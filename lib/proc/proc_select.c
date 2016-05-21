@@ -1426,6 +1426,47 @@ grn_select_slices(grn_ctx *ctx,
 }
 
 static grn_bool
+grn_select_prepare_drilldowns(grn_ctx *ctx,
+                              grn_select_data *data)
+{
+  grn_drilldown_data *anonymous_drilldown = NULL;
+
+  if (!data->drilldowns) {
+    return GRN_TRUE;
+  }
+
+  if (grn_hash_size(ctx, data->drilldowns) == 1) {
+    grn_id first_id = 1;
+    anonymous_drilldown =
+      (grn_drilldown_data *)grn_hash_get_value_(ctx,
+                                                data->drilldowns,
+                                                first_id,
+                                                NULL);
+    if (anonymous_drilldown) {
+      if (anonymous_drilldown->label.length > 0) {
+        anonymous_drilldown = NULL;
+      }
+    }
+  }
+
+  if (anonymous_drilldown) {
+    data->drilldown.keys =
+      grn_table_sort_key_from_str(ctx,
+                                  anonymous_drilldown->keys.value,
+                                  anonymous_drilldown->keys.length,
+                                  data->tables.result,
+                                  &(data->drilldown.n_keys));
+    if (data->drilldown.keys) {
+      data->output.n_elements += data->drilldown.n_keys;
+    }
+  } else {
+    data->output.n_elements += 1;
+  }
+
+  return GRN_TRUE;
+}
+
+static grn_bool
 grn_select_drilldown_execute(grn_ctx *ctx,
                              grn_select_data *data,
                              grn_obj *table,
@@ -2193,34 +2234,8 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         goto exit;
       }
 
-      if (data->drilldowns) {
-        grn_drilldown_data *anonymous_drilldown = NULL;
-        if (grn_hash_size(ctx, data->drilldowns) == 1) {
-          grn_id first_id = 1;
-          anonymous_drilldown =
-            (grn_drilldown_data *)grn_hash_get_value_(ctx,
-                                                      data->drilldowns,
-                                                      first_id,
-                                                      NULL);
-          if (anonymous_drilldown) {
-            if (anonymous_drilldown->label.length > 0) {
-              anonymous_drilldown = NULL;
-            }
-          }
-        }
-        if (anonymous_drilldown) {
-          data->drilldown.keys =
-            grn_table_sort_key_from_str(ctx,
-                                        anonymous_drilldown->keys.value,
-                                        anonymous_drilldown->keys.length,
-                                        data->tables.result,
-                                        &(data->drilldown.n_keys));
-          if (data->drilldown.keys) {
-            data->output.n_elements += data->drilldown.n_keys;
-          }
-        } else {
-          data->output.n_elements += 1;
-        }
+      if (!grn_select_prepare_drilldowns(ctx, data)) {
+        goto exit;
       }
 
       if (data->adjuster.length > 0) {
