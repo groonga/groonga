@@ -1084,7 +1084,7 @@ grn_select_filter(grn_ctx *ctx,
 
   if (data->query.length == 0 && data->filter.length == 0) {
     data->tables.result = data->tables.initial;
-    return TRUE;
+    return GRN_TRUE;
   }
 
   GRN_EXPR_CREATE_FOR_QUERY(ctx,
