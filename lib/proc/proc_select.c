@@ -756,9 +756,11 @@ grn_select_apply_adjuster_ensure_factor(grn_ctx *ctx, grn_obj *factor_object)
 }
 
 static void
-grn_select_apply_adjuster_adjust(grn_ctx *ctx, grn_obj *table,
-                                 grn_obj *column, grn_obj *value,
-                                 grn_obj *factor)
+grn_select_apply_adjuster_execute_adjust(grn_ctx *ctx,
+                                         grn_obj *table,
+                                         grn_obj *column,
+                                         grn_obj *value,
+                                         grn_obj *factor)
 {
   grn_obj *index;
   unsigned int n_indexes;
@@ -796,8 +798,9 @@ grn_select_apply_adjuster_adjust(grn_ctx *ctx, grn_obj *table,
 }
 
 static void
-grn_select_apply_adjuster(grn_ctx *ctx, grn_obj *table,
-                          grn_obj *adjuster)
+grn_select_apply_adjuster_execute(grn_ctx *ctx,
+                                  grn_obj *table,
+                                  grn_obj *adjuster)
 {
   grn_expr *expr = (grn_expr *)adjuster;
   grn_expr_code *code, *code_end;
@@ -824,7 +827,7 @@ grn_select_apply_adjuster(grn_ctx *ctx, grn_obj *table,
     } else {
       factor = NULL;
     }
-    grn_select_apply_adjuster_adjust(ctx, table, column, value, factor);
+    grn_select_apply_adjuster_execute_adjust(ctx, table, column, value, factor);
   }
 }
 
@@ -1244,6 +1247,50 @@ grn_select_apply_filtered_columns(grn_ctx *ctx,
                            data->columns.filtered);
 
   return ctx->rc == GRN_SUCCESS;
+}
+
+static grn_bool
+grn_select_apply_adjuster(grn_ctx *ctx,
+                          grn_select_data *data)
+{
+  grn_obj *adjuster;
+  grn_obj *record;
+  grn_rc rc;
+
+  if (data->adjuster.length == 0) {
+    return GRN_TRUE;
+  }
+
+  GRN_EXPR_CREATE_FOR_QUERY(ctx, data->tables.target, adjuster, record);
+  if (!adjuster) {
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][adjuster] "
+                       "failed to create expression: %s",
+                       ctx->errbuf);
+      return GRN_FALSE;
+  }
+
+  rc = grn_expr_parse(ctx, adjuster,
+                      data->adjuster.value,
+                      data->adjuster.length,
+                      NULL,
+                      GRN_OP_MATCH, GRN_OP_ADJUST,
+                      GRN_EXPR_SYNTAX_ADJUSTER);
+  if (rc != GRN_SUCCESS) {
+    grn_obj_unlink(ctx, adjuster);
+    return GRN_FALSE;
+  }
+
+  data->cacheable *= ((grn_expr *)adjuster)->cacheable;
+  data->taintable += ((grn_expr *)adjuster)->taintable;
+  grn_select_apply_adjuster_execute(ctx, data->tables.result, adjuster);
+  grn_obj_unlink(ctx, adjuster);
+
+  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                ":", "adjust(%d)", grn_table_size(ctx, data->tables.result));
+
+  return GRN_TRUE;
 }
 
 static grn_bool
@@ -2238,29 +2285,8 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         goto exit;
       }
 
-      if (data->adjuster.length > 0) {
-        grn_obj *adjuster;
-        grn_obj *v;
-        GRN_EXPR_CREATE_FOR_QUERY(ctx, data->tables.target, adjuster, v);
-        if (adjuster && v) {
-          grn_rc rc;
-          rc = grn_expr_parse(ctx, adjuster,
-                              data->adjuster.value,
-                              data->adjuster.length,
-                              NULL,
-                              GRN_OP_MATCH, GRN_OP_ADJUST,
-                              GRN_EXPR_SYNTAX_ADJUSTER);
-          if (rc) {
-            grn_obj_unlink(ctx, adjuster);
-            goto exit;
-          }
-          data->cacheable *= ((grn_expr *)adjuster)->cacheable;
-          data->taintable += ((grn_expr *)adjuster)->taintable;
-          grn_select_apply_adjuster(ctx, data->tables.result, adjuster);
-          grn_obj_unlink(ctx, adjuster);
-        }
-        GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                      ":", "adjust(%d)", nhits);
+      if (!grn_select_apply_adjuster(ctx, data)) {
+        goto exit;
       }
 
       if (data->scorer.length > 0) {
