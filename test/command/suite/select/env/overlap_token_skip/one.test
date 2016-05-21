@@ -1,4 +1,4 @@
-#@omit "need enable `GRN_II_OVERLAP_TOKEN_SKIP_ENABLE` environment variable."
+#$GRN_II_OVERLAP_TOKEN_SKIP_ENABLE=yes
 
 table_create Entries TABLE_NO_KEY
 column_create Entries body COLUMN_SCALAR ShortText
