@@ -199,8 +199,11 @@ grn_parse_table_group_calc_types(grn_ctx *ctx,
     CHECK_TABLE_GROUP_CALC_TYPE(NONE);
 #undef GRN_TABLE_GROUP_CALC_NONE
 
-    ERR(GRN_INVALID_ARGUMENT, "invalid table group calc type: <%.*s>",
-        (int)(calc_types_end - calc_types), calc_types);
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "invalid table group calc type: <%.*s>",
+                     (int)(calc_types_end - calc_types),
+                     calc_types);
     return 0;
 #undef CHECK_TABLE_GROUP_CALC_TYPE
   }
@@ -995,10 +998,11 @@ grn_select_filter(grn_ctx *ctx,
                             data->condition.expression,
                             v);
   if (!data->condition.expression) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[select][condition] "
-        "failed to create expression for condition: %s",
-        ctx->errbuf);
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_NO_MEMORY_AVAILABLE,
+                     "[select][condition] "
+                     "failed to create expression for condition: %s",
+                     ctx->errbuf);
     return GRN_FALSE;
   }
 
@@ -1008,11 +1012,13 @@ grn_select_filter(grn_ctx *ctx,
                               data->condition.match_columns,
                               v);
     if (!data->condition.match_columns) {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[select][match_columns] "
-          "failed to create expression for match columns: <%.*s>: %s",
-          (int)(data->match_columns.length),
-          data->match_columns.value,
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_NO_MEMORY_AVAILABLE,
+                       "[select][match_columns] "
+                       "failed to create expression for match columns: "
+                       "<%.*s>: %s",
+                       (int)(data->match_columns.length),
+                       data->match_columns.value,
           ctx->errbuf);
       return GRN_FALSE;
     }
@@ -1191,9 +1197,12 @@ grn_select_apply_adjuster_execute_adjust(grn_ctx *ctx,
     int column_name_size;
     column_name_size = grn_obj_name(ctx, column,
                                     column_name, GRN_TABLE_MAX_KEY_SIZE);
-    ERR(GRN_INVALID_ARGUMENT,
-        "adjuster requires index column for the target column: <%.*s>",
-        column_name_size, column_name);
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "adjuster requires index column for the target column: "
+                     "<%.*s>",
+                     column_name_size,
+                     column_name);
     return;
   }
 
@@ -2294,10 +2303,11 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
 
   data->tables.target = grn_ctx_get(ctx, data->table.value, data->table.length);
   if (!data->tables.target) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[select][table] invalid name: <%.*s>",
-        (int)(data->table.length),
-        data->table.value);
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[select][table] invalid name: <%.*s>",
+                     (int)(data->table.length),
+                     data->table.value);
     goto exit;
   }
 
