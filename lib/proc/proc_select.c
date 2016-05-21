@@ -125,6 +125,7 @@ typedef struct {
     grn_obj *target;
     grn_obj *initial;
     grn_obj *result;
+    grn_obj *sorted;
   } tables;
   struct {
     grn_obj *match_columns;
@@ -1374,6 +1375,65 @@ grn_select_apply_scorer(grn_ctx *ctx,
 }
 
 static grn_bool
+grn_select_sort(grn_ctx *ctx,
+                grn_select_data *data)
+{
+  grn_table_sort_key *keys;
+  uint32_t n_keys;
+
+  if (data->sort_keys.length == 0) {
+    return GRN_TRUE;
+  }
+
+  keys = grn_table_sort_key_from_str(ctx,
+                                     data->sort_keys.value,
+                                     data->sort_keys.length,
+                                     data->tables.result,
+                                     &n_keys);
+  if (!keys) {
+    GRN_PLUGIN_ERROR(ctx,
+                     ctx->rc,
+                     "[select][sort] "
+                     "failed to parse: <%.*s>: %s",
+                     (int)(data->sort_keys.length),
+                     data->sort_keys.value,
+                     ctx->errbuf);
+    return GRN_FALSE;
+  }
+
+  data->tables.sorted = grn_table_create(ctx, NULL, 0, NULL,
+                                         GRN_OBJ_TABLE_NO_KEY,
+                                         NULL,
+                                         data->tables.result);
+  if (!data->tables.sorted) {
+    GRN_PLUGIN_ERROR(ctx,
+                     ctx->rc,
+                     "[select][sort] "
+                     "failed to create table to store sorted record: "
+                     "<%.*s>: %s",
+                     (int)(data->sort_keys.length),
+                     data->sort_keys.value,
+                     ctx->errbuf);
+    return GRN_FALSE;
+  }
+
+  grn_table_sort(ctx,
+                 data->tables.result,
+                 data->offset,
+                 data->limit,
+                 data->tables.sorted,
+                 keys,
+                 n_keys);
+
+  grn_table_sort_key_close(ctx, keys, n_keys);
+
+  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                ":", "sort(%d)", data->limit);
+
+  return ctx->rc == GRN_SUCCESS;
+}
+
+static grn_bool
 grn_select_prepare_slices(grn_ctx *ctx,
                           grn_select_data *data)
 {
@@ -2129,8 +2189,7 @@ grn_select_drilldowns(grn_ctx *ctx,
 static grn_rc
 grn_select(grn_ctx *ctx, grn_select_data *data)
 {
-  uint32_t nkeys, nhits;
-  grn_table_sort_key *keys;
+  uint32_t nhits;
   grn_obj *outbuf = ctx->impl->output.buf;
   grn_content_type output_type = ctx->impl->output.type;
   char cache_key[GRN_CACHE_MAX_KEY_SIZE];
@@ -2141,6 +2200,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   data->tables.target = NULL;
   data->tables.initial = NULL;
   data->tables.result = NULL;
+  data->tables.sorted = NULL;
 
   data->condition.match_columns = NULL;
   data->condition.expression = NULL;
@@ -2374,42 +2434,34 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         goto exit;
       }
 
-      GRN_OUTPUT_ARRAY_OPEN("RESULT", data->output.n_elements);
-
       grn_normalize_offset_and_limit(ctx, nhits,
                                      &(data->offset), &(data->limit));
 
-      if (data->sort_keys.length > 0 &&
-          (keys = grn_table_sort_key_from_str(ctx,
-                                              data->sort_keys.value,
-                                              data->sort_keys.length,
-                                              data->tables.result,
-                                              &nkeys))) {
-        grn_obj *sorted;
-        sorted = grn_table_create(ctx, NULL, 0, NULL,
-                                  GRN_OBJ_TABLE_NO_KEY,
-                                  NULL,
-                                  data->tables.result);
-        if (sorted) {
-          grn_table_sort(ctx, data->tables.result, data->offset, data->limit,
-                         sorted, keys, nkeys);
-          GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                        ":", "sort(%d)", data->limit);
-          grn_proc_select_output_columns(ctx, sorted, nhits, 0, data->limit,
-                                         data->output_columns.value,
-                                         data->output_columns.length,
-                                         data->condition.expression);
-          grn_obj_unlink(ctx, sorted);
+      if (!grn_select_sort(ctx, data)) {
+        goto exit;
+      }
+
+      GRN_OUTPUT_ARRAY_OPEN("RESULT", data->output.n_elements);
+
+      {
+        int offset;
+        grn_obj *output_table;
+
+        if (data->tables.sorted) {
+          offset = 0;
+          output_table = data->tables.sorted;
+        } else {
+          offset = data->offset;
+          output_table = data->tables.result;
         }
-        grn_table_sort_key_close(ctx, keys, nkeys);
-      } else {
-        if (!ctx->rc) {
-          grn_proc_select_output_columns(ctx, data->tables.result, nhits,
-                                         data->offset, data->limit,
-                                         data->output_columns.value,
-                                         data->output_columns.length,
-                                         data->condition.expression);
-        }
+        grn_proc_select_output_columns(ctx,
+                                       output_table,
+                                       nhits,
+                                       offset,
+                                       data->limit,
+                                       data->output_columns.value,
+                                       data->output_columns.length,
+                                       data->condition.expression);
       }
       GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                     ":", "output(%d)", data->limit);
@@ -2460,6 +2512,10 @@ exit :
     grn_table_sort_key_close(ctx,
                              data->drilldown.keys,
                              data->drilldown.n_keys);
+  }
+
+  if (data->tables.sorted) {
+    grn_obj_unlink(ctx, data->tables.sorted);
   }
 
   if (data->tables.result &&
