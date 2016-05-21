@@ -1044,6 +1044,13 @@ GRN_API grn_log_level grn_logger_get_max_level(grn_ctx *ctx);
 
 GRN_API void grn_logger_put(grn_ctx *ctx, grn_log_level level,
                             const char *file, int line, const char *func, const char *fmt, ...) GRN_ATTRIBUTE_PRINTF(6);
+GRN_API void grn_logger_putv(grn_ctx *ctx,
+                             grn_log_level level,
+                             const char *file,
+                             int line,
+                             const char *func,
+                             const char *fmt,
+                             va_list ap);
 GRN_API void grn_logger_reopen(grn_ctx *ctx);
 
 GRN_API grn_bool grn_logger_pass(grn_ctx *ctx, grn_log_level level);

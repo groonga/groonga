@@ -353,8 +353,28 @@ grn_logger_pass(grn_ctx *ctx, grn_log_level level)
 #define LBUFSIZE 0x400
 
 void
-grn_logger_put(grn_ctx *ctx, grn_log_level level,
-               const char *file, int line, const char *func, const char *fmt, ...)
+grn_logger_put(grn_ctx *ctx,
+               grn_log_level level,
+               const char *file,
+               int line,
+               const char *func,
+               const char *fmt,
+               ...)
+{
+  va_list ap;
+  va_start(ap, fmt);
+  grn_logger_putv(ctx, level, file, line, func, fmt, ap);
+  va_end(ap);
+}
+
+void
+grn_logger_putv(grn_ctx *ctx,
+                grn_log_level level,
+                const char *file,
+                int line,
+                const char *func,
+                const char *fmt,
+                va_list ap)
 {
   if (level <= current_logger.max_level && current_logger.log) {
     char tbuf[TBUFSIZE];
@@ -367,10 +387,7 @@ grn_logger_put(grn_ctx *ctx, grn_log_level level,
       grn_timeval2str(ctx, &tv, tbuf, TBUFSIZE);
     }
     if (current_logger.flags & GRN_LOG_MESSAGE) {
-      va_list argp;
-      va_start(argp, fmt);
-      grn_vsnprintf(mbuf, MBUFSIZE - 1, fmt, argp);
-      va_end(argp);
+      grn_vsnprintf(mbuf, MBUFSIZE - 1, fmt, ap);
       mbuf[MBUFSIZE - 1] = '\0';
     } else {
       mbuf[0] = '\0';
