@@ -556,6 +556,7 @@ file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_message_pack_version"
 string(STRIP
   "${GRN_BUNDLED_MESSAGE_PACK_VERSION}"
   GRN_BUNDLED_MESSAGE_PACK_VERSION)
+option(GRN_WITH_BUNDLED_MESSAGE_PACK "use bundled MessagePack" OFF)
 
 set(GRN_WITH_MESSAGE_PACK "auto"
   CACHE STRING "use MessagePack for suggestion")
