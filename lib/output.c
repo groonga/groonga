@@ -2140,6 +2140,7 @@ grn_output_envelope_json(grn_ctx *ctx,
   }
 }
 
+#ifdef GRN_WITH_MESSAGE_PACK
 static void
 msgpack_pack_cstr(msgpack_packer *packer,
                   const char *string)
@@ -2377,6 +2378,7 @@ grn_output_envelope_msgpack(grn_ctx    *ctx,
     }
   }
 }
+#endif /* GRN_WITH_MESSAGE_PACK */
 
 void
 grn_output_envelope(grn_ctx *ctx,
@@ -2510,7 +2512,7 @@ grn_output_envelope(grn_ctx *ctx,
                                   started, elapsed,
                                   file, line);
     }
-#endif
+#endif /* GRN_WITH_MESSAGE_PACK */
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
     break;
