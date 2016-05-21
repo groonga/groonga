@@ -1280,6 +1280,11 @@ grn_select_apply_adjuster(grn_ctx *ctx,
                       GRN_EXPR_SYNTAX_ADJUSTER);
   if (rc != GRN_SUCCESS) {
     grn_obj_unlink(ctx, adjuster);
+    GRN_PLUGIN_ERROR(ctx,
+                     rc,
+                     "[select][adjuster] "
+                     "failed to parse: %s",
+                     ctx->errbuf);
     return GRN_FALSE;
   }
 

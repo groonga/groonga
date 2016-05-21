@@ -37,7 +37,8 @@ select Memos   --filter true   --adjuster 'tags @ "groonga" * 4 tags @ "mroonga"
       0.0,
       0.0
     ],
-    "Syntax error: <tags @ \"groonga\" * 4 |t|ags @ \"mroonga\" * 3>"
+    "[select][adjuster] failed to parse: Syntax error: <tags @ \"groonga\" * 4 |t|ags @ \"mroonga\" * 3>"
   ]
 ]
 #|e| Syntax error: <tags @ "groonga" * 4 |t|ags @ "mroonga" * 3>
+#|e| [select][adjuster] failed to parse: Syntax error: <tags @ "groonga" * 4 |t|ags @ "mroonga" * 3>
