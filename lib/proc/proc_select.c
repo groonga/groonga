@@ -1247,6 +1247,17 @@ grn_select_apply_filtered_columns(grn_ctx *ctx,
 }
 
 static grn_bool
+grn_select_prepare_slices(grn_ctx *ctx,
+                          grn_select_data *data)
+{
+  if (data->slices) {
+    data->output.n_elements += 1;
+  }
+
+  return GRN_TRUE;
+}
+
+static grn_bool
 grn_select_slice_execute(grn_ctx *ctx,
                          grn_select_data *data,
                          grn_obj *table,
@@ -2175,10 +2186,11 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     }
 
     {
+      /* For select results */
       data->output.n_elements = 1;
 
-      if (data->slices) {
-        data->output.n_elements += 1;
+      if (!grn_select_prepare_slices(ctx, data)) {
+        goto exit;
       }
 
       if (data->drilldowns) {
