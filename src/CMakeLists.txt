@@ -15,6 +15,7 @@
 
 include_directories(
   ${MRUBY_INCLUDE_DIRS}
+  ${MESSAGE_PACK_INCLUDE_DIRS}
   )
 
 add_subdirectory(suggest)
