@@ -381,7 +381,7 @@ if(NOT ${GRN_WITH_LZ4} STREQUAL "no")
     set(LIBLZ4_INCLUDE_DIRS
       "${CMAKE_CURRENT_SOURCE_DIR}/vendor/lz4-${GRN_BUNDLED_LZ4_VERSION}/lib")
     set(LIBLZ4_LIBRARY_DIRS
-      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/lz4")
+      "${CMAKE_CURRENT_BUILD_DIR}/vendor/lz4")
     set(LIBLZ4_LIBRARIES liblz4)
   else()
     if(NOT DEFINED LIBLZ4_FOUND)
@@ -418,7 +418,7 @@ if(NOT ${GRN_WITH_MECAB} STREQUAL "no")
     set(MECAB_INCLUDE_DIRS
       "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mecab-${GRN_BUNDLED_MECAB_VERSION}/src")
     set(MECAB_LIBRARY_DIRS
-      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mecab")
+      "${CMAKE_CURRENT_BUILD_DIR}/vendor/mecab")
     set(MECAB_LIBRARIES libmecab)
   else()
     set(GRN_MECAB_CONFIG "mecab-config" CACHE FILEPATH "mecab-config path")
