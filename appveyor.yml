@@ -39,7 +39,10 @@ build_script:
   - cmake --build . --config Debug --target Install
 
 before_test:
-  - gem install grntest
+  - git clone --depth 1 https://github.com/groonga/grntest.git test\command\grntest
+  - cd test\command\grntest
+  - bundle install --binstubs=..\bin
+  - cd ..\..\..
 test_script:
   - SET GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=%APPVEYOR_BUILD_FOLDER%\test\command\tmp\synonyms.tsv
-  - grntest --groonga c:\groonga\bin\groonga.exe --base-directory test\command --reporter stream --debug --stop-on-failure test\command\suite
+  - test\command\bin\grntest --groonga c:\groonga\bin\groonga.exe --base-directory test\command --reporter stream --debug --stop-on-failure test\command\suite
