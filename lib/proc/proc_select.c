@@ -1264,12 +1264,12 @@ grn_select_apply_adjuster(grn_ctx *ctx,
 
   GRN_EXPR_CREATE_FOR_QUERY(ctx, data->tables.target, adjuster, record);
   if (!adjuster) {
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_INVALID_ARGUMENT,
-                       "[select][adjuster] "
-                       "failed to create expression: %s",
-                       ctx->errbuf);
-      return GRN_FALSE;
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[select][adjuster] "
+                     "failed to create expression: %s",
+                     ctx->errbuf);
+    return GRN_FALSE;
   }
 
   rc = grn_expr_parse(ctx, adjuster,
