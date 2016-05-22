@@ -579,8 +579,8 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     if (s.st_size < sizeof(struct _grn_io_header)) {
       ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
           "[io][open] file size is too small: "
-          "<%" GRN_FMT_SIZE ">(required: >= %" GRN_FMT_SIZE "): <%s>",
-          s.st_size,
+          "<%" GRN_FMT_INT64D ">(required: >= %" GRN_FMT_SIZE "): <%s>",
+          (int64_t)(s.st_size),
           sizeof(struct _grn_io_header),
           path);
       grn_close(fd);
