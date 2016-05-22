@@ -16,7 +16,7 @@ install:
   - tzutil /s "Tokyo Standard Time"
   - choco install -y imdisk-toolkit
   - mkdir tmp
-  - imdisk -a -t file -m tmp -o awe -s 512M -p "/fs:ntfs /q /y"
+  - imdisk -a -t file -m tmp -o awe -s 1G -p "/fs:ntfs /q /y"
 
 build_script:
   - ps: |
@@ -46,4 +46,4 @@ before_test:
   - cd ..\..\..
 test_script:
   - SET GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=%APPVEYOR_BUILD_FOLDER%\test\command\tmp\synonyms.tsv
-  - ruby test\command\bin\grntest --groonga c:\groonga\bin\groonga.exe --base-directory test\command --reporter stream --stop-on-failure test\command\suite
+  - ruby test\command\bin\grntest --groonga c:\groonga\bin\groonga.exe --base-directory test\command --reporter mark --n-workers 4 test\command\suite
