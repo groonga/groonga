@@ -136,7 +136,6 @@
 #ifdef WIN32
 # define grn_snprintf(dest, dest_size, n, ...) do {             \
     _snprintf_s((dest), (dest_size), (n) - 1, __VA_ARGS__);     \
-    (dest)[(n) - 1] = '\0';                                     \
   } while (GRN_FALSE)
 #else /* WIN32 */
 # define grn_snprintf(dest, dest_size, n, ...)  \
@@ -145,7 +144,7 @@
 
 #ifdef WIN32
 # define grn_vsnprintf(dest, dest_size, format, args) do {      \
-    vsnprintf((dest), (dest_size) - 1, (format), (args));       \
+    vsnprintf((dest), (dest_size), (format), (args));           \
     (dest)[(dest_size) - 1] = '\0';                             \
   } while (GRN_FALSE)
 #else /* WIN32 */
