@@ -1468,17 +1468,6 @@ grn_select_output(grn_ctx *ctx,
 }
 
 static grn_bool
-grn_select_prepare_slices(grn_ctx *ctx,
-                          grn_select_data *data)
-{
-  if (data->slices) {
-    data->output.n_elements += 1;
-  }
-
-  return GRN_TRUE;
-}
-
-static grn_bool
 grn_select_slice_execute(grn_ctx *ctx,
                          grn_select_data *data,
                          grn_obj *table,
@@ -1569,15 +1558,34 @@ grn_select_slices_execute(grn_ctx *ctx,
 }
 
 static grn_bool
-grn_select_slices_output(grn_ctx *ctx,
-                         grn_select_data *data,
-                         grn_obj *table,
-                         grn_hash *slices)
+grn_select_prepare_slices(grn_ctx *ctx,
+                          grn_select_data *data)
+{
+  if (!data->slices) {
+    return GRN_TRUE;
+  }
+
+  if (!grn_select_slices_execute(ctx, data, data->tables.result, data->slices)) {
+    return GRN_FALSE;
+  }
+
+  data->output.n_elements += 1;
+
+  return GRN_TRUE;
+}
+
+static grn_bool
+grn_select_output_slices(grn_ctx *ctx,
+                         grn_select_data *data)
 {
   grn_bool succeeded = GRN_TRUE;
   unsigned int n_available_results = 0;
 
-  GRN_HASH_EACH_BEGIN(ctx, slices, cursor, id) {
+  if (!data->slices) {
+    return GRN_TRUE;
+  }
+
+  GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
     grn_slice_data *slice;
 
     grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
@@ -1587,7 +1595,7 @@ grn_select_slices_output(grn_ctx *ctx,
   } GRN_HASH_EACH_END(ctx, cursor);
 
   GRN_OUTPUT_MAP_OPEN("SLICES", n_available_results);
-  GRN_HASH_EACH_BEGIN(ctx, slices, cursor, id) {
+  GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
     grn_slice_data *slice;
     uint32_t n_hits;
     int offset;
@@ -1660,24 +1668,6 @@ grn_select_slices_output(grn_ctx *ctx,
   GRN_OUTPUT_MAP_CLOSE();
 
   return succeeded;
-}
-
-static grn_bool
-grn_select_slices(grn_ctx *ctx,
-                  grn_select_data *data)
-{
-  if (!data->slices) {
-    return GRN_TRUE;
-  }
-
-  if (!grn_select_slices_execute(ctx, data, data->tables.result, data->slices)) {
-    return GRN_FALSE;
-  }
-  if (!grn_select_slices_output(ctx, data, data->tables.result, data->slices)) {
-    return GRN_FALSE;
-  }
-
-  return GRN_TRUE;
 }
 
 static grn_bool
@@ -2526,10 +2516,6 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       /* For select results */
       data->output.n_elements = 1;
 
-      if (!grn_select_prepare_slices(ctx, data)) {
-        goto exit;
-      }
-
       if (!grn_select_prepare_drilldowns(ctx, data)) {
         goto exit;
       }
@@ -2549,6 +2535,10 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         goto exit;
       }
 
+      if (!grn_select_prepare_slices(ctx, data)) {
+        goto exit;
+      }
+
       GRN_OUTPUT_ARRAY_OPEN("RESULT", data->output.n_elements);
 
       if (!grn_select_output(ctx, data)) {
@@ -2556,7 +2546,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         goto exit;
       }
 
-      if (!grn_select_slices(ctx, data)) {
+      if (!grn_select_output_slices(ctx, data)) {
         GRN_OUTPUT_ARRAY_CLOSE();
         goto exit;
       }
