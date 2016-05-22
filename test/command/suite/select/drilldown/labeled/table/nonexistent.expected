@@ -70,9 +70,7 @@ select Memos   --drilldown[category].table nonexistent   --drilldown[category].k
         "Rroonga is fast!",
         "Rroonga"
       ]
-    ],
-    {
-    }
+    ]
   ]
 ]
 #|e| [select][drilldowns][category][table] nonexistent label: <nonexistent>

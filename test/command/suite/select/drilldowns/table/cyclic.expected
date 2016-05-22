@@ -80,9 +80,7 @@ select Memos   --drilldowns[category].table sub_category   --drilldowns[category
         "Rroonga is fast!",
         "Rroonga"
       ]
-    ],
-    {
-    }
+    ]
   ]
 ]
 #|e| [select][drilldowns][sub_category][table] cycled dependency: <category>

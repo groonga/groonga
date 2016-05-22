@@ -1893,7 +1893,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
-static void
+static grn_bool
 grn_select_drilldown(grn_ctx *ctx,
                      grn_select_data *data,
                      grn_obj *table,
@@ -1909,7 +1909,7 @@ grn_select_drilldown(grn_ctx *ctx,
   drilldown =
     (grn_drilldown_data *)grn_hash_get_value_(ctx, drilldowns, first_id, NULL);
   if (!drilldown) {
-    return;
+    return GRN_FALSE;
   }
 
   result = &(drilldown->result);
@@ -1926,7 +1926,7 @@ grn_select_drilldown(grn_ctx *ctx,
                                       keys + i,
                                       drilldowns,
                                       first_id)) {
-      break;
+      return GRN_FALSE;
     }
 
     if (drilldown->filtered_result) {
@@ -1995,6 +1995,8 @@ grn_select_drilldown(grn_ctx *ctx,
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                   ":", "drilldown(%d)", n_hits);
   }
+
+  return ctx->rc == GRN_SUCCESS;
 }
 
 typedef enum {
@@ -2111,18 +2113,20 @@ drilldown_tsort(grn_ctx *ctx,
   return succeeded;
 }
 
-static void
+static grn_bool
 grn_select_drilldowns_execute(grn_ctx *ctx,
                               grn_select_data *data,
                               grn_obj *table,
                               grn_hash *drilldowns)
 {
+  grn_bool succeeded = GRN_TRUE;
   grn_obj tsorted_ids;
   size_t i;
   size_t n_drilldowns;
 
   GRN_RECORD_INIT(&tsorted_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
   if (!drilldown_tsort(ctx, drilldowns, &tsorted_ids)) {
+    succeeded = GRN_FALSE;
     goto exit;
   }
 
@@ -2138,6 +2142,7 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
                                       drilldowns,
                                       id)) {
       if (ctx->rc != GRN_SUCCESS) {
+        succeeded = GRN_FALSE;
         break;
       }
     }
@@ -2145,14 +2150,17 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
 
 exit :
   GRN_OBJ_FIN(ctx, &tsorted_ids);
+
+  return succeeded;
 }
 
-static void
+static grn_bool
 grn_select_drilldowns_output(grn_ctx *ctx,
                              grn_select_data *data,
                              grn_obj *table,
                              grn_hash *drilldowns)
 {
+  grn_bool succeeded = GRN_TRUE;
   unsigned int n_available_results = 0;
 
   GRN_HASH_EACH_BEGIN(ctx, drilldowns, cursor, id) {
@@ -2210,19 +2218,35 @@ grn_select_drilldowns_output(grn_ctx *ctx,
         if (sorted) {
           grn_table_sort(ctx, target_table, offset, limit,
                          sorted, sort_keys, n_sort_keys);
-          grn_proc_select_output_columns(ctx, sorted, n_hits, 0, limit,
-                                         drilldown->output_columns.value,
-                                         drilldown->output_columns.length,
-                                         data->condition.expression);
+          if (!grn_proc_select_output_columns(ctx,
+                                              sorted,
+                                              n_hits,
+                                              0,
+                                              limit,
+                                              drilldown->output_columns.value,
+                                              drilldown->output_columns.length,
+                                              data->condition.expression)) {
+            succeeded = GRN_FALSE;
+          }
           grn_obj_unlink(ctx, sorted);
         }
         grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
       }
     } else {
-      grn_proc_select_output_columns(ctx, target_table, n_hits, offset, limit,
-                                     drilldown->output_columns.value,
-                                     drilldown->output_columns.length,
-                                     data->condition.expression);
+      if (!grn_proc_select_output_columns(ctx,
+                                          target_table,
+                                          n_hits,
+                                          offset,
+                                          limit,
+                                          drilldown->output_columns.value,
+                                          drilldown->output_columns.length,
+                                          data->condition.expression)) {
+        succeeded = GRN_FALSE;
+      }
+    }
+
+    if (!succeeded) {
+      break;
     }
 
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
@@ -2232,22 +2256,38 @@ grn_select_drilldowns_output(grn_ctx *ctx,
                   drilldown->label.value);
   } GRN_HASH_EACH_END(ctx, cursor);
   GRN_OUTPUT_MAP_CLOSE();
+
+  return succeeded;
 }
 
-static void
+static grn_bool
 grn_select_drilldowns(grn_ctx *ctx,
-                      grn_select_data *data,
-                      grn_obj *table,
-                      grn_hash *drilldowns)
+                      grn_select_data *data)
 {
-  grn_select_drilldowns_execute(ctx,
+  if (data->drilldown.keys) {
+    return grn_select_drilldown(ctx,
                                 data,
-                                table,
-                                drilldowns);
-  grn_select_drilldowns_output(ctx,
-                               data,
-                               table,
-                               drilldowns);
+                                data->tables.result,
+                                data->drilldown.keys,
+                                data->drilldown.n_keys,
+                                data->drilldowns);
+  } else if (data->drilldowns) {
+    if (!grn_select_drilldowns_execute(ctx,
+                                       data,
+                                       data->tables.result,
+                                       data->drilldowns)) {
+      return GRN_FALSE;
+    }
+    if (!grn_select_drilldowns_output(ctx,
+                                      data,
+                                      data->tables.result,
+                                      data->drilldowns)) {
+      return GRN_FALSE;
+    }
+    return GRN_TRUE;
+  } else {
+    return GRN_TRUE;
+  }
 }
 
 static grn_rc
@@ -2517,19 +2557,10 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         goto exit;
       }
 
-        if (data->drilldown.keys) {
-          grn_select_drilldown(ctx,
-                               data,
-                               data->tables.result,
-                               data->drilldown.keys,
-                               data->drilldown.n_keys,
-                               data->drilldowns);
-        } else if (data->drilldowns) {
-          grn_select_drilldowns(ctx,
-                                data,
-                                data->tables.result,
-                                data->drilldowns);
-        }
+      if (!grn_select_drilldowns(ctx, data)) {
+        GRN_OUTPUT_ARRAY_CLOSE();
+        goto exit;
+      }
 
       GRN_OUTPUT_ARRAY_CLOSE();
     }
