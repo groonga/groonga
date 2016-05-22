@@ -1,3 +1,5 @@
+#$GRN_MECAB_CHUNKED_TOKENIZE_ENABLED=yes
+#$GRN_MECAB_CHUNK_SIZE_THRESHOLD=30
 #@on-error omit
 tokenize TokenMecab '日本のエンジンとエンジン'
 #@on-error default
