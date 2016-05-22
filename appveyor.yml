@@ -33,8 +33,9 @@ build_script:
   - git submodule update --init
   - cd vendor
   - ruby download_mecab.rb
+  - ruby download_message_pack.rb
   - cd ..
-  - cmake . -G "%CMAKE_GENERATOR_NAME%" -DCMAKE_INSTALL_PREFIX=c:\groonga -DGRN_WITH_BUNDLED_MECAB=yes
+  - cmake . -G "%CMAKE_GENERATOR_NAME%" -DCMAKE_INSTALL_PREFIX=c:\groonga -DGRN_WITH_BUNDLED_MECAB=yes -DGRN_WITH_BUNDLED_MESSAGE_PACK=yes
   - cmake --build . --config Debug
   - cmake --build . --config Debug --target Install
 
