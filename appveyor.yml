@@ -45,4 +45,4 @@ before_test:
   - cd ..\..\..
 test_script:
   - SET GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=%APPVEYOR_BUILD_FOLDER%\test\command\tmp\synonyms.tsv
-  - ruby test\command\bin\grntest --groonga c:\groonga\bin\groonga.exe --base-directory test\command --reporter stream --debug --stop-on-failure test\command\suite
+  - ruby test\command\bin\grntest --groonga c:\groonga\bin\groonga.exe --base-directory test\command --reporter stream --stop-on-failure test\command\suite
