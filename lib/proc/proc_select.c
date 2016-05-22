@@ -2715,8 +2715,6 @@ grn_select_data_fill_slices(grn_ctx *ctx,
                             grn_user_data *user_data,
                             grn_select_data *data)
 {
-  unsigned int i;
-
   if (!grn_select_data_fill_slice_labels(ctx, user_data, data)) {
     return GRN_FALSE;
   }
@@ -2762,7 +2760,6 @@ grn_select_data_fill_slices(grn_ctx *ctx,
                           output_columns,
                           offset,
                           limit);
-      i++;
   } GRN_HASH_EACH_END(ctx, cursor);
 
   return GRN_TRUE;
