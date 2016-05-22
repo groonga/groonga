@@ -47,7 +47,7 @@ get_system_synonyms_file(void)
     const char *relative_path = GRN_QUERY_EXPANDER_TSV_RELATIVE_SYNONYMS_FILE;
     size_t base_dir_length;
 
-    base_dir = grn_plugin_win32_base_dir();
+    base_dir = grn_plugin_windows_base_dir();
     base_dir_length = strlen(base_dir);
     grn_strcpy(win32_synonyms_file, MAX_PATH, base_dir);
     grn_strcat(win32_synonyms_file, MAX_PATH, "/");
