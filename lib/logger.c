@@ -387,15 +387,13 @@ grn_logger_putv(grn_ctx *ctx,
       grn_timeval2str(ctx, &tv, tbuf, TBUFSIZE);
     }
     if (current_logger.flags & GRN_LOG_MESSAGE) {
-      grn_vsnprintf(mbuf, MBUFSIZE - 1, fmt, ap);
-      mbuf[MBUFSIZE - 1] = '\0';
+      grn_vsnprintf(mbuf, MBUFSIZE, fmt, ap);
     } else {
       mbuf[0] = '\0';
     }
     if (current_logger.flags & GRN_LOG_LOCATION) {
       grn_snprintf(lbuf, LBUFSIZE, LBUFSIZE,
                    "%d %s:%d %s()", getpid(), file, line, func);
-      lbuf[LBUFSIZE - 1] = '\0';
     } else {
       lbuf[0] = '\0';
     }
