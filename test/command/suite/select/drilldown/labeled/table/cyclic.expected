@@ -40,47 +40,6 @@ select Memos   --drilldown[category].table sub_category   --drilldown[category].
       0.0
     ],
     "[select][drilldowns][category][table] cycled dependency: <sub_category>"
-  ],
-  [
-    [
-      [
-        4
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ],
-        [
-          "tag",
-          "Tags"
-        ]
-      ],
-      [
-        1,
-        "Groonga is fast!",
-        "Groonga"
-      ],
-      [
-        2,
-        "Mroonga is fast!",
-        "Mroonga"
-      ],
-      [
-        3,
-        "Groonga sticker!",
-        "Groonga"
-      ],
-      [
-        4,
-        "Rroonga is fast!",
-        "Rroonga"
-      ]
-    ]
   ]
 ]
 #|e| [select][drilldowns][sub_category][table] cycled dependency: <category>

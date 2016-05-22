@@ -21,55 +21,6 @@ select Memos --drilldown tag1,tag2
       0.0
     ],
     "[table][create] key size too big: <> <Text>(65536) (max:4096)"
-  ],
-  [
-    [
-      [
-        4
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ],
-        [
-          "tag1",
-          "Text"
-        ],
-        [
-          "tag2",
-          "ShortText"
-        ]
-      ],
-      [
-        1,
-        "Groonga is fast!",
-        "Groonga",
-        ""
-      ],
-      [
-        2,
-        "Mroonga is fast!",
-        "Mroonga",
-        "Groonga"
-      ],
-      [
-        3,
-        "Groonga sticker!",
-        "Groonga",
-        ""
-      ],
-      [
-        4,
-        "Rroonga is fast!",
-        "Rroonga",
-        "Groonga"
-      ]
-    ]
   ]
 ]
 #|e| [table][create] key size too big: <> <Text>(65536) (max:4096)
