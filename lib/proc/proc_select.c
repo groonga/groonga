@@ -1393,14 +1393,18 @@ grn_select_sort(grn_ctx *ctx,
                                      data->tables.result,
                                      &n_keys);
   if (!keys) {
-    GRN_PLUGIN_ERROR(ctx,
-                     ctx->rc,
-                     "[select][sort] "
-                     "failed to parse: <%.*s>: %s",
-                     (int)(data->sort_keys.length),
-                     data->sort_keys.value,
-                     ctx->errbuf);
-    return GRN_FALSE;
+    if (ctx->rc == GRN_SUCCESS) {
+      return GRN_TRUE;
+    } else {
+      GRN_PLUGIN_ERROR(ctx,
+                       ctx->rc,
+                       "[select][sort] "
+                       "failed to parse: <%.*s>: %s",
+                       (int)(data->sort_keys.length),
+                       data->sort_keys.value,
+                       ctx->errbuf);
+      return GRN_FALSE;
+    }
   }
 
   data->tables.sorted = grn_table_create(ctx, NULL, 0, NULL,
