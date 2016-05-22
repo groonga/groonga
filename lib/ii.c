@@ -2795,23 +2795,23 @@ buffer_merge_dump_datavec(grn_ctx *ctx,
                           datavec *rdv)
 {
   int i, j;
-#define BUF_SIZE 255
-  char buf[BUF_SIZE], *bufp, *buf_end;
-  buf_end = buf + BUF_SIZE;
-#undef BUF_SIZE
+  grn_obj buffer;
 
+  GRN_TEXT_INIT(&buffer, 0);
   for (i = 0; i < ii->n_elements; i++) {
     GRN_LOG(ctx, GRN_LOG_DEBUG, "rdv[%d] data_size=%d, flags=%d",
             i, rdv[i].data_size, rdv[i].flags);
-    for (j = 0, bufp = buf; j < rdv[i].data_size;) {
-      bufp += grn_snprintf(bufp,
-                           buf_end - bufp,
-                           buf_end - bufp,
-                           " %d", rdv[i].data[j]);
+    GRN_BULK_REWIND(&buffer);
+    for (j = 0; j < rdv[i].data_size;) {
+      grn_text_printf(ctx, &buffer, " %d", rdv[i].data[j]);
       j++;
       if (!(j % 32) || j == rdv[i].data_size) {
-        GRN_LOG(ctx, GRN_LOG_DEBUG, "rdv[%d].data[%d]%s", i, j, buf);
-        bufp = buf;
+        GRN_LOG(ctx, GRN_LOG_DEBUG,
+                "rdv[%d].data[%d]%.*s",
+                i, j,
+                (int)GRN_TEXT_LEN(&buffer),
+                GRN_TEXT_VALUE(&buffer));
+        GRN_BULK_REWIND(&buffer);
       }
     }
   }
@@ -2819,18 +2819,22 @@ buffer_merge_dump_datavec(grn_ctx *ctx,
   for (i = 0; i < ii->n_elements; i++) {
     GRN_LOG(ctx, GRN_LOG_DEBUG, "dv[%d] data_size=%d, flags=%d",
             i, dv[i].data_size, dv[i].flags);
-    for (j = 0, bufp = buf; j < dv[i].data_size;) {
-      bufp += grn_snprintf(bufp,
-                           buf_end - bufp,
-                           buf_end - bufp,
-                           " %d", dv[i].data[j]);
+    GRN_BULK_REWIND(&buffer);
+    for (j = 0; j < dv[i].data_size;) {
+      grn_text_printf(ctx, &buffer, " %d", dv[i].data[j]);
       j++;
       if (!(j % 32) || j == dv[i].data_size) {
-        GRN_LOG(ctx, GRN_LOG_DEBUG, "dv[%d].data[%d]%s", i, j, buf);
-        bufp = buf;
+        GRN_LOG(ctx, GRN_LOG_DEBUG,
+                "dv[%d].data[%d]%.*s",
+                i, j,
+                (int)GRN_TEXT_LEN(&buffer),
+                GRN_TEXT_VALUE(&buffer));
+        GRN_BULK_REWIND(&buffer);
       }
     }
   }
+
+  GRN_OBJ_FIN(ctx, &buffer);
 }
 
 /* If dc doesn't have enough space, program may be crashed.
