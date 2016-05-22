@@ -1458,7 +1458,7 @@ grn_select_output(grn_ctx *ctx,
   GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                 ":", "output(%d)", data->limit);
 
-  return GRN_TRUE;
+  return ctx->rc == GRN_SUCCESS;
 }
 
 static grn_bool
@@ -2472,9 +2472,10 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       GRN_OUTPUT_ARRAY_OPEN("RESULT", data->output.n_elements);
 
       if (!grn_select_output(ctx, data)) {
+        GRN_OUTPUT_ARRAY_CLOSE();
         goto exit;
       }
-      if (!ctx->rc) {
+
         if (data->slices) {
           grn_select_slices(ctx, data, data->tables.result, data->slices);
         }
@@ -2491,9 +2492,9 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
                                 data->tables.result,
                                 data->drilldowns);
         }
-      }
+
+      GRN_OUTPUT_ARRAY_CLOSE();
     }
-    GRN_OUTPUT_ARRAY_CLOSE();
     if (!ctx->rc &&
         data->cacheable &&
         cache_key_size <= GRN_CACHE_MAX_KEY_SIZE &&
