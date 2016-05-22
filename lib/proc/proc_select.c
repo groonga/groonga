@@ -2923,7 +2923,6 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
     return GRN_TRUE;
   } else {
     grn_bool succeeded = GRN_TRUE;
-    unsigned int i;
 
     if (!grn_select_data_fill_drilldown_labels(ctx, user_data, data,
                                                "drilldowns[")) {
@@ -3018,7 +3017,6 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
                               calc_target,
                               filter,
                               table);
-      i++;
     } GRN_HASH_EACH_END(ctx, cursor);
 
     return succeeded;
