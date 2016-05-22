@@ -88,11 +88,11 @@ grn_obj_flags grn_proc_column_parse_flags(grn_ctx *ctx,
                                           const char *text,
                                           const char *end);
 
-void grn_proc_select_output_columns(grn_ctx *ctx,
-                                    grn_obj *res,
-                                    int n_hits, int offset, int limit,
-                                    const char *columns, int columns_len,
-                                    grn_obj *condition);
+grn_bool grn_proc_select_output_columns(grn_ctx *ctx,
+                                        grn_obj *res,
+                                        int n_hits, int offset, int limit,
+                                        const char *columns, int columns_len,
+                                        grn_obj *condition);
 
 grn_rc grn_proc_syntax_expand_query(grn_ctx *ctx,
                                     const char *query,
