@@ -50,7 +50,7 @@ module CommandRunner
 
   def groonga(*groonga_command_line, &block)
     command_line = [
-      "groonga",
+      groonga_path,
       "--log-path", @log_path.to_s,
       "--query-log-path", @query_log_path.to_s,
     ]
@@ -62,7 +62,7 @@ module CommandRunner
 
   def grndb(command, *arguments)
     command_line = [
-      "grndb",
+      grndb_path,
       command,
       @database_path.to_s,
     ]
@@ -79,7 +79,11 @@ module CommandRunner
       return program_path if File.exist?(program_path)
     end
 
-    nil
+    name
+  end
+
+  def groonga_path
+    find_program("groonga")
   end
 
   def grndb_path
