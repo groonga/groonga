@@ -9837,7 +9837,9 @@ typedef struct {
   uint8_t  sid_bits;   /* Number of bits for section ID */
   uint64_t sid_mask;   /* Mask bits for section ID */
 
-  grn_obj  *lexicon; /* Block lexicon (to be closed) */
+  grn_obj  *lexicon;    /* Block lexicon (to be closed) */
+  grn_obj  *tokenizer;  /* Lexicon's tokenizer */
+  grn_obj  *normalizer; /* Lexicon's normalzier */
 
   uint32_t n;   /* Number of integers appended to the current block */
   grn_id   rid; /* Record ID */
@@ -9887,6 +9889,8 @@ grn_ii_builder_init(grn_ctx *ctx, grn_ii_builder *builder,
   builder->sid_mask = 0;
 
   builder->lexicon = NULL;
+  builder->tokenizer = NULL;
+  builder->normalizer = NULL;
 
   builder->n = 0;
   builder->rid = GRN_ID_NIL;
@@ -10029,6 +10033,8 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn_ii_builder *builder)
     }
     return ctx->rc;
   }
+  builder->tokenizer = tokenizer;
+  builder->normalizer = normalizer;
   rc = grn_obj_set_info(ctx, builder->lexicon,
                         GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
   if (rc == GRN_SUCCESS) {
@@ -10453,27 +10459,60 @@ grn_ii_builder_append_value(grn_ctx *ctx, grn_ii_builder *builder,
     builder->pos++;
   }
   if (value_size) {
-    cursor = grn_token_cursor_open(ctx, builder->lexicon, value, value_size,
-                                   GRN_TOKEN_ADD, 0);
-    if (!cursor) {
-      if (ctx->rc == GRN_SUCCESS) {
-        ERR(GRN_UNKNOWN_ERROR,
-            "grn_token_cursor_open failed: value = <%.*s>", value_size, value);
+    if (!builder->tokenizer && !builder->normalizer) {
+      grn_id tid;
+      switch (builder->lexicon->header.type) {
+      case GRN_TABLE_PAT_KEY :
+        tid = grn_pat_add(ctx, (grn_pat *)builder->lexicon,
+                          value, value_size, NULL, NULL);
+        break;
+      case GRN_TABLE_DAT_KEY :
+        tid = grn_dat_add(ctx, (grn_dat *)builder->lexicon,
+                          value, value_size, NULL, NULL);
+        break;
+      case GRN_TABLE_HASH_KEY :
+        tid = grn_hash_add(ctx, (grn_hash *)builder->lexicon,
+                           value, value_size, NULL, NULL);
+        break;
+      case GRN_TABLE_NO_KEY :
+        tid = *(grn_id *)value;
+        break;
+      default :
+        tid = GRN_ID_NIL;
+        break;
       }
-      return ctx->rc;
-    }
-    while (cursor->status == GRN_TOKEN_CURSOR_DOING) {
-      grn_id tid = grn_token_cursor_next(ctx, cursor);
       if (tid != GRN_ID_NIL) {
-        pos = builder->pos + cursor->pos;
-        grn_rc rc = grn_ii_builder_append_token(ctx, builder, rid, sid, weight,
-                                                tid, pos);
+        pos = builder->pos;
+        grn_rc rc = grn_ii_builder_append_token(ctx, builder, rid, sid,
+                                                weight, tid, pos);
         if (rc != GRN_SUCCESS) {
-          break;
+          return rc;
         }
       }
+    } else {
+      cursor = grn_token_cursor_open(ctx, builder->lexicon, value, value_size,
+                                     GRN_TOKEN_ADD, 0);
+      if (!cursor) {
+        if (ctx->rc == GRN_SUCCESS) {
+          ERR(GRN_UNKNOWN_ERROR,
+              "grn_token_cursor_open failed: value = <%.*s>",
+              value_size, value);
+        }
+        return ctx->rc;
+      }
+      while (cursor->status == GRN_TOKEN_CURSOR_DOING) {
+        grn_id tid = grn_token_cursor_next(ctx, cursor);
+        if (tid != GRN_ID_NIL) {
+          pos = builder->pos + cursor->pos;
+          grn_rc rc = grn_ii_builder_append_token(ctx, builder, rid, sid,
+                                                  weight, tid, pos);
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        }
+      }
+      grn_token_cursor_close(ctx, cursor);
     }
-    grn_token_cursor_close(ctx, cursor);
   }
   builder->pos = pos + 1;
   return ctx->rc;
