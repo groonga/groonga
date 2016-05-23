@@ -30,7 +30,7 @@ module Sandbox
   end
 
   def setup_database_path
-    name_for_path = name.gsub(/[\(\)\[\] ]/, "-")
+    name_for_path = name.gsub(/[\(\)\[\]: ]/, "-")
     @database_path = @tmp_dir + "#{name_for_path}.db"
   end
 
