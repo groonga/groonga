@@ -22,7 +22,7 @@ select Entries --output_columns   'highlight_full(body, "", true,   "Groonga", "
       [
         [
           "highlight_full",
-          "null"
+          null
         ]
       ],
       [

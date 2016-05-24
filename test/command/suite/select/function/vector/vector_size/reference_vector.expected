@@ -32,7 +32,7 @@ select Memos   --output_columns 'tags, vector_size(tags)'
         ],
         [
           "vector_size",
-          "null"
+          null
         ]
       ],
       [

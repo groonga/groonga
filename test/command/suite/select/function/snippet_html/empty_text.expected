@@ -13,4 +13,4 @@ load --table Documents
 ]
 [[0,0.0,0.0],1]
 select Documents   --match_columns content --query 'Groonga'   --output_columns 'snippet_html("")'
-[[0,0.0,0.0],[[[1],[["snippet_html","null"]],[null]]]]
+[[0,0.0,0.0],[[[1],[["snippet_html",null]],[null]]]]

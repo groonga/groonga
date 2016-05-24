@@ -8,4 +8,4 @@ load --table Users
 ]
 [[0,0.0,0.0],1]
 select Users   --output_columns '_id, null || name || "unknown"'
-[[0,0.0,0.0],[[[1],[["_id","UInt32"],["","null"]],[1,"Alice"]]]]
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["",null]],[1,"Alice"]]]]

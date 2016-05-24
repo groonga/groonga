@@ -31,7 +31,7 @@ select Timestamps   --sortby _id   --limit -1   --output_columns '_key, time_cla
         ],
         [
           "time_classify_week",
-          "null"
+          null
         ]
       ],
       [

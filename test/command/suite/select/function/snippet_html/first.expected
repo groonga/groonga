@@ -30,7 +30,7 @@ select Entries   --output_columns 'snippet_html(title), title, content'   --matc
       [
         [
           "snippet_html",
-          "null"
+          null
         ],
         [
           "title",

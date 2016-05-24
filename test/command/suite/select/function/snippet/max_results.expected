@@ -22,7 +22,7 @@ select Entries   --output_columns '   snippet(content,   "SQL", "<span class=\\"
       [
         [
           "snippet",
-          "null"
+          null
         ]
       ],
       [

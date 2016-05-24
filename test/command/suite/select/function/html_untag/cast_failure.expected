@@ -27,7 +27,7 @@ select Entries   --output_columns "html_untag(keyword)"
       [
         [
           "html_untag",
-          "null"
+          null
         ]
       ],
       [

@@ -25,7 +25,7 @@ select Entries --output_columns   'highlight_full(body, "TokenBigram", true,   "
       [
         [
           "highlight_full",
-          "null"
+          null
         ]
       ],
       [

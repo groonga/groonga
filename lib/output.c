@@ -1374,7 +1374,7 @@ grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
                                  outbuf,
                                  output_type,
                                  GRN_TEXT_VALUE(buf),
-                                 "null");
+                                 NULL);
   } else {
     grn_obj *range_obj;
     char type_name[GRN_TABLE_MAX_KEY_SIZE];

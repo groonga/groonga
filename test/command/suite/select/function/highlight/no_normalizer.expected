@@ -22,7 +22,7 @@ select Entries --output_columns   'highlight(body,   "groonga", "<span class=\\"
       [
         [
           "highlight",
-          "null"
+          null
         ]
       ],
       [

@@ -33,7 +33,7 @@ select Prices   --sortby _id   --limit -1   --output_columns '_key, number_class
         ],
         [
           "number_classify",
-          "null"
+          null
         ]
       ],
       [

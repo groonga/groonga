@@ -8,4 +8,4 @@ load --table Entries
 ]
 [[0,0.0,0.0],1]
 select Entries   --output_columns "html_untag(id)"
-[[0,0.0,0.0],[[[1],[["html_untag","null"]],["29"]]]]
+[[0,0.0,0.0],[[[1],[["html_untag",null]],["29"]]]]

@@ -22,7 +22,7 @@ select Entries   --output_columns '   snippet(content,   "groonga", "<span class
       [
         [
           "snippet",
-          "null"
+          null
         ]
       ],
       [

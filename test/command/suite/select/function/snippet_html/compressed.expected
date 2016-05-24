@@ -39,7 +39,7 @@ select Documents   --match_columns content --query 'mroonga MySQL'   --output_co
         ],
         [
           "snippet_html",
-          "null"
+          null
         ]
       ],
       [

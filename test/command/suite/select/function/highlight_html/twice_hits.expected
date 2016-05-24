@@ -26,7 +26,7 @@ select Entries --output_columns   --match_columns body --query 'Groonga'   --out
       [
         [
           "highlight_html",
-          "null"
+          null
         ]
       ],
       [

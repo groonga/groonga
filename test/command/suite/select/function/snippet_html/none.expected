@@ -31,7 +31,7 @@ select Documents   --match_columns content --query 'MySQL'   --output_columns '_
         ],
         [
           "snippet_html",
-          "null"
+          null
         ]
       ],
       [

@@ -22,7 +22,7 @@ select Entries --output_columns   'highlight_full(body, "NormalizerAuto", true, 
       [
         [
           "highlight_full",
-          "null"
+          null
         ]
       ],
       [

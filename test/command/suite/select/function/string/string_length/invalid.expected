@@ -29,7 +29,7 @@ select Ages   --output_columns '_key, string_length(_key)'
         ],
         [
           "string_length",
-          "null"
+          null
         ]
       ],
       [

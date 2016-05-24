@@ -22,7 +22,7 @@ select Entries   --output_columns '   snippet(content,   "Groonga", "MySQL",   {
       [
         [
           "snippet",
-          "null"
+          null
         ]
       ],
       [

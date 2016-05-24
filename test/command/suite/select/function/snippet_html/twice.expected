@@ -30,11 +30,11 @@ select Entries   --output_columns 'snippet_html(title), snippet_html(content), t
       [
         [
           "snippet_html",
-          "null"
+          null
         ],
         [
           "snippet_html",
-          "null"
+          null
         ],
         [
           "title",

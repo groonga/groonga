@@ -39,7 +39,7 @@ select Documents   --match_columns content --query 'groonga'   --output_columns 
         ],
         [
           "snippet_html",
-          "null"
+          null
         ]
       ],
       [

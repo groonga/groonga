@@ -8,4 +8,4 @@ load --table Entries
 ]
 [[0,0.0,0.0],1]
 select Entries --output_columns   'highlight_full(body, true,   "Groonga", "<span class=\\"keyword1\\">", "</span>")'
-[[0,0.0,0.0],[[[1],[["highlight_full","null"]],[null]]]]
+[[0,0.0,0.0],[[[1],[["highlight_full",null]],[null]]]]

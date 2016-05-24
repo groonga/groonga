@@ -22,7 +22,7 @@ select Entries --output_columns   'highlight(body,   "Groonga", "Mroonga",   {"d
       [
         [
           "highlight",
-          "null"
+          null
         ]
       ],
       [
