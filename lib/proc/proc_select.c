@@ -2248,6 +2248,24 @@ grn_select_output_drilldowns(grn_ctx *ctx,
   return succeeded;
 }
 
+static grn_bool
+grn_select_output(grn_ctx *ctx, grn_select_data *data)
+{
+  if (!grn_select_output_records(ctx, data)) {
+    return GRN_FALSE;
+  }
+
+  if (!grn_select_output_slices(ctx, data)) {
+    return GRN_FALSE;
+  }
+
+  if (!grn_select_output_drilldowns(ctx, data)) {
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
+}
+
 static grn_rc
 grn_select(grn_ctx *ctx, grn_select_data *data)
 {
@@ -2474,6 +2492,8 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     }
 
     {
+      grn_bool succeeded;
+
       /* For select results */
       data->output.n_elements = 1;
 
@@ -2501,23 +2521,11 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       }
 
       GRN_OUTPUT_ARRAY_OPEN("RESULT", data->output.n_elements);
-
-      if (!grn_select_output_records(ctx, data)) {
-        GRN_OUTPUT_ARRAY_CLOSE();
-        goto exit;
-      }
-
-      if (!grn_select_output_slices(ctx, data)) {
-        GRN_OUTPUT_ARRAY_CLOSE();
-        goto exit;
-      }
-
-      if (!grn_select_output_drilldowns(ctx, data)) {
-        GRN_OUTPUT_ARRAY_CLOSE();
-        goto exit;
-      }
-
+      succeeded = grn_select_output(ctx, data);
       GRN_OUTPUT_ARRAY_CLOSE();
+      if (!succeeded) {
+        goto exit;
+      }
     }
     if (!ctx->rc &&
         data->cacheable &&
