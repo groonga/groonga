@@ -1226,18 +1226,82 @@ grn_output_pvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
 }
 
 static inline void
-grn_output_table_header(grn_ctx *ctx, grn_obj *outbuf,
-                        grn_content_type output_type,
-                        grn_obj *table, grn_obj_format *format)
+grn_output_result_set_n_hits_v1(grn_ctx *ctx,
+                                grn_obj *outbuf,
+                                grn_content_type output_type,
+                                grn_obj_format *format)
 {
-  if (format->nhits != -1) {
-    grn_output_array_open(ctx, outbuf, output_type, "NHITS", 1);
-    if (output_type == GRN_CONTENT_XML) {
-      grn_text_itoa(ctx, outbuf, format->nhits);
+  grn_output_array_open(ctx, outbuf, output_type, "NHITS", 1);
+  if (output_type == GRN_CONTENT_XML) {
+    grn_text_itoa(ctx, outbuf, format->nhits);
+  } else {
+    grn_output_int32(ctx, outbuf, output_type, format->nhits);
+  }
+  grn_output_array_close(ctx, outbuf, output_type);
+}
+
+static inline void
+grn_output_result_set_n_hits_v3(grn_ctx *ctx,
+                                grn_obj *outbuf,
+                                grn_content_type output_type,
+                                grn_obj_format *format)
+{
+  grn_output_cstr(ctx, outbuf, output_type, "n_hits");
+  grn_output_int32(ctx, outbuf, output_type, format->nhits);
+}
+
+static inline void
+grn_output_result_set_n_hits(grn_ctx *ctx,
+                             grn_obj *outbuf,
+                             grn_content_type output_type,
+                             grn_obj_format *format)
+{
+  if (format->nhits == -1) {
+    return;
+  }
+
+  if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
+    grn_output_result_set_n_hits_v1(ctx, outbuf, output_type, format);
+  } else {
+    grn_output_result_set_n_hits_v3(ctx, outbuf, output_type, format);
+  }
+}
+
+static inline void
+grn_output_table_column_info(grn_ctx *ctx,
+                             grn_obj *outbuf,
+                             grn_content_type output_type,
+                             const char *name,
+                             const char *type)
+{
+  if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
+    grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
+    if (name) {
+      grn_output_cstr(ctx, outbuf, output_type, name);
     } else {
-      grn_output_int32(ctx, outbuf, output_type, format->nhits);
+      grn_output_null(ctx, outbuf, output_type);
+    }
+    if (type) {
+      grn_output_cstr(ctx, outbuf, output_type, type);
+    } else {
+      grn_output_null(ctx, outbuf, output_type);
     }
     grn_output_array_close(ctx, outbuf, output_type);
+  } else {
+    grn_output_map_open(ctx, outbuf, output_type, "column", 2);
+    grn_output_cstr(ctx, outbuf, output_type, "name");
+    if (name) {
+      grn_output_cstr(ctx, outbuf, output_type, name);
+    } else {
+      grn_output_null(ctx, outbuf, output_type);
+    }
+    grn_output_cstr(ctx, outbuf, output_type, "type");
+    if (type) {
+      grn_output_cstr(ctx, outbuf, output_type, type);
+    } else {
+      grn_output_null(ctx, outbuf, output_type);
+    }
+    grn_output_map_close(ctx, outbuf, output_type);
   }
 }
 
@@ -1282,43 +1346,52 @@ grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
                         grn_content_type output_type,
                         grn_obj *column, grn_obj *buf)
 {
-  grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
-  if (column) {
-    grn_id range_id = GRN_ID_NIL;
-    GRN_BULK_REWIND(buf);
-    grn_column_name_(ctx, column, buf);
-    grn_output_obj(ctx, outbuf, output_type, buf, NULL);
-    if (column->header.type == GRN_COLUMN_INDEX) {
-      range_id = GRN_DB_UINT32;
-    } else if (is_score_accessor(ctx, column)) {
-      if (grn_ctx_get_command_version(ctx) == GRN_COMMAND_VERSION_1) {
-        range_id = GRN_DB_INT32;
-      } else {
-        range_id = GRN_DB_FLOAT;
-      }
-    }
-    if (range_id == GRN_ID_NIL) {
-      range_id = grn_obj_get_range(ctx, column);
-    }
-    if (range_id == GRN_ID_NIL) {
-      grn_output_cstr(ctx, outbuf, output_type, "null");
-    } else {
-      int name_len;
-      grn_obj *range_obj;
-      char name_buf[GRN_TABLE_MAX_KEY_SIZE];
+  grn_id range_id = GRN_ID_NIL;
 
-      range_obj = grn_ctx_at(ctx, range_id);
-      name_len = grn_obj_name(ctx, range_obj, name_buf,
-                              GRN_TABLE_MAX_KEY_SIZE);
-      GRN_BULK_REWIND(buf);
-      GRN_TEXT_PUT(ctx, buf, name_buf, name_len);
-      grn_output_obj(ctx, outbuf, output_type, buf, NULL);
-    }
-  } else {
-    grn_output_cstr(ctx, outbuf, output_type, "");
-    grn_output_cstr(ctx, outbuf, output_type, "");
+  if (!column) {
+    grn_output_table_column_info(ctx, outbuf, output_type, NULL, NULL);
+    return;
   }
-  grn_output_array_close(ctx, outbuf, output_type);
+
+  GRN_BULK_REWIND(buf);
+  grn_column_name_(ctx, column, buf);
+  GRN_TEXT_PUTC(ctx, buf, '\0');
+
+  if (column->header.type == GRN_COLUMN_INDEX) {
+    range_id = GRN_DB_UINT32;
+  } else if (is_score_accessor(ctx, column)) {
+    if (grn_ctx_get_command_version(ctx) == GRN_COMMAND_VERSION_1) {
+      range_id = GRN_DB_INT32;
+    } else {
+      range_id = GRN_DB_FLOAT;
+    }
+  }
+  if (range_id == GRN_ID_NIL) {
+    range_id = grn_obj_get_range(ctx, column);
+  }
+  if (range_id == GRN_ID_NIL) {
+    grn_output_table_column_info(ctx,
+                                 outbuf,
+                                 output_type,
+                                 GRN_TEXT_VALUE(buf),
+                                 "null");
+  } else {
+    grn_obj *range_obj;
+    char type_name[GRN_TABLE_MAX_KEY_SIZE];
+    int type_name_len;
+
+    range_obj = grn_ctx_at(ctx, range_id);
+    type_name_len = grn_obj_name(ctx,
+                                 range_obj,
+                                 type_name,
+                                 GRN_TABLE_MAX_KEY_SIZE);
+    type_name[type_name_len] = '\0';
+    grn_output_table_column_info(ctx,
+                                 outbuf,
+                                 output_type,
+                                 GRN_TEXT_VALUE(buf),
+                                 type_name);
+  }
 }
 
 static inline void
@@ -1329,28 +1402,29 @@ grn_output_table_column_by_expression(grn_ctx *ctx, grn_obj *outbuf,
                                       grn_obj *buf)
 {
   if (code_end <= code) {
-    grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
-    grn_output_null(ctx, outbuf, output_type);
-    grn_output_null(ctx, outbuf, output_type);
-    grn_output_array_close(ctx, outbuf, output_type);
+    grn_output_table_column_info(ctx,
+                                 outbuf,
+                                 output_type,
+                                 NULL,
+                                 NULL);
     return;
   }
 
   switch (code_end[-1].op) {
   case GRN_OP_GET_MEMBER :
     if ((code_end - code) == 3) {
-      grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
-
       GRN_BULK_REWIND(buf);
       grn_column_name_(ctx, code[0].value, buf);
       GRN_TEXT_PUTC(ctx, buf, '[');
       grn_inspect(ctx, buf, code[1].value);
       GRN_TEXT_PUTC(ctx, buf, ']');
+      GRN_TEXT_PUTC(ctx, buf, '\0');
 
-      grn_output_obj(ctx, outbuf, output_type, buf, NULL);
-      grn_output_null(ctx, outbuf, output_type);
-
-      grn_output_array_close(ctx, outbuf, output_type);
+      grn_output_table_column_info(ctx,
+                                   outbuf,
+                                   output_type,
+                                   GRN_TEXT_VALUE(buf),
+                                   NULL);
     } else {
       grn_output_table_column(ctx, outbuf, output_type, code->value, buf);
     }
@@ -1358,6 +1432,32 @@ grn_output_table_column_by_expression(grn_ctx *ctx, grn_obj *outbuf,
   default :
     grn_output_table_column(ctx, outbuf, output_type, code->value, buf);
     break;
+  }
+}
+
+static inline void
+grn_output_table_columns_open(grn_ctx *ctx,
+                              grn_obj *outbuf,
+                              grn_content_type output_type,
+                              int n_columns)
+{
+  if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
+    grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", n_columns);
+  } else {
+    grn_output_cstr(ctx, outbuf, output_type, "columns");
+    grn_output_array_open(ctx, outbuf, output_type, "columns", n_columns);
+  }
+}
+
+static inline void
+grn_output_table_columns_close(grn_ctx *ctx,
+                               grn_obj *outbuf,
+                               grn_content_type output_type)
+{
+  if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
+    grn_output_array_close(ctx, outbuf, output_type);
+  } else {
+    grn_output_array_close(ctx, outbuf, output_type);
   }
 }
 
@@ -1377,7 +1477,8 @@ grn_output_table_columns_by_expression(grn_ctx *ctx, grn_obj *outbuf,
 
   n_elements = count_n_elements_in_expression(ctx, format->expression);
 
-  grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", n_elements);
+  grn_output_table_columns_open(ctx, outbuf, output_type, n_elements);
+
   for (code = expr->codes; code < code_end; code++) {
     int code_start_offset;
 
@@ -1417,7 +1518,7 @@ grn_output_table_columns_by_expression(grn_ctx *ctx, grn_obj *outbuf,
                                           buf);
   }
 
-  grn_output_array_close(ctx, outbuf, output_type);
+  grn_output_table_columns_close(ctx, outbuf, output_type);
 }
 
 static inline void
@@ -1430,11 +1531,11 @@ grn_output_table_columns_by_columns(grn_ctx *ctx, grn_obj *outbuf,
   int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
   grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
 
-  grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", ncolumns);
+  grn_output_table_columns_open(ctx, outbuf, output_type, ncolumns);
   for (i = 0; i < ncolumns; i++) {
     grn_output_table_column(ctx, outbuf, output_type, columns[i], buf);
   }
-  grn_output_array_close(ctx, outbuf, output_type);
+  grn_output_table_columns_close(ctx, outbuf, output_type);
 }
 
 void
@@ -1453,6 +1554,31 @@ grn_output_table_columns(grn_ctx *ctx, grn_obj *outbuf,
                                         table, format, &buf);
   }
   GRN_OBJ_FIN(ctx, &buf);
+}
+
+static inline void
+grn_output_table_record_open(grn_ctx *ctx,
+                              grn_obj *outbuf,
+                              grn_content_type output_type,
+                              int n_columns)
+{
+  if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
+    grn_output_array_open(ctx, outbuf, output_type, "HIT", n_columns);
+  } else {
+    grn_output_array_open(ctx, outbuf, output_type, "record", n_columns);
+  }
+}
+
+static inline void
+grn_output_table_record_close(grn_ctx *ctx,
+                               grn_obj *outbuf,
+                               grn_content_type output_type)
+{
+  if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
+    grn_output_array_close(ctx, outbuf, output_type);
+  } else {
+    grn_output_array_close(ctx, outbuf, output_type);
+  }
 }
 
 static inline void
@@ -1512,7 +1638,7 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
     grn_bool is_first_comma = GRN_TRUE;
     grn_bool have_comma = GRN_FALSE;
     GRN_RECORD_SET(ctx, record, id);
-    grn_output_array_open(ctx, outbuf, output_type, "HIT", n_elements);
+    grn_output_table_record_open(ctx, outbuf, output_type, n_elements);
     for (code = expr->codes; code < code_end; code++) {
       if (code->op == GRN_OP_COMMA) {
         int code_start_offset = previous_comma_offset + 1;
@@ -1559,7 +1685,7 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
                                             record);
     }
 
-    grn_output_array_close(ctx, outbuf, output_type);
+    grn_output_table_record_close(ctx, outbuf, output_type);
   }
 }
 
@@ -1574,7 +1700,7 @@ grn_output_table_records_by_columns(grn_ctx *ctx, grn_obj *outbuf,
   int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
   grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
   while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
-    grn_output_array_open(ctx, outbuf, output_type, "HIT", ncolumns);
+    grn_output_table_record_open(ctx, outbuf, output_type, ncolumns);
     for (i = 0; i < ncolumns; i++) {
       grn_output_table_record_by_column(ctx,
                                         outbuf,
@@ -1582,6 +1708,28 @@ grn_output_table_records_by_columns(grn_ctx *ctx, grn_obj *outbuf,
                                         columns[i],
                                         id);
     }
+    grn_output_table_record_close(ctx, outbuf, output_type);
+  }
+}
+
+static inline void
+grn_output_table_records_open(grn_ctx *ctx,
+                              grn_obj *outbuf,
+                              grn_content_type output_type,
+                              int n_records)
+{
+  if (grn_ctx_get_command_version(ctx) >= GRN_COMMAND_VERSION_3) {
+    grn_output_cstr(ctx, outbuf, output_type, "records");
+    grn_output_array_open(ctx, outbuf, output_type, "records", n_records);
+  }
+}
+
+static inline void
+grn_output_table_records_close(grn_ctx *ctx,
+                               grn_obj *outbuf,
+                               grn_content_type output_type)
+{
+  if (grn_ctx_get_command_version(ctx) >= GRN_COMMAND_VERSION_3) {
     grn_output_array_close(ctx, outbuf, output_type);
   }
 }
@@ -1591,9 +1739,12 @@ grn_output_table_records(grn_ctx *ctx, grn_obj *outbuf,
                          grn_content_type output_type,
                          grn_obj *table, grn_obj_format *format)
 {
-  grn_table_cursor *tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0,
-                                               format->offset, format->limit,
-                                               GRN_CURSOR_ASCENDING);
+  grn_table_cursor *tc;
+
+  grn_output_table_records_open(ctx, outbuf, output_type, format->limit);
+  tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0,
+                             format->offset, format->limit,
+                             GRN_CURSOR_ASCENDING);
   if (tc) {
     if (format->expression) {
       grn_output_table_records_by_expression(ctx, outbuf, output_type,
@@ -1606,11 +1757,15 @@ grn_output_table_records(grn_ctx *ctx, grn_obj *outbuf,
   } else {
     ERRCLR(ctx);
   }
+  grn_output_table_records_close(ctx, outbuf, output_type);
 }
 
-static inline void
-grn_output_table(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
-                 grn_obj *table, grn_obj_format *format)
+static void
+grn_output_result_set_v1(grn_ctx *ctx,
+                         grn_obj *outbuf,
+                         grn_content_type output_type,
+                         grn_obj *table,
+                         grn_obj_format *format)
 {
   grn_obj buf;
   GRN_TEXT_INIT(&buf, 0);
@@ -1622,7 +1777,7 @@ grn_output_table(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     }
     resultset_size += format->limit;
     grn_output_array_open(ctx, outbuf, output_type, "RESULTSET", resultset_size);
-    grn_output_table_header(ctx, outbuf, output_type, table, format);
+    grn_output_result_set_n_hits(ctx, outbuf, output_type, format);
     if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
       grn_output_table_columns(ctx, outbuf, output_type, table, format);
     }
@@ -1651,6 +1806,66 @@ grn_output_table(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   GRN_OBJ_FIN(ctx, &buf);
 }
 
+static void
+grn_output_result_set_v3(grn_ctx *ctx,
+                         grn_obj *outbuf,
+                         grn_content_type output_type,
+                         grn_obj *result_set,
+                         grn_obj_format *format)
+{
+  grn_obj buf;
+  GRN_TEXT_INIT(&buf, 0);
+  if (format) {
+    int n_elements = 2;
+    /* result_set: {"n_hits": N, ("columns": COLUMNS,) "records": records} */
+    if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
+      n_elements++;
+    }
+    grn_output_map_open(ctx, outbuf, output_type, "result_set", n_elements);
+    grn_output_result_set_n_hits(ctx, outbuf, output_type, format);
+    if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
+      grn_output_table_columns(ctx, outbuf, output_type, result_set, format);
+    }
+    grn_output_table_records(ctx, outbuf, output_type, result_set, format);
+    grn_output_map_close(ctx, outbuf, output_type);
+  } else {
+    grn_obj *column;
+    int n_records;
+
+    column = grn_obj_column(ctx,
+                            result_set,
+                            GRN_COLUMN_NAME_KEY,
+                            GRN_COLUMN_NAME_KEY_LEN);
+    grn_output_map_open(ctx, outbuf, output_type, "result_set", 1);
+    n_records = grn_table_size(ctx, result_set);
+    grn_output_cstr(ctx, outbuf, output_type, "keys");
+    grn_output_array_open(ctx, outbuf, output_type, "keys", n_records);
+    GRN_TABLE_EACH_BEGIN(ctx, result_set, cursor, id) {
+      GRN_BULK_REWIND(&buf);
+      grn_obj_get_value(ctx, column, id, &buf);
+      grn_text_esc(ctx, outbuf, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
+    } GRN_TABLE_EACH_END(ctx, cursor);
+    grn_output_array_close(ctx, outbuf, output_type);
+    grn_output_map_close(ctx, outbuf, output_type);
+    grn_obj_unlink(ctx, column);
+  }
+  GRN_OBJ_FIN(ctx, &buf);
+}
+
+void
+grn_output_result_set(grn_ctx *ctx,
+                      grn_obj *outbuf,
+                      grn_content_type output_type,
+                      grn_obj *result_set,
+                      grn_obj_format *format)
+{
+  if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
+    grn_output_result_set_v1(ctx, outbuf, output_type, result_set, format);
+  } else {
+    grn_output_result_set_v3(ctx, outbuf, output_type, result_set, format);
+  }
+}
+
 void
 grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                grn_obj *obj, grn_obj_format *format)
@@ -1677,7 +1892,8 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_DAT_KEY :
   case GRN_TABLE_NO_KEY :
-    grn_output_table(ctx, outbuf, output_type, obj, format);
+    /* Deprecated. Use grn_output_result_set() directly. */
+    grn_output_result_set(ctx, outbuf, output_type, obj, format);
     break;
   }
   GRN_OBJ_FIN(ctx, &buf);

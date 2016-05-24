@@ -102,6 +102,8 @@ typedef struct {
   grn_obj *filtered_result;
 } grn_drilldown_data;
 
+typedef struct _grn_select_output_formatter grn_select_output_formatter;
+
 typedef struct {
   /* inputs */
   grn_select_string table;
@@ -138,8 +140,50 @@ typedef struct {
   uint16_t taintable;
   struct {
     int n_elements;
+    grn_select_output_formatter *formatter;
   } output;
 } grn_select_data;
+
+typedef void grn_select_output_result_sets_open_func(grn_ctx *ctx,
+                                                     grn_select_data *data);
+typedef void grn_select_output_result_sets_close_func(grn_ctx *ctx,
+                                                      grn_select_data *data);
+typedef void grn_select_output_match_label_func(grn_ctx *ctx,
+                                                grn_select_data *data);
+typedef void grn_select_output_slices_label_func(grn_ctx *ctx,
+                                                 grn_select_data *data);
+typedef void grn_select_output_slices_open_func(grn_ctx *ctx,
+                                                grn_select_data *data,
+                                                unsigned int n_result_sets);
+typedef void grn_select_output_slices_close_func(grn_ctx *ctx,
+                                                 grn_select_data *data);
+typedef void grn_select_output_slice_label_func(grn_ctx *ctx,
+                                                grn_select_data *data,
+                                                grn_slice_data *slice);
+typedef void grn_select_output_drilldowns_label_func(grn_ctx *ctx,
+                                                     grn_select_data *data);
+typedef void grn_select_output_drilldowns_open_func(grn_ctx *ctx,
+                                                    grn_select_data *data,
+                                                    unsigned int n_result_sets);
+typedef void grn_select_output_drilldowns_close_func(grn_ctx *ctx,
+                                                     grn_select_data *data);
+typedef void grn_select_output_drilldown_label_func(grn_ctx *ctx,
+                                                    grn_select_data *data,
+                                                    grn_drilldown_data *drilldown);
+
+struct _grn_select_output_formatter {
+  grn_select_output_result_sets_open_func  *result_sets_open;
+  grn_select_output_result_sets_close_func *result_sets_close;
+  grn_select_output_match_label_func       *match_label;
+  grn_select_output_slices_label_func      *slices_label;
+  grn_select_output_slices_open_func       *slices_open;
+  grn_select_output_slices_close_func      *slices_close;
+  grn_select_output_slice_label_func       *slice_label;
+  grn_select_output_drilldowns_label_func  *drilldowns_label;
+  grn_select_output_drilldowns_open_func   *drilldowns_open;
+  grn_select_output_drilldowns_close_func  *drilldowns_close;
+  grn_select_output_drilldown_label_func   *drilldown_label;
+};
 
 grn_rc
 grn_proc_syntax_expand_query(grn_ctx *ctx,
@@ -1441,11 +1485,13 @@ grn_select_sort(grn_ctx *ctx,
 }
 
 static grn_bool
-grn_select_output_records(grn_ctx *ctx,
-                          grn_select_data *data)
+grn_select_output_match(grn_ctx *ctx,
+                        grn_select_data *data)
 {
   int offset;
   grn_obj *output_table;
+
+  data->output.formatter->match_label(ctx, data);
 
   if (data->tables.sorted) {
     offset = 0;
@@ -1586,6 +1632,8 @@ grn_select_output_slices(grn_ctx *ctx,
     return GRN_TRUE;
   }
 
+  data->output.formatter->slices_label(ctx, data);
+
   GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
     grn_slice_data *slice;
 
@@ -1595,7 +1643,8 @@ grn_select_output_slices(grn_ctx *ctx,
     }
   } GRN_HASH_EACH_END(ctx, cursor);
 
-  GRN_OUTPUT_MAP_OPEN("SLICES", n_available_results);
+  data->output.formatter->slices_open(ctx, data, n_available_results);
+
   GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
     grn_slice_data *slice;
     uint32_t n_hits;
@@ -1607,7 +1656,7 @@ grn_select_output_slices(grn_ctx *ctx,
       continue;
     }
 
-    GRN_OUTPUT_STR(slice->label.value, slice->label.length);
+    data->output.formatter->slice_label(ctx, data, slice);
 
     n_hits = grn_table_size(ctx, slice->table);
 
@@ -1666,7 +1715,8 @@ grn_select_output_slices(grn_ctx *ctx,
                   (int)(slice->label.length),
                   slice->label.value);
   } GRN_HASH_EACH_END(ctx, cursor);
-  GRN_OUTPUT_MAP_CLOSE();
+
+  data->output.formatter->slices_close(ctx, data);
 
   return succeeded;
 }
@@ -2137,6 +2187,8 @@ grn_select_output_drilldowns(grn_ctx *ctx,
     return GRN_TRUE;
   }
 
+  data->output.formatter->drilldowns_label(ctx, data);
+
   GRN_HASH_EACH_BEGIN(ctx, data->drilldowns, cursor, id) {
     grn_drilldown_data *drilldown;
     grn_table_group_result *result;
@@ -2150,7 +2202,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
 
   is_labeled = (data->drilldown.keys.length == 0);
   if (is_labeled) {
-    GRN_OUTPUT_MAP_OPEN("DRILLDOWNS", n_available_results);
+    data->output.formatter->drilldowns_open(ctx, data, n_available_results);
   }
 
   GRN_HASH_EACH_BEGIN(ctx, data->drilldowns, cursor, id) {
@@ -2174,9 +2226,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
       target_table = result->table;
     }
 
-    if (is_labeled) {
-      GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
-    }
+    data->output.formatter->drilldown_label(ctx, data, drilldown);
 
     n_hits = grn_table_size(ctx, target_table);
 
@@ -2241,9 +2291,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
     }
   } GRN_HASH_EACH_END(ctx, cursor);
 
-  if (is_labeled) {
-    GRN_OUTPUT_MAP_CLOSE();
-  }
+  data->output.formatter->drilldowns_close(ctx, data);
 
   return succeeded;
 }
@@ -2251,7 +2299,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
 static grn_bool
 grn_select_output(grn_ctx *ctx, grn_select_data *data)
 {
-  if (!grn_select_output_records(ctx, data)) {
+  if (!grn_select_output_match(ctx, data)) {
     return GRN_FALSE;
   }
 
@@ -2266,6 +2314,203 @@ grn_select_output(grn_ctx *ctx, grn_select_data *data)
   return GRN_TRUE;
 }
 
+static void
+grn_select_output_result_sets_open_v1(grn_ctx *ctx, grn_select_data *data)
+{
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", data->output.n_elements);
+}
+
+static void
+grn_select_output_result_sets_close_v1(grn_ctx *ctx, grn_select_data *data)
+{
+  GRN_OUTPUT_ARRAY_CLOSE();
+}
+
+static void
+grn_select_output_match_label_v1(grn_ctx *ctx, grn_select_data *data)
+{
+}
+
+static void
+grn_select_output_slices_label_v1(grn_ctx *ctx, grn_select_data *data)
+{
+}
+
+static void
+grn_select_output_slices_open_v1(grn_ctx *ctx,
+                                 grn_select_data *data,
+                                 unsigned int n_result_sets)
+{
+  GRN_OUTPUT_MAP_OPEN("SLICES", n_result_sets);
+}
+
+static void
+grn_select_output_slices_close_v1(grn_ctx *ctx, grn_select_data *data)
+{
+  GRN_OUTPUT_MAP_CLOSE();
+}
+
+static void
+grn_select_output_slice_label_v1(grn_ctx *ctx,
+                                 grn_select_data *data,
+                                 grn_slice_data *slice)
+{
+  GRN_OUTPUT_STR(slice->label.value, slice->label.length);
+}
+
+static void
+grn_select_output_drilldowns_label_v1(grn_ctx *ctx, grn_select_data *data)
+{
+}
+
+static void
+grn_select_output_drilldowns_open_v1(grn_ctx *ctx,
+                                     grn_select_data *data,
+                                     unsigned int n_result_sets)
+{
+  if (data->drilldown.keys.length == 0) {
+    GRN_OUTPUT_MAP_OPEN("DRILLDOWNS", n_result_sets);
+  }
+}
+
+static void
+grn_select_output_drilldowns_close_v1(grn_ctx *ctx, grn_select_data *data)
+{
+  if (data->drilldown.keys.length == 0) {
+    GRN_OUTPUT_MAP_CLOSE();
+  }
+}
+
+static void
+grn_select_output_drilldown_label_v1(grn_ctx *ctx,
+                                     grn_select_data *data,
+                                     grn_drilldown_data *drilldown)
+{
+  if (data->drilldown.keys.length == 0) {
+    GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
+  }
+}
+
+static grn_select_output_formatter grn_select_output_formatter_v1 = {
+  grn_select_output_result_sets_open_v1,
+  grn_select_output_result_sets_close_v1,
+  grn_select_output_match_label_v1,
+  grn_select_output_slices_label_v1,
+  grn_select_output_slices_open_v1,
+  grn_select_output_slices_close_v1,
+  grn_select_output_slice_label_v1,
+  grn_select_output_drilldowns_label_v1,
+  grn_select_output_drilldowns_open_v1,
+  grn_select_output_drilldowns_close_v1,
+  grn_select_output_drilldown_label_v1
+};
+
+static void
+grn_select_output_result_sets_open_v3(grn_ctx *ctx, grn_select_data *data)
+{
+  int n_elements = 1;
+  if (data->slices) {
+    n_elements++;
+  }
+  if (data->drilldowns) {
+    n_elements++;
+  }
+  GRN_OUTPUT_MAP_OPEN("result_sets", n_elements);
+}
+
+static void
+grn_select_output_result_sets_close_v3(grn_ctx *ctx, grn_select_data *data)
+{
+  GRN_OUTPUT_MAP_CLOSE();
+}
+
+static void
+grn_select_output_match_label_v3(grn_ctx *ctx, grn_select_data *data)
+{
+  GRN_OUTPUT_CSTR("match");
+}
+
+static void
+grn_select_output_slices_label_v3(grn_ctx *ctx, grn_select_data *data)
+{
+  GRN_OUTPUT_CSTR("slices");
+}
+
+static void
+grn_select_output_slices_open_v3(grn_ctx *ctx,
+                                 grn_select_data *data,
+                                 unsigned int n_result_sets)
+{
+  GRN_OUTPUT_MAP_OPEN("slices", n_result_sets);
+}
+
+static void
+grn_select_output_slices_close_v3(grn_ctx *ctx, grn_select_data *data)
+{
+  GRN_OUTPUT_MAP_CLOSE();
+}
+
+static void
+grn_select_output_slice_label_v3(grn_ctx *ctx,
+                                 grn_select_data *data,
+                                 grn_slice_data *slice)
+{
+  GRN_OUTPUT_STR(slice->label.value, slice->label.length);
+}
+
+static void
+grn_select_output_drilldowns_label_v3(grn_ctx *ctx, grn_select_data *data)
+{
+  GRN_OUTPUT_CSTR("drilldowns");
+}
+
+static void
+grn_select_output_drilldowns_open_v3(grn_ctx *ctx,
+                                     grn_select_data *data,
+                                     unsigned int n_result_sets)
+{
+  GRN_OUTPUT_MAP_OPEN("drilldowns", n_result_sets);
+}
+
+static void
+grn_select_output_drilldowns_close_v3(grn_ctx *ctx, grn_select_data *data)
+{
+  GRN_OUTPUT_MAP_CLOSE();
+}
+
+static void
+grn_select_output_drilldown_label_v3(grn_ctx *ctx,
+                                     grn_select_data *data,
+                                     grn_drilldown_data *drilldown)
+{
+  if (data->drilldown.keys.length == 0) {
+    GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
+  } else {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_len;
+
+    name_len = grn_obj_name(ctx,
+                            drilldown->parsed_keys[0].key,
+                            name,
+                            GRN_TABLE_MAX_KEY_SIZE);
+    GRN_OUTPUT_STR(name, name_len);
+  }
+}
+
+static grn_select_output_formatter grn_select_output_formatter_v3 = {
+  grn_select_output_result_sets_open_v3,
+  grn_select_output_result_sets_close_v3,
+  grn_select_output_match_label_v3,
+  grn_select_output_slices_label_v3,
+  grn_select_output_slices_open_v3,
+  grn_select_output_slices_close_v3,
+  grn_select_output_slice_label_v3,
+  grn_select_output_drilldowns_label_v3,
+  grn_select_output_drilldowns_open_v3,
+  grn_select_output_drilldowns_close_v3,
+  grn_select_output_drilldown_label_v3
+};
+
 static grn_rc
 grn_select(grn_ctx *ctx, grn_select_data *data)
 {
@@ -2276,6 +2521,12 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   uint32_t cache_key_size;
   long long int threshold, original_threshold = 0;
   grn_cache *cache_obj = grn_cache_current_get(ctx);
+
+  if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
+    data->output.formatter = &grn_select_output_formatter_v1;
+  } else {
+    data->output.formatter = &grn_select_output_formatter_v3;
+  }
 
   data->tables.target = NULL;
   data->tables.initial = NULL;
@@ -2520,9 +2771,9 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         goto exit;
       }
 
-      GRN_OUTPUT_ARRAY_OPEN("RESULT", data->output.n_elements);
+      data->output.formatter->result_sets_open(ctx, data);
       succeeded = grn_select_output(ctx, data);
-      GRN_OUTPUT_ARRAY_CLOSE();
+      data->output.formatter->result_sets_close(ctx, data);
       if (!succeeded) {
         goto exit;
       }

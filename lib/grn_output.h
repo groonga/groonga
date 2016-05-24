@@ -54,6 +54,11 @@ GRN_API void grn_output_bool(grn_ctx *ctx, grn_obj *outbuf,
                              grn_content_type output_type,
                              grn_bool value);
 
+GRN_API void grn_output_result_set(grn_ctx *ctx,
+                                   grn_obj *outbuf,
+                                   grn_content_type output_type,
+                                   grn_obj *result_set,
+                                   grn_obj_format *format);
 GRN_API void grn_output_table_columns(grn_ctx *ctx,
                                       grn_obj *outbuf,
                                       grn_content_type output_type,

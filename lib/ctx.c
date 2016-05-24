@@ -1772,6 +1772,18 @@ grn_ctx_output_obj(grn_ctx *ctx, grn_obj *value, grn_obj_format *format)
 }
 
 void
+grn_ctx_output_result_set(grn_ctx *ctx,
+                          grn_obj *result_set,
+                          grn_obj_format *format)
+{
+  grn_output_result_set(ctx,
+                        ctx->impl->output.buf,
+                        ctx->impl->output.type,
+                        result_set,
+                        format);
+}
+
+void
 grn_ctx_output_table_columns(grn_ctx *ctx, grn_obj *table,
                              grn_obj_format *format)
 {
