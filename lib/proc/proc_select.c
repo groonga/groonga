@@ -1441,8 +1441,8 @@ grn_select_sort(grn_ctx *ctx,
 }
 
 static grn_bool
-grn_select_output(grn_ctx *ctx,
-                  grn_select_data *data)
+grn_select_output_records(grn_ctx *ctx,
+                          grn_select_data *data)
 {
   int offset;
   grn_obj *output_table;
@@ -2502,7 +2502,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
 
       GRN_OUTPUT_ARRAY_OPEN("RESULT", data->output.n_elements);
 
-      if (!grn_select_output(ctx, data)) {
+      if (!grn_select_output_records(ctx, data)) {
         GRN_OUTPUT_ARRAY_CLOSE();
         goto exit;
       }
