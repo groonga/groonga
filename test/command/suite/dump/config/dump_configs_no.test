@@ -1,4 +1,4 @@
 config_set key value
 
-#@timeout 0.1
+#@read-timeout 0.1
 dump --dump_configs no

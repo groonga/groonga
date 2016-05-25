@@ -3,5 +3,5 @@ column_create Names nick_name COLUMN_SCALAR Names
 
 table_remove Names
 
-#@timeout 0.1
+#@read-timeout 0.1
 dump

@@ -1,5 +1,5 @@
 table_create Tags TABLE_PAT_KEY ShortText \
   --default_tokenizer TokenNonexistent
 
-#@timeout 0.1
+#@read-timeout 0.1
 dump
