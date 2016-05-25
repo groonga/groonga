@@ -1772,6 +1772,32 @@ grn_ctx_output_obj(grn_ctx *ctx, grn_obj *value, grn_obj_format *format)
 }
 
 void
+grn_ctx_output_result_set_open(grn_ctx *ctx,
+                               grn_obj *result_set,
+                               grn_obj_format *format,
+                               uint32_t n_additional_elements)
+{
+  grn_output_result_set_open(ctx,
+                             ctx->impl->output.buf,
+                             ctx->impl->output.type,
+                             result_set,
+                             format,
+                             n_additional_elements);
+}
+
+void
+grn_ctx_output_result_set_close(grn_ctx *ctx,
+                                grn_obj *result_set,
+                                grn_obj_format *format)
+{
+  grn_output_result_set_close(ctx,
+                              ctx->impl->output.buf,
+                              ctx->impl->output.type,
+                              result_set,
+                              format);
+}
+
+void
 grn_ctx_output_result_set(grn_ctx *ctx,
                           grn_obj *result_set,
                           grn_obj_format *format)
