@@ -22,53 +22,51 @@ select Memos   --slices[groonga].filter 'tag == "Groonga"'   --slices[groonga].s
     "elapsed_time": 0.0
   },
   "body": {
-    "match": {
-      "n_hits": 4,
-      "columns": [
-        {
-          "name": "_id",
-          "type": "UInt32"
-        },
-        {
-          "name": "_key",
-          "type": "ShortText"
-        },
-        {
-          "name": "date",
-          "type": "Time"
-        },
-        {
-          "name": "tag",
-          "type": "Tags"
-        }
+    "n_hits": 4,
+    "columns": [
+      {
+        "name": "_id",
+        "type": "UInt32"
+      },
+      {
+        "name": "_key",
+        "type": "ShortText"
+      },
+      {
+        "name": "date",
+        "type": "Time"
+      },
+      {
+        "name": "tag",
+        "type": "Tags"
+      }
+    ],
+    "records": [
+      [
+        1,
+        "Groonga is fast!",
+        1463626800.0,
+        "Groonga"
       ],
-      "records": [
-        [
-          1,
-          "Groonga is fast!",
-          1463626800.0,
-          "Groonga"
-        ],
-        [
-          2,
-          "Mroonga is fast!",
-          1463626801.0,
-          "Mroonga"
-        ],
-        [
-          3,
-          "Groonga sticker!",
-          1463626802.0,
-          "Groonga"
-        ],
-        [
-          4,
-          "Rroonga is fast!",
-          1463626803.0,
-          "Rroonga"
-        ]
+      [
+        2,
+        "Mroonga is fast!",
+        1463626801.0,
+        "Mroonga"
+      ],
+      [
+        3,
+        "Groonga sticker!",
+        1463626802.0,
+        "Groonga"
+      ],
+      [
+        4,
+        "Rroonga is fast!",
+        1463626803.0,
+        "Rroonga"
       ]
-    },
+    ],
     "slices": {
       "groonga": {
         "n_hits": 2,
