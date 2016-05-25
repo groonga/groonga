@@ -1,0 +1,16 @@
+table_create Sources TABLE_NO_KEY
+column_create Sources value COLUMN_SCALAR Int32
+
+table_create Lexicon TABLE_PAT_KEY Int32
+column_create Lexicon sources_value COLUMN_INDEX Sources value
+
+#@timeout 300
+#@disable-logging
+# The number of elements of io->fis is 33 for ii.
+# 1090000 records require io->maps[33]. io->fis[33] is out of range.
+# We shouldn't touch io->fis[33] on io_flush.
+#@generate-series 0 1090000 Sources '{"value" => i}'
+#@enable-logging
+
+io_flush Lexicon.sources_value
+#@timeout default

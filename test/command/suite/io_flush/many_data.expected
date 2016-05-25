@@ -1,0 +1,10 @@
+table_create Sources TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Sources value COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+column_create Lexicon sources_value COLUMN_INDEX Sources value
+[[0,0.0,0.0],true]
+io_flush Lexicon.sources_value
+[[0,0.0,0.0],true]
