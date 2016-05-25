@@ -195,6 +195,21 @@ grn_io_max_n_files(grn_io *io)
                                     file_size);
 }
 
+static inline uint32_t
+grn_io_compute_nth_file_info(grn_io *io, uint32_t nth_segment)
+{
+  uint32_t segment_size;
+  unsigned long file_size;
+  uint32_t segments_per_file;
+  uint32_t resolved_nth_segment;
+
+  segment_size = io->header->segment_size;
+  file_size = grn_io_compute_file_size(io->header->version);
+  segments_per_file = file_size / segment_size;
+  resolved_nth_segment = nth_segment + io->base_seg;
+  return resolved_nth_segment / segments_per_file;
+}
+
 static grn_io *
 grn_io_create_tmp(grn_ctx *ctx, uint32_t header_size, uint32_t segment_size,
                   uint32_t max_segment, grn_io_mode mode, uint32_t flags)
@@ -1408,13 +1423,20 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
     segment_size = header->segment_size;
     for (i = 0; i < max_mapped_segment; i++) {
       grn_io_mapinfo *info = &(io->maps[i]);
+      uint32_t nth_file_info;
+
       if (!info) {
         continue;
       }
       if (!info->map) {
         continue;
       }
-      if (GRN_MSYNC(ctx, io->fis[i].fh, info->map, segment_size) != 0) {
+
+      nth_file_info = grn_io_compute_nth_file_info(io, i);
+      if (GRN_MSYNC(ctx,
+                    io->fis[nth_file_info].fh,
+                    info->map,
+                    segment_size) != 0) {
         rc = ctx->rc;
         break;
       }
