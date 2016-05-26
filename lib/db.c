@@ -3194,19 +3194,15 @@ grn_accessor_resolve_one_table(grn_ctx *ctx, grn_accessor *accessor,
 {
   grn_rc rc = GRN_SUCCESS;
   grn_obj *table;
-  grn_id next_res_domain_id = GRN_ID_NIL;
 
   table = accessor->obj;
   {
     grn_rc rc;
-    grn_obj *next_res_domain = grn_ctx_at(ctx, next_res_domain_id);
     *next_res = grn_table_create(ctx, NULL, 0, NULL,
                                  GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                  table, NULL);
-    rc = ctx->rc;
-    grn_obj_unlink(ctx, next_res_domain);
     if (!*next_res) {
-      return rc;
+      return ctx->rc;
     }
   }
 
