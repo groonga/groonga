@@ -403,8 +403,10 @@ fi
 %dir %{_libdir}/groonga/scripts/ruby/initialize
 %dir %{_libdir}/groonga/scripts/ruby/logger
 %dir %{_libdir}/groonga/scripts/ruby/query_logger
+%{_libdir}/groonga/plugins/functions/number.so
 %{_libdir}/groonga/plugins/functions/vector.so
 %{_libdir}/groonga/plugins/functions/string.so
+%{_libdir}/groonga/plugins/functions/time.so
 %{_libdir}/groonga/plugins/table/table.so
 %{_libdir}/groonga/plugins/query_expanders/tsv.so
 %{_libdir}/groonga/plugins/token_filters/stop_word.so
