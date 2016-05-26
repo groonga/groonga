@@ -7,6 +7,98 @@
 News
 ====
 
+.. _release-6-0-3:
+
+Release 6.0.3 - 2016-05-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added ``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` environment variable
+
+* Added ``GRN_NGRAM_TOKENIZER_REMOVE_BLANK_DISABLE`` environment
+  variable to not to remove blank for overlap token skip mode.
+
+* [:doc:`/reference/commands/table_create`] Stopped to ignore
+  nonexistent default tokenizer, normalizer or token filters. In the
+  previous versions, Groonga ignored a typo in
+  ``--default_tokenizer``, ``--normalizer`` or ``--token_filters``
+  parameter silently. It caused a delay in finding problems.
+
+* [:doc:`/reference/commands/select`] output_columns v1: Supported
+  expression such as "snippet_html(...)" in output_columns.
+
+* [:doc:`/reference/commands/select`] Removed a limitation about the
+  number of labeled drilldowns. In the previous versions, the number
+  of max labeled drilldowns is limited to 10.
+
+* [:doc:`/reference/functions/number`] Added a number plugin. Use
+  ``number_classify`` function to
+
+* [:doc:`/reference/functions/time`] Added a time plugin. Use
+  ``time_classify_second``, ``time_classify_minute``,
+  ``time_classify_hour``, ``time_classify_day``,
+  ``time_classify_week``, ``time_classify_month``,
+  ``time_classify_year`` function to
+
+* [:doc:`/reference/commands/select`] Supported dynamic column
+  creation which is used in ``output_columns``, ``drilldown`` or
+  ``sortby`` [GitHub#539,#541,#542,#544,#545][Patch by Naoya Murakami]::
+
+  select \
+    --columns[LABEL].stage filtered \
+    --columns[LABEL].type ShortText \
+    --columns[LABEL].flags COLUMN_SCALAR \
+    --columns[LABEL].value 'script syntax expression' \
+    ...
+
+* [experimental][:doc:`/reference/commands/select`] Improved
+  performance for range/equal search and enough filtered case. Set
+  ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO`` environment variable to
+  enable this feature.
+
+* [:doc:`/reference/commands/select`] Supported index used search for
+  filtered tables.
+
+* Supported to detect changed database isn't closed. This feature is
+  useful to check database corruption when Groonga is crashed
+  unexpectedly.
+
+* [:doc:`/reference/executables/grndb`] Supported detecting database
+  wasn't closed successfully case.
+
+* Added ``--drilldown_filter``.
+
+* Supported ``filter`` in labeled drilldown.
+
+* Improved performance for using [:doc:`/reference/functions/between`]
+  without index. By between() optimization, there is a case that range
+  search is 100x faster than the previous version of between().
+
+* [:doc:`/reference/functions/record_number`] Supported window function.
+
+* [:doc:`/reference/commands/select`] Supported ``--slices``.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/commands/select`] output_columns v2: Fixed a bug
+  that ``*`` isn't expand to columns correctly.
+
+* Fixed a bug that 1usec information is lost for time value.
+
+* Fixed a crash bug when a mruby plugin is initialized with multiple
+  threads.
+
+* Fixed a bug that static indexing crashes if a posting list is very long.
+  This bug may occur against enormous size of database. [GitHub#546]
+
+Thanks
+^^^^^^
+
+* Naoya Murakami
+
 .. _release-6-0-2:
 
 Release 6.0.2 - 2016-04-29
