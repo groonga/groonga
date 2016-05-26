@@ -27,7 +27,7 @@ Improvements
   parameter silently. It caused a delay in finding problems.
 
 * [:doc:`/reference/commands/select`] output_columns v1: Supported
-  expression such as "snippet_html(...)" in output_columns.
+  expression such as ``snippet_html(...)`` in output_columns.
 
 * [:doc:`/reference/commands/select`] Removed a limitation about the
   number of labeled drilldowns. In the previous versions, the number
