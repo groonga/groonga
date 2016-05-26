@@ -3221,6 +3221,9 @@ grn_accessor_resolve_one_table(grn_ctx *ctx, grn_accessor *accessor,
                                      table,
                                      record_id,
                                      sizeof(grn_id));
+      if (next_record_id == GRN_ID_NIL) {
+        continue;
+      }
 
       posting.rid = next_record_id;
       posting.weight = recinfo->score;
