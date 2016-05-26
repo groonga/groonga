@@ -3196,14 +3196,11 @@ grn_accessor_resolve_one_table(grn_ctx *ctx, grn_accessor *accessor,
   grn_obj *table;
 
   table = accessor->obj;
-  {
-    grn_rc rc;
-    *next_res = grn_table_create(ctx, NULL, 0, NULL,
-                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                                 table, NULL);
-    if (!*next_res) {
-      return ctx->rc;
-    }
+  *next_res = grn_table_create(ctx, NULL, 0, NULL,
+                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                               table, NULL);
+  if (!*next_res) {
+    return ctx->rc;
   }
 
   {
