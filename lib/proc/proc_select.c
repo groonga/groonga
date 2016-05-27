@@ -2672,22 +2672,28 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         sizeof(int) * 2;
     } GRN_HASH_EACH_END(ctx, cursor);
   }
+#define DRILLDOWN_CACHE_SIZE(drilldown)         \
+  drilldown->keys.length + 1 +                  \
+  drilldown->sort_keys.length + 1 +             \
+    drilldown->output_columns.length + 1 +      \
+    drilldown->label.length + 1 +               \
+    drilldown->calc_target_name.length + 1 +    \
+    drilldown->filter.length + 1 +              \
+    drilldown->table_name.length + 1 +          \
+    sizeof(int) * 2 +                           \
+    sizeof(grn_table_group_flags)
+  if (data->drilldown.keys.length > 0) {
+    grn_drilldown_data *drilldown = &(data->drilldown);
+    cache_key_size += DRILLDOWN_CACHE_SIZE(drilldown);
+  }
   if (data->drilldowns) {
     GRN_HASH_EACH_BEGIN(ctx, data->drilldowns, cursor, id) {
       grn_drilldown_data *drilldown;
       grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
-      cache_key_size +=
-        drilldown->keys.length + 1 +
-        drilldown->sort_keys.length + 1 +
-        drilldown->output_columns.length + 1 +
-        drilldown->label.length + 1 +
-        drilldown->calc_target_name.length + 1 +
-        drilldown->filter.length + 1 +
-        drilldown->table_name.length + 1 +
-        sizeof(int) * 2 +
-        sizeof(grn_table_group_flags);
+      cache_key_size += DRILLDOWN_CACHE_SIZE(drilldown);
     } GRN_HASH_EACH_END(ctx, cursor);
   }
+#undef DRILLDOWN_CACHE_SIZE
   if (cache_key_size <= GRN_CACHE_MAX_KEY_SIZE) {
     grn_obj *cache_value;
     char *cp = cache_key;
@@ -2718,27 +2724,35 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         cp += sizeof(int);
       } GRN_HASH_EACH_END(ctx, cursor);
     }
+#define PUT_CACHE_KEY_DRILLDOWN(drilldown) do {                 \
+      PUT_CACHE_KEY(drilldown->keys);                           \
+      PUT_CACHE_KEY(drilldown->sort_keys);                      \
+      PUT_CACHE_KEY(drilldown->output_columns);                 \
+      PUT_CACHE_KEY(drilldown->label);                          \
+      PUT_CACHE_KEY(drilldown->calc_target_name);               \
+      PUT_CACHE_KEY(drilldown->filter);                         \
+      PUT_CACHE_KEY(drilldown->table_name);                     \
+      grn_memcpy(cp, &(drilldown->offset), sizeof(int));        \
+      cp += sizeof(int);                                        \
+      grn_memcpy(cp, &(drilldown->limit), sizeof(int));         \
+      cp += sizeof(int);                                        \
+      grn_memcpy(cp,                                            \
+                 &(drilldown->calc_types),                      \
+                 sizeof(grn_table_group_flags));                \
+      cp += sizeof(grn_table_group_flags);                      \
+    } while (GRN_FALSE)
+    if (data->drilldown.keys.length > 0) {
+      grn_drilldown_data *drilldown = &(data->drilldown);
+      PUT_CACHE_KEY_DRILLDOWN(drilldown);
+    }
     if (data->drilldowns) {
       GRN_HASH_EACH_BEGIN(ctx, data->drilldowns, cursor, id) {
         grn_drilldown_data *drilldown;
         grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
-        PUT_CACHE_KEY(drilldown->keys);
-        PUT_CACHE_KEY(drilldown->sort_keys);
-        PUT_CACHE_KEY(drilldown->output_columns);
-        PUT_CACHE_KEY(drilldown->label);
-        PUT_CACHE_KEY(drilldown->calc_target_name);
-        PUT_CACHE_KEY(drilldown->filter);
-        PUT_CACHE_KEY(drilldown->table_name);
-        grn_memcpy(cp, &(drilldown->offset), sizeof(int));
-        cp += sizeof(int);
-        grn_memcpy(cp, &(drilldown->limit), sizeof(int));
-        cp += sizeof(int);
-        grn_memcpy(cp,
-                   &(drilldown->calc_types),
-                   sizeof(grn_table_group_flags));
-        cp += sizeof(grn_table_group_flags);
+        PUT_CACHE_KEY_DRILLDOWN(drilldown);
       } GRN_HASH_EACH_END(ctx, cursor);
     }
+#undef PUT_CACHE_KEY_DRILLDOWN
     PUT_CACHE_KEY(data->match_escalation_threshold);
     PUT_CACHE_KEY(data->query_expander);
     PUT_CACHE_KEY(data->query_flags);

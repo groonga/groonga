@@ -1,0 +1,17 @@
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tag COLUMN_SCALAR ShortText
+
+load --table Memos
+[
+{"_key": "Hello Groonga!", "tag": "Groonga"},
+{"_key": "Hello Rroonga!", "tag": "Rroonga"}
+]
+
+# For use cache
+#@sleep 1
+
+select Memos
+
+select Memos \
+  --drilldown tag
+
