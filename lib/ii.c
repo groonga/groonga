@@ -71,7 +71,7 @@
 # define S_IWUSR 0200
 #endif /* S_IWUSR */
 
-static grn_bool grn_ii_cursor_set_min_enable = GRN_FALSE;
+static grn_bool grn_ii_cursor_set_min_enable = GRN_TRUE;
 static double grn_ii_select_too_many_index_match_ratio = -1;
 static double grn_ii_estimate_size_for_query_reduce_ratio = 0.9;
 static grn_bool grn_ii_overlap_token_skip_enable = GRN_FALSE;
@@ -84,10 +84,10 @@ grn_ii_init_from_env(void)
     grn_getenv("GRN_II_CURSOR_SET_MIN_ENABLE",
                grn_ii_cursor_set_min_enable_env,
                GRN_ENV_BUFFER_SIZE);
-    if (grn_ii_cursor_set_min_enable_env[0]) {
-      grn_ii_cursor_set_min_enable = GRN_TRUE;
-    } else {
+    if (strcmp(grn_ii_cursor_set_min_enable_env, "no") == 0) {
       grn_ii_cursor_set_min_enable = GRN_FALSE;
+    } else {
+      grn_ii_cursor_set_min_enable = GRN_TRUE;
     }
   }
 
