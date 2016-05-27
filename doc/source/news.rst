@@ -15,10 +15,10 @@ Release 6.0.3 - 2016-05-29
 Improvements
 ^^^^^^^^^^^^
 
-* Added ``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` environment variable
-
-* Added ``GRN_NGRAM_TOKENIZER_REMOVE_BLANK_DISABLE`` environment
-  variable to not to remove blank for overlap token skip mode.
+* [experimental] Added ``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` and
+  ``GRN_NGRAM_TOKENIZER_REMOVE_BLANK_DISABLE`` environment variables
+  to improve performance of N-gram tokenizer.  [GitHub#533][Patch by
+  Naoya Murakami]
 
 * [:doc:`/reference/commands/table_create`] Stopped to ignore
   nonexistent default tokenizer, normalizer or token filters. In the
