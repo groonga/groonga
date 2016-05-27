@@ -23,7 +23,7 @@
 #include <string.h>
 
 static uint64_t grn_index_sparsity = 10;
-static grn_bool grn_index_chunk_split_enable = GRN_FALSE;
+static grn_bool grn_index_chunk_split_enable = GRN_TRUE;
 
 void
 grn_index_column_init_from_env(void)
@@ -48,10 +48,10 @@ grn_index_column_init_from_env(void)
     grn_getenv("GRN_INDEX_CHUNK_SPLIT_ENABLE",
                grn_index_chunk_split_enable_env,
                GRN_ENV_BUFFER_SIZE);
-    if (grn_index_chunk_split_enable_env[0]) {
-      grn_index_chunk_split_enable = GRN_TRUE;
-    } else {
+    if (strcmp(grn_index_chunk_split_enable_env, "no") == 0) {
       grn_index_chunk_split_enable = GRN_FALSE;
+    } else {
+      grn_index_chunk_split_enable = GRN_TRUE;
     }
   }
 }
