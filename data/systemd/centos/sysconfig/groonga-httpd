@@ -1,10 +1,10 @@
 # Default
 #GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO=0.01
 #GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO=0.01
-# Define this variable to enable skipping posting list
-#GRN_II_CURSOR_SET_MIN_ENABLE=yes
-# Define this variable to enable chunk split on offline index construction
-#GRN_INDEX_CHUNK_SPLIT_ENABLE=yes
+# Define this variable to disable skipping posting list (default: yes)
+#GRN_II_CURSOR_SET_MIN_ENABLE=no
+# Define this variable to disable chunk split on offline index construction (default: yes)
+#GRN_INDEX_CHUNK_SPLIT_ENABLE=no
 # Set "yes" to enable chunked tokenize feature
 #GRN_MECAB_CHUNKED_TOKENIZE_ENABLED=no
 # Set the threshold value for chunk size (default: 8192)
