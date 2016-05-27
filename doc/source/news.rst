@@ -78,7 +78,8 @@ Improvements
 
 * [:doc:`/reference/functions/record_number`] Supported window function.
 
-* [:doc:`/reference/commands/select`] Supported ``--slices``.
+* [experimental][:doc:`/reference/commands/select`] Supported ``--slices``.
+
 
 Fixes
 ^^^^^
