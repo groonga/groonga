@@ -80,6 +80,17 @@ Improvements
 
 * [experimental][:doc:`/reference/commands/select`] Supported ``--slices``.
 
+* [:doc:`/reference/commands/select`] Deprecated ``--sortby`` and
+  ``--drilldown_sortby``. Use ``--sort_keys`` and
+  ``-drilldown_sort_keys`` instead.
+
+* [:doc:`/reference/commands/select`] Deprecated ``--drilldown[...]``.
+  Use ``--drilldowns[...]`` instead.
+
+* Added [:doc:`/reference/command/command_version`] 3. It uses object
+  literal based envelope.
+
+* [groonga-httpd] Updated bundled nginx version to 1.11.0.
 
 Fixes
 ^^^^^
