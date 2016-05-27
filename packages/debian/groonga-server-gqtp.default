@@ -14,8 +14,8 @@ ENABLE=yes
 GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO=0.01
 # Set the threshold value to force sequential search for between()
 GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO=0.01
-# Set 1 to enable skipping posting list
-GRN_II_CURSOR_SET_MIN_ENABLE=0
+# Define this variable to disable skipping posting list (default: yes)
+#GRN_II_CURSOR_SET_MIN_ENABLE=no
 # Set "yes" to enable chunked tokenize feature
 GRN_MECAB_CHUNKED_TOKENIZE_ENABLED=no
 # Set the threshold value for chunk size (default: 8192)
