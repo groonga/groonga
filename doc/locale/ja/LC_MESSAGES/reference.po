@@ -16462,6 +16462,12 @@ msgstr ""
 msgid "現在時刻に対応するTime型のオブジェクトを返します。"
 msgstr ""
 
+msgid "``number_classify``"
+msgstr ""
+
+msgid "number_classify"
+msgstr ""
+
 msgid "``prefix_rk_search``"
 msgstr ""
 
@@ -16739,6 +16745,9 @@ msgstr ""
 msgid "0 と max の間の数を表すInt32型の値を返します。"
 msgstr ""
 
+msgid "``record_number``"
+msgstr ""
+
 msgid "``snippet_html``"
 msgstr ""
 
@@ -16983,6 +16992,27 @@ msgstr ""
 "``sub_filter`` は1つでもレコードがマッチしたかどうかを返します。もし、1つ以上"
 "のレコードがマッチしたら ``true`` を返します。1つもマッチしなかったら "
 "``false`` を返します。"
+
+msgid "``time_classify_day``"
+msgstr ""
+
+msgid "``time_classify_hour``"
+msgstr ""
+
+msgid "``time_classify_minute``"
+msgstr ""
+
+msgid "``time_classify_month``"
+msgstr ""
+
+msgid "``time_classify_second``"
+msgstr ""
+
+msgid "``time_classify_week``"
+msgstr ""
+
+msgid "``time_classify_year``"
+msgstr ""
 
 msgid "``vector_size``"
 msgstr ""
