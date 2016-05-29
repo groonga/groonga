@@ -36,11 +36,11 @@ Improvements
 * [:doc:`/reference/functions/number_classify`] Added a number
   plugin. Use ``number_classify`` function to classify by value.
 
-* [:doc:`/reference/functions/time`] Added a time plugin. Use
-  ``time_classify_second``, ``time_classify_minute``,
-  ``time_classify_hour``, ``time_classify_day``,
-  ``time_classify_week``, ``time_classify_month``,
-  ``time_classify_year`` function to classify by value.
+* Added a time plugin. Use ``time_classify_second``,
+  ``time_classify_minute``, ``time_classify_hour``,
+  ``time_classify_day``, ``time_classify_week``,
+  ``time_classify_month``, ``time_classify_year`` function to classify
+  by value.
 
 * [:doc:`/reference/commands/select`] Supported dynamic column
   creation which is used in ``output_columns``, ``drilldown`` or
