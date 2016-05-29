@@ -46,12 +46,12 @@ Improvements
   creation which is used in ``output_columns``, ``drilldown`` or
   ``sortby`` [GitHub#539,#541,#542,#544,#545][Patch by Naoya Murakami]::
 
-  select \
-    --columns[LABEL].stage filtered \
-    --columns[LABEL].type ShortText \
-    --columns[LABEL].flags COLUMN_SCALAR \
-    --columns[LABEL].value 'script syntax expression' \
-    ...
+    select \
+      --columns[LABEL].stage filtered \
+      --columns[LABEL].type ShortText \
+      --columns[LABEL].flags COLUMN_SCALAR \
+      --columns[LABEL].value 'script syntax expression' \
+      ...
 
 * [experimental][:doc:`/reference/commands/select`] Improved
   performance for range/equal search and enough filtered case. Set
