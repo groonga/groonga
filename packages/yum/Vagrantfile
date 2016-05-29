@@ -36,6 +36,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node.vm.boot_timeout = 1 * hour_in_seconds
       node.vm.provision(:shell, :privileged => false, :path => "build-rpm.sh")
       node.vm.provider("virtualbox") do |virtual_box|
+        system_n_cpus = 1
+        if File.exist?("/proc/cpuinfo")
+          system_n_cpus = File.readlines("/proc/cpuinfo").grep(/^processor/).size
+        end
+        if system_n_cpus > 1
+          vm_n_cpus = system_n_cpus / 2
+        else
+          vm_n_cpus = 1
+        end
+        virtual_box.cpus = (ENV["VM_CPUS"] || vm_n_cpus).to_i
         virtual_box.memory = (ENV["VM_MEMORY"] || 1024).to_i
       end
     end
