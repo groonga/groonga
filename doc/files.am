@@ -218,9 +218,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/simple_filter.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/simple_query.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/simple_usage.log \
-	$(top_srcdir)/doc/source/example/reference/commands/select/sortby_descending.log \
-	$(top_srcdir)/doc/source/example/reference/commands/select/sortby_score_with_query.log \
-	$(top_srcdir)/doc/source/example/reference/commands/select/sortby_simple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/sort_keys_descending.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/sort_keys_score_with_query.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/sort_keys_simple.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/table_nonexistent.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_drilldown.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_drilldown_only_query.log \
@@ -1063,9 +1063,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/simple_filter.log \
 	source/example/reference/commands/select/simple_query.log \
 	source/example/reference/commands/select/simple_usage.log \
-	source/example/reference/commands/select/sortby_descending.log \
-	source/example/reference/commands/select/sortby_score_with_query.log \
-	source/example/reference/commands/select/sortby_simple.log \
+	source/example/reference/commands/select/sort_keys_descending.log \
+	source/example/reference/commands/select/sort_keys_score_with_query.log \
+	source/example/reference/commands/select/sort_keys_simple.log \
 	source/example/reference/commands/select/table_nonexistent.log \
 	source/example/reference/commands/select/usage_drilldown.log \
 	source/example/reference/commands/select/usage_drilldown_only_query.log \
