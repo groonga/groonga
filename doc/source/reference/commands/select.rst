@@ -789,6 +789,14 @@ values except ``_score`` are outputted.
 ``sortby``
 """"""""""
 
+.. deprecated:: 6.0.3
+   Use :ref:`select-sort-keys` instead.
+
+.. _select-sort-keys:
+
+``sort_keys``
+"""""""""""""
+
 Specifies sort keys separated by ``,``. Each sort key is column
 name.
 
@@ -974,6 +982,14 @@ The ``select`` command outputs the following information:
 
 ``drilldown_sortby``
 """"""""""""""""""""
+
+.. deprecated:: 6.0.3
+   Use :ref:`select-drilldown-sort-keys` instead.
+
+.. _select-drilldown-sort-keys:
+
+``drilldown_sort_keys``
+"""""""""""""""""""""""
 
 Specifies sort keys for drilldown outputs separated by ``,``. Each
 sort key is column name.
