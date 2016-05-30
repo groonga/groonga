@@ -37,6 +37,7 @@ optional::
          [limit=10]
          [drilldown=null]
          [drilldown_sortby=null]
+         [drilldown_sort_keys=null]
          [drilldown_output_columns="_key, _nsubrecs"]
          [drilldown_offset=0]
          [drilldown_limit=10]
