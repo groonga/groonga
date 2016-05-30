@@ -806,11 +806,11 @@ values except ``_score`` are outputted.
 Specifies sort keys separated by ``,``. Each sort key is column
 name.
 
-Here is a simple ``sortby`` usage example.
+Here is a simple ``sort_keys`` usage example.
 
 .. groonga-command
-.. include:: ../../example/reference/commands/select/sortby_simple.log
-.. select Entries --sortby 'n_likes, _id'
+.. include:: ../../example/reference/commands/select/sort_keys_simple.log
+.. select Entries --sort_keys 'n_likes, _id'
 
 The ``select`` command sorts by ``n_likes`` column value in ascending
 order. For records that has the same ``n_likes`` are sorted by ``_id``
@@ -819,21 +819,21 @@ are the case.
 
 If you want to sort in descending order, add ``-`` before column name.
 
-Here is a descending order ``sortby`` usage example.
+Here is a descending order ``sort_keys`` usage example.
 
 .. groonga-command
-.. include:: ../../example/reference/commands/select/sortby_descending.log
-.. select Entries --sortby '-n_likes, _id'
+.. include:: ../../example/reference/commands/select/sort_keys_descending.log
+.. select Entries --sort_keys '-n_likes, _id'
 
 The ``select`` command sorts by ``n_likes`` column value in descending
 order. But ascending order is used for sorting by ``_id``.
 
-You can use ``_score`` pseudo column in ``sortby`` if you use
+You can use ``_score`` pseudo column in ``sort_keys`` if you use
 ``query`` or ``filter`` parameter.
 
 .. groonga-command
-.. include:: ../../example/reference/commands/select/sortby_score_with_query.log
-.. select Entries --match_columns content --query fast --sortby -_score --output_columns '_key, _score'
+.. include:: ../../example/reference/commands/select/sort_keys_score_with_query.log
+.. select Entries --match_columns content --query fast --sort_keys -_score --output_columns '_key, _score'
 
 The ``select`` command sorts matched records by hit score in
 descending order and outputs record key and hit score.
