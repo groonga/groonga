@@ -52,13 +52,16 @@ optional::
 
 ``select`` has the following named parameters for advanced drilldown:
 
-  * ``drilldown[${LABEL}].keys=null``
-  * ``drilldown[${LABEL}].sortby=null``
-  * ``drilldown[${LABEL}].output_columns="_key, _nsubrecs"``
-  * ``drilldown[${LABEL}].offset=0``
-  * ``drilldown[${LABEL}].limit=10``
-  * ``drilldown[${LABEL}].calc_types=NONE``
-  * ``drilldown[${LABEL}].calc_target=null``
+  * ``drilldowns[${LABEL}].keys=null``
+  * ``drilldowns[${LABEL}].sortby=null``
+  * ``drilldowns[${LABEL}].output_columns="_key, _nsubrecs"``
+  * ``drilldowns[${LABEL}].offset=0``
+  * ``drilldowns[${LABEL}].limit=10``
+  * ``drilldowns[${LABEL}].calc_types=NONE``
+  * ``drilldowns[${LABEL}].calc_target=null``
+
+.. deprecated:: 6.0.3
+  ``drilldown[...]`` syntax is deprecated, Use ``drilldowns[...]`` instead.
 
 You can use one or more alphabets, digits, ``_`` and ``.`` for
 ``${LABEL}``. For example, ``parent.sub1`` is a valid ``${LABEL}``.
