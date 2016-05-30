@@ -31,6 +31,7 @@ optional::
          [filter=null]
          [scorer=null]
          [sortby=null]
+         [sort_keys=null]
          [output_columns="_id, _key, *"]
          [offset=0]
          [limit=10]
