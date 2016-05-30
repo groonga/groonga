@@ -31,13 +31,11 @@ optional::
          [filter=null]
          [scorer=null]
          [sortby=null]
-         [sort_keys=null]
          [output_columns="_id, _key, *"]
          [offset=0]
          [limit=10]
          [drilldown=null]
          [drilldown_sortby=null]
-         [drilldown_sort_keys=null]
          [drilldown_output_columns="_key, _nsubrecs"]
          [drilldown_offset=0]
          [drilldown_limit=10]
@@ -49,6 +47,8 @@ optional::
          [adjuster=null]
          [drilldown_calc_types=NONE]
          [drilldown_calc_target=null]
+         [sort_keys=null]
+         [drilldown_sort_keys=null]
 
 ``select`` has the following named parameters for advanced drilldown:
 
