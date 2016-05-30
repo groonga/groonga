@@ -1445,7 +1445,7 @@ Output format is different a bit. It's also needed more description.
 .. _select-drilldown-label-keys:
 
 ``drilldowns[${LABEL}].keys``
-""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""
 
 :ref:`select-drilldown` can specify multiple keys for multiple
 drilldowns. But it can't specify multiple keys for one drilldown.
@@ -1480,7 +1480,7 @@ tag``. You should use ``_key`` for the case. It's the same rule in
 .. _select-drilldown-label-output-columns:
 
 ``drilldowns[${LABEL}].output_columns``
-""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""
 
 It's almost same as :ref:`select-drilldown-output-columns`. The
 difference between :ref:`select-drilldown-output-columns` and
@@ -1541,7 +1541,7 @@ Here is an example to refer each group key in multiple group keys by
 .. _select-drilldown-label-output-format:
 
 Output format for ``drilldowns[${LABEL}]`` style
-"""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""
 
 There is a difference in output format between :ref:`select-drilldown`
 and :ref:`select-drilldown-label-keys`. :ref:`select-drilldown` uses
