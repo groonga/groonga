@@ -557,7 +557,8 @@ more searches aren't executed. And no records are matched.
 ``query_expansion``
 """""""""""""""""""
 
-Deprecated. Use :ref:`select-query-expander` instead.
+.. deprecated:: 3.0.2
+   Use :ref:`select-query-expander` instead.
 
 .. _select-query-flags:
 
