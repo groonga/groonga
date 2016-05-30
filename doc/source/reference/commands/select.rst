@@ -70,15 +70,15 @@ Parameters that have the same ``${LABEL}`` are grouped.
 
 For example, the following parameters specify one drilldown:
 
-  * ``--drilldown[label].keys column``
-  * ``--drilldown[label].sortby -_nsubrecs``
+  * ``--drilldowns[label].keys column``
+  * ``--drilldowns[label].sortby -_nsubrecs``
 
 The following parameters specify two drilldowns:
 
-  * ``--drilldown[label1].keys column1``
-  * ``--drilldown[label1].sortby -_nsubrecs``
-  * ``--drilldown[label2].keys column2``
-  * ``--drilldown[label2].sortby _key``
+  * ``--drilldowns[label1].keys column1``
+  * ``--drilldowns[label1].sortby -_nsubrecs``
+  * ``--drilldowns[label2].keys column2``
+  * ``--drilldowns[label2].sortby _key``
 
 Usage
 -----
@@ -1385,13 +1385,13 @@ configuration for all drilldowns. For example,
 You can use a configuration for each drilldown by the following
 parameters:
 
-  * ``drilldown[${LABEL}].keys``
-  * ``drilldown[${LABEL}].sortby``
-  * ``drilldown[${LABEL}].output_columns``
-  * ``drilldown[${LABEL}].offset``
-  * ``drilldown[${LABEL}].limit``
-  * ``drilldown[${LABEL}].calc_types``
-  * ``drilldown[${LABEL}].calc_target``
+  * ``drilldowns[${LABEL}].keys``
+  * ``drilldowns[${LABEL}].sortby``
+  * ``drilldowns[${LABEL}].output_columns``
+  * ``drilldowns[${LABEL}].offset``
+  * ``drilldowns[${LABEL}].limit``
+  * ``drilldowns[${LABEL}].calc_types``
+  * ``drilldowns[${LABEL}].calc_target``
 
 ``${LABEL}`` is a variable. You can use the following characters for
 ``${LABEL}``:
@@ -1411,14 +1411,14 @@ parameters are used for one drilldown.
 
 For example, there are 2 groups for the following parameters:
 
-  * ``--drilldown[label1].keys _key``
-  * ``--drilldown[label1].output_columns _nsubrecs``
-  * ``--drilldown[label2].keys tag``
-  * ``--drilldown[label2].output_columns _key,_nsubrecs``
+  * ``--drilldowns[label1].keys _key``
+  * ``--drilldowns[label1].output_columns _nsubrecs``
+  * ``--drilldowns[label2].keys tag``
+  * ``--drilldowns[label2].output_columns _key,_nsubrecs``
 
-``drilldown[label1].keys`` and ``drilldown[label1].output_columns``
-are grouped. ``drilldown[label2].keys`` and
-``drilldown[label2].output_columns`` are also grouped.
+``drilldowns[label1].keys`` and ``drilldowns[label1].output_columns``
+are grouped. ``drilldowns[label2].keys`` and
+``drilldowns[label2].output_columns`` are also grouped.
 
 In ``label1`` group, ``_key`` is used for group key and ``_nsubrecs``
 is used for output columns.
@@ -1429,28 +1429,28 @@ In ``label2`` group, ``tag`` is used for group key and
 See document for corresponding ``drilldown_XXX`` parameter to know how
 to use it for the following parameters:
 
-  * ``drilldown[${LABEL}].sortby``: :ref:`select-drilldown-sortby`
-  * ``drilldown[${LABEL}].offset``: :ref:`select-drilldown-offset`
-  * ``drilldown[${LABEL}].limit``: :ref:`select-drilldown-limit`
-  * ``drilldown[${LABEL}].calc_types``: :ref:`select-drilldown-calc-types`
-  * ``drilldown[${LABEL}].calc_target``: :ref:`select-drilldown-calc-target`
+  * ``drilldowns[${LABEL}].sortby``: :ref:`select-drilldown-sortby`
+  * ``drilldowns[${LABEL}].offset``: :ref:`select-drilldown-offset`
+  * ``drilldowns[${LABEL}].limit``: :ref:`select-drilldown-limit`
+  * ``drilldowns[${LABEL}].calc_types``: :ref:`select-drilldown-calc-types`
+  * ``drilldowns[${LABEL}].calc_target``: :ref:`select-drilldown-calc-target`
 
 The following parameters are needed more description:
 
-  * ``drilldown[${LABEL}].keys``
-  * ``drilldown[${LABEL}].output_columns``
+  * ``drilldowns[${LABEL}].keys``
+  * ``drilldowns[${LABEL}].output_columns``
 
 Output format is different a bit. It's also needed more description.
 
 .. _select-drilldown-label-keys:
 
-``drilldown[${LABEL}].keys``
+``drilldowns[${LABEL}].keys``
 """"""""""""""""""""""""""""
 
 :ref:`select-drilldown` can specify multiple keys for multiple
 drilldowns. But it can't specify multiple keys for one drilldown.
 
-``drilldown[${LABEL}].keys`` can't specify multiple keys for multiple
+``drilldowns[${LABEL}].keys`` can't specify multiple keys for multiple
 drilldowns. But it can specify multiple keys for one drilldown.
 
 You can specify multiple keys separated by "``,``".
@@ -1463,8 +1463,8 @@ column values:
 .. select Entries \
 ..   --limit -1 \
 ..   --output_column tag,n_likes \
-..   --drilldown[tag.n_likes].keys tag,n_likes \
-..   --drilldown[tag.n_likes].output_columns _value.tag,_value.n_likes,_nsubrecs
+..   --drilldowns[tag.n_likes].keys tag,n_likes \
+..   --drilldowns[tag.n_likes].output_columns _value.tag,_value.n_likes,_nsubrecs
 
 ``tag.n_likes`` is used as the label for the drilldown parameters
 group. You can refer grouped keys by ``_value.${KEY_NAME}`` syntax in
@@ -1473,22 +1473,22 @@ column name to be used by group key. ``tag`` and ``n_likes`` are
 ``${KEY_NAME}`` in this case.
 
 Note that you can't use ``_value.${KEY_NAME}`` syntax when you just
-specify one key as ``drilldown[${LABEL}].keys`` like ``--drilldown[tag].keys
+specify one key as ``drilldowns[${LABEL}].keys`` like ``--drilldowns[tag].keys
 tag``. You should use ``_key`` for the case. It's the same rule in
 :ref:`select-drilldown-output-columns`.
 
 .. _select-drilldown-label-output-columns:
 
-``drilldown[${LABEL}].output_columns``
+``drilldowns[${LABEL}].output_columns``
 """"""""""""""""""""""""""""""""""""""
 
 It's almost same as :ref:`select-drilldown-output-columns`. The
 difference between :ref:`select-drilldown-output-columns` and
-``drilldown[${LABEL}].output_columns`` is how to refer group keys.
+``drilldowns[${LABEL}].output_columns`` is how to refer group keys.
 
 :ref:`select-drilldown-output-columns` uses ``_key``
 :doc:`/reference/columns/pseudo` to refer group
-key. ``drilldown[${LABEL}].output_columns`` also uses ``_key``
+key. ``drilldowns[${LABEL}].output_columns`` also uses ``_key``
 :doc:`/reference/columns/pseudo` to refer group key when you specify
 only one group key by :ref:`select-drilldown-label-keys`.
 
@@ -1500,12 +1500,12 @@ Here is an example to refer single group key by ``_key``
 .. select Entries \
 ..   --limit 0 \
 ..   --output_column _id \
-..   --drilldown[tag.n_likes].keys tag \
-..   --drilldown[tag.n_likes].output_columns _key
+..   --drilldowns[tag.n_likes].keys tag \
+..   --drilldowns[tag.n_likes].output_columns _key
 
 But you can't refer each group key by ``_key``
 :doc:`/reference/columns/pseudo` in
-``drilldown[${LABEL}].output_columns``. You need to use
+``drilldowns[${LABEL}].output_columns``. You need to use
 ``_value.${KEY_NAME}`` syntax. ``${KEY_NAME}`` is a column name that is
 used for group key in :ref:`select-drilldown-label-keys`.
 
@@ -1517,8 +1517,8 @@ Here is an example to refer each group key in multiple group keys by
 .. select Entries \
 ..   --limit 0 \
 ..   --output_column _id \
-..   --drilldown[tag.n_likes].keys tag,n_likes \
-..   --drilldown[tag.n_likes].output_columns _value.tag,_value.n_likes
+..   --drilldowns[tag.n_likes].keys tag,n_likes \
+..   --drilldowns[tag.n_likes].output_columns _value.tag,_value.n_likes
 
 .. tip:: Why ``_value.${KEY_NAME}`` syntax?
 
@@ -1526,7 +1526,7 @@ Here is an example to refer each group key in multiple group keys by
 
    ``_key`` is a vector value. The vector value is consists of all
    group keys. You can see byte sequence of the vector value by
-   referring ``_key`` in ``drilldown[${LABEL}].output_columns``.
+   referring ``_key`` in ``drilldowns[${LABEL}].output_columns``.
 
    There is one grouped record in ``_value`` to refer each grouped
    values when you specify multiple group keys to
@@ -1540,7 +1540,7 @@ Here is an example to refer each group key in multiple group keys by
 
 .. _select-drilldown-label-output-format:
 
-Output format for ``drilldown[${LABEL}]`` style
+Output format for ``drilldowns[${LABEL}]`` style
 """""""""""""""""""""""""""""""""""""""""""""""
 
 There is a difference in output format between :ref:`select-drilldown`
@@ -1732,7 +1732,7 @@ If ``select`` fails, error details are in ``HEADER``.
 See :doc:`/reference/command/output_format` for ``HEADER``.
 
 There are zero or more ``DRILLDOWN_RESULT``. If no ``drilldown`` and
-``drilldown[${LABEL}].keys`` are specified, they are omitted like the
+``drilldowns[${LABEL}].keys`` are specified, they are omitted like the
 following::
 
   [
@@ -1755,7 +1755,7 @@ column1, column2"``, multiple ``DRILLDOWN_RESULT`` exist::
     ]
   ]
 
-If ``drilldown[${LABEL}].keys`` is used, only one ``DRILLDOWN_RESULT``
+If ``drilldowns[${LABEL}].keys`` is used, only one ``DRILLDOWN_RESULT``
 exist::
 
   [
@@ -1767,7 +1767,7 @@ exist::
   ]
 
 ``DRILLDOWN_RESULT`` format is different between ``drilldown`` and
-``drilldown[${LABEL}].keys``. It's described later.
+``drilldowns[${LABEL}].keys``. It's described later.
 
 ``SEARCH_RESULT`` is the following format::
 
@@ -1866,7 +1866,7 @@ Here is an example ``RECORDS``::
   ]
 
 ``DRILLDOWN_RESULT`` format is different between ``drilldown`` and
-``drilldown[${LABEL}].keys``.
+``drilldowns[${LABEL}].keys``.
 
 ``drilldown`` uses the same format as ``SEARCH_RESULT``::
 
@@ -1879,8 +1879,8 @@ Here is an example ``RECORDS``::
 And ``drilldown`` generates one or more ``DRILLDOWN_RESULT`` when
 :ref:`select-drilldown` has one ore more keys.
 
-``drilldown[${LABEL}].keys`` uses the following format. Multiple
-``drilldown[${LABEL}].keys`` are mapped to one object (key-value
+``drilldowns[${LABEL}].keys`` uses the following format. Multiple
+``drilldowns[${LABEL}].keys`` are mapped to one object (key-value
 pairs)::
 
   {
@@ -1902,7 +1902,7 @@ pairs)::
     ]
   }
 
-Each ``drilldown[${LABEL}].keys`` corresponds to the following::
+Each ``drilldowns[${LABEL}].keys`` corresponds to the following::
 
   "LABEL": [
     [N_HITS],
@@ -1919,7 +1919,7 @@ The following value part is the same format as ``SEARCH_RESULT``::
   ]
 
 See also :ref:`select-drilldown-label-output-format` for
-``drilldown[${LABEL}]`` style drilldown output format.
+``drilldowns[${LABEL}]`` style drilldown output format.
 
 
 See also
