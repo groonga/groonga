@@ -1,4 +1,5 @@
 plugin_register token_filters/stop_word
+#$GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=#{base_directory}/tmp/synonyms.tsv
 #@copy-path fixture/query_expander/tsv/expand.tsv tmp/synonyms.tsv
 plugin_register query_expanders/tsv
 
