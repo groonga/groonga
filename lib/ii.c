@@ -4553,7 +4553,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
             }
             if (c->pb.rid < c->min) {
               c->pb.rid = 0;
-              if (br->jump > 0) {
+              if (br->jump > 0 && !BUFFER_REC_DELETED(br)) {
                 buffer_rec *jump_br = BUFFER_REC_AT(c->buf, br->jump);
                 uint8_t *jump_bp;
                 uint32_t jump_rid;
