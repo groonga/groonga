@@ -2618,14 +2618,6 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     data->output.formatter = &grn_select_output_formatter_v3;
   }
 
-  data->tables.target = NULL;
-  data->tables.initial = NULL;
-  data->tables.result = NULL;
-  data->tables.sorted = NULL;
-
-  data->condition.match_columns = NULL;
-  data->condition.expression = NULL;
-
   data->cacheable = 1;
   data->taintable = 0;
 
@@ -2895,32 +2887,6 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   }
 
 exit :
-  if (data->condition.expression) {
-    grn_obj_unlink(ctx, data->condition.expression);
-  }
-
-  if (data->condition.match_columns) {
-    grn_obj_unlink(ctx, data->condition.match_columns);
-  }
-
-  if (data->tables.sorted) {
-    grn_obj_unlink(ctx, data->tables.sorted);
-  }
-
-  if (data->tables.result &&
-      data->tables.result != data->tables.initial &&
-      data->tables.result != data->tables.target) {
-    grn_obj_unlink(ctx, data->tables.result);
-  }
-
-  if (data->tables.initial && data->tables.initial != data->tables.target) {
-    grn_obj_unlink(ctx, data->tables.initial);
-  }
-
-  if (data->tables.target) {
-    grn_obj_unlink(ctx, data->tables.target);
-  }
-
   if (data->match_escalation_threshold.length > 0) {
     grn_ctx_set_match_escalation_threshold(ctx, original_threshold);
   }
@@ -3283,10 +3249,19 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
 {
   grn_select_data data;
 
+  grn_columns_init(ctx, &(data.columns));
+
+  data.tables.target = NULL;
+  data.tables.initial = NULL;
+  data.tables.result = NULL;
+  data.tables.sorted = NULL;
+
+  data.condition.match_columns = NULL;
+  data.condition.expression = NULL;
+
   data.slices = NULL;
   grn_drilldown_data_init(ctx, &(data.drilldown), NULL, 0);
   data.drilldowns = NULL;
-  grn_columns_init(ctx, &(data.columns));
 
   data.table.value = grn_plugin_proc_get_var_string(ctx, user_data,
                                                     "table", -1,
@@ -3375,8 +3350,6 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   grn_select(ctx, &data);
 
 exit :
-  grn_columns_fin(ctx, &(data.columns));
-
   if (data.drilldowns) {
     GRN_HASH_EACH_BEGIN(ctx, data.drilldowns, cursor, id) {
       grn_drilldown_data *drilldown;
@@ -3401,6 +3374,34 @@ exit :
     } GRN_HASH_EACH_END(ctx, cursor);
     grn_hash_close(ctx, data.slices);
   }
+
+  if (data.condition.expression) {
+    grn_obj_unlink(ctx, data.condition.expression);
+  }
+
+  if (data.condition.match_columns) {
+    grn_obj_unlink(ctx, data.condition.match_columns);
+  }
+
+  if (data.tables.sorted) {
+    grn_obj_unlink(ctx, data.tables.sorted);
+  }
+
+  if (data.tables.result &&
+      data.tables.result != data.tables.initial &&
+      data.tables.result != data.tables.target) {
+    grn_obj_unlink(ctx, data.tables.result);
+  }
+
+  if (data.tables.initial && data.tables.initial != data.tables.target) {
+    grn_obj_unlink(ctx, data.tables.initial);
+  }
+
+  if (data.tables.target) {
+    grn_obj_unlink(ctx, data.tables.target);
+  }
+
+  grn_columns_fin(ctx, &(data.columns));
 
   return NULL;
 }
