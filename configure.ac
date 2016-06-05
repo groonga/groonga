@@ -1532,7 +1532,10 @@ else
 fi
 AM_CONDITIONAL(WITH_GROONGA_HTTPD, test "$enable_groonga_httpd" = "yes")
 
-GROONGA_HTTPD_PID_PATH="${localstatedir}/run/groonga-httpd.pid"
+GROONGA_HTTPD_PID_PATH="`
+  test \"$prefix\" = NONE && prefix=/usr/local
+  eval echo ${localstatedir}/run/groonga-httpd.pid
+`"
 AC_SUBST(GROONGA_HTTPD_PID_PATH)
 
 # mruby
