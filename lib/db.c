@@ -13248,6 +13248,8 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
      * handled as column names and "_id" or "_key".
      */
     for (i = 0; i < nvalues; i++) {
+      const char *col_name;
+      unsigned int col_name_size;
       if (value->header.domain != GRN_DB_TEXT) {
         grn_obj buffer;
         GRN_TEXT_INIT(&buffer, 0);
@@ -13260,8 +13262,8 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
         loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
         goto exit;
       }
-      const char *col_name = GRN_TEXT_VALUE(value);
-      unsigned int col_name_size = GRN_TEXT_LEN(value);
+      col_name = GRN_TEXT_VALUE(value);
+      col_name_size = GRN_TEXT_LEN(value);
       col = grn_obj_column(ctx, loader->table, col_name, col_name_size);
       if (!col) {
         ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s>",

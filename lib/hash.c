@@ -812,10 +812,13 @@ grn_rc
 grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
                     const void *value, int flags)
 {
+  grn_rc rc;
+
   if (!ctx || !array || !value) {
     return GRN_INVALID_ARGUMENT;
   }
-  grn_rc rc = grn_array_error_if_truncated(ctx, array);
+
+  rc = grn_array_error_if_truncated(ctx, array);
   if (rc != GRN_SUCCESS) {
     return rc;
   }

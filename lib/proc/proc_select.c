@@ -947,6 +947,8 @@ grn_select_apply_columns(grn_ctx *ctx,
   while (grn_hash_cursor_next(ctx, columns_cursor) != GRN_ID_NIL) {
     grn_column_data *column_data;
     grn_obj *column;
+    grn_obj *expression;
+    grn_obj *record;
 
     grn_hash_cursor_get_value(ctx, columns_cursor, (void **)&column_data);
 
@@ -968,8 +970,6 @@ grn_select_apply_columns(grn_ctx *ctx,
       break;
     }
 
-    grn_obj *expression;
-    grn_obj *record;
     GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expression, record);
     if (!expression) {
       grn_obj_close(ctx, column);
