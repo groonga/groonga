@@ -38,15 +38,24 @@ build_script:
   - ruby download_mecab.rb
   - ruby download_message_pack.rb
   - cd ..
-  - cmake . -G "%CMAKE_GENERATOR_NAME%" -DCMAKE_INSTALL_PREFIX=c:\groonga -DGRN_WITH_BUNDLED_MECAB=yes -DGRN_WITH_BUNDLED_MESSAGE_PACK=yes
+  - cmake . -G "%CMAKE_GENERATOR_NAME%"
+      -DCMAKE_INSTALL_PREFIX=c:\groonga
+      -DGRN_WITH_BUNDLED_MECAB=yes
+      -DGRN_WITH_BUNDLED_MESSAGE_PACK=yes
   - cmake --build . --config Debug
   - cmake --build . --config Debug --target Install
 
 before_test:
-  - git clone --depth 1 https://github.com/groonga/grntest.git test\command\grntest
+  - git clone --depth 1
+      https://github.com/groonga/grntest.git
+      test\command\grntest
   - cd test\command\grntest
   - bundle install --binstubs=..\bin
   - cd ..\..\..
 test_script:
-  - SET GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=%APPVEYOR_BUILD_FOLDER%\test\command\tmp\synonyms.tsv
-  - ruby test\command\bin\grntest --groonga c:\groonga\bin\groonga.exe --base-directory test\command --reporter mark --n-workers 4 test\command\suite
+  - ruby test\command\bin\grntest
+     --groonga c:\groonga\bin\groonga.exe
+     --base-directory test\command
+     --reporter mark
+     --n-workers 4
+     test\command\suite
