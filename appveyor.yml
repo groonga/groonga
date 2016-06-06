@@ -58,4 +58,5 @@ test_script:
      --base-directory test\command
      --reporter mark
      --n-workers 4
+     --timeout 60
      test\command\suite
