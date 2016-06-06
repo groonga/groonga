@@ -49,9 +49,9 @@ Install `Xcode <https://developer.apple.com/xcode/>`_.
 
 Download source::
 
-  % curl -O http://packages.groonga.org/source/groonga/groonga-6.0.3.tar.gz
-  % tar xvzf groonga-6.0.3.tar.gz
-  % cd groonga-6.0.3
+  % curl -O http://packages.groonga.org/source/groonga/groonga-6.0.4.tar.gz
+  % tar xvzf groonga-6.0.4.tar.gz
+  % cd groonga-6.0.4
 
 Configure (see :ref:`source-configure` about ``configure`` options)::
 
