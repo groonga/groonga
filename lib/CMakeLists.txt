@@ -165,4 +165,12 @@ if(GRN_WITH_MRUBY)
   install(
     FILES ${QUERY_LOGGER_RUBY_SCRIPTS}
     DESTINATION "${GRN_RELATIVE_RUBY_SCRIPTS_DIR}/query_logger")
+
+  read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/scripts/expression_tree/sources.am
+    EXPRESSION_TREE_RUBY_SCRIPTS)
+  string(REGEX REPLACE "([^;]+)" "mrb/scripts/expression_tree/\\1"
+    EXPRESSION_TREE_RUBY_SCRIPTS "${EXPRESSION_TREE_RUBY_SCRIPTS}")
+  install(
+    FILES ${EXPRESSION_TREE_RUBY_SCRIPTS}
+    DESTINATION "${GRN_RELATIVE_RUBY_SCRIPTS_DIR}/expression_tree")
 endif()
