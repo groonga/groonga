@@ -412,11 +412,11 @@ msgid ""
 "も共有することができます。"
 msgstr ""
 
-msgid "twitter編"
+msgid "Twitter編"
 msgstr ""
 
 msgid ""
-"Groongaを使ってもらえるようにtwitterのアカウントGroongaを取得して 日々、リ"
+"Groongaを使ってもらえるようにTwitterのアカウントGroongaを取得して 日々、リ"
 "リースの案内をしたり、ユーザーサポートをしたりしています。"
 msgstr ""
 
@@ -427,7 +427,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"twitterでサポートされている安心感からGroongaユーザーの拡大に繋げる ことができ"
+"Twitterでサポートされている安心感からGroongaユーザーの拡大に繋げる ことができ"
 "るようにサポートの際に気をつけることをまとめます。"
 msgstr ""
 
@@ -464,16 +464,16 @@ msgid ""
 "まり負担を感じさせないようにすると良いです。::"
 msgstr ""
 
-msgid "twitterでのやりとりはできるだけ他の場所(例えばredmine)へと誘導しない"
+msgid "Twitterでのやりとりはできるだけ他の場所(例えばRedmine)へと誘導しない"
 msgstr ""
 
 msgid ""
-"twitterは気軽につぶやけることが重要なので、気軽にできないことを相手に要求する"
+"Twitterは気軽につぶやけることが重要なので、気軽にできないことを相手に要求する"
 "と萎縮されてしまう可能性があります。"
 msgstr ""
 
 msgid ""
-"いきなりredmineでバグ報告をお願いすると、しりごみしてしまうかもしれません。::"
+"いきなりRedmineでバグ報告をお願いすると、しりごみしてしまうかもしれません。::"
 msgstr ""
 
 msgid ""
@@ -482,7 +482,7 @@ msgid ""
 "す。"
 msgstr ""
 
-msgid "twitterでやりとりを完結できるようにします。"
+msgid "Twitterでやりとりを完結できるようにします。"
 msgstr ""
 
 msgid "クエリの実現"
