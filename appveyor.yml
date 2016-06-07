@@ -57,6 +57,6 @@ test_script:
      --groonga c:\groonga\bin\groonga.exe
      --base-directory test\command
      --reporter mark
-     --n-workers 4
+     --n-workers 1
      --timeout 60
      test\command\suite
