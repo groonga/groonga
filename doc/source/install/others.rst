@@ -147,7 +147,7 @@ Here is an example that log file is placed into shared NFS directory
 Specifies the default encoding. Available encodings are ``euc_jp``,
 ``sjis``, ``utf8``, ``latin1``, ``koi8r`` and ``none``.
 
-The default is ``utf-8``.
+The default is ``utf8``.
 
 Here is an example that Shift_JIS is used as the default encoding::
 
