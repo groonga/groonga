@@ -3082,7 +3082,7 @@ show_usage(FILE *output)
           "      --file <path>:          read commands from specified file\n"
           "      --input-fd <FD>:        read commands from specified file descriptor\n"
           "                              --file has a prioriry over --input-fd\n"
-          "      --output-fd <FD>:       output response to specifid file descriptor\n"
+          "      --output-fd <FD>:       output response to specified file descriptor\n"
           "  -p, --port <port number>:   specify server port number (client mode only)\n"
           "                              (default: %d)\n"
           "\n"
