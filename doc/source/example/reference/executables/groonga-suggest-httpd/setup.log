@@ -1,7 +1,7 @@
 Execution example::
 
   % groonga-suggest-create-dataset ${DB_PATH} query
-  > register suggest/suggest
+  > plugin_register suggest/suggest
   true
   > table_create event_type TABLE_HASH_KEY ShortText
   true

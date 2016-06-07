@@ -29,7 +29,7 @@ Here is an example that just load ``expression.rb`` as Ruby script.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/ruby_load/load.log
-.. register ruby/load
+.. plugin_register ruby/load
 .. ruby_load "expression.rb"
 
 Register ``ruby/load`` plugin to use ``ruby_load`` command in advance.

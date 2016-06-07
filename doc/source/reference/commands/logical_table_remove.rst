@@ -76,7 +76,7 @@ Register ``sharding`` plugin to use this command in advance.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_table_remove/usage_register.log
-.. register sharding
+.. plugin_register sharding
 
 You can remove all tables for the logical table by specifying only
 ``logical_table`` and ``shard_key``.

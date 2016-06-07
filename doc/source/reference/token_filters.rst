@@ -24,7 +24,7 @@ token filter module:
 .. groonga-command
 .. database: token_filters_example
 .. include:: ../example/reference/token_filters/example-table-create.log
-.. register token_filters/stop_word
+.. plugin_register token_filters/stop_word
 .. table_create Terms TABLE_PAT_KEY ShortText \
 ..   --default_tokenizer TokenBigram \
 ..   --normalizer NormalizerAuto \
@@ -56,7 +56,7 @@ Here is an example that uses ``TokenFilterStopWord`` token filter:
 .. groonga-command
 .. database: token_filters_stop_word
 .. include:: ../example/reference/token_filters/stop_word.log
-.. register token_filters/stop_word
+.. plugin_register token_filters/stop_word
 .. table_create Memos TABLE_NO_KEY
 .. column_create Memos content COLUMN_SCALAR ShortText
 .. table_create Terms TABLE_PAT_KEY ShortText \
@@ -94,7 +94,7 @@ Here is an example that uses ``TokenFilterStem`` token filter:
 .. groonga-command
 .. database: token_filters_stem
 .. include:: ../example/reference/token_filters/stem.log
-.. register token_filters/stem
+.. plugin_register token_filters/stem
 .. table_create Memos TABLE_NO_KEY
 .. column_create Memos content COLUMN_SCALAR ShortText
 .. table_create Terms TABLE_PAT_KEY ShortText \

@@ -34,7 +34,7 @@ Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_tokenize/simple_example.log
-.. register token_filters/stop_word
+.. plugin_register token_filters/stop_word
 .. table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto   --token_filters TokenFilterStopWord
 .. column_create Terms is_stop_word COLUMN_SCALAR Bool
 .. load --table Terms

@@ -29,7 +29,7 @@ Here is an example that just calculate ``1 + 2`` as Ruby script.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/ruby_eval/calc.log
-.. register ruby/eval
+.. plugin_register ruby/eval
 .. ruby_eval "1 + 2"
 
 Register ``ruby/eval`` plugin to use ``ruby_eval`` command in advance.

@@ -50,7 +50,7 @@ Usage
 Register ``sharding`` plugin to use ``logical_range_filter`` command in advance.
 
 .. groonga-command
-.. register sharding
+.. plugin_register sharding
 
 TODO: Add examples
 

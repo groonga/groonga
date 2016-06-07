@@ -41,7 +41,7 @@ Usage
 Register ``sharding`` plugin to use ``logical_count`` command in advance.
 
 .. groonga-command
-.. register sharding
+.. plugin_register sharding
 
 Note that ``logical_count`` is implemented as an experimental plugin, and the specification may be changed in the future.
 
