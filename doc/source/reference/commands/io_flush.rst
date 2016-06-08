@@ -36,6 +36,7 @@ Groonga database:
   * :doc:`column_rename`
   * :doc:`plugin_register`
   * :doc:`plugin_unregister`
+  * :doc:`logical_table_remove`
 
 If you're using :ref:`select-scorer` parameter in :doc:`select` to
 change existing column values, :doc:`select` is added to the above
@@ -135,7 +136,7 @@ correspondence table between command and flush targets.
        Database::
 
          io_flush --recursive no
-   * - :doc:`table_remove` and :doc:`table_rename`
+   * - :doc:`table_remove`, :doc:`table_rename` and :doc:`logical_table_remove`
      - Database.
      - Database::
 

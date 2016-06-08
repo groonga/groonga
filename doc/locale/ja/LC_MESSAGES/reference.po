@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-06-07 17:08+0900\n"
+"PO-Revision-Date: 2016-06-08 08:59+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -5449,9 +5449,6 @@ msgstr ""
 msgid "``io_flush``"
 msgstr ""
 
-msgid "This command is an experimental feature."
-msgstr "このコマンドは実験的な機能です。"
-
 msgid ""
 "``io_flush`` flushes all changes in memory to disk explicitly. Normally, you "
 "don't need to use ``io_flush`` explicitly. Because flushing is done "
@@ -5503,6 +5500,9 @@ msgid ":doc:`plugin_register`"
 msgstr ""
 
 msgid ":doc:`plugin_unregister`"
+msgstr ""
+
+msgid ":doc:`logical_table_remove`"
 msgstr ""
 
 msgid ""
@@ -5589,8 +5589,10 @@ msgstr "処理対象のテーブルとデータベース。"
 msgid "Table::"
 msgstr "テーブル::"
 
-msgid ":doc:`table_remove` and :doc:`table_rename`"
-msgstr ":doc:`table_remove` と :doc:`table_rename`"
+msgid ""
+":doc:`table_remove`, :doc:`table_rename` and :doc:`logical_table_remove`"
+msgstr ""
+":doc:`table_remove` と :doc:`table_rename` と :doc:`logical_table_remove`"
 
 msgid "Database."
 msgstr "データベース。"
@@ -7403,6 +7405,9 @@ msgstr ""
 
 msgid "``normalize``"
 msgstr ""
+
+msgid "This command is an experimental feature."
+msgstr "このコマンドは実験的な機能です。"
 
 msgid "This command may be changed in the future."
 msgstr "このコマンドは将来的に変更されるかもしれません。"
