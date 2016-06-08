@@ -10644,12 +10644,11 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn_ii_builder *builder)
         if (rc == GRN_SUCCESS) {
           uint32_t sid = (uint32_t)(i + 1);
           rc = grn_ii_builder_append_obj(ctx, builder, rid, sid, obj);
-          if (rc == GRN_SUCCESS &&
-              builder->n >= builder->options.block_threshold) {
-            rc = grn_ii_builder_flush_block(ctx, builder);
-          }
         }
       }
+    }
+    if (rc == GRN_SUCCESS && builder->n >= builder->options.block_threshold) {
+      rc = grn_ii_builder_flush_block(ctx, builder);
     }
   }
   if (rc == GRN_SUCCESS) {
@@ -10974,6 +10973,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx, grn_ii_builder *builder,
   uint32_t rid = GRN_ID_NIL, last_sid = 0;
   uint32_t ii_flags = builder->ii->header->flags;
   grn_ii_builder_chunk *chunk = &builder->chunk;
+
   for (;;) {
     uint32_t gap, freq;
     uint64_t value;
