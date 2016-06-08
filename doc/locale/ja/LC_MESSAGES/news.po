@@ -39,7 +39,7 @@ msgid ""
 "[:doc:`/reference/commands/select`] Fixed a bug that ``--drilldown`` against "
 "a temporary column created by ``--columns`` refers freed memory."
 msgstr ""
-"[:doc:`/reference/commands/select`] ``--columns`` で作成して一時カラムに対す"
+"[:doc:`/reference/commands/select`] ``--columns`` で作成した一時カラムに対す"
 "る ``--drilldown`` が解放済みのメモリーを参照する問題を修正しました。"
 
 msgid ""
