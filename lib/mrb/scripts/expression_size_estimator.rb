@@ -91,6 +91,17 @@ module Groonga
       index_column
     end
 
+    def sampling_cursor_limit(n_terms)
+      limit = n_terms * 0.01
+      if limit < 10
+        10
+      elsif limit > 1000
+        1000
+      else
+        limit.to_i
+      end
+    end
+
     def estimate_match(data, index_column)
       index_column.estimate_size(:query => data.query.value)
     end
@@ -115,8 +126,13 @@ module Groonga
 
     def estimate_range(data, index_column)
       lexicon = index_column.lexicon
+      n_terms = lexicon.size
+      return 0 if n_terms.zero?
+
       value = data.query.value
-      options = {}
+      options = {
+        :limit => sampling_cursor_limit(n_terms),
+      }
       case data.op
       when Operator::LESS
         options[:max] = value
@@ -132,7 +148,9 @@ module Groonga
         options[:flags] = TableCursorFlags::GE
       end
       TableCursor.open(lexicon, options) do |cursor|
-        index_column.estimate_size(:lexicon_cursor => cursor)
+        size = index_column.estimate_size(:lexicon_cursor => cursor)
+        size += 1 if cursor.next != ID::NIL
+        size
       end
     end
 
@@ -142,15 +160,9 @@ module Groonga
       return 0 if n_terms.zero?
 
       value = data.query.value
-      limit = n_terms / 0.01
-      if limit < 10
-        limit = 10
-      elsif limit > 1000
-        limit = 1000
-      end
       options = {
         :min => value,
-        :limit => limit,
+        :limit => sampling_cursor_limit(n_terms),
         :flags => TableCursorFlags::PREFIX,
       }
       TableCursor.open(lexicon, options) do |cursor|
