@@ -198,6 +198,37 @@ class TestEstimateSize < QueryOptimizerTestCase
     end
   end
 
+  class TestPrefixSearch < self
+    def setup
+      Groonga::Schema.define do |schema|
+        schema.create_table("Logs") do |table|
+          table.short_text("user")
+        end
+
+        schema.create_table("Users",
+                            :type => :patricia_trie,
+                            :key_type => :short_text) do |table|
+          table.index("Logs", "user")
+        end
+      end
+      super
+    end
+
+    def test_no_record
+      assert_equal(0, estimate_size("user @^ 'al'"))
+    end
+
+    def test_have_record
+      @logs.add(:user => "bob")
+      @logs.add(:user => "alice")
+      @logs.add(:user => "alian")
+      @logs.add(:user => "alice")
+      @logs.add(:user => "alfread")
+      @logs.add(:user => "calros")
+      assert_equal(6, estimate_size("user @^ 'al'"))
+    end
+  end
+
   class TestBetweenSearch < self
     def setup
       Groonga::Schema.define do |schema|
