@@ -4501,8 +4501,10 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                   if (chunk_is_reused(ctx, c->ii, c,
                                       c->cinfo[c->curr_chunk].segno, size)) {
                     GRN_LOG(ctx, GRN_LOG_WARNING,
-                            "chunk(%d) is reused by another thread",
-                            c->cinfo[c->curr_chunk].segno);
+                            "[ii][cursor] "
+                            "chunk(%d) is reused by another thread: %p",
+                            c->cinfo[c->curr_chunk].segno,
+                            c);
                     c->pc.rid = 0;
                     break;
                   }
