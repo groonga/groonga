@@ -658,13 +658,36 @@ grn_obj_io(grn_obj *obj)
 }
 
 uint32_t
-grn_db_get_last_modified(grn_ctx *ctx, grn_obj *db)
+grn_obj_get_last_modified(grn_ctx *ctx, grn_obj *obj)
 {
-  if (!db) {
+  if (!obj) {
     return 0;
   }
 
-  return grn_obj_io(db)->header->last_modified;
+  return grn_obj_io(obj)->header->last_modified;
+}
+
+grn_bool
+grn_obj_is_dirty(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!obj) {
+    return GRN_FALSE;
+  }
+
+  switch (obj->header.type) {
+  case GRN_TABLE_PAT_KEY :
+    return grn_pat_is_dirty(ctx, (grn_pat *)obj);
+  case GRN_TABLE_DAT_KEY :
+    return grn_dat_is_dirty(ctx, (grn_dat *)obj);
+  default :
+    return GRN_FALSE;
+  }
+}
+
+uint32_t
+grn_db_get_last_modified(grn_ctx *ctx, grn_obj *db)
+{
+  return grn_obj_get_last_modified(ctx, db);
 }
 
 grn_bool
@@ -677,14 +700,7 @@ grn_db_is_dirty(grn_ctx *ctx, grn_obj *db)
   }
 
   keys = ((grn_db *)db)->keys;
-  switch (keys->header.type) {
-  case GRN_TABLE_PAT_KEY :
-    return grn_pat_is_dirty(ctx, (grn_pat *)keys);
-  case GRN_TABLE_DAT_KEY :
-    return grn_dat_is_dirty(ctx, (grn_dat *)keys);
-  default :
-    return GRN_FALSE;
-  }
+  return grn_obj_is_dirty(ctx, keys);
 }
 
 static grn_rc
@@ -763,6 +779,7 @@ grn_obj_touch(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
     case GRN_COLUMN_FIX_SIZE :
     case GRN_COLUMN_INDEX :
       if (!IS_TEMP(obj)) {
+        grn_obj_io(obj)->header->last_modified = tv->tv_sec;
         grn_obj_touch(ctx, DB_OBJ(obj)->db, tv);
       }
       break;

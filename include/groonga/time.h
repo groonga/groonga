@@ -24,11 +24,6 @@
 extern "C" {
 #endif
 
-typedef struct {
-  int64_t tv_sec;
-  int32_t tv_nsec;
-} grn_timeval;
-
 #define GRN_TIMEVAL_TO_MSEC(timeval)                    \
   (((timeval)->tv_sec * GRN_TIME_MSEC_PER_SEC) +        \
    ((timeval)->tv_nsec / GRN_TIME_NSEC_PER_MSEC))

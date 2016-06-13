@@ -1606,6 +1606,11 @@ struct _grn_table_scan_hit {
   unsigned int length;
 };
 
+typedef struct {
+  int64_t tv_sec;
+  int32_t tv_nsec;
+} grn_timeval;
+
 #ifdef __cplusplus
 }
 #endif
