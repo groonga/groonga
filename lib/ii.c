@@ -4386,6 +4386,7 @@ grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
   }
 
   if (grn_ii_cursor_set_min_enable) {
+    grn_id old_min = c->min;
     c->min = min;
     if (c->buf &&
         c->pc.rid < c->min &&
@@ -4410,10 +4411,16 @@ grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
         }
       }
       if (skip_chunk > c->curr_chunk) {
+        uint32_t old_chunk = c->curr_chunk;
         c->pc.rid = rid;
         c->prev_chunk_rid = rid - c->cinfo[skip_chunk - 1].dgap;
         c->curr_chunk = skip_chunk;
         c->crp = c->cdp + c->cdf;
+        GRN_LOG(ctx, GRN_LOG_DEBUG,
+                "[ii][cursor][min] skip: %p: min(%u->%u): chunk(%u->%u)",
+                c,
+                old_min, min,
+                old_chunk, c->curr_chunk);
       }
     }
   }
@@ -4880,7 +4887,8 @@ cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t 
       return GRN_END_OF_DATA;
     }
     if (!grn_ii_cursor_next_pos(ctx, c)) {
-      GRN_LOG(ctx, GRN_LOG_ERROR, "invalid ii_cursor b");
+      GRN_LOG(ctx, GRN_LOG_ERROR,
+              "[ii][cursor][heap][push] invalid cursor: %p", c);
       grn_ii_cursor_close(ctx, c);
       return GRN_END_OF_DATA;
     }
@@ -4955,7 +4963,8 @@ cursor_heap_pop(grn_ctx *ctx, cursor_heap *h, grn_id min)
       grn_ii_cursor_close(ctx, c);
       h->bins[0] = h->bins[--h->n_entries];
     } else if (!grn_ii_cursor_next_pos(ctx, c)) {
-      GRN_LOG(ctx, GRN_LOG_ERROR, "invalid ii_cursor c");
+      GRN_LOG(ctx, GRN_LOG_ERROR,
+              "[ii][cursor][heap][pop] invalid cursor: %p", c);
       grn_ii_cursor_close(ctx, c);
       h->bins[0] = h->bins[--h->n_entries];
     }
@@ -4973,7 +4982,8 @@ cursor_heap_pop_pos(grn_ctx *ctx, cursor_heap *h)
         grn_ii_cursor_close(ctx, c);
         h->bins[0] = h->bins[--h->n_entries];
       } else if (!grn_ii_cursor_next_pos(ctx, c)) {
-        GRN_LOG(ctx, GRN_LOG_ERROR, "invalid ii_cursor d");
+        GRN_LOG(ctx, GRN_LOG_ERROR,
+                "[ii][cursor][heap][pop][position] invalid cursor: %p", c);
         grn_ii_cursor_close(ctx, c);
         h->bins[0] = h->bins[--h->n_entries];
       }
