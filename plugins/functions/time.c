@@ -45,7 +45,7 @@ func_time_classify_raw(grn_ctx *ctx,
   grn_obj *time;
   uint32_t interval_raw = 1;
   grn_obj *classed_time;
-  grn_bool accept_interval;
+  grn_bool accept_interval = GRN_TRUE;
 
   switch (unit) {
   case GRN_TIME_CLASSIFY_UNIT_SECOND :
