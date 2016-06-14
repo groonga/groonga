@@ -5897,7 +5897,9 @@ inline static void
 grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
                        grn_id *range_id, grn_obj_flags *range_flags)
 {
-  if (grn_obj_is_proc(ctx, obj)) {
+  if (!obj) {
+    *range_id = GRN_ID_NIL;
+  } else if (grn_obj_is_proc(ctx, obj)) {
     /* TODO */
     *range_id = GRN_ID_NIL;
   } else if (GRN_DB_OBJP(obj)) {
