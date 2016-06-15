@@ -320,11 +320,23 @@ command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
   }
 
   fullname[fullname_len] = GRN_DB_DELIMITER;
-  grn_memcpy((fullname + fullname_len + 1),
+  fullname_len++;
+  if (fullname_len + GRN_TEXT_LEN(name) > GRN_TABLE_MAX_KEY_SIZE) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[column][remove] column name is too long: <%d> > <%u>: "
+                     "<%.*s>",
+                     (int)GRN_TEXT_LEN(name),
+                     GRN_TABLE_MAX_KEY_SIZE - fullname_len,
+                     (int)GRN_TEXT_LEN(name),
+                     GRN_TEXT_VALUE(name));
+    grn_ctx_output_bool(ctx, GRN_FALSE);
+    return NULL;
+  }
+  grn_memcpy(fullname + fullname_len,
              GRN_TEXT_VALUE(name),
              GRN_TEXT_LEN(name));
-  fullname_len += GRN_TEXT_LEN(name) + 1;
-  /* TODO:check fullname_len < GRN_TABLE_MAX_KEY_SIZE */
+  fullname_len += GRN_TEXT_LEN(name);
   column = grn_ctx_get(ctx, fullname, fullname_len);
   if (!column) {
     GRN_PLUGIN_ERROR(ctx,
