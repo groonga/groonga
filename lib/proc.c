@@ -2494,7 +2494,8 @@ run_query(grn_ctx *ctx, grn_obj *table,
                                         flags,
                                         GRN_TEXT_VALUE(query_expander_name),
                                         GRN_TEXT_LEN(query_expander_name),
-                                        &expanded_query);
+                                        &expanded_query,
+                                        "[query]");
       if (rc != GRN_SUCCESS) {
         GRN_OBJ_FIN(ctx, &expanded_query);
         goto exit;

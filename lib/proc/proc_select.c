@@ -183,7 +183,8 @@ grn_proc_syntax_expand_query(grn_ctx *ctx,
                              grn_expr_flags flags,
                              const char *query_expander_name,
                              unsigned int query_expander_name_len,
-                             grn_obj *expanded_query)
+                             grn_obj *expanded_query,
+                             const char *error_message_tag)
 {
   grn_obj *query_expander;
 
@@ -193,7 +194,8 @@ grn_proc_syntax_expand_query(grn_ctx *ctx,
   if (!query_expander) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
-                     "nonexistent query expansion column: <%.*s>",
+                     "%s nonexistent query expander: <%.*s>",
+                     error_message_tag,
                      query_expander_name_len, query_expander_name);
     return ctx->rc;
   }
@@ -1188,7 +1190,8 @@ grn_select_filter(grn_ctx *ctx,
                                         flags,
                                         data->query_expander.value,
                                         data->query_expander.length,
-                                        &query_expander_buf);
+                                        &query_expander_buf,
+                                        "[select]");
       if (rc == GRN_SUCCESS) {
         query = GRN_TEXT_VALUE(&query_expander_buf);
         query_len = GRN_TEXT_LEN(&query_expander_buf);

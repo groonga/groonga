@@ -14,7 +14,7 @@ select --table Memos --query_expander Nonexistent.nonexistent   --match_columns 
       0.0,
       0.0
     ],
-    "nonexistent query expansion column: <Nonexistent.nonexistent>"
+    "[select] nonexistent query expander: <Nonexistent.nonexistent>"
   ]
 ]
-#|e| nonexistent query expansion column: <Nonexistent.nonexistent>
+#|e| [select] nonexistent query expander: <Nonexistent.nonexistent>

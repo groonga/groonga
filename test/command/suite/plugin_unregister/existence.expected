@@ -47,5 +47,5 @@ select --table Memos --query_expander QueryExpanderTSV   --match_columns content
 plugin_unregister "query_expanders/tsv"
 [[0,0.0,0.0],true]
 select --table Memos --query_expander QueryExpanderTSV   --match_columns content --query rroonga
-[[[-22,0.0,0.0],"nonexistent query expansion column: <QueryExpanderTSV>"]]
-#|e| nonexistent query expansion column: <QueryExpanderTSV>
+[[[-22,0.0,0.0],"[select] nonexistent query expander: <QueryExpanderTSV>"]]
+#|e| [select] nonexistent query expander: <QueryExpanderTSV>
