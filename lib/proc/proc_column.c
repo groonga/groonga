@@ -296,6 +296,7 @@ command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
 {
   grn_obj *table_raw;
   grn_obj *name;
+  grn_bool dependent;
   grn_obj *table;
   grn_obj *column;
   char fullname[GRN_TABLE_MAX_KEY_SIZE];
@@ -303,6 +304,8 @@ command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
 
   table_raw = grn_plugin_proc_get_var(ctx, user_data, "table", -1);
   name      = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
+  dependent = grn_plugin_proc_get_var_bool(ctx, user_data, "dependent", -1,
+                                           GRN_TRUE);
 
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(table_raw),
@@ -351,7 +354,11 @@ command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
     return NULL;
   }
 
-  grn_obj_remove(ctx, column);
+  if (dependent) {
+    grn_obj_remove_dependent(ctx, column);
+  } else {
+    grn_obj_remove(ctx, column);
+  }
   grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
   return NULL;
 }
@@ -359,14 +366,15 @@ command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
 void
 grn_proc_init_column_remove(grn_ctx *ctx)
 {
-  grn_expr_var vars[2];
+  grn_expr_var vars[3];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "table", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "name", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[2]), "dependent", -1);
   grn_plugin_command_create(ctx,
                             "column_remove", -1,
                             command_column_remove,
-                            2,
+                            3,
                             vars);
 }
 
