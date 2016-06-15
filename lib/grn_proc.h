@@ -55,6 +55,7 @@ void grn_proc_init_lock_release(grn_ctx *ctx);
 void grn_proc_init_object_exist(grn_ctx *ctx);
 void grn_proc_init_object_inspect(grn_ctx *ctx);
 void grn_proc_init_object_remove(grn_ctx *ctx);
+void grn_proc_init_query_expand(grn_ctx *ctx);
 void grn_proc_init_schema(grn_ctx *ctx);
 void grn_proc_init_select(grn_ctx *ctx);
 void grn_proc_init_snippet(grn_ctx *ctx);
@@ -118,6 +119,11 @@ grn_rc grn_proc_syntax_expand_query(grn_ctx *ctx,
                                     unsigned int query_expander_name_len,
                                     grn_obj *expanded_query,
                                     const char *error_message_tag);
+
+grn_expr_flags grn_proc_expr_query_flags_parse(grn_ctx *ctx,
+                                               const char *query_flags,
+                                               size_t query_flags_size,
+                                               const char *error_message_tag);
 
 #ifdef __cplusplus
 }

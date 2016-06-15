@@ -4335,4 +4335,6 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
 
   grn_proc_init_snippet(ctx);
   grn_proc_init_highlight(ctx);
+
+  grn_proc_init_query_expand(ctx);
 }

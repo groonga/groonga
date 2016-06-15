@@ -732,12 +732,14 @@ grn_drilldown_data_fill(grn_ctx *ctx,
   GRN_SELECT_FILL_STRING(drilldown->table_name, table);
 }
 
-static grn_expr_flags
-grn_parse_query_flags(grn_ctx *ctx, const char *query_flags,
-                      unsigned int query_flags_len)
+grn_expr_flags
+grn_proc_expr_query_flags_parse(grn_ctx *ctx,
+                                const char *query_flags,
+                                size_t query_flags_size,
+                                const char *error_message_tag)
 {
   grn_expr_flags flags = 0;
-  const char *query_flags_end = query_flags + query_flags_len;
+  const char *query_flags_end = query_flags + query_flags_size;
 
   while (query_flags < query_flags_end) {
     if (*query_flags == '|' || *query_flags == ' ') {
@@ -745,13 +747,16 @@ grn_parse_query_flags(grn_ctx *ctx, const char *query_flags,
       continue;
     }
 
-#define CHECK_EXPR_FLAG(name)\
-  if (((query_flags_end - query_flags) >= (sizeof(#name) - 1)) &&\
-      (!memcmp(query_flags, #name, sizeof(#name) - 1))) {\
-    flags |= GRN_EXPR_ ## name;\
-    query_flags += sizeof(#name) - 1;\
-    continue;\
-  }
+#define CHECK_EXPR_FLAG(name)                                           \
+    if (((query_flags_end - query_flags) >= (sizeof(#name) - 1)) &&     \
+        (memcmp(query_flags, #name, sizeof(#name) - 1) == 0) &&         \
+        (((query_flags_end - query_flags) == (sizeof(#name) - 1)) ||    \
+         (query_flags[sizeof(#name) - 1] == '|') ||                     \
+         (query_flags[sizeof(#name) - 1] == ' '))) {                    \
+      flags |= GRN_EXPR_ ## name;                                       \
+      query_flags += sizeof(#name) - 1;                                 \
+      continue;                                                         \
+    }
 
     CHECK_EXPR_FLAG(ALLOW_PRAGMA);
     CHECK_EXPR_FLAG(ALLOW_COLUMN);
@@ -763,7 +768,8 @@ grn_parse_query_flags(grn_ctx *ctx, const char *query_flags,
 #undef GNR_EXPR_NONE
 
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "invalid query flag: <%.*s>",
+                     "%s invalid query flag: <%.*s>",
+                     error_message_tag,
                      (int)(query_flags_end - query_flags),
                      query_flags);
     return 0;
@@ -1171,9 +1177,10 @@ grn_select_filter(grn_ctx *ctx,
 
     flags = GRN_EXPR_SYNTAX_QUERY;
     if (data->query_flags.length) {
-      flags |= grn_parse_query_flags(ctx,
-                                     data->query_flags.value,
-                                     data->query_flags.length);
+      flags |= grn_proc_expr_query_flags_parse(ctx,
+                                               data->query_flags.value,
+                                               data->query_flags.length,
+                                               "[select]");
       if (ctx->rc) {
         return GRN_FALSE;
       }
