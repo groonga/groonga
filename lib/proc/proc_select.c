@@ -2323,9 +2323,8 @@ grn_select_output_drilldowns(grn_ctx *ctx,
   } GRN_HASH_EACH_END(ctx, cursor);
 
   is_labeled = (data->drilldown.keys.length == 0);
-  if (is_labeled) {
-    data->output.formatter->drilldowns_open(ctx, data, n_available_results);
-  }
+
+  data->output.formatter->drilldowns_open(ctx, data, n_available_results);
 
   GRN_HASH_EACH_BEGIN(ctx, data->drilldowns, cursor, id) {
     grn_drilldown_data *drilldown;
@@ -2589,13 +2588,21 @@ grn_select_output_drilldown_label_v3(grn_ctx *ctx,
   if (data->drilldown.keys.length == 0) {
     GRN_OUTPUT_STR(drilldown->label.value, drilldown->label.length);
   } else {
+    grn_obj *key;
     char name[GRN_TABLE_MAX_KEY_SIZE];
     int name_len;
 
-    name_len = grn_obj_name(ctx,
-                            drilldown->parsed_keys[0].key,
-                            name,
-                            GRN_TABLE_MAX_KEY_SIZE);
+    key = drilldown->parsed_keys[0].key;
+    switch (key->header.type) {
+    case GRN_COLUMN_FIX_SIZE :
+    case GRN_COLUMN_VAR_SIZE :
+    case GRN_COLUMN_INDEX :
+      name_len = grn_column_name(ctx, key, name, GRN_TABLE_MAX_KEY_SIZE);
+      break;
+    default :
+      name_len = grn_obj_name(ctx, key, name, GRN_TABLE_MAX_KEY_SIZE);
+      break;
+    }
     GRN_OUTPUT_STR(name, name_len);
   }
 }
