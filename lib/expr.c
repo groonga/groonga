@@ -5682,6 +5682,7 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   grn_table_cursor *tc;
   grn_hash_cursor *hc;
   grn_hash *s = (grn_hash *)res;
+  GRN_RECORD_INIT(v, 0, grn_obj_id(ctx, table));
   grn_table_select_sequential_data data;
   grn_table_select_sequential_init_func init;
   grn_table_select_sequential_exec_func exec;
@@ -5754,7 +5755,6 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, -1, 0))) {
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
-        GRN_RECORD_SET(ctx, v, *idp);
         score = exec(ctx, *idp, &data);
         if (ctx->rc) {
           break;
