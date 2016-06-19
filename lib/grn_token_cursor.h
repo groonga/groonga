@@ -60,7 +60,7 @@ typedef struct {
   grn_proc_ctx pctx;
   struct {
     grn_obj *objects;
-    grn_obj user_data_ptrs;
+    void **data;
   } token_filters;
   uint32_t variant;
   grn_obj *nstr;
