@@ -75,6 +75,7 @@ static grn_bool grn_ii_cursor_set_min_enable = GRN_TRUE;
 static double grn_ii_select_too_many_index_match_ratio = -1;
 static double grn_ii_estimate_size_for_query_reduce_ratio = 0.9;
 static grn_bool grn_ii_overlap_token_skip_enable = GRN_FALSE;
+static uint32_t grn_ii_builder_block_threshold_force = 0;
 
 void
 grn_ii_init_from_env(void)
@@ -122,6 +123,22 @@ grn_ii_init_from_env(void)
       grn_ii_overlap_token_skip_enable = GRN_TRUE;
     } else {
       grn_ii_overlap_token_skip_enable = GRN_FALSE;
+    }
+  }
+
+  {
+    char grn_ii_builder_block_threshold_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_BUILDER_BLOCK_THRESHOLD",
+               grn_ii_builder_block_threshold_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_ii_builder_block_threshold_env[0]) {
+      grn_ii_builder_block_threshold_force =
+        grn_atoui(grn_ii_builder_block_threshold_env,
+                  grn_ii_builder_block_threshold_env +
+                  strlen(grn_ii_builder_block_threshold_env),
+                  NULL);
+    } else {
+      grn_ii_builder_block_threshold_force = 0;
     }
   }
 }
@@ -9893,6 +9910,9 @@ grn_ii_builder_init(grn_ctx *ctx, grn_ii_builder *builder,
 {
   builder->ii = ii;
   builder->options = *options;
+  if (grn_ii_builder_block_threshold_force > 0) {
+    builder->options.block_threshold = grn_ii_builder_block_threshold_force;
+  }
   grn_ii_builder_options_fix(&builder->options);
 
   builder->src_table = NULL;

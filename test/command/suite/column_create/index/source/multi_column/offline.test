@@ -1,0 +1,18 @@
+#$GRN_II_BUILDER_BLOCK_THRESHOLD=5
+
+table_create Data TABLE_NO_KEY
+column_create Data value1 COLUMN_SCALAR Text
+column_create Data value2 COLUMN_SCALAR Text
+
+load --table Data
+[
+{"value1": "a a a a a", "value2": "a"}
+]
+
+table_create Lexicon TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Lexicon data_values COLUMN_INDEX|WITH_SECTION|WITH_POSITION \
+  Data value1,value2
+
+select Data --match_columns value2 --query a --limit 0
