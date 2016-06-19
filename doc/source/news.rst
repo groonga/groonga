@@ -14,7 +14,7 @@ Release 6.0.4 - 2016-06-06
 
 It's a bug fix release of 6.0.3. It's recommend that Groonga 6.0.3
 users upgrade to 6.0.4. This release fixes some search related
-problem.
+problems.
 
 Fixes
 ^^^^^
