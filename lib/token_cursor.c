@@ -24,10 +24,10 @@ static void
 grn_token_cursor_open_initialize_token_filters(grn_ctx *ctx,
                                                grn_token_cursor *token_cursor)
 {
-  grn_obj *token_filters = token_cursor->token_filters.objects;
+  grn_obj *token_filters = token_cursor->token_filter.objects;
   unsigned int i, n_token_filters;
 
-  token_cursor->token_filters.data = NULL;
+  token_cursor->token_filter.data = NULL;
 
   if (token_filters) {
     n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
@@ -39,8 +39,8 @@ grn_token_cursor_open_initialize_token_filters(grn_ctx *ctx,
     return;
   }
 
-  token_cursor->token_filters.data = GRN_MALLOCN(void *, n_token_filters);
-  if (!token_cursor->token_filters.data) {
+  token_cursor->token_filter.data = GRN_MALLOCN(void *, n_token_filters);
+  if (!token_cursor->token_filter.data) {
     return;
   }
 
@@ -48,7 +48,7 @@ grn_token_cursor_open_initialize_token_filters(grn_ctx *ctx,
     grn_obj *token_filter_object = GRN_PTR_VALUE_AT(token_filters, i);
     grn_proc *token_filter = (grn_proc *)token_filter_object;
 
-    token_cursor->token_filters.data[i] =
+    token_cursor->token_filter.data[i] =
       token_filter->callbacks.token_filter.init(ctx,
                                                 token_cursor->table,
                                                 token_cursor->mode);
@@ -75,7 +75,7 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   token_cursor->mode = mode;
   token_cursor->encoding = encoding;
   token_cursor->tokenizer = tokenizer;
-  token_cursor->token_filters.objects = token_filters;
+  token_cursor->token_filter.objects = token_filters;
   token_cursor->orig = (const unsigned char *)str;
   token_cursor->orig_blen = str_len;
   token_cursor->curr = NULL;
@@ -139,7 +139,7 @@ grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
                                           grn_obj *current_token_data,
                                           grn_obj *status)
 {
-  grn_obj *token_filters = token_cursor->token_filters.objects;
+  grn_obj *token_filters = token_cursor->token_filter.objects;
   unsigned int i, n_token_filters;
   grn_token current_token;
   grn_token next_token;
@@ -164,7 +164,7 @@ grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
   for (i = 0; i < n_token_filters; i++) {
     grn_obj *token_filter_object = GRN_PTR_VALUE_AT(token_filters, i);
     grn_proc *token_filter = (grn_proc *)token_filter_object;
-    void *data = token_cursor->token_filters.data[i];
+    void *data = token_cursor->token_filter.data[i];
 
 #define SKIP_FLAGS\
     (GRN_TOKEN_SKIP |\
@@ -338,7 +338,7 @@ static void
 grn_token_cursor_close_token_filters(grn_ctx *ctx,
                                      grn_token_cursor *token_cursor)
 {
-  grn_obj *token_filters = token_cursor->token_filters.objects;
+  grn_obj *token_filters = token_cursor->token_filter.objects;
   unsigned int i, n_token_filters;
 
   if (token_filters) {
@@ -354,11 +354,11 @@ grn_token_cursor_close_token_filters(grn_ctx *ctx,
   for (i = 0; i < n_token_filters; i++) {
     grn_obj *token_filter_object = GRN_PTR_VALUE_AT(token_filters, i);
     grn_proc *token_filter = (grn_proc *)token_filter_object;
-    void *data = token_cursor->token_filters.data[i];
+    void *data = token_cursor->token_filter.data[i];
 
     token_filter->callbacks.token_filter.fin(ctx, data);
   }
-  GRN_FREE(token_cursor->token_filters.data);
+  GRN_FREE(token_cursor->token_filter.data);
 }
 
 grn_rc

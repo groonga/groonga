@@ -61,7 +61,7 @@ typedef struct {
   struct {
     grn_obj *objects;
     void **data;
-  } token_filters;
+  } token_filter;
   uint32_t variant;
   grn_obj *nstr;
 } grn_token_cursor;
