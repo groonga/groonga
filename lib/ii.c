@@ -9195,7 +9195,7 @@ grn_ii_builder_term_get_buf(grn_ii_builder_term *term)
 }
 
 /*
- * grn_ii_builder_term_init intiializes a term. Note that an initialized term
+ * grn_ii_builder_term_init initializes a term. Note that an initialized term
  * must be finalized by grn_ii_builder_term_fin.
  */
 static void
