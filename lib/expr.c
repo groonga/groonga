@@ -6607,6 +6607,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       grn_expr *e = (grn_expr *)scanner->expr;
       grn_expr_code *codes = e->codes;
       uint32_t codes_curr = e->codes_curr;
+      v = grn_expr_get_var_by_offset(ctx, (grn_obj *)e, 0);
       GRN_PTR_INIT(&res_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
       for (i = 0; i < scanner->n_sis; i++) {
         scan_info *si = scanner->sis[i];
