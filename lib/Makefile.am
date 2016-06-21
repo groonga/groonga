@@ -31,6 +31,9 @@ DEFS += -D_REENTRANT $(GRN_DEFS) -DGRN_DAT_EXPORT
 
 include sources.am
 
+#nfkc.c:
+#	$(RUBY) nfkc.rb --impl=table
+
 libgroonga_la_LDFLAGS =				\
 	-version-info $(LT_VERSION_INFO)	\
 	-no-undefined				\
