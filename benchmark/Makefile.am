@@ -13,7 +13,8 @@ noinst_PROGRAMS =				\
 	bench-query-optimizer			\
 	bench-range-select			\
 	bench-result-set			\
-	bench-between-sequential
+	bench-between-sequential		\
+	bench-nfkc
 endif
 
 EXTRA_DIST =					\
@@ -60,6 +61,9 @@ nodist_EXTRA_bench_result_set_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 bench_between_sequential_SOURCES = bench-between-sequential.c
 nodist_EXTRA_bench_between_sequential_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 
+bench_nfkc_SOURCES = bench-nfkc.c
+nodist_EXTRA_bench_nfkc_SOURCES = $(NONEXISTENT_CXX_SOURCE)
+
 benchmarks =					\
 	run-bench-table-factory			\
 	run-bench-geo-distance			\
@@ -68,7 +72,8 @@ benchmarks =					\
 	run-bench-query-optimizer		\
 	run-bench-range-select			\
 	run-bench-result-set			\
-	run-bench-between-sequential
+	run-bench-between-sequential		\
+	run-bench-nfkc
 
 run-bench-table-factory: bench-table-factory
 	@echo $@:
@@ -131,5 +136,9 @@ run-bench-between-sequential: bench-between-sequential
 	env							\
 	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
 	  ./bench-between-sequential
+
+run-bench-nfkc: bench-nfkc
+	@echo $@:
+	./bench-nfkc
 
 benchmark: $(benchmarks)
