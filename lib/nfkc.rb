@@ -287,21 +287,24 @@ class TableGenerator < SwitchGenerator
     end
     byte_size_groups.keys.sort.each do |common_bytes|
       chars = byte_size_groups[common_bytes]
-      @output.puts(<<-TABLE_HEADER)
-
-static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
-      TABLE_HEADER
-
       lines = []
+      n_values = 0
       last_bytes = chars.collect {|char| char.bytes.last}
       last_bytes.min.step(last_bytes.max).each_slice(8) do |slice|
         values = slice.collect do |last_byte|
           yield((common_bytes + [last_byte]).pack("c*"))
         end
+        n_values += values.size
         lines << ("  " + values.join(", "))
       end
-      @output.puts(lines.join(",\n"))
 
+      next if n_values == 1
+
+      @output.puts(<<-TABLE_HEADER)
+
+static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
+      TABLE_HEADER
+      @output.puts(lines.join(",\n"))
       @output.puts(<<-TABLE_FOOTER)
 };
       TABLE_FOOTER
@@ -313,6 +316,7 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
                               char_map,
                               default,
                               return_type,
+                              options={},
                               &converter)
     byte_size_groups = char_map.keys.group_by do |from|
       bytes = from.bytes
@@ -325,15 +329,17 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
                                  byte_size_groups,
                                  &converter)
 
+    modifier = options[:internal] ? "static inline " : ""
     @output.puts(<<-HEADER)
 
-#{return_type}
+#{modifier}#{return_type}
 grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
 {
     HEADER
 
     prev_common_bytes = []
     prev_n_common_bytes = 0
+    first_group = true
     byte_size_groups.keys.sort.each do |common_bytes|
       chars = byte_size_groups[common_bytes]
       chars_bytes = chars.collect(&:bytes).sort
@@ -341,7 +347,19 @@ grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
       max = chars_bytes.last.last
       n_common_bytes = 0
       if common_bytes.empty?
-        @output.puts(<<-BODY)
+        if min == max
+          value = yield(chars.join(""))
+          @output.puts(<<-BODY)
+  if (utf8[0] < 0x80) {
+    if (utf8[0] == #{"%#04x" % min}) {
+      return #{value};
+    } else {
+      return #{default};
+    }
+  } else {
+          BODY
+        else
+          @output.puts(<<-BODY)
   if (utf8[0] < 0x80) {
     if (utf8[0] >= #{"%#04x" % min} && utf8[0] <= #{"%#04x" % max}) {
       return #{table_name(type, common_bytes)}[utf8[0] - #{"%#04x" % min}];
@@ -349,8 +367,15 @@ grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
       return #{default};
     }
   } else {
-        BODY
+          BODY
+        end
       else
+        if first_group
+          @output.puts(<<-BODY)
+  {
+          BODY
+        end
+
         found_different_byte = false
         common_bytes.each_with_index do |common_byte, i|
           unless found_different_byte
@@ -388,16 +413,27 @@ grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
 
         n = chars_bytes.first.size - 1
         indent = "  " * common_bytes.size
-        @output.puts(<<-BODY)
+        if min == max
+          value = yield(chars.join(""))
+          @output.puts(<<-BODY)
+    #{indent}if (utf8[#{n}] == #{"%#04x" % min}) {
+    #{indent}  return #{value};
+    #{indent}}
+    #{indent}break;
+          BODY
+        else
+          @output.puts(<<-BODY)
     #{indent}if (utf8[#{n}] >= #{"%#04x" % min} && utf8[#{n}] <= #{"%#04x" % max}) {
     #{indent}  return #{table_name(type, common_bytes)}[utf8[#{n}] - #{"%#04x" % min}];
     #{indent}}
     #{indent}break;
-        BODY
+          BODY
+        end
       end
 
       prev_common_bytes = common_bytes
       prev_n_common_bytes = n_common_bytes
+      first_group = false
     end
 
     # p [prev_common_bytes.collect{|x| "%#04x" % x}, prev_n_common_bytes]
@@ -450,6 +486,90 @@ grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
         default
       end
     end
+  end
+
+  def generate_map2(map2)
+    generate_compose(map2)
+  end
+
+  def generate_compose(map2)
+    # require "pp"
+    # p map2.size
+    # pp map2.keys.group_by {|x| x.chars[1]}.size
+    # pp map2.keys.group_by {|x| x.chars[1]}.collect {|k, vs| [k, k.codepoints, vs.size, vs.group_by {|x| x.chars[0].bytesize}.collect {|k2, vs2| [k2, vs2.size]}]}
+    # pp map2.keys.group_by {|x| x.chars[0].bytesize}.collect {|k, vs| [k, vs.size]}
+    # pp map2
+
+    suffix_char_map = {}
+    map2.each do |source, destination|
+      chars = source.chars
+      if chars.size != 2
+        STDERR.puts "caution: more than two chars in pattern #{chars.join('|')}"
+        return
+      end
+      prefix, suffix = chars
+      suffix_char_map[suffix] ||= {}
+      suffix_char_map[suffix][prefix] = destination
+    end
+
+    compose_func_type_name = "grn_nfkc#{@unicode_version}_compose_func"
+
+    @output.puts(<<-TYPEDEF)
+
+typedef const char *#{compose_func_type_name}(const unsigned char *prefix_utf8);
+TYPEDEF
+
+    suffix_char_map.each do |suffix, prefix_char_map|
+      suffix_bytes = suffix.bytes.collect {|byte| "%02x" % byte}.join("")
+      default = "NULL"
+      generate_char_converter("compose_prefix_#{suffix_bytes}",
+                              "compose_prefix_#{suffix_bytes}",
+                              prefix_char_map,
+                              default,
+                              "const char *",
+                              :internal => true) do |prefix|
+        prefix.force_encoding("UTF-8")
+        to = prefix_char_map[prefix]
+        if to
+          escaped_value = to.bytes.collect {|char| "\\x%02x" % char}.join("")
+          "\"#{escaped_value}\""
+        else
+          default
+        end
+      end
+    end
+
+    default = "NULL"
+    generate_char_converter("compose_suffix",
+                            "compose_suffix",
+                            suffix_char_map,
+                            default,
+                            "#{compose_func_type_name} *",
+                            :internal => true) do |suffix|
+      suffix.force_encoding("UTF-8")
+      if suffix_char_map.key?(suffix)
+        suffix_bytes = suffix.bytes.collect {|byte| "%02x" % byte}.join("")
+        "grn_nfkc#{@unicode_version}_compose_prefix_#{suffix_bytes}"
+      else
+        default
+      end
+    end
+
+    @output.puts(<<-BODY)
+
+const char *
+grn_nfkc#{@unicode_version}_map2(const unsigned char *prefix_utf8, const unsigned char *suffix_utf8)
+{
+  #{compose_func_type_name} *compose_func;
+
+  compose_func = grn_nfkc#{@unicode_version}_compose_suffix(suffix_utf8);
+  if (compose_func) {
+    return compose_func(prefix_utf8);
+  } else {
+    return NULL;
+  }
+}
+    BODY
   end
 
   def to_bytes_map(char_map)
