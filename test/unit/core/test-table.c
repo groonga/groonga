@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2009-2012  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2016  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,8 @@ void data_truncate_anonymous(void);
 void test_truncate_anonymous(gconstpointer data);
 void data_truncate_named(void);
 void test_truncate_named(gconstpointer data);
+void data_setoperation(void);
+void test_setoperation(gconstpointer data);
 
 static gchar *tmp_directory;
 
@@ -608,4 +610,125 @@ test_truncate_named(gconstpointer data)
   GRN_TEXT_PUTC(context, &buffer, '\0');
   cut_assert_equal_string("", GRN_TEXT_VALUE(&buffer));
   cut_assert_equal_uint(0, grn_table_size(context, table));
+}
+
+void
+data_setoperation(void)
+{
+#define ADD_DATA(operator, records)                     \
+  gcut_add_datum(#operator,                             \
+                 "operator", G_TYPE_INT, operator,	\
+                 "records", G_TYPE_STRING, records,	\
+                 NULL)
+
+  ADD_DATA(GRN_OP_OR,
+           "[[a, 1.0], [b, 2.0], [c, 1.0]]");
+  ADD_DATA(GRN_OP_AND,
+           "[[b, 2.0]]");
+  ADD_DATA(GRN_OP_AND_NOT,
+           "[[a, 1.0]]");
+  ADD_DATA(GRN_OP_ADJUST,
+           "[[a, 1.0], [b, 2.0]]");
+
+#undef ADD_DATA
+}
+
+void
+test_setoperation(gconstpointer data)
+{
+  grn_operator operator;
+  grn_obj *entries;
+  grn_obj *result1;
+  grn_obj *result2;
+  const char *dump;
+
+  operator = gcut_data_get_int(data, "operator");
+
+  assert_send_command("table_create Entries TABLE_HASH_KEY ShortText");
+  send_command(
+    "load "
+    "--table Entries "
+    "--values '[{\"_key\": \"a\"}, {\"_key\": \"b\"}, {\"_key\": \"c\"}]'");
+
+  entries = grn_ctx_get(context, "Entries", -1);
+  {
+    const char *condition = "_id < 3";
+    grn_obj *expr;
+    grn_obj *variable;
+
+    GRN_EXPR_CREATE_FOR_QUERY(context, entries, expr, variable);
+    grn_expr_parse(context, expr,
+                   condition, strlen(condition),
+                   NULL, GRN_OP_AND, GRN_OP_MATCH, GRN_EXPR_SYNTAX_SCRIPT);
+    result1 = grn_table_select(context, entries, expr, NULL, GRN_OP_OR);
+    grn_obj_unlink(context, expr);
+  }
+  {
+    const char *condition = "_id > 1";
+    grn_obj *expr;
+    grn_obj *variable;
+
+    GRN_EXPR_CREATE_FOR_QUERY(context, entries, expr, variable);
+    grn_expr_parse(context, expr,
+                   condition, strlen(condition),
+                   NULL, GRN_OP_AND, GRN_OP_MATCH, GRN_EXPR_SYNTAX_SCRIPT);
+    result2 = grn_table_select(context, entries, expr, NULL, GRN_OP_OR);
+    grn_obj_unlink(context, expr);
+  }
+
+  grn_table_setoperation(context, result1, result2, result1, operator);
+
+  {
+    grn_bool first_record = GRN_TRUE;
+    grn_obj buffer;
+    grn_obj *score_accessor;
+    grn_obj score;
+
+    GRN_TEXT_INIT(&buffer, 0);
+    GRN_TEXT_PUTS(context, &buffer, "[");
+    score_accessor = grn_obj_column(context, result1,
+                                    GRN_COLUMN_NAME_SCORE,
+                                    GRN_COLUMN_NAME_SCORE_LEN);
+    GRN_FLOAT_INIT(&score, 0);
+    GRN_TABLE_EACH_BEGIN(context, result1, cursor, id) {
+      void *result_key;
+      grn_id entry_id;
+      char entry_key[GRN_TABLE_MAX_KEY_SIZE];
+      int entry_key_size;
+
+      if (first_record) {
+        first_record = GRN_FALSE;
+      } else {
+        GRN_TEXT_PUTS(context, &buffer, ", ");
+      }
+
+      GRN_TEXT_PUTS(context, &buffer, "[");
+
+      grn_table_cursor_get_key(context, cursor, &result_key);
+      entry_id = *((grn_id *)result_key);
+      entry_key_size = grn_table_get_key(context,
+                                         entries,
+                                         entry_id,
+                                         entry_key,
+                                         GRN_TABLE_MAX_KEY_SIZE);
+      GRN_TEXT_PUT(context, &buffer, entry_key, entry_key_size);
+
+      GRN_TEXT_PUTS(context, &buffer, ", ");
+
+      GRN_BULK_REWIND(&score);
+      grn_obj_get_value(context, score_accessor, id, &score);
+      grn_text_printf(context, &buffer, "%.1f", GRN_FLOAT_VALUE(&score));
+
+      GRN_TEXT_PUTS(context, &buffer, "]");
+    } GRN_TABLE_EACH_END(context, cursor);
+    GRN_OBJ_FIN(context, &score);
+    grn_obj_unlink(context, score_accessor);
+    GRN_TEXT_PUTS(context, &buffer, "]");
+
+    dump = cut_take_strndup(GRN_TEXT_VALUE(&buffer), GRN_TEXT_LEN(&buffer));
+    GRN_OBJ_FIN(context, &buffer);
+  }
+
+  cut_assert_equal_string(gcut_data_get_string(data, "records"),
+                          dump);
 }

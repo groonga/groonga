@@ -4510,11 +4510,21 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
     });
     break;
   case GRN_OP_ADJUST :
-    GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
-      if (grn_table_get_v(ctx, table1, key, key_size, &value1)) {
-        grn_memcpy(value1, value2, value_size);
-      }
-    });
+    if (have_subrec) {
+      GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
+        if (grn_table_get_v(ctx, table1, key, key_size, &value1)) {
+          grn_rset_recinfo *ri1 = value1;
+          grn_rset_recinfo *ri2 = value2;
+          ri1->score += ri2->score;
+        }
+      });
+    } else {
+      GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
+        if (grn_table_get_v(ctx, table1, key, key_size, &value1)) {
+          grn_memcpy(value1, value2, value_size);
+        }
+      });
+    }
     break;
   default :
     break;
