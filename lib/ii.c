@@ -338,6 +338,10 @@ static int free_histogram[32];
 static grn_rc
 chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
 {
+  uint32_t n_chunks;
+
+  n_chunks = ii->chunk->header->max_segment;
+
   /*
   if (size) {
     int m, es = size - 1;
@@ -349,7 +353,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
   if (size > S_CHUNK) {
     int i, j;
     uint32_t n = (size + S_CHUNK - 1) >> GRN_II_W_CHUNK;
-    for (i = 0, j = -1; i < GRN_II_MAX_CHUNK; i++) {
+    for (i = 0, j = -1; i < n_chunks; i++) {
       if (HEADER_CHUNK_AT(ii, i)) {
         j = i;
       } else {
@@ -410,7 +414,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
     if (*vp == NOT_ASSIGNED) {
       int i = 0;
       while (HEADER_CHUNK_AT(ii, i)) {
-        if (++i >= GRN_II_MAX_CHUNK) { return GRN_NO_MEMORY_AVAILABLE; }
+        if (++i >= n_chunks) { return GRN_NO_MEMORY_AVAILABLE; }
       }
       HEADER_CHUNK_ON(ii, i);
       *vp = i << GRN_II_N_CHUNK_VARIATION;
@@ -476,7 +480,9 @@ chunk_free(grn_ctx *ctx, grn_ii *ii,
     /*
     uint32_t i = 0;
     while (HEADER_CHUNK_AT(ii, i)) {
-      if (++i >= GRN_II_MAX_CHUNK) { return GRN_NO_MEMORY_AVAILABLE; }
+      if (++i >= ii->chunk->header->max_segment) {
+        return GRN_NO_MEMORY_AVAILABLE;
+      }
     }
     HEADER_CHUNK_ON(ii, i);
     *gseg = i;
