@@ -34,6 +34,7 @@ GRN_API grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_table(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_bool grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_key_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_type(grn_ctx *ctx, grn_obj *obj);

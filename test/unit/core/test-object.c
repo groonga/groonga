@@ -33,6 +33,8 @@ void data_is_column(void);
 void test_is_column(gconstpointer data);
 void data_is_reference_column(void);
 void test_is_reference_column(gconstpointer data);
+void data_is_index_column(void);
+void test_is_index_column(gconstpointer data);
 void data_is_accessor(void);
 void test_is_accessor(gconstpointer data);
 void data_is_key_accessor(void);
@@ -254,6 +256,42 @@ test_is_reference_column(gconstpointer data)
     cut_assert_true(grn_obj_is_reference_column(context, object));
   } else {
     cut_assert_false(grn_obj_is_reference_column(context, object));
+  }
+}
+
+void
+data_is_index_column(void)
+{
+#define ADD_DATUM(label, expected, name)                                \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "name", G_TYPE_STRING, name,                           \
+                 NULL)
+
+  ADD_DATUM("table",        FALSE, "Users");
+  ADD_DATUM("value column", FALSE, "Users.age");
+  ADD_DATUM("index column", TRUE,  "Ages.users_age");
+
+#undef ADD_DATUM
+}
+
+void
+test_is_index_column(gconstpointer data)
+{
+  const gchar *name;
+  grn_obj *object;
+
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Users age COLUMN_SCALAR UInt8");
+  assert_send_command("table_create Ages TABLE_PAT_KEY UInt8");
+  assert_send_command("column_create Ages users_age COLUMN_INDEX Users age");
+
+  name = gcut_data_get_string(data, "name");
+  object = grn_ctx_get(context, name, strlen(name));
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_obj_is_index_column(context, object));
+  } else {
+    cut_assert_false(grn_obj_is_index_column(context, object));
   }
 }
 
