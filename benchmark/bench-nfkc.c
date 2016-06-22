@@ -97,7 +97,41 @@ bench_map1_table(gpointer user_data)
 }
 
 static void
-bench_map2_switch(gpointer user_data)
+bench_map2_switch_no_change(gpointer user_data)
+{
+  uint64_t prefix_code_point;
+  uint64_t suffix_code_point = 0x61; /* a */
+  char prefix_utf8[7];
+  char suffix_utf8[7];
+
+  ucs2utf8(suffix_code_point, (unsigned char *)suffix_utf8);
+  for (prefix_code_point = 1;
+       prefix_code_point < MAX_UNICODE;
+       prefix_code_point++) {
+    ucs2utf8(prefix_code_point, (unsigned char *)prefix_utf8);
+    grn_nfkc_map2(prefix_utf8, suffix_utf8);
+  }
+}
+
+static void
+bench_map2_table_no_change(gpointer user_data)
+{
+  uint64_t prefix_code_point;
+  uint64_t suffix_code_point = 0x61; /* a */
+  char prefix_utf8[7];
+  char suffix_utf8[7];
+
+  ucs2utf8(suffix_code_point, (unsigned char *)suffix_utf8);
+  for (prefix_code_point = 1;
+       prefix_code_point < MAX_UNICODE;
+       prefix_code_point++) {
+    ucs2utf8(prefix_code_point, (unsigned char *)prefix_utf8);
+    grn_nfkc50_map2(prefix_utf8, suffix_utf8);
+  }
+}
+
+static void
+bench_map2_switch_change(gpointer user_data)
 {
   uint64_t prefix_code_point;
   uint64_t suffix_code_point = 0x11ba;
@@ -114,7 +148,7 @@ bench_map2_switch(gpointer user_data)
 }
 
 static void
-bench_map2_table(gpointer user_data)
+bench_map2_table_change(gpointer user_data)
 {
   uint64_t prefix_code_point;
   uint64_t suffix_code_point = 0x11ba;
@@ -130,6 +164,7 @@ bench_map2_table(gpointer user_data)
   }
 }
 
+/*
 static void
 check_map1(gpointer user_data)
 {
@@ -199,6 +234,7 @@ check_map2(gpointer user_data)
     }
   }
 }
+*/
 
 int
 main(int argc, gchar **argv)
@@ -217,19 +253,27 @@ main(int argc, gchar **argv)
 
   reporter = bench_reporter_new();
 
+  if (g_getenv("N")) {
+    n = atoi(g_getenv("N"));
+  }
+
 #define REGISTER(label, bench_function)                 \
   bench_reporter_register(reporter, label, n,           \
                           NULL,                         \
                           bench_function,               \
                           NULL,                         \
                           NULL)
-  REGISTER("map1 - switch", bench_map1_switch);
-  REGISTER("map1 -  table", bench_map1_table);
-  REGISTER("map2 - switch", bench_map2_switch);
-  REGISTER("map2 -  table", bench_map2_table);
+  REGISTER("map1 - switch            ", bench_map1_switch);
+  REGISTER("map1 -  table            ", bench_map1_table);
+  REGISTER("map2 - switch - no change", bench_map2_switch_no_change);
+  REGISTER("map2 -  table - no change", bench_map2_table_no_change);
+  REGISTER("map2 - switch -    change", bench_map2_switch_change);
+  REGISTER("map2 -  table -    change", bench_map2_table_change);
 
-  /* REGISTER("check - map1", check_map1); */
-  /* REGISTER("check - map2", check_map2); */
+  /*
+    REGISTER("check - map1", check_map1);
+    REGISTER("check - map2", check_map2);
+  */
 #undef REGISTER
 
   bench_reporter_run(reporter);
