@@ -158,8 +158,8 @@ segment_get(grn_ctx *ctx, grn_ii *ii)
     if (!pseg) {
       int i;
       uint32_t pmax = 0;
-      char *used = GRN_CALLOC(MAX_PSEG);
-      if (!used) { return MAX_PSEG; }
+      char *used = GRN_CALLOC(ii->seg->header->max_segment);
+      if (!used) { return ii->seg->header->max_segment; }
       for (i = 0; i < GRN_II_MAX_LSEG; i++) {
         if ((pseg = ii->header->ainfo[i]) != NOT_ASSIGNED) {
           if (pseg > pmax) { pmax = pseg; }
@@ -170,12 +170,14 @@ segment_get(grn_ctx *ctx, grn_ii *ii)
           used[pseg] = 1;
         }
       }
-      for (pseg = 0; pseg < MAX_PSEG && used[pseg]; pseg++) ;
+      for (pseg = 0; pseg < ii->seg->header->max_segment && used[pseg]; pseg++) ;
       GRN_FREE(used);
       ii->header->pnext = pmax + 1;
     } else
 #endif /* CUT_OFF_COMPATIBILITY */
-    if (ii->header->pnext < MAX_PSEG) { ii->header->pnext++; }
+    if (ii->header->pnext < ii->seg->header->max_segment) {
+      ii->header->pnext++;
+    }
   }
   return pseg;
 }
@@ -184,7 +186,7 @@ inline static grn_rc
 segment_get_clear(grn_ctx *ctx, grn_ii *ii, uint32_t *pseg)
 {
   uint32_t seg = segment_get(ctx, ii);
-  if (seg < MAX_PSEG) {
+  if (seg < ii->seg->header->max_segment) {
     void *p = NULL;
     GRN_IO_SEG_REF(ii->seg, seg, p);
     if (!p) { return GRN_NO_MEMORY_AVAILABLE; }
@@ -214,7 +216,7 @@ buffer_segment_new(grn_ctx *ctx, grn_ii *ii, uint32_t *segno)
     *segno = lseg;
   }
   pseg = segment_get(ctx, ii);
-  if (pseg < MAX_PSEG) {
+  if (pseg < ii->seg->header->max_segment) {
     ii->header->binfo[lseg] = pseg;
     if (lseg >= ii->header->bmax) { ii->header->bmax = lseg + 1; }
     return GRN_SUCCESS;
@@ -239,28 +241,34 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
     if (ii->header->binfo[i] == NOT_ASSIGNED) { break; }
   }
   *lseg1 = i;
-  if ((*pseg0 = segment_get(ctx, ii)) == MAX_PSEG) {
+  if ((*pseg0 = segment_get(ctx, ii)) == ii->seg->header->max_segment) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
-  if ((*pseg1 = segment_get(ctx, ii)) == MAX_PSEG) {
+  if ((*pseg1 = segment_get(ctx, ii)) == ii->seg->header->max_segment) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
   /*
   {
     uint32_t pseg;
-    char *used = GRN_CALLOC(MAX_PSEG);
+    char *used = GRN_CALLOC(ii->seg->header->max_segment);
     if (!used) { return GRN_NO_MEMORY_AVAILABLE; }
     for (i = 0; i < GRN_II_MAX_LSEG; i++) {
       if ((pseg = ii->header->ainfo[i]) != NOT_ASSIGNED) { used[pseg] = 1; }
       if ((pseg = ii->header->binfo[i]) != NOT_ASSIGNED) { used[pseg] = 1; }
     }
     for (pseg = 0;; pseg++) {
-      if (pseg == MAX_PSEG) { GRN_FREE(used); return GRN_NO_MEMORY_AVAILABLE; }
+      if (pseg == ii->seg->header->max_segment) {
+        GRN_FREE(used);
+        return GRN_NO_MEMORY_AVAILABLE;
+      }
       if (!used[pseg]) { break; }
     }
     *pseg0 = pseg++;
     for (;; pseg++) {
-      if (pseg == MAX_PSEG) { GRN_FREE(used); return GRN_NO_MEMORY_AVAILABLE; }
+      if (pseg == ii->seg->header->max_segment) {
+        GRN_FREE(used);
+        return GRN_NO_MEMORY_AVAILABLE;
+      }
       if (!used[pseg]) { break; }
     }
     *pseg1 = pseg;
@@ -2024,7 +2032,7 @@ buffer_open(grn_ctx *ctx, grn_ii *ii, uint32_t pos, buffer_term **bt, buffer **b
 inline static grn_rc
 buffer_close(grn_ctx *ctx, grn_ii *ii, uint32_t pseg)
 {
-  if (pseg >= MAX_PSEG) {
+  if (pseg >= ii->seg->header->max_segment) {
     GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid pseg buffer_close(%d)", pseg);
     return GRN_INVALID_ARGUMENT;
   }
@@ -3150,7 +3158,9 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
   uint8_t *dc, *sc = NULL;
   uint32_t ds, pseg, scn, dcn = 0;
   if (ii->header->binfo[seg] == NOT_ASSIGNED) { return GRN_FILE_CORRUPT; }
-  if ((ds = segment_get(ctx, ii)) == MAX_PSEG) { return GRN_NO_MEMORY_AVAILABLE; }
+  if ((ds = segment_get(ctx, ii)) == ii->seg->header->max_segment) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
   pseg = buffer_open(ctx, ii, SEG2POS(seg, 0), NULL, &sb);
   if (pseg != NOT_ASSIGNED) {
     GRN_IO_SEG_REF(ii->seg, ds, db);
