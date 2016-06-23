@@ -955,11 +955,16 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
   const char *system_plugins_dir;
   const char *native_plugin_suffix;
   const char *ruby_plugin_suffix;
+  grn_bool is_close_opened_object_mode = GRN_FALSE;
 
   GRN_API_ENTER;
 
   if (ctx->rc) {
     GRN_API_RETURN(ctx->rc);
+  }
+
+  if (grn_thread_get_limit() == 1) {
+    is_close_opened_object_mode = GRN_TRUE;
   }
 
   db = ctx->impl->db;
@@ -981,38 +986,39 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
   native_plugin_suffix = grn_plugin_get_suffix();
   ruby_plugin_suffix = grn_plugin_get_ruby_suffix();
   while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+    grn_bool is_opened = GRN_TRUE;
     grn_obj *object;
     const char *path;
     grn_id processed_path_id;
 
+    if (is_close_opened_object_mode) {
+      is_opened = grn_ctx_is_opened(ctx, id);
+    }
+
     object = grn_ctx_at(ctx, id);
     if (!object) {
       ERRCLR(ctx);
-      continue;
+      goto next_loop;
     }
 
     if (!grn_obj_is_proc(ctx, object)) {
-      grn_obj_unlink(ctx, object);
-      continue;
+      goto next_loop;
     }
 
     if (grn_obj_is_builtin(ctx, object)) {
-      grn_obj_unlink(ctx, object);
-      continue;
+      goto next_loop;
     }
 
     path = grn_obj_path(ctx, object);
     if (!path) {
-      grn_obj_unlink(ctx, object);
-      continue;
+      goto next_loop;
     }
 
     processed_path_id = grn_hash_get(ctx, processed_paths,
                                      path, strlen(path),
                                      NULL);
     if (processed_path_id != GRN_ID_NIL) {
-      grn_obj_unlink(ctx, object);
-      continue;
+      goto next_loop;
     }
 
     grn_hash_add(ctx, processed_paths,
@@ -1051,6 +1057,11 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
       grn_vector_add_element(ctx, names,
                              name, strlen(name),
                              0, GRN_DB_TEXT);
+    }
+
+  next_loop :
+    if (object && is_close_opened_object_mode && !is_opened) {
+      grn_obj_close(ctx, object);
     }
   }
   grn_table_cursor_close(ctx, cursor);
