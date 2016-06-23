@@ -948,9 +948,6 @@ grn_plugin_ensure_registered(grn_ctx *ctx, grn_obj *proc)
 grn_rc
 grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
 {
-  grn_obj *db;
-  grn_table_cursor *cursor;
-  grn_id id;
   grn_hash *processed_paths;
   const char *system_plugins_dir;
   const char *native_plugin_suffix;
@@ -967,25 +964,19 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
     is_close_opened_object_mode = GRN_TRUE;
   }
 
-  db = ctx->impl->db;
-  cursor = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
-                                 GRN_CURSOR_BY_ID);
-  if (!cursor) {
-    GRN_API_RETURN(ctx->rc);
-  }
-
   processed_paths = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE, 0,
                                     GRN_OBJ_TABLE_HASH_KEY |
                                     GRN_OBJ_KEY_VAR_SIZE);
   if (!processed_paths) {
-    grn_table_cursor_close(ctx, cursor);
     GRN_API_RETURN(ctx->rc);
   }
 
   system_plugins_dir = grn_plugin_get_system_plugins_dir();
   native_plugin_suffix = grn_plugin_get_suffix();
   ruby_plugin_suffix = grn_plugin_get_ruby_suffix();
-  while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
+                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
     grn_bool is_opened = GRN_TRUE;
     grn_obj *object;
     const char *path;
@@ -1063,8 +1054,7 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
     if (object && is_close_opened_object_mode && !is_opened) {
       grn_obj_close(ctx, object);
     }
-  }
-  grn_table_cursor_close(ctx, cursor);
+  } GRN_TABLE_EACH_END(ctx, cursor);
 
   grn_hash_close(ctx, processed_paths);
 
