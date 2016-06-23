@@ -30,6 +30,7 @@ static const size_t DUMP_FLUSH_THRESHOLD_SIZE = 256 * 1024;
 typedef struct {
   grn_obj *output;
   grn_bool is_close_opened_object_mode;
+  grn_bool have_reference_column;
 } grn_dumper;
 
 static void
@@ -208,7 +209,8 @@ dump_column(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_obj *column)
 
 static void
 dump_columns(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table,
-             grn_obj *pending_reference_columns)
+             grn_bool dump_data_column,
+             grn_bool dump_reference_column)
 {
   grn_hash *columns;
   columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
@@ -242,9 +244,14 @@ dump_columns(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table,
       if (grn_obj_is_index_column(ctx, column)) {
         /* do nothing */
       } else if (grn_obj_is_reference_column(ctx, column)) {
-        GRN_PTR_PUT(ctx, pending_reference_columns, column);
+        dumper->have_reference_column = GRN_TRUE;
+        if (dump_reference_column) {
+          dump_column(ctx, dumper, table, column);
+        }
       } else {
-        dump_column(ctx, dumper, table, column);
+        if (dump_data_column) {
+          dump_column(ctx, dumper, table, column);
+        }
       }
 
       if (dumper->is_close_opened_object_mode && !is_opened) {
@@ -476,8 +483,7 @@ exit :
 }
 
 static void
-dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table,
-           grn_obj *pending_reference_columns)
+dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 {
   grn_obj *domain = NULL;
   grn_id range_id;
@@ -566,45 +572,20 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table,
     grn_obj_unlink(ctx, domain);
   }
 
-  dump_columns(ctx, dumper, table, pending_reference_columns);
-}
-
-static void
-dump_pending_columns(grn_ctx *ctx, grn_dumper *dumper, grn_obj *pending_columns)
-{
-  size_t i, n_columns;
-
-  n_columns = GRN_BULK_VSIZE(pending_columns) / sizeof(grn_obj *);
-  if (n_columns == 0) {
-    return;
-  }
-
-  if (GRN_TEXT_LEN(dumper->output) > 0) {
-    GRN_TEXT_PUTC(ctx, dumper->output, '\n');
-    grn_ctx_output_flush(ctx, 0);
-  }
-
-  for (i = 0; i < n_columns; i++) {
-    grn_obj *table, *column;
-
-    column = GRN_PTR_VALUE_AT(pending_columns, i);
-    table = grn_ctx_at(ctx, column->header.domain);
-    dump_column(ctx, dumper, table, column);
-    grn_obj_unlink(ctx, column);
-    grn_obj_unlink(ctx, table);
-  }
+  dump_columns(ctx, dumper, table, GRN_TRUE, GRN_FALSE);
 }
 
 static void
 dump_schema(grn_ctx *ctx, grn_dumper *dumper)
 {
-  grn_obj pending_reference_columns;
-
-  GRN_PTR_INIT(&pending_reference_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
-
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
                              GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+    grn_bool is_opened = GRN_TRUE;
     grn_obj *object;
+
+    if (dumper->is_close_opened_object_mode) {
+      is_opened = grn_ctx_is_opened(ctx, id);
+    }
 
     if ((object = grn_ctx_at(ctx, id))) {
       switch (object->header.type) {
@@ -612,12 +593,14 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
       case GRN_TABLE_PAT_KEY:
       case GRN_TABLE_DAT_KEY:
       case GRN_TABLE_NO_KEY:
-        dump_table(ctx, dumper, object, &pending_reference_columns);
+        dump_table(ctx, dumper, object);
         break;
       default:
         break;
       }
-      grn_obj_unlink(ctx, object);
+      if (dumper->is_close_opened_object_mode && !is_opened) {
+        grn_obj_close(ctx, object);
+      }
     } else {
       /* XXX: this clause is executed when MeCab tokenizer is enabled in
          database but the groonga isn't supported MeCab.
@@ -627,8 +610,44 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
     }
   } GRN_TABLE_EACH_END(ctx, cursor);
 
-  dump_pending_columns(ctx, dumper, &pending_reference_columns);
-  grn_obj_close(ctx, &pending_reference_columns);
+  if (!dumper->have_reference_column) {
+    return;
+  }
+
+  GRN_TEXT_PUTC(ctx, dumper->output, '\n');
+  grn_ctx_output_flush(ctx, 0);
+
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
+                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+    grn_bool is_opened = GRN_TRUE;
+    grn_obj *object;
+
+    if (dumper->is_close_opened_object_mode) {
+      is_opened = grn_ctx_is_opened(ctx, id);
+    }
+
+    if ((object = grn_ctx_at(ctx, id))) {
+      switch (object->header.type) {
+      case GRN_TABLE_HASH_KEY:
+      case GRN_TABLE_PAT_KEY:
+      case GRN_TABLE_DAT_KEY:
+      case GRN_TABLE_NO_KEY:
+        dump_columns(ctx, dumper, object, GRN_FALSE, GRN_TRUE);
+        break;
+      default:
+        break;
+      }
+      if (dumper->is_close_opened_object_mode && !is_opened) {
+        grn_obj_close(ctx, object);
+      }
+    } else {
+      /* XXX: this clause is executed when MeCab tokenizer is enabled in
+         database but the groonga isn't supported MeCab.
+         We should return error mesage about it and error exit status
+         but it's too difficult for this architecture. :< */
+      GRN_PLUGIN_CLEAR_ERROR(ctx);
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
 }
 
 static void
@@ -778,6 +797,7 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else {
     dumper.is_close_opened_object_mode = GRN_FALSE;
   }
+  dumper.have_reference_column = GRN_FALSE;
 
   tables = grn_plugin_proc_get_var(ctx, user_data, "tables", -1);
   is_dump_plugins = grn_plugin_proc_get_var_bool(ctx, user_data,
