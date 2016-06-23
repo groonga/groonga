@@ -2296,9 +2296,11 @@ grn_nfkc50_char_type(const unsigned char *utf8)
         default :
           break;
         }
+        break;
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -4062,9 +4064,11 @@ grn_nfkc50_map1(const unsigned char *utf8)
         default :
           break;
         }
+        break;
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -4072,8 +4076,6 @@ grn_nfkc50_map1(const unsigned char *utf8)
 
   return NULL;
 }
-
-typedef const char *grn_nfkc50_compose_func(const unsigned char *prefix_utf8);
 
 static const char *grn_nfkc50_compose_prefix_cc80_table_[] = {
   "\xc3\xa0", NULL, NULL, NULL, "\xc3\xa8", NULL, NULL, NULL,
@@ -4202,6 +4204,7 @@ grn_nfkc50_compose_prefix_cc80(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -4347,6 +4350,7 @@ grn_nfkc50_compose_prefix_cc81(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -4395,6 +4399,7 @@ grn_nfkc50_compose_prefix_cc82(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -4690,6 +4695,7 @@ grn_nfkc50_compose_prefix_cc84(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -4768,6 +4774,7 @@ grn_nfkc50_compose_prefix_cc86(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -4834,6 +4841,7 @@ grn_nfkc50_compose_prefix_cc87(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5103,6 +5111,7 @@ grn_nfkc50_compose_prefix_e0a4bc(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5126,6 +5135,7 @@ grn_nfkc50_compose_prefix_e0a6be(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5149,6 +5159,7 @@ grn_nfkc50_compose_prefix_e0a797(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5172,6 +5183,7 @@ grn_nfkc50_compose_prefix_e0ad96(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5195,6 +5207,7 @@ grn_nfkc50_compose_prefix_e0acbe(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5218,6 +5231,7 @@ grn_nfkc50_compose_prefix_e0ad97(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5246,6 +5260,7 @@ grn_nfkc50_compose_prefix_e0af97(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5273,6 +5288,7 @@ grn_nfkc50_compose_prefix_e0aebe(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5296,6 +5312,7 @@ grn_nfkc50_compose_prefix_e0b196(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5328,6 +5345,7 @@ grn_nfkc50_compose_prefix_e0b395(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5351,6 +5369,7 @@ grn_nfkc50_compose_prefix_e0b396(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5374,6 +5393,7 @@ grn_nfkc50_compose_prefix_e0b382(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5401,6 +5421,7 @@ grn_nfkc50_compose_prefix_e0b4be(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5424,6 +5445,7 @@ grn_nfkc50_compose_prefix_e0b597(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5451,6 +5473,7 @@ grn_nfkc50_compose_prefix_e0b78a(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5474,6 +5497,7 @@ grn_nfkc50_compose_prefix_e0b78f(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5497,6 +5521,7 @@ grn_nfkc50_compose_prefix_e0b79f(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5520,6 +5545,7 @@ grn_nfkc50_compose_prefix_e180ae(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5559,6 +5585,7 @@ grn_nfkc50_compose_prefix_e1acb5(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5895,6 +5922,7 @@ grn_nfkc50_compose_prefix_cd82(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -5981,6 +6009,7 @@ grn_nfkc50_compose_prefix_cd85(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -6074,6 +6103,7 @@ grn_nfkc50_compose_prefix_ccb8(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -6136,6 +6166,7 @@ grn_nfkc50_compose_prefix_e38299(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -6174,6 +6205,7 @@ grn_nfkc50_compose_prefix_e3829a(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -6203,6 +6235,7 @@ grn_nfkc50_compose_prefix_e185a1(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -8532,6 +8565,7 @@ grn_nfkc50_compose_prefix_e186a8(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -10861,6 +10895,7 @@ grn_nfkc50_compose_prefix_e186a9(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -13190,6 +13225,7 @@ grn_nfkc50_compose_prefix_e186aa(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -15519,6 +15555,7 @@ grn_nfkc50_compose_prefix_e186ab(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -17848,6 +17885,7 @@ grn_nfkc50_compose_prefix_e186ac(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -20177,6 +20215,7 @@ grn_nfkc50_compose_prefix_e186ad(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -22506,6 +22545,7 @@ grn_nfkc50_compose_prefix_e186ae(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -24835,6 +24875,7 @@ grn_nfkc50_compose_prefix_e186af(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -27164,6 +27205,7 @@ grn_nfkc50_compose_prefix_e186b0(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -29493,6 +29535,7 @@ grn_nfkc50_compose_prefix_e186b1(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -31822,6 +31865,7 @@ grn_nfkc50_compose_prefix_e186b2(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -34151,6 +34195,7 @@ grn_nfkc50_compose_prefix_e186b3(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -36480,6 +36525,7 @@ grn_nfkc50_compose_prefix_e186b4(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -38809,6 +38855,7 @@ grn_nfkc50_compose_prefix_e186b5(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -41138,6 +41185,7 @@ grn_nfkc50_compose_prefix_e186b6(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -43467,6 +43515,7 @@ grn_nfkc50_compose_prefix_e186b7(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -45796,6 +45845,7 @@ grn_nfkc50_compose_prefix_e186b8(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -48125,6 +48175,7 @@ grn_nfkc50_compose_prefix_e186b9(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -50454,6 +50505,7 @@ grn_nfkc50_compose_prefix_e186ba(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -52783,6 +52835,7 @@ grn_nfkc50_compose_prefix_e186bb(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -55112,6 +55165,7 @@ grn_nfkc50_compose_prefix_e186bc(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -57441,6 +57495,7 @@ grn_nfkc50_compose_prefix_e186bd(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -59770,6 +59825,7 @@ grn_nfkc50_compose_prefix_e186be(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -62099,6 +62155,7 @@ grn_nfkc50_compose_prefix_e186bf(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -64428,6 +64485,7 @@ grn_nfkc50_compose_prefix_e18780(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -66757,6 +66815,7 @@ grn_nfkc50_compose_prefix_e18781(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69086,6 +69145,7 @@ grn_nfkc50_compose_prefix_e18782(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69115,6 +69175,7 @@ grn_nfkc50_compose_prefix_e185a2(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69144,6 +69205,7 @@ grn_nfkc50_compose_prefix_e185a3(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69173,6 +69235,7 @@ grn_nfkc50_compose_prefix_e185a4(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69202,6 +69265,7 @@ grn_nfkc50_compose_prefix_e185a5(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69231,6 +69295,7 @@ grn_nfkc50_compose_prefix_e185a6(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69260,6 +69325,7 @@ grn_nfkc50_compose_prefix_e185a7(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69289,6 +69355,7 @@ grn_nfkc50_compose_prefix_e185a8(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69318,6 +69385,7 @@ grn_nfkc50_compose_prefix_e185a9(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69347,6 +69415,7 @@ grn_nfkc50_compose_prefix_e185aa(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69376,6 +69445,7 @@ grn_nfkc50_compose_prefix_e185ab(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69405,6 +69475,7 @@ grn_nfkc50_compose_prefix_e185ac(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69434,6 +69505,7 @@ grn_nfkc50_compose_prefix_e185ad(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69463,6 +69535,7 @@ grn_nfkc50_compose_prefix_e185ae(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69492,6 +69565,7 @@ grn_nfkc50_compose_prefix_e185af(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69521,6 +69595,7 @@ grn_nfkc50_compose_prefix_e185b0(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69550,6 +69625,7 @@ grn_nfkc50_compose_prefix_e185b1(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69579,6 +69655,7 @@ grn_nfkc50_compose_prefix_e185b2(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69608,6 +69685,7 @@ grn_nfkc50_compose_prefix_e185b3(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69637,6 +69715,7 @@ grn_nfkc50_compose_prefix_e185b4(const unsigned char *utf8)
       default :
         break;
       }
+      break;
     default :
       break;
     }
@@ -69666,196 +69745,7 @@ grn_nfkc50_compose_prefix_e185b5(const unsigned char *utf8)
       default :
         break;
       }
-    default :
       break;
-    }
-  }
-
-  return NULL;
-}
-
-static grn_nfkc50_compose_func *grn_nfkc50_compose_suffix_table_cc[] = {
-  grn_nfkc50_compose_prefix_cc80, grn_nfkc50_compose_prefix_cc81, grn_nfkc50_compose_prefix_cc82, grn_nfkc50_compose_prefix_cc83, grn_nfkc50_compose_prefix_cc84, NULL, grn_nfkc50_compose_prefix_cc86, grn_nfkc50_compose_prefix_cc87,
-  grn_nfkc50_compose_prefix_cc88, grn_nfkc50_compose_prefix_cc89, grn_nfkc50_compose_prefix_cc8a, grn_nfkc50_compose_prefix_cc8b, grn_nfkc50_compose_prefix_cc8c, NULL, NULL, grn_nfkc50_compose_prefix_cc8f,
-  NULL, grn_nfkc50_compose_prefix_cc91, NULL, grn_nfkc50_compose_prefix_cc93, grn_nfkc50_compose_prefix_cc94, NULL, NULL, NULL,
-  NULL, NULL, NULL, grn_nfkc50_compose_prefix_cc9b, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, grn_nfkc50_compose_prefix_cca3, grn_nfkc50_compose_prefix_cca4, grn_nfkc50_compose_prefix_cca5, grn_nfkc50_compose_prefix_cca6, grn_nfkc50_compose_prefix_cca7,
-  grn_nfkc50_compose_prefix_cca8, NULL, NULL, NULL, NULL, grn_nfkc50_compose_prefix_ccad, grn_nfkc50_compose_prefix_ccae, NULL,
-  grn_nfkc50_compose_prefix_ccb0, grn_nfkc50_compose_prefix_ccb1, NULL, NULL, NULL, NULL, NULL, NULL,
-  grn_nfkc50_compose_prefix_ccb8
-};
-
-static grn_nfkc50_compose_func *grn_nfkc50_compose_suffix_table_cd[] = {
-  grn_nfkc50_compose_prefix_cd82, NULL, NULL, grn_nfkc50_compose_prefix_cd85
-};
-
-static grn_nfkc50_compose_func *grn_nfkc50_compose_suffix_table_d9[] = {
-  grn_nfkc50_compose_prefix_d993, grn_nfkc50_compose_prefix_d994, grn_nfkc50_compose_prefix_d995
-};
-
-static grn_nfkc50_compose_func *grn_nfkc50_compose_suffix_table_e0ad[] = {
-  grn_nfkc50_compose_prefix_e0ad96, grn_nfkc50_compose_prefix_e0ad97
-};
-
-static grn_nfkc50_compose_func *grn_nfkc50_compose_suffix_table_e0b3[] = {
-  grn_nfkc50_compose_prefix_e0b382, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, grn_nfkc50_compose_prefix_e0b395, grn_nfkc50_compose_prefix_e0b396
-};
-
-static grn_nfkc50_compose_func *grn_nfkc50_compose_suffix_table_e0b7[] = {
-  grn_nfkc50_compose_prefix_e0b78a, NULL, NULL, NULL, NULL, grn_nfkc50_compose_prefix_e0b78f, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, grn_nfkc50_compose_prefix_e0b79f
-};
-
-static grn_nfkc50_compose_func *grn_nfkc50_compose_suffix_table_e185[] = {
-  grn_nfkc50_compose_prefix_e185a1, grn_nfkc50_compose_prefix_e185a2, grn_nfkc50_compose_prefix_e185a3, grn_nfkc50_compose_prefix_e185a4, grn_nfkc50_compose_prefix_e185a5, grn_nfkc50_compose_prefix_e185a6, grn_nfkc50_compose_prefix_e185a7, grn_nfkc50_compose_prefix_e185a8,
-  grn_nfkc50_compose_prefix_e185a9, grn_nfkc50_compose_prefix_e185aa, grn_nfkc50_compose_prefix_e185ab, grn_nfkc50_compose_prefix_e185ac, grn_nfkc50_compose_prefix_e185ad, grn_nfkc50_compose_prefix_e185ae, grn_nfkc50_compose_prefix_e185af, grn_nfkc50_compose_prefix_e185b0,
-  grn_nfkc50_compose_prefix_e185b1, grn_nfkc50_compose_prefix_e185b2, grn_nfkc50_compose_prefix_e185b3, grn_nfkc50_compose_prefix_e185b4, grn_nfkc50_compose_prefix_e185b5
-};
-
-static grn_nfkc50_compose_func *grn_nfkc50_compose_suffix_table_e186[] = {
-  grn_nfkc50_compose_prefix_e186a8, grn_nfkc50_compose_prefix_e186a9, grn_nfkc50_compose_prefix_e186aa, grn_nfkc50_compose_prefix_e186ab, grn_nfkc50_compose_prefix_e186ac, grn_nfkc50_compose_prefix_e186ad, grn_nfkc50_compose_prefix_e186ae, grn_nfkc50_compose_prefix_e186af,
-  grn_nfkc50_compose_prefix_e186b0, grn_nfkc50_compose_prefix_e186b1, grn_nfkc50_compose_prefix_e186b2, grn_nfkc50_compose_prefix_e186b3, grn_nfkc50_compose_prefix_e186b4, grn_nfkc50_compose_prefix_e186b5, grn_nfkc50_compose_prefix_e186b6, grn_nfkc50_compose_prefix_e186b7,
-  grn_nfkc50_compose_prefix_e186b8, grn_nfkc50_compose_prefix_e186b9, grn_nfkc50_compose_prefix_e186ba, grn_nfkc50_compose_prefix_e186bb, grn_nfkc50_compose_prefix_e186bc, grn_nfkc50_compose_prefix_e186bd, grn_nfkc50_compose_prefix_e186be, grn_nfkc50_compose_prefix_e186bf
-};
-
-static grn_nfkc50_compose_func *grn_nfkc50_compose_suffix_table_e187[] = {
-  grn_nfkc50_compose_prefix_e18780, grn_nfkc50_compose_prefix_e18781, grn_nfkc50_compose_prefix_e18782
-};
-
-static grn_nfkc50_compose_func *grn_nfkc50_compose_suffix_table_e382[] = {
-  grn_nfkc50_compose_prefix_e38299, grn_nfkc50_compose_prefix_e3829a
-};
-
-static inline grn_nfkc50_compose_func *
-grn_nfkc50_compose_suffix(const unsigned char *utf8)
-{
-  {
-    switch (utf8[0]) {
-    case 0xcc :
-      if (utf8[1] >= 0x80 && utf8[1] <= 0xb8) {
-        return grn_nfkc50_compose_suffix_table_cc[utf8[1] - 0x80];
-      }
-      break;
-    case 0xcd :
-      if (utf8[1] >= 0x82 && utf8[1] <= 0x85) {
-        return grn_nfkc50_compose_suffix_table_cd[utf8[1] - 0x82];
-      }
-      break;
-    case 0xd9 :
-      if (utf8[1] >= 0x93 && utf8[1] <= 0x95) {
-        return grn_nfkc50_compose_suffix_table_d9[utf8[1] - 0x93];
-      }
-      break;
-    case 0xe0 :
-      switch (utf8[1]) {
-      case 0xa4 :
-        if (utf8[2] == 0xbc) {
-          return grn_nfkc50_compose_prefix_e0a4bc;
-        }
-        break;
-      case 0xa6 :
-        if (utf8[2] == 0xbe) {
-          return grn_nfkc50_compose_prefix_e0a6be;
-        }
-        break;
-      case 0xa7 :
-        if (utf8[2] == 0x97) {
-          return grn_nfkc50_compose_prefix_e0a797;
-        }
-        break;
-      case 0xac :
-        if (utf8[2] == 0xbe) {
-          return grn_nfkc50_compose_prefix_e0acbe;
-        }
-        break;
-      case 0xad :
-        if (utf8[2] >= 0x96 && utf8[2] <= 0x97) {
-          return grn_nfkc50_compose_suffix_table_e0ad[utf8[2] - 0x96];
-        }
-        break;
-      case 0xae :
-        if (utf8[2] == 0xbe) {
-          return grn_nfkc50_compose_prefix_e0aebe;
-        }
-        break;
-      case 0xaf :
-        if (utf8[2] == 0x97) {
-          return grn_nfkc50_compose_prefix_e0af97;
-        }
-        break;
-      case 0xb1 :
-        if (utf8[2] == 0x96) {
-          return grn_nfkc50_compose_prefix_e0b196;
-        }
-        break;
-      case 0xb3 :
-        if (utf8[2] >= 0x82 && utf8[2] <= 0x96) {
-          return grn_nfkc50_compose_suffix_table_e0b3[utf8[2] - 0x82];
-        }
-        break;
-      case 0xb4 :
-        if (utf8[2] == 0xbe) {
-          return grn_nfkc50_compose_prefix_e0b4be;
-        }
-        break;
-      case 0xb5 :
-        if (utf8[2] == 0x97) {
-          return grn_nfkc50_compose_prefix_e0b597;
-        }
-        break;
-      case 0xb7 :
-        if (utf8[2] >= 0x8a && utf8[2] <= 0x9f) {
-          return grn_nfkc50_compose_suffix_table_e0b7[utf8[2] - 0x8a];
-        }
-        break;
-      default :
-        break;
-      }
-      break;
-    case 0xe1 :
-      switch (utf8[1]) {
-      case 0x80 :
-        if (utf8[2] == 0xae) {
-          return grn_nfkc50_compose_prefix_e180ae;
-        }
-        break;
-      case 0x85 :
-        if (utf8[2] >= 0xa1 && utf8[2] <= 0xb5) {
-          return grn_nfkc50_compose_suffix_table_e185[utf8[2] - 0xa1];
-        }
-        break;
-      case 0x86 :
-        if (utf8[2] >= 0xa8 && utf8[2] <= 0xbf) {
-          return grn_nfkc50_compose_suffix_table_e186[utf8[2] - 0xa8];
-        }
-        break;
-      case 0x87 :
-        if (utf8[2] >= 0x80 && utf8[2] <= 0x82) {
-          return grn_nfkc50_compose_suffix_table_e187[utf8[2] - 0x80];
-        }
-        break;
-      case 0xac :
-        if (utf8[2] == 0xb5) {
-          return grn_nfkc50_compose_prefix_e1acb5;
-        }
-        break;
-      default :
-        break;
-      }
-      break;
-    case 0xe3 :
-      switch (utf8[1]) {
-      case 0x82 :
-        if (utf8[2] >= 0x99 && utf8[2] <= 0x9a) {
-          return grn_nfkc50_compose_suffix_table_e382[utf8[2] - 0x99];
-        }
-        break;
-      default :
-        break;
-      }
     default :
       break;
     }
@@ -69867,14 +69757,362 @@ grn_nfkc50_compose_suffix(const unsigned char *utf8)
 const char *
 grn_nfkc50_map2(const unsigned char *prefix_utf8, const unsigned char *suffix_utf8)
 {
-  grn_nfkc50_compose_func *compose_func;
-
-  compose_func = grn_nfkc50_compose_suffix(suffix_utf8);
-  if (compose_func) {
-    return compose_func(prefix_utf8);
-  } else {
-    return NULL;
+  {
+    switch (suffix_utf8[0]) {
+    case 0xcc :
+      switch (suffix_utf8[1]) {
+      case 0x80 :
+        return grn_nfkc50_compose_prefix_cc80(prefix_utf8);
+      case 0x81 :
+        return grn_nfkc50_compose_prefix_cc81(prefix_utf8);
+      case 0x82 :
+        return grn_nfkc50_compose_prefix_cc82(prefix_utf8);
+      case 0x83 :
+        return grn_nfkc50_compose_prefix_cc83(prefix_utf8);
+      case 0x88 :
+        return grn_nfkc50_compose_prefix_cc88(prefix_utf8);
+      case 0x8a :
+        return grn_nfkc50_compose_prefix_cc8a(prefix_utf8);
+      case 0xa7 :
+        return grn_nfkc50_compose_prefix_cca7(prefix_utf8);
+      case 0x84 :
+        return grn_nfkc50_compose_prefix_cc84(prefix_utf8);
+      case 0x86 :
+        return grn_nfkc50_compose_prefix_cc86(prefix_utf8);
+      case 0xa8 :
+        return grn_nfkc50_compose_prefix_cca8(prefix_utf8);
+      case 0x87 :
+        return grn_nfkc50_compose_prefix_cc87(prefix_utf8);
+      case 0x8c :
+        return grn_nfkc50_compose_prefix_cc8c(prefix_utf8);
+      case 0x8b :
+        return grn_nfkc50_compose_prefix_cc8b(prefix_utf8);
+      case 0x9b :
+        return grn_nfkc50_compose_prefix_cc9b(prefix_utf8);
+      case 0x8f :
+        return grn_nfkc50_compose_prefix_cc8f(prefix_utf8);
+      case 0x91 :
+        return grn_nfkc50_compose_prefix_cc91(prefix_utf8);
+      case 0xa6 :
+        return grn_nfkc50_compose_prefix_cca6(prefix_utf8);
+      case 0xa5 :
+        return grn_nfkc50_compose_prefix_cca5(prefix_utf8);
+      case 0xa3 :
+        return grn_nfkc50_compose_prefix_cca3(prefix_utf8);
+      case 0xb1 :
+        return grn_nfkc50_compose_prefix_ccb1(prefix_utf8);
+      case 0xad :
+        return grn_nfkc50_compose_prefix_ccad(prefix_utf8);
+      case 0xb0 :
+        return grn_nfkc50_compose_prefix_ccb0(prefix_utf8);
+      case 0xae :
+        return grn_nfkc50_compose_prefix_ccae(prefix_utf8);
+      case 0xa4 :
+        return grn_nfkc50_compose_prefix_cca4(prefix_utf8);
+      case 0x89 :
+        return grn_nfkc50_compose_prefix_cc89(prefix_utf8);
+      case 0x93 :
+        return grn_nfkc50_compose_prefix_cc93(prefix_utf8);
+      case 0x94 :
+        return grn_nfkc50_compose_prefix_cc94(prefix_utf8);
+      case 0xb8 :
+        return grn_nfkc50_compose_prefix_ccb8(prefix_utf8);
+      default :
+        return NULL;
+      }
+      break;
+    case 0xcd :
+      switch (suffix_utf8[1]) {
+      case 0x82 :
+        return grn_nfkc50_compose_prefix_cd82(prefix_utf8);
+      case 0x85 :
+        return grn_nfkc50_compose_prefix_cd85(prefix_utf8);
+      default :
+        return NULL;
+      }
+      break;
+    case 0xd9 :
+      switch (suffix_utf8[1]) {
+      case 0x93 :
+        return grn_nfkc50_compose_prefix_d993(prefix_utf8);
+      case 0x94 :
+        return grn_nfkc50_compose_prefix_d994(prefix_utf8);
+      case 0x95 :
+        return grn_nfkc50_compose_prefix_d995(prefix_utf8);
+      default :
+        return NULL;
+      }
+      break;
+    case 0xe0 :
+      switch (suffix_utf8[1]) {
+      case 0xa4 :
+        switch (suffix_utf8[2]) {
+        case 0xbc :
+          return grn_nfkc50_compose_prefix_e0a4bc(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0xa6 :
+        switch (suffix_utf8[2]) {
+        case 0xbe :
+          return grn_nfkc50_compose_prefix_e0a6be(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0xa7 :
+        switch (suffix_utf8[2]) {
+        case 0x97 :
+          return grn_nfkc50_compose_prefix_e0a797(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0xac :
+        switch (suffix_utf8[2]) {
+        case 0xbe :
+          return grn_nfkc50_compose_prefix_e0acbe(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0xad :
+        switch (suffix_utf8[2]) {
+        case 0x96 :
+          return grn_nfkc50_compose_prefix_e0ad96(prefix_utf8);
+        case 0x97 :
+          return grn_nfkc50_compose_prefix_e0ad97(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0xae :
+        switch (suffix_utf8[2]) {
+        case 0xbe :
+          return grn_nfkc50_compose_prefix_e0aebe(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0xaf :
+        switch (suffix_utf8[2]) {
+        case 0x97 :
+          return grn_nfkc50_compose_prefix_e0af97(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0xb1 :
+        switch (suffix_utf8[2]) {
+        case 0x96 :
+          return grn_nfkc50_compose_prefix_e0b196(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0xb3 :
+        switch (suffix_utf8[2]) {
+        case 0x95 :
+          return grn_nfkc50_compose_prefix_e0b395(prefix_utf8);
+        case 0x96 :
+          return grn_nfkc50_compose_prefix_e0b396(prefix_utf8);
+        case 0x82 :
+          return grn_nfkc50_compose_prefix_e0b382(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0xb4 :
+        switch (suffix_utf8[2]) {
+        case 0xbe :
+          return grn_nfkc50_compose_prefix_e0b4be(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0xb5 :
+        switch (suffix_utf8[2]) {
+        case 0x97 :
+          return grn_nfkc50_compose_prefix_e0b597(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0xb7 :
+        switch (suffix_utf8[2]) {
+        case 0x8a :
+          return grn_nfkc50_compose_prefix_e0b78a(prefix_utf8);
+        case 0x8f :
+          return grn_nfkc50_compose_prefix_e0b78f(prefix_utf8);
+        case 0x9f :
+          return grn_nfkc50_compose_prefix_e0b79f(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      default :
+        break;
+      }
+      break;
+    case 0xe1 :
+      switch (suffix_utf8[1]) {
+      case 0x80 :
+        switch (suffix_utf8[2]) {
+        case 0xae :
+          return grn_nfkc50_compose_prefix_e180ae(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0x85 :
+        switch (suffix_utf8[2]) {
+        case 0xa1 :
+          return grn_nfkc50_compose_prefix_e185a1(prefix_utf8);
+        case 0xa2 :
+          return grn_nfkc50_compose_prefix_e185a2(prefix_utf8);
+        case 0xa3 :
+          return grn_nfkc50_compose_prefix_e185a3(prefix_utf8);
+        case 0xa4 :
+          return grn_nfkc50_compose_prefix_e185a4(prefix_utf8);
+        case 0xa5 :
+          return grn_nfkc50_compose_prefix_e185a5(prefix_utf8);
+        case 0xa6 :
+          return grn_nfkc50_compose_prefix_e185a6(prefix_utf8);
+        case 0xa7 :
+          return grn_nfkc50_compose_prefix_e185a7(prefix_utf8);
+        case 0xa8 :
+          return grn_nfkc50_compose_prefix_e185a8(prefix_utf8);
+        case 0xa9 :
+          return grn_nfkc50_compose_prefix_e185a9(prefix_utf8);
+        case 0xaa :
+          return grn_nfkc50_compose_prefix_e185aa(prefix_utf8);
+        case 0xab :
+          return grn_nfkc50_compose_prefix_e185ab(prefix_utf8);
+        case 0xac :
+          return grn_nfkc50_compose_prefix_e185ac(prefix_utf8);
+        case 0xad :
+          return grn_nfkc50_compose_prefix_e185ad(prefix_utf8);
+        case 0xae :
+          return grn_nfkc50_compose_prefix_e185ae(prefix_utf8);
+        case 0xaf :
+          return grn_nfkc50_compose_prefix_e185af(prefix_utf8);
+        case 0xb0 :
+          return grn_nfkc50_compose_prefix_e185b0(prefix_utf8);
+        case 0xb1 :
+          return grn_nfkc50_compose_prefix_e185b1(prefix_utf8);
+        case 0xb2 :
+          return grn_nfkc50_compose_prefix_e185b2(prefix_utf8);
+        case 0xb3 :
+          return grn_nfkc50_compose_prefix_e185b3(prefix_utf8);
+        case 0xb4 :
+          return grn_nfkc50_compose_prefix_e185b4(prefix_utf8);
+        case 0xb5 :
+          return grn_nfkc50_compose_prefix_e185b5(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0x86 :
+        switch (suffix_utf8[2]) {
+        case 0xa8 :
+          return grn_nfkc50_compose_prefix_e186a8(prefix_utf8);
+        case 0xa9 :
+          return grn_nfkc50_compose_prefix_e186a9(prefix_utf8);
+        case 0xaa :
+          return grn_nfkc50_compose_prefix_e186aa(prefix_utf8);
+        case 0xab :
+          return grn_nfkc50_compose_prefix_e186ab(prefix_utf8);
+        case 0xac :
+          return grn_nfkc50_compose_prefix_e186ac(prefix_utf8);
+        case 0xad :
+          return grn_nfkc50_compose_prefix_e186ad(prefix_utf8);
+        case 0xae :
+          return grn_nfkc50_compose_prefix_e186ae(prefix_utf8);
+        case 0xaf :
+          return grn_nfkc50_compose_prefix_e186af(prefix_utf8);
+        case 0xb0 :
+          return grn_nfkc50_compose_prefix_e186b0(prefix_utf8);
+        case 0xb1 :
+          return grn_nfkc50_compose_prefix_e186b1(prefix_utf8);
+        case 0xb2 :
+          return grn_nfkc50_compose_prefix_e186b2(prefix_utf8);
+        case 0xb3 :
+          return grn_nfkc50_compose_prefix_e186b3(prefix_utf8);
+        case 0xb4 :
+          return grn_nfkc50_compose_prefix_e186b4(prefix_utf8);
+        case 0xb5 :
+          return grn_nfkc50_compose_prefix_e186b5(prefix_utf8);
+        case 0xb6 :
+          return grn_nfkc50_compose_prefix_e186b6(prefix_utf8);
+        case 0xb7 :
+          return grn_nfkc50_compose_prefix_e186b7(prefix_utf8);
+        case 0xb8 :
+          return grn_nfkc50_compose_prefix_e186b8(prefix_utf8);
+        case 0xb9 :
+          return grn_nfkc50_compose_prefix_e186b9(prefix_utf8);
+        case 0xba :
+          return grn_nfkc50_compose_prefix_e186ba(prefix_utf8);
+        case 0xbb :
+          return grn_nfkc50_compose_prefix_e186bb(prefix_utf8);
+        case 0xbc :
+          return grn_nfkc50_compose_prefix_e186bc(prefix_utf8);
+        case 0xbd :
+          return grn_nfkc50_compose_prefix_e186bd(prefix_utf8);
+        case 0xbe :
+          return grn_nfkc50_compose_prefix_e186be(prefix_utf8);
+        case 0xbf :
+          return grn_nfkc50_compose_prefix_e186bf(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0x87 :
+        switch (suffix_utf8[2]) {
+        case 0x80 :
+          return grn_nfkc50_compose_prefix_e18780(prefix_utf8);
+        case 0x81 :
+          return grn_nfkc50_compose_prefix_e18781(prefix_utf8);
+        case 0x82 :
+          return grn_nfkc50_compose_prefix_e18782(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      case 0xac :
+        switch (suffix_utf8[2]) {
+        case 0xb5 :
+          return grn_nfkc50_compose_prefix_e1acb5(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      default :
+        break;
+      }
+      break;
+    case 0xe3 :
+      switch (suffix_utf8[1]) {
+      case 0x82 :
+        switch (suffix_utf8[2]) {
+        case 0x99 :
+          return grn_nfkc50_compose_prefix_e38299(prefix_utf8);
+        case 0x9a :
+          return grn_nfkc50_compose_prefix_e3829a(prefix_utf8);
+        default :
+          return NULL;
+        }
+        break;
+      default :
+        break;
+      }
+      break;
+    default :
+      break;
+    }
   }
+
+  return NULL;
 }
 
 #endif /* GRN_WITH_NFKC */

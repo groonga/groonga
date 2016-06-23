@@ -274,12 +274,20 @@ end
 
 class TableGenerator < SwitchGenerator
   private
-  def table_name(type, common_bytes)
-    suffix = common_bytes.collect {|byte| "%02x" % byte}.join("")
-    "grn_nfkc#{@unicode_version}_#{type}_table_#{suffix}"
+  def name_prefix
+    "grn_nfkc#{@unicode_version}_"
   end
 
-  def generate_char_convert_tables(type, char_map, return_type, byte_size_groups)
+  def table_name(type, common_bytes)
+    suffix = common_bytes.collect {|byte| "%02x" % byte}.join("")
+    "#{name_prefix}#{type}_table_#{suffix}"
+  end
+
+  def function_name(type)
+    "#{name_prefix}#{type}"
+  end
+
+  def generate_char_convert_tables(type, return_type, byte_size_groups)
     if return_type.end_with?("*")
       space = ""
     else
@@ -292,7 +300,9 @@ class TableGenerator < SwitchGenerator
       last_bytes = chars.collect {|char| char.bytes.last}
       last_bytes.min.step(last_bytes.max).each_slice(8) do |slice|
         values = slice.collect do |last_byte|
-          yield((common_bytes + [last_byte]).pack("c*"))
+          char = (common_bytes + [last_byte]).pack("c*")
+          char.force_encoding("UTF-8")
+          yield(char)
         end
         n_values += values.size
         lines << ("  " + values.join(", "))
@@ -311,29 +321,18 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
     end
   end
 
-  def generate_char_converter(type,
-                              function_type,
-                              char_map,
-                              default,
-                              return_type,
-                              options={},
-                              &converter)
-    byte_size_groups = char_map.keys.group_by do |from|
-      bytes = from.bytes
-      bytes[0..-2]
-    end
-
-    generate_char_convert_tables(type,
-                                 char_map,
-                                 return_type,
-                                 byte_size_groups,
-                                 &converter)
-
+  def generate_char_convert_function(type,
+                                     argument_list,
+                                     char_variable,
+                                     default,
+                                     return_type,
+                                     byte_size_groups,
+                                     options={})
     modifier = options[:internal] ? "static inline " : ""
     @output.puts(<<-HEADER)
 
 #{modifier}#{return_type}
-grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
+#{function_name(type)}(#{argument_list})
 {
     HEADER
 
@@ -347,28 +346,8 @@ grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
       max = chars_bytes.last.last
       n_common_bytes = 0
       if common_bytes.empty?
-        if min == max
-          value = yield(chars.join(""))
-          @output.puts(<<-BODY)
-  if (utf8[0] < 0x80) {
-    if (utf8[0] == #{"%#04x" % min}) {
-      return #{value};
-    } else {
-      return #{default};
-    }
-  } else {
-          BODY
-        else
-          @output.puts(<<-BODY)
-  if (utf8[0] < 0x80) {
-    if (utf8[0] >= #{"%#04x" % min} && utf8[0] <= #{"%#04x" % max}) {
-      return #{table_name(type, common_bytes)}[utf8[0] - #{"%#04x" % min}];
-    } else {
-      return #{default};
-    }
-  } else {
-          BODY
-        end
+        indent = "  "
+        yield(:no_common_bytes, indent, chars, chars_bytes)
       else
         if first_group
           @output.puts(<<-BODY)
@@ -390,7 +369,7 @@ grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
           if prev_common_bytes[i].nil?
             # p nil
             @output.puts(<<-BODY)
-    #{indent}switch (utf8[#{i}]) {
+    #{indent}switch (#{char_variable}[#{i}]) {
             BODY
           elsif i < prev_n_common_bytes
             # p :prev
@@ -403,7 +382,7 @@ grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
           elsif n_common_bytes < prev_n_common_bytes
             # p :common_prev
             @output.puts(<<-BODY)
-    #{indent}switch (utf8[#{i}]) {
+    #{indent}switch (#{char_variable}[#{i}]) {
             BODY
           end
           @output.puts(<<-BODY)
@@ -412,23 +391,8 @@ grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
         end
 
         n = chars_bytes.first.size - 1
-        indent = "  " * common_bytes.size
-        if min == max
-          value = yield(chars.join(""))
-          @output.puts(<<-BODY)
-    #{indent}if (utf8[#{n}] == #{"%#04x" % min}) {
-    #{indent}  return #{value};
-    #{indent}}
-    #{indent}break;
-          BODY
-        else
-          @output.puts(<<-BODY)
-    #{indent}if (utf8[#{n}] >= #{"%#04x" % min} && utf8[#{n}] <= #{"%#04x" % max}) {
-    #{indent}  return #{table_name(type, common_bytes)}[utf8[#{n}] - #{"%#04x" % min}];
-    #{indent}}
-    #{indent}break;
-          BODY
-        end
+        indent = "    " + ("  " * common_bytes.size)
+        yield(:have_common_bytes, indent, chars, chars_bytes, n, common_bytes)
       end
 
       prev_common_bytes = common_bytes
@@ -445,6 +409,11 @@ grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
     #{indent}  break;
     #{indent}}
       BODY
+      if i > 0
+        @output.puts(<<-BODY)
+    #{indent}break;
+        BODY
+      end
     end
 
     @output.puts(<<-FOOTER)
@@ -453,6 +422,88 @@ grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
   return #{default};
 }
     FOOTER
+  end
+
+  def generate_char_converter(type,
+                              function_type,
+                              char_map,
+                              default,
+                              return_type,
+                              options={},
+                              &converter)
+    byte_size_groups = char_map.keys.group_by do |from|
+      bytes = from.bytes
+      bytes[0..-2]
+    end
+
+    generate_char_convert_tables(type,
+                                 return_type,
+                                 byte_size_groups,
+                                 &converter)
+
+    char_variable = "utf8"
+    generate_char_convert_function(function_type,
+                                   "const unsigned char *#{char_variable}",
+                                   char_variable,
+                                   default,
+                                   return_type,
+                                   byte_size_groups,
+                                   options) do |state, *args|
+      case state
+      when :no_common_bytes
+        indent, chars, chars_bytes = args
+        if chars.size == 1
+          char = chars[0]
+          char_byte = chars_bytes.first.first
+          value = yield(char)
+          @output.puts(<<-BODY)
+#{indent}if (#{char_variable}[0] < 0x80) {
+#{indent}  if (#{char_variable}[0] == #{"%#04x" % char_byte}) {
+#{indent}    return #{value};
+#{indent}  } else {
+#{indent}    return #{default};
+#{indent}  }
+#{indent}} else {
+          BODY
+        else
+          min = chars_bytes.first.first
+          max = chars_bytes.last.first
+          @output.puts(<<-BODY)
+#{indent}if (#{char_variable}[0] < 0x80) {
+#{indent}  if (#{char_variable}[0] >= #{"%#04x" % min} &&
+#{indent}      #{char_variable}[0] <= #{"%#04x" % max}) {
+#{indent}    return #{table_name(type, [])}[#{char_variable}[0] - #{"%#04x" % min}];
+#{indent}  } else {
+#{indent}    return #{default};
+#{indent}  }
+#{indent}} else {
+          BODY
+        end
+      when :have_common_bytes
+        indent, chars, chars_bytes, n, common_bytes = args
+        if chars.size == 1
+          char = chars[0]
+          char_byte = chars_bytes.first.last
+          value = yield(char)
+          @output.puts(<<-BODY)
+#{indent}if (#{char_variable}[#{n}] == #{"%#04x" % char_byte}) {
+#{indent}  return #{value};
+#{indent}}
+#{indent}break;
+          BODY
+        else
+          min = chars_bytes.first.last
+          max = chars_bytes.last.last
+          @output.puts(<<-BODY)
+#{indent}if (#{char_variable}[#{n}] >= #{"%#04x" % min} &&
+#{indent}    #{char_variable}[#{n}] <= #{"%#04x" % max}) {
+#{indent}  return #{table_name(type, common_bytes)}[#{char_variable}[#{n}] - #{"%#04x" % min}];
+#{indent}}
+#{indent}break;
+          BODY
+        end
+      end
+    end
   end
 
   def generate_blockcode_char_type(block_codes)
@@ -477,7 +528,6 @@ grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
                             char_map,
                             default,
                             "const char *") do |from|
-      from.force_encoding("UTF-8")
       to = char_map[from]
       if to
         escaped_value = to.bytes.collect {|char| "\\x%02x" % char}.join("")
@@ -512,13 +562,6 @@ grn_nfkc#{@unicode_version}_#{function_type}(const unsigned char *utf8)
       suffix_char_map[suffix][prefix] = destination
     end
 
-    compose_func_type_name = "grn_nfkc#{@unicode_version}_compose_func"
-
-    @output.puts(<<-TYPEDEF)
-
-typedef const char *#{compose_func_type_name}(const unsigned char *prefix_utf8);
-TYPEDEF
-
     suffix_char_map.each do |suffix, prefix_char_map|
       suffix_bytes = suffix.bytes.collect {|byte| "%02x" % byte}.join("")
       default = "NULL"
@@ -528,7 +571,6 @@ TYPEDEF
                               default,
                               "const char *",
                               :internal => true) do |prefix|
-        prefix.force_encoding("UTF-8")
         to = prefix_char_map[prefix]
         if to
           escaped_value = to.bytes.collect {|char| "\\x%02x" % char}.join("")
@@ -539,37 +581,63 @@ TYPEDEF
       end
     end
 
+
+    char_variable = "suffix_utf8"
+    argument_list =
+      "const unsigned char *prefix_utf8, " +
+      "const unsigned char *#{char_variable}"
     default = "NULL"
-    generate_char_converter("compose_suffix",
-                            "compose_suffix",
-                            suffix_char_map,
-                            default,
-                            "#{compose_func_type_name} *",
-                            :internal => true) do |suffix|
-      suffix.force_encoding("UTF-8")
-      if suffix_char_map.key?(suffix)
-        suffix_bytes = suffix.bytes.collect {|byte| "%02x" % byte}.join("")
-        "grn_nfkc#{@unicode_version}_compose_prefix_#{suffix_bytes}"
-      else
-        default
+    byte_size_groups = suffix_char_map.keys.group_by do |from|
+      bytes = from.bytes
+      bytes[0..-2]
+    end
+    generate_char_convert_function("map2",
+                                   argument_list,
+                                   char_variable,
+                                   default,
+                                   "const char *",
+                                   byte_size_groups) do |type, *args|
+      case type
+      when :no_common_bytes
+        indent, chars, chars_bytes = args
+        @output.puts(<<-BODY)
+#{indent}switch (#{char_variable}[0]) {
+        BODY
+        chars.each do |char|
+          suffix_bytes = char.bytes.collect {|byte| "%02x" % byte}.join("")
+          type = "compose_prefix_#{suffix_bytes}"
+          @output.puts(<<-BODY)
+#{indent}case #{"%#04x" % char.bytes.last} :
+#{indent}  return #{function_name(type)}(prefix_utf8);
+          BODY
+        end
+        @output.puts(<<-BODY)
+#{indent}default :
+#{indent}  return #{default};
+#{indent}}
+#{indent}break;
+        BODY
+      when :have_common_bytes
+        indent, chars, chars_bytes, n, common_bytes = args
+        @output.puts(<<-BODY)
+#{indent}switch (#{char_variable}[#{n}]) {
+        BODY
+        chars.each do |char|
+          suffix_bytes = char.bytes.collect {|byte| "%02x" % byte}.join("")
+          type = "compose_prefix_#{suffix_bytes}"
+          @output.puts(<<-BODY)
+#{indent}case #{"%#04x" % char.bytes.last} :
+#{indent}  return #{function_name(type)}(prefix_utf8);
+          BODY
+        end
+        @output.puts(<<-BODY)
+#{indent}default :
+#{indent}  return #{default};
+#{indent}}
+#{indent}break;
+        BODY
       end
     end
-
-    @output.puts(<<-BODY)
-
-const char *
-grn_nfkc#{@unicode_version}_map2(const unsigned char *prefix_utf8, const unsigned char *suffix_utf8)
-{
-  #{compose_func_type_name} *compose_func;
-
-  compose_func = grn_nfkc#{@unicode_version}_compose_suffix(suffix_utf8);
-  if (compose_func) {
-    return compose_func(prefix_utf8);
-  } else {
-    return NULL;
-  }
-}
-    BODY
   end
 
   def to_bytes_map(char_map)
@@ -591,6 +659,7 @@ def create_bc(option)
   open("|./icudump --#{option}").each{|l|
     src,_,code = l.chomp.split("\t")
     str = src.split(':').collect(&:hex).pack("c*")
+    str.force_encoding("UTF-8")
     bc[str] = code
   }
   bc
