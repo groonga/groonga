@@ -499,6 +499,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Wed Jun 29 2016 Kentaro Hayashi <hayashi@clear-code.com> - 6.0.5-1
+- new upstream release.
+
 * Mon Jun 06 2016 Kouhei Sutou <kou@clear-code.com> - 6.0.4-1
 - new upstream release.
 
