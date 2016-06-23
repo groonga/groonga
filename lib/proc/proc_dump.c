@@ -204,21 +204,42 @@ dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
   }
 
   if (grn_table_columns(ctx, table, NULL, 0, (grn_obj *)columns) >= 0) {
-    grn_id *key;
+    grn_bool is_close_opened_object_mode = GRN_FALSE;
 
-    GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
+    if (grn_thread_get_limit() == 1) {
+      is_close_opened_object_mode = GRN_TRUE;
+    }
+
+    GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
+      grn_bool is_opened = GRN_TRUE;
+      void *key;
+      grn_id column_id;
       grn_obj *column;
-      if ((column = grn_ctx_at(ctx, *key))) {
-        if (grn_obj_is_index_column(ctx, column)) {
-          /* do nothing */
-        } else if (grn_obj_is_reference_column(ctx, column)) {
-          GRN_PTR_PUT(ctx, pending_reference_columns, column);
-        } else {
-          dump_column(ctx, outbuf, table, column);
-          grn_obj_unlink(ctx, column);
-        }
+
+      grn_hash_cursor_get_key(ctx, cursor, &key);
+      column_id = *((grn_id *)key);
+
+      if (is_close_opened_object_mode) {
+        is_opened = grn_ctx_is_opened(ctx, column_id);
       }
-    });
+
+      column = grn_ctx_at(ctx, column_id);
+      if (!column) {
+        continue;
+      }
+
+      if (grn_obj_is_index_column(ctx, column)) {
+        /* do nothing */
+      } else if (grn_obj_is_reference_column(ctx, column)) {
+        GRN_PTR_PUT(ctx, pending_reference_columns, column);
+      } else {
+        dump_column(ctx, outbuf, table, column);
+      }
+
+      if (is_close_opened_object_mode && !is_opened) {
+        grn_obj_close(ctx, column);
+      }
+    } GRN_HASH_EACH_END(ctx, cursor);
   }
   grn_hash_close(ctx, columns);
 }
