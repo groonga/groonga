@@ -16,6 +16,21 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+/*
+  Groonga: ed300a833d44eaefa978b5ecf46a96ef91ae0891
+
+  CFLAGS: -O2 -g
+  % make --quiet -C benchmark run-bench-nfkc
+  run-bench-nfkc:
+                               (total)    (average)  (median)
+    map1 - switch            : (0.0060ms) (0.00060000ms) (0.00000000ms)
+    map1 -  table            : (0.00000000ms) (0.00000000ms) (0.00000000ms)
+    map2 - switch - no change: (0.0010ms) (0.00010000ms) (0.00000000ms)
+    map2 -  table - no change: (0.00000000ms) (0.00000000ms) (0.00000000ms)
+    map2 - switch -    change: (0.0010ms) (0.00010000ms) (0.00000000ms)
+    map2 -  table -    change: (0.0010ms) (0.00010000ms) (0.00000000ms)
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 
