@@ -241,7 +241,7 @@ main(int argc, gchar **argv)
 {
   grn_rc rc;
   BenchReporter *reporter;
-  gint n = 1;
+  gint n = 10;
 
   rc = grn_init();
   if (rc != GRN_SUCCESS) {
