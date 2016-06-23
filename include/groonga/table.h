@@ -114,7 +114,7 @@ GRN_API grn_posting *grn_index_cursor_next(grn_ctx *ctx, grn_obj *ic, grn_id *ti
 } while (0)
 
 #define GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) do {\
-  if (table) {\
+  if ((table)) {\
     grn_table_cursor *cursor;\
     cursor = grn_table_cursor_open((ctx), (table),\
                                    NULL, 0,\
