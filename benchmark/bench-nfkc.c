@@ -38,7 +38,7 @@ const char *grn_nfkc50_map2(const unsigned char *prefix,
 #define MAX_UNICODE 0x110000
 #define BUFFER_SIZE 0x100
 
-static int
+static inline int
 ucs2utf8(unsigned int i, unsigned char *buf)
 {
   unsigned char *p = buf;
