@@ -780,7 +780,7 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (is_dump_records) {
     /* To update index columns correctly, we first create the whole schema, then
        load non-derivative records, while skipping records of index columns. That
-       way, groonga will silently do the job of updating index columns for us. */
+       way, Groonga will silently do the job of updating index columns for us. */
     if (GRN_TEXT_LEN(tables) > 0) {
       dump_selected_tables_records(ctx, outbuf, tables);
     } else {
