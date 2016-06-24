@@ -977,10 +977,17 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
 
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
                              GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+    void *name;
+    int name_size;
     grn_bool is_opened = GRN_TRUE;
     grn_obj *object;
     const char *path;
     grn_id processed_path_id;
+
+    name_size = grn_table_cursor_get_key(ctx, cursor, &name);
+    if (grn_obj_name_is_column(ctx, name, name_size)) {
+      continue;
+    }
 
     if (is_close_opened_object_mode) {
       is_opened = grn_ctx_is_opened(ctx, id);
