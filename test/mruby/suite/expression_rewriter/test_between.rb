@@ -71,4 +71,33 @@ class TestBetween < ExpressionRewriterTestCase
   expr:       <11..11>
     DUMP
   end
+
+  def test_function
+    code =
+      "between(timestamp, '2015-09-01 00:00:00', 'include', '2015-10-15 00:00:00', 'include') && " +
+      "timestamp >= '2015-10-01 00:00:00' && " +
+      "timestamp <  '2015-11-00 00:00:00'"
+    assert_equal(<<-DUMP, dump_rewritten_plan(code))
+[0]
+  op:         <call>
+  logical_op: <or>
+  args[0]:    <#<proc:function between arguments:[]>>
+  args[1]:    <#<column:fix_size Logs.timestamp range:Time type:scalar compress:none>>
+  args[2]:    <"2015-09-01 00:00:00">
+  args[3]:    <"include">
+  args[4]:    <"2015-10-15 00:00:00">
+  args[5]:    <"include">
+  expr:       <0..6>
+[1]
+  op:         <call>
+  logical_op: <and>
+  args[0]:    <#<proc:function between arguments:[]>>
+  args[1]:    <#<column:fix_size Logs.timestamp range:Time type:scalar compress:none>>
+  args[2]:    <"2015-10-01 00:00:00">
+  args[3]:    <"include">
+  args[4]:    <"2015-11-00 00:00:00">
+  args[5]:    <"exclude">
+  expr:       <7..13>
+    DUMP
+  end
 end
