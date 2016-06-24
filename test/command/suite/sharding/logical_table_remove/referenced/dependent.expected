@@ -12,7 +12,7 @@ table_create Times_20150203 TABLE_PAT_KEY Time
 [[0,0.0,0.0],true]
 column_create Times_20150203 timestamp_index COLUMN_INDEX Logs_20150203 timestamp
 [[0,0.0,0.0],true]
-table_create PathTerms_20150203 TABLE_PAT_KEY   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+table_create PathTerms_20150203 TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
 [[0,0.0,0.0],true]
 column_create PathTerms_20150203 index COLUMN_INDEX|WITH_POSITION   Paths_20150203 _key
 [[0,0.0,0.0],true]
@@ -30,7 +30,7 @@ table_create Times_20150204 TABLE_PAT_KEY Time
 [[0,0.0,0.0],true]
 column_create Times_20150204 timestamp_index COLUMN_INDEX Logs_20150204 timestamp
 [[0,0.0,0.0],true]
-table_create PathTerms_20150204 TABLE_PAT_KEY   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+table_create PathTerms_20150204 TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
 [[0,0.0,0.0],true]
 column_create PathTerms_20150204 index COLUMN_INDEX|WITH_POSITION   Paths_20150204 _key
 [[0,0.0,0.0],true]
@@ -59,7 +59,7 @@ column_create Logs_20150203 timestamp COLUMN_SCALAR Time
 
 table_create Times_20150203 TABLE_PAT_KEY Time
 
-table_create PathTerms_20150203 TABLE_PAT_KEY --default_tokenizer TokenBigram --normalizer NormalizerAuto
+table_create PathTerms_20150203 TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 
 table_create NotRelated_20150204 TABLE_NO_KEY
 

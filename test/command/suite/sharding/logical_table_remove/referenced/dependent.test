@@ -9,7 +9,7 @@ column_create Logs_20150203 path COLUMN_SCALAR Paths_20150203
 table_create Times_20150203 TABLE_PAT_KEY Time
 column_create Times_20150203 timestamp_index COLUMN_INDEX Logs_20150203 timestamp
 
-table_create PathTerms_20150203 TABLE_PAT_KEY \
+table_create PathTerms_20150203 TABLE_PAT_KEY ShortText \
   --default_tokenizer TokenBigram \
   --normalizer NormalizerAuto
 column_create PathTerms_20150203 index COLUMN_INDEX|WITH_POSITION \
@@ -25,7 +25,7 @@ column_create Logs_20150204 path COLUMN_SCALAR Paths_20150204
 table_create Times_20150204 TABLE_PAT_KEY Time
 column_create Times_20150204 timestamp_index COLUMN_INDEX Logs_20150204 timestamp
 
-table_create PathTerms_20150204 TABLE_PAT_KEY \
+table_create PathTerms_20150204 TABLE_PAT_KEY ShortText \
   --default_tokenizer TokenBigram \
   --normalizer NormalizerAuto
 column_create PathTerms_20150204 index COLUMN_INDEX|WITH_POSITION \
