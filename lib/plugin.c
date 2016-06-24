@@ -984,6 +984,10 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
     const char *path;
     grn_id processed_path_id;
 
+    if (grn_id_is_builtin(ctx, id)) {
+      continue;
+    }
+
     name_size = grn_table_cursor_get_key(ctx, cursor, &name);
     if (grn_obj_name_is_column(ctx, name, name_size)) {
       continue;
@@ -1000,10 +1004,6 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
     }
 
     if (!grn_obj_is_proc(ctx, object)) {
-      goto next_loop;
-    }
-
-    if (grn_obj_is_builtin(ctx, object)) {
       goto next_loop;
     }
 
