@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2011-2015 Brazil
+/*
+  Copyright(C) 2011-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -36,10 +37,11 @@
 #include <algorithm>
 #include <limits>
 
+/* Must be the same value as GRN_OPEN_CREATE_MODE */
 #ifdef WIN32
 # define GRN_IO_FILE_CREATE_MODE (GENERIC_READ | GENERIC_WRITE)
 #else /* WIN32 */
-# define GRN_IO_FILE_CREATE_MODE 0644
+# define GRN_IO_FILE_CREATE_MODE 0640
 #endif /* WIN32 */
 
 namespace grn {
