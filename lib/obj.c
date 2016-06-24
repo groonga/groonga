@@ -530,3 +530,17 @@ grn_obj_type_to_string(uint8_t type)
     return "unknown";
   }
 }
+
+grn_bool
+grn_obj_name_is_column(grn_ctx *ctx, const char *name, int name_len)
+{
+  if (!name) {
+    return GRN_FALSE;
+  }
+
+  if (name_len < 0) {
+    name_len = strlen(name);
+  }
+
+  return memchr(name, GRN_DB_DELIMITER, name_len) != NULL;
+}

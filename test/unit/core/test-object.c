@@ -61,6 +61,8 @@ void data_is_window_function_proc(void);
 void test_is_window_function_proc(gconstpointer data);
 void data_type_to_string(void);
 void test_type_to_string(gconstpointer data);
+void data_name_is_column(void);
+void test_name_is_column(gconstpointer data);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -752,4 +754,34 @@ test_type_to_string(gconstpointer data)
   type = gcut_data_get_uint(data, "type");
   cut_assert_equal_string(expected,
                           grn_obj_type_to_string(type));
+}
+
+void
+data_name_is_column(void)
+{
+#define ADD_DATUM(expected, name)                                      \
+  gcut_add_datum(G_STRINGIFY(name),                                    \
+                 "expected", G_TYPE_BOOLEAN, expected,                 \
+                 "name", G_TYPE_STRING, name,                          \
+                 NULL)
+
+  ADD_DATUM(GRN_TRUE, "Users.age");
+  ADD_DATUM(GRN_FALSE, "Users");
+
+#undef ADD_DATUM
+}
+
+void
+test_name_is_column(gconstpointer data)
+{
+  gboolean expected;
+  const gchar *name;
+
+  expected = gcut_data_get_boolean(data, "expected");
+  name = gcut_data_get_string(data, "name");
+  if (expected) {
+    cut_assert_true(grn_obj_name_is_column(context, name, -1));
+  } else {
+    cut_assert_false(grn_obj_name_is_column(context, name, -1));
+  }
 }

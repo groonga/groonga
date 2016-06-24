@@ -62,6 +62,10 @@ GRN_API grn_bool grn_obj_is_dirty(grn_ctx *ctx, grn_obj *obj);
 
 GRN_API const char *grn_obj_type_to_string(uint8_t type);
 
+GRN_API grn_bool grn_obj_name_is_column(grn_ctx *ctx,
+                                        const char *name,
+                                        int name_len);
+
 #ifdef __cplusplus
 }
 #endif
