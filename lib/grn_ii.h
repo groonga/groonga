@@ -63,8 +63,8 @@ struct grn_ii_header {
   uint32_t bgqtail;
   uint32_t bgqbody[GRN_II_BGQSIZE];
   uint32_t reserved[288];
-  uint32_t ainfo[GRN_II_MAX_LSEG];
-  uint32_t binfo[GRN_II_MAX_LSEG];
+  uint32_t ainfo[GRN_II_MAX_LSEG]; /* array info */
+  uint32_t binfo[GRN_II_MAX_LSEG]; /* buffer info */
   uint32_t free_chunks[GRN_II_N_CHUNK_VARIATION + 1];
   uint32_t garbages[GRN_II_N_CHUNK_VARIATION + 1];
   uint32_t ngarbages[GRN_II_N_CHUNK_VARIATION + 1];
