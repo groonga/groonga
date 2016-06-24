@@ -86,6 +86,10 @@ allow_unsigned_uploads = 0
               "The PGP key to sign .changes and .dsc") do |pgp_sign_key|
       @pgp_sign_key = pgp_sign_key
     end
+    parser.on("--ppa=PPA",
+              "The personal package archive name (groonga-ppa or groonga-nightly") do |ppa|
+      @dput_configuration_name = ppa
+    end
 
     parser.parse!
   end
