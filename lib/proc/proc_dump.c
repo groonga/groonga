@@ -933,7 +933,9 @@ dump_indexes(grn_ctx *ctx, grn_dumper *dumper)
     return;
   }
 
-  GRN_TEXT_PUTC(ctx, dumper->output, '\n');
+  if (GRN_TEXT_LEN(dumper->output) > 0) {
+    GRN_TEXT_PUTC(ctx, dumper->output, '\n');
+  }
 
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
                              GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
