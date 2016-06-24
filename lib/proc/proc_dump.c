@@ -153,21 +153,40 @@ dump_index_column_sources(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
     GRN_TEXT_PUTC(ctx, dumper->output, ' ');
   }
   for (i = 0; i < n; i++) {
+    grn_bool is_opened = GRN_TRUE;
+    grn_id source_id;
     grn_obj *source;
-    if ((source = grn_ctx_at(ctx, *source_ids))) {
-      if (i) { GRN_TEXT_PUTC(ctx, dumper->output, ','); }
-      switch (source->header.type) {
-      case GRN_TABLE_PAT_KEY:
-      case GRN_TABLE_DAT_KEY:
-      case GRN_TABLE_HASH_KEY:
-        GRN_TEXT_PUT(ctx, dumper->output, GRN_COLUMN_NAME_KEY, GRN_COLUMN_NAME_KEY_LEN);
-        break;
-      default:
-        dump_column_name(ctx, dumper, source);
-        break;
-      }
-    }
+
+    source_id = *source_ids;
     source_ids++;
+
+    if (dumper->is_close_opened_object_mode) {
+      is_opened = grn_ctx_is_opened(ctx, source_id);
+    }
+
+    source = grn_ctx_at(ctx, source_id);
+    if (!source) {
+      continue;
+    }
+
+    if (i) { GRN_TEXT_PUTC(ctx, dumper->output, ','); }
+    switch (source->header.type) {
+    case GRN_TABLE_PAT_KEY:
+    case GRN_TABLE_DAT_KEY:
+    case GRN_TABLE_HASH_KEY:
+      GRN_TEXT_PUT(ctx,
+                   dumper->output,
+                   GRN_COLUMN_NAME_KEY,
+                   GRN_COLUMN_NAME_KEY_LEN);
+      break;
+    default:
+      dump_column_name(ctx, dumper, source);
+      break;
+    }
+
+    if (dumper->is_close_opened_object_mode && !is_opened) {
+      grn_obj_close(ctx, source);
+    }
   }
   grn_obj_close(ctx, &sources);
 }
@@ -175,10 +194,16 @@ dump_index_column_sources(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
 static void
 dump_column(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_obj *column)
 {
+  grn_id type_id;
+  grn_bool is_opened_type = GRN_TRUE;
   grn_obj *type;
   grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
 
-  type = grn_ctx_at(ctx, grn_obj_get_range(ctx, column));
+  type_id = grn_obj_get_range(ctx, column);
+  if (dumper->is_close_opened_object_mode) {
+    is_opened_type = grn_ctx_is_opened(ctx, type_id);
+  }
+  type = grn_ctx_at(ctx, type_id);
   if (!type) {
     // ERR(GRN_RANGE_ERROR, "couldn't get column's type object");
     return;
@@ -202,7 +227,9 @@ dump_column(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_obj *column)
   }
   GRN_TEXT_PUTC(ctx, dumper->output, '\n');
 
-  grn_obj_unlink(ctx, type);
+  if (dumper->is_close_opened_object_mode && !is_opened_type) {
+    grn_obj_close(ctx, type);
+  }
 }
 
 static void
@@ -300,16 +327,6 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
   grn_bool have_index_column = GRN_FALSE;
   grn_bool have_data_column = GRN_FALSE;
 
-  switch (table->header.type) {
-  case GRN_TABLE_HASH_KEY:
-  case GRN_TABLE_PAT_KEY:
-  case GRN_TABLE_DAT_KEY:
-  case GRN_TABLE_NO_KEY:
-    break;
-  default:
-    return;
-  }
-
   if (grn_table_size(ctx, table) == 0) {
     return;
   }
@@ -326,7 +343,7 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
                                  GRN_COLUMN_NAME_ID_LEN);
     GRN_PTR_PUT(ctx, &columns, id_accessor);
     GRN_BOOL_PUT(ctx, &is_opened_flags, GRN_FALSE);
-  } else {
+  } else if (table->header.domain != GRN_ID_NIL) {
     grn_obj *key_accessor;
     key_accessor = grn_obj_column(ctx,
                                   table,
@@ -530,6 +547,7 @@ exit :
 static void
 dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 {
+  grn_bool is_opened_domain = GRN_TRUE;
   grn_obj *domain = NULL;
   grn_id range_id;
   grn_obj *range = NULL;
@@ -543,6 +561,9 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
   case GRN_TABLE_DAT_KEY:
+    if (dumper->is_close_opened_object_mode) {
+      is_opened_domain = grn_ctx_is_opened(ctx, table->header.domain);
+    }
     domain = grn_ctx_at(ctx, table->header.domain);
     break;
   default:
@@ -614,7 +635,9 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
   GRN_TEXT_PUTC(ctx, dumper->output, '\n');
 
   if (domain) {
-    grn_obj_unlink(ctx, domain);
+    if (dumper->is_close_opened_object_mode && !is_opened_domain) {
+      grn_obj_close(ctx, domain);
+    }
   }
 
   dump_columns(ctx, dumper, table, GRN_TRUE, GRN_FALSE);
@@ -625,8 +648,19 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
 {
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
                              GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+    void *name;
+    int name_size;
     grn_bool is_opened = GRN_TRUE;
     grn_obj *object;
+
+    if (grn_id_is_builtin(ctx, id)) {
+      continue;
+    }
+
+    name_size = grn_table_cursor_get_key(ctx, cursor, &name);
+    if (grn_obj_name_is_column(ctx, name, name_size)) {
+      continue;
+    }
 
     if (dumper->is_close_opened_object_mode) {
       is_opened = grn_ctx_is_opened(ctx, id);
@@ -664,8 +698,19 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
 
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
                              GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+    void *name;
+    int name_size;
     grn_bool is_opened = GRN_TRUE;
     grn_obj *object;
+
+    if (grn_id_is_builtin(ctx, id)) {
+      continue;
+    }
+
+    name_size = grn_table_cursor_get_key(ctx, cursor, &name);
+    if (grn_obj_name_is_column(ctx, name, name_size)) {
+      continue;
+    }
 
     if (dumper->is_close_opened_object_mode) {
       is_opened = grn_ctx_is_opened(ctx, id);
@@ -739,14 +784,18 @@ dump_selected_tables_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *tables)
       p++;
     }
 
-    if ((table = grn_ctx_get(ctx, token, token_e - token))) {
-      dump_records(ctx, dumper, table);
-      grn_obj_unlink(ctx, table);
-    } else {
+    table = grn_ctx_get(ctx, token, token_e - token);
+    if (!table) {
       GRN_LOG(ctx, GRN_LOG_WARNING,
               "nonexistent table name is ignored: <%.*s>\n",
               (int)(token_e - token), token);
+      continue;
     }
+
+    if (grn_obj_is_table(ctx, table)) {
+      dump_records(ctx, dumper, table);
+    }
+    grn_obj_unlink(ctx, table);
   }
 }
 
@@ -755,8 +804,19 @@ dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
 {
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
                              GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+    void *name;
+    int name_size;
     grn_bool is_opened = GRN_TRUE;
     grn_obj *table;
+
+    if (grn_id_is_builtin(ctx, id)) {
+      continue;
+    }
+
+    name_size = grn_table_cursor_get_key(ctx, cursor, &name);
+    if (grn_obj_name_is_column(ctx, name, name_size)) {
+      continue;
+    }
 
     if (dumper->is_close_opened_object_mode) {
       is_opened = grn_ctx_is_opened(ctx, id);
@@ -772,7 +832,9 @@ dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
       continue;
     }
 
-    dump_records(ctx, dumper, table);
+    if (grn_obj_is_table(ctx, table)) {
+      dump_records(ctx, dumper, table);
+    }
     if (dumper->is_close_opened_object_mode && !is_opened) {
       grn_obj_close(ctx, table);
     }
@@ -782,20 +844,20 @@ dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
 static void
 dump_indexes(grn_ctx *ctx, grn_dumper *dumper)
 {
-  grn_obj *db;
-  grn_table_cursor *cursor;
-  grn_id id;
   grn_bool is_first_index_column = GRN_TRUE;
 
-  db = grn_ctx_db(ctx);
-  cursor = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
-                                 GRN_CURSOR_BY_ID);
-  if (!cursor) {
-    return;
-  }
-
-  while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
+                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+    grn_bool is_opened = GRN_TRUE;
     grn_obj *object;
+
+    if (grn_id_is_builtin(ctx, id)) {
+      continue;
+    }
+
+    if (dumper->is_close_opened_object_mode) {
+      is_opened = grn_ctx_is_opened(ctx, id);
+    }
 
     object = grn_ctx_at(ctx, id);
     if (!object) {
@@ -808,6 +870,7 @@ dump_indexes(grn_ctx *ctx, grn_dumper *dumper)
     }
 
     if (object->header.type == GRN_COLUMN_INDEX) {
+      grn_bool is_table_opened = GRN_TRUE;
       grn_obj *table;
       grn_obj *column = object;
 
@@ -816,13 +879,19 @@ dump_indexes(grn_ctx *ctx, grn_dumper *dumper)
       }
       is_first_index_column = GRN_FALSE;
 
+      if (dumper->is_close_opened_object_mode) {
+        is_table_opened = grn_ctx_is_opened(ctx, column->header.domain);
+      }
       table = grn_ctx_at(ctx, column->header.domain);
       dump_column(ctx, dumper, table, column);
-      grn_obj_unlink(ctx, table);
+      if (dumper->is_close_opened_object_mode && !is_table_opened) {
+        grn_obj_close(ctx, table);
+      }
     }
-    grn_obj_unlink(ctx, object);
-  }
-  grn_table_cursor_close(ctx, cursor);
+    if (dumper->is_close_opened_object_mode && !is_opened) {
+      grn_obj_close(ctx, object);
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
 }
 
 static grn_obj *
