@@ -381,7 +381,7 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
         GRN_BOOL_PUT(ctx, &is_opened_flags, is_opened);
       }
     } GRN_HASH_EACH_END(ctx, cursor);
-    grn_obj_unlink(ctx, real_columns);
+    grn_hash_close(ctx, real_columns);
   }
 
   n_columns = GRN_BULK_VSIZE(&columns) / sizeof(grn_obj *);
