@@ -22,7 +22,7 @@
 grn_bool
 grn_type_id_is_builtin(grn_ctx *ctx, grn_id id)
 {
-  return id < GRN_N_RESERVED_TYPES;
+  return id >= GRN_DB_OBJECT && id <= GRN_DB_WGS84_GEO_POINT;
 }
 
 grn_bool

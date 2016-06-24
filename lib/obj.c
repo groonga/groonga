@@ -17,7 +17,6 @@
 */
 
 #include "grn.h"
-#include "grn_db.h"
 #include "grn_index_column.h"
 
 grn_bool
@@ -73,11 +72,7 @@ grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
   if (!obj) { return GRN_FALSE; }
 
   id = grn_obj_id(ctx, obj);
-  if (id == GRN_ID_NIL) {
-    return GRN_FALSE;
-  } else {
-    return id < GRN_N_RESERVED_TYPES;
-  }
+  return grn_id_is_builtin(ctx, id);
 }
 
 grn_bool

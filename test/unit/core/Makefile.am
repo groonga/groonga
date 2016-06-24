@@ -68,7 +68,8 @@ noinst_LTLIBRARIES =				\
 	test-operator.la			\
 	test-config.la				\
 	test-type.la				\
-	test-time.la
+	test-time.la				\
+	test-id.la
 endif
 
 AM_CPPFLAGS =			\
@@ -162,3 +163,4 @@ test_operator_la_SOURCES		= test-operator.c
 test_config_la_SOURCES			= test-config.c
 test_type_la_SOURCES			= test-type.c
 test_time_la_SOURCES			= test-time.c
+test_id_la_SOURCES			= test-id.c

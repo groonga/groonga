@@ -86,15 +86,16 @@ cut_teardown(void)
 void
 data_id_is_builtin(void)
 {
-#define ADD_DATUM(expected, name)                                       \
-  gcut_add_datum((expected ? "built-in - " name : "custom - " name),    \
+#define ADD_DATUM(label, expected, name)                                \
+  gcut_add_datum(label,                                                 \
                  "expected", G_TYPE_BOOLEAN, expected,                  \
                  "name", G_TYPE_STRING, name,                           \
                  NULL)
 
-  ADD_DATUM(TRUE, "Bool");
-  ADD_DATUM(TRUE, "WGS84GeoPoint");
-  ADD_DATUM(FALSE, "Users");
+  ADD_DATUM("built-in - Bool",          TRUE, "Bool");
+  ADD_DATUM("built-in - WGS84GeoPoint", TRUE, "WGS84GeoPoint");
+  ADD_DATUM("custom - Users",           FALSE, "Users");
+  ADD_DATUM("not type - TokenBigram",   FALSE, "TokenBigrm");
 
 #undef ADD_DATUM
 }

@@ -11,6 +11,7 @@ groonga_include_HEADERS =			\
 	hash.h					\
 	geo.h					\
 	groonga.h				\
+	id.h					\
 	ii.h					\
 	obj.h					\
 	operator.h				\
