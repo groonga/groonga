@@ -51,6 +51,9 @@ module Groonga
     def build
       stack = []
       codes = @expression.codes
+      in_function = false
+      procedure = nil
+      arguments = []
       codes.each do |code|
         case code.op
         when *LOGICAL_OPERATORS
@@ -69,9 +72,24 @@ module Groonga
         when Operator::GET_VALUE
           node = ExpressionTree::Variable.new(code.value)
           stack.push(node)
-        when Operator::PUSH
-          node = ExpressionTree::Constant.new(code.value.value)
+        when Operator::CALL
+          node = ExpressionTree::FunctionCall.new(procedure, arguments)
           stack.push(node)
+          in_function = false
+          procedure = nil
+          arguments = []
+        when Operator::PUSH
+          if in_function
+            arguments << ExpressionTree::Constant.new(code.value.value)
+          else
+            if code.value.is_a?(Procedure)
+              procedure = code.value
+              in_function = true
+            else
+              node = ExpressionTree::Constant.new(code.value.value)
+              stack.push(node)
+            end
+          end
         else
           raise "unknown operator: #{code.inspect}"
         end
