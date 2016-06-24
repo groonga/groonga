@@ -7,6 +7,76 @@
 News
 ====
 
+.. _release-6-0-5:
+
+Release 6.0.5 - 2016-06-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/io_flush`] Marked as stable command.
+
+* [mruby] Supported to optimize prefix search by estimating
+  data size efficiently
+
+* [:doc:`/reference/functions/fuzzy_search`] Supported
+  ``max_distance`` option as 3rd argument to specify it
+  easily. [GitHub#553] [Patch by Naoya Murakami]
+
+* [:doc:`/reference/commands/query_expand`] Supported command to
+  expand query. It is useful if there are many synonyms.
+
+* [:doc:`/reference/commands/select`] Supported ``--drilldown`` with
+   ``command_version=3``. [groonga-dev,04055] [Reported by Naoya
+   Murakami]
+
+* Removed needless code from ``grn_table_select_sequential()``.
+  [GitHub#560] [Reported by Sho Minagawa]
+
+* grn_table_setoperation(): Changed to update score instead of
+  overwriting by ``GRN_OP_ADJUST``. This change is introduced to keep
+  consistency with ``grn_ii_posting_add()``. [groonga-dev,04058]
+  [Reported by Naoya Murakami]
+
+* [:doc:`/reference/commands/dump`] Reduced the max opened
+  table/column files when 1 thread mode.
+
+Fixes
+^^^^^
+
+* [CMake][Windows] Fixed to install missing mruby
+  script. [groonga-dev,04040] [Reported by Soichiro Kiyokawa]
+
+* [Windows] Changed to bundle msgpack-c.
+
+* [:doc:`/install/others`] Fixed a typo
+  about default database encoding (utf8). [GitHub#549] [Patch by IWAI, Masaharu]
+
+* [:doc:`/contribution/development/cooperation`] Fixed a typo
+  about product name (Twitter). [GitHub#550] [Patch by IWAI, Masaharu]
+
+* Fixed a bug that specific records are not included into search
+  result when multiple index column is created with ``WITH_SECTION``
+  flag. [GitHub#551]
+
+* Fixed a crash bug that searching while loading data with
+  ``GRN_II_CURSOR_SET_MIN_ENABLE=yes``. ``GRN_II_CURSOR_SET_MIN_ENABLE``
+  is enabled by default since Groonga 6.0.3.
+
+* [:doc:`/reference/token_filters`] Fixed thread unsafe implementation.
+
+* [doc] Fixed a typo in 6.0.4 release entry. [GitHub#559] [Patch by cafedomancer]
+
+Thanks
+^^^^^^
+
+* Naoya Murakami
+* Soichiro Kiyokawa
+* IWAI, Masaharu
+* cafedomancer
+  
+
 .. _release-6-0-4:
 
 Release 6.0.4 - 2016-06-06
