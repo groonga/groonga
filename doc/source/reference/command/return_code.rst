@@ -103,6 +103,7 @@ only C API. It is not showen in query API.
 * -75: ``GRN_PLUGIN_ERROR``
 * -76: ``GRN_SCORER_ERROR``
 * -77: ``GRN_CANCEL``
+* -78: ``GRN_WINDOW_FUNCTION_ERROR``
 
 See also
 --------
