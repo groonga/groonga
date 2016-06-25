@@ -380,6 +380,13 @@ mrb_grn_expr_code_inspect(mrb_state *mrb, mrb_value self)
                                0));
   }
 
+  mrb_str_cat_lit(mrb, inspected, ", n_args=");
+  mrb_str_concat(mrb, inspected,
+                 mrb_funcall(mrb,
+                             mrb_fixnum_value(code->nargs),
+                             "inspect",
+                             0));
+
   mrb_str_cat_lit(mrb, inspected, ", modify=");
   mrb_str_concat(mrb, inspected,
                  mrb_funcall(mrb,
@@ -434,6 +441,15 @@ mrb_grn_expr_code_get_value(mrb_state *mrb, mrb_value self)
 
   expr_code = DATA_PTR(self);
   return grn_mrb_value_from_grn_obj(mrb, expr_code->value);
+}
+
+static mrb_value
+mrb_grn_expr_code_get_n_args(mrb_state *mrb, mrb_value self)
+{
+  grn_expr_code *expr_code;
+
+  expr_code = DATA_PTR(self);
+  return mrb_fixnum_value(expr_code->nargs);
 }
 
 static mrb_value
@@ -838,6 +854,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_expr_code_get_weight, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "value",
                     mrb_grn_expr_code_get_value, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "n_args",
+                    mrb_grn_expr_code_get_n_args, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "op",
                     mrb_grn_expr_code_get_op, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "flags",
