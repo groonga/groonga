@@ -62,11 +62,13 @@ class TestBetween < ExpressionRewriterTestCase
 [1]
   op:         <equal>
   logical_op: <and>
+  index:      <[]>
   query:      <1>
   expr:       <7..9>
 [2]
   op:         <push>
   logical_op: <and>
+  index:      <[]>
   query:      <(NULL)>
   expr:       <11..11>
     DUMP

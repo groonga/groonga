@@ -26,6 +26,7 @@ class TestIndex < QueryOptimizerTestCase
 [0]
   op:         <match>
   logical_op: <or>
+  index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
   query:      <"Groonga">
   expr:       <0..2>
     DUMP
@@ -36,11 +37,13 @@ class TestIndex < QueryOptimizerTestCase
 [0]
   op:         <match>
   logical_op: <or>
+  index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
   query:      <"Groonga">
   expr:       <0..2>
 [1]
   op:         <equal>
   logical_op: <and>
+  index:      <[]>
   query:      <2>
   expr:       <3..7>
     DUMP
