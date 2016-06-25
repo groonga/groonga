@@ -72,7 +72,7 @@ class TestBetween < ExpressionRewriterTestCase
     DUMP
   end
 
-  def test_function
+  def test_with_function_call
     code =
       "between(timestamp, '2015-09-01 00:00:00', 'include', '2015-10-15 00:00:00', 'include') && " +
       "timestamp >= '2015-10-01 00:00:00' && " +
