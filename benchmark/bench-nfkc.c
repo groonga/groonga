@@ -88,6 +88,30 @@ ucs2utf8(unsigned int i, unsigned char *buf)
 }
 
 static void
+bench_char_type_switch(gpointer user_data)
+{
+  uint64_t code_point;
+  char utf8[7];
+
+  for (code_point = 1; code_point < MAX_UNICODE; code_point++) {
+    ucs2utf8(code_point, (unsigned char *)utf8);
+    grn_nfkc_char_type(utf8);
+  }
+}
+
+static void
+bench_char_type_table(gpointer user_data)
+{
+  uint64_t code_point;
+  char utf8[7];
+
+  for (code_point = 1; code_point < MAX_UNICODE; code_point++) {
+    ucs2utf8(code_point, (unsigned char *)utf8);
+    grn_nfkc50_char_type(utf8);
+  }
+}
+
+static void
 bench_map1_switch(gpointer user_data)
 {
   uint64_t code_point;
@@ -180,6 +204,26 @@ bench_map2_table_change(gpointer user_data)
 }
 
 /*
+static void
+check_char_type(gpointer user_data)
+{
+  uint64_t code_point;
+  char utf8[7];
+
+  for (code_point = 1; code_point < MAX_UNICODE; code_point++) {
+    grn_char_type a;
+    grn_char_type b;
+
+    ucs2utf8(code_point, (unsigned char *)utf8);
+    a = grn_nfkc_char_type(utf8);
+    b = grn_nfkc50_char_type(utf8);
+    if (a == b) {
+      continue;
+    }
+    printf("%lx: %s: %d != %d\n", code_point, utf8, a, b);
+  }
+}
+
 static void
 check_map1(gpointer user_data)
 {
@@ -278,16 +322,19 @@ main(int argc, gchar **argv)
                           bench_function,               \
                           NULL,                         \
                           NULL)
-  REGISTER("map1 - switch            ", bench_map1_switch);
-  REGISTER("map1 -  table            ", bench_map1_table);
-  REGISTER("map2 - switch - no change", bench_map2_switch_no_change);
-  REGISTER("map2 -  table - no change", bench_map2_table_no_change);
-  REGISTER("map2 - switch -    change", bench_map2_switch_change);
-  REGISTER("map2 -  table -    change", bench_map2_table_change);
+  REGISTER("char_type - switch            ", bench_char_type_switch);
+  REGISTER("char_type -  table            ", bench_char_type_table);
+  REGISTER("map1      - switch            ", bench_map1_switch);
+  REGISTER("map1      -  table            ", bench_map1_table);
+  REGISTER("map2      - switch - no change", bench_map2_switch_no_change);
+  REGISTER("map2      -  table - no change", bench_map2_table_no_change);
+  REGISTER("map2      - switch -    change", bench_map2_switch_change);
+  REGISTER("map2      -  table -    change", bench_map2_table_change);
 
   /*
-    REGISTER("check - map1", check_map1);
-    REGISTER("check - map2", check_map2);
+    REGISTER("check - char_type", check_char_type);
+    REGISTER("check - map1     ", check_map1);
+    REGISTER("check - map2     ", check_map2);
   */
 #undef REGISTER
 
