@@ -3,4 +3,5 @@ RUBY_SCRIPT_FILES =				\
 	constant.rb				\
 	function_call.rb			\
 	logical_operation.rb			\
+	procedure.rb				\
 	variable.rb

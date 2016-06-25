@@ -9,7 +9,7 @@ module Groonga
       end
 
       def build(expression)
-        expression.append_object(@procedure, Operator::PUSH, 1)
+        @procedure.build(expression)
         @arguments.each do |argument|
           argument.build(expression)
         end

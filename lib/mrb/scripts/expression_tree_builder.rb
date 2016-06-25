@@ -51,29 +51,7 @@ module Groonga
     def build
       stack = []
       codes = @expression.codes
-      is_function = false
-      procedure = nil
-      arguments = []
       codes.each do |code|
-        if is_function
-          case code.op
-          when Operator::GET_VALUE
-            arguments << ExpressionTree::Variable.new(code.value)
-          when Operator::PUSH
-            arguments << ExpressionTree::Constant.new(code.value.value)
-            #TODO: should support HashTable
-          when Operator::CALL
-            node = ExpressionTree::FunctionCall.new(procedure, arguments)
-            stack.push(node)
-            is_function = false
-            procedure = nil
-            arguments = []
-          else
-            raise "unknown operator for arguments: #{code.inspect}"
-          end
-          next
-        end
-
         case code.op
         when *LOGICAL_OPERATORS
           right = stack.pop
@@ -93,12 +71,19 @@ module Groonga
           stack.push(node)
         when Operator::PUSH
           if code.value.is_a?(Procedure)
-            procedure = code.value
-            is_function = true
+            node = ExpressionTree::Procedure.new(code.value)
           else
             node = ExpressionTree::Constant.new(code.value.value)
-            stack.push(node)
           end
+          stack.push(node)
+        when Operator::CALL
+          arguments = []
+          code.n_args.times do
+            arguments.unshift(stack.pop)
+          end
+          procedure = stack.pop
+          node = ExpressionTree::FunctionCall.new(procedure, arguments)
+          stack.push(node)
         else
           raise "unknown operator: #{code.inspect}"
         end

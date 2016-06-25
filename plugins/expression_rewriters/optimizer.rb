@@ -122,7 +122,7 @@ module Groonga
         end
         return nil if greater_node.nil? or less_node.nil?
 
-        between = context["between"]
+        between = ExpressionTree::Procedure.new(context["between"])
         if greater_node.operator == Operator::GREATER
           greater_border = "exclude"
         else
