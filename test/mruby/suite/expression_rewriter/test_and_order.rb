@@ -58,11 +58,13 @@ class TestAndOrder < ExpressionRewriterTestCase
 [0]
   op:         <greater_equal>
   logical_op: <or>
+  index:      <[#<column:index Timestamps.Logs_updated_at range:Logs sources:[Logs.updated_at] flags:NONE>]>
   query:      <"2015-10-03 00:00:00">
   expr:       <0..2>
 [1]
   op:         <less_equal>
   logical_op: <and>
+  index:      <[#<column:index Timestamps.Logs_created_at range:Logs sources:[Logs.created_at] flags:NONE>]>
   query:      <"2015-10-01 00:00:00">
   expr:       <3..5>
     DUMP

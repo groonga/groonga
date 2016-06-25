@@ -5064,6 +5064,10 @@ grn_inspect_scan_info_list(grn_ctx *ctx, grn_obj *buffer, scan_info **sis, int n
         GRN_TEXT_PUTS(ctx, buffer, ">\n");
       }
     } else {
+      GRN_TEXT_PUTS(ctx, buffer, "  index:      <");
+      grn_inspect(ctx, buffer, &(si->index));
+      GRN_TEXT_PUTS(ctx, buffer, ">\n");
+
       GRN_TEXT_PUTS(ctx, buffer, "  query:      <");
       grn_inspect(ctx, buffer, si->query);
       GRN_TEXT_PUTS(ctx, buffer, ">\n");
