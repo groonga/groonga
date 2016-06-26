@@ -40,14 +40,6 @@
 
 #include "lib/benchmark.h"
 
-const char *grn_nfkc_map1(const unsigned char *str);
-const char *grn_nfkc50_map1(const unsigned char *str);
-const char *grn_nfkc_map2(const unsigned char *prefix,
-                          const unsigned char *suffix);
-const char *grn_nfkc50_map2(const unsigned char *prefix,
-                            const unsigned char *suffix);
-
-#include "../lib/nfkc.c"
 #include "../lib/nfkc50.c"
 
 #define MAX_UNICODE 0x110000
@@ -88,19 +80,7 @@ ucs2utf8(unsigned int i, unsigned char *buf)
 }
 
 static void
-bench_char_type_switch(gpointer user_data)
-{
-  uint64_t code_point;
-  char utf8[7];
-
-  for (code_point = 1; code_point < MAX_UNICODE; code_point++) {
-    ucs2utf8(code_point, (unsigned char *)utf8);
-    grn_nfkc_char_type(utf8);
-  }
-}
-
-static void
-bench_char_type_table(gpointer user_data)
+bench_char_type(gpointer user_data)
 {
   uint64_t code_point;
   char utf8[7];
@@ -112,31 +92,19 @@ bench_char_type_table(gpointer user_data)
 }
 
 static void
-bench_map1_switch(gpointer user_data)
+bench_decompose(gpointer user_data)
 {
   uint64_t code_point;
   char utf8[7];
 
   for (code_point = 1; code_point < MAX_UNICODE; code_point++) {
     ucs2utf8(code_point, (unsigned char *)utf8);
-    grn_nfkc_map1(utf8);
+    grn_nfkc50_decompose(utf8);
   }
 }
 
 static void
-bench_map1_table(gpointer user_data)
-{
-  uint64_t code_point;
-  char utf8[7];
-
-  for (code_point = 1; code_point < MAX_UNICODE; code_point++) {
-    ucs2utf8(code_point, (unsigned char *)utf8);
-    grn_nfkc50_map1(utf8);
-  }
-}
-
-static void
-bench_map2_switch_no_change(gpointer user_data)
+bench_compose_no_change(gpointer user_data)
 {
   uint64_t prefix_code_point;
   uint64_t suffix_code_point = 0x61; /* a */
@@ -148,29 +116,12 @@ bench_map2_switch_no_change(gpointer user_data)
        prefix_code_point < MAX_UNICODE;
        prefix_code_point++) {
     ucs2utf8(prefix_code_point, (unsigned char *)prefix_utf8);
-    grn_nfkc_map2(prefix_utf8, suffix_utf8);
+    grn_nfkc50_compose(prefix_utf8, suffix_utf8);
   }
 }
 
 static void
-bench_map2_table_no_change(gpointer user_data)
-{
-  uint64_t prefix_code_point;
-  uint64_t suffix_code_point = 0x61; /* a */
-  char prefix_utf8[7];
-  char suffix_utf8[7];
-
-  ucs2utf8(suffix_code_point, (unsigned char *)suffix_utf8);
-  for (prefix_code_point = 1;
-       prefix_code_point < MAX_UNICODE;
-       prefix_code_point++) {
-    ucs2utf8(prefix_code_point, (unsigned char *)prefix_utf8);
-    grn_nfkc50_map2(prefix_utf8, suffix_utf8);
-  }
-}
-
-static void
-bench_map2_switch_change(gpointer user_data)
+bench_compose_change(gpointer user_data)
 {
   uint64_t prefix_code_point;
   uint64_t suffix_code_point = 0x11ba;
@@ -182,24 +133,7 @@ bench_map2_switch_change(gpointer user_data)
        prefix_code_point < MAX_UNICODE;
        prefix_code_point++) {
     ucs2utf8(prefix_code_point, (unsigned char *)prefix_utf8);
-    grn_nfkc_map2(prefix_utf8, suffix_utf8);
-  }
-}
-
-static void
-bench_map2_table_change(gpointer user_data)
-{
-  uint64_t prefix_code_point;
-  uint64_t suffix_code_point = 0x11ba;
-  char prefix_utf8[7];
-  char suffix_utf8[7];
-
-  ucs2utf8(suffix_code_point, (unsigned char *)suffix_utf8);
-  for (prefix_code_point = 1;
-       prefix_code_point < MAX_UNICODE;
-       prefix_code_point++) {
-    ucs2utf8(prefix_code_point, (unsigned char *)prefix_utf8);
-    grn_nfkc50_map2(prefix_utf8, suffix_utf8);
+    grn_nfkc50_compose(prefix_utf8, suffix_utf8);
   }
 }
 
@@ -225,7 +159,7 @@ check_char_type(gpointer user_data)
 }
 
 static void
-check_map1(gpointer user_data)
+check_decompose(gpointer user_data)
 {
   uint64_t code_point;
   char utf8[7];
@@ -235,8 +169,8 @@ check_map1(gpointer user_data)
     const char *b;
 
     ucs2utf8(code_point, (unsigned char *)utf8);
-    a = grn_nfkc_map1(utf8);
-    b = grn_nfkc50_map1(utf8);
+    a = grn_nfkc_decompose(utf8);
+    b = grn_nfkc50_decompose(utf8);
     if (a == b) {
       continue;
     }
@@ -251,7 +185,7 @@ check_map1(gpointer user_data)
 }
 
 static void
-check_map2(gpointer user_data)
+check_compose(gpointer user_data)
 {
   uint64_t prefix_code_point;
   uint64_t suffix_code_point;
@@ -269,8 +203,8 @@ check_map2(gpointer user_data)
       const char *b;
 
       ucs2utf8(suffix_code_point, (unsigned char *)suffix_utf8);
-      a = grn_nfkc_map2(prefix_utf8, suffix_utf8);
-      b = grn_nfkc50_map2(prefix_utf8, suffix_utf8);
+      a = grn_nfkc_compose(prefix_utf8, suffix_utf8);
+      b = grn_nfkc50_compose(prefix_utf8, suffix_utf8);
       if (a == b) {
         continue;
       }
@@ -322,19 +256,15 @@ main(int argc, gchar **argv)
                           bench_function,               \
                           NULL,                         \
                           NULL)
-  REGISTER("char_type - switch            ", bench_char_type_switch);
-  REGISTER("char_type -  table            ", bench_char_type_table);
-  REGISTER("map1      - switch            ", bench_map1_switch);
-  REGISTER("map1      -  table            ", bench_map1_table);
-  REGISTER("map2      - switch - no change", bench_map2_switch_no_change);
-  REGISTER("map2      -  table - no change", bench_map2_table_no_change);
-  REGISTER("map2      - switch -    change", bench_map2_switch_change);
-  REGISTER("map2      -  table -    change", bench_map2_table_change);
+  REGISTER("char_type            ", bench_char_type);
+  REGISTER("decompose            ", bench_decompose);
+  REGISTER("compose   - no change", bench_compose_no_change);
+  REGISTER("compose   -    change", bench_compose_change);
 
   /*
     REGISTER("check - char_type", check_char_type);
-    REGISTER("check - map1     ", check_map1);
-    REGISTER("check - map2     ", check_map2);
+    REGISTER("check - decompose", check_decompose);
+    REGISTER("check - compose  ", check_compose);
   */
 #undef REGISTER
 

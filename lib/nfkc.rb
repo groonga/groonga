@@ -580,7 +580,7 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
   def generate_decompose(char_map)
     default = "NULL"
     generate_char_converter("decompose",
-                            "map1",
+                            "decompose",
                             char_map,
                             default,
                             "const char *") do |from|
@@ -647,7 +647,7 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
       bytes = from.bytes
       bytes[0..-2]
     end
-    generate_char_convert_function("map2",
+    generate_char_convert_function("compose",
                                    argument_list,
                                    char_variable,
                                    default,

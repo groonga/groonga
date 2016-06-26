@@ -17,6 +17,7 @@
 */
 
 #include "grn.h"
+#include "grn_nfkc.h"
 #include <groonga/nfkc.h>
 
 #ifdef GRN_WITH_NFKC
@@ -28,15 +29,16 @@ grn_nfkc_char_type(const unsigned char *utf8)
 }
 
 const char *
-grn_nfkc_map1(const unsigned char *utf8)
+grn_nfkc_decompose(const unsigned char *utf8)
 {
-  return grn_nfkc50_map1(utf8);
+  return grn_nfkc50_decompose(utf8);
 }
 
 const char *
-grn_nfkc_map2(const unsigned char *prefix_utf8, const unsigned char *suffix_utf8)
+grn_nfkc_compose(const unsigned char *prefix_utf8,
+                 const unsigned char *suffix_utf8)
 {
-  return grn_nfkc50_map2(prefix_utf8, suffix_utf8);
+  return grn_nfkc50_compose(prefix_utf8, suffix_utf8);
 }
 
 #endif /* GRN_WITH_NFKC */

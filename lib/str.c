@@ -20,6 +20,7 @@
 #include <string.h>
 #include "grn_db.h"
 #include "grn_str.h"
+#include "grn_nfkc.h"
 
 #ifndef _ISOC99_SOURCE
 #define _ISOC99_SOURCE
@@ -427,9 +428,6 @@ normalize_euc(grn_ctx *ctx, grn_str *nstr)
 }
 
 #ifdef GRN_WITH_NFKC
-const char *grn_nfkc_map1(const unsigned char *str);
-const char *grn_nfkc_map2(const unsigned char *prefix, const unsigned char *suffix);
-
 inline static grn_rc
 normalize_utf8(grn_ctx *ctx, grn_str *nstr)
 {
@@ -465,13 +463,13 @@ normalize_utf8(grn_ctx *ctx, grn_str *nstr)
     if (!(ls = grn_str_charlen_utf8(ctx, s, e))) {
       break;
     }
-    if ((p = (unsigned char *)grn_nfkc_map1(s))) {
+    if ((p = (unsigned char *)grn_nfkc_decompose(s))) {
       pe = p + strlen((char *)p);
     } else {
       p = s;
       pe = p + ls;
     }
-    if (d_ && (p2 = (unsigned char *)grn_nfkc_map2(d_, p))) {
+    if (d_ && (p2 = (unsigned char *)grn_nfkc_compose(d_, p))) {
       p = p2;
       pe = p + strlen((char *)p);
       if (cp) { cp--; }

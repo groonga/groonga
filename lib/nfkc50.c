@@ -6338,7 +6338,7 @@ static const char *grn_nfkc50_decompose_table_f0afa8[] = {
 };
 
 const char *
-grn_nfkc50_map1(const unsigned char *utf8)
+grn_nfkc50_decompose(const unsigned char *utf8)
 {
   if (utf8[0] < 0x80) {
     if (utf8[0] >= 0x41 &&
@@ -77419,7 +77419,7 @@ grn_nfkc50_compose_prefix_e185b5(const unsigned char *utf8)
 }
 
 const char *
-grn_nfkc50_map2(const unsigned char *prefix_utf8, const unsigned char *suffix_utf8)
+grn_nfkc50_compose(const unsigned char *prefix_utf8, const unsigned char *suffix_utf8)
 {
   {
     switch (suffix_utf8[0]) {
