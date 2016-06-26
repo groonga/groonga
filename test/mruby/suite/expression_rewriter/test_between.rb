@@ -160,4 +160,31 @@ class TestBetween < ExpressionRewriterTestCase
   expr:       <3..9>
     DUMP
   end
+
+  def test_with_options
+    code =
+      "fuzzy_search(message, 'roonga', {\"max_distance\": 1}) && " +
+      "timestamp >= '2015-10-01 00:00:00' && " +
+      "timestamp <  '2015-11-00 00:00:00'"
+    assert_equal(<<-DUMP, dump_rewritten_plan(code))
+[0]
+  op:         <call>
+  logical_op: <or>
+  args[0]:    <#<proc:function fuzzy_search arguments:[]>>
+  args[1]:    <#<column:var_size Logs.message range:Text type:scalar compress:none>>
+  args[2]:    <\"roonga\">
+  args[3]:    <#<table:hash (nil) key:(nil) value:(nil) size:1 columns:[] default_tokenizer:(nil) normalizer:(nil) keys:[\"max_distance\"] subrec:none>>
+  expr:       <0..4>
+[1]
+  op:         <call>
+  logical_op: <and>
+  args[0]:    <#<proc:function between arguments:[]>>
+  args[1]:    <#<column:fix_size Logs.timestamp range:Time type:scalar compress:none>>
+  args[2]:    <\"2015-10-01 00:00:00\">
+  args[3]:    <\"include\">
+  args[4]:    <\"2015-11-00 00:00:00\">
+  args[5]:    <\"exclude\">
+  expr:       <5..11>
+    DUMP
+  end
 end
