@@ -531,7 +531,7 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
                uint32_t value_size, uint32_t flags)
 {
   grn_pat *pat;
-  if (!(pat = GRN_MALLOC(sizeof(grn_pat)))) {
+  if (!(pat = GRN_CALLOC(sizeof(grn_pat)))) {
     return NULL;
   }
   GRN_DB_OBJ_SET_TYPE(pat, GRN_TABLE_PAT_KEY);

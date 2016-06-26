@@ -58,7 +58,7 @@ _grn_ra_create(grn_ctx *ctx, grn_ra *ra, const char *path, unsigned int element_
 grn_ra *
 grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size)
 {
-  grn_ra *ra = GRN_MALLOCN(grn_ra, 1);
+  grn_ra *ra = (grn_ra *)GRN_CALLOC(sizeof(grn_ra));
   if (!ra) {
     return NULL;
   }
@@ -395,7 +395,7 @@ grn_ja *
 grn_ja_create(grn_ctx *ctx, const char *path, unsigned int max_element_size, uint32_t flags)
 {
   grn_ja *ja = NULL;
-  ja = GRN_MALLOCN(grn_ja, 1);
+  ja = (grn_ja *)GRN_CALLOC(sizeof(grn_ja));
   if (!ja) {
     return NULL;
   }

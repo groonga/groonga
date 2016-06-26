@@ -284,7 +284,7 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
     }
   }
 
-  grn_dat * const dat = static_cast<grn_dat *>(GRN_MALLOC(sizeof(grn_dat)));
+  grn_dat * const dat = static_cast<grn_dat *>(GRN_CALLOC(sizeof(grn_dat)));
   if (!dat) {
     return NULL;
   }

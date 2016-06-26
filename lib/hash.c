@@ -561,7 +561,7 @@ grn_array *
 grn_array_create(grn_ctx *ctx, const char *path, uint32_t value_size, uint32_t flags)
 {
   if (ctx) {
-    grn_array * const array = (grn_array *)GRN_MALLOC(sizeof(grn_array));
+    grn_array * const array = (grn_array *)GRN_CALLOC(sizeof(grn_array));
     if (array) {
       GRN_DB_OBJ_SET_TYPE(array, GRN_TABLE_NO_KEY);
       if (!grn_array_init(ctx, array, path, value_size, flags)) {
@@ -1978,7 +1978,7 @@ grn_hash_create(grn_ctx *ctx, const char *path, uint32_t key_size, uint32_t valu
   if (key_size > GRN_HASH_MAX_KEY_SIZE_LARGE) {
     return NULL;
   }
-  hash = (grn_hash *)GRN_MALLOC(sizeof(grn_hash));
+  hash = (grn_hash *)GRN_CALLOC(sizeof(grn_hash));
   if (!hash) {
     return NULL;
   }
