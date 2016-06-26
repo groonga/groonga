@@ -72,6 +72,8 @@ module Groonga
         when Operator::PUSH
           if code.value.is_a?(Procedure)
             node = ExpressionTree::Procedure.new(code.value)
+          elsif code.value.is_a?(IndexColumn)
+            node = ExpressionTree::IndexColumn.new(code.value)
           else
             node = ExpressionTree::Constant.new(code.value.value)
           end

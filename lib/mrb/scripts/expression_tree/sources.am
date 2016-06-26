@@ -2,6 +2,7 @@ RUBY_SCRIPT_FILES =				\
 	binary_operation.rb			\
 	constant.rb				\
 	function_call.rb			\
+	index_column.rb				\
 	logical_operation.rb			\
 	procedure.rb				\
 	variable.rb
