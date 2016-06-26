@@ -13,10 +13,11 @@ load --table Memos
 {"_key": "Groonga is fast!", "date": "2016-05-19 12:00:00", "tag": "Groonga"},
 {"_key": "Mroonga is fast!", "date": "2016-05-19 12:00:01", "tag": "Mroonga"},
 {"_key": "Groonga sticker!", "date": "2016-05-19 12:00:02", "tag": "Groonga"},
+{"_key": "Groonga site!",    "date": "2016-05-19 12:00:02", "tag": "Groonga"},
 {"_key": "Rroonga is fast!", "date": "2016-05-19 12:00:03", "tag": "Rroonga"}
 ]
-[[0,0.0,0.0],4]
-select Memos   --filter 'date < "2016-05-19 13:00:02"'   --slices[groonga].filter 'tag @ "Groonga"'   --slices[groonga].sort_keys 'date'   --slices[groonga].output_columns '_key, date, tag'   --drilldowns[tags].table groonga   --drilldowns[tags].keys tag
+[[0,0.0,0.0],5]
+select Memos   --filter 'date < "2016-05-19 13:00:02"'   --slices[groonga].filter 'tag @ "Groonga"'   --slices[groonga].sort_keys '_id'   --slices[groonga].output_columns '_key, date, tag'   --drilldowns[tags].table groonga   --drilldowns[tags].keys date
 [
   [
     0,
@@ -26,7 +27,7 @@ select Memos   --filter 'date < "2016-05-19 13:00:02"'   --slices[groonga].filte
   [
     [
       [
-        4
+        5
       ],
       [
         [
@@ -66,6 +67,12 @@ select Memos   --filter 'date < "2016-05-19 13:00:02"'   --slices[groonga].filte
       ],
       [
         4,
+        "Groonga site!",
+        1463626802.0,
+        "Groonga"
+      ],
+      [
+        5,
         "Rroonga is fast!",
         1463626803.0,
         "Rroonga"
@@ -74,7 +81,7 @@ select Memos   --filter 'date < "2016-05-19 13:00:02"'   --slices[groonga].filte
     {
       "groonga": [
         [
-          2
+          3
         ],
         [
           [
@@ -99,18 +106,23 @@ select Memos   --filter 'date < "2016-05-19 13:00:02"'   --slices[groonga].filte
           "Groonga sticker!",
           1463626802.0,
           "Groonga"
+        ],
+        [
+          "Groonga site!",
+          1463626802.0,
+          "Groonga"
         ]
       ]
     },
     {
       "tags": [
         [
-          1
+          2
         ],
         [
           [
             "_key",
-            "ShortText"
+            "Time"
           ],
           [
             "_nsubrecs",
@@ -118,7 +130,11 @@ select Memos   --filter 'date < "2016-05-19 13:00:02"'   --slices[groonga].filte
           ]
         ],
         [
-          "Groonga",
+          1463626800.0,
+          1
+        ],
+        [
+          1463626802.0,
           2
         ]
       ]
