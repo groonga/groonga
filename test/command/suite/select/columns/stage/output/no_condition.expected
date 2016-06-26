@@ -1,0 +1,46 @@
+plugin_register functions/string
+[[0,0.0,0.0],true]
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "Groonga is fast."},
+{"content": "Mroonga is fast and easy to use."},
+{"content": "PGroonga is fast and easy to use."}
+]
+[[0,0.0,0.0],3]
+select Memos   --limit 2   --columns[content_length].stage output   --columns[content_length].type UInt32   --columns[content_length].flags COLUMN_SCALAR   --columns[content_length].value 'string_length(content)'   --output_columns _id,content_length
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content_length",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        16
+      ],
+      [
+        2,
+        32
+      ]
+    ]
+  ]
+]
