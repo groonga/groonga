@@ -45,6 +45,7 @@ libgroonga_la_SOURCES =				\
 	grn_mrb.h				\
 	grn_msgpack.h				\
 	nfkc.c					\
+	nfkc50.c				\
 	normalizer.c				\
 	grn_normalizer.h			\
 	obj.c					\
