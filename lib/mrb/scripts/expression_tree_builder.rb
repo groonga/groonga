@@ -77,6 +77,8 @@ module Groonga
             node = ExpressionTree::IndexColumn.new(code.value)
           when Accessor
             node = ExpressionTree::Accessor.new(code.value)
+          when HashTable
+            node = ExpressionTree::Options.new(code.value)
           else
             node = ExpressionTree::Constant.new(code.value.value)
           end
