@@ -962,37 +962,38 @@ grn_select_create_all_selected_result_table(grn_ctx *ctx,
 }
 
 static grn_obj *
-grn_select_create_offset_and_limit_sorted_table(grn_ctx *ctx,
-                                                grn_obj *table,
-                                                int offset,
-                                                int limit)
+grn_select_create_no_sort_keys_sorted_table(grn_ctx *ctx,
+                                            grn_select_data *data,
+                                            grn_obj *table)
 {
-  grn_obj *result;
+  grn_obj *sorted;
   grn_table_cursor *cursor;
 
-  result = grn_table_create(ctx, NULL, 0, NULL,
+  sorted = grn_table_create(ctx, NULL, 0, NULL,
                             GRN_OBJ_TABLE_NO_KEY,
                             NULL,
                             table);
 
-  if (!result) {
+  if (!sorted) {
     return NULL;
   }
 
   cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0,
-                                 offset, limit, GRN_CURSOR_ASCENDING);
+                                 data->offset,
+                                 data->limit,
+                                 GRN_CURSOR_ASCENDING);
   if (cursor) {
     grn_id id;
     while ((id = grn_table_cursor_next(ctx, cursor))) {
       grn_id *value;
-      if (grn_array_add(ctx, (grn_array *)result, (void **)&value)) {
+      if (grn_array_add(ctx, (grn_array *)sorted, (void **)&value)) {
         *value = id;
       }
     }
     grn_table_cursor_close(ctx, cursor);
   }
 
-  return result;
+  return sorted;
 }
 
 
@@ -1641,10 +1642,9 @@ grn_select_apply_output_columns(grn_ctx *ctx,
 
   if (!data->tables.sorted) {
     data->tables.sorted =
-      grn_select_create_offset_and_limit_sorted_table(ctx,
-                                                      data->tables.result,
-                                                      data->offset,
-                                                      data->limit);
+      grn_select_create_no_sort_keys_sorted_table(ctx,
+                                                  data,
+                                                  data->tables.result);
     if (!data->tables.sorted) {
       return GRN_FALSE;
     }
