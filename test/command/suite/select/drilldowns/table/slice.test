@@ -1,0 +1,23 @@
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos date COLUMN_SCALAR Time
+column_create Memos tag COLUMN_SCALAR Tags
+
+column_create Tags memos_tag COLUMN_INDEX Memos tag
+
+load --table Memos
+[
+{"_key": "Groonga is fast!", "date": "2016-05-19 12:00:00", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "date": "2016-05-19 12:00:01", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "date": "2016-05-19 12:00:02", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "date": "2016-05-19 12:00:03", "tag": "Rroonga"}
+]
+
+select Memos \
+  --filter 'date < "2016-05-19 13:00:02"' \
+  --slices[groonga].filter 'tag @ "Groonga"' \
+  --slices[groonga].sort_keys 'date' \
+  --slices[groonga].output_columns '_key, date, tag' \
+  --drilldowns[tags].table groonga \
+  --drilldowns[tags].keys tag

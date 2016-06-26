@@ -1964,14 +1964,30 @@ grn_select_drilldown_execute(grn_ctx *ctx,
                                 drilldown->table_name.length,
                                 NULL);
     if (dependent_id == GRN_ID_NIL) {
-      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                       "[select][drilldowns][%.*s][table] "
-                       "nonexistent label: <%.*s>",
-                       (int)(drilldown->label.length),
-                       drilldown->label.value,
-                       (int)(drilldown->table_name.length),
-                       drilldown->table_name.value);
-      return GRN_FALSE;
+      if (data->slices) {
+        grn_slice_data *slice;
+        dependent_id = grn_hash_get(ctx,
+                                    data->slices,
+                                    drilldown->table_name.value,
+                                    drilldown->table_name.length,
+                                    NULL);
+        if (dependent_id) {
+          slice =
+            (grn_slice_data *)grn_hash_get_value_(ctx, data->slices,
+                                                  dependent_id, NULL);
+          target_table = slice->table;
+        }
+      }
+      if (dependent_id == GRN_ID_NIL) {
+        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                         "[select][drilldowns][%.*s][table] "
+                         "nonexistent label: <%.*s>",
+                         (int)(drilldown->label.length),
+                         drilldown->label.value,
+                         (int)(drilldown->table_name.length),
+                         drilldown->table_name.value);
+        return GRN_FALSE;
+      }
     } else {
       grn_drilldown_data *dependent_drilldown;
       grn_table_group_result *dependent_result;
