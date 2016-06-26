@@ -765,8 +765,8 @@ data_name_is_column(void)
                  "name", G_TYPE_STRING, name,                          \
                  NULL)
 
-  ADD_DATUM(GRN_TRUE, "Users.age");
-  ADD_DATUM(GRN_FALSE, "Users");
+  ADD_DATUM(TRUE, "Users.age");
+  ADD_DATUM(FALSE, "Users");
 
 #undef ADD_DATUM
 }
