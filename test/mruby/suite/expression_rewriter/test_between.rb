@@ -135,4 +135,29 @@ class TestBetween < ExpressionRewriterTestCase
   expr:       <3..9>
     DUMP
   end
+
+  def test_with_accessor
+    code =
+      "Terms.Logs_message.message @ 'Groonga' && " +
+      "timestamp >= '2015-10-01 00:00:00' && " +
+      "timestamp <  '2015-11-00 00:00:00'"
+    assert_equal(<<-DUMP, dump_rewritten_plan(code))
+[0]
+  op:         <match>
+  logical_op: <or>
+  index:      <[Logs_message.message]>
+  query:      <\"Groonga\">
+  expr:       <0..2>
+[1]
+  op:         <call>
+  logical_op: <and>
+  args[0]:    <#<proc:function between arguments:[]>>
+  args[1]:    <#<column:fix_size Logs.timestamp range:Time type:scalar compress:none>>
+  args[2]:    <\"2015-10-01 00:00:00\">
+  args[3]:    <\"include\">
+  args[4]:    <\"2015-11-00 00:00:00\">
+  args[5]:    <\"exclude\">
+  expr:       <3..9>
+    DUMP
+  end
 end
