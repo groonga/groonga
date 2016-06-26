@@ -70,11 +70,12 @@ module Groonga
           node = ExpressionTree::Variable.new(code.value)
           stack.push(node)
         when Operator::PUSH
-          if code.value.is_a?(Procedure)
+          case code.value
+          when Procedure
             node = ExpressionTree::Procedure.new(code.value)
-          elsif code.value.is_a?(IndexColumn)
+          when IndexColumn
             node = ExpressionTree::IndexColumn.new(code.value)
-          elsif code.value.is_a?(Accessor)
+          when Accessor
             node = ExpressionTree::Accessor.new(code.value)
           else
             node = ExpressionTree::Constant.new(code.value.value)
