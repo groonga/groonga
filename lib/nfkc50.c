@@ -21,6 +21,7 @@
 */
 
 #include "grn.h"
+#include "grn_nfkc.h"
 #include <groonga/nfkc.h>
 
 #ifdef GRN_WITH_NFKC

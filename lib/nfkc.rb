@@ -24,13 +24,13 @@ class SwitchGenerator
     @output = output
   end
 
-  def generate(bc, map1, map2)
+  def generate(bc, decompose_map, compose_map)
     STDERR.puts('generating char type code..')
     generate_blockcode_char_type(bc)
-    STDERR.puts('generating map1 code..')
-    generate_map1(map1)
-    STDERR.puts('generating map2 code..')
-    generate_map2(map2)
+    STDERR.puts('generating decompose code..')
+    generate_decompose(decompose_map)
+    STDERR.puts('generating compose code..')
+    generate_compose(compose_map)
   end
 
   private
@@ -114,15 +114,15 @@ grn_nfkc#{@unicode_version}_char_type(const unsigned char *str)
     end
   end
 
-  def generate_map1(hash)
+  def generate_decompose(hash)
     @output.puts(<<-HEADER)
 
 const char *
-grn_nfkc#{@unicode_version}_map1(const unsigned char *str)
+grn_nfkc#{@unicode_version}_decompose(const unsigned char *str)
 {
     HEADER
 
-    gen_map1(hash, 0)
+    gen_decompose(hash, 0)
 
     @output.puts(<<-FOOTER)
   return 0;
@@ -130,7 +130,7 @@ grn_nfkc#{@unicode_version}_map1(const unsigned char *str)
     FOOTER
   end
 
-  def gen_map1(hash, level)
+  def gen_decompose(hash, level)
     bl = ' ' * ((level + 0) * 2)
     if hash['']
       dst = ''
@@ -154,29 +154,29 @@ grn_nfkc#{@unicode_version}_map1(const unsigned char *str)
     if h2.size == 1
       h2.each{|key,val|
         @output.printf("#{bl}if (str[#{level}] == 0x%02X) {\n", key)
-        gen_map1(val, level + 1)
+        gen_decompose(val, level + 1)
         @output.puts bl + '}'
       }
     else
       @output.puts "#{bl}switch (str[#{level}]) {"
       h2.keys.sort.each{|k|
         @output.printf("#{bl}case 0x%02X :\n", k)
-        gen_map1(h2[k], level + 1)
+        gen_decompose(h2[k], level + 1)
         @output.puts("#{bl}  break;")
       }
       @output.puts bl + '}'
     end
   end
 
-  def generate_map2(map2)
+  def generate_compose(compose_map)
     @output.puts(<<-HEADER)
 
 const char *
-grn_nfkc#{@unicode_version}_map2(const unsigned char *prefix, const unsigned char *suffix)
+grn_nfkc#{@unicode_version}_compose(const unsigned char *prefix, const unsigned char *suffix)
 {
     HEADER
     suffix = {}
-    map2.each{|src,dst|
+    compose_map.each{|src,dst|
       chars = src.chars
       if chars.size != 2
         STDERR.puts "caution: more than two chars in pattern #{chars.join('|')}"
@@ -188,14 +188,14 @@ grn_nfkc#{@unicode_version}_map2(const unsigned char *prefix, const unsigned cha
         suffix[s] = {chars.join=>dst}
       end
     }
-    gen_map2_sub(suffix, 0)
+    gen_compose_sub(suffix, 0)
     @output.puts(<<-FOOTER)
   return 0;
 }
     FOOTER
   end
 
-  def gen_map2_sub2(hash, level, indent)
+  def gen_compose_sub2(hash, level, indent)
     bl = ' ' * ((level + indent + 0) * 2)
     if hash['']
       @output.print "#{bl}return \""
@@ -221,24 +221,24 @@ grn_nfkc#{@unicode_version}_map2(const unsigned char *prefix, const unsigned cha
     if h2.size == 1
       h2.each{|key,val|
         @output.printf("#{bl}if (prefix[#{level}] == 0x%02X) {\n", key)
-        gen_map2_sub2(val, level + 1, indent)
+        gen_compose_sub2(val, level + 1, indent)
         @output.puts bl + '}'
       }
     else
       @output.puts "#{bl}switch (prefix[#{level}]) {"
       h2.keys.sort.each{|k|
         @output.printf("#{bl}case 0x%02X :\n", k)
-        gen_map2_sub2(h2[k], level + 1, indent)
+        gen_compose_sub2(h2[k], level + 1, indent)
         @output.puts("#{bl}  break;")
       }
       @output.puts bl + '}'
     end
   end
 
-  def gen_map2_sub(hash, level)
+  def gen_compose_sub(hash, level)
     bl = ' ' * ((level + 0) * 2)
     if hash['']
-      gen_map2_sub2(hash[''], 0, level)
+      gen_compose_sub2(hash[''], 0, level)
       hash.delete('')
     end
     return if hash.empty?
@@ -257,14 +257,14 @@ grn_nfkc#{@unicode_version}_map2(const unsigned char *prefix, const unsigned cha
     if h2.size == 1
       h2.each{|key,val|
         @output.printf("#{bl}if (suffix[#{level}] == 0x%02X) {\n", key)
-        gen_map2_sub(val, level + 1)
+        gen_compose_sub(val, level + 1)
         @output.puts bl + '}'
       }
     else
       @output.puts "#{bl}switch (suffix[#{level}]) {"
       h2.keys.sort.each{|k|
         @output.printf("#{bl}case 0x%02X :\n", k)
-        gen_map2_sub(h2[k], level + 1)
+        gen_compose_sub(h2[k], level + 1)
         @output.puts("#{bl}  break;")
       }
       @output.puts bl + '}'
@@ -573,18 +573,14 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
     end
   end
 
-  def generate_map1(hash)
-    generate_decompose(hash)
-  end
-
-  def generate_decompose(char_map)
+  def generate_decompose(decompose_map)
     default = "NULL"
     generate_char_converter("decompose",
                             "decompose",
-                            char_map,
+                            decompose_map,
                             default,
                             "const char *") do |from|
-      to = char_map[from]
+      to = decompose_map[from]
       if to
         escaped_value = to.bytes.collect {|char| "\\x%02x" % char}.join("")
         "\"#{escaped_value}\""
@@ -594,20 +590,16 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
     end
   end
 
-  def generate_map2(map2)
-    generate_compose(map2)
-  end
-
-  def generate_compose(map2)
+  def generate_compose(compose_map)
     # require "pp"
-    # p map2.size
-    # pp map2.keys.group_by {|x| x.chars[1]}.size
-    # pp map2.keys.group_by {|x| x.chars[1]}.collect {|k, vs| [k, k.codepoints, vs.size, vs.group_by {|x| x.chars[0].bytesize}.collect {|k2, vs2| [k2, vs2.size]}]}
-    # pp map2.keys.group_by {|x| x.chars[0].bytesize}.collect {|k, vs| [k, vs.size]}
-    # pp map2
+    # p compose_map.size
+    # pp compose_map.keys.group_by {|x| x.chars[1]}.size
+    # pp compose_map.keys.group_by {|x| x.chars[1]}.collect {|k, vs| [k, k.codepoints, vs.size, vs.group_by {|x| x.chars[0].bytesize}.collect {|k2, vs2| [k2, vs2.size]}]}
+    # pp compose_map.keys.group_by {|x| x.chars[0].bytesize}.collect {|k, vs| [k, vs.size]}
+    # pp compose_map
 
     suffix_char_map = {}
-    map2.each do |source, destination|
+    compose_map.each do |source, destination|
       chars = source.chars
       if chars.size != 2
         STDERR.puts "caution: more than two chars in pattern #{chars.join('|')}"
@@ -749,7 +741,7 @@ def subst(hash, str)
   return str
 end
 
-def map_entry(map1, cc, src, dst)
+def map_entry(decompose, cc, src, dst)
   dst.downcase! unless $case_sensitive
   loop {
     dst2 = subst(cc, dst)
@@ -759,10 +751,10 @@ def map_entry(map1, cc, src, dst)
   unless $keep_space
     dst = $1 if dst =~ /^ +([^ ].*)$/
   end
-  map1[src] = dst if src != dst
+  decompose[src] = dst if src != dst
 end
 
-def create_map1()
+def create_decompose_map()
   cc = {}
   open('|./icudump --cc').each{|l|
     _,src,dst = l.chomp.split("\t")
@@ -771,31 +763,31 @@ def create_map1()
     end
     ccpush(cc, src.chars, dst)
   }
-  map1 = {}
+  decompose_map = {}
   open('|./icudump --nfkd').each{|l|
     n,src,dst = l.chomp.split("\t")
-    map_entry(map1, cc, src, dst)
+    map_entry(decompose_map, cc, src, dst)
   }
   if File.readable?(CUSTOM_RULE_PATH)
     open(CUSTOM_RULE_PATH).each{|l|
       src,dst = l.chomp.split("\t")
-      map_entry(map1, cc, src, dst)
+      map_entry(decompose_map, cc, src, dst)
     }
   end
   unless $case_sensitive
     for c in 'A'..'Z'
-      map1[c] = c.downcase
+      decompose_map[c] = c.downcase
     end
   end
-  return map1
+  return decompose_map
 end
 
-def create_map2(map1)
+def create_compose_map(decompose_map)
   cc = {}
   open('|./icudump --cc').each{|l|
     _,src,dst = l.chomp.split("\t")
-    src = src.chars.collect{|c| map1[c] || c}.join
-    dst = map1[dst] || dst
+    src = src.chars.collect{|c| decompose_map[c] || c}.join
+    dst = decompose_map[dst] || dst
     if cc[src] && cc[src] != dst
       STDERR.puts("caution: inconsitent mapping '#{src}' => '#{cc[src]}'|'#{dst}'")
     end
@@ -812,8 +804,9 @@ def create_map2(map1)
         for j in i..l
           next if i == 0 && j == l
           str = chars[i..j].join
-          if map1[str]
-            STDERR.printf("caution: recursive mapping '%s'=>'%s'\n", str, map1[str])
+          if decompose_map[str]
+            STDERR.printf("caution: recursive mapping '%s'=>'%s'\n",
+                          str, decompose_map[str])
           end
           if cc[str]
             src2 = (i > 0 ? chars[0..i-1].join : '') + cc[str] + (j < l ? chars[j+1..l].join : '')
@@ -856,11 +849,11 @@ unicode_version = `./icudump --version`.strip.gsub(".", "")
 STDERR.puts('creating bc..')
 bc = create_bc("gc")
 
-STDERR.puts('creating map1..')
-map1 = create_map1()
+STDERR.puts('creating decompose map..')
+decompose_map = create_decompose_map()
 
-STDERR.puts('creating map2..')
-map2 = create_map2(map1)
+STDERR.puts('creating compose map..')
+compose_map = create_compose_map(decompose_map)
 
 File.open("nfkc#{unicode_version}.c", "w") do |output|
   output.puts(<<-HEADER)
@@ -887,13 +880,14 @@ File.open("nfkc#{unicode_version}.c", "w") do |output|
 */
 
 #include "grn.h"
+#include "grn_nfkc.h"
 #include <groonga/nfkc.h>
 
 #ifdef GRN_WITH_NFKC
   HEADER
 
   generator = generator_class.new(unicode_version, output)
-  generator.generate(bc, map1, map2)
+  generator.generate(bc, decompose_map, compose_map)
 
   output.puts(<<-FOOTER)
 
