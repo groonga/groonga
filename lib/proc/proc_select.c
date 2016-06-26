@@ -55,7 +55,8 @@ typedef struct {
 
 typedef enum {
   GRN_COLUMN_STAGE_INITIAL,
-  GRN_COLUMN_STAGE_FILTERED
+  GRN_COLUMN_STAGE_FILTERED,
+  GRN_COLUMN_STAGE_OUTPUT
 } grn_column_stage;
 
 typedef struct {
@@ -72,6 +73,7 @@ typedef struct {
 typedef struct {
   grn_hash *initial;
   grn_hash *filtered;
+  grn_hash *output;
 } grn_columns;
 
 typedef struct {
@@ -131,6 +133,7 @@ typedef struct {
     grn_obj *initial;
     grn_obj *result;
     grn_obj *sorted;
+    grn_obj *output;
   } tables;
   struct {
     grn_obj *match_columns;
@@ -256,6 +259,8 @@ grn_column_stage_name(grn_column_stage stage)
     return "initial";
   case GRN_COLUMN_STAGE_FILTERED :
     return "filtered";
+  case GRN_COLUMN_STAGE_OUTPUT :
+    return "output";
   default :
     return "unknown";
   }
@@ -445,6 +450,7 @@ grn_columns_init(grn_ctx *ctx, grn_columns *columns)
 {
   columns->initial = NULL;
   columns->filtered = NULL;
+  columns->output = NULL;
 }
 
 static void
@@ -456,6 +462,10 @@ grn_columns_fin(grn_ctx *ctx, grn_columns *columns)
 
   if (columns->filtered) {
     grn_hash_close(ctx, columns->filtered);
+  }
+
+  if (columns->output) {
+    grn_hash_close(ctx, columns->output);
   }
 }
 
@@ -522,6 +532,9 @@ grn_columns_collect(grn_ctx *ctx,
     } else if (GRN_BULK_EQUAL_STRING(value, "filtered")) {
       stage = GRN_COLUMN_STAGE_FILTERED;
       target_columns = &(columns->filtered);
+    } else if (GRN_BULK_EQUAL_STRING(value, "output")) {
+      stage = GRN_COLUMN_STAGE_OUTPUT;
+      target_columns = &(columns->output);
     } else {
       continue;
     }
@@ -575,6 +588,16 @@ grn_columns_fill(grn_ctx *ctx,
     if (!grn_column_data_collect(ctx,
                                  user_data,
                                  columns->filtered,
+                                 prefix,
+                                 prefix_length)) {
+      return GRN_FALSE;
+    }
+  }
+
+  if (columns->output) {
+    if (!grn_column_data_collect(ctx,
+                                 user_data,
+                                 columns->output,
                                  prefix,
                                  prefix_length)) {
       return GRN_FALSE;
@@ -937,6 +960,41 @@ grn_select_create_all_selected_result_table(grn_ctx *ctx,
 
   return result;
 }
+
+static grn_obj *
+grn_select_create_offset_and_limit_sorted_table(grn_ctx *ctx,
+                                                grn_obj *table,
+                                                int offset,
+                                                int limit)
+{
+  grn_obj *result;
+  grn_table_cursor *cursor;
+
+  result = grn_table_create(ctx, NULL, 0, NULL,
+                            GRN_OBJ_TABLE_NO_KEY,
+                            NULL,
+                            table);
+
+  if (!result) {
+    return NULL;
+  }
+
+  cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0,
+                                 offset, limit, GRN_CURSOR_ASCENDING);
+  if (cursor) {
+    grn_id id;
+    while ((id = grn_table_cursor_next(ctx, cursor))) {
+      grn_id *value;
+      if (grn_array_add(ctx, (grn_array *)result, (void **)&value)) {
+        *value = id;
+      }
+    }
+    grn_table_cursor_close(ctx, cursor);
+  }
+
+  return result;
+}
+
 
 static void
 grn_select_apply_columns(grn_ctx *ctx,
@@ -1569,6 +1627,33 @@ grn_select_sort(grn_ctx *ctx,
 
   GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                 ":", "sort(%d)", data->limit);
+
+  return ctx->rc == GRN_SUCCESS;
+}
+
+static grn_bool
+grn_select_apply_output_columns(grn_ctx *ctx,
+                                grn_select_data *data)
+{
+  if (!data->columns.output) {
+    return GRN_TRUE;
+  }
+
+  if (!data->tables.sorted) {
+    data->tables.sorted =
+      grn_select_create_offset_and_limit_sorted_table(ctx,
+                                                      data->tables.result,
+                                                      data->offset,
+                                                      data->limit);
+    if (!data->tables.sorted) {
+      return GRN_FALSE;
+    }
+  }
+
+  grn_select_apply_columns(ctx,
+                           data,
+                           data->tables.sorted,
+                           data->columns.output);
 
   return ctx->rc == GRN_SUCCESS;
 }
@@ -2873,6 +2958,10 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
                                      &(data->offset), &(data->limit));
 
       if (!grn_select_sort(ctx, data)) {
+        goto exit;
+      }
+
+      if (!grn_select_apply_output_columns(ctx, data)) {
         goto exit;
       }
 
