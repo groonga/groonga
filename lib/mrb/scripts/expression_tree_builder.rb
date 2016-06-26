@@ -74,6 +74,8 @@ module Groonga
             node = ExpressionTree::Procedure.new(code.value)
           elsif code.value.is_a?(IndexColumn)
             node = ExpressionTree::IndexColumn.new(code.value)
+          elsif code.value.is_a?(Accessor)
+            node = ExpressionTree::Accessor.new(code.value)
           else
             node = ExpressionTree::Constant.new(code.value.value)
           end
