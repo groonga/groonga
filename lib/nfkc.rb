@@ -296,7 +296,7 @@ class TableGenerator < SwitchGenerator
     byte_size_groups.keys.sort.each do |common_bytes|
       chars = byte_size_groups[common_bytes]
       lines = []
-      n_values = 0
+      all_values = []
       last_bytes = chars.collect {|char| char.bytes.last}
       last_bytes.min.step(last_bytes.max).each_slice(8) do |slice|
         values = slice.collect do |last_byte|
@@ -304,11 +304,11 @@ class TableGenerator < SwitchGenerator
           char.force_encoding("UTF-8")
           yield(char)
         end
-        n_values += values.size
+        all_values.concat(values)
         lines << ("  " + values.join(", "))
       end
 
-      next if n_values == 1
+      next if all_values.uniq.size == 1
 
       @output.puts(<<-TABLE_HEADER)
 
@@ -366,6 +366,7 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
           end
           indent = "  " * i
           # p [i, prev_common_bytes.collect{|x| "%#04x" % x}, common_bytes.collect{|x| "%#04x" % x}, "%#04x" % common_byte, n_common_bytes, prev_n_common_bytes]
+          # TODO: The following code may be able to be simplified.
           if prev_common_bytes[i].nil?
             # p nil
             @output.puts(<<-BODY)
@@ -384,6 +385,17 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
             @output.puts(<<-BODY)
     #{indent}switch (#{char_variable}[#{i}]) {
             BODY
+          else
+            # p :else
+            prev_common_bytes.size.downto(common_bytes.size + 1) do |j|
+              sub_indent = "  " * (j - 1)
+              @output.puts(<<-BODY)
+    #{indent}#{sub_indent}default :
+    #{indent}#{sub_indent}  break;
+    #{indent}#{sub_indent}}
+    #{indent}#{sub_indent}break;
+              BODY
+            end
           end
           @output.puts(<<-BODY)
     #{indent}case #{"%#04x" % common_byte} :
@@ -492,15 +504,34 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
 #{indent}break;
           BODY
         else
+          sorted_chars = chars.sort
           min = chars_bytes.first.last
           max = chars_bytes.last.last
-          @output.puts(<<-BODY)
+          all_values = (min..max).collect do |last_byte|
+            char = (common_bytes + [last_byte]).pack("c*")
+            char.force_encoding("UTF-8")
+            yield(char)
+          end
+          if all_values.uniq.size == 1
+            value = all_values.first
+          else
+            value = "#{table_name(type, common_bytes)}[#{char_variable}[#{n}] - #{"%#04x" % min}]"
+          end
+          last_n_bits_for_char_in_utf8 = 6
+          max_n_chars_in_byte = 2 ** last_n_bits_for_char_in_utf8
+          if all_values.size == max_n_chars_in_byte
+            @output.puts(<<-BODY)
+#{indent}return #{value};
+            BODY
+          else
+            @output.puts(<<-BODY)
 #{indent}if (#{char_variable}[#{n}] >= #{"%#04x" % min} &&
 #{indent}    #{char_variable}[#{n}] <= #{"%#04x" % max}) {
-#{indent}  return #{table_name(type, common_bytes)}[#{char_variable}[#{n}] - #{"%#04x" % min}];
+#{indent}  return #{value};
 #{indent}}
 #{indent}break;
-          BODY
+            BODY
+          end
         end
       end
     end
@@ -508,12 +539,37 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
 
   def generate_blockcode_char_type(block_codes)
     default = "GRN_CHAR_OTHERS"
+
+    char_types = {}
+    current_type = default
+    prev_char = nil
+    block_codes.keys.sort.each do |char|
+      type = block_codes[char]
+      if current_type != default
+        prev_code_point = prev_char.codepoints[0]
+        code_point = char.codepoints[0]
+        (prev_code_point...code_point).each do |target_code_point|
+          target_char = [target_code_point].pack("U*")
+          char_types[target_char] = current_type
+        end
+      end
+      current_type = type
+      prev_char = char
+    end
+    unless current_type == default
+      raise "TODO: Consider the max unicode character"
+      max_unicode_char = "\u{10ffff}"
+      (prev_char..max_unicode_char).each do |target_char|
+        char_types[target_char] = current_type
+      end
+    end
+
     generate_char_converter("char_type",
                             "char_type",
-                            block_codes,
+                            char_types,
                             default,
                             "grn_char_type") do |char|
-      block_codes[char] || default
+      char_types[char] || default
     end
   end
 
