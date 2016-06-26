@@ -1,0 +1,18 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+
+load --table Memos
+[
+{"content": "Groonga is fast."},
+{"content": "Mroonga is fast and easy to use."},
+{"content": "PGroonga is fast and easy to use."}
+]
+
+select Memos \
+  --query 'content:@fast' \
+  --limit 2 \
+  --columns[highlighted_content].stage output \
+  --columns[highlighted_content].type Text \
+  --columns[highlighted_content].flags COLUMN_SCALAR \
+  --columns[highlighted_content].value 'highlight_html(content)' \
+  --output_columns _id,highlighted_content

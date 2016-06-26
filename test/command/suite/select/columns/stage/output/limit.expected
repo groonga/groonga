@@ -1,0 +1,44 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "Groonga is fast."},
+{"content": "Mroonga is fast and easy to use."},
+{"content": "PGroonga is fast and easy to use."}
+]
+[[0,0.0,0.0],3]
+select Memos   --query 'content:@fast'   --sort_keys -_id   --limit 2   --columns[highlighted_content].stage output   --columns[highlighted_content].type Text   --columns[highlighted_content].flags COLUMN_SCALAR   --columns[highlighted_content].value 'highlight_html(content)'   --output_columns _id,highlighted_content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "highlighted_content",
+          "Text"
+        ]
+      ],
+      [
+        3,
+        "PGroonga is <span class=\"keyword\">fast</span> and easy to use."
+      ],
+      [
+        2,
+        "Mroonga is <span class=\"keyword\">fast</span> and easy to use."
+      ]
+    ]
+  ]
+]
