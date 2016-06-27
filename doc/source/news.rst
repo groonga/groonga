@@ -28,8 +28,8 @@ Improvements
   expand query. It is useful if there are many synonyms.
 
 * [:doc:`/reference/commands/select`] Supported ``--drilldown`` with
-   ``command_version=3``. [groonga-dev,04055] [Reported by Naoya
-   Murakami]
+  ``command_version=3``. [groonga-dev,04055] [Reported by Naoya
+  Murakami]
 
 * Removed needless code from ``grn_table_select_sequential()``.
   [GitHub#560] [Reported by Sho Minagawa]
