@@ -3797,6 +3797,9 @@ msgstr ""
 msgid "-77: ``GRN_CANCEL``"
 msgstr ""
 
+msgid "-78: ``GRN_WINDOW_FUNCTION_ERROR``"
+msgstr ""
+
 msgid ""
 ":doc:`output_format` shows where return code is appeared in query API "
 "response."
