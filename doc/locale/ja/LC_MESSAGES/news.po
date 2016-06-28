@@ -284,7 +284,7 @@ msgstr ""
 "合を検出できるようになりました。"
 
 msgid "Added ``--drilldown_filter``."
-msgstr "``--dirlldown_filter`` を追加しました。"
+msgstr "``--drilldown_filter`` を追加しました。"
 
 msgid "Supported ``filter`` in labeled drilldown."
 msgstr "ラベルつきドリルダウンで ``filter`` をサポートしました。"
