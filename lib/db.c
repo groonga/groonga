@@ -1011,6 +1011,14 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned int name_size
     return ctx->rc;
   }
 
+  if (!key_type && table_type != GRN_OBJ_TABLE_NO_KEY) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][create] "
+        "key is necessary for %s table: <%.*s>",
+        table_type_name, name_size, name);
+    return ctx->rc;
+  }
+
   if ((flags & GRN_OBJ_KEY_WITH_SIS) &&
       table_type != GRN_OBJ_TABLE_PAT_KEY) {
     ERR(GRN_INVALID_ARGUMENT,
