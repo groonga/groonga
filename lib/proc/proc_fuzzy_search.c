@@ -142,7 +142,7 @@ score_heap_push(grn_ctx *ctx, score_heap *h, grn_id id, uint32_t score)
   h->nodes[h->n_entries] = node;
   n = h->n_entries++;
   while (n) {
-    n2 = (n - 1) >> 1;
+    n2 = n >> 1;
     if (h->nodes[n2].score <= h->nodes[n].score) { break; }
     node2 = h->nodes[n];
     h->nodes[n] = h->nodes[n2];
