@@ -1,4 +1,4 @@
-register sharding
+plugin_register sharding
 [[0,0.0,0.0],true]
 table_create Logs_201502 TABLE_NO_KEY
 [[0,0.0,0.0],true]

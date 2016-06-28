@@ -1,4 +1,4 @@
-register sharding
+plugin_register sharding
 [[0,0.0,0.0],true]
 logical_parameters --range_index invalid
 [

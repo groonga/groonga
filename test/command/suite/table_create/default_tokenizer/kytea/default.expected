@@ -1,4 +1,4 @@
-register tokenizers/kytea
+plugin_register tokenizers/kytea
 [[0,0.0,0.0],true]
 table_create Memos TABLE_NO_KEY
 [[0,0.0,0.0],true]

@@ -1,4 +1,4 @@
-register token_filters/stop_word
+plugin_register token_filters/stop_word
 
 table_create Terms TABLE_PAT_KEY ShortText \
   --default_tokenizer TokenBigram \

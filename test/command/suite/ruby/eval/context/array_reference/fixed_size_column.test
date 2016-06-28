@@ -1,5 +1,5 @@
 #@on-error omit
-register ruby/eval
+plugin_register ruby/eval
 #@on-error default
 
 table_create Users TABLE_NO_KEY

@@ -1,4 +1,4 @@
-register token_filters/stem
+plugin_register token_filters/stem
 [[0,0.0,0.0],true]
 tokenize TokenBigram "I developed Groonga" NormalizerAuto --token_filters TokenFilterStem
 [

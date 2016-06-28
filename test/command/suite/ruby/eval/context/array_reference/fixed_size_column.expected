@@ -1,4 +1,4 @@
-register ruby/eval
+plugin_register ruby/eval
 [[0,0.0,0.0],true]
 table_create Users TABLE_NO_KEY
 [[0,0.0,0.0],true]

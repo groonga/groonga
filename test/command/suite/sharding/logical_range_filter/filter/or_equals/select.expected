@@ -1,4 +1,4 @@
-register sharding
+plugin_register sharding
 [[0,0.0,0.0],true]
 table_create Actions TABLE_PAT_KEY ShortText
 [[0,0.0,0.0],true]

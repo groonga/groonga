@@ -1,5 +1,5 @@
 #@on-error omit
-register sharding
+plugin_register sharding
 #@on-error default
 
 table_create Paths_20150203 TABLE_HASH_KEY|KEY_LARGE ShortText

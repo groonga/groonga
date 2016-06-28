@@ -1,5 +1,5 @@
 #@on-error omit
-register sharding
+plugin_register sharding
 #@on-error default
 
 logical_parameters --range_index auto

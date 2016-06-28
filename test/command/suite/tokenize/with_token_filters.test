@@ -1,5 +1,5 @@
 #@on-error omit
-register token_filters/stem
+plugin_register token_filters/stem
 #@on-error default
 
 tokenize TokenBigram "I developed Groonga" NormalizerAuto --token_filters TokenFilterStem

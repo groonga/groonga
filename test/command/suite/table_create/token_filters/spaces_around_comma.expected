@@ -1,4 +1,4 @@
-register token_filters/stop_word
+plugin_register token_filters/stop_word
 [[0,0.0,0.0],true]
 table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto   --token_filters "TokenFilterStopWord , TokenFilterStopWord"
 [[0,0.0,0.0],true]

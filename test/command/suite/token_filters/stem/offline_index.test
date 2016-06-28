@@ -1,5 +1,5 @@
 #@on-error omit
-register token_filters/stem
+plugin_register token_filters/stem
 #@on-error default
 
 table_create Memos TABLE_NO_KEY
