@@ -718,6 +718,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/object_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/plugin_register.rst \
 	$(top_srcdir)/doc/source/reference/commands/plugin_unregister.rst \
+	$(top_srcdir)/doc/source/reference/commands/query_expand.rst \
 	$(top_srcdir)/doc/source/reference/commands/quit.rst \
 	$(top_srcdir)/doc/source/reference/commands/range_filter.rst \
 	$(top_srcdir)/doc/source/reference/commands/register.rst \
@@ -753,6 +754,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/function.rst \
 	$(top_srcdir)/doc/source/reference/functions/between.rst \
 	$(top_srcdir)/doc/source/reference/functions/edit_distance.rst \
+	$(top_srcdir)/doc/source/reference/functions/fuzzy_search.rst \
 	$(top_srcdir)/doc/source/reference/functions/geo_distance.rst \
 	$(top_srcdir)/doc/source/reference/functions/geo_in_circle.rst \
 	$(top_srcdir)/doc/source/reference/functions/geo_in_rectangle.rst \
@@ -1563,6 +1565,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/object_remove.rst \
 	source/reference/commands/plugin_register.rst \
 	source/reference/commands/plugin_unregister.rst \
+	source/reference/commands/query_expand.rst \
 	source/reference/commands/quit.rst \
 	source/reference/commands/range_filter.rst \
 	source/reference/commands/register.rst \
@@ -1598,6 +1601,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/function.rst \
 	source/reference/functions/between.rst \
 	source/reference/functions/edit_distance.rst \
+	source/reference/functions/fuzzy_search.rst \
 	source/reference/functions/geo_distance.rst \
 	source/reference/functions/geo_in_circle.rst \
 	source/reference/functions/geo_in_rectangle.rst \
@@ -1922,6 +1926,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/object_remove.txt \
 	html/_sources/reference/commands/plugin_register.txt \
 	html/_sources/reference/commands/plugin_unregister.txt \
+	html/_sources/reference/commands/query_expand.txt \
 	html/_sources/reference/commands/quit.txt \
 	html/_sources/reference/commands/range_filter.txt \
 	html/_sources/reference/commands/register.txt \
@@ -1957,6 +1962,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/function.txt \
 	html/_sources/reference/functions/between.txt \
 	html/_sources/reference/functions/edit_distance.txt \
+	html/_sources/reference/functions/fuzzy_search.txt \
 	html/_sources/reference/functions/geo_distance.txt \
 	html/_sources/reference/functions/geo_in_circle.txt \
 	html/_sources/reference/functions/geo_in_rectangle.txt \
@@ -2181,6 +2187,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/object_remove.html \
 	html/reference/commands/plugin_register.html \
 	html/reference/commands/plugin_unregister.html \
+	html/reference/commands/query_expand.html \
 	html/reference/commands/quit.html \
 	html/reference/commands/range_filter.html \
 	html/reference/commands/register.html \
@@ -2216,6 +2223,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/function.html \
 	html/reference/functions/between.html \
 	html/reference/functions/edit_distance.html \
+	html/reference/functions/fuzzy_search.html \
 	html/reference/functions/geo_distance.html \
 	html/reference/functions/geo_in_circle.html \
 	html/reference/functions/geo_in_rectangle.html \
