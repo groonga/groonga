@@ -16,6 +16,7 @@ upload: source ensure-launchpad-configuration
 	  --source-archive '$(SOURCE)' \
 	  --code-names '$(CODE_NAMES)' \
 	  --debian-directory '$(srcdir)/../debian/' \
+	  --ppa '$(LAUNCHPAD_PPA)' \
 	  --pgp-sign-key '$(LAUNCHPAD_UPLOADER_PGP_KEY)'
 
 upload: upload-precise
@@ -30,6 +31,7 @@ upload-precise: source ensure-launchpad-configuration
 	  --source-archive '$(SOURCE)' \
 	  --code-names 'precise' \
 	  --debian-directory 'precise/debian' \
+	  --ppa '$(LAUNCHPAD_PPA)' \
 	  --pgp-sign-key '$(LAUNCHPAD_UPLOADER_PGP_KEY)'
 
 source: $(SOURCE)

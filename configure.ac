@@ -1642,6 +1642,13 @@ AC_ARG_WITH(rsync-path,
             [RSYNC_PATH="packages@packages.groonga.org:public"])
 AC_SUBST(RSYNC_PATH)
 
+AC_ARG_WITH(launchpad-ppa,
+            [AS_HELP_STRING([--with-launchpad-ppa=PPA],
+            [specify Launchpad Personal Package Archive. [default=groonga-ppa]])],
+            [LAUNCHPAD_PPA="$withval"],
+            [LAUNCHPAD_PPA="groonga-ppa"])
+AC_SUBST(LAUNCHPAD_PPA)
+
 AC_ARG_WITH(launchpad-uploader-pgp-key,
             [AS_HELP_STRING([--with-launchpad-uploader-pgp-key=KEY],
             [specify PGP key UID to upload Groonga packages to Launchpad.])],
