@@ -78,6 +78,7 @@ static double grn_ii_estimate_size_for_query_reduce_ratio = 0.9;
 static grn_bool grn_ii_overlap_token_skip_enable = GRN_FALSE;
 static uint32_t grn_ii_builder_block_threshold_force = 0;
 static uint32_t grn_ii_max_n_segments_tiny = MAX_PSEG_TINY;
+static uint32_t grn_ii_max_n_chunks_tiny = GRN_II_MAX_CHUNK_TINY;
 
 void
 grn_ii_init_from_env(void)
@@ -157,6 +158,23 @@ grn_ii_init_from_env(void)
                   NULL);
       if (grn_ii_max_n_segments_tiny > MAX_PSEG) {
         grn_ii_max_n_segments_tiny = MAX_PSEG;
+      }
+    }
+  }
+
+  {
+    char grn_ii_max_n_chunks_tiny_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_MAX_N_CHUNKS_TINY",
+               grn_ii_max_n_chunks_tiny_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_ii_max_n_chunks_tiny_env[0]) {
+      grn_ii_max_n_chunks_tiny =
+        grn_atoui(grn_ii_max_n_chunks_tiny_env,
+                  grn_ii_max_n_chunks_tiny_env +
+                  strlen(grn_ii_max_n_chunks_tiny_env),
+                  NULL);
+      if (grn_ii_max_n_chunks_tiny > GRN_II_MAX_CHUNK) {
+        grn_ii_max_n_chunks_tiny = GRN_II_MAX_CHUNK;
       }
     }
   }
@@ -3750,6 +3768,7 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
 {
   int i;
   uint32_t max_n_segments;
+  uint32_t max_n_chunks;
   grn_io *seg, *chunk;
   char path2[PATH_MAX];
   struct grn_ii_header *header;
@@ -3770,8 +3789,10 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
 
   if (flags & GRN_OBJ_INDEX_TINY) {
     max_n_segments = grn_ii_max_n_segments_tiny;
+    max_n_chunks = grn_ii_max_n_chunks_tiny;
   } else {
     max_n_segments = MAX_PSEG;
+    max_n_chunks = GRN_II_MAX_CHUNK;
   }
 
   seg = grn_io_create(ctx,
@@ -3785,10 +3806,10 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
   if (path) {
     grn_strcpy(path2, PATH_MAX, path);
     grn_strcat(path2, PATH_MAX, ".c");
-    chunk = grn_io_create(ctx, path2, 0, S_CHUNK, GRN_II_MAX_CHUNK, grn_io_auto,
+    chunk = grn_io_create(ctx, path2, 0, S_CHUNK, max_n_chunks, grn_io_auto,
                           GRN_IO_EXPIRE_SEGMENT);
   } else {
-    chunk = grn_io_create(ctx, NULL, 0, S_CHUNK, GRN_II_MAX_CHUNK, grn_io_auto, 0);
+    chunk = grn_io_create(ctx, NULL, 0, S_CHUNK, max_n_chunks, grn_io_auto, 0);
   }
   if (!chunk) {
     grn_io_close(ctx, seg);
