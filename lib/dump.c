@@ -57,8 +57,8 @@ grn_dump_table_create_flags(grn_ctx *ctx,
 
 grn_rc
 grn_dump_column_create_flags(grn_ctx *ctx,
-                            grn_obj_flags flags,
-                            grn_obj *buffer)
+                             grn_column_flags flags,
+                             grn_obj *buffer)
 {
   GRN_API_ENTER;
 
@@ -82,6 +82,9 @@ grn_dump_column_create_flags(grn_ctx *ctx,
     }
     if (flags & GRN_OBJ_WITH_POSITION) {
       GRN_TEXT_PUTS(ctx, buffer, "|WITH_POSITION");
+    }
+    if (flags & GRN_OBJ_INDEX_TINY) {
+      GRN_TEXT_PUTS(ctx, buffer, "|INDEX_TINY");
     }
     break;
   }

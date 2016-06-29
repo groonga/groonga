@@ -6,7 +6,7 @@ column_create Posts content COLUMN_SCALAR Text
 [[0,0.0,0.0],true]
 table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
 [[0,0.0,0.0],true]
-column_create Terms index COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION   Posts _key,title,content
+column_create Terms index   COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION|INDEX_TINY   Posts _key,title,content
 [[0,0.0,0.0],true]
 schema
 [
@@ -350,11 +350,11 @@ schema
               "arguments": {
                 "table": "Terms",
                 "name": "index",
-                "flags": "COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION",
+                "flags": "COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION|INDEX_TINY",
                 "type": "Posts",
                 "sources": "_key,title,content"
               },
-              "command_line": "column_create --table Terms --name index --flags COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION --type Posts --sources _key,title,content"
+              "command_line": "column_create --table Terms --name index --flags COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION|INDEX_TINY --type Posts --sources _key,title,content"
             }
           }
         }

@@ -759,9 +759,12 @@ command_schema_column_command_collect_arguments(grn_ctx *ctx,
 
   {
     grn_obj flags;
+    grn_column_flags column_flags;
+
     GRN_TEXT_INIT(&flags, 0);
+    column_flags = grn_column_get_flags(ctx, column);
     grn_dump_column_create_flags(ctx,
-                                 column->header.flags & ~GRN_OBJ_PERSISTENT,
+                                 column_flags & ~GRN_OBJ_PERSISTENT,
                                  &flags);
     GRN_TEXT_PUTC(ctx, &flags, '\0');
     ADD("flags", GRN_TEXT_VALUE(&flags));

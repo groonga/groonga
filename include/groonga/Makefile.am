@@ -1,6 +1,7 @@
 groonga_includedir = $(pkgincludedir)/groonga
 groonga_include_HEADERS =			\
 	array.h					\
+	column.h				\
 	command.h				\
 	config.h				\
 	dat.h					\

@@ -24,13 +24,13 @@
 
 #include <groonga/plugin.h>
 
-grn_obj_flags
+grn_column_flags
 grn_proc_column_parse_flags(grn_ctx *ctx,
                             const char *error_message_tag,
                             const char *text,
                             const char *end)
 {
-  grn_obj_flags flags = 0;
+  grn_column_flags flags = 0;
   while (text < end) {
     size_t name_size;
 
@@ -57,6 +57,7 @@ grn_proc_column_parse_flags(grn_ctx *ctx,
     CHECK_FLAG(WITH_WEIGHT);
     CHECK_FLAG(WITH_POSITION);
     CHECK_FLAG(RING_BUFFER);
+    CHECK_FLAG(INDEX_TINY);
 
 #undef CHECK_FLAG
 
@@ -175,7 +176,7 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_obj *flags_raw;
   grn_obj *type_raw;
   grn_obj *source_raw;
-  grn_obj_flags flags;
+  grn_column_flags flags;
   grn_obj *type = NULL;
 
   table_raw  = grn_plugin_proc_get_var(ctx, user_data, "table", -1);
@@ -532,7 +533,7 @@ output_column_info(grn_ctx *ctx, grn_obj *column)
   output_column_name(ctx, column);
   grn_ctx_output_cstr(ctx, path);
   grn_ctx_output_cstr(ctx, type);
-  grn_dump_column_create_flags(ctx, column->header.flags, &o);
+  grn_dump_column_create_flags(ctx, grn_column_get_flags(ctx, column), &o);
   grn_ctx_output_obj(ctx, &o, NULL);
   grn_proc_output_object_id_name(ctx, column->header.domain);
   grn_proc_output_object_id_name(ctx, grn_obj_get_range(ctx, column));

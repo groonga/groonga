@@ -480,6 +480,16 @@ grn_ja_info(grn_ctx *ctx, grn_ja *ja, unsigned int *max_element_size)
   return GRN_SUCCESS;
 }
 
+grn_column_flags
+grn_ja_get_flags(grn_ctx *ctx, grn_ja *ja)
+{
+  if (!ja) {
+    return 0;
+  }
+
+  return ja->header->flags;
+}
+
 grn_rc
 grn_ja_close(grn_ctx *ctx, grn_ja *ja)
 {

@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2016 Brazil
+  Copyright(C) 2009-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,7 @@
 extern "C" {
 #endif
 
-GRN_API grn_rc grn_dump_table_create_flags(grn_ctx *ctx,
-                                           grn_table_flags flags,
-                                           grn_obj *buffer);
-GRN_API grn_rc grn_dump_column_create_flags(grn_ctx *ctx,
-                                            grn_column_flags flags,
-                                            grn_obj *buffer);
+GRN_API grn_column_flags grn_column_get_flags(grn_ctx *ctx, grn_obj *column);
 
 #ifdef __cplusplus
 }

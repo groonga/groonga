@@ -295,6 +295,7 @@ GRN_API grn_encoding grn_encoding_parse(const char *name);
 
 typedef uint16_t grn_obj_flags;
 typedef uint32_t grn_table_flags;
+typedef uint32_t grn_column_flags;
 
 /* flags for grn_obj_flags and grn_table_flags */
 
@@ -356,6 +357,10 @@ typedef uint32_t grn_table_flags;
 /* flags only for grn_table_flags */
 
 #define GRN_OBJ_KEY_LARGE              (0x01<<16)
+
+/* flags only for grn_column_flags */
+
+#define GRN_OBJ_INDEX_TINY             (0x01<<16)
 
 /* obj types */
 
@@ -644,7 +649,7 @@ GRN_API grn_obj *grn_obj_column(grn_ctx *ctx, grn_obj *table,
 
 GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
                                    const char *name, unsigned int name_size,
-                                   const char *path, grn_obj_flags flags, grn_obj *type);
+                                   const char *path, grn_column_flags flags, grn_obj *type);
 
 #define GRN_COLUMN_OPEN_OR_CREATE(ctx,table,name,name_size,path,flags,type,column) \
   (((column) = grn_obj_column((ctx), (table), (name), (name_size))) ||\

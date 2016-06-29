@@ -44,6 +44,7 @@
 #endif
 
 #define MAX_PSEG                 0x20000
+#define MAX_PSEG_TINY            0x00200
 #define S_CHUNK                  (1 << GRN_II_W_CHUNK)
 #define W_SEGMENT                18
 #define S_SEGMENT                (1 << W_SEGMENT)
@@ -76,6 +77,7 @@ static double grn_ii_select_too_many_index_match_ratio = -1;
 static double grn_ii_estimate_size_for_query_reduce_ratio = 0.9;
 static grn_bool grn_ii_overlap_token_skip_enable = GRN_FALSE;
 static uint32_t grn_ii_builder_block_threshold_force = 0;
+static uint32_t grn_ii_max_n_segments_tiny = MAX_PSEG_TINY;
 
 void
 grn_ii_init_from_env(void)
@@ -139,6 +141,23 @@ grn_ii_init_from_env(void)
                   NULL);
     } else {
       grn_ii_builder_block_threshold_force = 0;
+    }
+  }
+
+  {
+    char grn_ii_max_n_segments_tiny_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_MAX_N_SEGMENTS_TINY",
+               grn_ii_max_n_segments_tiny_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_ii_max_n_segments_tiny_env[0]) {
+      grn_ii_max_n_segments_tiny =
+        grn_atoui(grn_ii_max_n_segments_tiny_env,
+                  grn_ii_max_n_segments_tiny_env +
+                  strlen(grn_ii_max_n_segments_tiny_env),
+                  NULL);
+      if (grn_ii_max_n_segments_tiny > MAX_PSEG) {
+        grn_ii_max_n_segments_tiny = MAX_PSEG;
+      }
     }
   }
 }
@@ -3730,6 +3749,7 @@ static grn_ii *
 _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uint32_t flags)
 {
   int i;
+  uint32_t max_n_segments;
   grn_io *seg, *chunk;
   char path2[PATH_MAX];
   struct grn_ii_header *header;
@@ -3747,8 +3767,20 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
     return NULL;
   }
   if (path && strlen(path) + 6 >= PATH_MAX) { return NULL; }
-  seg = grn_io_create(ctx, path, sizeof(struct grn_ii_header),
-                      S_SEGMENT, MAX_PSEG, grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
+
+  if (flags & GRN_OBJ_INDEX_TINY) {
+    max_n_segments = grn_ii_max_n_segments_tiny;
+  } else {
+    max_n_segments = MAX_PSEG;
+  }
+
+  seg = grn_io_create(ctx,
+                      path,
+                      sizeof(struct grn_ii_header),
+                      S_SEGMENT,
+                      max_n_segments,
+                      grn_io_auto,
+                      GRN_IO_EXPIRE_SEGMENT);
   if (!seg) { return NULL; }
   if (path) {
     grn_strcpy(path2, PATH_MAX, path);
@@ -3950,6 +3982,16 @@ grn_ii_info(grn_ctx *ctx, grn_ii *ii, uint64_t *seg_size, uint64_t *chunk_size)
   }
 
   return GRN_SUCCESS;
+}
+
+grn_column_flags
+grn_ii_get_flags(grn_ctx *ctx, grn_ii *ii)
+{
+  if (!ii) {
+    return 0;
+  }
+
+  return ii->header->flags;
 }
 
 void

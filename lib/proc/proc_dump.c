@@ -280,7 +280,8 @@ dump_column(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_obj *column)
   grn_id type_id;
   grn_bool is_opened_type = GRN_TRUE;
   grn_obj *type;
-  grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
+  grn_column_flags flags;
+  grn_column_flags default_flags = GRN_OBJ_PERSISTENT;
 
   type_id = grn_obj_get_range(ctx, column);
   if (dumper->is_close_opened_object_mode) {
@@ -300,8 +301,9 @@ dump_column(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_obj *column)
   if (type->header.type == GRN_TYPE) {
     default_flags |= type->header.flags;
   }
+  flags = grn_column_get_flags(ctx, column);
   grn_dump_column_create_flags(ctx,
-                               column->header.flags & ~default_flags,
+                               flags & ~default_flags,
                                dumper->output);
   GRN_TEXT_PUTC(ctx, dumper->output, ' ');
   dump_obj_name(ctx, dumper, type);

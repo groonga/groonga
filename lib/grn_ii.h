@@ -99,6 +99,7 @@ GRN_API grn_ii *grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon);
 GRN_API grn_rc grn_ii_close(grn_ctx *ctx, grn_ii *ii);
 GRN_API grn_rc grn_ii_remove(grn_ctx *ctx, const char *path);
 grn_rc grn_ii_info(grn_ctx *ctx, grn_ii *ii, uint64_t *seg_size, uint64_t *chunk_size);
+grn_column_flags grn_ii_get_flags(grn_ctx *ctx, grn_ii *ii);
 grn_rc grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, uint32_t key, grn_ii_updspec *u,
                          grn_hash *h);
 grn_rc grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, uint32_t key, grn_ii_updspec *u,

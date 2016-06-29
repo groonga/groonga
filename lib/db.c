@@ -4703,7 +4703,7 @@ _grn_table_key(grn_ctx *ctx, grn_obj *table, grn_id id, uint32_t *key_size)
 grn_obj *
 grn_column_create(grn_ctx *ctx, grn_obj *table,
                   const char *name, unsigned int name_size,
-                  const char *path, grn_obj_flags flags, grn_obj *type)
+                  const char *path, grn_column_flags flags, grn_obj *type)
 {
   grn_db *s;
   uint32_t value_size;
