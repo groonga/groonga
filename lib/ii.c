@@ -11224,6 +11224,14 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn_ii_builder *builder)
   builder->buf.chunk_offset += builder->chunk.enc_offset;
 
   a = array_get(ctx, builder->ii, builder->chunk.tid);
+  if (!a) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[ii][builder][chunk][register] "
+        "failed to allocate an array in segment: tid=<%u>: max_n_segments=<%u>",
+        builder->chunk.tid,
+        builder->ii->seg->header->max_segment);
+    return ctx->rc;
+  }
   a[0] = SEG2POS(builder->buf.buf_id,
                  sizeof(buffer_header) + buf_tid * sizeof(buffer_term));
   a[1] = builder->df;
