@@ -1635,7 +1635,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
     if (grn_obj_cast(ctx, y, res, GRN_FALSE)) {                         \
       ERR(GRN_INVALID_ARGUMENT,                                         \
           "not a numerical format: <%.*s>",                             \
-          (int)GRN_TEXT_LEN(y), GRN_TEXT_VALUE(y));                          \
+          (int)GRN_TEXT_LEN(y), GRN_TEXT_VALUE(y));                     \
       goto exit;                                                        \
     }                                                                   \
     set(ctx, res, integer_operation(x_, get(res)));                     \
