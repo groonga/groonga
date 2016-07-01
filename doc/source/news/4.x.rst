@@ -2,6 +2,9 @@
 
 .. highlightlang:: none
 
+News - 4.x
+==========
+
 .. _release-4-1-1:
 
 Release 4.1.1 - 2015-01-29

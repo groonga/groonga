@@ -2,6 +2,9 @@
 
 .. highlightlang:: none
 
+News - 1.3.x
+============
+
 .. _release-1-3-0:
 
 Release 1.3.0 - 2012-01-29
