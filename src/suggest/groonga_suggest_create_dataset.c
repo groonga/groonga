@@ -151,7 +151,7 @@ main(int argc, char **argv)
     grn_obj text;
     GRN_TEXT_INIT(&text, 0);
 #define SEND(string) send_command(ctx, &text, string, dataset_name)
-    SEND("register suggest/suggest");
+    SEND("plugin_register suggest/suggest");
     SEND("table_create event_type TABLE_HASH_KEY ShortText");
     {
       grn_obj query;
