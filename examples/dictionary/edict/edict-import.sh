@@ -17,9 +17,9 @@ else
 fi
 
 if type gzcat > /dev/null 2>&1; then
-    zcat='gzcat'
+    zcat="gzcat"
 else
-    zcat='zcat'
+    zcat="zcat"
 fi
 
 if $zcat $edict_gz | ${base_dir}/edict2grn.rb | groonga $1 > /dev/null; then
