@@ -82,7 +82,7 @@ func_string_length(grn_ctx *ctx, int n_args, grn_obj **args,
 
 static grn_obj *
 func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
-                     grn_user_data *user_data)
+                      grn_user_data *user_data)
 {
   grn_obj *target;
   size_t string_length = 0;
