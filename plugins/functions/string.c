@@ -90,8 +90,8 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
   size_t string_length = 0;
   int64_t from = 0;
   int64_t length = -1;
-  const char *start;
-  const char *end;
+  const char *start = NULL;
+  const char *end = NULL;
   grn_obj *substring;
 
   if (n_args < 2) {
@@ -231,9 +231,11 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
   {
     const char *p;
     unsigned int cl = 0;
-    start = GRN_TEXT_VALUE(target);
-    end = start + GRN_TEXT_LEN(target);
-    for (p = start; p < end && (cl = grn_charlen(ctx, p, end)); p += cl) {
+    start = NULL;
+    end = GRN_TEXT_VALUE(target) + GRN_TEXT_LEN(target);
+    for (p = GRN_TEXT_VALUE(target);
+         p < end && (cl = grn_charlen(ctx, p, end));
+         p += cl) {
       if (string_length == from) {
         start = p;
       }
@@ -245,7 +247,9 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
     }
   }
 
-  GRN_TEXT_SET(ctx, substring, start, end - start);
+  if (start) {
+    GRN_TEXT_SET(ctx, substring, start, end - start);
+  }
 
   return substring;
 }
