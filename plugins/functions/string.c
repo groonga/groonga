@@ -85,12 +85,14 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
                       grn_user_data *user_data)
 {
   grn_obj *target;
+  grn_obj *from_raw;
+  grn_obj *length_raw = NULL;
   size_t string_length = 0;
-  uint64_t from = 0;
-  uint64_t length = 0;
+  int64_t from = 0;
+  int64_t length = -1;
   const char *start;
   const char *end;
-  grn_obj *grn_text;
+  grn_obj *substring;
 
   if (n_args < 2) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
@@ -100,10 +102,9 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
   }
 
   target = args[0];
-  from = GRN_UINT64_VALUE(args[1]);
-
+  from_raw = args[1];
   if (n_args == 3) {
-    length = GRN_UINT64_VALUE(args[2]);
+    length_raw = args[2];
   }
 
   if (!(target->header.type == GRN_BULK &&
@@ -121,11 +122,117 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
     return NULL;
   }
 
+  /* TODO: extract as grn_func_arg_int64() */
+  if (!grn_type_id_is_number_family(ctx, from_raw->header.domain)) {
+    grn_obj inspected;
+
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, from_raw);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "string_substring(): from must be a number: <%.*s>",
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return NULL;
+  }
+  if (from_raw->header.domain == GRN_DB_INT32) {
+    from = GRN_INT32_VALUE(from_raw);
+  } else if (from_raw->header.domain == GRN_DB_INT64) {
+    from = GRN_INT64_VALUE(from_raw);
+  } else {
+    grn_obj buffer;
+    grn_rc rc;
+
+    GRN_INT64_INIT(&buffer, 0);
+    rc = grn_obj_cast(ctx, from_raw, &buffer, GRN_FALSE);
+    if (rc == GRN_SUCCESS) {
+      from = GRN_INT64_VALUE(&buffer);
+    }
+    GRN_OBJ_FIN(ctx, &buffer);
+
+    if (rc != GRN_SUCCESS) {
+      grn_obj inspected;
+
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, from_raw);
+      GRN_PLUGIN_ERROR(ctx, rc,
+                       "string_substring(): "
+                       "failed to cast from value to number: <%.*s>",
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return NULL;
+    }
+  }
+
+  if (length_raw) {
+    /* TODO: extract as grn_func_arg_int64() */
+    if (!grn_type_id_is_number_family(ctx, length_raw->header.domain)) {
+      grn_obj inspected;
+
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, length_raw);
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "string_substring(): length must be a number: <%.*s>",
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return NULL;
+    }
+    if (length_raw->header.domain == GRN_DB_INT32) {
+      length = GRN_INT32_VALUE(length_raw);
+    } else if (length_raw->header.domain == GRN_DB_INT64) {
+      length = GRN_INT64_VALUE(length_raw);
+    } else {
+      grn_obj buffer;
+      grn_rc rc;
+
+      GRN_INT64_INIT(&buffer, 0);
+      rc = grn_obj_cast(ctx, length_raw, &buffer, GRN_FALSE);
+      if (rc == GRN_SUCCESS) {
+        length = GRN_INT64_VALUE(&buffer);
+      }
+      GRN_OBJ_FIN(ctx, &buffer);
+
+      if (rc != GRN_SUCCESS) {
+        grn_obj inspected;
+
+        GRN_TEXT_INIT(&inspected, 0);
+        grn_inspect(ctx, &inspected, length_raw);
+        GRN_PLUGIN_ERROR(ctx, rc,
+                         "string_substring(): "
+                         "failed to cast length value to number: <%.*s>",
+                         (int)GRN_TEXT_LEN(&inspected),
+                         GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+        return NULL;
+      }
+    }
+  }
+
+  substring = grn_plugin_proc_alloc(ctx, user_data, target->header.domain, 0);
+  if (!substring) {
+    return NULL;
+  }
+
+  GRN_BULK_REWIND(substring);
+
+  if (GRN_TEXT_LEN(target) == 0) {
+    return substring;
+  }
+  if (length == 0) {
+    return substring;
+  }
+
+  while (from < 0) {
+    from += GRN_TEXT_LEN(target);
+  }
+
   {
     const char *p;
     unsigned int cl = 0;
     start = GRN_TEXT_VALUE(target);
-    end = GRN_BULK_CURR(target);
+    end = start + GRN_TEXT_LEN(target);
     for (p = start; p < end && (cl = grn_charlen(ctx, p, end)); p += cl) {
       if (string_length == from) {
         start = p;
@@ -138,14 +245,9 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
     }
   }
 
-  grn_text = grn_plugin_proc_alloc(ctx, user_data, target->header.domain, 0);
-  if (!grn_text) {
-    return NULL;
-  }
+  GRN_TEXT_SET(ctx, substring, start, end - start);
 
-  GRN_TEXT_SET(ctx, grn_text, start, end - start);
-
-  return grn_text;
+  return substring;
 }
 
 grn_rc
