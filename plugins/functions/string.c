@@ -94,7 +94,7 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
 
   if (n_args < 2) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "string_substring(): wrong number of arguments (%d for 2..)",
+                     "string_substring(): wrong number of arguments (%d for 2..3)",
                      n_args);
     return NULL;
   }
