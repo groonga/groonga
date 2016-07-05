@@ -76,6 +76,11 @@ typedef struct {
   grn_hash *output;
 } grn_columns;
 
+typedef enum {
+  GRN_SLICE_TARGET_FILTERED,
+  GRN_SLICE_TARGET_OUTPUT
+} grn_slice_target;
+
 typedef struct {
   grn_select_string label;
   grn_select_string filter;
@@ -83,6 +88,7 @@ typedef struct {
   grn_select_string output_columns;
   int offset;
   int limit;
+  grn_slice_target target;
   grn_obj *table;
 } grn_slice_data;
 
@@ -620,6 +626,7 @@ grn_slice_data_init(grn_ctx *ctx,
   GRN_SELECT_INIT_STRING(slice->output_columns);
   slice->offset = 0;
   slice->limit = GRN_SELECT_DEFAULT_LIMIT;
+  slice->target = GRN_SLICE_TARGET_FILTERED;
   slice->table = NULL;
 }
 
@@ -638,7 +645,8 @@ grn_slice_data_fill(grn_ctx *ctx,
                     grn_obj *sort_keys,
                     grn_obj *output_columns,
                     grn_obj *offset,
-                    grn_obj *limit)
+                    grn_obj *limit,
+                    grn_obj *target)
 {
   GRN_SELECT_FILL_STRING(slice->filter, filter);
 
@@ -654,6 +662,14 @@ grn_slice_data_fill(grn_ctx *ctx,
   slice->limit = grn_proc_option_value_int32(ctx,
                                              limit,
                                              GRN_SELECT_DEFAULT_LIMIT);
+
+  if (target) {
+    if (GRN_BULK_EQUAL_STRING(target, "filtered")) {
+      slice->target = GRN_SLICE_TARGET_FILTERED;
+    } else if (GRN_BULK_EQUAL_STRING(target, "output")) {
+      slice->target = GRN_SLICE_TARGET_OUTPUT;
+    }
+  }
 }
 
 static void
@@ -1793,15 +1809,22 @@ grn_select_slice_execute(grn_ctx *ctx,
 static grn_bool
 grn_select_slices_execute(grn_ctx *ctx,
                           grn_select_data *data,
-                          grn_obj *table,
                           grn_hash *slices)
 {
   grn_bool succeeded = GRN_TRUE;
 
   GRN_HASH_EACH_BEGIN(ctx, slices, cursor, id) {
     grn_slice_data *slice;
+    grn_obj *table = NULL;
 
     grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
+
+    if (slice->target == GRN_SLICE_TARGET_FILTERED) {
+      table = data->tables.result;
+    } else if (slice->target == GRN_SLICE_TARGET_OUTPUT) {
+      table = data->tables.sorted;
+    }
+ 
     if (!grn_select_slice_execute(ctx, data, table, slice)) {
       succeeded = GRN_FALSE;
       break;
@@ -1819,7 +1842,7 @@ grn_select_prepare_slices(grn_ctx *ctx,
     return GRN_TRUE;
   }
 
-  if (!grn_select_slices_execute(ctx, data, data->tables.result, data->slices)) {
+  if (!grn_select_slices_execute(ctx, data, data->slices)) {
     return GRN_FALSE;
   }
 
@@ -3122,6 +3145,7 @@ grn_select_data_fill_slices(grn_ctx *ctx,
     grn_obj *output_columns;
     grn_obj *offset;
     grn_obj *limit;
+    grn_obj *target;
 
     grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
 
@@ -3144,6 +3168,7 @@ grn_select_data_fill_slices(grn_ctx *ctx,
       GET_VAR(output_columns);
       GET_VAR(offset);
       GET_VAR(limit);
+      GET_VAR(target);
 
 #undef GET_VAR
 
@@ -3153,7 +3178,8 @@ grn_select_data_fill_slices(grn_ctx *ctx,
                           sort_keys,
                           output_columns,
                           offset,
-                          limit);
+                          limit,
+                          target);
   } GRN_HASH_EACH_END(ctx, cursor);
 
   return GRN_TRUE;
