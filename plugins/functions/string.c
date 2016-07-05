@@ -87,7 +87,6 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
   grn_obj *target;
   grn_obj *from_raw;
   grn_obj *length_raw = NULL;
-  size_t string_length = 0;
   int64_t from = 0;
   int64_t length = -1;
   const char *start = NULL;
@@ -230,20 +229,39 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
 
   {
     const char *p;
-    unsigned int cl = 0;
+
     start = NULL;
-    end = GRN_TEXT_VALUE(target) + GRN_TEXT_LEN(target);
-    for (p = GRN_TEXT_VALUE(target);
-         p < end && (cl = grn_charlen(ctx, p, end));
-         p += cl) {
-      if (string_length == from) {
-        start = p;
+    p = GRN_TEXT_VALUE(target);
+    end = p + GRN_TEXT_LEN(target);
+
+    if (from == 0) {
+      start = p;
+    } else {
+      unsigned int char_length = 0;
+      size_t n_chars = 0;
+
+      for (;
+           p < end && (char_length = grn_charlen(ctx, p, end));
+           p += char_length, n_chars++) {
+        if (n_chars == from) {
+          start = p;
+          break;
+        }
       }
-      if (length > 0 && string_length - from == length) {
-        end = p;
-        break;
+    }
+
+    if (start && length > 0) {
+      unsigned int char_length = 0;
+      size_t n_chars = 0;
+
+      for (;
+           p < end && (char_length = grn_charlen(ctx, p, end));
+           p += char_length, n_chars++) {
+        if (n_chars == length) {
+          end = p;
+          break;
+        }
       }
-      string_length++;
     }
   }
 
