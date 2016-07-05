@@ -86,8 +86,8 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
 {
   grn_obj *target;
   size_t string_length = 0;
-  unsigned long long from = 0;
-  unsigned long long length = 0;
+  uint64_t from = 0;
+  uint64_t length = 0;
   const char *start;
   const char *end;
   grn_obj *grn_text;
