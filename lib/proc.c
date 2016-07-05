@@ -546,7 +546,11 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         GRN_TABLE_EACH(ctx, records, GRN_ID_NIL, GRN_ID_NIL,
                        result_id, &key, NULL, NULL, {
           grn_id id = *(grn_id *)key;
-          grn_table_delete_by_id(ctx, table, id);
+          grn_rc sub_rc;
+          sub_rc = grn_table_delete_by_id(ctx, table, id);
+          if (rc == GRN_SUCCESS) {
+            rc = sub_rc;
+          }
           if (ctx->rc == GRN_OPERATION_NOT_PERMITTED) {
             ERRCLR(ctx);
           }
