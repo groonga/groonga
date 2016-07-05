@@ -107,9 +107,7 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
   }
 
   if (!(target->header.type == GRN_BULK &&
-        ((target->header.domain == GRN_DB_SHORT_TEXT) ||
-         (target->header.domain == GRN_DB_TEXT) ||
-         (target->header.domain == GRN_DB_LONG_TEXT)))) {
+        grn_type_id_is_text_family(ctx, target->header.domain))) {
     grn_obj inspected;
 
     GRN_TEXT_INIT(&inspected, 0);
