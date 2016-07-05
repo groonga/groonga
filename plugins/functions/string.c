@@ -80,6 +80,76 @@ func_string_length(grn_ctx *ctx, int n_args, grn_obj **args,
   return grn_length;
 }
 
+static grn_obj *
+func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
+                     grn_user_data *user_data)
+{
+  grn_obj *target;
+  size_t string_length = 0;
+  unsigned long long from = 0;
+  unsigned long long length = 0;
+  const char *start;
+  const char *end;
+  grn_obj *grn_text;
+
+  if (n_args < 2) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "string_substring(): wrong number of arguments (%d for 2..)",
+                     n_args);
+    return NULL;
+  }
+
+  target = args[0];
+  from = GRN_UINT64_VALUE(args[1]);
+
+  if (n_args == 3) {
+    length = GRN_UINT64_VALUE(args[2]);
+  }
+
+  if (!(target->header.type == GRN_BULK &&
+        ((target->header.domain == GRN_DB_SHORT_TEXT) ||
+         (target->header.domain == GRN_DB_TEXT) ||
+         (target->header.domain == GRN_DB_LONG_TEXT)))) {
+    grn_obj inspected;
+
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, target);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "string_substring(): target object must be a text bulk: "
+                     "<%.*s>",
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return NULL;
+  }
+
+  {
+    const char *p;
+    unsigned int cl = 0;
+    start = GRN_TEXT_VALUE(target);
+    end = GRN_BULK_CURR(target);
+    for (p = start; p < end && (cl = grn_charlen(ctx, p, end)); p += cl) {
+      if (string_length == from) {
+        start = p;
+      }
+      if (length > 0 && string_length - from == length) {
+        end = p;
+        break;
+      }
+      string_length++;
+    }
+  }
+
+  grn_text = grn_plugin_proc_alloc(ctx, user_data, target->header.domain, 0);
+  if (!grn_text) {
+    return NULL;
+  }
+
+  GRN_TEXT_SET(ctx, grn_text, start, end - start);
+
+  return grn_text;
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -92,6 +162,9 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   grn_rc rc = GRN_SUCCESS;
 
   grn_proc_create(ctx, "string_length", -1, GRN_PROC_FUNCTION, func_string_length,
+                  NULL, NULL, 0, NULL);
+
+  grn_proc_create(ctx, "string_substring", -1, GRN_PROC_FUNCTION, func_string_substring,
                   NULL, NULL, 0, NULL);
 
   return rc;
