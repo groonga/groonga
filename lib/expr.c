@@ -6217,9 +6217,9 @@ grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
             grn_ii_posting_add(ctx, &new_posting, (grn_hash *)res, logical_op);
           }
         }
-        processed = GRN_TRUE;
         grn_ii_cursor_close(ctx, ii_cursor);
       }
+      processed = GRN_TRUE;
       grn_table_cursor_close(ctx, cursor);
     }
 
