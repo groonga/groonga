@@ -835,12 +835,13 @@ grn_proc_create(grn_ctx *ctx, const char *name, int name_size, grn_proc_type typ
   grn_id range = GRN_ID_NIL;
   int added = 0;
   grn_obj *db;
-  const char *path = ctx->impl->plugin_path;
+  const char *path;
   if (!ctx || !ctx->impl || !(db = ctx->impl->db)) {
     ERR(GRN_INVALID_ARGUMENT, "db not initialized");
     return NULL;
   }
   GRN_API_ENTER;
+  path = ctx->impl->plugin_path;
   if (path) {
     range = grn_plugin_reference(ctx, path);
   }
