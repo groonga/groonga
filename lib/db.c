@@ -6188,8 +6188,10 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
   GRN_TIME_SET(ctx, dest, (long long int)(value) * GRN_TIME_USEC_PER_SEC);
 #define TIME2TIME(ctx, dest, value)\
   GRN_TIME_SET(ctx, dest, value);
-#define FLOAT2TIME(ctx, dest, value)\
-  GRN_TIME_SET(ctx, dest, (long long int)(value * GRN_TIME_USEC_PER_SEC));
+#define FLOAT2TIME(ctx, dest, value) do {\
+  double usec = round(value * GRN_TIME_USEC_PER_SEC);\
+  GRN_TIME_SET(ctx, dest, usec);\
+} while (0)
 
 #define NUM2FLOAT(ctx, dest, value)\
   GRN_FLOAT_SET(ctx, dest, value);
