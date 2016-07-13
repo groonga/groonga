@@ -38,6 +38,7 @@
 #include "grn_cache.h"
 #include "grn_window_functions.h"
 #include <string.h>
+#include <math.h>
 
 typedef struct {
   grn_id id;
@@ -6189,7 +6190,7 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
 #define TIME2TIME(ctx, dest, value)\
   GRN_TIME_SET(ctx, dest, value);
 #define FLOAT2TIME(ctx, dest, value) do {\
-  double usec = round(value * GRN_TIME_USEC_PER_SEC);\
+  int64_t usec = llround(value * GRN_TIME_USEC_PER_SEC);\
   GRN_TIME_SET(ctx, dest, usec);\
 } while (0)
 
