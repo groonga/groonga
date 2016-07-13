@@ -221,11 +221,11 @@ data_prefix_error(void)
            -1, -1);
   ADD_DATA("large offset",
            GRN_TOO_LARGE_OFFSET,
-           "offset is rather than table size: offset:100, table_size:8",
+           "offset is not less than table size: offset:100, table_size:8",
            100, -1);
   ADD_DATA("negative limit",
            GRN_TOO_SMALL_LIMIT,
-           "can't use small limit rather than -1 with GRN_CURSOR_PREFIX: -2",
+           "can't use smaller limit than -1 with GRN_CURSOR_PREFIX: -2",
            0, -2);
 
 #undef ADD_DATA

@@ -2452,12 +2452,12 @@ grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
           "can't use negative offset with GRN_CURSOR_PREFIX: %d", offset);
     } else if (offset != 0 && offset >= table_size) {
       ERR(GRN_TOO_LARGE_OFFSET,
-          "offset is rather than table size: offset:%d, table_size:%d",
+          "offset is not less than table size: offset:%d, table_size:%d",
           offset, table_size);
     } else {
       if (limit < -1) {
         ERR(GRN_TOO_SMALL_LIMIT,
-            "can't use small limit rather than -1 with GRN_CURSOR_PREFIX: %d",
+            "can't use smaller limit than -1 with GRN_CURSOR_PREFIX: %d",
             limit);
       } else if (limit == -1) {
         limit = table_size;
