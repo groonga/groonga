@@ -1,0 +1,17 @@
+table_create Ages TABLE_PAT_KEY Int8
+
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users age COLUMN_SCALAR Ages
+
+column_create Ages users_age COLUMN_INDEX Users age
+
+load --table Users
+[
+{"_key": "Alice",  "age": 29},
+{"_key": "Bob",    "age": 30},
+{"_key": "Carlos", "age": 28}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Users --filter 'age._key > 29' --output_columns '_key, age, _score'

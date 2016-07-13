@@ -1,0 +1,14 @@
+table_create Ages TABLE_PAT_KEY Int32
+
+load --table Ages
+[
+{"_key": 19},
+{"_key": 28},
+{"_key": 29},
+{"_key": 30},
+{"_key": 39}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Ages --filter '_key > 29' --output_columns '_key, _score'

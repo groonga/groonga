@@ -18,7 +18,7 @@ load --table Items
 [[0,0.0,0.0],6]
 log_level --level info
 [[0,0.0,0.0],true]
-select Items   --column[price_with_tax].stage initial   --column[price_with_tax].type UInt32   --column[price_with_tax].flags COLUMN_SCALAR   --column[price_with_tax].value 'price * 1.08'   --filter 'price >= 510'
+select Items   --column[price_with_tax].stage initial   --column[price_with_tax].type UInt32   --column[price_with_tax].flags COLUMN_SCALAR   --column[price_with_tax].value 'price * 1.08'   --filter 'price >= 510'   --sort_keys _id
 [
   [
     0,
@@ -49,18 +49,6 @@ select Items   --column[price_with_tax].stage initial   --column[price_with_tax]
         ]
       ],
       [
-        4,
-        "Pen",
-        550,
-        510
-      ],
-      [
-        3,
-        "Box",
-        561,
-        520
-      ],
-      [
         1,
         "Book",
         1080,
@@ -71,6 +59,18 @@ select Items   --column[price_with_tax].stage initial   --column[price_with_tax]
         "Note",
         1080,
         1000
+      ],
+      [
+        3,
+        "Box",
+        561,
+        520
+      ],
+      [
+        4,
+        "Pen",
+        550,
+        510
       ]
     ]
   ]

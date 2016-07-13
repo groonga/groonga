@@ -6115,6 +6115,90 @@ grn_table_select_index_not_equal(grn_ctx *ctx,
 }
 
 static inline grn_bool
+grn_table_select_index_range_key(grn_ctx *ctx,
+                                 grn_obj *table,
+                                 scan_info *si,
+                                 grn_operator logical_op,
+                                 grn_obj *res)
+{
+  const char *tag = "[range][key]";
+  grn_bool processed = GRN_FALSE;
+  grn_obj key;
+
+  if (grn_table_select_index_use_sequential_search(ctx,
+                                                   table,
+                                                   res,
+                                                   logical_op,
+                                                   tag,
+                                                   table)) {
+    return GRN_FALSE;
+  }
+
+  GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);
+  if (grn_obj_cast(ctx, si->query, &key, GRN_FALSE) == GRN_SUCCESS) {
+    grn_table_cursor *cursor;
+    const void *min = NULL, *max = NULL;
+    unsigned int min_size = 0, max_size = 0;
+    int offset = 0;
+    int limit = -1;
+    int flags = GRN_CURSOR_ASCENDING;
+
+    grn_table_select_index_report(ctx, tag, table);
+
+    switch (si->op) {
+    case GRN_OP_LESS :
+      flags |= GRN_CURSOR_LT;
+      max = GRN_BULK_HEAD(&key);
+      max_size = GRN_BULK_VSIZE(&key);
+      break;
+    case GRN_OP_GREATER :
+      flags |= GRN_CURSOR_GT;
+      min = GRN_BULK_HEAD(&key);
+      min_size = GRN_BULK_VSIZE(&key);
+      break;
+    case GRN_OP_LESS_EQUAL :
+      flags |= GRN_CURSOR_LE;
+      max = GRN_BULK_HEAD(&key);
+      max_size = GRN_BULK_VSIZE(&key);
+      break;
+    case GRN_OP_GREATER_EQUAL :
+      flags |= GRN_CURSOR_GE;
+      min = GRN_BULK_HEAD(&key);
+      min_size = GRN_BULK_VSIZE(&key);
+      break;
+    default :
+      break;
+    }
+    cursor = grn_table_cursor_open(ctx, table,
+                                   min, min_size, max, max_size,
+                                   offset, limit, flags);
+    if (cursor) {
+      uint32_t sid;
+      int32_t weight;
+
+      sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
+      weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
+
+      if (sid == 0) {
+        grn_posting posting = {0};
+
+        posting.weight = weight - 1;
+        while ((posting.rid = grn_table_cursor_next(ctx, cursor))) {
+          grn_ii_posting_add(ctx, &posting, (grn_hash *)res, logical_op);
+        }
+      }
+      processed = GRN_TRUE;
+      grn_table_cursor_close(ctx, cursor);
+    }
+
+    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, logical_op);
+  }
+  GRN_OBJ_FIN(ctx, &key);
+
+  return processed;
+}
+
+static inline grn_bool
 grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
                                     grn_obj *index,
                                     scan_info *si, grn_operator logical_op,
@@ -6254,7 +6338,8 @@ grn_table_select_index_range_accessor(grn_ctx *ctx,
   n_accessors = 0;
   for (a = (grn_accessor *)accessor; a; a = a->next) {
     n_accessors++;
-    if (GRN_OBJ_INDEX_COLUMNP(a->obj)) {
+    if (GRN_OBJ_INDEX_COLUMNP(a->obj) ||
+        grn_obj_is_table(ctx, a->obj)) {
       break;
     }
   }
@@ -6263,24 +6348,40 @@ grn_table_select_index_range_accessor(grn_ctx *ctx,
     grn_obj *index;
     grn_obj *range;
 
-    if (grn_column_index(ctx, last_obj, si->op, &index, 1, NULL) == 0) {
-      return GRN_FALSE;
-    }
+    if (grn_obj_is_table(ctx, last_obj)) {
+      index = last_obj;
+      range = last_obj;
+      base_res = grn_table_create(ctx, NULL, 0, NULL,
+                                  GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                  range,
+                                  NULL);
+      if (!base_res) {
+        return GRN_FALSE;
+      }
+      if (!grn_table_select_index_range_key(ctx, last_obj, si, GRN_OP_OR,
+                                            base_res)) {
+        grn_obj_unlink(ctx, base_res);
+        return GRN_FALSE;
+      }
+    } else {
+      if (grn_column_index(ctx, last_obj, si->op, &index, 1, NULL) == 0) {
+        return GRN_FALSE;
+      }
 
-    range = grn_ctx_at(ctx, DB_OBJ(index)->range);
-    base_res = grn_table_create(ctx, NULL, 0, NULL,
-                                GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                                range,
-                                NULL);
-    if (!base_res) {
-      return GRN_FALSE;
+      range = grn_ctx_at(ctx, DB_OBJ(index)->range);
+      base_res = grn_table_create(ctx, NULL, 0, NULL,
+                                  GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                  range,
+                                  NULL);
+      if (!base_res) {
+        return GRN_FALSE;
+      }
+      if (!grn_table_select_index_range_column(ctx, table, index, si, GRN_OP_OR,
+                                               base_res)) {
+        grn_obj_unlink(ctx, base_res);
+        return GRN_FALSE;
+      }
     }
-    if (!grn_table_select_index_range_column(ctx, table, index, si, GRN_OP_OR,
-                                             base_res)) {
-      grn_obj_unlink(ctx, base_res);
-      return GRN_FALSE;
-    }
-
     grn_table_select_index_report(ctx, "[range][accessor]", index);
   }
 
@@ -6295,12 +6396,18 @@ grn_table_select_index_range(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                              scan_info *si, grn_obj *res)
 {
   if (si->flags & SCAN_ACCESSOR) {
-    if (index->header.type != GRN_ACCESSOR) {
+    switch (index->header.type) {
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_DAT_KEY :
+      /* table == index */
+      return grn_table_select_index_range_key(ctx, table, si,
+                                              si->logical_op, res);
+    case GRN_ACCESSOR :
+      return grn_table_select_index_range_accessor(ctx, table, index, si,
+                                                   si->logical_op, res);
+    default :
       return GRN_FALSE;
     }
-
-    return grn_table_select_index_range_accessor(ctx, table, index, si,
-                                                 si->logical_op, res);
   } else {
     return grn_table_select_index_range_column(ctx, table, index, si,
                                                si->logical_op, res);

@@ -21,6 +21,7 @@ select Items \
   --columns[price_with_tax].type UInt32 \
   --columns[price_with_tax].flags COLUMN_SCALAR \
   --columns[price_with_tax].value 'price * 1.08' \
-  --filter 'price >= 510'
+  --filter 'price >= 510' \
+  --sort_keys _id
 log_level --level notice
 #@remove-important-log-levels info

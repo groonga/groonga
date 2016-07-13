@@ -12214,6 +12214,49 @@ grn_column_find_index_data_accessor_index_column(grn_ctx *ctx, grn_accessor *a,
   return 1;
 }
 
+static grn_bool
+grn_column_find_index_data_accessor_is_key_search(grn_ctx *ctx,
+                                                  grn_accessor *accessor,
+                                                  grn_operator op)
+{
+  if (accessor->next) {
+    return GRN_FALSE;
+  }
+
+  if (accessor->action != GRN_ACCESSOR_GET_KEY) {
+    return GRN_FALSE;
+  }
+
+  if (!grn_obj_is_table(ctx, accessor->obj)) {
+    return GRN_FALSE;
+  }
+
+  switch (op) {
+  case GRN_OP_LESS :
+  case GRN_OP_GREATER :
+  case GRN_OP_LESS_EQUAL :
+  case GRN_OP_GREATER_EQUAL :
+    switch (accessor->obj->header.type) {
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_DAT_KEY :
+      return GRN_TRUE;
+    default :
+      return GRN_FALSE;
+    }
+  case GRN_OP_EQUAL :
+    switch (accessor->obj->header.type) {
+    case GRN_TABLE_HASH_KEY :
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_DAT_KEY :
+      return GRN_TRUE;
+    default :
+      return GRN_FALSE;
+    }
+  default :
+    return GRN_FALSE;
+  }
+}
+
 static int
 grn_column_find_index_data_accessor_match(grn_ctx *ctx, grn_obj *obj,
                                           grn_operator op,
@@ -12283,6 +12326,31 @@ grn_column_find_index_data_accessor_match(grn_ctx *ctx, grn_obj *obj,
         }
         n++;
       }
+    }
+
+    if (!found &&
+        grn_column_find_index_data_accessor_is_key_search(ctx, a, op)) {
+      grn_obj *index;
+      int section = 0;
+
+      if ((grn_obj *)a == obj) {
+        index = a->obj;
+      } else {
+        index = (grn_obj *)a;
+      }
+
+      found = GRN_TRUE;
+      if (section_buf) {
+        *section_buf = section;
+      }
+      if (n < buf_size) {
+        *ip++ = index;
+      }
+      if (n < n_index_data) {
+        index_data[n].index = index;
+        index_data[n].section = section;
+      }
+      n++;
     }
 
     if (!found &&

@@ -1,0 +1,58 @@
+table_create Ages TABLE_PAT_KEY Int8
+[[0,0.0,0.0],true]
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users age COLUMN_SCALAR Ages
+[[0,0.0,0.0],true]
+column_create Ages users_age COLUMN_INDEX Users age
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "Alice",  "age": 29},
+{"_key": "Bob",    "age": 30},
+{"_key": "Carlos", "age": 28}
+]
+[[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
+select Users --filter 'age._key <= 29' --output_columns '_key, age, _score'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "age",
+          "Ages"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "Carlos",
+        28,
+        1
+      ],
+      [
+        "Alice",
+        29,
+        1
+      ]
+    ]
+  ]
+]
+#|i| [table][select][index][range][key] <Ages>
+#|i| [table][select][index][range][accessor] <Ages>
