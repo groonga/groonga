@@ -66,6 +66,10 @@ dumper_collect_statistics(grn_ctx *ctx, grn_dumper *dumper)
       continue;
     }
 
+    if (grn_obj_is_proc(ctx, object)) {
+      continue;
+    }
+
     if (!grn_obj_is_table(ctx, object)) {
       goto next_loop;
     }
