@@ -2461,6 +2461,10 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
 
     /* lock */
     if ((*hash->n_entries + *hash->n_garbages) * 2 > *hash->max_offset) {
+      if (*hash->max_offset > (1 << 29)) {
+        ERR(GRN_TOO_LARGE_OFFSET, "hash table size limit");
+        return GRN_ID_NIL;
+      }
       grn_hash_reset(ctx, hash, 0);
     }
 
