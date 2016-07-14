@@ -58,7 +58,7 @@ Keys of a table that has a normalizer module are normalized:
 
 ``NormalizerAuto`` normalizer normalizes a text as a downcased text.
 For example, ``"Apple"`` is normalized to ``"apple"``, ``"black"`` is
-normalized to ``"blank"`` and ``"COLOR"`` is normalized to
+normalized to ``"black"`` and ``"COLOR"`` is normalized to
 ``"color"``.
 
 If a table is a lexicon for fulltext search, tokenized tokens are
