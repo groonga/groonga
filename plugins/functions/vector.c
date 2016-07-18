@@ -70,6 +70,212 @@ func_vector_size(grn_ctx *ctx, int n_args, grn_obj **args,
   return grn_size;
 }
 
+static grn_obj *
+func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
+                  grn_user_data *user_data)
+{
+  grn_obj *target;
+  grn_obj *from_raw = NULL;
+  grn_obj *length_raw = NULL;
+  int64_t from = 0;
+  int64_t length = -1;
+  uint32_t to = 0;
+  uint32_t size = 0;
+  grn_obj *slice;
+
+  if (n_args < 2) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "vector_slice(): wrong number of arguments (%d for 2..3)",
+                     n_args);
+    return NULL;
+  }
+
+  target = args[0];
+  from_raw = args[1];
+  if (n_args == 3) {
+    length_raw = args[2];
+  } else {
+    length = 1;
+  }
+  switch (target->header.type) {
+  case GRN_VECTOR :
+  case GRN_PVECTOR :
+  case GRN_UVECTOR :
+    size = grn_vector_size(ctx, target);
+    break;
+  default :
+    {
+      grn_obj inspected;
+
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, target, &inspected);
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "vector_slice(): target object must be vector: <%.*s>",
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return NULL;
+    }
+    break;
+  }
+
+  if (!grn_type_id_is_number_family(ctx, from_raw->header.domain)) {
+    grn_obj inspected;
+
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, from_raw);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "vector_slice(): from must be a number: <%.*s>",
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return NULL;
+  }
+  if (from_raw->header.domain == GRN_DB_INT32) {
+    from = GRN_INT32_VALUE(from_raw);
+  } else if (from_raw->header.domain == GRN_DB_INT64) {
+    from = GRN_INT64_VALUE(from_raw);
+  } else {
+    grn_obj buffer;
+    grn_rc rc;
+
+    GRN_INT64_INIT(&buffer, 0);
+    rc = grn_obj_cast(ctx, from_raw, &buffer, GRN_FALSE);
+    if (rc == GRN_SUCCESS) {
+      from = GRN_INT64_VALUE(&buffer);
+    }
+    GRN_OBJ_FIN(ctx, &buffer);
+
+    if (rc != GRN_SUCCESS) {
+      grn_obj inspected;
+
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, from_raw);
+      GRN_PLUGIN_ERROR(ctx, rc,
+                       "vector_slice(): "
+                       "failed to cast from value to number: <%.*s>",
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return NULL;
+    }
+  }
+
+  if (length_raw) {
+    if (!grn_type_id_is_number_family(ctx, length_raw->header.domain)) {
+      grn_obj inspected;
+
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, length_raw);
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "vector_slice(): length must be a number: <%.*s>",
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return NULL;
+    }
+    if (length_raw->header.domain == GRN_DB_INT32) {
+      length = GRN_INT32_VALUE(length_raw);
+    } else if (length_raw->header.domain == GRN_DB_INT64) {
+      length = GRN_INT64_VALUE(length_raw);
+    } else {
+      grn_obj buffer;
+      grn_rc rc;
+
+      GRN_INT64_INIT(&buffer, 0);
+      rc = grn_obj_cast(ctx, length_raw, &buffer, GRN_FALSE);
+      if (rc == GRN_SUCCESS) {
+        length = GRN_INT64_VALUE(&buffer);
+      }
+      GRN_OBJ_FIN(ctx, &buffer);
+
+      if (rc != GRN_SUCCESS) {
+        grn_obj inspected;
+
+        GRN_TEXT_INIT(&inspected, 0);
+        grn_inspect(ctx, &inspected, length_raw);
+        GRN_PLUGIN_ERROR(ctx, rc,
+                         "vector_slice(): "
+                         "failed to cast length value to number: <%.*s>",
+                         (int)GRN_TEXT_LEN(&inspected),
+                         GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+        return NULL;
+      }
+    }
+  }
+
+  slice = grn_plugin_proc_alloc(ctx, user_data, target->header.domain, GRN_OBJ_VECTOR);
+  if (!slice) {
+    return NULL;
+  }
+
+  if (target->header.flags & GRN_OBJ_WITH_WEIGHT) {
+    slice->header.flags |= GRN_OBJ_WITH_WEIGHT;
+  }
+
+  if (size == 0) {
+    return slice;
+  }
+
+  if (length == 0) {
+    return slice;
+  } else if (length < 0) {
+    length = size;
+  }
+
+  if (from < 0) {
+    from = size + from;
+  }
+
+  if (from + length > size) {
+    to = size;
+  } else {
+    to = from + length;
+  }
+
+  switch (target->header.type) {
+  case GRN_VECTOR :
+    {
+      unsigned int i;
+      for (i = from; i < to; i++) {
+        const char *content;
+        unsigned int content_length; 
+        unsigned int weight;
+        grn_id domain;
+        content_length =
+          grn_vector_get_element(ctx, target, i,
+                                 &content, &weight, &domain);
+        grn_vector_add_element(ctx, slice,
+                               content, content_length, weight, domain);
+      }
+    }
+    break;
+  case GRN_PVECTOR :
+    {
+      unsigned int i;
+      for (i = from; i < to; i++) {
+        grn_obj *element = GRN_PTR_VALUE_AT(target, i);
+        GRN_PTR_PUT(ctx, slice, element);
+      }
+    }
+    break;
+  case GRN_UVECTOR :
+    {
+      unsigned int i;
+      for (i = from; i < to; i++) {
+        grn_id id;
+        unsigned int weight;
+        id = grn_uvector_get_element(ctx, target, i, &weight);
+        grn_uvector_add_element(ctx, slice, id, weight);
+      }
+    }
+    break;
+  }
+
+  return slice;
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -82,6 +288,9 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   grn_rc rc = GRN_SUCCESS;
 
   grn_proc_create(ctx, "vector_size", -1, GRN_PROC_FUNCTION, func_vector_size,
+                  NULL, NULL, 0, NULL);
+
+  grn_proc_create(ctx, "vector_slice", -1, GRN_PROC_FUNCTION, func_vector_slice,
                   NULL, NULL, 0, NULL);
 
   return rc;
