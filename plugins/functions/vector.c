@@ -212,24 +212,25 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
     slice->header.flags |= GRN_OBJ_WITH_WEIGHT;
   }
 
-  if (size == 0) {
-    return slice;
+  if (length < 0) {
+    length = size + length + 1;
   }
 
-  if (length == 0) {
-    return slice;
-  } else if (length < 0) {
+  if (length > size) {
     length = size;
   }
 
-  if (from < 0) {
-    from = size + from;
+  if (length <= 0) {
+    return slice;
   }
 
-  if (from + length > size) {
+  while (from < 0) {
+    from += size;
+  }
+
+  to = from + length;
+  if (to > size) {
     to = size;
-  } else {
-    to = from + length;
   }
 
   switch (target->header.type) {
@@ -241,9 +242,8 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
         unsigned int content_length;
         unsigned int weight;
         grn_id domain;
-        content_length =
-          grn_vector_get_element(ctx, target, i,
-                                 &content, &weight, &domain);
+        content_length = grn_vector_get_element(ctx, target, i,
+                                                &content, &weight, &domain);
         grn_vector_add_element(ctx, slice,
                                content, content_length, weight, domain);
       }
