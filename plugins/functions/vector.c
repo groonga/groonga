@@ -238,7 +238,7 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
       unsigned int i;
       for (i = from; i < to; i++) {
         const char *content;
-        unsigned int content_length; 
+        unsigned int content_length;
         unsigned int weight;
         grn_id domain;
         content_length =
