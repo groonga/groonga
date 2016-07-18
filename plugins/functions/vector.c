@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -94,8 +94,6 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
   from_raw = args[1];
   if (n_args == 3) {
     length_raw = args[2];
-  } else {
-    length = 1;
   }
   switch (target->header.type) {
   case GRN_VECTOR :
