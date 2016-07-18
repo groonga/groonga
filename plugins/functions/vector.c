@@ -83,7 +83,7 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
   uint32_t size = 0;
   grn_obj *slice;
 
-  if (n_args < 2) {
+  if (n_args < 2 || n_args > 3) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                      "vector_slice(): wrong number of arguments (%d for 2..3)",
                      n_args);
