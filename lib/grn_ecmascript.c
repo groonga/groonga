@@ -1968,6 +1968,7 @@ static void yy_reduce(
       if (added) {
         GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
         GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+        grn_expr_dfi_pop(e);
         e->codes_curr -= 3;
       } else {
         ERR(GRN_INVALID_ARGUMENT,
@@ -1983,61 +1984,61 @@ static void yy_reduce(
     }
   }
 }
-#line 1987 "grn_ecmascript.c"
+#line 1988 "grn_ecmascript.c"
         break;
       case 69: /* member_expression_part ::= BRACKETL expression BRACKETR */
-#line 452 "grn_ecmascript.lemon"
+#line 453 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GET_MEMBER, 2);
 }
-#line 1994 "grn_ecmascript.c"
+#line 1995 "grn_ecmascript.c"
         break;
       case 70: /* arguments ::= PARENL argument_list PARENR */
-#line 457 "grn_ecmascript.lemon"
+#line 458 "grn_ecmascript.lemon"
 { yymsp[-2].minor.yy0 = yymsp[-1].minor.yy0; }
-#line 1999 "grn_ecmascript.c"
+#line 2000 "grn_ecmascript.c"
         break;
       case 71: /* argument_list ::= */
-#line 458 "grn_ecmascript.lemon"
+#line 459 "grn_ecmascript.lemon"
 { yymsp[1].minor.yy0 = 0; }
-#line 2004 "grn_ecmascript.c"
+#line 2005 "grn_ecmascript.c"
         break;
       case 72: /* argument_list ::= assignment_expression */
-#line 459 "grn_ecmascript.lemon"
+#line 460 "grn_ecmascript.lemon"
 { yymsp[0].minor.yy0 = 1; }
-#line 2009 "grn_ecmascript.c"
+#line 2010 "grn_ecmascript.c"
         break;
       case 73: /* argument_list ::= argument_list COMMA assignment_expression */
-#line 460 "grn_ecmascript.lemon"
+#line 461 "grn_ecmascript.lemon"
 { yylhsminor.yy0 = yymsp[-2].minor.yy0 + 1; }
-#line 2014 "grn_ecmascript.c"
+#line 2015 "grn_ecmascript.c"
   yymsp[-2].minor.yy0 = yylhsminor.yy0;
         break;
       case 74: /* output_columns ::= */
-#line 462 "grn_ecmascript.lemon"
+#line 463 "grn_ecmascript.lemon"
 {
   yymsp[1].minor.yy0 = 0;
 }
-#line 2022 "grn_ecmascript.c"
+#line 2023 "grn_ecmascript.c"
         break;
       case 75: /* output_columns ::= output_column */
-#line 465 "grn_ecmascript.lemon"
+#line 466 "grn_ecmascript.lemon"
 {
   yylhsminor.yy0 = yymsp[0].minor.yy0;
 }
-#line 2029 "grn_ecmascript.c"
+#line 2030 "grn_ecmascript.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 76: /* output_columns ::= output_columns COMMA */
-#line 470 "grn_ecmascript.lemon"
+#line 471 "grn_ecmascript.lemon"
 {
   yylhsminor.yy0 = yymsp[-1].minor.yy0;
 }
-#line 2037 "grn_ecmascript.c"
+#line 2038 "grn_ecmascript.c"
   yymsp[-1].minor.yy0 = yylhsminor.yy0;
         break;
       case 77: /* output_columns ::= output_columns COMMA output_column */
-#line 475 "grn_ecmascript.lemon"
+#line 476 "grn_ecmascript.lemon"
 {
   if (yymsp[0].minor.yy0 == 0) {
     yylhsminor.yy0 = yymsp[-2].minor.yy0;
@@ -2048,11 +2049,11 @@ static void yy_reduce(
     yylhsminor.yy0 = 1;
   }
 }
-#line 2052 "grn_ecmascript.c"
+#line 2053 "grn_ecmascript.c"
   yymsp[-2].minor.yy0 = yylhsminor.yy0;
         break;
       case 78: /* output_column ::= STAR */
-#line 486 "grn_ecmascript.lemon"
+#line 487 "grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_obj *expr = efsi->e;
@@ -2106,21 +2107,21 @@ static void yy_reduce(
     yymsp[0].minor.yy0 = 0;
   }
 }
-#line 2110 "grn_ecmascript.c"
+#line 2111 "grn_ecmascript.c"
         break;
       case 79: /* output_column ::= NONEXISTENT_COLUMN */
-#line 539 "grn_ecmascript.lemon"
+#line 540 "grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 0;
 }
-#line 2117 "grn_ecmascript.c"
+#line 2118 "grn_ecmascript.c"
         break;
       case 80: /* output_column ::= assignment_expression */
-#line 542 "grn_ecmascript.lemon"
+#line 543 "grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 1;
 }
-#line 2124 "grn_ecmascript.c"
+#line 2125 "grn_ecmascript.c"
         break;
       default:
       /* (84) input ::= query */ yytestcase(yyruleno==84);
@@ -2249,7 +2250,7 @@ static void yy_syntax_error(
       GRN_OBJ_FIN(ctx, &message);
     }
   }
-#line 2253 "grn_ecmascript.c"
+#line 2254 "grn_ecmascript.c"
 /************ End %syntax_error code ******************************************/
   grn_expr_parserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
