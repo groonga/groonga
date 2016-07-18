@@ -8,12 +8,12 @@ column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT Tags
 [[0,0.0,0.0],true]
 load --table Memos
 [
-{"_key": "Groonga", "tags": {"Groonga": 100}},
-{"_key": "Rroonga", "tags": {"Groonga": 100, "Ruby": 50}},
+{"_key": "Groonga", "tags": {"Groonga": 100, "Full text search": 90}},
+{"_key": "Rroonga", "tags": {"Groonga": 100, "Full text search": 90, "Ruby": 50, "Library": 30}},
 {"_key": "Nothing"}
 ]
 [[0,0.0,0.0],3]
-select Memos   --columns[slice].stage output   --columns[slice].type Tags   --columns[slice].flags COLUMN_VECTOR|WITH_WEIGHT   --columns[slice].value 'vector_slice(tags, 0, 1)'   --output_columns 'tags, slice'
+select Memos   --columns[slice].stage output   --columns[slice].type Tags   --columns[slice].flags COLUMN_VECTOR|WITH_WEIGHT   --columns[slice].value 'vector_slice(tags, 1, 2)'   --output_columns 'tags, slice'
 [
   [
     0,
@@ -37,19 +37,23 @@ select Memos   --columns[slice].stage output   --columns[slice].type Tags   --co
       ],
       [
         {
-          "Groonga": 100
+          "Groonga": 100,
+          "Full text search": 90
         },
         {
-          "Groonga": 100
+          "Full text search": 90
         }
       ],
       [
         {
           "Groonga": 100,
-          "Ruby": 50
+          "Full text search": 90,
+          "Ruby": 50,
+          "Library": 30
         },
         {
-          "Groonga": 100
+          "Full text search": 90,
+          "Ruby": 50
         }
       ],
       [

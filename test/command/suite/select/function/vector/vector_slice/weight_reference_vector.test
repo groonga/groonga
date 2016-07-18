@@ -7,8 +7,8 @@ column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT Tags
 
 load --table Memos
 [
-{"_key": "Groonga", "tags": {"Groonga": 100}},
-{"_key": "Rroonga", "tags": {"Groonga": 100, "Ruby": 50}},
+{"_key": "Groonga", "tags": {"Groonga": 100, "Full text search": 90}},
+{"_key": "Rroonga", "tags": {"Groonga": 100, "Full text search": 90, "Ruby": 50, "Library": 30}},
 {"_key": "Nothing"}
 ]
 
@@ -16,5 +16,5 @@ select Memos \
   --columns[slice].stage output \
   --columns[slice].type Tags \
   --columns[slice].flags COLUMN_VECTOR|WITH_WEIGHT \
-  --columns[slice].value 'vector_slice(tags, 0, 1)' \
+  --columns[slice].value 'vector_slice(tags, 1, 2)' \
   --output_columns 'tags, slice'

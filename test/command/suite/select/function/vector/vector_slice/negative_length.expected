@@ -6,12 +6,12 @@ column_create Memos tags COLUMN_VECTOR ShortText
 [[0,0.0,0.0],true]
 load --table Memos
 [
-{"_key": "Groonga", "tags": ["Groonga"]},
-{"_key": "Rroonga", "tags": ["Groonga", "Ruby"]},
+{"_key": "Groonga", "tags": ["Groonga", "Full text search"]},
+{"_key": "Rroonga", "tags": ["Groonga", "Full text search", "Ruby"]},
 {"_key": "Nothing"}
 ]
 [[0,0.0,0.0],3]
-select Memos   --output_columns 'tags, vector_slice(tags, 0, -1)'
+select Memos   --output_columns 'tags, vector_slice(tags, 1, -2)'
 [
   [
     0,
@@ -35,19 +35,21 @@ select Memos   --output_columns 'tags, vector_slice(tags, 0, -1)'
       ],
       [
         [
-          "Groonga"
+          "Groonga",
+          "Full text search"
         ],
         [
-          "Groonga"
+          "Full text search"
         ]
       ],
       [
         [
           "Groonga",
+          "Full text search",
           "Ruby"
         ],
         [
-          "Groonga",
+          "Full text search",
           "Ruby"
         ]
       ],

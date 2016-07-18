@@ -7,10 +7,10 @@ column_create Memos tags COLUMN_VECTOR Tags
 
 load --table Memos
 [
-{"_key": "Groonga", "tags": ["Groonga"]},
-{"_key": "Rroonga", "tags": ["Groonga", "Ruby"]},
+{"_key": "Groonga", "tags": ["Groonga", "Full text search"]},
+{"_key": "Rroonga", "tags": ["Groonga", "Full text search", "Ruby", "Library"]},
 {"_key": "Nothing"}
 ]
 
 select Memos \
-  --output_columns 'tags, vector_slice(tags, 0, 1)'
+  --output_columns 'tags, vector_slice(tags, 1, 2)'
