@@ -7,6 +7,16 @@ module Groonga
         @rewriters[name] = rewriter_class
       end
 
+      def enabled?
+        rewriters_table_name =
+          Config["expression_rewriter.table"] || "expression_rewriters"
+        rewriters_table = Context.instance[rewriters_table_name]
+        return false if rewriters_table.nil?
+        return false if rewriters_table.empty?
+
+        true
+      end
+
       def classes
         rewriters_table_name =
           Config["expression_rewriter.table"] || "expression_rewriters"

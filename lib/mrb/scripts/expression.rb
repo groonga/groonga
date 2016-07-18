@@ -13,6 +13,7 @@ module Groonga
     def rewrite
       rewritten = nil
       begin
+        return nil unless ExpressionRewriters.enabled?
         source = self
         ExpressionRewriters.classes.each do |rewriter_class|
           rewriter = rewriter_class.new(source)
