@@ -431,6 +431,7 @@ property_name_and_value ::= property_name COLON assignment_expression. {
       if (added) {
         GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
         GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+        grn_expr_dfi_pop(e);
         e->codes_curr -= 3;
       } else {
         ERR(GRN_INVALID_ARGUMENT,

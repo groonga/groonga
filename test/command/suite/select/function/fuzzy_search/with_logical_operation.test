@@ -1,0 +1,16 @@
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Tags TABLE_PAT_KEY ShortText
+column_create Tags tag COLUMN_INDEX Users name
+
+load --table Users
+[
+{"name": "Tom"},
+{"name": "Tomy"},
+{"name": "Tomas"},
+{"name": "Pom"}
+]
+
+select Tags --filter '_key @^ "T" && fuzzy_search(_key, "To", {"max_distance": 2})' \
+  --output_columns '_key, _score'
