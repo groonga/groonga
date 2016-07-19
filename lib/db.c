@@ -4800,7 +4800,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   case GRN_TYPE :
     {
       grn_db_obj *t = (grn_db_obj *)type;
-      flags |= t->header.flags;
+      flags |= t->header.flags & ~GRN_OBJ_KEY_MASK;
       value_size = GRN_TYPE_SIZE(t);
     }
     break;
