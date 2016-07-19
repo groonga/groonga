@@ -1,0 +1,1876 @@
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Users TABLE_DAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users description COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto   --tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Terms users COLUMN_INDEX|WITH_SECTION|WITH_POSITION   Users _key,description
+[[0,0.0,0.0],true]
+thread_limit 1
+[[0,0.0,0.0],1]
+database_unmap
+[[0,0.0,0.0],true]
+table_create Tags TABLE_HASH_KEY ShortText   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Tags users COLUMN_INDEX Users tags
+[[0,0.0,0.0],true]
+object_list
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "Object": {
+      "id": 2,
+      "name": "Object",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 0,
+        "names": "KEY_UINT"
+      },
+      "path": null,
+      "size": 8
+    },
+    "Bool": {
+      "id": 3,
+      "name": "Bool",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 0,
+        "names": "KEY_UINT"
+      },
+      "path": null,
+      "size": 1
+    },
+    "Int8": {
+      "id": 4,
+      "name": "Int8",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 8,
+        "names": "KEY_INT"
+      },
+      "path": null,
+      "size": 1
+    },
+    "UInt8": {
+      "id": 5,
+      "name": "UInt8",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 0,
+        "names": "KEY_UINT"
+      },
+      "path": null,
+      "size": 1
+    },
+    "Int16": {
+      "id": 6,
+      "name": "Int16",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 8,
+        "names": "KEY_INT"
+      },
+      "path": null,
+      "size": 2
+    },
+    "UInt16": {
+      "id": 7,
+      "name": "UInt16",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 0,
+        "names": "KEY_UINT"
+      },
+      "path": null,
+      "size": 2
+    },
+    "Int32": {
+      "id": 8,
+      "name": "Int32",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 8,
+        "names": "KEY_INT"
+      },
+      "path": null,
+      "size": 4
+    },
+    "UInt32": {
+      "id": 9,
+      "name": "UInt32",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 0,
+        "names": "KEY_UINT"
+      },
+      "path": null,
+      "size": 4
+    },
+    "Int64": {
+      "id": 10,
+      "name": "Int64",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 8,
+        "names": "KEY_INT"
+      },
+      "path": null,
+      "size": 8
+    },
+    "UInt64": {
+      "id": 11,
+      "name": "UInt64",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 0,
+        "names": "KEY_UINT"
+      },
+      "path": null,
+      "size": 8
+    },
+    "Float": {
+      "id": 12,
+      "name": "Float",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16,
+        "names": "KEY_FLOAT"
+      },
+      "path": null,
+      "size": 8
+    },
+    "Time": {
+      "id": 13,
+      "name": "Time",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 8,
+        "names": "KEY_INT"
+      },
+      "path": null,
+      "size": 8
+    },
+    "ShortText": {
+      "id": 14,
+      "name": "ShortText",
+      "opened": true,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 4096
+    },
+    "Text": {
+      "id": 15,
+      "name": "Text",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 65536
+    },
+    "LongText": {
+      "id": 16,
+      "name": "LongText",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 2147483648
+    },
+    "TokyoGeoPoint": {
+      "id": 17,
+      "name": "TokyoGeoPoint",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 24,
+        "names": "KEY_GEO_POINT"
+      },
+      "path": null,
+      "size": 8
+    },
+    "WGS84GeoPoint": {
+      "id": 18,
+      "name": "WGS84GeoPoint",
+      "opened": false,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 24,
+        "names": "KEY_GEO_POINT"
+      },
+      "path": null,
+      "size": 8
+    },
+    "TokenMecab": {
+      "id": 64,
+      "name": "TokenMecab",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 4096,
+        "names": "CUSTOM_NAME"
+      },
+      "path": "tokenizers/.libs/mecab.so",
+      "plugin_id": 1
+    },
+    "TokenDelimit": {
+      "id": 65,
+      "name": "TokenDelimit",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "TokenUnigram": {
+      "id": 66,
+      "name": "TokenUnigram",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "TokenBigram": {
+      "id": 67,
+      "name": "TokenBigram",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "TokenTrigram": {
+      "id": 68,
+      "name": "TokenTrigram",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "TokenBigramSplitSymbol": {
+      "id": 69,
+      "name": "TokenBigramSplitSymbol",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "TokenBigramSplitSymbolAlpha": {
+      "id": 70,
+      "name": "TokenBigramSplitSymbolAlpha",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "TokenBigramSplitSymbolAlphaDigit": {
+      "id": 71,
+      "name": "TokenBigramSplitSymbolAlphaDigit",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "TokenBigramIgnoreBlank": {
+      "id": 72,
+      "name": "TokenBigramIgnoreBlank",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "TokenBigramIgnoreBlankSplitSymbol": {
+      "id": 73,
+      "name": "TokenBigramIgnoreBlankSplitSymbol",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "TokenBigramIgnoreBlankSplitSymbolAlpha": {
+      "id": 74,
+      "name": "TokenBigramIgnoreBlankSplitSymbolAlpha",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "TokenBigramIgnoreBlankSplitSymbolAlphaDigit": {
+      "id": 75,
+      "name": "TokenBigramIgnoreBlankSplitSymbolAlphaDigit",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "TokenDelimitNull": {
+      "id": 76,
+      "name": "TokenDelimitNull",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "TokenRegexp": {
+      "id": 77,
+      "name": "TokenRegexp",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "NormalizerAuto": {
+      "id": 78,
+      "name": "NormalizerAuto",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "NormalizerNFKC51": {
+      "id": 79,
+      "name": "NormalizerNFKC51",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "scorer_tf_idf": {
+      "id": 80,
+      "name": "scorer_tf_idf",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "scorer_tf_at_most": {
+      "id": 81,
+      "name": "scorer_tf_at_most",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "define_selector": {
+      "id": 128,
+      "name": "define_selector",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "select": {
+      "id": 129,
+      "name": "select",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "load": {
+      "id": 130,
+      "name": "load",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "status": {
+      "id": 131,
+      "name": "status",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "table_list": {
+      "id": 132,
+      "name": "table_list",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "column_list": {
+      "id": 133,
+      "name": "column_list",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "table_create": {
+      "id": 134,
+      "name": "table_create",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "table_remove": {
+      "id": 135,
+      "name": "table_remove",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "table_rename": {
+      "id": 136,
+      "name": "table_rename",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "column_create": {
+      "id": 137,
+      "name": "column_create",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "column_remove": {
+      "id": 138,
+      "name": "column_remove",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "column_rename": {
+      "id": 139,
+      "name": "column_rename",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "expr_missing": {
+      "id": 140,
+      "name": "expr_missing",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "quit": {
+      "id": 141,
+      "name": "quit",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "shutdown": {
+      "id": 142,
+      "name": "shutdown",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "clearlock": {
+      "id": 143,
+      "name": "clearlock",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "lock_clear": {
+      "id": 144,
+      "name": "lock_clear",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "defrag": {
+      "id": 145,
+      "name": "defrag",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "log_level": {
+      "id": 146,
+      "name": "log_level",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "log_put": {
+      "id": 147,
+      "name": "log_put",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "log_reopen": {
+      "id": 148,
+      "name": "log_reopen",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "delete": {
+      "id": 149,
+      "name": "delete",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "cache_limit": {
+      "id": 150,
+      "name": "cache_limit",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "dump": {
+      "id": 151,
+      "name": "dump",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "register": {
+      "id": 152,
+      "name": "register",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "check": {
+      "id": 153,
+      "name": "check",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "truncate": {
+      "id": 154,
+      "name": "truncate",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "normalize": {
+      "id": 155,
+      "name": "normalize",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "tokenize": {
+      "id": 156,
+      "name": "tokenize",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "table_tokenize": {
+      "id": 157,
+      "name": "table_tokenize",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "tokenizer_list": {
+      "id": 158,
+      "name": "tokenizer_list",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "normalizer_list": {
+      "id": 159,
+      "name": "normalizer_list",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "rand": {
+      "id": 160,
+      "name": "rand",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "now": {
+      "id": 161,
+      "name": "now",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "max": {
+      "id": 162,
+      "name": "max",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "min": {
+      "id": 163,
+      "name": "min",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "geo_in_circle": {
+      "id": 164,
+      "name": "geo_in_circle",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "geo_in_rectangle": {
+      "id": 165,
+      "name": "geo_in_rectangle",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "geo_distance": {
+      "id": 166,
+      "name": "geo_distance",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "geo_distance2": {
+      "id": 167,
+      "name": "geo_distance2",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "geo_distance3": {
+      "id": 168,
+      "name": "geo_distance3",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "edit_distance": {
+      "id": 169,
+      "name": "edit_distance",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "all_records": {
+      "id": 170,
+      "name": "all_records",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "snippet_html": {
+      "id": 171,
+      "name": "snippet_html",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "query": {
+      "id": 172,
+      "name": "query",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "sub_filter": {
+      "id": 173,
+      "name": "sub_filter",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "html_untag": {
+      "id": 174,
+      "name": "html_untag",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "between": {
+      "id": 175,
+      "name": "between",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "highlight_html": {
+      "id": 176,
+      "name": "highlight_html",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "highlight_full": {
+      "id": 177,
+      "name": "highlight_full",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "in_values": {
+      "id": 178,
+      "name": "in_values",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "range_filter": {
+      "id": 179,
+      "name": "range_filter",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "request_cancel": {
+      "id": 180,
+      "name": "request_cancel",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "plugin_register": {
+      "id": 181,
+      "name": "plugin_register",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "plugin_unregister": {
+      "id": 182,
+      "name": "plugin_unregister",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "io_flush": {
+      "id": 183,
+      "name": "io_flush",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "object_exist": {
+      "id": 184,
+      "name": "object_exist",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "thread_limit": {
+      "id": 185,
+      "name": "thread_limit",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "database_unmap": {
+      "id": 186,
+      "name": "database_unmap",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "column_copy": {
+      "id": 187,
+      "name": "column_copy",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "schema": {
+      "id": 188,
+      "name": "schema",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "reindex": {
+      "id": 189,
+      "name": "reindex",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "prefix_rk_search": {
+      "id": 190,
+      "name": "prefix_rk_search",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "config_get": {
+      "id": 191,
+      "name": "config_get",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "config_set": {
+      "id": 192,
+      "name": "config_set",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "config_delete": {
+      "id": 193,
+      "name": "config_delete",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "lock_acquire": {
+      "id": 194,
+      "name": "lock_acquire",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "lock_release": {
+      "id": 195,
+      "name": "lock_release",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "object_inspect": {
+      "id": 196,
+      "name": "object_inspect",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "fuzzy_search": {
+      "id": 197,
+      "name": "fuzzy_search",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "object_remove": {
+      "id": 198,
+      "name": "object_remove",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "snippet": {
+      "id": 199,
+      "name": "snippet",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "highlight": {
+      "id": 200,
+      "name": "highlight",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "query_expand": {
+      "id": 201,
+      "name": "query_expand",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "object_list": {
+      "id": 202,
+      "name": "object_list",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "record_number": {
+      "id": 203,
+      "name": "record_number",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 0,
+        "names": ""
+      },
+      "path": null,
+      "plugin_id": 0
+    },
+    "vector_size": {
+      "id": 256,
+      "name": "vector_size",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 4096,
+        "names": "CUSTOM_NAME"
+      },
+      "path": "functions/.libs/vector.so",
+      "plugin_id": 2
+    },
+    "vector_slice": {
+      "id": 257,
+      "name": "vector_slice",
+      "opened": true,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 4096,
+        "names": "CUSTOM_NAME"
+      },
+      "path": "functions/.libs/vector.so",
+      "plugin_id": 2
+    },
+    "Users": {
+      "id": 258,
+      "name": "Users",
+      "opened": true,
+      "type": {
+        "id": 50,
+        "name": "table:dat_key"
+      },
+      "flags": {
+        "value": 49154,
+        "names": "TABLE_DAT_KEY|PERSISTENT"
+      },
+      "path": "db/db.0000102",
+      "range": {
+        "id": 0,
+        "name": null
+      },
+      "token_filters": [
+
+      ]
+    },
+    "Users.description": {
+      "id": 259,
+      "name": "Users.description",
+      "opened": false,
+      "type": {
+        "id": 65,
+        "name": "column:var_size"
+      },
+      "flags": {
+        "value": 49152,
+        "names": "COLUMN_SCALAR|PERSISTENT"
+      },
+      "path": "db/db.0000103",
+      "range": {
+        "id": 14,
+        "name": "ShortText"
+      }
+    },
+    "Users.tags": {
+      "id": 260,
+      "name": "Users.tags",
+      "opened": true,
+      "type": {
+        "id": 65,
+        "name": "column:var_size"
+      },
+      "flags": {
+        "value": 49153,
+        "names": "COLUMN_VECTOR|PERSISTENT"
+      },
+      "path": "db/db.0000104",
+      "range": {
+        "id": 14,
+        "name": "ShortText"
+      }
+    },
+    "Terms": {
+      "id": 261,
+      "name": "Terms",
+      "opened": false,
+      "type": {
+        "id": 49,
+        "name": "table:pat_key"
+      },
+      "flags": {
+        "value": 49153,
+        "names": "TABLE_PAT_KEY|PERSISTENT"
+      },
+      "path": "db/db.0000105",
+      "range": {
+        "id": 0,
+        "name": null
+      },
+      "token_filters": [
+
+      ]
+    },
+    "Terms.users": {
+      "id": 262,
+      "name": "Terms.users",
+      "opened": false,
+      "type": {
+        "id": 72,
+        "name": "column:index"
+      },
+      "flags": {
+        "value": 33410,
+        "names": "COLUMN_INDEX|WITH_SECTION|WITH_POSITION|PERSISTENT"
+      },
+      "path": "db/db.0000106",
+      "range": {
+        "id": 258,
+        "name": "Users"
+      },
+      "sources": [
+        {
+          "id": 258,
+          "name": "Users"
+        },
+        {
+          "id": 259,
+          "name": "Users.description"
+        }
+      ]
+    },
+    "Tags": {
+      "id": 263,
+      "name": "Tags",
+      "opened": true,
+      "type": {
+        "id": 48,
+        "name": "table:hash_key"
+      },
+      "flags": {
+        "value": 49152,
+        "names": "TABLE_HASH_KEY|PERSISTENT"
+      },
+      "path": "db/db.0000107",
+      "range": {
+        "id": 0,
+        "name": null
+      },
+      "token_filters": [
+
+      ]
+    },
+    "Tags.users": {
+      "id": 264,
+      "name": "Tags.users",
+      "opened": true,
+      "type": {
+        "id": 72,
+        "name": "column:index"
+      },
+      "flags": {
+        "value": 32770,
+        "names": "COLUMN_INDEX|PERSISTENT"
+      },
+      "path": "db/db.0000108",
+      "range": {
+        "id": 258,
+        "name": "Users"
+      },
+      "sources": [
+        {
+          "id": 260,
+          "name": "Users.tags"
+        }
+      ]
+    }
+  }
+]

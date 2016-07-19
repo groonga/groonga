@@ -1,0 +1,21 @@
+plugin_register functions/vector
+
+table_create Users TABLE_DAT_KEY ShortText
+column_create Users description COLUMN_SCALAR ShortText
+column_create Users tags COLUMN_VECTOR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerAuto \
+  --tokenizer TokenBigram
+column_create Terms users COLUMN_INDEX|WITH_SECTION|WITH_POSITION \
+  Users _key,description
+
+thread_limit 1
+database_unmap
+
+table_create Tags TABLE_HASH_KEY ShortText \
+  --normalizer NormalizerAuto
+column_create Tags users COLUMN_INDEX Users tags
+
+
+object_list

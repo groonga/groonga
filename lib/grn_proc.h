@@ -55,6 +55,7 @@ void grn_proc_init_lock_clear(grn_ctx *ctx);
 void grn_proc_init_lock_release(grn_ctx *ctx);
 void grn_proc_init_object_exist(grn_ctx *ctx);
 void grn_proc_init_object_inspect(grn_ctx *ctx);
+void grn_proc_init_object_list(grn_ctx *ctx);
 void grn_proc_init_object_remove(grn_ctx *ctx);
 void grn_proc_init_query_expand(grn_ctx *ctx);
 void grn_proc_init_schema(grn_ctx *ctx);
