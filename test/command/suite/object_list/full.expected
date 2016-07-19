@@ -291,7 +291,7 @@ object_list
         "value": 4096,
         "names": "CUSTOM_NAME"
       },
-      "path": "tokenizers/.libs/mecab.so",
+      "path": "tokenizers/mecab.so",
       "plugin_id": 1
     },
     "TokenDelimit": {
@@ -1701,7 +1701,7 @@ object_list
         "value": 4096,
         "names": "CUSTOM_NAME"
       },
-      "path": "functions/.libs/vector.so",
+      "path": "functions/vector.so",
       "plugin_id": 2
     },
     "vector_slice": {
@@ -1716,7 +1716,7 @@ object_list
         "value": 4096,
         "names": "CUSTOM_NAME"
       },
-      "path": "functions/.libs/vector.so",
+      "path": "functions/vector.so",
       "plugin_id": 2
     },
     "Users": {
