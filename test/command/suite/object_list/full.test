@@ -10,7 +10,9 @@ table_create Terms TABLE_PAT_KEY ShortText \
 column_create Terms users COLUMN_INDEX|WITH_SECTION|WITH_POSITION \
   Users _key,description
 
+#@disable-logging
 thread_limit 1
+#@enable-logging
 database_unmap
 
 table_create Tags TABLE_HASH_KEY ShortText \
