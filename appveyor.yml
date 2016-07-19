@@ -17,9 +17,9 @@ init:
 
 install:
   - tzutil /s "Tokyo Standard Time"
-  - choco install -y imdisk-toolkit
-  - mkdir tmp
-  - imdisk -a -t file -m tmp -o awe -s 1G -p "/fs:ntfs /q /y"
+  # - choco install -y imdisk-toolkit
+  # - mkdir tmp
+  # - imdisk -a -t file -m tmp -o awe -s 1G -p "/fs:ntfs /q /y"
 
 build_script:
   - ps: |
