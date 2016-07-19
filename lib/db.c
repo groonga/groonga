@@ -9771,19 +9771,12 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
   return rc;
 }
 
-#define SERIALIZED_SPEC_INDEX_SPEC   0
-#define SERIALIZED_SPEC_INDEX_PATH   1
-#define SERIALIZED_SPEC_INDEX_SOURCE 2
-#define SERIALIZED_SPEC_INDEX_HOOK   3
-#define SERIALIZED_SPEC_INDEX_TOKEN_FILTERS 4
-#define SERIALIZED_SPEC_INDEX_EXPR   4
-
 #define GET_PATH(spec,buffer,s,id) do {\
   if (spec->header.flags & GRN_OBJ_CUSTOM_NAME) {\
     const char *path;\
     unsigned int size = grn_vector_get_element(ctx,\
                                                &v,\
-                                               SERIALIZED_SPEC_INDEX_PATH,\
+                                               GRN_SERIALIZED_SPEC_INDEX_PATH,\
                                                &path,\
                                                NULL,\
                                                NULL);\
@@ -9804,7 +9797,7 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
     r->db = (grn_obj *)s;\
     size = grn_vector_get_element(ctx,\
                                   &v,\
-                                  SERIALIZED_SPEC_INDEX_SOURCE,\
+                                  GRN_SERIALIZED_SPEC_INDEX_SOURCE,\
                                   &p,\
                                   NULL,\
                                   NULL);\
@@ -9816,7 +9809,7 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
     }\
     size = grn_vector_get_element(ctx,\
                                   &v,\
-                                  SERIALIZED_SPEC_INDEX_HOOK,\
+                                  GRN_SERIALIZED_SPEC_INDEX_HOOK,\
                                   &p,\
                                   NULL,\
                                   NULL);\
@@ -9833,13 +9826,13 @@ grn_token_filters_unpack(grn_ctx *ctx,
   unsigned int element_size;
   unsigned int i, n_token_filter_ids;
 
-  if (grn_vector_size(ctx, spec_vector) <= SERIALIZED_SPEC_INDEX_TOKEN_FILTERS) {
+  if (grn_vector_size(ctx, spec_vector) <= GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS) {
     return;
   }
 
   element_size = grn_vector_get_element(ctx,
                                         spec_vector,
-                                        SERIALIZED_SPEC_INDEX_TOKEN_FILTERS,
+                                        GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS,
                                         (const char **)(&token_filter_ids),
                                         NULL,
                                         NULL);
@@ -9935,7 +9928,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
               char buffer[PATH_MAX];
               size = grn_vector_get_element(ctx,
                                             &v,
-                                            SERIALIZED_SPEC_INDEX_SPEC,
+                                            GRN_SERIALIZED_SPEC_INDEX_SPEC,
                                             (const char **)&spec,
                                             NULL,
                                             NULL);
@@ -10010,7 +10003,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                     uint8_t *u;
                     size = grn_vector_get_element(ctx,
                                                   &v,
-                                                  SERIALIZED_SPEC_INDEX_EXPR,
+                                                  GRN_SERIALIZED_SPEC_INDEX_EXPR,
                                                   &p,
                                                   NULL,
                                                   NULL);

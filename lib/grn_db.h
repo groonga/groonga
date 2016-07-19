@@ -53,6 +53,13 @@ struct _grn_db {
   grn_critical_section lock;
 };
 
+#define GRN_SERIALIZED_SPEC_INDEX_SPEC   0
+#define GRN_SERIALIZED_SPEC_INDEX_PATH   1
+#define GRN_SERIALIZED_SPEC_INDEX_SOURCE 2
+#define GRN_SERIALIZED_SPEC_INDEX_HOOK   3
+#define GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS 4
+#define GRN_SERIALIZED_SPEC_INDEX_EXPR   4
+
 typedef struct {
   grn_obj_header header;
   grn_id range;
