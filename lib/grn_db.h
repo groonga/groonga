@@ -64,6 +64,11 @@ GRN_API grn_rc grn_db_close(grn_ctx *ctx, grn_obj *db);
 
 grn_obj *grn_db_keys(grn_obj *s);
 
+void grn_db_generate_pathname(grn_ctx *ctx,
+                              grn_obj *db,
+                              grn_id id,
+                              char *buffer);
+
 grn_rc _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
                                grn_table_delete_optarg *optarg);
 

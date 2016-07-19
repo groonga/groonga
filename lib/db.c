@@ -90,6 +90,8 @@ inline static void
 grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
                        grn_id *range_id, grn_obj_flags *range_flags);
 
+static grn_io *grn_obj_io(grn_obj *obj);
+
 
 static char grn_db_key[GRN_ENV_BUFFER_SIZE];
 
@@ -113,6 +115,12 @@ gen_pathname(const char *path, char *buffer, int fno)
   } else {
     buffer[len] = '\0';
   }
+}
+
+void
+grn_db_generate_pathname(grn_ctx *ctx, grn_obj *db, grn_id id, char *buffer)
+{
+  gen_pathname(grn_obj_io(db)->path, buffer, id);
 }
 
 static grn_bool
@@ -1170,7 +1178,7 @@ grn_table_create_with_max_n_subrecs(grn_ctx *ctx, const char *name,
     GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:table_create %.*s", name_size, name);
     if (!path) {
       if (GRN_DB_PERSISTENT_P(db)) {
-        gen_pathname(grn_obj_io(db)->path, buffer, id);
+        grn_db_generate_pathname(ctx, db, id, buffer);
         path = buffer;
       } else {
         ERR(GRN_INVALID_ARGUMENT, "path not assigned for persistent table");
@@ -4838,7 +4846,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   if (is_persistent_table && flags & GRN_OBJ_PERSISTENT) {
     if (!path) {
       if (GRN_DB_PERSISTENT_P(db)) {
-        gen_pathname(grn_obj_io(db)->path, buffer, id);
+        grn_db_generate_pathname(ctx, db, id, buffer);
         path = buffer;
       } else {
         int table_name_len;
@@ -9713,7 +9721,7 @@ grn_obj_path_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, char *buffer)
   if (!GRN_DB_P(db) || !buffer) {
     rc = GRN_INVALID_ARGUMENT;
   } else {
-    gen_pathname(grn_obj_io(db)->path, buffer, id);
+    grn_db_generate_pathname(ctx, db, id, buffer);
   }
   GRN_API_RETURN(rc);
 }
@@ -9783,7 +9791,7 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
     grn_memcpy(buffer, path, size);\
     buffer[size] = '\0';\
   } else {\
-    gen_pathname(grn_obj_io(s->keys)->path, buffer, id);  \
+    grn_db_generate_pathname(ctx, (grn_obj *)s, id, buffer);\
   }\
 } while (0)
 
