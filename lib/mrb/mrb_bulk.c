@@ -173,6 +173,13 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
       }
     }
     break;
+  case GRN_DB_FLOAT :
+    {
+      double value;
+      value = GRN_FLOAT_VALUE(bulk);
+      mrb_value_ = mrb_float_value(mrb, value);
+    }
+    break;
   case GRN_DB_TIME :
     {
       int64_t value;
