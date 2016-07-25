@@ -20,6 +20,7 @@ run sudo apt install -V -y \
     devscripts \
     autoconf \
     libtool \
+    cmake \
     pkg-config \
     mingw-w64 \
     wine \

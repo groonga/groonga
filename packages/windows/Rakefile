@@ -45,8 +45,10 @@ mecab_patches = [
 nginx_patches = [
 ]
 if groonga_win32_x86_p
+  architecture = "x86"
   host = "i686-w64-mingw32"
 else
+  architecture = "x64"
   host = "x86_64-w64-mingw32"
 end
 
@@ -160,7 +162,7 @@ namespace :build do
     tmp_dir = base_tmp_dir + "msgpack"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
-    msgpack_version = "1.3.0"
+    msgpack_version = "2.0.0"
     msgpack_base = "msgpack-#{msgpack_version}"
     msgpack_tar_gz = "#{msgpack_base}.tar.gz"
     msgpack_tar_gz_url_base =
@@ -172,17 +174,18 @@ namespace :build do
       sh("tar", "xzf", msgpack_tar_gz.to_s) or exit(false)
     end
     Dir.chdir(tmp_dir + msgpack_base) do
-      sh("autoreconf", "--install", "--force")
-      configure_parameters = [
-        "--prefix=#{binary_dir}",
-        "--host=#{host}",
+      cmake_parameters = [
+        "-DCMAKE_INSTALL_PREFIX=#{binary_dir}",
+        "-DCMAKE_SYSTEM_NAME=Windows",
+        "-DCMAKE_SYSTEM_PROCESSOR=#{architecture}",
+        "-DCMAKE_C_COMPILER=#{host}-gcc",
+        "-DCMAKE_CXX_COMPILER=#{host}-g++",
       ]
       if debug_build_p
-        configure_parameters << "--enable-debug"
-        configure_parameters << "CFLAGS=-O0 -g3"
-        configure_parameters << "CXXFLAGS=-O0 -g3"
+        cmake_parameters << "-DCMAKE_C_FLAGS=-O0 -g3"
+        cmake_parameters << "-DCMAKE_CXX_FLAGS=-O0 -g3"
       end
-      sh("./configure", *configure_parameters) or exit(false)
+      sh("cmake", *cmake_parameters) or exit(false)
       sh("env", "GREP_OPTIONS=--text", "nice", "make", "-j8") or exit(false)
       sh("env", "GREP_OPTIONS=--text", "make", "install") or exit(false)
 
