@@ -42,10 +42,10 @@ select Movies --match_columns name --query seven
   ]
 ]
 dump
-table_create Terms TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
-
 table_create Movies TABLE_NO_KEY
 column_create Movies name COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
 
 load --table Movies
 [

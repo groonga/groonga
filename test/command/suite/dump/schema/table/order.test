@@ -1,0 +1,5 @@
+table_create z TABLE_NO_KEY
+table_create a TABLE_NO_KEY
+table_create j TABLE_NO_KEY
+
+dump

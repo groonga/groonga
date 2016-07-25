@@ -16,9 +16,9 @@ load --table Users
 dump --dump_records no
 plugin_register token_filters/stop_word
 
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+
 table_create Users TABLE_HASH_KEY ShortText
 column_create Users name COLUMN_SCALAR ShortText
-
-table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 
 column_create Terms users_name_index COLUMN_INDEX|WITH_POSITION Users name

@@ -52,16 +52,16 @@ logical_table_remove Logs timestamp   --min "2015-02-04 00:00:00"   --min_border
 dump
 plugin_register sharding
 
-table_create Paths_20150203 TABLE_HASH_KEY|KEY_LARGE ShortText
-
 table_create Logs_20150203 TABLE_NO_KEY
 column_create Logs_20150203 timestamp COLUMN_SCALAR Time
 
-table_create Times_20150203 TABLE_PAT_KEY Time
+table_create NotRelated_20150204 TABLE_NO_KEY
 
 table_create PathTerms_20150203 TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 
-table_create NotRelated_20150204 TABLE_NO_KEY
+table_create Paths_20150203 TABLE_HASH_KEY|KEY_LARGE ShortText
+
+table_create Times_20150203 TABLE_PAT_KEY Time
 
 column_create Logs_20150203 path COLUMN_SCALAR Paths_20150203
 

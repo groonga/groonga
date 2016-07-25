@@ -16,10 +16,10 @@ dump
 table_create Bookmarks TABLE_HASH_KEY ShortText
 column_create Bookmarks title COLUMN_SCALAR ShortText
 
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+
 table_create Users TABLE_HASH_KEY ShortText
 column_create Users name COLUMN_SCALAR ShortText
-
-table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 
 column_create Users bookmark COLUMN_SCALAR Bookmarks
 

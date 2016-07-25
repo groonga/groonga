@@ -21,12 +21,12 @@ load --table URLs
 delete URLs --key "http://groonga.org/"
 [[0,0.0,0.0],true]
 dump
-table_create Users TABLE_HASH_KEY ShortText
-
 table_create URLs TABLE_HASH_KEY ShortText
 
-column_create Users bookmarks COLUMN_VECTOR URLs
+table_create Users TABLE_HASH_KEY ShortText
+
 column_create URLs author COLUMN_SCALAR Users
+column_create Users bookmarks COLUMN_VECTOR URLs
 
 load --table Users
 [

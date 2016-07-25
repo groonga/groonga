@@ -738,7 +738,7 @@ static void
 dump_schema(grn_ctx *ctx, grn_dumper *dumper)
 {
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
-                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+                             GRN_CURSOR_BY_KEY | GRN_CURSOR_ASCENDING) {
     void *name;
     int name_size;
     grn_bool is_opened = GRN_TRUE;
@@ -788,7 +788,7 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
   grn_ctx_output_flush(ctx, 0);
 
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
-                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+                             GRN_CURSOR_BY_KEY | GRN_CURSOR_ASCENDING) {
     void *name;
     int name_size;
     grn_bool is_opened = GRN_TRUE;

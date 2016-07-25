@@ -12,10 +12,10 @@ load --table Users
 ]
 [[0,0.0,0.0],1]
 dump
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+
 table_create Users TABLE_HASH_KEY ShortText
 column_create Users name COLUMN_SCALAR ShortText
-
-table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 
 load --table Users
 [

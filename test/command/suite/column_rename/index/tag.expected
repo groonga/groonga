@@ -14,9 +14,9 @@ load --table Memos
 column_rename Tags memos_tag memos_tag_index
 [[0,0.0,0.0],true]
 dump
-table_create Tags TABLE_PAT_KEY ShortText
-
 table_create Memos TABLE_HASH_KEY ShortText
+
+table_create Tags TABLE_PAT_KEY ShortText
 
 column_create Memos tag COLUMN_SCALAR Tags
 

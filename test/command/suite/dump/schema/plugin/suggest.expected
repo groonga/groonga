@@ -1,11 +1,15 @@
 dump
 plugin_register suggest/suggest
 
-table_create event_type TABLE_HASH_KEY ShortText
-
 table_create bigram TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 
-table_create kana TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+table_create configuration TABLE_HASH_KEY ShortText
+column_create configuration weight COLUMN_SCALAR UInt32
+
+table_create event_dataset TABLE_NO_KEY
+column_create event_dataset time COLUMN_SCALAR Time
+
+table_create event_type TABLE_HASH_KEY ShortText
 
 table_create item_dataset TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit --normalizer NormalizerAuto
 column_create item_dataset boost COLUMN_SCALAR Int32
@@ -14,6 +18,8 @@ column_create item_dataset freq COLUMN_SCALAR Int32
 column_create item_dataset freq2 COLUMN_SCALAR Int32
 column_create item_dataset last COLUMN_SCALAR Time
 
+table_create kana TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+
 table_create pair_dataset TABLE_HASH_KEY UInt64
 column_create pair_dataset freq0 COLUMN_SCALAR Int32
 column_create pair_dataset freq1 COLUMN_SCALAR Int32
@@ -21,19 +27,13 @@ column_create pair_dataset freq2 COLUMN_SCALAR Int32
 
 table_create sequence_dataset TABLE_HASH_KEY ShortText
 
-table_create event_dataset TABLE_NO_KEY
-column_create event_dataset time COLUMN_SCALAR Time
-
-table_create configuration TABLE_HASH_KEY ShortText
-column_create configuration weight COLUMN_SCALAR UInt32
-
+column_create event_dataset item COLUMN_SCALAR item_dataset
+column_create event_dataset sequence COLUMN_SCALAR sequence_dataset
+column_create event_dataset type COLUMN_SCALAR event_type
 column_create item_dataset kana COLUMN_VECTOR kana
 column_create pair_dataset post COLUMN_SCALAR item_dataset
 column_create pair_dataset pre COLUMN_SCALAR item_dataset
 column_create sequence_dataset events COLUMN_VECTOR event_dataset
-column_create event_dataset item COLUMN_SCALAR item_dataset
-column_create event_dataset sequence COLUMN_SCALAR sequence_dataset
-column_create event_dataset type COLUMN_SCALAR event_type
 
 load --table configuration
 [

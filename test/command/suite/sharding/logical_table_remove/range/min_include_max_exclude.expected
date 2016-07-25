@@ -57,12 +57,12 @@ plugin_register sharding
 table_create Logs_20150203 TABLE_NO_KEY
 column_create Logs_20150203 timestamp COLUMN_SCALAR Time
 
+table_create Logs_20150205 TABLE_NO_KEY
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+
 table_create Times_20150203 TABLE_PAT_KEY Time
 
 table_create Times_20150204 TABLE_PAT_KEY Time
-
-table_create Logs_20150205 TABLE_NO_KEY
-column_create Logs_20150205 timestamp COLUMN_SCALAR Time
 
 table_create Times_20150205 TABLE_PAT_KEY Time
 
