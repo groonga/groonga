@@ -79,5 +79,5 @@ load --table Logs_20150203
 [2,"/var/",1422975599.0]
 ]
 
-column_create Times_20150203 timestamp_index COLUMN_INDEX Logs_20150203 timestamp
 column_create PathTerms_20150203 index COLUMN_INDEX|WITH_POSITION Paths_20150203 _key
+column_create Times_20150203 timestamp_index COLUMN_INDEX Logs_20150203 timestamp

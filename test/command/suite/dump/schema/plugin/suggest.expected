@@ -42,5 +42,5 @@ load --table configuration
 ]
 
 column_create bigram item_dataset_key COLUMN_INDEX|WITH_POSITION item_dataset _key
-column_create kana item_dataset_kana COLUMN_INDEX item_dataset kana
 column_create item_dataset co COLUMN_INDEX pair_dataset pre
+column_create kana item_dataset_kana COLUMN_INDEX item_dataset kana

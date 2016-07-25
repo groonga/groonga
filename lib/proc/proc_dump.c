@@ -944,7 +944,7 @@ dump_indexes(grn_ctx *ctx, grn_dumper *dumper)
   }
 
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
-                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+                             GRN_CURSOR_BY_KEY | GRN_CURSOR_ASCENDING) {
     void *name;
     int name_size;
     grn_bool is_opened = GRN_TRUE;

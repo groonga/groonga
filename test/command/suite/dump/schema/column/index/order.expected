@@ -1,0 +1,33 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms users_name_index COLUMN_INDEX|WITH_POSITION Users name
+[[0,0.0,0.0],true]
+table_create Names TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Names users_name_index COLUMN_INDEX Users name
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice", "name": "Alice"}
+]
+[[0,0.0,0.0],1]
+dump
+table_create Names TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+load --table Users
+[
+["_key","name"],
+["alice","Alice"]
+]
+
+column_create Names users_name_index COLUMN_INDEX Users name
+column_create Terms users_name_index COLUMN_INDEX|WITH_POSITION Users name
