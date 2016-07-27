@@ -639,6 +639,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/news/2.x.rst \
 	$(top_srcdir)/doc/source/news/3.x.rst \
 	$(top_srcdir)/doc/source/news/4.x.rst \
+	$(top_srcdir)/doc/source/news/5.x.rst \
 	$(top_srcdir)/doc/source/news/senna.rst \
 	$(top_srcdir)/doc/source/reference.rst \
 	$(top_srcdir)/doc/source/reference/alias.rst \
@@ -1486,6 +1487,7 @@ source_files_relative_from_doc_dir = \
 	source/news/2.x.rst \
 	source/news/3.x.rst \
 	source/news/4.x.rst \
+	source/news/5.x.rst \
 	source/news/senna.rst \
 	source/reference.rst \
 	source/reference/alias.rst \
@@ -1847,6 +1849,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/news/2.x.txt \
 	html/_sources/news/3.x.txt \
 	html/_sources/news/4.x.txt \
+	html/_sources/news/5.x.txt \
 	html/_sources/news/senna.txt \
 	html/_sources/reference.txt \
 	html/_sources/reference/alias.txt \
@@ -2107,6 +2110,7 @@ html_files_relative_from_locale_dir = \
 	html/news/2.x.html \
 	html/news/3.x.html \
 	html/news/4.x.html \
+	html/news/5.x.html \
 	html/news/senna.html \
 	html/objects.inv \
 	html/reference.html \
