@@ -7,6 +7,69 @@
 News
 ====
 
+.. _release-6-0-7:
+
+Release 6.0.7 - 2016-07-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/functions/string_substring`] Added
+  ``string_substring`` function to extract a substring from given
+  string. The syntax of ``string_substring`` is
+  ``string_substring(string, from, [length])``. [GitHub#564] [Patch by
+  Naoya Murakami]
+
+* Supported to validate existence of ``key_type`` when type of table
+  is not ``TABLE_NO_KEY``. If type of table doesn't match to known
+  type, it is treated as error. [GitHub#570] [Patch by Naoya Murakami]
+
+* [experimental] Added ``GRN_II_MAX_N_SEGMENTS_TINY`` and
+  ``GRN_II_MAX_N_CHUNKS_TINY`` environment variables to customize the
+  value about default max N segments/chunks. This feature is affected to
+  index column for fixed size scalar column. It reduces memory usage
+  but not tested widely yet.
+
+* [:doc:`/news/5.x`] Extracted Groonga 5.x news entries from :doc:`/news`.
+
+* [:doc:`/reference/functions/vector_slice`] Added ``vector_slice``
+  function to extract specific elements in vector column. [GitHub#582]
+  [Patch by Naoya Murakami]
+
+* Supported index range search for ``_key`` of PAT/DAT table.
+  [GitHub#583]
+
+* [:doc:`/reference/commands/object_list`] Added ``object_list``
+  command for debugging. It is useful to investigate whether database
+  is corrupted or not.
+
+Fixes
+^^^^^
+
+* [examples edict] Fixed to use ``gzcat`` instead of ``zcat`` if
+  exists. [GitHub#576] [Patch by Yuya TAMANO]
+
+* Added missing null-check before dereferencing a
+  pointer. [GitHub#579] [Patch by Sho Minagawa]
+
+* Fixed not to perform a sequential search if an index is available.
+  [GitHub#580]
+
+* [:doc:`/reference/commands/load`] Fixed a bug that ``Time`` column
+  can reduce the precision of values. [GitHub#581]
+
+* Fixed a bug that object literal expression codes is broken when
+  executing multiple logical operations. [GitHub#584] [Patch by Naoya
+  Murakami]
+
+Thanks
+^^^^^^
+
+* Naoya Murakami
+* Yuya TAMANO
+* Sho Minagawa
+
 .. _release-6-0-5:
 
 Release 6.0.5 - 2016-06-29
