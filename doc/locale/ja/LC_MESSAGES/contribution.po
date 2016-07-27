@@ -1121,9 +1121,6 @@ msgstr ""
 msgid "Debian GNU/Linux"
 msgstr ""
 
-msgid "wheezy i386/amd64"
-msgstr ""
-
 msgid "jessie i386/amd64"
 msgstr ""
 

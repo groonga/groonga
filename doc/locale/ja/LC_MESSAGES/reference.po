@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-07-14 14:30+0900\n"
+"PO-Revision-Date: 2016-07-27 16:06+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -8252,6 +8252,9 @@ msgid "If ``plugin_unregister`` fails, error details are in ``HEADER``."
 msgstr ""
 "``plugin_unregister`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
 
+msgid "``query_expand``"
+msgstr ""
+
 msgid "``quit``"
 msgstr ""
 
@@ -15716,6 +15719,9 @@ msgid "指定した2つ文字列の編集距離をUint32型の値として返し
 msgstr ""
 
 msgid "例"
+msgstr ""
+
+msgid "``fuzzy_search``"
 msgstr ""
 
 msgid "``geo_distance``"
