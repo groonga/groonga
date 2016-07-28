@@ -2,7 +2,9 @@ table_create Names TABLE_PAT_KEY ShortText
 
 dump
 
+#@add-important-log-levels notice
 table_remove Names
+#@remove-important-log-levels notice
 
 #@read-timeout 0.1
 dump

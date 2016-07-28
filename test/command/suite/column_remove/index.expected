@@ -15,6 +15,7 @@ column_create Users name COLUMN_SCALAR ShortText
 column_create Terms users_name COLUMN_INDEX|WITH_POSITION Users name
 column_remove Terms users_name
 [[0,0.0,0.0],true]
+#|n| DDL:259:obj_remove Terms.users_name
 dump
 table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 

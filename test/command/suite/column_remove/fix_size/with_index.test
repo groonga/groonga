@@ -6,6 +6,8 @@ column_create Ages users_age COLUMN_INDEX Users age
 
 dump
 
+#@add-important-log-levels notice
 column_remove Users age
+#@remove-important-log-levels notice
 
 dump

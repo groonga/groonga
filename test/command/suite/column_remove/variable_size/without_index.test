@@ -3,6 +3,8 @@ column_create Users name COLUMN_SCALAR ShortText
 
 dump
 
+#@add-important-log-levels notice
 column_remove Users name
+#@remove-important-log-levels notice
 
 dump

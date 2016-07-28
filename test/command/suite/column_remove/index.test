@@ -8,6 +8,8 @@ column_create Terms users_name COLUMN_INDEX|WITH_POSITION Users name
 
 dump
 
+#@add-important-log-levels notice
 column_remove Terms users_name
+#@remove-important-log-levels notice
 
 dump

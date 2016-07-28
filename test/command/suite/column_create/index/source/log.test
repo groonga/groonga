@@ -1,0 +1,12 @@
+table_create Data TABLE_NO_KEY
+column_create Data value1 COLUMN_SCALAR Text
+column_create Data value2 COLUMN_SCALAR Text
+
+table_create Lexicon TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+
+#@add-important-log-levels notice
+column_create Lexicon data_values COLUMN_INDEX|WITH_SECTION|WITH_POSITION \
+  Data value1,value2
+#@remove-important-log-levels notice

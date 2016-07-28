@@ -1,0 +1,12 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data value1 COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Data value2 COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Lexicon data_values COLUMN_INDEX|WITH_SECTION|WITH_POSITION   Data value1,value2
+[[0,0.0,0.0],true]
+#|n| DDL:260:column_create Lexicon data_values
+#|n| DDL:260:set_source Lexicon.data_values Data.value1,Data.value2

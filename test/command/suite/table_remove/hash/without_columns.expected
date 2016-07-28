@@ -4,4 +4,5 @@ dump
 table_create Names TABLE_HASH_KEY ShortText
 table_remove Names
 [[0,0.0,0.0],true]
+#|n| DDL:256:obj_remove Names
 dump

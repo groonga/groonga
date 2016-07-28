@@ -7,5 +7,6 @@ table_create Users TABLE_PAT_KEY ShortText
 column_create Users name COLUMN_SCALAR ShortText
 column_remove Users name
 [[0,0.0,0.0],true]
+#|n| DDL:257:obj_remove Users.name
 dump
 table_create Users TABLE_PAT_KEY ShortText
