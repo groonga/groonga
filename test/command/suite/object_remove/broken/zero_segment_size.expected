@@ -15,6 +15,7 @@ object_remove Users
   false
 ]
 #|e| failed to open: segment size is 0
+#|e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
 #|e| [object][remove] failed to open the target object: <Users>
 object_exist Users
 [[0,0.0,0.0],true]

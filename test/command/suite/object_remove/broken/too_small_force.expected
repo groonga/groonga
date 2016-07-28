@@ -15,5 +15,6 @@ object_remove Users --force yes
   false
 ]
 #|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000100>
+#|e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
 object_exist Users
 [[0,0.0,0.0],false]

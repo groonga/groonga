@@ -10010,9 +10010,21 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
           uint32_t value_len;
           char *value = grn_ja_ref(ctx, s->specs, id, &jw, &value_len);
           if (value) {
+            grn_rc rc;
             grn_obj v;
             GRN_OBJ_INIT(&v, GRN_VECTOR, 0, GRN_DB_TEXT);
-            if (!grn_vector_decode(ctx, &v, value, value_len)) {
+            rc = grn_vector_decode(ctx, &v, value, value_len);
+            if (rc != GRN_SUCCESS) {
+              const char *name;
+              uint32_t name_size;
+              name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
+              GRN_LOG(ctx, GRN_LOG_ERROR,
+                      "grn_ctx_at: failed to decode spec: <%u>(<%.*s>):<%u>: %s",
+                      id,
+                      name_size, name,
+                      value_len,
+                      grn_rc_to_string(rc));
+            } else {
               const char *p;
               uint32_t size;
               grn_obj_spec *spec;
@@ -10023,7 +10035,15 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                                             (const char **)&spec,
                                             NULL,
                                             NULL);
-              if (size) {
+              if (size == 0) {
+                const char *name;
+                uint32_t name_size;
+                name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
+                GRN_LOG(ctx, GRN_LOG_ERROR,
+                        "grn_ctx_at: spec value is empty: <%u>(<%.*s>)",
+                        id,
+                        name_size, name);
+              } else {
                 switch (spec->header.type) {
                 case GRN_TYPE :
                   vp->ptr = (grn_obj *)grn_type_open(ctx, spec);
@@ -10102,6 +10122,18 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                     vp->ptr = grn_expr_open(ctx, spec, u, u + size);
                   }
                   break;
+                }
+                if (!vp->ptr) {
+                  const char *name;
+                  uint32_t name_size;
+                  name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
+                  GRN_LOG(ctx, GRN_LOG_ERROR,
+                          "grn_ctx_at: failed to open object: "
+                          "<%u>(<%.*s>):<%u>(<%s>)",
+                          id,
+                          name_size, name,
+                          spec->header.type,
+                          grn_obj_type_to_string(spec->header.type));
                 }
               }
               grn_obj_close(ctx, &v);
