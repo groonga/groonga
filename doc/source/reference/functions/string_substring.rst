@@ -17,7 +17,7 @@ To enable this function, register ``functions/string`` plugin by following the c
 
   plugin_register functions/string
 
- Syntax
+Syntax
 ------
 
 Usage

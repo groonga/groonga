@@ -17,7 +17,7 @@ To enable this function, register ``functions/vector`` plugin by following the c
 
   plugin_register functions/vector
 
- Syntax
+Syntax
 ------
 
 Usage
