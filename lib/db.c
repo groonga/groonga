@@ -8213,6 +8213,7 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
     default :
       break;
     }
+    /* TODO: reduce log level. */
     GRN_LOG(ctx, GRN_LOG_NOTICE,
             "spec:%u:update:%.*s:%u(%s):%u%s%.*s%s",
             obj->id,
@@ -9199,6 +9200,7 @@ _grn_obj_remove_spec(grn_ctx *ctx, grn_obj *db, grn_id id, uint8_t type)
   uint32_t name_size = 0;
 
   name = _grn_table_key(ctx, db, id, &name_size);
+  /* TODO: reduce log level. */
   GRN_LOG(ctx, GRN_LOG_NOTICE,
           "spec:%u:remove:%.*s:%u(%s)",
           id,
