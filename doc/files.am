@@ -716,6 +716,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/normalizer_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/object_exist.rst \
 	$(top_srcdir)/doc/source/reference/commands/object_inspect.rst \
+	$(top_srcdir)/doc/source/reference/commands/object_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/object_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/plugin_register.rst \
 	$(top_srcdir)/doc/source/reference/commands/plugin_unregister.rst \
@@ -770,6 +771,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/rand.rst \
 	$(top_srcdir)/doc/source/reference/functions/record_number.rst \
 	$(top_srcdir)/doc/source/reference/functions/snippet_html.rst \
+	$(top_srcdir)/doc/source/reference/functions/string_substring.rst \
 	$(top_srcdir)/doc/source/reference/functions/sub_filter.rst \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_day.rst \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_hour.rst \
@@ -779,6 +781,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_week.rst \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_year.rst \
 	$(top_srcdir)/doc/source/reference/functions/vector_size.rst \
+	$(top_srcdir)/doc/source/reference/functions/vector_slice.rst \
 	$(top_srcdir)/doc/source/reference/grn_expr.rst \
 	$(top_srcdir)/doc/source/reference/grn_expr/query_syntax.rst \
 	$(top_srcdir)/doc/source/reference/grn_expr/script_syntax.rst \
@@ -1564,6 +1567,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/normalizer_list.rst \
 	source/reference/commands/object_exist.rst \
 	source/reference/commands/object_inspect.rst \
+	source/reference/commands/object_list.rst \
 	source/reference/commands/object_remove.rst \
 	source/reference/commands/plugin_register.rst \
 	source/reference/commands/plugin_unregister.rst \
@@ -1618,6 +1622,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/rand.rst \
 	source/reference/functions/record_number.rst \
 	source/reference/functions/snippet_html.rst \
+	source/reference/functions/string_substring.rst \
 	source/reference/functions/sub_filter.rst \
 	source/reference/functions/time_classify_day.rst \
 	source/reference/functions/time_classify_hour.rst \
@@ -1627,6 +1632,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/time_classify_week.rst \
 	source/reference/functions/time_classify_year.rst \
 	source/reference/functions/vector_size.rst \
+	source/reference/functions/vector_slice.rst \
 	source/reference/grn_expr.rst \
 	source/reference/grn_expr/query_syntax.rst \
 	source/reference/grn_expr/script_syntax.rst \
@@ -1926,6 +1932,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/normalizer_list.txt \
 	html/_sources/reference/commands/object_exist.txt \
 	html/_sources/reference/commands/object_inspect.txt \
+	html/_sources/reference/commands/object_list.txt \
 	html/_sources/reference/commands/object_remove.txt \
 	html/_sources/reference/commands/plugin_register.txt \
 	html/_sources/reference/commands/plugin_unregister.txt \
@@ -1980,6 +1987,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/functions/rand.txt \
 	html/_sources/reference/functions/record_number.txt \
 	html/_sources/reference/functions/snippet_html.txt \
+	html/_sources/reference/functions/string_substring.txt \
 	html/_sources/reference/functions/sub_filter.txt \
 	html/_sources/reference/functions/time_classify_day.txt \
 	html/_sources/reference/functions/time_classify_hour.txt \
@@ -1989,6 +1997,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/functions/time_classify_week.txt \
 	html/_sources/reference/functions/time_classify_year.txt \
 	html/_sources/reference/functions/vector_size.txt \
+	html/_sources/reference/functions/vector_slice.txt \
 	html/_sources/reference/grn_expr.txt \
 	html/_sources/reference/grn_expr/query_syntax.txt \
 	html/_sources/reference/grn_expr/script_syntax.txt \
@@ -2188,6 +2197,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/normalizer_list.html \
 	html/reference/commands/object_exist.html \
 	html/reference/commands/object_inspect.html \
+	html/reference/commands/object_list.html \
 	html/reference/commands/object_remove.html \
 	html/reference/commands/plugin_register.html \
 	html/reference/commands/plugin_unregister.html \
@@ -2242,6 +2252,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/rand.html \
 	html/reference/functions/record_number.html \
 	html/reference/functions/snippet_html.html \
+	html/reference/functions/string_substring.html \
 	html/reference/functions/sub_filter.html \
 	html/reference/functions/time_classify_day.html \
 	html/reference/functions/time_classify_hour.html \
@@ -2251,6 +2262,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/time_classify_week.html \
 	html/reference/functions/time_classify_year.html \
 	html/reference/functions/vector_size.html \
+	html/reference/functions/vector_slice.html \
 	html/reference/grn_expr.html \
 	html/reference/grn_expr/query_syntax.html \
 	html/reference/grn_expr/script_syntax.html \
