@@ -9,4 +9,8 @@ table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram  
 column_create Lexicon data_values COLUMN_INDEX|WITH_SECTION|WITH_POSITION   Data value1,value2
 [[0,0.0,0.0],true]
 #|n| DDL:260:column_create Lexicon data_values
+#|n| spec:260:update:Lexicon.data_values:72(column:index):256(Data)
 #|n| DDL:260:set_source Lexicon.data_values Data.value1,Data.value2
+#|n| spec:257:update:Data.value1:65(column:var_size):15(Text)
+#|n| spec:258:update:Data.value2:65(column:var_size):15(Text)
+#|n| spec:260:update:Lexicon.data_values:72(column:index):256(Data)

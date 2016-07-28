@@ -8187,6 +8187,39 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
     grn_vector_delimit(ctx, &v, 0, 0);
     break;
   }
+  {
+    const char *name;
+    uint32_t name_size = 0;
+    const char *range_name = NULL;
+    uint32_t range_name_size = 0;
+
+    name = _grn_table_key(ctx, s->keys, obj->id, &name_size);
+    switch (obj->header.type) {
+    case GRN_TABLE_HASH_KEY :
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_DAT_KEY :
+    case GRN_TABLE_NO_KEY :
+    case GRN_COLUMN_FIX_SIZE :
+    case GRN_COLUMN_VAR_SIZE :
+    case GRN_COLUMN_INDEX :
+      if (obj->range != GRN_ID_NIL) {
+        range_name = _grn_table_key(ctx, s->keys, obj->range, &range_name_size);
+      }
+      break;
+    default :
+      break;
+    }
+    GRN_LOG(ctx, GRN_LOG_NOTICE,
+            "spec:%u:update:%.*s:%u(%s):%u%s%.*s%s",
+            obj->id,
+            name_size, name,
+            obj->header.type,
+            grn_obj_type_to_string(obj->header.type),
+            obj->range,
+            range_name_size == 0 ? "" : "(",
+            range_name_size, range_name,
+            range_name_size == 0 ? "" : ")");
+  }
   grn_ja_putv(ctx, s->specs, obj->id, &v, 0);
   grn_obj_close(ctx, &v);
 }
@@ -9155,11 +9188,31 @@ is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
   return removable;
 }
 
+static inline grn_rc
+_grn_obj_remove_spec(grn_ctx *ctx, grn_obj *db, grn_id id, uint8_t type)
+{
+  const char *name;
+  uint32_t name_size = 0;
+
+  name = _grn_table_key(ctx, db, id, &name_size);
+  GRN_LOG(ctx, GRN_LOG_NOTICE,
+          "spec:%u:remove:%.*s:%u(%s)",
+          id,
+          name_size, name,
+          type,
+          grn_obj_type_to_string(type));
+
+  return grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
+}
+
 static grn_rc
 _grn_obj_remove_pat(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
                     const char *path, grn_bool dependent)
 {
   grn_rc rc = GRN_SUCCESS;
+  uint8_t type;
+
+  type = obj->header.type;
 
   if (dependent) {
     rc = remove_reference_tables(ctx, obj, db);
@@ -9183,7 +9236,7 @@ _grn_obj_remove_pat(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
   if (path) {
     rc = grn_pat_remove(ctx, path);
     if (rc != GRN_SUCCESS) { return rc; }
-    rc = grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
+    rc = _grn_obj_remove_spec(ctx, db, id, type);
     if (rc != GRN_SUCCESS) { return rc; }
     rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) { return rc; }
@@ -9199,6 +9252,9 @@ _grn_obj_remove_dat(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
                     const char *path, grn_bool dependent)
 {
   grn_rc rc = GRN_SUCCESS;
+  uint8_t type;
+
+  type = obj->header.type;
 
   if (dependent) {
     rc = remove_reference_tables(ctx, obj, db);
@@ -9222,7 +9278,7 @@ _grn_obj_remove_dat(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
   if (path) {
     rc = grn_dat_remove(ctx, path);
     if (rc != GRN_SUCCESS) { return rc; }
-    rc = grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
+    rc = _grn_obj_remove_spec(ctx, db, id, type);
     if (rc != GRN_SUCCESS) { return rc; }
     rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) { return rc; }
@@ -9238,6 +9294,9 @@ _grn_obj_remove_hash(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
                      const char *path, grn_bool dependent)
 {
   grn_rc rc = GRN_SUCCESS;
+  uint8_t type;
+
+  type = obj->header.type;
 
   if (dependent) {
     rc = remove_reference_tables(ctx, obj, db);
@@ -9261,7 +9320,7 @@ _grn_obj_remove_hash(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
   if (path) {
     rc = grn_hash_remove(ctx, path);
     if (rc != GRN_SUCCESS) { return rc; }
-    rc = grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
+    rc = _grn_obj_remove_spec(ctx, db, id, type);
     if (rc != GRN_SUCCESS) { return rc; }
     rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) { return rc; }
@@ -9277,6 +9336,9 @@ _grn_obj_remove_array(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
                       const char *path, grn_bool dependent)
 {
   grn_rc rc = GRN_SUCCESS;
+  uint8_t type;
+
+  type = obj->header.type;
 
   if (dependent) {
     rc = remove_reference_tables(ctx, obj, db);
@@ -9298,7 +9360,7 @@ _grn_obj_remove_array(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
   if (path) {
     rc = grn_array_remove(ctx, path);
     if (rc != GRN_SUCCESS) { return rc; }
-    rc = grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
+    rc = _grn_obj_remove_spec(ctx, db, id, type);
     if (rc != GRN_SUCCESS) { return rc; }
     rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) { return rc; }
@@ -9314,6 +9376,9 @@ _grn_obj_remove_ja(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
                    const char *path)
 {
   grn_rc rc = GRN_SUCCESS;
+  uint8_t type;
+
+  type = obj->header.type;
 
   rc = remove_index(ctx, obj, GRN_HOOK_SET);
   if (rc != GRN_SUCCESS) { return rc; }
@@ -9323,7 +9388,7 @@ _grn_obj_remove_ja(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
   if (path) {
     rc = grn_ja_remove(ctx, path);
     if (rc != GRN_SUCCESS) { return rc; }
-    rc = grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
+    rc = _grn_obj_remove_spec(ctx, db, id, type);
     if (rc != GRN_SUCCESS) { return rc; }
     rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) { return rc; }
@@ -9339,6 +9404,9 @@ _grn_obj_remove_ra(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
                    const char *path)
 {
   grn_rc rc = GRN_SUCCESS;
+  uint8_t type;
+
+  type = obj->header.type;
 
   rc = remove_index(ctx, obj, GRN_HOOK_SET);
   if (rc != GRN_SUCCESS) { return rc; }
@@ -9348,7 +9416,7 @@ _grn_obj_remove_ra(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
   if (path) {
     rc = grn_ra_remove(ctx, path);
     if (rc != GRN_SUCCESS) { return rc; }
-    rc = grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
+    rc = _grn_obj_remove_spec(ctx, db, id, type);
     if (rc != GRN_SUCCESS) { return rc; }
     rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) { return rc; }
@@ -9363,6 +9431,9 @@ _grn_obj_remove_index(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
                       const char *path)
 {
   grn_rc rc = GRN_SUCCESS;
+  uint8_t type;
+
+  type = obj->header.type;
 
   delete_source_hook(ctx, obj);
   rc = grn_obj_close(ctx, obj);
@@ -9371,7 +9442,7 @@ _grn_obj_remove_index(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
   if (path) {
     rc = grn_ii_remove(ctx, path);
     if (rc != GRN_SUCCESS) { return rc; }
-    rc = grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
+    rc = _grn_obj_remove_spec(ctx, db, id, type);
     if (rc != GRN_SUCCESS) { return rc; }
     rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) { return rc; }
@@ -9387,6 +9458,9 @@ _grn_obj_remove_db_obj(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
                        const char *path)
 {
   grn_rc rc = GRN_SUCCESS;
+  uint8_t type;
+
+  type = obj->header.type;
 
   rc = grn_obj_close(ctx, obj);
   if (rc != GRN_SUCCESS) { return rc; }
@@ -9397,7 +9471,7 @@ _grn_obj_remove_db_obj(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
   }
 
   if (!(id & GRN_OBJ_TMP_OBJECT)) {
-    rc = grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
+    rc = _grn_obj_remove_spec(ctx, db, id, type);
     if (rc != GRN_SUCCESS) { return rc; }
     rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
     if (rc != GRN_SUCCESS) { return rc; }
