@@ -44,6 +44,24 @@ Improvements
   command for debugging. It is useful to investigate whether database
   is corrupted or not.
 
+* Added a script that checks ``object_list`` response.
+
+* [mruby] Supported float bulk in expression_rewriter. [GitHub#587]
+  [Patch by Naoya Murakami]
+
+* [:doc:`/reference/commands/dump`] Changed output order about table
+  by name instead of ID. It breaks dump output compatibility but it
+  can be restored as usual.
+
+* [windows] Updated bundled msgpack to 2.0.0.
+
+* [windows] Added
+  :doc:`/reference/executables/groonga-suggest-create-dataset`.
+
+* [httpd] Updated bundled nginx to 1.11.3.
+
+* [deb] Dropped support for Ubuntu 15.10 (Wily werewolf).
+
 Fixes
 ^^^^^
 
@@ -62,6 +80,10 @@ Fixes
 * Fixed a bug that object literal expression codes is broken when
   executing multiple logical operations. [GitHub#584] [Patch by Naoya
   Murakami]
+
+* Fixed a bug that columns of Float, WGS84GeoPoint and TokyoGeoPoint
+  were created with ``GRN_OBJ_COMPRESS_ZLIB`` even if the flag was not
+  specified. [GitHub#586] [Reported by Naoya Murakami]
 
 Thanks
 ^^^^^^
