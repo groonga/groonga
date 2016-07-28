@@ -769,9 +769,6 @@ msgstr ""
 msgid "14.04 LTS Trusty Tahr"
 msgstr ""
 
-msgid "15.10 Wily Werewolf"
-msgstr ""
-
 msgid "16.04 Xenial Xerus"
 msgstr ""
 
