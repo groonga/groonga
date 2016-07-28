@@ -7,6 +7,7 @@ groonga_include_HEADERS =			\
 	dat.h					\
 	db.h					\
 	dump.h					\
+	error.h					\
 	expr.h					\
 	file_reader.h				\
 	hash.h					\

@@ -27,6 +27,7 @@
 #include "groonga/dat.h"
 #include "groonga/db.h"
 #include "groonga/dump.h"
+#include "groonga/error.h"
 #include "groonga/expr.h"
 #include "groonga/file_reader.h"
 #include "groonga/geo.h"
