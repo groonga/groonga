@@ -5,8 +5,8 @@
 .. groonga-command
 .. database: string_substring
 
-``vector_slice``
-================
+``string_substring``
+====================
 
 Summary
 -------
