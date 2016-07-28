@@ -122,10 +122,6 @@ Here are common properties::
      - Whether the object is opened or not. It's ``true`` or
        ``false``.  If the object is opened, this value is
        ``true``. Otherwise, this value is ``false``.
-   * - ``opened``
-     - Whether the object is opened or not. It's ``true`` or
-       ``false``.  If the object is opened, this value is
-       ``true``. Otherwise, this value is ``false``.
    * - ``type``
      - The type of the object. See
        :ref:`object-list-return-value-object-type` for details.
