@@ -8156,6 +8156,9 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
   if (grn_id_is_builtin(ctx, obj->id)) { return; }
   if (!ctx->impl || !GRN_DB_OBJP(obj)) { return; }
   if (!(s = (grn_db *)ctx->impl->db) || !s->specs) { return; }
+  if (obj->header.type == GRN_PROC && obj->range == GRN_ID_NIL) {
+    return;
+  }
   GRN_OBJ_INIT(&v, GRN_VECTOR, 0, GRN_DB_TEXT);
   if (!(b = grn_vector_body(ctx, &v))) { return; }
   spec.header = obj->header;
