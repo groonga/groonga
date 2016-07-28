@@ -18,7 +18,7 @@ Syntax
 
 This command takes no parameters::
 
-  object_exist name
+  object_list
 
 Usage
 -----
