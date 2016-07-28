@@ -1,0 +1,362 @@
+Execution example::
+
+  object_list
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   {
+  #     "TokyoGeoPoint": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_GEO_POINT", 
+  #         "value": 24
+  #       }, 
+  #       "path": null, 
+  #       "size": 8, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 17, 
+  #       "name": "TokyoGeoPoint"
+  #     }, 
+  #     "Bool": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_UINT", 
+  #         "value": 0
+  #       }, 
+  #       "path": null, 
+  #       "size": 1, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 3, 
+  #       "name": "Bool"
+  #     }, 
+  #     "WGS84GeoPoint": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_GEO_POINT", 
+  #         "value": 24
+  #       }, 
+  #       "path": null, 
+  #       "size": 8, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 18, 
+  #       "name": "WGS84GeoPoint"
+  #     }, 
+  #     "Int32": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_INT", 
+  #         "value": 8
+  #       }, 
+  #       "path": null, 
+  #       "size": 4, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 8, 
+  #       "name": "Int32"
+  #     }, 
+  #     "Int16": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_INT", 
+  #         "value": 8
+  #       }, 
+  #       "path": null, 
+  #       "size": 2, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 6, 
+  #       "name": "Int16"
+  #     }, 
+  #     "Terms": {
+  #       "opened": true, 
+  #       "token_filters": [], 
+  #       "range": {
+  #         "id": 0, 
+  #         "name": null
+  #       }, 
+  #       "flags": {
+  #         "names": "TABLE_PAT_KEY|PERSISTENT", 
+  #         "value": 49153
+  #       }, 
+  #       "path": "/tmp/groonga-databases/commands_object_list.0000102", 
+  #       "type": {
+  #         "id": 49, 
+  #         "name": "table:pat_key"
+  #       }, 
+  #       "id": 258, 
+  #       "name": "Terms"
+  #     }, 
+  #     "LongText": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_VAR_SIZE", 
+  #         "value": 16384
+  #       }, 
+  #       "path": null, 
+  #       "size": 2147483648, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 16, 
+  #       "name": "LongText"
+  #     }, 
+  #     "ShortText": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_VAR_SIZE", 
+  #         "value": 16384
+  #       }, 
+  #       "path": null, 
+  #       "size": 4096, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 14, 
+  #       "name": "ShortText"
+  #     }, 
+  #     "Object": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_UINT", 
+  #         "value": 0
+  #       }, 
+  #       "path": null, 
+  #       "size": 8, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 2, 
+  #       "name": "Object"
+  #     }, 
+  #     "UInt16": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_UINT", 
+  #         "value": 0
+  #       }, 
+  #       "path": null, 
+  #       "size": 2, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 7, 
+  #       "name": "UInt16"
+  #     }, 
+  #     "UInt32": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_UINT", 
+  #         "value": 0
+  #       }, 
+  #       "path": null, 
+  #       "size": 4, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 9, 
+  #       "name": "UInt32"
+  #     }, 
+  #     "Terms.memos_content_index": {
+  #       "opened": true, 
+  #       "sources": [
+  #         {
+  #           "id": 257, 
+  #           "name": "Memos.content"
+  #         }
+  #       ], 
+  #       "range": {
+  #         "id": 256, 
+  #         "name": "Memos"
+  #       }, 
+  #       "flags": {
+  #         "names": "COLUMN_INDEX|WITH_POSITION|PERSISTENT", 
+  #         "value": 33282
+  #       }, 
+  #       "path": "/tmp/groonga-databases/commands_object_list.0000103", 
+  #       "type": {
+  #         "id": 72, 
+  #         "name": "column:index"
+  #       }, 
+  #       "id": 259, 
+  #       "name": "Terms.memos_content_index"
+  #     }, 
+  #     "UInt8": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_UINT", 
+  #         "value": 0
+  #       }, 
+  #       "path": null, 
+  #       "size": 1, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 5, 
+  #       "name": "UInt8"
+  #     }, 
+  #     "Int64": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_INT", 
+  #         "value": 8
+  #       }, 
+  #       "path": null, 
+  #       "size": 8, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 10, 
+  #       "name": "Int64"
+  #     }, 
+  #     "Time": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_INT", 
+  #         "value": 8
+  #       }, 
+  #       "path": null, 
+  #       "size": 8, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 13, 
+  #       "name": "Time"
+  #     }, 
+  #     "UInt64": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_UINT", 
+  #         "value": 0
+  #       }, 
+  #       "path": null, 
+  #       "size": 8, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 11, 
+  #       "name": "UInt64"
+  #     }, 
+  #     "Text": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_VAR_SIZE", 
+  #         "value": 16384
+  #       }, 
+  #       "path": null, 
+  #       "size": 65536, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 15, 
+  #       "name": "Text"
+  #     }, 
+  #     "Float": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_FLOAT", 
+  #         "value": 16
+  #       }, 
+  #       "path": null, 
+  #       "size": 8, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 12, 
+  #       "name": "Float"
+  #     }, 
+  #     "Int8": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "KEY_INT", 
+  #         "value": 8
+  #       }, 
+  #       "path": null, 
+  #       "size": 1, 
+  #       "type": {
+  #         "id": 32, 
+  #         "name": "type"
+  #       }, 
+  #       "id": 4, 
+  #       "name": "Int8"
+  #     }, 
+  #     "Memos.content": {
+  #       "opened": true, 
+  #       "range": {
+  #         "id": 15, 
+  #         "name": "Text"
+  #       }, 
+  #       "flags": {
+  #         "names": "COLUMN_SCALAR|PERSISTENT", 
+  #         "value": 49152
+  #       }, 
+  #       "path": "/tmp/groonga-databases/commands_object_list.0000101", 
+  #       "type": {
+  #         "id": 65, 
+  #         "name": "column:var_size"
+  #       }, 
+  #       "id": 257, 
+  #       "name": "Memos.content"
+  #     }, 
+  #     "Memos": {
+  #       "opened": true, 
+  #       "token_filters": [], 
+  #       "range": {
+  #         "id": 0, 
+  #         "name": null
+  #       }, 
+  #       "flags": {
+  #         "names": "TABLE_HASH_KEY|PERSISTENT", 
+  #         "value": 49152
+  #       }, 
+  #       "path": "/tmp/groonga-databases/commands_object_list.0000100", 
+  #       "type": {
+  #         "id": 48, 
+  #         "name": "table:hash_key"
+  #       }, 
+  #       "id": 256, 
+  #       "name": "Memos"
+  #     }, 
+  #     "TokenMecab": {
+  #       "opened": true, 
+  #       "flags": {
+  #         "names": "CUSTOM_NAME", 
+  #         "value": 4096
+  #       }, 
+  #       "path": "tokenizers/.libs/mecab.so", 
+  #       "plugin_id": 1, 
+  #       "type": {
+  #         "id": 33, 
+  #         "name": "proc"
+  #       }, 
+  #       "id": 64, 
+  #       "name": "TokenMecab"
+  #     }
+  #   }
+  # ]
