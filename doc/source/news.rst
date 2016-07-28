@@ -21,10 +21,6 @@ Improvements
   ``string_substring(string, from, [length])``. [GitHub#564] [Patch by
   Naoya Murakami]
 
-* Supported to validate existence of ``key_type`` when type of table
-  is not ``TABLE_NO_KEY``. If type of table doesn't match to known
-  type, it is treated as error. [GitHub#570] [Patch by Naoya Murakami]
-
 * [experimental] Added ``GRN_II_MAX_N_SEGMENTS_TINY`` and
   ``GRN_II_MAX_N_CHUNKS_TINY`` environment variables to customize the
   value about default max N segments/chunks. This feature is affected to
