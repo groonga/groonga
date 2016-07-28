@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-07-27 16:06+0900\n"
+"PO-Revision-Date: 2016-07-28 16:41+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -8040,6 +8040,9 @@ msgid ""
 msgstr ""
 "``TYPE_SIZE`` は調査対象の型のサイズです。単位はバイトです。調査対象の型が可"
 "変長型の場合は、サイズは最大サイズという意味です。"
+
+msgid "``object_list``"
+msgstr ""
 
 msgid "``object_remove``"
 msgstr ""
@@ -16969,6 +16972,14 @@ msgstr "正規化の方法をカスタマイズできるようにする。"
 
 msgid "Support options by object literal."
 msgstr "オブジェクトリテラル形式でのオプション指定をサポートする。"
+
+msgid "``vector_slice``"
+msgstr ""
+
+msgid ""
+"To enable this function, register ``functions/string`` plugin by following "
+"the command::"
+msgstr "この関数を有効にするには、以下のコマンドで ``functions/string`` プラグインを登録します::"
 
 msgid "``sub_filter``"
 msgstr ""
