@@ -151,6 +151,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/object_exist/usage.log \
 	$(top_srcdir)/doc/source/example/reference/commands/object_inspect/usage-database.log \
 	$(top_srcdir)/doc/source/example/reference/commands/object_inspect/usage-name.log \
+	$(top_srcdir)/doc/source/example/reference/commands/object_list/output.log \
+	$(top_srcdir)/doc/source/example/reference/commands/object_list/sample.log \
 	$(top_srcdir)/doc/source/example/reference/commands/object_remove/name_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/object_remove/usage.log \
 	$(top_srcdir)/doc/source/example/reference/commands/object_remove/usage_broken_with_force.log \
@@ -1002,6 +1004,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/object_exist/usage.log \
 	source/example/reference/commands/object_inspect/usage-database.log \
 	source/example/reference/commands/object_inspect/usage-name.log \
+	source/example/reference/commands/object_list/output.log \
+	source/example/reference/commands/object_list/sample.log \
 	source/example/reference/commands/object_remove/name_column.log \
 	source/example/reference/commands/object_remove/usage.log \
 	source/example/reference/commands/object_remove/usage_broken_with_force.log \
