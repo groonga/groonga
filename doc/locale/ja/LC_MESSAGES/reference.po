@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-07-28 16:41+0900\n"
+"PO-Revision-Date: 2016-07-29 14:09+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -8044,6 +8044,326 @@ msgstr ""
 msgid "``object_list``"
 msgstr ""
 
+msgid ""
+"``object_list`` lists objects in database. Object information is taken from "
+"metadata in database. ``object_list`` doesn't open any objects. So "
+"``object_list`` is a light command for database that has many tables and/or "
+"columns."
+msgstr ""
+"``object_list`` はデータベース内のオブジェクトの一覧を返します。オブジェクト"
+"の情報はデータベース内のメタデータから取得します。 ``object_list`` はオブジェ"
+"クトの実体を開きません。そのため、 ``object_list`` は多くのテーブル・カラムが"
+"あるデータベースに対しても軽い処理のコマンドです。"
+
+msgid ""
+"Normally, :doc:`schema` is a useful command than ``object_list``. Because :"
+"doc:`schema` returns more information than ``object_list``."
+msgstr ""
+"通常、 ``object_list`` より :doc:`schema` の方が便利なコマンドです。なぜな"
+"ら、 :doc:`schema` は ``object_list`` より多くの情報を返すからです。"
+
+msgid "Here is an example schema to show example output:"
+msgstr "以下は出力例を示すためのサンプルスキーマです。"
+
+msgid "Here is an output of ``object_list`` command against this database:"
+msgstr ""
+"このデータベースに対する ``object_list`` コマンドの出力は次の通りです。"
+
+msgid ""
+"``object_list`` command returns a list of object information in the "
+"database::"
+msgstr "``object_list`` はデータベース内のオブジェクトの情報一覧を返します。::"
+
+msgid "``OBJECTS``"
+msgstr ""
+
+msgid "``OBJECTS`` are pairs of object name and object details::"
+msgstr "``OBJECTS`` はオブジェクト名とオブジェクト詳細のペアの集合です。::"
+
+msgid ""
+"Each ``OBJECT`` consists of common properties and object type specific "
+"properties."
+msgstr ""
+"各 ``OBJECT`` は共通のプロパティとオブジェクトの種類固有のプロパティを持って"
+"います。"
+
+msgid "``OBJECT`` (common properties)"
+msgstr "``OBJECT`` （共通のプロパティ）"
+
+msgid "Here are common properties::"
+msgstr "以下は共通のプロパティです。::"
+
+msgid "The ID of the object."
+msgstr "このオブジェクトのID。"
+
+msgid "The name of the object."
+msgstr "このオブジェクトの名前。"
+
+msgid "``opened``"
+msgstr ""
+
+msgid ""
+"Whether the object is opened or not. It's ``true`` or ``false``.  If the "
+"object is opened, this value is ``true``. Otherwise, this value is ``false``."
+msgstr ""
+"このオブジェクトが開かれているかどうか。 ``true`` または ``false`` 。もし、こ"
+"のオブジェクトが開かれていれば値は ``true`` になります。そうでなければ値は "
+"``false`` になります。"
+
+msgid ""
+"The type of the object. See :ref:`object-list-return-value-object-type` for "
+"details."
+msgstr ""
+"このオブジェクトの種類。詳細は :ref:`object-list-return-value-object-type` を"
+"参照してください。"
+
+msgid ""
+"The flags of the object. See :ref:`object-list-return-value-flags` for "
+"details."
+msgstr ""
+"このオブジェクトのフラグ。詳細は :ref:`object-list-return-value-flags` を参照"
+"してください。"
+
+msgid "``path``"
+msgstr ""
+
+msgid ""
+"The path that contains data of the object. It's ``null`` for objects that "
+"doesn't have data. For example, command object doesn't have data."
+msgstr ""
+"このオブジェクトのデータを格納しているパス。データを持たないオブジェクトでは "
+"``null`` になります。たとえば、コマンドオブジェクトはデータを持ちません。"
+
+msgid "``OBJECT_TYPE``"
+msgstr ""
+
+msgid ""
+"``OBJECT_TYPE`` represents the type of object. For example, patricia trie "
+"table, hash table and index column are object types."
+msgstr ""
+"``OBJECT_TYPE`` はオブジェクトの種類を表します。たとえば、パトリシアトライ"
+"テーブル、ハッシュテーブル、インデックスカラムなどがオブジェクトの種類です。"
+
+msgid "``OBJECT_TYPE`` has the following properties::"
+msgstr "``OBJECT_TYPE`` は次のプロパティを持ちます。::"
+
+msgid "The ID of the type."
+msgstr "この種類のID。"
+
+msgid ""
+"The name of the type. For example, :ref:`table-hash-key` is ``\"table:"
+"hash_key\"``, :doc:`/reference/columns/vector` is ``\"column:var_size\"`` "
+"and :doc:`/reference/columns/index` is ``\"column:index\"``."
+msgstr ""
+"この種類の名前。たとえば、 :ref:`table-hash-key` は ``\"table:hash_key"
+"\"`` 、 :doc:`/reference/columns/vector` は ``\"column:var_size\"`` 、 :doc:"
+"`/reference/columns/index` は ``\"column:index\"`` となります。"
+
+msgid ""
+"``FLAGS`` represents the flags of object. The most flags are the specified "
+"flags in :doc:`table_create` or :doc:`column_create`. Some flags are added "
+"internally."
+msgstr ""
+"``FLAGS`` はオブジェクトのフラグを表します。フラグの多くは :doc:"
+"`table_create` あるいは :doc:`column_create` で指定したフラグになるでしょう。"
+"いくつかのフラグは内部的に追加されたものです。"
+
+msgid "``FLAGS`` has the following properties::"
+msgstr "``FLAGS`` は以下のプロパティを持っています。::"
+
+msgid "The value of the flags. It's an integer."
+msgstr "フラグの値。数値。"
+
+msgid "``names``"
+msgstr ""
+
+msgid ""
+"The names of each flag. It's a string. Each name is separated by ``|`` such "
+"as ``TABLE_HASH_KEY|PERSISTENT``."
+msgstr ""
+"各フラグの名前一覧。文字列。各フラグ名は ``TABLE_HASH_KEY|PERSISTENT`` という"
+"ように ``|`` で区切られています。"
+
+msgid "``OBJECT`` (``\"type\"`` object type specific properties)"
+msgstr ""
+"``OBJECT`` （ ``\"type\"`` というオブジェクトの種類に固有のプロパティ）"
+
+msgid "Here are ``\"type\"`` object type specific properties in ``OBJECT``::"
+msgstr ""
+"``\"type\"`` というオブジェクトの種類に固有の ``OBJECT`` 中のプロパティは次の"
+"通りです。::"
+
+msgid "``size``"
+msgstr ""
+
+msgid ""
+"The size of the type. If the type is fixed size type, the size is the size "
+"of each value. If the type is variable size type, the size is the maximum "
+"size of each value."
+msgstr ""
+"型のサイズ。型が固定サイズの型だった場合は各値のサイズになります。型が可変長"
+"サイズの型だった場合は各値の最大サイズになります。"
+
+msgid "``OBJECT`` (``\"proc\"`` object type specific properties)"
+msgstr ""
+"``OBJECT`` （ ``\"proc\"`` というオブジェクトの種類に固有のプロパティ）"
+
+msgid "Here is a list of object that is ``\"proc\"`` object type:"
+msgstr "以下は ``\"proc\"`` という種類のオブジェクト一覧です。"
+
+msgid ":doc:`/reference/command`"
+msgstr ""
+
+msgid ":doc:`/reference/function`"
+msgstr ""
+
+msgid ":doc:`/reference/tokenizers`"
+msgstr ""
+
+msgid ":doc:`/reference/token_filters`"
+msgstr ""
+
+msgid "Here are ``\"proc\"`` object type specific properties in ``OBJECT``::"
+msgstr ""
+"``\"proc\"`` というオブジェクトの種類に固有の ``OBJECT`` 中のプロパティは次の"
+"通りです。::"
+
+msgid "``plugin_id``"
+msgstr ""
+
+msgid ""
+"The plugin ID of the ``\"proc\"`` object. If the ``\"proc\"`` object is "
+"defined by plugin, the value is ``1`` or more larger integer. Plugin ID is "
+"``0`` for builtin ``\"proc\"`` object."
+msgstr ""
+"``\"proc\"`` オブジェクトのプラグインID。この ``\"proc\"`` オブジェクトがプラ"
+"グインで定義されている場合は値は ``1`` 以上の数値になります。組み込みの ``"
+"\"proc\"`` オブジェクトのプラグインIDは ``0`` になります。"
+
+msgid "``OBJECT`` (``\"table:*\"`` object types specific properties)"
+msgstr ""
+"``OBJECT`` （ ``\"table:*\"`` というオブジェクトの種類に固有のプロパティ）"
+
+msgid ""
+"Here are ``\"table:*\"`` object types specific properties in ``OBJECT``::"
+msgstr ""
+"``\"table:*\"`` というオブジェクトの種類に固有の ``OBJECT`` 中のプロパティは"
+"次の通りです。::"
+
+msgid "``range``"
+msgstr ""
+
+msgid ""
+"The type of the table's value. See :ref:`object-list-return-value-range` for "
+"details."
+msgstr ""
+"このテーブルの値の型。詳細は :ref:`object-list-return-value-range` を参照して"
+"ください。"
+
+msgid "``token_filters``"
+msgstr ""
+
+msgid ""
+"The token filters of the table. See :ref:`object-list-return-value-token-"
+"filters` for details."
+msgstr ""
+"このテーブルのトークンフィルター一覧。詳細は :ref:`object-list-return-value-"
+"token-filters` を参照してください。"
+
+msgid "``RANGE`` represents the type of the range."
+msgstr "``RANGE`` はこの値域の型を表します。"
+
+msgid "``RANGE`` has the following properties::"
+msgstr "``RANGE`` は次のプロパティを持ちます。::"
+
+msgid ""
+"The ID of the type of the range. It's an integer. If the object doesn't have "
+"range, ID is ``0``."
+msgstr ""
+"この値域の型のID。数値。オブジェクトが値域を持たない場合、IDは ``0`` になりま"
+"す。"
+
+msgid ""
+"The name of the type of the range. It's a string or ``null``. If the object "
+"doesn't have range, name is ``null``."
+msgstr ""
+"この値域の型の名前。文字列または ``null`` 。このオブジェクトが値域を持たない"
+"場合は、名前は ``null`` になります。"
+
+msgid "``TOKEN_FILTERS``"
+msgstr ""
+
+msgid "``TOKEN_FILTERS`` represents the token filters of the table."
+msgstr "``TOKEN_FILTERS`` はこのテーブルのトークンフィルターの一覧を表します。"
+
+msgid "``TOKEN_FILTERS`` is an array of ``TOKEN_FILTER``::"
+msgstr "``TOKEN_FILTERS`` は ``TOKEN_FILTER`` の配列になります。::"
+
+msgid "``TOKEN_FILTER`` has the following properties::"
+msgstr "``TOKEN_FILTER`` は次のプロパティを持ちます。::"
+
+msgid "The ID of the token filter. It's an integer."
+msgstr "このトークンフィルターのID。数値。"
+
+msgid "The name of the token filter. It's a string."
+msgstr "このトークンフィルターの名前。文字列。"
+
+msgid "``OBJECT`` (``\"column:*\"`` object types specific properties)"
+msgstr ""
+"``OBJECT`` （ ``\"column:*\"`` というオブジェクトの種類に固有のプロパティ）"
+
+msgid ""
+"Here are ``\"column:*\"`` object types specific properties in ``OBJECT``::"
+msgstr ""
+"``\"column:*\"`` というオブジェクトの種類に固有の ``OBJECT`` 中のプロパティは"
+"次の通りです。::"
+
+msgid ""
+"The type of the column's value. See :ref:`object-list-return-value-range` "
+"for details."
+msgstr ""
+"このカラムの値の型。詳細は :ref:`object-list-return-value-range` を参照してく"
+"ださい。"
+
+msgid "``OBJECT`` (``\"column:index\"`` object type specific properties)"
+msgstr ""
+"``OBJECT`` （ ``\"column:index\"`` というオブジェクトの種類に固有のプロパ"
+"ティ）"
+
+msgid ""
+"Here are ``\"column:index\"`` object type specific properties in ``OBJECT``::"
+msgstr ""
+"``\"column:index\"`` というオブジェクトの種類に固有の ``OBJECT`` 中のプロパ"
+"ティは次の通りです。::"
+
+msgid "``sources``"
+msgstr ""
+
+msgid ""
+"The sources of the index column. See :ref:`object-list-return-value-sources` "
+"for details."
+msgstr ""
+"このインデックスカラムのソース一覧。詳細は :ref:`object-list-return-value-"
+"sources` を参照してください。"
+
+msgid "``SOURCES`` represents the sources of the index column."
+msgstr "``SOURCES`` はこのインデックスカラムのソースの一覧を表します。"
+
+msgid "``SOURCES`` is an array of ``SOURCE``::"
+msgstr "``SOURCES`` は ``SOURCE`` の配列です。::"
+
+msgid "``SOURCE`` has the following properties::"
+msgstr "``SOURCE`` は次のプロパティを持ちます。::"
+
+msgid "The ID of the source table or column. It's an integer."
+msgstr "このソーステーブルまたはソースカラムのID。数値。"
+
+msgid "The name of the source table or column. It's a string."
+msgstr "このソーステーブルまたはソースカラムの名前。文字列。"
+
+msgid ":doc:`schema`"
+msgstr ""
+
 msgid "``object_remove``"
 msgstr ""
 
@@ -8616,9 +8936,6 @@ msgstr ""
 "``ruby_load`` コマンドは実験的なプラグインです。このコマンドは将来的に変更さ"
 "れるかもしれません。"
 
-msgid "``path``"
-msgstr ""
-
 msgid "Specifies the Ruby script path which you want to load."
 msgstr "読み込みたいrubyスクリプトを指定します。"
 
@@ -8657,9 +8974,6 @@ msgid ""
 msgstr ""
 "このコマンドはデータベースの詳細を知りたいときに便利です。たとえば、データ"
 "ベースを視覚化したり、データベースのGUIを作ったりするときに便利です。"
-
-msgid "Here is an example schema to show example output:"
-msgstr "以下は出力例を示すためのサンプルスキーマです。"
 
 msgid "Here is an output of ``schema`` command against this example schema:"
 msgstr "このサンプルスキーマに対する ``schema`` コマンドの出力は次の通りです。"
@@ -8710,9 +9024,6 @@ msgstr "以下は ``TYPE`` のプロパティです。"
 
 msgid "The type name."
 msgstr "型名。"
-
-msgid "``size``"
-msgstr ""
 
 msgid "The number of bytes of one value."
 msgstr "1つの値のバイト数です。"
@@ -8776,9 +9087,6 @@ msgstr "以下は ``NORMALIZER`` のプロパティです。"
 
 msgid "The normalizer name. It's used for :ref:`table-create-normalizer`."
 msgstr "ノーマライザー名。 :ref:`table-create-normalizer` で使います。"
-
-msgid "``TOKEN_FILTERS``"
-msgstr ""
 
 msgid ""
 "``TOKEN_FILTERS`` is an object. Its key is token filter name and its value "
@@ -8918,9 +9226,6 @@ msgstr ""
 
 msgid "``name``: The normalizer name."
 msgstr "``name`` ：ノーマライザー名。"
-
-msgid "``token_filters``"
-msgstr ""
 
 msgid ""
 "The token filters of the table. It's specified by :ref:`table-create-token-"
@@ -9135,9 +9440,6 @@ msgid ""
 msgstr ""
 "``WITH_POSITION`` フラグ付きでカラムを作ったときは ``true`` 、そうでないとき"
 "は ``false`` になります。"
-
-msgid "``sources``"
-msgstr ""
 
 msgid "The source columns of the index column."
 msgstr "インデックスカラムのソースカラム。"
@@ -12300,9 +12602,6 @@ msgstr ""
 msgid ":doc:`/reference/tables`"
 msgstr ""
 
-msgid ":doc:`/reference/tokenizers`"
-msgstr ""
-
 msgid "``table_list``"
 msgstr ""
 
@@ -12345,9 +12644,6 @@ msgid "``domain``"
 msgstr ""
 
 msgid "主キー値の属する型"
-msgstr ""
-
-msgid "``range``"
 msgstr ""
 
 msgid "valueが属する型"
@@ -16973,13 +17269,15 @@ msgstr "正規化の方法をカスタマイズできるようにする。"
 msgid "Support options by object literal."
 msgstr "オブジェクトリテラル形式でのオプション指定をサポートする。"
 
-msgid "``vector_slice``"
+msgid "``string_substring``"
 msgstr ""
 
 msgid ""
 "To enable this function, register ``functions/string`` plugin by following "
 "the command::"
-msgstr "この関数を有効にするには、以下のコマンドで ``functions/string`` プラグインを登録します::"
+msgstr ""
+"この関数を有効にするには、以下のコマンドで ``functions/string`` プラグインを"
+"登録します::"
 
 msgid "``sub_filter``"
 msgstr ""
@@ -17160,6 +17458,9 @@ msgstr ""
 
 msgid "``vector_size`` returns the value of target vector column size."
 msgstr "``vector_size`` は対象のベクターカラムのサイズを返します。"
+
+msgid "``vector_slice``"
+msgstr ""
 
 msgid ""
 "Grn_expr is an object that searches records with specified conditions and "

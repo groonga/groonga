@@ -234,10 +234,10 @@ Here are ``"proc"`` object type specific properties in ``OBJECT``::
        object is defined by plugin, the value is ``1`` or more larger
        integer. Plugin ID is ``0`` for builtin ``"proc"`` object.
 
-``OBJECT`` (``"table:\*"`` object types specific properties)
+``OBJECT`` (``"table:*"`` object types specific properties)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Here are ``"table:\*"`` object types specific properties in
+Here are ``"table:*"`` object types specific properties in
 ``OBJECT``::
 
   {
@@ -254,7 +254,7 @@ Here are ``"table:\*"`` object types specific properties in
      - The type of the table's value. See
        :ref:`object-list-return-value-range` for details.
    * - ``token_filters``
-     - The token filters of the table.See
+     - The token filters of the table. See
        :ref:`object-list-return-value-token-filters` for details.
 
 .. _object-list-return-value-range:
@@ -316,10 +316,10 @@ Here are ``"table:\*"`` object types specific properties in
    * - ``name``
      - The name of the token filter. It's a string.
 
-``OBJECT`` (``"column:\*"`` object types specific properties)
+``OBJECT`` (``"column:*"`` object types specific properties)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Here are ``"column:\*"`` object types specific properties in
+Here are ``"column:*"`` object types specific properties in
 ``OBJECT``::
 
   {
