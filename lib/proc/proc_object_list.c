@@ -126,7 +126,7 @@ command_object_list(grn_ctx *ctx,
 
     GRN_BULK_REWIND(&vector);
     if (grn_vector_decode(ctx, &vector, value, value_len) != GRN_SUCCESS) {
-      grn_ctx_output_map_open(ctx, "object", 3);
+      grn_ctx_output_map_open(ctx, "object", 4);
       {
         grn_ctx_output_cstr(ctx, "id");
         grn_ctx_output_int64(ctx, id);
@@ -134,6 +134,8 @@ command_object_list(grn_ctx *ctx,
         grn_ctx_output_str(ctx, name, name_size);
         grn_ctx_output_cstr(ctx, "opened");
         grn_ctx_output_bool(ctx, grn_ctx_is_opened(ctx, id));
+        grn_ctx_output_cstr(ctx, "value_size");
+        grn_ctx_output_uint64(ctx, value_len);
       }
       grn_ctx_output_map_close(ctx);
       goto next;
@@ -144,7 +146,7 @@ command_object_list(grn_ctx *ctx,
     {
       uint32_t element_size;
       grn_obj_spec *spec;
-      uint32_t n_properties = 7;
+      uint32_t n_properties = 8;
       grn_bool need_sources = GRN_FALSE;
       grn_bool need_token_filters = GRN_FALSE;
 
@@ -155,7 +157,7 @@ command_object_list(grn_ctx *ctx,
                                             NULL,
                                             NULL);
       if (element_size == 0) {
-        grn_ctx_output_map_open(ctx, "object", 3);
+        grn_ctx_output_map_open(ctx, "object", 4);
         {
           grn_ctx_output_cstr(ctx, "id");
           grn_ctx_output_int64(ctx, id);
@@ -163,6 +165,8 @@ command_object_list(grn_ctx *ctx,
           grn_ctx_output_str(ctx, name, name_size);
           grn_ctx_output_cstr(ctx, "opened");
           grn_ctx_output_bool(ctx, grn_ctx_is_opened(ctx, id));
+          grn_ctx_output_cstr(ctx, "n_elements");
+          grn_ctx_output_uint64(ctx, n_elements);
         }
         grn_ctx_output_map_close(ctx);
         goto next;
@@ -191,6 +195,9 @@ command_object_list(grn_ctx *ctx,
 
         grn_ctx_output_cstr(ctx, "opened");
         grn_ctx_output_bool(ctx, grn_ctx_is_opened(ctx, id));
+
+        grn_ctx_output_cstr(ctx, "n_elements");
+        grn_ctx_output_uint64(ctx, n_elements);
 
         grn_ctx_output_cstr(ctx, "type");
         grn_ctx_output_map_open(ctx, "type", 2);

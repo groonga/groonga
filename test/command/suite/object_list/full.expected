@@ -28,6 +28,7 @@ object_list
       "id": 2,
       "name": "Object",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -43,6 +44,7 @@ object_list
       "id": 3,
       "name": "Bool",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -58,6 +60,7 @@ object_list
       "id": 4,
       "name": "Int8",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -73,6 +76,7 @@ object_list
       "id": 5,
       "name": "UInt8",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -88,6 +92,7 @@ object_list
       "id": 6,
       "name": "Int16",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -103,6 +108,7 @@ object_list
       "id": 7,
       "name": "UInt16",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -118,6 +124,7 @@ object_list
       "id": 8,
       "name": "Int32",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -133,6 +140,7 @@ object_list
       "id": 9,
       "name": "UInt32",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -148,6 +156,7 @@ object_list
       "id": 10,
       "name": "Int64",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -163,6 +172,7 @@ object_list
       "id": 11,
       "name": "UInt64",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -178,6 +188,7 @@ object_list
       "id": 12,
       "name": "Float",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -193,6 +204,7 @@ object_list
       "id": 13,
       "name": "Time",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -208,6 +220,7 @@ object_list
       "id": 14,
       "name": "ShortText",
       "opened": true,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -223,6 +236,7 @@ object_list
       "id": 15,
       "name": "Text",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -238,6 +252,7 @@ object_list
       "id": 16,
       "name": "LongText",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -253,6 +268,7 @@ object_list
       "id": 17,
       "name": "TokyoGeoPoint",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -268,6 +284,7 @@ object_list
       "id": 18,
       "name": "WGS84GeoPoint",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 32,
         "name": "type"
@@ -283,6 +300,7 @@ object_list
       "id": 64,
       "name": "TokenMecab",
       "opened": true,
+      "n_elements": 4,
       "type": {
         "id": 33,
         "name": "proc"
@@ -298,6 +316,7 @@ object_list
       "id": 256,
       "name": "vector_size",
       "opened": true,
+      "n_elements": 4,
       "type": {
         "id": 33,
         "name": "proc"
@@ -313,6 +332,7 @@ object_list
       "id": 257,
       "name": "vector_slice",
       "opened": true,
+      "n_elements": 4,
       "type": {
         "id": 33,
         "name": "proc"
@@ -328,6 +348,7 @@ object_list
       "id": 258,
       "name": "Users",
       "opened": true,
+      "n_elements": 5,
       "type": {
         "id": 50,
         "name": "table:dat_key"
@@ -349,6 +370,7 @@ object_list
       "id": 259,
       "name": "Users.description",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 65,
         "name": "column:var_size"
@@ -367,6 +389,7 @@ object_list
       "id": 260,
       "name": "Users.tags",
       "opened": true,
+      "n_elements": 4,
       "type": {
         "id": 65,
         "name": "column:var_size"
@@ -385,6 +408,7 @@ object_list
       "id": 261,
       "name": "Terms",
       "opened": false,
+      "n_elements": 5,
       "type": {
         "id": 49,
         "name": "table:pat_key"
@@ -406,6 +430,7 @@ object_list
       "id": 262,
       "name": "Terms.users",
       "opened": false,
+      "n_elements": 4,
       "type": {
         "id": 72,
         "name": "column:index"
@@ -434,6 +459,7 @@ object_list
       "id": 263,
       "name": "Tags",
       "opened": true,
+      "n_elements": 5,
       "type": {
         "id": 48,
         "name": "table:hash_key"
@@ -455,6 +481,7 @@ object_list
       "id": 264,
       "name": "Tags.users",
       "opened": true,
+      "n_elements": 4,
       "type": {
         "id": 72,
         "name": "column:index"
