@@ -101,12 +101,14 @@ properties.
 Here are common properties::
 
   {
-    "id":     ID,
-    "name":   NAME,
-    "opened": OPENED,
-    "type":   OBJECT_TYPE,
-    "flags":  FLAGS,
-    "path":   PATH
+    "id":         ID,
+    "name":       NAME,
+    "opened":     OPENED,
+    "value_size": N_BYTES,
+    "n_elements": N_ELEMENTS,
+    "type":       OBJECT_TYPE,
+    "flags":      FLAGS,
+    "path":       PATH
   }
 
 .. list-table::
@@ -122,6 +124,16 @@ Here are common properties::
      - Whether the object is opened or not. It's ``true`` or
        ``false``.  If the object is opened, this value is
        ``true``. Otherwise, this value is ``false``.
+   * - ``value_size``
+     - The number of bytes of the metadata. It's an integer.
+
+       It's appeared only when the metadata are broken. If this
+       property is appeared, ``type``, ``n_elements``, ``flags`` and
+       ``path`` aren't appeared. Because they can't be retrieved from
+       broken metadata.
+   * - ``n_elements``
+     - The number of internal elements in the metadata. It's an
+       integer.
    * - ``type``
      - The type of the object. See
        :ref:`object-list-return-value-object-type` for details.
