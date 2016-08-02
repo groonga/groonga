@@ -4726,6 +4726,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   grn_id domain = GRN_ID_NIL;
   grn_bool is_persistent_table;
   char fullname[GRN_TABLE_MAX_KEY_SIZE];
+  unsigned int fullname_size;
   char buffer[PATH_MAX];
 
   GRN_API_ENTER;
@@ -4787,7 +4788,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     }
     fullname[table_name_len] = GRN_DB_DELIMITER;
     grn_memcpy(fullname + table_name_len + 1, name, name_size);
-    name_size += table_name_len + 1;
+    fullname_size = table_name_len + 1 + name_size;
   }
 
   range = DB_OBJ(type)->id;
@@ -4815,7 +4816,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   }
 
   if (is_persistent_table) {
-    id = grn_obj_register(ctx, db, fullname, name_size);
+    id = grn_obj_register(ctx, db, fullname, fullname_size);
     if (ERRP(ctx, GRN_ERROR)) { goto exit; }
 
     {
@@ -4831,19 +4832,19 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   } else {
     int added;
     id = grn_pat_add(ctx, ctx->impl->temporary_columns,
-                     fullname, name_size, NULL,
+                     fullname, fullname_size, NULL,
                      &added);
     if (!id) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[column][create][temporary] "
           "failed to register temporary column name: <%.*s>",
-          name_size, fullname);
+          fullname_size, fullname);
       goto exit;
     } else if (!added) {
       id = GRN_ID_NIL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[column][create][temporary] already used name was assigned: <%.*s>",
-          name_size, fullname);
+          fullname_size, fullname);
       goto exit;
     }
     id |= GRN_OBJ_TMP_OBJECT | GRN_OBJ_TMP_COLUMN;
