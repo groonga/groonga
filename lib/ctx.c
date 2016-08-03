@@ -1339,10 +1339,8 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
                       "<", "rc=%d", ctx->rc);
       }
     output :
-      if (!ERRP(ctx, GRN_CRIT)) {
-        if (!(flags & GRN_CTX_QUIET) && ctx->impl->output.func) {
-          ctx->impl->output.func(ctx, GRN_CTX_TAIL, ctx->impl->output.data.ptr);
-        }
+      if (!(flags & GRN_CTX_QUIET) && ctx->impl->output.func) {
+        ctx->impl->output.func(ctx, GRN_CTX_TAIL, ctx->impl->output.data.ptr);
       }
       if (expr) { grn_expr_clear_vars(ctx, expr); }
       grn_ctx_set_command_version(ctx, command_version);
