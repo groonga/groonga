@@ -195,9 +195,11 @@ segment_get(grn_ctx *ctx, grn_ii *ii)
     if (!pseg) {
       int i;
       uint32_t pmax = 0;
-      char *used = GRN_CALLOC(ii->seg->header->max_segment);
-      if (!used) { return ii->seg->header->max_segment; }
-      for (i = 0; i < GRN_II_MAX_LSEG; i++) {
+      char *used;
+      uint32_t max_segment = ii->seg->header->max_segment;
+      used = GRN_CALLOC(max_segment);
+      if (!used) { return max_segment; }
+      for (i = 0; i < GRN_II_MAX_LSEG && i < max_segment; i++) {
         if ((pseg = ii->header->ainfo[i]) != NOT_ASSIGNED) {
           if (pseg > pmax) { pmax = pseg; }
           used[pseg] = 1;
@@ -207,7 +209,7 @@ segment_get(grn_ctx *ctx, grn_ii *ii)
           used[pseg] = 1;
         }
       }
-      for (pseg = 0; pseg < ii->seg->header->max_segment && used[pseg]; pseg++) ;
+      for (pseg = 0; pseg < max_segment && used[pseg]; pseg++) ;
       GRN_FREE(used);
       ii->header->pnext = pmax + 1;
     } else
