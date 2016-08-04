@@ -27,8 +27,6 @@ Improvements
   index column for fixed size scalar column. It reduces memory usage
   but not tested widely yet.
 
-* [:doc:`/news/5.x`] Extracted Groonga 5.x news entries from :doc:`/news`.
-
 * [:doc:`/reference/functions/vector_slice`] Added ``vector_slice``
   function to extract specific elements in vector column. [GitHub#582]
   [Patch by Naoya Murakami]
