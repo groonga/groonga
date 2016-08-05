@@ -324,7 +324,7 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
     DEFINE_NAME(ii);
     MERR("[ii][buffer][segment][reserve] "
          "couldn't allocate two free segments: "
-         ": <%.*s>: "
+         "<%.*s>: "
          "found:<%u>, not-found:<%u>, max:<%u>",
          name_size, name,
          *lseg0, *lseg1, ii->seg->header->max_segment);
