@@ -909,7 +909,6 @@ grn_proc_create(grn_ctx *ctx, const char *name, int name_size, grn_proc_type typ
     res->funcs[PROC_INIT] = init;
     res->funcs[PROC_NEXT] = next;
     res->funcs[PROC_FIN] = fin;
-    res->selector = NULL;
     memset(&(res->callbacks), 0, sizeof(res->callbacks));
     GRN_TEXT_INIT(&res->name_buf, 0);
     res->vars = NULL;

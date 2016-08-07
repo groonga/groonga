@@ -246,7 +246,7 @@ grn_obj_is_selector_proc(grn_ctx *ctx, grn_obj *obj)
   }
 
   proc = (grn_proc *)obj;
-  return proc->selector != NULL;
+  return proc->callbacks.function.selector != NULL;
 }
 
 grn_bool

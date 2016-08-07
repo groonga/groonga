@@ -211,7 +211,7 @@ grn_proc_set_selector(grn_ctx *ctx, grn_obj *proc, grn_selector_func selector)
   if (!grn_obj_is_function_proc(ctx, proc)) {
     return GRN_INVALID_ARGUMENT;
   }
-  proc_->selector = selector;
+  proc_->callbacks.function.selector = selector;
   return GRN_SUCCESS;
 }
 
@@ -6627,8 +6627,13 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                        "[selector][%s]", proc_name);
           grn_table_select_index_report(ctx, tag, index);
         }
-        rc = proc->selector(ctx, table, index, si->nargs, si->args,
-                            res, si->logical_op);
+        rc = proc->callbacks.function.selector(ctx,
+                                               table,
+                                               index,
+                                               si->nargs,
+                                               si->args,
+                                               res,
+                                               si->logical_op);
         if (rc) {
           /* TODO: report error */
         } else {
@@ -6664,8 +6669,13 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                        "[selector][no-index][%s]", proc_name);
           grn_table_select_index_report(ctx, tag, table);
         }
-        rc = proc->selector(ctx, table, NULL, si->nargs, si->args,
-                            res, si->logical_op);
+        rc = proc->callbacks.function.selector(ctx,
+                                               table,
+                                               NULL,
+                                               si->nargs,
+                                               si->args,
+                                               res,
+                                               si->logical_op);
         if (rc) {
           if (rc == GRN_FUNCTION_NOT_IMPLEMENTED) {
             ERRCLR(ctx);

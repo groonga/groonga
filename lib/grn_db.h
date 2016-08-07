@@ -183,9 +183,10 @@ struct _grn_proc {
   grn_proc_type type;
   grn_proc_func *funcs[3];
 
-  grn_selector_func *selector;
-
   union {
+    struct {
+      grn_selector_func *selector;
+    } function;
     struct {
       grn_command_run_func *run;
     } command;
