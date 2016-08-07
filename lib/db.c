@@ -12670,6 +12670,7 @@ grn_column_find_index_data(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     case GRN_OP_NEAR2 :
     case GRN_OP_SIMILAR :
     case GRN_OP_REGEXP :
+    case GRN_OP_FUZZY :
       n = grn_column_find_index_data_column_match(ctx, obj, op,
                                                   index_data, n_index_data,
                                                   NULL, 0, NULL);
