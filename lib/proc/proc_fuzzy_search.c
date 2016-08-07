@@ -454,4 +454,5 @@ grn_proc_init_fuzzy_search(grn_ctx *ctx)
                                   GRN_PROC_FUNCTION,
                                   NULL, NULL, NULL, 0, NULL);
   grn_proc_set_selector(ctx, selector_proc, selector_fuzzy_search);
+  grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_FUZZY);
 }

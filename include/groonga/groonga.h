@@ -814,6 +814,11 @@ typedef grn_rc grn_selector_func(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 
 GRN_API grn_rc grn_proc_set_selector(grn_ctx *ctx, grn_obj *proc,
                                      grn_selector_func selector);
+GRN_API grn_rc grn_proc_set_selector_operator(grn_ctx *ctx,
+                                              grn_obj *proc,
+                                              grn_operator selector_op);
+GRN_API grn_operator grn_proc_get_selector_operator(grn_ctx *ctx,
+                                                    grn_obj *proc);
 
 /*-------------------------------------------------------------
  * grn_vector

@@ -186,6 +186,7 @@ struct _grn_proc {
   union {
     struct {
       grn_selector_func *selector;
+      grn_operator selector_op;
     } function;
     struct {
       grn_command_run_func *run;

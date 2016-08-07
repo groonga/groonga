@@ -38,9 +38,12 @@ module Groonga
     end
 
     def call_relational_resolve_indexes
-      # better index resolving framework for functions should be implemented
-      @args.each do |arg|
-        call_relational_resolve_index(arg)
+      procedure, *args = *@args
+      return unless procedure.selector?
+
+      selector_op = procedure.selector_operator
+      args.each do |arg|
+        call_relational_resolve_index(arg, selector_op)
       end
     end
 
@@ -285,26 +288,26 @@ module Groonga
       end
     end
 
-    def call_relational_resolve_index(object)
+    def call_relational_resolve_index(object, selector_op)
       case object
       when Accessor
-        call_relational_resolve_index_accessor(object)
+        call_relational_resolve_index_accessor(object, selector_op)
       when Bulk
         self.query = object
       when Indexable
-        call_relational_resolve_index_indexable(object)
+        call_relational_resolve_index_indexable(object, selector_op)
       end
     end
 
-    def call_relational_resolve_index_indexable(indexable)
-      index_info = indexable.find_index(op)
+    def call_relational_resolve_index_indexable(indexable, selector_op)
+      index_info = indexable.find_index(selector_op)
       return if index_info.nil?
       put_search_index(index_info.index, index_info.section_id, 1)
     end
 
-    def call_relational_resolve_index_accessor(accessor)
+    def call_relational_resolve_index_accessor(accessor, selector_op)
       self.flags |= ScanInfo::Flags::ACCESSOR
-      index_info = accessor.find_index(op)
+      index_info = accessor.find_index(selector_op)
       return if index_info.nil?
       put_search_index(index_info.index, index_info.section_id, 1)
     end

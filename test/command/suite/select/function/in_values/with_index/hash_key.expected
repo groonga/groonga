@@ -1,0 +1,48 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Tags TABLE_HASH_KEY ShortText --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Tags memos_tag COLUMN_INDEX Memos tag
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast", "tag": "Groonga"},
+{"_key": "Mroonga is fast", "tag": "Mroonga"},
+{"_key": "Rroonga is fast", "tag": "Rroonga"}
+]
+[[0,0.0,0.0],3]
+select Memos   --filter 'in_values(tag, "groonga", "mroonga")'   --output_columns _key,tag
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tag",
+          "ShortText"
+        ]
+      ],
+      [
+        "Groonga is fast",
+        "Groonga"
+      ],
+      [
+        "Mroonga is fast",
+        "Mroonga"
+      ]
+    ]
+  ]
+]

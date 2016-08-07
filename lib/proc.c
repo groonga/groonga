@@ -3441,11 +3441,15 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
     selector_proc = grn_proc_create(ctx, "geo_in_circle", -1, GRN_PROC_FUNCTION,
                                     func_geo_in_circle, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, grn_selector_geo_in_circle);
+    /* We may need GRN_OP_GEO_IN_CIRCLE. */
+    grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_MATCH);
 
     selector_proc = grn_proc_create(ctx, "geo_in_rectangle", -1,
                                     GRN_PROC_FUNCTION,
                                     func_geo_in_rectangle, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, grn_selector_geo_in_rectangle);
+    /* We may need GRN_OP_GEO_IN_RECTANGLE. */
+    grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_MATCH);
   }
 
   grn_proc_create(ctx, "geo_distance", -1, GRN_PROC_FUNCTION,
@@ -3467,6 +3471,7 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
     selector_proc = grn_proc_create(ctx, "all_records", -1, GRN_PROC_FUNCTION,
                                     func_all_records, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_all_records);
+    grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_NOP);
   }
 
   /* experimental */
@@ -3478,6 +3483,7 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
     selector_proc = grn_proc_create(ctx, "query", -1, GRN_PROC_FUNCTION,
                                     func_query, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_query);
+    grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_NOP);
   }
 
   {
@@ -3486,6 +3492,7 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
     selector_proc = grn_proc_create(ctx, "sub_filter", -1, GRN_PROC_FUNCTION,
                                     NULL, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_sub_filter);
+    grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_NOP);
   }
 
   grn_proc_create(ctx, "html_untag", -1, GRN_PROC_FUNCTION,
@@ -3497,6 +3504,7 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
     selector_proc = grn_proc_create(ctx, "between", -1, GRN_PROC_FUNCTION,
                                     func_between, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_between);
+    grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_LESS);
   }
 
   grn_proc_init_highlight_html(ctx);
@@ -3508,6 +3516,7 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
     selector_proc = grn_proc_create(ctx, "in_values", -1, GRN_PROC_FUNCTION,
                                     func_in_values, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_in_values);
+    grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_EQUAL);
   }
 
   DEF_VAR(vars[0], "table");
@@ -3556,6 +3565,7 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
                                     GRN_PROC_FUNCTION,
                                     NULL, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_prefix_rk_search);
+    grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_NOP);
   }
 
   grn_proc_init_config_get(ctx);

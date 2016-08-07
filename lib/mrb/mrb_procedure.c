@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014 Brazil
+  Copyright(C) 2014-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,8 @@
 #include <mruby/data.h>
 
 #include "mrb_procedure.h"
+
+#include "mrb_operator.h"
 
 static struct mrb_data_type mrb_grn_procedure_type = {
   "Groonga::Procedure",
@@ -68,6 +70,17 @@ mrb_grn_procedure_scorer_p(mrb_state *mrb, mrb_value self)
   return mrb_bool_value(grn_obj_is_scorer_proc(ctx, proc));
 }
 
+static mrb_value
+mrb_grn_procedure_get_selector_operator(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *proc = DATA_PTR(self);
+  grn_operator selector_op;
+
+  selector_op = grn_proc_get_selector_operator(ctx, proc);
+  return grn_mrb_value_from_operator(mrb, selector_op);
+}
+
 void
 grn_mrb_procedure_init(grn_ctx *ctx)
 {
@@ -88,5 +101,8 @@ grn_mrb_procedure_init(grn_ctx *ctx)
                     mrb_grn_procedure_selector_only_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "scorer?",
                     mrb_grn_procedure_scorer_p, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "selector_operator",
+                    mrb_grn_procedure_get_selector_operator, MRB_ARGS_NONE());
 }
 #endif

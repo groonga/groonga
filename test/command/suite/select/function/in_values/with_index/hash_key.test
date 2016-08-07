@@ -1,0 +1,16 @@
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tag COLUMN_SCALAR ShortText
+
+table_create Tags TABLE_HASH_KEY ShortText --normalizer NormalizerAuto
+column_create Tags memos_tag COLUMN_INDEX Memos tag
+
+load --table Memos
+[
+{"_key": "Groonga is fast", "tag": "Groonga"},
+{"_key": "Mroonga is fast", "tag": "Mroonga"},
+{"_key": "Rroonga is fast", "tag": "Rroonga"}
+]
+
+select Memos \
+  --filter 'in_values(tag, "groonga", "mroonga")' \
+  --output_columns _key,tag

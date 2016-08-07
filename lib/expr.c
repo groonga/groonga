@@ -215,6 +215,27 @@ grn_proc_set_selector(grn_ctx *ctx, grn_obj *proc, grn_selector_func selector)
   return GRN_SUCCESS;
 }
 
+grn_rc
+grn_proc_set_selector_operator(grn_ctx *ctx, grn_obj *proc, grn_operator op)
+{
+  grn_proc *proc_ = (grn_proc *)proc;
+  if (!grn_obj_is_function_proc(ctx, proc)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  proc_->callbacks.function.selector_op = op;
+  return GRN_SUCCESS;
+}
+
+grn_operator
+grn_proc_get_selector_operator(grn_ctx *ctx, grn_obj *proc)
+{
+  grn_proc *proc_ = (grn_proc *)proc;
+  if (!grn_obj_is_function_proc(ctx, proc)) {
+    return GRN_OP_NOP;
+  }
+  return proc_->callbacks.function.selector_op;
+}
+
 /* grn_expr */
 
 grn_obj *
@@ -4804,13 +4825,21 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
         si->end = c - e->codes;
         sis[i++] = si;
         /* better index resolving framework for functions should be implemented */
-        {
-          grn_obj **p = si->args, **pe = si->args + si->nargs;
+        if (grn_obj_is_selector_proc(ctx, si->args[0])) {
+          grn_obj *selector;
+          grn_obj **p;
+          grn_obj **pe;
+          grn_operator selector_op;
+
+          selector = si->args[0];
+          p = si->args + 1;
+          pe = si->args + si->nargs;
+          selector_op = grn_proc_get_selector_operator(ctx, selector);
           for (; p < pe; p++) {
             if (GRN_DB_OBJP(*p)) {
               grn_index_datum index_datum;
               unsigned int n_index_data;
-              n_index_data = grn_column_find_index_data(ctx, *p, c->op,
+              n_index_data = grn_column_find_index_data(ctx, *p, selector_op,
                                                         &index_datum, 1);
               if (n_index_data > 0) {
                 scan_info_put_index(ctx, si,
@@ -4821,7 +4850,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
               grn_index_datum index_datum;
               unsigned int n_index_data;
               si->flags |= SCAN_ACCESSOR;
-              n_index_data = grn_column_find_index_data(ctx, *p, c->op,
+              n_index_data = grn_column_find_index_data(ctx, *p, selector_op,
                                                         &index_datum, 1);
               if (n_index_data > 0) {
                 scan_info_put_index(ctx, si,
