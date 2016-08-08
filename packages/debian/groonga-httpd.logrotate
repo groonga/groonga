@@ -10,8 +10,7 @@
     postrotate
         . /etc/default/groonga-httpd
         if [ x"$ENABLE" = x"yes" ]; then
-            /usr/bin/curl --silent --output /dev/null \
-                "http://127.0.0.1:10041/d/log_reopen"
+            /usr/sbin/groonga-httpd -s reopen
         fi
     endscript
 }
