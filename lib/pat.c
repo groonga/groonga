@@ -1235,6 +1235,42 @@ grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_siz
   return r2;
 }
 
+static grn_id
+common_prefix_pat_node_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size)
+{
+  int c0 = -1, c;
+  const uint8_t *k;
+  uint32_t len = key_size * 16;
+  grn_id r;
+  pat_node *rn;
+  uint8_t keybuf[MAX_FIXED_KEY_SIZE];
+
+  KEY_ENCODE(pat, keybuf, key, key_size);
+  PAT_AT(pat, 0, rn);
+  r = rn->lr[1];
+  while (r) {
+    PAT_AT(pat, r, rn);
+    if (!rn) { return GRN_ID_NIL; }
+    c = PAT_CHK(rn);
+    if (c0 < c && c < len - 1) {
+      if (c & 1) {
+        r = (c + 1 < len) ? rn->lr[1] : rn->lr[0];
+      } else {
+        r = rn->lr[nth_bit((uint8_t *)key, c, len)];
+      }
+      c0 = c;
+      continue;
+    }
+    if (!(k = pat_node_get_key(ctx, pat, rn))) { break; }
+    if (PAT_LEN(rn) < key_size) { break; }
+    if (!memcmp(k, key, key_size)) {
+      return r;
+    }
+    break;
+  }
+  return GRN_ID_NIL;
+}
+
 typedef struct {
   grn_id id;
   uint16_t distance;
@@ -1492,17 +1528,12 @@ grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
   id = node->lr[1];
 
   if (prefix_match_size) {
-    grn_pat_cursor *cur;
-    if ((cur = grn_pat_cursor_open(ctx, pat, key, prefix_match_size,
-                                   NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
-      grn_id tid;
-      tid = grn_pat_cursor_next(ctx, cur);
-      grn_pat_cursor_close(ctx, cur);
-      if (tid) {
-        id = tid;
-      } else {
-        return GRN_END_OF_DATA;
-      }
+    grn_id tid;
+    tid = common_prefix_pat_node_get(ctx, pat, key, prefix_match_size);
+    if (tid != GRN_ID_NIL) {
+      id = tid;
+    } else {
+      return GRN_END_OF_DATA;
     }
   }
   for (lx = 0; s < e && (len = grn_charlen(ctx, s, e)); s += len) {
