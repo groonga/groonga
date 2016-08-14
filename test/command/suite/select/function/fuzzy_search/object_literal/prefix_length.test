@@ -8,9 +8,14 @@ load --table Users
 [
 {"name": "Tom"},
 {"name": "Tomy"},
-{"name": "Ken"}
+{"name": "Tomas"},
+{"name": "Pom"},
+{"name": "Pam"},
+{"name": "Tim"},
+{"name": "Tina"},
+{"name": "Tiga"}
 ]
 
-select Tags --filter 'fuzzy_search(_key, "To", {"max_distance": 5, "prefix_length": 1})' \
+select Tags --filter 'fuzzy_search(_key, "Tom", {"prefix_length": 1})' \
   --output_columns '_key, _score' \
   --match_escalation_threshold -1
