@@ -1,0 +1,43 @@
+table_create Names TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create NormalizedNames TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR Names
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice",   "name": "Alice"},
+{"_key": "bob",     "name": "Bob"},
+{"_key": "charlie", "name": "Charlie"}
+]
+[[0,0.0,0.0],3]
+column_create Users normalized_name COLUMN_SCALAR NormalizedNames
+[[0,0.0,0.0],true]
+column_copy Users name Users normalized_name
+[[0,0.0,0.0],true]
+dump --dump_schema no
+load --table Names
+[
+["_key"],
+["Alice"],
+["Bob"],
+["Charlie"]
+]
+
+load --table NormalizedNames
+[
+["_key"],
+["alice"],
+["bob"],
+["charlie"]
+]
+
+load --table Users
+[
+["_key","name","normalized_name"],
+["alice","Alice","alice"],
+["bob","Bob","bob"],
+["charlie","Charlie","charlie"]
+]

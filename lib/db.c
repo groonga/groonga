@@ -6218,6 +6218,59 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
 #define FLOAT2FLOAT(ctx, dest, value)\
   GRN_FLOAT_SET(ctx, dest, value);
 
+static grn_rc
+grn_obj_cast_record(grn_ctx *ctx,
+                    grn_obj *src,
+                    grn_obj *dest,
+                    grn_bool add_record_if_not_exist)
+{
+  grn_obj *src_table;
+  grn_obj *dest_table;
+  const char *key;
+  uint32_t key_size;
+  grn_id dest_id;
+
+  if (src->header.domain == dest->header.domain) {
+    GRN_RECORD_SET(ctx, dest, GRN_RECORD_VALUE(src));
+    return GRN_SUCCESS;
+  }
+
+  src_table = grn_ctx_at(ctx, src->header.domain);
+  if (!src_table) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (src_table->header.type == GRN_TABLE_NO_KEY) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  dest_table = grn_ctx_at(ctx, dest->header.domain);
+  if (!dest_table) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  switch (dest_table->header.type) {
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+    break;
+  default :
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  if (GRN_RECORD_VALUE(src) == GRN_ID_NIL) {
+    GRN_RECORD_SET(ctx, dest, GRN_RECORD_VALUE(src));
+    return GRN_SUCCESS;
+  }
+
+  key = _grn_table_key(ctx, src_table, GRN_RECORD_VALUE(src), &key_size);
+  if (add_record_if_not_exist) {
+    dest_id = grn_table_add(ctx, dest_table, key, key_size, NULL);
+  } else {
+    dest_id = grn_table_get(ctx, dest_table, key, key_size);
+  }
+  GRN_RECORD_SET(ctx, dest, dest_id);
+  return GRN_SUCCESS;
+}
+
 grn_rc
 grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
              grn_bool add_record_if_not_exist)
@@ -6482,11 +6535,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
       case GRN_TABLE_PAT_KEY :
       case GRN_TABLE_DAT_KEY :
       case GRN_TABLE_NO_KEY :
-        if (src->header.domain == dest->header.domain) {
-          GRN_RECORD_SET(ctx, dest, GRN_RECORD_VALUE(src));
-        } else {
-          rc = GRN_FUNCTION_NOT_IMPLEMENTED;
-        }
+        rc = grn_obj_cast_record(ctx, src, dest, add_record_if_not_exist);
         break;
       default :
         rc = GRN_FUNCTION_NOT_IMPLEMENTED;
