@@ -658,3 +658,253 @@ grn_proc_init_table_rename(grn_ctx *ctx)
                             2,
                             vars);
 }
+
+static grn_rc
+command_table_copy_resolve_target(grn_ctx *ctx,
+                                  const char *label,
+                                  grn_obj *name,
+                                  grn_obj **table)
+{
+  if (GRN_TEXT_LEN(name) == 0) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[table][copy] %s name isn't specified",
+                     label);
+    return ctx->rc;
+  }
+  *table = grn_ctx_get(ctx,
+                       GRN_TEXT_VALUE(name),
+                       GRN_TEXT_LEN(name));
+  if (!*table) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[table][copy] %s table isn't found: <%.*s>",
+                     label,
+                     (int)GRN_TEXT_LEN(name),
+                     GRN_TEXT_VALUE(name));
+    return ctx->rc;
+  }
+
+  return ctx->rc;
+}
+
+static void
+command_table_copy_same_key_type(grn_ctx *ctx,
+                                 grn_obj *from_table,
+                                 grn_obj *to_table,
+                                 grn_obj *from_name,
+                                 grn_obj *to_name)
+{
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, from_table, cursor, from_id,
+                             GRN_CURSOR_BY_KEY | GRN_CURSOR_ASCENDING) {
+    void   *key;
+    int     key_size;
+    grn_id  to_id;
+
+    key_size = grn_table_cursor_get_key(ctx, cursor, &key);
+    to_id    = grn_table_add(ctx, to_table, key, key_size, NULL);
+    if (to_id == GRN_ID_NIL) {
+      grn_obj key_buffer;
+      grn_obj inspected_key;
+      if (from_table->header.domain == GRN_DB_SHORT_TEXT) {
+        GRN_SHORT_TEXT_INIT(&key_buffer, 0);
+      } else {
+        GRN_VALUE_FIX_SIZE_INIT(&key_buffer, 0, from_table->header.domain);
+      }
+      grn_bulk_write(ctx, &key_buffer, key, key_size);
+      GRN_TEXT_INIT(&inspected_key, 0);
+      grn_inspect(ctx, &inspected_key, &key_buffer);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[table][copy] failed to copy key: <%.*s>: "
+                       "<%.*s> -> <%.*s>",
+                       (int)GRN_TEXT_LEN(&inspected_key),
+                       GRN_TEXT_VALUE(&inspected_key),
+                       (int)GRN_TEXT_LEN(from_name),
+                       GRN_TEXT_VALUE(from_name),
+                       (int)GRN_TEXT_LEN(to_name),
+                       GRN_TEXT_VALUE(to_name));
+      GRN_OBJ_FIN(ctx, &inspected_key);
+      GRN_OBJ_FIN(ctx, &key_buffer);
+      break;
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+}
+
+static void
+command_table_copy_different(grn_ctx *ctx,
+                              grn_obj *from_table,
+                              grn_obj *to_table,
+                              grn_obj *from_name,
+                              grn_obj *to_name)
+{
+  grn_obj from_key_buffer;
+  grn_obj to_key_buffer;
+
+  if (from_table->header.domain == GRN_DB_SHORT_TEXT) {
+    GRN_SHORT_TEXT_INIT(&from_key_buffer, 0);
+  } else {
+    GRN_VALUE_FIX_SIZE_INIT(&from_key_buffer, 0, from_table->header.domain);
+  }
+  if (to_table->header.domain == GRN_DB_SHORT_TEXT) {
+    GRN_SHORT_TEXT_INIT(&to_key_buffer, 0);
+  } else {
+    GRN_VALUE_FIX_SIZE_INIT(&to_key_buffer, 0, to_table->header.domain);
+  }
+
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, from_table, cursor, from_id,
+                             GRN_CURSOR_BY_KEY | GRN_CURSOR_ASCENDING) {
+    void *key;
+    int key_size;
+    grn_rc cast_rc;
+    grn_id to_id;
+
+    GRN_BULK_REWIND(&from_key_buffer);
+    GRN_BULK_REWIND(&to_key_buffer);
+
+    key_size = grn_table_cursor_get_key(ctx, cursor, &key);
+    grn_bulk_write(ctx, &from_key_buffer, key, key_size);
+    cast_rc = grn_obj_cast(ctx, &from_key_buffer, &to_key_buffer, GRN_FALSE);
+    if (cast_rc != GRN_SUCCESS) {
+      grn_obj *to_key_type;
+      grn_obj inspected_key;
+      grn_obj inspected_to_key_type;
+
+      to_key_type = grn_ctx_at(ctx, to_table->header.domain);
+      GRN_TEXT_INIT(&inspected_key, 0);
+      GRN_TEXT_INIT(&inspected_to_key_type, 0);
+      grn_inspect(ctx, &inspected_key, &from_key_buffer);
+      grn_inspect(ctx, &inspected_to_key_type, to_key_type);
+      ERR(cast_rc,
+          "[table][copy] failed to cast key: <%.*s> -> %.*s: "
+          "<%.*s> -> <%.*s>",
+          (int)GRN_TEXT_LEN(&inspected_key),
+          GRN_TEXT_VALUE(&inspected_key),
+          (int)GRN_TEXT_LEN(&inspected_to_key_type),
+          GRN_TEXT_VALUE(&inspected_to_key_type),
+          (int)GRN_TEXT_LEN(from_name),
+          GRN_TEXT_VALUE(from_name),
+          (int)GRN_TEXT_LEN(to_name),
+          GRN_TEXT_VALUE(to_name));
+      GRN_OBJ_FIN(ctx, &inspected_key);
+      GRN_OBJ_FIN(ctx, &inspected_to_key_type);
+      break;
+    }
+
+    to_id = grn_table_add(ctx, to_table,
+                          GRN_BULK_HEAD(&to_key_buffer),
+                          GRN_BULK_VSIZE(&to_key_buffer),
+                          NULL);
+    if (to_id == GRN_ID_NIL) {
+      grn_obj inspected_from_key;
+      grn_obj inspected_to_key;
+      GRN_TEXT_INIT(&inspected_from_key, 0);
+      GRN_TEXT_INIT(&inspected_to_key, 0);
+      grn_inspect(ctx, &inspected_from_key, &from_key_buffer);
+      grn_inspect(ctx, &inspected_to_key, &to_key_buffer);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[table][copy] failed to copy key: <%.*s> -> <%.*s>: "
+                       "<%.*s> -> <%.*s>",
+                       (int)GRN_TEXT_LEN(&inspected_from_key),
+                       GRN_TEXT_VALUE(&inspected_from_key),
+                       (int)GRN_TEXT_LEN(&inspected_to_key),
+                       GRN_TEXT_VALUE(&inspected_to_key),
+                       (int)GRN_TEXT_LEN(from_name),
+                       GRN_TEXT_VALUE(from_name),
+                       (int)GRN_TEXT_LEN(to_name),
+                       GRN_TEXT_VALUE(to_name));
+      GRN_OBJ_FIN(ctx, &inspected_from_key);
+      GRN_OBJ_FIN(ctx, &inspected_to_key);
+      break;
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  GRN_OBJ_FIN(ctx, &from_key_buffer);
+  GRN_OBJ_FIN(ctx, &to_key_buffer);
+}
+
+static grn_obj *
+command_table_copy(grn_ctx *ctx,
+                   int nargs,
+                   grn_obj **args,
+                   grn_user_data *user_data)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_obj *from_table = NULL;
+  grn_obj *to_table = NULL;
+  grn_obj *from_name;
+  grn_obj *to_name;
+
+  from_name = grn_plugin_proc_get_var(ctx, user_data, "from_name", -1);
+  to_name   = grn_plugin_proc_get_var(ctx, user_data, "to_name", -1);
+
+  rc = command_table_copy_resolve_target(ctx, "from", from_name, &from_table);
+  if (rc != GRN_SUCCESS) {
+    goto exit;
+  }
+  rc = command_table_copy_resolve_target(ctx, "to", to_name, &to_table);
+  if (rc != GRN_SUCCESS) {
+    goto exit;
+  }
+
+  if (from_table->header.type == GRN_TABLE_NO_KEY ||
+      to_table->header.type == GRN_TABLE_NO_KEY) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_OPERATION_NOT_SUPPORTED,
+                     "[table][copy] copy from/to TABLE_NO_KEY isn't supported: "
+                     "<%.*s> -> <%.*s>",
+                     (int)GRN_TEXT_LEN(from_name),
+                     GRN_TEXT_VALUE(from_name),
+                     (int)GRN_TEXT_LEN(to_name),
+                     GRN_TEXT_VALUE(to_name));
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  if (from_table == to_table) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_OPERATION_NOT_SUPPORTED,
+                     "[table][copy] from table and to table is the same: "
+                     "<%.*s>",
+                     (int)GRN_TEXT_LEN(from_name),
+                     GRN_TEXT_VALUE(from_name));
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  if (from_table->header.domain == to_table->header.domain) {
+    command_table_copy_same_key_type(ctx,
+                                     from_table, to_table,
+                                     from_name, to_name);
+  } else {
+    command_table_copy_different(ctx,
+                                 from_table, to_table,
+                                 from_name, to_name);
+  }
+
+exit :
+  grn_ctx_output_bool(ctx, rc == GRN_SUCCESS);
+
+  if (to_table) {
+    grn_obj_unlink(ctx, to_table);
+  }
+  if (from_table) {
+    grn_obj_unlink(ctx, from_table);
+  }
+
+  return NULL;
+}
+
+void
+grn_proc_init_table_copy(grn_ctx *ctx)
+{
+  grn_expr_var vars[2];
+
+  grn_plugin_expr_var_init(ctx, &(vars[0]), "from_name", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[1]), "to_name", -1);
+  grn_plugin_command_create(ctx,
+                            "table_copy", -1,
+                            command_table_copy,
+                            2,
+                            vars);
+}

@@ -1,0 +1,29 @@
+table_create SmallNumbers TABLE_HASH_KEY UInt8
+[[0,0.0,0.0],true]
+load --table SmallNumbers
+[
+{"_key": 10},
+{"_key": 20},
+{"_key": 30}
+]
+[[0,0.0,0.0],3]
+table_create LargeNumbers TABLE_HASH_KEY UInt64
+[[0,0.0,0.0],true]
+table_copy SmallNumbers LargeNumbers
+[[0,0.0,0.0],true]
+dump --dump_schema no
+load --table SmallNumbers
+[
+["_key"],
+[10],
+[20],
+[30]
+]
+
+load --table LargeNumbers
+[
+["_key"],
+[10],
+[20],
+[30]
+]

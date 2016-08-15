@@ -1,0 +1,24 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{},
+{},
+{}
+]
+[[0,0.0,0.0],3]
+table_create ApplicationLogs TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_copy Logs ApplicationLogs
+[
+  [
+    [
+      -58,
+      0.0,
+      0.0
+    ],
+    "[table][copy] copy from/to TABLE_NO_KEY isn't supported: <Logs> -> <ApplicationLogs>"
+  ],
+  false
+]
+#|e| [table][copy] copy from/to TABLE_NO_KEY isn't supported: <Logs> -> <ApplicationLogs>

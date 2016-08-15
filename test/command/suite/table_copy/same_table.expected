@@ -1,0 +1,22 @@
+table_create Logs TABLE_DAT_KEY UInt64
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{"_key": 0},
+{"_key": 1},
+{"_key": 2}
+]
+[[0,0.0,0.0],3]
+table_copy Logs Logs
+[
+  [
+    [
+      -58,
+      0.0,
+      0.0
+    ],
+    "[table][copy] from table and to table is the same: <Logs>"
+  ],
+  false
+]
+#|e| [table][copy] from table and to table is the same: <Logs>

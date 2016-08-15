@@ -1,0 +1,12 @@
+table_create Logs TABLE_NO_KEY
+
+load --table Logs
+[
+{},
+{},
+{}
+]
+
+table_create ApplicationLogs TABLE_HASH_KEY ShortText
+
+table_copy Logs ApplicationLogs

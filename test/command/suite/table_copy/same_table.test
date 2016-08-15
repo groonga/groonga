@@ -1,0 +1,10 @@
+table_create Logs TABLE_DAT_KEY UInt64
+
+load --table Logs
+[
+{"_key": 0},
+{"_key": 1},
+{"_key": 2}
+]
+
+table_copy Logs Logs

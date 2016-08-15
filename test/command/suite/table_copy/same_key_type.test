@@ -1,0 +1,14 @@
+table_create Users TABLE_HASH_KEY ShortText
+
+load --table Users
+[
+{"_key": "alice"},
+{"_key": "bob"},
+{"_key": "charlie"}
+]
+
+table_create Friends TABLE_PAT_KEY ShortText
+
+table_copy Users Friends
+
+dump --dump_schema no
