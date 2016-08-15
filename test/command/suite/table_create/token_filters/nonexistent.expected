@@ -1,0 +1,17 @@
+register token_filters/stop_word
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto   --token_filters "TokenFilterStopWord,TokenFilterNonexistent,TokenFilterStopWord"
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[table][create][token-filter] nonexistent token filter: <TokenFilterNonexistent>"
+  ],
+  false
+]
+#|e| [table][create][token-filter] nonexistent token filter: <TokenFilterNonexistent>
+dump
+plugin_register token_filters/stop_word
