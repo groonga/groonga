@@ -1321,7 +1321,7 @@ jQuery.extend(GroongaAdmin.prototype, {
   errorloading: function(ajax, hide_dialog) {
     var that = this;
     var json = null;
-    if (ajax) {
+    if (ajax && ajax.responseText) {
       json = JSON.parse(ajax.responseText);
     }
     this.hideloading();
