@@ -983,15 +983,18 @@ jQuery.extend(GroongaAdmin.prototype, {
     var that = this;
     var d_sel = null;
     var d_col = null;
+    var select_data = {
+      'table' : table_name,
+      'limit' : 1
+    };
+    if (id) {
+      data.query = '_id:' + id;
+    }
     $('#table-createrecord').empty();
     this.showloading(
       $.ajax({
         url: '/d/select',
-        data: {
-          'table' : table_name,
-          'limit' : 1,
-          'query' : '_id:' + id
-        },
+        data: select_data,
         dataType: 'json',
         success: function(d) {
           if (that.validateajax(d) < 0) { return; }
