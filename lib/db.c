@@ -7236,10 +7236,12 @@ grn_obj_set_value_column_var_size_vector_uvector(grn_ctx *ctx, grn_obj *column,
                                                  grn_id id, grn_obj *value,
                                                  int flags)
 {
-  grn_rc rc = GRN_INVALID_ARGUMENT;
+  grn_rc rc = GRN_SUCCESS;
   grn_obj uvector;
   grn_obj_flags uvector_flags = 0;
   grn_bool need_convert = GRN_FALSE;
+  grn_bool need_cast = GRN_FALSE;
+  grn_id column_range_id;
   void *raw_value;
   unsigned int size;
 
@@ -7253,17 +7255,67 @@ grn_obj_set_value_column_var_size_vector_uvector(grn_ctx *ctx, grn_obj *column,
       uvector_flags = GRN_OBJ_WITH_WEIGHT;
     }
   }
+  column_range_id = DB_OBJ(column)->range;
+  if (column_range_id != value->header.domain) {
+    need_convert = GRN_TRUE;
+    need_cast = GRN_TRUE;
+  }
 
   if (need_convert) {
     unsigned int i, n;
-    GRN_VALUE_FIX_SIZE_INIT(&uvector, GRN_OBJ_VECTOR, value->header.domain);
+
+    GRN_VALUE_FIX_SIZE_INIT(&uvector, GRN_OBJ_VECTOR, column_range_id);
     uvector.header.flags |= uvector_flags;
     n = grn_uvector_size(ctx, value);
-    for (i = 0; i < n; i++) {
-      grn_id id;
-      unsigned int weight = 0;
-      id = grn_uvector_get_element(ctx, value, i, NULL);
-      grn_uvector_add_element(ctx, &uvector, id, weight);
+    if (need_cast) {
+      grn_obj value_record;
+      grn_obj casted_record;
+
+      GRN_VALUE_FIX_SIZE_INIT(&value_record, 0, value->header.domain);
+      GRN_VALUE_FIX_SIZE_INIT(&casted_record, 0, column_range_id);
+      for (i = 0; i < n; i++) {
+        grn_id id;
+        grn_id casted_id;
+        unsigned int weight = 0;
+
+        GRN_BULK_REWIND(&value_record);
+        GRN_BULK_REWIND(&casted_record);
+
+        id = grn_uvector_get_element(ctx, value, i, NULL);
+        GRN_RECORD_SET(ctx, &value_record, id);
+        rc = grn_obj_cast(ctx, &value_record, &casted_record, GRN_TRUE);
+        if (rc != GRN_SUCCESS) {
+          char column_name[GRN_TABLE_MAX_KEY_SIZE];
+          int column_name_size;
+          grn_obj inspected;
+          column_name_size = grn_obj_name(ctx,
+                                          column,
+                                          column_name,
+                                          GRN_TABLE_MAX_KEY_SIZE);
+          GRN_TEXT_INIT(&inspected, 0);
+          grn_inspect(ctx, &value_record, &inspected);
+          ERR(rc,
+              "[column][set-value] failed to cast: <%.*s>: <%.*s>",
+              column_name_size,
+              column_name,
+              (int)GRN_TEXT_LEN(&inspected),
+              GRN_TEXT_VALUE(&inspected));
+          GRN_OBJ_FIN(ctx, &inspected);
+          break;
+        }
+        casted_id = GRN_RECORD_VALUE(&casted_record);
+        grn_uvector_add_element(ctx, &uvector, casted_id, weight);
+      }
+
+      GRN_OBJ_FIN(ctx, &value_record);
+      GRN_OBJ_FIN(ctx, &casted_record);
+    } else {
+      for (i = 0; i < n; i++) {
+        grn_id id;
+        unsigned int weight = 0;
+        id = grn_uvector_get_element(ctx, value, i, NULL);
+        grn_uvector_add_element(ctx, &uvector, id, weight);
+      }
     }
     raw_value = GRN_BULK_HEAD(&uvector);
     size = GRN_BULK_VSIZE(&uvector);
@@ -7272,7 +7324,9 @@ grn_obj_set_value_column_var_size_vector_uvector(grn_ctx *ctx, grn_obj *column,
     size = GRN_BULK_VSIZE(value);
   }
 
-  rc = grn_ja_put(ctx, (grn_ja *)column, id, raw_value, size, flags, NULL);
+  if (rc == GRN_SUCCESS) {
+    rc = grn_ja_put(ctx, (grn_ja *)column, id, raw_value, size, flags, NULL);
+  }
 
   if (need_convert) {
     GRN_OBJ_FIN(ctx, &uvector);

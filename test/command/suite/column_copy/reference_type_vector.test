@@ -1,0 +1,17 @@
+table_create Names TABLE_PAT_KEY ShortText
+table_create NormalizedNames TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users names COLUMN_VECTOR Names
+
+load --table Users
+[
+{"_key": "alice",   "names": ["Alice"]},
+{"_key": "bob",     "names": ["Bob", "Bobby"]},
+{"_key": "charlie", "names": ["Charlie"]}
+]
+
+column_create Users normalized_names COLUMN_VECTOR NormalizedNames
+column_copy Users names Users normalized_names
+
+dump --dump_schema no
