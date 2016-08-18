@@ -988,7 +988,7 @@ jQuery.extend(GroongaAdmin.prototype, {
       'limit' : 1
     };
     if (id) {
-      data.query = '_id:' + id;
+      select_data.query = '_id:' + id;
     }
     $('#table-createrecord').empty();
     this.showloading(
