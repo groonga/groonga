@@ -6,7 +6,7 @@ table_create Terms TABLE_PAT_KEY ShortText \
   --default_tokenizer TokenBigram \
   --normalizer NormalizerAuto
 column_create Terms index \
-  COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION|INDEX_TINY \
+  COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION|INDEX_SMALL \
   Posts _key,title,content
 
 schema

@@ -360,7 +360,7 @@ typedef uint32_t grn_column_flags;
 
 /* flags only for grn_column_flags */
 
-#define GRN_OBJ_INDEX_TINY             (0x01<<16)
+#define GRN_OBJ_INDEX_SMALL            (0x01<<16)
 
 /* obj types */
 

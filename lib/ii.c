@@ -44,7 +44,7 @@
 #endif
 
 #define MAX_PSEG                 0x20000
-#define MAX_PSEG_TINY            0x00200
+#define MAX_PSEG_SMALL           0x00200
 #define S_CHUNK                  (1 << GRN_II_W_CHUNK)
 #define W_SEGMENT                18
 #define S_SEGMENT                (1 << W_SEGMENT)
@@ -92,8 +92,8 @@ static double grn_ii_select_too_many_index_match_ratio = -1;
 static double grn_ii_estimate_size_for_query_reduce_ratio = 0.9;
 static grn_bool grn_ii_overlap_token_skip_enable = GRN_FALSE;
 static uint32_t grn_ii_builder_block_threshold_force = 0;
-static uint32_t grn_ii_max_n_segments_tiny = MAX_PSEG_TINY;
-static uint32_t grn_ii_max_n_chunks_tiny = GRN_II_MAX_CHUNK_TINY;
+static uint32_t grn_ii_max_n_segments_small = MAX_PSEG_SMALL;
+static uint32_t grn_ii_max_n_chunks_small = GRN_II_MAX_CHUNK_SMALL;
 
 void
 grn_ii_init_from_env(void)
@@ -161,35 +161,35 @@ grn_ii_init_from_env(void)
   }
 
   {
-    char grn_ii_max_n_segments_tiny_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_II_MAX_N_SEGMENTS_TINY",
-               grn_ii_max_n_segments_tiny_env,
+    char grn_ii_max_n_segments_small_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_MAX_N_SEGMENTS_SMALL",
+               grn_ii_max_n_segments_small_env,
                GRN_ENV_BUFFER_SIZE);
-    if (grn_ii_max_n_segments_tiny_env[0]) {
-      grn_ii_max_n_segments_tiny =
-        grn_atoui(grn_ii_max_n_segments_tiny_env,
-                  grn_ii_max_n_segments_tiny_env +
-                  strlen(grn_ii_max_n_segments_tiny_env),
+    if (grn_ii_max_n_segments_small_env[0]) {
+      grn_ii_max_n_segments_small =
+        grn_atoui(grn_ii_max_n_segments_small_env,
+                  grn_ii_max_n_segments_small_env +
+                  strlen(grn_ii_max_n_segments_small_env),
                   NULL);
-      if (grn_ii_max_n_segments_tiny > MAX_PSEG) {
-        grn_ii_max_n_segments_tiny = MAX_PSEG;
+      if (grn_ii_max_n_segments_small > MAX_PSEG) {
+        grn_ii_max_n_segments_small = MAX_PSEG;
       }
     }
   }
 
   {
-    char grn_ii_max_n_chunks_tiny_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_II_MAX_N_CHUNKS_TINY",
-               grn_ii_max_n_chunks_tiny_env,
+    char grn_ii_max_n_chunks_small_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_MAX_N_CHUNKS_SMALL",
+               grn_ii_max_n_chunks_small_env,
                GRN_ENV_BUFFER_SIZE);
-    if (grn_ii_max_n_chunks_tiny_env[0]) {
-      grn_ii_max_n_chunks_tiny =
-        grn_atoui(grn_ii_max_n_chunks_tiny_env,
-                  grn_ii_max_n_chunks_tiny_env +
-                  strlen(grn_ii_max_n_chunks_tiny_env),
+    if (grn_ii_max_n_chunks_small_env[0]) {
+      grn_ii_max_n_chunks_small =
+        grn_atoui(grn_ii_max_n_chunks_small_env,
+                  grn_ii_max_n_chunks_small_env +
+                  strlen(grn_ii_max_n_chunks_small_env),
                   NULL);
-      if (grn_ii_max_n_chunks_tiny > GRN_II_MAX_CHUNK) {
-        grn_ii_max_n_chunks_tiny = GRN_II_MAX_CHUNK;
+      if (grn_ii_max_n_chunks_small > GRN_II_MAX_CHUNK) {
+        grn_ii_max_n_chunks_small = GRN_II_MAX_CHUNK;
       }
     }
   }
@@ -4087,9 +4087,9 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
   }
   if (path && strlen(path) + 6 >= PATH_MAX) { return NULL; }
 
-  if (flags & GRN_OBJ_INDEX_TINY) {
-    max_n_segments = grn_ii_max_n_segments_tiny;
-    max_n_chunks = grn_ii_max_n_chunks_tiny;
+  if (flags & GRN_OBJ_INDEX_SMALL) {
+    max_n_segments = grn_ii_max_n_segments_small;
+    max_n_chunks = grn_ii_max_n_chunks_small;
   } else {
     max_n_segments = MAX_PSEG;
     max_n_chunks = GRN_II_MAX_CHUNK;
