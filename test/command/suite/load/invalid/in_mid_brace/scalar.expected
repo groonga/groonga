@@ -14,7 +14,17 @@ load --table Users
 [
 {"_key": "alice", "name": "Alice", "birthday": "2012-02-29 GARBAGE", "tags": "girl wonder"}
 ]
-[[0,0.0,0.0],1]
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "<Users.birthday>: failed to cast to <Time>: <\"2012-02-29 GARBAGE\">"
+  ],
+  1
+]
 #|e| <Users.birthday>: failed to cast to <Time>: <"2012-02-29 GARBAGE">
 #|e| [table][load] failed to set column value: <Users.birthday>: failed to cast to <Time>: <"2012-02-29 GARBAGE">: key: <"alice">, column: <birthday>, value: <"2012-02-29 GARBAGE">
 select Users

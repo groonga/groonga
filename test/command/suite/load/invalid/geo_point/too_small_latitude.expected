@@ -6,7 +6,17 @@ load --table LandMarks
 [
 {"location": "-324000001x1"}
 ]
-[[0,0.0,0.0],1]
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "<LandMarks.location>: failed to cast to <WGS84GeoPoint>: <\"-324000001x1\">"
+  ],
+  1
+]
 #|e| <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"-324000001x1">
 #|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"-324000001x1">: key: <(NULL)>, column: <location>, value: <"-324000001x1">
 select LandMarks

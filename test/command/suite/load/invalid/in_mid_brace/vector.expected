@@ -14,7 +14,7 @@ load --table Users
 [
 {"_key": "alice", "name": "Alice", "cards": [1, "GARBAGE", 3], "tags": ["girl", "wonder"]}
 ]
-[[0,0.0,0.0],1]
+[[[-22,0.0,0.0],"<Users.cards>: failed to cast to <UInt8>: <\"GARBAGE\">"],1]
 #|e| <Users.cards>: failed to cast to <UInt8>: <"GARBAGE">
 #|e| [table][load] failed to set column value: <Users.cards>: failed to cast to <UInt8>: <"GARBAGE">: key: <"alice">, column: <cards>, value: <[1, "GARBAGE", 3]>
 select Users

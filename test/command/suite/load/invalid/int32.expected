@@ -6,7 +6,17 @@ load --table Users
 [
 {"age": "invalid number!"}
 ]
-[[0,0.0,0.0],1]
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "<Users.age>: failed to cast to <Int32>: <\"invalid number!\">"
+  ],
+  1
+]
 #|e| <Users.age>: failed to cast to <Int32>: <"invalid number!">
 #|e| [table][load] failed to set column value: <Users.age>: failed to cast to <Int32>: <"invalid number!">: key: <(NULL)>, column: <age>, value: <"invalid number!">
 select Users

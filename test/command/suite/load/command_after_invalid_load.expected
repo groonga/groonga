@@ -6,7 +6,17 @@ load --table Shops
 [
 {"_key":"Tokyo","location":"x"}
 ]
-[[0,0.0,0.0],1]
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "<Shops.location>: failed to cast to <WGS84GeoPoint>: <\"x\">"
+  ],
+  1
+]
 #|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
 #|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"Tokyo">, column: <location>, value: <"x">
 table_list

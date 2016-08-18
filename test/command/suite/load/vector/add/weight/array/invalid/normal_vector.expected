@@ -14,6 +14,16 @@ load --table Memos
   }
 ]
 ]
-[[0,0.0,0.0],1]
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "<Memos.tags>: columns except weight vector column don't support object value"
+  ],
+  1
+]
 #|e| <Memos.tags>: columns except weight vector column don't support object value
 #|e| [table][load] failed to set column value: <Memos.tags>: columns except weight vector column don't support object value: key: <"Groonga is fast">, column: <Memos.tags>, value: <{"groonga": 100}>
