@@ -13722,6 +13722,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
     if (ctx->rc != GRN_SUCCESS) {
       char column_name[GRN_TABLE_MAX_KEY_SIZE];
       unsigned int column_name_size;
+      grn_loader_save_error(ctx, loader);
       column_name_size = grn_obj_name(ctx, col, column_name,
                                       GRN_TABLE_MAX_KEY_SIZE);
       report_set_column_value_failure(ctx, key_value,
@@ -13876,6 +13877,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
         grn_obj_set_value(ctx, col, id, value, GRN_OBJ_SET);
       }
       if (ctx->rc != GRN_SUCCESS) {
+        grn_loader_save_error(ctx, loader);
         report_set_column_value_failure(ctx, key_value,
                                         name, name_size, value);
         ERRCLR(ctx);
