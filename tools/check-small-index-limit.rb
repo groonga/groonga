@@ -8,8 +8,8 @@ def check_max_index(options)
   max_n_chunks = options[:max_n_chunks]
   n_patterns = options[:n_patterns] || 2
 
-  ENV["GRN_II_MAX_N_SEGMENTS_TINY"] = max_n_segments&.to_s
-  ENV["GRN_II_MAX_N_CHUNKS_TINY"] = max_n_chunks&.to_s
+  ENV["GRN_II_MAX_N_SEGMENTS_SMALL"] = max_n_segments&.to_s
+  ENV["GRN_II_MAX_N_CHUNKS_SMALL"] = max_n_chunks&.to_s
 
   db_dir = "/dev/shm/db"
   log_path = "#{db_dir}/log"
@@ -27,7 +27,7 @@ def check_max_index(options)
     groonga.gets
     groonga.puts("table_create a TABLE_PAT_KEY UInt32")
     groonga.gets
-    groonga.puts("column_create a b COLUMN_INDEX|INDEX_TINY x y")
+    groonga.puts("column_create a b COLUMN_INDEX|INDEX_SMALL x y")
     groonga.gets
 
     groonga.puts("load --table x")
@@ -64,7 +64,7 @@ def check_max_index(options)
       end
     end
     groonga.puts("]")
-    groonga.gets
+    puts(groonga.gets)
 
     groonga.puts("quit")
     groonga.gets

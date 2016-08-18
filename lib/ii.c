@@ -45,6 +45,13 @@
 
 #define MAX_PSEG                 0x20000
 #define MAX_PSEG_SMALL           0x00200
+/* MAX_PSEG_MEDIUM has enough space for the following source:
+ *   * Single source.
+ *   * Source is a fixed size column or _key of a table.
+ *   * Source column is a scalar column.
+ *   * Lexicon doesn't have tokenizer.
+ */
+#define MAX_PSEG_MEDIUM          0x10000
 #define S_CHUNK                  (1 << GRN_II_W_CHUNK)
 #define W_SEGMENT                18
 #define S_SEGMENT                (1 << W_SEGMENT)
@@ -4090,6 +4097,9 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
   if (flags & GRN_OBJ_INDEX_SMALL) {
     max_n_segments = grn_ii_max_n_segments_small;
     max_n_chunks = grn_ii_max_n_chunks_small;
+  } else if (flags & GRN_OBJ_INDEX_MEDIUM) {
+    max_n_segments = MAX_PSEG_MEDIUM;
+    max_n_chunks = GRN_II_MAX_CHUNK_MEDIUM;
   } else {
     max_n_segments = MAX_PSEG;
     max_n_chunks = GRN_II_MAX_CHUNK;

@@ -58,6 +58,7 @@ grn_proc_column_parse_flags(grn_ctx *ctx,
     CHECK_FLAG(WITH_POSITION);
     CHECK_FLAG(RING_BUFFER);
     CHECK_FLAG(INDEX_SMALL);
+    CHECK_FLAG(INDEX_MEDIUM);
 
 #undef CHECK_FLAG
 

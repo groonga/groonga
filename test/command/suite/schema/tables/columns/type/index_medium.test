@@ -1,0 +1,12 @@
+table_create Posts TABLE_HASH_KEY ShortText
+column_create Posts title COLUMN_SCALAR ShortText
+column_create Posts content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms index \
+  COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION|INDEX_MEDIUM \
+  Posts _key,title,content
+
+schema

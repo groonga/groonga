@@ -52,6 +52,13 @@ struct _grn_ii {
 #define GRN_II_N_CHUNK_VARIATION  (GRN_II_W_CHUNK - GRN_II_W_LEAST_CHUNK)
 
 #define GRN_II_MAX_CHUNK_SMALL    (1 << (GRN_II_W_TOTAL_CHUNK - GRN_II_W_CHUNK - 8))
+/* GRN_II_MAX_CHUNK_MEDIUM has enough space for the following source:
+ *   * Single source.
+ *   * Source is a fixed size column or _key of a table.
+ *   * Source column is a scalar column.
+ *   * Lexicon doesn't have tokenizer.
+ */
+#define GRN_II_MAX_CHUNK_MEDIUM   (1 << (GRN_II_W_TOTAL_CHUNK - GRN_II_W_CHUNK - 4))
 
 struct grn_ii_header {
   uint64_t total_chunk_size;

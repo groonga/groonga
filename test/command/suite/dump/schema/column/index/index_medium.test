@@ -1,0 +1,7 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Names TABLE_HASH_KEY ShortText
+column_create Names users COLUMN_INDEX|INDEX_MEDIUM Users name
+
+dump

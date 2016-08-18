@@ -86,6 +86,9 @@ grn_dump_column_create_flags(grn_ctx *ctx,
     if (flags & GRN_OBJ_INDEX_SMALL) {
       GRN_TEXT_PUTS(ctx, buffer, "|INDEX_SMALL");
     }
+    if (flags & GRN_OBJ_INDEX_MEDIUM) {
+      GRN_TEXT_PUTS(ctx, buffer, "|INDEX_MEDIUM");
+    }
     break;
   }
   switch (flags & GRN_OBJ_COMPRESS_MASK) {

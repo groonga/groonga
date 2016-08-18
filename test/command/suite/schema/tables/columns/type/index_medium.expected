@@ -1,0 +1,364 @@
+table_create Posts TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Posts title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Posts content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms index   COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION|INDEX_MEDIUM   Posts _key,title,content
+[[0,0.0,0.0],true]
+schema
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "plugins": {
+    },
+    "types": {
+      "Bool": {
+        "name": "Bool",
+        "size": 1,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "Float": {
+        "name": "Float",
+        "size": 8,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "Int16": {
+        "name": "Int16",
+        "size": 2,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "Int32": {
+        "name": "Int32",
+        "size": 4,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "Int64": {
+        "name": "Int64",
+        "size": 8,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "Int8": {
+        "name": "Int8",
+        "size": 1,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "LongText": {
+        "name": "LongText",
+        "size": 2147483648,
+        "can_be_key_type": false,
+        "can_be_value_type": false
+      },
+      "Object": {
+        "name": "Object",
+        "size": 8,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "ShortText": {
+        "name": "ShortText",
+        "size": 4096,
+        "can_be_key_type": true,
+        "can_be_value_type": false
+      },
+      "Text": {
+        "name": "Text",
+        "size": 65536,
+        "can_be_key_type": false,
+        "can_be_value_type": false
+      },
+      "Time": {
+        "name": "Time",
+        "size": 8,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "TokyoGeoPoint": {
+        "name": "TokyoGeoPoint",
+        "size": 8,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "UInt16": {
+        "name": "UInt16",
+        "size": 2,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "UInt32": {
+        "name": "UInt32",
+        "size": 4,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "UInt64": {
+        "name": "UInt64",
+        "size": 8,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "UInt8": {
+        "name": "UInt8",
+        "size": 1,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "WGS84GeoPoint": {
+        "name": "WGS84GeoPoint",
+        "size": 8,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      }
+    },
+    "tokenizers": {
+      "TokenBigram": {
+        "name": "TokenBigram"
+      },
+      "TokenBigramIgnoreBlank": {
+        "name": "TokenBigramIgnoreBlank"
+      },
+      "TokenBigramIgnoreBlankSplitSymbol": {
+        "name": "TokenBigramIgnoreBlankSplitSymbol"
+      },
+      "TokenBigramIgnoreBlankSplitSymbolAlpha": {
+        "name": "TokenBigramIgnoreBlankSplitSymbolAlpha"
+      },
+      "TokenBigramIgnoreBlankSplitSymbolAlphaDigit": {
+        "name": "TokenBigramIgnoreBlankSplitSymbolAlphaDigit"
+      },
+      "TokenBigramSplitSymbol": {
+        "name": "TokenBigramSplitSymbol"
+      },
+      "TokenBigramSplitSymbolAlpha": {
+        "name": "TokenBigramSplitSymbolAlpha"
+      },
+      "TokenBigramSplitSymbolAlphaDigit": {
+        "name": "TokenBigramSplitSymbolAlphaDigit"
+      },
+      "TokenDelimit": {
+        "name": "TokenDelimit"
+      },
+      "TokenDelimitNull": {
+        "name": "TokenDelimitNull"
+      },
+      "TokenMecab": {
+        "name": "TokenMecab"
+      },
+      "TokenRegexp": {
+        "name": "TokenRegexp"
+      },
+      "TokenTrigram": {
+        "name": "TokenTrigram"
+      },
+      "TokenUnigram": {
+        "name": "TokenUnigram"
+      }
+    },
+    "normalizers": {
+      "NormalizerAuto": {
+        "name": "NormalizerAuto"
+      },
+      "NormalizerNFKC51": {
+        "name": "NormalizerNFKC51"
+      }
+    },
+    "token_filters": {
+    },
+    "tables": {
+      "Posts": {
+        "name": "Posts",
+        "type": "hash table",
+        "key_type": {
+          "name": "ShortText",
+          "type": "type"
+        },
+        "value_type": null,
+        "tokenizer": null,
+        "normalizer": null,
+        "token_filters": [
+
+        ],
+        "indexes": [
+          {
+            "full_name": "Terms.index",
+            "table": "Terms",
+            "name": "index",
+            "section": 1
+          }
+        ],
+        "command": {
+          "name": "table_create",
+          "arguments": {
+            "name": "Posts",
+            "flags": "TABLE_HASH_KEY",
+            "key_type": "ShortText"
+          },
+          "command_line": "table_create --name Posts --flags TABLE_HASH_KEY --key_type ShortText"
+        },
+        "columns": {
+          "content": {
+            "name": "content",
+            "table": "Posts",
+            "full_name": "Posts.content",
+            "type": "scalar",
+            "value_type": {
+              "name": "Text",
+              "type": "type"
+            },
+            "compress": null,
+            "section": false,
+            "weight": false,
+            "position": false,
+            "sources": [
+
+            ],
+            "indexes": [
+              {
+                "full_name": "Terms.index",
+                "table": "Terms",
+                "name": "index",
+                "section": 3
+              }
+            ],
+            "command": {
+              "name": "column_create",
+              "arguments": {
+                "table": "Posts",
+                "name": "content",
+                "flags": "COLUMN_SCALAR",
+                "type": "Text"
+              },
+              "command_line": "column_create --table Posts --name content --flags COLUMN_SCALAR --type Text"
+            }
+          },
+          "title": {
+            "name": "title",
+            "table": "Posts",
+            "full_name": "Posts.title",
+            "type": "scalar",
+            "value_type": {
+              "name": "ShortText",
+              "type": "type"
+            },
+            "compress": null,
+            "section": false,
+            "weight": false,
+            "position": false,
+            "sources": [
+
+            ],
+            "indexes": [
+              {
+                "full_name": "Terms.index",
+                "table": "Terms",
+                "name": "index",
+                "section": 2
+              }
+            ],
+            "command": {
+              "name": "column_create",
+              "arguments": {
+                "table": "Posts",
+                "name": "title",
+                "flags": "COLUMN_SCALAR",
+                "type": "ShortText"
+              },
+              "command_line": "column_create --table Posts --name title --flags COLUMN_SCALAR --type ShortText"
+            }
+          }
+        }
+      },
+      "Terms": {
+        "name": "Terms",
+        "type": "patricia trie",
+        "key_type": {
+          "name": "ShortText",
+          "type": "type"
+        },
+        "value_type": null,
+        "tokenizer": {
+          "name": "TokenBigram"
+        },
+        "normalizer": {
+          "name": "NormalizerAuto"
+        },
+        "token_filters": [
+
+        ],
+        "indexes": [
+
+        ],
+        "command": {
+          "name": "table_create",
+          "arguments": {
+            "name": "Terms",
+            "flags": "TABLE_PAT_KEY",
+            "key_type": "ShortText",
+            "default_tokenizer": "TokenBigram",
+            "normalizer": "NormalizerAuto"
+          },
+          "command_line": "table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto"
+        },
+        "columns": {
+          "index": {
+            "name": "index",
+            "table": "Terms",
+            "full_name": "Terms.index",
+            "type": "index",
+            "value_type": {
+              "name": "Posts",
+              "type": "reference"
+            },
+            "compress": null,
+            "section": true,
+            "weight": true,
+            "position": true,
+            "sources": [
+              {
+                "name": "_key",
+                "table": "Posts",
+                "full_name": "Posts._key"
+              },
+              {
+                "name": "title",
+                "table": "Posts",
+                "full_name": "Posts.title"
+              },
+              {
+                "name": "content",
+                "table": "Posts",
+                "full_name": "Posts.content"
+              }
+            ],
+            "indexes": [
+
+            ],
+            "command": {
+              "name": "column_create",
+              "arguments": {
+                "table": "Terms",
+                "name": "index",
+                "flags": "COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION|INDEX_MEDIUM",
+                "type": "Posts",
+                "sources": "_key,title,content"
+              },
+              "command_line": "column_create --table Terms --name index --flags COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION|INDEX_MEDIUM --type Posts --sources _key,title,content"
+            }
+          }
+        }
+      }
+    }
+  }
+]
