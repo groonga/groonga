@@ -3990,7 +3990,9 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
                                GRN_CURSOR_ASCENDING);
   }
   if (tc) {
-    while (lseg == NOT_ASSIGNED && (tid = grn_table_cursor_next(ctx, tc))) {
+    while (ctx->rc == GRN_SUCCESS &&
+           lseg == NOT_ASSIGNED &&
+           (tid = grn_table_cursor_next(ctx, tc))) {
       if ((a = array_at(ctx, ii, tid))) {
         for (;;) {
           uint32_t pos = a[0];
