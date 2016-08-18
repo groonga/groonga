@@ -82,6 +82,7 @@ puts("N segments\tN chunks\tN patterns\tN records")
   [64, 64, 2],
   [128, 128, 2],
   [256, 256, 2],
+  [512, 512, 2],
   [nil, nil, 1],
   [nil, nil, 2],
   [nil, nil, 4],
