@@ -1,5 +1,28 @@
 #!/usr/bin/env ruby
 
+# Groonga: 70dc95ef3b6fed1225981d099a65dcb7297248c5
+#
+# N segments	N chunks	N patterns	N records
+# 1	1	2	50
+# 2	2	2	18898
+# 4	4	2	31181
+# 8	8	2	57853
+# 16	16	2	91349
+# 32	32	2	178502
+# 64	64	2	475020
+# 128	128	2	1066081
+# 256	256	2	2250389
+# 512	512	2	4648072
+# nil	nil	1	16779239
+# nil	nil	2	4648063
+# nil	nil	4	7239005
+# nil	nil	8	8308626
+# nil	nil	16	11068608
+# nil	nil	32	12670806
+# nil	nil	64	18524231
+# nil	nil	128	38095525
+# nil	nil	256	51265415
+
 require "fileutils"
 require "json"
 
@@ -54,7 +77,7 @@ def check_max_index(options)
                   i,
                 ]
                 puts(parameters.join("\t"))
-                # puts data
+                # puts(data)
                 throw(abort)
               end
               log_size = log.size
@@ -64,7 +87,8 @@ def check_max_index(options)
       end
     end
     groonga.puts("]")
-    puts(groonga.gets)
+    load_response = groonga.gets
+    # puts(load_response)
 
     groonga.puts("quit")
     groonga.gets
