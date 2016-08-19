@@ -134,11 +134,11 @@ ngx_http_groonga_get_thread_limit(void *data)
 }
 
 static ngx_int_t
-ngx_http_groonga_grn_rc_to_ngx_rc(grn_rc rc)
+ngx_http_groonga_grn_rc_to_http_status(grn_rc rc)
 {
   switch (rc) {
   case GRN_SUCCESS :
-    return NGX_OK;
+    return NGX_HTTP_OK;
   case GRN_INVALID_ARGUMENT :
   case GRN_FUNCTION_NOT_IMPLEMENTED :
   case GRN_SYNTAX_ERROR :
@@ -945,7 +945,7 @@ ngx_http_groonga_handler_send_response(ngx_http_request_t *r,
   output_chain = ngx_http_groonga_attach_chain(output_chain, &foot_chain);
 
   /* set the status line */
-  r->headers_out.status = ngx_http_groonga_grn_rc_to_ngx_rc(data->rc);
+  r->headers_out.status = ngx_http_groonga_grn_rc_to_http_status(data->rc);
   r->headers_out.content_length_n = GRN_TEXT_LEN(&(data->typed.head)) +
                                     GRN_TEXT_LEN(&(data->typed.body)) +
                                     GRN_TEXT_LEN(&(data->typed.foot));
