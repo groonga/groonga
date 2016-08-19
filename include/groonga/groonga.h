@@ -1143,6 +1143,13 @@ GRN_API off_t grn_default_query_logger_get_rotate_threshold_size(void);
     }\
   }\
 } while (0)
+#define GRN_BULK_INCR_LEN(bulk,len) do {\
+  if (GRN_BULK_OUTP(bulk)) {\
+    (bulk)->u.b.curr += (len);\
+  } else {\
+    (bulk)->header.flags += (grn_obj_flags)(len);\
+  }\
+} while (0)
 #define GRN_BULK_WSIZE(bulk) \
   (GRN_BULK_OUTP(bulk)\
    ? ((bulk)->u.b.tail - (bulk)->u.b.head)\

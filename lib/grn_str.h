@@ -75,14 +75,6 @@ grn_rc grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int en
 GRN_API int grn_charlen_(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding);
 GRN_API grn_str *grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_len, int flags, grn_encoding encoding);
 
-#define GRN_BULK_INCR_LEN(buf,len) do {\
-  if (GRN_BULK_OUTP(buf)) {\
-    (buf)->u.b.curr += (len);\
-  } else {\
-    (buf)->header.flags += (grn_obj_flags)(len);\
-  }\
-} while (0)
-
 #define GRN_BULK_SET_CURR(buf,p) do {\
   if (GRN_BULK_OUTP(buf)) {\
     (buf)->u.b.curr = (char *)(p);\
