@@ -1040,6 +1040,7 @@ h_output_set_header(grn_ctx *ctx, grn_obj *header,
     GRN_TEXT_SETS(ctx, header, "HTTP/1.1 200 OK\r\n");
     break;
   case GRN_INVALID_ARGUMENT :
+  case GRN_FUNCTION_NOT_IMPLEMENTED :
   case GRN_SYNTAX_ERROR :
     GRN_TEXT_SETS(ctx, header, "HTTP/1.1 400 Bad Request\r\n");
     break;
