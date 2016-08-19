@@ -63,6 +63,7 @@ typedef struct {
 
 typedef struct {
   grn_bool initialized;
+  grn_rc rc;
   struct {
     grn_bool processed;
     grn_bool header_sent;
@@ -130,6 +131,23 @@ static uint32_t
 ngx_http_groonga_get_thread_limit(void *data)
 {
   return 1;
+}
+
+static ngx_int_t
+ngx_http_groonga_grn_rc_to_ngx_rc(grn_rc rc)
+{
+  switch (rc) {
+  case GRN_SUCCESS :
+    return NGX_OK;
+  case GRN_INVALID_ARGUMENT :
+  case GRN_FUNCTION_NOT_IMPLEMENTED :
+  case GRN_SYNTAX_ERROR :
+    return NGX_HTTP_BAD_REQUEST;
+  case GRN_CANCEL :
+    return NGX_HTTP_REQUEST_TIME_OUT;
+  default :
+    return NGX_HTTP_INTERNAL_SERVER_ERROR;
+  }
 }
 
 static void
@@ -643,6 +661,7 @@ ngx_http_groonga_handler_create_data(ngx_http_request_t *r,
   *data_return = data;
 
   data->initialized = GRN_TRUE;
+  data->rc = GRN_SUCCESS;
 
   data->raw.processed = GRN_FALSE;
   data->raw.header_sent = GRN_FALSE;
@@ -680,6 +699,7 @@ ngx_http_groonga_handler_process_command_path(ngx_http_request_t *r,
   GRN_TEXT_PUT(context, &uri, command_path->data, command_path->len);
   grn_ctx_send(context, GRN_TEXT_VALUE(&uri), GRN_TEXT_LEN(&uri),
                GRN_NO_FLAGS);
+  data->rc = context->rc;
   ngx_http_groonga_context_log_error(r->connection->log);
   GRN_OBJ_FIN(context, &uri);
 
@@ -925,7 +945,7 @@ ngx_http_groonga_handler_send_response(ngx_http_request_t *r,
   output_chain = ngx_http_groonga_attach_chain(output_chain, &foot_chain);
 
   /* set the status line */
-  r->headers_out.status = NGX_HTTP_OK;
+  r->headers_out.status = ngx_http_groonga_grn_rc_to_ngx_rc(data->rc);
   r->headers_out.content_length_n = GRN_TEXT_LEN(&(data->typed.head)) +
                                     GRN_TEXT_LEN(&(data->typed.body)) +
                                     GRN_TEXT_LEN(&(data->typed.foot));
