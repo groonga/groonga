@@ -1,0 +1,19 @@
+#$GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO=0.7
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+
+table_create Memos TABLE_NO_KEY
+column_create Memos body COLUMN_SCALAR ShortText
+
+load --table Memos
+[
+{"body": "Rroonga is fast!"},
+{"body": "Groonga is fast!"},
+{"body": "Mroonga is fast!"},
+{"body": "Groonga sticker!"},
+{"body": "Groonga is good!"}
+]
+
+column_create Terms memos_body COLUMN_INDEX Memos body
+
+select Memos --query '_id:>=3 body:@"Groonga"' --output_columns _id,_score,body
