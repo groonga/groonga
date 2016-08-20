@@ -7549,6 +7549,24 @@ grn_ii_select_sequential_search_should_use(grn_ctx *ctx,
   }
 
   {
+    int i;
+    grn_id *source_ids = ii->obj.source;
+
+    for (i = 0; i < n_sources; i++) {
+      grn_id source_id = source_ids[i];
+      grn_obj *source;
+
+      source = grn_ctx_at(ctx, source_id);
+      if (!source) {
+        return GRN_FALSE;
+      }
+      if (grn_obj_is_reference_column(ctx, source)) {
+        return GRN_FALSE;
+      }
+    }
+  }
+
+  {
     uint32_t i;
     int n_existing_records;
 
