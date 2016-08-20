@@ -7633,6 +7633,7 @@ grn_ii_select_sequential_search_body(grn_ctx *ctx,
       grn_hash_cursor_close(ctx, cursor);
     }
     grn_obj_unlink(ctx, accessor);
+    grn_obj_unlink(ctx, source);
   }
   grn_obj_unlink(ctx, &buffer);
 }
