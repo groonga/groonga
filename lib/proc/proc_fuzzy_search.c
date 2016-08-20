@@ -190,8 +190,17 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
     while ((id = grn_table_cursor_next(ctx, tc))) {
       unsigned int distance = 0;
       grn_obj *domain;
+      grn_id record_id;
+
+      if (op == GRN_OP_AND) {
+        grn_id *key;
+        grn_table_cursor_get_key(ctx, tc, (void **)&key);
+        record_id = *key;
+      } else {
+        record_id = id;
+      }
       GRN_BULK_REWIND(&value);
-      grn_obj_get_value(ctx, column, id, &value);
+      grn_obj_get_value(ctx, column, record_id, &value);
       domain = grn_ctx_at(ctx, ((&value))->header.domain);
       if ((&(value))->header.type == GRN_VECTOR) {
         n = grn_vector_size(ctx, &value);
@@ -207,7 +216,7 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
                                           (char *)vector_value,
                                           (char *)vector_value + length, flags);
             if (distance <= max_distance) {
-              score_heap_push(ctx, heap, id, distance);
+              score_heap_push(ctx, heap, record_id, distance);
               break;
             }
           }
@@ -228,7 +237,7 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
             distance = calc_edit_distance(ctx, sx, ex,
                                           key_name, key_name + key_length, flags);
             if (distance <= max_distance) {
-              score_heap_push(ctx, heap, id, distance);
+              score_heap_push(ctx, heap, record_id, distance);
               break;
             }
           }
@@ -246,7 +255,7 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
             distance = calc_edit_distance(ctx, sx, ex,
                                           key_name, key_name + key_length, flags);
             if (distance <= max_distance) {
-              score_heap_push(ctx, heap, id, distance);
+              score_heap_push(ctx, heap, record_id, distance);
             }
           }
         } else {
@@ -257,7 +266,7 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
                                           GRN_TEXT_VALUE(&value),
                                           GRN_BULK_CURR(&value), flags);
             if (distance <= max_distance) {
-              score_heap_push(ctx, heap, id, distance);
+              score_heap_push(ctx, heap, record_id, distance);
             }
           }
         }
