@@ -3,11 +3,11 @@ column_create Users name COLUMN_SCALAR ShortText
 
 load --table Users
 [
-{"name": "Tom"},
 {"name": "Tomy"},
-{"name": "Ken"}
+{"name": "Ken"},
+{"name": "Tom"}
 ]
 
-select Users --filter 'name @^ "T" && fuzzy_search(name, "To")' \
+select Users --filter '_id >= 2 && fuzzy_search(name, "To")' \
   --output_columns 'name, _score' \
   --match_escalation_threshold -1
