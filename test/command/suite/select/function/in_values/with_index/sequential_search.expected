@@ -1,0 +1,62 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Rroonga is fast!", "tag": "Rroonga"},
+{"_key": "Groonga is fast!", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "tag": "Groonga"},
+{"_key": "Groonga is good!", "tag": "Groonga"}
+]
+[[0,0.0,0.0],5]
+column_create Tags memos_tag COLUMN_INDEX Memos tag
+[[0,0.0,0.0],true]
+select Memos --filter '_id >= 3 && in_values(tag, "Groonga")' --output_columns _id,_score,_key,tag
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tag",
+          "Tags"
+        ]
+      ],
+      [
+        4,
+        2,
+        "Groonga sticker!",
+        "Groonga"
+      ],
+      [
+        5,
+        2,
+        "Groonga is good!",
+        "Groonga"
+      ]
+    ]
+  ]
+]

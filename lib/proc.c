@@ -2716,20 +2716,22 @@ selector_in_values_sequential_search(grn_ctx *ctx,
                                 local_source_name_length);
       {
         grn_table_cursor *cursor;
-        grn_id record_id;
+        grn_id id;
         grn_obj record_value;
         GRN_RECORD_INIT(&record_value, 0, grn_obj_id(ctx, res));
         cursor = grn_table_cursor_open(ctx, res,
                                        NULL, 0, NULL, 0,
                                        0, -1, GRN_CURSOR_ASCENDING);
-        while ((record_id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+        while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+          grn_id *record_id;
+          grn_table_cursor_get_key(ctx, cursor, (void **)&record_id);
           GRN_BULK_REWIND(&record_value);
-          grn_obj_get_value(ctx, accessor, record_id, &record_value);
+          grn_obj_get_value(ctx, accessor, id, &record_value);
           for (i = 0; i < n_value_ids; i++) {
             grn_id value_id = GRN_RECORD_VALUE_AT(&value_ids, i);
             if (value_id == GRN_RECORD_VALUE(&record_value)) {
               grn_posting posting;
-              posting.rid = record_id;
+              posting.rid = *record_id;
               posting.sid = 1;
               posting.pos = 0;
               posting.weight = 0;
