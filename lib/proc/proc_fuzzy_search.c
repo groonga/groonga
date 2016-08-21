@@ -26,6 +26,35 @@
 
 #define DIST(ox,oy) (dists[((lx + 1) * (oy)) + (ox)])
 
+static double grn_fuzzy_search_enough_filtered_ratio = 0.0;
+static int grn_fuzzy_search_max_n_enough_filtered_records = 1000;
+
+void
+grn_proc_fuzzy_search_init_from_env(void)
+{
+  {
+    char grn_fuzzy_search_enough_filtered_ratio_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_FUZZY_SEARCH_ENOUGH_FILTERED_RATIO",
+               grn_fuzzy_search_enough_filtered_ratio_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_fuzzy_search_enough_filtered_ratio_env[0]) {
+      grn_fuzzy_search_enough_filtered_ratio =
+        atof(grn_fuzzy_search_enough_filtered_ratio_env);
+    }
+  }
+
+  {
+    char grn_fuzzy_search_max_n_enough_filtered_records_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_FUZZY_SEARCH_MAX_N_ENOUGH_FILTERED_RECORDS",
+               grn_fuzzy_search_max_n_enough_filtered_records_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_fuzzy_search_max_n_enough_filtered_records_env[0]) {
+      grn_fuzzy_search_max_n_enough_filtered_records =
+        atoi(grn_fuzzy_search_max_n_enough_filtered_records_env);
+    }
+  }
+}
+
 static uint32_t
 calc_edit_distance(grn_ctx *ctx, char *sx, char *ex, char *sy, char *ey, int flags)
 {
@@ -296,6 +325,56 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
   return GRN_SUCCESS;
 }
 
+static grn_bool
+sequential_fuzzy_search_should_use(grn_ctx *ctx,
+                                   grn_obj *index,
+                                   grn_obj *table,
+                                   grn_obj *res,
+                                   grn_operator op)
+{
+  grn_obj *lexicon;
+  int n_records;
+  int n_filtered_records;
+  double filtered_ratio;
+
+  lexicon = grn_ctx_at(ctx, index->header.domain);
+  if (!lexicon) {
+    return GRN_TRUE;
+  }
+
+  if (lexicon->header.type != GRN_TABLE_PAT_KEY) {
+    grn_obj_unlink(ctx, lexicon);
+    return GRN_TRUE;
+  }
+  grn_obj_unlink(ctx, lexicon);
+
+  if (op != GRN_OP_AND) {
+    return GRN_FALSE;
+  }
+
+  if (index->header.flags & GRN_OBJ_WITH_WEIGHT) {
+    return GRN_FALSE;
+  }
+
+  n_records = grn_table_size(ctx, table);
+  n_filtered_records = grn_table_size(ctx, res);
+  if (n_records == 0) {
+    filtered_ratio = 1.0;
+  } else {
+    filtered_ratio = (double)n_filtered_records / (double)n_records;
+  }
+
+  if (filtered_ratio >= grn_fuzzy_search_enough_filtered_ratio) {
+    return GRN_FALSE;
+  }
+
+  if (n_filtered_records > grn_fuzzy_search_max_n_enough_filtered_records) {
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
+}
+
 static grn_rc
 selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                       int nargs, grn_obj **args,
@@ -389,15 +468,8 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   }
 
   if (target) {
-    grn_obj *lexicon;
-    use_sequential_search = GRN_TRUE;
-    lexicon = grn_ctx_at(ctx, target->header.domain);
-    if (lexicon) {
-      if (lexicon->header.type == GRN_TABLE_PAT_KEY) {
-        use_sequential_search = GRN_FALSE;
-      }
-      grn_obj_unlink(ctx, lexicon);
-    }
+    use_sequential_search = sequential_fuzzy_search_should_use(ctx, target,
+                                                               table, res, op);
   } else {
     if (grn_obj_is_key_accessor(ctx, obj) &&
         table->header.type == GRN_TABLE_PAT_KEY) {

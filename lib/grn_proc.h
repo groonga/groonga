@@ -30,6 +30,7 @@ extern "C" {
 #define GRN_SELECT_INTERNAL_VAR_CONDITION     "$condition"
 
 void grn_proc_init_from_env(void);
+void grn_proc_fuzzy_search_init_from_env(void);
 
 GRN_VAR const char *grn_document_root;
 void grn_db_init_builtin_commands(grn_ctx *ctx);

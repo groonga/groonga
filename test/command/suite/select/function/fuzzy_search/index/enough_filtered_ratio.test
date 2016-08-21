@@ -1,0 +1,18 @@
+#$GRN_FUZZY_SEARCH_ENOUGH_FILTERED_RATIO=0.7
+
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Tags TABLE_PAT_KEY ShortText
+column_create Tags tag COLUMN_INDEX Users name
+
+load --table Users
+[
+{"name": "Tom"},
+{"name": "Tomy"},
+{"name": "Ken"}
+]
+
+select Users --filter 'name @^ "T" && fuzzy_search(name, "To")' \
+  --output_columns 'name, _score' \
+  --match_escalation_threshold -1

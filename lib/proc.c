@@ -73,6 +73,7 @@ grn_proc_init_from_env(void)
         atof(grn_in_values_too_many_index_match_ratio_env);
     }
   }
+  grn_proc_fuzzy_search_init_from_env();
 }
 
 /* bulk must be initialized grn_bulk or grn_msg */
