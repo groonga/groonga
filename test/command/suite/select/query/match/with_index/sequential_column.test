@@ -14,6 +14,6 @@ load --table Memos
 {"body": "Groonga is good!"}
 ]
 
-column_create Terms memos_body COLUMN_INDEX Memos body
+column_create Terms memos_body COLUMN_INDEX|WITH_POSITION Memos body
 
 select Memos --query '_id:>=3 body:@"Groonga"' --output_columns _id,_score,body
