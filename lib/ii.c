@@ -7583,16 +7583,31 @@ grn_ii_select_sequential_search_body(grn_ctx *ctx,
   for (i = 0; i < n_sources; i++) {
     grn_id source_id = source_ids[i];
     grn_obj *source;
-    char column_name[GRN_TABLE_MAX_KEY_SIZE];
-    int column_name_size;
     grn_obj *accessor;
 
     source = grn_ctx_at(ctx, source_id);
-    column_name_size = grn_column_name(ctx, source,
-                                       column_name,
-                                       GRN_TABLE_MAX_KEY_SIZE);
-    accessor = grn_obj_column(ctx, (grn_obj *)result, column_name,
-                              column_name_size);
+    switch (source->header.type) {
+    case GRN_TABLE_HASH_KEY :
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_DAT_KEY :
+      accessor = grn_obj_column(ctx,
+                                (grn_obj *)result,
+                                GRN_COLUMN_NAME_KEY,
+                                GRN_COLUMN_NAME_KEY_LEN);
+      break;
+    default :
+      {
+        char column_name[GRN_TABLE_MAX_KEY_SIZE];
+        int column_name_size;
+        column_name_size = grn_column_name(ctx, source,
+                                           column_name,
+                                           GRN_TABLE_MAX_KEY_SIZE);
+        accessor = grn_obj_column(ctx, (grn_obj *)result, column_name,
+                                  column_name_size);
+      }
+      break;
+    }
+
     {
       grn_hash_cursor *cursor;
       grn_id id;
