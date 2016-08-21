@@ -7602,8 +7602,6 @@ grn_ii_select_sequential_search_body(grn_ctx *ctx,
         grn_obj *value;
         const char *normalized_value;
         unsigned int normalized_value_length;
-        grn_id *rid;
-        grn_hash_cursor_get_key(ctx, cursor, (void **)&rid);
 
         GRN_BULK_REWIND(&buffer);
         grn_obj_get_value(ctx, accessor, id, &buffer);
@@ -7622,9 +7620,13 @@ grn_ii_select_sequential_search_body(grn_ctx *ctx,
                                NULL,
                                0);
         if (position != ONIG_MISMATCH) {
+          grn_id *record_id;
           grn_rset_posinfo info;
           double score;
-          info.rid = *rid;
+
+          grn_hash_cursor_get_key(ctx, cursor, (void **)&record_id);
+
+          info.rid = *record_id;
           info.sid = i + 1;
           info.pos = 0;
           score = get_weight(ctx, result, info.rid, info.sid, wvm, optarg);
