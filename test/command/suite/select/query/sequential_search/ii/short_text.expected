@@ -1,0 +1,56 @@
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos body COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"body": "Rroonga is fast!"},
+{"body": "Groonga is fast!"},
+{"body": "Mroonga is fast!"},
+{"body": "Groonga sticker!"},
+{"body": "Groonga is good!"}
+]
+[[0,0.0,0.0],5]
+column_create Terms memos_body COLUMN_INDEX Memos body
+[[0,0.0,0.0],true]
+select Memos --query '_id:>=3 body:@"Groonga"' --output_columns _id,_score,body
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "body",
+          "ShortText"
+        ]
+      ],
+      [
+        4,
+        2,
+        "Groonga sticker!"
+      ],
+      [
+        5,
+        2,
+        "Groonga is good!"
+      ]
+    ]
+  ]
+]
