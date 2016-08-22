@@ -7539,7 +7539,8 @@ grn_ii_select_sequential_search_should_use(grn_ctx *ctx,
                                            grn_select_optarg *optarg,
                                            token_info **token_infos,
                                            uint32_t n_token_infos,
-                                           double too_many_index_match_ratio)
+                                           double too_many_index_match_ratio,
+                                           grn_bool for_reference_column)
 {
   int n_sources;
 
@@ -7551,8 +7552,14 @@ grn_ii_select_sequential_search_should_use(grn_ctx *ctx,
     return GRN_FALSE;
   }
 
-  if (optarg->mode != GRN_OP_EXACT) {
-    return GRN_FALSE;
+  if (!for_reference_column) {
+    if (optarg->mode != GRN_OP_EXACT) {
+      return GRN_FALSE;
+    }
+  } else {
+    if (!(optarg->mode == GRN_OP_EXACT || optarg->mode == GRN_OP_PREFIX)) {
+      return GRN_FALSE;
+    }
   }
 
   n_sources = ii->obj.source_size / sizeof(grn_id);
@@ -7572,7 +7579,7 @@ grn_ii_select_sequential_search_should_use(grn_ctx *ctx,
       if (!source) {
         return GRN_FALSE;
       }
-      if (grn_obj_is_reference_column(ctx, source)) {
+      if (grn_obj_is_reference_column(ctx, source) ^ for_reference_column) {
         return GRN_FALSE;
       }
     }
@@ -7711,7 +7718,8 @@ grn_ii_select_sequential_search(grn_ctx *ctx,
                                                     optarg,
                                                     token_infos,
                                                     n_token_infos,
-                                                    grn_ii_select_too_many_index_match_ratio)) {
+                                                    grn_ii_select_too_many_index_match_ratio,
+                                                    GRN_FALSE)) {
       return GRN_FALSE;
     }
   }
@@ -7762,70 +7770,6 @@ grn_ii_select_sequential_search(grn_ctx *ctx,
   return processed;
 }
 #endif
-
-static grn_bool
-grn_ii_select_sequential_search_for_reference_should_use(grn_ctx *ctx,
-                                                         grn_ii *ii,
-                                                         const char *raw_query,
-                                                         unsigned int raw_query_len,
-                                                         grn_hash *result,
-                                                         grn_operator op,
-                                                         grn_select_optarg *optarg,
-                                                         token_info **token_infos,
-                                                         uint32_t n_token_infos,
-                                                         double too_many_index_match_ratio)
-{
-  int n_sources;
-
-  if (too_many_index_match_ratio < 0.0) {
-    return GRN_FALSE;
-  }
-
-  if (op != GRN_OP_AND) {
-    return GRN_FALSE;
-  }
-
-  if (!(optarg->mode == GRN_OP_EXACT || optarg->mode == GRN_OP_PREFIX)) {
-    return GRN_FALSE;
-  }
-
-  n_sources = ii->obj.source_size / sizeof(grn_id);
-  if (n_sources == 0) {
-    return GRN_FALSE;
-  }
-
-  {
-    int i;
-    grn_id *source_ids = ii->obj.source;
-
-    for (i = 0; i < n_sources; i++) {
-      grn_id source_id = source_ids[i];
-      grn_obj *source;
-
-      source = grn_ctx_at(ctx, source_id);
-      if (!source) {
-        return GRN_FALSE;
-      }
-      if (!grn_obj_is_reference_column(ctx, source)) {
-        return GRN_FALSE;
-      }
-    }
-  }
-
-  {
-    uint32_t i;
-    int n_existing_records;
-
-    n_existing_records = GRN_HASH_SIZE(result);
-    for (i = 0; i < n_token_infos; i++) {
-      token_info *info = token_infos[i];
-      if (n_existing_records <= (info->size * too_many_index_match_ratio)) {
-        return GRN_TRUE;
-      }
-    }
-    return GRN_FALSE;
-  }
-}
 
 static grn_bool
 grn_ii_select_sequential_search_for_reference_body(grn_ctx *ctx,
@@ -7966,10 +7910,18 @@ grn_ii_select_sequential_search_for_reference(grn_ctx *ctx,
                                               uint32_t n_token_infos)
 {
   grn_bool succeeded;
-  if (!grn_ii_select_sequential_search_for_reference_should_use(
-       ctx, ii, raw_query, raw_query_len,
-       result, op, optarg, token_infos, n_token_infos,
-       grn_ii_select_too_many_index_match_ratio_for_reference)) {
+  if (!grn_ii_select_sequential_search_should_use(ctx,
+                                                  ii,
+                                                  raw_query,
+                                                  raw_query_len,
+                                                  result,
+                                                  op,
+                                                  wvm,
+                                                  optarg,
+                                                  token_infos,
+                                                  n_token_infos,
+                                                  grn_ii_select_too_many_index_match_ratio_for_reference,
+                                                  GRN_TRUE)) {
     return GRN_FALSE;
   }
   succeeded = grn_ii_select_sequential_search_for_reference_body(ctx, ii, result,
