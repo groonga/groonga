@@ -7788,7 +7788,6 @@ grn_ii_select_sequential_search_for_reference_body(grn_ctx *ctx,
     grn_id source_id = source_ids[i];
     grn_obj *source;
     grn_obj *accessor;
-    grn_obj buffer;
     grn_id range_id;
     grn_obj *range;
 
@@ -7822,23 +7821,17 @@ grn_ii_select_sequential_search_for_reference_body(grn_ctx *ctx,
       break;
     } 
 
-    switch (source->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
-    case GRN_OBJ_COLUMN_SCALAR :
-      GRN_RECORD_INIT(&buffer, 0, range_id);
-      break;
-    case GRN_OBJ_COLUMN_VECTOR :
-      GRN_RECORD_INIT(&buffer, GRN_OBJ_VECTOR, range_id);
-      break;
-    default :
-      grn_obj_unlink(ctx, source);
-      grn_obj_unlink(ctx, range);
-      grn_obj_unlink(ctx, accessor);
-      return GRN_FALSE;
-    }
-
     {
       grn_hash_cursor *cursor;
       grn_id id;
+      grn_obj buffer;
+      grn_obj_flags flags = 0;
+
+      if ((source->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
+        flags = GRN_OBJ_VECTOR;
+      }
+      GRN_RECORD_INIT(&buffer, flags, range_id);
+
       cursor = grn_hash_cursor_open(ctx, result, NULL, 0, NULL, 0, 0, -1, 0);
       while ((id = grn_hash_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
         int j;
@@ -7888,10 +7881,10 @@ grn_ii_select_sequential_search_for_reference_body(grn_ctx *ctx,
         }
       }
       grn_hash_cursor_close(ctx, cursor);
+      GRN_OBJ_FIN(ctx, &buffer);
     }
     grn_obj_unlink(ctx, accessor);
     grn_obj_unlink(ctx, range);
-    grn_obj_unlink(ctx, &buffer);
   }
   return GRN_TRUE;
 }
