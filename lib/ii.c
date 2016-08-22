@@ -7839,20 +7839,23 @@ grn_ii_select_sequential_search_for_reference_body(grn_ctx *ctx,
         grn_obj_get_value(ctx, accessor, id, &buffer);
         for (j = 0; j < n_token_infos; j++) {
           grn_id tid = (token_infos[j])->cursors->bins[0]->id;
+
+#define ADD_POSTING() do {                                           \
+  grn_rset_posinfo info;                                             \
+  double score;                                                      \
+  info.rid = *record_id;                                             \
+  info.sid = i + 1;                                                  \
+  info.pos = 0;                                                      \
+  score = get_weight(ctx, result, info.rid, info.sid, wvm, optarg);  \
+  res_add(ctx, result, &info, score, op);                            \
+} while (0)
+
           switch (buffer.header.type) {
           case GRN_BULK :
             if (tid == GRN_RECORD_VALUE(&buffer)) {
               grn_id *record_id;
-              grn_rset_posinfo info;
-              double score;
-
               grn_hash_cursor_get_key(ctx, cursor, (void **)&record_id);
-
-              info.rid = *record_id;
-              info.sid = i + 1;
-              info.pos = 0;
-              score = get_weight(ctx, result, info.rid, info.sid, wvm, optarg);
-              res_add(ctx, result, &info, score, op);
+              ADD_POSTING();
             }
             break;
           case GRN_UVECTOR :
@@ -7863,14 +7866,7 @@ grn_ii_select_sequential_search_for_reference_body(grn_ctx *ctx,
               grn_hash_cursor_get_key(ctx, cursor, (void **)&record_id);
               for (k = 0; k < n_elements; k++) {
                 if (tid == GRN_RECORD_VALUE_AT(&buffer, k)) {
-                  grn_rset_posinfo info;
-                  double score;
-
-                  info.rid = *record_id;
-                  info.sid = i + 1;
-                  info.pos = 0;
-                  score = get_weight(ctx, result, info.rid, info.sid, wvm, optarg);
-                  res_add(ctx, result, &info, score, op);
+                  ADD_POSTING();
                 }
               }
             }
@@ -7878,6 +7874,7 @@ grn_ii_select_sequential_search_for_reference_body(grn_ctx *ctx,
           default :
             break;
           }
+#undef ADD_POSTING
         }
       }
       grn_hash_cursor_close(ctx, cursor);
