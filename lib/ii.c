@@ -7229,12 +7229,12 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
       }
     }
     if (tid && token_cursor->curr_size) {
-      if (optarg->max_interval == GRN_OP_UNSPLIT) {
+      if (optarg->mode == GRN_OP_UNSPLIT) {
         grn_table_search(ctx, lexicon, token_cursor->curr,
                          token_cursor->curr_size,
                          GRN_OP_PREFIX, (grn_obj *)h, GRN_OP_OR);
       }
-      if (optarg->max_interval == GRN_OP_PARTIAL) {
+      if (optarg->mode == GRN_OP_PARTIAL) {
         grn_table_search(ctx, lexicon, token_cursor->curr,
                          token_cursor->curr_size,
                          GRN_OP_SUFFIX, (grn_obj *)h, GRN_OP_OR);
