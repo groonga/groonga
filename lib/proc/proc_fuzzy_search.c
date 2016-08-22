@@ -327,6 +327,7 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
 
 static grn_bool
 sequential_fuzzy_search_should_use(grn_ctx *ctx,
+                                   grn_obj *obj,
                                    grn_obj *index,
                                    grn_obj *table,
                                    grn_obj *res,
@@ -353,6 +354,10 @@ sequential_fuzzy_search_should_use(grn_ctx *ctx,
   }
 
   if (index->header.flags & GRN_OBJ_WITH_WEIGHT) {
+    return GRN_FALSE;
+  }
+
+  if (!grn_obj_is_reference_column(ctx, obj)) {
     return GRN_FALSE;
   }
 
@@ -468,7 +473,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   }
 
   if (target) {
-    use_sequential_search = sequential_fuzzy_search_should_use(ctx, target,
+    use_sequential_search = sequential_fuzzy_search_should_use(ctx, obj, target,
                                                                table, res, op);
   } else {
     if (grn_obj_is_key_accessor(ctx, obj) &&
