@@ -7769,7 +7769,6 @@ grn_ii_select_sequential_search(grn_ctx *ctx,
 
   return processed;
 }
-#endif
 
 static grn_bool
 grn_ii_select_sequential_search_for_reference_body(grn_ctx *ctx,
@@ -7930,6 +7929,7 @@ grn_ii_select_sequential_search_for_reference(grn_ctx *ctx,
                                                                  n_token_infos);
   return succeeded;
 }
+#endif
 
 grn_rc
 grn_ii_select(grn_ctx *ctx, grn_ii *ii,
@@ -8035,12 +8035,12 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                                       s, op, wvm, optarg, tis, n)) {
     goto exit;
   }
-#endif
   if (grn_ii_select_sequential_search_for_reference(ctx, ii,
                                                     string, string_len,
                                                     s, op, wvm, optarg, tis, n)) {
     goto exit;
   }
+#endif
 
   if (optarg && optarg->scorer) {
     grn_proc *scorer = (grn_proc *)(optarg->scorer);
