@@ -14,8 +14,8 @@ column_create TagsIndex sites_tags COLUMN_INDEX Sites tags
       0.0,
       0.0
     ],
-    "grn_obj_set_info(): GRN_INFO_SOURCE: source type must equal to index table's key type: source:<Sites.tags(ShortText)> index:<Ta"
+    "[column][index][source] source type must equal to index table's key: source:<Sites.tags(ShortText)> expected:<Tags> index:<Tags"
   ],
   false
 ]
-#|e| grn_obj_set_info(): GRN_INFO_SOURCE: source type must equal to index table's key type: source:<Sites.tags(ShortText)> index:<TagsIndex.sites_tags(Tags)>
+#|e| [column][index][source] source type must equal to index table's key: source:<Sites.tags(ShortText)> expected:<Tags> index:<TagsIndex.sites_tags>
