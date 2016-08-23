@@ -6,7 +6,7 @@ column_create Users tags COLUMN_VECTOR ShortText
 
 table_create Terms TABLE_PAT_KEY ShortText \
   --normalizer NormalizerAuto \
-  --tokenizer TokenBigram
+  --default_tokenizer TokenBigram
 column_create Terms users COLUMN_INDEX|WITH_SECTION|WITH_POSITION \
   Users _key,description
 
