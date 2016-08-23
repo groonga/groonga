@@ -3292,6 +3292,10 @@ grn_accessor_resolve_one_data_column(grn_ctx *ctx, grn_accessor *accessor,
   }
   next_res_domain_id = DB_OBJ(index_datum.index)->range;
 
+  grn_report_index(ctx,
+                   "[accessor][resolve][data-column]",
+                   "",
+                   index_datum.index);
   {
     grn_rc rc;
     grn_obj *next_res_domain = grn_ctx_at(ctx, next_res_domain_id);
