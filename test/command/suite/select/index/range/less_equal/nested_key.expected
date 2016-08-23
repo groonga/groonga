@@ -56,3 +56,4 @@ select Users --filter 'age._key <= 29' --output_columns '_key, age, _score'
 ]
 #|i| [table][select][index][range][key] <Ages>
 #|i| [table][select][index][range][accessor] <Ages>
+#|i| [accessor][resolve][data-column][index] <Ages.users_age>
