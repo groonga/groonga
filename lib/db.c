@@ -8425,7 +8425,7 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     goto exit;
   }
 
-  if (!GRN_OBJ_TABLEP(lexicon_domain)) {
+  if (!grn_obj_is_table(ctx, lexicon_domain)) {
     goto exit;
   }
 
@@ -8438,7 +8438,7 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     if (!source) {
       continue;
     }
-    if (GRN_OBJ_TABLEP(source)) {
+    if (grn_obj_is_table(ctx, source)) {
       source_type_id = source->header.domain;
     } else {
       source_type_id = DB_OBJ(source)->range;
