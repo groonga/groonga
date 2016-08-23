@@ -8332,7 +8332,7 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
   grn_obj_close(ctx, &v);
 }
 
-inline static grn_rc
+inline static void
 grn_obj_set_info_source_validate_report_error(grn_ctx *ctx,
                                               grn_obj *column,
                                               grn_obj *table_domain,
@@ -8385,7 +8385,6 @@ grn_obj_set_info_source_validate_report_error(grn_ctx *ctx,
       source_type_name_size, source_type_name,
       column_name_size, column_name,
       table_domain_name_size, table_domain_name);
-  return ctx->rc;
 }
 
 inline static grn_rc
@@ -8444,14 +8443,14 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
       source_type_id = DB_OBJ(source)->range;
     }
     if (table_domain_id != source_type_id) {
-      rc = grn_obj_set_info_source_validate_report_error(ctx,
-                                                         obj,
-                                                         table_domain,
-                                                         source,
-                                                         source_type_id);
+      grn_obj_set_info_source_validate_report_error(ctx,
+                                                    obj,
+                                                    table_domain,
+                                                    source,
+                                                    source_type_id);
     }
     grn_obj_unlink(ctx, source);
-    if (rc != GRN_SUCCESS) {
+    if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
   }
