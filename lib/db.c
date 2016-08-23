@@ -8391,22 +8391,23 @@ inline static grn_rc
 grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
 {
   grn_rc rc = GRN_SUCCESS;
-  grn_id table_id;
-  grn_obj *table = NULL;
-  grn_id table_domain_id;
-  grn_obj *table_domain = NULL;
+  grn_id lexicon_id;
+  grn_obj *lexicon = NULL;
+  grn_id lexicon_domain_id;
+  grn_obj *lexicon_domain = NULL;
+  grn_bool lexicon_domain_is_table;
   grn_id *source_ids;
   int i, n_source_ids;
 
-  table_id = obj->header.domain;
-  table = grn_ctx_at(ctx, table_id);
-  if (!table) {
+  lexicon_id = obj->header.domain;
+  lexicon = grn_ctx_at(ctx, lexicon_id);
+  if (!lexicon) {
     goto exit;
   }
 
-  table_domain_id = table->header.domain;
-  table_domain = grn_ctx_at(ctx, table_domain_id);
-  if (!table_domain) {
+  lexicon_domain_id = lexicon->header.domain;
+  lexicon_domain = grn_ctx_at(ctx, lexicon_domain_id);
+  if (!lexicon_domain) {
     goto exit;
   }
 
@@ -8424,7 +8425,7 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     goto exit;
   }
 
-  if (!GRN_OBJ_TABLEP(table_domain)) {
+  if (!GRN_OBJ_TABLEP(lexicon_domain)) {
     goto exit;
   }
 
@@ -8442,10 +8443,10 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     } else {
       source_type_id = DB_OBJ(source)->range;
     }
-    if (table_domain_id != source_type_id) {
+    if (lexicon_domain_id != source_type_id) {
       grn_obj_set_info_source_validate_report_error(ctx,
                                                     obj,
-                                                    table_domain,
+                                                    lexicon_domain,
                                                     source,
                                                     source_type_id);
     }
@@ -8456,11 +8457,11 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   }
 
 exit:
-  if (table) {
-    grn_obj_unlink(ctx, table);
+  if (lexicon) {
+    grn_obj_unlink(ctx, lexicon);
   }
-  if (table_domain) {
-    grn_obj_unlink(ctx, table_domain);
+  if (lexicon_domain) {
+    grn_obj_unlink(ctx, lexicon_domain);
   }
   return ctx->rc;
 }
