@@ -1,0 +1,5 @@
+table_create Notes TABLE_NO_KEY
+column_create Notes title COLUMN_SCALAR LongText
+
+table_create Titles TABLE_PAT_KEY ShortText
+column_create Titles notes_title COLUMN_INDEX Notes title

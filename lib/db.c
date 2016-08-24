@@ -8491,7 +8491,9 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
             source);
         }
       } else {
-        if (lexicon_domain_id != source_type_id) {
+        if (!(lexicon_domain_id == source_type_id ||
+              (grn_type_id_is_text_family(ctx, lexicon_domain_id) &&
+               grn_type_id_is_text_family(ctx, source_type_id)))) {
           grn_obj_set_info_source_invalid_lexicon_error(
             ctx,
             "index table's key must equal source type",
