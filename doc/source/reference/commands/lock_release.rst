@@ -27,7 +27,7 @@ Syntax
 
 This command takes only one optional parameter::
 
-  lock_clear [target_name=null]
+  lock_release [target_name=null]
 
 If ``target_name`` parameters is omitted, database is used for the
 target object.
