@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-08-02 15:11+0900\n"
+"PO-Revision-Date: 2016-08-24 14:40+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -22267,6 +22267,9 @@ msgid ""
 "records are fetched."
 msgstr ""
 
+msgid "Characteristics of all tables"
+msgstr "全テーブルの特徴"
+
 msgid "Tables"
 msgstr "テーブル"
 
@@ -22300,29 +22303,32 @@ msgstr ""
 "以下はGroongaにあるすべてのテーブルの特性表です。（この表の中では ``TABLE_`` "
 "プレフィックスは省略しています。）"
 
-msgid "``DAT_KEY``"
-msgstr ""
-
-msgid "``HASH_KEY``"
+msgid "Item"
 msgstr ""
 
 msgid "``NO_KEY``"
 msgstr ""
 
+msgid "``HASH_KEY``"
+msgstr ""
+
 msgid "``PAT_KEY``"
+msgstr ""
+
+msgid "``DAT_KEY``"
 msgstr ""
 
 msgid "Data structure"
 msgstr "データ構造"
-
-msgid "Double array trie"
-msgstr "ダブル配列トライ"
 
 msgid "Hash table"
 msgstr "ハッシュテーブル"
 
 msgid "Patricia trie"
 msgstr "パトリシアトライ"
+
+msgid "Double array trie"
+msgstr "ダブル配列トライ"
 
 msgid "ID support"
 msgstr "IDサポート"
@@ -22336,14 +22342,14 @@ msgstr "バリューサポート"
 msgid "Key -> ID speed"
 msgstr "キー→ID検索速度"
 
-msgid "oo"
-msgstr ""
-
 msgid "o: fast"
 msgstr "o: 速い"
 
 msgid "x: slow"
 msgstr "x: 遅い"
+
+msgid "oo"
+msgstr ""
 
 msgid "Update speed"
 msgstr "更新速度"

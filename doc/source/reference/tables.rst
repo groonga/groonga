@@ -23,51 +23,78 @@ Characteristics
 Here is a chracteristic table of all tables in Groonga. (``TABLE_``
 prefix is omitted in the table.)
 
-+--------------+------------+--------------+-------------+-------------+
-|              | ``NO_KEY`` | ``HASH_KEY`` | ``PAT_KEY`` | ``DAT_KEY`` |
-+==============+============+==============+=============+=============+
-| Data         | Array      | Hash table   | Patricia    | Double      |
-| structure    |            |              | trie        | array       |
-|              |            |              |             | trie        |
-+--------------+------------+--------------+-------------+-------------+
-| ID           | o          | o            | o           | o           |
-| support      |            |              |             |             |
-+--------------+------------+--------------+-------------+-------------+
-| Key          | x          | o            | o           | o           |
-| support      |            |              |             |             |
-+--------------+------------+--------------+-------------+-------------+
-| Value        | o          | o            | o           | x           |
-| support      |            |              |             |             |
-+--------------+------------+--------------+-------------+-------------+
-| Key -> ID    | \-         | oo           | x           | o           |
-| speed        |            |              |             |             |
-|              |            |              |             |             |
-| * o: fast    |            |              |             |             |
-| * x: slow    |            |              |             |             |
-+--------------+------------+--------------+-------------+-------------+
-| Update speed | ooo        | o            | o           | x           |
-|              |            |              |             |             |
-| * o: fast    |            |              |             |             |
-| * x: slow    |            |              |             |             |
-+--------------+------------+--------------+-------------+-------------+
-| Size         | ooo        | o            | oo          | x           |
-|              |            |              |             |             |
-| * o: small   |            |              |             |             |
-| * x: large   |            |              |             |             |
-+--------------+------------+--------------+-------------+-------------+
-| Key          | \-         | x            | x           | o           |
-| update       |            |              |             |             |
-+--------------+------------+--------------+-------------+-------------+
-| Common       | \-         | x            | o           | o           |
-| prefix       |            |              |             |             |
-| search       |            |              |             |             |
-+--------------+------------+--------------+-------------+-------------+
-| Predictive   | \-         | x            | o           | o           |
-| search       |            |              |             |             |
-+--------------+------------+--------------+-------------+-------------+
-| Range        | \-         | x            | o           | o           |
-| search       |            |              |             |             |
-+--------------+------------+--------------+-------------+-------------+
+.. list-table:: Characteristics of all tables
+   :header-rows: 1
+
+   * - Item
+     - ``NO_KEY``
+     - ``HASH_KEY``
+     - ``PAT_KEY``
+     - ``DAT_KEY``
+   * - Data structure
+     - Array
+     - Hash table
+     - Patricia trie
+     - Double array trie
+   * - ID support
+     - o
+     - o
+     - o
+     - o
+   * - Key support
+     - x
+     - o
+     - o
+     - o
+   * - Value support
+     - o
+     - o
+     - o
+     - x
+   * - Key -> ID speed
+
+       * o: fast
+       * x: slow
+     - \-
+     - oo
+     - x
+     - o
+   * - Update speed
+
+       * o: fast
+       * x: slow
+     - ooo
+     - o
+     - o
+     - x
+   * - Size
+
+       * o: small
+       * x: large
+     - ooo
+     - o
+     - oo
+     - x
+   * - Key update
+     - \-
+     - x
+     - x
+     - o
+   * - Common prefix search
+     - \-
+     - x
+     - o
+     - o
+   * - Predictive search
+     - \-
+     - x
+     - o
+     - o
+   * - Range search
+     - \-
+     - x
+     - o
+     - o
 
 .. _table-no-key:
 
