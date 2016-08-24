@@ -8409,8 +8409,8 @@ grn_obj_set_info_source_invalid_lexicon_error(grn_ctx *ctx,
   ERR(GRN_INVALID_ARGUMENT,
       "[column][index][source] %s: "
       "<%.*s> -> <%.*s>: "
-      "index-column:<%.*s>"
-      "source:<%.*s> ",
+      "index-column:<%.*s> "
+      "source:<%.*s>",
       message,
       actual_type_name_size, actual_type_name,
       expected_type_name_size, expected_type_name,
