@@ -11,7 +11,7 @@ Darwin)
         gettext_prefix=/usr/local/Cellar/gettext
         if [ -d $gettext_prefix ]; then
           gettext_aclocal=$(ls $gettext_prefix/*/share/aclocal | \
-                               sort --version-sort | \
+                               gsort --version-sort | \
                                tail -n 1)
           if [ -d $gettext_aclocal ]; then
             ACLOCAL_PATH="$ACLOCAL_PATH $gettext_aclocal"
