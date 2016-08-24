@@ -12,8 +12,8 @@ column_create TagsIndex sites_tags COLUMN_INDEX TagPriorities _key
       0.0,
       0.0
     ],
-    "[column][index][source] source type must equal to index table: source:<TagPriorities._key(Tags)> expected:<TagsIndex> index:<Ta"
+    "[column][index][source] index table must equal to source type: <TagsIndex> -> <Tags>: index-column:<TagsIndex.sites_tags>source"
   ],
   false
 ]
-#|e| [column][index][source] source type must equal to index table: source:<TagPriorities._key(Tags)> expected:<TagsIndex> index:<TagsIndex.sites_tags>
+#|e| [column][index][source] index table must equal to source type: <TagsIndex> -> <Tags>: index-column:<TagsIndex.sites_tags>source:<TagPriorities._key> 

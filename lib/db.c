@@ -8369,22 +8369,31 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
 }
 
 inline static void
-grn_obj_set_info_source_invalid_source_type_error(grn_ctx *ctx,
-                                                  const char *message,
-                                                  grn_obj *source,
-                                                  grn_id source_type_id,
-                                                  grn_obj *column,
-                                                  grn_obj *expected_type)
+grn_obj_set_info_source_invalid_lexicon_error(grn_ctx *ctx,
+                                              const char *message,
+                                              grn_obj *actual_type,
+                                              grn_obj *expected_type,
+                                              grn_obj *index_column,
+                                              grn_obj *source)
 {
-  char source_name[GRN_TABLE_MAX_KEY_SIZE];
-  int source_name_size;
-  grn_obj *source_type;
-  char source_type_name[GRN_TABLE_MAX_KEY_SIZE];
-  int source_type_name_size;
-  char column_name[GRN_TABLE_MAX_KEY_SIZE];
-  int column_name_size;
+  char actual_type_name[GRN_TABLE_MAX_KEY_SIZE];
+  int actual_type_name_size;
   char expected_type_name[GRN_TABLE_MAX_KEY_SIZE];
   int expected_type_name_size;
+  char index_column_name[GRN_TABLE_MAX_KEY_SIZE];
+  int index_column_name_size;
+  char source_name[GRN_TABLE_MAX_KEY_SIZE];
+  int source_name_size;
+
+  actual_type_name_size = grn_obj_name(ctx, actual_type,
+                                       actual_type_name,
+                                       GRN_TABLE_MAX_KEY_SIZE);
+  expected_type_name_size = grn_obj_name(ctx, expected_type,
+                                         expected_type_name,
+                                         GRN_TABLE_MAX_KEY_SIZE);
+  index_column_name_size = grn_obj_name(ctx, index_column,
+                                        index_column_name,
+                                        GRN_TABLE_MAX_KEY_SIZE);
 
   source_name_size = grn_obj_name(ctx, source,
                                   source_name, GRN_TABLE_MAX_KEY_SIZE);
@@ -8397,35 +8406,16 @@ grn_obj_set_info_source_invalid_source_type_error(grn_ctx *ctx,
     source_name_size = strlen(source_name);
   }
 
-  source_type = grn_ctx_at(ctx, source_type_id);
-  if (source_type) {
-    source_type_name_size = grn_obj_name(ctx, source_type,
-                                         source_type_name,
-                                         GRN_TABLE_MAX_KEY_SIZE);
-    grn_obj_unlink(ctx, source_type);
-  } else {
-    grn_strncpy(source_type_name,
-                GRN_TABLE_MAX_KEY_SIZE,
-                "(nil)",
-                GRN_TABLE_MAX_KEY_SIZE);
-    source_type_name_size = strlen(source_type_name);
-  }
-
-  column_name_size = grn_obj_name(ctx, column,
-                                  column_name, GRN_TABLE_MAX_KEY_SIZE);
-  expected_type_name_size = grn_obj_name(ctx, expected_type,
-                                         expected_type_name,
-                                         GRN_TABLE_MAX_KEY_SIZE);
   ERR(GRN_INVALID_ARGUMENT,
       "[column][index][source] %s: "
-      "source:<%.*s(%.*s)> "
-      "expected:<%.*s> "
-      "index:<%.*s>",
+      "<%.*s> -> <%.*s>: "
+      "index-column:<%.*s>"
+      "source:<%.*s> ",
       message,
-      source_name_size, source_name,
-      source_type_name_size, source_type_name,
+      actual_type_name_size, actual_type_name,
       expected_type_name_size, expected_type_name,
-      column_name_size, column_name);
+      index_column_name_size, index_column_name,
+      source_name_size, source_name);
 }
 
 inline static grn_rc
@@ -8477,7 +8467,7 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     grn_id source_id = source_ids[i];
     grn_obj *source;
     grn_id source_type_id;
-    grn_id source_type_is_table;
+    grn_obj *source_type;
 
     source = grn_ctx_at(ctx, source_id);
     if (!source) {
@@ -8488,31 +8478,27 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     } else {
       source_type_id = DB_OBJ(source)->range;
     }
-    {
-      grn_obj *source_type;
-      source_type = grn_ctx_at(ctx, source_type_id);
-      source_type_is_table = grn_obj_is_table(ctx, source_type);
-    }
+    source_type = grn_ctx_at(ctx, source_type_id);
     if (!lexicon_have_tokenizer) {
-      if (source_type_is_table) {
+      if (grn_obj_is_table(ctx, source_type)) {
         if (lexicon_id != source_type_id) {
-          grn_obj_set_info_source_invalid_source_type_error(
+          grn_obj_set_info_source_invalid_lexicon_error(
             ctx,
-            "source type must equal to index table",
-            source,
-            source_type_id,
+            "index table must equal to source type",
+            lexicon,
+            source_type,
             obj,
-            lexicon);
+            source);
         }
       } else {
         if (lexicon_domain_id != source_type_id) {
-          grn_obj_set_info_source_invalid_source_type_error(
+          grn_obj_set_info_source_invalid_lexicon_error(
             ctx,
-            "source type must equal to index table's key",
-            source,
-            source_type_id,
+            "index table's key must equal source type",
+            lexicon_domain,
+            source_type,
             obj,
-            lexicon_domain);
+            source);
         }
       }
     }

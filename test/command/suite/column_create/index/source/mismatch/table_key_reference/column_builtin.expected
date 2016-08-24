@@ -14,8 +14,8 @@ column_create TagsIndex sites_tags COLUMN_INDEX Sites tags
       0.0,
       0.0
     ],
-    "[column][index][source] source type must equal to index table's key: source:<Sites.tags(ShortText)> expected:<Tags> index:<Tags"
+    "[column][index][source] index table's key must equal source type: <Tags> -> <ShortText>: index-column:<TagsIndex.sites_tags>sou"
   ],
   false
 ]
-#|e| [column][index][source] source type must equal to index table's key: source:<Sites.tags(ShortText)> expected:<Tags> index:<TagsIndex.sites_tags>
+#|e| [column][index][source] index table's key must equal source type: <Tags> -> <ShortText>: index-column:<TagsIndex.sites_tags>source:<Sites.tags> 
