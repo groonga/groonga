@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-08-24 14:40+0900\n"
+"PO-Revision-Date: 2016-08-24 14:48+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -22377,6 +22377,39 @@ msgstr "前方一致検索"
 
 msgid "Range search"
 msgstr "範囲検索"
+
+msgid "The maximum one key size"
+msgstr "1つのキーの最大サイズ"
+
+msgid "4KiB"
+msgstr ""
+
+msgid "The maximum total size of keys"
+msgstr "最大総キーサイズ"
+
+msgid ""
+"4GiB or 1TiB (by specifying ``KEY_LARGE`` flag to :ref:`table-create-flags`)"
+msgstr ""
+"4GiBまたは1TiB（ :ref:`table-create-flags` に ``KEY_LARGE`` フラグを指定した"
+"場合）"
+
+msgid "4GiB"
+msgstr ""
+
+msgid "The maximum number of records"
+msgstr "最大レコード数"
+
+msgid "1,073,741,815 (2 :sup:`30` - 9)"
+msgstr ""
+
+msgid "536,870,912 (2 :sup:`29`)"
+msgstr ""
+
+msgid "1,073,741,823 (2 :sup:`30` - 1)"
+msgstr ""
+
+msgid "268,435,455 (2 :sup:`28` - 1)"
+msgstr ""
 
 msgid ""
 "``TABLE_NO_KEY`` is very fast and very small but it doesn't support key. "

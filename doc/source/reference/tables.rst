@@ -95,6 +95,22 @@ prefix is omitted in the table.)
      - x
      - o
      - o
+   * - The maximum one key size
+     - \-
+     - 4KiB
+     - 4KiB
+     - 4KiB
+   * - The maximum total size of keys
+     - \-
+     - 4GiB or 1TiB (by specifying ``KEY_LARGE`` flag to
+       :ref:`table-create-flags`)
+     - 4GiB
+     - 4GiB
+   * - The maximum number of records
+     - 1,073,741,815 (2 :sup:`30` - 9)
+     - 536,870,912 (2 :sup:`29`)
+     - 1,073,741,823 (2 :sup:`30` - 1)
+     - 268,435,455 (2 :sup:`28` - 1)
 
 .. _table-no-key:
 
