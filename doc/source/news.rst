@@ -77,7 +77,7 @@ Fixes
 
 * [pat_fuzzy] Fixed a bug that ``prefix_match_size`` option returns
   wrong node. It causes a problem that
-  [:doc:`/reference/functions/fuzzy_search`] is returns wrong edit
+  [:doc:`/reference/functions/fuzzy_search`] returns wrong edit
   distance. [GitHub#590] [Patch by Naoya Murakami]
 
 * [:doc:`/reference/commands/load`] Changed to report error when
