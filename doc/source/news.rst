@@ -7,6 +7,72 @@
 News
 ====
 
+.. _release-6-0-8:
+
+Release 6.0.8 - 2016-08-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/object_list`] Supported to show more
+  properties such as `value_size` and `n_elements` in metadata.
+
+* Supported operator per selector. This change enables to choose
+  correct index for selector. It means that `between()` chooses index
+  for range search, `in_values()` chooses index for equality
+  comparison. [GitHub#589] [Reported by Naoya Murakami]
+
+* [debian] Changed to use nginx log reopen feature instead of
+  Groonga's [:doc:`/reference/commands/log_reopen`] command because
+  log_reopen command works only for one worker. On the contrast, nginx
+  log reopen feature works for multiple workers.
+
+* [:doc:`/reference/commands/table_copy`] Added `table_copy` command which
+  copies specified table.
+
+* Supported to cast A table record to B table record. It fixes a case
+  that [:doc:`/reference/commands/column_copy`] failure in the
+  previous version. Note that both tables must support key.
+
+* [:doc:`/reference/commands/column_copy`] Supported reference type
+  vector.
+
+* [admin] Supported no response error case. It fixes the problem
+  that "Loading..." message will remain displayed.
+
+* [:doc:`/reference/executables/groonga`][http] Supported to return
+  400 Bad Request against not implemented function.
+
+* [:doc:`/reference/executables/groonga-httpd`] Supported to return
+  body on failure.
+
+* [:doc:`/reference/executables/groonga-httpd`] Supported to load
+  large data as stream.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/commands/column_create`] Fixed a bug that buffer
+  overflow occurs on logging.
+
+* Fixed to output response even when critical level error.
+
+* Fixed to ensure clearing output buffer for each grn_ctx_send.
+  This change solves sometimes response may broken. [GitHub#330]
+
+* [pat_fuzzy] Fixed a bug that `prefix_match_size` option returns
+  wrong node. It causes a problem that
+  [:doc:`/reference/functions/fuzzy_search`] is returns wrong edit
+  distance. [GitHub#590] [Patch by Naoya Murakami]
+
+* [:doc:`/reference/commands/load`] Changed to report error when
+  column value set is failed. It enables you to notice mismatch
+  between type of column and actual value.
+
+* [:doc:`/reference/executables/groonga-httpd] Fixed a bug that wrong
+  HTTP status is set on success.
+
 .. _release-6-0-7:
 
 Release 6.0.7 - 2016-07-29
