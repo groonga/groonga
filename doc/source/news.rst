@@ -50,6 +50,20 @@ Improvements
 * [:doc:`/reference/executables/groonga-httpd`] Supported to load
   large data as stream.
 
+* Supported sequential search by ``_key`` when it is specified as a
+  source of index column.
+
+* Supported to report index information on resolving by accessor for
+  data column if log level is equal to info.
+
+* Added valid lexicon check on setting index sources. If users create
+  wrong index for sources by
+  [:doc:`/reference/commands/column_create`], this check shows
+  details.
+
+* [:doc:`/limitations`] Updated description about table
+  limitations.
+
 Fixes
 ^^^^^
 
@@ -72,6 +86,15 @@ Fixes
 
 * [:doc:`/reference/executables/groonga-httpd] Fixed a bug that wrong
   HTTP status is set on success.
+
+* [:doc:`/reference/functions/fuzzy_search`][:doc:`/reference/functions/in_values`]
+  Fixed to resolve record id correctly on sequential
+  search. [GitHub#591,#592,#593] [Patch by Naoya Murakami]
+
+Thanks
+^^^^^^
+
+* Naoya Murakami
 
 .. _release-6-0-7:
 
