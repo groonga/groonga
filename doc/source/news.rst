@@ -31,9 +31,10 @@ Improvements
 * [:doc:`/reference/commands/table_copy`] Added ``table_copy`` command
   which copies specified table.
 
-* Supported to cast A table record to B table record. It fixes a case
-  that [:doc:`/reference/commands/column_copy`] failure in the
-  previous version. Note that both tables must support key.
+* [:doc:`/reference/commands/column_copy`] Supported to cast A table
+  record to B table record. It fixes a case that ``column_copy``
+  failure in the previous version. Note that both tables must support
+  key.
 
 * [:doc:`/reference/commands/column_copy`] Supported reference type
   vector.
@@ -75,10 +76,10 @@ Fixes
 * Fixed to ensure clearing output buffer for each grn_ctx_send.
   This change solves sometimes response may broken. [GitHub#330]
 
-* [pat_fuzzy] Fixed a bug that ``prefix_match_size`` option returns
-  wrong node. It causes a problem that
-  [:doc:`/reference/functions/fuzzy_search`] returns wrong edit
-  distance. [GitHub#590] [Patch by Naoya Murakami]
+* [:doc:`/reference/functions/fuzzy_search`] Fixed a bug that
+  ``prefix_match_size`` option returns wrong node. It causes a problem
+  that ``fuzzy_search`` returns wrong edit distance. [GitHub#590]
+  [Patch by Naoya Murakami]
 
 * [:doc:`/reference/commands/load`] Changed to report error when
   column value set is failed. It enables you to notice mismatch
