@@ -22,6 +22,7 @@ case "${TRAVIS_OS_NAME}" in
     brew outdated pkg-config || brew upgrade pkg-config
     brew install --reinstall libtool
     brew install \
+         coreutils \
          msgpack \
          libevent \
          mecab \
