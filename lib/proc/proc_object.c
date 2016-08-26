@@ -102,37 +102,24 @@ command_object_remove(grn_ctx *ctx,
   }
 
   if (force) {
-    grn_id id;
-    id = grn_table_get(ctx, db,
-                       GRN_TEXT_VALUE(name),
-                       GRN_TEXT_LEN(name));
-    if (id != GRN_ID_NIL) {
-      char path[PATH_MAX];
-      struct stat stat_buffer;
-      grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
-      grn_obj_path_by_id(ctx, db, id, path);
-      grn_io_remove(ctx, path);
-      grn_strcat(path, PATH_MAX, ".c");
-      if (stat(path, &stat_buffer) == 0) {
-        grn_io_remove(ctx, path);
-      }
-      grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
-      return NULL;
+    grn_obj_remove_force(ctx, GRN_TEXT_VALUE(name), GRN_TEXT_LEN(name));
+    grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
+  } else {
+    if (failed_to_open) {
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "[object][remove] "
+                       "failed to open the target object: <%.*s>",
+                       (int)GRN_TEXT_LEN(name),
+                       GRN_TEXT_VALUE(name));
+    } else {
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "[object][remove] target object doesn't exist: <%.*s>",
+                       (int)GRN_TEXT_LEN(name),
+                       GRN_TEXT_VALUE(name));
     }
+    grn_ctx_output_bool(ctx, GRN_FALSE);
   }
 
-  if (failed_to_open) {
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "[object][remove] failed to open the target object: <%.*s>",
-                     (int)GRN_TEXT_LEN(name),
-                     GRN_TEXT_VALUE(name));
-  } else {
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "[object][remove] target object doesn't exist: <%.*s>",
-                     (int)GRN_TEXT_LEN(name),
-                     GRN_TEXT_VALUE(name));
-  }
-  grn_ctx_output_bool(ctx, GRN_FALSE);
   return NULL;
 }
 
