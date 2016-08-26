@@ -203,6 +203,16 @@ ctx_set_error_message(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+ctx_clear_error(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  ERRCLR(ctx);
+
+  return mrb_nil_value();
+}
+
+static mrb_value
 ctx_get_command_version(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -791,6 +801,7 @@ grn_mrb_ctx_init(grn_ctx *ctx)
                     MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "error_message=", ctx_set_error_message,
                     MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "clear_error", ctx_clear_error, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "command_version",
                     ctx_get_command_version, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "command_version=",
