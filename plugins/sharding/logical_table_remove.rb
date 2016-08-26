@@ -83,6 +83,7 @@ module Groonga
             end
           end
           columns.each do |column|
+            next if column.nil?
             range = column.range
             if range.is_a?(Table)
               referenced_table_ids << range.id
@@ -110,6 +111,7 @@ module Groonga
             begin
               table.remove(options)
             rescue
+              Context.instance.clear_error
               remove_table_force(shard)
             end
           else
@@ -136,6 +138,7 @@ module Groonga
         database.each_raw(:prefix => prefix) do |id, cursor|
           column = context[id]
           if column.nil?
+            Context.instance.clear_error
             column_name = cursor.key
             Object.remove_force(column_name)
           else
@@ -145,7 +148,9 @@ module Groonga
 
         # TODO: Remove objects that refers the table
 
-        Object.remove_force(shard.table_name)
+        if database[shard.table_name]
+          Object.remove_force(shard.table_name)
+        end
       end
 
       def remove_records(table)
