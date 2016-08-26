@@ -20,6 +20,7 @@ case "${TRAVIS_OS_NAME}" in
   osx)
     brew update > /dev/null
     brew outdated pkg-config || brew upgrade pkg-config
+    brew install --reinstall libtool
     brew install \
          msgpack \
          libevent \
