@@ -32,6 +32,20 @@
 #include "mrb_options.h"
 #include "mrb_converter.h"
 
+static mrb_value
+object_remove_force(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  char *name;
+  mrb_int name_size;
+
+  mrb_get_args(mrb, "s", &name, &name_size);
+  grn_obj_remove_force(ctx, name, name_size);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
+}
+
 mrb_value
 grn_mrb_object_inspect(mrb_state *mrb, mrb_value self)
 {
@@ -268,6 +282,12 @@ grn_mrb_object_init(grn_ctx *ctx)
   klass = mrb_define_class_under(mrb, module, "Object", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
   data->object_class = klass;
+
+  mrb_define_class_method(mrb,
+                          klass,
+                          "remove_force",
+                          object_remove_force,
+                          MRB_ARGS_REQ(1));
 
   mrb_define_method(mrb, klass, "inspect",
                     grn_mrb_object_inspect, MRB_ARGS_NONE());
