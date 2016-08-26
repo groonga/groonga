@@ -25,6 +25,7 @@
 
 #include "mrb_ctx.h"
 #include "mrb_database.h"
+#include "mrb_converter.h"
 
 static struct mrb_data_type mrb_grn_database_type = {
   "Groonga::Database",
@@ -123,6 +124,34 @@ mrb_grn_database_is_dirty(mrb_state *mrb, mrb_value self)
   return mrb_bool_value(is_dirty);
 }
 
+static mrb_value
+mrb_grn_database_array_reference(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *database;
+  grn_id key_domain_id = GRN_DB_SHORT_TEXT;
+  mrb_value mrb_key;
+  grn_id record_id;
+  grn_mrb_value_to_raw_data_buffer buffer;
+  void *key;
+  unsigned int key_size;
+
+  mrb_get_args(mrb, "o", &mrb_key);
+
+  database = DATA_PTR(self);
+  grn_mrb_value_to_raw_data_buffer_init(mrb, &buffer);
+  grn_mrb_value_to_raw_data(mrb, "key", mrb_key, key_domain_id,
+                            &buffer, &key, &key_size);
+  record_id = grn_table_get(ctx, database, key, key_size);
+  grn_mrb_value_to_raw_data_buffer_fin(mrb, &buffer);
+
+  if (record_id == GRN_ID_NIL) {
+    return mrb_nil_value();
+  } else {
+    return mrb_fixnum_value(record_id);
+  }
+}
+
 void
 grn_mrb_database_init(grn_ctx *ctx)
 {
@@ -152,5 +181,7 @@ grn_mrb_database_init(grn_ctx *ctx)
                     mrb_grn_database_get_last_modified, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "dirty?",
                     mrb_grn_database_is_dirty, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "[]",
+                    mrb_grn_database_array_reference, MRB_ARGS_REQ(1));
 }
 #endif
