@@ -71,8 +71,6 @@ module Groonga
           Context.instance.clear_error
         end
 
-        shard_suffix = shard.range_data.to_suffix
-
         referenced_table_ids = []
         if @dependent
           if table
@@ -119,6 +117,9 @@ module Groonga
           end
         end
 
+        return if referenced_table_ids.empty?
+
+        shard_suffix = shard.range_data.to_suffix
         referenced_table_ids.each do |referenced_table_id|
           referenced_table = context[referenced_table_id]
           next if referenced_table.nil?
