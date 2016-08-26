@@ -814,32 +814,54 @@ grn_io_size(grn_ctx *ctx, grn_io *io, uint64_t *size)
 }
 
 grn_rc
-grn_io_remove(grn_ctx *ctx, const char *path)
+grn_io_remove_raw(grn_ctx *ctx, const char *path)
 {
-  struct stat s;
-  if (stat(path, &s)) {
-    SERR("failed to stat: <%s>", path);
-    return ctx->rc;
-  } else if (grn_unlink(path)) {
+  grn_rc rc = GRN_SUCCESS;
+  int fno;
+  char buffer[PATH_MAX];
+
+  if (grn_unlink(path) != 0) {
     ERRNO_ERR("failed to remove path: <%s>",
               path);
     return ctx->rc;
-  } else {
-    int fno;
-    char buffer[PATH_MAX];
-    for (fno = 1; ; fno++) {
-      gen_pathname(path, buffer, fno);
-      if (!stat(buffer, &s)) {
-        if (grn_unlink(buffer)) {
-          ERRNO_ERR("failed to remove path: <%s>",
-                    buffer);
-        }
-      } else {
-        break;
-      }
-    }
-    return GRN_SUCCESS;
   }
+
+  for (fno = 1; ; fno++) {
+    struct stat s;
+    gen_pathname(path, buffer, fno);
+    if (stat(buffer, &s) != 0) {
+      break;
+    }
+    if (grn_unlink(buffer) != 0) {
+      ERRNO_ERR("failed to remove path: <%s>",
+                buffer);
+      rc = ctx->rc;
+    }
+  }
+  return rc;
+}
+
+grn_rc
+grn_io_remove(grn_ctx *ctx, const char *path)
+{
+  struct stat s;
+
+  if (stat(path, &s) != 0) {
+    SERR("failed to stat: <%s>", path);
+    return ctx->rc;
+  }
+
+  return grn_io_remove_raw(ctx, path);
+}
+
+grn_rc
+grn_io_remove_if_exist(grn_ctx *ctx, const char *path)
+{
+  struct stat s;
+  if (stat(path, &s) == 0) {
+    return grn_io_remove_raw(ctx, path);
+  }
+  return GRN_SUCCESS;
 }
 
 grn_rc

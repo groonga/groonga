@@ -738,6 +738,9 @@ GRN_API int grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void *
 GRN_API grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags);
 GRN_API grn_rc grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc grn_obj_remove_dependent(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_rc grn_obj_remove_force(grn_ctx *ctx,
+                                    const char *name,
+                                    int name_size);
 GRN_API grn_rc grn_obj_rename(grn_ctx *ctx, grn_obj *obj,
                               const char *name, unsigned int name_size);
 GRN_API grn_rc grn_table_rename(grn_ctx *ctx, grn_obj *table,

@@ -117,6 +117,7 @@ GRN_API grn_io *grn_io_create(grn_ctx *ctx, const char *path,
 grn_io *grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode);
 GRN_API grn_rc grn_io_close(grn_ctx *ctx, grn_io *io);
 grn_rc grn_io_remove(grn_ctx *ctx, const char *path);
+grn_rc grn_io_remove_if_exist(grn_ctx *ctx, const char *path);
 grn_rc grn_io_size(grn_ctx *ctx, grn_io *io, uint64_t *size);
 grn_rc grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name);
 GRN_API void *grn_io_header(grn_io *io);
