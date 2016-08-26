@@ -8893,12 +8893,30 @@ remove_columns(grn_ctx *ctx, grn_obj *obj)
       grn_id *key;
       GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
         grn_obj *col = grn_ctx_at(ctx, *key);
-        if (col) {
-          rc = _grn_obj_remove(ctx, col, GRN_FALSE);
-          if (rc != GRN_SUCCESS) {
-            grn_obj_unlink(ctx, col);
-            break;
+
+        if (!col) {
+          char name[GRN_TABLE_MAX_KEY_SIZE];
+          int name_size;
+          name_size = grn_table_get_key(ctx, ctx->impl->db, *key,
+                                        name, GRN_TABLE_MAX_KEY_SIZE);
+          if (ctx->rc == GRN_SUCCESS) {
+            ERR(GRN_INVALID_ARGUMENT,
+                "[object][remove] column is broken: <%.*s>",
+                name_size, name);
+          } else {
+            ERR(ctx->rc,
+                "[object][remove] column is broken: <%.*s>: %s",
+                name_size, name,
+                ctx->errbuf);
           }
+          rc = ctx->rc;
+          break;
+        }
+
+        rc = _grn_obj_remove(ctx, col, GRN_FALSE);
+        if (rc != GRN_SUCCESS) {
+          grn_obj_unlink(ctx, col);
+          break;
         }
       });
     }
