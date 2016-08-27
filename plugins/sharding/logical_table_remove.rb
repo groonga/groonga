@@ -112,6 +112,7 @@ module Groonga
               table.remove(options)
             rescue
               Context.instance.clear_error
+              table.close
               remove_table_force(shard)
             end
           else
