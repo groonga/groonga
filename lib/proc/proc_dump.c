@@ -96,6 +96,7 @@ dumper_collect_statistics(grn_ctx *ctx, grn_dumper *dumper)
 
       column = grn_ctx_at(ctx, column_id);
       if (!column) {
+        GRN_PLUGIN_CLEAR_ERROR(ctx);
         continue;
       }
 
@@ -353,6 +354,7 @@ dump_columns(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table,
 
       column = grn_ctx_at(ctx, column_id);
       if (!column) {
+        GRN_PLUGIN_CLEAR_ERROR(ctx);
         continue;
       }
 
@@ -475,6 +477,7 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 
       column = grn_ctx_at(ctx, column_id);
       if (!column) {
+        GRN_PLUGIN_CLEAR_ERROR(ctx);
         continue;
       }
 
