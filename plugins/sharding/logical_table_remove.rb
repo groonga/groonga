@@ -77,9 +77,11 @@ module Groonga
             columns = table.columns
           else
             prefix = "#{shard.table_name}."
-            column_names = context.database.each_name(:prefix => prefix)
-            columns = column_names.collect do |column_name|
-              context[column_name]
+            columns = []
+            context.database.each_name(:prefix => prefix) do |column_name|
+              column = context[column_name]
+              columns << column
+              context.clear_error if column.nil?
             end
           end
           columns.each do |column|
@@ -139,7 +141,7 @@ module Groonga
         database.each_raw(:prefix => prefix) do |id, cursor|
           column = context[id]
           if column.nil?
-            Context.instance.clear_error
+            context.clear_error
             column_name = cursor.key
             Object.remove_force(column_name)
           else
@@ -147,11 +149,27 @@ module Groonga
           end
         end
 
-        # TODO: Remove objects that refers the table
+        table_id = database[shard.table_name]
+        return if table_id.nil?
 
-        if database[shard.table_name]
-          Object.remove_force(shard.table_name)
+        database.each_raw do |id, cursor|
+          next if id == table_id
+          object = context[id]
+          case object
+          when Table
+            if object.domain_id == table_id
+              object.remove(:dependent => @dependent)
+            end
+          when Column
+            if object.range_id == table_id
+              object.remove(:dependent => @dependent)
+            end
+          when nil
+            context.clear_error
+          end
         end
+
+        Object.remove_force(shard.table_name)
       end
 
       def remove_records(table)
