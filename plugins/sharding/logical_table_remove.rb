@@ -92,11 +92,15 @@ module Groonga
               context.clear_error
             when Table
               referenced_table_ids << range.id
-              range.indexes.each do |index_info|
+              indexes = range.indexes
+              context.clear_error
+              indexes.each do |index_info|
                 referenced_table_ids << index_info.index.domain.id
               end
             end
-            column.indexes.each do |index_info|
+            indexes = column.indexes
+            context.clear_error
+            indexes.each do |index_info|
               referenced_table_ids << index_info.index.domain.id
             end
           end
@@ -116,6 +120,7 @@ module Groonga
             begin
               table.remove(options)
             rescue
+              context.clear_error
               table.close
               remove_table_force(shard.table_name)
             end
@@ -165,7 +170,14 @@ module Groonga
             column_name = cursor.key
             Object.remove_force(column_name)
           else
-            column.remove(:dependent => @dependent)
+            begin
+              column.remove(:dependent => @dependent)
+            rescue
+              context.clear_error
+              colomn.close
+              column_name = cursor.key
+              Object.remove_force(column_name)
+            end
           end
         end
 
