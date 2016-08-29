@@ -8855,10 +8855,20 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry)
     if (!target) {
       char name[GRN_TABLE_MAX_KEY_SIZE];
       int length;
+      char hook_name[GRN_TABLE_MAX_KEY_SIZE];
+      int hook_name_length;
+
       length = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
-      ERR(GRN_UNKNOWN_ERROR,
+      hook_name_length = grn_table_get_key(ctx,
+                                           ctx->impl->db,
+                                           data->target,
+                                           hook_name,
+                                           GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_OBJECT_CORRUPT,
           "[column][remove][index] "
-          "hook has a dangling reference: %.*s", length, name);
+          "hook has a dangling reference: <%.*s> -> <%.*s>",
+          length, name,
+          hook_name_length, hook_name);
       sub_rc = ctx->rc;
     } else if (target->header.type == GRN_COLUMN_INDEX) {
       //TODO: multicolumn  MULTI_COLUMN_INDEXP
