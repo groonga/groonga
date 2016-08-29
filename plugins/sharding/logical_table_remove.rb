@@ -68,7 +68,7 @@ module Groonga
 
       def remove_table(shard, table)
         if table.nil? and @force
-          Context.instance.clear_error
+          context.clear_error
         end
 
         referenced_table_ids = []
@@ -87,7 +87,10 @@ module Groonga
           columns.each do |column|
             next if column.nil?
             range = column.range
-            if range.is_a?(Table)
+            case range
+            when nil
+              context.clear_error
+            when Table
               referenced_table_ids << range.id
               range.indexes.each do |index_info|
                 referenced_table_ids << index_info.index.domain.id
@@ -101,7 +104,7 @@ module Groonga
 
         if table.nil?
           if @force
-            remove_table_force(shard)
+            remove_table_force(shard.table_name)
           else
             message = "[logical_table_remove] table is broken: " +
                       "<#{shard.table_name}>"
@@ -113,9 +116,8 @@ module Groonga
             begin
               table.remove(options)
             rescue
-              Context.instance.clear_error
               table.close
-              remove_table_force(shard)
+              remove_table_force(shard.table_name)
             end
           else
             table.remove(options)
@@ -127,17 +129,35 @@ module Groonga
         shard_suffix = shard.range_data.to_suffix
         referenced_table_ids.each do |referenced_table_id|
           referenced_table = context[referenced_table_id]
-          next if referenced_table.nil?
-          if referenced_table.name.end_with?(shard_suffix)
+          if referenced_table.nil?
+            context.clear_error
+            if @force
+              Object.remove_force(referenced_table_id)
+            end
+            next
+          end
+
+          referenced_table_name = referenced_table.name
+          next unless referenced_table_name.end_with?(shard_suffix)
+
+          if @force
+            begin
+              referenced_table.remove(:dependent => @dependent)
+            rescue
+              Context.instance.clear_error
+              referenced_table.close
+              remove_table_force(referenced_table_name)
+            end
+          else
             referenced_table.remove(:dependent => @dependent)
           end
         end
       end
 
-      def remove_table_force(shard)
+      def remove_table_force(table_name)
         database = context.database
 
-        prefix = "#{shard.table_name}."
+        prefix = "#{table_name}."
         database.each_raw(:prefix => prefix) do |id, cursor|
           column = context[id]
           if column.nil?
@@ -149,7 +169,7 @@ module Groonga
           end
         end
 
-        table_id = database[shard.table_name]
+        table_id = database[table_name]
         return if table_id.nil?
 
         database.each_raw do |id, cursor|
@@ -169,7 +189,7 @@ module Groonga
           end
         end
 
-        Object.remove_force(shard.table_name)
+        Object.remove_force(table_name)
       end
 
       def remove_records(table)
