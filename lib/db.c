@@ -12947,6 +12947,25 @@ grn_column_get_all_index_data_column(grn_ctx *ctx,
     grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
     grn_obj *target = grn_ctx_at(ctx, data->target);
     int section = 0;
+    if (!target) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int length;
+      char hook_name[GRN_TABLE_MAX_KEY_SIZE];
+      int hook_name_length;
+
+      length = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
+      hook_name_length = grn_table_get_key(ctx,
+                                           ctx->impl->db,
+                                           data->target,
+                                           hook_name,
+                                           GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_OBJECT_CORRUPT,
+          "[column][indexes][all] "
+          "hook has a dangling reference: <%.*s> -> <%.*s>",
+          length, name,
+          hook_name_length, hook_name);
+      continue;
+    }
     if (target->header.type != GRN_COLUMN_INDEX) {
       continue;
     }
