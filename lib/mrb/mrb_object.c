@@ -207,6 +207,16 @@ object_remove(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+object_is_closed(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *object;
+
+  object = DATA_PTR(self);
+  return mrb_bool_value(object == NULL);
+}
+
+static mrb_value
 object_get_domain_id(mrb_state *mrb, mrb_value self)
 {
   grn_obj *object;
@@ -302,6 +312,7 @@ grn_mrb_object_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "hash", object_hash, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "close", object_close, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "remove", object_remove, MRB_ARGS_OPT(1));
+  mrb_define_method(mrb, klass, "closed?", object_is_closed, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "domain_id", object_get_domain_id,
                     MRB_ARGS_NONE());
