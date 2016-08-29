@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-08-26 17:52+0900\n"
+"PO-Revision-Date: 2016-08-29 11:00+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -12120,6 +12120,18 @@ msgstr ":doc:`/reference/suggest`"
 
 msgid ":doc:`/reference/executables/groonga-suggest-create-dataset`"
 msgstr ""
+
+msgid "``table_copy``"
+msgstr ""
+
+msgid "TOOD: Write me"
+msgstr ""
+
+msgid "Specifies the table name of source table."
+msgstr "ソーステーブル名を指定します。"
+
+msgid "Specifies the destination table name."
+msgstr "コピー先のテーブル名を指定します。"
 
 msgid "``table_create``"
 msgstr ""
