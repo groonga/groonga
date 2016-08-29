@@ -67,6 +67,7 @@
 # include "mrb/mrb_writer.h"
 # include "mrb/mrb_config.h"
 # include "mrb/mrb_eval_context.h"
+# include "mrb/mrb_thread.h"
 
 # include <mruby/array.h>
 # include <mruby/string.h>
@@ -181,6 +182,7 @@ mrb_groonga_init(mrb_state *mrb, mrb_value self)
   grn_mrb_writer_init(ctx);
   grn_mrb_config_init(ctx);
   grn_mrb_eval_context_init(ctx);
+  grn_mrb_thread_init(ctx);
 
   grn_mrb_load(ctx, "initialize/post.rb");
 
