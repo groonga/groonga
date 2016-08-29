@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2015 Brazil
+  Copyright(C) 2013-2016 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -260,6 +260,17 @@ ctx_get_database(mrb_state *mrb, mrb_value self)
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
 
   return grn_mrb_value_from_grn_obj(mrb, grn_ctx_db(ctx));
+}
+
+static mrb_value
+ctx_is_opened(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_int mrb_id;
+
+  mrb_get_args(mrb, "i", &mrb_id);
+
+  return mrb_bool_value(grn_ctx_is_opened(ctx, mrb_id));
 }
 
 void
@@ -814,5 +825,8 @@ grn_mrb_ctx_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "database", ctx_get_database,
                     MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "opened?", ctx_is_opened,
+                    MRB_ARGS_REQ(1));
 }
 #endif
