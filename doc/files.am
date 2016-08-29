@@ -735,6 +735,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/shutdown.rst \
 	$(top_srcdir)/doc/source/reference/commands/status.rst \
 	$(top_srcdir)/doc/source/reference/commands/suggest.rst \
+	$(top_srcdir)/doc/source/reference/commands/table_copy.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_create.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_list.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_remove.rst \
@@ -1588,6 +1589,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/shutdown.rst \
 	source/reference/commands/status.rst \
 	source/reference/commands/suggest.rst \
+	source/reference/commands/table_copy.rst \
 	source/reference/commands/table_create.rst \
 	source/reference/commands/table_list.rst \
 	source/reference/commands/table_remove.rst \
@@ -1953,6 +1955,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/shutdown.txt \
 	html/_sources/reference/commands/status.txt \
 	html/_sources/reference/commands/suggest.txt \
+	html/_sources/reference/commands/table_copy.txt \
 	html/_sources/reference/commands/table_create.txt \
 	html/_sources/reference/commands/table_list.txt \
 	html/_sources/reference/commands/table_remove.txt \
@@ -2218,6 +2221,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/shutdown.html \
 	html/reference/commands/status.html \
 	html/reference/commands/suggest.html \
+	html/reference/commands/table_copy.html \
 	html/reference/commands/table_create.html \
 	html/reference/commands/table_list.html \
 	html/reference/commands/table_remove.html \
