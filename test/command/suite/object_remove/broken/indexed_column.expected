@@ -12,16 +12,16 @@ object_remove Users.name
 [
   [
     [
-      -1,
+      -55,
       0.0,
       0.0
     ],
-    "[column][remove][index] hook has a dangling reference: Users.name"
+    "[column][remove][index] hook has a dangling reference: <Users.name> -> <Terms.index>"
   ],
   false
 ]
 #|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000103>
 #|e| grn_ctx_at: failed to open object: <259>(<Terms.index>):<72>(<column:index>)
-#|e| [column][remove][index] hook has a dangling reference: Users.name
+#|e| [column][remove][index] hook has a dangling reference: <Users.name> -> <Terms.index>
 object_exist Users.name
 [[0,0.0,0.0],true]
