@@ -38,9 +38,11 @@ case "${BUILD_TOOL}" in
       test/mruby/run-test.rb
       test/command_line/run-test.rb
     fi
-    test/command/run-test.sh ${command_test_options} --interface http
+    travis_retry \
+      test/command/run-test.sh ${command_test_options} --interface http
     mkdir -p ${prefix}/var/log/groonga/httpd
-    test/command/run-test.sh ${command_test_options} --testee groonga-httpd
+    travis_retry \
+      test/command/run-test.sh ${command_test_options} --testee groonga-httpd
     ;;
   cmake)
     test/command/run-test.sh ${command_test_options}
