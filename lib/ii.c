@@ -5110,14 +5110,18 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
               c->pb.rid = 0;
               if (br->jump > 0 && !BUFFER_REC_DELETED(br)) {
                 buffer_rec *jump_br = BUFFER_REC_AT(c->buf, br->jump);
-                uint8_t *jump_bp;
-                uint32_t jump_rid;
-                jump_bp = GRN_NEXT_ADDR(jump_br);
-                GRN_B_DEC(jump_rid, jump_bp);
-                if (jump_rid < c->min) {
-                  c->nextb = br->jump;
-                } else {
+                if (BUFFER_REC_DELETED(jump_br)) {
                   c->nextb = br->step;
+                } else {
+                  uint8_t *jump_bp;
+                  uint32_t jump_rid;
+                  jump_bp = GRN_NEXT_ADDR(jump_br);
+                  GRN_B_DEC(jump_rid, jump_bp);
+                  if (jump_rid < c->min) {
+                    c->nextb = br->jump;
+                  } else {
+                    c->nextb = br->step;
+                  }
                 }
               } else {
                 c->nextb = br->step;
