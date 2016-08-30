@@ -10364,7 +10364,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 }
                 if (!vp->ptr) {
                   const char *name;
-                  uint32_t name_size;
+                  uint32_t name_size = 0;
                   name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
                   GRN_LOG(ctx, GRN_LOG_ERROR,
                           "grn_ctx_at: failed to open object: "
