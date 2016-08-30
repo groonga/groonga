@@ -48,7 +48,16 @@ load --table Logs_20150204
 ]
 [[0,0.0,0.0],3]
 logical_table_remove Logs timestamp   --min "2015-02-04 00:00:00"   --min_border "include"
-[[[-22,0.0,0.0],"[logical_table_remove] table is broken: <Logs_20150204>"]]
+[
+  [
+    [
+      -65,
+      0.0,
+      0.0
+    ],
+    "[logical_table_remove] table is broken: <Logs_20150204>: [io][open] file size is too small: <8>(required: >= 64): <db/db.000011"
+  ]
+]
 #|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000110>
 #|e| grn_ctx_at: failed to open object: <272>(<Logs_20150204>):<51>(<table:no_key>)
 dump

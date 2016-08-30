@@ -67,7 +67,18 @@ module Groonga
       end
 
       def remove_table(shard, table)
-        if table.nil? and @force
+        if table.nil?
+          unless @force
+            if context.rc == Context::RC::SUCCESS.to_i
+              error_class = InvalidArgument
+            else
+              rc = Context::RC.find(context.rc)
+              error_class = rc.error_class
+            end
+            message = "[logical_table_remove] table is broken: " +
+                      "<#{shard.table_name}>: #{context.error_message}"
+            raise error_class, message
+          end
           context.clear_error
         end
 
@@ -107,13 +118,7 @@ module Groonga
         end
 
         if table.nil?
-          if @force
-            remove_table_force(shard.table_name)
-          else
-            message = "[logical_table_remove] table is broken: " +
-                      "<#{shard.table_name}>"
-            raise InvalidArgument, message
-          end
+          remove_table_force(shard.table_name)
         else
           options = {:dependent => @dependent}
           if @force

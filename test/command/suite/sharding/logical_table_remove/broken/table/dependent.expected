@@ -55,7 +55,7 @@ logical_table_remove Logs timestamp   --min "2015-02-04 00:00:00"   --min_border
       0.0,
       0.0
     ],
-    "incompatible file format: <[io][open] file size is too small: <8>(required: >= 64): <db/db.0000110>>(-65)"
+    "[logical_table_remove] table is broken: <Logs_20150204>: [io][open] file size is too small: <8>(required: >= 64): <db/db.000011"
   ]
 ]
 #|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000110>
