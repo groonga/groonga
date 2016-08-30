@@ -168,7 +168,13 @@ module Groonga
 
         database.each_raw do |id, cursor|
           next if id == table_id
+
           object = context[id]
+          if object.nil?
+            context.clear_error
+            next
+          end
+
           case object
           when Table
             if object.domain_id == table_id
@@ -190,8 +196,6 @@ module Groonga
                 remove_column_force(object)
               end
             end
-          when nil
-            context.clear_error
           end
         end
 
