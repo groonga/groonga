@@ -56,4 +56,6 @@ logical_table_remove Logs timestamp \
   --min "2015-02-04 00:00:00" \
   --min_border "include"
 
+object_exist Times_20150204.timestamp_index
+
 dump

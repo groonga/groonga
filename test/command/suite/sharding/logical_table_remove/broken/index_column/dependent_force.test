@@ -58,4 +58,6 @@ logical_table_remove Logs timestamp \
   --dependent yes \
   --force yes
 
+object_exist Times_20150204.timestamp_index
+
 dump
