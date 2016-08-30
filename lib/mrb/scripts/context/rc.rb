@@ -6,7 +6,7 @@ module Groonga
 
       class << self
         def find(name_or_code)
-          if name_or_code.is_a?(String)
+          if name_or_code.is_a?(Symbol)
             @@names[name_or_code] || UNKNOWN_ERROR
           else
             @@codes[name_or_code] || UNKNOWN_ERROR
