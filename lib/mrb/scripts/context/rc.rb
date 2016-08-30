@@ -1,15 +1,21 @@
 module Groonga
   class Context
     class RC
+      @@codes = {}
       @@names = {}
 
       class << self
-        def find(name)
-          @@names[name] || UNKNOWN_ERROR
+        def find(name_or_code)
+          if name_or_code.is_a?(String)
+            @@names[name_or_code] || UNKNOWN_ERROR
+          else
+            @@codes[name_or_code] || UNKNOWN_ERROR
+          end
         end
 
         def register(name, code, error_class)
-          rc = new(name, code)
+          rc = new(name, code, error_class)
+          @@codes[code] = rc
           @@names[name] = rc
           error_class.rc = rc if error_class
           rc
@@ -17,9 +23,11 @@ module Groonga
       end
 
       attr_reader :name
-      def initialize(name, code)
+      attr_reader :error_class
+      def initialize(name, code, error_class)
         @name = name
         @code = code
+        @error_class = error_class
       end
 
       def to_i
