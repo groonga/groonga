@@ -206,7 +206,7 @@ module Groonga
 
       def remove_column_force(column)
         column_name = column.name
-        colomn.close
+        column.close
         Object.remove_force(column_name)
       end
 
