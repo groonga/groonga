@@ -967,21 +967,30 @@ grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
 
   for (addrinfo_ptr = addrinfo_list; addrinfo_ptr;
        addrinfo_ptr = addrinfo_ptr->ai_next) {
-    static const int value = 1;
     fd = socket(addrinfo_ptr->ai_family, addrinfo_ptr->ai_socktype,
                 addrinfo_ptr->ai_protocol);
     if (fd == -1) {
       SOERR("socket");
-    } else if (setsockopt(fd, 6, TCP_NODELAY,
-                          (const char *)&value, sizeof(value))) {
-      SOERR("setsockopt");
-      grn_sock_close(fd);
-    } else if (connect(fd, addrinfo_ptr->ai_addr, addrinfo_ptr->ai_addrlen)) {
+      continue;
+    }
+#ifdef TCP_NODELAY
+    {
+      static const int value = 1;
+      if (setsockopt(fd, 6, TCP_NODELAY,
+                     (const char *)&value, sizeof(value)) != 0) {
+        SOERR("setsockopt");
+        grn_sock_close(fd);
+        continue;
+      }
+    }
+#endif
+    if (connect(fd, addrinfo_ptr->ai_addr, addrinfo_ptr->ai_addrlen) != 0) {
       SOERR("connect");
       grn_sock_close(fd);
-    } else {
-      break;
+      continue;
     }
+
+    break;
   }
 
   freeaddrinfo(addrinfo_list);
