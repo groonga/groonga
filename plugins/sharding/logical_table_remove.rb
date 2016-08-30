@@ -140,34 +140,7 @@ module Groonga
           end
         end
 
-        return if referenced_table_ids.empty?
-
-        shard_suffix = shard.range_data.to_suffix
-        referenced_table_ids.each do |referenced_table_id|
-          referenced_table = context[referenced_table_id]
-          if referenced_table.nil?
-            context.clear_error
-            if @force
-              Object.remove_force(referenced_table_id)
-            end
-            next
-          end
-
-          referenced_table_name = referenced_table.name
-          next unless referenced_table_name.end_with?(shard_suffix)
-
-          if @force
-            begin
-              referenced_table.remove(:dependent => @dependent)
-            rescue
-              Context.instance.clear_error
-              referenced_table.close
-              remove_table_force(referenced_table_name)
-            end
-          else
-            referenced_table.remove(:dependent => @dependent)
-          end
-        end
+        remove_referenced_tables(shard, referenced_table_ids)
       end
 
       def remove_table_force(table_name)
@@ -213,6 +186,37 @@ module Groonga
         end
 
         Object.remove_force(table_name)
+      end
+
+      def remove_referenced_tables(shard, referenced_table_ids)
+        return if referenced_table_ids.empty?
+
+        shard_suffix = shard.range_data.to_suffix
+        referenced_table_ids.each do |referenced_table_id|
+          referenced_table = context[referenced_table_id]
+          if referenced_table.nil?
+            context.clear_error
+            if @force
+              Object.remove_force(referenced_table_id)
+            end
+            next
+          end
+
+          referenced_table_name = referenced_table.name
+          next unless referenced_table_name.end_with?(shard_suffix)
+
+          if @force
+            begin
+              referenced_table.remove(:dependent => @dependent)
+            rescue
+              Context.instance.clear_error
+              referenced_table.close
+              remove_table_force(referenced_table_name)
+            end
+          else
+            referenced_table.remove(:dependent => @dependent)
+          end
+        end
       end
 
       def remove_records(table)
