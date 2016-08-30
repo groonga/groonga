@@ -158,9 +158,7 @@ module Groonga
               column.remove(:dependent => @dependent)
             rescue
               context.clear_error
-              colomn.close
-              column_name = cursor.key
-              Object.remove_force(column_name)
+              remove_column_force(column)
             end
           end
         end
@@ -186,6 +184,12 @@ module Groonga
         end
 
         Object.remove_force(table_name)
+      end
+
+      def remove_column_force(column)
+        column_name = column.name
+        colomn.close
+        Object.remove_force(column_name)
       end
 
       def remove_referenced_tables(shard, referenced_table_ids)
