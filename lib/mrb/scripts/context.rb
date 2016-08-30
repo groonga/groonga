@@ -48,6 +48,25 @@ module Groonga
       end
     end
 
+    def open_temporary(id)
+      if Thread.limit == 1
+        need_close = opened?(id)
+      else
+        need_close = false
+      end
+      object = self[id]
+      begin
+        yield(object)
+      ensure
+        if need_close and !object.closed?
+          case object
+          when Table, Column
+            object.close
+          end
+        end
+      end
+    end
+
     private
     def set_error_raw(rc, error_level, message, backtrace)
       self.rc = rc.to_i
