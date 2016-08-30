@@ -13,6 +13,17 @@ set -x
 
 export COLUMNS=79
 
+retry()
+{
+  local i=0
+  while ! "$@"; do
+    if [ $i -eq 3 ]; then
+      exit 1
+    fi
+    i=$((i + 1))
+  done
+}
+
 if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
   memory_fs_size=$[512 * 1024 * 1024] # 512MiB
   byte_per_sector=512
@@ -38,11 +49,9 @@ case "${BUILD_TOOL}" in
       test/mruby/run-test.rb
       test/command_line/run-test.rb
     fi
-    travis_retry \
-      test/command/run-test.sh ${command_test_options} --interface http
+    retry test/command/run-test.sh ${command_test_options} --interface http
     mkdir -p ${prefix}/var/log/groonga/httpd
-    travis_retry \
-      test/command/run-test.sh ${command_test_options} --testee groonga-httpd
+    retry test/command/run-test.sh ${command_test_options} --testee groonga-httpd
     ;;
   cmake)
     test/command/run-test.sh ${command_test_options}
