@@ -176,7 +176,9 @@ module Groonga
                 object.remove(:dependent => @dependent)
               rescue
                 context.clear_error
-                remove_table_force(object.name)
+                reference_table_name = object.name
+                object.close
+                remove_table_force(reference_table_name)
               end
             end
           when Column
