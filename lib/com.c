@@ -1099,10 +1099,12 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
   ev->curr_edge_id.sid = 0;
   {
     int v = 1;
+#ifdef TCP_NODELAY
     if (setsockopt(lfd, SOL_TCP, TCP_NODELAY, (void *) &v, sizeof(int)) == -1) {
       SOERR("setsockopt");
       goto exit;
     }
+#endif
     if (setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, (void *) &v, sizeof(int)) == -1) {
       SOERR("setsockopt");
       goto exit;
