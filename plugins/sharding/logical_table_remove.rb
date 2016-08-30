@@ -32,14 +32,14 @@ module Groonga
         return if cover_type == :none
 
         shard_key = shard.key
-        if shard_key.nil?
+        if shard_key.nil? and !@force
           message = "[logical_table_remove] shard_key doesn't exist: " +
                     "<#{shard.key_name}>"
           raise InvalidArgument, message
         end
         table = shard.table
 
-        if cover_type == :all or (table.nil? and @force)
+        if cover_type == :all or ((table.nil? or shard_key.nil?) and @force)
           remove_table(shard, table)
           return
         end
@@ -69,9 +69,15 @@ module Groonga
       def collect_referenced_table_ids(shard, table)
         return [] unless @dependent
 
+        columns = nil
         if table
-          columns = table.columns
-        else
+          begin
+            columns = table.columns
+          rescue
+            context.clear_error
+          end
+        end
+        if columns.nil?
           prefix = "#{shard.table_name}."
           columns = []
           context.database.each_name(:prefix => prefix) do |column_name|

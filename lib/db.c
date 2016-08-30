@@ -8187,22 +8187,27 @@ delete_source_hook(grn_ctx *ctx, grn_obj *obj)
   GRN_TEXT_SET_REF(&data, &hook_data, sizeof(hook_data));
   for (i = 1; i <= n; i++, s++) {
     hook_data.section = i;
-    if ((source = grn_ctx_at(ctx, *s))) {
-      switch (source->header.type) {
-      case GRN_TABLE_HASH_KEY :
-      case GRN_TABLE_PAT_KEY :
-      case GRN_TABLE_DAT_KEY :
-        del_hook(ctx, source, GRN_HOOK_INSERT, &data);
-        del_hook(ctx, source, GRN_HOOK_DELETE, &data);
-        break;
-      case GRN_COLUMN_FIX_SIZE :
-      case GRN_COLUMN_VAR_SIZE :
-        del_hook(ctx, source, GRN_HOOK_SET, &data);
-        break;
-      default :
-        /* invalid target */
-        break;
-      }
+
+    source = grn_ctx_at(ctx, *s);
+    if (!source) {
+      ERRCLR(ctx);
+      continue;
+    }
+
+    switch (source->header.type) {
+    case GRN_TABLE_HASH_KEY :
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_DAT_KEY :
+      del_hook(ctx, source, GRN_HOOK_INSERT, &data);
+      del_hook(ctx, source, GRN_HOOK_DELETE, &data);
+      break;
+    case GRN_COLUMN_FIX_SIZE :
+    case GRN_COLUMN_VAR_SIZE :
+      del_hook(ctx, source, GRN_HOOK_SET, &data);
+      break;
+    default :
+      /* invalid target */
+      break;
     }
   }
   grn_obj_close(ctx, &data);
