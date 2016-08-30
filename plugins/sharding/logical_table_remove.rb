@@ -172,11 +172,21 @@ module Groonga
           case object
           when Table
             if object.domain_id == table_id
-              object.remove(:dependent => @dependent)
+              begin
+                object.remove(:dependent => @dependent)
+              rescue
+                context.clear_error
+                remove_table_force(object.name)
+              end
             end
           when Column
             if object.range_id == table_id
-              object.remove(:dependent => @dependent)
+              begin
+                object.remove(:dependent => @dependent)
+              rescue
+                context.clear_error
+                remove_column_force(object)
+              end
             end
           when nil
             context.clear_error

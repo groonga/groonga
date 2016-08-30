@@ -1,0 +1,64 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Paths_20150203 TABLE_HASH_KEY|KEY_LARGE ShortText
+table_create Logs_20150203 TABLE_NO_KEY
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+column_create Logs_20150203 path COLUMN_SCALAR Paths_20150203
+table_create Times_20150203 TABLE_PAT_KEY Time
+column_create Times_20150203 timestamp_index COLUMN_INDEX Logs_20150203 timestamp
+
+table_create PathTerms_20150203 TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create PathTerms_20150203 index COLUMN_INDEX|WITH_POSITION \
+  Paths_20150203 _key
+
+
+table_create NotRelated_20150204 TABLE_NO_KEY
+
+table_create Paths_20150204 TABLE_HASH_KEY|KEY_LARGE ShortText
+table_create Logs_20150204 TABLE_NO_KEY
+column_create Logs_20150204 timestamp COLUMN_SCALAR Time
+column_create Logs_20150204 path COLUMN_SCALAR Paths_20150204
+table_create Times_20150204 TABLE_PAT_KEY Time
+column_create Times_20150204 timestamp_index COLUMN_INDEX Logs_20150204 timestamp
+
+table_create PathTerms_20150204 TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create PathTerms_20150204 index COLUMN_INDEX|WITH_POSITION \
+  Paths_20150204 _key
+
+table_create Reference_20150204 TABLE_HASH_KEY Logs_20150204
+column_create Reference_20150204 data COLUMN_SCALAR Text
+
+load --table Logs_20150203
+[
+{"timestamp": "2015-02-03 12:49:00", "path": "/tmp/log"},
+{"timestamp": "2015-02-03 23:59:59", "path": "/var/"}
+]
+
+load --table Logs_20150204
+[
+{"timestamp": "2015-02-04 00:00:00", "path": "/tmp/log"},
+{"timestamp": "2015-02-04 13:49:00", "path": "/root/"},
+{"timestamp": "2015-02-04 13:50:00", "path": "/etc/aliases"}
+]
+
+#@disable-logging
+thread_limit 1
+database_unmap
+#@enable-logging
+
+#@copy-path fixture/sharding/logical_table_remove/broken #{db_path}.0000110
+#@copy-path fixture/sharding/logical_table_remove/broken #{db_path}.0000118
+
+logical_table_remove Logs timestamp \
+  --min "2015-02-04 00:00:00" \
+  --min_border "include" \
+  --dependent yes \
+  --force yes
+
+dump
