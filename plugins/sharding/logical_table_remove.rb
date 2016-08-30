@@ -66,6 +66,45 @@ module Groonga
         end
       end
 
+      def collect_referenced_table_ids(shard, table)
+        return [] unless @dependent
+
+        if table
+          columns = table.columns
+        else
+          prefix = "#{shard.table_name}."
+          columns = []
+          context.database.each_name(:prefix => prefix) do |column_name|
+            column = context[column_name]
+            columns << column
+            context.clear_error if column.nil?
+          end
+        end
+
+        referenced_table_ids = []
+        columns.each do |column|
+          next if column.nil?
+          range = column.range
+          case range
+          when nil
+            context.clear_error
+          when Table
+            referenced_table_ids << range.id
+            indexes = range.indexes
+            context.clear_error
+            indexes.each do |index_info|
+              referenced_table_ids << index_info.index.domain.id
+            end
+          end
+          indexes = column.indexes
+          context.clear_error
+          indexes.each do |index_info|
+            referenced_table_ids << index_info.index.domain.id
+          end
+        end
+        referenced_table_ids
+      end
+
       def remove_table(shard, table)
         if table.nil?
           unless @force
@@ -82,40 +121,7 @@ module Groonga
           context.clear_error
         end
 
-        referenced_table_ids = []
-        if @dependent
-          if table
-            columns = table.columns
-          else
-            prefix = "#{shard.table_name}."
-            columns = []
-            context.database.each_name(:prefix => prefix) do |column_name|
-              column = context[column_name]
-              columns << column
-              context.clear_error if column.nil?
-            end
-          end
-          columns.each do |column|
-            next if column.nil?
-            range = column.range
-            case range
-            when nil
-              context.clear_error
-            when Table
-              referenced_table_ids << range.id
-              indexes = range.indexes
-              context.clear_error
-              indexes.each do |index_info|
-                referenced_table_ids << index_info.index.domain.id
-              end
-            end
-            indexes = column.indexes
-            context.clear_error
-            indexes.each do |index_info|
-              referenced_table_ids << index_info.index.domain.id
-            end
-          end
-        end
+        referenced_table_ids = collect_referenced_table_ids(shard, table)
 
         if table.nil?
           remove_table_force(shard.table_name)
