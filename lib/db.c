@@ -8900,9 +8900,12 @@ remove_columns(grn_ctx *ctx, grn_obj *obj)
   if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                               GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
     if (grn_table_columns(ctx, obj, "", 0, (grn_obj *)cols)) {
-      grn_id *key;
-      GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
-        grn_obj *col = grn_ctx_at(ctx, *key);
+      GRN_HASH_EACH_BEGIN(ctx, cols, cursor, id) {
+        grn_id *key;
+        grn_obj *col;
+
+        grn_hash_cursor_get_key(ctx, cursor, (void **)&key);
+        col = grn_ctx_at(ctx, *key);
 
         if (!col) {
           char name[GRN_TABLE_MAX_KEY_SIZE];
@@ -8928,7 +8931,7 @@ remove_columns(grn_ctx *ctx, grn_obj *obj)
           grn_obj_unlink(ctx, col);
           break;
         }
-      });
+      } GRN_HASH_EACH_END(ctx, cursor);
     }
     grn_hash_close(ctx, cols);
   }
