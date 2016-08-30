@@ -167,33 +167,35 @@ module Groonga
         return if table_id.nil?
 
         database.each_raw do |id, cursor|
+          next if ID.builtin?(id)
           next if id == table_id
 
-          object = context[id]
-          if object.nil?
-            context.clear_error
-            next
-          end
-
-          case object
-          when Table
-            if object.domain_id == table_id
-              begin
-                object.remove(:dependent => @dependent)
-              rescue
-                context.clear_error
-                reference_table_name = object.name
-                object.close
-                remove_table_force(reference_table_name)
-              end
+          context.open_temporary(id) do |object|
+            if object.nil?
+              context.clear_error
+              next
             end
-          when Column
-            if object.range_id == table_id
-              begin
-                object.remove(:dependent => @dependent)
-              rescue
-                context.clear_error
-                remove_column_force(object)
+
+            case object
+            when Table
+              if object.domain_id == table_id
+                begin
+                  object.remove(:dependent => @dependent)
+                rescue
+                  context.clear_error
+                  reference_table_name = object.name
+                  object.close
+                  remove_table_force(reference_table_name)
+                end
+              end
+            when Column
+              if object.range_id == table_id
+                begin
+                  object.remove(:dependent => @dependent)
+                rescue
+                  context.clear_error
+                  remove_column_force(object)
+                end
               end
             end
           end
