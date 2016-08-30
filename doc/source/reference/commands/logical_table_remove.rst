@@ -37,6 +37,11 @@ specify range as between ``2016-03-18 00:00:00`` and ``2016-03-18
    table and tables related with the target shard by using
    ``dependent`` parameter.
 
+.. versionadded:: 6.0.9
+
+   You can remove broken tables and columns as much as possible by
+   using ``force`` parameter.
+
 Syntax
 ------
 
@@ -51,6 +56,7 @@ The required parameters are ``logical_table`` and ``shard_key``::
                        [max=null]
                        [max_border="include"]
                        [dependent=no]
+                       [force=no]
 
 .. _logical-table-remove-usage:
 
@@ -65,6 +71,7 @@ This section describes about the followings:
   * Removes parts of a logical table
   * Unremovable cases
   * Removes with related tables
+  * Removes broken tables as much as possible
   * Decreases used resources
 
 .. _logical-table-remove-basic-usage:
@@ -332,6 +339,70 @@ table aren't removed:
 .. object_exist NotRelated_20160320
 .. object_exist Servers
 
+.. _logical-table-removes-broken-tables-as-much-as-possible:
+
+Removes broken tables as much as possible
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 6.0.9
+
+If the target tables are broken, you can't remove them. But you can
+remove them as much as possible by using ``force`` parameter.
+
+If you specify ``--force yes``, they are removed as much as
+possible. In some cases, some tables and/or columns may not be
+removed. For example, broken index column can't be removed.
+
+Here is a sample schema to show this case:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_table_remove/remove_broken_tables_create.log
+.. table_create  Logs_20160320 TABLE_NO_KEY
+.. column_create Logs_20160320 timestamp COLUMN_SCALAR Time
+..
+.. table_create  Timestamps TABLE_PAT_KEY Time
+.. column_create Timestamps logs_20160320_timestamp \
+..   COLUMN_INDEX Logs_20160320 timestamp
+
+You can't remove ``Logs_20160320`` when
+``Timestamps.logs_20160320_timestamp`` is broken:
+
+.. groonga-command
+.. thread_limit 1
+.. database_unmap
+.. .. ${DB_PATH}.0000109 is Timestamps.logs_20160320_timestamp.
+.. .. You can confirm ID of Timestamps.logs_20160320_timestamp by object_list.
+.. % echo > ${DB_PATH}.0000109
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_table_remove/remove_broken_tables_remove.log
+.. logical_table_remove \
+..   --logical_table Logs \
+..   --shard_key timestamp
+
+You can remove ``Logs_20160320`` and its columns by using ``--force
+yes`` parameter even when ``Timestamps.logs_20160320_timestamp`` is
+broken:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_table_remove/remove_broken_tables_remove_force.log
+.. logical_table_remove \
+..   --logical_table Logs \
+..   --shard_key timestamp \
+..   --force yes
+
+``Logs_20160320`` and its columns are removed but
+``Timestamps.logs_20160320_timestamp`` isn't removed:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_table_remove/remove_broken_tables_index_column_exist.log
+.. object_exist Logs_20160320
+.. object_exist Logs_20160320.timestamp
+.. object_exist Timestamps.logs_20160320_timestamp
+
+``--force yes`` parameter is a dangerous parameter. Normally, you
+don't need to use it.
+
 .. _logical-table-remove-decreases-used-resources:
 
 Decreases used resources
@@ -442,6 +513,19 @@ You should use this parameter carefully. This is a danger parameter.
 
 See :ref:`logical-table-remove-removes-with-related-tables` how to use
 this parameter.
+
+``force``
+"""""""""
+
+.. versionadded:: 6.0.9
+
+Specifies whether you want to remove target tables and columns even if
+some problems exist.
+
+You should use this parameter carefully. This is a danger parameter.
+
+See :ref:`logical-table-removes-broken-tables-as-much-as-possible` how
+to use this parameter.
 
 Return value
 ------------
