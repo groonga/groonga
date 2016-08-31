@@ -129,26 +129,45 @@ mrb_grn_database_array_reference(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *database;
-  grn_id key_domain_id = GRN_DB_SHORT_TEXT;
-  mrb_value mrb_key;
-  grn_id record_id;
-  grn_mrb_value_to_raw_data_buffer buffer;
-  void *key;
-  unsigned int key_size;
+  mrb_value mrb_id_or_key;
 
-  mrb_get_args(mrb, "o", &mrb_key);
+  mrb_get_args(mrb, "o", &mrb_id_or_key);
 
   database = DATA_PTR(self);
-  grn_mrb_value_to_raw_data_buffer_init(mrb, &buffer);
-  grn_mrb_value_to_raw_data(mrb, "key", mrb_key, key_domain_id,
-                            &buffer, &key, &key_size);
-  record_id = grn_table_get(ctx, database, key, key_size);
-  grn_mrb_value_to_raw_data_buffer_fin(mrb, &buffer);
 
-  if (record_id == GRN_ID_NIL) {
-    return mrb_nil_value();
+  if (mrb_fixnum_p(mrb_id_or_key)) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+
+    name_size = grn_table_get_key(ctx,
+                                  grn_ctx_db(ctx),
+                                  mrb_fixnum(mrb_id_or_key),
+                                  name,
+                                  GRN_TABLE_MAX_KEY_SIZE);
+    if (name_size == 0) {
+      return mrb_nil_value();
+    } else {
+      return mrb_str_new(mrb, name, name_size);
+    }
   } else {
-    return mrb_fixnum_value(record_id);
+    grn_id name_domain_id = GRN_DB_SHORT_TEXT;
+    grn_id id;
+    grn_mrb_value_to_raw_data_buffer buffer;
+    void *name;
+    unsigned int name_size;
+
+    grn_mrb_value_to_raw_data_buffer_init(mrb, &buffer);
+    grn_mrb_value_to_raw_data(mrb, "name", mrb_id_or_key,
+                              name_domain_id, &buffer,
+                              &name, &name_size);
+    id = grn_table_get(ctx, database, name, name_size);
+    grn_mrb_value_to_raw_data_buffer_fin(mrb, &buffer);
+
+    if (id == GRN_ID_NIL) {
+      return mrb_nil_value();
+    } else {
+      return mrb_fixnum_value(id);
+    }
   }
 }
 
