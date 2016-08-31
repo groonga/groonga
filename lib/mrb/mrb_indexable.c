@@ -17,6 +17,7 @@
 */
 
 #include "../grn_ctx_impl.h"
+#include "../grn_db.h"
 
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
@@ -107,6 +108,49 @@ indexable_indexes(mrb_state *mrb, mrb_value self)
   return mrb_indexes;
 }
 
+static mrb_value
+indexable_index_ids(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *object;
+  grn_hook_entry entry;
+  int i;
+  int n_indexes;
+  mrb_value mrb_index_ids;
+  grn_obj hook_data;
+
+  object = DATA_PTR(self);
+
+  if (grn_obj_is_key_accessor(ctx, object)) {
+    object = grn_ctx_at(ctx, object->header.domain);
+  }
+  if (grn_obj_is_table(ctx, object)) {
+    entry = GRN_HOOK_INSERT;
+  } else if (grn_obj_is_column(ctx, object)) {
+    entry = GRN_HOOK_SET;
+  } else {
+    return mrb_ary_new(mrb);
+  }
+  n_indexes = grn_obj_get_nhooks(ctx, object, entry);
+
+  mrb_index_ids = mrb_ary_new_capa(mrb, n_indexes);
+
+  GRN_TEXT_INIT(&hook_data, 0);
+  for (i = 0; i < n_indexes; i++) {
+    GRN_BULK_REWIND(&hook_data);
+    grn_obj_get_hook(ctx, object, entry, i, &hook_data);
+    if (GRN_BULK_VSIZE(&hook_data) ==
+        sizeof(grn_obj_default_set_value_hook_data)) {
+      grn_obj_default_set_value_hook_data *data;
+
+      data = (grn_obj_default_set_value_hook_data *)GRN_TEXT_VALUE(&hook_data);
+      mrb_ary_push(mrb, mrb_index_ids, mrb_fixnum_value(data->target));
+    }
+  }
+
+  return mrb_index_ids;
+}
+
 void
 grn_mrb_indexable_init(grn_ctx *ctx)
 {
@@ -120,5 +164,7 @@ grn_mrb_indexable_init(grn_ctx *ctx)
                     indexable_find_index, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, module, "indexes",
                     indexable_indexes, MRB_ARGS_NONE());
+  mrb_define_method(mrb, module, "index_ids",
+                    indexable_index_ids, MRB_ARGS_NONE());
 }
 #endif
