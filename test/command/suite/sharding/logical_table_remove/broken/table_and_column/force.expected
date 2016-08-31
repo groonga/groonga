@@ -53,6 +53,8 @@ logical_table_remove Logs timestamp   --min "2015-02-04 00:00:00"   --min_border
 #|e| grn_ctx_at: failed to open object: <272>(<Logs_20150204>):<51>(<table:no_key>)
 #|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000112>
 #|e| grn_ctx_at: failed to open object: <274>(<Logs_20150204.path>):<64>(<column:fix_size>)
+#|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000110>
+#|e| grn_ctx_at: failed to open object: <272>(<Logs_20150204>):<51>(<table:no_key>)
 dump
 plugin_register sharding
 

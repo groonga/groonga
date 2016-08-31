@@ -8854,7 +8854,6 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry)
   grn_hook *h0, *hooks = DB_OBJ(obj)->hooks[entry];
   DB_OBJ(obj)->hooks[entry] = NULL; /* avoid mutual recursive call */
   while (hooks) {
-    grn_rc sub_rc;
     grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
     grn_obj *target = grn_ctx_at(ctx, data->target);
     if (!target) {
@@ -8874,10 +8873,10 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry)
           "hook has a dangling reference: <%.*s> -> <%.*s>",
           length, name,
           hook_name_length, hook_name);
-      sub_rc = ctx->rc;
+      rc = ctx->rc;
     } else if (target->header.type == GRN_COLUMN_INDEX) {
       //TODO: multicolumn  MULTI_COLUMN_INDEXP
-      sub_rc = _grn_obj_remove(ctx, target, GRN_FALSE);
+      rc = _grn_obj_remove(ctx, target, GRN_FALSE);
     } else {
       //TODO: err
       char fn[GRN_TABLE_MAX_KEY_SIZE];
@@ -8885,10 +8884,11 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry)
       flen = grn_obj_name(ctx, target, fn, GRN_TABLE_MAX_KEY_SIZE);
       fn[flen] = '\0';
       ERR(GRN_UNKNOWN_ERROR, "column has unsupported hooks, col=%s",fn);
-      sub_rc = ctx->rc;
+      rc = ctx->rc;
     }
-    if (rc == GRN_SUCCESS) {
-      rc = sub_rc;
+    if (rc != GRN_SUCCESS) {
+      DB_OBJ(obj)->hooks[entry] = hooks;
+      break;
     }
     h0 = hooks;
     hooks = hooks->next;
