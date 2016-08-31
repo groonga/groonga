@@ -350,10 +350,9 @@ If the target tables are broken, you can't remove them. But you can
 remove them as much as possible by using ``force`` parameter.
 
 If you specify ``--force yes``, they are removed as much as
-possible. In some cases, some tables and/or columns may not be
-removed. For example, broken index column can't be removed.
+possible. You can also use ``--dependent yes`` with ``--force yes``.
 
-Here is a sample schema to show this case:
+Here is a sample schema to show how ``--force yes`` behavior:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_table_remove/remove_broken_tables_create.log
@@ -391,8 +390,8 @@ broken:
 ..   --shard_key timestamp \
 ..   --force yes
 
-``Logs_20160320`` and its columns are removed but
-``Timestamps.logs_20160320_timestamp`` isn't removed:
+``Logs_20160320``, its columns and
+``Timestamps.logs_20160320_timestamp`` are removed:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_table_remove/remove_broken_tables_index_column_exist.log

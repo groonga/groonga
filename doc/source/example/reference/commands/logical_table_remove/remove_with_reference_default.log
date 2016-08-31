@@ -13,7 +13,7 @@ Execution example::
   #       [
   #         "Groonga::Sharding::LogicalTableRemoveCommand.remove_table", 
   #         "/home/kou/work/c/groonga.clean/plugins/sharding/logical_table_remove.rb", 
-  #         139
+  #         156
   #       ]
   #     ]
   #   ]
