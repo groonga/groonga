@@ -50,7 +50,7 @@ module Groonga
 
     def open_temporary(id)
       if Thread.limit == 1
-        need_close = opened?(id)
+        need_close = !opened?(id)
       else
         need_close = false
       end
@@ -58,7 +58,7 @@ module Groonga
       begin
         yield(object)
       ensure
-        if need_close and !object.closed?
+        if need_close and object and !object.closed?
           case object
           when Table, Column
             object.close
