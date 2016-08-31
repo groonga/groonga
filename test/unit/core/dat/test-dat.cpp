@@ -696,7 +696,9 @@ namespace test_dat
       cppcut_assert_equal(length, key_length);
       cppcut_assert_equal(keys[i], std::string(key_ptr, key_length));
     }
-    cppcut_assert_null(_grn_dat_key(&ctx, dat, GRN_ID_NIL, NULL));
+    uint32_t key_length;
+    cppcut_assert_null(_grn_dat_key(&ctx, dat, GRN_ID_NIL, &key_length));
+    cppcut_assert_equal(static_cast<uint32_t>(0), key_length);
     grn_test_assert_equal_rc(GRN_SUCCESS, grn_dat_close(&ctx, dat));
   }
 
