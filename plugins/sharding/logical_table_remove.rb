@@ -66,6 +66,23 @@ module Groonga
         end
       end
 
+      def collect_referenced_table_ids_from_index_ids(index_ids,
+                                                      referenced_table_ids)
+        database = context.database
+        index_ids.each do |index_id|
+          index = context[index_id]
+          if index.nil?
+            context.clear_error
+            index_name = database[index_id]
+            lexicon_name = index_name.split(".", 2)[0]
+            lexicon_id = database[lexicon_name]
+            referenced_table_ids << lexicon_id if lexicon_id
+          else
+            referenced_table_ids << index.domain_id
+          end
+        end
+      end
+
       def collect_referenced_table_ids(shard, table)
         return [] unless @dependent
 
@@ -96,17 +113,11 @@ module Groonga
             context.clear_error
           when Table
             referenced_table_ids << range.id
-            indexes = range.indexes
-            context.clear_error
-            indexes.each do |index_info|
-              referenced_table_ids << index_info.index.domain.id
-            end
+            collect_referenced_table_ids_from_index_ids(range.index_ids,
+                                                        referenced_table_ids)
           end
-          indexes = column.indexes
-          context.clear_error
-          indexes.each do |index_info|
-            referenced_table_ids << index_info.index.domain.id
-          end
+          collect_referenced_table_ids_from_index_ids(column.index_ids,
+                                                      referenced_table_ids)
         end
         referenced_table_ids
       end
@@ -219,25 +230,26 @@ module Groonga
       def remove_referenced_tables(shard, referenced_table_ids)
         return if referenced_table_ids.empty?
 
+        database = context.database
         shard_suffix = shard.range_data.to_suffix
         referenced_table_ids.each do |referenced_table_id|
+          referenced_table_name = database[referenced_table_id]
+          next unless referenced_table_name.end_with?(shard_suffix)
+
           referenced_table = context[referenced_table_id]
           if referenced_table.nil?
             context.clear_error
             if @force
-              Object.remove_force(referenced_table_id)
+              Object.remove_force(referenced_table_name)
             end
             next
           end
-
-          referenced_table_name = referenced_table.name
-          next unless referenced_table_name.end_with?(shard_suffix)
 
           if @force
             begin
               referenced_table.remove(:dependent => @dependent)
             rescue
-              Context.instance.clear_error
+              context.clear_error
               referenced_table.close
               remove_table_force(referenced_table_name)
             end
