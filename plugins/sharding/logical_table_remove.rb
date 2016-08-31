@@ -83,43 +83,82 @@ module Groonga
         end
       end
 
+      def collect_referenced_table_ids_from_column_name(column_name,
+                                                        referenced_table_ids)
+        database = context.database
+        column_id = database[column_name]
+        database.each_raw do |id, cursor|
+          next if ID.builtin?(id)
+          next if id == column_id
+
+          context.open_temporary(id) do |object|
+            if object.nil?
+              context.clear_error
+              next
+            end
+
+            case object
+            when IndexColumn
+              if object.source_ids.include?(column_id)
+                collect_referenced_table_ids_from_index_ids([id],
+                                                            referenced_table_ids)
+              end
+            end
+          end
+        end
+      end
+
+      def collect_referenced_table_ids_from_column(column,
+                                                   referenced_table_ids)
+        range = column.range
+        case range
+        when nil
+          context.clear_error
+        when Table
+          referenced_table_ids << range.id
+          collect_referenced_table_ids_from_index_ids(range.index_ids,
+                                                      referenced_table_ids)
+        end
+        collect_referenced_table_ids_from_index_ids(column.index_ids,
+                                                    referenced_table_ids)
+      end
+
+      def collect_referenced_table_ids_from_column_names(column_names)
+        referenced_table_ids = []
+        column_names.each do |column_name|
+          column = context[column_name]
+          if column.nil?
+            context.clear_error
+            collect_referenced_table_ids_from_column_name(column_name,
+                                                          referenced_table_ids)
+          else
+            collect_referenced_table_ids_from_column(column,
+                                                     referenced_table_ids)
+          end
+        end
+        referenced_table_ids
+      end
+
       def collect_referenced_table_ids(shard, table)
         return [] unless @dependent
 
-        columns = nil
+        column_names = nil
         if table
           begin
-            columns = table.columns
+            column_names = table.columns.collect(&:name)
           rescue
             context.clear_error
           end
         end
-        if columns.nil?
+        if column_names.nil?
           prefix = "#{shard.table_name}."
-          columns = []
+          column_names = []
           context.database.each_name(:prefix => prefix) do |column_name|
-            column = context[column_name]
-            columns << column
-            context.clear_error if column.nil?
+            column_names << column_name
           end
         end
 
-        referenced_table_ids = []
-        columns.each do |column|
-          next if column.nil?
-          range = column.range
-          case range
-          when nil
-            context.clear_error
-          when Table
-            referenced_table_ids << range.id
-            collect_referenced_table_ids_from_index_ids(range.index_ids,
-                                                        referenced_table_ids)
-          end
-          collect_referenced_table_ids_from_index_ids(column.index_ids,
-                                                      referenced_table_ids)
-        end
-        referenced_table_ids
+        collect_referenced_table_ids_from_column_names(column_names)
       end
 
       def remove_table(shard, table)
