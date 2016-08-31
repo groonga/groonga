@@ -177,14 +177,7 @@ module Groonga
               table.close
             end
           else
-            begin
-              column.remove(:dependent => @dependent)
-            rescue
-              context.clear_error
-              column_name = column.name
-              column.close
-              remove_column_force(column_name)
-            end
+            remove_column(column)
           end
         end
 
@@ -215,14 +208,7 @@ module Groonga
               end
             when Column
               if object.range_id == table_id
-                begin
-                  object.remove(:dependent => @dependent)
-                rescue
-                  context.clear_error
-                  column_name = object.name
-                  object.close
-                  remove_column_force(column_name)
-                end
+                remove_column(object)
               end
             end
           end
@@ -231,7 +217,39 @@ module Groonga
         Object.remove_force(table_name)
       end
 
+      def remove_column(column)
+        begin
+          column.remove(:dependent => @dependent)
+        rescue
+          context.clear_error
+          column_name = column.name
+          column.close
+          remove_column_force(column_name)
+        end
+      end
+
       def remove_column_force(column_name)
+        database = context.database
+
+        column_id = database[column_name]
+
+        column = context[column_id]
+        if column.nil?
+          context.clear_error
+        else
+          column.index_ids.each do |id|
+            index_column = context[id]
+            if index_column.nil?
+              context.clear_error
+              index_column_name = database[id]
+              remove_column_force(index_column_name)
+            else
+              remove_column(index_column)
+            end
+          end
+          column.close
+        end
+
         Object.remove_force(column_name)
       end
 
