@@ -169,13 +169,21 @@ module Groonga
           if column.nil?
             context.clear_error
             column_name = cursor.key
-            Object.remove_force(column_name)
+            remove_column_force(column_name)
+            table = context[table_name]
+            if table.nil?
+              context.clear_error
+            else
+              table.close
+            end
           else
             begin
               column.remove(:dependent => @dependent)
             rescue
               context.clear_error
-              remove_column_force(column)
+              column_name = column.name
+              column.close
+              remove_column_force(column_name)
             end
           end
         end
@@ -211,7 +219,9 @@ module Groonga
                   object.remove(:dependent => @dependent)
                 rescue
                   context.clear_error
-                  remove_column_force(object)
+                  column_name = object.name
+                  object.close
+                  remove_column_force(column_name)
                 end
               end
             end
@@ -221,9 +231,7 @@ module Groonga
         Object.remove_force(table_name)
       end
 
-      def remove_column_force(column)
-        column_name = column.name
-        column.close
+      def remove_column_force(column_name)
         Object.remove_force(column_name)
       end
 
