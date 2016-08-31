@@ -1822,6 +1822,7 @@ _grn_pat_key(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *key_size)
   pat_node *node;
   uint8_t *key;
   if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
+    *key_size = 0;
     return NULL;
   }
   PAT_AT(pat, id, node);

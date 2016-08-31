@@ -1028,14 +1028,17 @@ const char *
 _grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    *key_size = 0;
     return NULL;
   }
   const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
   if (!trie) {
+    *key_size = 0;
     return NULL;
   }
   const grn::dat::Key &key = trie->ith_key(id);
   if (!key.is_valid()) {
+    *key_size = 0;
     return NULL;
   }
   *key_size = key.length();
