@@ -339,7 +339,7 @@ table aren't removed:
 .. object_exist NotRelated_20160320
 .. object_exist Servers
 
-.. _logical-table-removes-broken-tables-as-much-as-possible:
+.. _logical-table-remove-removes-broken-tables-as-much-as-possible:
 
 Removes broken tables as much as possible
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
