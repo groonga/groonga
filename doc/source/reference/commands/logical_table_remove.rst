@@ -513,6 +513,8 @@ You should use this parameter carefully. This is a danger parameter.
 See :ref:`logical-table-remove-removes-with-related-tables` how to use
 this parameter.
 
+.. _logical-table-remove-force:
+
 ``force``
 """""""""
 
@@ -523,8 +525,9 @@ some problems exist.
 
 You should use this parameter carefully. This is a danger parameter.
 
-See :ref:`logical-table-removes-broken-tables-as-much-as-possible` how
-to use this parameter.
+See
+:ref:`logical-table-remove-removes-broken-tables-as-much-as-possible`
+how to use this parameter.
 
 Return value
 ------------
