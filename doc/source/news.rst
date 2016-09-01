@@ -397,8 +397,9 @@ Improvements
 * [:doc:`/reference/commands/table_tokenize`] Supported to output ``estimated_size``.
   [GitHub#518] [Patch by Naoya Murakami]
 
-* [geo_in_rectangle][geo_in_circle] Supported to work without index. In this case, sequential search
-  is executed as a fallback.
+* [:doc:`/reference/functions/geo_in_rectangle`][:doc:`/reference/functions/geo_in_circle`]
+  Supported to work without index. In this case, sequential search is
+  executed as a fallback.
 
 * Reduced needless internal loops. It improves phrase search performance.
   [GitHub#519] [Patch by Naoya Murakami]
