@@ -209,7 +209,6 @@ object_remove(mrb_state *mrb, mrb_value self)
 static mrb_value
 object_is_closed(mrb_state *mrb, mrb_value self)
 {
-  grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *object;
 
   object = DATA_PTR(self);
