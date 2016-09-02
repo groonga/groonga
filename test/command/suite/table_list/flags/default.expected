@@ -1,56 +1,13 @@
 table_create bookmarks
-[[0,0.0,0.0],true]
-table_list
 [
   [
-    0,
-    0.0,
-    0.0
-  ],
-  [
     [
-      [
-        "id",
-        "UInt32"
-      ],
-      [
-        "name",
-        "ShortText"
-      ],
-      [
-        "path",
-        "ShortText"
-      ],
-      [
-        "flags",
-        "ShortText"
-      ],
-      [
-        "domain",
-        "ShortText"
-      ],
-      [
-        "range",
-        "ShortText"
-      ],
-      [
-        "default_tokenizer",
-        "ShortText"
-      ],
-      [
-        "normalizer",
-        "ShortText"
-      ]
+      -22,
+      0.0,
+      0.0
     ],
-    [
-      256,
-      "bookmarks",
-      "db/db.0000100",
-      "TABLE_HASH_KEY|PERSISTENT",
-      null,
-      null,
-      null,
-      null
-    ]
-  ]
+    "[table][create] key type is required for TABLE_HASH_KEY, TABLE_PAT_KEY or TABLE_DAT_KEY: <bookmarks> (null)"
+  ],
+  false
 ]
+#|e| [table][create] key type is required for TABLE_HASH_KEY, TABLE_PAT_KEY or TABLE_DAT_KEY: <bookmarks> (null)
