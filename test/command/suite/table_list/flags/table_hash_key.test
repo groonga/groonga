@@ -1,2 +1,2 @@
-table_create bookmarks TABLE_HASH_KEY
+table_create bookmarks TABLE_HASH_KEY ShortText
 table_list

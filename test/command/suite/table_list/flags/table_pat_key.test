@@ -1,2 +1,2 @@
-table_create bookmarks TABLE_PAT_KEY
+table_create bookmarks TABLE_PAT_KEY ShortText
 table_list
