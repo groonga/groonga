@@ -83,7 +83,7 @@ cut_teardown(void)
 void
 test_invalid_name(void)
 {
-  assert_send_command("table_create Users");
+  assert_send_command("table_create Users TABLE_NO_KEY");
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
@@ -95,7 +95,7 @@ test_invalid_name(void)
 void
 test_missing_name(void)
 {
-  assert_send_command("table_create Users");
+  assert_send_command("table_create Users TABLE_NO_KEY");
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
@@ -115,7 +115,7 @@ test_too_long_name(void)
                   "column_create Users %s COLUMN_SCALAR ShortText",
                   long_name->str);
 
-  assert_send_command("table_create Users");
+  assert_send_command("table_create Users TABLE_NO_KEY");
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
@@ -138,7 +138,7 @@ test_nonexistent_table(void)
 void
 test_nonexistent_type(void)
 {
-  assert_send_command("table_create Users");
+  assert_send_command("table_create Users TABLE_NO_KEY");
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
