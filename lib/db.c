@@ -1011,6 +1011,15 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned int name_size
     break;
   }
 
+  if (!key_type && table_type != GRN_OBJ_TABLE_NO_KEY &&
+      !(flags & GRN_OBJ_KEY_VAR_SIZE)) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][create] "
+        "key type is required for TABLE_HASH_KEY, TABLE_PAT_KEY or "
+        "TABLE_DAT_KEY: <%.*s> (null)", name_size, name);
+    return ctx->rc;
+  }
+
   if (key_type && table_type == GRN_OBJ_TABLE_NO_KEY) {
     int key_name_size;
     char key_name[GRN_TABLE_MAX_KEY_SIZE];
