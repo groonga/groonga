@@ -1027,7 +1027,7 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned int name_size
                                  GRN_TABLE_MAX_KEY_SIZE);
     ERR(GRN_INVALID_ARGUMENT,
         "[table][create] "
-        "key isn't available for no key table: <%.*s> (%.*s)",
+        "key isn't available for TABLE_NO_KEY table: <%.*s> (%.*s)",
         name_size, name, key_name_size, key_name);
     return ctx->rc;
   }
@@ -1047,7 +1047,7 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned int name_size
       table_type == GRN_OBJ_TABLE_NO_KEY) {
     ERR(GRN_INVALID_ARGUMENT,
         "[table][create] "
-        "key normalization isn't available for no key table: <%.*s>",
+        "key normalization isn't available for TABLE_NO_KEY table: <%.*s>",
         name_size, name);
     return ctx->rc;
   }
