@@ -161,10 +161,15 @@ test_temporary_table_no_path(gpointer data)
 {
   grn_obj *table;
   grn_obj_flags flags = GPOINTER_TO_INT(data);
+  grn_obj *key_type = NULL;
+
+  if ((flags & GRN_OBJ_TABLE_TYPE_MASK) != GRN_OBJ_TABLE_NO_KEY) {
+    key_type = grn_ctx_at(context, GRN_DB_SHORT_TEXT);
+  }
 
   table = grn_table_create(context, NULL, 0, NULL,
                            flags,
-                           NULL, NULL);
+                           key_type, NULL);
   cut_assert_equal_string(NULL, grn_obj_path(context, table));
 }
 
@@ -185,13 +190,14 @@ test_temporary_table_default_tokenizer(gpointer data)
 {
   grn_obj *table;
   grn_obj_flags flags = GPOINTER_TO_INT(data);
+  grn_obj *key_type = grn_ctx_at(context, GRN_DB_SHORT_TEXT);
   grn_obj *tokenizer = NULL;
   char name[1024];
   int name_size;
 
   table = grn_table_create(context, NULL, 0, NULL,
                            flags,
-                           NULL, NULL);
+                           key_type, NULL);
   grn_obj_set_info(context, table, GRN_INFO_DEFAULT_TOKENIZER,
                    get_object("TokenTrigram"));
   tokenizer = grn_obj_get_info(context, table, GRN_INFO_DEFAULT_TOKENIZER, NULL);
