@@ -984,11 +984,13 @@ jQuery.extend(GroongaAdmin.prototype, {
     var d_sel = null;
     var d_col = null;
     var select_data = {
-      'table' : table_name,
-      'limit' : 1
+      'table' : table_name
     };
     if (id) {
       select_data.query = '_id:' + id;
+      select_data.limit = '1';
+    } else {
+      select_data.limit = '0';
     }
     $('#table-createrecord').empty();
     this.showloading(
