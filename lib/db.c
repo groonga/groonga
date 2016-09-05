@@ -1016,7 +1016,7 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned int name_size
     ERR(GRN_INVALID_ARGUMENT,
         "[table][create] "
         "key type is required for TABLE_HASH_KEY, TABLE_PAT_KEY or "
-        "TABLE_DAT_KEY: <%.*s> (null)", name_size, name);
+        "TABLE_DAT_KEY: <%.*s>", name_size, name);
     return ctx->rc;
   }
 

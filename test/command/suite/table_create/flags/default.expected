@@ -6,8 +6,8 @@ table_create bookmarks
       0.0,
       0.0
     ],
-    "[table][create] key type is required for TABLE_HASH_KEY, TABLE_PAT_KEY or TABLE_DAT_KEY: <bookmarks> (null)"
+    "[table][create] key type is required for TABLE_HASH_KEY, TABLE_PAT_KEY or TABLE_DAT_KEY: <bookmarks>"
   ],
   false
 ]
-#|e| [table][create] key type is required for TABLE_HASH_KEY, TABLE_PAT_KEY or TABLE_DAT_KEY: <bookmarks> (null)
+#|e| [table][create] key type is required for TABLE_HASH_KEY, TABLE_PAT_KEY or TABLE_DAT_KEY: <bookmarks>
