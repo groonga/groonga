@@ -6357,6 +6357,7 @@ grn_table_select_index_range_accessor(grn_ctx *ctx,
   grn_accessor *a;
   grn_obj *last_obj = NULL;
   int n_accessors;
+  grn_bool have_resolver = GRN_FALSE;
   grn_obj *base_res = NULL;
 
   for (a = (grn_accessor *)accessor; a; a = a->next) {
@@ -6369,6 +6370,7 @@ grn_table_select_index_range_accessor(grn_ctx *ctx,
     n_accessors++;
     if (GRN_OBJ_INDEX_COLUMNP(a->obj) ||
         grn_obj_is_table(ctx, a->obj)) {
+      have_resolver = GRN_TRUE;
       break;
     }
   }
@@ -6414,7 +6416,11 @@ grn_table_select_index_range_accessor(grn_ctx *ctx,
     grn_table_select_index_report(ctx, "[range][accessor]", index);
   }
 
-  rc = grn_accessor_resolve(ctx, accessor, n_accessors - 1, base_res, res, op);
+  if (n_accessors == 1 && have_resolver) {
+    rc = grn_accessor_resolve(ctx, accessor, 1, base_res, res, op);
+  } else {
+    rc = grn_accessor_resolve(ctx, accessor, n_accessors - 1, base_res, res, op);
+  }
   grn_obj_unlink(ctx, base_res);
 
   return rc == GRN_SUCCESS;

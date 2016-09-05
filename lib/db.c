@@ -3242,6 +3242,11 @@ grn_accessor_resolve_one_table(grn_ctx *ctx, grn_accessor *accessor,
     return ctx->rc;
   }
 
+  grn_report_table(ctx,
+                   "[accessor][resolve]",
+                   "",
+                   table);
+
   {
     grn_posting posting;
 

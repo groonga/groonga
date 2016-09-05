@@ -1,0 +1,99 @@
+table_create Dates TABLE_PAT_KEY UInt32
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos date COLUMN_SCALAR Dates
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Dates memos_date COLUMN_INDEX Memos date
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "date": 20160519, "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "date": 20160520, "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "date": 20160521, "tag": "Groonga"},
+{"_key": "Groonga is good!", "date": 20160522, "tag": "Groonga"}
+]
+[[0,0.0,0.0],4]
+log_level --level info
+[[0,0.0,0.0],true]
+select Memos   --filter 'tag @ "Groonga"'   --slices[groonga].filter 'date < 20160522'   --slices[groonga].sort_keys 'date'   --slices[groonga].output_columns '_key, date'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "date",
+          "Dates"
+        ],
+        [
+          "tag",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast!",
+        20160519,
+        "Groonga"
+      ],
+      [
+        3,
+        "Groonga sticker!",
+        20160521,
+        "Groonga"
+      ],
+      [
+        4,
+        "Groonga is good!",
+        20160522,
+        "Groonga"
+      ]
+    ],
+    {
+      "groonga": [
+        [
+          2
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "date",
+            "Dates"
+          ]
+        ],
+        [
+          "Groonga is fast!",
+          20160519
+        ],
+        [
+          "Groonga sticker!",
+          20160521
+        ]
+      ]
+    }
+  ]
+]
+#|i| [table][select][index][range] <Dates>
+#|i| [table][select][index][range][accessor] <Dates.memos_date>
+#|i| [accessor][resolve][table] (temporary) -> <Memos> -> <ShortText>
