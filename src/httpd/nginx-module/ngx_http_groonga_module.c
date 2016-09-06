@@ -699,7 +699,7 @@ ngx_http_groonga_handler_process_command_path(ngx_http_request_t *r,
   GRN_TEXT_PUTS(context, &uri, "/d/");
   GRN_TEXT_PUT(context, &uri, command_path->data, command_path->len);
   grn_ctx_send(context, GRN_TEXT_VALUE(&uri), GRN_TEXT_LEN(&uri),
-               GRN_NO_FLAGS);
+               GRN_CTX_TAIL);
   data->rc = context->rc;
   ngx_http_groonga_context_log_error(r->connection->log);
   GRN_OBJ_FIN(context, &uri);

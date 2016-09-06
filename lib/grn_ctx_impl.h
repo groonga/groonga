@@ -160,7 +160,6 @@ struct _grn_ctx_impl {
   uint32_t stack_curr;
   grn_hash *expr_vars;
   grn_obj *curr_expr;
-  grn_obj *qe_next;
   grn_obj current_request_id;
   void *current_request_timer_id;
   void *parser;
@@ -196,6 +195,10 @@ struct _grn_ctx_impl {
   struct {
     int flags;
     grn_command_version version;
+    struct {
+      grn_obj *command;
+      grn_command_version version;
+    } keep;
   } command;
 
   /* match escalation portion */

@@ -234,7 +234,6 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->expr_vars = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_obj *), 0);
   ctx->impl->stack_curr = 0;
   ctx->impl->curr_expr = NULL;
-  ctx->impl->qe_next = NULL;
   GRN_TEXT_INIT(&ctx->impl->current_request_id, 0);
   ctx->impl->current_request_timer_id = NULL;
   ctx->impl->parser = NULL;
@@ -242,11 +241,14 @@ grn_ctx_impl_init(grn_ctx *ctx)
   GRN_TEXT_INIT(&ctx->impl->output.names, GRN_OBJ_VECTOR);
   GRN_UINT32_INIT(&ctx->impl->output.levels, GRN_OBJ_VECTOR);
 
+  ctx->impl->command.flags = 0;
   if (ctx == &grn_gctx) {
     ctx->impl->command.version = GRN_COMMAND_VERSION_STABLE;
   } else {
     ctx->impl->command.version = grn_get_default_command_version();
   }
+  ctx->impl->command.keep.command = NULL;
+  ctx->impl->command.keep.version = ctx->impl->command.version;
 
   if (ctx == &grn_gctx) {
     ctx->impl->match_escalation_threshold =
@@ -283,9 +285,10 @@ grn_ctx_impl_init(grn_ctx *ctx)
 }
 
 void
-grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr)
+grn_ctx_set_keep_command(grn_ctx *ctx, grn_obj *command)
 {
-  ctx->impl->qe_next = expr;
+  ctx->impl->command.keep.command = command;
+  ctx->impl->command.keep.version = ctx->impl->command.version;
 }
 
 static void
@@ -1298,10 +1301,11 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       grn_obj *expr = NULL;
 
       command_version = grn_ctx_get_command_version(ctx);
-      if (ctx->impl->qe_next) {
+      if (ctx->impl->command.keep.command) {
         grn_obj *val;
-        expr = ctx->impl->qe_next;
-        ctx->impl->qe_next = NULL;
+        expr = ctx->impl->command.keep.command;
+        ctx->impl->command.keep.command = NULL;
+        grn_ctx_set_command_version(ctx, ctx->impl->command.keep.version);
         if ((val = grn_expr_get_var_by_offset(ctx, expr, 0))) {
           grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
           GRN_TEXT_PUT(ctx, val, str, str_len);
@@ -1323,7 +1327,7 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
         }
       }
       if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
-      if (ctx->impl->qe_next) {
+      if (ctx->impl->command.keep.command) {
         ERRCLR(ctx);
       } else {
         if (ctx->impl->current_request_timer_id) {

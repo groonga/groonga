@@ -433,7 +433,7 @@ void grn_ctx_loader_clear(grn_ctx *ctx);
 void grn_log_reopen(grn_ctx *ctx);
 
 GRN_API grn_rc grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
-GRN_API void grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr);
+void grn_ctx_set_keep_command(grn_ctx *ctx, grn_obj *command);
 
 grn_content_type grn_get_ctype(grn_obj *var);
 

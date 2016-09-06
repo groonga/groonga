@@ -1308,7 +1308,7 @@ do_htreq_get(grn_ctx *ctx, ht_context *hc)
       }
     }
   }
-  grn_ctx_send(ctx, path, pathe - path, 0);
+  grn_ctx_send(ctx, path, pathe - path, GRN_CTX_TAIL);
 }
 
 typedef struct {
@@ -1637,7 +1637,6 @@ do_htreq(grn_ctx *ctx, ht_context *hc)
     do_htreq_post(ctx, hc);
     break;
   }
-  grn_ctx_set_next_expr(ctx, NULL);
   /* if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {...} */
   grn_msg_close(ctx, (grn_obj *)msg);
   /* if not keep alive connection */
