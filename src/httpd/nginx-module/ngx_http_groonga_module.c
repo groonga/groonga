@@ -800,13 +800,17 @@ ngx_http_groonga_send_body(ngx_http_request_t *r,
              line_current < line_end;
              line_current++) {
           size_t line_length;
+          int flags = GRN_NO_FLAGS;
 
           if (*line_current != '\n') {
             continue;
           }
 
           line_length = line_current - line_start + 1;
-          grn_ctx_send(context, line_start, line_length, GRN_NO_FLAGS);
+          if (!chain->next && rest_buffer_size == 0) {
+            flags |= GRN_CTX_TAIL;
+          }
+          grn_ctx_send(context, line_start, line_length, flags);
           line_start_offset += line_length;
           line_start += line_length;
           ngx_http_groonga_context_log_error(log);
@@ -840,7 +844,7 @@ ngx_http_groonga_send_body(ngx_http_request_t *r,
     grn_ctx_send(context,
                  GRN_TEXT_VALUE(&line_buffer),
                  GRN_TEXT_LEN(&line_buffer),
-                 GRN_NO_FLAGS);
+                 GRN_CTX_TAIL);
     ngx_http_groonga_context_log_error(log);
     if (context->rc != GRN_SUCCESS && data->rc == GRN_SUCCESS) {
       data->rc = context->rc;

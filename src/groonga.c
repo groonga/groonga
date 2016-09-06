@@ -1511,7 +1511,7 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
     return;
   }
 
-  grn_ctx_send(ctx, header.path_start, header.path_length, GRN_CTX_QUIET);
+  grn_ctx_send(ctx, header.path_start, header.path_length, GRN_CTX_MORE);
   if (ctx->rc != GRN_SUCCESS) {
     ht_context context;
     context.msg = msg;
@@ -1586,7 +1586,9 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
           int flags = 0;
           if (!(read_content_length == header.content_length &&
                 buffer_current + 1 == buffer_end)) {
-            flags |= GRN_CTX_QUIET;
+            flags |= GRN_CTX_MORE;
+          } else {
+            flags |= GRN_CTX_TAIL;
           }
           grn_ctx_send(ctx,
                        GRN_TEXT_VALUE(&chunk_buffer),
@@ -1614,7 +1616,7 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
       grn_ctx_send(ctx,
                    GRN_TEXT_VALUE(&chunk_buffer),
                    GRN_TEXT_LEN(&chunk_buffer),
-                   0);
+                   GRN_CTX_TAIL);
     }
 
     GRN_OBJ_FIN(ctx, &chunk_buffer);

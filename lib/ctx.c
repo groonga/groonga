@@ -243,9 +243,9 @@ grn_ctx_impl_init(grn_ctx *ctx)
   GRN_UINT32_INIT(&ctx->impl->output.levels, GRN_OBJ_VECTOR);
 
   if (ctx == &grn_gctx) {
-    ctx->impl->command_version = GRN_COMMAND_VERSION_STABLE;
+    ctx->impl->command.version = GRN_COMMAND_VERSION_STABLE;
   } else {
-    ctx->impl->command_version = grn_get_default_command_version();
+    ctx->impl->command.version = grn_get_default_command_version();
   }
 
   if (ctx == &grn_gctx) {
@@ -755,7 +755,7 @@ grn_command_version
 grn_ctx_get_command_version(grn_ctx *ctx)
 {
   if (ctx->impl) {
-    return ctx->impl->command_version;
+    return ctx->impl->command.version;
   } else {
     return GRN_COMMAND_VERSION_STABLE;
   }
@@ -766,12 +766,12 @@ grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version)
 {
   switch (version) {
   case GRN_COMMAND_VERSION_DEFAULT :
-    ctx->impl->command_version = GRN_COMMAND_VERSION_STABLE;
+    ctx->impl->command.version = GRN_COMMAND_VERSION_STABLE;
     return GRN_SUCCESS;
   default :
     if (GRN_COMMAND_VERSION_MIN <= version &&
         version <= GRN_COMMAND_VERSION_MAX) {
-      ctx->impl->command_version = version;
+      ctx->impl->command.version = version;
       return GRN_SUCCESS;
     } else {
       return GRN_UNSUPPORTED_COMMAND_VERSION;
@@ -1273,12 +1273,14 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
   if (!ctx) { return 0; }
   GRN_API_ENTER;
   if (ctx->impl) {
+    if ((flags & GRN_CTX_MORE)) { flags |= GRN_CTX_QUIET; }
+    if (ctx->stat == GRN_CTX_QUIT) { flags |= GRN_CTX_QUIT; }
+
+    ctx->impl->command.flags = flags;
     if (ctx->impl->com) {
       grn_rc rc;
       grn_com_header sheader;
       grn_timeval_now(ctx, &ctx->impl->tv);
-      if ((flags & GRN_CTX_MORE)) { flags |= GRN_CTX_QUIET; }
-      if (ctx->stat == GRN_CTX_QUIT) { flags |= GRN_CTX_QUIT; }
       sheader.proto = GRN_COM_PROTO_GQTP;
       sheader.qtype = 0;
       sheader.keylen = 0;
@@ -1340,7 +1342,8 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
                       "<", "rc=%d", ctx->rc);
       }
     output :
-      if (!(flags & GRN_CTX_QUIET) && ctx->impl->output.func) {
+      if (!(ctx->impl->command.flags & GRN_CTX_QUIET) &&
+          ctx->impl->output.func) {
         ctx->impl->output.func(ctx, GRN_CTX_TAIL, ctx->impl->output.data.ptr);
       }
       if (expr) { grn_expr_clear_vars(ctx, expr); }

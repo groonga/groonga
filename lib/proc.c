@@ -142,7 +142,8 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     ctx->impl->loader.stat = GRN_LOADER_END;
     ctx->impl->loader.rc = GRN_SUCCESS;
   }
-  if (ctx->impl->loader.stat != GRN_LOADER_END) {
+  if (ctx->impl->loader.stat != GRN_LOADER_END &&
+      !(ctx->impl->command.flags & GRN_CTX_TAIL)) {
     grn_ctx_set_next_expr(ctx, grn_proc_get_info(ctx, user_data, NULL, NULL, NULL));
   } else {
     if (ctx->impl->loader.rc != GRN_SUCCESS) {

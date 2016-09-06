@@ -193,8 +193,10 @@ struct _grn_ctx_impl {
 #endif
   } output;
 
-  /* command portion */
-  grn_command_version command_version;
+  struct {
+    int flags;
+    grn_command_version version;
+  } command;
 
   /* match escalation portion */
   int64_t match_escalation_threshold;

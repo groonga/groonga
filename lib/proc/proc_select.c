@@ -2934,7 +2934,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     cp += sizeof(int);
     grn_memcpy(cp, &(data->limit), sizeof(int));
     cp += sizeof(int);
-    grn_memcpy(cp, &(ctx->impl->command_version), sizeof(grn_command_version));
+    grn_memcpy(cp, &(ctx->impl->command.version), sizeof(grn_command_version));
     cp += sizeof(grn_command_version);
     grn_memcpy(cp, &(ctx->impl->output.is_pretty), sizeof(grn_bool));
     cp += sizeof(grn_bool);
