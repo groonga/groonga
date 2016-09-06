@@ -1217,6 +1217,11 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
 {
   ngx_http_groonga_loc_conf_t *prev = parent;
   ngx_http_groonga_loc_conf_t *conf = child;
+  ngx_flag_t enabled = 0;
+
+  if (conf->enabled != NGX_CONF_UNSET) {
+    enabled = conf->enabled;
+  }
 
   ngx_conf_merge_str_value(conf->database_path, prev->database_path, NULL);
   ngx_conf_merge_value(conf->database_auto_create,
@@ -1230,7 +1235,7 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
                            NGX_HTTP_GROONGA_LOG_PATH);
   if (!conf->log_file &&
       ngx_str_is_custom_path(&(conf->log_path)) &&
-      conf->enabled) {
+      enabled) {
     conf->log_file = ngx_conf_open_file(cf->cycle, &(conf->log_path));
     if (!conf->log_file) {
       ngx_log_error(NGX_LOG_ERR, cf->cycle->log, 0,
@@ -1246,7 +1251,7 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
                            NGX_HTTP_GROONGA_QUERY_LOG_PATH);
   if (!conf->query_log_file &&
       ngx_str_is_custom_path(&(conf->query_log_path)) &&
-      conf->enabled) {
+      enabled) {
     conf->query_log_file = ngx_conf_open_file(cf->cycle,
                                               &(conf->query_log_path));
     if (!conf->query_log_file) {
@@ -1309,6 +1314,26 @@ ngx_http_groonga_each_loc_conf(ngx_http_conf_ctx_t *http_conf,
     ngx_http_groonga_each_loc_conf_in_tree(location_conf->static_locations,
                                            callback,
                                            user_data);
+  }
+}
+
+static void
+ngx_http_groonga_set_logger_callback(ngx_http_groonga_loc_conf_t *location_conf,
+                                     void *user_data)
+{
+  ngx_http_groonga_database_callback_data_t *data = user_data;
+
+  data->rc = ngx_http_groonga_context_init_logger(location_conf,
+                                                  data->pool,
+                                                  data->log);
+  if (data->rc != NGX_OK) {
+    return;
+  }
+  data->rc = ngx_http_groonga_context_init_query_logger(location_conf,
+                                                        data->pool,
+                                                        data->log);
+  if (data->rc != NGX_OK) {
+    return;
   }
 }
 
@@ -1471,6 +1496,20 @@ ngx_http_groonga_init_process(ngx_cycle_t *cycle)
   grn_default_logger_set_path(NGX_HTTP_GROONGA_LOG_PATH);
 #endif
 
+  http_conf =
+    (ngx_http_conf_ctx_t *)ngx_get_conf(cycle->conf_ctx, ngx_http_module);
+
+  data.log = cycle->log;
+  data.pool = cycle->pool;
+  data.rc = NGX_OK;
+  ngx_http_groonga_each_loc_conf(http_conf,
+                                 ngx_http_groonga_set_logger_callback,
+                                 &data);
+
+  if (data.rc != NGX_OK) {
+    return data.rc;
+  }
+
   rc = grn_init();
   if (rc != GRN_SUCCESS) {
     return NGX_ERROR;
@@ -1483,12 +1522,6 @@ ngx_http_groonga_init_process(ngx_cycle_t *cycle)
     return NGX_ERROR;
   }
 
-  http_conf =
-    (ngx_http_conf_ctx_t *)ngx_get_conf(cycle->conf_ctx, ngx_http_module);
-
-  data.log = cycle->log;
-  data.pool = cycle->pool;
-  data.rc = NGX_OK;
   ngx_http_groonga_each_loc_conf(http_conf,
                                  ngx_http_groonga_open_database_callback,
                                  &data);
