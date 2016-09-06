@@ -1,0 +1,18 @@
+table_create Memos TABLE_HASH_KEY ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms memos_key COLUMN_INDEX|WITH_POSITION Memos _key
+
+load --table Memos
+[
+{"_key": "Groonga is fast!"},
+{"_key": "Mroonga is fast!"},
+{"_key": "Groonga sticker!"},
+{"_key": "Rroonga is fast!"}
+]
+
+select Memos \
+  --slices[groonga].match_columns '_key' \
+  --slices[groonga].query 'Groonga'

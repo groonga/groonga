@@ -1,0 +1,30 @@
+table_create Memos TABLE_HASH_KEY ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms memos_key COLUMN_INDEX|WITH_POSITION Memos _key
+
+table_create Synonyms TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+column_create Synonyms words COLUMN_VECTOR ShortText
+
+load --table Memos
+[
+{"_key": "Groonga is fast!"},
+{"_key": "Mroonga is fast!"},
+{"_key": "Groonga sticker!"},
+{"_key": "Rroonga is fast!"},
+{"_key": "Ruby is good!"},
+{"_key": "Ruby and Groonga combination is good!"}
+]
+
+load --table Synonyms
+[
+["_key", "words"],
+["Rroonga", ["Rroonga", "Ruby Groonga"]]
+]
+
+select Memos \
+  --slices[rroonga].match_columns '_key' \
+  --slices[rroonga].query 'Rroonga' \
+  --slices[rroonga].query_expander Synonyms.words

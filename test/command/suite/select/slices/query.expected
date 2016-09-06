@@ -1,0 +1,110 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos date COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "date": "2016-05-19 12:00:00", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "date": "2016-05-19 12:00:01", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "date": "2016-05-19 12:00:02", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "date": "2016-05-19 12:00:03", "tag": "Rroonga"}
+]
+[[0,0.0,0.0],4]
+select Memos   --slices[groonga].query 'tag:Groonga'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "date",
+          "Time"
+        ],
+        [
+          "tag",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast!",
+        1463626800.0,
+        "Groonga"
+      ],
+      [
+        2,
+        "Mroonga is fast!",
+        1463626801.0,
+        "Mroonga"
+      ],
+      [
+        3,
+        "Groonga sticker!",
+        1463626802.0,
+        "Groonga"
+      ],
+      [
+        4,
+        "Rroonga is fast!",
+        1463626803.0,
+        "Rroonga"
+      ]
+    ],
+    {
+      "groonga": [
+        [
+          2
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "date",
+            "Time"
+          ],
+          [
+            "tag",
+            "Tags"
+          ]
+        ],
+        [
+          1,
+          "Groonga is fast!",
+          1463626800.0,
+          "Groonga"
+        ],
+        [
+          3,
+          "Groonga sticker!",
+          1463626802.0,
+          "Groonga"
+        ]
+      ]
+    }
+  ]
+]

@@ -1,0 +1,80 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms memos_key COLUMN_INDEX|WITH_POSITION Memos _key
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!"},
+{"_key": "Mroonga is fast!"},
+{"_key": "Groonga sticker!"},
+{"_key": "Rroonga is fast!"}
+]
+[[0,0.0,0.0],4]
+select Memos   --slices[groonga].match_columns '_key'   --slices[groonga].query 'Groonga'   --slices[groonga].output_columns '_key, highlight_html(_key)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast!"
+      ],
+      [
+        2,
+        "Mroonga is fast!"
+      ],
+      [
+        3,
+        "Groonga sticker!"
+      ],
+      [
+        4,
+        "Rroonga is fast!"
+      ]
+    ],
+    {
+      "groonga": [
+        [
+          2
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "highlight_html",
+            null
+          ]
+        ],
+        [
+          "Groonga is fast!",
+          "<span class=\"keyword\">Groonga</span> is fast!"
+        ],
+        [
+          "Groonga sticker!",
+          "<span class=\"keyword\">Groonga</span> sticker!"
+        ]
+      ]
+    }
+  ]
+]
