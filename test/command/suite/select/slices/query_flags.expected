@@ -14,7 +14,7 @@ load --table Memos
 {"_key": "Rroonga is fast!", "date": "2016-05-19 12:00:03", "tag": "Rroonga"}
 ]
 [[0,0.0,0.0],4]
-select Memos   --slices[groonga].match_columns 'tag'   --slices[groonga].query '-Groonga'   --slices[groonga].query_flags ALLOW_LEADING_NOT
+select Memos   --slices[not_groonga].match_columns 'tag'   --slices[not_groonga].query '-Groonga'   --slices[not_groonga].query_flags ALLOW_LEADING_NOT
 [
   [
     0,
