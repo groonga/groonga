@@ -691,15 +691,15 @@ ngx_http_groonga_handler_create_data(ngx_http_request_t *r,
 static void
 ngx_http_groonga_handler_process_command_path(ngx_http_request_t *r,
                                               ngx_str_t *command_path,
-                                              ngx_http_groonga_handler_data_t *data)
+                                              ngx_http_groonga_handler_data_t *data,
+                                              int flags)
 {
   grn_obj uri;
 
   GRN_TEXT_INIT(&uri, 0);
   GRN_TEXT_PUTS(context, &uri, "/d/");
   GRN_TEXT_PUT(context, &uri, command_path->data, command_path->len);
-  grn_ctx_send(context, GRN_TEXT_VALUE(&uri), GRN_TEXT_LEN(&uri),
-               GRN_CTX_TAIL);
+  grn_ctx_send(context, GRN_TEXT_VALUE(&uri), GRN_TEXT_LEN(&uri), flags);
   data->rc = context->rc;
   ngx_http_groonga_context_log_error(r->connection->log);
   GRN_OBJ_FIN(context, &uri);
@@ -807,7 +807,9 @@ ngx_http_groonga_send_body(ngx_http_request_t *r,
           }
 
           line_length = line_current - line_start + 1;
-          if (!chain->next && rest_buffer_size == 0) {
+          if (line_current + 1 == line_end &&
+              !chain->next &&
+              rest_buffer_size == 0) {
             flags |= GRN_CTX_TAIL;
           }
           grn_ctx_send(context, line_start, line_length, flags);
@@ -882,7 +884,10 @@ ngx_http_groonga_handler_process_load(ngx_http_request_t *r,
     return;
   }
 
-  ngx_http_groonga_handler_process_command_path(r, command_path, data);
+  ngx_http_groonga_handler_process_command_path(r,
+                                                command_path,
+                                                data,
+                                                GRN_NO_FLAGS);
   if (data->rc != GRN_SUCCESS) {
     return;
   }
@@ -997,7 +1002,10 @@ ngx_http_groonga_handler_get(ngx_http_request_t *r)
     return rc;
   }
 
-  ngx_http_groonga_handler_process_command_path(r, &command_path, data);
+  ngx_http_groonga_handler_process_command_path(r,
+                                                &command_path,
+                                                data,
+                                                GRN_CTX_TAIL);
 
   /* discard request body, since we don't need it here */
   rc = ngx_http_discard_request_body(r);
