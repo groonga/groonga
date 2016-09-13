@@ -8,6 +8,8 @@ load --table Softwares
 ["rroonga"]
 ]
 [[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
 select Softwares --filter 'all_records()'
 [
   [
@@ -45,3 +47,6 @@ select Softwares --filter 'all_records()'
     ]
   ]
 ]
+#|i| [table][select][index][selector][no-index][all_records] <Softwares>
+log_level --level notice
+[[0,0.0,0.0],true]

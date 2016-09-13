@@ -8,4 +8,8 @@ load --table Softwares
 ["rroonga"]
 ]
 
+#@add-important-log-levels info
+log_level --level info
 select Softwares --filter 'all_records()'
+log_level --level notice
+#@remove-important-log-levels info
