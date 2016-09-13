@@ -3763,6 +3763,7 @@ struct _grn_scan_info {
   (si)->max_interval = DEFAULT_MAX_INTERVAL;\
   (si)->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;\
   (si)->start = (st);\
+  (si)->query = NULL;\
   GRN_PTR_INIT(&(si)->scorers, GRN_OBJ_VECTOR, GRN_ID_NIL);\
   GRN_PTR_INIT(&(si)->scorer_args_exprs, GRN_OBJ_VECTOR, GRN_ID_NIL);\
   GRN_UINT32_INIT(&(si)->scorer_args_expr_offsets, GRN_OBJ_VECTOR);\
