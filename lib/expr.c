@@ -6456,7 +6456,9 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
 {
   grn_bool processed = GRN_FALSE;
   if (!si->query) {
-    return processed;
+    if (si->op != GRN_OP_CALL || !grn_obj_is_selector_proc(ctx, si->args[0])) {
+      return processed;
+    }
   }
   if (GRN_BULK_VSIZE(&si->index)) {
     grn_obj *index = GRN_PTR_VALUE(&si->index);
