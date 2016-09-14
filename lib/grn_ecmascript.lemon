@@ -2,6 +2,9 @@
 %name grn_expr_parser
 %token_prefix GRN_EXPR_TOKEN_
 %include {
+#ifdef assert
+#  undef assert
+#endif
 #define assert GRN_ASSERT
 }
 
