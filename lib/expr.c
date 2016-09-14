@@ -7081,14 +7081,7 @@ static grn_rc
 grn_expr_parser_open(grn_ctx *ctx)
 {
   if (!ctx->impl->parser) {
-    yyParser *pParser = GRN_MALLOCN(yyParser, 1);
-    if (pParser) {
-      pParser->yyidx = -1;
-#if YYSTACKDEPTH<=0
-      yyGrowStack(pParser);
-#endif
-      ctx->impl->parser = pParser;
-    }
+    ctx->impl->parser = grn_expr_parserAlloc(malloc);
   }
   return ctx->rc;
 }
@@ -7575,8 +7568,8 @@ exit :
 static void
 set_tos_minor_to_curr(grn_ctx *ctx, efs_info *q)
 {
-  yyParser *pParser = ctx->impl->parser;
-  yyStackEntry *yytos = &pParser->yystack[pParser->yyidx];
+  yyParser *parser = ctx->impl->parser;
+  yyStackEntry *yytos = parser->yytos;
   yytos->minor.yy0 = ((grn_expr *)(q->e))->codes_curr;
 }
 
@@ -8160,13 +8153,9 @@ grn_rc
 grn_expr_parser_close(grn_ctx *ctx)
 {
   if (ctx->impl->parser) {
-    yyParser *pParser = (yyParser*)ctx->impl->parser;
-    while (pParser->yyidx >= 0) yy_pop_parser_stack(pParser);
-#if YYSTACKDEPTH<=0
-    free(pParser->yystack);
-#endif
-    GRN_FREE(pParser);
+    yyParser *parser = (yyParser *)ctx->impl->parser;
     ctx->impl->parser = NULL;
+    grn_expr_parserFree(parser, free);
   }
   return ctx->rc;
 }

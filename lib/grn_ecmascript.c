@@ -26,8 +26,11 @@
 /************ Begin %include sections from the grammar ************************/
 #line 4 "grn_ecmascript.lemon"
 
+#ifdef assert
+#  undef assert
+#endif
 #define assert GRN_ASSERT
-#line 31 "grn_ecmascript.c"
+#line 34 "grn_ecmascript.c"
 /**************** End of %include directives **********************************/
 /* These constants specify the various numeric values for terminal symbols
 ** in a format understandable to "makeheaders".  This section is blank unless
@@ -181,32 +184,32 @@ typedef union {
 *********** Begin parsing tables **********************************************/
 #define YY_ACTTAB_COUNT (1759)
 static const YYACTIONTYPE yy_action[] = {
- /*     0 */     3,   71,  112,  354,  133,  316,    2,   77,   81,  126,
- /*    10 */     1,  315,   70,  496,   78,  109,  128,  234,  315,  335,
- /*    20 */   318,  319,   88,  123,  122,  136,  135,  134,  117,   85,
- /*    30 */   100,  113,  101,  330,  331,  333,   74,  337,  340,  337,
- /*    40 */   340,  316,   73,  356,   81,  141,    9,  227,   70,  230,
+ /*     0 */     3,   71,  112,  112,  133,  316,    2,   77,   81,  126,
+ /*    10 */     1,   77,   70,  496,   78,  109,  128,  234,   78,   74,
+ /*    20 */   109,  109,   88,  123,  122,  136,  135,  134,  117,   85,
+ /*    30 */   100,  113,  101,  101,  101,   88,   74,  234,  234,   74,
+ /*    40 */    74,  316,   73,  356,   81,  141,    9,  227,   70,  230,
  /*    50 */    65,   64,   53,   52,   51,   68,   67,   66,   63,   62,
  /*    60 */    61,   60,   59,   58,  341,  342,  343,  344,  345,    4,
- /*    70 */   124,   69,   57,   56,  335,  318,  319,   88,  123,  122,
- /*    80 */   136,  135,  134,  117,   85,  100,  113,  101,  330,  331,
- /*    90 */   333,   74,  308,  130,  337,  340,  292,  336,  112,  354,
+ /*    70 */   124,   69,   57,   56,   74,  124,  124,   88,  123,  122,
+ /*    80 */   136,  135,  134,  117,   85,  100,  113,  101,  101,  101,
+ /*    90 */    88,   74,  308,  130,   74,   74,  292,  336,  112,  112,
  /*   100 */   133,  316,    2,  232,   81,  126,    1,  107,   70,   77,
- /*   110 */   115,   31,   30,  315,  335,  318,  319,   88,  123,  122,
- /*   120 */   136,  135,  134,  117,   85,  100,  113,  101,  330,  331,
- /*   130 */   333,   74,  231,    7,  337,  340,  339,   72,  359,  130,
+ /*   110 */   115,   31,   30,   77,   74,  115,  115,   88,  123,  122,
+ /*   120 */   136,  135,  134,  117,   85,  100,  113,  101,  101,  101,
+ /*   130 */    88,   74,  231,    7,   74,   74,  339,   72,  107,  130,
  /*   140 */   355,  133,  297,  293,  229,   76,   65,   64,   23,   55,
  /*   150 */    54,   68,   67,   66,   63,   62,   61,   60,   59,   58,
  /*   160 */   341,  342,  343,  344,  345,    4,   83,   82,   79,  316,
  /*   170 */    73,  317,   81,  141,    9,  338,   70,   65,   64,  305,
  /*   180 */   228,   28,   68,   67,   66,   63,   62,   61,   60,   59,
  /*   190 */    58,  341,  342,  343,  344,  345,    4,  108,  349,  306,
- /*   200 */   335,  307,  319,   88,  123,  122,  136,  135,  134,  117,
- /*   210 */    85,  100,  113,  101,  330,  331,  333,   74,   10,    7,
- /*   220 */   337,  340,  339,   72,   36,   35,  350,    6,  302,  335,
- /*   230 */   351,  319,   88,  123,  122,  136,  135,  134,  117,   85,
- /*   240 */   100,  113,  101,  330,  331,  333,   74,  447,  446,  337,
- /*   250 */   340,   11,   84,    7,  490,  348,  339,   72,  290,  291,
+ /*   200 */    74,  307,  307,   88,  123,  122,  136,  135,  134,  117,
+ /*   210 */    85,  100,  113,  101,  101,  101,   88,   74,   10,    7,
+ /*   220 */    74,   74,  339,   72,   36,   35,  350,    6,  302,   74,
+ /*   230 */    84,   84,   88,  123,  122,  136,  135,  134,  117,   85,
+ /*   240 */   100,  113,  101,  101,  101,   88,   74,  447,  446,   74,
+ /*   250 */    74,   11,   84,    7,  490,  348,  339,   72,  290,  291,
  /*   260 */   350,    5,   28,   65,   64,   28,   80,   29,   68,   67,
  /*   270 */    66,   63,   62,   61,   60,   59,   58,  341,  342,  343,
  /*   280 */   344,  345,    4,  347,    7,  310,  309,  339,   72,   26,
@@ -216,147 +219,147 @@ static const YYACTIONTYPE yy_action[] = {
  /*   320 */    25,  363,  296,   33,  363,  363,  363,  363,   65,   64,
  /*   330 */   363,  363,  363,   68,   67,   66,   63,   62,   61,   60,
  /*   340 */    59,   58,  341,  342,  343,  344,  345,    4,  363,  363,
- /*   350 */    75,  335,  307,  319,   88,  123,  122,  136,  135,  134,
- /*   360 */   117,   85,  100,  113,  101,  330,  331,  333,   74,  363,
- /*   370 */   363,  337,  340,  363,  363,  363,  363,  363,  363,  304,
- /*   380 */   335,  299,  319,   88,  123,  122,  136,  135,  134,  117,
- /*   390 */    85,  100,  113,  101,  330,  331,  333,   74,  363,  363,
- /*   400 */   337,  340,  363,  363,  363,  363,  363,  111,  115,  363,
- /*   410 */   363,  363,  335,  318,  319,   88,  123,  122,  136,  135,
- /*   420 */   134,  117,   85,  100,  113,  101,  330,  331,  333,   74,
- /*   430 */   118,  363,  337,  340,  335,  318,  319,   88,  123,  122,
- /*   440 */   136,  135,  134,  117,   85,  100,  113,  101,  330,  331,
- /*   450 */   333,   74,  363,    7,  337,  340,  339,   72,  124,  363,
- /*   460 */   363,  363,  335,  318,  319,   88,  123,  122,  136,  135,
- /*   470 */   134,  117,   85,  100,  113,  101,  330,  331,  333,   74,
- /*   480 */   363,    7,  337,  340,  339,   72,  363,  363,  363,  363,
+ /*   350 */    75,   74,  307,  307,   88,  123,  122,  136,  135,  134,
+ /*   360 */   117,   85,  100,  113,  101,  101,  101,   88,   74,  363,
+ /*   370 */   363,   74,   74,  363,  363,  363,  363,  363,  363,  304,
+ /*   380 */    74,  299,  299,   88,  123,  122,  136,  135,  134,  117,
+ /*   390 */    85,  100,  113,  101,  101,  101,   88,   74,  363,  363,
+ /*   400 */    74,   74,  363,  363,  363,  363,  363,  111,  115,  363,
+ /*   410 */   363,  363,   74,  115,  115,   88,  123,  122,  136,  135,
+ /*   420 */   134,  117,   85,  100,  113,  101,  101,  101,   88,   74,
+ /*   430 */   118,  363,   74,   74,   74,  118,  118,   88,  123,  122,
+ /*   440 */   136,  135,  134,  117,   85,  100,  113,  101,  101,  101,
+ /*   450 */    88,   74,  363,    7,   74,   74,  339,   72,  124,  363,
+ /*   460 */   363,  363,   74,  124,  124,   88,  123,  122,  136,  135,
+ /*   470 */   134,  117,   85,  100,  113,  101,  101,  101,   88,   74,
+ /*   480 */   363,    7,   74,   74,  339,   72,  363,  363,  363,  363,
  /*   490 */   363,  363,  363,  363,  363,  363,  363,   65,   64,  363,
  /*   500 */   363,  363,   68,   67,   66,   63,   62,   61,   60,   59,
  /*   510 */    58,  341,  342,  125,  344,  345,    4,  363,  363,  363,
  /*   520 */   363,  363,  363,  363,  363,   65,   64,  363,  363,  363,
  /*   530 */    68,   67,   66,   63,   62,   61,   60,   59,   58,  341,
- /*   540 */   342,  343,  344,  345,    4,  335,  353,  319,   88,  123,
- /*   550 */   122,  136,  135,  134,  117,   85,  100,  113,  101,  330,
- /*   560 */   331,  333,   74,  363,  363,  337,  340,  335,  352,  319,
+ /*   540 */   342,  343,  344,  345,    4,   74,  353,  353,   88,  123,
+ /*   550 */   122,  136,  135,  134,  117,   85,  100,  113,  101,  101,
+ /*   560 */   101,   88,   74,  363,  363,   74,   74,   74,  352,  352,
  /*   570 */    88,  123,  122,  136,  135,  134,  117,   85,  100,  113,
- /*   580 */   101,  330,  331,  333,   74,  363,  363,  337,  340,  335,
- /*   590 */   247,  319,   88,  123,  122,  136,  135,  134,  117,   85,
- /*   600 */   100,  113,  101,  330,  331,  333,   74,  363,  363,  337,
- /*   610 */   340,  363,  363,  335,  246,  319,   88,  123,  122,  136,
- /*   620 */   135,  134,  117,   85,  100,  113,  101,  330,  331,  333,
- /*   630 */    74,  363,  363,  337,  340,  335,  245,  319,   88,  123,
- /*   640 */   122,  136,  135,  134,  117,   85,  100,  113,  101,  330,
- /*   650 */   331,  333,   74,  363,  363,  337,  340,  335,  244,  319,
+ /*   580 */   101,  101,  101,   88,   74,  363,  363,   74,   74,   74,
+ /*   590 */   247,  247,   88,  123,  122,  136,  135,  134,  117,   85,
+ /*   600 */   100,  113,  101,  101,  101,   88,   74,  363,  363,   74,
+ /*   610 */    74,  363,  363,   74,  246,  246,   88,  123,  122,  136,
+ /*   620 */   135,  134,  117,   85,  100,  113,  101,  101,  101,   88,
+ /*   630 */    74,  363,  363,   74,   74,   74,  245,  245,   88,  123,
+ /*   640 */   122,  136,  135,  134,  117,   85,  100,  113,  101,  101,
+ /*   650 */   101,   88,   74,  363,  363,   74,   74,   74,  244,  244,
  /*   660 */    88,  123,  122,  136,  135,  134,  117,   85,  100,  113,
- /*   670 */   101,  330,  331,  333,   74,  363,  363,  337,  340,  335,
- /*   680 */   243,  319,   88,  123,  122,  136,  135,  134,  117,   85,
- /*   690 */   100,  113,  101,  330,  331,  333,   74,  363,  363,  337,
- /*   700 */   340,  335,  242,  319,   88,  123,  122,  136,  135,  134,
- /*   710 */   117,   85,  100,  113,  101,  330,  331,  333,   74,  363,
- /*   720 */   363,  337,  340,  335,  241,  319,   88,  123,  122,  136,
- /*   730 */   135,  134,  117,   85,  100,  113,  101,  330,  331,  333,
- /*   740 */    74,  363,  363,  337,  340,  335,  240,  319,   88,  123,
- /*   750 */   122,  136,  135,  134,  117,   85,  100,  113,  101,  330,
- /*   760 */   331,  333,   74,  363,  363,  337,  340,  335,  239,  319,
+ /*   670 */   101,  101,  101,   88,   74,  363,  363,   74,   74,   74,
+ /*   680 */   243,  243,   88,  123,  122,  136,  135,  134,  117,   85,
+ /*   690 */   100,  113,  101,  101,  101,   88,   74,  363,  363,   74,
+ /*   700 */    74,   74,  242,  242,   88,  123,  122,  136,  135,  134,
+ /*   710 */   117,   85,  100,  113,  101,  101,  101,   88,   74,  363,
+ /*   720 */   363,   74,   74,   74,  241,  241,   88,  123,  122,  136,
+ /*   730 */   135,  134,  117,   85,  100,  113,  101,  101,  101,   88,
+ /*   740 */    74,  363,  363,   74,   74,   74,  240,  240,   88,  123,
+ /*   750 */   122,  136,  135,  134,  117,   85,  100,  113,  101,  101,
+ /*   760 */   101,   88,   74,  363,  363,   74,   74,   74,  239,  239,
  /*   770 */    88,  123,  122,  136,  135,  134,  117,   85,  100,  113,
- /*   780 */   101,  330,  331,  333,   74,  363,  363,  337,  340,  335,
- /*   790 */   238,  319,   88,  123,  122,  136,  135,  134,  117,   85,
- /*   800 */   100,  113,  101,  330,  331,  333,   74,  363,  363,  337,
- /*   810 */   340,  335,  237,  319,   88,  123,  122,  136,  135,  134,
- /*   820 */   117,   85,  100,  113,  101,  330,  331,  333,   74,  363,
- /*   830 */   363,  337,  340,  335,  300,  319,   88,  123,  122,  136,
- /*   840 */   135,  134,  117,   85,  100,  113,  101,  330,  331,  333,
- /*   850 */    74,  363,  363,  337,  340,  335,  295,  319,   88,  123,
- /*   860 */   122,  136,  135,  134,  117,   85,  100,  113,  101,  330,
- /*   870 */   331,  333,   74,  363,  363,  337,  340,  335,  248,  319,
+ /*   780 */   101,  101,  101,   88,   74,  363,  363,   74,   74,   74,
+ /*   790 */   238,  238,   88,  123,  122,  136,  135,  134,  117,   85,
+ /*   800 */   100,  113,  101,  101,  101,   88,   74,  363,  363,   74,
+ /*   810 */    74,   74,  237,  237,   88,  123,  122,  136,  135,  134,
+ /*   820 */   117,   85,  100,  113,  101,  101,  101,   88,   74,  363,
+ /*   830 */   363,   74,   74,   74,  300,  300,   88,  123,  122,  136,
+ /*   840 */   135,  134,  117,   85,  100,  113,  101,  101,  101,   88,
+ /*   850 */    74,  363,  363,   74,   74,   74,  295,  295,   88,  123,
+ /*   860 */   122,  136,  135,  134,  117,   85,  100,  113,  101,  101,
+ /*   870 */   101,   88,   74,  363,  363,   74,   74,   74,  248,  248,
  /*   880 */    88,  123,  122,  136,  135,  134,  117,   85,  100,  113,
- /*   890 */   101,  330,  331,  333,   74,  363,  363,  337,  340,  335,
- /*   900 */   140,  319,   88,  123,  122,  136,  135,  134,  117,   85,
- /*   910 */   100,  113,  101,  330,  331,  333,   74,  363,  363,  337,
- /*   920 */   340,  335,  236,  319,   88,  123,  122,  136,  135,  134,
- /*   930 */   117,   85,  100,  113,  101,  330,  331,  333,   74,  363,
- /*   940 */   363,  337,  340,  335,  235,  319,   88,  123,  122,  136,
- /*   950 */   135,  134,  117,   85,  100,  113,  101,  330,  331,  333,
- /*   960 */    74,  363,  335,  337,  340,  119,  363,  110,  136,  135,
- /*   970 */   134,  117,   85,  100,  113,  101,  330,  331,  333,   74,
- /*   980 */   363,  335,  337,  340,  119,  363,  363,  131,  135,  134,
- /*   990 */   117,   85,  100,  113,  101,  330,  331,  333,   74,  363,
- /*  1000 */   363,  337,  340,  335,  363,  363,  119,  363,  363,  139,
- /*  1010 */   135,  134,  117,   85,  100,  113,  101,  330,  331,  333,
- /*  1020 */    74,  363,  363,  337,  340,  335,  363,  363,  119,  363,
- /*  1030 */   363,  363,  138,  134,  117,   85,  100,  113,  101,  330,
- /*  1040 */   331,  333,   74,  363,  363,  337,  340,  335,  363,  363,
+ /*   890 */   101,  101,  101,   88,   74,  363,  363,   74,   74,   74,
+ /*   900 */   140,  140,   88,  123,  122,  136,  135,  134,  117,   85,
+ /*   910 */   100,  113,  101,  101,  101,   88,   74,  363,  363,   74,
+ /*   920 */    74,   74,  236,  236,   88,  123,  122,  136,  135,  134,
+ /*   930 */   117,   85,  100,  113,  101,  101,  101,   88,   74,  363,
+ /*   940 */   363,   74,   74,   74,  235,  235,   88,  123,  122,  136,
+ /*   950 */   135,  134,  117,   85,  100,  113,  101,  101,  101,   88,
+ /*   960 */    74,  363,   74,   74,   74,  119,  363,  110,  136,  135,
+ /*   970 */   134,  117,   85,  100,  113,  101,  101,  101,  119,   74,
+ /*   980 */   363,   74,   74,   74,  119,  363,  363,  131,  135,  134,
+ /*   990 */   117,   85,  100,  113,  101,  101,  101,  119,   74,  363,
+ /*  1000 */   363,   74,   74,   74,  363,  363,  119,  363,  363,  139,
+ /*  1010 */   135,  134,  117,   85,  100,  113,  101,  101,  101,  119,
+ /*  1020 */    74,  363,  363,   74,   74,   74,  363,  363,  119,  363,
+ /*  1030 */   363,  363,  138,  134,  117,   85,  100,  113,  101,  101,
+ /*  1040 */   101,  119,   74,  363,  363,   74,   74,   74,  363,  363,
  /*  1050 */   119,  363,  363,  363,  363,  137,  117,   85,  100,  113,
- /*  1060 */   101,  330,  331,  333,   74,  363,  363,  337,  340,   50,
+ /*  1060 */   101,  101,  101,  119,   74,  363,  363,   74,   74,   50,
  /*  1070 */    49,   48,   47,   46,   45,   44,   43,   42,   41,   40,
  /*  1080 */    39,   38,   37,   27,   22,   21,   20,   19,   18,   17,
- /*  1090 */    16,   15,   14,   13,   12,  335,  363,  363,  119,  363,
- /*  1100 */   363,  363,  363,  363,  121,   85,  100,  113,  101,  330,
- /*  1110 */   331,  333,   74,  363,  363,  337,  340,  363,  335,  363,
+ /*  1090 */    16,   15,   14,   13,   12,   74,  363,  363,  119,  363,
+ /*  1100 */   363,  363,  363,  363,  121,   85,  100,  113,  101,  101,
+ /*  1110 */   101,  119,   74,  363,  363,   74,   74,  363,   74,  363,
  /*  1120 */   363,  119,  363,  363,  363,  290,  291,  363,   86,  100,
- /*  1130 */   113,  101,  330,  331,  333,   74,  363,  363,  337,  340,
- /*  1140 */   335,  363,  363,  119,  363,  363,  363,  363,  363,  363,
- /*  1150 */    87,  100,  113,  101,  330,  331,  333,   74,  363,  335,
- /*  1160 */   337,  340,  119,  363,  363,  363,  363,  363,  363,  363,
- /*  1170 */    89,  113,  101,  330,  331,  333,   74,  363,  335,  337,
- /*  1180 */   340,  119,  363,  363,  363,  363,  363,  363,  363,   90,
- /*  1190 */   113,  101,  330,  331,  333,   74,  363,  363,  337,  340,
- /*  1200 */   363,  335,  363,  363,  119,  363,  363,    7,  363,  363,
- /*  1210 */   339,   72,   91,  113,  101,  330,  331,  333,   74,  363,
- /*  1220 */   363,  337,  340,  335,  363,  363,  119,  363,  363,  363,
- /*  1230 */   363,  363,  363,  363,   92,  113,  101,  330,  331,  333,
- /*  1240 */    74,  363,  335,  337,  340,  119,  363,  363,  363,  363,
- /*  1250 */   363,  363,  363,   93,  113,  101,  330,  331,  333,   74,
- /*  1260 */   363,  335,  337,  340,  119,  341,  342,  343,  344,  345,
- /*  1270 */     4,  363,   94,  113,  101,  330,  331,  333,   74,  363,
- /*  1280 */   363,  337,  340,  363,  335,  363,  363,  119,  363,  363,
- /*  1290 */   363,  363,  363,  363,  363,   95,  113,  101,  330,  331,
- /*  1300 */   333,   74,  363,  363,  337,  340,  335,  363,  363,  119,
+ /*  1130 */   113,  101,  101,  101,  119,   74,  363,  363,   74,   74,
+ /*  1140 */    74,  363,  363,  119,  363,  363,  363,  363,  363,  363,
+ /*  1150 */    87,  100,  113,  101,  101,  101,  119,   74,  363,   74,
+ /*  1160 */    74,   74,  119,  363,  363,  363,  363,  363,  363,  363,
+ /*  1170 */    89,  113,  101,  101,  101,  119,   74,  363,   74,   74,
+ /*  1180 */    74,  119,  363,  363,  363,  363,  363,  363,  363,   90,
+ /*  1190 */   113,  101,  101,  101,  119,   74,  363,  363,   74,   74,
+ /*  1200 */   363,   74,  363,  363,  119,  363,  363,    7,  363,  363,
+ /*  1210 */   339,   72,   91,  113,  101,  101,  101,  119,   74,  363,
+ /*  1220 */   363,   74,   74,   74,  363,  363,  119,  363,  363,  363,
+ /*  1230 */   363,  363,  363,  363,   92,  113,  101,  101,  101,  119,
+ /*  1240 */    74,  363,   74,   74,   74,  119,  363,  363,  363,  363,
+ /*  1250 */   363,  363,  363,   93,  113,  101,  101,  101,  119,   74,
+ /*  1260 */   363,   74,   74,   74,  119,  341,  342,  343,  344,  345,
+ /*  1270 */     4,  363,   94,  113,  101,  101,  101,  119,   74,  363,
+ /*  1280 */   363,   74,   74,  363,   74,  363,  363,  119,  363,  363,
+ /*  1290 */   363,  363,  363,  363,  363,   95,  113,  101,  101,  101,
+ /*  1300 */   119,   74,  363,  363,   74,   74,   74,  363,  363,  119,
  /*  1310 */   363,  363,  363,  363,  363,  363,  363,   96,  113,  101,
- /*  1320 */   330,  331,  333,   74,  363,  335,  337,  340,  119,  363,
- /*  1330 */   363,  363,  363,  363,  363,  363,   97,  113,  101,  330,
- /*  1340 */   331,  333,   74,  363,  335,  337,  340,  119,  363,  363,
- /*  1350 */   363,  363,  363,  363,  363,   98,  113,  101,  330,  331,
- /*  1360 */   333,   74,  363,  363,  337,  340,  363,  335,  363,  363,
+ /*  1320 */   101,  101,  119,   74,  363,   74,   74,   74,  119,  363,
+ /*  1330 */   363,  363,  363,  363,  363,  363,   97,  113,  101,  101,
+ /*  1340 */   101,  119,   74,  363,   74,   74,   74,  119,  363,  363,
+ /*  1350 */   363,  363,  363,  363,  363,   98,  113,  101,  101,  101,
+ /*  1360 */   119,   74,  363,  363,   74,   74,  363,   74,  363,  363,
  /*  1370 */   119,  363,  363,  363,  363,  363,  363,  363,   99,  113,
- /*  1380 */   101,  330,  331,  333,   74,  363,  363,  337,  340,  335,
+ /*  1380 */   101,  101,  101,  119,   74,  363,  363,   74,   74,   74,
  /*  1390 */   363,  363,  119,  363,  363,  363,  363,  363,  363,  363,
- /*  1400 */   102,  113,  101,  330,  331,  333,   74,  363,  335,  337,
- /*  1410 */   340,  119,  363,  363,  363,  363,  363,  363,  363,  104,
- /*  1420 */   113,  101,  330,  331,  333,   74,  363,  335,  337,  340,
+ /*  1400 */   102,  113,  101,  101,  101,  119,   74,  363,   74,   74,
+ /*  1410 */    74,  119,  363,  363,  363,  363,  363,  363,  363,  104,
+ /*  1420 */   113,  101,  101,  101,  119,   74,  363,   74,   74,   74,
  /*  1430 */   119,  363,  363,  363,  363,  363,  363,  363,  106,  113,
- /*  1440 */   101,  330,  331,  333,   74,  363,  363,  337,  340,  363,
- /*  1450 */   335,  363,  363,  119,  363,  363,  363,  363,  363,  363,
- /*  1460 */   363,  363,  114,  101,  330,  331,  333,   74,  363,  363,
- /*  1470 */   337,  340,  335,  363,  363,  119,  363,  363,  363,  363,
- /*  1480 */   363,  363,  363,  363,  116,  101,  330,  331,  333,   74,
- /*  1490 */   363,  335,  337,  340,  119,  363,  363,  363,  363,  363,
- /*  1500 */   363,  363,  363,  120,  101,  330,  331,  333,   74,  363,
- /*  1510 */   363,  337,  340,  445,  363,  363,   83,   82,   79,  316,
- /*  1520 */    73,  363,   81,  141,    9,  335,   70,  363,  119,  363,
- /*  1530 */   363,  363,  363,  363,  363,  363,  363,  363,  103,  330,
- /*  1540 */   331,  333,   74,  363,  363,  337,  340,  335,  363,  363,
- /*  1550 */   119,  363,  363,  363,  363,  335,  363,  363,  119,  363,
- /*  1560 */   105,  330,  331,  333,   74,  363,  363,  337,  340,  278,
- /*  1570 */   331,  333,   74,  363,  335,  337,  340,  119,  363,  363,
- /*  1580 */   363,  363,  363,  363,  363,  363,  363,  363,  277,  331,
- /*  1590 */   333,   74,  363,  363,  337,  340,  335,  363,  363,  119,
- /*  1600 */   363,  363,  363,  363,  363,  335,  363,  363,  119,  363,
- /*  1610 */   289,  331,  333,   74,  363,  363,  337,  340,  363,  288,
- /*  1620 */   331,  333,   74,  363,  335,  337,  340,  119,  363,  363,
- /*  1630 */   363,  363,  363,  335,  363,  363,  119,  363,  287,  331,
- /*  1640 */   333,   74,  363,  335,  337,  340,  119,  286,  331,  333,
- /*  1650 */    74,  363,  335,  337,  340,  119,  363,  285,  331,  333,
- /*  1660 */    74,  363,  363,  337,  340,  363,  284,  331,  333,   74,
- /*  1670 */   363,  335,  337,  340,  119,  363,  363,  363,  363,  335,
- /*  1680 */   363,  363,  119,  363,  363,  283,  331,  333,   74,  363,
- /*  1690 */   363,  337,  340,  282,  331,  333,   74,  363,  363,  337,
- /*  1700 */   340,  363,  335,  363,  363,  119,  363,  363,  363,  363,
- /*  1710 */   335,  363,  363,  119,  363,  363,  281,  331,  333,   74,
- /*  1720 */   363,  363,  337,  340,  280,  331,  333,   74,  363,  335,
- /*  1730 */   337,  340,  119,  363,  363,  363,  363,  335,  363,  363,
- /*  1740 */   119,  363,  363,  279,  331,  333,   74,  363,  363,  337,
- /*  1750 */   340,  276,  331,  333,   74,  363,  363,  337,  340,
+ /*  1440 */   101,  101,  101,  119,   74,  363,  363,   74,   74,  363,
+ /*  1450 */    74,  363,  363,  119,  363,  363,  363,  363,  363,  363,
+ /*  1460 */   363,  363,  114,  101,  101,  101,  119,   74,  363,  363,
+ /*  1470 */    74,   74,   74,  363,  363,  119,  363,  363,  363,  363,
+ /*  1480 */   363,  363,  363,  363,  116,  101,  101,  101,  119,   74,
+ /*  1490 */   363,   74,   74,   74,  119,  363,  363,  363,  363,  363,
+ /*  1500 */   363,  363,  363,  120,  101,  101,  101,  119,   74,  363,
+ /*  1510 */   363,   74,   74,  445,  363,  363,   83,   82,   79,  316,
+ /*  1520 */    73,  363,   81,  141,    9,   74,   70,  363,  119,  363,
+ /*  1530 */   363,  363,  363,  363,  363,  363,  363,  363,  103,  103,
+ /*  1540 */   103,  119,   74,  363,  363,   74,   74,   74,  363,  363,
+ /*  1550 */   119,  363,  363,  363,  363,   74,  363,  363,  119,  363,
+ /*  1560 */   105,  105,  105,  119,   74,  363,  363,   74,   74,  278,
+ /*  1570 */   278,  119,   74,  363,   74,   74,   74,  119,  363,  363,
+ /*  1580 */   363,  363,  363,  363,  363,  363,  363,  363,  277,  277,
+ /*  1590 */   119,   74,  363,  363,   74,   74,   74,  363,  363,  119,
+ /*  1600 */   363,  363,  363,  363,  363,   74,  363,  363,  119,  363,
+ /*  1610 */   289,  289,  119,   74,  363,  363,   74,   74,  363,  288,
+ /*  1620 */   288,  119,   74,  363,   74,   74,   74,  119,  363,  363,
+ /*  1630 */   363,  363,  363,   74,  363,  363,  119,  363,  287,  287,
+ /*  1640 */   119,   74,  363,   74,   74,   74,  119,  286,  286,  119,
+ /*  1650 */    74,  363,   74,   74,   74,  119,  363,  285,  285,  119,
+ /*  1660 */    74,  363,  363,   74,   74,  363,  284,  284,  119,   74,
+ /*  1670 */   363,   74,   74,   74,  119,  363,  363,  363,  363,   74,
+ /*  1680 */   363,  363,  119,  363,  363,  283,  283,  119,   74,  363,
+ /*  1690 */   363,   74,   74,  282,  282,  119,   74,  363,  363,   74,
+ /*  1700 */    74,  363,   74,  363,  363,  119,  363,  363,  363,  363,
+ /*  1710 */    74,  363,  363,  119,  363,  363,  281,  281,  119,   74,
+ /*  1720 */   363,  363,   74,   74,  280,  280,  119,   74,  363,   74,
+ /*  1730 */    74,   74,  119,  363,  363,  363,  363,   74,  363,  363,
+ /*  1740 */   119,  363,  363,  279,  279,  119,   74,  363,  363,   74,
+ /*  1750 */    74,  276,  276,  119,   74,  363,  363,   74,   74,
 };
 static const YYCODETYPE yy_lookahead[] = {
  /*     0 */     1,    2,  106,  107,  108,    6,    7,   77,    9,   10,
@@ -638,9 +641,9 @@ typedef struct yyStackEntry yyStackEntry;
 /* The state of the parser is completely contained in an instance of
 ** the following structure */
 struct yyParser {
-  int yyidx;                    /* Index of top element in stack */
+  yyStackEntry *yytos;          /* Pointer to top element of the stack */
 #ifdef YYTRACKMAXSTACKDEPTH
-  int yyidxMax;                 /* Maximum value of yyidx */
+  int yyhwm;                    /* High-water mark of the stack */
 #endif
 #ifndef YYNOERRORRECOVERY
   int yyerrcnt;                 /* Shifts left before out of the error */
@@ -649,6 +652,7 @@ struct yyParser {
 #if YYSTACKDEPTH<=0
   int yystksz;                  /* Current side of the stack */
   yyStackEntry *yystack;        /* The parser's stack */
+  yyStackEntry yystk0;          /* First stack entry */
 #else
   yyStackEntry yystack[YYSTACKDEPTH];  /* The parser's stack */
 #endif
@@ -867,24 +871,34 @@ static const char *const yyRuleName[] = {
 
 #if YYSTACKDEPTH<=0
 /*
-** Try to increase the size of the parser stack.
+** Try to increase the size of the parser stack.  Return the number
+** of errors.  Return 0 on success.
 */
-static void yyGrowStack(yyParser *p){
+static int yyGrowStack(yyParser *p){
   int newSize;
+  int idx;
   yyStackEntry *pNew;
 
   newSize = p->yystksz*2 + 100;
-  pNew = realloc(p->yystack, newSize*sizeof(pNew[0]));
+  idx = p->yytos ? (int)(p->yytos - p->yystack) : 0;
+  if( p->yystack==&p->yystk0 ){
+    pNew = malloc(newSize*sizeof(pNew[0]));
+    if( pNew ) pNew[0] = p->yystk0;
+  }else{
+    pNew = realloc(p->yystack, newSize*sizeof(pNew[0]));
+  }
   if( pNew ){
     p->yystack = pNew;
-    p->yystksz = newSize;
+    p->yytos = &p->yystack[idx];
 #ifndef NDEBUG
     if( yyTraceFILE ){
-      fprintf(yyTraceFILE,"%sStack grows to %d entries!\n",
-              yyTracePrompt, p->yystksz);
+      fprintf(yyTraceFILE,"%sStack grows from %d to %d entries.\n",
+              yyTracePrompt, p->yystksz, newSize);
     }
 #endif
+    p->yystksz = newSize;
   }
+  return pNew==0; 
 }
 #endif
 
@@ -913,15 +927,24 @@ void *grn_expr_parserAlloc(void *(*mallocProc)(YYMALLOCARGTYPE)){
   yyParser *pParser;
   pParser = (yyParser*)(*mallocProc)( (YYMALLOCARGTYPE)sizeof(yyParser) );
   if( pParser ){
-    pParser->yyidx = -1;
 #ifdef YYTRACKMAXSTACKDEPTH
-    pParser->yyidxMax = 0;
+    pParser->yyhwm = 0;
 #endif
 #if YYSTACKDEPTH<=0
+    pParser->yytos = NULL;
     pParser->yystack = NULL;
     pParser->yystksz = 0;
-    yyGrowStack(pParser);
+    if( yyGrowStack(pParser) ){
+      pParser->yystack = &pParser->yystk0;
+      pParser->yystksz = 1;
+    }
 #endif
+#ifndef YYNOERRORRECOVERY
+    pParser->yyerrcnt = -1;
+#endif
+    pParser->yytos = pParser->yystack;
+    pParser->yystack[0].stateno = 0;
+    pParser->yystack[0].major = 0;
   }
   return pParser;
 }
@@ -953,11 +976,11 @@ static void yy_destructor(
 /********* Begin destructor definitions ***************************************/
     case 75: /* suppress_unused_variable_warning */
 {
-#line 11 "grn_ecmascript.lemon"
+#line 14 "grn_ecmascript.lemon"
 
   (void)efsi;
 
-#line 961 "grn_ecmascript.c"
+#line 984 "grn_ecmascript.c"
 }
       break;
 /********* End destructor definitions *****************************************/
@@ -973,8 +996,9 @@ static void yy_destructor(
 */
 static void yy_pop_parser_stack(yyParser *pParser){
   yyStackEntry *yytos;
-  assert( pParser->yyidx>=0 );
-  yytos = &pParser->yystack[pParser->yyidx--];
+  assert( pParser->yytos!=0 );
+  assert( pParser->yytos > pParser->yystack );
+  yytos = pParser->yytos--;
 #ifndef NDEBUG
   if( yyTraceFILE ){
     fprintf(yyTraceFILE,"%sPopping %s\n",
@@ -1001,9 +1025,9 @@ void grn_expr_parserFree(
 #ifndef YYPARSEFREENEVERNULL
   if( pParser==0 ) return;
 #endif
-  while( pParser->yyidx>=0 ) yy_pop_parser_stack(pParser);
+  while( pParser->yytos>pParser->yystack ) yy_pop_parser_stack(pParser);
 #if YYSTACKDEPTH<=0
-  free(pParser->yystack);
+  if( pParser->yystack!=&pParser->yystk0 ) free(pParser->yystack);
 #endif
   (*freeProc)((void*)pParser);
 }
@@ -1014,7 +1038,7 @@ void grn_expr_parserFree(
 #ifdef YYTRACKMAXSTACKDEPTH
 int grn_expr_parserStackPeak(void *p){
   yyParser *pParser = (yyParser*)p;
-  return pParser->yyidxMax;
+  return pParser->yyhwm;
 }
 #endif
 
@@ -1027,7 +1051,7 @@ static unsigned int yy_find_shift_action(
   YYCODETYPE iLookAhead     /* The look-ahead token */
 ){
   int i;
-  int stateno = pParser->yystack[pParser->yyidx].stateno;
+  int stateno = pParser->yytos->stateno;
  
   if( stateno>=YY_MIN_REDUCE ) return stateno;
   assert( stateno <= YY_SHIFT_COUNT );
@@ -1120,13 +1144,13 @@ static int yy_find_reduce_action(
 */
 static void yyStackOverflow(yyParser *yypParser){
    grn_expr_parserARG_FETCH;
-   yypParser->yyidx--;
+   yypParser->yytos--;
 #ifndef NDEBUG
    if( yyTraceFILE ){
      fprintf(yyTraceFILE,"%sStack Overflow!\n",yyTracePrompt);
    }
 #endif
-   while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+   while( yypParser->yytos>yypParser->yystack ) yy_pop_parser_stack(yypParser);
    /* Here code is inserted which will execute if the parser
    ** stack every overflows */
 /******** Begin %stack_overflow code ******************************************/
@@ -1142,11 +1166,11 @@ static void yyTraceShift(yyParser *yypParser, int yyNewState){
   if( yyTraceFILE ){
     if( yyNewState<YYNSTATE ){
       fprintf(yyTraceFILE,"%sShift '%s', go to state %d\n",
-         yyTracePrompt,yyTokenName[yypParser->yystack[yypParser->yyidx].major],
+         yyTracePrompt,yyTokenName[yypParser->yytos->major],
          yyNewState);
     }else{
       fprintf(yyTraceFILE,"%sShift '%s'\n",
-         yyTracePrompt,yyTokenName[yypParser->yystack[yypParser->yyidx].major]);
+         yyTracePrompt,yyTokenName[yypParser->yytos->major]);
     }
   }
 }
@@ -1164,27 +1188,30 @@ static void yy_shift(
   grn_expr_parserTOKENTYPE yyMinor        /* The minor token to shift in */
 ){
   yyStackEntry *yytos;
-  yypParser->yyidx++;
+  yypParser->yytos++;
 #ifdef YYTRACKMAXSTACKDEPTH
-  if( yypParser->yyidx>yypParser->yyidxMax ){
-    yypParser->yyidxMax = yypParser->yyidx;
+  if( (int)(yypParser->yytos - yypParser->yystack)>yypParser->yyhwm ){
+    yypParser->yyhwm++;
+    assert( yypParser->yyhwm == (int)(yypParser->yytos - yypParser->yystack) );
   }
 #endif
 #if YYSTACKDEPTH>0 
-  if( yypParser->yyidx>=YYSTACKDEPTH ){
+  if( yypParser->yytos>=&yypParser->yystack[YYSTACKDEPTH] ){
     yyStackOverflow(yypParser);
     return;
   }
 #else
-  if( yypParser->yyidx>=yypParser->yystksz ){
-    yyGrowStack(yypParser);
-    if( yypParser->yyidx>=yypParser->yystksz ){
+  if( yypParser->yytos>=&yypParser->yystack[yypParser->yystksz] ){
+    if( yyGrowStack(yypParser) ){
       yyStackOverflow(yypParser);
       return;
     }
   }
 #endif
-  yytos = &yypParser->yystack[yypParser->yyidx];
+  if( yyNewState > YY_MAX_SHIFT ){
+    yyNewState += YY_MIN_REDUCE - YY_MIN_SHIFTREDUCE;
+  }
+  yytos = yypParser->yytos;
   yytos->stateno = (YYACTIONTYPE)yyNewState;
   yytos->major = (YYCODETYPE)yyMajor;
   yytos->minor.yy0 = yyMinor;
@@ -1349,7 +1376,7 @@ static void yy_reduce(
   yyStackEntry *yymsp;            /* The top of the parser's stack */
   int yysize;                     /* Amount to pop the stack */
   grn_expr_parserARG_FETCH;
-  yymsp = &yypParser->yystack[yypParser->yyidx];
+  yymsp = yypParser->yytos;
 #ifndef NDEBUG
   if( yyTraceFILE && yyruleno<(int)(sizeof(yyRuleName)/sizeof(yyRuleName[0])) ){
     yysize = yyRuleInfo[yyruleno].nrhs;
@@ -1363,22 +1390,23 @@ static void yy_reduce(
   ** enough on the stack to push the LHS value */
   if( yyRuleInfo[yyruleno].nrhs==0 ){
 #ifdef YYTRACKMAXSTACKDEPTH
-    if( yypParser->yyidx>yypParser->yyidxMax ){
-      yypParser->yyidxMax = yypParser->yyidx;
+    if( (int)(yypParser->yytos - yypParser->yystack)>yypParser->yyhwm ){
+      yypParser->yyhwm++;
+      assert( yypParser->yyhwm == (int)(yypParser->yytos - yypParser->yystack));
     }
 #endif
 #if YYSTACKDEPTH>0 
-    if( yypParser->yyidx>=YYSTACKDEPTH-1 ){
+    if( yypParser->yytos>=&yypParser->yystack[YYSTACKDEPTH-1] ){
       yyStackOverflow(yypParser);
       return;
     }
 #else
-    if( yypParser->yyidx>=yypParser->yystksz-1 ){
-      yyGrowStack(yypParser);
-      if( yypParser->yyidx>=yypParser->yystksz-1 ){
+    if( yypParser->yytos>=&yypParser->yystack[yypParser->yystksz-1] ){
+      if( yyGrowStack(yypParser) ){
         yyStackOverflow(yypParser);
         return;
       }
+      yymsp = yypParser->yytos;
     }
 #endif
   }
@@ -1395,46 +1423,46 @@ static void yy_reduce(
 /********** Begin reduce actions **********************************************/
         YYMINORTYPE yylhsminor;
       case 0: /* query ::= query query_element */
-#line 46 "grn_ecmascript.lemon"
+#line 49 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->op_stack, -1), 2);
 }
-#line 1403 "grn_ecmascript.c"
+#line 1431 "grn_ecmascript.c"
         break;
       case 1: /* query ::= query LOGICAL_AND query_element */
       case 23: /* logical_and_expression ::= logical_and_expression LOGICAL_AND bitwise_or_expression */ yytestcase(yyruleno==23);
-#line 49 "grn_ecmascript.lemon"
+#line 52 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND, 2);
 }
-#line 1411 "grn_ecmascript.c"
+#line 1439 "grn_ecmascript.c"
         break;
       case 2: /* query ::= query LOGICAL_AND_NOT query_element */
       case 24: /* logical_and_expression ::= logical_and_expression LOGICAL_AND_NOT bitwise_or_expression */ yytestcase(yyruleno==24);
-#line 52 "grn_ecmascript.lemon"
+#line 55 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND_NOT, 2);
 }
-#line 1419 "grn_ecmascript.c"
+#line 1447 "grn_ecmascript.c"
         break;
       case 3: /* query ::= query LOGICAL_OR query_element */
       case 22: /* logical_or_expression ::= logical_or_expression LOGICAL_OR logical_and_expression */ yytestcase(yyruleno==22);
-#line 55 "grn_ecmascript.lemon"
+#line 58 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR, 2);
 }
-#line 1427 "grn_ecmascript.c"
+#line 1455 "grn_ecmascript.c"
         break;
       case 4: /* query_element ::= RELATIVE_OP query_element */
-#line 62 "grn_ecmascript.lemon"
+#line 65 "grn_ecmascript.lemon"
 {
   int mode;
   GRN_INT32_POP(&efsi->mode_stack, mode);
 }
-#line 1435 "grn_ecmascript.c"
+#line 1463 "grn_ecmascript.c"
         break;
       case 5: /* query_element ::= IDENTIFIER RELATIVE_OP query_element */
-#line 66 "grn_ecmascript.lemon"
+#line 69 "grn_ecmascript.lemon"
 {
   int mode;
   grn_obj *c;
@@ -1458,317 +1486,317 @@ static void yy_reduce(
     break;
   }
 }
-#line 1462 "grn_ecmascript.c"
+#line 1490 "grn_ecmascript.c"
         break;
       case 6: /* query_element ::= BRACEL expression BRACER */
       case 7: /* query_element ::= EVAL primary_expression */ yytestcase(yyruleno==7);
-#line 89 "grn_ecmascript.lemon"
+#line 92 "grn_ecmascript.lemon"
 {
   efsi->flags = efsi->default_flags;
 }
-#line 1470 "grn_ecmascript.c"
+#line 1498 "grn_ecmascript.c"
         break;
       case 8: /* expression ::= expression COMMA assignment_expression */
-#line 97 "grn_ecmascript.lemon"
+#line 100 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_COMMA, 2);
 }
-#line 1477 "grn_ecmascript.c"
+#line 1505 "grn_ecmascript.c"
         break;
       case 9: /* assignment_expression ::= lefthand_side_expression ASSIGN assignment_expression */
-#line 102 "grn_ecmascript.lemon"
+#line 105 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ASSIGN, 2);
 }
-#line 1484 "grn_ecmascript.c"
+#line 1512 "grn_ecmascript.c"
         break;
       case 10: /* assignment_expression ::= lefthand_side_expression STAR_ASSIGN assignment_expression */
-#line 105 "grn_ecmascript.lemon"
+#line 108 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_STAR_ASSIGN, 2);
 }
-#line 1491 "grn_ecmascript.c"
+#line 1519 "grn_ecmascript.c"
         break;
       case 11: /* assignment_expression ::= lefthand_side_expression SLASH_ASSIGN assignment_expression */
-#line 108 "grn_ecmascript.lemon"
+#line 111 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SLASH_ASSIGN, 2);
 }
-#line 1498 "grn_ecmascript.c"
+#line 1526 "grn_ecmascript.c"
         break;
       case 12: /* assignment_expression ::= lefthand_side_expression MOD_ASSIGN assignment_expression */
-#line 111 "grn_ecmascript.lemon"
+#line 114 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MOD_ASSIGN, 2);
 }
-#line 1505 "grn_ecmascript.c"
+#line 1533 "grn_ecmascript.c"
         break;
       case 13: /* assignment_expression ::= lefthand_side_expression PLUS_ASSIGN assignment_expression */
-#line 114 "grn_ecmascript.lemon"
+#line 117 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS_ASSIGN, 2);
 }
-#line 1512 "grn_ecmascript.c"
+#line 1540 "grn_ecmascript.c"
         break;
       case 14: /* assignment_expression ::= lefthand_side_expression MINUS_ASSIGN assignment_expression */
-#line 117 "grn_ecmascript.lemon"
+#line 120 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS_ASSIGN, 2);
 }
-#line 1519 "grn_ecmascript.c"
+#line 1547 "grn_ecmascript.c"
         break;
       case 15: /* assignment_expression ::= lefthand_side_expression SHIFTL_ASSIGN assignment_expression */
-#line 120 "grn_ecmascript.lemon"
+#line 123 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTL_ASSIGN, 2);
 }
-#line 1526 "grn_ecmascript.c"
+#line 1554 "grn_ecmascript.c"
         break;
       case 16: /* assignment_expression ::= lefthand_side_expression SHIFTR_ASSIGN assignment_expression */
-#line 123 "grn_ecmascript.lemon"
+#line 126 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTR_ASSIGN, 2);
 }
-#line 1533 "grn_ecmascript.c"
+#line 1561 "grn_ecmascript.c"
         break;
       case 17: /* assignment_expression ::= lefthand_side_expression SHIFTRR_ASSIGN assignment_expression */
-#line 126 "grn_ecmascript.lemon"
+#line 129 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTRR_ASSIGN, 2);
 }
-#line 1540 "grn_ecmascript.c"
+#line 1568 "grn_ecmascript.c"
         break;
       case 18: /* assignment_expression ::= lefthand_side_expression AND_ASSIGN assignment_expression */
-#line 129 "grn_ecmascript.lemon"
+#line 132 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND_ASSIGN, 2);
 }
-#line 1547 "grn_ecmascript.c"
+#line 1575 "grn_ecmascript.c"
         break;
       case 19: /* assignment_expression ::= lefthand_side_expression XOR_ASSIGN assignment_expression */
-#line 132 "grn_ecmascript.lemon"
+#line 135 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_XOR_ASSIGN, 2);
 }
-#line 1554 "grn_ecmascript.c"
+#line 1582 "grn_ecmascript.c"
         break;
       case 20: /* assignment_expression ::= lefthand_side_expression OR_ASSIGN assignment_expression */
-#line 135 "grn_ecmascript.lemon"
+#line 138 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR_ASSIGN, 2);
 }
-#line 1561 "grn_ecmascript.c"
+#line 1589 "grn_ecmascript.c"
         break;
       case 21: /* conditional_expression ::= logical_or_expression QUESTION assignment_expression COLON assignment_expression */
-#line 140 "grn_ecmascript.lemon"
+#line 143 "grn_ecmascript.lemon"
 {
   grn_expr *e = (grn_expr *)efsi->e;
   e->codes[yymsp[-3].minor.yy0].nargs = yymsp[-1].minor.yy0 - yymsp[-3].minor.yy0;
   e->codes[yymsp[-1].minor.yy0].nargs = e->codes_curr - yymsp[-1].minor.yy0 - 1;
 }
-#line 1570 "grn_ecmascript.c"
+#line 1598 "grn_ecmascript.c"
         break;
       case 25: /* bitwise_or_expression ::= bitwise_or_expression BITWISE_OR bitwise_xor_expression */
-#line 160 "grn_ecmascript.lemon"
+#line 163 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_OR, 2);
 }
-#line 1577 "grn_ecmascript.c"
+#line 1605 "grn_ecmascript.c"
         break;
       case 26: /* bitwise_xor_expression ::= bitwise_xor_expression BITWISE_XOR bitwise_and_expression */
-#line 165 "grn_ecmascript.lemon"
+#line 168 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_XOR, 2);
 }
-#line 1584 "grn_ecmascript.c"
+#line 1612 "grn_ecmascript.c"
         break;
       case 27: /* bitwise_and_expression ::= bitwise_and_expression BITWISE_AND equality_expression */
-#line 170 "grn_ecmascript.lemon"
+#line 173 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_AND, 2);
 }
-#line 1591 "grn_ecmascript.c"
+#line 1619 "grn_ecmascript.c"
         break;
       case 28: /* equality_expression ::= equality_expression EQUAL relational_expression */
-#line 175 "grn_ecmascript.lemon"
+#line 178 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_EQUAL, 2);
 }
-#line 1598 "grn_ecmascript.c"
+#line 1626 "grn_ecmascript.c"
         break;
       case 29: /* equality_expression ::= equality_expression NOT_EQUAL relational_expression */
-#line 178 "grn_ecmascript.lemon"
+#line 181 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NOT_EQUAL, 2);
 }
-#line 1605 "grn_ecmascript.c"
+#line 1633 "grn_ecmascript.c"
         break;
       case 30: /* relational_expression ::= relational_expression LESS shift_expression */
-#line 183 "grn_ecmascript.lemon"
+#line 186 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LESS, 2);
 }
-#line 1612 "grn_ecmascript.c"
+#line 1640 "grn_ecmascript.c"
         break;
       case 31: /* relational_expression ::= relational_expression GREATER shift_expression */
-#line 186 "grn_ecmascript.lemon"
+#line 189 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GREATER, 2);
 }
-#line 1619 "grn_ecmascript.c"
+#line 1647 "grn_ecmascript.c"
         break;
       case 32: /* relational_expression ::= relational_expression LESS_EQUAL shift_expression */
-#line 189 "grn_ecmascript.lemon"
+#line 192 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LESS_EQUAL, 2);
 }
-#line 1626 "grn_ecmascript.c"
+#line 1654 "grn_ecmascript.c"
         break;
       case 33: /* relational_expression ::= relational_expression GREATER_EQUAL shift_expression */
-#line 192 "grn_ecmascript.lemon"
+#line 195 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GREATER_EQUAL, 2);
 }
-#line 1633 "grn_ecmascript.c"
+#line 1661 "grn_ecmascript.c"
         break;
       case 34: /* relational_expression ::= relational_expression IN shift_expression */
-#line 195 "grn_ecmascript.lemon"
+#line 198 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_IN, 2);
 }
-#line 1640 "grn_ecmascript.c"
+#line 1668 "grn_ecmascript.c"
         break;
       case 35: /* relational_expression ::= relational_expression MATCH shift_expression */
       case 83: /* adjust_match_expression ::= IDENTIFIER MATCH STRING */ yytestcase(yyruleno==83);
-#line 198 "grn_ecmascript.lemon"
+#line 201 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
 }
-#line 1648 "grn_ecmascript.c"
+#line 1676 "grn_ecmascript.c"
         break;
       case 36: /* relational_expression ::= relational_expression NEAR shift_expression */
-#line 201 "grn_ecmascript.lemon"
+#line 204 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR, 2);
 }
-#line 1655 "grn_ecmascript.c"
+#line 1683 "grn_ecmascript.c"
         break;
       case 37: /* relational_expression ::= relational_expression NEAR2 shift_expression */
-#line 204 "grn_ecmascript.lemon"
+#line 207 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR2, 2);
 }
-#line 1662 "grn_ecmascript.c"
+#line 1690 "grn_ecmascript.c"
         break;
       case 38: /* relational_expression ::= relational_expression SIMILAR shift_expression */
-#line 207 "grn_ecmascript.lemon"
+#line 210 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SIMILAR, 2);
 }
-#line 1669 "grn_ecmascript.c"
+#line 1697 "grn_ecmascript.c"
         break;
       case 39: /* relational_expression ::= relational_expression TERM_EXTRACT shift_expression */
-#line 210 "grn_ecmascript.lemon"
+#line 213 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_TERM_EXTRACT, 2);
 }
-#line 1676 "grn_ecmascript.c"
+#line 1704 "grn_ecmascript.c"
         break;
       case 40: /* relational_expression ::= relational_expression LCP shift_expression */
-#line 213 "grn_ecmascript.lemon"
+#line 216 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LCP, 2);
 }
-#line 1683 "grn_ecmascript.c"
+#line 1711 "grn_ecmascript.c"
         break;
       case 41: /* relational_expression ::= relational_expression PREFIX shift_expression */
-#line 216 "grn_ecmascript.lemon"
+#line 219 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PREFIX, 2);
 }
-#line 1690 "grn_ecmascript.c"
+#line 1718 "grn_ecmascript.c"
         break;
       case 42: /* relational_expression ::= relational_expression SUFFIX shift_expression */
-#line 219 "grn_ecmascript.lemon"
+#line 222 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SUFFIX, 2);
 }
-#line 1697 "grn_ecmascript.c"
+#line 1725 "grn_ecmascript.c"
         break;
       case 43: /* relational_expression ::= relational_expression REGEXP shift_expression */
-#line 222 "grn_ecmascript.lemon"
+#line 225 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_REGEXP, 2);
 }
-#line 1704 "grn_ecmascript.c"
+#line 1732 "grn_ecmascript.c"
         break;
       case 44: /* shift_expression ::= shift_expression SHIFTL additive_expression */
-#line 227 "grn_ecmascript.lemon"
+#line 230 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTL, 2);
 }
-#line 1711 "grn_ecmascript.c"
+#line 1739 "grn_ecmascript.c"
         break;
       case 45: /* shift_expression ::= shift_expression SHIFTR additive_expression */
-#line 230 "grn_ecmascript.lemon"
+#line 233 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTR, 2);
 }
-#line 1718 "grn_ecmascript.c"
+#line 1746 "grn_ecmascript.c"
         break;
       case 46: /* shift_expression ::= shift_expression SHIFTRR additive_expression */
-#line 233 "grn_ecmascript.lemon"
+#line 236 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTRR, 2);
 }
-#line 1725 "grn_ecmascript.c"
+#line 1753 "grn_ecmascript.c"
         break;
       case 47: /* additive_expression ::= additive_expression PLUS multiplicative_expression */
       case 81: /* adjuster ::= adjuster PLUS adjust_expression */ yytestcase(yyruleno==81);
-#line 238 "grn_ecmascript.lemon"
+#line 241 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS, 2);
 }
-#line 1733 "grn_ecmascript.c"
+#line 1761 "grn_ecmascript.c"
         break;
       case 48: /* additive_expression ::= additive_expression MINUS multiplicative_expression */
-#line 241 "grn_ecmascript.lemon"
+#line 244 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS, 2);
 }
-#line 1740 "grn_ecmascript.c"
+#line 1768 "grn_ecmascript.c"
         break;
       case 49: /* multiplicative_expression ::= multiplicative_expression STAR unary_expression */
       case 82: /* adjust_expression ::= adjust_match_expression STAR DECIMAL */ yytestcase(yyruleno==82);
-#line 246 "grn_ecmascript.lemon"
+#line 249 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_STAR, 2);
 }
-#line 1748 "grn_ecmascript.c"
+#line 1776 "grn_ecmascript.c"
         break;
       case 50: /* multiplicative_expression ::= multiplicative_expression SLASH unary_expression */
-#line 249 "grn_ecmascript.lemon"
+#line 252 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SLASH, 2);
 }
-#line 1755 "grn_ecmascript.c"
+#line 1783 "grn_ecmascript.c"
         break;
       case 51: /* multiplicative_expression ::= multiplicative_expression MOD unary_expression */
-#line 252 "grn_ecmascript.lemon"
+#line 255 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MOD, 2);
 }
-#line 1762 "grn_ecmascript.c"
+#line 1790 "grn_ecmascript.c"
         break;
       case 52: /* unary_expression ::= DELETE unary_expression */
-#line 257 "grn_ecmascript.lemon"
+#line 260 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DELETE, 1);
 }
-#line 1769 "grn_ecmascript.c"
+#line 1797 "grn_ecmascript.c"
         break;
       case 53: /* unary_expression ::= INCR unary_expression */
-#line 260 "grn_ecmascript.lemon"
+#line 263 "grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr *e = (grn_expr *)(efsi->e);
@@ -1786,10 +1814,10 @@ static void yy_reduce(
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR, 1);
   }
 }
-#line 1790 "grn_ecmascript.c"
+#line 1818 "grn_ecmascript.c"
         break;
       case 54: /* unary_expression ::= DECR unary_expression */
-#line 277 "grn_ecmascript.lemon"
+#line 280 "grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr *e = (grn_expr *)(efsi->e);
@@ -1807,66 +1835,66 @@ static void yy_reduce(
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR, 1);
   }
 }
-#line 1811 "grn_ecmascript.c"
+#line 1839 "grn_ecmascript.c"
         break;
       case 55: /* unary_expression ::= PLUS unary_expression */
-#line 294 "grn_ecmascript.lemon"
+#line 297 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS, 1);
 }
-#line 1818 "grn_ecmascript.c"
+#line 1846 "grn_ecmascript.c"
         break;
       case 56: /* unary_expression ::= MINUS unary_expression */
-#line 297 "grn_ecmascript.lemon"
+#line 300 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS, 1);
 }
-#line 1825 "grn_ecmascript.c"
+#line 1853 "grn_ecmascript.c"
         break;
       case 57: /* unary_expression ::= NOT unary_expression */
-#line 300 "grn_ecmascript.lemon"
+#line 303 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NOT, 1);
 }
-#line 1832 "grn_ecmascript.c"
+#line 1860 "grn_ecmascript.c"
         break;
       case 58: /* unary_expression ::= BITWISE_NOT unary_expression */
-#line 303 "grn_ecmascript.lemon"
+#line 306 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_NOT, 1);
 }
-#line 1839 "grn_ecmascript.c"
+#line 1867 "grn_ecmascript.c"
         break;
       case 59: /* unary_expression ::= ADJUST unary_expression */
-#line 306 "grn_ecmascript.lemon"
+#line 309 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ADJUST, 1);
 }
-#line 1846 "grn_ecmascript.c"
+#line 1874 "grn_ecmascript.c"
         break;
       case 60: /* unary_expression ::= EXACT unary_expression */
-#line 309 "grn_ecmascript.lemon"
+#line 312 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_EXACT, 1);
 }
-#line 1853 "grn_ecmascript.c"
+#line 1881 "grn_ecmascript.c"
         break;
       case 61: /* unary_expression ::= PARTIAL unary_expression */
-#line 312 "grn_ecmascript.lemon"
+#line 315 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PARTIAL, 1);
 }
-#line 1860 "grn_ecmascript.c"
+#line 1888 "grn_ecmascript.c"
         break;
       case 62: /* unary_expression ::= UNSPLIT unary_expression */
-#line 315 "grn_ecmascript.lemon"
+#line 318 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_UNSPLIT, 1);
 }
-#line 1867 "grn_ecmascript.c"
+#line 1895 "grn_ecmascript.c"
         break;
       case 63: /* postfix_expression ::= lefthand_side_expression INCR */
-#line 320 "grn_ecmascript.lemon"
+#line 323 "grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr *e = (grn_expr *)(efsi->e);
@@ -1884,10 +1912,10 @@ static void yy_reduce(
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR_POST, 1);
   }
 }
-#line 1888 "grn_ecmascript.c"
+#line 1916 "grn_ecmascript.c"
         break;
       case 64: /* postfix_expression ::= lefthand_side_expression DECR */
-#line 337 "grn_ecmascript.lemon"
+#line 340 "grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr *e = (grn_expr *)(efsi->e);
@@ -1905,17 +1933,17 @@ static void yy_reduce(
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR_POST, 1);
   }
 }
-#line 1909 "grn_ecmascript.c"
+#line 1937 "grn_ecmascript.c"
         break;
       case 65: /* call_expression ::= member_expression arguments */
-#line 358 "grn_ecmascript.lemon"
+#line 361 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, yymsp[0].minor.yy0);
 }
-#line 1916 "grn_ecmascript.c"
+#line 1944 "grn_ecmascript.c"
         break;
       case 66: /* object_literal ::= BRACEL property_name_and_value_list BRACER */
-#line 386 "grn_ecmascript.lemon"
+#line 389 "grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr_take_obj(ctx, efsi->e, (grn_obj *)(efsi->object_literal));
@@ -1923,10 +1951,10 @@ static void yy_reduce(
                       GRN_OP_PUSH, 1);
   efsi->object_literal = NULL;
 }
-#line 1927 "grn_ecmascript.c"
+#line 1955 "grn_ecmascript.c"
         break;
       case 67: /* property_name_and_value_list ::= */
-#line 394 "grn_ecmascript.lemon"
+#line 397 "grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
 
@@ -1939,10 +1967,10 @@ static void yy_reduce(
         (int)(efsi->str_end - efsi->str), efsi->str);
   }
 }
-#line 1943 "grn_ecmascript.c"
+#line 1971 "grn_ecmascript.c"
         break;
       case 68: /* property_name_and_value ::= property_name COLON assignment_expression */
-#line 409 "grn_ecmascript.lemon"
+#line 412 "grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr *e = (grn_expr *)(efsi->e);
@@ -1984,61 +2012,61 @@ static void yy_reduce(
     }
   }
 }
-#line 1988 "grn_ecmascript.c"
+#line 2016 "grn_ecmascript.c"
         break;
       case 69: /* member_expression_part ::= BRACKETL expression BRACKETR */
-#line 453 "grn_ecmascript.lemon"
+#line 456 "grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GET_MEMBER, 2);
 }
-#line 1995 "grn_ecmascript.c"
+#line 2023 "grn_ecmascript.c"
         break;
       case 70: /* arguments ::= PARENL argument_list PARENR */
-#line 458 "grn_ecmascript.lemon"
+#line 461 "grn_ecmascript.lemon"
 { yymsp[-2].minor.yy0 = yymsp[-1].minor.yy0; }
-#line 2000 "grn_ecmascript.c"
+#line 2028 "grn_ecmascript.c"
         break;
       case 71: /* argument_list ::= */
-#line 459 "grn_ecmascript.lemon"
+#line 462 "grn_ecmascript.lemon"
 { yymsp[1].minor.yy0 = 0; }
-#line 2005 "grn_ecmascript.c"
+#line 2033 "grn_ecmascript.c"
         break;
       case 72: /* argument_list ::= assignment_expression */
-#line 460 "grn_ecmascript.lemon"
+#line 463 "grn_ecmascript.lemon"
 { yymsp[0].minor.yy0 = 1; }
-#line 2010 "grn_ecmascript.c"
+#line 2038 "grn_ecmascript.c"
         break;
       case 73: /* argument_list ::= argument_list COMMA assignment_expression */
-#line 461 "grn_ecmascript.lemon"
+#line 464 "grn_ecmascript.lemon"
 { yylhsminor.yy0 = yymsp[-2].minor.yy0 + 1; }
-#line 2015 "grn_ecmascript.c"
+#line 2043 "grn_ecmascript.c"
   yymsp[-2].minor.yy0 = yylhsminor.yy0;
         break;
       case 74: /* output_columns ::= */
-#line 463 "grn_ecmascript.lemon"
+#line 466 "grn_ecmascript.lemon"
 {
   yymsp[1].minor.yy0 = 0;
 }
-#line 2023 "grn_ecmascript.c"
+#line 2051 "grn_ecmascript.c"
         break;
       case 75: /* output_columns ::= output_column */
-#line 466 "grn_ecmascript.lemon"
+#line 469 "grn_ecmascript.lemon"
 {
   yylhsminor.yy0 = yymsp[0].minor.yy0;
 }
-#line 2030 "grn_ecmascript.c"
+#line 2058 "grn_ecmascript.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 76: /* output_columns ::= output_columns COMMA */
-#line 471 "grn_ecmascript.lemon"
+#line 474 "grn_ecmascript.lemon"
 {
   yylhsminor.yy0 = yymsp[-1].minor.yy0;
 }
-#line 2038 "grn_ecmascript.c"
+#line 2066 "grn_ecmascript.c"
   yymsp[-1].minor.yy0 = yylhsminor.yy0;
         break;
       case 77: /* output_columns ::= output_columns COMMA output_column */
-#line 476 "grn_ecmascript.lemon"
+#line 479 "grn_ecmascript.lemon"
 {
   if (yymsp[0].minor.yy0 == 0) {
     yylhsminor.yy0 = yymsp[-2].minor.yy0;
@@ -2049,11 +2077,11 @@ static void yy_reduce(
     yylhsminor.yy0 = 1;
   }
 }
-#line 2053 "grn_ecmascript.c"
+#line 2081 "grn_ecmascript.c"
   yymsp[-2].minor.yy0 = yylhsminor.yy0;
         break;
       case 78: /* output_column ::= STAR */
-#line 487 "grn_ecmascript.lemon"
+#line 490 "grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_obj *expr = efsi->e;
@@ -2107,32 +2135,32 @@ static void yy_reduce(
     yymsp[0].minor.yy0 = 0;
   }
 }
-#line 2111 "grn_ecmascript.c"
+#line 2139 "grn_ecmascript.c"
         break;
       case 79: /* output_column ::= NONEXISTENT_COLUMN */
-#line 540 "grn_ecmascript.lemon"
+#line 543 "grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 0;
 }
-#line 2118 "grn_ecmascript.c"
+#line 2146 "grn_ecmascript.c"
         break;
       case 80: /* output_column ::= assignment_expression */
-#line 543 "grn_ecmascript.lemon"
+#line 546 "grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 1;
 }
-#line 2125 "grn_ecmascript.c"
+#line 2153 "grn_ecmascript.c"
         break;
       default:
       /* (84) input ::= query */ yytestcase(yyruleno==84);
       /* (85) input ::= expression */ yytestcase(yyruleno==85);
       /* (86) input ::= START_OUTPUT_COLUMNS output_columns */ yytestcase(yyruleno==86);
       /* (87) input ::= START_ADJUSTER adjuster */ yytestcase(yyruleno==87);
-      /* (88) query ::= query_element */ yytestcase(yyruleno==88);
+      /* (88) query ::= query_element (OPTIMIZED OUT) */ assert(yyruleno!=88);
       /* (89) query_element ::= QSTRING */ yytestcase(yyruleno==89);
       /* (90) query_element ::= PARENL query PARENR */ yytestcase(yyruleno==90);
-      /* (91) expression ::= assignment_expression */ yytestcase(yyruleno==91);
-      /* (92) assignment_expression ::= conditional_expression */ yytestcase(yyruleno==92);
+      /* (91) expression ::= assignment_expression (OPTIMIZED OUT) */ assert(yyruleno!=91);
+      /* (92) assignment_expression ::= conditional_expression (OPTIMIZED OUT) */ assert(yyruleno!=92);
       /* (93) conditional_expression ::= logical_or_expression */ yytestcase(yyruleno==93);
       /* (94) logical_or_expression ::= logical_and_expression */ yytestcase(yyruleno==94);
       /* (95) logical_and_expression ::= bitwise_or_expression */ yytestcase(yyruleno==95);
@@ -2143,17 +2171,17 @@ static void yy_reduce(
       /* (100) relational_expression ::= shift_expression */ yytestcase(yyruleno==100);
       /* (101) shift_expression ::= additive_expression */ yytestcase(yyruleno==101);
       /* (102) additive_expression ::= multiplicative_expression */ yytestcase(yyruleno==102);
-      /* (103) multiplicative_expression ::= unary_expression */ yytestcase(yyruleno==103);
-      /* (104) unary_expression ::= postfix_expression */ yytestcase(yyruleno==104);
+      /* (103) multiplicative_expression ::= unary_expression (OPTIMIZED OUT) */ assert(yyruleno!=103);
+      /* (104) unary_expression ::= postfix_expression (OPTIMIZED OUT) */ assert(yyruleno!=104);
       /* (105) postfix_expression ::= lefthand_side_expression */ yytestcase(yyruleno==105);
-      /* (106) lefthand_side_expression ::= call_expression */ yytestcase(yyruleno==106);
+      /* (106) lefthand_side_expression ::= call_expression (OPTIMIZED OUT) */ assert(yyruleno!=106);
       /* (107) lefthand_side_expression ::= member_expression */ yytestcase(yyruleno==107);
-      /* (108) member_expression ::= primary_expression */ yytestcase(yyruleno==108);
+      /* (108) member_expression ::= primary_expression (OPTIMIZED OUT) */ assert(yyruleno!=108);
       /* (109) member_expression ::= member_expression member_expression_part */ yytestcase(yyruleno==109);
-      /* (110) primary_expression ::= object_literal */ yytestcase(yyruleno==110);
+      /* (110) primary_expression ::= object_literal (OPTIMIZED OUT) */ assert(yyruleno!=110);
       /* (111) primary_expression ::= PARENL expression PARENR */ yytestcase(yyruleno==111);
       /* (112) primary_expression ::= IDENTIFIER */ yytestcase(yyruleno==112);
-      /* (113) primary_expression ::= array_literal */ yytestcase(yyruleno==113);
+      /* (113) primary_expression ::= array_literal (OPTIMIZED OUT) */ assert(yyruleno!=113);
       /* (114) primary_expression ::= DECIMAL */ yytestcase(yyruleno==114);
       /* (115) primary_expression ::= HEX_INTEGER */ yytestcase(yyruleno==115);
       /* (116) primary_expression ::= STRING */ yytestcase(yyruleno==116);
@@ -2164,15 +2192,15 @@ static void yy_reduce(
       /* (121) array_literal ::= BRACKETL element_list BRACKETR */ yytestcase(yyruleno==121);
       /* (122) elision ::= COMMA */ yytestcase(yyruleno==122);
       /* (123) elision ::= elision COMMA */ yytestcase(yyruleno==123);
-      /* (124) element_list ::= assignment_expression */ yytestcase(yyruleno==124);
+      /* (124) element_list ::= assignment_expression (OPTIMIZED OUT) */ assert(yyruleno!=124);
       /* (125) element_list ::= elision assignment_expression */ yytestcase(yyruleno==125);
       /* (126) element_list ::= element_list elision assignment_expression */ yytestcase(yyruleno==126);
-      /* (127) property_name_and_value_list ::= property_name_and_value */ yytestcase(yyruleno==127);
+      /* (127) property_name_and_value_list ::= property_name_and_value (OPTIMIZED OUT) */ assert(yyruleno!=127);
       /* (128) property_name_and_value_list ::= property_name_and_value_list COMMA property_name_and_value */ yytestcase(yyruleno==128);
       /* (129) property_name ::= STRING */ yytestcase(yyruleno==129);
       /* (130) member_expression_part ::= DOT IDENTIFIER */ yytestcase(yyruleno==130);
       /* (131) adjuster ::= */ yytestcase(yyruleno==131);
-      /* (132) adjuster ::= adjust_expression */ yytestcase(yyruleno==132);
+      /* (132) adjuster ::= adjust_expression (OPTIMIZED OUT) */ assert(yyruleno!=132);
       /* (133) adjust_expression ::= adjust_match_expression */ yytestcase(yyruleno==133);
         break;
 /********** End reduce actions ************************************************/
@@ -2182,15 +2210,17 @@ static void yy_reduce(
   yysize = yyRuleInfo[yyruleno].nrhs;
   yyact = yy_find_reduce_action(yymsp[-yysize].stateno,(YYCODETYPE)yygoto);
   if( yyact <= YY_MAX_SHIFTREDUCE ){
-    if( yyact>YY_MAX_SHIFT ) yyact += YY_MIN_REDUCE - YY_MIN_SHIFTREDUCE;
-    yypParser->yyidx -= yysize - 1;
+    if( yyact>YY_MAX_SHIFT ){
+      yyact += YY_MIN_REDUCE - YY_MIN_SHIFTREDUCE;
+    }
     yymsp -= yysize-1;
+    yypParser->yytos = yymsp;
     yymsp->stateno = (YYACTIONTYPE)yyact;
     yymsp->major = (YYCODETYPE)yygoto;
     yyTraceShift(yypParser, yyact);
   }else{
     assert( yyact == YY_ACCEPT_ACTION );
-    yypParser->yyidx -= yysize;
+    yypParser->yytos -= yysize;
     yy_accept(yypParser);
   }
 }
@@ -2208,7 +2238,7 @@ static void yy_parse_failed(
     fprintf(yyTraceFILE,"%sFail!\n",yyTracePrompt);
   }
 #endif
-  while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+  while( yypParser->yytos>yypParser->yystack ) yy_pop_parser_stack(yypParser);
   /* Here code is inserted which will be executed whenever the
   ** parser fails */
 /************ Begin %parse_failure code ***************************************/
@@ -2228,7 +2258,7 @@ static void yy_syntax_error(
   grn_expr_parserARG_FETCH;
 #define TOKEN yyminor
 /************ Begin %syntax_error code ****************************************/
-#line 17 "grn_ecmascript.lemon"
+#line 20 "grn_ecmascript.lemon"
 
   {
     grn_ctx *ctx = efsi->ctx;
@@ -2250,7 +2280,7 @@ static void yy_syntax_error(
       GRN_OBJ_FIN(ctx, &message);
     }
   }
-#line 2254 "grn_ecmascript.c"
+#line 2284 "grn_ecmascript.c"
 /************ End %syntax_error code ******************************************/
   grn_expr_parserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
@@ -2267,7 +2297,10 @@ static void yy_accept(
     fprintf(yyTraceFILE,"%sAccept!\n",yyTracePrompt);
   }
 #endif
-  while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+#ifndef YYNOERRORRECOVERY
+  yypParser->yyerrcnt = -1;
+#endif
+  assert( yypParser->yytos==yypParser->yystack );
   /* Here code is inserted which will be executed whenever the
   ** parser accepts */
 /*********** Begin %parse_accept code *****************************************/
@@ -2310,28 +2343,8 @@ void grn_expr_parser(
 #endif
   yyParser *yypParser;  /* The parser */
 
-  /* (re)initialize the parser, if necessary */
   yypParser = (yyParser*)yyp;
-  if( yypParser->yyidx<0 ){
-#if YYSTACKDEPTH<=0
-    if( yypParser->yystksz <=0 ){
-      yyStackOverflow(yypParser);
-      return;
-    }
-#endif
-    yypParser->yyidx = 0;
-#ifndef YYNOERRORRECOVERY
-    yypParser->yyerrcnt = -1;
-#endif
-    yypParser->yystack[0].stateno = 0;
-    yypParser->yystack[0].major = 0;
-#ifndef NDEBUG
-    if( yyTraceFILE ){
-      fprintf(yyTraceFILE,"%sInitialize. Empty stack. State 0\n",
-              yyTracePrompt);
-    }
-#endif
-  }
+  assert( yypParser->yytos!=0 );
 #if !defined(YYERRORSYMBOL) && !defined(YYNOERRORRECOVERY)
   yyendofinput = (yymajor==0);
 #endif
@@ -2346,7 +2359,6 @@ void grn_expr_parser(
   do{
     yyact = yy_find_shift_action(yypParser,(YYCODETYPE)yymajor);
     if( yyact <= YY_MAX_SHIFTREDUCE ){
-      if( yyact > YY_MAX_SHIFT ) yyact += YY_MIN_REDUCE - YY_MIN_SHIFTREDUCE;
       yy_shift(yypParser,yyact,yymajor,yyminor);
 #ifndef YYNOERRORRECOVERY
       yypParser->yyerrcnt--;
@@ -2388,7 +2400,7 @@ void grn_expr_parser(
       if( yypParser->yyerrcnt<0 ){
         yy_syntax_error(yypParser,yymajor,yyminor);
       }
-      yymx = yypParser->yystack[yypParser->yyidx].major;
+      yymx = yypParser->yytos->major;
       if( yymx==YYERRORSYMBOL || yyerrorhit ){
 #ifndef NDEBUG
         if( yyTraceFILE ){
@@ -2399,18 +2411,20 @@ void grn_expr_parser(
         yy_destructor(yypParser, (YYCODETYPE)yymajor, &yyminorunion);
         yymajor = YYNOCODE;
       }else{
-        while(
-          yypParser->yyidx >= 0 &&
-          yymx != YYERRORSYMBOL &&
-          (yyact = yy_find_reduce_action(
-                        yypParser->yystack[yypParser->yyidx].stateno,
+        while( yypParser->yytos >= &yypParser->yystack
+            && yymx != YYERRORSYMBOL
+            && (yyact = yy_find_reduce_action(
+                        yypParser->yytos->stateno,
                         YYERRORSYMBOL)) >= YY_MIN_REDUCE
         ){
           yy_pop_parser_stack(yypParser);
         }
-        if( yypParser->yyidx < 0 || yymajor==0 ){
+        if( yypParser->yytos < yypParser->yystack || yymajor==0 ){
           yy_destructor(yypParser,(YYCODETYPE)yymajor,&yyminorunion);
           yy_parse_failed(yypParser);
+#ifndef YYNOERRORRECOVERY
+          yypParser->yyerrcnt = -1;
+#endif
           yymajor = YYNOCODE;
         }else if( yymx!=YYERRORSYMBOL ){
           yy_shift(yypParser,yyact,YYERRORSYMBOL,yyminor);
@@ -2447,18 +2461,23 @@ void grn_expr_parser(
       yy_destructor(yypParser,(YYCODETYPE)yymajor,&yyminorunion);
       if( yyendofinput ){
         yy_parse_failed(yypParser);
+#ifndef YYNOERRORRECOVERY
+        yypParser->yyerrcnt = -1;
+#endif
       }
       yymajor = YYNOCODE;
 #endif
     }
-  }while( yymajor!=YYNOCODE && yypParser->yyidx>=0 );
+  }while( yymajor!=YYNOCODE && yypParser->yytos>yypParser->yystack );
 #ifndef NDEBUG
   if( yyTraceFILE ){
-    int i;
+    yyStackEntry *i;
+    char cDiv = '[';
     fprintf(yyTraceFILE,"%sReturn. Stack=",yyTracePrompt);
-    for(i=1; i<=yypParser->yyidx; i++)
-      fprintf(yyTraceFILE,"%c%s", i==1 ? '[' : ' ', 
-              yyTokenName[yypParser->yystack[i].major]);
+    for(i=&yypParser->yystack[1]; i<=yypParser->yytos; i++){
+      fprintf(yyTraceFILE,"%c%s", cDiv, yyTokenName[i->major]);
+      cDiv = ' ';
+    }
     fprintf(yyTraceFILE,"]\n");
   }
 #endif
