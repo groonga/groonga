@@ -1322,6 +1322,19 @@ ngx_http_groonga_each_loc_conf(ngx_http_conf_ctx_t *http_conf,
     ngx_http_groonga_each_loc_conf_in_tree(location_conf->static_locations,
                                            callback,
                                            user_data);
+
+    if (location_conf->regex_locations) {
+      ngx_uint_t j;
+      for (j = 0; location_conf->regex_locations[j]; j++) {
+        ngx_http_core_loc_conf_t *regex_location_conf;
+
+        regex_location_conf = location_conf->regex_locations[j];
+        if (regex_location_conf->handler == ngx_http_groonga_handler) {
+          callback(regex_location_conf->loc_conf[ngx_http_groonga_module.ctx_index],
+                   user_data);
+        }
+      }
+    }
   }
 }
 
