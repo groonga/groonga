@@ -472,7 +472,7 @@ AC_ARG_WITH(stack_size,
 AC_DEFINE_UNQUOTED(GRN_STACK_SIZE, [$GRN_STACK_SIZE], [stack size])
 
 # lock timeout
-GRN_LOCK_TIMEOUT=10000000
+GRN_LOCK_TIMEOUT=900000
 AC_ARG_WITH(lock_timeout,
   [AS_HELP_STRING([--with-lock-timeout=N],
     [This option specifies how many times Groonga tries to acquire a lock.
