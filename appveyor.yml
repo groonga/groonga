@@ -42,7 +42,7 @@ build_script:
       -DCMAKE_INSTALL_PREFIX=c:\groonga
       -DGRN_WITH_BUNDLED_MECAB=yes
       -DGRN_WITH_BUNDLED_MESSAGE_PACK=yes
-      -DGRN_WITH_BUNDLED_LZ4=yes
+      # -DGRN_WITH_BUNDLED_LZ4=yes
   - cmake --build . --config Debug
   - cmake --build . --config Debug --target Install
 
