@@ -8,7 +8,6 @@ platform:
 notifications:
   - provider: Email
     to:
-      - kou@clear-code.com
       - groonga-commit@lists.osdn.me
     on_build_status_changed: true
 
