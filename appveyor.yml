@@ -5,6 +5,11 @@ platform:
   - x86
   - x64
 
+environment:
+  matrix:
+    - GENERATOR_NAME: "Visual Studio 12 2013"
+    - GENERATOR_NAME: "Visual Studio 14 2015"
+
 notifications:
   - provider: Email
     to:
@@ -25,12 +30,12 @@ build_script:
       if ($Env:PLATFORM -eq "x86")
       {
         $Env:PATH = "C:\Ruby22\bin;$Env:PATH"
-        $Env:CMAKE_GENERATOR_NAME = "Visual Studio 12 2013"
+        $Env:CMAKE_GENERATOR_NAME = "$Env:GENERATOR_NAME"
       }
       else
       {
         $Env:PATH = "C:\Ruby22-x64\bin;$Env:PATH"
-        $Env:CMAKE_GENERATOR_NAME = "Visual Studio 12 2013 Win64"
+        $Env:CMAKE_GENERATOR_NAME = "$Env:GENERATOR_NAME Win64"
       }
   - git submodule update --init
   - cd vendor
