@@ -28,3 +28,9 @@ grn_id_is_builtin(grn_ctx *ctx, grn_id id)
     return id < GRN_N_RESERVED_TYPES;
   }
 }
+
+grn_bool
+grn_id_is_builtin_type(grn_ctx *ctx, grn_id id)
+{
+  return GRN_DB_BOOL <= id && id <= GRN_DB_WGS84_GEO_POINT;
+}

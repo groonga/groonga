@@ -27,6 +27,8 @@
 
 void data_is_builtin(void);
 void test_is_builtin(gconstpointer data);
+void data_is_builtin_type(void);
+void test_is_builtin_type(gconstpointer data);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -107,5 +109,49 @@ test_is_builtin(gconstpointer data)
     cut_assert_true(grn_id_is_builtin(context, id));
   } else {
     cut_assert_false(grn_id_is_builtin(context, id));
+  }
+}
+
+void
+data_is_builtin_type(void)
+{
+#define ADD_DATUM(expected, id)                                         \
+  gcut_add_datum((expected ? "built-in - " #id : "custom - " #id),      \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "id", G_TYPE_UINT, id,                                 \
+                 NULL)
+
+  ADD_DATUM(FALSE, GRN_DB_OBJECT);
+  ADD_DATUM(TRUE, GRN_DB_BOOL);
+  ADD_DATUM(TRUE, GRN_DB_INT8);
+  ADD_DATUM(TRUE, GRN_DB_UINT8);
+  ADD_DATUM(TRUE, GRN_DB_INT16);
+  ADD_DATUM(TRUE, GRN_DB_UINT16);
+  ADD_DATUM(TRUE, GRN_DB_INT32);
+  ADD_DATUM(TRUE, GRN_DB_UINT32);
+  ADD_DATUM(TRUE, GRN_DB_INT64);
+  ADD_DATUM(TRUE, GRN_DB_UINT64);
+  ADD_DATUM(TRUE, GRN_DB_FLOAT);
+  ADD_DATUM(TRUE, GRN_DB_TIME);
+  ADD_DATUM(TRUE, GRN_DB_SHORT_TEXT);
+  ADD_DATUM(TRUE, GRN_DB_TEXT);
+  ADD_DATUM(TRUE, GRN_DB_LONG_TEXT);
+  ADD_DATUM(TRUE, GRN_DB_TOKYO_GEO_POINT);
+  ADD_DATUM(TRUE, GRN_DB_WGS84_GEO_POINT);
+  ADD_DATUM(FALSE, GRN_DB_MECAB);
+
+#undef ADD_DATUM
+}
+
+void
+test_is_builtin_type(gconstpointer data)
+{
+  grn_id id;
+
+  id = gcut_data_get_uint(data, "id");
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_id_is_builtin_type(context, id));
+  } else {
+    cut_assert_false(grn_id_is_builtin_type(context, id));
   }
 }
