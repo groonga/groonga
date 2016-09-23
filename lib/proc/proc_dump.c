@@ -478,15 +478,21 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
       if (column) {
         if (grn_obj_is_index_column(ctx, column)) {
           have_index_column = GRN_TRUE;
-          grn_ctx_pop_temporary_open_space(ctx);
+          if (dumper->is_close_opened_object_mode) {
+            grn_ctx_pop_temporary_open_space(ctx);
+          }
         } else {
           have_data_column = GRN_TRUE;
           GRN_PTR_PUT(ctx, &columns, column);
-          grn_ctx_merge_temporary_open_space(ctx);
+          if (dumper->is_close_opened_object_mode) {
+            grn_ctx_merge_temporary_open_space(ctx);
+          }
         }
       } else {
         GRN_PLUGIN_CLEAR_ERROR(ctx);
-        grn_ctx_pop_temporary_open_space(ctx);
+        if (dumper->is_close_opened_object_mode) {
+          grn_ctx_pop_temporary_open_space(ctx);
+        }
       }
     } GRN_HASH_EACH_END(ctx, cursor);
     grn_hash_close(ctx, real_columns);
