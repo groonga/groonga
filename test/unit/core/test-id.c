@@ -121,7 +121,8 @@ data_is_builtin_type(void)
                  "id", G_TYPE_UINT, id,                                 \
                  NULL)
 
-  ADD_DATUM(FALSE, GRN_DB_OBJECT);
+  ADD_DATUM(FALSE, GRN_DB_DB);
+  ADD_DATUM(TRUE, GRN_DB_OBJECT);
   ADD_DATUM(TRUE, GRN_DB_BOOL);
   ADD_DATUM(TRUE, GRN_DB_INT8);
   ADD_DATUM(TRUE, GRN_DB_UINT8);
