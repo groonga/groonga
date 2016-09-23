@@ -1,2 +1,3 @@
+#@omit "TODO: Fragile on Windows (AppVeyor)"
 object_remove object_remove
 object_remove
