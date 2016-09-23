@@ -27,6 +27,18 @@ typedef struct {
 } grn_schema_data;
 
 static void
+command_schema_output_id(grn_ctx *ctx, grn_obj *obj)
+{
+  if (obj) {
+    grn_id id;
+    id = grn_obj_id(ctx, obj);
+    grn_ctx_output_uint64(ctx, id);
+  } else {
+    grn_ctx_output_null(ctx);
+  }
+}
+
+static void
 command_schema_output_name(grn_ctx *ctx, grn_obj *obj)
 {
   if (obj) {
@@ -56,7 +68,10 @@ command_schema_output_type(grn_ctx *ctx, const char *type_label, grn_obj *type)
     return;
   }
 
-  grn_ctx_output_map_open(ctx, type_label, 2);
+  grn_ctx_output_map_open(ctx, type_label, 3);
+
+  grn_ctx_output_cstr(ctx, "id");
+  command_schema_output_id(ctx, type);
 
   grn_ctx_output_cstr(ctx, "name");
   command_schema_output_name(ctx, type);
@@ -203,7 +218,10 @@ command_schema_output_types(grn_ctx *ctx)
 
     command_schema_output_name(ctx, type);
 
-    grn_ctx_output_map_open(ctx, "type", 4);
+    grn_ctx_output_map_open(ctx, "type", 5);
+
+    grn_ctx_output_cstr(ctx, "id");
+    command_schema_output_id(ctx, type);
 
     grn_ctx_output_cstr(ctx, "name");
     command_schema_output_name(ctx, type);
@@ -274,7 +292,10 @@ command_schema_output_tokenizers(grn_ctx *ctx, grn_schema_data *data)
 
     command_schema_output_name(ctx, tokenizer);
 
-    grn_ctx_output_map_open(ctx, "tokenizer", 1);
+    grn_ctx_output_map_open(ctx, "tokenizer", 2);
+
+    grn_ctx_output_cstr(ctx, "id");
+    command_schema_output_id(ctx, tokenizer);
 
     grn_ctx_output_cstr(ctx, "name");
     command_schema_output_name(ctx, tokenizer);
@@ -338,7 +359,10 @@ command_schema_output_normalizers(grn_ctx *ctx, grn_schema_data *data)
 
     command_schema_output_name(ctx, normalizer);
 
-    grn_ctx_output_map_open(ctx, "normalizer", 1);
+    grn_ctx_output_map_open(ctx, "normalizer", 2);
+
+    grn_ctx_output_cstr(ctx, "id");
+    command_schema_output_id(ctx, normalizer);
 
     grn_ctx_output_cstr(ctx, "name");
     command_schema_output_name(ctx, normalizer);
@@ -402,7 +426,10 @@ command_schema_output_token_filters(grn_ctx *ctx, grn_schema_data *data)
 
     command_schema_output_name(ctx, token_filter);
 
-    grn_ctx_output_map_open(ctx, "token_filter", 1);
+    grn_ctx_output_map_open(ctx, "token_filter", 2);
+
+    grn_ctx_output_cstr(ctx, "id");
+    command_schema_output_id(ctx, token_filter);
 
     grn_ctx_output_cstr(ctx, "name");
     command_schema_output_name(ctx, token_filter);
@@ -479,7 +506,10 @@ command_schema_table_output_tokenizer(grn_ctx *ctx, grn_obj *table)
     return;
   }
 
-  grn_ctx_output_map_open(ctx, "tokenizer", 1);
+  grn_ctx_output_map_open(ctx, "tokenizer", 2);
+
+  grn_ctx_output_cstr(ctx, "id");
+  command_schema_output_id(ctx, tokenizer);
 
   grn_ctx_output_cstr(ctx, "name");
   command_schema_output_name(ctx, tokenizer);
@@ -498,7 +528,10 @@ command_schema_table_output_normalizer(grn_ctx *ctx, grn_obj *table)
     return;
   }
 
-  grn_ctx_output_map_open(ctx, "normalizer", 1);
+  grn_ctx_output_map_open(ctx, "normalizer", 2);
+
+  grn_ctx_output_cstr(ctx, "id");
+  command_schema_output_id(ctx, normalizer);
 
   grn_ctx_output_cstr(ctx, "name");
   command_schema_output_name(ctx, normalizer);
@@ -524,7 +557,10 @@ command_schema_table_output_token_filters(grn_ctx *ctx, grn_obj *table)
 
     token_filter = GRN_PTR_VALUE_AT(&token_filters, i);
 
-    grn_ctx_output_map_open(ctx, "token_filter", 1);
+    grn_ctx_output_map_open(ctx, "token_filter", 2);
+
+    grn_ctx_output_cstr(ctx, "id");
+    command_schema_output_id(ctx, token_filter);
 
     grn_ctx_output_cstr(ctx, "name");
     command_schema_output_name(ctx, token_filter);
@@ -743,7 +779,14 @@ command_schema_column_output_sources(grn_ctx *ctx, grn_obj *column)
     source_id = GRN_RECORD_VALUE_AT(&source_ids, i);
     source = grn_ctx_at(ctx, source_id);
 
-    grn_ctx_output_map_open(ctx, "source", 3);
+    grn_ctx_output_map_open(ctx, "source", 4);
+
+    grn_ctx_output_cstr(ctx, "id");
+    if (grn_obj_is_table(ctx, source)) {
+      command_schema_output_id(ctx, NULL);
+    } else {
+      command_schema_output_id(ctx, source);
+    }
 
     grn_ctx_output_cstr(ctx, "name");
     if (grn_obj_is_table(ctx, source)) {
@@ -797,7 +840,10 @@ command_schema_output_indexes(grn_ctx *ctx, grn_obj *object)
   for (i = 0; i < n_index_data; i++) {
     grn_obj *lexicon;
 
-    grn_ctx_output_map_open(ctx, "index", 4);
+    grn_ctx_output_map_open(ctx, "index", 5);
+
+    grn_ctx_output_cstr(ctx, "id");
+    command_schema_output_id(ctx, index_data[i].index);
 
     grn_ctx_output_cstr(ctx, "full_name");
     command_schema_output_name(ctx, index_data[i].index);
@@ -944,7 +990,10 @@ command_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   command_schema_output_column_name(ctx, column);
 
-  grn_ctx_output_map_open(ctx, "column", 12);
+  grn_ctx_output_map_open(ctx, "column", 13);
+
+  grn_ctx_output_cstr(ctx, "id");
+  command_schema_output_id(ctx, column);
 
   grn_ctx_output_cstr(ctx, "name");
   command_schema_output_column_name(ctx, column);
@@ -1030,7 +1079,10 @@ command_schema_output_table(grn_ctx *ctx,
 {
   command_schema_output_name(ctx, table);
 
-  grn_ctx_output_map_open(ctx, "table", 10);
+  grn_ctx_output_map_open(ctx, "table", 11);
+
+  grn_ctx_output_cstr(ctx, "id");
+  command_schema_output_id(ctx, table);
 
   grn_ctx_output_cstr(ctx, "name");
   command_schema_output_name(ctx, table);

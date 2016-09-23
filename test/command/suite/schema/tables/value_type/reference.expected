@@ -14,102 +14,119 @@ schema
     },
     "types": {
       "Bool": {
+        "id": 3,
         "name": "Bool",
         "size": 1,
         "can_be_key_type": true,
         "can_be_value_type": true
       },
       "Float": {
+        "id": 12,
         "name": "Float",
         "size": 8,
         "can_be_key_type": true,
         "can_be_value_type": true
       },
       "Int16": {
+        "id": 6,
         "name": "Int16",
         "size": 2,
         "can_be_key_type": true,
         "can_be_value_type": true
       },
       "Int32": {
+        "id": 8,
         "name": "Int32",
         "size": 4,
         "can_be_key_type": true,
         "can_be_value_type": true
       },
       "Int64": {
+        "id": 10,
         "name": "Int64",
         "size": 8,
         "can_be_key_type": true,
         "can_be_value_type": true
       },
       "Int8": {
+        "id": 4,
         "name": "Int8",
         "size": 1,
         "can_be_key_type": true,
         "can_be_value_type": true
       },
       "LongText": {
+        "id": 16,
         "name": "LongText",
         "size": 2147483648,
         "can_be_key_type": false,
         "can_be_value_type": false
       },
       "Object": {
+        "id": 2,
         "name": "Object",
         "size": 8,
         "can_be_key_type": true,
         "can_be_value_type": true
       },
       "ShortText": {
+        "id": 14,
         "name": "ShortText",
         "size": 4096,
         "can_be_key_type": true,
         "can_be_value_type": false
       },
       "Text": {
+        "id": 15,
         "name": "Text",
         "size": 65536,
         "can_be_key_type": false,
         "can_be_value_type": false
       },
       "Time": {
+        "id": 13,
         "name": "Time",
         "size": 8,
         "can_be_key_type": true,
         "can_be_value_type": true
       },
       "TokyoGeoPoint": {
+        "id": 17,
         "name": "TokyoGeoPoint",
         "size": 8,
         "can_be_key_type": true,
         "can_be_value_type": true
       },
       "UInt16": {
+        "id": 7,
         "name": "UInt16",
         "size": 2,
         "can_be_key_type": true,
         "can_be_value_type": true
       },
       "UInt32": {
+        "id": 9,
         "name": "UInt32",
         "size": 4,
         "can_be_key_type": true,
         "can_be_value_type": true
       },
       "UInt64": {
+        "id": 11,
         "name": "UInt64",
         "size": 8,
         "can_be_key_type": true,
         "can_be_value_type": true
       },
       "UInt8": {
+        "id": 5,
         "name": "UInt8",
         "size": 1,
         "can_be_key_type": true,
         "can_be_value_type": true
       },
       "WGS84GeoPoint": {
+        "id": 18,
         "name": "WGS84GeoPoint",
         "size": 8,
         "can_be_key_type": true,
@@ -118,53 +135,69 @@ schema
     },
     "tokenizers": {
       "TokenBigram": {
+        "id": 67,
         "name": "TokenBigram"
       },
       "TokenBigramIgnoreBlank": {
+        "id": 72,
         "name": "TokenBigramIgnoreBlank"
       },
       "TokenBigramIgnoreBlankSplitSymbol": {
+        "id": 73,
         "name": "TokenBigramIgnoreBlankSplitSymbol"
       },
       "TokenBigramIgnoreBlankSplitSymbolAlpha": {
+        "id": 74,
         "name": "TokenBigramIgnoreBlankSplitSymbolAlpha"
       },
       "TokenBigramIgnoreBlankSplitSymbolAlphaDigit": {
+        "id": 75,
         "name": "TokenBigramIgnoreBlankSplitSymbolAlphaDigit"
       },
       "TokenBigramSplitSymbol": {
+        "id": 69,
         "name": "TokenBigramSplitSymbol"
       },
       "TokenBigramSplitSymbolAlpha": {
+        "id": 70,
         "name": "TokenBigramSplitSymbolAlpha"
       },
       "TokenBigramSplitSymbolAlphaDigit": {
+        "id": 71,
         "name": "TokenBigramSplitSymbolAlphaDigit"
       },
       "TokenDelimit": {
+        "id": 65,
         "name": "TokenDelimit"
       },
       "TokenDelimitNull": {
+        "id": 76,
         "name": "TokenDelimitNull"
       },
       "TokenMecab": {
+        "id": 64,
         "name": "TokenMecab"
       },
       "TokenRegexp": {
+        "id": 77,
         "name": "TokenRegexp"
       },
       "TokenTrigram": {
+        "id": 68,
         "name": "TokenTrigram"
       },
       "TokenUnigram": {
+        "id": 66,
         "name": "TokenUnigram"
       }
     },
     "normalizers": {
       "NormalizerAuto": {
+        "id": 78,
         "name": "NormalizerAuto"
       },
       "NormalizerNFKC51": {
+        "id": 79,
         "name": "NormalizerNFKC51"
       }
     },
@@ -172,10 +205,12 @@ schema
     },
     "tables": {
       "Logs": {
+        "id": 257,
         "name": "Logs",
         "type": "array",
         "key_type": null,
         "value_type": {
+          "id": 256,
           "name": "Users",
           "type": "reference"
         },
@@ -200,9 +235,11 @@ schema
         }
       },
       "Users": {
+        "id": 256,
         "name": "Users",
         "type": "hash table",
         "key_type": {
+          "id": 14,
           "name": "ShortText",
           "type": "type"
         },
