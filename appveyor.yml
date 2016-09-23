@@ -37,7 +37,7 @@ build_script:
         $Env:PATH = "C:\Ruby22-x64\bin;$Env:PATH"
         $Env:CMAKE_GENERATOR_NAME = "$Env:GENERATOR_NAME Win64"
       }
-  - git submodule update --init --depth 1
+  - git submodule update --init
   - cd vendor
   - ruby download_mecab.rb
   - ruby download_message_pack.rb
