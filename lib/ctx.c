@@ -281,6 +281,9 @@ grn_ctx_impl_init(grn_ctx *ctx)
 
   grn_ctx_impl_mrb_init(ctx);
 
+  GRN_TEXT_INIT(&(ctx->impl->temporary_open_spaces.stack), 0);
+  ctx->impl->temporary_open_spaces.current = NULL;
+
   return ctx->rc;
 }
 
@@ -413,6 +416,20 @@ grn_ctx_fin(grn_ctx *ctx)
     grn_ctx_impl_clear_n_same_error_messagges(ctx);
     if (ctx->impl->finalizer) {
       ctx->impl->finalizer(ctx, 0, NULL, &(ctx->user_data));
+    }
+    {
+      grn_obj *stack;
+      grn_obj *spaces;
+      unsigned int i, n_spaces;
+
+      stack = &(ctx->impl->temporary_open_spaces.stack);
+      spaces = (grn_obj *)GRN_BULK_HEAD(stack);
+      n_spaces = GRN_BULK_VSIZE(stack) / sizeof(grn_obj);
+      for (i = 0; i < n_spaces; i++) {
+        grn_obj *space = spaces + (n_spaces - i - 1);
+        GRN_OBJ_FIN(ctx, space);
+      }
+      GRN_OBJ_FIN(ctx, stack);
     }
     grn_ctx_impl_mrb_fin(ctx);
     grn_ctx_loader_clear(ctx);

@@ -220,6 +220,11 @@ struct _grn_ctx_impl {
   unsigned int n_same_error_messages;
 
   grn_mrb_data mrb;
+
+  struct {
+    grn_obj stack;
+    grn_obj *current;
+  } temporary_open_spaces;
 };
 
 #ifdef __cplusplus

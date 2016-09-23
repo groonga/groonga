@@ -10407,6 +10407,25 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
             GRN_FUTEX_WAIT(&vp->ptr);
           }
         }
+        if (vp->ptr) {
+          switch (vp->ptr->header.type) {
+          case GRN_TABLE_HASH_KEY :
+          case GRN_TABLE_PAT_KEY :
+          case GRN_TABLE_DAT_KEY :
+          case GRN_TABLE_NO_KEY :
+          case GRN_COLUMN_FIX_SIZE :
+          case GRN_COLUMN_VAR_SIZE :
+          case GRN_COLUMN_INDEX :
+            {
+              grn_obj *space;
+              space = ctx->impl->temporary_open_spaces.current;
+              if (space) {
+                GRN_PTR_PUT(ctx, space, vp->ptr);
+              }
+            }
+            break;
+          }
+        }
       }
       res = vp->ptr;
       if (res && res->header.type == GRN_PROC) {
@@ -10489,7 +10508,7 @@ grn_pvector_fin(grn_ctx *ctx, grn_obj *obj)
     unsigned int i, n_elements;
     n_elements = GRN_BULK_VSIZE(obj) / sizeof(grn_obj *);
     for (i = 0; i < n_elements; i++) {
-      grn_obj *element = GRN_PTR_VALUE_AT(obj, i);
+      grn_obj *element = GRN_PTR_VALUE_AT(obj, n_elements - i - 1);
       grn_obj_close(ctx, element);
     }
   }
@@ -14819,4 +14838,94 @@ grn_ctx_get_all_token_filters(grn_ctx *ctx, grn_obj *token_filters_buffer)
 {
   return grn_ctx_get_all_objects(ctx, token_filters_buffer,
                                  grn_obj_is_token_filter_proc);
+}
+
+grn_rc
+grn_ctx_push_temporary_open_space(grn_ctx *ctx)
+{
+  grn_obj *stack;
+  grn_obj *space;
+  grn_obj buffer;
+
+  GRN_API_ENTER;
+
+  stack = &(ctx->impl->temporary_open_spaces.stack);
+  GRN_VOID_INIT(&buffer);
+  grn_bulk_write(ctx, stack, (const char *)&buffer, sizeof(grn_obj));
+  space = ((grn_obj *)GRN_BULK_CURR(stack)) - 1;
+  GRN_PTR_INIT(space, GRN_OBJ_VECTOR | GRN_OBJ_OWN, GRN_ID_NIL);
+
+  ctx->impl->temporary_open_spaces.current = space;
+
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_ctx_pop_temporary_open_space(grn_ctx *ctx)
+{
+  grn_obj *stack;
+  grn_obj *space;
+
+  GRN_API_ENTER;
+
+  stack = &(ctx->impl->temporary_open_spaces.stack);
+  if (GRN_BULK_EMPTYP(stack)) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[ctx][temporary-open-spaces][pop] too much pop");
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  space = ctx->impl->temporary_open_spaces.current;
+  GRN_OBJ_FIN(ctx, space);
+  grn_bulk_truncate(ctx, stack, GRN_BULK_VSIZE(stack) - sizeof(grn_obj));
+
+  if (GRN_BULK_EMPTYP(stack)) {
+    space = NULL;
+  } else {
+    space = ((grn_obj *)GRN_BULK_CURR(stack)) - 1;
+  }
+  ctx->impl->temporary_open_spaces.current = space;
+
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_ctx_merge_temporary_open_space(grn_ctx *ctx)
+{
+  grn_obj *stack;
+  grn_obj *space;
+  grn_obj *next_space;
+
+  GRN_API_ENTER;
+
+  stack = &(ctx->impl->temporary_open_spaces.stack);
+  if (GRN_BULK_VSIZE(stack) < sizeof(grn_obj) * 2) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[ctx][temporary-open-spaces][merge] "
+        "merge requires at least two spaces");
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  space = ctx->impl->temporary_open_spaces.current;
+  next_space = ctx->impl->temporary_open_spaces.current - 1;
+  {
+    unsigned int i, n_elements;
+    n_elements = GRN_BULK_VSIZE(space) / sizeof(grn_obj *);
+    for (i = 0; i < n_elements; i++) {
+      grn_obj *element = GRN_PTR_VALUE_AT(space, i);
+      GRN_PTR_PUT(ctx, next_space, element);
+    }
+  }
+  GRN_BULK_REWIND(space);
+  GRN_OBJ_FIN(ctx, space);
+  grn_bulk_truncate(ctx, stack, GRN_BULK_VSIZE(stack) - sizeof(grn_obj));
+
+  if (GRN_BULK_EMPTYP(stack)) {
+    space = NULL;
+  } else {
+    space = ((grn_obj *)GRN_BULK_CURR(stack)) - 1;
+  }
+  ctx->impl->temporary_open_spaces.current = space;
+
+  GRN_API_RETURN(ctx->rc);
 }

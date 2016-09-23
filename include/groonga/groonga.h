@@ -247,6 +247,10 @@ GRN_API grn_ctx *grn_ctx_open(int flags);
 GRN_API grn_rc grn_ctx_close(grn_ctx *ctx);
 GRN_API grn_rc grn_ctx_set_finalizer(grn_ctx *ctx, grn_proc_func *func);
 
+GRN_API grn_rc grn_ctx_push_temporary_open_space(grn_ctx *ctx);
+GRN_API grn_rc grn_ctx_pop_temporary_open_space(grn_ctx *ctx);
+GRN_API grn_rc grn_ctx_merge_temporary_open_space(grn_ctx *ctx);
+
 GRN_API grn_encoding grn_get_default_encoding(void);
 GRN_API grn_rc grn_set_default_encoding(grn_encoding encoding);
 
