@@ -22,6 +22,10 @@
 
 #include <groonga/plugin.h>
 
+typedef struct {
+  grn_bool is_close_opened_object_mode;
+} grn_schema_data;
+
 static void
 command_schema_output_name(grn_ctx *ctx, grn_obj *obj)
 {
@@ -176,21 +180,26 @@ command_schema_output_plugins(grn_ctx *ctx)
 static void
 command_schema_output_types(grn_ctx *ctx)
 {
-  grn_obj types;
-  unsigned int i, n;
+  unsigned int n_types;
 
-  GRN_PTR_INIT(&types, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
-
-  grn_ctx_get_all_types(ctx, &types);
+  n_types = 0;
+  GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
+    if (grn_id_is_builtin_type(ctx, id)) {
+      n_types++;
+    }
+  } GRN_DB_EACH_END(ctx, cursor);
 
   grn_ctx_output_cstr(ctx, "types");
 
-  n = GRN_BULK_VSIZE(&types) / sizeof(grn_obj *);
-  grn_ctx_output_map_open(ctx, "types", n);
-  for (i = 0; i < n; i++) {
+  grn_ctx_output_map_open(ctx, "types", n_types);
+  GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
     grn_obj *type;
 
-    type = GRN_PTR_VALUE_AT(&types, i);
+    if (!grn_id_is_builtin_type(ctx, id)) {
+      continue;
+    }
+
+    type = grn_ctx_at(ctx, id);
 
     command_schema_output_name(ctx, type);
 
@@ -209,30 +218,59 @@ command_schema_output_types(grn_ctx *ctx)
     grn_ctx_output_bool(ctx, !(type->header.flags & GRN_OBJ_KEY_VAR_SIZE));
 
     grn_ctx_output_map_close(ctx);
-  }
+  } GRN_DB_EACH_END(ctx, cursor);
   grn_ctx_output_map_close(ctx);
-
-  GRN_OBJ_FIN(ctx, &types);
 }
 
 static void
-command_schema_output_tokenizers(grn_ctx *ctx)
+command_schema_output_tokenizers(grn_ctx *ctx, grn_schema_data *data)
 {
-  grn_obj tokenizers;
+  grn_obj tokenizer_ids;
   unsigned int i, n;
 
-  GRN_PTR_INIT(&tokenizers, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
+  GRN_RECORD_INIT(&tokenizer_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
+    void *name;
+    int name_size;
+    grn_obj *object;
 
-  grn_ctx_get_all_tokenizers(ctx, &tokenizers);
+    name_size = grn_table_cursor_get_key(ctx, cursor, &name);
+    if (grn_obj_name_is_column(ctx, name, name_size)) {
+      continue;
+    }
+
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+
+    object = grn_ctx_at(ctx, id);
+    if (object) {
+      if (grn_obj_is_tokenizer_proc(ctx, object)) {
+        GRN_RECORD_PUT(ctx, &tokenizer_ids, id);
+      }
+    } else {
+      /* XXX: this clause is executed when MeCab tokenizer is enabled in
+         database but the groonga isn't supported MeCab.
+         We should return error mesage about it and error exit status
+         but it's too difficult for this architecture. :< */
+      GRN_PLUGIN_CLEAR_ERROR(ctx);
+    }
+
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+  } GRN_DB_EACH_END(ctx, cursor);
 
   grn_ctx_output_cstr(ctx, "tokenizers");
 
-  n = GRN_BULK_VSIZE(&tokenizers) / sizeof(grn_obj *);
+  n = GRN_BULK_VSIZE(&tokenizer_ids) / sizeof(grn_id);
   grn_ctx_output_map_open(ctx, "tokenizers", n);
   for (i = 0; i < n; i++) {
+    grn_id tokenizer_id;
     grn_obj *tokenizer;
 
-    tokenizer = GRN_PTR_VALUE_AT(&tokenizers, i);
+    tokenizer_id = GRN_RECORD_VALUE_AT(&tokenizer_ids, i);
+    tokenizer = grn_ctx_at(ctx, tokenizer_id);
 
     command_schema_output_name(ctx, tokenizer);
 
@@ -245,27 +283,58 @@ command_schema_output_tokenizers(grn_ctx *ctx)
   }
   grn_ctx_output_map_close(ctx);
 
-  GRN_OBJ_FIN(ctx, &tokenizers);
+  GRN_OBJ_FIN(ctx, &tokenizer_ids);
 }
 
 static void
-command_schema_output_normalizers(grn_ctx *ctx)
+command_schema_output_normalizers(grn_ctx *ctx, grn_schema_data *data)
 {
-  grn_obj normalizers;
+  grn_obj normalizer_ids;
   unsigned int i, n;
 
-  GRN_PTR_INIT(&normalizers, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
+  GRN_RECORD_INIT(&normalizer_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
+    void *name;
+    int name_size;
+    grn_obj *object;
 
-  grn_ctx_get_all_normalizers(ctx, &normalizers);
+    name_size = grn_table_cursor_get_key(ctx, cursor, &name);
+    if (grn_obj_name_is_column(ctx, name, name_size)) {
+      continue;
+    }
+
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+
+    object = grn_ctx_at(ctx, id);
+    if (object) {
+      if (grn_obj_is_normalizer_proc(ctx, object)) {
+        GRN_RECORD_PUT(ctx, &normalizer_ids, id);
+      }
+    } else {
+      /* XXX: this clause is executed when MeCab normalizer is enabled in
+         database but the groonga isn't supported MeCab.
+         We should return error mesage about it and error exit status
+         but it's too difficult for this architecture. :< */
+      GRN_PLUGIN_CLEAR_ERROR(ctx);
+    }
+
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+  } GRN_DB_EACH_END(ctx, cursor);
 
   grn_ctx_output_cstr(ctx, "normalizers");
 
-  n = GRN_BULK_VSIZE(&normalizers) / sizeof(grn_obj *);
+  n = GRN_BULK_VSIZE(&normalizer_ids) / sizeof(grn_id);
   grn_ctx_output_map_open(ctx, "normalizers", n);
   for (i = 0; i < n; i++) {
+    grn_id normalizer_id;
     grn_obj *normalizer;
 
-    normalizer = GRN_PTR_VALUE_AT(&normalizers, i);
+    normalizer_id = GRN_RECORD_VALUE_AT(&normalizer_ids, i);
+    normalizer = grn_ctx_at(ctx, normalizer_id);
 
     command_schema_output_name(ctx, normalizer);
 
@@ -278,27 +347,58 @@ command_schema_output_normalizers(grn_ctx *ctx)
   }
   grn_ctx_output_map_close(ctx);
 
-  GRN_OBJ_FIN(ctx, &normalizers);
+  GRN_OBJ_FIN(ctx, &normalizer_ids);
 }
 
 static void
-command_schema_output_token_filters(grn_ctx *ctx)
+command_schema_output_token_filters(grn_ctx *ctx, grn_schema_data *data)
 {
-  grn_obj token_filters;
-  int i, n;
+  grn_obj token_filter_ids;
+  unsigned int i, n;
 
-  GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
+  GRN_RECORD_INIT(&token_filter_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
+    void *name;
+    int name_size;
+    grn_obj *object;
 
-  grn_ctx_get_all_token_filters(ctx, &token_filters);
+    name_size = grn_table_cursor_get_key(ctx, cursor, &name);
+    if (grn_obj_name_is_column(ctx, name, name_size)) {
+      continue;
+    }
+
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+
+    object = grn_ctx_at(ctx, id);
+    if (object) {
+      if (grn_obj_is_token_filter_proc(ctx, object)) {
+        GRN_RECORD_PUT(ctx, &token_filter_ids, id);
+      }
+    } else {
+      /* XXX: this clause is executed when MeCab normalizer is enabled in
+         database but the groonga isn't supported MeCab.
+         We should return error mesage about it and error exit status
+         but it's too difficult for this architecture. :< */
+      GRN_PLUGIN_CLEAR_ERROR(ctx);
+    }
+
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+  } GRN_DB_EACH_END(ctx, cursor);
 
   grn_ctx_output_cstr(ctx, "token_filters");
 
-  n = GRN_BULK_VSIZE(&token_filters) / sizeof(grn_obj *);
+  n = GRN_BULK_VSIZE(&token_filter_ids) / sizeof(grn_id);
   grn_ctx_output_map_open(ctx, "token_filters", n);
   for (i = 0; i < n; i++) {
+    grn_id token_filter_id;
     grn_obj *token_filter;
 
-    token_filter = GRN_PTR_VALUE_AT(&token_filters, i);
+    token_filter_id = GRN_RECORD_VALUE_AT(&token_filter_ids, i);
+    token_filter = grn_ctx_at(ctx, token_filter_id);
 
     command_schema_output_name(ctx, token_filter);
 
@@ -311,7 +411,7 @@ command_schema_output_token_filters(grn_ctx *ctx)
   }
   grn_ctx_output_map_close(ctx);
 
-  GRN_OBJ_FIN(ctx, &token_filters);
+  GRN_OBJ_FIN(ctx, &token_filter_ids);
 }
 
 static const char *
@@ -675,24 +775,22 @@ command_schema_column_output_sources(grn_ctx *ctx, grn_obj *column)
 }
 
 static void
-command_schema_column_output_indexes(grn_ctx *ctx, grn_obj *column)
+command_schema_output_indexes(grn_ctx *ctx, grn_obj *object)
 {
   uint32_t i;
   grn_index_datum *index_data = NULL;
   uint32_t n_index_data = 0;
 
-  if (column) {
-    n_index_data = grn_column_get_all_index_data(ctx, column, NULL, 0);
-    if (n_index_data > 0) {
-      index_data = GRN_PLUGIN_MALLOC(ctx,
-                                     sizeof(grn_index_datum) * n_index_data);
-      if (!index_data) {
-        GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                         "[schema] failed to allocate memory for indexes");
-        return;
-      }
-      grn_column_get_all_index_data(ctx, column, index_data, n_index_data);
+  n_index_data = grn_column_get_all_index_data(ctx, object, NULL, 0);
+  if (n_index_data > 0) {
+    index_data = GRN_PLUGIN_MALLOC(ctx,
+                                   sizeof(grn_index_datum) * n_index_data);
+    if (!index_data) {
+      GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                       "[schema] failed to allocate memory for indexes");
+      return;
     }
+    grn_column_get_all_index_data(ctx, object, index_data, n_index_data);
   }
 
   grn_ctx_output_array_open(ctx, "indexes", n_index_data);
@@ -725,9 +823,9 @@ command_schema_column_output_indexes(grn_ctx *ctx, grn_obj *column)
 
 static void
 command_schema_column_command_collect_arguments(grn_ctx *ctx,
-                                             grn_obj *table,
-                                             grn_obj *column,
-                                             grn_obj *arguments)
+                                                grn_obj *table,
+                                                grn_obj *column,
+                                                grn_obj *arguments)
 {
 #define ADD(name_, value_)                              \
   grn_vector_add_element(ctx, arguments,                \
@@ -823,7 +921,9 @@ command_schema_column_command_collect_arguments(grn_ctx *ctx,
 }
 
 static void
-command_schema_column_output_command(grn_ctx *ctx, grn_obj *table, grn_obj *column)
+command_schema_column_output_command(grn_ctx *ctx,
+                                     grn_obj *table,
+                                     grn_obj *column)
 {
   grn_obj arguments;
 
@@ -877,7 +977,7 @@ command_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
   command_schema_column_output_sources(ctx, column);
 
   grn_ctx_output_cstr(ctx, "indexes");
-  command_schema_column_output_indexes(ctx, column);
+  command_schema_output_indexes(ctx, column);
 
   grn_ctx_output_cstr(ctx, "command");
   command_schema_column_output_command(ctx, table, column);
@@ -886,7 +986,9 @@ command_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 }
 
 static void
-command_schema_table_output_columns(grn_ctx *ctx, grn_obj *table)
+command_schema_table_output_columns(grn_ctx *ctx,
+                                    grn_obj *table,
+                                    grn_schema_data *data)
 {
   grn_hash *columns;
 
@@ -904,8 +1006,17 @@ command_schema_table_output_columns(grn_ctx *ctx, grn_obj *table)
     grn_id *key;
     GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
       grn_obj *column;
+
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_push_temporary_open_space(ctx);
+      }
+
       column = grn_ctx_at(ctx, *key);
       command_schema_column_output(ctx, table, column);
+
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_pop_temporary_open_space(ctx);
+      }
     });
   }
   grn_ctx_output_map_close(ctx);
@@ -913,84 +1024,132 @@ command_schema_table_output_columns(grn_ctx *ctx, grn_obj *table)
 }
 
 static void
-command_schema_output_tables(grn_ctx *ctx)
+command_schema_output_table(grn_ctx *ctx,
+                            grn_schema_data *data,
+                            grn_obj *table)
 {
-  grn_obj tables;
+  command_schema_output_name(ctx, table);
+
+  grn_ctx_output_map_open(ctx, "table", 10);
+
+  grn_ctx_output_cstr(ctx, "name");
+  command_schema_output_name(ctx, table);
+
+  grn_ctx_output_cstr(ctx, "type");
+  grn_ctx_output_cstr(ctx, command_schema_table_type_name(ctx, table));
+
+  grn_ctx_output_cstr(ctx, "key_type");
+  command_schema_table_output_key_type(ctx, table);
+
+  grn_ctx_output_cstr(ctx, "value_type");
+  command_schema_table_output_value_type(ctx, table);
+
+  grn_ctx_output_cstr(ctx, "tokenizer");
+  command_schema_table_output_tokenizer(ctx, table);
+
+  grn_ctx_output_cstr(ctx, "normalizer");
+  command_schema_table_output_normalizer(ctx, table);
+
+  grn_ctx_output_cstr(ctx, "token_filters");
+  command_schema_table_output_token_filters(ctx, table);
+
+  grn_ctx_output_cstr(ctx, "indexes");
+  command_schema_output_indexes(ctx, table);
+
+  grn_ctx_output_cstr(ctx, "command");
+  command_schema_table_output_command(ctx, table);
+
+  grn_ctx_output_cstr(ctx, "columns");
+  command_schema_table_output_columns(ctx, table, data);
+
+  grn_ctx_output_map_close(ctx);
+}
+
+static void
+command_schema_output_tables(grn_ctx *ctx, grn_schema_data *data)
+{
+  grn_obj table_ids;
   unsigned int i, n;
 
-  GRN_PTR_INIT(&tables, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
+  GRN_RECORD_INIT(&table_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
+    void *name;
+    int name_size;
+    grn_obj *object;
 
-  grn_ctx_get_all_tables(ctx, &tables);
-
-  grn_ctx_output_cstr(ctx, "tables");
-
-  n = GRN_BULK_VSIZE(&tables) / sizeof(grn_obj *);
-  grn_ctx_output_map_open(ctx, "tables", n);
-  for (i = 0; i < n; i++) {
-    grn_obj *table;
-
-    table = GRN_PTR_VALUE_AT(&tables, i);
-
-    command_schema_output_name(ctx, table);
-
-    grn_ctx_output_map_open(ctx, "table", 10);
-
-    grn_ctx_output_cstr(ctx, "name");
-    command_schema_output_name(ctx, table);
-
-    grn_ctx_output_cstr(ctx, "type");
-    grn_ctx_output_cstr(ctx, command_schema_table_type_name(ctx, table));
-
-    grn_ctx_output_cstr(ctx, "key_type");
-    command_schema_table_output_key_type(ctx, table);
-
-    grn_ctx_output_cstr(ctx, "value_type");
-    command_schema_table_output_value_type(ctx, table);
-
-    grn_ctx_output_cstr(ctx, "tokenizer");
-    command_schema_table_output_tokenizer(ctx, table);
-
-    grn_ctx_output_cstr(ctx, "normalizer");
-    command_schema_table_output_normalizer(ctx, table);
-
-    grn_ctx_output_cstr(ctx, "token_filters");
-    command_schema_table_output_token_filters(ctx, table);
-
-    grn_ctx_output_cstr(ctx, "indexes");
-    if (table->header.type == GRN_TABLE_NO_KEY) {
-      command_schema_column_output_indexes(ctx, NULL);
-    } else {
-      grn_obj *key_column;
-      key_column = grn_obj_column(ctx, table,
-                                  GRN_COLUMN_NAME_KEY,
-                                  GRN_COLUMN_NAME_KEY_LEN);
-      command_schema_column_output_indexes(ctx, key_column);
-      grn_obj_unlink(ctx, key_column);
+    if (grn_id_is_builtin(ctx, id)) {
+      continue;
     }
 
-    grn_ctx_output_cstr(ctx, "command");
-    command_schema_table_output_command(ctx, table);
+    name_size = grn_table_cursor_get_key(ctx, cursor, &name);
+    if (grn_obj_name_is_column(ctx, name, name_size)) {
+      continue;
+    }
 
-    grn_ctx_output_cstr(ctx, "columns");
-    command_schema_table_output_columns(ctx, table);
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
 
-    grn_ctx_output_map_close(ctx);
+    object = grn_ctx_at(ctx, id);
+    if (!object) {
+      /* XXX: this clause is executed when MeCab tokenizer is enabled in
+         database but the groonga isn't supported MeCab.
+         We should return error mesage about it and error exit status
+         but it's too difficult for this architecture. :< */
+      GRN_PLUGIN_CLEAR_ERROR(ctx);
+      goto next_loop;
+    }
+
+    if (grn_obj_is_table(ctx, object)) {
+      GRN_RECORD_PUT(ctx, &table_ids, id);
+    }
+
+  next_loop :
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+
+  n = GRN_BULK_VSIZE(&table_ids) / sizeof(grn_id);
+
+  grn_ctx_output_cstr(ctx, "tables");
+  grn_ctx_output_map_open(ctx, "tables", n);
+  for (i = 0; i < n; i++) {
+    grn_id table_id;
+    grn_obj *table;
+
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+
+    table_id = GRN_RECORD_VALUE_AT(&table_ids, i);
+    table = grn_ctx_at(ctx, table_id);
+
+    command_schema_output_table(ctx, data, table);
+
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
   }
   grn_ctx_output_map_close(ctx);
 
-  GRN_OBJ_FIN(ctx, &tables);
+  GRN_OBJ_FIN(ctx, &table_ids);
 }
 
 static grn_obj *
 command_schema(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
+  grn_schema_data data;
+
+  data.is_close_opened_object_mode = (grn_thread_get_limit() == 1);
+
   grn_ctx_output_map_open(ctx, "schema", 6);
   command_schema_output_plugins(ctx);
   command_schema_output_types(ctx);
-  command_schema_output_tokenizers(ctx);
-  command_schema_output_normalizers(ctx);
-  command_schema_output_token_filters(ctx);
-  command_schema_output_tables(ctx);
+  command_schema_output_tokenizers(ctx, &data);
+  command_schema_output_normalizers(ctx, &data);
+  command_schema_output_token_filters(ctx, &data);
+  command_schema_output_tables(ctx, &data);
   grn_ctx_output_map_close(ctx);
 
   return NULL;
