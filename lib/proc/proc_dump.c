@@ -35,8 +35,7 @@ typedef struct {
 static void
 dumper_collect_statistics(grn_ctx *ctx, grn_dumper *dumper)
 {
-  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
-                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+  GRN_DB_EACH_BEGIN_BY_ID(ctx, cursor, id) {
     void *name;
     int name_size;
     grn_bool is_opened = GRN_TRUE;
@@ -116,7 +115,7 @@ next_loop :
     if (dumper->is_close_opened_object_mode && !is_opened) {
       grn_obj_close(ctx, object);
     }
-  } GRN_TABLE_EACH_END(ctx, cursor);
+  } GRN_DB_EACH_END(ctx, cursor);
 }
 
 static void
@@ -740,8 +739,7 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 static void
 dump_schema(grn_ctx *ctx, grn_dumper *dumper)
 {
-  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
-                             GRN_CURSOR_BY_KEY | GRN_CURSOR_ASCENDING) {
+  GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
     void *name;
     int name_size;
     grn_bool is_opened = GRN_TRUE;
@@ -781,7 +779,7 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
     }
-  } GRN_TABLE_EACH_END(ctx, cursor);
+  } GRN_DB_EACH_END(ctx, cursor);
 
   if (!dumper->have_reference_column) {
     return;
@@ -790,8 +788,7 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
   GRN_TEXT_PUTC(ctx, dumper->output, '\n');
   grn_ctx_output_flush(ctx, 0);
 
-  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
-                             GRN_CURSOR_BY_KEY | GRN_CURSOR_ASCENDING) {
+  GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
     void *name;
     int name_size;
     grn_bool is_opened = GRN_TRUE;
@@ -831,7 +828,7 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
     }
-  } GRN_TABLE_EACH_END(ctx, cursor);
+  } GRN_DB_EACH_END(ctx, cursor);
 }
 
 static void
@@ -896,8 +893,7 @@ dump_selected_tables_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *tables)
 static void
 dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
 {
-  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
-                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+  GRN_DB_EACH_BEGIN_BY_ID(ctx, cursor, id) {
     void *name;
     int name_size;
     grn_bool is_opened = GRN_TRUE;
@@ -932,7 +928,7 @@ dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
     if (dumper->is_close_opened_object_mode && !is_opened) {
       grn_obj_close(ctx, table);
     }
-  } GRN_TABLE_EACH_END(ctx, cursor);
+  } GRN_DB_EACH_END(ctx, cursor);
 }
 
 static void
@@ -946,8 +942,7 @@ dump_indexes(grn_ctx *ctx, grn_dumper *dumper)
     GRN_TEXT_PUTC(ctx, dumper->output, '\n');
   }
 
-  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, grn_ctx_db(ctx), cursor, id,
-                             GRN_CURSOR_BY_KEY | GRN_CURSOR_ASCENDING) {
+  GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
     void *name;
     int name_size;
     grn_bool is_opened = GRN_TRUE;
@@ -982,7 +977,7 @@ dump_indexes(grn_ctx *ctx, grn_dumper *dumper)
     if (dumper->is_close_opened_object_mode && !is_opened) {
       grn_obj_close(ctx, object);
     }
-  } GRN_TABLE_EACH_END(ctx, cursor);
+  } GRN_DB_EACH_END(ctx, cursor);
 }
 
 static grn_obj *

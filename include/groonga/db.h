@@ -41,6 +41,28 @@ GRN_API grn_rc grn_db_unmap(grn_ctx *ctx, grn_obj *db);
 GRN_API uint32_t grn_db_get_last_modified(grn_ctx *ctx, grn_obj *db);
 GRN_API grn_bool grn_db_is_dirty(grn_ctx *ctx, grn_obj *db);
 
+#define GRN_DB_EACH_BEGIN_FLAGS(ctx, cursor, id, flags)                 \
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx,                                       \
+                             grn_ctx_db((ctx)),                         \
+                             cursor,                                    \
+                             id,                                        \
+                             flags)
+
+#define GRN_DB_EACH_BEGIN_BY_ID(ctx, cursor, id)                        \
+  GRN_DB_EACH_BEGIN_FLAGS(ctx,                                          \
+                          cursor,                                       \
+                          id,                                           \
+                          GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING)
+
+#define GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id)                       \
+  GRN_DB_EACH_BEGIN_FLAGS(ctx,                                          \
+                          cursor,                                       \
+                          id,                                           \
+                          GRN_CURSOR_BY_KEY | GRN_CURSOR_ASCENDING)
+
+#define GRN_DB_EACH_END(ctx, cursor)            \
+  GRN_TABLE_EACH_END(ctx, cursor)
+
 #ifdef __cplusplus
 }
 #endif
