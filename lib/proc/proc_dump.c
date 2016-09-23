@@ -256,7 +256,7 @@ dump_index_column_sources(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
 
     source = grn_ctx_at(ctx, source_id);
     if (!source) {
-      continue;
+      goto next_loop;
     }
 
     if (i) { GRN_TEXT_PUTC(ctx, dumper->output, ','); }
@@ -274,6 +274,7 @@ dump_index_column_sources(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
       break;
     }
 
+  next_loop :
     if (dumper->is_close_opened_object_mode) {
       grn_ctx_pop_temporary_open_space(ctx);
     }
@@ -356,7 +357,7 @@ dump_columns(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table,
       column = grn_ctx_at(ctx, column_id);
       if (!column) {
         GRN_PLUGIN_CLEAR_ERROR(ctx);
-        continue;
+        goto next_loop;
       }
 
       if (grn_obj_is_index_column(ctx, column)) {
@@ -373,6 +374,7 @@ dump_columns(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table,
         }
       }
 
+    next_loop :
       if (dumper->is_close_opened_object_mode) {
         grn_ctx_pop_temporary_open_space(ctx);
       }
