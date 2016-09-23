@@ -33,14 +33,58 @@ typedef struct {
 } grn_dumper;
 
 static void
+dumper_collect_statistics_table(grn_ctx *ctx,
+                                grn_dumper *dumper,
+                                grn_obj *table)
+{
+  grn_hash *columns;
+
+  columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                            GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+  if (!columns) {
+    return;
+  }
+
+  grn_table_columns(ctx, table, NULL, 0, (grn_obj *)columns);
+  GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
+    void *key;
+    grn_id column_id;
+    grn_obj *column;
+
+    grn_hash_cursor_get_key(ctx, cursor, &key);
+    column_id = *((grn_id *)key);
+
+    if (dumper->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+
+    column = grn_ctx_at(ctx, column_id);
+    if (!column) {
+      GRN_PLUGIN_CLEAR_ERROR(ctx);
+      goto next_loop;
+    }
+
+    if (grn_obj_is_index_column(ctx, column)) {
+      dumper->have_index_column = GRN_TRUE;
+    } else if (grn_obj_is_reference_column(ctx, column)) {
+      dumper->have_reference_column = GRN_TRUE;
+    }
+
+  next_loop :
+    if (dumper->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+  } GRN_HASH_EACH_END(ctx, cursor);
+  grn_hash_close(ctx, columns);
+}
+
+static void
 dumper_collect_statistics(grn_ctx *ctx, grn_dumper *dumper)
 {
   GRN_DB_EACH_BEGIN_BY_ID(ctx, cursor, id) {
     void *name;
     int name_size;
-    grn_bool is_opened = GRN_TRUE;
     grn_obj *object;
-    grn_hash *columns;
 
     if (grn_id_is_builtin(ctx, id)) {
       continue;
@@ -52,7 +96,7 @@ dumper_collect_statistics(grn_ctx *ctx, grn_dumper *dumper)
     }
 
     if (dumper->is_close_opened_object_mode) {
-      is_opened = grn_ctx_is_opened(ctx, id);
+      grn_ctx_push_temporary_open_space(ctx);
     }
 
     object = grn_ctx_at(ctx, id);
@@ -62,58 +106,18 @@ dumper_collect_statistics(grn_ctx *ctx, grn_dumper *dumper)
          We should return error mesage about it and error exit status
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
-      continue;
-    }
-
-    if (grn_obj_is_proc(ctx, object)) {
-      continue;
+      goto next_loop;
     }
 
     if (!grn_obj_is_table(ctx, object)) {
       goto next_loop;
     }
 
-    columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                              GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
-    if (!columns) {
-      goto next_loop;
-    }
-
-    grn_table_columns(ctx, object, NULL, 0, (grn_obj *)columns);
-    GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
-      grn_bool is_opened = GRN_TRUE;
-      void *key;
-      grn_id column_id;
-      grn_obj *column;
-
-      grn_hash_cursor_get_key(ctx, cursor, &key);
-      column_id = *((grn_id *)key);
-
-      if (dumper->is_close_opened_object_mode) {
-        is_opened = grn_ctx_is_opened(ctx, column_id);
-      }
-
-      column = grn_ctx_at(ctx, column_id);
-      if (!column) {
-        GRN_PLUGIN_CLEAR_ERROR(ctx);
-        continue;
-      }
-
-      if (grn_obj_is_index_column(ctx, column)) {
-        dumper->have_index_column = GRN_TRUE;
-      } else if (grn_obj_is_reference_column(ctx, column)) {
-        dumper->have_reference_column = GRN_TRUE;
-      }
-
-      if (dumper->is_close_opened_object_mode && !is_opened) {
-        grn_obj_close(ctx, column);
-      }
-    } GRN_HASH_EACH_END(ctx, cursor);
-    grn_hash_close(ctx, columns);
+    dumper_collect_statistics_table(ctx, dumper, object);
 
 next_loop :
-    if (dumper->is_close_opened_object_mode && !is_opened) {
-      grn_obj_close(ctx, object);
+    if (dumper->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
     }
   } GRN_DB_EACH_END(ctx, cursor);
 }
@@ -240,7 +244,6 @@ dump_index_column_sources(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
     GRN_TEXT_PUTC(ctx, dumper->output, ' ');
   }
   for (i = 0; i < n; i++) {
-    grn_bool is_opened = GRN_TRUE;
     grn_id source_id;
     grn_obj *source;
 
@@ -248,7 +251,7 @@ dump_index_column_sources(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
     source_ids++;
 
     if (dumper->is_close_opened_object_mode) {
-      is_opened = grn_ctx_is_opened(ctx, source_id);
+      grn_ctx_push_temporary_open_space(ctx);
     }
 
     source = grn_ctx_at(ctx, source_id);
@@ -271,8 +274,8 @@ dump_index_column_sources(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
       break;
     }
 
-    if (dumper->is_close_opened_object_mode && !is_opened) {
-      grn_obj_close(ctx, source);
+    if (dumper->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
     }
   }
   grn_obj_close(ctx, &sources);
@@ -282,19 +285,18 @@ static void
 dump_column(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_obj *column)
 {
   grn_id type_id;
-  grn_bool is_opened_type = GRN_TRUE;
   grn_obj *type;
   grn_column_flags flags;
   grn_column_flags default_flags = GRN_OBJ_PERSISTENT;
 
   type_id = grn_obj_get_range(ctx, column);
   if (dumper->is_close_opened_object_mode) {
-    is_opened_type = grn_ctx_is_opened(ctx, type_id);
+    grn_ctx_push_temporary_open_space(ctx);
   }
   type = grn_ctx_at(ctx, type_id);
   if (!type) {
-    // ERR(GRN_RANGE_ERROR, "couldn't get column's type object");
-    return;
+    /* ERR(GRN_RANGE_ERROR, "couldn't get column's type object"); */
+    goto exit;
   }
 
   GRN_TEXT_PUTS(ctx, dumper->output, "column_create ");
@@ -316,8 +318,9 @@ dump_column(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_obj *column)
   }
   GRN_TEXT_PUTC(ctx, dumper->output, '\n');
 
-  if (dumper->is_close_opened_object_mode && !is_opened_type) {
-    grn_obj_close(ctx, type);
+exit :
+  if (dumper->is_close_opened_object_mode) {
+    grn_ctx_pop_temporary_open_space(ctx);
   }
 }
 
@@ -339,7 +342,6 @@ dump_columns(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table,
 
   if (grn_table_columns(ctx, table, NULL, 0, (grn_obj *)columns) >= 0) {
     GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
-      grn_bool is_opened = GRN_TRUE;
       void *key;
       grn_id column_id;
       grn_obj *column;
@@ -348,7 +350,7 @@ dump_columns(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table,
       column_id = *((grn_id *)key);
 
       if (dumper->is_close_opened_object_mode) {
-        is_opened = grn_ctx_is_opened(ctx, column_id);
+        grn_ctx_push_temporary_open_space(ctx);
       }
 
       column = grn_ctx_at(ctx, column_id);
@@ -371,8 +373,8 @@ dump_columns(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table,
         }
       }
 
-      if (dumper->is_close_opened_object_mode && !is_opened) {
-        grn_obj_close(ctx, column);
+      if (dumper->is_close_opened_object_mode) {
+        grn_ctx_pop_temporary_open_space(ctx);
       }
     } GRN_HASH_EACH_END(ctx, cursor);
   }
@@ -414,7 +416,6 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
   int i, n_columns;
   grn_obj column_name;
   grn_obj columns;
-  grn_obj is_opened_flags;
   grn_obj delete_commands;
   grn_bool have_index_column = GRN_FALSE;
   grn_bool have_data_column = GRN_FALSE;
@@ -423,9 +424,12 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     return;
   }
 
+  if (dumper->is_close_opened_object_mode) {
+    grn_ctx_push_temporary_open_space(ctx);
+  }
+
   GRN_TEXT_INIT(&column_name, 0);
   GRN_PTR_INIT(&columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
-  GRN_BOOL_INIT(&is_opened_flags, GRN_OBJ_VECTOR);
 
   if (table->header.type == GRN_TABLE_NO_KEY) {
     grn_obj *id_accessor;
@@ -434,7 +438,6 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
                                  GRN_COLUMN_NAME_ID,
                                  GRN_COLUMN_NAME_ID_LEN);
     GRN_PTR_PUT(ctx, &columns, id_accessor);
-    GRN_BOOL_PUT(ctx, &is_opened_flags, GRN_FALSE);
   } else if (table->header.domain != GRN_ID_NIL) {
     grn_obj *key_accessor;
     key_accessor = grn_obj_column(ctx,
@@ -442,7 +445,6 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
                                   GRN_COLUMN_NAME_KEY,
                                   GRN_COLUMN_NAME_KEY_LEN);
     GRN_PTR_PUT(ctx, &columns, key_accessor);
-    GRN_BOOL_PUT(ctx, &is_opened_flags, GRN_FALSE);
   }
 
   if (grn_obj_get_range(ctx, table) != GRN_ID_NIL) {
@@ -452,7 +454,6 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
                                     GRN_COLUMN_NAME_VALUE,
                                     GRN_COLUMN_NAME_VALUE_LEN);
     GRN_PTR_PUT(ctx, &columns, value_accessor);
-    GRN_BOOL_PUT(ctx, &is_opened_flags, GRN_FALSE);
   }
 
   {
@@ -462,33 +463,30 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
                                    GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
     grn_table_columns(ctx, table, NULL, 0, (grn_obj *)real_columns);
     GRN_HASH_EACH_BEGIN(ctx, real_columns, cursor, id) {
-      grn_bool is_opened = GRN_TRUE;
       void *key;
       grn_id column_id;
       grn_obj *column;
 
+      if (dumper->is_close_opened_object_mode) {
+        grn_ctx_push_temporary_open_space(ctx);
+      }
+
       grn_hash_cursor_get_key(ctx, cursor, &key);
       column_id = *((grn_id *)key);
 
-      if (dumper->is_close_opened_object_mode) {
-        is_opened = grn_ctx_is_opened(ctx, column_id);
-      }
-
       column = grn_ctx_at(ctx, column_id);
-      if (!column) {
-        GRN_PLUGIN_CLEAR_ERROR(ctx);
-        continue;
-      }
-
-      if (grn_obj_is_index_column(ctx, column)) {
-        have_index_column = GRN_TRUE;
-        if (dumper->is_close_opened_object_mode && !is_opened) {
-          grn_obj_close(ctx, column);
+      if (column) {
+        if (grn_obj_is_index_column(ctx, column)) {
+          have_index_column = GRN_TRUE;
+          grn_ctx_pop_temporary_open_space(ctx);
+        } else {
+          have_data_column = GRN_TRUE;
+          GRN_PTR_PUT(ctx, &columns, column);
+          grn_ctx_merge_temporary_open_space(ctx);
         }
       } else {
-        have_data_column = GRN_TRUE;
-        GRN_PTR_PUT(ctx, &columns, column);
-        GRN_BOOL_PUT(ctx, &is_opened_flags, is_opened);
+        GRN_PLUGIN_CLEAR_ERROR(ctx);
+        grn_ctx_pop_temporary_open_space(ctx);
       }
     } GRN_HASH_EACH_END(ctx, cursor);
     grn_hash_close(ctx, real_columns);
@@ -620,27 +618,23 @@ exit :
   GRN_OBJ_FIN(ctx, &column_name);
 
   for (i = 0; i < n_columns; i++) {
-    grn_bool is_opened;
     grn_obj *column;
 
-    is_opened = GRN_BOOL_VALUE_AT(&is_opened_flags, i);
     column = GRN_PTR_VALUE_AT(&columns, i);
     if (column->header.type == GRN_ACCESSOR) {
-      grn_obj_unlink(ctx, column);
-    } else {
-      if (dumper->is_close_opened_object_mode && !is_opened) {
-        grn_obj_close(ctx, column);
-      }
+      grn_obj_close(ctx, column);
     }
   }
   GRN_OBJ_FIN(ctx, &columns);
-  GRN_OBJ_FIN(ctx, &is_opened_flags);
+
+  if (dumper->is_close_opened_object_mode) {
+    grn_ctx_pop_temporary_open_space(ctx);
+  }
 }
 
 static void
 dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 {
-  grn_bool is_opened_domain = GRN_TRUE;
   grn_obj *domain = NULL;
   grn_id range_id;
   grn_obj *range = NULL;
@@ -654,9 +648,6 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
   case GRN_TABLE_DAT_KEY:
-    if (dumper->is_close_opened_object_mode) {
-      is_opened_domain = grn_ctx_is_opened(ctx, table->header.domain);
-    }
     domain = grn_ctx_at(ctx, table->header.domain);
     break;
   default:
@@ -727,12 +718,6 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 
   GRN_TEXT_PUTC(ctx, dumper->output, '\n');
 
-  if (domain) {
-    if (dumper->is_close_opened_object_mode && !is_opened_domain) {
-      grn_obj_close(ctx, domain);
-    }
-  }
-
   dump_columns(ctx, dumper, table, GRN_TRUE, GRN_FALSE, GRN_FALSE);
 }
 
@@ -742,7 +727,6 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
   GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
     void *name;
     int name_size;
-    grn_bool is_opened = GRN_TRUE;
     grn_obj *object;
 
     if (grn_id_is_builtin(ctx, id)) {
@@ -755,7 +739,7 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
     }
 
     if (dumper->is_close_opened_object_mode) {
-      is_opened = grn_ctx_is_opened(ctx, id);
+      grn_ctx_push_temporary_open_space(ctx);
     }
 
     if ((object = grn_ctx_at(ctx, id))) {
@@ -769,15 +753,16 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
       default:
         break;
       }
-      if (dumper->is_close_opened_object_mode && !is_opened) {
-        grn_obj_close(ctx, object);
-      }
     } else {
       /* XXX: this clause is executed when MeCab tokenizer is enabled in
          database but the groonga isn't supported MeCab.
          We should return error mesage about it and error exit status
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
+    }
+
+    if (dumper->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
     }
   } GRN_DB_EACH_END(ctx, cursor);
 
@@ -791,7 +776,6 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
   GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
     void *name;
     int name_size;
-    grn_bool is_opened = GRN_TRUE;
     grn_obj *object;
 
     if (grn_id_is_builtin(ctx, id)) {
@@ -804,7 +788,7 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
     }
 
     if (dumper->is_close_opened_object_mode) {
-      is_opened = grn_ctx_is_opened(ctx, id);
+      grn_ctx_push_temporary_open_space(ctx);
     }
 
     if ((object = grn_ctx_at(ctx, id))) {
@@ -818,15 +802,16 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
       default:
         break;
       }
-      if (dumper->is_close_opened_object_mode && !is_opened) {
-        grn_obj_close(ctx, object);
-      }
     } else {
       /* XXX: this clause is executed when MeCab tokenizer is enabled in
          database but the groonga isn't supported MeCab.
          We should return error mesage about it and error exit status
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
+    }
+
+    if (dumper->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
     }
   } GRN_DB_EACH_END(ctx, cursor);
 }
@@ -896,7 +881,6 @@ dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
   GRN_DB_EACH_BEGIN_BY_ID(ctx, cursor, id) {
     void *name;
     int name_size;
-    grn_bool is_opened = GRN_TRUE;
     grn_obj *table;
 
     if (grn_id_is_builtin(ctx, id)) {
@@ -909,7 +893,7 @@ dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
     }
 
     if (dumper->is_close_opened_object_mode) {
-      is_opened = grn_ctx_is_opened(ctx, id);
+      grn_ctx_push_temporary_open_space(ctx);
     }
 
     table = grn_ctx_at(ctx, id);
@@ -919,14 +903,16 @@ dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
          We should return error mesage about it and error exit status
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
-      continue;
+      goto next_loop;
     }
 
     if (grn_obj_is_table(ctx, table)) {
       dump_records(ctx, dumper, table);
     }
-    if (dumper->is_close_opened_object_mode && !is_opened) {
-      grn_obj_close(ctx, table);
+
+  next_loop :
+    if (dumper->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
     }
   } GRN_DB_EACH_END(ctx, cursor);
 }
@@ -945,7 +931,6 @@ dump_indexes(grn_ctx *ctx, grn_dumper *dumper)
   GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
     void *name;
     int name_size;
-    grn_bool is_opened = GRN_TRUE;
     grn_obj *object;
 
     if (grn_id_is_builtin(ctx, id)) {
@@ -958,7 +943,7 @@ dump_indexes(grn_ctx *ctx, grn_dumper *dumper)
     }
 
     if (dumper->is_close_opened_object_mode) {
-      is_opened = grn_ctx_is_opened(ctx, id);
+      grn_ctx_push_temporary_open_space(ctx);
     }
 
     object = grn_ctx_at(ctx, id);
@@ -968,14 +953,16 @@ dump_indexes(grn_ctx *ctx, grn_dumper *dumper)
          We should return error mesage about it and error exit status
          but it's too difficult for this architecture. :< */
       GRN_PLUGIN_CLEAR_ERROR(ctx);
-      continue;
+      goto next_loop;
     }
 
     if (grn_obj_is_table(ctx, object)) {
       dump_columns(ctx, dumper, object, GRN_FALSE, GRN_FALSE, GRN_TRUE);
     }
-    if (dumper->is_close_opened_object_mode && !is_opened) {
-      grn_obj_close(ctx, object);
+
+  next_loop :
+    if (dumper->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
     }
   } GRN_DB_EACH_END(ctx, cursor);
 }
