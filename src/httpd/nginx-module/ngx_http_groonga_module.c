@@ -935,7 +935,14 @@ ngx_http_groonga_handler_send_response(ngx_http_request_t *r,
 
   /* set the 'Content-type' header */
   if (r->headers_out.content_type.len == 0) {
-    content_type = grn_ctx_get_mime_type(context);
+    grn_obj *foot = &(data->typed.foot);
+    if (grn_ctx_get_output_type(context) == GRN_CONTENT_JSON &&
+        GRN_TEXT_LEN(foot) > 0 &&
+        GRN_TEXT_VALUE(foot)[GRN_TEXT_LEN(foot) - 1] == ';') {
+      content_type = "application/javascript";
+    } else {
+      content_type = grn_ctx_get_mime_type(context);
+    }
     ngx_http_groonga_handler_set_content_type(r, content_type);
   }
 
