@@ -134,6 +134,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_table_remove/basic_usage_list_shards_after.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_table_remove/basic_usage_list_shards_before.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_table_remove/basic_usage_remove_all.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_table_remove/remove_broken_tables_create.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_table_remove/remove_broken_tables_index_column_exist.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_table_remove/remove_broken_tables_remove.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_table_remove/remove_broken_tables_remove_force.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_table_remove/remove_parts_create_shards.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_table_remove/remove_parts_dump.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_table_remove/remove_parts_remove.log \
@@ -988,6 +992,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_table_remove/basic_usage_list_shards_after.log \
 	source/example/reference/commands/logical_table_remove/basic_usage_list_shards_before.log \
 	source/example/reference/commands/logical_table_remove/basic_usage_remove_all.log \
+	source/example/reference/commands/logical_table_remove/remove_broken_tables_create.log \
+	source/example/reference/commands/logical_table_remove/remove_broken_tables_index_column_exist.log \
+	source/example/reference/commands/logical_table_remove/remove_broken_tables_remove.log \
+	source/example/reference/commands/logical_table_remove/remove_broken_tables_remove_force.log \
 	source/example/reference/commands/logical_table_remove/remove_parts_create_shards.log \
 	source/example/reference/commands/logical_table_remove/remove_parts_dump.log \
 	source/example/reference/commands/logical_table_remove/remove_parts_remove.log \
