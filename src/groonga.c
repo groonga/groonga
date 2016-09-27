@@ -1032,8 +1032,11 @@ typedef struct {
 } ht_context;
 
 static void
-h_output_set_header(grn_ctx *ctx, grn_obj *header,
-                    grn_rc rc, long long int content_length)
+h_output_set_header(grn_ctx *ctx,
+                    grn_obj *header,
+                    grn_rc rc,
+                    long long int content_length,
+                    grn_obj *foot)
 {
   switch (rc) {
   case GRN_SUCCESS :
@@ -1058,7 +1061,14 @@ h_output_set_header(grn_ctx *ctx, grn_obj *header,
                GRN_TEXT_VALUE(&http_response_server_line),
                GRN_TEXT_LEN(&http_response_server_line));
   GRN_TEXT_PUTS(ctx, header, "Content-Type: ");
-  GRN_TEXT_PUTS(ctx, header, grn_ctx_get_mime_type(ctx));
+  if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_JSON &&
+      foot &&
+      GRN_TEXT_LEN(foot) > 0 &&
+      GRN_TEXT_VALUE(foot)[GRN_TEXT_LEN(foot) - 1] == ';') {
+    GRN_TEXT_PUTS(ctx, header, "application/javascript");
+  } else {
+    GRN_TEXT_PUTS(ctx, header, grn_ctx_get_mime_type(ctx));
+  }
   GRN_TEXT_PUTS(ctx, header, "\r\n");
   if (content_length >= 0) {
     GRN_TEXT_PUTS(ctx, header, "Connection: close\r\n");
@@ -1185,10 +1195,10 @@ h_output_raw(grn_ctx *ctx, int flags, ht_context *hc)
 
   if (!hc->in_body) {
     if (is_last_message) {
-      h_output_set_header(ctx, &header_, expr_rc, GRN_TEXT_LEN(&body_));
+      h_output_set_header(ctx, &header_, expr_rc, GRN_TEXT_LEN(&body_), NULL);
       hc->is_chunked = GRN_FALSE;
     } else {
-      h_output_set_header(ctx, &header_, expr_rc, -1);
+      h_output_set_header(ctx, &header_, expr_rc, -1, NULL);
       hc->is_chunked = GRN_TRUE;
     }
     header = &header_;
@@ -1258,7 +1268,8 @@ h_output_typed(grn_ctx *ctx, int flags, ht_context *hc)
   h_output_set_header(ctx, &header, expr_rc,
                       GRN_TEXT_LEN(&head) +
                       GRN_TEXT_LEN(&body) +
-                      GRN_TEXT_LEN(&foot));
+                      GRN_TEXT_LEN(&foot),
+                      &foot);
   if (should_return_body) {
     h_output_send(ctx, fd, &header, &head, &body, &foot);
   } else {
