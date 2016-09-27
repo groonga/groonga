@@ -291,6 +291,45 @@ namespace :build do
     end
   end
 
+  desc "Build PCRE and install it into #{dist_dir}."
+  task :pcre => :env do
+    tmp_dir = base_tmp_dir + "pcre"
+    rm_rf(tmp_dir)
+    mkdir_p(tmp_dir)
+    pcre_version = "8.39"
+    pcre_base = "pcre-#{pcre_version}"
+    pcre_tar_gz_url_base =
+      "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre"
+    pcre_tar_gz_url =
+      "#{pcre_tar_gz_url_base}/pcre-#{pcre_version}.tar.gz"
+    pcre_tar_gz = download(pcre_tar_gz_url, download_dir)
+    Dir.chdir(tmp_dir) do
+      sh("tar", "xzf", pcre_tar_gz.to_s) or exit(false)
+    end
+    Dir.chdir(tmp_dir + pcre_base) do
+      parameters = [
+        "CC=#{host}-gcc",
+        "EXT=.exe",
+        "SHARED_EXT=dll",
+        "PREFIX=#{binary_dir}",
+      ]
+      parameters << "CFLAGS=-O0 -g3" if debug_build_p
+      sh("./configure",
+         "--prefix=#{binary_dir}",
+         "--host=#{host}",
+         "--enable-utf8",
+         "--enable-unicode-properties") or exit(false)
+      sh("make",
+         *parameters,
+         "install") or exit(false)
+
+      pcre_license_dir = license_dir + "pcre"
+      mkdir_p(pcre_license_dir)
+      files = ["LICENCE"]
+      cp(files, pcre_license_dir)
+    end
+  end
+
   desc "Build Groonga and install it into #{dist_dir}/."
   task :groonga => :env do
     tmp_dir = base_tmp_dir + "groonga"
@@ -424,6 +463,7 @@ build_dependencies = [
   "build:msgpack",
   "build:mecab",
   "build:mecab_dict",
+  "build:pcre",
   "build:groonga",
   "build:groonga_admin",
   "build:post",
