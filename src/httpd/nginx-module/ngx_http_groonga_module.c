@@ -1330,7 +1330,6 @@ ngx_http_groonga_each_loc_conf(ngx_http_conf_ctx_t *http_conf,
                                            callback,
                                            user_data);
 
-#ifdef NGX_GRN_SUPPORT_PCRE
     if (location_conf->regex_locations) {
       ngx_uint_t j;
       for (j = 0; location_conf->regex_locations[j]; j++) {
@@ -1343,7 +1342,6 @@ ngx_http_groonga_each_loc_conf(ngx_http_conf_ctx_t *http_conf,
         }
       }
     }
-#endif
   }
 }
 

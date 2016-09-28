@@ -10,9 +10,6 @@ if [ "$GROONGA_HTTPD_IN_TREE" = yes ]; then
   groonga_cflags="-I${GROONGA_HTTPD_IN_TREE_INCLUDE_PATH}"
   groonga_cflags="${groonga_cflags} -DNGX_HTTP_GROONGA_LOG_PATH=\\\"\"${GROONGA_HTTPD_GROONGA_LOG_PATH}\"\\\""
   groonga_cflags="${groonga_cflags} -DNGX_HTTP_GROONGA_QUERY_LOG_PATH=\\\"\"${GROONGA_HTTPD_GROONGA_QUERY_LOG_PATH}\"\\\""
-  if [ "${GROONGA_HTTPD_WITH_PCRE}" = "yes" ]; then
-    groonga_cflags="${groonga_cflags} -DNGX_GRN_SUPPORT_PCRE"
-  fi
   groonga_libs="-L${GROONGA_HTTPD_IN_TREE_LINK_PATH}"
   if [ "${GROONGA_HTTPD_WITH_ONIGMO}" = "yes" ]; then
   groonga_libs="$groonga_libs -L${GROONGA_HTTPD_ONIGMO_IN_TREE_LINK_PATH}"
