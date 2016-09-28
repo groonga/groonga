@@ -7,6 +7,69 @@
 News
 ====
 
+.. _release-6-0-9:
+
+Release 6.0.9 - 2016-09-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/logical_table_remove`] Supported to remove broken
+  tables and columns. It supports ``force`` parameter.
+
+* [:doc:`/reference/commands/select`] Supported match_columns, query,
+  query_flags and query_expander for slices.
+
+* [http][httpd] Supported incomplete POST-ed JSON. Only passed JSON is
+  processed.
+
+* [httpd] Changed to stop not to create the default log file when
+  custom file is specified.
+
+* Changed to reduce the default lock timeout to 15min from 2.7h.
+
+* [:doc:`/reference/executables/groonga-httpd`] support "~" modifier
+  in location such as "location ~ /d/...".
+
+* [mruby] Updated to the latest mruby to fix build error with Visutal
+  Studio.
+
+* [httpd] Updated bundled nginx to 1.11.4.
+  
+Fixes
+^^^^^
+
+* Fixed build error on OpenBSD. OpenBSD doesn't provide
+  ``TCP_NODELAY``. [MariaDB JIRA: fix MDEV-7209][Reported by Brad
+  Smith]
+
+* Fixed a missing deleted check for indexes. It causes missing search
+  results even though it should be matched. Groonga 6.0.3 or later
+  version are affected. [groonga-dev, 04107] [Reported by Kazuhiko]
+
+* [doc] Fixed a missing entry in Groonga 6.0.2 news that sequential
+  search is also executed as a fallback for :doc:`/reference/functions/geo_in_circle` [Reported by Gurunavi,
+  Inc]
+
+* [:doc:`/reference/commands/table_create`] Fixed a bug that
+  ``table_create`` command accepts no key type for ``TABLE_PAT_KEY``,
+  ``TABLE_HASH_KEY`` and ``TABLE_DAT_KEY`` tables. It creates a
+  invalid table. [GitHub#599]
+
+* [admin] Fixed a bug that it can not create a new record.
+
+* Fixed a bug that select command with a wrong filter causes
+  crash. [GitHub#601]
+
+
+Thanks
+^^^^^^
+
+* Brad Smith
+* Kazuhiko
+* Gurunavi, Inc
+
 .. _release-6-0-8:
 
 Release 6.0.8 - 2016-08-29
