@@ -50,7 +50,7 @@ Fixes
 
 * [doc] Fixed a missing entry in Groonga 6.0.2 news that sequential
   search is also executed as a fallback for :doc:`/reference/functions/geo_in_circle` [Reported by Gurunavi,
-  Inc]
+  Inc.]
 
 * [:doc:`/reference/commands/table_create`] Fixed a bug that
   ``table_create`` command accepts no key type for ``TABLE_PAT_KEY``,
@@ -68,7 +68,7 @@ Thanks
 
 * Brad Smith
 * Kazuhiko
-* Gurunavi, Inc
+* Gurunavi, Inc.
 
 .. _release-6-0-8:
 
