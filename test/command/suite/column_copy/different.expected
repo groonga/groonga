@@ -16,18 +16,18 @@ column_create LargeNumbers id_text COLUMN_SCALAR Text
 column_copy SmallNumbers id_uint8 LargeNumbers id_text
 [[0,0.0,0.0],true]
 dump --dump_schema no
-load --table SmallNumbers
-[
-["_key","id_uint8"],
-[10,11],
-[20,22],
-[30,33]
-]
-
 load --table LargeNumbers
 [
 ["_key","id_text"],
 [10,"11"],
 [20,"22"],
 [30,"33"]
+]
+
+load --table SmallNumbers
+[
+["_key","id_uint8"],
+[10,11],
+[20,22],
+[30,33]
 ]

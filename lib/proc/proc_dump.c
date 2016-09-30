@@ -886,7 +886,7 @@ dump_selected_tables_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *tables)
 static void
 dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
 {
-  GRN_DB_EACH_BEGIN_BY_ID(ctx, cursor, id) {
+  GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
     void *name;
     int name_size;
     grn_obj *table;

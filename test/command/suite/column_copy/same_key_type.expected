@@ -16,18 +16,18 @@ column_create Friends age_uint8 COLUMN_SCALAR UInt8
 column_copy Users age_text Friends age_uint8
 [[0,0.0,0.0],true]
 dump --dump_schema no
-load --table Users
-[
-["_key","age_text"],
-["alice","12"],
-["bob","29"],
-["charlie","9"]
-]
-
 load --table Friends
 [
 ["_key","age_uint8"],
 ["alice",12],
 ["bob",29],
 ["charlie",9]
+]
+
+load --table Users
+[
+["_key","age_text"],
+["alice","12"],
+["bob","29"],
+["charlie","9"]
 ]

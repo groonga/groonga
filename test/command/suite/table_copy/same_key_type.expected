@@ -12,7 +12,7 @@ table_create Friends TABLE_PAT_KEY ShortText
 table_copy Users Friends
 [[0,0.0,0.0],true]
 dump --dump_schema no
-load --table Users
+load --table Friends
 [
 ["_key"],
 ["alice"],
@@ -20,7 +20,7 @@ load --table Users
 ["charlie"]
 ]
 
-load --table Friends
+load --table Users
 [
 ["_key"],
 ["alice"],
