@@ -48,7 +48,7 @@ build_script:
       -DGRN_WITH_MRUBY=yes
       -DGRN_WITH_BUNDLED_MECAB=yes
       -DGRN_WITH_BUNDLED_MESSAGE_PACK=yes
-      # -DGRN_WITH_BUNDLED_LZ4=yes
+      -DGRN_WITH_BUNDLED_LZ4=yes
   - cmake --build . --config Debug
   - cmake --build . --config Debug --target Install
 
