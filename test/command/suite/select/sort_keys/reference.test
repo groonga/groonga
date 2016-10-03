@@ -1,0 +1,13 @@
+table_create Numbers TABLE_HASH_KEY Int32
+
+table_create Values TABLE_NO_KEY
+column_create Values number COLUMN_SCALAR Numbers
+
+load --table Values
+[
+{"number": 127},
+{"number": 256},
+{"number": -255}
+]
+
+select Values --sort_keys number --output_columns number._id,number

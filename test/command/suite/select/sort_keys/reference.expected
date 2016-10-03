@@ -1,0 +1,50 @@
+table_create Numbers TABLE_HASH_KEY Int32
+[[0,0.0,0.0],true]
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values number COLUMN_SCALAR Numbers
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"number": 127},
+{"number": 256},
+{"number": -255}
+]
+[[0,0.0,0.0],3]
+select Values --sort_keys number --output_columns number._id,number
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "number._id",
+          "UInt32"
+        ],
+        [
+          "number",
+          "Numbers"
+        ]
+      ],
+      [
+        1,
+        127
+      ],
+      [
+        2,
+        256
+      ],
+      [
+        3,
+        -255
+      ]
+    ]
+  ]
+]
