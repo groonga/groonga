@@ -24,10 +24,11 @@ notifications:
 
 init:
   - call "%VC_INIT%" %VC_MACHINE%
+  - set PATH=C:\Ruby22\bin;%PATH%
+  - set PATH=C:\msys64\usr\bin;%PATH%
 #  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
-  - set PATH=C:\Ruby22\bin;%PATH%
   - tzutil /s "Tokyo Standard Time"
   # - choco install -y imdisk-toolkit
   # - mkdir tmp
