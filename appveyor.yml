@@ -4,9 +4,17 @@ clone_depth: 10
 environment:
   matrix:
     - CMAKE_GENERATOR_NAME: "Visual Studio 12 2013"
+      VC_INIT: C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat
+      VC_MACHINE: x86
     - CMAKE_GENERATOR_NAME: "Visual Studio 12 2013 Win64"
+      VC_INIT: C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat
+      VC_MACHINE: amd64
     - CMAKE_GENERATOR_NAME: "Visual Studio 14 2015"
+      VC_INIT: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat
+      VC_MACHINE: x86
     - CMAKE_GENERATOR_NAME: "Visual Studio 14 2015 Win64"
+      VC_INIT: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat
+      VC_MACHINE: amd64
 
 notifications:
   - provider: Email
@@ -14,8 +22,9 @@ notifications:
       - groonga-commit@lists.osdn.me
     on_build_status_changed: true
 
-# init:
-#   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+init:
+  - call "%VC_INIT" "%VC_MACHINE%"
+#  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
   - set PATH=C:\Ruby22\bin;%PATH%
