@@ -63,7 +63,7 @@ Here is a summary of above query.
      - The number of group records
      - Group records means following records
    * - .org
-     - 3 
+     - 3
      - * http://example.org/
        * http://example.org/aba
        * http://example.org/gat
