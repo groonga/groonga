@@ -4,17 +4,17 @@ clone_depth: 10
 environment:
   matrix:
     - CMAKE_GENERATOR_NAME: "Visual Studio 12 2013"
-      VC_INIT: C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat
-      VC_MACHINE: x86
+      VC_INIT: "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat"
+      VC_MACHINE: "x86"
     - CMAKE_GENERATOR_NAME: "Visual Studio 12 2013 Win64"
-      VC_INIT: C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat
-      VC_MACHINE: amd64
+      VC_INIT: "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat"
+      VC_MACHINE: "amd64"
     - CMAKE_GENERATOR_NAME: "Visual Studio 14 2015"
-      VC_INIT: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat
-      VC_MACHINE: x86
+      VC_INIT: "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
+      VC_MACHINE: "x86"
     - CMAKE_GENERATOR_NAME: "Visual Studio 14 2015 Win64"
-      VC_INIT: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat
-      VC_MACHINE: amd64
+      VC_INIT: "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
+      VC_MACHINE: "amd64"
 
 notifications:
   - provider: Email
