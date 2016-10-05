@@ -1,8 +1,8 @@
 table_create Users TABLE_NO_KEY
 column_create Users name COLUMN_SCALAR ShortText
 
-table_create Tags TABLE_PAT_KEY ShortText
-column_create Tags tag COLUMN_INDEX Users name
+table_create Names TABLE_PAT_KEY ShortText
+column_create Names user COLUMN_INDEX Users name
 
 load --table Users
 [
@@ -11,6 +11,6 @@ load --table Users
 {"name": "Ken"}
 ]
 
-select Tags --filter 'fuzzy_search(_key, "Tom")' \
+select Names --filter 'fuzzy_search(_key, "Tom")' \
   --output_columns '_key, _score' \
   --match_escalation_threshold -1

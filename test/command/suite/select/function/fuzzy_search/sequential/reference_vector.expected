@@ -1,8 +1,8 @@
-table_create Tags TABLE_PAT_KEY ShortText
+table_create Names TABLE_PAT_KEY ShortText
 [[0,0.0,0.0],true]
 table_create Users TABLE_NO_KEY
 [[0,0.0,0.0],true]
-column_create Users name COLUMN_VECTOR Tags
+column_create Users name COLUMN_VECTOR Names
 [[0,0.0,0.0],true]
 load --table Users
 [
@@ -26,7 +26,7 @@ select Users --filter 'fuzzy_search(name, "Tom", {"max_distance": 2})'   --outpu
       [
         [
           "name",
-          "Tags"
+          "Names"
         ],
         [
           "_score",

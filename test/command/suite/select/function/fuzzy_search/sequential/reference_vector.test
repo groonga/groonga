@@ -1,7 +1,7 @@
-table_create Tags TABLE_PAT_KEY ShortText
+table_create Names TABLE_PAT_KEY ShortText
 
 table_create Users TABLE_NO_KEY
-column_create Users name COLUMN_VECTOR Tags
+column_create Users name COLUMN_VECTOR Names
 
 load --table Users
 [

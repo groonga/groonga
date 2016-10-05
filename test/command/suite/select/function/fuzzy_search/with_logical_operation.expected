@@ -2,9 +2,9 @@ table_create Users TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Users name COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
-table_create Tags TABLE_PAT_KEY ShortText
+table_create Names TABLE_PAT_KEY ShortText
 [[0,0.0,0.0],true]
-column_create Tags tag COLUMN_INDEX Users name
+column_create Names user COLUMN_INDEX Users name
 [[0,0.0,0.0],true]
 load --table Users
 [
@@ -14,7 +14,7 @@ load --table Users
 {"name": "Pom"}
 ]
 [[0,0.0,0.0],4]
-select Tags --filter '_key @^ "T" && fuzzy_search(_key, "To", {"max_distance": 2})'   --output_columns '_key, _score'
+select Names --filter '_key @^ "T" && fuzzy_search(_key, "To", {"max_distance": 2})'   --output_columns '_key, _score'
 [
   [
     0,
