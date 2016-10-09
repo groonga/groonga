@@ -39,14 +39,14 @@ build_script:
   - cd vendor
   - ruby download_mecab.rb
   - ruby download_message_pack.rb
-  - ruby download_lz4.rb
+#  - ruby download_lz4.rb
   - cd ..
   - cmake . -G "%CMAKE_GENERATOR_NAME%"
       -DCMAKE_INSTALL_PREFIX=c:\groonga
       -DGRN_WITH_MRUBY=yes
       -DGRN_WITH_BUNDLED_MECAB=yes
       -DGRN_WITH_BUNDLED_MESSAGE_PACK=yes
-      -DGRN_WITH_BUNDLED_LZ4=yes
+#      -DGRN_WITH_BUNDLED_LZ4=yes
   - cmake --build . --config Debug
   - cmake --build . --config Debug --target Install
 
