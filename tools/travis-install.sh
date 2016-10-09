@@ -29,6 +29,7 @@ case "${TRAVIS_OS_NAME}" in
          mecab-ipadic \
          pcre \
          cutter
+    brew link openssl
     ;;
 esac
 
