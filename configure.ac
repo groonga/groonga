@@ -1619,7 +1619,7 @@ AC_ARG_WITH(ssl,
   [with_ssl="auto"])
 if test "x$with_ssl" != "xno"; then
   m4_ifdef([PKG_CHECK_MODULES], [
-    PKG_CHECK_MODULES([SSL], [libssl],
+    PKG_CHECK_MODULES([SSL], [libssl >= 1.0.1e],
       [_PKG_CONFIG(SSL_LIBS_ONLY_L, [libs-only-L], [libssl])
        SSL_LIBS_ONLY_L="$pkg_cv_SSL_LIBS_ONLY_L"
        GRN_WITH_SSL=yes],
