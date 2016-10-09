@@ -23,9 +23,9 @@ notifications:
     on_build_status_changed: true
 
 init:
-  - call "%VC_INIT%" %VC_MACHINE%
   - set PATH=C:\Ruby22\bin;%PATH%
   - set PATH=C:\msys64\usr\bin;%PATH%
+  - call "%VC_INIT%" %VC_MACHINE%
 #  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
