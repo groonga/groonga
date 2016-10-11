@@ -14,6 +14,8 @@ Summary
 ``table_create`` creates a new table in the current database. You need
 to create one or more tables to store and search data.
 
+See :doc:`/reference/tables` for table details.
+
 Syntax
 ------
 
@@ -32,8 +34,15 @@ The required parameter is only ``name`` and otehrs are optional::
 Usage
 -----
 
-``table_create`` command creates a new persistent table. See
-:doc:`/reference/tables` for table details.
+This section describes about the followings:
+
+  * :ref:`table-create-data-store`
+  * :ref:`table-create-large-data-store`
+  * :ref:`table-create-lexicon`
+  * :ref:`table-create-tag-index-table`
+  * :ref:`table-create-range-index-table`
+
+.. _table-create-data-store:
 
 Create data store table
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -60,6 +69,8 @@ If your records are searched by key or referenced by one or more
 columns, ``TABLE_NO_KEY`` type isn't suitable. Lexicon for fulltext
 search is the case.
 
+.. _table-create-large-data-store:
+
 Create large data store table
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -82,17 +93,18 @@ The ``table_create`` command creates a table that is named ``Paths``
 and is ``TABLE_HASH_KEY`` type. The ``Paths`` table can store many
 large keys.
 
-Create lexicon table
-^^^^^^^^^^^^^^^^^^^^
+.. _table-create-lexicon:
 
-You can use all table types except ``TABLE_NO_KEY`` for lexicon table.
-Lexicon table needs key support but ``TABLE_NO_KEY`` doesn't support
-key.
+Create lexicon
+^^^^^^^^^^^^^^
+
+You can use all table types except ``TABLE_NO_KEY`` for lexicon.
+Lexicon needs key support but ``TABLE_NO_KEY`` doesn't support key.
 
 Here is an example to create ``TABLE_PAT_KEY`` table:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/table_create/lexicon_table_pat_key.log
+.. include:: ../../example/reference/commands/table_create/lexicon_pat_key.log
 .. table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 
 The ``table_create`` command creates the following table:
@@ -104,14 +116,14 @@ The ``table_create`` command creates the following table:
   normalized text.
 * The table uses ``NormalizerAuto`` normalizer to normalize a text.
 
-``TABLE_PAT_KEY`` is suitable table type for lexicon table. Lexicon
-table is used for fulltext search.
+``TABLE_PAT_KEY`` is suitable table type for lexicon. Lexicon is used
+for fulltext search.
 
 In fulltext search, predictive search may be used for fuzzy
 search. Predictive search is supported by ``TABLE_PAT_KEY`` and
 ``TABLE_DAT_KEY``.
 
-Lexicon table has many keys because a fulltext target text has many
+Lexicon has many keys because a fulltext target text has many
 tokens. Table that has many keys should consider table size because
 large table requires large memory. Requiring large memory causes disk
 I/O. It blocks fast search. So table size is important for a table
@@ -119,7 +131,9 @@ that has many keys. ``TABLE_PAT_KEY`` is less table size than
 ``TABLE_DAT_KEY``.
 
 Because of the above reasons, ``TABLE_PAT_KEY`` is suitable table type
-for lexicon table.
+for lexicon.
+
+.. _table-create-tag-index-table:
 
 Create tag index table
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -147,6 +161,8 @@ If you also need predictive tag search feature (for example, searching
 ``"groonga"`` by ``"gr"`` keyword.), ``TABLE_DAT_KEY`` is suitable.
 ``TABLE_DAT_KEY`` is large table size but it is not important because
 the number of tags will not be large.
+
+.. _table-create-range-index-table:
 
 Create range index table
 ^^^^^^^^^^^^^^^^^^^^^^^^
