@@ -2,40 +2,230 @@
 
 .. highlightlang:: none
 
+.. groonga-command
+.. database: commands_column_create
+
 ``column_create``
 =================
 
 Summary
 -------
 
-column_create - カラムの追加
+``column_create`` creates a new column in a table.
 
-Groonga組込コマンドの一つであるcolumn_createについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+You need to create one or more columns to store multiple data in one
+record.
 
-column_createは、使用しているデータベースのテーブルに対してカラムを追加します。
+Groonga provides an index as a column. It's different from other
+systems. An index is just an index in other systems. Implementing an
+index as a column provides flexibility. For example, you can add
+metadata to each token.
 
+See :doc:`/reference/column` for column details.
 
 Syntax
 ------
-::
 
- column_create table name flags type [source]
+This command takes many parameters::
+
+  column_create table
+                name
+                flags
+                type
+                [source=null]
 
 Usage
 -----
 
-テーブルEntryに、ShortText型の値を格納するカラム、bodyを作成します。::
+This section describes about the followings:
 
-  column_create Entry body --type ShortText
-  [true]
+  * :ref:`column-create-scalar`
+  * :ref:`column-create-vector`
+  * :ref:`column-create-reference`
+  * :ref:`column-create-index`
+  * :ref:`column-create-index-small`
+  * :ref:`column-create-index-medium`
 
-テーブルTermに、Entryテーブルのbodyカラムの値を対象とする完全転置インデックス型カラム、entry_bodyを作成します。::
+Here is the ``People`` table definition. The ``People`` table is used
+in examples:
 
-  column_create Term entry_body COLUMN_INDEX|WITH_POSITION Entry body
-  [true]
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_table.log
+.. table_create \
+..   --name People \
+..   --flags TABLE_HASH_KEY \
+..   --key_type ShortText
+
+.. _column-create-scalar:
+
+Create a scalar column
+^^^^^^^^^^^^^^^^^^^^^^
+
+Groonga provides scalar column to store one value. For example, scalar
+column should be used for storing age into a person record. Because a
+person record must have only one age.
+
+If you want to store multiple values into a record, scalar column
+isn't suitable. Use :ref:`column-create-vector` instead.
+
+You must specify ``COLUMN_SCALAR`` to ``flags`` parameter.
+
+Here is an example to create the ``age`` column to the ``People``
+table. ``age`` column is a scalar column. It can store one ``UInt8``
+(``0-255``) value as its value:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_scalar_create.log
+.. column_create \
+..   --table People \
+..   --name age \
+..   --flags COLUMN_SCALAR \
+..   --type UInt8
+
+You can store one value (``7``) by the following :doc:`load` command:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_scalar_load.log
+.. load --table People
+.. [
+.. {"_key": "alice", "age": 7}
+.. ]
+
+You can confirm the stored one value (``7``) by the following
+:doc:`select` command:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_scalar_select.log
+.. select --table People
+
+.. _column-create-vector:
+
+Create a vector column
+^^^^^^^^^^^^^^^^^^^^^^
+
+Groonga provides vector column to store multiple values. For example,
+vector column may be used for storing roles into a person
+record. Because a person record may have multiple roles.
+
+If you want to store only one value into a record, vector column isn't
+suitable. Use :ref:`column-create-scalar` instead.
+
+You must specify ``COLUMN_VECTOR`` to ``flags`` parameter.
+
+Here is an example to create the ``roles`` column to the ``People``
+table. ``roles`` column is a vector column. It can store zero or more
+``ShortText`` values as its value:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_vector_create.log
+.. column_create \
+..   --table People \
+..   --name roles \
+..   --flags COLUMN_VECTOR \
+..   --type ShortText
+
+You can store multiple values (``["adventurer", "younger-sister"]``)
+by the following :doc:`load` command:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_scalar_load.log
+.. load --table People
+.. [
+.. {"_key": "alice", "roles": ["adventurer", "younger-sister"]}
+.. ]
+
+You can confirm the stored multiple values (``["adventurer",
+"younger-sister"]``) by the following :doc:`select` command:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_vector_select.log
+.. select --table People
+
+.. _column-create-reference:
+
+Create a column that refers a table's record
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Both scalar column and vector column can store reference to record of
+an existing table as column value. It's useful to store relationship
+between records.
+
+For example, using a column that refers is better for storing a
+character into a book record. Because one person may be appeared in
+some books.
+
+You must specify table name to ``type`` parameter.
+
+Here is an example to create the ``character`` column to the ``Books``
+table. ``character`` column refers ``People`` table. It can store
+one ``People`` table's record.
+
+Here is the ``Books`` table definition:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_reference_create_table.log
+.. table_create \
+..   --name Books \
+..   --flags TABLE_HASH_KEY \
+..   --key_type ShortText
+
+Here is the ``character`` column definition in the ``Books``
+table. ``--type People`` is important:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_reference_create_column.log
+.. column_create \
+..   --table Books \
+..   --name character \
+..   --flags COLUMN_SCALAR \
+..   --type People
+
+You can store one reference (``"alice"``) by the following :doc:`load`
+command. You can use key value (``People._key`` value) for referring a
+record:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_reference_load.log
+.. load --table Books
+.. [
+.. {"_key": "Alice's Adventure in Wonderland", "character": "alice"}
+.. ]
+
+You can confirm the stored reference (``"alice"`` record) by the
+following :doc:`select` command. It retrieves ``age`` column and
+``roles`` column values:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_reference_select.log
+.. select \
+..  --table Books \
+..  --output_columns _key,character._key,character.age,character.roles
+
+.. _column-create-index:
+
+Create an index column
+^^^^^^^^^^^^^^^^^^^^^^
+
+TODO
+
+.. _column-create-index-small:
+
+Create a small index column
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+TODO
+
+.. _column-create-index-medium:
+
+Create a medium index column
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+TODO
 
 Parameters
 ----------
+
+TODO
 
 ``table``
 
