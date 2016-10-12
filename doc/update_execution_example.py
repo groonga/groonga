@@ -17,31 +17,50 @@ shutil.rmtree(DB_DIRECTORY, ignore_errors=True)
 os.makedirs(DB_DIRECTORY)
 
 groonga_process = None
+current_log = None
+output_log = False
 def close_groonga():
   global groonga_process
+  global current_log
+  global output_log
   if groonga_process:
     groonga_process.stdin.close()
     groonga_process.stdout.close()
     groonga_process = None
     print '###<<< database: close'
+  if current_log:
+    current_log.close()
+    current_log = None
+  output_log = False
 
 current_db_path = None
+current_log_path = None
 def reconnect(name):
   global groonga_process
+  global current_log
   global current_db_path
+  global current_log_path
   close_groonga()
   current_db_path = os.path.join(DB_DIRECTORY, name)
+  current_log_path = os.path.join(DB_DIRECTORY, name + ".log")
   if os.path.exists(current_db_path):
-    groonga_process = subprocess.Popen(["groonga", current_db_path],
+    groonga_process = subprocess.Popen(["groonga",
+                                        "--log-path", current_log_path,
+                                        current_db_path],
                                        stdin=subprocess.PIPE,
                                        stdout=subprocess.PIPE)
   else:
-    groonga_process = subprocess.Popen(["groonga", "-n", current_db_path],
+    groonga_process = subprocess.Popen(["groonga",
+                                        "--log-path", current_log_path,
+                                        "-n",
+                                        current_db_path],
                                        stdin=subprocess.PIPE,
                                        stdout=subprocess.PIPE)
   groonga_process.stdin.write("status\n")
   groonga_process.stdin.flush()
   groonga_process.stdout.readline()
+  current_log = open(current_log_path)
+  current_log.read()
   print '###>>> database: open <%s>' % current_db_path
 
 def expand_command_line(command_line):
@@ -136,6 +155,17 @@ def execmd(command, fout):
             first_lines_re = re.compile("^", re.M)
             fout.write(first_lines_re.sub(prefix, formatted_output.strip()))
             fout.write("\n")
+          if current_log:
+            log = current_log.read().strip()
+            if len(log) > 0:
+              prefix = "  # log: "
+              first_lines_re = re.compile("^", re.M)
+              formatted_log = first_lines_re.sub(prefix, log)
+              stdout.write(first_lines_re.sub(prefix, log))
+              stdout.write("\n")
+              if output_log:
+                fout.write(formatted_log)
+                fout.write("\n")
           output_buffer = ""
     else:
       stdout.flush()
@@ -172,6 +202,9 @@ def readfile(fname, outflag):
         if cmd.startswith('.. database:'):
           database_name = cmd[cmd.index(":")+1:].strip()
           reconnect(database_name)
+        elif cmd.startswith('.. log:'):
+          log_value = cmd[cmd.index(":")+1:].strip()
+          output_log = log_value == "true"
         elif cmd.startswith('.. include:: '):
           a = rootdir + cmd[13:]
           dir_name = os.path.dirname(a)
