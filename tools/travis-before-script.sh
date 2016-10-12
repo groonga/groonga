@@ -5,6 +5,10 @@ set -u
 
 : ${ENABLE_MRUBY:=no}
 
+if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+  export PKG_CONFIG_PATH="$(brew --prefix openssl)/lib/pkgconfig"
+fi
+
 git submodule update --init --depth 1
 
 prefix=/tmp/local
