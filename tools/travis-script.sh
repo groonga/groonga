@@ -32,6 +32,9 @@ if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
   newfs_hfs ${memory_fs_device_path}
   mkdir -p tmp
   mount -t hfs ${memory_fs_device_path} tmp
+
+  export PKG_CONFIG_PATH="$(brew --prefix openssl)/lib/pkgconfig"
+
   command_test_options="${command_test_options} --n-workers=2"
 else
   command_test_options="${command_test_options} --n-workers=4"
