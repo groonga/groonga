@@ -6263,7 +6263,7 @@ grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
     int limit = -1;
     int flags = GRN_CURSOR_ASCENDING;
 
-    grn_table_select_index_report(ctx, "[range]", index_table);
+    grn_table_select_index_report(ctx, "[range]", index);
 
     switch (si->op) {
     case GRN_OP_LESS :
