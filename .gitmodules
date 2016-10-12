@@ -7,3 +7,6 @@
 [submodule "test/mruby/rroonga"]
 	path = test/mruby/rroonga
 	url = https://github.com/ranguba/rroonga.git
+[submodule "vendor/ngx_mruby-source"]
+	path = vendor/ngx_mruby-source
+	url = https://github.com/matsumoto-r/ngx_mruby.git
