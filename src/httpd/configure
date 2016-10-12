@@ -88,12 +88,13 @@ fi
 
 nginx_mruby_directory="${top_builddir}/vendor/ngx_mruby-source"
 mruby_directory="${top_srcdir}/vendor/mruby-source"
+mruby_build_directory="${top_srcdir}/vendor/mruby-build"
 if [ "${GROONGA_HTTPD_WITH_MRUBY}" = "yes" ]; then
+  # NOTE: out-of-tree build support is required ngx_mruby PR#222 
   cd "${nginx_mruby_directory}"
-  ./configure --with-ngx-src-root=${nginx_directory} --with-mruby-root=${mruby_directory}
-  make build_mruby_with_fpic
-  make generate_gems_config_dynamic
-  configure_args="${configure_args} --add-dynamic-module=${nginx_mruby_directory}"
+  ./configure --with-ngx-src-root=${nginx_directory} --with-mruby-root=${mruby_directory} --with-mruby-build-root=${mruby_build_directory}
+  make generate_gems_config
+  configure_args="${configure_args} --add-module=${nginx_mruby_directory}"
 fi
 
 cd "${nginx_directory_in_build_directory}"
