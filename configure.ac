@@ -1558,9 +1558,11 @@ if test "$enable_mruby" = "yes"; then
   fi
   AC_DEFINE(GRN_WITH_MRUBY, [1], [Define to 1 if mruby is enabled.])
   MRUBY_CFLAGS="-I\$(top_srcdir)/vendor/mruby-source/include"
+  GRN_WITH_MRUBY="yes"
 else
   MRUBY_CFLAGS=""
 fi
+AC_SUBST(GRN_WITH_MRUBY)
 AC_SUBST(MRUBY_CFLAGS)
 AM_CONDITIONAL(WITH_MRUBY, test "$enable_mruby" = "yes")
 

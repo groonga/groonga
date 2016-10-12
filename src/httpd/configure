@@ -86,6 +86,15 @@ if [ "${GROONGA_HTTPD_WITH_SSL}" = "yes" ]; then
   configure_args="${configure_args} --with-http_ssl_module"
 fi
 
+nginx_mruby_directory="${top_builddir}/vendor/ngx_mruby-source"
+mruby_directory="${top_srcdir}/vendor/mruby-source"
+if [ "${GROONGA_HTTPD_WITH_MRUBY}" = "yes" ]; then
+  cd "${nginx_mruby_directory}"
+  ./configure --with-ngx-src-root=${nginx_directory} --with-mruby-root=${mruby_directory}
+  make build_mruby_with_fpic
+  make generate_gems_config_dynamic
+  configure_args="${configure_args} --add-dynamic-module=${nginx_mruby_directory}"
+fi
 
 cd "${nginx_directory_in_build_directory}"
 
