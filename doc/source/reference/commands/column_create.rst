@@ -43,6 +43,7 @@ This section describes about the followings:
   * :ref:`column-create-vector`
   * :ref:`column-create-reference`
   * :ref:`column-create-index`
+  * :ref:`column-create-index-full-text-search`
   * :ref:`column-create-index-small`
   * :ref:`column-create-index-medium`
 
@@ -68,7 +69,8 @@ person record must have only one age.
 If you want to store multiple values into a record, scalar column
 isn't suitable. Use :ref:`column-create-vector` instead.
 
-You must specify ``COLUMN_SCALAR`` to ``flags`` parameter.
+You must specify ``COLUMN_SCALAR`` to ``flags`` parameter to create a
+scalar column.
 
 Here is an example to create the ``age`` column to the ``People``
 table. ``age`` column is a scalar column. It can store one ``UInt8``
@@ -110,7 +112,8 @@ record. Because a person record may have multiple roles.
 If you want to store only one value into a record, vector column isn't
 suitable. Use :ref:`column-create-scalar` instead.
 
-You must specify ``COLUMN_VECTOR`` to ``flags`` parameter.
+You must specify ``COLUMN_VECTOR`` to ``flags`` parameter to create a
+vector column.
 
 Here is an example to create the ``roles`` column to the ``People``
 table. ``roles`` column is a vector column. It can store zero or more
@@ -154,7 +157,8 @@ For example, using a column that refers is better for storing a
 character into a book record. Because one person may be appeared in
 some books.
 
-You must specify table name to ``type`` parameter.
+You must specify table name to ``type`` parameter to create a column
+that refers a table's record.
 
 Here is an example to create the ``character`` column to the ``Books``
 table. ``character`` column refers ``People`` table. It can store
@@ -206,7 +210,71 @@ following :doc:`select` command. It retrieves ``age`` column and
 Create an index column
 ^^^^^^^^^^^^^^^^^^^^^^
 
+Groonga provides index column for fast search. It doesn't store your
+data. It stores data for fast search.
+
+You don't need to update index column by yourself. Index column is
+updated automatically when you store data into a data column (scalar
+column or vector column) that is marked as index target column. You
+can set multiple columns as index target columns to one index column.
+
+If Groonga has an index for the ``age`` column of the ``People``
+table, Groonga can do fast equal search, fast comparison search and
+fast range search against ``age`` column values.
+
+You must specify the following parameters to create an index column:
+
+  * ``flags`` parameter: ``COLUMN_INDEX``
+
+  * ``type`` parameter: The table name of source column such as
+    ``People``
+
+  * ``source`` parameter: The source column name such as ``age``
+
+You don't need additional flags to ``flags`` parameter for equal
+search, comparison search and range search index. You need additional
+flags to ``flags`` parameter for full text search index. See
+:ref:`column-create-index-full-text-search` for details.
+
+Here is an example to create an index for the ``age`` column of the
+``People`` table.
+
+First, you need to create a range index table. See
+:ref:`table-create-range-index-table` for details. This example
+creates the ``Ages`` table as :ref:`table-pat-key`:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_index_create_table.log
+.. table_create \
+..   --name Ages \
+..   --flags TABLE_PAT_KEY \
+..   --key_type UInt8
+
+Now, you can create an index column for the ``age`` column of the
+``People`` table. ``COLUMN_INDEX`` in ``flags`` parameter, ``People``
+in ``type`` parameter`` and ``age`` in ``source`` parameter are
+important:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_index_create_column.log
+.. column_create \
+..   --table Ages \
+..   --name people_age_index \
+..   --flags COLUMN_INDEX \
+..   --type People \
+..   --source age
+
 TODO
+You can confirm that ``age > 5`` is evaluated by the
+``Ages.people_age_index`` newly created index.
+
+.. groonga-command
+.. log: true
+.. include:: ../../example/reference/commands/column_create/usage_index_select.log
+.. select \
+..   --table People \
+..   --filter 'age > 5'
+.. log: false
 
 .. _column-create-index-small:
 
