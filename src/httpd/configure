@@ -92,7 +92,7 @@ libmruby_directory="${top_srcdir}/vendor/mruby-build/host/lib"
 if [ "${GROONGA_HTTPD_WITH_MRUBY}" = "yes" ]; then
   # NOTE: out-of-tree build support is required ngx_mruby PR#222 
   cd "${nginx_mruby_directory}"
-  ./configure --with-ngx-src-root=${nginx_directory} --with-mruby-root=${mruby_directory} --with-mruby-build-root=${mruby_build_directory}
+  ./configure --with-ngx-src-root=${nginx_directory} --with-mruby-incdir="${mruby_directory}/src ${mruby_directory}/include"  --with-mruby-libdir=${libmruby_directory}
   make generate_gems_config
   configure_args="${configure_args} --add-module=${nginx_mruby_directory}"
 fi
