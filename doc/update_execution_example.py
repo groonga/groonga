@@ -163,7 +163,7 @@ def execmd(command, fout):
               formatted_log = first_lines_re.sub(prefix, log)
               stdout.write(first_lines_re.sub(prefix, log))
               stdout.write("\n")
-              if output_log:
+              if output_log and fout:
                 fout.write(formatted_log)
                 fout.write("\n")
           output_buffer = ""
