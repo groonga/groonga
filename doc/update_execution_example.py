@@ -203,6 +203,7 @@ def readfile(fname, outflag):
           database_name = cmd[cmd.index(":")+1:].strip()
           reconnect(database_name)
         elif cmd.startswith('.. log:'):
+          global output_log
           log_value = cmd[cmd.index(":")+1:].strip()
           output_log = log_value == "true"
         elif cmd.startswith('.. include:: '):
