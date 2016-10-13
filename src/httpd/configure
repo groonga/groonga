@@ -88,7 +88,7 @@ fi
 
 nginx_mruby_directory="${top_builddir}/vendor/ngx_mruby-source"
 mruby_directory="${top_srcdir}/vendor/mruby-source"
-libmruby_directory="${top_srcdir}/vendor/mruby-build"
+libmruby_directory="${top_srcdir}/vendor/mruby-build/host/lib"
 if [ "${GROONGA_HTTPD_WITH_MRUBY}" = "yes" ]; then
   # NOTE: out-of-tree build support is required ngx_mruby PR#222 
   cd "${nginx_mruby_directory}"
