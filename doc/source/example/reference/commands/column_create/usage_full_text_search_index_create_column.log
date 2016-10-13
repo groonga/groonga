@@ -1,0 +1,9 @@
+Execution example::
+
+  column_create \
+    --table Terms \
+    --name people_roles_index \
+    --flags COLUMN_INDEX|WITH_POSITION \
+    --type People \
+    --source roles
+  # [[0, 1337566253.89858, 0.000355720520019531], true]

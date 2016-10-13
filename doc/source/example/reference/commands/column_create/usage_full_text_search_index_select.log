@@ -1,0 +1,56 @@
+Execution example::
+
+  log_level --level info
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  select \
+    --table People \
+    --match_columns roles \
+    --query Sister
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "age", 
+  #           "UInt8"
+  #         ], 
+  #         [
+  #           "roles", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "alice", 
+  #         7, 
+  #         [
+  #           "adventurer", 
+  #           "younger-sister"
+  #         ]
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  # log: 2016-10-13 19:10:02.953279|i| [object][search][index][key][exact] <Terms.people_roles_index>
+  # log: 2016-10-13 19:10:02.953301|i| grn_ii_sel > (Sister)
+  # log: 2016-10-13 19:10:02.953331|i| n=1 (Sister)
+  # log: 2016-10-13 19:10:02.953358|i| exact: 1
+  # log: 2016-10-13 19:10:02.953362|i| hits=1
+  log_level --level notice
+  # [[0, 1337566253.89858, 0.000355720520019531], true]

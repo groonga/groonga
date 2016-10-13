@@ -1,0 +1,9 @@
+Execution example::
+
+  column_create \
+    --table Ages \
+    --name people_age_medium_index \
+    --flags COLUMN_INDEX|INDEX_MEDIUM \
+    --type People \
+    --source age
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
