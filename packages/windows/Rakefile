@@ -402,7 +402,7 @@ namespace :build do
     tmp_dir = base_tmp_dir + "groonga-admin"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
-    groonga_admin_version = "0.9.4"
+    groonga_admin_version = "0.9.5"
     groonga_admin_base = "groonga-admin-#{groonga_admin_version}"
     groonga_admin_tar_gz_url_base =
       "http://packages.groonga.org/source/groonga-admin"
