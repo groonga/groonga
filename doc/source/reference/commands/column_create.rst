@@ -41,6 +41,7 @@ This section describes about the followings:
 
   * :ref:`column-create-scalar`
   * :ref:`column-create-vector`
+  * :ref:`column-create-vector-weight`
   * :ref:`column-create-reference`
   * :ref:`column-create-index`
   * :ref:`column-create-index-full-text-search`
@@ -144,6 +145,13 @@ You can confirm the stored multiple values (``["adventurer",
 .. groonga-command
 .. include:: ../../example/reference/commands/column_create/usage_vector_select.log
 .. select --table People
+
+.. _column-create-vector-weight:
+
+Create a weight vector column
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+TODO: See also :ref:`weight-vector-column` and :ref:`select-adjuster`.
 
 .. _column-create-reference:
 
@@ -541,67 +549,243 @@ Parameters
 
 This section describes all parameters.
 
-TODO
+Required parameters
+^^^^^^^^^^^^^^^^^^^
+
+There are some required parameters.
+
+.. _column-create-table:
 
 ``table``
+"""""""""
 
-  カラムを追加するテーブルの名前を指定します。
+Specifies an existing table name for the newly created column.
+
+.. _column-create-name:
 
 ``name``
+""""""""
 
-  作成するカラムの名前を指定します。カラム名は、テーブルの中で一意でなければなりません。
+Specifies the column name to be created.
 
-  ピリオド('.'), コロン(':')を含む名前のカラムは作成できません。また、アンダースコア('_')で始まる名前は予約済みであり、使用できません。
+The column name must be unique in the same table.
+
+Here are available characters:
+
+* ``0`` .. ``9`` (digit)
+* ``a`` .. ``z`` (alphabet, lower case)
+* ``A`` .. ``Z`` (alphabet, upper case)
+* ``#`` (hash)
+* ``@`` (at mark)
+* ``-`` (hyphen)
+* ``_`` (underscore) (NOTE: Underscore can't be used as the first
+  character.)
+
+You need to create a name with one or more the above characters. Note
+that you can't use ``_`` as the first character such as ``_name``.
+
+
+.. _column-create-flags:
 
 ``flags``
+"""""""""
 
-  カラムの属性を表す以下の数値か、パイプ('|')で組み合わせたシンボル名を指定します。
+Specifies the column type and column customize options.
 
-  0, ``COLUMN_SCALAR``
-    単一の値が格納できるカラムを作成します。
-  1, ``COLUMN_VECTOR``
-    複数の値の配列を格納できるカラムを作成します。
-  2, ``COLUMN_INDEX``
-    インデックス型のカラムを作成します。
+Here are available flags:
 
-  There are two flags to compress the value of column, but you can't specify these flags for now because there are memory leaks issue `GitHub#6 <https://github.com/groonga/groonga/issues/6>`_ when refers the value of column. This issue occurs both of them (zlib and lzo).
+.. list-table::
+   :header-rows: 1
 
-  16, ``COMPRESS_ZLIB``
-    Compress the value of column by using zlib. This flag is enabled when you build Groonga with ``--with-zlib``.
-  32, ``COMPRESS_LZO``
-    Compress the value of column by using lzo. This flag is enabled when you build Groonga with ``--with-lzo``.
+   * - Flag
+     - Description
 
-  インデックス型のカラムについては、flagsの値に以下の値を加えることによって、追加の属
-  性を指定することができます。
+   * - ``COLUMN_SCALAR``
+     - Scalar column. It can store one value. See also
+       :doc:`/reference/columns/scalar` or
+       :ref:`column-create-scalar`.
 
-  128, ``WITH_SECTION``
-    段落情報を格納するインデックスを作成します。
+   * - ``COLUMN_VECTOR``
+     - Vector column. It can store multiple values. See also
+       :doc:`/reference/columns/vector` or
+       :ref:`column-create-vector`.
 
-  256, ``WITH_WEIGHT``
-    ウェイト情報を格納するインデックスを作成します。
+   * - ``COLUMN_INDEX``
+     - Index column. It stores data for fast search. See also
+       :doc:`/reference/columns/index` or
+       :ref:`column-create-index`.
 
-  512, ``WITH_POSITION``
-    位置情報を格納するインデックス(完全転置インデックス)を作成します。
+   * - ``COMPRESS_ZLIB``
+     - It enables column value compression by zlib. You need Groonga
+       that enables zlib support.
+
+       Compression by zlib is higher space efficiency than compression
+       by LZ4. But Compression by zlib is slower than compression by
+       LZ4.
+
+       This flag is available only for ``COLUMN_SCALAR`` and
+       ``COLUMN_VECTOR``.
+
+   * - ``COMPRESS_LZ4``
+     - It enables column value compression by LZ4. You need Groonga
+       that enables LZ4 support.
+
+       Compression by LZ4 is faster than compression by zlib. But
+       Compression by LZ4 is lower space efficiency than compression
+       by zlib.
+
+       This flag is available only for ``COLUMN_SCALAR`` and
+       ``COLUMN_VECTOR``.
+
+   * - ``WITH_SECTION``
+     - It enables section support to index column.
+
+       If section support is enabled, you can support multiple
+       documents in the same index column.
+
+       You must specify this flag to create a multiple columns index
+       column. See also ref:`column-create-index-multiple-columns` for
+       details.
+
+       Section support requires additional spaces. If you don't need
+       section support, you should not enable section support.
+
+       This flag is available only for ``COLUMN_INDEX``.
+
+   * - ``WITH_WEIGHT``
+     - It enables weight support to vector column or index column.
+
+       If weight support is enabled for vector column, you can add
+       weight for each element. If weight support is enabled for index
+       column, you can add weight for each posting. They are useful to
+       compute suitable search score.
+
+       You must specify this flag to use :ref:`select-adjuster`. See
+       also ref:`column-create-vector-weight` for details.
+
+       Weight support requires additional spaces. If you don't need
+       weight support, you should not enable weight support.
+
+       This flag is available only for ``COLUMN_VECTOR`` or
+       ``COLUMN_INDEX``.
+
+   * - ``WITH_POSITION``
+     - It enables position support to index column. It means that the
+       index column is full inverted index. (Index column is
+       implemented as inverted index.)
+
+       If position support is enabled, you can add position in the
+       document for each posting. It's required for phrase search. It
+       means that index column for full text search must enable
+       position support because most full text search uses phrase
+       search.
+
+       You must specify this flag to create a full text search index
+       column. See also ref:`column-create-index-full-text-search` for
+       details.
+
+       Position support requires additional spaces. If you don't need
+       position support, you should not enable position support.
+
+       This flag is available only for ``COLUMN_INDEX``.
+
+   * - ``INDEX_SMALL``
+     - .. versionadded:: 6.0.8
+
+       It requires to create a small index column.
+
+       If index target data are small, small index column is enough.
+       Small index column uses fewer memory than a normal index column
+       or a medium index column. See also
+       ref:`column-create-index-small` for knowing what are "small
+       data" and how to use this flag.
+
+       This flag is available only for ``COLUMN_INDEX``.
+
+   * - ``INDEX_MEDIUM``
+     - .. versionadded:: 6.0.8
+
+       It requires to create a medium index column.
+
+       If index target data are medium, medium index column is enough.
+       Medium index column uses fewer memory than a normal index
+       column. See also ref:`column-create-index-mediumn` for knowing
+       what are "medium data" and how to use this flag.
+
+       This flag is available only for ``COLUMN_INDEX``.
+
+You must specify one of ``COLUMN_${TYPE}`` flags. You can't specify
+two or more ``COLUMN_${TYPE}`` flags. For example,
+``COLUMN_SCALAR|COLUMN_VECTOR`` is invalid.
+
+You can combine flags with ``|`` (vertical bar) such as
+``COLUMN_INDEX|WITH_SECTION|WITH_POSITION``.
+
+.. _column-create-type:
 
 ``type``
+""""""""
 
-  値の型を指定します。Groongaの組込型か、同一データベースに定義済みのユーザ定義型、定義済みのテーブルを指定することができます。
+Specifies type of the column value.
+
+If the column is scalar column or vector column, here are available
+types:
+
+  * Builtin types described in :doc:`/reference/types`
+  * Tables defined by users
+
+If the column is index column, here are available types:
+
+  * Tables defined by users
+
+See also the followings:
+
+  * :ref:`column-create-scalar`
+  * :ref:`column-create-vector`
+  * :ref:`column-create-reference`
+  * :ref:`column-create-index`
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
+There are an optional parameter.
+
+.. _column-create-source:
 
 ``source``
+""""""""""
 
-  インデックス型のカラムを作成した場合は、インデックス対象となるカラムをsource引数に指定します。
+Specifies index target columns. You can specify one or more columns to
+the ``source`` parameter.
+
+This parameter is only available for index column.
+
+You can only specify columns of the table specified as
+:ref:`column-create-type`. You can also use the ``_key`` pseudo column
+for specifying the table key as index target.
+
+If you specify multiple columns to the ``source`` parameter, separate
+columns with ``,`` (comma) such as ``_key,roles``.
 
 Return value
 ------------
 
-::
+``column_create`` returns ``true`` as body on success such as::
 
- [HEADER, SUCCEEDED]
+  [HEADER, true]
 
-``HEADER``
+If ``column_create`` fails, ``column_create`` returns ``false`` as
+body::
 
-  See :doc:`/reference/command/output_format` about ``HEADER``.
+  [HEADER, false]
 
-``SUCCEEDED``
+Error details are in ``HEADER``.
 
-  If command is succeeded, it returns true on success, false otherwise.
+See :doc:`/reference/command/output_format` for ``HEADER``.
+
+See also
+--------
+
+  * :doc:`/reference/column`
+  * :doc:`/reference/commands/table_create`
+  * :doc:`/reference/command/output_format`
