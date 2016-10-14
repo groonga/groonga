@@ -12568,7 +12568,7 @@ msgstr ""
 "``normalizer`` オプションに ``NormalizerAuto`` を指定してください。"
 
 msgid ""
-"You must specify one of ``TABLE_${TYPE}`` flags. You cannot specify two or "
+"You must specify one of ``TABLE_${TYPE}`` flags. You can't specify two or "
 "more ``TABLE_${TYPE}`` flags. For example, ``TABLE_NO_KEY|TABLE_HASH_KEY`` "
 "is invalid."
 msgstr ""

@@ -195,10 +195,15 @@ Parameters
 
 This section describes all parameters.
 
+Required parameters
+^^^^^^^^^^^^^^^^^^^
+
+There is only one required parameter.
+
 .. _table-create-name:
 
 ``name``
-^^^^^^^^
+""""""""
 
 Specifies a table name to be created. ``name`` must be specified.
 
@@ -214,13 +219,17 @@ Here are available characters:
   character.)
 
 You need to create a name with one or more the above characters. Note
-that you cannot use ``_`` as the first character such as
-``_name``.
+that you can't use ``_`` as the first character such as ``_name``.
+
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
+There are some optional parameters.
 
 .. _table-create-flags:
 
 ``flags``
-^^^^^^^^^
+"""""""""
 
 Specifies a table type and table customize options.
 
@@ -249,7 +258,7 @@ Here are available flags:
    Since Groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use
    ``normalizer`` option with ``NormalizerAuto`` instead.
 
-You must specify one of ``TABLE_${TYPE}`` flags. You cannot specify two
+You must specify one of ``TABLE_${TYPE}`` flags. You can't specify two
 or more ``TABLE_${TYPE}`` flags. For example,
 ``TABLE_NO_KEY|TABLE_HASH_KEY`` is invalid.
 
@@ -263,7 +272,7 @@ The default flags are ``TABLE_HASH_KEY``.
 .. _table-create-key-type:
 
 ``key_type``
-^^^^^^^^^^^^
+""""""""""""
 
 Specifies key type.
 
@@ -278,7 +287,7 @@ The default value is none.
 .. _table-create-value-type:
 
 ``value_type``
-^^^^^^^^^^^^^^
+""""""""""""""
 
 Specifies value type.
 
@@ -292,7 +301,7 @@ The default value is none.
 .. _table-create-default-tokenizer:
 
 ``default_tokenizer``
-^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""
 
 Specifies the default tokenizer that is used on searching and data
 loading.
@@ -325,7 +334,7 @@ The default value is none.
 .. _table-create-normalizer:
 
 ``normalizer``
-^^^^^^^^^^^^^^
+""""""""""""""
 
 Specifies a normalizer that is used to normalize key.
 
@@ -339,7 +348,7 @@ The default value is none.
 .. _table-create-token-filters:
 
 ``token_filters``
-^^^^^^^^^^^^^^^^^^
+"""""""""""""""""
 
 Specifies token filters that is used to some processes tokenized token.
 
