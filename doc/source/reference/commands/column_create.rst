@@ -26,7 +26,9 @@ See :doc:`/reference/column` for column details.
 Syntax
 ------
 
-This command takes many parameters::
+This command takes many parameters.
+
+Most parameters are required::
 
   column_create table
                 name
@@ -162,16 +164,16 @@ Both scalar column and vector column can store reference to record of
 an existing table as column value. It's useful to store relationship
 between records.
 
-For example, using a column that refers is better for storing a
-character into a book record. Because one person may be appeared in
-some books.
+For example, using a column that refers a person record is better for
+storing a character into a book record. Because one person may be
+appeared in some books.
 
-You must specify table name to ``type`` parameter to create a column
-that refers a table's record.
+You must specify table name to be referenced to the ``type`` parameter
+to create a column that refers a table's record.
 
 Here is an example to create the ``character`` column to the ``Books``
-table. ``character`` column refers ``People`` table. It can store
-one ``People`` table's record.
+table. The ``character`` column refers the ``People`` table. It can
+store one ``People`` table's record.
 
 Here is the ``Books`` table definition:
 
@@ -205,8 +207,8 @@ record:
 .. ]
 
 You can confirm the stored reference (``"alice"`` record) by the
-following :doc:`select` command. It retrieves ``age`` column and
-``roles`` column values:
+following :doc:`select` command. It retrieves the ``age`` column and
+the ``roles`` column values:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/column_create/usage_reference_select.log
@@ -227,29 +229,31 @@ updated automatically when you store data into a data column (scalar
 column or vector column) that is marked as index target column. You
 can set multiple columns as index target columns to one index column.
 
-If Groonga has an index for the ``age`` column of the ``People``
-table, Groonga can do fast equal search, fast comparison search and
-fast range search against ``age`` column values.
+If Groonga has an index column for the ``age`` column of the
+``People`` table, Groonga can do fast equal search, fast comparison
+search and fast range search against ``age`` column values.
 
 You must specify the following parameters to create an index column:
 
   * The ``flags`` parameter: ``COLUMN_INDEX``
 
-  * The ``type`` parameter: The table name of source column such as
-    ``People``
+  * The ``type`` parameter: The table name of index target column such
+    as ``People``
 
-  * The ``source`` parameter: The source column name such as ``age``
+  * The ``source`` parameter: The index target column name such as
+    ``age``
 
 You don't need additional flags to the ``flags`` parameter for equal
-search, comparison search and range search index. You need additional
-flags to the ``flags`` parameter for full text search index or
-multiple column index. See :ref:`column-create-index-full-text-search`
-and :ref:`column-create-index-multiple-columns` for details.
+search, comparison search and range search index column. You need
+additional flags to the ``flags`` parameter for full text search index
+column or multiple column index column. See
+:ref:`column-create-index-full-text-search` and
+:ref:`column-create-index-multiple-columns` for details.
 
-Here is an example to create an index for the ``age`` column of the
-``People`` table.
+Here is an example to create an index column for the ``age`` column of
+the ``People`` table.
 
-First, you need to create a range index table. See
+First, you need to create a table for range index column. See
 :ref:`table-create-range-index-table` for details. This example
 creates the ``Ages`` table as :ref:`table-pat-key`:
 
@@ -275,9 +279,9 @@ parameter are important:
 ..   --source age
 
 You can confirm that ``age > 5`` is evaluated by the
-``Ages.people_age_index`` newly created index from log. Groonga
-reports used indexes in ``info`` log level. You can change log level
-dynamically by :doc:`log_level` command.
+``Ages.people_age_index`` newly created index column from log. Groonga
+reports used index columns in ``info`` log level. You can change log
+level dynamically by :doc:`log_level` command.
 
 .. groonga-command
 .. log: true
@@ -294,7 +298,8 @@ following log::
 
   [table][select][index][range] <Ages.people_age_index>
 
-The log says ``Ages.people_age_index`` index is used for range search.
+The log says ``Ages.people_age_index`` index column is used for range
+search.
 
 .. _column-create-index-full-text-search:
 
@@ -302,19 +307,19 @@ Create an index column for full text search
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 There is a difference between for non full text search (equal search,
-comparison search or range search) index and for full text search
-index. You need to add ``WITH_POSITION`` to the ``flags``
-parameter. It means that you need to specify
+comparison search or range search) index column and for full text
+search index column. You need to add ``WITH_POSITION`` to the
+``flags`` parameter. It means that you need to specify
 ``COLUMN_INDEX|WITH_POSITION`` to the ``flags`` parameter. It's the
 difference.
 
-Here is an example to create a full text search index for the
+Here is an example to create a full text search index column for the
 ``roles`` column of the ``People`` table.
 
-First, you need to create a table for full text search index. See
-:ref:`table-create-lexicon` for details. This example creates the
-``Terms`` table as :ref:`table-pat-key` with :ref:`token-bigram`
-tokenizer and :ref:`normalizer-auto` normalizer:
+First, you need to create a table for full text search index
+column. See :ref:`table-create-lexicon` for details. This example
+creates the ``Terms`` table as :ref:`table-pat-key` with
+:ref:`token-bigram` tokenizer and :ref:`normalizer-auto` normalizer:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/column_create/usage_full_text_search_index_create_table.log
@@ -341,9 +346,9 @@ column of the ``People`` table. ``COLUMN_INDEX|WITH_POSITION`` in the
 
 You can confirm that ``--match_columns roles`` and ``--query Sister``
 are evaluated by the ``Terms.people_roles_index`` newly created full
-text search index from log. Groonga reports used indexes in ``info``
-log level. You can change log level dynamically by :doc:`log_level`
-command.
+text search index column from log. Groonga reports used index columns
+in ``info`` log level. You can change log level dynamically by
+:doc:`log_level` command.
 
 .. groonga-command
 .. log: true
@@ -361,9 +366,9 @@ following log::
 
   [object][search][index][key][exact] <Terms.people_roles_index>
 
-The log says ``Terms.people_roles_index`` index is used for full text
-search. (To be precise, the index is used for exact term search by
-inverted index.)
+The log says ``Terms.people_roles_index`` index column is used for
+full text search. (To be precise, the index column is used for exact
+term search by inverted index.)
 
 .. _column-create-index-multiple-columns:
 
@@ -372,37 +377,41 @@ Create a multiple columns index column
 
 You can create an index column for multiple columns. It means that you
 can do fast search for multiple columns with one index
-column. Multiple columns index has better space efficiency than single
-column index only when multiple columns have many same
-tokens. Multiple columns index may be slower than single column
-index. Because multiple columns index will be a bigger index.
+column. Multiple columns index column has better space efficiency than
+single column index column only when multiple columns have many same
+tokens. Multiple columns index column may be slower than single column
+index column. Because multiple columns index column will be a bigger
+index column.
 
-You can't use multiples columns in different tables as source columns
-in the same multiple columns index. You must specify columns in the
-same tables as source columns to one multiple columns index. For
-example, you can't create a multiple columns index for ``People._key``
-and ``Books._key`` because they are columns of different tables. You
-can create a multiple columns index for ``People._key`` and
-``People.roles`` because they are columns of the same table.
+You can't use multiples columns in different tables as index target
+columns in the same multiple columns index column. You must specify
+columns in the same tables as index target columns to one multiple
+columns index column. For example, you can't create a multiple columns
+index for ``People._key`` and ``Books._key`` because they are columns
+of different tables. You can create a multiple columns index column
+for ``People._key`` and ``People.roles`` because they are columns of
+the same table.
 
-There is a difference between for single column index and for multiple
-columns index. You need to add ``WITH_SECTION`` to the ``flags``
-parameter. It means that you need to specify
+There is a difference between for single column index column and for
+multiple columns index column. You need to add ``WITH_SECTION`` to the
+``flags`` parameter. It means that you need to specify
 ``COLUMN_INDEX|WITH_SECTION`` to the ``flags`` parameter. It's the
 difference.
 
-If you want to create a multiple columns index for full text search,
-you need to specify ``COLUMN_INDEX|WITH_POSITION|WITH_SECTION`` to
-the ``flags`` parameter. See :ref:`column-create-full-text-search` for
-full text search index column details.
+If you want to create a multiple columns index column for full text
+search, you need to specify
+``COLUMN_INDEX|WITH_POSITION|WITH_SECTION`` to the ``flags``
+parameter. See :ref:`column-create-index-full-text-search` for full
+text search index column details.
 
 Here is an example to create a multiple columns full text search index
-for the key of the ``People`` table and the ``roles`` column of the
-``People`` table.
+column for the key of the ``People`` table and the ``roles`` column of
+the ``People`` table.
 
-There is no difference between index table for single column index and
-multiple columns index. In this example, the ``Terms`` table created
-at :ref:`column-create-full-text-search` is used.
+There is no difference between index table for single column index
+column and multiple columns index column. In this example, the
+``Terms`` table created at :ref:`column-create-index-full-text-search`
+is used.
 
 You can create a multiple columns full text search index column for
 the key of the ``People`` table and ``roles`` column of the ``People``
@@ -421,8 +430,8 @@ the ``source`` parameter are important:
 
 You can confirm that ``--match_columns _key`` and ``--query
 Alice`` are evaluated by the ``Terms.people_key_roles_index`` newly
-created multiple columns full text search index from log. Groonga
-reports used indexes in ``info`` log level. You can change log level
+created multiple columns full text search index column from log. Groonga
+reports used index columns in ``info`` log level. You can change log level
 dynamically by :doc:`log_level` command.
 
 .. groonga-command
@@ -441,9 +450,9 @@ following log::
 
   [object][search][index][key][exact] <Terms.people_key_roles_index>
 
-The log says ``Terms.people_roles_index`` index is used for full text
-search. (To be precise, the index is used for exact term search by
-inverted index.)
+The log says ``Terms.people_roles_index`` index column is used for
+full text search. (To be precise, the index column is used for exact
+term search by inverted index.)
 
 .. _column-create-index-small:
 
@@ -454,12 +463,12 @@ If you know index target data are small, you can reduce memory usage
 for the index column. Memory usage is ``1/256`` of the default index
 column.
 
-How many data are small? It's depend on data. Small index column can't
-handle 10 billions records at least. If index target is only one
+How many data are small? It depends on data. Small index column can't
+handle 1 billion records at least. If index target is only one
 scalar column with no text family type (``ShortText``, ``Text`` or
 ``LongText``), the maximum handleable records are depends of the
 number of kinds of index target data. If index target column has
-``1``, ``1``, ``22`` and ``3``, the number of kinds of them are ``3``
+``1``, ``1``, ``2`` and ``3``, the number of kinds of them are ``3``
 (``1`` and ``2`` and ``3``). The following table shows the
 relationship between the number of kinds of index target data and the
 number of handleable records:
@@ -488,8 +497,8 @@ number of handleable records:
    * - 256
      - 51265384
 
-You need to add ``INDEX_SMALL`` to the ``flags`` parameter such s
-``COLUMN_INDEX|INDEX_SMALL``.
+You need to add ``INDEX_SMALL`` to the ``flags`` parameter such as
+``COLUMN_INDEX|INDEX_SMALL`` to create a small index column.
 
 If the ``People`` table has only 1 million records, you can use a
 small index column for the ``age`` column:
@@ -512,7 +521,7 @@ If you know index target data are medium, you can reduce memory usage
 for the index column. Memory usage is ``5/24`` of the default index
 column.
 
-How many data are medium? It's depend on data.
+How many data are medium? It depends on data.
 
 If index target is only one scalar column, a medium index column
 can handle all records.
@@ -526,8 +535,8 @@ cases:
   * Index targets are multiple columns
   * Index table has tokenizer
 
-You need to add ``INDEX_MEDIUM`` to the ``flags`` parameter such s
-``COLUMN_INDEX|INDEX_MEDIUM``.
+You need to add ``INDEX_MEDIUM`` to the ``flags`` parameter such as
+``COLUMN_INDEX|INDEX_MEDIUM`` to create a medium index column.
 
 You can use a medium index column for an index column of the ``age``
 column of the ``People`` table safely. Because it's one scalar column
@@ -559,7 +568,7 @@ There are some required parameters.
 ``table``
 """""""""
 
-Specifies an existing table name for the newly created column.
+Specifies an existing table name for the new column.
 
 .. _column-create-name:
 
@@ -620,7 +629,7 @@ Here are available flags:
        that enables zlib support.
 
        Compression by zlib is higher space efficiency than compression
-       by LZ4. But Compression by zlib is slower than compression by
+       by LZ4. But compression by zlib is slower than compression by
        LZ4.
 
        This flag is available only for ``COLUMN_SCALAR`` and
@@ -631,7 +640,7 @@ Here are available flags:
        that enables LZ4 support.
 
        Compression by LZ4 is faster than compression by zlib. But
-       Compression by LZ4 is lower space efficiency than compression
+       compression by LZ4 is lower space efficiency than compression
        by zlib.
 
        This flag is available only for ``COLUMN_SCALAR`` and
@@ -644,7 +653,7 @@ Here are available flags:
        documents in the same index column.
 
        You must specify this flag to create a multiple columns index
-       column. See also ref:`column-create-index-multiple-columns` for
+       column. See also :ref:`column-create-index-multiple-columns` for
        details.
 
        Section support requires additional spaces. If you don't need
@@ -661,7 +670,7 @@ Here are available flags:
        compute suitable search score.
 
        You must specify this flag to use :ref:`select-adjuster`. See
-       also ref:`column-create-vector-weight` for details.
+       also :ref:`column-create-vector-weight` for details.
 
        Weight support requires additional spaces. If you don't need
        weight support, you should not enable weight support.
@@ -681,7 +690,7 @@ Here are available flags:
        search.
 
        You must specify this flag to create a full text search index
-       column. See also ref:`column-create-index-full-text-search` for
+       column. See also :ref:`column-create-index-full-text-search` for
        details.
 
        Position support requires additional spaces. If you don't need
@@ -697,7 +706,7 @@ Here are available flags:
        If index target data are small, small index column is enough.
        Small index column uses fewer memory than a normal index column
        or a medium index column. See also
-       ref:`column-create-index-small` for knowing what are "small
+       :ref:`column-create-index-small` for knowing what are "small
        data" and how to use this flag.
 
        This flag is available only for ``COLUMN_INDEX``.
@@ -709,7 +718,7 @@ Here are available flags:
 
        If index target data are medium, medium index column is enough.
        Medium index column uses fewer memory than a normal index
-       column. See also ref:`column-create-index-mediumn` for knowing
+       column. See also :ref:`column-create-index-medium` for knowing
        what are "medium data" and how to use this flag.
 
        This flag is available only for ``COLUMN_INDEX``.
@@ -748,7 +757,7 @@ See also the followings:
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There are an optional parameter.
+There is an optional parameter.
 
 .. _column-create-source:
 
