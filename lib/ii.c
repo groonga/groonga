@@ -2211,6 +2211,11 @@ buffer_term_dump(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt)
   int pos, rid, sid;
   uint8_t *p;
   buffer_rec *r;
+
+  if (!grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+    return;
+  }
+
   GRN_LOG(ctx, GRN_LOG_DEBUG,
           "b=(%x %u %u %u)", b->header.chunk, b->header.chunk_size,
           b->header.buffer_free, b->header.nterms);
