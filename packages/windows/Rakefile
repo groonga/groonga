@@ -359,6 +359,7 @@ namespace :build do
         "--with-message-pack=#{binary_dir}",
         "--enable-mruby",
         "--enable-shared-onigmo",
+        "--disable-groonga-httpd",
       ]
       if mecab_config.exist?
         options << "--with-mecab-config=#{mecab_config}"
