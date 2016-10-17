@@ -86,9 +86,9 @@ if [ "${GROONGA_HTTPD_WITH_SSL}" = "yes" ]; then
   configure_args="${configure_args} --with-http_ssl_module"
 fi
 
-nginx_mruby_directory="${top_builddir}/vendor/ngx_mruby-source"
-mruby_directory="${top_srcdir}/vendor/mruby-source"
-libmruby_directory="${top_srcdir}/vendor/mruby/.libs"
+nginx_mruby_directory="${abs_top_srcdir}/vendor/ngx_mruby-source"
+mruby_directory="${abs_top_srcdir}/vendor/mruby-source"
+libmruby_directory="${abs_top_builddir}/vendor/mruby/.libs"
 if [ "${GROONGA_HTTPD_WITH_MRUBY}" = "yes" ]; then
   # NOTE: out-of-tree build support is required ngx_mruby PR#222 
   cd "${nginx_mruby_directory}"
