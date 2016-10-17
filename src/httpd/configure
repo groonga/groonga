@@ -89,7 +89,8 @@ fi
 nginx_mruby_directory="${abs_top_srcdir}/vendor/ngx_mruby-source"
 mruby_directory="${abs_top_srcdir}/vendor/mruby-source"
 libmruby_directory="${abs_top_builddir}/vendor/mruby/.libs"
-if [ "${GROONGA_HTTPD_WITH_MRUBY}" = "yes" ]; then
+if [ "${GROONGA_HTTPD_WITH_MRUBY}" = "yes" -a
+     "${GROONGA_HTTPD_WITH_PCRE}" = "yes" ]; then
   cd "${nginx_mruby_directory}"
   ./configure --with-ngx-src-root=${nginx_directory} \
     --with-mruby-incdir="${mruby_directory}/src ${mruby_directory}/include" \
