@@ -4957,16 +4957,21 @@ grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
       }
       if (skip_chunk > c->curr_chunk) {
         uint32_t old_chunk = c->curr_chunk;
+        grn_bool old_chunk_used = (c->stat & CHUNK_USED);
         c->pc.rid = rid;
         c->pc.rest = 0;
         c->prev_chunk_rid = rid - c->cinfo[skip_chunk - 1].dgap;
         c->curr_chunk = skip_chunk;
         c->crp = c->cdp + c->cdf;
+        c->stat |= CHUNK_USED;
         GRN_LOG(ctx, GRN_LOG_DEBUG,
-                "[ii][cursor][min] skip: %p: min(%u->%u): chunk(%u->%u)",
+                "[ii][cursor][min] skip: %p: min(%u->%u): chunk(%u->%u): "
+                "chunk-used(%s->%s)",
                 c,
                 old_min, min,
-                old_chunk, c->curr_chunk);
+                old_chunk, c->curr_chunk,
+                old_chunk_used ? "true" : "false",
+                (c->stat & CHUNK_USED) ? "true" : "false");
       }
     }
   }
