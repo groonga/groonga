@@ -10037,7 +10037,7 @@ typedef struct {
 } grn_ii_builder_buffer;
 
 /*
- * grn_ii_builder_buffer_init initializes a buffer. Note that a bufer must be
+ * grn_ii_builder_buffer_init initializes a buffer. Note that a buffer must be
  * finalized by grn_ii_builder_buffer_fin.
  */
 static void
