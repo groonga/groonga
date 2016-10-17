@@ -95,7 +95,7 @@ if [ "${GROONGA_HTTPD_WITH_MRUBY}" = "yes" ]; then
     --with-mruby-incdir="${mruby_directory}/src ${mruby_directory}/include" \
     --with-mruby-libdir=${libmruby_directory}
   make generate_gems_config
-  configure_args="${configure_args} --add-module=${nginx_mruby_directory}/dependence/ngx_devel_kit --add-module=${nginx_mruby_directory} "
+  configure_args="${configure_args} --add-module=${nginx_mruby_directory}/dependence/ngx_devel_kit --add-module=${nginx_mruby_directory}"
 fi
 
 cd "${nginx_directory_in_build_directory}"
