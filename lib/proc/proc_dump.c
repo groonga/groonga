@@ -363,14 +363,17 @@ dump_columns(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table,
       if (grn_obj_is_index_column(ctx, column)) {
         if (dump_index_column) {
           dump_column(ctx, dumper, table, column);
+          GRN_PLUGIN_CLEAR_ERROR(ctx);
         }
       } else if (grn_obj_is_reference_column(ctx, column)) {
         if (dump_reference_column) {
           dump_column(ctx, dumper, table, column);
+          GRN_PLUGIN_CLEAR_ERROR(ctx);
         }
       } else {
         if (dump_data_column) {
           dump_column(ctx, dumper, table, column);
+          GRN_PLUGIN_CLEAR_ERROR(ctx);
         }
       }
 
