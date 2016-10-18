@@ -32,10 +32,15 @@ module Groonga
         return if cover_type == :none
 
         shard_key = shard.key
-        if shard_key.nil? and !@force
-          message = "[logical_table_remove] shard_key doesn't exist: " +
-                    "<#{shard.key_name}>"
-          raise InvalidArgument, message
+        if shard_key.nil?
+          if @force
+            Context.instance.clear_error
+          else
+            message =
+              "[logical_table_remove] shard_key doesn't exist: " +
+              "<#{shard.key_name}>"
+            raise InvalidArgument, message
+          end
         end
         table = shard.table
 
