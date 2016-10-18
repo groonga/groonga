@@ -34,7 +34,7 @@ module Groonga
         shard_key = shard.key
         if shard_key.nil?
           if @force
-            Context.instance.clear_error
+            context.clear_error
           else
             message =
               "[logical_table_remove] shard_key doesn't exist: " +
