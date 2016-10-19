@@ -5973,6 +5973,9 @@ grn_table_select_index_equal(grn_ctx *ctx,
 
     if (domain) {
       grn_id tid;
+
+      grn_table_select_index_report(ctx, tag, index);
+
       if (GRN_OBJ_GET_DOMAIN(si->query) == DB_OBJ(domain)->id) {
         tid = GRN_RECORD_VALUE(si->query);
       } else {
@@ -5985,8 +5988,6 @@ grn_table_select_index_equal(grn_ctx *ctx,
         int32_t weight;
         grn_ii *ii = (grn_ii *)index;
         grn_ii_cursor *ii_cursor;
-
-        grn_table_select_index_report(ctx, tag, index);
 
         sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
         weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
