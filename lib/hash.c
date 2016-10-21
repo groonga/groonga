@@ -2099,7 +2099,7 @@ grn_hash_close(grn_ctx *ctx, grn_hash *hash)
   if (!ctx || !hash) { return GRN_INVALID_ARGUMENT; }
   if (grn_hash_is_io_hash(hash)) {
     rc = grn_io_close(ctx, hash->io);
-    GRN_PTR_INIT(&(hash->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
+    GRN_OBJ_FIN(ctx, &(hash->token_filters));
   } else {
     GRN_ASSERT(ctx == hash->ctx);
     rc = grn_tiny_hash_fin(ctx, hash);
