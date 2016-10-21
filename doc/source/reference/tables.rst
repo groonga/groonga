@@ -168,8 +168,8 @@ Record ID is assigned automatically. You cannot assign record ID.
 
 Record ID of deleted record may be reused.
 
-Valid record ID range is between 1 and 268435455. (1 and 268435455 are
-valid IDs.)
+Valid record ID range is between 1 and 1073741823. (1 and 1073741823
+are valid IDs.)
 
 Persistent table and temporary table
 ------------------------------------
