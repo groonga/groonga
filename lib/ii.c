@@ -11045,6 +11045,7 @@ grn_ii_builder_flush_block(grn_ctx *ctx, grn_ii_builder *builder)
       return rc;
     }
   }
+  grn_table_cursor_close(ctx, cursor);
   rc = grn_ii_builder_flush_file_buf(ctx, builder);
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -11917,6 +11918,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn_ii_builder *builder)
       return rc;
     }
   }
+  grn_table_cursor_close(ctx, cursor);
   if (grn_ii_builder_buffer_is_assigned(ctx, &builder->buf)) {
     rc = grn_ii_builder_buffer_flush(ctx, &builder->buf);
     if (rc != GRN_SUCCESS) {
