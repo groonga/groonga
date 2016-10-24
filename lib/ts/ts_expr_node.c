@@ -2253,10 +2253,11 @@ grn_ts_expr_const_node_open(grn_ctx *ctx, grn_ts_data_kind data_kind,
                             grn_ts_any value, grn_ts_expr_node **node)
 {
   grn_rc rc = grn_ts_expr_const_node_check_value(ctx, data_kind, value);
+  grn_ts_expr_const_node *new_node;
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  grn_ts_expr_const_node *new_node = GRN_MALLOCN(grn_ts_expr_const_node, 1);
+  new_node = GRN_MALLOCN(grn_ts_expr_const_node, 1);
   if (!new_node) {
     GRN_TS_ERR_RETURN(GRN_NO_MEMORY_AVAILABLE,
                       "GRN_MALLOCN failed: %" GRN_FMT_SIZE " x 1",

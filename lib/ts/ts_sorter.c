@@ -195,9 +195,12 @@ grn_ts_qsort_by_id_asc(grn_ctx *ctx, grn_ts_sorter_node *node,
    *        This value should be optimized and replaced with a named constant.
    */
   while (n_recs >= 16) {
+    grn_ts_record pivot;
+    size_t left, right;
     grn_ts_move_pivot_by_id_asc(recs, n_recs);
-    grn_ts_record pivot = recs[0];
-    size_t left = 1, right = n_recs;
+    pivot = recs[0];
+    left = 1;
+    right = n_recs;
     for ( ; ; ) {
       /* Move prior records to left. */
       while (left < right) {
@@ -327,9 +330,12 @@ grn_ts_qsort_by_id_desc(grn_ctx *ctx, grn_ts_sorter_node *node,
    *        This value should be optimized and replaced with a named constant.
    */
   while (n_recs >= 16) {
+    grn_ts_record pivot;
+    size_t left, right;
     grn_ts_move_pivot_by_id_desc(recs, n_recs);
-    grn_ts_record pivot = recs[0];
-    size_t left = 1, right = n_recs;
+    pivot = recs[0];
+    left = 1;
+    right = n_recs;
     for ( ; ; ) {
       /* Move prior records to left. */
       while (left < right) {
@@ -496,10 +502,15 @@ grn_ts_qsort_by_score_asc(grn_ctx *ctx, grn_ts_sorter_node *node,
    *        This value should be optimized and replaced with a named constant.
    */
   while (n_recs >= 16) {
+    grn_ts_record pivot;
+    size_t left, right;
+    size_t pivot_left, pivot_right;
     grn_ts_move_pivot_by_score_asc(recs, n_recs);
-    grn_ts_record pivot = recs[0];
-    size_t left = 1, right = n_recs;
-    size_t pivot_left = 1, pivot_right = n_recs;
+    pivot = recs[0];
+    left = 1;
+    right = n_recs;
+    pivot_left = 1;
+    pivot_right = n_recs;
     for ( ; ; ) {
       /*
        * Prior entries are moved to left. Less prior entries are moved to
@@ -900,10 +911,15 @@ grn_ts_qsort_by_int(grn_ctx *ctx, grn_ts_sorter_node *node,
    *        This value should be optimized and replaced with a named constant.
    */
   while (n_recs >= 16) {
+    grn_ts_int pivot;
+    size_t left, right;
+    size_t pivot_left, pivot_right;
     grn_ts_move_pivot_by_int(node, vals, recs, n_recs);
-    grn_ts_int pivot = vals[0];
-    size_t left = 1, right = n_recs;
-    size_t pivot_left = 1, pivot_right = n_recs;
+    pivot = vals[0];
+    left = 1;
+    right = n_recs;
+    pivot_left = 1;
+    pivot_right = n_recs;
     for ( ; ; ) {
       /*
        * Prior entries are moved to left. Less prior entries are moved to
@@ -1339,10 +1355,15 @@ grn_ts_qsort_by_text_desc(grn_ctx *ctx, grn_ts_sorter_node *node,
    *        This value should be optimized and replaced with a named constant.
    */
   while (n_recs >= 16) {
+    grn_ts_text pivot;
+    size_t left, right;
+    size_t pivot_left, pivot_right;
     grn_ts_move_pivot_by_text_desc(node, vals, recs, n_recs);
-    grn_ts_text pivot = vals[0];
-    size_t left = 1, right = n_recs;
-    size_t pivot_left = 1, pivot_right = n_recs;
+    pivot = vals[0];
+    left = 1;
+    right = n_recs;
+    pivot_left = 1;
+    pivot_right = n_recs;
     for ( ; ; ) {
       /*
        * Prior entries are moved to left. Less prior entries are moved to
@@ -1572,10 +1593,15 @@ grn_ts_qsort_by_text_asc2(grn_ctx *ctx, grn_ts_sorter_node *node,
    *        This value should be optimized and replaced with a named constant.
    */
   while (n_recs >= 16) {
+    int pivot;
+    size_t left, right;
+    size_t pivot_left, pivot_right;
     grn_ts_move_pivot_by_text_asc2(node, vals, recs, n_recs, depth);
-    int pivot = grn_ts_text_get_label(vals[0], depth);
-    size_t left = 1, right = n_recs;
-    size_t pivot_left = 1, pivot_right = n_recs;
+    pivot = grn_ts_text_get_label(vals[0], depth);
+    left = 1;
+    right = n_recs;
+    pivot_left = 1;
+    pivot_right = n_recs;
     for ( ; ; ) {
       /*
        * Prior entries are moved to left. Less prior entries are moved to

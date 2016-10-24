@@ -11174,9 +11174,10 @@ grn_ii_builder_append_value(grn_ctx *ctx, grn_ii_builder *builder,
         break;
       }
       if (tid != GRN_ID_NIL) {
+        grn_rc rc;
         pos = builder->pos;
-        grn_rc rc = grn_ii_builder_append_token(ctx, builder, rid, sid,
-                                                weight, tid, pos);
+        rc = grn_ii_builder_append_token(ctx, builder, rid, sid,
+                                         weight, tid, pos);
         if (rc != GRN_SUCCESS) {
           return rc;
         }
