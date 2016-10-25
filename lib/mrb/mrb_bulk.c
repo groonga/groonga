@@ -78,9 +78,25 @@ grn_mrb_value_to_bulk(mrb_state *mrb, mrb_value mrb_value_, grn_obj *bulk)
     GRN_TEXT_SET(ctx, bulk, RSTRING_PTR(mrb_value_), RSTRING_LEN(mrb_value_));
     break;
   default :
-    mrb_raisef(mrb, E_ARGUMENT_ERROR,
-               "unsupported object to convert to bulk: %S",
-               mrb_value_);
+    {
+      struct RClass *klass;
+
+      klass = mrb_class(mrb, mrb_value_);
+      if (klass == ctx->impl->mrb.builtin.time_class) {
+        mrb_value mrb_sec;
+        mrb_value mrb_usec;
+
+        mrb_sec = mrb_funcall(mrb, mrb_value_, "to_i", 0);
+        mrb_usec = mrb_funcall(mrb, mrb_value_, "usec", 0);
+        grn_obj_reinit(ctx, bulk, GRN_DB_TIME, 0);
+        GRN_TIME_SET(ctx, bulk,
+                     GRN_TIME_PACK(mrb_fixnum(mrb_sec), mrb_fixnum(mrb_usec)));
+      } else {
+        mrb_raisef(mrb, E_ARGUMENT_ERROR,
+                   "unsupported object to convert to bulk: %S",
+                    mrb_value_);
+      }
+    }
     break;
   }
 
