@@ -1,4 +1,4 @@
-CODE_NAMES = trusty,xenial
+CODE_NAMES = trusty,xenial,yakkety
 SOURCE = ../$(PACKAGE)-$(VERSION).tar.gz
 
 all:
