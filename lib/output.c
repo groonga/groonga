@@ -2809,6 +2809,7 @@ is_output_columns_format_v1(grn_ctx *ctx,
 {
   const char *current;
   const char *end;
+  grn_bool in_identifier = GRN_FALSE;
 
   current = output_columns;
   end = current + output_columns_len;
@@ -2822,18 +2823,29 @@ is_output_columns_format_v1(grn_ctx *ctx,
 
     switch (current[0]) {
     case ' ' :
-    case '.' :
+    case ',' :
+      in_identifier = GRN_FALSE;
+      break;
     case '_' :
+      in_identifier = GRN_TRUE;
+      break;
+    case '.' :
     case '-' :
     case '#' :
     case '@' :
+      if (!in_identifier) {
+        return GRN_FALSE;
+      }
       break;
     default :
       if ('a' <= current[0] && current[0] <= 'z') {
+        in_identifier = GRN_TRUE;
         break;
       } else if ('A' <= current[0] && current[0] <= 'Z') {
+        in_identifier = GRN_TRUE;
         break;
       } else if ('0' <= current[0] && current[0] <= '9') {
+        in_identifier = GRN_TRUE;
         break;
       } else {
         return GRN_FALSE;
