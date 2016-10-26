@@ -61,6 +61,26 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/column_copy/move_column_setup.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_copy/to_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_copy/to_table_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_full_text_search_index_create_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_full_text_search_index_create_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_full_text_search_index_select.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_index_create_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_index_create_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_index_select.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_medium_index_create_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_multiple_columns_index_create_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_multiple_columns_index_select.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_reference_create_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_reference_create_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_reference_load.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_reference_select.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_scalar_create.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_scalar_load.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_scalar_select.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_small_index_create_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_vector_create.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_vector_select.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_list/column_list.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_rename/column_rename.log \
 	$(top_srcdir)/doc/source/example/reference/commands/config_delete/existent.log \
@@ -919,6 +939,26 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/column_copy/move_column_setup.log \
 	source/example/reference/commands/column_copy/to_table.log \
 	source/example/reference/commands/column_copy/to_table_setup.log \
+	source/example/reference/commands/column_create/usage_full_text_search_index_create_column.log \
+	source/example/reference/commands/column_create/usage_full_text_search_index_create_table.log \
+	source/example/reference/commands/column_create/usage_full_text_search_index_select.log \
+	source/example/reference/commands/column_create/usage_index_create_column.log \
+	source/example/reference/commands/column_create/usage_index_create_table.log \
+	source/example/reference/commands/column_create/usage_index_select.log \
+	source/example/reference/commands/column_create/usage_medium_index_create_column.log \
+	source/example/reference/commands/column_create/usage_multiple_columns_index_create_column.log \
+	source/example/reference/commands/column_create/usage_multiple_columns_index_select.log \
+	source/example/reference/commands/column_create/usage_reference_create_column.log \
+	source/example/reference/commands/column_create/usage_reference_create_table.log \
+	source/example/reference/commands/column_create/usage_reference_load.log \
+	source/example/reference/commands/column_create/usage_reference_select.log \
+	source/example/reference/commands/column_create/usage_scalar_create.log \
+	source/example/reference/commands/column_create/usage_scalar_load.log \
+	source/example/reference/commands/column_create/usage_scalar_select.log \
+	source/example/reference/commands/column_create/usage_small_index_create_column.log \
+	source/example/reference/commands/column_create/usage_table.log \
+	source/example/reference/commands/column_create/usage_vector_create.log \
+	source/example/reference/commands/column_create/usage_vector_select.log \
 	source/example/reference/commands/column_list/column_list.log \
 	source/example/reference/commands/column_rename/column_rename.log \
 	source/example/reference/commands/config_delete/existent.log \
