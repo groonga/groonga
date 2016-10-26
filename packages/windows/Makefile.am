@@ -24,7 +24,9 @@ upload: ensure-rsync-path
 
 upload-to-tmp:
 	for architecture in $(ARCHITECTURES); do			\
-	  scp files/$(PACKAGE)-$(VERSION)-$${architecture}$(SUFFIX).zip	\
+	  zip=$(PACKAGE)-$(VERSION)-$${architecture}$(SUFFIX).zip;	\
+	  (cd files && sha256sum $${zip} > $${zip}.sha256);		\
+	  scp files/$${zip} files/$${zip}.sha256			\
 	    packages@packages.groonga.org:public/tmp/;			\
 	done
 
