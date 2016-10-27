@@ -107,7 +107,8 @@ load --table Users
     MESSAGE
   end
 
-  def test_locked_index_column
+  sub_test_case "locked index column" do
+  def test_locked_segment
     groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
     groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
 
@@ -122,6 +123,7 @@ load --table Users
     assert_equal(<<-MESSAGE, error.error_output)
 [Ages.users_age] Index column is locked. It may be broken. Re-create index by '#{grndb_path} recover #{@database_path}'.
     MESSAGE
+  end
   end
 
   sub_test_case "--target" do
