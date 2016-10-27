@@ -108,22 +108,23 @@ load --table Users
   end
 
   sub_test_case "locked index column" do
-  def test_locked_segment
-    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
-    groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
+    def test_locked_segment
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+      groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
 
-    groonga("table_create", "Ages", "TABLE_PAT_KEY", "UInt8")
-    groonga("column_create", "Ages", "users_age", "COLUMN_INDEX", "Users", "age")
+      groonga("table_create", "Ages", "TABLE_PAT_KEY", "UInt8")
+      groonga("column_create", "Ages", "users_age",
+              "COLUMN_INDEX", "Users", "age")
 
-    groonga("lock_acquire", "Ages.users_age")
+      groonga("lock_acquire", "Ages.users_age")
 
-    error = assert_raise(CommandRunner::Error) do
-      grndb("check")
-    end
-    assert_equal(<<-MESSAGE, error.error_output)
+      error = assert_raise(CommandRunner::Error) do
+        grndb("check")
+      end
+      assert_equal(<<-MESSAGE, error.error_output)
 [Ages.users_age] Index column is locked. It may be broken. Re-create index by '#{grndb_path} recover #{@database_path}'.
-    MESSAGE
-  end
+      MESSAGE
+    end
   end
 
   sub_test_case "--target" do
