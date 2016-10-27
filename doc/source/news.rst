@@ -15,11 +15,54 @@ Release 6.1.0 - 2016-10-29
 Improvements
 ^^^^^^^^^^^^
 
+* [:doc:`/reference/commands/table_create`][:doc:`/reference/commands/column_create`]
+  Revised outdated descriptions with execution examples. English
+  documentation is also published and section about small/medium index
+  column is also added.
+
+* [experimental][httpd] Supported mruby to customize configuration
+  settings in groonga-httpd.conf.
+
+* [windows] Updated bundled Groonga Admin to 0.9.5. It is recommended
+  to upgrade because amount of memory usage is drastically
+  reduced. Note that this version drops Groonga 5.0.8 or earlier
+  support.
+
+* Added log token and token ID on error. [Gitter:groonga/ja:58043f77614116a2568d529c]
+  [Suggested by torinky]
+
+* [:doc:`/reference/tables`] Updated description about the max record ID.
+
+* [mruby] Suppported to convert time of ``mrb_value`` to ``grn_bulk``.
+  [GitHub:#607] [Patch by Naoya Murakami]
+
+* [ubuntu] Supported Ubuntu 16.10 (Yakkety Yak)
+
+* [httpd] Updated bundled nginx to 1.11.5.
+
 Fixes
 ^^^^^
 
+* Fixed a bug that table of index column was reported in log instead of
+  correct index column.
+
+* Fixed a bug that unexpected "invalid cursor error" is recorded in
+  log file. [Gitter:groonga/ja:57f2ff87d45d7f0f525e2216] [Reported by
+  torinky]
+
+* Fixed a memory leak on static index construction.
+
+* [hash] Fixed a memory leak for many token filters are set case.
+
+* [:doc:`/reference/commands/select`] Fixed a bug that wrong column
+  name that starts with number in output_columns is not ignored. It
+  caused a syntax error.
+
 Thanks
 ^^^^^^
+
+* torinky
+* Naoya Murakami
 
 .. _release-6-0-9:
 
