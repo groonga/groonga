@@ -279,8 +279,6 @@ AC_CONFIG_FILES([
   packages/windows/language-files/Makefile
   packages/windows/setup-x64.nsi
   data/Makefile
-  data/images/Makefile
-  data/images/logo/Makefile
   data/html/Makefile
   data/munin/Makefile
   data/init.d/Makefile
