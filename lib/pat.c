@@ -3629,3 +3629,17 @@ grn_pat_clean(grn_ctx *ctx, grn_pat *pat)
 
   return rc;
 }
+
+grn_rc
+grn_pat_clear_dirty(grn_ctx *ctx, grn_pat *pat)
+{
+  grn_rc rc = GRN_SUCCESS;
+
+  CRITICAL_SECTION_ENTER(pat->lock);
+  pat->is_dirty = GRN_FALSE;
+  pat->header->n_dirty_opens = 0;
+  rc = grn_io_flush(ctx, pat->io);
+  CRITICAL_SECTION_LEAVE(pat->lock);
+
+  return rc;
+}

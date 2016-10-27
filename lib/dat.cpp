@@ -1205,4 +1205,23 @@ grn_dat_clean(grn_ctx *ctx, grn_dat *dat)
   return rc;
 }
 
+grn_rc
+grn_dat_clear_dirty(grn_ctx *ctx, grn_dat *dat)
+{
+  grn_rc rc = GRN_SUCCESS;
+
+  if (!dat->io) {
+    return rc;
+  }
+
+  {
+    CriticalSection critical_section(&dat->lock);
+    dat->is_dirty = GRN_FALSE;
+    dat->header->n_dirty_opens = 0;
+    rc = grn_io_flush(ctx, dat->io);
+  }
+
+  return rc;
+}
+
 }  // extern "C"

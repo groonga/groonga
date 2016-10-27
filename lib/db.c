@@ -754,6 +754,26 @@ grn_db_clean(grn_ctx *ctx, grn_obj *db)
   }
 }
 
+static grn_rc
+grn_db_clear_dirty(grn_ctx *ctx, grn_obj *db)
+{
+  grn_obj *keys;
+
+  if (!db) {
+    return GRN_SUCCESS;
+  }
+
+  keys = ((grn_db *)db)->keys;
+  switch (keys->header.type) {
+  case GRN_TABLE_PAT_KEY :
+    return grn_pat_clear_dirty(ctx, (grn_pat *)keys);
+  case GRN_TABLE_DAT_KEY :
+    return grn_dat_clear_dirty(ctx, (grn_dat *)keys);
+  default :
+    return GRN_SUCCESS;
+  }
+}
+
 void
 grn_db_touch(grn_ctx *ctx, grn_obj *s)
 {
@@ -14601,6 +14621,7 @@ static void
 grn_db_recover_database(grn_ctx *ctx, grn_obj *db)
 {
   if (!grn_obj_is_locked(ctx, db)) {
+    grn_db_clear_dirty(ctx, db);
     return;
   }
 
