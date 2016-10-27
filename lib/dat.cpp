@@ -1186,10 +1186,11 @@ grn_dat_is_dirty(grn_ctx *ctx, grn_dat *dat)
 grn_rc
 grn_dat_clean(grn_ctx *ctx, grn_dat *dat)
 {
-  if (!dat->io) {
-  }
-
   grn_rc rc = GRN_SUCCESS;
+
+  if (!dat->io) {
+    return rc;
+  }
 
   {
     CriticalSection critical_section(&dat->lock);
