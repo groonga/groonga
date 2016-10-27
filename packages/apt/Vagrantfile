@@ -8,11 +8,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   vms = [
     {
       :id => "debian-jessie-i386",
-      :box_url => "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_debian-8.5-i386_chef-provisionerless.box",
+      :box_url => "https://atlas.hashicorp.com/bento/boxes/debian-8.6-i386/versions/2.3.0/providers/virtualbox.box",
     },
     {
       :id => "debian-jessie-amd64",
-      :box_url => "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_debian-8.5_chef-provisionerless.box",
+      :box_url => "https://atlas.hashicorp.com/bento/boxes/debian-8.6/versions/2.3.0/providers/virtualbox.box",
     },
   ]
 
