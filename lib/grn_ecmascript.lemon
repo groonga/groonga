@@ -477,10 +477,12 @@ output_columns(N_STACKED_COLUMNS) ::=
 output_columns(N_STACKED_COLUMNS) ::=
    output_columns(SUB_N_STACKED_COLUMNS) COMMA
    output_column(NEW_N_STACKED_COLUMNS). {
-  if (NEW_N_STACKED_COLUMNS == 0) {
+  if (SUB_N_STACKED_COLUMNS == 0) {
+    N_STACKED_COLUMNS = NEW_N_STACKED_COLUMNS;
+  } else if (NEW_N_STACKED_COLUMNS == 0) {
     N_STACKED_COLUMNS = SUB_N_STACKED_COLUMNS;
   } else {
-    if (SUB_N_STACKED_COLUMNS > 0 || NEW_N_STACKED_COLUMNS > 1) {
+    if (NEW_N_STACKED_COLUMNS == 1) {
       grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_COMMA, 2);
     }
     N_STACKED_COLUMNS = 1;
@@ -490,45 +492,42 @@ output_columns(N_STACKED_COLUMNS) ::=
 output_column(N_STACKED_COLUMNS) ::= STAR. {
   grn_ctx *ctx = efsi->ctx;
   grn_obj *expr = efsi->e;
-  grn_expr *e = (grn_expr *)expr;
   grn_obj *variable = grn_expr_get_var_by_offset(ctx, expr, 0);
   if (variable) {
     grn_id table_id = GRN_OBJ_GET_DOMAIN(variable);
     grn_obj *table = grn_ctx_at(ctx, table_id);
     grn_obj columns_buffer;
+    int n_columns;
     grn_obj **columns;
-    int i, n_columns;
-    int n_output_columns;
 
     GRN_PTR_INIT(&columns_buffer, GRN_OBJ_VECTOR, GRN_ID_NIL);
     grn_obj_columns(ctx, table, "*", strlen("*"), &columns_buffer);
     n_columns = GRN_BULK_VSIZE(&columns_buffer) / sizeof(grn_obj *);
     columns = (grn_obj **)GRN_BULK_HEAD(&columns_buffer);
 
-    if (e->codes_curr == 0) {
-      n_output_columns = 0;
-    } else {
-      grn_expr_code *codes;
-      grn_expr_code *codes_end;
-
-      n_output_columns = 1;
-      codes_end = e->codes + e->codes_curr;
-      for (codes = e->codes; codes < codes_end; codes++) {
-        if (codes[0].op == GRN_OP_COMMA) {
-          n_output_columns++;
-        }
-      }
-    }
-
-    for (i = 0; i < n_columns; i++) {
-      grn_obj *column = columns[i];
-      if (n_output_columns > 1 && i > 0) {
-        grn_expr_append_op(ctx, expr, GRN_OP_COMMA, 2);
-      }
+    if (n_columns == 0) {
+      /* do nothing */
+    } else if (n_columns == 1) {
+      grn_obj *column = columns[0];
       grn_expr_append_const(ctx, expr, column, GRN_OP_GET_VALUE, 1);
-      n_output_columns++;
       if (column->header.type == GRN_ACCESSOR) {
         grn_expr_take_obj(ctx, expr, column);
+      }
+    } else {
+      grn_expr *e = (grn_expr *)expr;
+      grn_bool have_column;
+      int i;
+
+      have_column = (e->codes_curr > 0);
+      for (i = 0; i < n_columns; i++) {
+        grn_obj *column = columns[i];
+        grn_expr_append_const(ctx, expr, column, GRN_OP_GET_VALUE, 1);
+        if (have_column || i > 0) {
+          grn_expr_append_op(ctx, expr, GRN_OP_COMMA, 2);
+        }
+        if (column->header.type == GRN_ACCESSOR) {
+          grn_expr_take_obj(ctx, expr, column);
+        }
       }
     }
 

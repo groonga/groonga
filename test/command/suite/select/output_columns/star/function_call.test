@@ -1,0 +1,18 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos column1 COLUMN_SCALAR ShortText
+column_create Memos column2 COLUMN_SCALAR ShortText
+column_create Memos column3 COLUMN_SCALAR ShortText
+
+load --table Memos
+[
+{"column1": "1", "column2": "Hello", "column3": "3"}
+]
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenMecab \
+  --normalizer NormalizerAuto
+column_create Terms memos COLUMN_INDEX|WITH_POSITION Memos column2
+
+select Memos \
+  --query column2:@Hello \
+  --output_columns '*,snippet_html(column2)'

@@ -1,0 +1,58 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos column1 COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos column2 COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos column3 COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"column1": "1", "column2": "Hello", "column3": "3"}
+]
+[[0,0.0,0.0],1]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenMecab   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms memos COLUMN_INDEX|WITH_POSITION Memos column2
+[[0,0.0,0.0],true]
+select Memos   --query column2:@Hello   --output_columns '*,snippet_html(column2)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "column1",
+          "ShortText"
+        ],
+        [
+          "column2",
+          "ShortText"
+        ],
+        [
+          "column3",
+          "ShortText"
+        ],
+        [
+          "snippet_html",
+          null
+        ]
+      ],
+      [
+        "1",
+        "Hello",
+        "3",
+        [
+          "<span class=\"keyword\">Hello</span>"
+        ]
+      ]
+    ]
+  ]
+]
