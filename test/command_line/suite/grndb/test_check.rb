@@ -12,7 +12,8 @@ Database is locked. It may be broken. Re-create the database.
     MESSAGE
   end
 
-  def test_dirty_database
+  sub_test_case "dirty database" do
+  def test_only_table
     groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
     groonga do |process|
       process.run_command(<<-COMMAND)
@@ -20,15 +21,16 @@ load --table Users
 [
 {"_key": "Alice"}
 ]
-      COMMAND
-      Process.kill(:KILL, process.pid)
-    end
-    error = assert_raise(CommandRunner::Error) do
-      grndb("check")
-    end
-    assert_equal(<<-MESSAGE, error.error_output)
+       COMMAND
+       Process.kill(:KILL, process.pid)
+     end
+     error = assert_raise(CommandRunner::Error) do
+       grndb("check")
+     end
+     assert_equal(<<-MESSAGE, error.error_output)
 Database wasn't closed successfully. It may be broken. Re-create the database.
-    MESSAGE
+     MESSAGE
+   end
   end
 
   def test_cleaned_database
