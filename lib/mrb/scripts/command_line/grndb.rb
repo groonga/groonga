@@ -193,6 +193,7 @@ module Groonga
             cursor.each do |id|
               next if ID.builtin?(id)
               path = "%s.%07x" % [@database.path, id]
+              next unless File.exist?(path)
               return if File.stat(path).mtime > last_modified
             end
           end

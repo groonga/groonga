@@ -31,6 +31,28 @@ load --table Users
 Database wasn't closed successfully. It may be broken. Re-create the database.
       MESSAGE
     end
+
+    def test_have_plugin
+      groonga("plugin_register", "sharding")
+      groonga("io_flush")
+
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+      groonga do |process|
+        process.run_command(<<-COMMAND)
+load --table Users
+[
+{"_key": "Alice"}
+]
+        COMMAND
+        Process.kill(:KILL, process.pid)
+      end
+      error = assert_raise(CommandRunner::Error) do
+        grndb("check")
+      end
+      assert_equal(<<-MESSAGE, error.error_output)
+Database wasn't closed successfully. It may be broken. Re-create the database.
+      MESSAGE
+    end
   end
 
   def test_cleaned_database
