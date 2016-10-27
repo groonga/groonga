@@ -1235,7 +1235,7 @@ if test "x$enable_message_pack" != "xno"; then
 
     if test "x$message_pack_available" = "xyes"; then
       MESSAGE_PACK_CFLAGS="-I$with_message_pack/include"
-      MESSAGE_PACK_LIBS="-L$with_message_pack/lib -lmsgpack"
+      MESSAGE_PACK_LIBS="-L$with_message_pack/lib -lmsgpackc"
     fi
   fi
 
