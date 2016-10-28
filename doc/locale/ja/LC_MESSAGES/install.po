@@ -769,7 +769,10 @@ msgstr ""
 msgid "14.04 LTS Trusty Tahr"
 msgstr ""
 
-msgid "16.04 Xenial Xerus"
+msgid "16.04 LTS Xenial Xerus"
+msgstr ""
+
+msgid "16.10 Yakkety Yak"
 msgstr ""
 
 msgid "Enable the universe repository to install Groonga::"
