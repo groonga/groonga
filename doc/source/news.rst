@@ -15,6 +15,8 @@ Release 6.1.0 - 2016-10-29
 Improvements
 ^^^^^^^^^^^^
 
+* [:doc:`/reference/commands/dump`] Supported to sort load table names by key instead of ID to make output stable. This is incompatible change but it makes easy to compare result of dump command.
+
 * [:doc:`/reference/commands/table_create`][:doc:`/reference/commands/column_create`]
   Revised outdated descriptions with execution examples. English
   documentation is also published and section about small/medium index
