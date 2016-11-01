@@ -2489,8 +2489,15 @@ selector_between(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   }
 
   if (index) {
+    if (index->header.type == GRN_ACCESSOR) {
+      /* TODO */
+    } else {
+      index_table = grn_ctx_at(ctx, index->header.domain);
+    }
+  }
+
+  if (index_table) {
     double ratio = grn_between_too_many_index_match_ratio;
-    index_table = grn_ctx_at(ctx, index->header.domain);
     use_sequential_search =
       selector_between_sequential_search_should_use(ctx,
                                                     table,
