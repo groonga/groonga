@@ -10016,9 +10016,17 @@ grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned int name_
     grn_db *s = (grn_db *)db;
     int added;
     if (!(id = grn_table_add(ctx, s->keys, name, name_size, &added))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[object][register] failed to to register a name: <%.*s>",
-          name_size, name);
+      grn_rc rc;
+      rc = ctx->rc;
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_NO_MEMORY_AVAILABLE;
+      }
+      ERR(rc,
+          "[object][register] failed to to register a name: <%.*s>%s%s%s",
+          name_size, name,
+          ctx->rc == GRN_SUCCESS ? "" : ": <",
+          ctx->rc == GRN_SUCCESS ? "" : ctx->errbuf,
+          ctx->rc == GRN_SUCCESS ? "" : ">");
     } else if (!added) {
       ERR(GRN_INVALID_ARGUMENT,
           "[object][register] already used name was assigned: <%.*s>",
