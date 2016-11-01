@@ -10017,10 +10017,12 @@ grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned int name_
     int added;
     if (!(id = grn_table_add(ctx, s->keys, name, name_size, &added))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "grn_table_add failed: <%.*s>", name_size, name);
+          "[object][register] failed to to register a name: <%.*s>",
+          name_size, name);
     } else if (!added) {
       ERR(GRN_INVALID_ARGUMENT,
-          "already used name was assigned: <%.*s>", name_size, name);
+          "[object][register] already used name was assigned: <%.*s>",
+          name_size, name);
       id = GRN_ID_NIL;
     }
   } else if (ctx->impl && ctx->impl->values) {
