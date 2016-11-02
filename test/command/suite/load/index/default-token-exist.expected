@@ -1,0 +1,55 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users age COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+table_create Ages TABLE_PAT_KEY UInt8
+[[0,0.0,0.0],true]
+column_create Ages users_age COLUMN_INDEX Users age
+[[0,0.0,0.0],true]
+load --table Ages
+[
+{"_key": 0}
+]
+[[0,0.0,0.0],1]
+load --table Users
+[
+{"_key": "alice", "age": 10}
+]
+[[0,0.0,0.0],1]
+log_level --level info
+[[0,0.0,0.0],true]
+select Users --filter 'age >= 10'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "age",
+          "UInt8"
+        ]
+      ],
+      [
+        1,
+        "alice",
+        10
+      ]
+    ]
+  ]
+]
+#|i| [table][select][index][range] <Ages.users_age>

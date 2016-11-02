@@ -4620,12 +4620,6 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   uint32_t pseg, size, *a;
   if (!tid) { return ctx->rc; }
   if (!(a = array_at(ctx, ii, tid))) {
-    DEFINE_NAME(ii);
-    MERR("[ii][delete][one] failed to allocate a segment: "
-         "<%.*s>: "
-         "<%u>:<%u>:<%u>",
-         name_size, name,
-         u->rid, u->sid, tid);
     return ctx->rc;
   }
   for (;;) {
