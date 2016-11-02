@@ -155,13 +155,19 @@ default_logger_log(grn_ctx *ctx, grn_log_level level,
       }
     }
     if (default_logger_file) {
+      char label = *(slev + level);
       int written;
       if (location && *location) {
-        written = fprintf(default_logger_file, "%s|%c|%s %s %s\n",
-                          timestamp, *(slev + level), title, message, location);
+        if (title && *title) {
+          written = fprintf(default_logger_file, "%s|%c|%s: %s %s\n",
+                            timestamp, label, location, title, message);
+        } else {
+          written = fprintf(default_logger_file, "%s|%c|%s: %s\n",
+                            timestamp, label, location, message);
+        }
       } else {
-        written = fprintf(default_logger_file, "%s|%c|%s %s\n", timestamp,
-                          *(slev + level), title, message);
+        written = fprintf(default_logger_file, "%s|%c|%s %s\n",
+                          timestamp, label, title, message);
       }
       if (written > 0) {
         default_logger_size += written;
@@ -394,6 +400,9 @@ grn_logger_putv(grn_ctx *ctx,
     if (current_logger.flags & GRN_LOG_LOCATION) {
       grn_snprintf(lbuf, LBUFSIZE, LBUFSIZE,
                    "%d %s:%d %s()", getpid(), file, line, func);
+    } else if (current_logger.flags & GRN_LOG_PID) {
+      grn_snprintf(lbuf, LBUFSIZE, LBUFSIZE,
+                   "%d", getpid());
     } else {
       lbuf[0] = '\0';
     }

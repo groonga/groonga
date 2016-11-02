@@ -182,65 +182,40 @@ ngx_http_groonga_logger_log(grn_ctx *ctx, grn_log_level level,
                             void *user_data)
 {
   ngx_open_file_t *file = user_data;
-  const char level_marks[] = " EACewnid-";
+  char level_marks[] = " EACewnid-";
   u_char buffer[NGX_MAX_ERROR_STR];
-  u_char *last;
-  size_t prefix_size;
-  size_t message_size;
-  size_t location_size;
-  size_t postfix_size;
-  size_t log_message_size;
 
   if (!file) {
     return;
   }
 
-#define LOG_PREFIX_FORMAT "%s|%c|%s"
-  prefix_size =
-    strlen(timestamp) +
-    1 /* | */ +
-    1 /* %c */ +
-    1 /* | */ +
-    strlen(title) +
-    1 /* a space */;
-  message_size = strlen(message);
+  ngx_http_groonga_write_fd(file->fd,
+                            buffer, NGX_MAX_ERROR_STR,
+                            timestamp, strlen(timestamp));
+  ngx_write_fd(file->fd, "|", 1);
+  ngx_write_fd(file->fd, level_marks + level, 1);
+  ngx_write_fd(file->fd, "|", 1);
   if (location && *location) {
-    location_size = 1 /* a space */ + strlen(location);
-  } else {
-    location_size = 0;
-  }
-  postfix_size = 1 /* \n */;
-  log_message_size = prefix_size + message_size + location_size + postfix_size;
-
-  if (log_message_size > NGX_MAX_ERROR_STR) {
-    last = ngx_slprintf(buffer, buffer + NGX_MAX_ERROR_STR,
-                        LOG_PREFIX_FORMAT,
-                        timestamp, *(level_marks + level), title);
-    ngx_write_fd(file->fd, buffer, last - buffer);
     ngx_http_groonga_write_fd(file->fd,
                               buffer, NGX_MAX_ERROR_STR,
-                              message, message_size);
-    if (location_size > 0) {
-      ngx_write_fd(file->fd, " ", 1);
+                              location, strlen(location));
+    ngx_write_fd(file->fd, ": ", 2);
+    if (title && *title) {
       ngx_http_groonga_write_fd(file->fd,
                                 buffer, NGX_MAX_ERROR_STR,
-                                location, location_size);
+                                title, strlen(title));
+      ngx_write_fd(file->fd, " ", 1);
     }
-    ngx_write_fd(file->fd, "\n", 1);
   } else {
-    if (location && *location) {
-      last = ngx_slprintf(buffer, buffer + NGX_MAX_ERROR_STR,
-                          LOG_PREFIX_FORMAT " %s %s\n",
-                          timestamp, *(level_marks + level), title, message,
-                          location);
-    } else {
-      last = ngx_slprintf(buffer, buffer + NGX_MAX_ERROR_STR,
-                          LOG_PREFIX_FORMAT " %s\n",
-                          timestamp, *(level_marks + level), title, message);
-    }
-    ngx_write_fd(file->fd, buffer, last - buffer);
+    ngx_http_groonga_write_fd(file->fd,
+                              buffer, NGX_MAX_ERROR_STR,
+                              title, strlen(title));
+    ngx_write_fd(file->fd, " ", 1);
   }
-#undef LOG_PREFIX_FORMAT
+  ngx_http_groonga_write_fd(file->fd,
+                            buffer, NGX_MAX_ERROR_STR,
+                            message, strlen(message));
+  ngx_write_fd(file->fd, "\n", 1);
 }
 
 static void
@@ -258,7 +233,7 @@ ngx_http_groonga_logger_fin(grn_ctx *ctx, void *user_data)
 
 static grn_logger ngx_http_groonga_logger = {
   GRN_LOG_DEFAULT_LEVEL,
-  GRN_LOG_TIME | GRN_LOG_MESSAGE,
+  GRN_LOG_TIME | GRN_LOG_MESSAGE | GRN_LOG_PID,
   NULL,
   ngx_http_groonga_logger_log,
   ngx_http_groonga_logger_reopen,
