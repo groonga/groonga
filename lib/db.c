@@ -9302,12 +9302,17 @@ static grn_bool
 is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
 {
   grn_bool removable = GRN_TRUE;
+  grn_id table_id;
   grn_bool is_close_opened_object_mode = GRN_FALSE;
   grn_obj not_opened_ids;
-  grn_id table_id;
   char table_name[GRN_TABLE_MAX_KEY_SIZE];
   int table_name_size;
   grn_table_cursor *cursor;
+
+  table_id = DB_OBJ(table)->id;
+  if (table_id & GRN_OBJ_TMP_OBJECT) {
+    return GRN_TRUE;
+  }
 
   if (grn_thread_get_limit() == 1) {
     is_close_opened_object_mode = GRN_TRUE;
@@ -9315,7 +9320,6 @@ is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
 
   GRN_TEXT_INIT(&not_opened_ids, 0);
 
-  table_id = DB_OBJ(table)->id;
   table_name_size = grn_obj_name(ctx, table, table_name, GRN_TABLE_MAX_KEY_SIZE);
   if ((cursor = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
                                       GRN_CURSOR_BY_ID))) {
