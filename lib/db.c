@@ -10026,7 +10026,7 @@ grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned int name_
         rc = GRN_NO_MEMORY_AVAILABLE;
       }
       ERR(rc,
-          "[object][register] failed to to register a name: <%.*s>%s%s%s",
+          "[object][register] failed to register a name: <%.*s>%s%s%s",
           name_size, name,
           ctx->rc == GRN_SUCCESS ? "" : ": <",
           ctx->rc == GRN_SUCCESS ? "" : ctx->errbuf,
