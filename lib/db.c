@@ -11172,10 +11172,10 @@ grn_rc
 grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id)
 {
   GRN_API_ENTER;
-  grn_io_unlock(grn_obj_io(obj));
   if (obj && obj->header.type == GRN_COLUMN_INDEX) {
     grn_io_unlock(((grn_ii *)obj)->chunk);
   }
+  grn_io_unlock(grn_obj_io(obj));
   GRN_API_RETURN(GRN_SUCCESS);
 }
 
