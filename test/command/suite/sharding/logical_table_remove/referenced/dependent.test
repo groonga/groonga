@@ -6,6 +6,7 @@ table_create Paths_20150203 TABLE_HASH_KEY|KEY_LARGE ShortText
 table_create Logs_20150203 TABLE_NO_KEY
 column_create Logs_20150203 timestamp COLUMN_SCALAR Time
 column_create Logs_20150203 path COLUMN_SCALAR Paths_20150203
+column_create Logs_20150203 links COLUMN_VECTOR Paths_20150203
 table_create Times_20150203 TABLE_PAT_KEY Time
 column_create Times_20150203 timestamp_index COLUMN_INDEX Logs_20150203 timestamp
 
@@ -22,6 +23,7 @@ table_create Paths_20150204 TABLE_HASH_KEY|KEY_LARGE ShortText
 table_create Logs_20150204 TABLE_NO_KEY
 column_create Logs_20150204 timestamp COLUMN_SCALAR Time
 column_create Logs_20150204 path COLUMN_SCALAR Paths_20150204
+column_create Logs_20150204 links COLUMN_VECTOR Paths_20150204
 table_create Times_20150204 TABLE_PAT_KEY Time
 column_create Times_20150204 timestamp_index COLUMN_INDEX Logs_20150204 timestamp
 
@@ -34,15 +36,15 @@ column_create PathTerms_20150204 index COLUMN_INDEX|WITH_POSITION \
 
 load --table Logs_20150203
 [
-{"timestamp": "2015-02-03 12:49:00", "path": "/tmp/log"},
-{"timestamp": "2015-02-03 23:59:59", "path": "/var/"}
+{"timestamp": "2015-02-03 12:49:00", "path": "/tmp/log", "links": []},
+{"timestamp": "2015-02-03 23:59:59", "path": "/var/",    "links": []}
 ]
 
 load --table Logs_20150204
 [
-{"timestamp": "2015-02-04 00:00:00", "path": "/tmp/log"},
-{"timestamp": "2015-02-04 13:49:00", "path": "/root/"},
-{"timestamp": "2015-02-04 13:50:00", "path": "/etc/aliases"}
+{"timestamp": "2015-02-04 00:00:00", "path": "/tmp/log",     "links": []},
+{"timestamp": "2015-02-04 13:49:00", "path": "/root/",       "links": []},
+{"timestamp": "2015-02-04 13:50:00", "path": "/etc/aliases", "links": []}
 ]
 
 logical_table_remove Logs timestamp \

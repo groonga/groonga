@@ -302,8 +302,9 @@ module Groonga
 
         database = context.database
         shard_suffix = shard.range_data.to_suffix
-        referenced_table_ids.each do |referenced_table_id|
+        referenced_table_ids.uniq.each do |referenced_table_id|
           referenced_table_name = database[referenced_table_id]
+          next if referenced_table_name.nil?
           next unless referenced_table_name.end_with?(shard_suffix)
 
           referenced_table = context[referenced_table_id]
