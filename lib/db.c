@@ -11250,8 +11250,13 @@ grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj)
     break;
   case GRN_COLUMN_FIX_SIZE:
   case GRN_COLUMN_VAR_SIZE:
+    grn_io_clear_lock(grn_obj_io(obj));
+    break;
   case GRN_COLUMN_INDEX:
     grn_io_clear_lock(grn_obj_io(obj));
+    if (obj) {
+      grn_io_clear_lock(((grn_ii *)obj)->chunk);
+    }
     break;
   }
   GRN_API_RETURN(GRN_SUCCESS);
@@ -11263,6 +11268,9 @@ grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj)
   unsigned int res = 0;
   GRN_API_ENTER;
   res = grn_io_is_locked(grn_obj_io(obj));
+  if (obj && obj->header.type == GRN_COLUMN_INDEX) {
+    res += grn_io_is_locked(((grn_ii *)obj)->chunk);
+  }
   GRN_API_RETURN(res);
 }
 
