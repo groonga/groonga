@@ -1200,6 +1200,15 @@ grn_ja_element_info(grn_ctx *ctx, grn_ja *ja, grn_id id,
   return GRN_SUCCESS;
 }
 
+#define COMPRESSED_VALUE_META_FLAG(meta) ((meta) & 0xf000000000000000)
+#define COMPRESSED_VALUE_META_FLAG_RAW             0x1000000000000000
+#define COMPRESSED_VALUE_META_UNCOMPRESSED_LEN(meta) \
+                                         ((meta) & 0x0fffffffffffffff)
+
+#define COMPRESS_THRESHOLD_BYTE 256
+#define COMPRESS_PACKED_VALUE_SIZE_MAX 257
+        /* COMPRESS_THRESHOLD_BYTE - 1 + sizeof(uint64_t) = 257 */
+
 #ifdef GRN_WITH_ZLIB
 #include <zlib.h>
 
@@ -1207,15 +1216,35 @@ static void *
 grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
   z_stream zstream;
+  void *raw_value;
+  uint32_t raw_value_len;
   void *zvalue;
   uint32_t zvalue_len;
-  if (!(zvalue = grn_ja_ref_raw(ctx, ja, id, iw, &zvalue_len))) {
+  uint64_t compressed_value_meta;
+  uint64_t uncompressed_value_len;
+
+  if (!(raw_value = grn_ja_ref_raw(ctx, ja, id, iw, &raw_value_len))) {
     iw->uncompressed_value = NULL;
     *value_len = 0;
     return NULL;
   }
-  zstream.next_in = (Bytef *)(((uint64_t *)zvalue) + 1);
-  zstream.avail_in = zvalue_len - sizeof(uint64_t);
+
+  compressed_value_meta = *((uint64_t *)raw_value);
+  zvalue = (void *)(((uint64_t *)raw_value) + 1);
+  zvalue_len = raw_value_len - sizeof(uint64_t);
+
+  uncompressed_value_len =
+    COMPRESSED_VALUE_META_UNCOMPRESSED_LEN(compressed_value_meta);
+  switch (COMPRESSED_VALUE_META_FLAG(compressed_value_meta)) {
+  case COMPRESSED_VALUE_META_FLAG_RAW :
+    *value_len = uncompressed_value_len;
+    return zvalue;
+  default :
+    break;
+  }
+
+  zstream.next_in = (Bytef *)zvalue;
+  zstream.avail_in = zvalue_len;
   zstream.zalloc = Z_NULL;
   zstream.zfree = Z_NULL;
   if (inflateInit2(&zstream, 15 /* windowBits */) != Z_OK) {
@@ -1223,14 +1252,14 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *v
     *value_len = 0;
     return NULL;
   }
-  if (!(iw->uncompressed_value = GRN_MALLOC(*((uint64_t *)zvalue)))) {
+  if (!(iw->uncompressed_value = GRN_MALLOC(uncompressed_value_len))) {
     inflateEnd(&zstream);
     iw->uncompressed_value = NULL;
     *value_len = 0;
     return NULL;
   }
   zstream.next_out = (Bytef *)iw->uncompressed_value;
-  zstream.avail_out = *(uint64_t *)zvalue;
+  zstream.avail_out = uncompressed_value_len;
   if (inflate(&zstream, Z_FINISH) != Z_STREAM_END) {
     inflateEnd(&zstream);
     GRN_FREE(iw->uncompressed_value);
@@ -1255,35 +1284,48 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *v
 static void *
 grn_ja_ref_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
-  void *packed_value;
-  int packed_value_len;
+  void *raw_value;
+  uint32_t raw_value_len;
   void *lz4_value;
-  int lz4_value_len;
-  int original_value_len;
+  uint32_t lz4_value_len;
+  uint64_t compressed_value_meta;
+  uint64_t uncompressed_value_len;
 
-  if (!(packed_value = grn_ja_ref_raw(ctx, ja, id, iw, &packed_value_len))) {
+  if (!(raw_value = grn_ja_ref_raw(ctx, ja, id, iw, &raw_value_len))) {
     iw->uncompressed_value = NULL;
     *value_len = 0;
     return NULL;
   }
-  original_value_len = *((uint64_t *)packed_value);
-  if (!(iw->uncompressed_value = GRN_MALLOC(original_value_len))) {
+
+  compressed_value_meta = *((uint64_t *)raw_value);
+  lz4_value = (void *)(((uint64_t *)raw_value) + 1);
+  lz4_value_len = raw_value_len - sizeof(uint64_t);
+
+  uncompressed_value_len =
+    COMPRESSED_VALUE_META_UNCOMPRESSED_LEN(compressed_value_meta);
+  switch (COMPRESSED_VALUE_META_FLAG(compressed_value_meta)) {
+  case COMPRESSED_VALUE_META_FLAG_RAW :
+    *value_len = uncompressed_value_len;
+    return lz4_value;
+  default :
+    break;
+  }
+
+  if (!(iw->uncompressed_value = GRN_MALLOC(uncompressed_value_len))) {
     iw->uncompressed_value = NULL;
     *value_len = 0;
     return NULL;
   }
-  lz4_value = (void *)((uint64_t *)packed_value + 1);
-  lz4_value_len = packed_value_len - sizeof(uint64_t);
   if (LZ4_decompress_safe((const char *)(lz4_value),
                           (char *)(iw->uncompressed_value),
                           lz4_value_len,
-                          original_value_len) < 0) {
+                          uncompressed_value_len) < 0) {
     GRN_FREE(iw->uncompressed_value);
     iw->uncompressed_value = NULL;
     *value_len = 0;
     return NULL;
   }
-  *value_len = original_value_len;
+  *value_len = uncompressed_value_len;
   return iw->uncompressed_value;
 }
 #endif /* GRN_WITH_LZ4 */
@@ -1348,6 +1390,22 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
   }
 
+  if (value_len < COMPRESS_THRESHOLD_BYTE) {
+    char *packed_value[COMPRESS_PACKED_VALUE_SIZE_MAX];
+    uint32_t packed_value_len;
+    uint64_t packed_value_meta;
+
+    packed_value_len = value_len + sizeof(uint64_t);
+    packed_value_meta = value_len | COMPRESSED_VALUE_META_FLAG_RAW;
+    *((uint64_t *)packed_value) = packed_value_meta;
+    memcpy(((uint64_t *)packed_value) + 1,
+           value,
+           value_len);
+    return grn_ja_put_raw(ctx, ja, id,
+                          packed_value, packed_value_len,
+                          flags, cas);
+  }
+
   zstream.next_in = value;
   zstream.avail_in = value_len;
   zstream.zalloc = Z_NULL;
@@ -1395,6 +1453,22 @@ grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
 
   if (value_len == 0) {
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
+  }
+
+  if (value_len < COMPRESS_THRESHOLD_BYTE) {
+    char *packed_value[COMPRESS_PACKED_VALUE_SIZE_MAX];
+    uint32_t packed_value_len;
+    uint64_t packed_value_meta;
+
+    packed_value_len = value_len + sizeof(uint64_t);
+    packed_value_meta = value_len | COMPRESSED_VALUE_META_FLAG_RAW;
+    *((uint64_t *)packed_value) = packed_value_meta;
+    memcpy(((uint64_t *)packed_value) + 1,
+           value,
+           value_len);
+    return grn_ja_put_raw(ctx, ja, id,
+                          packed_value, packed_value_len,
+                          flags, cas);
   }
 
   if (value_len > (uint32_t)LZ4_MAX_INPUT_SIZE) {
