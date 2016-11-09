@@ -48,8 +48,9 @@ Fixes
 * Fixed a bug that table of index column was reported in log instead of
   correct index column.
 
-* Fixed a bug that unexpected "invalid cursor error" is recorded in
-  log file. [Gitter:groonga/ja:57f2ff87d45d7f0f525e2216] [Reported by
+* Fixed a bug that in posting list skip optimization in index search
+  may skip to wrong
+  position. [Gitter:groonga/ja:57f2ff87d45d7f0f525e2216] [Reported by
   torinky]
 
 * Fixed a memory leak on static index construction.
