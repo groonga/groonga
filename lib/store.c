@@ -1209,6 +1209,36 @@ grn_ja_element_info(grn_ctx *ctx, grn_ja *ja, grn_id id,
 #define COMPRESS_PACKED_VALUE_SIZE_MAX 257
         /* COMPRESS_THRESHOLD_BYTE - 1 + sizeof(uint64_t) = 257 */
 
+#if defined(GRN_WITH_ZLIB) || defined(GRN_WITH_LZ4)
+static void *
+grn_ja_ref_packed(grn_ctx *ctx,
+                  grn_io_win *iw,
+                  uint32_t *value_len,
+                  void *raw_value,
+                  uint32_t raw_value_len,
+                  void **compressed_value,
+                  uint32_t *compressed_value_len,
+                  uint32_t *uncompressed_value_len)
+{
+  uint64_t compressed_value_meta;
+
+  compressed_value_meta = *((uint64_t *)raw_value);
+  *compressed_value = (void *)(((uint64_t *)raw_value) + 1);
+  *compressed_value_len = raw_value_len - sizeof(uint64_t);
+
+  *uncompressed_value_len =
+    COMPRESSED_VALUE_META_UNCOMPRESSED_LEN(compressed_value_meta);
+  switch (COMPRESSED_VALUE_META_FLAG(compressed_value_meta)) {
+  case COMPRESSED_VALUE_META_FLAG_RAW :
+    iw->uncompressed_value = NULL;
+    *value_len = *uncompressed_value_len;
+    return *compressed_value;
+  default :
+    return NULL;
+  }
+}
+#endif /* defined(GRN_WITH_ZLIB) || defined(GRN_WITH_LZ4) */
+
 #ifdef GRN_WITH_ZLIB
 #include <zlib.h>
 
@@ -1220,8 +1250,8 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *v
   uint32_t raw_value_len;
   void *zvalue;
   uint32_t zvalue_len;
-  uint64_t compressed_value_meta;
-  uint64_t uncompressed_value_len;
+  void *unpacked_value;
+  uint32_t uncompressed_value_len;
 
   if (!(raw_value = grn_ja_ref_raw(ctx, ja, id, iw, &raw_value_len))) {
     iw->uncompressed_value = NULL;
@@ -1229,18 +1259,13 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *v
     return NULL;
   }
 
-  compressed_value_meta = *((uint64_t *)raw_value);
-  zvalue = (void *)(((uint64_t *)raw_value) + 1);
-  zvalue_len = raw_value_len - sizeof(uint64_t);
-
-  uncompressed_value_len =
-    COMPRESSED_VALUE_META_UNCOMPRESSED_LEN(compressed_value_meta);
-  switch (COMPRESSED_VALUE_META_FLAG(compressed_value_meta)) {
-  case COMPRESSED_VALUE_META_FLAG_RAW :
-    *value_len = uncompressed_value_len;
-    return zvalue;
-  default :
-    break;
+  unpacked_value = grn_ja_ref_packed(ctx,
+                                     iw, value_len,
+                                     raw_value, raw_value_len,
+                                     &zvalue, &zvalue_len,
+                                     &uncompressed_value_len);
+  if (unpacked_value) {
+    return unpacked_value;
   }
 
   zstream.next_in = (Bytef *)zvalue;
@@ -1288,8 +1313,8 @@ grn_ja_ref_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
   uint32_t raw_value_len;
   void *lz4_value;
   uint32_t lz4_value_len;
-  uint64_t compressed_value_meta;
-  uint64_t uncompressed_value_len;
+  void *unpacked_value;
+  uint32_t uncompressed_value_len;
 
   if (!(raw_value = grn_ja_ref_raw(ctx, ja, id, iw, &raw_value_len))) {
     iw->uncompressed_value = NULL;
@@ -1297,18 +1322,13 @@ grn_ja_ref_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
     return NULL;
   }
 
-  compressed_value_meta = *((uint64_t *)raw_value);
-  lz4_value = (void *)(((uint64_t *)raw_value) + 1);
-  lz4_value_len = raw_value_len - sizeof(uint64_t);
-
-  uncompressed_value_len =
-    COMPRESSED_VALUE_META_UNCOMPRESSED_LEN(compressed_value_meta);
-  switch (COMPRESSED_VALUE_META_FLAG(compressed_value_meta)) {
-  case COMPRESSED_VALUE_META_FLAG_RAW :
-    *value_len = uncompressed_value_len;
-    return lz4_value;
-  default :
-    break;
+  unpacked_value = grn_ja_ref_packed(ctx,
+                                     iw, value_len,
+                                     raw_value, raw_value_len,
+                                     &lz4_value, &lz4_value_len,
+                                     &uncompressed_value_len);
+  if (unpacked_value) {
+    return unpacked_value;
   }
 
   if (!(iw->uncompressed_value = GRN_MALLOC(uncompressed_value_len))) {
