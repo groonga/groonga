@@ -1237,6 +1237,34 @@ grn_ja_ref_packed(grn_ctx *ctx,
     return NULL;
   }
 }
+
+static grn_rc
+grn_ja_put_packed(grn_ctx *ctx,
+                  grn_ja *ja,
+                  grn_id id,
+                  void *value,
+                  uint32_t value_len,
+                  int flags,
+                  uint64_t *cas)
+{
+  char *packed_value[COMPRESS_PACKED_VALUE_SIZE_MAX];
+  uint32_t packed_value_len;
+  uint64_t packed_value_meta;
+
+  packed_value_len = value_len + sizeof(uint64_t);
+  packed_value_meta = value_len | COMPRESSED_VALUE_META_FLAG_RAW;
+  *((uint64_t *)packed_value) = packed_value_meta;
+  memcpy(((uint64_t *)packed_value) + 1,
+         value,
+         value_len);
+  return grn_ja_put_raw(ctx,
+                        ja,
+                        id,
+                        packed_value,
+                        packed_value_len,
+                        flags,
+                        cas);
+}
 #endif /* defined(GRN_WITH_ZLIB) || defined(GRN_WITH_LZ4) */
 
 #ifdef GRN_WITH_ZLIB
@@ -1411,19 +1439,7 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
   }
 
   if (value_len < COMPRESS_THRESHOLD_BYTE) {
-    char *packed_value[COMPRESS_PACKED_VALUE_SIZE_MAX];
-    uint32_t packed_value_len;
-    uint64_t packed_value_meta;
-
-    packed_value_len = value_len + sizeof(uint64_t);
-    packed_value_meta = value_len | COMPRESSED_VALUE_META_FLAG_RAW;
-    *((uint64_t *)packed_value) = packed_value_meta;
-    memcpy(((uint64_t *)packed_value) + 1,
-           value,
-           value_len);
-    return grn_ja_put_raw(ctx, ja, id,
-                          packed_value, packed_value_len,
-                          flags, cas);
+    return grn_ja_put_packed(ctx, ja, id, value, value_len, flags, cas);
   }
 
   zstream.next_in = value;
@@ -1476,19 +1492,7 @@ grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
   }
 
   if (value_len < COMPRESS_THRESHOLD_BYTE) {
-    char *packed_value[COMPRESS_PACKED_VALUE_SIZE_MAX];
-    uint32_t packed_value_len;
-    uint64_t packed_value_meta;
-
-    packed_value_len = value_len + sizeof(uint64_t);
-    packed_value_meta = value_len | COMPRESSED_VALUE_META_FLAG_RAW;
-    *((uint64_t *)packed_value) = packed_value_meta;
-    memcpy(((uint64_t *)packed_value) + 1,
-           value,
-           value_len);
-    return grn_ja_put_raw(ctx, ja, id,
-                          packed_value, packed_value_len,
-                          flags, cas);
+    return grn_ja_put_packed(ctx, ja, id, value, value_len, flags, cas);
   }
 
   if (value_len > (uint32_t)LZ4_MAX_INPUT_SIZE) {
