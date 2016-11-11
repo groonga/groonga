@@ -1,6 +1,6 @@
 Summary: Groonga release files
 Name: groonga-release
-Version: 1.1.0
+Version: 1.2.0
 Release: 1
 License: LGPLv2
 URL: http://packages.groonga.org/
@@ -8,6 +8,7 @@ Source: groonga-release.tar.gz
 Group: System Environment/Base
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildArchitectures: noarch
+Requires: epel-release
 Obsoletes: groonga-repository <= 1.0.1-0
 
 %description
@@ -38,6 +39,9 @@ Groonga release files
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga
 
 %changelog
+* Tue Nov 29 2016 Kouhei Sutou <kou@clear-code.com>
+- Require epel-release for msgpack-devel, lz4-devel and libzstd-devel.
+
 * Thu Nov 29 2012 HAYASHI Kentaro <hayashi@clear-code.com>
 - Fix to specify the version of last released groonga-repository package
   as Obsoletes.

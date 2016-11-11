@@ -19,7 +19,7 @@ CentOS 5
 
 Install::
 
-  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-1.noarch.rpm
+  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.2.0-1.noarch.rpm
   % sudo yum makecache
   % sudo yum install -y groonga
 
@@ -35,29 +35,6 @@ Install groonga-tokenizer-mecab package::
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
 Groonga status by Munin, install groonga-munin-plugins package.
-
-.. note::
-
-   Groonga-munin-plugins package requires munin-node package that
-   isn't included in the official CentOS repository. You need to
-   enable `Repoforge (RPMforge) <http://repoforge.org/>`_ repository
-   or `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository to
-   install it by ``yum``.
-
-   Enable Repoforge (RPMforge) repository on i386 environment::
-
-     % wget http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el5.rf.i386.rpm
-     % sudo rpm -ivh rpmforge-release-0.5.2-2.el5.rf.i386.rpm
-
-   Enable Repoforge (RPMforge) repository on x86_64 environment::
-
-     % wget http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el5.rf.x86_64.rpm
-     % sudo rpm -ivh rpmforge-release-0.5.2-2.el5.rf.x86_64.rpm
-
-   Enable EPEL repository on any environment::
-
-     % wget http://download.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm
-     % sudo rpm -ivh epel-release-5-4.noarch.rpm
 
 Install groonga-munin-plugins package::
 
@@ -76,7 +53,7 @@ CentOS 6
 
 Install::
 
-  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-1.noarch.rpm
+  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.2.0-1.noarch.rpm
   % sudo yum makecache
   % sudo yum install -y groonga
 
@@ -92,17 +69,6 @@ Install groonga-tokenizer-mecab package::
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
 Groonga status by Munin, install groonga-munin-plugins package.
-
-.. note::
-
-   Groonga-munin-plugins package requires munin-node package that
-   isn't included in the official CentOS repository. You need to
-   enable `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository to
-   install it by ``yum``.
-
-   Enable EPEL repository on any environment::
-
-     % sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
 
 Install groonga-munin-plugins package::
 
@@ -121,7 +87,7 @@ CentOS 7
 
 Install::
 
-  % sudo yum install -y http://packages.groonga.org/centos/groonga-release-1.1.0-1.noarch.rpm
+  % sudo yum install -y http://packages.groonga.org/centos/groonga-release-1.2.0-1.noarch.rpm
   % sudo yum install -y groonga
 
 .. include:: server-use.inc
@@ -136,17 +102,6 @@ Install groonga-tokenizer-mecab package::
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
 Groonga status by Munin, install groonga-munin-plugins package.
-
-.. note::
-
-   Groonga-munin-plugins package requires munin-node package that
-   isn't included in the official CentOS repository. You need to
-   enable `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository to
-   install it by ``yum``.
-
-   Enable EPEL repository::
-
-     % sudo yum install -y epel-release
 
 Install groonga-munin-plugins package::
 
