@@ -5554,8 +5554,10 @@ accessor_new(grn_ctx *ctx)
     res->header.impl_flags = GRN_OBJ_ALLOCATED;
     res->header.flags = 0;
     res->header.domain = GRN_ID_NIL;
+    res->range = GRN_ID_NIL;
     res->action = GRN_ACCESSOR_VOID;
     res->offset = 0;
+    res->obj = NULL;
     res->next = NULL;
   }
   return res;
