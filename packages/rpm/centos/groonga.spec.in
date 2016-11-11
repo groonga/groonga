@@ -1,9 +1,10 @@
 %define _centos_ver   %{?centos_ver:%{centos_ver}}%{!?centos_ver:5}
 
-%define _use_lz4      %{?use_lz4:%{use_lz4}}%{!?use_lz4:0}
+%define _use_lz4      %{?use_lz4:%{use_lz4}}%{!?use_lz4:%{_centos_ver} >= 6}
+%define _use_zstd     %{?use_zstd:%{use_zstd}}%{!?use_zstd:%{_centos_ver} >= 6}
 %define _use_mecab    %{?use_mecab:%{use_mecab}}%{!?use_mecab:1}
 %define _use_jemalloc %{?use_jemalloc:%{use_jemalloc}}%{!?use_jemalloc:0}
-%define _use_msgpack  %{?use_msgpack:%{use_msgpack}}%{!?use_msgpack:0}
+%define _use_msgpack  %{?use_msgpack:%{use_msgpack}}%{!?use_msgpack:%{_centos_ver} >= 7}
 %define _use_systemd  %{?use_systemd:%{use_systemd}}%{!?use_systemd:%{_centos_ver} >= 7}
 
 %define _additional_configure_options \
@@ -28,6 +29,9 @@ BuildRequires:	mecab-devel
 BuildRequires:	zlib-devel
 %if %{_use_lz4}
 BuildRequires:	lz4-devel
+%endif
+%if %{_use_zstd}
+BuildRequires:	libzstd-devel
 %endif
 %if %{_use_jemalloc}
 BuildRequires:	jemalloc-devel
@@ -60,6 +64,9 @@ License:	LGPLv2 and (MIT or GPLv2)
 Requires:	zlib
 %if %{_use_lz4}
 Requires:	lz4
+%endif
+%if %{_use_zstd}
+Requires:	libzstd
 %endif
 %if %{_use_jemalloc}
 Requires:	jemalloc
@@ -204,10 +211,16 @@ Munin plugins for Groonga
 %if %{!_use_lz4}
   --without-lz4 \
 %endif
+%if %{!_use_zstd}
+  --without-zstd \
+%endif
 %if %{_use_mecab}
   --with-mecab \
 %else
   --without-mecab \
+%endif
+%if %{!_use_msgpack}
+  --without-message-pack \
 %endif
   --with-munin-plugins \
   --enable-mruby \
@@ -499,6 +512,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Fri Nov 11 2016 Kouhei Sutou <kou@clear-code.com> - 6.1.1-0
+- add Zstandard support.
+
 * Sat Oct 29 2016 Kentaro Hayashi <hayashi@clear-code.com> - 6.1.0-1
 - new upstream release.
 
