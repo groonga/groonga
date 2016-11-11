@@ -1,0 +1,10 @@
+#@include fixture/geo/in_circle/north_east.grn
+
+log_level --level info
+#@add-important-log-levels info
+select LandMarks \
+  --limit 0 \
+  --filter '_id > 1' \
+  --slices[point].filter 'geo_in_rectangle(point, "13x8", "8x13")' \
+  --slices[point].sort_keys _id \
+  --slices[point].limit -1

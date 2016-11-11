@@ -6429,6 +6429,98 @@ grn_table_select_index_range_accessor(grn_ctx *ctx,
 }
 
 static inline grn_bool
+grn_table_select_index_call_selector(grn_ctx *ctx,
+                                     grn_obj *table,
+                                     grn_obj *index,
+                                     scan_info *si,
+                                     grn_obj *selector,
+                                     grn_obj *res)
+{
+  grn_bool processed = GRN_FALSE;
+  grn_proc *proc = (grn_proc *)selector;
+  grn_rc rc;
+
+  if (grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    char tag[GRN_TABLE_MAX_KEY_SIZE];
+    name_size = grn_obj_name(ctx,
+                             (grn_obj *)selector,
+                             name,
+                             GRN_TABLE_MAX_KEY_SIZE);
+    grn_snprintf(tag, GRN_TABLE_MAX_KEY_SIZE, GRN_TABLE_MAX_KEY_SIZE,
+                 "[selector][%.*s]",
+                 name_size, name);
+    grn_table_select_index_report(ctx, tag, index);
+  }
+
+  if (index && index->header.type == GRN_ACCESSOR) {
+    grn_operator selector_op;
+    grn_obj *accessor = index;
+    unsigned int accessor_deep = 0;
+    grn_obj *base_table = NULL;
+    grn_obj *base_index = NULL;
+    grn_obj *base_res = NULL;
+    grn_accessor *a;
+
+    selector_op = grn_proc_get_selector_operator(ctx, selector);
+    for (a = (grn_accessor *)accessor; a; a = a->next) {
+      if (a->next) {
+        accessor_deep++;
+      } else {
+        grn_index_datum index_data;
+        unsigned int n_index_datum;
+
+        base_table = grn_ctx_at(ctx, a->obj->header.domain);
+        n_index_datum = grn_column_find_index_data(ctx,
+                                                   a->obj,
+                                                   selector_op,
+                                                   &index_data,
+                                                   1);
+        if (n_index_datum > 0) {
+          base_index = index_data.index;
+        }
+        base_res = grn_table_create(ctx, NULL, 0, NULL,
+                                    GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                    base_table, NULL);
+      }
+    }
+    rc = proc->callbacks.function.selector(ctx,
+                                           base_table,
+                                           base_index,
+                                           si->nargs,
+                                           si->args,
+                                           base_res,
+                                           GRN_OP_OR);
+    if (rc == GRN_SUCCESS) {
+      grn_accessor_resolve(ctx,
+                           accessor,
+                           accessor_deep,
+                           base_res,
+                           res,
+                           si->logical_op);
+    }
+    grn_obj_close(ctx, base_res);
+  } else {
+    rc = proc->callbacks.function.selector(ctx,
+                                           table,
+                                           index,
+                                           si->nargs,
+                                           si->args,
+                                           res,
+                                           si->logical_op);
+  }
+
+  if (rc) {
+    /* TODO: report error */
+  } else {
+    processed = GRN_TRUE;
+  }
+
+  return processed;
+}
+
+static inline grn_bool
 grn_table_select_index_range(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                              scan_info *si, grn_obj *res)
 {
@@ -6656,31 +6748,12 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
       break;
     case GRN_OP_CALL :
       if (grn_obj_is_selector_proc(ctx, si->args[0])) {
-        grn_rc rc;
-        grn_proc *proc = (grn_proc *)(si->args[0]);
-        if (grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
-          char proc_name[GRN_TABLE_MAX_KEY_SIZE];
-          int proc_name_size;
-          char tag[GRN_TABLE_MAX_KEY_SIZE];
-          proc_name_size = grn_obj_name(ctx, (grn_obj *)proc,
-                                        proc_name, GRN_TABLE_MAX_KEY_SIZE);
-          proc_name[proc_name_size] = '\0';
-          grn_snprintf(tag, GRN_TABLE_MAX_KEY_SIZE, GRN_TABLE_MAX_KEY_SIZE,
-                       "[selector][%s]", proc_name);
-          grn_table_select_index_report(ctx, tag, index);
-        }
-        rc = proc->callbacks.function.selector(ctx,
-                                               table,
-                                               index,
-                                               si->nargs,
-                                               si->args,
-                                               res,
-                                               si->logical_op);
-        if (rc) {
-          /* TODO: report error */
-        } else {
-          processed = GRN_TRUE;
-        }
+        processed = grn_table_select_index_call_selector(ctx,
+                                                         table,
+                                                         index,
+                                                         si,
+                                                         si->args[0],
+                                                         res);
       }
       break;
     case GRN_OP_LESS :
