@@ -39,7 +39,7 @@ Groonga release files
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga
 
 %changelog
-* Tue Nov 29 2016 Kouhei Sutou <kou@clear-code.com>
+* Fri Nov 11 2016 Kouhei Sutou <kou@clear-code.com> - 1.2.0-0
 - Require epel-release for msgpack-devel, lz4-devel and libzstd-devel.
 
 * Thu Nov 29 2012 HAYASHI Kentaro <hayashi@clear-code.com>
