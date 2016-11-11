@@ -2461,9 +2461,13 @@ selector_between_sequential_search(grn_ctx *ctx,
 }
 
 static grn_rc
-selector_between(grn_ctx *ctx, grn_obj *table, grn_obj *index,
-                 int nargs, grn_obj **args,
-                 grn_obj *res, grn_operator op)
+selector_between_no_accessor(grn_ctx *ctx,
+                             grn_obj *table,
+                             grn_obj *index,
+                             int nargs,
+                             grn_obj **args,
+                             grn_obj *res,
+                             grn_operator op)
 {
   grn_rc rc = GRN_SUCCESS;
   int offset = 0;
@@ -2489,11 +2493,7 @@ selector_between(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   }
 
   if (index) {
-    if (index->header.type == GRN_ACCESSOR) {
-      /* TODO */
-    } else {
-      index_table = grn_ctx_at(ctx, index->header.domain);
-    }
+    index_table = grn_ctx_at(ctx, index->header.domain);
   }
 
   if (index_table) {
@@ -2534,8 +2534,69 @@ selector_between(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 
 exit :
   between_data_fin(ctx, &data);
-  if (index_table) {
-    grn_obj_unlink(ctx, index_table);
+
+  return rc;
+}
+
+static grn_rc
+selector_between(grn_ctx *ctx,
+                 grn_obj *table,
+                 grn_obj *index,
+                 int nargs,
+                 grn_obj **args,
+                 grn_obj *res,
+                 grn_operator op)
+{
+  grn_rc rc = GRN_SUCCESS;
+
+  if (index && index->header.type == GRN_ACCESSOR) {
+    grn_obj *accessor = index;
+    unsigned int accessor_deep = 0;
+    grn_obj *base_table = NULL;
+    grn_obj *base_index = NULL;
+    grn_obj *base_res = NULL;
+    grn_accessor *a;
+
+    for (a = (grn_accessor *)accessor; a; a = a->next) {
+      if (a->next) {
+        accessor_deep++;
+      } else {
+        grn_index_datum index_data;
+        unsigned int n_index_datum;
+
+        base_table = grn_ctx_at(ctx, a->obj->header.domain);
+        n_index_datum = grn_column_find_index_data(ctx,
+                                                   a->obj,
+                                                   GRN_OP_LESS,
+                                                   &index_data,
+                                                   1);
+        if (n_index_datum > 0) {
+          base_index = index_data.index;
+        }
+        base_res = grn_table_create(ctx, NULL, 0, NULL,
+                                    GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                    base_table, NULL);
+      }
+    }
+    rc = selector_between_no_accessor(ctx,
+                                      base_table,
+                                      base_index,
+                                      nargs,
+                                      args,
+                                      base_res,
+                                      GRN_OP_OR);
+    if (rc == GRN_SUCCESS) {
+      grn_accessor_resolve(ctx, accessor, accessor_deep, base_res, res, op);
+    }
+    grn_obj_close(ctx, base_res);
+  } else {
+    rc = selector_between_no_accessor(ctx,
+                                      table,
+                                      index,
+                                      nargs,
+                                      args,
+                                      res,
+                                      op);
   }
 
   return rc;

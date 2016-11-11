@@ -1,0 +1,21 @@
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos date COLUMN_SCALAR Time
+
+table_create Times TABLE_PAT_KEY Time
+column_create Times memos_date COLUMN_INDEX Memos date
+
+load --table Memos
+[
+{"_key": "Groonga is fast!", "date": "2016-05-19 12:00:00"},
+{"_key": "Mroonga is fast!", "date": "2016-05-19 12:00:01"},
+{"_key": "Groonga sticker!", "date": "2016-05-19 12:00:02"},
+{"_key": "Rroonga is fast!", "date": "2016-05-19 12:00:03"}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Memos \
+  --filter '_id > 1' \
+  --slices[groonga].filter 'between(date, \
+                                    "2016-05-19 12:00:00", "include", \
+                                    "2016-05-19 12:00:03", "exclude")'

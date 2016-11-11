@@ -1,0 +1,95 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos date COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Times TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times memos_date COLUMN_INDEX Memos date
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "date": "2016-05-19 12:00:00"},
+{"_key": "Mroonga is fast!", "date": "2016-05-19 12:00:01"},
+{"_key": "Groonga sticker!", "date": "2016-05-19 12:00:02"},
+{"_key": "Rroonga is fast!", "date": "2016-05-19 12:00:03"}
+]
+[[0,0.0,0.0],4]
+log_level --level info
+[[0,0.0,0.0],true]
+select Memos   --filter '_id > 1'   --slices[groonga].filter 'between(date,                                     "2016-05-19 12:00:00", "include",                                     "2016-05-19 12:00:03", "exclude")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "date",
+          "Time"
+        ]
+      ],
+      [
+        2,
+        "Mroonga is fast!",
+        1463626801.0
+      ],
+      [
+        3,
+        "Groonga sticker!",
+        1463626802.0
+      ],
+      [
+        4,
+        "Rroonga is fast!",
+        1463626803.0
+      ]
+    ],
+    {
+      "groonga": [
+        [
+          2
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "date",
+            "Time"
+          ]
+        ],
+        [
+          2,
+          "Mroonga is fast!",
+          1463626801.0
+        ],
+        [
+          3,
+          "Groonga sticker!",
+          1463626802.0
+        ]
+      ]
+    }
+  ]
+]
+#|i| [table][select][index][selector][between] <>
+#|i| [accessor][resolve][table] (temporary) -> <Memos> -> <ShortText>
