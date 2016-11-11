@@ -121,9 +121,6 @@ int grn_ii_updspec_cmp(grn_ii_updspec *a, grn_ii_updspec *b);
 void grn_ii_expire(grn_ctx *ctx, grn_ii *ii);
 grn_rc grn_ii_flush(grn_ctx *ctx, grn_ii *ii);
 
-GRN_API grn_rc grn_ii_posting_add(grn_ctx *ctx, grn_posting *pos,
-                                  grn_hash *s, grn_operator op);
-
 grn_ii_cursor *grn_ii_cursor_openv1(grn_ii *ii, uint32_t key);
 grn_rc grn_ii_cursor_openv2(grn_ii_cursor **cursors, int ncursors);
 grn_posting *grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c);
