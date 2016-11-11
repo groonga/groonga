@@ -1304,6 +1304,33 @@ grn_ja_compress_error(grn_ctx *ctx,
 #ifdef GRN_WITH_ZLIB
 #include <zlib.h>
 
+static const char *
+grn_zrc_to_string(int zrc)
+{
+  switch (zrc) {
+  case Z_OK :
+    return "OK";
+  case Z_STREAM_END :
+    return "Stream is end";
+  case Z_NEED_DICT :
+    return "Need dictionary";
+  case Z_ERRNO :
+    return "See errno";
+  case Z_STREAM_ERROR :
+    return "Stream error";
+  case Z_DATA_ERROR :
+    return "Data error";
+  case Z_MEM_ERROR :
+    return "Memory error";
+  case Z_BUF_ERROR :
+    return "Buffer error";
+  case Z_VERSION_ERROR :
+    return "Version error";
+  default :
+    return "Unknown";
+  }
+}
+
 static void *
 grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
@@ -1314,6 +1341,7 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *v
   uint32_t zvalue_len;
   void *unpacked_value;
   uint32_t uncompressed_value_len;
+  int zrc;
 
   if (!(raw_value = grn_ja_ref_raw(ctx, ja, id, iw, &raw_value_len))) {
     iw->uncompressed_value = NULL;
@@ -1334,31 +1362,58 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *v
   zstream.avail_in = zvalue_len;
   zstream.zalloc = Z_NULL;
   zstream.zfree = Z_NULL;
-  if (inflateInit2(&zstream, 15 /* windowBits */) != Z_OK) {
+  zrc = inflateInit2(&zstream, 15 /* windowBits */);
+  if (zrc != Z_OK) {
     iw->uncompressed_value = NULL;
     *value_len = 0;
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZLIB_ERROR,
+                          "[zlib] failed to decompress: initialize",
+                          grn_zrc_to_string(zrc));
     return NULL;
   }
   if (!(iw->uncompressed_value = GRN_MALLOC(uncompressed_value_len))) {
     inflateEnd(&zstream);
     iw->uncompressed_value = NULL;
     *value_len = 0;
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZLIB_ERROR,
+                          "[zlib] failed to decompress: allocate buffer",
+                          NULL);
     return NULL;
   }
   zstream.next_out = (Bytef *)iw->uncompressed_value;
   zstream.avail_out = uncompressed_value_len;
-  if (inflate(&zstream, Z_FINISH) != Z_STREAM_END) {
+  zrc = inflate(&zstream, Z_FINISH);
+  if (zrc != Z_STREAM_END) {
     inflateEnd(&zstream);
     GRN_FREE(iw->uncompressed_value);
     iw->uncompressed_value = NULL;
     *value_len = 0;
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZLIB_ERROR,
+                          "[zlib] failed to decompress: finish",
+                          grn_zrc_to_string(zrc));
     return NULL;
   }
   *value_len = zstream.total_out;
-  if (inflateEnd(&zstream) != Z_OK) {
+  zrc = inflateEnd(&zstream);
+  if (zrc != Z_OK) {
     GRN_FREE(iw->uncompressed_value);
     iw->uncompressed_value = NULL;
     *value_len = 0;
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZLIB_ERROR,
+                          "[zlib] failed to decompress: end",
+                          grn_zrc_to_string(zrc));
     return NULL;
   }
   return iw->uncompressed_value;
@@ -1405,6 +1460,12 @@ grn_ja_ref_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
     GRN_FREE(iw->uncompressed_value);
     iw->uncompressed_value = NULL;
     *value_len = 0;
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_LZ4_ERROR,
+                          "[lz4] failed to decompress",
+                          NULL);
     return NULL;
   }
   *value_len = uncompressed_value_len;
@@ -1532,6 +1593,7 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
   z_stream zstream;
   void *zvalue;
   int zvalue_len;
+  int zrc;
 
   if (value_len == 0) {
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
@@ -1545,27 +1607,54 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
   zstream.avail_in = value_len;
   zstream.zalloc = Z_NULL;
   zstream.zfree = Z_NULL;
-  if (deflateInit2(&zstream, Z_DEFAULT_COMPRESSION, Z_DEFLATED,
-                   15 /* windowBits */,
-                   8 /* memLevel */,
-                   Z_DEFAULT_STRATEGY) != Z_OK) {
-    ERR(GRN_ZLIB_ERROR, "deflateInit2 failed");
+  zrc = deflateInit2(&zstream, Z_DEFAULT_COMPRESSION, Z_DEFLATED,
+                     15 /* windowBits */,
+                     8 /* memLevel */,
+                     Z_DEFAULT_STRATEGY);
+  if (zrc != Z_OK) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZLIB_ERROR,
+                          "[zlib] failed to compress: initialize",
+                          grn_zrc_to_string(zrc));
     return ctx->rc;
   }
   zvalue_len = deflateBound(&zstream, value_len);
-  if (!(zvalue = GRN_MALLOC(zvalue_len + sizeof(uint64_t)))) { deflateEnd(&zstream); return GRN_NO_MEMORY_AVAILABLE; }
+  if (!(zvalue = GRN_MALLOC(zvalue_len + sizeof(uint64_t)))) {
+    deflateEnd(&zstream);
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZLIB_ERROR,
+                          "[zlib] failed to allocate compress buffer",
+                          NULL);
+    return ctx->rc;
+  }
   zstream.next_out = (Bytef *)(((uint64_t *)zvalue) + 1);
   zstream.avail_out = zvalue_len;
-  if (deflate(&zstream, Z_FINISH) != Z_STREAM_END) {
+  zrc = deflate(&zstream, Z_FINISH);
+  if (zrc != Z_STREAM_END) {
     deflateEnd(&zstream);
     GRN_FREE(zvalue);
-    ERR(GRN_ZLIB_ERROR, "deflate failed");
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZLIB_ERROR,
+                          "[zlib] failed to compress: finish",
+                          grn_zrc_to_string(zrc));
     return ctx->rc;
   }
   zvalue_len = zstream.total_out;
-  if (deflateEnd(&zstream) != Z_OK) {
+  zrc = deflateEnd(&zstream);
+  if (zrc != Z_OK) {
     GRN_FREE(zvalue);
-    ERR(GRN_ZLIB_ERROR, "deflateEnd failed");
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZLIB_ERROR,
+                          "[zlib] failed to compress: end",
+                          grn_zrc_to_string(zrc));
     return ctx->rc;
   }
   *(uint64_t *)zvalue = value_len;
@@ -1582,9 +1671,11 @@ grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
 {
   grn_rc rc;
   void *packed_value;
-  int packed_value_len;
+  int packed_value_len_max;
+  int packed_value_len_real;
   char *lz4_value;
-  int lz4_value_len;
+  int lz4_value_len_max;
+  int lz4_value_len_real;
 
   if (value_len == 0) {
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
@@ -1601,22 +1692,38 @@ grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
     return ctx->rc;
   }
 
-  lz4_value_len = LZ4_compressBound(value_len);
-
-  if (!(packed_value = GRN_MALLOC(lz4_value_len + sizeof(uint64_t)))) {
-    return GRN_NO_MEMORY_AVAILABLE;
+  lz4_value_len_max = LZ4_compressBound(value_len);
+  packed_value_len_max = lz4_value_len_max + sizeof(uint64_t);
+  if (!(packed_value = GRN_MALLOC(packed_value_len_max))) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_LZ4_ERROR,
+                          "[lz4] failed to allocate compress buffer",
+                          NULL);
+    return ctx->rc;
   }
   lz4_value = (char *)((uint64_t *)packed_value + 1);
-  lz4_value_len = LZ4_compress((const char*)value, lz4_value, value_len);
-
-  if (lz4_value_len <= 0) {
+  lz4_value_len_real = LZ4_compress((const char*)value, lz4_value, value_len);
+  if (lz4_value_len_real <= 0) {
     GRN_FREE(packed_value);
-    ERR(GRN_LZ4_ERROR, "LZ4_compress");
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_LZ4_ERROR,
+                          "[lz4] failed to compress",
+                          NULL);
     return ctx->rc;
   }
   *(uint64_t *)packed_value = value_len;
-  packed_value_len = lz4_value_len + sizeof(uint64_t);
-  rc = grn_ja_put_raw(ctx, ja, id, packed_value, packed_value_len, flags, cas);
+  packed_value_len_real = lz4_value_len_real + sizeof(uint64_t);
+  rc = grn_ja_put_raw(ctx,
+                      ja,
+                      id,
+                      packed_value,
+                      packed_value_len_real,
+                      flags,
+                      cas);
   GRN_FREE(packed_value);
   return rc;
 }
@@ -1652,7 +1759,13 @@ grn_ja_put_zstd(grn_ctx *ctx,
   zstd_value_len_max = ZSTD_compressBound(value_len);
   packed_value_len_max = zstd_value_len_max + sizeof(uint64_t);
   if (!(packed_value = GRN_MALLOC(packed_value_len_max))) {
-    return GRN_NO_MEMORY_AVAILABLE;
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZSTD_ERROR,
+                          "[zstd] failed to allocate compress buffer",
+                          NULL);
+    return ctx->rc;
   }
   zstd_value = ((uint64_t *)packed_value) + 1;
   zstd_value_len_real = ZSTD_compress(zstd_value, zstd_value_len_max,
