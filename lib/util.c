@@ -453,7 +453,117 @@ grn_vector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *vector)
 static grn_rc
 grn_accessor_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  return grn_column_name_(ctx, obj, buf);
+  grn_accessor *accessor = (grn_accessor *)obj;
+
+  GRN_TEXT_PUTS(ctx, buf, "#<accessor ");
+  for (; accessor; accessor = accessor->next) {
+    grn_bool show_obj_name = GRN_FALSE;
+    grn_bool show_obj_domain_name = GRN_FALSE;
+
+    if (accessor != (grn_accessor *)obj) {
+      GRN_TEXT_PUTS(ctx, buf, ".");
+    }
+    switch (accessor->action) {
+    case GRN_ACCESSOR_GET_ID :
+      GRN_TEXT_PUT(ctx,
+                   buf,
+                   GRN_COLUMN_NAME_ID,
+                   GRN_COLUMN_NAME_ID_LEN);
+      show_obj_name = GRN_TRUE;
+      break;
+    case GRN_ACCESSOR_GET_KEY :
+      GRN_TEXT_PUT(ctx,
+                   buf,
+                   GRN_COLUMN_NAME_KEY,
+                   GRN_COLUMN_NAME_KEY_LEN);
+      show_obj_name = GRN_TRUE;
+      break;
+    case GRN_ACCESSOR_GET_VALUE :
+      GRN_TEXT_PUT(ctx,
+                   buf,
+                   GRN_COLUMN_NAME_VALUE,
+                   GRN_COLUMN_NAME_VALUE_LEN);
+      show_obj_name = GRN_TRUE;
+      break;
+    case GRN_ACCESSOR_GET_SCORE :
+      GRN_TEXT_PUT(ctx,
+                   buf,
+                   GRN_COLUMN_NAME_SCORE,
+                   GRN_COLUMN_NAME_SCORE_LEN);
+      break;
+    case GRN_ACCESSOR_GET_NSUBRECS :
+      GRN_TEXT_PUT(ctx,
+                   buf,
+                   GRN_COLUMN_NAME_NSUBRECS,
+                   GRN_COLUMN_NAME_NSUBRECS_LEN);
+      break;
+    case GRN_ACCESSOR_GET_MAX :
+      GRN_TEXT_PUT(ctx,
+                   buf,
+                   GRN_COLUMN_NAME_MAX,
+                   GRN_COLUMN_NAME_MAX_LEN);
+      break;
+    case GRN_ACCESSOR_GET_MIN :
+      GRN_TEXT_PUT(ctx,
+                   buf,
+                   GRN_COLUMN_NAME_MIN,
+                   GRN_COLUMN_NAME_MIN_LEN);
+      break;
+    case GRN_ACCESSOR_GET_SUM :
+      GRN_TEXT_PUT(ctx,
+                   buf,
+                   GRN_COLUMN_NAME_SUM,
+                   GRN_COLUMN_NAME_SUM_LEN);
+      break;
+    case GRN_ACCESSOR_GET_AVG :
+      GRN_TEXT_PUT(ctx,
+                   buf,
+                   GRN_COLUMN_NAME_AVG,
+                   GRN_COLUMN_NAME_AVG_LEN);
+      break;
+    case GRN_ACCESSOR_GET_COLUMN_VALUE :
+      grn_column_name_(ctx, accessor->obj, buf);
+      show_obj_domain_name = GRN_TRUE;
+      break;
+    case GRN_ACCESSOR_GET_DB_OBJ :
+      grn_text_printf(ctx, buf, "(_db)");
+      break;
+    case GRN_ACCESSOR_LOOKUP :
+      grn_text_printf(ctx, buf, "(_lookup)");
+      break;
+    case GRN_ACCESSOR_FUNCALL :
+      grn_text_printf(ctx, buf, "(_funcall)");
+      break;
+    default :
+      grn_text_printf(ctx, buf, "(unknown:%u)", accessor->action);
+      break;
+    }
+
+    if (show_obj_name || show_obj_domain_name) {
+      grn_obj *target = accessor->obj;
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+
+      if (show_obj_domain_name) {
+        target = grn_ctx_at(ctx, target->header.domain);
+      }
+
+      name_size = grn_obj_name(ctx,
+                               target,
+                               name,
+                               GRN_TABLE_MAX_KEY_SIZE);
+      GRN_TEXT_PUTS(ctx, buf, "(");
+      if (name_size == 0) {
+        GRN_TEXT_PUTS(ctx, buf, "anonymous");
+      } else {
+        GRN_TEXT_PUT(ctx, buf, name, name_size);
+      }
+      GRN_TEXT_PUTS(ctx, buf, ")");
+    }
+  }
+  GRN_TEXT_PUTS(ctx, buf, ">");
+
+  return GRN_SUCCESS;
 }
 
 static grn_rc
