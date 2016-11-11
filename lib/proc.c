@@ -3249,23 +3249,14 @@ proc_reindex(grn_ctx *ctx, int nargs, grn_obj **args,
 }
 
 static grn_rc
-selector_prefix_rk_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
-                          int nargs, grn_obj **args,
-                          grn_obj *res, grn_operator op)
+selector_prefix_rk_search_raw(grn_ctx *ctx,
+                              grn_obj *table,
+                              grn_obj *column,
+                              grn_obj *query,
+                              grn_obj *res,
+                              grn_operator op)
 {
   grn_rc rc = GRN_SUCCESS;
-  grn_obj *column;
-  grn_obj *query;
-
-  if ((nargs - 1) != 2) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "prefix_rk_serach(): wrong number of arguments (%d for 2)", nargs - 1);
-    rc = ctx->rc;
-    goto exit;
-  }
-
-  column = args[1];
-  query = args[2];
 
   if (!grn_obj_is_key_accessor(ctx, column)) {
     grn_obj inspected_column;
@@ -3323,6 +3314,78 @@ selector_prefix_rk_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     }
     grn_table_cursor_close(ctx, cursor);
     grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
+  }
+
+exit :
+  return rc;
+}
+
+static grn_rc
+selector_prefix_rk_search(grn_ctx *ctx,
+                          grn_obj *table,
+                          grn_obj *index,
+                          int nargs,
+                          grn_obj **args,
+                          grn_obj *res,
+                          grn_operator op)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_obj *column;
+  grn_obj *query;
+
+  if ((nargs - 1) != 2) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "prefix_rk_serach(): wrong number of arguments (%d for 2)", nargs - 1);
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  column = args[1];
+  query = args[2];
+
+  if (column &&
+      column->header.type == GRN_ACCESSOR &&
+      ((grn_accessor *)column)->next) {
+    grn_obj *accessor = column;
+    unsigned int accessor_deep = 0;
+    grn_obj *base_table = NULL;
+    grn_obj *base_column = NULL;
+    grn_obj *base_res = NULL;
+    grn_accessor *a;
+
+    for (a = (grn_accessor *)accessor; a; a = a->next) {
+      if (a->next) {
+        accessor_deep++;
+      } else {
+        base_column = (grn_obj *)a;
+        base_table = a->obj;
+        base_res = grn_table_create(ctx, NULL, 0, NULL,
+                                    GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                    base_table, NULL);
+      }
+    }
+    rc = selector_prefix_rk_search_raw(ctx,
+                                       base_table,
+                                       base_column,
+                                       query,
+                                       base_res,
+                                       GRN_OP_OR);
+    if (rc == GRN_SUCCESS) {
+      grn_accessor_resolve(ctx,
+                           accessor,
+                           accessor_deep,
+                           base_res,
+                           res,
+                           op);
+    }
+    grn_obj_close(ctx, base_res);
+  } else {
+    rc = selector_prefix_rk_search_raw(ctx,
+                                       table,
+                                       column,
+                                       query,
+                                       res,
+                                       op);
   }
 
 exit :

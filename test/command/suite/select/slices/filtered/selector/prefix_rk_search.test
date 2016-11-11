@@ -1,0 +1,13 @@
+table_create Readings TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+
+load --table Readings
+[
+{"_key": "グルンガ"},
+{"_key": "グルンパ"}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Readings \
+  --filter '_id > 1' \
+  --slices[key].filter 'prefix_rk_search(_key, "gur")'

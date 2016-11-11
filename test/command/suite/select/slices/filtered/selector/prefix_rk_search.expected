@@ -1,0 +1,62 @@
+table_create Readings TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+load --table Readings
+[
+{"_key": "グルンガ"},
+{"_key": "グルンパ"}
+]
+[[0,0.0,0.0],2]
+log_level --level info
+[[0,0.0,0.0],true]
+select Readings   --filter '_id > 1'   --slices[key].filter 'prefix_rk_search(_key, "gur")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "グルンパ"
+      ]
+    ],
+    {
+      "key": [
+        [
+          1
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "_key",
+            "ShortText"
+          ]
+        ],
+        [
+          2,
+          "グルンパ"
+        ]
+      ]
+    }
+  ]
+]
+#|i| [table][select][index][selector][no-index][prefix_rk_search] <>
+#|i| [accessor][resolve][table] (temporary) -> <Readings> -> <ShortText>
