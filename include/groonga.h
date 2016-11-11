@@ -21,6 +21,7 @@
 #include "groonga/portability.h"
 #include "groonga/groonga.h"
 
+#include "groonga/accessor.h"
 #include "groonga/array.h"
 #include "groonga/column.h"
 #include "groonga/config.h"
