@@ -1,0 +1,4 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs message COLUMN_SCALAR|COMPRESS_ZSTD Text
+
+schema

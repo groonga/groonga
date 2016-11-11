@@ -100,6 +100,9 @@ grn_dump_column_create_flags(grn_ctx *ctx,
   case GRN_OBJ_COMPRESS_LZ4:
     GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_LZ4");
     break;
+  case GRN_OBJ_COMPRESS_ZSTD:
+    GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_ZSTD");
+    break;
   }
   if (flags & GRN_OBJ_PERSISTENT) {
     GRN_TEXT_PUTS(ctx, buffer, "|PERSISTENT");

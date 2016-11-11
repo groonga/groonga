@@ -1209,7 +1209,11 @@ grn_ja_element_info(grn_ctx *ctx, grn_ja *ja, grn_id id,
 #define COMPRESS_PACKED_VALUE_SIZE_MAX 257
         /* COMPRESS_THRESHOLD_BYTE - 1 + sizeof(uint64_t) = 257 */
 
-#if defined(GRN_WITH_ZLIB) || defined(GRN_WITH_LZ4)
+#if defined(GRN_WITH_ZLIB) || defined(GRN_WITH_LZ4) || defined(GRN_WITH_ZSTD)
+#  define GRN_WITH_COMPRESSED
+#endif
+
+#ifdef GRN_WITH_COMPRESSED
 static void *
 grn_ja_ref_packed(grn_ctx *ctx,
                   grn_io_win *iw,
@@ -1265,7 +1269,37 @@ grn_ja_put_packed(grn_ctx *ctx,
                         flags,
                         cas);
 }
-#endif /* defined(GRN_WITH_ZLIB) || defined(GRN_WITH_LZ4) */
+
+static void
+grn_ja_compress_error(grn_ctx *ctx,
+                      grn_ja *ja,
+                      grn_id id,
+                      grn_rc rc,
+                      const char *message,
+                      const char *detail)
+{
+  char name[GRN_TABLE_MAX_KEY_SIZE];
+  int name_len;
+
+  if (ja->obj.id == GRN_ID_NIL) {
+    name[0] = '\0';
+    name_len = 0;
+  } else {
+    name_len = grn_obj_name(ctx, (grn_obj *)ja, name, GRN_TABLE_MAX_KEY_SIZE);
+  }
+  ERR(GRN_ZSTD_ERROR,
+      "[ja]%s: %s%.*s%s<%u>%s%s%s",
+      message,
+      name_len == 0 ? "" : "<",
+      name_len,
+      name,
+      name_len == 0 ? "" : ">: ",
+      id,
+      detail ? " :<" : "",
+      detail ? detail : "",
+      detail ? ">" : "");
+}
+#endif /* GRN_WITH_COMPRESSED */
 
 #ifdef GRN_WITH_ZLIB
 #include <zlib.h>
@@ -1378,20 +1412,85 @@ grn_ja_ref_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
 }
 #endif /* GRN_WITH_LZ4 */
 
+#ifdef GRN_WITH_ZSTD
+#include <zstd.h>
+
+static void *
+grn_ja_ref_zstd(grn_ctx *ctx,
+                grn_ja *ja,
+                grn_id id,
+                grn_io_win *iw,
+                uint32_t *value_len)
+{
+  void *raw_value;
+  uint32_t raw_value_len;
+  void *zstd_value;
+  uint32_t zstd_value_len;
+  void *unpacked_value;
+  uint32_t uncompressed_value_len;
+  size_t written_len;
+
+  if (!(raw_value = grn_ja_ref_raw(ctx, ja, id, iw, &raw_value_len))) {
+    iw->uncompressed_value = NULL;
+    *value_len = 0;
+    return NULL;
+  }
+
+  unpacked_value = grn_ja_ref_packed(ctx,
+                                     iw, value_len,
+                                     raw_value, raw_value_len,
+                                     &zstd_value, &zstd_value_len,
+                                     &uncompressed_value_len);
+  if (unpacked_value) {
+    return unpacked_value;
+  }
+
+  if (!(iw->uncompressed_value = GRN_MALLOC(uncompressed_value_len))) {
+    iw->uncompressed_value = NULL;
+    *value_len = 0;
+    return NULL;
+  }
+
+  written_len = ZSTD_decompress((char *)(iw->uncompressed_value),
+                                uncompressed_value_len,
+                                zstd_value,
+                                zstd_value_len);
+  if (ZSTD_isError(written_len)) {
+    GRN_FREE(iw->uncompressed_value);
+    iw->uncompressed_value = NULL;
+    *value_len = 0;
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZSTD_ERROR,
+                          "[zstd] failed to decompress",
+                          ZSTD_getErrorName(written_len));
+    return NULL;
+  }
+  *value_len = uncompressed_value_len;
+  return iw->uncompressed_value;
+}
+#endif /* GRN_WITH_ZSTD */
+
 void *
 grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
+  switch (ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
 #ifdef GRN_WITH_ZLIB
-  if (ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
+  case GRN_OBJ_COMPRESS_ZLIB :
     return grn_ja_ref_zlib(ctx, ja, id, iw, value_len);
-  }
 #endif /* GRN_WITH_ZLIB */
 #ifdef GRN_WITH_LZ4
-  if (ja->header->flags & GRN_OBJ_COMPRESS_LZ4) {
+  case GRN_OBJ_COMPRESS_LZ4 :
     return grn_ja_ref_lz4(ctx, ja, id, iw, value_len);
-  }
 #endif /* GRN_WITH_LZ4 */
-  return grn_ja_ref_raw(ctx, ja, id, iw, value_len);
+#ifdef GRN_WITH_ZSTD
+  case GRN_OBJ_COMPRESS_ZSTD :
+    return grn_ja_ref_zstd(ctx, ja, id, iw, value_len);
+#endif /* GRN_WITH_ZSTD */
+  default :
+    return grn_ja_ref_raw(ctx, ja, id, iw, value_len);
+  }
 }
 
 grn_obj *
@@ -1523,21 +1622,85 @@ grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
 }
 #endif /* GRN_WITH_LZ4 */
 
+#ifdef GRN_WITH_ZSTD
+inline static grn_rc
+grn_ja_put_zstd(grn_ctx *ctx,
+                grn_ja *ja,
+                grn_id id,
+                void *value,
+                uint32_t value_len,
+                int flags,
+                uint64_t *cas)
+{
+  grn_rc rc;
+  void *packed_value;
+  int packed_value_len_max;
+  int packed_value_len_real;
+  void *zstd_value;
+  int zstd_value_len_max;
+  int zstd_value_len_real;
+  int zstd_compression_level = 3;
+
+  if (value_len == 0) {
+    return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
+  }
+
+  if (value_len < COMPRESS_THRESHOLD_BYTE) {
+    return grn_ja_put_packed(ctx, ja, id, value, value_len, flags, cas);
+  }
+
+  zstd_value_len_max = ZSTD_compressBound(value_len);
+  packed_value_len_max = zstd_value_len_max + sizeof(uint64_t);
+  if (!(packed_value = GRN_MALLOC(packed_value_len_max))) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  zstd_value = ((uint64_t *)packed_value) + 1;
+  zstd_value_len_real = ZSTD_compress(zstd_value, zstd_value_len_max,
+                                      value, value_len,
+                                      zstd_compression_level);
+  if (ZSTD_isError(zstd_value_len_real)) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZSTD_ERROR,
+                          "[zstd] failed to compress",
+                          ZSTD_getErrorName(zstd_value_len_real));
+    return ctx->rc;
+  }
+  *(uint64_t *)packed_value = value_len;
+  packed_value_len_real = zstd_value_len_real + sizeof(uint64_t);
+  rc = grn_ja_put_raw(ctx,
+                      ja,
+                      id,
+                      packed_value,
+                      packed_value_len_real,
+                      flags,
+                      cas);
+  GRN_FREE(packed_value);
+  return rc;
+}
+#endif /* GRN_WITH_ZSTD */
+
 grn_rc
 grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
            int flags, uint64_t *cas)
 {
+  switch (ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
 #ifdef GRN_WITH_ZLIB
-  if (ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
+  case GRN_OBJ_COMPRESS_ZLIB :
     return grn_ja_put_zlib(ctx, ja, id, value, value_len, flags, cas);
-  }
 #endif /* GRN_WITH_ZLIB */
 #ifdef GRN_WITH_LZ4
-  if (ja->header->flags & GRN_OBJ_COMPRESS_LZ4) {
+  case GRN_OBJ_COMPRESS_LZ4 :
     return grn_ja_put_lz4(ctx, ja, id, value, value_len, flags, cas);
-  }
 #endif /* GRN_WITH_LZ4 */
-  return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
+#ifdef GRN_WITH_ZSTD
+  case GRN_OBJ_COMPRESS_ZSTD :
+    return grn_ja_put_zstd(ctx, ja, id, value, value_len, flags, cas);
+#endif /* GRN_WITH_ZSTD */
+  default :
+    return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
+  }
 }
 
 static grn_rc
@@ -1783,7 +1946,7 @@ grn_ja_reader_close(grn_ctx *ctx, grn_ja_reader *reader)
   return rc;
 }
 
-#if defined(GRN_WITH_ZLIB) || defined(GRN_WITH_LZ4)
+#ifdef GRN_WITH_COMPRESSED
 /* grn_ja_reader_seek_compressed() prepares to access a compressed value. */
 static grn_rc
 grn_ja_reader_seek_compressed(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
@@ -1830,7 +1993,7 @@ grn_ja_reader_seek_compressed(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
   reader->value_size = (uint32_t)*(uint64_t *)seg_addr;
   return GRN_SUCCESS;
 }
-#endif /* defined(GRN_WITH_ZLIB) || defined(GRN_WITH_LZ4) */
+#endif /* GRN_WITH_COMPRESSED */
 
 /* grn_ja_reader_seek_raw() prepares to access a value. */
 static grn_rc
@@ -1881,17 +2044,22 @@ grn_ja_reader_seek_raw(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
 grn_rc
 grn_ja_reader_seek(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
 {
+  switch (reader->ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
 #ifdef GRN_WITH_ZLIB
-  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
+  case GRN_OBJ_COMPRESS_ZLIB :
     return grn_ja_reader_seek_compressed(ctx, reader, id);
-  }
 #endif /* GRN_WITH_ZLIB */
 #ifdef GRN_WITH_LZ4
-  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_LZ4) {
+  case GRN_OBJ_COMPRESS_LZ4 :
     return grn_ja_reader_seek_compressed(ctx, reader, id);
-  }
 #endif /* GRN_WITH_LZ4 */
-  return grn_ja_reader_seek_raw(ctx, reader, id);
+#ifdef GRN_WITH_ZSTD
+  case GRN_OBJ_COMPRESS_ZSTD :
+    return grn_ja_reader_seek_compressed(ctx, reader, id);
+#endif /* GRN_WITH_ZSTD */
+  default :
+    return grn_ja_reader_seek_raw(ctx, reader, id);
+  }
 }
 
 grn_rc
@@ -2074,6 +2242,67 @@ grn_ja_reader_read_lz4(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 }
 #endif /* GRN_WITH_LZ4 */
 
+#ifdef GRN_WITH_ZSTD
+/* grn_ja_reader_read_zstd() reads a value compressed with Zstandard. */
+static grn_rc
+grn_ja_reader_read_zstd(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
+{
+  int src_size, dest_size;
+  grn_ja_einfo *einfo = (grn_ja_einfo *)reader->einfo;
+  if (EHUGE_P(einfo)) {
+    grn_io *io = reader->ja->io;
+    void *seg_addr;
+    char *packed_ptr;
+    uint32_t size, seg_id;
+    if (reader->packed_size > reader->packed_buf_size) {
+      void *new_buf = GRN_REALLOC(reader->packed_buf, reader->packed_size);
+      if (!new_buf) {
+        return GRN_NO_MEMORY_AVAILABLE;
+      }
+      reader->packed_buf = new_buf;
+      reader->packed_buf_size = reader->packed_size;
+    }
+    packed_ptr = (char *)reader->packed_buf;
+    grn_memcpy(packed_ptr, (char *)reader->body_seg_addr + sizeof(uint64_t),
+               io->header->segment_size - sizeof(uint64_t));
+    packed_ptr += io->header->segment_size - sizeof(uint64_t);
+    size = reader->packed_size - (io->header->segment_size - sizeof(uint64_t));
+    seg_id = reader->body_seg_id + 1;
+    while (size > io->header->segment_size) {
+      GRN_IO_SEG_REF(io, seg_id, seg_addr);
+      if (!seg_addr) {
+        return GRN_UNKNOWN_ERROR;
+      }
+      grn_memcpy(packed_ptr, seg_addr, io->header->segment_size);
+      GRN_IO_SEG_UNREF(io, seg_id);
+      seg_id++;
+      size -= io->header->segment_size;
+      packed_ptr += io->header->segment_size;
+    }
+    GRN_IO_SEG_REF(io, seg_id, seg_addr);
+    if (!seg_addr) {
+      return GRN_UNKNOWN_ERROR;
+    }
+    grn_memcpy(packed_ptr, seg_addr, size);
+    GRN_IO_SEG_UNREF(io, seg_id);
+    seg_id++;
+    src_size = (int)(reader->packed_size - sizeof(uint64_t));
+    dest_size = ZSTD_decompress(reader->packed_buf, reader->value_size,
+                                buf, src_size);
+  } else {
+    char *packed_addr = (char *)reader->body_seg_addr;
+    packed_addr += reader->body_seg_offset + sizeof(uint64_t);
+    src_size = (int)(reader->packed_size - sizeof(uint64_t));
+    dest_size = ZSTD_decompress(packed_addr, reader->value_size,
+                                buf, src_size);
+  }
+  if ((uint32_t)dest_size != reader->value_size) {
+    return GRN_ZSTD_ERROR;
+  }
+  return GRN_SUCCESS;
+}
+#endif /* GRN_WITH_ZSTD */
+
 /* grn_ja_reader_read_raw() reads a value. */
 static grn_rc
 grn_ja_reader_read_raw(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
@@ -2121,17 +2350,22 @@ grn_ja_reader_read_raw(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 grn_rc
 grn_ja_reader_read(grn_ctx *ctx, grn_ja_reader *reader, void *buf)
 {
+  switch (reader->ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
 #ifdef GRN_WITH_ZLIB
-  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
+  case GRN_OBJ_COMPRESS_ZLIB :
     return grn_ja_reader_read_zlib(ctx, reader, buf);
-  }
 #endif /* GRN_WITH_ZLIB */
 #ifdef GRN_WITH_LZ4
-  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_LZ4) {
+  case GRN_OBJ_COMPRESS_LZ4 :
     return grn_ja_reader_read_lz4(ctx, reader, buf);
-  }
 #endif /* GRN_WITH_LZ4 */
-  return grn_ja_reader_read_raw(ctx, reader, buf);
+#ifdef GRN_WITH_ZSTD
+  case GRN_OBJ_COMPRESS_ZSTD :
+    return grn_ja_reader_read_zstd(ctx, reader, buf);
+#endif /* GRN_WITH_ZSTD */
+  default :
+    return grn_ja_reader_read_raw(ctx, reader, buf);
+  }
 }
 
 #ifdef GRN_WITH_ZLIB
@@ -2155,6 +2389,17 @@ grn_ja_reader_pread_lz4(grn_ctx *ctx, grn_ja_reader *reader,
   return GRN_FUNCTION_NOT_IMPLEMENTED;
 }
 #endif /* GRN_WITH_LZ4 */
+
+#ifdef GRN_WITH_ZSTD
+/* grn_ja_reader_pread_zstd() reads a part of a value compressed with ZSTD. */
+static grn_rc
+grn_ja_reader_pread_zstd(grn_ctx *ctx, grn_ja_reader *reader,
+                         size_t offset, size_t size, void *buf)
+{
+  /* TODO: To be supported? */
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+}
+#endif /* GRN_WITH_ZSTD */
 
 /* grn_ja_reader_pread_raw() reads a part of a value. */
 static grn_rc
@@ -2223,17 +2468,22 @@ grn_rc
 grn_ja_reader_pread(grn_ctx *ctx, grn_ja_reader *reader,
                     size_t offset, size_t size, void *buf)
 {
+  switch (reader->ja-header->flags & GRN_OBJ_COMPRESS_MASK) {
 #ifdef GRN_WITH_ZLIB
-  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
+  case GRN_OBJ_COMPRESS_ZLIB :
     return grn_ja_reader_pread_zlib(ctx, reader, offset, size, buf);
-  }
 #endif /* GRN_WITH_ZLIB */
 #ifdef GRN_WITH_LZ4
-  if (reader->ja->header->flags & GRN_OBJ_COMPRESS_LZ4) {
+  case GRN_OBJ_COMPRESS_LZ4 :
     return grn_ja_reader_pread_lz4(ctx, reader, offset, size, buf);
-  }
 #endif /* GRN_WITH_LZ4 */
-  return grn_ja_reader_pread_raw(ctx, reader, offset, size, buf);
+#ifdef GRN_WITH_ZSTD
+  case GRN_OBJ_COMPRESS_ZSTD :
+    return grn_ja_reader_pread_zstd(ctx, reader, offset, size, buf);
+#endif /* GRN_WITH_ZSTD */
+  default :
+    return grn_ja_reader_pread_raw(ctx, reader, offset, size, buf);
+  }
 }
 
 /**** vgram ****/

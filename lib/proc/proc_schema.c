@@ -741,10 +741,18 @@ command_schema_column_output_compress(grn_ctx *ctx, grn_obj *column)
   const char *compress = NULL;
 
   if (column->header.type != GRN_COLUMN_INDEX) {
-    if (column->header.flags & GRN_OBJ_COMPRESS_ZLIB) {
+    switch (column->header.flags & GRN_OBJ_COMPRESS_MASK) {
+    case GRN_OBJ_COMPRESS_ZLIB :
       compress = "zlib";
-    } else if (column->header.flags & GRN_OBJ_COMPRESS_LZ4) {
+      break;
+    case GRN_OBJ_COMPRESS_LZ4 :
       compress = "lz4";
+      break;
+    case GRN_OBJ_COMPRESS_ZSTD :
+      compress = "zstd";
+      break;
+    default :
+      break;
     }
   }
 

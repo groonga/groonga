@@ -3054,6 +3054,9 @@ show_version(void)
 #ifdef GRN_WITH_LZ4
   printf(",lz4");
 #endif
+#ifdef GRN_WITH_ZSTD
+  printf(",zstd");
+#endif
 #ifdef USE_KQUEUE
   printf(",kqueue");
 #endif

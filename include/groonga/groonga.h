@@ -126,7 +126,8 @@ typedef enum {
   GRN_PLUGIN_ERROR = -75,
   GRN_SCORER_ERROR = -76,
   GRN_CANCEL = -77,
-  GRN_WINDOW_FUNCTION_ERROR = -78
+  GRN_WINDOW_FUNCTION_ERROR = -78,
+  GRN_ZSTD_ERROR = -79
 } grn_rc;
 
 GRN_API grn_rc grn_init(void);
@@ -331,6 +332,7 @@ typedef uint32_t grn_column_flags;
 #define GRN_OBJ_COMPRESS_LZ4           (0x02<<4)
 /* Just for backward compatibility. We'll remove it at 5.0.0. */
 #define GRN_OBJ_COMPRESS_LZO           GRN_OBJ_COMPRESS_LZ4
+#define GRN_OBJ_COMPRESS_ZSTD          (0x03<<4)
 
 #define GRN_OBJ_WITH_SECTION           (0x01<<7)
 #define GRN_OBJ_WITH_WEIGHT            (0x01<<8)
@@ -705,7 +707,8 @@ typedef enum {
 /* Just for backward compatibility. We'll remove it at 5.0.0. */
 #define GRN_INFO_SUPPORT_LZO GRN_INFO_SUPPORT_LZ4
   GRN_INFO_NORMALIZER,
-  GRN_INFO_TOKEN_FILTERS
+  GRN_INFO_TOKEN_FILTERS,
+  GRN_INFO_SUPPORT_ZSTD
 } grn_info_type;
 
 GRN_API grn_obj *grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valuebuf);

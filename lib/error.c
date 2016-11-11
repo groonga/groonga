@@ -441,6 +441,9 @@ grn_rc_to_string(grn_rc rc)
   case GRN_WINDOW_FUNCTION_ERROR :
     message = "window function error";
     break;
+  case GRN_ZSTD_ERROR :
+    message = "Zstandard error";
+    break;
   }
 
   return message;

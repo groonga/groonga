@@ -8041,6 +8041,18 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
     GRN_BOOL_PUT(ctx, valuebuf, GRN_FALSE);
 #endif /* GRN_WITH_LZ4 */
     break;
+  case GRN_INFO_SUPPORT_ZSTD :
+    if (!valuebuf && !(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_BOOL))) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "failed to open value buffer for GRN_INFO_ZSTD_SUPPORT");
+      goto exit;
+    }
+#ifdef GRN_WITH_ZSTD
+    GRN_BOOL_PUT(ctx, valuebuf, GRN_TRUE);
+#else /* GRN_WITH_ZSTD */
+    GRN_BOOL_PUT(ctx, valuebuf, GRN_FALSE);
+#endif /* GRN_WITH_ZSTD */
+    break;
   default :
     if (!obj) {
       ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
@@ -12007,7 +12019,14 @@ is_compressed_column(grn_ctx *ctx, grn_obj *obj)
     return GRN_FALSE;
   }
 
-  return (obj->header.flags & (GRN_OBJ_COMPRESS_ZLIB | GRN_OBJ_COMPRESS_LZ4));
+  switch (obj->header.flags & GRN_OBJ_COMPRESS_MASK) {
+  case GRN_OBJ_COMPRESS_ZLIB :
+  case GRN_OBJ_COMPRESS_LZ4 :
+  case GRN_OBJ_COMPRESS_ZSTD :
+    return GRN_TRUE;
+  default :
+    return GRN_FALSE;
+  }
 }
 
 static grn_bool

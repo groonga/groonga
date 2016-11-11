@@ -762,6 +762,12 @@ grn_mrb_ctx_check(mrb_state *mrb)
                  "window function error: <%s>(%d)",
                  ctx->errbuf, ctx->rc);
     break;
+  case GRN_ZSTD_ERROR:
+    error_class = mrb_class_get_under(mrb, module, "ZstdError");
+    grn_snprintf(message, MESSAGE_SIZE, MESSAGE_SIZE,
+                 "Zstandard error: <%s>(%d)",
+                 ctx->errbuf, ctx->rc);
+    break;
   }
 
   if (!error_class) {

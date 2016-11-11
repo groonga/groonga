@@ -16,7 +16,8 @@ AM_CFLAGS =					\
 	$(COVERAGE_CFLAGS)			\
 	$(GRN_CFLAGS)				\
 	$(MESSAGE_PACK_CFLAGS)			\
-	$(LIBLZ4_CFLAGS)
+	$(LIBLZ4_CFLAGS)			\
+	$(LIBZSTD_CFLAGS)
 
 BUNDLED_LIBRARIES_CFLAGS =			\
 	$(MRUBY_CFLAGS)				\
@@ -54,6 +55,7 @@ endif
 libgroonga_la_LIBADD +=				\
 	$(ONIGMO_LIBS)				\
 	$(LIBLZ4_LIBS)				\
+	$(LIBZSTD_LIBS)				\
 	$(ATOMIC_LIBS)
 
 if WITH_LEMON

@@ -196,6 +196,8 @@ module Groonga
         register(:cancel, -77, Cancel)
       WINDOW_FUNCTION_ERROR =
         register(:window_function_error, -78, WindowFunctionError)
+      ZSTD_ERROR =
+        register(:zstd_error, -79, ZstdError)
 
       GroongaError.rc = UNKNOWN_ERROR
     end

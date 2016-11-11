@@ -196,5 +196,7 @@ grn_mrb_error_init(grn_ctx *ctx)
                          groonga_error_class);
   mrb_define_class_under(mrb, module, "WindowFunctionError",
                          groonga_error_class);
+  mrb_define_class_under(mrb, module, "ZstdError",
+                         groonga_error_class);
 }
 #endif

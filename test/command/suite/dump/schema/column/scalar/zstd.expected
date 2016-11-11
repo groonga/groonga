@@ -1,0 +1,7 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR|COMPRESS_ZSTD Text
+[[0,0.0,0.0],true]
+dump
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR|COMPRESS_ZSTD Text

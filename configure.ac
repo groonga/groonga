@@ -920,6 +920,30 @@ if test "x$with_lz4" != "xno"; then
   fi
 fi
 
+# Zstandard
+AC_ARG_WITH(zstd,
+  [AS_HELP_STRING([--with-zstd],
+    [Support data compression by Zstandard. [default=auto]])],
+  [with_zstd="$withval"],
+  [with_zstd="auto"])
+if test "x$with_zstd" != "xno"; then
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([LIBZSTD],
+                      [libzstd],
+                      [GRN_WITH_ZSTD=yes],
+                      [GRN_WITH_ZSTD=no])
+  ],
+  [GRN_WITH_ZSTD=no])
+  if test "$GRN_WITH_ZSTD" = "yes"; then
+    AC_DEFINE(GRN_WITH_ZSTD, [1],
+              [Support data compression by Zstandard.])
+  else
+    if test "x$with_zstd" != "xauto"; then
+      AC_MSG_ERROR("No libzstd found")
+    fi
+  fi
+fi
+
 # jemalloc
 AC_ARG_WITH(jemalloc,
   [AS_HELP_STRING([--with-jemalloc],
