@@ -33,6 +33,7 @@ case "${architecture}" in
         ;;
 esac
 
+run sudo yum install -y epel-release
 run sudo yum groupinstall -y "Development Tools"
 run sudo yum install -y rpm-build rpmdevtools tar ${DEPENDED_PACKAGES}
 
