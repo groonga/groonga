@@ -1,0 +1,21 @@
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Names TABLE_PAT_KEY ShortText
+column_create Names user COLUMN_INDEX Users name
+
+load --table Users
+[
+{"name": "Tom"},
+{"name": "Tomy"},
+{"name": "Ken"},
+{"name": "Tom"}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Users \
+  --filter '_id > 1' \
+  --slices[name].filter 'fuzzy_search(name, "Tom")' \
+  --slices[name].output_columns '_id, name, _score' \
+  --slices[name].sort_keys _id

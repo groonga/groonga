@@ -12922,6 +12922,7 @@ grn_column_find_index_data_accessor(grn_ctx *ctx, grn_obj *obj,
   case GRN_OP_GREATER_EQUAL :
   case GRN_OP_CALL :
   case GRN_OP_REGEXP :
+  case GRN_OP_FUZZY :
     n = grn_column_find_index_data_accessor_match(ctx, obj, op,
                                                   index_data, n_index_data,
                                                   index_buf, buf_size,

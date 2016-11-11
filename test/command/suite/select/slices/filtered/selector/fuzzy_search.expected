@@ -1,0 +1,93 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Names TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Names user COLUMN_INDEX Users name
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"name": "Tom"},
+{"name": "Tomy"},
+{"name": "Ken"},
+{"name": "Tom"}
+]
+[[0,0.0,0.0],4]
+log_level --level info
+[[0,0.0,0.0],true]
+select Users   --filter '_id > 1'   --slices[name].filter 'fuzzy_search(name, "Tom")'   --slices[name].output_columns '_id, name, _score'   --slices[name].sort_keys _id
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "Tomy"
+      ],
+      [
+        3,
+        "Ken"
+      ],
+      [
+        4,
+        "Tom"
+      ]
+    ],
+    {
+      "name": [
+        [
+          2
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "name",
+            "ShortText"
+          ],
+          [
+            "_score",
+            "Int32"
+          ]
+        ],
+        [
+          2,
+          "Tomy",
+          2
+        ],
+        [
+          4,
+          "Tom",
+          3
+        ]
+      ]
+    }
+  ]
+]
+#|i| [table][select][index][selector][fuzzy_search] <>
+#|i| [object][search][index][key][fuzzy] <Names.user>
+#|i| grn_ii_sel > (Tom)
+#|i| n=1 (Tom)
+#|i| exact: 3
+#|i| hits=3
+#|i| [accessor][resolve][table] (temporary) -> <Users>
