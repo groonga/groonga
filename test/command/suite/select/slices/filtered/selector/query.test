@@ -1,0 +1,21 @@
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Lexicon TABLE_HASH_KEY ShortText \
+  --default_tokenizer TokenBigramSplitSymbolAlphaDigit \
+  --normalizer NormalizerAuto
+column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
+
+load --table Users
+[
+{"name": "Alice"},
+{"name": "Alisa"},
+{"name": "Bob"}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Users \
+  --filter '_id > 1' \
+  --slices[name].filter 'query("name * 10", "ali")' \
+  --slices[name].output_columns _id,name,_score
