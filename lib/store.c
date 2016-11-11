@@ -1686,10 +1686,33 @@ grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
   }
 
   if (value_len > (uint32_t)LZ4_MAX_INPUT_SIZE) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[ja][lz4] too large value size: <%u>: max: <%d>",
-        value_len, LZ4_MAX_INPUT_SIZE);
-    return ctx->rc;
+    uint64_t packed_value_meta;
+
+    packed_value_len_real = value_len + sizeof(uint64_t);
+    packed_value = GRN_MALLOC(packed_value_len_real);
+    if (!packed_value) {
+      grn_ja_compress_error(ctx,
+                            ja,
+                            id,
+                            GRN_LZ4_ERROR,
+                            "[lz4] failed to allocate packed buffer",
+                            NULL);
+      return ctx->rc;
+    }
+    packed_value_meta = value_len | COMPRESSED_VALUE_META_FLAG_RAW;
+    *((uint64_t *)packed_value) = packed_value_meta;
+    memcpy(((uint64_t *)packed_value) + 1,
+           value,
+           value_len);
+    rc = grn_ja_put_raw(ctx,
+                        ja,
+                        id,
+                        packed_value,
+                        packed_value_len_real,
+                        flags,
+                        cas);
+    GRN_FREE(packed_value);
+    return rc;
   }
 
   lz4_value_len_max = LZ4_compressBound(value_len);
