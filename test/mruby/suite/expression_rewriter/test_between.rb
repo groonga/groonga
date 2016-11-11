@@ -145,7 +145,7 @@ class TestBetween < ExpressionRewriterTestCase
 [0]
   op:         <match>
   logical_op: <or>
-  index:      <[Logs_message.message]>
+  index:      <[#<accessor Logs_message(Terms).message(Logs)>]>
   query:      <\"Groonga\">
   expr:       <0..2>
 [1]
