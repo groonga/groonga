@@ -2468,7 +2468,7 @@ grn_rc
 grn_ja_reader_pread(grn_ctx *ctx, grn_ja_reader *reader,
                     size_t offset, size_t size, void *buf)
 {
-  switch (reader->ja-header->flags & GRN_OBJ_COMPRESS_MASK) {
+  switch (reader->ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
 #ifdef GRN_WITH_ZLIB
   case GRN_OBJ_COMPRESS_ZLIB :
     return grn_ja_reader_pread_zlib(ctx, reader, offset, size, buf);
