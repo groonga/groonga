@@ -2264,6 +2264,10 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
     return GRN_FALSE;
   }
 
+  if (!index) {
+    return GRN_FALSE;
+  }
+
   if (index->header.flags & GRN_OBJ_WITH_WEIGHT) {
     return GRN_FALSE;
   }
@@ -2493,7 +2497,19 @@ selector_between(grn_ctx *ctx,
   }
 
   if (index) {
-    index_table = grn_ctx_at(ctx, index->header.domain);
+    switch (index->header.type) {
+    case GRN_TABLE_NO_KEY :
+    case GRN_TABLE_HASH_KEY :
+      break;
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_DAT_KEY :
+      index_table = index;
+      index = NULL;
+      break;
+    default :
+      index_table = grn_ctx_at(ctx, index->header.domain);
+      break;
+    }
   }
 
   if (index_table) {
@@ -2526,8 +2542,19 @@ selector_between(grn_ctx *ctx,
     goto exit;
   }
 
-  while ((id = grn_table_cursor_next(ctx, cursor))) {
-    grn_ii_at(ctx, (grn_ii *)index, id, (grn_hash *)res, op);
+  if (index) {
+    while ((id = grn_table_cursor_next(ctx, cursor))) {
+      grn_ii_at(ctx, (grn_ii *)index, id, (grn_hash *)res, op);
+    }
+  } else {
+    grn_posting posting;
+    memset(&posting, 0, sizeof(grn_posting));
+    posting.sid = 1;
+    posting.pos = 0;
+    while ((id = grn_table_cursor_next(ctx, cursor))) {
+      posting.rid = id;
+      grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
+    }
   }
   grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
   grn_table_cursor_close(ctx, cursor);
