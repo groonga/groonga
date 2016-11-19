@@ -2356,7 +2356,7 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
         DEFINE_NAME(ii);
         CRIT(GRN_FILE_CORRUPT,
              "[ii][buffer][put] loop is found: "
-             "<%.*s> :"
+             "<%.*s>: "
              "(%d:%d)->(%d:%d)",
              name_size, name,
              id_post.rid, id_post.sid, id_curr.rid, id_curr.sid);
