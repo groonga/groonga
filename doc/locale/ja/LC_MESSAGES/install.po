@@ -77,27 +77,6 @@ msgstr ""
 "ます。MuninでGroongaの状態をモニターしたい場合は、groonga-munin-pluginsパッ"
 "ケージをインストールしてください。"
 
-msgid ""
-"Groonga-munin-plugins package requires munin-node package that isn't "
-"included in the official CentOS repository. You need to enable `Repoforge "
-"(RPMforge) <http://repoforge.org/>`_ repository or `EPEL <http://"
-"fedoraproject.org/wiki/EPEL>`_ repository to install it by ``yum``."
-msgstr ""
-"groonga-munin-pluginsパッケージはmunin-nodeパッケージを必要としますが、munin-"
-"nodeパッケージはCentOSの公式リポジトリには含まれていません。munin-nodeパッ"
-"ケージを ``yum`` でインストールするために `Repoforge (RPMforge) <http://"
-"repoforge.org/>`_ リポジトリか `EPEL <http://fedoraproject.org/wiki/EPEL>`_ "
-"リポジトリを有効にする必要があります。"
-
-msgid "Enable Repoforge (RPMforge) repository on i386 environment::"
-msgstr "i386環境でRepoforge (RPMforge)リポジトリを有効にする::"
-
-msgid "Enable Repoforge (RPMforge) repository on x86_64 environment::"
-msgstr "x86_64環境でRepoforge (RPMforge)リポジトリを有効にする::"
-
-msgid "Enable EPEL repository on any environment::"
-msgstr "EPELリポジトリを有効にする（環境非依存）::"
-
 msgid "Install groonga-munin-plugins package::"
 msgstr "groonga-munin-pluginsパッケージのインストール::"
 
@@ -116,21 +95,8 @@ msgstr "groonga-normalizer-mysqlパッケージのインストール::"
 msgid "CentOS 6"
 msgstr ""
 
-msgid ""
-"Groonga-munin-plugins package requires munin-node package that isn't "
-"included in the official CentOS repository. You need to enable `EPEL <http://"
-"fedoraproject.org/wiki/EPEL>`_ repository to install it by ``yum``."
-msgstr ""
-"groonga-munin-pluginsパッケージはmunin-nodeパッケージを必要としますが、munin-"
-"nodeパッケージはCentOSの公式リポジトリには含まれていません。munin-nodeパッ"
-"ケージを ``yum`` でインストールするために `EPEL <http://fedoraproject.org/"
-"wiki/EPEL>`_ リポジトリを有効にする必要があります。"
-
 msgid "CentOS 7"
 msgstr ""
-
-msgid "Enable EPEL repository::"
-msgstr "EPELリポジトリを有効にする::"
 
 msgid "Build from source"
 msgstr "ソースからビルド"
@@ -894,3 +860,4 @@ msgid ""
 msgstr ""
 "以上の手順で :doc:`/reference/executables/groonga` が ``c:\\Groonga\\bin"
 "\\groonga.exe`` にインストールされます。"
+
