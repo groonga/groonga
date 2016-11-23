@@ -208,10 +208,10 @@ Munin plugins for Groonga
 %configure \
   --disable-static \
   --with-package-platform=centos%{?centos_ver} \
-%if %{!_use_lz4}
+%if ! %{_use_lz4}
   --without-lz4 \
 %endif
-%if %{!_use_zstd}
+%if ! %{_use_zstd}
   --without-zstd \
 %endif
 %if %{_use_mecab}
@@ -219,7 +219,7 @@ Munin plugins for Groonga
 %else
   --without-mecab \
 %endif
-%if %{!_use_msgpack}
+%if ! %{_use_msgpack}
   --without-message-pack \
 %endif
   --with-munin-plugins \
