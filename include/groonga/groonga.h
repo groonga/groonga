@@ -1064,7 +1064,15 @@ GRN_API grn_log_level grn_logger_get_max_level(grn_ctx *ctx);
 # define GRN_ATTRIBUTE_PRINTF(fmt_pos)
 #endif /* __GNUC__ */
 
-#ifdef __GNUC__
+#if defined(__clang__)
+# if __has_attribute(__alloc_size__)
+#  define HAVE_ALLOC_SIZE_ATTRIBUTE
+# endif /* __has_attribute(__alloc_size__) */
+#elif defined(__GNUC__)
+# define HAVE_ALLOC_SIZE_ATTRIBUTE
+#endif /* __clang__ */
+
+#ifdef HAVE_ALLOC_SIZE_ATTRIBUTE
 # define GRN_ATTRIBUTE_ALLOC_SIZE(size) \
   __attribute__ ((alloc_size(size)))
 # define GRN_ATTRIBUTE_ALLOC_SIZE_N(n, size) \
@@ -1072,7 +1080,7 @@ GRN_API grn_log_level grn_logger_get_max_level(grn_ctx *ctx);
 #else
 # define GRN_ATTRIBUTE_ALLOC_SIZE(size)
 # define GRN_ATTRIBUTE_ALLOC_SIZE_N(n, size)
-#endif /* __GNUC__ */
+#endif /* HAVE_ALLOC_SIZE_ATTRIBUTE */
 
 GRN_API void grn_logger_put(grn_ctx *ctx, grn_log_level level,
                             const char *file, int line, const char *func, const char *fmt, ...) GRN_ATTRIBUTE_PRINTF(6);
