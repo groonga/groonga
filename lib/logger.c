@@ -243,6 +243,21 @@ grn_default_logger_get_max_level(void)
 }
 
 void
+grn_default_logger_set_flags(int flags)
+{
+  default_logger.flags = flags;
+  if (current_logger.log == default_logger_log) {
+    current_logger.flags = flags;
+  }
+}
+
+int
+grn_default_logger_get_flags(void)
+{
+  return default_logger.flags;
+}
+
+void
 grn_default_logger_set_path(const char *path)
 {
   if (default_logger_path) {
