@@ -199,7 +199,7 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
       break;
     case GRN_COM_PROTO_GQTP :
       {
-        if ((flags & GRN_CTX_MORE)) { flags |= GRN_CTX_QUIET; }
+        if (flags & GRN_CTX_MORE) { flags |= GRN_CTX_QUIET; }
         if (ctx->stat == GRN_CTX_QUIT) { flags |= GRN_CTX_QUIT; }
         header->qtype = (uint8_t) ctx->impl->output.type;
         header->keylen = 0;
@@ -572,8 +572,8 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
                                       (void **)(&pfd),
                                       &dummy,
                                       (void **)(&com));
-        if ((com->events & GRN_COM_POLLIN)) { FD_SET(*pfd, &rfds); }
-        if ((com->events & GRN_COM_POLLOUT)) { FD_SET(*pfd, &wfds); }
+        if (com->events & GRN_COM_POLLIN) { FD_SET(*pfd, &rfds); }
+        if (com->events & GRN_COM_POLLOUT) { FD_SET(*pfd, &wfds); }
 # ifndef WIN32
         if (*pfd > nfds) { nfds = *pfd; }
 # endif /* WIN32 */
@@ -655,7 +655,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
       if (grn_sock_close(efd) == -1) { SOERR("close"); }
       continue;
     }
-    if ((ep->events & GRN_COM_POLLIN)) { grn_com_receiver(ctx, com); }
+    if (ep->events & GRN_COM_POLLIN) { grn_com_receiver(ctx, com); }
 # else /* USE_EPOLL */
 #  ifdef USE_KQUEUE
     efd = ep->ident;
@@ -669,7 +669,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
       if (grn_sock_close(efd) == -1) { SOERR("close"); }
       continue;
     }
-    if ((ep->filter == GRN_COM_POLLIN)) { grn_com_receiver(ctx, com); }
+    if (ep->filter == GRN_COM_POLLIN) { grn_com_receiver(ctx, com); }
 #  else
     efd = ep->fd;
     if (!(ep->events & ep->revents)) { continue; }
@@ -679,7 +679,7 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
       if (grn_sock_close(efd) == -1) { SOERR("close"); }
       continue;
     }
-    if ((ep->revents & GRN_COM_POLLIN)) { grn_com_receiver(ctx, com); }
+    if (ep->revents & GRN_COM_POLLIN) { grn_com_receiver(ctx, com); }
 #  endif /* USE_KQUEUE */
 # endif /* USE_EPOLL */
   }
@@ -888,7 +888,7 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
     case GRN_COM_PROTO_GQTP :
     case GRN_COM_PROTO_MBREQ :
       if (GRN_BULK_WSIZE(buf) < value_size) {
-        if ((grn_bulk_resize(ctx, buf, value_size))) {
+        if (grn_bulk_resize(ctx, buf, value_size)) {
           goto exit;
         }
       }
