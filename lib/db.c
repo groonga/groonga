@@ -12013,15 +12013,27 @@ grn_table_sort_value(grn_ctx *ctx, grn_obj *table,
 static grn_bool
 is_compressed_column(grn_ctx *ctx, grn_obj *obj)
 {
+  grn_obj *target_obj;
+
   if (!obj) {
     return GRN_FALSE;
   }
 
-  if (obj->header.type != GRN_COLUMN_VAR_SIZE) {
+  if (obj->header.type == GRN_ACCESSOR) {
+    grn_accessor *a = (grn_accessor *)obj;
+    while (a->next) {
+      a = a->next;
+    }
+    target_obj = a->obj;
+  } else {
+    target_obj = obj;
+  }
+
+  if (target_obj->header.type != GRN_COLUMN_VAR_SIZE) {
     return GRN_FALSE;
   }
 
-  switch (obj->header.flags & GRN_OBJ_COMPRESS_MASK) {
+  switch (target_obj->header.flags & GRN_OBJ_COMPRESS_MASK) {
   case GRN_OBJ_COMPRESS_ZLIB :
   case GRN_OBJ_COMPRESS_LZ4 :
   case GRN_OBJ_COMPRESS_ZSTD :
