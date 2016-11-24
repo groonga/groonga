@@ -860,4 +860,3 @@ msgid ""
 msgstr ""
 "以上の手順で :doc:`/reference/executables/groonga` が ``c:\\Groonga\\bin"
 "\\groonga.exe`` にインストールされます。"
-

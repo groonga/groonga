@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-11-09 14:11+0900\n"
+"PO-Revision-Date: 2016-11-24 10:08+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -21,11 +21,20 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 6.1.0 - 2016-10-29"
-msgstr "6.1.0リリース - 2016-10-29"
+msgid "Release 6.1.1 - 2016-11-29"
+msgstr "6.1.1リリース - 2016-11-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Release 6.1.0 - 2016-10-29"
+msgstr "6.1.0リリース - 2016-10-29"
 
 msgid ""
 "[:doc:`/reference/commands/dump`] Supported to sort load table names by key "
@@ -85,9 +94,6 @@ msgstr "[ubuntu] Ubuntu 16.10 (Yakkety Yak)をサポートしました。"
 msgid "[httpd] Updated bundled nginx to 1.11.5."
 msgstr "[httpd] バンドルしているnginxのバージョンを1.11.5に更新しました。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "Fixed a bug that table of index column was reported in log instead of "
 "correct index column."
@@ -120,9 +126,6 @@ msgstr ""
 "[:doc:`/reference/commands/select`] 数値から始まる誤ったカラム名を "
 "``output_columns`` に指定したときに無視されずにシンタックスエラーとなる不具合"
 "を修正しました。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "torinky"
 msgstr "torinkyさん"
