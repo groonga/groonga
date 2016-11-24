@@ -41,6 +41,8 @@ Improvements
 * [:doc:`/reference/functions/between`] Supported ``between(_key, ...)``
   as target.
 
+* [httpd] Updated bundled nginx to 1.11.6..
+
 Fixes
 ^^^^^
 
