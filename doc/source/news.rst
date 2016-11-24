@@ -15,11 +15,47 @@ Release 6.1.1 - 2016-11-29
 Improvements
 ^^^^^^^^^^^^
 
+* [:doc:`/reference/commands/select`] Supported the following functions in slices.
+
+  * :doc:`/reference/functions/between`
+  * :doc:`/reference/functions/geo_in_circle`
+  * :doc:`/reference/functions/geo_in_rectangle`
+  * :doc:`/reference/functions/in_values`
+  * :doc:`/reference/functions/fuzzy_search`
+  * :doc:`/reference/functions/query`
+
+* [:doc:`/reference/executables/groonga-httpd`] Supported PID output to
+  log file. It is useful to distinct multiple worker processes.
+  The messages are logged as ``TIMESTAMP|MARK|PID: MESSAGE``.
+
+* [ja] Changed to stop compressing small data. If column data is less
+  than 256 byte, the data aren't compressed even when ``COMPRESS_ZLIB``
+  or ``COMPRESS_LZ4`` or ``COMPRESS_ZSTD`` is specified. By this change,
+  performance and space efficiency will be improved.
+
+* [:doc:`/reference/commands/column_create`] Supported Zstandard.
+  ``COMPRESS_ZSTD`` flag is used to enable this feature.
+
+* [rpm][centos] Enabled Zstandard for CentOS 6 or later packages.
+
+* [:doc:`/reference/functions/between`] Supported ``between(_key, ...)``
+  as target.
+
 Fixes
 ^^^^^
 
-Thanks
-^^^^^^
+* Fixed a bug that needless index check reports error wrongly when the
+  default column value such as 0 exists in lexicon. It shows error
+  message such as "[ii][delete][one] failed to allocate a segment:
+  ..." unexpectedly.
+
+* [:doc:`/reference/commands/logical_table_remove`] Fixed a bug that
+  it may return error with ``--dependent yes`` option. In the previous
+  version, if one or more columns that refer the same table, the error
+  is occurred.
+
+* [sort] Fixed a crash bug when one of sort keys is a compressed
+  column and ``--query`` and/or ``--filter`` are used at the same time.
 
 .. _release-6-1-0:
 
