@@ -648,7 +648,7 @@ OS Xでのパッケージ管理方法として `Homebrew <http://brew.sh/>`_ が
 
 Groongaを簡単にインストールできるようにするために、Homebrewへpull requestを送ります。
 
-  https://github.com/mxcl/homebrew
+  https://github.com/Homebrew/homebrew-core
 
 すでにGroongaのFormulaは取り込まれているので、リリースのたびにFormulaの内容を更新する作業を実施します。
 
