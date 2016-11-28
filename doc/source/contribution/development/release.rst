@@ -6,7 +6,7 @@
 ============
 
 前提条件
---------
+*********
 
 リリース手順の前提条件は以下の通りです。
 
@@ -20,6 +20,11 @@
 * GROONGA_ORG_PATH=$HOME/work/groonga/groonga.org
 * CUTTER_DIR=$HOME/work/cutter
 * CUTTER_SOURCE_PATH=$HOME/work/cutter/cutter
+
+
+最初の1回だけ行う手順
+**********************
+
 
 ビルド環境の準備
 ----------------
