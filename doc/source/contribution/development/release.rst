@@ -51,7 +51,7 @@ Vagrantで使用する仮想化ソフトウェア（VirtualBox、VMwareなど）
 リリース作業ではRPMパッケージに対する署名を行います。
 その際、パッケージ署名用の鍵が必要です。
 
-Groongaプロジェクトでは署名用の鍵をリリース担当者の公開鍵で暗号化してリポジトリのpackages/ディレクトリ以下へと登録しています。
+Groongaプロジェクトでは署名用の鍵をリリース担当者の公開鍵で暗号化してリポジトリのpackages/ディレクトリ以下へと登録しています。新しいリリース担当者に任命されたばかりで、まだ自分用に暗号化された鍵が無い場合には、他のリリース担当者に依頼して署名用の鍵を暗号化してもらって下さい。
 
 リリース担当者はリポジトリに登録された秘密鍵を復号した後に鍵のインポートを以下のコマンドにて行います。::
 
@@ -192,7 +192,7 @@ configureオプションである--with-cutter-source-pathにはcutterのソー�
 make update-latest-releaseの実行
 --------------------------------
 
-make update-latest-releaseコマンドでは、OLD_RELEASE_DATEに前回のリリースの日付を、NEW_RELEASE_DATEに次回リリースの日付を指定します。
+make update-latest-releaseコマンドでは、OLD_RELEASE_DATEに前回のリリースの日付を、NEW_RELEASE_DATEに次回リリースの日付（未来の日付）を指定します。
 
 2.0.2のリリースを行った際は以下のコマンドを実行しました。::
 ::
@@ -231,7 +231,19 @@ make update-poコマンドの実行により更新した各種.poファイルを
     % make -C doc/locale/ja html
     % make -C doc/locale/en html
 
+修正が必要な箇所を調べて、`***.edit`というファイルを適宜修正します。
+
+    % cd groonga/doc/locale
+    % gir diff
+
+ファイルを編集したら、再度poファイルとHTMLを更新するために以下のコマンドを実行します。::
+
+    % make update-po
+    % make -C doc/locale/ja html
+    % make -C doc/locale/en html
+
 確認が完了したら、翻訳済みpoファイルをコミットします。
+
 
 リリースタグの設定
 ------------------
@@ -311,7 +323,7 @@ Groongaのpackages/aptサブディレクトリに移動して、以下のコマ�
     % cd packages/apt
     % make build PALALLEL=yes
 
-make build PALALLEL=yesコマンドを実行すると、ディストリビューションのリリースとアーキテクチャの組み合わせでビルドを平行して行うことができます。
+make build PALALLEL=yesコマンドを実行すると、ディストリビューションのリリースとアーキテクチャの組み合わせでビルドを平行して行うことができます。ホストマシンの性能に複数台のVMを動作させるだけの余裕がない場合は、PALALLEL=yesは指定しないで下さい。その場合、各アーキテクチャ向けのビルドが順番に行われます。
 
 現在サポートされているのは以下の通りです。
 
@@ -397,14 +409,24 @@ make installerが正常に終了するとWindowsインストーラをfilesディ
 
 Debian系もしくはRed Hat系の場合には本番環境へとアップロードする前にローカルのaptないしyumのリポジトリを参照して正常に更新できることを確認します。
 
-ここでは以下のようにrubyを利用してリポジトリをwebサーバ経由で参照できるようにします。::
+ここでは以下のようにrubyを利用してリポジトリをwebサーバ経由で参照できるようにします。
 
-    % ruby -run -e httpd -- packages/yum/repositories (yumの場合)
-    % ruby -run -e httpd -- packages/apt/repositories (aptの場合)
+yumの場合::
+
+    % ruby -run -e httpd -- packages/yum/repositories
+    % yum update
+    ...
+
+aptの場合::
+
+    % ruby -run -e httpd -- packages/apt/repositories
+    % sudo apt update
+    ...
 
 grntestの準備
 ~~~~~~~~~~~~~
 
+TravisCIの結果が正常であれば、この手順はスキップして構いません。
 grntestを実行するためにはGroongaのテストデータとgrntestのソースが必要です。
 
 まずGroongaのソースを任意のディレクトリへと展開します。::
@@ -465,7 +487,7 @@ Red Hat系の場合の動作確認手順は以下の通りとなります。
 Windows向けの場合
 ~~~~~~~~~~~~~~~~~
 
-* 新規インストール/上書きインストールを行う
+* テスト環境で新規インストール/上書きインストールを行う
 * grntestのアーカイブを展開してインストールしたバージョンでテストを実行する
 * grntestの正常終了を確認する
 
@@ -498,6 +520,8 @@ news.txtに変更点をまとめましたが、それを元にリリースアナ
 * [groonga-dev,00794] [ANN] Groonga 2.0.2
 
     * http://osdn.jp/projects/groonga/lists/archive/dev/2012-April/000794.html
+
+後述しますが、Twitter等でのリリースアナウンスの際はここで用意したアナウンス文の要約を使用します。
 
 
 パッケージのアップロード
