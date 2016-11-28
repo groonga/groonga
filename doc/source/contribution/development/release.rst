@@ -667,13 +667,7 @@ Groongaグループのメンバーになると、個人のアカウントでは�
 
 リリースアナウンスを流し終えたら、次期バージョンの開発が始まります。
 
-* Groonga プロジェクトの新規バージョン追加
 * Groonga のbase_versionの更新
-
-Groonga プロジェクトの新規バージョン追加
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`Groonga プロジェクトの設定ページ <http://redmine.groonga.org/projects/groonga/settings>`_ にて新規バージョンを追加します。(例: release-2.0.6)
 
 Groonga バージョン更新
 ~~~~~~~~~~~~~~~~~~~~~~
