@@ -642,6 +642,8 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 Homebrewの更新
 --------------
 
+この手順は省略可能です（Homebrewの更新はGroongaプロジェクト本体のリリース要件には含まれません）。
+
 OS Xでのパッケージ管理方法として `Homebrew <http://brew.sh/>`_ があります。
 
 Groongaを簡単にインストールできるようにするために、Homebrewへpull requestを送ります。
