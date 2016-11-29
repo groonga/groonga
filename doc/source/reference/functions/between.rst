@@ -39,7 +39,7 @@ Here are a schema definition and sample data to show usage:
 .. {"_key": "Bob",    "age": 13},
 .. {"_key": "Calros", "age": 15},
 .. {"_key": "Dave",   "age": 16},
-.. {"_key": "Eric",   "age": 20}
+.. {"_key": "Eric",   "age": 20},
 .. {"_key": "Frank",  "age": 21}
 .. ]
 
