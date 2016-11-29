@@ -633,7 +633,7 @@ cloneしたWebサイトのソースに対して以下のファイルを新規追
 編集した内容をpushする前に確認したい場合にはJekyllおよびRedCloth（Textileパーサー）、RDiscount（Markdownパーサー）、JavaScript interpreter（therubyracer、Node.jsなど）が必要です。
 インストールするには以下のコマンドを実行します。::
 
-    % sudo gem install jekyll RedCloth rdiscount therubyracer
+    % sudo gem install jekyll jekyll-paginate RedCloth rdiscount therubyracer
 
 jekyllのインストールを行ったら、以下のコマンドでローカルにwebサーバを起動します。::
 
