@@ -610,6 +610,13 @@ Ubuntu向けのパッケージのアップロードには以下のコマンド�
 
   https://launchpad.net/~groonga/+archive/ubuntu/ppa
 
+Ubuntu用パッケージの公開の取り消し
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+LaunchpadのGroongaチームのページで対象のPPAを選択し、バージョン一覧の上にある「View package details」リンクの先で「Delete packages」リンクを辿ると、アップロード済みパッケージを削除できる。
+例；[不安定版リポジトリのパッケージの削除用のページ](https://launchpad.net/~groonga/+archive/ubuntu/nightly/+delete-packages)。
+
+
 blogroonga(ブログ)の更新
 ------------------------
 
