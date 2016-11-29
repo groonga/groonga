@@ -344,9 +344,9 @@ Debian系パッケージのビルド
 Groongaのpackages/aptサブディレクトリに移動して、以下のコマンドを実行します。::
 
     % cd packages/apt
-    % make build PALALLEL=yes
+    % make build PARALLEL=yes
 
-make build PALALLEL=yesコマンドを実行すると、ディストリビューションのリリースとアーキテクチャの組み合わせでビルドを平行して行うことができます。ホストマシンの性能に複数台のVMを動作させるだけの余裕がない場合は、PALALLEL=yesは指定しないで下さい。その場合、各アーキテクチャ向けのビルドが順番に行われます。
+make build PARALLEL=yesコマンドを実行すると、ディストリビューションのリリースとアーキテクチャの組み合わせでビルドを平行して行うことができます。ホストマシンの性能に複数台のVMを動作させるだけの余裕がない場合は、PARALLEL=yesは指定しないで下さい。その場合、各アーキテクチャ向けのビルドが順番に行われます。
 
 現在サポートされているのは以下の通りです。
 
@@ -378,9 +378,9 @@ Red Hat系パッケージのビルド
 Groongaのpackages/yumサブディレクトリに移動して、以下のコマンドを実行します。::
 
     % cd packages/yum
-    % make build PALALLEL=yes
+    % make build PARALLEL=yes
 
-make build PALALLEL=yesコマンドを実行すると、ディストリビューションのリリースとアーキテクチャの組み合わせでビルドを平行して行うことができます。
+make build PARALLEL=yesコマンドを実行すると、ディストリビューションのリリースとアーキテクチャの組み合わせでビルドを平行して行うことができます。
 
 現在サポートされているのは以下の通りです。
 
@@ -713,7 +713,7 @@ $GROONGA_CLONE_DIRにて以下のコマンドを実行します。::
 ビルドを並列化したい
 ~~~~~~~~~~~~~~~~~~~~
 
-make build PALALLEL=yesを指定するとchroot環境で並列にビルドを
+make build PARALLEL=yesを指定するとchroot環境で並列にビルドを
 実行できます。
 
 
