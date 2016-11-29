@@ -211,6 +211,20 @@ configureオプションである--with-cutter-source-pathにはcutterのソー�
 
     % ssh packages@packages.groonga.org
 
+デバッグ用や開発用のパッケージをテスト用に公開する時は、`--with-launchpad-ppa=groonga-nightly`を指定して不安定版のリポジトリにアップロードするように指定します。::
+
+    % ./configure \
+          --with-launchpad-ppa=groonga-nightly \
+          --prefix=/tmp/local \
+          --with-launchpad-uploader-pgp-key=(Launchpadに登録したkeyID) \
+          --with-groonga-org-path=$HOME/work/groonga/groonga.org \
+          --enable-document \
+          --with-ruby \
+          --enable-mruby \
+          --with-cutter-source-path=$HOME/work/cutter/cutter
+
+新任のリリース担当者は必ず、この方法でPPAのリポジトリにパッケージをアップロードできる事を確認しておいてください。
+
 
 make update-latest-releaseの実行
 --------------------------------
@@ -576,6 +590,10 @@ Windows向けのパッケージのアップロードには以下のコマンド�
 
 Ubuntu用パッケージのアップロード
 --------------------------------
+
+Ubuntu向けパッケージの作成には、作業マシン上にGroongaのビルドに必要な依存ソフトウェア一式がインストールされている必要があります。以下のようにしてインストールしておいて下さい。::
+
+    % sudo apt build-dep groonga
 
 Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::
 
