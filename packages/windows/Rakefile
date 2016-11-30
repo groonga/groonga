@@ -398,6 +398,38 @@ namespace :build do
     end
   end
 
+  desc "Build groonga-normalizer-mysql and install it into #{dist_dir}/."
+  task :groonga_normalizer_mysql => :env do
+    tmp_dir = base_tmp_dir + "groonga-normalizer-mysql"
+    rm_rf(tmp_dir)
+    mkdir_p(tmp_dir)
+    groonga_normalizer_mysql_base = "groonga-normalizer-mysql-1.1.1"
+    groonga_normalizer_mysql_tar_gz_url =
+      "http://packages.groonga.org/source/groonga-normalizer-mysql/" +
+      "#{groonga_normalizer_mysql_base}.tar.gz"
+    groonga_normalizer_mysql_tar_gz =
+      download(groonga_normalizer_mysql_tar_gz_url, download_dir)
+    Dir.chdir(tmp_dir) do
+      sh("tar", "xzf", groonga_normalizer_mysql_tar_gz.to_s) or exit(false)
+    end
+    Dir.chdir(tmp_dir + groonga_normalizer_mysql_base) do
+      options = [
+        "--prefix=#{binary_dir}",
+        "--host=#{host}",
+      ]
+      options << "--enable-debug" if debug_build_p
+      sh("./configure", *options) or exit(false)
+      sh("env", "GREP_OPTIONS=--text", "nice", "make", "-j8") or exit(false)
+      sh("env", "GREP_OPTIONS=--text", "make", "install") or exit(false)
+
+      groonga_normalizer_mysql_license_dir =
+        license_dir + "groonga-normalizer-mysql"
+      mkdir_p(groonga_normalizer_mysql_license_dir)
+      files = ["README.md", "doc/text/lgpl-2.0.txt"]
+      cp(files, groonga_normalizer_mysql_license_dir)
+    end
+  end
+
   desc "Install Groonga Admin into #{dist_dir}/."
   task :groonga_admin => :env do
     tmp_dir = base_tmp_dir + "groonga-admin"
@@ -466,6 +498,7 @@ build_dependencies = [
   "build:mecab_dict",
   "build:pcre",
   "build:groonga",
+  "build:groonga_normalizer_mysql",
   "build:groonga_admin",
   "build:post",
 ]
