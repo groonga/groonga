@@ -27,6 +27,12 @@ Process log uses the following format::
 
   #{TIME_STAMP}|#{L}| #{MESSAGE}
 
+Some multi-process based applications such as
+:doc:`/reference/executables/groonga-httpd` and `PGroonga
+<https://pgroonga.github.io/>`_ use the following format::
+
+  #{TIME_STAMP}|#{L}|#{PID}: #{MESSAGE}
+
 TIME_STAMP
   It's time stamp uses the following format::
 
@@ -92,6 +98,13 @@ L
 
     E
 
+PID
+  The process ID.
+
+  Example::
+
+    1129
+
 MESSAGE
   Details about the log with free format.
 
@@ -103,6 +116,11 @@ Example::
 
   2011-07-05 08:35:09.276421|n| grn_init
   2011-07-05 08:35:09.276553|n| RLIMIT_NOFILE(4096,4096)
+
+Example with PID::
+
+  2011-07-05 08:35:09.276421|n|1129: grn_init
+  2011-07-05 08:35:09.276553|n|1129: RLIMIT_NOFILE(4096,4096)
 
 .. _query-log:
 
