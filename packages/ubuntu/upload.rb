@@ -109,6 +109,7 @@ allow_unsigned_uploads = 0
                     "Build for #{code_name}.")
         run_command("debuild",
                     "--set-envvar=LINTIAN_PROFILE=ubuntu",
+                    "-d",
                     "-S",
                     "-sa",
                     "-pgpg2",
