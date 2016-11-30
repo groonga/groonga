@@ -54,7 +54,6 @@ CentOS 6
 Install::
 
   % sudo yum install -y http://packages.groonga.org/centos/groonga-release-1.2.0-1.noarch.rpm
-  % sudo yum makecache
   % sudo yum install -y groonga
 
 .. include:: server-use.inc
