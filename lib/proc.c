@@ -151,7 +151,14 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       ctx->rc = ctx->impl->loader.rc;
       grn_strcpy(ctx->errbuf, GRN_CTX_MSGSIZE, ctx->impl->loader.errbuf);
     }
-    GRN_OUTPUT_INT64(ctx->impl->loader.nrecords);
+    if (grn_ctx_get_command_version(ctx) >= GRN_COMMAND_VERSION_3) {
+      GRN_OUTPUT_MAP_OPEN("RESULT", 1);
+      GRN_OUTPUT_CSTR("n_loaded_records");
+      GRN_OUTPUT_INT64(ctx->impl->loader.nrecords);
+      GRN_OUTPUT_MAP_CLOSE();
+    } else {
+      GRN_OUTPUT_INT64(ctx->impl->loader.nrecords);
+    }
     if (ctx->impl->loader.table) {
       grn_db_touch(ctx, DB_OBJ(ctx->impl->loader.table)->db);
     }

@@ -1,0 +1,7 @@
+table_create Memos TABLE_NO_KEY
+
+load --table Memos --command_version 3
+[
+{},
+{}
+]
