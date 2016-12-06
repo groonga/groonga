@@ -74,6 +74,7 @@ typedef struct {
   grn_obj values;
   grn_obj level;
   grn_obj columns;
+  grn_obj ids;
   uint32_t emit_level;
   int32_t id_offset;  /* Position of _id in values or -1 if _id is N/A. */
   int32_t key_offset; /* Position of _key in values or -1 if _key is N/A. */
@@ -89,6 +90,7 @@ typedef struct {
   grn_loader_columns_status columns_status;
   grn_rc rc;
   char errbuf[GRN_CTX_MSGSIZE];
+  grn_bool output_ids;
 } grn_loader;
 
 #define GRN_CTX_N_SEGMENTS 512

@@ -433,6 +433,7 @@ GRN_API void grn_load_(grn_ctx *ctx, grn_content_type input_type,
                        const char *values, unsigned int values_len,
                        const char *ifexists, unsigned int ifexists_len,
                        const char *each, unsigned int each_len,
+                       grn_obj *output_ids,
                        uint32_t emit_level);
 
 GRN_API grn_rc grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,

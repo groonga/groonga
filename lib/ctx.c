@@ -147,6 +147,7 @@ grn_loader_init(grn_loader *loader)
   GRN_TEXT_INIT(&loader->values, 0);
   GRN_UINT32_INIT(&loader->level, GRN_OBJ_VECTOR);
   GRN_PTR_INIT(&loader->columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_UINT32_INIT(&loader->ids, GRN_OBJ_VECTOR);
   loader->id_offset = -1;
   loader->key_offset = -1;
   loader->table = NULL;
@@ -159,6 +160,7 @@ grn_loader_init(grn_loader *loader)
   loader->columns_status = GRN_LOADER_COLUMNS_UNSET;
   loader->rc = GRN_SUCCESS;
   loader->errbuf[0] = '\0';
+  loader->output_ids = GRN_FALSE;
 }
 
 void
@@ -176,6 +178,7 @@ grn_ctx_loader_clear(grn_ctx *ctx)
   GRN_OBJ_FIN(ctx, &loader->values);
   GRN_OBJ_FIN(ctx, &loader->level);
   GRN_OBJ_FIN(ctx, &loader->columns);
+  GRN_OBJ_FIN(ctx, &loader->ids);
   grn_loader_init(loader);
 }
 

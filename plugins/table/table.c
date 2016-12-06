@@ -391,7 +391,9 @@ command_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
             GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
             NULL, 0,
             GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
-            NULL, 0, NULL, 0, 0);
+            NULL, 0, NULL, 0,
+            NULL,
+            0);
   GRN_OUTPUT_BOOL(ctx->impl->loader.nrecords);
   if (ctx->impl->loader.table) {
     grn_db_touch(ctx, DB_OBJ(ctx->impl->loader.table)->db);
@@ -577,7 +579,9 @@ command_push(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                     GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
                     NULL, 0,
                     GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
-                    NULL, 0, NULL, 0, 0);
+                    NULL, 0, NULL, 0,
+                    NULL,
+                    0);
           if (grn_table_queue_size(queue) == queue->cap) {
             grn_table_queue_tail_increment(queue);
           }

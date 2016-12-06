@@ -132,12 +132,14 @@ exit :
 static grn_obj *
 proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_load(ctx, grn_get_ctype(VAR(4)),
-           GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
-           GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
-           GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
-           GRN_TEXT_VALUE(VAR(3)), GRN_TEXT_LEN(VAR(3)),
-           GRN_TEXT_VALUE(VAR(5)), GRN_TEXT_LEN(VAR(5)));
+  grn_load_(ctx, grn_get_ctype(VAR(4)),
+            GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
+            GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
+            GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
+            GRN_TEXT_VALUE(VAR(3)), GRN_TEXT_LEN(VAR(3)),
+            GRN_TEXT_VALUE(VAR(5)), GRN_TEXT_LEN(VAR(5)),
+            VAR(6),
+            1);
   if (ctx->rc == GRN_CANCEL) {
     ctx->impl->loader.stat = GRN_LOADER_END;
     ctx->impl->loader.rc = GRN_SUCCESS;
@@ -152,9 +154,25 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       grn_strcpy(ctx->errbuf, GRN_CTX_MSGSIZE, ctx->impl->loader.errbuf);
     }
     if (grn_ctx_get_command_version(ctx) >= GRN_COMMAND_VERSION_3) {
-      GRN_OUTPUT_MAP_OPEN("RESULT", 1);
+      int n_elements = 1;
+      if (ctx->impl->loader.output_ids) {
+        n_elements++;
+      }
+      GRN_OUTPUT_MAP_OPEN("result", n_elements);
       GRN_OUTPUT_CSTR("n_loaded_records");
       GRN_OUTPUT_INT64(ctx->impl->loader.nrecords);
+      if (ctx->impl->loader.output_ids) {
+        grn_obj *ids = &(ctx->impl->loader.ids);
+        int i, n_ids;
+
+        GRN_OUTPUT_CSTR("ids");
+        n_ids = GRN_BULK_VSIZE(ids) / sizeof(uint32_t);
+        GRN_OUTPUT_ARRAY_OPEN("ids", n_ids);
+        for (i = 0; i < n_ids; i++) {
+          GRN_OUTPUT_UINT64(GRN_UINT32_VALUE_AT(ids, i));
+        }
+        GRN_OUTPUT_ARRAY_CLOSE();
+      }
       GRN_OUTPUT_MAP_CLOSE();
     } else {
       GRN_OUTPUT_INT64(ctx->impl->loader.nrecords);
@@ -3450,7 +3468,8 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
   DEF_VAR(vars[3], "ifexists");
   DEF_VAR(vars[4], "input_type");
   DEF_VAR(vars[5], "each");
-  DEF_COMMAND("load", proc_load, 6, vars);
+  DEF_VAR(vars[6], "output_ids");
+  DEF_COMMAND("load", proc_load, 7, vars);
 
   DEF_COMMAND("status", proc_status, 0, vars);
 
