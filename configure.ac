@@ -254,7 +254,6 @@ AC_CONFIG_FILES([
   plugins/Makefile
   plugins/tokenizers/Makefile
   plugins/suggest/Makefile
-  plugins/table/Makefile
   plugins/query_expanders/Makefile
   plugins/ruby/Makefile
   plugins/token_filters/Makefile
