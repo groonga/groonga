@@ -79,8 +79,7 @@ update-latest-release: misc
 	  doc/source/install.rst				\
 	  doc/source/install/*.rst				\
 	  doc/locale/*/LC_MESSAGES/install.po			\
-	  $(GROONGA_ORG_PATH)/index.html			\
-	  $(GROONGA_ORG_PATH)/ja/index.html
+	  $(GROONGA_ORG_PATH)/_config.yml
 
 update-po:
 	@for lang in $(LOCALES); do						\
