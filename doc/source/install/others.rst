@@ -64,6 +64,8 @@ All libraries are optional. Here are optional libraries:
   * `zlib <http://zlib.net/>`_ for compressing column value
   * `LZ4 <https://code.google.com/p/lz4/>`_ for compressing
     column value
+  * `Zstandard <https://facebook.github.io/zstd/>`_ for compressing
+    column value
 
 If you want to use those all or some libraries, you need to install
 them before installing Groonga.
