@@ -62,7 +62,7 @@ All libraries are optional. Here are optional libraries:
   * `libedit <http://www.thrysoee.dk/editline/>`_ for command line
     editing in :doc:`/reference/executables/groonga`
   * `zlib <http://zlib.net/>`_ for compressing column value
-  * `LZ4 <https://code.google.com/p/lz4/>`_ for compressing
+  * `LZ4 <https://lz4.github.io/lz4/>`_ for compressing
     column value
   * `Zstandard <https://facebook.github.io/zstd/>`_ for compressing
     column value
