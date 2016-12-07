@@ -14,7 +14,7 @@ load --table Users --command_version 3 --output_ids yes
   },
   "body": {
     "n_loaded_records": 2,
-    "ids": [
+    "loaded_ids": [
       1,
       0,
       2

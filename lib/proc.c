@@ -165,9 +165,9 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         grn_obj *ids = &(ctx->impl->loader.ids);
         int i, n_ids;
 
-        GRN_OUTPUT_CSTR("ids");
+        GRN_OUTPUT_CSTR("loaded_ids");
         n_ids = GRN_BULK_VSIZE(ids) / sizeof(uint32_t);
-        GRN_OUTPUT_ARRAY_OPEN("ids", n_ids);
+        GRN_OUTPUT_ARRAY_OPEN("loaded_ids", n_ids);
         for (i = 0; i < n_ids; i++) {
           GRN_OUTPUT_UINT64(GRN_UINT32_VALUE_AT(ids, i));
         }
