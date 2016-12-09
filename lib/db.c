@@ -12550,6 +12550,7 @@ grn_column_find_index_data_column_range(grn_ctx *ctx, grn_obj *obj,
     grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
     grn_obj *target = grn_ctx_at(ctx, data->target);
     int section;
+    if (!target) { continue; }
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
     section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
     if (section_buf) { *section_buf = section; }
