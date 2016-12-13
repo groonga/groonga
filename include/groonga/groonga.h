@@ -1068,7 +1068,8 @@ GRN_API grn_log_level grn_logger_get_max_level(grn_ctx *ctx);
 # if __has_attribute(__alloc_size__)
 #  define HAVE_ALLOC_SIZE_ATTRIBUTE
 # endif /* __has_attribute(__alloc_size__) */
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) && \
+  ((__GNUC__ >= 5) || (__GNUC__ > 4 && __GNUC_MINOR__ >= 3))
 # define HAVE_ALLOC_SIZE_ATTRIBUTE
 #endif /* __clang__ */
 
