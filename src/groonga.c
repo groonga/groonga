@@ -1796,6 +1796,9 @@ memcached_init(grn_ctx *ctx)
     }
 
     cache_table = grn_ctx_at(ctx, cache_value->header.domain);
+    if (!cache_table) {
+      return GRN_FALSE;
+    }
     if (cache_table->header.type == GRN_TABLE_NO_KEY) {
       grn_obj inspected;
       GRN_TEXT_INIT(&inspected, 0);
