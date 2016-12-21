@@ -44,7 +44,7 @@
 #endif /* GRN_WITH_ONIGMO */
 
 #ifdef GRN_SUPPORT_REGEXP
-# include <oniguruma.h>
+# include <onigmo.h>
 #endif /* GRN_SUPPORT_REGEXP */
 
 #ifdef WIN32

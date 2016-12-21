@@ -28,7 +28,7 @@
 #endif
 
 #ifdef GRN_SUPPORT_REGEXP
-# include <oniguruma.h>
+# include <onigmo.h>
 #endif
 
 static const char *operator_names[] = {

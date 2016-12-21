@@ -36,7 +36,7 @@
 
 #ifdef GRN_SUPPORT_REGEXP
 # include "grn_normalizer.h"
-# include <oniguruma.h>
+# include <onigmo.h>
 #endif
 
 static double grn_table_select_enough_filtered_ratio = 0.0;

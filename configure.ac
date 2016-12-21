@@ -1579,7 +1579,7 @@ AC_SUBST(GRN_WITH_ONIGMO)
 AC_CONFIG_SUBDIRS([vendor/onigmo])
 
 ONIGMO_CFLAGS="-I\$(top_srcdir)/vendor/onigmo-source"
-ONIGMO_LIBS="\$(top_builddir)/vendor/onigmo-source/libonig.la"
+ONIGMO_LIBS="\$(top_builddir)/vendor/onigmo-source/libonigmo.la"
 AC_SUBST(ONIGMO_CFLAGS)
 AC_SUBST(ONIGMO_LIBS)
 

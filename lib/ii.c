@@ -40,7 +40,7 @@
 
 #ifdef GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH
 # include "grn_string.h"
-# include <oniguruma.h>
+# include <onigmo.h>
 #endif
 
 #define MAX_PSEG                 0x20000

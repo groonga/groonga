@@ -5,7 +5,7 @@ set -u
 
 srcdir="."
 builddir="."
-options="--enable-multithread --with-pic --disable-shared --enable-static"
+options="--with-pic --disable-shared --enable-static"
 for argument in "$@"; do
   case "$argument" in
     --srcdir=*)
