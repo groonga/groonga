@@ -8,10 +8,6 @@
 ``highlight_html``
 ==================
 
-.. caution::
-
-   This feature is experimental. API will be changed.
-
 .. versionadded:: 4.0.5
 
 Summary

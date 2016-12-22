@@ -8,10 +8,6 @@
 ``snippet_html``
 ================
 
-.. caution::
-
-   This feature is experimental. API will be changed.
-
 Summary
 -------
 
@@ -53,10 +49,6 @@ Here are a schema definition and sample data to show usage.
 
 ``snippet_html`` can be used in only ``--output_columns`` in
 :doc:`/reference/commands/select`.
-
-You need to specify ``--command_version 2`` argument explicitly
-because function call in ``--output_columns`` is experimental feature
-in Groonga 2.0.9. It will be enabled by default soon.
 
 You also need to specify ``--query`` and/or ``--filter``. Keywords are
 extracted from ``--query`` and ``--filter`` arguments.

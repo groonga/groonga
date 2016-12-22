@@ -8,10 +8,6 @@
 Summary
 -------
 
-.. note::
-
-   This executable command is an experimental feature.
-
 .. versionadded:: 4.0.9
 
 ``grndb`` manages a Groonga database.

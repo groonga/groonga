@@ -8,10 +8,6 @@
 Summary
 -------
 
-.. note::
-
-   This command is an experimental feature.
-
 .. versionadded:: 4.0.9
 
 ``request_cancel`` command cancels a running request.

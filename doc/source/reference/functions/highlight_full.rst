@@ -8,10 +8,6 @@
 ``highlight_full``
 ==================
 
-.. caution::
-
-   This feature is experimental. API will be changed.
-
 Summary
 -------
 
