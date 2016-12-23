@@ -616,7 +616,7 @@ else()
   set(MRUBY_INCLUDE_DIRS "")
   set(MRUBY_LIBS "")
 endif()
-set(MRUBY_DEFINITIONS "MRB_INT64")
+set(MRUBY_DEFINITIONS "MRB_INT64" "HAVE_ONIGMO_H")
 
 # TODO: Support using system Onigmo instead of bundled Onigmo.
 set(GRN_WITH_ONIGMO ON)
