@@ -14434,9 +14434,6 @@ msgstr "groongaパッケージが提供する実行ファイルについて説�
 msgid "``grndb``"
 msgstr ""
 
-msgid "This executable command is an experimental feature."
-msgstr "この実行ファイルは実験的な機能です。"
-
 msgid "``grndb`` manages a Groonga database."
 msgstr "``grndb`` はGroongaのデータベースを管理します。"
 
@@ -17426,9 +17423,6 @@ msgstr ""
 msgid "``highlight_full``"
 msgstr ""
 
-msgid "This feature is experimental. API will be changed."
-msgstr "この機能は実験的です。APIが変わる可能性があります。"
-
 msgid ""
 "``highlight_full`` tags target text. It can use to highlight the search "
 "keyword. It can specify use/not use HTML escape, the normalizer name and "
@@ -18105,15 +18099,6 @@ msgid ""
 msgstr ""
 "``snippet_html`` は :doc:`/reference/commands/select` コマンドの ``--"
 "output_columns`` 内でのみ指定できます。"
-
-msgid ""
-"You need to specify ``--command_version 2`` argument explicitly because "
-"function call in ``--output_columns`` is experimental feature in Groonga "
-"2.0.9. It will be enabled by default soon."
-msgstr ""
-"Groonga 2.0.9では ``output_columns`` 内での関数呼び出しはまだ実験的な機能なの"
-"で、明示的に ``--command_version 2`` オプションを指定する必要があります。この"
-"機能はじきに有効になる予定です。"
 
 msgid ""
 "The following example uses ``--query \"fast performance\"``. In this case, "
