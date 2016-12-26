@@ -8,18 +8,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   vms = [
     {
       :id => "debian-jessie-i386",
-      :box_url => "https://atlas.hashicorp.com/bento/boxes/debian-8.6-i386/versions/2.3.0/providers/virtualbox.box",
+      :box => "bento/debian-8.6-i386",
     },
     {
       :id => "debian-jessie-amd64",
-      :box_url => "https://atlas.hashicorp.com/bento/boxes/debian-8.6/versions/2.3.0/providers/virtualbox.box",
+      :box => "bento/debian-8.6",
     },
   ]
 
   vms.each do |vm|
     config.vm.define(vm[:id]) do |node|
-      node.vm.box = vm[:id]
-      node.vm.box_url = vm[:box_url]
+      node.vm.box = vm[:box]
       hour_in_seconds = 60 * 60
       node.vm.boot_timeout = 1 * hour_in_seconds
       node.vm.provision(:shell, :privileged => false, :path => "build-deb.sh")
