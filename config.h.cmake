@@ -3,8 +3,8 @@
 /* general constants */
 #define CONFIGURE_OPTIONS    "${CONFIGURE_OPTIONS}"
 
-#define HOST_CPU             "${CMAKE_HOST_SYSTEM_PROCESSOR}"
-#define HOST_OS              "${CMAKE_HOST_SYSTEM_NAME}"
+#define HOST_CPU             "${CMAKE_SYSTEM_PROCESSOR}"
+#define HOST_OS              "${CMAKE_SYSTEM_NAME}"
 
 #define VERSION              "${VERSION}"
 #define PACKAGE              "${PROJECT_NAME}"
