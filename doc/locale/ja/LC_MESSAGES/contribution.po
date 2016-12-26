@@ -745,6 +745,9 @@ msgstr ""
 msgid "CUTTER_SOURCE_PATH=$HOME/work/cutter/cutter"
 msgstr ""
 
+msgid "最初の1回だけ行う手順"
+msgstr ""
+
 msgid "ビルド環境の準備"
 msgstr ""
 
@@ -784,7 +787,9 @@ msgstr ""
 
 msgid ""
 "Groongaプロジェクトでは署名用の鍵をリリース担当者の公開鍵で暗号化してリポジト"
-"リのpackages/ディレクトリ以下へと登録しています。"
+"リのpackages/ディレクトリ以下へと登録しています。新しいリリース担当者に任命さ"
+"れたばかりで、まだ自分用に暗号化された鍵が無い場合には、他のリリース担当者に"
+"依頼して署名用の鍵を暗号化してもらって下さい。"
 msgstr ""
 
 msgid ""
@@ -810,6 +815,18 @@ msgid ""
 "変更があった場合などに行います。"
 msgstr ""
 
+msgid "PPA用の鍵の登録"
+msgstr ""
+
+msgid "この作業は、新規にリリースを行うことになった担当者のみ行います。"
+msgstr ""
+
+msgid ""
+"[Launchpad](https://launchpad.net/)にアカウントを作成し、自分の普段使いの秘密"
+"鍵を登録した上で、他のリリース担当者に依頼して[Groongaチーム](https://"
+"launchpad.net/~groonga)に追加してもらって下さい。"
+msgstr ""
+
 msgid "リリース作業用ディレクトリの作成"
 msgstr ""
 
@@ -828,42 +845,18 @@ msgid ""
 "レクトリ(groonga.clean)としてソースコードをcloneしたものとして説明します。"
 msgstr ""
 
+msgid "毎回のリリースで行う手順"
+msgstr ""
+
+msgid "Groongaのソースコード取得"
+msgstr ""
+
 msgid ""
 "リリース用のクリーンな状態でソースコードを取得するために$GROONGA_DIRにて以下"
 "のコマンドを実行します。::"
 msgstr ""
 
 msgid "この作業はリリース作業ごとに行います。"
-msgstr ""
-
-msgid "変更点のまとめ"
-msgstr ""
-
-msgid ""
-"前回リリース時からの変更点を$GROONGA_CLONE_DIR/doc/source/news.txtにまとめま"
-"す。 ここでまとめた内容についてはリリースアナウンスにも使用します。"
-msgstr ""
-
-msgid "前回リリースからの変更履歴を参照するには以下のコマンドを実行します。::"
-msgstr ""
-
-msgid ""
-"ログを^commitで検索しながら、以下の基準を目安として変更点を追記していきます。"
-msgstr ""
-
-msgid "含めるもの"
-msgstr ""
-
-msgid "ユーザへ影響するような変更"
-msgstr ""
-
-msgid "互換性がなくなるような変更"
-msgstr ""
-
-msgid "含めないもの"
-msgstr ""
-
-msgid "内部的な変更(変数名の変更やらリファクタリング)"
 msgstr ""
 
 msgid "Groongaのウェブサイトの取得"
@@ -899,6 +892,39 @@ msgid ""
 msgstr ""
 
 msgid "これで、$CUTTER_SOURCE_PATHディレクトリにcutterのソースを取得できます。"
+msgstr ""
+
+msgid "変更点のまとめ"
+msgstr ""
+
+msgid ""
+"前回リリース時からの変更点を$GROONGA_CLONE_DIR/doc/source/news.rst（英語）に"
+"まとめます。 ここでまとめた内容についてはリリースアナウンスにも使用します。"
+msgstr ""
+
+msgid "前回リリースからの変更履歴を参照するには以下のコマンドを実行します。::"
+msgstr ""
+
+msgid ""
+"ログを^commitで検索しながら、以下の基準を目安として変更点を追記していきます。"
+msgstr ""
+
+msgid "含めるもの"
+msgstr ""
+
+msgid "ユーザへ影響するような変更"
+msgstr ""
+
+msgid "互換性がなくなるような変更"
+msgstr ""
+
+msgid "含めないもの"
+msgstr ""
+
+msgid "内部的な変更(変数名の変更やらリファクタリング)"
+msgstr ""
+
+msgid "具体的な変更点の記述方法は後述します。"
 msgstr ""
 
 msgid "configureスクリプトの生成"
@@ -949,12 +975,23 @@ msgstr ""
 msgid "ログイン可能であるかの確認は以下のようにコマンドを実行して行います。::"
 msgstr ""
 
+msgid ""
+"デバッグ用や開発用のパッケージをテスト用に公開する時は、`--with-launchpad-"
+"ppa=groonga-nightly`を指定して不安定版のリポジトリにアップロードするように指"
+"定します。::"
+msgstr ""
+
+msgid ""
+"新任のリリース担当者は必ず、この方法でPPAのリポジトリにパッケージをアップロー"
+"ドできる事を確認しておいてください。"
+msgstr ""
+
 msgid "make update-latest-releaseの実行"
 msgstr ""
 
 msgid ""
 "make update-latest-releaseコマンドでは、OLD_RELEASE_DATEに前回のリリースの日"
-"付を、NEW_RELEASE_DATEに次回リリースの日付を指定します。"
+"付を、NEW_RELEASE_DATEに次回リリースの日付（未来の日付）を指定します。"
 msgstr ""
 
 msgid "2.0.2のリリースを行った際は以下のコマンドを実行しました。:: ::"
@@ -1002,6 +1039,17 @@ msgid "make update-poコマンドの実行により更新した各種.poファ�
 msgstr ""
 
 msgid "翻訳結果をHTMLで確認するために、以下のコマンドを実行します。::"
+msgstr ""
+
+msgid "修正が必要な箇所を調べて、`***.edit`というファイルを適宜修正します。"
+msgstr ""
+
+msgid "% cd groonga/doc/locale % gir diff"
+msgstr ""
+
+msgid ""
+"ファイルを編集したら、再度poファイルとHTMLを更新するために以下のコマンドを実"
+"行します。::"
 msgstr ""
 
 msgid "確認が完了したら、翻訳済みpoファイルをコミットします。"
@@ -1111,8 +1159,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"make build PALALLEL=yesコマンドを実行すると、ディストリビューションのリリース"
-"とアーキテクチャの組み合わせでビルドを平行して行うことができます。"
+"make build PARALLEL=yesコマンドを実行すると、ディストリビューションのリリース"
+"とアーキテクチャの組み合わせでビルドを平行して行うことができます。ホストマシ"
+"ンの性能に複数台のVMを動作させるだけの余裕がない場合は、PARALLEL=yesは指定し"
+"ないで下さい。その場合、各アーキテクチャ向けのビルドが順番に行われます。"
 msgstr ""
 
 msgid "現在サポートされているのは以下の通りです。"
@@ -1152,6 +1202,11 @@ msgstr ""
 msgid ""
 "Groongaのpackages/yumサブディレクトリに移動して、以下のコマンドを実行しま"
 "す。::"
+msgstr ""
+
+msgid ""
+"make build PARALLEL=yesコマンドを実行すると、ディストリビューションのリリース"
+"とアーキテクチャの組み合わせでビルドを平行して行うことができます。"
 msgstr ""
 
 msgid "centos-5 i386/x86_64"
@@ -1229,14 +1284,21 @@ msgstr ""
 
 msgid ""
 "ここでは以下のようにrubyを利用してリポジトリをwebサーバ経由で参照できるように"
-"します。::"
+"します。"
+msgstr ""
+
+msgid "yumの場合::"
+msgstr ""
+
+msgid "aptの場合::"
 msgstr ""
 
 msgid "grntestの準備"
 msgstr ""
 
 msgid ""
-"grntestを実行するためにはGroongaのテストデータとgrntestのソースが必要です。"
+"TravisCIの結果が正常であれば、この手順はスキップして構いません。 grntestを実"
+"行するためにはGroongaのテストデータとgrntestのソースが必要です。"
 msgstr ""
 
 msgid "まずGroongaのソースを任意のディレクトリへと展開します。::"
@@ -1267,11 +1329,11 @@ msgstr ""
 msgid "Debian系の場合の動作確認手順は以下の通りとなります。"
 msgstr ""
 
-msgid "旧バージョンをchroot環境へとインストールする"
+msgid "旧バージョンをテスト環境へとインストールする"
 msgstr ""
 
 msgid ""
-"chroot環境の/etc/hostsを書き換えてpackages.groonga.orgがホストを 参照するよう"
+"テスト環境の/etc/hostsを書き換えてpackages.groonga.orgがホストを 参照するよう"
 "に変更する"
 msgstr ""
 
@@ -1296,11 +1358,11 @@ msgstr ""
 msgid "Red Hat系の場合の動作確認手順は以下の通りとなります。"
 msgstr ""
 
-msgid "旧バージョンをchroot環境へとインストール"
+msgid "旧バージョンをテスト環境へとインストール"
 msgstr ""
 
 msgid ""
-"chroot環境の/etc/hostsを書き換えてpackages.groonga.orgがホストを参照するよう"
+"テスト環境の/etc/hostsを書き換えてpackages.groonga.orgがホストを参照するよう"
 "に変更する"
 msgstr ""
 
@@ -1316,7 +1378,7 @@ msgstr ""
 msgid "Windows向けの場合"
 msgstr ""
 
-msgid "新規インストール/上書きインストールを行う"
+msgid "テスト環境で新規インストール/上書きインストールを行う"
 msgstr ""
 
 msgid "zipアーカイブも同様にしてgrntestを実行し動作確認を行います。"
@@ -1329,7 +1391,7 @@ msgid "リリースの際にはリリースアナウンスを流して、Groonga
 msgstr ""
 
 msgid ""
-"news.txtに変更点をまとめましたが、それを元にリリースアナウンスを作成します。"
+"news.rstに変更点をまとめましたが、それを元にリリースアナウンスを作成します。"
 msgstr ""
 
 msgid "リリースアナウンスには以下を含めます。"
@@ -1344,7 +1406,7 @@ msgstr ""
 msgid "リリース変更点へのリンク"
 msgstr ""
 
-msgid "リリース変更点(news.txtの内容)"
+msgid "リリース変更点(news.rstの内容)"
 msgstr ""
 
 msgid ""
@@ -1370,6 +1432,11 @@ msgstr ""
 
 msgid ""
 "http://osdn.jp/projects/groonga/lists/archive/dev/2012-April/000794.html"
+msgstr ""
+
+msgid ""
+"後述しますが、Twitter等でのリリースアナウンスの際はここで用意したアナウンス文"
+"の要約を使用します。"
 msgstr ""
 
 msgid "パッケージのアップロード"
@@ -1400,6 +1467,12 @@ msgstr ""
 msgid "Ubuntu用パッケージのアップロード"
 msgstr ""
 
+msgid ""
+"Ubuntu向けパッケージの作成には、作業マシン上にGroongaのビルドに必要な依存ソフ"
+"トウェア一式がインストールされている必要があります。以下のようにしてインス"
+"トールしておいて下さい。::"
+msgstr ""
+
 msgid "Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::"
 msgstr ""
 
@@ -1420,6 +1493,17 @@ msgid ""
 msgstr ""
 
 msgid "https://launchpad.net/~groonga/+archive/ubuntu/ppa"
+msgstr ""
+
+msgid "Ubuntu用パッケージの公開の取り消し"
+msgstr ""
+
+msgid ""
+"LaunchpadのGroongaチームのページで対象のPPAを選択し、バージョン一覧の上にある"
+"「View package details」リンクの先で「Delete packages」リンクを辿ると、アップ"
+"ロード済みパッケージを削除できる。 例；[不安定版リポジトリのパッケージの削除"
+"用のページ](https://launchpad.net/~groonga/+archive/ubuntu/nightly/+delete-"
+"packages)。"
 msgstr ""
 
 msgid "blogroonga(ブログ)の更新"
@@ -1488,6 +1572,11 @@ msgid "Homebrewの更新"
 msgstr ""
 
 msgid ""
+"この手順は省略可能です（Homebrewの更新はGroongaプロジェクト本体のリリース要件"
+"には含まれません）。"
+msgstr ""
+
+msgid ""
 "OS Xでのパッケージ管理方法として `Homebrew <http://brew.sh/>`_ があります。"
 msgstr ""
 
@@ -1496,7 +1585,7 @@ msgid ""
 "ります。"
 msgstr ""
 
-msgid "https://github.com/mxcl/homebrew"
+msgid "https://github.com/Homebrew/homebrew-core"
 msgstr ""
 
 msgid ""
@@ -1567,15 +1656,7 @@ msgstr ""
 msgid "リリースアナウンスを流し終えたら、次期バージョンの開発が始まります。"
 msgstr ""
 
-msgid "Groonga プロジェクトの新規バージョン追加"
-msgstr ""
-
 msgid "Groonga のbase_versionの更新"
-msgstr ""
-
-msgid ""
-"`Groonga プロジェクトの設定ページ <http://redmine.groonga.org/projects/"
-"groonga/settings>`_ にて新規バージョンを追加します。(例: release-2.0.6)"
 msgstr ""
 
 msgid "Groonga バージョン更新"
@@ -1599,7 +1680,7 @@ msgid "ビルドを並列化したい"
 msgstr ""
 
 msgid ""
-"make build PALALLEL=yesを指定するとchroot環境で並列にビルドを 実行できます。"
+"make build PARALLEL=yesを指定するとchroot環境で並列にビルドを 実行できます。"
 msgstr ""
 
 msgid "特定の環境向けのみビルドしたい"
