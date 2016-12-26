@@ -59,7 +59,6 @@ set_source_files_properties(
   ${LIBGRNMRB_SOURCES}
   ${LIBGRNPROC_SOURCES}
   ${LIBGRNTS_SOURCES}
-  ${LIBGROONGA_METADATA_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 set_source_files_properties(
