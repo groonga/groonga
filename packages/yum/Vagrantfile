@@ -8,23 +8,23 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   vms = [
     {
       :id => "centos-5-i386",
-      :box_url => "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-5.11-i386_chef-provisionerless.box",
+      :box_url => "https://atlas.hashicorp.com/bento/boxes/centos-5.11-i386/versions/2.3.1/providers/virtualbox.box",
     },
     {
       :id => "centos-5-x86_64",
-      :box_url => "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-5.11_chef-provisionerless.box",
+      :box_url => "https://atlas.hashicorp.com/bento/boxes/centos-5.11/versions/2.3.1/providers/virtualbox.box",
     },
     {
       :id => "centos-6-i386",
-      :box_url => "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.8-i386_chef-provisionerless.box",
+      :box_url => "https://atlas.hashicorp.com/bento/boxes/centos-6.8-i386/versions/2.3.1/providers/virtualbox.box",
     },
     {
       :id => "centos-6-x86_64",
-      :box_url => "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.8_chef-provisionerless.box",
+      :box_url => "https://atlas.hashicorp.com/bento/boxes/centos-6.8/versions/2.3.1/providers/virtualbox.box",
     },
     {
       :id => "centos-7-x86_64",
-      :box_url => "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-7.2_chef-provisionerless.box",
+      :box_url => "https://atlas.hashicorp.com/bento/boxes/centos-7.3/versions/2.3.2/providers/virtualbox.box",
     },
   ]
 
