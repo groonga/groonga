@@ -61,6 +61,11 @@ run cp -rp /vagrant/tmp/debian debian
 if [ "${have_liblz4}" = "no" ]; then
   grep -v liblz4 /vagrant/tmp/debian/control > debian/control
 fi
+if [ "${have_libzstd}" = "no" ]; then
+  grep -v libzstd debian/control > debian/control.tmp
+  cp -f debian/control.tmp debian/control
+  rm -f debian/control.tmp
+fi
 # export DEB_BUILD_OPTIONS=noopt
 run debuild -us -uc
 run cd -
