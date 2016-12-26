@@ -1415,9 +1415,6 @@ AC_SUBST(query_expander_pluginsdir)
 suggest_pluginsdir="\${pluginsdir}/suggest"
 AC_SUBST(suggest_pluginsdir)
 
-table_pluginsdir="\${pluginsdir}/table"
-AC_SUBST(table_pluginsdir)
-
 ruby_pluginsdir="\${pluginsdir}/ruby"
 AC_SUBST(ruby_pluginsdir)
 
