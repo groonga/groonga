@@ -8,23 +8,23 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   vms = [
     {
       :id => "centos-5-i386",
-      :box_url => "bento/centos-5.11-i386",
+      :box => "bento/centos-5.11-i386",
     },
     {
       :id => "centos-5-x86_64",
-      :box_url => "bento/centos-5.11",
+      :box => "bento/centos-5.11",
     },
     {
       :id => "centos-6-i386",
-      :box_url => "bento/centos-6.8-i386",
+      :box => "bento/centos-6.8-i386",
     },
     {
       :id => "centos-6-x86_64",
-      :box_url => "bento/centos-6.8",
+      :box => "bento/centos-6.8",
     },
     {
       :id => "centos-7-x86_64",
-      :box_url => "bento/centos-7.3",
+      :box => "bento/centos-7.3",
     },
   ]
 
