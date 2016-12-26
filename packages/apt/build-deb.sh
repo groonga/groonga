@@ -38,9 +38,16 @@ have_liblz4=yes
 if ! apt-cache show liblz4-dev > /dev/null 2>&1; then
   have_liblz4=no
 fi
+have_libzstd=yes
+if ! apt-cache show libzstd-dev > /dev/null 2>&1; then
+  have_libzstd=no
+fi
 
 if [ "${have_liblz4}" = "no" ]; then
   DEPENDED_PACKAGES="$(echo ${DEPENDED_PACKAGES} | sed -e 's/liblz4-dev//')"
+fi
+if [ "${have_libzstd}" = "no" ]; then
+  DEPENDED_PACKAGES="$(echo ${DEPENDED_PACKAGES} | sed -e 's/libzstd-dev//')"
 fi
 run sudo apt-get install -V -y build-essential devscripts ${DEPENDED_PACKAGES}
 
