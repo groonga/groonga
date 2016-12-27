@@ -7790,7 +7790,9 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
   grn_obj *lexicon = ii->lexicon;
   grn_scorer_score_func *score_func = NULL;
   grn_scorer_matched_record record;
+  grn_id previous_min = GRN_ID_NIL;
   grn_id current_min = GRN_ID_NIL;
+  grn_bool set_min_enable_for_and_query = GRN_FALSE;
 
   if (!lexicon || !ii || !s) { return GRN_INVALID_ARGUMENT; }
   if (optarg) {
@@ -7799,6 +7801,10 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
       wvm = grn_wv_dynamic;
     } else if (optarg->vector_size) {
       wvm = optarg->weight_vector ? grn_wv_static : grn_wv_constant;
+    }
+    if (optarg->min) {
+      previous_min = *optarg->min;
+      set_min_enable_for_and_query = GRN_TRUE;
     }
   }
   if (mode == GRN_OP_SIMILAR) {
@@ -7822,14 +7828,14 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
   }
   if (mode == GRN_OP_FUZZY) {
     if (token_info_build_fuzzy(ctx, lexicon, ii, string, string_len,
-                               tis, &n, &only_skip_token, *optarg->min,
+                               tis, &n, &only_skip_token, previous_min,
                                mode, &(optarg->fuzzy)) ||
         !n) {
       goto exit;
     }
   } else {
     if (token_info_build(ctx, lexicon, ii, string, string_len,
-                         tis, &n, &only_skip_token, *optarg->min, mode) ||
+                         tis, &n, &only_skip_token, previous_min, mode) ||
         !n) {
       goto exit;
     }
@@ -8028,7 +8034,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
           } else {
             record_score = (noccur + tscore) * weight;
           }
-          if (optarg->min) {
+          if (set_min_enable_for_and_query) {
             if (current_min == GRN_ID_NIL) {
               current_min = rid;
             }
@@ -8046,8 +8052,8 @@ exit :
     GRN_OBJ_FIN(ctx, &(record.term_weights));
   }
 
-  if (optarg->min) {
-    if (current_min > *optarg->min) {
+  if (set_min_enable_for_and_query) {
+    if (current_min > previous_min) {
       *optarg->min = current_min;
     }
   }
@@ -8120,6 +8126,7 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
   grn_operator mode = GRN_OP_EXACT;
   double estimated_size = 0;
   double normalized_ratio = 1.0;
+  grn_id min = GRN_ID_NIL;
 
   if (query_len == 0) {
     return 0;
@@ -8142,6 +8149,9 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
     default :
       break;
     }
+    if (optarg->min) {
+      min = *optarg->min;
+    }
   }
 
   if (mode == GRN_OP_REGEXP) {
@@ -8157,12 +8167,12 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
   switch (mode) {
   case GRN_OP_FUZZY :
     rc = token_info_build_fuzzy(ctx, lexicon, ii, query, query_len,
-                                tis, &n_tis, &only_skip_token, *optarg->min,
+                                tis, &n_tis, &only_skip_token, min,
                                 mode, &(optarg->fuzzy));
     break;
   default :
     rc = token_info_build(ctx, lexicon, ii, query, query_len,
-                          tis, &n_tis, &only_skip_token, *optarg->min, mode);
+                          tis, &n_tis, &only_skip_token, min, mode);
     break;
   }
 
