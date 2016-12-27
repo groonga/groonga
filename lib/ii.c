@@ -4018,6 +4018,8 @@ buffer_open_by_tid(grn_ctx *ctx,
   return pseg;
 }
 
+#define EXISTING_BUFFER_FIND_LIMIT 10000
+
 inline static uint32_t
 buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
            buffer_term **bt, buffer_rec **br, buffer **bp, grn_id id, grn_hash *h)
@@ -4031,6 +4033,7 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
   int key_size = grn_table_get_key(ctx, ii->lexicon, id, key,
                                    GRN_TABLE_MAX_KEY_SIZE);
   uint32_t lseg = NOT_ASSIGNED, pseg = NOT_ASSIGNED;
+  int cursor_limit = -1;
   grn_table_cursor *tc = NULL;
   if (S_SEGMENT - sizeof(buffer_header) < size + sizeof(buffer_term)) {
     DEFINE_NAME(ii);
@@ -4042,16 +4045,22 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
          (size_t)(S_SEGMENT - sizeof(buffer_header)));
     return NOT_ASSIGNED;
   }
+  if (ii->next_buffer_candidate_tid != GRN_ID_NIL) {
+    cursor_limit = EXISTING_BUFFER_FIND_LIMIT;
+  }
   if (ii->lexicon->header.type == GRN_TABLE_PAT_KEY) {
     if (ii->lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-      tc = grn_table_cursor_open(ctx, ii->lexicon, key, key_size, NULL, 0, 0, -1,
+      tc = grn_table_cursor_open(ctx, ii->lexicon, key, key_size, NULL, 0,
+                                 0, cursor_limit,
                                  GRN_CURSOR_ASCENDING|GRN_CURSOR_GT);
     } else {
-      tc = grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, key, key_size, 0, -1,
+      tc = grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, key, key_size,
+                                 0, cursor_limit,
                                  GRN_CURSOR_PREFIX);
     }
   } else {
-    tc = grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, NULL, 0, 0, -1,
+    tc = grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, NULL, 0,
+                               0, cursor_limit,
                                GRN_CURSOR_ASCENDING);
   }
   if (tc) {
