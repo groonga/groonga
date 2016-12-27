@@ -1517,7 +1517,6 @@ grn_select_apply_adjuster_execute_adjust(grn_ctx *ctx,
     options.proc = NULL;
     options.max_size = 0;
     options.scorer = NULL;
-    options.min = NULL;
 
     grn_obj_search(ctx, index, value, table, GRN_OP_ADJUST, &options);
   }

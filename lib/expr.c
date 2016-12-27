@@ -6689,6 +6689,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         optarg.max_size = 0;
         if (min) {
           previous_min = *min;
+          optarg.match_info.flags |= GRN_MATCH_INFO_GET_MIN_RECORD_ID;
         }
         ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
         for (j = 0; j < n_indexes; j++, ip++, wp += 2) {
@@ -6697,7 +6698,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           grn_id current_min;
           if (min) {
             current_min = previous_min;
-            optarg.min = &current_min;
+            optarg.match_info.min = &current_min;
           }
           if (sid) {
             int weight_index = sid - 1;
