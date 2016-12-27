@@ -6733,8 +6733,8 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           }
           GRN_BULK_REWIND(&wv);
           if (min) {
-            if (previous_min < *optarg.min && (j == 0 || *optarg.min < *min)) {
-              *min = *optarg.min;
+            if (previous_min < current_min && (*min == previous_min || current_min < *min)) {
+              *min = current_min;
             }
           }
         }
