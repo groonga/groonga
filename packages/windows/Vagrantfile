@@ -5,8 +5,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "debian-jessie-amd64"
-  config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_debian-8.5_chef-provisionerless.box"
+  config.vm.box = "bento/debian-8.6"
   config.vm.provision(:shell, :privileged => false, :path => "build.sh")
   config.vm.provider("virtualbox") do |virtual_box|
     virtual_box.memory = (ENV["VM_MEMORY"] || 2048).to_i
