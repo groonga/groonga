@@ -5420,7 +5420,7 @@ cursor_heap_open(grn_ctx *ctx, int max)
 
 static inline grn_rc
 cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t offset2,
-                 int weight)
+                 int weight, grn_id min)
 {
   int n, n2;
   grn_ii_cursor *c, *c2;
@@ -5433,7 +5433,7 @@ cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t 
     h->bins = bins;
   }
   {
-    if (!(c = grn_ii_cursor_open(ctx, ii, tid, GRN_ID_NIL, GRN_ID_MAX,
+    if (!(c = grn_ii_cursor_open(ctx, ii, tid, min, GRN_ID_MAX,
                                  ii->n_elements, 0))) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "cursor open failed");
       return ctx->rc;
@@ -6361,7 +6361,7 @@ token_info_expand_both(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                 !(lexicon->header.flags & GRN_OBJ_KEY_WITH_SIS) ||
                 key2_size <= 2) { // todo: refine
               if ((s = grn_ii_estimate_size(ctx, ii, *tp))) {
-                cursor_heap_push(ctx, ti->cursors, ii, *tp, 0, 0);
+                cursor_heap_push(ctx, ti->cursors, ii, *tp, 0, 0, GRN_ID_NIL);
                 ti->ntoken++;
                 ti->size += s;
               }
@@ -6373,7 +6373,7 @@ token_info_expand_both(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                 GRN_HASH_EACH(ctx, g, id, &tq, NULL, &offset2, {
                   if ((s = grn_ii_estimate_size(ctx, ii, *tq))) {
                     cursor_heap_push(ctx, ti->cursors, ii, *tq,
-                                     /* *offset2 */ 0, 0);
+                                     /* *offset2 */ 0, 0, GRN_ID_NIL);
                     ti->ntoken++;
                     ti->size += s;
                   }
@@ -6401,7 +6401,7 @@ token_info_close(grn_ctx *ctx, token_info *ti)
 inline static token_info *
 token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                 const char *key, unsigned int key_size, uint32_t offset,
-                int mode, grn_fuzzy_search_optarg *args)
+                int mode, grn_fuzzy_search_optarg *args, grn_id min)
 {
   int s = 0;
   grn_hash *h;
@@ -6422,7 +6422,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
     if ((tid = grn_table_get(ctx, lexicon, key, key_size)) &&
         (s = grn_ii_estimate_size(ctx, ii, tid)) &&
         (ti->cursors = cursor_heap_open(ctx, 1))) {
-      cursor_heap_push(ctx, ti->cursors, ii, tid, 0, 0);
+      cursor_heap_push(ctx, ti->cursors, ii, tid, 0, 0, min);
       ti->ntoken++;
       ti->size = s;
     }
@@ -6435,7 +6435,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
         if ((ti->cursors = cursor_heap_open(ctx, GRN_HASH_SIZE(h)))) {
           GRN_HASH_EACH(ctx, h, id, &tp, NULL, NULL, {
             if ((s = grn_ii_estimate_size(ctx, ii, *tp))) {
-              cursor_heap_push(ctx, ti->cursors, ii, *tp, 0, 0);
+              cursor_heap_push(ctx, ti->cursors, ii, *tp, 0, 0, min);
               ti->ntoken++;
               ti->size += s;
             }
@@ -6454,7 +6454,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
           uint32_t *offset2;
           GRN_HASH_EACH(ctx, h, id, &tp, NULL, &offset2, {
             if ((s = grn_ii_estimate_size(ctx, ii, *tp))) {
-              cursor_heap_push(ctx, ti->cursors, ii, *tp, /* *offset2 */ 0, 0);
+              cursor_heap_push(ctx, ti->cursors, ii, *tp, /* *offset2 */ 0, 0, min);
               ti->ntoken++;
               ti->size += s;
             }
@@ -6475,7 +6475,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
           grn_rset_recinfo *ri;
           GRN_HASH_EACH(ctx, h, id, &tp, NULL, (void **)&ri, {
             if ((s = grn_ii_estimate_size(ctx, ii, *tp))) {
-              cursor_heap_push(ctx, ti->cursors, ii, *tp, 0, ri->score - 1);
+              cursor_heap_push(ctx, ti->cursors, ii, *tp, 0, ri->score - 1, min);
               ti->ntoken++;
               ti->size += s;
             }
@@ -6792,7 +6792,7 @@ inline static grn_rc
 token_candidate_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                       token_info **tis, uint32_t *n,
                       token_candidate_node *nodes, uint32_t selected_candidate,
-                      int offset)
+                      int offset, grn_id min)
 {
   grn_rc rc = GRN_END_OF_DATA;
   token_info *ti;
@@ -6807,19 +6807,19 @@ token_candidate_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
       case GRN_TOKEN_CURSOR_DOING :
         key = _grn_table_key(ctx, lexicon, node->tid, &size);
         ti = token_info_open(ctx, lexicon, ii, key, size, node->pos,
-                             EX_NONE, NULL);
+                             EX_NONE, NULL, min);
         break;
       case GRN_TOKEN_CURSOR_DONE :
         if (node->tid) {
           key = _grn_table_key(ctx, lexicon, node->tid, &size);
           ti = token_info_open(ctx, lexicon, ii, key, size, node->pos,
-                               node->ef & EX_PREFIX, NULL);
+                               node->ef & EX_PREFIX, NULL, min);
           break;
         } /* else fallthru */
       default :
         ti = token_info_open(ctx, lexicon, ii, (char *)node->token,
                              node->token_size, node->pos,
-                             node->ef & EX_PREFIX, NULL);
+                             node->ef & EX_PREFIX, NULL, min);
         break;
       }
       if (!ti) {
@@ -6839,7 +6839,7 @@ inline static grn_rc
 token_info_build_skipping_overlap(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                                   token_info **tis, uint32_t *n,
                                   grn_token_cursor *token_cursor,
-                                  grn_id tid, int ef)
+                                  grn_id tid, int ef, grn_id min)
 {
   grn_rc rc;
   token_candidate_node *nodes = NULL;
@@ -6857,7 +6857,7 @@ token_info_build_skipping_overlap(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
     if (rc != GRN_SUCCESS) {
       goto exit;
     }
-    rc = token_candidate_build(ctx, lexicon, ii, tis, n, nodes, selected_candidate, offset);
+    rc = token_candidate_build(ctx, lexicon, ii, tis, n, nodes, selected_candidate, offset, min);
     if (rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -6873,7 +6873,7 @@ exit :
 
 inline static grn_rc
 token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string, unsigned int string_len,
-                 token_info **tis, uint32_t *n, grn_bool *only_skip_token,
+                 token_info **tis, uint32_t *n, grn_bool *only_skip_token, grn_id min,
                  grn_operator mode)
 {
   token_info *ti;
@@ -6889,7 +6889,7 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
   if (!token_cursor) { return GRN_NO_MEMORY_AVAILABLE; }
   if (mode == GRN_OP_UNSPLIT) {
     if ((ti = token_info_open(ctx, lexicon, ii, (char *)token_cursor->orig,
-                              token_cursor->orig_blen, 0, EX_BOTH, NULL))) {
+                              token_cursor->orig_blen, 0, EX_BOTH, NULL, min))) {
       tis[(*n)++] = ti;
       rc = GRN_SUCCESS;
     }
@@ -6916,21 +6916,21 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
     case GRN_TOKEN_CURSOR_DOING :
       key = _grn_table_key(ctx, lexicon, tid, &size);
       ti = token_info_open(ctx, lexicon, ii, key, size, token_cursor->pos,
-                           ef & EX_SUFFIX, NULL);
+                           ef & EX_SUFFIX, NULL, min);
       break;
     case GRN_TOKEN_CURSOR_DONE :
       ti = token_info_open(ctx, lexicon, ii, (const char *)token_cursor->curr,
-                           token_cursor->curr_size, 0, ef, NULL);
+                           token_cursor->curr_size, 0, ef, NULL, min);
       /*
       key = _grn_table_key(ctx, lexicon, tid, &size);
-      ti = token_info_open(ctx, lexicon, ii, token_cursor->curr, token_cursor->curr_size, token_cursor->pos, ef, NULL);
+      ti = token_info_open(ctx, lexicon, ii, token_cursor->curr, token_cursor->curr_size, token_cursor->pos, ef, NULL, GRN_ID_NIL);
       ti = token_info_open(ctx, lexicon, ii, (char *)token_cursor->orig,
-                           token_cursor->orig_blen, token_cursor->pos, ef, NULL);
+                           token_cursor->orig_blen, token_cursor->pos, ef, NULL, GRN_ID_NIL);
       */
       break;
     case GRN_TOKEN_CURSOR_NOT_FOUND :
       ti = token_info_open(ctx, lexicon, ii, (char *)token_cursor->orig,
-                           token_cursor->orig_blen, 0, ef, NULL);
+                           token_cursor->orig_blen, 0, ef, NULL, min);
       break;
     case GRN_TOKEN_CURSOR_DONE_SKIP :
       *only_skip_token = GRN_TRUE;
@@ -6942,7 +6942,7 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
     tis[(*n)++] = ti;
 
     if (grn_ii_overlap_token_skip_enable) {
-      rc = token_info_build_skipping_overlap(ctx, lexicon, ii, tis, n, token_cursor, tid, ef);
+      rc = token_info_build_skipping_overlap(ctx, lexicon, ii, tis, n, token_cursor, tid, ef, min);
       goto exit;
     }
 
@@ -6955,19 +6955,19 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
       case GRN_TOKEN_CURSOR_DOING :
         key = _grn_table_key(ctx, lexicon, tid, &size);
         ti = token_info_open(ctx, lexicon, ii, key, size, token_cursor->pos,
-                             EX_NONE, NULL);
+                             EX_NONE, NULL, min);
         break;
       case GRN_TOKEN_CURSOR_DONE :
         if (tid) {
           key = _grn_table_key(ctx, lexicon, tid, &size);
           ti = token_info_open(ctx, lexicon, ii, key, size, token_cursor->pos,
-                               ef & EX_PREFIX, NULL);
+                               ef & EX_PREFIX, NULL, min);
           break;
         } /* else fallthru */
       default :
         ti = token_info_open(ctx, lexicon, ii, (char *)token_cursor->curr,
                              token_cursor->curr_size, token_cursor->pos,
-                             ef & EX_PREFIX, NULL);
+                             ef & EX_PREFIX, NULL, min);
         break;
       }
       if (!ti) {
@@ -6986,7 +6986,7 @@ inline static grn_rc
 token_info_build_fuzzy(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                        const char *string, unsigned int string_len,
                        token_info **tis, uint32_t *n, grn_bool *only_skip_token,
-                       grn_operator mode, grn_fuzzy_search_optarg *args)
+                       grn_id min, grn_operator mode, grn_fuzzy_search_optarg *args)
 {
   token_info *ti;
   grn_rc rc = GRN_END_OF_DATA;
@@ -7006,7 +7006,7 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
   case GRN_TOKEN_CURSOR_DONE :
     ti = token_info_open(ctx, lexicon, ii, (const char *)token_cursor->curr,
                          token_cursor->curr_size, token_cursor->pos, EX_FUZZY,
-                         args);
+                         args, min);
     break;
   default :
     ti = NULL;
@@ -7025,7 +7025,7 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
     case GRN_TOKEN_CURSOR_DONE :
       ti = token_info_open(ctx, lexicon, ii, (const char *)token_cursor->curr,
                            token_cursor->curr_size, token_cursor->pos, EX_FUZZY,
-                           args);
+                           args, min);
       break;
     default :
       break;
@@ -7790,6 +7790,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
   grn_obj *lexicon = ii->lexicon;
   grn_scorer_score_func *score_func = NULL;
   grn_scorer_matched_record record;
+  grn_id current_min = GRN_ID_NIL;
 
   if (!lexicon || !ii || !s) { return GRN_INVALID_ARGUMENT; }
   if (optarg) {
@@ -7821,14 +7822,14 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
   }
   if (mode == GRN_OP_FUZZY) {
     if (token_info_build_fuzzy(ctx, lexicon, ii, string, string_len,
-                               tis, &n, &only_skip_token, mode,
-                               &(optarg->fuzzy)) ||
+                               tis, &n, &only_skip_token, *optarg->min,
+                               mode, &(optarg->fuzzy)) ||
         !n) {
       goto exit;
     }
   } else {
     if (token_info_build(ctx, lexicon, ii, string, string_len,
-                         tis, &n, &only_skip_token, mode) ||
+                         tis, &n, &only_skip_token, *optarg->min, mode) ||
         !n) {
       goto exit;
     }
@@ -8027,6 +8028,11 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
           } else {
             record_score = (noccur + tscore) * weight;
           }
+          if (optarg->min) {
+            if (current_min == GRN_ID_NIL) {
+              current_min = rid;
+            }
+          }
           res_add(ctx, s, &pi, record_score, op);
         }
 #undef SKIP_OR_BREAK
@@ -8039,6 +8045,13 @@ exit :
     GRN_OBJ_FIN(ctx, &(record.terms));
     GRN_OBJ_FIN(ctx, &(record.term_weights));
   }
+
+  if (optarg->min) {
+    if (current_min > *optarg->min) {
+      *optarg->min = current_min;
+    }
+  }
+
   for (tip = tis; tip < tis + n; tip++) {
     if (*tip) { token_info_close(ctx, *tip); }
   }
@@ -8144,12 +8157,12 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
   switch (mode) {
   case GRN_OP_FUZZY :
     rc = token_info_build_fuzzy(ctx, lexicon, ii, query, query_len,
-                                tis, &n_tis, &only_skip_token, mode,
-                                &(optarg->fuzzy));
+                                tis, &n_tis, &only_skip_token, *optarg->min,
+                                mode, &(optarg->fuzzy));
     break;
   default :
     rc = token_info_build(ctx, lexicon, ii, query, query_len,
-                          tis, &n_tis, &only_skip_token, mode);
+                          tis, &n_tis, &only_skip_token, *optarg->min, mode);
     break;
   }
 
@@ -8243,6 +8256,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
       arg.scorer = optarg->scorer;
       arg.scorer_args_expr = optarg->scorer_args_expr;
       arg.scorer_args_expr_offset = optarg->scorer_args_expr_offset;
+      arg.min = optarg->min;
     }
     /* todo : support subrec
     grn_rset_init(ctx, s, grn_rec_document, 0, grn_rec_none, 0, 0);

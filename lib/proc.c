@@ -2855,6 +2855,7 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     search_options.proc = NULL;
     search_options.max_size = 0;
     search_options.scorer = NULL;
+    search_options.min = NULL;
     if (i == n_values - 1) {
       ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
     }

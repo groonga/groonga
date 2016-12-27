@@ -6545,7 +6545,7 @@ grn_table_select_index_range(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 
 static inline grn_bool
 grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
-                       grn_obj *res)
+                       grn_obj *res, grn_id *min)
 {
   grn_bool processed = GRN_FALSE;
   if (!si->query) {
@@ -6662,6 +6662,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         int n_indexes = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
         int32_t *wp = &GRN_INT32_VALUE(&si->wv);
         grn_search_optarg optarg;
+        grn_id previous_min = GRN_ID_NIL;
         GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
         if (si->op == GRN_OP_MATCH) {
           optarg.mode = GRN_OP_EXACT;
@@ -6686,10 +6687,18 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         optarg.vector_size = 1;
         optarg.proc = NULL;
         optarg.max_size = 0;
+        if (min) {
+          previous_min = *min;
+        }
         ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
         for (j = 0; j < n_indexes; j++, ip++, wp += 2) {
           uint32_t sid = (uint32_t) wp[0];
           int32_t weight = wp[1];
+          grn_id current_min;
+          if (min) {
+            current_min = previous_min;
+            optarg.min = &current_min;
+          }
           if (sid) {
             int weight_index = sid - 1;
             int current_vector_size;
@@ -6723,6 +6732,11 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             }
           }
           GRN_BULK_REWIND(&wv);
+          if (min) {
+            if (previous_min < *optarg.min && (j == 0 || *optarg.min < *min)) {
+              *min = *optarg.min;
+            }
+          }
         }
         GRN_OBJ_FIN(ctx, &wv);
       }
@@ -6843,6 +6857,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       grn_expr *e = (grn_expr *)scanner->expr;
       grn_expr_code *codes = e->codes;
       uint32_t codes_curr = e->codes_curr;
+      grn_id min = GRN_ID_NIL;
       v = grn_expr_get_var_by_offset(ctx, (grn_obj *)e, 0);
       GRN_PTR_INIT(&res_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
       for (i = 0; i < scanner->n_sis; i++) {
@@ -6865,7 +6880,10 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
             GRN_PTR_PUT(ctx, &res_stack, res);
             res = res_;
           }
-          processed = grn_table_select_index(ctx, table, si, res);
+          if (si->logical_op != GRN_OP_AND) {
+            min = GRN_ID_NIL;
+          }
+          processed = grn_table_select_index(ctx, table, si, res, &min);
           if (!processed) {
             if (ctx->rc) { break; }
             e->codes = codes + si->start;

@@ -814,6 +814,7 @@ struct _grn_search_optarg {
   grn_obj *scorer_args_expr;
   unsigned int scorer_args_expr_offset;
   grn_fuzzy_search_optarg fuzzy;
+  grn_id *min;
 };
 
 GRN_API grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
