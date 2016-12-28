@@ -159,6 +159,7 @@ if test "$GCC" = "yes"; then
   CHECK_BUILD_FLAG([-Wno-sign-compare])
   CHECK_CFLAG([-Wno-pointer-sign])
   CHECK_BUILD_FLAG([-Wno-missing-field-initializers])
+  CHECK_CFLAG([-Wno-declaration-after-statement])
 
   CHECK_BUILD_FLAG([-Wformat])
   CHECK_BUILD_FLAG([-Wstrict-aliasing=2])
