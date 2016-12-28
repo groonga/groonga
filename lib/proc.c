@@ -1816,7 +1816,7 @@ run_query(grn_ctx *ctx, grn_obj *table,
 
 #define KEY_EQUAL(name)                                                 \
           (key_size == strlen(name) && memcmp(key, name, strlen(name)) == 0)
-          if (KEY_EQUAL("query_expander")) {
+          if (KEY_EQUAL("expander")) {
             query_expander_name = value;
           } else if (KEY_EQUAL("default_mode")) {
             default_mode = parse_mode(ctx, value, "query()");

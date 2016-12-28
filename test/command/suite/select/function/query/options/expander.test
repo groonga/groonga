@@ -22,4 +22,4 @@ load --table Memos
 
 select \
   --table Memos \
-  --filter 'query("content", "rroonga", {"query_expander": "QueryExpanderTSV"})'
+  --filter 'query("content", "rroonga", {"expander": "QueryExpanderTSV"})'
