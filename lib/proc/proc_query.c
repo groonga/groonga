@@ -49,10 +49,15 @@ command_query_expand(grn_ctx *ctx, int nargs, grn_obj **args,
                                              -1,
                                              &flags_raw_size);
 
-  flags |= grn_proc_expr_query_flags_parse(ctx,
-                                           flags_raw,
-                                           flags_raw_size,
-                                           "[query][expand]");
+  if (flags_raw_size > 0) {
+    flags |= grn_proc_expr_query_flags_parse(ctx,
+                                             flags_raw,
+                                             flags_raw_size,
+                                             "[query][expand]");
+  } else {
+    flags |= GRN_EXPR_ALLOW_PRAGMA | GRN_EXPR_ALLOW_COLUMN;
+  }
+
   if (ctx->rc != GRN_SUCCESS) {
     return NULL;
   }

@@ -2,4 +2,4 @@
 #@copy-path fixture/query_expander/tsv/expand.tsv tmp/synonyms.tsv
 plugin_register "query_expanders/tsv"
 
-query_expand QueryExpanderTSV rroonga
+query_expand QueryExpanderTSV "rroonga column:rroonga"
