@@ -1,0 +1,4 @@
+plugin_register "query_expanders/tsv"
+[[0,0.0,0.0],true]
+query_expand QueryExpanderTSV "rroonga column:rroonga" NONE
+[[0,0.0,0.0],"((rroonga) OR (Ruby groonga)) column:rroonga"]
