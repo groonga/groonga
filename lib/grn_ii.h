@@ -154,6 +154,7 @@ struct _grn_select_optarg {
   grn_obj *scorer_args_expr;
   unsigned int scorer_args_expr_offset;
   grn_fuzzy_search_optarg fuzzy;
+  grn_match_info *match_info;
 };
 
 GRN_API grn_rc grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id id,

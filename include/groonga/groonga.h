@@ -800,6 +800,15 @@ struct _grn_fuzzy_search_optarg {
   int flags;
 };
 
+#define GRN_MATCH_INFO_GET_MIN_RECORD_ID                           (0x01)
+
+typedef struct _grn_match_info grn_match_info;
+
+struct _grn_match_info {
+  int flags;
+  grn_id min;
+};
+
 typedef struct _grn_search_optarg grn_search_optarg;
 
 struct _grn_search_optarg {
@@ -814,6 +823,7 @@ struct _grn_search_optarg {
   grn_obj *scorer_args_expr;
   unsigned int scorer_args_expr_offset;
   grn_fuzzy_search_optarg fuzzy;
+  grn_match_info match_info;
 };
 
 GRN_API grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
