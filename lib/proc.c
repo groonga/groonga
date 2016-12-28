@@ -1774,11 +1774,12 @@ run_query(grn_ctx *ctx, grn_obj *table,
   grn_obj *query;
   grn_obj *query_expander_name = NULL;
   grn_operator default_mode = GRN_OP_MATCH;
+  grn_expr_flags flags = GRN_EXPR_SYNTAX_QUERY;
+  grn_bool flags_specified = GRN_FALSE;
   grn_obj *match_columns = NULL;
   grn_obj *condition = NULL;
   grn_obj *dummy_variable;
 
-  /* TODO: support flags by parameters */
   if (!(2 <= nargs && nargs <= 3)) {
     ERR(GRN_INVALID_ARGUMENT,
         "query(): wrong number of arguments (%d for 2..3)", nargs);
@@ -1825,6 +1826,17 @@ run_query(grn_ctx *ctx, grn_obj *table,
               rc = ctx->rc;
               goto exit;
             }
+          } else if (KEY_EQUAL("flags")) {
+            flags_specified = GRN_TRUE;
+            flags |= grn_proc_expr_query_flags_parse(ctx,
+                                                     GRN_TEXT_VALUE(value),
+                                                     GRN_TEXT_LEN(value),
+                                                     "query()");
+            if (ctx->rc != GRN_SUCCESS) {
+              grn_hash_cursor_close(ctx, cursor);
+              rc = ctx->rc;
+              goto exit;
+            }
           } else {
             GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                              "query(): unknown option name: <%.*s>",
@@ -1855,6 +1867,10 @@ run_query(grn_ctx *ctx, grn_obj *table,
     }
   }
 
+  if (!flags_specified) {
+    flags |= GRN_EXPR_ALLOW_PRAGMA | GRN_EXPR_ALLOW_COLUMN;
+  }
+
   if (match_columns_string->header.domain == GRN_DB_TEXT &&
       GRN_TEXT_LEN(match_columns_string) > 0) {
     GRN_EXPR_CREATE_FOR_QUERY(ctx, table, match_columns, dummy_variable);
@@ -1878,8 +1894,6 @@ run_query(grn_ctx *ctx, grn_obj *table,
     const char *query_string;
     unsigned int query_string_len;
     grn_obj expanded_query;
-    grn_expr_flags flags =
-      GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN;
 
     GRN_EXPR_CREATE_FOR_QUERY(ctx, table, condition, dummy_variable);
     if (!condition) {
