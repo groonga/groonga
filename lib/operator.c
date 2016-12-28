@@ -740,7 +740,7 @@ static OnigRegex
 regexp_compile(grn_ctx *ctx,
                const char *pattern,
                unsigned int pattern_len,
-               OnigSyntaxType *syntax)
+               const OnigSyntaxType *syntax)
 {
   OnigRegex regex;
   OnigEncoding onig_encoding;
