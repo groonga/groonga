@@ -6695,10 +6695,8 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         for (j = 0; j < n_indexes; j++, ip++, wp += 2) {
           uint32_t sid = (uint32_t) wp[0];
           int32_t weight = wp[1];
-          grn_id current_min;
           if (min) {
-            current_min = previous_min;
-            optarg.match_info.min = &current_min;
+            optarg.match_info.min = previous_min;
           }
           if (sid) {
             int weight_index = sid - 1;
@@ -6734,8 +6732,8 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           }
           GRN_BULK_REWIND(&wv);
           if (min) {
-            if (previous_min < current_min && (*min == previous_min || current_min < *min)) {
-              *min = current_min;
+            if (previous_min < optarg.match_info.min && (*min == previous_min || optarg.match_info.min < *min)) {
+              *min = optarg.match_info.min;
             }
           }
         }

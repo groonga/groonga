@@ -7802,8 +7802,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
     } else if (optarg->vector_size) {
       wvm = optarg->weight_vector ? grn_wv_static : grn_wv_constant;
     }
-    if (optarg->match_info.flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
-      previous_min = *(optarg->match_info.min);
+    if (optarg->match_info->flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
+      previous_min = optarg->match_info->min;
       set_min_enable_for_and_query = GRN_TRUE;
     }
   }
@@ -8054,7 +8054,7 @@ exit :
 
   if (set_min_enable_for_and_query) {
     if (current_min > previous_min) {
-      *(optarg->match_info.min) = current_min;
+      optarg->match_info->min = current_min;
     }
   }
 
@@ -8150,7 +8150,7 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
       break;
     }
     if (optarg->match_info.flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
-      min = *(optarg->match_info.min);
+      min = optarg->match_info.min;
     }
   }
 
@@ -8266,9 +8266,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
       arg.scorer = optarg->scorer;
       arg.scorer_args_expr = optarg->scorer_args_expr;
       arg.scorer_args_expr_offset = optarg->scorer_args_expr_offset;
-      if (optarg->match_info.flags) {
-        arg.match_info = optarg->match_info;
-      }
+      arg.match_info = &(optarg->match_info);
     }
     /* todo : support subrec
     grn_rset_init(ctx, s, grn_rec_document, 0, grn_rec_none, 0, 0);
