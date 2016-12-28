@@ -8238,8 +8238,10 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
   ERRCLR(ctx);
   GRN_LOG(ctx, GRN_LOG_INFO, "grn_ii_sel > (%.*s)", string_len, string);
   {
-    grn_select_optarg arg = {GRN_OP_EXACT, 0, 0, NULL, 0, NULL, NULL, 0, NULL, NULL, 0, {0}, NULL};
+    grn_select_optarg arg;
     if (!s) { return GRN_INVALID_ARGUMENT; }
+    memset(&arg, 0, sizeof(grn_select_optarg));
+    arg.mode = GRN_OP_EXACT;
     if (optarg) {
       switch (optarg->mode) {
       case GRN_OP_NEAR :
