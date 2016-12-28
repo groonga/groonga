@@ -7802,9 +7802,11 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
     } else if (optarg->vector_size) {
       wvm = optarg->weight_vector ? grn_wv_static : grn_wv_constant;
     }
-    if (optarg->match_info->flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
-      previous_min = optarg->match_info->min;
-      set_min_enable_for_and_query = GRN_TRUE;
+    if (optarg->match_info) {
+      if (optarg->match_info->flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
+        previous_min = optarg->match_info->min;
+        set_min_enable_for_and_query = GRN_TRUE;
+      }
     }
   }
   if (mode == GRN_OP_SIMILAR) {
@@ -8236,7 +8238,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
   ERRCLR(ctx);
   GRN_LOG(ctx, GRN_LOG_INFO, "grn_ii_sel > (%.*s)", string_len, string);
   {
-    grn_select_optarg arg = {GRN_OP_EXACT, 0, 0, NULL, 0, NULL, NULL, 0, NULL};
+    grn_select_optarg arg = {GRN_OP_EXACT, 0, 0, NULL, 0, NULL, NULL, 0, NULL, NULL, 0, {0}, NULL};
     if (!s) { return GRN_INVALID_ARGUMENT; }
     if (optarg) {
       switch (optarg->mode) {
