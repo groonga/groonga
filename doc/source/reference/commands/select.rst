@@ -42,7 +42,7 @@ optional::
          [cache=yes]
          [match_escalation_threshold=0]
          [query_expansion=null]
-         [query_flags=ALLOW_PRAGMA|ALLOW_COLUMN|ALLOW_UPDATE|ALLOW_LEADING_NOT|NONE]
+         [query_flags=ALLOW_PRAGMA|ALLOW_COLUMN]
          [query_expander=null]
          [adjuster=null]
          [drilldown_calc_types=NONE]
