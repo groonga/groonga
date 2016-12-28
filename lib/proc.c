@@ -1694,6 +1694,76 @@ selector_to_function_data_fin(grn_ctx *ctx,
   }
 }
 
+static grn_operator
+parse_mode(grn_ctx *ctx, grn_obj *mode, const char *context)
+{
+  if (mode->header.domain != GRN_DB_TEXT) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, mode);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s: mode must be text: <%.*s>",
+                     context,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return GRN_OP_NOP;
+  }
+
+#define EQUAL_MODE(name)                                        \
+  (GRN_TEXT_LEN(mode) == strlen(name) &&                        \
+   memcmp(GRN_TEXT_VALUE(mode), name, strlen(name)) == 0)
+
+  if (EQUAL_MODE("==") || EQUAL_MODE("EQUAL")) {
+    return GRN_OP_EQUAL;
+  } else if (EQUAL_MODE("!=") || EQUAL_MODE("NOT_EQUAL")) {
+    return GRN_OP_NOT_EQUAL;
+  } else if (EQUAL_MODE("<") || EQUAL_MODE("LESS")) {
+    return GRN_OP_LESS;
+  } else if (EQUAL_MODE(">") || EQUAL_MODE("GREATER")) {
+    return GRN_OP_GREATER;
+  } else if (EQUAL_MODE("<=") || EQUAL_MODE("LESS_EQUAL")) {
+    return GRN_OP_LESS_EQUAL;
+  } else if (EQUAL_MODE(">=") || EQUAL_MODE("GREATER_EQUAL")) {
+    return GRN_OP_GREATER_EQUAL;
+  } else if (EQUAL_MODE("@") || EQUAL_MODE("MATCH")) {
+    return GRN_OP_MATCH;
+  } else if (EQUAL_MODE("*N") || EQUAL_MODE("NEAR")) {
+    return GRN_OP_NEAR;
+  } else if (EQUAL_MODE("*S") || EQUAL_MODE("SIMILAR")) {
+    return GRN_OP_SIMILAR;
+  } else if (EQUAL_MODE("^") || EQUAL_MODE("PREFIX")) {
+    return GRN_OP_PREFIX;
+  } else if (EQUAL_MODE("$") || EQUAL_MODE("SUFFIX")) {
+    return GRN_OP_SUFFIX;
+  } else if (EQUAL_MODE("~") || EQUAL_MODE("REGEXP")) {
+    return GRN_OP_REGEXP;
+  } else {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s: mode must be one of them: "
+                     "["
+                     "\"==\", \"EQUAL\", "
+                     "\"!=\", \"NOT_EQUAL\", "
+                     "\"<\", \"LESS\", "
+                     "\">\", \"GREATER\", "
+                     "\"<=\", \"LESS_EQUAL\", "
+                     "\">=\", \"GREATER_EQUAL\", "
+                     "\"@\", \"MATCH\", "
+                     "\"*N\", \"NEAR\", "
+                     "\"*S\", \"SIMILAR\", "
+                     "\"^\", \"PREFIX\", "
+                     "\"$\", \"SUFFIX\", "
+                     "\"~\", \"REGEXP\""
+                     "]: <%.*s>",
+                     context,
+                     (int)GRN_TEXT_LEN(mode),
+                     GRN_TEXT_VALUE(mode));
+    return GRN_OP_NOP;
+  }
+
+#undef EQUAL_MODE
+}
+
 static grn_rc
 run_query(grn_ctx *ctx, grn_obj *table,
           int nargs, grn_obj **args,
@@ -1703,6 +1773,7 @@ run_query(grn_ctx *ctx, grn_obj *table,
   grn_obj *match_columns_string;
   grn_obj *query;
   grn_obj *query_expander_name = NULL;
+  grn_operator default_mode = GRN_OP_MATCH;
   grn_obj *match_columns = NULL;
   grn_obj *condition = NULL;
   grn_obj *dummy_variable;
@@ -1710,7 +1781,7 @@ run_query(grn_ctx *ctx, grn_obj *table,
   /* TODO: support flags by parameters */
   if (!(2 <= nargs && nargs <= 3)) {
     ERR(GRN_INVALID_ARGUMENT,
-        "wrong number of arguments (%d for 2..3)", nargs);
+        "query(): wrong number of arguments (%d for 2..3)", nargs);
     rc = ctx->rc;
     goto exit;
   }
@@ -1718,7 +1789,70 @@ run_query(grn_ctx *ctx, grn_obj *table,
   match_columns_string = args[0];
   query = args[1];
   if (nargs > 2) {
-    query_expander_name = args[2];
+    grn_obj *options = args[2];
+
+    switch (options->header.type) {
+    case GRN_BULK :
+      query_expander_name = options;
+      break;
+    case GRN_TABLE_HASH_KEY :
+      {
+        grn_hash_cursor *cursor;
+        void *key;
+        grn_obj *value;
+        int key_size;
+        cursor = grn_hash_cursor_open(ctx, (grn_hash *)options,
+                                      NULL, 0, NULL, 0,
+                                      0, -1, 0);
+        if (!cursor) {
+          GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                           "query(): failed to open cursor for options");
+          rc = ctx->rc;
+          goto exit;
+        }
+        while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
+          grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size,
+                                        (void **)&value);
+
+#define KEY_EQUAL(name)                                                 \
+          (key_size == strlen(name) && memcmp(key, name, strlen(name)) == 0)
+          if (KEY_EQUAL("query_expander")) {
+            query_expander_name = value;
+          } else if (KEY_EQUAL("default_mode")) {
+            default_mode = parse_mode(ctx, value, "query()");
+            if (ctx->rc != GRN_SUCCESS) {
+              grn_hash_cursor_close(ctx, cursor);
+              rc = ctx->rc;
+              goto exit;
+            }
+          } else {
+            GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                             "query(): unknown option name: <%.*s>",
+                             key_size, (char *)key);
+            grn_hash_cursor_close(ctx, cursor);
+            rc = ctx->rc;
+            goto exit;
+          }
+#undef KEY_EQUAL
+        }
+        grn_hash_cursor_close(ctx, cursor);
+      }
+      break;
+    default :
+      {
+        grn_obj inspected;
+        GRN_TEXT_INIT(&inspected, 0);
+        grn_inspect(ctx, &inspected, options);
+        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                         "query(): "
+                         "3rd argument must be string or object literal: <%.*s>",
+                         (int)GRN_TEXT_LEN(&inspected),
+                         GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+      }
+      rc = ctx->rc;
+      goto exit;
+    }
   }
 
   if (match_columns_string->header.domain == GRN_DB_TEXT &&
@@ -1777,7 +1911,7 @@ run_query(grn_ctx *ctx, grn_obj *table,
     grn_expr_parse(ctx, condition,
                    query_string,
                    query_string_len,
-                   match_columns, GRN_OP_MATCH, GRN_OP_AND, flags);
+                   match_columns, default_mode, GRN_OP_AND, flags);
     rc = ctx->rc;
     GRN_OBJ_FIN(ctx, &expanded_query);
     if (rc != GRN_SUCCESS) {

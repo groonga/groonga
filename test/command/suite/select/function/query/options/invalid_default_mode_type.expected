@@ -1,0 +1,18 @@
+table_create Products TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Products name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Products
+[
+["name"],
+["Groonga"],
+["Mroonga"],
+["Rroonga"],
+["PGroonga"],
+["Ruby"],
+["PostgreSQL"]
+]
+[[0,0.0,0.0],6]
+select   --table Products   --filter 'query("name", "r", {"default_mode": 29})'
+[[[-22,0.0,0.0],"query(): mode must be text: <29>"]]
+#|e| query(): mode must be text: <29>
