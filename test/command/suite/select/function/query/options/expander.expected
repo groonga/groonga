@@ -18,7 +18,7 @@ load --table Memos
 ["Learning Ruby and Groonga..."]
 ]
 [[0,0.0,0.0],5]
-select   --table Memos   --filter 'query("content", "rroonga", {"expander": "QueryExpanderTSV"})'
+select   --table Memos   --filter 'query("content", "rroonga content:@rroonga",                   {"expander": "QueryExpanderTSV"})'
 [
   [
     0,
