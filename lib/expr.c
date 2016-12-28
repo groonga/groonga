@@ -8187,6 +8187,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     efsi.escalation_threshold = GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD;
     efsi.escalation_decaystep = DEFAULT_DECAYSTEP;
     efsi.weight_offset = 0;
+    memset(&(efsi.opt), 0, sizeof(grn_select_optarg));
     efsi.opt.weight_vector = NULL;
     efsi.weight_set = NULL;
     efsi.object_literal = NULL;
