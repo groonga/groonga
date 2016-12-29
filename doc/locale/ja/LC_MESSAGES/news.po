@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-11-25 13:57+0900\n"
+"PO-Revision-Date: 2016-12-29 17:04+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -21,11 +21,102 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 6.1.1 - 2016-11-29"
-msgstr "6.1.1リリース - 2016-11-29"
+msgid "Release 6.1.2 - 2016-12-31"
+msgstr "6.1.2リリース - 2016-11-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "windows: Supported to bundle groonga-normalizer-mysql."
+msgstr "windows: groonga-normalizer-mysqlをバンドルするようにしました。"
+
+msgid ""
+"[:doc:`/reference/log`] Added description about log format with ``PID`` case."
+msgstr ""
+"[:doc:`/reference/log`] ``PID`` に関するログフォーマットの説明を追加しまし"
+"た。"
+
+msgid ""
+"[:doc:`/install/centos`] Improved install procedure about recent ``groonga-"
+"release`` package."
+msgstr ""
+"[:doc:`/install/centos`] 最近の ``groonga-release`` パッケージに関して、イン"
+"ストール手順を改善しました。"
+
+msgid ""
+"[:doc:`/reference/commands/load`] Supported to show ``{\"n_loaded_records\": "
+"N}`` in response for command version 3 or later."
+msgstr ""
+"[:doc:`/reference/commands/load`] コマンドバージョンが3以降の場合に、 "
+"``{\"n_loaded_records\": N}`` をレスポンスに含めるようにしました。"
+
+msgid ""
+"[:doc:`/reference/commands/load`] Supported ``--output_ids yes`` parameter "
+"for command version 3 or later.  If \"--output_ids yes\" is specified, "
+"loaded record IDs(``loaded_ids``) are also returned. ID is 0 for record that "
+"is failed to add."
+msgstr ""
+"[:doc:`/reference/commands/load`] コマンドバージョンが3以降の場合に、 ``--"
+"output_ids yes`` パラメータを指定できるようにしました。もし \"--output_ids "
+"yes\" が指定されていたら、ロードできたID(``loaded_ids``)が返却されます。IDが0"
+"ならロードに失敗したことを意味します。"
+
+msgid ""
+"[:doc:`/install/others`] Added install instruction about depended packages "
+"(Zstandard, LZ4)"
+msgstr ""
+"[:doc:`/install/others`] 依存するパッケージ(Zstandard, LZ4)に関してインストー"
+"ル手順を追加しました。"
+
+msgid "Changed to use Onigmo 6.0 as regular expression library."
+msgstr "正規表現ライブラリーとしてOnigumo 6.0を使うようにしました。"
+
+msgid "Marked some features as stable."
+msgstr "実験的扱いだったいくつかの機能を正式版として今後扱うことにしました。"
+
+msgid "[:doc:`/reference/executables/grndb`] command."
+msgstr "[:doc:`/reference/executables/grndb`] コマンド"
+
+msgid "[:doc:`/reference/commands/request_cancel`] command."
+msgstr ":doc:`/reference/commands/request_cancel` コマンド"
+
+msgid "[:doc:`/reference/functions/highlight_html`] function."
+msgstr "[:doc:`/reference/functions/highlight_html`] 関数"
+
+msgid "[:doc:`/reference/functions/highlight_full`] function."
+msgstr "[:doc:`/reference/functions/highlight_full`] 関数"
+
+msgid "[:doc:`/reference/functions/snippet_html`] function."
+msgstr "[:doc:`/reference/functions/snippet_html`] 関数"
+
+msgid "[httpd] Updated bundled nginx to 1.11.8."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.11.8に更新しました。"
+
+msgid ""
+"Improved to reduce ``AND`` search response time. [GitHub#618,#619,#620] "
+"[Patch by Naoya Murakami]"
+msgstr ""
+"``AND`` 検索時の応答時間を改善しました。[GitHub#618,#619,#620] [村上さんが"
+"パッチ提供]"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"Added missing ``NULL`` check about return value of ``grn_ctx_at``. This fix "
+"prevents from unexpected crash bug."
+msgstr ""
+"``grn_ctx_at`` の返り値の ``NULL`` チェックが抜けているのを修正しました。この"
+"修正により意図しないクラッシュを回避できるようになります。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Naoya Murakami"
+msgstr "村上さん"
+
+msgid "Release 6.1.1 - 2016-11-29"
+msgstr "6.1.1リリース - 2016-11-29"
 
 msgid ""
 "[:doc:`/reference/commands/select`] Supported the following functions in "
@@ -90,9 +181,6 @@ msgstr ""
 
 msgid "[httpd] Updated bundled nginx to 1.11.6.."
 msgstr "[httpd] バンドルしているnginxのバージョンを1.11.6に更新しました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid ""
 "Fixed a bug that needless index check reports error wrongly when the default "
@@ -215,14 +303,8 @@ msgstr ""
 "``output_columns`` に指定したときに無視されずにシンタックスエラーとなる不具合"
 "を修正しました。"
 
-msgid "Thanks"
-msgstr "感謝"
-
 msgid "torinky"
 msgstr "torinkyさん"
-
-msgid "Naoya Murakami"
-msgstr "村上さん"
 
 msgid "Release 6.0.9 - 2016-09-29"
 msgstr "6.0.9リリース - 2016-09-29"
