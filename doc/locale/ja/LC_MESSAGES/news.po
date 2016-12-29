@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-12-29 17:04+0900\n"
+"PO-Revision-Date: 2016-12-29 17:10+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -74,20 +74,20 @@ msgstr "正規表現ライブラリーとしてOnigumo 6.0を使うようにし�
 msgid "Marked some features as stable."
 msgstr "実験的扱いだったいくつかの機能を正式版として今後扱うことにしました。"
 
-msgid "[:doc:`/reference/executables/grndb`] command."
-msgstr "[:doc:`/reference/executables/grndb`] コマンド"
+msgid ":doc:`/reference/executables/grndb` command."
+msgstr ":doc:`/reference/executables/grndb` コマンド"
 
-msgid "[:doc:`/reference/commands/request_cancel`] command."
+msgid ":doc:`/reference/commands/request_cancel` command."
 msgstr ":doc:`/reference/commands/request_cancel` コマンド"
 
-msgid "[:doc:`/reference/functions/highlight_html`] function."
-msgstr "[:doc:`/reference/functions/highlight_html`] 関数"
+msgid ":doc:`/reference/functions/highlight_html` function."
+msgstr ":doc:`/reference/functions/highlight_html` 関数"
 
-msgid "[:doc:`/reference/functions/highlight_full`] function."
-msgstr "[:doc:`/reference/functions/highlight_full`] 関数"
+msgid ":doc:`/reference/functions/highlight_full` function."
+msgstr ":doc:`/reference/functions/highlight_full` 関数"
 
-msgid "[:doc:`/reference/functions/snippet_html`] function."
-msgstr "[:doc:`/reference/functions/snippet_html`] 関数"
+msgid ":doc:`/reference/functions/snippet_html` function."
+msgstr ":doc:`/reference/functions/snippet_html` 関数"
 
 msgid "[httpd] Updated bundled nginx to 1.11.8."
 msgstr "[httpd] バンドルしているnginxのバージョンを1.11.8に更新しました。"
