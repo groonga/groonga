@@ -7,6 +7,60 @@
 News
 ====
 
+.. _release-6-1-2:
+
+Release 6.1.2 - 2016-12-31
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* windows: Supported to bundle groonga-normalizer-mysql.
+
+* [:doc:`/reference/log`] Added description about log format with
+  ``PID`` case.
+
+* [:doc:`/install/centos`] Improved install procedure about recent
+  ``groonga-release`` package.
+
+* [:doc:`/reference/commands/load`] Supported to show
+  ``{"n_loaded_records": N}`` in response for command version 3 or
+  later.
+
+* [:doc:`/reference/commands/load`] Supported ``--output_ids yes``
+  parameter for command version 3 or later.  If "--output_ids yes" is
+  specified, loaded record IDs(``loaded_ids``) are also returned. ID
+  is 0 for record that is failed to add.
+
+* [:doc:`/install/others`] Added install instruction about
+  depended packages (Zstandard, LZ4)
+
+* Changed to use Onigmo 6.0 as regular expression library.
+
+* Marked some features as stable.
+
+  * [:doc:`/reference/executables/grndb`] command.
+  * [:doc:`/reference/commands/request_cancel`] command.
+  * [:doc:`/reference/functions/highlight_html`] function.
+  * [:doc:`/reference/functions/highlight_full`] function.
+  * [:doc:`/reference/functions/snippet_html`] function.
+
+* [httpd] Updated bundled nginx to 1.11.8.
+
+* Improved to reduce ``AND`` search response time.
+  [GitHub#618,#619,#620] [Patch by Naoya Murakami]
+
+Fixes
+^^^^^
+
+* Added missing ``NULL`` check about return value of
+  ``grn_ctx_at``. This fix prevents from unexpected crash bug.
+
+Thanks
+^^^^^^
+
+* Naoya Murakami
+
 .. _release-6-1-1:
 
 Release 6.1.1 - 2016-11-29
