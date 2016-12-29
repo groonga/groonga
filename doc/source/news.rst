@@ -28,7 +28,7 @@ Improvements
   later.
 
 * [:doc:`/reference/commands/load`] Supported ``--output_ids yes``
-  parameter for command version 3 or later.  If "--output_ids yes" is
+  parameter for command version 3 or later.  If ``--output_ids yes`` is
   specified, loaded record IDs(``loaded_ids``) are also returned. ID
   is 0 for record that is failed to add.
 
