@@ -39,6 +39,7 @@ struct _grn_ii {
                          /* This member is used for matching */
   uint32_t n_elements;   /* Number of elements in postings */
                          /* rid, [sid], tf, [weight] and [pos] */
+  grn_id next_buffer_candidate_tid;
   struct grn_ii_header *header;
 };
 
