@@ -39,11 +39,11 @@ Improvements
 
 * Marked some features as stable.
 
-  * [:doc:`/reference/executables/grndb`] command.
-  * [:doc:`/reference/commands/request_cancel`] command.
-  * [:doc:`/reference/functions/highlight_html`] function.
-  * [:doc:`/reference/functions/highlight_full`] function.
-  * [:doc:`/reference/functions/snippet_html`] function.
+  * :doc:`/reference/executables/grndb` command.
+  * :doc:`/reference/commands/request_cancel` command.
+  * :doc:`/reference/functions/highlight_html` function.
+  * :doc:`/reference/functions/highlight_full` function.
+  * :doc:`/reference/functions/snippet_html` function.
 
 * [httpd] Updated bundled nginx to 1.11.8.
 
