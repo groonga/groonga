@@ -20,8 +20,8 @@ Improvements
 * [:doc:`/reference/log`] Added description about log format with
   ``PID`` case.
 
-* [:doc:`/install/centos`] Improved install procedure about recent
-  ``groonga-release`` package.
+* [:doc:`/install/centos`] Improved installation procedure about
+  recent ``groonga-release`` package.
 
 * [:doc:`/reference/commands/load`] Supported to show
   ``{"n_loaded_records": N}`` in response for command version 3 or
@@ -32,7 +32,7 @@ Improvements
   specified, loaded record IDs(``loaded_ids``) are also returned. ID
   is 0 for record that is failed to add.
 
-* [:doc:`/install/others`] Added install instruction about
+* [:doc:`/install/others`] Added installation instruction about
   depended packages (Zstandard, LZ4)
 
 * Changed to use Onigmo 6.0 as regular expression library.
