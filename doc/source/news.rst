@@ -50,6 +50,10 @@ Improvements
 * Improved to reduce ``AND`` search response time.
   [GitHub#618,#619,#620] [Patch by Naoya Murakami]
 
+* Improved performance of updating inverted indexes in the worst case.
+  This fix also reduces memory usage in that
+  process. [groonga-dev,04219] [Reported by Masanori Miyashita]
+
 Fixes
 ^^^^^
 
@@ -60,6 +64,7 @@ Thanks
 ^^^^^^
 
 * Naoya Murakami
+* Masanori Miyashita
 
 .. _release-6-1-1:
 
