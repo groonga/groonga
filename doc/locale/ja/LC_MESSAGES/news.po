@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-12-29 18:36+0900\n"
+"PO-Revision-Date: 2016-12-31 02:35+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -99,6 +99,14 @@ msgstr ""
 "``AND`` 検索時の応答時間を改善しました。[GitHub#618,#619,#620] [村上さんが"
 "パッチ提供]"
 
+msgid ""
+"Improved performance of updating inverted indexes in the worst case. This "
+"fix also reduces memory usage in that process. [groonga-dev,04219] [Reported "
+"by Masanori Miyashita]"
+msgstr ""
+"転置インデックスの更新が遅くなるケースを改善しました。この修正でメモリ使用量"
+"も削減されます。 [groonga-dev,04219] [宮下さんが報告]"
+
 msgid "Fixes"
 msgstr "修正"
 
@@ -114,6 +122,9 @@ msgstr "感謝"
 
 msgid "Naoya Murakami"
 msgstr "村上さん"
+
+msgid "Masanori Miyashita"
+msgstr ""
 
 msgid "Release 6.1.1 - 2016-11-29"
 msgstr "6.1.1リリース - 2016-11-29"
