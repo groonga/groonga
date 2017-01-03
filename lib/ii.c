@@ -3973,9 +3973,10 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
   grn_id tid;
   uint16_t offset;
   char key[GRN_TABLE_MAX_KEY_SIZE];
+  // unsigned int key_size;
+  // const char *key = _grn_table_key(ctx, ii->lexicon, id, &key_size);
   int key_size = grn_table_get_key(ctx, ii->lexicon, id, key,
                                    GRN_TABLE_MAX_KEY_SIZE);
-  int key_size_for_retry = key_size * 8;
   uint32_t *a, lseg = NOT_ASSIGNED, pseg = NOT_ASSIGNED;
   grn_table_cursor *tc = NULL;
   if (S_SEGMENT - sizeof(buffer_header) < size + sizeof(buffer_term)) {
@@ -3988,62 +3989,56 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
          (size_t)(S_SEGMENT - sizeof(buffer_header)));
     return NOT_ASSIGNED;
   }
-  while (lseg == NOT_ASSIGNED && key_size_for_retry) {
-    if (ii->lexicon->header.type == GRN_TABLE_PAT_KEY) {
-      if (ii->lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-        tc = grn_table_cursor_open(ctx, ii->lexicon, key, key_size_for_retry,
-                                   NULL, 0, 0, -1,
-                                   GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT);
-        key_size_for_retry--;
-      } else {
-        tc = grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, key, key_size, 0, -1,
-                                   GRN_CURSOR_PREFIX);
-        key_size_for_retry = 0;
-      }
+  if (ii->lexicon->header.type == GRN_TABLE_PAT_KEY) {
+    if (ii->lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+      tc = grn_table_cursor_open(ctx, ii->lexicon, key, key_size, NULL, 0, 0, -1,
+                                 GRN_CURSOR_ASCENDING|GRN_CURSOR_GT);
     } else {
-      tc = grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, NULL, 0, 0, -1,
-                                 GRN_CURSOR_ASCENDING);
-      key_size_for_retry = 0;
+      tc = grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, key, key_size, 0, -1,
+                                 GRN_CURSOR_PREFIX);
     }
-    if (tc) {
-      while (ctx->rc == GRN_SUCCESS &&
-            lseg == NOT_ASSIGNED &&
-            (tid = grn_table_cursor_next(ctx, tc))) {
-        if ((a = array_at(ctx, ii, tid))) {
-          for (;;) {
-            uint32_t pos = a[0];
-            if (!pos || (pos & 1)) { break; }
-            pseg = buffer_open(ctx, ii, pos, NULL, &b);
-            if (pseg == NOT_ASSIGNED) { break; }
-            if (b->header.buffer_free >= size + sizeof(buffer_term)) {
-              lseg = LSEG(pos);
+  } else {
+    tc = grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, NULL, 0, 0, -1,
+                               GRN_CURSOR_ASCENDING);
+  }
+  if (tc) {
+    while (ctx->rc == GRN_SUCCESS &&
+           lseg == NOT_ASSIGNED &&
+           (tid = grn_table_cursor_next(ctx, tc))) {
+      if ((a = array_at(ctx, ii, tid))) {
+        for (;;) {
+          uint32_t pos = a[0];
+          if (!pos || (pos & 1)) { break; }
+          pseg = buffer_open(ctx, ii, pos, NULL, &b);
+          if (pseg == NOT_ASSIGNED) { break; }
+          if (b->header.buffer_free >= size + sizeof(buffer_term)) {
+            lseg = LSEG(pos);
+            break;
+          }
+          buffer_close(ctx, ii, pseg);
+          if (SPLIT_COND) {
+            /* ((S_SEGMENT - sizeof(buffer_header) + ii->header->bmax -
+               b->header.nterms * sizeof(buffer_term)) * 4 <
+               b->header.chunk_size) */
+            GRN_LOG(ctx, GRN_LOG_DEBUG,
+                    "nterms=%d chunk=%d total=%" GRN_FMT_INT64U,
+                    b->header.nterms,
+                    b->header.chunk_size,
+                    ii->header->total_chunk_size >> 10);
+            if (buffer_split(ctx, ii, LSEG(pos), h)) { break; }
+          } else {
+            if (S_SEGMENT - sizeof(buffer_header)
+                - b->header.nterms * sizeof(buffer_term)
+                < size + sizeof(buffer_term)) {
               break;
             }
-            buffer_close(ctx, ii, pseg);
-            if (SPLIT_COND) {
-              /* ((S_SEGMENT - sizeof(buffer_header) + ii->header->bmax -
-                b->header.nterms * sizeof(buffer_term)) * 4 <
-                b->header.chunk_size) */
-              GRN_LOG(ctx, GRN_LOG_DEBUG,
-                      "nterms=%d chunk=%d total=%" GRN_FMT_INT64U,
-                      b->header.nterms,
-                      b->header.chunk_size,
-                      ii->header->total_chunk_size >> 10);
-              if (buffer_split(ctx, ii, LSEG(pos), h)) { break; }
-            } else {
-              if (S_SEGMENT - sizeof(buffer_header)
-                  - b->header.nterms * sizeof(buffer_term)
-                  < size + sizeof(buffer_term)) {
-                break;
-              }
-              if (buffer_flush(ctx, ii, LSEG(pos), h)) { break; }
-            }
+            if (buffer_flush(ctx, ii, LSEG(pos), h)) { break; }
           }
-          array_unref(ii, tid);
         }
+        array_unref(ii, tid);
       }
-      grn_table_cursor_close(ctx, tc);
     }
+    grn_table_cursor_close(ctx, tc);
   }
   if (lseg == NOT_ASSIGNED) {
     if (buffer_segment_new(ctx, ii, &lseg) ||
