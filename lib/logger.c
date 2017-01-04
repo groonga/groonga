@@ -218,14 +218,16 @@ static grn_logger default_logger = {
   default_logger_fin
 };
 
-static grn_logger current_logger = {
-  GRN_LOG_DEFAULT_LEVEL,
-  GRN_LOG_TIME|GRN_LOG_MESSAGE,
-  NULL,
-  NULL,
-  NULL,
-  NULL
-};
+#define INITIAL_LOGGER {                        \
+  GRN_LOG_DEFAULT_LEVEL,                        \
+  GRN_LOG_TIME|GRN_LOG_MESSAGE,                 \
+  NULL,                                         \
+  NULL,                                         \
+  NULL,                                         \
+  NULL                                          \
+}
+
+static grn_logger current_logger = INITIAL_LOGGER;
 
 void
 grn_default_logger_set_max_level(grn_log_level max_level)
@@ -302,6 +304,10 @@ current_logger_fin(grn_ctx *ctx)
 {
   if (current_logger.fin) {
     current_logger.fin(ctx, current_logger.user_data);
+  }
+  {
+    grn_logger initial_logger = INITIAL_LOGGER;
+    current_logger = initial_logger;
   }
 }
 
@@ -529,13 +535,15 @@ static grn_query_logger default_query_logger = {
   default_query_logger_fin
 };
 
-static grn_query_logger current_query_logger = {
-  GRN_QUERY_LOG_DEFAULT,
-  NULL,
-  NULL,
-  NULL,
-  NULL
-};
+#define INITIAL_QUERY_LOGGER {                  \
+  GRN_QUERY_LOG_DEFAULT,                        \
+  NULL,                                         \
+  NULL,                                         \
+  NULL,                                         \
+  NULL                                          \
+}
+
+static grn_query_logger current_query_logger = INITIAL_QUERY_LOGGER;
 
 void
 grn_default_query_logger_set_flags(unsigned int flags)
@@ -597,6 +605,10 @@ current_query_logger_fin(grn_ctx *ctx)
 {
   if (current_query_logger.fin) {
     current_query_logger.fin(ctx, current_query_logger.user_data);
+  }
+  {
+    grn_query_logger initial_query_logger = INITIAL_QUERY_LOGGER;
+    current_query_logger = initial_query_logger;
   }
 }
 
