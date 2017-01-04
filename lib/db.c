@@ -14780,8 +14780,11 @@ grn_db_recover(grn_ctx *ctx, grn_obj *db)
 {
   grn_table_cursor *cursor;
   grn_id id;
+  grn_bool is_close_opened_object_mode;
 
   GRN_API_ENTER;
+
+  is_close_opened_object_mode = (grn_thread_get_limit() == 1);
 
   grn_db_recover_database(ctx, db);
   if (ctx->rc != GRN_SUCCESS) {
@@ -14798,6 +14801,10 @@ grn_db_recover(grn_ctx *ctx, grn_obj *db)
 
   while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
     grn_obj *object;
+
+    if (is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
 
     if ((object = grn_ctx_at(ctx, id))) {
       switch (object->header.type) {
@@ -14822,6 +14829,10 @@ grn_db_recover(grn_ctx *ctx, grn_obj *db)
       if (grn_db_recover_is_builtin(ctx, id, cursor)) {
         ERRCLR(ctx);
       }
+    }
+
+    if (is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
     }
 
     if (ctx->rc != GRN_SUCCESS) {
