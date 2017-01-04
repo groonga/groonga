@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2015 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -431,7 +431,7 @@ grn_logger_init(void)
 {
   CRITICAL_SECTION_INIT(default_logger_lock);
   if (!current_logger.log) {
-    grn_memcpy(&current_logger, &default_logger, sizeof(grn_logger));
+    current_logger = default_logger;
   }
 }
 
@@ -675,8 +675,7 @@ grn_query_logger_put(grn_ctx *ctx, unsigned int flag, const char *mark,
 void
 grn_query_logger_init(void)
 {
-  grn_memcpy(&current_query_logger,
-             &default_query_logger, sizeof(grn_query_logger));
+  current_query_logger = default_query_logger;
   CRITICAL_SECTION_INIT(default_query_logger_lock);
 }
 
