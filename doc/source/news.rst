@@ -7,6 +7,23 @@
 News
 ====
 
+.. _release-6-1-3:
+
+Release 6.1.3 - 2017-01-05
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:c:func:`grn_db_recover()`][:doc:`/reference/executables/grndb`] Reduced memory usage when only 1 thread mode.
+
+Fixes
+^^^^^
+
+* Reverted "Improved performance of updating inverted indexes in the worst case".
+  It had reported error when key has multibyte character.
+  This change was included in 6.1.2.
+
 .. _release-6-1-2:
 
 Release 6.1.2 - 2016-12-31
