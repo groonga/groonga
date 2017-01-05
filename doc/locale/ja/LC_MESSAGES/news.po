@@ -21,9 +21,8 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-#, fuzzy
 msgid "Release 6.1.3 - 2017-01-05"
-msgstr "4.1.0リリース - 2015-01-09"
+msgstr "6.1.3リリース - 2017-01-05"
 
 msgid "Improvements"
 msgstr "改良"
@@ -32,6 +31,8 @@ msgid ""
 "[:c:func:`grn_db_recover()`][:doc:`/reference/executables/grndb`] Reduced "
 "memory usage when only 1 thread mode."
 msgstr ""
+"[:c:func:`grn_db_recover()`][:doc:`/reference/executables/grndb`] シングルス"
+"レッドモードのメモリ使用量を減らしました。"
 
 msgid "Fixes"
 msgstr "修正"
@@ -41,6 +42,8 @@ msgid ""
 "case\". It had reported error when key has multibyte character. This change "
 "was included in 6.1.2."
 msgstr ""
+"Groonga 6.1.2で入った、転置インデックスの更新が遅くなるケースの改善を元に戻"
+"しました。キーがマルチバイト文字を含む場合にエラーになっていたためです。"
 
 msgid "Release 6.1.2 - 2016-12-31"
 msgstr "6.1.2リリース - 2016-12-31"
