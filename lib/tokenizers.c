@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2015 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -603,6 +603,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (is_begin &&
         char_len == GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN &&
         memcmp(current, GRN_TOKENIZER_BEGIN_MARK_UTF8, char_len) == 0) {
+      tokenizer->is_start_token = GRN_TRUE;
       n_characters++;
       GRN_TEXT_PUT(ctx, buffer, current, char_len);
       current += char_len;
