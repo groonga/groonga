@@ -1,0 +1,5 @@
+table_create Lexicon TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenRegexp
+table_tokenize Lexicon "x" --mode ADD
+
+table_tokenize Lexicon "￯x￰" --mode GET
