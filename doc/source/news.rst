@@ -9,7 +9,7 @@ News
 
 .. _release-6-1-3:
 
-Release 6.1.3 - 2017-01-05
+Release 6.1.3 - 2017-01-06
 --------------------------
 
 Improvements
@@ -23,6 +23,9 @@ Fixes
 * Reverted "Improved performance of updating inverted indexes in the worst case".
   It had reported error when key has multibyte character.
   This change was included in 6.1.2.
+
+* [:ref:`token-regexp`] Fixed a bug that `\\A${ONE_CHARACTER}\\z`
+  returns all one character values.
 
 .. _release-6-1-2:
 
