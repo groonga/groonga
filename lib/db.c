@@ -10013,6 +10013,9 @@ grn_column_rename(grn_ctx *ctx, grn_obj *column, const char *name, unsigned int 
     grn_memcpy(fullname + len + 1, name, name_size);
     name_size += len + 1;
     rc = grn_obj_rename(ctx, column, fullname, name_size);
+    if (rc == GRN_SUCCESS) {
+      grn_obj_touch(ctx, column, NULL);
+    }
   }
 exit :
   GRN_API_RETURN(rc);
