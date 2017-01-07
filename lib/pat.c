@@ -709,6 +709,7 @@ grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
     pat->header->truncated = GRN_TRUE;
   }
   if ((rc = grn_io_close(ctx, pat->io))) { goto exit; }
+  grn_pvector_fin(ctx, &pat->token_filters);
   pat->io = NULL;
   if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
   if (!_grn_pat_create(ctx, pat, path, key_size, value_size, flags)) {

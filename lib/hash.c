@@ -2156,6 +2156,7 @@ grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
         rc = grn_io_remove(ctx, path);
       }
     }
+    GRN_OBJ_FIN(ctx, &(hash->token_filters));
   }
   if (!rc) {
     rc = grn_hash_init(ctx, hash, path, key_size, value_size, flags);
