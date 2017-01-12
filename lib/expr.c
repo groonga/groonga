@@ -7806,8 +7806,20 @@ parse_script(grn_ctx *ctx, efs_info *q)
     case '*' :
       switch (q->cur[1]) {
       case 'N' :
-        PARSE(GRN_EXPR_TOKEN_NEAR);
-        q->cur += 2;
+        {
+          const char *next_start = q->cur + 2;
+          const char *end;
+          int max_interval;
+          max_interval = grn_atoi(next_start, q->str_end, &end);
+          if (end == next_start) {
+            max_interval = DEFAULT_MAX_INTERVAL;
+          } else {
+            next_start = end;
+          }
+          GRN_INT32_PUT(ctx, &q->max_interval_stack, max_interval);
+          PARSE(GRN_EXPR_TOKEN_NEAR);
+          q->cur = next_start;
+        }
         break;
       case 'S' :
         PARSE(GRN_EXPR_TOKEN_SIMILAR);
