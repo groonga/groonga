@@ -7975,7 +7975,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                 rc = ctx->rc;
                 goto exit;
               }
-              if (max - min <= max_interval) {
+              if ((max_interval < 0) || (max - min <= max_interval)) {
                 if (rep) { pi.pos = min; res_add(ctx, s, &pi, weight, op); }
                 noccur++;
                 if (ti->pos == max + 1) {
