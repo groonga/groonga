@@ -6874,6 +6874,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
           grn_table_setoperation(ctx, res_, res, res_, si->logical_op);
           grn_obj_close(ctx, res);
           res = res_;
+          min = GRN_ID_NIL;
         } else {
           grn_bool processed = GRN_FALSE;
           if (si->flags & SCAN_PUSH) {
@@ -6885,6 +6886,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
             }
             GRN_PTR_PUT(ctx, &res_stack, res);
             res = res_;
+            min = GRN_ID_NIL;
           }
           if (si->logical_op != GRN_OP_AND) {
             min = GRN_ID_NIL;
@@ -6896,6 +6898,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
             e->codes_curr = si->end - si->start + 1;
             grn_table_select_sequential(ctx, table, (grn_obj *)e, v,
                                         res, si->logical_op);
+            min = GRN_ID_NIL;
           }
         }
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
