@@ -5575,6 +5575,17 @@ grn_obj_get_accessor_rset_value(grn_ctx *ctx, grn_obj *obj,
     (*rp)->obj = obj;
 
     switch (action) {
+#define CHECK_GROUP_CALC_FLAG(flag) do {   \
+      if (GRN_TABLE_IS_GROUPED(obj)) {     \
+        grn_table_group_flags flags;       \
+        flags = DB_OBJ(obj)->flags.group;  \
+        if (flags & flag) {                \
+          succeeded = GRN_TRUE;            \
+          (*rp)->action = action;          \
+          goto exit;                       \
+        }                                  \
+      }                                    \
+    } while(GRN_FALSE)
     case GRN_ACCESSOR_GET_SCORE :
       if (DB_OBJ(obj)->header.flags & GRN_OBJ_WITH_SUBREC) {
         (*rp)->action = action;
@@ -5583,9 +5594,17 @@ grn_obj_get_accessor_rset_value(grn_ctx *ctx, grn_obj *obj,
       }
       break;
     case GRN_ACCESSOR_GET_MAX :
+      CHECK_GROUP_CALC_FLAG(GRN_TABLE_GROUP_CALC_MAX);
+      break;
     case GRN_ACCESSOR_GET_MIN :
+      CHECK_GROUP_CALC_FLAG(GRN_TABLE_GROUP_CALC_MIN);
+      break;
     case GRN_ACCESSOR_GET_SUM :
+      CHECK_GROUP_CALC_FLAG(GRN_TABLE_GROUP_CALC_SUM);
+      break;
     case GRN_ACCESSOR_GET_AVG :
+      CHECK_GROUP_CALC_FLAG(GRN_TABLE_GROUP_CALC_AVG);
+      break;
     case GRN_ACCESSOR_GET_NSUBRECS :
       if (GRN_TABLE_IS_GROUPED(obj)) {
         (*rp)->action = action;
@@ -5614,6 +5633,7 @@ grn_obj_get_accessor_rset_value(grn_ctx *ctx, grn_obj *obj,
     if (!(obj = grn_ctx_at(ctx, obj->header.domain))) {
       goto exit;
     }
+#undef CHECK_GROUP_CALC_FLAG
   }
 
 exit :
