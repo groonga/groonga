@@ -1939,7 +1939,9 @@ grn_select_output_slices(grn_ctx *ctx,
                                               slice->sort_keys.value,
                                               slice->sort_keys.length,
                                               slice->table, &n_sort_keys);
-      if (sort_keys) {
+      if (!sort_keys) {
+        GRN_PLUGIN_CLEAR_ERROR(ctx);
+      } else {
         grn_obj *sorted;
         sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
                                   NULL, slice->table);
@@ -2524,7 +2526,9 @@ grn_select_output_drilldowns(grn_ctx *ctx,
                                               drilldown->sort_keys.value,
                                               drilldown->sort_keys.length,
                                               target_table, &n_sort_keys);
-      if (sort_keys) {
+      if (!sort_keys) {
+        GRN_PLUGIN_CLEAR_ERROR(ctx);
+      } else {
         grn_obj *sorted;
         sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
                                   NULL, target_table);
