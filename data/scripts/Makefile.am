@@ -1,1 +1,3 @@
-dist_sbin_SCRIPTS = groonga-httpd-restart
+if WITH_GROONGA_HTTPD
+sbin_SCRIPTS = groonga-httpd-restart
+endif
