@@ -2511,8 +2511,6 @@ grn_select_output_drilldowns(grn_ctx *ctx,
       target_table = result->table;
     }
 
-    data->output.formatter->drilldown_label(ctx, data, drilldown);
-
     n_hits = grn_table_size(ctx, target_table);
 
     offset = drilldown->offset;
@@ -2533,6 +2531,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
         if (sorted) {
           grn_table_sort(ctx, target_table, offset, limit,
                          sorted, sort_keys, n_sort_keys);
+          data->output.formatter->drilldown_label(ctx, data, drilldown);
           if (!grn_proc_select_output_columns(ctx,
                                               sorted,
                                               n_hits,
@@ -2548,6 +2547,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
         grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
       }
     } else {
+      data->output.formatter->drilldown_label(ctx, data, drilldown);
       if (!grn_proc_select_output_columns(ctx,
                                           target_table,
                                           n_hits,
