@@ -384,7 +384,7 @@ msgstr "`LZ4 <https://lz4.github.io/lz4/>`_ （カラム値の圧縮用）"
 
 msgid ""
 "`Zstandard <https://facebook.github.io/zstd/>`_ for compressing column value"
-msgstr "Zstandard <https://facebook.github.io/zstd/>`_ （カラム値の圧縮用）"
+msgstr "`Zstandard <https://facebook.github.io/zstd/>`_ （カラム値の圧縮用）"
 
 msgid ""
 "If you want to use those all or some libraries, you need to install them "
