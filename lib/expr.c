@@ -6740,7 +6740,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           }
         }
         if (min) {
-          if (!((si->logical_op == GRN_OP_AND) || 
+          if (!((si->logical_op == GRN_OP_AND) ||
                 (si->logical_op == GRN_OP_OR && previous_n_hits == 0))) {
             *min = GRN_ID_NIL;
           }
