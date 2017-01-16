@@ -14,4 +14,4 @@ load --table Memos
 
 select Memos \
   --match_columns 'content' \
-  --query 'today OR tomorrow day'
+  --query '(today OR tomorrow) day'
