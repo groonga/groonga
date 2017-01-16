@@ -4016,15 +4016,88 @@ buffer_new_find_segment(grn_ctx *ctx,
   array_unref(ii, tid);
 }
 
+inline static void
+buffer_new_lexicon_pat(grn_ctx *ctx,
+                       grn_ii *ii,
+                       int size,
+                       grn_id id,
+                       grn_hash *h,
+                       buffer **b,
+                       uint32_t *lseg,
+                       uint32_t *pseg)
+{
+  grn_pat_cursor *cursor;
+  char key[GRN_TABLE_MAX_KEY_SIZE];
+  int key_size;
+
+  key_size = grn_table_get_key(ctx, ii->lexicon, id, key,
+                               GRN_TABLE_MAX_KEY_SIZE);
+  if (ii->lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+    int target_key_size = key_size;
+
+    while (*lseg == NOT_ASSIGNED && target_key_size > 0) {
+      grn_id tid;
+
+      cursor = grn_pat_cursor_open(ctx,
+                                   (grn_pat *)(ii->lexicon),
+                                   key, target_key_size,
+                                   NULL, 0, 0, -1,
+                                   GRN_CURSOR_PREFIX);
+      target_key_size--;
+      if (!cursor) {
+        break;
+      }
+
+      while (ctx->rc == GRN_SUCCESS &&
+             *lseg == NOT_ASSIGNED &&
+             (tid = grn_pat_cursor_next(ctx, cursor))) {
+        buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
+      }
+      grn_pat_cursor_close(ctx, cursor);
+    }
+  } else {
+    cursor = grn_pat_cursor_open(ctx,
+                                 (grn_pat *)(ii->lexicon),
+                                 NULL, 0, key, key_size, 0, -1,
+                                 GRN_CURSOR_PREFIX);
+    if (cursor) {
+      grn_id tid;
+      while (ctx->rc == GRN_SUCCESS &&
+             *lseg == NOT_ASSIGNED &&
+             (tid = grn_pat_cursor_next(ctx, cursor))) {
+        buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
+      }
+      grn_pat_cursor_close(ctx, cursor);
+    }
+  }
+}
+
+inline static void
+buffer_new_lexicon_other(grn_ctx *ctx,
+                         grn_ii *ii,
+                         int size,
+                         grn_id id,
+                         grn_hash *h,
+                         buffer **b,
+                         uint32_t *lseg,
+                         uint32_t *pseg)
+{
+  GRN_TABLE_EACH_BEGIN(ctx, ii->lexicon, cursor, tid) {
+    if (ctx->rc != GRN_SUCCESS || *lseg != NOT_ASSIGNED) {
+      break;
+    }
+    buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
+  } GRN_TABLE_EACH_END(ctx, cursor);
+}
+
+
 inline static uint32_t
 buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
            buffer_term **bt, buffer_rec **br, buffer **bp, grn_id id, grn_hash *h)
 {
   buffer *b = NULL;
-  grn_id tid;
   uint16_t offset;
   uint32_t lseg = NOT_ASSIGNED, pseg = NOT_ASSIGNED;
-  grn_table_cursor *tc = NULL;
   if (S_SEGMENT - sizeof(buffer_header) < size + sizeof(buffer_term)) {
     DEFINE_NAME(ii);
     MERR("[ii][buffer][new] requested size is too large: "
@@ -4036,27 +4109,9 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
     return NOT_ASSIGNED;
   }
   if (ii->lexicon->header.type == GRN_TABLE_PAT_KEY) {
-    char key[GRN_TABLE_MAX_KEY_SIZE];
-    int key_size = grn_table_get_key(ctx, ii->lexicon, id, key,
-                                     GRN_TABLE_MAX_KEY_SIZE);
-    if (ii->lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-      tc = grn_table_cursor_open(ctx, ii->lexicon, key, key_size, NULL, 0, 0, -1,
-                                 GRN_CURSOR_ASCENDING|GRN_CURSOR_GT);
-    } else {
-      tc = grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, key, key_size, 0, -1,
-                                 GRN_CURSOR_PREFIX);
-    }
+    buffer_new_lexicon_pat(ctx, ii, size, id, h, &b, &lseg, &pseg);
   } else {
-    tc = grn_table_cursor_open(ctx, ii->lexicon, NULL, 0, NULL, 0, 0, -1,
-                               GRN_CURSOR_ASCENDING);
-  }
-  if (tc) {
-    while (ctx->rc == GRN_SUCCESS &&
-           lseg == NOT_ASSIGNED &&
-           (tid = grn_table_cursor_next(ctx, tc))) {
-      buffer_new_find_segment(ctx, ii, size, tid, h, &b, &lseg, &pseg);
-    }
-    grn_table_cursor_close(ctx, tc);
+    buffer_new_lexicon_other(ctx, ii, size, id, h, &b, &lseg, &pseg);
   }
   if (lseg == NOT_ASSIGNED) {
     if (buffer_segment_new(ctx, ii, &lseg) ||
