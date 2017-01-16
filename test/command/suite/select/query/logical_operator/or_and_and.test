@@ -1,0 +1,17 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_HASH_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms index COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"content": "Today is a good day."},
+{"content": "Tomorrow will be a good day."}
+]
+
+select Memos \
+  --match_columns 'content' \
+  --query 'today OR tomorrow day'
