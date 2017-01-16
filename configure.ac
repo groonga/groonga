@@ -1570,16 +1570,40 @@ AC_ARG_ENABLE(shared-onigmo,
   [enable_shared_onigmo="no"])
 AM_CONDITIONAL(WITH_SHARED_ONIGMO, test "$enable_shared_onigmo" = "yes")
 
-# TODO: Support using system Onigmo instead of bundled Onigmo.
-AC_DEFINE(GRN_WITH_ONIGMO, [1], [Use Onigmo.])
-GRN_WITH_ONIGMO="yes"
+AC_ARG_WITH(onigmo,
+  [AS_HELP_STRING([--without-onigmo],
+    [Don't Use Onigmo. [default=bundled]])],
+  [with_onigmo="$withval"],
+  [with_onigmo="bundled"])
+if test "x$with_onigmo" != "xno"; then
+  GRN_WITH_ONIGMO="yes"
+  if test "x$with_onigmo" != "xbundled"; then
+    m4_ifdef([PKG_CHECK_MODULES], [
+      PKG_CHECK_MODULES([ONIGMO], [onigmo],
+        [_PKG_CONFIG(ONIGMO_LIBS_ONLY_L, [libs-only-L], [onigmo])
+         ONIGMO_LIBS_ONLY_L="$pkg_cv_ONIGMO_LIBS_ONLY_L"
+         have_onigmo=yes],
+        [have_onigmo=no])
+      ],
+      [have_onigmo=no])
+  fi
+  if test "x$with_onigmo" = "xsystem" -a "$have_onigmo" = "no"; then
+    AC_MSG_ERROR("No Onigmo found")
+  fi
+  if test "x$with_onigmo" = "xbundled" -o "$have_onigmo" = "no"; then
+    AC_CONFIG_SUBDIRS([vendor/onigmo])
+    ONIGMO_CFLAGS="-I\$(top_srcdir)/vendor/onigmo-source"
+    ONIGMO_LIBS="\$(top_builddir)/vendor/onigmo-source/libonigmo.la"
+    ONIGMO_LIBS_ONLY_L="-L\$(top_builddir)/vendor/onigmo-source"
+  fi
+  AC_DEFINE(GRN_WITH_ONIGMO, [1], [Use Onigmo.])
+else
+  GRN_WITH_ONIGMO="no"
+fi
 AC_SUBST(GRN_WITH_ONIGMO)
-AC_CONFIG_SUBDIRS([vendor/onigmo])
-
-ONIGMO_CFLAGS="-I\$(top_srcdir)/vendor/onigmo-source"
-ONIGMO_LIBS="\$(top_builddir)/vendor/onigmo-source/libonigmo.la"
 AC_SUBST(ONIGMO_CFLAGS)
 AC_SUBST(ONIGMO_LIBS)
+AM_CONDITIONAL(WITH_BUNDLED_ONIGMO, test "$with_onigmo" != "no" -a "x$have_onigmo" != "xyes")
 
 # PCRE
 GRN_WITH_PCRE=no
