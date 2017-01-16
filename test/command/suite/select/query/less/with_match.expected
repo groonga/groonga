@@ -1,0 +1,54 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos created_at COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Terms TABLE_HASH_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+table_create Times TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times memos_created_at COLUMN_INDEX Memos created_at
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "Today is a good day.",         "created_at": "2017-01-16 12:00:00"},
+{"content": "Tomorrow will be a good day.", "created_at": "2017-01-17 12:00:00"}
+]
+[[0,0.0,0.0],2]
+select Memos   --match_columns 'content'   --query 'tomorrow created_at:<"2017-01-17 13:00:00" day'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "ShortText"
+        ],
+        [
+          "created_at",
+          "Time"
+        ]
+      ],
+      [
+        2,
+        "Tomorrow will be a good day.",
+        1484622000.0
+      ]
+    ]
+  ]
+]
