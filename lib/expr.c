@@ -6146,6 +6146,108 @@ grn_table_select_index_not_equal(grn_ctx *ctx,
 }
 
 static inline grn_bool
+grn_table_select_index_match(grn_ctx *ctx,
+                             grn_obj *table,
+                             grn_obj *index,
+                             scan_info *si,
+                             grn_obj *res,
+                             grn_id *min)
+{
+  grn_obj wv, **ip = &GRN_PTR_VALUE(&si->index);
+  int j;
+  int n_indexes = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
+  int32_t *wp = &GRN_INT32_VALUE(&si->wv);
+  grn_search_optarg optarg;
+  grn_id previous_min = GRN_ID_NIL;
+  unsigned int previous_n_hits = grn_table_size(ctx, res);
+
+  GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
+  if (si->op == GRN_OP_MATCH) {
+    optarg.mode = GRN_OP_EXACT;
+  } else {
+    optarg.mode = si->op;
+  }
+  optarg.max_interval = 0;
+  optarg.similarity_threshold = 0;
+  switch (si->op) {
+  case GRN_OP_NEAR :
+  case GRN_OP_NEAR2 :
+    optarg.max_interval = si->max_interval;
+    break;
+  case GRN_OP_SIMILAR :
+    optarg.similarity_threshold = si->similarity_threshold;
+    break;
+  default :
+    break;
+  }
+  optarg.weight_vector = (int *)GRN_BULK_HEAD(&wv);
+  /* optarg.vector_size = GRN_BULK_VSIZE(&si->wv); */
+  optarg.vector_size = 1;
+  optarg.proc = NULL;
+  optarg.max_size = 0;
+  if (min) {
+    previous_min = *min;
+    optarg.match_info.flags |= GRN_MATCH_INFO_GET_MIN_RECORD_ID;
+  }
+  ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
+  for (j = 0; j < n_indexes; j++, ip++, wp += 2) {
+    uint32_t sid = (uint32_t) wp[0];
+    int32_t weight = wp[1];
+    if (min) {
+      optarg.match_info.min = previous_min;
+    }
+    if (sid) {
+      int weight_index = sid - 1;
+      int current_vector_size;
+      current_vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
+      if (weight_index < current_vector_size) {
+        ((int *)GRN_BULK_HEAD(&wv))[weight_index] = weight;
+      } else {
+        GRN_INT32_SET_AT(ctx, &wv, weight_index, weight);
+      }
+      optarg.weight_vector = &GRN_INT32_VALUE(&wv);
+      optarg.vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
+    } else {
+      optarg.weight_vector = NULL;
+      optarg.vector_size = weight;
+    }
+    optarg.scorer = GRN_PTR_VALUE_AT(&(si->scorers), j);
+    optarg.scorer_args_expr =
+      GRN_PTR_VALUE_AT(&(si->scorer_args_exprs), j);
+    optarg.scorer_args_expr_offset =
+      GRN_UINT32_VALUE_AT(&(si->scorer_args_expr_offsets), j);
+    if (j < n_indexes - 1) {
+      if (sid && ip[0] == ip[1]) { continue; }
+    } else {
+      ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
+    }
+    grn_obj_search(ctx, ip[0], si->query, res, si->logical_op, &optarg);
+    if (optarg.weight_vector) {
+      int i;
+      for (i = 0; i < optarg.vector_size; i++) {
+        optarg.weight_vector[i] = 0;
+      }
+    }
+    GRN_BULK_REWIND(&wv);
+    if (min) {
+      if (previous_min < optarg.match_info.min &&
+          (*min == previous_min || optarg.match_info.min < *min)) {
+        *min = optarg.match_info.min;
+      }
+    }
+  }
+  if (min) {
+    if (!((si->logical_op == GRN_OP_AND) ||
+          (si->logical_op == GRN_OP_OR && previous_n_hits == 0))) {
+      *min = GRN_ID_NIL;
+    }
+  }
+  GRN_OBJ_FIN(ctx, &wv);
+
+  return GRN_TRUE;
+}
+
+static inline grn_bool
 grn_table_select_index_call_selector(grn_ctx *ctx,
                                      grn_obj *table,
                                      grn_obj *index,
@@ -6656,98 +6758,12 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
     case GRN_OP_NEAR2 :
     case GRN_OP_SIMILAR :
     case GRN_OP_REGEXP :
-      {
-        grn_obj wv, **ip = &GRN_PTR_VALUE(&si->index);
-        int j;
-        int n_indexes = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
-        int32_t *wp = &GRN_INT32_VALUE(&si->wv);
-        grn_search_optarg optarg;
-        grn_id previous_min = GRN_ID_NIL;
-        unsigned int previous_n_hits = grn_table_size(ctx, res);
-        GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
-        if (si->op == GRN_OP_MATCH) {
-          optarg.mode = GRN_OP_EXACT;
-        } else {
-          optarg.mode = si->op;
-        }
-        optarg.max_interval = 0;
-        optarg.similarity_threshold = 0;
-        switch (si->op) {
-        case GRN_OP_NEAR :
-        case GRN_OP_NEAR2 :
-          optarg.max_interval = si->max_interval;
-          break;
-        case GRN_OP_SIMILAR :
-          optarg.similarity_threshold = si->similarity_threshold;
-          break;
-        default :
-          break;
-        }
-        optarg.weight_vector = (int *)GRN_BULK_HEAD(&wv);
-        /* optarg.vector_size = GRN_BULK_VSIZE(&si->wv); */
-        optarg.vector_size = 1;
-        optarg.proc = NULL;
-        optarg.max_size = 0;
-        if (min) {
-          previous_min = *min;
-          optarg.match_info.flags |= GRN_MATCH_INFO_GET_MIN_RECORD_ID;
-        }
-        ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
-        for (j = 0; j < n_indexes; j++, ip++, wp += 2) {
-          uint32_t sid = (uint32_t) wp[0];
-          int32_t weight = wp[1];
-          if (min) {
-            optarg.match_info.min = previous_min;
-          }
-          if (sid) {
-            int weight_index = sid - 1;
-            int current_vector_size;
-            current_vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
-            if (weight_index < current_vector_size) {
-              ((int *)GRN_BULK_HEAD(&wv))[weight_index] = weight;
-            } else {
-              GRN_INT32_SET_AT(ctx, &wv, weight_index, weight);
-            }
-            optarg.weight_vector = &GRN_INT32_VALUE(&wv);
-            optarg.vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
-          } else {
-            optarg.weight_vector = NULL;
-            optarg.vector_size = weight;
-          }
-          optarg.scorer = GRN_PTR_VALUE_AT(&(si->scorers), j);
-          optarg.scorer_args_expr =
-            GRN_PTR_VALUE_AT(&(si->scorer_args_exprs), j);
-          optarg.scorer_args_expr_offset =
-            GRN_UINT32_VALUE_AT(&(si->scorer_args_expr_offsets), j);
-          if (j < n_indexes - 1) {
-            if (sid && ip[0] == ip[1]) { continue; }
-          } else {
-            ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
-          }
-          grn_obj_search(ctx, ip[0], si->query, res, si->logical_op, &optarg);
-          if (optarg.weight_vector) {
-            int i;
-            for (i = 0; i < optarg.vector_size; i++) {
-              optarg.weight_vector[i] = 0;
-            }
-          }
-          GRN_BULK_REWIND(&wv);
-          if (min) {
-            if (previous_min < optarg.match_info.min &&
-                (*min == previous_min || optarg.match_info.min < *min)) {
-              *min = optarg.match_info.min;
-            }
-          }
-        }
-        if (min) {
-          if (!((si->logical_op == GRN_OP_AND) ||
-                (si->logical_op == GRN_OP_OR && previous_n_hits == 0))) {
-            *min = GRN_ID_NIL;
-          }
-        }
-        GRN_OBJ_FIN(ctx, &wv);
-      }
-      processed = GRN_TRUE;
+      processed = grn_table_select_index_match(ctx,
+                                               table,
+                                               index,
+                                               si,
+                                               res,
+                                               min);
       break;
     case GRN_OP_TERM_EXTRACT :
       if (si->flags & SCAN_ACCESSOR) {
