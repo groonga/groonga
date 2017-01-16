@@ -4043,17 +4043,34 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
                                    key, target_key_size,
                                    NULL, 0, 0, -1,
                                    GRN_CURSOR_PREFIX);
-      target_key_size--;
       if (!cursor) {
         break;
       }
 
-      while (ctx->rc == GRN_SUCCESS &&
-             *lseg == NOT_ASSIGNED &&
-             (tid = grn_pat_cursor_next(ctx, cursor))) {
-        buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
+      if (target_key_size == key_size) {
+        while (ctx->rc == GRN_SUCCESS &&
+               *lseg == NOT_ASSIGNED &&
+               (tid = grn_pat_cursor_next(ctx, cursor))) {
+          buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
+        }
+      } else {
+        while (ctx->rc == GRN_SUCCESS &&
+               *lseg == NOT_ASSIGNED &&
+               (tid = grn_pat_cursor_next(ctx, cursor))) {
+          void *current_key;
+          int current_key_size;
+
+          current_key_size = grn_pat_cursor_get_key(ctx, cursor, &current_key);
+          if (((char *)current_key)[target_key_size + 1] ==
+              key[target_key_size + 1]) {
+            continue;
+          }
+          buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
+        }
       }
       grn_pat_cursor_close(ctx, cursor);
+
+      target_key_size--;
     }
   } else {
     cursor = grn_pat_cursor_open(ctx,
