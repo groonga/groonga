@@ -6663,6 +6663,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         int32_t *wp = &GRN_INT32_VALUE(&si->wv);
         grn_search_optarg optarg;
         grn_id previous_min = GRN_ID_NIL;
+        unsigned int previous_n_hits = grn_table_size(ctx, res);
         GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
         if (si->op == GRN_OP_MATCH) {
           optarg.mode = GRN_OP_EXACT;
@@ -6732,9 +6733,16 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           }
           GRN_BULK_REWIND(&wv);
           if (min) {
-            if (previous_min < optarg.match_info.min && (*min == previous_min || optarg.match_info.min < *min)) {
+            if (previous_min < optarg.match_info.min &&
+                (*min == previous_min || optarg.match_info.min < *min)) {
               *min = optarg.match_info.min;
             }
+          }
+        }
+        if (min) {
+          if (!((si->logical_op == GRN_OP_AND) || 
+                (si->logical_op == GRN_OP_OR && previous_n_hits == 0))) {
+            *min = GRN_ID_NIL;
           }
         }
         GRN_OBJ_FIN(ctx, &wv);
@@ -6867,6 +6875,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
           grn_table_setoperation(ctx, res_, res, res_, si->logical_op);
           grn_obj_close(ctx, res);
           res = res_;
+          min = GRN_ID_NIL;
         } else {
           grn_bool processed = GRN_FALSE;
           if (si->flags & SCAN_PUSH) {
@@ -6878,6 +6887,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
             }
             GRN_PTR_PUT(ctx, &res_stack, res);
             res = res_;
+            min = GRN_ID_NIL;
           }
           if (si->logical_op != GRN_OP_AND) {
             min = GRN_ID_NIL;
@@ -6889,6 +6899,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
             e->codes_curr = si->end - si->start + 1;
             grn_table_select_sequential(ctx, table, (grn_obj *)e, v,
                                         res, si->logical_op);
+            min = GRN_ID_NIL;
           }
         }
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
