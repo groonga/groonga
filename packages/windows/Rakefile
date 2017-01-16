@@ -92,7 +92,7 @@ namespace :build do
     zlib_version = "1.2.8"
     zlib_base = "zlib-#{zlib_version}"
     zlib_tar_gz_url_base =
-      "http://downloads.sourceforge.net/project/libpng/zlib"
+      "https://downloads.sourceforge.net/project/libpng/zlib"
     zlib_tar_gz_url =
       "#{zlib_tar_gz_url_base}/#{zlib_version}/#{zlib_base}.tar.gz"
     zlib_tar_gz = download(zlib_tar_gz_url, download_dir)
