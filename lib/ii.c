@@ -3973,8 +3973,6 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
   grn_id tid;
   uint16_t offset;
   char key[GRN_TABLE_MAX_KEY_SIZE];
-  // unsigned int key_size;
-  // const char *key = _grn_table_key(ctx, ii->lexicon, id, &key_size);
   int key_size = grn_table_get_key(ctx, ii->lexicon, id, key,
                                    GRN_TABLE_MAX_KEY_SIZE);
   uint32_t *a, lseg = NOT_ASSIGNED, pseg = NOT_ASSIGNED;
