@@ -50,13 +50,16 @@ parameters are optional::
 ``logical_select`` has the following named parameters for advanced
 drilldown:
 
-  * ``drilldown[${LABEL}].keys=null``
-  * ``drilldown[${LABEL}].sortby=null``
-  * ``drilldown[${LABEL}].output_columns="_key, _nsubrecs"``
-  * ``drilldown[${LABEL}].offset=0``
-  * ``drilldown[${LABEL}].limit=10``
-  * ``drilldown[${LABEL}].calc_types=NONE``
-  * ``drilldown[${LABEL}].calc_target=null``
+  * ``drilldowns[${LABEL}].keys=null``
+  * ``drilldowns[${LABEL}].sortby=null``
+  * ``drilldowns[${LABEL}].output_columns="_key, _nsubrecs"``
+  * ``drilldowns[${LABEL}].offset=0``
+  * ``drilldowns[${LABEL}].limit=10``
+  * ``drilldowns[${LABEL}].calc_types=NONE``
+  * ``drilldowns[${LABEL}].calc_target=null``
+
+.. deprecated:: 6.1.4
+  ``drilldown[...]`` syntax is deprecated, Use ``drilldowns[...]`` instead.
 
 You can use one or more alphabets, digits, ``_`` and ``.`` for
 ``${LABEL}``. For example, ``parent.sub1`` is a valid ``${LABEL}``.
@@ -65,15 +68,15 @@ Parameters that have the same ``${LABEL}`` are grouped.
 
 For example, the following parameters specify one drilldown:
 
-  * ``--drilldown[label].keys column``
-  * ``--drilldown[label].sortby -_nsubrecs``
+  * ``--drilldowns[label].keys column``
+  * ``--drilldowns[label].sortby -_nsubrecs``
 
 The following parameters specify two drilldowns:
 
-  * ``--drilldown[label1].keys column1``
-  * ``--drilldown[label1].sortby -_nsubrecs``
-  * ``--drilldown[label2].keys column2``
-  * ``--drilldown[label2].sortby _key``
+  * ``--drilldowns[label1].keys column1``
+  * ``--drilldowns[label1].sortby -_nsubrecs``
+  * ``--drilldowns[label2].keys column2``
+  * ``--drilldowns[label2].sortby _key``
 
 Differences from ``select``
 ---------------------------
@@ -88,9 +91,9 @@ But there are some differences from :doc:`select`:
     instead of ``table`` parameter.
   * ``sortby`` isn't supported when multiple shards are used. (Only
     one shard is used, they are supported.)
-  * ``_value.${KEY_NAME}`` in ``drilldown[${LABEL}].sortby`` doesn't
+  * ``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].sortby`` doesn't
     work with multiple shards. It works with one shard. ``_key`` in
-    ``drilldown[${LABEL}].sortby`` work with multiple shards.
+    ``drilldowns[${LABEL}].sortby`` work with multiple shards.
   * ``match_columns`` and ``query`` aren't supported yet.
   * ``cache`` isn't supported yet.
   * ``match_escalation_threshold`` isn't supported yet.
@@ -661,70 +664,70 @@ details.
 
 There are some limitations:
 
-  * ``_value.${KEY_NAME}`` in ``drilldown[${LABEL}].sortby`` doesn't
+  * ``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].sortby`` doesn't
     work with multiple shards. It works with one shard. ``_key`` in
-    ``drilldown[${LABEL}].sortby`` work with multiple shards.
+    ``drilldowns[${LABEL}].sortby`` work with multiple shards.
 
-.. _logical-select-drilldown-label-keys:
+.. _logical-select-drilldowns-label-keys:
 
-``drilldown[${LABEL}].keys``
-""""""""""""""""""""""""""""
+``drilldowns[${LABEL}].keys``
+"""""""""""""""""""""""""""""
 
-Corresponds to :ref:`select-drilldown-label-keys` in
-:doc:`select`. See :ref:`select-drilldown-label-keys` for details.
+Corresponds to :ref:`select-drilldowns-label-keys` in
+:doc:`select`. See :ref:`select-drilldowns-label-keys` for details.
 
 Here is an example:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/logical_select/drilldown_label_keys.log
+.. include:: ../../example/reference/commands/logical_select/drilldowns_label_keys.log
 .. logical_select \
 ..   --logical_table Entries \
 ..   --shard_key created_at \
 ..   --limit 0 \
 ..   --output_columns _id \
-..   --drilldown[tag.n_likes].keys tag,n_likes \
-..   --drilldown[tag.n_likes].output_columns _value.tag,_value.n_likes,_nsubrecs
+..   --drilldowns[tag.n_likes].keys tag,n_likes \
+..   --drilldowns[tag.n_likes].output_columns _value.tag,_value.n_likes,_nsubrecs
 
-.. _logical-select-drilldown-label-output-columns:
+.. _logical-select-drilldowns-label-output-columns:
 
-``drilldown[${LABEL}].output_columns``
-""""""""""""""""""""""""""""""""""""""
+``drilldowns[${LABEL}].output_columns``
+"""""""""""""""""""""""""""""""""""""""
 
-Corresponds to :ref:`select-drilldown-label-output-columns` in
-:doc:`select`. See :ref:`select-drilldown-label-output-columns` for
+Corresponds to :ref:`select-drilldowns-label-output-columns` in
+:doc:`select`. See :ref:`select-drilldowns-label-output-columns` for
 details.
 
 Here is an example:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/logical_select/drilldown_label_output_columns.log
+.. include:: ../../example/reference/commands/logical_select/drilldowns_label_output_columns.log
 .. logical_select \
 ..   --logical_table Entries \
 ..   --shard_key created_at \
 ..   --limit 0 \
 ..   --output_columns _id \
-..   --drilldown[tag].keys tag \
-..   --drilldown[tag].output_columns _key,_nsubrecs
+..   --drilldowns[tag].keys tag \
+..   --drilldowns[tag].output_columns _key,_nsubrecs
 
-.. _logical-select-drilldown-label-sortby:
+.. _logical-select-drilldowns-label-sortby:
 
-``drilldown[${LABEL}].sortby``
-""""""""""""""""""""""""""""""
+``drilldowns[${LABEL}].sortby``
+"""""""""""""""""""""""""""""""
 
 Corresponds to :ref:`logical-select-drilldown-sortby` in not labeled
 drilldown.
 
-``drilldown[${LABEL}].sortby`` has a limitation.
+``drilldowns[${LABEL}].sortby`` has a limitation.
 
-``_value.${KEY_NAME}`` in ``drilldown[${LABEL}].sortby`` doesn't work
+``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].sortby`` doesn't work
 with multiple shards. It works with one shard. ``_key`` in
-``drilldown[${LABEL}].sortby`` work with multiple shards.
+``drilldowns[${LABEL}].sortby`` work with multiple shards.
 
 Here is an example that uses ``_value.${KEY_NAME}`` with only one
 shard:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/logical_select/drilldown_label_sortby.log
+.. include:: ../../example/reference/commands/logical_select/drilldowns_label_sortby.log
 .. logical_select \
 ..   --logical_table Entries \
 ..   --shard_key created_at \
@@ -734,14 +737,14 @@ shard:
 ..   --max_border "exclude" \
 ..   --limit 0 \
 ..   --output_columns _id \
-..   --drilldown[tag.n_likes].keys tag,n_likes \
-..   --drilldown[tag.n_likes].output_columns _nsubrecs,_value.n_likes,_value.tag \
-..   --drilldown[tag.n_likes].sortby -_nsubrecs,_value.n_likes,_value.tag
+..   --drilldowns[tag.n_likes].keys tag,n_likes \
+..   --drilldowns[tag.n_likes].output_columns _nsubrecs,_value.n_likes,_value.tag \
+..   --drilldowns[tag.n_likes].sortby -_nsubrecs,_value.n_likes,_value.tag
 
-.. _logical-select-drilldown-label-offset:
+.. _logical-select-drilldowns-label-offset:
 
-``drilldown[${LABEL}].offset``
-""""""""""""""""""""""""""""""
+``drilldowns[${LABEL}].offset``
+"""""""""""""""""""""""""""""""
 
 Corresponds to :ref:`logical-select-drilldown-offset` in not labeled
 drilldown.
@@ -749,19 +752,19 @@ drilldown.
 Here is an example:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/logical_select/drilldown_label_offset.log
+.. include:: ../../example/reference/commands/logical_select/drilldowns_label_offset.log
 .. logical_select \
 ..   --logical_table Entries \
 ..   --shard_key created_at \
 ..   --limit 0 \
 ..   --output_columns _id \
-..   --drilldown[tag.n_likes].keys tag \
-..   --drilldown[tag.n_likes].offset 1
+..   --drilldowns[tag.n_likes].keys tag \
+..   --drilldowns[tag.n_likes].offset 1
 
-.. _logical-select-drilldown-label-limit:
+.. _logical-select-drilldowns-label-limit:
 
-``drilldown[${LABEL}].limit``
-"""""""""""""""""""""""""""""
+``drilldowns[${LABEL}].limit``
+""""""""""""""""""""""""""""""
 
 Corresponds to :ref:`logical-select-drilldown-limit` in not labeled
 drilldown.
@@ -769,19 +772,19 @@ drilldown.
 Here is an example:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/logical_select/drilldown_label_limit.log
+.. include:: ../../example/reference/commands/logical_select/drilldowns_label_limit.log
 .. logical_select \
 ..   --logical_table Entries \
 ..   --shard_key created_at \
 ..   --limit 0 \
 ..   --output_columns _id \
-..   --drilldown[tag.n_likes].keys tag \
-..   --drilldown[tag.n_likes].limit 2
+..   --drilldowns[tag.n_likes].keys tag \
+..   --drilldowns[tag.n_likes].limit 2
 
-.. _logical-select-drilldown-label-calc-types:
+.. _logical-select-drilldowns-label-calc-types:
 
-``drilldown[${LABEL}].calc_types``
-""""""""""""""""""""""""""""""""""
+``drilldowns[${LABEL}].calc_types``
+"""""""""""""""""""""""""""""""""""
 
 Corresponds to :ref:`logical-select-drilldown-calc-types` in not
 labeled drilldown.
@@ -789,26 +792,26 @@ labeled drilldown.
 Here is an example:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/logical_select/drilldown_label_calc_types.log
+.. include:: ../../example/reference/commands/logical_select/drilldowns_label_calc_types.log
 .. logical_select \
 ..   --logical_table Entries \
 ..   --shard_key created_at \
 ..   --limit 0 \
 ..   --output_columns _id \
-..   --drilldown[tag].keys tag \
-..   --drilldown[tag].calc_types MAX,MIN,SUM,AVG \
-..   --drilldown[tag].calc_target n_likes \
-..   --drilldown[tag].output_columns _key,_nsubrecs,_max,_min,_sum,_avg
+..   --drilldowns[tag].keys tag \
+..   --drilldowns[tag].calc_types MAX,MIN,SUM,AVG \
+..   --drilldowns[tag].calc_target n_likes \
+..   --drilldowns[tag].output_columns _key,_nsubrecs,_max,_min,_sum,_avg
 
-.. _logical-select-drilldown-label-calc-target:
+.. _logical-select-drilldowns-label-calc-target:
 
-``drilldown[${LABEL}].calc_target``
-"""""""""""""""""""""""""""""""""""
+``drilldowns[${LABEL}].calc_target``
+""""""""""""""""""""""""""""""""""""
 
 Corresponds to :ref:`logical-select-drilldown-calc-target` in not
 labeled drilldown.
 
-See also :ref:`logical-select-drilldown-label-calc-types`
+See also :ref:`logical-select-drilldowns-label-calc-types`
 for an example.
 
 Return value
