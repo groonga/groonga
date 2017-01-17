@@ -35,10 +35,16 @@ MRuby::Build.new do |conf|
   conf.gem :core => "mruby-toplevel-ext"
   conf.gem :core => "mruby-kernel-ext"
 
-  conf.gem :github => "mattn/mruby-onig-regexp"
-  conf.gem :github => "iij/mruby-env"
-  conf.gem :github => "iij/mruby-io"
-  conf.gem :github => "kou/mruby-pp"
-  conf.gem :github => "kou/mruby-slop"
-  conf.gem :github => "ksss/mruby-file-stat"
+  conf.gem :github => "mattn/mruby-onig-regexp",
+           :checksum => "12f573cb327aa50834c3a549f62995f44edd3172"
+  conf.gem :github => "iij/mruby-env",
+           :checksum => "57f0d737a4ece49dc5b6f1c7ee09b0bc8f8adf87"
+  conf.gem :github => "iij/mruby-io",
+           :checksum => "69623078a86b45617a6fdbe0238c147e280ad9db"
+  conf.gem :github => "kou/mruby-pp",
+           :checksum => "ddda20ca273ba532f2025d4ff7ddc8bb223ad8c2"
+  conf.gem :github => "kou/mruby-slop",
+           :checksum => "752d1a3e2bc4fdc40ee92d668812a99c8fc5e1cc"
+  conf.gem :github => "ksss/mruby-file-stat",
+           :checksum => "1d72447005eaba01a097066ec47f9725887c90bc"
 end
