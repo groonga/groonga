@@ -1,0 +1,145 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Logs_20150203 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150203 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20150203 action COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Logs_20150204 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150204 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150204 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20150204 action COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Logs_20150205 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20150205 action COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Logs_20150203
+[
+{
+  "timestamp": "2015-02-03 12:49:00",
+  "memo":      "2015-02-03 12:49:00",
+  "action":    "Start"
+},
+{
+  "timestamp": "2015-02-03 23:59:59",
+  "memo":      "2015-02-03 23:59:59",
+  "action":    "Shutdown"
+}
+]
+[[0,0.0,0.0],2]
+load --table Logs_20150204
+[
+{
+  "timestamp": "2015-02-04 00:00:00",
+  "memo":      "2015-02-04 00:00:00",
+  "action":    "Start"
+},
+{
+  "timestamp": "2015-02-04 13:49:00",
+  "memo":      "2015-02-04 13:49:00",
+  "action":    "Restart"
+},
+{
+  "timestamp": "2015-02-04 13:50:00",
+  "memo":      "2015-02-04 13:50:00",
+  "action":    "Restart"
+}
+]
+[[0,0.0,0.0],3]
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:49:00",
+  "memo":      "2015-02-05 13:49:00",
+  "action":    "Restart"
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+  "memo":      "2015-02-05 13:50:00",
+  "action":    "Restart"
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+  "memo":      "2015-02-05 13:51:00",
+  "action":    "Restart"
+},
+{
+  "timestamp": "2015-02-05 13:52:00",
+  "memo":      "2015-02-05 13:52:00",
+  "action":    "Restart"
+}
+]
+[[0,0.0,0.0],4]
+logical_select Logs timestamp   --limit 0   --drilldowns[action].keys action
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        9
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "action",
+          "ShortText"
+        ],
+        [
+          "memo",
+          "ShortText"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ]
+    ],
+    {
+      "action": [
+        [
+          3
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          "Start",
+          2
+        ],
+        [
+          "Shutdown",
+          1
+        ],
+        [
+          "Restart",
+          6
+        ]
+      ]
+    }
+  ]
+]

@@ -332,7 +332,7 @@ module Groonga
             arguments.each do |argument_id|
               argument.id = argument_id
               key = argument.key
-              match_data = /\Adrilldown\[(.+?)\]\.(.+)\z/.match(key)
+              match_data = /\Adrilldowns?\[(.+?)\]\.(.+)\z/.match(key)
               next if match_data.nil?
               drilldown = (drilldowns[match_data[1]] ||= {})
               drilldown[match_data[2]] = input[key]

@@ -1,0 +1,57 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos_20150709 TABLE_HASH_KEY ShortText
+column_create Memos_20150709 created_at COLUMN_SCALAR Time
+column_create Memos_20150709 tag COLUMN_SCALAR Tags
+column_create Memos_20150709 user COLUMN_SCALAR ShortText
+column_create Memos_20150709 priority COLUMN_SCALAR Int64
+
+table_create Memos_20150710 TABLE_HASH_KEY ShortText
+column_create Memos_20150710 created_at COLUMN_SCALAR Time
+column_create Memos_20150710 tag COLUMN_SCALAR Tags
+column_create Memos_20150710 user COLUMN_SCALAR ShortText
+column_create Memos_20150710 priority COLUMN_SCALAR Int64
+
+load --table Memos_20150709
+[
+{"_key": "Groonga1", "tag": "Groonga", "user": "user1", "priority": 10,
+ "created_at": "2015/07/09 00:00:00"},
+{"_key": "Groonga2", "tag": "Groonga", "user": "user1", "priority": 20,
+ "created_at": "2015/07/09 01:00:00"},
+{"_key": "Groonga3", "tag": "Groonga", "user": "user1", "priority": 60,
+ "created_at": "2015/07/09 02:00:00"},
+{"_key": "Groonga4", "tag": "Groonga", "user": "user2", "priority": 61,
+ "created_at": "2015/07/09 03:00:00"}
+]
+
+load --table Memos_20150710
+[
+{"_key": "Groonga5", "tag": "Groonga", "user": "user2", "priority": 24,
+ "created_at": "2015/07/10 00:00:00"},
+{"_key": "Groonga6", "tag": "Groonga", "user": "user2", "priority": 8,
+ "created_at": "2015/07/10 01:00:00"},
+{"_key": "Mroonga1", "tag": "Mroonga", "user": "user3", "priority": 7,
+ "created_at": "2015/07/10 02:00:00"},
+{"_key": "Mroonga2", "tag": "Mroonga", "user": "user3", "priority": 3,
+ "created_at": "2015/07/10 03:00:00"},
+{"_key": "Mroonga3", "tag": "Mroonga", "user": "user3", "priority": -4,
+ "created_at": "2015/07/10 04:00:00"},
+{"_key": "Mroonga4", "tag": "Mroonga", "user": "user4", "priority": -1,
+ "created_at": "2015/07/10 05:00:00"},
+{"_key": "Mroonga5", "tag": "Mroonga", "user": "user4", "priority": -2,
+ "created_at": "2015/07/10 06:00:00"},
+{"_key": "Mroonga6", "tag": "Mroonga", "user": "user4", "priority": -3,
+ "created_at": "2015/07/10 07:00:00"}
+]
+
+logical_select Memos \
+  --shard_key created_at \
+  --limit 0 \
+  --drilldowns[tag].keys tag,user \
+  --drilldowns[tag].calc_types 'AVG, MAX, MIN, SUM' \
+  --drilldowns[tag].calc_target priority \
+  --drilldowns[tag].output_columns _value.tag,_value.user,_max,_min,_sum,_avg
