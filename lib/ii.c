@@ -4034,6 +4034,7 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
                                GRN_TABLE_MAX_KEY_SIZE);
   if (ii->lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     int target_key_size = key_size;
+    int reduced_key_size = 0;
 
     while (*lseg == NOT_ASSIGNED && target_key_size > 0) {
       grn_id tid;
@@ -4047,7 +4048,7 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
         break;
       }
 
-      if (target_key_size == key_size) {
+      if (reduced_key_size == 0) {
         while (ctx->rc == GRN_SUCCESS &&
                *lseg == NOT_ASSIGNED &&
                (tid = grn_pat_cursor_next(ctx, cursor))) {
@@ -4061,8 +4062,9 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
           int current_key_size;
 
           current_key_size = grn_pat_cursor_get_key(ctx, cursor, &current_key);
-          if (((char *)current_key)[target_key_size + 1] ==
-              key[target_key_size + 1]) {
+          if (memcmp(((char *)current_key) + target_key_size,
+                     key + target_key_size,
+                     reduced_key_size) == 0) {
             continue;
           }
           buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
@@ -4070,7 +4072,12 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
       }
       grn_pat_cursor_close(ctx, cursor);
 
-      target_key_size--;
+      if (reduced_key_size == 0) {
+        reduced_key_size = 1;
+      } else {
+        reduced_key_size *= 2;
+      }
+      target_key_size -= reduced_key_size;
     }
   } else {
     cursor = grn_pat_cursor_open(ctx,
