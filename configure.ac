@@ -1580,9 +1580,7 @@ if test "x$with_onigmo" != "xno"; then
   if test "x$with_onigmo" != "xbundled"; then
     m4_ifdef([PKG_CHECK_MODULES], [
       PKG_CHECK_MODULES([ONIGMO], [onigmo],
-        [_PKG_CONFIG(ONIGMO_LIBS_ONLY_L, [libs-only-L], [onigmo])
-         ONIGMO_LIBS_ONLY_L="$pkg_cv_ONIGMO_LIBS_ONLY_L"
-         have_onigmo=yes],
+        [have_onigmo=yes],
         [have_onigmo=no])
       ],
       [have_onigmo=no])
@@ -1594,7 +1592,6 @@ if test "x$with_onigmo" != "xno"; then
     AC_CONFIG_SUBDIRS([vendor/onigmo])
     ONIGMO_CFLAGS="-I\$(top_srcdir)/vendor/onigmo-source"
     ONIGMO_LIBS="\$(top_builddir)/vendor/onigmo-source/libonigmo.la"
-    ONIGMO_LIBS_ONLY_L="-L\$(top_builddir)/vendor/onigmo-source"
   fi
   AC_DEFINE(GRN_WITH_ONIGMO, [1], [Use Onigmo.])
 else
