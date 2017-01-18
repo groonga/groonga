@@ -978,14 +978,28 @@ with the expression.
 Near search operator
 ^^^^^^^^^^^^^^^^^^^^
 
-Its syntax is ``column *N "word1 word2 ..."``.
+Its syntax is one of them::
+
+  column *N "word1 word2 ..."
+  column *N${MAX_INTERVAL} "word1 word2 ..."
+
+Here are the examples of the second form::
+
+  column *N29 "word1 word2 ..."
+  column *N-1 "word1 word2 ..."
+
+The first example means that ``29`` is used for the max interval.
+
+The second example means that ``-1`` is used for the max interval.
+``-1`` max interval means no limit.
 
 The operator does near search with words ``word1 word2 ...``. Near
 search searches records that contain the words and the words are
-appeared in the near distance. Near distance is always ``10`` for
-now. The unit of near distance is the number of characters in N-gram
-family tokenizers and the number of words in morphological analysis
-family tokenizers.
+appeared in the specified order and the max interval.
+
+The max interval is ``10`` by default. The unit of the max interval is
+the number of characters in N-gram family tokenizers and the number of
+words in morphological analysis family tokenizers.
 
 (TODO: Add a description about ``TokenBigram`` doesn't split ASCII
 only word into tokens. So the unit for ASCII words with
@@ -1004,19 +1018,19 @@ Here is a simple example.
 .. select Entries --filter 'content *N "also Really"' --output_columns content
 
 The first expression matches records that contain ``I`` and ``fast``
-and the near distance of those words are in 10 words. So the record
+and the max interval of those words are in 10 words. So the record
 that its content is ``I also started to use mroonga. It's also very
 fast! ...`` is matched. The number of words between ``I`` and ``fast``
 is just 10.
 
 The second expression matches records that contain ``I`` and
-``Really`` and the near distance of those words are in 10 words. So
-the record that its content is ``I also started to use mroonga. It's
-also very fast! Really fast!`` is not matched. The number of words between
+``Really`` and the max interval of those words are in 10 words. So the
+record that its content is ``I also started to use mroonga. It's also
+very fast! Really fast!`` is not matched. The number of words between
 ``I`` and ``Really`` is 11.
 
 The third expression matches records that contain ``also`` and
-``Really`` and the near distance of those words are in 10 words. So
+``Really`` and the max interval of those words are in 10 words. So
 the record that its content is ``I also st arted to use mroonga. It's
 also very fast! Really fast!`` is matched. The number of words between
 ``also`` and ``Really`` is 10.

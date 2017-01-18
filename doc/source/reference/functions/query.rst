@@ -27,13 +27,23 @@ Syntax
 
 ``query`` requires two arguments - ``match_columns`` and ``query_string``.
 
-The parameter ``query_expander`` or ``substitution_table`` is optional.
+The parameter ``query_expander``, ``substitution_table`` and
+``options`` are optional.
 
 ::
 
   query(match_columns, query_string)
   query(match_columns, query_string, query_expander)
   query(match_columns, query_string, substitution_table)
+  query(match_columns, query_string, options)
+
+``options`` accepts the following keys::
+
+  {
+    "expander": query_expander,
+    "default_mode": default_mode,
+    "flags": flags
+  }
 
 
 Usage
@@ -79,8 +89,8 @@ search by keyword 'alice' without using ``--match_columns`` and
 .. include:: ../../example/reference/functions/query/usage_basic.log
 .. select Users --output_columns name,_score --filter 'query("name * 10", "alice")'
 
-When executing above query, the keyword 'alice' is weighted to the value -
-'10'.
+When executing above query, the keyword ``alice`` is weighted to the
+value ``10``.
 
 Here are the contrasting examples with/without ``query``.
 
@@ -88,20 +98,19 @@ Here are the contrasting examples with/without ``query``.
 .. include:: ../../example/reference/functions/query/usage_without_query.log
 .. select Users --output_columns name,memo,_score --match_columns "memo * 10" --query "memo:@groonga OR memo:@mroonga OR memo:@user" --sortby -_score
 
-In this case, the keywords 'groonga' and 'mroonga' and 'user' are
-given same weight value.
-You can't pass different weight value to each keyword in this way.
-
+In this case, the all keywords ``groonga``, ``mroonga`` and ``user``
+use the default weight. You can't pass different weight value to each
+keyword in this way.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/query/usage_with_query.log
 .. select Users --output_columns name,memo,_score --filter 'query("memo * 10", "groonga") || query("memo * 20", "mroonga") || query("memo * 1", "user")' --sortby -_score
 
 On the other hand, by specifying multiple ``query``, the keywords
-'groonga' and 'mroonga' and 'user' are given different value of weight.
+``groonga``, ``mroonga`` and ``user`` use different weight.
 
-As a result, you can control full text search result by giving different weight to the
-keywords on your purpose.
+As a result, you can control full text search result score by
+specifying different weight to the keywords on your purpose.
 
 Parameters
 ----------
@@ -151,6 +160,32 @@ by following format such as ``${TABLE}.${COLUMN}`` for query expansion.
 
 See :ref:`select-query-expander` about details.
 
+``default_mode``
+""""""""""""""""
+
+Specifies the default search operation. The search operation can
+customize like ``column:@keyword`` syntax. The default search
+operation is used when you just specify ``keyword`` instead of
+``column:@keyword``. See :doc:`/reference/grn_expr/query_syntax` for
+more syntax details.
+
+Here are available modes. The default is ``MATCH`` mode.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Mode
+     - Aliases
+     - Description
+   * - TODO
+     - TODO
+     - TDOO
+
+``flags``
+"""""""""
+
+TODO
+
 Return value
 ------------
 
@@ -158,10 +193,6 @@ Return value
 records are matched, it returns ``true``. Otherwise, it returns
 ``false``.
 
-TODO
-----
-
-* Support query_flags
 
 See also
 --------
