@@ -122,16 +122,16 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/usage_set.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_calc_types.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_limit.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_offset.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_output_columns.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_sortby.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldowns_label_calc_types.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldowns_label_keys.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldowns_label_limit.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldowns_label_offset.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldowns_label_output_columns.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldowns_label_sortby.log \
-	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_limit.log \
-	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_offset.log \
-	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_output_columns.log \
-	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_sortby.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/filter.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/limit.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/logical_table_existent.log \
@@ -203,8 +203,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_min.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_sum.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_filter.log \
-	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_keys_multiple.log \
-	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_limit_negative.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_limit_simple.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_multiple.log \
@@ -216,6 +214,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_output_columns_simple.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_simple.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_sortby_simple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_keys_multiple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_equal.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_less_than.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/limit_negative.log \
@@ -1000,16 +1000,16 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_parameters/usage_set.log \
 	source/example/reference/commands/logical_select/drilldown.log \
 	source/example/reference/commands/logical_select/drilldown_calc_types.log \
+	source/example/reference/commands/logical_select/drilldown_limit.log \
+	source/example/reference/commands/logical_select/drilldown_offset.log \
+	source/example/reference/commands/logical_select/drilldown_output_columns.log \
+	source/example/reference/commands/logical_select/drilldown_sortby.log \
 	source/example/reference/commands/logical_select/drilldowns_label_calc_types.log \
 	source/example/reference/commands/logical_select/drilldowns_label_keys.log \
 	source/example/reference/commands/logical_select/drilldowns_label_limit.log \
 	source/example/reference/commands/logical_select/drilldowns_label_offset.log \
 	source/example/reference/commands/logical_select/drilldowns_label_output_columns.log \
 	source/example/reference/commands/logical_select/drilldowns_label_sortby.log \
-	source/example/reference/commands/logical_select/drilldown_limit.log \
-	source/example/reference/commands/logical_select/drilldown_offset.log \
-	source/example/reference/commands/logical_select/drilldown_output_columns.log \
-	source/example/reference/commands/logical_select/drilldown_sortby.log \
 	source/example/reference/commands/logical_select/filter.log \
 	source/example/reference/commands/logical_select/limit.log \
 	source/example/reference/commands/logical_select/logical_table_existent.log \
@@ -1081,8 +1081,6 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/drilldown_calc_types_min.log \
 	source/example/reference/commands/select/drilldown_calc_types_sum.log \
 	source/example/reference/commands/select/drilldown_filter.log \
-	source/example/reference/commands/select/drilldowns_label_keys_multiple.log \
-	source/example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log \
 	source/example/reference/commands/select/drilldown_limit_negative.log \
 	source/example/reference/commands/select/drilldown_limit_simple.log \
 	source/example/reference/commands/select/drilldown_multiple.log \
@@ -1094,6 +1092,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/drilldown_output_columns_simple.log \
 	source/example/reference/commands/select/drilldown_simple.log \
 	source/example/reference/commands/select/drilldown_sortby_simple.log \
+	source/example/reference/commands/select/drilldowns_label_keys_multiple.log \
+	source/example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log \
 	source/example/reference/commands/select/filter_equal.log \
 	source/example/reference/commands/select/filter_less_than.log \
 	source/example/reference/commands/select/limit_negative.log \
