@@ -7,6 +7,57 @@
 News
 ====
 
+.. _release-6-1-4:
+
+Release 6.1.4 - 2017-01-18
+--------------------------
+
+This is a bug fix release of 6.1.3. 6.1.3 users should upgrade to
+6.1.4.
+
+Improvements
+^^^^^^^^^^^^
+
+* [:ref:`script-syntax-near-search-operator`] Supported customizing
+  the max interval.
+
+* [:ref:`script-syntax-near-search-operator`] Supported unlimited interval.
+
+* Stopped to install ``groonga-httpd-restart`` when ``groonga-httpd``
+  isn't installed. [GitHub#626] [Patch by OBATA Akio]
+
+* Improved index update performance against non natural language text
+  data such as multi column index data in Mroonga.
+  [groonga-dev,04219] [Reported by Masanori Miyashita]
+  [GitHub#617]
+
+* [:doc:`/reference/commands/logical_select`] Supported
+  ``drilldowns[LABEL]`` form. ``drilldown[LABEL]`` form is deprecated.
+
+* Supported using system Onigmo.
+  [GitUub#628] [Patch by OBATA Akio]
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/commands/truncate`] Fixed a memory leak. It's
+  caused when the target is :ref:`table-hash-key` or
+  :ref:`table-pat-key` and the target table has many token filters are
+  registered. [GitHub#622] [Patch by Naoya Murakami]
+
+* [:doc:`/reference/commands/select`] Fixed a bug that old cache is
+  used after :doc:`/reference/commands/column_rename` is used.
+
+* [:doc:`/reference/commands/select`] Fixed a bug that index search
+  may not return matched record. [GitHub#624] [Patch by Naoya Murakami]
+
+Thanks
+^^^^^^
+
+* Naoya Murakami
+
+* OBATA Akio
+
 .. _release-6-1-3:
 
 Release 6.1.3 - 2017-01-06
@@ -120,7 +171,7 @@ Improvements
 * [:doc:`/reference/functions/between`] Supported ``between(_key, ...)``
   as target.
 
-* [httpd] Updated bundled nginx to 1.11.6..
+* [httpd] Updated bundled nginx to 1.11.6.
 
 Fixes
 ^^^^^
