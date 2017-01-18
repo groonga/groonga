@@ -10,7 +10,7 @@ TMP_FILES =						\
 
 all:
 
-release: upload
+release: download upload
 
 ensure-rsync-path:
 	@if test -z "$(RSYNC_PATH)"; then				\

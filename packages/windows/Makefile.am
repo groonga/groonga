@@ -8,7 +8,7 @@ SUFFIX =
 
 all:
 
-release: build package installer upload
+release: download build package installer upload
 
 ensure-rsync-path:
 	@if test -z "$(RSYNC_PATH)"; then				\

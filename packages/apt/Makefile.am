@@ -8,7 +8,7 @@ KEYRING_BASE_NAME = $(KEYRING_PACKAGE)-$(KEYRING_VERSION)
 
 all:
 
-release: build sign-packages update-repository sign-repository upload
+release: download build sign-packages update-repository sign-repository upload
 
 remove-existing-packages:
 	for distribution in $(DISTRIBUTIONS); do		\
