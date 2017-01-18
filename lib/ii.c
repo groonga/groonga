@@ -4997,7 +4997,10 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
             GRN_B_DEC(c->cinfo[i].size, c->cp);
             GRN_B_DEC(c->cinfo[i].dgap, c->cp);
             crid += c->cinfo[i].dgap;
-            if (crid < min) { c->curr_chunk = i + 1; }
+            if (crid < min) {
+              c->pc.rid = crid;
+              c->curr_chunk = i + 1;
+            }
           }
           if (chunk_is_reused(ctx, ii, c, chunk, c->buf->header.chunk_size)) {
             grn_ii_cursor_close(ctx, c);
