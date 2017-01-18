@@ -134,6 +134,7 @@ CMakeFiles
 /packages/apt/.vagrant/
 /packages/apt/tmp/
 /packages/ubuntu/precise/
+/packages/ubuntu/trusty/
 /packages/ubuntu/tmp/
 /packages/ubuntu/*.tar.gz
 /configure.lineno
