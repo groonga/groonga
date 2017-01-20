@@ -6158,6 +6158,7 @@ grn_table_select_index_match(grn_ctx *ctx,
   int n_indexes = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
   int32_t *wp = &GRN_INT32_VALUE(&si->wv);
   grn_search_optarg optarg;
+  grn_bool minimum_min_id_is_set = GRN_FALSE;
   grn_id minimum_min_id = GRN_ID_NIL;
   unsigned int previous_n_hits = grn_table_size(ctx, res);
 
@@ -6224,8 +6225,9 @@ grn_table_select_index_match(grn_ctx *ctx,
       }
     }
     GRN_BULK_REWIND(&wv);
-    if (minimum_min_id == GRN_ID_NIL ||
+    if (!minimum_min_id_is_set ||
         optarg.match_info.min < minimum_min_id) {
+      minimum_min_id_is_set = GRN_TRUE;
       minimum_min_id = optarg.match_info.min;
     }
   }
