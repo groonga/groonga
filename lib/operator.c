@@ -641,7 +641,11 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
     }\
     GRN_OBJ_FIN(ctx, &element_buffer);\
   } else {\
-    DO_COMPARE_SCALAR(x, y, r, op);\
+    if (GRN_BULK_VSIZE(x) == 0 || GRN_BULK_VSIZE(y) == 0) {\
+      r = GRN_FALSE;\
+    } else {\
+      DO_COMPARE_SCALAR(x, y, r, op);\
+    }\
   }\
 } while (0)
 
