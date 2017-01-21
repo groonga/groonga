@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2015 Brazil
+/*
+  Copyright(C) 2010-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -80,11 +81,20 @@ grn_inspect_name(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   int name_size;
 
   name_size = grn_obj_name(ctx, obj, NULL, 0);
-  if (name_size) {
+  if (name_size > 0) {
     grn_bulk_space(ctx, buf, name_size);
     grn_obj_name(ctx, obj, GRN_BULK_CURR(buf) - name_size, name_size);
   } else {
-    GRN_TEXT_PUTS(ctx, buf, "(nil)");
+    grn_id id;
+
+    id = grn_obj_id(ctx, obj);
+    if (id == GRN_ID_NIL) {
+      GRN_TEXT_PUTS(ctx, buf, "(nil)");
+    } else {
+      GRN_TEXT_PUTS(ctx, buf, "(anonymous:");
+      grn_text_lltoa(ctx, buf, id);
+      GRN_TEXT_PUTS(ctx, buf, ")");
+    }
   }
 
   return buf;
@@ -806,6 +816,37 @@ grn_table_columns_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
+grn_table_ids_and_values_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  int i = 0;
+  grn_obj value;
+
+  GRN_VALUE_FIX_SIZE_INIT(&value, 0, grn_obj_get_range(ctx, obj));
+
+  GRN_TEXT_PUTS(ctx, buf, "ids&values:[");
+  GRN_TABLE_EACH_BEGIN(ctx, obj, cursor, id) {
+    void *value_buffer;
+    int value_size;
+
+    if (i++ > 0) {
+      GRN_TEXT_PUTS(ctx, buf, ", ");
+    }
+
+    GRN_TEXT_PUTS(ctx, buf, "\n  ");
+    grn_text_lltoa(ctx, buf, id);
+    GRN_TEXT_PUTS(ctx, buf, ":");
+    value_size = grn_table_cursor_get_value(ctx, cursor, &value_buffer);
+    grn_bulk_write_from(ctx, &value, value_buffer, 0, value_size);
+    grn_inspect(ctx, buf, &value);
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  GRN_TEXT_PUTS(ctx, buf, "\n]");
+
+  GRN_OBJ_FIN(ctx, &value);
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_table_ids_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   grn_table_cursor *tc;
@@ -972,7 +1013,11 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 
   if (obj->header.type == GRN_TABLE_NO_KEY) {
     GRN_TEXT_PUTS(ctx, buf, " ");
-    grn_table_ids_inspect(ctx, buf, obj);
+    if (range) {
+      grn_table_ids_and_values_inspect(ctx, buf, obj);
+    } else {
+      grn_table_ids_inspect(ctx, buf, obj);
+    }
   } else {
     GRN_TEXT_PUTS(ctx, buf, " ");
     grn_table_default_tokenizer_inspect(ctx, buf, obj);
