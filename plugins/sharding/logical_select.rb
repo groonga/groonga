@@ -10,17 +10,21 @@ module Groonga
                  "max",
                  "max_border",
                  "filter",
+                 # Deprecated since 6.1.5. Use sort_keys instead.
                  "sortby",
                  "output_columns",
                  "offset",
                  "limit",
                  "drilldown",
+                 # Deprecated since 6.1.5. Use drilldown_sort_keys instead.
                  "drilldown_sortby",
                  "drilldown_output_columns",
                  "drilldown_offset",
                  "drilldown_limit",
                  "drilldown_calc_types",
                  "drilldown_calc_target",
+                 "sort_keys",
+                 "drilldown_sort_keys",
                ])
 
       def run_body(input)
@@ -55,6 +59,9 @@ module Groonga
 
       private
       def cache_key(input)
+        sort_keys = input[:sort_keys] || input[:sortby]
+        drilldown_sort_keys =
+          input[:drilldown_sort_keys] || input[:drilldown_sortby]
         key = "logical_select\0"
         key << "#{input[:logical_table]}\0"
         key << "#{input[:shard_key]}\0"
@@ -63,12 +70,12 @@ module Groonga
         key << "#{input[:max]}\0"
         key << "#{input[:max_border]}\0"
         key << "#{input[:filter]}\0"
-        key << "#{input[:sortby]}\0"
+        key << "#{sort_keys}\0"
         key << "#{input[:output_columns]}\0"
         key << "#{input[:offset]}\0"
         key << "#{input[:limit]}\0"
         key << "#{input[:drilldown]}\0"
-        key << "#{input[:drilldown_sortby]}\0"
+        key << "#{drilldown_sort_keys}\0"
         key << "#{input[:drilldown_output_columns]}\0"
         key << "#{input[:drilldown_offset]}\0"
         key << "#{input[:drilldown_limit]}\0"
@@ -252,7 +259,7 @@ module Groonga
           @filter = @input[:filter]
           @offset = (@input[:offset] || 0).to_i
           @limit = (@input[:limit] || 10).to_i
-          @sort_keys = parse_keys(@input[:sortby])
+          @sort_keys = parse_keys(@input[:sort_keys] || @input[:sortby])
           @output_columns = @input[:output_columns] || "_id, _key, *"
 
           @result_sets = []
@@ -293,7 +300,8 @@ module Groonga
           @keys = parse_keys(@input[:drilldown])
           @offset = (@input[:drilldown_offset] || 0).to_i
           @limit = (@input[:drilldown_limit] || 10).to_i
-          @sort_keys = parse_keys(@input[:drilldown_sortby])
+          @sort_keys = parse_keys(@input[:drilldown_sort_keys] ||
+                                  @input[:drilldown_sortby])
           @output_columns = @input[:drilldown_output_columns]
           @output_columns ||= "_key, _nsubrecs"
           @calc_target_name = @input[:drilldown_calc_target]
@@ -391,7 +399,8 @@ module Groonga
           @keys = parse_keys(parameters["keys"])
           @offset = (parameters["offset"] || 0).to_i
           @limit = (parameters["limit"] || 10).to_i
-          @sort_keys = parse_keys(parameters["sortby"])
+          @sort_keys = parse_keys(parameters["sort_keys"] ||
+                                  parameters["sortby"])
           @output_columns = parameters["output_columns"]
           @output_columns ||= "_key, _nsubrecs"
           @calc_target_name = parameters["calc_target"]
