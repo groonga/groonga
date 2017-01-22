@@ -102,7 +102,7 @@ load --table Logs_20150205
 }
 ]
 [[0,0.0,0.0],5]
-logical_select Logs timestamp   --min "2015-02-05 00:00:00"   --min_border "include"   --max "2015-02-06 00:00:00"   --max_border "exclude"   --limit 0   --drilldowns[action_date].keys action,date   --drilldowns[action_date].output_columns _value.action,_value.date,_nsubrecs   --drilldowns[action_date].sortby -_nsubrecs,_value.date,_value.action
+logical_select Logs timestamp   --min "2015-02-05 00:00:00"   --min_border "include"   --max "2015-02-06 00:00:00"   --max_border "exclude"   --limit 0   --drilldowns[action_date].keys action,date   --drilldowns[action_date].output_columns _value.action,_value.date,_nsubrecs   --drilldowns[action_date].sort_keys -_nsubrecs,_value.date,_value.action
 [
   [
     0,
