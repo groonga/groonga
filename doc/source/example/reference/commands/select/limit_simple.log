@@ -1,6 +1,6 @@
 Execution example::
 
-  select Entries --sortby _id --offset 2 --limit 3 --output_columns _key
+  select Entries --sort_keys _id --offset 2 --limit 3 --output_columns _key
   # [
   #   [
   #     0, 

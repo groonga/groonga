@@ -9,9 +9,9 @@ Execution example::
   #     "[logical_select] no shard exists: logical_table: <Nonexistent>: shard_key: <created_at>", 
   #     [
   #       [
-  #         "Groonga::Context.set_groonga_error", 
-  #         "lib/mrb/scripts/context.rb", 
-  #         27
+  #         "Groonga::Sharding::LogicalSelectCommand::Executor.execute_search", 
+  #         "/home/kou/work/c/groonga.clean/plugins/sharding/logical_select.rb", 
+  #         469
   #       ]
   #     ]
   #   ]

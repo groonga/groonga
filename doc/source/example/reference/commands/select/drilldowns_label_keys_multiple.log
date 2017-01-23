@@ -3,8 +3,8 @@ Execution example::
   select Entries \
     --limit -1 \
     --output_column tag,n_likes \
-    --drilldown[tag.n_likes].keys tag,n_likes \
-    --drilldown[tag.n_likes].output_columns _value.tag,_value.n_likes,_nsubrecs
+    --drilldowns[tag.n_likes].keys tag,n_likes \
+    --drilldowns[tag.n_likes].output_columns _value.tag,_value.n_likes,_nsubrecs
   # [
   #   [
   #     0, 

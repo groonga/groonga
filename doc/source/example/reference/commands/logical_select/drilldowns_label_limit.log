@@ -5,8 +5,8 @@ Execution example::
     --shard_key created_at \
     --limit 0 \
     --output_columns _id \
-    --drilldown[tag.n_likes].keys tag \
-    --drilldown[tag.n_likes].limit 2
+    --drilldowns[tag.n_likes].keys tag \
+    --drilldowns[tag.n_likes].limit 2
   # [
   #   [
   #     0, 

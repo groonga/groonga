@@ -6,7 +6,7 @@ Execution example::
     --limit 0 \
     --output_columns _id \
     --drilldown tag \
-    --drilldown_sortby -_nsubrecs,_key
+    --drilldown_sort_keys -_nsubrecs,_key
   # [
   #   [
   #     0, 

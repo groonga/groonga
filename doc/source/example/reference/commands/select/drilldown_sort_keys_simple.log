@@ -3,9 +3,8 @@ Execution example::
   select Entries \
     --limit 0 \
     --output_column _id \
-    --drilldown tag \
-    --drilldown_sort_keys _key \
-    --drilldown_offset -2
+    --drilldown 'tag, n_likes' \
+    --drilldown_sort_keys '-_nsubrecs, _key'
   # [
   #   [
   #     0, 
@@ -55,12 +54,47 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         "Hello", 
-  #         1
+  #         "Groonga", 
+  #         2
   #       ], 
   #       [
   #         "Senna", 
   #         2
+  #       ], 
+  #       [
+  #         "Hello", 
+  #         1
+  #       ]
+  #     ], 
+  #     [
+  #       [
+  #         4
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_nsubrecs", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         3, 
+  #         2
+  #       ], 
+  #       [
+  #         5, 
+  #         1
+  #       ], 
+  #       [
+  #         10, 
+  #         1
+  #       ], 
+  #       [
+  #         15, 
+  #         1
   #       ]
   #     ]
   #   ]

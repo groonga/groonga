@@ -53,7 +53,7 @@ optional::
 ``select`` has the following named parameters for advanced drilldown:
 
   * ``drilldowns[${LABEL}].keys=null``
-  * ``drilldowns[${LABEL}].sortby=null``
+  * ``drilldowns[${LABEL}].sort_keys=null``
   * ``drilldowns[${LABEL}].output_columns="_key, _nsubrecs"``
   * ``drilldowns[${LABEL}].offset=0``
   * ``drilldowns[${LABEL}].limit=10``
@@ -71,14 +71,14 @@ Parameters that have the same ``${LABEL}`` are grouped.
 For example, the following parameters specify one drilldown:
 
   * ``--drilldowns[label].keys column``
-  * ``--drilldowns[label].sortby -_nsubrecs``
+  * ``--drilldowns[label].sort_keys -_nsubrecs``
 
 The following parameters specify two drilldowns:
 
   * ``--drilldowns[label1].keys column1``
-  * ``--drilldowns[label1].sortby -_nsubrecs``
+  * ``--drilldowns[label1].sort_keys -_nsubrecs``
   * ``--drilldowns[label2].keys column2``
-  * ``--drilldowns[label2].sortby _key``
+  * ``--drilldowns[label2].sort_keys _key``
 
 Usage
 -----
@@ -852,7 +852,7 @@ record.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/offset_simple.log
-.. select Entries --sortby _id --offset 3 --output_columns _key
+.. select Entries --sort_keys _id --offset 3 --output_columns _key
 
 The ``select`` command outputs from the 4th record.
 
@@ -864,7 +864,7 @@ record.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/offset_negative.log
-.. select Entries --sortby _id --offset -2 --output_columns _key
+.. select Entries --sort_keys _id --offset -2 --output_columns _key
 
 The ``select`` command outputs from the 4th record because the total
 number of records is ``5``.
@@ -883,7 +883,7 @@ Here is a simple ``limit`` usage example.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/limit_simple.log
-.. select Entries --sortby _id --offset 2 --limit 3 --output_columns _key
+.. select Entries --sort_keys _id --offset 2 --limit 3 --output_columns _key
 
 The ``select`` command outputs the 3rd, the 4th and the 5th records.
 
@@ -1003,15 +1003,15 @@ sort key is column name.
 You can refer the number of grouped records by ``_nsubrecs``
 :doc:`/reference/columns/pseudo`.
 
-Here is a simple ``drilldown_sortby`` example:
+Here is a simple ``drilldown_sort_keys`` example:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/select/drilldown_sortby_simple.log
+.. include:: ../../example/reference/commands/select/drilldown_sort_keys_simple.log
 .. select Entries \
 ..   --limit 0 \
 ..   --output_column _id \
 ..   --drilldown tag \
-..   --drilldown_sortby '-_nsubrecs, _key'
+..   --drilldown_sort_keys '-_nsubrecs, _key'
 
 Drilldown result is sorted by the number of grouped records (=
 ``_nsubrecs`` ) in descending order. If there are grouped results that
@@ -1021,12 +1021,12 @@ are sorted by grouped key (= ``_key`` ) in ascending order.
 The sort keys are used in all group keys specified in ``drilldown``:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/select/drilldown_sortby_simple.log
+.. include:: ../../example/reference/commands/select/drilldown_sort_keys_simple.log
 .. select Entries \
 ..   --limit 0 \
 ..   --output_column _id \
 ..   --drilldown 'tag, n_likes' \
-..   --drilldown_sortby '-_nsubrecs, _key'
+..   --drilldown_sort_keys '-_nsubrecs, _key'
 
 The same sort keys are used in ``tag`` drilldown and ``n_likes``
 drilldown.
@@ -1134,7 +1134,7 @@ Here is a ``drilldown_offset`` example:
 ..   --limit 0 \
 ..   --output_column _id \
 ..   --drilldown tag \
-..   --drilldown_sortby _key \
+..   --drilldown_sort_keys _key \
 ..   --drilldown_offset 1
 
 The ``select`` command outputs from the 2nd record.
@@ -1151,7 +1151,7 @@ grouped result to the 3rd grouped result.
 ..   --limit 0 \
 ..   --output_column _id \
 ..   --drilldown tag \
-..   --drilldown_sortby _key \
+..   --drilldown_sort_keys _key \
 ..   --drilldown_offset -2
 
 The ``select`` command outputs from the 2nd grouped result because the
@@ -1175,7 +1175,7 @@ Here is a ``drilldown_limit`` example:
 ..   --limit 0 \
 ..   --output_column _id \
 ..   --drilldown tag \
-..   --drilldown_sortby _key \
+..   --drilldown_sort_keys _key \
 ..   --drilldown_offset 1 \
 ..   --drilldown_limit 2
 
@@ -1193,7 +1193,7 @@ Here is a negative ``drilldown_limit`` value example.
 ..   --limit 0 \
 ..   --output_column _id \
 ..   --drilldown tag \
-..   --drilldown_sortby _key \
+..   --drilldown_sort_keys _key \
 ..   --drilldown_limit -1
 
 The ``select`` command outputs all groups.
@@ -1386,7 +1386,7 @@ You can use a configuration for each drilldown by the following
 parameters:
 
   * ``drilldowns[${LABEL}].keys``
-  * ``drilldowns[${LABEL}].sortby``
+  * ``drilldowns[${LABEL}].sort_keys``
   * ``drilldowns[${LABEL}].output_columns``
   * ``drilldowns[${LABEL}].offset``
   * ``drilldowns[${LABEL}].limit``
@@ -1429,7 +1429,7 @@ In ``label2`` group, ``tag`` is used for group key and
 See document for corresponding ``drilldown_XXX`` parameter to know how
 to use it for the following parameters:
 
-  * ``drilldowns[${LABEL}].sortby``: :ref:`select-drilldown-sortby`
+  * ``drilldowns[${LABEL}].sort_keys``: :ref:`select-drilldown-sort-keys`
   * ``drilldowns[${LABEL}].offset``: :ref:`select-drilldown-offset`
   * ``drilldowns[${LABEL}].limit``: :ref:`select-drilldown-limit`
   * ``drilldowns[${LABEL}].calc_types``: :ref:`select-drilldown-calc-types`

@@ -7,7 +7,7 @@ Execution example::
     --min_border "include" \
     --max "2015/07/09 00:00:00" \
     --max_border "exclude" \
-    --sortby _key
+    --sort_keys _key
   # [
   #   [
   #     0, 

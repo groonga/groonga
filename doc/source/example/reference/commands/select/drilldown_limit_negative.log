@@ -4,7 +4,7 @@ Execution example::
     --limit 0 \
     --output_column _id \
     --drilldown tag \
-    --drilldown_sortby _key \
+    --drilldown_sort_keys _key \
     --drilldown_limit -1
   # [
   #   [

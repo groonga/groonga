@@ -5,8 +5,8 @@ Execution example::
     --shard_key created_at \
     --limit 0 \
     --output_columns _id \
-    --drilldown[tag].keys tag \
-    --drilldown[tag].output_columns _key,_nsubrecs
+    --drilldowns[tag].keys tag \
+    --drilldowns[tag].output_columns _key,_nsubrecs
   # [
   #   [
   #     0, 

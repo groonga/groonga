@@ -46,12 +46,14 @@ parameters are optional::
                  [drilldown_limit=10]
                  [drilldown_calc_types=NONE]
                  [drilldown_calc_target=null]
+                 [sort_keys=null]
+                 [drilldown_sort_keys=null]
 
 ``logical_select`` has the following named parameters for advanced
 drilldown:
 
   * ``drilldowns[${LABEL}].keys=null``
-  * ``drilldowns[${LABEL}].sortby=null``
+  * ``drilldowns[${LABEL}].sort_keys=null``
   * ``drilldowns[${LABEL}].output_columns="_key, _nsubrecs"``
   * ``drilldowns[${LABEL}].offset=0``
   * ``drilldowns[${LABEL}].limit=10``
@@ -59,7 +61,14 @@ drilldown:
   * ``drilldowns[${LABEL}].calc_target=null``
 
 .. deprecated:: 6.1.4
-  ``drilldown[...]`` syntax is deprecated, Use ``drilldowns[...]`` instead.
+
+   ``drilldown[...]`` syntax is deprecated. Use ``drilldowns[...]``
+   instead.
+
+.. deprecated:: 6.1.5
+
+   :ref:`logical-select-drilldowns-sortby` is deprecated.
+   Use :ref:`logical-select-drilldowns-sort-keys` instead.
 
 You can use one or more alphabets, digits, ``_`` and ``.`` for
 ``${LABEL}``. For example, ``parent.sub1`` is a valid ``${LABEL}``.
@@ -69,14 +78,14 @@ Parameters that have the same ``${LABEL}`` are grouped.
 For example, the following parameters specify one drilldown:
 
   * ``--drilldowns[label].keys column``
-  * ``--drilldowns[label].sortby -_nsubrecs``
+  * ``--drilldowns[label].sort_keys -_nsubrecs``
 
 The following parameters specify two drilldowns:
 
   * ``--drilldowns[label1].keys column1``
-  * ``--drilldowns[label1].sortby -_nsubrecs``
+  * ``--drilldowns[label1].sort_keys -_nsubrecs``
   * ``--drilldowns[label2].keys column2``
-  * ``--drilldowns[label2].sortby _key``
+  * ``--drilldowns[label2].sort_keys _key``
 
 Differences from ``select``
 ---------------------------
@@ -89,11 +98,12 @@ But there are some differences from :doc:`select`:
 
   * ``logical_table`` and ``shard_key`` parameters are required
     instead of ``table`` parameter.
-  * ``sortby`` isn't supported when multiple shards are used. (Only
+  * ``sort_keys`` isn't supported when multiple shards are used. (Only
     one shard is used, they are supported.)
-  * ``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].sortby`` doesn't
-    work with multiple shards. It works with one shard. ``_key`` in
-    ``drilldowns[${LABEL}].sortby`` work with multiple shards.
+  * ``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].sort_keys``
+    doesn't work with multiple shards. It works with one
+    shard. ``_key`` in ``drilldowns[${LABEL}].sort_keys`` work with
+    multiple shards.
   * ``match_columns`` and ``query`` aren't supported yet.
   * ``cache`` isn't supported yet.
   * ``match_escalation_threshold`` isn't supported yet.
@@ -454,17 +464,26 @@ Here is an example:
 ``sortby``
 """"""""""
 
-Corresponds to :ref:`select-sortby` in :doc:`select`. See
-:ref:`select-sortby` for details.
+.. deprecated:: 6.1.5
 
-``sortby`` has a limitation. It works only when the number of search
-target shards is one. If the number of search target shards is larger
-than one, ``sortby`` doesn't work.
+   Use :ref:`logical-select-sort-keys` instead.
+
+.. _logical-select-sort-keys:
+
+``sort_keys``
+"""""""""""""
+
+Corresponds to :ref:`select-sort-keys` in :doc:`select`. See
+:ref:`select-sort-keys` for details.
+
+``sort_keys`` has a limitation. It works only when the number of
+search target shards is one. If the number of search target shards is
+larger than one, ``sort_keys`` doesn't work.
 
 Here is an example that uses only one shard:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/logical_select/sortby.log
+.. include:: ../../example/reference/commands/logical_select/sort_keys.log
 .. logical_select \
 ..   --logical_table Entries \
 ..   --shard_key created_at \
@@ -472,7 +491,7 @@ Here is an example that uses only one shard:
 ..   --min_border "include" \
 ..   --max "2015/07/09 00:00:00" \
 ..   --max_border "exclude" \
-..   --sortby _key
+..   --sort_keys _key
 
 .. _logical-select-offset:
 
@@ -546,20 +565,29 @@ Here is an example:
 ``drilldown_sortby``
 """"""""""""""""""""
 
-Corresponds to :ref:`select-drilldown-sortby` in :doc:`select`. See
-:ref:`select-drilldown-sortby` for details.
+.. deprecated:: 6.1.5
+
+   Use :ref:`logical-select-drilldown-sort-keys` instead.
+
+.. _logical-select-drilldown-sort-keys:
+
+``drilldown_sort_keys``
+"""""""""""""""""""""""
+
+Corresponds to :ref:`select-drilldown-sort-keys` in :doc:`select`. See
+:ref:`select-drilldown-sort-keys` for details.
 
 Here is an example:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/logical_select/drilldown_sortby.log
+.. include:: ../../example/reference/commands/logical_select/drilldown_sort_keys.log
 .. logical_select \
 ..   --logical_table Entries \
 ..   --shard_key created_at \
 ..   --limit 0 \
 ..   --output_columns _id \
 ..   --drilldown tag \
-..   --drilldown_sortby -_nsubrecs,_key
+..   --drilldown_sort_keys -_nsubrecs,_key
 
 .. _logical-select-drilldown-output-columns:
 
@@ -664,9 +692,10 @@ details.
 
 There are some limitations:
 
-  * ``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].sortby`` doesn't
-    work with multiple shards. It works with one shard. ``_key`` in
-    ``drilldowns[${LABEL}].sortby`` work with multiple shards.
+  * ``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].sort_keys``
+    doesn't work with multiple shards. It works with one
+    shard. ``_key`` in ``drilldowns[${LABEL}].sort_key`` work with
+    multiple shards.
 
 .. _logical-select-drilldowns-label-keys:
 
@@ -714,20 +743,29 @@ Here is an example:
 ``drilldowns[${LABEL}].sortby``
 """""""""""""""""""""""""""""""
 
-Corresponds to :ref:`logical-select-drilldown-sortby` in not labeled
-drilldown.
+.. deprecated:: 6.1.5
 
-``drilldowns[${LABEL}].sortby`` has a limitation.
+   Use :ref:`logical-select-drilldowns-label-sort-keys` instead.
 
-``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].sortby`` doesn't work
-with multiple shards. It works with one shard. ``_key`` in
-``drilldowns[${LABEL}].sortby`` work with multiple shards.
+.. _logical-select-drilldowns-label-sort-keys:
+
+``drilldowns[${LABEL}].sort_keys``
+""""""""""""""""""""""""""""""""""
+
+Corresponds to :ref:`logical-select-drilldown-sort-keys` in not
+labeled drilldown.
+
+``drilldowns[${LABEL}].sort_keys`` has a limitation.
+
+``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].sort_keys`` doesn't
+work with multiple shards. It works with one shard. ``_key`` in
+``drilldowns[${LABEL}].sort_keys`` work with multiple shards.
 
 Here is an example that uses ``_value.${KEY_NAME}`` with only one
 shard:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/logical_select/drilldowns_label_sortby.log
+.. include:: ../../example/reference/commands/logical_select/drilldowns_label_sort_keys.log
 .. logical_select \
 ..   --logical_table Entries \
 ..   --shard_key created_at \
@@ -739,7 +777,7 @@ shard:
 ..   --output_columns _id \
 ..   --drilldowns[tag.n_likes].keys tag,n_likes \
 ..   --drilldowns[tag.n_likes].output_columns _nsubrecs,_value.n_likes,_value.tag \
-..   --drilldowns[tag.n_likes].sortby -_nsubrecs,_value.n_likes,_value.tag
+..   --drilldowns[tag.n_likes].sort_keys -_nsubrecs,_value.n_likes,_value.tag
 
 .. _logical-select-drilldowns-label-offset:
 

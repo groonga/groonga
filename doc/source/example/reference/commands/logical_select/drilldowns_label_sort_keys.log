@@ -9,9 +9,9 @@ Execution example::
     --max_border "exclude" \
     --limit 0 \
     --output_columns _id \
-    --drilldown[tag.n_likes].keys tag,n_likes \
-    --drilldown[tag.n_likes].output_columns _nsubrecs,_value.n_likes,_value.tag \
-    --drilldown[tag.n_likes].sortby -_nsubrecs,_value.n_likes,_value.tag
+    --drilldowns[tag.n_likes].keys tag,n_likes \
+    --drilldowns[tag.n_likes].output_columns _nsubrecs,_value.n_likes,_value.tag \
+    --drilldowns[tag.n_likes].sort_keys -_nsubrecs,_value.n_likes,_value.tag
   # [
   #   [
   #     0, 
