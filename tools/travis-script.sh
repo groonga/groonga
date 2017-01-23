@@ -25,13 +25,13 @@ retry()
 }
 
 if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-  memory_fs_size=$[512 * 1024 * 1024] # 512MiB
-  byte_per_sector=512
-  n_sectors=$[${memory_fs_size} / ${byte_per_sector}]
-  memory_fs_device_path=$(hdid -nomount ram://${n_sectors})
-  newfs_hfs ${memory_fs_device_path}
-  mkdir -p tmp
-  mount -t hfs ${memory_fs_device_path} tmp
+  # memory_fs_size=$[512 * 1024 * 1024] # 512MiB
+  # byte_per_sector=512
+  # n_sectors=$[${memory_fs_size} / ${byte_per_sector}]
+  # memory_fs_device_path=$(hdid -nomount ram://${n_sectors})
+  # newfs_hfs ${memory_fs_device_path}
+  # mkdir -p tmp
+  # mount -t hfs ${memory_fs_device_path} tmp
 
   command_test_options="${command_test_options} --n-workers=2"
 else
