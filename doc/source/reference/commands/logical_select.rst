@@ -67,8 +67,8 @@ drilldown:
 
 .. deprecated:: 6.1.5
 
-   :ref:`logical-select-drilldowns-sortby` is deprecated.
-   Use :ref:`logical-select-drilldowns-sort-keys` instead.
+   :ref:`logical-select-drilldowns-label-sortby` is deprecated.
+   Use :ref:`logical-select-drilldowns-label-sort-keys` instead.
 
 You can use one or more alphabets, digits, ``_`` and ``.`` for
 ``${LABEL}``. For example, ``parent.sub1`` is a valid ``${LABEL}``.
