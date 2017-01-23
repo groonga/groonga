@@ -7,6 +7,34 @@
 News
 ====
 
+.. _release-6-1-5:
+
+Release 6.1.5 - 2017-01-23
+--------------------------
+
+This is a bug fix release of 6.1.4. 6.1.4 users should upgrade to
+6.1.5.
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported binary operation against nonexistent reference column
+  value. It's always false.
+
+* [:doc:`/reference/commands/logical_select`] Added
+  :ref:`logical-select-sort-keys`,
+  :ref:`logical-select-drilldown-sort-keys` and
+  :ref:`logical-select-drilldowns-label-sort-keys`.
+  :ref:`logical-select-sortby`,
+  :ref:`logical-select-drilldown-sortby` and
+  :ref:`logical-select-drilldowns-label-sortby` are deprecated.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/commands/select`] Fixed a bug that index search
+  may not return matched record.
+
 .. _release-6-1-4:
 
 Release 6.1.4 - 2017-01-18
