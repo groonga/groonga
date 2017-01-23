@@ -499,7 +499,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/tutorial/drilldown-limit.log \
 	$(top_srcdir)/doc/source/example/tutorial/drilldown-multiple-column.log \
 	$(top_srcdir)/doc/source/example/tutorial/drilldown-output-columns.log \
-	$(top_srcdir)/doc/source/example/tutorial/drilldown-sort_keys.log \
+	$(top_srcdir)/doc/source/example/tutorial/drilldown-sortby.log \
 	$(top_srcdir)/doc/source/example/tutorial/index-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/index-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/index-3.log \
