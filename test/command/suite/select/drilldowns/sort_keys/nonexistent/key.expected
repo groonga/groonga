@@ -1,0 +1,76 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+column_create Memos value COLUMN_SCALAR Int64
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "tag": "Groonga", "value": 10},
+{"_key": "Mroonga is fast!", "tag": "Mroonga", "value": 20},
+{"_key": "Groonga sticker!", "tag": "Groonga", "value": 40},
+{"_key": "Rroonga is fast!", "tag": "Rroonga", "value": 80}
+]
+[[0,0.0,0.0],4]
+select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].output_columns _key   --drilldowns[tag].sort_keys noexistent
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tag",
+          "Tags"
+        ],
+        [
+          "value",
+          "Int64"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast!",
+        "Groonga",
+        10
+      ],
+      [
+        2,
+        "Mroonga is fast!",
+        "Mroonga",
+        20
+      ],
+      [
+        3,
+        "Groonga sticker!",
+        "Groonga",
+        40
+      ],
+      [
+        4,
+        "Rroonga is fast!",
+        "Rroonga",
+        80
+      ]
+    ],
+    {
+    }
+  ]
+]
+#|w| invalid sort key: <noexistent>: table:<(anonymous)> keys:<noexistent>
