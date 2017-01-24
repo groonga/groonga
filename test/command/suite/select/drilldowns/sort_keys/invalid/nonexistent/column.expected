@@ -14,7 +14,7 @@ load --table Memos
 {"_key": "Rroonga is fast!", "tag": "Rroonga", "value": 80}
 ]
 [[0,0.0,0.0],4]
-select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].output_columns _key   --drilldowns[tag].sort_keys noexistent
+select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].output_columns _key   --drilldowns[tag].sort_keys nonexistent
 [
   [
     [
@@ -22,7 +22,7 @@ select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].output_columns _ke
       0.0,
       0.0
     ],
-    "invalid sort key: <noexistent>: table:<(anonymous)> keys:<noexistent>"
+    "invalid sort key: <nonexistent>: table:<(anonymous)> keys:<nonexistent>"
   ],
   [
     [
@@ -76,4 +76,4 @@ select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].output_columns _ke
     }
   ]
 ]
-#|w| invalid sort key: <noexistent>: table:<(anonymous)> keys:<noexistent>
+#|w| invalid sort key: <nonexistent>: table:<(anonymous)> keys:<nonexistent>

@@ -12,4 +12,4 @@ load --table Memos
 select Memos \
   --drilldowns[tag].keys tag \
   --drilldowns[tag].output_columns _key \
-  --drilldowns[tag].sort_keys noexistent
+  --drilldowns[tag].sort_keys nonexistent
