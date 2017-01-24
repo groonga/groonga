@@ -34,5 +34,5 @@ case "${TRAVIS_OS_NAME}" in
 esac
 
 if [ "${ENABLE_MRUBY}" = "yes" ]; then
-  gem install pkg-config groonga-client
+  gem install pkg-config groonga-client test-unit
 fi
