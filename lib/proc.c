@@ -2912,16 +2912,10 @@ selector_in_values_sequential_search(grn_ctx *ctx,
       grn_obj *accessor;
       char local_source_name[GRN_TABLE_MAX_KEY_SIZE];
       int local_source_name_length;
-      grn_obj_flags source_obj_flags = 0;
 
       local_source_name_length = grn_column_name(ctx, source,
                                                  local_source_name,
                                                  GRN_TABLE_MAX_KEY_SIZE);
-
-      if ((source->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
-        source_obj_flags |= GRN_OBJ_VECTOR;
-      }
-
       grn_obj_unlink(ctx, source);
       accessor = grn_obj_column(ctx, res,
                                 local_source_name,
@@ -2930,7 +2924,8 @@ selector_in_values_sequential_search(grn_ctx *ctx,
         grn_table_cursor *cursor;
         grn_id id;
         grn_obj record_value;
-        GRN_RECORD_INIT(&record_value, source_obj_flags, grn_obj_id(ctx, res));
+
+        GRN_VOID_INIT(&record_value);
         cursor = grn_table_cursor_open(ctx, res,
                                        NULL, 0, NULL, 0,
                                        0, -1, GRN_CURSOR_ASCENDING);
