@@ -1,0 +1,14 @@
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items tag COLUMN_SCALAR Tags
+
+load --table Items
+[
+{"_key": "Mroonga", "tag": "MySQL"},
+{"_key": "PGroonga", "tag": "PostgreSQL"}
+]
+
+select Items \
+  --drilldowns[tag].keys tag \
+  --drilldowns[tag].sort_keys -_sum

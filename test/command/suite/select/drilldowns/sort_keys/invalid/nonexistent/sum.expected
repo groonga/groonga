@@ -1,0 +1,14 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "Mroonga", "tag": "MySQL"},
+{"_key": "PGroonga", "tag": "PostgreSQL"}
+]
+[[0,0.0,0.0],2]
+select Items   --drilldowns[tag].keys tag   --drilldowns[tag].sort_keys -_sum
+failed to parse <json> content: 409: unexpected token at '{"tag"}]]': <[[-22,1485238798.712087,0.0003325939178466797,"invalid sort key: <_sum>: table:<(anonymous)> keys:<-_sum>",[["grn_table_sort_key_from_str","db.c",13495]]],[[[2],[["_id","UInt32"],["_key","ShortText"],["tag","Tags"]],[1,"Mroonga","MySQL"],[2,"PGroonga","PostgreSQL"]],{"tag"}]]>#|w| invalid sort key: <_sum>: table:<(anonymous)> keys:<-_sum>
