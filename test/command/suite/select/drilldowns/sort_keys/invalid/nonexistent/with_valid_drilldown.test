@@ -1,14 +1,16 @@
 table_create Tags TABLE_PAT_KEY ShortText
+
 table_create Memos TABLE_HASH_KEY ShortText
 column_create Memos tag COLUMN_SCALAR Tags
-column_create Memos value COLUMN_SCALAR Int64
+
 load --table Memos
 [
-{"_key": "Groonga is fast!", "tag": "Groonga", "value": 10},
-{"_key": "Mroonga is fast!", "tag": "Mroonga", "value": 20},
-{"_key": "Groonga sticker!", "tag": "Groonga", "value": 40},
-{"_key": "Rroonga is fast!", "tag": "Rroonga", "value": 80}
+{"_key": "Groonga is fast!", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "tag": "Rroonga"}
 ]
+
 select Memos \
   --drilldowns[tag].keys tag \
   --drilldowns[tag].output_columns _key \
