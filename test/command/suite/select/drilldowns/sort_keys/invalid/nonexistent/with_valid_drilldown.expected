@@ -17,9 +17,12 @@ load --table Memos
 select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].output_columns _key   --drilldowns[tag].sort_keys noexistent   --drilldowns[tag2].keys tag
 [
   [
-    0,
-    0.0,
-    0.0
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "invalid sort key: <noexistent>: table:<(anonymous)> keys:<noexistent>"
   ],
   [
     [
@@ -70,33 +73,6 @@ select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].output_columns _ke
       ]
     ],
     {
-      "tag2": [
-        [
-          3
-        ],
-        [
-          [
-            "_key",
-            "ShortText"
-          ],
-          [
-            "_nsubrecs",
-            "Int32"
-          ]
-        ],
-        [
-          "Groonga",
-          2
-        ],
-        [
-          "Mroonga",
-          1
-        ],
-        [
-          "Rroonga",
-          1
-        ]
-      ]
     }
   ]
 ]

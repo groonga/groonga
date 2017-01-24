@@ -1939,9 +1939,7 @@ grn_select_output_slices(grn_ctx *ctx,
                                               slice->sort_keys.value,
                                               slice->sort_keys.length,
                                               slice->table, &n_sort_keys);
-      if (!sort_keys) {
-        GRN_PLUGIN_CLEAR_ERROR(ctx);
-      } else {
+      if (sort_keys) {
         grn_obj *sorted;
         sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
                                   NULL, slice->table);
@@ -1962,6 +1960,8 @@ grn_select_output_slices(grn_ctx *ctx,
           grn_obj_unlink(ctx, sorted);
         }
         grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
+      } else {
+        succeeded = GRN_FALSE;
       }
     } else {
       data->output.formatter->slice_label(ctx, data, slice);
@@ -2526,9 +2526,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
                                               drilldown->sort_keys.value,
                                               drilldown->sort_keys.length,
                                               target_table, &n_sort_keys);
-      if (!sort_keys) {
-        GRN_PLUGIN_CLEAR_ERROR(ctx);
-      } else {
+      if (sort_keys) {
         grn_obj *sorted;
         sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
                                   NULL, target_table);
@@ -2549,6 +2547,8 @@ grn_select_output_drilldowns(grn_ctx *ctx,
           grn_obj_unlink(ctx, sorted);
         }
         grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
+      } else {
+        succeeded = GRN_FALSE;
       }
     } else {
       data->output.formatter->drilldown_label(ctx, data, drilldown);
