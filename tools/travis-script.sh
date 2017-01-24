@@ -56,6 +56,7 @@ case "${BUILD_TOOL}" in
         ;;
       *)
         test/unit/run-test.sh
+        test/command/run-test.sh ${command_test_options}
         if [ "${ENABLE_MRUBY}" = "yes" ]; then
           test/mruby/run-test.rb
           test/command_line/run-test.rb
