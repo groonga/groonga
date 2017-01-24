@@ -28,7 +28,13 @@ matrix:
       env: BUILD_TOOL=cmake ENABLE_MRUBY=yes
     - os: osx
       compiler: clang
-      env: BUILD_TOOL=autotools ENABLE_MRUBY=yes
+      env: BUILD_TOOL=autotools ENABLE_MRUBY=yes TEST_TARGET=command
+    - os: osx
+      compiler: clang
+      env: BUILD_TOOL=autotools ENABLE_MRUBY=yes TEST_TARGET=command-http
+    - os: osx
+      compiler: clang
+      env: BUILD_TOOL=autotools ENABLE_MRUBY=yes TEST_TARGET=command-httpd
     - os: osx
       compiler: clang
       env: BUILD_TOOL=cmake ENABLE_MRUBY=yes
