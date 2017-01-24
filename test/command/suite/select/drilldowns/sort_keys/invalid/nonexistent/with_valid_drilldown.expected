@@ -12,7 +12,7 @@ load --table Memos
 {"_key": "Rroonga is fast!", "tag": "Rroonga"}
 ]
 [[0,0.0,0.0],4]
-select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].output_columns _key   --drilldowns[tag].sort_keys nonexistent   --drilldowns[tag2].keys tag
+select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].output_columns _key   --drilldowns[tag].sort_keys nonexistent   --drilldowns[zzz].keys tag
 [
   [
     [

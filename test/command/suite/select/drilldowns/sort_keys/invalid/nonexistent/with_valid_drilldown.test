@@ -15,4 +15,4 @@ select Memos \
   --drilldowns[tag].keys tag \
   --drilldowns[tag].output_columns _key \
   --drilldowns[tag].sort_keys nonexistent \
-  --drilldowns[tag2].keys tag
+  --drilldowns[zzz].keys tag
