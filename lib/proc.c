@@ -1732,11 +1732,11 @@ parse_mode(grn_ctx *ctx, grn_obj *mode, const char *context)
     return GRN_OP_NEAR;
   } else if (EQUAL_MODE("*S") || EQUAL_MODE("SIMILAR")) {
     return GRN_OP_SIMILAR;
-  } else if (EQUAL_MODE("^") || EQUAL_MODE("PREFIX")) {
+  } else if (EQUAL_MODE("^") || EQUAL_MODE("@^") || EQUAL_MODE("PREFIX")) {
     return GRN_OP_PREFIX;
-  } else if (EQUAL_MODE("$") || EQUAL_MODE("SUFFIX")) {
+  } else if (EQUAL_MODE("$") || EQUAL_MODE("@$") || EQUAL_MODE("SUFFIX")) {
     return GRN_OP_SUFFIX;
-  } else if (EQUAL_MODE("~") || EQUAL_MODE("REGEXP")) {
+  } else if (EQUAL_MODE("~") || EQUAL_MODE("@~") || EQUAL_MODE("REGEXP")) {
     return GRN_OP_REGEXP;
   } else {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
@@ -1751,9 +1751,9 @@ parse_mode(grn_ctx *ctx, grn_obj *mode, const char *context)
                      "\"@\", \"MATCH\", "
                      "\"*N\", \"NEAR\", "
                      "\"*S\", \"SIMILAR\", "
-                     "\"^\", \"PREFIX\", "
-                     "\"$\", \"SUFFIX\", "
-                     "\"~\", \"REGEXP\""
+                     "\"^\", \"@^\", \"PREFIX\", "
+                     "\"$\", \"@$\", \"SUFFIX\", "
+                     "\"~\", \"@~\", \"REGEXP\""
                      "]: <%.*s>",
                      context,
                      (int)GRN_TEXT_LEN(mode),
