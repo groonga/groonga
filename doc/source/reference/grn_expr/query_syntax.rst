@@ -342,6 +342,20 @@ The expression matches records that have value that ends with ``んが``
 in ``content`` column value. ``ぐるんが`` and ``むるんが`` are matched
 with the expression.
 
+.. _query-syntax-near-search-condition:
+
+Near search condition
+^^^^^^^^^^^^^^^^^^^^^
+
+TODO
+
+.. _query-syntax-similar-search-condition:
+
+Similar search condition
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+TODO
+
 .. _query-syntax-equal-condition:
 
 Equal condition
@@ -489,34 +503,6 @@ Here is a simple example.
 
 The expression matches records that ``n_likes`` column value is
 greater than or equal to ``10``.
-
-.. _query-syntax-near-search-condition:
-
-Near search condition
-^^^^^^^^^^^^^^^^^^^^^
-
-TODO
-
-.. _query-syntax-similar-search-condition:
-
-Similar search condition
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-TODO
-
-.. _query-syntax-prefix-search-condition:
-
-Prefix search condition
-^^^^^^^^^^^^^^^^^^^^^^^
-
-TODO
-
-.. _query-syntax-suffix-search-condition:
-
-Suffix search condition
-^^^^^^^^^^^^^^^^^^^^^^^
-
-TODO
 
 .. _query-syntax-regular-expression-condition:
 
