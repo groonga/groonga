@@ -21,7 +21,7 @@ Install::
 
   % wget http://packages.groonga.org/centos/groonga-release-1.2.0-1.noarch.rpm
   % sudo yum install -y --nogpgcheck groonga-release-1.2.0-1.noarch.rpm
-  % sudo yum install -y groonga
+  % sudo yum install -y --enablerepo=epel groonga
 
 .. include:: server-use.inc
 
@@ -30,7 +30,7 @@ tokenizer, install groonga-tokenizer-mecab package.
 
 Install groonga-tokenizer-mecab package::
 
-  % sudo yum install -y groonga-tokenizer-mecab
+  % sudo yum install -y --enablerepo=epel groonga-tokenizer-mecab
 
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
@@ -38,7 +38,7 @@ Groonga status by Munin, install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 
-  % sudo yum install -y groonga-munin-plugins
+  % sudo yum install -y --enablerepo=epel groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
 a Groonga plugin.
@@ -46,7 +46,7 @@ If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::
 
-  % sudo yum install -y groonga-normalizer-mysql
+  % sudo yum install -y --enablerepo=epel groonga-normalizer-mysql
 
 CentOS 6
 --------
@@ -54,7 +54,7 @@ CentOS 6
 Install::
 
   % sudo yum install -y http://packages.groonga.org/centos/groonga-release-1.2.0-1.noarch.rpm
-  % sudo yum install -y groonga
+  % sudo yum install -y --enablerepo=epel groonga
 
 .. include:: server-use.inc
 
@@ -63,7 +63,7 @@ tokenizer, install groonga-tokenizer-mecab package.
 
 Install groonga-tokenizer-mecab package::
 
-  % sudo yum install -y groonga-tokenizer-mecab
+  % sudo yum install -y --enablerepo=epel groonga-tokenizer-mecab
 
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
@@ -71,7 +71,7 @@ Groonga status by Munin, install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 
-  % sudo yum install -y groonga-munin-plugins
+  % sudo yum install -y --enablerepo=epel groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
 a Groonga plugin.
@@ -79,7 +79,7 @@ If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::
 
-  % sudo yum install -y groonga-normalizer-mysql
+  % sudo yum install -y --enablerepo=epel groonga-normalizer-mysql
 
 CentOS 7
 --------
@@ -87,7 +87,7 @@ CentOS 7
 Install::
 
   % sudo yum install -y http://packages.groonga.org/centos/groonga-release-1.2.0-1.noarch.rpm
-  % sudo yum install -y groonga
+  % sudo yum install -y --enablerepo=epel groonga
 
 .. include:: server-use.inc
 
@@ -96,7 +96,7 @@ tokenizer, install groonga-tokenizer-mecab package.
 
 Install groonga-tokenizer-mecab package::
 
-  % sudo yum install -y groonga-tokenizer-mecab
+  % sudo yum install -y --enablerepo=epel groonga-tokenizer-mecab
 
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
@@ -104,7 +104,7 @@ Groonga status by Munin, install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 
-  % sudo yum install -y groonga-munin-plugins
+  % sudo yum install -y --enablerepo=epel groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
 a Groonga plugin.
@@ -112,7 +112,7 @@ If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::
 
-  % sudo yum install -y groonga-normalizer-mysql
+  % sudo yum install -y --enablerepo=epel groonga-normalizer-mysql
 
 Build from source
 -----------------
