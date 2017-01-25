@@ -177,8 +177,41 @@ Here are available modes. The default is ``MATCH`` mode.
    * - Mode
      - Aliases
      - Description
-   * - TODO
-     - TODO
+   * - ``EQUAL``
+     - ``==``
+     - TDOO
+   * - ``NOT_EQUAL``
+     - ``!=``
+     - TDOO
+   * - ``LESS``
+     - ``<``
+     - TDOO
+   * - ``GREATER``
+     - ``>``
+     - TDOO
+   * - ``LESS_EQUAL``
+     - ``<=``
+     - TDOO
+   * - ``GREATER_EQUAL``
+     - ``>=``
+     - TDOO
+   * - ``MATCH``
+     - ``@``
+     - TDOO
+   * - ``NEAR``
+     - ``*N``
+     - TDOO
+   * - ``SIMILAR``
+     - ``*S``
+     - TDOO
+   * - ``PREFIX``
+     - ``^``, ``@^``
+     - TDOO
+   * - ``SUFFIX``
+     - ``$``, ``@$``
+     - TDOO
+   * - ``REGEXP``
+     - ``~``, ``@~``
      - TDOO
 
 ``flags``
