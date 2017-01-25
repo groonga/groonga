@@ -179,40 +179,50 @@ Here are available modes. The default is ``MATCH`` mode.
      - Description
    * - ``EQUAL``
      - ``==``
-     - TDOO
+     - Use :ref:`query-syntax-equal-condition` as the default operator.
    * - ``NOT_EQUAL``
      - ``!=``
-     - TDOO
+     - Use :ref:`query-syntax-not-equal-condition` as the default operator.
    * - ``LESS``
      - ``<``
-     - TDOO
+     - Use :ref:`query-syntax-less-than-condition` as the default operator.
    * - ``GREATER``
      - ``>``
-     - TDOO
+     - Use :ref:`query-syntax-greater-than-condition` as the default operator.
    * - ``LESS_EQUAL``
      - ``<=``
-     - TDOO
+     - Use :ref:`query-syntax-less-than-or-equal-condition` as the
+       default operator.
    * - ``GREATER_EQUAL``
      - ``>=``
-     - TDOO
+     - Use :ref:`query-syntax-greater-than-or-equal-condition` as the
+       default operator.
    * - ``MATCH``
      - ``@``
-     - TDOO
+     - Use :ref:`query-syntax-full-text-search-condition` as the
+       default operator.
+
+       It's the default.
    * - ``NEAR``
      - ``*N``
-     - TDOO
+     - Use :ref:`query-syntax-near-search-condition` as the default
+       operator.
    * - ``SIMILAR``
      - ``*S``
-     - TDOO
+     - Use :ref:`query-syntax-similar-search-condition` as the default
+       operator.
    * - ``PREFIX``
      - ``^``, ``@^``
-     - TDOO
+     - Use :ref:`query-syntax-prefix-search-condition` as the default
+       operator.
    * - ``SUFFIX``
      - ``$``, ``@$``
-     - TDOO
+     - Use :ref:`query-syntax-suffix-search-condition` as the default
+       operator.
    * - ``REGEXP``
      - ``~``, ``@~``
-     - TDOO
+     - Use :ref:`query-syntax-regular-expression-condition` as the default
+       operator.
 
 ``flags``
 """""""""
