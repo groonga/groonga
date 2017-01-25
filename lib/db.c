@@ -8359,12 +8359,73 @@ grn_token_filters_pack(grn_ctx *ctx,
   }
 }
 
+static grn_bool
+grn_obj_encoded_spec_equal(grn_ctx *ctx,
+                           grn_obj *encoded_spec1,
+                           grn_obj *encoded_spec2)
+{
+  unsigned int i, n_elements;
+
+  if (encoded_spec1->header.type != GRN_VECTOR) {
+    return GRN_FALSE;
+  }
+
+  if (encoded_spec1->header.type != encoded_spec2->header.type) {
+    return GRN_FALSE;
+  }
+
+  n_elements = grn_vector_size(ctx, encoded_spec1);
+  if (grn_vector_size(ctx, encoded_spec2) != n_elements) {
+    return GRN_FALSE;
+  }
+
+  for (i = 0; i < n_elements; i++) {
+    const char *content1;
+    const char *content2;
+    unsigned int content_size1;
+    unsigned int content_size2;
+    unsigned int weight1;
+    unsigned int weight2;
+    grn_id domain1;
+    grn_id domain2;
+
+    content_size1 = grn_vector_get_element(ctx,
+                                           encoded_spec1,
+                                           i,
+                                           &content1,
+                                           &weight1,
+                                           &domain1);
+    content_size2 = grn_vector_get_element(ctx,
+                                           encoded_spec2,
+                                           i,
+                                           &content2,
+                                           &weight2,
+                                           &domain2);
+    if (content_size1 != content_size2) {
+      return GRN_FALSE;
+    }
+    if (memcmp(content1, content2, content_size1) != 0) {
+      return GRN_FALSE;
+    }
+    if (weight1 != weight2) {
+      return GRN_FALSE;
+    }
+    if (domain1 != domain2) {
+      return GRN_FALSE;
+    }
+  }
+
+  return GRN_TRUE;
+}
+
 void
 grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
 {
   grn_db *s;
   grn_obj v, *b;
   grn_obj_spec spec;
+  grn_bool need_update = GRN_TRUE;
+
   if (obj->id & GRN_OBJ_TMP_OBJECT) { return; }
   if (!ctx->impl || !GRN_DB_OBJP(obj)) { return; }
   if (!(s = (grn_db *)ctx->impl->db) || !s->specs) { return; }
@@ -8403,6 +8464,39 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
     grn_vector_delimit(ctx, &v, 0, 0);
     break;
   }
+
+  {
+    grn_io_win jw;
+    uint32_t current_spec_raw_len;
+    char *current_spec_raw;
+
+    current_spec_raw = grn_ja_ref(ctx,
+                                  s->specs,
+                                  obj->id,
+                                  &jw,
+                                  &current_spec_raw_len);
+    if (current_spec_raw) {
+      grn_rc rc;
+      grn_obj current_spec;
+
+      GRN_OBJ_INIT(&current_spec, GRN_VECTOR, 0, GRN_DB_TEXT);
+      rc = grn_vector_decode(ctx,
+                             &current_spec,
+                             current_spec_raw,
+                             current_spec_raw_len);
+      if (rc == GRN_SUCCESS) {
+        need_update = !grn_obj_encoded_spec_equal(ctx, &v, &current_spec);
+      }
+      GRN_OBJ_FIN(ctx, &current_spec);
+      grn_ja_unref(ctx, &jw);
+    }
+  }
+
+  if (!need_update) {
+    grn_obj_close(ctx, &v);
+    return;
+  }
+
   {
     const char *name;
     uint32_t name_size = 0;
