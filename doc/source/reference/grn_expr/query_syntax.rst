@@ -107,14 +107,14 @@ quoted ``"Alice's brother (Bob)"`` or ``'Alice\'s brother (Bob)'``.
    from database. If you can't do intended search by Groonga, confirm
    whether special character is escaped properly.
 
-.. _conditional-expression:
+.. _query-syntax-conditional-expression:
 
 Conditional expression
 ----------------------
 
 Here is available conditional expression list.
 
-.. _full-text-search-condition:
+.. _query-syntax-full-text-search-condition:
 
 Full text search condition
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -148,7 +148,7 @@ The expression matches records that contain a word ``fast`` in
 
 ``content`` column is the default match column.
 
-.. _phrase-search-condition:
+.. _query-syntax-phrase-search-condition:
 
 Phrase search condition
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -181,6 +181,8 @@ The expression matches records that contain a phrase ``I started`` in
 ``I`` and ``started`` aren't adjacent.
 
 ``content`` column is the default match column.
+
+.. _query-syntax-full-text-search-condition-with-explicit-match-column:
 
 Full text search condition (with explicit match column)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -249,7 +251,7 @@ The expression matches records that contain a phrase ``I started`` in
 ``content`` column value. ``I also started`` isn't matched because
 ``I`` and ``started`` aren't adjacent.
 
-.. _prefix-search-condition:
+.. _query-syntax-prefix-search-condition:
 
 Prefix search condition
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -283,7 +285,7 @@ The expression matches records that contain a word that starts with
 ``Goo`` in ``_key`` pseudo column value. ``Good-bye Senna`` and
 ``Good-bye Tritonn`` are matched with the expression.
 
-.. _suffix-search-condition:
+.. _query-syntax-suffix-search-condition:
 
 Suffix search condition
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -340,6 +342,8 @@ The expression matches records that have value that ends with ``んが``
 in ``content`` column value. ``ぐるんが`` and ``むるんが`` are matched
 with the expression.
 
+.. _query-syntax-equal-condition:
+
 Equal condition
 ^^^^^^^^^^^^^^^
 
@@ -359,6 +363,8 @@ Here is a simple example.
 The expression matches records that ``_key`` column value is
 equal to ``Groonga``.
 
+.. _query-syntax-not-equal-condition:
+
 Not equal condition
 ^^^^^^^^^^^^^^^^^^^
 
@@ -377,6 +383,8 @@ Here is a simple example.
 
 The expression matches records that ``_key`` column value is not equal
 to ``Groonga``.
+
+.. _query-syntax-less-than-condition:
 
 Less than condition
 ^^^^^^^^^^^^^^^^^^^
@@ -402,6 +410,8 @@ Here is a simple example.
 The expression matches records that ``n_likes`` column value is less
 than ``10``.
 
+.. _query-syntax-greater-than-condition:
+
 Greater than condition
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -425,6 +435,8 @@ Here is a simple example.
 
 The expression matches records that ``n_likes`` column value is greater
 than ``10``.
+
+.. _query-syntax-less-than-or-equal-condition:
 
 Less than or equal to condition
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -451,6 +463,8 @@ Here is a simple example.
 The expression matches records that ``n_likes`` column value is less
 than or equal to ``10``.
 
+.. _query-syntax-greater-than-or-equal-condition:
+
 Greater than or equal to condition
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -476,7 +490,35 @@ Here is a simple example.
 The expression matches records that ``n_likes`` column value is
 greater than or equal to ``10``.
 
-.. _query-regular-expression-condition:
+.. _query-syntax-near-search-condition:
+
+Near search condition
+^^^^^^^^^^^^^^^^^^^^^
+
+TODO
+
+.. _query-syntax-similar-search-condition:
+
+Similar search condition
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+TODO
+
+.. _query-syntax-prefix-search-condition:
+
+Prefix search condition
+^^^^^^^^^^^^^^^^^^^^^^^
+
+TODO
+
+.. _query-syntax-suffix-search-condition:
+
+Suffix search condition
+^^^^^^^^^^^^^^^^^^^^^^^
+
+TODO
+
+.. _query-syntax-regular-expression-condition:
 
 Regular expression condition
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -502,7 +544,7 @@ be slow against many records.
 In some cases, Groonga evaluates regular expression by index. It's
 very fast. See :doc:`/reference/regular_expression` for details.
 
-.. _combined-expression:
+.. _query-syntax-combined-expression:
 
 Combined expression
 -------------------
