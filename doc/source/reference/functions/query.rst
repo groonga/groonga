@@ -169,7 +169,8 @@ operation is used when you just specify ``keyword`` instead of
 ``column:@keyword``. See :doc:`/reference/grn_expr/query_syntax` for
 more syntax details.
 
-Here are available modes. The default is ``MATCH`` mode.
+Here are available modes. The default is ``MATCH`` mode. It does full
+text search.
 
 .. list-table::
    :header-rows: 1
@@ -227,7 +228,16 @@ Here are available modes. The default is ``MATCH`` mode.
 ``flags``
 """""""""
 
-TODO
+Specifies the flags that customizes how to parse query.
+
+You can specify multiple flags by separating each flags by ``|``. Here
+is the example to specify multiple flags::
+
+  query("title * 10 || content",
+        "keyword",
+        {"flags": "ALLOW_COLUMN|ALLOW_LEADING_NOT"})
+
+See :ref:`select-query-flags` for available flags.
 
 Return value
 ------------
@@ -235,7 +245,6 @@ Return value
 ``query`` returns whether any record is matched or not. If one or more
 records are matched, it returns ``true``. Otherwise, it returns
 ``false``.
-
 
 See also
 --------
