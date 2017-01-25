@@ -11356,6 +11356,7 @@ grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj)
       }
     }
     grn_io_clear_lock(grn_obj_io(obj));
+    grn_obj_clear_lock(ctx, (grn_obj *)(((grn_db *)obj)->specs));
     break;
   case GRN_TABLE_NO_KEY :
     grn_array_queue_lock_clear(ctx, (grn_array *)obj);
