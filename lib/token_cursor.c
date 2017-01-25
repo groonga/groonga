@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2014 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,7 @@ grn_token_cursor_open_initialize_token_filters(grn_ctx *ctx,
     return;
   }
 
-  token_cursor->token_filter.data = GRN_MALLOCN(void *, n_token_filters);
+  token_cursor->token_filter.data = GRN_CALLOC(sizeof(void *) * n_token_filters);
   if (!token_cursor->token_filter.data) {
     return;
   }
@@ -76,6 +76,7 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   token_cursor->encoding = encoding;
   token_cursor->tokenizer = tokenizer;
   token_cursor->token_filter.objects = token_filters;
+  token_cursor->token_filter.data = NULL;
   token_cursor->orig = (const unsigned char *)str;
   token_cursor->orig_blen = str_len;
   token_cursor->curr = NULL;
@@ -340,6 +341,10 @@ grn_token_cursor_close_token_filters(grn_ctx *ctx,
 {
   grn_obj *token_filters = token_cursor->token_filter.objects;
   unsigned int i, n_token_filters;
+
+  if (!token_cursor->token_filter.data) {
+    return;
+  }
 
   if (token_filters) {
     n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
