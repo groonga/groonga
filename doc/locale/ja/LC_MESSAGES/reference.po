@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2017-01-23 11:58+0900\n"
+"PO-Revision-Date: 2017-01-26 09:20+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -18009,29 +18009,187 @@ msgstr ""
 "に指定します。"
 
 msgid "See :ref:`select-query-expander` about details."
-msgstr "詳細については :ref:`select-query-expander` を参照してください。"
+msgstr "詳細は :ref:`select-query-expander` を見てください。"
 
 msgid "``default_mode``"
 msgstr ""
 
 msgid ""
-"Specifies the default search operation. The search operation can customize "
-"like ``column:@keyword`` syntax. The default search operation is used when "
-"you just specify ``keyword`` instead of ``column:@keyword``. See :doc:`/"
+"Specifies the default search mode. You can custom the default search mode by "
+"``column:@keyword`` like syntax. The default search mode is used when you "
+"just specify ``keyword`` instead of ``column:@keyword``. See :doc:`/"
 "reference/grn_expr/query_syntax` for more syntax details."
 msgstr ""
+"デフォルトの検索モードを指定します。検索モードは ``column:@keyword`` というよ"
+"うな構文でカスタマイズできます。デフォルトの検索モードは ``column:@keyword`` "
+"ではなく単に ``keyword`` と指定したときに使われます。構文の詳細は :doc:`/"
+"reference/grn_expr/query_syntax` を見てください。<"
 
-msgid "Here are available modes. The default is ``MATCH`` mode."
+msgid ""
+"Here are available modes. The default is ``MATCH`` mode. It does full text "
+"search."
 msgstr ""
+"以下は利用可能なモードです。デフォルトは ``MATCH`` モードです。このモードでは"
+"全文検索をします。"
 
 msgid "Mode"
-msgstr ""
+msgstr "モード"
 
 msgid "Aliases"
 msgstr "別名"
 
-msgid "TDOO"
+msgid "``EQUAL``"
 msgstr ""
+
+msgid "``==``"
+msgstr ""
+
+msgid "It uses :ref:`query-syntax-equal-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-equal-condition` を使います。"
+
+msgid "``NOT_EQUAL``"
+msgstr ""
+
+msgid "``!=``"
+msgstr ""
+
+msgid "It uses :ref:`query-syntax-not-equal-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-not-equal-condition` を使います。"
+
+msgid "``LESS``"
+msgstr ""
+
+msgid "``<``"
+msgstr ""
+
+msgid "It uses :ref:`query-syntax-less-than-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-less-than-condition` を使います。"
+
+msgid "``GREATER``"
+msgstr ""
+
+msgid "``>``"
+msgstr ""
+
+msgid "It uses :ref:`query-syntax-greater-than-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-greater-than-condition` を使いま"
+"す。"
+
+msgid "``LESS_EQUAL``"
+msgstr ""
+
+msgid "``<=``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-less-than-or-equal-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-less-than-or-equal-condition` を"
+"使います。"
+
+msgid "``GREATER_EQUAL``"
+msgstr ""
+
+msgid "``>=``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-greater-than-or-equal-condition` as the default "
+"mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-greater-than-or-equal-condition` "
+"を使います。"
+
+msgid "``MATCH``"
+msgstr ""
+
+msgid "``@``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-full-text-search-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-full-text-search-condition` を使"
+"います。"
+
+msgid "It's the default."
+msgstr "これがデフォルトです。"
+
+msgid "``NEAR``"
+msgstr ""
+
+msgid "``*N``"
+msgstr ""
+
+msgid "It uses :ref:`query-syntax-near-search-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-near-search-condition` を使いま"
+"す。"
+
+msgid "``SIMILAR``"
+msgstr ""
+
+msgid "``*S``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-similar-search-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-similar-search-condition` を使い"
+"ます。"
+
+msgid "``PREFIX``"
+msgstr ""
+
+msgid "``^``, ``@^``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-prefix-search-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-prefix-search-condition` を使いま"
+"す。"
+
+msgid "``SUFFIX``"
+msgstr ""
+
+msgid "``$``, ``@$``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-suffix-search-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-suffix-search-condition` を使いま"
+"す。"
+
+msgid "``REGEXP``"
+msgstr ""
+
+msgid "``~``, ``@~``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-regular-expression-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-regular-expression-condition` を"
+"使います。"
+
+msgid "Specifies the flags that customizes how to parse query."
+msgstr "クエリーのパース方法をカスタマイズするフラグを指定します。"
+
+msgid ""
+"You can specify multiple flags by separating each flags by ``|``. Here is "
+"the example to specify multiple flags::"
+msgstr ""
+"1つ以上のフラグを指定できます。複数のフラグを指定する場合は ``|`` で区切りま"
+"す。以下が複数のフラグを指定する例です。::"
+
+msgid "See :ref:`select-query-flags` for available flags."
+msgstr "詳細は :ref:`select-query-flags` を見てください。"
 
 msgid ""
 "``query`` returns whether any record is matched or not. If one or more "
@@ -18885,6 +19043,12 @@ msgid ""
 msgstr ""
 "この式は ``content`` カラムの値が ``んが`` で終わるレコードにマッチします。こ"
 "の場合は ``ぐるんが`` と ``むるんが`` にマッチします。"
+
+msgid "Near search condition"
+msgstr "近傍検索条件"
+
+msgid "Similar search condition"
+msgstr "類似文書検索条件"
 
 msgid "Equal condition"
 msgstr "等価条件"

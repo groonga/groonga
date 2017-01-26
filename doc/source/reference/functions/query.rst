@@ -163,9 +163,9 @@ See :ref:`select-query-expander` about details.
 ``default_mode``
 """"""""""""""""
 
-Specifies the default search operation. The search operation can
-customize like ``column:@keyword`` syntax. The default search
-operation is used when you just specify ``keyword`` instead of
+Specifies the default search mode. You can custom the default search
+mode by ``column:@keyword`` like syntax. The default search mode is
+used when you just specify ``keyword`` instead of
 ``column:@keyword``. See :doc:`/reference/grn_expr/query_syntax` for
 more syntax details.
 
@@ -180,50 +180,50 @@ text search.
      - Description
    * - ``EQUAL``
      - ``==``
-     - Use :ref:`query-syntax-equal-condition` as the default operator.
+     - It uses :ref:`query-syntax-equal-condition` as the default mode.
    * - ``NOT_EQUAL``
      - ``!=``
-     - Use :ref:`query-syntax-not-equal-condition` as the default operator.
+     - It uses :ref:`query-syntax-not-equal-condition` as the default mode.
    * - ``LESS``
      - ``<``
-     - Use :ref:`query-syntax-less-than-condition` as the default operator.
+     - It uses :ref:`query-syntax-less-than-condition` as the default mode.
    * - ``GREATER``
      - ``>``
-     - Use :ref:`query-syntax-greater-than-condition` as the default operator.
+     - It uses :ref:`query-syntax-greater-than-condition` as the default mode.
    * - ``LESS_EQUAL``
      - ``<=``
-     - Use :ref:`query-syntax-less-than-or-equal-condition` as the
-       default operator.
+     - It uses :ref:`query-syntax-less-than-or-equal-condition` as the
+       default mode.
    * - ``GREATER_EQUAL``
      - ``>=``
-     - Use :ref:`query-syntax-greater-than-or-equal-condition` as the
-       default operator.
+     - It uses :ref:`query-syntax-greater-than-or-equal-condition` as the
+       default mode.
    * - ``MATCH``
      - ``@``
-     - Use :ref:`query-syntax-full-text-search-condition` as the
-       default operator.
+     - It uses :ref:`query-syntax-full-text-search-condition` as the
+       default mode.
 
        It's the default.
    * - ``NEAR``
      - ``*N``
-     - Use :ref:`query-syntax-near-search-condition` as the default
-       operator.
+     - It uses :ref:`query-syntax-near-search-condition` as the default
+       mode.
    * - ``SIMILAR``
      - ``*S``
-     - Use :ref:`query-syntax-similar-search-condition` as the default
-       operator.
+     - It uses :ref:`query-syntax-similar-search-condition` as the default
+       mode.
    * - ``PREFIX``
      - ``^``, ``@^``
-     - Use :ref:`query-syntax-prefix-search-condition` as the default
-       operator.
+     - It uses :ref:`query-syntax-prefix-search-condition` as the default
+       mode.
    * - ``SUFFIX``
      - ``$``, ``@$``
-     - Use :ref:`query-syntax-suffix-search-condition` as the default
-       operator.
+     - It uses :ref:`query-syntax-suffix-search-condition` as the default
+       mode.
    * - ``REGEXP``
      - ``~``, ``@~``
-     - Use :ref:`query-syntax-regular-expression-condition` as the default
-       operator.
+     - It uses :ref:`query-syntax-regular-expression-condition` as the default
+       mode.
 
 ``flags``
 """""""""
