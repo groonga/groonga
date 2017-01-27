@@ -5170,7 +5170,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                   if (chunk_is_reused(ctx, c->ii, c,
                                       c->cinfo[c->curr_chunk].segno, size)) {
                     GRN_LOG(ctx, GRN_LOG_WARNING,
-                            "[ii][cursor][chunk] "
+                            "[ii][cursor][next][chunk] "
                             "chunk(%d) is reused by another thread: %p",
                             c->cinfo[c->curr_chunk].segno,
                             c);
@@ -5215,7 +5215,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
             buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
             if (buffer_is_reused(ctx, c->ii, c)) {
               GRN_LOG(ctx, GRN_LOG_WARNING,
-                      "[ii][cursor][buffer] "
+                      "[ii][cursor][next][buffer] "
                       "buffer(%d,%d) is reused by another thread: %p",
                       c->buffer_pseg, *c->ppseg,
                       c);
