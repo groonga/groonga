@@ -5,6 +5,7 @@
 %define _use_mecab    %{?use_mecab:%{use_mecab}}%{!?use_mecab:1}
 %define _use_jemalloc %{?use_jemalloc:%{use_jemalloc}}%{!?use_jemalloc:0}
 %define _use_msgpack  %{?use_msgpack:%{use_msgpack}}%{!?use_msgpack:%{_centos_ver} >= 7}
+%define _use_libstemmer %{?use_libstemmer:%{use_libstemmer}}%{!?use_libstemmer:%{_centos_ver} >= 7}
 %define _use_systemd  %{?use_systemd:%{use_systemd}}%{!?use_systemd:%{_centos_ver} >= 7}
 
 %define _additional_configure_options \
@@ -38,6 +39,9 @@ BuildRequires:	jemalloc-devel
 %endif
 %if %{_use_msgpack}
 BuildRequires:	msgpack-devel
+%endif
+%if %{_use_libstemmer}
+BuildRequires:	libstemmer-devel
 %endif
 BuildRequires:	pcre-devel
 BuildRequires:	pkgconfig
@@ -179,6 +183,17 @@ Requires:       mecab-dic
 MeCab tokenizer for Groonga
 %endif
 
+%if %{_use_libstemmer}
+%package token-filter-stem
+Summary:	Stemming token filter for Groonga
+Group:		Applications/Text
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:	libstemmer
+
+%description token-filter-stem
+Stemming token filter for Groonga. Name is TokenFilterStem.
+%endif
+
 %package plugin-suggest
 Summary:	Suggest plugin for Groonga
 Group:		Applications/Text
@@ -221,6 +236,9 @@ Munin plugins for Groonga
 %endif
 %if ! %{_use_msgpack}
   --without-message-pack \
+%endif
+%if ! %{_use_libstemmer}
+  --without-libstemmer \
 %endif
   --with-munin-plugins \
   --enable-mruby \
@@ -503,6 +521,12 @@ fi
 %files tokenizer-mecab
 %defattr(-,root,root,-)
 %{_libdir}/groonga/plugins/tokenizers/mecab.so
+%endif
+
+%if %{_use_libstemmer}
+%files token-filter-stem
+%defattr(-,root,root,-)
+%{_libdir}/groonga/plugins/token_filters/stem.so
 %endif
 
 %files munin-plugins
