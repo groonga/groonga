@@ -185,7 +185,7 @@ Group:		Applications/Text
 Requires:	%{name}-libs = %{version}-%{release}
 
 %description plugin-suggest
-Sugget plugin for Groonga
+Suggest plugin for Groonga
 
 %package munin-plugins
 Summary:	Munin plugins for Groonga
