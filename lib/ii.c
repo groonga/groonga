@@ -5135,6 +5135,25 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
               if (c->curr_chunk == c->nchunks) {
                 if (c->cp < c->cpe) {
                   grn_p_decv(ctx, c->cp, c->cpe - c->cp, c->rdv, c->ii->n_elements);
+                  if (buffer_is_reused(ctx, c->ii, c)) {
+                    GRN_LOG(ctx, GRN_LOG_WARNING,
+                            "[ii][cursor][next][chunk][last] "
+                            "buffer is reused by another thread: %p",
+                            c);
+                    c->pc.rid = 0;
+                    break;
+                  }
+                  if (chunk_is_reused(ctx, c->ii, c,
+                                      c->buf->header.chunk,
+                                      c->buf->header.chunk_size)) {
+                    GRN_LOG(ctx, GRN_LOG_WARNING,
+                            "[ii][cursor][next][chunk][last] "
+                            "chunk(%d) is reused by another thread: %p",
+                            c->buf->header.chunk,
+                            c);
+                    c->pc.rid = 0;
+                    break;
+                  }
                 } else {
                   c->pc.rid = 0;
                   break;
@@ -5151,7 +5170,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                   if (chunk_is_reused(ctx, c->ii, c,
                                       c->cinfo[c->curr_chunk].segno, size)) {
                     GRN_LOG(ctx, GRN_LOG_WARNING,
-                            "[ii][cursor] "
+                            "[ii][cursor][chunk] "
                             "chunk(%d) is reused by another thread: %p",
                             c->cinfo[c->curr_chunk].segno,
                             c);
@@ -5195,8 +5214,11 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
             uint32_t lrid = c->pb.rid, lsid = c->pb.sid; /* for check */
             buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
             if (buffer_is_reused(ctx, c->ii, c)) {
-              GRN_LOG(ctx, GRN_LOG_DEBUG, "buffer reused(%d,%d)",
-                      c->buffer_pseg, *c->ppseg);
+              GRN_LOG(ctx, GRN_LOG_WARNING,
+                      "[ii][cursor][buffer] "
+                      "buffer(%d,%d) is reused by another thread: %p",
+                      c->buffer_pseg, *c->ppseg,
+                      c);
               // todo : rewind;
             }
             c->bp = GRN_NEXT_ADDR(br);
