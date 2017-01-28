@@ -47,7 +47,7 @@ typedef struct _grn_window_definition {
 typedef grn_rc grn_window_function_func(grn_ctx *ctx,
                                         grn_obj *output_column,
                                         grn_window *window,
-                                        grn_obj *args,
+                                        grn_obj **args,
                                         int n_args);
 
 GRN_API grn_obj *grn_window_function_create(grn_ctx *ctx,
