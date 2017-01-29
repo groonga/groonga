@@ -285,7 +285,7 @@ grn_expr_call_window_function(grn_ctx *ctx,
   proc = (grn_proc *)(expr->codes[0].value);
 
   GRN_PTR_INIT(&args, GRN_OBJ_VECTOR, GRN_ID_NIL);
-  n = expr->codes_curr - 2;
+  n = expr->codes_curr - 1;
   for (i = 1; i < n; i++) {
     /* TODO: Check op. */
     GRN_PTR_PUT(ctx, &args, expr->codes[i].value);
@@ -293,7 +293,7 @@ grn_expr_call_window_function(grn_ctx *ctx,
   rc = proc->callbacks.window_function(ctx,
                                        output_column,
                                        window,
-                                       (grn_obj *)GRN_BULK_HEAD(&args),
+                                       (grn_obj **)GRN_BULK_HEAD(&args),
                                        GRN_BULK_VSIZE(&args) / sizeof(grn_obj *));
   GRN_OBJ_FIN(ctx, &args);
 

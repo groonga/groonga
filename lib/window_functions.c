@@ -23,7 +23,7 @@ static grn_rc
 window_function_record_number(grn_ctx *ctx,
                               grn_obj *output_column,
                               grn_window *window,
-                              grn_obj *args,
+                              grn_obj **args,
                               int n_args)
 {
   grn_id id;
