@@ -7385,7 +7385,7 @@ grn_obj_set_value_column_var_size_vector_uvector(grn_ctx *ctx, grn_obj *column,
                                           column_name,
                                           GRN_TABLE_MAX_KEY_SIZE);
           GRN_TEXT_INIT(&inspected, 0);
-          grn_inspect(ctx, &value_record, &inspected);
+          grn_inspect(ctx, &inspected, &value_record);
           ERR(rc,
               "[column][set-value] failed to cast: <%.*s>: <%.*s>",
               column_name_size,

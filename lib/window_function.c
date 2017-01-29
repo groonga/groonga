@@ -320,7 +320,7 @@ grn_table_apply_window_function(grn_ctx *ctx,
   if (!grn_expr_is_window_function_call(ctx, window_function_call)) {
     grn_obj inspected;
     GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect(ctx, window_function_call, &inspected);
+    grn_inspect(ctx, &inspected, window_function_call);
     ERR(GRN_INVALID_ARGUMENT,
         "[table][apply][window-function] must be window function call: %.*s",
         (int)GRN_TEXT_LEN(&inspected),
