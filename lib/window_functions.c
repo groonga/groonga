@@ -20,11 +20,11 @@
 #include "grn_window_functions.h"
 
 static grn_rc
-window_function_record_number(grn_ctx *ctx,
-                              grn_obj *output_column,
-                              grn_window *window,
-                              grn_obj **args,
-                              int n_args)
+window_record_number(grn_ctx *ctx,
+                     grn_obj *output_column,
+                     grn_window *window,
+                     grn_obj **args,
+                     int n_args)
 {
   grn_id id;
   uint32_t nth_record = 1;
@@ -44,8 +44,12 @@ window_function_record_number(grn_ctx *ctx,
 grn_rc
 grn_db_init_builtin_window_functions(grn_ctx *ctx)
 {
+  /* For backward compatibility. */
   grn_window_function_create(ctx,
                              "record_number", -1,
-                             window_function_record_number);
+                             window_record_number);
+  grn_window_function_create(ctx,
+                             "window_record_number", -1,
+                             window_record_number);
   return GRN_SUCCESS;
 }

@@ -1,0 +1,19 @@
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items price COLUMN_SCALAR UInt32
+
+load --table Items
+[
+{"_key": "item1", "price": 666},
+{"_key": "item2", "price": 999},
+{"_key": "item3", "price": 777},
+{"_key": "item4", "price": 111},
+{"_key": "item5", "price": 333},
+{"_key": "item6", "price": 222}
+]
+
+select Items \
+  --columns[nth_record].stage initial \
+  --columns[nth_record].value 'window_record_number()' \
+  --columns[nth_record].type UInt32 \
+  --columns[nth_record].window.sort_keys -price \
+  --output_columns '_key, price, nth_record'
