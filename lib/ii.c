@@ -5033,6 +5033,7 @@ grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
     grn_id old_min = c->min;
     c->min = min;
     if (c->buf &&
+        c->pc.rid != GRN_ID_NIL &&
         c->pc.rid < c->min &&
         c->prev_chunk_rid < c->min &&
         c->curr_chunk < c->nchunks) {
