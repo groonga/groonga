@@ -5135,7 +5135,20 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
             if (c->curr_chunk <= c->nchunks) {
               if (c->curr_chunk == c->nchunks) {
                 if (c->cp < c->cpe) {
-                  grn_p_decv(ctx, c->cp, c->cpe - c->cp, c->rdv, c->ii->n_elements);
+                  int decoded_size;
+                  decoded_size =
+                    grn_p_decv(ctx, c->cp, c->cpe - c->cp,
+                               c->rdv, c->ii->n_elements);
+                  if (decoded_size == 0) {
+                    GRN_LOG(ctx, GRN_LOG_WARNING,
+                            "[ii][cursor][next][chunk][last] "
+                            "chunk(%d) is changed by another thread "
+                            "while decoding: %p",
+                            c->cinfo[c->curr_chunk].segno,
+                            c);
+                    c->pc.rid = 0;
+                    break;
+                  }
                   if (buffer_is_reused(ctx, c->ii, c)) {
                     GRN_LOG(ctx, GRN_LOG_WARNING,
                             "[ii][cursor][next][chunk][last] "
@@ -5166,8 +5179,20 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                 if (size && (cp = WIN_MAP(c->ii->chunk, ctx, &iw,
                                           c->cinfo[c->curr_chunk].segno, 0,
                                           size, grn_io_rdonly))) {
-                  grn_p_decv(ctx, cp, size, c->rdv, c->ii->n_elements);
+                  int decoded_size;
+                  decoded_size =
+                    grn_p_decv(ctx, cp, size, c->rdv, c->ii->n_elements);
                   grn_io_win_unmap(&iw);
+                  if (decoded_size == 0) {
+                    GRN_LOG(ctx, GRN_LOG_WARNING,
+                            "[ii][cursor][next][chunk] "
+                            "chunk(%d) is changed by another thread "
+                            "while decoding: %p",
+                            c->cinfo[c->curr_chunk].segno,
+                            c);
+                    c->pc.rid = 0;
+                    break;
+                  }
                   if (chunk_is_reused(ctx, c->ii, c,
                                       c->cinfo[c->curr_chunk].segno, size)) {
                     GRN_LOG(ctx, GRN_LOG_WARNING,
