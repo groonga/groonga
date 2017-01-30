@@ -28,10 +28,7 @@ case "${TRAVIS_OS_NAME}" in
          mecab-ipadic \
          pcre \
          cutter
-    brew info openssl
     brew install --force openssl
-    pkg-config --modversion libssl
-    pkg-config --cflags --libs libssl
     ;;
 esac
 
