@@ -5194,7 +5194,9 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                 if ((c->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
                   c->cwp = c->rdv[j++].data;
                 }
-                c->cpp = c->rdv[j].data;
+                if ((c->ii->header->flags & GRN_OBJ_WITH_POSITION)) {
+                  c->cpp = c->rdv[j].data;
+                }
               }
               c->prev_chunk_rid = c->pc.rid;
               c->pc.rid = 0;
