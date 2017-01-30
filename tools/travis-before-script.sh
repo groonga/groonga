@@ -5,10 +5,6 @@ set -u
 
 : ${ENABLE_MRUBY:=no}
 
-if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-  export PKG_CONFIG_PATH="$(brew --prefix openssl)/lib/pkgconfig"
-fi
-
 git submodule update --init --depth 1
 
 prefix=/tmp/local
@@ -18,6 +14,10 @@ case "${BUILD_TOOL}" in
     ./autogen.sh
 
     configure_args=""
+    if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+      pkg_config_path="$(brew --prefix openssl)/lib/pkgconfig"
+      configure_args="${configure_args} PKG_CONFIG_PATH=${pkg_config_path}"
+    fi
     #if [ "$CC" = "clang" ]; then
       configure_args="${configure_args} --enable-debug"
     #fi
