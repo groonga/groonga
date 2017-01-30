@@ -27,7 +27,8 @@ case "${TRAVIS_OS_NAME}" in
          mecab \
          mecab-ipadic \
          pcre \
-         cutter
+         cutter \
+         openssl
     pkg-config --modversion libssl
     pkg-config --cflags --libs libssl
     ;;
