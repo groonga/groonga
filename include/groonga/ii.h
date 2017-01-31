@@ -27,6 +27,9 @@ extern "C" {
 typedef struct _grn_ii grn_ii;
 typedef struct _grn_ii_buffer grn_ii_buffer;
 
+GRN_API void grn_ii_cursor_set_min_enable_set(grn_bool enable);
+GRN_API grn_bool grn_ii_cursor_set_min_enable_get(void);
+
 GRN_API uint32_t grn_ii_estimate_size(grn_ctx *ctx, grn_ii *ii, grn_id tid);
 GRN_API uint32_t grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
                                                 const char *query,

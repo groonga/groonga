@@ -202,6 +202,18 @@ grn_ii_init_from_env(void)
   }
 }
 
+void
+grn_ii_cursor_set_min_enable_set(grn_bool enable)
+{
+  grn_ii_cursor_set_min_enable = enable;
+}
+
+grn_bool
+grn_ii_cursor_set_min_enable_get(void)
+{
+  return grn_ii_cursor_set_min_enable;
+}
+
 /* segment */
 
 inline static uint32_t
