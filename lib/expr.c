@@ -5716,6 +5716,7 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   grn_table_cursor *tc;
   grn_hash_cursor *hc;
   grn_hash *s = (grn_hash *)res;
+  GRN_RECORD_INIT(v, 0, grn_obj_id(ctx, table));
   grn_table_select_sequential_data data;
   grn_table_select_sequential_init_func init;
   grn_table_select_sequential_exec_func exec;
