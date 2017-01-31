@@ -21,9 +21,9 @@ case "${TRAVIS_OS_NAME}" in
     brew update > /dev/null
     brew outdated pkg-config || brew upgrade pkg-config
     brew reinstall libtool
+    brew outdated libevent || brew upgrade libevent
     brew install \
          msgpack \
-         libevent \
          mecab \
          mecab-ipadic \
          pcre \
