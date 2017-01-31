@@ -194,14 +194,26 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
     return false;
   }
 
-  try {
-    new_trie->open(trie_path);
-  } catch (const grn::dat::Exception &ex) {
-    ERR(grn_dat_translate_error_code(ex.code()),
-        "grn::dat::Trie::open failed: %s",
-        ex.what());
-    delete new_trie;
-    return false;
+  if (trie_path[0] == '\0') {
+    try {
+      new_trie->create(trie_path);
+    } catch (const grn::dat::Exception &ex) {
+      ERR(grn_dat_translate_error_code(ex.code()),
+          "grn::dat::Trie::create failed: %s",
+          ex.what());
+      delete new_trie;
+      return false;
+    }
+  } else {
+    try {
+      new_trie->open(trie_path);
+    } catch (const grn::dat::Exception &ex) {
+      ERR(grn_dat_translate_error_code(ex.code()),
+          "grn::dat::Trie::open failed: %s",
+          ex.what());
+      delete new_trie;
+      return false;
+    }
   }
 
   dat->old_trie = trie;
