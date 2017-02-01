@@ -42,6 +42,8 @@ GRN_API grn_obj *grn_window_get_table(grn_ctx *ctx,
 typedef struct _grn_window_definition {
   grn_table_sort_key *sort_keys;
   size_t n_sort_keys;
+  grn_table_sort_key *group_keys;
+  size_t n_group_keys;
 } grn_window_definition;
 
 typedef grn_rc grn_window_function_func(grn_ctx *ctx,

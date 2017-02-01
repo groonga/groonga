@@ -1,5 +1,6 @@
+/* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2016 Brazil
+  Copyright(C) 2016-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,6 +21,7 @@
 
 struct _grn_window {
   grn_obj *table;
+  grn_obj *grouped_table;
   grn_obj ids;
   size_t n_ids;
   ssize_t current_index;
@@ -28,7 +30,10 @@ struct _grn_window {
   size_t n_sort_keys;
 };
 
-grn_rc grn_window_init(grn_ctx *ctx, grn_window *window, grn_obj *table);
+grn_rc grn_window_init(grn_ctx *ctx,
+                       grn_window *window,
+                       grn_obj *table,
+                       grn_obj *grouped_table);
 grn_rc grn_window_fin(grn_ctx *ctx, grn_window *window);
 grn_rc grn_window_set_sort_keys(grn_ctx *ctx,
                                 grn_window *window,

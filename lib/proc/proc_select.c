@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -67,6 +67,7 @@ typedef struct {
   grn_select_string value;
   struct {
     grn_select_string sort_keys;
+    grn_select_string group_keys;
   } window;
 } grn_column_data;
 
@@ -331,6 +332,7 @@ grn_column_data_init(grn_ctx *ctx,
   column->flags = GRN_OBJ_COLUMN_SCALAR;
   GRN_SELECT_INIT_STRING(column->value);
   GRN_SELECT_INIT_STRING(column->window.sort_keys);
+  GRN_SELECT_INIT_STRING(column->window.group_keys);
 
   return GRN_TRUE;
 }
@@ -341,7 +343,8 @@ grn_column_data_fill(grn_ctx *ctx,
                      grn_obj *type_raw,
                      grn_obj *flags,
                      grn_obj *value,
-                     grn_obj *window_sort_keys)
+                     grn_obj *window_sort_keys,
+                     grn_obj *window_group_keys)
 {
   if (type_raw && GRN_TEXT_LEN(type_raw) > 0) {
     grn_obj *type;
@@ -399,6 +402,7 @@ grn_column_data_fill(grn_ctx *ctx,
 
   GRN_SELECT_FILL_STRING(column->value, value);
   GRN_SELECT_FILL_STRING(column->window.sort_keys, window_sort_keys);
+  GRN_SELECT_FILL_STRING(column->window.group_keys, window_group_keys);
 
   return GRN_TRUE;
 }
@@ -426,9 +430,11 @@ grn_column_data_collect(grn_ctx *ctx,
     grn_obj *value = NULL;
     struct {
       grn_obj *sort_keys;
+      grn_obj *group_keys;
     } window;
 
     window.sort_keys = NULL;
+    window.group_keys = NULL;
 
     grn_hash_cursor_get_value(ctx, cursor, (void **)&column);
 
@@ -456,13 +462,16 @@ grn_column_data_collect(grn_ctx *ctx,
     GET_VAR(flags);
     GET_VAR(value);
     GET_VAR(window.sort_keys);
+    GET_VAR(window.group_keys);
 
 #undef GET_VAR
 
 #undef GET_VAR_RAW
 
     grn_column_data_fill(ctx, column,
-                         type, flags, value, window.sort_keys);
+                         type, flags, value,
+                         window.sort_keys,
+                         window.group_keys);
   }
   grn_hash_cursor_close(ctx, cursor);
   return GRN_TRUE;
@@ -1301,29 +1310,66 @@ grn_select_apply_columns(grn_ctx *ctx,
                                         expression,
                                         data->filter.condition.expression);
 
-    if (column_data->window.sort_keys.length > 0) {
+    if (column_data->window.sort_keys.length > 0 ||
+        column_data->window.group_keys.length > 0) {
       grn_window_definition definition;
-      int n_sort_keys;
       grn_rc rc;
 
-      definition.sort_keys =
-        grn_table_sort_key_from_str(ctx,
-                                    column_data->window.sort_keys.value,
-                                    column_data->window.sort_keys.length,
-                                    table, &n_sort_keys);
-      definition.n_sort_keys = n_sort_keys;
-      if (!definition.sort_keys) {
-        grn_obj_close(ctx, expression);
-        grn_obj_close(ctx, column);
-        GRN_PLUGIN_ERROR(ctx,
-                         GRN_INVALID_ARGUMENT,
-                         "[select][column][%s][%.*s] "
-                         "failed to parse sort keys: %s",
-                         grn_column_stage_name(column_data->stage),
-                         (int)(column_data->label.length),
-                         column_data->label.value,
-                         ctx->errbuf);
-        break;
+      if (column_data->window.sort_keys.length > 0) {
+        int n_sort_keys;
+        definition.sort_keys =
+          grn_table_sort_key_from_str(ctx,
+                                      column_data->window.sort_keys.value,
+                                      column_data->window.sort_keys.length,
+                                      table, &n_sort_keys);
+        definition.n_sort_keys = n_sort_keys;
+        if (!definition.sort_keys) {
+          grn_obj_close(ctx, expression);
+          grn_obj_close(ctx, column);
+          GRN_PLUGIN_ERROR(ctx,
+                           GRN_INVALID_ARGUMENT,
+                           "[select][column][%s][%.*s] "
+                           "failed to parse sort keys: %s",
+                           grn_column_stage_name(column_data->stage),
+                           (int)(column_data->label.length),
+                           column_data->label.value,
+                           ctx->errbuf);
+          break;
+        }
+      } else {
+        definition.sort_keys = NULL;
+        definition.n_sort_keys = 0;
+      }
+
+      if (column_data->window.group_keys.length > 0) {
+        int n_group_keys;
+        definition.group_keys =
+          grn_table_sort_key_from_str(ctx,
+                                      column_data->window.group_keys.value,
+                                      column_data->window.group_keys.length,
+                                      table, &n_group_keys);
+        definition.n_group_keys = n_group_keys;
+        if (!definition.group_keys) {
+          grn_obj_close(ctx, expression);
+          grn_obj_close(ctx, column);
+          if (definition.sort_keys) {
+            grn_table_sort_key_close(ctx,
+                                     definition.sort_keys,
+                                     definition.n_sort_keys);
+          }
+          GRN_PLUGIN_ERROR(ctx,
+                           GRN_INVALID_ARGUMENT,
+                           "[select][column][%s][%.*s] "
+                           "failed to parse group keys: %s",
+                           grn_column_stage_name(column_data->stage),
+                           (int)(column_data->label.length),
+                           column_data->label.value,
+                           ctx->errbuf);
+          break;
+        }
+      } else {
+        definition.group_keys = NULL;
+        definition.n_group_keys = 0;
       }
 
       rc = grn_table_apply_window_function(ctx,
@@ -1331,9 +1377,16 @@ grn_select_apply_columns(grn_ctx *ctx,
                                            column,
                                            &definition,
                                            expression);
-      grn_table_sort_key_close(ctx,
-                               definition.sort_keys,
-                               definition.n_sort_keys);
+      if (definition.sort_keys) {
+        grn_table_sort_key_close(ctx,
+                                 definition.sort_keys,
+                                 definition.n_sort_keys);
+      }
+      if (definition.group_keys) {
+        grn_table_sort_key_close(ctx,
+                                 definition.group_keys,
+                                 definition.n_group_keys);
+      }
       if (rc != GRN_SUCCESS) {
         grn_obj_close(ctx, expression);
         grn_obj_close(ctx, column);
