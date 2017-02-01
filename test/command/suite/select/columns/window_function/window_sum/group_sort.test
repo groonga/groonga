@@ -4,12 +4,12 @@ column_create Logs price COLUMN_SCALAR UInt32
 
 load --table Logs
 [
+{"item": "item2", "price": 333},
 {"item": "item1", "price": 666},
-{"item": "item1", "price": 999},
+{"item": "item3", "price": 222},
 {"item": "item1", "price": 777},
 {"item": "item2", "price": 111},
-{"item": "item2", "price": 333},
-{"item": "item3", "price": 222}
+{"item": "item1", "price": 999}
 ]
 
 select Logs \

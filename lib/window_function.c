@@ -181,11 +181,47 @@ grn_window_set_sort_keys(grn_ctx *ctx,
       GRN_API_RETURN(ctx->rc);
     }
 
-    grn_table_sort(ctx,
-                   window->grouped_table,
-                   0, -1,
-                   sorted,
-                   sort_keys, n_sort_keys);
+    if (window->table == window->grouped_table) {
+      grn_table_sort(ctx,
+                     window->grouped_table,
+                     0, -1,
+                     sorted,
+                     sort_keys, n_sort_keys);
+    } else {
+      size_t i;
+      grn_table_sort_key *adjusted_sort_keys;
+
+      adjusted_sort_keys = GRN_MALLOC(sizeof(grn_table_sort_key) * n_sort_keys);
+      if (!adjusted_sort_keys) {
+        ERR(ctx->rc,
+            "[window][set][sort-keys] "
+            "failed to allocate adjusted sort keys: %s",
+            ctx->errbuf);
+        grn_obj_unlink(ctx, sorted);
+        GRN_API_RETURN(ctx->rc);
+      }
+      for (i = 0; i < n_sort_keys; i++) {
+        grn_accessor *key;
+
+        adjusted_sort_keys[i] = sort_keys[i];
+        /* TODO: Ugly. We should use accessor_new(). */
+        key = GRN_CALLOC(sizeof(grn_accessor));
+        key->header.type = GRN_ACCESSOR;
+        key->action = GRN_ACCESSOR_GET_KEY;
+        key->obj = window->grouped_table;
+        key->next = (grn_accessor *)(sort_keys[i].key);
+        adjusted_sort_keys[i].key = (grn_obj *)key;
+      }
+      grn_table_sort(ctx,
+                     window->grouped_table,
+                     0, -1,
+                     sorted,
+                     adjusted_sort_keys, n_sort_keys);
+      for (i = 0; i < n_sort_keys; i++) {
+        GRN_FREE(adjusted_sort_keys[i].key);
+      }
+      GRN_FREE(adjusted_sort_keys);
+    }
     if (ctx->rc != GRN_SUCCESS) {
       ERR(ctx->rc,
           "[window][set][sort-keys] "
