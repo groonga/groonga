@@ -4439,6 +4439,16 @@ grn_ii_get_flags(grn_ctx *ctx, grn_ii *ii)
   return ii->header->flags;
 }
 
+uint32_t
+grn_ii_get_n_elements(grn_ctx *ctx, grn_ii *ii)
+{
+  if (!ii) {
+    return 0;
+  }
+
+  return ii->n_elements;
+}
+
 void
 grn_ii_expire(grn_ctx *ctx, grn_ii *ii)
 {

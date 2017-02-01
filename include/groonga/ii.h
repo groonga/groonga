@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,8 @@ extern "C" {
 
 typedef struct _grn_ii grn_ii;
 typedef struct _grn_ii_buffer grn_ii_buffer;
+
+GRN_API uint32_t grn_ii_get_n_elements(grn_ctx *ctx, grn_ii *ii);
 
 GRN_API void grn_ii_cursor_set_min_enable_set(grn_bool enable);
 GRN_API grn_bool grn_ii_cursor_set_min_enable_get(void);
