@@ -38,6 +38,8 @@ GRN_API grn_rc grn_window_set_direction(grn_ctx *ctx,
                                         grn_window_direction direction);
 GRN_API grn_obj *grn_window_get_table(grn_ctx *ctx,
                                       grn_window *window);
+GRN_API grn_bool grn_window_is_sorted(grn_ctx *ctx,
+                                      grn_window *window);
 
 typedef struct _grn_window_definition {
   grn_table_sort_key *sort_keys;

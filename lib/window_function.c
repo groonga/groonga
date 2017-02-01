@@ -241,6 +241,15 @@ grn_window_set_sort_keys(grn_ctx *ctx,
   GRN_API_RETURN(GRN_SUCCESS);
 }
 
+grn_bool
+grn_window_is_sorted(grn_ctx *ctx, grn_window *window)
+{
+  grn_bool is_sorted;
+  GRN_API_ENTER;
+  is_sorted = (window && window->n_sort_keys > 0);
+  GRN_API_RETURN(is_sorted);
+}
+
 grn_obj *
 grn_window_function_create(grn_ctx *ctx,
                            const char *name,
