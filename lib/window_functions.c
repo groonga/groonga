@@ -142,59 +142,124 @@ window_sum(grn_ctx *ctx,
     }
     GRN_VOID_INIT(&value);
 
-    while ((id = grn_window_next(ctx, window))) {
-      GRN_BULK_REWIND(&value);
-      grn_obj_get_value(ctx, target, id, &value);
-      switch (target_range_id) {
+    if (grn_window_is_sorted(ctx, window)) {
+      while ((id = grn_window_next(ctx, window))) {
+        GRN_BULK_REWIND(&value);
+        grn_obj_get_value(ctx, target, id, &value);
+        switch (target_range_id) {
+        case GRN_DB_INT8 :
+          GRN_INT64_SET(ctx,
+                        &sum,
+                        GRN_INT64_VALUE(&sum) + GRN_INT8_VALUE(&value));
+          break;
+        case GRN_DB_INT16 :
+          GRN_INT64_SET(ctx,
+                        &sum,
+                        GRN_INT64_VALUE(&sum) + GRN_INT16_VALUE(&value));
+          break;
+        case GRN_DB_INT32 :
+          GRN_INT64_SET(ctx,
+                        &sum,
+                        GRN_INT64_VALUE(&sum) + GRN_INT32_VALUE(&value));
+          break;
+        case GRN_DB_INT64 :
+          GRN_INT64_SET(ctx,
+                        &sum,
+                        GRN_INT64_VALUE(&sum) + GRN_INT64_VALUE(&value));
+          break;
+        case GRN_DB_UINT8 :
+          GRN_UINT64_SET(ctx,
+                         &sum,
+                         GRN_UINT64_VALUE(&sum) + GRN_UINT8_VALUE(&value));
+          break;
+        case GRN_DB_UINT16 :
+          GRN_UINT64_SET(ctx,
+                         &sum,
+                         GRN_UINT64_VALUE(&sum) + GRN_UINT16_VALUE(&value));
+          break;
+        case GRN_DB_UINT32 :
+          GRN_UINT64_SET(ctx,
+                         &sum,
+                         GRN_UINT64_VALUE(&sum) + GRN_UINT32_VALUE(&value));
+          break;
+        case GRN_DB_UINT64 :
+          GRN_UINT64_SET(ctx,
+                         &sum,
+                         GRN_UINT64_VALUE(&sum) + GRN_UINT64_VALUE(&value));
+          break;
+        case GRN_DB_FLOAT :
+          GRN_FLOAT_SET(ctx,
+                        &sum,
+                        GRN_FLOAT_VALUE(&sum) + GRN_FLOAT_VALUE(&value));
+          break;
+        default :
+          break;
+        }
+        grn_obj_set_value(ctx, output_column, id, &sum, GRN_OBJ_SET);
+      }
+    } else {
+      int64_t sum_raw_int64 = 0;
+      uint64_t sum_raw_uint64 = 0;
+      double sum_raw_double = 0.0;
+
+      while ((id = grn_window_next(ctx, window))) {
+        GRN_BULK_REWIND(&value);
+        grn_obj_get_value(ctx, target, id, &value);
+        switch (target_range_id) {
+        case GRN_DB_INT8 :
+          sum_raw_int64 += GRN_INT8_VALUE(&value);
+          break;
+        case GRN_DB_INT16 :
+          sum_raw_int64 += GRN_INT16_VALUE(&value);
+          break;
+        case GRN_DB_INT32 :
+          sum_raw_int64 += GRN_INT32_VALUE(&value);
+          break;
+        case GRN_DB_INT64 :
+          sum_raw_int64 += GRN_INT64_VALUE(&value);
+          break;
+        case GRN_DB_UINT8 :
+          sum_raw_uint64 += GRN_UINT8_VALUE(&value);
+          break;
+        case GRN_DB_UINT16 :
+          sum_raw_uint64 += GRN_UINT16_VALUE(&value);
+          break;
+        case GRN_DB_UINT32 :
+          sum_raw_uint64 += GRN_UINT32_VALUE(&value);
+          break;
+        case GRN_DB_UINT64 :
+          sum_raw_uint64 += GRN_UINT64_VALUE(&value);
+          break;
+        case GRN_DB_FLOAT :
+          sum_raw_double += GRN_FLOAT_VALUE(&value);
+          break;
+        default :
+          break;
+        }
+      }
+
+      switch (output_column_range_id) {
       case GRN_DB_INT8 :
-        GRN_INT64_SET(ctx,
-                      &sum,
-                      GRN_INT64_VALUE(&sum) + GRN_INT8_VALUE(&value));
-        break;
       case GRN_DB_INT16 :
-        GRN_INT64_SET(ctx,
-                      &sum,
-                      GRN_INT64_VALUE(&sum) + GRN_INT16_VALUE(&value));
-        break;
       case GRN_DB_INT32 :
-        GRN_INT64_SET(ctx,
-                      &sum,
-                      GRN_INT64_VALUE(&sum) + GRN_INT32_VALUE(&value));
-        break;
       case GRN_DB_INT64 :
-        GRN_INT64_SET(ctx,
-                      &sum,
-                      GRN_INT64_VALUE(&sum) + GRN_INT64_VALUE(&value));
+        GRN_INT64_SET(ctx, &sum, sum_raw_int64);
         break;
       case GRN_DB_UINT8 :
-        GRN_UINT64_SET(ctx,
-                       &sum,
-                       GRN_UINT64_VALUE(&sum) + GRN_UINT8_VALUE(&value));
-        break;
       case GRN_DB_UINT16 :
-        GRN_UINT64_SET(ctx,
-                       &sum,
-                       GRN_UINT64_VALUE(&sum) + GRN_UINT16_VALUE(&value));
-        break;
       case GRN_DB_UINT32 :
-        GRN_UINT64_SET(ctx,
-                       &sum,
-                       GRN_UINT64_VALUE(&sum) + GRN_UINT32_VALUE(&value));
-        break;
       case GRN_DB_UINT64 :
-        GRN_UINT64_SET(ctx,
-                       &sum,
-                       GRN_UINT64_VALUE(&sum) + GRN_UINT64_VALUE(&value));
+        GRN_UINT64_SET(ctx, &sum, sum_raw_uint64);
         break;
       case GRN_DB_FLOAT :
-        GRN_FLOAT_SET(ctx,
-                      &sum,
-                      GRN_FLOAT_VALUE(&sum) + GRN_FLOAT_VALUE(&value));
-        break;
-      default :
+        GRN_FLOAT_SET(ctx, &sum, sum_raw_double);
         break;
       }
-      grn_obj_set_value(ctx, output_column, id, &sum, GRN_OBJ_SET);
+
+      grn_window_rewind(ctx, window);
+      while ((id = grn_window_next(ctx, window))) {
+        grn_obj_set_value(ctx, output_column, id, &sum, GRN_OBJ_SET);
+      }
     }
 
     GRN_OBJ_FIN(ctx, &value);

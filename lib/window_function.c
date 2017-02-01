@@ -227,7 +227,7 @@ grn_window_set_sort_keys(grn_ctx *ctx,
                           id,
                           &record_id, sizeof(grn_id));
       }
-      GRN_RECORD_PUT(ctx, &(window->ids), id);
+      GRN_RECORD_PUT(ctx, &(window->ids), record_id);
     } GRN_TABLE_EACH_END(ctx, cursor);
   }
 

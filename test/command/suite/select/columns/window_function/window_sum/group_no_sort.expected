@@ -1,0 +1,75 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs item COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{"item": "item1", "price": 666},
+{"item": "item1", "price": 999},
+{"item": "item1", "price": 777},
+{"item": "item2", "price": 111},
+{"item": "item2", "price": 333},
+{"item": "item3", "price": 222}
+]
+[[0,0.0,0.0],6]
+select Logs   --columns[sum].stage initial   --columns[sum].value 'window_sum(price)'   --columns[sum].type UInt32   --columns[sum].window.group_keys item   --output_columns 'item, price, sum'   --sort_keys item,price
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "item",
+          "ShortText"
+        ],
+        [
+          "price",
+          "UInt32"
+        ],
+        [
+          "sum",
+          "UInt32"
+        ]
+      ],
+      [
+        "item1",
+        666,
+        2442
+      ],
+      [
+        "item1",
+        777,
+        2442
+      ],
+      [
+        "item1",
+        999,
+        2442
+      ],
+      [
+        "item2",
+        111,
+        444
+      ],
+      [
+        "item2",
+        333,
+        444
+      ],
+      [
+        "item3",
+        222,
+        222
+      ]
+    ]
+  ]
+]
