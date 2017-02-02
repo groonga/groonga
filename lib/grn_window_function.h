@@ -26,19 +26,14 @@ struct _grn_window {
   size_t n_ids;
   ssize_t current_index;
   grn_window_direction direction;
-  grn_table_sort_key *sort_keys;
-  size_t n_sort_keys;
+  grn_bool is_sorted;
 };
 
 grn_rc grn_window_init(grn_ctx *ctx,
                        grn_window *window,
                        grn_obj *table,
-                       grn_obj *grouped_table);
+                       grn_bool is_sorted);
 grn_rc grn_window_fin(grn_ctx *ctx, grn_window *window);
-grn_rc grn_window_set_sort_keys(grn_ctx *ctx,
-                                grn_window *window,
-                                grn_table_sort_key *sort_keys,
-                                size_t n_sort_keys);
 
 #ifdef __cplusplus
 }

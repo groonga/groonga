@@ -27,18 +27,16 @@ grn_rc
 grn_window_init(grn_ctx *ctx,
                 grn_window *window,
                 grn_obj *table,
-                grn_obj *grouped_table)
+                grn_bool is_sorted)
 {
   GRN_API_ENTER;
 
   window->table = table;
-  window->grouped_table = grouped_table;
   GRN_RECORD_INIT(&(window->ids), GRN_OBJ_VECTOR, grn_obj_id(ctx, table));
   window->n_ids = 0;
   window->current_index = 0;
   window->direction = GRN_WINDOW_DIRECTION_ASCENDING;
-  window->sort_keys = NULL;
-  window->n_sort_keys = 0;
+  window->is_sorted = is_sorted;
 
   GRN_API_RETURN(GRN_SUCCESS);
 }
@@ -152,138 +150,39 @@ grn_window_set_direction(grn_ctx *ctx,
   GRN_API_RETURN(GRN_SUCCESS);
 }
 
-grn_rc
-grn_window_set_sort_keys(grn_ctx *ctx,
-                         grn_window *window,
-                         grn_table_sort_key *sort_keys,
-                         size_t n_sort_keys)
+static inline void
+grn_window_reset(grn_ctx *ctx,
+                 grn_window *window)
 {
-  GRN_API_ENTER;
+  GRN_BULK_REWIND(&(window->ids));
+}
 
-  if (!window) {
-    ERR(GRN_INVALID_ARGUMENT, "[window][set][sort-keys] window is NULL");
-    GRN_API_RETURN(ctx->rc);
-  }
+static inline void
+grn_window_add_record(grn_ctx *ctx,
+                      grn_window *window,
+                      grn_id record_id)
+{
+  GRN_RECORD_PUT(ctx, &(window->ids), record_id);
+}
 
-  if (sort_keys) {
-    grn_obj *sorted;
-
-    sorted = grn_table_create(ctx,
-                              NULL, 0, NULL,
-                              GRN_OBJ_TABLE_NO_KEY,
-                              NULL,
-                              window->grouped_table);
-    if (!sorted) {
-      ERR(ctx->rc,
-          "[window][set][sort-keys] "
-          "failed to create a table to store sorted records: %s",
-          ctx->errbuf);
-      GRN_API_RETURN(ctx->rc);
-    }
-
-    if (window->table == window->grouped_table) {
-      grn_table_sort(ctx,
-                     window->grouped_table,
-                     0, -1,
-                     sorted,
-                     sort_keys, n_sort_keys);
-    } else {
-      size_t i;
-      grn_table_sort_key *adjusted_sort_keys;
-
-      adjusted_sort_keys = GRN_MALLOC(sizeof(grn_table_sort_key) * n_sort_keys);
-      if (!adjusted_sort_keys) {
-        ERR(ctx->rc,
-            "[window][set][sort-keys] "
-            "failed to allocate adjusted sort keys: %s",
-            ctx->errbuf);
-        grn_obj_unlink(ctx, sorted);
-        GRN_API_RETURN(ctx->rc);
-      }
-      for (i = 0; i < n_sort_keys; i++) {
-        grn_accessor *key;
-
-        adjusted_sort_keys[i] = sort_keys[i];
-        /* TODO: Ugly. We should use accessor_new(). */
-        key = GRN_CALLOC(sizeof(grn_accessor));
-        key->header.type = GRN_ACCESSOR;
-        key->action = GRN_ACCESSOR_GET_KEY;
-        key->obj = window->grouped_table;
-        key->next = (grn_accessor *)(sort_keys[i].key);
-        adjusted_sort_keys[i].key = (grn_obj *)key;
-      }
-      grn_table_sort(ctx,
-                     window->grouped_table,
-                     0, -1,
-                     sorted,
-                     adjusted_sort_keys, n_sort_keys);
-      for (i = 0; i < n_sort_keys; i++) {
-        GRN_FREE(adjusted_sort_keys[i].key);
-      }
-      GRN_FREE(adjusted_sort_keys);
-    }
-    if (ctx->rc != GRN_SUCCESS) {
-      ERR(ctx->rc,
-          "[window][set][sort-keys] "
-          "failed to sort: %s",
-          ctx->errbuf);
-      grn_obj_unlink(ctx, sorted);
-      GRN_API_RETURN(ctx->rc);
-    }
-
-    GRN_BULK_REWIND(&(window->ids));
-    GRN_TABLE_EACH_BEGIN(ctx, sorted, cursor, id) {
-      void *value;
-      grn_id record_id;
-
-      grn_table_cursor_get_value(ctx, cursor, &value);
-      if (window->table == window->grouped_table) {
-        record_id = *((grn_id *)value);
-      } else {
-        grn_id grouped_record_id;
-        grouped_record_id = *((grn_id *)value);
-        grn_table_get_key(ctx,
-                          window->grouped_table,
-                          grouped_record_id,
-                          &record_id, sizeof(grn_id));
-      }
-      GRN_RECORD_PUT(ctx, &(window->ids), record_id);
-    } GRN_TABLE_EACH_END(ctx, cursor);
-
-    grn_obj_close(ctx, sorted);
-  } else {
-    GRN_BULK_REWIND(&(window->ids));
-    GRN_TABLE_EACH_BEGIN(ctx, window->grouped_table, cursor, id) {
-      grn_id record_id;
-      if (window->table == window->grouped_table) {
-        record_id = id;
-      } else {
-        grn_table_get_key(ctx,
-                          window->grouped_table,
-                          id,
-                          &record_id, sizeof(grn_id));
-      }
-      GRN_RECORD_PUT(ctx, &(window->ids), record_id);
-    } GRN_TABLE_EACH_END(ctx, cursor);
-  }
-
-  window->n_ids = GRN_BULK_VSIZE(&(window->ids)) / sizeof(grn_id);
-
-  grn_window_set_direction(ctx, window, window->direction);
-
-  window->sort_keys = sort_keys;
-  window->n_sort_keys = n_sort_keys;
-
-  GRN_API_RETURN(GRN_SUCCESS);
+static inline grn_bool
+grn_window_is_empty(grn_ctx *ctx,
+                    grn_window *window)
+{
+  return GRN_BULK_VSIZE(&(window->ids)) == 0;
 }
 
 grn_bool
 grn_window_is_sorted(grn_ctx *ctx, grn_window *window)
 {
-  grn_bool is_sorted;
   GRN_API_ENTER;
-  is_sorted = (window && window->n_sort_keys > 0);
-  GRN_API_RETURN(is_sorted);
+
+  if (!window) {
+    ERR(GRN_INVALID_ARGUMENT, "[window][is-sorted] window is NULL");
+    GRN_API_RETURN(GRN_FALSE);
+  }
+
+  GRN_API_RETURN(window->is_sorted);
 }
 
 grn_obj *
@@ -369,6 +268,12 @@ grn_expr_call_window_function(grn_ctx *ctx,
     /* TODO: Check op. */
     GRN_PTR_PUT(ctx, &args, expr->codes[i].value);
   }
+  window->n_ids = GRN_BULK_VSIZE(&(window->ids)) / sizeof(grn_id);
+  if (window->direction == GRN_WINDOW_DIRECTION_ASCENDING) {
+    window->current_index = 0;
+  } else {
+    window->current_index = window->n_ids - 1;
+  }
   rc = proc->callbacks.window_function(ctx,
                                        output_column,
                                        window,
@@ -379,29 +284,6 @@ grn_expr_call_window_function(grn_ctx *ctx,
   return rc;
 }
 
-static grn_rc
-grn_table_apply_window_function_per_group(grn_ctx *ctx,
-                                          grn_obj *table,
-                                          grn_obj *grouped_table,
-                                          grn_window_definition *definition,
-                                          grn_obj *output_column,
-                                          grn_obj *window_function_call)
-{
-  grn_window window;
-
-  grn_window_init(ctx, &window, table, grouped_table);
-  grn_window_set_sort_keys(ctx, &window,
-                           definition->sort_keys,
-                           definition->n_sort_keys);
-  grn_expr_call_window_function(ctx,
-                                output_column,
-                                &window,
-                                window_function_call);
-  grn_window_fin(ctx, &window);
-
-  return GRN_SUCCESS;
-}
-
 grn_rc
 grn_table_apply_window_function(grn_ctx *ctx,
                                 grn_obj *table,
@@ -409,8 +291,6 @@ grn_table_apply_window_function(grn_ctx *ctx,
                                 grn_window_definition *definition,
                                 grn_obj *window_function_call)
 {
-  grn_rc rc;
-
   GRN_API_ENTER;
 
   if (!table) {
@@ -431,72 +311,145 @@ grn_table_apply_window_function(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
-  if (definition->group_keys) {
-    grn_table_group_result grouped;
-    grn_obj subrecs;
+  {
+    size_t n_sort_keys;
+    grn_table_sort_key *sort_keys;
+    grn_obj *sorted;
+    grn_window window;
 
-    grouped.table = NULL;
-    grouped.key_begin = 0;
-    grouped.key_end = definition->n_group_keys;
-    grouped.limit = -1;
-    grouped.flags = GRN_TABLE_GROUP_CALC_COUNT;
-    grouped.op = 0;
-    grouped.max_n_subrecs = grn_table_size(ctx, table);
-    grouped.calc_target = NULL;
-
-    /* TODO: grn_table_group() should support table output for sub records? */
-    GRN_RECORD_INIT(&subrecs, GRN_OBJ_VECTOR, grn_obj_id(ctx, table));
-    grn_bulk_reserve(ctx, &subrecs, sizeof(grn_obj *) * grouped.max_n_subrecs);
-    grn_table_group(ctx,
-                    table,
-                    definition->group_keys,
-                    definition->n_group_keys,
-                    &grouped,
-                    1);
-    GRN_TABLE_EACH_BEGIN(ctx, grouped.table, cursor, id) {
-      grn_obj *grouped_table;
-
-      grouped_table = grn_table_create(ctx,
-                                       NULL, 0,
-                                       NULL,
-                                       GRN_TABLE_HASH_KEY,
-                                       table,
-                                       NULL);
-      {
-        unsigned int i, n;
-        GRN_BULK_REWIND(&subrecs);
-        n = grn_table_get_subrecs(ctx,
-                                  grouped.table,
-                                  id,
-                                  (grn_id *)GRN_BULK_HEAD(&subrecs),
-                                  NULL,
-                                  grouped.max_n_subrecs);
-        for (i = 0; i < n; i++) {
-          grn_id subrec_id;
-          subrec_id = GRN_RECORD_VALUE_AT(&subrecs, i);
-          grn_table_add(ctx, grouped_table, &subrec_id, sizeof(grn_id), NULL);
-        }
+    n_sort_keys = definition->n_group_keys + definition->n_sort_keys;
+    sort_keys = GRN_MALLOCN(grn_table_sort_key, n_sort_keys);
+    if (!sort_keys) {
+      grn_rc rc = ctx->rc;
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_NO_MEMORY_AVAILABLE;
       }
-      /* TODO: rc handling */
-      rc = grn_table_apply_window_function_per_group(ctx,
-                                                     table,
-                                                     grouped_table,
-                                                     definition,
-                                                     output_column,
-                                                     window_function_call);
-      grn_obj_close(ctx, grouped_table);
-    } GRN_TABLE_EACH_END(ctx, cursor);
+      ERR(rc,
+          "[table][apply][window-function] "
+          "failed to allocate internal sort keys: %s",
+          ctx->errbuf);
+      GRN_API_RETURN(ctx->rc);
+    }
+    {
+      size_t i;
+      for (i = 0; i < definition->n_group_keys; i++) {
+        sort_keys[i] = definition->group_keys[i];
+      }
+      for (i = 0; i < definition->n_sort_keys; i++) {
+        sort_keys[i + definition->n_group_keys] = definition->sort_keys[i];
+      }
+    }
+    sorted = grn_table_create(ctx,
+                              NULL, 0, NULL,
+                              GRN_OBJ_TABLE_NO_KEY,
+                              NULL,
+                              table);
+    if (!sorted) {
+      grn_rc rc = ctx->rc;
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_NO_MEMORY_AVAILABLE;
+      }
+      GRN_FREE(sort_keys);
+      ERR(rc,
+          "[table][apply][window-function] "
+          "failed to allocate table to store sorted result: %s",
+          ctx->errbuf);
+      GRN_API_RETURN(ctx->rc);
+    }
+    grn_table_sort(ctx,
+                   table,
+                   0, -1,
+                   sorted,
+                   sort_keys, n_sort_keys);
 
-    grn_obj_close(ctx, grouped.table);
-    GRN_OBJ_FIN(ctx, &subrecs);
-  } else {
-    rc = grn_table_apply_window_function_per_group(ctx,
-                                                   table,
-                                                   table,
-                                                   definition,
-                                                   output_column,
-                                                   window_function_call);
+    grn_window_init(ctx, &window, table, definition->n_sort_keys > 0);
+    if (definition->n_group_keys > 0) {
+      grn_obj *previous_values;
+      grn_obj *current_values;
+      size_t i, n;
+
+      previous_values = GRN_MALLOCN(grn_obj, definition->n_group_keys);
+      current_values = GRN_MALLOCN(grn_obj, definition->n_group_keys);
+      n = definition->n_group_keys;
+
+      for (i = 0; i < n; i++) {
+        GRN_VOID_INIT(&(previous_values[i]));
+        GRN_VOID_INIT(&(current_values[i]));
+      }
+
+      GRN_TABLE_EACH_BEGIN(ctx, sorted, cursor, id) {
+        void *value;
+        grn_id record_id;
+        grn_bool is_group_key_changed = GRN_FALSE;
+
+        grn_table_cursor_get_value(ctx, cursor, &value);
+        record_id = *((grn_id *)value);
+
+        for (i = 0; i < n; i++) {
+          size_t reverse_i = n - i - 1;
+          grn_obj *previous_value = &(previous_values[reverse_i]);
+          grn_obj *current_value = &(current_values[reverse_i]);
+          grn_obj *group_key = definition->group_keys[reverse_i].key;
+
+          if (is_group_key_changed) {
+            GRN_BULK_REWIND(previous_value);
+            grn_obj_get_value(ctx, group_key, record_id, previous_value);
+          } else {
+            GRN_BULK_REWIND(current_value);
+            grn_obj_get_value(ctx, group_key, record_id, current_value);
+            if ((GRN_BULK_VSIZE(current_value) !=
+                 GRN_BULK_VSIZE(previous_value)) ||
+                (memcmp(GRN_BULK_HEAD(current_value),
+                        GRN_BULK_HEAD(previous_value),
+                        GRN_BULK_VSIZE(current_value)) != 0)) {
+              is_group_key_changed = GRN_TRUE;
+              grn_bulk_write_from(ctx,
+                                  previous_value,
+                                  GRN_BULK_HEAD(current_value),
+                                  0,
+                                  GRN_BULK_VSIZE(current_value));
+            }
+          }
+        }
+
+        if (is_group_key_changed && !grn_window_is_empty(ctx, &window)) {
+          grn_expr_call_window_function(ctx,
+                                        output_column,
+                                        &window,
+                                        window_function_call);
+          grn_window_reset(ctx, &window);
+        }
+        grn_window_add_record(ctx, &window, record_id);
+      } GRN_TABLE_EACH_END(ctx, cursor);
+      grn_expr_call_window_function(ctx,
+                                    output_column,
+                                    &window,
+                                    window_function_call);
+
+      for (i = 0; i < definition->n_group_keys; i++) {
+        GRN_OBJ_FIN(ctx, &(previous_values[i]));
+        GRN_OBJ_FIN(ctx, &(current_values[i]));
+      }
+      GRN_FREE(previous_values);
+      GRN_FREE(current_values);
+    } else {
+      GRN_TABLE_EACH_BEGIN(ctx, sorted, cursor, id) {
+        void *value;
+        grn_id record_id;
+
+        grn_table_cursor_get_value(ctx, cursor, &value);
+        record_id = *((grn_id *)value);
+        grn_window_add_record(ctx, &window, record_id);
+      } GRN_TABLE_EACH_END(ctx, cursor);
+      grn_expr_call_window_function(ctx,
+                                    output_column,
+                                    &window,
+                                    window_function_call);
+    }
+    grn_window_fin(ctx, &window);
+
+    GRN_FREE(sort_keys);
   }
 
-  GRN_API_RETURN(rc);
+  GRN_API_RETURN(ctx->rc);
 }

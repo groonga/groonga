@@ -1,0 +1,87 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs item COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs user COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{"item": "item2", "user": "user3", "price": 333},
+{"item": "item1", "user": "user2", "price": 666},
+{"item": "item3", "user": "user1", "price": 222},
+{"item": "item1", "user": "user2", "price": 777},
+{"item": "item2", "user": "user3", "price": 111},
+{"item": "item1", "user": "user2", "price": 999}
+]
+[[0,0.0,0.0],6]
+select Logs   --columns[sum].stage initial   --columns[sum].value 'window_sum(price)'   --columns[sum].type UInt32   --columns[sum].window.group_keys item,user   --columns[sum].window.sort_keys price   --output_columns 'item, user, price, sum'   --sort_keys item,price
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "item",
+          "ShortText"
+        ],
+        [
+          "user",
+          "ShortText"
+        ],
+        [
+          "price",
+          "UInt32"
+        ],
+        [
+          "sum",
+          "UInt32"
+        ]
+      ],
+      [
+        "item1",
+        "user2",
+        666,
+        666
+      ],
+      [
+        "item1",
+        "user2",
+        777,
+        1443
+      ],
+      [
+        "item1",
+        "user2",
+        999,
+        2442
+      ],
+      [
+        "item2",
+        "user3",
+        111,
+        111
+      ],
+      [
+        "item2",
+        "user3",
+        333,
+        444
+      ],
+      [
+        "item3",
+        "user1",
+        222,
+        222
+      ]
+    ]
+  ]
+]
