@@ -294,6 +294,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   uint32_t ncols;   /* Number of columns except _id and _key. */
   uint32_t nvalues; /* Number of values in brackets. */
   uint32_t depth;
+  grn_bool is_record_load = GRN_FALSE;
 
   cols = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
   ncols = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
@@ -404,6 +405,8 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
     goto exit;
   }
 
+  is_record_load = GRN_TRUE;
+
   /* Target columns and _id or _key are already specified. */
   if (!nvalues) {
     /*
@@ -473,8 +476,19 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   }
   loader->nrecords++;
 exit:
-  if (depth > 0 && loader->output_ids) {
-    GRN_UINT32_PUT(ctx, &(loader->ids), id);
+  if (is_record_load) {
+    if (loader->output_ids) {
+      GRN_UINT32_PUT(ctx, &(loader->ids), id);
+    }
+    if (loader->output_errors) {
+      GRN_INT32_PUT(ctx, &(loader->return_codes), ctx->rc);
+      grn_vector_add_element(ctx,
+                             &(loader->error_messages),
+                             ctx->errbuf,
+                             strlen(ctx->errbuf),
+                             0,
+                             GRN_DB_TEXT);
+    }
   }
   loader->values_size = begin;
 }
@@ -631,6 +645,15 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
 exit:
   if (loader->output_ids) {
     GRN_UINT32_PUT(ctx, &(loader->ids), id);
+  }
+  if (loader->output_errors) {
+    GRN_INT32_PUT(ctx, &(loader->return_codes), ctx->rc);
+    grn_vector_add_element(ctx,
+                           &(loader->error_messages),
+                           ctx->errbuf,
+                           strlen(ctx->errbuf),
+                           0,
+                           GRN_DB_TEXT);
   }
   loader->values_size = begin;
 }
@@ -1115,6 +1138,7 @@ grn_load_internal(grn_ctx *ctx, grn_load_input *input)
       }
     }
     loader->output_ids = input->output_ids;
+    loader->output_errors = input->output_errors;
   } else {
     if (!loader->table) {
       ERR(GRN_INVALID_ARGUMENT, "mandatory \"table\" parameter is absent");
@@ -1165,6 +1189,7 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
     input.each.value = each;
     input.each.length = each_len;
     input.output_ids = GRN_FALSE;
+    input.output_errors = GRN_FALSE;
     input.emit_level = 1;
     grn_load_internal(ctx, &input);
   }

@@ -1,0 +1,9 @@
+table_create Numbers TABLE_HASH_KEY UInt32
+
+load --table Numbers --command_version 3 --output_ids yes --output_errors yes
+[
+["_key"],
+[1],
+["String"],
+[-1]
+]

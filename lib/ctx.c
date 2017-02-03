@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -148,6 +148,8 @@ grn_loader_init(grn_loader *loader)
   GRN_UINT32_INIT(&loader->level, GRN_OBJ_VECTOR);
   GRN_PTR_INIT(&loader->columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_UINT32_INIT(&loader->ids, GRN_OBJ_VECTOR);
+  GRN_INT32_INIT(&loader->return_codes, GRN_OBJ_VECTOR);
+  GRN_TEXT_INIT(&loader->error_messages, GRN_OBJ_VECTOR);
   loader->id_offset = -1;
   loader->key_offset = -1;
   loader->table = NULL;
@@ -161,6 +163,7 @@ grn_loader_init(grn_loader *loader)
   loader->rc = GRN_SUCCESS;
   loader->errbuf[0] = '\0';
   loader->output_ids = GRN_FALSE;
+  loader->output_errors = GRN_FALSE;
 }
 
 void
@@ -179,6 +182,8 @@ grn_ctx_loader_clear(grn_ctx *ctx)
   GRN_OBJ_FIN(ctx, &loader->level);
   GRN_OBJ_FIN(ctx, &loader->columns);
   GRN_OBJ_FIN(ctx, &loader->ids);
+  GRN_OBJ_FIN(ctx, &loader->return_codes);
+  GRN_OBJ_FIN(ctx, &loader->error_messages);
   grn_loader_init(loader);
 }
 

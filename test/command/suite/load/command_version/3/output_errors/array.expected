@@ -1,0 +1,45 @@
+table_create Numbers TABLE_HASH_KEY UInt32
+[[0,0.0,0.0],true]
+load --table Numbers --command_version 3 --output_ids yes --output_errors yes
+[
+["_key"],
+[1],
+["String"],
+[-1]
+]
+{
+  "header": {
+    "return_code": -22,
+    "start_time": 0.0,
+    "elapsed_time": 0.0,
+    "error": {
+      "message": "cast failed",
+      "function": "grn_table_add_by_key",
+      "file": "db.c",
+      "line": 1574
+    }
+  },
+  "body": {
+    "n_loaded_records": 2,
+    "loaded_ids": [
+      1,
+      0,
+      2
+    ],
+    "errors": [
+      {
+        "return_code": 0,
+        "message": ""
+      },
+      {
+        "return_code": -22,
+        "message": "cast failed"
+      },
+      {
+        "return_code": 0,
+        "message": ""
+      }
+    ]
+  }
+}
+#|e| cast failed

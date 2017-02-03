@@ -160,6 +160,10 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                                   user_data,
                                                   "output_ids", -1,
                                                   GRN_FALSE);
+  input.output_errors = grn_plugin_proc_get_var_bool(ctx,
+                                                     user_data,
+                                                     "output_errors", -1,
+                                                     GRN_FALSE);
   input.emit_level = 1;
 
   grn_load_internal(ctx, &input);
@@ -181,6 +185,9 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       if (ctx->impl->loader.output_ids) {
         n_elements++;
       }
+      if (ctx->impl->loader.output_errors) {
+        n_elements++;
+      }
       GRN_OUTPUT_MAP_OPEN("result", n_elements);
       GRN_OUTPUT_CSTR("n_loaded_records");
       GRN_OUTPUT_INT64(ctx->impl->loader.nrecords);
@@ -193,6 +200,34 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         GRN_OUTPUT_ARRAY_OPEN("loaded_ids", n_ids);
         for (i = 0; i < n_ids; i++) {
           GRN_OUTPUT_UINT64(GRN_UINT32_VALUE_AT(ids, i));
+        }
+        GRN_OUTPUT_ARRAY_CLOSE();
+      }
+      if (ctx->impl->loader.output_errors) {
+        grn_obj *return_codes = &(ctx->impl->loader.return_codes);
+        grn_obj *error_messages = &(ctx->impl->loader.error_messages);
+        int i, n;
+
+        GRN_OUTPUT_CSTR("errors");
+        n = GRN_BULK_VSIZE(return_codes) / sizeof(int32_t);
+        GRN_OUTPUT_ARRAY_OPEN("errors", n);
+        for (i = 0; i < n; i++) {
+          const char *message;
+          unsigned int message_size;
+
+          message_size = grn_vector_get_element(ctx,
+                                                error_messages,
+                                                i,
+                                                &message,
+                                                NULL,
+                                                NULL);
+
+          GRN_OUTPUT_MAP_OPEN("error", 2);
+          GRN_OUTPUT_CSTR("return_code");
+          GRN_OUTPUT_INT64(GRN_INT32_VALUE_AT(return_codes, i));
+          GRN_OUTPUT_CSTR("message");
+          GRN_OUTPUT_STR(message, message_size);
+          GRN_OUTPUT_MAP_CLOSE();
         }
         GRN_OUTPUT_ARRAY_CLOSE();
       }
@@ -3675,7 +3710,8 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
   DEF_VAR(vars[4], "input_type");
   DEF_VAR(vars[5], "each");
   DEF_VAR(vars[6], "output_ids");
-  DEF_COMMAND("load", proc_load, 7, vars);
+  DEF_VAR(vars[7], "output_errors");
+  DEF_COMMAND("load", proc_load, 8, vars);
 
   DEF_COMMAND("status", proc_status, 0, vars);
 

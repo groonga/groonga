@@ -36,6 +36,7 @@ typedef struct grn_load_input_ {
   grn_raw_string if_exists;
   grn_raw_string each;
   grn_bool output_ids;
+  grn_bool output_errors;
   uint32_t emit_level;
 } grn_load_input;
 
