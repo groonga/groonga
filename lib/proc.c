@@ -685,6 +685,18 @@ grn_proc_option_value_string(grn_ctx *ctx,
   }
 }
 
+grn_content_type
+grn_proc_option_value_content_type(grn_ctx *ctx,
+                                   grn_obj *option,
+                                   grn_content_type default_value)
+{
+  if (!option) {
+    return default_value;
+  }
+
+  return grn_content_type_parse(ctx, option, default_value);
+}
+
 static grn_obj *
 proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {

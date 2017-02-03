@@ -79,6 +79,9 @@ int32_t grn_proc_option_value_int32(grn_ctx *ctx,
 const char *grn_proc_option_value_string(grn_ctx *ctx,
                                          grn_obj *option,
                                          size_t *size);
+grn_content_type grn_proc_option_value_content_type(grn_ctx *ctx,
+                                                    grn_obj *option,
+                                                    grn_content_type default_value);
 
 void grn_proc_output_object_name(grn_ctx *ctx, grn_obj *obj);
 void grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);
