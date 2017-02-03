@@ -76,6 +76,26 @@ grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
 }
 
 grn_bool
+grn_obj_is_bulk(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!obj) {
+    return GRN_FALSE;
+  }
+
+  return obj->header.type == GRN_BULK;
+}
+
+grn_bool
+grn_obj_is_text_family_bulk(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_bulk(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  return GRN_TYPE_IS_TEXT_FAMILY(obj->header.domain);
+}
+
+grn_bool
 grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
 {
   grn_bool is_table = GRN_FALSE;

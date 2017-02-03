@@ -31,6 +31,8 @@ extern "C" {
 GRN_API grn_bool grn_obj_is_true(grn_ctx *ctx, grn_obj *obj);
 
 GRN_API grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_bool grn_obj_is_bulk(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_bool grn_obj_is_text_family_bulk(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_table(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj);

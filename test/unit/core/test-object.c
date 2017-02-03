@@ -27,6 +27,8 @@
 
 void data_is_builtin(void);
 void test_is_builtin(gconstpointer data);
+void test_is_bulk(void);
+void test_is_text_family_bulk(void);
 void data_is_table(void);
 void test_is_table(gconstpointer data);
 void data_is_column(void);
@@ -156,6 +158,44 @@ test_is_builtin(gconstpointer data)
   } else {
     cut_assert_false(grn_obj_is_builtin(context, object));
   }
+}
+
+void
+test_is_bulk(void)
+{
+  grn_obj bulk;
+  grn_obj *tokenizer;
+
+  GRN_UINT32_INIT(&bulk, 0);
+  cut_assert_true(grn_obj_is_bulk(context, &bulk));
+  GRN_OBJ_FIN(context, &bulk);
+
+  tokenizer = grn_ctx_get(context, "TokenBigram", -1);
+  cut_assert_false(grn_obj_is_bulk(context, tokenizer));
+}
+
+void
+test_is_text_family_bulk(void)
+{
+  grn_obj uint32_bulk;
+  grn_obj short_text_bulk;
+  grn_obj text_bulk;
+  grn_obj long_text_bulk;
+
+  GRN_UINT32_INIT(&uint32_bulk, 0);
+  GRN_SHORT_TEXT_INIT(&short_text_bulk, 0);
+  GRN_TEXT_INIT(&text_bulk, 0);
+  GRN_LONG_TEXT_INIT(&long_text_bulk, 0);
+
+  cut_assert_false(grn_obj_is_text_family_bulk(context, &uint32_bulk));
+  cut_assert_true(grn_obj_is_text_family_bulk(context, &short_text_bulk));
+  cut_assert_true(grn_obj_is_text_family_bulk(context, &text_bulk));
+  cut_assert_true(grn_obj_is_text_family_bulk(context, &long_text_bulk));
+
+  GRN_OBJ_FIN(context, &uint32_bulk);
+  GRN_OBJ_FIN(context, &short_text_bulk);
+  GRN_OBJ_FIN(context, &text_bulk);
+  GRN_OBJ_FIN(context, &long_text_bulk);
 }
 
 void
