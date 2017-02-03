@@ -1302,6 +1302,10 @@ GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_TEXT_VALUE(obj) GRN_BULK_HEAD(obj)
 #define GRN_TEXT_LEN(obj) GRN_BULK_VSIZE(obj)
 
+#define GRN_TEXT_EQUAL_CSTRING(bulk, string)\
+  (GRN_TEXT_LEN(bulk) == strlen(string) &&\
+   memcmp(GRN_TEXT_VALUE(bulk), string, GRN_TEXT_LEN(bulk)) == 0)
+
 #define GRN_BOOL_INIT(obj,flags) \
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_BOOL)
 #define GRN_INT8_INIT(obj,flags) \

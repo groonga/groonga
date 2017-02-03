@@ -44,10 +44,6 @@
     string.length = GRN_TEXT_LEN(bulk);          \
   }                                              \
 
-#define GRN_BULK_EQUAL_STRING(bulk, string)                             \
-  (GRN_TEXT_LEN(bulk) == strlen(string) &&                              \
-   memcmp(GRN_TEXT_VALUE(bulk), string, GRN_TEXT_LEN(bulk)) == 0)
-
 typedef struct {
   const char *value;
   size_t length;
@@ -558,13 +554,13 @@ grn_columns_collect(grn_ctx *ctx,
 
     grn_table_cursor_get_value(ctx, cursor, &value_raw);
     value = value_raw;
-    if (GRN_BULK_EQUAL_STRING(value, "initial")) {
+    if (GRN_TEXT_EQUAL_CSTRING(value, "initial")) {
       stage = GRN_COLUMN_STAGE_INITIAL;
       target_columns = &(columns->initial);
-    } else if (GRN_BULK_EQUAL_STRING(value, "filtered")) {
+    } else if (GRN_TEXT_EQUAL_CSTRING(value, "filtered")) {
       stage = GRN_COLUMN_STAGE_FILTERED;
       target_columns = &(columns->filtered);
-    } else if (GRN_BULK_EQUAL_STRING(value, "output")) {
+    } else if (GRN_TEXT_EQUAL_CSTRING(value, "output")) {
       stage = GRN_COLUMN_STAGE_OUTPUT;
       target_columns = &(columns->output);
     } else {
