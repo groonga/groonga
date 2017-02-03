@@ -16,7 +16,7 @@ Improvements
 ^^^^^^^^^^^^
 
 * [:doc:`/reference/functions/in_values`] Supported sequential search
-  for reference vector column. [Patch by Naoya Murakami] [GitHub#627]
+  for reference vector column. [Patch by Naoya Murakami] [GitHub#629]
 
 * [:doc:`/reference/commands/select`] Changed to report error instead
   of ignoring on invalid ``drilldown[LABEL].sort_keys``.
