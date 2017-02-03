@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015-2016 Brazil
+  Copyright(C) 2015-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -116,6 +116,28 @@ grn_obj_is_column(grn_ctx *ctx, grn_obj *obj)
   }
 
   return is_column;
+}
+
+grn_bool
+grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_column(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  return ((obj->header.type == GRN_COLUMN_VAR_SIZE) &&
+          ((obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) ==
+           GRN_OBJ_COLUMN_VECTOR));
+}
+
+grn_bool
+grn_obj_is_weight_vector_column(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_vector_column(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  return (obj->header.flags & GRN_OBJ_WITH_WEIGHT) == GRN_OBJ_WITH_WEIGHT;
 }
 
 grn_bool

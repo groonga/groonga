@@ -31,6 +31,10 @@ void data_is_table(void);
 void test_is_table(gconstpointer data);
 void data_is_column(void);
 void test_is_column(gconstpointer data);
+void data_is_vector_column(void);
+void test_is_vector_column(gconstpointer data);
+void data_is_weight_vector_column(void);
+void test_is_weight_vector_column(gconstpointer data);
 void data_is_reference_column(void);
 void test_is_reference_column(gconstpointer data);
 void data_is_index_column(void);
@@ -222,6 +226,81 @@ test_is_column(gconstpointer data)
     cut_assert_true(grn_obj_is_column(context, object));
   } else {
     cut_assert_false(grn_obj_is_column(context, object));
+  }
+}
+
+void
+data_is_vector_column(void)
+{
+#define ADD_DATUM(label, expected, name)                                \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "name", G_TYPE_STRING, name,                           \
+                 NULL)
+
+  ADD_DATUM("table",                  FALSE, "Users");
+  ADD_DATUM("fix size scalar column", FALSE, "Users.age");
+  ADD_DATUM("var size scalar column", FALSE, "Users.name");
+  ADD_DATUM("vector column",          TRUE,  "Users.tags");
+  ADD_DATUM("index column",           FALSE, "Names.users");
+
+#undef ADD_DATUM
+}
+
+void
+test_is_vector_column(gconstpointer data)
+{
+  const gchar *name;
+  grn_obj *object;
+
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Users age COLUMN_SCALAR UInt8");
+  assert_send_command("column_create Users name COLUMN_SCALAR ShortText");
+  assert_send_command("column_create Users tags COLUMN_VECTOR ShortText");
+  assert_send_command("table_create Names TABLE_PAT_KEY ShortText");
+  assert_send_command("column_create Names users COLUMN_INDEX Users name");
+
+  name = gcut_data_get_string(data, "name");
+  object = grn_ctx_get(context, name, strlen(name));
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_obj_is_vector_column(context, object));
+  } else {
+    cut_assert_false(grn_obj_is_vector_column(context, object));
+  }
+}
+
+void
+data_is_weight_vector_column(void)
+{
+#define ADD_DATUM(label, expected, name)                                \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "name", G_TYPE_STRING, name,                           \
+                 NULL)
+
+  ADD_DATUM("vector column",        FALSE, "Users.tags");
+  ADD_DATUM("weight vector column", TRUE,  "Users.weight_tags");
+
+#undef ADD_DATUM
+}
+
+void
+test_is_weight_vector_column(gconstpointer data)
+{
+  const gchar *name;
+  grn_obj *object;
+
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Users tags COLUMN_VECTOR ShortText");
+  assert_send_command("column_create Users weight_tags "
+                      "COLUMN_VECTOR|WITH_WEIGHT ShortText");
+
+  name = gcut_data_get_string(data, "name");
+  object = grn_ctx_get(context, name, strlen(name));
+  if (gcut_data_get_string(data, "expected")) {
+    cut_assert_true(grn_obj_is_weight_vector_column(context, object));
+  } else {
+    cut_assert_false(grn_obj_is_weight_vector_column(context, object));
   }
 }
 

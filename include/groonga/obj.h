@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015-2016 Brazil
+  Copyright(C) 2015-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -33,6 +33,8 @@ GRN_API grn_bool grn_obj_is_true(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_table(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_column(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_bool grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_bool grn_obj_is_weight_vector_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_accessor(grn_ctx *ctx, grn_obj *obj);
