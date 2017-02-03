@@ -4,7 +4,17 @@ load --table Numbers
 [
 {"_key": "invalid number!"}
 ]
-[[[-22,0.0,0.0],"cast failed"],0]
-#|e| cast failed
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "<Numbers>: failed to cast to <Int32>: <\"invalid number!\">"
+  ],
+  0
+]
+#|e| <Numbers>: failed to cast to <Int32>: <"invalid number!">
 select Numbers
 [[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","Int32"]]]]]

@@ -1551,7 +1551,8 @@ grn_table_get_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key)
     grn_obj buf;
     GRN_OBJ_INIT(&buf, GRN_BULK, 0, table->header.domain);
     if ((rc = grn_obj_cast(ctx, key, &buf, GRN_TRUE))) {
-      ERR(rc, "cast failed");
+      grn_obj *domain = grn_ctx_at(ctx, table->header.domain);
+      ERR_CAST(table, domain, key);
     } else {
       id = grn_table_get(ctx, table, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
     }
@@ -1571,7 +1572,8 @@ grn_table_add_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key, int *added)
     grn_obj buf;
     GRN_OBJ_INIT(&buf, GRN_BULK, 0, table->header.domain);
     if ((rc = grn_obj_cast(ctx, key, &buf, GRN_TRUE))) {
-      ERR(rc, "cast failed");
+      grn_obj *domain = grn_ctx_at(ctx, table->header.domain);
+      ERR_CAST(table, domain, key);
     } else {
       id = grn_table_add(ctx, table, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf), added);
     }
