@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 
 #include "grn_logger.h"
 #include "grn_ctx.h"
-#include "grn_util.h"
+#include "grn_windows.h"
 
 #include <string.h>
 

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2015 Brazil
+  Copyright(C) 2010-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
 */
 
 #include "grn.h"
+#include "grn_windows.h"
 
 #ifdef WIN32
 static char *windows_base_dir = NULL;
@@ -71,4 +72,33 @@ grn_windows_base_dir(void)
   }
   return windows_base_dir;
 }
-#endif
+
+UINT
+grn_windows_encoding_to_code_page(grn_encoding encoding)
+{
+  UINT code_page;
+
+  switch (encoding) {
+  case GRN_ENC_EUC_JP :
+    code_page = 20932;
+    break;
+  case GRN_ENC_UTF8 :
+    code_page = CP_UTF8;
+    break;
+  case GRN_ENC_SJIS :
+    code_page = 932;
+    break;
+  case GRN_ENC_LATIN1 :
+    code_page = 1252;
+    break;
+  case GRN_ENC_KOI8R :
+    code_page = 20866;
+    break;
+  default :
+    code_page = CP_ACP;
+    break;
+  }
+
+  return code_page;
+}
+#endif /* WIN32 */

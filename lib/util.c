@@ -1572,34 +1572,3 @@ grn_path_exist(const char *path)
   struct stat status;
   return stat(path, &status) == 0;
 }
-
-#ifdef WIN32
-UINT
-grn_windows_encoding_to_code_page(grn_encoding encoding)
-{
-  UINT code_page;
-
-  switch (encoding) {
-  case GRN_ENC_EUC_JP :
-    code_page = 20932;
-    break;
-  case GRN_ENC_UTF8 :
-    code_page = CP_UTF8;
-    break;
-  case GRN_ENC_SJIS :
-    code_page = 932;
-    break;
-  case GRN_ENC_LATIN1 :
-    code_page = 1252;
-    break;
-  case GRN_ENC_KOI8R :
-    code_page = 20866;
-    break;
-  default :
-    code_page = CP_ACP;
-    break;
-  }
-
-  return code_page;
-}
-#endif /* WIN32 */
