@@ -25,7 +25,7 @@ Improvements
   updates on DB. It reduces the case that database lock remains
   even though ``select`` command is executed. [Reported by aomi-n]
 
-* [:doc:`/reference/commands/lock_clear`] Changed to clear specs lock
+* [:doc:`/reference/commands/lock_clear`] Changed to clear metadata lock
   by lock_clear against DB.
 
 * [:doc:`/install/centos`] Enabled EPEL by default to install Groonga
