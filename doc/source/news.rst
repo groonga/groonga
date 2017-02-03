@@ -35,7 +35,7 @@ Improvements
   syntax for prefix("@^"), suffix("@$"), regexp("@^") search.
 
 * [:doc:`/reference/functions/query`] Added documentation about
-  available list of mode. The default mode is ``MATCH``("@") mode
+  available list of mode. The default mode is ``MATCH`` ("@") mode
   which executes full text search.
 
 * [rpm][centos] Supported groonga-token-filter-stem package which
