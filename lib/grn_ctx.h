@@ -80,6 +80,7 @@ extern "C" {
     ((grn_ctx *)ctx)->errlvl = GRN_OK;\
     if (((grn_ctx *)ctx)->rc != GRN_CANCEL) {\
       ((grn_ctx *)ctx)->rc = GRN_SUCCESS;\
+      ((grn_ctx *)ctx)->errbuf[0] = '\0';\
     }\
   }\
   errno = 0;\
