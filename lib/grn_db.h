@@ -408,24 +408,6 @@ void grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj);
 
 grn_rc grn_obj_reinit_for(grn_ctx *ctx, grn_obj *obj, grn_obj *domain_obj);
 
-#define GRN_INT32_POP(obj,value) do {\
-  if (GRN_BULK_VSIZE(obj) >= sizeof(int32_t)) {\
-    GRN_BULK_INCR_LEN((obj), -(sizeof(int32_t)));\
-    value = *(int32_t *)(GRN_BULK_CURR(obj));\
-  } else {\
-    value = 0;\
-  }\
-} while (0)
-
-#define GRN_UINT32_POP(obj,value) do {\
-  if (GRN_BULK_VSIZE(obj) >= sizeof(uint32_t)) {\
-    GRN_BULK_INCR_LEN((obj), -(sizeof(uint32_t)));\
-    value = *(uint32_t *)(GRN_BULK_CURR(obj));\
-  } else {\
-    value = 0;\
-  }\
-} while (0)
-
 void grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 GRN_API grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 grn_hash *grn_expr_get_vars(grn_ctx *ctx, grn_obj *expr, unsigned int *nvars);

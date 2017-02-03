@@ -1537,6 +1537,28 @@ GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
   grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(grn_obj *));\
 } while (0)
 
+#define GRN_BULK_POP(obj, value, type, default) do {\
+  if (GRN_BULK_VSIZE(obj) >= sizeof(type)) {\
+    GRN_BULK_INCR_LEN((obj), -(sizeof(type)));\
+    value = *(type *)(GRN_BULK_CURR(obj));\
+  } else {\
+    value = default;\
+  }\
+} while (0)
+#define GRN_BOOL_POP(obj, value) GRN_BULK_POP(obj, value, unsigned char, 0)
+#define GRN_INT8_POP(obj, value) GRN_BULK_POP(obj, value, int8_t, 0)
+#define GRN_UINT8_POP(obj, value) GRN_BULK_POP(obj, value, uint8_t, 0)
+#define GRN_INT16_POP(obj, value) GRN_BULK_POP(obj, value, int16_t, 0)
+#define GRN_UINT16_POP(obj, value) GRN_BULK_POP(obj, value, uint16_t, 0)
+#define GRN_INT32_POP(obj, value) GRN_BULK_POP(obj, value, int32_t, 0)
+#define GRN_UINT32_POP(obj, value) GRN_BULK_POP(obj, value, uint32_t, 0)
+#define GRN_INT64_POP(obj, value) GRN_BULK_POP(obj, value, int64_t, 0)
+#define GRN_UINT64_POP(obj, value) GRN_BULK_POP(obj, value, uint64_t, 0)
+#define GRN_FLOAT_POP(obj, value) GRN_BULK_POP(obj, value, double, 0.0)
+#define GRN_TIME_POP GRN_INT64_POP
+#define GRN_RECORD_POP(obj, value) GRN_BULK_POP(obj, value, grn_id, GRN_ID_NIL)
+#define GRN_PTR_POP(obj, value) GRN_BULK_POP(obj, value, grn_obj *, NULL)
+
 /* grn_str: deprecated. use grn_string instead. */
 
 typedef struct {
