@@ -29,11 +29,20 @@ extern "C" {
     string.length = 0;                          \
   } while (GRN_FALSE)
 
+#define GRN_RAW_STRING_SET(string, bulk)         \
+  if (bulk && GRN_TEXT_LEN(bulk) > 0) {          \
+    string.value = GRN_TEXT_VALUE(bulk);         \
+    string.length = GRN_TEXT_LEN(bulk);          \
+  } else {                                       \
+    string.value = NULL;                         \
+    string.length = 0;                           \
+  }
+
 #define GRN_RAW_STRING_FILL(string, bulk)        \
   if (bulk && GRN_TEXT_LEN(bulk) > 0) {          \
     string.value = GRN_TEXT_VALUE(bulk);         \
     string.length = GRN_TEXT_LEN(bulk);          \
-  }                                              \
+  }
 
 typedef struct {
   const char *value;
