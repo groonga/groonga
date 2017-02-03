@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -133,14 +133,36 @@ exit :
 static grn_obj *
 proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_load_(ctx, grn_get_ctype(VAR(4)),
-            GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
-            GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
-            GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
-            GRN_TEXT_VALUE(VAR(3)), GRN_TEXT_LEN(VAR(3)),
-            GRN_TEXT_VALUE(VAR(5)), GRN_TEXT_LEN(VAR(5)),
-            VAR(6),
-            1);
+  grn_load_input input;
+
+  input.type = grn_plugin_proc_get_var_content_type(ctx,
+                                                    user_data,
+                                                    "input_type",
+                                                    -1,
+                                                    GRN_CONTENT_JSON);
+#define INIT_STRING_ARGUMENT(member_name, arg_name)             \
+  input.member_name.value =                                     \
+    grn_plugin_proc_get_var_string(ctx,                         \
+                                   user_data,                   \
+                                   arg_name,                    \
+                                   -1,                          \
+                                   &(input.member_name.length))
+
+  INIT_STRING_ARGUMENT(table, "table");
+  INIT_STRING_ARGUMENT(columns, "columns");
+  INIT_STRING_ARGUMENT(values, "values");
+  INIT_STRING_ARGUMENT(if_exists, "ifexists");
+  INIT_STRING_ARGUMENT(each, "each");
+
+#undef INIT_STRING_ARGUMENT
+
+  input.output_ids = grn_plugin_proc_get_var_bool(ctx,
+                                                  user_data,
+                                                  "output_ids", -1,
+                                                  GRN_FALSE);
+  input.emit_level = 1;
+
+  grn_load_internal(ctx, &input);
   if (ctx->rc == GRN_CANCEL) {
     ctx->impl->loader.stat = GRN_LOADER_END;
     ctx->impl->loader.rc = GRN_SUCCESS;

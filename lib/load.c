@@ -20,7 +20,6 @@
 #include "grn_ctx_impl.h"
 #include "grn_db.h"
 #include "grn_util.h"
-#include "grn_proc.h"
 
 static grn_obj *
 values_add(grn_ctx *ctx, grn_loader *loader)
@@ -1046,39 +1045,41 @@ grn_loader_parse_columns(grn_ctx *ctx, grn_loader *loader,
 static grn_com_addr *addr;
 
 void
-grn_load_(grn_ctx *ctx, grn_content_type input_type,
-          const char *table, unsigned int table_len,
-          const char *columns, unsigned int columns_len,
-          const char *values, unsigned int values_len,
-          const char *ifexists, unsigned int ifexists_len,
-          const char *each, unsigned int each_len,
-          grn_obj *output_ids,
-          uint32_t emit_level)
+grn_load_internal(grn_ctx *ctx, grn_load_input *input)
 {
   grn_loader *loader = &ctx->impl->loader;
-  loader->emit_level = emit_level;
+
+  loader->emit_level = input->emit_level;
   if (ctx->impl->edge) {
     grn_edge *edge = grn_edges_add_communicator(ctx, addr);
     grn_obj *msg = grn_msg_open(ctx, edge->com, &ctx->impl->edge->send_old);
     /* build msg */
     grn_edge_dispatch(ctx, edge, msg);
   }
-  if (table && table_len) {
+  if (input->table.length > 0) {
     grn_ctx_loader_clear(ctx);
-    loader->input_type = input_type;
-    if (grn_db_check_name(ctx, table, table_len)) {
-      GRN_DB_CHECK_NAME_ERR("[table][load]", table, table_len);
+    loader->input_type = input->type;
+    if (grn_db_check_name(ctx, input->table.value, input->table.length)) {
+      GRN_DB_CHECK_NAME_ERR("[table][load]",
+                            input->table.value,
+                            (int)(input->table.length));
       loader->stat = GRN_LOADER_END;
       return;
     }
-    loader->table = grn_ctx_get(ctx, table, table_len);
+    loader->table = grn_ctx_get(ctx, input->table.value, input->table.length);
     if (!loader->table) {
-      ERR(GRN_INVALID_ARGUMENT, "nonexistent table: <%.*s>", table_len, table);
+      ERR(GRN_INVALID_ARGUMENT,
+          "nonexistent table: <%.*s>",
+          (int)(input->table.length),
+          input->table.value);
       loader->stat = GRN_LOADER_END;
       return;
     }
-    if (columns && columns_len) {
-      grn_rc rc = grn_loader_parse_columns(ctx, loader, columns, columns_len);
+    if (input->columns.length > 0) {
+      grn_rc rc = grn_loader_parse_columns(ctx,
+                                           loader,
+                                           input->columns.value,
+                                           input->columns.length);
       if (rc != GRN_SUCCESS) {
         loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
         loader->stat = GRN_LOADER_END;
@@ -1086,39 +1087,40 @@ grn_load_(grn_ctx *ctx, grn_content_type input_type,
       }
       loader->columns_status = GRN_LOADER_COLUMNS_SET;
     }
-    if (ifexists && ifexists_len) {
+    if (input->if_exists.length > 0) {
       grn_obj *v;
       GRN_EXPR_CREATE_FOR_QUERY(ctx, loader->table, loader->ifexists, v);
       if (loader->ifexists && v) {
-        grn_expr_parse(ctx, loader->ifexists, ifexists, ifexists_len,
+        grn_expr_parse(ctx,
+                       loader->ifexists,
+                       input->if_exists.value,
+                       input->if_exists.length,
                        NULL, GRN_OP_EQUAL, GRN_OP_AND,
                        GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
       }
     }
-    if (each && each_len) {
+    if (input->each.length > 0) {
       grn_obj *v;
       GRN_EXPR_CREATE_FOR_QUERY(ctx, loader->table, loader->each, v);
       if (loader->each && v) {
-        grn_expr_parse(ctx, loader->each, each, each_len,
+        grn_expr_parse(ctx, loader->each,
+                       input->each.value,
+                       input->each.length,
                        NULL, GRN_OP_EQUAL, GRN_OP_AND,
                        GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
       }
     }
-    if (output_ids && GRN_TEXT_LEN(output_ids) > 0) {
-      loader->output_ids =
-        grn_proc_option_value_bool(ctx, output_ids, GRN_FALSE);
-    }
+    loader->output_ids = input->output_ids;
   } else {
     if (!loader->table) {
       ERR(GRN_INVALID_ARGUMENT, "mandatory \"table\" parameter is absent");
       loader->stat = GRN_LOADER_END;
       return;
     }
-    input_type = loader->input_type;
   }
-  switch (input_type) {
+  switch (loader->input_type) {
   case GRN_CONTENT_JSON :
-    json_read(ctx, loader, values, values_len);
+    json_read(ctx, loader, input->values.value, input->values.length);
     break;
   case GRN_CONTENT_NONE :
   case GRN_CONTENT_TSV :
@@ -1145,10 +1147,22 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
     return ctx->rc;
   }
   GRN_API_ENTER;
-  grn_load_(ctx, input_type, table, table_len,
-            columns, columns_len, values, values_len,
-            ifexists, ifexists_len, each, each_len,
-            NULL,
-            1);
+  {
+    grn_load_input input;
+    input.type = input_type;
+    input.table.value = table;
+    input.table.length = table_len;
+    input.columns.value = columns;
+    input.columns.length = columns_len;
+    input.values.value = values;
+    input.values.length = values_len;
+    input.if_exists.value = ifexists;
+    input.if_exists.length = ifexists_len;
+    input.each.value = each;
+    input.each.length = each_len;
+    input.output_ids = GRN_FALSE;
+    input.emit_level = 1;
+    grn_load_internal(ctx, &input);
+  }
   GRN_API_RETURN(ctx->rc);
 }

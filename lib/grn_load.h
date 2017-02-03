@@ -19,6 +19,7 @@
 #pragma once
 
 #include "grn.h"
+#include "grn_raw_string.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,14 +28,18 @@ extern "C" {
 #define GRN_JSON_LOAD_OPEN_BRACKET 0x40000000
 #define GRN_JSON_LOAD_OPEN_BRACE   0x40000001
 
-GRN_API void grn_load_(grn_ctx *ctx, grn_content_type input_type,
-                       const char *table, unsigned int table_len,
-                       const char *columns, unsigned int columns_len,
-                       const char *values, unsigned int values_len,
-                       const char *ifexists, unsigned int ifexists_len,
-                       const char *each, unsigned int each_len,
-                       grn_obj *output_ids,
-                       uint32_t emit_level);
+typedef struct grn_load_input_ {
+  grn_content_type type;
+  grn_raw_string table;
+  grn_raw_string columns;
+  grn_raw_string values;
+  grn_raw_string if_exists;
+  grn_raw_string each;
+  grn_bool output_ids;
+  uint32_t emit_level;
+} grn_load_input;
+
+void grn_load_internal(grn_ctx *ctx, grn_load_input *input);
 
 #ifdef __cplusplus
 }
