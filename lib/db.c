@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -11049,7 +11049,7 @@ grn_obj_reinit_for(grn_ctx *ctx, grn_obj *obj, grn_obj *domain_obj)
   if (!GRN_DB_OBJP(domain_obj) && domain_obj->header.type != GRN_ACCESSOR) {
     grn_obj inspected;
     GRN_TEXT_INIT(&inspected, 0);
-    limited_size_inspect(ctx, &inspected, domain_obj);
+    grn_inspect_limited(ctx, &inspected, domain_obj);
     ERR(GRN_INVALID_ARGUMENT,
         "[reinit] invalid domain object: <%.*s>",
         (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));

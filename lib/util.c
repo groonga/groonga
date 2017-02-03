@@ -1449,6 +1449,30 @@ grn_inspect_indented(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj,
   return buffer;
 }
 
+grn_obj *
+grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
+{
+  grn_obj sub_buffer;
+  unsigned int max_size = GRN_CTX_MSGSIZE / 2;
+
+  GRN_TEXT_INIT(&sub_buffer, 0);
+  grn_inspect(ctx, &sub_buffer, obj);
+  if (GRN_TEXT_LEN(&sub_buffer) > max_size) {
+    GRN_TEXT_PUT(ctx, buffer, GRN_TEXT_VALUE(&sub_buffer), max_size);
+    GRN_TEXT_PUTS(ctx, buffer, "...(");
+    grn_text_lltoa(ctx, buffer, GRN_TEXT_LEN(&sub_buffer));
+    GRN_TEXT_PUTS(ctx, buffer, ")");
+  } else {
+    GRN_TEXT_PUT(ctx,
+                 buffer,
+                 GRN_TEXT_VALUE(&sub_buffer),
+                 GRN_TEXT_LEN(&sub_buffer));
+  }
+  GRN_OBJ_FIN(ctx, &sub_buffer);
+
+  return buffer;
+}
+
 void
 grn_p(grn_ctx *ctx, grn_obj *obj)
 {
