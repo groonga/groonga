@@ -40,6 +40,10 @@ void grn_p_record(grn_ctx *ctx, grn_obj *table, grn_id id);
 int grn_mkstemp(char *path_template);
 grn_bool grn_path_exist(const char *path);
 
+int grn_tokenize(const char *str, size_t str_len,
+                 const char **tokbuf, int buf_size,
+                 const char **rest);
+
 #ifdef __cplusplus
 }
 #endif

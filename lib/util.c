@@ -1572,3 +1572,38 @@ grn_path_exist(const char *path)
   struct stat status;
   return stat(path, &status) == 0;
 }
+
+/* todo : refine */
+/*
+ * grn_tokenize splits a string into at most buf_size tokens and
+ * returns the number of tokens. The ending address of each token is
+ * written into tokbuf. Delimiters are ' ' and ','.
+ * Then, the address to the remaining is set to rest.
+ */
+int
+grn_tokenize(const char *str, size_t str_len,
+             const char **tokbuf, int buf_size,
+             const char **rest)
+{
+  const char **tok = tokbuf, **tok_end = tokbuf + buf_size;
+  if (buf_size > 0) {
+    const char *str_end = str + str_len;
+    while (str < str_end && (' ' == *str || ',' == *str)) { str++; }
+    for (;;) {
+      if (str == str_end) {
+        *tok++ = str;
+        break;
+      }
+      if (' ' == *str || ',' == *str) {
+        /* *str = '\0'; */
+        *tok++ = str;
+        if (tok == tok_end) { break; }
+        do { str++; } while (str < str_end && (' ' == *str || ',' == *str));
+      } else {
+        str++;
+      }
+    }
+  }
+  if (rest) { *rest = str; }
+  return tok - tokbuf;
+}

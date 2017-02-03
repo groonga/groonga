@@ -13382,7 +13382,7 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
   grn_obj *col;
   const char *p = (char *)str, *q, *r, *pe = p + str_size, *tokbuf[256];
   while (p < pe) {
-    int i, n = tokenize(p, pe - p, tokbuf, 256, &q);
+    int i, n = grn_tokenize(p, pe - p, tokbuf, 256, &q);
     for (i = 0; i < n; i++) {
       r = tokbuf[i];
       while (p < r && (' ' == *p || ',' == *p)) { p++; }
@@ -13473,7 +13473,7 @@ grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned int str_
   p = str;
   if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
     grn_id domain = GRN_ID_NIL;
-    int i, n = tokenize(str, str_size, tokbuf, str_size, NULL);
+    int i, n = grn_tokenize(str, str_size, tokbuf, str_size, NULL);
     if ((keys = GRN_MALLOCN(grn_table_sort_key, n))) {
       k = keys;
       for (i = 0; i < n; i++) {
@@ -13537,7 +13537,7 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned int str_size
     return keys;
   }
   if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
-    int i, n = tokenize(str, str_size, tokbuf, str_size, NULL);
+    int i, n = grn_tokenize(str, str_size, tokbuf, str_size, NULL);
     if ((keys = GRN_MALLOCN(grn_table_sort_key, n))) {
       k = keys;
       for (i = 0; i < n; i++) {
