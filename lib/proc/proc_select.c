@@ -17,6 +17,7 @@
 */
 
 #include "../grn_proc.h"
+#include "../grn_raw_string.h"
 #include "../grn_expr.h"
 #include "../grn_str.h"
 #include "../grn_output.h"
@@ -33,22 +34,6 @@
 #define DEFAULT_DRILLDOWN_LIMIT           10
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key, _nsubrecs"
 
-#define GRN_SELECT_INIT_STRING(string) do {     \
-    string.value = NULL;                        \
-    string.length = 0;                          \
-  } while (GRN_FALSE)
-
-#define GRN_SELECT_FILL_STRING(string, bulk)     \
-  if (bulk && GRN_TEXT_LEN(bulk) > 0) {          \
-    string.value = GRN_TEXT_VALUE(bulk);         \
-    string.length = GRN_TEXT_LEN(bulk);          \
-  }                                              \
-
-typedef struct {
-  const char *value;
-  size_t length;
-} grn_select_string;
-
 typedef enum {
   GRN_COLUMN_STAGE_INITIAL,
   GRN_COLUMN_STAGE_FILTERED,
@@ -56,14 +41,14 @@ typedef enum {
 } grn_column_stage;
 
 typedef struct {
-  grn_select_string label;
+  grn_raw_string label;
   grn_column_stage stage;
   grn_obj *type;
   grn_obj_flags flags;
-  grn_select_string value;
+  grn_raw_string value;
   struct {
-    grn_select_string sort_keys;
-    grn_select_string group_keys;
+    grn_raw_string sort_keys;
+    grn_raw_string group_keys;
   } window;
 } grn_column_data;
 
@@ -74,11 +59,11 @@ typedef struct {
 } grn_columns;
 
 typedef struct {
-  grn_select_string match_columns;
-  grn_select_string query;
-  grn_select_string query_expander;
-  grn_select_string query_flags;
-  grn_select_string filter;
+  grn_raw_string match_columns;
+  grn_raw_string query;
+  grn_raw_string query_expander;
+  grn_raw_string query_flags;
+  grn_raw_string filter;
   struct {
     grn_obj *match_columns;
     grn_obj *expression;
@@ -87,28 +72,28 @@ typedef struct {
 } grn_filter_data;
 
 typedef struct {
-  grn_select_string label;
+  grn_raw_string label;
   grn_filter_data filter;
-  grn_select_string sort_keys;
-  grn_select_string output_columns;
+  grn_raw_string sort_keys;
+  grn_raw_string output_columns;
   int offset;
   int limit;
   grn_obj *table;
 } grn_slice_data;
 
 typedef struct {
-  grn_select_string label;
-  grn_select_string keys;
+  grn_raw_string label;
+  grn_raw_string keys;
   grn_table_sort_key *parsed_keys;
   int n_parsed_keys;
-  grn_select_string sort_keys;
-  grn_select_string output_columns;
+  grn_raw_string sort_keys;
+  grn_raw_string output_columns;
   int offset;
   int limit;
   grn_table_group_flags calc_types;
-  grn_select_string calc_target_name;
-  grn_select_string filter;
-  grn_select_string table_name;
+  grn_raw_string calc_target_name;
+  grn_raw_string filter;
+  grn_raw_string table_name;
   grn_columns columns;
   grn_table_group_result result;
   grn_obj *filtered_result;
@@ -118,19 +103,19 @@ typedef struct _grn_select_output_formatter grn_select_output_formatter;
 
 typedef struct {
   /* inputs */
-  grn_select_string table;
+  grn_raw_string table;
   grn_filter_data filter;
-  grn_select_string scorer;
-  grn_select_string sort_keys;
-  grn_select_string output_columns;
+  grn_raw_string scorer;
+  grn_raw_string sort_keys;
+  grn_raw_string output_columns;
   int offset;
   int limit;
   grn_hash *slices;
   grn_drilldown_data drilldown;
   grn_hash *drilldowns;
-  grn_select_string cache;
-  grn_select_string match_escalation_threshold;
-  grn_select_string adjuster;
+  grn_raw_string cache;
+  grn_raw_string match_escalation_threshold;
+  grn_raw_string adjuster;
   grn_columns columns;
 
   /* for processing */
@@ -268,24 +253,6 @@ grn_column_stage_name(grn_column_stage stage)
   }
 }
 
-static void
-grn_select_string_lstrip(grn_ctx *ctx,
-                         grn_select_string *string)
-{
-  const char *end;
-  int space_len;
-
-  end = string->value + string->length;
-  while (string->value < end) {
-    space_len = grn_isspace(string->value, ctx->encoding);
-    if (space_len == 0) {
-      break;
-    }
-    string->value += space_len;
-    string->length -= space_len;
-  }
-}
-
 static grn_bool
 grn_column_data_init(grn_ctx *ctx,
                      const char *label,
@@ -326,9 +293,9 @@ grn_column_data_init(grn_ctx *ctx,
   column->stage = stage;
   column->type = grn_ctx_at(ctx, GRN_DB_TEXT);
   column->flags = GRN_OBJ_COLUMN_SCALAR;
-  GRN_SELECT_INIT_STRING(column->value);
-  GRN_SELECT_INIT_STRING(column->window.sort_keys);
-  GRN_SELECT_INIT_STRING(column->window.group_keys);
+  GRN_RAW_STRING_INIT(column->value);
+  GRN_RAW_STRING_INIT(column->window.sort_keys);
+  GRN_RAW_STRING_INIT(column->window.group_keys);
 
   return GRN_TRUE;
 }
@@ -396,9 +363,9 @@ grn_column_data_fill(grn_ctx *ctx,
     }
   }
 
-  GRN_SELECT_FILL_STRING(column->value, value);
-  GRN_SELECT_FILL_STRING(column->window.sort_keys, window_sort_keys);
-  GRN_SELECT_FILL_STRING(column->window.group_keys, window_group_keys);
+  GRN_RAW_STRING_FILL(column->value, value);
+  GRN_RAW_STRING_FILL(column->window.sort_keys, window_sort_keys);
+  GRN_RAW_STRING_FILL(column->window.group_keys, window_group_keys);
 
   return GRN_TRUE;
 }
@@ -638,11 +605,11 @@ grn_columns_fill(grn_ctx *ctx,
 static void
 grn_filter_data_init(grn_ctx *ctx, grn_filter_data *data)
 {
-  GRN_SELECT_INIT_STRING(data->match_columns);
-  GRN_SELECT_INIT_STRING(data->query);
-  GRN_SELECT_INIT_STRING(data->query_expander);
-  GRN_SELECT_INIT_STRING(data->query_flags);
-  GRN_SELECT_INIT_STRING(data->filter);
+  GRN_RAW_STRING_INIT(data->match_columns);
+  GRN_RAW_STRING_INIT(data->query);
+  GRN_RAW_STRING_INIT(data->query_expander);
+  GRN_RAW_STRING_INIT(data->query_flags);
+  GRN_RAW_STRING_INIT(data->filter);
   data->condition.match_columns = NULL;
   data->condition.expression = NULL;
   data->filtered = NULL;
@@ -671,11 +638,11 @@ grn_filter_data_fill(grn_ctx *ctx,
                      grn_obj *query_flags,
                      grn_obj *filter)
 {
-  GRN_SELECT_FILL_STRING(data->match_columns, match_columns);
-  GRN_SELECT_FILL_STRING(data->query, query);
-  GRN_SELECT_FILL_STRING(data->query_expander, query_expander);
-  GRN_SELECT_FILL_STRING(data->query_flags, query_flags);
-  GRN_SELECT_FILL_STRING(data->filter, filter);
+  GRN_RAW_STRING_FILL(data->match_columns, match_columns);
+  GRN_RAW_STRING_FILL(data->query, query);
+  GRN_RAW_STRING_FILL(data->query_expander, query_expander);
+  GRN_RAW_STRING_FILL(data->query_flags, query_flags);
+  GRN_RAW_STRING_FILL(data->filter, filter);
 }
 
 static grn_bool
@@ -837,8 +804,8 @@ grn_slice_data_init(grn_ctx *ctx,
   slice->label.value = label;
   slice->label.length = label_len;
   grn_filter_data_init(ctx, &(slice->filter));
-  GRN_SELECT_INIT_STRING(slice->sort_keys);
-  GRN_SELECT_INIT_STRING(slice->output_columns);
+  GRN_RAW_STRING_INIT(slice->sort_keys);
+  GRN_RAW_STRING_INIT(slice->output_columns);
   slice->offset = 0;
   slice->limit = GRN_SELECT_DEFAULT_LIMIT;
   slice->table = NULL;
@@ -871,9 +838,9 @@ grn_slice_data_fill(grn_ctx *ctx,
                        query_flags,
                        filter);
 
-  GRN_SELECT_FILL_STRING(slice->sort_keys, sort_keys);
+  GRN_RAW_STRING_FILL(slice->sort_keys, sort_keys);
 
-  GRN_SELECT_FILL_STRING(slice->output_columns, output_columns);
+  GRN_RAW_STRING_FILL(slice->output_columns, output_columns);
   if (slice->output_columns.length == 0) {
     slice->output_columns.value = GRN_SELECT_DEFAULT_OUTPUT_COLUMNS;
     slice->output_columns.length = strlen(GRN_SELECT_DEFAULT_OUTPUT_COLUMNS);
@@ -893,17 +860,17 @@ grn_drilldown_data_init(grn_ctx *ctx,
 {
   drilldown->label.value = label;
   drilldown->label.length = label_len;
-  GRN_SELECT_INIT_STRING(drilldown->keys);
+  GRN_RAW_STRING_INIT(drilldown->keys);
   drilldown->parsed_keys = NULL;
   drilldown->n_parsed_keys = 0;
-  GRN_SELECT_INIT_STRING(drilldown->sort_keys);
-  GRN_SELECT_INIT_STRING(drilldown->output_columns);
+  GRN_RAW_STRING_INIT(drilldown->sort_keys);
+  GRN_RAW_STRING_INIT(drilldown->output_columns);
   drilldown->offset = 0;
   drilldown->limit = DEFAULT_DRILLDOWN_LIMIT;
   drilldown->calc_types = 0;
-  GRN_SELECT_INIT_STRING(drilldown->calc_target_name);
-  GRN_SELECT_INIT_STRING(drilldown->filter);
-  GRN_SELECT_INIT_STRING(drilldown->table_name);
+  GRN_RAW_STRING_INIT(drilldown->calc_target_name);
+  GRN_RAW_STRING_INIT(drilldown->filter);
+  GRN_RAW_STRING_INIT(drilldown->table_name);
   grn_columns_init(ctx, &(drilldown->columns));
   drilldown->result.table = NULL;
   drilldown->filtered_result = NULL;
@@ -944,11 +911,11 @@ grn_drilldown_data_fill(grn_ctx *ctx,
                         grn_obj *filter,
                         grn_obj *table)
 {
-  GRN_SELECT_FILL_STRING(drilldown->keys, keys);
+  GRN_RAW_STRING_FILL(drilldown->keys, keys);
 
-  GRN_SELECT_FILL_STRING(drilldown->sort_keys, sort_keys);
+  GRN_RAW_STRING_FILL(drilldown->sort_keys, sort_keys);
 
-  GRN_SELECT_FILL_STRING(drilldown->output_columns, output_columns);
+  GRN_RAW_STRING_FILL(drilldown->output_columns, output_columns);
   if (drilldown->output_columns.length == 0) {
     drilldown->output_columns.value = DEFAULT_DRILLDOWN_OUTPUT_COLUMNS;
     drilldown->output_columns.length = strlen(DEFAULT_DRILLDOWN_OUTPUT_COLUMNS);
@@ -977,11 +944,11 @@ grn_drilldown_data_fill(grn_ctx *ctx,
     drilldown->calc_types = 0;
   }
 
-  GRN_SELECT_FILL_STRING(drilldown->calc_target_name, calc_target);
+  GRN_RAW_STRING_FILL(drilldown->calc_target_name, calc_target);
 
-  GRN_SELECT_FILL_STRING(drilldown->filter, filter);
+  GRN_RAW_STRING_FILL(drilldown->filter, filter);
 
-  GRN_SELECT_FILL_STRING(drilldown->table_name, table);
+  GRN_RAW_STRING_FILL(drilldown->table_name, table);
 }
 
 grn_expr_flags
@@ -2857,7 +2824,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
 
   data->output.n_elements = 0;
 
-  grn_select_string_lstrip(ctx, &(data->filter.query));
+  grn_raw_string_lstrip(ctx, &(data->filter.query));
 
   cache_key_size =
     data->table.length + 1 +
@@ -2879,7 +2846,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
       grn_slice_data *slice;
       grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
-      grn_select_string_lstrip(ctx, &(slice->filter.query));
+      grn_raw_string_lstrip(ctx, &(slice->filter.query));
       cache_key_size +=
         slice->filter.match_columns.length + 1 +
         slice->filter.query.length + 1 +

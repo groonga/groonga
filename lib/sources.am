@@ -62,6 +62,8 @@ libgroonga_la_SOURCES =				\
 	grn_plugin.h				\
 	proc.c					\
 	grn_proc.h				\
+	raw_string.c				\
+	grn_raw_string.h			\
 	report.c				\
 	grn_report.h				\
 	request_canceler.c			\
