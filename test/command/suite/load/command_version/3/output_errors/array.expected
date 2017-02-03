@@ -29,7 +29,7 @@ load --table Numbers --command_version 3 --output_ids yes --output_errors yes
     "errors": [
       {
         "return_code": 0,
-        "message": ""
+        "message": null
       },
       {
         "return_code": -22,
@@ -37,7 +37,7 @@ load --table Numbers --command_version 3 --output_ids yes --output_errors yes
       },
       {
         "return_code": 0,
-        "message": ""
+        "message": null
       }
     ]
   }

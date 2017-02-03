@@ -226,7 +226,11 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           GRN_OUTPUT_CSTR("return_code");
           GRN_OUTPUT_INT64(GRN_INT32_VALUE_AT(return_codes, i));
           GRN_OUTPUT_CSTR("message");
-          GRN_OUTPUT_STR(message, message_size);
+          if (message_size == 0) {
+            GRN_OUTPUT_NULL();
+          } else {
+            GRN_OUTPUT_STR(message, message_size);
+          }
           GRN_OUTPUT_MAP_CLOSE();
         }
         GRN_OUTPUT_ARRAY_CLOSE();
