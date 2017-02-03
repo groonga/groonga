@@ -571,15 +571,6 @@ exit :
   GRN_API_RETURN((grn_obj *)expr);
 }
 
-#define GRN_PTR_POP(obj,value) do {\
-  if (GRN_BULK_VSIZE(obj) >= sizeof(grn_obj *)) {\
-    GRN_BULK_INCR_LEN((obj), -((ssize_t)(sizeof(grn_obj *))));\
-    value = *(grn_obj **)(GRN_BULK_CURR(obj));\
-  } else {\
-    value = NULL;\
-  }\
-} while (0)
-
 grn_rc
 grn_expr_close(grn_ctx *ctx, grn_obj *expr)
 {
