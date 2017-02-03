@@ -38,9 +38,6 @@ extern "C" {
 
 #define GRN_N_RESERVED_TYPES 256
 
-#define GRN_JSON_LOAD_OPEN_BRACKET 0x40000000
-#define GRN_JSON_LOAD_OPEN_BRACE   0x40000001
-
 typedef struct _grn_db grn_db;
 typedef struct _grn_proc grn_proc;
 
@@ -412,15 +409,6 @@ void grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 GRN_API grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 grn_hash *grn_expr_get_vars(grn_ctx *ctx, grn_obj *expr, unsigned int *nvars);
 grn_obj *grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t *pe);
-
-GRN_API void grn_load_(grn_ctx *ctx, grn_content_type input_type,
-                       const char *table, unsigned int table_len,
-                       const char *columns, unsigned int columns_len,
-                       const char *values, unsigned int values_len,
-                       const char *ifexists, unsigned int ifexists_len,
-                       const char *each, unsigned int each_len,
-                       grn_obj *output_ids,
-                       uint32_t emit_level);
 
 GRN_API grn_rc grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
                                               grn_table_sort_key *group_key,

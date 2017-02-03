@@ -22,6 +22,7 @@
 #include "grn_util.h"
 #include "grn_string.h"
 #include "grn_expr.h"
+#include "grn_load.h"
 
 #include <string.h>
 #include <stdio.h>
