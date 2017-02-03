@@ -1,0 +1,8 @@
+table_create Numbers TABLE_HASH_KEY Int32
+
+load --table Numbers
+[
+{"_key": "invalid number!"}
+]
+
+select Numbers

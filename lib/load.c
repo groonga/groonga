@@ -21,6 +21,13 @@
 #include "grn_db.h"
 #include "grn_util.h"
 
+static void
+grn_loader_save_error(grn_ctx *ctx, grn_loader *loader)
+{
+  loader->rc = ctx->rc;
+  grn_strcpy(loader->errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
+}
+
 static grn_obj *
 values_add(grn_ctx *ctx, grn_loader *loader)
 {
@@ -64,6 +71,10 @@ loader_add(grn_ctx *ctx, grn_obj *key)
   int added = 0;
   grn_loader *loader = &ctx->impl->loader;
   grn_id id = grn_table_add_by_key(ctx, loader->table, key, &added);
+  if (id == GRN_ID_NIL) {
+    grn_loader_save_error(ctx, loader);
+    return id;
+  }
   if (!added && loader->ifexists) {
     grn_obj *v = grn_expr_get_var_by_offset(ctx, loader->ifexists, 0);
     grn_obj *result;
@@ -239,13 +250,6 @@ report_set_column_value_failure(grn_ctx *ctx,
           GRN_TEXT_VALUE(&column_value_inspected));
   GRN_OBJ_FIN(ctx, &key_inspected);
   GRN_OBJ_FIN(ctx, &column_value_inspected);
-}
-
-static void
-grn_loader_save_error(grn_ctx *ctx, grn_loader *loader)
-{
-  loader->rc = ctx->rc;
-  grn_strcpy(loader->errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
 }
 
 static grn_id

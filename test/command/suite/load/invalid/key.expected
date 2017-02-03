@@ -1,0 +1,10 @@
+table_create Numbers TABLE_HASH_KEY Int32
+[[0,0.0,0.0],true]
+load --table Numbers
+[
+{"_key": "invalid number!"}
+]
+[[[-22,0.0,0.0],"cast failed"],0]
+#|e| cast failed
+select Numbers
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","Int32"]]]]]
