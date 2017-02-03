@@ -436,6 +436,9 @@ GRN_API grn_rc grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
 void grn_ctx_set_keep_command(grn_ctx *ctx, grn_obj *command);
 
 grn_content_type grn_get_ctype(grn_obj *var);
+grn_content_type grn_content_type_parse(grn_ctx *ctx,
+                                        grn_obj *var,
+                                        grn_content_type default_value);
 
 /**** db_obj ****/
 

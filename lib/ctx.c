@@ -876,7 +876,15 @@ grn_ctx_set_match_escalation_threshold(grn_ctx *ctx, long long int threshold)
 grn_content_type
 grn_get_ctype(grn_obj *var)
 {
-  grn_content_type ct = GRN_CONTENT_JSON;
+  return grn_content_type_parse(NULL, var, GRN_CONTENT_JSON);
+}
+
+grn_content_type
+grn_content_type_parse(grn_ctx *ctx,
+                       grn_obj *var,
+                       grn_content_type default_value)
+{
+  grn_content_type ct = default_value;
   if (var->header.domain == GRN_DB_INT32) {
     ct = GRN_INT32_VALUE(var);
   } else if (GRN_TEXT_LEN(var)) {
