@@ -123,47 +123,6 @@ grn_db_generate_pathname(grn_ctx *ctx, grn_obj *db, grn_id id, char *buffer)
   gen_pathname(grn_obj_io(db)->path, buffer, id);
 }
 
-static grn_bool
-is_text_object(grn_obj *object)
-{
-  if (!object) {
-    return GRN_FALSE;
-  }
-
-  if (object->header.type != GRN_BULK) {
-    return GRN_FALSE;
-  }
-
-  switch (object->header.domain) {
-  case GRN_DB_SHORT_TEXT:
-  case GRN_DB_TEXT:
-  case GRN_DB_LONG_TEXT:
-    return GRN_TRUE;
-  default:
-    return GRN_FALSE;
-  }
-}
-
-static void
-limited_size_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *object)
-{
-  unsigned int original_size = 0;
-  unsigned int max_size = GRN_CTX_MSGSIZE / 2;
-
-  if (object) {
-    original_size = GRN_BULK_VSIZE(object);
-  }
-
-  if (original_size > max_size && is_text_object(object)) {
-    grn_text_esc(ctx, buffer, GRN_TEXT_VALUE(object), max_size);
-    GRN_TEXT_PUTS(ctx, buffer, "...(");
-    grn_text_lltoa(ctx, buffer, original_size);
-    GRN_TEXT_PUTS(ctx, buffer, ")");
-  } else {
-    grn_inspect(ctx, buffer, object);
-  }
-}
-
 typedef struct {
   grn_obj *ptr;
   uint32_t lock;
@@ -13339,40 +13298,6 @@ grn_column_get_all_index_data(grn_ctx *ctx,
                                                index_data, n_index_data);
   }
   GRN_API_RETURN(n);
-}
-
-/* todo : refine */
-/*
- * tokenize splits a string into at most buf_size tokens and returns the number
- * of tokens. The ending address of each token is written into tokbuf.
- * Delimiters are ' ' and ','.
- * Then, the address to the remaining is set to rest.
- */
-static int
-tokenize(const char *str, size_t str_len,
-         const char **tokbuf, int buf_size, const char **rest)
-{
-  const char **tok = tokbuf, **tok_end = tokbuf + buf_size;
-  if (buf_size > 0) {
-    const char *str_end = str + str_len;
-    while (str < str_end && (' ' == *str || ',' == *str)) { str++; }
-    for (;;) {
-      if (str == str_end) {
-        *tok++ = str;
-        break;
-      }
-      if (' ' == *str || ',' == *str) {
-        // *str = '\0';
-        *tok++ = str;
-        if (tok == tok_end) { break; }
-        do { str++; } while (str < str_end && (' ' == *str || ',' == *str));
-      } else {
-        str++;
-      }
-    }
-  }
-  if (rest) { *rest = str; }
-  return tok - tokbuf;
 }
 
 grn_rc
