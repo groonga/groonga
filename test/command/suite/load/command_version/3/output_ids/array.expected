@@ -1,0 +1,24 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Users --command_version 3 --output_ids yes
+[
+["_key"],
+["Alice"],
+[],
+["Chris"]
+]
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "body": {
+    "n_loaded_records": 2,
+    "loaded_ids": [
+      1,
+      0,
+      2
+    ]
+  }
+}

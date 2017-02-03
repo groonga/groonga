@@ -1,0 +1,9 @@
+table_create Users TABLE_HASH_KEY ShortText
+
+load --table Users --command_version 3 --output_ids yes
+[
+["_key"],
+["Alice"],
+[],
+["Chris"]
+]
