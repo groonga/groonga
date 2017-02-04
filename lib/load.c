@@ -423,6 +423,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
       ERR(GRN_INVALID_ARGUMENT,
           "unexpected #values: expected:%u, actual:%u",
           expected_nvalues, nvalues);
+      grn_loader_save_error(ctx, loader);
       goto exit;
     }
     if (loader->id_offset != -1) {
@@ -491,6 +492,7 @@ exit:
     }
   }
   loader->values_size = begin;
+  ERRCLR(ctx);
 }
 
 static void
@@ -656,6 +658,7 @@ exit:
                            GRN_DB_TEXT);
   }
   loader->values_size = begin;
+  ERRCLR(ctx);
 }
 
 #define JSON_READ_OPEN_BRACKET() do {\
