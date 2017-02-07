@@ -123,7 +123,6 @@ grn_rc grn_ii_flush(grn_ctx *ctx, grn_ii *ii);
 
 grn_ii_cursor *grn_ii_cursor_openv1(grn_ii *ii, uint32_t key);
 grn_rc grn_ii_cursor_openv2(grn_ii_cursor **cursors, int ncursors);
-grn_posting *grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c);
 
 uint32_t grn_ii_max_section(grn_ii *ii);
 
