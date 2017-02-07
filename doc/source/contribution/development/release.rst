@@ -238,6 +238,15 @@ make update-latest-releaseコマンドでは、OLD_RELEASE_DATEに前回のリ�
 
 これにより、clone済みのGroongaのWebサイトのトップページのソース(index.html,ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されます。
 
+make update-examplesの実行
+-----------------------
+
+ドキュメントに埋め込まれている実行結果を更新するために、以下のコマンドを実行します。::
+
+    % cd doc && make update-examples
+
+doc/source/examples以下が更新されるので、それらをコミットします。
+
 make update-filesの実行
 -----------------------
 
