@@ -211,7 +211,7 @@ configureオプションである--with-cutter-source-pathにはcutterのソー�
 
     % ssh packages@packages.groonga.org
 
-デバッグ用や開発用のパッケージをテスト用に公開する時は、`--with-launchpad-ppa=groonga-nightly`を指定して不安定版のリポジトリにアップロードするように指定します。::
+デバッグ用や開発用のパッケージをテスト用に公開する時は、 ``--with-launchpad-ppa=groonga-nightly`` を指定して不安定版のリポジトリにアップロードするように指定します。::
 
     % ./configure \
           --with-launchpad-ppa=groonga-nightly \
@@ -277,7 +277,7 @@ make update-poコマンドの実行により更新した各種.poファイルを
     % make -C doc/locale/ja html
     % make -C doc/locale/en html
 
-修正が必要な箇所を調べて、`***.edit`というファイルを適宜修正します。
+修正が必要な箇所を調べて、 ``***.edit`` というファイルを適宜修正します。
 
     % cd groonga/doc/locale
     % gir diff
