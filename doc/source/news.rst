@@ -59,6 +59,19 @@ Improvements
 * Supported ``columns[LABEL].window.group_keys``. It's used to apply
   window function for every group.
 
+* [:doc:`/reference/commands/load`] Supported to report error on
+  invalid key. It enables you to detect mismatch type of key.
+
+* [:doc:`/reference/commands/load`] Supported ``--output_errors yes``
+  option. If you specify "yes", you can get errors for each load
+  failed record. Note that this feature requires command version 3.
+
+* [:doc:`/reference/commands/load`] Improve error message on table key
+  cast failure. Instead of "cast failed", type of table key and target
+  type of table key are also contained in error message.
+
+* [httpd] Updated bundled nginx to 1.11.9.
+
 Fixes
 ^^^^^
 
