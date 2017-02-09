@@ -18224,6 +18224,11 @@ msgstr ""
 msgid "``record_number``"
 msgstr ""
 
+msgid ""
+"``record_number()`` is deprecated. Use :doc:`/reference/functions/"
+"window_record_number` instead."
+msgstr ""
+
 msgid "``snippet_html``"
 msgstr ""
 
@@ -18538,6 +18543,12 @@ msgid "``vector_size`` returns the value of target vector column size."
 msgstr "``vector_size`` は対象のベクターカラムのサイズを返します。"
 
 msgid "``vector_slice``"
+msgstr ""
+
+msgid "``window_record_number``"
+msgstr ""
+
+msgid "``window_sum``"
 msgstr ""
 
 msgid ""

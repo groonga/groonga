@@ -976,9 +976,9 @@ msgid "ログイン可能であるかの確認は以下のようにコマンド�
 msgstr ""
 
 msgid ""
-"デバッグ用や開発用のパッケージをテスト用に公開する時は、`--with-launchpad-"
-"ppa=groonga-nightly`を指定して不安定版のリポジトリにアップロードするように指"
-"定します。::"
+"デバッグ用や開発用のパッケージをテスト用に公開する時は、 ``--with-launchpad-"
+"ppa=groonga-nightly`` を指定して不安定版のリポジトリにアップロードするように"
+"指定します。::"
 msgstr ""
 
 msgid ""
@@ -1001,6 +1001,17 @@ msgid ""
 "これにより、clone済みのGroongaのWebサイトのトップページのソース(index.html,"
 "ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されま"
 "す。"
+msgstr ""
+
+msgid "make update-examplesの実行"
+msgstr ""
+
+msgid ""
+"ドキュメントに埋め込まれている実行結果を更新するために、以下のコマンドを実行"
+"します。::"
+msgstr ""
+
+msgid "doc/source/examples以下が更新されるので、それらをコミットします。"
 msgstr ""
 
 msgid "make update-filesの実行"
@@ -1041,7 +1052,8 @@ msgstr ""
 msgid "翻訳結果をHTMLで確認するために、以下のコマンドを実行します。::"
 msgstr ""
 
-msgid "修正が必要な箇所を調べて、`***.edit`というファイルを適宜修正します。"
+msgid ""
+"修正が必要な箇所を調べて、 ``***.edit`` というファイルを適宜修正します。"
 msgstr ""
 
 msgid "% cd groonga/doc/locale % gir diff"
