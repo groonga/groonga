@@ -2880,6 +2880,8 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         }
         GRN_TEXT_PUTS(ctx, bulk, "}");
       } else {
+        /* TODO: Does we still need this code? If we don't need this, we should
+           remove this. */
         int i, j;
         grn_id *v = (grn_id *)GRN_BULK_HEAD(obj), *ve = (grn_id *)GRN_BULK_CURR(obj);
         int ncolumns = GRN_BULK_VSIZE(&format->columns) / sizeof(grn_obj *);
