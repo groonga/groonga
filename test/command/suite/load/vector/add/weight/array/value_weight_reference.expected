@@ -10,10 +10,22 @@ load --table Memos
 [
   "Groonga is fast",
   {
-    "groonga": 100
+    "groonga": 100,
+    "mroonga": 200
   }
 ]
 ]
 [[0,0.0,0.0],1]
-select Tags
-[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"groonga"]]]]
+dump   --dump_plugins no   --dump_schema no
+load --table Memos
+[
+["_key","tags"],
+["Groonga is fast",{"groonga":100,"mroonga":200}]
+]
+
+load --table Tags
+[
+["_key"],
+["groonga"],
+["mroonga"]
+]

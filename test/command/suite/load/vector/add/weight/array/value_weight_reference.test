@@ -9,9 +9,12 @@ load --table Memos
 [
   "Groonga is fast",
   {
-    "groonga": 100
+    "groonga": 100,
+    "mroonga": 200
   }
 ]
 ]
 
-select Tags
+dump \
+  --dump_plugins no \
+  --dump_schema no
