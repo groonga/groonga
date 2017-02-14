@@ -10,24 +10,27 @@ load --table Memos
   "_key": "Groonga is fast",
   "tags": {
     "groonga": 100,
-    "full text serach": 10
+    "full text search": 10
   }
 }
 ]
 [[0,0.0,0.0],1]
 dump
-table_create Tags TABLE_PAT_KEY ShortText
 table_create Memos TABLE_HASH_KEY ShortText
-column_create Memos tags COLUMN_INDEX|WITH_WEIGHT Tags
-load --table Tags
-[
-["_key"],
-["full text serach"],
-["groonga"]
-]
+
+table_create Tags TABLE_PAT_KEY ShortText
+
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT Tags
+
 load --table Memos
 [
 ["_key","tags"],
-["Groonga is fast",{"groonga":100,"full text serach":10}]
+["Groonga is fast",{"groonga":100,"full text search":10}]
 ]
 
+load --table Tags
+[
+["_key"],
+["full text search"],
+["groonga"]
+]

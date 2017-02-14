@@ -391,24 +391,26 @@ dump_record_column_vector(grn_ctx *ctx, grn_dumper *dumper, grn_id id,
                           grn_obj *column, grn_id range_id, grn_obj *buf)
 {
   grn_obj *range;
+  grn_obj_format *format_argument = NULL;
+  grn_obj_format format;
 
   range = grn_ctx_at(ctx, range_id);
+  if (column->header.flags & GRN_OBJ_WITH_WEIGHT) {
+    format.flags = GRN_OBJ_FORMAT_WITH_WEIGHT;
+    format_argument = &format;
+  }
+
   if (grn_obj_is_table(ctx, range) ||
       (range->header.flags & GRN_OBJ_KEY_VAR_SIZE) == 0) {
     GRN_OBJ_INIT(buf, GRN_UVECTOR, 0, range_id);
     grn_obj_get_value(ctx, column, id, buf);
-    grn_text_otoj(ctx, dumper->output, buf, NULL);
+    grn_text_otoj(ctx, dumper->output, buf, format_argument);
   } else {
-    grn_obj_format *format_argument = NULL;
-    grn_obj_format format;
-    if (column->header.flags & GRN_OBJ_WITH_WEIGHT) {
-      format.flags = GRN_OBJ_FORMAT_WITH_WEIGHT;
-      format_argument = &format;
-    }
     GRN_OBJ_INIT(buf, GRN_VECTOR, 0, range_id);
     grn_obj_get_value(ctx, column, id, buf);
     grn_text_otoj(ctx, dumper->output, buf, format_argument);
   }
+
   grn_obj_unlink(ctx, range);
   grn_obj_unlink(ctx, buf);
 }
