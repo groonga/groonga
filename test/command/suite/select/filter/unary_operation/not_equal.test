@@ -1,0 +1,14 @@
+table_create Numbers TABLE_PAT_KEY UInt32
+
+load --table Numbers
+[
+{"_key": 2},
+{"_key": 29},
+{"_key": 2929}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Numbers --filter '!(_key == 29)'
+#@remove-important-log-levels info
+log_level --level notice

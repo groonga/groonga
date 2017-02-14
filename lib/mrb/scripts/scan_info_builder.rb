@@ -144,6 +144,26 @@ module Groonga
           index = data.args.pop
           data.start_position = index.value
           status = Status::COL1
+        when Operator::NOT
+          last_data = @data_list.last
+          return nil if last_data.nil?
+          case last_data.op
+          when Operator::LESS
+            last_data.op = Operator::GREATER_EQUAL
+          when Operator::LESS_EQUAL
+            last_data.op = Operator::GREATER
+          when Operator::GREATER
+            last_data.op = Operator::LESS_EQUAL
+          when Operator::GREATER_EQUAL
+            last_data.op = Operator::LESS
+          when Operator::EQUAL
+            last_data.op = Operator::NOT_EQUAL
+          when Operator::NOT_EQUAL
+            last_data.op = Operator::EQUAL
+          else
+            return nil
+          end
+          last_data.end += 1
         end
       end
 
@@ -241,6 +261,8 @@ module Groonga
           else
             return false
           end
+        when Operator::NOT
+          # Do nothing
         else
           return false
         end

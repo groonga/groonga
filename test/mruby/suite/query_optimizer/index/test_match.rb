@@ -1,4 +1,4 @@
-class TestIndex < QueryOptimizerTestCase
+class TestMatch < QueryOptimizerTestCase
   def setup
     Groonga::Schema.define do |schema|
       schema.create_table("Logs") do |table|

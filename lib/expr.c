@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2016 Brazil
+  Copyright(C) 2010-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -4685,6 +4685,8 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
         break;
       }
       break;
+    case GRN_OP_NOT :
+      break;
     default :
       return NULL;
       break;
@@ -4883,6 +4885,44 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
         GRN_OBJ_FIN(ctx, &buffer);
       }
       stat = SCAN_COL1;
+      break;
+    case GRN_OP_NOT :
+      if (i == 0) {
+        return NULL;
+      }
+      {
+        scan_info *last_si = sis[i - 1];
+        switch (last_si->op) {
+        case GRN_OP_LESS :
+          last_si->op = GRN_OP_GREATER_EQUAL;
+          break;
+        case GRN_OP_LESS_EQUAL :
+          last_si->op = GRN_OP_GREATER;
+          break;
+        case GRN_OP_GREATER :
+          last_si->op = GRN_OP_LESS_EQUAL;
+          break;
+        case GRN_OP_GREATER_EQUAL :
+          last_si->op = GRN_OP_LESS;
+          break;
+        case GRN_OP_EQUAL :
+          last_si->op = GRN_OP_NOT_EQUAL;
+          break;
+        case GRN_OP_NOT_EQUAL :
+          last_si->op = GRN_OP_EQUAL;
+          break;
+        default :
+          {
+            int j;
+            for (j = 0; j < i; j++) {
+              SI_FREE(sis[j]);
+            }
+            GRN_FREE(sis);
+          }
+          return NULL;
+        }
+        last_si->end++;
+      }
       break;
     default :
       break;
