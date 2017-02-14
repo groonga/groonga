@@ -88,6 +88,43 @@ loader_add(grn_ctx *ctx, grn_obj *key)
 }
 
 static void
+add_weight_vector(grn_ctx *ctx,
+                  grn_obj *column,
+                  grn_obj *value,
+                  grn_obj *vector)
+{
+  unsigned int i, n;
+  grn_obj weight_buffer;
+
+  n = GRN_UINT32_VALUE(value);
+  GRN_UINT32_INIT(&weight_buffer, 0);
+  for (i = 0; i < n; i += 2) {
+    grn_rc rc;
+    grn_obj *key, *weight;
+
+    key = value + 1 + i;
+    weight = key + 1;
+
+    GRN_BULK_REWIND(&weight_buffer);
+    rc = grn_obj_cast(ctx, weight, &weight_buffer, GRN_TRUE);
+    if (rc != GRN_SUCCESS) {
+      grn_obj *range;
+      range = grn_ctx_at(ctx, weight_buffer.header.domain);
+      ERR_CAST(column, range, weight);
+      grn_obj_unlink(ctx, range);
+      break;
+    }
+    grn_vector_add_element(ctx,
+                           vector,
+                           GRN_BULK_HEAD(key),
+                           GRN_BULK_VSIZE(key),
+                           GRN_UINT32_VALUE(&weight_buffer),
+                           key->header.domain);
+  }
+  GRN_OBJ_FIN(ctx, &weight_buffer);
+}
+
+static void
 set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
 {
   int n = GRN_UINT32_VALUE(vector);
@@ -120,7 +157,9 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
     if (((struct _grn_type *)range)->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
       GRN_TEXT_INIT(&buf, GRN_OBJ_VECTOR);
       while (n--) {
-        if (v->header.domain == GRN_DB_TEXT) {
+        switch (v->header.domain) {
+        case GRN_DB_TEXT :
+        {
           grn_bool cast_failed = GRN_FALSE;
           grn_obj casted_element, *element = v;
           if (range_id != element->header.domain) {
@@ -134,12 +173,20 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
           if (!cast_failed) {
             grn_vector_add_element(ctx, &buf,
                                    GRN_TEXT_VALUE(element),
-                                   GRN_TEXT_LEN(element), 0,
+                                   GRN_TEXT_LEN(element),
+                                   0,
                                    element->header.domain);
           }
           if (element == &casted_element) { GRN_OBJ_FIN(ctx, element); }
-        } else {
-          ERR(GRN_INVALID_ARGUMENT, "bad syntax.");
+          break;
+        }
+        case GRN_JSON_LOAD_OPEN_BRACE :
+          add_weight_vector(ctx, column, v, &buf);
+          n -= GRN_UINT32_VALUE(v);
+          break;
+        default :
+          ERR(GRN_INVALID_ARGUMENT, "array must contain string or object");
+          break;
         }
         v = values_next(ctx, v);
       }
@@ -170,7 +217,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
 }
 
 static void
-set_weight_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *index_value)
+set_weight_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *value)
 {
   if (!grn_obj_is_weight_vector_column(ctx, column)) {
     char column_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -184,34 +231,10 @@ set_weight_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *index_value
   }
 
   {
-    unsigned int i, n;
     grn_obj vector;
-    grn_obj weight_buffer;
 
-    n = GRN_UINT32_VALUE(index_value);
     GRN_TEXT_INIT(&vector, GRN_OBJ_VECTOR);
-    GRN_UINT32_INIT(&weight_buffer, 0);
-    for (i = 0; i < n; i += 2) {
-      grn_rc rc;
-      grn_obj *key, *weight;
-
-      key = index_value + 1 + i;
-      weight = key + 1;
-
-      GRN_BULK_REWIND(&weight_buffer);
-      rc = grn_obj_cast(ctx, weight, &weight_buffer, GRN_TRUE);
-      if (rc != GRN_SUCCESS) {
-        grn_obj *range;
-        range = grn_ctx_at(ctx, weight_buffer.header.domain);
-        ERR_CAST(column, range, weight);
-        grn_obj_unlink(ctx, range);
-        break;
-      }
-      grn_vector_add_element(ctx, &vector,
-                             GRN_BULK_HEAD(key), GRN_BULK_VSIZE(key),
-                             GRN_UINT32_VALUE(&weight_buffer),
-                             key->header.domain);
-    }
+    add_weight_vector(ctx, column, value, &vector);
     grn_obj_set_value(ctx, column, id, &vector, GRN_OBJ_SET);
     GRN_OBJ_FIN(ctx, &vector);
   }
