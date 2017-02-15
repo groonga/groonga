@@ -1,15 +1,8 @@
-class TestIndexMatch < QueryOptimizerTestCase
+class TestNoIndexMatch < QueryOptimizerTestCase
   def setup
     Groonga::Schema.define do |schema|
       schema.create_table("Logs") do |table|
         table.text("message")
-      end
-
-      schema.create_table("Terms",
-                          :type => :patricia_trie,
-                          :default_tokenizer => "TokenBigram",
-                          :normalizer => "NormalizerAuto") do |table|
-        table.index("Logs", "message")
       end
     end
 
@@ -26,7 +19,7 @@ class TestIndexMatch < QueryOptimizerTestCase
 [0]
   op:         <match>
   logical_op: <or>
-  index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
+  index:      <[]>
   query:      <"Groonga">
   expr:       <0..2>
     DUMP
@@ -37,7 +30,7 @@ class TestIndexMatch < QueryOptimizerTestCase
 [0]
   op:         <match>
   logical_op: <or>
-  index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
+  index:      <[]>
   query:      <"Groonga">
   expr:       <0..2>
 [1]
@@ -51,17 +44,7 @@ class TestIndexMatch < QueryOptimizerTestCase
 
   def test_not
     assert_equal(<<-DUMP, dump_plan("!(message @ 'Groonga')"))
-[0]
-  op:         <call>
-  logical_op: <or>
-  args[0]:    <#<proc:function all_records arguments:[]>>
-  expr:       <0..0>
-[1]
-  op:         <match>
-  logical_op: <and_not>
-  index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
-  query:      <"Groonga">
-  expr:       <0..2>
+sequential search
     DUMP
   end
 end
