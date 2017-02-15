@@ -148,51 +148,8 @@ module Groonga
           data.start_position = index.value
           status = Status::COL1
         when Operator::NOT
-          last_data = @data_list.last
-          return nil if last_data.nil?
-          case last_data.op
-          when Operator::LESS
-            last_data.op = Operator::GREATER_EQUAL
-            last_data.end += 1
-          when Operator::LESS_EQUAL
-            last_data.op = Operator::GREATER
-            last_data.end += 1
-          when Operator::GREATER
-            last_data.op = Operator::LESS_EQUAL
-            last_data.end += 1
-          when Operator::GREATER_EQUAL
-            last_data.op = Operator::LESS
-            last_data.end += 1
-          when Operator::NOT_EQUAL
-            last_data.op = Operator::EQUAL
-            last_data.end += 1
-          else
-            if @data_list.size == 1
-              if last_data.search_indexes.empty?
-                if last_data.op == Operator::EQUAL
-                  last_data.op = Operator::NOT_EQUAL
-                  last_data.end += 1
-                else
-                  return nil
-                end
-              else
-                last_data.logical_op = Operator::AND_NOT
-                last_data.flags &= ~ScanInfo::Flags::PUSH
-                @data_list.unshift(create_all_match_data)
-              end
-            else
-              next_code = codes[i + 1]
-              return nil if next_code.nil?
-              case next_code.op
-              when Operator::AND
-                next_code_op = Operator::AND_NOT
-              when Operator::AND_NOT
-                next_code_op = Operator::AND
-              else
-                return nil
-              end
-            end
-          end
+          success, next_code_op = build_not(code, codes, i)
+          return nil unless success
         end
       end
 
@@ -364,6 +321,59 @@ module Groonga
           raise ErrorMessage, "unmatched nesting level"
         end
       end
+    end
+
+    def build_not(code, codes, i)
+      last_data = @data_list.last
+      return [false, nil] if last_data.nil?
+
+      next_code_op = nil
+      case last_data.op
+      when Operator::LESS
+        last_data.op = Operator::GREATER_EQUAL
+        last_data.end += 1
+      when Operator::LESS_EQUAL
+        last_data.op = Operator::GREATER
+        last_data.end += 1
+      when Operator::GREATER
+        last_data.op = Operator::LESS_EQUAL
+        last_data.end += 1
+      when Operator::GREATER_EQUAL
+        last_data.op = Operator::LESS
+        last_data.end += 1
+      when Operator::NOT_EQUAL
+        last_data.op = Operator::EQUAL
+        last_data.end += 1
+      else
+        if @data_list.size == 1
+          if last_data.search_indexes.empty?
+            if last_data.op == Operator::EQUAL
+              last_data.op = Operator::NOT_EQUAL
+              last_data.end += 1
+            else
+              return [false, nil]
+            end
+          else
+            last_data.logical_op = Operator::AND_NOT
+            last_data.flags &= ~ScanInfo::Flags::PUSH
+            @data_list.unshift(create_all_match_data)
+          end
+        else
+          next_code = codes[i + 1]
+          return [false, nil] if next_code.nil?
+
+          case next_code.op
+          when Operator::AND
+            next_code_op = Operator::AND_NOT
+          when Operator::AND_NOT
+            next_code_op = Operator::AND
+          else
+            return [false, nil]
+          end
+        end
+      end
+
+      [true, next_code_op]
     end
 
     def optimize

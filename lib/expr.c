@@ -3739,27 +3739,33 @@ struct _grn_scan_info {
   GRN_FREE(si);\
 } while (0)
 
+#define SI_ALLOC_RAW(si, st) do {\
+  if (((si) = GRN_MALLOCN(scan_info, 1))) {\
+    GRN_INT32_INIT(&(si)->wv, GRN_OBJ_VECTOR);\
+    GRN_PTR_INIT(&(si)->index, GRN_OBJ_VECTOR, GRN_ID_NIL);\
+    (si)->logical_op = GRN_OP_OR;\
+    (si)->flags = SCAN_PUSH;\
+    (si)->nargs = 0;\
+    (si)->max_interval = DEFAULT_MAX_INTERVAL;\
+    (si)->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;\
+    (si)->start = (st);\
+    (si)->query = NULL;\
+    GRN_PTR_INIT(&(si)->scorers, GRN_OBJ_VECTOR, GRN_ID_NIL);\
+    GRN_PTR_INIT(&(si)->scorer_args_exprs, GRN_OBJ_VECTOR, GRN_ID_NIL);\
+    GRN_UINT32_INIT(&(si)->scorer_args_expr_offsets, GRN_OBJ_VECTOR);\
+    (si)->position.specified = GRN_FALSE;\
+    (si)->position.start = 0;\
+  }\
+} while (0)
+
 #define SI_ALLOC(si, i, st) do {\
-  if (!((si) = GRN_MALLOCN(scan_info, 1))) {\
+  SI_ALLOC_RAW(si, st);\
+  if (!(si)) {\
     int j;\
     for (j = 0; j < i; j++) { SI_FREE(sis[j]); }\
     GRN_FREE(sis);\
     return NULL;\
   }\
-  GRN_INT32_INIT(&(si)->wv, GRN_OBJ_VECTOR);\
-  GRN_PTR_INIT(&(si)->index, GRN_OBJ_VECTOR, GRN_ID_NIL);\
-  (si)->logical_op = GRN_OP_OR;\
-  (si)->flags = SCAN_PUSH;\
-  (si)->nargs = 0;\
-  (si)->max_interval = DEFAULT_MAX_INTERVAL;\
-  (si)->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;\
-  (si)->start = (st);\
-  (si)->query = NULL;\
-  GRN_PTR_INIT(&(si)->scorers, GRN_OBJ_VECTOR, GRN_ID_NIL);\
-  GRN_PTR_INIT(&(si)->scorer_args_exprs, GRN_OBJ_VECTOR, GRN_ID_NIL);\
-  GRN_UINT32_INIT(&(si)->scorer_args_expr_offsets, GRN_OBJ_VECTOR);\
-  (si)->position.specified = GRN_FALSE;\
-  (si)->position.start = 0;\
 } while (0)
 
 static scan_info **
@@ -4539,6 +4545,90 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si)
   }
 }
 
+static grn_bool
+grn_scan_info_build_full_not(grn_ctx *ctx,
+                             scan_info **sis,
+                             int *i,
+                             grn_expr_code *code,
+                             grn_expr_code *code_end,
+                             grn_operator *next_code_op)
+{
+  scan_info *last_si;
+
+  if (*i == 0) {
+    return GRN_TRUE;
+  }
+
+  last_si = sis[*i - 1];
+  switch (last_si->op) {
+  case GRN_OP_LESS :
+    last_si->op = GRN_OP_GREATER_EQUAL;
+    last_si->end++;
+    break;
+  case GRN_OP_LESS_EQUAL :
+    last_si->op = GRN_OP_GREATER;
+    last_si->end++;
+    break;
+  case GRN_OP_GREATER :
+    last_si->op = GRN_OP_LESS_EQUAL;
+    last_si->end++;
+    break;
+  case GRN_OP_GREATER_EQUAL :
+    last_si->op = GRN_OP_LESS;
+    last_si->end++;
+    break;
+  case GRN_OP_NOT_EQUAL :
+    last_si->op = GRN_OP_EQUAL;
+    last_si->end++;
+    break;
+  default :
+    if (*i == 1) {
+      if (GRN_BULK_VSIZE(&(last_si->index)) > 0) {
+        scan_info *all_records_si = NULL;
+        SI_ALLOC_RAW(all_records_si, 0);
+        if (!all_records_si) {
+          return GRN_FALSE;
+        }
+        all_records_si->op = GRN_OP_CALL;
+        all_records_si->args[all_records_si->nargs++] =
+          grn_ctx_get(ctx, "all_records", -1);
+        last_si->logical_op = GRN_OP_AND_NOT;
+        last_si->flags &= ~SCAN_PUSH;
+        sis[*i] = sis[*i - 1];
+        sis[*i - 1] = all_records_si;
+        (*i)++;
+      } else {
+        if (last_si->op == GRN_OP_EQUAL) {
+          last_si->op = GRN_OP_NOT_EQUAL;
+          last_si->end++;
+        } else {
+          return GRN_FALSE;
+        }
+      }
+    } else {
+      grn_expr_code *next_code = code + 1;
+
+      if (next_code >= code_end) {
+        return GRN_FALSE;
+      }
+
+      switch (next_code->op) {
+      case GRN_OP_AND :
+        *next_code_op = GRN_OP_AND_NOT;
+        break;
+      case GRN_OP_AND_NOT :
+        *next_code_op = GRN_OP_AND;
+        break;
+      default :
+        return GRN_FALSE;
+        break;
+      }
+    }
+  }
+
+  return GRN_TRUE;
+}
+
 static scan_info **
 grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
                          grn_operator op, grn_bool record_exist)
@@ -4899,86 +4989,16 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
       stat = SCAN_COL1;
       break;
     case GRN_OP_NOT :
-      if (i == 0) {
-        return NULL;
-      }
       {
-        scan_info *last_si = sis[i - 1];
-        switch (last_si->op) {
-        case GRN_OP_LESS :
-          last_si->op = GRN_OP_GREATER_EQUAL;
-          last_si->end++;
-          break;
-        case GRN_OP_LESS_EQUAL :
-          last_si->op = GRN_OP_GREATER;
-          last_si->end++;
-          break;
-        case GRN_OP_GREATER :
-          last_si->op = GRN_OP_LESS_EQUAL;
-          last_si->end++;
-          break;
-        case GRN_OP_GREATER_EQUAL :
-          last_si->op = GRN_OP_LESS;
-          last_si->end++;
-          break;
-        case GRN_OP_NOT_EQUAL :
-          last_si->op = GRN_OP_EQUAL;
-          last_si->end++;
-          break;
-        default :
-          if (i == 1) {
-            if (GRN_BULK_VSIZE(&(last_si->index)) > 0) {
-              scan_info *all_records_si = NULL;
-              SI_ALLOC(all_records_si, 0, 0);
-              all_records_si->op = GRN_OP_CALL;
-              all_records_si->args[all_records_si->nargs++] =
-                grn_ctx_get(ctx, "all_records", -1);
-              last_si->logical_op = GRN_OP_AND_NOT;
-              last_si->flags &= ~SCAN_PUSH;
-              sis[i] = sis[i - 1];
-              sis[i - 1] = all_records_si;
-              i++;
-            } else {
-              if (last_si->op == GRN_OP_EQUAL) {
-                last_si->op = GRN_OP_NOT_EQUAL;
-                last_si->end++;
-              } else {
-                int j;
-                for (j = 0; j < i; j++) {
-                  SI_FREE(sis[j]);
-                }
-                GRN_FREE(sis);
-                return NULL;
-              }
-            }
-          } else {
-            grn_bool valid = GRN_TRUE;
-            grn_expr_code *next_code = c + 1;
-            if (next_code < ce) {
-              switch (next_code->op) {
-              case GRN_OP_AND :
-                next_code_op = GRN_OP_AND_NOT;
-                break;
-              case GRN_OP_AND_NOT :
-                next_code_op = GRN_OP_AND;
-                break;
-              default :
-                valid = GRN_FALSE;
-                break;
-              }
-            } else {
-              valid = GRN_FALSE;
-            }
-            if (!valid) {
-              int j;
-              for (j = 0; j < i; j++) {
-                SI_FREE(sis[j]);
-              }
-              GRN_FREE(sis);
-              return NULL;
-            }
+        grn_bool valid;
+        valid = grn_scan_info_build_full_not(ctx, sis, &i, c, ce, &next_code_op);
+        if (!valid) {
+          int j;
+          for (j = 0; j < i; j++) {
+            SI_FREE(sis[j]);
           }
-          break;
+          GRN_FREE(sis);
+          return NULL;
         }
       }
       break;
