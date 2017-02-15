@@ -66,11 +66,14 @@ module Groonga
       data = nil
       codes = @expression.codes
       n_codes = codes.size
+      next_code_op = nil
       codes.each_with_index do |code, i|
-        case code.op
+        code_op = (next_code_op || code.op)
+        next_code_op = nil
+        case code_op
         when *RELATION_OPERATORS
           status = Status::START
-          data.op = code.op
+          data.op = code_op
           data.end = i
           data.match_resolve_index
           @data_list << data
@@ -82,7 +85,7 @@ module Groonga
             @data_list << data
             data = nil
           end
-          put_logical_op(code.op, i)
+          put_logical_op(code_op, i)
           # TODO: rescue and return nil
           status = Status::START
         when Operator::PUSH
@@ -124,7 +127,7 @@ module Groonga
           if (code.flags & ExpressionCode::Flags::RELATIONAL_EXPRESSION) != 0 or
               (i + 1) == n_codes
             status = Status::START
-            data.op = code.op
+            data.op = code_op
             data.end = i
             data.call_relational_resolve_indexes
             @data_list << data
@@ -164,14 +167,27 @@ module Groonga
             last_data.op = Operator::EQUAL
             last_data.end += 1
           else
-            if @data_list.size == 1 and not last_data.search_indexes.empty?
-              last_data.logical_op = Operator::AND_NOT
-              last_data.flags &= ~ScanInfo::Flags::PUSH
-              @data_list.unshift(create_all_match_data)
+            if @data_list.size == 1
+              if last_data.search_indexes.empty?
+                if last_data.op == Operator::EQUAL
+                  last_data.op = Operator::NOT_EQUAL
+                  last_data.end += 1
+                else
+                  return nil
+                end
+              else
+                last_data.logical_op = Operator::AND_NOT
+                last_data.flags &= ~ScanInfo::Flags::PUSH
+                @data_list.unshift(create_all_match_data)
+              end
             else
-              if last_data.op == Operator::EQUAL
-                last_data.op = Operator::NOT_EQUAL
-                last_data.end += 1
+              next_code = codes[i + 1]
+              return nil if next_code.nil?
+              case next_code.op
+              when Operator::AND
+                next_code_op = Operator::AND_NOT
+              when Operator::AND_NOT
+                next_code_op = Operator::AND
               else
                 return nil
               end
