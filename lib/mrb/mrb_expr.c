@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2016 Brazil
+  Copyright(C) 2013-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -616,6 +616,14 @@ mrb_grn_expression_allocate_constant(mrb_state *mrb, mrb_value self)
     GRN_TEXT_INIT(grn_object, 0);
     GRN_TEXT_SET(ctx, grn_object,
                  RSTRING_PTR(mrb_object), RSTRING_LEN(mrb_object));
+    break;
+  case MRB_TT_TRUE:
+    grn_object = grn_expr_alloc_const(ctx, expr);
+    if (!grn_object) {
+      grn_mrb_ctx_check(mrb);
+    }
+    GRN_BOOL_INIT(grn_object, 0);
+    GRN_BOOL_SET(ctx, grn_object, GRN_TRUE);
     break;
   default:
     mrb_raisef(mrb, E_ARGUMENT_ERROR, "unsupported type: %S", mrb_object);
