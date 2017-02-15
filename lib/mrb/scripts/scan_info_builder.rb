@@ -150,20 +150,33 @@ module Groonga
           case last_data.op
           when Operator::LESS
             last_data.op = Operator::GREATER_EQUAL
+            last_data.end += 1
           when Operator::LESS_EQUAL
             last_data.op = Operator::GREATER
+            last_data.end += 1
           when Operator::GREATER
             last_data.op = Operator::LESS_EQUAL
+            last_data.end += 1
           when Operator::GREATER_EQUAL
             last_data.op = Operator::LESS
-          when Operator::EQUAL
-            last_data.op = Operator::NOT_EQUAL
+            last_data.end += 1
           when Operator::NOT_EQUAL
             last_data.op = Operator::EQUAL
+            last_data.end += 1
           else
-            return nil
+            if @data_list.size == 1 and not last_data.search_indexes.empty?
+              last_data.logical_op = Operator::AND_NOT
+              last_data.flags &= ~ScanInfo::Flags::PUSH
+              @data_list.unshift(create_all_match_data)
+            else
+              if last_data.op == Operator::EQUAL
+                last_data.op = Operator::NOT_EQUAL
+                last_data.end += 1
+              else
+                return nil
+              end
+            end
           end
-          last_data.end += 1
         end
       end
 
@@ -391,6 +404,17 @@ module Groonga
       else
         false
       end
+    end
+
+    def create_all_match_data
+      data = ScanInfoData.new(0)
+      data.end = 0
+      data.flags = ScanInfo::Flags::PUSH
+      data.op = Operator::CALL
+      data.logical_op = Operator::OR
+      data.args = [Context.instance["all_records"]]
+      data.search_indexes = []
+      data
     end
 
     def create_between_data(data, next_data)

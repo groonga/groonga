@@ -1,0 +1,140 @@
+class TestIndexCompare < QueryOptimizerTestCase
+  def setup
+    Groonga::Schema.define do |schema|
+      schema.create_table("Values") do |table|
+        table.int32("number")
+      end
+
+      schema.create_table("Numbers",
+                          :type => :patricia_trie,
+                          :key_type => "Int32") do |table|
+        table.index("Values", "number")
+      end
+    end
+
+    @values = Groonga["Values"]
+    setup_expression(@values)
+  end
+
+  def teardown
+    teardown_expression
+  end
+
+  def test_less
+    assert_equal(<<-DUMP, dump_plan("number < 29"))
+[0]
+  op:         <less>
+  logical_op: <or>
+  index:      <[#<column:index Numbers.Values_number range:Values sources:[Values.number] flags:NONE>]>
+  query:      <29>
+  expr:       <0..2>
+    DUMP
+  end
+
+  def test_not_less
+    assert_equal(<<-DUMP, dump_plan("!(number < 29)"))
+[0]
+  op:         <greater_equal>
+  logical_op: <or>
+  index:      <[#<column:index Numbers.Values_number range:Values sources:[Values.number] flags:NONE>]>
+  query:      <29>
+  expr:       <0..3>
+    DUMP
+  end
+
+  def test_not_less_equal
+    assert_equal(<<-DUMP, dump_plan("!(number <= 29)"))
+[0]
+  op:         <greater>
+  logical_op: <or>
+  index:      <[#<column:index Numbers.Values_number range:Values sources:[Values.number] flags:NONE>]>
+  query:      <29>
+  expr:       <0..3>
+    DUMP
+  end
+
+  def test_not_greater
+    assert_equal(<<-DUMP, dump_plan("!(number > 29)"))
+[0]
+  op:         <less_equal>
+  logical_op: <or>
+  index:      <[#<column:index Numbers.Values_number range:Values sources:[Values.number] flags:NONE>]>
+  query:      <29>
+  expr:       <0..3>
+    DUMP
+  end
+
+  def test_not_greater_equal
+    assert_equal(<<-DUMP, dump_plan("!(number >= 29)"))
+[0]
+  op:         <less>
+  logical_op: <or>
+  index:      <[#<column:index Numbers.Values_number range:Values sources:[Values.number] flags:NONE>]>
+  query:      <29>
+  expr:       <0..3>
+    DUMP
+  end
+
+  def test_not_equal
+    assert_equal(<<-DUMP, dump_plan("!(number == 29)"))
+[0]
+  op:         <call>
+  logical_op: <or>
+  args[0]:    <#<proc:function all_records arguments:[]>>
+  expr:       <0..0>
+[1]
+  op:         <equal>
+  logical_op: <and_not>
+  index:      <[#<column:index Numbers.Values_number range:Values sources:[Values.number] flags:NONE>]>
+  query:      <29>
+  expr:       <0..2>
+    DUMP
+  end
+
+  def test_not_not_equal
+    assert_equal(<<-DUMP, dump_plan("!(number != 29)"))
+[0]
+  op:         <equal>
+  logical_op: <or>
+  index:      <[#<column:index Numbers.Values_number range:Values sources:[Values.number] flags:NONE>]>
+  query:      <29>
+  expr:       <0..3>
+    DUMP
+  end
+
+  sub_test_case("multiple conditions") do
+    test("not at the first") do
+      assert_equal(<<-DUMP, dump_plan("!(number < 29) && _id == 29"))
+[0]
+  op:         <greater_equal>
+  logical_op: <or>
+  index:      <[#<column:index Numbers.Values_number range:Values sources:[Values.number] flags:NONE>]>
+  query:      <29>
+  expr:       <0..3>
+[1]
+  op:         <equal>
+  logical_op: <and>
+  index:      <[#<accessor _id(Values)>]>
+  query:      <29>
+  expr:       <4..6>
+      DUMP
+    end
+
+    test("not at the last") do
+      assert_equal(<<-DUMP, dump_plan("_id == 29 && !(number < 29)"))
+[0]
+  op:         <equal>
+  logical_op: <or>
+  index:      <[#<accessor _id(Values)>]>
+  query:      <29>
+  expr:       <0..2>
+[1]
+  op:         <greater_equal>
+  logical_op: <and>
+  index:      <[#<column:index Numbers.Values_number range:Values sources:[Values.number] flags:NONE>]>
+  query:      <29>
+  expr:       <3..6>
+      DUMP
+    end
+  end
+end

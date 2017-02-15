@@ -4546,6 +4546,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
   grn_obj *var;
   scan_stat stat;
   int i, m = 0, o = 0;
+  int n_nots = 0;
   scan_info **sis, *si = NULL;
   grn_expr_code *c, *ce;
   grn_expr *e = (grn_expr *)expr;
@@ -4686,6 +4687,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
       }
       break;
     case GRN_OP_NOT :
+      n_nots++;
       break;
     default :
       return NULL;
@@ -4693,7 +4695,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
     }
   }
   if (stat || m != o + 1) { return NULL; }
-  if (!(sis = GRN_MALLOCN(scan_info *, m + m + o))) { return NULL; }
+  if (!(sis = GRN_MALLOCN(scan_info *, m + m + o + n_nots))) { return NULL; }
   for (i = 0, stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
     switch (c->op) {
     case GRN_OP_MATCH :
@@ -4895,33 +4897,49 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
         switch (last_si->op) {
         case GRN_OP_LESS :
           last_si->op = GRN_OP_GREATER_EQUAL;
+          last_si->end++;
           break;
         case GRN_OP_LESS_EQUAL :
           last_si->op = GRN_OP_GREATER;
+          last_si->end++;
           break;
         case GRN_OP_GREATER :
           last_si->op = GRN_OP_LESS_EQUAL;
+          last_si->end++;
           break;
         case GRN_OP_GREATER_EQUAL :
           last_si->op = GRN_OP_LESS;
-          break;
-        case GRN_OP_EQUAL :
-          last_si->op = GRN_OP_NOT_EQUAL;
+          last_si->end++;
           break;
         case GRN_OP_NOT_EQUAL :
           last_si->op = GRN_OP_EQUAL;
+          last_si->end++;
           break;
         default :
-          {
-            int j;
-            for (j = 0; j < i; j++) {
-              SI_FREE(sis[j]);
+          if (i == 1 && GRN_BULK_VSIZE(&(last_si->index)) > 0) {
+            SI_ALLOC(si, 0, 0);
+            si->op = GRN_OP_CALL;
+            si->args[si->nargs++] = grn_ctx_get(ctx, "all_records", -1);
+            last_si->logical_op = GRN_OP_AND_NOT;
+            last_si->flags &= ~SCAN_PUSH;
+            sis[i] = sis[i - 1];
+            sis[i - 1] = si;
+            i++;
+          } else {
+            if (last_si->op == GRN_OP_EQUAL) {
+              last_si->op = GRN_OP_NOT_EQUAL;
+              last_si->end++;
+            } else {
+              int j;
+              for (j = 0; j < i; j++) {
+                SI_FREE(sis[j]);
+              }
+              GRN_FREE(sis);
+              return NULL;
             }
-            GRN_FREE(sis);
           }
-          return NULL;
+          break;
         }
-        last_si->end++;
       }
       break;
     default :
