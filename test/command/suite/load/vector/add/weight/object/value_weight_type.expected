@@ -17,5 +17,5 @@ dump   --dump_plugins no   --dump_schema no
 load --table Memos
 [
 ["_key","tags"],
-["Groonga is fast",[{"groonga":100},{"mroonga":200}]]
+["Groonga is fast",{"groonga":100,"mroonga":200}]
 ]

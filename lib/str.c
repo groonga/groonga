@@ -3002,7 +3002,11 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       GRN_UINT32_INIT(&weight, 0);
       with_weight = (format && format->flags & GRN_OBJ_FORMAT_WITH_WEIGHT);
       n = grn_vector_size(ctx, obj);
-      GRN_TEXT_PUTC(ctx, bulk, '[');
+      if (with_weight) {
+        GRN_TEXT_PUTC(ctx, bulk, '{');
+      } else {
+        GRN_TEXT_PUTC(ctx, bulk, '[');
+      }
       for (i = 0; i < n; i++) {
         const char *_value;
         unsigned int _weight, length;
@@ -3016,19 +3020,19 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         } else {
           grn_obj_reinit(ctx, &value, obj->header.domain, 0);
         }
-        if (with_weight) {
-          GRN_TEXT_PUTC(ctx, bulk, '{');
-        }
         grn_bulk_write(ctx, &value, _value, length);
         grn_text_otoj(ctx, bulk, &value, NULL);
         if (with_weight) {
           GRN_TEXT_PUTC(ctx, bulk, ':');
           GRN_UINT32_SET(ctx, &weight, _weight);
           grn_text_otoj(ctx, bulk, &weight, NULL);
-          GRN_TEXT_PUTC(ctx, bulk, '}');
         }
       }
-      GRN_TEXT_PUTC(ctx, bulk, ']');
+      if (with_weight) {
+        GRN_TEXT_PUTC(ctx, bulk, '}');
+      } else {
+        GRN_TEXT_PUTC(ctx, bulk, ']');
+      }
       GRN_OBJ_FIN(ctx, &value);
       GRN_OBJ_FIN(ctx, &weight);
     }
