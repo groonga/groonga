@@ -2,14 +2,6 @@ require "scan_info_data"
 
 module Groonga
   class ScanInfoBuilder
-    module Status
-      START = 0
-      VAR = 1
-      COL1 = 2
-      COL2 = 3
-      CONST = 4
-    end
-
     def initialize(expression, operator, record_exist)
       @data_list = []
       @expression = expression
@@ -61,94 +53,106 @@ module Groonga
     def build
       return nil unless valid?
 
-      status = Status::START
-      variable = @expression[0]
-      data = nil
-      codes = @expression.codes
-      n_codes = codes.size
-      next_code_op = nil
-      codes.each_with_index do |code, i|
-        code_op = (next_code_op || code.op)
-        next_code_op = nil
+      context = BuildContext.new(@expression)
+      codes = context.codes
+      variable = context.variable
+      while context.have_next?
+        code = context.code
+        code_op = context.code_op
+        i = context.i
+        context.next
+
         case code_op
         when *RELATION_OPERATORS
-          status = Status::START
+          context.status = :start
+          data = context.data
           data.op = code_op
           data.end = i
           data.match_resolve_index
           @data_list << data
-          data = nil
+          context.data = nil
         when *LOGICAL_OPERATORS
-          if status == Status::CONST
+          if context.status == :const
+            data = context.data
             data.op = Operator::PUSH
             data.end = data.start
             @data_list << data
-            data = nil
+            context.data = nil
           end
           put_logical_op(code_op, i)
           # TODO: rescue and return nil
-          status = Status::START
+          context.status = :start
         when Operator::PUSH
-          data ||= ScanInfoData.new(i)
+          context.data ||= ScanInfoData.new(i)
+          data = context.data
           if code.value == variable
-            status = Status::VAR
+            context.status = :var
           else
             data.args << code.value
-            if status == Status::START
+            if context.status == :start
               data.flags |= ScanInfo::Flags::PRE_CONST
             end
-            status = Status::CONST
+            context.status = :const
           end
           if code.modify > 0 and
               LOGICAL_OPERATORS.include?(codes[i + code.modify].op)
             data.op = Operator::PUSH
             data.end = data.start
             @data_list << data
-            data = nil
-            status = Status::START
+            context.data = nil
+            context.status = :start
           end
         when Operator::GET_VALUE
-          case status
-          when Status::START
-            data ||= ScanInfoData.new(i)
-            status = Status::COL1
+          case context.status
+          when :start
+            context.data ||= ScanInfoData.new(i)
+            data = context.data
+            context.status = :column1
             data.args << code.value
-          when Status::CONST, Status::VAR
-            status = Status::COL1
+          when :const, :var
+            context.status = :column1
             data.args << code.value
-          when Status::COL1
-            raise ErrorMessage, "invalid expression: can't use column as a value: <#{code.value.name}>: <#{@expression.grn_inspect}>"
-            status = Status::COL2
-          when Status::COL2
+          when :column1
+            message = "invalid expression: can't use column as a value: "
+            message << "<#{code.value.name}>: <#{@expression.grn_inspect}>"
+            raise ErrorMessage, message
+          when :column2
             # Do nothing
+          else
+            message = "internal expression parsing error: unknown status: "
+            message << "<#{context.status.inspect}>: "
+            message << "<#{@expression.grn_inspect}>"
+            raise ErrorMessage, message
           end
         when Operator::CALL
-          data ||= ScanInfoData.new(i)
+          context.data ||= ScanInfoData.new(i)
+          data = context.data
           if (code.flags & ExpressionCode::Flags::RELATIONAL_EXPRESSION) != 0 or
-              (i + 1) == n_codes
-            status = Status::START
+              (not context.have_next?)
+            context.status = :start
             data.op = code_op
             data.end = i
             data.call_relational_resolve_indexes
             @data_list << data
-            data = nil
+            context.data = nil
           else
-            status = Status::COL2
+            context.status = :column2
           end
         when Operator::GET_REF
-          data ||= ScanInfoData.new(i)
-          case status
-          when Status::START
-            data ||= ScanInfoData.new(i)
-            status = Status::COL1
+          context.data ||= ScanInfoData.new(i)
+          case context.status
+          when :start
+            data = context.data
+            context.status = :column1
             data.args << code.value
           end
         when Operator::GET_MEMBER
+          data = context.data
           index = data.args.pop
           data.start_position = index.value
-          status = Status::COL1
+          context.status = :column1
         when Operator::NOT
-          success, next_code_op = build_not(code, codes, i)
+          success = build_not(context, code)
           return nil unless success
         end
       end
@@ -163,7 +167,7 @@ module Groonga
           first_data.logical_op = @operator
         end
       else
-        put_logical_op(@operator, n_codes)
+        put_logical_op(@operator, @context.n_codes)
       end
 
       optimize
@@ -173,31 +177,33 @@ module Groonga
     def valid?
       n_relation_expressions = 0
       n_logical_expressions = 0
-      status = Status::START
+      status = :start
       variable = @expression[0]
       codes = @expression.codes
       codes.each_with_index do |code, i|
         case code.op
         when *RELATION_OPERATORS
-          return false if status < Status::COL1
-          return false if status > Status::CONST
-          status = Status::START
+          if status == :start || status == :var
+            return false
+          end
+          status = :start
           n_relation_expressions += 1
         when *ARITHMETIC_OPERATORS
-          return false if status < Status::COL1
-          return false if status > Status::CONST
-          status = Status::START
+          if status == :start || status == :var
+            return false
+          end
+          status = :start
           return false if n_relation_expressions != (n_logical_expressions + 1)
         when *LOGICAL_OPERATORS
           case status
-          when Status::START
+          when :start
             n_logical_expressions += 1
             return false if n_logical_expressions >= n_relation_expressions
-          when Status::CONST
+          when :const
             n_logical_expressions += 1
             n_relation_expressions += 1
             return false if n_logical_expressions >= n_relation_expressions
-            status = Status::START
+            status = :start
           else
             return false
           end
@@ -205,21 +211,21 @@ module Groonga
           if code.modify > 0 and
               LOGICAL_OPERATORS.include?(codes[i + code.modify].op)
             n_relation_expressions += 1
-            status = Status::START
+            status = :start
           else
             if code.value == variable
-              status = Status::VAR
+              status = :var
             else
-              status = Status::CONST
+              status = :const
             end
           end
         when Operator::GET_VALUE
           case status
-          when Status::START, Status::CONST, Status::VAR
-            status = Status::COL1
-          when Status::COL1
-            status = Status::COL2
-          when Status::COL2
+          when :start, :const, :var
+            status = :column1
+          when :column1
+            status = :column2
+          when :column2
             # Do nothing
           else
             return false
@@ -227,23 +233,23 @@ module Groonga
         when Operator::CALL
           if (code.flags & ExpressionCode::Flags::RELATIONAL_EXPRESSION) != 0 or
               code == codes.last
-            status = Status::START
+            status = :start
             n_relation_expressions += 1
           else
-            status = Status::COL2
+            status = :column2
           end
         when Operator::GET_REF
           case status
-          when Status::START
-            status = Status::COL1
+          when :start
+            status = :column1
           else
             return false
           end
         when Operator::GET_MEMBER
           case status
-          when Status::CONST
+          when :const
             return false unless codes[i - 1].value.value.is_a?(Integer)
-            status = Status::COL1
+            status = :column1
           else
             return false
           end
@@ -254,7 +260,7 @@ module Groonga
         end
       end
 
-      return false if status != Status::START
+      return false if status != :start
       return false if n_relation_expressions != (n_logical_expressions + 1)
 
       true
@@ -323,11 +329,10 @@ module Groonga
       end
     end
 
-    def build_not(code, codes, i)
+    def build_not(context, code)
       last_data = @data_list.last
-      return [false, nil] if last_data.nil?
+      return false if last_data.nil?
 
-      next_code_op = nil
       case last_data.op
       when Operator::LESS
         last_data.op = Operator::GREATER_EQUAL
@@ -351,7 +356,7 @@ module Groonga
               last_data.op = Operator::NOT_EQUAL
               last_data.end += 1
             else
-              return [false, nil]
+              return false
             end
           else
             last_data.logical_op = Operator::AND_NOT
@@ -359,21 +364,21 @@ module Groonga
             @data_list.unshift(create_all_match_data)
           end
         else
-          next_code = codes[i + 1]
-          return [false, nil] if next_code.nil?
+          next_code = context.code
+          return false if next_code.nil?
 
           case next_code.op
           when Operator::AND
-            next_code_op = Operator::AND_NOT
+            context.code_op = Operator::AND_NOT
           when Operator::AND_NOT
-            next_code_op = Operator::AND
+            context.code_op = Operator::AND
           else
-            return [false, nil]
+            return false
           end
         end
       end
 
-      [true, next_code_op]
+      true
     end
 
     def optimize
@@ -489,6 +494,44 @@ module Groonga
         max,
         @expression.allocate_constant(max_border),
       ]
+    end
+
+    class BuildContext
+      attr_accessor :status
+      attr_reader :variable
+      attr_reader :codes
+      attr_reader :n_codes
+      attr_reader :i
+      attr_writer :code_op
+      attr_accessor :data
+      def initialize(expression)
+        @expression = expression
+        @status = :start
+        @variable = @expression[0]
+        @current_data = nil
+        @codes = @expression.codes
+        @n_codes = @codes.size
+        @i = 0
+        @code_op = nil
+        @data = nil
+      end
+
+      def have_next?
+        @i < @n_codes
+      end
+
+      def next
+        @i += 1
+        @code_op = nil
+      end
+
+      def code
+        @codes[@i]
+      end
+
+      def code_op
+        @code_op || code.op
+      end
     end
   end
 end
