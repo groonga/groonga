@@ -167,7 +167,7 @@ module Groonga
           first_data.logical_op = @operator
         end
       else
-        put_logical_op(@operator, @context.n_codes)
+        put_logical_op(@operator, context.n_codes)
       end
 
       optimize
