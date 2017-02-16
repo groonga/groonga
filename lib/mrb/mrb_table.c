@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright(C) 2014-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -63,6 +63,27 @@ mrb_grn_table_array_reference(mrb_state *mrb, mrb_value self)
     return mrb_nil_value();
   } else {
     return mrb_fixnum_value(record_id);
+  }
+}
+
+static mrb_value
+mrb_grn_table_is_id(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *table;
+  mrb_int mrb_record_id;
+  grn_id record_id;
+  grn_id real_record_id;
+
+  mrb_get_args(mrb, "i", &mrb_record_id);
+
+  table = DATA_PTR(self);
+  record_id = (grn_id)mrb_record_id;
+  real_record_id = grn_table_at(ctx, table, record_id);
+  if (real_record_id == record_id) {
+    return mrb_true_value();
+  } else {
+    return mrb_false_value();
   }
 }
 
@@ -342,6 +363,8 @@ grn_mrb_table_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "[]",
                     mrb_grn_table_array_reference, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "id?",
+                    mrb_grn_table_is_id, MRB_ARGS_REQ(1));
 
   mrb_define_method(mrb, klass, "find_column",
                     mrb_grn_table_find_column, MRB_ARGS_REQ(1));
