@@ -4631,6 +4631,7 @@ grn_scan_info_build_full_not(grn_ctx *ctx,
             grn_ctx_get(ctx, "all_records", -1);
           sis[*i] = sis[*i - 1];
           sis[*i - 1] = all_records_si;
+          (*i)++;
           put_logical_op(ctx, sis, i, GRN_OP_AND_NOT, code_end - code);
         }
         break;
