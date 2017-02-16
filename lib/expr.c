@@ -4549,6 +4549,7 @@ static grn_bool
 grn_scan_info_build_full_not(grn_ctx *ctx,
                              scan_info **sis,
                              int *i,
+                             grn_expr_code *codes,
                              grn_expr_code *code,
                              grn_expr_code *code_end,
                              grn_operator *next_code_op)
@@ -4632,7 +4633,7 @@ grn_scan_info_build_full_not(grn_ctx *ctx,
           sis[*i] = sis[*i - 1];
           sis[*i - 1] = all_records_si;
           (*i)++;
-          put_logical_op(ctx, sis, i, GRN_OP_AND_NOT, code_end - code);
+          put_logical_op(ctx, sis, i, GRN_OP_AND_NOT, code - codes);
         }
         break;
       default :
@@ -5007,7 +5008,13 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_NOT :
       {
         grn_bool valid;
-        valid = grn_scan_info_build_full_not(ctx, sis, &i, c, ce, &next_code_op);
+        valid = grn_scan_info_build_full_not(ctx,
+                                             sis,
+                                             &i,
+                                             e->codes,
+                                             c,
+                                             ce,
+                                             &next_code_op);
         if (!valid) {
           int j;
           for (j = 0; j < i; j++) {
