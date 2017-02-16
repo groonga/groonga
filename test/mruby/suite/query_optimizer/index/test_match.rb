@@ -142,4 +142,63 @@ class TestIndexMatch < QueryOptimizerTestCase
   expr:       <0..2>
     DUMP
   end
+
+  sub_test_case("optimization by estimate size") do
+    def setup
+      super
+      10.times do |i|
+        @logs.add(:message => "Groonga#{i}")
+      end
+      2.times do |i|
+        @logs.add(:message => "Rroonga#{i}")
+      end
+      100.times do |i|
+        @logs.add(:message => "Mroonga#{i}")
+      end
+    end
+
+    def test_and
+      filter = "(message @ 'Groonga') && (message @ 'Rroonga')"
+      assert_equal(<<-DUMP, dump_plan(filter))
+[0]
+  op:         <match>
+  logical_op: <or>
+  index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
+  query:      <"Rroonga">
+  expr:       <3..5>
+[1]
+  op:         <match>
+  logical_op: <and>
+  index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
+  query:      <"Groonga">
+  expr:       <0..2>
+      DUMP
+    end
+
+    def test_and_and_not
+      filter = "(message @ 'Groonga') && "
+      filter << "(message @ 'Rroonga') &! "
+      filter << "(message @ 'Mroonga')"
+      assert_equal(<<-DUMP, dump_plan(filter))
+[0]
+  op:         <match>
+  logical_op: <or>
+  index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
+  query:      <"Rroonga">
+  expr:       <3..5>
+[1]
+  op:         <match>
+  logical_op: <and>
+  index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
+  query:      <"Groonga">
+  expr:       <0..2>
+[2]
+  op:         <match>
+  logical_op: <and_not>
+  index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
+  query:      <"Mroonga">
+  expr:       <7..9>
+      DUMP
+    end
+  end
 end

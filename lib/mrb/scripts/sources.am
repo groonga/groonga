@@ -28,6 +28,7 @@ RUBY_SCRIPT_FILES =				\
 	scan_info.rb				\
 	scan_info_builder.rb			\
 	scan_info_data.rb			\
+	scan_info_data_size_estimator.rb	\
 	scan_info_search_index.rb		\
 	table.rb				\
 	table_cursor.rb				\

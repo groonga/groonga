@@ -53,6 +53,7 @@ end
 
 ENV["GRN_PLUGINS_DIR"] = (build_top_dir_path + "plugins").to_s
 ENV["GRN_RUBY_SCRIPTS_DIR"] = (build_top_dir_path + "lib/mrb/scripts").to_s
+ENV["GRN_ORDER_BY_ESTIMATED_SIZE_ENABLE"] = "yes"
 
 $LOAD_PATH.unshift((rroonga_dir_path + "ext" + "groonga").to_s)
 $LOAD_PATH.unshift((rroonga_dir_path + "lib").to_s)

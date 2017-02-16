@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2015 Brazil
+  Copyright(C) 2013-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -38,6 +38,7 @@
 #define E_LOAD_ERROR (mrb_class_get(mrb, "LoadError"))
 
 static char grn_mrb_ruby_scripts_dir[GRN_ENV_BUFFER_SIZE];
+static grn_bool grn_mrb_order_by_estimated_size_enable = GRN_FALSE;
 
 void
 grn_mrb_init_from_env(void)
@@ -45,6 +46,23 @@ grn_mrb_init_from_env(void)
   grn_getenv("GRN_RUBY_SCRIPTS_DIR",
              grn_mrb_ruby_scripts_dir,
              GRN_ENV_BUFFER_SIZE);
+  {
+    char grn_order_by_estimated_size_enable_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_ORDER_BY_ESTIMATED_SIZE_ENABLE",
+               grn_order_by_estimated_size_enable_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (strcmp(grn_order_by_estimated_size_enable_env, "yes") == 0) {
+      grn_mrb_order_by_estimated_size_enable = GRN_TRUE;
+    } else {
+      grn_mrb_order_by_estimated_size_enable = GRN_FALSE;
+    }
+  }
+}
+
+grn_bool
+grn_mrb_is_order_by_estimated_size_enabled(void)
+{
+  return grn_mrb_order_by_estimated_size_enable;
 }
 
 #ifdef GRN_WITH_MRUBY

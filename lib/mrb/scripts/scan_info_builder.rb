@@ -7,6 +7,8 @@ module Groonga
       @expression = expression
       @operator = operator
       @record_exist = record_exist
+      @variable = @expression[0]
+      @table = Context.instance[@variable.domain]
     end
 
     RELATION_OPERATORS = [
@@ -55,7 +57,6 @@ module Groonga
 
       context = BuildContext.new(@expression)
       codes = context.codes
-      variable = context.variable
       while context.have_next?
         code = context.code
         code_op = context.code_op
@@ -85,7 +86,7 @@ module Groonga
         when Operator::PUSH
           context.data ||= ScanInfoData.new(i)
           data = context.data
-          if code.value == variable
+          if code.value == @variable
             context.status = :var
           else
             data.args << code.value
@@ -178,7 +179,6 @@ module Groonga
       n_relation_expressions = 0
       n_logical_expressions = 0
       status = :start
-      variable = @expression[0]
       codes = @expression.codes
       codes.each_with_index do |code, i|
         case code.op
@@ -213,7 +213,7 @@ module Groonga
             n_relation_expressions += 1
             status = :start
           else
-            if code.value == variable
+            if code.value == @variable
               status = :var
             else
               status = :const
@@ -404,7 +404,45 @@ module Groonga
         end
         optimized_data_list << data
       end
-      optimized_data_list
+
+      optimize_by_estimated_size(optimized_data_list)
+    end
+
+    def optimize_by_estimated_size(data_list)
+      return data_list unless Groonga::ORDER_BY_ESTIMATED_SIZE
+
+      start_index = nil
+      data_list.size.times do |i|
+        data = data_list[i]
+        if data.logical_op != Operator::AND
+          if start_index.nil?
+            start_index = i
+          else
+            sort_by_estimated_size!(data_list, start_index...i)
+            start_index = nil
+          end
+        end
+      end
+      unless start_index.nil?
+        sort_by_estimated_size!(data_list, start_index...data_list.size)
+      end
+      data_list
+    end
+
+    def sort_by_estimated_size!(data_list, range)
+      target_data_list = data_list[range]
+      return if target_data_list.size < 2
+
+      start_logical_op = target_data_list.first.logical_op
+      sorted_data_list = target_data_list.sort_by do |data|
+        estimator = ScanInfoDataSizeEstimator.new(data, @table)
+        estimator.estimate
+      end
+      sorted_data_list.each do |sorted_data|
+        sorted_data.logical_op = Operator::AND
+      end
+      sorted_data_list.first.logical_op = start_logical_op
+      data_list[range] = sorted_data_list
     end
 
     def range_operations?(data, next_data)
@@ -501,7 +539,6 @@ module Groonga
 
     class BuildContext
       attr_accessor :status
-      attr_reader :variable
       attr_reader :codes
       attr_reader :n_codes
       attr_reader :i
@@ -510,7 +547,6 @@ module Groonga
       def initialize(expression)
         @expression = expression
         @status = :start
-        @variable = @expression[0]
         @current_data = nil
         @codes = @expression.codes
         @n_codes = @codes.size

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2016 Brazil
+  Copyright(C) 2013-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -196,6 +196,12 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
 
   mrb->ud = ctx;
   ctx->impl->mrb.module = mrb_define_module(mrb, "Groonga");
+  mrb_define_const(mrb,
+                   ctx->impl->mrb.module,
+                   "ORDER_BY_ESTIMATED_SIZE",
+                   grn_mrb_is_order_by_estimated_size_enabled() ?
+                   mrb_true_value() :
+                   mrb_false_value());
   mrb_define_class_method(mrb, ctx->impl->mrb.module,
                           "init", mrb_groonga_init, MRB_ARGS_NONE());
   mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "init", 0);

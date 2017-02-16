@@ -20,10 +20,21 @@ module Groonga
         return table.size unless @procedure.name == "between"
 
         column, min, min_border, max, max_border = @arguments
+
         index_info = column.column.find_index(Operator::CALL)
         return table.size if index_info.nil?
-
         index_column = index_info.index
+        while index_column.is_a?(Groonga::Accessor)
+          if index_column.have_next?
+            index_column = index_column.next
+          else
+            index_column = index_column.object
+            index_info = index_column.find_index(Operator::CALL)
+            return table.size if index_info.nil?
+            index_column = index_info.index
+          end
+        end
+
         lexicon = index_column.lexicon
         options = {
           :min => min.value,

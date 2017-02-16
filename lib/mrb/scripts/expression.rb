@@ -6,6 +6,7 @@ require "expression_tree_builder"
 require "scan_info"
 require "scan_info_builder"
 
+require "scan_info_data_size_estimator"
 require "expression_size_estimator"
 
 module Groonga
