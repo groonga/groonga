@@ -120,4 +120,26 @@ class TestIndexMatch < QueryOptimizerTestCase
   expr:       <3..5>
     DUMP
   end
+
+  def test_normal_or_not
+    assert_equal(<<-DUMP, dump_plan("(message @ 'Rroonga') || !(message @ 'Groonga')"))
+[0]
+  op:         <call>
+  logical_op: <or>
+  args[0]:    <#<proc:function all_records arguments:[]>>
+  expr:       <0..0>
+[1]
+  op:         <match>
+  logical_op: <and_not>
+  index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
+  query:      <"Groonga">
+  expr:       <3..5>
+[2]
+  op:         <match>
+  logical_op: <or>
+  index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
+  query:      <"Rroonga">
+  expr:       <0..2>
+    DUMP
+  end
 end

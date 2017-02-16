@@ -1,0 +1,66 @@
+table_create Texts TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms texts_key COLUMN_INDEX|WITH_POSITION   Texts _key
+[[0,0.0,0.0],true]
+load --table Texts
+[
+{"_key": "Groonga and Rroonga"},
+{"_key": "Rroonga and Ruby"},
+{"_key": "Mroonga and Groonga"},
+{"_key": "MySQL and PostgreSQL"}
+]
+[[0,0.0,0.0],4]
+log_level --level info
+[[0,0.0,0.0],true]
+select Texts --filter '(_key @ "Rroonga") || !(_key @ "Groonga")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Groonga and Rroonga"
+      ],
+      [
+        4,
+        "MySQL and PostgreSQL"
+      ],
+      [
+        2,
+        "Rroonga and Ruby"
+      ]
+    ]
+  ]
+]
+#|i| [table][select][index][selector][no-index][all_records] <Texts>
+#|i| [object][search][index][key][exact] <Terms.texts_key>
+#|i| grn_ii_sel > (Groonga)
+#|i| n=1 (Groonga)
+#|i| exact: 2
+#|i| hits=2
+#|i| [object][search][index][key][exact] <Terms.texts_key>
+#|i| grn_ii_sel > (Rroonga)
+#|i| n=1 (Rroonga)
+#|i| exact: 3
+#|i| hits=3
+log_level --level notice
+[[0,0.0,0.0],true]

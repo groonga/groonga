@@ -152,7 +152,7 @@ module Groonga
           data.start_position = index.value
           context.status = :column1
         when Operator::NOT
-          success = build_not(context, code)
+          success = build_not(context, code, i)
           return nil unless success
         end
       end
@@ -329,7 +329,7 @@ module Groonga
       end
     end
 
-    def build_not(context, code)
+    def build_not(context, code, i)
       last_data = @data_list.last
       return false if last_data.nil?
 
@@ -372,6 +372,9 @@ module Groonga
             context.code_op = Operator::AND_NOT
           when Operator::AND_NOT
             context.code_op = Operator::AND
+          when Operator::OR
+            @data_list[-1, 0] = create_all_match_data
+            put_logical_op(Operator::AND_NOT, i)
           else
             return false
           end

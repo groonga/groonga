@@ -4619,6 +4619,21 @@ grn_scan_info_build_full_not(grn_ctx *ctx,
       case GRN_OP_AND_NOT :
         *next_code_op = GRN_OP_AND;
         break;
+      case GRN_OP_OR :
+        {
+          scan_info *all_records_si = NULL;
+          SI_ALLOC_RAW(all_records_si, 0);
+          if (!all_records_si) {
+            return GRN_FALSE;
+          }
+          all_records_si->op = GRN_OP_CALL;
+          all_records_si->args[all_records_si->nargs++] =
+            grn_ctx_get(ctx, "all_records", -1);
+          sis[*i] = sis[*i - 1];
+          sis[*i - 1] = all_records_si;
+          put_logical_op(ctx, sis, i, GRN_OP_AND_NOT, code_end - code);
+        }
+        break;
       default :
         return GRN_FALSE;
         break;
