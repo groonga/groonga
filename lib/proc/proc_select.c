@@ -2613,13 +2613,13 @@ grn_select_output_drilldowns(grn_ctx *ctx,
 
     if (is_labeled) {
       GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                    ":", "drilldown(%d)[%.*s]",
-                    n_hits,
+                    ":", "output.drilldowns[%.*s](%d)",
                     (int)(drilldown->label.length),
-                    drilldown->label.value);
+                    drilldown->label.value,
+                    n_hits);
     } else {
       GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                    ":", "drilldown(%d)", n_hits);
+                    ":", "output.drilldown(%d)", n_hits);
     }
   } GRN_HASH_EACH_END(ctx, cursor);
 
