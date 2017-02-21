@@ -2208,6 +2208,27 @@ grn_select_drilldown_execute(grn_ctx *ctx,
     grn_obj_close(ctx, expression);
   }
 
+  {
+    unsigned int n_hits;
+
+    if (drilldown->filtered_result) {
+      n_hits = grn_table_size(ctx, drilldown->filtered_result);
+    } else {
+      n_hits = grn_table_size(ctx, result->table);
+    }
+    if (data->drilldown.keys.length == 0) {
+      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                    ":", "drilldowns[%.*s](%u)",
+                    (int)(drilldown->label.length),
+                    drilldown->label.value,
+                    n_hits);
+    } else {
+      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                    ":", "drilldown(%u)",
+                    n_hits);
+    }
+  }
+
   return GRN_TRUE;
 }
 
