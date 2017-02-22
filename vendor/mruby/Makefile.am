@@ -51,7 +51,7 @@ mruby-io/src/file_test.c: mruby_build.timestamp
 mruby-io/src/io.c: mruby_build.timestamp
 mruby-io/src/mruby_io_gem.c: mruby_build.timestamp
 mruby-file-stat/src/file-stat.c: mruby_build.timestamp
-mruby-file-stat/src/extconf.h: mruby_build.timestamp
+mruby-file-stat/src/config.h: mruby_build.timestamp
 	touch "$(builddir)/$@"
 
 MRUBY_CONFIG = $(abs_srcdir)/build_config.rb
