@@ -100,9 +100,9 @@ module Groonga
 
       key = find_column(key_name)
       if key.nil?
-        table_name = table.name || "(temporary)"
+        table_name = name || "(temporary)"
         message = "unknown key: #{key_name.inspect}: "
-        message << "#{table_name}(#{table.size})"
+        message << "#{table_name}(#{size})"
         raise ArgumentError, message
       end
 
