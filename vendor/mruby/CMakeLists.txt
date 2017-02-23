@@ -66,7 +66,7 @@ if(GRN_WITH_MRUBY)
       )
   endif()
   file(WRITE
-    "${CMAKE_CURRENT_BINARY_DIR}/mruby-file-stat/src/extconf.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/mruby-file-stat/src/config.h"
     "")
 
   set(MRUBY_ALL_SOURCES
