@@ -979,7 +979,6 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
                              GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
     void *name;
     int name_size;
-    grn_bool is_opened = GRN_TRUE;
     grn_obj *object;
     const char *path;
     grn_id processed_path_id;
@@ -994,7 +993,7 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
     }
 
     if (is_close_opened_object_mode) {
-      is_opened = grn_ctx_is_opened(ctx, id);
+      grn_ctx_push_temporary_open_space(ctx);
     }
 
     object = grn_ctx_at(ctx, id);
@@ -1058,8 +1057,8 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
     }
 
   next_loop :
-    if (object && is_close_opened_object_mode && !is_opened) {
-      grn_obj_close(ctx, object);
+    if (is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
     }
   } GRN_TABLE_EACH_END(ctx, cursor);
 
