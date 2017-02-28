@@ -178,7 +178,7 @@ msgid ""
 "Fixed a crash bug when tokenizer has an error. It's caused when tokenizer "
 "and token filter are registered and tokenizer has an error."
 msgstr ""
-"tokenizerでエラーが発生するとクラッシュするf不具合を修正しました。tokenizer "
+"tokenizerでエラーが発生するとクラッシュする不具合を修正しました。tokenizer "
 "と token filterを登録していて、tokenizer にエラーがあると発生していました。"
 
 msgid ""
