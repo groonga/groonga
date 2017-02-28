@@ -4045,53 +4045,80 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
   key_size = grn_table_get_key(ctx, ii->lexicon, id, key,
                                GRN_TABLE_MAX_KEY_SIZE);
   if (ii->lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    int target_key_size = key_size;
-    int reduced_key_size = 0;
+    grn_obj *tokenizer = NULL;
 
-    while (*lseg == NOT_ASSIGNED && target_key_size > 0) {
-      grn_id tid;
-
+    grn_table_get_info(ctx, ii->lexicon, NULL, NULL, &tokenizer, NULL, NULL);
+    if (tokenizer) {
+      /* For natural language */
       cursor = grn_pat_cursor_open(ctx,
                                    (grn_pat *)(ii->lexicon),
-                                   key, target_key_size,
-                                   NULL, 0, 0, -1,
-                                   GRN_CURSOR_PREFIX);
-      if (!cursor) {
-        break;
-      }
-
-      if (reduced_key_size == 0) {
+                                   key,
+                                   key_size,
+                                   NULL,
+                                   0,
+                                   0,
+                                   -1,
+                                   GRN_CURSOR_ASCENDING|GRN_CURSOR_GT);
+      if (cursor) {
+        grn_id tid;
         while (ctx->rc == GRN_SUCCESS &&
                *lseg == NOT_ASSIGNED &&
                (tid = grn_pat_cursor_next(ctx, cursor))) {
           buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
         }
-      } else {
-        while (ctx->rc == GRN_SUCCESS &&
-               *lseg == NOT_ASSIGNED &&
-               (tid = grn_pat_cursor_next(ctx, cursor))) {
-          void *current_key;
-          int current_key_size;
+        grn_pat_cursor_close(ctx, cursor);
+      }
+    } else {
+      /* For text data */
+      int target_key_size = key_size;
+      int reduced_key_size = 0;
 
-          current_key_size = grn_pat_cursor_get_key(ctx, cursor, &current_key);
-          if (memcmp(((char *)current_key) + target_key_size,
-                     key + target_key_size,
-                     reduced_key_size) == 0) {
-            continue;
+      while (*lseg == NOT_ASSIGNED && target_key_size > 0) {
+        grn_id tid;
+
+        cursor = grn_pat_cursor_open(ctx,
+                                     (grn_pat *)(ii->lexicon),
+                                     key, target_key_size,
+                                     NULL, 0, 0, -1,
+                                     GRN_CURSOR_PREFIX);
+        if (!cursor) {
+          break;
+        }
+
+        if (reduced_key_size == 0) {
+          while (ctx->rc == GRN_SUCCESS &&
+                 *lseg == NOT_ASSIGNED &&
+                 (tid = grn_pat_cursor_next(ctx, cursor))) {
+            buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
           }
-          buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
-        }
-      }
-      grn_pat_cursor_close(ctx, cursor);
+        } else {
+          while (ctx->rc == GRN_SUCCESS &&
+                 *lseg == NOT_ASSIGNED &&
+                 (tid = grn_pat_cursor_next(ctx, cursor))) {
+            void *current_key;
+            int current_key_size;
 
-      if (reduced_key_size == 0) {
-        reduced_key_size = 1;
-      } else {
-        reduced_key_size *= 2;
+            current_key_size = grn_pat_cursor_get_key(ctx, cursor, &current_key);
+            if (memcmp(((char *)current_key) + target_key_size,
+                       key + target_key_size,
+                       reduced_key_size) == 0) {
+              continue;
+            }
+            buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
+          }
+        }
+        grn_pat_cursor_close(ctx, cursor);
+
+        if (reduced_key_size == 0) {
+          reduced_key_size = 1;
+        } else {
+          reduced_key_size *= 2;
+        }
+        target_key_size -= reduced_key_size;
       }
-      target_key_size -= reduced_key_size;
     }
   } else {
+    /* For other data */
     cursor = grn_pat_cursor_open(ctx,
                                  (grn_pat *)(ii->lexicon),
                                  NULL, 0, key, key_size, 0, -1,
