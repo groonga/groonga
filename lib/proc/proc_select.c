@@ -1391,10 +1391,10 @@ grn_select_apply_columns(grn_ctx *ctx,
     grn_obj_close(ctx, expression);
 
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                  ":", "columns(%d)[%.*s]",
-                  grn_table_size(ctx, table),
+                  ":", "columns[%.*s](%d)",
                   (int)(column_data->label.length),
-                  column_data->label.value);
+                  column_data->label.value,
+                  grn_table_size(ctx, table));
   }
 
   grn_hash_cursor_close(ctx, columns_cursor);
