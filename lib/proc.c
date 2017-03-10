@@ -1025,32 +1025,45 @@ char_type_name(grn_char_type type)
 {
   const char *name = "unknown";
 
-  switch (type) {
+#define CHAR_TYPE_NAME_WITH_BLANK(type_name) do {       \
+    if (GRN_CHAR_IS_BLANK(type)) {                      \
+      name = type_name "|blank";                        \
+    } else {                                            \
+      name = type_name;                                 \
+    }                                                   \
+  } while (GRN_FALSE)
+
+  switch (GRN_CHAR_TYPE(type)) {
   case GRN_CHAR_NULL :
-    name = "null";
+    CHAR_TYPE_NAME_WITH_BLANK("null");
     break;
   case GRN_CHAR_ALPHA :
-    name = "alpha";
+    CHAR_TYPE_NAME_WITH_BLANK("alpha");
     break;
   case GRN_CHAR_DIGIT :
-    name = "digit";
+    CHAR_TYPE_NAME_WITH_BLANK("digit");
     break;
   case GRN_CHAR_SYMBOL :
-    name = "symbol";
+    CHAR_TYPE_NAME_WITH_BLANK("symbol");
     break;
   case GRN_CHAR_HIRAGANA :
-    name = "hiragana";
+    CHAR_TYPE_NAME_WITH_BLANK("hiragana");
     break;
   case GRN_CHAR_KATAKANA :
-    name = "katakana";
+    CHAR_TYPE_NAME_WITH_BLANK("katakana");
     break;
   case GRN_CHAR_KANJI :
-    name = "kanji";
+    CHAR_TYPE_NAME_WITH_BLANK("kanji");
     break;
   case GRN_CHAR_OTHERS :
-    name = "others";
+    CHAR_TYPE_NAME_WITH_BLANK("other");
+    break;
+  default :
+    CHAR_TYPE_NAME_WITH_BLANK("unknown");
     break;
   }
+
+#undef CHAR_TYPE_NAME_WITH_BLANK
 
   return name;
 }

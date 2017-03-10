@@ -1,2 +1,27 @@
-normalize NormalizerAuto " a  b   c " REMOVE_BLANK|WITH_CHECKS
-[[0,0.0,0.0],{"normalized":"abc","types":[],"checks":[2,3,4]}]
+normalize NormalizerAuto " aa bbb   c " REMOVE_BLANK|WITH_TYPES|WITH_CHECKS
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "aabbbc",
+    "types": [
+      "alpha",
+      "alpha|blank",
+      "alpha",
+      "alpha",
+      "alpha|blank",
+      "alpha|blank"
+    ],
+    "checks": [
+      2,
+      1,
+      2,
+      1,
+      1,
+      4
+    ]
+  }
+]
