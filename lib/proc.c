@@ -1056,7 +1056,7 @@ char_type_name(grn_char_type type)
     CHAR_TYPE_NAME_WITH_BLANK("kanji");
     break;
   case GRN_CHAR_OTHERS :
-    CHAR_TYPE_NAME_WITH_BLANK("other");
+    CHAR_TYPE_NAME_WITH_BLANK("others");
     break;
   default :
     CHAR_TYPE_NAME_WITH_BLANK("unknown");
