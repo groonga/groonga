@@ -2161,10 +2161,15 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
     return 0;
   }
   if (pat->normalizer) {
+    int flags =
+      GRN_STRING_REMOVE_BLANK |
+      GRN_STRING_WITH_TYPES |
+      GRN_STRING_WITH_CHECKS;
     grn_obj *nstr = grn_string_open(ctx, str, str_len,
-                                    pat->normalizer, GRN_STRING_WITH_CHECKS);
+                                    pat->normalizer, flags);
     if (nstr) {
       const short *cp = grn_string_get_checks(ctx, nstr);
+      const unsigned char *tp = grn_string_get_types(ctx, nstr);
       unsigned int offset = 0, offset0 = 0;
       unsigned int normalized_length_in_bytes;
       const char *sp, *se;
@@ -2173,18 +2178,31 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
       se = sp + normalized_length_in_bytes;
       while (n < sh_size) {
         if ((tid = grn_pat_lcp_search(ctx, pat, sp, se - sp))) {
+          const char *key;
           uint32_t len;
-          _grn_pat_key(ctx, pat, tid, &len);
+          key = _grn_pat_key(ctx, pat, tid, &len);
           sh[n].id = tid;
           sh[n].offset = (*cp > 0) ? offset : offset0;
+          if (sh[n].offset > 0 &&
+              GRN_CHAR_IS_BLANK(tp[-1]) &&
+              grn_charlen(ctx, key, key + len) == 1 &&
+              key[0] != ' ') {
+            /* Remove leading spaces. */
+            const char *original_str = str + sh[n].offset;
+            while (grn_charlen(ctx, original_str, str + str_len) == 1 &&
+                   original_str[0] == ' ') {
+              original_str++;
+              sh[n].offset++;
+            }
+          }
           while (len--) {
-            if (*cp > 0) { offset0 = offset; offset += *cp; }
+            if (*cp > 0) { offset0 = offset; offset += *cp; tp++; }
             sp++; cp++;
           }
           sh[n].length = offset - sh[n].offset;
           n++;
         } else {
-          if (*cp > 0) { offset0 = offset; offset += *cp; }
+          if (*cp > 0) { offset0 = offset; offset += *cp; tp++; }
           do {
             sp++; cp++;
           } while (sp < se && !*cp);
