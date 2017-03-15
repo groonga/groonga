@@ -1362,6 +1362,7 @@ grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
 {
   static int _ncalls = 0, _ncolls = 0;
   uint32_t count, count_log_border = 1000;
+  uint32_t rc_check_interval = 1000;
   _ncalls++;
   if (!io) { return GRN_INVALID_ARGUMENT; }
   for (count = 0;; count++) {
@@ -1386,6 +1387,11 @@ grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
         } else {
           GRN_LOG(ctx, GRN_LOG_NOTICE,
                   "io(%s) collisions(%d/%d)", io->path, _ncolls, _ncalls);
+        }
+      }
+      if ((count % rc_check_interval) == 0) {
+        if (ctx->rc != GRN_SUCCESS) {
+          return ctx->rc;
         }
       }
       grn_nanosleep(GRN_LOCK_WAIT_TIME_NANOSECOND);
