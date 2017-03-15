@@ -32,7 +32,7 @@ Let's create document table and synonym table.
 .. table_create Term TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 .. column_create Term Doc_body COLUMN_INDEX|WITH_POSITION Doc body
 .. table_create Synonym TABLE_PAT_KEY ShortText
-.. column_create Synonym body COLUMN_SCALAR ShortText
+.. column_create Synonym body COLUMN_VECTOR ShortText
 .. load --table Doc
 .. [
 .. {"_key": "001", "body": "Play all night in this theater."},
@@ -40,8 +40,8 @@ Let's create document table and synonym table.
 .. ]
 .. load --table Synonym
 .. [
-.. {"_key": "theater", "body": "(theater OR theatre)"},
-.. {"_key": "theatre", "body": "(theater OR theatre)"},
+.. {"_key": "theater", "body": ["theater", "theatre"]},
+.. {"_key": "theatre", "body": ["theater", "theatre"]},
 .. ]
 
 In this case, it doesn't occur search leakage because it creates synonym table which accepts "theatre" and "theater" as query string.
