@@ -10,7 +10,7 @@ Execution example::
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   table_create Synonym TABLE_PAT_KEY ShortText
   # [[0, 1337566253.89858, 0.000355720520019531], true]
-  column_create Synonym body COLUMN_SCALAR ShortText
+  column_create Synonym body COLUMN_VECTOR ShortText
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   load --table Doc
   [
@@ -20,7 +20,7 @@ Execution example::
   # [[0, 1337566253.89858, 0.000355720520019531], 2]
   load --table Synonym
   [
-  {"_key": "theater", "body": "(theater OR theatre)"},
-  {"_key": "theatre", "body": "(theater OR theatre)"},
+  {"_key": "theater", "body": ["theater", "theatre"]},
+  {"_key": "theatre", "body": ["theater", "theatre"]},
   ]
   # [[0, 1337566253.89858, 0.000355720520019531], 2]
