@@ -186,6 +186,17 @@ grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj)
 }
 
 grn_bool
+grn_obj_is_data_column(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_column(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  return obj->header.type == GRN_COLUMN_FIX_SIZE ||
+    obj->header.type == GRN_COLUMN_VAR_SIZE;
+}
+
+grn_bool
 grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj)
 {
   if (!grn_obj_is_column(ctx, obj)) {

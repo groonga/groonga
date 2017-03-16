@@ -38,6 +38,7 @@ GRN_API grn_bool grn_obj_is_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_weight_vector_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_bool grn_obj_is_data_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_key_accessor(grn_ctx *ctx, grn_obj *obj);
