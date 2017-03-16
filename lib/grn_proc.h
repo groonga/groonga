@@ -28,6 +28,8 @@ extern "C" {
 #define GRN_SELECT_DEFAULT_OUTPUT_COLUMNS  "_id, _key, *"
 
 #define GRN_SELECT_INTERNAL_VAR_CONDITION     "$condition"
+#define GRN_SELECT_INTERNAL_VAR_CONDITION_LEN           \
+  (sizeof(GRN_SELECT_INTERNAL_VAR_CONDITION) - 1)
 
 void grn_proc_init_from_env(void);
 

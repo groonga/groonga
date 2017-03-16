@@ -1012,7 +1012,7 @@ grn_select_expression_set_condition(grn_ctx *ctx,
   condition_ptr =
     grn_expr_get_or_add_var(ctx, expression,
                             GRN_SELECT_INTERNAL_VAR_CONDITION,
-                            strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
+                            GRN_SELECT_INTERNAL_VAR_CONDITION_LEN);
   GRN_PTR_INIT(condition_ptr, 0, GRN_DB_OBJECT);
   GRN_PTR_SET(ctx, condition_ptr, condition);
 }
