@@ -28,6 +28,7 @@
 #include <mruby/hash.h>
 
 #include "../grn_expr.h"
+#include "../grn_proc.h"
 #include "../grn_util.h"
 #include "../grn_mrb.h"
 #include "mrb_accessor.h"
@@ -590,6 +591,28 @@ mrb_grn_expression_array_reference(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_expression_set_condition(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *expr;
+  mrb_value mrb_condition;
+  grn_obj *condition_ptr;
+
+  mrb_get_args(mrb, "o", &mrb_condition);
+
+  expr = DATA_PTR(self);
+  condition_ptr = grn_expr_get_or_add_var(ctx,
+                                          expr,
+                                          GRN_SELECT_INTERNAL_VAR_CONDITION,
+                                          GRN_SELECT_INTERNAL_VAR_CONDITION_LEN);
+  GRN_OBJ_FIN(ctx, condition_ptr);
+  GRN_PTR_INIT(condition_ptr, 0, GRN_DB_OBJECT);
+  GRN_PTR_SET(ctx, condition_ptr, GRN_MRB_DATA_PTR(mrb_condition));
+
+  return mrb_nil_value();
+}
+
+static mrb_value
 mrb_grn_expression_take_object(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -918,6 +941,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_expression_codes, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "[]",
                     mrb_grn_expression_array_reference, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "condition=",
+                    mrb_grn_expression_set_condition, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "take_object",
                     mrb_grn_expression_take_object, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "allocate_constant",
