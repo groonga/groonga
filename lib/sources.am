@@ -86,6 +86,7 @@ libgroonga_la_SOURCES =				\
 	grn_str.h				\
 	string.c				\
 	grn_string.h				\
+	table.c					\
 	thread.c				\
 	time.c					\
 	grn_time.h				\

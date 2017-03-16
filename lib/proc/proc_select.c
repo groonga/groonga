@@ -1356,35 +1356,21 @@ grn_select_apply_columns(grn_ctx *ctx,
         break;
       }
     } else {
-      grn_table_cursor *table_cursor;
-      grn_id id;
-
-      table_cursor = grn_table_cursor_open(ctx, table,
-                                           NULL, 0,
-                                           NULL, 0,
-                                           0, -1, GRN_CURSOR_BY_ID);
-      if (!table_cursor) {
+      grn_rc rc;
+      rc = grn_table_apply_expression(ctx, table, column, expression);
+      if (rc != GRN_SUCCESS) {
         grn_obj_close(ctx, expression);
         grn_obj_close(ctx, column);
         GRN_PLUGIN_ERROR(ctx,
                          GRN_INVALID_ARGUMENT,
                          "[select][column][%s][%.*s] "
-                         "failed to create cursor for getting records: %s",
+                         "failed to apply expression to generate column values: "
+                         "%s",
                          grn_column_stage_name(column_data->stage),
                          (int)(column_data->label.length),
                          column_data->label.value,
                          ctx->errbuf);
         break;
-      }
-
-      while ((id = grn_table_cursor_next(ctx, table_cursor)) != GRN_ID_NIL) {
-        grn_obj *value;
-
-        GRN_RECORD_SET(ctx, record, id);
-        value = grn_expr_exec(ctx, expression, 0);
-        if (value) {
-          grn_obj_set_value(ctx, column, id, value, GRN_OBJ_SET);
-        }
       }
     }
 
