@@ -367,6 +367,16 @@ grn_obj_is_window_function_proc(grn_ctx *ctx, grn_obj *obj)
   return proc->type == GRN_PROC_WINDOW_FUNCTION;
 }
 
+grn_bool
+grn_obj_is_expr(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!obj) {
+    return GRN_FALSE;
+  }
+
+  return obj->header.type == GRN_EXPR;
+}
+
 static void
 grn_db_reindex(grn_ctx *ctx, grn_obj *db)
 {

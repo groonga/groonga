@@ -53,6 +53,7 @@ GRN_API grn_bool grn_obj_is_normalizer_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_token_filter_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_scorer_proc(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_window_function_proc(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_bool grn_obj_is_expr(grn_ctx *ctx, grn_obj *obj);
 
 GRN_API grn_rc grn_obj_cast(grn_ctx *ctx,
                             grn_obj *src,

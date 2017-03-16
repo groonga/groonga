@@ -67,6 +67,7 @@ void data_is_scorer_proc(void);
 void test_is_scorer_proc(gconstpointer data);
 void data_is_window_function_proc(void);
 void test_is_window_function_proc(gconstpointer data);
+void test_is_expr(void);
 void data_type_to_string(void);
 void test_type_to_string(gconstpointer data);
 void data_name_is_column(void);
@@ -858,6 +859,17 @@ test_is_window_function_proc(gconstpointer data)
   } else {
     cut_assert_false(grn_obj_is_window_function_proc(context, object));
   }
+}
+
+void
+test_is_expr(void)
+{
+  grn_obj *expr;
+
+  cut_assert_false(grn_obj_is_expr(context, grn_ctx_get(context, "select", -1)));
+  expr = grn_expr_create(context, NULL, 0);
+  cut_assert_true(grn_obj_is_expr(context, expr));
+  grn_expr_close(ctx, expr);
 }
 
 void
