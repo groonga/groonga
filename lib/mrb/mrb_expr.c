@@ -682,7 +682,12 @@ mrb_grn_expression_parse(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "s|H", &query, &query_size, &mrb_options);
 
   if (!mrb_nil_p(mrb_options)) {
+    mrb_value mrb_default_column;
     mrb_value mrb_flags;
+
+    mrb_default_column =
+      grn_mrb_options_get_lit(mrb, mrb_options, "default_column");
+    default_column = GRN_MRB_DATA_PTR(mrb_default_column);
 
     mrb_flags = grn_mrb_options_get_lit(mrb, mrb_options, "flags");
     if (!mrb_nil_p(mrb_flags)) {
