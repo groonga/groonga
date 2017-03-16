@@ -155,7 +155,7 @@ test_is_builtin(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_builtin(context, object));
   } else {
     cut_assert_false(grn_obj_is_builtin(context, object));
@@ -226,7 +226,7 @@ test_is_table(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_table(context, object));
   } else {
     cut_assert_false(grn_obj_is_table(context, object));
@@ -264,7 +264,7 @@ test_is_column(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_column(context, object));
   } else {
     cut_assert_false(grn_obj_is_column(context, object));
@@ -304,7 +304,7 @@ test_is_vector_column(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_vector_column(context, object));
   } else {
     cut_assert_false(grn_obj_is_vector_column(context, object));
@@ -339,7 +339,7 @@ test_is_weight_vector_column(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_weight_vector_column(context, object));
   } else {
     cut_assert_false(grn_obj_is_weight_vector_column(context, object));
@@ -375,7 +375,7 @@ test_is_reference_column(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_reference_column(context, object));
   } else {
     cut_assert_false(grn_obj_is_reference_column(context, object));
@@ -413,7 +413,7 @@ test_is_data_column(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_data_column(context, object));
   } else {
     cut_assert_false(grn_obj_is_data_column(context, object));
@@ -449,7 +449,7 @@ test_is_index_column(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_index_column(context, object));
   } else {
     cut_assert_false(grn_obj_is_index_column(context, object));
@@ -486,7 +486,7 @@ test_is_accessor(gconstpointer data)
   table = grn_ctx_get(context, "Users", -1);
   name = gcut_data_get_string(data, "name");
   object = grn_obj_column(context, table, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_accessor(context, object));
   } else {
     cut_assert_false(grn_obj_is_accessor(context, object));
@@ -524,7 +524,7 @@ test_is_key_accessor(gconstpointer data)
   table = grn_ctx_get(context, "Users", -1);
   name = gcut_data_get_string(data, "name");
   object = grn_obj_column(context, table, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_key_accessor(context, object));
   } else {
     cut_assert_false(grn_obj_is_key_accessor(context, object));
@@ -558,7 +558,7 @@ test_is_type(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_type(context, object));
   } else {
     cut_assert_false(grn_obj_is_type(context, object));
@@ -593,7 +593,7 @@ test_is_text_family_type(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_text_family_type(context, object));
   } else {
     cut_assert_false(grn_obj_is_text_family_type(context, object));
@@ -627,7 +627,7 @@ test_is_proc(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_proc(context, object));
   } else {
     cut_assert_false(grn_obj_is_proc(context, object));
@@ -659,7 +659,7 @@ test_is_tokenizer_proc(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_tokenizer_proc(context, object));
   } else {
     cut_assert_false(grn_obj_is_tokenizer_proc(context, object));
@@ -691,7 +691,7 @@ test_is_function_proc(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_function_proc(context, object));
   } else {
     cut_assert_false(grn_obj_is_function_proc(context, object));
@@ -723,7 +723,7 @@ test_is_selector_proc(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_selector_proc(context, object));
   } else {
     cut_assert_false(grn_obj_is_selector_proc(context, object));
@@ -755,7 +755,7 @@ test_is_normalizer_proc(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_normalizer_proc(context, object));
   } else {
     cut_assert_false(grn_obj_is_normalizer_proc(context, object));
@@ -789,7 +789,7 @@ test_is_token_filter_proc(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_token_filter_proc(context, object));
   } else {
     cut_assert_false(grn_obj_is_token_filter_proc(context, object));
@@ -821,7 +821,7 @@ test_is_scorer_proc(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_scorer_proc(context, object));
   } else {
     cut_assert_false(grn_obj_is_scorer_proc(context, object));
@@ -853,7 +853,7 @@ test_is_window_function_proc(gconstpointer data)
 
   name = gcut_data_get_string(data, "name");
   object = grn_ctx_get(context, name, strlen(name));
-  if (gcut_data_get_string(data, "expected")) {
+  if (gcut_data_get_boolean(data, "expected")) {
     cut_assert_true(grn_obj_is_window_function_proc(context, object));
   } else {
     cut_assert_false(grn_obj_is_window_function_proc(context, object));
