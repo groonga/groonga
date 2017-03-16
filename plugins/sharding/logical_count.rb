@@ -66,8 +66,8 @@ module Groonga
         table_name = shard.table_name
 
         expression_builder = RangeExpressionBuilder.new(shard_key,
-                                                        target_range,
-                                                        filter)
+                                                        target_range)
+        expression_builder.filter = filter
         if cover_type == :all
           log_use_range_index(false, table_name, __LINE__, __method__)
           if filter.nil?

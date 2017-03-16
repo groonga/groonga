@@ -50,8 +50,7 @@ module Groonga
         end
 
         expression_builder = RangeExpressionBuilder.new(shard_key,
-                                                        target_range,
-                                                        nil)
+                                                        target_range)
         case cover_type
         when :partial_min
           remove_records(table) do |expression|

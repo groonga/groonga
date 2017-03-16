@@ -25,6 +25,8 @@ module Groonga
                  "drilldown_calc_target",
                  "sort_keys",
                  "drilldown_sort_keys",
+                 "match_columns",
+                 "query",
                ])
 
       def run_body(input)
@@ -76,6 +78,8 @@ module Groonga
         key << "#{input[:limit]}\0"
         key << "#{input[:drilldown]}\0"
         key << "#{drilldown_sort_keys}\0"
+        key << "#{input[:match_columns]}\0"
+        key << "#{input[:query]}\0"
         key << "#{input[:drilldown_output_columns]}\0"
         key << "#{input[:drilldown_offset]}\0"
         key << "#{input[:drilldown_limit]}\0"
@@ -266,6 +270,8 @@ module Groonga
         include KeysParsable
 
         attr_reader :enumerator
+        attr_reader :match_columns
+        attr_reader :query
         attr_reader :filter
         attr_reader :offset
         attr_reader :limit
@@ -277,9 +283,12 @@ module Groonga
         attr_reader :plain_drilldown
         attr_reader :labeled_drilldowns
         attr_reader :temporary_tables
+        attr_reader :expressions
         def initialize(input)
           @input = input
           @enumerator = LogicalEnumerator.new("logical_select", @input)
+          @match_columns = @input[:match_columns]
+          @query = @input[:query]
           @filter = @input[:filter]
           @offset = (@input[:offset] || 0).to_i
           @limit = (@input[:limit] || 10).to_i
@@ -295,6 +304,8 @@ module Groonga
           @labeled_drilldowns = LabeledDrilldowns.parse(@input)
 
           @temporary_tables = []
+
+          @expressions = []
         end
 
         def close
@@ -312,6 +323,10 @@ module Groonga
 
           @temporary_tables.each do |table|
             table.close
+          end
+
+          @expressions.each do |expression|
+            expression.close
           end
         end
       end
@@ -396,11 +411,12 @@ module Groonga
         def close
         end
 
-        def apply(table)
+        def apply(table, condition=nil)
           column = table.create_column(@label, @flags, @type)
           expression = Expression.create(table)
           begin
             expression.parse(@value)
+            expression.condition = condition if condition
             table.apply_expression(column, expression)
           ensure
             expression.close
@@ -700,6 +716,8 @@ module Groonga
 
           @target_table = @shard.table
 
+          @match_columns = @context.match_columns
+          @query = @context.query
           @filter = @context.filter
           @sort_keys = @context.sort_keys
           @result_sets = @context.result_sets
@@ -721,41 +739,38 @@ module Groonga
             raise InvalidArgument, message
           end
 
-          expression_builder = RangeExpressionBuilder.new(shard_key,
-                                                          @target_range,
-                                                          @filter)
           @context.dynamic_columns.each_initial do |dynamic_column|
             if @target_table == @shard.table
-              create_expression(@target_table) do |expression|
-                expression.append_constant(true, Operator::PUSH, 1)
-                @target_table = @target_table.select(expression)
-              end
+              @target_table = create_all_match_table(@target_table)
+              @context.temporary_tables << @target_table
             end
             dynamic_column.apply(@target_table)
           end
 
-          case @cover_type
-          when :all
-            filter_shard_all(expression_builder)
-          when :partial_min
-            filter_table do |expression|
-              expression_builder.build_partial_min(expression)
-            end
-          when :partial_max
-            filter_table do |expression|
-              expression_builder.build_partial_max(expression)
-            end
-          when :partial_min_and_max
-            filter_table do |expression|
-              expression_builder.build_partial_min_and_max(expression)
+          create_expression_builder(shard_key) do |expression_builder|
+            case @cover_type
+            when :all
+              filter_shard_all(expression_builder)
+            when :partial_min
+              filter_table do |expression|
+                expression_builder.build_partial_min(expression)
+              end
+            when :partial_max
+              filter_table do |expression|
+                expression_builder.build_partial_max(expression)
+              end
+            when :partial_min_and_max
+              filter_table do |expression|
+                expression_builder.build_partial_min_and_max(expression)
+              end
             end
           end
         end
 
         private
         def filter_shard_all(expression_builder)
-          if @filter.nil?
-            add_result_set(@target_table)
+          if @query.nil? and @filter.nil?
+            add_result_set(@target_table, nil)
           else
             filter_table do |expression|
               expression_builder.build_all(expression)
@@ -765,22 +780,32 @@ module Groonga
 
         def create_expression(table)
           expression = Expression.create(table)
+          @context.expressions << expression
+          expression
+        end
+
+        def create_expression_builder(shard_key)
+          expression_builder = RangeExpressionBuilder.new(shard_key,
+                                                          @target_range)
+          expression_builder.match_columns = @match_columns
+          expression_builder.query = @query
+          expression_builder.filter = @filter
           begin
-            yield(expression)
+            yield(expression_builder)
           ensure
-            expression.close
+            expression = expression_builder.match_columns_expression
+            @context.expressions << expression if expression
           end
         end
 
         def filter_table
           table = @target_table
-          create_expression(table) do |expression|
-            yield(expression)
-            add_result_set(table.select(expression))
-          end
+          expression = create_expression(table)
+          yield(expression)
+          add_result_set(table.select(expression), expression)
         end
 
-        def add_result_set(result_set)
+        def add_result_set(result_set, condition)
           if result_set.empty?
             result_set.close
             return
@@ -792,6 +817,16 @@ module Groonga
             @unsorted_result_sets << result_set
             sorted_result_set = result_set.sort(@sort_keys)
             @result_sets << sorted_result_set
+          end
+        end
+
+        def create_all_match_table(table)
+          expression = Expression.create(table)
+          begin
+            expression.append_constant(true, Operator::PUSH, 1)
+            table.select(expression)
+          ensure
+            expression.close
           end
         end
       end

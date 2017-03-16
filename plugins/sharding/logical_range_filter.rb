@@ -211,8 +211,8 @@ module Groonga
           end
 
           expression_builder = RangeExpressionBuilder.new(shard_key,
-                                                          @target_range,
-                                                          @filter)
+                                                          @target_range)
+          expression_builder.filter = @filter
 
           index_info = shard_key.find_index(Operator::LESS)
           if index_info
