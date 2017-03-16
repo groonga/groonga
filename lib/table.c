@@ -21,13 +21,37 @@
 
 grn_rc
 grn_table_apply_expr(grn_ctx *ctx,
-                           grn_obj *table,
-                           grn_obj *output_column,
-                           grn_obj *expr)
+                     grn_obj *table,
+                     grn_obj *output_column,
+                     grn_obj *expr)
 {
   grn_obj *record;
 
   GRN_API_ENTER;
+
+  if (!grn_obj_is_data_column(ctx, output_column)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, output_column);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][apply-expr] output column isn't data column: %.*s",
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  if (!grn_obj_is_expr(ctx, expr)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, expr);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][apply-expr] expr is invalid: %.*s",
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    GRN_API_RETURN(ctx->rc);
+  }
 
   record = grn_expr_get_var_by_offset(ctx, expr, 0);
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, table, cursor, id, GRN_CURSOR_BY_ID) {
