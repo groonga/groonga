@@ -771,6 +771,7 @@ module Groonga
         def filter_shard_all(expression_builder)
           if @query.nil? and @filter.nil?
             add_result_set(@target_table, nil)
+            @context.temporary_tables.delete(@target_table)
           else
             filter_table do |expression|
               expression_builder.build_all(expression)
