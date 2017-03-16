@@ -222,10 +222,10 @@ GRN_API grn_obj *grn_table_tokenize(grn_ctx *ctx, grn_obj *table,
                                     const char *str, unsigned int str_len,
                                     grn_obj *buf, grn_bool addp);
 
-GRN_API grn_rc grn_table_apply_expression(grn_ctx *ctx,
-                                          grn_obj *table,
-                                          grn_obj *output_column,
-                                          grn_obj *expression);
+GRN_API grn_rc grn_table_apply_expr(grn_ctx *ctx,
+                                    grn_obj *table,
+                                    grn_obj *output_column,
+                                    grn_obj *expr);
 
 #ifdef __cplusplus
 }

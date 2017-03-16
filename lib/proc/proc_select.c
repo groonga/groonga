@@ -1357,7 +1357,7 @@ grn_select_apply_columns(grn_ctx *ctx,
       }
     } else {
       grn_rc rc;
-      rc = grn_table_apply_expression(ctx, table, column, expression);
+      rc = grn_table_apply_expr(ctx, table, column, expression);
       if (rc != GRN_SUCCESS) {
         grn_obj_close(ctx, expression);
         grn_obj_close(ctx, column);

@@ -20,20 +20,20 @@
 #include "grn_ctx.h"
 
 grn_rc
-grn_table_apply_expression(grn_ctx *ctx,
+grn_table_apply_expr(grn_ctx *ctx,
                            grn_obj *table,
                            grn_obj *output_column,
-                           grn_obj *expression)
+                           grn_obj *expr)
 {
   grn_obj *record;
 
   GRN_API_ENTER;
 
-  record = grn_expr_get_var_by_offset(ctx, expression, 0);
+  record = grn_expr_get_var_by_offset(ctx, expr, 0);
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, table, cursor, id, GRN_CURSOR_BY_ID) {
     grn_obj *value;
     GRN_RECORD_SET(ctx, record, id);
-    value = grn_expr_exec(ctx, expression, 0);
+    value = grn_expr_exec(ctx, expr, 0);
     if (value) {
       grn_obj_set_value(ctx, output_column, id, value, GRN_OBJ_SET);
     }
