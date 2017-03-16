@@ -198,6 +198,28 @@ module Groonga
         end
       end
 
+      class LabeledArgumentParser
+        def initialize(input)
+          @input = input
+          @arguments = input.arguments
+          @argument = Record.new(@arguments, nil)
+        end
+
+        def parse(prefix_pattern)
+          pattern = /\A#{prefix_pattern}\[(.+?)\]\.(.+)\z/
+          labeled_arguments = {}
+          @arguments.each do |argument_id|
+            @argument.id = argument_id
+            key = @argument.key
+            match_data = pattern.match(key)
+            next if match_data.nil?
+            labeled_argument = (labeled_arguments[match_data[1]] ||= {})
+            labeled_argument[match_data[2]] = @input[key]
+          end
+          labeled_arguments
+        end
+      end
+
       module KeysParsable
         private
         def parse_keys(raw_keys)
@@ -249,10 +271,12 @@ module Groonga
         attr_reader :limit
         attr_reader :sort_keys
         attr_reader :output_columns
+        attr_reader :dynamic_columns
         attr_reader :result_sets
         attr_reader :unsorted_result_sets
         attr_reader :plain_drilldown
         attr_reader :labeled_drilldowns
+        attr_reader :temporary_tables
         def initialize(input)
           @input = input
           @enumerator = LogicalEnumerator.new("logical_select", @input)
@@ -262,11 +286,15 @@ module Groonga
           @sort_keys = parse_keys(@input[:sort_keys] || @input[:sortby])
           @output_columns = @input[:output_columns] || "_id, _key, *"
 
+          @dynamic_columns = DynamicColumns.parse(@input, "")
+
           @result_sets = []
           @unsorted_result_sets = []
 
           @plain_drilldown = PlainDrilldownExecuteContext.new(@input)
           @labeled_drilldowns = LabeledDrilldowns.parse(@input)
+
+          @temporary_tables = []
         end
 
         def close
@@ -279,6 +307,131 @@ module Groonga
 
           @plain_drilldown.close
           @labeled_drilldowns.close
+
+          @dynamic_columns.close
+
+          @temporary_tables.each do |table|
+            table.close
+          end
+        end
+      end
+
+      class DynamicColumns
+        class << self
+          def parse(input, prefix)
+            parser = LabeledArgumentParser.new(input)
+            columns = parser.parse(/#{Regexp.escape(prefix)}columns?/)
+
+            initial_contexts = []
+            filtered_contexts = []
+            output_contexts = []
+            columns.each do |label, parameters|
+              contexts = nil
+              case parameters["stage"]
+              when "initial"
+                contexts = initial_contexts
+              when "filtered"
+                contexts = filtered_contexts
+              when "output"
+                contexts = output_contexts
+              else
+                next
+              end
+              contexts << DynamicColumnExecuteContext.new(label, parameters)
+            end
+
+            new(initial_contexts,
+                filtered_contexts,
+                output_contexts)
+          end
+        end
+
+        def initialize(initial_contexts,
+                       filtered_contexts,
+                       output_contexts)
+          @initial_contexts = initial_contexts
+          @filtered_contexts = filtered_contexts
+          @output_contexts = output_contexts
+        end
+
+        def each_initial(&block)
+          @initial_contexts.each(&block)
+        end
+
+        def each_filtered(&block)
+          @filtered_contexts.each(&block)
+        end
+
+        def each_output(&block)
+          @output_contexts.each(&block)
+        end
+
+        def close
+          @initial_contexts.each do |context|
+            context.close
+          end
+          @filtered_contexts.each do |context|
+            context.close
+          end
+          @output_contexts.each do |context|
+            context.close
+          end
+        end
+      end
+
+      class DynamicColumnExecuteContext
+        attr_reader :label
+        attr_reader :stage
+        attr_reader :type
+        attr_reader :flags
+        attr_reader :value
+        def initialize(label, parameters)
+          @label = label
+          @stage = parameters["stage"]
+          @type = parse_type(parameters["type"])
+          @flags = parse_flags(parameters["flags"] || "COLUMN_SCALAR")
+          @value = parameters["value"]
+        end
+
+        def close
+        end
+
+        def apply(table)
+          column = table.create_column(@label, @flags, @type)
+          expression = Expression.create(table)
+          begin
+            expression.parse(@value)
+            table.apply_expression(column, expression)
+          ensure
+            expression.close
+          end
+        end
+
+        private
+        def parse_type(type_raw)
+          return nil if type_raw.nil?
+
+          type = Context.instance[type_raw]
+          if type.nil?
+            message = "#{error_message_tag} unknown type: <#{type_raw}>"
+            raise InvalidArgument, message
+          end
+
+          case type
+          when Type, Table
+            type
+          else
+            message = "#{error_message_tag} invalid type: #{type.grn_inspect}"
+            raise InvalidArgument, message
+          end
+        end
+
+        def parse_flags(flags_raw)
+          Column.parse_flags(error_message_tag, flags_raw)
+        end
+
+        def error_message_tag
+          "[logical_select][columns][#{@stage}][#{@label}]"
         end
       end
 
@@ -334,24 +487,14 @@ module Groonga
 
         class << self
           def parse(input)
-            drilldowns = {}
-            arguments = input.arguments
-            argument = Record.new(arguments, nil)
-            arguments.each do |argument_id|
-              argument.id = argument_id
-              key = argument.key
-              match_data = /\Adrilldowns?\[(.+?)\]\.(.+)\z/.match(key)
-              next if match_data.nil?
-              drilldown = (drilldowns[match_data[1]] ||= {})
-              drilldown[match_data[2]] = input[key]
-            end
+            parser = LabeledArgumentParser.new(input)
+            drilldowns = parser.parse(/drilldowns?/)
 
             contexts = []
             drilldowns.each do |label, parameters|
               next if parameters["keys"].nil?
               contexts << LabeledDrilldownExecuteContext.new(label, parameters)
             end
-            return nil if contexts.nil?
 
             new(contexts)
           end
@@ -555,6 +698,8 @@ module Groonga
           @shard = shard
           @shard_range = shard_range
 
+          @target_table = @shard.table
+
           @filter = @context.filter
           @sort_keys = @context.sort_keys
           @result_sets = @context.result_sets
@@ -567,7 +712,7 @@ module Groonga
 
         def execute
           return if @cover_type == :none
-          return if @shard.table.empty?
+          return if @target_table.empty?
 
           shard_key = @shard.key
           if shard_key.nil?
@@ -579,6 +724,16 @@ module Groonga
           expression_builder = RangeExpressionBuilder.new(shard_key,
                                                           @target_range,
                                                           @filter)
+          @context.dynamic_columns.each_initial do |dynamic_column|
+            if @target_table == @shard.table
+              create_expression(@target_table) do |expression|
+                expression.append_constant(true, Operator::PUSH, 1)
+                @target_table = @target_table.select(expression)
+              end
+            end
+            dynamic_column.apply(@target_table)
+          end
+
           case @cover_type
           when :all
             filter_shard_all(expression_builder)
@@ -600,7 +755,7 @@ module Groonga
         private
         def filter_shard_all(expression_builder)
           if @filter.nil?
-            add_result_set(@shard.table)
+            add_result_set(@target_table)
           else
             filter_table do |expression|
               expression_builder.build_all(expression)
@@ -618,7 +773,7 @@ module Groonga
         end
 
         def filter_table
-          table = @shard.table
+          table = @target_table
           create_expression(table) do |expression|
             yield(expression)
             add_result_set(table.select(expression))
