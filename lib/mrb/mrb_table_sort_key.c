@@ -32,16 +32,12 @@
 static void
 mrb_grn_table_sort_key_free(mrb_state *mrb, void *data)
 {
-  grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_table_sort_key *sort_key = data;
 
   if (!sort_key) {
     return;
   }
 
-  if (sort_key->key) {
-    grn_obj_unlink(ctx, sort_key->key);
-  }
   mrb_free(mrb, sort_key);
 }
 
