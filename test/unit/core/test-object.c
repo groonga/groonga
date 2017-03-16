@@ -869,7 +869,7 @@ test_is_expr(void)
   cut_assert_false(grn_obj_is_expr(context, grn_ctx_get(context, "select", -1)));
   expr = grn_expr_create(context, NULL, 0);
   cut_assert_true(grn_obj_is_expr(context, expr));
-  grn_expr_close(ctx, expr);
+  grn_expr_close(context, expr);
 }
 
 void
