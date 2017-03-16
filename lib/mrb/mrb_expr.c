@@ -526,6 +526,15 @@ mrb_grn_expression_initialize(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_expression_is_empty(mrb_state *mrb, mrb_value self)
+{
+  grn_expr *expr;
+
+  expr = DATA_PTR(self);
+  return mrb_bool_value(expr->codes_curr == 0);
+}
+
+static mrb_value
 mrb_grn_expression_codes(mrb_state *mrb, mrb_value self)
 {
   grn_expr *expr;
@@ -888,6 +897,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_expression_initialize, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "empty?",
+                    mrb_grn_expression_is_empty, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "codes",
                     mrb_grn_expression_codes, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "[]",
