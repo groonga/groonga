@@ -22,13 +22,13 @@ case "${TRAVIS_OS_NAME}" in
     brew outdated pkg-config || brew upgrade pkg-config
     brew reinstall libtool
     brew outdated libevent || brew upgrade libevent
+    brew outdated pcre || brew upgrade pcre
     brew install \
          msgpack \
          mecab \
-         mecab-ipadic \
-         pcre \
-         cutter
+         mecab-ipadic
     brew install --force openssl
+    # brew install cutter
     ;;
 esac
 
