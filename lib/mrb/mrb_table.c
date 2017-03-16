@@ -375,6 +375,27 @@ mrb_grn_table_delete(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+static mrb_value
+mrb_grn_table_apply_expression(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mrb_output_column;
+  mrb_value mrb_expression;
+  grn_obj *table;
+  grn_obj *output_column = NULL;
+  grn_obj *expression = NULL;
+
+  mrb_get_args(mrb, "oo", &mrb_output_column, &mrb_expression);
+
+  table = DATA_PTR(self);
+  output_column = GRN_MRB_DATA_PTR(mrb_output_column);
+  expression = GRN_MRB_DATA_PTR(mrb_expression);
+  grn_table_apply_expr(ctx, table, output_column, expression);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_table_init(grn_ctx *ctx)
 {
@@ -418,5 +439,7 @@ grn_mrb_table_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "delete",
                     mrb_grn_table_delete, MRB_ARGS_REQ(1));
 
+  mrb_define_method(mrb, klass, "apply_expression",
+                    mrb_grn_table_apply_expression, MRB_ARGS_REQ(2));
 }
 #endif

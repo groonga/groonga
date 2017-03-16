@@ -24,6 +24,9 @@
 extern "C" {
 #endif
 
+#define GRN_MRB_DATA_PTR(mrb_object)                            \
+  (mrb_nil_p((mrb_object)) ? NULL : DATA_PTR((mrb_object)))
+
 void grn_mrb_converter_init(grn_ctx *ctx);
 
 typedef struct {
