@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2014 Brazil
+  Copyright(C) 2013-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
 */
 
 #include "../grn_ctx_impl.h"
+#include "../grn_proc.h"
 
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
@@ -27,6 +28,24 @@
 #include "mrb_column.h"
 #include "mrb_bulk.h"
 #include "mrb_converter.h"
+
+static mrb_value
+mrb_grn_column_class_parse_flags(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  char *error_message_tag;
+  char *flags_text;
+  mrb_int flags_text_size;
+  grn_column_flags flags;
+
+  mrb_get_args(mrb, "Ss", &error_message_tag, &flags_text, &flags_text_size);
+
+  flags = grn_proc_column_parse_flags(ctx,
+                                      error_message_tag,
+                                      flags_text,
+                                      flags_text + flags_text_size);
+  return mrb_fixnum_value(flags);
+}
 
 static mrb_value
 mrb_grn_column_array_reference(mrb_state *mrb, mrb_value self)
@@ -116,6 +135,9 @@ grn_mrb_column_init(grn_ctx *ctx)
 
   klass = mrb_define_class_under(mrb, module, "Column", object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
+
+  mrb_define_class_method(mrb, klass, "parse_flags",
+                          mrb_grn_column_class_parse_flags, MRB_ARGS_REQ(2));
 
   mrb_define_method(mrb, klass, "[]",
                     mrb_grn_column_array_reference, MRB_ARGS_REQ(1));
