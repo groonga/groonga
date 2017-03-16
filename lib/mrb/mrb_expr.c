@@ -891,6 +891,21 @@ grn_mrb_expr_init(grn_ctx *ctx)
   klass = mrb_define_class_under(mrb, module, "Expression", object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
+#define DEFINE_FLAG(name)                               \
+  mrb_define_const(mrb, klass,                          \
+                   #name,                               \
+                   mrb_fixnum_value(GRN_EXPR_ ## name))
+
+  DEFINE_FLAG(SYNTAX_QUERY);
+  DEFINE_FLAG(SYNTAX_SCRIPT);
+  DEFINE_FLAG(SYNTAX_OUTPUT_COLUMNS);
+  DEFINE_FLAG(ALLOW_PRAGMA);
+  DEFINE_FLAG(ALLOW_COLUMN);
+  DEFINE_FLAG(ALLOW_UPDATE);
+  DEFINE_FLAG(ALLOW_LEADING_NOT);
+
+#undef DEFINE_FLAG
+
   mrb_define_class_method(mrb, klass, "create",
                           mrb_grn_expression_class_create,
                           MRB_ARGS_REQ(1));
