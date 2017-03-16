@@ -812,6 +812,14 @@ module Groonga
             return
           end
 
+          @context.dynamic_columns.each_filtered do |dynamic_column|
+            if result_set == @shard.table
+              @context.temporary_tables << result_set
+              result_set = create_all_match_table(result_set)
+            end
+            dynamic_column.apply(result_set, condition)
+          end
+
           if @sort_keys.empty?
             @result_sets << result_set
           else
