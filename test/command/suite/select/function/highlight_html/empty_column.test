@@ -9,6 +9,6 @@ load --table Entries
 {"body": ""}
 ]
 
-select Entries --output_columns \
+select Entries \
   --query 'body:@groonga OR _id:1' \
   --output_columns 'highlight_html(body)'

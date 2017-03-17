@@ -9,6 +9,6 @@ load --table Entries
 {"body": "Mroonga is a ＭｙＳＱＬ storage engine based on Groonga. <b>Rroonga</b> is a Ruby binding of Groonga."}
 ]
 
-select Entries --output_columns \
+select Entries \
   --match_columns body --query 'groonga' \
   --output_columns 'highlight_html(body)'
