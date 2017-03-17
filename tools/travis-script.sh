@@ -55,7 +55,7 @@ case "${BUILD_TOOL}" in
               --testee groonga-httpd
         ;;
       *)
-        test/unit/run-test.sh
+        test/unit/run-test.sh -v v
         test/command/run-test.sh ${command_test_options}
         if [ "${ENABLE_MRUBY}" = "yes" ]; then
           test/mruby/run-test.rb
