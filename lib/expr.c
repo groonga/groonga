@@ -27,6 +27,7 @@
 #include "grn_scanner.h"
 #include "grn_util.h"
 #include "grn_report.h"
+#include "grn_token_cursor.h"
 #include "grn_mrb.h"
 #include "mrb/mrb_expr.h"
 
@@ -8722,9 +8723,56 @@ grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords)
           butp = 1 - butp;
         }
       } else {
-        if (si->op == GRN_OP_MATCH && si->query) {
-          if (butp == (si->logical_op == GRN_OP_AND_NOT)) {
-            GRN_PTR_PUT(ctx, keywords, si->query);
+        if (butp == (si->logical_op == GRN_OP_AND_NOT) &&
+            si->query) {
+          switch (si->op) {
+          case GRN_OP_MATCH :
+            if (keywords->header.type == GRN_PVECTOR) {
+              GRN_PTR_PUT(ctx, keywords, si->query);
+            } else {
+              grn_vector_add_element(ctx,
+                                     keywords,
+                                     GRN_TEXT_VALUE(si->query),
+                                     GRN_TEXT_LEN(si->query),
+                                     0,
+                                     GRN_DB_TEXT);
+            }
+            break;
+          case GRN_OP_SIMILAR :
+            if (keywords->header.type == GRN_VECTOR &&
+                GRN_BULK_VSIZE(&(si->index)) > 0) {
+              grn_token_cursor *token_cursor;
+              unsigned int token_flags = 0;
+              grn_obj *index = GRN_PTR_VALUE(&(si->index));
+              grn_obj *lexicon;
+
+              lexicon = grn_ctx_at(ctx, index->header.domain);
+              token_cursor = grn_token_cursor_open(ctx,
+                                                   lexicon,
+                                                   GRN_TEXT_VALUE(si->query),
+                                                   GRN_TEXT_LEN(si->query),
+                                                   GRN_TOKENIZE_GET,
+                                                   token_flags);
+              if (token_cursor) {
+                while (token_cursor->status != GRN_TOKEN_CURSOR_DONE) {
+                  grn_id token_id;
+                  token_id = grn_token_cursor_next(ctx, token_cursor);
+                  if (token_id == GRN_ID_NIL) {
+                    continue;
+                  }
+                  grn_vector_add_element(ctx,
+                                         keywords,
+                                         token_cursor->curr,
+                                         token_cursor->curr_size,
+                                         0,
+                                         GRN_DB_TEXT);
+                }
+                grn_token_cursor_close(ctx, token_cursor);
+              }
+            }
+            break;
+          default :
+            break;
           }
         }
         if (si->flags & SCAN_PUSH) {
