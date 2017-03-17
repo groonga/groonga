@@ -18,6 +18,7 @@
 
 #include "grn.h"
 #include "grn_ctx.h"
+#include "grn_expr_executor.h"
 
 grn_rc
 grn_table_apply_expr(grn_ctx *ctx,
@@ -25,7 +26,7 @@ grn_table_apply_expr(grn_ctx *ctx,
                      grn_obj *output_column,
                      grn_obj *expr)
 {
-  grn_obj *record;
+  grn_expr_executor *executor;
 
   GRN_API_ENTER;
 
@@ -53,15 +54,21 @@ grn_table_apply_expr(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
-  record = grn_expr_get_var_by_offset(ctx, expr, 0);
+  executor = grn_expr_executor_open(ctx, expr);
+  if (!executor) {
+    GRN_API_RETURN(ctx->rc);
+  }
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, table, cursor, id, GRN_CURSOR_BY_ID) {
     grn_obj *value;
-    GRN_RECORD_SET(ctx, record, id);
-    value = grn_expr_exec(ctx, expr, 0);
+    value = grn_expr_executor_exec(ctx, executor, id);
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
     if (value) {
       grn_obj_set_value(ctx, output_column, id, value, GRN_OBJ_SET);
     }
   } GRN_TABLE_EACH_END(ctx, cursor);
+  grn_expr_executor_close(ctx, executor);
 
   GRN_API_RETURN(ctx->rc);
 }
