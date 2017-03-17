@@ -24,6 +24,7 @@
 #include "grn_geo.h"
 #include "grn_expr.h"
 #include "grn_expr_code.h"
+#include "grn_expr_executor.h"
 #include "grn_scanner.h"
 #include "grn_util.h"
 #include "grn_report.h"
@@ -5264,10 +5265,18 @@ exec_result_to_score(grn_ctx *ctx, grn_obj *result, grn_obj *score_buffer)
   case GRN_VOID :
     return 0;
   case GRN_BULK :
-    if (grn_obj_cast(ctx, result, score_buffer, GRN_FALSE) != GRN_SUCCESS) {
-      return 1;
+    switch (result->header.domain) {
+    case GRN_DB_BOOL :
+      return GRN_BOOL_VALUE(result) ? 1 : 0;
+    case GRN_DB_INT32 :
+      return GRN_INT32_VALUE(result);
+    default :
+      GRN_BULK_REWIND(score_buffer);
+      if (grn_obj_cast(ctx, result, score_buffer, GRN_FALSE) != GRN_SUCCESS) {
+        return 1;
+      }
+      return GRN_INT32_VALUE(score_buffer);
     }
-    return GRN_INT32_VALUE(score_buffer);
   case GRN_UVECTOR :
   case GRN_PVECTOR :
   case GRN_VECTOR :
@@ -5277,617 +5286,33 @@ exec_result_to_score(grn_ctx *ctx, grn_obj *result, grn_obj *score_buffer)
   }
 }
 
-typedef union {
-  struct {
-    grn_obj *expr;
-    grn_obj *variable;
-  } common;
-  struct {
-    grn_obj *expr;
-    grn_obj *variable;
-    grn_obj score_buffer;
-  } general;
-  struct {
-    grn_obj *expr;
-    grn_obj *variable;
-    int32_t score;
-  } constant;
-  struct {
-    grn_obj *expr;
-    grn_obj *variable;
-    grn_obj *column;
-    grn_obj value_buffer;
-    grn_obj score_buffer;
-  } value;
-  struct {
-    grn_obj *expr;
-    grn_obj *variable;
-#ifdef GRN_SUPPORT_REGEXP
-    OnigRegex regex;
-    grn_obj value_buffer;
-    grn_obj *normalizer;
-#endif /* GRN_SUPPORT_REGEXP */
-  } simple_regexp;
-  struct {
-    grn_obj *expr;
-    grn_obj *variable;
-    grn_obj value_buffer;
-    grn_obj constant_buffer;
-    int32_t score;
-    grn_bool (*exec)(grn_ctx *ctx, grn_obj *x, grn_obj *y);
-  } simple_condition;
-} grn_table_select_sequential_data;
-
-typedef void (*grn_table_select_sequential_init_func)(grn_ctx *ctx,
-                                                      grn_table_select_sequential_data *data);
-typedef int32_t (*grn_table_select_sequential_exec_func)(grn_ctx *ctx,
-                                                         grn_id id,
-                                                         grn_table_select_sequential_data *data);
-typedef void (*grn_table_select_sequential_fin_func)(grn_ctx *ctx,
-                                                     grn_table_select_sequential_data *data);
-
-static void
-grn_table_select_sequential_init_general(grn_ctx *ctx,
-                                         grn_table_select_sequential_data *data)
-{
-  GRN_INT32_INIT(&(data->general.score_buffer), 0);
-}
-
-static int32_t
-grn_table_select_sequential_exec_general(grn_ctx *ctx,
-                                         grn_id id,
-                                         grn_table_select_sequential_data *data)
-{
-  grn_obj *result;
-  GRN_RECORD_SET(ctx, data->general.variable, id);
-  result = grn_expr_exec(ctx, data->general.expr, 0);
-  if (ctx->rc) {
-    return -1;
-  }
-  return exec_result_to_score(ctx, result, &(data->general.score_buffer));
-}
-
-static void
-grn_table_select_sequential_fin_general(grn_ctx *ctx,
-                                        grn_table_select_sequential_data *data)
-{
-  GRN_OBJ_FIN(ctx, &(data->general.score_buffer));
-}
-
-static grn_bool
-grn_table_select_sequential_is_constant(grn_ctx *ctx, grn_obj *expr)
-{
-  grn_expr *e = (grn_expr *)expr;
-  grn_expr_code *target;
-
-  if (e->codes_curr != 1) {
-    return GRN_FALSE;
-  }
-
-  target = &(e->codes[0]);
-
-  if (target->op != GRN_OP_PUSH) {
-    return GRN_FALSE;
-  }
-  if (!target->value) {
-    return GRN_FALSE;
-  }
-
-  return GRN_TRUE;
-}
-
-static void
-grn_table_select_sequential_init_constant(grn_ctx *ctx,
-                                          grn_table_select_sequential_data *data)
-{
-  grn_obj *result;
-  grn_obj score_buffer;
-
-  GRN_INT32_INIT(&score_buffer, 0);
-  result = grn_expr_exec(ctx, data->constant.expr, 0);
-  if (ctx->rc) {
-    data->constant.score = -1;
-  } else {
-    data->constant.score = exec_result_to_score(ctx, result, &score_buffer);
-  }
-  GRN_OBJ_FIN(ctx, &score_buffer);
-}
-
-static int32_t
-grn_table_select_sequential_exec_constant(grn_ctx *ctx,
-                                          grn_id id,
-                                          grn_table_select_sequential_data *data)
-{
-  return data->constant.score;
-}
-
-static void
-grn_table_select_sequential_fin_constant(grn_ctx *ctx,
-                                         grn_table_select_sequential_data *data)
-{
-}
-
-static grn_bool
-grn_table_select_sequential_is_value(grn_ctx *ctx, grn_obj *expr)
-{
-  grn_expr *e = (grn_expr *)expr;
-  grn_expr_code *target;
-
-  if (e->codes_curr != 1) {
-    return GRN_FALSE;
-  }
-
-  target = &(e->codes[0]);
-
-  if (target->op != GRN_OP_GET_VALUE) {
-    return GRN_FALSE;
-  }
-  if (!target->value) {
-    return GRN_FALSE;
-  }
-
-  return GRN_TRUE;
-}
-
-static void
-grn_table_select_sequential_init_value(grn_ctx *ctx,
-                                       grn_table_select_sequential_data *data)
-{
-  grn_expr *e = (grn_expr *)(data->value.expr);
-
-  data->value.column = e->codes[0].value;
-  GRN_VOID_INIT(&(data->value.value_buffer));
-  GRN_INT32_INIT(&(data->value.score_buffer), 0);
-}
-
-static int32_t
-grn_table_select_sequential_exec_value(grn_ctx *ctx,
-                                       grn_id id,
-                                       grn_table_select_sequential_data *data)
-{
-  grn_obj *value_buffer = &(data->value.value_buffer);
-  grn_obj *score_buffer = &(data->value.score_buffer);
-  int32_t score;
-
-  GRN_BULK_REWIND(value_buffer);
-  grn_obj_get_value(ctx, data->value.column, id, value_buffer);
-  GRN_BULK_REWIND(score_buffer);
-  score = exec_result_to_score(ctx, value_buffer, score_buffer);
-
-  return score;
-}
-
-static void
-grn_table_select_sequential_fin_value(grn_ctx *ctx,
-                                      grn_table_select_sequential_data *data)
-{
-  GRN_OBJ_FIN(ctx, &(data->value.score_buffer));
-  GRN_OBJ_FIN(ctx, &(data->value.value_buffer));
-}
-
-#ifdef GRN_SUPPORT_REGEXP
-static grn_bool
-grn_table_select_sequential_is_simple_regexp(grn_ctx *ctx, grn_obj *expr)
-{
-  grn_expr *e = (grn_expr *)expr;
-  grn_expr_code *target;
-  grn_expr_code *pattern;
-  grn_expr_code *operator;
-
-  if (e->codes_curr != 3) {
-    return GRN_FALSE;
-  }
-
-  target = &(e->codes[0]);
-  pattern = &(e->codes[1]);
-  operator = &(e->codes[2]);
-
-  if (operator->op != GRN_OP_REGEXP) {
-    return GRN_FALSE;
-  }
-  if (operator->nargs != 2) {
-    return GRN_FALSE;
-  }
-
-  if (target->op != GRN_OP_GET_VALUE) {
-    return GRN_FALSE;
-  }
-  if (target->nargs != 1) {
-    return GRN_FALSE;
-  }
-  if (!target->value) {
-    return GRN_FALSE;
-  }
-  if (target->value->header.type != GRN_COLUMN_VAR_SIZE) {
-    return GRN_FALSE;
-  }
-  if ((target->value->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) !=
-      GRN_OBJ_COLUMN_SCALAR) {
-    return GRN_FALSE;
-  }
-  switch (grn_obj_get_range(ctx, target->value)) {
-  case GRN_DB_SHORT_TEXT :
-  case GRN_DB_TEXT :
-  case GRN_DB_LONG_TEXT :
-    break;
-  default :
-    return GRN_FALSE;
-  }
-
-  if (pattern->op != GRN_OP_PUSH) {
-    return GRN_FALSE;
-  }
-  if (pattern->nargs != 1) {
-    return GRN_FALSE;
-  }
-  if (!pattern->value) {
-    return GRN_FALSE;
-  }
-  if (pattern->value->header.type != GRN_BULK) {
-    return GRN_FALSE;
-  }
-  switch (pattern->value->header.domain) {
-  case GRN_DB_SHORT_TEXT :
-  case GRN_DB_TEXT :
-  case GRN_DB_LONG_TEXT :
-    break;
-  default :
-    return GRN_FALSE;
-  }
-
-  return GRN_TRUE;
-}
-
-static void
-grn_table_select_sequential_init_simple_regexp(grn_ctx *ctx,
-                                               grn_table_select_sequential_data *data)
-{
-  grn_expr *e = (grn_expr *)(data->simple_regexp.expr);
-  OnigEncoding onig_encoding;
-  int onig_result;
-  OnigErrorInfo onig_error_info;
-  grn_obj *pattern;
-
-  if (ctx->encoding == GRN_ENC_NONE) {
-    data->simple_regexp.regex = NULL;
-    return;
-  }
-
-  switch (ctx->encoding) {
-  case GRN_ENC_EUC_JP :
-    onig_encoding = ONIG_ENCODING_EUC_JP;
-    break;
-  case GRN_ENC_UTF8 :
-    onig_encoding = ONIG_ENCODING_UTF8;
-    break;
-  case GRN_ENC_SJIS :
-    onig_encoding = ONIG_ENCODING_CP932;
-    break;
-  case GRN_ENC_LATIN1 :
-    onig_encoding = ONIG_ENCODING_ISO_8859_1;
-    break;
-  case GRN_ENC_KOI8R :
-    onig_encoding = ONIG_ENCODING_KOI8_R;
-    break;
-  default :
-    data->simple_regexp.regex = NULL;
-    return;
-  }
-
-  pattern = e->codes[1].value;
-  onig_result = onig_new(&(data->simple_regexp.regex),
-                         GRN_TEXT_VALUE(pattern),
-                         GRN_TEXT_VALUE(pattern) + GRN_TEXT_LEN(pattern),
-                         ONIG_OPTION_ASCII_RANGE |
-                         ONIG_OPTION_MULTILINE,
-                         onig_encoding,
-                         ONIG_SYNTAX_RUBY,
-                         &onig_error_info);
-  if (onig_result != ONIG_NORMAL) {
-    char message[ONIG_MAX_ERROR_MESSAGE_LEN];
-    onig_error_code_to_str(message, onig_result, onig_error_info);
-    ERR(GRN_INVALID_ARGUMENT,
-        "[table][select][sequential][regexp] "
-        "failed to create regular expression object: <%.*s>: %s",
-        (int)GRN_TEXT_LEN(pattern), GRN_TEXT_VALUE(pattern),
-        message);
-    return;
-  }
-
-  GRN_VOID_INIT(&(data->simple_regexp.value_buffer));
-
-  data->simple_regexp.normalizer =
-    grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-}
-
-static int32_t
-grn_table_select_sequential_exec_simple_regexp(grn_ctx *ctx,
-                                               grn_id id,
-                                               grn_table_select_sequential_data *data)
-{
-  grn_expr *e = (grn_expr *)(data->simple_regexp.expr);
-  grn_obj *value_buffer = &(data->simple_regexp.value_buffer);
-
-  if (ctx->rc) {
-    return -1;
-  }
-
-  grn_obj_reinit_for(ctx, value_buffer, e->codes[0].value);
-  grn_obj_get_value(ctx, e->codes[0].value, id, value_buffer);
-  {
-    grn_obj *norm_target;
-    const char *norm_target_raw;
-    unsigned int norm_target_raw_length_in_bytes;
-
-    norm_target = grn_string_open(ctx,
-                                  GRN_TEXT_VALUE(value_buffer),
-                                  GRN_TEXT_LEN(value_buffer),
-                                  data->simple_regexp.normalizer,
-                                  0);
-    grn_string_get_normalized(ctx, norm_target,
-                              &norm_target_raw,
-                              &norm_target_raw_length_in_bytes,
-                              NULL);
-
-    {
-      OnigPosition position;
-      position = onig_search(data->simple_regexp.regex,
-                             norm_target_raw,
-                             norm_target_raw + norm_target_raw_length_in_bytes,
-                             norm_target_raw,
-                             norm_target_raw + norm_target_raw_length_in_bytes,
-                             NULL,
-                             ONIG_OPTION_NONE);
-      grn_obj_close(ctx, norm_target);
-      if (position == ONIG_MISMATCH) {
-        return -1;
-      } else {
-        return 1;
-      }
-    }
-  }
-}
-
-static void
-grn_table_select_sequential_fin_simple_regexp(grn_ctx *ctx,
-                                              grn_table_select_sequential_data *data)
-{
-  if (!data->simple_regexp.regex) {
-    return;
-  }
-
-  onig_free(data->simple_regexp.regex);
-  GRN_OBJ_FIN(ctx, &(data->simple_regexp.value_buffer));
-}
-#endif /* GRN_SUPPORT_REGEXP */
-
-static grn_bool
-grn_table_select_sequential_is_simple_condition(grn_ctx *ctx, grn_obj *expr)
-{
-  grn_expr *e = (grn_expr *)expr;
-  grn_expr_code *target;
-  grn_expr_code *constant;
-  grn_expr_code *operator;
-
-  if (e->codes_curr != 3) {
-    return GRN_FALSE;
-  }
-
-  target = &(e->codes[0]);
-  constant = &(e->codes[1]);
-  operator = &(e->codes[2]);
-
-  switch (operator->op) {
-  case GRN_OP_EQUAL :
-  case GRN_OP_NOT_EQUAL :
-  case GRN_OP_LESS :
-  case GRN_OP_GREATER :
-  case GRN_OP_LESS_EQUAL :
-  case GRN_OP_GREATER_EQUAL :
-    break;
-  default :
-    return GRN_FALSE;
-  }
-  if (operator->nargs != 2) {
-    return GRN_FALSE;
-  }
-
-  if (target->op != GRN_OP_GET_VALUE) {
-    return GRN_FALSE;
-  }
-  if (target->nargs != 1) {
-    return GRN_FALSE;
-  }
-  if (!target->value) {
-    return GRN_FALSE;
-  }
-  if ((target->value->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) !=
-      GRN_OBJ_COLUMN_SCALAR) {
-    return GRN_FALSE;
-  }
-
-  if (constant->op != GRN_OP_PUSH) {
-    return GRN_FALSE;
-  }
-  if (constant->nargs != 1) {
-    return GRN_FALSE;
-  }
-  if (!constant->value) {
-    return GRN_FALSE;
-  }
-  if (constant->value->header.type != GRN_BULK) {
-    return GRN_FALSE;
-  }
-
-  return GRN_TRUE;
-}
-
-static void
-grn_table_select_sequential_init_simple_condition(
-  grn_ctx *ctx,
-  grn_table_select_sequential_data *data)
-{
-  grn_expr *e = (grn_expr *)(data->simple_condition.expr);
-  grn_obj *target;
-  grn_obj *constant;
-  grn_operator op;
-  grn_obj *value_buffer;
-  grn_obj *constant_buffer;
-  grn_rc rc;
-
-  target = e->codes[0].value;
-  constant = e->codes[1].value;
-  op = e->codes[2].op;
-
-  data->simple_condition.score = 0;
-
-  value_buffer = &(data->simple_condition.value_buffer);
-  GRN_VOID_INIT(value_buffer);
-  grn_obj_reinit_for(ctx, value_buffer, target);
-
-  switch (op) {
-  case GRN_OP_EQUAL :
-    data->simple_condition.exec = grn_operator_exec_equal;
-    break;
-  case GRN_OP_NOT_EQUAL :
-    data->simple_condition.exec = grn_operator_exec_not_equal;
-    break;
-  case GRN_OP_LESS :
-    data->simple_condition.exec = grn_operator_exec_less;
-    break;
-  case GRN_OP_GREATER :
-    data->simple_condition.exec = grn_operator_exec_greater;
-    break;
-  case GRN_OP_LESS_EQUAL :
-    data->simple_condition.exec = grn_operator_exec_less_equal;
-    break;
-  case GRN_OP_GREATER_EQUAL :
-    data->simple_condition.exec = grn_operator_exec_greater_equal;
-    break;
-  default :
-    break;
-  }
-
-  constant_buffer = &(data->simple_condition.constant_buffer);
-  GRN_VOID_INIT(constant_buffer);
-  grn_obj_reinit_for(ctx, constant_buffer, target);
-  rc = grn_obj_cast(ctx, constant, constant_buffer, GRN_FALSE);
-  if (rc != GRN_SUCCESS) {
-    grn_obj *type;
-
-    type = grn_ctx_at(ctx, constant_buffer->header.domain);
-    if (grn_obj_is_table(ctx, type)) {
-      if (op == GRN_OP_NOT_EQUAL) {
-        data->simple_condition.score = 1;
-      } else {
-        data->simple_condition.score = -1;
-      }
-    } else {
-      int type_name_size;
-      char type_name[GRN_TABLE_MAX_KEY_SIZE];
-      grn_obj inspected;
-
-      type_name_size = grn_obj_name(ctx, type, type_name,
-                                    GRN_TABLE_MAX_KEY_SIZE);
-      GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, constant);
-      ERR(rc,
-          "[table][select][sequential][condition] "
-          "failed to cast to <%.*s>: <%.*s>",
-          type_name_size, type_name,
-          (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
-    }
-    return;
-  }
-}
-
-static int32_t
-grn_table_select_sequential_exec_simple_condition(
-  grn_ctx *ctx,
-  grn_id id,
-  grn_table_select_sequential_data *data)
-{
-  grn_expr *e = (grn_expr *)(data->simple_condition.expr);
-  grn_obj *target;
-  grn_obj *value_buffer = &(data->simple_condition.value_buffer);
-  grn_obj *constant_buffer = &(data->simple_condition.constant_buffer);
-
-  if (ctx->rc) {
-    return -1;
-  }
-
-  if (data->simple_condition.score != 0) {
-    return data->simple_condition.score;
-  }
-
-  target = e->codes[0].value;
-  GRN_BULK_REWIND(value_buffer);
-  grn_obj_get_value(ctx, target, id, value_buffer);
-
-  if (data->simple_condition.exec(ctx, value_buffer, constant_buffer)) {
-    return 1;
-  } else {
-    return -1;
-  }
-}
-
-static void
-grn_table_select_sequential_fin_simple_condition(
-  grn_ctx *ctx,
-  grn_table_select_sequential_data *data)
-{
-  GRN_OBJ_FIN(ctx, &(data->simple_condition.value_buffer));
-  GRN_OBJ_FIN(ctx, &(data->simple_condition.constant_buffer));
-}
-
 static void
 grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                             grn_obj *v, grn_obj *res, grn_operator op)
 {
+  grn_obj *result;
+  grn_obj score_buffer;
   int32_t score;
   grn_id id, *idp;
   grn_table_cursor *tc;
   grn_hash_cursor *hc;
   grn_hash *s = (grn_hash *)res;
-  grn_table_select_sequential_data data;
-  grn_table_select_sequential_init_func init;
-  grn_table_select_sequential_exec_func exec;
-  grn_table_select_sequential_fin_func fin;
+  grn_expr_executor *executor;
 
-  data.common.expr = expr;
-  data.common.variable = v;
-  init = grn_table_select_sequential_init_general;
-  exec = grn_table_select_sequential_exec_general;
-  fin = grn_table_select_sequential_fin_general;
-  if (grn_table_select_sequential_is_constant(ctx, expr)) {
-    init = grn_table_select_sequential_init_constant;
-    exec = grn_table_select_sequential_exec_constant;
-    fin = grn_table_select_sequential_fin_constant;
-  } else if (grn_table_select_sequential_is_value(ctx, expr)) {
-    init = grn_table_select_sequential_init_value;
-    exec = grn_table_select_sequential_exec_value;
-    fin = grn_table_select_sequential_fin_value;
-#ifdef GRN_SUPPORT_REGEXP
-  } else if (grn_table_select_sequential_is_simple_regexp(ctx, expr)) {
-    init = grn_table_select_sequential_init_simple_regexp;
-    exec = grn_table_select_sequential_exec_simple_regexp;
-    fin = grn_table_select_sequential_fin_simple_regexp;
-#endif /* GRN_SUPPORT_REGEXP */
-  } else if (grn_table_select_sequential_is_simple_condition(ctx, expr)) {
-    init = grn_table_select_sequential_init_simple_condition;
-    exec = grn_table_select_sequential_exec_simple_condition;
-    fin = grn_table_select_sequential_fin_simple_condition;
+  executor = grn_expr_executor_open(ctx, expr);
+  if (!executor) {
+    return;
   }
-
-  init(ctx, &data);
+  GRN_INT32_INIT(&score_buffer, 0);
   switch (op) {
   case GRN_OP_OR :
     if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
       while ((id = grn_table_cursor_next(ctx, tc))) {
-        score = exec(ctx, id, &data);
+        result = grn_expr_executor_exec(ctx, executor, id);
         if (ctx->rc) {
           break;
         }
+        score = exec_result_to_score(ctx, result, &score_buffer);
         if (score > 0) {
           grn_rset_recinfo *ri;
           if (grn_hash_add(ctx, s, &id, s->key_size, (void **)&ri, NULL)) {
@@ -5902,10 +5327,11 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, -1, 0))) {
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
-        score = exec(ctx, *idp, &data);
+        result = grn_expr_executor_exec(ctx, executor, *idp);
         if (ctx->rc) {
           break;
         }
+        score = exec_result_to_score(ctx, result, &score_buffer);
         if (score > 0) {
           grn_rset_recinfo *ri;
           grn_hash_cursor_get_value(ctx, hc, (void **) &ri);
@@ -5921,10 +5347,11 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, -1, 0))) {
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
-        score = exec(ctx, *idp, &data);
+        result = grn_expr_executor_exec(ctx, executor, *idp);
         if (ctx->rc) {
           break;
         }
+        score = exec_result_to_score(ctx, result, &score_buffer);
         if (score > 0) {
           grn_hash_cursor_delete(ctx, hc, NULL);
         }
@@ -5936,10 +5363,11 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, -1, 0))) {
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
-        score = exec(ctx, *idp, &data);
+        result = grn_expr_executor_exec(ctx, executor, *idp);
         if (ctx->rc) {
           break;
         }
+        score = exec_result_to_score(ctx, result, &score_buffer);
         if (score > 0) {
           grn_rset_recinfo *ri;
           grn_hash_cursor_get_value(ctx, hc, (void **) &ri);
@@ -5952,7 +5380,8 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   default :
     break;
   }
-  fin(ctx, &data);
+  GRN_OBJ_FIN(ctx, &score_buffer);
+  grn_expr_executor_close(ctx, executor);
 }
 
 static inline void
