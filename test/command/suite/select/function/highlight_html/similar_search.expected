@@ -1,0 +1,47 @@
+plugin_register token_filters/stop_word
+[[0,0.0,0.0],true]
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries body COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto   --token_filters TokenFilterStopWord
+[[0,0.0,0.0],true]
+column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+[[0,0.0,0.0],true]
+column_create Terms is_stop_word COLUMN_SCALAR Bool
+[[0,0.0,0.0],true]
+load --table Terms
+[
+{"_key": "is", "is_stop_word": true},
+{"_key": ".",  "is_stop_word": true}
+]
+[[0,0.0,0.0],2]
+load --table Entries
+[
+{"body": "Mroonga is a ＭｙＳＱＬ storage engine based on Groonga. <b>Rroonga</b> is a Ruby binding of Groonga."}
+]
+[[0,0.0,0.0],1]
+select Entries   --filter 'body *S "Groonga is fast full text search engine. There are SQL interfaces by Mroonga and PGroonga and Ruby interface by Rroonga."'   --output_columns 'highlight_html(body)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "highlight_html",
+          null
+        ]
+      ],
+      [
+        "<span class=\"keyword\">Mroonga</span> is a ＭｙＳＱＬ storage <span class=\"keyword\">engine</span> based on <span class=\"keyword\">Groonga</span>. &lt;b&gt;<span class=\"keyword\">Rroonga</span>&lt;/b&gt; is a <span class=\"keyword\">Ruby</span> binding of <span class=\"keyword\">Groonga</span>."
+      ]
+    ]
+  ]
+]
