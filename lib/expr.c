@@ -8754,10 +8754,20 @@ grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords)
                                                    GRN_TOKENIZE_GET,
                                                    token_flags);
               if (token_cursor) {
+                grn_obj *source_table;
+                uint32_t n_records_threshold;
+                source_table = grn_ctx_at(ctx, grn_obj_get_range(ctx, index));
+                n_records_threshold = grn_table_size(ctx, source_table) / 2;
                 while (token_cursor->status != GRN_TOKEN_CURSOR_DONE) {
                   grn_id token_id;
+                  uint32_t n_estimated_records;
                   token_id = grn_token_cursor_next(ctx, token_cursor);
                   if (token_id == GRN_ID_NIL) {
+                    continue;
+                  }
+                  n_estimated_records =
+                    grn_ii_estimate_size(ctx, (grn_ii *)index, token_id);
+                  if (n_estimated_records >= n_records_threshold) {
                     continue;
                   }
                   grn_vector_add_element(ctx,
