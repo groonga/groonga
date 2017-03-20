@@ -18,7 +18,10 @@ sign-packages:
 	  '$(DISTRIBUTIONS)'
 
 update-repository:
-	./update-repository.sh '$(PACKAGE)' '$(REPOSITORIES_PATH)/' \
+	./update-repository.sh \
+	  '$(GPG_UID)' \
+	  '$(PACKAGE)' \
+	  '$(REPOSITORIES_PATH)/' \
 	  '$(DISTRIBUTIONS)'
 
 upload: ensure-rsync-path

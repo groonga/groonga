@@ -3,14 +3,15 @@
 script_base_dir=`dirname $0`
 
 if [ $# != 3 ]; then
-    echo "Usage: $0 GPG_KEY_NAME DESTINATION DISTRIBUTIONS"
-    echo " e.g.: $0 mitler-manager repositories/ 'fedora centos'"
+    echo "Usage: $0 GPG_UID GPG_KEY_NAME DESTINATION DISTRIBUTIONS"
+    echo " e.g.: $0 1BD22CD1 mitler-manager repositories/ 'fedora centos'"
     exit 1
 fi
 
-GPG_KEY_NAME=$1
-DESTINATION=$2
-DISTRIBUTIONS=$3
+GPG_UID=$1
+GPG_KEY_NAME=$2
+DESTINATION=$3
+DISTRIBUTIONS=$4
 
 run()
 {
@@ -28,6 +29,6 @@ for distribution in ${DISTRIBUTIONS}; do
 	test -d $dir &&	run createrepo --checksum sha $dir
     done;
 
-    run cp $script_base_dir/RPM-GPG-KEY-${GPG_KEY_NAME} \
+    run gpg --armor --export ${GPG_UID} > \
 	${DESTINATION}${distribution}/RPM-GPG-KEY-${GPG_KEY_NAME};
 done
