@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Copyright(C) 2014  Kouhei Sutou <kou@clear-code.com>
+# Copyright(C) 2014-2017  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -109,6 +109,10 @@ allow_unsigned_uploads = 0
                     "Build for #{code_name}.")
         run_command("debuild",
                     "--set-envvar=LINTIAN_PROFILE=ubuntu",
+                    # Workaround for Launchpad. Launchpad doesn't accept
+                    # .buildinfo yet.
+                    # See also: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=853795
+                    "--buildinfo-option=-O",
                     "-d",
                     "-S",
                     "-sa",
