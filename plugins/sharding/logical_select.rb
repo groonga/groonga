@@ -511,16 +511,18 @@ module Groonga
 
       class LabeledDrilldowns
         include Enumerable
+        include TSort
 
         class << self
           def parse(input)
             parser = LabeledArgumentParser.new(input)
             drilldowns = parser.parse(/drilldowns?/)
 
-            contexts = []
+            contexts = {}
             drilldowns.each do |label, parameters|
               next if parameters["keys"].nil?
-              contexts << LabeledDrilldownExecuteContext.new(label, parameters)
+              context = LabeledDrilldownExecuteContext.new(label, parameters)
+              contexts[label] = context
             end
 
             new(contexts)
@@ -529,16 +531,32 @@ module Groonga
 
         def initialize(contexts)
           @contexts = contexts
+          @dependencies = {}
+          @contexts.each do |label, context|
+            if context.table
+              depended_context = @contexts[context.table]
+              if depended_context.nil?
+                raise "Unknown drilldown: <#{context.table}>"
+              end
+              @dependencies[label] = [depended_context]
+            else
+              @dependencies[label] = []
+            end
+          end
         end
 
         def close
-          @contexts.each do |context|
+          @contexts.each_value do |context|
             context.close
           end
         end
 
+        def [](label)
+          @contexts[label]
+        end
+
         def have_keys?
-          @contexts.size > 0
+          not @contexts.empty?
         end
 
         def n_result_sets
@@ -546,7 +564,15 @@ module Groonga
         end
 
         def each(&block)
-          @contexts.each(&block)
+          @contexts.each_value(&block)
+        end
+
+        def tsort_each_node(&block)
+          @contexts.each_value(&block)
+        end
+
+        def tsort_each_child(context, &block)
+          @dependencies[context.label].each(&block)
         end
       end
 
@@ -562,6 +588,7 @@ module Groonga
         attr_reader :output_columns
         attr_reader :calc_target_name
         attr_reader :calc_types
+        attr_reader :table
         attr_reader :dynamic_columns
         attr_accessor :result_set
         attr_accessor :unsorted_result_set
@@ -576,6 +603,7 @@ module Groonga
           @output_columns ||= "_key, _nsubrecs"
           @calc_target_name = parameters["calc_target"]
           @calc_types = parse_calc_types(parameters["calc_types"])
+          @table = parameters["table"]
 
           @dynamic_columns = DynamicColumns.parse(parameters)
 
@@ -682,7 +710,7 @@ module Groonga
         def execute_labeled_drilldowns
           drilldowns = @context.labeled_drilldowns
 
-          drilldowns.each do |drilldown|
+          drilldowns.tsort_each do |drilldown|
             group_result = TableGroupResult.new
             keys = drilldown.keys
             begin
@@ -693,10 +721,18 @@ module Groonga
               end
               group_result.limit = 1
               group_result.flags = drilldown.calc_types
-              @context.result_sets.each do |result_set|
+              if drilldown.table
+                target_table = drilldowns[drilldown.table].result_set
                 with_calc_target(group_result,
-                                 drilldown.calc_target(result_set)) do
-                  result_set.group(keys, group_result)
+                                 drilldown.calc_target(target_table)) do
+                  target_table.group(keys, group_result)
+                end
+              else
+                @context.result_sets.each do |result_set|
+                  with_calc_target(group_result,
+                                   drilldown.calc_target(result_set)) do
+                    result_set.group(keys, group_result)
+                  end
                 end
               end
               result_set = group_result.table
