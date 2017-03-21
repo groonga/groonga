@@ -27,6 +27,7 @@ module Groonga
                  "drilldown_sort_keys",
                  "match_columns",
                  "query",
+                 "drilldown_filter",
                ])
 
       def run_body(input)
@@ -85,6 +86,7 @@ module Groonga
         key << "#{input[:drilldown_limit]}\0"
         key << "#{input[:drilldown_calc_types]}\0"
         key << "#{input[:drilldown_calc_target]}\0"
+        key << "#{input[:drilldown_filter]}\0"
         labeled_drilldowns = LabeledDrilldowns.parse(input).sort_by(&:label)
         labeled_drilldowns.each do |drilldown|
           key << "#{drilldown.label}\0"
@@ -94,6 +96,7 @@ module Groonga
           key << "#{drilldown.limit}\0"
           key << "#{drilldown.calc_types}\0"
           key << "#{drilldown.calc_target_name}\0"
+          key << "#{drilldown.filter}\0"
         end
         dynamic_columns = DynamicColumns.parse(input)
         [
@@ -481,8 +484,11 @@ module Groonga
         attr_reader :output_columns
         attr_reader :calc_target_name
         attr_reader :calc_types
+        attr_reader :filter
         attr_reader :result_sets
         attr_reader :unsorted_result_sets
+        attr_reader :temporary_tables
+        attr_reader :expressions
         def initialize(input)
           @input = input
           @keys = parse_keys(@input[:drilldown])
@@ -494,9 +500,14 @@ module Groonga
           @output_columns ||= "_key, _nsubrecs"
           @calc_target_name = @input[:drilldown_calc_target]
           @calc_types = parse_calc_types(@input[:drilldown_calc_types])
+          @filter = @input[:drilldown_filter]
 
           @result_sets = []
           @unsorted_result_sets = []
+
+          @temporary_tables = []
+
+          @expressions = []
         end
 
         def close
@@ -505,6 +516,14 @@ module Groonga
           end
           @unsorted_result_sets.each do |result_set|
             result_set.close
+          end
+
+          @temporary_tables.each do |table|
+            table.close
+          end
+
+          @expressions.each do |expression|
+            expression.close
           end
         end
 
@@ -596,10 +615,13 @@ module Groonga
         attr_reader :output_columns
         attr_reader :calc_target_name
         attr_reader :calc_types
+        attr_reader :filter
         attr_reader :table
         attr_reader :dynamic_columns
         attr_accessor :result_set
         attr_accessor :unsorted_result_set
+        attr_reader :temporary_tables
+        attr_reader :expressions
         def initialize(label, parameters)
           @label = label
           @keys = parse_keys(parameters["keys"])
@@ -611,12 +633,17 @@ module Groonga
           @output_columns ||= "_key, _nsubrecs"
           @calc_target_name = parameters["calc_target"]
           @calc_types = parse_calc_types(parameters["calc_types"])
+          @filter = parameters["filter"]
           @table = parameters["table"]
 
           @dynamic_columns = DynamicColumns.parse(parameters)
 
           @result_set = nil
           @unsorted_result_set = nil
+
+          @temporary_tables = []
+
+          @expressions = []
         end
 
         def close
@@ -624,6 +651,14 @@ module Groonga
           @unsorted_result_set.close if @unsorted_result_set
 
           @dynamic_columns.close
+
+          @temporary_tables.each do |table|
+            table.close
+          end
+
+          @expressions.each do |expression|
+            expression.close
+          end
         end
 
         def need_command_version2?
@@ -702,6 +737,7 @@ module Groonga
                 end
               end
               result_set = group_result.table
+              result_set = apply_drilldown_filter(drilldown, result_set)
               if drilldown.sort_keys.empty?
                 drilldown.result_sets << result_set
               else
@@ -747,6 +783,7 @@ module Groonga
               drilldown.dynamic_columns.each_initial do |dynamic_column|
                 dynamic_column.apply(result_set)
               end
+              result_set = apply_drilldown_filter(drilldown, result_set)
               if drilldown.sort_keys.empty?
                 drilldown.result_set = result_set
               else
@@ -768,6 +805,18 @@ module Groonga
             calc_target.close if calc_target
             group_result.calc_target = nil
           end
+        end
+
+        def apply_drilldown_filter(drilldown, result_set)
+          filter = drilldown.filter
+          return result_set if filter.nil?
+
+          expression = Expression.create(result_set)
+          drilldown.expressions << expression
+          expression.parse(filter)
+          filtered_result_set = result_set.select(expression)
+          drilldown.temporary_tables << result_set
+          filtered_result_set
         end
       end
 
