@@ -2584,9 +2584,21 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
               goto exit;
             }
             proc = sp[-offset];
-            WITH_SPSAVE({
-              grn_proc_call(ctx, proc, code->nargs, expr);
-            });
+            if (grn_obj_is_window_function_proc(ctx, proc)) {
+              grn_obj inspected;
+              GRN_TEXT_INIT(&inspected, 0);
+              grn_inspect(ctx, &inspected, proc);
+              ERR(GRN_INVALID_ARGUMENT,
+                  "window function can't be executed for each record: %.*s",
+                  (int)GRN_TEXT_LEN(&inspected),
+                  GRN_TEXT_VALUE(&inspected));
+              GRN_OBJ_FIN(ctx, &inspected);
+              goto exit;
+            } else {
+              WITH_SPSAVE({
+                grn_proc_call(ctx, proc, code->nargs, expr);
+              });
+            }
             if (ctx->rc) {
               goto exit;
             }
