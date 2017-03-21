@@ -1,0 +1,95 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Logs_20170315 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Logs_20170316 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170316 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Logs_20170317 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170317 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 1000},
+{"timestamp": "2017/03/15 01:00:00", "price": 1000}
+]
+[[0,0.0,0.0],2]
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "price":  500},
+{"timestamp": "2017/03/16 11:00:00", "price":  500}
+]
+[[0,0.0,0.0],2]
+load --table Logs_20170317
+[
+{"timestamp": "2017/03/17 20:00:00", "price":  500},
+{"timestamp": "2017/03/17 20:00:00", "price":  300}
+]
+[[0,0.0,0.0],2]
+logical_select Logs   --shard_key timestamp   --output_columns _id   --limit 0   --drilldowns[label].keys price   --drilldowns[label].output_columns _key,_nsubrecs,tax_included   --drilldowns[label].columns[tax_included].stage initial   --drilldowns[label].columns[tax_included].type UInt32   --drilldowns[label].columns[tax_included].flags COLUMN_SCALAR   --drilldowns[label].columns[tax_included].value '_key * 1.08'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ]
+      ]
+    ],
+    {
+      "label": [
+        [
+          3
+        ],
+        [
+          [
+            "_key",
+            "UInt32"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ],
+          [
+            "tax_included",
+            "UInt32"
+          ]
+        ],
+        [
+          1000,
+          2,
+          1080
+        ],
+        [
+          500,
+          3,
+          540
+        ],
+        [
+          300,
+          1,
+          324
+        ]
+      ]
+    }
+  ]
+]

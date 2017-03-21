@@ -95,7 +95,7 @@ module Groonga
           key << "#{drilldown.calc_types}\0"
           key << "#{drilldown.calc_target_name}\0"
         end
-        dynamic_columns = DynamicColumns.parse(input, "")
+        dynamic_columns = DynamicColumns.parse(input)
         [
           :initial,
           :filtered,
@@ -218,22 +218,18 @@ module Groonga
       end
 
       class LabeledArgumentParser
-        def initialize(input)
-          @input = input
-          @arguments = input.arguments
-          @argument = Record.new(@arguments, nil)
+        def initialize(parameters)
+          @parameters = parameters
         end
 
         def parse(prefix_pattern)
           pattern = /\A#{prefix_pattern}\[(.+?)\]\.(.+)\z/
           labeled_arguments = {}
-          @arguments.each do |argument_id|
-            @argument.id = argument_id
-            key = @argument.key
+          @parameters.each do |key, value|
             match_data = pattern.match(key)
             next if match_data.nil?
             labeled_argument = (labeled_arguments[match_data[1]] ||= {})
-            labeled_argument[match_data[2]] = @input[key]
+            labeled_argument[match_data[2]] = value
           end
           labeled_arguments
         end
@@ -310,7 +306,7 @@ module Groonga
           @sort_keys = parse_keys(@input[:sort_keys] || @input[:sortby])
           @output_columns = @input[:output_columns] || "_id, _key, *"
 
-          @dynamic_columns = DynamicColumns.parse(@input, "")
+          @dynamic_columns = DynamicColumns.parse(@input)
 
           @result_sets = []
           @unsorted_result_sets = []
@@ -348,9 +344,9 @@ module Groonga
 
       class DynamicColumns
         class << self
-          def parse(input, prefix)
+          def parse(input)
             parser = LabeledArgumentParser.new(input)
-            columns = parser.parse(/#{Regexp.escape(prefix)}columns?/)
+            columns = parser.parse(/columns?/)
 
             initial_contexts = []
             filtered_contexts = []
@@ -566,6 +562,7 @@ module Groonga
         attr_reader :output_columns
         attr_reader :calc_target_name
         attr_reader :calc_types
+        attr_reader :dynamic_columns
         attr_accessor :result_set
         attr_accessor :unsorted_result_set
         def initialize(label, parameters)
@@ -580,6 +577,8 @@ module Groonga
           @calc_target_name = parameters["calc_target"]
           @calc_types = parse_calc_types(parameters["calc_types"])
 
+          @dynamic_columns = DynamicColumns.parse(parameters)
+
           @result_set = nil
           @unsorted_result_set = nil
         end
@@ -587,6 +586,8 @@ module Groonga
         def close
           @result_set.close if @result_set
           @unsorted_result_set.close if @unsorted_result_set
+
+          @dynamic_columns.close
         end
 
         def need_command_version2?
@@ -699,6 +700,9 @@ module Groonga
                 end
               end
               result_set = group_result.table
+              drilldown.dynamic_columns.each_initial do |dynamic_column|
+                dynamic_column.apply(result_set)
+              end
               if drilldown.sort_keys.empty?
                 drilldown.result_set = result_set
               else

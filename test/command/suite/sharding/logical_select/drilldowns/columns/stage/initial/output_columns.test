@@ -1,0 +1,44 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+
+table_create Logs_20170316 TABLE_NO_KEY
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+column_create Logs_20170316 price COLUMN_SCALAR UInt32
+
+table_create Logs_20170317 TABLE_NO_KEY
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+column_create Logs_20170317 price COLUMN_SCALAR UInt32
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 1000},
+{"timestamp": "2017/03/15 01:00:00", "price": 1000}
+]
+
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "price":  500},
+{"timestamp": "2017/03/16 11:00:00", "price":  500}
+]
+
+load --table Logs_20170317
+[
+{"timestamp": "2017/03/17 20:00:00", "price":  500},
+{"timestamp": "2017/03/17 20:00:00", "price":  300}
+]
+
+logical_select Logs \
+  --shard_key timestamp \
+  --output_columns _id \
+  --limit 0 \
+  --drilldowns[label].keys price \
+  --drilldowns[label].output_columns _key,_nsubrecs,tax_included \
+  --drilldowns[label].columns[tax_included].stage initial \
+  --drilldowns[label].columns[tax_included].type UInt32 \
+  --drilldowns[label].columns[tax_included].flags COLUMN_SCALAR \
+  --drilldowns[label].columns[tax_included].value '_key * 1.08'
