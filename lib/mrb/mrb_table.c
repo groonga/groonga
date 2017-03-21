@@ -396,6 +396,37 @@ mrb_grn_table_apply_expression(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+static mrb_value
+mrb_grn_table_apply_window_function_raw(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mrb_output_column;
+  mrb_value mrb_window_definition;
+  mrb_value mrb_window_function_call;
+  grn_obj *table;
+  grn_obj *output_column = NULL;
+  grn_window_definition *window_definition = NULL;
+  grn_obj *window_function_call = NULL;
+
+  mrb_get_args(mrb, "ooo",
+               &mrb_output_column,
+               &mrb_window_definition,
+               &mrb_window_function_call);
+
+  table = DATA_PTR(self);
+  output_column = GRN_MRB_DATA_PTR(mrb_output_column);
+  window_definition = GRN_MRB_DATA_PTR(mrb_window_definition);
+  window_function_call = GRN_MRB_DATA_PTR(mrb_window_function_call);
+  grn_table_apply_window_function(ctx,
+                                  table,
+                                  output_column,
+                                  window_definition,
+                                  window_function_call);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_table_init(grn_ctx *ctx)
 {
@@ -441,5 +472,7 @@ grn_mrb_table_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "apply_expression",
                     mrb_grn_table_apply_expression, MRB_ARGS_REQ(2));
+  mrb_define_method(mrb, klass, "apply_window_function_raw",
+                    mrb_grn_table_apply_window_function_raw, MRB_ARGS_REQ(4));
 }
 #endif

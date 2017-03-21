@@ -42,7 +42,32 @@ module Groonga
       end
     end
 
+    def apply_window_function(output_column,
+                              window_function_call,
+                              options={})
+      ensure_sort_keys_accept_nil(options[:sort_keys]) do |sort_keys|
+        ensure_sort_keys_accept_nil(options[:group_keys]) do |group_keys|
+          window_definition = WindowDefinition.new
+          begin
+            window_definition.sort_keys = sort_keys
+            window_definition.group_keys = group_keys
+            apply_window_function_raw(output_column,
+                                      window_definition,
+                                      window_function_call)
+          ensure
+            window_definition.close
+          end
+        end
+      end
+    end
+
     private
+    def ensure_sort_keys_accept_nil(keys, &block)
+      return yield(nil) if keys.nil?
+
+      ensure_sort_keys(keys, &block)
+    end
+
     def ensure_sort_keys(keys)
       if keys.is_a?(::Array) and keys.all? {|key| key.is_a?(TableSortKey)}
         return yield(keys)
