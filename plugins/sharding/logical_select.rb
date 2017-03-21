@@ -97,8 +97,14 @@ module Groonga
           key << "#{drilldown.calc_types}\0"
           key << "#{drilldown.calc_target_name}\0"
           key << "#{drilldown.filter}\0"
+          cache_key_dynamic_columns(key, drilldown.dynamic_columns)
         end
         dynamic_columns = DynamicColumns.parse(input)
+        cache_key_dynamic_columns(key, dynamic_columns)
+        key
+      end
+
+      def cache_key_dynamic_columns(key, dynamic_columns)
         [
           :initial,
           :filtered,
@@ -113,7 +119,6 @@ module Groonga
             key << "#{dynamic_column.value}\0"
           end
         end
-        key
       end
 
       def write_records(writer, context)
