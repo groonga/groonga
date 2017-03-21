@@ -1,0 +1,61 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items price COLUMN_SCALAR UInt32
+column_create Items type COLUMN_SCALAR ShortText
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 item COLUMN_SCALAR Items
+
+table_create Logs_20170316 TABLE_NO_KEY
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+column_create Logs_20170316 item COLUMN_SCALAR Items
+
+table_create Logs_20170317 TABLE_NO_KEY
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+column_create Logs_20170317 item COLUMN_SCALAR Items
+
+load --table Items
+[
+{"_key": "item1", "price": 666, "type": "C"},
+{"_key": "item2", "price": 999, "type": "A"},
+{"_key": "item3", "price": 777, "type": "A"},
+{"_key": "item4", "price": 111, "type": "B"},
+{"_key": "item5", "price": 333, "type": "C"},
+{"_key": "item6", "price": 222, "type": "A"}
+]
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "item": "item1"},
+{"timestamp": "2017/03/15 01:00:00", "item": "item2"}
+]
+
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "item": "item3"},
+{"timestamp": "2017/03/16 11:00:00", "item": "item4"}
+]
+
+load --table Logs_20170317
+[
+{"timestamp": "2017/03/17 20:00:00", "item": "item5"},
+{"timestamp": "2017/03/17 20:00:00", "item": "item6"}
+]
+
+logical_select Logs \
+  --shard_key timestamp \
+  --output_columns _id \
+  --limit 0 \
+  --drilldowns[item].keys item \
+  --drilldowns[item].columns[nth_record].stage initial \
+  --drilldowns[item].columns[nth_record].type UInt32 \
+  --drilldowns[item].columns[nth_record].flags COLUMN_SCALAR \
+  --drilldowns[item].columns[nth_record].value 'window_record_number()' \
+  --drilldowns[item].columns[nth_record].window.group_keys type \
+  --drilldowns[item].columns[nth_record].window.sort_keys price \
+  --drilldowns[item].sort_keys 'type, nth_record' \
+  --drilldowns[item].output_columns 'type, nth_record, _key, price'

@@ -420,6 +420,7 @@ module Groonga
         attr_reader :flags
         attr_reader :value
         attr_reader :window_sort_keys
+        attr_reader :window_group_keys
         def initialize(label, parameters)
           @label = label
           @stage = parameters["stage"]
@@ -427,6 +428,7 @@ module Groonga
           @flags = parse_flags(parameters["flags"] || "COLUMN_SCALAR")
           @value = parameters["value"]
           @window_sort_keys = parameters["window.sort_keys"]
+          @window_group_keys = parameters["window.group_keys"]
         end
 
         def close
@@ -437,7 +439,7 @@ module Groonga
           expression = Expression.create(table)
           begin
             expression.parse(@value)
-            if @window_sort_keys
+            if @window_sort_keys or @window_group_keys
               table.apply_window_function(column, expression,
                                           :sort_keys => @window_sort_keys,
                                           :group_keys => @window_group_keys)
