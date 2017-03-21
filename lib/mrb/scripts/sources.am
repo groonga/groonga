@@ -2,6 +2,7 @@ RUBY_SCRIPT_FILES =				\
 	accessor.rb				\
 	backtrace_entry.rb			\
 	command.rb				\
+	command_input.rb			\
 	command_line_parser.rb			\
 	context.rb				\
 	database.rb				\

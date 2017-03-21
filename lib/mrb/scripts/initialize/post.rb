@@ -15,6 +15,7 @@ require "variable_size_column"
 require "index_column"
 require "accessor"
 require "command"
+require "command_input"
 require "table_cursor"
 require "index_cursor"
 
