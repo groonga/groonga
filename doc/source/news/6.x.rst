@@ -637,8 +637,8 @@ Improvements
   ``time_classify_month``, ``time_classify_year`` function to classify
   by value.
 
-* [:doc:`/reference/commands/select`] Supported dynamic column
-  creation which is used in ``output_columns``, ``drilldown`` or
+* [:doc:`/reference/commands/select`] Supported dynamic column.
+  Dynamic columns can be used in ``output_columns``, ``drilldown`` and
   ``sortby`` [GitHub#539,#541,#542,#544,#545][Patch by Naoya Murakami]::
 
     select \
