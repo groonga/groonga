@@ -50,6 +50,23 @@ optional::
          [sort_keys=null]
          [drilldown_sort_keys=null]
 
+.. versionadded:: 6.0.6
+
+   ``select`` has the following named parameters for dynamic columns:
+
+     * ``columns[${LABEL}].stage=null``
+     * ``columns[${LABEL}].flags=COLUMN_SCALAR``
+     * ``columns[${LABEL}].type=null``
+     * ``columns[${LABEL}].value=null``
+     * ``columns[${LABEL}].window.sort_keys=null``
+
+.. versionadded:: 7.0.0
+
+   ``select`` supports grouped window function by the following named
+   parameters:
+
+     * ``columns[${LABEL}].window.group_keys=null``
+
 ``select`` has the following named parameters for advanced drilldown:
 
   * ``drilldowns[${LABEL}].keys=null``
