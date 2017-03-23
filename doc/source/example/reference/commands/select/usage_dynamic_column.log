@@ -1,0 +1,79 @@
+Execution example::
+
+  plugin_register functions/number
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  select \
+    --table Entries \
+    --columns[n_likes_class].stage initial \
+    --columns[n_likes_class].type UInt32 \
+    --columns[n_likes_class].value 'number_classify(n_likes, 10)' \
+    --drilldown n_likes_class \
+    --drilldown_sort_keys _nsubrecs \
+    --output_columns n_likes,n_likes_class
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "n_likes_class", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         5, 
+  #         0
+  #       ], 
+  #       [
+  #         10, 
+  #         10
+  #       ], 
+  #       [
+  #         15, 
+  #         10
+  #       ], 
+  #       [
+  #         3, 
+  #         0
+  #       ], 
+  #       [
+  #         3, 
+  #         0
+  #       ]
+  #     ], 
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_nsubrecs", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         10, 
+  #         2
+  #       ], 
+  #       [
+  #         0, 
+  #         3
+  #       ]
+  #     ]
+  #   ]
+  # ]

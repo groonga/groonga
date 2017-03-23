@@ -54,18 +54,18 @@ optional::
 
    ``select`` has the following named parameters for dynamic columns:
 
-     * ``columns[${LABEL}].stage=null``
-     * ``columns[${LABEL}].flags=COLUMN_SCALAR``
-     * ``columns[${LABEL}].type=null``
-     * ``columns[${LABEL}].value=null``
-     * ``columns[${LABEL}].window.sort_keys=null``
+     * ``columns[${NAME}].stage=null``
+     * ``columns[${NAME}].flags=COLUMN_SCALAR``
+     * ``columns[${NAME}].type=null``
+     * ``columns[${NAME}].value=null``
+     * ``columns[${NAME}].window.sort_keys=null``
 
 .. versionadded:: 7.0.0
 
    ``select`` supports grouped window function by the following named
    parameters:
 
-     * ``columns[${LABEL}].window.group_keys=null``
+     * ``columns[${NAME}].window.group_keys=null``
 
 ``select`` has the following named parameters for advanced drilldown:
 
@@ -76,6 +76,24 @@ optional::
   * ``drilldowns[${LABEL}].limit=10``
   * ``drilldowns[${LABEL}].calc_types=NONE``
   * ``drilldowns[${LABEL}].calc_target=null``
+
+.. versionadded:: 6.0.6
+
+   Dynamic columns can be used in ``drilldown[${LABEL}]`` with the
+   following named parameters:
+
+     * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
+     * ``drilldowns[${LABEL}].columns[${NAME}].flags=COLUMN_SCALAR``
+     * ``drilldowns[${LABEL}].columns[${NAME}].type=null``
+     * ``drilldowns[${LABEL}].columns[${NAME}].value=null``
+     * ``drilldowns[${LABEL}].columns[${NAME}].window.sort_keys=null``
+
+.. versionadded:: 7.0.0
+
+   Grouped windows function can be used in ``drilldown[${LABEL}]``
+   with the following named parameters:
+
+     * ``drilldowns[${LABEL}].columns[${NAME}].window.group_keys=null``
 
 .. deprecated:: 6.0.3
   ``drilldown[...]`` syntax is deprecated, Use ``drilldowns[...]`` instead.
@@ -262,7 +280,7 @@ Drilldown
 ^^^^^^^^^
 
 You can get additional grouped results against the search result in
-one ``select``. You need to use two or more ``SELECT``s in SQL but
+one ``select``. You need to use two or more ``SELECT`` s in SQL but
 ``select`` in Groonga can do it in one ``select``.
 
 This feature is called as `drilldown
@@ -307,6 +325,148 @@ Groonga supports not only counting grouped records but also finding
 the maximum and/or minimum value from grouped records, summing values
 in grouped records and so on. See
 :ref:`select-drilldown-related-parameters` for details.
+
+Dynamic column
+^^^^^^^^^^^^^^
+
+You can create zero or more columns and fill values into these columns
+while a ``select`` execution. These columns are called as "dynamic
+columns". You can use dynamic columns as same as normal columns after
+dynamic columns are created.
+
+Dynamic column has performance merit because its values are computed
+at once and reused computed values.
+
+Dynamic column increases memory usage because its values are kept
+while the ``select`` execution.
+
+You need to use dynamic column in the following cases:
+
+  * You want to name values like ``AS`` in SQL.
+
+  * You want to use computed values for drilldown. Groonga doesn't not
+    support drilldown target value computation in drilldown.
+
+  * You want to use window function.
+
+There are some points to create dynamic columns. You must specify
+``stage`` to each dynamic column to control dynamic columns creation
+points. It's important that you choose proper point to get better
+performance.
+
+For example, it's not a good idea that you create a dynamic column
+that is only used for output for all records. The number of output
+records will be a little even if there are many records in a
+table. Because you will filter, sort and limit all records and output
+only the limited records in many cases.
+
+Here is the ``select`` process flow with dynamic column creation
+points. You should choose stage as late as possible:
+
+  1. Creates dynamic columns for ``initial`` stage. All records have
+     these dynamic columns.
+
+  2. Evaluates :ref:`select-query` and :ref:`select-filter`. You can
+     use dynamic columns created in ``initial`` stage.
+
+  3. Creates dynamic columns for ``filtered`` stage. Only filtered
+     records have these dynamic columns.
+
+  4. Evaluates :ref:`select-adjuster`. You can use dynamic columns
+     created in ``initial`` stage and ``filtered`` stage.
+
+  5. Evaluates :ref:`select-scorer`. You can use dynamic columns
+     created in ``initial`` stage and ``filtered`` stage.
+
+  6. Evaluates :ref:`select-sort-keys`, :ref:`select-offset` and
+     :ref:`select-limit`. You can use dynamic columns created in
+     ``initial`` stage and ``filtered`` stage.
+
+  7. Creates dynamic columns for ``output`` stage. Only
+     :ref:`select-limit` records have these dynamic columns.
+
+  8. Evaluates :ref:`select-slices`. You can use dynamic columns
+     created in ``initial`` stage, ``filtered`` stage and ``output``
+     stage.
+
+  9. Evaluates :ref:`select-drilldowns`. You can use dynamic columns
+     created in ``initial`` stage, ``filtered`` stage and ``output``
+     stage. Note that you can use dynamic columns in each drilldown.
+
+  10. Evaluates :ref:`select-output-columns`. You can use dynamic
+      columns created in ``initial`` stage, ``filtered`` stage and
+     ``output`` stage.
+
+Here are parameters for dynamic column:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Name
+     - Default value
+     - Required
+   * - ``--columns[${NAME}].stage``
+     - ``null``
+     - Required
+   * - ``--columns[${NAME}].flags``
+     - ``COLUMN_SCALAR``
+     - Optional
+   * - ``--columns[${NAME}].type``
+     - ``null``
+     - Required
+   * - ``--columns[${NAME}].value``
+     - ``null``
+     - Required
+   * - ``--columns[${NAME}].window.sort_keys``
+     - ``null``
+     - Optional
+   * - ``--columns[${NAME}].window.group_keys``
+     - ``=null``
+     - Optional
+
+You need to specify multiple parameters for a dynamic
+column. ``${NAME}`` is the identifier for each dynamic
+column. Parameters that use the same ``${NAME}`` are treated as
+parameters for the same dynamic column. Here is an example to specify
+parameters for 2 dynamic columns (``name1`` and ``name2``)::
+
+    --column[name1].stage initial
+    --column[name1].type UInt32
+    --column[name1].value 29
+
+    --column[name2].stage filtered
+    --column[name2].type ShortText
+    --column[name2].value "29"
+
+Here is a dynamic column usage example. It classifies
+``Entry.n_likes`` column values and stores the classified values to
+``n_likes_class`` column. This example classifies ``Entry.n_likes``
+column value ``10`` step and the lowest number in the class is the
+classified value. If a ``Entry.n_likes`` value is between ``0`` and
+``9`` such as ``3`` and ``5``, ``n_likes_class`` value (classified
+value) is ``0``. If ``Entry.n_likes`` value is between ``10`` and
+``20`` such as ``10`` and ``15``, ``n_likes_class`` value (classified
+value) is ``10``.
+
+You can use doc:`/reference/functions/number_classify` function for
+the classification. You need to register ``functions/number`` plugin
+by :doc:`plugin_register` command to use
+doc:`/reference/functions/number_classify` function.
+
+This example does drilldown by ``n_likes_class`` value. The drilldown
+result will help you to know data trend.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/usage_dynamic_column.log
+.. plugin_register functions/number
+.. select \
+..   --table Entries \
+..   --columns[n_likes_class].stage initial \
+..   --columns[n_likes_class].type UInt32 \
+..   --columns[n_likes_class].value 'number_classify(n_likes, 10)' \
+..   --drilldown n_likes_class \
+..   --drilldown_sort_keys _nsubrecs \
+..   --output_columns n_likes,n_likes_class
 
 Parameters
 ----------
