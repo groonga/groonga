@@ -43,6 +43,7 @@
 
 static double grn_table_select_enough_filtered_ratio = 0.0;
 static int grn_table_select_max_n_enough_filtered_records = 1000;
+static grn_bool grn_table_select_and_min_skip_enable = GRN_TRUE;
 
 void
 grn_expr_init_from_env(void)
@@ -66,6 +67,18 @@ grn_expr_init_from_env(void)
     if (grn_table_select_max_n_enough_filtered_records_env[0]) {
       grn_table_select_max_n_enough_filtered_records =
         atoi(grn_table_select_max_n_enough_filtered_records_env);
+    }
+  }
+
+  {
+    char grn_table_select_and_min_skip_enable_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_TABLE_SELECT_AND_MIN_SKIP_ENABLE",
+               grn_table_select_and_min_skip_enable_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (strcmp(grn_table_select_and_min_skip_enable_env, "no") == 0) {
+      grn_table_select_and_min_skip_enable = GRN_FALSE;
+    } else {
+      grn_table_select_and_min_skip_enable = GRN_TRUE;
     }
   }
 }
@@ -5765,7 +5778,11 @@ grn_table_select_index_match(grn_ctx *ctx,
   for (j = 0; j < n_indexes; j++, ip++, wp += 2) {
     uint32_t sid = (uint32_t) wp[0];
     int32_t weight = wp[1];
-    optarg.match_info.min = *min_id;
+    if (grn_table_select_and_min_skip_enable) {
+      optarg.match_info.min = *min_id;
+    } else {
+      optarg.match_info.min = 0;
+    }
     if (sid) {
       int weight_index = sid - 1;
       int current_vector_size;
