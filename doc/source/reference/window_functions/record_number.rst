@@ -10,7 +10,8 @@ Summary
 
 .. deprecated:: 7.0.0
 
-   ``record_number()`` is deprecated. Use :doc:`/reference/functions/window_record_number` instead.
+   ``record_number()`` is deprecated. Use :doc:`window_record_number`
+   instead.
 
 Syntax
 ------
