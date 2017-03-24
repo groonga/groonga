@@ -2,7 +2,7 @@ Execution example::
 
   select Items \
     --limit 0 \
-    --output_column _id \
+    --output_columns _id \
     --drilldown tag \
     --drilldown_output_columns '_key, *'
   # [
@@ -20,14 +20,6 @@ Execution example::
   #         [
   #           "_id", 
   #           "UInt32"
-  #         ], 
-  #         [
-  #           "_key", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "tag", 
-  #           "Tags"
   #         ]
   #       ]
   #     ], 

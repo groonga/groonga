@@ -1240,7 +1240,7 @@ Here is a ``drilldown`` with multiple group keys example:
 .. include:: ../../example/reference/commands/select/drilldown_multiple.log
 .. select Entries \
 ..   --limit 0 \
-..   --output_column _id \
+..   --output_columns _id \
 ..   --drilldown tag,n_likes
 
 The ``select`` command outputs the following information:
@@ -1282,7 +1282,7 @@ Here is a simple ``drilldown_sort_keys`` example:
 .. include:: ../../example/reference/commands/select/drilldown_sort_keys_simple.log
 .. select Entries \
 ..   --limit 0 \
-..   --output_column _id \
+..   --output_columns _id \
 ..   --drilldown tag \
 ..   --drilldown_sort_keys '-_nsubrecs, _key'
 
@@ -1297,7 +1297,7 @@ The sort keys are used in all group keys specified in ``drilldown``:
 .. include:: ../../example/reference/commands/select/drilldown_sort_keys_simple.log
 .. select Entries \
 ..   --limit 0 \
-..   --output_column _id \
+..   --output_columns _id \
 ..   --drilldown 'tag, n_likes' \
 ..   --drilldown_sort_keys '-_nsubrecs, _key'
 
@@ -1320,7 +1320,7 @@ Here is a ``drilldown_output_columns`` example:
 .. include:: ../../example/reference/commands/select/drilldown_output_columns_simple.log
 .. select Entries \
 ..   --limit 0 \
-..   --output_column _id \
+..   --output_columns _id \
 ..   --drilldown tag \
 ..   --drilldown_output_columns _key
 
@@ -1365,7 +1365,7 @@ You can refer ``Tags.label`` by ``label`` in
 .. include:: ../../example/reference/commands/select/drilldown_output_columns_referenced_type_column_label.log
 .. select Items \
 ..   --limit 0 \
-..   --output_column _id \
+..   --output_columns _id \
 ..   --drilldown tag \
 ..   --drilldown_output_columns '_key, label'
 
@@ -1375,7 +1375,7 @@ You can use ``*`` to refer all columns in referenced table (= ``Tags``):
 .. include:: ../../example/reference/commands/select/drilldown_output_columns_referenced_type_column_asterisk.log
 .. select Items \
 ..   --limit 0 \
-..   --output_column _id \
+..   --output_columns _id \
 ..   --drilldown tag \
 ..   --drilldown_output_columns '_key, *'
 
@@ -1405,7 +1405,7 @@ Here is a ``drilldown_offset`` example:
 .. include:: ../../example/reference/commands/select/drilldown_offset_simple.log
 .. select Entries \
 ..   --limit 0 \
-..   --output_column _id \
+..   --output_columns _id \
 ..   --drilldown tag \
 ..   --drilldown_sort_keys _key \
 ..   --drilldown_offset 1
@@ -1422,7 +1422,7 @@ grouped result to the 3rd grouped result.
 .. include:: ../../example/reference/commands/select/drilldown_offset_negative.log
 .. select Entries \
 ..   --limit 0 \
-..   --output_column _id \
+..   --output_columns _id \
 ..   --drilldown tag \
 ..   --drilldown_sort_keys _key \
 ..   --drilldown_offset -2
@@ -1446,7 +1446,7 @@ Here is a ``drilldown_limit`` example:
 .. include:: ../../example/reference/commands/select/drilldown_limit_simple.log
 .. select Entries \
 ..   --limit 0 \
-..   --output_column _id \
+..   --output_columns _id \
 ..   --drilldown tag \
 ..   --drilldown_sort_keys _key \
 ..   --drilldown_offset 1 \
@@ -1464,7 +1464,7 @@ Here is a negative ``drilldown_limit`` value example.
 .. include:: ../../example/reference/commands/select/drilldown_limit_negative.log
 .. select Entries \
 ..   --limit 0 \
-..   --output_column _id \
+..   --output_columns _id \
 ..   --drilldown tag \
 ..   --drilldown_sort_keys _key \
 ..   --drilldown_limit -1
@@ -1532,7 +1532,7 @@ Here is a ``MAX`` example:
 .. include:: ../../example/reference/commands/select/drilldown_calc_types_max.log
 .. select Entries \
 ..   --limit -1 \
-..   --output_column _id,n_likes \
+..   --output_columns _id,n_likes \
 ..   --drilldown tag \
 ..   --drilldown_calc_types MAX \
 ..   --drilldown_calc_target n_likes \
@@ -1550,7 +1550,7 @@ Here is a ``MIN`` example:
 .. include:: ../../example/reference/commands/select/drilldown_calc_types_min.log
 .. select Entries \
 ..   --limit -1 \
-..   --output_column _id,n_likes \
+..   --output_columns _id,n_likes \
 ..   --drilldown tag \
 ..   --drilldown_calc_types MIN \
 ..   --drilldown_calc_target n_likes \
@@ -1568,7 +1568,7 @@ Here is a ``SUM`` example:
 .. include:: ../../example/reference/commands/select/drilldown_calc_types_sum.log
 .. select Entries \
 ..   --limit -1 \
-..   --output_column _id,n_likes \
+..   --output_columns _id,n_likes \
 ..   --drilldown tag \
 ..   --drilldown_calc_types SUM \
 ..   --drilldown_calc_target n_likes \
@@ -1586,7 +1586,7 @@ Here is a ``AVG`` example:
 .. include:: ../../example/reference/commands/select/drilldown_calc_types_avg.log
 .. select Entries \
 ..   --limit -1 \
-..   --output_column _id,n_likes \
+..   --output_columns _id,n_likes \
 ..   --drilldown tag \
 ..   --drilldown_calc_types AVG \
 ..   --drilldown_calc_target n_likes \
@@ -1604,7 +1604,7 @@ Here is an example that uses all calculation types:
 .. include:: ../../example/reference/commands/select/drilldown_calc_types_all.log
 .. select Entries \
 ..   --limit -1 \
-..   --output_column _id,n_likes \
+..   --output_columns _id,n_likes \
 ..   --drilldown tag \
 ..   --drilldown_calc_types MAX,MIN,SUM,AVG \
 ..   --drilldown_calc_target n_likes \
@@ -1735,7 +1735,7 @@ column values:
 .. include:: ../../example/reference/commands/select/drilldowns_label_keys_multiple.log
 .. select Entries \
 ..   --limit -1 \
-..   --output_column tag,n_likes \
+..   --output_columns tag,n_likes \
 ..   --drilldowns[tag.n_likes].keys tag,n_likes \
 ..   --drilldowns[tag.n_likes].output_columns _value.tag,_value.n_likes,_nsubrecs
 
@@ -1772,7 +1772,7 @@ Here is an example to refer single group key by ``_key``
 .. include:: ../../example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log
 .. select Entries \
 ..   --limit 0 \
-..   --output_column _id \
+..   --output_columns _id \
 ..   --drilldowns[tag.n_likes].keys tag \
 ..   --drilldowns[tag.n_likes].output_columns _key
 
@@ -1789,7 +1789,7 @@ Here is an example to refer each group key in multiple group keys by
 .. include:: ../../example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log
 .. select Entries \
 ..   --limit 0 \
-..   --output_column _id \
+..   --output_columns _id \
 ..   --drilldowns[tag.n_likes].keys tag,n_likes \
 ..   --drilldowns[tag.n_likes].output_columns _value.tag,_value.n_likes
 

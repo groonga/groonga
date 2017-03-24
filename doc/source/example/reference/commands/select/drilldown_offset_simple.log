@@ -2,7 +2,7 @@ Execution example::
 
   select Entries \
     --limit 0 \
-    --output_column _id \
+    --output_columns _id \
     --drilldown tag \
     --drilldown_sort_keys _key \
     --drilldown_offset 1
@@ -21,22 +21,6 @@ Execution example::
   #         [
   #           "_id", 
   #           "UInt32"
-  #         ], 
-  #         [
-  #           "_key", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "content", 
-  #           "Text"
-  #         ], 
-  #         [
-  #           "n_likes", 
-  #           "UInt32"
-  #         ], 
-  #         [
-  #           "tag", 
-  #           "ShortText"
   #         ]
   #       ]
   #     ], 

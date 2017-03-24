@@ -2,7 +2,7 @@ Execution example::
 
   select Entries \
     --limit -1 \
-    --output_column _id,n_likes \
+    --output_columns _id,n_likes \
     --drilldown tag \
     --drilldown_calc_types AVG \
     --drilldown_calc_target n_likes \
@@ -24,56 +24,29 @@ Execution example::
   #           "UInt32"
   #         ], 
   #         [
-  #           "_key", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "content", 
-  #           "Text"
-  #         ], 
-  #         [
   #           "n_likes", 
   #           "UInt32"
-  #         ], 
-  #         [
-  #           "tag", 
-  #           "ShortText"
   #         ]
   #       ], 
   #       [
   #         1, 
-  #         "The first post!", 
-  #         "Welcome! This is my first post!", 
-  #         5, 
-  #         "Hello"
+  #         5
   #       ], 
   #       [
   #         2, 
-  #         "Groonga", 
-  #         "I started to use Groonga. It's very fast!", 
-  #         10, 
-  #         "Groonga"
+  #         10
   #       ], 
   #       [
   #         3, 
-  #         "Mroonga", 
-  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
-  #         15, 
-  #         "Groonga"
+  #         15
   #       ], 
   #       [
   #         4, 
-  #         "Good-bye Senna", 
-  #         "I migrated all Senna system!", 
-  #         3, 
-  #         "Senna"
+  #         3
   #       ], 
   #       [
   #         5, 
-  #         "Good-bye Tritonn", 
-  #         "I also migrated all Tritonn system!", 
-  #         3, 
-  #         "Senna"
+  #         3
   #       ]
   #     ], 
   #     [
