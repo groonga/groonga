@@ -1,0 +1,60 @@
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Items TABLE_NO_KEY
+[[0,0.0,0.0],true]
+load --table Items
+[
+{},
+{},
+{}
+]
+[[0,0.0,0.0],3]
+select Items   --columns[vector].stage initial   --columns[vector].flags COLUMN_VECTOR   --columns[vector].type UInt32   --columns[vector].value 'vector_new(1, 2, 3)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "vector",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      [
+        2,
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      [
+        3,
+        [
+          1,
+          2,
+          3
+        ]
+      ]
+    ]
+  ]
+]

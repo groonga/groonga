@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015-2016 Brazil
+  Copyright(C) 2015-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -274,6 +274,53 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
   return slice;
 }
 
+static grn_obj *
+func_vector_new(grn_ctx *ctx, int n_args, grn_obj **args,
+                grn_user_data *user_data)
+{
+  grn_obj *vector = NULL;
+  int i;
+
+  if (n_args == 0) {
+    return grn_plugin_proc_alloc(ctx, user_data, GRN_DB_UINT32, GRN_OBJ_VECTOR);
+  }
+
+  vector = grn_plugin_proc_alloc(ctx,
+                                 user_data,
+                                 args[0]->header.domain,
+                                 GRN_OBJ_VECTOR);
+  if (!vector) {
+    return NULL;
+  }
+
+  for (i = 0; i < n_args; i++) {
+    grn_obj *element = args[i];
+    switch (vector->header.type) {
+    case GRN_VECTOR :
+      grn_vector_add_element(ctx,
+                             vector,
+                             GRN_BULK_HEAD(element),
+                             GRN_BULK_VSIZE(element),
+                             0,
+                             element->header.domain);
+      break;
+    case GRN_UVECTOR :
+      grn_bulk_write(ctx,
+                     vector,
+                     GRN_BULK_HEAD(element),
+                     GRN_BULK_VSIZE(element));
+      break;
+    case GRN_PVECTOR :
+      GRN_PTR_PUT(ctx, vector, element);
+      break;
+    default :
+      break;
+    }
+  }
+
+  return vector;
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -289,6 +336,9 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
                   NULL, NULL, 0, NULL);
 
   grn_proc_create(ctx, "vector_slice", -1, GRN_PROC_FUNCTION, func_vector_slice,
+                  NULL, NULL, 0, NULL);
+
+  grn_proc_create(ctx, "vector_new", -1, GRN_PROC_FUNCTION, func_vector_new,
                   NULL, NULL, 0, NULL);
 
   return rc;
