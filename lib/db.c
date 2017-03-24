@@ -3508,6 +3508,9 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       if (!base_res) {
         goto exit;
       }
+      if (optarg) {
+        optarg->match_info.min = GRN_ID_NIL;
+      }
       rc = grn_obj_search(ctx, index, query, base_res, GRN_OP_OR, optarg);
       if (rc != GRN_SUCCESS) {
         grn_obj_unlink(ctx, base_res);

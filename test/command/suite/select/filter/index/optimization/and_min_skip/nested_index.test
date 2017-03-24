@@ -1,0 +1,29 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Memos TABLE_NO_KEY
+column_create Memos user COLUMN_SCALAR ShortText
+column_create Memos tag COLUMN_SCALAR Tags
+
+column_create Tags memos_tag COLUMN_INDEX Memos tag
+
+table_create UserTerms TABLE_PAT_KEY ShortText \
+  --normalize NormalizerAuto \
+  --default_tokenizer TokenBigram
+column_create UserTerms memos_user COLUMN_INDEX|WITH_POSITION Memos user
+
+table_create TagTerms TABLE_PAT_KEY ShortText \
+  --normalize NormalizerAuto \
+  --default_tokenizer TokenBigram
+column_create TagTerms tags_key COLUMN_INDEX|WITH_POSITION Tags _key
+
+load --table Memos
+[
+{"user": "Alice", "tag": "B"},
+{"user": "Alice", "tag": "A"},
+{"user": "Alice", "tag": "B"},
+{"user": "Bob",   "tag": "A"}
+]
+
+select Memos \
+  --match_escalation_threshold -1 \
+  --filter 'user @ "Bob" && tag._key @ "A"'

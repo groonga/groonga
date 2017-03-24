@@ -1,0 +1,60 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos user COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+column_create Tags memos_tag COLUMN_INDEX Memos tag
+[[0,0.0,0.0],true]
+table_create UserTerms TABLE_PAT_KEY ShortText   --normalize NormalizerAuto   --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create UserTerms memos_user COLUMN_INDEX|WITH_POSITION Memos user
+[[0,0.0,0.0],true]
+table_create TagTerms TABLE_PAT_KEY ShortText   --normalize NormalizerAuto   --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create TagTerms tags_key COLUMN_INDEX|WITH_POSITION Tags _key
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"user": "Alice", "tag": "B"},
+{"user": "Alice", "tag": "A"},
+{"user": "Alice", "tag": "B"},
+{"user": "Bob",   "tag": "A"}
+]
+[[0,0.0,0.0],4]
+select Memos   --match_escalation_threshold -1   --filter 'user @ "Bob" && tag._key @ "A"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "tag",
+          "Tags"
+        ],
+        [
+          "user",
+          "ShortText"
+        ]
+      ],
+      [
+        4,
+        "A",
+        "Bob"
+      ]
+    ]
+  ]
+]
