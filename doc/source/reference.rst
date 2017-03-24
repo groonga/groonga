@@ -23,6 +23,7 @@ Reference manual
    reference/grn_expr
    reference/regular_expression
    reference/function
+   reference/window_function
    reference/operations
    reference/configuration
    reference/alias

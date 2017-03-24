@@ -251,6 +251,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/table_nonexistent.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_drilldown.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_drilldown_only_query.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/usage_dynamic_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/commands/shutdown/default.log \
 	$(top_srcdir)/doc/source/example/reference/commands/shutdown/graceful.log \
@@ -798,7 +799,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/prefix_rk_search.rst \
 	$(top_srcdir)/doc/source/reference/functions/query.rst \
 	$(top_srcdir)/doc/source/reference/functions/rand.rst \
-	$(top_srcdir)/doc/source/reference/functions/record_number.rst \
 	$(top_srcdir)/doc/source/reference/functions/snippet_html.rst \
 	$(top_srcdir)/doc/source/reference/functions/string_substring.rst \
 	$(top_srcdir)/doc/source/reference/functions/sub_filter.rst \
@@ -811,8 +811,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_year.rst \
 	$(top_srcdir)/doc/source/reference/functions/vector_size.rst \
 	$(top_srcdir)/doc/source/reference/functions/vector_slice.rst \
-	$(top_srcdir)/doc/source/reference/functions/window_record_number.rst \
-	$(top_srcdir)/doc/source/reference/functions/window_sum.rst \
 	$(top_srcdir)/doc/source/reference/grn_expr.rst \
 	$(top_srcdir)/doc/source/reference/grn_expr/query_syntax.rst \
 	$(top_srcdir)/doc/source/reference/grn_expr/script_syntax.rst \
@@ -841,6 +839,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/tokenizers.rst \
 	$(top_srcdir)/doc/source/reference/tuning.rst \
 	$(top_srcdir)/doc/source/reference/types.rst \
+	$(top_srcdir)/doc/source/reference/window_function.rst \
+	$(top_srcdir)/doc/source/reference/window_functions/record_number.rst \
+	$(top_srcdir)/doc/source/reference/window_functions/window_record_number.rst \
+	$(top_srcdir)/doc/source/reference/window_functions/window_sum.rst \
 	$(top_srcdir)/doc/source/server.rst \
 	$(top_srcdir)/doc/source/server/gqtp.rst \
 	$(top_srcdir)/doc/source/server/http.rst \
@@ -1133,6 +1135,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/table_nonexistent.log \
 	source/example/reference/commands/select/usage_drilldown.log \
 	source/example/reference/commands/select/usage_drilldown_only_query.log \
+	source/example/reference/commands/select/usage_dynamic_column.log \
 	source/example/reference/commands/select/usage_setup.log \
 	source/example/reference/commands/shutdown/default.log \
 	source/example/reference/commands/shutdown/graceful.log \
@@ -1680,7 +1683,6 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/prefix_rk_search.rst \
 	source/reference/functions/query.rst \
 	source/reference/functions/rand.rst \
-	source/reference/functions/record_number.rst \
 	source/reference/functions/snippet_html.rst \
 	source/reference/functions/string_substring.rst \
 	source/reference/functions/sub_filter.rst \
@@ -1693,8 +1695,6 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/time_classify_year.rst \
 	source/reference/functions/vector_size.rst \
 	source/reference/functions/vector_slice.rst \
-	source/reference/functions/window_record_number.rst \
-	source/reference/functions/window_sum.rst \
 	source/reference/grn_expr.rst \
 	source/reference/grn_expr/query_syntax.rst \
 	source/reference/grn_expr/script_syntax.rst \
@@ -1723,6 +1723,10 @@ source_files_relative_from_doc_dir = \
 	source/reference/tokenizers.rst \
 	source/reference/tuning.rst \
 	source/reference/types.rst \
+	source/reference/window_function.rst \
+	source/reference/window_functions/record_number.rst \
+	source/reference/window_functions/window_record_number.rst \
+	source/reference/window_functions/window_sum.rst \
 	source/server.rst \
 	source/server/gqtp.rst \
 	source/server/http.rst \
@@ -2049,7 +2053,6 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/functions/prefix_rk_search.txt \
 	html/_sources/reference/functions/query.txt \
 	html/_sources/reference/functions/rand.txt \
-	html/_sources/reference/functions/record_number.txt \
 	html/_sources/reference/functions/snippet_html.txt \
 	html/_sources/reference/functions/string_substring.txt \
 	html/_sources/reference/functions/sub_filter.txt \
@@ -2062,8 +2065,6 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/functions/time_classify_year.txt \
 	html/_sources/reference/functions/vector_size.txt \
 	html/_sources/reference/functions/vector_slice.txt \
-	html/_sources/reference/functions/window_record_number.txt \
-	html/_sources/reference/functions/window_sum.txt \
 	html/_sources/reference/grn_expr.txt \
 	html/_sources/reference/grn_expr/query_syntax.txt \
 	html/_sources/reference/grn_expr/script_syntax.txt \
@@ -2091,6 +2092,10 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/tokenizers.txt \
 	html/_sources/reference/tuning.txt \
 	html/_sources/reference/types.txt \
+	html/_sources/reference/window_function.txt \
+	html/_sources/reference/window_functions/record_number.txt \
+	html/_sources/reference/window_functions/window_record_number.txt \
+	html/_sources/reference/window_functions/window_sum.txt \
 	html/_sources/server.txt \
 	html/_sources/server/gqtp.txt \
 	html/_sources/server/http.txt \
@@ -2318,7 +2323,6 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/prefix_rk_search.html \
 	html/reference/functions/query.html \
 	html/reference/functions/rand.html \
-	html/reference/functions/record_number.html \
 	html/reference/functions/snippet_html.html \
 	html/reference/functions/string_substring.html \
 	html/reference/functions/sub_filter.html \
@@ -2331,8 +2335,6 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/time_classify_year.html \
 	html/reference/functions/vector_size.html \
 	html/reference/functions/vector_slice.html \
-	html/reference/functions/window_record_number.html \
-	html/reference/functions/window_sum.html \
 	html/reference/grn_expr.html \
 	html/reference/grn_expr/query_syntax.html \
 	html/reference/grn_expr/script_syntax.html \
@@ -2360,6 +2362,10 @@ html_files_relative_from_locale_dir = \
 	html/reference/tokenizers.html \
 	html/reference/tuning.html \
 	html/reference/types.html \
+	html/reference/window_function.html \
+	html/reference/window_functions/record_number.html \
+	html/reference/window_functions/window_record_number.html \
+	html/reference/window_functions/window_sum.html \
 	html/search.html \
 	html/searchindex.js \
 	html/server.html \

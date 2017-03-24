@@ -671,7 +671,8 @@ Improvements
   without index. By between() optimization, there is a case that range
   search is 100x faster than the previous version of between().
 
-* [:doc:`/reference/functions/record_number`] Supported window function.
+* [:doc:`/reference/window_functions/record_number`] Supported window
+  function.
 
 * [experimental][:doc:`/reference/commands/select`] Supported ``--slices``.
 

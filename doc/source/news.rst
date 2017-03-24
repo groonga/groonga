@@ -42,13 +42,13 @@ Improvements
   provides stemming feature by ``TokenFilterStem`` token filter on
   CentOS 7. [GitHub#633] [Reported by Tim Bellefleur]
 
-* [:doc:`/reference/functions/window_record_number`] Marked
+* [:doc:`/reference/window_functions/window_record_number`] Marked
   ``record_number`` as deprecated. Use ``window_record_number``
   instead. ``record_number`` is still available for backward
   compatibility.
 
-* [:doc:`/reference/functions/window_sum`] Added ``window_sum`` window
-  function. It's similar behavior to window function sum() on
+* [:doc:`/reference/window_functions/window_sum`] Added ``window_sum``
+  window function. It's similar behavior to window function sum() on
   PostgreSQL.
 
 * Supported to construct offline indexing with in-memory (temporary)
@@ -88,12 +88,10 @@ Fixes
   tokenizer and token filter are registered and tokenizer has an
   error.
 
-* [:doc:`/reference/functions/window_record_number`] Fixed a bug that
-  arguments for window function is not correctly
+* [:doc:`/reference/window_functions/window_record_number`] Fixed a
+  bug that arguments for window function is not correctly
   passed. [GitHub#634][Patch by Naoya Murakami]
 
-
-    
 Thanks
 ^^^^^^
 
