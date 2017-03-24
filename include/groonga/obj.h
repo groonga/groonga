@@ -35,6 +35,7 @@ GRN_API grn_bool grn_obj_is_bulk(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_text_family_bulk(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_table(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_column(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_bool grn_obj_is_scalar_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_weight_vector_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj);

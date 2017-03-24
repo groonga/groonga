@@ -139,6 +139,16 @@ grn_obj_is_column(grn_ctx *ctx, grn_obj *obj)
 }
 
 grn_bool
+grn_obj_is_scalar_column(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_column(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  return (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_SCALAR;
+}
+
+grn_bool
 grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj)
 {
   if (!grn_obj_is_column(ctx, obj)) {
