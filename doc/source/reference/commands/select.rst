@@ -79,7 +79,7 @@ optional::
 
 .. versionadded:: 6.0.6
 
-   Dynamic columns can be used in ``drilldown[${LABEL}]`` with the
+   Dynamic columns can be used in ``drilldowns[${LABEL}]`` with the
    following named parameters:
 
      * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
@@ -90,7 +90,7 @@ optional::
 
 .. versionadded:: 7.0.0
 
-   Grouped windows function can be used in ``drilldown[${LABEL}]``
+   Grouped windows function can be used in ``drilldowns[${LABEL}]``
    with the following named parameters:
 
      * ``drilldowns[${LABEL}].columns[${NAME}].window.group_keys=null``
@@ -341,7 +341,7 @@ column value ``10`` step and the lowest number in the class is the
 classified value. If a ``Entry.n_likes`` value is between ``0`` and
 ``9`` such as ``3`` and ``5``, ``n_likes_class`` value (classified
 value) is ``0``. If ``Entry.n_likes`` value is between ``10`` and
-``20`` such as ``10`` and ``15``, ``n_likes_class`` value (classified
+``19`` such as ``10`` and ``15``, ``n_likes_class`` value (classified
 value) is ``10``.
 
 You can use doc:`/reference/functions/number_classify` function for
@@ -1045,7 +1045,7 @@ related parameters:
 
    * - Name
      - Default value
-     - Required
+     - Required or optional
    * - ``--columns[${NAME}].stage``
      - ``null``
      - Required
@@ -1253,7 +1253,7 @@ dynamic column related parameters:
    :header-rows: 1
 
    * - Name
-     - Required
+     - Required or optional
      - Note
    * - ``--columns[${NAME}].value``
      - Required
