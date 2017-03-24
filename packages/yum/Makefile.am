@@ -3,7 +3,7 @@ DISTRIBUTIONS = centos
 ARCHITECTURES = i386 x86_64
 BASE_URL_PREFIX = http://packages.groonga.org
 HAVE_DEVELOPMENT_BRANCH = no
-CENTOS_VERSIONS = 5 6 7
+CENTOS_VERSIONS = 6 7
 
 release: download build sign-packages update-repository upload
 

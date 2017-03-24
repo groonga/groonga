@@ -46,7 +46,7 @@ for distribution in ${DISTRIBUTIONS}; do
 	    ;;
 	centos)
 	    distribution_label=CentOS
-	    distribution_versions="5 6 7"
+	    distribution_versions="6 7"
 	    ;;
     esac
     repo=${PACKAGE}.repo
