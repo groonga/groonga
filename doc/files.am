@@ -197,6 +197,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/adjuster_no_weight.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/adjuster_one.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/cache_no.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/columns_name_flags.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/columns_name_stage.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/columns_name_type.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/columns_name_value.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_all.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_avg.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_max.log \
@@ -800,6 +804,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/query.rst \
 	$(top_srcdir)/doc/source/reference/functions/rand.rst \
 	$(top_srcdir)/doc/source/reference/functions/snippet_html.rst \
+	$(top_srcdir)/doc/source/reference/functions/string_length.rst \
 	$(top_srcdir)/doc/source/reference/functions/string_substring.rst \
 	$(top_srcdir)/doc/source/reference/functions/sub_filter.rst \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_day.rst \
@@ -1081,6 +1086,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/adjuster_no_weight.log \
 	source/example/reference/commands/select/adjuster_one.log \
 	source/example/reference/commands/select/cache_no.log \
+	source/example/reference/commands/select/columns_name_flags.log \
+	source/example/reference/commands/select/columns_name_stage.log \
+	source/example/reference/commands/select/columns_name_type.log \
+	source/example/reference/commands/select/columns_name_value.log \
 	source/example/reference/commands/select/drilldown_calc_types_all.log \
 	source/example/reference/commands/select/drilldown_calc_types_avg.log \
 	source/example/reference/commands/select/drilldown_calc_types_max.log \
@@ -1684,6 +1693,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/query.rst \
 	source/reference/functions/rand.rst \
 	source/reference/functions/snippet_html.rst \
+	source/reference/functions/string_length.rst \
 	source/reference/functions/string_substring.rst \
 	source/reference/functions/sub_filter.rst \
 	source/reference/functions/time_classify_day.rst \
@@ -2054,6 +2064,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/functions/query.txt \
 	html/_sources/reference/functions/rand.txt \
 	html/_sources/reference/functions/snippet_html.txt \
+	html/_sources/reference/functions/string_length.txt \
 	html/_sources/reference/functions/string_substring.txt \
 	html/_sources/reference/functions/sub_filter.txt \
 	html/_sources/reference/functions/time_classify_day.txt \
@@ -2324,6 +2335,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/query.html \
 	html/reference/functions/rand.html \
 	html/reference/functions/snippet_html.html \
+	html/reference/functions/string_length.html \
 	html/reference/functions/string_substring.html \
 	html/reference/functions/sub_filter.html \
 	html/reference/functions/time_classify_day.html \
