@@ -5781,7 +5781,7 @@ grn_table_select_index_match(grn_ctx *ctx,
     if (grn_table_select_and_min_skip_enable) {
       optarg.match_info.min = *min_id;
     } else {
-      optarg.match_info.min = 0;
+      optarg.match_info.min = GRN_ID_NIL;
     }
     if (sid) {
       int weight_index = sid - 1;
