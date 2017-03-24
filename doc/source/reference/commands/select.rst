@@ -1134,7 +1134,7 @@ points. You should choose stage as late as possible:
 
   #. Evaluates :ref:`select-output-columns`. You can use dynamic
      columns created in ``initial`` stage, ``filtered`` stage and
-    ``output`` stage.
+     ``output`` stage.
 
 Here is a ``columns[${NAME}].stage`` example. It creates
 ``is_popular`` column at ``initial`` stage. You can use ``is_popular``
