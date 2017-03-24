@@ -1033,6 +1033,70 @@ records will be a little even if there are many records in a
 table. Because you will filter, sort and limit all records and output
 only the limited records in many cases.
 
+See :ref:`select-columns-name-stage` for ``stage`` detail.
+
+Here are parameters for dynamic column. They don't include window
+function related parameters. See
+:ref:`select-window-function-related-parameters` for window function
+related parameters:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Name
+     - Default value
+     - Required
+   * - ``--columns[${NAME}].stage``
+     - ``null``
+     - Required
+   * - ``--columns[${NAME}].flags``
+     - ``COLUMN_SCALAR``
+     - Optional
+   * - ``--columns[${NAME}].type``
+     - ``null``
+     - Required
+   * - ``--columns[${NAME}].value``
+     - ``null``
+     - Required
+
+You need to specify multiple parameters for a dynamic
+column. ``${NAME}`` is the name for each dynamic column. Parameters
+that use the same ``${NAME}`` are treated as parameters for the same
+dynamic column. Here is an example to specify parameters for 2 dynamic
+columns (``name1`` and ``name2``)::
+
+    --columns[name1].stage initial
+    --columns[name1].type UInt32
+    --columns[name1].value 29
+
+    --columns[name2].stage filtered
+    --columns[name2].type ShortText
+    --columns[name2].value "29"
+
+.. _select-columns-name-stage:
+
+``columns[${NAME}].stage``
+""""""""""""""""""""""""""
+
+Specifies when the dynamic column is created. This is a required
+parameter to create a dynamic column.
+
+Here are available stages:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Name
+     - Description
+   * - ``initial``
+     - Dynamic column is created at first.
+   * - ``filtered``
+     - Dynamic column is created after :ref:`select-query` and
+       :ref:`select-filter` are evaluated.
+   * - ``output``
+     - Dynamic column is created before :ref:`select-output-columns`
+       is evaluated.
+
 Here is the ``select`` process flow with dynamic column creation
 points. You should choose stage as late as possible:
 
@@ -1072,71 +1136,101 @@ points. You should choose stage as late as possible:
      columns created in ``initial`` stage, ``filtered`` stage and
     ``output`` stage.
 
-Here are parameters for dynamic column. They don't include window
-function related parameters. See
-:ref:`select-window-function-related-parameters` for window function
-related parameters:
+Here is a ``columns[${NAME}].stage`` example. It creates
+``is_popular`` column at ``initial`` stage. You can use ``is_popular``
+in all parameters such as ``filter`` and ``output_columns``:
 
-.. list-table::
-   :header-rows: 1
-
-   * - Name
-     - Default value
-     - Required
-   * - ``--columns[${NAME}].stage``
-     - ``null``
-     - Required
-   * - ``--columns[${NAME}].flags``
-     - ``COLUMN_SCALAR``
-     - Optional
-   * - ``--columns[${NAME}].type``
-     - ``null``
-     - Required
-   * - ``--columns[${NAME}].value``
-     - ``null``
-     - Required
-
-You need to specify multiple parameters for a dynamic
-column. ``${NAME}`` is the identifier for each dynamic
-column. Parameters that use the same ``${NAME}`` are treated as
-parameters for the same dynamic column. Here is an example to specify
-parameters for 2 dynamic columns (``name1`` and ``name2``)::
-
-    --columns[name1].stage initial
-    --columns[name1].type UInt32
-    --columns[name1].value 29
-
-    --columns[name2].stage filtered
-    --columns[name2].type ShortText
-    --columns[name2].value "29"
-
-.. _select-columns-name-stage:
-
-``columns[${NAME}].stage``
-""""""""""""""""""""""""""
-
-TODO
+.. groonga-command
+.. include:: ../../example/reference/commands/select/columns_name_stage.log
+.. select Entries \
+..   --columns[is_popular].stage initial \
+..   --columns[is_popular].type Bool \
+..   --columns[is_popular].value 'n_likes >= 10' \
+..   --filter is_popular \
+..   --output_columns _id,is_popular,n_likes
 
 .. _select-columns-name-flags:
 
 ``columns[${NAME}].flags``
 """"""""""""""""""""""""""
 
-TODO
+Specifies flags for the dynamic column. It's the same as ``flags``
+parameter for :doc:`column_create`. See :ref:`column-create-flags` for
+available flags.
+
+The default value is ``COLUMN_SCALAR``.
+
+Here is a ``columns[${NAME}].flags`` example. It creates a vector
+column by ``COLUMN_VECTOR`` flags. ``plugin_register
+functions/vector`` is for using :doc:`/reference/functions/vector_new`
+function:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/columns_name_flags.log
+.. plugin_register functions/vector
+.. select Entries \
+..   --columns[vector].stage initial \
+..   --columns[vector].flags COLUMN_VECTOR \
+..   --columns[vector].type UInt32 \
+..   --columns[vector].value 'vector_new(1, 2, 3)' \
+..   --output_columns _id,vector
 
 .. _select-columns-name-type:
 
 ``columns[${NAME}].type``
 """""""""""""""""""""""""
 
-TODO
+Specifies value type for the dynamic column. It's the same as ``type``
+parameter for :doc:`column_create`. See :ref:`column-create-type` for
+available flags.
+
+This is required parameter.
+
+Here is a ``columns[${NAME}].type`` example. It creates a
+``ShortText`` value column. Stored value is casted to ``ShortText``
+automatically. In this example, number is casted to ``ShortText``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/columns_name_type.log
+.. select Entries \
+..   --columns[n_likes_string].stage initial \
+..   --columns[n_likes_string].type ShortText \
+..   --columns[n_likes_string].value n_likes \
+..   --output_columns _id,n_likes,n_likes_string
 
 .. _select-columns-name-value:
 
 ``columns[${NAME}].value``
 """"""""""""""""""""""""""
 
-TODO
+Specifies expression that generates values for the dynamic column. The
+expression uses :doc:`/reference/grn_expr/script_syntax`. It's the
+same syntax in :ref:`select-filter`. For example, ``1 + 1``,
+``string_length("Hello")``, ``column * 1.08`` and so on are valid
+expressions.
+
+You need to specify :doc:`/reference/window_function` as ``value``
+value and other window function related parameters when you use window
+function. See :ref:`select-window-function-related-parameters` for
+details.
+
+This is required parameter.
+
+Here is a ``columns[${NAME}].value`` example. It creates a new dynamic
+column that stores the number of characters of content. This example
+uses :doc:`/reference/functions/string_length` function in
+``functions/string`` plugin to compute string
+length. :doc:`plugin_register` is used to register
+``functions/string`` plugin:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/columns_name_value.log
+.. plugin_register functions/string
+.. select Entries \
+..   --columns[content_length].stage initial \
+..   --columns[content_length].type UInt32 \
+..   --columns[content_length].value 'string_length(content)' \
+..   --output_columns _id,content,content_length
 
 .. _select-window-function-related-parameters:
 
