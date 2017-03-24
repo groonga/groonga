@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2016 Brazil
+/*
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1452,19 +1453,36 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
     for (i = 0; i < max_mapped_segment; i++) {
       grn_io_mapinfo *info = &(io->maps[i]);
       uint32_t nth_file_info;
+      uint32_t *pnref;
+      uint32_t nref;
+      int msync_result;
 
       if (!info) {
         continue;
       }
+
+      pnref = &info->nref;
+      GRN_ATOMIC_ADD_EX(pnref, 1, nref);
+      if (nref != 0) {
+        GRN_ATOMIC_ADD_EX(pnref, -1, nref);
+        continue;
+      }
+
       if (!info->map) {
+        GRN_ATOMIC_ADD_EX(pnref, -1, nref);
+        GRN_FUTEX_WAKE(pnref);
         continue;
       }
 
       nth_file_info = grn_io_compute_nth_file_info(io, i);
-      if (GRN_MSYNC(ctx,
-                    io->fis[nth_file_info].fh,
-                    info->map,
-                    segment_size) != 0) {
+      msync_result = GRN_MSYNC(ctx,
+                               io->fis[nth_file_info].fh,
+                               info->map,
+                               segment_size);
+      GRN_ATOMIC_ADD_EX(pnref, -1, nref);
+      GRN_FUTEX_WAKE(pnref);
+
+      if (msync_result != 0) {
         rc = ctx->rc;
         break;
       }
