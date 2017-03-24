@@ -442,11 +442,7 @@ grn_expr_executor_is_simple_condition(grn_ctx *ctx, grn_obj *expr)
   if (target->nargs != 1) {
     return GRN_FALSE;
   }
-  if (!target->value) {
-    return GRN_FALSE;
-  }
-  if ((target->value->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) !=
-      GRN_OBJ_COLUMN_SCALAR) {
+  if (!grn_obj_is_scalar_column(ctx, target->value)) {
     return GRN_FALSE;
   }
 
