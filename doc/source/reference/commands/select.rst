@@ -329,118 +329,14 @@ in grouped records and so on. See
 Dynamic column
 ^^^^^^^^^^^^^^
 
-You can create zero or more columns and fill values into these columns
-while a ``select`` execution. These columns are called as "dynamic
-columns". You can use dynamic columns as same as normal columns after
-dynamic columns are created.
+You can create zero or more columns dynamically while a ``select``
+execution. You can use them for drilldown by computed value, window
+function and so on.
 
-Dynamic column has performance merit because its values are computed
-at once and reused computed values.
-
-Dynamic column increases memory usage because its values are kept
-while the ``select`` execution.
-
-You need to use dynamic column in the following cases:
-
-  * You want to name values like ``AS`` in SQL.
-
-  * You want to use computed values for drilldown. Groonga doesn't not
-    support drilldown target value computation in drilldown.
-
-  * You want to use window function.
-
-There are some points to create dynamic columns. You must specify
-``stage`` to each dynamic column to control dynamic columns creation
-points. It's important that you choose proper point to get better
-performance.
-
-For example, it's not a good idea that you create a dynamic column
-that is only used for output for all records. The number of output
-records will be a little even if there are many records in a
-table. Because you will filter, sort and limit all records and output
-only the limited records in many cases.
-
-Here is the ``select`` process flow with dynamic column creation
-points. You should choose stage as late as possible:
-
-  1. Creates dynamic columns for ``initial`` stage. All records have
-     these dynamic columns.
-
-  2. Evaluates :ref:`select-query` and :ref:`select-filter`. You can
-     use dynamic columns created in ``initial`` stage.
-
-  3. Creates dynamic columns for ``filtered`` stage. Only filtered
-     records have these dynamic columns.
-
-  4. Evaluates :ref:`select-adjuster`. You can use dynamic columns
-     created in ``initial`` stage and ``filtered`` stage.
-
-  5. Evaluates :ref:`select-scorer`. You can use dynamic columns
-     created in ``initial`` stage and ``filtered`` stage.
-
-  6. Evaluates :ref:`select-sort-keys`, :ref:`select-offset` and
-     :ref:`select-limit`. You can use dynamic columns created in
-     ``initial`` stage and ``filtered`` stage.
-
-  7. Creates dynamic columns for ``output`` stage. Only
-     :ref:`select-limit` records have these dynamic columns.
-
-  8. Evaluates :ref:`select-slices`. You can use dynamic columns
-     created in ``initial`` stage, ``filtered`` stage and ``output``
-     stage.
-
-  9. Evaluates :ref:`select-drilldowns`. You can use dynamic columns
-     created in ``initial`` stage, ``filtered`` stage and ``output``
-     stage. Note that you can use dynamic columns in each drilldown.
-
-  10. Evaluates :ref:`select-output-columns`. You can use dynamic
-      columns created in ``initial`` stage, ``filtered`` stage and
-     ``output`` stage.
-
-Here are parameters for dynamic column:
-
-.. list-table::
-   :header-rows: 1
-
-   * - Name
-     - Default value
-     - Required
-   * - ``--columns[${NAME}].stage``
-     - ``null``
-     - Required
-   * - ``--columns[${NAME}].flags``
-     - ``COLUMN_SCALAR``
-     - Optional
-   * - ``--columns[${NAME}].type``
-     - ``null``
-     - Required
-   * - ``--columns[${NAME}].value``
-     - ``null``
-     - Required
-   * - ``--columns[${NAME}].window.sort_keys``
-     - ``null``
-     - Optional
-   * - ``--columns[${NAME}].window.group_keys``
-     - ``=null``
-     - Optional
-
-You need to specify multiple parameters for a dynamic
-column. ``${NAME}`` is the identifier for each dynamic
-column. Parameters that use the same ``${NAME}`` are treated as
-parameters for the same dynamic column. Here is an example to specify
-parameters for 2 dynamic columns (``name1`` and ``name2``)::
-
-    --column[name1].stage initial
-    --column[name1].type UInt32
-    --column[name1].value 29
-
-    --column[name2].stage filtered
-    --column[name2].type ShortText
-    --column[name2].value "29"
-
-Here is a dynamic column usage example. It classifies
-``Entry.n_likes`` column values and stores the classified values to
-``n_likes_class`` column. This example classifies ``Entry.n_likes``
+Here is an example that uses dynamic column for drilldown by computed
+value. This example creates a new column named
+``n_likes_class``. ``n_likes_class`` column has classified value of
+``Entry.n_likes`` value. This example classifies ``Entry.n_likes``
 column value ``10`` step and the lowest number in the class is the
 classified value. If a ``Entry.n_likes`` value is between ``0`` and
 ``9`` such as ``3`` and ``5``, ``n_likes_class`` value (classified
@@ -467,6 +363,13 @@ result will help you to know data trend.
 ..   --drilldown n_likes_class \
 ..   --drilldown_sort_keys _nsubrecs \
 ..   --output_columns n_likes,n_likes_class
+
+See :ref:`select-dynamic-column-related-parameters` for details.
+
+Window function
+^^^^^^^^^^^^^^^
+
+TODO
 
 Parameters
 ----------
@@ -1088,6 +991,199 @@ TODO: write in English and add example.
 検索条件にマッチする全てのレコードに対して適用するgrn_exprをscript形式で指定します。
 
 scorerは、検索処理が完了し、ソート処理が実行される前に呼び出されます。従って、各レコードのスコアを操作する式を指定しておけば、検索結果のソート順序をカスタマイズできるようになります。
+
+.. _select-dynamic-column-related-parameters:
+
+Dynamic column related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This section describes dynamic column related parameters. You can use
+dynamic column for window function but this section doesn't describe
+window function. See :ref:`select-window-function-related-parameters`
+for window function.
+
+You can create zero or more columns and fill values into these columns
+while a ``select`` execution. These columns are called as "dynamic
+columns". You can use dynamic columns as same as normal columns after
+dynamic columns are created.
+
+Dynamic column has performance merit because its values are computed
+at once and reused computed values.
+
+Dynamic column increases memory usage because its values are kept
+while the ``select`` execution.
+
+You need to use dynamic column in the following cases:
+
+  * You want to name values like ``AS`` in SQL.
+
+  * You want to use computed values for drilldown. Groonga doesn't
+    support drilldown target value computation in drilldown.
+
+  * You want to use window function.
+
+There are some points to create dynamic columns. You must specify
+``stage`` to each dynamic column to control dynamic columns creation
+points. It's important that you choose proper point to get better
+performance.
+
+For example, it's not a good idea that you create a dynamic column
+that is only used for output for all records. The number of output
+records will be a little even if there are many records in a
+table. Because you will filter, sort and limit all records and output
+only the limited records in many cases.
+
+Here is the ``select`` process flow with dynamic column creation
+points. You should choose stage as late as possible:
+
+  #. Creates dynamic columns for ``initial`` stage. All records have
+     these dynamic columns.
+
+  #. Evaluates :ref:`select-query` and :ref:`select-filter`. You can
+     use dynamic columns created in ``initial`` stage.
+
+  #. Creates dynamic columns for ``filtered`` stage. Only filtered
+     records have these dynamic columns.
+
+  #. Evaluates :ref:`select-adjuster`. You can use dynamic columns
+     created in ``initial`` stage and ``filtered`` stage.
+
+  #. Evaluates :ref:`select-scorer`. You can use dynamic columns
+     created in ``initial`` stage and ``filtered`` stage.
+
+  #. Evaluates :ref:`select-sort-keys`, :ref:`select-offset` and
+     :ref:`select-limit`. You can use dynamic columns created in
+     ``initial`` stage and ``filtered`` stage.
+
+  #. Creates dynamic columns for ``output`` stage. Only
+     :ref:`select-limit` records have these dynamic columns.
+
+  #. Evaluates :ref:`select-slice-related-parameters`. You can use
+     dynamic columns created in ``initial`` stage, ``filtered`` stage
+     and ``output`` stage.
+
+  #. Evaluates :ref:`select-drilldown-related-parameters` and
+     :ref:`select-advanced-drilldown-related-parameters`. You can use
+     dynamic columns created in ``initial`` stage, ``filtered`` stage
+     and ``output`` stage. Note that you can use dynamic columns in
+     each drilldown.
+
+  #. Evaluates :ref:`select-output-columns`. You can use dynamic
+     columns created in ``initial`` stage, ``filtered`` stage and
+    ``output`` stage.
+
+Here are parameters for dynamic column. They don't include window
+function related parameters. See
+:ref:`select-window-function-related-parameters` for window function
+related parameters:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Name
+     - Default value
+     - Required
+   * - ``--columns[${NAME}].stage``
+     - ``null``
+     - Required
+   * - ``--columns[${NAME}].flags``
+     - ``COLUMN_SCALAR``
+     - Optional
+   * - ``--columns[${NAME}].type``
+     - ``null``
+     - Required
+   * - ``--columns[${NAME}].value``
+     - ``null``
+     - Required
+
+You need to specify multiple parameters for a dynamic
+column. ``${NAME}`` is the identifier for each dynamic
+column. Parameters that use the same ``${NAME}`` are treated as
+parameters for the same dynamic column. Here is an example to specify
+parameters for 2 dynamic columns (``name1`` and ``name2``)::
+
+    --columns[name1].stage initial
+    --columns[name1].type UInt32
+    --columns[name1].value 29
+
+    --columns[name2].stage filtered
+    --columns[name2].type ShortText
+    --columns[name2].value "29"
+
+.. _select-columns-name-stage:
+
+``columns[${NAME}].stage``
+""""""""""""""""""""""""""
+
+TODO
+
+.. _select-columns-name-flags:
+
+``columns[${NAME}].flags``
+""""""""""""""""""""""""""
+
+TODO
+
+.. _select-columns-name-type:
+
+``columns[${NAME}].type``
+"""""""""""""""""""""""""
+
+TODO
+
+.. _select-columns-name-value:
+
+``columns[${NAME}].value``
+""""""""""""""""""""""""""
+
+TODO
+
+.. _select-window-function-related-parameters:
+
+Window function related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This section describes window function column related parameters. You
+need to use dynamic column for using window function. See
+:ref:`select-dynamic-column-related-parameters` for dynamic column.
+
+TODO: Describe window function
+
+Here are parameters for window function. You need to specify both
+window function related parameters and required dynamic columns
+parameters. Because window function is implemented based on dynamic
+column. See :ref:`select-dynamic-column-related-parameters` for
+dynamic column related parameters:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Name
+     - Required
+     - Note
+   * - ``--columns[${NAME}].value``
+     - Required
+     - Use :doc:`/reference/window_function`.
+   * - ``--columns[${NAME}].window.sort_keys``
+     - Required if ``--columns[${NAME}].window.group_keys`` isn't specified.
+     -
+   * - ``--columns[${NAME}].window.group_keys``
+     - Required if ``--columns[${NAME}].window.sort_keys`` isn't specified.
+     -
+
+.. _select-columns-name-window-sort-keys:
+
+``columns[${NAME}].window.sort_keys``
+"""""""""""""""""""""""""""""""""""""
+
+TODO
+
+.. _select-columns-name-window-group-keys:
+
+``columns[${NAME}].window.group_keys``
+""""""""""""""""""""""""""""""""""""""
+
+TODO
 
 .. _select-drilldown-related-parameters:
 
@@ -1751,6 +1847,113 @@ result.
       }
     ]
   ]
+
+.. _select-slice-related-parameters:
+
+Slice related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+This section describes slice related parameters.
+
+TODO
+
+Here are parameters for slice:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Name
+     - Required
+   * - ``--slices[${LABEL}].match_columns``
+     - Optional
+   * - ``--slices[${LABEL}].query``
+     - Required if ``--slices[${LABEL}].filter`` isn't specified.
+   * - ``--slices[${LABEL}].filter``
+     - Required if ``--slices[${LABEL}].query`` isn't specified.
+   * - ``--slices[${LABEL}].query_expander``
+     - Optional
+   * - ``--slices[${LABEL}].query_flags``
+     - Optional
+   * - ``--slices[${LABEL}].sort_keys``
+     - Optional
+   * - ``--slices[${LABEL}].output_columns``
+     - Optional
+   * - ``--slices[${LABEL}].offset``
+     - Optional
+   * - ``--slices[${LABEL}].limit``
+     - Optional
+   * - ``--slices[${LABEL}].table``
+     - Optional
+
+.. _select-slices-label-match-columns:
+
+``slices[${LABEL}].match_columns``
+""""""""""""""""""""""""""""""""""
+
+TODO
+
+.. _select-slices-label-query:
+
+``slices[${LABEL}].query``
+""""""""""""""""""""""""""
+
+TODO
+
+.. _select-slices-label-filter:
+
+``slices[${LABEL}].filter``
+"""""""""""""""""""""""""""
+
+TODO
+
+.. _select-slices-label-query-expander:
+
+``slices[${LABEL}].query_expander``
+"""""""""""""""""""""""""""""""""""
+
+TODO
+
+.. _select-slices-label-query-flags:
+
+``slices[${LABEL}].query_flags``
+""""""""""""""""""""""""""""""""
+
+TODO
+
+.. _select-slices-label-sort-keys:
+
+``slices[${LABEL}].sort_keys``
+""""""""""""""""""""""""""""""
+
+TODO
+
+.. _select-slices-label-output-columns:
+
+``slices[${LABEL}].output_columns``
+"""""""""""""""""""""""""""""""""""
+
+TODO
+
+.. _select-slices-label-offset:
+
+``slices[${LABEL}].offset``
+"""""""""""""""""""""""""""
+
+TODO
+
+.. _select-slices-label-limit:
+
+``slices[${LABEL}].limit``
+""""""""""""""""""""""""""
+
+TODO
+
+.. _select-slices-label-table:
+
+``slices[${LABEL}].table``
+""""""""""""""""""""""""""
+
+TODO
 
 Cache related parameter
 ^^^^^^^^^^^^^^^^^^^^^^^
