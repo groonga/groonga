@@ -23,11 +23,12 @@ Add the Groonga apt repository.
 
 /etc/apt/sources.list.d/groonga.list::
 
-  deb http://packages.groonga.org/debian/ jessie main
-  deb-src http://packages.groonga.org/debian/ jessie main
+  deb https://packages.groonga.org/debian/ jessie main
+  deb-src https://packages.groonga.org/debian/ jessie main
 
 Install::
 
+  % sudo apt-get install apt-transport-https
   % sudo apt-get update
   % sudo apt-get install -y --allow-unauthenticated groonga-keyring
   % sudo apt-get update
