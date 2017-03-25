@@ -1,7 +1,7 @@
 REPOSITORIES_PATH = repositories
 DISTRIBUTIONS = centos
 ARCHITECTURES = i386 x86_64
-BASE_URL_PREFIX = http://packages.groonga.org
+BASE_URL_PREFIX = https://packages.groonga.org
 HAVE_DEVELOPMENT_BRANCH = no
 CENTOS_VERSIONS = 6 7
 
