@@ -21,14 +21,14 @@ Installer
 For 32-bit environment, download x86 executable binary from
 packages.groonga.org:
 
-  * http://packages.groonga.org/windows/groonga/groonga-7.0.1-x86.exe
+  * https://packages.groonga.org/windows/groonga/groonga-7.0.1-x86.exe
 
 Then run it.
 
 For 64-bit environment, download x64 executable binary from
 packages.goronga.org:
 
-  * http://packages.groonga.org/windows/groonga/groonga-7.0.1-x64.exe
+  * https://packages.groonga.org/windows/groonga/groonga-7.0.1-x64.exe
 
 Then run it.
 
@@ -41,14 +41,14 @@ zip
 For 32-bit environment, download x86 zip archive from
 packages.groonga.org:
 
-  * http://packages.groonga.org/windows/groonga/groonga-7.0.1-x86.zip
+  * https://packages.groonga.org/windows/groonga/groonga-7.0.1-x86.zip
 
 Then extract it.
 
 For 64-bit environment, download x64 zip archive from
 packages.groonga.org:
 
-  * http://packages.groonga.org/windows/groonga/groonga-7.0.1-x64.zip
+  * https://packages.groonga.org/windows/groonga/groonga-7.0.1-x64.zip
 
 Then extract it.
 
@@ -66,7 +66,7 @@ Windows. Here are required tools:
 
 Download zipped source from packages.groonga.org:
 
-  * http://packages.groonga.org/source/groonga/groonga-7.0.1.zip
+  * https://packages.groonga.org/source/groonga/groonga-7.0.1.zip
 
 Then extract it.
 

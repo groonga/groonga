@@ -17,7 +17,7 @@ Install required packages to build Groonga::
 
 Download source::
 
-  % wget http://packages.groonga.org/source/groonga/groonga-7.0.1.tar.gz
+  % wget https://packages.groonga.org/source/groonga/groonga-7.0.1.tar.gz
   % gtar xvzf groonga-7.0.1.tar.gz
   % cd groonga-7.0.1
 

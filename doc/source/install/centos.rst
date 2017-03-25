@@ -19,7 +19,7 @@ CentOS 6
 
 Install::
 
-  % sudo yum install -y http://packages.groonga.org/centos/groonga-release-1.2.0-1.noarch.rpm
+  % sudo yum install -y https://packages.groonga.org/centos/groonga-release-1.2.0-1.noarch.rpm
   % sudo yum install -y --enablerepo=epel groonga
 
 .. include:: server-use.inc
@@ -52,7 +52,7 @@ CentOS 7
 
 Install::
 
-  % sudo yum install -y http://packages.groonga.org/centos/groonga-release-1.2.0-1.noarch.rpm
+  % sudo yum install -y https://packages.groonga.org/centos/groonga-release-1.2.0-1.noarch.rpm
   % sudo yum install -y --enablerepo=epel groonga
 
 .. include:: server-use.inc
@@ -89,7 +89,7 @@ Install required packages to build Groonga::
 
 Download source::
 
-  % wget http://packages.groonga.org/source/groonga/groonga-7.0.1.tar.gz
+  % wget https://packages.groonga.org/source/groonga/groonga-7.0.1.tar.gz
   % tar xvzf groonga-7.0.1.tar.gz
   % cd groonga-7.0.1
 

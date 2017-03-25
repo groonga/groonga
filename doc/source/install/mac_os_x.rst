@@ -49,7 +49,7 @@ Install `Xcode <https://developer.apple.com/xcode/>`_.
 
 Download source::
 
-  % curl -O http://packages.groonga.org/source/groonga/groonga-7.0.1.tar.gz
+  % curl -O https://packages.groonga.org/source/groonga/groonga-7.0.1.tar.gz
   % tar xvzf groonga-7.0.1.tar.gz
   % cd groonga-7.0.1
 

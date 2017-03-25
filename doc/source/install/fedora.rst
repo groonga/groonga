@@ -33,7 +33,7 @@ Install::
 Note that additional packages such as ``mecab-dic`` and ``mecab-jumandic`` packages require to install
 ``groonga-release`` package which provides the Groonga yum repository beforehand::
 
-  % sudo rpm -ivh http://packages.groonga.org/fedora/groonga-release-1.1.0-1.noarch.rpm
+  % sudo rpm -ivh https://packages.groonga.org/fedora/groonga-release-1.1.0-1.noarch.rpm
   % sudo yum update
 
 .. include:: server-use.inc
@@ -80,7 +80,7 @@ Install required packages to build Groonga::
 
 Download source::
 
-  % wget http://packages.groonga.org/source/groonga/groonga-7.0.1.tar.gz
+  % wget https://packages.groonga.org/source/groonga/groonga-7.0.1.tar.gz
   % tar xvzf groonga-7.0.1.tar.gz
   % cd groonga-7.0.1
 
