@@ -3,7 +3,7 @@ Name: groonga-release
 Version: 1.2.0
 Release: 1
 License: LGPLv2
-URL: http://packages.groonga.org/
+URL: https://packages.groonga.org/
 Source: groonga-release.tar.gz
 Group: System Environment/Base
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
