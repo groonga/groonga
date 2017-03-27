@@ -52,7 +52,7 @@ msgstr ""
 "このセクションではCentOS上でGroonga関連のRPMパッケージをインストールする方法"
 "を説明します。これらのパッケージは ``yum`` でインストールできます。"
 
-msgid "CentOS 5"
+msgid "CentOS 6"
 msgstr ""
 
 msgid "Install::"
@@ -91,9 +91,6 @@ msgstr ""
 
 msgid "Install groonga-normalizer-mysql package::"
 msgstr "groonga-normalizer-mysqlパッケージのインストール::"
-
-msgid "CentOS 6"
-msgstr ""
 
 msgid "CentOS 7"
 msgstr ""
@@ -773,7 +770,7 @@ msgstr ""
 "32-bit環境の場合は、x86のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-7.0.1-x86.exe"
+msgid "https://packages.groonga.org/windows/groonga/groonga-7.0.1-x86.exe"
 msgstr ""
 
 msgid "Then run it."
@@ -786,7 +783,7 @@ msgstr ""
 "64-bit環境の場合は、x64のバイナリをpackages.groonga.orgからダウンロードしてく"
 "ださい。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-7.0.1-x64.exe"
+msgid "https://packages.groonga.org/windows/groonga/groonga-7.0.1-x64.exe"
 msgstr ""
 
 msgid ""
@@ -805,7 +802,7 @@ msgstr ""
 "32-bit環境の場合は、x86のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-7.0.1-x86.zip"
+msgid "https://packages.groonga.org/windows/groonga/groonga-7.0.1-x86.zip"
 msgstr ""
 
 msgid "Then extract it."
@@ -817,7 +814,7 @@ msgstr ""
 "64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-msgid "http://packages.groonga.org/windows/groonga/groonga-7.0.1-x64.zip"
+msgid "https://packages.groonga.org/windows/groonga/groonga-7.0.1-x64.zip"
 msgstr ""
 
 msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."
@@ -843,7 +840,7 @@ msgstr ""
 msgid "Download zipped source from packages.groonga.org:"
 msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-msgid "http://packages.groonga.org/source/groonga/groonga-7.0.1.zip"
+msgid "https://packages.groonga.org/source/groonga/groonga-7.0.1.zip"
 msgstr ""
 
 msgid "Move to the Groonga's source folder::"
