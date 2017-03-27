@@ -9779,6 +9779,8 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj, grn_bool dependent)
   grn_obj *db = NULL;
   const char *io_path;
   char *path;
+  grn_bool is_temporary_open_target = GRN_FALSE;
+
   if (ctx->impl && ctx->impl->db) {
     grn_id id;
     uint32_t s = 0;
@@ -9809,24 +9811,31 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj, grn_bool dependent)
     break;
   case GRN_TABLE_PAT_KEY :
     rc = _grn_obj_remove_pat(ctx, obj, db, id, path, dependent);
+    is_temporary_open_target = GRN_TRUE;
     break;
   case GRN_TABLE_DAT_KEY :
     rc = _grn_obj_remove_dat(ctx, obj, db, id, path, dependent);
+    is_temporary_open_target = GRN_TRUE;
     break;
   case GRN_TABLE_HASH_KEY :
     rc = _grn_obj_remove_hash(ctx, obj, db, id, path, dependent);
+    is_temporary_open_target = GRN_TRUE;
     break;
   case GRN_TABLE_NO_KEY :
     rc = _grn_obj_remove_array(ctx, obj, db, id, path, dependent);
+    is_temporary_open_target = GRN_TRUE;
     break;
   case GRN_COLUMN_VAR_SIZE :
     rc = _grn_obj_remove_ja(ctx, obj, db, id, path);
+    is_temporary_open_target = GRN_TRUE;
     break;
   case GRN_COLUMN_FIX_SIZE :
     rc = _grn_obj_remove_ra(ctx, obj, db, id, path);
+    is_temporary_open_target = GRN_TRUE;
     break;
   case GRN_COLUMN_INDEX :
     rc = _grn_obj_remove_index(ctx, obj, db, id, path);
+    is_temporary_open_target = GRN_TRUE;
     break;
   default :
     if (GRN_DB_OBJP(obj)) {
@@ -9835,7 +9844,26 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj, grn_bool dependent)
       rc = _grn_obj_remove_other(ctx, obj, db, id, path);
     }
   }
-  if (path) { GRN_FREE(path); }
+  if (path) {
+    GRN_FREE(path);
+  } else {
+    is_temporary_open_target = GRN_FALSE;
+  }
+
+  if (is_temporary_open_target && rc == GRN_SUCCESS) {
+    grn_obj *space;
+    space = ctx->impl->temporary_open_spaces.current;
+    if (space) {
+      unsigned int i, n_elements;
+      n_elements = GRN_BULK_VSIZE(space) / sizeof(grn_obj *);
+      for (i = 0; i < n_elements; i++) {
+        if (GRN_PTR_VALUE_AT(space, i) == obj) {
+          GRN_PTR_SET_AT(ctx, space, i, NULL);
+        }
+      }
+    }
+  }
+
   return rc;
 }
 
@@ -10591,7 +10619,9 @@ grn_pvector_fin(grn_ctx *ctx, grn_obj *obj)
     n_elements = GRN_BULK_VSIZE(obj) / sizeof(grn_obj *);
     for (i = 0; i < n_elements; i++) {
       grn_obj *element = GRN_PTR_VALUE_AT(obj, n_elements - i - 1);
-      grn_obj_close(ctx, element);
+      if (element) {
+        grn_obj_close(ctx, element);
+      }
     }
   }
   obj->header.type = GRN_VOID;

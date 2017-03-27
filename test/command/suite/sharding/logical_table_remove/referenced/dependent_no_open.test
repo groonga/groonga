@@ -1,0 +1,23 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create NotRelated_20150204 TABLE_NO_KEY
+
+table_create Logs_20150204 TABLE_NO_KEY
+column_create Logs_20150204 timestamp COLUMN_SCALAR Time
+
+table_create Bookmarks TABLE_HASH_KEY ShortText
+column_create Bookmarks log_20150204 COLUMN_SCALAR Logs_20150204
+
+#@disable-logging
+thread_limit 1
+database_unmap
+#@enable-logging
+
+logical_table_remove \
+  --logical_table Logs \
+  --shard_key timestamp \
+  --dependent yes
+
+dump
