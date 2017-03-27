@@ -1,11 +1,9 @@
 Execution example::
 
   select Entries \
-    --limit -1 \
-    --output_columns _id,tag \
-    --drilldown tag \
-    --drilldown_filter '_nsubrecs > 1' \
-    --drilldown_output_columns _key,_nsubrecs
+    --output_columns _key,tag \
+    --filter 'n_likes >= 5' \
+    --drilldown tag
   # [
   #   [
   #     0, 
@@ -15,12 +13,12 @@ Execution example::
   #   [
   #     [
   #       [
-  #         5
+  #         3
   #       ], 
   #       [
   #         [
-  #           "_id", 
-  #           "UInt32"
+  #           "_key", 
+  #           "ShortText"
   #         ], 
   #         [
   #           "tag", 
@@ -28,24 +26,16 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         1, 
+  #         "The first post!", 
   #         "Hello"
   #       ], 
   #       [
-  #         2, 
+  #         "Groonga", 
   #         "Groonga"
   #       ], 
   #       [
-  #         3, 
+  #         "Mroonga", 
   #         "Groonga"
-  #       ], 
-  #       [
-  #         4, 
-  #         "Senna"
-  #       ], 
-  #       [
-  #         5, 
-  #         "Senna"
   #       ]
   #     ], 
   #     [
@@ -63,11 +53,11 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         "Groonga", 
-  #         2
+  #         "Hello", 
+  #         1
   #       ], 
   #       [
-  #         "Senna", 
+  #         "Groonga", 
   #         2
   #       ]
   #     ]

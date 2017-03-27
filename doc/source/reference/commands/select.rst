@@ -1333,7 +1333,7 @@ The ``select`` command outputs the following information:
 Here is a ``drilldown`` with search condition example:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/select/drilldown_filter.log
+.. include:: ../../example/reference/commands/select/drilldown_with_filter.log
 .. select Entries \
 ..   --output_columns _key,tag \
 ..   --filter 'n_likes >= 5' \
@@ -1774,7 +1774,7 @@ as :ref:`select-filter`.
 Here is an example to suppress tags that are occurred only once:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/select/drilldown_calc_types_all.log
+.. include:: ../../example/reference/commands/select/drilldown_filter.log
 .. select Entries \
 ..   --limit -1 \
 ..   --output_columns _id,tag \
