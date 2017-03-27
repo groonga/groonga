@@ -124,6 +124,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/columns_name_stage.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/columns_name_type.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/columns_name_value.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/columns_name_window_group_keys.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/columns_name_window_sort_keys.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_calc_types.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_filter.log \
@@ -1026,6 +1028,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_select/columns_name_stage.log \
 	source/example/reference/commands/logical_select/columns_name_type.log \
 	source/example/reference/commands/logical_select/columns_name_value.log \
+	source/example/reference/commands/logical_select/columns_name_window_group_keys.log \
+	source/example/reference/commands/logical_select/columns_name_window_sort_keys.log \
 	source/example/reference/commands/logical_select/drilldown.log \
 	source/example/reference/commands/logical_select/drilldown_calc_types.log \
 	source/example/reference/commands/logical_select/drilldown_filter.log \

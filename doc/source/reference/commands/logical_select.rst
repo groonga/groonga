@@ -620,9 +620,8 @@ details.
 
 .. versionadded:: 7.0.1
 
-Corresponds to :ref:`logical-select-columns-name-stage` in
-:doc:`select`. See :ref:`logical-select-columns-name-stage` for
-details.
+Corresponds to :ref:`select-columns-name-stage` in :doc:`select`. See
+:ref:`select-columns-name-stage` for details.
 
 This is required parameter.
 
@@ -648,9 +647,8 @@ in all parameters such as ``filter`` and ``output_columns``:
 
 .. versionadded:: 7.0.1
 
-Corresponds to :ref:`logical-select-columns-name-flags` in
-:doc:`select`. See :ref:`logical-select-columns-name-flags` for
-details.
+Corresponds to :ref:`select-columns-name-flags` in :doc:`select`. See
+:ref:`select-columns-name-flags` for details.
 
 The default value is ``COLUMN_SCALAR``.
 
@@ -678,9 +676,8 @@ function:
 
 .. versionadded:: 7.0.1
 
-Corresponds to :ref:`logical-select-columns-name-type` in
-:doc:`select`. See :ref:`logical-select-columns-name-type` for
-details.
+Corresponds to :ref:`select-columns-name-type` in :doc:`select`. See
+:ref:`select-columns-name-type` for details.
 
 This is required parameter.
 
@@ -698,16 +695,15 @@ automatically. In this example, number is casted to ``ShortText``:
 ..   --columns[n_likes_string].value n_likes \
 ..   --output_columns _id,n_likes,n_likes_string
 
-.. _select-columns-name-value:
+.. _logical-select-columns-name-value:
 
 ``columns[${NAME}].value``
 """"""""""""""""""""""""""
 
 .. versionadded:: 7.0.1
 
-Corresponds to :ref:`logical-select-columns-name-value` in
-:doc:`select`. See :ref:`logical-select-columns-name-value` for
-details.
+Corresponds to :ref:`select-columns-name-value` in :doc:`select`. See
+:ref:`select-columns-name-value` for details.
 
 You need to specify :doc:`/reference/window_function` as ``value``
 value and other window function related parameters when you use window
@@ -734,7 +730,7 @@ length. :doc:`plugin_register` is used to register
 ..   --columns[content_length].value 'string_length(content)' \
 ..   --output_columns _id,content,content_length
 
-.. _select-window-function-related-parameters:
+.. _logical-select-window-function-related-parameters:
 
 Window function related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -752,7 +748,29 @@ details.
 
 .. versionadded:: 7.0.1
 
-TODO
+Corresponds to :ref:`select-columns-name-window-sort-keys` in
+:doc:`select`. See :ref:`select-columns-name-window-sort-keys` for
+details.
+
+You must specify :ref:`logical-select-columns-name-window-sort-keys`
+or :ref:`logical-select-columns-name-window-group-keys` to use window
+function.
+
+Here is an example that computes cumulative sum per
+``Entries.tag``. Each group is sorted by ``Entries._key``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/columns_name_window_sort_keys.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[n_likes_cumulative_sum_per_tag].stage initial \
+..   --columns[n_likes_cumulative_sum_per_tag].type UInt32 \
+..   --columns[n_likes_cumulative_sum_per_tag].value 'window_sum(n_likes)' \
+..   --columns[n_likes_cumulative_sum_per_tag].window.sort_keys _key \
+..   --columns[n_likes_cumulative_sum_per_tag].window.group_keys tag \
+..   --sort_keys _key \
+..   --output_columns tag,_key,n_likes,n_likes_cumulative_sum_per_tag
 
 .. _logical-select-columns-name-window-group-keys:
 
@@ -761,7 +779,27 @@ TODO
 
 .. versionadded:: 7.0.1
 
-TODO
+Corresponds to :ref:`select-columns-name-window-group-keys` in
+:doc:`select`. See :ref:`select-columns-name-window-group-keys` for
+details.
+
+You must specify :ref:`logical-select-columns-name-window-sort-keys`
+or :ref:`logical-select-columns-name-window-group-keys` to use window
+function.
+
+Here is an example that computes sum per ``Entries.tag``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/columns_name_window_group_keys.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[n_likes_sum_per_tag].stage initial \
+..   --columns[n_likes_sum_per_tag].type UInt32 \
+..   --columns[n_likes_sum_per_tag].value 'window_sum(n_likes)' \
+..   --columns[n_likes_sum_per_tag].window.group_keys tag \
+..   --sort_keys _key \
+..   --output_columns tag,_key,n_likes,n_likes_sum_per_tag
 
 .. _logical-select-drilldown-related-parameters:
 
