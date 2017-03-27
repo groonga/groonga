@@ -47,25 +47,39 @@ optional::
          [adjuster=null]
          [drilldown_calc_types=NONE]
          [drilldown_calc_target=null]
+         [drilldown_filter=null]
          [sort_keys=null]
          [drilldown_sort_keys=null]
 
-.. versionadded:: 6.0.6
+``select`` has the following named parameters for dynamic columns:
 
-   ``select`` has the following named parameters for dynamic columns:
+   * ``columns[${NAME}].stage=null``
+   * ``columns[${NAME}].flags=COLUMN_SCALAR``
+   * ``columns[${NAME}].type=null``
+   * ``columns[${NAME}].value=null``
+   * ``columns[${NAME}].window.sort_keys=null``
+   * ``columns[${NAME}].window.group_keys=null``
 
-     * ``columns[${NAME}].stage=null``
-     * ``columns[${NAME}].flags=COLUMN_SCALAR``
-     * ``columns[${NAME}].type=null``
-     * ``columns[${NAME}].value=null``
-     * ``columns[${NAME}].window.sort_keys=null``
+You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For
+example, ``column1`` is a valid ``${NAME}``. This is the same rule as
+normal column. See also :ref:`column-create-name`.
 
-.. versionadded:: 7.0.0
+Parameters that have the same ``${NAME}`` are grouped.
 
-   ``select`` supports grouped window function by the following named
-   parameters:
+For example, the following parameters specify one dynamic column:
 
-     * ``columns[${NAME}].window.group_keys=null``
+  * ``--columns[name].stage initial``
+  * ``--columns[name].type UInt32``
+  * ``--columns[name].value 29``
+
+The following parameters specify two dynamic columns:
+
+  * ``--columns[name1].stage initial``
+  * ``--columns[name1].type UInt32``
+  * ``--columns[name1].value 29``
+  * ``--columns[name2].stage filtered``
+  * ``--columns[name2].type Float``
+  * ``--columns[name2].value '_score * 0.1'``
 
 ``select`` has the following named parameters for advanced drilldown:
 
@@ -76,24 +90,12 @@ optional::
   * ``drilldowns[${LABEL}].limit=10``
   * ``drilldowns[${LABEL}].calc_types=NONE``
   * ``drilldowns[${LABEL}].calc_target=null``
-
-.. versionadded:: 6.0.6
-
-   Dynamic columns can be used in ``drilldowns[${LABEL}]`` with the
-   following named parameters:
-
-     * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
-     * ``drilldowns[${LABEL}].columns[${NAME}].flags=COLUMN_SCALAR``
-     * ``drilldowns[${LABEL}].columns[${NAME}].type=null``
-     * ``drilldowns[${LABEL}].columns[${NAME}].value=null``
-     * ``drilldowns[${LABEL}].columns[${NAME}].window.sort_keys=null``
-
-.. versionadded:: 7.0.0
-
-   Grouped windows function can be used in ``drilldowns[${LABEL}]``
-   with the following named parameters:
-
-     * ``drilldowns[${LABEL}].columns[${NAME}].window.group_keys=null``
+  * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
+  * ``drilldowns[${LABEL}].columns[${NAME}].flags=COLUMN_SCALAR``
+  * ``drilldowns[${LABEL}].columns[${NAME}].type=null``
+  * ``drilldowns[${LABEL}].columns[${NAME}].value=null``
+  * ``drilldowns[${LABEL}].columns[${NAME}].window.sort_keys=null``
+  * ``drilldowns[${LABEL}].columns[${NAME}].window.group_keys=null``
 
 .. deprecated:: 6.0.3
   ``drilldown[...]`` syntax is deprecated, Use ``drilldowns[...]`` instead.
@@ -997,6 +999,8 @@ scorerは、検索処理が完了し、ソート処理が実行される前に�
 Dynamic column related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. versionadded:: 6.0.6
+
 This section describes dynamic column related parameters. You can use
 dynamic column for window function but this section doesn't describe
 window function. See :ref:`select-window-function-related-parameters`
@@ -1078,6 +1082,8 @@ columns (``name1`` and ``name2``)::
 ``columns[${NAME}].stage``
 """"""""""""""""""""""""""
 
+.. versionadded:: 6.0.6
+
 Specifies when the dynamic column is created. This is a required
 parameter to create a dynamic column.
 
@@ -1154,6 +1160,8 @@ in all parameters such as ``filter`` and ``output_columns``:
 ``columns[${NAME}].flags``
 """"""""""""""""""""""""""
 
+.. versionadded:: 6.0.6
+
 Specifies flags for the dynamic column. It's the same as ``flags``
 parameter for :doc:`column_create`. See :ref:`column-create-flags` for
 available flags.
@@ -1180,6 +1188,8 @@ function:
 ``columns[${NAME}].type``
 """""""""""""""""""""""""
 
+.. versionadded:: 6.0.6
+
 Specifies value type for the dynamic column. It's the same as ``type``
 parameter for :doc:`column_create`. See :ref:`column-create-type` for
 available flags.
@@ -1202,6 +1212,8 @@ automatically. In this example, number is casted to ``ShortText``:
 
 ``columns[${NAME}].value``
 """"""""""""""""""""""""""
+
+.. versionadded:: 6.0.6
 
 Specifies expression that generates values for the dynamic column. The
 expression uses :doc:`/reference/grn_expr/script_syntax`. It's the
@@ -1237,6 +1249,8 @@ length. :doc:`plugin_register` is used to register
 Window function related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. versionadded:: 6.0.6
+
 This section describes window function column related parameters. You
 need to use dynamic column for using window function. See
 :ref:`select-dynamic-column-related-parameters` for dynamic column.
@@ -1270,12 +1284,16 @@ dynamic column related parameters:
 ``columns[${NAME}].window.sort_keys``
 """""""""""""""""""""""""""""""""""""
 
+.. versionadded:: 6.0.6
+
 TODO
 
 .. _select-columns-name-window-group-keys:
 
 ``columns[${NAME}].window.group_keys``
 """"""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.0
 
 TODO
 
@@ -1719,6 +1737,8 @@ that only ``COUNT`` is enabled. Because ``NONE`` is just ignored and
 ``drilldown_calc_target``
 """""""""""""""""""""""""
 
+.. versionadded:: 6.0.3
+
 Specifies the target column for :ref:`select-drilldown-calc-types`.
 
 If you specify a calculation type that needs a target column such as
@@ -1739,10 +1759,35 @@ See :ref:`select-drilldown-calc-types` to know how to use
 The default value of ``drilldown_calc_target`` is ``null``. It means
 that no calculation target column is specified.
 
+.. _select-drilldown-filter:
+
+``drilldown_filter``
+""""""""""""""""""""
+
+.. versionadded:: 6.0.3
+
+Specifies the filter condition against the drilled down result.
+
+The syntax is :doc:`/reference/grn_expr/script_syntax`. It's the same
+as :ref:`select-filter`.
+
+Here is an example to suppress tags that are occurred only once:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_calc_types_all.log
+.. select Entries \
+..   --limit -1 \
+..   --output_columns _id,tag \
+..   --drilldown tag \
+..   --drilldown_filter '_nsubrecs > 1' \
+..   --drilldown_output_columns _key,_nsubrecs
+
 .. _select-advanced-drilldown-related-parameters:
 
 Advanced drilldown related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 4.0.8
 
 You can get multiple drilldown results by specifying multiple group
 keys by :ref:`select-drilldown`. But you need to use the same
@@ -1759,6 +1804,7 @@ parameters:
   * ``drilldowns[${LABEL}].limit``
   * ``drilldowns[${LABEL}].calc_types``
   * ``drilldowns[${LABEL}].calc_target``
+  * ``drilldowns[${LABEL}].filter``
 
 ``${LABEL}`` is a variable. You can use the following characters for
 ``${LABEL}``:
@@ -1801,6 +1847,7 @@ to use it for the following parameters:
   * ``drilldowns[${LABEL}].limit``: :ref:`select-drilldown-limit`
   * ``drilldowns[${LABEL}].calc_types``: :ref:`select-drilldown-calc-types`
   * ``drilldowns[${LABEL}].calc_target``: :ref:`select-drilldown-calc-target`
+  * ``drilldowns[${LABEL}].filter``: :ref:`select-drilldown-filter`
 
 The following parameters are needed more description:
 
@@ -1813,6 +1860,8 @@ Output format is different a bit. It's also needed more description.
 
 ``drilldowns[${LABEL}].keys``
 """""""""""""""""""""""""""""
+
+.. versionadded:: 4.0.8
 
 :ref:`select-drilldown` can specify multiple keys for multiple
 drilldowns. But it can't specify multiple keys for one drilldown.
@@ -1848,6 +1897,8 @@ tag``. You should use ``_key`` for the case. It's the same rule in
 
 ``drilldowns[${LABEL}].output_columns``
 """""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 4.0.8
 
 It's almost same as :ref:`select-drilldown-output-columns`. The
 difference between :ref:`select-drilldown-output-columns` and
@@ -1946,6 +1997,8 @@ result.
 
 Slice related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 6.0.3
 
 This section describes slice related parameters.
 
