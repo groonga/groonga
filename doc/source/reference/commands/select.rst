@@ -51,7 +51,7 @@ optional::
          [sort_keys=null]
          [drilldown_sort_keys=null]
 
-``select`` has the following named parameters for dynamic columns:
+This command has the following named parameters for dynamic columns:
 
    * ``columns[${NAME}].stage=null``
    * ``columns[${NAME}].flags=COLUMN_SCALAR``
@@ -81,7 +81,7 @@ The following parameters specify two dynamic columns:
   * ``--columns[name2].type Float``
   * ``--columns[name2].value '_score * 0.1'``
 
-``select`` has the following named parameters for advanced drilldown:
+This command has the following named parameters for advanced drilldown:
 
   * ``drilldowns[${LABEL}].keys=null``
   * ``drilldowns[${LABEL}].sort_keys=null``
@@ -90,6 +90,7 @@ The following parameters specify two dynamic columns:
   * ``drilldowns[${LABEL}].limit=10``
   * ``drilldowns[${LABEL}].calc_types=NONE``
   * ``drilldowns[${LABEL}].calc_target=null``
+  * ``drilldowns[${LABEL}].filter=null``
   * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
   * ``drilldowns[${LABEL}].columns[${NAME}].flags=COLUMN_SCALAR``
   * ``drilldowns[${LABEL}].columns[${NAME}].type=null``
@@ -98,7 +99,9 @@ The following parameters specify two dynamic columns:
   * ``drilldowns[${LABEL}].columns[${NAME}].window.group_keys=null``
 
 .. deprecated:: 6.0.3
-  ``drilldown[...]`` syntax is deprecated, Use ``drilldowns[...]`` instead.
+
+   ``drilldown[...]`` syntax is deprecated, Use ``drilldowns[...]``
+   instead.
 
 You can use one or more alphabets, digits, ``_`` and ``.`` for
 ``${LABEL}``. For example, ``parent.sub1`` is a valid ``${LABEL}``.

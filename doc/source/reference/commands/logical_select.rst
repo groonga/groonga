@@ -52,7 +52,37 @@ parameters are optional::
                  [query=null]
                  [drilldown_filter=null]
 
-``logical_select`` has the following named parameters for advanced
+This command has the following named parameters for dynamic columns:
+
+   * ``columns[${NAME}].stage=null``
+   * ``columns[${NAME}].flags=COLUMN_SCALAR``
+   * ``columns[${NAME}].type=null``
+   * ``columns[${NAME}].value=null``
+   * ``columns[${NAME}].window.sort_keys=null``
+   * ``columns[${NAME}].window.group_keys=null``
+
+You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For
+example, ``column1`` is a valid ``${NAME}``. This is the same rule as
+normal column. See also :ref:`column-create-name`.
+
+Parameters that have the same ``${NAME}`` are grouped.
+
+For example, the following parameters specify one dynamic column:
+
+  * ``--columns[name].stage initial``
+  * ``--columns[name].type UInt32``
+  * ``--columns[name].value 29``
+
+The following parameters specify two dynamic columns:
+
+  * ``--columns[name1].stage initial``
+  * ``--columns[name1].type UInt32``
+  * ``--columns[name1].value 29``
+  * ``--columns[name2].stage filtered``
+  * ``--columns[name2].type Float``
+  * ``--columns[name2].value '_score * 0.1'``
+
+This command has the following named parameters for advanced
 drilldown:
 
   * ``drilldowns[${LABEL}].keys=null``
@@ -63,6 +93,12 @@ drilldown:
   * ``drilldowns[${LABEL}].calc_types=NONE``
   * ``drilldowns[${LABEL}].calc_target=null``
   * ``drilldowns[${LABEL}].filter=null``
+  * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
+  * ``drilldowns[${LABEL}].columns[${NAME}].flags=COLUMN_SCALAR``
+  * ``drilldowns[${LABEL}].columns[${NAME}].type=null``
+  * ``drilldowns[${LABEL}].columns[${NAME}].value=null``
+  * ``drilldowns[${LABEL}].columns[${NAME}].window.sort_keys=null``
+  * ``drilldowns[${LABEL}].columns[${NAME}].window.group_keys=null``
 
 .. deprecated:: 6.1.4
 
@@ -565,6 +601,167 @@ Here is an example:
 """"""""""
 
 Not implemented yet.
+
+.. _logical-select-dynamic-column-related-parameters:
+
+Dynamic column related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 7.0.1
+
+All dynamic column related parameters in :doc:`select` are
+supported. See :ref:`select-dynamic-column-related-parameters` for
+details.
+
+.. _logical-select-columns-name-stage:
+
+``columns[${NAME}].stage``
+""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.1
+
+Corresponds to :ref:`logical-select-columns-name-stage` in
+:doc:`select`. See :ref:`logical-select-columns-name-stage` for
+details.
+
+This is required parameter.
+
+Here is a ``columns[${NAME}].stage`` example. It creates
+``is_popular`` column at ``initial`` stage. You can use ``is_popular``
+in all parameters such as ``filter`` and ``output_columns``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/columns_name_stage.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[is_popular].stage initial \
+..   --columns[is_popular].type Bool \
+..   --columns[is_popular].value 'n_likes >= 10' \
+..   --filter is_popular \
+..   --output_columns _id,is_popular,n_likes
+
+.. _logical-select-columns-name-flags:
+
+``columns[${NAME}].flags``
+""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.1
+
+Corresponds to :ref:`logical-select-columns-name-flags` in
+:doc:`select`. See :ref:`logical-select-columns-name-flags` for
+details.
+
+The default value is ``COLUMN_SCALAR``.
+
+Here is a ``columns[${NAME}].flags`` example. It creates a vector
+column by ``COLUMN_VECTOR`` flags. ``plugin_register
+functions/vector`` is for using :doc:`/reference/functions/vector_new`
+function:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/columns_name_flags.log
+.. plugin_register functions/vector
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[vector].stage initial \
+..   --columns[vector].flags COLUMN_VECTOR \
+..   --columns[vector].type UInt32 \
+..   --columns[vector].value 'vector_new(1, 2, 3)' \
+..   --output_columns _id,vector
+
+.. _logical-select-columns-name-type:
+
+``columns[${NAME}].type``
+"""""""""""""""""""""""""
+
+.. versionadded:: 7.0.1
+
+Corresponds to :ref:`logical-select-columns-name-type` in
+:doc:`select`. See :ref:`logical-select-columns-name-type` for
+details.
+
+This is required parameter.
+
+Here is a ``columns[${NAME}].type`` example. It creates a
+``ShortText`` value column. Stored value is casted to ``ShortText``
+automatically. In this example, number is casted to ``ShortText``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/columns_name_type.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[n_likes_string].stage initial \
+..   --columns[n_likes_string].type ShortText \
+..   --columns[n_likes_string].value n_likes \
+..   --output_columns _id,n_likes,n_likes_string
+
+.. _select-columns-name-value:
+
+``columns[${NAME}].value``
+""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.1
+
+Corresponds to :ref:`logical-select-columns-name-value` in
+:doc:`select`. See :ref:`logical-select-columns-name-value` for
+details.
+
+You need to specify :doc:`/reference/window_function` as ``value``
+value and other window function related parameters when you use window
+function. See :ref:`logical-select-window-function-related-parameters`
+for details.
+
+This is required parameter.
+
+Here is a ``columns[${NAME}].value`` example. It creates a new dynamic
+column that stores the number of characters of content. This example
+uses :doc:`/reference/functions/string_length` function in
+``functions/string`` plugin to compute string
+length. :doc:`plugin_register` is used to register
+``functions/string`` plugin:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/columns_name_value.log
+.. plugin_register functions/string
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[content_length].stage initial \
+..   --columns[content_length].type UInt32 \
+..   --columns[content_length].value 'string_length(content)' \
+..   --output_columns _id,content,content_length
+
+.. _select-window-function-related-parameters:
+
+Window function related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 7.0.1
+
+All window function related parameters in :doc:`select` are
+supported. See :ref:`select-window-function-related-parameters` for
+details.
+
+.. _logical-select-columns-name-window-sort-keys:
+
+``columns[${NAME}].window.sort_keys``
+"""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.1
+
+TODO
+
+.. _logical-select-columns-name-window-group-keys:
+
+``columns[${NAME}].window.group_keys``
+""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.1
+
+TODO
 
 .. _logical-select-drilldown-related-parameters:
 

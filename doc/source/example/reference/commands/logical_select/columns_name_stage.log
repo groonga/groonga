@@ -1,0 +1,48 @@
+Execution example::
+
+  logical_select \
+    --logical_table Entries \
+    --shard_key created_at \
+    --columns[is_popular].stage initial \
+    --columns[is_popular].type Bool \
+    --columns[is_popular].value 'n_likes >= 10' \
+    --filter is_popular \
+    --output_columns _id,is_popular,n_likes
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "is_popular", 
+  #           "Bool"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         2, 
+  #         true, 
+  #         10
+  #       ], 
+  #       [
+  #         3, 
+  #         true, 
+  #         15
+  #       ]
+  #     ]
+  #   ]
+  # ]

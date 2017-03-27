@@ -120,6 +120,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/usage_get.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/usage_register.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/usage_set.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/columns_name_flags.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/columns_name_stage.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/columns_name_type.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/columns_name_value.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_calc_types.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_filter.log \
@@ -1015,6 +1019,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_parameters/usage_get.log \
 	source/example/reference/commands/logical_parameters/usage_register.log \
 	source/example/reference/commands/logical_parameters/usage_set.log \
+	source/example/reference/commands/logical_select/columns_name_flags.log \
+	source/example/reference/commands/logical_select/columns_name_stage.log \
+	source/example/reference/commands/logical_select/columns_name_type.log \
+	source/example/reference/commands/logical_select/columns_name_value.log \
 	source/example/reference/commands/logical_select/drilldown.log \
 	source/example/reference/commands/logical_select/drilldown_calc_types.log \
 	source/example/reference/commands/logical_select/drilldown_filter.log \
