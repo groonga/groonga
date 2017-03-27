@@ -9653,17 +9653,71 @@ _grn_obj_remove_array(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
   return rc;
 }
 
+static grn_bool
+is_removable_column(grn_ctx *ctx, grn_obj *column, grn_obj *db)
+{
+  grn_hook *hooks;
+
+  hooks = DB_OBJ(column)->hooks[GRN_HOOK_SET];
+  while (hooks) {
+    grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    grn_obj *index_column;
+
+    name_size = grn_obj_name(ctx, column, name, GRN_TABLE_MAX_KEY_SIZE);
+
+    index_column = grn_ctx_at(ctx, data->target);
+    if (!index_column) {
+      ERR(GRN_UNKNOWN_ERROR,
+          "[column][remove] "
+          "hook has a dangling reference: <%.*s>",
+          name_size, name);
+      return GRN_FALSE;
+    }
+
+    {
+      char index_column_name[GRN_TABLE_MAX_KEY_SIZE];
+      int index_column_name_size;
+
+      index_column_name_size = grn_obj_name(ctx,
+                                            index_column,
+                                            index_column_name,
+                                            GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_OPERATION_NOT_PERMITTED,
+          "[column][remove] an index column for target column exists: "
+          "<%.*s> -> <%.*s>",
+          index_column_name_size,
+          index_column_name,
+          name_size,
+          name);
+      return GRN_FALSE;
+    }
+  }
+
+  return GRN_TRUE;
+}
+
 static grn_rc
 _grn_obj_remove_ja(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
-                   const char *path)
+                   const char *path, grn_bool dependent)
 {
   grn_rc rc = GRN_SUCCESS;
   uint8_t type;
 
   type = obj->header.type;
 
-  rc = remove_index(ctx, obj, GRN_HOOK_SET);
-  if (rc != GRN_SUCCESS) { return rc; }
+  if (dependent) {
+    rc = remove_index(ctx, obj, GRN_HOOK_SET);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  } else {
+    if (!is_removable_column(ctx, obj, db)) {
+      return ctx->rc;
+    }
+  }
+
   rc = grn_obj_close(ctx, obj);
   if (rc != GRN_SUCCESS) { return rc; }
 
@@ -9683,15 +9737,24 @@ _grn_obj_remove_ja(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
 
 static grn_rc
 _grn_obj_remove_ra(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
-                   const char *path)
+                   const char *path, grn_bool dependent)
 {
   grn_rc rc = GRN_SUCCESS;
   uint8_t type;
 
   type = obj->header.type;
 
-  rc = remove_index(ctx, obj, GRN_HOOK_SET);
-  if (rc != GRN_SUCCESS) { return rc; }
+  if (dependent) {
+    rc = remove_index(ctx, obj, GRN_HOOK_SET);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  } else {
+    if (!is_removable_column(ctx, obj, db)) {
+      return ctx->rc;
+    }
+  }
+
   rc = grn_obj_close(ctx, obj);
   if (rc != GRN_SUCCESS) { return rc; }
 
@@ -9820,10 +9883,10 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj, grn_bool dependent)
     rc = _grn_obj_remove_array(ctx, obj, db, id, path, dependent);
     break;
   case GRN_COLUMN_VAR_SIZE :
-    rc = _grn_obj_remove_ja(ctx, obj, db, id, path);
+    rc = _grn_obj_remove_ja(ctx, obj, db, id, path, dependent);
     break;
   case GRN_COLUMN_FIX_SIZE :
-    rc = _grn_obj_remove_ra(ctx, obj, db, id, path);
+    rc = _grn_obj_remove_ra(ctx, obj, db, id, path, dependent);
     break;
   case GRN_COLUMN_INDEX :
     rc = _grn_obj_remove_index(ctx, obj, db, id, path);
