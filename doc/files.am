@@ -122,11 +122,13 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/usage_set.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_calc_types.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_filter.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_limit.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_offset.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_output_columns.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldown_sort_keys.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldowns_label_calc_types.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldowns_label_filter.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldowns_label_keys.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldowns_label_limit.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldowns_label_offset.log \
@@ -136,12 +138,14 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/limit.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/logical_table_existent.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/logical_table_nonexistent.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/match_columns.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/max.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/max_border.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/min.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/min_border.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/offset.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/output_columns.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/query.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/shard_key_existent.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/sort_keys.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/usage_plugin_register.log \
@@ -1013,11 +1017,13 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_parameters/usage_set.log \
 	source/example/reference/commands/logical_select/drilldown.log \
 	source/example/reference/commands/logical_select/drilldown_calc_types.log \
+	source/example/reference/commands/logical_select/drilldown_filter.log \
 	source/example/reference/commands/logical_select/drilldown_limit.log \
 	source/example/reference/commands/logical_select/drilldown_offset.log \
 	source/example/reference/commands/logical_select/drilldown_output_columns.log \
 	source/example/reference/commands/logical_select/drilldown_sort_keys.log \
 	source/example/reference/commands/logical_select/drilldowns_label_calc_types.log \
+	source/example/reference/commands/logical_select/drilldowns_label_filter.log \
 	source/example/reference/commands/logical_select/drilldowns_label_keys.log \
 	source/example/reference/commands/logical_select/drilldowns_label_limit.log \
 	source/example/reference/commands/logical_select/drilldowns_label_offset.log \
@@ -1027,12 +1033,14 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_select/limit.log \
 	source/example/reference/commands/logical_select/logical_table_existent.log \
 	source/example/reference/commands/logical_select/logical_table_nonexistent.log \
+	source/example/reference/commands/logical_select/match_columns.log \
 	source/example/reference/commands/logical_select/max.log \
 	source/example/reference/commands/logical_select/max_border.log \
 	source/example/reference/commands/logical_select/min.log \
 	source/example/reference/commands/logical_select/min_border.log \
 	source/example/reference/commands/logical_select/offset.log \
 	source/example/reference/commands/logical_select/output_columns.log \
+	source/example/reference/commands/logical_select/query.log \
 	source/example/reference/commands/logical_select/shard_key_existent.log \
 	source/example/reference/commands/logical_select/sort_keys.log \
 	source/example/reference/commands/logical_select/usage_plugin_register.log \
