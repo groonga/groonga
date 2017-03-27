@@ -48,6 +48,9 @@ parameters are optional::
                  [drilldown_calc_target=null]
                  [sort_keys=null]
                  [drilldown_sort_keys=null]
+                 [match_columns=null]
+                 [query=null]
+                 [drilldown_filter=null]
 
 ``logical_select`` has the following named parameters for advanced
 drilldown:
@@ -59,6 +62,7 @@ drilldown:
   * ``drilldowns[${LABEL}].limit=10``
   * ``drilldowns[${LABEL}].calc_types=NONE``
   * ``drilldowns[${LABEL}].calc_target=null``
+  * ``drilldowns[${LABEL}].filter=null``
 
 .. deprecated:: 6.1.4
 
@@ -104,7 +108,6 @@ But there are some differences from :doc:`select`:
     doesn't work with multiple shards. It works with one
     shard. ``_key`` in ``drilldowns[${LABEL}].sort_keys`` work with
     multiple shards.
-  * ``match_columns`` and ``query`` aren't supported yet.
   * ``cache`` isn't supported yet.
   * ``match_escalation_threshold`` isn't supported yet.
   * ``query_flags`` isn't supported yet.
@@ -385,14 +388,43 @@ only supported for now.
 ``match_columns``
 """""""""""""""""
 
-Not implemented yet.
+.. versionadded:: 7.0.1
+
+Corresponds to :ref:`select-match-columns` in :doc:`select`. See
+:ref:`select-match-columns` for details.
+
+Here is an example to find records that include ``"fast"`` text in
+``content`` column:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/match_columns.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --match_columns content \
+..   --query "fast"
 
 .. _logical-select-query:
 
 ``query``
 """""""""
 
-Not implemented yet.
+.. versionadded:: 7.0.1
+
+Corresponds to :ref:`select-query` in :doc:`select`. See
+:ref:`select-query-columns` for details.
+
+Here is an example to find records that include ``"fast"`` text in
+``content`` column:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/query.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --query "content:@fast"
+
+See also :ref:`logical-select-match-columns`.
 
 .. _logical-select-filter:
 
@@ -681,6 +713,30 @@ Corresponds to :ref:`select-drilldown-calc-target` in
 
 See also :ref:`logical-select-drilldown-calc-types` for an example.
 
+.. _logical-select-drilldown-filter:
+
+``drilldown_filter``
+""""""""""""""""""""
+
+.. versionadded:: 7.0.1
+
+Corresponds to :ref:`select-drilldown-filter` in
+:doc:`select`. See :ref:`select-drilldown-filter` for details.
+
+Here is an example to suppress drilled down tags that are occurred
+only once:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldown_filter.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldown tag \
+..   --drilldown_filter "_nsubrecs > 1" \
+..   --drilldown_output_columns _key,_nsubrecs
+
 .. _logical-select-advanced-drilldown-related-parameters:
 
 Advanced drilldown related parameters
@@ -851,6 +907,30 @@ labeled drilldown.
 
 See also :ref:`logical-select-drilldowns-label-calc-types`
 for an example.
+
+.. _logical-select-drilldowns-label-filter:
+
+``drilldowns[${LABEL}].filter``
+"""""""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.1
+
+Corresponds to :ref:`logical-select-drilldown-filter` in not labeled
+drilldown.
+
+Here is an example to suppress drilled down tags that are occurred
+only once:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldowns_label_filter.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldowns[tag].keys tag \
+..   --drilldowns[tag].tiler "_nsubrecs > 1" \
+..   --drilldowns[tag].output_columns _key,_nsubrecs
 
 Return value
 ------------
