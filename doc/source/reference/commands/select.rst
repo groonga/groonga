@@ -374,7 +374,70 @@ See :ref:`select-dynamic-column-related-parameters` for details.
 Window function
 ^^^^^^^^^^^^^^^
 
-TODO
+You can compute each record value from values of grouped records. For
+example, you can compute sums of each group and puts sums to each
+record. The difference against drilldown is drilldown can compute sums
+of each group but it puts sums to each group not record.
+
+Here is the result with window function. Each record has sum:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Group No.
+     - Target value
+     - Sum result
+   * - 1
+     - 5
+     - 5
+   * - 2
+     - 10
+     - 25
+   * - 2
+     - 15
+     - 25
+   * - 3
+     - 3
+     - 8
+   * - 3
+     - 5
+     - 8
+
+Here is the result with drilldown. Each group has sum:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Group No.
+     - Target values
+     - Sum result
+   * - 1
+     - 5
+     - 5
+   * - 2
+     - 10, 15
+     - 25
+   * - 3
+     - 3, 5
+     - 8
+
+Window function is useful for data analysis.
+
+Here is an example that sums ``Entries.n_likes`` per
+``Entries.tag``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/usage_window_function.log
+.. plugin_register functions/number
+.. select \
+..   --table Entries \
+..   --columns[n_likes_sum_per_tag].stage initial \
+..   --columns[n_likes_sum_per_tag].type UInt32 \
+..   --columns[n_likes_sum_per_tag].value 'window_sum(n_likes)' \
+..   --columns[n_likes_sum_per_tag].window.group_keys tag \
+..   --output_columns tag,n_likes,n_likes_sum_per_tag
+
+See :ref:`select-window-function-related-parameters` for details.
 
 Parameters
 ----------
@@ -1053,16 +1116,16 @@ related parameters:
    * - Name
      - Default value
      - Required or optional
-   * - ``--columns[${NAME}].stage``
+   * - ``columns[${NAME}].stage``
      - ``null``
      - Required
-   * - ``--columns[${NAME}].flags``
+   * - ``columns[${NAME}].flags``
      - ``COLUMN_SCALAR``
      - Optional
-   * - ``--columns[${NAME}].type``
+   * - ``columns[${NAME}].type``
      - ``null``
      - Required
-   * - ``--columns[${NAME}].value``
+   * - ``columns[${NAME}].value``
      - ``null``
      - Required
 
@@ -1258,7 +1321,133 @@ This section describes window function column related parameters. You
 need to use dynamic column for using window function. See
 :ref:`select-dynamic-column-related-parameters` for dynamic column.
 
-TODO: Describe window function
+Window function in Groonga is similar to window function in
+SQL. Normal function computes its result with only the current
+record. On the other hand, window function computes its result with
+multiple records. Window function is useful to data analysis because
+it can process multiple records.
+
+You can find supported window functions at
+:doc:`/reference/window_function`. For example,
+:doc:`/reference/window_functions/window_sum` is a window function. It
+sums numbers in the target records.
+
+Window function processes records that are grouped by the specified
+group keys. For example, window function processes three groups
+(``Hello`` group, ``Groonga`` group and ``Senna`` group) in the
+following case. :doc:`/reference/window_functions/window_sum` sums
+``n_likes`` values in each group:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Group No.
+     - Group key value
+     - ``n_likes`` value
+     - :doc:`/reference/window_functions/window_sum` result
+   * - 1
+     - ``Hello``
+     - 5
+     - 5
+   * - 2
+     - ``Groonga``
+     - 10
+     - 25
+   * - 2
+     - ``Groonga``
+     - 15
+     - 25
+   * - 3
+     - ``Senna``
+     - 3
+     - 6
+   * - 3
+     - ``Senna``
+     - 3
+     - 6
+
+You can specify no group keys. In the case, window function processes
+only one group that includes all
+records. :doc:`/reference/window_functions/window_sum` sums all
+``n_likes`` values in the following case:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Group No.
+     - ``n_likes`` value
+     - :doc:`/reference/window_functions/window_sum` result
+   * - 1
+     - 5
+     - 36
+   * - 1
+     - 10
+     - 36
+   * - 1
+     - 15
+     - 36
+   * - 1
+     - 3
+     - 36
+   * - 1
+     - 3
+     - 36
+
+Window function processes records in each group in the specified
+order. You can specify no sort keys like the above group keys
+example.
+
+The behavior when you specify no sort keys depends on each window
+function specification. For example,
+:doc:`/reference/window_functions/window_sum` uses different behavior
+whether sort keys are specified or not. If you specify not sort keys,
+:doc:`/reference/window_functions/window_sum` sums values of all
+records in the group and puts it to all target records like the above
+group keys example. If you specify sort keys,
+:doc:`/reference/window_functions/window_sum` behaves as cumulative
+sum. :doc:`/reference/window_functions/window_sum` sums values of all
+records in the group in sequence and puts the current sum to the
+current record like the following:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Group No.
+     - Group key value
+     - Sort key value
+     - ``n_likes`` value
+     - :doc:`/reference/window_functions/window_sum` result
+     - Note
+   * - 1
+     - ``Hello``
+     - 1
+     - 5
+     - 5
+     - The first record in group No. 1. (``5 = 5``)
+   * - 2
+     - ``Groonga``
+     - 90
+     - 10
+     - 10
+     - The first record in group No. 2. (``10 = 10``)
+   * - 2
+     - ``Groonga``
+     - 91
+     - 15
+     - 25
+     - The second record in group No. 2. (``10 + 15 = 25``)
+   * - 3
+     - ``Senna``
+     - 200
+     - 3
+     - 8
+     - The second record in group No. 3. (``5 + 3 = 8``)
+   * - 3
+     - ``Senna``
+     - 100
+     - 5
+     - 5
+     - The first record in group No. 3. (``5 = 5``)
 
 Here are parameters for window function. You need to specify both
 window function related parameters and required dynamic columns
@@ -1272,14 +1461,14 @@ dynamic column related parameters:
    * - Name
      - Required or optional
      - Note
-   * - ``--columns[${NAME}].value``
+   * - ``columns[${NAME}].value``
      - Required
      - Use :doc:`/reference/window_function`.
-   * - ``--columns[${NAME}].window.sort_keys``
-     - Required if ``--columns[${NAME}].window.group_keys`` isn't specified.
+   * - ``columns[${NAME}].window.sort_keys``
+     - Required if ``columns[${NAME}].window.group_keys`` isn't specified.
      -
-   * - ``--columns[${NAME}].window.group_keys``
-     - Required if ``--columns[${NAME}].window.sort_keys`` isn't specified.
+   * - ``columns[${NAME}].window.group_keys``
+     - Required if ``columns[${NAME}].window.sort_keys`` isn't specified.
      -
 
 .. _select-columns-name-window-sort-keys:
@@ -1289,7 +1478,29 @@ dynamic column related parameters:
 
 .. versionadded:: 6.0.6
 
-TODO
+Specifies sort keys in each group. Window function processes records
+in each group in the specified order.
+
+Sort keys are separated by ``.``. Each sort key is column name. It's
+the same as :ref:`select-sort-keys`.
+
+You must specify :ref:`select-columns-name-window-sort-keys` or
+:ref:`select-columns-name-window-group-keys` to use window function.
+
+Here is an example that computes cumulative sum per
+``Entries.tag``. Each group is sorted by ``Entries._key``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/columns_name_window_sort_keys.log
+.. select \
+..   --table Entries \
+..   --columns[n_likes_cumulative_sum_per_tag].stage initial \
+..   --columns[n_likes_cumulative_sum_per_tag].type UInt32 \
+..   --columns[n_likes_cumulative_sum_per_tag].value 'window_sum(n_likes)' \
+..   --columns[n_likes_cumulative_sum_per_tag].window.sort_keys _key \
+..   --columns[n_likes_cumulative_sum_per_tag].window.group_keys tag \
+..   --sort_keys _key \
+..   --output_columns tag,_key,n_likes,n_likes_cumulative_sum_per_tag
 
 .. _select-columns-name-window-group-keys:
 
@@ -1298,7 +1509,28 @@ TODO
 
 .. versionadded:: 7.0.0
 
-TODO
+Specifies group keys. Window function processes records in each
+group. If you specify no group keys, window function processes one
+group that includes all records.
+
+Sort keys are separated by ``.``. Each sort key is column name. It's
+the same as :ref:`select-drilldown`.
+
+You must specify :ref:`select-columns-name-window-sort-keys` or
+:ref:`select-columns-name-window-group-keys` to use window function.
+
+Here is an example that computes sum per ``Entries.tag``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/columns_name_window_group_keys.log
+.. select \
+..   --table Entries \
+..   --columns[n_likes_sum_per_tag].stage initial \
+..   --columns[n_likes_sum_per_tag].type UInt32 \
+..   --columns[n_likes_sum_per_tag].value 'window_sum(n_likes)' \
+..   --columns[n_likes_sum_per_tag].window.group_keys tag \
+..   --sort_keys _key \
+..   --output_columns tag,_key,n_likes,n_likes_sum_per_tag
 
 .. _select-drilldown-related-parameters:
 

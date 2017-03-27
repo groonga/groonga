@@ -209,6 +209,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/columns_name_stage.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/columns_name_type.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/columns_name_value.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/columns_name_window_group_keys.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/columns_name_window_sort_keys.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_all.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_avg.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_calc_types_max.log \
@@ -266,6 +268,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_drilldown_only_query.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_dynamic_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/usage_window_function.log \
 	$(top_srcdir)/doc/source/example/reference/commands/shutdown/default.log \
 	$(top_srcdir)/doc/source/example/reference/commands/shutdown/graceful.log \
 	$(top_srcdir)/doc/source/example/reference/commands/shutdown/immediate.log \
@@ -1108,6 +1111,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/columns_name_stage.log \
 	source/example/reference/commands/select/columns_name_type.log \
 	source/example/reference/commands/select/columns_name_value.log \
+	source/example/reference/commands/select/columns_name_window_group_keys.log \
+	source/example/reference/commands/select/columns_name_window_sort_keys.log \
 	source/example/reference/commands/select/drilldown_calc_types_all.log \
 	source/example/reference/commands/select/drilldown_calc_types_avg.log \
 	source/example/reference/commands/select/drilldown_calc_types_max.log \
@@ -1165,6 +1170,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/usage_drilldown_only_query.log \
 	source/example/reference/commands/select/usage_dynamic_column.log \
 	source/example/reference/commands/select/usage_setup.log \
+	source/example/reference/commands/select/usage_window_function.log \
 	source/example/reference/commands/shutdown/default.log \
 	source/example/reference/commands/shutdown/graceful.log \
 	source/example/reference/commands/shutdown/immediate.log \
