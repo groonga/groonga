@@ -97,7 +97,7 @@ mrb_grn_window_definition_set_sort_keys(mrb_state *mrb, mrb_value self)
   } else {
     mrb_int i, n;
     n = RARRAY_LEN(mrb_keys);
-    definition->sort_keys = mrb_calloc(mrb, n, sizeof(grn_table_sort_key *));
+    definition->sort_keys = mrb_calloc(mrb, n, sizeof(grn_table_sort_key));
     for (i = 0; i < n; i++) {
       grn_table_sort_key *sort_key = DATA_PTR(RARRAY_PTR(mrb_keys)[i]);
       definition->sort_keys[i] = *sort_key;
@@ -127,7 +127,7 @@ mrb_grn_window_definition_set_group_keys(mrb_state *mrb, mrb_value self)
   } else {
     mrb_int i, n;
     n = RARRAY_LEN(mrb_keys);
-    definition->group_keys = mrb_calloc(mrb, n, sizeof(grn_table_sort_key *));
+    definition->group_keys = mrb_calloc(mrb, n, sizeof(grn_table_sort_key));
     for (i = 0; i < n; i++) {
       grn_table_sort_key *group_key = DATA_PTR(RARRAY_PTR(mrb_keys)[i]);
       definition->group_keys[i] = *group_key;
