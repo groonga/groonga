@@ -26,66 +26,68 @@ Improvements
 * [:doc:`/reference/commands/dump`] Supported to dump weight reference
   vector.
 
-* [:doc:`/reference/commands/load`] Supported to load `array<object>`
-  style weight vector column. The example of `array<object>` style is:
-  `[{"key1": weight1}, {"key2": weight2}]`.
+* [:doc:`/reference/commands/load`] Supported to load
+  ``array<object>`` style weight vector column. The example of
+  ``array<object>`` style is: ``[{"key1": weight1}, {"key2":
+  weight2}]``.
 
-* Supported to search `!(XXX OPERATOR VALUE)` by index. Supported
-  operator is not only `>` but also `>=`, `<`, `<=`, `==` and `!=`.
+* Supported to search ``!(XXX OPERATOR VALUE)`` by index. Supported
+  operator is not only ``>`` but also ``>=``, ``<``, ``<=``, ``==``
+  and ``!=``.
 
 * Supported index search for "!(column == CONSTANT)". The example in
-  this case is: `!(column == 29)` and so on.
+  this case is: ``!(column == 29)`` and so on.
 
 * Supported more "!" optimization in the following patterns.
 
-  * `!(column @ "X") && (column @ "Y")`
-  * `(column @ "Y") && !(column @ "X")`
-  * `(column @ "Y") &! !(column @ "X")`
+  * ``!(column @ "X") && (column @ "Y")``
+  * ``(column @ "Y") && !(column @ "X")``
+  * ``(column @ "Y") &! !(column @ "X")``
 
-* Supported to search `XXX || !(column @ "xxx")` by index.
+* Supported to search ``XXX || !(column @ "xxx")`` by index.
 
-* [:doc:`/reference/commands/dump`] Changed to use `'{"x": 1, "y":
-  2}'` style for not referenced weight vector. This change doesn't
+* [:doc:`/reference/commands/dump`] Changed to use ``'{"x": 1, "y":
+  2}'`` style for not referenced weight vector. This change doesn't
   affect to old Groonga because it already supports one.
 
-* [experimental] Supported `GRN_ORDER_BY_ESTIMATED_SIZE_ENABLE`
+* [experimental] Supported ``GRN_ORDER_BY_ESTIMATED_SIZE_ENABLE``
   environment variable. This variable controls whether query
   optimization which is based on estimated size is applied or not.
   This feature is disabled by default. Set
-  `GRN_ORDER_BY_ESTIMATED_SIZE_ENABLE=yes` if you want to try it.
+  ``GRN_ORDER_BY_ESTIMATED_SIZE_ENABLE=yes`` if you want to try it.
 
-* [:doc:`/reference/commands/select`] Added query log for `columns`,
-  `drilldown` evaluation.
+* [:doc:`/reference/commands/select`] Added query log for ``columns``,
+  ``drilldown`` evaluation.
 
 * [:doc:`/reference/commands/select`] Changed query log format for
-  `drilldown`. This is backward incompatible change, but it only
+  ``drilldown``. This is backward incompatible change, but it only
   affects users who convert query log by own programs.
 
 * [:doc:`/reference/commands/table_remove`] Reduced temporary memory
   usage. It's enabled when the number of max threads is 0.
 
-* [:doc:`/reference/commands/select`] `columns[LABEL](N)` is used for
-  query log format instead of `columns(N)[LABEL]`..
+* [:doc:`/reference/commands/select`] ``columns[LABEL](N)`` is used
+  for query log format instead of ``columns(N)[LABEL]``..
 
 * [:doc:`/tutorial/query_expansion`] Updated example to use vector
   column because it is recommended way. [Reported by Gurunavi, Inc]
 
 * Supported to detect canceled request while locking. It fixes the
-  problem that `request_cancel` is ignored unexpectedly while locking.
+  problem that ``request_cancel`` is ignored unexpectedly while locking.
 
-* [:doc:`/reference/commands/logical_select`] Supported `initial` and
-  `filtered` stage dynamic columns. The examples are:
-  `--columns[LABEL].stage initial` or `--columns[LABEL].stage
-  filtered`.
+* [:doc:`/reference/commands/logical_select`] Supported ``initial``
+  and ``filtered`` stage dynamic columns. The examples are:
+  ``--columns[LABEL].stage initial`` or ``--columns[LABEL].stage
+  filtered``.
 
 * [:doc:`/reference/commands/logical_select`] Supported
-  `match_columns`, `query` and `drilldown_filter` option.
+  ``match_columns``, ``query`` and ``drilldown_filter`` option.
 
 * [:doc:`/reference/function/highlight_html`] Supported similar search.
 
-* [:doc:`/reference/commands/logical_select`] Supported `initial` and
-   stage dynamic columns in labeled drilldown. The examples is:
-   `--drilldowns[LABEL].stage initial`.
+* [:doc:`/reference/commands/logical_select`] Supported ``initial``
+   and stage dynamic columns in labeled drilldown. The examples is:
+   ``--drilldowns[LABEL].stage initial``.
 
 * [:doc:`/reference/commands/logical_select`] Supported window
   function in dynamic column.
@@ -102,14 +104,14 @@ Improvements
 
 * Supported to disable AND match optimization by environment variable.
   You can disable this feature by
-  `GRN_TABLE_SELECT_AND_MIN_SKIP_ENABLE=no`. This feature is enable by
-  default.
+  ``GRN_TABLE_SELECT_AND_MIN_SKIP_ENABLE=no``. This feature is enable
+  by default.
 
 * [:doc:`/reference/functions/vector_new`] Added a new function to
   create a new vector.
 
 * [:doc:`/reference/commands/select`] Added documentation about
-  `drilldown_filter`.
+  ``drilldown_filter``.
 
 Fixes
 ^^^^^
@@ -123,8 +125,8 @@ Fixes
 * [:doc:`/reference/commands/select`] Fixed a bug that "A && B.C @ X"
   may not return records that should be matched.
 
-* Fixed a conflict with `grn_io_flush()` and
-  `grn_io_expire()`. Without this change, if `io_flush` and `load`
+* Fixed a conflict with ``grn_io_flush()`` and
+  ``grn_io_expire()``. Without this change, if ``io_flush`` and ``load``
   command are executed simultaneously in specific timing, it causes a
   crash bug by access violation.
 
