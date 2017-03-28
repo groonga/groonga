@@ -83,7 +83,8 @@ Improvements
 * [:doc:`/reference/commands/logical_select`] Supported
   ``match_columns``, ``query`` and ``drilldown_filter`` option.
 
-* [:doc:`/reference/function/highlight_html`] Supported similar search.
+* [:doc:`/reference/functions/highlight_html`] Supported similar
+  search.
 
 * [:doc:`/reference/commands/logical_select`] Supported ``initial`` 
   and stage dynamic columns in labeled drilldown. The example is: 
