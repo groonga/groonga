@@ -85,9 +85,9 @@ Improvements
 
 * [:doc:`/reference/function/highlight_html`] Supported similar search.
 
-* [:doc:`/reference/commands/logical_select`] Supported ``initial``
-   and stage dynamic columns in labeled drilldown. The examples is:
-   ``--drilldowns[LABEL].stage initial``.
+* [:doc:`/reference/commands/logical_select`] Supported ``initial`` 
+  and stage dynamic columns in labeled drilldown. The example is: 
+  ``--drilldowns[LABEL].stage initial``.
 
 * [:doc:`/reference/commands/logical_select`] Supported window
   function in dynamic column.
