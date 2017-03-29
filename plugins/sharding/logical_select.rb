@@ -414,6 +414,8 @@ module Groonga
       end
 
       class DynamicColumnExecuteContext
+        include KeysParsable
+
         attr_reader :label
         attr_reader :stage
         attr_reader :type
@@ -427,8 +429,8 @@ module Groonga
           @type = parse_type(parameters["type"])
           @flags = parse_flags(parameters["flags"] || "COLUMN_SCALAR")
           @value = parameters["value"]
-          @window_sort_keys = parameters["window.sort_keys"]
-          @window_group_keys = parameters["window.group_keys"]
+          @window_sort_keys = parse_keys(parameters["window.sort_keys"])
+          @window_group_keys = parse_keys(parameters["window.group_keys"])
         end
 
         def close
