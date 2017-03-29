@@ -623,7 +623,7 @@ details.
 Corresponds to :ref:`select-columns-name-stage` in :doc:`select`. See
 :ref:`select-columns-name-stage` for details.
 
-This is required parameter.
+This is a required parameter.
 
 Here is a ``columns[${NAME}].stage`` example. It creates
 ``is_popular`` column at ``initial`` stage. You can use ``is_popular``
@@ -679,10 +679,10 @@ function:
 Corresponds to :ref:`select-columns-name-type` in :doc:`select`. See
 :ref:`select-columns-name-type` for details.
 
-This is required parameter.
+This is a required parameter.
 
 Here is a ``columns[${NAME}].type`` example. It creates a
-``ShortText`` value column. Stored value is casted to ``ShortText``
+``ShortText`` type column. Stored value is casted to ``ShortText``
 automatically. In this example, number is casted to ``ShortText``:
 
 .. groonga-command
@@ -710,13 +710,13 @@ value and other window function related parameters when you use window
 function. See :ref:`logical-select-window-function-related-parameters`
 for details.
 
-This is required parameter.
+This is a required parameter.
 
 Here is a ``columns[${NAME}].value`` example. It creates a new dynamic
 column that stores the number of characters of content. This example
 uses :doc:`/reference/functions/string_length` function in
-``functions/string`` plugin to compute string
-length. :doc:`plugin_register` is used to register
+``functions/string`` plugin to compute the number of characters in a
+string. :doc:`plugin_register` is used to register
 ``functions/string`` plugin:
 
 .. groonga-command

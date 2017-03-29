@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2017-03-24 17:50+0900\n"
+"PO-Revision-Date: 2017-03-29 11:37+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -7262,7 +7262,6 @@ msgstr ""
 "必須の引数は ``logical_table`` と ``shard_key`` です。それ以外の引数は省略可"
 "能です::"
 
-#, fuzzy
 msgid "This command has the following named parameters for dynamic columns:"
 msgstr "以下の名前付き引数で動的カラム機能を使うことができます。"
 
@@ -7284,22 +7283,20 @@ msgstr ""
 msgid "``columns[${NAME}].window.group_keys=null``"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For "
 "example, ``column1`` is a valid ``${NAME}``. This is the same rule as normal "
 "column. See also :ref:`column-create-name`."
 msgstr ""
-"``${LABEL}`` には1つ以上のアルファベット、数字、 ``_`` 、 ``.`` を使うことが"
-"できます。たとえば、 ``parent.sub1`` は有効な ``${LABEL}`` です。"
+"``${NAME}`` には1つ以上のアルファベット、数字、 ``_``  を使うことができます。"
+"たとえば、 ``column1`` は有効な ``${NAME}`` です。これは通常のカラムと同じ"
+"ルールです。 :ref:`column-create-name` も見てください。"
 
-#, fuzzy
 msgid "Parameters that have the same ``${NAME}`` are grouped."
-msgstr "同じ ``${LABEL}`` も持つ引数は同じグループになります。"
+msgstr "同じ ``${NAME}`` も持つ引数は同じグループになります。"
 
-#, fuzzy
 msgid "For example, the following parameters specify one dynamic column:"
-msgstr "たとえば、以下の引数は1つのドリルダウンを指定しています。"
+msgstr "たとえば、以下の引数は1つの動的カラムを指定しています。"
 
 msgid "``--columns[name].stage initial``"
 msgstr ""
@@ -7310,9 +7307,8 @@ msgstr ""
 msgid "``--columns[name].value 29``"
 msgstr ""
 
-#, fuzzy
 msgid "The following parameters specify two dynamic columns:"
-msgstr "以下の引数は2つのドリルダウンを指定しています。"
+msgstr "以下の引数は2つの動的カラムを指定しています。"
 
 msgid "``--columns[name1].stage initial``"
 msgstr ""
@@ -7332,10 +7328,9 @@ msgstr ""
 msgid "``--columns[name2].value '_score * 0.1'``"
 msgstr ""
 
-#, fuzzy
 msgid "This command has the following named parameters for advanced drilldown:"
 msgstr ""
-"``select`` には高度なドリルダウン機能のために以下の名前付き引数があります。"
+"このコマンドには高度なドリルダウン機能のために以下の名前付き引数があります。"
 
 msgid "``drilldowns[${LABEL}].keys=null``"
 msgstr ""
@@ -7358,9 +7353,8 @@ msgstr ""
 msgid "``drilldowns[${LABEL}].calc_target=null``"
 msgstr ""
 
-#, fuzzy
 msgid "``drilldowns[${LABEL}].filter=null``"
-msgstr "``drilldowns[${LABEL}].sort_keys`` には制限があります。"
+msgstr ""
 
 msgid "``drilldowns[${LABEL}].columns[${NAME}].stage=null``"
 msgstr ""
@@ -7675,31 +7669,29 @@ msgstr ""
 "``match_columns`` と ``query`` はまだサポートしていません。今のところ、 "
 "``filter`` だけサポートしています。"
 
-#, fuzzy
 msgid ""
 "Corresponds to :ref:`select-match-columns` in :doc:`select`. See :ref:"
 "`select-match-columns` for details."
 msgstr ""
-":doc:`select` の :ref:`select-output-columns` に対応しています。詳細は :ref:"
-"`select-output-columns` を見てください。"
+":doc:`select` の :ref:`select-match-columns` に対応しています。詳細は :ref:"
+"`select-match-columns` を見てください。"
 
-#, fuzzy
 msgid ""
 "Here is an example to find records that include ``\"fast\"`` text in "
 "``content`` column:"
-msgstr "以下は ``Sites.title`` カラムのロックを獲得する例です。"
+msgstr ""
+"以下は ``content`` カラムに ``\"fast\"`` というテキストを含むレコードを検索す"
+"る例です。"
 
-#, fuzzy
 msgid ""
 "Corresponds to :ref:`select-query` in :doc:`select`. See :ref:`select-query-"
 "columns` for details."
 msgstr ""
-":doc:`select` の :ref:`select-filter` に対応しています。詳細は :ref:`select-"
-"filter` を見てください。"
+":doc:`select` の :ref:`select-query` に対応しています。詳細は :ref:`select-"
+"query` を見てください。"
 
-#, fuzzy
 msgid "See also :ref:`logical-select-match-columns`."
-msgstr ":ref:`logical-select-max` も参照してください。"
+msgstr ":ref:`logical-select-match-columns` も参照してください。"
 
 msgid ""
 "Corresponds to :ref:`select-filter` in :doc:`select`. See :ref:`select-"
@@ -7778,150 +7770,157 @@ msgstr ""
 msgid "Dynamic column related parameters"
 msgstr "動的カラム関連の引数"
 
-#, fuzzy
 msgid ""
 "All dynamic column related parameters in :doc:`select` are supported. See :"
 "ref:`select-dynamic-column-related-parameters` for details."
 msgstr ""
-":doc:`select` のすべてのドリルダウン関連パラメーターをサポートしています。詳"
-"細は :ref:`select-drilldown-related-parameters` を見てください。"
+":doc:`select` のすべての動的カラム関連パラメーターをサポートしています。詳細"
+"は :ref:`select-dynamic-column-related-parameters` を見てください。"
 
 msgid "``columns[${NAME}].stage``"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "Corresponds to :ref:`select-columns-name-stage` in :doc:`select`. See :ref:"
 "`select-columns-name-stage` for details."
 msgstr ""
-":doc:`select` の :ref:`select-offset` に対応しています。詳細は :ref:`select-"
-"offset` を見てください。"
+":doc:`select` の :ref:`select-columns-name-stage` に対応しています。詳細は :"
+"ref:`select-columns-name-stage` を見てください。"
 
-#, fuzzy
-msgid "This is required parameter."
-msgstr "必須の引数はありません。"
+msgid "This is a required parameter."
+msgstr "必須の引数です。"
 
 msgid ""
 "Here is a ``columns[${NAME}].stage`` example. It creates ``is_popular`` "
 "column at ``initial`` stage. You can use ``is_popular`` in all parameters "
 "such as ``filter`` and ``output_columns``:"
 msgstr ""
+"以下は ``columns[${NAME}].stage`` の使用例です。この例では ``initial`` ステー"
+"ジで ``is_popular`` カラムを作っています。作成した ``is_popular`` カラムは "
+"``filter`` や ``output_columns`` を含むすべてのパラメーターで使えます。"
 
 msgid "``columns[${NAME}].flags``"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "Corresponds to :ref:`select-columns-name-flags` in :doc:`select`. See :ref:"
 "`select-columns-name-flags` for details."
 msgstr ""
-":doc:`select` の :ref:`select-output-columns` に対応しています。詳細は :ref:"
-"`select-output-columns` を見てください。"
+":doc:`select` の :ref:`select-columns-name-flags` に対応しています。詳細は :"
+"ref:`select-columns-name-flags` を見てください。"
 
-#, fuzzy
 msgid "The default value is ``COLUMN_SCALAR``."
-msgstr "デフォルト値は ``NONE`` です。"
+msgstr "デフォルト値は ``COLUMN_SCALAR`` です。"
 
 msgid ""
 "Here is a ``columns[${NAME}].flags`` example. It creates a vector column by "
 "``COLUMN_VECTOR`` flags. ``plugin_register functions/vector`` is for using :"
 "doc:`/reference/functions/vector_new` function:"
 msgstr ""
+"以下は ``columns[${NAME}].flags`` の使用例です。この例では ``COLUMN_VECTOR`` "
+"フラグを指定してベクターカラムを作成しています。 ``plugin_register functions/"
+"vector`` は :doc:`/reference/functions/vector_new` 関数を使うために実行してい"
+"ます。:"
 
 msgid "``columns[${NAME}].type``"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "Corresponds to :ref:`select-columns-name-type` in :doc:`select`. See :ref:"
 "`select-columns-name-type` for details."
 msgstr ""
-":doc:`select` の :ref:`select-offset` に対応しています。詳細は :ref:`select-"
-"offset` を見てください。"
+":doc:`select` の :ref:`select-columns-name-type` に対応しています。詳細は :"
+"ref:`select-columns-name-type` を見てください。"
 
 msgid ""
-"Here is a ``columns[${NAME}].type`` example. It creates a ``ShortText`` "
-"value column. Stored value is casted to ``ShortText`` automatically. In this "
+"Here is a ``columns[${NAME}].type`` example. It creates a ``ShortText`` type "
+"column. Stored value is casted to ``ShortText`` automatically. In this "
 "example, number is casted to ``ShortText``:"
 msgstr ""
+"以下は ``columns[${NAME}].type`` の使用例です。この例では ``ShortText`` 型の"
+"カラムを作成しています。保存された値は自動的に ``ShortText`` にキャストされま"
+"す。この例では数値が ``ShortText`` にキャストされています。"
 
 msgid "``columns[${NAME}].value``"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "Corresponds to :ref:`select-columns-name-value` in :doc:`select`. See :ref:"
 "`select-columns-name-value` for details."
 msgstr ""
-":doc:`select` の :ref:`select-output-columns` に対応しています。詳細は :ref:"
-"`select-output-columns` を見てください。"
+":doc:`select` の :ref:`select-columns-name-value` に対応しています。詳細は :"
+"ref:`select-columns-name-value` を見てください。"
 
-#, fuzzy
 msgid ""
 "You need to specify :doc:`/reference/window_function` as ``value`` value and "
 "other window function related parameters when you use window function. See :"
 "ref:`logical-select-window-function-related-parameters` for details."
 msgstr ""
-"このセクションは動的カラム関連の引数について説明します。ウィンドウ関数を使う"
-"ために動的カラムを使うこともできますが、このセクションではウィンドウ関数につ"
-"いては説明しません。ウィンドウ関数については :ref:`select-window-function-"
-"related-parameters` を参照してください。"
+"ウィンドウ関数を使う場合は、 ``value`` の値に :doc:`/reference/"
+"window_function` を指定し、さらに他のウィンドウ関数関連のパラメーターも指定す"
+"る必要があります。詳細は :ref:`logical-select-window-function-related-"
+"parameters` を見てください。"
 
 msgid ""
 "Here is a ``columns[${NAME}].value`` example. It creates a new dynamic "
 "column that stores the number of characters of content. This example uses :"
 "doc:`/reference/functions/string_length` function in ``functions/string`` "
-"plugin to compute string length. :doc:`plugin_register` is used to register "
-"``functions/string`` plugin:"
+"plugin to compute the number of characters in a string. :doc:"
+"`plugin_register` is used to register ``functions/string`` plugin:"
 msgstr ""
+"以下は ``columns[${NAME}].value`` の使用例です。この例では内容の文字数を格納"
+"するための動的カラムを1つ作成しています。この例では文字数を数えるために "
+"``functions/string`` プラグイン内の :doc:`/reference/functions/"
+"string_length` 関数を使っています。 ``functions/string`` プラグインを登録する"
+"ために :doc:`plugin_register` を使っています。"
 
-#, fuzzy
 msgid "Window function related parameters"
-msgstr "ドリルダウン関連の引数"
+msgstr "ウィンドウ関数関連の引数"
 
-#, fuzzy
 msgid ""
 "All window function related parameters in :doc:`select` are supported. See :"
 "ref:`select-window-function-related-parameters` for details."
 msgstr ""
-":doc:`select` のすべてのドリルダウン関連パラメーターをサポートしています。詳"
-"細は :ref:`select-drilldown-related-parameters` を見てください。"
+":doc:`select` のすべてのウィンドウ関数関連パラメーターをサポートしています。"
+"詳細は :ref:`select-window-function-related-parameters` を見てください。"
 
 msgid "``columns[${NAME}].window.sort_keys``"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "Corresponds to :ref:`select-columns-name-window-sort-keys` in :doc:`select`. "
 "See :ref:`select-columns-name-window-sort-keys` for details."
 msgstr ""
-":doc:`select` の :ref:`select-drilldown-sort-keys` に対応しています。詳細は :"
-"ref:`select-drilldown-sort-keys` を見てください。"
+":doc:`select` の :ref:`select-columns-name-window-sort-keys` に対応していま"
+"す。詳細は :ref:`select-columns-name-window-sort-keys` を見てください。"
 
 msgid ""
 "You must specify :ref:`logical-select-columns-name-window-sort-keys` or :ref:"
 "`logical-select-columns-name-window-group-keys` to use window function."
 msgstr ""
+"ウィンドウ関数を使うには :ref:`logical-select-columns-name-window-sort-keys` "
+"または :ref:`logical-select-columns-name-window-group-keys` を指定しなければ"
+"いけません。"
 
 msgid ""
 "Here is an example that computes cumulative sum per ``Entries.tag``. Each "
 "group is sorted by ``Entries._key``:"
 msgstr ""
+"以下は ``Entries.tag`` 毎に累積和を計算する例です。各グループ内のレコードは "
+"``Entries._key`` でソートします。"
 
 msgid "``columns[${NAME}].window.group_keys``"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "Corresponds to :ref:`select-columns-name-window-group-keys` in :doc:"
 "`select`. See :ref:`select-columns-name-window-group-keys` for details."
 msgstr ""
-":doc:`select` の :ref:`select-sort-keys` に対応しています。詳細は :ref:"
-"`select-sort-keys` を見てください。"
+":doc:`select` の :ref:`select-columns-name-window-group-keys` に対応していま"
+"す。詳細は :ref:`select-columns-name-window-group-keys` を見てください。"
 
-#, fuzzy
 msgid "Here is an example that computes sum per ``Entries.tag``:"
-msgstr "以下は ``Entries.name`` カラムだけをチェックする例です。::"
+msgstr "以下は ``Entries.tag`` 毎に合計を計算する例です。"
 
 msgid "Drilldown related parameters"
 msgstr "ドリルダウン関連の引数"
@@ -8000,18 +7999,16 @@ msgstr "具体例は :ref:`select-drilldown-calc-types` を見てください。
 msgid "``drilldown_filter``"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "Corresponds to :ref:`select-drilldown-filter` in :doc:`select`. See :ref:"
 "`select-drilldown-filter` for details."
 msgstr ""
-":doc:`select` の :ref:`select-drilldown-limit` に対応しています。詳細は :ref:"
-"`select-drilldown-limit` を見てください。"
+":doc:`select` の :ref:`select-drilldown-filter` に対応しています。詳細は :"
+"ref:`select-drilldown-filter` を見てください。"
 
-#, fuzzy
 msgid ""
 "Here is an example to suppress drilled down tags that are occurred only once:"
-msgstr "以下はたくさんの大きなキーを保存することができるテーブルを作る例です。"
+msgstr "以下は1度しか出現していないタグをドリルダウン結果から除く例です。"
 
 msgid "Advanced drilldown related parameters"
 msgstr "高度なドリルダウン関連のパラメーター"
@@ -8125,17 +8122,15 @@ msgid ""
 msgstr ""
 "例は :ref:`logical-select-drilldowns-label-calc-types` を参照してください。"
 
-#, fuzzy
 msgid "``drilldowns[${LABEL}].filter``"
-msgstr "``drilldowns[${LABEL}].sort_keys`` には制限があります。"
+msgstr ""
 
-#, fuzzy
 msgid ""
 "Corresponds to :ref:`logical-select-drilldown-filter` in not labeled "
 "drilldown."
 msgstr ""
-"ラベルなしドリルダウンの :ref:`logical-select-drilldown-limit` に対応していま"
-"す。"
+"ラベルなしドリルダウンの :ref:`logical-select-drilldown-filter` に対応してい"
+"ます。"
 
 msgid ""
 "The return value format of ``logical_select`` is compatible with :doc:"
@@ -11089,13 +11084,13 @@ msgstr ""
 "``10`` になります。"
 
 msgid ""
-"You can use doc:`/reference/functions/number_classify` function for the "
+"You can use :doc:`/reference/functions/number_classify` function for the "
 "classification. You need to register ``functions/number`` plugin by :doc:"
-"`plugin_register` command to use doc:`/reference/functions/number_classify` "
+"`plugin_register` command to use :doc:`/reference/functions/number_classify` "
 "function."
 msgstr ""
-"このような分類をするために doc:`/reference/functions/number_classify` 関数を"
-"使えます。 doc:`/reference/functions/number_classify` 関数を使うためには :"
+"このような分類をするために :doc:`/reference/functions/number_classify` 関数を"
+"使えます。 :doc:`/reference/functions/number_classify` 関数を使うためには :"
 "doc:`plugin_register` コマンドで ``functions/number`` プラグインを登録する必"
 "要があります。"
 
@@ -11119,20 +11114,24 @@ msgid ""
 "The difference against drilldown is drilldown can compute sums of each group "
 "but it puts sums to each group not record."
 msgstr ""
+"グループ化したレコードの値を使って各レコードの値を計算することができます。た"
+"とえば、グループ毎に合計を計算して、合計値をすべてのレコードに格納できます。"
+"ドリルダウンもグループ毎に合計を計算できますが、すべてのレコードに合計を格納"
+"するのではなく、各グループ合計を格納する点が違います。"
 
 msgid "Here is the result with window function. Each record has sum:"
 msgstr ""
+"以下はウィンドウ関数を使った結果の例です。すべてのレコードが合計値を持ってい"
+"ます。"
 
-#, fuzzy
 msgid "Group No."
-msgstr "グループ"
+msgstr "グループ番号"
 
-#, fuzzy
 msgid "Target value"
-msgstr "戻り値"
+msgstr "合計対象の値"
 
 msgid "Sum result"
-msgstr ""
+msgstr "合計結果"
 
 msgid "5"
 msgstr ""
@@ -11151,10 +11150,10 @@ msgstr ""
 
 msgid "Here is the result with drilldown. Each group has sum:"
 msgstr ""
+"以下はドリルダウンを使った結果の例です。各グループが合計値を持っています。"
 
-#, fuzzy
 msgid "Target values"
-msgstr "戻り値"
+msgstr "合計対象の値"
 
 msgid "10, 15"
 msgstr ""
@@ -11163,16 +11162,15 @@ msgid "3, 5"
 msgstr ""
 
 msgid "Window function is useful for data analysis."
-msgstr ""
+msgstr "ウィンドウ関数はデータ解析に有用です。"
 
-#, fuzzy
 msgid "Here is an example that sums ``Entries.n_likes`` per ``Entries.tag``:"
-msgstr "以下は ``Entries.name`` カラムだけをチェックする例です。::"
+msgstr ""
+"以下は ``Entries.tag`` 毎に ``Entries.n_likes`` の合計を計算する例です。"
 
-#, fuzzy
 msgid "See :ref:`select-window-function-related-parameters` for details."
 msgstr ""
-"詳細は :ref:`select-dynamic-column-related-parameters` を見てください。"
+"詳細は :ref:`select-window-function-related-parameters` を見てください。"
 
 msgid "This section describes all parameters. Parameters are categorized."
 msgstr ""
@@ -11818,8 +11816,8 @@ msgstr "代わりに :ref:`select-sort-keys` を使ってください。"
 
 msgid "Specifies sort keys separated by ``,``. Each sort key is column name."
 msgstr ""
-"ソートキーを ``,`` 区切りで指定します。それぞれのソートキーはカラム名を指定し"
-"ます。"
+"ソートキーを ``,`` 区切りで指定します。それぞれのソートキーにはカラム名を指定"
+"します。"
 
 msgid "Here is a simple ``sort_keys`` usage example."
 msgstr "以下は簡単な ``sort_keys`` の使用例です。"
@@ -12034,7 +12032,7 @@ msgid "Default value"
 msgstr "デフォルト値"
 
 msgid "Required or optional"
-msgstr ""
+msgstr "必須か省略可能か"
 
 msgid "``null``"
 msgstr ""
@@ -12051,22 +12049,26 @@ msgid ""
 "are treated as parameters for the same dynamic column. Here is an example to "
 "specify parameters for 2 dynamic columns (``name1`` and ``name2``)::"
 msgstr ""
+"1つの動的カラムに対して複数のパラメーターを指定する必要があります。同じ ``"
+"${NAME}`` を使っているパラメーターは同じ動的カラムのパラメーターとして扱われ"
+"ます。以下は2つの動的カラム（ ``name1`` と ``name2`` ）用のパラメーターを指定"
+"する例です。::"
 
 msgid ""
 "Specifies when the dynamic column is created. This is a required parameter "
 "to create a dynamic column."
 msgstr ""
+"どのタイミング（どのステージ）で動的カラムを作るかを指定します。動的カラムを"
+"作る場合はこのパラメーターは必須です。"
 
-#, fuzzy
 msgid "Here are available stages:"
-msgstr "指定可能なフラグは以下の通りです。"
+msgstr "指定可能なステージは以下の通りです。"
 
 msgid "``initial``"
 msgstr ""
 
-#, fuzzy
 msgid "Dynamic column is created at first."
-msgstr "動的カラム関連の引数"
+msgstr "最初に動的カラムを作成します。"
 
 msgid "``filtered``"
 msgstr ""
@@ -12075,86 +12077,114 @@ msgid ""
 "Dynamic column is created after :ref:`select-query` and :ref:`select-filter` "
 "are evaluated."
 msgstr ""
+":ref:`select-query` と :ref:`select-filter` を評価してから動的カラムを作成し"
+"ます。"
 
-#, fuzzy
 msgid "``output``"
-msgstr "出力"
+msgstr ""
 
-#, fuzzy
 msgid ""
 "Dynamic column is created before :ref:`select-output-columns` is evaluated."
-msgstr ""
-"カラム名は :ref:`select-output-columns` で指定された値から抽出しています。"
+msgstr ":ref:`select-output-columns` を評価する前に動的カラムを作成します。"
 
 msgid ""
 "Here is the ``select`` process flow with dynamic column creation points. You "
 "should choose stage as late as possible:"
 msgstr ""
+"以下は動的カラム作成タイミング入りの ``select`` の処理の流れです。できるだけ"
+"後のステージを選ぶべきです。"
 
 msgid ""
 "Creates dynamic columns for ``initial`` stage. All records have these "
 "dynamic columns."
 msgstr ""
+"``initial`` ステージの動的カラムを作ります。すべてのレコードはこの動的カラム"
+"を持ちます。"
 
 msgid ""
 "Evaluates :ref:`select-query` and :ref:`select-filter`. You can use dynamic "
 "columns created in ``initial`` stage."
 msgstr ""
+":ref:`select-query` と :ref:`select-filter` を評価します。 ``initial`` ステー"
+"ジで作った動的カラムを使えます。"
 
 msgid ""
 "Creates dynamic columns for ``filtered`` stage. Only filtered records have "
 "these dynamic columns."
 msgstr ""
+"``filtered`` ステージの動的カラムを作ります。フィルター後のレコードだけがこの"
+"動的カラムを持ちます。"
 
 msgid ""
 "Evaluates :ref:`select-adjuster`. You can use dynamic columns created in "
 "``initial`` stage and ``filtered`` stage."
 msgstr ""
+":ref:`select-adjuster` を評価します。 ``initial`` ステージと ``filtered`` ス"
+"テージで作った動的カラムを使えます。"
 
 msgid ""
 "Evaluates :ref:`select-scorer`. You can use dynamic columns created in "
 "``initial`` stage and ``filtered`` stage."
 msgstr ""
+":ref:`select-scorer` を評価します。 ``initial`` ステージと ``filtered`` ス"
+"テージで作った動的カラムを使えます。"
 
 msgid ""
 "Evaluates :ref:`select-sort-keys`, :ref:`select-offset` and :ref:`select-"
 "limit`. You can use dynamic columns created in ``initial`` stage and "
 "``filtered`` stage."
 msgstr ""
+":ref:`select-sort-keys` 、 :ref:`select-offset` 、 :ref:`select-limit` を評価"
+"します。 ``initial`` ステージと ``filtered`` ステージで作った動的カラムを使え"
+"ます。"
+
+msgid ""
+"Evaluates :ref:`select-slice-related-parameters`. You can use dynamic "
+"columns created in ``initial`` stage and ``filtered`` stage."
+msgstr ""
+":ref:`select-slice-related-parameters` を評価します。 ``initial`` ステージと "
+"``filtered`` ステージで作った動的カラムを使えます。"
+
+msgid ""
+"Evaluates :ref:`select-drilldown-related-parameters` and :ref:`select-"
+"advanced-drilldown-related-parameters`. You can use dynamic columns created "
+"in ``initial`` stage and ``filtered`` stage. Note that you can create "
+"dynamic columns in each drilldown."
+msgstr ""
+":ref:`select-drilldown-related-parameters` と :ref:`select-advanced-"
+"drilldown-related-parameters` を評価します。 ``initial`` ステージと "
+"``filtered`` ステージで作った動的カラムを使えます。各ドリルダウン内でも個別に"
+"動的カラムを作れるので混同しないように注意してください。"
 
 msgid ""
 "Creates dynamic columns for ``output`` stage. Only :ref:`select-limit` "
 "records have these dynamic columns."
 msgstr ""
-
-msgid ""
-"Evaluates :ref:`select-slice-related-parameters`. You can use dynamic "
-"columns created in ``initial`` stage, ``filtered`` stage and ``output`` "
-"stage."
-msgstr ""
-
-msgid ""
-"Evaluates :ref:`select-drilldown-related-parameters` and :ref:`select-"
-"advanced-drilldown-related-parameters`. You can use dynamic columns created "
-"in ``initial`` stage, ``filtered`` stage and ``output`` stage. Note that you "
-"can use dynamic columns in each drilldown."
-msgstr ""
+"``output`` ステージの動的カラムを作ります。最大 :ref:`select-limit` 件のレ"
+"コードだけがこの動的カラムを持ちます。"
 
 msgid ""
 "Evaluates :ref:`select-output-columns`. You can use dynamic columns created "
 "in ``initial`` stage, ``filtered`` stage and ``output`` stage."
 msgstr ""
+":ref:`select-output-columns` を評価します。 ``initial`` ステージと "
+"``filtered`` ステージと ``output`` ステージで作った動的カラムを使えます。"
 
 msgid ""
 "Specifies flags for the dynamic column. It's the same as ``flags`` parameter "
 "for :doc:`column_create`. See :ref:`column-create-flags` for available flags."
 msgstr ""
+"動的カラムのフラグを指定します。これは :doc:`column_create` の ``flags`` パラ"
+"メーターと同じです。利用可能なフラグは :ref:`column-create-flags` を見てくだ"
+"さい。"
 
 msgid ""
 "Specifies value type for the dynamic column. It's the same as ``type`` "
 "parameter for :doc:`column_create`. See :ref:`column-create-type` for "
-"available flags."
+"available types."
 msgstr ""
+"動的カラムの値の型を指定します。 :doc:`column_create` の ``type`` パラメー"
+"ターと同じです。利用可能な型は :ref:`column-create-type` を見てください。"
 
 msgid ""
 "Specifies expression that generates values for the dynamic column. The "
@@ -12163,28 +12193,29 @@ msgid ""
 "``string_length(\"Hello\")``, ``column * 1.08`` and so on are valid "
 "expressions."
 msgstr ""
+"この動的カラムの値を生成する式を指定します。式には :doc:`/reference/grn_expr/"
+"script_syntax` を使います。この構文は :ref:`select-filter` と同じです。たとえ"
+"ば、 ``1 + 1`` 、 ``string_length(\"Hello\")`` 、 ``column * 1.08`` などは妥"
+"当な式です。"
 
-#, fuzzy
 msgid ""
 "You need to specify :doc:`/reference/window_function` as ``value`` value and "
 "other window function related parameters when you use window function. See :"
 "ref:`select-window-function-related-parameters` for details."
 msgstr ""
-"このセクションは動的カラム関連の引数について説明します。ウィンドウ関数を使う"
-"ために動的カラムを使うこともできますが、このセクションではウィンドウ関数につ"
-"いては説明しません。ウィンドウ関数については :ref:`select-window-function-"
-"related-parameters` を参照してください。"
+"ウィンドウ関数を使う場合は、 ``value`` の値に :doc:`/reference/"
+"window_function` を指定し、他のウィンドウ関数のパラメーターも指定する必要があ"
+"ります。詳細は :ref:`select-window-function-related-parameters` を見てくださ"
+"い。"
 
-#, fuzzy
 msgid ""
-"This section describes window function column related parameters. You need "
-"to use dynamic column for using window function. See :ref:`select-dynamic-"
-"column-related-parameters` for dynamic column."
+"This section describes window function related parameters. You need to use "
+"dynamic column for using window function. See :ref:`select-dynamic-column-"
+"related-parameters` for dynamic column."
 msgstr ""
-"このセクションは動的カラム関連の引数について説明します。ウィンドウ関数を使う"
-"ために動的カラムを使うこともできますが、このセクションではウィンドウ関数につ"
-"いては説明しません。ウィンドウ関数については :ref:`select-window-function-"
-"related-parameters` を参照してください。"
+"このセクションはウィンドウ関数関連の引数について説明します。ウィンドウ関数を"
+"使うためには動的カラムを使う必要があります。動的カラムについては :ref:"
+"`select-dynamic-column-related-parameters` を見てください。"
 
 msgid ""
 "Window function in Groonga is similar to window function in SQL. Normal "
@@ -12192,12 +12223,19 @@ msgid ""
 "hand, window function computes its result with multiple records. Window "
 "function is useful to data analysis because it can process multiple records."
 msgstr ""
+"Groongaのウィンドウ関数はSQLのウィンドウ関数と似ています。通常の関数は現在の"
+"レコードだけを使って結果を計算します。一方、ウィンドウ関数は複数のレコードを"
+"使って結果を計算します。複数のレコードを処理できるのでウィンドウ関数はデータ"
+"解析に有用です。"
 
 msgid ""
 "You can find supported window functions at :doc:`/reference/"
 "window_function`. For example, :doc:`/reference/window_functions/window_sum` "
 "is a window function. It sums numbers in the target records."
 msgstr ""
+"サポートしているウィンドウ関数は :doc:`/reference/window_function` で確認でき"
+"ます。たとえば、 :doc:`/reference/window_functions/window_sum` はウィンドウ関"
+"数です。このウィンドウ関数は対象レコードの数値の合計を計算します。"
 
 msgid ""
 "Window function processes records that are grouped by the specified group "
@@ -12205,17 +12243,20 @@ msgid ""
 "``Groonga`` group and ``Senna`` group) in the following case. :doc:`/"
 "reference/window_functions/window_sum` sums ``n_likes`` values in each group:"
 msgstr ""
+"ウィンドウ関数は指定したグループキーでグループ化したレコードを処理します。た"
+"とえば、以下のケースではウィンドウ関数は3つのグループ（ ``Hello`` グループ、 "
+"``Groonga`` グループ、 ``Senna`` グループ）を処理します。 :doc:`/reference/"
+"window_functions/window_sum` は各グループ毎に ``n_likes`` の値の合計を計算し"
+"ます。"
 
 msgid "Group key value"
-msgstr ""
+msgstr "グループキーの値"
 
-#, fuzzy
 msgid "``n_likes`` value"
-msgstr "``n_likes`` について:"
+msgstr "``n_likes`` の値"
 
-#, fuzzy
 msgid ":doc:`/reference/window_functions/window_sum` result"
-msgstr ":doc:`/reference/columns/pseudo` 名"
+msgstr ":doc:`/reference/window_functions/window_sum` の結果"
 
 msgid "``Hello``"
 msgstr ""
@@ -12234,6 +12275,10 @@ msgid ""
 "one group that includes all records. :doc:`/reference/window_functions/"
 "window_sum` sums all ``n_likes`` values in the following case:"
 msgstr ""
+"グループキーを指定しないこともできます。この場合、ウィンドウ関数はすべてのレ"
+"コードを含んだ1つのグループだけを処理します。以下のケースでは :doc:`/"
+"reference/window_functions/window_sum` はすべての ``n_likes`` の値の合計を計"
+"算します。"
 
 msgid "36"
 msgstr ""
@@ -12242,6 +12287,8 @@ msgid ""
 "Window function processes records in each group in the specified order. You "
 "can specify no sort keys like the above group keys example."
 msgstr ""
+"ウィンドウ関数は各グループのレコードを指定された順に処理します。前述のグルー"
+"プキーの例のようにソートキーを指定しないこともできます。"
 
 msgid ""
 "The behavior when you specify no sort keys depends on each window function "
@@ -12254,92 +12301,106 @@ msgid ""
 "window_functions/window_sum` sums values of all records in the group in "
 "sequence and puts the current sum to the current record like the following:"
 msgstr ""
+"ソートキーを指定しなかったときの挙動は各ウィンドウ関数の仕様に依存します。た"
+"とえば、 :doc:`/reference/window_functions/window_sum` はソートキーを指定した"
+"ときと指定しないときで挙動が変わります。ソートキーを指定しなかったときは、 :"
+"doc:`/reference/window_functions/window_sum` はグループの全レコードの値の合計"
+"を計算し、すべての対象レコードに合計値を格納します。これは前述のグループキー"
+"の例での挙動です。ソートキーを指定したときは、 :doc:`/reference/"
+"window_functions/window_sum` は累積和を計算します。 :doc:`/reference/"
+"window_functions/window_sum` はグループの全レコードの合計を順番に計算し、各レ"
+"コードにはそのレコードを処理した時点の合計値を格納します。以下に例を示しま"
+"す。"
 
 msgid "Sort key value"
-msgstr ""
+msgstr "ソートキーの値"
 
 msgid "Note"
 msgstr "備考"
 
 msgid "The first record in group No. 1. (``5 = 5``)"
-msgstr ""
+msgstr "グループ番号1の最初のレコード。（ ``5 = 5`` ）"
 
 msgid "90"
 msgstr ""
 
 msgid "The first record in group No. 2. (``10 = 10``)"
-msgstr ""
+msgstr "グループ番号2の最初のレコード。（ ``10 = 10`` ）"
 
 msgid "91"
 msgstr ""
 
 msgid "The second record in group No. 2. (``10 + 15 = 25``)"
-msgstr ""
+msgstr "グループ番号2の2つ目のレコード。（ ``10 + 15 = 25`` ）"
 
 msgid "200"
 msgstr ""
 
 msgid "The second record in group No. 3. (``5 + 3 = 8``)"
-msgstr ""
+msgstr "グループ番号3の2つ目のレコード。（ ``5 + 3 = 8`` ）"
 
 msgid "100"
 msgstr ""
 
 msgid "The first record in group No. 3. (``5 = 5``)"
-msgstr ""
+msgstr "グループ番号3の最初のレコード。（ ``5 = 5`` ）"
 
-#, fuzzy
 msgid ""
 "Here are parameters for window function. You need to specify both window "
 "function related parameters and required dynamic columns parameters. Because "
 "window function is implemented based on dynamic column. See :ref:`select-"
 "dynamic-column-related-parameters` for dynamic column related parameters:"
 msgstr ""
-"以下は動的カラムの引数です。ウィンドウ関数関連の引数は入っていません。ウィン"
-"ドウ関数関連の引数については :ref:`select-window-function-related-"
-"parameters` を見てください。"
+"以下はウィンドウ関数のパラメーターです。ウィンドウ関数関連のパラメーターと動"
+"的カラム関連のパラメーターを指定する必要があります。なぜならウィンドウ関数は"
+"動的カラムの上に実装されているからです。動的カラム関連のパラメーターについて"
+"は :ref:`select-dynamic-column-related-parameters` を見てください。"
 
-#, fuzzy
 msgid "Use :doc:`/reference/window_function`."
-msgstr ":doc:`/reference/suggest`"
+msgstr ":doc:`/reference/window_function` を使います。"
 
 msgid "Required if ``columns[${NAME}].window.group_keys`` isn't specified."
-msgstr ""
+msgstr "``columns[${NAME}].window.group_keys`` を指定しない場合は必須です。"
 
 msgid "Required if ``columns[${NAME}].window.sort_keys`` isn't specified."
-msgstr ""
+msgstr "``columns[${NAME}].window.sort_keys`` を指定しない場合は必須です。"
 
 msgid ""
 "Specifies sort keys in each group. Window function processes records in each "
 "group in the specified order."
 msgstr ""
+"各グループでのソートキーを指定します。ウィンドウ関数は各グループのレコードを"
+"指定された順に処理します。"
 
-#, fuzzy
 msgid ""
-"Sort keys are separated by ``.``. Each sort key is column name. It's the "
+"Sort keys are separated by ``,``. Each sort key is column name. It's the "
 "same as :ref:`select-sort-keys`."
 msgstr ""
-"ソートキーを ``,`` 区切りで指定します。それぞれのソートキーはカラム名を指定し"
-"ます。"
+"ソートキーを ``,`` 区切りで指定します。それぞれのソートキーにはカラム名を指定"
+"します。これは :ref:`select-sort-keys` と同じです。"
 
 msgid ""
 "You must specify :ref:`select-columns-name-window-sort-keys` or :ref:`select-"
 "columns-name-window-group-keys` to use window function."
 msgstr ""
+"ウィンドウ関数を使う場合は :ref:`select-columns-name-window-sort-keys` また"
+"は :ref:`select-columns-name-window-group-keys` を使う必要があります。"
 
 msgid ""
 "Specifies group keys. Window function processes records in each group. If "
 "you specify no group keys, window function processes one group that includes "
 "all records."
 msgstr ""
+"グループキーを指定します。ウィンドウ関数は各グループのレコードを処理します。"
+"グループキーを指定しない場合はウィンドウ関数はすべてのレコードを含んだ1つのグ"
+"ループを処理します。"
 
-#, fuzzy
 msgid ""
-"Sort keys are separated by ``.``. Each sort key is column name. It's the "
+"Group keys are separated by ``,``. Each group key is column name. It's the "
 "same as :ref:`select-drilldown`."
 msgstr ""
-"ソートキーを ``,`` 区切りで指定します。それぞれのソートキーはカラム名を指定し"
-"ます。"
+"グループキーを ``,`` 区切りで指定します。それぞれのグループキーにはカラム名を"
+"指定します。これは :ref:`select-drilldown` と同じです。"
 
 msgid ""
 "This section describes basic drilldown related parameters. Advanced "
@@ -12792,18 +12853,17 @@ msgstr ""
 "ムは何も指定されていないということです。"
 
 msgid "Specifies the filter condition against the drilled down result."
-msgstr ""
+msgstr "ドリルダウン結果に対するフィルター条件を指定します。"
 
-#, fuzzy
 msgid ""
 "The syntax is :doc:`/reference/grn_expr/script_syntax`. It's the same as :"
 "ref:`select-filter`."
 msgstr ""
-"他の演算子は :doc:`/reference/grn_expr/script_syntax` を参照してください。"
+"構文は :doc:`/reference/grn_expr/script_syntax` です。これは :ref:`select-"
+"filter` と同じです。"
 
-#, fuzzy
 msgid "Here is an example to suppress tags that are occurred only once:"
-msgstr "以下は1つのシャードのみを使っている例です。"
+msgstr "以下は1開始か出現していないタグを除く例です。"
 
 msgid ""
 "You can get multiple drilldown results by specifying multiple group keys by :"
@@ -12937,7 +12997,7 @@ msgstr ""
 "きます。"
 
 msgid "You can specify multiple keys separated by \"``,``\"."
-msgstr "複数のキーを ``,`` 区切りで指定します。"
+msgstr "複数のキーを「``,`` 」区切りで指定します。"
 
 msgid ""
 "Here is an example to group by multiple keys, ``tag`` and ``n_likes`` column "
@@ -13070,17 +13130,14 @@ msgid ":ref:`select-drilldowns-label-keys` uses the following output format::"
 msgstr ""
 ":ref:`select-drilldowns-label-keys` の出力フォーマットは以下の通りです::"
 
-#, fuzzy
 msgid "Slice related parameters"
-msgstr "スコアー関連の引数"
+msgstr "スライス関連の引数"
 
-#, fuzzy
 msgid "This section describes slice related parameters."
-msgstr "このセクションではすべての引数について説明します。"
+msgstr "このセクションではスライス関連のパラメーターについて説明します。"
 
-#, fuzzy
 msgid "Here are parameters for slice:"
-msgstr "学習時に必須の引数"
+msgstr "スライスのパラメーターは以下の通りです。"
 
 msgid "``--slices[${LABEL}].match_columns``"
 msgstr ""
@@ -13089,13 +13146,13 @@ msgid "``--slices[${LABEL}].query``"
 msgstr ""
 
 msgid "Required if ``--slices[${LABEL}].filter`` isn't specified."
-msgstr ""
+msgstr "``--slices[${LABEL}].filter`` を指定していないときは必須です。"
 
 msgid "``--slices[${LABEL}].filter``"
 msgstr ""
 
 msgid "Required if ``--slices[${LABEL}].query`` isn't specified."
-msgstr ""
+msgstr "``--slices[${LABEL}].query`` を指定していないときは必須です。"
 
 msgid "``--slices[${LABEL}].query_expander``"
 msgstr ""
@@ -13103,9 +13160,8 @@ msgstr ""
 msgid "``--slices[${LABEL}].query_flags``"
 msgstr ""
 
-#, fuzzy
 msgid "``--slices[${LABEL}].sort_keys``"
-msgstr "``drilldowns[${LABEL}].sort_keys`` には制限があります。"
+msgstr ""
 
 msgid "``--slices[${LABEL}].output_columns``"
 msgstr ""
@@ -13134,9 +13190,8 @@ msgstr ""
 msgid "``slices[${LABEL}].query_flags``"
 msgstr ""
 
-#, fuzzy
 msgid "``slices[${LABEL}].sort_keys``"
-msgstr "``drilldowns[${LABEL}].sort_keys`` には制限があります。"
+msgstr ""
 
 msgid "``slices[${LABEL}].output_columns``"
 msgstr ""
@@ -19238,9 +19293,8 @@ msgstr "オブジェクトリテラル形式でのオプション指定をサポ
 msgid "``string_length``"
 msgstr ""
 
-#, fuzzy
 msgid "It returns the number of characters in the given string."
-msgstr "最大スレッド数を返します。"
+msgstr "指定された文字列の文字数を返します。"
 
 msgid "``string_substring``"
 msgstr ""
@@ -19389,9 +19443,8 @@ msgstr ""
 msgid "``vector_new``"
 msgstr ""
 
-#, fuzzy
 msgid "It creates a new vector from arguments."
-msgstr "ベクターカラムを作成"
+msgstr "引数から新しくベクターカラムを作ります。"
 
 msgid "``vector_size``"
 msgstr ""
@@ -25782,22 +25835,22 @@ msgid ""
 "テーブルを別途作成し、そのテーブルを型として利用します。"
 msgstr ""
 
-#, fuzzy
 msgid ""
-"Window function can be used in :doc:`commands/select`. See :ref:`select-"
-"window-function-related-parameters` for details."
+"Window function can be used in :doc:`commands/select` and :doc:`commands/"
+"logical_select`. See :ref:`select-window-function-related-parameters` for "
+"details."
 msgstr ""
-":doc:`select` のすべてのドリルダウン関連パラメーターをサポートしています。詳"
-"細は :ref:`select-drilldown-related-parameters` を見てください。"
+"ウィンドウ関数は :doc:`commands/select` と :doc:`commands/logical_select` で"
+"使えます。詳細は :ref:`select-window-function-related-parameters` を見てくだ"
+"さい。"
 
-#, fuzzy
 msgid "This section describes window function and built-in window functions."
 msgstr ""
-"このセクションでは関数についての説明と組み込みの関数について説明します。"
+"このセクションではウィンドウ関数についての説明と組み込みのウィンドウ関数につ"
+"いて説明します。"
 
-#, fuzzy
 msgid "TODO: Add documentations about window function."
-msgstr "ウィンドウ関数を使いたい場合。"
+msgstr ""
 
 msgid "``record_number``"
 msgstr ""
@@ -25811,33 +25864,3 @@ msgstr ""
 
 msgid "``window_sum``"
 msgstr ""
-
-#~ msgid ""
-#~ "Grouped windows function can be used in ``drilldown[${LABEL}]`` with the "
-#~ "following named parameters:"
-#~ msgstr ""
-#~ "``drilldowns[${LABEL}]`` では以下の名前付き引数を使うとグループ化した上で"
-#~ "ウィンドウ関数を使えます。"
-
-#~ msgid ""
-#~ "Dynamic columns can be used in ``drilldown[${LABEL}]`` with the following "
-#~ "named parameters:"
-#~ msgstr ""
-#~ "``drilldowns[${LABEL}]`` では以下の名前付き引数で動的カラムを使うことがで"
-#~ "きます。"
-
-#~ msgid ""
-#~ "``select`` supports grouped window function by the following named "
-#~ "parameters:"
-#~ msgstr ""
-#~ "以下の名前付き引数を使うとグループ化した上でウィンドウ関数を使えます。"
-
-#~ msgid "``match_columns`` and ``query`` aren't supported yet."
-#~ msgstr "``match_columns`` と ``query`` はまだサポートしていません。"
-
-#~ msgid ""
-#~ "``logical_select`` has the following named parameters for advanced "
-#~ "drilldown:"
-#~ msgstr ""
-#~ "``logical_select`` には高度なドリルダウン機能のために以下の名前付き引数が"
-#~ "あります。"

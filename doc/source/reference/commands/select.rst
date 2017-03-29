@@ -349,10 +349,10 @@ value) is ``0``. If ``Entry.n_likes`` value is between ``10`` and
 ``19`` such as ``10`` and ``15``, ``n_likes_class`` value (classified
 value) is ``10``.
 
-You can use doc:`/reference/functions/number_classify` function for
+You can use :doc:`/reference/functions/number_classify` function for
 the classification. You need to register ``functions/number`` plugin
 by :doc:`plugin_register` command to use
-doc:`/reference/functions/number_classify` function.
+:doc:`/reference/functions/number_classify` function.
 
 This example does drilldown by ``n_likes_class`` value. The drilldown
 result will help you to know data trend.
@@ -1191,18 +1191,16 @@ points. You should choose stage as late as possible:
      :ref:`select-limit`. You can use dynamic columns created in
      ``initial`` stage and ``filtered`` stage.
 
-  #. Creates dynamic columns for ``output`` stage. Only
-     :ref:`select-limit` records have these dynamic columns.
-
   #. Evaluates :ref:`select-slice-related-parameters`. You can use
-     dynamic columns created in ``initial`` stage, ``filtered`` stage
-     and ``output`` stage.
+     dynamic columns created in ``initial`` stage and ``filtered`` stage.
 
   #. Evaluates :ref:`select-drilldown-related-parameters` and
      :ref:`select-advanced-drilldown-related-parameters`. You can use
-     dynamic columns created in ``initial`` stage, ``filtered`` stage
-     and ``output`` stage. Note that you can use dynamic columns in
-     each drilldown.
+     dynamic columns created in ``initial`` stage and ``filtered`` stage.
+     Note that you can create dynamic columns in each drilldown.
+
+  #. Creates dynamic columns for ``output`` stage. Only
+     :ref:`select-limit` records have these dynamic columns.
 
   #. Evaluates :ref:`select-output-columns`. You can use dynamic
      columns created in ``initial`` stage, ``filtered`` stage and
@@ -1258,12 +1256,12 @@ function:
 
 Specifies value type for the dynamic column. It's the same as ``type``
 parameter for :doc:`column_create`. See :ref:`column-create-type` for
-available flags.
+available types.
 
-This is required parameter.
+This is a required parameter.
 
 Here is a ``columns[${NAME}].type`` example. It creates a
-``ShortText`` value column. Stored value is casted to ``ShortText``
+``ShortText`` type column. Stored value is casted to ``ShortText``
 automatically. In this example, number is casted to ``ShortText``:
 
 .. groonga-command
@@ -1292,13 +1290,13 @@ value and other window function related parameters when you use window
 function. See :ref:`select-window-function-related-parameters` for
 details.
 
-This is required parameter.
+This is a required parameter.
 
 Here is a ``columns[${NAME}].value`` example. It creates a new dynamic
 column that stores the number of characters of content. This example
 uses :doc:`/reference/functions/string_length` function in
-``functions/string`` plugin to compute string
-length. :doc:`plugin_register` is used to register
+``functions/string`` plugin to compute the number of characters in a
+string. :doc:`plugin_register` is used to register
 ``functions/string`` plugin:
 
 .. groonga-command
@@ -1317,8 +1315,8 @@ Window function related parameters
 
 .. versionadded:: 6.0.6
 
-This section describes window function column related parameters. You
-need to use dynamic column for using window function. See
+This section describes window function related parameters. You need to
+use dynamic column for using window function. See
 :ref:`select-dynamic-column-related-parameters` for dynamic column.
 
 Window function in Groonga is similar to window function in
@@ -1481,7 +1479,7 @@ dynamic column related parameters:
 Specifies sort keys in each group. Window function processes records
 in each group in the specified order.
 
-Sort keys are separated by ``.``. Each sort key is column name. It's
+Sort keys are separated by ``,``. Each sort key is column name. It's
 the same as :ref:`select-sort-keys`.
 
 You must specify :ref:`select-columns-name-window-sort-keys` or
@@ -1513,7 +1511,7 @@ Specifies group keys. Window function processes records in each
 group. If you specify no group keys, window function processes one
 group that includes all records.
 
-Sort keys are separated by ``.``. Each sort key is column name. It's
+Group keys are separated by ``,``. Each group key is column name. It's
 the same as :ref:`select-drilldown`.
 
 You must specify :ref:`select-columns-name-window-sort-keys` or
