@@ -441,13 +441,13 @@ module Groonga
           expression = Expression.create(table)
           begin
             expression.parse(@value)
-            if @window_sort_keys or @window_group_keys
+            if @window_sort_keys.empty? and @window_group_keys.empty?
+              expression.condition = condition if condition
+              table.apply_expression(column, expression)
+            else
               table.apply_window_function(column, expression,
                                           :sort_keys => @window_sort_keys,
                                           :group_keys => @window_group_keys)
-            else
-              expression.condition = condition if condition
-              table.apply_expression(column, expression)
             end
           ensure
             expression.close
