@@ -1206,9 +1206,9 @@ points. You should choose stage as late as possible:
      columns created in ``initial`` stage, ``filtered`` stage and
      ``output`` stage.
 
-Here is a ``columns[${NAME}].stage`` example. It creates
-``is_popular`` column at ``initial`` stage. You can use ``is_popular``
-in all parameters such as ``filter`` and ``output_columns``:
+Here is an example that creates ``is_popular`` column at ``initial``
+stage. You can use ``is_popular`` in all parameters such as ``filter``
+and ``output_columns``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/columns_name_stage.log
@@ -1260,9 +1260,9 @@ available types.
 
 This is a required parameter.
 
-Here is a ``columns[${NAME}].type`` example. It creates a
-``ShortText`` type column. Stored value is casted to ``ShortText``
-automatically. In this example, number is casted to ``ShortText``:
+Here is an example that creates a ``ShortText`` type column. Stored
+value is casted to ``ShortText`` automatically. In this example,
+number is casted to ``ShortText``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/columns_name_type.log
@@ -1292,9 +1292,9 @@ details.
 
 This is a required parameter.
 
-Here is a ``columns[${NAME}].value`` example. It creates a new dynamic
-column that stores the number of characters of content. This example
-uses :doc:`/reference/functions/string_length` function in
+Here is an example that creates a new dynamic column that stores the
+number of characters of content. This example uses
+:doc:`/reference/functions/string_length` function in
 ``functions/string`` plugin to compute the number of characters in a
 string. :doc:`plugin_register` is used to register
 ``functions/string`` plugin:
@@ -2038,6 +2038,12 @@ parameters:
   * ``drilldowns[${LABEL}].calc_types``
   * ``drilldowns[${LABEL}].calc_target``
   * ``drilldowns[${LABEL}].filter``
+  * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
+  * ``drilldowns[${LABEL}].columns[${NAME}].flags=COLUMN_SCALAR``
+  * ``drilldowns[${LABEL}].columns[${NAME}].type=null``
+  * ``drilldowns[${LABEL}].columns[${NAME}].value=null``
+  * ``drilldowns[${LABEL}].columns[${NAME}].window.sort_keys=null``
+  * ``drilldowns[${LABEL}].columns[${NAME}].window.group_keys=null``
 
 ``${LABEL}`` is a variable. You can use the following characters for
 ``${LABEL}``:
@@ -2045,6 +2051,13 @@ parameters:
   * Alphabets
   * Digits
   * ``.``
+  * ``_``
+
+``${NAME}`` is a variable. You can use the following characters for
+``${NAME}``:
+
+  * Alphabets
+  * Digits
   * ``_``
 
 .. note::
@@ -2082,10 +2095,25 @@ to use it for the following parameters:
   * ``drilldowns[${LABEL}].calc_target``: :ref:`select-drilldown-calc-target`
   * ``drilldowns[${LABEL}].filter``: :ref:`select-drilldown-filter`
 
+See document for corresponding ``columns[${NAME}].XXX`` parameter to
+know how to use it for the following parameters:
+
+  * ``drilldowns[${LABEL}].columns[${NAME}].flags=COLUMN_SCALAR``:
+    :ref:`select-columns-name-flags`
+  * ``drilldowns[${LABEL}].columns[${NAME}].type=null``:
+    :ref:`select-columns-name-type`
+  * ``drilldowns[${LABEL}].columns[${NAME}].value=null``:
+    :ref:`select-columns-name-value`
+  * ``drilldowns[${LABEL}].columns[${NAME}].window.sort_keys=null``:
+    :ref:`select-columns-name-window-sort-keys`
+  * ``drilldowns[${LABEL}].columns[${NAME}].window.group_keys=null``:
+    :ref:`select-columns-name-window-group-keys`
+
 The following parameters are needed more description:
 
   * ``drilldowns[${LABEL}].keys``
   * ``drilldowns[${LABEL}].output_columns``
+  * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
 
 Output format is different a bit. It's also needed more description.
 
@@ -2188,6 +2216,65 @@ Here is an example to refer each group key in multiple group keys by
    you specify only one group key to
    :ref:`select-drilldowns-label-keys`. So you can't refer group key by
    ``_value.${KEY_NAME}`` syntax.
+
+.. _select-drilldowns-label-columns-name-stage:
+
+``drilldowns[${LABEL}].columns[${NAME}].stage``
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 6.0.5
+
+Specifies when the dynamic column is created. This is a required
+parameter to create a dynamic column.
+
+Here are available stages:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Name
+     - Description
+   * - ``initial``
+     - Dynamic column is created at first.
+
+Here is one drilldown process flow with dynamic column creation
+points. You should choose stage as late as possible:
+
+  #. Evaluates :ref:`select-drilldowns-label-keys`,
+     ``drilldowns[${LABEL}].calc_types`` and
+     ``drilldowns[${LABEL}].calc_target``.
+
+  #. Creates dynamic columns for ``initial`` stage. All drilldown
+     result records have these dynamic columns.
+
+  #. Evaluates ``drilldowns[${LABEL}].filter``. You can use dynamic
+     columns created in ``initial`` stage.
+
+  #. Evaluates ``drilldowns[${LABEL}].sort_keys``,
+     ``drilldowns[${LABEL}].offset`` and
+     ``drilldowns[${LABEL}].limit``. You can use dynamic columns
+     created in ``initial`` stage.
+
+  #. Evaluates :ref:`select-drilldowns-label-output-columns`. You can
+     use dynamic columns created in ``initial`` stage.
+
+Here is a ``drilldowns[${LABEL}].columns[${NAME}].stage`` example. It
+creates ``is_popular`` column at ``initial`` stage. You can use
+``is_popular`` in all parameters such as
+``drilldowns[${LABEL}].filter`` and
+``drilldowns[${LABEL}].output_columns``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldowns_label_columns_name_stage.log
+.. select Entries \
+..   --drilldowns[tag].keys tag \
+..   --drilldowns[tag].columns[is_popular].stage initial \
+..   --drilldowns[tag].columns[is_popular].type Bool \
+..   --drilldowns[tag].columns[is_popular].value '_nsubrecs > 1' \
+..   --drilldowns[tag].filter is_popular \
+..   --drilldowns[tag].output_columns _key,is_popular,_nsubrecs
+
+.. versionadded:: 4.0.8
 
 .. _select-drilldowns-label-output-format:
 

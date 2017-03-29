@@ -1,0 +1,14 @@
+Execution example::
+
+  plugin_register functions/string \
+  logical_select \
+    --logical_table Entries \
+    --shard_key created_at \
+    --limit 0 \
+    --output_columns _id \
+    --drilldowns[tag].keys tag \
+    --drilldowns[tag].columns[tag_length].stage initial \
+    --drilldowns[tag].columns[tag_length].type UInt32 \
+    --drilldowns[tag].columns[tag_length].value 'string_length(_key)' \
+    --drilldowns[tag].output_columns _key,tag_length
+  # [[0, 1337566253.89858, 0.000355720520019531], true]

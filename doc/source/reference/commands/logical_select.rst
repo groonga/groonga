@@ -448,7 +448,7 @@ Here is an example to find records that include ``"fast"`` text in
 .. versionadded:: 7.0.1
 
 Corresponds to :ref:`select-query` in :doc:`select`. See
-:ref:`select-query-columns` for details.
+:ref:`select-query` for details.
 
 Here is an example to find records that include ``"fast"`` text in
 ``content`` column:
@@ -625,9 +625,9 @@ Corresponds to :ref:`select-columns-name-stage` in :doc:`select`. See
 
 This is a required parameter.
 
-Here is a ``columns[${NAME}].stage`` example. It creates
-``is_popular`` column at ``initial`` stage. You can use ``is_popular``
-in all parameters such as ``filter`` and ``output_columns``:
+Here is an example that creates ``is_popular`` column at ``initial``
+stage. You can use ``is_popular`` in all parameters such as ``filter``
+and ``output_columns``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_select/columns_name_stage.log
@@ -652,10 +652,9 @@ Corresponds to :ref:`select-columns-name-flags` in :doc:`select`. See
 
 The default value is ``COLUMN_SCALAR``.
 
-Here is a ``columns[${NAME}].flags`` example. It creates a vector
-column by ``COLUMN_VECTOR`` flags. ``plugin_register
-functions/vector`` is for using :doc:`/reference/functions/vector_new`
-function:
+Here is an example that creates a vector column by ``COLUMN_VECTOR``
+flags. ``plugin_register functions/vector`` is for using
+:doc:`/reference/functions/vector_new` function:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_select/columns_name_flags.log
@@ -681,9 +680,9 @@ Corresponds to :ref:`select-columns-name-type` in :doc:`select`. See
 
 This is a required parameter.
 
-Here is a ``columns[${NAME}].type`` example. It creates a
-``ShortText`` type column. Stored value is casted to ``ShortText``
-automatically. In this example, number is casted to ``ShortText``:
+Here is an example that creates a ``ShortText`` type column. Stored
+value is casted to ``ShortText`` automatically. In this example,
+number is casted to ``ShortText``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_select/columns_name_type.log
@@ -712,9 +711,9 @@ for details.
 
 This is a required parameter.
 
-Here is a ``columns[${NAME}].value`` example. It creates a new dynamic
-column that stores the number of characters of content. This example
-uses :doc:`/reference/functions/string_length` function in
+Here is an example that creates a new dynamic column that stores the
+number of characters of content. This example uses
+:doc:`/reference/functions/string_length` function in
 ``functions/string`` plugin to compute the number of characters in a
 string. :doc:`plugin_register` is used to register
 ``functions/string`` plugin:
@@ -1166,6 +1165,195 @@ only once:
 ..   --drilldowns[tag].keys tag \
 ..   --drilldowns[tag].tiler "_nsubrecs > 1" \
 ..   --drilldowns[tag].output_columns _key,_nsubrecs
+
+.. _logical-select-drilldowns-label-columns-name-stage:
+
+``drilldowns[${LABEL}].columns[${NAME}].stage``
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.1
+
+Corresponds to :ref:`select-drilldowns-label-columns-name-stage` in
+:doc:`select`. See :ref:`select-drilldowns-label-columns-name-stage`
+for details.
+
+Here is an example to create a dynamic column at ``initial``
+stage. This example creates a dynamic column whether each drilled down
+tag is occurred only once or not:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldowns_label_columns_name_stage.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldowns[tag].keys tag \
+..   --drilldowns[tag].columns[is_popular].stage initial \
+..   --drilldowns[tag].columns[is_popular].type Bool \
+..   --drilldowns[tag].columns[is_popular].value '_nsubrecs > 1' \
+..   --drilldowns[tag].output_columns _key,_nsubrecs,is_popular
+
+.. _logical-select-drilldowns-label-columns-name-flags:
+
+``drilldowns[${LABEL}].columns[${NAME}].flags``
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.1
+
+Corresponds to :ref:`logical-select-columns-name-flags` in main
+search.
+
+The default value is ``COLUMN_SCALAR``.
+
+Here is an example to create a vector column by ``COLUMN_VECTOR``
+flags. ``plugin_register functions/vector`` is for using
+:doc:`/reference/functions/vector_new` function:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldowns_label_columns_name_flags.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldowns[tag].keys tag \
+..   --drilldowns[tag].columns[vector].stage initial \
+..   --drilldowns[tag].columns[vector].flags COLUMN_VECTOR \
+..   --drilldowns[tag].columns[vector].type ShortText \
+..   --drilldowns[tag].columns[vector].value 'vector_new("a", "b", "c")' \
+..   --drilldowns[tag].output_columns _key,vector
+
+.. _logical-select-drilldowns-label-columns-name-type:
+
+``drilldowns[${LABEL}].columns[${NAME}].type``
+""""""""""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.1
+
+Corresponds to :ref:`logical-select-columns-name-type` in main
+search.
+
+This is a required parameter.
+
+Here is an example to create a ``ShortText`` type column. Stored value
+is casted to ``ShortText`` automatically. In this example, number is
+casted to ``ShortText``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldowns_label_columns_name_type.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldowns[tag].keys tag \
+..   --drilldowns[tag].columns[nsubrecs_string].stage initial \
+..   --drilldowns[tag].columns[nsubrecs_string].type ShortText \
+..   --drilldowns[tag].columns[nsubrecs_string].value _nsubrecs \
+..   --drilldowns[tag].output_columns _key,_nsubrecs,nsubrecs_string
+
+.. _logical-select-drilldowns-label-columns-name-value:
+
+``drilldowns[${LABEL}].columns[${NAME}].value``
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.1
+
+Corresponds to :ref:`logical-select-columns-name-value` in main
+search.
+
+This is a required parameter.
+
+Here is an example that creates a new dynamic column that stores the
+number of characters of content. This example uses
+:doc:`/reference/functions/string_length` function in
+``functions/string`` plugin to compute the number of characters in a
+string. :doc:`plugin_register` is used to register
+``functions/string`` plugin:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldowns_label_columns_name_value.log
+.. plugin_register functions/string \
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldowns[tag].keys tag \
+..   --drilldowns[tag].columns[tag_length].stage initial \
+..   --drilldowns[tag].columns[tag_length].type UInt32 \
+..   --drilldowns[tag].columns[tag_length].value 'string_length(_key)' \
+..   --drilldowns[tag].output_columns _key,tag_length
+
+.. _logical-select-drilldowns-label-columns-name-window-sort-keys:
+
+``drilldowns[${LABEL}].columns[${NAME}].window.sort_keys``
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.1
+
+Corresponds to :ref:`logical-select-columns-name-window-sort-keys` in
+main search.
+
+You must specify
+:ref:`logical-select-drilldowns-label-columns-name-window-sort-keys`
+or
+:ref:`logical-select-drilldowns-label-columns-name-window-group-keys`
+to use window function.
+
+Here is an example that computes the Nth record in the number of sub
+records order:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldowns_label_columns_name_window_sort_keys.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldowns[tag].keys tag \
+..   --drilldowns[tag].columns[record_number].stage initial \
+..   --drilldowns[tag].columns[record_number].type UInt32 \
+..   --drilldowns[tag].columns[record_number].value 'window_record_number()' \
+..   --drilldowns[tag].columns[record_number].window.sort_keys _nsubrecs,_key \
+..   --drilldowns[tag].sort_keys record_number \
+..   --drilldowns[tag].output_columns _key,_nsubrecs,record_number
+
+.. _logical-select-drilldowns-label-columns-name-window-group-keys:
+
+``drilldowns[${LABEL}].columns[${NAME}].window.group_keys``
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.1
+
+Corresponds to :ref:`logical-select-columns-name-window-group-keys` in
+main search.
+
+You must specify
+:ref:`logical-select-drilldowns-label-columns-name-window-sort-keys`
+or
+:ref:`logical-select-drilldowns-label-columns-name-window-group-keys`
+to use window function.
+
+Here is an example that computes the Nth record ordered by tag name
+for each the same number of sub records:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/drilldowns_label_columns_name_window_group_keys.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 0 \
+..   --output_columns _id \
+..   --drilldowns[tag].keys tag \
+..   --drilldowns[tag].columns[record_number].stage initial \
+..   --drilldowns[tag].columns[record_number].type UInt32 \
+..   --drilldowns[tag].columns[record_number].value 'window_record_number()' \
+..   --drilldowns[tag].columns[record_number].window.sort_keys _key \
+..   --drilldowns[tag].columns[record_number].window.group_keys _nsubrecs \
+..   --drilldowns[tag].sort_keys _nsubrecs,record_number \
+..   --drilldowns[tag].output_columns _key,_nsubrecs,record_number
 
 Return value
 ------------

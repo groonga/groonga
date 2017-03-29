@@ -1,0 +1,74 @@
+Execution example::
+
+  logical_select \
+    --logical_table Entries \
+    --shard_key created_at \
+    --limit 0 \
+    --output_columns _id \
+    --drilldowns[tag].keys tag \
+    --drilldowns[tag].columns[vector].stage initial \
+    --drilldowns[tag].columns[vector].flags COLUMN_VECTOR \
+    --drilldowns[tag].columns[vector].type ShortText \
+    --drilldowns[tag].columns[vector].value 'vector_new("a", "b", "c")' \
+    --drilldowns[tag].output_columns _key,vector
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ]
+  #       ]
+  #     ], 
+  #     {
+  #       "tag": [
+  #         [
+  #           3
+  #         ], 
+  #         [
+  #           [
+  #             "_key", 
+  #             "ShortText"
+  #           ], 
+  #           [
+  #             "vector", 
+  #             "ShortText"
+  #           ]
+  #         ], 
+  #         [
+  #           "Hello", 
+  #           [
+  #             "a", 
+  #             "b", 
+  #             "c"
+  #           ]
+  #         ], 
+  #         [
+  #           "Groonga", 
+  #           [
+  #             "a", 
+  #             "b", 
+  #             "c"
+  #           ]
+  #         ], 
+  #         [
+  #           "Senna", 
+  #           [
+  #             "a", 
+  #             "b", 
+  #             "c"
+  #           ]
+  #         ]
+  #       ]
+  #     }
+  #   ]
+  # ]

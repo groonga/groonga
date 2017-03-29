@@ -1,0 +1,68 @@
+Execution example::
+
+  logical_select \
+    --logical_table Entries \
+    --shard_key created_at \
+    --limit 0 \
+    --output_columns _id \
+    --drilldowns[tag].keys tag \
+    --drilldowns[tag].columns[nsubrecs_string].stage initial \
+    --drilldowns[tag].columns[nsubrecs_string].type ShortText \
+    --drilldowns[tag].columns[nsubrecs_string].value _nsubrecs \
+    --drilldowns[tag].output_columns _key,_nsubrecs,nsubrecs_string
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ]
+  #       ]
+  #     ], 
+  #     {
+  #       "tag": [
+  #         [
+  #           3
+  #         ], 
+  #         [
+  #           [
+  #             "_key", 
+  #             "ShortText"
+  #           ], 
+  #           [
+  #             "_nsubrecs", 
+  #             "Int32"
+  #           ], 
+  #           [
+  #             "nsubrecs_string", 
+  #             "ShortText"
+  #           ]
+  #         ], 
+  #         [
+  #           "Hello", 
+  #           1, 
+  #           "1"
+  #         ], 
+  #         [
+  #           "Groonga", 
+  #           2, 
+  #           "2"
+  #         ], 
+  #         [
+  #           "Senna", 
+  #           2, 
+  #           "2"
+  #         ]
+  #       ]
+  #     }
+  #   ]
+  # ]

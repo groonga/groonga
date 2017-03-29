@@ -1,0 +1,68 @@
+Execution example::
+
+  logical_select \
+    --logical_table Entries \
+    --shard_key created_at \
+    --limit 0 \
+    --output_columns _id \
+    --drilldowns[tag].keys tag \
+    --drilldowns[tag].columns[is_popular].stage initial \
+    --drilldowns[tag].columns[is_popular].type Bool \
+    --drilldowns[tag].columns[is_popular].value '_nsubrecs > 1' \
+    --drilldowns[tag].output_columns _key,_nsubrecs,is_popular
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ]
+  #       ]
+  #     ], 
+  #     {
+  #       "tag": [
+  #         [
+  #           3
+  #         ], 
+  #         [
+  #           [
+  #             "_key", 
+  #             "ShortText"
+  #           ], 
+  #           [
+  #             "_nsubrecs", 
+  #             "Int32"
+  #           ], 
+  #           [
+  #             "is_popular", 
+  #             "Bool"
+  #           ]
+  #         ], 
+  #         [
+  #           "Hello", 
+  #           1, 
+  #           false
+  #         ], 
+  #         [
+  #           "Groonga", 
+  #           2, 
+  #           true
+  #         ], 
+  #         [
+  #           "Senna", 
+  #           2, 
+  #           true
+  #         ]
+  #       ]
+  #     }
+  #   ]
+  # ]
