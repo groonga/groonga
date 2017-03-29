@@ -10,7 +10,7 @@ include $(top_srcdir)/doc/files.am
 
 SOURCES = $(srcdir)/source
 update-examples:
-	PATH=$(top_builddir)/src:$(top_builddir)/src/suggest:$$PATH	\
+	PATH=$(abs_top_builddir)/src:$(abs_top_builddir)/src/suggest:$$PATH	\
 	  GRN_PLUGINS_DIR="$(abs_top_builddir)/plugins"			\
 	  GRN_RUBY_SCRIPTS_DIR="$(abs_top_srcdir)/lib/mrb/scripts"	\
 	  $(srcdir)/update_execution_example.py				\
