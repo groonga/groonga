@@ -1177,9 +1177,9 @@ Corresponds to :ref:`select-drilldowns-label-columns-name-stage` in
 :doc:`select`. See :ref:`select-drilldowns-label-columns-name-stage`
 for details.
 
-Here is an example to create a dynamic column at ``initial``
-stage. This example creates a dynamic column whether each drilled down
-tag is occurred only once or not:
+Here is an example that creates a dynamic column at ``initial``
+stage. This example creates a dynamic column that stores whether each
+drilled down tag is occurred only once or not:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_select/drilldowns_label_columns_name_stage.log
@@ -1206,7 +1206,7 @@ search.
 
 The default value is ``COLUMN_SCALAR``.
 
-Here is an example to create a vector column by ``COLUMN_VECTOR``
+Here is an example that creates a vector column by ``COLUMN_VECTOR``
 flags. ``plugin_register functions/vector`` is for using
 :doc:`/reference/functions/vector_new` function:
 
@@ -1236,9 +1236,9 @@ search.
 
 This is a required parameter.
 
-Here is an example to create a ``ShortText`` type column. Stored value
-is casted to ``ShortText`` automatically. In this example, number is
-casted to ``ShortText``:
+Here is an example that creates a ``ShortText`` type column. Stored
+value is casted to ``ShortText`` automatically. In this example,
+number is casted to ``ShortText``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_select/drilldowns_label_columns_name_type.log
