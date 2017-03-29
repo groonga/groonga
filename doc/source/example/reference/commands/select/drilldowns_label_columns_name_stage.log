@@ -1,0 +1,111 @@
+Execution example::
+
+  select Entries \
+    --drilldowns[tag].keys tag \
+    --drilldowns[tag].columns[is_popular].stage initial \
+    --drilldowns[tag].columns[is_popular].type Bool \
+    --drilldowns[tag].columns[is_popular].value '_nsubrecs > 1' \
+    --drilldowns[tag].filter is_popular \
+    --drilldowns[tag].output_columns _key,is_popular,_nsubrecs
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "tag", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "The first post!", 
+  #         "Welcome! This is my first post!", 
+  #         5, 
+  #         "Hello"
+  #       ], 
+  #       [
+  #         2, 
+  #         "Groonga", 
+  #         "I started to use Groonga. It's very fast!", 
+  #         10, 
+  #         "Groonga"
+  #       ], 
+  #       [
+  #         3, 
+  #         "Mroonga", 
+  #         "I also started to use Mroonga. It's also very fast! Really fast!", 
+  #         15, 
+  #         "Groonga"
+  #       ], 
+  #       [
+  #         4, 
+  #         "Good-bye Senna", 
+  #         "I migrated all Senna system!", 
+  #         3, 
+  #         "Senna"
+  #       ], 
+  #       [
+  #         5, 
+  #         "Good-bye Tritonn", 
+  #         "I also migrated all Tritonn system!", 
+  #         3, 
+  #         "Senna"
+  #       ]
+  #     ], 
+  #     {
+  #       "tag": [
+  #         [
+  #           2
+  #         ], 
+  #         [
+  #           [
+  #             "_key", 
+  #             "ShortText"
+  #           ], 
+  #           [
+  #             "is_popular", 
+  #             "Bool"
+  #           ], 
+  #           [
+  #             "_nsubrecs", 
+  #             "Int32"
+  #           ]
+  #         ], 
+  #         [
+  #           "Groonga", 
+  #           true, 
+  #           2
+  #         ], 
+  #         [
+  #           "Senna", 
+  #           true, 
+  #           2
+  #         ]
+  #       ]
+  #     }
+  #   ]
+  # ]
