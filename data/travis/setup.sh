@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2013-2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2013-2017  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,7 @@ else
     debian)
       code_name=$(lsb_release --short --codename)
       component=main
-      apt_url_base=http://packages.groonga.org
+      apt_url_base=https://packages.groonga.org
       cat <<EOF | sudo tee /etc/apt/sources.list.d/groonga.list
 deb ${apt_url_base}/${distribution}/ ${code_name} ${component}
 deb-src ${apt_url_base}/${distribution}/ ${code_name} ${component}
