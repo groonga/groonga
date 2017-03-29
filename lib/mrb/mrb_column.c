@@ -38,7 +38,7 @@ mrb_grn_column_class_parse_flags(mrb_state *mrb, mrb_value self)
   mrb_int flags_text_size;
   grn_column_flags flags;
 
-  mrb_get_args(mrb, "Ss", &error_message_tag, &flags_text, &flags_text_size);
+  mrb_get_args(mrb, "zs", &error_message_tag, &flags_text, &flags_text_size);
 
   flags = grn_proc_column_parse_flags(ctx,
                                       error_message_tag,
