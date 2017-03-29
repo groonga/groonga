@@ -110,13 +110,15 @@ module Groonga
           :filtered,
           :output
         ].each do |stage|
-          target_dynamic_columns = dynamic_columns.__send__("each_#{stage}")
+          target_dynamic_columns = dynamic_columns.__send__("each_#{stage}").to_a
           target_dynamic_columns.sort_by(&:label).each do |dynamic_column|
             key << "#{dynamic_column.label}\0"
             key << "#{dynamic_column.stage}\0"
             key << "#{dynamic_column.type}\0"
-            key << "#{dynamic_column.flags.join('|')}\0"
+            key << "#{dynamic_column.flags}\0"
             key << "#{dynamic_column.value}\0"
+            key << "#{dynamic_column.window_sort_keys.join(',')}\0"
+            key << "#{dynamic_column.window_group_keys.join(',')}\0"
           end
         end
       end
