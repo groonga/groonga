@@ -393,7 +393,8 @@ data_comparison_operator_syntax_error(void)
                  NULL)
 
   ADD_DATUM("nonexistent ==",
-            cut_take_printf("Syntax error: <nonexistent| |== 100>"),
+            cut_take_printf("Syntax error: <nonexistent| |== 100>: "
+                            "[expr][parse] unknown identifier: <nonexistent>"),
             "nonexistent == 100");
 
 #undef ADD_DATUM
@@ -1348,16 +1349,20 @@ data_arithmetic_operator_syntax_error(void)
                  NULL)
 
   ADD_DATUM("++constant",
-            cut_take_printf("constant can't be incremented: <++8 <= 9>"),
+            cut_take_printf("Syntax error: <++8 <=| |9>: "
+                            "constant can't be incremented: <++8 <= 9>"),
             "++8 <= 9");
   ADD_DATUM("--constant",
-            cut_take_printf("constant can't be decremented: <--10 <= 9>"),
+            cut_take_printf("Syntax error: <--10 <=| |9>: "
+                            "constant can't be decremented: <--10 <= 9>"),
             "--10 <= 9");
   ADD_DATUM("constant++",
-            cut_take_printf("constant can't be incremented: <8++ <= 9>"),
+            cut_take_printf("Syntax error: <8++ <=| |9>: "
+                            "constant can't be incremented: <8++ <= 9>"),
             "8++ <= 9");
   ADD_DATUM("constant--",
-            cut_take_printf("constant can't be decremented: <10-- <= 9>"),
+            cut_take_printf("Syntax error: <10-- <=| |9>: "
+                            "constant can't be decremented: <10-- <= 9>"),
             "10-- <= 9");
 
 #undef ADD_DATUM
@@ -1393,52 +1398,54 @@ data_not_allow_update(void)
                  NULL)
 
   ADD_DATUM("=",
-            cut_take_printf("'=' is not allowed (size = 100)"),
+            cut_take_printf("'=' is not allowed: <size = 100>"),
             "size = 100");
   ADD_DATUM("*=",
-            cut_take_printf("'*=' is not allowed (size *= 10)"),
+            cut_take_printf("'*=' is not allowed: <size *= 10>"),
             "size *= 10");
   ADD_DATUM("/=",
-            cut_take_printf("'/=' is not allowed (size /= 10)"),
+            cut_take_printf("'/=' is not allowed: <size /= 10>"),
             "size /= 10");
   ADD_DATUM("%=",
-            cut_take_printf("'%%=' is not allowed (size %%= 10)"),
+            cut_take_printf("'%%=' is not allowed: <size %%= 10>"),
             "size %= 10");
   ADD_DATUM("+=",
-            cut_take_printf("'+=' is not allowed (size += 10)"),
+            cut_take_printf("'+=' is not allowed: <size += 10>"),
             "size += 10");
   ADD_DATUM("-=",
-            cut_take_printf("'-=' is not allowed (size -= 10)"),
+            cut_take_printf("'-=' is not allowed: <size -= 10>"),
             "size -= 10");
   ADD_DATUM("<<=",
-            cut_take_printf("'<<=' is not allowed (size <<= 10)"),
+            cut_take_printf("'<<=' is not allowed: <size <<= 10>"),
             "size <<= 10");
   ADD_DATUM(">>=",
-            cut_take_printf("'>>=' is not allowed (size >>= 10)"),
+            cut_take_printf("'>>=' is not allowed: <size >>= 10>"),
             "size >>= 10");
   ADD_DATUM(">>>=",
-            cut_take_printf("'>>>=' is not allowed (size >>>= 10)"),
+            cut_take_printf("'>>>=' is not allowed: <size >>>= 10>"),
             "size >>>= 10");
   ADD_DATUM("&=",
-            cut_take_printf("'&=' is not allowed (size &= 10)"),
+            cut_take_printf("'&=' is not allowed: <size &= 10>"),
             "size &= 10");
   ADD_DATUM("|=",
-            cut_take_printf("'|=' is not allowed (size |= 10)"),
+            cut_take_printf("'|=' is not allowed: <size |= 10>"),
             "size |= 10");
   ADD_DATUM("^=",
-            cut_take_printf("'^=' is not allowed (size ^= 10)"),
+            cut_take_printf("'^=' is not allowed: <size ^= 10>"),
             "size ^= 10");
   ADD_DATUM("variable++",
-            cut_take_printf("'++' is not allowed (size++)"),
+            cut_take_printf("'++' is not allowed: <size++>"),
             "size++");
   ADD_DATUM("++variable",
-            cut_take_printf("'++' is not allowed (++size)"),
+            cut_take_printf("Syntax error: <|+|+size>: "
+                            "'++' is not allowed: <++size>"),
             "++size");
   ADD_DATUM("variable--",
-            cut_take_printf("'--' is not allowed (size--)"),
+            cut_take_printf("'--' is not allowed: <size-->"),
             "size--");
   ADD_DATUM("--variable",
-            cut_take_printf("'--' is not allowed (--size)"),
+            cut_take_printf("Syntax error: <|-|-size>: "
+                            "'--' is not allowed: <--size>"),
             "--size");
 
 #undef ADD_DATUM

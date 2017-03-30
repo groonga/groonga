@@ -383,6 +383,7 @@ test_invalid_filter(void)
     context,
     GRN_SYNTAX_ERROR,
     "[table][record][delete] failed to parse filter: "
-    "table: <Users>, filter: <$>, detail: <Syntax error: <$||>>",
+    "table: <Users>, filter: <$>, detail: <Syntax error: <$||>: "
+    "[expr][parse] unknow",
     "delete Users --filter \"$\"");
 }
