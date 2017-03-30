@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -171,7 +171,7 @@ grn_cache_expire_entry(grn_cache *cache, grn_cache_entry *ce)
 
 grn_rc
 grn_cache_fetch(grn_ctx *ctx, grn_cache *cache,
-                const char *str, uint32_t str_len,
+                const char *key, uint32_t key_len,
                 grn_obj *output)
 {
   /* TODO: How about GRN_NOT_FOUND? */
@@ -180,7 +180,7 @@ grn_cache_fetch(grn_ctx *ctx, grn_cache *cache,
   if (!ctx->impl || !ctx->impl->db) { return GRN_INVALID_ARGUMENT; }
   MUTEX_LOCK(cache->mutex);
   cache->nfetches++;
-  if (grn_hash_get(cache->ctx, cache->hash, str, str_len, (void **)&ce)) {
+  if (grn_hash_get(cache->ctx, cache->hash, key, key_len, (void **)&ce)) {
     if (ce->tv.tv_sec <= grn_db_get_last_modified(ctx, ctx->impl->db)) {
       grn_cache_expire_entry(cache, ce);
       goto exit;
@@ -208,7 +208,7 @@ exit :
 
 void
 grn_cache_update(grn_ctx *ctx, grn_cache *cache,
-                 const char *str, uint32_t str_len, grn_obj *value)
+                 const char *key, uint32_t key_len, grn_obj *value)
 {
   grn_id id;
   int added = 0;
@@ -225,7 +225,7 @@ grn_cache_update(grn_ctx *ctx, grn_cache *cache,
     goto exit;
   }
   GRN_TEXT_PUT(cache->ctx, obj, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
-  id = grn_hash_add(cache->ctx, cache->hash, str, str_len, (void **)&ce, &added);
+  id = grn_hash_add(cache->ctx, cache->hash, key, key_len, (void **)&ce, &added);
   if (id) {
     if (!added) {
       old = ce->value;
