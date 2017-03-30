@@ -14,8 +14,18 @@ load --table Memos
 ]
 [[0,0.0,0.0],1]
 select Memos --filter 'caption == "Groonga"'
-[[[-63,0.0,0.0],"Syntax error: <caption| |== \"Groonga\">"]]
-#|e| Syntax error: <caption| |== "Groonga">
+[
+  [
+    [
+      -63,
+      0.0,
+      0.0
+    ],
+    "Syntax error: <caption| |== \"Groonga\">: [expr][parse] unknown identifier: <caption>"
+  ]
+]
+#|e| [expr][parse] unknown identifier: <caption>
+#|e| Syntax error: <caption| |== "Groonga">: Syntax error: <caption| |== "Groonga">: [expr][parse] unknown identifier: <caption>
 load --table Aliases
 [
 {"_key": "Memos.caption", "real_name": "Memos.title"}

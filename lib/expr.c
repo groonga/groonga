@@ -7262,6 +7262,10 @@ done :
       PARSE(GRN_EXPR_TOKEN_NONEXISTENT_COLUMN);
     } else {
       rc = GRN_SYNTAX_ERROR;
+      ERR(rc,
+          "[expr][parse] unknown identifier: <%.*s>",
+          (int)name_size,
+          name);
     }
   }
 exit :

@@ -13,5 +13,15 @@ load --table Memos
 ]
 [[0,0.0,0.0],1]
 select Memos   --match_columns Memos.nonexistent_column   --query Groonga   --query_expander nonexistent_query_expander
-[[[-63,0.0,0.0],"Syntax error: <Memos.nonexistent_column||>"]]
-#|e| Syntax error: <Memos.nonexistent_column||>
+[
+  [
+    [
+      -63,
+      0.0,
+      0.0
+    ],
+    "Syntax error: <Memos.nonexistent_column||>: [expr][parse] unknown identifier: <Memos.nonexistent_column>"
+  ]
+]
+#|e| [expr][parse] unknown identifier: <Memos.nonexistent_column>
+#|e| Syntax error: <Memos.nonexistent_column||>: Syntax error: <Memos.nonexistent_column||>: [expr][parse] unknown identifier: <Memos.nonexistent_column>
