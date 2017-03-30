@@ -47,6 +47,8 @@ build: source
 	$(MAKE) prepare-build
 	docker run				\
 	  --rm					\
+	  --interactive				\
+	  --user $$(id --user):$$(id --group)	\
 	  --volume ${abs_builddir}:/build	\
 	  groonga/windows-build
 
@@ -56,6 +58,7 @@ debug: source
 	  --rm					\
 	  --interactive				\
 	  --tty					\
+	  --user $$(id --user):$$(id --group)	\
 	  --volume ${abs_builddir}:/build	\
 	  groonga/windows-build			\
 	  /bin/bash
