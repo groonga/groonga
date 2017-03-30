@@ -64,30 +64,23 @@ mrb_grn_cache_fetch(mrb_state *mrb, mrb_value self)
   grn_cache *cache;
   char *key;
   mrb_int key_size;
-  grn_obj *value;
+  grn_rc rc;
+  grn_obj cache_value;
+  mrb_value mrb_cache_value;
 
   cache = DATA_PTR(self);
   mrb_get_args(mrb, "s", &key, &key_size);
 
-  value = grn_cache_fetch(ctx, cache, key, key_size);
+  GRN_TEXT_INIT(&cache_value, 0);
+  rc = grn_cache_fetch(ctx, cache, key, key_size, &cache_value);
+  if (rc == GRN_SUCCESS) {
+    mrb_cache_value = grn_mrb_value_from_bulk(mrb, &cache_value);
+  } else {
+    mrb_cache_value = mrb_nil_value();
+  }
+  GRN_OBJ_FIN(ctx, &cache_value);
 
-  return grn_mrb_value_from_bulk(mrb, value);
-}
-
-static mrb_value
-mrb_grn_cache_unref(mrb_state *mrb, mrb_value self)
-{
-  grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  grn_cache *cache;
-  char *key;
-  mrb_int key_size;
-
-  cache = DATA_PTR(self);
-  mrb_get_args(mrb, "s", &key, &key_size);
-
-  grn_cache_unref(ctx, cache, key, key_size);
-
-  return mrb_nil_value();
+  return mrb_cache_value;
 }
 
 static mrb_value
@@ -131,8 +124,6 @@ grn_mrb_cache_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "fetch",
                     mrb_grn_cache_fetch, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "unref",
-                    mrb_grn_cache_unref, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "update",
                     mrb_grn_cache_update, MRB_ARGS_REQ(2));
 }

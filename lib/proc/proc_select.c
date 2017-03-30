@@ -2895,7 +2895,6 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   }
 #undef DRILLDOWN_CACHE_SIZE
   if (cache_key_size <= GRN_CACHE_MAX_KEY_SIZE) {
-    grn_obj *cache_value;
     char *cp = cache_key;
 
 #define PUT_CACHE_KEY(string)                                   \
@@ -2973,16 +2972,15 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     cp += sizeof(grn_bool);
 #undef PUT_CACHE_KEY
 
-    cache_value = grn_cache_fetch(ctx, cache_obj, cache_key, cache_key_size);
-    if (cache_value) {
-      GRN_TEXT_PUT(ctx, outbuf,
-                   GRN_TEXT_VALUE(cache_value),
-                   GRN_TEXT_LEN(cache_value));
-      grn_cache_unref(ctx, cache_obj, cache_key, cache_key_size);
-      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_CACHE,
-                    ":", "cache(%" GRN_FMT_LLD ")",
-                    (long long int)GRN_TEXT_LEN(cache_value));
-      return ctx->rc;
+    {
+      grn_rc rc;
+      rc = grn_cache_fetch(ctx, cache_obj, cache_key, cache_key_size, outbuf);
+      if (rc == GRN_SUCCESS) {
+        GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_CACHE,
+                      ":", "cache(%" GRN_FMT_LLD ")",
+                      (long long int)GRN_TEXT_LEN(outbuf));
+        return ctx->rc;
+      }
     }
   }
   if (data->match_escalation_threshold.length) {

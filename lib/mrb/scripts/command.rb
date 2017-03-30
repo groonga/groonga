@@ -36,7 +36,6 @@ module Groonga
         cached_value = cache.fetch(key)
         if cached_value
           context.output = cached_value
-          cache.unref(key)
           query_logger.log(:cache, ":", "cache(#{cached_value.bytesize})")
         else
           yield

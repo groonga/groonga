@@ -41,7 +41,6 @@ struct _grn_cache_entry {
   grn_obj *value;
   grn_timeval tv;
   grn_id id;
-  uint32_t nref;
 };
 
 static grn_ctx grn_cache_ctx;
@@ -164,21 +163,21 @@ grn_cache_get_statistics(grn_ctx *ctx, grn_cache *cache,
 static void
 grn_cache_expire_entry(grn_cache *cache, grn_cache_entry *ce)
 {
-  if (!ce->nref) {
-    ce->prev->next = ce->next;
-    ce->next->prev = ce->prev;
-    grn_obj_close(cache->ctx, ce->value);
-    grn_hash_delete_by_id(cache->ctx, cache->hash, ce->id, NULL);
-  }
+  ce->prev->next = ce->next;
+  ce->next->prev = ce->prev;
+  grn_obj_close(cache->ctx, ce->value);
+  grn_hash_delete_by_id(cache->ctx, cache->hash, ce->id, NULL);
 }
 
-grn_obj *
+grn_rc
 grn_cache_fetch(grn_ctx *ctx, grn_cache *cache,
-                const char *str, uint32_t str_len)
+                const char *str, uint32_t str_len,
+                grn_obj *output)
 {
+  /* TODO: How about GRN_NOT_FOUND? */
+  grn_rc rc = GRN_INVALID_ARGUMENT;
   grn_cache_entry *ce;
-  grn_obj *obj = NULL;
-  if (!ctx->impl || !ctx->impl->db) { return obj; }
+  if (!ctx->impl || !ctx->impl->db) { return GRN_INVALID_ARGUMENT; }
   MUTEX_LOCK(cache->mutex);
   cache->nfetches++;
   if (grn_hash_get(cache->ctx, cache->hash, str, str_len, (void **)&ce)) {
@@ -186,8 +185,11 @@ grn_cache_fetch(grn_ctx *ctx, grn_cache *cache,
       grn_cache_expire_entry(cache, ce);
       goto exit;
     }
-    ce->nref++;
-    obj = ce->value;
+    rc = GRN_SUCCESS;
+    GRN_TEXT_PUT(ctx,
+                 output,
+                 GRN_TEXT_VALUE(ce->value),
+                 GRN_TEXT_LEN(ce->value));
     ce->prev->next = ce->next;
     ce->next->prev = ce->prev;
     {
@@ -201,19 +203,7 @@ grn_cache_fetch(grn_ctx *ctx, grn_cache *cache,
   }
 exit :
   MUTEX_UNLOCK(cache->mutex);
-  return obj;
-}
-
-void
-grn_cache_unref(grn_ctx *ctx, grn_cache *cache,
-                const char *str, uint32_t str_len)
-{
-  grn_cache_entry *ce;
-  MUTEX_LOCK(cache->mutex);
-  if (grn_hash_get(cache->ctx, cache->hash, str, str_len, (void **)&ce)) {
-    if (ce->nref) { ce->nref--; }
-  }
-  MUTEX_UNLOCK(cache->mutex);
+  return rc;
 }
 
 void
@@ -238,10 +228,6 @@ grn_cache_update(grn_ctx *ctx, grn_cache *cache,
   id = grn_hash_add(cache->ctx, cache->hash, str, str_len, (void **)&ce, &added);
   if (id) {
     if (!added) {
-      if (ce->nref) {
-        rc = GRN_RESOURCE_BUSY;
-        goto exit;
-      }
       old = ce->value;
       ce->prev->next = ce->next;
       ce->next->prev = ce->prev;
@@ -249,7 +235,6 @@ grn_cache_update(grn_ctx *ctx, grn_cache *cache,
     ce->id = id;
     ce->value = obj;
     ce->tv = ctx->impl->tv;
-    ce->nref = 0;
     {
       grn_cache_entry *ce0 = (grn_cache_entry *)cache;
       ce->next = ce0->next;
