@@ -11,26 +11,8 @@ run()
   fi
 }
 
-run sudo sed -i'' -e 's/httpredir/ftp.jp/g' /etc/apt/sources.list
+cd "$(dirname $0)"
 
-run sudo dpkg --add-architecture i386
-run sudo apt update
-run sudo apt install -V -y \
-    build-essential \
-    devscripts \
-    autoconf \
-    libtool \
-    cmake \
-    pkg-config \
-    mingw-w64 \
-    wine \
-    wine-binfmt \
-    rsync \
-    ruby
-
-run sudo gem install rake
-
-run cd /vagrant
 . tmp/env.sh
 
 for architecture in ${ARCHITECTURES}; do

@@ -30,8 +30,7 @@ upload-to-tmp:
 	    packages@packages.groonga.org:public/tmp/;			\
 	done
 
-build: source
-	vagrant destroy --force
+prepare-build:
 	@(							\
 	  echo "VERSION='$(VERSION)'";				\
 	  echo "SOURCE='$(SOURCE)'";				\
@@ -39,8 +38,27 @@ build: source
 	  echo "MEMORY_DEBUG_BUILD='$(MEMORY_DEBUG_BUILD)'";	\
 	  echo "ARCHITECTURES='$(ARCHITECTURES)'";		\
 	) > tmp/env.sh
-	vagrant up
-	vagrant destroy --force
+	docker build				\
+	  --tag groonga/windows-build		\
+	  --force-rm				\
+	  $(srcdir)
+
+build: source
+	$(MAKE) prepare-build
+	docker run				\
+	  --rm					\
+	  --volume ${abs_builddir}:/build	\
+	  groonga/windows-build
+
+debug: source
+	$(MAKE) prepare-build
+	docker run				\
+	  --rm					\
+	  --interactive				\
+	  --tty					\
+	  --volume ${abs_builddir}:/build	\
+	  groonga/windows-build			\
+	  /bin/bash
 
 build-groonga: source
 	for architecture in $(ARCHITECTURES); do			\
