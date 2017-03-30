@@ -107,6 +107,7 @@ CMakeFiles
 /benchmark/bench-result-set
 /benchmark/bench-between-sequential
 /benchmark/bench-nfkc
+/benchmark/bench-cache
 /packages/*/*.log
 /packages/apt/env.sh
 /packages/apt/debian/groonga-keyring.postrm

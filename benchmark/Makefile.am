@@ -14,7 +14,8 @@ noinst_PROGRAMS =				\
 	bench-range-select			\
 	bench-result-set			\
 	bench-between-sequential		\
-	bench-nfkc
+	bench-nfkc				\
+	bench-cache
 endif
 
 EXTRA_DIST =					\
@@ -64,6 +65,9 @@ nodist_EXTRA_bench_between_sequential_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 bench_nfkc_SOURCES = bench-nfkc.c
 nodist_EXTRA_bench_nfkc_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 
+bench_cache_SOURCES = bench-cache.c
+nodist_EXTRA_bench_cache_SOURCES = $(NONEXISTENT_CXX_SOURCE)
+
 benchmarks =					\
 	run-bench-table-factory			\
 	run-bench-geo-distance			\
@@ -73,7 +77,8 @@ benchmarks =					\
 	run-bench-range-select			\
 	run-bench-result-set			\
 	run-bench-between-sequential		\
-	run-bench-nfkc
+	run-bench-nfkc				\
+	run-bench-cache
 
 run-bench-table-factory: bench-table-factory
 	@echo $@:
@@ -140,5 +145,9 @@ run-bench-between-sequential: bench-between-sequential
 run-bench-nfkc: bench-nfkc
 	@echo $@:
 	./bench-nfkc
+
+run-bench-cache: bench-cache
+	@echo $@:
+	./bench-cache
 
 benchmark: $(benchmarks)
