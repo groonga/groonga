@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2016 Brazil
+/*
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2180,13 +2181,15 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
         if ((tid = grn_pat_lcp_search(ctx, pat, sp, se - sp))) {
           const char *key;
           uint32_t len;
+          int first_key_char_len;
           key = _grn_pat_key(ctx, pat, tid, &len);
           sh[n].id = tid;
           sh[n].offset = (*cp > 0) ? offset : offset0;
+          first_key_char_len = grn_charlen(ctx, key, key + len);
           if (sh[n].offset > 0 &&
               GRN_CHAR_IS_BLANK(tp[-1]) &&
-              grn_charlen(ctx, key, key + len) == 1 &&
-              key[0] != ' ') {
+              ((first_key_char_len == 1 && key[0] != ' ') ||
+               first_key_char_len > 1)){
             /* Remove leading spaces. */
             const char *original_str = str + sh[n].offset;
             while (grn_charlen(ctx, original_str, str + str_len) == 1 &&
