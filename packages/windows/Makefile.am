@@ -38,9 +38,13 @@ prepare-build:
 	  echo "MEMORY_DEBUG_BUILD='$(MEMORY_DEBUG_BUILD)'";	\
 	  echo "ARCHITECTURES='$(ARCHITECTURES)'";		\
 	) > tmp/env.sh
-	docker build				\
-	  --tag groonga/windows-build		\
-	  --force-rm				\
+	docker build					\
+	  --tag groonga/windows-build			\
+	  --force-rm					\
+	  --build-arg WORK_UID=$$(id --user)		\
+	  --build-arg WORK_GID=$$(id --group)		\
+	  --build-arg WORK_USER=$$(id --user --name)	\
+	  --build-arg WORK_GROUP=$$(id --group --name)	\
 	  $(srcdir)
 
 build: source
