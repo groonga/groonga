@@ -415,7 +415,7 @@ grn_cache_fetch_persistent(grn_ctx *ctx, grn_cache *cache,
     return rc;
   }
 
-  rc = grn_io_lock(ctx, keys->io, grn_lock_timeout);
+  rc = grn_io_lock(ctx, keys->io, cache->impl.persistent.timeout);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -535,7 +535,7 @@ grn_cache_update_persistent(grn_ctx *ctx, grn_cache *cache,
     return;
   }
 
-  rc = grn_io_lock(ctx, keys->io, grn_lock_timeout);
+  rc = grn_io_lock(ctx, keys->io, cache->impl.persistent.timeout);
   if (rc != GRN_SUCCESS) {
     return;
   }
@@ -607,7 +607,7 @@ grn_cache_expire_persistent(grn_cache *cache, int32_t size)
   grn_hash *keys = cache->impl.persistent.keys;
   grn_cache_entry_persistent *head_entry;
 
-  rc = grn_io_lock(ctx, keys->io, grn_lock_timeout);
+  rc = grn_io_lock(ctx, keys->io, cache->impl.persistent.timeout);
   if (rc != GRN_SUCCESS) {
     return;
   }
