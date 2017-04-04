@@ -24,6 +24,8 @@
 #include "grn_store.h"
 #include "grn_db.h"
 
+#include <sys/stat.h>
+
 typedef struct _grn_cache_entry_memory grn_cache_entry_memory;
 
 struct _grn_cache_entry_memory {
@@ -88,33 +90,114 @@ grn_cache_open_memory(grn_ctx *ctx, grn_cache *cache)
 }
 
 inline static void
-grn_cache_open_persistent(grn_ctx *ctx, grn_cache *cache)
+grn_cache_open_persistent(grn_ctx *ctx,
+                          grn_cache *cache,
+                          const char *base_path)
 {
-  cache->impl.persistent.keys =
-    grn_hash_create(cache->ctx,
-                    NULL,
-                    GRN_CACHE_MAX_KEY_SIZE,
-                    sizeof(grn_cache_entry_persistent),
-                    GRN_OBJ_KEY_VAR_SIZE);
+  char *keys_path = NULL;
+  char *values_path = NULL;
+  char keys_path_buffer[PATH_MAX];
+  char values_path_buffer[PATH_MAX];
+
+  if (base_path) {
+    struct stat stat_buffer;
+
+    grn_snprintf(keys_path_buffer, PATH_MAX, PATH_MAX, "%s.keys", base_path);
+    grn_snprintf(values_path_buffer, PATH_MAX, PATH_MAX, "%s.values", base_path);
+    keys_path = keys_path_buffer;
+    values_path = values_path_buffer;
+
+    if (stat(keys_path, &stat_buffer) == 0) {
+      cache->impl.persistent.keys = grn_hash_open(ctx, keys_path);
+      if (cache->impl.persistent.keys) {
+        cache->impl.persistent.values = grn_ja_open(ctx, values_path);
+      }
+    }
+    if (!cache->impl.persistent.keys) {
+      if (cache->impl.persistent.values) {
+        grn_ja_close(ctx, cache->impl.persistent.values);
+        cache->impl.persistent.values = NULL;
+      }
+      if (stat(keys_path, &stat_buffer) == 0) {
+        if (grn_hash_remove(ctx, keys_path) != GRN_SUCCESS) {
+          ERRNO_ERR("[cache][persistent] "
+                    "failed to remove path for cache keys: <%s>",
+                    keys_path);
+          return;
+        }
+      }
+      if (stat(values_path, &stat_buffer) == 0) {
+        if (grn_ja_remove(ctx, values_path) != GRN_SUCCESS) {
+          ERRNO_ERR("[cache][persistent] "
+                    "failed to remove path for cache values: <%s>",
+                    values_path);
+          return;
+        }
+      }
+    }
+  }
+
+  if (!cache->impl.persistent.keys) {
+    cache->impl.persistent.keys =
+      grn_hash_create(ctx,
+                      keys_path,
+                      GRN_CACHE_MAX_KEY_SIZE,
+                      sizeof(grn_cache_entry_persistent),
+                      GRN_OBJ_KEY_VAR_SIZE);
+    if (!cache->impl.persistent.keys) {
+      ERR(ctx->rc,
+          "[cache][persistent] failed to create cache keys storage: <%s>",
+          keys_path ? keys_path : "(memory)");
+      return;
+    }
+    cache->impl.persistent.values =
+      grn_ja_create(ctx,
+                    values_path,
+                    1 << 16,
+                    0);
+    if (!cache->impl.persistent.values) {
+      grn_hash_close(ctx, cache->impl.persistent.keys);
+      ERR(ctx->rc,
+          "[cache][persistent] failed to create cache values storage: <%s>",
+          values_path ? values_path : "(memory)");
+      return;
+    }
+  }
+
   {
     grn_cache_entry_persistent *entry;
-    /* TODO: validate ID == GRN_CACHE_PERSISTENT_ROOT_ID */
-    grn_hash_add(ctx,
-                 cache->impl.persistent.keys,
-                 GRN_CACHE_PERSISTENT_ROOT_KEY,
-                 GRN_CACHE_PERSISTENT_ROOT_KEY_LEN,
-                 (void **)&entry,
-                 NULL);
-    entry->next = GRN_CACHE_PERSISTENT_ROOT_ID;
-    entry->prev = GRN_CACHE_PERSISTENT_ROOT_ID;
-    entry->modified_time.tv_sec = 0;
-    entry->modified_time.tv_nsec = 0;
+    grn_id root_id;
+    int added;
+
+    root_id = grn_hash_add(ctx,
+                           cache->impl.persistent.keys,
+                           GRN_CACHE_PERSISTENT_ROOT_KEY,
+                           GRN_CACHE_PERSISTENT_ROOT_KEY_LEN,
+                           (void **)&entry,
+                           &added);
+    if (root_id != GRN_CACHE_PERSISTENT_ROOT_ID) {
+      grn_ja_close(ctx, cache->impl.persistent.values);
+      grn_hash_close(ctx, cache->impl.persistent.keys);
+      if (values_path) {
+        grn_ja_remove(ctx, values_path);
+      }
+      if (keys_path) {
+        grn_hash_remove(ctx, keys_path);
+      }
+      ERR(ctx->rc,
+          "[cache][persistent] broken cache keys storage: <%s>",
+          keys_path ? keys_path : "(memory)");
+      return;
+    }
+
+    if (added) {
+      entry->next = root_id;
+      entry->prev = root_id;
+      entry->modified_time.tv_sec = 0;
+      entry->modified_time.tv_nsec = 0;
+    }
   }
-  cache->impl.persistent.values =
-    grn_ja_create(cache->ctx,
-                  NULL,
-                  1 << 16,
-                  0);
+
   cache->impl.persistent.timeout = 1000;
 }
 
@@ -124,7 +207,7 @@ grn_cache_open(grn_ctx *ctx)
   grn_cache *cache = NULL;
 
   GRN_API_ENTER;
-  cache = GRN_MALLOC(sizeof(grn_cache));
+  cache = GRN_CALLOC(sizeof(grn_cache));
   if (!cache) {
     ERR(GRN_NO_MEMORY_AVAILABLE, "[cache] failed to allocate grn_cache");
     goto exit;
@@ -144,7 +227,7 @@ grn_cache_open(grn_ctx *ctx)
   if (cache->is_memory) {
     grn_cache_open_memory(ctx, cache);
   } else {
-    grn_cache_open_persistent(ctx, cache);
+    grn_cache_open_persistent(ctx, cache, NULL);
   }
   if (ctx->rc != GRN_SUCCESS) {
     GRN_FREE(cache);
