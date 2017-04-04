@@ -17,7 +17,7 @@
 */
 
 /*
-  Groonga: b6f3dca1f7f7458ef6064c75265a90d2fc5da562
+  Groonga: eb65125330b3a8f920693ef3ad53011c7412f2c9
   CFLAGS: -O2 -g3
   CPU: Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz
 
@@ -29,8 +29,8 @@
   % GRN_CACHE_TYPE=persistent make --silent -C benchmark run-bench-cache
   run-bench-cache:
            (total)    (average)  (median)
-     1000: (0.0360s)  (0.3601ms) (0.3230ms)
-    10000: (0.2629s)  (0.0026s)  (0.0026s) 
+     1000: (0.0480s)  (0.4801ms) (0.4700ms)
+    10000: (0.4033s)  (0.0040s)  (0.0040s) 
  */
 
 #include <string.h>
