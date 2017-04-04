@@ -531,6 +531,7 @@ grn_cache_update_persistent(grn_ctx *ctx, grn_cache *cache,
 {
   grn_rc rc;
   grn_hash *keys = cache->impl.persistent.keys;
+  grn_ja *values = cache->impl.persistent.values;
   grn_id cache_id;
   grn_cache_entry_persistent *entry;
   int added;
@@ -556,6 +557,10 @@ grn_cache_update_persistent(grn_ctx *ctx, grn_cache *cache,
       grn_cache_entry_persistent_delete_link(cache, entry);
     }
     entry->modified_time = ctx->impl->tv;
+
+    grn_ja_put(cache->ctx, values, cache_id,
+               GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value),
+               GRN_OBJ_SET, NULL);
 
     head_entry =
       (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,
