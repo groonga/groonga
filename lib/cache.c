@@ -247,9 +247,9 @@ grn_cache_get_max_n_entries(grn_ctx *ctx, grn_cache *cache)
   return cache->max_nentries;
 }
 
-void
-grn_cache_get_statistics(grn_ctx *ctx, grn_cache *cache,
-                         grn_cache_statistics *statistics)
+static void
+grn_cache_get_statistics_memory(grn_ctx *ctx, grn_cache *cache,
+                                grn_cache_statistics *statistics)
 {
   MUTEX_LOCK(cache->impl.memory.mutex);
   statistics->nentries = GRN_HASH_SIZE(cache->impl.memory.hash);
@@ -257,6 +257,37 @@ grn_cache_get_statistics(grn_ctx *ctx, grn_cache *cache,
   statistics->nfetches = cache->nfetches;
   statistics->nhits = cache->nhits;
   MUTEX_UNLOCK(cache->impl.memory.mutex);
+}
+
+static void
+grn_cache_get_statistics_persistent(grn_ctx *ctx, grn_cache *cache,
+                                    grn_cache_statistics *statistics)
+{
+  grn_rc rc = GRN_INVALID_ARGUMENT;
+  grn_hash *keys = cache->impl.persistent.keys;
+
+  rc = grn_io_lock(ctx, keys->io, cache->impl.persistent.timeout);
+  if (rc != GRN_SUCCESS) {
+    return;
+  }
+
+  statistics->nentries = GRN_HASH_SIZE(keys);
+  statistics->max_nentries = cache->max_nentries;
+  statistics->nfetches = cache->nfetches;
+  statistics->nhits = cache->nhits;
+
+  grn_io_unlock(keys->io);
+}
+
+void
+grn_cache_get_statistics(grn_ctx *ctx, grn_cache *cache,
+                         grn_cache_statistics *statistics)
+{
+  if (cache->is_memory) {
+    return grn_cache_get_statistics_memory(ctx, cache, statistics);
+  } else {
+    return grn_cache_get_statistics_persistent(ctx, cache, statistics);
+  }
 }
 
 static void
