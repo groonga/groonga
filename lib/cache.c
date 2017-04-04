@@ -420,8 +420,15 @@ grn_cache_fetch_persistent(grn_ctx *ctx, grn_cache *cache,
     return rc;
   }
 
+  /* TODO: How about GRN_NOT_FOUND? */
+  rc = GRN_INVALID_ARGUMENT;
+
   cache->nfetches++;
   cache_id = grn_hash_get(cache->ctx, keys, key, key_len, (void **)&entry);
+  if (cache_id == GRN_ID_NIL) {
+    goto exit;
+  }
+
   if (cache_id != GRN_ID_NIL) {
     if (entry->modified_time.tv_sec <=
         grn_db_get_last_modified(ctx, ctx->impl->db)) {
