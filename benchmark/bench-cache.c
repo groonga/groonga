@@ -16,6 +16,23 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+/*
+  Groonga: b6f3dca1f7f7458ef6064c75265a90d2fc5da562
+  CFLAGS: -O2 -g3
+  CPU: Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz
+
+  % make --silent -C benchmark run-bench-cache
+  run-bench-cache:
+           (total)    (average)  (median)
+     1000: (0.0458s)  (0.4576ms) (0.4170ms)
+    10000: (0.3464s)  (0.0035s)  (0.0034s) 
+  % GRN_CACHE_TYPE=persistent make --silent -C benchmark run-bench-cache
+  run-bench-cache:
+           (total)    (average)  (median)
+     1000: (0.0360s)  (0.3601ms) (0.3230ms)
+    10000: (0.2629s)  (0.0026s)  (0.0026s) 
+ */
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
