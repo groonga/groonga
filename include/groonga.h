@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2014-2016 Brazil
+  Copyright(C) 2014-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@
 
 #include "groonga/accessor.h"
 #include "groonga/array.h"
+#include "groonga/cache.h"
 #include "groonga/column.h"
 #include "groonga/config.h"
 #include "groonga/dat.h"
