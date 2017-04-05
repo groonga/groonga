@@ -8,11 +8,7 @@
 Summary
 -------
 
-log_level - ログ出力レベルの設定
-
-Groonga組込コマンドの一つであるlog_levelについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
-
-log_levelは、ログ出力レベルを設定します。
+``log_level`` command sets log level of Groonga.
 
 Syntax
 ------
@@ -32,27 +28,57 @@ Parameters
 
 ``level``
 
-  設定するログ出力レベルの値を以下のいずれかで指定します。
+  Specify log level with a character or string which means log level.
 
-     emergency
-     alert
-     critical
-     error
-     warning
-     notice
-     info
-     debug
+  .. list-table::
+     :header-rows: 1
+
+     * - Value
+       - Alias
+     * - ``E``
+       - ``emerge`` or ``emergency``
+     * - ``A``
+       - ``alert``
+     * - ``C``
+       - ``crit`` or ``critical``
+     * - ``e``
+       - ``error``
+     * - ``w``
+       - ``warn`` or ``warning``
+     * - ``n``
+       - ``notice``
+     * - ``i``
+       - ``info``
+     * - ``d``
+       - ``debug``
+     * - ``-``
+       - ``dump``
+
+  Example::
+
+       emergency
+       alert
+       critical
+       error
+       warning
+       notice
+       info
+       debug
 
 Return value
 ------------
 
-::
+``log_level`` command returns whether log level configuration is succeeded or not::
 
- [成功かどうかのフラグ]
+  [HEADER, SUCCEEDED_OR_NOT]
 
-``成功かどうかのフラグ``
+``HEADER``
 
-  エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。
+  See :doc:`/reference/command/output_format` about ``HEADER``.
+
+``SUCCEEDED_OR_NOT``
+
+  If command succeeded, it returns true, otherwise it returns false on error.
 
 See also
 --------
