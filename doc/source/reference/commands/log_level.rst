@@ -34,9 +34,9 @@ Parameters
 
   設定するログ出力レベルの値を以下のいずれかで指定します。
 
-     EMERG
-     ALERT
-     CRIT
+     emergency
+     alert
+     critical
      error
      warning
      notice
