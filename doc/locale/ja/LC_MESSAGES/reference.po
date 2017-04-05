@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2017-03-29 17:13+0900\n"
+"PO-Revision-Date: 2017-04-05 15:16+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -6807,26 +6807,74 @@ msgstr ""
 msgid "``log_level``"
 msgstr ""
 
-msgid "log_level - ログ出力レベルの設定"
-msgstr ""
-
-msgid ""
-"Groonga組込コマンドの一つであるlog_levelについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-msgstr ""
-
-msgid "log_levelは、ログ出力レベルを設定します。"
-msgstr ""
+msgid "``log_level`` command sets log level of Groonga."
+msgstr "``log_level`` コマンドはGroongaのログレベルを設定します。"
 
 msgid "``level``"
 msgstr ""
 
-msgid "設定するログ出力レベルの値を以下のいずれかで指定します。"
+msgid "Specify log level with a character or string which means log level."
+msgstr "ログレベル（1文字）もしくはログレベルを表す文字列を指定します。"
+
+msgid "``E``"
 msgstr ""
 
-msgid "EMERG ALERT CRIT error warning notice info debug"
+msgid "``emerge`` or ``emergency``"
+msgstr "``emerge`` もしくは ``emergency``"
+
+msgid "``A``"
 msgstr ""
+
+msgid "``alert``"
+msgstr "``alert``"
+
+msgid "``C``"
+msgstr ""
+
+msgid "``crit`` or ``critical``"
+msgstr "``crit`` もしくは ``critical``"
+
+msgid "``e``"
+msgstr ""
+
+msgid "``error``"
+msgstr ""
+
+msgid "``w``"
+msgstr ""
+
+msgid "``warn`` or ``warning``"
+msgstr "``warn`` もしくは ``warning``"
+
+msgid "``n``"
+msgstr ""
+
+msgid "``notice``"
+msgstr ""
+
+msgid "``i``"
+msgstr ""
+
+msgid "``info``"
+msgstr ""
+
+msgid "``d``"
+msgstr ""
+
+msgid "``debug``"
+msgstr ""
+
+msgid "``-``"
+msgstr ""
+
+msgid "Example::"
+msgstr "実行例::"
+
+msgid ""
+"``log_level`` command returns whether log level configuration is succeeded "
+"or not::"
+msgstr ""
+"``log_level`` コマンドはログレベルの設定に成功したかどうかを返します。::"
 
 msgid ":doc:`log_put` :doc:`log_reopen`"
 msgstr ""
@@ -6844,6 +6892,12 @@ msgid ""
 msgstr ""
 
 msgid "log_putは、ログにmessageを出力します。"
+msgstr ""
+
+msgid "設定するログ出力レベルの値を以下のいずれかで指定します。"
+msgstr ""
+
+msgid "EMERG ALERT CRIT error warning notice info debug"
 msgstr ""
 
 msgid "``message``"
@@ -16345,9 +16399,6 @@ msgstr ""
 msgid "``groonga_log_level``"
 msgstr ""
 
-msgid "``notice``"
-msgstr ""
-
 msgid ""
 "Specifies Groonga log level in the ``http``, ``server`` or ``location`` "
 "block. The default is ``notice``. You can disable logging by specifying "
@@ -17205,9 +17256,6 @@ msgstr "``1970-01-01T00:00:00Z`` から経過時間。"
 msgid "The unit is millisecond."
 msgstr "単位はミリ秒。"
 
-msgid "``i``"
-msgstr ""
-
 msgid "Unique ID to distinct each user"
 msgstr "各ユーザーを識別するユニークなID。"
 
@@ -17239,9 +17287,6 @@ msgid ""
 msgstr ""
 "``t`` パラメータに ``complete`` 、 ``correct`` 、 ``suggest`` のどれかを指定"
 "したときは次のパラメーターを指定する必要があります。"
-
-msgid "``n``"
-msgstr ""
 
 msgid "The dataset name to use computing suggestion result."
 msgstr "サジェスト結果を計算するときに使うデータセット名。"
@@ -21900,9 +21945,6 @@ msgstr "マイクロ秒（6桁）"
 
 msgid "SSSSSS"
 msgstr ""
-
-msgid "Example::"
-msgstr "実行例::"
 
 msgid "TIME_STAMP"
 msgstr ""
