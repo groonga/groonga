@@ -18,6 +18,7 @@
 
 #include "../grn_pat.h"
 #include "../grn_dat.h"
+#include "../grn_ii.h"
 
 #include "../grn_proc.h"
 
@@ -229,7 +230,120 @@ command_object_inspect_column_type(grn_ctx *ctx, grn_obj *column)
 }
 
 static void
-command_object_inspect_column_value_compress(grn_ctx *ctx, grn_obj *column)
+command_object_inspect_column_index_value_statistics(grn_ctx *ctx,
+                                                     grn_ii *ii)
+{
+  grn_ctx_output_map_open(ctx, "statistics", 11);
+  {
+    struct grn_ii_header *h = ii->header;
+
+    grn_ctx_output_cstr(ctx, "max_section_id");
+    grn_ctx_output_uint64(ctx, grn_ii_max_section(ii));
+
+    {
+      uint32_t max_id = 0;
+      uint32_t n_garbage_segments = 0;
+      uint32_t n_array_segments = 0;
+      uint32_t n_buffer_segments = 0;
+
+      grn_ctx_output_cstr(ctx, "n_garbage_segments");
+      {
+        uint32_t i;
+
+        for (i = h->bgqtail;
+             i != h->bgqhead;
+             i = ((i + 1) & (GRN_II_BGQSIZE - 1))) {
+          uint32_t id = h->bgqbody[i];
+          n_garbage_segments++;
+          if (id > max_id) { max_id = id; }
+        }
+        grn_ctx_output_uint64(ctx, n_garbage_segments);
+      }
+
+      grn_ctx_output_cstr(ctx, "max_array_segment_id");
+      grn_ctx_output_uint64(ctx, h->amax);
+      grn_ctx_output_cstr(ctx, "n_array_segments");
+      {
+        uint32_t i;
+
+        for (i = 0; i < GRN_II_MAX_LSEG; i++) {
+          uint32_t id = h->ainfo[i];
+          if (id < 0x20000) {
+            if (id > max_id) { max_id = id; }
+            n_array_segments++;
+          }
+        }
+        grn_ctx_output_uint64(ctx, n_array_segments);
+      }
+
+      grn_ctx_output_cstr(ctx, "max_buffer_segment_id");
+      grn_ctx_output_uint64(ctx, h->bmax);
+      grn_ctx_output_cstr(ctx, "n_buffer_segments");
+      {
+        uint32_t i;
+
+        for (i = 0; i < GRN_II_MAX_LSEG; i++) {
+          uint32_t id = h->binfo[i];
+          if (id < 0x20000) {
+            if (id > max_id) { max_id = id; }
+            n_buffer_segments++;
+          }
+        }
+        grn_ctx_output_uint64(ctx, n_buffer_segments);
+      }
+
+      grn_ctx_output_cstr(ctx, "max_in_use_physical_segment_id");
+      grn_ctx_output_uint64(ctx, max_id);
+
+      grn_ctx_output_cstr(ctx, "n_unmanaged_segments");
+      grn_ctx_output_uint64(ctx,
+                            h->pnext -
+                            n_array_segments -
+                            n_buffer_segments -
+                            n_garbage_segments);
+    }
+
+    {
+      grn_ctx_output_cstr(ctx, "total_chunk_size");
+      grn_ctx_output_uint64(ctx, h->total_chunk_size);
+      grn_ctx_output_cstr(ctx, "max_in_use_chunk_segment_id");
+      {
+        uint32_t i;
+        uint32_t max_id;
+
+        for (max_id = 0, i = 0; i < (GRN_II_MAX_CHUNK >> 3); i++) {
+          uint8_t sub_chunk_info = h->chunks[i];
+          uint8_t bit;
+
+          if (sub_chunk_info == 0) {
+            continue;
+          }
+          for (bit = 0; bit < 8; bit++) {
+            if (sub_chunk_info & (1 << bit)) {
+              max_id = (i << 3) + sub_chunk_info;
+            }
+          }
+        }
+        grn_ctx_output_uint64(ctx, max_id);
+      }
+      grn_ctx_output_cstr(ctx, "n_garbage_chunks");
+      grn_ctx_output_array_open(ctx,
+                                "n_garbage_chunks",
+                                GRN_II_N_CHUNK_VARIATION);
+      {
+        uint32_t i;
+        for (i = 0; i <= GRN_II_N_CHUNK_VARIATION; i++) {
+          grn_ctx_output_uint64(ctx, h->ngarbages[i]);
+        }
+      }
+      grn_ctx_output_array_close(ctx);
+    }
+  }
+  grn_ctx_output_map_close(ctx);
+}
+
+static void
+command_object_inspect_column_data_value_compress(grn_ctx *ctx, grn_obj *column)
 {
   const char *compress = NULL;
   grn_column_flags column_flags;
@@ -263,7 +377,7 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
   grn_bool is_index = (column->header.type == GRN_COLUMN_INDEX);
 
   if (is_index) {
-    n_elements += 3;
+    n_elements += 5;
   } else {
     n_elements += 1;
   }
@@ -284,9 +398,20 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
       grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WITH_WEIGHT) != 0);
       grn_ctx_output_cstr(ctx, "position");
       grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WITH_POSITION) != 0);
+      grn_ctx_output_cstr(ctx, "size");
+      if ((column_flags & GRN_OBJ_INDEX_SMALL) != 0) {
+        grn_ctx_output_cstr(ctx, "small");
+      } else if ((column_flags & GRN_OBJ_INDEX_MEDIUM) != 0) {
+        grn_ctx_output_cstr(ctx, "medium");
+      } else {
+        grn_ctx_output_cstr(ctx, "normal");
+      }
+      grn_ctx_output_cstr(ctx, "statistics");
+      command_object_inspect_column_index_value_statistics(ctx,
+                                                           (grn_ii *)column);
     } else {
       grn_ctx_output_cstr(ctx, "compress");
-      command_object_inspect_column_valkue_compress(ctx, column);
+      command_object_inspect_column_data_value_compress(ctx, column);
     }
   }
   grn_ctx_output_map_close(ctx);

@@ -63,7 +63,37 @@ object_inspect Terms.memos_title_content
       },
       "section": true,
       "weight": false,
-      "position": true
+      "position": true,
+      "size": "normal",
+      "statistics": {
+        "max_section_id": 0,
+        "n_garbage_segments": 0,
+        "max_array_segment_id": 0,
+        "n_array_segments": 0,
+        "max_buffer_segment_id": 0,
+        "n_buffer_segments": 0,
+        "max_in_use_physical_segment_id": 0,
+        "n_unmanaged_segments": 0,
+        "total_chunk_size": 0,
+        "max_in_use_chunk_segment_id": 0,
+        "n_garbage_chunks": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
     }
   }
 ]
