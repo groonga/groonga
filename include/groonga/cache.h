@@ -25,7 +25,12 @@ extern "C" {
 #define GRN_CACHE_DEFAULT_MAX_N_ENTRIES 100
 typedef struct _grn_cache grn_cache;
 
+GRN_API void grn_set_default_cache_base_path(const char *base_path);
+GRN_API const char *grn_get_default_cache_base_path(void);
+
 GRN_API grn_cache *grn_cache_open(grn_ctx *ctx);
+GRN_API grn_cache *grn_persistent_cache_open(grn_ctx *ctx,
+                                             const char *base_path);
 GRN_API grn_rc grn_cache_close(grn_ctx *ctx, grn_cache *cache);
 
 GRN_API grn_rc grn_cache_current_set(grn_ctx *ctx, grn_cache *cache);

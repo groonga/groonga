@@ -71,6 +71,29 @@ struct _grn_cache {
 static grn_ctx grn_cache_ctx;
 static grn_cache *grn_cache_current = NULL;
 static grn_cache *grn_cache_default = NULL;
+static char grn_cache_default_base_path[PATH_MAX];
+
+void
+grn_set_default_cache_base_path(const char *base_path)
+{
+  if (base_path) {
+    grn_strcpy(grn_cache_default_base_path,
+               PATH_MAX,
+               base_path);
+  } else {
+    grn_cache_default_base_path[0] = '\0';
+  }
+}
+
+const char *
+grn_get_default_cache_base_path(void)
+{
+  if (grn_cache_default_base_path[0] == '\0') {
+    return NULL;
+  } else {
+    return grn_cache_default_base_path;
+  }
+}
 
 inline static void
 grn_cache_open_memory(grn_ctx *ctx, grn_cache *cache)
@@ -201,8 +224,10 @@ grn_cache_open_persistent(grn_ctx *ctx,
   cache->impl.persistent.timeout = 1000;
 }
 
-grn_cache *
-grn_cache_open(grn_ctx *ctx)
+static grn_cache *
+grn_cache_open_raw(grn_ctx *ctx,
+                   grn_bool is_memory,
+                   const char *base_path)
 {
   grn_cache *cache = NULL;
 
@@ -213,21 +238,12 @@ grn_cache_open(grn_ctx *ctx)
     goto exit;
   }
 
-  {
-    char grn_cache_type_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_CACHE_TYPE", grn_cache_type_env, GRN_ENV_BUFFER_SIZE);
-    if (strcmp(grn_cache_type_env, "persistent") == 0) {
-      cache->is_memory = GRN_FALSE;
-    } else {
-      cache->is_memory = GRN_TRUE;
-    }
-  }
-
   cache->ctx = ctx;
+  cache->is_memory = is_memory;
   if (cache->is_memory) {
     grn_cache_open_memory(ctx, cache);
   } else {
-    grn_cache_open_persistent(ctx, cache, NULL);
+    grn_cache_open_persistent(ctx, cache, base_path);
   }
   if (ctx->rc != GRN_SUCCESS) {
     GRN_FREE(cache);
@@ -242,6 +258,39 @@ grn_cache_open(grn_ctx *ctx)
 exit :
   GRN_API_RETURN(cache);
 }
+
+grn_cache *
+grn_cache_open(grn_ctx *ctx)
+{
+  const char *base_path = NULL;
+  grn_bool is_memory;
+
+  if (grn_cache_default_base_path[0] != '\0') {
+    base_path = grn_cache_default_base_path;
+  }
+
+  if (base_path) {
+    is_memory = GRN_FALSE;
+  } else {
+    char grn_cache_type_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_CACHE_TYPE", grn_cache_type_env, GRN_ENV_BUFFER_SIZE);
+    if (strcmp(grn_cache_type_env, "persistent") == 0) {
+      is_memory = GRN_FALSE;
+    } else {
+      is_memory = GRN_TRUE;
+    }
+  }
+
+  return grn_cache_open_raw(ctx, is_memory, base_path);
+}
+
+grn_cache *
+grn_persistent_cache_open(grn_ctx *ctx, const char *base_path)
+{
+  grn_bool is_memory = GRN_FALSE;
+  return grn_cache_open_raw(ctx, is_memory, base_path);
+}
+
 
 inline static void
 grn_cache_close_memory(grn_ctx *ctx, grn_cache *cache)
