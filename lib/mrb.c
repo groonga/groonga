@@ -207,6 +207,7 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     {
       struct RProc *proc;
       proc = mrb_generate_code(mrb, parser);
+      proc->target_class = mrb->object_class;
       result = mrb_toplevel_run(mrb, proc);
     }
     mrb_parser_free(parser);
