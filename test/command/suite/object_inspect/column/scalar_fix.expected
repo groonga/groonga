@@ -39,8 +39,11 @@ object_inspect Users.age
     },
     "full_name": "Users.age",
     "type": {
-      "id": 64,
-      "name": "column:fix_size"
+      "name": "scalar",
+      "raw": {
+        "id": 64,
+        "name": "column:fix_size"
+      }
     },
     "value": {
       "type": {

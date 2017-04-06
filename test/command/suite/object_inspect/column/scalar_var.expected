@@ -27,8 +27,11 @@ object_inspect Memos.title
     },
     "full_name": "Memos.title",
     "type": {
-      "id": 65,
-      "name": "column:var_size"
+      "name": "scalar",
+      "raw": {
+        "id": 65,
+        "name": "column:var_size"
+      }
     },
     "value": {
       "type": {

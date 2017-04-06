@@ -185,6 +185,50 @@ command_object_inspect_column_name(grn_ctx *ctx, grn_obj *column)
 }
 
 static void
+command_object_inspect_column_type_name(grn_ctx *ctx, grn_obj *column)
+{
+  switch (column->header.type) {
+  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_VAR_SIZE :
+    switch (column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
+    case GRN_OBJ_COLUMN_SCALAR :
+      grn_ctx_output_cstr(ctx, "scalar");
+      break;
+    case GRN_OBJ_COLUMN_VECTOR :
+      grn_ctx_output_cstr(ctx, "vector");
+      break;
+    }
+    break;
+  case GRN_COLUMN_INDEX :
+    grn_ctx_output_cstr(ctx, "index");
+    break;
+  default:
+    break;
+  }
+}
+
+static void
+command_object_inspect_column_type(grn_ctx *ctx, grn_obj *column)
+{
+  grn_ctx_output_map_open(ctx, "type", 2);
+  {
+    grn_ctx_output_cstr(ctx, "name");
+    command_object_inspect_column_type_name(ctx, column);
+
+    grn_ctx_output_cstr(ctx, "raw");
+    grn_ctx_output_map_open(ctx, "raw", 2);
+    {
+      grn_ctx_output_cstr(ctx, "id");
+      grn_ctx_output_uint64(ctx, column->header.type);
+      grn_ctx_output_cstr(ctx, "name");
+      grn_ctx_output_cstr(ctx, grn_obj_type_to_string(column->header.type));
+    }
+    grn_ctx_output_map_close(ctx);
+  }
+  grn_ctx_output_map_close(ctx);
+}
+
+static void
 command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
 {
   grn_ctx_output_map_open(ctx, "value", 1);
@@ -210,7 +254,7 @@ command_object_inspect_column(grn_ctx *ctx, grn_obj *obj)
     grn_ctx_output_cstr(ctx, "full_name");
     command_object_inspect_obj_name(ctx, obj);
     grn_ctx_output_cstr(ctx, "type");
-    command_object_inspect_obj_type(ctx, obj->header.type);
+    command_object_inspect_column_type(ctx, obj);
     grn_ctx_output_cstr(ctx, "value");
     command_object_inspect_column_value(ctx, obj);
   }

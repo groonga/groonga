@@ -45,8 +45,11 @@ object_inspect Terms.memos_title_content
     },
     "full_name": "Terms.memos_title_content",
     "type": {
-      "id": 72,
-      "name": "column:index"
+      "name": "index",
+      "raw": {
+        "id": 72,
+        "name": "column:index"
+      }
     },
     "value": {
       "type": {
