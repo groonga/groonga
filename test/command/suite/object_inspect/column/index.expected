@@ -60,7 +60,8 @@ object_inspect Terms.memos_title_content
           "name": "table:no_key"
         },
         "size": 4
-      }
+      },
+      "compress": null
     },
     "section": true,
     "weight": false,

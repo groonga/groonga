@@ -1,4 +1,4 @@
 table_create Memos TABLE_NO_KEY
-column_create Memos title COLUMN_SCALAR ShortText
+column_create Memos title COLUMN_SCALAR|COMPRESS_ZSTD ShortText
 
 object_inspect Memos.title

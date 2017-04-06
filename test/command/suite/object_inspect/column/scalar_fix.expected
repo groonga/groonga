@@ -54,7 +54,8 @@ object_inspect Users.age
           "name": "type"
         },
         "size": 1
-      }
+      },
+      "compress": null
     },
     "section": false,
     "weight": false,
