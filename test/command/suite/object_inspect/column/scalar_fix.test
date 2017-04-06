@@ -1,0 +1,4 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users age COLUMN_SCALAR UInt8
+
+object_inspect Users.age

@@ -1,0 +1,4 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos tags COLUMN_VECTOR ShortText
+
+object_inspect Memos.tags

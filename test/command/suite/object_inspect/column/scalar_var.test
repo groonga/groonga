@@ -1,0 +1,4 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos title COLUMN_SCALAR ShortText
+
+object_inspect Memos.title

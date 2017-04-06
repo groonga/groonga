@@ -1,0 +1,63 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto   --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Terms memos_title_content   COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Memos title,content
+[[0,0.0,0.0],true]
+object_inspect Terms.memos_title_content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 260,
+    "name": "memos_title_content",
+    "table": {
+      "id": 259,
+      "name": "Terms",
+      "type": {
+        "id": 49,
+        "name": "table:pat_key"
+      },
+      "key": {
+        "type": {
+          "id": 14,
+          "name": "ShortText",
+          "type": {
+            "id": 32,
+            "name": "type"
+          },
+          "size": 4096
+        },
+        "total_size": 0,
+        "max_total_size": 4294967294
+      },
+      "value": {
+        "type": null
+      },
+      "n_records": 0
+    },
+    "full_name": "Terms.memos_title_content",
+    "type": {
+      "id": 72,
+      "name": "column:index"
+    },
+    "value": {
+      "type": {
+        "id": 256,
+        "name": "Memos",
+        "type": {
+          "id": 51,
+          "name": "table:no_key"
+        },
+        "size": 4
+      }
+    }
+  }
+]

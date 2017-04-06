@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2016 Brazil
+  Copyright(C) 2016-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -174,6 +174,50 @@ command_object_inspect_table(grn_ctx *ctx, grn_obj *obj)
 }
 
 static void
+command_object_inspect_column_name(grn_ctx *ctx, grn_obj *column)
+{
+  char name[GRN_TABLE_MAX_KEY_SIZE];
+  int name_size;
+
+  name_size = grn_column_name(ctx, column, name, GRN_TABLE_MAX_KEY_SIZE);
+  name[name_size] = '\0';
+  grn_ctx_output_str(ctx, name, name_size);
+}
+
+static void
+command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
+{
+  grn_ctx_output_map_open(ctx, "value", 1);
+  {
+    grn_id range_id = grn_obj_get_range(ctx, column);
+    grn_ctx_output_cstr(ctx, "type");
+    command_object_inspect_type(ctx, grn_ctx_at(ctx, range_id));
+  }
+  grn_ctx_output_map_close(ctx);
+}
+
+static void
+command_object_inspect_column(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_ctx_output_map_open(ctx, "column", 5);
+  {
+    grn_ctx_output_cstr(ctx, "id");
+    grn_ctx_output_uint64(ctx, grn_obj_id(ctx, obj));
+    grn_ctx_output_cstr(ctx, "name");
+    command_object_inspect_column_name(ctx, obj);
+    grn_ctx_output_cstr(ctx, "table");
+    command_object_inspect_table(ctx, grn_ctx_at(ctx, obj->header.domain));
+    grn_ctx_output_cstr(ctx, "full_name");
+    command_object_inspect_obj_name(ctx, obj);
+    grn_ctx_output_cstr(ctx, "type");
+    command_object_inspect_obj_type(ctx, obj->header.type);
+    grn_ctx_output_cstr(ctx, "value");
+    command_object_inspect_column_value(ctx, obj);
+  }
+  grn_ctx_output_map_close(ctx);
+}
+
+static void
 command_object_inspect_db(grn_ctx *ctx, grn_obj *obj)
 {
   grn_db *db = (grn_db *)obj;
@@ -200,6 +244,11 @@ command_object_inspect_dispatch(grn_ctx *ctx, grn_obj *obj)
   case GRN_TABLE_DAT_KEY :
   case GRN_TABLE_NO_KEY :
     command_object_inspect_table(ctx, obj);
+    break;
+  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_VAR_SIZE :
+  case GRN_COLUMN_INDEX :
+    command_object_inspect_column(ctx, obj);
     break;
   case GRN_DB :
     command_object_inspect_db(ctx, obj);

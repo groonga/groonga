@@ -1,0 +1,45 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+object_inspect Memos.title
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 257,
+    "name": "title",
+    "table": {
+      "id": 256,
+      "name": "Memos",
+      "type": {
+        "id": 51,
+        "name": "table:no_key"
+      },
+      "key": null,
+      "value": {
+        "type": null
+      },
+      "n_records": 0
+    },
+    "full_name": "Memos.title",
+    "type": {
+      "id": 65,
+      "name": "column:var_size"
+    },
+    "value": {
+      "type": {
+        "id": 14,
+        "name": "ShortText",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4096
+      }
+    }
+  }
+]
