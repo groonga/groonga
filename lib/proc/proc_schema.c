@@ -99,8 +99,8 @@ command_schema_output_value_type(grn_ctx *ctx, grn_obj *value_type)
 
 static void
 command_schema_output_command(grn_ctx *ctx,
-                           const char *command_name,
-                           grn_obj *arguments)
+                              const char *command_name,
+                              grn_obj *arguments)
 {
   grn_ctx_output_map_open(ctx, "command", 3);
 
