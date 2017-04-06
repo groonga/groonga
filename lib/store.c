@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2016 Brazil
+/*
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1423,6 +1424,11 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *v
 #ifdef GRN_WITH_LZ4
 #include <lz4.h>
 
+# if (LZ4_VERSION_MAJOR == 1 && LZ4_VERSION_MINOR < 6)
+#  define LZ4_compress_default(source, dest, source_size, max_dest_size) \
+  LZ4_compress((source), (dest), (source_size))
+# endif
+
 static void *
 grn_ja_ref_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
@@ -1727,7 +1733,10 @@ grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
     return ctx->rc;
   }
   lz4_value = (char *)((uint64_t *)packed_value + 1);
-  lz4_value_len_real = LZ4_compress((const char*)value, lz4_value, value_len);
+  lz4_value_len_real = LZ4_compress_default((const char *)value,
+                                            lz4_value,
+                                            value_len,
+                                            lz4_value_len_max);
   if (lz4_value_len_real <= 0) {
     GRN_FREE(packed_value);
     grn_ja_compress_error(ctx,
