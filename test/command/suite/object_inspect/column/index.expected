@@ -94,6 +94,20 @@ object_inspect Terms.memos_title_content
           0
         ]
       }
-    }
+    },
+    "sources": [
+      {
+        "id": 257,
+        "name": "title",
+        "table": "Memos",
+        "full_name": "Memos.title"
+      },
+      {
+        "id": 258,
+        "name": "content",
+        "table": "Memos",
+        "full_name": "Memos.content"
+      }
+    ]
   }
 ]

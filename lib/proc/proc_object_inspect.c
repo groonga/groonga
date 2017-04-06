@@ -418,9 +418,74 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
 }
 
 static void
+command_object_inspect_column_index_sources(grn_ctx *ctx, grn_obj *column)
+{
+  grn_obj *source_table;
+  grn_obj source_ids;
+  unsigned int i, n_ids;
+
+  source_table = grn_ctx_at(ctx, grn_obj_get_range(ctx, column));
+
+  GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
+
+  n_ids = GRN_BULK_VSIZE(&source_ids) / sizeof(grn_id);
+  grn_ctx_output_array_open(ctx, "sources", n_ids);
+  for (i = 0; i < n_ids; i++) {
+    grn_id source_id;
+    grn_obj *source;
+
+    source_id = GRN_RECORD_VALUE_AT(&source_ids, i);
+    source = grn_ctx_at(ctx, source_id);
+
+    grn_ctx_output_map_open(ctx, "source", 4);
+    {
+      grn_ctx_output_cstr(ctx, "id");
+      if (grn_obj_is_table(ctx, source)) {
+        grn_ctx_output_null(ctx);
+      } else {
+        grn_ctx_output_uint64(ctx, source_id);
+      }
+
+      grn_ctx_output_cstr(ctx, "name");
+      if (grn_obj_is_table(ctx, source)) {
+        grn_ctx_output_cstr(ctx, "_key");
+      } else {
+        command_object_inspect_column_name(ctx, source);
+      }
+
+      grn_ctx_output_cstr(ctx, "table");
+      command_object_inspect_obj_name(ctx, source_table);
+
+      grn_ctx_output_cstr(ctx, "full_name");
+      if (grn_obj_is_table(ctx, source)) {
+        char name[GRN_TABLE_MAX_KEY_SIZE];
+        unsigned int name_size;
+        name_size = grn_obj_name(ctx, source, name, GRN_TABLE_MAX_KEY_SIZE);
+        name[name_size] = '\0';
+        grn_strcat(name, GRN_TABLE_MAX_KEY_SIZE, "._key");
+        grn_ctx_output_cstr(ctx, name);
+      } else {
+        command_object_inspect_obj_name(ctx, source);
+      }
+    }
+    grn_ctx_output_map_close(ctx);
+  }
+  grn_ctx_output_array_close(ctx);
+
+  GRN_OBJ_FIN(ctx, &source_ids);
+}
+
+static void
 command_object_inspect_column(grn_ctx *ctx, grn_obj *column)
 {
-  grn_ctx_output_map_open(ctx, "column", 6);
+  int n_elements = 6;
+  grn_bool is_index = (column->header.type == GRN_COLUMN_INDEX);
+
+  if (is_index) {
+    n_elements += 1;
+  }
+  grn_ctx_output_map_open(ctx, "column", n_elements);
   {
     grn_ctx_output_cstr(ctx, "id");
     grn_ctx_output_uint64(ctx, grn_obj_id(ctx, column));
@@ -434,6 +499,10 @@ command_object_inspect_column(grn_ctx *ctx, grn_obj *column)
     command_object_inspect_column_type(ctx, column);
     grn_ctx_output_cstr(ctx, "value");
     command_object_inspect_column_value(ctx, column);
+    if (is_index) {
+      grn_ctx_output_cstr(ctx, "sources");
+      command_object_inspect_column_index_sources(ctx, column);
+    }
   }
   grn_ctx_output_map_close(ctx);
 }
