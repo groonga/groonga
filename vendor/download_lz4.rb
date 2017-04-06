@@ -22,7 +22,7 @@ def extract_tar_gz(tar_gz_path)
         p [entry.header.typeflag, entry.full_name] if @debug
         if entry.directory?
           FileUtils.mkdir_p(entry.full_name)
-        else
+        elsif entry.file?
           File.open(entry.full_name, "wb") do |file|
             file.print(entry.read)
           end
