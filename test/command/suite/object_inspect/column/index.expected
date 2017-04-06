@@ -61,10 +61,9 @@ object_inspect Terms.memos_title_content
         },
         "size": 4
       },
-      "compress": null
-    },
-    "section": true,
-    "weight": false,
-    "position": true
+      "section": true,
+      "weight": false,
+      "position": true
+    }
   }
 ]

@@ -261,13 +261,35 @@ command_object_inspect_column_compress(grn_ctx *ctx, grn_obj *column)
 static void
 command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
 {
-  grn_ctx_output_map_open(ctx, "value", 2);
+  int n_elements = 1;
+  grn_bool is_index = (column->header.type == GRN_COLUMN_INDEX);
+
+  if (is_index) {
+    n_elements += 3;
+  } else {
+    n_elements += 1;
+  }
+  grn_ctx_output_map_open(ctx, "value", n_elements);
   {
-    grn_id range_id = grn_obj_get_range(ctx, column);
+    grn_id range_id;
+    grn_column_flags column_flags;
+
+    range_id = grn_obj_get_range(ctx, column);
+    column_flags = grn_column_get_flags(ctx, column);
+
     grn_ctx_output_cstr(ctx, "type");
     command_object_inspect_type(ctx, grn_ctx_at(ctx, range_id));
-    grn_ctx_output_cstr(ctx, "compress");
-    command_object_inspect_column_compress(ctx, column);
+    if (is_index) {
+      grn_ctx_output_cstr(ctx, "section");
+      grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WITH_SECTION) != 0);
+      grn_ctx_output_cstr(ctx, "weight");
+      grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WITH_WEIGHT) != 0);
+      grn_ctx_output_cstr(ctx, "position");
+      grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WITH_POSITION) != 0);
+    } else {
+      grn_ctx_output_cstr(ctx, "compress");
+      command_object_inspect_column_compress(ctx, column);
+    }
   }
   grn_ctx_output_map_close(ctx);
 }
@@ -275,12 +297,8 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
 static void
 command_object_inspect_column(grn_ctx *ctx, grn_obj *column)
 {
-  grn_ctx_output_map_open(ctx, "column", 9);
+  grn_ctx_output_map_open(ctx, "column", 6);
   {
-    grn_column_flags column_flags;
-
-    column_flags = grn_column_get_flags(ctx, column);
-
     grn_ctx_output_cstr(ctx, "id");
     grn_ctx_output_uint64(ctx, grn_obj_id(ctx, column));
     grn_ctx_output_cstr(ctx, "name");
@@ -293,12 +311,6 @@ command_object_inspect_column(grn_ctx *ctx, grn_obj *column)
     command_object_inspect_column_type(ctx, column);
     grn_ctx_output_cstr(ctx, "value");
     command_object_inspect_column_value(ctx, column);
-    grn_ctx_output_cstr(ctx, "section");
-    grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WITH_SECTION) != 0);
-    grn_ctx_output_cstr(ctx, "weight");
-    grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WITH_WEIGHT) != 0);
-    grn_ctx_output_cstr(ctx, "position");
-    grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WITH_POSITION) != 0);
   }
   grn_ctx_output_map_close(ctx);
 }
