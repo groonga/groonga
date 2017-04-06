@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3122,6 +3122,10 @@ show_usage(FILE *output)
           "      --default-request-timeout <timeout>:\n"
           "                                specify the default request timeout in seconds\n"
           "                                (default: %f)\n"
+          "      --cache-base-path <path>: specify the cache base path\n"
+          "                                You can make cache persistent by this option\n"
+          "                                You must specify path on memory file system\n"
+          "                                (default: none; disabled)\n"
           "\n"
           "Memcached options:\n"
           "      --memcached-column <column>:\n"
@@ -3213,6 +3217,7 @@ main(int argc, char **argv)
   const char *working_directory_arg = NULL;
   const char *config_path = NULL;
   const char *default_request_timeout_arg = NULL;
+  const char *cache_base_path = NULL;
   int exit_code = EXIT_SUCCESS;
   int i;
   int flags = 0;
@@ -3254,6 +3259,7 @@ main(int argc, char **argv)
      FLAG_USE_WINDOWS_EVENT_LOG, GETOPT_OP_ON},
     {'\0', "memcached-column", NULL, 0, GETOPT_OP_NONE},
     {'\0', "default-request-timeout", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "cache-base-path", NULL, 0, GETOPT_OP_NONE},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
@@ -3279,6 +3285,7 @@ main(int argc, char **argv)
   opts[27].arg = &working_directory_arg;
   opts[29].arg = &memcached_column_name;
   opts[30].arg = &default_request_timeout_arg;
+  opts[31].arg = &cache_base_path;
 
   reset_ready_notify_pipe();
 
@@ -3320,6 +3327,10 @@ main(int argc, char **argv)
               argv[0], working_directory_arg, strerror(errno));
       return EXIT_FAILURE;
     }
+  }
+
+  if (cache_base_path) {
+    grn_set_default_cache_base_path(cache_base_path);
   }
 
   /* ignore mode option in config file */
