@@ -50,5 +50,5 @@ def download(url, base)
   FileUtils.rm_rf(tar_gz)
 end
 
-download("https://github.com/lz4/lz4/archive/#{lz4_version}.tar.gz",
+download("https://github.com/lz4/lz4/archive/v#{lz4_version}.tar.gz",
          lz4_base)
