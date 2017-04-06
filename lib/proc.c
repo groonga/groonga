@@ -844,14 +844,14 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           }
           for (i = 0; i < GRN_II_MAX_LSEG; i++) {
             j = h->binfo[i];
-            if (j < 0x20000) {
+            if (j != GRN_II_PSEG_NOT_ASSIGNED) {
               if (j > max) { max = j; }
               b++;
             }
           }
           for (i = 0; i < GRN_II_MAX_LSEG; i++) {
             j = h->ainfo[i];
-            if (j < 0x20000) {
+            if (j != GRN_II_PSEG_NOT_ASSIGNED) {
               if (j > max) { max = j; }
               a++;
             }

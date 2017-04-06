@@ -60,6 +60,8 @@ struct _grn_ii {
  */
 #define GRN_II_MAX_CHUNK_MEDIUM   (1 << (GRN_II_W_TOTAL_CHUNK - GRN_II_W_CHUNK - 4))
 
+#define GRN_II_PSEG_NOT_ASSIGNED  0xffffffff
+
 struct grn_ii_header {
   uint64_t total_chunk_size;
   uint64_t bmax;

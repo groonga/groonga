@@ -59,7 +59,6 @@
 #define S_ARRAY_ELEMENT          (1 << W_ARRAY_ELEMENT)
 #define W_ARRAY                  (W_SEGMENT - W_ARRAY_ELEMENT)
 #define ARRAY_MASK_IN_A_SEGMENT  ((1 << W_ARRAY) - 1)
-#define NOT_ASSIGNED             0xffffffff
 
 #define S_GARBAGE                (1<<12)
 
@@ -234,11 +233,11 @@ segment_get(grn_ctx *ctx, grn_ii *ii)
       used = GRN_CALLOC(max_segment);
       if (!used) { return max_segment; }
       for (i = 0; i < GRN_II_MAX_LSEG && i < max_segment; i++) {
-        if ((pseg = ii->header->ainfo[i]) != NOT_ASSIGNED) {
+        if ((pseg = ii->header->ainfo[i]) != GRN_II_PSEG_NOT_ASSIGNED) {
           if (pseg > pmax) { pmax = pseg; }
           used[pseg] = 1;
         }
-        if ((pseg = ii->header->binfo[i]) != NOT_ASSIGNED) {
+        if ((pseg = ii->header->binfo[i]) != GRN_II_PSEG_NOT_ASSIGNED) {
           if (pseg > pmax) { pmax = pseg; }
           used[pseg] = 1;
         }
@@ -277,13 +276,13 @@ buffer_segment_new(grn_ctx *ctx, grn_ii *ii, uint32_t *segno)
 {
   uint32_t lseg, pseg;
   if (*segno < GRN_II_MAX_LSEG) {
-    if (ii->header->binfo[*segno] != NOT_ASSIGNED) {
+    if (ii->header->binfo[*segno] != GRN_II_PSEG_NOT_ASSIGNED) {
       return GRN_INVALID_ARGUMENT;
     }
     lseg = *segno;
   } else {
     for (lseg = 0; lseg < GRN_II_MAX_LSEG; lseg++) {
-      if (ii->header->binfo[lseg] == NOT_ASSIGNED) { break; }
+      if (ii->header->binfo[lseg] == GRN_II_PSEG_NOT_ASSIGNED) { break; }
     }
     if (lseg == GRN_II_MAX_LSEG) { return GRN_NO_MEMORY_AVAILABLE; }
     *segno = lseg;
@@ -313,7 +312,7 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
            GRN_II_MAX_LSEG);
       return ctx->rc;
     }
-    if (ii->header->binfo[i] == NOT_ASSIGNED) { break; }
+    if (ii->header->binfo[i] == GRN_II_PSEG_NOT_ASSIGNED) { break; }
   }
   *lseg0 = i++;
   for (;; i++) {
@@ -327,7 +326,7 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
            *lseg0, GRN_II_MAX_LSEG);
       return ctx->rc;
     }
-    if (ii->header->binfo[i] == NOT_ASSIGNED) { break; }
+    if (ii->header->binfo[i] == GRN_II_PSEG_NOT_ASSIGNED) { break; }
   }
   *lseg1 = i;
   if ((*pseg0 = segment_get(ctx, ii)) == ii->seg->header->max_segment) {
@@ -355,8 +354,12 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
     char *used = GRN_CALLOC(ii->seg->header->max_segment);
     if (!used) { return GRN_NO_MEMORY_AVAILABLE; }
     for (i = 0; i < GRN_II_MAX_LSEG; i++) {
-      if ((pseg = ii->header->ainfo[i]) != NOT_ASSIGNED) { used[pseg] = 1; }
-      if ((pseg = ii->header->binfo[i]) != NOT_ASSIGNED) { used[pseg] = 1; }
+      if ((pseg = ii->header->ainfo[i]) != GRN_II_PSEG_NOT_ASSIGNED) {
+        used[pseg] = 1;
+      }
+      if ((pseg = ii->header->binfo[i]) != GRN_II_PSEG_NOT_ASSIGNED) {
+        used[pseg] = 1;
+      }
     }
     for (pseg = 0;; pseg++) {
       if (pseg == ii->seg->header->max_segment) {
@@ -381,7 +384,7 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
 }
 
 #define BGQENQUE(lseg) do {\
-  if (ii->header->binfo[lseg] != NOT_ASSIGNED) {\
+  if (ii->header->binfo[lseg] != GRN_II_PSEG_NOT_ASSIGNED) {\
     ii->header->bgqbody[ii->header->bgqhead] = ii->header->binfo[lseg];\
     ii->header->bgqhead = (ii->header->bgqhead + 1) & (GRN_II_BGQSIZE - 1);\
     GRN_ASSERT(ii->header->bgqhead != ii->header->bgqtail);\
@@ -402,7 +405,7 @@ buffer_segment_clear(grn_ii *ii, uint32_t lseg)
 {
   BGQENQUE(lseg);
   // smb_wmb();
-  ii->header->binfo[lseg] = NOT_ASSIGNED;
+  ii->header->binfo[lseg] = GRN_II_PSEG_NOT_ASSIGNED;
 }
 
 /* chunk */
@@ -493,7 +496,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
       grn_io_win iw, iw_;
       iw_.addr = NULL;
       gseg = &ii->header->garbages[m - GRN_II_W_LEAST_CHUNK];
-      while (*gseg != NOT_ASSIGNED) {
+      while (*gseg != GRN_II_PSEG_NOT_ASSIGNED) {
         ginfo = WIN_MAP(ii->chunk, ctx, &iw, *gseg, 0, S_GARBAGE, grn_io_rdwr);
         //GRN_IO_SEG_MAP2(ii->chunk, *gseg, ginfo);
         if (!ginfo) {
@@ -510,7 +513,8 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
           }
           return ctx->rc;
         }
-        if (ginfo->next != NOT_ASSIGNED || ginfo->nrecs > N_GARBAGES_TH) {
+        if (ginfo->next != GRN_II_PSEG_NOT_ASSIGNED ||
+            ginfo->nrecs > N_GARBAGES_TH) {
           *res = ginfo->recs[ginfo->tail];
           if (++ginfo->tail == N_GARBAGES) { ginfo->tail = 0; }
           ginfo->nrecs--;
@@ -530,7 +534,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
       if (iw_.addr) { grn_io_win_unmap(&iw_); }
     }
     vp = &ii->header->free_chunks[m - GRN_II_W_LEAST_CHUNK];
-    if (*vp == NOT_ASSIGNED) {
+    if (*vp == GRN_II_PSEG_NOT_ASSIGNED) {
       int i = 0;
       while (HEADER_CHUNK_AT(ii, i)) {
         if (++i >= n_chunks) {
@@ -551,7 +555,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
     *res = *vp;
     *vp += 1 << (m - GRN_II_W_LEAST_CHUNK);
     if (!(*vp & ((1 << GRN_II_N_CHUNK_VARIATION) - 1))) {
-      *vp = NOT_ASSIGNED;
+      *vp = GRN_II_PSEG_NOT_ASSIGNED;
     }
     return GRN_SUCCESS;
   }
@@ -587,7 +591,7 @@ chunk_free(grn_ctx *ctx, grn_ii *ii,
   }
   gseg = &ii->header->garbages[m - GRN_II_W_LEAST_CHUNK];
   iw_.addr = NULL;
-  while (*gseg != NOT_ASSIGNED) {
+  while (*gseg != GRN_II_PSEG_NOT_ASSIGNED) {
     ginfo = WIN_MAP(ii->chunk, ctx, &iw, *gseg, 0, S_GARBAGE, grn_io_rdwr);
     // GRN_IO_SEG_MAP2(ii->chunk, *gseg, ginfo);
     if (!ginfo) {
@@ -599,7 +603,7 @@ chunk_free(grn_ctx *ctx, grn_ii *ii,
     iw_ = iw;
     gseg = &ginfo->next;
   }
-  if (*gseg == NOT_ASSIGNED) {
+  if (*gseg == GRN_II_PSEG_NOT_ASSIGNED) {
     grn_rc rc;
     if ((rc = chunk_new(ctx, ii, gseg, S_GARBAGE))) {
       if (iw_.addr) { grn_io_win_unmap(&iw_); }
@@ -624,7 +628,7 @@ chunk_free(grn_ctx *ctx, grn_ii *ii,
     ginfo->head = 0;
     ginfo->tail = 0;
     ginfo->nrecs = 0;
-    ginfo->next = NOT_ASSIGNED;
+    ginfo->next = GRN_II_PSEG_NOT_ASSIGNED;
   }
   if (iw_.addr) { grn_io_win_unmap(&iw_); }
   ginfo->recs[ginfo->head] = offset;
@@ -2169,9 +2173,9 @@ buffer_open(grn_ctx *ctx, grn_ii *ii, uint32_t pos, buffer_term **bt, buffer **b
   byte *p = NULL;
   uint16_t lseg = (uint16_t) (LSEG(pos));
   uint32_t pseg = ii->header->binfo[lseg];
-  if (pseg != NOT_ASSIGNED) {
+  if (pseg != GRN_II_PSEG_NOT_ASSIGNED) {
     GRN_IO_SEG_REF(ii->seg, pseg, p);
-    if (!p) { return NOT_ASSIGNED; }
+    if (!p) { return GRN_II_PSEG_NOT_ASSIGNED; }
     if (b) { *b = (buffer *)p; }
     if (bt) { *bt = (buffer_term *)(p + LPOS(pos)); }
   }
@@ -2193,14 +2197,14 @@ inline static uint32_t
 buffer_open_if_capable(grn_ctx *ctx, grn_ii *ii, int32_t seg, int size, buffer **b)
 {
   uint32_t pseg, pos = SEG2POS(seg, 0);
-  if ((pseg = buffer_open(ctx, ii, pos, NULL, b)) != NOT_ASSIGNED) {
+  if ((pseg = buffer_open(ctx, ii, pos, NULL, b)) != GRN_II_PSEG_NOT_ASSIGNED) {
     uint16_t nterms = (*b)->header.nterms - (*b)->header.nterms_void;
     if (!((nterms < 4096 ||
            (ii->header->total_chunk_size >> ((nterms >> 8) - 6))
            > (*b)->header.chunk_size) &&
           ((*b)->header.buffer_free >= size + sizeof(buffer_term)))) {
       buffer_close(ctx, ii, pseg);
-      return NOT_ASSIGNED;
+      return GRN_II_PSEG_NOT_ASSIGNED;
     }
   }
   return pseg;
@@ -2470,7 +2474,9 @@ array_at(grn_ctx *ctx, grn_ii *ii, uint32_t id)
   uint32_t seg, pseg;
   if (id > GRN_ID_MAX) { return NULL; }
   seg = id >> W_ARRAY;
-  if ((pseg = ii->header->ainfo[seg]) == NOT_ASSIGNED) { return NULL; }
+  if ((pseg = ii->header->ainfo[seg]) == GRN_II_PSEG_NOT_ASSIGNED) {
+    return NULL;
+  }
   GRN_IO_SEG_REF(ii->seg, pseg, p);
   if (!p) { return NULL; }
   return (uint32_t *)(p + (id & ARRAY_MASK_IN_A_SEGMENT) * S_ARRAY_ELEMENT);
@@ -2484,7 +2490,7 @@ array_get(grn_ctx *ctx, grn_ii *ii, uint32_t id)
   uint32_t pseg;
   if (id > GRN_ID_MAX) { return NULL; }
   seg = id >> W_ARRAY;
-  if ((pseg = ii->header->ainfo[seg]) == NOT_ASSIGNED) {
+  if ((pseg = ii->header->ainfo[seg]) == GRN_II_PSEG_NOT_ASSIGNED) {
     if (segment_get_clear(ctx, ii, &pseg)) { return NULL; }
     ii->header->ainfo[seg] = pseg;
     if (seg >= ii->header->amax) { ii->header->amax = seg + 1; }
@@ -3346,7 +3352,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
   buffer *sb, *db = NULL;
   uint8_t *dc, *sc = NULL;
   uint32_t ds, pseg, scn, dcn = 0;
-  if (ii->header->binfo[seg] == NOT_ASSIGNED) {
+  if (ii->header->binfo[seg] == GRN_II_PSEG_NOT_ASSIGNED) {
     DEFINE_NAME(ii);
     CRIT(GRN_FILE_CORRUPT,
          "[ii][buffer][flush] invalid segment: "
@@ -3366,7 +3372,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
     return ctx->rc;
   }
   pseg = buffer_open(ctx, ii, SEG2POS(seg, 0), NULL, &sb);
-  if (pseg == NOT_ASSIGNED) {
+  if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
     DEFINE_NAME(ii);
     MERR("[ii][buffer][flush] failed to open buffer: "
          "<%.*s> :"
@@ -3381,7 +3387,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
       uint32_t actual_chunk_size = 0;
       uint32_t max_dest_chunk_size = sb->header.chunk_size + S_SEGMENT;
       if ((dc = GRN_MALLOC(max_dest_chunk_size * 2))) {
-        if ((scn = sb->header.chunk) == NOT_ASSIGNED ||
+        if ((scn = sb->header.chunk) == GRN_II_PSEG_NOT_ASSIGNED ||
             (sc = WIN_MAP(ii->chunk, ctx, &sw, scn, 0,
                           sb->header.chunk_size, grn_io_rdonly))) {
           uint16_t n = sb->header.nterms;
@@ -3396,13 +3402,14 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
             }
             if (ctx->rc == GRN_SUCCESS) {
               grn_rc rc;
-              db->header.chunk = actual_chunk_size ? dcn : NOT_ASSIGNED;
+              db->header.chunk =
+                actual_chunk_size ? dcn : GRN_II_PSEG_NOT_ASSIGNED;
               fake_map(ctx, ii->chunk, &dw, dc, dcn, actual_chunk_size);
               rc = grn_io_win_unmap(&dw);
               if (rc == GRN_SUCCESS) {
                 buffer_segment_update(ii, seg, ds);
                 ii->header->total_chunk_size += actual_chunk_size;
-                if (scn != NOT_ASSIGNED) {
+                if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
                   grn_io_win_unmap(&sw);
                   chunk_free(ctx, ii, scn, 0, sb->header.chunk_size);
                   ii->header->total_chunk_size -= sb->header.chunk_size;
@@ -3412,7 +3419,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                 if (actual_chunk_size) {
                   chunk_free(ctx, ii, dcn, 0, actual_chunk_size);
                 }
-                if (scn != NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
+                if (scn != GRN_II_PSEG_NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
                 {
                   DEFINE_NAME(ii);
                   ERR(rc,
@@ -3427,11 +3434,11 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
               }
             } else {
               GRN_FREE(dc);
-              if (scn != NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
+              if (scn != GRN_II_PSEG_NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
             }
           } else {
             GRN_FREE(dc);
-            if (scn != NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
+            if (scn != GRN_II_PSEG_NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
           }
         } else {
           GRN_FREE(dc);
@@ -3487,12 +3494,12 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   grn_obj buf;
   size_t lower_bound;
   int64_t nloops = 0, nviolations = 0;
-  if (ii->header->binfo[seg] == NOT_ASSIGNED) {
+  if (ii->header->binfo[seg] == GRN_II_PSEG_NOT_ASSIGNED) {
     GRN_OUTPUT_BOOL(GRN_FALSE);
     return;
   }
   pseg = buffer_open(ctx, ii, SEG2POS(seg, 0), NULL, &sb);
-  if (pseg == NOT_ASSIGNED) {
+  if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
     GRN_OUTPUT_BOOL(GRN_FALSE);
     return;
   }
@@ -3506,7 +3513,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   GRN_OUTPUT_MAP_OPEN("BUFFER", -1);
   GRN_OUTPUT_CSTR("buffer id");
   GRN_OUTPUT_INT64(seg);
-  if ((scn = sb->header.chunk) == NOT_ASSIGNED) {
+  if ((scn = sb->header.chunk) == GRN_II_PSEG_NOT_ASSIGNED) {
     GRN_OUTPUT_CSTR("void chunk size");
     GRN_OUTPUT_INT64(sb->header.chunk_size);
   } else {
@@ -3743,7 +3750,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
   buffer *sb, *db0 = NULL, *db1 = NULL;
   uint8_t *sc = NULL, *dc0, *dc1;
   uint32_t dps0 = 0, dps1 = 0, dls0 = 0, dls1 = 0, sps, scn, dcn0 = 0, dcn1 = 0;
-  if (ii->header->binfo[seg] == NOT_ASSIGNED) {
+  if (ii->header->binfo[seg] == GRN_II_PSEG_NOT_ASSIGNED) {
     DEFINE_NAME(ii);
     CRIT(GRN_FILE_CORRUPT,
          "[ii][buffer][split] invalid segment: "
@@ -3765,7 +3772,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
     return ctx->rc;
   }
   sps = buffer_open(ctx, ii, SEG2POS(seg, 0), NULL, &sb);
-  if (sps == NOT_ASSIGNED) {
+  if (sps == GRN_II_PSEG_NOT_ASSIGNED) {
     DEFINE_NAME(ii);
     MERR("[ii][buffer][split] failed to open buffer: "
          "<%.*s> :"
@@ -3782,7 +3789,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
         uint32_t max_dest_chunk_size = sb->header.chunk_size + S_SEGMENT;
         if ((dc0 = GRN_MALLOC(max_dest_chunk_size * 2))) {
           if ((dc1 = GRN_MALLOC(max_dest_chunk_size * 2))) {
-            if ((scn = sb->header.chunk) == NOT_ASSIGNED ||
+            if ((scn = sb->header.chunk) == GRN_II_PSEG_NOT_ASSIGNED ||
                 (sc = WIN_MAP(ii->chunk, ctx, &sw, scn, 0,
                               sb->header.chunk_size, grn_io_rdonly))) {
               term_split(ctx, ii->lexicon, sb, db0, db1);
@@ -3794,7 +3801,8 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                 }
                 if (ctx->rc == GRN_SUCCESS) {
                   grn_rc rc;
-                  db0->header.chunk = actual_db0_chunk_size ? dcn0 : NOT_ASSIGNED;
+                  db0->header.chunk =
+                    actual_db0_chunk_size ? dcn0 : GRN_II_PSEG_NOT_ASSIGNED;
                   fake_map(ctx, ii->chunk, &dw0, dc0, dcn0, actual_db0_chunk_size);
                   rc = grn_io_win_unmap(&dw0);
                   if (rc == GRN_SUCCESS) {
@@ -3809,7 +3817,8 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                                  actual_db1_chunk_size);
                         rc = grn_io_win_unmap(&dw1);
                         if (rc == GRN_SUCCESS) {
-                          db1->header.chunk = actual_db1_chunk_size ? dcn1 : NOT_ASSIGNED;
+                          db1->header.chunk =
+                            actual_db1_chunk_size ? dcn1 : GRN_II_PSEG_NOT_ASSIGNED;
                           buffer_segment_update(ii, dls0, dps0);
                           buffer_segment_update(ii, dls1, dps1);
                           array_update(ctx, ii, dls0, db0);
@@ -3817,7 +3826,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                           buffer_segment_clear(ii, seg);
                           ii->header->total_chunk_size += actual_db0_chunk_size;
                           ii->header->total_chunk_size += actual_db1_chunk_size;
-                          if (scn != NOT_ASSIGNED) {
+                          if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
                             grn_io_win_unmap(&sw);
                             chunk_free(ctx, ii, scn, 0, sb->header.chunk_size);
                             ii->header->total_chunk_size -= sb->header.chunk_size;
@@ -3830,7 +3839,9 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                             chunk_free(ctx, ii, dcn0, 0, actual_db0_chunk_size);
                           }
                           GRN_FREE(dc1);
-                          if (scn != NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
+                          if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
+                            grn_io_win_unmap(&sw);
+                          }
                           {
                             DEFINE_NAME(ii);
                             ERR(rc,
@@ -3855,14 +3866,18 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                           chunk_free(ctx, ii, dcn0, 0, actual_db0_chunk_size);
                         }
                         GRN_FREE(dc1);
-                        if (scn != NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
+                        if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
+                          grn_io_win_unmap(&sw);
+                        }
                       }
                     } else {
                       if (actual_db0_chunk_size) {
                         chunk_free(ctx, ii, dcn0, 0, actual_db0_chunk_size);
                       }
                       GRN_FREE(dc1);
-                      if (scn != NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
+                      if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
+                        grn_io_win_unmap(&sw);
+                      }
                     }
                   } else {
                     if (actual_db0_chunk_size) {
@@ -3870,7 +3885,9 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                     }
                     GRN_FREE(dc1);
                     GRN_FREE(dc0);
-                    if (scn != NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
+                    if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
+                      grn_io_win_unmap(&sw);
+                    }
                     {
                       DEFINE_NAME(ii);
                       ERR(rc,
@@ -3889,12 +3906,12 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                 } else {
                   GRN_FREE(dc1);
                   GRN_FREE(dc0);
-                  if (scn != NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
+                  if (scn != GRN_II_PSEG_NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
                 }
               } else {
                 GRN_FREE(dc1);
                 GRN_FREE(dc0);
-                if (scn != NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
+                if (scn != GRN_II_PSEG_NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
               }
             } else {
               GRN_FREE(dc1);
@@ -3999,7 +4016,7 @@ buffer_new_find_segment(grn_ctx *ctx,
     uint32_t pos = a[0];
     if (!pos || (pos & 1)) { break; }
     *pseg = buffer_open(ctx, ii, pos, NULL, b);
-    if (*pseg == NOT_ASSIGNED) { break; }
+    if (*pseg == GRN_II_PSEG_NOT_ASSIGNED) { break; }
     if ((*b)->header.buffer_free >= size + sizeof(buffer_term)) {
       *lseg = LSEG(pos);
       break;
@@ -4062,7 +4079,7 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
       if (cursor) {
         grn_id tid;
         while (ctx->rc == GRN_SUCCESS &&
-               *lseg == NOT_ASSIGNED &&
+               *lseg == GRN_II_PSEG_NOT_ASSIGNED &&
                (tid = grn_pat_cursor_next(ctx, cursor))) {
           buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
         }
@@ -4073,7 +4090,7 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
       int target_key_size = key_size;
       int reduced_key_size = 0;
 
-      while (*lseg == NOT_ASSIGNED && target_key_size > 0) {
+      while (*lseg == GRN_II_PSEG_NOT_ASSIGNED && target_key_size > 0) {
         grn_id tid;
 
         cursor = grn_pat_cursor_open(ctx,
@@ -4087,13 +4104,13 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
 
         if (reduced_key_size == 0) {
           while (ctx->rc == GRN_SUCCESS &&
-                 *lseg == NOT_ASSIGNED &&
+                 *lseg == GRN_II_PSEG_NOT_ASSIGNED &&
                  (tid = grn_pat_cursor_next(ctx, cursor))) {
             buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
           }
         } else {
           while (ctx->rc == GRN_SUCCESS &&
-                 *lseg == NOT_ASSIGNED &&
+                 *lseg == GRN_II_PSEG_NOT_ASSIGNED &&
                  (tid = grn_pat_cursor_next(ctx, cursor))) {
             void *current_key;
             int current_key_size;
@@ -4126,7 +4143,7 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
     if (cursor) {
       grn_id tid;
       while (ctx->rc == GRN_SUCCESS &&
-             *lseg == NOT_ASSIGNED &&
+             *lseg == GRN_II_PSEG_NOT_ASSIGNED &&
              (tid = grn_pat_cursor_next(ctx, cursor))) {
         buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
       }
@@ -4146,7 +4163,7 @@ buffer_new_lexicon_other(grn_ctx *ctx,
                          uint32_t *pseg)
 {
   GRN_TABLE_EACH_BEGIN(ctx, ii->lexicon, cursor, tid) {
-    if (ctx->rc != GRN_SUCCESS || *lseg != NOT_ASSIGNED) {
+    if (ctx->rc != GRN_SUCCESS || *lseg != GRN_II_PSEG_NOT_ASSIGNED) {
       break;
     }
     buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
@@ -4160,7 +4177,7 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
 {
   buffer *b = NULL;
   uint16_t offset;
-  uint32_t lseg = NOT_ASSIGNED, pseg = NOT_ASSIGNED;
+  uint32_t lseg = GRN_II_PSEG_NOT_ASSIGNED, pseg = GRN_II_PSEG_NOT_ASSIGNED;
   if (S_SEGMENT - sizeof(buffer_header) < size + sizeof(buffer_term)) {
     DEFINE_NAME(ii);
     MERR("[ii][buffer][new] requested size is too large: "
@@ -4169,21 +4186,21 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
          name_size, name,
          (size_t)(size + sizeof(buffer_term)),
          (size_t)(S_SEGMENT - sizeof(buffer_header)));
-    return NOT_ASSIGNED;
+    return GRN_II_PSEG_NOT_ASSIGNED;
   }
   if (ii->lexicon->header.type == GRN_TABLE_PAT_KEY) {
     buffer_new_lexicon_pat(ctx, ii, size, id, h, &b, &lseg, &pseg);
   } else {
     buffer_new_lexicon_other(ctx, ii, size, id, h, &b, &lseg, &pseg);
   }
-  if (lseg == NOT_ASSIGNED) {
+  if (lseg == GRN_II_PSEG_NOT_ASSIGNED) {
     if (buffer_segment_new(ctx, ii, &lseg) ||
-        (pseg = buffer_open(ctx, ii, SEG2POS(lseg, 0), NULL, &b)) == NOT_ASSIGNED) {
-      return NOT_ASSIGNED;
+        (pseg = buffer_open(ctx, ii, SEG2POS(lseg, 0), NULL, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
+      return GRN_II_PSEG_NOT_ASSIGNED;
     }
     memset(b, 0, S_SEGMENT);
     b->header.buffer_free = S_SEGMENT - sizeof(buffer_header);
-    b->header.chunk = NOT_ASSIGNED;
+    b->header.chunk = GRN_II_PSEG_NOT_ASSIGNED;
   }
   if (b->header.nterms_void) {
     for (offset = 0; offset < b->header.nterms; offset++) {
@@ -4270,12 +4287,12 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
   header = grn_io_header(seg);
   grn_io_set_type(seg, GRN_COLUMN_INDEX);
   for (i = 0; i < GRN_II_MAX_LSEG; i++) {
-    header->ainfo[i] = NOT_ASSIGNED;
-    header->binfo[i] = NOT_ASSIGNED;
+    header->ainfo[i] = GRN_II_PSEG_NOT_ASSIGNED;
+    header->binfo[i] = GRN_II_PSEG_NOT_ASSIGNED;
   }
   for (i = 0; i <= GRN_II_N_CHUNK_VARIATION; i++) {
-    header->free_chunks[i] = NOT_ASSIGNED;
-    header->garbages[i] = NOT_ASSIGNED;
+    header->free_chunks[i] = GRN_II_PSEG_NOT_ASSIGNED;
+    header->garbages[i] = GRN_II_PSEG_NOT_ASSIGNED;
   }
   header->flags = flags;
   ii->seg = seg;
@@ -4534,7 +4551,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     if (a[0]) {
       if (!(a[0] & 1)) {
         pos = a[0];
-        if ((pseg = buffer_open(ctx, ii, pos, &bt, &b)) == NOT_ASSIGNED) {
+        if ((pseg = buffer_open(ctx, ii, pos, &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
           DEFINE_NAME(ii);
           MERR("[ii][update][one] failed to allocate a buffer: "
                "<%.*s>: "
@@ -4592,7 +4609,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                     "grn_ii_update_one: a[0] changed %d->%d", a[0], pos);
             continue;
           }
-          if ((pseg = buffer_open(ctx, ii, pos, &bt, &b)) == NOT_ASSIGNED) {
+          if ((pseg = buffer_open(ctx, ii, pos, &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
             GRN_LOG(ctx, GRN_LOG_CRIT, "buffer not found a[0]=%d", a[0]);
             {
               DEFINE_NAME(ii);
@@ -4655,7 +4672,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             goto exit;
           }
           pseg = buffer_new(ctx, ii, size + size2, &pos, &bt, &br, &b, tid, h);
-          if (pseg == NOT_ASSIGNED) {
+          if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
             GRN_FREE(bs2);
             {
               DEFINE_NAME(ii);
@@ -4710,7 +4727,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
       }
     }
     pseg = buffer_new(ctx, ii, size, &pos, &bt, &br, &b, tid, h);
-    if (pseg == NOT_ASSIGNED) {
+    if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
       DEFINE_NAME(ii);
       MERR("[ii][update][one] failed to create a buffer: "
            "<%.*s>: "
@@ -4796,7 +4813,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
            u->rid, u->sid, tid);
       goto exit;
     }
-    if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == NOT_ASSIGNED) {
+    if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
       DEFINE_NAME(ii);
       MERR("[ii][delete][one] failed to allocate a buffer: "
            "<%.*s>: "
@@ -4830,7 +4847,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                 a[0], _a);
         continue;
       }
-      if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == NOT_ASSIGNED) {
+      if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
         DEFINE_NAME(ii);
         MERR("[ii][delete][one] failed to reallocate a buffer: "
              "<%.*s>: "
@@ -4945,7 +4962,7 @@ chunk_is_reused(grn_ctx *ctx, grn_ii *ii, grn_ii_cursor *c, uint32_t offset, uin
       m = GRN_II_W_LEAST_CHUNK;
     }
     gseg = ii->header->garbages[m - GRN_II_W_LEAST_CHUNK];
-    while (gseg != NOT_ASSIGNED) {
+    while (gseg != GRN_II_PSEG_NOT_ASSIGNED) {
       grn_io_win iw;
       grn_ii_ginfo *ginfo = WIN_MAP(ii->chunk, ctx, &iw, gseg, 0, S_GARBAGE,
                                     grn_io_rdwr);
@@ -5007,13 +5024,13 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
       uint32_t chunk;
       buffer_term *bt;
       c->buffer_pseg = buffer_open(ctx, ii, pos, &bt, &c->buf);
-      if (c->buffer_pseg == NOT_ASSIGNED) {
+      if (c->buffer_pseg == GRN_II_PSEG_NOT_ASSIGNED) {
         GRN_FREE(c);
         c = NULL;
         goto exit;
       }
       c->ppseg = &ii->header->binfo[LSEG(pos)];
-      if (bt->size_in_chunk && (chunk = c->buf->header.chunk) != NOT_ASSIGNED) {
+      if (bt->size_in_chunk && (chunk = c->buf->header.chunk) != GRN_II_PSEG_NOT_ASSIGNED) {
         if (!(c->cp = WIN_MAP(ii->chunk, ctx, &c->iw, chunk, bt->pos_in_chunk,
                               bt->size_in_chunk, grn_io_rdonly))) {
           buffer_close(ctx, ii, c->buffer_pseg);
@@ -5500,7 +5517,7 @@ grn_ii_get_chunksize(grn_ctx *ctx, grn_ii *ii, grn_id tid)
       buffer *buf;
       uint32_t pseg;
       buffer_term *bt;
-      if ((pseg = buffer_open(ctx, ii, pos, &bt, &buf)) == NOT_ASSIGNED) {
+      if ((pseg = buffer_open(ctx, ii, pos, &bt, &buf)) == GRN_II_PSEG_NOT_ASSIGNED) {
         res = 0;
       } else {
         res = bt->size_in_chunk;
@@ -5527,7 +5544,7 @@ grn_ii_estimate_size(grn_ctx *ctx, grn_ii *ii, grn_id tid)
       buffer *buf;
       uint32_t pseg;
       buffer_term *bt;
-      if ((pseg = buffer_open(ctx, ii, pos, &bt, &buf)) == NOT_ASSIGNED) {
+      if ((pseg = buffer_open(ctx, ii, pos, &bt, &buf)) == GRN_II_PSEG_NOT_ASSIGNED) {
         res = 0;
       } else {
         res = a[1] + bt->size_in_buffer + 2;
@@ -5560,7 +5577,7 @@ grn_ii_entry_info(grn_ctx *ctx, grn_ii *ii, grn_id tid, unsigned int *a,
   array_unref(ii, tid);
   if (!a[0]) { return 1; }
   if (a[0] & 1) { return 2; }
-  if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == NOT_ASSIGNED) { return 3; }
+  if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) { return 3; }
   *chunk = b->header.chunk;
   *chunk_size = b->header.chunk_size;
   *buffer_free = b->header.buffer_free;
@@ -9419,7 +9436,7 @@ get_term_buffer(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
     uint32_t lseg;
     void *term_buffer;
     for (lseg = 0; lseg < GRN_II_MAX_LSEG; lseg++) {
-      if (ii_buffer->ii->header->binfo[lseg] == NOT_ASSIGNED) { break; }
+      if (ii_buffer->ii->header->binfo[lseg] == GRN_II_PSEG_NOT_ASSIGNED) { break; }
     }
     if (lseg == GRN_II_MAX_LSEG) {
       DEFINE_NAME(ii_buffer->ii);
@@ -10370,7 +10387,7 @@ grn_ii_builder_buffer_assign(grn_ctx *ctx, grn_ii_builder_buffer *buf,
   grn_rc rc;
 
   /* Create a buffer. */
-  buf->buf_id = NOT_ASSIGNED;
+  buf->buf_id = GRN_II_PSEG_NOT_ASSIGNED;
   rc = buffer_segment_new(ctx, buf->ii, &buf->buf_id);
   if (rc != GRN_SUCCESS) {
     if (ctx->rc != GRN_SUCCESS) {

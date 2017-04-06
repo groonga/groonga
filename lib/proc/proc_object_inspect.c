@@ -268,7 +268,7 @@ command_object_inspect_column_index_value_statistics(grn_ctx *ctx,
 
         for (i = 0; i < GRN_II_MAX_LSEG; i++) {
           uint32_t id = h->ainfo[i];
-          if (id < 0x20000) {
+          if (id != GRN_II_PSEG_NOT_ASSIGNED) {
             if (id > max_id) { max_id = id; }
             n_array_segments++;
           }
@@ -284,7 +284,7 @@ command_object_inspect_column_index_value_statistics(grn_ctx *ctx,
 
         for (i = 0; i < GRN_II_MAX_LSEG; i++) {
           uint32_t id = h->binfo[i];
-          if (id < 0x20000) {
+          if (id != GRN_II_PSEG_NOT_ASSIGNED) {
             if (id > max_id) { max_id = id; }
             n_buffer_segments++;
           }
