@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012-2016 Brazil
+  Copyright(C) 2012-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -54,6 +54,7 @@ typedef struct {
   char *name;
   grn_obj *database;
   grn_cache *cache;
+  ngx_str_t cache_base_path;
 } ngx_http_groonga_loc_conf_t;
 
 typedef struct {
@@ -1198,6 +1199,8 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
   conf->config_file = NULL;
   conf->config_line = 0;
   conf->cache = NULL;
+  conf->cache_base_path.data = NULL;
+  conf->cache_base_path.len = 0;
 
   return conf;
 }
@@ -1252,6 +1255,10 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
       return NGX_CONF_ERROR;
     }
   }
+
+  ngx_conf_merge_str_value(conf->cache_base_path,
+                           prev->cache_base_path,
+                           NULL);
 
   return NGX_CONF_OK;
 }
@@ -1451,7 +1458,17 @@ ngx_http_groonga_open_database_callback(ngx_http_groonga_loc_conf_t *location_co
     }
   }
 
-  location_conf->cache = grn_cache_open(context);
+  if (location_conf->cache_base_path.data &&
+      ngx_str_is_custom_path(&(location_conf->cache_base_path))) {
+    char cache_base_path[PATH_MAX];
+    grn_memcpy(cache_base_path,
+               location_conf->cache_base_path.data,
+               location_conf->cache_base_path.len);
+    cache_base_path[location_conf->cache_base_path.len] = '\0';
+    location_conf->cache = grn_persistent_cache_open(context, cache_base_path);
+  } else {
+    location_conf->cache = grn_cache_open(context);
+  }
   if (!location_conf->cache) {
     ngx_log_error(NGX_LOG_EMERG, data->log, 0,
                   "failed to open Groonga cache: %s",
@@ -1618,6 +1635,13 @@ static ngx_command_t ngx_http_groonga_commands[] = {
     ngx_conf_set_msec_slot,
     NGX_HTTP_LOC_CONF_OFFSET,
     offsetof(ngx_http_groonga_loc_conf_t, default_request_timeout_msec),
+    NULL },
+
+  { ngx_string("groonga_cache_base_path"),
+    NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+    ngx_conf_set_str_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    offsetof(ngx_http_groonga_loc_conf_t, cache_base_path),
     NULL },
 
   ngx_null_command

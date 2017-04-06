@@ -38,6 +38,19 @@ http {
   # for each worker. It can't be set for each Groonga database.
   # groonga_cache_limit 100;
 
+  # The base path where Groonga cache data are stored. If you specify
+  # base path, there are the following merits:
+  #
+  #   * All workers share cache data.
+  #     It means that cache hit rate will be increased.
+  #
+  #   * Cache data aren't cleared after groonga-httpd restart.
+  #     It means that you don't need to warm up cache after
+  #     groonga-httpd restart.
+  #
+  # You must specify base path on memory file system for performance.
+  # groonga_cache_base_path /dev/shm/groonga-httpd-cache;
+
   server {
     listen 10041;
     server_name localhost;
