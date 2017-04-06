@@ -43,6 +43,9 @@ object_inspect Memos.title
         },
         "size": 4096
       }
-    }
+    },
+    "section": false,
+    "weight": false,
+    "position": false
   }
 ]

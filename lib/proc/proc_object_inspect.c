@@ -241,22 +241,32 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
 }
 
 static void
-command_object_inspect_column(grn_ctx *ctx, grn_obj *obj)
+command_object_inspect_column(grn_ctx *ctx, grn_obj *column)
 {
-  grn_ctx_output_map_open(ctx, "column", 5);
+  grn_ctx_output_map_open(ctx, "column", 9);
   {
+    grn_column_flags column_flags;
+
+    column_flags = grn_column_get_flags(ctx, column);
+
     grn_ctx_output_cstr(ctx, "id");
-    grn_ctx_output_uint64(ctx, grn_obj_id(ctx, obj));
+    grn_ctx_output_uint64(ctx, grn_obj_id(ctx, column));
     grn_ctx_output_cstr(ctx, "name");
-    command_object_inspect_column_name(ctx, obj);
+    command_object_inspect_column_name(ctx, column);
     grn_ctx_output_cstr(ctx, "table");
-    command_object_inspect_table(ctx, grn_ctx_at(ctx, obj->header.domain));
+    command_object_inspect_table(ctx, grn_ctx_at(ctx, column->header.domain));
     grn_ctx_output_cstr(ctx, "full_name");
-    command_object_inspect_obj_name(ctx, obj);
+    command_object_inspect_obj_name(ctx, column);
     grn_ctx_output_cstr(ctx, "type");
-    command_object_inspect_column_type(ctx, obj);
+    command_object_inspect_column_type(ctx, column);
     grn_ctx_output_cstr(ctx, "value");
-    command_object_inspect_column_value(ctx, obj);
+    command_object_inspect_column_value(ctx, column);
+    grn_ctx_output_cstr(ctx, "section");
+    grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WITH_SECTION) != 0);
+    grn_ctx_output_cstr(ctx, "weight");
+    grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WITH_WEIGHT) != 0);
+    grn_ctx_output_cstr(ctx, "position");
+    grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WITH_POSITION) != 0);
   }
   grn_ctx_output_map_close(ctx);
 }

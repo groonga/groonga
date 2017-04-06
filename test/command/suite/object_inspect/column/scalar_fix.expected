@@ -55,6 +55,9 @@ object_inspect Users.age
         },
         "size": 1
       }
-    }
+    },
+    "section": false,
+    "weight": false,
+    "position": false
   }
 ]
