@@ -76,7 +76,6 @@ if(GRN_WITH_BUNDLED_LZ4)
 
   if(NOT GRN_BUNDLED)
     add_executable(lz4 ${LZ4_SOURCES})
-    target_link_libraries(lz4 liblz4)
 
     install(TARGETS liblz4
       ARCHIVE DESTINATION "${LIB_DIR}"
