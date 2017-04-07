@@ -69,7 +69,7 @@ if(GRN_WITH_BUNDLED_LZ4)
     set_target_properties(liblz4 PROPERTIES OUTPUT_NAME "lz4")
   endif()
 
-  if(!GRN_BUNDLED)
+  if(NOT GRN_BUNDLED)
     add_executable(lz4 ${LZ4_SOURCES})
     target_link_libraries(lz4 liblz4)
 
