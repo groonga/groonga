@@ -46,6 +46,9 @@ if(GRN_WITH_BUNDLED_LZ4)
   set(LZ4_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 
   add_definitions("-DXXH_NAMESPACE=LZ4_")
+  if(MSVC)
+    add_definitions("-DLZ4_DLL_EXPORT=1")
+  endif()
   set_source_files_properties(${LIBLZ4_SOURCES}
     PROPERTIES
     COMPILE_FLAGS "${LZ4_C_COMPILE_FLAGS}")
