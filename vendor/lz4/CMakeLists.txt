@@ -46,7 +46,7 @@ if(GRN_WITH_BUNDLED_LZ4)
     "${LZ4_SOURCE_DIR}/programs/datagen.h"
     "${LZ4_SOURCE_DIR}/programs/platform.h"
     "${LZ4_SOURCE_DIR}/programs/util.h"
-    )
+    ${LIBLZ4_SOURCES})
 
   set(LZ4_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 
