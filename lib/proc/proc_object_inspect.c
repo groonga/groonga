@@ -306,7 +306,7 @@ command_object_inspect_column_index_value_statistics(grn_ctx *ctx,
     {
       grn_ctx_output_cstr(ctx, "total_chunk_size");
       grn_ctx_output_uint64(ctx, h->total_chunk_size);
-      grn_ctx_output_cstr(ctx, "max_in_use_chunk_segment_id");
+      grn_ctx_output_cstr(ctx, "max_in_use_chunk_id");
       {
         uint32_t i;
         uint32_t max_id;

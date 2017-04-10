@@ -75,7 +75,7 @@ object_inspect Terms.memos_title_content
         "max_in_use_physical_segment_id": 0,
         "n_unmanaged_segments": 0,
         "total_chunk_size": 0,
-        "max_in_use_chunk_segment_id": 0,
+        "max_in_use_chunk_id": 0,
         "n_garbage_chunks": [
           0,
           0,
