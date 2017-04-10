@@ -455,7 +455,7 @@ command_object_inspect_column_index_sources(grn_ctx *ctx, grn_obj *column)
       }
 
       grn_ctx_output_cstr(ctx, "table");
-      command_object_inspect_obj_name(ctx, source_table);
+      command_object_inspect_table(ctx, source_table);
 
       grn_ctx_output_cstr(ctx, "full_name");
       if (grn_obj_is_table(ctx, source)) {

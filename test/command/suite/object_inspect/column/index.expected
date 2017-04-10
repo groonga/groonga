@@ -99,13 +99,37 @@ object_inspect Terms.memos_title_content
       {
         "id": 257,
         "name": "title",
-        "table": "Memos",
+        "table": {
+          "id": 256,
+          "name": "Memos",
+          "type": {
+            "id": 51,
+            "name": "table:no_key"
+          },
+          "key": null,
+          "value": {
+            "type": null
+          },
+          "n_records": 0
+        },
         "full_name": "Memos.title"
       },
       {
         "id": 258,
         "name": "content",
-        "table": "Memos",
+        "table": {
+          "id": 256,
+          "name": "Memos",
+          "type": {
+            "id": 51,
+            "name": "table:no_key"
+          },
+          "key": null,
+          "value": {
+            "type": null
+          },
+          "n_records": 0
+        },
         "full_name": "Memos.content"
       }
     ]
