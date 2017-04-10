@@ -1,0 +1,19 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+
+load --table Logs_20170315
+[
+]
+
+logical_select Logs \
+  --shard_key timestamp \
+  --columns[price_with_tax].stage initial \
+  --columns[price_with_tax].type UInt32 \
+  --columns[price_with_tax].flags COLUMN_SCALAR \
+  --columns[price_with_tax].value 'price * 1.08' \
+  --output_columns price,price_with_tax

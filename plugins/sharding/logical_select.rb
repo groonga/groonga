@@ -728,6 +728,12 @@ module Groonga
           if @context.result_sets.empty?
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
                                           :key_type => first_shard.table)
+            @context.dynamic_columns.each_initial do |dynamic_column|
+              dynamic_column.apply(result_set)
+            end
+            @context.dynamic_columns.each_filtered do |dynamic_column|
+              dynamic_column.apply(result_set)
+            end
             @context.result_sets << result_set
           end
         end
