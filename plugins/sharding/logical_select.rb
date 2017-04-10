@@ -440,6 +440,8 @@ module Groonga
 
         def apply(table, condition=nil)
           column = table.create_column(@label, @flags, @type)
+          return if table.empty?
+
           expression = Expression.create(table)
           begin
             expression.parse(@value)
