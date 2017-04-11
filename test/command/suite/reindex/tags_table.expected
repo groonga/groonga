@@ -11,9 +11,9 @@ load --table Memos
 {"tags": ["job", "asap"]}
 ]
 [[0,0.0,0.0],1]
-select Tags --output_columns _key --sortby _key
+select Tags --output_columns _key --sort_keys _key
 [[0,0.0,0.0],[[[2],[["_key","ShortText"]],["asap"],["job"]]]]
 reindex Tags
 [[0,0.0,0.0],true]
-select Tags --output_columns _key --sortby _key
+select Tags --output_columns _key --sort_keys _key
 [[0,0.0,0.0],[[[2],[["_key","ShortText"]],["asap"],["job"]]]]

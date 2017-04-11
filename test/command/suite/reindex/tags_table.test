@@ -10,8 +10,8 @@ load --table Memos
 {"tags": ["job", "asap"]}
 ]
 
-select Tags --output_columns _key --sortby _key
+select Tags --output_columns _key --sort_keys _key
 
 reindex Tags
 
-select Tags --output_columns _key --sortby _key
+select Tags --output_columns _key --sort_keys _key

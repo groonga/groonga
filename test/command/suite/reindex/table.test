@@ -12,8 +12,8 @@ load --table Memos
 ]
 
 delete Terms --key this
-select Terms --output_columns _key --sortby _key
+select Terms --output_columns _key --sort_keys _key
 
 reindex Terms
 
-select Terms --output_columns _key --sortby _key
+select Terms --output_columns _key --sort_keys _key
