@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2016 Brazil
+/*
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -7678,23 +7679,321 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   return rc;
 }
 
+typedef struct {
+  btr *bt;
+  grn_ii *ii;
+  token_info **tis;
+  uint32_t n_tis;
+  int max_interval;
+  grn_operator mode;
+  grn_posting posting;
+  const char *string;
+  unsigned int string_len;
+  grn_bool done;
+} grn_ii_select_cursor;
+
+grn_rc
+grn_ii_select_cursor_close(grn_ctx *ctx,
+                           grn_ii_select_cursor *cursor)
+{
+  token_info **tip;
+
+  if (!cursor) {
+    return GRN_SUCCESS;
+  }
+
+  for (tip = cursor->tis; tip < cursor->tis + cursor->n_tis; tip++) {
+    if (*tip) {
+      token_info_close(ctx, *tip);
+    }
+  }
+  if (cursor->tis) {
+    GRN_FREE(cursor->tis);
+  }
+  bt_close(ctx, cursor->bt);
+  GRN_FREE(cursor);
+
+  return GRN_SUCCESS;
+}
+
+grn_ii_select_cursor *
+grn_ii_select_cursor_open(grn_ctx *ctx,
+                          grn_ii *ii,
+                          const char *string,
+                          unsigned int string_len,
+                          grn_select_optarg *optarg)
+{
+  grn_operator mode = GRN_OP_EXACT;
+  grn_ii_select_cursor *cursor;
+
+  if (string_len == 0) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[ii][select][cursor][open] empty string");
+    return NULL;
+  }
+
+  if (optarg) {
+    mode = optarg->mode;
+  }
+  switch (mode) {
+  case GRN_OP_EXACT :
+  case GRN_OP_FUZZY :
+  case GRN_OP_NEAR :
+  case GRN_OP_NEAR2 :
+    break;
+  default :
+    ERR(GRN_INVALID_ARGUMENT,
+        "[ii][select][cursor][open] "
+        "EXACT, FUZZY, NEAR and NEAR2 are only supported mode: %s",
+        grn_operator_to_string(mode));
+    break;
+  }
+
+  cursor = GRN_CALLOC(sizeof(grn_ii_select_cursor));
+  if (!cursor) {
+    ERR(ctx->rc,
+        "[ii][select][cursor][open] failed to allocate cursor: %s",
+        ctx->errbuf);
+    return NULL;
+  }
+
+  cursor->ii = ii;
+  cursor->mode = mode;
+
+  if (!(cursor->tis = GRN_MALLOC(sizeof(token_info *) * string_len * 2))) {
+    ERR(ctx->rc,
+        "[ii][select][cursor][open] failed to allocate token info container: %s",
+        ctx->errbuf);
+    GRN_FREE(cursor);
+    return NULL;
+  }
+  cursor->n_tis = 0;
+  if (cursor->mode == GRN_OP_FUZZY) {
+    grn_bool only_skip_token = GRN_FALSE;
+    grn_id previous_min = GRN_ID_NIL;
+    if (token_info_build_fuzzy(ctx, ii->lexicon, ii, string, string_len,
+                               cursor->tis, &(cursor->n_tis),
+                               &only_skip_token, previous_min,
+                               cursor->mode, &(optarg->fuzzy)) != GRN_SUCCESS) {
+      grn_ii_select_cursor_close(ctx, cursor);
+      return NULL;
+    }
+  } else {
+    grn_bool only_skip_token = GRN_FALSE;
+    grn_id previous_min = GRN_ID_NIL;
+    if (token_info_build(ctx, ii->lexicon, ii, string, string_len,
+                         cursor->tis, &(cursor->n_tis),
+                         &only_skip_token, previous_min,
+                         cursor->mode) != GRN_SUCCESS) {
+      grn_ii_select_cursor_close(ctx, cursor);
+      return NULL;
+    }
+  }
+  if (cursor->n_tis == 0) {
+    grn_ii_select_cursor_close(ctx, cursor);
+    return NULL;
+  }
+
+  switch (cursor->mode) {
+  case GRN_OP_NEAR2 :
+    token_info_clear_offset(cursor->tis, cursor->n_tis);
+    cursor->mode = GRN_OP_NEAR;
+    /* fallthru */
+  case GRN_OP_NEAR :
+    if (!(cursor->bt = bt_open(ctx, cursor->n_tis))) {
+      ERR(ctx->rc,
+          "[ii][select][cursor][open] failed to allocate btree: %s",
+          ctx->errbuf);
+      grn_ii_select_cursor_close(ctx, cursor);
+      return NULL;
+    }
+    cursor->max_interval = optarg->max_interval;
+    break;
+  default :
+    break;
+  }
+  qsort(cursor->tis, cursor->n_tis, sizeof(token_info *), token_compare);
+  GRN_LOG(ctx, GRN_LOG_INFO,
+          "[ii][select][cursor][open] n=%d <%.*s>",
+          cursor->n_tis,
+          string_len, string);
+
+  cursor->posting.rest = 0;
+
+  cursor->string = string;
+  cursor->string_len = string_len;
+
+  cursor->done = GRN_FALSE;
+
+  return cursor;
+}
+
+grn_posting *
+grn_ii_select_cursor_next(grn_ctx *ctx,
+                          grn_ii_select_cursor *cursor)
+{
+  btr *bt = cursor->bt;
+  token_info **tis = cursor->tis;
+  token_info **tie = tis + cursor->n_tis;
+  uint32_t n_tis = cursor->n_tis;
+  int max_interval = cursor->max_interval;
+  grn_operator mode = cursor->mode;
+
+  if (cursor->done) {
+    return NULL;
+  }
+
+  for (;;) {
+    grn_id rid;
+    grn_id sid;
+    grn_id next_rid;
+    grn_id next_sid;
+    token_info **tip;
+
+    rid = (*tis)->p->rid;
+    sid = (*tis)->p->sid;
+    for (tip = tis + 1, next_rid = rid, next_sid = sid + 1;
+         tip < tie;
+         tip++) {
+      token_info *ti = *tip;
+      if (token_info_skip(ctx, ti, rid, sid)) { return NULL; }
+      if (ti->p->rid != rid || ti->p->sid != sid) {
+        next_rid = ti->p->rid;
+        next_sid = ti->p->sid;
+        break;
+      }
+    }
+
+    if (tip == tie) {
+      int n_occurs = 0;
+      int pos = 0;
+      int score = 0;
+      int tscore = 0;
+
+#define SKIP_OR_BREAK(pos) {\
+  if (token_info_skip_pos(ctx, ti, rid, sid, pos)) { break; }    \
+  if (ti->p->rid != rid || ti->p->sid != sid) { \
+    next_rid = ti->p->rid; \
+    next_sid = ti->p->sid; \
+    break; \
+  } \
+}
+      if (n_tis == 1) {
+        n_occurs = (*tis)->p->tf;
+        tscore = (*tis)->p->weight + (*tis)->cursors->bins[0]->weight;
+        pos = (*tis)->p->pos;
+      } else if (mode == GRN_OP_NEAR) {
+        bt_zap(bt);
+        for (tip = tis; tip < tie; tip++) {
+          token_info *ti = *tip;
+          SKIP_OR_BREAK(pos);
+          bt_push(bt, ti);
+        }
+        if (tip == tie) {
+          for (;;) {
+            token_info *ti;
+            int min;
+            int max;
+
+            ti = bt->min;
+            min = ti->pos;
+            max = bt->max->pos;
+            if (min > max) {
+              char ii_name[GRN_TABLE_MAX_KEY_SIZE];
+              int ii_name_size;
+              ii_name_size = grn_obj_name(ctx,
+                                          (grn_obj *)(cursor->ii),
+                                          ii_name,
+                                          GRN_TABLE_MAX_KEY_SIZE);
+              ERR(GRN_FILE_CORRUPT,
+                  "[ii][select][cursor][near] "
+                  "max position must be larger than min position: "
+                  "min:<%d> max:<%d> ii:<%.*s> string:<%.*s>",
+                  min, max,
+                  ii_name_size, ii_name,
+                  cursor->string_len,
+                  cursor->string);
+              return NULL;
+            }
+            if ((max_interval < 0) || (max - min <= max_interval)) {
+              n_occurs++;
+              if (ti->pos == max + 1) {
+                break;
+              }
+              SKIP_OR_BREAK(max + 1);
+            } else {
+              if (ti->pos == max - max_interval) {
+                break;
+              }
+              SKIP_OR_BREAK(max - max_interval);
+            }
+            bt_pop(bt);
+          }
+        }
+      } else {
+        int count = 0;
+        for (tip = tis; ; tip++) {
+          token_info *ti;
+
+          if (tip == tie) { tip = tis; }
+          ti = *tip;
+          SKIP_OR_BREAK(pos);
+          if (ti->pos == pos) {
+            score += ti->p->weight + ti->cursors->bins[0]->weight;
+            count++;
+          } else {
+            score = ti->p->weight + ti->cursors->bins[0]->weight;
+            count = 1;
+            pos = ti->pos;
+          }
+          if (count == n_tis) {
+            tscore += score;
+            score = 0;
+            count = 0;
+            pos++;
+            n_occurs++;
+          }
+        }
+      }
+      if (n_occurs > 0) {
+        cursor->posting.rid = rid;
+        cursor->posting.sid = sid;
+        cursor->posting.pos = pos;
+        cursor->posting.tf = n_occurs;
+        cursor->posting.weight = tscore;
+        if (token_info_skip(ctx, *tis, next_rid, next_sid) != GRN_SUCCESS) {
+          cursor->done = GRN_TRUE;
+        }
+        return &(cursor->posting);
+      }
+#undef SKIP_OR_BREAK
+    }
+    if (token_info_skip(ctx, *tis, next_rid, next_sid)) {
+      return NULL;
+    }
+  }
+}
+
 static grn_rc
 grn_ii_parse_regexp_query(grn_ctx *ctx,
                           const char *log_tag,
                           const char *string, unsigned int string_len,
-                          grn_obj *parsed_string)
+                          grn_obj *parsed_strings)
 {
   grn_bool escaping = GRN_FALSE;
   int nth_char = 0;
   const char *current = string;
   const char *string_end = string + string_len;
+  grn_obj buffer;
 
+  GRN_TEXT_INIT(&buffer, 0);
   while (current < string_end) {
     const char *target;
     int char_len;
 
     char_len = grn_charlen(ctx, current, string_end);
     if (char_len == 0) {
+      GRN_OBJ_FIN(ctx, &buffer);
       ERR(GRN_INVALID_ARGUMENT,
           "%s invalid encoding character: <%.*s|%#x|>",
           log_tag,
@@ -7726,15 +8025,41 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
         }
       }
     } else {
-      if (char_len == 1 && *target == '\\') {
-        escaping = GRN_TRUE;
-        continue;
+      if (char_len == 1) {
+        if (*target == '\\') {
+          escaping = GRN_TRUE;
+          continue;
+        } else if (*target == '.' &&
+                   grn_charlen(ctx, current, string_end) == 1 &&
+                   *current == '*') {
+          if (GRN_TEXT_LEN(&buffer) > 0) {
+            grn_vector_add_element(ctx,
+                                   parsed_strings,
+                                   GRN_TEXT_VALUE(&buffer),
+                                   GRN_TEXT_LEN(&buffer),
+                                   0,
+                                   GRN_DB_TEXT);
+            GRN_BULK_REWIND(&buffer);
+          }
+          current++;
+          nth_char++;
+          continue;
+        }
       }
     }
 
-    GRN_TEXT_PUT(ctx, parsed_string, target, char_len);
+    GRN_TEXT_PUT(ctx, &buffer, target, char_len);
     nth_char++;
   }
+  if (GRN_TEXT_LEN(&buffer) > 0) {
+    grn_vector_add_element(ctx,
+                           parsed_strings,
+                           GRN_TEXT_VALUE(&buffer),
+                           GRN_TEXT_LEN(&buffer),
+                           0,
+                           GRN_DB_TEXT);
+  }
+  GRN_OBJ_FIN(ctx, &buffer);
 
   return GRN_SUCCESS;
 }
@@ -7745,25 +8070,116 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
                      grn_hash *s, grn_operator op, grn_select_optarg *optarg)
 {
   grn_rc rc;
-  grn_obj parsed_string;
+  grn_obj parsed_strings;
+  unsigned int n_parsed_strings;
 
-  GRN_TEXT_INIT(&parsed_string, 0);
+  GRN_TEXT_INIT(&parsed_strings, GRN_OBJ_VECTOR);
   rc = grn_ii_parse_regexp_query(ctx, "[ii][select][regexp]",
-                                 string, string_len, &parsed_string);
+                                 string, string_len, &parsed_strings);
   if (rc != GRN_SUCCESS) {
-    GRN_OBJ_FIN(ctx, &parsed_string);
+    GRN_OBJ_FIN(ctx, &parsed_strings);
     return rc;
   }
 
   if (optarg) {
-    optarg->mode = GRN_OP_MATCH;
+    optarg->mode = GRN_OP_EXACT;
   }
 
-  rc = grn_ii_select(ctx, ii,
-                     GRN_TEXT_VALUE(&parsed_string),
-                     GRN_TEXT_LEN(&parsed_string),
-                     s, op, optarg);
-  GRN_OBJ_FIN(ctx, &parsed_string);
+  n_parsed_strings = grn_vector_size(ctx, &parsed_strings);
+  if (n_parsed_strings == 1) {
+    const char *parsed_string;
+    unsigned int parsed_string_len;
+    parsed_string_len = grn_vector_get_element(ctx,
+                                               &parsed_strings,
+                                               0,
+                                               &parsed_string,
+                                               NULL,
+                                               NULL);
+    rc = grn_ii_select(ctx, ii,
+                       parsed_string,
+                       parsed_string_len,
+                       s, op, optarg);
+  } else {
+    int i;
+    grn_ii_select_cursor **cursors;
+    int keep_i = 0;
+    grn_posting keep_posting;
+
+    cursors = GRN_MALLOC(sizeof(grn_ii_select_cursor *) * n_parsed_strings);
+    for (i = 0; i < n_parsed_strings; i++) {
+      const char *parsed_string;
+      unsigned int parsed_string_len;
+      parsed_string_len = grn_vector_get_element(ctx,
+                                                 &parsed_strings,
+                                                 i,
+                                                 &parsed_string,
+                                                 NULL,
+                                                 NULL);
+      cursors[i] = grn_ii_select_cursor_open(ctx,
+                                             ii,
+                                             parsed_string,
+                                             parsed_string_len,
+                                             optarg);
+    }
+
+    for (;;) {
+      grn_posting *posting;
+      uint32_t pos;
+
+      posting = grn_ii_select_cursor_next(ctx, cursors[0]);
+      if (!posting) {
+        break;
+      }
+
+      pos = posting->pos;
+      for (i = 1; i < n_parsed_strings; i++) {
+        grn_posting *posting_i;
+
+        for (;;) {
+          if (keep_i == i) {
+            posting_i = &keep_posting;
+            keep_i = 0;
+          } else {
+            posting_i = grn_ii_select_cursor_next(ctx, cursors[i]);
+            if (!posting_i) {
+              break;
+            }
+          }
+
+          if (posting_i->rid == posting->rid &&
+              posting_i->sid == posting->sid &&
+              posting_i->pos > pos) {
+            break;
+          }
+          if (posting_i->rid > posting->rid) {
+            keep_i = i;
+            keep_posting = *posting_i;
+            break;
+          }
+        }
+
+        if (!posting_i) {
+          break;
+        }
+
+        if (posting_i->rid != posting->rid || posting_i->sid != posting->sid) {
+          break;
+        }
+      }
+
+      if (i == n_parsed_strings) {
+        grn_rset_posinfo pi = {posting->rid, posting->sid, 0};
+        double record_score = 1.0;
+        res_add(ctx, s, &pi, record_score, op);
+      }
+    }
+
+    for (i = 0; i < n_parsed_strings; i++) {
+      grn_ii_select_cursor_close(ctx, cursors[i]);
+    }
+    GRN_FREE(cursors);
+  }
+  GRN_OBJ_FIN(ctx, &parsed_strings);
 
   if (optarg) {
     optarg->mode = GRN_OP_REGEXP;
@@ -8314,7 +8730,7 @@ grn_ii_estimate_size_for_query_regexp(grn_ctx *ctx, grn_ii *ii,
   }
 
   if (optarg) {
-    optarg->mode = GRN_OP_MATCH;
+    optarg->mode = GRN_OP_EXACT;
   }
 
   size = grn_ii_estimate_size_for_query(ctx, ii,
