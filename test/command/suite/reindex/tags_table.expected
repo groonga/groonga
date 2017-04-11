@@ -1,0 +1,19 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+column_create Tags memos_tags COLUMN_INDEX Memos tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"tags": ["job", "asap"]}
+]
+[[0,0.0,0.0],1]
+select Tags --output_columns _key --sortby _key
+[[0,0.0,0.0],[[[2],[["_key","ShortText"]],["asap"],["job"]]]]
+reindex Tags
+[[0,0.0,0.0],true]
+select Tags --output_columns _key --sortby _key
+[[0,0.0,0.0],[[[2],[["_key","ShortText"]],["asap"],["job"]]]]

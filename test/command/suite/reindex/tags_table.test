@@ -1,0 +1,17 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Memos TABLE_NO_KEY
+column_create Memos tags COLUMN_VECTOR Tags
+
+column_create Tags memos_tags COLUMN_INDEX Memos tags
+
+load --table Memos
+[
+{"tags": ["job", "asap"]}
+]
+
+select Tags --output_columns _key --sortby _key
+
+reindex Tags
+
+select Tags --output_columns _key --sortby _key
