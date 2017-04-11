@@ -443,18 +443,7 @@ grn_table_reindex(grn_ctx *ctx, grn_obj *table)
   }
 
   if (grn_table_columns(ctx, table, "", 0, (grn_obj *)columns) > 0) {
-    grn_bool have_data_column = GRN_FALSE;
     grn_id *key;
-    GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
-      grn_obj *column = grn_ctx_at(ctx, *key);
-      if (column && column->header.type != GRN_COLUMN_INDEX) {
-        have_data_column = GRN_TRUE;
-        break;
-      }
-    });
-    if (!have_data_column) {
-      grn_table_truncate(ctx, table);
-    }
     GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
       grn_obj *column = grn_ctx_at(ctx, *key);
       if (column && column->header.type == GRN_COLUMN_INDEX) {
