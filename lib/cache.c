@@ -36,10 +36,25 @@ struct _grn_cache_entry_memory {
   grn_id id;
 };
 
-typedef struct _grn_cache_entry_persistent {
+typedef struct _grn_cache_entry_persistent_data {
   grn_id next;
   grn_id prev;
   grn_timeval modified_time;
+} grn_cache_entry_persistent_data;
+
+/*
+  sizeof(grn_cache_entry_persistent_metadata) should be equal or smaller
+  than sizeof(grn_cache_entry_persistent_data).
+ */
+typedef struct _grn_cache_entry_persistent_metadata {
+  uint32_t max_nentries;
+  uint32_t nfetches;
+  uint32_t nhits;
+} grn_cache_entry_persistent_metadata;
+
+typedef union _grn_cache_entry_persistent {
+  grn_cache_entry_persistent_data data;
+  grn_cache_entry_persistent_metadata metadata;
 } grn_cache_entry_persistent;
 
 struct _grn_cache {
@@ -49,6 +64,9 @@ struct _grn_cache {
       grn_cache_entry_memory *prev;
       grn_hash *hash;
       grn_mutex mutex;
+      uint32_t max_nentries;
+      uint32_t nfetches;
+      uint32_t nhits;
     } memory;
     struct {
       grn_hash *keys;
@@ -58,15 +76,16 @@ struct _grn_cache {
   } impl;
   grn_bool is_memory;
   grn_ctx *ctx;
-  uint32_t max_nentries;
-  uint32_t nfetches;
-  uint32_t nhits;
 };
 
 #define GRN_CACHE_PERSISTENT_ROOT_ID 1
 #define GRN_CACHE_PERSISTENT_ROOT_KEY "\0"
 #define GRN_CACHE_PERSISTENT_ROOT_KEY_LEN \
   (sizeof(GRN_CACHE_PERSISTENT_ROOT_KEY) - 1)
+#define GRN_CACHE_PERSISTENT_METADATA_ID 2
+#define GRN_CACHE_PERSISTENT_METADATA_KEY "\1"
+#define GRN_CACHE_PERSISTENT_METADATA_KEY_LEN \
+  (sizeof(GRN_CACHE_PERSISTENT_METADATA_KEY) - 1)
 
 static grn_ctx grn_cache_ctx;
 static grn_cache *grn_cache_current = NULL;
@@ -95,7 +114,7 @@ grn_get_default_cache_base_path(void)
   }
 }
 
-inline static void
+static void
 grn_cache_open_memory(grn_ctx *ctx, grn_cache *cache)
 {
   cache->impl.memory.next = (grn_cache_entry_memory *)cache;
@@ -110,9 +129,13 @@ grn_cache_open_memory(grn_ctx *ctx, grn_cache *cache)
     return;
   }
   MUTEX_INIT(cache->impl.memory.mutex);
+
+  cache->impl.memory.max_nentries = GRN_CACHE_DEFAULT_MAX_N_ENTRIES;
+  cache->impl.memory.nfetches = 0;
+  cache->impl.memory.nhits = 0;
 }
 
-inline static void
+static void
 grn_cache_open_persistent(grn_ctx *ctx,
                           grn_cache *cache,
                           const char *base_path)
@@ -168,7 +191,7 @@ grn_cache_open_persistent(grn_ctx *ctx,
                       sizeof(grn_cache_entry_persistent),
                       GRN_OBJ_KEY_VAR_SIZE);
     if (!cache->impl.persistent.keys) {
-      ERR(ctx->rc,
+      ERR(ctx->rc == GRN_SUCCESS ? GRN_FILE_CORRUPT : ctx->rc,
           "[cache][persistent] failed to create cache keys storage: <%s>",
           keys_path ? keys_path : "(memory)");
       return;
@@ -180,7 +203,7 @@ grn_cache_open_persistent(grn_ctx *ctx,
                     0);
     if (!cache->impl.persistent.values) {
       grn_hash_close(ctx, cache->impl.persistent.keys);
-      ERR(ctx->rc,
+      ERR(ctx->rc == GRN_SUCCESS ? GRN_FILE_CORRUPT : ctx->rc,
           "[cache][persistent] failed to create cache values storage: <%s>",
           values_path ? values_path : "(memory)");
       return;
@@ -207,17 +230,50 @@ grn_cache_open_persistent(grn_ctx *ctx,
       if (keys_path) {
         grn_hash_remove(ctx, keys_path);
       }
-      ERR(ctx->rc,
-          "[cache][persistent] broken cache keys storage: <%s>",
+      ERR(ctx->rc == GRN_SUCCESS ? GRN_FILE_CORRUPT : ctx->rc,
+          "[cache][persistent] broken cache keys storage: broken root: <%s>",
           keys_path ? keys_path : "(memory)");
       return;
     }
 
     if (added) {
-      entry->next = root_id;
-      entry->prev = root_id;
-      entry->modified_time.tv_sec = 0;
-      entry->modified_time.tv_nsec = 0;
+      entry->data.next = root_id;
+      entry->data.prev = root_id;
+      entry->data.modified_time.tv_sec = 0;
+      entry->data.modified_time.tv_nsec = 0;
+    }
+  }
+
+  {
+    grn_cache_entry_persistent *entry;
+    grn_id metadata_id;
+    int added;
+
+    metadata_id = grn_hash_add(ctx,
+                               cache->impl.persistent.keys,
+                               GRN_CACHE_PERSISTENT_METADATA_KEY,
+                               GRN_CACHE_PERSISTENT_METADATA_KEY_LEN,
+                               (void **)&entry,
+                               &added);
+    if (metadata_id != GRN_CACHE_PERSISTENT_METADATA_ID) {
+      grn_ja_close(ctx, cache->impl.persistent.values);
+      grn_hash_close(ctx, cache->impl.persistent.keys);
+      if (values_path) {
+        grn_ja_remove(ctx, values_path);
+      }
+      if (keys_path) {
+        grn_hash_remove(ctx, keys_path);
+      }
+      ERR(ctx->rc == GRN_SUCCESS ? GRN_FILE_CORRUPT : ctx->rc,
+          "[cache][persistent] broken cache keys storage: broken metadata: <%s>",
+          keys_path ? keys_path : "(memory)");
+      return;
+    }
+
+    if (added) {
+      entry->metadata.max_nentries = GRN_CACHE_DEFAULT_MAX_N_ENTRIES;
+      entry->metadata.nfetches = 0;
+      entry->metadata.nhits = 0;
     }
   }
 
@@ -250,10 +306,6 @@ grn_cache_open_raw(grn_ctx *ctx,
     cache = NULL;
     goto exit;
   }
-
-  cache->max_nentries = GRN_CACHE_DEFAULT_MAX_N_ENTRIES;
-  cache->nfetches = 0;
-  cache->nhits = 0;
 
 exit :
   GRN_API_RETURN(cache);
@@ -292,7 +344,7 @@ grn_persistent_cache_open(grn_ctx *ctx, const char *base_path)
 }
 
 
-inline static void
+static void
 grn_cache_close_memory(grn_ctx *ctx, grn_cache *cache)
 {
   grn_cache_entry_memory *vp;
@@ -304,7 +356,7 @@ grn_cache_close_memory(grn_ctx *ctx, grn_cache *cache)
   MUTEX_FIN(cache->impl.memory.mutex);
 }
 
-inline static void
+static void
 grn_cache_close_persistent(grn_ctx *ctx, grn_cache *cache)
 {
   grn_hash_close(ctx, cache->impl.persistent.keys);
@@ -352,76 +404,6 @@ grn_cache_init(void)
   grn_cache_current_set(ctx, grn_cache_default);
 }
 
-grn_rc
-grn_cache_set_max_n_entries(grn_ctx *ctx, grn_cache *cache, unsigned int n)
-{
-  uint32_t current_max_n_entries;
-
-  if (!cache) {
-    return GRN_INVALID_ARGUMENT;
-  }
-
-  current_max_n_entries = cache->max_nentries;
-  cache->max_nentries = n;
-  if (n < current_max_n_entries) {
-    grn_cache_expire(cache, current_max_n_entries - n);
-  }
-
-  return GRN_SUCCESS;
-}
-
-uint32_t
-grn_cache_get_max_n_entries(grn_ctx *ctx, grn_cache *cache)
-{
-  if (!cache) {
-    return 0;
-  }
-  return cache->max_nentries;
-}
-
-static void
-grn_cache_get_statistics_memory(grn_ctx *ctx, grn_cache *cache,
-                                grn_cache_statistics *statistics)
-{
-  MUTEX_LOCK(cache->impl.memory.mutex);
-  statistics->nentries = GRN_HASH_SIZE(cache->impl.memory.hash);
-  statistics->max_nentries = cache->max_nentries;
-  statistics->nfetches = cache->nfetches;
-  statistics->nhits = cache->nhits;
-  MUTEX_UNLOCK(cache->impl.memory.mutex);
-}
-
-static void
-grn_cache_get_statistics_persistent(grn_ctx *ctx, grn_cache *cache,
-                                    grn_cache_statistics *statistics)
-{
-  grn_rc rc = GRN_INVALID_ARGUMENT;
-  grn_hash *keys = cache->impl.persistent.keys;
-
-  rc = grn_io_lock(ctx, keys->io, cache->impl.persistent.timeout);
-  if (rc != GRN_SUCCESS) {
-    return;
-  }
-
-  statistics->nentries = GRN_HASH_SIZE(keys);
-  statistics->max_nentries = cache->max_nentries;
-  statistics->nfetches = cache->nfetches;
-  statistics->nhits = cache->nhits;
-
-  grn_io_unlock(keys->io);
-}
-
-void
-grn_cache_get_statistics(grn_ctx *ctx, grn_cache *cache,
-                         grn_cache_statistics *statistics)
-{
-  if (cache->is_memory) {
-    return grn_cache_get_statistics_memory(ctx, cache, statistics);
-  } else {
-    return grn_cache_get_statistics_persistent(ctx, cache, statistics);
-  }
-}
-
 static void
 grn_cache_expire_entry_memory(grn_cache *cache, grn_cache_entry_memory *ce)
 {
@@ -443,15 +425,15 @@ grn_cache_entry_persistent_delete_link(grn_cache *cache,
   prev_entry =
     (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,
                                                       keys,
-                                                      entry->prev,
+                                                      entry->data.prev,
                                                       NULL);
   next_entry =
     (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,
                                                       keys,
-                                                      entry->next,
+                                                      entry->data.next,
                                                       NULL);
-  prev_entry->next = entry->next;
-  next_entry->prev = entry->prev;
+  prev_entry->data.next = entry->data.next;
+  next_entry->data.prev = entry->data.prev;
 }
 
 static void
@@ -465,15 +447,15 @@ grn_cache_entry_persistent_prepend_link(grn_cache *cache,
   grn_hash *keys = cache->impl.persistent.keys;
   grn_cache_entry_persistent *head_next_entry;
 
-  entry->next = head_entry->next;
-  entry->prev = head_entry_id;
+  entry->data.next = head_entry->data.next;
+  entry->data.prev = head_entry_id;
   head_next_entry =
     (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,
                                                       keys,
-                                                      head_entry->next,
+                                                      head_entry->data.next,
                                                       NULL);
-  head_next_entry->prev = entry_id;
-  head_entry->next = entry_id;
+  head_next_entry->data.prev = entry_id;
+  head_entry->data.next = entry_id;
 }
 
 static void
@@ -489,7 +471,199 @@ grn_cache_expire_entry_persistent(grn_cache *cache,
   grn_hash_delete_by_id(cache->ctx, keys, cache_id, NULL);
 }
 
-inline static grn_rc
+static void
+grn_cache_expire_memory_without_lock(grn_cache *cache, int32_t size)
+{
+  grn_cache_entry_memory *ce0 =
+    (grn_cache_entry_memory *)(&(cache->impl.memory));
+  while (ce0 != ce0->prev && size--) {
+    grn_cache_expire_entry_memory(cache, ce0->prev);
+  }
+}
+
+static void
+grn_cache_expire_persistent_without_lock(grn_cache *cache, int32_t size)
+{
+  grn_ctx *ctx = cache->ctx;
+  grn_hash *keys = cache->impl.persistent.keys;
+  grn_cache_entry_persistent *head_entry;
+
+  head_entry =
+    (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,
+                                                      keys,
+                                                      GRN_CACHE_PERSISTENT_ROOT_ID,
+                                                      NULL);
+  while (head_entry->data.prev != GRN_CACHE_PERSISTENT_ROOT_ID &&
+         size > 0) {
+    grn_cache_entry_persistent *tail_entry;
+    tail_entry =
+      (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,
+                                                        keys,
+                                                        head_entry->data.prev,
+                                                        NULL);
+    grn_cache_expire_entry_persistent(cache, tail_entry, head_entry->data.prev);
+    size--;
+  }
+}
+
+static grn_rc
+grn_cache_set_max_n_entries_memory(grn_ctx *ctx,
+                                   grn_cache *cache,
+                                   unsigned int n)
+{
+  uint32_t current_max_n_entries;
+
+  MUTEX_LOCK(cache->impl.memory.mutex);
+  current_max_n_entries = cache->impl.memory.max_nentries;
+  cache->impl.memory.max_nentries = n;
+  if (n < current_max_n_entries) {
+    grn_cache_expire_memory_without_lock(cache, current_max_n_entries - n);
+  }
+  MUTEX_UNLOCK(cache->impl.memory.mutex);
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_cache_set_max_n_entries_persistent(grn_ctx *ctx,
+                                       grn_cache *cache,
+                                       unsigned int n)
+{
+  grn_rc rc;
+  grn_hash *keys = cache->impl.persistent.keys;
+  grn_cache_entry_persistent *metadata_entry;
+  uint32_t current_max_n_entries;
+
+  rc = grn_io_lock(ctx, keys->io, cache->impl.persistent.timeout);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+
+  metadata_entry =
+      (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,
+                                                        keys,
+                                                        GRN_CACHE_PERSISTENT_METADATA_ID,
+                                                        NULL);
+
+  current_max_n_entries = metadata_entry->metadata.max_nentries;
+  metadata_entry->metadata.max_nentries = n;
+  if (n < current_max_n_entries) {
+    grn_cache_expire_persistent_without_lock(cache, current_max_n_entries - n);
+  }
+  grn_io_unlock(keys->io);
+
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_cache_set_max_n_entries(grn_ctx *ctx, grn_cache *cache, unsigned int n)
+{
+  if (!cache) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  if (cache->is_memory) {
+    return grn_cache_set_max_n_entries_memory(cache->ctx, cache, n);
+  } else {
+    return grn_cache_set_max_n_entries_persistent(cache->ctx, cache, n);
+  }
+}
+
+static uint32_t
+grn_cache_get_max_n_entries_memory(grn_ctx *ctx, grn_cache *cache)
+{
+  return cache->impl.memory.max_nentries;
+}
+
+static uint32_t
+grn_cache_get_max_n_entries_persistent(grn_ctx *ctx, grn_cache *cache)
+{
+  grn_rc rc;
+  grn_hash *keys = cache->impl.persistent.keys;
+  grn_cache_entry_persistent *metadata_entry;
+  uint32_t current_max_n_entries;
+
+  rc = grn_io_lock(ctx, keys->io, cache->impl.persistent.timeout);
+  if (rc != GRN_SUCCESS) {
+    return 0;
+  }
+
+  metadata_entry =
+      (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,
+                                                        keys,
+                                                        GRN_CACHE_PERSISTENT_METADATA_ID,
+                                                        NULL);
+  current_max_n_entries = metadata_entry->metadata.max_nentries;
+  grn_io_unlock(keys->io);
+
+  return current_max_n_entries;
+}
+
+uint32_t
+grn_cache_get_max_n_entries(grn_ctx *ctx, grn_cache *cache)
+{
+  if (!cache) {
+    return 0;
+  }
+
+  if (cache->is_memory) {
+    return grn_cache_get_max_n_entries_memory(cache->ctx, cache);
+  } else {
+    return grn_cache_get_max_n_entries_persistent(cache->ctx, cache);
+  }
+}
+
+static void
+grn_cache_get_statistics_memory(grn_ctx *ctx, grn_cache *cache,
+                                grn_cache_statistics *statistics)
+{
+  MUTEX_LOCK(cache->impl.memory.mutex);
+  statistics->nentries = GRN_HASH_SIZE(cache->impl.memory.hash);
+  statistics->max_nentries = cache->impl.memory.max_nentries;
+  statistics->nfetches = cache->impl.memory.nfetches;
+  statistics->nhits = cache->impl.memory.nhits;
+  MUTEX_UNLOCK(cache->impl.memory.mutex);
+}
+
+static void
+grn_cache_get_statistics_persistent(grn_ctx *ctx, grn_cache *cache,
+                                    grn_cache_statistics *statistics)
+{
+  grn_rc rc = GRN_INVALID_ARGUMENT;
+  grn_hash *keys = cache->impl.persistent.keys;
+  grn_cache_entry_persistent *metadata_entry;
+
+  rc = grn_io_lock(ctx, keys->io, cache->impl.persistent.timeout);
+  if (rc != GRN_SUCCESS) {
+    return;
+  }
+
+  metadata_entry =
+      (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,
+                                                        keys,
+                                                        GRN_CACHE_PERSISTENT_METADATA_ID,
+                                                        NULL);
+
+  statistics->nentries = GRN_HASH_SIZE(keys);
+  statistics->max_nentries = metadata_entry->metadata.max_nentries;
+  statistics->nfetches = metadata_entry->metadata.nfetches;
+  statistics->nhits = metadata_entry->metadata.nhits;
+
+  grn_io_unlock(keys->io);
+}
+
+void
+grn_cache_get_statistics(grn_ctx *ctx, grn_cache *cache,
+                         grn_cache_statistics *statistics)
+{
+  if (cache->is_memory) {
+    return grn_cache_get_statistics_memory(ctx, cache, statistics);
+  } else {
+    return grn_cache_get_statistics_persistent(ctx, cache, statistics);
+  }
+}
+
+static grn_rc
 grn_cache_fetch_memory(grn_ctx *ctx, grn_cache *cache,
                        const char *key, uint32_t key_len,
                        grn_obj *output)
@@ -499,7 +673,7 @@ grn_cache_fetch_memory(grn_ctx *ctx, grn_cache *cache,
   grn_cache_entry_memory *ce;
 
   MUTEX_LOCK(cache->impl.memory.mutex);
-  cache->nfetches++;
+  cache->impl.memory.nfetches++;
   if (grn_hash_get(cache->ctx, cache->impl.memory.hash, key, key_len,
                    (void **)&ce)) {
     if (ce->tv.tv_sec <= grn_db_get_last_modified(ctx, ctx->impl->db)) {
@@ -521,14 +695,14 @@ grn_cache_fetch_memory(grn_ctx *ctx, grn_cache *cache,
       ce0->next->prev = ce;
       ce0->next = ce;
     }
-    cache->nhits++;
+    cache->impl.memory.nhits++;
   }
 exit :
   MUTEX_UNLOCK(cache->impl.memory.mutex);
   return rc;
 }
 
-inline static grn_rc
+static grn_rc
 grn_cache_fetch_persistent(grn_ctx *ctx, grn_cache *cache,
                            const char *key, uint32_t key_len,
                            grn_obj *output)
@@ -539,6 +713,7 @@ grn_cache_fetch_persistent(grn_ctx *ctx, grn_cache *cache,
   grn_ja *values = cache->impl.persistent.values;
   grn_id cache_id;
   grn_cache_entry_persistent *entry;
+  grn_cache_entry_persistent *metadata_entry;
 
   if (key_len == GRN_CACHE_PERSISTENT_ROOT_KEY_LEN &&
       memcmp(key,
@@ -555,14 +730,20 @@ grn_cache_fetch_persistent(grn_ctx *ctx, grn_cache *cache,
   /* TODO: How about GRN_NOT_FOUND? */
   rc = GRN_INVALID_ARGUMENT;
 
-  cache->nfetches++;
+  metadata_entry =
+      (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,
+                                                        keys,
+                                                        GRN_CACHE_PERSISTENT_METADATA_ID,
+                                                        NULL);
+  metadata_entry->metadata.nfetches++;
+
   cache_id = grn_hash_get(cache->ctx, keys, key, key_len, (void **)&entry);
   if (cache_id == GRN_ID_NIL) {
     goto exit;
   }
 
   if (cache_id != GRN_ID_NIL) {
-    if (entry->modified_time.tv_sec <=
+    if (entry->data.modified_time.tv_sec <=
         grn_db_get_last_modified(ctx, ctx->impl->db)) {
       grn_cache_expire_entry_persistent(cache, entry, cache_id);
       goto exit;
@@ -584,7 +765,7 @@ grn_cache_fetch_persistent(grn_ctx *ctx, grn_cache *cache,
                                               head_entry,
                                               GRN_CACHE_PERSISTENT_ROOT_ID);
     }
-    cache->nhits++;
+    metadata_entry->metadata.nhits++;
   }
 
 exit :
@@ -607,7 +788,7 @@ grn_cache_fetch(grn_ctx *ctx, grn_cache *cache,
   }
 }
 
-inline static void
+static void
 grn_cache_update_memory(grn_ctx *ctx, grn_cache *cache,
                         const char *key, uint32_t key_len,
                         grn_obj *value)
@@ -618,6 +799,10 @@ grn_cache_update_memory(grn_ctx *ctx, grn_cache *cache,
   grn_rc rc = GRN_SUCCESS;
   grn_obj *old = NULL;
   grn_obj *obj = NULL;
+
+  if (cache->impl.memory.max_nentries == 0) {
+    return;
+  }
 
   MUTEX_LOCK(cache->impl.memory.mutex);
   obj = grn_obj_open(cache->ctx, GRN_BULK, 0, GRN_DB_TEXT);
@@ -644,7 +829,8 @@ grn_cache_update_memory(grn_ctx *ctx, grn_cache *cache,
       ce0->next->prev = ce;
       ce0->next = ce;
     }
-    if (GRN_HASH_SIZE(cache->impl.memory.hash) > cache->max_nentries) {
+    if (GRN_HASH_SIZE(cache->impl.memory.hash) >
+        cache->impl.memory.max_nentries) {
       grn_cache_expire_entry_memory(cache, cache->impl.memory.prev);
     }
   } else {
@@ -656,7 +842,7 @@ exit :
   MUTEX_UNLOCK(cache->impl.memory.mutex);
 }
 
-inline static void
+static void
 grn_cache_update_persistent(grn_ctx *ctx, grn_cache *cache,
                             const char *key, uint32_t key_len,
                             grn_obj *value)
@@ -664,6 +850,7 @@ grn_cache_update_persistent(grn_ctx *ctx, grn_cache *cache,
   grn_rc rc;
   grn_hash *keys = cache->impl.persistent.keys;
   grn_ja *values = cache->impl.persistent.values;
+  grn_cache_entry_persistent *metadata_entry;
   grn_id cache_id;
   grn_cache_entry_persistent *entry;
   int added;
@@ -675,9 +862,25 @@ grn_cache_update_persistent(grn_ctx *ctx, grn_cache *cache,
     return;
   }
 
+  if (key_len == GRN_CACHE_PERSISTENT_METADATA_KEY_LEN &&
+      memcmp(key,
+             GRN_CACHE_PERSISTENT_METADATA_KEY,
+             GRN_CACHE_PERSISTENT_METADATA_KEY_LEN) == 0) {
+    return;
+  }
+
   rc = grn_io_lock(ctx, keys->io, cache->impl.persistent.timeout);
   if (rc != GRN_SUCCESS) {
     return;
+  }
+
+  metadata_entry =
+    (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,
+                                                      keys,
+                                                      GRN_CACHE_PERSISTENT_METADATA_ID,
+                                                      NULL);
+  if (metadata_entry->metadata.max_nentries == 0) {
+    goto exit;
   }
 
   cache_id = grn_hash_add(cache->ctx, keys, key, key_len, (void **)&entry,
@@ -688,7 +891,7 @@ grn_cache_update_persistent(grn_ctx *ctx, grn_cache *cache,
     if (!added) {
       grn_cache_entry_persistent_delete_link(cache, entry);
     }
-    entry->modified_time = ctx->impl->tv;
+    entry->data.modified_time = ctx->impl->tv;
 
     grn_ja_put(cache->ctx, values, cache_id,
                GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value),
@@ -704,17 +907,20 @@ grn_cache_update_persistent(grn_ctx *ctx, grn_cache *cache,
                                             cache_id,
                                             head_entry,
                                             GRN_CACHE_PERSISTENT_ROOT_ID);
-    if (GRN_HASH_SIZE(keys) > cache->max_nentries) {
+    if (GRN_HASH_SIZE(keys) > metadata_entry->metadata.max_nentries) {
       grn_cache_entry_persistent *tail_entry;
       tail_entry =
         (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,
                                                           keys,
-                                                          head_entry->prev,
+                                                          head_entry->data.prev,
                                                           NULL);
-      grn_cache_expire_entry_persistent(cache, tail_entry, head_entry->prev);
+      grn_cache_expire_entry_persistent(cache,
+                                        tail_entry,
+                                        head_entry->data.prev);
     }
   }
 
+exit :
   grn_io_unlock(keys->io);
 }
 
@@ -722,7 +928,7 @@ void
 grn_cache_update(grn_ctx *ctx, grn_cache *cache,
                  const char *key, uint32_t key_len, grn_obj *value)
 {
-  if (!ctx->impl || !cache->max_nentries) { return; }
+  if (!ctx->impl) { return; }
 
   if (cache->is_memory) {
     grn_cache_update_memory(ctx, cache, key, key_len, value);
@@ -731,46 +937,28 @@ grn_cache_update(grn_ctx *ctx, grn_cache *cache,
   }
 }
 
-inline static void
+static void
 grn_cache_expire_memory(grn_cache *cache, int32_t size)
 {
-  grn_cache_entry_memory *ce0 =
-    (grn_cache_entry_memory *)(&(cache->impl.memory));
   MUTEX_LOCK(cache->impl.memory.mutex);
-  while (ce0 != ce0->prev && size--) {
-    grn_cache_expire_entry_memory(cache, ce0->prev);
-  }
+  grn_cache_expire_memory_without_lock(cache, size);
   MUTEX_UNLOCK(cache->impl.memory.mutex);
 }
 
-inline static void
+static void
 grn_cache_expire_persistent(grn_cache *cache, int32_t size)
 {
   grn_rc rc;
   grn_ctx *ctx = cache->ctx;
   grn_hash *keys = cache->impl.persistent.keys;
-  grn_cache_entry_persistent *head_entry;
 
   rc = grn_io_lock(ctx, keys->io, cache->impl.persistent.timeout);
   if (rc != GRN_SUCCESS) {
     return;
   }
 
-  head_entry =
-    (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,
-                                                      keys,
-                                                      GRN_CACHE_PERSISTENT_ROOT_ID,
-                                                      NULL);
-  while (head_entry->prev != GRN_CACHE_PERSISTENT_ROOT_ID && size > 0) {
-    grn_cache_entry_persistent *tail_entry;
-    tail_entry =
-      (grn_cache_entry_persistent *)grn_hash_get_value_(ctx,
-                                                        keys,
-                                                        head_entry->prev,
-                                                        NULL);
-    grn_cache_expire_entry_persistent(cache, tail_entry, head_entry->prev);
-    size--;
-  }
+  grn_cache_expire_persistent_without_lock(cache, size);
+
   grn_io_unlock(keys->io);
 }
 
@@ -791,8 +979,10 @@ grn_cache_fin(void)
 
   grn_cache_current_set(ctx, NULL);
 
-  grn_cache_close(ctx, grn_cache_default);
-  grn_cache_default = NULL;
+  if (grn_cache_default) {
+    grn_cache_close(ctx, grn_cache_default);
+    grn_cache_default = NULL;
+  }
 
   grn_ctx_fin(ctx);
 }
