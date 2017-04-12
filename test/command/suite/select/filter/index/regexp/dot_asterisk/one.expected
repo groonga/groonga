@@ -15,7 +15,7 @@ load --table Memos
 [[0,0.0,0.0],3]
 log_level --level info
 [[0,0.0,0.0],true]
-select Memos --filter 'content @~ "g.*ga"'
+select Memos   --filter 'content @~ "g.*ga"'   --output_columns content,_score
 [
   [
     0,
@@ -29,21 +29,21 @@ select Memos --filter 'content @~ "g.*ga"'
       ],
       [
         [
-          "_id",
-          "UInt32"
-        ],
-        [
           "content",
           "Text"
+        ],
+        [
+          "_score",
+          "Int32"
         ]
       ],
       [
-        1,
-        "Groonga"
+        "Groonga",
+        1
       ],
       [
-        3,
-        "PGroonga"
+        "PGroonga",
+        1
       ]
     ]
   ]

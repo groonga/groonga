@@ -15,8 +15,8 @@ load --table Memos
 [[0,0.0,0.0],3]
 log_level --level info
 [[0,0.0,0.0],true]
-select Memos --filter 'content @~ "mr.*ga"'
-[[0,0.0,0.0],[[[0],[["_id","UInt32"],["content","Text"]]]]]
+select Memos   --filter 'content @~ "mr.*ga"'   --output_columns content,_score
+[[0,0.0,0.0],[[[0],[["content","Text"],["_score","Int32"]]]]]
 #|i| [object][search][index][key][regexp] <RegexpTokens.memos_content>
 #|i| grn_ii_sel > (mr.*ga)
 #|i| exact: 0

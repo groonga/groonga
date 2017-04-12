@@ -18,6 +18,8 @@ load --table Memos
 
 log_level --level info
 #@add-important-log-levels info
-select Memos --filter 'content @~ "g.*ga\\\\z"'
+select Memos \
+  --filter 'content @~ "g.*ga\\\\z"' \
+  --output_columns content,_score
 #@remove-important-log-levels info
 log_level --level notice
