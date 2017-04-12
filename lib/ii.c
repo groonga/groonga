@@ -7693,13 +7693,22 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
 }
 
 typedef struct {
+  grn_id rid;
+  uint32_t sid;
+  uint32_t start_pos;
+  uint32_t end_pos;
+  uint32_t tf;
+  uint32_t weight;
+} grn_ii_select_cursor_posting;
+
+typedef struct {
   btr *bt;
   grn_ii *ii;
   token_info **tis;
   uint32_t n_tis;
   int max_interval;
   grn_operator mode;
-  grn_posting posting;
+  grn_ii_select_cursor_posting posting;
   const char *string;
   unsigned int string_len;
   grn_bool done;
@@ -7831,8 +7840,6 @@ grn_ii_select_cursor_open(grn_ctx *ctx,
           cursor->n_tis,
           string_len, string);
 
-  cursor->posting.rest = 0;
-
   cursor->string = string;
   cursor->string_len = string_len;
 
@@ -7841,7 +7848,7 @@ grn_ii_select_cursor_open(grn_ctx *ctx,
   return cursor;
 }
 
-grn_posting *
+grn_ii_select_cursor_posting *
 grn_ii_select_cursor_next(grn_ctx *ctx,
                           grn_ii_select_cursor *cursor)
 {
@@ -7879,7 +7886,8 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
 
     if (tip == tie) {
       int n_occurs = 0;
-      int pos = 0;
+      int start_pos = 0;
+      int end_pos = 0;
       int score = 0;
       int tscore = 0;
 
@@ -7894,12 +7902,12 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
       if (n_tis == 1) {
         n_occurs = (*tis)->p->tf;
         tscore = (*tis)->p->weight + (*tis)->cursors->bins[0]->weight;
-        pos = (*tis)->p->pos;
+        start_pos = end_pos = (*tis)->p->pos;
       } else if (mode == GRN_OP_NEAR) {
         bt_zap(bt);
         for (tip = tis; tip < tie; tip++) {
           token_info *ti = *tip;
-          SKIP_OR_BREAK(pos);
+          SKIP_OR_BREAK(end_pos);
           bt_push(bt, ti);
         }
         if (tip == tie) {
@@ -7950,20 +7958,23 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
 
           if (tip == tie) { tip = tis; }
           ti = *tip;
-          SKIP_OR_BREAK(pos);
-          if (ti->pos == pos) {
+          SKIP_OR_BREAK(end_pos);
+          if (ti->pos == end_pos) {
             score += ti->p->weight + ti->cursors->bins[0]->weight;
             count++;
           } else {
             score = ti->p->weight + ti->cursors->bins[0]->weight;
             count = 1;
-            pos = ti->pos;
+            if (start_pos == 0) {
+              start_pos = ti->pos;
+            }
+            end_pos = ti->pos;
           }
           if (count == n_tis) {
             tscore += score;
             score = 0;
             count = 0;
-            pos++;
+            end_pos++;
             n_occurs++;
           }
         }
@@ -7971,10 +7982,11 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
       if (n_occurs > 0) {
         cursor->posting.rid = rid;
         cursor->posting.sid = sid;
-        cursor->posting.pos = pos;
+        cursor->posting.start_pos = start_pos;
+        cursor->posting.end_pos = end_pos;
         cursor->posting.tf = n_occurs;
         cursor->posting.weight = tscore;
-        if (token_info_skip_pos(ctx, *tis, rid, sid, pos + 1) != GRN_SUCCESS) {
+        if (token_info_skip_pos(ctx, *tis, rid, sid, end_pos + 1) != GRN_SUCCESS) {
           if (token_info_skip(ctx, *tis, next_rid, next_sid) != GRN_SUCCESS) {
             cursor->done = GRN_TRUE;
           }
@@ -8120,7 +8132,7 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
     grn_ii_select_cursor **cursors;
     grn_bool have_error = GRN_FALSE;
     int keep_i = 0;
-    grn_posting keep_posting;
+    grn_ii_select_cursor_posting keep_posting;
 
     cursors = GRN_CALLOC(sizeof(grn_ii_select_cursor *) * n_parsed_strings);
     for (i = 0; i < n_parsed_strings; i++) {
@@ -8144,7 +8156,7 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
     }
 
     while (!have_error) {
-      grn_posting *posting;
+      grn_ii_select_cursor_posting *posting;
       uint32_t pos;
 
       posting = grn_ii_select_cursor_next(ctx, cursors[0]);
@@ -8152,9 +8164,9 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
         break;
       }
 
-      pos = posting->pos;
+      pos = posting->end_pos;
       for (i = 1; i < n_parsed_strings; i++) {
-        grn_posting *posting_i;
+        grn_ii_select_cursor_posting *posting_i;
 
         for (;;) {
           if (keep_i == i) {
@@ -8169,7 +8181,7 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
 
           if (posting_i->rid == posting->rid &&
               posting_i->sid == posting->sid &&
-              posting_i->pos > pos) {
+              posting_i->start_pos > pos) {
             keep_i = i;
             keep_posting = *posting_i;
             break;
@@ -8188,10 +8200,12 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
         if (posting_i->rid != posting->rid || posting_i->sid != posting->sid) {
           break;
         }
+
+        pos = posting_i->end_pos;
       }
 
       if (i == n_parsed_strings) {
-        grn_rset_posinfo pi = {posting->rid, posting->sid, 0};
+        grn_rset_posinfo pi = {posting->rid, posting->sid, pos};
         double record_score = 1.0;
         res_add(ctx, s, &pi, record_score, op);
       }
