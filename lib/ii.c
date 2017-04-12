@@ -101,6 +101,7 @@ static grn_bool grn_ii_overlap_token_skip_enable = GRN_FALSE;
 static uint32_t grn_ii_builder_block_threshold_force = 0;
 static uint32_t grn_ii_max_n_segments_small = MAX_PSEG_SMALL;
 static uint32_t grn_ii_max_n_chunks_small = GRN_II_MAX_CHUNK_SMALL;
+static grn_bool grn_ii_regexp_dot_asterisk_enable = GRN_FALSE;
 
 void
 grn_ii_init_from_env(void)
@@ -198,6 +199,18 @@ grn_ii_init_from_env(void)
       if (grn_ii_max_n_chunks_small > GRN_II_MAX_CHUNK) {
         grn_ii_max_n_chunks_small = GRN_II_MAX_CHUNK;
       }
+    }
+  }
+
+  {
+    char grn_ii_regexp_dot_asterisk_enable_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_REGEXP_DOT_ASTERISK_ENABLE",
+               grn_ii_regexp_dot_asterisk_enable_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (strcmp(grn_ii_regexp_dot_asterisk_enable_env, "yes") == 0) {
+      grn_ii_regexp_dot_asterisk_enable = GRN_TRUE;
+    } else {
+      grn_ii_regexp_dot_asterisk_enable = GRN_FALSE;
     }
   }
 }
@@ -8029,7 +8042,8 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
         if (*target == '\\') {
           escaping = GRN_TRUE;
           continue;
-        } else if (*target == '.' &&
+        } else if (grn_ii_regexp_dot_asterisk_enable &&
+                   *target == '.' &&
                    grn_charlen(ctx, current, string_end) == 1 &&
                    *current == '*') {
           if (GRN_TEXT_LEN(&buffer) > 0) {

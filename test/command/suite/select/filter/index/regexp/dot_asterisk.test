@@ -1,3 +1,5 @@
+#$GRN_II_REGEXP_DOT_ASTERISK_ENABLE=yes
+
 table_create Memos TABLE_NO_KEY
 column_create Memos content COLUMN_SCALAR Text
 
