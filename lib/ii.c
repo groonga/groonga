@@ -8116,10 +8116,11 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
   } else {
     int i;
     grn_ii_select_cursor **cursors;
+    grn_bool have_error = GRN_FALSE;
     int keep_i = 0;
     grn_posting keep_posting;
 
-    cursors = GRN_MALLOC(sizeof(grn_ii_select_cursor *) * n_parsed_strings);
+    cursors = GRN_CALLOC(sizeof(grn_ii_select_cursor *) * n_parsed_strings);
     for (i = 0; i < n_parsed_strings; i++) {
       const char *parsed_string;
       unsigned int parsed_string_len;
@@ -8134,9 +8135,13 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
                                              parsed_string,
                                              parsed_string_len,
                                              optarg);
+      if (!cursors[i]) {
+        have_error = GRN_TRUE;
+        break;
+      }
     }
 
-    for (;;) {
+    while (!have_error) {
       grn_posting *posting;
       uint32_t pos;
 
@@ -8189,7 +8194,9 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
     }
 
     for (i = 0; i < n_parsed_strings; i++) {
-      grn_ii_select_cursor_close(ctx, cursors[i]);
+      if (cursors[i]) {
+        grn_ii_select_cursor_close(ctx, cursors[i]);
+      }
     }
     GRN_FREE(cursors);
   }
