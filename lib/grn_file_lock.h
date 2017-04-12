@@ -26,7 +26,11 @@ extern "C" {
 
 typedef struct {
   const char *path;
+#ifdef WIN32
+  HANDLE handle;
+#else /* WIN32 */
   int fd;
+#endif /* WIN32 */
 } grn_file_lock;
 
 void grn_file_lock_init(grn_ctx *ctx,
