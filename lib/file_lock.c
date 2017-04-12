@@ -73,7 +73,7 @@ grn_file_lock_acquire(grn_ctx *ctx,
                                    FILE_ATTRIBUTE_NORMAL,
                                    NULL);
 #else /* WIN32 */
-    file_lock->fd = open(file_lock->path, O_CREAT | O_EXCL, S_IRWUSR | S_IWUSR);
+    file_lock->fd = open(file_lock->path, O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
 #endif
     if (!GRN_FILE_LOCK_IS_INVALID(file_lock)) {
       break;
