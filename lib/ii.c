@@ -7974,8 +7974,10 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
         cursor->posting.pos = pos;
         cursor->posting.tf = n_occurs;
         cursor->posting.weight = tscore;
-        if (token_info_skip(ctx, *tis, next_rid, next_sid) != GRN_SUCCESS) {
-          cursor->done = GRN_TRUE;
+        if (token_info_skip_pos(ctx, *tis, rid, sid, pos + 1) != GRN_SUCCESS) {
+          if (token_info_skip(ctx, *tis, next_rid, next_sid) != GRN_SUCCESS) {
+            cursor->done = GRN_TRUE;
+          }
         }
         return &(cursor->posting);
       }
@@ -8168,6 +8170,8 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
           if (posting_i->rid == posting->rid &&
               posting_i->sid == posting->sid &&
               posting_i->pos > pos) {
+            keep_i = i;
+            keep_posting = *posting_i;
             break;
           }
           if (posting_i->rid > posting->rid) {
