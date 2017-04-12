@@ -30,6 +30,8 @@ libgroonga_la_SOURCES =				\
 	grn_expr_code.h				\
 	expr_executor.c				\
 	grn_expr_executor.h			\
+	file_lock.c				\
+	grn_file_lock.h				\
 	geo.c					\
 	grn_geo.h				\
 	grn.h					\

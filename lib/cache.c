@@ -23,6 +23,7 @@
 #include "grn_pat.h"
 #include "grn_store.h"
 #include "grn_db.h"
+#include "grn_file_lock.h"
 
 #include <sys/stat.h>
 
@@ -140,10 +141,21 @@ grn_cache_open_persistent(grn_ctx *ctx,
                           grn_cache *cache,
                           const char *base_path)
 {
+  grn_file_lock file_lock;
   char *keys_path = NULL;
   char *values_path = NULL;
+  char lock_path_buffer[PATH_MAX];
   char keys_path_buffer[PATH_MAX];
   char values_path_buffer[PATH_MAX];
+
+  cache->impl.persistent.timeout = 1000;
+
+  if (base_path) {
+    grn_snprintf(lock_path_buffer, PATH_MAX, PATH_MAX, "%s.lock", base_path);
+    grn_file_lock_init(ctx, &file_lock, lock_path_buffer);
+  } else {
+    grn_file_lock_init(ctx, &file_lock, NULL);
+  }
 
   if (base_path) {
     struct stat stat_buffer;
@@ -152,6 +164,13 @@ grn_cache_open_persistent(grn_ctx *ctx,
     grn_snprintf(values_path_buffer, PATH_MAX, PATH_MAX, "%s.values", base_path);
     keys_path = keys_path_buffer;
     values_path = values_path_buffer;
+
+    if (!grn_file_lock_acquire(ctx,
+                               &file_lock,
+                               cache->impl.persistent.timeout,
+                               "[cache][persistent][open]")) {
+      goto exit;
+    }
 
     if (stat(keys_path, &stat_buffer) == 0) {
       cache->impl.persistent.keys = grn_hash_open(ctx, keys_path);
@@ -169,7 +188,7 @@ grn_cache_open_persistent(grn_ctx *ctx,
           ERRNO_ERR("[cache][persistent] "
                     "failed to remove path for cache keys: <%s>",
                     keys_path);
-          return;
+          goto exit;
         }
       }
       if (stat(values_path, &stat_buffer) == 0) {
@@ -177,7 +196,7 @@ grn_cache_open_persistent(grn_ctx *ctx,
           ERRNO_ERR("[cache][persistent] "
                     "failed to remove path for cache values: <%s>",
                     values_path);
-          return;
+          goto exit;
         }
       }
     }
@@ -194,7 +213,7 @@ grn_cache_open_persistent(grn_ctx *ctx,
       ERR(ctx->rc == GRN_SUCCESS ? GRN_FILE_CORRUPT : ctx->rc,
           "[cache][persistent] failed to create cache keys storage: <%s>",
           keys_path ? keys_path : "(memory)");
-      return;
+      goto exit;
     }
     cache->impl.persistent.values =
       grn_ja_create(ctx,
@@ -206,7 +225,7 @@ grn_cache_open_persistent(grn_ctx *ctx,
       ERR(ctx->rc == GRN_SUCCESS ? GRN_FILE_CORRUPT : ctx->rc,
           "[cache][persistent] failed to create cache values storage: <%s>",
           values_path ? values_path : "(memory)");
-      return;
+      goto exit;
     }
   }
 
@@ -267,7 +286,7 @@ grn_cache_open_persistent(grn_ctx *ctx,
       ERR(ctx->rc == GRN_SUCCESS ? GRN_FILE_CORRUPT : ctx->rc,
           "[cache][persistent] broken cache keys storage: broken metadata: <%s>",
           keys_path ? keys_path : "(memory)");
-      return;
+      goto exit;
     }
 
     if (added) {
@@ -277,7 +296,9 @@ grn_cache_open_persistent(grn_ctx *ctx,
     }
   }
 
-  cache->impl.persistent.timeout = 1000;
+exit :
+  grn_file_lock_release(ctx, &file_lock);
+  grn_file_lock_fin(ctx, &file_lock);
 }
 
 static grn_cache *
