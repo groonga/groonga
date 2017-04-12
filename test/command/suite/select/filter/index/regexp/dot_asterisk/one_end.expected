@@ -1,0 +1,27 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create RegexpTokens TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto   --default_tokenizer TokenRegexp
+[[0,0.0,0.0],true]
+column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION   Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "groonga"},
+{"content": "groonga server"},
+{"content": "groonga-httpd"}
+]
+[[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
+select Memos --filter 'content @~ "g.*ga\\\\z"'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["content","Text"]],[1,"groonga"]]]]
+#|i| [object][search][index][key][regexp] <RegexpTokens.memos_content>
+#|i| grn_ii_sel > (g.*ga\z)
+#|i| [ii][select][cursor][open] n=1 <g>
+#|i| [ii][select][cursor][open] n=2 <ga￰>
+#|i| exact: 1
+#|i| hits=1
+log_level --level notice
+[[0,0.0,0.0],true]
