@@ -528,7 +528,8 @@ ngx_http_groonga_context_receive_handler_typed(grn_ctx *context,
       context->stat |= GRN_CTX_QUIT;
     } else {
       context->rc = GRN_OPERATION_NOT_PERMITTED;
-      GRN_TEXT_PUTS(context, &(data->typed.body), "false");
+      result = "false";
+      result_size = strlen(result);
       context->stat &= ~GRN_CTX_QUIT;
     }
   }
