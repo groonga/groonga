@@ -1,0 +1,37 @@
+select LandMarks --sortby 'geo_distance(point, "0x0")' --offset 2 --limit 3
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        11
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "point",
+          "WGS84GeoPoint"
+        ]
+      ],
+      [
+        3,
+        "1x2"
+      ],
+      [
+        4,
+        "2x-2"
+      ],
+      [
+        5,
+        "2x3"
+      ]
+    ]
+  ]
+]

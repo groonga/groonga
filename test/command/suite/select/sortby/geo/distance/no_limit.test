@@ -1,0 +1,3 @@
+#@include fixture/geo/sort/init.grn
+
+select LandMarks --sortby 'geo_distance(point, "0x0")' --limit -1

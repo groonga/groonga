@@ -1,0 +1,6 @@
+#@include fixture/geo/taiyaki/init.grn
+
+select Shops \
+  --sortby 'geo_distance(location, "35.67487x139.76352")' \
+  --output_columns 'name'
+

@@ -1,0 +1,103 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Logs_20150203 TABLE_NO_KEY
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+column_create Logs_20150203 memo COLUMN_SCALAR ShortText
+column_create Logs_20150203 date COLUMN_SCALAR ShortText
+column_create Logs_20150203 action COLUMN_SCALAR ShortText
+
+table_create Logs_20150204 TABLE_NO_KEY
+column_create Logs_20150204 timestamp COLUMN_SCALAR Time
+column_create Logs_20150204 memo COLUMN_SCALAR ShortText
+column_create Logs_20150204 date COLUMN_SCALAR ShortText
+column_create Logs_20150204 action COLUMN_SCALAR ShortText
+
+table_create Logs_20150205 TABLE_NO_KEY
+column_create Logs_20150205 timestamp COLUMN_SCALAR Time
+column_create Logs_20150205 memo COLUMN_SCALAR ShortText
+column_create Logs_20150205 date COLUMN_SCALAR ShortText
+column_create Logs_20150205 action COLUMN_SCALAR ShortText
+
+load --table Logs_20150203
+[
+{
+  "timestamp": "2015-02-03 23:59:59",
+  "memo":      "2015-02-03 23:59:59",
+  "date":      "2015-02-03",
+  "action":    "Shutdown"
+},
+{
+  "timestamp": "2015-02-03 12:49:00",
+  "memo":      "2015-02-03 12:49:00",
+  "date":      "2015-02-03",
+  "action":    "Start"
+}
+]
+
+load --table Logs_20150204
+[
+{
+  "timestamp": "2015-02-04 13:50:00",
+  "memo":      "2015-02-04 13:50:00",
+  "date":      "2015-02-04",
+  "action":    "Restart"
+},
+{
+  "timestamp": "2015-02-04 13:49:00",
+  "memo":      "2015-02-04 13:49:00",
+  "date":      "2015-02-04",
+  "action":    "Restart"
+},
+{
+  "timestamp": "2015-02-04 00:00:00",
+  "memo":      "2015-02-04 00:00:00",
+  "date":      "2015-02-04",
+  "action":    "Start"
+}
+]
+
+load --table Logs_20150205
+[
+{
+  "timestamp": "2015-02-05 13:53:00",
+  "memo":      "2015-02-05 13:53:00",
+  "date":      "2015-02-05",
+  "action":    "Shutdown"
+},
+{
+  "timestamp": "2015-02-05 13:52:00",
+  "memo":      "2015-02-05 13:52:00",
+  "date":      "2015-02-05",
+  "action":    "Start"
+},
+{
+  "timestamp": "2015-02-05 13:51:00",
+  "memo":      "2015-02-05 13:51:00",
+  "date":      "2015-02-05",
+  "action":    "Shutdown"
+},
+{
+  "timestamp": "2015-02-05 13:50:00",
+  "memo":      "2015-02-05 13:50:00",
+  "date":      "2015-02-05",
+  "action":    "Restart"
+},
+{
+  "timestamp": "2015-02-05 13:49:00",
+  "memo":      "2015-02-05 13:49:00",
+  "date":      "2015-02-05",
+  "action":    "Restart"
+}
+]
+
+logical_select Logs timestamp \
+  --min "2015-02-05 00:00:00" \
+  --min_border "include" \
+  --max "2015-02-06 00:00:00" \
+  --max_border "exclude" \
+  --limit 0 \
+  --drilldowns[action_date].keys action,date \
+  --drilldowns[action_date].output_columns _value.action,_value.date,_nsubrecs \
+  --drilldowns[action_date].sortby -_nsubrecs,_value.date,_value.action

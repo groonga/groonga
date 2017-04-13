@@ -1,0 +1,11 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+load --table Users
+[
+{"_key": "alice", "name": "Alice"},
+{"_key": "kou", "name": "kou"},
+{"_key": "mori", "name": "森"}
+]
+
+select Users --sortby name

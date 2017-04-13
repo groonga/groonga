@@ -1,0 +1,18 @@
+table_create  Locations      TABLE_PAT_KEY  WGS84GeoPoint
+
+table_create  Shops          TABLE_NO_KEY
+column_create Shops name     COLUMN_SCALAR  ShortText
+column_create Shops location COLUMN_SCALAR  WGS84GeoPoint
+
+column_create Locations shop COLUMN_INDEX Shops location
+
+load --table Shops
+[
+{"name":"根津のたいやき",  "location":"128592911x503145263"},
+{"name":"たい焼 カタオカ", "location":null}
+]
+
+select Shops \
+  --sortby 'geo_distance(location, "35.67487x139.76352")' \
+  --output_columns '_id, name, location'
+
