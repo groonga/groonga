@@ -1,0 +1,26 @@
+#$GRN_II_REGEXP_DOT_ASTERISK_ENABLE=yes
+
+table_create Properties TABLE_NO_KEY
+column_create Properties content COLUMN_SCALAR ShortText
+
+table_create RegexpTokens TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerAuto \
+  --default_tokenizer TokenRegexp
+column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION \
+  Properties content
+
+load --table Properties
+[
+{"content": "app:Groonga"},
+{"content": "app:apple"},
+{"content": "project:Groonga"},
+{"content": "appname:application1"}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Properties \
+  --filter 'content @~ "app.*:.*pp.*"' \
+  --output_columns content,_score
+#@remove-important-log-levels info
+log_level --level notice

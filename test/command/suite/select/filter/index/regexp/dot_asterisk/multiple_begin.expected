@@ -1,0 +1,55 @@
+table_create Properties TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Properties content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create RegexpTokens TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto   --default_tokenizer TokenRegexp
+[[0,0.0,0.0],true]
+column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION   Properties content
+[[0,0.0,0.0],true]
+load --table Properties
+[
+{"content": "app:Groonga"},
+{"content": "app:apple"},
+{"content": "project:app:apple"},
+{"content": "appname:application1"}
+]
+[[0,0.0,0.0],4]
+log_level --level info
+[[0,0.0,0.0],true]
+select Properties   --filter 'content @~ "\\\\Aapp:.*pp.*"'   --output_columns content,_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "content",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "app:apple",
+        1
+      ]
+    ]
+  ]
+]
+#|i| [object][search][index][key][regexp] <RegexpTokens.memos_content>
+#|i| grn_ii_sel > (\Aapp:.*pp.*)
+#|i| [ii][select][cursor][open] n=3 <￯app:>
+#|i| [ii][select][cursor][open] n=1 <pp>
+#|i| exact: 1
+#|i| hits=1
+log_level --level notice
+[[0,0.0,0.0],true]

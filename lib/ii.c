@@ -7712,9 +7712,11 @@ typedef struct {
   const char *string;
   unsigned int string_len;
   grn_bool done;
+  grn_ii_select_cursor_posting unshifted_posting;
+  grn_bool have_unshifted_posting;
 } grn_ii_select_cursor;
 
-grn_rc
+static grn_rc
 grn_ii_select_cursor_close(grn_ctx *ctx,
                            grn_ii_select_cursor *cursor)
 {
@@ -7738,7 +7740,7 @@ grn_ii_select_cursor_close(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-grn_ii_select_cursor *
+static grn_ii_select_cursor *
 grn_ii_select_cursor_open(grn_ctx *ctx,
                           grn_ii *ii,
                           const char *string,
@@ -7845,10 +7847,12 @@ grn_ii_select_cursor_open(grn_ctx *ctx,
 
   cursor->done = GRN_FALSE;
 
+  cursor->have_unshifted_posting = GRN_FALSE;
+
   return cursor;
 }
 
-grn_ii_select_cursor_posting *
+static grn_ii_select_cursor_posting *
 grn_ii_select_cursor_next(grn_ctx *ctx,
                           grn_ii_select_cursor *cursor)
 {
@@ -7858,6 +7862,11 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
   uint32_t n_tis = cursor->n_tis;
   int max_interval = cursor->max_interval;
   grn_operator mode = cursor->mode;
+
+  if (cursor->have_unshifted_posting) {
+    cursor->have_unshifted_posting = GRN_FALSE;
+    return &(cursor->unshifted_posting);
+  }
 
   if (cursor->done) {
     return NULL;
@@ -7885,29 +7894,48 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
     }
 
     if (tip == tie) {
-      int n_occurs = 0;
       int start_pos = 0;
+      int pos = 0;
       int end_pos = 0;
       int score = 0;
+      int tf = 0;
       int tscore = 0;
 
 #define SKIP_OR_BREAK(pos) {\
-  if (token_info_skip_pos(ctx, ti, rid, sid, pos)) { break; }    \
+  if (token_info_skip_pos(ctx, ti, rid, sid, pos)) { break; } \
   if (ti->p->rid != rid || ti->p->sid != sid) { \
     next_rid = ti->p->rid; \
     next_sid = ti->p->sid; \
     break; \
   } \
 }
+
+#define RETURN_POSTING() do { \
+  cursor->posting.rid = rid; \
+  cursor->posting.sid = sid; \
+  cursor->posting.start_pos = start_pos; \
+  cursor->posting.end_pos = end_pos; \
+  cursor->posting.tf = tf; \
+  cursor->posting.weight = tscore; \
+  if (token_info_skip_pos(ctx, *tis, rid, sid, pos) != GRN_SUCCESS) { \
+    if (token_info_skip(ctx, *tis, next_rid, next_sid) != GRN_SUCCESS) { \
+      cursor->done = GRN_TRUE; \
+    } \
+  } \
+  return &(cursor->posting); \
+} while (GRN_FALSE)
+
       if (n_tis == 1) {
-        n_occurs = (*tis)->p->tf;
+        start_pos = pos = end_pos = (*tis)->p->pos;
+        pos++;
+        tf = (*tis)->p->tf;
         tscore = (*tis)->p->weight + (*tis)->cursors->bins[0]->weight;
-        start_pos = end_pos = (*tis)->p->pos;
+        RETURN_POSTING();
       } else if (mode == GRN_OP_NEAR) {
         bt_zap(bt);
         for (tip = tis; tip < tie; tip++) {
           token_info *ti = *tip;
-          SKIP_OR_BREAK(end_pos);
+          SKIP_OR_BREAK(pos);
           bt_push(bt, ti);
         }
         if (tip == tie) {
@@ -7937,7 +7965,8 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
               return NULL;
             }
             if ((max_interval < 0) || (max - min <= max_interval)) {
-              n_occurs++;
+              /* TODO: Set start_pos, pos, end_pos, tf and tscore */
+              RETURN_POSTING();
               if (ti->pos == max + 1) {
                 break;
               }
@@ -7958,40 +7987,26 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
 
           if (tip == tie) { tip = tis; }
           ti = *tip;
-          SKIP_OR_BREAK(end_pos);
-          if (ti->pos == end_pos) {
+          SKIP_OR_BREAK(pos);
+          if (ti->pos == pos) {
             score += ti->p->weight + ti->cursors->bins[0]->weight;
             count++;
           } else {
             score = ti->p->weight + ti->cursors->bins[0]->weight;
             count = 1;
-            if (start_pos == 0) {
-              start_pos = ti->pos;
-            }
-            end_pos = ti->pos;
+            start_pos = pos = ti->pos;
+            end_pos = ti->p->pos;
           }
           if (count == n_tis) {
+            pos++;
+            if (ti->p->pos > end_pos) {
+              end_pos = ti->p->pos;
+            }
+            tf = 1;
             tscore += score;
-            score = 0;
-            count = 0;
-            end_pos++;
-            n_occurs++;
+            RETURN_POSTING();
           }
         }
-      }
-      if (n_occurs > 0) {
-        cursor->posting.rid = rid;
-        cursor->posting.sid = sid;
-        cursor->posting.start_pos = start_pos;
-        cursor->posting.end_pos = end_pos;
-        cursor->posting.tf = n_occurs;
-        cursor->posting.weight = tscore;
-        if (token_info_skip_pos(ctx, *tis, rid, sid, end_pos + 1) != GRN_SUCCESS) {
-          if (token_info_skip(ctx, *tis, next_rid, next_sid) != GRN_SUCCESS) {
-            cursor->done = GRN_TRUE;
-          }
-        }
-        return &(cursor->posting);
       }
 #undef SKIP_OR_BREAK
     }
@@ -7999,6 +8014,15 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
       return NULL;
     }
   }
+}
+
+static void
+grn_ii_select_cursor_unshift(grn_ctx *ctx,
+                             grn_ii_select_cursor *cursor,
+                             grn_ii_select_cursor_posting *posting)
+{
+  cursor->unshifted_posting = *posting;
+  cursor->have_unshifted_posting = GRN_TRUE;
 }
 
 static grn_rc
@@ -8131,8 +8155,6 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
     int i;
     grn_ii_select_cursor **cursors;
     grn_bool have_error = GRN_FALSE;
-    int keep_i = 0;
-    grn_ii_select_cursor_posting keep_posting;
 
     cursors = GRN_CALLOC(sizeof(grn_ii_select_cursor *) * n_parsed_strings);
     for (i = 0; i < n_parsed_strings; i++) {
@@ -8169,26 +8191,19 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
         grn_ii_select_cursor_posting *posting_i;
 
         for (;;) {
-          if (keep_i == i) {
-            posting_i = &keep_posting;
-            keep_i = 0;
-          } else {
-            posting_i = grn_ii_select_cursor_next(ctx, cursors[i]);
-            if (!posting_i) {
-              break;
-            }
+          posting_i = grn_ii_select_cursor_next(ctx, cursors[i]);
+          if (!posting_i) {
+            break;
           }
 
           if (posting_i->rid == posting->rid &&
               posting_i->sid == posting->sid &&
               posting_i->start_pos > pos) {
-            keep_i = i;
-            keep_posting = *posting_i;
+            grn_ii_select_cursor_unshift(ctx, cursors[i], posting_i);
             break;
           }
           if (posting_i->rid > posting->rid) {
-            keep_i = i;
-            keep_posting = *posting_i;
+            grn_ii_select_cursor_unshift(ctx, cursors[i], posting_i);
             break;
           }
         }

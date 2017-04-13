@@ -1,0 +1,65 @@
+table_create Properties TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Properties content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create RegexpTokens TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto   --default_tokenizer TokenRegexp
+[[0,0.0,0.0],true]
+column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION   Properties content
+[[0,0.0,0.0],true]
+load --table Properties
+[
+{"content": "app:Groonga"},
+{"content": "app:apple"},
+{"content": "project:Groonga"},
+{"content": "project:app:Groonga,app:Rroonga"},
+{"content": "appname:PGroonga"}
+]
+[[0,0.0,0.0],5]
+log_level --level info
+[[0,0.0,0.0],true]
+select Properties   --filter 'content @~ "app.*:.*ga\\\\z"'   --output_columns content,_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "content",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "app:Groonga",
+        1
+      ],
+      [
+        "project:app:Groonga,app:Rroonga",
+        2
+      ],
+      [
+        "appname:PGroonga",
+        1
+      ]
+    ]
+  ]
+]
+#|i| [object][search][index][key][regexp] <RegexpTokens.memos_content>
+#|i| grn_ii_sel > (app.*:.*ga\z)
+#|i| [ii][select][cursor][open] n=2 <app>
+#|i| [ii][select][cursor][open] n=1 <:>
+#|i| [ii][select][cursor][open] n=2 <ga￰>
+#|i| exact: 3
+#|i| hits=3
+log_level --level notice
+[[0,0.0,0.0],true]
