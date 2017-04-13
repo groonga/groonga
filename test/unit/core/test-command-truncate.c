@@ -123,7 +123,7 @@ test_have_columns(void)
        "[1,\"mori\",\"Daijiro MORI\"],"
        "[2,\"gunyara-kun\",\"Tasuku SUENAGA\"],"
        "[3,\"yu\",\"Yutaro Shimamura\"]]]",
-    send_command("select Users --sortby _id"));
+    send_command("select Users --sort_keys _id"));
   cut_assert_equal_string("true",
                           send_command("truncate Users"));
   cut_assert_equal_string(

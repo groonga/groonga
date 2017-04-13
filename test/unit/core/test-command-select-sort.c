@@ -156,7 +156,7 @@ test_int(void)
      "[\"groonga.org\",100,2],"
      "[\"2ch.net\",10,11]]]",
     send_command("select Sites "
-                 "--sortby \"-score, -age\" "
+                 "--sort_keys \"-score, -age\" "
                  "--output_columns \"_key, score, age\""));
 }
 
@@ -193,10 +193,10 @@ test_drilldown(void)
       "[100,2]]]",
     send_command("select Bookmarks "
                  "--output_columns \"site._key, user._key, rank\" "
-                 "--sortby \"-site.score, -site.age\" "
+                 "--sort_keys \"-site.score, -site.age\" "
                  "--drilldown \"site, user, rank\" "
                  "--drilldown_output_columns \"_key, _nsubrecs\" "
-                 "--drilldown_sortby \"_key\""));
+                 "--drilldown_sort_keys \"_key\""));
 }
 
 void
@@ -209,7 +209,7 @@ test_score_without_query(void)
       "[\"groonga.org\"],"
       "[\"qwik.jp/senna/FrontPageJ.html\"]]]",
     send_command("select Sites "
-                 "--sortby \"_score\" "
+                 "--sort_keys \"_score\" "
                  "--output_columns \"_key\""));
 }
 
@@ -245,11 +245,11 @@ test_score_drilldown_without_query(void)
      "[50,1],"
      "[100,2]]]",
     send_command("select Bookmarks "
-                 "--sortby \"_score,-_id\" "
+                 "--sort_keys \"_score,-_id\" "
                  "--output_columns \"_id, site._key, user._key\" "
                  "--drilldown \"site user rank\" "
                  "--drilldown_output_columns \"_key, _nsubrecs\" "
-                 "--drilldown_sortby \"_key\""));
+                 "--drilldown_sort_keys \"_key\""));
 }
 
 void
@@ -261,7 +261,7 @@ test_nonexistent(void)
     "[select][sort] failed to parse: <_score,nonexistent>: "
     "invalid sort key: <nonexistent>: table:<Sites> keys:<_score,nonexistent>",
     "select Sites "
-    "--sortby \"_score,nonexistent\" "
+    "--sort_keys \"_score,nonexistent\" "
     "--output_columns \"_key\"");
 }
 
@@ -276,7 +276,7 @@ test_fulltext_search_index_with_query(void)
        "[\"groonga.org\","
         "\"fulltext search engine and column store\"]]]",
     send_command("select Sites "
-                 "--sortby \"description\" "
+                 "--sort_keys \"description\" "
                  "--output_columns \"_key, description\" "
                  "--match_columns \"description\" "
                  "--query \"fulltext\""));
@@ -305,7 +305,7 @@ test_pat_integer_index_with_query(void)
        "[5,\"qwik.jp/senna/FrontPageJ.html\"],"
        "[11,\"2ch.net\"]]]",
     send_command("select Sites "
-                 "--sortby \"age\" "
+                 "--sort_keys \"age\" "
                  "--output_columns \"age, _key\" "
                  "--match_columns \"description\" "
                  "--query \"fulltext OR BBS OR groonga\""));
@@ -334,6 +334,6 @@ test_pat_integer_index_without_query(void)
        "[5,\"qwik.jp/senna/FrontPageJ.html\"],"
        "[11,\"2ch.net\"]]]",
     send_command("select Sites "
-                 "--sortby \"age\" "
+                 "--sort_keys \"age\" "
                  "--output_columns \"age, _key\""));
 }

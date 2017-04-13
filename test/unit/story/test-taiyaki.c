@@ -117,7 +117,7 @@ test_in_circle(void)
     send_command(
       cut_take_printf(
         "select Shops "
-        "--sortby '+_score, +name' "
+        "--sort_keys '+_score, +name' "
         "--output_columns 'name, _score, location' "
         "--filter 'geo_in_circle(location, \"%s\", %d)' "
         "--scorer '_score=geo_distance(location, \"%s\")'",
@@ -147,7 +147,7 @@ test_sort(void)
     send_command(
       cut_take_printf(
         "select Shops "
-        "--sortby 'geo_distance(location, \"%s\")' "
+        "--sort_keys 'geo_distance(location, \"%s\")' "
         "--output_columns 'name, _score' "
         "--filter 'geo_in_circle(location, \"%s\", %d)' "
         "--scorer '_score=geo_distance(location, \"%s\")'",
@@ -180,7 +180,7 @@ test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void)
     send_command(
       cut_take_printf(
         "select Shops "
-        "--sortby '+_score, +name' "
+        "--sort_keys '+_score, +name' "
         "--output_columns 'name, _score' "
         "--filter 'tags @ \"たいやき\"' "
         "--scorer '_score=geo_distance2(location, \"%s\")'",
@@ -206,7 +206,7 @@ test_in_circle_and_tag(void)
     send_command(
       cut_take_printf(
         "select Shops "
-        "--sortby '+_score, +name' "
+        "--sort_keys '+_score, +name' "
         "--output_columns 'name, _score' "
         "--filter 'geo_in_circle(location, \"%s\", %d) && tags @ \"たいやき\"' "
         "--scorer '_score=geo_distance3(location, \"%s\")'",
@@ -234,7 +234,7 @@ test_but_white(void)
     send_command(
       cut_take_printf(
         "select Shops "
-        "--sortby '+_score, +name' "
+        "--sort_keys '+_score, +name' "
         "--output_columns 'name, _score' "
         "--filter '" \
         "geo_in_circle(location, \"%s\", %d) && " \
@@ -293,13 +293,13 @@ test_drilldown(void)
     send_command(
       cut_take_printf(
         "select Shops "
-        "--sortby '+_score, +name' "
+        "--sort_keys '+_score, +name' "
         "--output_columns 'name, _score' "
         "--filter 'geo_in_circle(location, \"%s\", %d) && tags @ \"たいやき\"' "
         "--scorer '_score=geo_distance2(location, \"%s\")' "
         "--drilldown 'tags categories area' "
         "--drilldown_output_columns '_key, name, _nsubrecs' "
-        "--drilldown_sortby '_key'",
+        "--drilldown_sort_keys '_key'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
@@ -336,13 +336,13 @@ test_drilldown_with_broken_reference(void)
     send_command(
       cut_take_printf(
         "select Shops "
-        "--sortby '+_score, +name' "
+        "--sort_keys '+_score, +name' "
         "--output_columns 'name, _score' "
         "--filter 'geo_in_circle(location, \"%s\", %d) && tags @ \"たいやき\"' "
         "--scorer '_score=geo_distance3(location, \"%s\")' "
         "--drilldown 'area' "
         "--drilldown_output_columns '_key, name, _nsubrecs' "
-        "--drilldown_sortby '_key'",
+        "--drilldown_sort_keys '_key'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
@@ -381,14 +381,14 @@ test_weight_match(void)
     send_command(
       cut_take_printf(
         "select Shops "
-        "--sortby '-_score, +name' "
+        "--sort_keys '-_score, +name' "
         "--output_columns 'name, _score' "
         "--match_columns 'name * 1000 || tags * 10000' "
         "--query たいやき "
         "--filter 'geo_in_circle(location, \"%s\", %d)' "
         "--scorer '_score -= geo_distance(location, \"%s\")' "
         "--drilldown_output_columns '_key, _nsubrecs' "
-        "--drilldown_sortby '-_nsubrecs' "
+        "--drilldown_sort_keys '-_nsubrecs' "
         "--drilldown 'tags' ",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
@@ -410,7 +410,7 @@ test_multi_geo_in_circle(void)
     send_command(
       cut_take_printf(
         "select Shops "
-        "--sortby '-_score, +name' "
+        "--sort_keys '-_score, +name' "
         "--output_columns 'name, _score' "
         "--match_columns 'name * 1000 || tags * 10000' "
         "--query たいやき "
@@ -440,7 +440,7 @@ test_query_expansion(void)
     "]]",
     send_command(
       "select Shops "
-      "--sortby '+name' "
+      "--sort_keys '+name' "
       "--output_columns 'name' "
       "--limit 3 "
       "--match_columns name "

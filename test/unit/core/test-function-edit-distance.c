@@ -152,7 +152,7 @@ test_alphabet(gconstpointer data)
   command = cut_take_printf("select Users "
                             "--output_columns name,_score "
                             "--filter true "
-                            "--sortby _score,name "
+                            "--sort_keys _score,name "
                             "--scorer '_score=edit_distance(name, \"%s\")'",
                             gcut_data_get_string(data, "string"));
 
@@ -233,7 +233,7 @@ test_japanese(gconstpointer data)
   command = cut_take_printf("select Users "
                             "--output_columns name,_score "
                             "--filter true "
-                            "--sortby _score,name "
+                            "--sort_keys _score,name "
                             "--scorer '_score=edit_distance(name, \"%s\")'",
                             gcut_data_get_string(data, "string"));
 

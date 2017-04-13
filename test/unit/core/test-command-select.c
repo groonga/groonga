@@ -463,7 +463,7 @@ test_less_than(gconstpointer data)
                      "[\"groonga.org\",5]]]",
                     type),
     send_command("select Sites "
-                 "--sortby -score "
+                 "--sort_keys -score "
                  "--output_columns _key,score "
                  "--filter 'score > 4'"));
 }
@@ -515,7 +515,7 @@ test_less_than_or_equal(gconstpointer data)
                      "[\"ruby-lang.org\",4]]]",
                     type),
     send_command("select Sites "
-                 "--sortby -score "
+                 "--sort_keys -score "
                  "--output_columns _key,score "
                  "--filter 'score >= 4'"));
 }
@@ -566,7 +566,7 @@ test_equal_numeric(gconstpointer data)
                      "[\"ruby-lang.org\",4]]]",
                     type),
     send_command("select Sites "
-                 "--sortby -score "
+                 "--sort_keys -score "
                  "--output_columns _key,score "
                  "--filter 'score == 4'"));
 }
