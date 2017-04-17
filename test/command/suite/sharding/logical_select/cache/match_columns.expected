@@ -1,0 +1,138 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Memos_20170416 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos_20170416 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos_20170416 title COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Memos_20170416 content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Memos_20170417 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos_20170417 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos_20170417 title COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Memos_20170417 content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Memos_20170416
+[
+{"timestamp": "2017/04/16 10:00:00", "title": "Easy PGroonga", "content": "PGroonga is fast and easy to use."},
+{"timestamp": "2017/04/16 11:00:00", "title": "Easy Rroonga", "content": "Rroonga is fast and easy to use."}
+]
+[[0,0.0,0.0],2]
+load --table Memos_20170417
+[
+{"timestamp": "2017/04/17 00:00:00", "title": "Easy Groonga", "content": "Groonga is fast."},
+{"timestamp": "2017/04/17 01:00:00", "title": "Easy Mroonga", "content": "Mroonga is fast and easy to use."}
+]
+[[0,0.0,0.0],2]
+logical_select Memos   --shard_key timestamp   --query easy   --match_columns 'title'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ],
+        [
+          "title",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "PGroonga is fast and easy to use.",
+        1492304400.0,
+        "Easy PGroonga"
+      ],
+      [
+        2,
+        "Rroonga is fast and easy to use.",
+        1492308000.0,
+        "Easy Rroonga"
+      ],
+      [
+        1,
+        "Groonga is fast.",
+        1492354800.0,
+        "Easy Groonga"
+      ],
+      [
+        2,
+        "Mroonga is fast and easy to use.",
+        1492358400.0,
+        "Easy Mroonga"
+      ]
+    ]
+  ]
+]
+logical_select Memos   --shard_key timestamp   --query easy   --match_columns 'content'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ],
+        [
+          "title",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "PGroonga is fast and easy to use.",
+        1492304400.0,
+        "Easy PGroonga"
+      ],
+      [
+        2,
+        "Rroonga is fast and easy to use.",
+        1492308000.0,
+        "Easy Rroonga"
+      ],
+      [
+        2,
+        "Mroonga is fast and easy to use.",
+        1492358400.0,
+        "Easy Mroonga"
+      ]
+    ]
+  ]
+]
