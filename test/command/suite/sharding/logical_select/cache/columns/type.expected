@@ -1,0 +1,99 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Logs_20170415 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170415 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170415 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Logs_20170416 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170416 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170416 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Logs_20170415
+[
+{"timestamp": "2017/04/15 00:00:00", "price": 1000},
+{"timestamp": "2017/04/15 01:00:00", "price":  900}
+]
+[[0,0.0,0.0],2]
+load --table Logs_20170416
+[
+{"timestamp": "2017/04/16 10:00:00", "price":  520},
+{"timestamp": "2017/04/16 11:00:00", "price":  510},
+{"timestamp": "2017/04/16 12:00:00", "price":  500}
+]
+[[0,0.0,0.0],3]
+logical_select Logs   --shard_key timestamp   --columns[price_with_tax].stage initial   --columns[price_with_tax].type UInt32   --columns[price_with_tax].flags COLUMN_SCALAR   --columns[price_with_tax].value 'price * 1.08'   --output_columns price_with_tax
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "price_with_tax",
+          "UInt32"
+        ]
+      ],
+      [
+        1080
+      ],
+      [
+        972
+      ],
+      [
+        561
+      ],
+      [
+        550
+      ],
+      [
+        540
+      ]
+    ]
+  ]
+]
+logical_select Logs   --shard_key timestamp   --columns[price_with_tax].stage initial   --columns[price_with_tax].type ShortText   --columns[price_with_tax].flags COLUMN_SCALAR   --columns[price_with_tax].value 'price * 1.08'   --output_columns price_with_tax
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "price_with_tax",
+          "ShortText"
+        ]
+      ],
+      [
+        "1080.0"
+      ],
+      [
+        "972.0000000000001"
+      ],
+      [
+        "561.6"
+      ],
+      [
+        "550.8000000000001"
+      ],
+      [
+        "540.0"
+      ]
+    ]
+  ]
+]
