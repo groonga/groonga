@@ -1,0 +1,31 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Memos_20170416 TABLE_NO_KEY
+column_create Memos_20170416 timestamp COLUMN_SCALAR Time
+column_create Memos_20170416 content COLUMN_SCALAR Text
+
+table_create Memos_20170417 TABLE_NO_KEY
+column_create Memos_20170417 timestamp COLUMN_SCALAR Time
+column_create Memos_20170417 content COLUMN_SCALAR Text
+
+load --table Memos_20170416
+[
+{"timestamp": "2017/04/16 00:00:00", "content": "Groonga is fast."},
+{"timestamp": "2017/04/16 01:00:00", "content": "Mroonga is fast and easy to use."}
+]
+
+load --table Memos_20170417
+[
+{"timestamp": "2017/04/17 10:00:00", "content": "PGroonga is fast and easy to use."},
+{"timestamp": "2017/04/17 11:00:00", "content": "Rroonga is fast and easy to use."}
+]
+
+logical_select Memos \
+  --shard_key timestamp \
+  --query 'content:@easy'
+
+logical_select Memos \
+  --shard_key timestamp \
+  --query 'content:@groonga'
