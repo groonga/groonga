@@ -44,6 +44,7 @@
 static double grn_table_select_enough_filtered_ratio = 0.0;
 static int grn_table_select_max_n_enough_filtered_records = 1000;
 static grn_bool grn_table_select_and_min_skip_enable = GRN_TRUE;
+static grn_bool grn_scan_info_regexp_dot_asterisk_enable = GRN_TRUE;
 
 void
 grn_expr_init_from_env(void)
@@ -79,6 +80,18 @@ grn_expr_init_from_env(void)
       grn_table_select_and_min_skip_enable = GRN_FALSE;
     } else {
       grn_table_select_and_min_skip_enable = GRN_TRUE;
+    }
+  }
+
+  {
+    char grn_scan_info_regexp_dot_asterisk_enable_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_SCAN_INFO_REGEXP_DOT_ASTERISK_ENABLE",
+               grn_scan_info_regexp_dot_asterisk_enable_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (strcmp(grn_scan_info_regexp_dot_asterisk_enable_env, "no") == 0) {
+      grn_scan_info_regexp_dot_asterisk_enable = GRN_FALSE;
+    } else {
+      grn_scan_info_regexp_dot_asterisk_enable = GRN_TRUE;
     }
   }
 }
@@ -4469,6 +4482,9 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
         case '*' :
           escaping = GRN_FALSE;
           if (!dot) {
+            return GRN_FALSE;
+          }
+          if (!grn_scan_info_regexp_dot_asterisk_enable)  {
             return GRN_FALSE;
           }
           dot = GRN_FALSE;
