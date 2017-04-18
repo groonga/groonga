@@ -7978,6 +7978,9 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
           if (ti->pos == pos) {
             score += ti->p->weight + ti->cursors->bins[0]->weight;
             count++;
+            if (ti->p->pos > end_pos) {
+              end_pos = ti->p->pos;
+            }
           } else {
             score = ti->p->weight + ti->cursors->bins[0]->weight;
             count = 1;
