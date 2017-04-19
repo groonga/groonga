@@ -21,4 +21,4 @@ load --table Logs
 ]
 
 select Logs \
-  --filter 'in_records(Reports, user, "user")'
+  --filter 'in_records(Reports, user, "==", "user")'

@@ -32,6 +32,6 @@ load --table Logs
 
 select Logs \
   --filter 'in_records(Reports, \
-                       user, "user", \
-                       tag, "tag", \
-                       time_classify_day(time), "day")'
+                       user, "==", "user", \
+                       tag, "==", "tag", \
+                       time_classify_day(time), "==", "day")'

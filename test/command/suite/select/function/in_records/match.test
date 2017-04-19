@@ -1,0 +1,22 @@
+table_create Conditions TABLE_NO_KEY
+column_create Conditions user_pattern COLUMN_SCALAR ShortText
+
+table_create Logs TABLE_NO_KEY
+column_create Logs user COLUMN_SCALAR ShortText
+
+load --table Conditions
+[
+{"user_pattern": "ali"},
+{"user_pattern": "ris"}
+]
+
+load --table Logs
+[
+{"user": "alice"},
+{"user": "bob"},
+{"user": "chris"},
+{"user": "david"}
+]
+
+select Logs \
+  --filter 'in_records(Conditions, user, "@", "user_pattern")'

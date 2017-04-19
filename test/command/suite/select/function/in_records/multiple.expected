@@ -37,7 +37,7 @@ load --table Logs
 {"user": "david", "tag": "tag2", "time": "2017-04-20 11:22:33"}
 ]
 [[0,0.0,0.0],5]
-select Logs   --filter 'in_records(Reports,                        user, "user",                        tag, "tag",                        time_classify_day(time), "day")'
+select Logs   --filter 'in_records(Reports,                        user, "==", "user",                        tag, "==", "tag",                        time_classify_day(time), "==", "day")'
 [
   [
     0,
