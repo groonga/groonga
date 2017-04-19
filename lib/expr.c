@@ -903,11 +903,11 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_CALL :
       {
         grn_obj *proc = NULL;
-        if (e->codes_curr - nargs > 0) {
+        if (e->codes_curr - (nargs - 1) > 0) {
           int i;
           grn_expr_code *code;
           code = &(e->codes[e->codes_curr - 1]);
-          for (i = 0; i < nargs; i++) {
+          for (i = 0; i < nargs - 1; i++) {
             int rest_n_codes = 1;
             while (rest_n_codes > 0) {
               rest_n_codes += code->nargs;
@@ -951,7 +951,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       }
       PUSH_CODE(e, op, obj, nargs, code);
       {
-        int i = nargs;
+        int i = nargs - 1;
         while (i--) { dfi = grn_expr_dfi_pop(e); }
       }
       if (!obj) { dfi = grn_expr_dfi_pop(e); }
@@ -2595,16 +2595,16 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         {
           grn_obj *proc;
           if (code->value) {
-            if (sp < s_ + code->nargs) {
+            if (sp < s_ + code->nargs - 1) {
               ERR(GRN_INVALID_ARGUMENT, "stack error");
               goto exit;
             }
             proc = code->value;
             WITH_SPSAVE({
-              grn_proc_call(ctx, proc, code->nargs, expr);
+              grn_proc_call(ctx, proc, code->nargs - 1, expr);
             });
           } else {
-            int offset = code->nargs + 1;
+            int offset = code->nargs;
             if (sp < s_ + offset) {
               ERR(GRN_INVALID_ARGUMENT, "stack error");
               goto exit;
@@ -2622,7 +2622,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
               goto exit;
             } else {
               WITH_SPSAVE({
-                grn_proc_call(ctx, proc, code->nargs, expr);
+                grn_proc_call(ctx, proc, code->nargs - 1, expr);
               });
             }
             if (ctx->rc) {
@@ -7075,7 +7075,7 @@ parse_query(grn_ctx *ctx, efs_info *q)
           /* dummy token */
           PARSE(GRN_EXPR_TOKEN_QSTRING);
           grn_expr_append_obj(ctx, q->e, all_records, GRN_OP_PUSH, 1);
-          grn_expr_append_op(ctx, q->e, GRN_OP_CALL, 0);
+          grn_expr_append_op(ctx, q->e, GRN_OP_CALL, 1);
         }
       }
       op->op = GRN_OP_AND_NOT;

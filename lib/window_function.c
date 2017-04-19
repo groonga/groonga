@@ -241,7 +241,7 @@ grn_expr_is_window_function_call(grn_ctx *ctx,
   if (call->op != GRN_OP_CALL) {
     return GRN_FALSE;
   }
-  if (call->nargs != (expr->codes_curr - 2)) {
+  if (call->nargs != (expr->codes_curr - 1)) {
     return GRN_FALSE;
   }
 

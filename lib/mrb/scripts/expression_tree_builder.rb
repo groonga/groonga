@@ -85,7 +85,7 @@ module Groonga
           stack.push(node)
         when Operator::CALL
           arguments = []
-          code.n_args.times do
+          (code.n_args - 1).times do
             arguments.unshift(stack.pop)
           end
           procedure = stack.pop

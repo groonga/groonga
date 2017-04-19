@@ -369,7 +369,7 @@ lefthand_side_expression ::= call_expression.
 lefthand_side_expression ::= member_expression.
 
 call_expression ::= member_expression arguments(A). {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, A);
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, 1 + A);
 }
 
 member_expression ::= primary_expression.
