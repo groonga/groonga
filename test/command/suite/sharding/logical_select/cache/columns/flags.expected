@@ -1,0 +1,35 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Logs_20170415 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170415 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170415 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Logs_20170416 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170416 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170416 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Logs_20170415
+[
+{"timestamp": "2017/04/15 00:00:00", "price": 1000},
+{"timestamp": "2017/04/15 01:00:00", "price": 900}
+]
+[[0,0.0,0.0],2]
+load --table Logs_20170416
+[
+{"timestamp": "2017/04/16 10:00:00", "price":  520},
+{"timestamp": "2017/04/16 11:00:00", "price":  510},
+{"timestamp": "2017/04/16 12:00:00", "price":  500}
+]
+[[0,0.0,0.0],3]
+table_create Vector TABLE_PAT_KEY UInt32
+[[0,0.0,0.0],true]
+logical_select Logs   --shard_key timestamp   --columns[vector].stage initial   --columns[vector].type ShortText   --columns[vector].flags COLUMN_VECTOR   --columns[vector].value "vector_new()"   --output_columns vector
+[[0,0.0,0.0],[[[5],[["vector","ShortText"]],[[]],[[]],[[]],[[]],[[]]]]]
+logical_select Logs   --shard_key timestamp   --columns[vector].stage initial   --columns[vector].type ShortText   --columns[vector].flags COLUMN_VECTOR|WITH_WEIGHT   --columns[vector].value "vector_new()"   --output_columns vector
+[[0,0.0,0.0],[[[5],[["vector","ShortText"]],[{}],[{}],[{}],[{}],[{}]]]]
