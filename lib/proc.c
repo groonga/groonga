@@ -1781,13 +1781,16 @@ selector_to_function_data_fin(grn_ctx *ctx,
   }
 }
 
-static grn_operator
-parse_mode(grn_ctx *ctx, grn_obj *mode, const char *context)
+grn_operator
+grn_proc_option_value_mode(grn_ctx *ctx,
+                           grn_obj *option,
+                           grn_operator default_mode,
+                           const char *context)
 {
-  if (mode->header.domain != GRN_DB_TEXT) {
+  if (option->header.domain != GRN_DB_TEXT) {
     grn_obj inspected;
     GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect(ctx, &inspected, mode);
+    grn_inspect(ctx, &inspected, option);
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                      "%s: mode must be text: <%.*s>",
                      context,
@@ -1797,9 +1800,13 @@ parse_mode(grn_ctx *ctx, grn_obj *mode, const char *context)
     return GRN_OP_NOP;
   }
 
+  if (GRN_TEXT_LEN(option) == 0) {
+    return default_mode;
+  }
+
 #define EQUAL_MODE(name)                                        \
-  (GRN_TEXT_LEN(mode) == strlen(name) &&                        \
-   memcmp(GRN_TEXT_VALUE(mode), name, strlen(name)) == 0)
+  (GRN_TEXT_LEN(option) == strlen(name) &&                      \
+   memcmp(GRN_TEXT_VALUE(option), name, strlen(name)) == 0)
 
   if (EQUAL_MODE("==") || EQUAL_MODE("EQUAL")) {
     return GRN_OP_EQUAL;
@@ -1843,8 +1850,8 @@ parse_mode(grn_ctx *ctx, grn_obj *mode, const char *context)
                      "\"~\", \"@~\", \"REGEXP\""
                      "]: <%.*s>",
                      context,
-                     (int)GRN_TEXT_LEN(mode),
-                     GRN_TEXT_VALUE(mode));
+                     (int)GRN_TEXT_LEN(option),
+                     GRN_TEXT_VALUE(option));
     return GRN_OP_NOP;
   }
 
@@ -1907,7 +1914,10 @@ run_query(grn_ctx *ctx, grn_obj *table,
           if (KEY_EQUAL("expander")) {
             query_expander_name = value;
           } else if (KEY_EQUAL("default_mode")) {
-            default_mode = parse_mode(ctx, value, "query()");
+            default_mode = grn_proc_option_value_mode(ctx,
+                                                      value,
+                                                      GRN_OP_MATCH,
+                                                      "query()");
             if (ctx->rc != GRN_SUCCESS) {
               grn_hash_cursor_close(ctx, cursor);
               rc = ctx->rc;

@@ -85,6 +85,11 @@ const char *grn_proc_option_value_string(grn_ctx *ctx,
 grn_content_type grn_proc_option_value_content_type(grn_ctx *ctx,
                                                     grn_obj *option,
                                                     grn_content_type default_value);
+grn_operator grn_proc_option_value_mode(grn_ctx *ctx,
+                                        grn_obj *option,
+                                        grn_operator default_mode,
+                                        const char *context);
+
 
 void grn_proc_output_object_name(grn_ctx *ctx, grn_obj *obj);
 void grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);
