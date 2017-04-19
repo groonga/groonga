@@ -1,0 +1,57 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Reports TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Reports user COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs user COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+load --table Reports
+[
+{"user": "alice"},
+{"user": "david"}
+]
+[[0,0.0,0.0],2]
+load --table Logs
+[
+{"user": "alice"},
+{"user": "bob"},
+{"user": "chris"},
+{"user": "david"}
+]
+[[0,0.0,0.0],4]
+select Logs   --filter 'in_records(Reports, user, "user")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "user",
+          "Users"
+        ]
+      ],
+      [
+        1,
+        "alice"
+      ],
+      [
+        4,
+        "david"
+      ]
+    ]
+  ]
+]

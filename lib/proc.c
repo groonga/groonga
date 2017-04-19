@@ -3972,4 +3972,6 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
   grn_proc_init_object_list(ctx);
 
   grn_proc_init_table_copy(ctx);
+
+  grn_proc_init_in_records(ctx);
 }

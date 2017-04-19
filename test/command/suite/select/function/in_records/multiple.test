@@ -1,0 +1,37 @@
+plugin_register functions/time
+
+table_create Users TABLE_HASH_KEY ShortText
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Reports TABLE_NO_KEY
+column_create Reports user COLUMN_SCALAR Users
+column_create Reports tag COLUMN_SCALAR Tags
+column_create Reports day COLUMN_SCALAR Time
+
+table_create Logs TABLE_NO_KEY
+column_create Logs user COLUMN_SCALAR Users
+column_create Logs tag COLUMN_SCALAR Tags
+column_create Logs time COLUMN_SCALAR Time
+
+load --table Reports
+[
+{"user": "alice", "tag": "tag1", "day": "2017-04-18 00:00:00"},
+{"user": "alice", "tag": "tag1", "day": "2017-04-19 00:00:00"},
+{"user": "david", "tag": "tag2", "day": "2017-04-20 00:00:00"},
+{"user": "david", "tag": "tag3", "day": "2017-04-21 00:00:00"}
+]
+
+load --table Logs
+[
+{"user": "alice", "tag": "tag1", "time": "2017-04-18 11:22:33"},
+{"user": "alice", "tag": "tag1", "time": "2017-04-20 11:22:33"},
+{"user": "bob",   "tag": "tag1", "time": "2017-04-19 11:22:33"},
+{"user": "david", "tag": "tag1", "time": "2017-04-19 11:22:33"},
+{"user": "david", "tag": "tag2", "time": "2017-04-20 11:22:33"}
+]
+
+select Logs \
+  --filter 'in_records(Reports, \
+                       user, "user", \
+                       tag, "tag", \
+                       time_classify_day(time), "day")'

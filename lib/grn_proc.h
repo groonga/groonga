@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -52,6 +52,7 @@ void grn_proc_init_fuzzy_search(grn_ctx *ctx);
 void grn_proc_init_highlight(grn_ctx *ctx);
 void grn_proc_init_highlight_full(grn_ctx *ctx);
 void grn_proc_init_highlight_html(grn_ctx *ctx);
+void grn_proc_init_in_records(grn_ctx *ctx);
 void grn_proc_init_lock_acquire(grn_ctx *ctx);
 void grn_proc_init_lock_clear(grn_ctx *ctx);
 void grn_proc_init_lock_release(grn_ctx *ctx);

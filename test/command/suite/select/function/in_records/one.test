@@ -1,0 +1,24 @@
+table_create Users TABLE_HASH_KEY ShortText
+
+table_create Reports TABLE_NO_KEY
+column_create Reports user COLUMN_SCALAR Users
+
+table_create Logs TABLE_NO_KEY
+column_create Logs user COLUMN_SCALAR Users
+
+load --table Reports
+[
+{"user": "alice"},
+{"user": "david"}
+]
+
+load --table Logs
+[
+{"user": "alice"},
+{"user": "bob"},
+{"user": "chris"},
+{"user": "david"}
+]
+
+select Logs \
+  --filter 'in_records(Reports, user, "user")'
