@@ -1,0 +1,44 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+plugin_register functions/vector
+
+table_create Logs_20170415 TABLE_NO_KEY
+column_create Logs_20170415 timestamp COLUMN_SCALAR Time
+column_create Logs_20170415 price COLUMN_SCALAR UInt32
+
+table_create Logs_20170416 TABLE_NO_KEY
+column_create Logs_20170416 timestamp COLUMN_SCALAR Time
+column_create Logs_20170416 price COLUMN_SCALAR UInt32
+
+load --table Logs_20170415
+[
+{"timestamp": "2017/04/15 00:00:00", "price": 1000},
+{"timestamp": "2017/04/15 01:00:00", "price": 900}
+]
+
+load --table Logs_20170416
+[
+{"timestamp": "2017/04/16 10:00:00", "price":  520},
+{"timestamp": "2017/04/16 11:00:00", "price":  510},
+{"timestamp": "2017/04/16 12:00:00", "price":  500}
+]
+
+table_create Vector TABLE_PAT_KEY UInt32
+
+logical_select Logs \
+  --shard_key timestamp \
+  --columns[vector].stage initial \
+  --columns[vector].type ShortText \
+  --columns[vector].flags COLUMN_VECTOR \
+  --columns[vector].value "vector_new()" \
+  --output_columns vector
+
+logical_select Logs \
+  --shard_key timestamp \
+  --columns[vector].stage initial \
+  --columns[vector].type ShortText \
+  --columns[vector].flags COLUMN_VECTOR|WITH_WEIGHT \
+  --columns[vector].value "vector_new()" \
+  --output_columns vector
