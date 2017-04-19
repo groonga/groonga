@@ -160,6 +160,8 @@ by following format such as ``${TABLE}.${COLUMN}`` for query expansion.
 
 See :ref:`select-query-expander` about details.
 
+.. _query-default-mode:
+
 ``default_mode``
 """"""""""""""""
 

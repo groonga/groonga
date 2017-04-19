@@ -1,0 +1,8 @@
+Execution example::
+
+  load --table Conditions
+  [
+  {"_key": "lic + groonga", "user_pattern": "lic", "tag": "groonga", max_length: 20},
+  {"_key": "dav + droonga", "user_pattern": "dav", "tag": "droonga", max_length: 50}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 2]

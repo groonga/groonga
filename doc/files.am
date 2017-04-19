@@ -358,6 +358,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_html_untag.log \
 	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/functions/in_records/usage_search.log \
+	$(top_srcdir)/doc/source/example/reference/functions/in_records/usage_setup_conditions.log \
+	$(top_srcdir)/doc/source/example/reference/functions/in_records/usage_setup_data.log \
+	$(top_srcdir)/doc/source/example/reference/functions/in_records/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_only.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_schema.log \
@@ -818,6 +822,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/highlight_full.rst \
 	$(top_srcdir)/doc/source/reference/functions/highlight_html.rst \
 	$(top_srcdir)/doc/source/reference/functions/html_untag.rst \
+	$(top_srcdir)/doc/source/reference/functions/in_records.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_values.rst \
 	$(top_srcdir)/doc/source/reference/functions/now.rst \
 	$(top_srcdir)/doc/source/reference/functions/number_classify.rst \
@@ -1269,6 +1274,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/html_untag/usage_html_untag.log \
 	source/example/reference/functions/html_untag/usage_setup_data.log \
 	source/example/reference/functions/html_untag/usage_setup_schema.log \
+	source/example/reference/functions/in_records/usage_search.log \
+	source/example/reference/functions/in_records/usage_setup_conditions.log \
+	source/example/reference/functions/in_records/usage_setup_data.log \
+	source/example/reference/functions/in_records/usage_setup_schema.log \
 	source/example/reference/functions/in_values/usage_only.log \
 	source/example/reference/functions/in_values/usage_setup_data.log \
 	source/example/reference/functions/in_values/usage_setup_schema.log \
@@ -1729,6 +1738,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/highlight_full.rst \
 	source/reference/functions/highlight_html.rst \
 	source/reference/functions/html_untag.rst \
+	source/reference/functions/in_records.rst \
 	source/reference/functions/in_values.rst \
 	source/reference/functions/now.rst \
 	source/reference/functions/number_classify.rst \
@@ -2101,6 +2111,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/functions/highlight_full.txt \
 	html/_sources/reference/functions/highlight_html.txt \
 	html/_sources/reference/functions/html_untag.txt \
+	html/_sources/reference/functions/in_records.txt \
 	html/_sources/reference/functions/in_values.txt \
 	html/_sources/reference/functions/now.txt \
 	html/_sources/reference/functions/number_classify.txt \
@@ -2373,6 +2384,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/highlight_full.html \
 	html/reference/functions/highlight_html.html \
 	html/reference/functions/html_untag.html \
+	html/reference/functions/in_records.html \
 	html/reference/functions/in_values.html \
 	html/reference/functions/now.html \
 	html/reference/functions/number_classify.html \
