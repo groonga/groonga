@@ -27,8 +27,8 @@ func_in_records(grn_ctx *ctx,
                 grn_user_data *user_data)
 {
   grn_obj *found;
-  grn_obj *table;
-  grn_obj columns;
+  grn_obj *condition_table;
+  grn_obj condition_columns;
   int i;
 
   found = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_BOOL, 0);
@@ -53,11 +53,11 @@ func_in_records(grn_ctx *ctx,
     return found;
   }
 
-  table = args[0];
-  if (!grn_obj_is_table(ctx, table)) {
+  condition_table = args[0];
+  if (!grn_obj_is_table(ctx, condition_table)) {
     grn_obj inspected;
     GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect(ctx, &inspected, table);
+    grn_inspect(ctx, &inspected, condition_table);
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
                      "in_records(): the first argument must be a table: <%.*s>",
@@ -67,15 +67,15 @@ func_in_records(grn_ctx *ctx,
     return found;
   }
 
-  GRN_PTR_INIT(&columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_PTR_INIT(&condition_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
   for (i = 1; i < n_args; i += 2) {
     grn_obj *column_name = args[i + 1];
-    grn_obj *column;
+    grn_obj *condition_column;
 
     if (!grn_obj_is_text_family_bulk(ctx, column_name)) {
       grn_obj inspected;
       GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, table);
+      grn_inspect(ctx, &inspected, condition_table);
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
                        "in_records(): "
@@ -88,45 +88,53 @@ func_in_records(grn_ctx *ctx,
       goto exit;
     }
 
-    column = grn_obj_column(ctx, table,
-                            GRN_TEXT_VALUE(column_name),
-                            GRN_TEXT_LEN(column_name));
-    if (!column) {
+    condition_column = grn_obj_column(ctx, condition_table,
+                                      GRN_TEXT_VALUE(column_name),
+                                      GRN_TEXT_LEN(column_name));
+    if (!condition_column) {
       grn_obj inspected;
       GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, table);
+      grn_inspect(ctx, &inspected, condition_table);
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
                        "in_records(): "
                        "the %dth argument must be existing column name: "
-                       "<%.*s>",
+                       "<%.*s>: <%.*s>",
                        i + 1,
+                       (int)GRN_TEXT_LEN(column_name),
+                       GRN_TEXT_VALUE(column_name),
                        (int)GRN_TEXT_LEN(&inspected),
                        GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
       goto exit;
     }
-    GRN_PTR_PUT(ctx, &columns, column);
+    GRN_PTR_PUT(ctx, &condition_columns, condition_column);
   }
 
   {
-    grn_obj column_value;
+    grn_obj condition_column_value;
 
-    GRN_VOID_INIT(&column_value);
-    GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
+    GRN_VOID_INIT(&condition_column_value);
+    GRN_TABLE_EACH_BEGIN(ctx, condition_table, cursor, id) {
       grn_bool found_record = GRN_TRUE;
 
       for (i = 1; i < n_args; i += 2) {
         grn_obj *value = args[i];
-        grn_obj *column = GRN_PTR_VALUE_AT(&columns, (i - 1) / 2);
+        grn_obj *condition_column;
 
-        if (grn_obj_is_data_column(ctx, column)) {
+        condition_column = GRN_PTR_VALUE_AT(&condition_columns, (i - 1) / 2);
+        if (grn_obj_is_data_column(ctx, condition_column)) {
           grn_bool found_value = GRN_FALSE;
 
-          GRN_BULK_REWIND(&column_value);
-          grn_obj_get_value(ctx, column, id, &column_value);
+          GRN_BULK_REWIND(&condition_column_value);
+          grn_obj_get_value(ctx,
+                            condition_column,
+                            id,
+                            &condition_column_value);
 
-          found_value = grn_operator_exec_equal(ctx, value, &column_value);
+          found_value = grn_operator_exec_equal(ctx,
+                                                value,
+                                                &condition_column_value);
           if (ctx->rc != GRN_SUCCESS) {
             found_record = GRN_FALSE;
             break;
@@ -147,17 +155,18 @@ func_in_records(grn_ctx *ctx,
         break;
       }
     } GRN_TABLE_EACH_END(ctx, cursor);
-    GRN_OBJ_FIN(ctx, &column_value);
+    GRN_OBJ_FIN(ctx, &condition_column_value);
   }
 
 exit :
   for (i = 1; i < n_args; i += 2) {
-    grn_obj *column = GRN_PTR_VALUE_AT(&columns, (i - 1) / 2);
-    if (column->header.type == GRN_ACCESSOR) {
-      grn_obj_unlink(ctx, column);
+    grn_obj *condition_column;
+    condition_column = GRN_PTR_VALUE_AT(&condition_columns, (i - 1) / 2);
+    if (condition_column->header.type == GRN_ACCESSOR) {
+      grn_obj_unlink(ctx, condition_column);
     }
   }
-  GRN_OBJ_FIN(ctx, &columns);
+  GRN_OBJ_FIN(ctx, &condition_columns);
 
   return found;
 }
