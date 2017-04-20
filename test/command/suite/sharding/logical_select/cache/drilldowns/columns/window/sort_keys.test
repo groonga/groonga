@@ -1,0 +1,58 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items price COLUMN_SCALAR UInt32
+
+table_create Logs_20170415 TABLE_NO_KEY
+column_create Logs_20170415 timestamp COLUMN_SCALAR Time
+column_create Logs_20170415 item COLUMN_SCALAR Items
+
+table_create Logs_20170416 TABLE_NO_KEY
+column_create Logs_20170416 timestamp COLUMN_SCALAR Time
+column_create Logs_20170416 item COLUMN_SCALAR Items
+
+load --table Items
+[
+{"_key": "item1", "price": 100},
+{"_key": "item2", "price": 200}
+]
+
+load --table Logs_20170415
+[
+{"timestamp": "2017/04/15 00:00:00", "item": "item1"},
+{"timestamp": "2017/04/15 01:00:00", "item": "item2"}
+]
+
+load --table Logs_20170416
+[
+{"timestamp": "2017/04/16 10:00:00", "item": "item2"},
+{"timestamp": "2017/04/16 11:00:00", "item": "item1"},
+{"timestamp": "2017/04/16 12:00:00", "item": "item1"}
+]
+
+
+logical_select Logs \
+  --shard_key timestamp \
+  --limit 0 \
+  --output_columns _id \
+  --drilldowns[group].keys item \
+  --drilldowns[group].columns[number].stage initial \
+  --drilldowns[group].columns[number].type UInt32 \
+  --drilldowns[group].columns[number].flags COLUMN_SCALAR \
+  --drilldowns[group].columns[number].value 'window_sum(price)' \
+  --drilldowns[group].columns[number].window.sort_keys _key \
+  --drilldowns[group].output_columns _key,_nsubrecs,price,number
+
+logical_select Logs \
+  --shard_key timestamp \
+  --limit 0 \
+  --output_columns _id \
+  --drilldowns[group].keys item \
+  --drilldowns[group].columns[number].stage initial \
+  --drilldowns[group].columns[number].type UInt32 \
+  --drilldowns[group].columns[number].flags COLUMN_SCALAR \
+  --drilldowns[group].columns[number].value 'window_sum(price)' \
+  --drilldowns[group].columns[number].window.sort_keys _nsubrecs \
+  --drilldowns[group].output_columns _key,_nsubrecs,price,number 
