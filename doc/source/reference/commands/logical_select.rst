@@ -416,8 +416,7 @@ Search related parameters
 ``logical_select`` provides :doc:`select` compatible search related
 parameters.
 
-``match_columns`` and ``query`` aren't supported yet. ``filter`` is
-only supported for now.
+``match_columns`` and ``query``, ``filter`` are only supported for now.
 
 .. _logical-select-match-columns:
 
