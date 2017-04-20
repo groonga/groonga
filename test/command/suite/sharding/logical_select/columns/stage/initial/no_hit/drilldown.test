@@ -1,0 +1,37 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+plugin_register functions/number
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+
+table_create Logs_20170316 TABLE_NO_KEY
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+column_create Logs_20170316 price COLUMN_SCALAR UInt32
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 100},
+{"timestamp": "2017/03/15 01:00:00", "price": 200}
+]
+
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "price": 100},
+{"timestamp": "2017/03/16 11:00:00", "price": 200},
+{"timestamp": "2017/03/16 11:00:00", "price": 300}
+]
+
+logical_select Logs \
+  --shard_key timestamp \
+  --limit 0 \
+  --min "2017/04/01 00:00:00" \
+  --columns[price_with_tax].stage initial \
+  --columns[price_with_tax].type UInt32 \
+  --columns[price_with_tax].flags COLUMN_SCALAR \
+  --columns[price_with_tax].value 'price * 1.05' \
+  --drilldown price_with_tax
+
