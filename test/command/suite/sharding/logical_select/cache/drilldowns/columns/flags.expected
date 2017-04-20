@@ -1,0 +1,196 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Logs_20170315 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170315 items COLUMN_VECTOR Items
+[[0,0.0,0.0],true]
+table_create Logs_20170316 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170316 items COLUMN_VECTOR Items
+[[0,0.0,0.0],true]
+table_create Logs_20170317 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170317 items COLUMN_VECTOR Items
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "Book",  "price": 1000},
+{"_key": "Note",  "price": 1000},
+{"_key": "Box",   "price": 500},
+{"_key": "Pen",   "price": 500},
+{"_key": "Food",  "price": 500},
+{"_key": "Drink", "price": 300}
+]
+[[0,0.0,0.0],6]
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "items": ["Book", "Note", "Box", "Pen"]},
+{"timestamp": "2017/03/15 01:00:00", "items": ["Food", "Drink", "Pen"]}
+]
+[[0,0.0,0.0],2]
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "items": ["Pen", "Note", "Food", "Drink"]},
+{"timestamp": "2017/03/16 11:00:00", "items": ["Note", "Box"]}
+]
+[[0,0.0,0.0],2]
+load --table Logs_20170317
+[
+{"timestamp": "2017/03/17 20:00:00", "items": ["Food", "Book"]},
+{"timestamp": "2017/03/17 20:00:00", "items": ["Drink", "Note"]}
+]
+[[0,0.0,0.0],2]
+logical_select Logs   --shard_key timestamp   --output_columns _id   --limit 0   --drilldowns[item].keys items   --drilldowns[item].sort_keys price   --drilldowns[item].columns[price_with_tax].stage initial   --drilldowns[item].columns[price_with_tax].type ShortText   --drilldowns[item].columns[price_with_tax].flags COLUMN_VECTOR   --drilldowns[item].columns[price_with_tax].value 'vector_new()'   --drilldowns[item].output_columns _key,price_with_tax 
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ]
+      ]
+    ],
+    {
+      "item": [
+        [
+          6
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "price_with_tax",
+            "ShortText"
+          ]
+        ],
+        [
+          "Drink",
+          [
+
+          ]
+        ],
+        [
+          "Food",
+          [
+
+          ]
+        ],
+        [
+          "Pen",
+          [
+
+          ]
+        ],
+        [
+          "Box",
+          [
+
+          ]
+        ],
+        [
+          "Book",
+          [
+
+          ]
+        ],
+        [
+          "Note",
+          [
+
+          ]
+        ]
+      ]
+    }
+  ]
+]
+logical_select Logs   --shard_key timestamp   --output_columns _id   --limit 0   --drilldowns[item].keys items   --drilldowns[item].sort_keys price   --drilldowns[item].columns[price_with_tax].stage initial   --drilldowns[item].columns[price_with_tax].type ShortText   --drilldowns[item].columns[price_with_tax].flags COLUMN_VECTOR|WITH_WEIGHT   --drilldowns[item].columns[price_with_tax].value 'vector_new()'   --drilldowns[item].output_columns _key,price_with_tax 
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ]
+      ]
+    ],
+    {
+      "item": [
+        [
+          6
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "price_with_tax",
+            "ShortText"
+          ]
+        ],
+        [
+          "Drink",
+          {
+          }
+        ],
+        [
+          "Food",
+          {
+          }
+        ],
+        [
+          "Pen",
+          {
+          }
+        ],
+        [
+          "Box",
+          {
+          }
+        ],
+        [
+          "Book",
+          {
+          }
+        ],
+        [
+          "Note",
+          {
+          }
+        ]
+      ]
+    }
+  ]
+]
