@@ -1162,7 +1162,7 @@ only once:
 ..   --limit 0 \
 ..   --output_columns _id \
 ..   --drilldowns[tag].keys tag \
-..   --drilldowns[tag].tiler "_nsubrecs > 1" \
+..   --drilldowns[tag].filter "_nsubrecs > 1" \
 ..   --drilldowns[tag].output_columns _key,_nsubrecs
 
 .. _logical-select-drilldowns-label-columns-name-stage:
