@@ -1,0 +1,41 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Memos_20170416 TABLE_NO_KEY
+column_create Memos_20170416 timestamp COLUMN_SCALAR Time
+column_create Memos_20170416 tag COLUMN_SCALAR ShortText
+column_create Memos_20170416 content COLUMN_SCALAR Text
+
+table_create Memos_20170417 TABLE_NO_KEY
+column_create Memos_20170417 timestamp COLUMN_SCALAR Time
+column_create Memos_20170417 tag COLUMN_SCALAR ShortText
+column_create Memos_20170417 content COLUMN_SCALAR Text
+
+load --table Memos_20170416
+[
+{"timestamp": "2017/04/16 00:00:00", "tag": "Groonga", "content": "Groonga is fast."},
+{"timestamp": "2017/04/16 01:00:00", "tag": "Mroonga", "content": "Mroonga is fast and easy to use."}
+]
+
+load --table Memos_20170417
+[
+{"timestamp": "2017/04/17 10:00:00", "tag": "PGroonga", "content": "PGroonga is fast and easy to use."},
+{"timestamp": "2017/04/17 11:00:00", "tag": "Rroonga", "content": "Rroonga is fast and easy to use."},
+{"timestamp": "2017/04/17 12:00:00", "tag": "Groonga", "content": "Groonga is very fast."}
+]
+
+logical_select Memos \
+  --shard_key timestamp \
+  --limit 0 \
+  --output_columns _id \
+  --drilldown tag \
+  --drilldown_filter "_nsubrecs > 0"
+
+logical_select Memos \
+  --shard_key timestamp \
+  --limit 0 \
+  --output_columns _id \
+  --drilldown tag \
+  --drilldown_filter "_nsubrecs > 1"
+  
