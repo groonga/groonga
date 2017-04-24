@@ -1,0 +1,151 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Logs_20170415 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170415 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170415 item COLUMN_SCALAR Items
+[[0,0.0,0.0],true]
+column_create Logs_20170415 category COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Logs_20170416 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170416 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170416 item COLUMN_SCALAR Items
+[[0,0.0,0.0],true]
+column_create Logs_20170416 category COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "item1", "price": 200},
+{"_key": "item2", "price": 100}
+]
+[[0,0.0,0.0],2]
+load --table Logs_20170415
+[
+{"timestamp": "2017/04/15 00:00:00", "item": "item1", "category": "Book"},
+{"timestamp": "2017/04/15 01:00:00", "item": "item2", "category": "Pen"},
+{"timestamp": "2017/04/15 02:00:00", "item": "item1", "cateogry": "Pen"}
+]
+[[0,0.0,0.0],3]
+#|e| invalid column('cateogry')
+load --table Logs_20170416
+[
+{"timestamp": "2017/04/16 10:00:00", "item": "item2", "category": "Pen"},
+{"timestamp": "2017/04/16 11:00:00", "item": "item1", "category": "Pen"},
+{"timestamp": "2017/04/16 12:00:00", "item": "item1", "category": "Book"}
+]
+[[0,0.0,0.0],3]
+logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id   --drilldowns[group].keys item,category   --drilldowns[group].columns[nth].stage initial   --drilldowns[group].columns[nth].type UInt32   --drilldowns[group].columns[nth].flags COLUMN_SCALAR   --drilldowns[group].columns[nth].value 'window_record_number()'   --drilldowns[group].columns[nth].window.group_keys _value.item   --drilldowns[group].output_columns _value.item,nth
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ]
+      ]
+    ],
+    {
+      "group": [
+        [
+          4
+        ],
+        [
+          [
+            "item",
+            "Items"
+          ],
+          [
+            "nth",
+            "UInt32"
+          ]
+        ],
+        [
+          "item1",
+          1
+        ],
+        [
+          "item2",
+          2
+        ],
+        [
+          "item1",
+          2
+        ],
+        [
+          "item1",
+          1
+        ]
+      ]
+    }
+  ]
+]
+logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id   --drilldowns[group].keys item,category   --drilldowns[group].columns[nth].stage initial   --drilldowns[group].columns[nth].type UInt32   --drilldowns[group].columns[nth].flags COLUMN_SCALAR   --drilldowns[group].columns[nth].value 'window_record_number()'   --drilldowns[group].columns[nth].window.group_keys _value.category   --drilldowns[group].output_columns _value.item,nth
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ]
+      ]
+    ],
+    {
+      "group": [
+        [
+          4
+        ],
+        [
+          [
+            "item",
+            "Items"
+          ],
+          [
+            "nth",
+            "UInt32"
+          ]
+        ],
+        [
+          "item1",
+          1
+        ],
+        [
+          "item2",
+          2
+        ],
+        [
+          "item1",
+          1
+        ],
+        [
+          "item1",
+          1
+        ]
+      ]
+    }
+  ]
+]
