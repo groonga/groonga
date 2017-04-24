@@ -730,9 +730,6 @@ msgstr ""
 msgid "Here are supported Ubuntu versions:"
 msgstr "サポートしているUbuntuのバージョンは次の通りです。"
 
-msgid "12.04 LTS Precise Pangolin"
-msgstr ""
-
 msgid "14.04 LTS Trusty Tahr"
 msgstr ""
 
