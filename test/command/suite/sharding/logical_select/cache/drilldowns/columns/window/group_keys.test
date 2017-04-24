@@ -1,0 +1,61 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items price COLUMN_SCALAR UInt32
+
+table_create Logs_20170415 TABLE_NO_KEY
+column_create Logs_20170415 timestamp COLUMN_SCALAR Time
+column_create Logs_20170415 item COLUMN_SCALAR Items
+column_create Logs_20170415 category COLUMN_SCALAR ShortText
+
+table_create Logs_20170416 TABLE_NO_KEY
+column_create Logs_20170416 timestamp COLUMN_SCALAR Time
+column_create Logs_20170416 item COLUMN_SCALAR Items
+column_create Logs_20170416 category COLUMN_SCALAR ShortText
+
+load --table Items
+[
+{"_key": "item1", "price": 200},
+{"_key": "item2", "price": 100}
+]
+
+load --table Logs_20170415
+[
+{"timestamp": "2017/04/15 00:00:00", "item": "item1", "category": "Book"},
+{"timestamp": "2017/04/15 01:00:00", "item": "item2", "category": "Pen"},
+{"timestamp": "2017/04/15 02:00:00", "item": "item1", "cateogry": "Pen"}
+]
+
+load --table Logs_20170416
+[
+{"timestamp": "2017/04/16 10:00:00", "item": "item2", "category": "Pen"},
+{"timestamp": "2017/04/16 11:00:00", "item": "item1", "category": "Pen"},
+{"timestamp": "2017/04/16 12:00:00", "item": "item1", "category": "Book"}
+]
+
+
+logical_select Logs \
+  --shard_key timestamp \
+  --limit 0 \
+  --output_columns _id \
+  --drilldowns[group].keys item,category \
+  --drilldowns[group].columns[nth].stage initial \
+  --drilldowns[group].columns[nth].type UInt32 \
+  --drilldowns[group].columns[nth].flags COLUMN_SCALAR \
+  --drilldowns[group].columns[nth].value 'window_record_number()' \
+  --drilldowns[group].columns[nth].window.group_keys _value.item \
+  --drilldowns[group].output_columns _value.item,nth
+
+logical_select Logs \
+  --shard_key timestamp \
+  --limit 0 \
+  --output_columns _id \
+  --drilldowns[group].keys item,category \
+  --drilldowns[group].columns[nth].stage initial \
+  --drilldowns[group].columns[nth].type UInt32 \
+  --drilldowns[group].columns[nth].flags COLUMN_SCALAR \
+  --drilldowns[group].columns[nth].value 'window_record_number()' \
+  --drilldowns[group].columns[nth].window.group_keys _value.category \
+  --drilldowns[group].output_columns _value.item,nth
