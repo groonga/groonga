@@ -81,7 +81,7 @@ load --table Logs_20150205
 }
 ]
 [[0,0.0,0.0],4]
-logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id   --drilldowns[restart].stage initial   --drilldowns[restart].keys 'action'   --drilldowns[restart].filter "_key @ 'Restart'"   --drilldowns[restart].output_columns _key   --drilldowns[start].stage initial   --drilldowns[start].keys 'action'   --drilldowns[start].filter "_key @ 'Start'"   --drilldowns[start].output_columns _key   --drilldowns[action].table restart   --drilldowns[action].keys _key 
+logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id   --drilldowns[action].table restart   --drilldowns[action].keys _key   --drilldowns[restart].stage initial   --drilldowns[restart].keys 'action'   --drilldowns[restart].filter "_key @ 'Restart'"   --drilldowns[restart].output_columns _key   --drilldowns[start].stage initial   --drilldowns[start].keys 'action'   --drilldowns[start].filter "_key @ 'Start'"   --drilldowns[start].output_columns _key
 [
   [
     0,
@@ -101,37 +101,6 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
       ]
     ],
     {
-      "restart": [
-        [
-          1
-        ],
-        [
-          [
-            "_key",
-            "ShortText"
-          ]
-        ],
-        [
-          "Restart"
-        ]
-      ],
-      "start": [
-        [
-          2
-        ],
-        [
-          [
-            "_key",
-            "ShortText"
-          ]
-        ],
-        [
-          "Start"
-        ],
-        [
-          "Restart"
-        ]
-      ],
       "action": [
         [
           1
@@ -150,30 +119,7 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
           "Restart",
           1
         ]
-      ]
-    }
-  ]
-]
-logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id   --drilldowns[restart].stage initial   --drilldowns[restart].keys 'action'   --drilldowns[restart].filter "_key @ 'Restart'"   --drilldowns[restart].output_columns _key   --drilldowns[start].stage initial   --drilldowns[start].keys 'action'   --drilldowns[start].filter "_key @ 'Start'"   --drilldowns[start].output_columns _key   --drilldowns[action].table start   --drilldowns[action].keys _key 
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        9
       ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ]
-      ]
-    ],
-    {
       "restart": [
         [
           1
@@ -204,7 +150,30 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
         [
           "Restart"
         ]
+      ]
+    }
+  ]
+]
+logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id   --drilldowns[action].table start   --drilldowns[action].keys _key   --drilldowns[restart].stage initial   --drilldowns[restart].keys 'action'   --drilldowns[restart].filter "_key @ 'Restart'"   --drilldowns[restart].output_columns _key   --drilldowns[start].stage initial   --drilldowns[start].keys 'action'   --drilldowns[start].filter "_key @ 'Start'"   --drilldowns[start].output_columns _key
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        9
       ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ]
+      ]
+    ],
+    {
       "action": [
         [
           2
@@ -226,6 +195,37 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
         [
           "Restart",
           1
+        ]
+      ],
+      "restart": [
+        [
+          1
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ]
+        ],
+        [
+          "Restart"
+        ]
+      ],
+      "start": [
+        [
+          2
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ]
+        ],
+        [
+          "Start"
+        ],
+        [
+          "Restart"
         ]
       ]
     }

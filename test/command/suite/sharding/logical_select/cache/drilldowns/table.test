@@ -78,6 +78,8 @@ logical_select Logs \
   --shard_key timestamp \
   --limit 0 \
   --output_columns _id \
+  --drilldowns[action].table restart \
+  --drilldowns[action].keys _key \
   --drilldowns[restart].stage initial \
   --drilldowns[restart].keys 'action' \
   --drilldowns[restart].filter "_key @ 'Restart'" \
@@ -85,14 +87,14 @@ logical_select Logs \
   --drilldowns[start].stage initial \
   --drilldowns[start].keys 'action' \
   --drilldowns[start].filter "_key @ 'Start'" \
-  --drilldowns[start].output_columns _key \
-  --drilldowns[action].table restart \
-  --drilldowns[action].keys _key 
+  --drilldowns[start].output_columns _key
 
 logical_select Logs \
   --shard_key timestamp \
   --limit 0 \
   --output_columns _id \
+  --drilldowns[action].table start \
+  --drilldowns[action].keys _key \
   --drilldowns[restart].stage initial \
   --drilldowns[restart].keys 'action' \
   --drilldowns[restart].filter "_key @ 'Restart'" \
@@ -100,6 +102,4 @@ logical_select Logs \
   --drilldowns[start].stage initial \
   --drilldowns[start].keys 'action' \
   --drilldowns[start].filter "_key @ 'Start'" \
-  --drilldowns[start].output_columns _key \
-  --drilldowns[action].table start \
-  --drilldowns[action].keys _key 
+  --drilldowns[start].output_columns _key
