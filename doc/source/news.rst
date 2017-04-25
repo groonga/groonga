@@ -28,15 +28,15 @@ Improvements
 
 * Exported the following API
 
-  * `grn_set_default_cache_base_path()`
-  * `grn_get_default_cache_base_path()`
-  * `grn_persistent_cache_open()`
+  * ``grn_set_default_cache_base_path()``
+  * ``grn_get_default_cache_base_path()``
+  * ``grn_persistent_cache_open()``
 
 * [:doc:`/reference/executables/groonga`] Supported
-  `--cache-base-path` option to use persistent cache.
+  ``--cache-base-path`` option to use persistent cache.
 
 * [:doc:`/reference/executables/groonga-httpd`] Supported
-  `groonga_cache_base_path` option to use persistent cache.
+  ``groonga_cache_base_path`` option to use persistent cache.
 
 * [windows] Updated bundled msgpack to 2.1.1.
 
@@ -45,7 +45,7 @@ Improvements
 
 * [experimental] Supported index search for ".*" regexp pattern.  This
   feature is enabled by default. Set
-  `GRN_SCAN_INFO_REGEXP_DOT_ASTERISK_ENABLE=no` environment variable to
+  ``GRN_SCAN_INFO_REGEXP_DOT_ASTERISK_ENABLE=no`` environment variable to
   disable this feature.
 
 * [:doc:`/reference/functions/in_records`] Added function to use an
@@ -68,7 +68,7 @@ Fixes
   by reindex. [GitHub#646]
 
 * [httpd] Fixed too much response on quit/shutdown error. It means
-  that `quit` and `shutdown` command are now denied. [GitHub
+  that ``quit`` and ``shutdown`` command are now denied. [GitHub
   ranguba/groonga-client#12]
 
 .. _release-7-0-1:
