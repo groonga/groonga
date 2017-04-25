@@ -7460,7 +7460,8 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
                       const char *string, unsigned int string_len,
                       grn_hash *s, grn_operator op, grn_select_optarg *optarg)
 {
-  int *w1, limit;
+  double *w1;
+  int limit;
   grn_id tid, *tp, max_size;
   grn_rc rc = GRN_SUCCESS;
   grn_hash *h;
@@ -7470,7 +7471,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
   if (!lexicon || !ii || !string || !string_len || !s || !optarg) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (!(h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(int), 0))) {
+  if (!(h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(double), 0))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
   if (!(token_cursor = grn_token_cursor_open(ctx, lexicon, string, string_len,
@@ -7478,12 +7479,20 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     grn_hash_close(ctx, h);
     return GRN_NO_MEMORY_AVAILABLE;
   }
-  if (!(max_size = optarg->max_size)) { max_size = 1048576; }
+  if (!(max_size = optarg->max_size)) {
+    grn_obj *source_table;
+    source_table = grn_ctx_at(ctx, grn_obj_get_range(ctx, (grn_obj *)ii));
+    if (source_table) {
+      max_size = grn_table_size(ctx, source_table);
+    } else {
+      max_size = 1048576;
+    }
+  }
   while (token_cursor->status != GRN_TOKEN_CURSOR_DONE &&
          token_cursor->status != GRN_TOKEN_CURSOR_DONE_SKIP) {
     if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
       if (grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **)&w1, NULL)) {
-        (*w1)++;
+        (*w1) += 1;
       }
     }
     if (tid && token_cursor->curr_size) {
@@ -7513,7 +7522,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
       uint32_t es;
       grn_hash_cursor_get_key_value(ctx, c, (void **) &tp, NULL, (void **) &w1);
       if ((es = grn_ii_estimate_size(ctx, ii, *tp))) {
-        *w1 += max_size / es;
+        *w1 *= (double)es / (double)max_size;
       } else {
         grn_hash_cursor_delete(ctx, c, NULL);
       }
