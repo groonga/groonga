@@ -15,11 +15,61 @@ Release 7.0.2 - 2017-04-29
 Improvements
 ^^^^^^^^^^^^
 
+* [:doc:`/reference/commands/logical_select`] Supported multiple
+  :ref:`logical-select-drilldowns-label-columns-name-window-sort-keys`
+  and
+  :ref:`logical-select-drilldowns-label-columns-name-window-group-keys`.
+
+* [windows] Updated bundled LZ4 to 1.7.5.
+
+* [cache] Supported persistent cache feature.
+
+* [:doc:`/reference/commands/log_level`] Update English documentation.
+
+* Exported the following API
+
+  * `grn_set_default_cache_base_path()`
+  * `grn_get_default_cache_base_path()`
+  * `grn_persistent_cache_open()`
+
+* [:doc:`/reference/executables/groonga`] Supported
+  `--cache-base-path` option to use persistent cache.
+
+* [:doc:`/reference/executables/groonga-httpd`] Supported
+  `groonga_cache_base_path` option to use persistent cache.
+
+* [windows] Updated bundled msgpack to 2.1.1.
+
+* [:doc:`/reference/commands/object_inspect`] Supported not only
+  column inspection, but also index column statistics.
+
+* [experimental] Supported index search for ".*" regexp pattern.  This
+  feature is enabled by default. Set
+  `GRN_SCAN_INFO_REGEXP_DOT_ASTERISK_ENABLE=no` environment variable to
+  disable this feature.
+
+* [:doc:`/reference/functions/in_records`] Added function to use an
+  existing table as condition patterns.
+
+* [:doc:`/install/ubuntu`] Dropped Ubuntu 12.04 (Precise Pangolin)
+  support because of EOL.
+
 Fixes
 ^^^^^
 
-Thanks
-^^^^^^
+* [:doc:`/reference/commands/logical_select`] Fixed a bug that wrong
+  cache is used. This bug was occurred when dynamic column parameter
+  is used.
+
+* [:doc:`/reference/commands/logical_select`] Fixed a bug that dynamic
+  columns aren't created. It's occurred when no match case.
+
+* [:doc:`/reference/commands/reindex`] Fixed a bug that data is lost
+  by reindex. [GitHub#646]
+
+* [httpd] Fixed too much response on quit/shutdown error. It means
+  that `quit` and `shutdown` command are now denied. [GitHub
+  ranguba/groonga-client#12]
 
 .. _release-7-0-1:
 
