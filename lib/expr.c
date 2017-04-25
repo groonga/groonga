@@ -903,6 +903,21 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_CALL :
       {
         grn_obj *proc = NULL;
+        /*
+         * This is for keeping backward compatibility. We want to
+         * handle all "nargs" means that "N items on stack are used (N
+         * items are popped)" but "nargs" for OP_CALL is used as "N
+         * arguments" not "N items on stack are used" historically. It
+         * means that called function isn't included in "nargs".
+         *
+         * We adjust "nargs" here to handle "code->nargs" more easily.
+         * If we don't adjust "nargs" here, we need to care
+         * "code->nargs" at all locations that use "code->nargs". We
+         * need to use "code->nargs + 1" for OP_CALL and "code->nargs"
+         * for not OP_CALL to compute N items should be popped. It's
+         * wired. So we adjust "nargs" here.
+         */
+        nargs++;
         if (e->codes_curr - (nargs - 1) > 0) {
           int i;
           grn_expr_code *code;
@@ -7075,7 +7090,7 @@ parse_query(grn_ctx *ctx, efs_info *q)
           /* dummy token */
           PARSE(GRN_EXPR_TOKEN_QSTRING);
           grn_expr_append_obj(ctx, q->e, all_records, GRN_OP_PUSH, 1);
-          grn_expr_append_op(ctx, q->e, GRN_OP_CALL, 1);
+          grn_expr_append_op(ctx, q->e, GRN_OP_CALL, 0);
         }
       }
       op->op = GRN_OP_AND_NOT;

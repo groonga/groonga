@@ -55,7 +55,7 @@ module Groonga
         expression.append_constant(@target_range.max, Operator::PUSH, 1)
         expression.append_constant(@target_range.max_border,
                                    Operator::PUSH, 1)
-        expression.append_operator(Operator::CALL, 6)
+        expression.append_operator(Operator::CALL, 5)
         build_condition(expression)
       end
 

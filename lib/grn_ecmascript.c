@@ -1946,7 +1946,7 @@ static void yy_reduce(
       case 65: /* call_expression ::= member_expression arguments */
 #line 371 "grn_ecmascript.lemon"
 {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, 1 + yymsp[0].minor.yy0);
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, yymsp[0].minor.yy0);
 }
 #line 1952 "grn_ecmascript.c"
         break;

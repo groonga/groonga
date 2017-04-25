@@ -13,7 +13,7 @@ module Groonga
         @arguments.each do |argument|
           argument.build(expression)
         end
-        expression.append_operator(Operator::CALL, 1 + @arguments.size)
+        expression.append_operator(Operator::CALL, @arguments.size)
       end
 
       def estimate_size(table)

@@ -462,7 +462,7 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
                                   key,
                                   GRN_OP_GET_VALUE, 1);
               grn_expr_append_const(ctx, expr, query, GRN_OP_PUSH, 1);
-              grn_expr_append_op(ctx, expr, GRN_OP_CALL, 3);
+              grn_expr_append_op(ctx, expr, GRN_OP_CALL, 2);
               grn_expr_append_op(ctx, expr, GRN_OP_MINUS_ASSIGN, 2);
 
               if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, -1, 0))) {
