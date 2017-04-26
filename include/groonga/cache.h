@@ -36,6 +36,8 @@ GRN_API grn_rc grn_cache_close(grn_ctx *ctx, grn_cache *cache);
 GRN_API grn_rc grn_cache_current_set(grn_ctx *ctx, grn_cache *cache);
 GRN_API grn_cache *grn_cache_current_get(grn_ctx *ctx);
 
+GRN_API grn_rc grn_cache_default_reopen(void);
+
 GRN_API grn_rc grn_cache_set_max_n_entries(grn_ctx *ctx,
                                            grn_cache *cache,
                                            unsigned int n);

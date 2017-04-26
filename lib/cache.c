@@ -425,6 +425,33 @@ grn_cache_init(void)
   grn_cache_current_set(ctx, grn_cache_default);
 }
 
+grn_rc
+grn_cache_default_reopen(void)
+{
+  grn_ctx *ctx = &grn_cache_ctx;
+  grn_cache *new_default;
+  grn_bool default_is_current;
+
+  GRN_API_ENTER;
+
+  new_default = grn_cache_open(ctx);
+  if (!new_default) {
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  default_is_current = (grn_cache_default == grn_cache_current_get(ctx));
+  if (default_is_current) {
+    grn_cache_current_set(ctx, new_default);
+  }
+
+  if (grn_cache_default) {
+    grn_cache_close(ctx, grn_cache_default);
+  }
+  grn_cache_default = new_default;
+
+  GRN_API_RETURN(ctx->rc);
+}
+
 static void
 grn_cache_expire_entry_memory(grn_cache *cache, grn_cache_entry_memory *ce)
 {
