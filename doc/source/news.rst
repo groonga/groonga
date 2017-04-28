@@ -26,11 +26,12 @@ Improvements
 
 * [:doc:`/reference/commands/log_level`] Update English documentation.
 
-* Exported the following API
+* Added the following APIs:
 
   * ``grn_set_default_cache_base_path()``
   * ``grn_get_default_cache_base_path()``
   * ``grn_persistent_cache_open()``
+  * ``grn_cache_default_open()``
 
 * [:doc:`/reference/executables/groonga`] Supported
   ``--cache-base-path`` option to use persistent cache.
