@@ -37,15 +37,15 @@ Improvements
   persistent cache.
 
 * [:doc:`/reference/executables/groonga-httpd`]
-  [:ref:`groonga-httpd-cache-base-path`] Added new configuration to
-  use persistent cache.
+  [:ref:`groonga-httpd-groonga-cache-base-path`] Added new
+  configuration to use persistent cache.
 
 * [windows] Updated bundled msgpack to 2.1.1.
 
 * [:doc:`/reference/commands/object_inspect`] Supported not only
   column inspection, but also index column statistics.
 
-* Supported index search for ``".*"`` regexp pattern.  This feature is
+* Supported index search for "``.*``" regexp pattern.  This feature is
   enabled by default. Set
   ``GRN_SCAN_INFO_REGEXP_DOT_ASTERISK_ENABLE=no`` environment variable
   to disable this feature.
@@ -69,8 +69,8 @@ Fixes
 * [:doc:`/reference/commands/reindex`] Fixed a bug that data is lost
   by reindex. [GitHub#646]
 
-* [httpd] Fixed a bug that response of :doc:`reference/commands/quit`
-  and :doc:`reference/commands/shutdown` is broken JSON when worker is
+* [httpd] Fixed a bug that response of :doc:`/reference/commands/quit`
+  and :doc:`/reference/commands/shutdown` is broken JSON when worker is
   running as another user. [GitHub ranguba/groonga-client#12]
 
 .. _release-7-0-1:
