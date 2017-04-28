@@ -44,10 +44,10 @@ Improvements
 * [:doc:`/reference/commands/object_inspect`] Supported not only
   column inspection, but also index column statistics.
 
-* [experimental] Supported index search for ".*" regexp pattern.  This
-  feature is enabled by default. Set
-  ``GRN_SCAN_INFO_REGEXP_DOT_ASTERISK_ENABLE=no`` environment variable to
-  disable this feature.
+* Supported index search for ``".*"`` regexp pattern.  This feature is
+  enabled by default. Set
+  ``GRN_SCAN_INFO_REGEXP_DOT_ASTERISK_ENABLE=no`` environment variable
+  to disable this feature.
 
 * [:doc:`/reference/functions/in_records`] Added function to use an
   existing table as condition patterns.
