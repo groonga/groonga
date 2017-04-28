@@ -2,6 +2,8 @@
 
 .. highlightlang:: none
 
+.. program:: grnslap
+
 grnslap
 =======
 
@@ -31,7 +33,7 @@ Groonga独自プロトコルであるGQTPと、httpの両プロトコルでリ�
 オプション
 ----------
 
-.. cmdoption:: -P
+.. option:: -P
 
    リクエストのプロトコルを指定します。
 
@@ -43,14 +45,14 @@ Groonga独自プロトコルであるGQTPと、httpの両プロトコルでリ�
 
      gqtpでリクエストします。gqtpのリクエストをLF区切り形式で標準入力に与えると、それらのリクエストを順次行います。
 
-.. cmdoption:: -m
+.. option:: -m
 
    リクエストの多重度を指定します。初期値は10です。
 
 引数
 ----
 
-.. cmdoption:: dest
+.. option:: dest
 
    接続先のホスト名とポート番号をを指定します(デフォルト値は'localhost:10041')。ポート番号を指定しない場合には、10041が指定されたものとします。
 

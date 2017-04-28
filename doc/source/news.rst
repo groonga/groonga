@@ -33,8 +33,8 @@ Improvements
   * ``grn_persistent_cache_open()``
   * ``grn_cache_default_open()``
 
-* [:doc:`/reference/executables/groonga`][:option:`--cache-base-path
-  <path>`] Added a new option to use persistent cache.
+* [:option:`groonga --cache-base-path`] Added a new option to use
+  persistent cache.
 
 * [:doc:`/reference/executables/groonga-httpd`] Supported
   ``groonga_cache_base_path`` option to use persistent cache.

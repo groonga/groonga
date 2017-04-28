@@ -2,6 +2,8 @@
 
 .. highlightlang:: none
 
+.. program:: groonga-benchmark
+
 groonga-benchmark
 =================
 
@@ -30,44 +32,44 @@ groonga-benchmark用のデータファイルは自分で作成することも既
 
 オプション
 ----------
-.. cmdoption:: -i, --host <ip/hostname>
+.. option:: -i, --host <ip/hostname>
 
   接続するgroongaサーバを、ipアドレスまたはホスト名で指定します。指定先にgroongaサーバが立ち上がっていない場合、接続不能となることに注意してください。このオプションを指定しない場合、groonga-benchmarkは自動的にlocalhostのgroongaサーバを起動して接続します。
 
 
-.. cmdoption:: -p, --port <port number>
+.. option:: -p, --port <port number>
 
   自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、このオプションで指定したポート番号が異なる場合、接続不能となることに注意してください。
 
 
-.. cmdoption:: --dir
+.. option:: --dir
 
   ftp.groonga.org に用意されているスクリプトファイルを表示します。
 
-.. cmdoption:: --ftp
+.. option:: --ftp
 
   ftp.groonga.orgとFTP通信を行い、scriptファイルの同期やログファイルの送信を行います。
 
-.. cmdoption:: --log-output-dir
+.. option:: --log-output-dir
 
   デフォルトでは、groonga-benchmark終了後のログファイルの出力先ははカレントディレクトリです。このオプションを利用すると、任意のディレクトリに出力先を変更することができます。
 
-.. cmdoption:: --groonga <groonga_path>
+.. option:: --groonga <groonga_path>
 
   groongaコマンドのパスを指定します。デフォルトでは、PATHの中からgroongaコマンドを探します。
 
-.. cmdoption:: --protocol <gqtp|http>
+.. option:: --protocol <gqtp|http>
 
   groongaコマンドが使うプロトコルとして `gqtp` または `http` を指定します。
 
 引数
 ----
 
-.. cmdoption:: script
+.. option:: script
 
   groonga-benchmarkの動作方法(以下、groonga-benchmark命令と呼びます)を記述したテキストファイルです。拡張子は.scrです。
 
-.. cmdoption:: db
+.. option:: db
 
   groonga-benchmarkが利用するgroonga データベースです。指定されたデータベースが存在しない場合、groonga-benchmarkが新規に作成します。またgroonga サーバを自動的に起動する場合もこの引数で指定したデータベースが利用されます。接続するgroonga サーバを明示的に指定した場合に利用するデータベースは、接続先サーバが使用中のデータベースになることに注意してください。
 

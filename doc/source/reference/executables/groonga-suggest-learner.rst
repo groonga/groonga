@@ -2,6 +2,8 @@
 
 .. highlightlang:: none
 
+.. program:: groonga-suggest-learner
+
 groonga-suggest-learner
 =======================
 
@@ -45,27 +47,27 @@ Here is the sample to load log data under ``logs`` directory::
 Options
 -------
 
-.. cmdoption:: -r <endpoint>, --receive-endpoint <endpoint>
+.. option:: -r <endpoint>, --receive-endpoint <endpoint>
 
    Uses ``<endpoint>`` as the receiver endpoint.
 
-.. cmdoption:: -s <endpoint>, --send-endpoint <endpoint>
+.. option:: -s <endpoint>, --send-endpoint <endpoint>
 
    Uses ``<endpoint>`` as the sender endpoint.
 
-.. cmdoption:: -d, --daemon
+.. option:: -d, --daemon
 
    Runs as a daemon.
 
-.. cmdoption:: -l <directory>, --log-base-path <directory>
+.. option:: -l <directory>, --log-base-path <directory>
 
    Reads logs from ``<directory>``.
 
-.. cmdoption:: --log-path <path>
+.. option:: --log-path <path>
 
    Outputs log to ``<path>``.
 
-.. cmdoption:: --log-level <level>
+.. option:: --log-level <level>
 
    Uses ``<level>`` for log level. ``<level>`` must be between 1 and 9.
    Larger level outputs more logs.

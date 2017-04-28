@@ -2,6 +2,8 @@
 
 .. highlightlang:: none
 
+.. program:: groonga-suggest-httpd
+
 .. groonga-command
 .. database: groonga-suggest-httpd
 .. % killall lt-groonga-suggest-learner || :

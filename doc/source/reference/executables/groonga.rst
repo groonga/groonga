@@ -2,6 +2,8 @@
 
 .. highlightlang:: none
 
+.. program:: groonga
+
 ``groonga`` executable file
 ===========================
 
@@ -164,27 +166,27 @@ is running at ``192.168.0.1:10043`` and exit::
 Options
 -------
 
-.. cmdoption:: -n
+.. option:: -n
 
    Creates new database.
 
-.. cmdoption:: -c
+.. option:: -c
 
    Executes ``groonga`` command in client mode.
 
-.. cmdoption:: -s
+.. option:: -s
 
    Executes ``groonga`` command in server mode. Use "Ctrl+C" to stop the ``groonga`` process.
 
-.. cmdoption:: -d
+.. option:: -d
 
    Executes ``groonga`` command in daemon mode. In contrast to server mode, ``groonga`` command forks in daemon mode. For example, to stop local daemon process, use "curl http://127.0.0.1:10041/d/shutdown".
 
-.. cmdoption:: -e, --encoding <encoding>
+.. option:: -e, --encoding <encoding>
 
    Specifies encoding which is used for Groonga database. This option is effective when you create new Groonga database.  This parameter specifies one of the following values: ``none``, ``euc``, ``utf8``, ``sjis``, ``latin`` or ``koi8r``.
 
-.. cmdoption:: -l, --log-level <log level>
+.. option:: -l, --log-level <log level>
 
    Specifies log level. Log level must be a log level name or an
    integer value. Here are available log levels:
@@ -226,69 +228,69 @@ Options
      - ``-`` or ``dump``
      - ``9``
 
-.. cmdoption:: -a, --address <ip/hostname>
+.. option:: -a, --address <ip/hostname>
 
    .. deprecated:: 1.2.2
       Use :option:`--bind-address` instead.
 
-.. cmdoption:: --bind-address <ip/hostname>
+.. option:: --bind-address <ip/hostname>
 
    .. versionadded:: 1.2.2
 
    サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。(デフォルトは `hostname` の返すホスト名)
 
-.. cmdoption:: -p, --port <port number>
+.. option:: -p, --port <port number>
 
    クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。
    (クライアントモードのデフォルトは10043番、サーバ、またはデーモンモードのデフォルトは、HTTPの場合、10041番、GQTPの場合、10043番)
 
-.. cmdoption:: -i, --server-id <ip/hostname>
+.. option:: -i, --server-id <ip/hostname>
 
    サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定します。(デフォルトは`hostname`の返すホスト名)
 
-.. cmdoption:: -h, --help
+.. option:: -h, --help
 
    ヘルプメッセージを出力します。
 
-.. cmdoption:: --document-root <path>
+.. option:: --document-root <path>
 
    httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定します。
 
    デフォルトでは、データベースを管理するための汎用的なページに対応するファイルが/usr/share/groonga/admin_html以下にインストールされます。このディレクトリをdocument-rootオプションの値に指定して起動した場合、ウェブブラウザでhttp://hostname:port/index.htmlにアクセスすると、ウェブベースのデータベース管理ツールを使用できます。
 
-.. cmdoption:: --protocol <protocol>
+.. option:: --protocol <protocol>
 
    http,gqtpのいずれかを指定します。(デフォルトはgqtp)
 
-.. cmdoption:: --log-path <path>
+.. option:: --log-path <path>
 
    ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/groonga.logです)
 
-.. cmdoption:: --log-rotate-threshold-size <threshold>
+.. option:: --log-rotate-threshold-size <threshold>
 
    .. versionadded:: 5.0.3
 
    Specifies threshold for log rotation. Log file is rotated when log file size is larger than or equals to the threshold (default: 0; disabled).
 
-.. cmdoption:: --query-log-path <path>
+.. option:: --query-log-path <path>
 
    クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されません)
 
-.. cmdoption:: --query-log-rotate-threshold-size <threshold>
+.. option:: --query-log-rotate-threshold-size <threshold>
 
    .. versionadded:: 5.0.3
 
    Specifies threshold for query log rotation. Query log file is rotated when query log file size is larger than or equals to the threshold (default: 0; disabled).
 
-.. cmdoption:: -t, --max-threads <max threasd>
+.. option:: -t, --max-threads <max threasd>
 
    最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数です)
 
-.. cmdoption:: --pid-path <path>
+.. option:: --pid-path <path>
 
    PIDを保存するパスを指定します。(デフォルトでは保存しません)
 
-.. cmdoption:: --config-path <path>
+.. option:: --config-path <path>
 
    設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになります。::
 
@@ -305,15 +307,15 @@ Options
      # 例えば、'--pid-path'に対応するキーは'pid-path'。
      # ただし、キーが'config-path'のオプションは無視される。
 
-.. cmdoption:: --cache-limit <limit>
+.. option:: --cache-limit <limit>
 
    キャッシュ数の最大値を指定します。(デフォルトは100です)
 
-.. cmdoption:: --default-match-escalation-threshold <threshold>
+.. option:: --default-match-escalation-threshold <threshold>
 
    検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)
 
-.. cmdoption:: --default-request-timeout <timeout>
+.. option:: --default-request-timeout <timeout>
 
    Specifies the default request timeout in seconds.
 
@@ -327,7 +329,7 @@ Options
 
    .. seealso:: :doc:`/reference/command/request_timeout`
 
-.. cmdoption:: --cache-base-path <path>
+.. option:: --cache-base-path <path>
 
    .. versionadded:: 7.0.2
 
@@ -352,13 +354,13 @@ Options
 Command line parameters
 -----------------------
 
-.. cmdoption:: dest
+.. option:: dest
 
    使用するデータベースのパス名を指定します。
 
    クライアントモードの場合は接続先のホスト名とポート番号を指定します(デフォルト値は'localhost:10043')。ポート番号を指定しない場合には、10043が指定されたものとします。
 
-.. cmdoption:: command [args]
+.. option:: command [args]
 
    スタンドアロンおよびクライアントモードの場合は、実行するコマンドとその引数をコマンドライン引数に指定できます。コマンドライン引数にcommandを与えなかった場合は、標準入力から一行ずつEOFに達するまでコマンド文字列を読み取り、順次実行します。
 
