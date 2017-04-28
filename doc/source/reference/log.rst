@@ -14,11 +14,11 @@ works. Query log is just for query processing.
 Process log
 -----------
 
-Process log is enabled by default. Log path can be
-customized by :option:`--log-path` option. Each log has its
-log level. If a log is smaller than Groonga process' log
-level, it's not logged. Log level can be customized by
-:option:`-l` or :doc:`commands/log_level`.
+Process log is enabled by default. Log path can be customized by
+:option:`groonga --log-path` option. Each log has its log level. If a
+log is smaller than Groonga process' log level, it's not logged. Log
+level can be customized by :option:`groonga -l` or
+:doc:`commands/log_level`.
 
 Format
 ^^^^^^
@@ -128,7 +128,7 @@ Query log
 ---------
 
 Query log is disabled by default. It can be enabled by
-:option:`--query-log-path` option.
+:option:`groonga --query-log-path` option.
 
 Format
 ^^^^^^
