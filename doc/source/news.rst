@@ -68,9 +68,9 @@ Fixes
 * [:doc:`/reference/commands/reindex`] Fixed a bug that data is lost
   by reindex. [GitHub#646]
 
-* [httpd] Fixed too much response on quit/shutdown error. It means
-  that ``quit`` and ``shutdown`` command are now denied. [GitHub
-  ranguba/groonga-client#12]
+* [httpd] Fixed a bug that response of :doc:`reference/commands/quit`
+  and :doc:`reference/commands/shutdown` is broken JSON when worker is
+  running as another user. [GitHub ranguba/groonga-client#12]
 
 .. _release-7-0-1:
 
