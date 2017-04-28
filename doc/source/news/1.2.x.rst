@@ -293,7 +293,7 @@ Improvements
 * document: Started English support. (not completed yet.)
 * groonga-suggest-httpd: Added --disable-max-fd-check option.
 * groonga: Renamed :option:`groonga -a` and :option:`groonga
---address` options to :option:`groonga --bind-address` option.
+  --address` options to :option:`groonga --bind-address` option.
 * groonga-suggest-httpd: Renamed --address option to --bind-address.
 * Changed admin HTML install directory to
   $PREFIX/share/groonga/html/admin/ from

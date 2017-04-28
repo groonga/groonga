@@ -20,8 +20,8 @@ by nginx is also available in groonga-httpd.
 groonga-httpd has an Web-based administration tool implemented with HTML and
 JavaScript. You can access to it from http://hostname:port/.
 
-Synopsis
---------
+Syntax
+------
 
 ::
 
@@ -121,7 +121,7 @@ by groonga-httpd to configure groonga-httpd specific configurations.
 ``groonga``
 """""""""""
 
-Synopsis::
+Syntax::
 
   groonga on | off;
 
@@ -144,12 +144,12 @@ Examples::
     groonga off; # Disables groonga under /d/... path
   }
 
-.. _groonga-database:
+.. _groonga-httpd-groonga-database:
 
 ``groonga_database``
 """"""""""""""""""""
 
-Synopsis::
+Syntax::
 
   groonga_database /path/to/groonga/database;
 
@@ -162,12 +162,12 @@ Context
 Specifies the path to a Groonga database. This is the required
 directive.
 
-.. _groonga-database-auto-create:
+.. _groonga-httpd-groonga-database-auto-create:
 
 ``groonga_database_auto_create``
 """"""""""""""""""""""""""""""""
 
-Synopsis::
+Syntax::
 
   groonga_database_auto_create on | off;
 
@@ -179,9 +179,9 @@ Context
 
 Specifies whether Groonga database is created automatically or not. If
 the value is ``on`` and the Groonga database specified by
-:ref:`groonga-database` doesn't exist, the Groonga database is created
-automatically. If the Groonga database exists, groonga-httpd does
-nothing.
+:ref:`groonga-httpd-groonga-database` doesn't exist, the Groonga
+database is created automatically. If the Groonga database exists,
+groonga-httpd does nothing.
 
 If parent directory doesn't exist, parent directory is also created
 recursively.
@@ -193,7 +193,7 @@ changed.
 ``groonga_base_path``
 """""""""""""""""""""
 
-Synopsis::
+Syntax::
 
   groonga_base_path /d/;
 
@@ -237,12 +237,12 @@ Here is an example configuration to add authorization to
     # Because location name is the base path.
   }
 
-.. _groonga-log-path:
+.. _groonga-httpd-groonga-log-path:
 
 ``groonga_log_path``
 """""""""""""""""""""
 
-Synopsis::
+Syntax::
 
   groonga_log_path path | off;
 
@@ -264,12 +264,12 @@ Examples::
     groonga_log_path off;
   }
 
-.. _groonga-log-level:
+.. _groonga-httpd-groonga-log-level:
 
 ``groonga_log_level``
 """""""""""""""""""""
 
-Synopsis::
+Syntax::
 
   groonga_log_level none | emergency | alert | ciritical | error | warning | notice | info | debug | dump;
 
@@ -290,12 +290,12 @@ Examples::
     groonga_log_level notice;
   }
 
-.. _groonga-query-log-path:
+.. _groonga-httpd-groonga-query-log-path:
 
 ``groonga_query_log_path``
 """"""""""""""""""""""""""
 
-Synopsis::
+Syntax::
 
   groonga_query_log_path path | off;
 
@@ -349,19 +349,17 @@ see http://wiki.nginx.org/CoreModule#worker_processes.
 
 By default, this is set to 1. It is nginx's default.
 
-.. _groonga-cache-limit:
+.. _groonga-httpd-groonga-cache-limit:
 
 ``groonga_cache_limit``
 """""""""""""""""""""""
 
-This directive is introduced to customize cache limit for each worker process.
+Syntax::
 
-Synopsis::
-
-  groonga_cache_limit CACHE_LIMIT;
+  groonga_cache_limit limit;
 
 Default
-  100
+  ``groonga_cache_limit 100;``
 
 Context
   ``http``, ``server``, ``location``
@@ -376,6 +374,56 @@ Examples::
     groonga on;
     # You can customize query cache limit for groonga.
     groonga_cache_limit 100;
+  }
+
+.. _groonga-httpd-groonga-cache-base-path:
+
+``groonga_cache_base_path``
+"""""""""""""""""""""""""""
+
+Syntax::
+
+  groonga_cache_base_path path | off;
+
+Default
+  ``groonga_cache_base_path off;``
+
+Context
+  ``http``, ``server``, ``location``
+
+Specifies the base path of query cache in the ``http``, ``server`` or
+``location`` block.
+
+It's recommended that you specify this configuration when you use
+multi-workers configuration.
+
+If the base path is specified, you can use persistent cache instead of
+on memory cache. If you use persistent cache, workers share query
+cache. It's efficient for multi-workers configuration because the same
+response is cached only once in multiple workers.
+
+There is one more merit for persistent cache. You don't need to warm
+up cache after groonga-httpd is restarted. Persistent cache isn't
+cleared when groonga-httpd is down. groonga-httpd can use existing
+persistent cache again.
+
+The default value is ``off``. It means that persistent cache is
+disabled. On memory cache is used. On memory cache is independent in
+each worker. It's not efficient for multi-workers configuration
+because two or more workers may keeps the same response separately.
+
+Persistent cache is a bit slower than on memory cache. Normally, the
+difference has little influence on performance.
+
+You must specify the base path on memory file system. If you specify
+the base path on disk, your cache will be slow. It's not make sense.
+
+Examples::
+
+  location /d/ {
+    groonga on;
+    # You can customize query cache limit for groonga.
+    groonga_cache_base_path /dev/shm/groonga-httpd-cache;
   }
 
 ``proxy_cache``

@@ -60,7 +60,7 @@ Enable request timeout by default
 
 :doc:`/reference/executables/groonga` supports enabling request
 timeout by default. You can specify the default request timeout by
-:option:`--default-request-timeout`.
+:option:`groonga --default-request-timeout`.
 
 If the default request timeout is larger than 0 second, the default
 request timeout is used as request timeout for all requests.

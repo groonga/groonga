@@ -350,6 +350,8 @@ Options
    The default is nothing. It means that persistent cache is
    disabled. On memory cache is used.
 
+   Persistent cache is a bit slower than on memory cache. Normally,
+   the difference has little influence on performance.
 
 Command line parameters
 -----------------------

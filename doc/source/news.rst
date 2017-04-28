@@ -36,8 +36,9 @@ Improvements
 * [:option:`groonga --cache-base-path`] Added a new option to use
   persistent cache.
 
-* [:doc:`/reference/executables/groonga-httpd`] Supported
-  ``groonga_cache_base_path`` option to use persistent cache.
+* [:doc:`/reference/executables/groonga-httpd`]
+  [:ref:`groonga-httpd-cache-base-path`] Added new configuration to
+  use persistent cache.
 
 * [windows] Updated bundled msgpack to 2.1.1.
 
