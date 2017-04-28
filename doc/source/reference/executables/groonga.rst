@@ -327,6 +327,28 @@ Options
 
    .. seealso:: :doc:`/reference/command/request_timeout`
 
+.. cmdoption:: --cache-base-path <path>
+
+   .. versionadded:: 7.0.2
+
+   Specifies the base path for cache. It enables persistent cache
+   feature.
+
+   You can get the following merits by persistent cache feature:
+
+     * You can reuse cache after ``groonga`` process is restarted. You
+       don't need to warm up your cache each restart.
+
+     * You can share cache with multiple ``groonga`` processes.
+
+   You must specify the base path on memory file system. If you
+   specify the base path on disk, your cache will be slow. It's not
+   make sense.
+
+   The default is nothing. It means that persistent cache is
+   disabled. On memory cache is used.
+
+
 Command line parameters
 -----------------------
 
