@@ -739,6 +739,9 @@ msgstr ""
 msgid "16.10 Yakkety Yak"
 msgstr ""
 
+msgid "17.04 Zesty Zapus"
+msgstr ""
+
 msgid "Enable the universe repository to install Groonga::"
 msgstr ""
 "Groongaをインストールするためにuniverseリポジトリを有効にしてください::"
