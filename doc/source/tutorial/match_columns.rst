@@ -93,10 +93,69 @@ Let's search same query in previous section. You can get same search results.
 Full text search with specific index name
 -----------------------------------------
 
-TODO
+Groonga also supports full text search with specific index name.
 
-.. TODO: match_columnsにインデックス名を指定しての検索についても触れる。
+In this section, you learn how to use specific index column efficiently.
 
+Here is the concrete example about specific index name.
+
+.. groonga-command
+.. include:: ../example/tutorial/match_columns-specific-index-schema.log
+.. table_create Entries TABLE_HASH_KEY ShortText
+.. column_create Entries title COLUMN_SCALAR ShortText
+.. column_create Entries body COLUMN_SCALAR ShortText
+.. load --table Entries
+.. [
+.. {"_key": "http://example.com/entry1", "title":"Hello Groonga.", "body":"This is my first entry."},
+.. {"_key": "http://example.com/entry2", "title":"Hello world.", "body":"I love Groonga!"},
+.. {"_key": "http://example.com/entry3", "title":"Hello Mroonga, bye Groonga.", "body":"I use Mroonga."},
+.. {"_key": "http://example.com/entry4", "title":"Say, Hello Groonga!", "body":"I'm back."}
+.. ]
+.. table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+.. column_create Terms entries_title COLUMN_INDEX|WITH_POSITION Entries title
+.. column_create Terms entries_body COLUMN_INDEX|WITH_POSITION Entries body
+.. column_create Terms entries_whole COLUMN_INDEX|WITH_POSITION|WITH_SECTION Entries title,body
+
+The table which stores entries has columns for title and body.
+And the terms table has index columns for title and body to entries table.
+
+There are three index columns in terms table.
+
+* entries_title: index column for title
+* entries_body: index column for body
+* entries_whole: index column for title and body
+
+If you specify index column which is related to specific data column, related data column is searched with that index implicitly.
+
+For example, if you want to search title or body only, specify ``Terms.entries_title`` or ``Terms.entries_body`` index column.
+
+.. groonga-command
+.. include:: ../example/tutorial/match_columns-specific-title-index.log
+.. select --table Entries --match_columns Terms.entries_title --query "Groonga"
+
+This example uses ``Terms.entries_title`` as index, then search "Hello Groonga" against title data column.
+
+.. groonga-command
+.. include:: ../example/tutorial/match_columns-specific-body-index.log
+.. select --table Entries --match_columns Terms.entries_body --query "Groonga"
+
+This example uses ``Terms.entries_body`` as index, then search "Hello Groonga" against body data column.
+
+If you specify multiple index column which is related to specific data columns, you can also specify data column name as suffix. It means that "Use specific index and search specific data column explicitly".
+
+For example, if you want to search title or body only with ``entries_whole`` index, specify ``Terms.entries_whole.title`` or ``Terms.entries_whole.body``. It uses ``Terms.entries_whole`` index and search ``title`` column or ``body`` column explicitly.
+
+.. groonga-command
+.. include:: ../example/tutorial/match_columns-specific-whole-with-title.log
+.. select --table Entries --match_columns Terms.entries_whole.title --query "Groonga"
+
+This example uses ``Terms.entries_whole`` as index, then search "Hello Groonga" against title data column.
+
+.. groonga-command
+.. include:: ../example/tutorial/match_columns-specific-whole-with-body.log
+.. select --table Entries --match_columns Terms.entries_whole.body --query "Groonga"
+
+This example uses ``Terms.entries_whole`` as index, then search "Hello Groonga" against body data column.
 
 .. _nested-index-search:
 
