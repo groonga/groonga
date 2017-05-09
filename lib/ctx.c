@@ -345,6 +345,7 @@ grn_ctx_init_internal(grn_ctx *ctx, int flags)
 {
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
   // if (ctx->stat != GRN_CTX_FIN) { return GRN_INVALID_ARGUMENT; }
+  ctx->rc = GRN_SUCCESS;
   ERRCLR(ctx);
   ctx->flags = flags;
   if (grn_ctx_per_db) {
