@@ -551,6 +551,23 @@ details.
 Note that score function isn't related to :ref:`select-scorer`
 parameter.
 
+You can also specify index columns to ``--match_columns``
+parameter. In such a case, you can control what index column should be
+used and what data column should be searched explicitly.
+
+There are two kind of index columns which you can specify.
+
+* index column for one data column
+* index column for multiple data column
+
+If you use index column for one data column, index column which
+corresponds to data column is paired. On the otherhand, if you use
+index column for multiple data column, all data column is searched by
+default. If you want to use specific index column to search specific
+data column, Specify index column with data column name such as
+`TERMS_TABLE.INDEX_COLUMN.DATA_COLUMN``. See example use case
+:ref:`full-text-search-with-specific-index-name` for details.
+
 .. _select-query:
 
 ``query``
