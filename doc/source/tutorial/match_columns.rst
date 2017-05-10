@@ -133,13 +133,13 @@ For example, if you want to search title or body only, specify ``Terms.entries_t
 
 .. groonga-command
 .. include:: ../example/tutorial/match_columns-specific-title-index.log
-.. select --table Entries --match_columns Terms.entries_title --query "Groonga"
+.. select --table Entries --output_columns title --match_columns Terms.entries_title --query "Groonga"
 
 This example uses ``Terms.entries_title`` as index, then search "Groonga" against title data column.
 
 .. groonga-command
 .. include:: ../example/tutorial/match_columns-specific-body-index.log
-.. select --table Entries --match_columns Terms.entries_body --query "Groonga"
+.. select --table Entries --output_columns body --match_columns Terms.entries_body --query "Groonga"
 
 This example uses ``Terms.entries_body`` as index, then search "Groonga" against body data column.
 
@@ -149,13 +149,13 @@ For example, if you want to search title or body only with ``entries_whole`` ind
 
 .. groonga-command
 .. include:: ../example/tutorial/match_columns-specific-whole-with-title.log
-.. select --table Entries --match_columns Terms.entries_whole.title --query "Groonga"
+.. select --table Entries --output_columns title --match_columns Terms.entries_whole.title --query "Groonga"
 
 This example uses ``Terms.entries_whole`` as index, then search "Groonga" against title data column.
 
 .. groonga-command
 .. include:: ../example/tutorial/match_columns-specific-whole-with-body.log
-.. select --table Entries --match_columns Terms.entries_whole.body --query "Groonga"
+.. select --table Entries --output_columns body --match_columns Terms.entries_whole.body --query "Groonga"
 
 This example uses ``Terms.entries_whole`` as index, then search "Groonga" against body data column.
 

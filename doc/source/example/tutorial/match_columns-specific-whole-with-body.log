@@ -1,6 +1,6 @@
 Execution example::
 
-  select --table Entries --match_columns Terms.entries_whole.body --query "Groonga"
+  select --table Entries --output_columns body --match_columns Terms.entries_whole.body --query "Groonga"
   # [
   #   [
   #     0, 
@@ -14,27 +14,12 @@ Execution example::
   #       ], 
   #       [
   #         [
-  #           "_id", 
-  #           "UInt32"
-  #         ], 
-  #         [
-  #           "_key", 
-  #           "ShortText"
-  #         ], 
-  #         [
   #           "body", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "title", 
   #           "ShortText"
   #         ]
   #       ], 
   #       [
-  #         2, 
-  #         "http://example.com/entry2", 
-  #         "I love Groonga!", 
-  #         "Hello world."
+  #         "I love Groonga!"
   #       ]
   #     ]
   #   ]
