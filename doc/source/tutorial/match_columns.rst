@@ -90,6 +90,8 @@ Let's search same query in previous section. You can get same search results.
    * Indexes for multiple column - It saves disk usage because it shares common buffer. On the other hand, the update performance is not so good.
 
 
+.. _full-text-search-with-specific-index-name:
+
 Full text search with specific index name
 -----------------------------------------
 
