@@ -555,18 +555,27 @@ You can also specify index columns to ``--match_columns``
 parameter. In such a case, you can control what index column should be
 used and what data column should be searched explicitly.
 
-There are two kind of index columns which you can specify.
+If data column is specified to ``--match_columns``, Groonga searches
+related index column automatically, but it is not defined as a spec
+that which index column is actually selected. Thus, if multiple index
+columns are created against one data column, there is no way to know
+which index column will be selected in advance. (In most cases, latest
+created index column will be selected, but it is undocumented
+behavior.)
+
+Here is a use case how to specify index column.
 
 * index column for one data column
 * index column for multiple data column
 
 If you use index column for one data column, index column which
-corresponds to data column is paired. On the otherhand, if you use
-index column for multiple data column, all data column is searched by
-default. If you want to use specific index column to search specific
-data column, Specify index column with data column name such as
-`TERMS_TABLE.INDEX_COLUMN.DATA_COLUMN``. See example use case
-:ref:`full-text-search-with-specific-index-name` for details.
+corresponds to data column is paired. Thus,
+``TERMS_TABLE.INDEX_COLUMN`` should be specified. On the otherhand, if
+you use index column for multiple data column, all data column is
+searched by default. If you want to use specific multiple index column
+to search specific data column, Specify index column with data column
+name such as ``TERMS_TABLE.INDEX_COLUMN.DATA_COLUMN``. See example use
+case :ref:`full-text-search-with-specific-index-name` for details.
 
 .. _select-query:
 
