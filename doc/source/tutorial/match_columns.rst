@@ -135,13 +135,13 @@ For example, if you want to search title or body only, specify ``Terms.entries_t
 .. include:: ../example/tutorial/match_columns-specific-title-index.log
 .. select --table Entries --match_columns Terms.entries_title --query "Groonga"
 
-This example uses ``Terms.entries_title`` as index, then search "Hello Groonga" against title data column.
+This example uses ``Terms.entries_title`` as index, then search "Groonga" against title data column.
 
 .. groonga-command
 .. include:: ../example/tutorial/match_columns-specific-body-index.log
 .. select --table Entries --match_columns Terms.entries_body --query "Groonga"
 
-This example uses ``Terms.entries_body`` as index, then search "Hello Groonga" against body data column.
+This example uses ``Terms.entries_body`` as index, then search "Groonga" against body data column.
 
 If you specify multiple index column which is related to specific data columns, you can also specify data column name as suffix. It means that "Use specific index and search specific data column explicitly".
 
@@ -151,13 +151,13 @@ For example, if you want to search title or body only with ``entries_whole`` ind
 .. include:: ../example/tutorial/match_columns-specific-whole-with-title.log
 .. select --table Entries --match_columns Terms.entries_whole.title --query "Groonga"
 
-This example uses ``Terms.entries_whole`` as index, then search "Hello Groonga" against title data column.
+This example uses ``Terms.entries_whole`` as index, then search "Groonga" against title data column.
 
 .. groonga-command
 .. include:: ../example/tutorial/match_columns-specific-whole-with-body.log
 .. select --table Entries --match_columns Terms.entries_whole.body --query "Groonga"
 
-This example uses ``Terms.entries_whole`` as index, then search "Hello Groonga" against body data column.
+This example uses ``Terms.entries_whole`` as index, then search "Groonga" against body data column.
 
 .. _nested-index-search:
 
