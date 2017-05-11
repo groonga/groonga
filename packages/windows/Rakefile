@@ -1,6 +1,6 @@
 # -*- coding: utf-8; mode: ruby -*-
 #
-# Copyright (C) 2011-2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011-2017  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,7 @@ if groonga_win32_x86_p
 else
   dist_dir = Pathname.new("dist-x64").expand_path
 end
+source_dir = Pathname.new("source").expand_path
 license_dir = dist_dir + "share" + "license"
 binary_dir = base_dir + dist_dir
 include_dir = binary_dir + "include"
@@ -71,6 +72,8 @@ end
 
 namespace :build do
   download_dir = base_tmp_dir + "download"
+  rm_rf(source_dir)
+  mkdir_p(source_dir)
 
   task :pkg_config do
     ENV["PKG_CONFIG_PATH"] = nil
@@ -96,6 +99,7 @@ namespace :build do
     zlib_tar_gz_url =
       "#{zlib_tar_gz_url_base}/#{zlib_version}/#{zlib_base}.tar.gz"
     zlib_tar_gz = download(zlib_tar_gz_url, download_dir)
+    cp(zlib_tar_gz, source_dir)
     Dir.chdir(tmp_dir) do
       sh("tar", "xzf", zlib_tar_gz.to_s) or exit(false)
     end
@@ -135,6 +139,7 @@ namespace :build do
     lz4_tar_gz_url =
       "#{lz4_tar_gz_url_base}/#{lz4_version}.tar.gz"
     lz4_tar_gz = download(lz4_tar_gz_url, download_dir)
+    cp(lz4_tar_gz, source_dir)
     Dir.chdir(tmp_dir) do
       sh("tar", "xzf", lz4_tar_gz.to_s) or exit(false)
     end
@@ -170,6 +175,7 @@ namespace :build do
     msgpack_tar_gz_url =
       "#{msgpack_tar_gz_url_base}/cpp-#{msgpack_version}/#{msgpack_tar_gz}"
     msgpack_tar_gz = download(msgpack_tar_gz_url, download_dir)
+    cp(msgpack_tar_gz, source_dir)
     Dir.chdir(tmp_dir) do
       sh("tar", "xzf", msgpack_tar_gz.to_s) or exit(false)
     end
@@ -208,9 +214,9 @@ namespace :build do
     mkdir_p(tmp_dir)
     mecab_version = "0.996"
     mecab_base = "mecab-#{mecab_version}"
-    mecab_tar_gz = "#{mecab_base}.tar.gz"
     mecab_tar_gz_url = "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE"
     mecab_tar_gz = download(mecab_tar_gz_url, download_dir)
+    cp(mecab_tar_gz, "#{source_dir}/#{mecab_base}.tar.gz")
     Dir.chdir(tmp_dir) do
       sh("tar", "xzf", mecab_tar_gz.to_s) or exit(false)
     end
@@ -251,6 +257,7 @@ namespace :build do
     naist_jdic_tar_gz_url =
       "http://osdn.dl.sourceforge.jp/naist-jdic/48487/#{naist_jdic_base}.tar.gz"
     naist_jdic_tar_gz = download(naist_jdic_tar_gz_url, download_dir)
+    cp(naist_jdic_tar_gz, source_dir)
     Dir.chdir(tmp_dir) do
       sh("tar", "xzf", naist_jdic_tar_gz.to_s) or exit(false)
     end
@@ -303,6 +310,7 @@ namespace :build do
     pcre_tar_gz_url =
       "#{pcre_tar_gz_url_base}/pcre-#{pcre_version}.tar.gz"
     pcre_tar_gz = download(pcre_tar_gz_url, download_dir)
+    cp(pcre_tar_gz, source_dir)
     Dir.chdir(tmp_dir) do
       sh("tar", "xzf", pcre_tar_gz.to_s) or exit(false)
     end
@@ -335,6 +343,7 @@ namespace :build do
     tmp_dir = base_tmp_dir + "groonga"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
+    cp(groonga_source, source_dir)
     Dir.chdir(tmp_dir) do
       sh("tar", "xzf", groonga_source.to_s) or exit(false)
     end
@@ -409,6 +418,7 @@ namespace :build do
       "#{groonga_normalizer_mysql_base}.tar.gz"
     groonga_normalizer_mysql_tar_gz =
       download(groonga_normalizer_mysql_tar_gz_url, download_dir)
+    cp(groonga_normalizer_mysql_tar_gz, source_dir)
     Dir.chdir(tmp_dir) do
       sh("tar", "xzf", groonga_normalizer_mysql_tar_gz.to_s) or exit(false)
     end
@@ -442,6 +452,7 @@ namespace :build do
     groonga_admin_tar_gz_url =
       "#{groonga_admin_tar_gz_url_base}/#{groonga_admin_base}.tar.gz"
     groonga_admin_tar_gz = download(groonga_admin_tar_gz_url, download_dir)
+    cp(groonga_admin_tar_gz, source_dir)
     Dir.chdir(tmp_dir) do
       sh("tar", "xzf", groonga_admin_tar_gz.to_s) or exit(false)
     end

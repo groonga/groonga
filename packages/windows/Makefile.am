@@ -21,6 +21,8 @@ download: ensure-rsync-path
 
 upload: ensure-rsync-path
 	rsync -avz --progress --delete files/ $(RSYNC_PATH)/windows/groonga
+	rsync -avz --progress --delete source/				\
+	  $(RSYNC_PATH)/windows/groonga/$(PACKAGE)-$(VERSION)$(SUFFIX)
 
 upload-to-tmp:
 	for architecture in $(ARCHITECTURES); do			\
@@ -29,6 +31,8 @@ upload-to-tmp:
 	  scp files/$${zip} files/$${zip}.sha256			\
 	    packages@packages.groonga.org:public/tmp/;			\
 	done
+	scp -r source 							\
+	  packages@packages.groonga.org:public/tmp/$(PACKAGE)-$(VERSION)$(SUFFIX)
 
 prepare-build:
 	@(							\
