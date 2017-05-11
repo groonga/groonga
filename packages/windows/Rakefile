@@ -214,7 +214,7 @@ namespace :build do
     mecab_base = "mecab-#{mecab_version}"
     mecab_tar_gz_url = "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE"
     mecab_tar_gz = download(mecab_tar_gz_url, download_dir)
-    cp(mecab_tar_gz, "#{source_dir}/#{mecab_base}.tar.gz")
+    cp(mecab_tar_gz, source_dir + "#{mecab_base}.tar.gz")
     Dir.chdir(tmp_dir) do
       sh("tar", "xzf", mecab_tar_gz.to_s) or exit(false)
     end
