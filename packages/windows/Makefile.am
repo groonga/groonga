@@ -24,7 +24,7 @@ upload: ensure-rsync-path
 	rsync -avz --progress --delete source/				\
 	  $(RSYNC_PATH)/windows/groonga/$(PACKAGE)-$(VERSION)$(SUFFIX)
 
-upload-to-tmp:
+upload-to-tmp: ensure-rsync-path
 	for architecture in $(ARCHITECTURES); do			\
 	  zip=$(PACKAGE)-$(VERSION)-$${architecture}$(SUFFIX).zip;	\
 	  (cd files && sha256sum $${zip} > $${zip}.sha256);		\
