@@ -625,7 +625,7 @@ if test "x$have_epoll" != "xyes"; then
     ])
   ])
   if test "x$have_kqueue" != "xyes"; then
-    AC_CHECK_HEADER(sys/poll.h, [
+    AC_CHECK_HEADER(poll.h, [
       AC_CHECK_FUNC(poll, [
         have_poll="yes"
         AC_DEFINE(USE_POLL, [1], [use poll])

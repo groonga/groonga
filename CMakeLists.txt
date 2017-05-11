@@ -333,7 +333,7 @@ else()
     endif()
 
     if(NOT USE_KQUEUE)
-      ac_check_headers(sys/poll.h)
+      ac_check_headers(poll.h)
       if(${HAVE_SYS_POLL_H})
         ac_check_funcs(poll)
         if(${HAVE_POLL})
