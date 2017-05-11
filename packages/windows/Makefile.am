@@ -31,8 +31,8 @@ upload-to-tmp:
 	  scp files/$${zip} files/$${zip}.sha256			\
 	    packages@packages.groonga.org:public/tmp/;			\
 	done
-	scp -r source 							\
-	  packages@packages.groonga.org:public/tmp/$(PACKAGE)-$(VERSION)$(SUFFIX)
+	rsync -avz --progress --delete source/				\
+	  $(RSYNC_PATH)/tmp/$(PACKAGE)-$(VERSION)$(SUFFIX)
 
 prepare-build:
 	@(							\
