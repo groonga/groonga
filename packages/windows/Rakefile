@@ -72,8 +72,6 @@ end
 
 namespace :build do
   download_dir = base_tmp_dir + "download"
-  rm_rf(source_dir)
-  mkdir_p(source_dir)
 
   task :pkg_config do
     ENV["PKG_CONFIG_PATH"] = nil
@@ -471,6 +469,8 @@ namespace :build do
 
   task :clean do
     rm_rf(dist_dir)
+    rm_rf(source_dir)
+    mkdir_p(source_dir)
   end
 
   task :pre => [:clean]
