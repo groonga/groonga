@@ -4752,8 +4752,22 @@ exit :
   array_unref(ii, tid);
   if (bs) { GRN_FREE(bs); }
   if (u->tf != u->atf) {
+    grn_obj *source_table;
+    char source_table_name[GRN_TABLE_MAX_KEY_SIZE];
+    int source_table_name_size;
     char term[GRN_TABLE_MAX_KEY_SIZE];
     int term_size;
+
+    source_table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
+    if (source_table) {
+      source_table_name_size = grn_obj_name(ctx,
+                                            source_table,
+                                            source_table_name,
+                                            GRN_TABLE_MAX_KEY_SIZE);
+    } else {
+      grn_strcpy(source_table_name, GRN_TABLE_MAX_KEY_SIZE, "(null)");
+      source_table_name_size = strlen(source_table_name);
+    }
     term_size = grn_table_get_key(ctx, ii->lexicon, tid,
                                   term, GRN_TABLE_MAX_KEY_SIZE);
     {
@@ -4761,10 +4775,13 @@ exit :
       GRN_LOG(ctx, GRN_LOG_WARNING,
               "[ii][update][one] too many postings: "
               "<%.*s>: "
+              "record:<%.*s>(%d), "
               "n-postings:<%d>, "
               "n-discarded-postings:<%d>, "
               "term:<%d>(<%.*s>)",
               name_size, name,
+              source_table_name_size, source_table_name,
+              u->rid,
               u->atf,
               u->atf - u->tf,
               tid, term_size, term);
