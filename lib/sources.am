@@ -1,6 +1,7 @@
 libgroonga_la_SOURCES =				\
 	alloc.c					\
 	grn_alloc.h				\
+	arrow.cpp				\
 	cache.c					\
 	grn_cache.h				\
 	column.c				\

@@ -960,6 +960,30 @@ if test "x$with_jemalloc" != "xno"; then
                  [AC_MSG_ERROR("No libjemalloc found")])
 fi
 
+# Apache Arrow
+AC_ARG_ENABLE(arrow,
+  [AS_HELP_STRING([--disable-arrow],
+    [enable Apache Arrow support. [default=auto-detect]])],
+  [enable_arrow="$enableval"],
+  [enable_arrow="auto"])
+if test "x$enable_arrow" != "xno"; then
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([ARROW],
+                      [arrow],
+                      [arrow_available=yes],
+                      [arrow_available=no])
+  ],
+  [arrow_available=no])
+  if test "x$arrow_available" = "xyes"; then
+    AC_DEFINE(GRN_WITH_ARROW, [1], [Enable Apache Arrow support.])
+  else
+    if test "x$enable_arrow" = "xyes"; then
+      AC_MSG_ERROR("No Apache Arrow found")
+    fi
+  fi
+fi
+AM_CONDITIONAL([GRN_WITH_ARROW], [test "$arrow_available" = "yes"])
+
 # MeCab
 # NOTE: MUST be checked last
 
@@ -1704,6 +1728,7 @@ AC_OUTPUT([
   packages/apt/env.sh
   packages/yum/env.sh
   groonga.pc
+  groonga-arrow.pc
   config.sh
   groonga-httpd-conf.sh
   data/groonga-httpd.conf
