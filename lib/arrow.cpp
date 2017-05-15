@@ -17,10 +17,9 @@
 */
 
 #include "grn.h"
-
-#ifdef GRN_WITH_ARROW
 #include "grn_db.h"
 
+#ifdef GRN_WITH_ARROW
 #include <groonga/arrow.hpp>
 
 #include <arrow/api.h>
