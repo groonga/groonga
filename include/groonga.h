@@ -23,6 +23,7 @@
 
 #include "groonga/accessor.h"
 #include "groonga/array.h"
+#include "groonga/arrow.h"
 #include "groonga/cache.h"
 #include "groonga/column.h"
 #include "groonga/config.h"

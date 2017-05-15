@@ -3,6 +3,7 @@ groonga_include_HEADERS =			\
 	accessor.h				\
 	array.h					\
 	arrow.h					\
+	arrow.hpp				\
 	cache.h					\
 	column.h				\
 	command.h				\

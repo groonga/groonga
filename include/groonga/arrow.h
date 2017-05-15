@@ -18,4 +18,17 @@
 
 #pragma once
 
-#include "groonga.h"
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
+GRN_API grn_rc grn_arrow_load(grn_ctx *ctx,
+                              grn_obj *table,
+                              const char *path);
+GRN_API grn_rc grn_arrow_dump(grn_ctx *ctx,
+                              grn_obj *table,
+                              const char *path);
+
+#ifdef __cplusplus
+}
+#endif

@@ -34,6 +34,9 @@ EXTRA_DIST =					\
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = groonga.pc
+if GRN_WITH_ARROW
+pkgconfig_DATA += groonga-arrow.pc
+endif
 
 .PHONY: FORCE
 

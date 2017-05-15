@@ -17,3 +17,5 @@
 */
 
 #pragma once
+
+#include <groonga.hpp>

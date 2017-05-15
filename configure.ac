@@ -982,6 +982,7 @@ if test "x$enable_arrow" != "xno"; then
     fi
   fi
 fi
+AM_CONDITIONAL([GRN_WITH_ARROW], [test "$arrow_available" = "yes"])
 
 # MeCab
 # NOTE: MUST be checked last
@@ -1727,6 +1728,7 @@ AC_OUTPUT([
   packages/apt/env.sh
   packages/yum/env.sh
   groonga.pc
+  groonga-arrow.pc
   config.sh
   groonga-httpd-conf.sh
   data/groonga-httpd.conf
