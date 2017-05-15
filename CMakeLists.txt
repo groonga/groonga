@@ -381,14 +381,16 @@ if(NOT ${GRN_WITH_LZ4} STREQUAL "no")
   if(GRN_WITH_BUNDLED_LZ4)
     set(LIBLZ4_INCLUDE_DIRS
       "${CMAKE_CURRENT_SOURCE_DIR}/vendor/lz4-${GRN_BUNDLED_LZ4_VERSION}/lib")
-    set(LIBLZ4_LIBRARY_DIRS
-      "${CMAKE_CURRENT_BUILD_DIR}/vendor/lz4")
-    set(LIBLZ4_LIBRARIES liblz4)
+    set(LIBLZ4_LIBS liblz4)
   else()
     if(NOT DEFINED LIBLZ4_FOUND)
       pkg_check_modules(LIBLZ4 liblz4)
     endif()
     if(LIBLZ4_FOUND)
+      find_library(LIBLZ4_LIBS
+	NAMES ${LIBLZ4_LIBRARIES}
+	PATHS ${LIBLZ4_LIBRARY_DIRS}
+	NO_DEFAULT_PATH)
       set(GRN_WITH_LZ4 TRUE)
     else()
       if(${GRN_WITH_LZ4} STREQUAL "yes")
@@ -565,14 +567,16 @@ if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
   if(GRN_WITH_BUNDLED_MESSAGE_PACK)
     set(MESSAGE_PACK_INCLUDE_DIRS
       "${CMAKE_CURRENT_SOURCE_DIR}/vendor/msgpack-${GRN_BUNDLED_MESSAGE_PACK_VERSION}/include")
-    set(MESSAGE_PACK_LIBRARY_DIRS
-      "${CMAKE_CURRENT_BUILD_DIR}/vendor/message_pack")
-    set(MESSAGE_PACK_LIBRARIES msgpackc)
+    set(MESSAGE_PACK_LIBS msgpackc)
   else()
     if(NOT DEFINED MESSAGE_PACK_FOUND)
       pkg_check_modules(MESSAGE_PACK msgpack)
     endif()
     if(MESSAGE_PACK_FOUND)
+      find_library(MESSAGE_PACK_LIBS
+	NAMES ${MESSAGE_PACK_LIBRARIES}
+	PATHS ${MESSAGE_PACK_LIBRARY_DIRS}
+	NO_DEFAULT_PATH)
       set(GRN_WITH_MESSAGE_PACK TRUE)
     else()
       if("${GRN_WITH_MESSAGE_PACK}" STREQUAL "yes" OR
@@ -587,7 +591,10 @@ if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
       ac_check_lib(msgpack msgpack_version "${MESSAGE_PACK_LIBRARY_DIRS}")
       set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES_SAVE})
       if(HAVE_LIBMSGPACK)
-	set(MESSAGE_PACK_LIBRARIES "msgpack")
+	find_library(MESSAGE_PACK_LIBS
+	  NAMES "msgpack"
+	  PATHS ${MESSAGE_PACK_LIBRARY_DIRS}
+	  NO_DEFAULT_PATH)
 	set(GRN_WITH_MESSAGE_PACK TRUE)
       else()
 	if(${GRN_WITH_MESSAGE_PACK} STREQUAL "yes")
