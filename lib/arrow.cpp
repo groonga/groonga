@@ -409,31 +409,20 @@ namespace grnarrow {
 
   class FileDumper {
   public:
-    FileDumper(grn_ctx *ctx, grn_obj *grn_table)
+    FileDumper(grn_ctx *ctx, grn_obj *grn_table, grn_obj *grn_columns)
       : ctx_(ctx),
-        grn_table_(grn_table) {
-      grn_columns_ = grn_hash_create(ctx_,
-                                     NULL,
-                                     sizeof(grn_id),
-                                     0,
-                                     GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
-      grn_table_columns(ctx_,
-                        grn_table_,
-                        "", 0,
-                        reinterpret_cast<grn_obj *>(grn_columns_));
+        grn_table_(grn_table),
+        grn_columns_(grn_columns) {
     }
 
     ~FileDumper() {
-      grn_hash_close(ctx_, grn_columns_);
     }
 
     grn_rc dump(arrow::io::OutputStream *output) {
       std::vector<std::shared_ptr<arrow::Field>> fields;
-      GRN_HASH_EACH_BEGIN(ctx_, grn_columns_, cursor, id) {
-        void *key;
-        grn_hash_cursor_get_key(ctx_, cursor, &key);
-        auto column_id = static_cast<grn_id *>(key);
-        auto column = grn_ctx_at(ctx_, *column_id);
+      auto n_columns = GRN_BULK_VSIZE(grn_columns_) / sizeof(grn_obj *);
+      for (auto i = 0; i < n_columns; ++i) {
+        auto column = GRN_PTR_VALUE_AT(grn_columns_, i);
 
         char column_name[GRN_TABLE_MAX_KEY_SIZE];
         int column_name_size;
@@ -492,7 +481,7 @@ namespace grnarrow {
                                                     field_type,
                                                     false);
         fields.push_back(field);
-      } GRN_HASH_EACH_END(ctx_, cursor);
+      };
 
       auto schema = std::make_shared<arrow::Schema>(fields);
 
@@ -525,17 +514,15 @@ namespace grnarrow {
   private:
     grn_ctx *ctx_;
     grn_obj *grn_table_;
-    grn_hash *grn_columns_;
+    grn_obj *grn_columns_;
 
     void write_record_batch(std::vector<grn_id> &ids,
                             std::shared_ptr<arrow::Schema> &schema,
                             std::shared_ptr<arrow::ipc::RecordBatchFileWriter> &writer) {
       std::vector<std::shared_ptr<arrow::Array>> columns;
-      GRN_HASH_EACH_BEGIN(ctx_, grn_columns_, cursor, id) {
-        void *key;
-        grn_hash_cursor_get_key(ctx_, cursor, &key);
-        auto grn_column_id = static_cast<grn_id *>(key);
-        auto grn_column = grn_ctx_at(ctx_, *grn_column_id);
+      auto n_columns = GRN_BULK_VSIZE(grn_columns_) / sizeof(grn_obj *);
+      for (auto i = 0; i < n_columns; ++i) {
+        auto grn_column = GRN_PTR_VALUE_AT(grn_columns_, i);
 
         arrow::Status status;
         std::shared_ptr<arrow::Array> column;
@@ -588,7 +575,7 @@ namespace grnarrow {
           continue;
         }
         columns.push_back(column);
-      } GRN_HASH_EACH_END(ctx_, cursor);
+      }
 
       arrow::RecordBatch record_batch(schema, ids.size(), columns);
       writer->WriteRecordBatch(record_batch);
@@ -802,6 +789,45 @@ grn_arrow_dump(grn_ctx *ctx,
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_ARROW
+  auto all_columns =
+    grn_hash_create(ctx,
+                    NULL,
+                    sizeof(grn_id),
+                    0,
+                    GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
+  grn_table_columns(ctx,
+                    table,
+                    "", 0,
+                    reinterpret_cast<grn_obj *>(all_columns));
+
+  grn_obj columns;
+  GRN_PTR_INIT(&columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_HASH_EACH_BEGIN(ctx, all_columns, cursor, id) {
+    void *key;
+    grn_hash_cursor_get_key(ctx, cursor, &key);
+    auto column_id = static_cast<grn_id *>(key);
+    auto column = grn_ctx_at(ctx, *column_id);
+    GRN_PTR_PUT(ctx, &columns, column);
+  } GRN_HASH_EACH_END(ctx, cursor);
+  grn_hash_close(ctx, all_columns);
+
+  grn_arrow_dump_columns(ctx, table, &columns, path);
+  GRN_OBJ_FIN(ctx, &columns);
+#else /* GRN_WITH_ARROW */
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][dump] Apache Arrow support isn't enabled");
+#endif /* GRN_WITH_ARROW */
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_arrow_dump_columns(grn_ctx *ctx,
+                       grn_obj *table,
+                       grn_obj *columns,
+                       const char *path)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_ARROW
   std::shared_ptr<arrow::io::FileOutputStream> output;
   auto status = arrow::io::FileOutputStream::Open(path, &output);
   if (!grnarrow::check_status(ctx,
@@ -812,7 +838,7 @@ grn_arrow_dump(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
-  grnarrow::FileDumper dumper(ctx, table);
+  grnarrow::FileDumper dumper(ctx, table, columns);
   dumper.dump(output.get());
 #else /* GRN_WITH_ARROW */
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
