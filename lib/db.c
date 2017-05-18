@@ -740,7 +740,7 @@ grn_db_check_corrupted(grn_ctx *ctx, grn_obj *db)
     return GRN_FALSE;
   }
 
-  if (!db->specs) {
+  if (!((grn_db *)db)->specs) {
     /* no objects */
     return GRN_FALSE;
   }
