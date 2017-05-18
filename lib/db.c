@@ -11085,50 +11085,84 @@ grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
       }
     }
   } else if (obj->header.type == GRN_ACCESSOR) {
-    const char *name = NULL;
+    grn_obj name;
     grn_accessor *a;
+
+    GRN_TEXT_INIT(&name, 0);
+
+#define ADD_DELMITER() do {                             \
+      if (GRN_TEXT_LEN(&name) > 0) {                    \
+        GRN_TEXT_PUTC(ctx, &name, GRN_DB_DELIMITER);    \
+      }                                                 \
+    } while (GRN_FALSE)
+
     for (a = (grn_accessor *)obj; a; a = a->next) {
       switch (a->action) {
       case GRN_ACCESSOR_GET_ID :
-        name = GRN_COLUMN_NAME_ID;
+        ADD_DELMITER();
+        GRN_TEXT_PUTS(ctx, &name, GRN_COLUMN_NAME_ID);
         break;
       case GRN_ACCESSOR_GET_KEY :
-        name = GRN_COLUMN_NAME_KEY;
+        if (!a->next) {
+          ADD_DELMITER();
+          GRN_TEXT_PUTS(ctx, &name, GRN_COLUMN_NAME_KEY);
+        }
         break;
       case GRN_ACCESSOR_GET_VALUE :
-        name = GRN_COLUMN_NAME_VALUE;
+        if (!a->next) {
+          ADD_DELMITER();
+          GRN_TEXT_PUTS(ctx, &name, GRN_COLUMN_NAME_VALUE);
+        }
         break;
       case GRN_ACCESSOR_GET_SCORE :
-        name = GRN_COLUMN_NAME_SCORE;
+        ADD_DELMITER();
+        GRN_TEXT_PUTS(ctx, &name, GRN_COLUMN_NAME_SCORE);
         break;
       case GRN_ACCESSOR_GET_NSUBRECS :
-        name = GRN_COLUMN_NAME_NSUBRECS;
+        ADD_DELMITER();
+        GRN_TEXT_PUTS(ctx, &name, GRN_COLUMN_NAME_NSUBRECS);
         break;
       case GRN_ACCESSOR_GET_MAX :
-        name = GRN_COLUMN_NAME_MAX;
+        ADD_DELMITER();
+        GRN_TEXT_PUTS(ctx, &name, GRN_COLUMN_NAME_MAX);
         break;
       case GRN_ACCESSOR_GET_MIN :
-        name = GRN_COLUMN_NAME_MIN;
+        ADD_DELMITER();
+        GRN_TEXT_PUTS(ctx, &name, GRN_COLUMN_NAME_MIN);
         break;
       case GRN_ACCESSOR_GET_SUM :
-        name = GRN_COLUMN_NAME_SUM;
+        ADD_DELMITER();
+        GRN_TEXT_PUTS(ctx, &name, GRN_COLUMN_NAME_SUM);
         break;
       case GRN_ACCESSOR_GET_AVG :
-        name = GRN_COLUMN_NAME_AVG;
+        ADD_DELMITER();
+        GRN_TEXT_PUTS(ctx, &name, GRN_COLUMN_NAME_AVG);
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
+        ADD_DELMITER();
+        {
+          char column_name[GRN_TABLE_MAX_KEY_SIZE];
+          int column_name_size;
+          column_name_size = grn_column_name(ctx, a->obj,
+                                             column_name,
+                                             GRN_TABLE_MAX_KEY_SIZE);
+          GRN_TEXT_PUT(ctx, &name, column_name, column_name_size);
+        }
+        break;
       case GRN_ACCESSOR_GET_DB_OBJ :
       case GRN_ACCESSOR_LOOKUP :
       case GRN_ACCESSOR_FUNCALL :
         break;
       }
     }
-    if (name) {
-      len = strlen(name);
-      if (len <= buf_size) {
-        grn_memcpy(namebuf, name, len);
-      }
+#undef ADD_DELIMITER
+
+    len = GRN_TEXT_LEN(&name);
+    if (len > 0 && len <= buf_size) {
+      grn_memcpy(namebuf, GRN_TEXT_VALUE(&name), len);
     }
+
+    GRN_OBJ_FIN(ctx, &name);
   }
   GRN_API_RETURN(len);
 }
