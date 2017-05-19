@@ -645,6 +645,9 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           if (rc == GRN_SUCCESS) {
             rc = sub_rc;
           }
+          if (ctx->rc == GRN_CANCEL) {
+            break;
+          }
           if (ctx->rc != GRN_SUCCESS) {
             ERRCLR(ctx);
           }
