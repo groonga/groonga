@@ -631,19 +631,24 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
       records = grn_table_select(ctx, table, cond, NULL, GRN_OP_OR);
       if (records) {
-        void *key = NULL;
-        GRN_TABLE_EACH(ctx, records, GRN_ID_NIL, GRN_ID_NIL,
-                       result_id, &key, NULL, NULL, {
-          grn_id id = *(grn_id *)key;
+        GRN_TABLE_EACH_BEGIN(ctx, records, cursor, result_id) {
+          void *key;
+          grn_id id;
           grn_rc sub_rc;
+
+          if (grn_table_cursor_get_key(ctx, cursor, &key) == 0) {
+            continue;
+          }
+
+          id = *(grn_id *)key;
           sub_rc = grn_table_delete_by_id(ctx, table, id);
           if (rc == GRN_SUCCESS) {
             rc = sub_rc;
           }
-          if (ctx->rc == GRN_OPERATION_NOT_PERMITTED) {
+          if (ctx->rc != GRN_SUCCESS) {
             ERRCLR(ctx);
           }
-        });
+        } GRN_TABLE_EACH_END(ctx, cursor);
         grn_obj_unlink(ctx, records);
       }
     }
@@ -654,7 +659,7 @@ exit :
   if (table) {
     grn_obj_unlink(ctx, table);
   }
-  GRN_OUTPUT_BOOL(!rc);
+  GRN_OUTPUT_BOOL(rc == GRN_SUCCESS);
   return NULL;
 }
 
