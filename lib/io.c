@@ -1745,8 +1745,7 @@ grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
   grn_rc rc;
   struct _grn_io_header io_header;
-  DWORD header_size;
-  DWORD read_bytes;
+  LARGE_INTEGER file_size;
   int version = grn_io_version_default;
 
   rc = grn_fileinfo_open_common(ctx, fi, path, flags);
@@ -1754,7 +1753,9 @@ grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
     return rc;
   }
 
-  if (!(flags & O_CREAT)) {
+  if (GetFileSizeEx(fi->fh, &file_size) && file_size.QuadPart > 0) {
+    DWORD header_size;
+    DWORD read_bytes;
     header_size = sizeof(struct _grn_io_header);
     ReadFile(fi->fh, &io_header, header_size, &read_bytes, NULL);
     if (read_bytes == header_size) {
