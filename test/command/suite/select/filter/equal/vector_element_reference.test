@@ -1,0 +1,15 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Values TABLE_NO_KEY
+column_create Values tags COLUMN_VECTOR Tags
+
+load --table Values
+[
+{"tags": ["Groonga", "Mroonga", "Rroonga"]},
+{"tags": ["Mroonga", "Rroonga"]},
+{"tags": ["Rroonga", "Groonga", "Mroonga"]}
+]
+
+select Values \
+  --filter 'tags[1] == "Rroonga"' \
+  --output_columns 'tags'

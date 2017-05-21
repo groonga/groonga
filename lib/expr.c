@@ -2442,13 +2442,66 @@ grn_expr_exec_get_member_vector(grn_ctx *ctx,
 
   i = GRN_UINT32_VALUE(index);
   if (values.header.type == GRN_UVECTOR) {
-    int n_elements;
-    grn_obj_reinit(ctx, result, DB_OBJ(column)->range, 0);
-    n_elements = GRN_BULK_VSIZE(&values) / sizeof(grn_id);
+    int n_elements = 0;
+    grn_obj *range;
+    grn_id range_id = DB_OBJ(column)->range;
+    grn_obj_reinit(ctx, result, range_id, 0);
+    if ((range = grn_ctx_at(ctx, range_id))) {
+      switch (range->header.type) {
+      case GRN_TYPE :
+        n_elements = GRN_BULK_VSIZE(&values) / GRN_TYPE_SIZE(DB_OBJ(range));
+        break;
+      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_PAT_KEY :
+      case GRN_TABLE_DAT_KEY :
+      case GRN_TABLE_NO_KEY :
+        n_elements = GRN_BULK_VSIZE(&values) / sizeof(grn_id);
+        break;
+      }
+    }
     if (n_elements > i) {
-      grn_id value;
-      value = GRN_RECORD_VALUE_AT(&values, i);
-      GRN_RECORD_SET(ctx, result, value);
+#define GET_UVECTOR_ELEMENT_AS(type) do {                                          \
+        GRN_ ## type ## _SET(ctx, result, GRN_ ## type ## _VALUE_AT(&values, i));  \
+      } while (GRN_FALSE)
+      switch (values.header.domain) {
+      case GRN_DB_BOOL :
+        GET_UVECTOR_ELEMENT_AS(BOOL);
+        break;
+      case GRN_DB_INT8 :
+        GET_UVECTOR_ELEMENT_AS(INT8);
+        break;
+      case GRN_DB_UINT8 :
+        GET_UVECTOR_ELEMENT_AS(UINT8);
+        break;
+      case GRN_DB_INT16 :
+        GET_UVECTOR_ELEMENT_AS(INT16);
+        break;
+      case GRN_DB_UINT16 :
+        GET_UVECTOR_ELEMENT_AS(UINT16);
+        break;
+      case GRN_DB_INT32 :
+        GET_UVECTOR_ELEMENT_AS(INT32);
+        break;
+      case GRN_DB_UINT32 :
+        GET_UVECTOR_ELEMENT_AS(UINT32);
+        break;
+      case GRN_DB_INT64 :
+        GET_UVECTOR_ELEMENT_AS(INT64);
+        break;
+      case GRN_DB_UINT64 :
+        GET_UVECTOR_ELEMENT_AS(UINT64);
+        break;
+      case GRN_DB_FLOAT :
+        GET_UVECTOR_ELEMENT_AS(FLOAT);
+        break;
+      case GRN_DB_TIME :
+        GET_UVECTOR_ELEMENT_AS(TIME);
+        break;
+      default :
+        GET_UVECTOR_ELEMENT_AS(RECORD);
+        break;
+      }
+#undef GET_UVECTOR_ELEMENT_AS
     }
   } else {
     if (values.u.v.n_sections > i) {
