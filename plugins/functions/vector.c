@@ -259,7 +259,7 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
     }
     break;
   case GRN_UVECTOR :
-    {
+    if (grn_obj_is_reference_column(ctx, target)) {
       unsigned int i;
       for (i = from; i < to; i++) {
         grn_id id;
@@ -267,8 +267,51 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
         id = grn_uvector_get_element(ctx, target, i, &weight);
         grn_uvector_add_element(ctx, slice, id, weight);
       }
+    } else {
+#define PUT_SLICE_VALUES(type) do {                                               \
+        unsigned int i;                                                           \
+        for (i = from; i < to; i++) {                                             \
+          GRN_ ## type ## _PUT(ctx, slice, GRN_ ## type ## _VALUE_AT(target, i)); \
+        }                                                                         \
+      } while (GRN_FALSE)
+      switch (target->header.domain) {
+      case GRN_DB_BOOL :
+        PUT_SLICE_VALUES(BOOL);
+        break;
+      case GRN_DB_INT8 :
+        PUT_SLICE_VALUES(INT8);
+        break;
+      case GRN_DB_UINT8 :
+        PUT_SLICE_VALUES(UINT8);
+        break;
+      case GRN_DB_INT16 :
+        PUT_SLICE_VALUES(INT16);
+        break;
+      case GRN_DB_UINT16 :
+        PUT_SLICE_VALUES(UINT16);
+        break;
+      case GRN_DB_INT32 :
+        PUT_SLICE_VALUES(INT32);
+        break;
+      case GRN_DB_UINT32 :
+        PUT_SLICE_VALUES(UINT32);
+        break;
+      case GRN_DB_INT64 :
+        PUT_SLICE_VALUES(INT64);
+        break;
+      case GRN_DB_UINT64 :
+        PUT_SLICE_VALUES(UINT64);
+        break;
+      case GRN_DB_FLOAT :
+        PUT_SLICE_VALUES(FLOAT);
+        break;
+      case GRN_DB_TIME :
+        PUT_SLICE_VALUES(TIME);
+        break;
+      }
     }
     break;
+#undef PUT_SLICE_VALUES
   }
 
   return slice;

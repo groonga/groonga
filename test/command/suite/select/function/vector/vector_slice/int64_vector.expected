@@ -1,0 +1,63 @@
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag_ids COLUMN_VECTOR Int64
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga", "tag_ids": [1, 3, 5]},
+{"_key": "Rroonga", "tag_ids": [2, 4]}
+]
+[[0,0.0,0.0],2]
+select Memos   --output_columns '_key, tag_ids, vector_slice(tag_ids, 1, 2)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tag_ids",
+          "Int64"
+        ],
+        [
+          "vector_slice",
+          null
+        ]
+      ],
+      [
+        "Groonga",
+        [
+          1,
+          3,
+          5
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      [
+        "Rroonga",
+        [
+          2,
+          4
+        ],
+        [
+          4
+        ]
+      ]
+    ]
+  ]
+]
