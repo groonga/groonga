@@ -7,6 +7,35 @@
 News
 ====
 
+.. _release-7-0-3:
+
+Release 7.0.3 - 2017-05-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/select`] Add document about
+  :ref:`full-text-search-with-specific-index-name`.
+
+* [index] Supported to log warning message which record causes posting
+  list overflows.
+
+* [:doc:`/reference/commands/load`][:doc:`/reference/commands/dump`]
+  Supported Apache Arrow. [GitHub#691]
+
+* [cmake] Supported linking lz4 in embedded static library build.
+  [Original patch by Sergei Golubchik]
+
+* [:doc:`/reference/commands/delete`] Supported to cancel.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/commands/delete`] Fixed a bug that error isn't
+  cleared correctly. It affects to following deletions so that it
+  causes unexpected behavior.
+
 .. _release-7-0-2:
 
 Release 7.0.2 - 2017-04-29
