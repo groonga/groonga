@@ -2451,7 +2451,7 @@ grn_expr_exec_get_member_vector(grn_ctx *ctx,
     if (range) {
       switch (range->header.type) {
       case GRN_TYPE :
-        n_elements = GRN_BULK_VSIZE(&values) / GRN_TYPE_SIZE(DB_OBJ(range));
+        n_elements = GRN_BULK_VSIZE(&values) / grn_type_size(ctx, range);
         break;
       case GRN_TABLE_HASH_KEY :
       case GRN_TABLE_PAT_KEY :
