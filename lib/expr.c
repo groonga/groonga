@@ -2445,8 +2445,10 @@ grn_expr_exec_get_member_vector(grn_ctx *ctx,
     int n_elements = 0;
     grn_obj *range;
     grn_id range_id = DB_OBJ(column)->range;
+
     grn_obj_reinit(ctx, result, range_id, 0);
-    if ((range = grn_ctx_at(ctx, range_id))) {
+    range = grn_ctx_at(ctx, range_id);
+    if (range) {
       switch (range->header.type) {
       case GRN_TYPE :
         n_elements = GRN_BULK_VSIZE(&values) / GRN_TYPE_SIZE(DB_OBJ(range));
