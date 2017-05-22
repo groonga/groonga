@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012-2016 Brazil
+  Copyright(C) 2012-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1288,6 +1288,15 @@ grn_plugin_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data,
                                   unsigned int offset)
 {
   return grn_proc_get_var_by_offset(ctx, user_data, offset);
+}
+
+grn_obj *
+grn_plugin_proc_get_caller(grn_ctx *ctx, grn_user_data *user_data)
+{
+  grn_obj *caller = NULL;
+  GRN_API_ENTER;
+  grn_proc_get_info(ctx, user_data, NULL, NULL, &caller);
+  GRN_API_RETURN(caller);
 }
 
 const char *
