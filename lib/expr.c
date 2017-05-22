@@ -2462,8 +2462,10 @@ grn_expr_exec_get_member_vector(grn_ctx *ctx,
       }
     }
     if (n_elements > i) {
-#define GET_UVECTOR_ELEMENT_AS(type) do {                                          \
-        GRN_ ## type ## _SET(ctx, result, GRN_ ## type ## _VALUE_AT(&values, i));  \
+#define GET_UVECTOR_ELEMENT_AS(type) do {                               \
+        GRN_ ## type ## _SET(ctx,                                       \
+                             result,                                    \
+                             GRN_ ## type ## _VALUE_AT(&values, i));    \
       } while (GRN_FALSE)
       switch (values.header.domain) {
       case GRN_DB_BOOL :
