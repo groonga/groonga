@@ -1,4 +1,4 @@
-# Copyright(C) 2015-2016 Brazil
+# Copyright(C) 2015-2017 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -98,3 +98,24 @@ else()
   install(TARGETS time_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
 endif()
 target_link_libraries(time_functions libgroonga)
+
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/index_column_sources.am
+  INDEX_COLUMN_SOURCES)
+set_source_files_properties(${INDEX_COLUMN_SOURCES}
+  PROPERTIES
+  COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+if(GRN_EMBED)
+  add_library(index_column_functions STATIC ${INDEX_COLUMN_SOURCES})
+  set_target_properties(
+    index_column_functions
+    PROPERTIES
+    POSITION_INDEPENDENT_CODE ON)
+else()
+  add_library(index_column_functions MODULE ${INDEX_COLUMN_SOURCES})
+  set_target_properties(index_column_functions PROPERTIES
+    PREFIX ""
+    OUTPUT_NAME "index_column")
+  install(TARGETS index_column_functions
+    DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+endif()
+target_link_libraries(index_column_functions libgroonga)

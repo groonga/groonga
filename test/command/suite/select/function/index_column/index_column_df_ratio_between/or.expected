@@ -1,0 +1,101 @@
+plugin_register functions/index_column
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Memos _key
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is a fast full text search engine."},
+{"_key": "Mroonga is a MySQL storage engine based on Groonga."},
+{"_key": "Mroonga provides fast full text search feature to MySQL."},
+{"_key": "Rroonga is a Ruby bindings for Groonga."},
+{"_key": "Ruby"}
+]
+[[0,0.0,0.0],5]
+select Terms   --filter '_key == "Ruby" || index_column_df_ratio_between(index, 0.1, 0.9)'   --limit -1   --sort_keys _id   --columns[df_ratio].stage output   --columns[df_ratio].type Float   --columns[df_ratio].value 'index_column_df_ratio("index")'   --output_columns '_id, _key, df_ratio'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        11
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "df_ratio",
+          "Float"
+        ]
+      ],
+      [
+        10,
+        "mroonga",
+        0.8
+      ],
+      [
+        12,
+        "storage",
+        0.2
+      ],
+      [
+        13,
+        "based",
+        0.2
+      ],
+      [
+        14,
+        "on",
+        0.2
+      ],
+      [
+        15,
+        "provides",
+        0.2
+      ],
+      [
+        16,
+        "feature",
+        0.2
+      ],
+      [
+        17,
+        "to",
+        0.2
+      ],
+      [
+        18,
+        "rroonga",
+        0.2
+      ],
+      [
+        19,
+        "ruby",
+        1.0
+      ],
+      [
+        20,
+        "bindings",
+        0.2
+      ],
+      [
+        21,
+        "for",
+        0.2
+      ]
+    ]
+  ]
+]
