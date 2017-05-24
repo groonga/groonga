@@ -130,6 +130,8 @@ typedef enum {
   GRN_ZSTD_ERROR = -79
 } grn_rc;
 
+GRN_API const char *grn_rc_to_string(grn_rc rc);
+
 GRN_API grn_rc grn_init(void);
 GRN_API grn_rc grn_fin(void);
 

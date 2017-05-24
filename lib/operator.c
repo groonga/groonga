@@ -125,6 +125,105 @@ grn_operator_to_string(grn_operator op)
   }
 }
 
+static const char *rc_names[] = {
+  "success",
+  "end of data",
+  "unknown error",
+  "operation not permitted",
+  "no such file or directory",
+  "no such process",
+  "interrupted function call",
+  "input output error",
+  "no such device or address",
+  "arg list too long",
+  "exec format error",
+  "bad file descriptor",
+  "no child processes",
+  "resource temporarily unavailable",
+  "not enough space",
+  "permission denied",
+  "bad address",
+  "resource busy",
+  "file exists",
+  "improper link",
+  "no such device",
+  "not a directory",
+  "is a directory",
+  "invalid argument",
+  "too many open files in system",
+  "too many open files",
+  "inappropriate i o control operation",
+  "file too large",
+  "no space left on device",
+  "invalid seek",
+  "read only file system",
+  "too many links",
+  "broken pipe",
+  "domain error",
+  "result too large",
+  "resource deadlock avoided",
+  "no memory available",
+  "filename too long",
+  "no locks available",
+  "function not implemented",
+  "directory not empty",
+  "illegal byte sequence",
+  "socket not initialized",
+  "operation would block",
+  "address is not available",
+  "network is down",
+  "no buffer",
+  "socket is already connected",
+  "socket is not connected",
+  "socket is already shutdowned",
+  "operation timeout",
+  "connection refused",
+  "range error",
+  "tokenizer error",
+  "file corrupt",
+  "invalid format",
+  "object corrupt",
+  "too many symbolic links",
+  "not socket",
+  "operation not supported",
+  "address is in use",
+  "zlib error",
+  "lz4 error",
+  "stack over flow",
+  "syntax error",
+  "retry max",
+  "incompatible file format",
+  "update not allowed",
+  "too small offset",
+  "too large offset",
+  "too small limit",
+  "cas error",
+  "unsupported command version",
+  "normalizer error",
+  "token filter error",
+  "command error",
+  "plugin error",
+  "scorer error",
+};
+
+#define GRN_RC_SUCCESS_CODE_LAST GRN_END_OF_DATA
+#define GRN_RC_ERROR_CODE_LAST   GRN_SCORER_ERROR
+
+const char *
+grn_rc_to_string(grn_rc rc)
+{
+  if (rc >= GRN_RC_ERROR_CODE_LAST && rc < 0) {
+    // negative value range is ERROR code.
+    return rc_names[GRN_RC_SUCCESS_CODE_LAST + (-rc)];
+  } else if (rc >= 0 && GRN_RC_SUCCESS_CODE_LAST >= rc) {
+    // positive valus range is SUCCESS code.
+    return rc_names[rc];
+  } else {
+    // another value range is undefined success/error code.
+    return "unknown";
+  }
+}
+
 #define DO_EQ_SUB do {\
   switch (y->header.domain) {\
   case GRN_DB_INT8 :\
