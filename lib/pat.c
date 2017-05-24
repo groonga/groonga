@@ -1317,7 +1317,7 @@ fuzzy_heap_push(grn_ctx *ctx, fuzzy_heap *h, grn_id id, uint16_t distance)
   h->nodes[h->n_entries] = node;
   n = h->n_entries++;
   while (n) {
-    n2 = (n - 1) >> 1;
+    n2 = n >> 1;
     if (h->nodes[n2].distance <= h->nodes[n].distance) { break; }
     node2 = h->nodes[n];
     h->nodes[n] = h->nodes[n2];
