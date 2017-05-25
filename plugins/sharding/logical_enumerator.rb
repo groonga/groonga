@@ -196,7 +196,7 @@ module Groonga
               Time.local(@year, @month + 1, 1)
             end
           else
-            Time.local(@year, @month, @max_day, 23, 59, 59, 999999)
+            Time.local(@year, @month, @max_day)
           end
         end
 
