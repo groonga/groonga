@@ -30,6 +30,16 @@ table_create Times_20150205 TABLE_PAT_KEY Time
 [[0,0.0,0.0],true]
 column_create Times_20150205 timestamp_index COLUMN_INDEX Logs_20150205 timestamp
 [[0,0.0,0.0],true]
+table_create Logs_20150331 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150331 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150331 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Times_20150331 TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times_20150331 timestamp_index COLUMN_INDEX Logs_20150331 timestamp
+[[0,0.0,0.0],true]
 load --table Logs_20150203
 [
 {
@@ -78,6 +88,18 @@ load --table Logs_20150205
 }
 ]
 [[0,0.0,0.0],4]
+load --table Logs_20150331
+[
+{
+  "timestamp": "2015-03-31 12:49:00",
+  "memo":      "2015-03-31 12:49:00"
+},
+{
+  "timestamp": "2015-03-31 23:59:59",
+  "memo":      "2015-03-31 23:59:59"
+}
+]
+[[0,0.0,0.0],2]
 logical_select Logs timestamp   --min "2015-02-04 00:00:00"   --min_border "exclude"
 [
   [
@@ -88,7 +110,7 @@ logical_select Logs timestamp   --min "2015-02-04 00:00:00"   --min_border "excl
   [
     [
       [
-        6
+        8
       ],
       [
         [
@@ -133,6 +155,16 @@ logical_select Logs timestamp   --min "2015-02-04 00:00:00"   --min_border "excl
         4,
         "2015-02-05 13:52:00",
         1423111920.0
+      ],
+      [
+        1,
+        "2015-03-31 12:49:00",
+        1427773740.0
+      ],
+      [
+        2,
+        "2015-03-31 23:59:59",
+        1427813999.0
       ]
     ]
   ]

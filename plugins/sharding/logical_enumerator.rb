@@ -162,7 +162,7 @@ module Groonga
         end
 
         def least_over_time
-          Time.local(@year, @month, @day + 1)
+          Time.local(@year, @month, @day, 23, 59, 59, 999999)
         end
 
         def min_time
@@ -186,9 +186,10 @@ module Groonga
 
         def least_over_time
           if @max_day.nil?
-            Time.local(@year, @month + 1, 1)
+             @next_month = (1..11).include?(@month) ? @month+1 : 1
+             Time.local(@year, @next_month, 1)
           else
-            Time.local(@year, @month, @max_day + 1)
+            Time.local(@year, @month, @max_day, 23, 59, 59, 999999)
           end
         end
 

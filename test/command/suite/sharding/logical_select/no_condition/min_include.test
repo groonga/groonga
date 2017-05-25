@@ -20,6 +20,12 @@ column_create Logs_20150205 memo COLUMN_SCALAR ShortText
 table_create Times_20150205 TABLE_PAT_KEY Time
 column_create Times_20150205 timestamp_index COLUMN_INDEX Logs_20150205 timestamp
 
+table_create Logs_20150331 TABLE_NO_KEY
+column_create Logs_20150331 timestamp COLUMN_SCALAR Time
+column_create Logs_20150331 memo COLUMN_SCALAR ShortText
+table_create Times_20150331 TABLE_PAT_KEY Time
+column_create Times_20150331 timestamp_index COLUMN_INDEX Logs_20150331 timestamp
+
 load --table Logs_20150203
 [
 {
@@ -65,6 +71,17 @@ load --table Logs_20150205
 {
   "timestamp": "2015-02-05 13:52:00",
   "memo":      "2015-02-05 13:52:00"
+}
+]
+load --table Logs_20150331
+[
+{
+  "timestamp": "2015-03-31 12:49:00",
+  "memo":      "2015-03-31 12:49:00"
+},
+{
+  "timestamp": "2015-03-31 23:59:59",
+  "memo":      "2015-03-31 23:59:59"
 }
 ]
 
