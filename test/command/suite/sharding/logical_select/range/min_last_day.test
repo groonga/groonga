@@ -1,0 +1,39 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Logs_20150131 TABLE_NO_KEY
+column_create Logs_20150131 timestamp COLUMN_SCALAR Time
+column_create Logs_20150131 memo COLUMN_SCALAR ShortText
+table_create Times_20150131 TABLE_PAT_KEY Time
+column_create Times_20150131 timestamp_index COLUMN_INDEX Logs_20150131 timestamp
+
+table_create Logs_20150201 TABLE_NO_KEY
+column_create Logs_20150201 timestamp COLUMN_SCALAR Time
+column_create Logs_20150201 memo COLUMN_SCALAR ShortText
+table_create Times_20150201 TABLE_PAT_KEY Time
+column_create Times_20150201 timestamp_index COLUMN_INDEX Logs_20150201 timestamp
+
+load --table Logs_20150131
+[
+{
+  "timestamp": "2015-01-31 00:00:00",
+  "memo":      "2015-01-31 00:00:00"
+},
+{
+  "timestamp": "2015-01-31 23:59:59.999999",
+  "memo":      "2015-01-31 23:59:59.999999"
+}
+]
+
+load --table Logs_20150201
+[
+{
+  "timestamp": "2015-02-01 00:00:00",
+  "memo":      "2015-02-01 00:00:00"
+}
+]
+
+logical_select Logs timestamp \
+  --min "2015-01-31 23:59:59.999999" \
+  --min_border "include"
