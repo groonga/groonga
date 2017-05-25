@@ -1,0 +1,86 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Logs_201512 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_201512 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_201512 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Times_201512 TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times_201512 timestamp_index COLUMN_INDEX Logs_201512 timestamp
+[[0,0.0,0.0],true]
+table_create Logs_201601 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_201601 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_201601 memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Times_201601 TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times_201601 timestamp_index COLUMN_INDEX Logs_201601 timestamp
+[[0,0.0,0.0],true]
+load --table Logs_201512
+[
+{
+  "timestamp": "2015-12-31 00:00:00",
+  "memo":      "2015-12-31 00:00:00"
+},
+{
+  "timestamp": "2015-12-31 23:59:59",
+  "memo":      "2015-12-31 23:59:59"
+}
+]
+[[0,0.0,0.0],2]
+load --table Logs_201601
+[
+{
+  "timestamp": "2016-01-01 00:00:00",
+  "memo":      "2016-01-01 00:00:00"
+}
+]
+[[0,0.0,0.0],1]
+logical_select Logs timestamp   --min "2015-12-31 00:00:00"   --min_border "include"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "memo",
+          "ShortText"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ],
+      [
+        1,
+        "2015-12-31 00:00:00",
+        1451487600.0
+      ],
+      [
+        2,
+        "2015-12-31 23:59:59",
+        1451573999.0
+      ],
+      [
+        1,
+        "2016-01-01 00:00:00",
+        1451574000.0
+      ]
+    ]
+  ]
+]
