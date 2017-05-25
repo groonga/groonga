@@ -162,11 +162,11 @@ module Groonga
         end
 
         def least_over_time
-          over_time = Time.local(@year, @month, @day) + (60 * 60 * 24)
-          while over_time.day == @day # For leap second
-            over_time += 1
+          next_day = Time.local(@year, @month, @day) + (60 * 60 * 24)
+          while next_day.day == @day # For leap second
+            next_day += 1
           end
-          over_time
+          next_day
         end
 
         def min_time
