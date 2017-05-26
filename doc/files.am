@@ -566,6 +566,11 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/tutorial/match_columns-nested-index-schema.log \
 	$(top_srcdir)/doc/source/example/tutorial/match_columns-nested-index-select-with-three-relationship.log \
 	$(top_srcdir)/doc/source/example/tutorial/match_columns-nested-index-select.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-specific-body-index.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-specific-index-schema.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-specific-title-index.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-specific-whole-with-body.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-specific-whole-with-title.log \
 	$(top_srcdir)/doc/source/example/tutorial/micro_blog_drilldown.log \
 	$(top_srcdir)/doc/source/example/tutorial/micro_blog_favorite.log \
 	$(top_srcdir)/doc/source/example/tutorial/micro_blog_follower.log \
@@ -1482,6 +1487,11 @@ source_files_relative_from_doc_dir = \
 	source/example/tutorial/match_columns-nested-index-schema.log \
 	source/example/tutorial/match_columns-nested-index-select-with-three-relationship.log \
 	source/example/tutorial/match_columns-nested-index-select.log \
+	source/example/tutorial/match_columns-specific-body-index.log \
+	source/example/tutorial/match_columns-specific-index-schema.log \
+	source/example/tutorial/match_columns-specific-title-index.log \
+	source/example/tutorial/match_columns-specific-whole-with-body.log \
+	source/example/tutorial/match_columns-specific-whole-with-title.log \
 	source/example/tutorial/micro_blog_drilldown.log \
 	source/example/tutorial/micro_blog_favorite.log \
 	source/example/tutorial/micro_blog_follower.log \
