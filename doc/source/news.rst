@@ -29,12 +29,39 @@ Improvements
 
 * [:doc:`/reference/commands/delete`] Supported to cancel.
 
+* [httpd] Updated bundled nginx to 1.13.0
+
+* Exported the following API
+
+  * grn_plugin_proc_get_caller()
+
+* Added index column related function and selector.
+
+  * Added new selector: index_column_df_ratio_between()
+
+  * Added new function: index_column_df_ratio()
+
 Fixes
 ^^^^^
 
 * [:doc:`/reference/commands/delete`] Fixed a bug that error isn't
   cleared correctly. It affects to following deletions so that it
   causes unexpected behavior.
+
+* [windows] Fixed a bug that IO version is not detected correctly when the
+  file is opened with ``O_CREAT`` flag.
+
+* [:doc:`/reference/functions/vector_slice`] Fixed a bug that non 4
+  bytes vector columns can't slice. [GitHub#695] [Patch by Naoya
+  Murakami]
+
+* Fixed a bug that non 4 bytes fixed vector column can't sequential
+  match by specifying index of vector. [GitHub#696] [Patch by Naoya
+  Murakami]
+
+* [:doc:`/reference/commands/logical_select`] Fixed a bug that
+  "argument out of range" occurs when setting last day of month to the
+  min. [GitHub#698]
 
 .. _release-7-0-2:
 
