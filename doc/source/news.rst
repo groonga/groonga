@@ -63,6 +63,13 @@ Fixes
   "argument out of range" occurs when setting last day of month to the
   min. [GitHub#698]
 
+Thanks
+^^^^^^
+
+* Sergei Golubchik
+
+* Naoya Murakami
+
 .. _release-7-0-2:
 
 Release 7.0.2 - 2017-04-29
