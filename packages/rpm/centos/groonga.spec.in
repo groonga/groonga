@@ -8,8 +8,7 @@
 %define _use_libstemmer %{?use_libstemmer:%{use_libstemmer}}%{!?use_libstemmer:%{_centos_ver} >= 7}
 %define _use_systemd  %{?use_systemd:%{use_systemd}}%{!?use_systemd:%{_centos_ver} >= 7}
 
-%define _additional_configure_options \
-  %{?additional_configure_options:%{additional_configure_options}}
+%define _additional_configure_options %{?additional_configure_options:%{additional_configure_options}}
 
 %global _initddir %{_sysconfdir}/init.d/
 
