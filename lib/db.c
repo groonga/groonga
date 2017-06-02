@@ -4464,6 +4464,10 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
   uint32_t value_size = 0;
   uint32_t key_size = 0;
   grn_bool have_subrec;
+  if (!table1 || !table2) {
+    ERR(GRN_INVALID_ARGUMENT, "[db] can't set operation against null table");
+    return ctx->rc;
+  }
   if (table1 != res) {
     if (table2 == res) {
       grn_obj *t = table1;
