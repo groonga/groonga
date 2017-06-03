@@ -4459,18 +4459,34 @@ grn_rc
 grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *res,
                        grn_operator op)
 {
-  grn_rc rc = GRN_SUCCESS;
   void *key = NULL, *value1 = NULL, *value2 = NULL;
   uint32_t value_size = 0;
   uint32_t key_size = 0;
   grn_bool have_subrec;
+
+  GRN_API_ENTER;
+  if (!table1) {
+    ERR(GRN_INVALID_ARGUMENT, "[table][setoperation] table1 is NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+  if (!table2) {
+    ERR(GRN_INVALID_ARGUMENT, "[table][setoperation] table2 is NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+  if (!res) {
+    ERR(GRN_INVALID_ARGUMENT, "[table][setoperation] result table is NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+
   if (table1 != res) {
     if (table2 == res) {
       grn_obj *t = table1;
       table1 = table2;
       table2 = t;
     } else {
-      return GRN_INVALID_ARGUMENT;
+      ERR(GRN_INVALID_ARGUMENT,
+          "[table][setoperation] table1 or table2 must be result table");
+      GRN_API_RETURN(ctx->rc);
     }
   }
   have_subrec = ((DB_OBJ(table1)->header.flags & GRN_OBJ_WITH_SUBREC) &&
@@ -4576,7 +4592,7 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
   default :
     break;
   }
-  return rc;
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc
