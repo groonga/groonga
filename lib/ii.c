@@ -10295,12 +10295,12 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
           "tmpfile_size:%" GRN_FMT_INT64D " > total_chunk_size:%" GRN_FMT_SIZE,
           ii_buffer->filepos, ii_buffer->total_chunk_size);
   grn_close(ii_buffer->tmpfd);
-  if (grn_unlink(ii_buffer->tmpfpath) != 0) {
-    ERRNO_ERR("failed to remove path on grn_ii_buffer_commit(): <%s>",
-              ii_buffer->tmpfpath);
-  } else {
+  if (grn_unlink(ii_buffer->tmpfpath) == 0) {
     GRN_LOG(ctx, GRN_LOG_INFO,
             "removed path on grn_ii_buffer_commit(): <%s>", ii_buffer->tmpfpath);
+  } else {
+    ERRNO_ERR("failed to remove path on grn_ii_buffer_commit(): <%s>",
+              ii_buffer->tmpfpath);
   }
   ii_buffer->tmpfd = -1;
   return ctx->rc;
