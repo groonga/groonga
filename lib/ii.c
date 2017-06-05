@@ -11405,12 +11405,13 @@ grn_ii_builder_fin(grn_ctx *ctx, grn_ii_builder *builder)
   }
   if (builder->fd != -1) {
     grn_close(builder->fd);
-    if (grn_unlink(builder->path) != 0) {
-      ERRNO_ERR("failed to remove path on grn_ii_builder_fin(): <%s>",
-                builder->path);
-    } else {
+    if (grn_unlink(builder->path) == 0) {
       GRN_LOG(ctx, GRN_LOG_INFO,
-              "removed path on grn_ii_builder_fin(): <%s>", builder->path);
+              "[ii][builder][fin] removed path: <%s>",
+              builder->path);
+    } else {
+      ERRNO_ERR("[ii][builder][fin] failed to remove path: <%s>",
+                builder->path);
     }
   }
   grn_ii_builder_fin_terms(ctx, builder);
