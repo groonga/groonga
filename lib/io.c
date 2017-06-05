@@ -1690,9 +1690,25 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
       SERR("CreateFile(<%s>, <%s>) failed",
            path, flags_description);
       goto exit;
-    } else {
+    }
+
+    switch (dwCreationDisposition) {
+    case CREATE_NEW :
       GRN_LOG(ctx, GRN_LOG_INFO,
-              "[io][open] file is created on CreateFile: <%s>", path);
+              "[io][open] create new file: <%s>", path);
+      break;
+    case OPEN_ALWAYS :
+      if (GetLastError() == ERROR_ALREADY_EXISTS) {
+        GRN_LOG(ctx, GRN_LOG_INFO,
+                "[io][open] open existing file because it exists: <%s>", path);
+      } else {
+        GRN_LOG(ctx, GRN_LOG_INFO,
+                "[io][open] create new file because it doesn't exist: <%s>",
+                path);
+      }
+      break;
+    default :
+      break;
     }
 
     if (grn_io_use_sparse) {
@@ -1729,10 +1745,9 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
       SERR("CreateFile(<%s>, <O_RDWR|O_TRUNC>) failed",
            path);
       goto exit;
-    } else {
-      GRN_LOG(ctx, GRN_LOG_INFO,
-              "[io][open] file is truncated: <%s>", path);
     }
+    GRN_LOG(ctx, GRN_LOG_INFO,
+            "[io][open] truncated: <%s>", path);
     goto exit;
   }
   /* O_RDWR only */
@@ -1744,10 +1759,9 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
     SERR("CreateFile(<%s>, <O_RDWR>) failed",
          path);
     goto exit;
-  } else {
-    GRN_LOG(ctx, GRN_LOG_INFO,
-            "[io][open] file is created: <%s>", path);
   }
+  GRN_LOG(ctx, GRN_LOG_INFO,
+          "[io][open] open existing file: <%s>", path);
 
 exit :
   return ctx->rc;
