@@ -822,12 +822,11 @@ grn_io_remove_raw(grn_ctx *ctx, const char *path)
   char buffer[PATH_MAX];
 
   if (grn_unlink(path) != 0) {
-    ERRNO_ERR("failed to remove path: <%s>",
+    ERRNO_ERR("[io][remove] failed to remove path: <%s>",
               path);
     return ctx->rc;
-  } else {
-    GRN_LOG(ctx, GRN_LOG_INFO, "removed path on grn_io_remove_raw(): <%s>", path);
   }
+  GRN_LOG(ctx, GRN_LOG_INFO, "[io][remove] removed path: <%s>", path);
 
   for (fno = 1; ; fno++) {
     struct stat s;
