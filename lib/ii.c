@@ -10322,12 +10322,13 @@ grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   }
   if (ii_buffer->tmpfd != -1) {
     grn_close(ii_buffer->tmpfd);
-    if (grn_unlink(ii_buffer->tmpfpath) != 0) {
-      ERRNO_ERR("failed to remove path on grn_ii_buffer_close(): <%s>",
-                ii_buffer->tmpfpath);
-    } else {
+    if (grn_unlink(ii_buffer->tmpfpath) == 0) {
       GRN_LOG(ctx, GRN_LOG_INFO,
-              "removed path on grn_ii_buffer_close(): <%s>", ii_buffer->tmpfpath);
+              "[ii][buffer][close] removed temporary path: <%s>",
+              ii_buffer->tmpfpath);
+    } else {
+      ERRNO_ERR("[ii][buffer][close] failed to remove temporary path: <%s>",
+                ii_buffer->tmpfpath);
     }
   }
   if (ii_buffer->block_buf) {
