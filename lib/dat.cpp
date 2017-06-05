@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2011-2016 Brazil
+  Copyright(C) 2011-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -71,14 +71,14 @@ bool
 grn_dat_remove_file(grn_ctx *ctx, const char *path)
 {
   struct stat stat;
-  bool succeeded = GRN_FALSE;
+  bool succeeded = false;
   if (!::stat(path, &stat)) {
     if (grn_unlink(path) != 0) {
       ERRNO_ERR("failed to remove path: <%s>", path);
     } else {
       GRN_LOG(ctx, GRN_LOG_INFO,
               "removed path on grn_dat_remove_file(): <%s>", path);
-      succeeded = GRN_TRUE;
+      succeeded = true;
     }
   }
   return succeeded;
