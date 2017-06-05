@@ -364,6 +364,8 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size,
                 "failed to grn_unlink() path on grn_io_create() error: "
                 "<%s>: <%s>",
                 path, grn_strerror(errno));
+      } else {
+        GRN_LOG(ctx, GRN_LOG_INFO, "removed path on grn_io_create(): <%s>", path);
       }
     }
     GRN_FREE(fis);
@@ -825,6 +827,8 @@ grn_io_remove_raw(grn_ctx *ctx, const char *path)
     ERRNO_ERR("failed to remove path: <%s>",
               path);
     return ctx->rc;
+  } else {
+    GRN_LOG(ctx, GRN_LOG_INFO, "removed path on grn_io_remove_raw(): <%s>", path);
   }
 
   for (fno = 1; ; fno++) {
@@ -837,6 +841,9 @@ grn_io_remove_raw(grn_ctx *ctx, const char *path)
       ERRNO_ERR("failed to remove path: <%s>",
                 buffer);
       rc = ctx->rc;
+    } else {
+      GRN_LOG(ctx, GRN_LOG_INFO,
+              "removed path with fno on grn_io_remove_raw(): <%s>", buffer);
     }
   }
   return rc;
