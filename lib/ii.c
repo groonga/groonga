@@ -10295,7 +10295,13 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
           "tmpfile_size:%" GRN_FMT_INT64D " > total_chunk_size:%" GRN_FMT_SIZE,
           ii_buffer->filepos, ii_buffer->total_chunk_size);
   grn_close(ii_buffer->tmpfd);
-  grn_unlink(ii_buffer->tmpfpath);
+  if (grn_unlink(ii_buffer->tmpfpath) != 0) {
+    ERRNO_ERR("failed to remove path on grn_ii_buffer_commit(): <%s>",
+              ii_buffer->tmpfpath);
+  } else {
+    GRN_LOG(ctx, GRN_LOG_INFO,
+            "removed path on grn_ii_buffer_commit(): <%s>", ii_buffer->tmpfpath);
+  }
   ii_buffer->tmpfd = -1;
   return ctx->rc;
 }
@@ -10315,7 +10321,13 @@ grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   }
   if (ii_buffer->tmpfd != -1) {
     grn_close(ii_buffer->tmpfd);
-    grn_unlink(ii_buffer->tmpfpath);
+    if (grn_unlink(ii_buffer->tmpfpath) != 0) {
+      ERRNO_ERR("failed to remove path on grn_ii_buffer_close(): <%s>",
+                ii_buffer->tmpfpath);
+    } else {
+      GRN_LOG(ctx, GRN_LOG_INFO,
+              "removed path on grn_ii_buffer_close(): <%s>", ii_buffer->tmpfpath);
+    }
   }
   if (ii_buffer->block_buf) {
     GRN_FREE(ii_buffer->block_buf);
@@ -11391,7 +11403,13 @@ grn_ii_builder_fin(grn_ctx *ctx, grn_ii_builder *builder)
   }
   if (builder->fd != -1) {
     grn_close(builder->fd);
-    grn_unlink(builder->path);
+    if (grn_unlink(builder->path) != 0) {
+      ERRNO_ERR("failed to remove path on grn_ii_builder_fin(): <%s>",
+                builder->path);
+    } else {
+      GRN_LOG(ctx, GRN_LOG_INFO,
+              "removed path on grn_ii_builder_fin(): <%s>", builder->path);
+    }
   }
   grn_ii_builder_fin_terms(ctx, builder);
   if (builder->lexicon) {

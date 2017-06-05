@@ -71,7 +71,17 @@ bool
 grn_dat_remove_file(grn_ctx *ctx, const char *path)
 {
   struct stat stat;
-  return !::stat(path, &stat) && !grn_unlink(path);
+  bool succeeded = GRN_FALSE;
+  if (!::stat(path, &stat)) {
+    if (grn_unlink(path) != 0) {
+      ERRNO_ERR("failed to remove path: <%s>", path);
+    } else {
+      GRN_LOG(ctx, GRN_LOG_INFO,
+              "removed path on grn_dat_remove_file(): <%s>", path);
+      succeeded = GRN_TRUE;
+    }
+  }
+  return succeeded;
 }
 
 grn_rc
