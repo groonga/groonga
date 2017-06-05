@@ -18,6 +18,7 @@
 
 #include "../grn_proc.h"
 #include "../grn_db.h"
+#include "../grn_store.h"
 
 #include <groonga/plugin.h>
 
@@ -26,6 +27,10 @@ typedef struct {
   grn_obj *condition_table;
   grn_obj condition_columns;
   grn_operator_exec_func **condition_functions;
+  grn_ra **ras;
+  grn_ra_cache *ra_caches;
+  unsigned int *ra_element_sizes;
+  grn_obj *ra_values;
 } grn_in_records_data;
 
 static void
@@ -47,6 +52,23 @@ grn_in_records_data_free(grn_ctx *ctx, grn_in_records_data *data)
     }
   }
   GRN_OBJ_FIN(ctx, &(data->condition_columns));
+
+  for (i = 0; i < data->n_conditions; i++) {
+    grn_ra *ra = data->ras[i];
+    grn_ra_cache *ra_cache = data->ra_caches + i;
+    grn_obj *ra_value = data->ra_values + i;
+
+    GRN_OBJ_FIN(ctx, ra_value);
+
+    if (!ra || !ra_cache) {
+      continue;
+    }
+    GRN_RA_CACHE_FIN(ra, ra_cache);
+  }
+  GRN_PLUGIN_FREE(ctx, data->ras);
+  GRN_PLUGIN_FREE(ctx, data->ra_caches);
+  GRN_PLUGIN_FREE(ctx, data->ra_element_sizes);
+  GRN_PLUGIN_FREE(ctx, data->ra_values);
 
   GRN_PLUGIN_FREE(ctx, data);
 }
@@ -114,11 +136,19 @@ func_in_records_init(grn_ctx *ctx,
   data = GRN_PLUGIN_CALLOC(ctx, sizeof(grn_in_records_data));
   user_data->ptr = data;
 
+  data->n_conditions = n_conditions;
   data->condition_table = condition_table;
   GRN_PTR_INIT(&(data->condition_columns), GRN_OBJ_VECTOR, GRN_ID_NIL);
   data->condition_functions =
     GRN_PLUGIN_MALLOCN(ctx, grn_operator_exec_func *, n_conditions);
-  data->n_conditions = n_conditions;
+  data->ras = GRN_PLUGIN_MALLOCN(ctx, grn_ra *, n_conditions);
+  data->ra_caches = GRN_PLUGIN_MALLOCN(ctx, grn_ra_cache, n_conditions);
+  data->ra_element_sizes = GRN_PLUGIN_MALLOCN(ctx, unsigned int, n_conditions);
+  data->ra_values = GRN_PLUGIN_MALLOCN(ctx, grn_obj, n_conditions);
+  for (i = 0; i < n_conditions; i++) {
+    data->ras[i] = NULL;
+    GRN_VOID_INIT(data->ra_values + i);
+  }
 
   for (i = 1, nth = 0; i < n_arg_codes; nth++) {
     int value_i = i;
@@ -222,6 +252,16 @@ func_in_records_init(grn_ctx *ctx,
     }
     GRN_PTR_PUT(ctx, &(data->condition_columns), condition_column);
 
+    if (condition_column->header.type == GRN_COLUMN_FIX_SIZE) {
+      data->ras[nth] = (grn_ra *)condition_column;
+      GRN_RA_CACHE_INIT(data->ras[nth], data->ra_caches + nth);
+      grn_ra_info(ctx, data->ras[nth], &(data->ra_element_sizes[nth]));
+      grn_obj_reinit(ctx,
+                     data->ra_values + nth,
+                     grn_obj_get_range(ctx, condition_column),
+                     0);
+    }
+
     i = column_name_i + 1;
   }
 
@@ -263,21 +303,36 @@ func_in_records_next(grn_ctx *ctx,
       grn_obj *condition_column;
       grn_operator_exec_func *condition_function;
       grn_obj *value = args[i];
+      grn_obj *condition_value;
 
       condition_column = GRN_PTR_VALUE_AT(&(data->condition_columns), nth);
       condition_function = data->condition_functions[nth];
       if (grn_obj_is_data_column(ctx, condition_column)) {
         grn_bool found_value = GRN_FALSE;
 
-        GRN_BULK_REWIND(&condition_column_value);
-        grn_obj_get_value(ctx,
-                          condition_column,
-                          id,
-                          &condition_column_value);
+        if (data->ras[nth]) {
+          void *raw_value;
 
-        found_value = condition_function(ctx,
-                                         value,
-                                         &condition_column_value);
+          raw_value = grn_ra_ref_cache(ctx,
+                                       data->ras[nth],
+                                       id,
+                                       data->ra_caches + nth);
+          condition_value = data->ra_values + nth;
+          GRN_BULK_REWIND(condition_value);
+          grn_bulk_write(ctx,
+                         condition_value,
+                         raw_value,
+                         data->ra_element_sizes[nth]);
+        } else {
+          condition_value = &condition_column_value;
+          GRN_BULK_REWIND(condition_value);
+          grn_obj_get_value(ctx,
+                            condition_column,
+                            id,
+                            condition_value);
+        }
+
+        found_value = condition_function(ctx, value, condition_value);
         if (ctx->rc != GRN_SUCCESS) {
           found_record = GRN_FALSE;
           break;
