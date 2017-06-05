@@ -5,6 +5,7 @@ module Groonga
         @program_path, *@arguments = argv
         @succeeded = true
         @database_path = nil
+        @log_path = nil
       end
 
       def run
@@ -32,8 +33,10 @@ module Groonga
           options = command.options
           options.banner += " DB_PATH"
           options.string("--target", "Check only the target object.")
+          options.string("--log-path", "Specify log file path.")
 
           command.add_action do |options|
+            @log_path = options[:log_path]
             open_database(command, options) do |database, rest_arguments|
               check(database, options, rest_arguments)
             end
@@ -45,8 +48,10 @@ module Groonga
 
           options = command.options
           options.banner += " DB_PATH"
+          options.string("--log-path", "Specify log file path.")
 
           command.add_action do |options|
+            @log_path = options[:log_path]
             open_database(command, options) do |database, rest_arguments|
               recover(database, options, rest_arguments)
             end
@@ -104,6 +109,7 @@ module Groonga
         checker = Checker.new
         checker.program_path = @program_path
         checker.database_path = @database_path
+        checker.log_path = @log_path
         checker.database = database
         checker.on_failure = lambda do |message|
           failed(message)
@@ -123,6 +129,7 @@ module Groonga
         attr_writer :program_path
         attr_writer :database_path
         attr_writer :database
+        attr_writer :log_path
         attr_writer :on_failure
 
         def initialize
@@ -131,6 +138,7 @@ module Groonga
         end
 
         def check_database
+          @context.logger.path = @log_path
           check_database_locked
           check_database_dirty
         end
