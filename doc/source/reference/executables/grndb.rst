@@ -94,6 +94,18 @@ Here is an example that checks only ``Entries.name`` column::
 
   % grndb check --target Entries.name /var/lib/groonga/db/db
 
+``--log-path``
+""""""""""""""
+
+.. versionadded:: 7.0.4
+
+It specifies a path of ``grndb`` log.
+
+Here is an example that specifies ``--log-path`` option::
+
+  % grndb check --log-path /var/log/groonga/grndb.log /var/lib/groonga/db/db
+
+
 ``recover``
 ^^^^^^^^^^^
 
@@ -115,3 +127,17 @@ status. You can know whether the database is recoverable or not by
 
    You must not use this command for opened database. If the database
    is opened, this command may break the database.
+
+``recover`` has some options.
+
+``--log-path``
+""""""""""""""
+
+.. versionadded:: 7.0.4
+
+It specifies a path of ``grndb`` log.
+
+Here is an example that specifies ``--log-path`` option::
+
+  % grndb recover --log-path /var/log/groonga/grndb.log /var/lib/groonga/db/db
+
