@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2017-05-10 19:01+0900\n"
+"PO-Revision-Date: 2017-06-06 11:50+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -16277,6 +16277,15 @@ msgstr "以下は ``Entries`` テーブルとそのカラムだけをチェッ�
 msgid "Here is an example that checks only ``Entries.name`` column::"
 msgstr "以下は ``Entries.name`` カラムだけをチェックする例です。::"
 
+msgid "``--log-path``"
+msgstr ""
+
+msgid "It specifies a path of ``grndb`` log."
+msgstr "``grndb`` のログ出力先のパスを指定します。"
+
+msgid "Here is an example that specifies ``--log-path`` option::"
+msgstr "以下は ``--log-path`` オプションを指定する例です。"
+
 msgid "``recover``"
 msgstr ""
 
@@ -16316,6 +16325,9 @@ msgstr ""
 "このコマンドを他のプロセスが開いているデータベースに対しては使ってはいけませ"
 "ん。もし、データベースが他のプロセスから開かれていると、このコマンドはデータ"
 "ベースを壊してしまう可能性があります。"
+
+msgid "``recover`` has some options."
+msgstr "``recover`` にはいくつかオプションがあります。"
 
 msgid "grnslap"
 msgstr ""
