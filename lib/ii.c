@@ -10297,9 +10297,10 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   grn_close(ii_buffer->tmpfd);
   if (grn_unlink(ii_buffer->tmpfpath) == 0) {
     GRN_LOG(ctx, GRN_LOG_INFO,
-            "removed path on grn_ii_buffer_commit(): <%s>", ii_buffer->tmpfpath);
+            "[ii][buffer][commit] removed temporary path: <%s>",
+            ii_buffer->tmpfpath);
   } else {
-    ERRNO_ERR("failed to remove path on grn_ii_buffer_commit(): <%s>",
+    ERRNO_ERR("[ii][buffer][commit] failed to remove temporary path: <%s>",
               ii_buffer->tmpfpath);
   }
   ii_buffer->tmpfd = -1;
