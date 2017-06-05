@@ -834,13 +834,13 @@ grn_io_remove_raw(grn_ctx *ctx, const char *path)
     if (stat(buffer, &s) != 0) {
       break;
     }
-    if (grn_unlink(buffer) != 0) {
-      ERRNO_ERR("failed to remove path: <%s>",
-                buffer);
-      rc = ctx->rc;
-    } else {
+    if (grn_unlink(buffer) == 0) {
       GRN_LOG(ctx, GRN_LOG_INFO,
-              "removed path with fno on grn_io_remove_raw(): <%s>", buffer);
+              "[io][remove] removed numbered path: <%d>: <%s>", fno, buffer);
+    } else {
+      ERRNO_ERR("[io][remove] failed to remove numbered path: <%d>: <%s>",
+                fno, buffer);
+      rc = ctx->rc;
     }
   }
   return rc;
