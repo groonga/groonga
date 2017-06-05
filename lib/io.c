@@ -1690,6 +1690,9 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
       SERR("CreateFile(<%s>, <%s>) failed",
            path, flags_description);
       goto exit;
+    } else {
+      GRN_LOG(ctx, GRN_LOG_INFO,
+              "[io][open] file is created on CreateFile: <%s>", path);
     }
 
     if (grn_io_use_sparse) {
@@ -1726,6 +1729,9 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
       SERR("CreateFile(<%s>, <O_RDWR|O_TRUNC>) failed",
            path);
       goto exit;
+    } else {
+      GRN_LOG(ctx, GRN_LOG_INFO,
+              "[io][open] file is truncated: <%s>", path);
     }
     goto exit;
   }
@@ -1738,6 +1744,9 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
     SERR("CreateFile(<%s>, <O_RDWR>) failed",
          path);
     goto exit;
+  } else {
+    GRN_LOG(ctx, GRN_LOG_INFO,
+            "[io][open] file is created: <%s>", path);
   }
 
 exit :
