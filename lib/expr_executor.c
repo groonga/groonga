@@ -17,6 +17,7 @@
 */
 
 #include "grn.h"
+#include "grn_ctx_impl.h"
 #include "grn_expr_executor.h"
 
 #ifdef GRN_WITH_ONIGMO
@@ -44,6 +45,10 @@ typedef union {
     grn_obj *normalizer;
   } simple_regexp;
 #endif /* GRN_SUPPORT_REGEXP */
+  struct {
+    grn_proc_ctx proc_ctx;
+    int n_args;
+  } proc;
   struct {
     grn_bool need_exec;
     grn_obj result_buffer;
@@ -406,6 +411,111 @@ grn_expr_executor_fin_simple_regexp(grn_ctx *ctx,
 #endif /* GRN_SUPPORT_REGEXP */
 
 static grn_bool
+grn_expr_executor_is_proc(grn_ctx *ctx, grn_obj *expr)
+{
+  grn_expr *e = (grn_expr *)expr;
+  grn_obj *first;
+  grn_proc *proc;
+
+  if (e->codes_curr < 2) {
+    return GRN_FALSE;
+  }
+
+  first = e->codes[0].value;
+  if (!grn_obj_is_function_proc(ctx, first)) {
+    return GRN_FALSE;
+  }
+
+  proc = (grn_proc *)first;
+  if (!(proc->funcs[PROC_INIT] &&
+        proc->funcs[PROC_NEXT])) {
+    return GRN_FALSE;
+  }
+
+  if (e->codes[e->codes_curr - 1].op != GRN_OP_CALL) {
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
+}
+
+static void
+grn_expr_executor_init_proc(grn_ctx *ctx,
+                            grn_expr_executor *executor)
+{
+  grn_proc_ctx *proc_ctx = &(executor->data.proc.proc_ctx);
+  grn_expr *expr;
+  grn_proc *proc;
+
+  expr = (grn_expr *)(executor->expr);
+  proc = (grn_proc *)(expr->codes[0].value);
+  proc_ctx->proc = proc;
+  proc_ctx->caller = executor->expr;
+  proc_ctx->phase = PROC_INIT;
+
+  executor->data.proc.n_args = expr->codes[expr->codes_curr - 1].nargs - 1;
+
+  proc->funcs[PROC_INIT](ctx, 0, NULL, &(proc_ctx->user_data));
+}
+
+static grn_obj *
+grn_expr_executor_exec_proc(grn_ctx *ctx,
+                            grn_expr_executor *executor,
+                            grn_id id)
+{
+  grn_proc_ctx *proc_ctx = &(executor->data.proc.proc_ctx);
+  int n_args = executor->data.proc.n_args;
+  grn_proc *proc;
+  grn_expr *expr;
+  grn_obj **args;
+  uint32_t values_curr;
+  uint32_t values_tail;
+  grn_obj *result;
+
+  proc = proc_ctx->proc;
+  proc_ctx->phase = PROC_NEXT;
+  GRN_RECORD_SET(ctx, executor->variable, id);
+
+  expr = (grn_expr *)(executor->expr);
+  values_curr = expr->values_curr;
+  values_tail = expr->values_tail;
+
+  expr->codes += 1;
+  expr->codes_curr -= 2;
+  grn_expr_exec(ctx, executor->expr, 0);
+  expr->codes_curr += 2;
+  expr->codes -= 1;
+
+  args = ctx->impl->stack + ctx->impl->stack_curr;
+  ctx->impl->stack_curr += n_args;
+  expr->values_curr = expr->values_tail;
+  result = proc->funcs[PROC_NEXT](ctx,
+                                  n_args,
+                                  args,
+                                  &(proc_ctx->user_data));
+  ctx->impl->stack_curr -= n_args;
+
+  expr->values_tail = values_tail;
+  expr->values_curr = values_curr;
+
+  return result;
+}
+
+static void
+grn_expr_executor_fin_proc(grn_ctx *ctx,
+                           grn_expr_executor *executor)
+{
+  grn_proc_ctx *proc_ctx = &(executor->data.proc.proc_ctx);
+  grn_proc *proc;
+
+  proc = proc_ctx->proc;
+  proc_ctx->phase = PROC_FIN;
+  if (proc->funcs[PROC_FIN]) {
+    proc->funcs[PROC_FIN](ctx, 0, NULL, &(proc_ctx->user_data));
+  }
+}
+
+static grn_bool
 grn_expr_executor_is_simple_condition(grn_ctx *ctx, grn_obj *expr)
 {
   grn_expr *e = (grn_expr *)expr;
@@ -639,6 +749,10 @@ grn_expr_executor_open(grn_ctx *ctx, grn_obj *expr)
     executor->exec = grn_expr_executor_exec_simple_regexp;
     executor->fin = grn_expr_executor_fin_simple_regexp;
 #endif /* GRN_SUPPORT_REGEXP */
+  } else if (grn_expr_executor_is_proc(ctx, expr)) {
+    grn_expr_executor_init_proc(ctx, executor);
+    executor->exec = grn_expr_executor_exec_proc;
+    executor->fin = grn_expr_executor_fin_proc;
   } else if (grn_expr_executor_is_simple_condition(ctx, expr)) {
     grn_expr_executor_init_simple_condition(ctx, executor);
     executor->exec = grn_expr_executor_exec_simple_condition;

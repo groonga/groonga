@@ -1451,15 +1451,27 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   pctx.caller = caller;
   pctx.user_data.ptr = NULL;
   if (p->funcs[PROC_INIT]) {
-    obj = p->funcs[PROC_INIT](ctx, nargs, args, &pctx.user_data);
+    grn_obj *sub_obj;
+    sub_obj = p->funcs[PROC_INIT](ctx, nargs, args, &pctx.user_data);;
+    if (sub_obj) {
+      obj = sub_obj;
+    }
   }
   pctx.phase = PROC_NEXT;
   if (p->funcs[PROC_NEXT]) {
-    obj = p->funcs[PROC_NEXT](ctx, nargs, args, &pctx.user_data);
+    grn_obj *sub_obj;
+    sub_obj = p->funcs[PROC_NEXT](ctx, nargs, args, &pctx.user_data);
+    if (sub_obj) {
+      obj = sub_obj;
+    }
   }
   pctx.phase = PROC_FIN;
   if (p->funcs[PROC_FIN]) {
-    obj = p->funcs[PROC_FIN](ctx, nargs, args, &pctx.user_data);
+    grn_obj *sub_obj;
+    sub_obj = p->funcs[PROC_FIN](ctx, nargs, args, &pctx.user_data);
+    if (sub_obj) {
+      obj = sub_obj;
+    }
   }
   ctx->impl->stack_curr -= nargs;
   grn_ctx_push(ctx, obj);
