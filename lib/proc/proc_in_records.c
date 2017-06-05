@@ -316,13 +316,190 @@ func_in_records_fin(grn_ctx *ctx,
   return NULL;
 }
 
+static grn_rc
+selector_in_records(grn_ctx *ctx,
+                    grn_obj *table,
+                    grn_obj *index,
+                    int n_args,
+                    grn_obj **args,
+                    grn_obj *res,
+                    grn_operator op)
+{
+  grn_obj *condition_table;
+  grn_operator *condition_modes = NULL;
+  grn_obj condition_columns;
+  int i, nth;
+
+  /* TODO: Enable me when function call is supported. */
+  return GRN_FUNCTION_NOT_IMPLEMENTED;
+
+  if (n_args < 5) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "in_records(): wrong number of arguments (%d for 4..)",
+                     n_args - 1);
+    return ctx->rc;
+  }
+
+  condition_table = args[1];
+  if (!grn_obj_is_table(ctx, condition_table)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, condition_table);
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "in_records(): the first argument must be a table: <%.*s>",
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return ctx->rc;
+  }
+
+  condition_modes = GRN_PLUGIN_MALLOCN(ctx, grn_operator, (n_args - 2) / 3);
+  GRN_PTR_INIT(&condition_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  for (i = 2, nth = 0; i < n_args; i += 3, nth++) {
+    int mode_name_i = i + 1;
+    int column_name_i = i + 2;
+    grn_obj *mode_name;
+    grn_operator mode;
+    grn_obj *column_name;
+    grn_obj *condition_column;
+
+    mode_name = args[mode_name_i];
+    mode = grn_proc_option_value_mode(ctx,
+                                      mode_name,
+                                      GRN_OP_EQUAL,
+                                      "in_records()");
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+
+    condition_modes[nth] = mode;
+
+    column_name = args[column_name_i];
+    if (!grn_obj_is_text_family_bulk(ctx, column_name)) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, condition_table);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "in_records(): "
+                       "the %dth argument must be column name as string: "
+                       "<%.*s>",
+                       column_name_i,
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      goto exit;
+    }
+
+    condition_column = grn_obj_column(ctx, condition_table,
+                                      GRN_TEXT_VALUE(column_name),
+                                      GRN_TEXT_LEN(column_name));
+    if (!condition_column) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, condition_table);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "in_records(): "
+                       "the %dth argument must be existing column name: "
+                       "<%.*s>: <%.*s>",
+                       column_name_i,
+                       (int)GRN_TEXT_LEN(column_name),
+                       GRN_TEXT_VALUE(column_name),
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      goto exit;
+    }
+    GRN_PTR_PUT(ctx, &condition_columns, condition_column);
+  }
+
+  {
+    grn_obj condition_column_value;
+
+    GRN_VOID_INIT(&condition_column_value);
+    GRN_TABLE_EACH_BEGIN(ctx, condition_table, cursor, id) {
+      grn_obj *sub_res = NULL;
+
+      for (i = 2; i < n_args; i += 3) {
+        int nth = (i - 2) / 3;
+        grn_operator sub_op;
+        grn_obj *condition_column;
+        grn_operator condition_mode;
+        grn_obj *column = args[i];
+        grn_obj *expr;
+        grn_obj *variable;
+
+        if (nth == 0) {
+          sub_op = GRN_OP_OR;
+        } else {
+          sub_op = GRN_OP_AND;
+        }
+
+        condition_column = GRN_PTR_VALUE_AT(&condition_columns, nth);
+        condition_mode = condition_modes[nth];
+
+        GRN_BULK_REWIND(&condition_column_value);
+        grn_obj_get_value(ctx,
+                          condition_column,
+                          id,
+                          &condition_column_value);
+
+        GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expr, variable);
+        if (!expr) {
+          GRN_PLUGIN_ERROR(ctx,
+                           GRN_INVALID_ARGUMENT,
+                           "in_records(): failed to create expression");
+          GRN_OBJ_FIN(ctx, &condition_column_value);
+          if (sub_res) {
+            grn_obj_close(ctx, sub_res);
+          }
+          goto exit;
+        }
+        grn_expr_append_obj(ctx, expr, column, GRN_OP_GET_VALUE, 1);
+        grn_expr_append_obj(ctx, expr, &condition_column_value, GRN_OP_PUSH, 1);
+        grn_expr_append_op(ctx, expr, condition_mode, 2);
+        sub_res = grn_table_select(ctx, table, expr, sub_res, sub_op);
+        grn_obj_close(ctx, expr);
+      }
+
+      if (sub_res) {
+        grn_table_setoperation(ctx, res, sub_res, res, op);
+        grn_obj_close(ctx, sub_res);
+      }
+    } GRN_TABLE_EACH_END(ctx, cursor);
+    GRN_OBJ_FIN(ctx, &condition_column_value);
+  }
+
+exit :
+  GRN_PLUGIN_FREE(ctx, condition_modes);
+
+  for (i = 2; i < n_args; i += 3) {
+    int nth = (i - 2) / 3;
+    grn_obj *condition_column;
+    condition_column = GRN_PTR_VALUE_AT(&condition_columns, nth);
+    if (condition_column && condition_column->header.type == GRN_ACCESSOR) {
+      grn_obj_unlink(ctx, condition_column);
+    }
+  }
+  GRN_OBJ_FIN(ctx, &condition_columns);
+
+  return ctx->rc;
+}
+
 void
 grn_proc_init_in_records(grn_ctx *ctx)
 {
-  grn_proc_create(ctx, "in_records", -1, GRN_PROC_FUNCTION,
-                  func_in_records_init,
-                  func_in_records_next,
-                  func_in_records_fin,
-                  0,
-                  NULL);
+  grn_obj *selector_proc;
+
+  selector_proc = grn_proc_create(ctx, "in_records", -1, GRN_PROC_FUNCTION,
+                                  func_in_records_init,
+                                  func_in_records_next,
+                                  func_in_records_fin,
+                                  0,
+                                  NULL);
+  grn_proc_set_selector(ctx, selector_proc, selector_in_records);
+  grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_NOP);
 }
