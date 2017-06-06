@@ -64,6 +64,17 @@ logger_log(mrb_state *mrb, mrb_value self)
   return self;
 }
 
+static mrb_value
+logger_path(mrb_state *mrb, mrb_value self)
+{
+  char *path;
+
+  mrb_get_args(mrb, "z", &path);
+  grn_default_logger_set_path(path);
+
+  return self;
+}
+
 void
 grn_mrb_logger_init(grn_ctx *ctx)
 {
@@ -79,6 +90,7 @@ grn_mrb_logger_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "need_log?", logger_need_log_p, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "log", logger_log, MRB_ARGS_REQ(5));
+  mrb_define_method(mrb, klass, "path=", logger_path, MRB_ARGS_REQ(1));
 
   grn_mrb_load(ctx, "logger/level.rb");
   grn_mrb_load(ctx, "logger.rb");
