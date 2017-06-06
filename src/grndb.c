@@ -120,8 +120,38 @@ int
 main(int argc, char **argv)
 {
   int exit_code = EXIT_SUCCESS;
+  const char *log_path = GRN_LOG_PATH;
 
-  grn_default_logger_set_path(GRN_LOG_PATH);
+  {
+    int i;
+    for (i = 1; i < argc; i++) {
+      const char *arg = argv[i];
+
+      if (arg[0] != '-') {
+        continue;
+      }
+
+      if (arg[1] == '-' && arg[2] == '\0') {
+        break;
+      }
+
+      if (strcmp(arg, "--log-path") == 0) {
+        if (i + 1 < argc) {
+          log_path = argv[i + 1];
+        } else {
+          break;
+        }
+#define log_path_equal_prefix "--log-path="
+      } else if (strncmp(arg,
+                         log_path_equal_prefix,
+                         strlen(log_path_equal_prefix)) == 0) {
+        log_path = arg + strlen(log_path_equal_prefix);
+      }
+#undef log_path_equal_prefix
+    }
+  }
+
+  grn_default_logger_set_path(log_path);
 
   if (grn_init() != GRN_SUCCESS) {
     return EXIT_FAILURE;

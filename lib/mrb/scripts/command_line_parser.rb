@@ -30,6 +30,7 @@ module Groonga
 
     def add_command(name)
       command = Command.new(@program_name, name)
+      setup_common_options(command.options)
       yield(command)
       @commands << command
     end
@@ -81,10 +82,17 @@ module Groonga
     private
     def setup_options
       @options.banner = "Usage: #{@program_name} [OPTIONS]"
+      setup_common_options(@options)
       @options.on("-h", "--help", "Display this help message.",
                   :tail => true) do
         $stdout.puts(help_message)
       end
+    end
+
+    def setup_common_options(options)
+      options.string("--log-path",
+                     "Change log path (#{Logger.default_path})",
+                     default: Logger.default_path)
     end
 
     def find_command(name)
