@@ -1452,7 +1452,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   pctx.user_data.ptr = NULL;
   if (p->funcs[PROC_INIT]) {
     grn_obj *sub_obj;
-    sub_obj = p->funcs[PROC_INIT](ctx, nargs, args, &pctx.user_data);;
+    sub_obj = p->funcs[PROC_INIT](ctx, nargs, args, &pctx.user_data);
     if (sub_obj) {
       obj = sub_obj;
     }
