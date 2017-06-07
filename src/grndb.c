@@ -121,6 +121,7 @@ main(int argc, char **argv)
 {
   int exit_code = EXIT_SUCCESS;
   const char *log_path = GRN_LOG_PATH;
+  grn_log_level log_level = GRN_LOG_NOTICE;
 
   {
     int i;
@@ -148,6 +149,25 @@ main(int argc, char **argv)
         log_path = arg + strlen(log_path_equal_prefix);
       }
 #undef log_path_equal_prefix
+
+      if (strcmp(arg, "--log-level") == 0) {
+        if (i + 1 < argc) {
+          if (grn_log_level_parse(argv[i + 1], &log_level) == GRN_TRUE) {
+            grn_default_logger_set_max_level(log_level);
+          }
+        } else {
+          break;
+        }
+#define log_level_equal_prefix "--log-level="
+      } else if (strncmp(arg,
+                         log_level_equal_prefix,
+                         strlen(log_level_equal_prefix)) == 0) {
+        if (grn_log_level_parse(arg + strlen(log_level_equal_prefix), &log_level) == GRN_TRUE) {
+          grn_default_logger_set_max_level(log_level);
+        }
+      }
+#undef log_level_equal_prefix
+
     }
   }
 
