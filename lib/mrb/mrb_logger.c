@@ -35,7 +35,7 @@ logger_s_get_default_path(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-logger_s_get_default_log_level(mrb_state *mrb, mrb_value self)
+logger_s_get_default_level(mrb_state *mrb, mrb_value self)
 {
   return mrb_str_new_cstr(mrb,
                           grn_log_level_to_string(grn_default_logger_get_max_level()));
@@ -83,8 +83,8 @@ grn_mrb_logger_init(grn_ctx *ctx)
 
   mrb_define_singleton_method(mrb, (struct RObject *)klass, "default_path",
                               logger_s_get_default_path, MRB_ARGS_NONE());
-  mrb_define_singleton_method(mrb, (struct RObject *)klass, "default_log_level",
-                              logger_s_get_default_log_level, MRB_ARGS_NONE());
+  mrb_define_singleton_method(mrb, (struct RObject *)klass, "default_level",
+                              logger_s_get_default_level, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "need_log?", logger_need_log_p, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "log", logger_log, MRB_ARGS_REQ(5));
