@@ -121,7 +121,7 @@ main(int argc, char **argv)
 {
   int exit_code = EXIT_SUCCESS;
   const char *log_path = GRN_LOG_PATH;
-  grn_log_level log_level = GRN_LOG_NOTICE;
+  grn_log_level log_level = GRN_LOG_DEFAULT_LEVEL;
 
   {
     int i;
