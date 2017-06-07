@@ -37,8 +37,12 @@ logger_s_get_default_path(mrb_state *mrb, mrb_value self)
 static mrb_value
 logger_s_get_default_level(mrb_state *mrb, mrb_value self)
 {
-  return mrb_str_new_cstr(mrb,
-                          grn_log_level_to_string(grn_default_logger_get_max_level()));
+  mrb_value mrb_level_class;
+  mrb_value mrb_level;
+
+  mrb_level_class = mrb_const_get(mrb, self, mrb_intern_lit(mrb, "Level"));
+  mrb_level = mrb_fixnum_value(grn_default_logger_get_max_level());
+  return mrb_funcall(mrb, mrb_level_class, "find", 1, mrb_level);
 }
 
 static mrb_value

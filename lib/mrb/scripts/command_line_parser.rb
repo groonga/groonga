@@ -93,9 +93,10 @@ module Groonga
       options.string("--log-path",
                      "Change log path (#{Logger.default_path})",
                      default: Logger.default_path)
+      default_log_level = Logger.default_level
       options.string("--log-level",
-                     "Change log level (#{Logger.default_log_level.upcase})",
-                     default: Logger::Level.find(Logger.default_log_level.intern).to_i)
+                     "Change log level (#{default_log_level.name})",
+                     default: default_log_level)
     end
 
     def find_command(name)
