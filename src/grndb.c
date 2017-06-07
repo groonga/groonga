@@ -152,6 +152,7 @@ main(int argc, char **argv)
   }
 
   grn_default_logger_set_path(log_path);
+  grn_default_logger_set_max_level(GRN_LOG_INFO);
 
   if (grn_init() != GRN_SUCCESS) {
     return EXIT_FAILURE;
