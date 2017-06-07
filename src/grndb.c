@@ -20,6 +20,8 @@
 # define GROONGA_MAIN
 #endif /* WIN32 */
 
+#include <stdio.h>
+
 #include <grn_mrb.h>
 #include <grn_ctx_impl.h>
 #include <grn_ctx_impl_mrb.h>
@@ -121,7 +123,7 @@ main(int argc, char **argv)
 {
   int exit_code = EXIT_SUCCESS;
   const char *log_path = GRN_LOG_PATH;
-  grn_log_level log_level = GRN_LOG_DEFAULT_LEVEL;
+  const char *log_level_name = NULL;
 
   {
     int i;
@@ -136,42 +138,42 @@ main(int argc, char **argv)
         break;
       }
 
-      if (strcmp(arg, "--log-path") == 0) {
+#define log_path_prefix "--log-path"
+#define log_level_prefix "--log-level"
+      if (strcmp(arg, log_path_prefix) == 0) {
         if (i + 1 < argc) {
           log_path = argv[i + 1];
-        } else {
-          break;
+          i++;
         }
-#define log_path_equal_prefix "--log-path="
       } else if (strncmp(arg,
-                         log_path_equal_prefix,
-                         strlen(log_path_equal_prefix)) == 0) {
-        log_path = arg + strlen(log_path_equal_prefix);
+                         log_path_prefix "=",
+                         strlen(log_path_prefix "=")) == 0) {
+        log_path = arg + strlen(log_path_prefix "=");
+      } else if (strcmp(arg, log_level_prefix) == 0) {
+        if (i + 1 < argc) {
+          log_level_name = argv[i + 1];
+          i++;
+        }
+      } else if (strncmp(arg,
+                         log_level_prefix "=",
+                         strlen(log_level_prefix "=")) == 0) {
+        log_level_name = arg + strlen(log_level_prefix "=");
       }
 #undef log_path_equal_prefix
-
-      if (strcmp(arg, "--log-level") == 0) {
-        if (i + 1 < argc) {
-          if (grn_log_level_parse(argv[i + 1], &log_level) == GRN_TRUE) {
-            grn_default_logger_set_max_level(log_level);
-          }
-        } else {
-          break;
-        }
-#define log_level_equal_prefix "--log-level="
-      } else if (strncmp(arg,
-                         log_level_equal_prefix,
-                         strlen(log_level_equal_prefix)) == 0) {
-        if (grn_log_level_parse(arg + strlen(log_level_equal_prefix), &log_level) == GRN_TRUE) {
-          grn_default_logger_set_max_level(log_level);
-        }
-      }
 #undef log_level_equal_prefix
-
     }
   }
 
   grn_default_logger_set_path(log_path);
+  if (log_level_name) {
+    grn_log_level log_level = GRN_LOG_DEFAULT_LEVEL;
+    if (!grn_log_level_parse(log_level_name, &log_level)) {
+      fprintf(stderr, "%s: failed to parse log level: <%s>\n",
+              argv[0], log_level_name);
+      return EXIT_FAILURE;
+    }
+    grn_default_logger_set_max_level(log_level);
+  }
 
   if (grn_init() != GRN_SUCCESS) {
     return EXIT_FAILURE;
