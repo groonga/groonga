@@ -219,7 +219,6 @@ test_expr(void)
   grn_test_assert(grn_obj_close(context, &buf));
 }
 
-#ifdef ENABLE_PERSISTENT_EXPR
 void
 test_persistent_expr(void)
 {
@@ -277,7 +276,8 @@ test_persistent_expr(void)
     expr = NULL;
   }
   grn_test_assert(grn_obj_close(context, &buf));
-
+  grn_test_assert(grn_obj_close(context, &r1));
+  grn_test_assert(grn_obj_close(context, &r2));
   grn_db_close(context, database);
   database = grn_db_open(context, path);
 
@@ -304,11 +304,9 @@ test_persistent_expr(void)
     // printf("et=%zu\n", et);
     cut_assert_equal_uint(0, nerr);
     grn_test_assert(grn_table_cursor_close(context, tc));
+    grn_test_assert(grn_obj_remove(context, expr));
   }
-  grn_test_assert(grn_obj_close(context, &r1));
-  grn_test_assert(grn_obj_close(context, &r2));
 }
-#endif /* ENABLE_PERSISTENT_EXPR */
 
 void
 test_expr_query(void)

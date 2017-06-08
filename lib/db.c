@@ -9752,6 +9752,27 @@ _grn_obj_remove_index(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
 }
 
 static grn_rc
+_grn_obj_remove_expr(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id)
+{
+  grn_rc rc = GRN_SUCCESS;
+  uint8_t type;
+
+  type = obj->header.type;
+
+  rc = grn_obj_close(ctx, obj);
+  if (rc != GRN_SUCCESS) { return rc; }
+
+  rc = _grn_obj_remove_spec(ctx, db, id, type);
+  if (rc != GRN_SUCCESS) { return rc; }
+  rc = grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
+  if (rc != GRN_SUCCESS) { return rc; }
+
+  grn_obj_touch(ctx, db, NULL);
+
+  return rc;
+}
+
+static grn_rc
 _grn_obj_remove_db_obj(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
                        const char *path)
 {
@@ -9852,6 +9873,9 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj, grn_bool dependent)
   case GRN_COLUMN_INDEX :
     rc = _grn_obj_remove_index(ctx, obj, db, id, path);
     is_temporary_open_target = GRN_TRUE;
+    break;
+  case GRN_EXPR :
+    rc = _grn_obj_remove_expr(ctx, obj, db, id);
     break;
   default :
     if (GRN_DB_OBJP(obj)) {
@@ -10499,6 +10523,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                                                   NULL);
                     u = (uint8_t *)p;
                     vp->ptr = grn_expr_open(ctx, spec, u, u + size);
+                    UNPACK_INFO();
                   }
                   break;
                 }
