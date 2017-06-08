@@ -94,6 +94,19 @@ Here is an example that checks only ``Entries.name`` column::
 
   % grndb check --target Entries.name /var/lib/groonga/db/db
 
+``--log-level``
+"""""""""""""""
+
+.. versionadded:: 7.0.4
+
+It specifies a log level of ``grndb`` log.
+
+Here is an example that specifies ``--log-level`` option::
+
+  % grndb check --log-level info --log-path /var/log/groonga/grndb.log /var/lib/groonga/db/db
+
+See :doc:`/reference/commands/log_level` to know about supported log level.
+
 ``--log-path``
 """"""""""""""
 
@@ -129,6 +142,19 @@ status. You can know whether the database is recoverable or not by
    is opened, this command may break the database.
 
 ``recover`` has some options.
+
+``--log-level``
+"""""""""""""""
+
+.. versionadded:: 7.0.4
+
+It specifies a log level of ``grndb`` log.
+
+Here is an example that specifies ``--log-level`` option::
+
+  % grndb recover --log-level info --log-path /var/log/groonga/grndb.log /var/lib/groonga/db/db
+
+See :doc:`/reference/commands/log_level` to know about supported log level.
 
 ``--log-path``
 """"""""""""""
