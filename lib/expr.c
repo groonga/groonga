@@ -1078,6 +1078,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       break;
     case GRN_OP_TABLE_CREATE :
     case GRN_OP_EXPR_GET_VAR :
+    case GRN_OP_EXPR_EXEC :
     case GRN_OP_MATCH :
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
@@ -3028,6 +3029,24 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           if (!grn_obj_is_true(ctx, v)) {
             code += code->nargs;
           }
+        }
+        code++;
+        break;
+      case GRN_OP_EXPR_EXEC :
+        {
+          grn_obj *expr;
+          grn_obj *record, *expr_record;
+          expr = code->value;
+          record = v0;
+          expr_record = grn_expr_get_var_by_offset(ctx, expr, 0);
+          if (expr_record) {
+            if (expr_record->header.domain != record->header.domain) {
+              grn_obj_reinit(ctx, expr_record, record->header.domain, 0);
+            }
+            GRN_RECORD_SET(ctx, expr_record, GRN_RECORD_VALUE(record));
+          }
+          res = grn_expr_exec(ctx, expr, 0);
+          PUSH1(res);
         }
         code++;
         break;
@@ -7419,8 +7438,17 @@ done :
       goto exit;
     }
     if ((obj = resolve_top_level_name(ctx, name, name_size))) {
-      if (obj->header.type == GRN_ACCESSOR) {
-        grn_expr_take_obj(ctx, q->e, obj);
+      if (obj->header.type == GRN_EXPR) {
+        PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
+        grn_expr_append_obj(ctx, q->e, obj, GRN_OP_EXPR_EXEC, 1);
+        goto exit;
+      } else {
+        if (obj->header.type == GRN_ACCESSOR) {
+          grn_expr_take_obj(ctx, q->e, obj);
+        }
+        PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
+        grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
+        goto exit;
       }
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
