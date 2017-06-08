@@ -37,6 +37,7 @@ void test_set_value_with_implicit_variable_reference(void);
 void test_set_value_with_query(void);
 void test_proc_call(void);
 void test_score_set(void);
+void test_expr_exec_operator(void);
 void test_key_equal(void);
 void test_value_access(void);
 void test_snip(void);
@@ -593,6 +594,38 @@ test_score_set(void)
                          res2,
                          "body");
   grn_test_assert(grn_obj_close(&context, res2));
+}
+
+void
+test_expr_exec_operator(void)
+{
+  grn_obj *v, *v2;
+  grn_obj *sub_cond;
+
+  prepare_data();
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, cond, v);
+  cut_assert_not_null(cond);
+  cut_assert_not_null(v);
+  PARSE(cond, "size >= 4", GRN_EXPR_SYNTAX_SCRIPT);
+
+  GRN_EXPR_CREATE_FOR_QUERY(&context, docs, sub_cond, v2);
+  cut_assert_not_null(sub_cond);
+  cut_assert_not_null(v2);
+  PARSE(sub_cond, "size < 7", GRN_EXPR_SYNTAX_SCRIPT);
+
+  grn_expr_append_obj(&context, cond, sub_cond, GRN_OP_EXPR_EXEC, 1);
+  grn_expr_append_op(&context, cond, GRN_OP_AND, 2);
+
+  res = grn_table_select(&context, docs, cond, NULL, GRN_OP_OR);
+  cut_assert_not_null(res);
+  grn_test_assert_select(&context,
+                         gcut_take_new_list_string("hoge",
+                                                   NULL),
+                         res,
+                         "body");
+  grn_test_assert(grn_obj_close(&context, sub_cond));
+  sub_cond = NULL;
 }
 
 void
