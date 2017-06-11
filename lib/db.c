@@ -8102,6 +8102,15 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
       }
       grn_bulk_write(ctx, valuebuf, DB_OBJ(obj)->source, DB_OBJ(obj)->source_size);
       break;
+    case GRN_INFO_EXPRESSION :
+      if (!valuebuf) {
+        if (!(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, 0))) {
+          ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
+          goto exit;
+        }
+      }
+      valuebuf = ((grn_ii *)obj)->expression;
+      break;
     case GRN_INFO_DEFAULT_TOKENIZER :
       switch (DB_OBJ(obj)->header.type) {
       case GRN_TABLE_HASH_KEY :
@@ -8439,6 +8448,15 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
     grn_token_filters_pack(ctx, &(((grn_dat *)obj)->token_filters), b);
     grn_vector_delimit(ctx, &v, 0, 0);
     break;
+  case GRN_COLUMN_INDEX :
+    if (obj->header.flags & GRN_OBJ_WITH_EXPRESSION) {
+      grn_ii *ii = (grn_ii *)obj;
+      if (ii->expression) {
+        grn_expr_pack(ctx, b, ii->expression);
+      }
+      grn_vector_delimit(ctx, &v, 0, 0);
+    }
+    break;
   case GRN_EXPR :
     grn_expr_pack(ctx, b, (grn_obj *)obj);
     grn_vector_delimit(ctx, &v, 0, 0);
@@ -8576,6 +8594,10 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   grn_bool lexicon_have_tokenizer;
   grn_id *source_ids;
   int i, n_source_ids;
+
+  if ((obj->header.flags & GRN_OBJ_WITH_EXPRESSION)) {
+    goto exit;
+  }
 
   lexicon_id = obj->header.domain;
   lexicon = grn_ctx_at(ctx, lexicon_id);
@@ -8805,6 +8827,62 @@ grn_obj_set_info_token_filters(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
+static grn_rc
+grn_obj_set_info_expression(grn_ctx *ctx,
+                            grn_obj *obj,
+                            grn_obj *expression)
+{
+  grn_ii *ii = (grn_ii *)obj;
+
+  if (obj->header.type != GRN_COLUMN_INDEX) {
+    grn_obj type_name;
+
+    GRN_TEXT_INIT(&type_name, 0);
+    grn_inspect_type(ctx, &type_name, obj->header.type);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[info][set][expression] target object must be "
+        "GRN_COLUMN_INDEX: %.*s",
+        (int)GRN_TEXT_LEN(&type_name), GRN_TEXT_VALUE(&type_name));
+    GRN_OBJ_FIN(ctx, &type_name);
+    return ctx->rc;
+  }
+
+  if (!(obj->header.flags & GRN_OBJ_WITH_EXPRESSION)) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[info][set][expression] target object must have "
+        "GRN_OBJ_WITH_EXPRESSION");
+    return ctx->rc;
+  }
+
+  if (ii->expression) {
+    grn_obj_close(ctx, ii->expression);
+  }
+  ii->expression = expression;
+
+  {
+    grn_obj *expression_raw;
+    grn_obj name_buf;
+    GRN_TEXT_INIT(&name_buf, 0);
+    expression_raw = grn_expr_get_var(ctx, expression,
+                                      GRN_COLUMN_EXPRESSION_RAW,
+                                      GRN_COLUMN_EXPRESSION_RAW_LEN);
+    if (expression_raw) {
+      GRN_TEXT_PUT(ctx, &name_buf,
+                   GRN_TEXT_VALUE(expression_raw),
+                   GRN_TEXT_LEN(expression_raw));
+    }
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:%u:set_expression %.*s",
+            DB_OBJ(obj)->id,
+            (int)GRN_BULK_VSIZE(&name_buf),
+            GRN_BULK_HEAD(&name_buf));
+    GRN_OBJ_FIN(ctx, &name_buf);
+  }
+
+  grn_obj_spec_save(ctx, DB_OBJ(obj));
+
+  return GRN_SUCCESS;
+}
+
 grn_rc
 grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
 {
@@ -8821,6 +8899,9 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
       goto exit;
     }
     rc = grn_obj_set_info_source(ctx, obj, value);
+    break;
+  case GRN_INFO_EXPRESSION :
+    rc = grn_obj_set_info_expression(ctx, obj, value);
     break;
   case GRN_INFO_DEFAULT_TOKENIZER :
     if (!value || DB_OBJ(value)->header.type == GRN_PROC) {
@@ -10481,6 +10562,20 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                   {
                     grn_obj *table = grn_ctx_at(ctx, spec->header.domain);
                     vp->ptr = (grn_obj *)grn_ii_open(ctx, buffer, table);
+                    if (spec->header.flags & GRN_OBJ_WITH_EXPRESSION) {
+                      uint8_t *u;
+                      grn_ii *ii = (grn_ii *)(vp->ptr);
+                      if (grn_vector_size(ctx, &v) > GRN_SERIALIZED_SPEC_INDEX_EXPR) {
+                        size = grn_vector_get_element(ctx,
+                                                      &v,
+                                                      GRN_SERIALIZED_SPEC_INDEX_EXPR,
+                                                      &p,
+                                                      NULL,
+                                                      NULL);
+                        u = (uint8_t *)p;
+                        ii->expression = grn_expr_open(ctx, spec, u, u + size);
+                      }
+                    }
                   }
                   UNPACK_INFO();
                   break;
@@ -12534,6 +12629,7 @@ grn_column_find_index_data_column_equal(grn_ctx *ctx, grn_obj *obj,
     grn_obj *target = grn_ctx_at(ctx, data->target);
     int section;
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+    if (target->header.flags & GRN_OBJ_WITH_EXPRESSION) { continue; }
     if (obj->header.type != GRN_COLUMN_FIX_SIZE) {
       if (is_full_text_searchable_index(ctx, target)) { continue; }
     }
@@ -12672,6 +12768,7 @@ grn_column_find_index_data_column_range(grn_ctx *ctx, grn_obj *obj,
     int section;
     if (!target) { continue; }
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+    if (target->header.flags & GRN_OBJ_WITH_EXPRESSION) { continue; }
     section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
     if (section_buf) { *section_buf = section; }
     {

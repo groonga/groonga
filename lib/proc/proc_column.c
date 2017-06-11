@@ -58,6 +58,7 @@ grn_proc_column_parse_flags(grn_ctx *ctx,
     CHECK_FLAG(WITH_WEIGHT);
     CHECK_FLAG(WITH_POSITION);
     CHECK_FLAG(RING_BUFFER);
+    CHECK_FLAG(WITH_EXPRESSION);
     CHECK_FLAG(INDEX_SMALL);
     CHECK_FLAG(INDEX_MEDIUM);
 
@@ -178,14 +179,16 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_obj *flags_raw;
   grn_obj *type_raw;
   grn_obj *source_raw;
+  grn_obj *expression_raw;
   grn_column_flags flags;
   grn_obj *type = NULL;
 
-  table_raw  = grn_plugin_proc_get_var(ctx, user_data, "table", -1);
-  name       = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
-  flags_raw  = grn_plugin_proc_get_var(ctx, user_data, "flags", -1);
-  type_raw   = grn_plugin_proc_get_var(ctx, user_data, "type", -1);
-  source_raw = grn_plugin_proc_get_var(ctx, user_data, "source", -1);
+  table_raw      = grn_plugin_proc_get_var(ctx, user_data, "table", -1);
+  name           = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
+  flags_raw      = grn_plugin_proc_get_var(ctx, user_data, "flags", -1);
+  type_raw       = grn_plugin_proc_get_var(ctx, user_data, "type", -1);
+  source_raw     = grn_plugin_proc_get_var(ctx, user_data, "source", -1);
+  expression_raw = grn_plugin_proc_get_var(ctx, user_data, "expression", -1);
 
   table = grn_ctx_get(ctx, GRN_TEXT_VALUE(table_raw), GRN_TEXT_LEN(table_raw));
   if (!table) {
@@ -246,6 +249,80 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
     goto exit;
   }
 
+  if (GRN_TEXT_LEN(expression_raw) > 0) {
+    grn_rc rc;
+    grn_expr_flags expr_flags = GRN_EXPR_SYNTAX_SCRIPT;
+    grn_obj *expression;
+    grn_obj *record;
+    grn_obj *saved_expression_raw;
+
+    if (!(flags & GRN_OBJ_WITH_EXPRESSION)) {
+      grn_obj_remove(ctx, column);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[column][create] "
+                       "flags must have WITH_EXPRESSION");
+      succeeded = GRN_FALSE;
+      goto exit;
+    }
+
+    if (!grn_obj_is_table(ctx, type)) {
+      grn_obj_remove(ctx, column);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[column][create] "
+                       "type must be table");
+      succeeded = GRN_FALSE;
+      goto exit;
+    }
+
+    expression = grn_expr_create(ctx, NULL, 0);
+    if (!expression) {
+      grn_obj_remove(ctx, column);
+      succeeded = GRN_FALSE;
+      goto exit;
+    }
+    record = grn_expr_add_var(ctx, expression, NULL, 0);
+    GRN_RECORD_INIT(record, 0, grn_obj_id(ctx, type));
+
+    saved_expression_raw = grn_expr_add_var(ctx, expression,
+                                            GRN_COLUMN_EXPRESSION_RAW,
+                                            GRN_COLUMN_EXPRESSION_RAW_LEN);
+    GRN_TEXT_INIT(saved_expression_raw, 0);
+    GRN_TEXT_PUT(ctx, saved_expression_raw,
+                 GRN_TEXT_VALUE(expression_raw),
+                 GRN_TEXT_LEN(expression_raw));
+    grn_expr_parse(ctx,
+                   expression,
+                   GRN_TEXT_VALUE(expression_raw),
+                   GRN_TEXT_LEN(expression_raw),
+                   NULL,
+                   GRN_OP_MATCH,
+                   GRN_OP_AND,
+                   expr_flags);
+    if (ctx->rc != GRN_SUCCESS) {
+      grn_obj_close(ctx, expression);
+      grn_obj_remove(ctx, column);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[column][create] "
+                       "failed to parse expression: <%.*s>: %s",
+                       (int)GRN_TEXT_LEN(expression_raw),
+                       GRN_TEXT_VALUE(expression_raw),
+                       ctx->errbuf);
+      succeeded = GRN_FALSE;
+      goto exit;
+    }
+    grn_obj_set_info(ctx, column, GRN_INFO_EXPRESSION, expression);
+    rc = ctx->rc;
+    if (rc != GRN_SUCCESS) {
+      grn_obj_close(ctx, expression);
+      grn_obj_remove(ctx, column);
+      succeeded = GRN_FALSE;
+      goto exit;
+    }
+  }
+
   if (GRN_TEXT_LEN(source_raw) > 0) {
     grn_rc rc;
     grn_obj source_ids;
@@ -279,17 +356,18 @@ exit :
 void
 grn_proc_init_column_create(grn_ctx *ctx)
 {
-  grn_expr_var vars[5];
+  grn_expr_var vars[6];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "table", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "name", -1);
   grn_plugin_expr_var_init(ctx, &(vars[2]), "flags", -1);
   grn_plugin_expr_var_init(ctx, &(vars[3]), "type", -1);
   grn_plugin_expr_var_init(ctx, &(vars[4]), "source", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[5]), "expression", -1);
   grn_plugin_command_create(ctx,
                             "column_create", -1,
                             command_column_create,
-                            5,
+                            6,
                             vars);
 }
 

@@ -1,0 +1,19 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+
+column_create Terms memos_content \
+  COLUMN_INDEX|WITH_POSITION|WITH_EXPRESSION \
+  Memos content \
+  'html_untag(content)'
+
+load --table Memos
+[
+{"content": "G<b>roonga</b> is fast fulltext search engine"},
+{"content": "Mroonga is MySQL stroage engine using Groonga"}
+]
+
+select Memos --filter 'content @ "Groonga"'

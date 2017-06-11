@@ -31,6 +31,10 @@ extern "C" {
 #define GRN_SELECT_INTERNAL_VAR_CONDITION_LEN           \
   (sizeof(GRN_SELECT_INTERNAL_VAR_CONDITION) - 1)
 
+#define GRN_COLUMN_EXPRESSION_RAW     "$expression_raw"
+#define GRN_COLUMN_EXPRESSION_RAW_LEN           \
+  (sizeof(GRN_COLUMN_EXPRESSION_RAW) - 1)
+
 void grn_proc_init_from_env(void);
 
 GRN_VAR const char *grn_document_root;

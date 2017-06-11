@@ -40,6 +40,8 @@ struct _grn_ii {
   uint32_t n_elements;   /* Number of elements in postings */
                          /* rid, [sid], tf, [weight] and [pos] */
   struct grn_ii_header *header;
+
+  grn_obj *expression;
 };
 
 /* BGQ is buffer garbage queue? */

@@ -1,0 +1,25 @@
+table_create Users TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms users_name COLUMN_INDEX|WITH_POSITION|WITH_EXPRESSION Users name 'html_untag(name)'
+[[0,0.0,0.0],true]
+dump
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+column_create Terms users_name COLUMN_INDEX|WITH_POSITION|WITH_EXPRESSION Users name 'html_untag(name)'
+column_remove Terms users_name
+[[0,0.0,0.0],true]
+#|n| DDL:259:obj_remove Terms.users_name
+#|n| spec:257:update:Users.name:65(column:var_size):14(ShortText)
+#|n| spec:259:remove:Terms.users_name:72(column:index)
+dump
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
