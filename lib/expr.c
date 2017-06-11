@@ -318,11 +318,34 @@ grn_obj_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   if (GRN_DB_OBJP(obj)) {
     grn_text_benc(ctx, buf, DB_OBJ(obj)->id);
   } else {
-    // todo : support vector, query, accessor, snip..
-    uint32_t vs = GRN_BULK_VSIZE(obj);
+    // todo : support vector, query, snip..
+ 
     grn_text_benc(ctx, buf, obj->header.domain);
-    grn_text_benc(ctx, buf, vs);
-    if (vs) { GRN_TEXT_PUT(ctx, buf, GRN_BULK_HEAD(obj), vs); }
+    switch (obj->header.type) {
+    case GRN_ACCESSOR :
+      {
+        grn_accessor *a;
+        uint32_t n_accessors = 0;
+        for (a = (grn_accessor *)obj; a; a = a->next) {
+          n_accessors++;
+        }
+        grn_text_benc(ctx, buf, n_accessors);
+        for (a = (grn_accessor *)obj; a; a = a->next) {
+          grn_text_benc(ctx, buf, a->action);
+          grn_text_benc(ctx, buf, a->offset);
+          grn_text_benc(ctx, buf, grn_obj_id(ctx, a->obj));
+        }
+      }
+      break;
+    default :
+      {
+        uint32_t vs;
+        vs = GRN_BULK_VSIZE(obj);
+        grn_text_benc(ctx, buf, vs);
+        if (vs) { GRN_TEXT_PUT(ctx, buf, GRN_BULK_HEAD(obj), vs); }
+      }
+      break;
+    }
   }
 }
 
@@ -432,6 +455,38 @@ grn_expr_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, grn_obj *expr
           grn_id id;
           GRN_B_DEC(id, p);
           code->value = grn_ctx_at(ctx, id);
+        } else if (object_type == GRN_ACCESSOR) {
+          grn_accessor *prev_a = NULL;
+          grn_id domain;
+          uint32_t n_accessors, j;
+          GRN_B_DEC(domain, p);
+          GRN_B_DEC(n_accessors, p);
+          for (j = 0; j < n_accessors; j++) {
+            grn_id id;
+            grn_accessor *a;
+            a = GRN_MALLOCN(grn_accessor, 1);
+            if (!a) {
+              ERR(GRN_NO_MEMORY_AVAILABLE, "failed malloc for unpack accessor");
+              return p;
+            }
+            a->header.type = GRN_ACCESSOR;
+            a->header.impl_flags = GRN_OBJ_ALLOCATED;
+            a->header.flags = 0;
+            a->header.domain = GRN_ID_NIL;
+            a->range = GRN_ID_NIL;
+            GRN_B_DEC(a->action, p);
+            GRN_B_DEC(a->offset, p);
+            GRN_B_DEC(id, p);
+            a->obj = grn_ctx_at(ctx, id);
+            a->next = NULL;
+            if (j == 0) {
+              code->value = (grn_obj *)a;
+              prev_a = a;
+            } else {
+              prev_a->next = a;
+            }
+          }
+          grn_expr_take_obj(ctx, expr, code->value);
         } else {
           if (!(v = grn_expr_alloc_const(ctx, expr))) { return NULL; }
           p = grn_obj_unpack(ctx, p, pe, object_type, GRN_OBJ_EXPRCONST, v);
