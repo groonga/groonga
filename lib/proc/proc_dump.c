@@ -283,6 +283,30 @@ dump_index_column_sources(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
 }
 
 static void
+dump_index_column_expression(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
+{
+  grn_obj buf;
+  grn_obj *expression;
+  grn_obj *expression_raw;
+
+  GRN_OBJ_INIT(&buf, GRN_BULK, 0, GRN_ID_NIL);
+  expression = grn_obj_get_info(ctx, column, GRN_INFO_EXPRESSION, &buf);
+  expression_raw = grn_expr_get_var(ctx, expression,
+                                    GRN_COLUMN_EXPRESSION_RAW,
+                                    GRN_COLUMN_EXPRESSION_RAW_LEN);
+  if (expression_raw) {
+    GRN_TEXT_PUTC(ctx, dumper->output, ' ');
+    GRN_TEXT_PUTC(ctx, dumper->output, '\'');
+    GRN_TEXT_PUT(ctx,
+                 dumper->output,
+                 GRN_TEXT_VALUE(expression_raw),
+                 GRN_TEXT_LEN(expression_raw));
+    GRN_TEXT_PUTC(ctx, dumper->output, '\'');
+  }
+  grn_obj_close(ctx, &buf);
+}
+
+static void
 dump_column(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_obj *column)
 {
   grn_id type_id;
@@ -316,6 +340,9 @@ dump_column(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_obj *column)
   dump_obj_name(ctx, dumper, type);
   if (column->header.flags & GRN_OBJ_COLUMN_INDEX) {
     dump_index_column_sources(ctx, dumper, column);
+    if (column->header.flags & GRN_OBJ_WITH_EXPRESSION) {
+      dump_index_column_expression(ctx, dumper, column);
+    }
   }
   GRN_TEXT_PUTC(ctx, dumper->output, '\n');
 
