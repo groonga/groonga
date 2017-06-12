@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2016 Brazil
+  Copyright(C) 2014-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -123,6 +123,46 @@ grn_operator_to_string(grn_operator op)
   } else {
     return "unknown";
   }
+}
+
+grn_operator_exec_func *
+grn_operator_to_exec_func(grn_operator op)
+{
+  grn_operator_exec_func *func = NULL;
+
+  switch (op) {
+  case GRN_OP_EQUAL :
+    func = grn_operator_exec_equal;
+    break;
+  case GRN_OP_NOT_EQUAL :
+    func = grn_operator_exec_not_equal;
+    break;
+  case GRN_OP_LESS :
+    func = grn_operator_exec_less;
+    break;
+  case GRN_OP_GREATER :
+    func = grn_operator_exec_greater;
+    break;
+  case GRN_OP_LESS_EQUAL :
+    func = grn_operator_exec_less_equal;
+    break;
+  case GRN_OP_GREATER_EQUAL :
+    func = grn_operator_exec_greater_equal;
+    break;
+  case GRN_OP_MATCH :
+    func = grn_operator_exec_match;
+    break;
+  case GRN_OP_PREFIX :
+    func = grn_operator_exec_prefix;
+    break;
+  case GRN_OP_REGEXP :
+    func = grn_operator_exec_regexp;
+    break;
+  default :
+    break;
+  }
+
+  return func;
 }
 
 #define DO_EQ_SUB do {\
