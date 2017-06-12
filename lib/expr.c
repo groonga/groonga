@@ -5225,44 +5225,129 @@ grn_scan_info_build_simple_open(grn_ctx *ctx, int *n, grn_operator logical_op)
 }
 
 static scan_info **
-grn_scan_info_build_simple(grn_ctx *ctx, grn_obj *expr, int *n,
-                           grn_operator logical_op, grn_bool record_exist)
+grn_scan_info_build_simple_value(grn_ctx *ctx,
+                                 grn_obj *expr,
+                                 int *n,
+                                 grn_operator logical_op,
+                                 grn_bool record_exist)
 {
   grn_expr *e = (grn_expr *)expr;
+  scan_info **sis;
+  scan_info *si;
+  grn_expr_code *target = e->codes;
 
-  if (e->codes_curr == 1) {
-    scan_info **sis;
-    scan_info *si;
-    grn_expr_code *target = e->codes;
+  switch (target->op) {
+  case GRN_OP_PUSH :
+  case GRN_OP_GET_VALUE :
+    break;
+  default :
+    return NULL;
+    break;
+  }
 
-    switch (target->op) {
-    case GRN_OP_PUSH :
-    case GRN_OP_GET_VALUE :
-      break;
-    default :
-      return NULL;
-      break;
-    }
+  sis = grn_scan_info_build_simple_open(ctx, n, logical_op);
+  if (!sis) {
+    return NULL;
+  }
 
-    sis = grn_scan_info_build_simple_open(ctx, n, logical_op);
-    if (!sis) {
-      return NULL;
-    }
+  si = sis[0];
+  si->end = 0;
+  si->op = target->op;
+  return sis;
+}
 
-    si = sis[0];
-    si->end = 0;
-    si->op = target->op;
-    return sis;
-  } else if (e->codes_curr == 3) {
-    grn_expr_code *target;
-    grn_expr_code *constant;
-    grn_expr_code *operator;
-    scan_info **sis;
-    scan_info *si;
+static scan_info **
+grn_scan_info_build_simple_operation(grn_ctx *ctx,
+                                     grn_obj *expr,
+                                     int *n,
+                                     grn_operator logical_op,
+                                     grn_bool record_exist)
+{
+  grn_expr *e = (grn_expr *)expr;
+  grn_expr_code *target;
+  grn_expr_code *constant;
+  grn_expr_code *operator;
+  scan_info **sis;
+  scan_info *si;
 
-    target   = e->codes + 0;
-    constant = e->codes + 1;
-    operator = e->codes + 2;
+  target   = e->codes + 0;
+  constant = e->codes + 1;
+  operator = e->codes + 2;
+
+  if (target->op != GRN_OP_GET_VALUE) {
+    return NULL;
+  }
+  if (target->nargs != 1) {
+    return NULL;
+  }
+  if (!target->value) {
+    return NULL;
+  }
+
+  if (constant->op != GRN_OP_PUSH) {
+    return NULL;
+  }
+  if (constant->nargs != 1) {
+    return NULL;
+  }
+  if (!constant->value) {
+    return NULL;
+  }
+
+  if (operator->nargs != 2) {
+    return NULL;
+  }
+  switch (operator->op) {
+  case GRN_OP_MATCH :
+  case GRN_OP_NEAR :
+  case GRN_OP_SIMILAR :
+  case GRN_OP_PREFIX :
+  case GRN_OP_SUFFIX :
+  case GRN_OP_EQUAL :
+  case GRN_OP_NOT_EQUAL :
+  case GRN_OP_LESS :
+  case GRN_OP_GREATER :
+  case GRN_OP_LESS_EQUAL :
+  case GRN_OP_GREATER_EQUAL :
+  case GRN_OP_TERM_EXTRACT :
+  case GRN_OP_REGEXP :
+    break;
+  default :
+    return NULL;
+    break;
+  }
+
+  sis = grn_scan_info_build_simple_open(ctx, n, logical_op);
+  if (!sis) {
+    return NULL;
+  }
+
+  si = sis[0];
+  si->end = 2;
+  si->op = operator->op;
+  si->args[si->nargs++] = target->value;
+  si->args[si->nargs++] = constant->value;
+  scan_info_build_match(ctx, si);
+  return sis;
+}
+
+static scan_info **
+grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
+                                          grn_obj *expr,
+                                          int *n,
+                                          grn_operator logical_op,
+                                          grn_bool record_exist)
+{
+  grn_expr *e = (grn_expr *)expr;
+  scan_info **sis = NULL;
+  int n_sis = 0;
+  int i;
+  int nth_sis;
+
+  for (i = 0, nth_sis = 0; i < e->codes_curr; i += 3, nth_sis++) {
+    grn_expr_code *target = e->codes + i;
+    grn_expr_code *constant = e->codes + i + 1;
+    grn_expr_code *operator = e->codes + i + 2;
 
     if (target->op != GRN_OP_GET_VALUE) {
       return NULL;
@@ -5307,18 +5392,94 @@ grn_scan_info_build_simple(grn_ctx *ctx, grn_obj *expr, int *n,
       break;
     }
 
-    sis = grn_scan_info_build_simple_open(ctx, n, logical_op);
-    if (!sis) {
-      return NULL;
-    }
+    if (nth_sis > 0) {
+      grn_expr_code *logical_operator = e->codes + i + 3;
 
-    si = sis[0];
-    si->end = 2;
-    si->op = operator->op;
+      if (logical_operator->op != GRN_OP_AND) {
+        return NULL;
+      }
+      if (logical_operator->nargs != 2) {
+        return NULL;
+      }
+
+      i++;
+    }
+  }
+  n_sis = nth_sis;
+
+  sis = GRN_CALLOC(sizeof(scan_info *) * n_sis);
+  if (!sis) {
+    return NULL;
+  }
+
+  for (i = 0, nth_sis = 0; i < e->codes_curr; i += 3, nth_sis++) {
+    grn_expr_code *target = e->codes + i;
+    grn_expr_code *constant = e->codes + i + 1;
+    grn_expr_code *operator = e->codes + i + 2;
+    scan_info *si;
+
+    sis[nth_sis] = si = grn_scan_info_open(ctx, i);
+    if (!si) {
+      goto exit;
+    }
     si->args[si->nargs++] = target->value;
     si->args[si->nargs++] = constant->value;
+    si->op = operator->op;
+    si->end = i + 2;
+    si->flags &= ~SCAN_PUSH;
+    if (nth_sis == 0) {
+      si->logical_op = logical_op;
+    } else {
+      si->logical_op = GRN_OP_AND;
+    }
     scan_info_build_match(ctx, si);
-    return sis;
+
+    if (nth_sis > 0) {
+      i++;
+    }
+  }
+
+  *n = n_sis;
+  return sis;
+
+exit :
+  if (n_sis > 0) {
+    for (i = 0; i < n_sis; i++) {
+      scan_info *si = sis[i];
+      if (si) {
+        grn_scan_info_close(ctx, si);
+      }
+    }
+    GRN_FREE(sis);
+  }
+
+  return NULL;
+}
+
+static scan_info **
+grn_scan_info_build_simple(grn_ctx *ctx, grn_obj *expr, int *n,
+                           grn_operator logical_op, grn_bool record_exist)
+{
+  grn_expr *e = (grn_expr *)expr;
+
+  if (e->codes_curr == 1) {
+    return grn_scan_info_build_simple_value(ctx,
+                                            expr,
+                                            n,
+                                            logical_op,
+                                            record_exist);
+  } else if (e->codes_curr == 3) {
+    return grn_scan_info_build_simple_operation(ctx,
+                                                expr,
+                                                n,
+                                                logical_op,
+                                                record_exist);
+  } else if (e->codes_curr % 4 == 3) {
+    return grn_scan_info_build_simple_and_operations(ctx,
+                                                     expr,
+                                                     n,
+                                                     logical_op,
+                                                     record_exist);
   }
 
   return NULL;
