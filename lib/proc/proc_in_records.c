@@ -26,25 +26,25 @@ typedef struct {
   int n_conditions;
   grn_obj *condition_table;
   grn_obj condition_columns;
-  grn_operator_exec_func **condition_functions;
-  grn_ra **ras;
-  grn_ra_cache *ra_caches;
-  unsigned int *ra_element_sizes;
-  grn_obj *ra_values;
+  grn_operator *condition_modes;
+  grn_obj *search_result;
 } grn_in_records_data;
 
 static void
 grn_in_records_data_free(grn_ctx *ctx, grn_in_records_data *data)
 {
   int i;
+  int n_condition_columns;
 
   if (!data) {
     return;
   }
 
-  GRN_PLUGIN_FREE(ctx, data->condition_functions);
+  GRN_PLUGIN_FREE(ctx, data->condition_modes);
 
-  for (i = 0; i < data->n_conditions; i++) {
+  n_condition_columns =
+    GRN_BULK_VSIZE(&(data->condition_columns)) / sizeof(grn_obj *);
+  for (i = 0; i < n_condition_columns; i++) {
     grn_obj *condition_column;
     condition_column = GRN_PTR_VALUE_AT(&(data->condition_columns), i);
     if (condition_column && condition_column->header.type == GRN_ACCESSOR) {
@@ -53,22 +53,9 @@ grn_in_records_data_free(grn_ctx *ctx, grn_in_records_data *data)
   }
   GRN_OBJ_FIN(ctx, &(data->condition_columns));
 
-  for (i = 0; i < data->n_conditions; i++) {
-    grn_ra *ra = data->ras[i];
-    grn_ra_cache *ra_cache = data->ra_caches + i;
-    grn_obj *ra_value = data->ra_values + i;
-
-    GRN_OBJ_FIN(ctx, ra_value);
-
-    if (!ra || !ra_cache) {
-      continue;
-    }
-    GRN_RA_CACHE_FIN(ra, ra_cache);
+  if (data->search_result) {
+    grn_obj_close(ctx, data->search_result);
   }
-  GRN_PLUGIN_FREE(ctx, data->ras);
-  GRN_PLUGIN_FREE(ctx, data->ra_caches);
-  GRN_PLUGIN_FREE(ctx, data->ra_element_sizes);
-  GRN_PLUGIN_FREE(ctx, data->ra_values);
 
   GRN_PLUGIN_FREE(ctx, data);
 }
@@ -134,27 +121,30 @@ func_in_records_init(grn_ctx *ctx,
   }
 
   data = GRN_PLUGIN_CALLOC(ctx, sizeof(grn_in_records_data));
+  if (!data) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "in_records(): failed to allocate internal data");
+    return NULL;
+  }
   user_data->ptr = data;
 
   data->n_conditions = n_conditions;
   data->condition_table = condition_table;
   GRN_PTR_INIT(&(data->condition_columns), GRN_OBJ_VECTOR, GRN_ID_NIL);
-  data->condition_functions =
-    GRN_PLUGIN_MALLOCN(ctx, grn_operator_exec_func *, n_conditions);
-  data->ras = GRN_PLUGIN_MALLOCN(ctx, grn_ra *, n_conditions);
-  data->ra_caches = GRN_PLUGIN_MALLOCN(ctx, grn_ra_cache, n_conditions);
-  data->ra_element_sizes = GRN_PLUGIN_MALLOCN(ctx, unsigned int, n_conditions);
-  data->ra_values = GRN_PLUGIN_MALLOCN(ctx, grn_obj, n_conditions);
-  for (i = 0; i < n_conditions; i++) {
-    data->ras[i] = NULL;
-    GRN_VOID_INIT(data->ra_values + i);
+  data->condition_modes = GRN_PLUGIN_MALLOCN(ctx, grn_operator, n_conditions);
+  if (!data->condition_modes) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "in_records(): "
+                     "failed to allocate internal data for condition modes");
+    goto exit;
   }
 
   for (i = 1, nth = 0; i < n_arg_codes; nth++) {
     int value_i = i;
     int mode_name_i;
     grn_obj *mode_name;
-    grn_operator mode;
     int column_name_i;
     grn_obj *column_name;
     grn_obj *condition_column;
@@ -163,54 +153,13 @@ func_in_records_init(grn_ctx *ctx,
 
     mode_name_i = value_i + 1;
     mode_name = codes[mode_name_i].value;
-    mode = grn_proc_option_value_mode(ctx,
-                                      mode_name,
-                                      GRN_OP_EQUAL,
-                                      "in_records()");
+    data->condition_modes[nth] = grn_proc_option_value_mode(ctx,
+                                                            mode_name,
+                                                            GRN_OP_EQUAL,
+                                                            "in_records()");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-
-    switch (mode) {
-    case GRN_OP_EQUAL :
-      data->condition_functions[nth] = grn_operator_exec_equal;
-      break;
-    case GRN_OP_NOT_EQUAL :
-      data->condition_functions[nth] = grn_operator_exec_not_equal;
-      break;
-    case GRN_OP_LESS :
-      data->condition_functions[nth] = grn_operator_exec_less;
-      break;
-    case GRN_OP_GREATER :
-      data->condition_functions[nth] = grn_operator_exec_greater;
-      break;
-    case GRN_OP_LESS_EQUAL :
-      data->condition_functions[nth] = grn_operator_exec_less_equal;
-      break;
-    case GRN_OP_GREATER_EQUAL :
-      data->condition_functions[nth] = grn_operator_exec_greater_equal;
-      break;
-    case GRN_OP_MATCH :
-      data->condition_functions[nth] = grn_operator_exec_match;
-      break;
-    case GRN_OP_PREFIX :
-      data->condition_functions[nth] = grn_operator_exec_prefix;
-      break;
-    case GRN_OP_REGEXP :
-      data->condition_functions[nth] = grn_operator_exec_regexp;
-      break;
-    default :
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_INVALID_ARGUMENT,
-                       "in_records(): "
-                       "the %dth argument is unsupported mode: <%.*s>",
-                       mode_name_i,
-                       (int)GRN_TEXT_LEN(mode_name),
-                       GRN_TEXT_VALUE(mode_name));
-      goto exit;
-      break;
-    }
-
 
     column_name_i = mode_name_i + 1;
     column_name = codes[column_name_i].value;
@@ -252,16 +201,6 @@ func_in_records_init(grn_ctx *ctx,
     }
     GRN_PTR_PUT(ctx, &(data->condition_columns), condition_column);
 
-    if (condition_column->header.type == GRN_COLUMN_FIX_SIZE) {
-      data->ras[nth] = (grn_ra *)condition_column;
-      GRN_RA_CACHE_INIT(data->ras[nth], data->ra_caches + nth);
-      grn_ra_info(ctx, data->ras[nth], &(data->ra_element_sizes[nth]));
-      grn_obj_reinit(ctx,
-                     data->ra_values + nth,
-                     grn_obj_get_range(ctx, condition_column),
-                     0);
-    }
-
     i = column_name_i + 1;
   }
 
@@ -281,7 +220,8 @@ func_in_records_next(grn_ctx *ctx,
 {
   grn_in_records_data *data = user_data->ptr;
   grn_obj *found;
-  grn_obj condition_column_value;
+  grn_obj *condition;
+  grn_obj *variable;
   int i;
 
   found = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_BOOL, 0);
@@ -294,66 +234,85 @@ func_in_records_next(grn_ctx *ctx,
     return found;
   }
 
-  GRN_VOID_INIT(&condition_column_value);
-  GRN_TABLE_EACH_BEGIN(ctx, data->condition_table, cursor, id) {
-    grn_bool found_record = GRN_TRUE;
-
-    for (i = 1; i < n_args; i += 3) {
-      int nth = (i - 1) / 3;
-      grn_obj *condition_column;
-      grn_operator_exec_func *condition_function;
-      grn_obj *value = args[i];
-      grn_obj *condition_value;
-
-      condition_column = GRN_PTR_VALUE_AT(&(data->condition_columns), nth);
-      condition_function = data->condition_functions[nth];
-      if (grn_obj_is_data_column(ctx, condition_column)) {
-        grn_bool found_value = GRN_FALSE;
-
-        if (data->ras[nth]) {
-          void *raw_value;
-
-          raw_value = grn_ra_ref_cache(ctx,
-                                       data->ras[nth],
-                                       id,
-                                       data->ra_caches + nth);
-          condition_value = data->ra_values + nth;
-          GRN_BULK_REWIND(condition_value);
-          grn_bulk_write(ctx,
-                         condition_value,
-                         raw_value,
-                         data->ra_element_sizes[nth]);
-        } else {
-          condition_value = &condition_column_value;
-          GRN_BULK_REWIND(condition_value);
-          grn_obj_get_value(ctx,
-                            condition_column,
-                            id,
-                            condition_value);
-        }
-
-        found_value = condition_function(ctx, value, condition_value);
-        if (ctx->rc != GRN_SUCCESS) {
-          found_record = GRN_FALSE;
-          break;
-        }
-
-        if (!found_value) {
-          found_record = GRN_FALSE;
-          break;
-        }
-      } else {
-        found_record = GRN_FALSE;
-        break;
-      }
+  GRN_EXPR_CREATE_FOR_QUERY(ctx,
+                            data->condition_table,
+                            condition,
+                            variable);
+  if (!condition) {
+    grn_rc rc = ctx->rc;
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_NO_MEMORY_AVAILABLE;
     }
+    GRN_PLUGIN_ERROR(ctx,
+                     rc,
+                     "in_records(): "
+                     "failed to create internal expression: %s",
+                     ctx->errbuf);
+    return found;
+  }
 
-    if (found_record) {
-      GRN_BOOL_SET(ctx, found, GRN_TRUE);
+  for (i = 1; i < n_args; i += 3) {
+    int nth = (i - 1) / 3;
+    grn_obj *value = args[i];
+    grn_obj *condition_column;
+    grn_operator condition_mode;
+
+    condition_column = GRN_PTR_VALUE_AT(&(data->condition_columns), nth);
+    condition_mode = data->condition_modes[nth];
+
+    switch (condition_mode) {
+    case GRN_OP_EQUAL :
+    case GRN_OP_NOT_EQUAL :
+      grn_expr_append_obj(ctx, condition, condition_column, GRN_OP_GET_VALUE, 1);
+      grn_expr_append_obj(ctx, condition, value, GRN_OP_PUSH, 1);
+      grn_expr_append_op(ctx, condition, condition_mode, 2);
+      break;
+    case GRN_OP_LESS :
+      grn_expr_append_obj(ctx, condition, condition_column, GRN_OP_GET_VALUE, 1);
+      grn_expr_append_obj(ctx, condition, value, GRN_OP_PUSH, 1);
+      grn_expr_append_op(ctx, condition, GRN_OP_GREATER_EQUAL, 2);
+      break;
+    case GRN_OP_GREATER :
+      grn_expr_append_obj(ctx, condition, condition_column, GRN_OP_GET_VALUE, 1);
+      grn_expr_append_obj(ctx, condition, value, GRN_OP_PUSH, 1);
+      grn_expr_append_op(ctx, condition, GRN_OP_LESS_EQUAL, 2);
+      break;
+    case GRN_OP_LESS_EQUAL :
+      grn_expr_append_obj(ctx, condition, condition_column, GRN_OP_GET_VALUE, 1);
+      grn_expr_append_obj(ctx, condition, value, GRN_OP_PUSH, 1);
+      grn_expr_append_op(ctx, condition, GRN_OP_GREATER, 2);
+      break;
+    case GRN_OP_GREATER_EQUAL :
+      grn_expr_append_obj(ctx, condition, condition_column, GRN_OP_GET_VALUE, 1);
+      grn_expr_append_obj(ctx, condition, value, GRN_OP_PUSH, 1);
+      grn_expr_append_op(ctx, condition, GRN_OP_LESS, 2);
+      break;
+    default :
+      grn_expr_append_obj(ctx, condition, value, GRN_OP_PUSH, 1);
+      grn_expr_append_obj(ctx, condition, condition_column, GRN_OP_GET_VALUE, 1);
+      grn_expr_append_op(ctx, condition, condition_mode, 2);
       break;
     }
-  } GRN_TABLE_EACH_END(ctx, cursor);
-  GRN_OBJ_FIN(ctx, &condition_column_value);
+
+    if (nth > 0) {
+      grn_expr_append_op(ctx, condition, GRN_OP_AND, 2);
+    }
+  }
+
+  data->search_result = grn_table_select(ctx,
+                                         data->condition_table,
+                                         condition,
+                                         data->search_result,
+                                         GRN_OP_OR);
+  if (grn_table_size(ctx, data->search_result) > 0) {
+    GRN_BOOL_SET(ctx, found, GRN_TRUE);
+
+    GRN_TABLE_EACH_BEGIN(ctx, data->search_result, cursor, id) {
+      grn_table_cursor_delete(ctx, cursor);
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  }
+
+  grn_obj_close(ctx, condition);
 
   return found;
 }
