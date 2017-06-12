@@ -50,11 +50,20 @@ typedef union {
     int n_args;
   } proc;
   struct {
+    grn_obj result_buffer;
+    grn_ra *ra;
+    grn_ra_cache ra_cache;
+    unsigned int ra_element_size;
+    grn_obj value_buffer;
+    grn_obj constant_buffer;
+    grn_operator_exec_func *exec;
+  } simple_condition_ra;
+  struct {
     grn_bool need_exec;
     grn_obj result_buffer;
     grn_obj value_buffer;
     grn_obj constant_buffer;
-    grn_bool (*exec)(grn_ctx *ctx, grn_obj *x, grn_obj *y);
+    grn_operator_exec_func *exec;
   } simple_condition;
 } grn_expr_executor_data;
 
@@ -516,6 +525,161 @@ grn_expr_executor_fin_proc(grn_ctx *ctx,
 }
 
 static grn_bool
+grn_expr_executor_is_simple_condition_ra(grn_ctx *ctx, grn_obj *expr)
+{
+  grn_expr *e = (grn_expr *)expr;
+  grn_expr_code *target;
+  grn_expr_code *constant;
+  grn_expr_code *operator;
+
+  if (e->codes_curr != 3) {
+    return GRN_FALSE;
+  }
+
+  target = &(e->codes[0]);
+  constant = &(e->codes[1]);
+  operator = &(e->codes[2]);
+
+  switch (operator->op) {
+  case GRN_OP_EQUAL :
+  case GRN_OP_NOT_EQUAL :
+  case GRN_OP_LESS :
+  case GRN_OP_GREATER :
+  case GRN_OP_LESS_EQUAL :
+  case GRN_OP_GREATER_EQUAL :
+    break;
+  default :
+    return GRN_FALSE;
+  }
+  if (operator->nargs != 2) {
+    return GRN_FALSE;
+  }
+
+  if (target->op != GRN_OP_GET_VALUE) {
+    return GRN_FALSE;
+  }
+  if (target->nargs != 1) {
+    return GRN_FALSE;
+  }
+  if (target->value->header.type != GRN_COLUMN_FIX_SIZE) {
+    return GRN_FALSE;
+  }
+
+  if (constant->op != GRN_OP_PUSH) {
+    return GRN_FALSE;
+  }
+  if (constant->nargs != 1) {
+    return GRN_FALSE;
+  }
+  if (!constant->value) {
+    return GRN_FALSE;
+  }
+  if (constant->value->header.type != GRN_BULK) {
+    return GRN_FALSE;
+  }
+
+  {
+    grn_obj constant_buffer;
+    grn_rc rc;
+    GRN_VOID_INIT(&constant_buffer);
+    grn_obj_reinit_for(ctx, &constant_buffer, target->value);
+    rc = grn_obj_cast(ctx, constant->value, &constant_buffer, GRN_FALSE);
+    GRN_OBJ_FIN(ctx, &constant_buffer);
+    if (rc != GRN_SUCCESS) {
+      return GRN_FALSE;
+    }
+  }
+
+  return GRN_TRUE;
+}
+
+static void
+grn_expr_executor_init_simple_condition_ra(grn_ctx *ctx,
+                                           grn_expr_executor *executor)
+{
+  grn_expr *e = (grn_expr *)(executor->expr);
+  grn_obj *target;
+  grn_obj *constant;
+  grn_operator op;
+  grn_obj *result_buffer;
+  grn_obj *value_buffer;
+  grn_obj *constant_buffer;
+
+  target = e->codes[0].value;
+  constant = e->codes[1].value;
+  op = e->codes[2].op;
+
+  result_buffer = &(executor->data.simple_condition_ra.result_buffer);
+  GRN_BOOL_INIT(result_buffer, 0);
+  GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+
+  value_buffer = &(executor->data.simple_condition_ra.value_buffer);
+  GRN_VOID_INIT(value_buffer);
+  grn_obj_reinit_for(ctx, value_buffer, target);
+
+  executor->data.simple_condition_ra.ra = (grn_ra *)target;
+  GRN_RA_CACHE_INIT(executor->data.simple_condition_ra.ra,
+                    &(executor->data.simple_condition_ra.ra_cache));
+  grn_ra_info(ctx,
+              executor->data.simple_condition_ra.ra,
+              &(executor->data.simple_condition_ra.ra_element_size));
+
+  executor->data.simple_condition_ra.exec = grn_operator_to_exec_func(op);
+
+  constant_buffer = &(executor->data.simple_condition_ra.constant_buffer);
+  GRN_VOID_INIT(constant_buffer);
+  grn_obj_reinit_for(ctx, constant_buffer, target);
+  grn_obj_cast(ctx, constant, constant_buffer, GRN_FALSE);
+}
+
+static grn_obj *
+grn_expr_executor_exec_simple_condition_ra(grn_ctx *ctx,
+                                           grn_expr_executor *executor,
+                                           grn_id id)
+{
+  grn_obj *result_buffer = &(executor->data.simple_condition_ra.result_buffer);
+  grn_obj *value_buffer = &(executor->data.simple_condition_ra.value_buffer);
+  grn_obj *constant_buffer =
+    &(executor->data.simple_condition_ra.constant_buffer);
+
+  if (ctx->rc) {
+    GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+    return result_buffer;
+  }
+
+  {
+    grn_ra *ra = executor->data.simple_condition_ra.ra;
+    grn_ra_cache *ra_cache = &(executor->data.simple_condition_ra.ra_cache);
+    unsigned int ra_element_size =
+      executor->data.simple_condition_ra.ra_element_size;
+    void *raw_value;
+    raw_value = grn_ra_ref_cache(ctx, ra, id, ra_cache);
+    GRN_BULK_REWIND(value_buffer);
+    grn_bulk_write(ctx, value_buffer, raw_value, ra_element_size);
+  }
+
+  if (executor->data.simple_condition_ra.exec(ctx,
+                                              value_buffer,
+                                              constant_buffer)) {
+    GRN_BOOL_SET(ctx, result_buffer, GRN_TRUE);
+  } else {
+    GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+  }
+  return result_buffer;
+}
+
+static void
+grn_expr_executor_fin_simple_condition_ra(grn_ctx *ctx,
+                                          grn_expr_executor *executor)
+{
+  GRN_OBJ_FIN(ctx, &(executor->data.simple_condition_ra.result_buffer));
+  GRN_RA_CACHE_FIN(executor->data.simple_condition_ra.ra,
+                   &(executor->data.simple_condition_ra.ra_cache));
+  GRN_OBJ_FIN(ctx, &(executor->data.simple_condition_ra.value_buffer));
+  GRN_OBJ_FIN(ctx, &(executor->data.simple_condition_ra.constant_buffer));
+}
+
+static grn_bool
 grn_expr_executor_is_simple_condition(grn_ctx *ctx, grn_obj *expr)
 {
   grn_expr *e = (grn_expr *)expr;
@@ -599,28 +763,7 @@ grn_expr_executor_init_simple_condition(grn_ctx *ctx,
   GRN_VOID_INIT(value_buffer);
   grn_obj_reinit_for(ctx, value_buffer, target);
 
-  switch (op) {
-  case GRN_OP_EQUAL :
-    executor->data.simple_condition.exec = grn_operator_exec_equal;
-    break;
-  case GRN_OP_NOT_EQUAL :
-    executor->data.simple_condition.exec = grn_operator_exec_not_equal;
-    break;
-  case GRN_OP_LESS :
-    executor->data.simple_condition.exec = grn_operator_exec_less;
-    break;
-  case GRN_OP_GREATER :
-    executor->data.simple_condition.exec = grn_operator_exec_greater;
-    break;
-  case GRN_OP_LESS_EQUAL :
-    executor->data.simple_condition.exec = grn_operator_exec_less_equal;
-    break;
-  case GRN_OP_GREATER_EQUAL :
-    executor->data.simple_condition.exec = grn_operator_exec_greater_equal;
-    break;
-  default :
-    break;
-  }
+  executor->data.simple_condition.exec = grn_operator_to_exec_func(op);
 
   constant_buffer = &(executor->data.simple_condition.constant_buffer);
   GRN_VOID_INIT(constant_buffer);
@@ -753,6 +896,10 @@ grn_expr_executor_open(grn_ctx *ctx, grn_obj *expr)
     grn_expr_executor_init_proc(ctx, executor);
     executor->exec = grn_expr_executor_exec_proc;
     executor->fin = grn_expr_executor_fin_proc;
+  } else if (grn_expr_executor_is_simple_condition_ra(ctx, expr)) {
+    grn_expr_executor_init_simple_condition_ra(ctx, executor);
+    executor->exec = grn_expr_executor_exec_simple_condition_ra;
+    executor->fin = grn_expr_executor_fin_simple_condition_ra;
   } else if (grn_expr_executor_is_simple_condition(ctx, expr)) {
     grn_expr_executor_init_simple_condition(ctx, executor);
     executor->exec = grn_expr_executor_exec_simple_condition;
