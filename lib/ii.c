@@ -4442,9 +4442,6 @@ grn_ii_close(grn_ctx *ctx, grn_ii *ii)
   if (!ii) { return GRN_INVALID_ARGUMENT; }
   if ((rc = grn_io_close(ctx, ii->seg))) { return rc; }
   if ((rc = grn_io_close(ctx, ii->chunk))) { return rc; }
-  if (ii->expression) {
-    if ((rc = grn_obj_close(ctx, ii->expression))) { return rc; }
-  }
   
   GRN_FREE(ii);
   /*
