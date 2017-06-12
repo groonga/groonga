@@ -6,12 +6,12 @@ table_create Dates TABLE_PAT_KEY Time
 
 column_create Dates earliest_date COLUMN_INDEX|WITH_EXPRESSION \
   Patents app_date,priority_date \
-  'min(app_date,priority_date)'
+  --expression 'min(app_date,priority_date)'
 
 load --table Patents
 [
 {"_key": "JP20010123456", "app_date": "2001-01-01 00:00:00", "priority_date": "2000-12-01 00:00:00"},
-{"_key": "JP20000123456", "app_date": "2000-12-11 00:00:00", "priority_date": "9999-12-31 00:00:00"}
+{"_key": "JP20000123456", "app_date": "2000-12-11 00:00:00", "priority_date": "2099-12-31 00:00:00"}
 ]
 
 select Patents \

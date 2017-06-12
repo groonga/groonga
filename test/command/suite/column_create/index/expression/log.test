@@ -9,5 +9,5 @@ table_create Lexicon TABLE_PAT_KEY ShortText \
 #@add-important-log-levels notice
 column_create Lexicon data_values COLUMN_INDEX|WITH_POSITION|WITH_EXPRESSION \
   Data value1,value2 \
-  'value1 + value2'
+  --expression 'value1 + value2'
 #@remove-important-log-levels notice

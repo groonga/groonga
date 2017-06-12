@@ -8,7 +8,7 @@ table_create Terms TABLE_PAT_KEY ShortText \
 column_create Terms memos_content \
   COLUMN_INDEX|WITH_POSITION|WITH_EXPRESSION \
   Memos content \
-  'html_untag(content)'
+  --expression 'html_untag(content)'
 
 load --table Memos
 [

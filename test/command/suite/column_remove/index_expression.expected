@@ -4,7 +4,7 @@ column_create Users name COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
 [[0,0.0,0.0],true]
-column_create Terms users_name COLUMN_INDEX|WITH_POSITION|WITH_EXPRESSION Users name 'html_untag(name)'
+column_create Terms users_name COLUMN_INDEX|WITH_POSITION|WITH_EXPRESSION Users name  --expression 'html_untag(name)'
 [[0,0.0,0.0],true]
 dump
 table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto

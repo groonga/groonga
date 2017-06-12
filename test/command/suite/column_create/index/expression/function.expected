@@ -4,5 +4,5 @@ column_create Notes title COLUMN_SCALAR LongText
 [[0,0.0,0.0],true]
 table_create Titles TABLE_PAT_KEY ShortText
 [[0,0.0,0.0],true]
-column_create Titles notes_title COLUMN_INDEX|WITH_EXPRESSION Notes title html_untag(title)
+column_create Titles notes_title COLUMN_INDEX|WITH_EXPRESSION Notes title --expression 'html_untag(title)'
 [[0,0.0,0.0],true]
