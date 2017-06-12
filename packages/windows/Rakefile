@@ -253,7 +253,7 @@ namespace :build do
     mkdir_p(tmp_dir)
     naist_jdic_base = "mecab-naist-jdic-0.6.3-20100801"
     naist_jdic_tar_gz_url =
-      "http://osdn.dl.sourceforge.jp/naist-jdic/48487/#{naist_jdic_base}.tar.gz"
+      "https://ja.osdn.net/projects/naist-jdic/downloads/48487/#{naist_jdic_base}.tar.gz/"
     naist_jdic_tar_gz = download(naist_jdic_tar_gz_url, download_dir)
     cp(naist_jdic_tar_gz, source_dir)
     Dir.chdir(tmp_dir) do
