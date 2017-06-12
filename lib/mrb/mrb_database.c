@@ -125,6 +125,17 @@ mrb_grn_database_is_dirty(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_database_check_corrupted(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  grn_db_check_corrupted(ctx, DATA_PTR(self));
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
+}
+
+static mrb_value
 mrb_grn_database_array_reference(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -202,5 +213,7 @@ grn_mrb_database_init(grn_ctx *ctx)
                     mrb_grn_database_is_dirty, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "[]",
                     mrb_grn_database_array_reference, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "corrupted?",
+                    mrb_grn_database_check_corrupted, MRB_ARGS_NONE());
 }
 #endif

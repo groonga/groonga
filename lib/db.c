@@ -733,6 +733,25 @@ grn_db_clear_dirty(grn_ctx *ctx, grn_obj *db)
   }
 }
 
+grn_rc
+grn_db_check_corrupted(grn_ctx *ctx, grn_obj *db)
+{
+  if (!db) {
+    return GRN_FALSE;
+  }
+
+  if (!((grn_db *)db)->specs) {
+    /* no objects */
+    return GRN_FALSE;
+  }
+
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, db, cursor, id,
+                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
+    /* TODO: */
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  return ctx->rc;
+}
+
 void
 grn_db_touch(grn_ctx *ctx, grn_obj *s)
 {
