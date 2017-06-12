@@ -318,11 +318,34 @@ grn_obj_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   if (GRN_DB_OBJP(obj)) {
     grn_text_benc(ctx, buf, DB_OBJ(obj)->id);
   } else {
-    // todo : support vector, query, accessor, snip..
-    uint32_t vs = GRN_BULK_VSIZE(obj);
+    // todo : support vector, query, snip..
+ 
     grn_text_benc(ctx, buf, obj->header.domain);
-    grn_text_benc(ctx, buf, vs);
-    if (vs) { GRN_TEXT_PUT(ctx, buf, GRN_BULK_HEAD(obj), vs); }
+    switch (obj->header.type) {
+    case GRN_ACCESSOR :
+      {
+        grn_accessor *a;
+        uint32_t n_accessors = 0;
+        for (a = (grn_accessor *)obj; a; a = a->next) {
+          n_accessors++;
+        }
+        grn_text_benc(ctx, buf, n_accessors);
+        for (a = (grn_accessor *)obj; a; a = a->next) {
+          grn_text_benc(ctx, buf, a->action);
+          grn_text_benc(ctx, buf, a->offset);
+          grn_text_benc(ctx, buf, grn_obj_id(ctx, a->obj));
+        }
+      }
+      break;
+    default :
+      {
+        uint32_t vs;
+        vs = GRN_BULK_VSIZE(obj);
+        grn_text_benc(ctx, buf, vs);
+        if (vs) { GRN_TEXT_PUT(ctx, buf, GRN_BULK_HEAD(obj), vs); }
+      }
+      break;
+    }
   }
 }
 
@@ -432,6 +455,38 @@ grn_expr_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, grn_obj *expr
           grn_id id;
           GRN_B_DEC(id, p);
           code->value = grn_ctx_at(ctx, id);
+        } else if (object_type == GRN_ACCESSOR) {
+          grn_accessor *prev_a = NULL;
+          grn_id domain;
+          uint32_t n_accessors, j;
+          GRN_B_DEC(domain, p);
+          GRN_B_DEC(n_accessors, p);
+          for (j = 0; j < n_accessors; j++) {
+            grn_id id;
+            grn_accessor *a;
+            a = GRN_MALLOCN(grn_accessor, 1);
+            if (!a) {
+              ERR(GRN_NO_MEMORY_AVAILABLE, "failed malloc for unpack accessor");
+              return p;
+            }
+            a->header.type = GRN_ACCESSOR;
+            a->header.impl_flags = GRN_OBJ_ALLOCATED;
+            a->header.flags = 0;
+            a->header.domain = GRN_ID_NIL;
+            a->range = GRN_ID_NIL;
+            GRN_B_DEC(a->action, p);
+            GRN_B_DEC(a->offset, p);
+            GRN_B_DEC(id, p);
+            a->obj = grn_ctx_at(ctx, id);
+            a->next = NULL;
+            if (j == 0) {
+              code->value = (grn_obj *)a;
+              prev_a = a;
+            } else {
+              prev_a->next = a;
+            }
+          }
+          grn_expr_take_obj(ctx, expr, code->value);
         } else {
           if (!(v = grn_expr_alloc_const(ctx, expr))) { return NULL; }
           p = grn_obj_unpack(ctx, p, pe, object_type, GRN_OBJ_EXPRCONST, v);
@@ -697,7 +752,9 @@ grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned int nam
       v->name_size = name_size;
       res = &v->value;
       GRN_VOID_INIT(res);
-      for (i = e->nvars, p = GRN_TEXT_VALUE(&e->name_buf), v = e->vars; i; i--, v++) {
+      for (i = e->nvars, p = GRN_TEXT_VALUE(&e->name_buf), v = e->vars;
+           i;
+           i--, v++) {
         v->name = p;
         p += v->name_size;
       }
@@ -709,31 +766,69 @@ grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned int nam
 grn_obj *
 grn_expr_get_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned int name_size)
 {
-  uint32_t n;
   grn_obj *res = NULL;
-  grn_hash *vars = grn_expr_get_vars(ctx, expr, &n);
-  if (vars) { grn_hash_get(ctx, vars, name, name_size, (void **)&res); }
+  if (expr->header.type == GRN_EXPR &&
+      !(DB_OBJ(expr)->id & GRN_OBJ_TMP_OBJECT)) {
+    grn_expr *e = (grn_expr *)expr;
+    if (e->vars && e->nvars) {
+      uint32_t i;
+      grn_expr_var *v;
+      v = e->vars;
+      for (i = e->nvars, v = e->vars;
+           i;
+           i--, v++) {
+        if (v->name_size == name_size &&
+            !memcmp(v->name, name, name_size)) {
+          res = &(v->value);
+          break;
+        }
+      }
+    }
+  } else {
+    uint32_t n;
+    grn_hash *vars = grn_expr_get_vars(ctx, expr, &n);
+    if (vars) { grn_hash_get(ctx, vars, name, name_size, (void **)&res); }
+  }
   return res;
 }
 
 grn_obj *
 grn_expr_get_or_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned int name_size)
 {
-  uint32_t n;
   grn_obj *res = NULL;
-  grn_hash *vars = grn_expr_get_vars(ctx, expr, &n);
-  if (vars) {
-    int added = 0;
-    char name_buf[16];
-    if (!name_size) {
-      char *rest;
-      name_buf[0] = '$';
-      grn_itoa((int)GRN_HASH_SIZE(vars) + 1, name_buf + 1, name_buf + 16, &rest);
-      name_size = rest - name_buf;
-      name = name_buf;
+  if (expr->header.type == GRN_EXPR &&
+      !(DB_OBJ(expr)->id & GRN_OBJ_TMP_OBJECT)) {
+    grn_expr *e = (grn_expr *)expr;
+    if (e->vars && e->nvars) {
+      char name_buf[16];
+      if (!name_size) {
+        char *rest;
+        name_buf[0] = '$';
+        grn_itoa(e->nvars + 1, name_buf + 1, name_buf + 16, &rest);
+        name_size = rest - name_buf;
+        name = name_buf;
+      }
+      res = grn_expr_get_var(ctx, expr, name, name_size);
     }
-    grn_hash_add(ctx, vars, name, name_size, (void **)&res, &added);
-    if (added) { GRN_TEXT_INIT(res, 0); }
+    if (!res) {
+      res = grn_expr_add_var(ctx, expr, name, name_size);
+    }
+  } else {
+    uint32_t n;
+    grn_hash *vars = grn_expr_get_vars(ctx, expr, &n);
+    if (vars) {
+      int added = 0;
+      char name_buf[16];
+      if (!name_size) {
+        char *rest;
+        name_buf[0] = '$';
+        grn_itoa((int)GRN_HASH_SIZE(vars) + 1, name_buf + 1, name_buf + 16, &rest);
+        name_size = rest - name_buf;
+        name = name_buf;
+      }
+      grn_hash_add(ctx, vars, name, name_size, (void **)&res, &added);
+      if (added) { GRN_TEXT_INIT(res, 0); }
+    }
   }
   return res;
 }
@@ -741,10 +836,28 @@ grn_expr_get_or_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned 
 grn_obj *
 grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
 {
-  uint32_t n;
   grn_obj *res = NULL;
-  grn_hash *vars = grn_expr_get_vars(ctx, expr, &n);
-  if (vars) { res = (grn_obj *)grn_hash_get_value_(ctx, vars, offset + 1, NULL); }
+  if (expr->header.type == GRN_EXPR &&
+      !(DB_OBJ(expr)->id & GRN_OBJ_TMP_OBJECT)) {
+    grn_expr *e = (grn_expr *)expr;
+    if (e->vars && e->nvars) {
+      grn_expr_var *v;
+      uint32_t i;
+      v = e->vars;
+      for (i = e->nvars, v = e->vars;
+           i;
+           i--, v++) {
+        if (e->nvars - offset == i) {
+          res = &(v->value);
+          break;
+        }
+      }
+    }
+  } else {
+    uint32_t n;
+    grn_hash *vars = grn_expr_get_vars(ctx, expr, &n);
+    if (vars) { res = (grn_obj *)grn_hash_get_value_(ctx, vars, offset + 1, NULL); }
+  }
   return res;
 }
 

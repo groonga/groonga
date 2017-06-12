@@ -322,6 +322,7 @@ typedef uint32_t grn_column_flags;
 #define GRN_OBJ_WITH_WEIGHT            (0x01<<8)
 #define GRN_OBJ_WITH_POSITION          (0x01<<9)
 #define GRN_OBJ_RING_BUFFER            (0x01<<10)
+#define GRN_OBJ_WITH_EXPRESSION        (0x01<<11)
 
 #define GRN_OBJ_UNIT_MASK              (0x0f<<8)
 #define GRN_OBJ_UNIT_DOCUMENT_NONE     (0x00<<8)
@@ -692,7 +693,8 @@ typedef enum {
 #define GRN_INFO_SUPPORT_LZO GRN_INFO_SUPPORT_LZ4
   GRN_INFO_NORMALIZER,
   GRN_INFO_TOKEN_FILTERS,
-  GRN_INFO_SUPPORT_ZSTD
+  GRN_INFO_SUPPORT_ZSTD,
+  GRN_INFO_EXPRESSION
 } grn_info_type;
 
 GRN_API grn_obj *grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valuebuf);

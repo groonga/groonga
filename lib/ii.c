@@ -4306,6 +4306,7 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
   if ((flags & GRN_OBJ_WITH_SECTION)) { ii->n_elements++; }
   if ((flags & GRN_OBJ_WITH_WEIGHT)) { ii->n_elements++; }
   if ((flags & GRN_OBJ_WITH_POSITION)) { ii->n_elements++; }
+  ii->expression = NULL;
   return ii;
 }
 
@@ -4430,6 +4431,7 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   if ((header->flags & GRN_OBJ_WITH_SECTION)) { ii->n_elements++; }
   if ((header->flags & GRN_OBJ_WITH_WEIGHT)) { ii->n_elements++; }
   if ((header->flags & GRN_OBJ_WITH_POSITION)) { ii->n_elements++; }
+  ii->expression = NULL;
   return ii;
 }
 
@@ -4440,6 +4442,7 @@ grn_ii_close(grn_ctx *ctx, grn_ii *ii)
   if (!ii) { return GRN_INVALID_ARGUMENT; }
   if ((rc = grn_io_close(ctx, ii->seg))) { return rc; }
   if ((rc = grn_io_close(ctx, ii->chunk))) { return rc; }
+  
   GRN_FREE(ii);
   /*
   {
@@ -6288,6 +6291,106 @@ grn_uvector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid,
   }
 }
 
+inline static grn_obj *
+grn_ii_expr_exec_with_update_value(grn_ctx *ctx,
+                                   grn_ii *ii,
+                                   grn_id rid,
+                                   unsigned int section,
+                                   grn_obj *oldvalue,
+                                   grn_obj *newvalue)
+{
+  grn_obj *record;
+  grn_expr_code *code, *code_end;
+  grn_obj *original_code_value;
+  grn_obj *return_value;
+  grn_array *target_codes;
+  grn_id *source_ids = ii->obj.source;
+  grn_id source_id = source_ids[section - 1];
+  grn_obj *source_obj = grn_ctx_at(ctx, source_id);
+  grn_expr *expr = (grn_expr *)ii->expression;
+
+  target_codes = grn_array_create(ctx, NULL, sizeof(grn_expr_code *), 0);
+  if (!target_codes) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[ii][column][update] failed to create array for execute expression with update value");
+    goto exit;
+  }
+  code = expr->codes;
+  code_end = expr->codes + expr->codes_curr;
+  while (code < code_end) {
+    grn_bool is_found = GRN_FALSE;
+    if (code->op == GRN_OP_GET_VALUE) {
+      if (grn_obj_is_accessor(ctx, code->value)) {
+        grn_accessor *a;
+        for (a = (grn_accessor *)code->value; a->next; a = a->next) {
+          if (a->obj == source_obj) {
+            is_found = GRN_TRUE;
+            break;
+          }
+        }
+      } else {
+        if (code->value == source_obj) {
+          is_found = GRN_TRUE;
+        }
+      }
+      if (is_found) {
+        grn_expr_code **code_p;
+        if (grn_array_add(ctx, target_codes, (void **)&code_p)) {
+          *code_p = code;
+          original_code_value = code->value;
+          code->value = oldvalue;
+          code->op = GRN_OP_PUSH;
+        }
+      }
+    }
+    code++;
+  }
+  record = grn_expr_get_var_by_offset(ctx, (grn_obj *)expr, 0);
+  GRN_RECORD_SET(ctx, record, rid);
+
+  if (oldvalue &&
+      !grn_bulk_is_zero(ctx, oldvalue)) {
+    return_value = grn_expr_exec(ctx, (grn_obj *)expr, 0);
+    if (ctx->rc) {
+      goto exit;
+    }
+    grn_obj_reinit(ctx, oldvalue,
+                   return_value->header.domain,
+                   return_value->header.flags);
+    GRN_TEXT_SET(ctx, oldvalue,
+                 GRN_TEXT_VALUE(return_value),
+                 GRN_TEXT_LEN(return_value));
+  }
+
+  if (!grn_bulk_is_zero(ctx, newvalue)) {
+    grn_expr_code **key;
+    GRN_ARRAY_EACH(ctx, target_codes, 0, 0, id, &key, {
+      grn_expr_code *k = *key;
+      k->value = newvalue;
+    });
+    return_value = grn_expr_exec(ctx, (grn_obj *)expr, 0);
+    if (ctx->rc) {
+      goto exit;
+    }
+    newvalue = return_value;
+  }
+
+  {
+    grn_expr_code **key;
+    GRN_ARRAY_EACH(ctx, target_codes, 0, 0, id, &key, {
+      grn_expr_code *k = *key;
+      k->value = original_code_value;
+      k->op = GRN_OP_GET_VALUE;
+    });
+  }
+
+exit :
+  if (target_codes) {
+    grn_array_close(ctx, target_codes);
+  }
+  return newvalue;
+}
+
 grn_rc
 grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                      grn_obj *oldvalue, grn_obj *newvalue, grn_obj *posting)
@@ -6315,6 +6418,18 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     post = &buf;
   }
   if (grn_io_lock(ctx, ii->seg, grn_lock_timeout)) { return ctx->rc; }
+
+  if (ii->expression) {
+    newvalue = grn_ii_expr_exec_with_update_value(ctx,
+                                                  ii,
+                                                  rid,
+                                                  section,
+                                                  oldvalue,
+                                                  newvalue);
+    new = newvalue;
+    section = 1;
+  }
+
   if (new) {
     unsigned char type = (ii->obj.header.domain == new->header.domain)
       ? GRN_UVECTOR
@@ -12098,7 +12213,22 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn_ii_builder *builder)
         }
         if (rc == GRN_SUCCESS) {
           uint32_t sid = (uint32_t)(i + 1);
-          rc = grn_ii_builder_append_obj(ctx, builder, rid, sid, obj);
+          if (builder->ii->obj.header.flags & GRN_OBJ_WITH_EXPRESSION) {
+            if (sid == 1) {
+              obj = grn_ii_expr_exec_with_update_value(ctx,
+                                                       builder->ii,
+                                                       rid,
+                                                       sid,
+                                                       NULL,
+                                                       obj);
+              rc = ctx->rc;
+              if (rc == GRN_SUCCESS) {
+                rc = grn_ii_builder_append_obj(ctx, builder, rid, sid, obj);
+              }
+            }
+          } else {
+            rc = grn_ii_builder_append_obj(ctx, builder, rid, sid, obj);
+          }
         }
       }
     }

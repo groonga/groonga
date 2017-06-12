@@ -83,6 +83,9 @@ grn_dump_column_create_flags(grn_ctx *ctx,
     if (flags & GRN_OBJ_WITH_POSITION) {
       GRN_TEXT_PUTS(ctx, buffer, "|WITH_POSITION");
     }
+    if (flags & GRN_OBJ_WITH_EXPRESSION) {
+      GRN_TEXT_PUTS(ctx, buffer, "|WITH_EXPRESSION");
+    }
     if (flags & GRN_OBJ_INDEX_SMALL) {
       GRN_TEXT_PUTS(ctx, buffer, "|INDEX_SMALL");
     }
