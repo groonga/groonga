@@ -1266,4 +1266,37 @@ grn_dat_clear_dirty(grn_ctx *ctx, grn_dat *dat)
   return rc;
 }
 
+grn_bool
+grn_dat_is_corrupt(grn_ctx *ctx, grn_dat *dat)
+{
+  if (!dat->io) {
+    return GRN_FALSE;
+  }
+
+  {
+    CriticalSection critical_section(&dat->lock);
+
+    if (grn_io_is_corrupt(ctx, dat->io)) {
+      return GRN_TRUE;
+    }
+
+    if (dat->header->file_id == 0) {
+      return GRN_FALSE;
+    }
+
+    char trie_path[PATH_MAX];
+    grn_dat_generate_trie_path(grn_io_path(dat->io),
+                               trie_path,
+                               dat->header->file_id);
+    struct stat stat;
+    if (::stat(trie_path, &stat) != 0) {
+      SERR("[dat][corrupt] used path doesn't exist: <%s>",
+           trie_path);
+      return GRN_TRUE;
+    }
+  }
+
+  return GRN_FALSE;
+}
+
 }  // extern "C"

@@ -149,6 +149,23 @@ load --table Users
     MESSAGE
   end
 
+  def test_corrupt_double_array_table
+    groonga("table_create", "Users", "TABLE_DAT_KEY", "ShortText")
+    groonga do |external_process|
+      external_process.input.puts("load --table Users")
+      external_process.input.puts("[")
+      external_process.input.puts("{\"_key\": \"x\"}")
+      external_process.input.puts("]")
+    end
+    FileUtils.rm("#{@database_path}.0000100.001")
+    error = assert_raise(CommandRunner::Error) do
+      grndb("check")
+    end
+    assert_equal(<<-MESSAGE, error.error_output)
+[Users] Table is corrupt. (1) Truncate the table (truncate Users or '#{grndb_path} recover --force-truncate #{@database_path}') and (2) load data again.
+    MESSAGE
+  end
+
   def test_corrupt_data_column
     groonga("table_create", "Data", "TABLE_NO_KEY")
     groonga("column_create", "Data", "text", "COLUMN_SCALAR", "Text")

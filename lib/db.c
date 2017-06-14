@@ -763,7 +763,11 @@ grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj)
     break;
   case GRN_TABLE_HASH_KEY :
   case GRN_TABLE_PAT_KEY :
+    is_corrupt = grn_io_is_corrupt(ctx, grn_obj_io(obj));
+    break;
   case GRN_TABLE_DAT_KEY :
+    is_corrupt = grn_dat_is_corrupt(ctx, (grn_dat *)obj);
+    break;
   case GRN_COLUMN_FIX_SIZE :
   case GRN_COLUMN_VAR_SIZE :
     is_corrupt = grn_io_is_corrupt(ctx, grn_obj_io(obj));
