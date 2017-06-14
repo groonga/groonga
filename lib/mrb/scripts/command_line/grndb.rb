@@ -94,7 +94,9 @@ module Groonga
 
       def recover(database, options, arguments)
         begin
-          database.recover
+          recoverer = Recoverer.new
+          recoverer.database = database
+          force_remove = options[:force_remove]
         rescue Error => error
           failed("Failed to recover database: <#{@database_path}>",
                  error.message)
@@ -350,6 +352,10 @@ module Groonga
 
         def initialize
           @context = Context.instance
+        end
+
+        def recover
+          @database.recover
         end
       end
     end
