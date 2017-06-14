@@ -344,6 +344,14 @@ module Groonga
           failed(message)
         end
       end
+
+      class Recoverer
+        attr_writer :database
+
+        def initialize
+          @context = Context.instance
+        end
+      end
     end
   end
 end
