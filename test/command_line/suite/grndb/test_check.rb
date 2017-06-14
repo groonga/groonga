@@ -127,6 +127,51 @@ load --table Users
     end
   end
 
+  def test_corrupt_table
+    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+    groonga do |external_process|
+      external_process.input.puts("load --table Users")
+      external_process.input.puts("[")
+      300000.times do |i|
+        key = (("%04d" % i) * 1024)[0, 4096]
+        external_process.input.puts("{\"_key\": \"#{key}\"},")
+        external_process.input.flush
+      end
+      external_process.input.puts("{\"_key\": \"x\"}")
+      external_process.input.puts("]")
+    end
+    FileUtils.rm("#{@database_path}.0000100.001")
+    error = assert_raise(CommandRunner::Error) do
+      grndb("check")
+    end
+    assert_equal(<<-MESSAGE, error.error_output)
+[Users] Table is corrupt. (1) Truncate the table (truncate Users or '#{grndb_path} recover --force-truncate #{@database_path}') and (2) load data again.
+    MESSAGE
+  end
+
+  def test_corrupt_data_column
+    groonga("table_create", "Data", "TABLE_NO_KEY")
+    groonga("column_create", "Data", "text", "COLUMN_SCALAR", "Text")
+    groonga do |external_process|
+      external_process.input.puts("load --table Data")
+      external_process.input.puts("[")
+      data = "a" * 10000000
+      100.times do |i|
+        external_process.input.puts("{\"text\": \"#{data}\"},")
+        external_process.input.flush
+      end
+      external_process.input.puts("{\"text\": \"x\"}")
+      external_process.input.puts("]")
+    end
+    FileUtils.rm("#{@database_path}.0000101.001")
+    error = assert_raise(CommandRunner::Error) do
+      grndb("check")
+    end
+    assert_equal(<<-MESSAGE, error.error_output)
+[Data.text] Data column is corrupt. (1) Truncate the column (truncate Data.text or '#{grndb_path} recover --force-truncate #{@database_path}') and (2) load data again.
+    MESSAGE
+  end
+
   sub_test_case "--target" do
     def test_nonexistent_table
       groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")

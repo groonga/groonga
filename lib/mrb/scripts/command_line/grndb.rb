@@ -132,6 +132,7 @@ module Groonga
 
         def check_database
           check_database_locked
+          check_database_corrupt
           check_database_dirty
         end
 
@@ -181,6 +182,15 @@ module Groonga
           failed(message)
         end
 
+        def check_database_corrupt
+          return unless @database.corrupt?
+
+          message =
+            "Database is corrupt. " +
+            "Re-create the database."
+          failed(message)
+        end
+
         def check_database_dirty
           return unless @database.dirty?
 
@@ -209,6 +219,11 @@ module Groonga
           return if @checked.key?(object.id)
           @checked[object.id] = true
 
+          check_object_locked(object)
+          check_object_corrupt(object)
+        end
+
+        def check_object_locked(object)
           case object
           when IndexColumn
             return unless object.locked?
@@ -235,6 +250,35 @@ module Groonga
               "It may be broken. " +
               "(1) Truncate the table (truncate #{name}) or " +
               "clear lock of the table (lock_clear #{name}) " +
+              "and (2) load data again."
+            failed(message)
+          end
+        end
+
+        def check_object_corrupt(object)
+          case object
+          when IndexColumn
+            return unless object.corrupt?
+            message =
+              "[#{object.name}] Index column is corrupt. " +
+              "Re-create index by '#{@program_path} recover #{@database_path}'."
+            failed(message)
+          when Column
+            return unless object.corrupt?
+            name = object.name
+            message =
+              "[#{name}] Data column is corrupt. " +
+              "(1) Truncate the column (truncate #{name} or " +
+              "'#{@program_path} recover --force-truncate #{@database_path}') " +
+              "and (2) load data again."
+            failed(message)
+          when Table
+            return unless object.corrupt?
+            name = object.name
+            message =
+              "[#{name}] Table is corrupt. " +
+              "(1) Truncate the table (truncate #{name} or " +
+              "'#{@program_path} recover --force-truncate #{@database_path}') " +
               "and (2) load data again."
             failed(message)
           end
