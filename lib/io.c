@@ -1516,11 +1516,11 @@ grn_io_is_corrupt(grn_ctx *ctx, grn_io *io)
     if (stat(path, &s) != 0) {
       SERR("[io][corrupt] used path doesn't exist: <%s>",
            path);
-      return GRN_FALSE;
+      return GRN_TRUE;
     }
   }
 
-  return GRN_TRUE;
+  return GRN_FALSE;
 }
 
 /** mmap abstraction **/
