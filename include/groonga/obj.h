@@ -73,6 +73,8 @@ GRN_API grn_bool grn_obj_name_is_column(grn_ctx *ctx,
                                         const char *name,
                                         int name_len);
 
+GRN_API grn_bool grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj);
+
 #ifdef __cplusplus
 }
 #endif

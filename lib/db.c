@@ -739,6 +739,48 @@ grn_db_touch(grn_ctx *ctx, grn_obj *s)
   grn_obj_touch(ctx, s, NULL);
 }
 
+grn_bool
+grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_bool is_corrupt = GRN_FALSE;
+
+  GRN_API_ENTER;
+
+  if (!obj) {
+    ERR(GRN_INVALID_ARGUMENT, "[object][corrupt] object must not be NULL");
+    GRN_API_RETURN(GRN_FALSE);
+  }
+
+  switch (obj->header.type) {
+  case GRN_DB :
+    is_corrupt = grn_io_is_corrupt(ctx, grn_obj_io(obj));
+    if (!is_corrupt) {
+      is_corrupt = grn_io_is_corrupt(ctx, ((grn_db *)obj)->specs->io);
+    }
+    if (!is_corrupt) {
+      is_corrupt = grn_io_is_corrupt(ctx, ((grn_db *)obj)->config->io);
+    }
+    break;
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_VAR_SIZE :
+    is_corrupt = grn_io_is_corrupt(ctx, grn_obj_io(obj));
+    break;
+  case GRN_COLUMN_INDEX :
+    is_corrupt = grn_io_is_corrupt(ctx, ((grn_ii *)obj)->seg);
+    if (!is_corrupt) {
+      is_corrupt = grn_io_is_corrupt(ctx, ((grn_ii *)obj)->chunk);
+    }
+    break;
+  default :
+    break;
+  }
+
+  GRN_API_RETURN(is_corrupt);
+}
+
 #define IS_TEMP(obj) (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT)
 
 static inline void
