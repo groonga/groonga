@@ -97,6 +97,9 @@ module Groonga
           recoverer = Recoverer.new
           recoverer.database = database
           force_remove = options[:force_remove]
+          if force_remove
+            recoverer.force_remove(target)
+          end
         rescue Error => error
           failed("Failed to recover database: <#{@database_path}>",
                  error.message)
@@ -361,3 +364,13 @@ module Groonga
     end
   end
 end
+
+        def force_remove(targets)
+          # TODO: do table_remove equivalent process
+
+          targets.each do |name, path|
+            Dir.glob("#{path}*") do |file|
+              unlink(file)
+            end
+          end
+        end
