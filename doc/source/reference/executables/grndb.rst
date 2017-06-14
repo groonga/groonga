@@ -143,6 +143,32 @@ status. You can know whether the database is recoverable or not by
 
 ``recover`` has some options.
 
+``--force-truncate``
+""""""""""""""""""""
+
+.. versionadded:: 7.0.4
+
+It forces to truncate a corrupted database object.
+
+Here is an example that specifies ``--force-truncate`` option::
+
+  % grndb recover --force-truncate --log-level info --log-path /var/log/groonga/grndb.log /var/lib/groonga/db/db
+
+When this option is specified, ``grndb`` does the following:
+
+* check whether there is a corrupted database object (table, column, indexes)
+* truncate a corrupted database object (table, column, indexes)
+* remove incremental files with .00N suffix which is created when large amount of data is loaded
+
+``--force-truncate`` option is destructive one. Even though lock is still remained, ``grndb`` truncates a targeted corrupted database object.
+
+After ``grndb recover`` command has finished, you need to load data
+against truncated tables or columns to recreate database.
+
+.. note::
+
+   You must use this option only when necessary. It means that you use it when there is a mismatch between database meta information and database object files which exists actually. This options should be used when there is no other way to recover database.
+
 ``--log-level``
 """""""""""""""
 
