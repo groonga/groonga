@@ -45,6 +45,7 @@ module Groonga
 
           options = command.options
           options.banner += " DB_PATH"
+          options.string("--force-remove", "Remove files about corrupted target object.")
 
           command.add_action do |options|
             open_database(command, options) do |database, rest_arguments|
