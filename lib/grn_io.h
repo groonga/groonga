@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -313,6 +313,7 @@ GRN_API grn_rc grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout);
 GRN_API void grn_io_unlock(grn_io *io);
 void grn_io_clear_lock(grn_io *io);
 uint32_t grn_io_is_locked(grn_io *io);
+grn_bool grn_io_is_corrupt(grn_ctx *ctx, grn_io *io);
 
 #define GRN_IO_ARRAY_AT(io,array,offset,flags,res) do {\
   grn_io_array_info *ainfo = &(io)->ainfo[array];\

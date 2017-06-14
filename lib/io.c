@@ -785,6 +785,14 @@ gen_pathname(const char *path, char *buffer, int fno)
   }
 }
 
+static uint32_t
+grn_io_n_files(grn_ctx *ctx, grn_io *io)
+{
+  unsigned long file_size;
+  file_size = grn_io_compute_file_size(io->header->version);
+  return ((io->header->curr_size + file_size - 1) / file_size);
+}
+
 grn_rc
 grn_io_size(grn_ctx *ctx, grn_io *io, uint64_t *size)
 {
@@ -792,16 +800,10 @@ grn_io_size(grn_ctx *ctx, grn_io *io, uint64_t *size)
   struct stat s;
   uint64_t tsize = 0;
   char buffer[PATH_MAX];
-  uint32_t nfiles;
+  uint32_t n_files;
 
-  if (io->header->curr_size) {
-    unsigned long file_size;
-    file_size = grn_io_compute_file_size(io->header->version);
-    nfiles = (uint32_t) ((io->header->curr_size + file_size - 1) / file_size);
-  } else {
-    nfiles = grn_io_max_n_files(io);
-  }
-  for (fno = 0; fno < nfiles; fno++) {
+  n_files = grn_io_n_files(ctx, io);
+  for (fno = 0; fno < n_files; fno++) {
     gen_pathname(io->path, buffer, fno);
     if (stat(buffer, &s)) {
       SERR("failed to stat path to compute size: <%s>",
@@ -1494,6 +1496,31 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
   }
 
   return rc;
+}
+
+grn_bool
+grn_io_is_corrupt(grn_ctx *ctx, grn_io *io)
+{
+  uint32_t i;
+  uint32_t n_files;
+
+  if (!io) {
+    return GRN_FALSE;
+  }
+
+  n_files = grn_io_n_files(ctx, io);
+  for (i = 0; i < n_files; i++) {
+    char path[PATH_MAX];
+    struct stat s;
+    gen_pathname(io->path, path, i);
+    if (stat(path, &s) != 0) {
+      SERR("[io][corrupt] used path doesn't exist: <%s>",
+           path);
+      return GRN_FALSE;
+    }
+  }
+
+  return GRN_TRUE;
 }
 
 /** mmap abstraction **/
