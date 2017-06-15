@@ -158,6 +158,8 @@ class TestIndexMatch < QueryOptimizerTestCase
     end
 
     def test_and
+      omit("AND only expression is processed in C for now. " +
+           "We should reconsider about it. (Optimize in C or mruby?)")
       filter = "(message @ 'Groonga') && (message @ 'Rroonga')"
       assert_equal(<<-DUMP, dump_plan(filter))
 [0]
