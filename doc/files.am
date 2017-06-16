@@ -93,6 +93,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/cascade.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/status.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/all.log \
+	$(top_srcdir)/doc/source/example/reference/commands/io_flush/only_opened_yes.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/recursive_default.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/recursive_invalid.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/recursive_no.log \
@@ -1014,6 +1015,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/delete/cascade.log \
 	source/example/reference/commands/delete/status.log \
 	source/example/reference/commands/io_flush/all.log \
+	source/example/reference/commands/io_flush/only_opened_yes.log \
 	source/example/reference/commands/io_flush/recursive_default.log \
 	source/example/reference/commands/io_flush/recursive_invalid.log \
 	source/example/reference/commands/io_flush/recursive_no.log \

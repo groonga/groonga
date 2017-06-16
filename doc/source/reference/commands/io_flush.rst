@@ -48,12 +48,17 @@ changes in memory, flushing them to disk is a heavy process.
 Syntax
 ------
 
-This command takes two parameters.
+This command takes three parameters.
 
 All parameters are optional::
 
   io_flush [target_name=null]
            [recursive=yes]
+           [only_opened=no]
+
+.. versionadded:: 7.0.4
+
+   :ref:`io-flush-only-opened` is added.
 
 Usage
 -----
@@ -219,6 +224,9 @@ Child objects of table is all its columns.
 
 Child objects of column is nothing.
 
+If you specify ``yes`` to :ref:`io-flush-only-opened`, ``recursive``
+is ignored.
+
 ``recursive`` value must be ``yes`` or ``no``. ``yes`` means that all
 of the specified flush target object and child objects are flush
 target objects. ``no`` means that only the specified flush target
@@ -253,6 +261,37 @@ isn't specified:
 .. groonga-command
 .. include:: ../../example/reference/commands/io_flush/recursive_default.log
 .. io_flush
+
+.. _io-flush-only-opened:
+
+``only_opened``
+"""""""""""""""
+
+.. versionadded:: 7.0.4
+
+Specifies whether opened objects are only flushed.
+
+If there is only one process that changes the target database, flush
+performance will be improved by specifying ``yes`` to
+``only_opened``. It skips needless flushes.
+
+You can't specify :ref:`io-flush-target-name` with ``only_opened``
+option. If you specify :ref:`io-flush-target-name`, ``only_opened`` is
+ignored.
+
+If you specify ``yes`` to ``only_opened``, :ref:`io-flush-recursive`
+is ignored.
+
+``only_opened`` value must be ``yes`` or ``no``. ``yes`` means that
+opened objects are only flushed. ``no`` means that all target objects
+are flushed even they aren't opened.
+
+The following ``io_flush`` flushes all changes in database, all tables
+and all columns:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/io_flush/only_opened_yes.log
+.. io_flush --only_opened yes
 
 Return value
 ------------
