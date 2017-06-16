@@ -27,7 +27,7 @@ def close_groonga():
     groonga_process.stdin.close()
     groonga_process.stdout.close()
     groonga_process = None
-    print '###<<< database: close'
+    print('###<<< database: close')
   if current_log:
     current_log.close()
     current_log = None
@@ -61,7 +61,7 @@ def reconnect(name):
   groonga_process.stdout.readline()
   current_log = open(current_log_path)
   current_log.read()
-  print '###>>> database: open <%s>' % current_db_path
+  print('###>>> database: open <%s>' % current_db_path)
 
 def expand_command_line(command_line):
   return command_line.replace('${DB_PATH}', current_db_path)
@@ -174,10 +174,10 @@ def execmd(command, fout):
 processed_files = []
 def readfile(fname, outflag):
   if fname in processed_files:
-    print "skipped processed file: %s" % fname
+    print("skipped processed file: %s" % fname)
     return
   if outflag > 32:
-    print "!!!! INCLUDE DEPTH OVER !!!!"
+    print("!!!! INCLUDE DEPTH OVER !!!!")
     raise
   processed_files.append(fname)
 
@@ -195,7 +195,7 @@ def readfile(fname, outflag):
   while len(dat):
     cmd = dat.pop(0)
     if cmd.startswith('.. groonga-command'):
-      print '### command start'
+      print('### command start')
       fout = None
       while len(dat):
         cmd = dat.pop(0)
@@ -212,13 +212,13 @@ def readfile(fname, outflag):
           if not os.path.exists(dir_name):
             os.makedirs(dir_name)
           fout = open(a, 'w')
-          print '### write start : ' + a
+          print('### write start : ' + a)
           fout.write("Execution example::\n\n")
         elif cmd.startswith('.. % '):
           command_line = cmd[5:]
           if fout:
             fout.write("  % " + command_line + "\n")
-          print command_line
+          print(command_line)
           expanded_command_line = expand_command_line(command_line)
           command_output = subprocess.check_output(expanded_command_line,
                                                    shell=True)
@@ -227,12 +227,12 @@ def readfile(fname, outflag):
             fout.write(first_lines_re.sub("  ", command_output.strip()))
             fout.write("\n")
           else:
-            print command_output
+            print(command_output)
         elif cmd.startswith('.. .. '):
           command_line = cmd[6:]
           if fout:
             fout.write("  " + command_line + "\n")
-          print command_line
+          print(command_line)
         elif cmd.startswith('..'):
           if cmd.replace(' ', '').replace("\t", '') == '..':
             while len(dat):
@@ -245,15 +245,15 @@ def readfile(fname, outflag):
               cmd += '\n' + re.sub('^\.\. ', '', dat.pop(0))
             execmd(cmd, fout)
         else:
-          print '### command end'
+          print('### command end')
           if fout:
             fout.close()
           break
     elif cmd.startswith('.. groonga-include : '):
       a = rootdir + cmd[21:]
-      print '###>>> include : ' + a
+      print('###>>> include : ' + a)
       readfile(a, outflag + 1)
-      print '###<<< include end'
+      print('###<<< include end')
 
 entry_point = "source/"
 rest_timeout = 0.1
@@ -269,7 +269,7 @@ else:
     for fname in files:
       if fname.lower().endswith('.rst'):
         b = os.path.join(root, fname)
-        print "===" + b
+        print("===" + b)
         readfile(b, 0)
 
 if fout:
