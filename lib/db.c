@@ -11481,7 +11481,13 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
     rc = grn_ii_flush(ctx, (grn_ii *)obj);
     break;
   default :
-    rc = grn_io_flush(ctx, grn_obj_io(obj));
+    {
+      grn_io *io;
+      io = grn_obj_io(obj);
+      if (io) {
+        rc = grn_io_flush(ctx, io);
+      }
+    }
     break;
   }
 
