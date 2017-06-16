@@ -131,6 +131,7 @@ module Groonga
         end
 
         def check_database
+          check_database_orphan_inspect
           check_database_locked
           check_database_corrupt
           check_database_dirty
@@ -172,6 +173,20 @@ module Groonga
         end
 
         private
+        def check_database_orphan_inspect
+          open_database_cursor do |cursor|
+            cursor.each do |id|
+              if cursor.key == "inspect" and @context[id].nil?
+                message =
+                  "Database has orphan 'inspect' object. " +
+                  "Remove it by '#{@program_path} recover #{@database_path}'."
+                failed(message)
+                break
+              end
+            end
+          end
+        end
+
         def check_database_locked
           return unless @database.locked?
 

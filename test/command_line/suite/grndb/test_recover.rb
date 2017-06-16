@@ -2,6 +2,16 @@ class TestGrnDBRecover < GroongaTestCase
   def setup
   end
 
+  def test_orphan_inspect
+    groonga("table_create", "inspect", "TABLE_NO_KEY")
+    _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+    FileUtils.rm(path)
+    result = grndb("recover")
+    assert_equal("", result.error_output)
+    result = grndb("check")
+    assert_equal("", result.error_output)
+  end
+
   def test_locked_database
     groonga("lock_acquire")
     error = assert_raise(CommandRunner::Error) do

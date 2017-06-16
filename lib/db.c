@@ -13693,15 +13693,38 @@ exit :
 }
 
 static void
+grn_db_recover_database_remove_orphan_inspect(grn_ctx *ctx, grn_obj *db)
+{
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, db, cursor, id, GRN_CURSOR_BY_ID) {
+    void *key;
+    int key_size;
+
+    key_size = grn_table_cursor_get_key(ctx, cursor, &key);
+#define INSPECT     "inspect"
+#define INSPECT_LEN (sizeof(INSPECT) - 1)
+    if (key_size == INSPECT_LEN && memcmp(key, INSPECT, INSPECT_LEN) == 0) {
+      if (!grn_ctx_at(ctx, id)) {
+        ERRCLR(ctx);
+        grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
+      }
+      break;
+    }
+#undef INSPECT
+#undef INSPECT_LEN
+  } GRN_TABLE_EACH_END(ctx, cursor);
+}
+
+static void
 grn_db_recover_database(grn_ctx *ctx, grn_obj *db)
 {
-  if (!grn_obj_is_locked(ctx, db)) {
-    grn_db_clear_dirty(ctx, db);
+  if (grn_obj_is_locked(ctx, db)) {
+    ERR(GRN_OBJECT_CORRUPT,
+        "[db][recover] database may be broken. Please re-create the database");
     return;
   }
 
-  ERR(GRN_OBJECT_CORRUPT,
-      "[db][recover] database may be broken. Please re-create the database");
+  grn_db_clear_dirty(ctx, db);
+  grn_db_recover_database_remove_orphan_inspect(ctx, db);
 }
 
 static void

@@ -2,6 +2,18 @@ class TestGrnDBCheck < GroongaTestCase
   def setup
   end
 
+  def test_orphan_inspect
+    groonga("table_create", "inspect", "TABLE_NO_KEY")
+    _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+    FileUtils.rm(path)
+    error = assert_raise(CommandRunner::Error) do
+      grndb("check")
+    end
+    assert_equal(<<-MESSAGE, error.error_output)
+Database has orphan 'inspect' object. Remove it by '#{grndb_path} recover #{@database_path}'.
+    MESSAGE
+  end
+
   def test_locked_database
     groonga("lock_acquire")
     error = assert_raise(CommandRunner::Error) do
