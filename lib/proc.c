@@ -3477,37 +3477,37 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   is_only_opened = grn_proc_option_value_bool(ctx, only_opened, GRN_FALSE);
   {
     grn_rc rc;
-    if (is_recursive) {
-      if (target->header.type == GRN_DB && is_only_opened) {
-        rc = grn_obj_flush(ctx, target);
-        if (rc == GRN_SUCCESS) {
-          GRN_TABLE_EACH_BEGIN_FLAGS(ctx, target, cursor, id, GRN_CURSOR_BY_ID) {
-            grn_obj *sub_target;
+    if (target->header.type == GRN_DB && is_only_opened) {
+      rc = grn_obj_flush(ctx, target);
+      if (rc == GRN_SUCCESS) {
+        GRN_TABLE_EACH_BEGIN_FLAGS(ctx, target, cursor, id, GRN_CURSOR_BY_ID) {
+          grn_obj *sub_target;
 
-            if (id < GRN_N_RESERVED_TYPES) {
-              continue;
-            }
+          if (id < GRN_N_RESERVED_TYPES) {
+            continue;
+          }
 
-            if (!grn_ctx_is_opened(ctx, id)) {
-              continue;
-            }
+          if (!grn_ctx_is_opened(ctx, id)) {
+            continue;
+          }
 
-            sub_target = grn_ctx_at(ctx, id);
-            rc = grn_obj_flush(ctx, sub_target);
-            if (rc != GRN_SUCCESS) {
-              break;
-            }
-          } GRN_TABLE_EACH_END(ctx, cursor);
-        }
-      } else {
-        rc = grn_obj_flush_recursive(ctx, target);
+          sub_target = grn_ctx_at(ctx, id);
+          rc = grn_obj_flush(ctx, sub_target);
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        } GRN_TABLE_EACH_END(ctx, cursor);
       }
     } else {
-      rc = grn_obj_flush(ctx, target);
+      if (is_recursive) {
+        rc = grn_obj_flush_recursive(ctx, target);
+      } else {
+        rc = grn_obj_flush(ctx, target);
+      }
     }
-
     GRN_OUTPUT_BOOL(rc == GRN_SUCCESS);
   }
+
 
   return NULL;
 }
