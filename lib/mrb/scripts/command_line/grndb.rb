@@ -92,8 +92,10 @@ module Groonga
       end
 
       def recover(database, options, arguments)
+        recoverer = Recoverer.new
+        recoverer.database = database
         begin
-          database.recover
+          recoverer.recover
         rescue Error => error
           failed("Failed to recover database: <#{@database_path}>",
                  error.message)
