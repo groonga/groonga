@@ -45,6 +45,7 @@ module Groonga
 
           options = command.options
           options.banner += " DB_PATH"
+          options.boolean("--force-truncate", "Force to truncate corrupted objects.")
 
           command.add_action do |options|
             open_database(command, options) do |database, rest_arguments|
