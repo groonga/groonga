@@ -402,6 +402,14 @@ module Groonga
           failed(message)
         end
       end
+
+      class Recoverer
+        attr_writer :database
+
+        def recover
+          @database.recover
+        end
+      end
     end
   end
 end
