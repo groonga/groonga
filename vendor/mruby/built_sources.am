@@ -10,4 +10,5 @@ BUILT_SOURCES =						\
 	mruby-io/src/io.c				\
 	mruby-io/src/mruby_io_gem.c			\
 	mruby-file-stat/src/config.h			\
-	mruby-file-stat/src/file-stat.c
+	mruby-file-stat/src/file-stat.c			\
+	mruby-dir/src/dir.c

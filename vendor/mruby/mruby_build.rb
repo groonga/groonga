@@ -59,3 +59,7 @@ FileUtils.cp_r("#{mruby_io_dir}/src/", "mruby-io/")
 mruby_file_stat_dir = "#{mruby_build_dir}/mrbgems/mruby-file-stat"
 FileUtils.mkdir_p("mruby-file-stat/")
 FileUtils.cp_r("#{mruby_file_stat_dir}/src/", "mruby-file-stat/")
+
+mruby_dir_dir = "#{mruby_build_dir}/mrbgems/mruby-dir"
+FileUtils.mkdir_p("mruby-dir/")
+FileUtils.cp_r("#{mruby_dir_dir}/src/", "mruby-dir/")
