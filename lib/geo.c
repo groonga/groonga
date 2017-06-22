@@ -710,6 +710,11 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
   if ((index = find_geo_sort_index(ctx, column))) {
     grn_id tid;
     grn_pat *pat = (grn_pat *)grn_ctx_at(ctx, index->header.domain);
+    if (!pat) {
+      ERR(GRN_INVALID_ARGUMENT, "grn_ctx_at(): unknown grn_id"
+          "index->header.domain:%d", index->header.domain);
+      GRN_API_RETURN(i);
+    }
     grn_id domain = pat->obj.header.domain;
     grn_pat_cursor *pc = grn_pat_cursor_open(ctx, pat, NULL, 0,
                                              GRN_BULK_HEAD(geo_point),
@@ -871,6 +876,11 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
   grn_geo_point *center, on_circle;
   grn_geo_distance_raw_func distance_raw_func;
   pat = grn_ctx_at(ctx, index->header.domain);
+  if (!pat) {
+    ERR(GRN_INVALID_ARGUMENT, "grn_ctx_at(): unknown grn_id"
+        "index->header.domain:%d", index->header.domain);
+    goto exit;
+  }
   domain = pat->header.domain;
   if (domain != GRN_DB_TOKYO_GEO_POINT && domain != GRN_DB_WGS84_GEO_POINT) {
     char name[GRN_TABLE_MAX_KEY_SIZE];
@@ -1043,6 +1053,11 @@ in_rectangle_data_fill(grn_ctx *ctx, grn_obj *index,
   const char *domain_name;
 
   data->pat = grn_ctx_at(ctx, index->header.domain);
+  if(!data->pat) {
+    ERR(GRN_INVALID_ARGUMENT, "grn_ctx_at(): unknown grn_id"
+        "index->header.domain:%d", index->header.domain);
+    return;
+  }
   domain = data->pat->header.domain;
   if (domain != GRN_DB_TOKYO_GEO_POINT && domain != GRN_DB_WGS84_GEO_POINT) {
     char name[GRN_TABLE_MAX_KEY_SIZE];
