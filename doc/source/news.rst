@@ -7,6 +7,60 @@
 News
 ====
 
+.. _release-7-0-4:
+
+Release 7.0.4 - 2017-06-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added physical create/delete operation logs to identify problem for
+  troubleshooting. [GitHub#700,#701]
+
+* [:doc:`/reference/function/in_records`] Improved performance for
+  fixed sized column. It may reduce 50% execution time.
+
+* [:doc:`/reference/executables/grndb`] Added ``--log-path`` option.
+  [GitHub#702,#703]
+
+* [:doc:`/reference/executables/grndb`] Added ``--log-level`` option.
+  [GitHub#706,#708]
+
+* Added the following API
+
+  * ``grn_operator_to_exec_func()``
+  * ``grn_obj_is_corrupt()``
+
+* Improved performance for "FIXED_SIZE_COLUMN OP CONSTANT". Supported
+  operators are: ``==``, ``!=``, ``<``, ``>``, ``<=`` and ``>=``.
+
+* Improved performance for "COLUMN OP VALUE && COLUMN OP VALUE && ...".
+
+* [:doc:`/reference/executables/grndb`] Supported corrupted object
+  detection with ``grndb check``.
+
+* [:doc:`/reference/commands/io_flush`] Supported ``--only_opened``
+  option which enables to flush only opened database objects.
+
+* [:doc:`/reference/executables/grndb`] Supported to detect/delete
+  orphan "inspect" object. The orphaned "inspect" object is created by
+  renamed command name from ``inspect`` to ``object_inspect``.
+
+Fixes
+^^^^^
+
+* [rpm][centos] Fixed unexpected macro expansion problem with
+  customized build. This bug only affects when rebuilding Groonga SRPM
+  with customized ``additional_configure_options`` parameter in spec
+  file.
+
+* Fixed missing null check for ``grn_table_setoperation()``. There is a
+  possibility of crash bug when indexes are broken. [GitHub#699]
+
+Thanks
+^^^^^^
+
 .. _release-7-0-3:
 
 Release 7.0.3 - 2017-05-29
