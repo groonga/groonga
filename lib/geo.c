@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2013 Brazil
+/*
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -711,8 +712,24 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     grn_id tid;
     grn_pat *pat = (grn_pat *)grn_ctx_at(ctx, index->header.domain);
     if (!pat) {
-      ERR(GRN_INVALID_ARGUMENT, "grn_ctx_at(): unknown grn_id"
-          "index->header.domain:%d", index->header.domain);
+      char index_name[GRN_TABLE_MAX_KEY_SIZE];
+      int index_name_size;
+      char lexicon_name[GRN_TABLE_MAX_KEY_SIZE];
+      int lexicon_name_size;
+      index_name_size = grn_obj_name(ctx,
+                                     index,
+                                     index_name,
+                                     GRN_TABLE_MAX_KEY_SIZE);
+      lexicon_name_size = grn_table_get_key(ctx,
+                                            grn_ctx_db(ctx),
+                                            index->header.domain,
+                                            lexicon_name,
+                                            GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[sort][geo] lexicon is broken: <%.*s>: <%.*s>(%d)",
+          index_name_size, index_name,
+          lexicon_name_size, lexicon_name,
+          index->header.domain);
       GRN_API_RETURN(i);
     }
     grn_id domain = pat->obj.header.domain;
