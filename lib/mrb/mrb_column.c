@@ -124,6 +124,18 @@ mrb_grn_column_get_table(mrb_state *mrb, mrb_value self)
   return grn_mrb_value_from_grn_obj(mrb, table);
 }
 
+static mrb_value
+mrb_grn_column_truncate(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *column;
+
+  column = DATA_PTR(self);
+  grn_column_truncate(ctx, column);
+  grn_mrb_ctx_check(mrb);
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_column_init(grn_ctx *ctx)
 {
@@ -154,5 +166,8 @@ grn_mrb_column_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "table",
                     mrb_grn_column_get_table, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "truncate",
+                    mrb_grn_column_truncate, MRB_ARGS_NONE());
 }
 #endif
