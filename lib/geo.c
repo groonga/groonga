@@ -894,8 +894,24 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
   grn_geo_distance_raw_func distance_raw_func;
   pat = grn_ctx_at(ctx, index->header.domain);
   if (!pat) {
-    ERR(GRN_INVALID_ARGUMENT, "grn_ctx_at(): unknown grn_id"
-        "index->header.domain:%d", index->header.domain);
+    char index_name[GRN_TABLE_MAX_KEY_SIZE];
+    int index_name_size;
+    char lexicon_name[GRN_TABLE_MAX_KEY_SIZE];
+    int lexicon_name_size;
+    index_name_size = grn_obj_name(ctx,
+                                   index,
+                                   index_name,
+                                   GRN_TABLE_MAX_KEY_SIZE);
+    lexicon_name_size = grn_table_get_key(ctx,
+                                          grn_ctx_db(ctx),
+                                          index->header.domain,
+                                          lexicon_name,
+                                          GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_OBJECT_CORRUPT,
+        "geo_in_circle(): lexicon is broken: <%.*s>: <%.*s>(%d)",
+        index_name_size, index_name,
+        lexicon_name_size, lexicon_name,
+        index->header.domain);
     goto exit;
   }
   domain = pat->header.domain;
