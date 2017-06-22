@@ -1086,11 +1086,29 @@ in_rectangle_data_fill(grn_ctx *ctx, grn_obj *index,
   const char *domain_name;
 
   data->pat = grn_ctx_at(ctx, index->header.domain);
-  if(!data->pat) {
-    ERR(GRN_INVALID_ARGUMENT, "grn_ctx_at(): unknown grn_id"
-        "index->header.domain:%d", index->header.domain);
+  if (!data->pat) {
+    char index_name[GRN_TABLE_MAX_KEY_SIZE];
+    int index_name_size;
+    char lexicon_name[GRN_TABLE_MAX_KEY_SIZE];
+    int lexicon_name_size;
+    index_name_size = grn_obj_name(ctx,
+                                   index,
+                                   index_name,
+                                   GRN_TABLE_MAX_KEY_SIZE);
+    lexicon_name_size = grn_table_get_key(ctx,
+                                          grn_ctx_db(ctx),
+                                          index->header.domain,
+                                          lexicon_name,
+                                          GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_OBJECT_CORRUPT,
+        "%s: lexicon lexicon is broken: <%.*s>: <%.*s>(%d)",
+        process_name,
+        index_name_size, index_name,
+        lexicon_name_size, lexicon_name,
+        index->header.domain);
     return;
   }
+
   domain = data->pat->header.domain;
   if (domain != GRN_DB_TOKYO_GEO_POINT && domain != GRN_DB_WGS84_GEO_POINT) {
     char name[GRN_TABLE_MAX_KEY_SIZE];
