@@ -725,7 +725,7 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                                             index->header.domain,
                                             lexicon_name,
                                             GRN_TABLE_MAX_KEY_SIZE);
-      ERR(GRN_INVALID_ARGUMENT,
+      ERR(GRN_OBJECT_CORRUPT,
           "[sort][geo] lexicon is broken: <%.*s>: <%.*s>(%d)",
           index_name_size, index_name,
           lexicon_name_size, lexicon_name,
