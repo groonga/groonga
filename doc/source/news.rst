@@ -18,7 +18,7 @@ Improvements
 * Added physical create/delete operation logs to identify problem for
   troubleshooting. [GitHub#700,#701]
 
-* [:doc:`/reference/function/in_records`] Improved performance for
+* [:doc:`/reference/functions/in_records`] Improved performance for
   fixed sized column. It may reduce 50% execution time.
 
 * [:doc:`/reference/executables/grndb`] Added ``--log-path`` option.
