@@ -45,6 +45,7 @@ module Groonga
 
           options = command.options
           options.banner += " DB_PATH"
+          options.boolean("--force-truncate", "Force to truncate corrupted objects.")
 
           command.add_action do |options|
             open_database(command, options) do |database, rest_arguments|
@@ -92,8 +93,11 @@ module Groonga
       end
 
       def recover(database, options, arguments)
+        recoverer = Recoverer.new
+        recoverer.database = database
+        recoverer.force_truncate = options[:force_truncate]
         begin
-          database.recover
+          recoverer.recover
         rescue Error => error
           failed("Failed to recover database: <#{@database_path}>",
                  error.message)
@@ -400,6 +404,47 @@ module Groonga
             "It's broken. " +
             "Re-create the object or the database."
           failed(message)
+        end
+      end
+
+      class Recoverer
+        attr_writer :database
+        attr_writer :force_truncate
+
+        def initialize
+          @context = Context.instance
+        end
+
+        def recover
+          @database.recover
+          if @force_truncate
+            truncate_corrupt_objects
+          end
+        end
+
+        def truncate_corrupt_objects
+          @database.each do |object|
+            next unless object.corrupt?
+            logger = @context.logger
+            object_path = object.path
+            object_dirname = File.dirname(object_path)
+            object_basename = File.basename(object_path)
+            object.truncate
+            Dir.foreach(object_dirname) do |path|
+              if path.start_with?("#{object_basename}.")
+                begin
+                  File.unlink("#{object_dirname}/#{path}")
+                  message = "Corrupted <#{object_path}> related file is removed: <#{path}>"
+                  $stdout.puts(message)
+                  logger.log(Logger::Level::INFO.to_i, __FILE__, __LINE__, "truncate_corrupt_objects", message)
+                rescue Error => error
+                  message = "Failed to remove file which is related to corrupted <#{object_path}>: <#{path}>"
+                  $stderr.puts(message)
+                  logger.log_error(message)
+                end
+              end
+            end
+          end
         end
       end
     end
