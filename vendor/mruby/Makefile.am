@@ -4,7 +4,8 @@ EXTRA_DIST =					\
 	build_config.rb				\
 	mruby_build.rb				\
 	mruby_build.timestamp			\
-	version
+	version					\
+	mruby-dir/src/Win/dirent.c
 
 DEFAULT_INCLUDES =						\
 	-I$(srcdir)/../mruby-source/include			\
