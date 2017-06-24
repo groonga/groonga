@@ -624,6 +624,30 @@ grn_query_logger_set(grn_ctx *ctx, const grn_query_logger *logger)
   return GRN_SUCCESS;
 }
 
+void
+grn_query_logger_set_flags(grn_ctx *ctx, unsigned int flags)
+{
+  current_query_logger.flags = flags;
+}
+
+void
+grn_query_logger_add_flags(grn_ctx *ctx, unsigned int flags)
+{
+  current_query_logger.flags |= flags;
+}
+
+void
+grn_query_logger_remove_flags(grn_ctx *ctx, unsigned int flags)
+{
+  current_query_logger.flags &= ~flags;
+}
+
+unsigned int
+grn_query_logger_get_flags(grn_ctx *ctx)
+{
+  return current_query_logger.flags;
+}
+
 grn_bool
 grn_query_logger_pass(grn_ctx *ctx, unsigned int flag)
 {

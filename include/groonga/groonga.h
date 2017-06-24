@@ -1122,6 +1122,10 @@ struct _grn_query_logger {
 };
 
 GRN_API grn_rc grn_query_logger_set(grn_ctx *ctx, const grn_query_logger *logger);
+GRN_API void grn_query_logger_set_flags(grn_ctx *ctx, unsigned int flags);
+GRN_API void grn_query_logger_add_flags(grn_ctx *ctx, unsigned int flags);
+GRN_API void grn_query_logger_remove_flags(grn_ctx *ctx, unsigned int flags);
+GRN_API unsigned int grn_query_logger_get_flags(grn_ctx *ctx);
 
 GRN_API void grn_query_logger_put(grn_ctx *ctx, unsigned int flag,
                                   const char *mark,
