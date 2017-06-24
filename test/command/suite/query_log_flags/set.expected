@@ -1,0 +1,12 @@
+query_log_flags --flags SIZE --mode SET
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "previous": "COMMAND|RESULT_CODE|DESTINATION|CACHE|SIZE|SCORE",
+    "current": "SIZE"
+  }
+]

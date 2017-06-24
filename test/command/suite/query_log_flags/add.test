@@ -1,0 +1,2 @@
+query_log_flags --flags COMMAND|RESULT_CODE --mode SET
+query_log_flags --flags SIZE|SCORE --mode ADD

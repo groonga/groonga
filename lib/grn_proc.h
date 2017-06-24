@@ -61,6 +61,7 @@ void grn_proc_init_object_inspect(grn_ctx *ctx);
 void grn_proc_init_object_list(grn_ctx *ctx);
 void grn_proc_init_object_remove(grn_ctx *ctx);
 void grn_proc_init_query_expand(grn_ctx *ctx);
+void grn_proc_init_query_log_flags(grn_ctx *ctx);
 void grn_proc_init_schema(grn_ctx *ctx);
 void grn_proc_init_select(grn_ctx *ctx);
 void grn_proc_init_snippet(grn_ctx *ctx);

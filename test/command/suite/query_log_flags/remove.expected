@@ -1,0 +1,12 @@
+query_log_flags --flags DESTINATION|CACHE|SIZE|SCORE --mode REMOVE
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "previous": "COMMAND|RESULT_CODE|DESTINATION|CACHE|SIZE|SCORE",
+    "current": "COMMAND|RESULT_CODE"
+  }
+]

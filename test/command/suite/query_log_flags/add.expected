@@ -1,0 +1,24 @@
+query_log_flags --flags COMMAND|RESULT_CODE --mode SET
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "previous": "COMMAND|RESULT_CODE|DESTINATION|CACHE|SIZE|SCORE",
+    "current": "COMMAND|RESULT_CODE"
+  }
+]
+query_log_flags --flags SIZE|SCORE --mode ADD
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "previous": "COMMAND|RESULT_CODE",
+    "current": "COMMAND|RESULT_CODE|SIZE|SCORE"
+  }
+]

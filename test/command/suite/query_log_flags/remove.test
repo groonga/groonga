@@ -1,0 +1,1 @@
+query_log_flags --flags DESTINATION|CACHE|SIZE|SCORE --mode REMOVE

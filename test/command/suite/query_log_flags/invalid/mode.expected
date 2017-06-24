@@ -1,0 +1,13 @@
+query_log_flags --flags SIZE --mode nonexistent
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[query-log][flags] mode must be <SET>, <ADD> or <REMOVE>: <nonexistent>"
+  ],
+  null
+]
+#|e| [query-log][flags] mode must be <SET>, <ADD> or <REMOVE>: <nonexistent>
