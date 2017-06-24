@@ -248,6 +248,39 @@ grn_inspect_type(grn_ctx *ctx, grn_obj *buf, unsigned char type)
   return buf;
 }
 
+
+grn_obj *
+grn_inspect_query_log_flags(grn_ctx *ctx, grn_obj *buffer, unsigned int flags)
+{
+  grn_bool have_content = GRN_FALSE;
+
+  if (flags == GRN_QUERY_LOG_NONE) {
+    GRN_TEXT_PUTS(ctx, buffer, "NONE");
+    return buffer;
+  }
+
+#define CHECK_FLAG(NAME) do {                   \
+    if (flags & GRN_QUERY_LOG_ ## NAME) {       \
+      if (have_content) {                       \
+        GRN_TEXT_PUTS(ctx, buffer, "|");        \
+      }                                         \
+      GRN_TEXT_PUTS(ctx, buffer, #NAME);        \
+      have_content = GRN_TRUE;                  \
+    }                                           \
+  } while (GRN_FALSE)
+
+  CHECK_FLAG(COMMAND);
+  CHECK_FLAG(RESULT_CODE);
+  CHECK_FLAG(DESTINATION);
+  CHECK_FLAG(CACHE);
+  CHECK_FLAG(SIZE);
+  CHECK_FLAG(SCORE);
+
+#undef CHECK_FALG
+
+  return buffer;
+}
+
 static grn_rc
 grn_proc_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {

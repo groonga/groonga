@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1120,6 +1120,10 @@ struct _grn_query_logger {
   void (*reopen)(grn_ctx *ctx, void *user_data);
   void (*fin)(grn_ctx *ctx, void *user_data);
 };
+
+GRN_API grn_bool grn_query_log_flags_parse(const char *string,
+                                           int string_size,
+                                           unsigned int *flags);
 
 GRN_API grn_rc grn_query_logger_set(grn_ctx *ctx, const grn_query_logger *logger);
 GRN_API void grn_query_logger_set_flags(grn_ctx *ctx, unsigned int flags);

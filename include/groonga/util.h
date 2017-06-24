@@ -31,6 +31,9 @@ GRN_API grn_obj *grn_inspect_limited(grn_ctx *ctx,
 GRN_API grn_obj *grn_inspect_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
 GRN_API grn_obj *grn_inspect_encoding(grn_ctx *ctx, grn_obj *buffer, grn_encoding encoding);
 GRN_API grn_obj *grn_inspect_type(grn_ctx *ctx, grn_obj *buffer, unsigned char type);
+GRN_API grn_obj *grn_inspect_query_log_flags(grn_ctx *ctx,
+                                             grn_obj *buffer,
+                                             unsigned int flags);
 
 GRN_API void grn_p(grn_ctx *ctx, grn_obj *obj);
 GRN_API void grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point);

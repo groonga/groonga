@@ -459,6 +459,58 @@ static grn_critical_section default_query_logger_lock;
 static off_t default_query_logger_size = 0;
 static off_t default_query_logger_rotate_threshold_size = 0;
 
+grn_bool
+grn_query_log_flags_parse(const char *string,
+                          int string_size,
+                          unsigned int *flags)
+{
+  const char *string_end;
+
+  *flags = GRN_QUERY_LOG_NONE;
+
+  if (!string) {
+    return GRN_TRUE;
+  }
+
+  if (string_size < 0) {
+    string_size = strlen(string);
+  }
+
+  string_end = string + string_size;
+
+  while (string < string_end) {
+    if (*string == '|' || *string == ' ') {
+      string += 1;
+      continue;
+    }
+
+#define CHECK_FLAG(name)                                        \
+    if (((string_end - string) >= (sizeof(#name) - 1)) &&       \
+        (memcmp(string, #name, sizeof(#name) - 1) == 0) &&      \
+        (((string_end - string) == (sizeof(#name) - 1)) ||      \
+         (string[sizeof(#name) - 1] == '|') ||                  \
+         (string[sizeof(#name) - 1] == ' '))) {                 \
+      *flags |= GRN_QUERY_LOG_ ## name;                         \
+      string += sizeof(#name) - 1;                              \
+      continue;                                                 \
+    }
+
+    CHECK_FLAG(NONE);
+    CHECK_FLAG(COMMAND);
+    CHECK_FLAG(RESULT_CODE);
+    CHECK_FLAG(DESTINATION);
+    CHECK_FLAG(CACHE);
+    CHECK_FLAG(SIZE);
+    CHECK_FLAG(SCORE);
+
+#undef CHECK_FLAG
+
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
+}
+
 static void
 default_query_logger_log(grn_ctx *ctx, unsigned int flag,
                          const char *timestamp, const char *info,
