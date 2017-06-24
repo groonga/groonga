@@ -4,7 +4,7 @@ Priority: important
 Maintainer: groonga project <packages@groonga.org>
 Build-Depends:
   debhelper (>= 7.0.50)
-Standards-Version: 3.9.1
+Standards-Version: 3.9.6
 Homepage: http://groonga.org/
 
 Package: groonga-keyring
