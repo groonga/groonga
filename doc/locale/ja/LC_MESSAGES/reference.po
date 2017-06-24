@@ -16393,6 +16393,59 @@ msgstr ""
 msgid "``recover`` has some options."
 msgstr "``recover`` にはいくつかオプションがあります。"
 
+msgid "``--force-truncate``"
+msgstr ""
+
+msgid "It forces to truncate a corrupted database object."
+msgstr "壊れたデータベースオブジェクトを強制的に初期化します。"
+
+msgid "Here is an example that specifies ``--force-truncate`` option::"
+msgstr "以下は ``--force-truncate`` オプションを指定する例です。"
+
+msgid "When this option is specified, ``grndb`` does the following:"
+msgstr "このオプションが指定されたとき、 ``grndb`` は次のことを実行します。:"
+
+msgid ""
+"check whether there is a corrupted database object (table, column, indexes)"
+msgstr ""
+"壊れたデータベースオブジェクト(テーブル、カラム、インデックス)がないかチェッ"
+"クします"
+
+msgid "truncate a corrupted database object (table, column, indexes)"
+msgstr ""
+"壊れたデータベースオブジェクト(テーブル、カラム、インデックス)を初期化します"
+
+msgid ""
+"remove incremental files with .00N suffix which is created when large amount "
+"of data is loaded"
+msgstr ""
+"大量のデータをロードしたときに作られる増分ファイル(末尾に.00Nがつきます)を削"
+"除します"
+
+msgid ""
+"``--force-truncate`` option is destructive one. Even though lock is still "
+"remained, ``grndb`` truncates a targeted corrupted database object."
+msgstr ""
+"``--force-truncate`` は破壊的なオプションです。ロックが残留していても、 "
+"``grndb`` は構わず対象となる壊れたデータベースオブジェクトを初期化します。"
+
+msgid ""
+"After ``grndb recover`` command has finished, you need to load data against "
+"truncated tables or columns to recreate database."
+msgstr ""
+"``grndb recover`` の処理が終わったら、データベースを再構築するために初期化さ"
+"れたテーブルやカラムに対して再びデータをロードする必要があります。"
+
+msgid ""
+"You must use this option only when necessary. It means that you use it when "
+"there is a mismatch between database meta information and database object "
+"files which exists actually. This options should be used when there is no "
+"other way to recover database."
+msgstr ""
+"このオプションは必要なときのみ使用します。つまりデータベースのメタ情報と実際"
+"に存在するデータベースのオブジェクトファイルの情報が食い違っているときです。 "
+"他にデータベースを復旧する方法がないときのみ使うべきです。"
+
 msgid "grnslap"
 msgstr ""
 
