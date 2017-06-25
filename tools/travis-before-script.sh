@@ -50,8 +50,4 @@ case "$(uname)" in
     ;;
 esac
 
-if [ "${ENABLE_MRUBY}" = "yes" ]; then
-  make
-else
-  make -j${n_processors} > /dev/null
-fi
+make -j${n_processors} > /dev/null
