@@ -3,7 +3,7 @@ Section: misc
 Priority: important
 Maintainer: groonga project <packages@groonga.org>
 Build-Depends:
-  debhelper (>= 7.0.50)
+  debhelper (>= 9)
 Standards-Version: 3.9.6
 Homepage: http://groonga.org/
 
