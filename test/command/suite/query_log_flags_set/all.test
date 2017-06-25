@@ -1,0 +1,4 @@
+#@disable-logging
+query_log_flags_set --flags COMMAND|RESULT_CODE
+#@enable-logging
+query_log_flags_set --flags ALL

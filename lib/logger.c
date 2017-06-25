@@ -502,6 +502,8 @@ grn_query_log_flags_parse(const char *string,
     CHECK_FLAG(CACHE);
     CHECK_FLAG(SIZE);
     CHECK_FLAG(SCORE);
+    CHECK_FLAG(ALL);
+    CHECK_FLAG(DEFAULT);
 
 #undef CHECK_FLAG
 
