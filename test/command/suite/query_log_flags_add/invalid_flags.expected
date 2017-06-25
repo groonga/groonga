@@ -1,0 +1,13 @@
+query_log_flags_add --flags nonexistent
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[query-log][flags][add] invalid query log flags: <nonexistent>"
+  ],
+  null
+]
+#|e| [query-log][flags][add] invalid query log flags: <nonexistent>

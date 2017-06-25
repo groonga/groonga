@@ -1,4 +1,4 @@
-query_log_flags --flags COMMAND|RESULT_CODE --mode SET
+query_log_flags_set --flags COMMAND|RESULT_CODE
 [
   [
     0,
@@ -10,7 +10,7 @@ query_log_flags --flags COMMAND|RESULT_CODE --mode SET
     "current": "COMMAND|RESULT_CODE"
   }
 ]
-query_log_flags --flags SIZE|SCORE --mode ADD
+query_log_flags_add --flags SIZE|SCORE
 [
   [
     0,

@@ -1,4 +1,4 @@
-query_log_flags --flags DESTINATION|CACHE|SIZE|SCORE --mode REMOVE
+query_log_flags_remove --flags DESTINATION|CACHE|SIZE|SCORE
 [
   [
     0,

@@ -1,4 +1,4 @@
-query_log_flags --flags SIZE --mode SET
+query_log_flags_set --flags SIZE
 [
   [
     0,

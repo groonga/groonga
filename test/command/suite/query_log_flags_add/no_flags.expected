@@ -1,0 +1,3 @@
+query_log_flags_add
+[[[-22,0.0,0.0],"[query-log][flags][add] no query log flags"],null]
+#|e| [query-log][flags][add] no query log flags
