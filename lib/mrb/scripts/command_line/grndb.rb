@@ -416,10 +416,10 @@ module Groonga
         end
 
         def recover
-          @database.recover
           if @force_truncate
             truncate_corrupt_objects
           end
+          @database.recover
         end
 
         def truncate_corrupt_objects
