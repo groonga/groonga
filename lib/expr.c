@@ -8012,7 +8012,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
         const char *rest;
         int64_t int64 = grn_atoll(q->cur, q->str_end, &rest);
         // checks to see grn_atoll was appropriate
-        // (NOTE: *q->cur begins with a digit. Thus, grn_atoll parses at leaset
+        // (NOTE: *q->cur begins with a digit. Thus, grn_atoll parses at least
         //        one char.)
         if (q->str_end != rest &&
             (*rest == '.' || *rest == 'e' || *rest == 'E' ||
