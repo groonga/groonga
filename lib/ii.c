@@ -6310,6 +6310,60 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     ERR(GRN_INVALID_ARGUMENT, "[ii][column][update] record ID is nil");
     return ctx->rc;
   }
+  if (old || new) {
+    unsigned char type = GRN_VOID;
+    if (old) {
+      type = (ii->obj.header.domain == old->header.domain)
+        ? GRN_UVECTOR
+        : old->header.type;
+    }
+    if (new) {
+      type = (ii->obj.header.domain == new->header.domain)
+        ? GRN_UVECTOR
+        : new->header.type;
+    }
+    if (type == GRN_VECTOR) {
+      grn_obj *tokenizer;
+      grn_table_get_info(ctx, ii->lexicon, NULL, NULL, &tokenizer, NULL, NULL);
+      if (tokenizer) {
+        grn_obj old_elem, new_elem;
+        unsigned int i, max_n;
+        unsigned int old_n = 0, new_n = 0;
+        if (old) {
+          old_n = grn_vector_size(ctx, old);
+        }
+        if (new) {
+          new_n = grn_vector_size(ctx, new);
+        }
+        max_n = (old_n > new_n) ? old_n : new_n;
+        GRN_OBJ_INIT(&old_elem, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, old->header.domain);
+        GRN_OBJ_INIT(&new_elem, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, new->header.domain);
+        for (i = 0; i < max_n; i++) {
+          grn_rc rc;
+          grn_obj *old_p = NULL, *new_p = NULL;
+          if (i < old_n) {
+            const char *str;
+            unsigned int size = grn_vector_get_element(ctx, old, i, &str, NULL, NULL);
+            GRN_TEXT_SET_REF(&old_elem, str, size);
+            old_p = &old_elem;
+          }
+          if (i < new_n) {
+            const char *str;
+            unsigned int size = grn_vector_get_element(ctx, new, i, &str, NULL, NULL);
+            GRN_TEXT_SET_REF(&new_elem, str, size);
+            new_p = &new_elem;
+          }
+          rc = grn_ii_column_update(ctx, ii, rid, section + i, old_p, new_p, posting);
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        }
+        GRN_OBJ_FIN(ctx, &old_elem);
+        GRN_OBJ_FIN(ctx, &new_elem);
+        return ctx->rc;
+      }
+    }
+  }
   if (posting) {
     GRN_RECORD_INIT(&buf, GRN_OBJ_VECTOR, grn_obj_id(ctx, ii->lexicon));
     post = &buf;
