@@ -7245,7 +7245,7 @@ msgstr ""
 
 msgid "The command returns the current parameters for ``logical_*`` command::"
 msgstr ""
-"このコマンドは ``logical_*`` コマンドが使うパラメーターの現在地を返します::"
+"このコマンドは ``logical_*`` コマンドが使うパラメーターの現在値を返します::"
 
 msgid "``HOW_TO_USE_RANGE_INDEX`` value is one of the followings:"
 msgstr "``HOW_TO_USE_RANGE_INDEX`` の値は次のどれかです。"
