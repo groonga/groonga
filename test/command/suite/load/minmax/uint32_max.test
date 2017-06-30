@@ -1,0 +1,9 @@
+table_create Values TABLE_NO_KEY
+column_create Values value COLUMN_SCALAR UInt32
+
+load --table Values
+[
+{"value": 4294967295}
+]
+
+select Values --output_columns _id,value
