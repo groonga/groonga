@@ -12013,6 +12013,9 @@ grn_ii_builder_append_obj(grn_ctx *ctx, grn_ii_builder *builder,
         if (sec->length == 0) {
           continue;
         }
+        if (builder->tokenizer) {
+          sid = i + 1;
+        }
         rc = grn_ii_builder_append_value(ctx, builder, rid, sid, sec->weight,
                                          head + sec->offset, sec->length);
         if (rc != GRN_SUCCESS) {
@@ -12045,13 +12048,6 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn_ii_builder *builder)
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "failed to allocate memory for objs: n_srcs = %u", builder->n_srcs);
     return ctx->rc;
-  }
-
-  /* Create a block lexicon. */
-  rc = grn_ii_builder_create_lexicon(ctx, builder);
-  if (rc != GRN_SUCCESS) {
-    GRN_FREE(objs);
-    return rc;
   }
 
   /* Create a cursor to get records in the ID order. */
@@ -12132,6 +12128,54 @@ grn_ii_builder_set_src_table(grn_ctx *ctx, grn_ii_builder *builder)
   return GRN_SUCCESS;
 }
 
+/* grn_ii_builder_set_sid_bits calculates sid_bits and sid_mask. */
+static grn_rc
+grn_ii_builder_set_sid_bits(grn_ctx *ctx, grn_ii_builder *builder)
+{
+  /* Calculate the number of bits required to represent a section ID. */
+  if (builder->n_srcs == 1 && builder->tokenizer &&
+      (builder->srcs[0]->header.flags & GRN_OBJ_COLUMN_VECTOR) != 0) {
+    /* If the source column is a vector column and the index has a tokenizer, */
+    /* the maximum sid equals to the maximum number of elements. */
+    size_t max_elems = 0;
+    grn_table_cursor *cursor;
+    grn_obj obj;
+    cursor = grn_table_cursor_open(ctx, builder->src_table, NULL, 0, NULL, 0,
+                                    0, -1, GRN_CURSOR_BY_ID);
+    if (!cursor) {
+      if (ctx->rc == GRN_SUCCESS) {
+        ERR(GRN_OBJECT_CORRUPT, "[index] failed to open table cursor");
+      }
+      return ctx->rc;
+    }
+    GRN_TEXT_INIT(&obj, 0);
+    for (;;) {
+      grn_id rid = grn_table_cursor_next(ctx, cursor);
+      if (rid == GRN_ID_NIL) {
+        break;
+      }
+      if (!grn_obj_get_value(ctx, builder->srcs[0], rid, &obj)) {
+        continue;
+      }
+      if (obj.u.v.n_sections > max_elems) {
+        max_elems = obj.u.v.n_sections;
+      }
+    }
+    GRN_OBJ_FIN(ctx, &obj);
+    grn_table_cursor_close(ctx, cursor);
+    while (((uint32_t)1 << builder->sid_bits) < max_elems) {
+      builder->sid_bits++;
+    }
+  }
+  if (builder->sid_bits == 0) {
+    while (((uint32_t)1 << builder->sid_bits) < builder->n_srcs) {
+      builder->sid_bits++;
+    }
+  }
+  builder->sid_mask = ((uint64_t)1 << builder->sid_bits) - 1;
+  return GRN_SUCCESS;
+}
+
 /* grn_ii_builder_set_srcs sets source columns. */
 static grn_rc
 grn_ii_builder_set_srcs(grn_ctx *ctx, grn_ii_builder *builder)
@@ -12159,12 +12203,7 @@ grn_ii_builder_set_srcs(grn_ctx *ctx, grn_ii_builder *builder)
       return ctx->rc;
     }
   }
-  /* Calculate the number of bits required to represent a section ID. */
-  while (((uint32_t)1 << builder->sid_bits) < builder->n_srcs) {
-    builder->sid_bits++;
-  }
-  builder->sid_mask = ((uint64_t)1 << builder->sid_bits) - 1;
-  return GRN_SUCCESS;
+  return grn_ii_builder_set_sid_bits(ctx, builder);
 }
 
 /* grn_ii_builder_append_source appends values in source columns. */
@@ -12178,6 +12217,11 @@ grn_ii_builder_append_source(grn_ctx *ctx, grn_ii_builder *builder)
   if (grn_table_size(ctx, builder->src_table) == 0) {
     /* Nothing to do because there are no values. */
     return ctx->rc;
+  }
+  /* Create a block lexicon. */
+  rc = grn_ii_builder_create_lexicon(ctx, builder);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
   rc = grn_ii_builder_set_srcs(ctx, builder);
   if (rc != GRN_SUCCESS) {
