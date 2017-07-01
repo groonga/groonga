@@ -20,6 +20,7 @@
 #include "grn_db.h"
 #include "grn_expr.h"
 #include "grn_window_function.h"
+#include "grn_util.h"
 
 #include <string.h>
 
@@ -321,6 +322,7 @@ grn_table_apply_window_function(grn_ctx *ctx,
 
     offset = definition->offset;
     limit = definition->limit;
+    grn_normalize_offset_and_limit(ctx, grn_table_size(ctx, table), &offset, &limit);
     
     n_sort_keys = definition->n_group_keys + definition->n_sort_keys;
     sort_keys = GRN_MALLOCN(grn_table_sort_key, n_sort_keys);
