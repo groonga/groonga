@@ -51,6 +51,8 @@ module Groonga
           begin
             window_definition.sort_keys = sort_keys
             window_definition.group_keys = group_keys
+            window_definition.offset = options[:offset] || 0
+            window_definition.limit = options[:limit] || -1
             apply_window_function_raw(output_column,
                                       window_definition,
                                       window_function_call)

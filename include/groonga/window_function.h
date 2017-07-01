@@ -46,6 +46,8 @@ typedef struct _grn_window_definition {
   size_t n_sort_keys;
   grn_table_sort_key *group_keys;
   size_t n_group_keys;
+  int offset;
+  int limit;
 } grn_window_definition;
 
 typedef grn_rc grn_window_function_func(grn_ctx *ctx,

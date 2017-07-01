@@ -316,7 +316,12 @@ grn_table_apply_window_function(grn_ctx *ctx,
     grn_table_sort_key *sort_keys;
     grn_obj *sorted;
     grn_window window;
+    int offset = 0;
+    int limit = -1;
 
+    offset = definition->offset;
+    limit = definition->limit;
+    
     n_sort_keys = definition->n_group_keys + definition->n_sort_keys;
     sort_keys = GRN_MALLOCN(grn_table_sort_key, n_sort_keys);
     if (!sort_keys) {
@@ -358,7 +363,8 @@ grn_table_apply_window_function(grn_ctx *ctx,
     }
     grn_table_sort(ctx,
                    table,
-                   0, -1,
+                   offset,
+                   limit,
                    sorted,
                    sort_keys, n_sort_keys);
 
