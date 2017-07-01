@@ -185,6 +185,15 @@ grn_window_is_sorted(grn_ctx *ctx, grn_window *window)
   GRN_API_RETURN(window->is_sorted);
 }
 
+size_t
+grn_window_get_size(grn_ctx *ctx,
+                    grn_window *window)
+{
+  GRN_API_ENTER;
+
+  GRN_API_RETURN(window->n_ids);
+}
+
 grn_obj *
 grn_window_function_create(grn_ctx *ctx,
                            const char *name,
