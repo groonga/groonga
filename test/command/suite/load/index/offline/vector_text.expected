@@ -1,0 +1,87 @@
+table_create Docs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Docs sentences COLUMN_VECTOR Text
+[[0,0.0,0.0],true]
+load --table Docs
+[
+{"sentences":["午前中は良く晴れます．", "午後は雨が降ります．"]}
+]
+[[0,0.0,0.0],1]
+table_create Words TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Words docs_sentences COLUMN_INDEX|WITH_POSITION|WITH_SECTION Docs sentences
+[[0,0.0,0.0],true]
+select Docs --match_columns 'sentences' --query '"午前中"'   --output_columns '_id,_score,sentences'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "sentences",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        1,
+        [
+          "午前中は良く晴れます．",
+          "午後は雨が降ります．"
+        ]
+      ]
+    ]
+  ]
+]
+select Docs --match_columns 'sentences' --query '"ります"'   --output_columns '_id,_score,sentences'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "sentences",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        1,
+        [
+          "午前中は良く晴れます．",
+          "午後は雨が降ります．"
+        ]
+      ]
+    ]
+  ]
+]
