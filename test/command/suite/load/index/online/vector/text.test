@@ -1,0 +1,16 @@
+table_create Docs TABLE_NO_KEY
+column_create Docs sentences COLUMN_VECTOR Text
+
+table_create Words TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+column_create Words docs_sentences COLUMN_INDEX|WITH_POSITION|WITH_SECTION Docs sentences
+
+load --table Docs
+[
+{"sentences":["午前中は良く晴れます．", "午後は雨が降ります．"]}
+]
+
+select Docs --match_columns 'sentences' --query '"午前中"' \
+  --output_columns '_id,_score,sentences'
+
+select Docs --match_columns 'sentences' --query '"ります"' \
+  --output_columns '_id,_score,sentences'
