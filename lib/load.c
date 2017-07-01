@@ -841,19 +841,25 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned int str_le
             loader->last->header.domain = GRN_DB_INT64;
             GRN_INT64_SET(ctx, loader->last, i);
           } else if (cur != str) {
-            double d;
-            char *end;
-            grn_obj buf;
-            GRN_TEXT_INIT(&buf, 0);
-            GRN_TEXT_PUT(ctx, &buf, str, GRN_BULK_VSIZE(loader->last));
-            GRN_TEXT_PUTC(ctx, &buf, '\0');
-            errno = 0;
-            d = strtod(GRN_TEXT_VALUE(&buf), &end);
-            if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
-              loader->last->header.domain = GRN_DB_FLOAT;
-              GRN_FLOAT_SET(ctx, loader->last, d);
+            uint64_t i = grn_atoull(str, str_end, &cur);
+            if (cur == str_end) {
+              loader->last->header.domain = GRN_DB_UINT64;
+              GRN_UINT64_SET(ctx, loader->last, i);
+            } else if (cur != str) {
+              double d;
+              char *end;
+              grn_obj buf;
+              GRN_TEXT_INIT(&buf, 0);
+              GRN_TEXT_PUT(ctx, &buf, str, GRN_BULK_VSIZE(loader->last));
+              GRN_TEXT_PUTC(ctx, &buf, '\0');
+              errno = 0;
+              d = strtod(GRN_TEXT_VALUE(&buf), &end);
+              if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
+                loader->last->header.domain = GRN_DB_FLOAT;
+                GRN_FLOAT_SET(ctx, loader->last, d);
+              }
+              GRN_OBJ_FIN(ctx, &buf);
             }
-            GRN_OBJ_FIN(ctx, &buf);
           }
         }
         loader->stat = GRN_BULK_VSIZE(&loader->level) ? GRN_LOADER_TOKEN : GRN_LOADER_END;
