@@ -1766,18 +1766,29 @@ grn_aton(grn_ctx *ctx, const char *p, const char *end, const char **rest,
           grn_obj_reinit(ctx, res, GRN_DB_INT64, 0);
           GRN_INT64_SET(ctx, res, int64);
         }
-      } else if (rest_char == '.' || rest_char == 'e' || rest_char == 'E' ||
-                 (rest_char >= '0' && rest_char <= '9')) {
-        char *rest_float;
-        double d;
-        errno = 0;
-        d = strtod(p, &rest_float);
-        if (!errno && rest_float == end) {
-          grn_obj_reinit(ctx, res, GRN_DB_FLOAT, 0);
-          GRN_FLOAT_SET(ctx, res, d);
-          *rest = rest_float;
-        } else {
-          return GRN_INVALID_ARGUMENT;
+      } else {
+        if (*p != '-' && rest_char >= '0' && rest_char <= '9') {
+          uint64_t uint64 = grn_atoull(p, end, rest);
+          if (end == *rest) {
+            grn_obj_reinit(ctx, res, GRN_DB_UINT64, 0);
+            GRN_UINT64_SET(ctx, res, uint64);
+          }
+        }
+        if (end != *rest) {
+          if (rest_char == '.' || rest_char == 'e' || rest_char == 'E' ||
+              (rest_char >= '0' && rest_char <= '9')) {
+            char *rest_float;
+            double d;
+            errno = 0;
+            d = strtod(p, &rest_float);
+            if (!errno && rest_float == end) {
+              grn_obj_reinit(ctx, res, GRN_DB_FLOAT, 0);
+              GRN_FLOAT_SET(ctx, res, d);
+              *rest = rest_float;
+            } else {
+              return GRN_INVALID_ARGUMENT;
+            }
+          }
         }
       }
     }
