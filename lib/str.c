@@ -1464,24 +1464,30 @@ grn_atoui(const char *nptr, const char *end, const char **rest)
 int64_t
 grn_atoll(const char *nptr, const char *end, const char **rest)
 {
-  /* FIXME: INT_MIN is not supported */
   const char *p = nptr;
-  int n = 0, o = 0;
-  int64_t v = 0, t;
+  int o = 0;
+  int64_t v = 0;
   if (p < end && *p == '-') {
     p++;
-    n = 1;
     o = 1;
-  }
-  while (p < end && *p >= '0' && *p <= '9') {
-    t = v * 10 + (*p - '0');
-    if (t < v) { v = 0; break; }
-    v = t;
-    o = 0;
-    p++;
+    while (p < end && *p >= '0' && *p <= '9') {
+      int64_t t = v * 10 - (*p - '0');
+      if (t > v) { v = 0; break; }
+      v = t;
+      o = 0;
+      p++;
+    }
+  } else {
+    while (p < end && *p >= '0' && *p <= '9') {
+      int64_t t = v * 10 + (*p - '0');
+      if (t < v) { v = 0; break; }
+      v = t;
+      o = 0;
+      p++;
+    }
   }
   if (rest) { *rest = o ? nptr : p; }
-  return n ? -v : v;
+  return v;
 }
 
 uint64_t
