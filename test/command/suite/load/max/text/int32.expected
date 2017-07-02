@@ -1,0 +1,11 @@
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values value COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"value": "2147483647"}
+]
+[[0,0.0,0.0],1]
+select Values --output_columns _id,value
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["value","Int32"]],[1,2147483647]]]]
