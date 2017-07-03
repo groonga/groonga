@@ -55,6 +55,16 @@ func_math_abs(grn_ctx *ctx, int n_args, grn_obj **args,
     return NULL;
   }
 
+#define ABS_AS_IS(return_type, to_type, getter, setter) { \
+    grn_abs_number = grn_plugin_proc_alloc(ctx,           \
+                                           user_data,     \
+                                           (return_type), \
+                                           0);            \
+    if (!grn_abs_number) {                                \
+      return NULL;                                        \
+    }                                                     \
+    setter(ctx, grn_abs_number, getter(number));          \
+  }
 #define ABS_CONVERT_TYPE(func, return_type, to_type, getter, setter) { \
     grn_abs_number = grn_plugin_proc_alloc(ctx,                        \
                                            user_data,                  \
@@ -72,25 +82,25 @@ func_math_abs(grn_ctx *ctx, int n_args, grn_obj **args,
     ABS_CONVERT_TYPE(abs, GRN_DB_UINT8, uint8_t, GRN_INT8_VALUE, GRN_UINT8_SET);
     break;
   case GRN_DB_UINT8:
-    ABS_CONVERT_TYPE(abs, GRN_DB_UINT8, uint8_t, GRN_UINT8_VALUE, GRN_UINT8_SET);
+    ABS_AS_IS(GRN_DB_UINT8, uint8_t, GRN_UINT8_VALUE, GRN_UINT8_SET);
     break;
   case GRN_DB_INT16:
     ABS_CONVERT_TYPE(abs, GRN_DB_UINT16, uint16_t, GRN_INT16_VALUE, GRN_UINT16_SET);
     break;
   case GRN_DB_UINT16:
-    ABS_CONVERT_TYPE(abs, GRN_DB_UINT16, uint16_t, GRN_UINT16_VALUE, GRN_UINT16_SET);
+    ABS_AS_IS(GRN_DB_UINT16, uint16_t, GRN_UINT16_VALUE, GRN_UINT16_SET);
     break;
   case GRN_DB_INT32:
     ABS_CONVERT_TYPE(labs, GRN_DB_UINT32, uint32_t, GRN_INT32_VALUE, GRN_UINT32_SET);
     break;
   case GRN_DB_UINT32:
-    ABS_CONVERT_TYPE(llabs, GRN_DB_UINT32, uint32_t, GRN_UINT32_VALUE, GRN_UINT32_SET);
+    ABS_AS_IS(GRN_DB_UINT32, uint32_t, GRN_UINT32_VALUE, GRN_UINT32_SET);
     break;
   case GRN_DB_INT64:
     ABS_CONVERT_TYPE(llabs, GRN_DB_UINT64, uint64_t, GRN_INT64_VALUE, GRN_UINT64_SET);
     break;
   case GRN_DB_UINT64:
-    ABS_CONVERT_TYPE(llabs, GRN_DB_UINT64, uint64_t, GRN_UINT64_VALUE, GRN_UINT64_SET);
+    ABS_AS_IS(GRN_DB_UINT64, uint64_t, GRN_UINT64_VALUE, GRN_UINT64_SET);
     break;
   case GRN_DB_FLOAT:
     ABS_CONVERT_TYPE(fabs, GRN_DB_FLOAT, double, GRN_FLOAT_VALUE, GRN_FLOAT_SET);
@@ -99,6 +109,7 @@ func_math_abs(grn_ctx *ctx, int n_args, grn_obj **args,
     break;
   }
 #undef ABS_CONVERT_TYPE
+#undef ABS_AS_IS
   
   return grn_abs_number;
 }
