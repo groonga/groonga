@@ -30,7 +30,7 @@ func_math_abs(grn_ctx *ctx, int n_args, grn_obj **args,
               grn_user_data *user_data)
 {
   grn_obj *number;
-  grn_obj *grn_abs_number;
+  grn_obj *grn_abs_number = NULL;
 
   if (n_args != 1) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
