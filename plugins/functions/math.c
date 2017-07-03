@@ -55,16 +55,16 @@ func_math_abs(grn_ctx *ctx, int n_args, grn_obj **args,
     return NULL;
   }
 
-#define ABS_CONVERT_TYPE(func, return_type, to_type, getter, setter) {   \
-    grn_abs_number = grn_plugin_proc_alloc(ctx,			\
-                                           user_data,		\
-                                           (return_type),	\
-                                           0);			\
-    if (!grn_abs_number) {					\
-      return NULL;						\
-    }								\
-    to_type abs_number_raw = (to_type)(func)(getter(number));	\
-    setter(ctx, grn_abs_number, abs_number_raw);		\
+#define ABS_CONVERT_TYPE(func, return_type, to_type, getter, setter) { \
+    grn_abs_number = grn_plugin_proc_alloc(ctx,                        \
+                                           user_data,                  \
+                                           (return_type),              \
+                                           0);                         \
+    if (!grn_abs_number) {                                             \
+      return NULL;                                                     \
+    }                                                                  \
+    to_type abs_number_raw = (to_type)(func)(getter(number));          \
+    setter(ctx, grn_abs_number, abs_number_raw);                       \
   }
 
   switch (number->header.domain) {
