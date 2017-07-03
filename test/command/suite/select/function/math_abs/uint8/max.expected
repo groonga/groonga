@@ -1,0 +1,15 @@
+plugin_register functions/math
+[[0,0.0,0.0],true]
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values value COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"value":255}
+]
+[[0,0.0,0.0],1]
+select Values
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["value","UInt8"]],[1,255]]]]
+select Values   --filter true   --output_columns 'math_abs(value)'
+[[0,0.0,0.0],[[[1],[["math_abs",null]],[255]]]]

@@ -84,7 +84,7 @@ func_math_abs(grn_ctx *ctx, int n_args, grn_obj **args,
     ABS_CONVERT_TYPE(labs, GRN_DB_UINT32, uint32_t, GRN_INT32_VALUE, GRN_UINT32_SET);
     break;
   case GRN_DB_UINT32:
-    ABS_CONVERT_TYPE(labs, GRN_DB_UINT32, uint32_t, GRN_UINT32_VALUE, GRN_UINT32_SET);
+    ABS_CONVERT_TYPE(llabs, GRN_DB_UINT32, uint32_t, GRN_UINT32_VALUE, GRN_UINT32_SET);
     break;
   case GRN_DB_INT64:
     ABS_CONVERT_TYPE(llabs, GRN_DB_UINT64, uint64_t, GRN_INT64_VALUE, GRN_UINT64_SET);

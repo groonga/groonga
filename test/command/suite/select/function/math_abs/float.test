@@ -1,0 +1,13 @@
+plugin_register functions/math
+
+table_create Values TABLE_NO_KEY
+column_create Values value COLUMN_SCALAR Float
+
+load --table Values
+[
+{"value":-3.14}
+]
+
+select Values \
+  --filter true \
+  --output_columns 'math_abs(value)'
