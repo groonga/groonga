@@ -49,6 +49,8 @@ typedef struct {
   struct {
     grn_raw_string sort_keys;
     grn_raw_string group_keys;
+    int offset;
+    int limit;
   } window;
 } grn_column_data;
 
@@ -296,6 +298,8 @@ grn_column_data_init(grn_ctx *ctx,
   GRN_RAW_STRING_INIT(column->value);
   GRN_RAW_STRING_INIT(column->window.sort_keys);
   GRN_RAW_STRING_INIT(column->window.group_keys);
+  column->window.offset = 0;
+  column->window.limit = -1;
 
   return GRN_TRUE;
 }
@@ -307,7 +311,9 @@ grn_column_data_fill(grn_ctx *ctx,
                      grn_obj *flags,
                      grn_obj *value,
                      grn_obj *window_sort_keys,
-                     grn_obj *window_group_keys)
+                     grn_obj *window_group_keys,
+                     grn_obj *window_offset,
+                     grn_obj *window_limit)
 {
   if (type_raw && GRN_TEXT_LEN(type_raw) > 0) {
     grn_obj *type;
@@ -366,6 +372,18 @@ grn_column_data_fill(grn_ctx *ctx,
   GRN_RAW_STRING_FILL(column->value, value);
   GRN_RAW_STRING_FILL(column->window.sort_keys, window_sort_keys);
   GRN_RAW_STRING_FILL(column->window.group_keys, window_group_keys);
+  if (window_offset && GRN_TEXT_LEN(window_offset)) {
+    column->window.offset =
+      grn_atoi(GRN_TEXT_VALUE(window_offset), GRN_BULK_CURR(window_offset), NULL);
+  } else {
+    column->window.offset = 0;
+  }
+  if (window_limit && GRN_TEXT_LEN(window_limit)) {
+    column->window.limit =
+      grn_atoi(GRN_TEXT_VALUE(window_limit), GRN_BULK_CURR(window_limit), NULL);
+  } else {
+    column->window.limit = -1;
+  }
 
   return GRN_TRUE;
 }
@@ -394,10 +412,14 @@ grn_column_data_collect(grn_ctx *ctx,
     struct {
       grn_obj *sort_keys;
       grn_obj *group_keys;
+      grn_obj *offset;
+      grn_obj *limit;
     } window;
 
     window.sort_keys = NULL;
     window.group_keys = NULL;
+    window.offset = NULL;
+    window.limit = NULL;
 
     grn_hash_cursor_get_value(ctx, cursor, (void **)&column);
 
@@ -426,6 +448,8 @@ grn_column_data_collect(grn_ctx *ctx,
     GET_VAR(value);
     GET_VAR(window.sort_keys);
     GET_VAR(window.group_keys);
+    GET_VAR(window.offset);
+    GET_VAR(window.limit);
 
 #undef GET_VAR
 
@@ -434,7 +458,9 @@ grn_column_data_collect(grn_ctx *ctx,
     grn_column_data_fill(ctx, column,
                          type, flags, value,
                          window.sort_keys,
-                         window.group_keys);
+                         window.group_keys,
+                         window.offset,
+                         window.limit);
   }
   grn_hash_cursor_close(ctx, cursor);
   return GRN_TRUE;
@@ -1299,9 +1325,13 @@ grn_select_apply_columns(grn_ctx *ctx,
                            ctx->errbuf);
           break;
         }
+        definition.offset = column_data->window.offset;
+        definition.limit = column_data->window.limit;
       } else {
         definition.sort_keys = NULL;
         definition.n_sort_keys = 0;
+        definition.offset = 0;
+        definition.limit = -1;
       }
 
       if (column_data->window.group_keys.length > 0) {

@@ -119,6 +119,8 @@ module Groonga
             key << "#{dynamic_column.value}\0"
             key << "#{dynamic_column.window_sort_keys.join(',')}\0"
             key << "#{dynamic_column.window_group_keys.join(',')}\0"
+            key << "#{dynamic_column.window_offset}\0"
+            key << "#{dynamic_column.window_limit}\0"
           end
         end
       end
@@ -425,6 +427,8 @@ module Groonga
         attr_reader :value
         attr_reader :window_sort_keys
         attr_reader :window_group_keys
+        attr_reader :window_offset
+        attr_reader :window_limit
         def initialize(label, parameters)
           @label = label
           @stage = parameters["stage"]
@@ -433,6 +437,8 @@ module Groonga
           @value = parameters["value"]
           @window_sort_keys = parse_keys(parameters["window.sort_keys"])
           @window_group_keys = parse_keys(parameters["window.group_keys"])
+          @window_offset = (parameters["window.offset"] || 0).to_i
+          @window_limit = (parameters["window.limit"] || -1).to_i
         end
 
         def close
@@ -451,7 +457,9 @@ module Groonga
             else
               table.apply_window_function(column, expression,
                                           :sort_keys => @window_sort_keys,
-                                          :group_keys => @window_group_keys)
+                                          :group_keys => @window_group_keys,
+                                          :offset => @window_offset,
+                                          :limit => @window_limit)
             end
           ensure
             expression.close

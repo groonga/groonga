@@ -138,6 +138,32 @@ mrb_grn_window_definition_set_group_keys(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+static mrb_value
+mrb_grn_window_definition_set_offset(mrb_state *mrb, mrb_value self)
+{
+  grn_window_definition *definition;
+  mrb_int offset;
+
+  mrb_get_args(mrb, "i", &offset);
+  definition = DATA_PTR(self);
+  definition->offset = offset;
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+mrb_grn_window_definition_set_limit(mrb_state *mrb, mrb_value self)
+{
+  grn_window_definition *definition;
+  mrb_int limit;
+
+  mrb_get_args(mrb, "i", &limit);
+  definition = DATA_PTR(self);
+  definition->limit = limit;
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_window_definition_init(grn_ctx *ctx)
 {
@@ -160,5 +186,9 @@ grn_mrb_window_definition_init(grn_ctx *ctx)
                     mrb_grn_window_definition_set_sort_keys, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "group_keys=",
                     mrb_grn_window_definition_set_group_keys, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "offset=",
+                    mrb_grn_window_definition_set_offset, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "limit=",
+                    mrb_grn_window_definition_set_limit, MRB_ARGS_REQ(1));
 }
 #endif
