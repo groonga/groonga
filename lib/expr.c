@@ -1814,8 +1814,8 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
       long long int x_;                                                 \
       x_ = GRN_INT64_VALUE(x);                                          \
       left_expression_check(x_);                                        \
-      NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_UINT64_SET,             \
-                                            GRN_UINT64_VALUE,           \
+      NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_INT64_SET,              \
+                                            GRN_INT64_VALUE,            \
                                             x_, y, res,                 \
                                             integer64_operation,        \
                                             float_operation,            \
