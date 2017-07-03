@@ -916,10 +916,10 @@ learner_learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner)
       pair_id = grn_table_add(ctx, learner->pairs, &key, sizeof(uint64_t),
                               &added);
       if (added) {
-	GRN_RECORD_SET(ctx, pre_item, tid);
-	grn_obj_set_value(ctx, learner->pairs_pre, pair_id,
+        GRN_RECORD_SET(ctx, pre_item, tid);
+        grn_obj_set_value(ctx, learner->pairs_pre, pair_id,
                           pre_item, GRN_OBJ_SET);
-	grn_obj_set_value(ctx, learner->pairs_post, pair_id,
+        grn_obj_set_value(ctx, learner->pairs_post, pair_id,
                           post_item, GRN_OBJ_SET);
       }
       if (!token_ids) {
