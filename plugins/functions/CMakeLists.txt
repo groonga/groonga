@@ -119,3 +119,23 @@ else()
     DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
 endif()
 target_link_libraries(index_column_functions libgroonga)
+
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/math_sources.am
+  MATH_SOURCES)
+set_source_files_properties(${MATH_SOURCES}
+  PROPERTIES
+  COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+if(GRN_EMBED)
+  add_library(math_functions STATIC ${MATH_SOURCES})
+  set_target_properties(
+    math_functions
+    PROPERTIES
+    POSITION_INDEPENDENT_CODE ON)
+else()
+  add_library(math_functions MODULE ${MATH_SOURCES})
+  set_target_properties(math_functions PROPERTIES
+    PREFIX ""
+    OUTPUT_NAME "math")
+  install(TARGETS math_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+endif()
+target_link_libraries(math_functions libgroonga)

@@ -1,0 +1,14 @@
+plugin_register functions/math
+
+table_create Values TABLE_NO_KEY
+column_create Values value COLUMN_SCALAR UInt8
+
+load --table Values
+[
+{"value":255}
+]
+
+select Values
+select Values \
+  --filter true \
+  --output_columns 'math_abs(value)'
