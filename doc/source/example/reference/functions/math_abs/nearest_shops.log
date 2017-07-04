@@ -1,0 +1,39 @@
+Execution example::
+
+  select Shops --filter true --output_columns '_key, from_office' --scorer 'from_office = math_abs(250 - from_station)' --sort_keys from_office
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "from_office", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "Cake & Coffee Shop", 
+  #         50
+  #       ], 
+  #       [
+  #         "Donut & Coffee Shop", 
+  #         150
+  #       ], 
+  #       [
+  #         "Coffee Shop", 
+  #         200
+  #       ]
+  #     ]
+  #   ]
+  # ]

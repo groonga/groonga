@@ -366,6 +366,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_only.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/functions/math_abs/nearest_shops.log \
+	$(top_srcdir)/doc/source/example/reference/functions/math_abs/usage_setup_data.log \
+	$(top_srcdir)/doc/source/example/reference/functions/math_abs/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/prefix_rk_search/usage_add_no_reading_completion_target.log \
 	$(top_srcdir)/doc/source/example/reference/functions/prefix_rk_search/usage_loose_completion.log \
 	$(top_srcdir)/doc/source/example/reference/functions/prefix_rk_search/usage_prefix_rk_only_completion.log \
@@ -830,6 +833,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/html_untag.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_records.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_values.rst \
+	$(top_srcdir)/doc/source/reference/functions/math_abs.rst \
 	$(top_srcdir)/doc/source/reference/functions/now.rst \
 	$(top_srcdir)/doc/source/reference/functions/number_classify.rst \
 	$(top_srcdir)/doc/source/reference/functions/prefix_rk_search.rst \
@@ -1288,6 +1292,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/in_values/usage_only.log \
 	source/example/reference/functions/in_values/usage_setup_data.log \
 	source/example/reference/functions/in_values/usage_setup_schema.log \
+	source/example/reference/functions/math_abs/nearest_shops.log \
+	source/example/reference/functions/math_abs/usage_setup_data.log \
+	source/example/reference/functions/math_abs/usage_setup_schema.log \
 	source/example/reference/functions/prefix_rk_search/usage_add_no_reading_completion_target.log \
 	source/example/reference/functions/prefix_rk_search/usage_loose_completion.log \
 	source/example/reference/functions/prefix_rk_search/usage_prefix_rk_only_completion.log \
@@ -1752,6 +1759,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/html_untag.rst \
 	source/reference/functions/in_records.rst \
 	source/reference/functions/in_values.rst \
+	source/reference/functions/math_abs.rst \
 	source/reference/functions/now.rst \
 	source/reference/functions/number_classify.rst \
 	source/reference/functions/prefix_rk_search.rst \
@@ -2125,6 +2133,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/functions/html_untag.txt \
 	html/_sources/reference/functions/in_records.txt \
 	html/_sources/reference/functions/in_values.txt \
+	html/_sources/reference/functions/math_abs.txt \
 	html/_sources/reference/functions/now.txt \
 	html/_sources/reference/functions/number_classify.txt \
 	html/_sources/reference/functions/prefix_rk_search.txt \
@@ -2398,6 +2407,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/html_untag.html \
 	html/reference/functions/in_records.html \
 	html/reference/functions/in_values.html \
+	html/reference/functions/math_abs.html \
 	html/reference/functions/now.html \
 	html/reference/functions/number_classify.html \
 	html/reference/functions/prefix_rk_search.html \
