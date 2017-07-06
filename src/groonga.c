@@ -513,11 +513,20 @@ groonga_set_thread_limit(uint32_t new_limit, void *data)
 {
   uint32_t i;
   uint32_t current_n_floating_threads;
+  static uint32_t n_changing_threads = 0;
+  uint32_t prev_n_changing_threads;
+
+  GRN_ATOMIC_ADD_EX(&n_changing_threads, 1, prev_n_changing_threads);
 
   MUTEX_LOCK_ENSURE(&grn_gctx, q_mutex);
   current_n_floating_threads = n_floating_threads;
   max_n_floating_threads = new_limit;
   MUTEX_UNLOCK(q_mutex);
+
+  if (prev_n_changing_threads > 0) {
+    GRN_ATOMIC_ADD_EX(&n_changing_threads, -1, prev_n_changing_threads);
+    return;
+  }
 
   if (current_n_floating_threads > new_limit) {
     for (i = 0; i < current_n_floating_threads; i++) {
@@ -540,6 +549,8 @@ groonga_set_thread_limit(uint32_t new_limit, void *data)
     }
     grn_nanosleep(1000000);
   }
+
+  GRN_ATOMIC_ADD_EX(&n_changing_threads, -1, prev_n_changing_threads);
 }
 
 typedef struct {
