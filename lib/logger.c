@@ -127,6 +127,7 @@ rotate_log_file(grn_ctx *ctx, const char *current_path)
   rename(current_path, rotated_path);
 }
 
+static grn_bool logger_inited = GRN_FALSE;
 static char *default_logger_path = NULL;
 static FILE *default_logger_file = NULL;
 static grn_critical_section default_logger_lock;
@@ -262,6 +263,10 @@ grn_default_logger_get_flags(void)
 void
 grn_default_logger_set_path(const char *path)
 {
+  if (logger_inited) {
+    CRITICAL_SECTION_ENTER(default_logger_lock);
+  }
+
   if (default_logger_path) {
     free(default_logger_path);
   }
@@ -270,6 +275,10 @@ grn_default_logger_set_path(const char *path)
     default_logger_path = grn_strdup_raw(path);
   } else {
     default_logger_path = NULL;
+  }
+
+  if (logger_inited) {
+    CRITICAL_SECTION_LEAVE(default_logger_lock);
   }
 }
 
@@ -439,6 +448,8 @@ grn_logger_init(void)
   if (!current_logger.log) {
     current_logger = default_logger;
   }
+
+  logger_inited = GRN_TRUE;
 }
 
 void
@@ -450,9 +461,12 @@ grn_logger_fin(grn_ctx *ctx)
     default_logger_path = NULL;
   }
   CRITICAL_SECTION_FIN(default_logger_lock);
+
+  logger_inited = GRN_FALSE;
 }
 
 
+static grn_bool query_logger_inited = GRN_FALSE;
 static char *default_query_logger_path = NULL;
 static FILE *default_query_logger_file = NULL;
 static grn_critical_section default_query_logger_lock;
@@ -617,6 +631,10 @@ grn_default_query_logger_get_flags(void)
 void
 grn_default_query_logger_set_path(const char *path)
 {
+  if (query_logger_inited) {
+    CRITICAL_SECTION_ENTER(default_query_logger_lock);
+  }
+
   if (default_query_logger_path) {
     free(default_query_logger_path);
   }
@@ -625,6 +643,10 @@ grn_default_query_logger_set_path(const char *path)
     default_query_logger_path = grn_strdup_raw(path);
   } else {
     default_query_logger_path = NULL;
+  }
+
+  if (query_logger_inited) {
+    CRITICAL_SECTION_LEAVE(default_query_logger_lock);
   }
 }
 
@@ -767,6 +789,8 @@ grn_query_logger_init(void)
 {
   current_query_logger = default_query_logger;
   CRITICAL_SECTION_INIT(default_query_logger_lock);
+
+  query_logger_inited = GRN_TRUE;
 }
 
 void
@@ -778,6 +802,8 @@ grn_query_logger_fin(grn_ctx *ctx)
     default_query_logger_path = NULL;
   }
   CRITICAL_SECTION_FIN(default_query_logger_lock);
+
+  query_logger_inited = GRN_FALSE;
 }
 
 void
