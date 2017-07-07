@@ -264,8 +264,11 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
     }
 
     lexicon = grn_ctx_get(ctx, GRN_TEXT_VALUE(table_name), GRN_TEXT_LEN(table_name));
-
     if (!lexicon) {
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "[table_tokenize] nonexistent lexicon: <%.*s>",
+                       (int)GRN_TEXT_LEN(table_name),
+                       GRN_TEXT_VALUE(table_name));
       return NULL;
     }
 
