@@ -1088,7 +1088,6 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   flag_names = VAR(2);
   if (GRN_TEXT_LEN(normalizer_name) == 0) {
     ERR(GRN_INVALID_ARGUMENT, "normalizer name is missing");
-    GRN_OUTPUT_CSTR("");
     return NULL;
   }
 
@@ -1108,7 +1107,6 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
           "[normalize] nonexistent normalizer: <%.*s>",
           (int)GRN_TEXT_LEN(normalizer_name),
           GRN_TEXT_VALUE(normalizer_name));
-      GRN_OUTPUT_CSTR("");
       return NULL;
     }
 
@@ -1121,7 +1119,6 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
           (int)GRN_TEXT_LEN(&inspected),
           GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
-      GRN_OUTPUT_CSTR("");
       grn_obj_unlink(ctx, normalizer);
       return NULL;
     }
