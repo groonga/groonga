@@ -7,7 +7,6 @@ normalize TokenBigram "aBcDe"
       0.0
     ],
     "[normalize] not normalizer: #<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>"
-  ],
-  ""
+  ]
 ]
 #|e| [normalize] not normalizer: #<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>
