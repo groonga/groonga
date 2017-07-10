@@ -54,8 +54,8 @@ Here is the sample schema and data to check dump behaviour::
   ]
   load --table Sites
   [
-  {"_key": 1, "url":"http://groonga.org"},
-  {"_key": 2, "url":"http://mroonga.org"}
+  {"_id": 1, "url":"http://groonga.org"},
+  {"_id": 2, "url":"http://mroonga.org"}
   ]
 
 Dump all data in database::
