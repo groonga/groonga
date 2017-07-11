@@ -127,6 +127,22 @@ func_time_classify_raw(grn_ctx *ctx,
     grn_obj_cast(ctx, interval, &casted_interval, GRN_FALSE);
     interval_raw = GRN_UINT32_VALUE(&casted_interval);
     GRN_OBJ_FIN(ctx, &casted_interval);
+
+    if (interval_raw == 0) {
+      grn_obj inspected;
+
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, interval);
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "%s(): "
+                       "the second argument must not be zero: "
+                       "<%.*s>",
+                       function_name,
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return NULL;
+    }
   }
 
   {
