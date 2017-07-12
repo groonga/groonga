@@ -497,7 +497,7 @@ dump_records_internal(grn_ctx *ctx, grn_dumper *dumper,
   }
 }
 static void
-dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
+dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_bool is_sort_hash_table)
 {
   grn_id old_id = 0, id;
   grn_table_cursor *cursor;
@@ -613,7 +613,7 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 
   GRN_TEXT_INIT(&delete_commands, 0);
 
-  if (table->header.type == GRN_TABLE_HASH_KEY) {
+  if (table->header.type == GRN_TABLE_HASH_KEY && is_sort_hash_table) {
     grn_obj *sorted;
     grn_table_sort_key *sort_keys;
     uint32_t n_sort_keys;
@@ -881,7 +881,7 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
 }
 
 static void
-dump_selected_tables_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *tables)
+dump_selected_tables_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *tables, grn_bool is_sort_hash_table)
 {
   const char *p, *e;
 
@@ -933,14 +933,14 @@ dump_selected_tables_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *tables)
     }
 
     if (grn_obj_is_table(ctx, table)) {
-      dump_records(ctx, dumper, table);
+      dump_records(ctx, dumper, table, is_sort_hash_table);
     }
     grn_obj_unlink(ctx, table);
   }
 }
 
 static void
-dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
+dump_all_records(grn_ctx *ctx, grn_dumper *dumper, grn_bool is_sort_hash_table)
 {
   GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
     void *name;
@@ -971,7 +971,7 @@ dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
     }
 
     if (grn_obj_is_table(ctx, table)) {
-      dump_records(ctx, dumper, table);
+      dump_records(ctx, dumper, table, is_sort_hash_table);
     }
 
   next_loop :
@@ -1041,6 +1041,7 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_bool is_dump_records;
   grn_bool is_dump_indexes;
   grn_bool is_dump_configs;
+  grn_bool is_sort_hash_table;
 
   dumper.output = ctx->impl->output.buf;
   if (grn_thread_get_limit() == 1) {
@@ -1067,6 +1068,9 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   is_dump_configs = grn_plugin_proc_get_var_bool(ctx, user_data,
                                                  "dump_configs", -1,
                                                  GRN_TRUE);
+  is_sort_hash_table = grn_plugin_proc_get_var_bool(ctx, user_data,
+                                                 "sort_hash_table", -1,
+                                                 GRN_FALSE);
 
   grn_ctx_set_output_type(ctx, GRN_CONTENT_GROONGA_COMMAND_LIST);
 
@@ -1086,9 +1090,9 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
        load non-derivative records, while skipping records of index columns. That
        way, Groonga will silently do the job of updating index columns for us. */
     if (GRN_TEXT_LEN(tables) > 0) {
-      dump_selected_tables_records(ctx, &dumper, tables);
+      dump_selected_tables_records(ctx, &dumper, tables, is_sort_hash_table);
     } else {
-      dump_all_records(ctx, &dumper);
+      dump_all_records(ctx, &dumper, is_sort_hash_table);
     }
   }
   if (is_dump_indexes) {
@@ -1106,7 +1110,7 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 void
 grn_proc_init_dump(grn_ctx *ctx)
 {
-  grn_expr_var vars[6];
+  grn_expr_var vars[7];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "tables", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "dump_plugins", -1);
@@ -1114,9 +1118,10 @@ grn_proc_init_dump(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[3]), "dump_records", -1);
   grn_plugin_expr_var_init(ctx, &(vars[4]), "dump_indexes", -1);
   grn_plugin_expr_var_init(ctx, &(vars[5]), "dump_configs", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[6]), "dump_hash_table_sort", -1);
   grn_plugin_command_create(ctx,
                             "dump", -1,
                             command_dump,
-                            6,
+                            sizeof(vars) / sizeof(vars[0]),
                             vars);
 }
