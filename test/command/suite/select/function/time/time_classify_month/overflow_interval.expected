@@ -4,15 +4,10 @@ table_create Timestamps TABLE_PAT_KEY Time
 [[0,0.0,0.0],true]
 load --table Timestamps
 [
-{"_key": "2016-04-30 23:59:59.999999"},
-{"_key": "2016-05-01 00:00:00.000000"},
-{"_key": "2016-05-01 00:00:00.000001"},
-{"_key": "2016-06-30 23:59:59.999999"},
-{"_key": "2016-07-01 00:00:00.000000"},
 {"_key": "2016-07-01 00:00:00.000001"}
 ]
-[[0,0.0,0.0],6]
-select Timestamps   --sortby _id   --limit -1   --output_columns '_key, time_classify_month(_key, 4294967296)'
+[[0,0.0,0.0],1]
+select Timestamps   --output_columns '_key, time_classify_month(_key, 4294967296)'
 [
   [
     [
@@ -25,7 +20,7 @@ select Timestamps   --sortby _id   --limit -1   --output_columns '_key, time_cla
   [
     [
       [
-        6
+        1
       ],
       [
         [
@@ -38,27 +33,7 @@ select Timestamps   --sortby _id   --limit -1   --output_columns '_key, time_cla
         ]
       ],
       [
-        1462060799.999999,
-        "time_classify_month(): the second argument must not be zero: <4294967296>"
-      ],
-      [
-        1462060800.0,
-        "time_classify_month(): the second argument must not be zero: <4294967296>"
-      ],
-      [
-        1462060800.000001,
-        "time_classify_month(): the second argument must not be zero: <4294967296>"
-      ],
-      [
-        1467331199.999999,
-        "time_classify_month(): the second argument must not be zero: <4294967296>"
-      ],
-      [
-        1467331200.0,
-        "time_classify_month(): the second argument must not be zero: <4294967296>"
-      ],
-      [
-        1467331200.000001,
+        1467298800.000001,
         "time_classify_month(): the second argument must not be zero: <4294967296>"
       ]
     ]
