@@ -1,0 +1,13 @@
+table_create Dates TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values time_values COLUMN_VECTOR Dates
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"time_values": ["2017-07-12 00:00:00", "2017-05-12 00:00:00"]}
+]
+[[0,0.0,0.0],1]
+select Values   --filter true   --output_columns '_id, min(time_values, "2017-06-12 00:00:00")'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["min",null]],[1,1494514800.0]]]]
