@@ -2394,10 +2394,20 @@ between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
 
   {
     grn_id value_type;
-    if (data->value->header.type == GRN_BULK) {
+    switch (data->value->header.type) {
+    case GRN_BULK :
       value_type = data->value->header.domain;
-    } else {
+      break;
+    case GRN_COLUMN_INDEX :
+      {
+        grn_obj *domain_object;
+        domain_object = grn_ctx_at(ctx, data->value->header.domain);
+        value_type = domain_object->header.domain;
+      }
+      break;
+    default :
       value_type = grn_obj_get_range(ctx, data->value);
+      break;
     }
     if (value_type != data->min->header.domain) {
       rc = between_cast(ctx, data->min, &data->casted_min, value_type, "min");
@@ -2544,6 +2554,10 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
   }
 
   if (index->header.flags & GRN_OBJ_WITH_WEIGHT) {
+    return GRN_FALSE;
+  }
+
+  if (data->value->header.type == GRN_COLUMN_INDEX) {
     return GRN_FALSE;
   }
 
@@ -2769,6 +2783,10 @@ selector_between(grn_ctx *ctx,
   }
   if (data.max_border_type == BETWEEN_BORDER_EXCLUDE) {
     flags |= GRN_CURSOR_LT;
+  }
+
+  if (data.value->header.type == GRN_COLUMN_INDEX) {
+    index = data.value;
   }
 
   if (index) {
