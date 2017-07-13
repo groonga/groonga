@@ -139,11 +139,18 @@ Reference
 
 .. c:type:: grn_table_sort_key
 
-   TODO...
+   .. c:member:: grn_obj* key
+   .. c:member:: grn_table_sort_flags flag
+   .. c:member:: int offset
 
 .. c:type:: grn_table_sort_flags
 
-   TODO...
+   A typedef of unsigned char
+
+   Values
+
+   .. c:macro:: GRN_TABLE_SORT_ASC (0x00)
+   .. c:macro:: GRN_TABLE_SORT_DESC (0x01)
 
 .. c:function:: int grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit, grn_obj *result, grn_table_sort_key *keys, int n_keys)
 
@@ -160,11 +167,27 @@ Reference
  
 .. c:type:: grn_table_group_result
 
-   TODO...
+   .. c:member:: grn_obj* table
+   .. c:member:: unsigned char key_begin
+   .. c:member:: unsigned char key_end
+   .. c:member:: int limit
+   .. c:member:: grn_table_group_flags flags
+   .. c:member:: grn_operator op
+   .. c:member:: unsigned int max_n_subrecs
+   .. c:member:: grn_obj* calc_target
 
 .. c:type:: grn_table_group_flags
 
-   TODO...
+   A typedef of uint32_t
+
+   Values
+
+   .. c:macro:: GRN_TABLE_GROUP_CALC_COUNT     (0x01<<3)
+   .. c:macro:: GRN_TABLE_GROUP_CALC_MAX       (0x01<<4)
+   .. c:macro:: GRN_TABLE_GROUP_CALC_MIN       (0x01<<5)
+   .. c:macro:: GRN_TABLE_GROUP_CALC_SUM       (0x01<<6)
+   .. c:macro:: GRN_TABLE_GROUP_CALC_AVG       (0x01<<7)
+
 
 .. c:function:: grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table, grn_table_sort_key *keys, int n_keys, grn_table_group_result *results, int n_results)
 
