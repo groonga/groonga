@@ -653,6 +653,7 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
       dump_record(ctx, dumper, table, id, &columns, n_columns);
     }
     GRN_TEXT_PUTS(ctx, dumper->output, "\n]\n");
+    grn_obj_close(ctx, sorted);
     grn_obj_unlink(ctx, sort_keys[0].key);
   } else {
     grn_obj delete_commands;
