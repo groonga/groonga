@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,7 @@ typedef struct {
   grn_bool is_close_opened_object_mode;
   grn_bool have_reference_column;
   grn_bool have_index_column;
+  grn_bool is_sort_hash_table;
 } grn_dumper;
 
 static void
@@ -497,7 +498,7 @@ dump_records_internal(grn_ctx *ctx, grn_dumper *dumper,
   }
 }
 static void
-dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_bool is_sort_hash_table)
+dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 {
   grn_id old_id = 0, id;
   grn_table_cursor *cursor;
@@ -613,7 +614,7 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_bool is_sort_
 
   GRN_TEXT_INIT(&delete_commands, 0);
 
-  if (table->header.type == GRN_TABLE_HASH_KEY && is_sort_hash_table) {
+  if (table->header.type == GRN_TABLE_HASH_KEY && dumper->is_sort_hash_table) {
     grn_obj *sorted;
     grn_table_sort_key *sort_keys;
     uint32_t n_sort_keys;
@@ -881,7 +882,7 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
 }
 
 static void
-dump_selected_tables_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *tables, grn_bool is_sort_hash_table)
+dump_selected_tables_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *tables)
 {
   const char *p, *e;
 
@@ -933,14 +934,14 @@ dump_selected_tables_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *tables, 
     }
 
     if (grn_obj_is_table(ctx, table)) {
-      dump_records(ctx, dumper, table, is_sort_hash_table);
+      dump_records(ctx, dumper, table);
     }
     grn_obj_unlink(ctx, table);
   }
 }
 
 static void
-dump_all_records(grn_ctx *ctx, grn_dumper *dumper, grn_bool is_sort_hash_table)
+dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
 {
   GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
     void *name;
@@ -971,7 +972,7 @@ dump_all_records(grn_ctx *ctx, grn_dumper *dumper, grn_bool is_sort_hash_table)
     }
 
     if (grn_obj_is_table(ctx, table)) {
-      dump_records(ctx, dumper, table, is_sort_hash_table);
+      dump_records(ctx, dumper, table);
     }
 
   next_loop :
@@ -1041,7 +1042,6 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_bool is_dump_records;
   grn_bool is_dump_indexes;
   grn_bool is_dump_configs;
-  grn_bool is_sort_hash_table;
 
   dumper.output = ctx->impl->output.buf;
   if (grn_thread_get_limit() == 1) {
@@ -1068,9 +1068,10 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   is_dump_configs = grn_plugin_proc_get_var_bool(ctx, user_data,
                                                  "dump_configs", -1,
                                                  GRN_TRUE);
-  is_sort_hash_table = grn_plugin_proc_get_var_bool(ctx, user_data,
-                                                 "sort_hash_table", -1,
-                                                 GRN_FALSE);
+  dumper.is_sort_hash_table =
+    grn_plugin_proc_get_var_bool(ctx, user_data,
+                                 "sort_hash_table", -1,
+                                 GRN_FALSE);
 
   grn_ctx_set_output_type(ctx, GRN_CONTENT_GROONGA_COMMAND_LIST);
 
@@ -1090,9 +1091,9 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
        load non-derivative records, while skipping records of index columns. That
        way, Groonga will silently do the job of updating index columns for us. */
     if (GRN_TEXT_LEN(tables) > 0) {
-      dump_selected_tables_records(ctx, &dumper, tables, is_sort_hash_table);
+      dump_selected_tables_records(ctx, &dumper, tables);
     } else {
-      dump_all_records(ctx, &dumper, is_sort_hash_table);
+      dump_all_records(ctx, &dumper);
     }
   }
   if (is_dump_indexes) {
