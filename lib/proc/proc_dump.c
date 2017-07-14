@@ -503,7 +503,6 @@ dump_record(grn_ctx *ctx, grn_dumper *dumper,
 static void
 dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 {
-  grn_id old_id = 0, id;
   grn_table_cursor *cursor;
   int i, n_columns;
   grn_obj columns;
@@ -644,10 +643,10 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
                                    0);
 
     while (grn_table_cursor_next(ctx, cursor) != GRN_ID_NIL) {
+      grn_id id;
 
       grn_table_cursor_get_value(ctx, cursor, &value_raw);
       id = *((grn_id *)value_raw);
-      old_id = id;
 
       if (is_first_record) {
         is_first_record = GRN_FALSE;
@@ -659,6 +658,9 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     GRN_TEXT_PUTS(ctx, dumper->output, "\n]\n");
     grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
   } else {
+    grn_id old_id = GRN_ID_NIL;
+    grn_id id;
+
     cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1,
                                    GRN_CURSOR_BY_KEY);
     for (i = 0; (id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL;
