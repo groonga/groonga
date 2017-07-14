@@ -617,7 +617,6 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     grn_obj *sorted;
     grn_table_sort_key *sort_keys;
     uint32_t n_sort_keys;
-    void *value_raw;
     grn_bool is_first_record = GRN_TRUE;
 
     sort_keys = grn_table_sort_key_from_str(ctx,
@@ -640,6 +639,7 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
                                    0);
 
     while (grn_table_cursor_next(ctx, cursor) != GRN_ID_NIL) {
+      void *value_raw;
       grn_id id;
 
       grn_table_cursor_get_value(ctx, cursor, &value_raw);
