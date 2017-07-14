@@ -615,14 +615,15 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 
   if (table->header.type == GRN_TABLE_HASH_KEY && dumper->is_sort_hash_table) {
     grn_obj *sorted;
-    grn_table_sort_key *sort_keys;
-    uint32_t n_sort_keys;
+    grn_table_sort_key sort_keys[1];
+    uint32_t n_sort_keys = 1;
     grn_bool is_first_record = GRN_TRUE;
 
-    sort_keys = grn_table_sort_key_from_str(ctx,
-                                            "_key", strlen("_key"),
-                                            table,
-                                            &n_sort_keys);
+    sort_keys[0].key = grn_obj_column(ctx, table,
+                                      GRN_COLUMN_NAME_KEY,
+                                      GRN_COLUMN_NAME_KEY_LEN);
+    sort_keys[0].flags = GRN_TABLE_SORT_ASC;
+    sort_keys[0].offset = 0;
     sorted = grn_table_create(ctx,
                               NULL, 0, NULL,
                               GRN_TABLE_NO_KEY,
@@ -637,7 +638,6 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
                                    NULL, 0, NULL, 0,
                                    0, -1,
                                    0);
-
     while (grn_table_cursor_next(ctx, cursor) != GRN_ID_NIL) {
       void *value_raw;
       grn_id id;
@@ -653,7 +653,7 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
       dump_record(ctx, dumper, table, id, &columns, n_columns);
     }
     GRN_TEXT_PUTS(ctx, dumper->output, "\n]\n");
-    grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
+    grn_obj_unlink(ctx, sort_keys[0].key);
   } else {
     grn_obj delete_commands;
     grn_id old_id = GRN_ID_NIL;
