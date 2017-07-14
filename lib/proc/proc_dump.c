@@ -622,6 +622,7 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     grn_table_sort_key *sort_keys;
     uint32_t n_sort_keys;
     void *value_raw;
+    grn_bool is_first_record = GRN_TRUE;
 
     sort_keys = grn_table_sort_key_from_str(ctx,
                                             "_key", strlen("_key"),
@@ -642,14 +643,17 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
                                    0, -1,
                                    0);
 
-    for (i = 0;
-           grn_table_cursor_next(ctx, cursor) != GRN_ID_NIL; ++i) {
+    while (grn_table_cursor_next(ctx, cursor) != GRN_ID_NIL) {
 
       grn_table_cursor_get_value(ctx, cursor, &value_raw);
       id = *((grn_id *)value_raw);
       old_id = id;
 
-      if (i) { GRN_TEXT_PUTS(ctx, dumper->output, ",\n"); }
+      if (is_first_record) {
+        is_first_record = GRN_FALSE;
+      } else {
+        GRN_TEXT_PUTS(ctx, dumper->output, ",\n");
+      }
       dump_record(ctx, dumper, table, id, &columns, n_columns);
     }
     GRN_TEXT_PUTS(ctx, dumper->output, "\n]\n");
