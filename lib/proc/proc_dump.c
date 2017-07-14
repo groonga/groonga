@@ -682,8 +682,9 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     }
     grn_table_cursor_close(ctx, cursor);
     GRN_TEXT_PUTS(ctx, dumper->output, "\n]\n");
-    GRN_TEXT_PUT(ctx, dumper->output, GRN_TEXT_VALUE(&delete_commands),
-                              GRN_TEXT_LEN(&delete_commands));
+    GRN_TEXT_PUT(ctx, dumper->output,
+                 GRN_TEXT_VALUE(&delete_commands),
+                 GRN_TEXT_LEN(&delete_commands));
     GRN_OBJ_FIN(ctx, &delete_commands);
   }
 exit :
