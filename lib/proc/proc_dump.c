@@ -419,7 +419,7 @@ dump_record_column_vector(grn_ctx *ctx, grn_dumper *dumper, grn_id id,
 static void
 dump_records_internal(grn_ctx *ctx, grn_dumper *dumper,
                       grn_obj *table,
-                      grn_id *id,
+                      grn_id id,
                       grn_obj *columns, grn_obj *column_name, int n_columns)
 {
   int j;
@@ -450,12 +450,12 @@ dump_records_internal(grn_ctx *ctx, grn_dumper *dumper,
     case GRN_COLUMN_FIX_SIZE:
       switch (column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
       case GRN_OBJ_COLUMN_VECTOR:
-        dump_record_column_vector(ctx, dumper, *id, column, range, &buf);
+        dump_record_column_vector(ctx, dumper, id, column, range, &buf);
         break;
       case GRN_OBJ_COLUMN_SCALAR:
         {
           GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
-          grn_obj_get_value(ctx, column, *id, &buf);
+          grn_obj_get_value(ctx, column, id, &buf);
           grn_text_otoj(ctx, dumper->output, &buf, NULL);
           grn_obj_unlink(ctx, &buf);
         }
@@ -473,7 +473,7 @@ dump_records_internal(grn_ctx *ctx, grn_dumper *dumper,
     case GRN_ACCESSOR:
       {
         GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
-        grn_obj_get_value(ctx, column, *id, &buf);
+        grn_obj_get_value(ctx, column, id, &buf);
         /* XXX maybe, grn_obj_get_range() should not unconditionally return
            GRN_DB_INT32 when column is GRN_ACCESSOR and
            GRN_ACCESSOR_GET_VALUE */
@@ -649,7 +649,7 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 
       if (i) { GRN_TEXT_PUTS(ctx, dumper->output, ",\n"); }
       dump_records_internal(ctx, dumper,
-                            table, &id, &columns, &column_name, n_columns);
+                            table, id, &columns, &column_name, n_columns);
     }
     GRN_TEXT_PUTS(ctx, dumper->output, "\n]\n");
     grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
@@ -672,7 +672,7 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
       }
     }
     dump_records_internal(ctx, dumper,
-                          table, &id, &columns, &column_name, n_columns);
+                          table, id, &columns, &column_name, n_columns);
   }
   grn_table_cursor_close(ctx, cursor);
   GRN_TEXT_PUTS(ctx, dumper->output, "\n]\n");
