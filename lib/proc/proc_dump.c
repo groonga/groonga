@@ -506,7 +506,6 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
   grn_table_cursor *cursor;
   int i, n_columns;
   grn_obj columns;
-  grn_obj delete_commands;
   grn_bool have_index_column = GRN_FALSE;
   grn_bool have_data_column = GRN_FALSE;
 
@@ -614,8 +613,6 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
   }
   GRN_TEXT_PUTS(ctx, dumper->output, "],\n");
 
-  GRN_TEXT_INIT(&delete_commands, 0);
-
   if (table->header.type == GRN_TABLE_HASH_KEY && dumper->is_sort_hash_table) {
     grn_obj *sorted;
     grn_table_sort_key *sort_keys;
@@ -658,9 +655,11 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     GRN_TEXT_PUTS(ctx, dumper->output, "\n]\n");
     grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
   } else {
+    grn_obj delete_commands;
     grn_id old_id = GRN_ID_NIL;
     grn_id id;
 
+    GRN_TEXT_INIT(&delete_commands, 0);
     cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1,
                                    GRN_CURSOR_BY_KEY);
     for (i = 0; (id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL;
