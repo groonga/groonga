@@ -418,9 +418,9 @@ dump_record_column_vector(grn_ctx *ctx, grn_dumper *dumper, grn_id id,
 
 static void
 dump_records_internal(grn_ctx *ctx, grn_dumper *dumper,
-                     grn_obj *table,
-                     grn_id *id,
-                     grn_obj *columns, grn_obj *column_name, int n_columns)
+                      grn_obj *table,
+                      grn_id *id,
+                      grn_obj *columns, grn_obj *column_name, int n_columns)
 {
   int j;
   grn_obj buf;
