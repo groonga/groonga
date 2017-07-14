@@ -497,6 +497,7 @@ dump_records_internal(grn_ctx *ctx, grn_dumper *dumper,
     grn_ctx_output_flush(ctx, 0);
   }
 }
+
 static void
 dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 {
