@@ -418,10 +418,10 @@ dump_record_column_vector(grn_ctx *ctx, grn_dumper *dumper, grn_id id,
 }
 
 static void
-dump_records_internal(grn_ctx *ctx, grn_dumper *dumper,
-                      grn_obj *table,
-                      grn_id id,
-                      grn_obj *columns, int n_columns)
+dump_record(grn_ctx *ctx, grn_dumper *dumper,
+            grn_obj *table,
+            grn_id id,
+            grn_obj *columns, int n_columns)
 {
   int j;
   grn_obj buf;
@@ -650,7 +650,7 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
       old_id = id;
 
       if (i) { GRN_TEXT_PUTS(ctx, dumper->output, ",\n"); }
-      dump_records_internal(ctx, dumper, table, id, &columns, n_columns);
+      dump_record(ctx, dumper, table, id, &columns, n_columns);
     }
     GRN_TEXT_PUTS(ctx, dumper->output, "\n]\n");
     grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
@@ -672,7 +672,7 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
         GRN_TEXT_PUTC(ctx, &delete_commands, '\n');
       }
     }
-    dump_records_internal(ctx, dumper, table, id, &columns, n_columns);
+    dump_record(ctx, dumper, table, id, &columns, n_columns);
   }
   grn_table_cursor_close(ctx, cursor);
   GRN_TEXT_PUTS(ctx, dumper->output, "\n]\n");
