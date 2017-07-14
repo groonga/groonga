@@ -666,25 +666,25 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     for (i = 0; (id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL;
          ++i, old_id = id) {
 
-    if (i) { GRN_TEXT_PUTS(ctx, dumper->output, ",\n"); }
-    if (table->header.type == GRN_TABLE_NO_KEY && old_id + 1 < id) {
-      grn_id current_id;
-      for (current_id = old_id + 1; current_id < id; current_id++) {
-        GRN_TEXT_PUTS(ctx, dumper->output, "[],\n");
-        GRN_TEXT_PUTS(ctx, &delete_commands, "delete --table ");
-        dump_obj_name_raw(ctx, &delete_commands, table);
-        GRN_TEXT_PUTS(ctx, &delete_commands, " --id ");
-        grn_text_lltoa(ctx, &delete_commands, current_id);
-        GRN_TEXT_PUTC(ctx, &delete_commands, '\n');
+      if (i) { GRN_TEXT_PUTS(ctx, dumper->output, ",\n"); }
+      if (table->header.type == GRN_TABLE_NO_KEY && old_id + 1 < id) {
+        grn_id current_id;
+        for (current_id = old_id + 1; current_id < id; current_id++) {
+          GRN_TEXT_PUTS(ctx, dumper->output, "[],\n");
+          GRN_TEXT_PUTS(ctx, &delete_commands, "delete --table ");
+          dump_obj_name_raw(ctx, &delete_commands, table);
+          GRN_TEXT_PUTS(ctx, &delete_commands, " --id ");
+          grn_text_lltoa(ctx, &delete_commands, current_id);
+          GRN_TEXT_PUTC(ctx, &delete_commands, '\n');
+        }
       }
+      dump_record(ctx, dumper, table, id, &columns, n_columns);
     }
-    dump_record(ctx, dumper, table, id, &columns, n_columns);
-  }
-  grn_table_cursor_close(ctx, cursor);
-  GRN_TEXT_PUTS(ctx, dumper->output, "\n]\n");
-  GRN_TEXT_PUT(ctx, dumper->output, GRN_TEXT_VALUE(&delete_commands),
-                            GRN_TEXT_LEN(&delete_commands));
-  GRN_OBJ_FIN(ctx, &delete_commands);
+    grn_table_cursor_close(ctx, cursor);
+    GRN_TEXT_PUTS(ctx, dumper->output, "\n]\n");
+    GRN_TEXT_PUT(ctx, dumper->output, GRN_TEXT_VALUE(&delete_commands),
+                              GRN_TEXT_LEN(&delete_commands));
+    GRN_OBJ_FIN(ctx, &delete_commands);
   }
 exit :
   for (i = 0; i < n_columns; i++) {
