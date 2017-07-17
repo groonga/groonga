@@ -1482,6 +1482,93 @@ compare_number(grn_ctx *ctx, grn_obj *number1, grn_obj *number2, grn_id type)
 #undef COMPARE_AND_RETURN
 }
 
+inline static void
+get_number_in_grn_uvector(grn_ctx *ctx, grn_obj *uvector, unsigned int offset,
+                          grn_obj *buf)
+{
+#define GET_UVECTOR_ELEMENT_AS(type) do {                            \
+  GRN_ ## type ## _SET(ctx,                                          \
+                       buf,                                          \
+                       GRN_ ## type ## _VALUE_AT(uvector, offset));  \
+  } while (GRN_FALSE)
+  switch (uvector->header.domain) {
+  case GRN_DB_BOOL :
+    GET_UVECTOR_ELEMENT_AS(BOOL);
+    break;
+  case GRN_DB_INT8 :
+    GET_UVECTOR_ELEMENT_AS(INT8);
+    break;
+  case GRN_DB_UINT8 :
+    GET_UVECTOR_ELEMENT_AS(UINT8);
+    break;
+  case GRN_DB_INT16 :
+    GET_UVECTOR_ELEMENT_AS(INT16);
+    break;
+  case GRN_DB_UINT16 :
+    GET_UVECTOR_ELEMENT_AS(UINT16);
+    break;
+  case GRN_DB_INT32 :
+    GET_UVECTOR_ELEMENT_AS(INT32);
+    break;
+  case GRN_DB_UINT32 :
+    GET_UVECTOR_ELEMENT_AS(UINT32);
+    break;
+  case GRN_DB_INT64 :
+    GET_UVECTOR_ELEMENT_AS(INT64);
+    break;
+  case GRN_DB_UINT64 :
+    GET_UVECTOR_ELEMENT_AS(UINT64);
+    break;
+  case GRN_DB_FLOAT :
+    GET_UVECTOR_ELEMENT_AS(FLOAT);
+    break;
+  case GRN_DB_TIME :
+    GET_UVECTOR_ELEMENT_AS(TIME);
+    break;
+  default :
+    GET_UVECTOR_ELEMENT_AS(RECORD);
+    break;
+  }
+#undef GET_UVECTOR_ELEMENT_AS
+}
+
+inline static void
+apply_max(grn_ctx *ctx, grn_obj *number, grn_obj *max,
+          grn_obj *casted_number, grn_obj *casted_max, grn_id cast_type)
+{
+  grn_id domain = number->header.domain;
+  if (!is_comparable_number_type(domain)) {
+    return;
+  }
+  cast_type = larger_number_type(cast_type, domain);
+  if (!number_safe_cast(ctx, number, casted_number, cast_type)) {
+    return;
+  }
+  if (max->header.domain == GRN_DB_VOID) {
+    grn_obj_reinit(ctx, max, cast_type, 0);
+    GRN_TEXT_SET(ctx, max,
+                 GRN_TEXT_VALUE(casted_number),
+                 GRN_TEXT_LEN(casted_number));
+    return;
+  }
+
+  if (max->header.domain != cast_type) {
+    if (!number_safe_cast(ctx, max, casted_max, cast_type)) {
+      return;
+    }
+    grn_obj_reinit(ctx, max, cast_type, 0);
+    GRN_TEXT_SET(ctx, max,
+                 GRN_TEXT_VALUE(casted_max),
+                 GRN_TEXT_LEN(casted_max));
+  }
+  if (compare_number(ctx, casted_number, max, cast_type) > 0) {
+    grn_obj_reinit(ctx, max, cast_type, 0);
+    GRN_TEXT_SET(ctx, max,
+                 GRN_TEXT_VALUE(casted_number),
+                 GRN_TEXT_LEN(casted_number));
+  }
+}
+
 static grn_obj *
 func_max(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -1497,44 +1584,80 @@ func_max(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   GRN_VOID_INIT(&casted_max);
   GRN_VOID_INIT(&casted_number);
-  for (i = 0; i < nargs; i++) {
-    grn_obj *number = args[i];
-    grn_id domain = number->header.domain;
-    if (!is_comparable_number_type(domain)) {
-      continue;
-    }
-    cast_type = larger_number_type(cast_type, domain);
-    if (!number_safe_cast(ctx, number, &casted_number, cast_type)) {
-      continue;
-    }
-    if (max->header.domain == GRN_DB_VOID) {
-      grn_obj_reinit(ctx, max, cast_type, 0);
-      GRN_TEXT_SET(ctx, max,
-                   GRN_TEXT_VALUE(&casted_number),
-                   GRN_TEXT_LEN(&casted_number));
-      continue;
-    }
 
-    if (max->header.domain != cast_type) {
-      if (!number_safe_cast(ctx, max, &casted_max, cast_type)) {
-        continue;
+  for (i = 0; i < nargs; i++) {
+    switch (args[i]->header.type) {
+    case GRN_BULK :
+      apply_max(ctx, args[i], max, &casted_number, &casted_max, cast_type);
+      break;
+    case GRN_UVECTOR :
+      {
+        unsigned int j;
+        unsigned int n_elements;
+        grn_obj number_in_uvector;
+        grn_obj *domain;
+
+        domain = grn_ctx_at(ctx, args[i]->header.domain);
+        GRN_OBJ_INIT(&number_in_uvector, GRN_BULK, 0, args[i]->header.domain);
+        n_elements = grn_uvector_size(ctx, args[i]);
+        for (j = 0; j < n_elements; j++) {
+          get_number_in_grn_uvector(ctx, args[i], j, &number_in_uvector);
+          if (grn_obj_is_table(ctx, domain)) {
+            grn_obj_reinit(ctx, &number_in_uvector, domain->header.domain, 0);
+            grn_table_get_key2(ctx, domain,
+                               GRN_RECORD_VALUE(&number_in_uvector),
+                               &number_in_uvector);
+          }
+          apply_max(ctx, &number_in_uvector, max, &casted_number, &casted_max, cast_type);
+        }
+        GRN_OBJ_FIN(ctx, &number_in_uvector);
       }
-      grn_obj_reinit(ctx, max, cast_type, 0);
-      GRN_TEXT_SET(ctx, max,
-                   GRN_TEXT_VALUE(&casted_max),
-                   GRN_TEXT_LEN(&casted_max));
-    }
-    if (compare_number(ctx, &casted_number, max, cast_type) > 0) {
-      grn_obj_reinit(ctx, max, cast_type, 0);
-      GRN_TEXT_SET(ctx, max,
-                   GRN_TEXT_VALUE(&casted_number),
-                   GRN_TEXT_LEN(&casted_number));
+      break;
+    default :
+      continue;
     }
   }
   GRN_OBJ_FIN(ctx, &casted_max);
   GRN_OBJ_FIN(ctx, &casted_number);
 
   return max;
+}
+
+static void
+apply_min(grn_ctx *ctx, grn_obj *number, grn_obj *min,
+          grn_obj *casted_number, grn_obj *casted_min, grn_id cast_type)
+{
+  grn_id domain = number->header.domain;
+  if (!is_comparable_number_type(domain)) {
+    return;
+  }
+  cast_type = smaller_number_type(cast_type, domain);
+  if (!number_safe_cast(ctx, number, casted_number, cast_type)) {
+    return;
+  }
+  if (min->header.domain == GRN_DB_VOID) {
+    grn_obj_reinit(ctx, min, cast_type, 0);
+    GRN_TEXT_SET(ctx, min,
+                 GRN_TEXT_VALUE(casted_number),
+                 GRN_TEXT_LEN(casted_number));
+    return;
+  }
+
+  if (min->header.domain != cast_type) {
+    if (!number_safe_cast(ctx, min, casted_min, cast_type)) {
+      return;
+    }
+    grn_obj_reinit(ctx, min, cast_type, 0);
+    GRN_TEXT_SET(ctx, min,
+                 GRN_TEXT_VALUE(casted_min),
+                 GRN_TEXT_LEN(casted_min));
+  }
+  if (compare_number(ctx, casted_number, min, cast_type) < 0) {
+    grn_obj_reinit(ctx, min, cast_type, 0);
+    GRN_TEXT_SET(ctx, min,
+                 GRN_TEXT_VALUE(casted_number),
+                 GRN_TEXT_LEN(casted_number));
+  }
 }
 
 static grn_obj *
@@ -1553,37 +1676,35 @@ func_min(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   GRN_VOID_INIT(&casted_min);
   GRN_VOID_INIT(&casted_number);
   for (i = 0; i < nargs; i++) {
-    grn_obj *number = args[i];
-    grn_id domain = number->header.domain;
-    if (!is_comparable_number_type(domain)) {
-      continue;
-    }
-    cast_type = smaller_number_type(cast_type, domain);
-    if (!number_safe_cast(ctx, number, &casted_number, cast_type)) {
-      continue;
-    }
-    if (min->header.domain == GRN_DB_VOID) {
-      grn_obj_reinit(ctx, min, cast_type, 0);
-      GRN_TEXT_SET(ctx, min,
-                   GRN_TEXT_VALUE(&casted_number),
-                   GRN_TEXT_LEN(&casted_number));
-      continue;
-    }
+    switch (args[i]->header.type) {
+    case GRN_BULK :
+      apply_min(ctx, args[i], min, &casted_number, &casted_min, cast_type);
+      break;
+    case GRN_UVECTOR :
+      {
+        unsigned int j;
+        unsigned int n_elements;
+        grn_obj number_in_uvector;
+        grn_obj *domain;
 
-    if (min->header.domain != cast_type) {
-      if (!number_safe_cast(ctx, min, &casted_min, cast_type)) {
-        continue;
+        domain = grn_ctx_at(ctx, args[i]->header.domain);
+        GRN_OBJ_INIT(&number_in_uvector, GRN_BULK, 0, args[i]->header.domain);
+        n_elements = grn_uvector_size(ctx, args[i]);
+        for (j = 0; j < n_elements; j++) {
+          get_number_in_grn_uvector(ctx, args[i], j, &number_in_uvector);
+          if (grn_obj_is_table(ctx, domain)) {
+            grn_obj_reinit(ctx, &number_in_uvector, domain->header.domain, 0);
+            grn_table_get_key2(ctx, domain,
+                               GRN_RECORD_VALUE(&number_in_uvector),
+                               &number_in_uvector);
+          }
+          apply_min(ctx, &number_in_uvector, min, &casted_number, &casted_min, cast_type);
+        }
+        GRN_OBJ_FIN(ctx, &number_in_uvector);
       }
-      grn_obj_reinit(ctx, min, cast_type, 0);
-      GRN_TEXT_SET(ctx, min,
-                   GRN_TEXT_VALUE(&casted_min),
-                   GRN_TEXT_LEN(&casted_min));
-    }
-    if (compare_number(ctx, &casted_number, min, cast_type) < 0) {
-      grn_obj_reinit(ctx, min, cast_type, 0);
-      GRN_TEXT_SET(ctx, min,
-                   GRN_TEXT_VALUE(&casted_number),
-                   GRN_TEXT_LEN(&casted_number));
+      break;
+    default :
+      continue;
     }
   }
   GRN_OBJ_FIN(ctx, &casted_min);

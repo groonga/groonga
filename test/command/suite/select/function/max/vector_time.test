@@ -1,0 +1,11 @@
+table_create Values TABLE_NO_KEY
+column_create Values time_values COLUMN_VECTOR Time
+
+load --table Values
+[
+{"time_values": ["2017-07-12 00:00:00", "2017-05-12 00:00:00"]}
+]
+
+select Values \
+  --filter true \
+  --output_columns '_id, max(time_values, "2017-06-12 00:00:00")'
