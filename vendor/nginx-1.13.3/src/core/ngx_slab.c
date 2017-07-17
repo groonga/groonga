@@ -181,8 +181,8 @@ void *
 ngx_slab_alloc_locked(ngx_slab_pool_t *pool, size_t size)
 {
     size_t            s;
-    uintptr_t         p, n, m, mask, *bitmap;
-    ngx_uint_t        i, slot, shift, map;
+    uintptr_t         p, m, mask, *bitmap;
+    ngx_uint_t        i, n, slot, shift, map;
     ngx_slab_page_t  *page, *prev, *slots;
 
     if (size > ngx_slab_max_size) {
@@ -226,7 +226,7 @@ ngx_slab_alloc_locked(ngx_slab_pool_t *pool, size_t size)
 
             bitmap = (uintptr_t *) ngx_slab_page_addr(pool, page);
 
-            map = (ngx_pagesize >> shift) / (sizeof(uintptr_t) * 8);
+            map = (ngx_pagesize >> shift) / (8 * sizeof(uintptr_t));
 
             for (n = 0; n < map; n++) {
 
@@ -239,7 +239,7 @@ ngx_slab_alloc_locked(ngx_slab_pool_t *pool, size_t size)
 
                         bitmap[n] |= m;
 
-                        i = (n * sizeof(uintptr_t) * 8 + i) << shift;
+                        i = (n * 8 * sizeof(uintptr_t) + i) << shift;
 
                         p = (uintptr_t) bitmap + i;
 
@@ -339,11 +339,17 @@ ngx_slab_alloc_locked(ngx_slab_pool_t *pool, size_t size)
             }
 
             /* "n" elements for bitmap, plus one requested */
-            bitmap[0] = ((uintptr_t) 2 << n) - 1;
 
-            map = (ngx_pagesize >> shift) / (sizeof(uintptr_t) * 8);
+            for (i = 0; i < (n + 1) / (8 * sizeof(uintptr_t)); i++) {
+                bitmap[i] = NGX_SLAB_BUSY;
+            }
 
-            for (i = 1; i < map; i++) {
+            m = ((uintptr_t) 1 << ((n + 1) % (8 * sizeof(uintptr_t)))) - 1;
+            bitmap[i] = m;
+
+            map = (ngx_pagesize >> shift) / (8 * sizeof(uintptr_t));
+
+            for (i = i + 1; i < map; i++) {
                 bitmap[i] = 0;
             }
 
@@ -369,7 +375,7 @@ ngx_slab_alloc_locked(ngx_slab_pool_t *pool, size_t size)
 
             slots[slot].next = page;
 
-            pool->stats[slot].total += sizeof(uintptr_t) * 8;
+            pool->stats[slot].total += 8 * sizeof(uintptr_t);
 
             p = ngx_slab_page_addr(pool, page);
 
@@ -480,8 +486,8 @@ ngx_slab_free_locked(ngx_slab_pool_t *pool, void *p)
         }
 
         n = ((uintptr_t) p & (ngx_pagesize - 1)) >> shift;
-        m = (uintptr_t) 1 << (n % (sizeof(uintptr_t) * 8));
-        n /= sizeof(uintptr_t) * 8;
+        m = (uintptr_t) 1 << (n % (8 * sizeof(uintptr_t)));
+        n /= 8 * sizeof(uintptr_t);
         bitmap = (uintptr_t *)
                              ((uintptr_t) p & ~((uintptr_t) ngx_pagesize - 1));
 
@@ -506,13 +512,16 @@ ngx_slab_free_locked(ngx_slab_pool_t *pool, void *p)
                 n = 1;
             }
 
-            if (bitmap[0] & ~(((uintptr_t) 1 << n) - 1)) {
+            i = n / (8 * sizeof(uintptr_t));
+            m = ((uintptr_t) 1 << (n % (8 * sizeof(uintptr_t)))) - 1;
+
+            if (bitmap[i] & ~m) {
                 goto done;
             }
 
-            map = (ngx_pagesize >> shift) / (sizeof(uintptr_t) * 8);
+            map = (ngx_pagesize >> shift) / (8 * sizeof(uintptr_t));
 
-            for (i = 1; i < map; i++) {
+            for (i = i + 1; i < map; i++) {
                 if (bitmap[i]) {
                     goto done;
                 }
@@ -558,7 +567,7 @@ ngx_slab_free_locked(ngx_slab_pool_t *pool, void *p)
 
             ngx_slab_free_pages(pool, page, 1);
 
-            pool->stats[slot].total -= sizeof(uintptr_t) * 8;
+            pool->stats[slot].total -= 8 * sizeof(uintptr_t);
 
             goto done;
         }
