@@ -9,5 +9,5 @@ load --table Values
 {"time_values": ["2017-07-12 00:00:00", "2017-05-12 00:00:00"]}
 ]
 [[0,0.0,0.0],1]
-select Values   --filter true   --output_columns '_id, min(time_values, "2017-06-12 00:00:00")'
+select Values   --output_columns '_id, min(time_values, "2017-06-12 00:00:00")'
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["min",null]],[1,1494514800.0]]]]

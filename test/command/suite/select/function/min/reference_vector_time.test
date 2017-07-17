@@ -9,5 +9,4 @@ load --table Values
 ]
 
 select Values \
-  --filter true \
   --output_columns '_id, min(time_values, "2017-06-12 00:00:00")'
