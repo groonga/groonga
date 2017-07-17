@@ -21,9 +21,14 @@ module Groonga
 
         column, min, min_border, max, max_border = @arguments
 
-        index_info = column.column.find_index(Operator::CALL)
-        return table.size if index_info.nil?
-        index_column = index_info.index
+        if column.is_a?(Groonga::ExpressionTree::IndexColumn)
+          index_column = column.object
+        else
+          index_info = column.column.find_index(Operator::CALL)
+          return table.size if index_info.nil?
+          index_column = index_info.index
+        end
+
         while index_column.is_a?(Groonga::Accessor)
           if index_column.have_next?
             index_column = index_column.next
