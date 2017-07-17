@@ -762,7 +762,7 @@ grn_arrow_load(grn_ctx *ctx,
   int n_record_batches = reader->num_record_batches();
   for (int i = 0; i < n_record_batches; ++i) {
     std::shared_ptr<arrow::RecordBatch> record_batch;
-    status = reader->GetRecordBatch(i, &record_batch);
+    status = reader->ReadRecordBatch(i, &record_batch);
     if (!grnarrow::check_status(ctx,
                                 status,
                                 std::ostringstream("") <<
