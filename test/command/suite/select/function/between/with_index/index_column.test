@@ -13,4 +13,4 @@ load --table Users
 {"_key": "eric",   "age": 21}
 ]
 
-select Users --filter 'between(Ages.users_age, "18", "include", 20, "include")'
+select Users --filter 'between(Ages.users_age, 18, "include", 20, "include")'
