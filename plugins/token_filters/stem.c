@@ -92,15 +92,15 @@ is_stemmable(grn_obj *data, grn_bool *is_all_upper)
   end = current + GRN_TEXT_LEN(data);
 
   for (; current < end; current++) {
-    if (islower(*current)) {
+    if (islower((unsigned char)*current)) {
       have_lower = GRN_TRUE;
       continue;
     }
-    if (isupper(*current)) {
+    if (isupper((unsigned char)*current)) {
       have_upper = GRN_TRUE;
       continue;
     }
-    if (isdigit(*current)) {
+    if (isdigit((unsigned char)*current)) {
       continue;
     }
     switch (*current) {
@@ -131,7 +131,7 @@ normalize(grn_ctx *ctx,
   end = current + length;
 
   for (; current < end; current++) {
-    if (isupper(*current)) {
+    if (isupper((unsigned char)*current)) {
       if (current > unwritten) {
         GRN_TEXT_PUT(ctx, normalized, unwritten, current - unwritten);
       }
@@ -157,7 +157,7 @@ unnormalize(grn_ctx *ctx,
   end = current + length;
 
   for (; current < end; current++) {
-    if (islower(*current)) {
+    if (islower((unsigned char)*current)) {
       if (current > unwritten) {
         GRN_TEXT_PUT(ctx, normalized, unwritten, current - unwritten);
       }
