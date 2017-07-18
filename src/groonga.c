@@ -2794,7 +2794,7 @@ config_file_parse(const char *path, const grn_str_getopt_opt *opts,
   char *ptr, *name, *value;
   size_t name_length, value_length;
 
-  while (isspace(*buf)) {
+  while (isspace((unsigned char)*buf)) {
     buf++;
   }
 
@@ -2805,17 +2805,17 @@ config_file_parse(const char *path, const grn_str_getopt_opt *opts,
 
   do {
     *ptr-- = '\0';
-  } while (ptr >= buf && isspace(*ptr));
+  } while (ptr >= buf && isspace((unsigned char)*ptr));
 
   if (!*buf) {
     return CONFIG_FILE_SUCCESS;
   }
 
   name = ptr = buf;
-  while (*ptr && !isspace(*ptr) && *ptr != '=') {
+  while (*ptr && !isspace((unsigned char)*ptr) && *ptr != '=') {
     ptr++;
   }
-  while (isspace(*ptr)) {
+  while (isspace((unsigned char)*ptr)) {
     *ptr++ = '\0';
   }
 
@@ -2830,7 +2830,7 @@ config_file_parse(const char *path, const grn_str_getopt_opt *opts,
 
   if (*ptr == '=') {
     *ptr++ = '\0';
-    while (isspace(*ptr)) {
+    while (isspace((unsigned char)*ptr)) {
       ptr++;
     }
     value = ptr;
