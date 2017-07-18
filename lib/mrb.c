@@ -112,7 +112,7 @@ grn_mrb_is_absolute_path(const char *path)
     return GRN_TRUE;
   }
 
-  if (isalpha(path[0]) && path[1] == ':' && path[2] == '/') {
+  if (isalpha((unsigned char)path[0]) && path[1] == ':' && path[2] == '/') {
     return GRN_TRUE;
   }
 
