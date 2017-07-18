@@ -170,7 +170,7 @@ chunked_tokenize_utf8_chunk(grn_ctx *ctx,
 
   tokenized_chunk_length = strlen(tokenized_chunk);
   if (tokenized_chunk_length >= 1 &&
-      isspace(tokenized_chunk[tokenized_chunk_length - 1])) {
+      isspace((unsigned char)tokenized_chunk[tokenized_chunk_length - 1])) {
     GRN_TEXT_PUT(ctx, &(tokenizer->buf),
                  tokenized_chunk, tokenized_chunk_length - 1);
   } else {
