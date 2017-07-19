@@ -135,7 +135,7 @@ normalize(grn_ctx *ctx,
       if (current > unwritten) {
         GRN_TEXT_PUT(ctx, normalized, unwritten, current - unwritten);
       }
-      GRN_TEXT_PUTC(ctx, normalized, tolower(*current));
+      GRN_TEXT_PUTC(ctx, normalized, tolower((unsigned char)*current));
       unwritten = current + 1;
     }
   }
@@ -161,7 +161,7 @@ unnormalize(grn_ctx *ctx,
       if (current > unwritten) {
         GRN_TEXT_PUT(ctx, normalized, unwritten, current - unwritten);
       }
-      GRN_TEXT_PUTC(ctx, normalized, toupper(*current));
+      GRN_TEXT_PUTC(ctx, normalized, toupper((unsigned char)*current));
       unwritten = current + 1;
     }
   }
