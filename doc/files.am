@@ -899,6 +899,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/textile.py \
 	$(top_srcdir)/doc/source/troubleshooting.rst \
 	$(top_srcdir)/doc/source/troubleshooting/different_results_with_the_same_keyword.rst \
+	$(top_srcdir)/doc/source/troubleshooting/how_to_analyze_of_error_message.rst \
 	$(top_srcdir)/doc/source/troubleshooting/mmap_cannot_allocate_memory.rst \
 	$(top_srcdir)/doc/source/tutorial.rst \
 	$(top_srcdir)/doc/source/tutorial/data.rst \
@@ -1825,6 +1826,7 @@ source_files_relative_from_doc_dir = \
 	source/textile.py \
 	source/troubleshooting.rst \
 	source/troubleshooting/different_results_with_the_same_keyword.rst \
+	source/troubleshooting/how_to_analyze_of_error_message.rst \
 	source/troubleshooting/mmap_cannot_allocate_memory.rst \
 	source/tutorial.rst \
 	source/tutorial/data.rst \
@@ -2197,6 +2199,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/spec/search.txt \
 	html/_sources/troubleshooting.txt \
 	html/_sources/troubleshooting/different_results_with_the_same_keyword.txt \
+	html/_sources/troubleshooting/how_to_analyze_of_error_message.txt \
 	html/_sources/troubleshooting/mmap_cannot_allocate_memory.txt \
 	html/_sources/tutorial.txt \
 	html/_sources/tutorial/data.txt \
@@ -2473,6 +2476,7 @@ html_files_relative_from_locale_dir = \
 	html/spec/search.html \
 	html/troubleshooting.html \
 	html/troubleshooting/different_results_with_the_same_keyword.html \
+	html/troubleshooting/how_to_analyze_of_error_message.html \
 	html/troubleshooting/mmap_cannot_allocate_memory.html \
 	html/tutorial.html \
 	html/tutorial/data.html \
