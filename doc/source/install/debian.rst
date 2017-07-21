@@ -151,9 +151,13 @@ Install groonga-normalizer-mysql package::
 Build from source
 -----------------
 
-Install required packages to build Groonga::
+Install required packages to build Groonga for Debian jessie::
 
-  % sudo apt-get install -y -V  wget tar build-essential zlib1g-dev liblzo2-dev libmsgpack-dev libzmq-dev libevent-dev libmecab-dev
+  % sudo apt-get install -y -V  wget tar build-essential pkg-config zlib1g-dev libmsgpack-dev libzmq3-dev libevent-dev libmecab-dev liblz4-dev
+
+Install required packages to build Groonga for Debian stretch::
+
+  % sudo apt-get install -y -V  wget tar build-essential pkg-config zlib1g-dev libmsgpack-dev libzmq3-dev libevent-dev libmecab-dev liblz4-dev libzstd-dev
 
 Download source::
 
