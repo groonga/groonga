@@ -1,4 +1,4 @@
-CODE_NAMES = xenial,yakkety,zesty
+CODE_NAMES = xenial,zesty
 SOURCE = ../$(PACKAGE)-$(VERSION).tar.gz
 
 all:
