@@ -59,13 +59,13 @@ Improvements
 
 * [load] Supported Apache Arrow 0.5.0 or later.
 
-* [:doc:`/reference/troubleshooting/how_to_analyze_error_message`]
+* [:doc:`/troubleshooting/how_to_analyze_error_message`]
   Added howto article to analyze error message in Groonga.
 
-* [:doc:`/reference/install/debian`] Updated required package list to
+* [:doc:`/install/debian`] Updated required package list to
   build from source.
 
-* [:doc:`/reference/install/ubuntu`] Dropped Ubuntu 16.10 (Yakkety
+* [:doc:`/install/ubuntu`] Dropped Ubuntu 16.10 (Yakkety
   Yak) support. It has reached EOL at July 20, 2017.
 
 Fixes
