@@ -7,6 +7,88 @@
 News
 ====
 
+.. _release-7-0-5:
+
+Release 7.0.5 - 2017-07-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [httpd] Updated bundled nginx to 1.13.3. Note that this version
+  contains security fix for CVE-2017-7529.
+
+* [:doc:`/reference/commands/load`] Supported to load the value of max
+  UInt64. In the previous versions, max UInt64 value is converted into
+  0 unexpectedlly.
+
+* Added the following API
+
+  * ``grn_window_get_size()`` [GitHub#725] [Patch by Naoya Murakami]
+
+* [:doc:`/reference/functions/math_abs`] Supported ``math_abs()``
+  function to calculate absolute value. [GitHub#721]
+
+* Supported to make ``grn_default_logger_set_path()`` and
+  ``grn_default_query_logger_set_path()`` thread safe.
+
+* [windows] Updated bundled pcre library to 8.41.
+
+* [:doc:`/reference/commands/normalize`] Improved not to output
+  redundant empty string ``""`` on error. [GitHub#730]
+
+* [functions/time] Supported to show error message when division by
+  zero was happened. [GitHub#733] [Patch by Naoya Murakami]
+
+* [windows] Changed to map ``ERROR_NO_SYSTEM_RESOURCES`` to
+  ``GRN_RESOURCE_TEMPORARILY_UNAVAILABLE``. In the previous versions,
+  it returns ``rc=-1`` as a result code. It is not helpful to
+  investigate what actually happened. With this fix, it returns
+  ``rc=-12``.
+
+* [functions/min][functions/max] Supported vector column. Now you need
+  not to care scalar column or vector column to use. [GitHub#735]
+  [Patch by Naoya Murakami]
+
+* [:doc:`/reference/commands/dump`] Supported ``--sort_hash_table``
+  option to sort by ``_key`` for hash table. Specify
+  ``--sort_hash_table yes`` to use it.
+
+* [:doc:`/reference/functions/between`] Supported to specify index
+  column. [GitHub#740] [Patch by Naoya Murakami]
+
+* [load] Supported Apache Arrow 0.5.0 or later.
+
+* [:doc:`/reference/troubleshooting/how_to_analyze_error_message`]
+  Added howto article to analyze error message in Groonga.
+
+* [:doc:`/reference/install/debian`] Updated required package list to
+  build from source.
+
+* [:doc:`/reference/install/ubuntu`] Dropped Ubuntu 16.10 (Yakkety
+  Yak) support. It has reached EOL at July 20, 2017.
+
+Fixes
+^^^^^
+
+* Fixed to construct correct fulltext indexes against vector column
+  which type belongs to text family (```ShortText`` and so on). This
+  fix resolves that fulltext search doesn't work well against text
+  vector column after updating indexes. [GitHub#494]
+
+* [:doc:`/reference/commands/thread_limit`] Fixed a bug that deadlock
+  occurs when thread_limit?max=1 is requested at once.
+
+* [:doc:`/reference/executables/groonga-httpd`] Fixed a mismatch path
+  of pid file between default one and restart command assumed. This
+  mismatch blocked restarting groonga-httpd. [GitHub#743] [Reported by
+  sozaki]
+
+Thanks
+^^^^^^
+
+* Naoya Murakami
+
 .. _release-7-0-4:
 
 Release 7.0.4 - 2017-06-29
@@ -68,6 +150,9 @@ Release 7.0.3 - 2017-05-29
 
 Improvements
 ^^^^^^^^^^^^
+
+Fixes
+^^^^^
 
 * [:doc:`/reference/commands/select`] Add document about
   :ref:`full-text-search-with-specific-index-name`.
