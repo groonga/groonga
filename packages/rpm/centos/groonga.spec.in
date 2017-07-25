@@ -434,6 +434,7 @@ fi
 %dir %{_libdir}/groonga/scripts/ruby/logger
 %dir %{_libdir}/groonga/scripts/ruby/query_logger
 %{_libdir}/groonga/plugins/functions/index_column.so
+%{_libdir}/groonga/plugins/functions/math.so
 %{_libdir}/groonga/plugins/functions/number.so
 %{_libdir}/groonga/plugins/functions/vector.so
 %{_libdir}/groonga/plugins/functions/string.so
