@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2016-12-27 01:00+0900\n"
+"PO-Revision-Date: 2017-07-25 11:28+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -162,6 +162,15 @@ msgstr "groonga-server-gtqp向け:"
 
 msgid "% sudo systemctl enable groonga-server-gqtp"
 msgstr ""
+
+msgid "stretch"
+msgstr ""
+
+msgid "Install required packages to build Groonga for Debian jessie::"
+msgstr "Debian jessieでGroongaをビルドするために必要なパッケージをインストールします::"
+
+msgid "Install required packages to build Groonga for Debian stretch::"
+msgstr "Debian stretchでGroongaをビルドするために必要なパッケージをインストールします::"
 
 msgid "Fedora"
 msgstr ""
