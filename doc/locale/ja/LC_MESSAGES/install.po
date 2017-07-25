@@ -167,10 +167,14 @@ msgid "stretch"
 msgstr ""
 
 msgid "Install required packages to build Groonga for Debian jessie::"
-msgstr "Debian jessieでGroongaをビルドするために必要なパッケージをインストールします::"
+msgstr ""
+"Debian jessieでGroongaをビルドするために必要なパッケージをインストールしま"
+"す::"
 
 msgid "Install required packages to build Groonga for Debian stretch::"
-msgstr "Debian stretchでGroongaをビルドするために必要なパッケージをインストールします::"
+msgstr ""
+"Debian stretchでGroongaをビルドするために必要なパッケージをインストールしま"
+"す::"
 
 msgid "Fedora"
 msgstr ""
