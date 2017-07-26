@@ -456,6 +456,8 @@ fi
 %config(noreplace) %{_sysconfdir}/groonga/synonyms.tsv
 
 %files server-common
+%defattr(-,root,root,-)
+%config(noreplace) %{_sysconfdir}/tmpfiles.d/groonga.conf
 
 %files server-gqtp
 %defattr(-,root,root,-)

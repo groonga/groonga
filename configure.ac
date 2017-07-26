@@ -290,6 +290,7 @@ AC_CONFIG_FILES([
   data/systemd/centos/Makefile
   data/systemd/centos/sysconfig/Makefile
   data/scripts/Makefile
+  data/tmpfiles.d/Makefile
   tools/Makefile
   doc/Makefile
   doc/locale/Makefile

@@ -4,7 +4,8 @@ SUBDIRS =			\
 	init.d			\
 	logrotate.d		\
 	systemd			\
-	scripts
+	scripts			\
+	tmpfiles.d
 
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE)
 dist_pkgsysconf_DATA =		\
