@@ -6228,7 +6228,7 @@ msgstr ""
 
 msgid ""
 "dumpが出力するフォーマットは直接Groongaが解釈できるフォーマットです。そのた"
-"め、以下のようにしてデータベース>をコピーすることができます。::"
+"め、以下のようにしてデータベースをコピーすることができます。::"
 msgstr ""
 
 msgid "Here is the sample schema and data to check dump behaviour::"
