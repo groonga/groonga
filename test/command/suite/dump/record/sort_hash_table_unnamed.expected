@@ -1,0 +1,26 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "bob", "name": "Bob"},
+{"_key": "mallory", "name": "Mallory"},
+{"_key": "peggy", "name": "Peggy"},
+{"_key": "alice", "name": "Alice"},
+{"_key": "eve", "name": "Eve"}
+]
+[[0,0.0,0.0],5]
+dump Users yes yes yes yes yes yes
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+load --table Users
+[
+["_key","name"],
+["alice","Alice"],
+["bob","Bob"],
+["eve","Eve"],
+["mallory","Mallory"],
+["peggy","Peggy"]
+]
