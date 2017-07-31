@@ -19,7 +19,7 @@ Groonga組込コマンドの一つであるdumpについて説明します。組
 dumpはデータベースのスキーマとデータを後から読み込めるフォーマットで出力します。dumpの結果は大きくなるため、
 主にコマンドラインから使うことを想定しています。データベースのバックアップが主な利用方法です。
 
-dumpが出力するフォーマットは直接Groongaが解釈できるフォーマットです。そのため、以下のようにしてデータベース>をコピーすることができます。::
+dumpが出力するフォーマットは直接Groongaが解釈できるフォーマットです。そのため、以下のようにしてデータベースをコピーすることができます。::
 
   % groonga original/db dump > dump.grn
   % mkdir backup
@@ -34,6 +34,7 @@ Syntax
         [dump_schema]
         [dump_records]
         [dump_indexes]
+        [dump_configs]
         [sort_hash_table]
 
 Usage
@@ -64,22 +65,22 @@ Dump all data in database::
 
   > dump
   plugin_register token_filters/stop_word
-  
+
   table_create Sites TABLE_NO_KEY
   column_create Sites url COLUMN_SCALAR ShortText
-  
+
   table_create Bookmarks TABLE_HASH_KEY ShortText
   column_create Bookmarks title COLUMN_SCALAR ShortText
-  
+
   table_create Lexicon TABLE_PAT_KEY ShortText
-  
+
   load --table Sites
   [
   ["_id","url"],
   [1,"http://groonga.org"],
   [2,"http://mroonga.org"]
   ]
-  
+
   load --table Bookmarks
   [
   ["_key","title"],
@@ -87,22 +88,22 @@ Dump all data in database::
   ["PGroonga","Introduction to PGroonga"],
   ["Mroonga","Introduction to Mroonga"]
   ]
-  
+
   create Lexicon bookmark_title COLUMN_INDEX Bookmarks title
 
 Dump schema and specific table data::
 
   > dump Bookmarks
   plugin_register token_filters/stop_word
-  
+
   table_create Sites TABLE_NO_KEY
   column_create Sites url COLUMN_SCALAR ShortText
-  
+
   table_create Bookmarks TABLE_HASH_KEY ShortText
   column_create Bookmarks title COLUMN_SCALAR ShortText
-  
+
   table_create Lexicon TABLE_PAT_KEY ShortText
-  
+
   load --table Bookmarks
   [
   ["_key","title"],
@@ -110,7 +111,7 @@ Dump schema and specific table data::
   ["PGroonga","Introduction to PGroonga"],
   ["Mroonga","Introduction to Mroonga"]
   ]
-  
+
   column_create Lexicon bookmark_title COLUMN_INDEX Bookmarks title
 
 Dump plugin only::
@@ -127,7 +128,7 @@ Dump records only::
   [1,"http://groonga.org"],
   [2,"http://mroonga.org"]
   ]
-  
+
   load --table Bookmarks
   [
   ["_key","title"],
@@ -141,10 +142,10 @@ Dump schema only::
   > dump --dump_records no --dump_plugins no --dump_indexes no
   table_create Sites TABLE_NO_KEY
   column_create Sites url COLUMN_SCALAR ShortText
-  
+
   table_create Bookmarks TABLE_HASH_KEY ShortText
   column_create Bookmarks title COLUMN_SCALAR ShortText
-  
+
   table_create Lexicon TABLE_PAT_KEY ShortText
 
 Dump sorted hash table data::
@@ -228,7 +229,7 @@ The default value is ``yes``.
 
 .. versionadded:: 7.0.5
 
-You can ascending sort the output of hash table when it contains hash table.
+You can ascending sort by ``_key`` the output of hash table when it contains hash table.
 To don't sort the output of hash table, specify ``no``.
 
 The default value is ``no``.
