@@ -1129,7 +1129,7 @@ grn_proc_init_dump(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[3]), "dump_records", -1);
   grn_plugin_expr_var_init(ctx, &(vars[4]), "dump_indexes", -1);
   grn_plugin_expr_var_init(ctx, &(vars[5]), "dump_configs", -1);
-  grn_plugin_expr_var_init(ctx, &(vars[6]), "dump_hash_table_sort", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[6]), "sort_hash_table", -1);
   grn_plugin_command_create(ctx,
                             "dump", -1,
                             command_dump,
