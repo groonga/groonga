@@ -6064,28 +6064,33 @@ grn_table_select_index_prefix(grn_ctx *ctx,
       }
     }
   } else {
-    grn_obj *domain = grn_ctx_at(ctx, index->header.domain);
-    if (domain) {
-      grn_hash *pres;
-      if ((pres = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                                  GRN_OBJ_TABLE_HASH_KEY))) {
-        grn_id *key;
-        if (si->op == GRN_OP_SUFFIX) {
-          grn_table_select_index_report(ctx, "[suffix]", index);
-        } else {
-          grn_table_select_index_report(ctx, "[prefix]", index);
+    grn_obj **indexes = &GRN_PTR_VALUE(&si->index);
+    int i, n_indexes = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
+    for (i = 0; i < n_indexes; i++) {
+      grn_obj *index = indexes[i];
+      grn_obj *lexicon = grn_ctx_at(ctx, index->header.domain);
+      if (lexicon) {
+        grn_hash *keys;
+        if ((keys = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                    GRN_OBJ_TABLE_HASH_KEY))) {
+          grn_id *key;
+          if (si->op == GRN_OP_SUFFIX) {
+            grn_table_select_index_report(ctx, "[suffix]", index);
+          } else {
+            grn_table_select_index_report(ctx, "[prefix]", index);
+          }
+          grn_table_search(ctx, lexicon,
+                          GRN_BULK_HEAD(si->query),
+                          GRN_BULK_VSIZE(si->query),
+                          si->op, (grn_obj *)keys, GRN_OP_OR);
+          grn_obj_unlink(ctx, lexicon);
+          GRN_HASH_EACH(ctx, keys, id, &key, NULL, NULL, {
+            grn_ii_at(ctx, (grn_ii *)index, *key, (grn_hash *)res, si->logical_op);
+          });
+          grn_hash_close(ctx, keys);
         }
-        grn_table_search(ctx, domain,
-                         GRN_BULK_HEAD(si->query),
-                         GRN_BULK_VSIZE(si->query),
-                         si->op, (grn_obj *)pres, GRN_OP_OR);
-        grn_obj_unlink(ctx, domain);
-        GRN_HASH_EACH(ctx, pres, id, &key, NULL, NULL, {
-          grn_ii_at(ctx, (grn_ii *)index, *key, (grn_hash *)res, si->logical_op);
-        });
-        grn_hash_close(ctx, pres);
+        grn_obj_unlink(ctx, lexicon);
       }
-      grn_obj_unlink(ctx, domain);
     }
     grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
     processed = GRN_TRUE;
