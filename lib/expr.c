@@ -6100,19 +6100,17 @@ grn_table_select_index_suffix(grn_ctx *ctx,
                               scan_info *si,
                               grn_obj *res)
 {
-  if (si->op == GRN_OP_SUFFIX) {
-    grn_obj *domain;
-    if (si->flags & SCAN_ACCESSOR) {
-      domain = table;
-    } else {
-      domain = grn_ctx_at(ctx, index->header.domain);
-    }
-    if (domain->header.type != GRN_TABLE_PAT_KEY) {
-      return GRN_FALSE;
-    }
-    if (!(domain->header.flags & GRN_OBJ_KEY_WITH_SIS)) {
-      return GRN_FALSE;
-    }
+  grn_obj *domain;
+  if (si->flags & SCAN_ACCESSOR) {
+    domain = table;
+  } else {
+    domain = grn_ctx_at(ctx, index->header.domain);
+  }
+  if (domain->header.type != GRN_TABLE_PAT_KEY) {
+    return GRN_FALSE;
+  }
+  if (!(domain->header.flags & GRN_OBJ_KEY_WITH_SIS)) {
+    return GRN_FALSE;
   }
   return grn_table_select_index_prefix(ctx, table, index, si, res);
 }
