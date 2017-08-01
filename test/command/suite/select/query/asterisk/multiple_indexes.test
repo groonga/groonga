@@ -1,0 +1,30 @@
+table_create Docs TABLE_NO_KEY
+column_create Docs title COLUMN_SCALAR ShortText
+column_create Docs body COLUMN_SCALAR Text
+
+load --table Docs --columns 'title,body'
+[
+["Groonga overview","Full text search engine."],
+["Groonga indexes","Groonga uses inverted ind."],
+["Conclusion","Groonga is good."]
+]
+
+table_create Idx TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Idx title COLUMN_INDEX|WITH_POSITION Docs title
+column_create Idx body COLUMN_INDEX|WITH_POSITION Docs body
+
+select \
+  --table Docs \
+  --match_columns 'title||body' \
+  --query 'Groo*' \
+  --output_columns '_id,_score' \
+  --match_escalation_threshold -1
+
+select \
+  --table Docs \
+  --match_columns 'body||title' \
+  --query 'Groo*' \
+  --output_columns '_id,_score' \
+  --match_escalation_threshold -1

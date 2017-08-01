@@ -1,0 +1,23 @@
+table_create Docs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Docs title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Docs body COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Docs --columns 'title,body'
+[
+["Groonga overview","Full text search engine."],
+["Groonga indexes","Groonga uses inverted ind."],
+["Conclusion","Groonga is good."]
+]
+[[0,0.0,0.0],3]
+table_create Idx TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Idx title COLUMN_INDEX|WITH_POSITION Docs title
+[[0,0.0,0.0],true]
+column_create Idx body COLUMN_INDEX|WITH_POSITION Docs body
+[[0,0.0,0.0],true]
+select   --table Docs   --match_columns 'title||body'   --query 'Groo*'   --output_columns '_id,_score'   --match_escalation_threshold -1
+[[0,0.0,0.0],[[[3],[["_id","UInt32"],["_score","Int32"]],[1,1],[2,2],[3,1]]]]
+select   --table Docs   --match_columns 'body||title'   --query 'Groo*'   --output_columns '_id,_score'   --match_escalation_threshold -1
+[[0,0.0,0.0],[[[3],[["_id","UInt32"],["_score","Int32"]],[2,2],[3,1],[1,1]]]]
