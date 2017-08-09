@@ -1,0 +1,20 @@
+table_create Items TABLE_NO_KEY
+column_create Items name COLUMN_SCALAR ShortText
+
+load --table Items
+[
+{"name": "item1"},
+{"name": "item2"},
+{"name": "item2"},
+{"name": "item1"},
+{"name": "item3"},
+{"name": "item1"}
+]
+
+select Items \
+  --columns[count].stage initial \
+  --columns[count].value 'window_count()' \
+  --columns[count].type UInt32 \
+  --columns[count].window.sort_keys _id \
+  --output_columns '_id, name, count' \
+  --sort_keys _id

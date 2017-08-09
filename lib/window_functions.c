@@ -269,6 +269,119 @@ window_sum(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
+static grn_rc
+window_count(grn_ctx *ctx,
+             grn_obj *output_column,
+             grn_window *window,
+             grn_obj **args,
+             int n_args)
+{
+  grn_id id;
+  grn_id output_column_range_id;
+  grn_obj n_records;
+  uint32_t n_records_raw = 0;
+
+
+  if (n_args != 0) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "window_count(): wrong number of arguments (%d for 0)",
+                     n_args);
+    return ctx->rc;
+  }
+
+  output_column_range_id = grn_obj_get_range(ctx, output_column);
+  switch (output_column_range_id) {
+  case GRN_DB_INT8 :
+  case GRN_DB_INT16 :
+  case GRN_DB_INT32 :
+  case GRN_DB_INT64 :
+    GRN_INT64_INIT(&n_records, 0);
+    break;
+  case GRN_DB_UINT8 :
+  case GRN_DB_UINT16 :
+  case GRN_DB_UINT32 :
+  case GRN_DB_UINT64 :
+    GRN_UINT64_INIT(&n_records, 0);
+    break;
+  case GRN_DB_FLOAT :
+    GRN_FLOAT_INIT(&n_records, 0);
+    break;
+  default :
+    {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, output_column);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "window_count(): "
+                       "the output column must be number column: <%.*s>",
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return ctx->rc;
+    }
+    break;
+  }
+
+  if (grn_window_is_sorted(ctx, window)) {
+    while ((id = grn_window_next(ctx, window))) {
+      n_records_raw++;
+      switch (output_column_range_id) {
+      case GRN_DB_INT8 :
+      case GRN_DB_INT16 :
+      case GRN_DB_INT32 :
+      case GRN_DB_INT64 :
+        GRN_INT64_SET(ctx, &n_records, n_records_raw);
+        break;
+      case GRN_DB_UINT8 :
+      case GRN_DB_UINT16 :
+      case GRN_DB_UINT32 :
+      case GRN_DB_UINT64 :
+        GRN_UINT64_SET(ctx, &n_records, n_records_raw);
+        break;
+      case GRN_DB_FLOAT :
+        GRN_FLOAT_SET(ctx, &n_records, n_records_raw);
+        break;
+      default :
+        break;
+      }
+      grn_obj_set_value(ctx, output_column, id, &n_records, GRN_OBJ_SET);
+    }
+  } else {
+    while ((id = grn_window_next(ctx, window))) {
+      n_records_raw++;
+    }
+
+    switch (output_column_range_id) {
+    case GRN_DB_INT8 :
+    case GRN_DB_INT16 :
+    case GRN_DB_INT32 :
+    case GRN_DB_INT64 :
+      GRN_INT64_SET(ctx, &n_records, n_records_raw);
+      break;
+    case GRN_DB_UINT8 :
+    case GRN_DB_UINT16 :
+    case GRN_DB_UINT32 :
+    case GRN_DB_UINT64 :
+      GRN_UINT64_SET(ctx, &n_records, n_records_raw);
+      break;
+    case GRN_DB_FLOAT :
+      GRN_FLOAT_SET(ctx, &n_records, n_records_raw);
+      break;
+    }
+
+    grn_window_rewind(ctx, window);
+    while ((id = grn_window_next(ctx, window))) {
+      grn_obj_set_value(ctx, output_column, id, &n_records, GRN_OBJ_SET);
+    }
+  }
+
+  GRN_OBJ_FIN(ctx, &n_records);
+
+  return GRN_SUCCESS;
+}
+
 grn_rc
 grn_db_init_builtin_window_functions(grn_ctx *ctx)
 {
@@ -283,6 +396,10 @@ grn_db_init_builtin_window_functions(grn_ctx *ctx)
   grn_window_function_create(ctx,
                              "window_sum", -1,
                              window_sum);
+
+  grn_window_function_create(ctx,
+                             "window_count", -1,
+                             window_count);
 
   return GRN_SUCCESS;
 }

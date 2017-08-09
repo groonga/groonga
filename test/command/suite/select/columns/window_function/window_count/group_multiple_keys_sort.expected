@@ -1,0 +1,85 @@
+table_create Items TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Items name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Items user COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"name": "item1", "user": "user3"},
+{"name": "item2", "user": "user2"},
+{"name": "item2", "user": "user2"},
+{"name": "item1", "user": "user3"},
+{"name": "item3", "user": "user1"},
+{"name": "item1", "user": "user1"}
+]
+[[0,0.0,0.0],6]
+select Items   --columns[count].stage initial   --columns[count].value 'window_count()'   --columns[count].type UInt32   --columns[count].window.group_keys name,user   --columns[count].window.sort_keys _id   --output_columns '_id, name, user, count'   --sort_keys _id
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "name",
+          "ShortText"
+        ],
+        [
+          "user",
+          "ShortText"
+        ],
+        [
+          "count",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        "item1",
+        "user3",
+        1
+      ],
+      [
+        2,
+        "item2",
+        "user2",
+        1
+      ],
+      [
+        3,
+        "item2",
+        "user2",
+        2
+      ],
+      [
+        4,
+        "item1",
+        "user3",
+        2
+      ],
+      [
+        5,
+        "item3",
+        "user1",
+        1
+      ],
+      [
+        6,
+        "item1",
+        "user1",
+        1
+      ]
+    ]
+  ]
+]
