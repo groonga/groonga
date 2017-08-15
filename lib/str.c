@@ -1482,7 +1482,6 @@ grn_atoll(const char *nptr, const char *end, const char **rest)
       int64_t t = v * 10 + (*p - '0');
       if (t < v) { v = 0; break; }
       v = t;
-      o = 0;
       p++;
     }
   }
