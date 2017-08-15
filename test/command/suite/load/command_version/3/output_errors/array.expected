@@ -16,7 +16,7 @@ load --table Numbers --command_version 3 --output_ids yes --output_errors yes
       "message": "<Numbers>: failed to cast to <UInt32>: <\"String\">",
       "function": "grn_table_add_by_key",
       "file": "db.c",
-      "line": 1622
+      "line": 0
     }
   },
   "body": {
