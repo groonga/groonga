@@ -234,6 +234,55 @@ func_index_column_df_ratio(grn_ctx *ctx,
   }
 }
 
+static grn_rc
+selector_index_column_not_match(grn_ctx *ctx,
+                                grn_obj *table,
+                                grn_obj *index,
+                                int n_args,
+                                grn_obj **args,
+                                grn_obj *res,
+                                grn_operator op)
+{
+  grn_obj *index_column;
+  const char *column_name;
+  grn_ii *ii;
+
+  if ((n_args - 1) != 1) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "index_column_not_match(): "
+                     "wrong number of arguments (%d for 1)", n_args - 1);
+    return ctx->rc;
+  }
+
+  column_name = GRN_TEXT_VALUE(args[1]);
+  
+  index_column = grn_obj_column(ctx, table, column_name, strlen(column_name));
+  if (!index_column) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "index_column_not_match(): "
+                     "no such index column: <%s>", column_name);
+    return ctx->rc;
+  }
+
+  ii = (grn_ii *)index_column;
+
+  GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
+    if (grn_ii_target_token_id_not_match(ctx, ii, id)) {
+      grn_posting pos;
+      pos.rid = id;
+      pos.sid = 1;
+      pos.pos = 0;
+      pos.weight = 0;
+      grn_ii_posting_add(ctx, &pos, (grn_hash *)res, op);
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+
+  grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
+  return ctx->rc;
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -255,6 +304,13 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   grn_proc_create(ctx, "index_column_df_ratio", -1,
                   GRN_PROC_FUNCTION,
                   func_index_column_df_ratio, NULL, NULL, 0, NULL);
+
+  selector_proc = grn_proc_create(ctx, "index_column_not_match", -1,
+                                  GRN_PROC_FUNCTION,
+                                  NULL, NULL, NULL, 0, NULL);
+  grn_proc_set_selector(ctx, selector_proc,
+                        selector_index_column_not_match);
+  grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_NOP);
 
   return ctx->rc;
 }
