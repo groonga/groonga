@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011-2012  Brazil
+  Copyright (C) 2011-2017  Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,6 +15,12 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif /* HAVE_CONFIG_H */
+
+#ifdef HAVE_CXX11
 
 #include <gcutter.h>
 #include <cppcutter.h>
@@ -44,7 +50,7 @@ namespace test_dat_cursor_factory
     grn::dat::Trie trie;
     create_trie(&trie);
 
-    std::auto_ptr<grn::dat::Cursor> cursor(grn::dat::CursorFactory::open(
+    std::unique_ptr<grn::dat::Cursor> cursor(grn::dat::CursorFactory::open(
         trie, "apple", 5, "melon", 5, 1, 2,
         grn::dat::KEY_RANGE_CURSOR | grn::dat::EXCEPT_LOWER_BOUND |
         grn::dat::EXCEPT_UPPER_BOUND));
@@ -64,7 +70,7 @@ namespace test_dat_cursor_factory
     grn::dat::Trie trie;
     create_trie(&trie);
 
-    std::auto_ptr<grn::dat::Cursor> cursor(grn::dat::CursorFactory::open(
+    std::unique_ptr<grn::dat::Cursor> cursor(grn::dat::CursorFactory::open(
         trie, "apple", 5, "melon", 5, 1, 2,
         grn::dat::ID_RANGE_CURSOR | grn::dat::ASCENDING_CURSOR));
     cppcut_assert_not_null(cursor.get());
@@ -81,7 +87,7 @@ namespace test_dat_cursor_factory
     grn::dat::Trie trie;
     create_trie(&trie);
 
-    std::auto_ptr<grn::dat::Cursor> cursor(grn::dat::CursorFactory::open(
+    std::unique_ptr<grn::dat::Cursor> cursor(grn::dat::CursorFactory::open(
         trie, NULL, 3, "apple", 5, 0, 1,
         grn::dat::PREFIX_CURSOR | grn::dat::DESCENDING_CURSOR));
     cppcut_assert_not_null(cursor.get());
@@ -97,7 +103,7 @@ namespace test_dat_cursor_factory
     grn::dat::Trie trie;
     create_trie(&trie);
 
-    std::auto_ptr<grn::dat::Cursor> cursor(grn::dat::CursorFactory::open(
+    std::unique_ptr<grn::dat::Cursor> cursor(grn::dat::CursorFactory::open(
         trie, "apple", 5, NULL, 0, 1, 2,
         grn::dat::PREDICTIVE_CURSOR | grn::dat::EXCEPT_EXACT_MATCH));
     cppcut_assert_not_null(cursor.get());
@@ -110,3 +116,5 @@ namespace test_dat_cursor_factory
                         cursor->flags());
   }
 }
+#endif /* HAVE_CXX11 */
+
