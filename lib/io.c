@@ -1523,6 +1523,31 @@ grn_io_is_corrupt(grn_ctx *ctx, grn_io *io)
   return GRN_FALSE;
 }
 
+size_t
+grn_io_get_disk_usage(grn_ctx *ctx, grn_io *io)
+{
+  size_t usage = 0;
+  uint32_t i;
+  uint32_t n_files;
+
+  if (!io) {
+    return usage;
+  }
+
+  n_files = grn_io_n_files(ctx, io);
+  for (i = 0; i < n_files; i++) {
+    char path[PATH_MAX];
+    struct stat s;
+    gen_pathname(io->path, path, i);
+    if (stat(path, &s) != 0) {
+      continue;
+    }
+    usage += s.st_size;
+  }
+
+  return usage;
+}
+
 /** mmap abstraction **/
 
 static size_t mmap_size = 0;

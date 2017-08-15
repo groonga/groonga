@@ -314,6 +314,7 @@ GRN_API void grn_io_unlock(grn_io *io);
 void grn_io_clear_lock(grn_io *io);
 uint32_t grn_io_is_locked(grn_io *io);
 grn_bool grn_io_is_corrupt(grn_ctx *ctx, grn_io *io);
+size_t grn_io_get_disk_usage(grn_ctx *ctx, grn_io *io);
 
 #define GRN_IO_ARRAY_AT(io,array,offset,flags,res) do {\
   grn_io_array_info *ainfo = &(io)->ainfo[array];\
