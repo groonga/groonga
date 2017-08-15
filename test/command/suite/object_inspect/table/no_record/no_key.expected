@@ -26,6 +26,7 @@ object_inspect Points
         "size": 8
       }
     },
-    "n_records": 0
+    "n_records": 0,
+    "disk_usage": 12288
   }
 ]

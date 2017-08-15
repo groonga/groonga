@@ -44,6 +44,7 @@ object_inspect Users
         "size": 8
       }
     },
-    "n_records": 2
+    "n_records": 2,
+    "disk_usage": 8445952
   }
 ]

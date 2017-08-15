@@ -21,7 +21,9 @@ object_inspect
         "type": null
       },
       "value": null,
-      "n_records": 255
-    }
+      "n_records": 255,
+      "disk_usage": 1052672
+    },
+    "disk_usage": 26542080
   }
 ]

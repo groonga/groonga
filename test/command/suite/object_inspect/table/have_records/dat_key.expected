@@ -32,6 +32,7 @@ object_inspect Users
       }
     },
     "value": null,
-    "n_records": 2
+    "n_records": 2,
+    "disk_usage": 1052672
   }
 ]

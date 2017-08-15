@@ -35,7 +35,8 @@ object_inspect Users.age
       "value": {
         "type": null
       },
-      "n_records": 0
+      "n_records": 0,
+      "disk_usage": 65536
     },
     "full_name": "Users.age",
     "type": {
@@ -56,6 +57,7 @@ object_inspect Users.age
         "size": 1
       },
       "compress": null
-    }
+    },
+    "disk_usage": 4096
   }
 ]

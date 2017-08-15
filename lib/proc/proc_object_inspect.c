@@ -76,6 +76,12 @@ command_object_inspect_type(grn_ctx *ctx, grn_obj *type)
 }
 
 static void
+command_object_inspect_disk_usage(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_ctx_output_uint64(ctx, grn_obj_get_disk_usage(ctx, obj));
+}
+
+static void
 command_object_inspect_table_hash_key_key(grn_ctx *ctx, grn_hash *hash)
 {
   grn_ctx_output_map_open(ctx, "key", 3);
@@ -156,7 +162,7 @@ command_object_inspect_table_value(grn_ctx *ctx, grn_obj *table)
 static void
 command_object_inspect_table(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_ctx_output_map_open(ctx, "table", 6);
+  grn_ctx_output_map_open(ctx, "table", 7);
   {
     grn_ctx_output_cstr(ctx, "id");
     grn_ctx_output_uint64(ctx, grn_obj_id(ctx, obj));
@@ -170,6 +176,8 @@ command_object_inspect_table(grn_ctx *ctx, grn_obj *obj)
     command_object_inspect_table_value(ctx, obj);
     grn_ctx_output_cstr(ctx, "n_records");
     grn_ctx_output_uint64(ctx, grn_table_size(ctx, obj));
+    grn_ctx_output_cstr(ctx, "disk_usage");
+    command_object_inspect_disk_usage(ctx, obj);
   }
   grn_ctx_output_map_close(ctx);
 }
@@ -479,7 +487,7 @@ command_object_inspect_column_index_sources(grn_ctx *ctx, grn_obj *column)
 static void
 command_object_inspect_column(grn_ctx *ctx, grn_obj *column)
 {
-  int n_elements = 6;
+  int n_elements = 7;
   grn_bool is_index = (column->header.type == GRN_COLUMN_INDEX);
 
   if (is_index) {
@@ -503,6 +511,8 @@ command_object_inspect_column(grn_ctx *ctx, grn_obj *column)
       grn_ctx_output_cstr(ctx, "sources");
       command_object_inspect_column_index_sources(ctx, column);
     }
+    grn_ctx_output_cstr(ctx, "disk_usage");
+    command_object_inspect_disk_usage(ctx, column);
   }
   grn_ctx_output_map_close(ctx);
 }
@@ -512,12 +522,14 @@ command_object_inspect_db(grn_ctx *ctx, grn_obj *obj)
 {
   grn_db *db = (grn_db *)obj;
 
-  grn_ctx_output_map_open(ctx, "database", 2);
+  grn_ctx_output_map_open(ctx, "database", 3);
   {
     grn_ctx_output_cstr(ctx, "type");
     command_object_inspect_obj_type(ctx, obj->header.type);
     grn_ctx_output_cstr(ctx, "name_table");
     command_object_inspect_dispatch(ctx, db->keys);
+    grn_ctx_output_cstr(ctx, "disk_usage");
+    command_object_inspect_disk_usage(ctx, obj);
   }
   grn_ctx_output_map_close(ctx);
 }
