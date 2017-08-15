@@ -18,6 +18,9 @@
 
 #include "grn.h"
 #include "grn_index_column.h"
+#include "grn_pat.h"
+#include "grn_dat.h"
+#include "grn_ii.h"
 
 grn_bool
 grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
@@ -600,4 +603,44 @@ grn_obj_name_is_column(grn_ctx *ctx, const char *name, int name_len)
   }
 
   return memchr(name, GRN_DB_DELIMITER, name_len) != NULL;
+}
+
+grn_io *
+grn_obj_get_io(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_io *io = NULL;
+
+  if (!obj) {
+    return NULL;
+  }
+
+  if (obj->header.type == GRN_DB) {
+    obj = ((grn_db *)obj)->keys;
+  }
+
+  switch (obj->header.type) {
+  case GRN_TABLE_PAT_KEY :
+    io = ((grn_pat *)obj)->io;
+    break;
+  case GRN_TABLE_DAT_KEY :
+    io = ((grn_dat *)obj)->io;
+    break;
+  case GRN_TABLE_HASH_KEY :
+    io = ((grn_hash *)obj)->io;
+    break;
+  case GRN_TABLE_NO_KEY :
+    io = ((grn_array *)obj)->io;
+    break;
+  case GRN_COLUMN_VAR_SIZE :
+    io = ((grn_ja *)obj)->io;
+    break;
+  case GRN_COLUMN_FIX_SIZE :
+    io = ((grn_ra *)obj)->io;
+    break;
+  case GRN_COLUMN_INDEX :
+    io = ((grn_ii *)obj)->seg;
+    break;
+  }
+
+  return io;
 }
