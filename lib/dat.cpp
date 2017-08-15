@@ -1299,4 +1299,34 @@ grn_dat_is_corrupt(grn_ctx *ctx, grn_dat *dat)
   return GRN_FALSE;
 }
 
+size_t
+grn_dat_get_disk_usage(grn_ctx *ctx, grn_dat *dat)
+{
+  if (!dat->io) {
+    return 0;
+  }
+
+  {
+    CriticalSection critical_section(&dat->lock);
+    size_t usage;
+
+    usage = grn_io_get_disk_usage(ctx, dat->io);
+
+    if (dat->header->file_id == 0) {
+      return usage;
+    }
+
+    char trie_path[PATH_MAX];
+    grn_dat_generate_trie_path(grn_io_path(dat->io),
+                               trie_path,
+                               dat->header->file_id);
+    struct stat stat;
+    if (::stat(trie_path, &stat) == 0) {
+      usage += stat.st_size;
+    }
+
+    return usage;
+  }
+}
+
 }  // extern "C"

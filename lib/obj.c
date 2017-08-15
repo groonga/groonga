@@ -644,3 +644,46 @@ grn_obj_get_io(grn_ctx *ctx, grn_obj *obj)
 
   return io;
 }
+
+size_t
+grn_obj_get_disk_usage(grn_ctx *ctx, grn_obj *obj)
+{
+  size_t usage;
+
+  GRN_API_ENTER;
+
+  if (!obj) {
+    ERR(GRN_INVALID_ARGUMENT, "[object][disk-usage] object must not be NULL");
+    GRN_API_RETURN(0);
+  }
+
+  switch (obj->header.type) {
+  case GRN_DB :
+    {
+      grn_db *db = (grn_db *)obj;
+      usage = grn_obj_get_disk_usage(ctx, db->keys);
+      if (db->specs) {
+        usage += grn_obj_get_disk_usage(ctx, (grn_obj *)(db->specs));
+      }
+      usage += grn_obj_get_disk_usage(ctx, (grn_obj *)(db->config));
+    }
+    break;
+  case GRN_TABLE_DAT_KEY :
+    usage = grn_dat_get_disk_usage(ctx, (grn_dat *)obj);
+    break;
+  case GRN_COLUMN_INDEX :
+    usage = grn_ii_get_disk_usage(ctx, (grn_ii *)obj);
+    break;
+  default :
+    {
+      grn_io *io;
+      io = grn_obj_get_io(ctx, obj);
+      if (io) {
+        usage = grn_io_get_disk_usage(ctx, io);
+      }
+    }
+    break;
+  }
+
+  GRN_API_RETURN(usage);
+}

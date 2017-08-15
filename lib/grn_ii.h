@@ -122,6 +122,7 @@ int grn_ii_updspec_cmp(grn_ii_updspec *a, grn_ii_updspec *b);
 
 void grn_ii_expire(grn_ctx *ctx, grn_ii *ii);
 grn_rc grn_ii_flush(grn_ctx *ctx, grn_ii *ii);
+size_t grn_ii_get_disk_usage(grn_ctx *ctx, grn_ii *ii);
 
 grn_ii_cursor *grn_ii_cursor_openv1(grn_ii *ii, uint32_t key);
 grn_rc grn_ii_cursor_openv2(grn_ii_cursor **cursors, int ncursors);

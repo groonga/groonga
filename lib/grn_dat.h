@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2011-2016 Brazil
+  Copyright(C) 2011-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -87,6 +87,8 @@ grn_rc grn_dat_clean(grn_ctx *ctx, grn_dat *dat);
 grn_rc grn_dat_clear_dirty(grn_ctx *ctx, grn_dat *dat);
 
 grn_bool grn_dat_is_corrupt(grn_ctx *ctx, grn_dat *dat);
+
+size_t grn_dat_get_disk_usage(grn_ctx *ctx, grn_dat *dat);
 
 #ifdef __cplusplus
 }

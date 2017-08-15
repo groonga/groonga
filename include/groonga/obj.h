@@ -74,6 +74,7 @@ GRN_API grn_bool grn_obj_name_is_column(grn_ctx *ctx,
                                         int name_len);
 
 GRN_API grn_bool grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj);
+GRN_API size_t grn_obj_get_disk_usage(grn_ctx *ctx, grn_obj *obj);
 
 #ifdef __cplusplus
 }

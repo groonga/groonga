@@ -4516,6 +4516,17 @@ grn_ii_flush(grn_ctx *ctx, grn_ii *ii)
   return rc;
 }
 
+size_t
+grn_ii_get_disk_usage(grn_ctx *ctx, grn_ii *ii)
+{
+  size_t usage;
+
+  usage = grn_io_get_disk_usage(ctx, ii->seg);
+  usage += grn_io_get_disk_usage(ctx, ii->chunk);
+
+  return usage;
+}
+
 #define BIT11_01(x) ((x >> 1) & 0x7ff)
 #define BIT31_12(x) (x >> 12)
 
