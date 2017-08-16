@@ -1,0 +1,23 @@
+plugin_register functions/index_column
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Memos _key
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is a fast full text search engine."},
+{"_key": "Mroonga is a MySQL storage engine based on Groonga."},
+{"_key": "Mroonga provides fast full text search feature to MySQL."},
+{"_key": "Rroonga is a Ruby bindings for Groonga."},
+{"_key": "Ruby"}
+]
+[[0,0.0,0.0],5]
+select Terms   --filter 'index_column_not_match("index")'   --sort_keys _id   --output_columns '_id, _key'
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
+delete Memos --filter '_id > 3'
+[[0,0.0,0.0],true]
+select Terms   --filter 'index_column_not_match("index")'   --sort_keys _id   --output_columns '_id, _key'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[19,"ruby"]]]]
