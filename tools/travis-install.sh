@@ -10,6 +10,7 @@ case "${TRAVIS_OS_NAME}" in
     curl --silent --location https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
     sudo apt-get install -qq -y \
          autotools-dev \
+         autoconf-archive \
          zlib1g-dev \
          libmsgpack-dev \
          libevent-dev \
@@ -24,6 +25,7 @@ case "${TRAVIS_OS_NAME}" in
     brew outdated libevent || brew upgrade libevent
     brew outdated pcre || brew upgrade pcre
     brew install \
+         autoconf-archive \
          msgpack \
          mecab \
          mecab-ipadic
