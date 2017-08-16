@@ -1,5 +1,5 @@
-#$GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=#{base_directory}/tmp/synonyms.tsv
-#@copy-path fixture/query_expander/tsv/expand.tsv tmp/synonyms.tsv
+#$GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=#{db_directory}/synonyms.tsv
+#@copy-path fixture/query_expander/tsv/expand.tsv #{db_directory}/synonyms.tsv
 plugin_register "query_expanders/tsv"
 
 query_expand QueryExpanderTSV "rroonga column:rroonga"
