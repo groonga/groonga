@@ -27,6 +27,6 @@ object_inspect Points
       }
     },
     "n_records": 0,
-    "disk_usage": 12288
+    "disk_usage": 0
   }
 ]

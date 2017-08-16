@@ -27,6 +27,6 @@ object_inspect Users
     },
     "value": null,
     "n_records": 0,
-    "disk_usage": 4096
+    "disk_usage": 0
   }
 ]

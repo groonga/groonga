@@ -24,7 +24,7 @@ object_inspect Memos.tags
         "type": null
       },
       "n_records": 0,
-      "disk_usage": 4096
+      "disk_usage": 0
     },
     "full_name": "Memos.tags",
     "type": {
@@ -46,6 +46,6 @@ object_inspect Memos.tags
       },
       "compress": null
     },
-    "disk_usage": 274432
+    "disk_usage": 0
   }
 ]

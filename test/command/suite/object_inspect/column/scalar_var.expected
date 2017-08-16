@@ -24,7 +24,7 @@ object_inspect Memos.title
         "type": null
       },
       "n_records": 0,
-      "disk_usage": 4096
+      "disk_usage": 0
     },
     "full_name": "Memos.title",
     "type": {
@@ -46,6 +46,6 @@ object_inspect Memos.title
       },
       "compress": "zstd"
     },
-    "disk_usage": 274432
+    "disk_usage": 0
   }
 ]

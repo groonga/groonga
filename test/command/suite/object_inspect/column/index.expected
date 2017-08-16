@@ -42,7 +42,7 @@ object_inspect Terms.memos_title_content
         "type": null
       },
       "n_records": 0,
-      "disk_usage": 4243456
+      "disk_usage": 0
     },
     "full_name": "Terms.memos_title_content",
     "type": {
@@ -112,7 +112,7 @@ object_inspect Terms.memos_title_content
             "type": null
           },
           "n_records": 0,
-          "disk_usage": 4096
+          "disk_usage": 0
         },
         "full_name": "Memos.title"
       },
@@ -131,11 +131,11 @@ object_inspect Terms.memos_title_content
             "type": null
           },
           "n_records": 0,
-          "disk_usage": 4096
+          "disk_usage": 0
         },
         "full_name": "Memos.content"
       }
     ],
-    "disk_usage": 565248
+    "disk_usage": 0
   }
 ]
