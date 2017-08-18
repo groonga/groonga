@@ -3729,7 +3729,7 @@ main(int argc, char **argv)
       if (argc - i > 1) {
         batchmode = GRN_TRUE;
       } else {
-        batchmode = !isatty(0);
+        batchmode = !grn_isatty(0);
       }
     }
   }

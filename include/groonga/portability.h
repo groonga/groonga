@@ -187,3 +187,9 @@
 #else /* WIN32 */
 # define grn_fileno(stream) fileno((stream))
 #endif /* WIN32 */
+
+#ifdef WIN32
+# define grn_isatty(stream) _isatty((stream))
+#else /* WIN32 */
+# define grn_isatty(stream) isatty((stream))
+#endif /* WIN32 */
