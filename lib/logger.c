@@ -28,10 +28,6 @@
 # include <share.h>
 #endif /* WIN32 */
 
-#ifdef WIN32
-# define fileno(file) _fileno(file)
-#endif
-
 static const char *log_level_names[] = {
   "none",
   "emergency",
@@ -150,7 +146,7 @@ default_logger_log(grn_ctx *ctx, grn_log_level level,
       default_logger_size = 0;
       if (default_logger_file) {
         struct stat stat;
-        if (fstat(fileno(default_logger_file), &stat) != -1) {
+        if (fstat(grn_fileno(default_logger_file), &stat) != -1) {
           default_logger_size = stat.st_size;
         }
       }
@@ -539,7 +535,7 @@ default_query_logger_log(grn_ctx *ctx, unsigned int flag,
       default_query_logger_size = 0;
       if (default_query_logger_file) {
         struct stat stat;
-        if (fstat(fileno(default_query_logger_file), &stat) != -1) {
+        if (fstat(grn_fileno(default_query_logger_file), &stat) != -1) {
           default_query_logger_size = stat.st_size;
         }
       }
