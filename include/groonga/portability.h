@@ -193,3 +193,9 @@
 #else /* WIN32 */
 # define grn_isatty(stream) isatty((stream))
 #endif /* WIN32 */
+
+#ifdef WIN32
+# define grn_getpid() _getpid()
+#else /* WIN32 */
+# define grn_getpid() getpid()
+#endif /* WIN32 */

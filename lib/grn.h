@@ -109,8 +109,6 @@
 #  endif
 # endif
 
-# define getpid() _getpid()
-
 # ifndef __GNUC__
 typedef SSIZE_T ssize_t;
 typedef int pid_t;

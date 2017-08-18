@@ -3004,7 +3004,7 @@ main(int argc, char **argv)
     FILE *pid_file;
     pid_file = fopen(pid_path, "w");
     if (pid_file) {
-      fprintf(pid_file, "%d", getpid());
+      fprintf(pid_file, "%d", grn_getpid());
       fclose(pid_file);
     } else {
       fprintf(stderr,

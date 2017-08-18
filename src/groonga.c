@@ -831,7 +831,7 @@ create_pid_file(void)
     fprintf(pid_file, "%" GRN_FMT_DWORD "\n", pid);
 #else /* WIN32 */
     pid_t pid;
-    pid = getpid();
+    pid = grn_getpid();
     fprintf(pid_file, "%d\n", pid);
 #endif /* WIN32 */
   }
@@ -881,7 +881,7 @@ daemonize(void)
       create_pid_file();
     } else {
       pid_t pid;
-      pid = getpid();
+      pid = grn_getpid();
       fprintf(stderr, "%d\n", pid);
     }
     break;
@@ -2340,7 +2340,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
     break;
   case MBCMD_STAT :
     {
-      pid_t pid = getpid();
+      pid_t pid = grn_getpid();
       GRN_MSG_MBRES({
         grn_bulk_write(ctx, re, "pid", 3);
         grn_text_itoa(ctx, re, pid);

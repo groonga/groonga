@@ -455,7 +455,7 @@ grn_com_event_del(grn_ctx *ctx, grn_com_event *ev, grn_sock fd)
     } else {
       GRN_LOG(ctx, GRN_LOG_ERROR,
               "%04x| fd(%" GRN_FMT_SOCKET ") not found in ev(%p)",
-              getpid(), fd, ev);
+              grn_getpid(), fd, ev);
       return GRN_INVALID_ARGUMENT;
     }
   }

@@ -425,10 +425,10 @@ grn_logger_putv(grn_ctx *ctx,
     }
     if (current_logger.flags & GRN_LOG_LOCATION) {
       grn_snprintf(lbuf, LBUFSIZE, LBUFSIZE,
-                   "%d %s:%d %s()", getpid(), file, line, func);
+                   "%d %s:%d %s()", grn_getpid(), file, line, func);
     } else if (current_logger.flags & GRN_LOG_PID) {
       grn_snprintf(lbuf, LBUFSIZE, LBUFSIZE,
-                   "%d", getpid());
+                   "%d", grn_getpid());
     } else {
       lbuf[0] = '\0';
     }
