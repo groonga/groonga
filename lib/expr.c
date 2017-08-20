@@ -6900,6 +6900,12 @@ typedef struct {
   grn_hash *weight_set;
   snip_cond *snip_conds;
   grn_hash *object_literal;
+  int paren_depth;
+  struct {
+    const char *string;
+    size_t string_length;
+    int token;
+  } pending_token;
 } efs_info;
 
 typedef struct {
@@ -6922,7 +6928,7 @@ skip_space(grn_ctx *ctx, efs_info *q)
 }
 
 static grn_bool
-get_op(efs_info *q, efs_op *op, grn_operator *mode, int *option)
+parse_query_op(efs_info *q, efs_op *op, grn_operator *mode, int *option)
 {
   grn_bool found = GRN_TRUE;
   const char *start, *end = q->cur;
@@ -7098,8 +7104,8 @@ grn_expr_parser_open(grn_ctx *ctx)
 #define PARSE(token) grn_expr_parser(ctx->impl->parser, (token), 0, q)
 
 static void
-accept_query_string(grn_ctx *ctx, efs_info *efsi,
-                    const char *str, unsigned int str_size)
+parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
+                          const char *str, unsigned int str_size)
 {
   grn_obj *column, *token;
   grn_operator mode;
@@ -7144,8 +7150,55 @@ accept_query_string(grn_ctx *ctx, efs_info *efsi,
   }
 }
 
+static void
+parse_query_flush_pending_token(grn_ctx *ctx, efs_info *q)
+{
+  const char *cur_keep;
+
+  if (!(q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR)) {
+    return;
+  }
+
+  if (q->pending_token.string_length == 0) {
+    return;
+  }
+
+  cur_keep = q->cur;
+  q->cur = q->pending_token.string;
+  PARSE(q->pending_token.token);
+  q->cur = cur_keep;
+
+  q->pending_token.string = NULL;
+  q->pending_token.string_length = 0;
+  q->pending_token.token = 0;
+}
+
+static void
+parse_query_accept_logical_op(grn_ctx *ctx,
+                              efs_info *q,
+                              const char *string,
+                              unsigned int string_length,
+                              int token)
+{
+  if (!(q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR)) {
+    PARSE(token);
+    return;
+  }
+
+  if (q->pending_token.string_length > 0) {
+    parse_query_accept_string(ctx,
+                              q,
+                              q->pending_token.string,
+                              q->pending_token.string_length);
+  }
+
+  q->pending_token.string = string;
+  q->pending_token.string_length = string_length;
+  q->pending_token.token = token;
+}
+
 static grn_rc
-get_word_(grn_ctx *ctx, efs_info *q)
+parse_query_word(grn_ctx *ctx, efs_info *q)
 {
   const char *end;
   unsigned int len;
@@ -7167,7 +7220,6 @@ get_word_(grn_ctx *ctx, efs_info *q)
                                   GRN_TEXT_VALUE(&q->buf),
                                   GRN_TEXT_LEN(&q->buf));
       if (c && end + 1 < q->str_end) {
-        //        efs_op op;
         switch (end[1]) {
         case '!' :
           mode = GRN_OP_NOT_EQUAL;
@@ -7221,11 +7273,16 @@ get_word_(grn_ctx *ctx, efs_info *q)
           q->cur = end + 1;
           break;
         }
+      } else if (q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR) {
+        GRN_TEXT_PUT(ctx, &q->buf, end, len);
+        end += len;
+        continue;
       } else {
         ERR(GRN_INVALID_ARGUMENT, "column lookup failed");
         q->cur = q->str_end;
         return ctx->rc;
       }
+      parse_query_flush_pending_token(ctx, q);
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       PARSE(GRN_EXPR_TOKEN_RELATIVE_OP);
 
@@ -7248,7 +7305,11 @@ get_word_(grn_ctx *ctx, efs_info *q)
     GRN_TEXT_PUT(ctx, &q->buf, end, len);
     end += len;
   }
-  accept_query_string(ctx, q, GRN_TEXT_VALUE(&q->buf), GRN_TEXT_LEN(&q->buf));
+  parse_query_flush_pending_token(ctx, q);
+  parse_query_accept_string(ctx,
+                            q,
+                            GRN_TEXT_VALUE(&q->buf),
+                            GRN_TEXT_LEN(&q->buf));
 
   return GRN_SUCCESS;
 }
@@ -7272,13 +7333,22 @@ parse_query(grn_ctx *ctx, efs_info *q)
       goto exit;
       break;
     case GRN_QUERY_PARENR :
-      PARSE(GRN_EXPR_TOKEN_PARENR);
+      if (q->paren_depth == 0 && q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR) {
+        const char parenr = GRN_QUERY_PARENR;
+        parse_query_flush_pending_token(ctx, q);
+        parse_query_accept_string(ctx, q, &parenr, 1);
+      } else {
+        parse_query_flush_pending_token(ctx, q);
+        PARSE(GRN_EXPR_TOKEN_PARENR);
+        q->paren_depth--;
+      }
       q->cur++;
       break;
     case GRN_QUERY_QUOTEL :
       q->cur++;
 
       {
+        grn_bool closed = GRN_FALSE;
         const char *start, *s;
         start = s = q->cur;
         GRN_BULK_REWIND(&q->buf);
@@ -7295,6 +7365,7 @@ parse_query(grn_ctx *ctx, efs_info *q)
           } else if (len == 1) {
             if (*s == GRN_QUERY_QUOTER) {
               q->cur = s + 1;
+              closed = GRN_TRUE;
               break;
             } else if (*s == GRN_QUERY_ESCAPE && s + 1 < q->str_end) {
               s++;
@@ -7303,16 +7374,23 @@ parse_query(grn_ctx *ctx, efs_info *q)
           }
           GRN_TEXT_PUT(ctx, &q->buf, s, len);
           s += len;
-
         }
-        accept_query_string(ctx, q,
-                            GRN_TEXT_VALUE(&q->buf), GRN_TEXT_LEN(&q->buf));
+        if (!closed && (q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR)) {
+          q->cur = start - 1;
+          parse_query_word(ctx, q);
+        } else {
+          parse_query_flush_pending_token(ctx, q);
+          parse_query_accept_string(ctx,
+                                    q,
+                                    GRN_TEXT_VALUE(&q->buf),
+                                    GRN_TEXT_LEN(&q->buf));
+        }
       }
 
       break;
     case GRN_QUERY_PREFIX :
       q->cur++;
-      if (get_op(q, op, &mode, &option)) {
+      if (parse_query_op(q, op, &mode, &option)) {
         switch (mode) {
         case GRN_OP_NEAR :
         case GRN_OP_NEAR2 :
@@ -7325,71 +7403,121 @@ parse_query(grn_ctx *ctx, efs_info *q)
           break;
         }
         GRN_INT32_PUT(ctx, &q->mode_stack, mode);
+        parse_query_flush_pending_token(ctx, q);
         PARSE(GRN_EXPR_TOKEN_RELATIVE_OP);
       } else {
         q->cur--;
-        get_word_(ctx, q);
+        parse_query_word(ctx, q);
       }
       break;
     case GRN_QUERY_AND :
       if (!first_token) {
         op->op = GRN_OP_AND;
-        PARSE(GRN_EXPR_TOKEN_LOGICAL_AND);
+        parse_query_accept_logical_op(ctx,
+                                      q,
+                                      q->cur, 1,
+                                      GRN_EXPR_TOKEN_LOGICAL_AND);
       }
       q->cur++;
       break;
     case GRN_QUERY_AND_NOT :
-      if (first_token && (q->flags & GRN_EXPR_ALLOW_LEADING_NOT)) {
-        grn_obj *all_records = grn_ctx_get(ctx, "all_records", 11);
-        if (all_records) {
-          /* dummy token */
-          PARSE(GRN_EXPR_TOKEN_QSTRING);
-          grn_expr_append_obj(ctx, q->e, all_records, GRN_OP_PUSH, 1);
-          grn_expr_append_op(ctx, q->e, GRN_OP_CALL, 0);
+      if (first_token) {
+        if (q->flags & GRN_EXPR_ALLOW_LEADING_NOT) {
+          grn_obj *all_records = grn_ctx_get(ctx, "all_records", 11);
+          if (all_records) {
+            /* dummy token */
+            PARSE(GRN_EXPR_TOKEN_QSTRING);
+            grn_expr_append_obj(ctx, q->e, all_records, GRN_OP_PUSH, 1);
+            grn_expr_append_op(ctx, q->e, GRN_OP_CALL, 0);
+          }
+        } else if (q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR) {
+          parse_query_flush_pending_token(ctx, q);
+          parse_query_accept_string(ctx, q, q->cur, 1);
+          q->cur++;
+          break;
         }
       }
       op->op = GRN_OP_AND_NOT;
-      PARSE(GRN_EXPR_TOKEN_LOGICAL_AND_NOT);
+      parse_query_accept_logical_op(ctx,
+                                    q,
+                                    q->cur, 1,
+                                    GRN_EXPR_TOKEN_LOGICAL_AND_NOT);
       q->cur++;
       break;
     case GRN_QUERY_ADJ_INC :
       if (op->weight < 127) { op->weight++; }
       op->op = GRN_OP_ADJUST;
-      PARSE(GRN_EXPR_TOKEN_ADJUST);
+      parse_query_accept_logical_op(ctx,
+                                    q,
+                                    q->cur, 1,
+                                    GRN_EXPR_TOKEN_ADJUST);
       q->cur++;
       break;
     case GRN_QUERY_ADJ_DEC :
       if (op->weight > -128) { op->weight--; }
       op->op = GRN_OP_ADJUST;
-      PARSE(GRN_EXPR_TOKEN_ADJUST);
+      parse_query_accept_logical_op(ctx,
+                                    q,
+                                    q->cur, 1,
+                                    GRN_EXPR_TOKEN_ADJUST);
       q->cur++;
       break;
     case GRN_QUERY_ADJ_NEG :
       op->op = GRN_OP_ADJUST;
       op->weight = -1;
-      PARSE(GRN_EXPR_TOKEN_ADJUST);
+      parse_query_accept_logical_op(ctx,
+                                    q,
+                                    q->cur, 1,
+                                    GRN_EXPR_TOKEN_ADJUST);
       q->cur++;
       break;
     case GRN_QUERY_PARENL :
+      parse_query_flush_pending_token(ctx, q);
       PARSE(GRN_EXPR_TOKEN_PARENL);
       q->cur++;
+      q->paren_depth++;
       block_started = GRN_TRUE;
       break;
     case 'O' :
-      if (q->cur[1] == 'R' && q->cur[2] == ' ') {
-        PARSE(GRN_EXPR_TOKEN_LOGICAL_OR);
+      if (q->cur + 2 < q->str_end && q->cur[1] == 'R' && q->cur[2] == ' ') {
+        if (first_token && (q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR)) {
+          parse_query_flush_pending_token(ctx, q);
+          parse_query_accept_string(ctx, q, q->cur, 2);
+        } else {
+          parse_query_accept_logical_op(ctx,
+                                        q,
+                                        q->cur, 2,
+                                        GRN_EXPR_TOKEN_LOGICAL_OR);
+        }
         q->cur += 2;
         break;
       }
       /* fallthru */
     default :
-      get_word_(ctx, q);
+      parse_query_word(ctx, q);
       break;
     }
     first_token = block_started;
     block_started = GRN_FALSE;
   }
 exit :
+  if (q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR) {
+    if (q->pending_token.string_length > 0) {
+      parse_query_accept_string(ctx,
+                                q,
+                                q->pending_token.string,
+                                q->pending_token.string_length);
+    }
+    if (q->paren_depth > 0) {
+      int paren_depth = q->paren_depth;
+      while (paren_depth > 0) {
+        const char parenl = GRN_QUERY_PARENL;
+        parse_query_accept_string(ctx, q, &parenl, 1);
+        PARSE(GRN_EXPR_TOKEN_PARENR);
+        paren_depth--;
+      }
+    }
+  }
   PARSE(0);
   return GRN_SUCCESS;
 }
@@ -8125,6 +8253,10 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     efsi.opt.weight_vector = NULL;
     efsi.weight_set = NULL;
     efsi.object_literal = NULL;
+    efsi.paren_depth = 0;
+    efsi.pending_token.string = NULL;
+    efsi.pending_token.string_length = 0;
+    efsi.pending_token.token = 0;
 
     if (flags & (GRN_EXPR_SYNTAX_SCRIPT |
                  GRN_EXPR_SYNTAX_OUTPUT_COLUMNS |
