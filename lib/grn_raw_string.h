@@ -44,6 +44,12 @@ extern "C" {
     string.length = GRN_TEXT_LEN(bulk);          \
   }
 
+#define GRN_RAW_STRING_EQUAL_CSTRING(string, cstring)           \
+  (cstring ?                                                    \
+   (string.length == strlen(cstring) &&                         \
+    memcmp(string.value, cstring, string.length) == 0) :        \
+   (string.length == 0))
+
 typedef struct {
   const char *value;
   size_t length;
