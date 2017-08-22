@@ -35,6 +35,7 @@ Syntax
         [dump_records]
         [dump_indexes]
         [dump_configs]
+        [sort_hash_table]
 
 Usage
 -----
