@@ -4408,8 +4408,11 @@ scan_info_build_match_expr_codes_find_index(grn_ctx *ctx, scan_info *si,
 }
 
 static uint32_t
-scan_info_build_match_expr_codes(grn_ctx *ctx, scan_info *si,
-                                 grn_expr *expr, uint32_t i)
+scan_info_build_match_expr_codes(grn_ctx *ctx,
+                                 scan_info *si,
+                                 grn_expr *expr,
+                                 uint32_t i,
+                                 int32_t weight)
 {
   grn_expr_code *ec;
   grn_obj *index = NULL;
@@ -4434,7 +4437,7 @@ scan_info_build_match_expr_codes(grn_ctx *ctx, scan_info *si,
         si->flags |= SCAN_ACCESSOR;
       }
       scan_info_put_index(ctx, si, index, sid,
-                          get_weight(ctx, &(expr->codes[i]), &offset),
+                          get_weight(ctx, &(expr->codes[i]), &offset) + weight,
                           NULL, NULL, 0);
       i += offset;
     }
@@ -4464,7 +4467,7 @@ scan_info_build_match_expr_codes(grn_ctx *ctx, scan_info *si,
         i++;
       }
       scan_info_put_index(ctx, si, index, sid,
-                          get_weight(ctx, &(expr->codes[i]), &offset),
+                          get_weight(ctx, &(expr->codes[i]), &offset) + weight,
                           ec->value,
                           (grn_obj *)expr,
                           scorer_args_expr_offset);
@@ -4488,12 +4491,15 @@ scan_info_build_match_expr_codes(grn_ctx *ctx, scan_info *si,
 }
 
 static void
-scan_info_build_match_expr(grn_ctx *ctx, scan_info *si, grn_expr *expr)
+scan_info_build_match_expr(grn_ctx *ctx,
+                           scan_info *si,
+                           grn_expr *expr,
+                           int32_t weight)
 {
   uint32_t i;
   i = 0;
   while (i < expr->codes_curr) {
-    i = scan_info_build_match_expr_codes(ctx, si, expr, i);
+    i = scan_info_build_match_expr_codes(ctx, si, expr, i, weight);
   }
 }
 
@@ -4611,7 +4617,7 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
 }
 
 static void
-scan_info_build_match(grn_ctx *ctx, scan_info *si)
+scan_info_build_match(grn_ctx *ctx, scan_info *si, int32_t weight)
 {
   grn_obj **p, **pe;
 
@@ -4630,9 +4636,9 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si)
   pe = si->args + si->nargs;
   for (; p < pe; p++) {
     if ((*p)->header.type == GRN_EXPR) {
-      scan_info_build_match_expr(ctx, si, (grn_expr *)(*p));
+      scan_info_build_match_expr(ctx, si, (grn_expr *)(*p), weight);
     } else if ((*p)->header.type == GRN_COLUMN_INDEX) {
-      scan_info_put_index(ctx, si, *p, 0, 1, NULL, NULL, 0);
+      scan_info_put_index(ctx, si, *p, 0, 1 + weight, NULL, NULL, 0);
     } else if (grn_obj_is_proc(ctx, *p)) {
       break;
     } else if (GRN_DB_OBJP(*p)) {
@@ -4642,7 +4648,7 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si)
                                                 &index_datum, 1);
       if (n_index_data > 0) {
         scan_info_put_index(ctx, si,
-                            index_datum.index, index_datum.section, 1,
+                            index_datum.index, index_datum.section, 1 + weight,
                             NULL, NULL, 0);
       }
     } else if (GRN_ACCESSORP(*p)) {
@@ -4659,7 +4665,7 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si)
           index = index_datum.index;
         }
         scan_info_put_index(ctx, si,
-                            index, index_datum.section, 1,
+                            index, index_datum.section, 1 + weight,
                             NULL, NULL, 0);
       }
     } else {
@@ -4982,7 +4988,13 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
       si->op = code_op;
       si->end = c - e->codes;
       sis[i++] = si;
-      scan_info_build_match(ctx, si);
+      {
+        int32_t weight = 0;
+        if (c->value && c->value->header.domain == GRN_DB_INT32) {
+          weight = GRN_INT32_VALUE(c->value);
+        }
+        scan_info_build_match(ctx, si, weight);
+      }
       if (ctx->rc != GRN_SUCCESS) {
         int j;
         for (j = 0; j < i; j++) { SI_FREE(sis[j]); }
@@ -5327,7 +5339,13 @@ grn_scan_info_build_simple_operation(grn_ctx *ctx,
   si->op = operator->op;
   si->args[si->nargs++] = target->value;
   si->args[si->nargs++] = constant->value;
-  scan_info_build_match(ctx, si);
+  {
+    int32_t weight = 0;
+    if (operator->value && operator->value->header.domain == GRN_DB_INT32) {
+      weight = GRN_INT32_VALUE(operator->value);
+    }
+    scan_info_build_match(ctx, si, weight);
+  }
   return sis;
 }
 
@@ -5432,7 +5450,13 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
     } else {
       si->logical_op = GRN_OP_AND;
     }
-    scan_info_build_match(ctx, si);
+    {
+      int32_t weight = 0;
+      if (operator->value && operator->value->header.domain == GRN_DB_INT32) {
+        weight = GRN_INT32_VALUE(operator->value);
+      }
+      scan_info_build_match(ctx, si, weight);
+    }
 
     if (nth_sis > 0) {
       i++;
@@ -6889,6 +6913,7 @@ typedef struct {
   grn_obj mode_stack;
   grn_obj max_interval_stack;
   grn_obj similarity_threshold_stack;
+  grn_obj weight_stack;
   grn_operator default_op;
   grn_select_optarg opt;
   grn_operator default_mode;
@@ -6905,6 +6930,7 @@ typedef struct {
     const char *string;
     size_t string_length;
     int token;
+    int weight;
   } pending_token;
 } efs_info;
 
@@ -7109,6 +7135,7 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
 {
   grn_obj *column, *token;
   grn_operator mode;
+  int32_t weight;
 
   GRN_PTR_PUT(ctx, &efsi->token_stack,
               grn_expr_add_str(ctx, efsi->e, str, str_size));
@@ -7123,7 +7150,11 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
   grn_expr_append_obj(efsi->ctx, efsi->e, token, GRN_OP_PUSH, 1);
 
   mode = grn_int32_value_at(&efsi->mode_stack, -1);
+  weight = grn_int32_value_at(&efsi->weight_stack, -1);
   switch (mode) {
+  case GRN_OP_ASSIGN :
+    grn_expr_append_op(efsi->ctx, efsi->e, mode, 2);
+    break;
   case GRN_OP_NEAR :
   case GRN_OP_NEAR2 :
     {
@@ -7131,7 +7162,7 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
       max_interval = grn_int32_value_at(&efsi->max_interval_stack, -1);
       grn_expr_append_const_int(efsi->ctx, efsi->e, max_interval,
                                 GRN_OP_PUSH, 1);
-      grn_expr_append_op(efsi->ctx, efsi->e, mode, 3);
+      grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 3);
     }
     break;
   case GRN_OP_SIMILAR :
@@ -7141,11 +7172,11 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
         grn_int32_value_at(&efsi->similarity_threshold_stack, -1);
       grn_expr_append_const_int(efsi->ctx, efsi->e, similarity_threshold,
                                 GRN_OP_PUSH, 1);
-      grn_expr_append_op(efsi->ctx, efsi->e, mode, 3);
+      grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 3);
     }
     break;
   default :
-    grn_expr_append_op(efsi->ctx, efsi->e, mode, 2);
+    grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 2);
     break;
   }
 }
@@ -7165,12 +7196,17 @@ parse_query_flush_pending_token(grn_ctx *ctx, efs_info *q)
 
   cur_keep = q->cur;
   q->cur = q->pending_token.string;
+  if (q->pending_token.token == GRN_EXPR_TOKEN_ADJUST ||
+      q->pending_token.token == GRN_EXPR_TOKEN_NEGATIVE) {
+    GRN_INT32_PUT(ctx, &q->weight_stack, q->pending_token.weight);
+  }
   PARSE(q->pending_token.token);
   q->cur = cur_keep;
 
   q->pending_token.string = NULL;
   q->pending_token.string_length = 0;
   q->pending_token.token = 0;
+  q->pending_token.weight = 0;
 }
 
 static void
@@ -7195,6 +7231,33 @@ parse_query_accept_logical_op(grn_ctx *ctx,
   q->pending_token.string = string;
   q->pending_token.string_length = string_length;
   q->pending_token.token = token;
+}
+
+static void
+parse_query_accept_adjust(grn_ctx *ctx,
+                          efs_info *q,
+                          const char *string,
+                          unsigned int string_length,
+                          int token,
+                          int weight)
+{
+  if (!(q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR)) {
+    GRN_INT32_PUT(ctx, &q->weight_stack, weight);
+    PARSE(token);
+    return;
+  }
+
+  if (q->pending_token.string_length > 0) {
+    parse_query_accept_string(ctx,
+                              q,
+                              q->pending_token.string,
+                              q->pending_token.string_length);
+  }
+
+  q->pending_token.string = string;
+  q->pending_token.string_length = string_length;
+  q->pending_token.token = token;
+  q->pending_token.weight = weight;
 }
 
 static grn_rc
@@ -7447,28 +7510,30 @@ parse_query(grn_ctx *ctx, efs_info *q)
     case GRN_QUERY_ADJ_INC :
       if (op->weight < 127) { op->weight++; }
       op->op = GRN_OP_ADJUST;
-      parse_query_accept_logical_op(ctx,
-                                    q,
-                                    q->cur, 1,
-                                    GRN_EXPR_TOKEN_ADJUST);
+      parse_query_accept_adjust(ctx,
+                                q,
+                                q->cur, 1,
+                                GRN_EXPR_TOKEN_ADJUST,
+                                op->weight);
       q->cur++;
       break;
     case GRN_QUERY_ADJ_DEC :
       if (op->weight > -128) { op->weight--; }
       op->op = GRN_OP_ADJUST;
-      parse_query_accept_logical_op(ctx,
-                                    q,
-                                    q->cur, 1,
-                                    GRN_EXPR_TOKEN_ADJUST);
+      parse_query_accept_adjust(ctx,
+                                q,
+                                q->cur, 1,
+                                GRN_EXPR_TOKEN_ADJUST,
+                                op->weight);
       q->cur++;
       break;
     case GRN_QUERY_ADJ_NEG :
       op->op = GRN_OP_ADJUST;
-      op->weight = -1;
-      parse_query_accept_logical_op(ctx,
-                                    q,
-                                    q->cur, 1,
-                                    GRN_EXPR_TOKEN_ADJUST);
+      parse_query_accept_adjust(ctx,
+                                q,
+                                q->cur, 1,
+                                GRN_EXPR_TOKEN_NEGATIVE,
+                                -DEFAULT_WEIGHT);
       q->cur++;
       break;
     case GRN_QUERY_PARENL :
@@ -8235,6 +8300,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_INT32_INIT(&efsi.mode_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.max_interval_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.similarity_threshold_stack, GRN_OBJ_VECTOR);
+    GRN_INT32_INIT(&efsi.weight_stack, GRN_OBJ_VECTOR);
     GRN_PTR_INIT(&efsi.column_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
     GRN_PTR_INIT(&efsi.token_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
     efsi.e = expr;
@@ -8245,6 +8311,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_PTR_PUT(ctx, &efsi.column_stack, default_column);
     GRN_INT32_PUT(ctx, &efsi.op_stack, default_op);
     GRN_INT32_PUT(ctx, &efsi.mode_stack, default_mode);
+    GRN_INT32_PUT(ctx, &efsi.weight_stack, 0);
     efsi.default_flags = efsi.flags = flags;
     efsi.escalation_threshold = GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD;
     efsi.escalation_decaystep = DEFAULT_DECAYSTEP;
@@ -8291,6 +8358,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_OBJ_FIN(ctx, &efsi.mode_stack);
     GRN_OBJ_FIN(ctx, &efsi.max_interval_stack);
     GRN_OBJ_FIN(ctx, &efsi.similarity_threshold_stack);
+    GRN_OBJ_FIN(ctx, &efsi.weight_stack);
     GRN_OBJ_FIN(ctx, &efsi.column_stack);
     GRN_OBJ_FIN(ctx, &efsi.token_stack);
     GRN_OBJ_FIN(ctx, &efsi.buf);

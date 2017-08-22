@@ -69,6 +69,7 @@ module Groonga
           data = context.data
           data.op = code_op
           data.end = i
+          data.weight = code.value.value if code.value
           data.match_resolve_index
           @data_list << data
           context.data = nil

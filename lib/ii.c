@@ -8677,7 +8677,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
       }
     }
     weight = get_weight(ctx, s, rid, sid, wvm, optarg);
-    if (tip == tie && weight > 0) {
+    if (tip == tie && weight != 0) {
       grn_rset_posinfo pi = {rid, sid, 0};
       if (orp || grn_hash_get(ctx, s, &pi, s->key_size, NULL)) {
         int count = 0, noccur = 0, pos = 0, score = 0, tscore = 0, min, max;
@@ -9020,7 +9020,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
       default :
         break;
       }
-      if (optarg->vector_size > 0) {
+      if (optarg->vector_size != 0) {
         arg.weight_vector = optarg->weight_vector;
         arg.vector_size = optarg->vector_size;
       }
