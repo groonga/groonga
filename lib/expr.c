@@ -7162,7 +7162,11 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
       max_interval = grn_int32_value_at(&efsi->max_interval_stack, -1);
       grn_expr_append_const_int(efsi->ctx, efsi->e, max_interval,
                                 GRN_OP_PUSH, 1);
-      grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 3);
+      if (weight == 0) {
+        grn_expr_append_op(efsi->ctx, efsi->e, mode, 3);
+      } else {
+        grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 3);
+      }
     }
     break;
   case GRN_OP_SIMILAR :
@@ -7172,11 +7176,19 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
         grn_int32_value_at(&efsi->similarity_threshold_stack, -1);
       grn_expr_append_const_int(efsi->ctx, efsi->e, similarity_threshold,
                                 GRN_OP_PUSH, 1);
-      grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 3);
+      if (weight == 0) {
+        grn_expr_append_op(efsi->ctx, efsi->e, mode, 3);
+      } else {
+        grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 3);
+      }
     }
     break;
   default :
-    grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 2);
+    if (weight == 0) {
+      grn_expr_append_op(efsi->ctx, efsi->e, mode, 2);
+    } else {
+      grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 2);
+    }
     break;
   }
 }
