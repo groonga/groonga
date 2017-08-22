@@ -34,6 +34,7 @@ Syntax
         [dump_schema]
         [dump_records]
         [dump_indexes]
+        [dump_configs]
 
 Usage
 -----
