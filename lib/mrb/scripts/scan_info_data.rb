@@ -13,6 +13,7 @@ module Groonga
     attr_accessor :max_interval
     attr_accessor :similarity_threshold
     attr_accessor :start_position
+    attr_accessor :weight
     def initialize(start)
       @start = start
       @end = 0
@@ -25,6 +26,7 @@ module Groonga
       @max_interval = nil
       @similarity_threshold = nil
       @start_position = nil
+      @weight = 0
     end
 
     def match_resolve_index
@@ -197,13 +199,12 @@ module Groonga
           end
           weight, offset = codes[i].weight
           i += offset
-          search_index = ScanInfoSearchIndex.new(index_info.index,
-                                                 index_info.section_id,
-                                                 weight,
-                                                 scorer,
-                                                 expression,
-                                                 scorer_args_expr_offset)
-          @search_indexes << search_index
+          put_search_index(index_info.index,
+                           index_info.section_id,
+                           weight,
+                           scorer,
+                           expression,
+                           scorer_args_expr_offset)
         end
       when Table
         raise ErrorMessage, "invalid match target: <#{value.name}>"
@@ -312,8 +313,11 @@ module Groonga
       put_search_index(index_info.index, index_info.section_id, 1)
     end
 
-    def put_search_index(index, section_id, weight)
-      search_index = ScanInfoSearchIndex.new(index, section_id, weight)
+    def put_search_index(index, section_id, weight, *args)
+      search_index = ScanInfoSearchIndex.new(index,
+                                             section_id,
+                                             weight + @weight,
+                                             *args)
       @search_indexes << search_index
     end
   end
