@@ -6274,50 +6274,77 @@ grn_table_select_index_call_selector(grn_ctx *ctx,
   if (index && index->header.type == GRN_ACCESSOR) {
     grn_operator selector_op;
     grn_obj *accessor = index;
-    unsigned int accessor_deep = 0;
-    grn_obj *base_table = NULL;
-    grn_obj *base_index = NULL;
-    grn_obj *base_res = NULL;
-    grn_accessor *a;
+    grn_accessor *a = (grn_accessor *)accessor;
 
     selector_op = grn_proc_get_selector_operator(ctx, selector);
-    for (a = (grn_accessor *)accessor; a; a = a->next) {
-      if (a->next) {
-        accessor_deep++;
-      } else {
-        grn_index_datum index_data;
-        unsigned int n_index_datum;
+    if (a->next) {
+      unsigned int accessor_deep = 0;
+      grn_obj *base_table = NULL;
+      grn_obj *base_index = NULL;
+      grn_obj *base_res = NULL;
 
-        base_table = grn_ctx_at(ctx, a->obj->header.domain);
-        n_index_datum = grn_column_find_index_data(ctx,
-                                                   a->obj,
-                                                   selector_op,
-                                                   &index_data,
-                                                   1);
-        if (n_index_datum > 0) {
-          base_index = index_data.index;
+      for (; a; a = a->next) {
+        if (a->next) {
+          accessor_deep++;
+        } else {
+          grn_index_datum index_data;
+          unsigned int n_index_datum;
+
+          if (grn_obj_is_table(ctx, a->obj)) {
+            base_table = a->obj;
+          } else {
+            base_table = grn_ctx_at(ctx, a->obj->header.domain);
+          }
+          n_index_datum = grn_column_find_index_data(ctx,
+                                                     a->obj,
+                                                     selector_op,
+                                                     &index_data,
+                                                     1);
+          if (n_index_datum > 0) {
+            base_index = index_data.index;
+          }
+          base_res = grn_table_create(ctx, NULL, 0, NULL,
+                                      GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                      base_table, NULL);
         }
-        base_res = grn_table_create(ctx, NULL, 0, NULL,
-                                    GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                                    base_table, NULL);
       }
+      rc = proc->callbacks.function.selector(ctx,
+                                             base_table,
+                                             base_index,
+                                             si->nargs,
+                                             si->args,
+                                             base_res,
+                                             GRN_OP_OR);
+      if (rc == GRN_SUCCESS) {
+        grn_accessor_resolve(ctx,
+                             accessor,
+                             accessor_deep,
+                             base_res,
+                             res,
+                             si->logical_op);
+      }
+      grn_obj_close(ctx, base_res);
+    } else {
+      grn_index_datum index_data;
+      unsigned int n_index_datum;
+      grn_obj *target_index = NULL;
+
+      n_index_datum = grn_column_find_index_data(ctx,
+                                                 a->obj,
+                                                 selector_op,
+                                                 &index_data,
+                                                 1);
+      if (n_index_datum > 0) {
+        target_index = index_data.index;
+      }
+      rc = proc->callbacks.function.selector(ctx,
+                                             table,
+                                             target_index,
+                                             si->nargs,
+                                             si->args,
+                                             res,
+                                             si->logical_op);
     }
-    rc = proc->callbacks.function.selector(ctx,
-                                           base_table,
-                                           base_index,
-                                           si->nargs,
-                                           si->args,
-                                           base_res,
-                                           GRN_OP_OR);
-    if (rc == GRN_SUCCESS) {
-      grn_accessor_resolve(ctx,
-                           accessor,
-                           accessor_deep,
-                           base_res,
-                           res,
-                           si->logical_op);
-    }
-    grn_obj_close(ctx, base_res);
   } else {
     rc = proc->callbacks.function.selector(ctx,
                                            table,
