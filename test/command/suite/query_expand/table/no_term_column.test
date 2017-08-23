@@ -1,0 +1,11 @@
+table_create TermExpansions TABLE_HASH_KEY ShortText \
+  --normalizer NormalizerAuto
+column_create TermExpansions expansions COLUMN_VECTOR ShortText
+
+load --table TermExpansions
+[
+{"_key": "Rroonga", "expansions": ["Rroonga", "Ruby Groonga"]}
+]
+
+query_expand TermExpansions "Groonga Rroonga Mroonga" \
+  --expanded_term_column expansions

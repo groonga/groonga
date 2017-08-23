@@ -135,6 +135,10 @@ grn_rc grn_proc_syntax_expand_query(grn_ctx *ctx,
                                     grn_expr_flags flags,
                                     const char *query_expander_name,
                                     unsigned int query_expander_name_len,
+                                    const char *term_column_name,
+                                    unsigned int term_column_name_len,
+                                    const char *expanded_term_column_name,
+                                    unsigned int expanded_term_column_name_len,
                                     grn_obj *expanded_query,
                                     const char *error_message_tag);
 

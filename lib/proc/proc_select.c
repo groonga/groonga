@@ -173,6 +173,10 @@ grn_proc_syntax_expand_query(grn_ctx *ctx,
                              grn_expr_flags flags,
                              const char *query_expander_name,
                              unsigned int query_expander_name_len,
+                             const char *term_column_name,
+                             unsigned int term_column_name_len,
+                             const char *expanded_term_column_name,
+                             unsigned int expanded_term_column_name_len,
                              grn_obj *expanded_query,
                              const char *error_message_tag)
 {
@@ -186,12 +190,96 @@ grn_proc_syntax_expand_query(grn_ctx *ctx,
                      GRN_INVALID_ARGUMENT,
                      "%s nonexistent query expander: <%.*s>",
                      error_message_tag,
-                     query_expander_name_len, query_expander_name);
+                     (int)query_expander_name_len,
+                     query_expander_name);
     return ctx->rc;
   }
 
-  return grn_expr_syntax_expand_query(ctx, query, query_len, flags,
-                                      query_expander, expanded_query);
+  if (expanded_term_column_name_len == 0) {
+    return grn_expr_syntax_expand_query(ctx, query, query_len, flags,
+                                        query_expander, expanded_query);
+  }
+
+  if (!grn_obj_is_table(ctx, query_expander)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, query_expander);
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s query expander with expanded term column "
+                     "must be table: <%.*s>",
+                     error_message_tag,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return ctx->rc;
+  }
+
+  {
+    grn_obj *term_column = NULL;
+    grn_obj *expanded_term_column;
+
+    expanded_term_column = grn_obj_column(ctx,
+                                          query_expander,
+                                          expanded_term_column_name,
+                                          expanded_term_column_name_len);
+    if (!expanded_term_column) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, query_expander);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "%s nonexistent expanded term column: <%.*s>: "
+                       "query expander: <%.*s>",
+                       error_message_tag,
+                       (int)expanded_term_column_name_len,
+                       expanded_term_column_name,
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return ctx->rc;
+    }
+
+    if (term_column_name_len > 0) {
+      term_column = grn_obj_column(ctx,
+                                   query_expander,
+                                   term_column_name,
+                                   term_column_name_len);
+      if (!term_column) {
+        grn_obj inspected;
+        GRN_TEXT_INIT(&inspected, 0);
+        grn_inspect(ctx, &inspected, query_expander);
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
+                         "%s nonexistent term column: <%.*s>: "
+                         "query expander: <%.*s>",
+                         error_message_tag,
+                         (int)term_column_name_len,
+                         term_column_name,
+                         (int)GRN_TEXT_LEN(&inspected),
+                         GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+        if (grn_obj_is_accessor(ctx, expanded_term_column)) {
+          grn_obj_unlink(ctx, expanded_term_column);
+        }
+        return ctx->rc;
+      }
+    }
+
+    grn_expr_syntax_expand_query_by_table(ctx,
+                                          query, query_len,
+                                          flags,
+                                          term_column,
+                                          expanded_term_column,
+                                          expanded_query);
+    if (grn_obj_is_accessor(ctx, term_column)) {
+      grn_obj_unlink(ctx, term_column);
+    }
+    if (grn_obj_is_accessor(ctx, expanded_term_column)) {
+      grn_obj_unlink(ctx, expanded_term_column);
+    }
+    return ctx->rc;
+  }
 }
 
 static grn_table_group_flags
@@ -737,6 +825,8 @@ grn_filter_data_execute(grn_ctx *ctx,
                                           flags,
                                           data->query_expander.value,
                                           data->query_expander.length,
+                                          NULL, 0,
+                                          NULL, 0,
                                           &query_expander_buf,
                                           tag);
         if (rc == GRN_SUCCESS) {

@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -71,6 +71,13 @@ GRN_API grn_rc grn_expr_syntax_expand_query(grn_ctx *ctx,
                                             grn_expr_flags flags,
                                             grn_obj *expander,
                                             grn_obj *expanded_query);
+GRN_API grn_rc grn_expr_syntax_expand_query_by_table(grn_ctx *ctx,
+                                                     const char *query,
+                                                     int query_size,
+                                                     grn_expr_flags flags,
+                                                     grn_obj *term_column,
+                                                     grn_obj *expanded_term_column,
+                                                     grn_obj *expanded_query);
 
 GRN_API grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr);
 GRN_API grn_obj *grn_expr_rewrite(grn_ctx *ctx, grn_obj *expr);

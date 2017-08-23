@@ -1,0 +1,16 @@
+table_create TermExpansions TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create TermExpansions term COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create TermExpansions expansion COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table TermExpansions
+[
+{"term": "PGroonga", "expansion": "PGroonga"},
+{"term": "PGroonga", "expansion": "Groogna PostgreSQL"},
+{"term": "Rroonga", "expansion": "Rroonga"},
+{"term": "Rroonga", "expansion": "Ruby Groonga"}
+]
+[[0,0.0,0.0],4]
+query_expand TermExpansions "Groonga Rroonga Mroonga"   --term_column term   --expanded_term_column expansion
+[[0,0.0,0.0],"Groonga ((Rroonga) OR (Ruby Groonga)) Mroonga"]
