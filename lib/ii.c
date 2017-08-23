@@ -5533,6 +5533,27 @@ grn_ii_cursor_close(grn_ctx *ctx, grn_ii_cursor *c)
   return GRN_SUCCESS;
 }
 
+grn_bool
+grn_ii_target_token_id_not_match(grn_ctx *ctx, grn_ii *ii, grn_id tid)
+{
+  grn_bool not_match = GRN_FALSE;
+
+  if (!ii) { return GRN_FALSE; }
+
+  uint32_t n_elements = grn_ii_get_n_elements(ctx, ii);
+  grn_ii_cursor *ii_cursor = grn_ii_cursor_open(ctx, ii, tid,
+                                                GRN_ID_NIL, GRN_ID_MAX,
+                                                n_elements, 0);
+  if (ii_cursor) {
+    grn_posting *posting = grn_ii_cursor_next(ctx, ii_cursor);
+    if (!posting) {
+      not_match = GRN_TRUE;
+    }
+    grn_ii_cursor_close(ctx, ii_cursor);
+  }
+  return not_match;
+}
+
 uint32_t
 grn_ii_get_chunksize(grn_ctx *ctx, grn_ii *ii, grn_id tid)
 {
