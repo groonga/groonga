@@ -1,0 +1,15 @@
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Names TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+column_create Names users_name COLUMN_INDEX Users name
+
+load --table Users
+[
+{"name": "Alice"},
+{"name": "Bob"},
+{"name": "Chris"},
+{"name": "Ava"}
+]
+
+select --table Users --query name:^a

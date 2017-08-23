@@ -1,0 +1,49 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Names TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Names users_name COLUMN_INDEX Users name
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"name": "Alice"},
+{"name": "Bob"},
+{"name": "Chris"},
+{"name": "Ava"}
+]
+[[0,0.0,0.0],4]
+select --table Users --query name:^a
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ],
+      [
+        4,
+        "Ava"
+      ],
+      [
+        1,
+        "Alice"
+      ]
+    ]
+  ]
+]
