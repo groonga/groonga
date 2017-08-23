@@ -1,0 +1,48 @@
+table_create Terms TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Terms reading COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Readings TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Readings terms_reading COLUMN_INDEX Terms reading
+[[0,0.0,0.0],true]
+load --table Terms
+[
+{"reading": "ムルンガ"},
+{"reading": "グルンガ"},
+{"reading": "グループ"}
+]
+[[0,0.0,0.0],3]
+select Terms --filter 'prefix_rk_search(reading, "gur")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "reading",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "グルンガ"
+      ],
+      [
+        3,
+        "グループ"
+      ]
+    ]
+  ]
+]

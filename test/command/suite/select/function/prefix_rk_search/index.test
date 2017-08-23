@@ -1,0 +1,14 @@
+table_create Terms TABLE_NO_KEY
+column_create Terms reading COLUMN_SCALAR ShortText
+
+table_create Readings TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+column_create Readings terms_reading COLUMN_INDEX Terms reading
+
+load --table Terms
+[
+{"reading": "ムルンガ"},
+{"reading": "グルンガ"},
+{"reading": "グループ"}
+]
+
+select Terms --filter 'prefix_rk_search(reading, "gur")'

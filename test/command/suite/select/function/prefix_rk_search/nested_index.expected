@@ -1,0 +1,67 @@
+table_create Tags TABLE_HASH_KEY ShortText --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Tags reading COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Readings TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Readings tags_reading COLUMN_INDEX Tags reading
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+column_create Tags memos_tag COLUMN_INDEX Memos tag
+[[0,0.0,0.0],true]
+load --table Tags
+[
+{"_key": "Mroonga", "reading": "ムルンガ"},
+{"_key": "Groonga", "reading": "グルンガ"},
+{"_key": "Group",   "reading": "グループ"}
+]
+[[0,0.0,0.0],3]
+load --table Memos
+[
+{"_key": "Groonga is great!",   "tag": "Groonga"},
+{"_key": "Groonga and Rroonga", "tag": "Group"},
+{"_key": "Rroonga is great!",   "tag": "Rroonga"}
+]
+[[0,0.0,0.0],3]
+select Memos --filter 'prefix_rk_search(tag.reading, "gur")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tag",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        "Groonga is great!",
+        "groonga"
+      ],
+      [
+        2,
+        "Groonga and Rroonga",
+        "group"
+      ]
+    ]
+  ]
+]
