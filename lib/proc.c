@@ -3839,8 +3839,7 @@ selector_prefix_rk_search(grn_ctx *ctx,
   if ((nargs - 1) != 2) {
     ERR(GRN_INVALID_ARGUMENT,
         "prefix_rk_serach(): wrong number of arguments (%d for 2)", nargs - 1);
-    rc = ctx->rc;
-    goto exit;
+    return ctx->rc;
   }
 
   column = args[1];
@@ -3918,8 +3917,6 @@ selector_prefix_rk_search(grn_ctx *ctx,
                                        res,
                                        op);
   }
-
-exit :
   return rc;
 }
 
