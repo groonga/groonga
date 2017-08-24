@@ -9409,103 +9409,62 @@ remove_reference_tables(grn_ctx *ctx, grn_obj *table, grn_obj *db)
 static grn_bool
 is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
 {
-  grn_bool removable = GRN_TRUE;
   grn_id table_id;
-  grn_bool is_close_opened_object_mode = GRN_FALSE;
-  char table_name[GRN_TABLE_MAX_KEY_SIZE];
-  int table_name_size;
-  grn_table_cursor *cursor;
+  grn_id reference_object_id;
 
   table_id = DB_OBJ(table)->id;
   if (table_id & GRN_OBJ_TMP_OBJECT) {
     return GRN_TRUE;
   }
 
-  if (grn_thread_get_limit() == 1) {
-    is_close_opened_object_mode = GRN_TRUE;
+  reference_object_id = grn_table_find_reference_object(ctx, table);
+  if (reference_object_id == GRN_ID_NIL) {
+    return GRN_TRUE;
   }
 
-  table_name_size = grn_obj_name(ctx, table, table_name, GRN_TABLE_MAX_KEY_SIZE);
-  if ((cursor = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
-                                      GRN_CURSOR_BY_ID))) {
-    grn_id id;
-    while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
-      grn_obj *object;
+  {
+    grn_obj *db;
+    const char *table_name;
+    int table_name_size;
+    grn_obj *reference_object;
+    const char *reference_object_name;
+    int reference_object_name_size;
 
-      if (is_close_opened_object_mode) {
-        grn_ctx_push_temporary_open_space(ctx);
+    db = grn_ctx_db(ctx);
+
+    table_name = _grn_table_key(ctx, db, table_id,&table_name_size);
+
+    reference_object = grn_ctx_at(ctx, reference_object_id);
+    reference_object_name = _grn_table_key(ctx,
+                                           db,
+                                           reference_object_id,
+                                           &reference_object_name_size);
+    if (reference_object) {
+      if (grn_obj_is_table(ctx, reference_object)) {
+        ERR(GRN_OPERATION_NOT_PERMITTED,
+            "[table][remove] a table that references the table exists: "
+            "<%.*s._key> -> <%.*s>",
+            reference_object_name_size, reference_object_name,
+            table_name_size, table_name);
+      } else {
+        ERR(GRN_OPERATION_NOT_PERMITTED,
+            "[table][remove] a column that references the table exists: "
+            "<%.*s> -> <%.*s>",
+            reference_object_name_size, reference_object_name,
+            table_name_size, table_name);
       }
-
-      object = grn_ctx_at(ctx, id);
-      if (!object) {
-        ERRCLR(ctx);
-        if (is_close_opened_object_mode) {
-          grn_ctx_pop_temporary_open_space(ctx);
-        }
-        continue;
-      }
-
-      switch (object->header.type) {
-      case GRN_TABLE_HASH_KEY :
-      case GRN_TABLE_PAT_KEY :
-      case GRN_TABLE_DAT_KEY :
-        if (DB_OBJ(object)->id == table_id) {
-          break;
-        }
-
-        if (object->header.domain == table_id) {
-          char reference_table_name[GRN_TABLE_MAX_KEY_SIZE];
-          int reference_table_name_size;
-          reference_table_name_size =
-            grn_obj_name(ctx, object, reference_table_name,
-                         GRN_TABLE_MAX_KEY_SIZE);
-          ERR(GRN_OPERATION_NOT_PERMITTED,
-              "[table][remove] a table that references the table exists: "
-              "<%.*s._key> -> <%.*s>",
-              reference_table_name_size, reference_table_name,
-              table_name_size, table_name);
-          removable = GRN_FALSE;
-        }
-        break;
-      case GRN_TABLE_NO_KEY :
-        break;
-      case GRN_COLUMN_VAR_SIZE :
-      case GRN_COLUMN_FIX_SIZE :
-        if (object->header.domain == table_id) {
-          break;
-        }
-        if (DB_OBJ(object)->range == table_id) {
-          char column_name[GRN_TABLE_MAX_KEY_SIZE];
-          int column_name_size;
-          column_name_size = grn_obj_name(ctx, object, column_name,
-                                          GRN_TABLE_MAX_KEY_SIZE);
-          ERR(GRN_OPERATION_NOT_PERMITTED,
-              "[table][remove] a column that references the table exists: "
-              "<%.*s> -> <%.*s>",
-              column_name_size, column_name,
-              table_name_size, table_name);
-          removable = GRN_FALSE;
-        }
-        break;
-      case GRN_COLUMN_INDEX :
-        break;
-      default:
-        break;
-      }
-      grn_obj_unlink(ctx, object);
-
-      if (is_close_opened_object_mode) {
-        grn_ctx_pop_temporary_open_space(ctx);
-      }
-
-      if (!removable) {
-        break;
-      }
+    } else {
+      ERR(GRN_OPERATION_NOT_PERMITTED,
+          "[table][remove] a dangling object that references the table exists: "
+          "<%.*s(%u)> -> <%.*s>",
+          reference_object_name_size,
+          reference_object_name,
+          reference_object_id,
+          table_name_size, table_name);
     }
-    grn_table_cursor_close(ctx, cursor);
   }
 
-  return removable;
+  return GRN_FALSE;
 }
 
 static inline grn_rc
