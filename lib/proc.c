@@ -1398,28 +1398,27 @@ number_safe_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_id type)
       GRN_UINT8_SET(ctx, dest, 0);
       return GRN_TRUE;
     }
-    /* fallthru */
+    break;
   case GRN_DB_UINT16 :
     if (is_negative_value(src)) {
       GRN_UINT16_SET(ctx, dest, 0);
       return GRN_TRUE;
     }
-    /* fallthru */
+    break;
   case GRN_DB_UINT32 :
     if (is_negative_value(src)) {
       GRN_UINT32_SET(ctx, dest, 0);
       return GRN_TRUE;
     }
-    /* fallthru */
+    break;
   case GRN_DB_UINT64 :
     if (is_negative_value(src)) {
       GRN_UINT64_SET(ctx, dest, 0);
       return GRN_TRUE;
     }
-    /* fallthru */
-  default :
-    return grn_obj_cast(ctx, src, dest, GRN_FALSE) == GRN_SUCCESS;
+    break;
   }
+  return grn_obj_cast(ctx, src, dest, GRN_FALSE) == GRN_SUCCESS;
 }
 
 static inline int
