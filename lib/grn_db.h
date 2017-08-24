@@ -62,6 +62,14 @@ typedef struct {
   grn_id range;
 } grn_obj_spec;
 
+grn_bool grn_db_spec_unpack(grn_ctx *ctx,
+                            grn_id id,
+                            void *encoded_spec,
+                            uint32_t encoded_spec_size,
+                            grn_obj_spec **spec,
+                            grn_obj *decoded_spec,
+                            const char *error_message_tag);
+
 void grn_db_init_from_env(void);
 
 GRN_API grn_rc grn_db_close(grn_ctx *ctx, grn_obj *db);

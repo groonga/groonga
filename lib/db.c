@@ -10264,11 +10264,11 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
   return rc;
 }
 
-#define GET_PATH(spec,buffer,s,id) do {\
+#define GET_PATH(spec,decoded_spec,buffer,s,id) do {\
   if (spec->header.flags & GRN_OBJ_CUSTOM_NAME) {\
     const char *path;\
     unsigned int size = grn_vector_get_element(ctx,\
-                                               &v,\
+                                               decoded_spec,\
                                                GRN_SERIALIZED_SPEC_INDEX_PATH,\
                                                &path,\
                                                NULL,\
@@ -10281,15 +10281,17 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
   }\
 } while (0)
 
-#define UNPACK_INFO() do {\
+#define UNPACK_INFO(spec,decoded_spec) do {\
   if (vp->ptr) {\
+    const char *p;\
+    uint32_t size;\
     grn_db_obj *r = DB_OBJ(vp->ptr);\
     r->header = spec->header;\
     r->id = id;\
     r->range = spec->range;\
     r->db = (grn_obj *)s;\
     size = grn_vector_get_element(ctx,\
-                                  &v,\
+                                  decoded_spec,\
                                   GRN_SERIALIZED_SPEC_INDEX_SOURCE,\
                                   &p,\
                                   NULL,\
@@ -10301,7 +10303,7 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
       }\
     }\
     size = grn_vector_get_element(ctx,\
-                                  &v,\
+                                  decoded_spec,\
                                   GRN_SERIALIZED_SPEC_INDEX_HOOK,\
                                   &p,\
                                   NULL,\
@@ -10342,6 +10344,62 @@ grn_token_filters_unpack(grn_ctx *ctx,
     }
     GRN_PTR_PUT(ctx, token_filters, token_filter);
   }
+}
+
+grn_bool
+grn_db_spec_unpack(grn_ctx *ctx,
+                   grn_id id,
+                   void *encoded_spec,
+                   uint32_t encoded_spec_size,
+                   grn_obj_spec **spec,
+                   grn_obj *decoded_spec,
+                   const char *error_message_tag)
+{
+  grn_obj *db;
+  grn_db *db_raw;
+  grn_rc rc;
+  uint32_t spec_size;
+
+  db = ctx->impl->db;
+  db_raw = (grn_db *)db;
+
+  rc = grn_vector_decode(ctx,
+                         decoded_spec,
+                         encoded_spec,
+                         encoded_spec_size);
+  if (rc != GRN_SUCCESS) {
+    const char *name;
+    uint32_t name_size;
+    name = _grn_table_key(ctx, db, id, &name_size);
+    GRN_LOG((ctx), GRN_LOG_ERROR,
+            "%s: failed to decode spec: <%u>(<%.*s>):<%u>: %s",
+            error_message_tag,
+            id,
+            name_size, name,
+            encoded_spec_size,
+            grn_rc_to_string(rc));
+    return GRN_FALSE;
+  }
+
+  spec_size = grn_vector_get_element(ctx,
+                                     decoded_spec,
+                                     GRN_SERIALIZED_SPEC_INDEX_SPEC,
+                                     (const char **)spec,
+                                     NULL,
+                                     NULL);
+  if (spec_size == 0) {
+    const char *name;
+    uint32_t name_size;
+    name = _grn_table_key(ctx, db, id, &name_size);
+    GRN_LOG(ctx, GRN_LOG_ERROR,
+            "%s: spec value is empty: <%u>(<%.*s>)",
+            error_message_tag,
+            id,
+            name_size, name);
+    return GRN_FALSE;
+  }
+
+  return GRN_TRUE;
 }
 
 grn_obj *
@@ -10408,139 +10466,128 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
         }
 #endif /* USE_NREF */
         if (!l) {
-          grn_io_win jw;
-          uint32_t value_len;
-          char *value = grn_ja_ref(ctx, s->specs, id, &jw, &value_len);
-          if (value) {
-            grn_rc rc;
-            grn_obj v;
-            GRN_OBJ_INIT(&v, GRN_VECTOR, 0, GRN_DB_TEXT);
-            rc = grn_vector_decode(ctx, &v, value, value_len);
-            if (rc != GRN_SUCCESS) {
-              const char *name;
-              uint32_t name_size;
-              name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
-              GRN_LOG(ctx, GRN_LOG_ERROR,
-                      "grn_ctx_at: failed to decode spec: <%u>(<%.*s>):<%u>: %s",
-                      id,
-                      name_size, name,
-                      value_len,
-                      grn_rc_to_string(rc));
-            } else {
-              const char *p;
-              uint32_t size;
-              grn_obj_spec *spec;
+          grn_io_win iw;
+          uint32_t encoded_spec_size;
+          void *encoded_spec;
+
+          encoded_spec = grn_ja_ref(ctx, s->specs, id, &iw, &encoded_spec_size);
+          if (encoded_spec) {
+            grn_bool success;
+            grn_obj_spec *spec;
+            grn_obj decoded_spec;
+
+            GRN_OBJ_INIT(&decoded_spec, GRN_VECTOR, 0, GRN_DB_TEXT);
+            success = grn_db_spec_unpack(ctx,
+                                         id,
+                                         encoded_spec,
+                                         encoded_spec_size,
+                                         &spec,
+                                         &decoded_spec,
+                                         "grn_ctx_at");
+            if (success) {
               char buffer[PATH_MAX];
-              size = grn_vector_get_element(ctx,
-                                            &v,
-                                            GRN_SERIALIZED_SPEC_INDEX_SPEC,
-                                            (const char **)&spec,
-                                            NULL,
-                                            NULL);
-              if (size == 0) {
+              switch (spec->header.type) {
+              case GRN_TYPE :
+                vp->ptr = (grn_obj *)grn_type_open(ctx, spec);
+                UNPACK_INFO(spec, &decoded_spec);
+                break;
+              case GRN_TABLE_HASH_KEY :
+                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                vp->ptr = (grn_obj *)grn_hash_open(ctx, buffer);
+                if (vp->ptr) {
+                  grn_hash *hash = (grn_hash *)(vp->ptr);
+                  grn_obj_flags flags = vp->ptr->header.flags;
+                  UNPACK_INFO(spec, &decoded_spec);
+                  vp->ptr->header.flags = flags;
+                  grn_token_filters_unpack(ctx,
+                                           &(hash->token_filters),
+                                           &decoded_spec);
+                }
+                break;
+              case GRN_TABLE_PAT_KEY :
+                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                vp->ptr = (grn_obj *)grn_pat_open(ctx, buffer);
+                if (vp->ptr) {
+                  grn_pat *pat = (grn_pat *)(vp->ptr);
+                  grn_obj_flags flags = vp->ptr->header.flags;
+                  UNPACK_INFO(spec, &decoded_spec);
+                  vp->ptr->header.flags = flags;
+                  grn_token_filters_unpack(ctx,
+                                           &(pat->token_filters),
+                                           &decoded_spec);
+                }
+                break;
+              case GRN_TABLE_DAT_KEY :
+                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                vp->ptr = (grn_obj *)grn_dat_open(ctx, buffer);
+                if (vp->ptr) {
+                  grn_dat *dat = (grn_dat *)(vp->ptr);
+                  grn_obj_flags flags = vp->ptr->header.flags;
+                  UNPACK_INFO(spec, &decoded_spec);
+                  vp->ptr->header.flags = flags;
+                  grn_token_filters_unpack(ctx,
+                                           &(dat->token_filters),
+                                           &decoded_spec);
+                }
+                break;
+              case GRN_TABLE_NO_KEY :
+                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                vp->ptr = (grn_obj *)grn_array_open(ctx, buffer);
+                UNPACK_INFO(spec, &decoded_spec);
+                break;
+              case GRN_COLUMN_VAR_SIZE :
+                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                vp->ptr = (grn_obj *)grn_ja_open(ctx, buffer);
+                UNPACK_INFO(spec, &decoded_spec);
+                break;
+              case GRN_COLUMN_FIX_SIZE :
+                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                vp->ptr = (grn_obj *)grn_ra_open(ctx, buffer);
+                UNPACK_INFO(spec, &decoded_spec);
+                break;
+              case GRN_COLUMN_INDEX :
+                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                {
+                  grn_obj *table = grn_ctx_at(ctx, spec->header.domain);
+                  vp->ptr = (grn_obj *)grn_ii_open(ctx, buffer, table);
+                }
+                UNPACK_INFO(spec, &decoded_spec);
+                break;
+              case GRN_PROC :
+                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                grn_plugin_register(ctx, buffer);
+                break;
+              case GRN_EXPR :
+                {
+                  const char *p;
+                  uint32_t size;
+                  uint8_t *u;
+                  size = grn_vector_get_element(ctx,
+                                                &decoded_spec,
+                                                GRN_SERIALIZED_SPEC_INDEX_EXPR,
+                                                &p,
+                                                NULL,
+                                                NULL);
+                  u = (uint8_t *)p;
+                  vp->ptr = grn_expr_open(ctx, spec, u, u + size);
+                }
+                break;
+              }
+              if (!vp->ptr) {
                 const char *name;
-                uint32_t name_size;
+                uint32_t name_size = 0;
                 name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
                 GRN_LOG(ctx, GRN_LOG_ERROR,
-                        "grn_ctx_at: spec value is empty: <%u>(<%.*s>)",
+                        "grn_ctx_at: failed to open object: "
+                        "<%u>(<%.*s>):<%u>(<%s>)",
                         id,
-                        name_size, name);
-              } else {
-                switch (spec->header.type) {
-                case GRN_TYPE :
-                  vp->ptr = (grn_obj *)grn_type_open(ctx, spec);
-                  UNPACK_INFO();
-                  break;
-                case GRN_TABLE_HASH_KEY :
-                  GET_PATH(spec, buffer, s, id);
-                  vp->ptr = (grn_obj *)grn_hash_open(ctx, buffer);
-                  if (vp->ptr) {
-                    grn_hash *hash = (grn_hash *)(vp->ptr);
-                    grn_obj_flags flags = vp->ptr->header.flags;
-                    UNPACK_INFO();
-                    vp->ptr->header.flags = flags;
-                    grn_token_filters_unpack(ctx, &(hash->token_filters), &v);
-                  }
-                  break;
-                case GRN_TABLE_PAT_KEY :
-                  GET_PATH(spec, buffer, s, id);
-                  vp->ptr = (grn_obj *)grn_pat_open(ctx, buffer);
-                  if (vp->ptr) {
-                    grn_pat *pat = (grn_pat *)(vp->ptr);
-                    grn_obj_flags flags = vp->ptr->header.flags;
-                    UNPACK_INFO();
-                    vp->ptr->header.flags = flags;
-                    grn_token_filters_unpack(ctx, &(pat->token_filters), &v);
-                  }
-                  break;
-                case GRN_TABLE_DAT_KEY :
-                  GET_PATH(spec, buffer, s, id);
-                  vp->ptr = (grn_obj *)grn_dat_open(ctx, buffer);
-                  if (vp->ptr) {
-                    grn_dat *dat = (grn_dat *)(vp->ptr);
-                    grn_obj_flags flags = vp->ptr->header.flags;
-                    UNPACK_INFO();
-                    vp->ptr->header.flags = flags;
-                    grn_token_filters_unpack(ctx, &(dat->token_filters), &v);
-                  }
-                  break;
-                case GRN_TABLE_NO_KEY :
-                  GET_PATH(spec, buffer, s, id);
-                  vp->ptr = (grn_obj *)grn_array_open(ctx, buffer);
-                  UNPACK_INFO();
-                  break;
-                case GRN_COLUMN_VAR_SIZE :
-                  GET_PATH(spec, buffer, s, id);
-                  vp->ptr = (grn_obj *)grn_ja_open(ctx, buffer);
-                  UNPACK_INFO();
-                  break;
-                case GRN_COLUMN_FIX_SIZE :
-                  GET_PATH(spec, buffer, s, id);
-                  vp->ptr = (grn_obj *)grn_ra_open(ctx, buffer);
-                  UNPACK_INFO();
-                  break;
-                case GRN_COLUMN_INDEX :
-                  GET_PATH(spec, buffer, s, id);
-                  {
-                    grn_obj *table = grn_ctx_at(ctx, spec->header.domain);
-                    vp->ptr = (grn_obj *)grn_ii_open(ctx, buffer, table);
-                  }
-                  UNPACK_INFO();
-                  break;
-                case GRN_PROC :
-                  GET_PATH(spec, buffer, s, id);
-                  grn_plugin_register(ctx, buffer);
-                  break;
-                case GRN_EXPR :
-                  {
-                    uint8_t *u;
-                    size = grn_vector_get_element(ctx,
-                                                  &v,
-                                                  GRN_SERIALIZED_SPEC_INDEX_EXPR,
-                                                  &p,
-                                                  NULL,
-                                                  NULL);
-                    u = (uint8_t *)p;
-                    vp->ptr = grn_expr_open(ctx, spec, u, u + size);
-                  }
-                  break;
-                }
-                if (!vp->ptr) {
-                  const char *name;
-                  uint32_t name_size = 0;
-                  name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
-                  GRN_LOG(ctx, GRN_LOG_ERROR,
-                          "grn_ctx_at: failed to open object: "
-                          "<%u>(<%.*s>):<%u>(<%s>)",
-                          id,
-                          name_size, name,
-                          spec->header.type,
-                          grn_obj_type_to_string(spec->header.type));
-                }
+                        name_size, name,
+                        spec->header.type,
+                        grn_obj_type_to_string(spec->header.type));
               }
-              grn_obj_close(ctx, &v);
             }
-            grn_ja_unref(ctx, &jw);
+            GRN_OBJ_FIN(ctx, &decoded_spec);
+            grn_ja_unref(ctx, &iw);
           }
 #ifndef USE_NREF
           GRN_ATOMIC_ADD_EX(pl, -1, l);
