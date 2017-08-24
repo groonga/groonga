@@ -7,6 +7,62 @@
 News
 ====
 
+.. _release-7-0-6:
+
+Release 7.0.6 - 2017-08-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported prefix match search using multiple
+  indexes. (e.g. ``--query "Foo*" --match_columns
+  "TITLE_INDEX_COLUMN||BODY_INDEX_COLUMN"``).
+
+* [:doc:`/reference/window_functions/window_count`] Supported
+  ``window_count`` function to add count data to result set. It is
+  useful to analyze or filter additionally.
+
+* Added the following API
+
+  * ``grn_obj_get_disk_usage():``
+  * ``GRN_EXPR_QUERY_NO_SYNTAX_ERROR``
+  * ``grn_expr_syntax_expand_query_by_table()``
+  * ``grn_table_find_reference_object()``
+
+* [:doc:`/reference/commands/object_inspect`] Supported to show disk
+  usage about specified object.
+
+* Supported falling back query parse feature. It is enabled when
+  ``QUERY_NO_SYNTAX_ERROR`` flag is set to ``query_flags``. (this
+  feature is disabled by default). If this flag is set, query never
+  causes syntax error. For example, "A +" is parsed and escaped
+  automatically into "A \+". This behavior is useful when application
+  uses user input directly and doesn't want to show syntax error to
+  user and in log.
+
+* Supported to adjust score for term in query. ">", "<", and "~"
+  operators are supported. For example, ">Groonga" increments score of
+  "Groonga", "<Groonga" decrements score of "Groonga". "~Groonga"
+  decreases score of matched document in the current search
+  result. "~" operator doesn't change search result itself.
+
+* Improved performance to remove table. ``thread_limit=1`` is not
+  needed for it. The process about checking referenced table existence
+  is done without opening objects. As a result, performance is
+  improved.
+
+* [httpd] Updated bundled nginx to 1.13.4.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/commands/dump`] Fixed a bug that the 7-th unnamed
+  parameter for `--sort_hash_table` option is ignored.
+
+Thanks
+^^^^^^
+
 .. _release-7-0-5:
 
 Release 7.0.5 - 2017-07-29
