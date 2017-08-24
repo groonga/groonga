@@ -6228,7 +6228,7 @@ msgstr ""
 
 msgid ""
 "dumpが出力するフォーマットは直接Groongaが解釈できるフォーマットです。そのた"
-"め、以下のようにしてデータベースをコピーすることができます。::"
+"め、以下のようにしてデータベース>をコピーすることができます。::"
 msgstr ""
 
 msgid "Here is the sample schema and data to check dump behaviour::"
@@ -27108,6 +27108,9 @@ msgstr ""
 
 msgid ""
 "``record_number()`` is deprecated. Use :doc:`window_record_number` instead."
+msgstr ""
+
+msgid "``window_count``"
 msgstr ""
 
 msgid "``window_record_number``"
