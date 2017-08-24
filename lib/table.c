@@ -72,3 +72,51 @@ grn_table_apply_expr(grn_ctx *ctx,
 
   GRN_API_RETURN(ctx->rc);
 }
+
+grn_id
+grn_table_find_reference_object(grn_ctx *ctx, grn_obj *table)
+{
+  grn_id table_id;
+  grn_id reference_object_id = GRN_ID_NIL;
+
+  GRN_API_ENTER;
+
+  if (!grn_obj_is_table(ctx, table)) {
+    GRN_API_RETURN(GRN_ID_NIL);
+  }
+
+  table_id = DB_OBJ(table)->id;
+
+  GRN_DB_SPEC_EACH_BEGIN(ctx, cursor, id, spec) {
+    if (id == table_id) {
+      continue;
+    }
+
+    switch (spec->header.type) {
+    case GRN_TABLE_HASH_KEY :
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_DAT_KEY :
+      if (spec->header.domain == table_id) {
+        reference_object_id = id;
+      }
+      break;
+    case GRN_COLUMN_VAR_SIZE :
+    case GRN_COLUMN_FIX_SIZE :
+      if (spec->header.domain == table_id) {
+        break;
+      }
+      if (spec->range == table_id) {
+        reference_object_id = id;
+      }
+      break;
+    default :
+      break;
+    }
+
+    if (reference_object_id != GRN_ID_NIL) {
+      break;
+    }
+  } GRN_DB_SPEC_EACH_END(ctx, cursor);
+
+  GRN_API_RETURN(reference_object_id);
+}

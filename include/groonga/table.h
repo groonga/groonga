@@ -239,6 +239,8 @@ GRN_API grn_rc grn_table_apply_expr(grn_ctx *ctx,
                                     grn_obj *output_column,
                                     grn_obj *expr);
 
+GRN_API grn_id grn_table_find_reference_object(grn_ctx *ctx, grn_obj *table);
+
 #ifdef __cplusplus
 }
 #endif

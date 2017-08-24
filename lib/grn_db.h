@@ -70,6 +70,53 @@ grn_bool grn_db_spec_unpack(grn_ctx *ctx,
                             grn_obj *decoded_spec,
                             const char *error_message_tag);
 
+#define GRN_DB_SPEC_EACH_BEGIN(ctx, cursor, id, spec) do {              \
+  grn_obj *db = grn_ctx_db((ctx));                                      \
+  grn_db *db_raw = (grn_db *)db;                                        \
+  grn_obj decoded_spec;                                                 \
+  grn_io_win iw;                                                        \
+  grn_bool iw_need_unref = GRN_FALSE;                                   \
+  GRN_OBJ_INIT(&decoded_spec, GRN_VECTOR, 0, GRN_DB_TEXT);              \
+  GRN_TABLE_EACH_BEGIN((ctx), db, cursor, id) {                         \
+    void *encoded_spec;                                                 \
+    uint32_t encoded_spec_size;                                         \
+    grn_bool success;                                                   \
+    grn_obj_spec *spec;                                                 \
+                                                                        \
+    if (iw_need_unref) {                                                \
+      grn_ja_unref(ctx, &iw);                                           \
+      iw_need_unref = GRN_FALSE;                                        \
+    }                                                                   \
+    encoded_spec = grn_ja_ref((ctx),                                    \
+                              db_raw->specs,                            \
+                              id,                                       \
+                              &iw,                                      \
+                              &encoded_spec_size);                      \
+    if (!encoded_spec) {                                                \
+      continue;                                                         \
+    }                                                                   \
+    iw_need_unref = GRN_TRUE;                                           \
+                                                                        \
+    GRN_BULK_REWIND(&decoded_spec);                                     \
+    success = grn_db_spec_unpack(ctx,                                   \
+                                 id,                                    \
+                                 encoded_spec,                          \
+                                 encoded_spec_size,                     \
+                                 &spec,                                 \
+                                 &decoded_spec,                         \
+                                 __FUNCTION__);                         \
+   if (!success) {                                                      \
+     continue;                                                          \
+   }                                                                    \
+
+#define GRN_DB_SPEC_EACH_END(ctx, cursor)         \
+  } GRN_TABLE_EACH_END(ctx, cursor);              \
+  if (iw_need_unref) {                            \
+    grn_ja_unref(ctx, &iw);                       \
+  }                                               \
+  GRN_OBJ_FIN((ctx), &decoded_spec);              \
+} while(GRN_FALSE)
+
 void grn_db_init_from_env(void);
 
 GRN_API grn_rc grn_db_close(grn_ctx *ctx, grn_obj *db);
