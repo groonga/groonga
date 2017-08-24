@@ -3820,7 +3820,6 @@ selector_prefix_rk_search_index(grn_ctx *ctx,
   } GRN_TABLE_EACH_END(ctx, cursor);
   grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
 
-exit :
   return rc;
 }
 
