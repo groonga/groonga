@@ -8,11 +8,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   vms = [
     {
       :id => "debian-jessie-i386",
-      :box => "bento/debian-8.8-i386",
+      :box => "bento/debian-8.9-i386",
     },
     {
       :id => "debian-jessie-amd64",
-      :box => "bento/debian-8.8",
+      :box => "bento/debian-8.9",
     },
     {
       :id => "debian-stretch-i386",
@@ -20,7 +20,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     },
     {
       :id => "debian-stretch-amd64",
-      :box => "bento/debian-9.0",
+      :box => "bento/debian-9.1",
     },
   ]
 
