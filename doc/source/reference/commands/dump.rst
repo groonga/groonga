@@ -52,6 +52,7 @@ Here is the sample schema and data to check dump behaviour::
   load --table Bookmarks
   [
   {"_key":"Groonga", "title":"Introduction to Groonga"},
+  {"_key":"PGroonga", "title":"Introduction to PGroonga"},
   {"_key":"Mroonga", "title":"Introduction to Mroonga"}
   ]
   load --table Sites
@@ -64,51 +65,53 @@ Dump all data in database::
 
   > dump
   plugin_register token_filters/stop_word
-  
+
   table_create Sites TABLE_NO_KEY
   column_create Sites url COLUMN_SCALAR ShortText
-  
+
   table_create Bookmarks TABLE_HASH_KEY ShortText
   column_create Bookmarks title COLUMN_SCALAR ShortText
-  
+
   table_create Lexicon TABLE_PAT_KEY ShortText
-  
+
   load --table Sites
   [
   ["_id","url"],
   [1,"http://groonga.org"],
   [2,"http://mroonga.org"]
   ]
-  
+
   load --table Bookmarks
   [
   ["_key","title"],
   ["Groonga","Introduction to Groonga"],
+  ["PGroonga","Introduction to PGroonga"],
   ["Mroonga","Introduction to Mroonga"]
   ]
-  
+
   create Lexicon bookmark_title COLUMN_INDEX Bookmarks title
 
 Dump schema and specific table data::
 
   > dump Bookmarks
   plugin_register token_filters/stop_word
-  
+
   table_create Sites TABLE_NO_KEY
   column_create Sites url COLUMN_SCALAR ShortText
-  
+
   table_create Bookmarks TABLE_HASH_KEY ShortText
   column_create Bookmarks title COLUMN_SCALAR ShortText
-  
+
   table_create Lexicon TABLE_PAT_KEY ShortText
-  
+
   load --table Bookmarks
   [
   ["_key","title"],
   ["Groonga","Introduction to Groonga"],
+  ["PGroonga","Introduction to PGroonga"],
   ["Mroonga","Introduction to Mroonga"]
   ]
-  
+
   column_create Lexicon bookmark_title COLUMN_INDEX Bookmarks title
 
 Dump plugin only::
@@ -125,11 +128,12 @@ Dump records only::
   [1,"http://groonga.org"],
   [2,"http://mroonga.org"]
   ]
-  
+
   load --table Bookmarks
   [
   ["_key","title"],
   ["Groonga","Introduction to Groonga"],
+  ["PGroonga","Introduction to PGroonga"],
   ["Mroonga","Introduction to Mroonga"]
   ]
 
@@ -138,11 +142,34 @@ Dump schema only::
   > dump --dump_records no --dump_plugins no --dump_indexes no
   table_create Sites TABLE_NO_KEY
   column_create Sites url COLUMN_SCALAR ShortText
-  
+
   table_create Bookmarks TABLE_HASH_KEY ShortText
   column_create Bookmarks title COLUMN_SCALAR ShortText
-  
+
   table_create Lexicon TABLE_PAT_KEY ShortText
+
+Dump sorted hash table data::
+
+  > dump Bookmarks --sort_hash_table yes
+  plugin_register token_filters/stop_word
+
+  table_create Sites TABLE_NO_KEY
+  column_create Sites url COLUMN_SCALAR ShortText
+
+  table_create Bookmarks TABLE_HASH_KEY ShortText
+  column_create Bookmarks title COLUMN_SCALAR ShortText
+
+  table_create Lexicon TABLE_PAT_KEY ShortText
+
+  load --table Bookmarks
+  [
+  ["_key","title"],
+  ["Groonga","Introduction to Groonga"],
+  ["Mroonga","Introduction to Mroonga"],
+  ["PGroonga","Introduction to PGroonga"]
+  ]
+
+  column_create Lexicon bookmark_title COLUMN_INDEX Bookmarks title
 
 Parameters
 ----------
@@ -196,6 +223,16 @@ You can customize the output whether it contains indexes or not.
 To exclude indexes from the output, specify ``no``.
 
 The default value is ``yes``.
+
+``sort_hash_table``
+"""""""""""""""""""
+
+.. versionadded:: 7.0.5
+
+You can ascending sort by ``_key`` the output of hash table when it contains hash table.
+To don't sort the output of hash table, specify ``no``.
+
+The default value is ``no``.
 
 Return value
 ------------

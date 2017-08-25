@@ -6250,6 +6250,9 @@ msgstr "レコードのみダンプ::"
 msgid "Dump schema only::"
 msgstr "スキーマのみダンプ:"
 
+msgid "Dump sorted hash table data::"
+msgstr "ハッシュテーブルのデータをソートしてダンプ::"
+
 msgid "There are optional parameters."
 msgstr "いくつか省略可能な引数があります。"
 
@@ -6303,6 +6306,19 @@ msgid ""
 msgstr ""
 "インデックスを出力に含めるかどうかをカスタマイズすることができます。インデッ"
 "クスを出力から除外する場合、 ``no`` を指定します。"
+
+msgid "``sort_hash_table``"
+msgstr ""
+
+msgid ""
+"You can ascending sort the output of hash table when it contains hash table. "
+"To don't sort the output of hash table, specify ``no``."
+msgstr ""
+"ハッシュテーブルの出力を昇順にソートして出力することができます。レコードを"
+"ソートしないで出力する場合、 ``no`` を指定します。"
+
+msgid "The default value is ``no``."
+msgstr "デフォルト値は ``no`` です。"
 
 msgid ""
 "データベースのスキーマとデータをGroongaの組み込みコマンド呼び出し形式で出力し"
