@@ -403,9 +403,9 @@ schema
                 "name": "index",
                 "flags": "COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION|INDEX_SMALL",
                 "type": "Posts",
-                "sources": "_key,title,content"
+                "source": "_key,title,content"
               },
-              "command_line": "column_create --table Terms --name index --flags COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION|INDEX_SMALL --type Posts --sources _key,title,content"
+              "command_line": "column_create --table Terms --name index --flags COLUMN_INDEX|WITH_SECTION|WITH_WEIGHT|WITH_POSITION|INDEX_SMALL --type Posts --source _key,title,content"
             }
           }
         }

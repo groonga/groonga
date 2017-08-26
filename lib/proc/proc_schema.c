@@ -964,7 +964,7 @@ command_schema_column_command_collect_arguments(grn_ctx *ctx,
         GRN_TEXT_PUT(ctx, &sources, name, name_size);
       }
       GRN_TEXT_PUTC(ctx, &sources, '\0');
-      ADD("sources", GRN_TEXT_VALUE(&sources));
+      ADD("source", GRN_TEXT_VALUE(&sources));
       GRN_OBJ_FIN(ctx, &sources);
     }
     GRN_OBJ_FIN(ctx, &source_ids);
