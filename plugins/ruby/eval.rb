@@ -16,7 +16,7 @@ module Groonga
         eval_context = EvalContext.new
         begin
           result = eval_context.eval(script)
-        rescue => error
+        rescue Exception => error
           writer.map("result", 1) do
             writer.write("exception")
             writer.map("exception", 1) do

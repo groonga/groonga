@@ -39,7 +39,8 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
 
   ctx = mrbc_context_new(mrb);
   if (!ctx) {
-    mrb_raise(mrb,E_RUNTIME_ERROR, "mrbc_context_new failed.");
+    mrb_raise(mrb, E_RUNTIME_ERROR,
+              "[mruby][eval][compile] failed to allocate context");
   }
   ctx->capture_errors = 1;
 
@@ -47,7 +48,8 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
   parser = mrb_parse_nstring(mrb, script, script_length, ctx);
   if (!parser) {
     mrbc_context_free(mrb, ctx);
-    mrb_raise(mrb,E_RUNTIME_ERROR, "mrb_parse_nstring failed.");
+    mrb_raise(mrb, E_RUNTIME_ERROR,
+              "[mruby][eval][compile] failed to allocate parser");
   }
   if (parser->nerr > 0) {
     mrb_value errormessage = mrb_format(mrb, "line %S:%S: %S",
@@ -57,7 +59,7 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
     mrb_parser_free(parser);
     mrbc_context_free(mrb, ctx);
 
-    mrb_raisef(mrb, E_ARGUMENT_ERROR, "%S", errormessage);
+    mrb_raisef(mrb, E_SYNTAX_ERROR, "%S", errormessage);
   }
 
   proc = mrb_generate_code(mrb, parser);
