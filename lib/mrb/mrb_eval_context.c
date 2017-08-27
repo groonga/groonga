@@ -52,14 +52,20 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
               "[mruby][eval][compile] failed to allocate parser");
   }
   if (parser->nerr > 0) {
-    mrb_value errormessage = mrb_format(mrb, "line %S:%S: %S",
-      mrb_fixnum_value(parser->error_buffer[0].lineno),
-      mrb_fixnum_value(parser->error_buffer[0].column),
-      mrb_str_new_cstr(mrb, parser->error_buffer[0].message));
+    struct mrb_parser_message *error = &(parser->error_buffer[0]);
+    mrb_value new_args[1];
+    mrb_value exception;
+
+    new_args[0] = mrb_format(mrb,
+                             "line %S:%S: %S",
+                             mrb_fixnum_value(error->lineno),
+                             mrb_fixnum_value(error->column),
+                             mrb_str_new_cstr(mrb, error->message));
+    exception = mrb_obj_new(mrb, E_SYNTAX_ERROR, 1, new_args);
     mrb_parser_free(parser);
     mrbc_context_free(mrb, ctx);
 
-    mrb_raisef(mrb, E_SYNTAX_ERROR, "%S", errormessage);
+    mrb_exc_raise(mrb, exception);
   }
 
   proc = mrb_generate_code(mrb, parser);
