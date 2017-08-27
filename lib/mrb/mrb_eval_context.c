@@ -37,6 +37,8 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
   struct mrb_parser_state *parser;
   struct RProc *proc;
 
+  mrb_get_args(mrb, "s", &script, &script_length);
+
   compile_ctx = mrbc_context_new(mrb);
   if (!compile_ctx) {
     mrb_raise(mrb, E_RUNTIME_ERROR,
@@ -44,7 +46,6 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
   }
   compile_ctx->capture_errors = TRUE;
 
-  mrb_get_args(mrb, "s", &script, &script_length);
   parser = mrb_parse_nstring(mrb, script, script_length, compile_ctx);
   if (!parser) {
     mrbc_context_free(mrb, compile_ctx);
