@@ -33,21 +33,21 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
 {
   char *script;
   mrb_int script_length;
-  mrbc_context* ctx;
+  mrbc_context* compile_ctx;
   struct mrb_parser_state *parser;
   struct RProc *proc;
 
-  ctx = mrbc_context_new(mrb);
-  if (!ctx) {
+  compile_ctx = mrbc_context_new(mrb);
+  if (!compile_ctx) {
     mrb_raise(mrb, E_RUNTIME_ERROR,
               "[mruby][eval][compile] failed to allocate context");
   }
-  ctx->capture_errors = 1;
+  compile_ctx->capture_errors = TRUE;
 
   mrb_get_args(mrb, "s", &script, &script_length);
-  parser = mrb_parse_nstring(mrb, script, script_length, ctx);
+  parser = mrb_parse_nstring(mrb, script, script_length, compile_ctx);
   if (!parser) {
-    mrbc_context_free(mrb, ctx);
+    mrbc_context_free(mrb, compile_ctx);
     mrb_raise(mrb, E_RUNTIME_ERROR,
               "[mruby][eval][compile] failed to allocate parser");
   }
@@ -63,7 +63,7 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
                              mrb_str_new_cstr(mrb, error->message));
     exception = mrb_obj_new(mrb, E_SYNTAX_ERROR, 1, new_args);
     mrb_parser_free(parser);
-    mrbc_context_free(mrb, ctx);
+    mrbc_context_free(mrb, compile_ctx);
 
     mrb_exc_raise(mrb, exception);
   }
@@ -77,7 +77,7 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
     *iseq = MKOP_AB(OP_RETURN, 1, OP_R_NORMAL);
   }
   mrb_parser_free(parser);
-  mrbc_context_free(mrb, ctx);
+  mrbc_context_free(mrb, compile_ctx);
   return mrb_obj_value(proc);
 }
 
