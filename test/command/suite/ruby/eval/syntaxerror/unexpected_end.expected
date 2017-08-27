@@ -1,0 +1,15 @@
+plugin_register ruby/eval
+[[0,0.0,0.0],true]
+ruby_eval "begin"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "exception": {
+      "message": "line 1:5: syntax error, unexpected $end"
+    }
+  }
+]

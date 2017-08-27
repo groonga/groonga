@@ -33,11 +33,36 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
 {
   char *script;
   mrb_int script_length;
+  mrbc_context* ctx;
   struct mrb_parser_state *parser;
   struct RProc *proc;
 
+  ctx = mrbc_context_new(mrb);
+  if (!ctx)
+  {
+    mrb_raise(mrb,E_RUNTIME_ERROR, "mrbc_context_new failed.");
+  }
+  ctx->capture_errors = 1;
+
   mrb_get_args(mrb, "s", &script, &script_length);
-  parser = mrb_parse_nstring(mrb, script, script_length, NULL);
+  parser = mrb_parse_nstring(mrb, script, script_length, ctx);
+  if (!parser)
+  {
+    mrbc_context_free(mrb, ctx);
+    mrb_raise(mrb,E_RUNTIME_ERROR, "mrb_parse_nstring failed.");
+  }
+  if (parser->nerr > 0)
+  {
+    mrb_value errormessage = mrb_format(mrb, "line %S:%S: %S",
+      mrb_fixnum_value(parser->error_buffer[0].lineno),
+      mrb_fixnum_value(parser->error_buffer[0].column),
+      mrb_str_new_cstr(mrb, parser->error_buffer[0].message));
+    mrb_parser_free(parser);
+    mrbc_context_free(mrb, ctx);
+
+    mrb_raisef(mrb, E_ARGUMENT_ERROR, "%S", errormessage);
+  }
+
   proc = mrb_generate_code(mrb, parser);
   {
     mrb_code *iseq = proc->body.irep->iseq;
@@ -47,7 +72,7 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
     *iseq = MKOP_AB(OP_RETURN, 1, OP_R_NORMAL);
   }
   mrb_parser_free(parser);
-
+  mrbc_context_free(mrb, ctx);
   return mrb_obj_value(proc);
 }
 
