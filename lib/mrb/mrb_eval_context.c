@@ -38,21 +38,18 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
   struct RProc *proc;
 
   ctx = mrbc_context_new(mrb);
-  if (!ctx)
-  {
+  if (!ctx) {
     mrb_raise(mrb,E_RUNTIME_ERROR, "mrbc_context_new failed.");
   }
   ctx->capture_errors = 1;
 
   mrb_get_args(mrb, "s", &script, &script_length);
   parser = mrb_parse_nstring(mrb, script, script_length, ctx);
-  if (!parser)
-  {
+  if (!parser) {
     mrbc_context_free(mrb, ctx);
     mrb_raise(mrb,E_RUNTIME_ERROR, "mrb_parse_nstring failed.");
   }
-  if (parser->nerr > 0)
-  {
+  if (parser->nerr > 0) {
     mrb_value errormessage = mrb_format(mrb, "line %S:%S: %S",
       mrb_fixnum_value(parser->error_buffer[0].lineno),
       mrb_fixnum_value(parser->error_buffer[0].column),
