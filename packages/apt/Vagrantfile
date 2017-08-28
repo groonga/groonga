@@ -27,10 +27,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   vms.each do |vm|
     config.vm.define(vm[:id]) do |node|
       # Use official box
-      #node.vm.box = vm[:box]
+      node.vm.box = vm[:box] if vm[:box]
       # Use box and box_url until official box is released
-      node.vm.box = vm[:id]
-      node.vm.box_url = vm[:box_url]
+      node.vm.box = vm[:id] if vm[:box_url]
+      node.vm.box_url = vm[:box_url] if vm[:box_url]
       hour_in_seconds = 60 * 60
       node.vm.boot_timeout = 1 * hour_in_seconds
       node.vm.provision(:shell, :privileged => false, :path => "build-deb.sh")
