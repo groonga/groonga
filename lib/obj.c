@@ -648,7 +648,7 @@ grn_obj_get_io(grn_ctx *ctx, grn_obj *obj)
 size_t
 grn_obj_get_disk_usage(grn_ctx *ctx, grn_obj *obj)
 {
-  size_t usage;
+  size_t usage = 0;
 
   GRN_API_ENTER;
 
