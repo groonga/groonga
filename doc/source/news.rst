@@ -60,8 +60,19 @@ Fixes
 * [:doc:`/reference/commands/dump`] Fixed a bug that the 7-th unnamed
   parameter for `--sort_hash_table` option is ignored.
 
+* [:doc:`/reference/commands/schema`] Fixed a typo in command line
+  parameter name. It should be `source` instead of `sources`.
+  [groonga-dev,04449] [Reported by murata satoshi]
+
+* [:doc:`/reference/commands/ruby_eval`] Fixed crash when ruby_eval
+  returned syntax error. [GitHub#751] [Patch by ryo-pinus]
+
 Thanks
 ^^^^^^
+
+* murata satoshi
+
+* ryo-pinus
 
 .. _release-7-0-5:
 
