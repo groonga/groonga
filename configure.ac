@@ -152,15 +152,11 @@ NO_FLOAT_EQUAL_CFLAGS=""
 NO_BAD_FUNCTION_CAST_CFLAGS=""
 if test "$GCC" = "yes"; then
   CHECK_BUILD_FLAG([-Wall])
-  CHECK_BUILD_FLAG([-Wextra])
   if test "x$check_cflag" = "xno"; then
     CHECK_BUILD_FLAG([-W])
   fi
   CHECK_BUILD_FLAG([-Wno-unused-but-set-variable]) # FIXME: enable it.
-  CHECK_BUILD_FLAG([-Wno-unused-parameter])
-  CHECK_BUILD_FLAG([-Wno-sign-compare])
   CHECK_CFLAG([-Wno-pointer-sign])
-  CHECK_BUILD_FLAG([-Wno-missing-field-initializers])
   CHECK_CFLAG([-Wno-declaration-after-statement])
 
   CHECK_BUILD_FLAG([-Wformat])
@@ -192,18 +188,6 @@ if test "$GCC" = "yes"; then
 
   CHECK_CXXFLAG([-fexceptions])
   CHECK_CXXFLAG([-fimplicit-templates])
-
-  CFLAGS_for_source="$CFLAGS"
-  CXXFLAGS_for_source="$CXXFLAGS"
-  CHECK_BUILD_FLAG([-Wno-clobbered])
-  if test "x$check_cflag" = "xyes"; then
-    TEST_CFLAGS="-Wno-clobbered"
-  fi
-  if test "x$check_cxxflag" = "xyes"; then
-    TEST_CXXFLAGS="-Wno-clobbered"
-  fi
-  CFLAGS="$CFLAGS_for_source"
-  CXXFLAGS="$CXXFLAGS_for_source"
 fi
 AC_SUBST(TEST_CFLAGS)
 AC_SUBST(TEST_CXXFLAGS)
