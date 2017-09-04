@@ -22,7 +22,7 @@ init:
   - set PATH=C:\Ruby22\bin;%PATH%
   - set PATH=C:\msys64\usr\bin;%PATH%
   - call
-      "C:\Program Files (x86)\Microsoft Visual Studio %VC_VERSION%.0\VC\vcvarsall.bat"
+      "C:\Program Files (x86)\Microsoft Visual Studio %VS_VERSION%.0\VC\vcvarsall.bat"
       "%ARCH%"
 #  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
@@ -39,7 +39,7 @@ build_script:
   - ruby download_message_pack.rb
   - ruby download_lz4.rb
   - cd ..
-  - set CMAKE_GENERATOR_NAME="Visual Studio %VC_VERSION%"
+  - set CMAKE_GENERATOR_NAME="Visual Studio %VS_VERSION%"
   - if "%VS_VERSION%" == "12"
       set CMAKE_GENERATOR_NAME="%CMAKE_GENERATOR_NAME% 2013"
   - if "%VS_VERSION%" == "14"
