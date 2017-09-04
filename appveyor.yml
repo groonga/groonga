@@ -23,7 +23,7 @@ init:
   - set PATH=C:\msys64\usr\bin;%PATH%
   - call
       "C:\Program Files (x86)\Microsoft Visual Studio %VS_VERSION%.0\VC\vcvarsall.bat"
-      "%ARCH%"
+      %ARCH%
 #  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
