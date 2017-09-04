@@ -46,6 +46,7 @@ build_script:
       set CMAKE_GENERATOR_NAME="%CMAKE_GENERATOR_NAME% 2015"
   - if "%ARCH%" == "amd64"
       set CMAKE_GENERATOR_NAME="%CMAKE_GENERATOR_NAME% Win64"
+  - echo "<%CMAKE_GENERATOR_NAME%>"
   - cmake . -G "%CMAKE_GENERATOR_NAME%"
       -DCMAKE_INSTALL_PREFIX=c:\groonga
       -DGRN_WITH_MRUBY=yes
