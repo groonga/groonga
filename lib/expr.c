@@ -7423,17 +7423,19 @@ parse_query(grn_ctx *ctx, efs_info *q)
   grn_operator mode;
   efs_op op_, *op = &op_;
   grn_bool first_token = GRN_TRUE;
+  grn_bool only_first_and = GRN_FALSE;
   grn_bool block_started = GRN_FALSE;
 
   op->op = q->default_op;
   op->weight = DEFAULT_WEIGHT;
   while (!ctx->rc) {
     skip_space(ctx, q);
+
     if (q->cur >= q->str_end) { goto exit; }
+    if (*q->cur == '\0') { goto exit; }
+
+    only_first_and = GRN_FALSE;
     switch (*q->cur) {
-    case '\0' :
-      goto exit;
-      break;
     case GRN_QUERY_PARENR :
       if (q->paren_depth == 0 && q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR) {
         const char parenr = GRN_QUERY_PARENR;
@@ -7513,7 +7515,9 @@ parse_query(grn_ctx *ctx, efs_info *q)
       }
       break;
     case GRN_QUERY_AND :
-      if (!first_token) {
+      if (first_token) {
+        only_first_and = GRN_TRUE;
+      } else {
         op->op = GRN_OP_AND;
         parse_query_accept_logical_op(ctx,
                                       q,
@@ -7611,6 +7615,12 @@ exit :
                                 q,
                                 q->pending_token.string,
                                 q->pending_token.string_length);
+    } else if (only_first_and) {
+      const char query_and[] = {GRN_QUERY_AND};
+      parse_query_accept_string(ctx,
+                                q,
+                                query_and,
+                                1);
     }
     if (q->paren_depth > 0) {
       int paren_depth = q->paren_depth;
