@@ -1829,6 +1829,10 @@ grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 
   rc = grn_fileinfo_open_common(ctx, fi, path, flags);
   if (rc != GRN_SUCCESS) {
+    if (fi->fh) {
+      CloseHandle(fi->fh);
+      fi->fh = INVALID_HANDLE_VALUE;
+    }
     return rc;
   }
 
