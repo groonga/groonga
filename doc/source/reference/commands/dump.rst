@@ -29,13 +29,13 @@ Syntax
 ------
 ::
 
-   dump [tables]
-        [dump_plugins]
-        [dump_schema]
-        [dump_records]
-        [dump_indexes]
-        [dump_configs]
-        [sort_hash_table]
+   dump [tables=null]
+        [dump_plugins=yes]
+        [dump_schema=yes]
+        [dump_records=yes]
+        [dump_indexes=yes]
+        [dump_configs=yes]
+        [sort_hash_table=no]
 
 Usage
 -----
