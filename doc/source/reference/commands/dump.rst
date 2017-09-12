@@ -230,7 +230,7 @@ The default value is ``yes``.
 .. versionadded:: 7.0.5
 
 You can ascending sort by ``_key`` the output of hash table when it contains hash table.
-To don't sort the output of hash table, specify ``no``.
+To sort the output of hash table, specify ``yes``.
 
 The default value is ``no``.
 
