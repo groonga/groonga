@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -264,7 +264,7 @@ typedef pthread_key_t grn_thread_key;
   #define GRN_TEST_YIELD() do {\
     if (((++grn_uyield_count) & (0x20 - 1)) == 0) {\
       sched_yield();\
-      if(grn_uyield_count > 0x1000) {\
+      if (grn_uyield_count > 0x1000) {\
         grn_uyield_count = (uint32_t)time(NULL) % 0x1000;\
       }\
     }\
@@ -279,7 +279,7 @@ typedef pthread_key_t grn_thread_key;
     GRN_TEST_YIELD();\
   } while (0)
 
-  #define if(if_cond) \
+  #define if (if_cond) \
     if ((((++grn_uyield_count) & (0x100 - 1)) != 0 || (sched_yield() * 0) == 0) && (if_cond))
   #define while(while_cond) \
     while ((((++grn_uyield_count) & (0x100 - 1)) != 0 || (sched_yield() * 0) == 0) && (while_cond))
