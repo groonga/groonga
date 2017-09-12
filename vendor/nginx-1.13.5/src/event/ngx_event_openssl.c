@@ -924,6 +924,7 @@ ngx_ssl_read_password_file(ngx_conf_t *cf, ngx_str_t *file)
     cln->data = passwords;
 
     fd = ngx_open_file(file->data, NGX_FILE_RDONLY, NGX_FILE_OPEN, 0);
+
     if (fd == NGX_INVALID_FILE) {
         ngx_conf_log_error(NGX_LOG_EMERG, cf, ngx_errno,
                            ngx_open_file_n " \"%s\" failed", file->data);
@@ -2905,7 +2906,9 @@ ngx_ssl_session_ticket_keys(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_array_t *paths)
         file.name = path[i];
         file.log = cf->log;
 
-        file.fd = ngx_open_file(file.name.data, NGX_FILE_RDONLY, 0, 0);
+        file.fd = ngx_open_file(file.name.data, NGX_FILE_RDONLY,
+                                NGX_FILE_OPEN, 0);
+
         if (file.fd == NGX_INVALID_FILE) {
             ngx_conf_log_error(NGX_LOG_EMERG, cf, ngx_errno,
                                ngx_open_file_n " \"%V\" failed", &file.name);
@@ -3548,13 +3551,22 @@ ngx_ssl_get_server_name(ngx_connection_t *c, ngx_pool_t *pool, ngx_str_t *s)
 {
 #ifdef SSL_CTRL_SET_TLSEXT_HOSTNAME
 
-    const char  *servername;
+    size_t       len;
+    const char  *name;
 
-    servername = SSL_get_servername(c->ssl->connection,
-                                    TLSEXT_NAMETYPE_host_name);
-    if (servername) {
-        s->data = (u_char *) servername;
-        s->len = ngx_strlen(servername);
+    name = SSL_get_servername(c->ssl->connection, TLSEXT_NAMETYPE_host_name);
+
+    if (name) {
+        len = ngx_strlen(name);
+
+        s->len = len;
+        s->data = ngx_pnalloc(pool, len);
+        if (s->data == NULL) {
+            return NGX_ERROR;
+        }
+
+        ngx_memcpy(s->data, name, len);
+
         return NGX_OK;
     }
 
@@ -3654,6 +3666,36 @@ ngx_ssl_get_certificate(ngx_connection_t *c, ngx_pool_t *pool, ngx_str_t *s)
             *p++ = '\t';
         }
     }
+
+    return NGX_OK;
+}
+
+
+ngx_int_t
+ngx_ssl_get_escaped_certificate(ngx_connection_t *c, ngx_pool_t *pool,
+    ngx_str_t *s)
+{
+    ngx_str_t  cert;
+    uintptr_t  n;
+
+    if (ngx_ssl_get_raw_certificate(c, pool, &cert) != NGX_OK) {
+        return NGX_ERROR;
+    }
+
+    if (cert.len == 0) {
+        s->len = 0;
+        return NGX_OK;
+    }
+
+    n = ngx_escape_uri(NULL, cert.data, cert.len, NGX_ESCAPE_URI_COMPONENT);
+
+    s->len = cert.len + n * 2;
+    s->data = ngx_pnalloc(pool, s->len);
+    if (s->data == NULL) {
+        return NGX_ERROR;
+    }
+
+    ngx_escape_uri(s->data, cert.data, cert.len, NGX_ESCAPE_URI_COMPONENT);
 
     return NGX_OK;
 }
