@@ -3601,18 +3601,7 @@ main(int argc, char **argv)
               default_command_version_arg);
       return EXIT_FAILURE;
     }
-    switch (value) {
-    case 1 :
-      default_command_version = GRN_COMMAND_VERSION_1;
-      break;
-    case 2 :
-      default_command_version = GRN_COMMAND_VERSION_2;
-      break;
-    default :
-      fprintf(stderr, "invalid command version: <%s>\n",
-              default_command_version_arg);
-      return EXIT_FAILURE;
-    }
+    default_command_version = value;
   } else {
     default_command_version = default_default_command_version;
   }
