@@ -113,8 +113,8 @@ Here is a list of built-in tokenizers:
   * ``TokenBigramSplitSymbolAlphaDigit``
   * ``TokenBigramIgnoreBlank``
   * ``TokenBigramIgnoreBlankSplitSymbol``
-  * ``TokenBigramIgnoreBlankSplitAlpha``
-  * ``TokenBigramIgnoreBlankSplitAlphaDigit``
+  * ``TokenBigramIgnoreBlankSplitSymbolAlpha``
+  * ``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``
   * ``TokenUnigram``
   * ``TokenTrigram``
   * ``TokenDelimit``

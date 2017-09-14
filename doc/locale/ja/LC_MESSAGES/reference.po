@@ -26155,10 +26155,10 @@ msgstr ""
 msgid "``TokenBigramIgnoreBlankSplitSymbol``"
 msgstr ""
 
-msgid "``TokenBigramIgnoreBlankSplitAlpha``"
+msgid "``TokenBigramIgnoreBlankSplitSymbolAlpha``"
 msgstr ""
 
-msgid "``TokenBigramIgnoreBlankSplitAlphaDigit``"
+msgid "``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``"
 msgstr ""
 
 msgid "``TokenUnigram``"
@@ -26424,9 +26424,6 @@ msgstr ""
 msgid "Here is a result by ``TokenBigramIgnoreBlankSplitSymbol``:"
 msgstr "``TokenBigramIgnoreBlankSplitSymbol`` の実行結果です。"
 
-msgid "``TokenBigramIgnoreBlankSplitSymbolAlpha``"
-msgstr ""
-
 msgid ""
 "``TokenBigramIgnoreBlankSplitSymbolAlpha`` is similar to :ref:`token-"
 "bigram`. The differences between them are the followings:"
@@ -26460,9 +26457,6 @@ msgstr ""
 
 msgid "Here is a result by ``TokenBigramIgnoreBlankSplitSymbolAlpha``:"
 msgstr "``TokenBigramIgnoreBlankSplitSymbolAlpha`` の実行結果です。"
-
-msgid "``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``"
-msgstr ""
 
 msgid ""
 "``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` is similar to :ref:`token-"
