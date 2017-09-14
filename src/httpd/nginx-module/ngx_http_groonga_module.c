@@ -55,6 +55,7 @@ typedef struct {
   grn_obj *database;
   grn_cache *cache;
   ngx_str_t cache_base_path;
+  ngx_flag_t log_location_uri;
 } ngx_http_groonga_loc_conf_t;
 
 typedef struct {
@@ -672,9 +673,15 @@ ngx_http_groonga_handler_process_command_path(ngx_http_request_t *r,
                                               int flags)
 {
   grn_obj uri;
+  ngx_http_groonga_loc_conf_t * location_conf;
 
   GRN_TEXT_INIT(&uri, 0);
-  GRN_TEXT_PUTS(context, &uri, "/d/");
+  location_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
+  if (location_conf->log_location_uri) {
+    GRN_TEXT_PUTS(context, &uri, location_conf->name);
+  } else {
+    GRN_TEXT_PUTS(context, &uri, "/d/");
+  }
   GRN_TEXT_PUT(context, &uri, command_path->data, command_path->len);
   grn_ctx_send(context, GRN_TEXT_VALUE(&uri), GRN_TEXT_LEN(&uri), flags);
   data->rc = context->rc;
@@ -1202,6 +1209,7 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
   conf->cache = NULL;
   conf->cache_base_path.data = NULL;
   conf->cache_base_path.len = 0;
+  conf->log_location_uri = NGX_CONF_UNSET;
 
   return conf;
 }
@@ -1643,6 +1651,13 @@ static ngx_command_t ngx_http_groonga_commands[] = {
     ngx_conf_set_str_slot,
     NGX_HTTP_LOC_CONF_OFFSET,
     offsetof(ngx_http_groonga_loc_conf_t, cache_base_path),
+    NULL },
+
+  { ngx_string("groonga_log_location_uri"),
+    NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+    ngx_conf_set_flag_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    offsetof(ngx_http_groonga_loc_conf_t, log_location_uri),
     NULL },
 
   ngx_null_command
