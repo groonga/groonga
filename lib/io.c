@@ -1232,9 +1232,11 @@ grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info)
         if (!info->map && !path_exist) {
           if (grn_unlink(path) == 0) {
             GRN_LOG(ctx, GRN_LOG_INFO,
-                    "[io][map][error] removed empty file: <%s>", path);
+                    "[io][map][error] memory mapping is failed and then "
+                    "removed created map file: <%s>", path);
           } else {
-            ERRNO_ERR("[io][map][error] failed to remove empty file: <%s>", path);
+            ERRNO_ERR("[io][map][error] memory mapping is failed and then "
+                      "failed to remove created map file: <%s>", path);
           }
         }
       }
