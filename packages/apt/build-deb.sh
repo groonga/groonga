@@ -21,7 +21,7 @@ run sudo swapon "$swap_file"
 run sudo sed -i'' -e 's/httpredir/ftp.jp/g' /etc/apt/sources.list
 
 run sudo apt-get update
-run sudo apt-get install -y lsb-release
+run sudo apt-get install -y lsb-release apt-transport-https
 
 distribution=$(lsb_release --id --short | tr 'A-Z' 'a-z')
 code_name=$(lsb_release --codename --short)
