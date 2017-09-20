@@ -69,7 +69,7 @@ The max number of text parts is 3. If there are 4 or more text parts
 that include the keywords, only the leading 3 parts are only used.
 
 The max size of a text part is 200byte. The unit is bytes not
-characters. The size doesn't include inserted ``<span keyword="keyword">``
+characters. The size doesn't include inserted ``<span class="keyword">``
 and ``</span>``.
 
 Both the max number of text parts and the max size of a text part
@@ -92,7 +92,7 @@ An element of array is a snippet::
   [SNIPPET1, SNIPPET2, SNIPPET3]
 
 A snippet includes one or more keywords. The max byte size of a
-snippet except ``<span keyword="keyword">`` and ``</span>`` is
+snippet except ``<span class="keyword">`` and ``</span>`` is
 200byte. The unit isn't the number of characters.
 
 The array size is larger than or equal to 0 and less than or equal
