@@ -218,9 +218,6 @@ Release 7.0.3 - 2017-05-29
 Improvements
 ^^^^^^^^^^^^
 
-Fixes
-^^^^^
-
 * [:doc:`/reference/commands/select`] Add document about
   :ref:`full-text-search-with-specific-index-name`.
 
