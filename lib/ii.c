@@ -5342,7 +5342,8 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                       "buffer(%d,%d) is reused by another thread: %p",
                       c->buffer_pseg, *c->ppseg,
                       c);
-              // todo : rewind;
+              c->pb.rid = GRN_ID_NIL;
+              break;
             }
             c->bp = GRN_NEXT_ADDR(br);
             GRN_B_DEC(c->pb.rid, c->bp);
@@ -5352,8 +5353,17 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
               c->pb.sid = 1;
             }
             if (lrid > c->pb.rid || (lrid == c->pb.rid && lsid >= c->pb.sid)) {
-              ERR(GRN_FILE_CORRUPT, "brokend!! (%d:%d) -> (%d:%d) (%d->%d)",
-                  lrid, lsid, c->pb.rid, c->pb.sid, c->buffer_pseg, *c->ppseg);
+              DEFINE_NAME(c->ii);
+              ERR(GRN_FILE_CORRUPT,
+                  "[ii][broken][cursor][next][buffer] "
+                  "posting in list in buffer isn't sorted: "
+                  "<%.*s>: (%d:%d) -> (%d:%d) (%d->%d)",
+                  name_size, name,
+                  lrid, lsid,
+                  c->pb.rid, c->pb.sid,
+                  c->buffer_pseg, *c->ppseg);
+              c->pb.rid = GRN_ID_NIL;
+              break;
             }
             if (c->pb.rid < c->min) {
               c->pb.rid = 0;
@@ -5489,9 +5499,12 @@ grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c)
           }
         } else if (c->post == &c->pb) {
           if (buffer_is_reused(ctx, c->ii, c)) {
-            GRN_LOG(ctx, GRN_LOG_DEBUG, "buffer reused(%d,%d)",
-                    c->buffer_pseg, *c->ppseg);
-            // todo : rewind;
+            GRN_LOG(ctx, GRN_LOG_WARNING,
+                    "[ii][cursor][next][pos][buffer] "
+                    "buffer(%d,%d) is reused by another thread: %p",
+                    c->buffer_pseg, *c->ppseg,
+                    c);
+            return NULL;
           }
           if (c->pb.rest) {
             c->pb.rest--;
