@@ -1054,6 +1054,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
   grn_obj request_id;
   double request_timeout;
   const char *p = path, *e = path + path_len, *v, *key_end, *filename_end;
+  const char *slash_delimiter;
 
   request_timeout = grn_get_default_request_timeout();
 
@@ -1063,8 +1064,10 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
   if (!GRN_TEXT_LEN(&buf)) { GRN_TEXT_SETS(ctx, &buf, INDEX_HTML); }
   v = GRN_TEXT_VALUE(&buf);
   grn_str_get_mime_type(ctx, v, GRN_BULK_CURR(&buf), &key_end, &filename_end);
-  if ((GRN_TEXT_LEN(&buf) >= 2 && v[0] == 'd' && v[1] == '/')) {
-    const char *command_name = v + 2;
+
+  slash_delimiter = strchr(v, '/');
+  if ((GRN_TEXT_LEN(&buf) >= 2 && slash_delimiter)) {
+    const char *command_name = slash_delimiter + 1;
     int command_name_size = key_end - command_name;
     expr = grn_ctx_get(ctx, command_name, command_name_size);
     if (expr && command_proc_p(expr)) {
