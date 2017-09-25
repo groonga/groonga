@@ -4963,18 +4963,18 @@ struct _grn_ii_cursor {
   uint32_t prev_chunk_rid;
 };
 
-static int
+static grn_bool
 buffer_is_reused(grn_ctx *ctx, grn_ii *ii, grn_ii_cursor *c)
 {
   if (*c->ppseg != c->buffer_pseg) {
     uint32_t i;
     for (i = ii->header->bgqtail; i != ii->header->bgqhead;
          i = (i + 1) & (GRN_II_BGQSIZE - 1)) {
-      if (ii->header->bgqbody[i] == c->buffer_pseg) { return 0; }
+      if (ii->header->bgqbody[i] == c->buffer_pseg) { return GRN_FALSE; }
     }
-    return 1;
+    return GRN_TRUE;
   }
-  return 0;
+  return GRN_FALSE;
 }
 
 static int
