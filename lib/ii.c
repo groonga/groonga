@@ -5241,7 +5241,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                             "while decoding: %p",
                             c->cinfo[c->curr_chunk].segno,
                             c);
-                    c->pc.rid = 0;
+                    c->pc.rid = GRN_ID_NIL;
                     break;
                   }
                   if (buffer_is_reused(ctx, c->ii, c)) {
@@ -5249,7 +5249,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                             "[ii][cursor][next][chunk][last] "
                             "buffer is reused by another thread: %p",
                             c);
-                    c->pc.rid = 0;
+                    c->pc.rid = GRN_ID_NIL;
                     break;
                   }
                   if (chunk_is_reused(ctx, c->ii, c,
@@ -5260,11 +5260,11 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                             "chunk(%d) is reused by another thread: %p",
                             c->buf->header.chunk,
                             c);
-                    c->pc.rid = 0;
+                    c->pc.rid = GRN_ID_NIL;
                     break;
                   }
                 } else {
-                  c->pc.rid = 0;
+                  c->pc.rid = GRN_ID_NIL;
                   break;
                 }
               } else {
@@ -5285,7 +5285,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                             "while decoding: %p",
                             c->cinfo[c->curr_chunk].segno,
                             c);
-                    c->pc.rid = 0;
+                    c->pc.rid = GRN_ID_NIL;
                     break;
                   }
                   if (chunk_is_reused(ctx, c->ii, c,
@@ -5295,11 +5295,11 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                             "chunk(%d) is reused by another thread: %p",
                             c->cinfo[c->curr_chunk].segno,
                             c);
-                    c->pc.rid = 0;
+                    c->pc.rid = GRN_ID_NIL;
                     break;
                   }
                 } else {
-                  c->pc.rid = 0;
+                  c->pc.rid = GRN_ID_NIL;
                   break;
                 }
               }
@@ -5319,13 +5319,13 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                 }
               }
               c->prev_chunk_rid = c->pc.rid;
-              c->pc.rid = 0;
+              c->pc.rid = GRN_ID_NIL;
               c->pc.sid = 0;
               c->pc.rest = 0;
               c->curr_chunk++;
               continue;
             } else {
-              c->pc.rid = 0;
+              c->pc.rid = GRN_ID_NIL;
             }
           }
           break;
