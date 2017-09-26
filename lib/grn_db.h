@@ -243,6 +243,7 @@ struct _grn_proc {
     struct {
       grn_selector_func *selector;
       grn_operator selector_op;
+      grn_bool is_stable;
     } function;
     struct {
       grn_command_run_func *run;

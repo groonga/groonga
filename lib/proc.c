@@ -4027,17 +4027,24 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
 
   DEF_COMMAND("normalizer_list", proc_normalizer_list, 0, vars);
 
-  DEF_VAR(vars[0], "seed");
-  grn_proc_create(ctx, "rand", -1, GRN_PROC_FUNCTION, func_rand,
-                  NULL, NULL, 0, vars);
+  {
+    grn_obj *proc;
+    proc = grn_proc_create(ctx, "rand", -1, GRN_PROC_FUNCTION, func_rand,
+                           NULL, NULL, 0, NULL);
+    grn_proc_set_is_stable(ctx, proc, GRN_FALSE);
+  }
 
-  grn_proc_create(ctx, "now", -1, GRN_PROC_FUNCTION, func_now,
-                  NULL, NULL, 0, vars);
+  {
+    grn_obj *proc;
+    proc = grn_proc_create(ctx, "now", -1, GRN_PROC_FUNCTION, func_now,
+                           NULL, NULL, 0, NULL);
+    grn_proc_set_is_stable(ctx, proc, GRN_FALSE);
+  }
 
   grn_proc_create(ctx, "max", -1, GRN_PROC_FUNCTION, func_max,
-                  NULL, NULL, 0, vars);
+                  NULL, NULL, 0, NULL);
   grn_proc_create(ctx, "min", -1, GRN_PROC_FUNCTION, func_min,
-                  NULL, NULL, 0, vars);
+                  NULL, NULL, 0, NULL);
 
   {
     grn_obj *selector_proc;

@@ -264,6 +264,27 @@ grn_proc_get_selector_operator(grn_ctx *ctx, grn_obj *proc)
   return proc_->callbacks.function.selector_op;
 }
 
+grn_rc
+grn_proc_set_is_stable(grn_ctx *ctx, grn_obj *proc, grn_bool is_stable)
+{
+  grn_proc *proc_ = (grn_proc *)proc;
+  if (!grn_obj_is_function_proc(ctx, proc)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  proc_->callbacks.function.is_stable = is_stable;
+  return GRN_SUCCESS;
+}
+
+grn_bool
+grn_proc_is_stable(grn_ctx *ctx, grn_obj *proc)
+{
+  grn_proc *proc_ = (grn_proc *)proc;
+  if (!grn_obj_is_function_proc(ctx, proc)) {
+    return GRN_FALSE;
+  }
+  return proc_->callbacks.function.is_stable;
+}
+
 /* grn_expr */
 
 grn_obj *
@@ -963,17 +984,20 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
           GRN_OBJ_FIN(ctx, &buffer);
           goto exit;
         }
+
+        PUSH_CODE(e, op, obj, nargs, code);
+        {
+          int i = nargs - 1;
+          while (i--) { dfi = grn_expr_dfi_pop(e); }
+        }
+        if (!obj) { dfi = grn_expr_dfi_pop(e); }
+        // todo : increment e->values_tail.
+        /* cannot identify type of return value */
+        grn_expr_dfi_put(ctx, e, type, domain, code);
+        if (!grn_proc_is_stable(ctx, proc)) {
+          e->cacheable = 0;
+        }
       }
-      PUSH_CODE(e, op, obj, nargs, code);
-      {
-        int i = nargs - 1;
-        while (i--) { dfi = grn_expr_dfi_pop(e); }
-      }
-      if (!obj) { dfi = grn_expr_dfi_pop(e); }
-      // todo : increment e->values_tail.
-      /* cannot identify type of return value */
-      grn_expr_dfi_put(ctx, e, type, domain, code);
-      e->cacheable = 0;
       break;
     case GRN_OP_INTERN :
       if (obj && CONSTP(obj)) {

@@ -826,6 +826,11 @@ GRN_API grn_rc grn_proc_set_selector_operator(grn_ctx *ctx,
 GRN_API grn_operator grn_proc_get_selector_operator(grn_ctx *ctx,
                                                     grn_obj *proc);
 
+GRN_API grn_rc grn_proc_set_is_stable(grn_ctx *ctx,
+                                      grn_obj *proc,
+                                      grn_bool is_stable);
+GRN_API grn_bool grn_proc_is_stable(grn_ctx *ctx, grn_obj *proc);
+
 /*-------------------------------------------------------------
  * grn_vector
 */
