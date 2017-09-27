@@ -246,6 +246,7 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
 }
 
 bool grn_dat_rebuild_trie(grn_ctx *ctx, grn_dat *dat) {
+  const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
   grn::dat::Trie * const new_trie = new (std::nothrow) grn::dat::Trie;
   if (!new_trie) {
     MERR("new grn::dat::Trie failed");
@@ -253,17 +254,22 @@ bool grn_dat_rebuild_trie(grn_ctx *ctx, grn_dat *dat) {
   }
 
   const uint32_t file_id = dat->header->file_id;
-  try {
-    char trie_path[PATH_MAX];
-    grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, file_id + 1);
-    const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
-    new_trie->create(*trie, trie_path, trie->file_size() * 2);
-  } catch (const grn::dat::Exception &ex) {
-    ERR(grn_dat_translate_error_code(ex.code()),
-        "grn::dat::Trie::open failed: %s",
-        ex.what());
-    delete new_trie;
-    return false;
+  char trie_path[PATH_MAX];
+  grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, file_id + 1);
+
+  for (uint64_t file_size = trie->file_size() * 2;; file_size *= 2) {
+    try {
+      new_trie->create(*trie, trie_path, file_size);
+    } catch (const grn::dat::SizeError &) {
+      continue;
+    } catch (const grn::dat::Exception &ex) {
+      ERR(grn_dat_translate_error_code(ex.code()),
+          "grn::dat::Trie::open failed: %s",
+          ex.what());
+      delete new_trie;
+      return false;
+    }
+    break;
   }
 
   grn::dat::Trie * const old_trie = static_cast<grn::dat::Trie *>(dat->old_trie);
