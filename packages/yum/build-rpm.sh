@@ -58,8 +58,8 @@ run mkdir -p "${rpm_dir}" "${srpm_dir}"
 
 build_fedora_srpm()
 {
-    base=http://download.fedoraproject.org/pub/fedora/linux/releases/23/Everything/source/SRPMS/m
-    update=http://download.fedoraproject.org/pub/fedora/linux/updates/23/SRPMS
+    base=http://download.fedoraproject.org/pub/fedora/linux/releases/26/Everything/source/tree/Packages/m
+    update=http://download.fedoraproject.org/pub/fedora/linux/updates/26/SRPMS
     srpm="$1"
     srpm_base="$2"
 
