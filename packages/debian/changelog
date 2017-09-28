@@ -1,3 +1,9 @@
+groonga (7.0.7-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Kentaro Hayashi <hayashi@clear-code.com>  Fri, 29 Sep 2017 00:00:00 +0900
+
 groonga (7.0.6-1) unstable; urgency=low
 
   * New upstream release.
