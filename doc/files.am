@@ -883,6 +883,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/types.rst \
 	$(top_srcdir)/doc/source/reference/window_function.rst \
 	$(top_srcdir)/doc/source/reference/window_functions/record_number.rst \
+	$(top_srcdir)/doc/source/reference/window_functions/window_count.rst \
 	$(top_srcdir)/doc/source/reference/window_functions/window_record_number.rst \
 	$(top_srcdir)/doc/source/reference/window_functions/window_sum.rst \
 	$(top_srcdir)/doc/source/server.rst \
@@ -1810,6 +1811,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/types.rst \
 	source/reference/window_function.rst \
 	source/reference/window_functions/record_number.rst \
+	source/reference/window_functions/window_count.rst \
 	source/reference/window_functions/window_record_number.rst \
 	source/reference/window_functions/window_sum.rst \
 	source/server.rst \
@@ -2184,6 +2186,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/types.txt \
 	html/_sources/reference/window_function.txt \
 	html/_sources/reference/window_functions/record_number.txt \
+	html/_sources/reference/window_functions/window_count.txt \
 	html/_sources/reference/window_functions/window_record_number.txt \
 	html/_sources/reference/window_functions/window_sum.txt \
 	html/_sources/server.txt \
@@ -2459,6 +2462,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/types.html \
 	html/reference/window_function.html \
 	html/reference/window_functions/record_number.html \
+	html/reference/window_functions/window_count.html \
 	html/reference/window_functions/window_record_number.html \
 	html/reference/window_functions/window_sum.html \
 	html/search.html \
