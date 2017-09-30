@@ -126,6 +126,7 @@ const UInt64 MIN_FILE_SIZE              = 1 << 16;
 const UInt64 DEFAULT_FILE_SIZE          = 1 << 20;
 const UInt64 MAX_FILE_SIZE              = (UInt64)1 << 40;
 const double DEFAULT_NUM_NODES_PER_KEY  = 4.0;
+const double MAX_NUM_NODES_PER_KEY      = 16.0;
 const double DEFAULT_AVERAGE_KEY_LENGTH = 16.0;
 const UInt32 MAX_KEY_BUF_SIZE           = 0x80000000U;
 const UInt32 MAX_TOTAL_KEY_LENGTH       = 0xFFFFFFFFU;
