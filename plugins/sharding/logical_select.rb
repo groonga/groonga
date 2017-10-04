@@ -155,11 +155,11 @@ module Groonga
           result_sets.each do |result_set|
             if result_set.size > current_offset
               writer.write_table_records(result_set, output_columns, options)
+              current_limit -= result_set.size
             end
             if current_offset > 0
               current_offset = [current_offset - result_set.size, 0].max
             end
-            current_limit -= result_set.size
             break if current_limit <= 0
             options[:offset] = current_offset
             options[:limit] = current_limit
