@@ -7,6 +7,65 @@
 News
 ====
 
+.. _release-7-0-7:
+
+Release 7.0.7 - 2017-09-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported ``+`` query for ``QUERY_NO_SYNTAX_ERROR``.
+
+* [httpd] Updated bundled nginx to 1.13.5.
+
+* [:doc:`/reference/commands/dump`] Fixed document to add the default argument values to the syntax of dump.
+
+* Improved error messages when memory mapping is failed.
+
+* [:doc:`/reference/command/command_version`] Supported ``--default-command-version 3``.
+
+* Supported caching select result with function call.
+  New API:
+
+  * ``grn_proc_set_is_stable()``
+  * ``grn_proc_is_stable()``
+
+  CAUTION: If you add a new function that may return different result with
+  the same argument, you must call grn_proc_is_stable(ctx, proc,
+  GRN_FALSE). If you don't call it, select result with the function call
+  is cached and is wrong result for multiple requests.
+
+  The default values are ``GRN_TRUE``. Because the most existing Groonga
+  functions are stable.
+
+Fixes
+^^^^^
+
+* [windows] Ensure cleaning file handle on failure.
+
+* [:doc:`/reference/tokenizers`] Fixed document for wrong tokenizer names.
+
+* Don't keep created empty file on error.
+
+  In the previous versions, there is a case that
+  empty file keeps remain on error.
+
+  Here is the senario to reproduce:
+
+    1. creating new file by grn_fileinfo_open succeeds
+    2. mapping file by DO_MAP() is failed
+
+  In such a case, it causes an another error such as
+  "already file exists" because of the file which
+  isn't under control. so these file should be removed during
+  cleanup process.
+
+* Fixed crash on buffer reused by many updates.
+
+* Fixed a bug that table_create failed.
+  If there are many deleted keys, a dat trie could fail to extend itself.
+
 .. _release-7-0-6:
 
 Release 7.0.6 - 2017-08-29
