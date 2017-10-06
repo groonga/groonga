@@ -15,7 +15,7 @@ Release 7.0.7 - 2017-09-29
 Improvements
 ^^^^^^^^^^^^
 
-* Supported ``+`` query for ``QUERY_NO_SYNTAX_ERROR``.
+* Supported ``+`` only query (``--query "+"``) for ``QUERY_NO_SYNTAX_ERROR``.
 
 * [httpd] Updated bundled nginx to 1.13.5.
 
@@ -32,12 +32,12 @@ Improvements
   * ``grn_proc_is_stable()``
 
   CAUTION: If you add a new function that may return different result with
-  the same argument, you must call grn_proc_is_stable(ctx, proc,
-  GRN_FALSE). If you don't call it, select result with the function call
-  is cached and is wrong result for multiple requests.
+  the same argument, you must call ``grn_proc_is_stable(ctx, proc, GRN_FALSE)``.
+  If you don't call it, select result with the function call is cached and
+  is wrong result for multiple requests.
 
-  The default values are ``GRN_TRUE``. Because the most existing Groonga
-  functions are stable.
+  The default value of is_stable is ``GRN_TRUE``. Because the most
+  existing Groonga functions are stable.
 
 Fixes
 ^^^^^
