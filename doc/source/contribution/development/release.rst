@@ -112,7 +112,7 @@ Groongaのソースコード取得
 
 リリース用のクリーンな状態でソースコードを取得するために$GROONGA_DIRにて以下のコマンドを実行します。::
 
-    % git clone --recursive git@github.com:groonga/groonga.git groonga.clean---------------------------
+    % git clone --recursive git@github.com:groonga/groonga.git groonga.clean
 
 この作業はリリース作業ごとに行います。
 
