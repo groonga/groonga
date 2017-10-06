@@ -139,7 +139,10 @@ But there are some differences from :doc:`select`:
   * ``logical_table`` and ``shard_key`` parameters are required
     instead of ``table`` parameter.
   * ``sort_keys`` isn't supported when multiple shards are used. (Only
-    one shard is used, they are supported.)
+    one shard is used, they are supported. There is one exception
+    about ``sort_keys`` for multiple shards. When ``shard_keys`` and
+    ``sort_keys`` are same, they are supported. See
+    :ref:`logical-select-sort-keys` about details)
   * ``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].sort_keys``
     doesn't work with multiple shards. It works with one
     shard. ``_key`` in ``drilldowns[${LABEL}].sort_keys`` work with
@@ -544,6 +547,15 @@ Corresponds to :ref:`select-sort-keys` in :doc:`select`. See
 ``sort_keys`` has a limitation. It works only when the number of
 search target shards is one. If the number of search target shards is
 larger than one, ``sort_keys`` doesn't work.
+
+.. note::
+
+   There is one exception for multiple shards. When the same value is
+   specified for ``shard_key`` and ``sort_keys``, they are supported.
+   ``logical_select`` processes target shards one by one by ascending
+   order. Thus, in this process, magnitude correlation about the value
+   of ``shard_key`` is kept among them. This is because ``sort_keys``
+   is supported when ``shard_key`` and ``sort_keys`` is same.
 
 Here is an example that uses only one shard:
 
