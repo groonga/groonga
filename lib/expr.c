@@ -7595,12 +7595,17 @@ parse_query(grn_ctx *ctx, efs_info *q)
       q->cur++;
       break;
     case GRN_QUERY_ADJ_NEG :
-      op->op = GRN_OP_ADJUST;
-      parse_query_accept_adjust(ctx,
-                                q,
-                                q->cur, 1,
-                                GRN_EXPR_TOKEN_NEGATIVE,
-                                -DEFAULT_WEIGHT);
+      if (first_token) {
+        parse_query_flush_pending_token(ctx, q);
+        parse_query_accept_string(ctx, q, q->cur, 1);
+      } else {
+        op->op = GRN_OP_ADJUST;
+        parse_query_accept_adjust(ctx,
+                                  q,
+                                  q->cur, 1,
+                                  GRN_EXPR_TOKEN_NEGATIVE,
+                                  -DEFAULT_WEIGHT);
+      }
       q->cur++;
       break;
     case GRN_QUERY_PARENL :
