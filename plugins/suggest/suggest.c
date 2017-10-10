@@ -657,10 +657,22 @@ learner_init_columns(grn_ctx *ctx, grn_suggest_learner *learner)
   grn_obj *seqs, *events, *post_item, *items, *pairs;
 
   learner->seqs = seqs = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(learner->seq));
+  if (!learner->seqs) {
+    ERR(GRN_DOMAIN_ERROR,
+        "failed to initialize columns because domain id: <%d> of seq is not found.",
+        GRN_OBJ_GET_DOMAIN(learner->seq));
+    return;
+  }
   learner->seqs_events = grn_obj_column(ctx, seqs, CONST_STR_LEN("events"));
 
   events_id = grn_obj_get_range(ctx, learner->seqs_events);
   learner->events = events = grn_ctx_at(ctx, events_id);
+  if (!learner->events) {
+    ERR(GRN_UNKNOWN_ERROR,
+        "failed to initialize columns because event id: <%d> is not found.",
+        events_id);
+    return;
+  }
   learner->events_item = grn_obj_column(ctx, events, CONST_STR_LEN("item"));
   learner->events_type = grn_obj_column(ctx, events, CONST_STR_LEN("type"));
   learner->events_time = grn_obj_column(ctx, events, CONST_STR_LEN("time"));
@@ -670,6 +682,12 @@ learner_init_columns(grn_ctx *ctx, grn_suggest_learner *learner)
 
   post_item = learner->post_item;
   learner->items = items = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(post_item));
+  if (!learner->items) {
+    ERR(GRN_DOMAIN_ERROR,
+        "failed to initialize columns because domain id: <%d> of post_item is not found.",
+        GRN_OBJ_GET_DOMAIN(post_item));
+    return;
+  }
   learner->items_freq = grn_obj_column(ctx, items, CONST_STR_LEN("freq"));
   learner->items_freq2 = grn_obj_column(ctx, items, CONST_STR_LEN("freq2"));
   learner->items_last = grn_obj_column(ctx, items, CONST_STR_LEN("last"));
