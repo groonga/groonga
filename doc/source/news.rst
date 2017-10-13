@@ -24,8 +24,6 @@ Improvements
 * [:doc:`/reference/commands/dump`] Added the default argument values
   to the syntax section.
 
-* Improved error messages when memory mapping is failed.
-
 * [:doc:`/reference/command/command_version`] Supported ``--default-command-version 3``.
 
 * Supported caching select result with function call. Now, most of
