@@ -4478,12 +4478,6 @@ msgstr ""
 "``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
 "さい。"
 
-msgid ""
-"The number of kinds of index target data and the number of handleable "
-"records in a small index column"
-msgstr ""
-"インデックス対象データの種類数と小さなインデックスカラムで扱えるレコード数"
-
 msgid "``column_create``"
 msgstr ""
 
@@ -5022,6 +5016,12 @@ msgstr ""
 "``2`` 、 ``3`` というデータが入っていたとすると、種類数は ``3`` （ ``1`` と "
 "``2`` と ``3`` ）になります。以下の表はインデックス対象データの種類数と扱える"
 "最大レコード数の関係を示しています。"
+
+msgid ""
+"The number of kinds of index target data and the number of handleable "
+"records in a small index column"
+msgstr ""
+"インデックス対象データの種類数と小さなインデックスカラムで扱えるレコード数"
 
 msgid "The number of kinds of index target data"
 msgstr "インデックス対象のデータの種類数"
@@ -25604,9 +25604,6 @@ msgid ""
 "records are fetched."
 msgstr ""
 
-msgid "Characteristics of all tables"
-msgstr "全テーブルの特徴"
-
 msgid "Tables"
 msgstr "テーブル"
 
@@ -25639,6 +25636,9 @@ msgid ""
 msgstr ""
 "以下はGroongaにあるすべてのテーブルの特性表です。（この表の中では ``TABLE_`` "
 "プレフィックスは省略しています。）"
+
+msgid "Characteristics of all tables"
+msgstr "全テーブルの特徴"
 
 msgid "Item"
 msgstr ""
