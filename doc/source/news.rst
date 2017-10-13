@@ -15,41 +15,49 @@ Release 7.0.7 - 2017-09-29
 Improvements
 ^^^^^^^^^^^^
 
-* Supported ``+`` only query (``--query "+"``) for ``QUERY_NO_SYNTAX_ERROR``.
+* Supported ``+`` only query (``--query "+"``) for
+  ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an
+  error.
 
 * [httpd] Updated bundled nginx to 1.13.5.
 
-* [:doc:`/reference/commands/dump`] Fixed document to add the default argument values to the syntax of dump.
+* [:doc:`/reference/commands/dump`] Added the default argument values
+  to the syntax section.
 
 * Improved error messages when memory mapping is failed.
 
 * [:doc:`/reference/command/command_version`] Supported ``--default-command-version 3``.
 
-* Supported caching select result with function call.
-  New API:
+* Supported caching select result with function call. Now, most of
+  existing functions supports this feature. There are two exception,
+  when ``now()`` and ``rand()`` are used in query, select result will
+  not cached. Because of this default behavior change, new APIs are
+  introduced.
 
   * ``grn_proc_set_is_stable()``
   * ``grn_proc_is_stable()``
 
-  CAUTION: If you add a new function that may return different result with
-  the same argument, you must call ``grn_proc_is_stable(ctx, proc, GRN_FALSE)``.
-  If you don't call it, select result with the function call is cached and
-  is wrong result for multiple requests.
-
-  The default value of is_stable is ``GRN_TRUE``. Because the most
-  existing Groonga functions are stable.
+  Note that if you add a new function that may return different result
+  with the same argument, you must call ``grn_proc_is_stable(ctx,
+  proc, GRN_FALSE)``.  If you don't call it, select result with the
+  function call is cached and is wrong result for multiple requests.
 
 Fixes
 ^^^^^
 
-* [windows] Ensure cleaning file handle on failure.
+* [windows] Fixed to clean up file handle correctly on failure when
+  ``database_unmap`` is executed. There is a case that critical
+  section is not initialized when request is canceled before executing
+  ``database_unmap``. In such a case, it caused a crach bug.
 
-* [:doc:`/reference/tokenizers`] Fixed document for wrong tokenizer names.
+* [:doc:`/reference/tokenizers`] Fixed document for wrong tokenizer
+  names. It should be ``TokenBigramIgnoreBlankSplitSymbolAlpha`` and
+  ``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``.
 
-* Don't keep created empty file on error.
+* Changed not to keep created empty file on error.
 
-  In the previous versions, there is a case that
-  empty file keeps remain on error.
+  In the previous versions, there is a case that empty file keeps
+  remain on error.
 
   Here is the senario to reproduce:
 
@@ -61,10 +69,11 @@ Fixes
   isn't under control. so these file should be removed during
   cleanup process.
 
-* Fixed crash on buffer reused by many updates.
+* Fixed a bug that Groonga may be crashed when search process is
+  executed during executing many updates in a short time.
 
-* Fixed a bug that table_create failed.
-  If there are many deleted keys, a dat trie could fail to extend itself.
+* [:doc:`/reference/commands/table_create`] Fixed a bug that
+  ``table_create`` failed when there are many deleted keys.
 
 .. _release-7-0-6:
 
