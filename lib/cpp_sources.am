@@ -1,3 +1,3 @@
-libgrnarrow_cpp_source =			\
+libgroonga_cpp_source =				\
 	arrow.cpp				\
 	dat.cpp

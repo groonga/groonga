@@ -40,7 +40,7 @@ include c_sources.am
 include cpp_sources.am
 libgroonga_la_SOURCES =				\
 	$(libgroonga_c_sources)			\
-	$(libgrnarrow_cpp_source)
+	$(libgroonga_cpp_source)
 
 #nfkc.c:
 #	$(RUBY) nfkc.rb --impl=table
