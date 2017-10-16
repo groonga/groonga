@@ -24,6 +24,9 @@ init:
   - call
       "C:\Program Files (x86)\Microsoft Visual Studio %VS_VERSION%.0\VC\vcvarsall.bat"
       %ARCH%
+  - ps: $env:GROONGA_VERSION = Get-Content base_version
+  - set GROONGA_INSTALL_FOLDER=groonga-%GROONGA_VERSION%
+  - set FULL_GROONGA_INSTALL_FOLDER=%APPVEYOR_BUILD_FOLDER%\%GROONGA_INSTALL_FOLDER%
 #  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
@@ -47,7 +50,7 @@ build_script:
   - if "%ARCH%" == "amd64"
       set CMAKE_GENERATOR_NAME=%CMAKE_GENERATOR_NAME% Win64
   - cmake . -G "%CMAKE_GENERATOR_NAME%"
-      -DCMAKE_INSTALL_PREFIX=c:\groonga
+      -DCMAKE_INSTALL_PREFIX=%FULL_GROONGA_INSTALL_FOLDER%
       -DGRN_WITH_MRUBY=yes
       -DGRN_WITH_BUNDLED_MECAB=yes
       -DGRN_WITH_BUNDLED_MESSAGE_PACK=yes
@@ -64,9 +67,12 @@ before_test:
   - cd ..\..\..
 test_script:
   - ruby test\command\bin\grntest
-     --groonga c:\groonga\bin\groonga.exe
+     --groonga %FULL_GROONGA_INSTALL_FOLDER%\bin\groonga.exe
      --base-directory test\command
      --reporter mark
      --n-workers 1
      --timeout 60
      test\command\suite
+
+artifacts:
+  - path: %GROONGA_INSTALL_FOLODER%
