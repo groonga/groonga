@@ -1572,7 +1572,7 @@ grn_get_package_label(void)
 }
 
 #ifdef WIN32
-static LONG
+static LONG WINAPI
 exception_filter(EXCEPTION_POINTERS *info)
 {
   grn_ctx *ctx = &grn_gctx;
