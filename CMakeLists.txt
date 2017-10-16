@@ -1,4 +1,4 @@
-# Copyright(C) 2012-2016 Brazil
+# Copyright(C) 2012-2017 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -307,6 +307,8 @@ if(WIN32)
   # ac_check_lib(ws2_32 select)
   set(HAVE_LIBWS2_32 TRUE)
   set(WS2_32_LIBS "ws2_32.lib")
+
+  SET(DBGHELP_LIBS "dbghelp.lib")
 
   set(USE_SELECT TRUE)
 else()

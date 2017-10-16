@@ -677,7 +677,7 @@ int main(int argc, char **argv)
 # MinGW
 if test "$os_win32" = "yes"; then
   WINDOWS_LDFLAGS="-mwindows"
-  WINDOWS_LIBS="-ladvapi32 -lws2_32"
+  WINDOWS_LIBS="-ladvapi32 -lws2_32 -ldbghelp"
 else
   WINDOWS_LDFLAGS=
   WINDOWS_LIBS=

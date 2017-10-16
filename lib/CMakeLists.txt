@@ -100,6 +100,7 @@ set(GRN_ALL_LIBRARIES
     ${DL_LIBS}
     ${M_LIBS}
     ${WS2_32_LIBS}
+    ${DBGHELP_LIBS}
     ${MRUBY_LIBS}
     ${ONIGMO_LIBS})
 if(GRN_EMBED)
