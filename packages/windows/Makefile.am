@@ -133,6 +133,15 @@ LICENSE:
 	 echo "-------";				\
 	 echo;						\
 	 cat $(LICENSE_DIR)/naist-jdic/COPYING;		\
+	 echo;						\
+	 echo;						\
+	 echo "cv2pdb";					\
+	 echo "======";					\
+	 echo;						\
+	 echo "LICENSE";				\
+	 echo "-------";				\
+	 echo;						\
+	 cat $(LICENSE_DIR)/cv2pdb/LICENSE;		\
 	) > LICENSE
 
 installer: installer-x86 installer-x64

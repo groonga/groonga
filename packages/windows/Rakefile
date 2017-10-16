@@ -54,7 +54,7 @@ else
 end
 
 def download(url, download_dir)
-  base_name = url.split("/").last
+  base_name = url.split("/").last.split("?", 2)[0]
   absolute_output_path = download_dir + base_name
 
   unless absolute_output_path.exist?
@@ -70,9 +70,8 @@ def download(url, download_dir)
   absolute_output_path
 end
 
+download_dir = base_tmp_dir + "download"
 namespace :build do
-  download_dir = base_tmp_dir + "download"
-
   task :pkg_config do
     ENV["PKG_CONFIG_PATH"] = nil
     ENV["PKG_CONFIG_LIBDIR"] = (lib_dir + "pkgconfig").to_s
@@ -497,8 +496,37 @@ namespace :gcc do
   end
 end
 
+namespace :pdb do
+  namespace :extractor do
+    desc "Generate PDB extractor"
+    task :generate do
+      cv2pdb_url = "https://ci.appveyor.com/api/projects/rainers/visuald/artifacts/cv2pdb.exe?job=Environment%3A%20os%3DVisual%20Studio%202013%2C%20VS%3D12%2C%20APPVEYOR_BUILD_WORKER_IMAGE%3DVisual%20Studio%202015"
+      cv2pdb = download(cv2pdb_url, download_dir)
+      chmod(0755, cv2pdb)
+      generate_pdb_bat = bin_dir + "generate_pdb.bat"
+      generate_pdb_bat.open("w") do |bat|
+        cd(bin_dir) do
+          Dir.glob("*.{exe,dll}") do |binary|
+            bat.print("#{cv2pdb.basename} #{binary}\r\n")
+          end
+        end
+      end
+      chmod(0755, generate_pdb_bat)
+      cp(cv2pdb, bin_dir)
+
+      cv2pdb_license_dir = license_dir + "cv2pdb"
+      mkdir_p(cv2pdb_license_dir)
+      files = ["README", "LICENSE"].collect do |file|
+        download("https://raw.githubusercontent.com/rainers/cv2pdb/master/#{file}",
+                 download_dir)
+      end
+      cp(files, cv2pdb_license_dir)
+    end
+  end
+end
+
 task "build:mecab_dict" => "gcc:dll:bundle"
-task "build:post" => "gcc:dll:bundle"
+task "build:post" => ["gcc:dll:bundle", "pdb:extractor:generate"]
 
 build_dependencies = [
   "build:pre",
