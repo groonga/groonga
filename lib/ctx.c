@@ -1575,6 +1575,7 @@ grn_get_package_label(void)
 static LONG
 exception_filter(EXCEPTION_POINTERS *info)
 {
+  grn_ctx *ctx = &grn_gctx;
   HANDLE process;
   HANDLE thread;
   CONTEXT *context;
