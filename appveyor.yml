@@ -74,5 +74,7 @@ test_script:
      --timeout 60
      test\command\suite
 
-artifacts:
-  - path: %GROONGA_INSTALL_FOLODER%
+after_build:
+  - set ARTIFACT=%GROONGA_INSTALL_FOLDER%.7z
+  - 7z a %ARTIFACT% %GROONGA_INSTALL_FOLDER%
+  - ps: Push-AppveyorArtifact $Env:ARTIFACT
