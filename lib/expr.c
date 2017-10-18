@@ -7458,18 +7458,35 @@ parse_query(grn_ctx *ctx, efs_info *q)
     if (q->cur >= q->str_end) { goto exit; }
     if (*q->cur == '\0') { goto exit; }
 
-    only_first_and = GRN_FALSE;
     switch (*q->cur) {
     case GRN_QUERY_PARENR :
-      if (q->paren_depth == 0 && q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR) {
-        const char parenr = GRN_QUERY_PARENR;
-        parse_query_flush_pending_token(ctx, q);
-        parse_query_accept_string(ctx, q, &parenr, 1);
-      } else {
-        parse_query_flush_pending_token(ctx, q);
-        PARSE(GRN_EXPR_TOKEN_PARENR);
-        q->paren_depth--;
+      if (q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR) {
+        if (q->paren_depth == 0) {
+          const char parenr = GRN_QUERY_PARENR;
+          parse_query_flush_pending_token(ctx, q);
+          parse_query_accept_string(ctx, q, &parenr, 1);
+          q->cur++;
+          break;
+        }
+        if (first_token) {
+          const char parenl = GRN_QUERY_PARENL;
+          const char parenr = GRN_QUERY_PARENR;
+          parse_query_flush_pending_token(ctx, q);
+          parse_query_accept_string(ctx, q, &parenl, 1);
+          parse_query_accept_string(ctx, q, &parenr, 1);
+        }
+        if (only_first_and) {
+          const char query_and[] = {GRN_QUERY_AND};
+          parse_query_flush_pending_token(ctx, q);
+          parse_query_accept_string(ctx,
+                                    q,
+                                    query_and,
+                                    1);
+        }
       }
+      parse_query_flush_pending_token(ctx, q);
+      PARSE(GRN_EXPR_TOKEN_PARENR);
+      q->paren_depth--;
       q->cur++;
       break;
     case GRN_QUERY_QUOTEL :
@@ -7633,6 +7650,9 @@ parse_query(grn_ctx *ctx, efs_info *q)
     default :
       parse_query_word(ctx, q);
       break;
+    }
+    if (!first_token) {
+      only_first_and = GRN_FALSE;
     }
     first_token = block_started;
     block_started = GRN_FALSE;
