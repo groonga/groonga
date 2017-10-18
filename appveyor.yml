@@ -24,9 +24,6 @@ init:
   - call
       "C:\Program Files (x86)\Microsoft Visual Studio %VS_VERSION%.0\VC\vcvarsall.bat"
       %ARCH%
-  - ps: $env:GROONGA_VERSION = Get-Content base_version
-  - set GROONGA_INSTALL_FOLDER=groonga-%GROONGA_VERSION%
-  - set FULL_GROONGA_INSTALL_FOLDER=%APPVEYOR_BUILD_FOLDER%\%GROONGA_INSTALL_FOLDER%
 #  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
@@ -34,6 +31,9 @@ install:
   # - choco install -y imdisk-toolkit
   # - mkdir tmp
   # - imdisk -a -t file -m tmp -o awe -s 1G -p "/fs:ntfs /q /y"
+  - ps: $Env:GROONGA_VERSION = Get-Content base_version
+  - set GROONGA_INSTALL_FOLDER=groonga-%GROONGA_VERSION%
+  - set FULL_GROONGA_INSTALL_FOLDER=%APPVEYOR_BUILD_FOLDER%\%GROONGA_INSTALL_FOLDER%
 
 build_script:
   - git submodule update --init
@@ -74,7 +74,7 @@ test_script:
      --timeout 60
      test\command\suite
 
-after_build:
+on_success:
   - set ARTIFACT=%GROONGA_INSTALL_FOLDER%.7z
   - 7z a %ARTIFACT% %GROONGA_INSTALL_FOLDER%
   - ps: Push-AppveyorArtifact $Env:ARTIFACT
