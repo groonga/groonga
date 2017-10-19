@@ -15,12 +15,14 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+require "digest"
 require "pathname"
 require "open-uri"
 
 base_dir = Pathname.new(__FILE__).dirname
 
-groonga_win32_x86_p = ENV["ARCHITECTURE"] == "x86"
+architecture = ENV["ARCHITECTURE"]
+groonga_win32_x86_p = architecture == "x86"
 groonga_version = ENV["VERSION"]
 groonga_source = Pathname.new(ENV["SOURCE"]).expand_path
 debug_build_p = ENV["DEBUG_BUILD"] == "yes"
@@ -546,3 +548,29 @@ build_dependencies = [
 ]
 desc "Build and install them into #{dist_dir}/."
 task :build => build_dependencies
+
+namespace :pdb do
+  desc "Generate *.pdb for *.exe and *.dll in zip archive"
+  task :generate do
+    suffix = ENV["SUFFIX"]
+    dir_name = "groonga-#{groonga_version}-#{architecture}#{suffix}"
+    zip_path = "#{dir_name}.zip"
+    sha256_path = "#{zip_path}.sha256"
+    url = "https://packages.groonga.org/tmp/#{zup_path}"
+    rm_f(zip_path)
+    download(url, ".")
+    sh("7z", "x", zip_path)
+    cd(dir_name) do
+      sh("bin/generate-pdb.bat")
+    end
+    rm_f(zip_path)
+    sh("7z", "a", zip_path, dir_name)
+    File.open(sha256_path, "wb") do |sha256|
+      sha256.puts("#{Digest::SHA256.file(zip_path).hexdigest}  #{zip_path}")
+    end
+    sh("scp",
+       zip_path,
+       sha256_path,
+       "packages@packages.groonga.org:public/tmp/")
+  end
+end
