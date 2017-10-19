@@ -503,11 +503,13 @@ namespace :pdb do
       cv2pdb_url = "https://ci.appveyor.com/api/projects/rainers/visuald/artifacts/cv2pdb.exe?job=Environment%3A%20os%3DVisual%20Studio%202013%2C%20VS%3D12%2C%20APPVEYOR_BUILD_WORKER_IMAGE%3DVisual%20Studio%202015"
       cv2pdb = download(cv2pdb_url, download_dir)
       chmod(0755, cv2pdb)
-      generate_pdb_bat = bin_dir + "generate_pdb.bat"
+      generate_pdb_bat = bin_dir + "generate-pdb.bat"
       generate_pdb_bat.open("w") do |bat|
-        cd(bin_dir) do
-          Dir.glob("*.{exe,dll}") do |binary|
-            bat.print("#{cv2pdb.basename} #{binary}\r\n")
+        cd(binary_dir) do
+          Dir.glob("**/*.{exe,dll}") do |binary|
+            pdb = "lib\\pdb\\" + File.basename(binary, ".*") + ".pdb"
+            binary = binary.gsub("/", "\\")
+            bat.print("bin\\#{cv2pdb.basename} #{binary} #{binary} #{pdb}\r\n")
           end
         end
       end
