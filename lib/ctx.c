@@ -1595,6 +1595,39 @@ exception_filter(EXCEPTION_POINTERS *info)
                 SYMOPT_LOAD_LINES |
                 SYMOPT_NO_PROMPTS);
   SymInitialize(process, NULL, TRUE);
+  {
+    char search_path[MAX_PATH * 2];
+    const char *base_dir;
+
+    if (SymGetSearchPath(process, search_path, sizeof(search_path))) {
+      grn_strncat(search_path, sizeof(search_path), ";", 1);
+    } else {
+      search_path[0] = '\0';
+    }
+
+    base_dir = grn_windows_base_dir();
+    {
+      char *current, *end;
+      current = search_path + strlen(search_path);
+      end = current + sizeof(search_path) - 1;
+      for (; *base_dir && current < end; base_dir++, current++) {
+        if (*base_dir == '/') {
+          *current = '\\';
+        } else {
+          *current = *base_dir;
+        }
+      }
+      if ((current + strlen("\\bin") + 1) < end) {
+        (*current++) = '\\';
+        (*current++) = 'b';
+        (*current++) = 'i';
+        (*current++) = 'n';
+      }
+      *current = '\0';
+    }
+
+    SymSetSearchPath(process, search_path);
+  }
 
   memset(&frame, 0, sizeof(STACKFRAME64));
   frame.AddrPC.Mode = AddrModeFlat;
