@@ -31,9 +31,16 @@ install:
   # - choco install -y imdisk-toolkit
   # - mkdir tmp
   # - imdisk -a -t file -m tmp -o awe -s 1G -p "/fs:ntfs /q /y"
-  - ps: $Env:GROONGA_VERSION = Get-Content base_version
-  - set GROONGA_INSTALL_FOLDER=groonga-%GROONGA_VERSION%
-  - set FULL_GROONGA_INSTALL_FOLDER=%APPVEYOR_BUILD_FOLDER%\%GROONGA_INSTALL_FOLDER%
+  - ps: |
+      $GroongaVersionRaw = git describe --abbrev=7
+      $Env:GROONGA_VERSION = $GroongaVersionRaw.TrimStart("v")
+      $Env:GROONGA_INSTALL_FOLDER = "groonga-" + $Env:GROONGA_VERSION
+      if ($Env:ARCH -eq "x86") {
+        $Env:GROONGA_INSTALL_FOLDER += "-x86"
+      } else {
+        $Env:GROONGA_INSTALL_FOLDER += "-x64"
+      }
+      $Env:FULL_GROONGA_INSTALL_FOLDER = $Env:APPVEYOR_BUILD_FOLDER% + "\" + $Env:GROONGA_INSTALL_FOLDER
 
 build_script:
   - git submodule update --init
