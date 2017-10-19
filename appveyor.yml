@@ -31,6 +31,7 @@ install:
   # - choco install -y imdisk-toolkit
   # - mkdir tmp
   # - imdisk -a -t file -m tmp -o awe -s 1G -p "/fs:ntfs /q /y"
+  - ps: git describe --abbrev=7 HEAD
   - ps: |
       $GroongaVersionRaw = git describe --abbrev=7 HEAD
       $Env:GROONGA_VERSION = $GroongaVersionRaw.TrimStart("v")
