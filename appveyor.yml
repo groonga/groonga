@@ -55,8 +55,8 @@ build_script:
       -DGRN_WITH_BUNDLED_MECAB=yes
       -DGRN_WITH_BUNDLED_MESSAGE_PACK=yes
       -DGRN_WITH_BUNDLED_LZ4=yes
-  - cmake --build . --config Debug
-  - cmake --build . --config Debug --target Install
+  - cmake --build . --config RelWithDebInfo
+  - cmake --build . --config RelWithDebInfo --target Install
 
 before_test:
   - git clone --depth 1
@@ -75,6 +75,6 @@ test_script:
      test\command\suite
 
 on_success:
-  - set ARTIFACT=%GROONGA_INSTALL_FOLDER%.7z
+  - set ARTIFACT=%GROONGA_INSTALL_FOLDER%.zip
   - 7z a %ARTIFACT% %GROONGA_INSTALL_FOLDER%
   - ps: Push-AppveyorArtifact $Env:ARTIFACT

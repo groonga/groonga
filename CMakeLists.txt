@@ -84,6 +84,7 @@ option(GRN_EMBED
 set(BIN_DIR "bin")
 set(SBIN_DIR "sbin")
 set(LIB_DIR "lib")
+set(PDB_DIR "${LIB_DIR}/pdb")
 set(INCLUDE_DIR "include")
 set(GRN_INCLUDE_DIR "include/groonga")
 set(DATA_DIR "share")

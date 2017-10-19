@@ -83,6 +83,9 @@ if(GRN_WITH_BUNDLED_LZ4)
       RUNTIME DESTINATION "${BIN_DIR}")
     install(TARGETS lz4
       DESTINATION "${BIN_DIR}")
+    install(FILES $<TARGET_PDB_FILE:lz4>
+      DESTINATION "${PDB_DIR}"
+      OPTIONAL)
     install(FILES
       "${LZ4_SOURCE_DIR}/lib/lz4.h"
       "${LZ4_SOURCE_DIR}/lib/lz4frame.h"

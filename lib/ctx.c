@@ -1617,11 +1617,14 @@ exception_filter(EXCEPTION_POINTERS *info)
           *current = *base_dir;
         }
       }
-      if ((current + strlen("\\bin") + 1) < end) {
-        (*current++) = '\\';
-        (*current++) = 'b';
-        (*current++) = 'i';
-        (*current++) = 'n';
+      {
+        const char *pdb_dir = "\\lib\\pdb";
+        size_t pdb_dir_length;
+        pdb_dir_length = strlen(pdb_dir);
+        if ((current + pdb_dir_length + 1) < end) {
+          grn_strncat(current, pdb_dir_length + 1, pdb_dir, pdb_dir_length);
+          current += pdb_dir_length;
+        }
       }
       *current = '\0';
     }

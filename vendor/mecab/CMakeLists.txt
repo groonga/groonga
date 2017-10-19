@@ -173,6 +173,13 @@ if(GRN_WITH_BUNDLED_MECAB)
     DESTINATION "${BIN_DIR}")
   install(TARGETS mecab-dict-index
     DESTINATION "${BIN_DIR}")
+  install(
+    FILES
+    $<TARGET_PDB_FILE:libmecab>
+    $<TARGET_PDB_FILE:mecab>
+    $<TARGET_PDB_FILE:mecab-dict-index>
+    DESTINATION "${PDB_DIR}"
+    OPTIONAL)
   install(FILES "${MECAB_SOURCE_DIR}/src/mecab.h"
     DESTINATION "${INCLUDE_DIR}")
 

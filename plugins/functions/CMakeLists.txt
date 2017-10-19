@@ -36,6 +36,9 @@ else()
     PREFIX ""
     OUTPUT_NAME "vector")
   install(TARGETS vector_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+  install(FILES $<TARGET_PDB_FILE:vector_functions>
+    DESTINATION "${PDB_DIR}"
+    OPTIONAL)
 endif()
 target_link_libraries(vector_functions libgroonga)
 
@@ -56,6 +59,9 @@ else()
     PREFIX ""
     OUTPUT_NAME "string")
   install(TARGETS string_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+  install(FILES $<TARGET_PDB_FILE:string_functions>
+    DESTINATION "${PDB_DIR}"
+    OPTIONAL)
 endif()
 target_link_libraries(string_functions libgroonga)
 
