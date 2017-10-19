@@ -32,7 +32,7 @@ install:
   # - mkdir tmp
   # - imdisk -a -t file -m tmp -o awe -s 1G -p "/fs:ntfs /q /y"
   - ps: |
-      $GroongaVersionRaw = git describe --abbrev=7
+      $GroongaVersionRaw = git describe --abbrev=7 HEAD
       $Env:GROONGA_VERSION = $GroongaVersionRaw.TrimStart("v")
       $Env:GROONGA_INSTALL_FOLDER = "groonga-" + $Env:GROONGA_VERSION
       if ($Env:ARCH -eq "x86") {
