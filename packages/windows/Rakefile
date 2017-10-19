@@ -515,6 +515,7 @@ namespace :pdb do
       end
       chmod(0755, generate_pdb_bat)
       cp(cv2pdb, bin_dir)
+      mkdir_p(lib_dir + "pdb")
 
       cv2pdb_license_dir = license_dir + "cv2pdb"
       mkdir_p(cv2pdb_license_dir)
