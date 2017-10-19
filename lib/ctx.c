@@ -1600,7 +1600,7 @@ exception_filter(EXCEPTION_POINTERS *info)
     const char *base_dir;
 
     if (SymGetSearchPath(process, search_path, sizeof(search_path))) {
-      grn_strncat(search_path, sizeof(search_path), ";", 1);
+      grn_strcat(search_path, sizeof(search_path), ";");
     } else {
       search_path[0] = '\0';
     }
@@ -1608,6 +1608,7 @@ exception_filter(EXCEPTION_POINTERS *info)
     base_dir = grn_windows_base_dir();
     {
       char *current, *end;
+      const char *pdb_dir = "\\lib\\pdb";
       current = search_path + strlen(search_path);
       end = current + sizeof(search_path) - 1;
       for (; *base_dir && current < end; base_dir++, current++) {
@@ -1617,16 +1618,11 @@ exception_filter(EXCEPTION_POINTERS *info)
           *current = *base_dir;
         }
       }
-      {
-        const char *pdb_dir = "\\lib\\pdb";
-        size_t pdb_dir_length;
-        pdb_dir_length = strlen(pdb_dir);
-        if ((current + pdb_dir_length + 1) < end) {
-          grn_strncat(current, pdb_dir_length + 1, pdb_dir, pdb_dir_length);
-          current += pdb_dir_length;
-        }
+      if (current == end) {
+        current--;
       }
       *current = '\0';
+      grn_strcat(search_path, sizeof(search_path), pdb_dir);
     }
 
     SymSetSearchPath(process, search_path);
