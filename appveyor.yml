@@ -31,11 +31,12 @@ install:
   # - choco install -y imdisk-toolkit
   # - mkdir tmp
   # - imdisk -a -t file -m tmp -o awe -s 1G -p "/fs:ntfs /q /y"
-  - ps: git log -n 1
-  - ps: git describe --abbrev=7 HEAD
+  - ruby -r pp -e 'pp ENV'
   - ps: |
-      $GroongaVersionRaw = git describe --abbrev=7 HEAD
-      $Env:GROONGA_VERSION = $GroongaVersionRaw.TrimStart("v")
+      $Env:GROONGA_VERSION = (Get-Content base_version)
+      if ($Env:APPVEYOR_REPO_TAG -eq "false") {
+        $Env:GROONGA_VERSION += "-" + $Env:APPVERYOR_REPO_COMMIT.Substring(0, 7)
+      }
       $Env:GROONGA_INSTALL_FOLDER = "groonga-" + $Env:GROONGA_VERSION
       if ($Env:ARCH -eq "x86") {
         $Env:GROONGA_INSTALL_FOLDER += "-x86"
