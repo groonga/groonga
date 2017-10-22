@@ -31,11 +31,10 @@ install:
   # - choco install -y imdisk-toolkit
   # - mkdir tmp
   # - imdisk -a -t file -m tmp -o awe -s 1G -p "/fs:ntfs /q /y"
-  - ruby -r pp -e 'pp ENV'
   - ps: |
       $Env:GROONGA_VERSION = (Get-Content base_version)
       if ($Env:APPVEYOR_REPO_TAG -eq "false") {
-        $Env:GROONGA_VERSION += "-" + $Env:APPVERYOR_REPO_COMMIT.Substring(0, 7)
+        $Env:GROONGA_VERSION += "-" + $Env:APPVEYOR_REPO_COMMIT.Substring(0, 7)
       }
       $Env:GROONGA_INSTALL_FOLDER = "groonga-" + $Env:GROONGA_VERSION
       if ($Env:ARCH -eq "x86") {
@@ -43,7 +42,7 @@ install:
       } else {
         $Env:GROONGA_INSTALL_FOLDER += "-x64"
       }
-      $Env:FULL_GROONGA_INSTALL_FOLDER = $Env:APPVEYOR_BUILD_FOLDER% + "\" + $Env:GROONGA_INSTALL_FOLDER
+      $Env:FULL_GROONGA_INSTALL_FOLDER = $Env:APPVEYOR_BUILD_FOLDER + "\" + $Env:GROONGA_INSTALL_FOLDER
 
 build_script:
   - git submodule update --init
