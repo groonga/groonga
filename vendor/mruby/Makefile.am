@@ -56,6 +56,8 @@ mruby-file-stat/src/config.h: mruby_build.timestamp
 	touch "$(builddir)/$@"
 mruby-dir/src/dir.c: mruby_build.timestamp
 mruby-dir/src/Win/dirent.c: mruby_build.timestamp
+mruby-miniz/src/miniz_zip.c: mruby_build.timestamp
+mruby-miniz/src/mruby_miniz_gem.c: mruby_build.timestamp
 
 MRUBY_CONFIG = $(abs_srcdir)/build_config.rb
 MRUBY_BUILD_DIR = $(abs_top_builddir)/vendor/mruby-build
