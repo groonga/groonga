@@ -21,13 +21,16 @@ Improvements
   This feature makes problem solving easier.
 
 * Supported ``( )`` (empty block) only query (``--query "( )"``) for
-  ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an error.[GitHub#767]
+  ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an
+  error. [GitHub#767]
 
-* Supported ``(+)`` (only and block) only query (``--query "(+)"``) for
-  ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an error.[GitHub#767]
+* Supported ``(+)`` (only and block) only query (``--query "(+)"``)
+  for ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an
+  error. [GitHub#767]
 
 * Supported ``~foo`` (starting with "~") query (``--query "~y"``) for
-  ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an error.[GitHub#767]
+  ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an
+  error. [GitHub#767]
 
 .. _release-7-0-7:
 
