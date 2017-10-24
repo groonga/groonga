@@ -7,6 +7,28 @@
 News
 ====
 
+.. _release-7-0-8:
+
+Release 7.0.8 - 2017-10-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [windows] Supported backtrace on crash.
+  This feature not only function call history but also source filename
+  and number of lines can be displayed as much as possible.
+  This feature makes problem solving easier.
+
+* Supported ``( )`` (empty block) only query (``--query "( )"``) for
+  ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an error.[GitHub#767]
+
+* Supported ``(+)`` (only and block) only query (``--query "(+)"``) for
+  ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an error.[GitHub#767]
+
+* Supported ``~foo`` (starting with "~") query (``--query "~y"``) for
+  ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an error.[GitHub#767]
+
 .. _release-7-0-7:
 
 Release 7.0.7 - 2017-09-29
