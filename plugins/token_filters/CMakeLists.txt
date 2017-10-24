@@ -36,7 +36,7 @@ else()
     PREFIX ""
     OUTPUT_NAME "stop_word")
   install(TARGETS stop_word_token_filter DESTINATION "${TOKEN_FILTERS_DIR}")
-  if(CMAKE_VERSION VERSION_GREATER "3.1")
+  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
     install(FILES $<TARGET_PDB_FILE:stop_word_token_filter>
       DESTINATION "${PDB_DIR}"
       OPTIONAL)
@@ -63,7 +63,7 @@ if(GRN_WITH_LIBSTEMMER)
       PREFIX ""
       OUTPUT_NAME "stem")
     install(TARGETS stem_token_filter DESTINATION "${TOKEN_FILTERS_DIR}")
-    if(CMAKE_VERSION VERSION_GREATER "3.1")
+    if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
       install(FILES $<TARGET_PDB_FILE:stem_token_filter>
 	DESTINATION "${PDB_DIR}"
 	OPTIONAL)

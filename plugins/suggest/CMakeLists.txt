@@ -32,7 +32,7 @@ else()
   add_library(suggest MODULE ${SUGGEST_SOURCES})
   set_target_properties(suggest PROPERTIES PREFIX "")
   install(TARGETS suggest DESTINATION "${GRN_RELATIVE_PLUGINS_DIR}/suggest")
-  if(CMAKE_VERSION VERSION_GREATER "3.1")
+  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
     install(FILES $<TARGET_PDB_FILE:suggest>
       DESTINATION "${PDB_DIR}"
       OPTIONAL)

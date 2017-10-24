@@ -48,7 +48,7 @@ if(GRN_WITH_MECAB)
       PREFIX ""
       OUTPUT_NAME "mecab")
     install(TARGETS mecab_tokenizer DESTINATION "${TOKENIZERS_DIR}")
-    if(CMAKE_VERSION VERSION_GREATER "3.1")
+    if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
       install(FILES $<TARGET_PDB_FILE:mecab_tokenizer>
 	DESTINATION "${PDB_DIR}"
 	OPTIONAL)
@@ -76,7 +76,7 @@ if(GRN_WITH_KYTEA)
       PREFIX ""
       OUTPUT_NAME "kytea")
     install(TARGETS kytea_tokenizer DESTINATION "${TOKENIZERS_DIR}")
-    if(CMAKE_VERSION VERSION_GREATER "3.1")
+    if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
       install(FILES $<TARGET_PDB_FILE:kytea_tokenizer>
 	DESTINATION "${PDB_DIR}"
 	OPTIONAL)

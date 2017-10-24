@@ -27,7 +27,7 @@ set_source_files_properties(${GROONGA_SOURCES}
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 target_link_libraries(groonga libgroonga)
 install(TARGETS groonga DESTINATION ${BIN_DIR})
-if(CMAKE_VERSION VERSION_GREATER "3.1")
+if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
   install(FILES $<TARGET_PDB_FILE:groonga>
     DESTINATION "${PDB_DIR}"
     OPTIONAL)
@@ -44,7 +44,7 @@ if(GRN_WITH_MRUBY)
     COMPILE_DEFINITIONS "${MRUBY_DEFINITIONS}")
   target_link_libraries(grndb libgroonga)
   install(TARGETS grndb DESTINATION ${BIN_DIR})
-  if(CMAKE_VERSION VERSION_GREATER "3.1")
+  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
     install(FILES $<TARGET_PDB_FILE:grndb>
       DESTINATION "${PDB_DIR}"
       OPTIONAL)
@@ -69,7 +69,7 @@ set_source_files_properties(${GROONGA_BENCHMARK_SOURCES}
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 target_link_libraries(groonga-benchmark libgroonga)
 install(TARGETS groonga-benchmark DESTINATION ${BIN_DIR})
-if(CMAKE_VERSION VERSION_GREATER "3.1")
+if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
   install(FILES $<TARGET_PDB_FILE:groonga-benchmark>
     DESTINATION "${PDB_DIR}"
     OPTIONAL)
