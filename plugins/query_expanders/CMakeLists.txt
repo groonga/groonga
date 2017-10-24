@@ -34,8 +34,10 @@ else()
     PREFIX ""
     OUTPUT_NAME "tsv")
   install(TARGETS tsv_query_expander DESTINATION "${QUERY_EXPANDERS_DIR}")
-  install(FILES $<TARGET_PDB_FILE:tsv_query_expander>
-    DESTINATION "${PDB_DIR}"
-    OPTIONAL)
+  if(CMAKE_VERSION VERSION_GREATER "3.1")
+    install(FILES $<TARGET_PDB_FILE:tsv_query_expander>
+      DESTINATION "${PDB_DIR}"
+      OPTIONAL)
+  endif()
 endif()
 target_link_libraries(tsv_query_expander libgroonga)

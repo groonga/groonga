@@ -36,9 +36,11 @@ else()
     PREFIX ""
     OUTPUT_NAME "stop_word")
   install(TARGETS stop_word_token_filter DESTINATION "${TOKEN_FILTERS_DIR}")
-  install(FILES $<TARGET_PDB_FILE:stop_word_token_filter>
-    DESTINATION "${PDB_DIR}"
-    OPTIONAL)
+  if(CMAKE_VERSION VERSION_GREATER "3.1")
+    install(FILES $<TARGET_PDB_FILE:stop_word_token_filter>
+      DESTINATION "${PDB_DIR}"
+      OPTIONAL)
+  endif()
 endif()
 target_link_libraries(stop_word_token_filter libgroonga)
 
@@ -61,9 +63,11 @@ if(GRN_WITH_LIBSTEMMER)
       PREFIX ""
       OUTPUT_NAME "stem")
     install(TARGETS stem_token_filter DESTINATION "${TOKEN_FILTERS_DIR}")
-    install(FILES $<TARGET_PDB_FILE:stem_token_filter>
-      DESTINATION "${PDB_DIR}"
-      OPTIONAL)
+    if(CMAKE_VERSION VERSION_GREATER "3.1")
+      install(FILES $<TARGET_PDB_FILE:stem_token_filter>
+	DESTINATION "${PDB_DIR}"
+	OPTIONAL)
+    endif()
   endif()
   target_link_libraries(stem_token_filter libgroonga ${LIBSTEMMER_LIBRARIES})
 endif()

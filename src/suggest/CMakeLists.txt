@@ -29,9 +29,11 @@ target_link_libraries(groonga-suggest-create-dataset libgroonga)
 install(
   TARGETS groonga-suggest-create-dataset
   DESTINATION ${BIN_DIR})
-install(FILES $<TARGET_PDB_FILE:groonga-suggest-create-dataset>
-  DESTINATION "${PDB_DIR}"
-  OPTIONAL)
+if(CMAKE_VERSION VERSION_GREATER "3.1")
+  install(FILES $<TARGET_PDB_FILE:groonga-suggest-create-dataset>
+    DESTINATION "${PDB_DIR}"
+    OPTIONAL)
+endif()
 
 if(GRN_WITH_LIBEVENT AND GRN_WITH_ZEROMQ AND GRN_WITH_MESSAGE_PACK)
   set(GRN_WITH_SUGGEST_LEARNER TRUE)
@@ -87,10 +89,12 @@ if(GRN_WITH_SUGGEST_LEARNER)
   install(
     TARGETS groonga-suggest-learner groonga-suggest-httpd
     DESTINATION ${BIN_DIR})
-  install(
-    FILES
-    $<TARGET_PDB_FILE:groonga-suggest-learner>
-    $<TARGET_PDB_FILE:groonga-suggest-httpd>
-    DESTINATION "${PDB_DIR}"
-    OPTIONAL)
+  if(CMAKE_VERSION VERSION_GREATER "3.1")
+    install(
+      FILES
+      $<TARGET_PDB_FILE:groonga-suggest-learner>
+      $<TARGET_PDB_FILE:groonga-suggest-httpd>
+      DESTINATION "${PDB_DIR}"
+      OPTIONAL)
+  endif()
 endif()

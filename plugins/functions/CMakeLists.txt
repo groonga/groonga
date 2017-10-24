@@ -36,9 +36,11 @@ else()
     PREFIX ""
     OUTPUT_NAME "vector")
   install(TARGETS vector_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
-  install(FILES $<TARGET_PDB_FILE:vector_functions>
-    DESTINATION "${PDB_DIR}"
-    OPTIONAL)
+  if(CMAKE_VERSION VERSION_GREATER "3.1")
+    install(FILES $<TARGET_PDB_FILE:vector_functions>
+      DESTINATION "${PDB_DIR}"
+      OPTIONAL)
+  endif()
 endif()
 target_link_libraries(vector_functions libgroonga)
 
@@ -59,9 +61,11 @@ else()
     PREFIX ""
     OUTPUT_NAME "string")
   install(TARGETS string_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
-  install(FILES $<TARGET_PDB_FILE:string_functions>
-    DESTINATION "${PDB_DIR}"
-    OPTIONAL)
+  if(CMAKE_VERSION VERSION_GREATER "3.1")
+    install(FILES $<TARGET_PDB_FILE:string_functions>
+      DESTINATION "${PDB_DIR}"
+      OPTIONAL)
+  endif()
 endif()
 target_link_libraries(string_functions libgroonga)
 

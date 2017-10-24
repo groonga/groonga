@@ -119,9 +119,11 @@ else()
     ARCHIVE DESTINATION "${LIB_DIR}"
     LIBRARY DESTINATION "${LIB_DIR}"
     RUNTIME DESTINATION "${BIN_DIR}")
-  install(FILES $<TARGET_PDB_FILE:libgroonga>
-    DESTINATION "${PDB_DIR}"
-    OPTIONAL)
+  if(CMAKE_VERSION VERSION_GREATER "3.1")
+    install(FILES $<TARGET_PDB_FILE:libgroonga>
+      DESTINATION "${PDB_DIR}"
+      OPTIONAL)
+  endif()
 endif()
 
 if(GRN_WITH_MRUBY)
