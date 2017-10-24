@@ -32,6 +32,21 @@ Improvements
   ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an
   error. [GitHub#767]
 
+* Modified log level of ``expired`` from ``info`` to ``debug``.
+  ``2017-10-29 14:05:34.123456|i| <0000000012345678:0> expired i=000000000B123456 max=10 (2/2)``
+  This log is output when unmapping part of memory mapped area for index.
+  So, this log is useful information for debugging, but since it is unnecessary
+  information in normal operation, we changed log level from ``info`` to ``debug``.
+
+Fixes
+^^^^^
+
+* Fixed a bug that you can not set the index if you register a large
+  amount of data and repeat deleting a large amount.
+
+* Fixed a bug that when ``offset`` and ``limit`` were applied to multiple shards,
+  unexpected records were output.
+
 .. _release-7-0-7:
 
 Release 7.0.7 - 2017-09-29
