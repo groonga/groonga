@@ -28,6 +28,7 @@ case "${BUILD_TOOL}" in
     ./configure --prefix=${prefix} --with-ruby ${configure_args}
     ;;
   cmake)
+    cmake --version
     cmake_args=""
     cmake_args="${cmake_args} -DGRN_WITH_DEBUG=yes"
     if [ "${ENABLE_MRUBY}" = "yes" ]; then
