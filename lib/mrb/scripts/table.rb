@@ -102,7 +102,7 @@ module Groonga
         order    = key[:order] || order
         offset   = key[:offset] || offset
       else
-        key_name = key
+        key_name = key.dup
       end
 
       case key_name

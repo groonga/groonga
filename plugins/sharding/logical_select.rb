@@ -152,6 +152,11 @@ module Groonga
             :offset => current_offset,
             :limit => current_limit,
           }
+          context.sort_keys.each do |sort_key|
+            if sort_key.match("-timestamp")
+              result_sets = result_sets.reverse
+            end
+          end
           result_sets.each do |result_set|
             if result_set.size > current_offset
               writer.write_table_records(result_set, output_columns, options)
