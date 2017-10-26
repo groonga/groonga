@@ -152,10 +152,8 @@ module Groonga
             :offset => current_offset,
             :limit => current_limit,
           }
-          context.sort_keys.each do |sort_key|
-            if sort_key.match("-timestamp")
+          if context.sort_keys.any? {|sort_key| sort_key.start_with?("-")}
               result_sets = result_sets.reverse
-            end
           end
           result_sets.each do |result_set|
             if result_set.size > current_offset

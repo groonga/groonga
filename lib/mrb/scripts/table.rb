@@ -102,7 +102,7 @@ module Groonga
         order    = key[:order] || order
         offset   = key[:offset] || offset
       else
-        key_name = key.dup
+        key_name = key
       end
 
       case key_name
@@ -117,10 +117,10 @@ module Groonga
       end
 
       if key_name.start_with?("-")
-        key_name[0] = ""
+        key_name = key_name[1..-1]
         order = :descending
       elsif key_name.start_with?("+")
-        key_name[0] = ""
+        key_name = key_name[1..-1]
       end
 
       key = find_column(key_name)
