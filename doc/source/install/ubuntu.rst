@@ -25,6 +25,7 @@ Here are supported Ubuntu versions:
   * 14.04 LTS Trusty Tahr
   * 16.04 LTS Xenial Xerus
   * 17.04 Zesty Zapus
+  * 17.10 Artful Aardvark
 
 
 Enable the universe repository to install Groonga::
