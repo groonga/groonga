@@ -33,19 +33,29 @@ Improvements
   error. [GitHub#767]
 
 * Modified log level of ``expired`` from ``info`` to ``debug``.
-  ``2017-10-29 14:05:34.123456|i| <0000000012345678:0> expired i=000000000B123456 max=10 (2/2)``
-  This log is output when unmapping part of memory mapped area for index.
-  So, this log is useful information for debugging, but since it is unnecessary
-  information in normal operation, we changed log level from ``info`` to ``debug``.
+  ``2017-10-29 14:05:34.123456|i| <0000000012345678:0> expired
+  i=000000000B123456 max=10 (2/2)`` This message is logged when memory
+  mapped area for index is unmapped.  Thus, this log message is useful
+  information for debugging, in other words, as it is unnecessary
+  information in normal operation, we changed log level from ``info``
+  to ``debug``.
+
+* Supported Ubuntu 17.10 (Artful Aardvark)
 
 Fixes
 ^^^^^
 
-* Fixed a bug that you can not set the index if you register a large
-  amount of data and repeat deleting a large amount.
+* [dat] Fixed a bug that large file is created unexpectedly in the
+  worst case during database expansion process. This bug may occurs
+  when you create/delete index columns so frequently. In 7.0.7
+  release, a related bug was fixed - "``table_create`` command fails
+  when there are many deleted keys", but it turns out that it is not
+  enough in the worst case.
 
-* Fixed a bug that when ``offset`` and ``limit`` were applied to multiple shards,
-  unexpected records were output.
+* [:doc:`/reference/commands/logical_select`] Fixed a bug that when
+  ``offset`` and ``limit`` were applied to multiple shards at the same
+  time, there is a case that it returns a fewer number of records
+  unexpectedly.
 
 .. _release-7-0-7:
 
