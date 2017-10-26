@@ -153,7 +153,7 @@ module Groonga
             :limit => current_limit,
           }
           if context.sort_keys.any? {|sort_key| sort_key.start_with?("-")}
-              result_sets = result_sets.reverse
+            result_sets = result_sets.reverse
           end
           result_sets.each do |result_set|
             if result_set.size > current_offset
