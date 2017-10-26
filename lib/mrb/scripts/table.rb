@@ -117,10 +117,10 @@ module Groonga
       end
 
       if key_name.start_with?("-")
-        key_name[0] = ""
+        key_name = key_name[1..-1]
         order = :descending
       elsif key_name.start_with?("+")
-        key_name[0] = ""
+        key_name = key_name[1..-1]
       end
 
       key = find_column(key_name)
