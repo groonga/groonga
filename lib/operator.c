@@ -22,6 +22,8 @@
 #include "grn_normalizer.h"
 
 #include <string.h>
+#include <math.h>
+#include <float.h>
 
 #ifdef GRN_WITH_ONIGMO
 # define GRN_SUPPORT_REGEXP
@@ -195,7 +197,7 @@ grn_operator_to_exec_func(grn_operator op)
     r = (x_ == GRN_UINT64_VALUE(y));\
     break;\
   case GRN_DB_FLOAT :\
-    r = ((x_ <= GRN_FLOAT_VALUE(y)) && (x_ >= GRN_FLOAT_VALUE(y)));\
+    r = (fabs(x_ - GRN_FLOAT_VALUE(y)) < DBL_EPSILON);\
     break;\
   case GRN_DB_SHORT_TEXT :\
   case GRN_DB_TEXT :\
