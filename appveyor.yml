@@ -14,7 +14,8 @@ environment:
 
 matrix:
   allow_failures:
-    - ARCH: x86
+    - VS_VERSION: 12
+      ARCH: x86
 
 notifications:
   - provider: Email
