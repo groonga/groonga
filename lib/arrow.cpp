@@ -353,7 +353,7 @@ namespace grnarrow {
     }
 
     grn_rc load_table(const std::shared_ptr<arrow::Table> &arrow_table) {
-      int n_columns = arrow_table->num_columns();
+      auto n_columns = arrow_table->num_columns();
 
       if (key_column_name_.empty()) {
         grn_obj ids;
@@ -421,7 +421,7 @@ namespace grnarrow {
     grn_rc dump(arrow::io::OutputStream *output) {
       std::vector<std::shared_ptr<arrow::Field>> fields;
       auto n_columns = GRN_BULK_VSIZE(grn_columns_) / sizeof(grn_obj *);
-      for (auto i = 0; i < n_columns; ++i) {
+      for (size_t i = 0; i < n_columns; ++i) {
         auto column = GRN_PTR_VALUE_AT(grn_columns_, i);
 
         char column_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -485,7 +485,7 @@ namespace grnarrow {
 
       auto schema = std::make_shared<arrow::Schema>(fields);
 
-      std::shared_ptr<arrow::ipc::RecordBatchFileWriter> writer;
+      std::shared_ptr<arrow::ipc::RecordBatchWriter> writer;
       auto status =
         arrow::ipc::RecordBatchFileWriter::Open(output, schema, &writer);
       if (!check_status(ctx_,
@@ -495,7 +495,7 @@ namespace grnarrow {
       }
 
       std::vector<grn_id> ids;
-      int n_records_per_batch = 1000;
+      size_t n_records_per_batch = 1000;
       GRN_TABLE_EACH_BEGIN(ctx_, grn_table_, table_cursor, record_id) {
         ids.push_back(record_id);
         if (ids.size() == n_records_per_batch) {
@@ -518,10 +518,10 @@ namespace grnarrow {
 
     void write_record_batch(std::vector<grn_id> &ids,
                             std::shared_ptr<arrow::Schema> &schema,
-                            std::shared_ptr<arrow::ipc::RecordBatchFileWriter> &writer) {
+                            std::shared_ptr<arrow::ipc::RecordBatchWriter> &writer) {
       std::vector<std::shared_ptr<arrow::Array>> columns;
       auto n_columns = GRN_BULK_VSIZE(grn_columns_) / sizeof(grn_obj *);
-      for (auto i = 0; i < n_columns; ++i) {
+      for (size_t i = 0; i < n_columns; ++i) {
         auto grn_column = GRN_PTR_VALUE_AT(grn_columns_, i);
 
         arrow::Status status;
@@ -705,8 +705,8 @@ namespace grnarrow {
                                         std::shared_ptr<arrow::Array> *array) {
       auto timestamp_ns_data_type =
         std::make_shared<arrow::TimestampType>(arrow::TimeUnit::MICRO);
-      arrow::TimestampBuilder builder(arrow::default_memory_pool(),
-                                      timestamp_ns_data_type);
+      arrow::TimestampBuilder builder(timestamp_ns_data_type,
+                                      arrow::default_memory_pool());
       for (auto id : ids) {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);

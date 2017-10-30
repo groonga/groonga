@@ -956,7 +956,7 @@ AC_ARG_ENABLE(arrow,
 if test "x$enable_arrow" != "xno"; then
   m4_ifdef([PKG_CHECK_MODULES], [
     PKG_CHECK_MODULES([ARROW],
-                      [arrow >= 0.5.0],
+                      [arrow >= 0.8.0],
                       [arrow_available=yes],
                       [arrow_available=no])
   ],
