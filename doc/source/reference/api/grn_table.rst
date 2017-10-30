@@ -140,17 +140,22 @@ Reference
 .. c:type:: grn_table_sort_key
 
    .. c:member:: grn_obj* key
-   .. c:member:: grn_table_sort_flags flag
+   .. c:member:: grn_table_sort_flags flags
    .. c:member:: int offset
 
 .. c:type:: grn_table_sort_flags
 
-   A typedef of unsigned char
+   This flags specify sort order of records.
 
-   Values
+   Available flags:
 
-   .. c:macro:: GRN_TABLE_SORT_ASC (0x00)
-   .. c:macro:: GRN_TABLE_SORT_DESC (0x01)
+   .. c:macro:: GRN_TABLE_SORT_ASC
+
+      When we want to sort records in ascending order, we specify this flag.
+
+   .. c:macro:: GRN_TABLE_SORT_DESC
+
+      When we want to sort records in descending order, we specify this flag.
 
 .. c:function:: int grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit, grn_obj *result, grn_table_sort_key *keys, int n_keys)
 
@@ -164,7 +169,7 @@ Reference
    :param result: 結果を格納するtableを指定します。
    :param keys: ソートキー配列へのポインタを指定します。
    :param n_keys: ソートキー配列のサイズを指定します。
- 
+
 .. c:type:: grn_table_group_result
 
    .. c:member:: grn_obj* table
@@ -178,15 +183,14 @@ Reference
 
 .. c:type:: grn_table_group_flags
 
-   A typedef of uint32_t
 
-   Values
+   Available flags:
 
-   .. c:macro:: GRN_TABLE_GROUP_CALC_COUNT     (0x01<<3)
-   .. c:macro:: GRN_TABLE_GROUP_CALC_MAX       (0x01<<4)
-   .. c:macro:: GRN_TABLE_GROUP_CALC_MIN       (0x01<<5)
-   .. c:macro:: GRN_TABLE_GROUP_CALC_SUM       (0x01<<6)
-   .. c:macro:: GRN_TABLE_GROUP_CALC_AVG       (0x01<<7)
+   .. c:macro:: GRN_TABLE_GROUP_CALC_COUNT
+   .. c:macro:: GRN_TABLE_GROUP_CALC_MAX
+   .. c:macro:: GRN_TABLE_GROUP_CALC_MIN
+   .. c:macro:: GRN_TABLE_GROUP_CALC_SUM
+   .. c:macro:: GRN_TABLE_GROUP_CALC_AVG
 
 
 .. c:function:: grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table, grn_table_sort_key *keys, int n_keys, grn_table_group_result *results, int n_results)
