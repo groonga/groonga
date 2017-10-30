@@ -127,7 +127,7 @@ if [ ${exit_code} -ne 0 ]; then
 fi
 
 if [ "${GROONGA_HTTPD_DEBUG}" = "yes" ]; then
-  objs_makefile_backup="objs/Makefile.with-debug-flags"
+  objs_makefile_backup="objs/Makefile.without-debug-flags"
   mv objs/Makefile "${objs_makefile_backup}"
   sed \
     -e '/^CFLAGS =/ s/ -O / -O0 /' \
