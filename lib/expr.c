@@ -2204,7 +2204,8 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
                                     unsigned_integer_operation,         \
                                     float_operation,                    \
                                     invalid_type_error) do {            \
-  grn_obj *x, *y;                                                       \
+  grn_obj *x = NULL;                                                    \
+  grn_obj *y = NULL;                                                    \
                                                                         \
   POP2ALLOC1(x, y, res);                                                \
   if (y != res) {                                                       \
@@ -2226,7 +2227,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
                                             right_expression_check,     \
                                             text_operation,             \
                                             invalid_type_error) do {    \
-  grn_obj *x;                                                           \
+  grn_obj *x = NULL;                                                    \
   POP1ALLOC1(x, res);                                                   \
   res->header.domain = x->header.domain;                                \
   switch (x->header.domain) {                                           \
@@ -2346,7 +2347,9 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 
 #define UNARY_OPERATE_AND_ASSIGN_DISPATCH(exec_operate, delta,          \
                                           set_flags) do {               \
-  grn_obj *var, *col, value;                                            \
+  grn_obj *var = NULL;                                                  \
+  grn_obj *col = NULL;                                                  \
+  grn_obj value;                                                        \
   grn_id rid;                                                           \
                                                                         \
   POP1ALLOC1(var, res);                                                 \
@@ -2412,7 +2415,9 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
                                                  left_expression_check, \
                                                  right_expression_check,\
                                                  text_operation) do {   \
-  grn_obj *value, *var, *res;                                           \
+  grn_obj *value = NULL;                                                \
+  grn_obj *var = NULL;                                                  \
+  grn_obj *res = NULL;                                                  \
   if (code->value) {                                                    \
     value = code->value;                                                \
     POP1ALLOC1(var, res);                                               \
@@ -2659,14 +2664,15 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_POP :
         {
-          grn_obj *obj;
+          grn_obj *obj = NULL;
           POP1(obj);
           code++;
         }
         break;
       case GRN_OP_GET_REF :
         {
-          grn_obj *col, *rec;
+          grn_obj *col = NULL;
+          grn_obj *rec = NULL;
           if (code->nargs == 1) {
             rec = v0;
             if (code->value) {
@@ -2702,7 +2708,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_CALL :
         {
-          grn_obj *proc;
+          grn_obj *proc = NULL;
           if (code->value) {
             if (sp < s_ + code->nargs - 1) {
               ERR(GRN_INVALID_ARGUMENT, "stack error");
@@ -2752,7 +2758,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_INTERN :
         {
-          grn_obj *obj;
+          grn_obj *obj = NULL;
           POP1(obj);
           obj = GRN_OBJ_RESOLVE(ctx, obj);
           res = grn_expr_get_var(ctx, expr, GRN_TEXT_VALUE(obj), GRN_TEXT_LEN(obj));
@@ -2785,7 +2791,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_EXPR_GET_VAR :
         {
-          grn_obj *name, *expr;
+          grn_obj *name = NULL;
+          grn_obj *expr = NULL;
           POP1(name);
           name = GRN_OBJ_RESOLVE(ctx, name);
           POP1(expr);
@@ -2818,7 +2825,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_ASSIGN :
         {
-          grn_obj *value, *var;
+          grn_obj *value = NULL;
+          grn_obj *var = NULL;
           if (code->value) {
             value = code->value;
           } else {
@@ -2999,7 +3007,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_CJUMP :
         {
-          grn_obj *v;
+          grn_obj *v = NULL;
           POP1(v);
           if (!grn_obj_is_true(ctx, v)) {
             code += code->nargs;
@@ -3009,7 +3017,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_GET_VALUE :
         {
-          grn_obj *col, *rec;
+          grn_obj *col = NULL;
+          grn_obj *rec = NULL;
           do {
             if (code->nargs == 1) {
               rec = v0;
@@ -3044,7 +3053,9 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_OBJ_SEARCH :
         {
-          grn_obj *op, *query, *index;
+          grn_obj *op = NULL;
+          grn_obj *query = NULL;
+          grn_obj *index = NULL;
           // todo : grn_search_optarg optarg;
           POP1(op);
           op = GRN_OBJ_RESOLVE(ctx, op);
@@ -3061,7 +3072,10 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_TABLE_SELECT :
         {
-          grn_obj *op, *res, *expr, *table;
+          grn_obj *op = NULL;
+          grn_obj *res = NULL;
+          grn_obj *expr = NULL;
+          grn_obj *table = NULL;
           POP1(op);
           op = GRN_OBJ_RESOLVE(ctx, op);
           POP1(res);
@@ -3079,7 +3093,10 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_TABLE_SORT :
         {
-          grn_obj *keys_, *res, *limit, *table;
+          grn_obj *keys_ = NULL;
+          grn_obj *res = NULL;
+          grn_obj *limit = NULL;
+          grn_obj *table = NULL;
           POP1(keys_);
           keys_ = GRN_OBJ_RESOLVE(ctx, keys_);
           POP1(res);
@@ -3123,7 +3140,9 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_TABLE_GROUP :
         {
-          grn_obj *res, *keys_, *table;
+          grn_obj *res = NULL;
+          grn_obj *keys_ = NULL;
+          grn_obj *table = NULL;
           POP1(res);
           res = GRN_OBJ_RESOLVE(ctx, res);
           POP1(keys_);
@@ -3176,7 +3195,9 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_JSON_PUT :
         {
           grn_obj_format format;
-          grn_obj *str, *table, *res;
+          grn_obj *res = NULL;
+          grn_obj *str = NULL;
+          grn_obj *table = NULL;
           POP1(res);
           res = GRN_OBJ_RESOLVE(ctx, res);
           POP1(str);
@@ -3194,7 +3215,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_AND :
         {
-          grn_obj *x, *y;
+          grn_obj *x = NULL;
+          grn_obj *y = NULL;
           grn_obj *result = NULL;
           POP2ALLOC1(x, y, res);
           if (grn_obj_is_true(ctx, x)) {
@@ -3216,8 +3238,9 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_OR :
         {
-          grn_obj *x, *y;
-          grn_obj *result;
+          grn_obj *x = NULL;
+          grn_obj *y = NULL;
+          grn_obj *result = NULL;
           POP2ALLOC1(x, y, res);
           if (grn_obj_is_true(ctx, x)) {
             result = x;
@@ -3242,7 +3265,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_AND_NOT :
         {
-          grn_obj *x, *y;
+          grn_obj *x = NULL;
+          grn_obj *y = NULL;
           grn_bool is_true;
           POP2ALLOC1(x, y, res);
           if (!grn_obj_is_true(ctx, x) || grn_obj_is_true(ctx, y)) {
@@ -3263,7 +3287,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_MATCH :
         {
-          grn_obj *x, *y;
+          grn_obj *x = NULL;
+          grn_obj *y = NULL;
           grn_bool matched;
           POP1(y);
           POP1(x);
@@ -3279,7 +3304,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_EQUAL :
         {
           grn_bool is_equal;
-          grn_obj *x, *y;
+          grn_obj *x = NULL;
+          grn_obj *y = NULL;
           POP2ALLOC1(x, y, res);
           is_equal = grn_operator_exec_equal(ctx, x, y);
           grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
@@ -3290,7 +3316,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_NOT_EQUAL :
         {
           grn_bool is_not_equal;
-          grn_obj *x, *y;
+          grn_obj *x = NULL;
+          grn_obj *y = NULL;
           POP2ALLOC1(x, y, res);
           is_not_equal = grn_operator_exec_not_equal(ctx, x, y);
           grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
@@ -3300,7 +3327,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_PREFIX :
         {
-          grn_obj *x, *y;
+          grn_obj *x = NULL;
+          grn_obj *y = NULL;
           grn_bool matched;
           POP1(y);
           POP1(x);
@@ -3315,7 +3343,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_SUFFIX :
         {
-          grn_obj *x, *y;
+          grn_obj *x = NULL;
+          grn_obj *y = NULL;
           grn_bool matched = GRN_FALSE;
           POP2ALLOC1(x, y, res);
           if (GRN_TEXT_LEN(x) >= GRN_TEXT_LEN(y) &&
@@ -3331,7 +3360,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_LESS :
         {
           grn_bool r;
-          grn_obj *x, *y;
+          grn_obj *x = NULL;
+          grn_obj *y = NULL;
           POP2ALLOC1(x, y, res);
           r = grn_operator_exec_less(ctx, x, y);
           grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
@@ -3342,7 +3372,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_GREATER :
         {
           grn_bool r;
-          grn_obj *x, *y;
+          grn_obj *x = NULL;
+          grn_obj *y = NULL;
           POP2ALLOC1(x, y, res);
           r = grn_operator_exec_greater(ctx, x, y);
           grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
@@ -3353,7 +3384,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_LESS_EQUAL :
         {
           grn_bool r;
-          grn_obj *x, *y;
+          grn_obj *x = NULL;
+          grn_obj *y = NULL;
           POP2ALLOC1(x, y, res);
           r = grn_operator_exec_less_equal(ctx, x, y);
           grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
@@ -3364,7 +3396,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_GREATER_EQUAL :
         {
           grn_bool r;
-          grn_obj *x, *y;
+          grn_obj *x = NULL;
+          grn_obj *y = NULL;
           POP2ALLOC1(x, y, res);
           r = grn_operator_exec_greater_equal(ctx, x, y);
           grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
@@ -3374,7 +3407,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_GEO_DISTANCE1 :
         {
-          grn_obj *value;
+          grn_obj *value = NULL;
           double lng1, lat1, lng2, lat2, x, y, d;
           POP1(value);
           lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
@@ -3395,7 +3428,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_GEO_DISTANCE2 :
         {
-          grn_obj *value;
+          grn_obj *value = NULL;
           double lng1, lat1, lng2, lat2, x, y, d;
           POP1(value);
           lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
@@ -3416,7 +3449,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_GEO_DISTANCE3 :
         {
-          grn_obj *value;
+          grn_obj *value = NULL;
           double lng1, lat1, lng2, lat2, p, q, m, n, x, y, d;
           POP1(value);
           lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
@@ -3441,7 +3474,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_GEO_DISTANCE4 :
         {
-          grn_obj *value;
+          grn_obj *value = NULL;
           double lng1, lat1, lng2, lat2, p, q, m, n, x, y, d;
           POP1(value);
           lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
@@ -3467,7 +3500,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_GEO_WITHINP5 :
         {
           int r;
-          grn_obj *value;
+          grn_obj *value = NULL;
           double lng0, lat0, lng1, lat1, x, y, d;
           POP1(value);
           lng0 = GEO_INT2RAD(GRN_INT32_VALUE(value));
@@ -3501,7 +3534,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_GEO_WITHINP6 :
         {
           int r;
-          grn_obj *value;
+          grn_obj *value = NULL;
           double lng0, lat0, lng1, lat1, lng2, lat2, x, y, d;
           POP1(value);
           lng0 = GEO_INT2RAD(GRN_INT32_VALUE(value));
@@ -3530,7 +3563,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_GEO_WITHINP8 :
         {
           int r;
-          grn_obj *value;
+          grn_obj *value = NULL;
           int64_t ln0, la0, ln1, la1, ln2, la2, ln3, la3;
           POP1(value);
           ln0 = GRN_INT32_VALUE(value);
@@ -3776,7 +3809,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_NOT :
         {
-          grn_obj *value;
+          grn_obj *value = NULL;
           grn_bool value_boolean;
           POP1ALLOC1(value, res);
           GRN_OBJ_IS_TRUE(ctx, value, value_boolean);
@@ -3787,7 +3820,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_GET_MEMBER :
         {
-          grn_obj *receiver, *index_or_key;
+          grn_obj *receiver = NULL;
+          grn_obj *index_or_key = NULL;
           POP2ALLOC1(receiver, index_or_key, res);
           if (receiver->header.type == GRN_PTR) {
             grn_obj *index = index_or_key;
@@ -3801,7 +3835,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_REGEXP :
         {
-          grn_obj *target, *pattern;
+          grn_obj *target = NULL;
+          grn_obj *pattern = NULL;
           grn_bool matched;
           POP1(pattern);
           POP1(target);

@@ -12,10 +12,10 @@ environment:
     - VS_VERSION: 14
       ARCH: amd64
 
-matrix:
-  allow_failures:
-    - VS_VERSION: 12
-      ARCH: x86
+# matrix:
+#   allow_failures:
+#     - VS_VERSION: 12
+#       ARCH: x86
 
 notifications:
   - provider: Email
