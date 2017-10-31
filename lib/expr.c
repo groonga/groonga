@@ -1911,7 +1911,8 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
                                              right_expression_check,    \
                                              text_operation,            \
                                              invalid_type_error) do {   \
-  grn_obj *x, *y;                                                       \
+  grn_obj *x = NULL;                                                    \
+  grn_obj *y = NULL;                                                    \
                                                                         \
   POP2ALLOC1(x, y, res);                                                \
   if (x->header.type == GRN_VECTOR || y->header.type == GRN_VECTOR) {   \
