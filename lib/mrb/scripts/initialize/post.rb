@@ -25,4 +25,6 @@ require "plugin_loader"
 
 require "eval_context"
 
+require "labeled_arguments"
+
 require "command_line_parser"

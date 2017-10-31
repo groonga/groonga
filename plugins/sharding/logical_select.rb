@@ -230,33 +230,6 @@ module Groonga
         end
       end
 
-      class LabeledArgumentParser
-        def initialize(parameters)
-          @parameters = parameters
-        end
-
-        def parse(prefix_pattern)
-          pattern = /\A#{prefix_pattern}\[(.+?)\]\.(.+)\z/
-          labeled_arguments = {}
-          @parameters.each do |key, value|
-            match_data = pattern.match(key)
-            next if match_data.nil?
-            labeled_argument = (labeled_arguments[match_data[1]] ||= {})
-            labeled_argument[match_data[2]] = value
-          end
-          labeled_arguments
-        end
-      end
-
-      module KeysParsable
-        private
-        def parse_keys(raw_keys)
-          return [] if raw_keys.nil?
-
-          raw_keys.strip.split(/ *, */)
-        end
-      end
-
       module Calculatable
         def calc_target(table)
           return nil if @calc_target_name.nil?
@@ -355,140 +328,6 @@ module Groonga
         end
       end
 
-      class DynamicColumns
-        class << self
-          def parse(input)
-            parser = LabeledArgumentParser.new(input)
-            columns = parser.parse(/columns?/)
-
-            initial_contexts = []
-            filtered_contexts = []
-            output_contexts = []
-            columns.each do |label, parameters|
-              contexts = nil
-              case parameters["stage"]
-              when "initial"
-                contexts = initial_contexts
-              when "filtered"
-                contexts = filtered_contexts
-              when "output"
-                contexts = output_contexts
-              else
-                next
-              end
-              contexts << DynamicColumnExecuteContext.new(label, parameters)
-            end
-
-            new(initial_contexts,
-                filtered_contexts,
-                output_contexts)
-          end
-        end
-
-        def initialize(initial_contexts,
-                       filtered_contexts,
-                       output_contexts)
-          @initial_contexts = initial_contexts
-          @filtered_contexts = filtered_contexts
-          @output_contexts = output_contexts
-        end
-
-        def each_initial(&block)
-          @initial_contexts.each(&block)
-        end
-
-        def each_filtered(&block)
-          @filtered_contexts.each(&block)
-        end
-
-        def each_output(&block)
-          @output_contexts.each(&block)
-        end
-
-        def close
-          @initial_contexts.each do |context|
-            context.close
-          end
-          @filtered_contexts.each do |context|
-            context.close
-          end
-          @output_contexts.each do |context|
-            context.close
-          end
-        end
-      end
-
-      class DynamicColumnExecuteContext
-        include KeysParsable
-
-        attr_reader :label
-        attr_reader :stage
-        attr_reader :type
-        attr_reader :flags
-        attr_reader :value
-        attr_reader :window_sort_keys
-        attr_reader :window_group_keys
-        def initialize(label, parameters)
-          @label = label
-          @stage = parameters["stage"]
-          @type = parse_type(parameters["type"])
-          @flags = parse_flags(parameters["flags"] || "COLUMN_SCALAR")
-          @value = parameters["value"]
-          @window_sort_keys = parse_keys(parameters["window.sort_keys"])
-          @window_group_keys = parse_keys(parameters["window.group_keys"])
-        end
-
-        def close
-        end
-
-        def apply(table, condition=nil)
-          column = table.create_column(@label, @flags, @type)
-          return if table.empty?
-
-          expression = Expression.create(table)
-          begin
-            expression.parse(@value)
-            if @window_sort_keys.empty? and @window_group_keys.empty?
-              expression.condition = condition if condition
-              table.apply_expression(column, expression)
-            else
-              table.apply_window_function(column, expression,
-                                          :sort_keys => @window_sort_keys,
-                                          :group_keys => @window_group_keys)
-            end
-          ensure
-            expression.close
-          end
-        end
-
-        private
-        def parse_type(type_raw)
-          return nil if type_raw.nil?
-
-          type = Context.instance[type_raw]
-          if type.nil?
-            message = "#{error_message_tag} unknown type: <#{type_raw}>"
-            raise InvalidArgument, message
-          end
-
-          case type
-          when Type, Table
-            type
-          else
-            message = "#{error_message_tag} invalid type: #{type.grn_inspect}"
-            raise InvalidArgument, message
-          end
-        end
-
-        def parse_flags(flags_raw)
-          Column.parse_flags(error_message_tag, flags_raw)
-        end
-
-        def error_message_tag
-          "[logical_select][columns][#{@stage}][#{@label}]"
-        end
-      end
-
       class PlainDrilldownExecuteContext
         include KeysParsable
         include Calculatable
@@ -558,16 +397,13 @@ module Groonga
 
         class << self
           def parse(input)
-            parser = LabeledArgumentParser.new(input)
-            drilldowns = parser.parse(/drilldowns?/)
-
             contexts = {}
-            drilldowns.each do |label, parameters|
-              next if parameters["keys"].nil?
-              context = LabeledDrilldownExecuteContext.new(label, parameters)
+            labeled_arguments = LabeledArguments.new(input, /drilldowns?/)
+            labeled_arguments.each do |label, arguments|
+              next if arguments["keys"].nil?
+              context = LabeledDrilldownExecuteContext.new(label, arguments)
               contexts[label] = context
             end
-
             new(contexts)
           end
         end

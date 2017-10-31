@@ -7,4 +7,6 @@ sharding_scripts =				\
 	logical_shard_list.rb			\
 	logical_table_remove.rb			\
 	parameters.rb				\
-	range_expression_builder.rb
+	range_expression_builder.rb		\
+	keys_parsable.rb			\
+	dynamic_columns.rb

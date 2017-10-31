@@ -1,6 +1,9 @@
 require "sharding/parameters"
 require "sharding/range_expression_builder"
 require "sharding/logical_enumerator"
+require "sharding/keys_parsable"
+
+require "sharding/dynamic_columns"
 
 require "sharding/logical_parameters"
 
