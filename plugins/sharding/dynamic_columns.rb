@@ -48,16 +48,36 @@ module Groonga
         @output_contexts.each(&block)
       end
 
+      def each(&block)
+        each_initial(&block)
+        each_filtered(&block)
+        each_output(&block)
+      end
+
       def close
-        @initial_contexts.each do |context|
+        each do |context|
           context.close
         end
-        @filtered_contexts.each do |context|
-          context.close
+      end
+
+      def cache_key
+        key = ""
+        [
+          @initial_contexts,
+          @filtered_contexts,
+          @output_contexts,
+        ].each do |contexts|
+          contexts.sort_by(&:label).each do |context|
+            key << "#{context.label}\0"
+            key << "#{context.stage}\0"
+            key << "#{context.type}\0"
+            key << "#{context.flags}\0"
+            key << "#{context.value}\0"
+            key << "#{context.window_sort_keys.join(',')}\0"
+            key << "#{context.window_group_keys.join(',')}\0"
+          end
         end
-        @output_contexts.each do |context|
-          context.close
-        end
+        key
       end
     end
 

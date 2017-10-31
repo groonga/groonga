@@ -97,30 +97,11 @@ module Groonga
           key << "#{drilldown.calc_types}\0"
           key << "#{drilldown.calc_target_name}\0"
           key << "#{drilldown.filter}\0"
-          cache_key_dynamic_columns(key, drilldown.dynamic_columns)
+          key << drilldown.dynamic_columns.cache_key
         end
         dynamic_columns = DynamicColumns.parse(input)
-        cache_key_dynamic_columns(key, dynamic_columns)
+        key << dynamic_columns.cache_key
         key
-      end
-
-      def cache_key_dynamic_columns(key, dynamic_columns)
-        [
-          :initial,
-          :filtered,
-          :output
-        ].each do |stage|
-          target_dynamic_columns = dynamic_columns.__send__("each_#{stage}").to_a
-          target_dynamic_columns.sort_by(&:label).each do |dynamic_column|
-            key << "#{dynamic_column.label}\0"
-            key << "#{dynamic_column.stage}\0"
-            key << "#{dynamic_column.type}\0"
-            key << "#{dynamic_column.flags}\0"
-            key << "#{dynamic_column.value}\0"
-            key << "#{dynamic_column.window_sort_keys.join(',')}\0"
-            key << "#{dynamic_column.window_group_keys.join(',')}\0"
-          end
-        end
       end
 
       def write_records(writer, context)
