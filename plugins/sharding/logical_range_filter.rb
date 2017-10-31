@@ -71,6 +71,8 @@ module Groonga
         key << "#{input[:limit]}\0"
         key << "#{input[:output_columns]}\0"
         key << "#{input[:use_range_index]}\0"
+        dynamic_columns = DynamicColumns.parse(input)
+        key << dynamic_columns.cache_key
         key
       end
 
@@ -81,10 +83,12 @@ module Groonga
         attr_reader :filter
         attr_reader :offset
         attr_reader :limit
+        attr_reader :dynamic_columns
         attr_accessor :current_offset
         attr_accessor :current_limit
         attr_reader :result_sets
         attr_reader :unsorted_result_sets
+        attr_reader :temporary_tables
         attr_reader :threshold
         def initialize(input)
           @input = input
@@ -94,12 +98,15 @@ module Groonga
           @filter = @input[:filter]
           @offset = (@input[:offset] || 0).to_i
           @limit = (@input[:limit] || 10).to_i
+          @dynamic_columns = DynamicColumns.parse(@input)
 
           @current_offset = @offset
           @current_limit = @limit
 
           @result_sets = []
           @unsorted_result_sets = []
+
+          @temporary_tables = []
 
           @threshold = compute_threshold
         end
@@ -110,6 +117,12 @@ module Groonga
           end
           @result_sets.each do |result_set|
             result_set.close if result_set.temporary?
+          end
+
+          @dynamic_columns.close
+
+          @temporary_tables.each do |table|
+            table.close
           end
         end
 
@@ -179,6 +192,12 @@ module Groonga
           if @context.result_sets.empty?
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
                                           :key_type => first_shard.table)
+            @context.dynamic_columns.each_initial do |dynamic_column|
+              dynamic_column.apply(result_set)
+            end
+            @context.dynamic_columns.each_filtered do |dynamic_column|
+              dynamic_column.apply(result_set)
+            end
             @context.result_sets << result_set
           end
         end
@@ -189,6 +208,8 @@ module Groonga
           @context = context
           @shard = shard
           @shard_range = shard_range
+
+          @target_table = @shard.table
 
           @filter = @context.filter
           @result_sets = @context.result_sets
@@ -201,7 +222,7 @@ module Groonga
 
         def execute
           return if @cover_type == :none
-          return if @shard.table.empty?
+          return if @target_table.empty?
 
           shard_key = @shard.key
           if shard_key.nil?
@@ -222,6 +243,14 @@ module Groonga
             end
           else
             range_index = nil
+          end
+
+          @context.dynamic_columns.each_initial do |dynamic_column|
+            if @target_table == @shard.table
+              @target_table = @target_table.select_all
+              @context.temporary_tables << @target_table
+            end
+            dynamic_column.apply(@target_table)
           end
 
           execute_filter(range_index, expression_builder)
@@ -273,11 +302,15 @@ module Groonga
                                           __LINE__, __method__)
           end
 
+          unless @context.dynamic_columns.empty?
+            reason = "dynamic columns are used"
+            return decide_use_range_index(false, reason, __LINE__, __method__)
+          end
+
           current_limit = @context.current_limit
           if current_limit < 0
             reason = "limit is negative: <#{current_limit}>"
-            return decide_use_range_index(false, reason,
-                                          __LINE__, __method__)
+            return decide_use_range_index(false, reason, __LINE__, __method__)
           end
 
           required_n_records = @context.current_offset + current_limit
@@ -449,7 +482,7 @@ module Groonga
         end
 
         def filter_shard_all(range_index, expression_builder)
-          table = @shard.table
+          table = @target_table
           if @filter.nil?
             if table.size <= @context.current_offset
               @context.current_offset -= table.size
@@ -593,7 +626,7 @@ module Groonga
         end
 
         def filter_table
-          table = @shard.table
+          table = @target_table
           create_expression(table) do |expression|
             yield(expression)
             result_set = table.select(expression)
@@ -602,9 +635,18 @@ module Groonga
         end
 
         def sort_result_set(result_set)
+          @context.temporary_tables.delete(result_set)
+
           if result_set.empty?
             result_set.close if result_set.temporary?
             return
+          end
+
+          @context.dynamic_columns.each_filtered do |dynamic_column|
+            if result_set == @shard.table
+              result_set = result_set.select_all
+            end
+            dynamic_column.apply(result_set)
           end
 
           if result_set.size <= @context.current_offset

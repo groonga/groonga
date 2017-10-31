@@ -1,0 +1,32 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 1000},
+{"timestamp": "2017/03/15 01:00:00", "price":  900},
+{"timestamp": "2017/03/15 02:00:00", "price":  300}
+]
+
+table_create Times TABLE_PAT_KEY Time
+column_create Times logs_20170315 COLUMN_INDEX Logs_20170315 timestamp
+
+#@add-important-log-levels debug
+log_level --level debug
+logical_range_filter Logs \
+  --shard_key timestamp \
+  --columns[price_with_tax].stage initial \
+  --columns[price_with_tax].type UInt32 \
+  --columns[price_with_tax].flags COLUMN_SCALAR \
+  --columns[price_with_tax].value 'price * 1.08' \
+  --sort_keys price_with_tax \
+  --min "2017/04/01 00:00:00" \
+  --offset 1 \
+  --limit 3
+log_level --level notice
+#@remove-important-log-levels debug

@@ -54,6 +54,12 @@ module Groonga
         each_output(&block)
       end
 
+      def empty?
+        @initial_contexts.empty? and
+          @filtered_contexts.empty? and
+          @output_contexts.empty?
+      end
+
       def close
         each do |context|
           context.close
