@@ -692,7 +692,7 @@ module Groonga
 
           @context.dynamic_columns.each_initial do |dynamic_column|
             if @target_table == @shard.table
-              @target_table = create_all_match_table(@target_table)
+              @target_table = @target_table.select_all
               @context.temporary_tables << @target_table
             end
             dynamic_column.apply(@target_table)
@@ -765,8 +765,7 @@ module Groonga
 
           @context.dynamic_columns.each_filtered do |dynamic_column|
             if result_set == @shard.table
-              @context.temporary_tables << result_set
-              result_set = create_all_match_table(result_set)
+              result_set = result_set.select_all
             end
             dynamic_column.apply(result_set, condition)
           end
@@ -777,16 +776,6 @@ module Groonga
             @unsorted_result_sets << result_set
             sorted_result_set = result_set.sort(@sort_keys)
             @result_sets << sorted_result_set
-          end
-        end
-
-        def create_all_match_table(table)
-          expression = Expression.create(table)
-          begin
-            expression.append_constant(true, Operator::PUSH, 1)
-            table.select(expression)
-          ensure
-            expression.close
           end
         end
       end

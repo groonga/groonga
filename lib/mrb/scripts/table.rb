@@ -61,6 +61,16 @@ module Groonga
       end
     end
 
+    def select_all
+      expression = Expression.create(self)
+      begin
+        expression.append_constant(true, Operator::PUSH, 1)
+        select(expression)
+      ensure
+        expression.close
+      end
+    end
+
     private
     def ensure_sort_keys_accept_nil(keys, &block)
       return yield(nil) if keys.nil?
