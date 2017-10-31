@@ -11,6 +11,6 @@ load --table Sites
 ["_key", "uri"],
 ["Groonga", "http://groonga.org/"],
 ["Mroonga", "http://mroonga.org/"]
-]"
+]
 
 select Sites --filter "_key @ uri"
