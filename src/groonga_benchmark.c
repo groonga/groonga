@@ -113,6 +113,7 @@ static grn_obj *grntest_db = NULL;
 #define MAX_CON 64
 
 #define BUF_LEN 1024
+#define LARGE_BUF_LEN 2048
 #define MAX_PATH_LEN 256
 
 #define J_DO_LOCAL  1  /* do_local */
@@ -1077,7 +1078,7 @@ exit:
   job->qnum += task->qnum;
   job->done++;
   if (job->done == job->concurrency) {
-    char tmpbuf[BUF_LEN];
+    char tmpbuf[LARGE_BUF_LEN];
     sec = job_elapsed_time / (double)1000000;
     qps = (double)job->qnum/ sec;
     grntest_jobdone++;
