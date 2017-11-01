@@ -38,42 +38,42 @@
  */
 
 /* grn_ts_bool_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_bool_is_valid(grn_ts_bool value)
 {
   return GRN_TRUE;
 }
 
 /* grn_ts_int_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_int_is_valid(grn_ts_int value)
 {
   return GRN_TRUE;
 }
 
 /* grn_ts_float_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_float_is_valid(grn_ts_float value)
 {
   return isfinite(value);
 }
 
 /* grn_ts_time_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_time_is_valid(grn_ts_time value)
 {
   return GRN_TRUE;
 }
 
 /* grn_ts_text_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_text_is_valid(grn_ts_text value)
 {
   return value.ptr || !value.size;
 }
 
 /* grn_ts_geo_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_geo_is_valid(grn_ts_geo value)
 {
   return ((value.latitude >= GRN_GEO_MIN_LATITUDE) &&
@@ -96,42 +96,42 @@ grn_ts_geo_is_valid(grn_ts_geo value)
   }\
   return GRN_TRUE;
 /* grn_ts_bool_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_bool_vector_is_valid(grn_ts_bool_vector value)
 {
   GRN_TS_VECTOR_IS_VALID(bool)
 }
 
 /* grn_ts_int_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_int_vector_is_valid(grn_ts_int_vector value)
 {
   GRN_TS_VECTOR_IS_VALID(int)
 }
 
 /* grn_ts_float_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_float_vector_is_valid(grn_ts_float_vector value)
 {
   GRN_TS_VECTOR_IS_VALID(float)
 }
 
 /* grn_ts_time_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_time_vector_is_valid(grn_ts_time_vector value)
 {
   GRN_TS_VECTOR_IS_VALID(time)
 }
 
 /* grn_ts_text_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_text_vector_is_valid(grn_ts_text_vector value)
 {
   GRN_TS_VECTOR_IS_VALID(text)
 }
 
 /* grn_ts_geo_vector_is_valid() returns whether a value is valid or not. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_geo_vector_is_valid(grn_ts_geo_vector value)
 {
   GRN_TS_VECTOR_IS_VALID(geo)
@@ -139,98 +139,98 @@ grn_ts_geo_vector_is_valid(grn_ts_geo_vector value)
 #undef GRN_TS_VECTOR_IS_VALID
 
 /* grn_ts_bool_zero() returns a zero. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_bool_zero(void)
 {
   return GRN_FALSE;
 }
 
 /* grn_ts_int_zero() returns a zero. */
-inline static grn_ts_int
+grn_inline static grn_ts_int
 grn_ts_int_zero(void)
 {
   return 0;
 }
 
 /* grn_ts_float_zero() returns a zero. */
-inline static grn_ts_float
+grn_inline static grn_ts_float
 grn_ts_float_zero(void)
 {
   return 0.0;
 }
 
 /* grn_ts_time_zero() returns a zero. */
-inline static grn_ts_time
+grn_inline static grn_ts_time
 grn_ts_time_zero(void)
 {
   return 0;
 }
 
 /* grn_ts_text_zero() returns a zero. */
-inline static grn_ts_text
+grn_inline static grn_ts_text
 grn_ts_text_zero(void)
 {
   return (grn_ts_text){ NULL, 0 };
 }
 
 /* grn_ts_geo_zero() returns a zero. */
-inline static grn_ts_geo
+grn_inline static grn_ts_geo
 grn_ts_geo_zero(void)
 {
   return (grn_ts_geo){ 0, 0 };
 }
 
 /* grn_ts_ref_zero() returns a zero. */
-inline static grn_ts_ref
+grn_inline static grn_ts_ref
 grn_ts_ref_zero(void)
 {
   return (grn_ts_ref){ 0, 0.0 };
 }
 
 /* grn_ts_bool_vector_zero() returns a zero. */
-inline static grn_ts_bool_vector
+grn_inline static grn_ts_bool_vector
 grn_ts_bool_vector_zero(void)
 {
   return (grn_ts_bool_vector){ NULL, 0 };
 }
 
 /* grn_ts_int_vector_zero() returns a zero. */
-inline static grn_ts_int_vector
+grn_inline static grn_ts_int_vector
 grn_ts_int_vector_zero(void)
 {
   return (grn_ts_int_vector){ NULL, 0 };
 }
 
 /* grn_ts_float_vector_zero() returns a zero. */
-inline static grn_ts_float_vector
+grn_inline static grn_ts_float_vector
 grn_ts_float_vector_zero(void)
 {
   return (grn_ts_float_vector){ NULL, 0 };
 }
 
 /* grn_ts_time_vector_zero() returns a zero. */
-inline static grn_ts_time_vector
+grn_inline static grn_ts_time_vector
 grn_ts_time_vector_zero(void)
 {
   return (grn_ts_time_vector){ NULL, 0 };
 }
 
 /* grn_ts_text_vector_zero() returns a zero. */
-inline static grn_ts_text_vector
+grn_inline static grn_ts_text_vector
 grn_ts_text_vector_zero(void)
 {
   return (grn_ts_text_vector){ NULL, 0 };
 }
 
 /* grn_ts_geo_vector_zero() returns a zero. */
-inline static grn_ts_geo_vector
+grn_inline static grn_ts_geo_vector
 grn_ts_geo_vector_zero(void)
 {
   return (grn_ts_geo_vector){ NULL, 0 };
 }
 
 /* grn_ts_ref_vector_zero() returns a zero. */
-inline static grn_ts_ref_vector
+grn_inline static grn_ts_ref_vector
 grn_ts_ref_vector_zero(void)
 {
   return (grn_ts_ref_vector){ NULL, 0 };
@@ -320,49 +320,49 @@ grn_ts_data_kind_to_type(grn_ts_data_kind kind)
  */
 
 /* grn_ts_op_logical_not_bool() returns !arg. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_logical_not_bool(grn_ts_bool arg)
 {
   return !arg;
 }
 
 /* grn_ts_op_bitwise_not_bool() returns ~arg. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_bitwise_not_bool(grn_ts_bool arg)
 {
   return !arg;
 }
 
 /* grn_ts_op_bitwise_not_int() returns ~arg. */
-inline static grn_ts_int
+grn_inline static grn_ts_int
 grn_ts_op_bitwise_not_int(grn_ts_int arg)
 {
   return ~arg;
 }
 
 /* grn_ts_op_positive_int() returns +arg. */
-inline static grn_ts_int
+grn_inline static grn_ts_int
 grn_ts_op_positive_int(grn_ts_int arg)
 {
   return arg;
 }
 
 /* grn_ts_op_positive_float() returns +arg. */
-inline static grn_ts_float
+grn_inline static grn_ts_float
 grn_ts_op_positive_float(grn_ts_float arg)
 {
   return arg;
 }
 
 /* grn_ts_op_negative_int() returns -arg. */
-inline static grn_ts_int
+grn_inline static grn_ts_int
 grn_ts_op_negative_int(grn_ts_int arg)
 {
   return -arg;
 }
 
 /* grn_ts_op_negative_float() returns -arg. */
-inline static grn_ts_float
+grn_inline static grn_ts_float
 grn_ts_op_negative_float(grn_ts_float arg)
 {
   return -arg;
@@ -390,63 +390,63 @@ grn_ts_op_time(grn_ctx *ctx, grn_ts_text arg, grn_ts_time *out)
 }
 
 /* grn_ts_op_bitwise_and_bool() returns lhs & rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_bitwise_and_bool(grn_ts_bool lhs, grn_ts_bool rhs)
 {
   return lhs & rhs;
 }
 
 /* grn_ts_op_bitwise_and_int() returns lhs & rhs. */
-inline static grn_ts_int
+grn_inline static grn_ts_int
 grn_ts_op_bitwise_and_int(grn_ts_int lhs, grn_ts_int rhs)
 {
   return lhs & rhs;
 }
 
 /* grn_ts_op_bitwise_or_bool() returns lhs | rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_bitwise_or_bool(grn_ts_bool lhs, grn_ts_bool rhs)
 {
   return lhs | rhs;
 }
 
 /* grn_ts_op_bitwise_or_int() returns lhs | rhs. */
-inline static grn_ts_int
+grn_inline static grn_ts_int
 grn_ts_op_bitwise_or_int(grn_ts_int lhs, grn_ts_int rhs)
 {
   return lhs | rhs;
 }
 
 /* grn_ts_op_bitwise_xor_bool() returns lhs ^ rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_bitwise_xor_bool(grn_ts_bool lhs, grn_ts_bool rhs)
 {
   return lhs ^ rhs;
 }
 
 /* grn_ts_op_bitwise_xor_int() returns lhs ^ rhs. */
-inline static grn_ts_int
+grn_inline static grn_ts_int
 grn_ts_op_bitwise_xor_int(grn_ts_int lhs, grn_ts_int rhs)
 {
   return lhs ^ rhs;
 }
 
 /* grn_ts_op_equal_bool() returns lhs == rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_equal_bool(grn_ts_bool lhs, grn_ts_bool rhs)
 {
   return lhs == rhs;
 }
 
 /* grn_ts_op_equal_int() returns lhs == rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_equal_int(grn_ts_int lhs, grn_ts_int rhs)
 {
   return lhs == rhs;
 }
 
 /* grn_ts_op_equal_float() returns lhs == rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_equal_float(grn_ts_float lhs, grn_ts_float rhs)
 {
   /* To suppress warnings, "lhs == rhs" is not used. */
@@ -454,28 +454,28 @@ grn_ts_op_equal_float(grn_ts_float lhs, grn_ts_float rhs)
 }
 
 /* grn_ts_op_equal_time() returns lhs == rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_equal_time(grn_ts_time lhs, grn_ts_time rhs)
 {
   return lhs == rhs;
 }
 
 /* grn_ts_op_equal_text() returns lhs == rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_equal_text(grn_ts_text lhs, grn_ts_text rhs)
 {
   return (lhs.size == rhs.size) && !memcmp(lhs.ptr, rhs.ptr, lhs.size);
 }
 
 /* grn_ts_op_equal_geo() returns lhs == rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_equal_geo(grn_ts_geo lhs, grn_ts_geo rhs)
 {
   return (lhs.latitude == rhs.latitude) && (lhs.longitude == rhs.longitude);
 }
 
 /* grn_ts_op_equal_ref() returns lhs == rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs)
 {
   /* Ignore scores. */
@@ -494,49 +494,49 @@ grn_ts_op_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs)
   }\
   return GRN_TRUE;
 /* grn_ts_op_equal_bool_vector() returns lhs == rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_equal_bool_vector(grn_ts_bool_vector lhs, grn_ts_bool_vector rhs)
 {
   GRN_TS_OP_EQUAL_VECTOR(bool)
 }
 
 /* grn_ts_op_equal_int_vector() returns lhs == rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_equal_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs)
 {
   GRN_TS_OP_EQUAL_VECTOR(int)
 }
 
 /* grn_ts_op_equal_float_vector() returns lhs == rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_equal_float_vector(grn_ts_float_vector lhs, grn_ts_float_vector rhs)
 {
   GRN_TS_OP_EQUAL_VECTOR(float)
 }
 
 /* grn_ts_op_equal_time_vector() returns lhs == rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_equal_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs)
 {
   GRN_TS_OP_EQUAL_VECTOR(time)
 }
 
 /* grn_ts_op_equal_text_vector() returns lhs == rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_equal_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs)
 {
   GRN_TS_OP_EQUAL_VECTOR(text)
 }
 
 /* grn_ts_op_equal_geo_vector() returns lhs == rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_equal_geo_vector(grn_ts_geo_vector lhs, grn_ts_geo_vector rhs)
 {
   GRN_TS_OP_EQUAL_VECTOR(geo)
 }
 
 /* grn_ts_op_equal_ref_vector() returns lhs == rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_equal_ref_vector(grn_ts_ref_vector lhs, grn_ts_ref_vector rhs)
 {
   GRN_TS_OP_EQUAL_VECTOR(ref)
@@ -544,21 +544,21 @@ grn_ts_op_equal_ref_vector(grn_ts_ref_vector lhs, grn_ts_ref_vector rhs)
 #undef GRN_TS_OP_EQUAL_VECTOR
 
 /* grn_ts_op_not_equal_bool() returns lhs != rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_not_equal_bool(grn_ts_bool lhs, grn_ts_bool rhs)
 {
   return lhs != rhs;
 }
 
 /* grn_ts_op_not_equal_int() returns lhs != rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_not_equal_int(grn_ts_int lhs, grn_ts_int rhs)
 {
   return lhs != rhs;
 }
 
 /* grn_ts_op_not_equal_float() returns lhs != rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_not_equal_float(grn_ts_float lhs, grn_ts_float rhs)
 {
   /* To suppress warnings, "lhs != rhs" is not used. */
@@ -566,28 +566,28 @@ grn_ts_op_not_equal_float(grn_ts_float lhs, grn_ts_float rhs)
 }
 
 /* grn_ts_op_not_equal_time() returns lhs != rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_not_equal_time(grn_ts_time lhs, grn_ts_time rhs)
 {
   return lhs != rhs;
 }
 
 /* grn_ts_op_not_equal_text() returns lhs != rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_not_equal_text(grn_ts_text lhs, grn_ts_text rhs)
 {
   return (lhs.size != rhs.size) || memcmp(lhs.ptr, rhs.ptr, lhs.size);
 }
 
 /* grn_ts_op_not_equal_geo() returns lhs != rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_not_equal_geo(grn_ts_geo lhs, grn_ts_geo rhs)
 {
   return (lhs.latitude != rhs.latitude) || (lhs.longitude != rhs.longitude);
 }
 
 /* grn_ts_op_not_equal_ref() returns lhs != rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_not_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs)
 {
   /* Ignore scores. */
@@ -606,21 +606,21 @@ grn_ts_op_not_equal_ref(grn_ts_ref lhs, grn_ts_ref rhs)
   }\
   return GRN_FALSE;
 /* grn_ts_op_not_equal_bool_vector() returns lhs != rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_not_equal_bool_vector(grn_ts_bool_vector lhs, grn_ts_bool_vector rhs)
 {
   GRN_TS_OP_NOT_EQUAL_VECTOR(bool)
 }
 
 /* grn_ts_op_not_equal_int_vector() returns lhs != rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_not_equal_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs)
 {
   GRN_TS_OP_NOT_EQUAL_VECTOR(int)
 }
 
 /* grn_ts_op_not_equal_float_vector() returns lhs != rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_not_equal_float_vector(grn_ts_float_vector lhs,
                                  grn_ts_float_vector rhs)
 {
@@ -628,28 +628,28 @@ grn_ts_op_not_equal_float_vector(grn_ts_float_vector lhs,
 }
 
 /* grn_ts_op_not_equal_time_vector() returns lhs != rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_not_equal_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs)
 {
   GRN_TS_OP_NOT_EQUAL_VECTOR(time)
 }
 
 /* grn_ts_op_not_equal_text_vector() returns lhs != rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_not_equal_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs)
 {
   GRN_TS_OP_NOT_EQUAL_VECTOR(text)
 }
 
 /* grn_ts_op_not_equal_geo_vector() returns lhs != rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_not_equal_geo_vector(grn_ts_geo_vector lhs, grn_ts_geo_vector rhs)
 {
   GRN_TS_OP_NOT_EQUAL_VECTOR(geo)
 }
 
 /* grn_ts_op_not_equal_ref_vector() returns lhs != rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_not_equal_ref_vector(grn_ts_ref_vector lhs, grn_ts_ref_vector rhs)
 {
   GRN_TS_OP_NOT_EQUAL_VECTOR(ref)
@@ -657,28 +657,28 @@ grn_ts_op_not_equal_ref_vector(grn_ts_ref_vector lhs, grn_ts_ref_vector rhs)
 #undef GRN_TS_OP_NOT_EQUAL_VECTOR
 
 /* grn_ts_op_less_int() returns lhs < rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_int(grn_ts_int lhs, grn_ts_int rhs)
 {
   return lhs < rhs;
 }
 
 /* grn_ts_op_less_float() returns lhs < rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_float(grn_ts_float lhs, grn_ts_float rhs)
 {
   return lhs < rhs;
 }
 
 /* grn_ts_op_less_time() returns lhs < rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_time(grn_ts_time lhs, grn_ts_time rhs)
 {
   return lhs < rhs;
 }
 
 /* grn_ts_op_less_text() returns lhs < rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_text(grn_ts_text lhs, grn_ts_text rhs)
 {
   size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
@@ -697,28 +697,28 @@ grn_ts_op_less_text(grn_ts_text lhs, grn_ts_text rhs)
   }\
   return lhs.size < rhs.size;
 /* grn_ts_op_less_int_vector() returns lhs < rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs)
 {
   GRN_TS_OP_LESS_VECTOR(int)
 }
 
 /* grn_ts_op_less_float_vector() returns lhs < rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_float_vector(grn_ts_float_vector lhs, grn_ts_float_vector rhs)
 {
   GRN_TS_OP_LESS_VECTOR(float)
 }
 
 /* grn_ts_op_less_time_vector() returns lhs < rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs)
 {
   GRN_TS_OP_LESS_VECTOR(time)
 }
 
 /* grn_ts_op_less_text_vector() returns lhs < rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs)
 {
   GRN_TS_OP_LESS_VECTOR(text)
@@ -726,28 +726,28 @@ grn_ts_op_less_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs)
 #undef GRN_TS_OP_LESS_VECTOR
 
 /* grn_ts_op_less_equal_int() returns lhs <= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_equal_int(grn_ts_int lhs, grn_ts_int rhs)
 {
   return lhs <= rhs;
 }
 
 /* grn_ts_op_less_equal_float() returns lhs <= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_equal_float(grn_ts_float lhs, grn_ts_float rhs)
 {
   return lhs <= rhs;
 }
 
 /* grn_ts_op_less_equal_time() returns lhs <= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_equal_time(grn_ts_time lhs, grn_ts_time rhs)
 {
   return lhs <= rhs;
 }
 
 /* grn_ts_op_less_equal_text() returns lhs <= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_equal_text(grn_ts_text lhs, grn_ts_text rhs)
 {
   size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
@@ -766,14 +766,14 @@ grn_ts_op_less_equal_text(grn_ts_text lhs, grn_ts_text rhs)
   }\
   return lhs.size <= rhs.size;
 /* grn_ts_op_less_equal_int_vector() returns lhs <= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_equal_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs)
 {
   GRN_TS_OP_LESS_EQUAL_VECTOR(int)
 }
 
 /* grn_ts_op_less_equal_float_vector() returns lhs <= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_equal_float_vector(grn_ts_float_vector lhs,
                                   grn_ts_float_vector rhs)
 {
@@ -781,7 +781,7 @@ grn_ts_op_less_equal_float_vector(grn_ts_float_vector lhs,
 }
 
 /* grn_ts_op_less_equal_time_vector() returns lhs <= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_equal_time_vector(grn_ts_time_vector lhs,
                                  grn_ts_time_vector rhs)
 {
@@ -789,7 +789,7 @@ grn_ts_op_less_equal_time_vector(grn_ts_time_vector lhs,
 }
 
 /* grn_ts_op_less_equal_text_vector() returns lhs <= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_less_equal_text_vector(grn_ts_text_vector lhs,
                                  grn_ts_text_vector rhs)
 {
@@ -798,28 +798,28 @@ grn_ts_op_less_equal_text_vector(grn_ts_text_vector lhs,
 #undef GRN_TS_OP_LESS_EQUAL_VECTOR
 
 /* grn_ts_op_greater_int() returns lhs > rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_int(grn_ts_int lhs, grn_ts_int rhs)
 {
   return lhs > rhs;
 }
 
 /* grn_ts_op_greater_float() returns lhs > rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_float(grn_ts_float lhs, grn_ts_float rhs)
 {
   return lhs > rhs;
 }
 
 /* grn_ts_op_greater_time() returns lhs > rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_time(grn_ts_time lhs, grn_ts_time rhs)
 {
   return lhs > rhs;
 }
 
 /* grn_ts_op_greater_text() returns lhs > rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_text(grn_ts_text lhs, grn_ts_text rhs)
 {
   size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
@@ -838,14 +838,14 @@ grn_ts_op_greater_text(grn_ts_text lhs, grn_ts_text rhs)
   }\
   return lhs.size > rhs.size;
 /* grn_ts_op_greater_int_vector() returns lhs > rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_int_vector(grn_ts_int_vector lhs, grn_ts_int_vector rhs)
 {
   GRN_TS_OP_GREATER_VECTOR(int)
 }
 
 /* grn_ts_op_greater_float_vector() returns lhs > rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_float_vector(grn_ts_float_vector lhs,
                                grn_ts_float_vector rhs)
 {
@@ -853,14 +853,14 @@ grn_ts_op_greater_float_vector(grn_ts_float_vector lhs,
 }
 
 /* grn_ts_op_greater_time_vector() returns lhs > rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_time_vector(grn_ts_time_vector lhs, grn_ts_time_vector rhs)
 {
   GRN_TS_OP_GREATER_VECTOR(time)
 }
 
 /* grn_ts_op_greater_text_vector() returns lhs > rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs)
 {
   GRN_TS_OP_GREATER_VECTOR(text)
@@ -868,28 +868,28 @@ grn_ts_op_greater_text_vector(grn_ts_text_vector lhs, grn_ts_text_vector rhs)
 #undef GRN_TS_OP_GREATER_VECTOR
 
 /* grn_ts_op_greater_equal_int() returns lhs >= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_equal_int(grn_ts_int lhs, grn_ts_int rhs)
 {
   return lhs >= rhs;
 }
 
 /* grn_ts_op_greater_equal_float() returns lhs >= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_equal_float(grn_ts_float lhs, grn_ts_float rhs)
 {
   return lhs >= rhs;
 }
 
 /* grn_ts_op_greater_equal_time() returns lhs >= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_equal_time(grn_ts_time lhs, grn_ts_time rhs)
 {
   return lhs >= rhs;
 }
 
 /* grn_ts_op_greater_equal_text() returns lhs >= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_equal_text(grn_ts_text lhs, grn_ts_text rhs)
 {
   size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
@@ -908,7 +908,7 @@ grn_ts_op_greater_equal_text(grn_ts_text lhs, grn_ts_text rhs)
   }\
   return lhs.size >= rhs.size;
 /* grn_ts_op_greater_equal_int_vector() returns lhs >= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_equal_int_vector(grn_ts_int_vector lhs,
                                    grn_ts_int_vector rhs)
 {
@@ -916,7 +916,7 @@ grn_ts_op_greater_equal_int_vector(grn_ts_int_vector lhs,
 }
 
 /* grn_ts_op_greater_equal_float_vector() returns lhs >= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_equal_float_vector(grn_ts_float_vector lhs,
                                      grn_ts_float_vector rhs)
 {
@@ -924,7 +924,7 @@ grn_ts_op_greater_equal_float_vector(grn_ts_float_vector lhs,
 }
 
 /* grn_ts_op_greater_equal_time_vector() returns lhs >= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_equal_time_vector(grn_ts_time_vector lhs,
                                     grn_ts_time_vector rhs)
 {
@@ -932,7 +932,7 @@ grn_ts_op_greater_equal_time_vector(grn_ts_time_vector lhs,
 }
 
 /* grn_ts_op_greater_equal_text_vector() returns lhs >= rhs. */
-inline static grn_ts_bool
+grn_inline static grn_ts_bool
 grn_ts_op_greater_equal_text_vector(grn_ts_text_vector lhs,
                                     grn_ts_text_vector rhs)
 {
@@ -941,34 +941,34 @@ grn_ts_op_greater_equal_text_vector(grn_ts_text_vector lhs,
 #undef GRN_TS_OP_GREATER_EQUAL_VECTOR
 
 /* grn_ts_op_shift_arithmetic_left() returns lhs << rhs. */
-inline static grn_ts_int
+grn_inline static grn_ts_int
 grn_ts_op_shift_arithmetic_left(grn_ts_int lhs, grn_ts_int rhs)
 {
   return lhs << rhs;
 }
 
 /* grn_ts_op_shift_arithmetic_right() returns lhs << rhs. */
-inline static grn_ts_int
+grn_inline static grn_ts_int
 grn_ts_op_shift_arithmetic_right(grn_ts_int lhs, grn_ts_int rhs)
 {
   return lhs >> rhs;
 }
 
 /* grn_ts_op_shift_logical_left() returns lhs << rhs. */
-inline static grn_ts_int
+grn_inline static grn_ts_int
 grn_ts_op_shift_logical_left(grn_ts_int lhs, grn_ts_int rhs)
 {
   return lhs << rhs;
 }
 
 /* grn_ts_op_shift_logical_right() returns lhs << rhs. */
-inline static grn_ts_int
+grn_inline static grn_ts_int
 grn_ts_op_shift_logical_right(grn_ts_int lhs, grn_ts_int rhs)
 {
   return (uint64_t)lhs >> rhs;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_plus_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
                        grn_ts_int *out)
 {
@@ -976,7 +976,7 @@ grn_ts_op_plus_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_plus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
                            grn_ts_float *out)
 {
@@ -987,7 +987,7 @@ grn_ts_op_plus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_plus_time_int(grn_ctx *ctx, grn_ts_time lhs, grn_ts_int rhs,
                         grn_ts_time *out)
 {
@@ -995,7 +995,7 @@ grn_ts_op_plus_time_int(grn_ctx *ctx, grn_ts_time lhs, grn_ts_int rhs,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_plus_time_float(grn_ctx *ctx, grn_ts_time lhs, grn_ts_float rhs,
                           grn_ts_time *out)
 {
@@ -1003,7 +1003,7 @@ grn_ts_op_plus_time_float(grn_ctx *ctx, grn_ts_time lhs, grn_ts_float rhs,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_minus_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
                         grn_ts_int *out)
 {
@@ -1011,7 +1011,7 @@ grn_ts_op_minus_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_minus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
                             grn_ts_float *out)
 {
@@ -1022,7 +1022,7 @@ grn_ts_op_minus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_minus_time_time(grn_ctx *ctx, grn_ts_time lhs, grn_ts_time rhs,
                           grn_ts_float *out)
 {
@@ -1030,7 +1030,7 @@ grn_ts_op_minus_time_time(grn_ctx *ctx, grn_ts_time lhs, grn_ts_time rhs,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_minus_time_int(grn_ctx *ctx, grn_ts_time lhs, grn_ts_int rhs,
                          grn_ts_time *out)
 {
@@ -1038,7 +1038,7 @@ grn_ts_op_minus_time_int(grn_ctx *ctx, grn_ts_time lhs, grn_ts_int rhs,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_minus_time_float(grn_ctx *ctx, grn_ts_time lhs, grn_ts_float rhs,
                            grn_ts_time *out)
 {
@@ -1046,7 +1046,7 @@ grn_ts_op_minus_time_float(grn_ctx *ctx, grn_ts_time lhs, grn_ts_float rhs,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_multiplication_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
                                  grn_ts_int *out)
 {
@@ -1054,7 +1054,7 @@ grn_ts_op_multiplication_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_multiplication_float_float(grn_ctx *ctx, grn_ts_float lhs,
                                      grn_ts_float rhs, grn_ts_float *out)
 {
@@ -1065,7 +1065,7 @@ grn_ts_op_multiplication_float_float(grn_ctx *ctx, grn_ts_float lhs,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_division_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
                            grn_ts_int *out)
 {
@@ -1079,7 +1079,7 @@ grn_ts_op_division_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_division_float_float(grn_ctx *ctx, grn_ts_float lhs,
                                grn_ts_float rhs, grn_ts_float *out)
 {
@@ -1090,7 +1090,7 @@ grn_ts_op_division_float_float(grn_ctx *ctx, grn_ts_float lhs,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_modulus_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
                           grn_ts_int *out)
 {
@@ -1104,7 +1104,7 @@ grn_ts_op_modulus_int_int(grn_ctx *ctx, grn_ts_int lhs, grn_ts_int rhs,
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 grn_ts_op_modulus_float_float(grn_ctx *ctx, grn_ts_float lhs, grn_ts_float rhs,
                               grn_ts_float *out)
 {

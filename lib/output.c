@@ -544,7 +544,7 @@ grn_output_null(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
   INCR_LENGTH;
 }
 
-static inline void
+static grn_inline void
 grn_output_bulk_void(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                      const char *value, size_t value_len)
 {
@@ -823,14 +823,14 @@ exit :
   grn_obj_close(ctx, &buf);
 }
 
-static inline void
+static grn_inline void
 grn_output_void(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                 grn_obj *bulk, grn_obj_format *format)
 {
   grn_output_null(ctx, outbuf, output_type);
 }
 
-static inline void
+static grn_inline void
 grn_output_bulk(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                 grn_obj *bulk, grn_obj_format *format)
 {
@@ -1045,7 +1045,7 @@ grn_output_uvector_result_set(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &buf);
 }
 
-static inline void
+static grn_inline void
 grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                    grn_obj *uvector, grn_obj_format *format)
 {
@@ -1136,7 +1136,7 @@ grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   grn_obj_unlink(ctx, range);
 }
 
-static inline void
+static grn_inline void
 grn_output_vector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                   grn_obj *vector, grn_obj_format *format)
 {
@@ -1204,7 +1204,7 @@ grn_output_vector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   }
 }
 
-static inline void
+static grn_inline void
 grn_output_pvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                    grn_obj *pvector, grn_obj_format *format)
 {
@@ -1225,7 +1225,7 @@ grn_output_pvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   }
 }
 
-static inline void
+static grn_inline void
 grn_output_result_set_n_hits_v1(grn_ctx *ctx,
                                 grn_obj *outbuf,
                                 grn_content_type output_type,
@@ -1240,7 +1240,7 @@ grn_output_result_set_n_hits_v1(grn_ctx *ctx,
   grn_output_array_close(ctx, outbuf, output_type);
 }
 
-static inline void
+static grn_inline void
 grn_output_result_set_n_hits_v3(grn_ctx *ctx,
                                 grn_obj *outbuf,
                                 grn_content_type output_type,
@@ -1250,7 +1250,7 @@ grn_output_result_set_n_hits_v3(grn_ctx *ctx,
   grn_output_int32(ctx, outbuf, output_type, format->nhits);
 }
 
-static inline void
+static grn_inline void
 grn_output_result_set_n_hits(grn_ctx *ctx,
                              grn_obj *outbuf,
                              grn_content_type output_type,
@@ -1267,7 +1267,7 @@ grn_output_result_set_n_hits(grn_ctx *ctx,
   }
 }
 
-static inline void
+static grn_inline void
 grn_output_table_column_info(grn_ctx *ctx,
                              grn_obj *outbuf,
                              grn_content_type output_type,
@@ -1305,7 +1305,7 @@ grn_output_table_column_info(grn_ctx *ctx,
   }
 }
 
-static inline int
+static grn_inline int
 count_n_elements_in_expression(grn_ctx *ctx, grn_obj *expression)
 {
   int n_elements = 0;
@@ -1341,7 +1341,7 @@ is_score_accessor(grn_ctx *ctx, grn_obj *obj)
   return a->action == GRN_ACCESSOR_GET_SCORE;
 }
 
-static inline void
+static grn_inline void
 grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
                         grn_content_type output_type,
                         grn_obj *column, grn_obj *buf)
@@ -1394,7 +1394,7 @@ grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
   }
 }
 
-static inline void
+static grn_inline void
 grn_output_table_column_by_expression(grn_ctx *ctx, grn_obj *outbuf,
                                       grn_content_type output_type,
                                       grn_expr_code *code,
@@ -1435,7 +1435,7 @@ grn_output_table_column_by_expression(grn_ctx *ctx, grn_obj *outbuf,
   }
 }
 
-static inline void
+static grn_inline void
 grn_output_table_columns_open(grn_ctx *ctx,
                               grn_obj *outbuf,
                               grn_content_type output_type,
@@ -1449,7 +1449,7 @@ grn_output_table_columns_open(grn_ctx *ctx,
   }
 }
 
-static inline void
+static grn_inline void
 grn_output_table_columns_close(grn_ctx *ctx,
                                grn_obj *outbuf,
                                grn_content_type output_type)
@@ -1461,7 +1461,7 @@ grn_output_table_columns_close(grn_ctx *ctx,
   }
 }
 
-static inline void
+static grn_inline void
 grn_output_table_columns_by_expression(grn_ctx *ctx, grn_obj *outbuf,
                                        grn_content_type output_type,
                                        grn_obj *table, grn_obj_format *format,
@@ -1521,7 +1521,7 @@ grn_output_table_columns_by_expression(grn_ctx *ctx, grn_obj *outbuf,
   grn_output_table_columns_close(ctx, outbuf, output_type);
 }
 
-static inline void
+static grn_inline void
 grn_output_table_columns_by_columns(grn_ctx *ctx, grn_obj *outbuf,
                                     grn_content_type output_type,
                                     grn_obj *table, grn_obj_format *format,
@@ -1556,7 +1556,7 @@ grn_output_table_columns(grn_ctx *ctx, grn_obj *outbuf,
   GRN_OBJ_FIN(ctx, &buf);
 }
 
-static inline void
+static grn_inline void
 grn_output_table_record_open(grn_ctx *ctx,
                               grn_obj *outbuf,
                               grn_content_type output_type,
@@ -1569,7 +1569,7 @@ grn_output_table_record_open(grn_ctx *ctx,
   }
 }
 
-static inline void
+static grn_inline void
 grn_output_table_record_close(grn_ctx *ctx,
                                grn_obj *outbuf,
                                grn_content_type output_type)
@@ -1581,7 +1581,7 @@ grn_output_table_record_close(grn_ctx *ctx,
   }
 }
 
-static inline void
+static grn_inline void
 grn_output_table_record_by_column(grn_ctx *ctx,
                                   grn_obj *outbuf,
                                   grn_content_type output_type,
@@ -1591,7 +1591,7 @@ grn_output_table_record_by_column(grn_ctx *ctx,
   grn_text_atoj(ctx, outbuf, output_type, column, id);
 }
 
-static inline void
+static grn_inline void
 grn_output_table_record_by_expression(grn_ctx *ctx,
                                       grn_obj *outbuf,
                                       grn_content_type output_type,
@@ -1618,7 +1618,7 @@ grn_output_table_record_by_expression(grn_ctx *ctx,
   }
 }
 
-static inline void
+static grn_inline void
 grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
                                        grn_content_type output_type,
                                        grn_table_cursor *tc,
@@ -1689,7 +1689,7 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
   }
 }
 
-static inline void
+static grn_inline void
 grn_output_table_records_by_columns(grn_ctx *ctx, grn_obj *outbuf,
                                     grn_content_type output_type,
                                     grn_table_cursor *tc,
@@ -1712,7 +1712,7 @@ grn_output_table_records_by_columns(grn_ctx *ctx, grn_obj *outbuf,
   }
 }
 
-static inline void
+static grn_inline void
 grn_output_table_records_open(grn_ctx *ctx,
                               grn_obj *outbuf,
                               grn_content_type output_type,
@@ -1724,7 +1724,7 @@ grn_output_table_records_open(grn_ctx *ctx,
   }
 }
 
-static inline void
+static grn_inline void
 grn_output_table_records_close(grn_ctx *ctx,
                                grn_obj *outbuf,
                                grn_content_type output_type)
@@ -2244,7 +2244,7 @@ typedef struct {
   grn_obj *buffer;
 } msgpack_writer_ctx;
 
-static inline int
+static grn_inline int
 msgpack_buffer_writer(void* data, const char* buf, msgpack_size_t len)
 {
   msgpack_writer_ctx *writer_ctx = (msgpack_writer_ctx *)data;
@@ -2802,7 +2802,7 @@ grn_output_envelope(grn_ctx *ctx,
   }
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 is_output_columns_format_v1(grn_ctx *ctx,
                             const char *output_columns,
                             unsigned int output_columns_len)

@@ -2465,7 +2465,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   }                                                                     \
 } while (0)
 
-inline static void
+grn_inline static void
 grn_expr_exec_get_member_vector(grn_ctx *ctx,
                                 grn_obj *expr,
                                 grn_obj *column_and_record_id,
@@ -2565,7 +2565,7 @@ grn_expr_exec_get_member_vector(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &values);
 }
 
-inline static void
+grn_inline static void
 grn_expr_exec_get_member_table(grn_ctx *ctx,
                                grn_obj *expr,
                                grn_obj *table,
@@ -2593,7 +2593,7 @@ grn_expr_exec_get_member_table(grn_ctx *ctx,
   GRN_RECORD_SET(ctx, result, id);
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 grn_expr_exec_is_simple_expr(grn_ctx *ctx, grn_obj *expr)
 {
   grn_expr *e = (grn_expr *)expr;
@@ -2614,7 +2614,7 @@ grn_expr_exec_is_simple_expr(grn_ctx *ctx, grn_obj *expr)
   }
 }
 
-static inline grn_obj *
+static grn_inline grn_obj *
 grn_expr_exec_simple(grn_ctx *ctx, grn_obj *expr)
 {
   grn_expr *e = (grn_expr *)expr;
@@ -5643,7 +5643,7 @@ grn_p_scan_info_list(grn_ctx *ctx, scan_info **sis, int n)
   GRN_OBJ_FIN(ctx, &inspected);
 }
 
-inline static int32_t
+grn_inline static int32_t
 exec_result_to_score(grn_ctx *ctx, grn_obj *result, grn_obj *score_buffer)
 {
   if (!result) {
@@ -5773,13 +5773,13 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   grn_expr_executor_close(ctx, executor);
 }
 
-static inline void
+static grn_inline void
 grn_table_select_index_report(grn_ctx *ctx, const char *tag, grn_obj *index)
 {
   grn_report_index(ctx, "[table][select]", tag, index);
 }
 
-static inline void
+static grn_inline void
 grn_table_select_index_not_used_report(grn_ctx *ctx,
                                        const char *tag,
                                        grn_obj *index,
@@ -5788,7 +5788,7 @@ grn_table_select_index_not_used_report(grn_ctx *ctx,
   grn_report_index_not_used(ctx, "[table][select]", tag, index, reason);
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 grn_table_select_index_use_sequential_search(grn_ctx *ctx,
                                              grn_obj *table,
                                              grn_obj *res,
@@ -5839,7 +5839,7 @@ grn_table_select_index_use_sequential_search(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 grn_table_select_index_equal(grn_ctx *ctx,
                              grn_obj *table,
                              grn_obj *index,
@@ -5983,7 +5983,7 @@ grn_table_select_index_equal(grn_ctx *ctx,
   return processed;
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 grn_table_select_index_not_equal(grn_ctx *ctx,
                                  grn_obj *table,
                                  grn_obj *index,
@@ -6204,7 +6204,7 @@ grn_table_select_index_suffix(grn_ctx *ctx,
   return grn_table_select_index_prefix(ctx, table, index, si, res);
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 grn_table_select_index_match(grn_ctx *ctx,
                              grn_obj *table,
                              grn_obj *index,
@@ -6305,7 +6305,7 @@ grn_table_select_index_match(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 grn_table_select_index_call_selector(grn_ctx *ctx,
                                      grn_obj *table,
                                      grn_obj *index,
@@ -6424,7 +6424,7 @@ grn_table_select_index_call_selector(grn_ctx *ctx,
   return processed;
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 grn_table_select_index_range_key(grn_ctx *ctx,
                                  grn_obj *table,
                                  scan_info *si,
@@ -6508,7 +6508,7 @@ grn_table_select_index_range_key(grn_ctx *ctx,
   return processed;
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
                                     grn_obj *index,
                                     scan_info *si, grn_operator logical_op,
@@ -6626,7 +6626,7 @@ grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
   return processed;
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 grn_table_select_index_range_accessor(grn_ctx *ctx,
                                       grn_obj *table,
                                       grn_obj *accessor,
@@ -6707,7 +6707,7 @@ grn_table_select_index_range_accessor(grn_ctx *ctx,
   return rc == GRN_SUCCESS;
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 grn_table_select_index_range(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                              scan_info *si, grn_obj *res)
 {
@@ -6730,7 +6730,7 @@ grn_table_select_index_range(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   }
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                        grn_obj *res, grn_id *min_id)
 {
@@ -7026,7 +7026,7 @@ typedef struct {
   int weight;
 } efs_op;
 
-inline static void
+grn_inline static void
 skip_space(grn_ctx *ctx, efs_info *q)
 {
   unsigned int len;

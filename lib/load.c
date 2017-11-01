@@ -240,7 +240,7 @@ set_weight_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *value)
   }
 }
 
-static inline int
+static grn_inline int
 name_equal(const char *p, unsigned int size, const char *name)
 {
   if (strlen(name) != size) { return 0; }

@@ -78,7 +78,7 @@ static unsigned char symbol[] = {
   '$', 0, 0, '%', '#', '&', '*', '@', 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-inline static grn_obj *
+grn_inline static grn_obj *
 eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   static uint16_t hankana[] = {
@@ -323,7 +323,7 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
   return NULL;
 }
 
-inline static grn_obj *
+grn_inline static grn_obj *
 sjis_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   static uint16_t hankana[] = {
@@ -560,7 +560,7 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
 }
 
 #ifdef GRN_WITH_NFKC
-static inline int
+static grn_inline int
 grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char *end)
 {
   /* MEMO: This function allows non-null-terminated string as str. */
@@ -610,7 +610,7 @@ grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char
   return 0;
 }
 
-inline static grn_obj *
+grn_inline static grn_obj *
 utf8_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   int16_t *ch;
@@ -753,7 +753,7 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
 }
 #endif /* GRN_WITH_NFKC */
 
-inline static grn_obj *
+grn_inline static grn_obj *
 ascii_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   int16_t *ch;
@@ -855,7 +855,7 @@ ascii_normalize(grn_ctx *ctx, grn_string *nstr)
 }
 
 /* use cp1252 as latin1 */
-inline static grn_obj *
+grn_inline static grn_obj *
 latin1_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   int16_t *ch;
@@ -990,7 +990,7 @@ latin1_normalize(grn_ctx *ctx, grn_string *nstr)
   return NULL;
 }
 
-inline static grn_obj *
+grn_inline static grn_obj *
 koi8r_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   int16_t *ch;

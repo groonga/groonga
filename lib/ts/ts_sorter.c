@@ -114,7 +114,7 @@ grn_ts_sorter_node_sort(grn_ctx *ctx, grn_ts_sorter_node *node,
                         grn_ts_record *recs, size_t n_recs);
 
 /* grn_ts_rec_swap() swaps records. */
-inline static void
+grn_inline static void
 grn_ts_rec_swap(grn_ts_record *lhs, grn_ts_record *rhs)
 {
   grn_ts_record tmp = *lhs;
@@ -123,7 +123,7 @@ grn_ts_rec_swap(grn_ts_record *lhs, grn_ts_record *rhs)
 }
 
 /* grn_ts_int_swap() swaps Int values. */
-inline static void
+grn_inline static void
 grn_ts_int_swap(grn_ts_int *lhs, grn_ts_int *rhs)
 {
   grn_ts_int tmp = *lhs;
@@ -1028,7 +1028,7 @@ grn_ts_qsort_by_int(grn_ctx *ctx, grn_ts_sorter_node *node,
 }
 
 /* grn_ts_text_cmp() compares Text values. */
-inline static int
+grn_inline static int
 grn_ts_text_cmp(grn_ts_text lhs, grn_ts_text rhs)
 {
   size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;
@@ -1043,7 +1043,7 @@ grn_ts_text_cmp(grn_ts_text lhs, grn_ts_text rhs)
 }
 
 /* grn_ts_text_swap() swaps Text values. */
-inline static void
+grn_inline static void
 grn_ts_text_swap(grn_ts_text *lhs, grn_ts_text *rhs)
 {
   grn_ts_text tmp = *lhs;
@@ -1477,14 +1477,14 @@ grn_ts_qsort_by_text_desc(grn_ctx *ctx, grn_ts_sorter_node *node,
 }
 
 /* grn_ts_text_get_label() returns a label. */
-inline static int
+grn_inline static int
 grn_ts_text_get_label(grn_ts_text val, size_t depth)
 {
   return (depth < val.size) ? (uint8_t)val.ptr[depth] : -1;
 }
 
 /* grn_ts_text_cmp2() compares Text values. */
-inline static int
+grn_inline static int
 grn_ts_text_cmp2(grn_ts_text lhs, grn_ts_text rhs, size_t depth)
 {
   size_t min_size = (lhs.size < rhs.size) ? lhs.size : rhs.size;

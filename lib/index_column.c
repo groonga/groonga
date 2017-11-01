@@ -56,7 +56,7 @@ grn_index_column_init_from_env(void)
   }
 }
 
-inline static void
+grn_inline static void
 grn_index_column_build_call_hook(grn_ctx *ctx, grn_obj *obj,
                                  grn_id id, grn_obj *value, int flags)
 {

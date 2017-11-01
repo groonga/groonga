@@ -266,7 +266,7 @@ output(grn_ctx *ctx, grn_obj *table, grn_obj *res, grn_id tid,
   }
 }
 
-static inline void
+static grn_inline void
 complete_add_item(grn_ctx *ctx, grn_id id, grn_obj *res, int frequency_threshold,
                   grn_obj *items_freq, grn_obj *items_boost,
                   grn_obj *item_freq, grn_obj *item_boost)

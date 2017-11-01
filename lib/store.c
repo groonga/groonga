@@ -1591,7 +1591,7 @@ exit :
 }
 
 #ifdef GRN_WITH_ZLIB
-inline static grn_rc
+grn_inline static grn_rc
 grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
                 void *value, uint32_t value_len, int flags, uint64_t *cas)
 {
@@ -1671,7 +1671,7 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
 #endif /* GRN_WITH_ZLIB */
 
 #ifdef GRN_WITH_LZ4
-inline static grn_rc
+grn_inline static grn_rc
 grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
                void *value, uint32_t value_len, int flags, uint64_t *cas)
 {
@@ -1762,7 +1762,7 @@ grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
 #endif /* GRN_WITH_LZ4 */
 
 #ifdef GRN_WITH_ZSTD
-inline static grn_rc
+grn_inline static grn_rc
 grn_ja_put_zstd(grn_ctx *ctx,
                 grn_ja *ja,
                 grn_id id,

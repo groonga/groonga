@@ -1291,13 +1291,13 @@ func_now(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return obj;
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 is_comparable_number_type(grn_id type)
 {
   return GRN_DB_INT8 <= type && type <= GRN_DB_TIME;
 }
 
-static inline grn_id
+static grn_inline grn_id
 larger_number_type(grn_id type1, grn_id type2)
 {
   if (type1 == type2) {
@@ -1322,7 +1322,7 @@ larger_number_type(grn_id type1, grn_id type2)
   }
 }
 
-static inline grn_id
+static grn_inline grn_id
 smaller_number_type(grn_id type1, grn_id type2)
 {
   if (type1 == type2) {
@@ -1362,7 +1362,7 @@ smaller_number_type(grn_id type1, grn_id type2)
   }
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 is_negative_value(grn_obj *number)
 {
   switch (number->header.domain) {
@@ -1383,7 +1383,7 @@ is_negative_value(grn_obj *number)
   }
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 number_safe_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_id type)
 {
   grn_obj_reinit(ctx, dest, type, 0);
@@ -1421,7 +1421,7 @@ number_safe_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_id type)
   return grn_obj_cast(ctx, src, dest, GRN_FALSE) == GRN_SUCCESS;
 }
 
-static inline int
+static grn_inline int
 compare_number(grn_ctx *ctx, grn_obj *number1, grn_obj *number2, grn_id type)
 {
 #define COMPARE_AND_RETURN(type, value1, value2)\
@@ -1485,7 +1485,7 @@ compare_number(grn_ctx *ctx, grn_obj *number1, grn_obj *number2, grn_id type)
 #undef COMPARE_AND_RETURN
 }
 
-inline static void
+grn_inline static void
 get_number_in_grn_uvector(grn_ctx *ctx, grn_obj *uvector, unsigned int offset,
                           grn_obj *buf)
 {
@@ -1535,7 +1535,7 @@ get_number_in_grn_uvector(grn_ctx *ctx, grn_obj *uvector, unsigned int offset,
 #undef GET_UVECTOR_ELEMENT_AS
 }
 
-inline static void
+grn_inline static void
 apply_max(grn_ctx *ctx, grn_obj *number, grn_obj *max,
           grn_obj *casted_number, grn_obj *casted_max, grn_id cast_type)
 {

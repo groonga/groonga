@@ -91,6 +91,16 @@
 #endif
 
 #ifdef WIN32
+# if defined(__cplusplus) || defined(__GNUC__)
+#  define grn_inline inline
+# else /* defined(__cplusplus) || defined(__GNUC__) */
+#  define grn_inline _inline
+# endif /* defined(__cplusplus) || defined(__GNUC__) */
+#else /* WIN32 */
+# define grn_inline inline
+#endif /* WIN32 */
+
+#ifdef WIN32
 # include <basetsd.h>
 # include <process.h>
 # include <winsock2.h>
@@ -104,9 +114,6 @@
 
 # ifndef __GNUC__
 #  define PATH_MAX (MAX_PATH - 1)
-#  ifndef __cplusplus
-#   define inline _inline
-#  endif
 # endif
 
 # ifndef __GNUC__
@@ -589,7 +596,7 @@ typedef uint8_t byte;
 #define GRN_ID_WIDTH 30
 
 #ifdef __GNUC__
-inline static int
+grn_inline static int
 grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 {
   for (;; ap++, bp++, as--, bs--) {

@@ -328,7 +328,7 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
                                      return_type,
                                      byte_size_groups,
                                      options={})
-    modifier = options[:internal] ? "static inline " : ""
+    modifier = options[:internal] ? "static grn_inline " : ""
     @output.puts(<<-HEADER)
 
 #{modifier}#{return_type}

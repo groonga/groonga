@@ -91,7 +91,7 @@ get_mecab_encoding(mecab_t *mecab)
   return encoding;
 }
 
-static inline grn_bool
+static grn_inline grn_bool
 is_delimiter_character(grn_ctx *ctx, const char *character, int character_bytes)
 {
   switch (character_bytes) {

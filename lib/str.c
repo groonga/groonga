@@ -35,7 +35,7 @@
 # endif /* _WIN64 */
 #endif /* defined(HAVE__GMTIME64_S) && defined(__GNUC__) */
 
-inline static int
+grn_inline static int
 grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char *end)
 {
   /* MEMO: This function allows non-null-terminated string as str. */
@@ -188,7 +188,7 @@ static unsigned char symbol[] = {
   '$', 0, 0, '%', '#', '&', '*', '@', 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-inline static grn_rc
+grn_inline static grn_rc
 normalize_euc(grn_ctx *ctx, grn_str *nstr)
 {
   static uint16_t hankana[] = {
@@ -428,7 +428,7 @@ normalize_euc(grn_ctx *ctx, grn_str *nstr)
 }
 
 #ifdef GRN_WITH_NFKC
-inline static grn_rc
+grn_inline static grn_rc
 normalize_utf8(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
@@ -549,7 +549,7 @@ normalize_utf8(grn_ctx *ctx, grn_str *nstr)
 }
 #endif /* GRN_WITH_NFKC */
 
-inline static grn_rc
+grn_inline static grn_rc
 normalize_sjis(grn_ctx *ctx, grn_str *nstr)
 {
   static uint16_t hankana[] = {
@@ -779,7 +779,7 @@ normalize_sjis(grn_ctx *ctx, grn_str *nstr)
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 normalize_none(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
@@ -875,7 +875,7 @@ normalize_none(grn_ctx *ctx, grn_str *nstr)
 }
 
 /* use cp1252 as latin1 */
-inline static grn_rc
+grn_inline static grn_rc
 normalize_latin1(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
@@ -1004,7 +1004,7 @@ normalize_latin1(grn_ctx *ctx, grn_str *nstr)
   return GRN_SUCCESS;
 }
 
-inline static grn_rc
+grn_inline static grn_rc
 normalize_koi8r(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
@@ -1821,7 +1821,7 @@ grn_str_tok(const char *str, size_t str_len, char delim, const char **tokbuf, in
   return tok - tokbuf;
 }
 
-inline static int
+grn_inline static int
 op_getopt_flag(int *flags, const grn_str_getopt_opt *o,
                int argc, char * const argv[], int i, const char *optvalue)
 {
@@ -2092,7 +2092,7 @@ grn_text_ulltoa(grn_ctx *ctx, grn_obj *buf, unsigned long long int i)
   return rc;
 }
 
-inline static void
+grn_inline static void
 ftoa_(grn_ctx *ctx, grn_obj *buf, double d)
 {
   char *start;
