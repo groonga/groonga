@@ -705,9 +705,9 @@ grn_cache_get_statistics(grn_ctx *ctx, grn_cache *cache,
                          grn_cache_statistics *statistics)
 {
   if (cache->is_memory) {
-    return grn_cache_get_statistics_memory(ctx, cache, statistics);
+    grn_cache_get_statistics_memory(ctx, cache, statistics);
   } else {
-    return grn_cache_get_statistics_persistent(ctx, cache, statistics);
+    grn_cache_get_statistics_persistent(ctx, cache, statistics);
   }
 }
 
