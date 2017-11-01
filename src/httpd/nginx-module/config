@@ -7,23 +7,18 @@ groonga_strip_switch()
 }
 
 if [ "$GROONGA_HTTPD_IN_TREE" = yes ]; then
-  groonga_cflags="-I${GROONGA_HTTPD_IN_TREE_INCLUDE_PATH}"
-  groonga_cflags="${groonga_cflags} -DNGX_HTTP_GROONGA_LOG_PATH=\\\"\"${GROONGA_HTTPD_GROONGA_LOG_PATH}\"\\\""
+  groonga_cflags="-DNGX_HTTP_GROONGA_LOG_PATH=\\\"\"${GROONGA_HTTPD_GROONGA_LOG_PATH}\"\\\""
   groonga_cflags="${groonga_cflags} -DNGX_HTTP_GROONGA_QUERY_LOG_PATH=\\\"\"${GROONGA_HTTPD_GROONGA_QUERY_LOG_PATH}\"\\\""
-  groonga_libs="-L${GROONGA_HTTPD_IN_TREE_LINK_PATH}"
-  if [ "${GROONGA_HTTPD_WITH_ONIGMO}" = "yes" ]; then
-  groonga_libs="$groonga_libs -L${GROONGA_HTTPD_ONIGMO_IN_TREE_LINK_PATH}"
-  fi
-  groonga_libs="$groonga_libs -lgroonga"
+  groonga_libs="-lgroonga"
   if [ -n "${GROONGA_HTTPD_RPATH}" ]; then
-    groonga_libs="$groonga_libs -Wl,-rpath -Wl,${GROONGA_HTTPD_RPATH}"
+    groonga_libs="${groonga_libs} -Wl,-rpath -Wl,${GROONGA_HTTPD_RPATH}"
   fi
 
   ngx_addon_name=ngx_http_groonga_module
   HTTP_MODULES="$HTTP_MODULES ngx_http_groonga_module"
   NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_groonga_module.c"
-  CFLAGS="$CFLAGS $groonga_cflags"
-  CORE_LIBS="$CORE_LIBS $groonga_libs"
+  CFLAGS="$CFLAGS ${groonga_cflags}"
+  CORE_LIBS="$CORE_LIBS ${groonga_libs}"
 
   return 0
 fi

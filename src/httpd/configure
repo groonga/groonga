@@ -69,8 +69,14 @@ if [ "${GROONGA_HTTPD_DEBUG}" = "yes" ]; then
   configure_args="${configure_args} --with-debug"
 fi
 
-cc_opt="${CFLAGS-} ${CPPFLAGS-}"
-ld_opt="${LDFLAGS-}"
+groonga_cflags="-I${GROONGA_HTTPD_IN_TREE_INCLUDE_PATH}"
+groonga_ldflags="-L${GROONGA_HTTPD_IN_TREE_LINK_PATH}"
+if [ "${GROONGA_HTTPD_WITH_ONIGMO}" = "yes" ]; then
+  groonga_ldflags="$groonga_ldflags -L${GROONGA_HTTPD_ONIGMO_IN_TREE_LINK_PATH}"
+fi
+
+cc_opt="${groonga_cflags}"
+ld_opt="${groonga_ldflags}"
 if [ "${GROONGA_HTTPD_WITH_PCRE}" = "yes" ]; then
   cc_opt="${cc_opt} ${GROONGA_HTTPD_PCRE_CFLAGS}"
   ld_opt="${ld_opt} ${GROONGA_HTTPD_PCRE_LIBS_ONLY_L}"
@@ -87,6 +93,8 @@ if [ "${GROONGA_HTTPD_WITH_SSL}" = "yes" ]; then
   ld_opt="${ld_opt} ${GROONGA_HTTPD_SSL_LIBS_ONLY_L}"
   configure_args="${configure_args} --with-http_ssl_module"
 fi
+cc_opt="${cc_opt} ${CFLAGS-} ${CPPFLAGS-}"
+ld_opt="${ld_opt} ${LDFLAGS-}"
 
 nginx_mruby_directory="${abs_top_srcdir}/vendor/ngx_mruby-source"
 mruby_directory="${abs_top_srcdir}/vendor/mruby-source"
