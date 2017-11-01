@@ -160,6 +160,7 @@ if test "$GCC" = "yes"; then
   CHECK_CFLAG([-Wno-declaration-after-statement])
 
   CHECK_BUILD_FLAG([-Wformat])
+  CHECK_BUILD_FLAG([-Wno-format-truncation])
   CHECK_BUILD_FLAG([-Wstrict-aliasing=2])
   if test "x$check_cflag" = "xyes"; then
     NO_STRICT_ALIASING_CFLAGS="-fno-strict-aliasing"
