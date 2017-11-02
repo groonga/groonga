@@ -3446,7 +3446,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
           {
             DEFINE_NAME(ii);
             MERR("[ii][buffer][flush] failed to map a source chunk: "
-                 "<%.*s> :"
+                 "<%.*s>: "
                  "segment:<%u>, source-segment:<%u>, chunk-size:<%u>",
                  name_size, name,
                  seg,
@@ -3457,7 +3457,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
       } else {
         DEFINE_NAME(ii);
         MERR("[ii][buffer][flush] failed to allocate a destination chunk: "
-             "<%.*s> :"
+             "<%.*s>: "
              "segment:<%u>, destination-segment:<%u>",
              name_size, name,
              seg,
@@ -3467,7 +3467,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
     } else {
       DEFINE_NAME(ii);
       MERR("[ii][buffer][flush] failed to allocate a destination segment: "
-           "<%.*s> :"
+           "<%.*s>: "
            "segment:<%u>, destination-segment:<%u>",
            name_size, name,
            seg,
