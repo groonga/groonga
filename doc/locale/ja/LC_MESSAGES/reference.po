@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2017-10-06 19:26+0900\n"
+"PO-Revision-Date: 2017-11-06 16:24+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4478,6 +4478,12 @@ msgstr ""
 "``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
 "さい。"
 
+msgid ""
+"The number of kinds of index target data and the number of handleable "
+"records in a small index column"
+msgstr ""
+"インデックス対象データの種類数と小さなインデックスカラムで扱えるレコード数"
+
 msgid "``column_create``"
 msgstr ""
 
@@ -5016,12 +5022,6 @@ msgstr ""
 "``2`` 、 ``3`` というデータが入っていたとすると、種類数は ``3`` （ ``1`` と "
 "``2`` と ``3`` ）になります。以下の表はインデックス対象データの種類数と扱える"
 "最大レコード数の関係を示しています。"
-
-msgid ""
-"The number of kinds of index target data and the number of handleable "
-"records in a small index column"
-msgstr ""
-"インデックス対象データの種類数と小さなインデックスカラムで扱えるレコード数"
 
 msgid "The number of kinds of index target data"
 msgstr "インデックス対象のデータの種類数"
@@ -7281,8 +7281,42 @@ msgstr ""
 msgid "``logical_range_filter``"
 msgstr ""
 
-msgid "TODO: Write summary"
+msgid ""
+"``logical_range_filter`` is a sharding version of :doc:`range_filter`. "
+"``logical_range_filter`` searches records from multiple tables and outputs "
+"them."
 msgstr ""
+"``logical_range_filter`` は :doc:`range_filter` のシャーディングバージョンで"
+"す。 ``logical_range_filter`` は複数のテーブルからレコードを検索し、マッチし"
+"たレコードを出力します。"
+
+msgid ""
+"``logical_range_filter`` is similar to :doc:`logical_select`. Both of them "
+"searches records from multiples tables and outputs them. "
+"``logical_range_filter`` stops searching when requested records are found. :"
+"doc:`logical_select` searches all records and outputs only needed records."
+msgstr ""
+
+msgid "``logical_range_filter`` has performance merit but some restrictions."
+msgstr ""
+
+msgid ""
+"If many records are matched and requested records are small, "
+"``logical_range_filter`` will be faster than :doc:`logical_select`."
+msgstr ""
+
+msgid ""
+"``logical_range_filter`` doesn't support drilldown because drilldown "
+"requires all matched records. ``logical_range_filter`` may not find all "
+"matched records. So ``logical_range_filter`` doesn't support drilldown."
+msgstr ""
+
+msgid ""
+"You need to :doc:`plugin_register` ``sharding`` plugin because this command "
+"is included in ``sharding`` plugin."
+msgstr ""
+"このコマンド は ``sharding`` プラグインに含まれているので、 ``sharding`` プラ"
+"グインを :doc:`plugin_register` する必要があります。"
 
 msgid ""
 "There are some parameters that can be only used as named parameters. You "
@@ -7297,89 +7331,6 @@ msgstr "名前付き引数としてしか使えない引数は次の通りです
 
 msgid "``cache=no``"
 msgstr ""
-
-msgid ""
-"Register ``sharding`` plugin to use ``logical_range_filter`` command in "
-"advance."
-msgstr ""
-"``logical_range_filter`` コマンドを使うには事前に ``sharding`` プラグインを登"
-"録します。"
-
-msgid "TODO: Add examples"
-msgstr ""
-
-msgid "This section describes parameters of ``logical_range_filter``."
-msgstr "このセクションでは ``logical_range_filter`` の引数について説明します。"
-
-msgid "``order``"
-msgstr ""
-
-msgid "``use_range_index``"
-msgstr ""
-
-msgid ""
-"Specifies whether range_index is used or not. Note that it's a parameter for "
-"test. It should not be used for production."
-msgstr ""
-"range_indexを使うかどうかを指定します。ただし、この引数はテスト用なので、本番"
-"で使うべきではありません。"
-
-msgid "Cache related parameter"
-msgstr "キャッシュ関連の引数"
-
-msgid "``cache``"
-msgstr ""
-
-msgid "Specifies whether caching the result of this query or not."
-msgstr "このクエリーの結果をキャッシュするかどうかを指定します。"
-
-msgid ""
-"If the result of this query is cached, the next same query returns response "
-"quickly by using the cache."
-msgstr ""
-"このクエリーの結果がキャッシュしてあると、次に同じクエリーを実行するときは"
-"キャッシュを使って高速にレスポンスを返すことができます。"
-
-msgid "It doesn't control whether existing cached result is used or not."
-msgstr ""
-"これは既存のキャッシュされた結果を使うかどうかを指定するものではありません。"
-
-msgid "``no``"
-msgstr ""
-
-msgid "Don't cache the output of this query."
-msgstr "このクエリーの出力をキャッシュしない。"
-
-msgid "``yes``"
-msgstr ""
-
-msgid "Cache the output of this query. It's the default value."
-msgstr "このクエリーの出力をキャッシュする。デフォルト値。"
-
-msgid "``logical_select``"
-msgstr ""
-
-msgid ""
-"``logical_select`` is a sharding version of :doc:`select`. "
-"``logical_select`` searches records from multiple tables and outputs them."
-msgstr ""
-"``logical_select`` は :doc:`select` のシャーディングバージョンです。 "
-"``logical_select`` は複数のテーブルからレコードを検索し、マッチしたレコードを"
-"出力します。"
-
-msgid ""
-"You need to :doc:`plugin_register` ``sharding`` plugin because "
-"``logical_select`` is included in ``sharding`` plugin."
-msgstr ""
-"``logical_select`` は ``sharding`` プラグインに含まれているので、 "
-"``sharding`` プラグインを :doc:`plugin_register` する必要があります。"
-
-msgid ""
-"The required parameters are ``logical_table`` and ``shard_key``. Other "
-"parameters are optional::"
-msgstr ""
-"必須の引数は ``logical_table`` と ``shard_key`` です。それ以外の引数は省略可"
-"能です::"
 
 msgid "This command has the following named parameters for dynamic columns:"
 msgstr "以下の名前付き引数で動的カラム機能を使うことができます。"
@@ -7446,6 +7397,92 @@ msgstr ""
 
 msgid "``--columns[name2].value '_score * 0.1'``"
 msgstr ""
+
+msgid ""
+"Let's learn about usage with examples. This section shows many popular "
+"usages."
+msgstr ""
+"例を使いながら使い方を学びましょう。このセクションではよく使われる使い方を紹"
+"介します。"
+
+msgid ""
+"You need to register ``sharding`` plugin because this command is included in "
+"``sharding`` plugin."
+msgstr ""
+"このコマンドは ``sharding`` プラグインに含まれているので ``sharding`` プラグ"
+"インを登録する必要があります。"
+
+msgid "TODO: Add examples"
+msgstr ""
+
+msgid "This section describes parameters of ``logical_range_filter``."
+msgstr "このセクションでは ``logical_range_filter`` の引数について説明します。"
+
+msgid "``order``"
+msgstr ""
+
+msgid "``use_range_index``"
+msgstr ""
+
+msgid ""
+"Specifies whether range_index is used or not. Note that it's a parameter for "
+"test. It should not be used for production."
+msgstr ""
+"range_indexを使うかどうかを指定します。ただし、この引数はテスト用なので、本番"
+"で使うべきではありません。"
+
+msgid "Cache related parameter"
+msgstr "キャッシュ関連の引数"
+
+msgid "``cache``"
+msgstr ""
+
+msgid "Specifies whether caching the result of this query or not."
+msgstr "このクエリーの結果をキャッシュするかどうかを指定します。"
+
+msgid ""
+"If the result of this query is cached, the next same query returns response "
+"quickly by using the cache."
+msgstr ""
+"このクエリーの結果がキャッシュしてあると、次に同じクエリーを実行するときは"
+"キャッシュを使って高速にレスポンスを返すことができます。"
+
+msgid "It doesn't control whether existing cached result is used or not."
+msgstr ""
+"これは既存のキャッシュされた結果を使うかどうかを指定するものではありません。"
+
+msgid "``no``"
+msgstr ""
+
+msgid "Don't cache the output of this query."
+msgstr "このクエリーの出力をキャッシュしない。"
+
+msgid "``yes``"
+msgstr ""
+
+msgid "Cache the output of this query. It's the default value."
+msgstr "このクエリーの出力をキャッシュする。デフォルト値。"
+
+msgid "Here is an example to disable caching the result of this query:"
+msgstr "このクエリーの結果をキャッシュしないようにする例です。"
+
+msgid "``logical_select``"
+msgstr ""
+
+msgid ""
+"``logical_select`` is a sharding version of :doc:`select`. "
+"``logical_select`` searches records from multiple tables and outputs them."
+msgstr ""
+"``logical_select`` は :doc:`select` のシャーディングバージョンです。 "
+"``logical_select`` は複数のテーブルからレコードを検索し、マッチしたレコードを"
+"出力します。"
+
+msgid ""
+"The required parameters are ``logical_table`` and ``shard_key``. Other "
+"parameters are optional::"
+msgstr ""
+"必須の引数は ``logical_table`` と ``shard_key`` です。それ以外の引数は省略可"
+"能です::"
 
 msgid "This command has the following named parameters for advanced drilldown:"
 msgstr ""
@@ -7580,9 +7617,6 @@ msgstr ""
 "``_value.${KEY_NAME}`` を使えません。1つのシャードのみを使った場合は使えま"
 "す。"
 
-msgid "``cache`` isn't supported yet."
-msgstr "``cache`` はまだサポートしていません。"
-
 msgid "``match_escalation_threshold`` isn't supported yet."
 msgstr "``match_escalation_threshold`` はまだサポートしていません。"
 
@@ -7594,20 +7628,6 @@ msgstr "``query_expander`` はまだサポートしていません。"
 
 msgid "``adjuster`` isn't supported yet."
 msgstr "``adjuster`` はまだサポートしていません。"
-
-msgid ""
-"Let's learn about ``logical_select`` usage with examples. This section shows "
-"many popular usages."
-msgstr ""
-"例を使いながら ``logical_select`` の使い方を学びましょう。このセクションでは"
-"よく使われる使い方を紹介します。"
-
-msgid ""
-"You need to register ``sharding`` plugin because ``logical_select`` is "
-"included in ``sharding`` plugin."
-msgstr ""
-"``logical_select`` は ``sharding`` プラグインに含まれているので ``sharding`` "
-"プラグインを登録する必要があります。"
 
 msgid ""
 "There are two tables, ``Entries_20150708`` and ``Entries_20150709``, for "
@@ -14089,9 +14109,6 @@ msgstr ""
 
 msgid "``slices[${LABEL}].table``"
 msgstr ""
-
-msgid "Here is an example to disable caching the result of this query:"
-msgstr "このクエリーの結果をキャッシュしないようにする例です。"
 
 msgid "Score related parameters"
 msgstr "スコアー関連の引数"
@@ -25604,6 +25621,9 @@ msgid ""
 "records are fetched."
 msgstr ""
 
+msgid "Characteristics of all tables"
+msgstr "全テーブルの特徴"
+
 msgid "Tables"
 msgstr "テーブル"
 
@@ -25636,9 +25656,6 @@ msgid ""
 msgstr ""
 "以下はGroongaにあるすべてのテーブルの特性表です。（この表の中では ``TABLE_`` "
 "プレフィックスは省略しています。）"
-
-msgid "Characteristics of all tables"
-msgstr "全テーブルの特徴"
 
 msgid "Item"
 msgstr ""
@@ -27148,3 +27165,20 @@ msgstr ""
 
 #~ msgid "There are two kind of index columns which you can specify."
 #~ msgstr "2つの種類のインデックスカラムを指定することができます。"
+
+#~ msgid ""
+#~ "Let's learn about ``logical_select`` usage with examples. This section "
+#~ "shows many popular usages."
+#~ msgstr ""
+#~ "例を使いながら ``logical_select`` の使い方を学びましょう。このセクションで"
+#~ "はよく使われる使い方を紹介します。"
+
+#~ msgid "``cache`` isn't supported yet."
+#~ msgstr "``cache`` はまだサポートしていません。"
+
+#~ msgid ""
+#~ "Register ``sharding`` plugin to use ``logical_range_filter`` command in "
+#~ "advance."
+#~ msgstr ""
+#~ "``logical_range_filter`` コマンドを使うには事前に ``sharding`` プラグイン"
+#~ "を登録します。"
