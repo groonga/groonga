@@ -13,7 +13,29 @@ Summary
 
 .. versionadded:: 5.0.0
 
-TODO: Write summary
+``logical_range_filter`` is a sharding version of
+:doc:`range_filter`. ``logical_range_filter`` searches records from
+multiple tables and outputs them.
+
+``logical_range_filter`` is similar to :doc:`logical_select`. Both of
+them searches records from multiples tables and outputs
+them. ``logical_range_filter`` stops searching when the number of
+matched records is requested the number of
+records. :doc:`logical_select` searches all records and outputs only
+needed records.
+
+``logical_range_filter`` has performance merit but some restrictions.
+
+If many records are matched and requested records are small,
+``logical_range_filter`` will be faster than :doc:`logical_select`.
+
+``logical_range_filter`` doesn't support drilldown because drilldown
+requires all matched records. ``logical_range_filter`` may not find
+all matched records. So ``logical_range_filter`` doesn't support
+drilldown.
+
+You need to :doc:`plugin_register` ``sharding`` plugin because
+this command is included in ``sharding`` plugin.
 
 Syntax
 ------
@@ -44,15 +66,139 @@ Here are parameters that can be only used as named parameters:
 
   * ``cache=no``
 
+.. versionadded:: 7.0.9
+
+   This command has the following named parameters for dynamic columns:
+
+      * ``columns[${NAME}].stage=null``
+      * ``columns[${NAME}].flags=COLUMN_SCALAR``
+      * ``columns[${NAME}].type=null``
+      * ``columns[${NAME}].value=null``
+      * ``columns[${NAME}].window.sort_keys=null``
+      * ``columns[${NAME}].window.group_keys=null``
+
+       You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For
+       example, ``column1`` is a valid ``${NAME}``. This is the same rule as
+       normal column. See also :ref:`column-create-name`.
+
+       Parameters that have the same ``${NAME}`` are grouped.
+
+       For example, the following parameters specify one dynamic column:
+
+         * ``--columns[name].stage initial``
+         * ``--columns[name].type UInt32``
+         * ``--columns[name].value 29``
+
+       The following parameters specify two dynamic columns:
+
+         * ``--columns[name1].stage initial``
+         * ``--columns[name1].type UInt32``
+         * ``--columns[name1].value 29``
+         * ``--columns[name2].stage filtered``
+         * ``--columns[name2].type Float``
+         * ``--columns[name2].value '_score * 0.1'``
+
 Usage
 -----
 
-Register ``sharding`` plugin to use ``logical_range_filter`` command in advance.
+Let's learn about usage with examples. This section shows many popular
+usages.
+
+You need to register ``sharding`` plugin because this command is
+included in ``sharding`` plugin.
 
 .. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/usage_plugin_register.log
 .. plugin_register sharding
 
-TODO: Add examples
+Here are a schema definition and sample data to show usage.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/usage_setup.log
+.. table_create Entries_20150708 TABLE_HASH_KEY ShortText
+.. column_create Entries_20150708 created_at COLUMN_SCALAR Time
+.. column_create Entries_20150708 content COLUMN_SCALAR Text
+.. column_create Entries_20150708 n_likes COLUMN_SCALAR UInt32
+.. column_create Entries_20150708 tag COLUMN_SCALAR ShortText
+..
+.. table_create Entries_20150709 TABLE_HASH_KEY ShortText
+.. column_create Entries_20150709 created_at COLUMN_SCALAR Time
+.. column_create Entries_20150709 content COLUMN_SCALAR Text
+.. column_create Entries_20150709 n_likes COLUMN_SCALAR UInt32
+.. column_create Entries_20150709 tag COLUMN_SCALAR ShortText
+..
+.. table_create Terms TABLE_PAT_KEY ShortText \
+..   --default_tokenizer TokenBigram \
+..   --normalizer NormalizerAuto
+.. column_create Terms entries_key_index_20150708 \
+..   COLUMN_INDEX|WITH_POSITION Entries_20150708 _key
+.. column_create Terms entries_content_index_20150708 \
+..   COLUMN_INDEX|WITH_POSITION Entries_20150708 content
+.. column_create Terms entries_key_index_20150709 \
+..   COLUMN_INDEX|WITH_POSITION Entries_20150709 _key
+.. column_create Terms entries_content_index_20150709 \
+..   COLUMN_INDEX|WITH_POSITION Entries_20150709 content
+..
+.. load --table Entries_20150708
+.. [
+.. {"_key":       "The first post!",
+..  "created_at": "2015/07/08 00:00:00",
+..  "content":    "Welcome! This is my first post!",
+..  "n_likes":    5,
+..  "tag":        "Hello"},
+.. {"_key":       "Groonga",
+..  "created_at": "2015/07/08 01:00:00",
+..  "content":    "I started to use Groonga. It's very fast!",
+..  "n_likes":    10,
+..  "tag":        "Groonga"},
+.. {"_key":       "Mroonga",
+..  "created_at": "2015/07/08 02:00:00",
+..  "content":    "I also started to use Mroonga. It's also very fast! Really fast!",
+..  "n_likes":    15,
+..  "tag":        "Groonga"}
+.. ]
+..
+.. load --table Entries_20150709
+.. [
+.. {"_key":       "Good-bye Senna",
+..  "created_at": "2015/07/09 00:00:00",
+..  "content":    "I migrated all Senna system!",
+..  "n_likes":    3,
+..  "tag":        "Senna"},
+.. {"_key":       "Good-bye Tritonn",
+..  "created_at": "2015/07/09 01:00:00",
+..  "content":    "I also migrated all Tritonn system!",
+..  "n_likes":    3,
+..  "tag":        "Senna"}
+.. ]
+
+There are two tables, ``Entries_20150708`` and ``Entries_20150709``,
+for blog entries.
+
+.. note::
+
+   You need to use ``${LOGICAL_TABLE_NAME}_${YYYYMMDD}`` naming rule
+   for table names. In this example, ``LOGICAL_TABLE_NAME`` is
+   ``Entries`` and ``YYYYMMDD`` is ``20150708`` or ``20150709``.
+
+An entry has title, created time, content, the number of likes for the
+entry and tag. Title is key of ``Entries_YYYYMMDD``. Created time is
+value of ``Entries_YYYYMMDD.created_at`` column. Content is value of
+``Entries_YYYYMMDD.content`` column. The number of likes is value of
+``Entries_YYYYMMDD.n_likes`` column. Tag is value of
+``Entries_YYYYMMDD.tag`` column.
+
+``Entries_YYYYMMDD._key`` column and ``Entries_YYYYMMDD.content``
+column are indexed using ``TokenBigram`` tokenizer. So both
+``Entries_YYYYMMDD._key`` and ``Entries_YYYYMMDD.content`` are
+fulltext search ready.
+
+OK. The schema and data for examples are ready.
+
+Simple usage
+^^^^^^^^^^^^
+
+TODO
 
 Parameters
 ----------
@@ -147,6 +293,216 @@ Note that it's a parameter for test. It should not be used for production.
 
 TODO: Add examples
 
+.. _logical-range-filter-dynamic-column-related-parameters:
+
+Dynamic column related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 7.0.9
+
+All dynamic column related parameters in :doc:`select` are
+supported. See :ref:`select-dynamic-column-related-parameters` for
+details.
+
+If you use one or more dynamic columns, "stop searching when enough
+records are matched in a table" feature is disabled. ("Stop searching
+against rest tables when enough records are matched" is still
+enabled.)  ``logical_range_filter`` searches all matched records in a
+table even when requested the number of matched records is small. It's
+for supporting window function. Running window function requires all
+target records in a table.
+
+.. _logical-range-filter-columns-name-stage:
+
+``columns[${NAME}].stage``
+""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.9
+
+Corresponds to :ref:`select-columns-name-stage` in :doc:`select`. See
+:ref:`select-columns-name-stage` for details.
+
+This is a required parameter.
+
+Here is an example that creates ``is_popular`` column at ``initial``
+stage. You can use ``is_popular`` in all parameters such as ``filter``
+and ``output_columns``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/columns_name_stage.log
+.. logical_range_filter \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[is_popular].stage initial \
+..   --columns[is_popular].type Bool \
+..   --columns[is_popular].value 'n_likes >= 10' \
+..   --filter is_popular \
+..   --output_columns _id,is_popular,n_likes
+
+.. _logical-range-filter-columns-name-flags:
+
+``columns[${NAME}].flags``
+""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.9
+
+Corresponds to :ref:`select-columns-name-flags` in :doc:`select`. See
+:ref:`select-columns-name-flags` for details.
+
+The default value is ``COLUMN_SCALAR``.
+
+Here is an example that creates a vector column by ``COLUMN_VECTOR``
+flags. ``plugin_register functions/vector`` is for using
+:doc:`/reference/functions/vector_new` function:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/columns_name_flags.log
+.. plugin_register functions/vector
+.. logical_range_filter \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[vector].stage initial \
+..   --columns[vector].flags COLUMN_VECTOR \
+..   --columns[vector].type UInt32 \
+..   --columns[vector].value 'vector_new(1, 2, 3)' \
+..   --output_columns _id,vector
+
+.. _logical-range-filter-columns-name-type:
+
+``columns[${NAME}].type``
+"""""""""""""""""""""""""
+
+.. versionadded:: 7.0.9
+
+Corresponds to :ref:`select-columns-name-type` in :doc:`select`. See
+:ref:`select-columns-name-type` for details.
+
+This is a required parameter.
+
+Here is an example that creates a ``ShortText`` type column. Stored
+value is casted to ``ShortText`` automatically. In this example,
+number is casted to ``ShortText``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/columns_name_type.log
+.. logical_range_filter \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[n_likes_string].stage initial \
+..   --columns[n_likes_string].type ShortText \
+..   --columns[n_likes_string].value n_likes \
+..   --output_columns _id,n_likes,n_likes_string
+
+.. _logical-range-filter-columns-name-value:
+
+``columns[${NAME}].value``
+""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.9
+
+Corresponds to :ref:`select-columns-name-value` in :doc:`select`. See
+:ref:`select-columns-name-value` for details.
+
+You need to specify :doc:`/reference/window_function` as ``value``
+value and other window function related parameters when you use window
+function. See :ref:`logical-range-filter-window-function-related-parameters`
+for details.
+
+This is a required parameter.
+
+Here is an example that creates a new dynamic column that stores the
+number of characters of content. This example uses
+:doc:`/reference/functions/string_length` function in
+``functions/string`` plugin to compute the number of characters in a
+string. :doc:`plugin_register` is used to register
+``functions/string`` plugin:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/columns_name_value.log
+.. plugin_register functions/string
+.. logical_range_filter \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[content_length].stage initial \
+..   --columns[content_length].type UInt32 \
+..   --columns[content_length].value 'string_length(content)' \
+..   --output_columns _id,content,content_length
+
+.. _logical-range-filter-window-function-related-parameters:
+
+Window function related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 7.0.9
+
+All window function related parameters in :doc:`select` are
+supported. See :ref:`select-window-function-related-parameters` for
+details.
+
+.. note::
+
+   Window function over multiple tables aren't supported yet.
+
+.. _logical-range-filter-columns-name-window-sort-keys:
+
+``columns[${NAME}].window.sort_keys``
+"""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.9
+
+Corresponds to :ref:`select-columns-name-window-sort-keys` in
+:doc:`select`. See :ref:`select-columns-name-window-sort-keys` for
+details.
+
+You must specify :ref:`logical-range-filter-columns-name-window-sort-keys`
+or :ref:`logical-range-filter-columns-name-window-group-keys` to use window
+function.
+
+Here is an example that computes cumulative sum per
+``Entries.tag``. Each group is sorted by ``Entries._key``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/columns_name_window_sort_keys.log
+.. logical_range_filter \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[n_likes_cumulative_sum_per_tag].stage initial \
+..   --columns[n_likes_cumulative_sum_per_tag].type UInt32 \
+..   --columns[n_likes_cumulative_sum_per_tag].value 'window_sum(n_likes)' \
+..   --columns[n_likes_cumulative_sum_per_tag].window.sort_keys _key \
+..   --columns[n_likes_cumulative_sum_per_tag].window.group_keys tag \
+..   --sort_keys _key \
+..   --output_columns tag,_key,n_likes,n_likes_cumulative_sum_per_tag
+
+.. _logical-range-filter-columns-name-window-group-keys:
+
+``columns[${NAME}].window.group_keys``
+""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 7.0.9
+
+Corresponds to :ref:`select-columns-name-window-group-keys` in
+:doc:`select`. See :ref:`select-columns-name-window-group-keys` for
+details.
+
+You must specify :ref:`logical-range-filter-columns-name-window-sort-keys`
+or :ref:`logical-range-filter-columns-name-window-group-keys` to use window
+function.
+
+Here is an example that computes sum per ``Entries.tag``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/columns_name_window_group_keys.log
+.. logical_range_filter \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[n_likes_sum_per_tag].stage initial \
+..   --columns[n_likes_sum_per_tag].type UInt32 \
+..   --columns[n_likes_sum_per_tag].value 'window_sum(n_likes)' \
+..   --columns[n_likes_sum_per_tag].window.group_keys tag \
+..   --sort_keys _key \
+..   --output_columns tag,_key,n_likes,n_likes_sum_per_tag
+
 Cache related parameter
 ^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -177,11 +533,14 @@ Here are available values:
 
 TODO: Add examples
 
-.. Here is an example to disable caching the result of this query:
+Here is an example to disable caching the result of this query:
 
-.. .. groonga-command
-.. .. include:: ../../example/reference/commands/logical_range_filter/cache_no.log
-.. .. logical_range_filter ... --cache no
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/cache_no.log
+.. logical_range_filter \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --cache no
 
 The default value is ``yes``.
 

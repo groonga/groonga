@@ -1,0 +1,71 @@
+Execution example::
+
+  plugin_register functions/vector
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  logical_range_filter \
+    --logical_table Entries \
+    --shard_key created_at \
+    --columns[vector].stage initial \
+    --columns[vector].flags COLUMN_VECTOR \
+    --columns[vector].type UInt32 \
+    --columns[vector].value 'vector_new(1, 2, 3)' \
+    --output_columns _id,vector
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         "_id", 
+  #         "UInt32"
+  #       ], 
+  #       [
+  #         "vector", 
+  #         "UInt32"
+  #       ]
+  #     ], 
+  #     [
+  #       1, 
+  #       [
+  #         1, 
+  #         2, 
+  #         3
+  #       ]
+  #     ], 
+  #     [
+  #       2, 
+  #       [
+  #         1, 
+  #         2, 
+  #         3
+  #       ]
+  #     ], 
+  #     [
+  #       3, 
+  #       [
+  #         1, 
+  #         2, 
+  #         3
+  #       ]
+  #     ], 
+  #     [
+  #       1, 
+  #       [
+  #         1, 
+  #         2, 
+  #         3
+  #       ]
+  #     ], 
+  #     [
+  #       2, 
+  #       [
+  #         1, 
+  #         2, 
+  #         3
+  #       ]
+  #     ]
+  #   ]
+  # ]

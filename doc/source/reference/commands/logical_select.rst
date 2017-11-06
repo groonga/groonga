@@ -756,6 +756,10 @@ All window function related parameters in :doc:`select` are
 supported. See :ref:`select-window-function-related-parameters` for
 details.
 
+.. note::
+
+   Window function over multiple tables aren't supported yet.
+
 .. _logical-select-columns-name-window-sort-keys:
 
 ``columns[${NAME}].window.sort_keys``

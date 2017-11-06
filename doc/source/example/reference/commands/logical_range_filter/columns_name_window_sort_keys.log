@@ -1,0 +1,69 @@
+Execution example::
+
+  logical_range_filter \
+    --logical_table Entries \
+    --shard_key created_at \
+    --columns[n_likes_cumulative_sum_per_tag].stage initial \
+    --columns[n_likes_cumulative_sum_per_tag].type UInt32 \
+    --columns[n_likes_cumulative_sum_per_tag].value 'window_sum(n_likes)' \
+    --columns[n_likes_cumulative_sum_per_tag].window.sort_keys _key \
+    --columns[n_likes_cumulative_sum_per_tag].window.group_keys tag \
+    --sort_keys _key \
+    --output_columns tag,_key,n_likes,n_likes_cumulative_sum_per_tag
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         "tag", 
+  #         "ShortText"
+  #       ], 
+  #       [
+  #         "_key", 
+  #         "ShortText"
+  #       ], 
+  #       [
+  #         "n_likes", 
+  #         "UInt32"
+  #       ], 
+  #       [
+  #         "n_likes_cumulative_sum_per_tag", 
+  #         "UInt32"
+  #       ]
+  #     ], 
+  #     [
+  #       "Hello", 
+  #       "The first post!", 
+  #       5, 
+  #       5
+  #     ], 
+  #     [
+  #       "Groonga", 
+  #       "Groonga", 
+  #       10, 
+  #       10
+  #     ], 
+  #     [
+  #       "Groonga", 
+  #       "Mroonga", 
+  #       15, 
+  #       25
+  #     ], 
+  #     [
+  #       "Senna", 
+  #       "Good-bye Senna", 
+  #       3, 
+  #       3
+  #     ], 
+  #     [
+  #       "Senna", 
+  #       "Good-bye Tritonn", 
+  #       3, 
+  #       6
+  #     ]
+  #   ]
+  # ]

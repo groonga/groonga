@@ -1,0 +1,71 @@
+Execution example::
+
+  table_create Entries_20150708 TABLE_HASH_KEY ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Entries_20150708 created_at COLUMN_SCALAR Time
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Entries_20150708 content COLUMN_SCALAR Text
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Entries_20150708 n_likes COLUMN_SCALAR UInt32
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Entries_20150708 tag COLUMN_SCALAR ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  table_create Entries_20150709 TABLE_HASH_KEY ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Entries_20150709 created_at COLUMN_SCALAR Time
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Entries_20150709 content COLUMN_SCALAR Text
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Entries_20150709 n_likes COLUMN_SCALAR UInt32
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Entries_20150709 tag COLUMN_SCALAR ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  table_create Terms TABLE_PAT_KEY ShortText \
+    --default_tokenizer TokenBigram \
+    --normalizer NormalizerAuto
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Terms entries_key_index_20150708 \
+    COLUMN_INDEX|WITH_POSITION Entries_20150708 _key
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Terms entries_content_index_20150708 \
+    COLUMN_INDEX|WITH_POSITION Entries_20150708 content
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Terms entries_key_index_20150709 \
+    COLUMN_INDEX|WITH_POSITION Entries_20150709 _key
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Terms entries_content_index_20150709 \
+    COLUMN_INDEX|WITH_POSITION Entries_20150709 content
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  load --table Entries_20150708
+  [
+  {"_key":       "The first post!",
+   "created_at": "2015/07/08 00:00:00",
+   "content":    "Welcome! This is my first post!",
+   "n_likes":    5,
+   "tag":        "Hello"},
+  {"_key":       "Groonga",
+   "created_at": "2015/07/08 01:00:00",
+   "content":    "I started to use Groonga. It's very fast!",
+   "n_likes":    10,
+   "tag":        "Groonga"},
+  {"_key":       "Mroonga",
+   "created_at": "2015/07/08 02:00:00",
+   "content":    "I also started to use Mroonga. It's also very fast! Really fast!",
+   "n_likes":    15,
+   "tag":        "Groonga"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  load --table Entries_20150709
+  [
+  {"_key":       "Good-bye Senna",
+   "created_at": "2015/07/09 00:00:00",
+   "content":    "I migrated all Senna system!",
+   "n_likes":    3,
+   "tag":        "Senna"},
+  {"_key":       "Good-bye Tritonn",
+   "created_at": "2015/07/09 01:00:00",
+   "content":    "I also migrated all Tritonn system!",
+   "n_likes":    3,
+   "tag":        "Senna"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 2]

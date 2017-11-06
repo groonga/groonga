@@ -1,0 +1,59 @@
+Execution example::
+
+  plugin_register functions/string
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  logical_range_filter \
+    --logical_table Entries \
+    --shard_key created_at \
+    --columns[content_length].stage initial \
+    --columns[content_length].type UInt32 \
+    --columns[content_length].value 'string_length(content)' \
+    --output_columns _id,content,content_length
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         "_id", 
+  #         "UInt32"
+  #       ], 
+  #       [
+  #         "content", 
+  #         "Text"
+  #       ], 
+  #       [
+  #         "content_length", 
+  #         "UInt32"
+  #       ]
+  #     ], 
+  #     [
+  #       1, 
+  #       "Welcome! This is my first post!", 
+  #       31
+  #     ], 
+  #     [
+  #       2, 
+  #       "I started to use Groonga. It's very fast!", 
+  #       41
+  #     ], 
+  #     [
+  #       3, 
+  #       "I also started to use Mroonga. It's also very fast! Really fast!", 
+  #       64
+  #     ], 
+  #     [
+  #       1, 
+  #       "I migrated all Senna system!", 
+  #       28
+  #     ], 
+  #     [
+  #       2, 
+  #       "I also migrated all Tritonn system!", 
+  #       35
+  #     ]
+  #   ]
+  # ]
