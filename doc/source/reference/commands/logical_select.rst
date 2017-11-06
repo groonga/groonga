@@ -18,7 +18,7 @@ Summary
 tables and outputs them.
 
 You need to :doc:`plugin_register` ``sharding`` plugin because
-``logical_select`` is included in ``sharding`` plugin.
+this command is included in ``sharding`` plugin.
 
 Syntax
 ------
@@ -51,6 +51,14 @@ parameters are optional::
                  [match_columns=null]
                  [query=null]
                  [drilldown_filter=null]
+
+There are some parameters that can be only used as named
+parameters. You can't use these parameters as ordered parameters. You
+must specify parameter name.
+
+Here are parameters that can be only used as named parameters:
+
+  * ``cache=no``
 
 This command has the following named parameters for dynamic columns:
 
@@ -147,7 +155,6 @@ But there are some differences from :doc:`select`:
     doesn't work with multiple shards. It works with one
     shard. ``_key`` in ``drilldowns[${LABEL}].sort_keys`` work with
     multiple shards.
-  * ``cache`` isn't supported yet.
   * ``match_escalation_threshold`` isn't supported yet.
   * ``query_flags`` isn't supported yet.
   * ``query_expander`` isn't supported yet.
@@ -156,10 +163,10 @@ But there are some differences from :doc:`select`:
 Usage
 -----
 
-Let's learn about ``logical_select`` usage with examples. This section
-shows many popular usages.
+Let's learn about usage with examples. This section shows many popular
+usages.
 
-You need to register ``sharding`` plugin because ``logical_select`` is
+You need to register ``sharding`` plugin because this command is
 included in ``sharding`` plugin.
 
 .. groonga-command
@@ -1363,6 +1370,45 @@ for each the same number of sub records:
 ..   --drilldowns[tag].columns[record_number].window.group_keys _nsubrecs \
 ..   --drilldowns[tag].sort_keys _nsubrecs,record_number \
 ..   --drilldowns[tag].output_columns _key,_nsubrecs,record_number
+
+Cache related parameter
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. _logical-select-cache:
+
+``cache``
+"""""""""
+
+Specifies whether caching the result of this query or not.
+
+If the result of this query is cached, the next same query returns
+response quickly by using the cache.
+
+It doesn't control whether existing cached result is used or not.
+
+Here are available values:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Value
+     - Description
+   * - ``no``
+     - Don't cache the output of this query.
+   * - ``yes``
+     - Cache the output of this query.
+       It's the default value.
+
+Here is an example to disable caching the result of this query:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/cache_no.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --cache no
+
+The default value is ``yes``.
 
 Return value
 ------------
