@@ -76,7 +76,7 @@ module Groonga
           contexts.sort_by(&:label).each do |context|
             key << "#{context.label}\0"
             key << "#{context.stage}\0"
-            key << "#{context.type}\0"
+            key << "#{context.type.name}\0"
             key << "#{context.flags}\0"
             key << "#{context.value}\0"
             key << "#{context.window_sort_keys.join(',')}\0"
