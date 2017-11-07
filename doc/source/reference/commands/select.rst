@@ -2587,7 +2587,7 @@ the same ``"KEYWORD"``. It is useful to tune search score. See
 Return value
 ------------
 
-``select`` returns response with the following format::
+The command returns a response with the following format::
 
   [
     HEADER,
@@ -2600,7 +2600,7 @@ Return value
     ]
   ]
 
-If ``select`` fails, error details are in ``HEADER``.
+If the command fails, error details are in ``HEADER``.
 
 See :doc:`/reference/command/output_format` for ``HEADER``.
 
@@ -2793,7 +2793,6 @@ The following value part is the same format as ``SEARCH_RESULT``::
 
 See also :ref:`select-drilldowns-label-output-format` for
 ``drilldowns[${LABEL}]`` style drilldown output format.
-
 
 See also
 --------

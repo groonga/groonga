@@ -276,20 +276,67 @@ TODO
 
 TODO
 
-``offset``
-""""""""""
+Output related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-TODO
-
-``limit``
-"""""""""
-
-TODO
+.. _logical-range-filter-output-columns:
 
 ``output_columns``
 """"""""""""""""""
 
-TODO
+Corresponds to :ref:`select-output-columns` in :doc:`select`. See
+:ref:`select-output-columns` for details.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/output_columns.log
+.. logical_range_filter \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --output_columns '_key, *'
+
+.. _logical-range-filter-offset:
+
+``offset``
+""""""""""
+
+Corresponds to :ref:`select-offset` in :doc:`select`. See
+:ref:`select-offset` for details.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/offset.log
+.. logical_range_filter \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --offset 2
+
+.. _logical-range-filter-limit:
+
+``limit``
+"""""""""
+
+Corresponds to :ref:`select-limit` in :doc:`select`. See
+:ref:`select-limit` for details.
+
+The difference from :doc:`select` is that this command stops searching
+when all requested records specified by
+:ref:`logical-range-filter-offset` and
+:ref:`logical-range-filter-limit` are found.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/limit.log
+.. logical_range_filter \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --limit 2
+
+Test related parameters
+^^^^^^^^^^^^^^^^^^^^^^^
 
 ``use_range_index``
 """""""""""""""""""
@@ -551,8 +598,100 @@ The default value is ``yes``.
 Return value
 ------------
 
-TODO
+The command returns a response with the following format::
 
-::
+  [
+    HEADER,
+    [
+      COLUMNS,
+      RECORDS
+    ]
+  ]
 
-  [HEADER, LOGICAL_FILTERED]
+If the command fails, error details are in ``HEADER``.
+
+See :doc:`/reference/command/output_format` for ``HEADER``.
+
+``COLUMNS`` describes about output columns specified by
+:ref:`logical-range-filter-output-columns`. It uses the following
+format::
+
+  [
+    [COLUMN_NAME_1, COLUMN_TYPE_1],
+    [COLUMN_NAME_2, COLUMN_TYPE_2],
+    ...,
+    [COLUMN_NAME_N, COLUMN_TYPE_N]
+  ]
+
+``COLUMNS`` includes one or more output column information. Each
+output column information includes the followings:
+
+  * Column name as string
+  * Column type as string or ``null``
+
+Column name is extracted from value specified as
+:ref:`logical-range-filter-output-columns`.
+
+Column type is Groonga's type name or ``null``. It doesn't describe
+whether the column value is vector or scalar. You need to determine it
+by whether real column value is array or not.
+
+See :doc:`/reference/types` for type details.
+
+``null`` is used when column value type isn't determined. For example,
+function call in :ref:`logical-range-filter-output-columns` such as
+``--output_columns "snippet_html(content)"`` uses ``null``.
+
+Here is an example of ``COLUMNS``::
+
+  [
+    ["_id",     "UInt32"],
+    ["_key",    "ShortText"],
+    ["n_likes", "UInt32"],
+  ]
+
+``RECORDS`` includes column values for each matched record. Included
+records are selected by :ref:`logical-range-filter-offset` and
+:ref:`logical-range-filter-limit`. It uses the following format::
+
+  [
+    [
+      RECORD_1_COLUMN_1,
+      RECORD_1_COLUMN_2,
+      ...,
+      RECORD_1_COLUMN_N
+    ],
+    [
+      RECORD_2_COLUMN_1,
+      RECORD_2_COLUMN_2,
+      ...,
+      RECORD_2_COLUMN_N
+    ],
+    ...
+    [
+      RECORD_N_COLUMN_1,
+      RECORD_N_COLUMN_2,
+      ...,
+      RECORD_N_COLUMN_N
+    ]
+  ]
+
+Here is an example ``RECORDS``::
+
+  [
+    [
+      1,
+      "The first post!",
+      5
+    ],
+    [
+      2,
+      "Groonga",
+      10
+    ],
+    [
+      3,
+      "Mroonga",
+      15
+    ]
+  ]
