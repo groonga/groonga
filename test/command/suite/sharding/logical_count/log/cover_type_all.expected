@@ -12,6 +12,6 @@ log_level --level debug
 [[0,0.0,0.0],true]
 logical_count Logs timestamp
 [[0,0.0,0.0],0]
-#|d| [logical_count][select] <Logs_20150709>
+#|d| [logical_count][select] <Logs_20150709>: covered
 log_level --level notice
 [[0,0.0,0.0],true]

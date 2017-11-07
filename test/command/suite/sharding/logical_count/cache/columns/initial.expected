@@ -1,0 +1,26 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Logs_20170315 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 1000},
+{"timestamp": "2017/03/15 01:00:00", "price":  900},
+{"timestamp": "2017/03/15 02:00:00", "price":  300}
+]
+[[0,0.0,0.0],3]
+logical_count Logs   --shard_key timestamp   --columns[price_with_tax].stage initial   --columns[price_with_tax].type UInt32   --columns[price_with_tax].flags COLUMN_SCALAR   --columns[price_with_tax].value 'price * 1.08'   --filter 'price_with_tax > 550'
+[[0,0.0,0.0],2]
+#>logical_count --columns[price_with_tax].flags "COLUMN_SCALAR" --columns[price_with_tax].stage "initial" --columns[price_with_tax].type "UInt32" --columns[price_with_tax].value "price * 1.08" --filter "price_with_tax > 550" --logical_table "Logs" --shard_key "timestamp"
+#:000000000000000 filter(3)
+#:000000000000000 filter(2)
+#<000000000000000 rc=0
+logical_count Logs   --shard_key timestamp   --columns[price_with_tax].stage initial   --columns[price_with_tax].type UInt32   --columns[price_with_tax].flags COLUMN_SCALAR   --columns[price_with_tax].value 'price * 1.08'   --filter 'price_with_tax > 550'
+[[0,0.0,0.0],2]
+#>logical_count --columns[price_with_tax].flags "COLUMN_SCALAR" --columns[price_with_tax].stage "initial" --columns[price_with_tax].type "UInt32" --columns[price_with_tax].value "price * 1.08" --filter "price_with_tax > 550" --logical_table "Logs" --shard_key "timestamp"
+#:000000000000000 cache(0)
+#<000000000000000 rc=0
