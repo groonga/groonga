@@ -119,8 +119,6 @@ module Groonga
             result_set.close if result_set.temporary?
           end
 
-          @dynamic_columns.close
-
           @temporary_tables.each do |table|
             table.close
           end

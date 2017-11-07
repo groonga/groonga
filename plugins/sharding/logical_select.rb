@@ -297,8 +297,6 @@ module Groonga
           @plain_drilldown.close
           @labeled_drilldowns.close
 
-          @dynamic_columns.close
-
           @temporary_tables.each do |table|
             table.close
           end
@@ -482,8 +480,6 @@ module Groonga
         def close
           @result_set.close if @result_set
           @unsorted_result_set.close if @unsorted_result_set
-
-          @dynamic_columns.close
 
           @temporary_tables.each do |table|
             table.close

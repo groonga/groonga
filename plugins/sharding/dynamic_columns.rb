@@ -60,12 +60,6 @@ module Groonga
           @output_contexts.empty?
       end
 
-      def close
-        each do |context|
-          context.close
-        end
-      end
-
       def cache_key
         key = ""
         [
@@ -105,9 +99,6 @@ module Groonga
         @value = arguments["value"]
         @window_sort_keys = parse_keys(arguments["window.sort_keys"])
         @window_group_keys = parse_keys(arguments["window.group_keys"])
-      end
-
-      def close
       end
 
       def apply(table, condition=nil)
