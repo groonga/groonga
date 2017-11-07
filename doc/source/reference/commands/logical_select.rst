@@ -423,7 +423,7 @@ Here is an example for ``exclude``. The result doesn't include the
 Search related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``logical_select`` provides :doc:`select` compatible search related
+This command provides :doc:`select` compatible search related
 parameters.
 
 .. _logical-select-match-columns:

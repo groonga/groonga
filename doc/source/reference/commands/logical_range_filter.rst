@@ -52,14 +52,14 @@ The required parameters are ``logical_table`` and ``shard_key``::
     logical_table
     shard_key
     [min=null]
-    [min_border=null]
+    [min_border="include"]
     [max=null]
-    [max_border=null]
-    [order=ascending]
+    [max_border="include"]
+    [order="ascending"]
     [filter=null]
     [offset=0]
     [limit=10]
-    [output_columns=_key,*]
+    [output_columns="_key, *"]
     [use_range_index=null]
 
 There are some parameters that can be only used as named
@@ -270,6 +270,14 @@ TODO: Add examples
 """"""""""
 
 TODO
+
+.. _logical-range-filter-search-related-parameters:
+
+Search related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This command provides :doc:`select` compatible search related
+parameters.
 
 ``filter``
 """"""""""
@@ -524,7 +532,6 @@ Here is an example that computes cumulative sum per
 ..   --columns[n_likes_cumulative_sum_per_tag].value 'window_sum(n_likes)' \
 ..   --columns[n_likes_cumulative_sum_per_tag].window.sort_keys _key \
 ..   --columns[n_likes_cumulative_sum_per_tag].window.group_keys tag \
-..   --sort_keys _key \
 ..   --output_columns tag,_key,n_likes,n_likes_cumulative_sum_per_tag
 
 .. _logical-range-filter-columns-name-window-group-keys:
@@ -553,7 +560,6 @@ Here is an example that computes sum per ``Entries.tag``:
 ..   --columns[n_likes_sum_per_tag].type UInt32 \
 ..   --columns[n_likes_sum_per_tag].value 'window_sum(n_likes)' \
 ..   --columns[n_likes_sum_per_tag].window.group_keys tag \
-..   --sort_keys _key \
 ..   --output_columns tag,_key,n_likes,n_likes_sum_per_tag
 
 Cache related parameter

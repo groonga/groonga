@@ -1,0 +1,12 @@
+Execution example::
+
+  plugin_register functions/string
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  logical_count \
+    --logical_table Entries \
+    --shard_key created_at \
+    --columns[content_length].stage initial \
+    --columns[content_length].type UInt32 \
+    --columns[content_length].value 'string_length(content)' \
+    --filter 'content_length >= 40'
+  # [[0, 1337566253.89858, 0.000355720520019531], 2]
