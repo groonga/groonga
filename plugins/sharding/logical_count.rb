@@ -17,8 +17,17 @@ module Groonga
 
         counter = Counter.new(input, enumerator.target_range)
         total = 0
+        have_shard = false
         enumerator.each do |shard, shard_range|
+          have_shard = true
           total += counter.count(shard, shard_range)
+        end
+        unless have_shard
+          message =
+            "[logical_count] no shard exists: " +
+            "logical_table: <#{enumerator.logical_table}>: " +
+            "shard_key: <#{enumerator.shard_key_name}>"
+          raise InvalidArgument, message
         end
         writer.write(total)
       end

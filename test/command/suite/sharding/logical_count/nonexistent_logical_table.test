@@ -1,0 +1,7 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+logical_count \
+  --logical_table Nonexistent \
+  --shard_key created_at

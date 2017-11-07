@@ -1,0 +1,13 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+logical_count   --logical_table Nonexistent   --shard_key created_at
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[logical_count] no shard exists: logical_table: <Nonexistent>: shard_key: <created_at>"
+  ]
+]
