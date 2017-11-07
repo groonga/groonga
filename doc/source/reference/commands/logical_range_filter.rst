@@ -34,6 +34,10 @@ requires all matched records. ``logical_range_filter`` may not find
 all matched records. So ``logical_range_filter`` doesn't support
 drilldown.
 
+``logical_range_filter`` doesn't return the number of all matched
+records. Because ``logical_range_filter`` may not search all matched
+records.
+
 You need to :doc:`plugin_register` ``sharding`` plugin because
 this command is included in ``sharding`` plugin.
 
@@ -77,26 +81,26 @@ Here are parameters that can be only used as named parameters:
       * ``columns[${NAME}].window.sort_keys=null``
       * ``columns[${NAME}].window.group_keys=null``
 
-       You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For
-       example, ``column1`` is a valid ``${NAME}``. This is the same rule as
-       normal column. See also :ref:`column-create-name`.
+   You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For
+   example, ``column1`` is a valid ``${NAME}``. This is the same rule as
+   normal column. See also :ref:`column-create-name`.
 
-       Parameters that have the same ``${NAME}`` are grouped.
+   Parameters that have the same ``${NAME}`` are grouped.
 
-       For example, the following parameters specify one dynamic column:
+   For example, the following parameters specify one dynamic column:
 
-         * ``--columns[name].stage initial``
-         * ``--columns[name].type UInt32``
-         * ``--columns[name].value 29``
+     * ``--columns[name].stage initial``
+     * ``--columns[name].type UInt32``
+     * ``--columns[name].value 29``
 
-       The following parameters specify two dynamic columns:
+   The following parameters specify two dynamic columns:
 
-         * ``--columns[name1].stage initial``
-         * ``--columns[name1].type UInt32``
-         * ``--columns[name1].value 29``
-         * ``--columns[name2].stage filtered``
-         * ``--columns[name2].type Float``
-         * ``--columns[name2].value '_score * 0.1'``
+     * ``--columns[name1].stage initial``
+     * ``--columns[name1].type UInt32``
+     * ``--columns[name1].value 29``
+     * ``--columns[name2].stage filtered``
+     * ``--columns[name2].type Float``
+     * ``--columns[name2].value '_score * 0.1'``
 
 Usage
 -----
@@ -213,8 +217,10 @@ There are required parameters, ``logical_table`` and ``shard_key``.
 ``logical_table``
 """""""""""""""""
 
-Specifies logical table name. It means table name without "_YYYYMMDD" postfix.
-If you use actual table such as "Logs_20150203", "Logs_20150203" and so on, logical table name is "Logs".
+Specifies logical table name. It means table name without
+``_YYYYMMDD`` postfix.  If you use actual table such as
+``Logs_20150203``, ``Logs_20150203`` and so on, logical table name is
+``Logs``.
 
 TODO: Add examples
 
@@ -530,8 +536,6 @@ Here are available values:
    * - ``yes``
      - Cache the output of this query.
        It's the default value.
-
-TODO: Add examples
 
 Here is an example to disable caching the result of this query:
 

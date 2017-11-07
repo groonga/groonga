@@ -122,8 +122,10 @@ There are required parameters, ``logical_table`` and ``shard_key``.
 ``logical_table``
 """""""""""""""""
 
-Specifies logical table name. It means table name without "_YYYYMMDD" postfix.
-If you use actual table such as "Logs_20150203", "Logs_20150203" and so on, logical table name is "Logs".
+Specifies logical table name. It means table name without
+``_YYYYMMDD`` postfix.  If you use actual table such as
+``Logs_20150203``, ``Logs_20150203`` and so on, logical table name is
+``Logs``.
 
 ``shard_key``
 """""""""""""
