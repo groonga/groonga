@@ -10,3 +10,6 @@
 [submodule "vendor/ngx_mruby-source"]
 	path = vendor/ngx_mruby-source
 	url = https://github.com/matsumoto-r/ngx_mruby.git
+[submodule "vendor/groonga-log"]
+	path = vendor/groonga-log
+	url = https://github.com/groonga/groonga-log.git

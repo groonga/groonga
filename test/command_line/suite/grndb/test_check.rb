@@ -422,5 +422,12 @@ load --table Users
 [Logs.user] Data column is locked. It may be broken. (1) Truncate the column (truncate Logs.user) or clear lock of the column (lock_clear Logs.user) and (2) load data again.
       MESSAGE
     end
+
+    def test_groonga_log_parse
+      result = grndb("check", "--groonga-log", File.dirname(__FILE__) + "/groonga.log")
+      assert_equal(<<-MESSAGE, result.output)
+{:timestamp=>Thu Jun 15 03:00:27 2017, :log_level=>:notice, :pid=>nil, :message=>"DDL:2222:obj_remove TestTable.Test"}
+      MESSAGE
+    end
   end
 end

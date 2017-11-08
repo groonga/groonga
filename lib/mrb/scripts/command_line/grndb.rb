@@ -1,3 +1,5 @@
+require "groonga-log"
+
 module Groonga
   module CommandLine
     class Grndb
@@ -26,16 +28,30 @@ module Groonga
         program_name = File.basename(@program_path)
         parser = CommandLineParser.new(program_name)
 
-        parser.add_command("check") do |command|
-          command.description = "Check database"
+        if @arguments[1] == "--groonga-log" then
+          parser.add_command("check") do |command|
+            command.description = "Parse groonga log"
 
-          options = command.options
-          options.banner += " DB_PATH"
-          options.string("--target", "Check only the target object.")
+            options = command.options
+            options.banner += " GROONGA_LOG_PATH"
+            options.string("--groonga-log", "Parse groonga log.")
+            command.add_action do |options|
+              open_groonga_log(command, options) do |groonga_log|
+                parse_groonga_log(groonga_log, options)
+              end
+            end
+          end
+        else
+          parser.add_command("check") do |command|
+            command.description = "Check database"
 
-          command.add_action do |options|
-            open_database(command, options) do |database, rest_arguments|
-              check(database, options, rest_arguments)
+            options = command.options
+            options.banner += " DB_PATH"
+            options.string("--target", "Check only the target object.")
+            command.add_action do |options|
+              open_database(command, options) do |database, rest_arguments|
+                check(database, options, rest_arguments)
+              end
             end
           end
         end
@@ -92,6 +108,32 @@ module Groonga
         @succeeded = false
       end
 
+      def open_groonga_log(command, options)
+        arguments = options[:"groonga-log"]
+        if arguments.empty?
+          $stderr.puts("Groonga log path is missing")
+          $stderr.puts
+          $stderr.puts(command.help_message)
+          @succeesed = false
+          return
+        end
+
+        groonga_log = nil
+        @groonga_log_path = arguments
+        begin
+          File.open(@groonga_log_path, "r") do |file|
+            groonga_log = file.read
+          end
+        rescue Error => error
+          $stderr.puts("Failed to open groonga log: <#{@groonga_log_path}>")
+          $stderr.puts(error.message)
+          @succeeded = false
+          return
+        end
+
+        yield(groonga_log)
+      end
+
       def recover(database, options, arguments)
         recoverer = Recoverer.new
         recoverer.database = database
@@ -120,6 +162,13 @@ module Groonga
           checker.check_one(target_name)
         else
           checker.check_all
+        end
+      end
+
+      def parse_groonga_log(groonga_log, options)
+        parser = GroongaLog::Parser.new
+        parser.parse(groonga_log) do |parsed_groonga_log|
+          $sdout.puts(parsed_groonga_log.to_h)
         end
       end
 

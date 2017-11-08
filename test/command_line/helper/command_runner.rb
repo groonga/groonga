@@ -64,9 +64,9 @@ module CommandRunner
     command_line = [
       grndb_path,
       command,
-      @database_path.to_s,
     ]
     command_line.concat(arguments)
+    command_line << @database_path.to_s
     run_command(*command_line)
   end
 
