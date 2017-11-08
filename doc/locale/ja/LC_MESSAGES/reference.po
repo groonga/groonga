@@ -7058,6 +7058,86 @@ msgstr ""
 "能です::"
 
 msgid ""
+"There are some parameters that can be only used as named parameters. You "
+"can't use these parameters as ordered parameters. You must specify parameter "
+"name."
+msgstr ""
+"いくつか名前付き引数としてしか使えない引数があります。これらの引数を「○番目の"
+"引数」として使うことはできません。必ず名前を指定する必要があります。"
+
+msgid "Here are parameters that can be only used as named parameters:"
+msgstr "名前付き引数としてしか使えない引数は次の通りです。"
+
+msgid "``cache=no``"
+msgstr ""
+
+msgid "This command has the following named parameters for dynamic columns:"
+msgstr "以下の名前付き引数で動的カラム機能を使うことができます。"
+
+msgid "``columns[${NAME}].stage=null``"
+msgstr ""
+
+msgid "``columns[${NAME}].flags=COLUMN_SCALAR``"
+msgstr ""
+
+msgid "``columns[${NAME}].type=null``"
+msgstr ""
+
+msgid "``columns[${NAME}].value=null``"
+msgstr ""
+
+msgid "``columns[${NAME}].window.sort_keys=null``"
+msgstr ""
+
+msgid "``columns[${NAME}].window.group_keys=null``"
+msgstr ""
+
+msgid ""
+"You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For "
+"example, ``column1`` is a valid ``${NAME}``. This is the same rule as normal "
+"column. See also :ref:`column-create-name`."
+msgstr ""
+"``${NAME}`` には1つ以上のアルファベット、数字、 ``_``  を使うことができます。"
+"たとえば、 ``column1`` は有効な ``${NAME}`` です。これは通常のカラムと同じ"
+"ルールです。 :ref:`column-create-name` も見てください。"
+
+msgid "Parameters that have the same ``${NAME}`` are grouped."
+msgstr "同じ ``${NAME}`` も持つ引数は同じグループになります。"
+
+msgid "For example, the following parameters specify one dynamic column:"
+msgstr "たとえば、以下の引数は1つの動的カラムを指定しています。"
+
+msgid "``--columns[name].stage initial``"
+msgstr ""
+
+msgid "``--columns[name].type UInt32``"
+msgstr ""
+
+msgid "``--columns[name].value 29``"
+msgstr ""
+
+msgid "The following parameters specify two dynamic columns:"
+msgstr "以下の引数は2つの動的カラムを指定しています。"
+
+msgid "``--columns[name1].stage initial``"
+msgstr ""
+
+msgid "``--columns[name1].type UInt32``"
+msgstr ""
+
+msgid "``--columns[name1].value 29``"
+msgstr ""
+
+msgid "``--columns[name2].stage initial``"
+msgstr ""
+
+msgid "``--columns[name2].type Float``"
+msgstr ""
+
+msgid "``--columns[name2].value '_score * 0.1'``"
+msgstr ""
+
+msgid ""
 "Let's learn about usage with examples. This section shows many popular "
 "usages."
 msgstr ""
@@ -7673,84 +7753,7 @@ msgstr ""
 msgid "The required parameters are ``logical_table`` and ``shard_key``::"
 msgstr "必須引数は2つあります。 ``logical_table`` と ``shard_key`` です。"
 
-msgid ""
-"There are some parameters that can be only used as named parameters. You "
-"can't use these parameters as ordered parameters. You must specify parameter "
-"name."
-msgstr ""
-"いくつか名前付き引数としてしか使えない引数があります。これらの引数を「○番目の"
-"引数」として使うことはできません。必ず名前を指定する必要があります。"
-
-msgid "Here are parameters that can be only used as named parameters:"
-msgstr "名前付き引数としてしか使えない引数は次の通りです。"
-
-msgid "``cache=no``"
-msgstr ""
-
-msgid "This command has the following named parameters for dynamic columns:"
-msgstr "以下の名前付き引数で動的カラム機能を使うことができます。"
-
-msgid "``columns[${NAME}].stage=null``"
-msgstr ""
-
-msgid "``columns[${NAME}].flags=COLUMN_SCALAR``"
-msgstr ""
-
-msgid "``columns[${NAME}].type=null``"
-msgstr ""
-
-msgid "``columns[${NAME}].value=null``"
-msgstr ""
-
-msgid "``columns[${NAME}].window.sort_keys=null``"
-msgstr ""
-
-msgid "``columns[${NAME}].window.group_keys=null``"
-msgstr ""
-
-msgid ""
-"You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For "
-"example, ``column1`` is a valid ``${NAME}``. This is the same rule as normal "
-"column. See also :ref:`column-create-name`."
-msgstr ""
-"``${NAME}`` には1つ以上のアルファベット、数字、 ``_``  を使うことができます。"
-"たとえば、 ``column1`` は有効な ``${NAME}`` です。これは通常のカラムと同じ"
-"ルールです。 :ref:`column-create-name` も見てください。"
-
-msgid "Parameters that have the same ``${NAME}`` are grouped."
-msgstr "同じ ``${NAME}`` も持つ引数は同じグループになります。"
-
-msgid "For example, the following parameters specify one dynamic column:"
-msgstr "たとえば、以下の引数は1つの動的カラムを指定しています。"
-
-msgid "``--columns[name].stage initial``"
-msgstr ""
-
-msgid "``--columns[name].type UInt32``"
-msgstr ""
-
-msgid "``--columns[name].value 29``"
-msgstr ""
-
-msgid "The following parameters specify two dynamic columns:"
-msgstr "以下の引数は2つの動的カラムを指定しています。"
-
-msgid "``--columns[name1].stage initial``"
-msgstr ""
-
-msgid "``--columns[name1].type UInt32``"
-msgstr ""
-
-msgid "``--columns[name1].value 29``"
-msgstr ""
-
 msgid "``--columns[name2].stage filtered``"
-msgstr ""
-
-msgid "``--columns[name2].type Float``"
-msgstr ""
-
-msgid "``--columns[name2].value '_score * 0.1'``"
 msgstr ""
 
 msgid "Simple usage"

@@ -46,6 +46,46 @@ parameters are optional::
     [max_border="include"]
     [filter=null]
 
+There are some parameters that can be only used as named
+parameters. You can't use these parameters as ordered parameters. You
+must specify parameter name.
+
+Here are parameters that can be only used as named parameters:
+
+  * ``cache=no``
+
+.. versionadded:: 7.0.9
+
+   This command has the following named parameters for dynamic columns:
+
+      * ``columns[${NAME}].stage=null``
+      * ``columns[${NAME}].flags=COLUMN_SCALAR``
+      * ``columns[${NAME}].type=null``
+      * ``columns[${NAME}].value=null``
+      * ``columns[${NAME}].window.sort_keys=null``
+      * ``columns[${NAME}].window.group_keys=null``
+
+   You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For
+   example, ``column1`` is a valid ``${NAME}``. This is the same rule as
+   normal column. See also :ref:`column-create-name`.
+
+   Parameters that have the same ``${NAME}`` are grouped.
+
+   For example, the following parameters specify one dynamic column:
+
+     * ``--columns[name].stage initial``
+     * ``--columns[name].type UInt32``
+     * ``--columns[name].value 29``
+
+   The following parameters specify two dynamic columns:
+
+     * ``--columns[name1].stage initial``
+     * ``--columns[name1].type UInt32``
+     * ``--columns[name1].value 29``
+     * ``--columns[name2].stage initial``
+     * ``--columns[name2].type Float``
+     * ``--columns[name2].value '_score * 0.1'``
+
 .. _logical-count-usage:
 
 Usage
