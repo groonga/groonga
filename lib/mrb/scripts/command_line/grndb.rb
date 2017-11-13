@@ -146,9 +146,11 @@ module Groonga
         def check_log_paths
           @log_paths.each do |log_path|
             begin
-              log_file = open(log_path)
-            rescue
-              failed("[#{log_path}] Can't open Groonga log path.")
+              log_file = File.new(log_path)
+            rescue => error
+              message = "[#{log_path}] Can't open Groonga log path: "
+              message << "#{error.class}: #{error.message}"
+              failed(message)
               next
             end
 
