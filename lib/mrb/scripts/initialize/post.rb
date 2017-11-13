@@ -28,3 +28,11 @@ require "eval_context"
 require "labeled_arguments"
 
 require "command_line_parser"
+
+load_path = ENV["GRN_RUBY_LOAD_PATH"]
+if load_path
+  load_path.split(File::PATH_SEPARATOR).each do |path|
+    next if path.empty?
+    $LOAD_PATH << path
+  end
+end
