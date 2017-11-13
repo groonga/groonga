@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2016 Brazil
+  Copyright(C) 2014-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -186,6 +186,7 @@ main(int argc, char **argv)
     if (ctx.rc == GRN_SUCCESS) {
       exit_code = run(&ctx, argc, argv);
     } else {
+      fprintf(stderr, "%d: %s\n", ctx.rc, ctx.errbuf);
       exit_code = EXIT_FAILURE;
     }
     grn_ctx_fin(&ctx);
