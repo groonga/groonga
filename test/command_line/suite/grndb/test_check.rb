@@ -2,6 +2,36 @@ class TestGrnDBCheck < GroongaTestCase
   def setup
   end
 
+  sub_test_case "Groonga log" do
+    def test_failed_to_open
+      groonga("status")
+      error = assert_raise(CommandRunner::Error) do
+        grndb("check",
+              "--groonga-log-path", "/nonexistent1",
+              "--groonga-log-path", "/nonexistent2")
+      end
+      assert_equal(<<-MESSAGE, error.error_output)
+[/nonexistent1] Can't open Groonga log path.
+[/nonexistent2] Can't open Groonga log path.
+      MESSAGE
+    end
+
+    def test_normal
+      # TODO: This test should be removed when we put check cases.
+      groonga("status")
+      log_file = Tempfile.new(["grndb-check-log-path", ".log"])
+      log_file.puts(<<-GROONGA_LOG)
+2017-11-13 15:58:27.712199|n| grn_init: <7.0.8-14-g16082c4>
+      GROONGA_LOG
+      log_file.close
+      result = grndb("check",
+                     "--groonga-log-path", log_file.path)
+      assert_equal(<<-MESSAGE, result.output)
+{:timestamp=>Mon Nov 13 15:58:27 2017, :log_level=>:notice, :pid=>nil, :message=>"grn_init: <7.0.8-14-g16082c4>"}
+      MESSAGE
+    end
+  end
+
   def test_orphan_inspect
     groonga("table_create", "inspect", "TABLE_NO_KEY")
     _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]

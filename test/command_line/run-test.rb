@@ -30,6 +30,10 @@ else
   ].join(File::PATH_SEPARATOR)
   ENV["GRN_PLUGINS_DIR"]      = (build_top_dir_path + "plugins").to_s
   ENV["GRN_RUBY_SCRIPTS_DIR"] = (build_top_dir_path + "lib/mrb/scripts").to_s
+  ENV["GRN_RUBY_LOAD_PATH"] = [
+    (build_top_dir_path + "vendor/groonga-log-source/lib").to_s,
+    ENV["GRN_RUBY_LOAD_PATH"],
+  ].compact.join(File::PATH_SEPARATOR)
 end
 
 $VERBOSE = true

@@ -1,3 +1,5 @@
+require "groonga-log"
+
 module Groonga
   module CommandLine
     class Grndb
@@ -32,6 +34,9 @@ module Groonga
           options = command.options
           options.banner += " DB_PATH"
           options.string("--target", "Check only the target object.")
+          options.array("--groonga-log-path",
+                        "Path to Groonga log file to be checked.",
+                        "You can specify multiple times to specify multiple log files.")
 
           command.add_action do |options|
             open_database(command, options) do |database, rest_arguments|
@@ -109,9 +114,12 @@ module Groonga
         checker.program_path = @program_path
         checker.database_path = @database_path
         checker.database = database
+        checker.log_paths = options[:groonga_log_path]
         checker.on_failure = lambda do |message|
           failed(message)
         end
+
+        checker.check_log_paths
 
         checker.check_database
 
@@ -127,11 +135,29 @@ module Groonga
         attr_writer :program_path
         attr_writer :database_path
         attr_writer :database
+        attr_writer :log_paths
         attr_writer :on_failure
 
         def initialize
           @context = Context.instance
           @checked = {}
+        end
+
+        def check_log_paths
+          @log_paths.each do |log_path|
+            begin
+              log_file = open(log_path)
+            rescue
+              failed("[#{log_path}] Can't open Groonga log path.")
+              next
+            end
+
+            begin
+              check_log_file(log_file)
+            ensure
+              log_file.close
+            end
+          end
         end
 
         def check_database
@@ -177,6 +203,13 @@ module Groonga
         end
 
         private
+        def check_log_file(log_file)
+          parser = GroongaLog::Parser.new
+          parser.parse(log_file) do |statistic|
+            p statistic.to_h
+          end
+        end
+
         def check_database_orphan_inspect
           open_database_cursor do |cursor|
             cursor.each do |id|

@@ -1,5 +1,6 @@
 require "fileutils"
 require "json"
+require "tempfile"
 
 require "test-unit"
 

@@ -1,0 +1,2 @@
+ruby_scripts_DATA =					\
+	../groonga-log-source/lib/groonga-log.rb

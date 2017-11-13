@@ -1,3 +1,18 @@
+# Copyright(C) 2017 Brazil
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License version 2.1 as published by the Free Software Foundation.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
 NGINX_DIR = nginx-$(NGINX_VERSION)
 
 SUBDIRS =					\
@@ -5,7 +20,8 @@ SUBDIRS =					\
 	onigmo					\
 	mecab					\
 	message_pack				\
-	mruby
+	mruby					\
+	groonga-log
 
 EXTRA_DIST =					\
 	$(NGINX_DIR)				\
@@ -27,3 +43,6 @@ dist-hook:
 	$(MKDIR_P) $(distdir)/ngx_mruby-source
 	GIT_DIR=$(srcdir)/ngx_mruby-source/.git git archive --format=tar HEAD | \
 	  tar xf - -C $(distdir)/ngx_mruby-source
+	$(MKDIR_P) $(distdir)/groonga-log
+	GIT_DIR=$(srcdir)/groonga-log/.git git archive --format=tar HEAD | \
+	  tar xf - -C $(distdir)/groonga-log

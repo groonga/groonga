@@ -1,0 +1,4 @@
+ruby_scripts_groonga_log_DATA =					\
+	../groonga-log-source/lib/groonga-log/parser.rb		\
+	../groonga-log-source/lib/groonga-log/statistic.rb	\
+	../groonga-log-source/lib/groonga-log/version.rb
