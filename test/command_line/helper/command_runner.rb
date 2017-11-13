@@ -72,8 +72,11 @@ module CommandRunner
 
   def find_program(name)
     ENV["PATH"].split(File::PATH_SEPARATOR).each do |path|
-      lt_program_path = File.join(path, ".libs", "lt-#{name}")
-      return lt_program_path if File.exist?(lt_program_path)
+      libs_lt_program_path = File.join(path, ".libs", "lt-#{name}")
+      return libs_lt_program_path if File.exist?(libs_lt_program_path)
+
+      libs_program_path = File.join(path, ".libs", name)
+      return libs_program_path if File.exist?(libs_program_path)
 
       program_path = File.join(path, name)
       return program_path if File.exist?(program_path)
