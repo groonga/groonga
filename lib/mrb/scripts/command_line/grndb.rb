@@ -1,4 +1,5 @@
 require "groonga-log"
+require "groonga_query_log"
 
 module Groonga
   module CommandLine
@@ -34,6 +35,9 @@ module Groonga
           options = command.options
           options.banner += " DB_PATH"
           options.string("--target", "Check only the target object.")
+          options.array("--groonga-query-log-path",
+                        "Path to Groonga query log file to be checked.",
+                        "You can specify multiple times to specify multiple query log files.")
           options.array("--groonga-log-path",
                         "Path to Groonga log file to be checked.",
                         "You can specify multiple times to specify multiple log files.")
@@ -114,12 +118,14 @@ module Groonga
         checker.program_path = @program_path
         checker.database_path = @database_path
         checker.database = database
+        checker.query_log_paths = options[:groonga_query_log_path]
         checker.log_paths = options[:groonga_log_path]
         checker.on_failure = lambda do |message|
           failed(message)
         end
 
         checker.check_log_paths
+        checker.check_query_log_paths
 
         checker.check_database
 
@@ -135,12 +141,32 @@ module Groonga
         attr_writer :program_path
         attr_writer :database_path
         attr_writer :database
+        attr_writer :query_log_paths
         attr_writer :log_paths
         attr_writer :on_failure
 
         def initialize
           @context = Context.instance
           @checked = {}
+        end
+
+        def check_query_log_paths
+          @query_log_paths.each do |query_log_path|
+            begin
+              query_log_file = File.new(query_log_path)
+            rescue => error
+              message = "[#{query_log_path}] Can't open Groonga query log path: "
+              message << "#{error.class}: #{error.message}"
+              failed(message)
+              next
+            end
+
+            begin
+              check_query_log_file(query_log_file)
+            ensure
+              query_log_file.close
+            end
+          end
         end
 
         def check_log_paths
@@ -205,6 +231,13 @@ module Groonga
         end
 
         private
+        def check_query_log_file(query_log_file)
+          parser = GroongaQueryLog::Parser.new
+          parser.parse(query_log_file) do |statistic|
+            p statistic.to_h
+          end
+        end
+
         def check_log_file(log_file)
           parser = GroongaLog::Parser.new
           parser.parse(log_file) do |statistic|

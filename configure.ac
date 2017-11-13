@@ -235,6 +235,7 @@ AC_CONFIG_FILES([
   lib/mrb/scripts/initialize/Makefile
   lib/mrb/scripts/logger/Makefile
   lib/mrb/scripts/query_logger/Makefile
+  lib/mrb/scripts/groonga_query_log/Makefile
   lib/proc/Makefile
   lib/ts/Makefile
   include/Makefile

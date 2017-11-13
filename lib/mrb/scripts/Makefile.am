@@ -4,7 +4,8 @@ SUBDIRS =					\
 	expression_tree				\
 	initialize				\
 	logger					\
-	query_logger
+	query_logger					\
+	groonga_query_log
 
 include sources.am
 

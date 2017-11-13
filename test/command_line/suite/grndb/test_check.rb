@@ -2,6 +2,44 @@ class TestGrnDBCheck < GroongaTestCase
   def setup
   end
 
+  sub_test_case "Groonga query log" do
+    def test_failed_to_open
+      groonga("status")
+      error = assert_raise(CommandRunner::Error) do
+        grndb("check",
+              "--groonga-query-log-path", "/nonexistent1",
+              "--groonga-query-log-path", "/nonexistent2")
+      end
+      assert_equal(<<-MESSAGE, error.error_output)
+[/nonexistent1] Can't open Groonga query log path: RuntimeError: open
+[/nonexistent2] Can't open Groonga query log path: RuntimeError: open
+      MESSAGE
+    end
+
+    def test_normal
+      # TODO: This test should be removed when we put check cases.
+      groonga("status")
+      log_file = Tempfile.new(["grndb-check-query-log-path", ".log"])
+      log_file.puts(<<-GROONGA_QUERY_LOG)
+2017-06-15 03:00:00.458756|45ea3034|>select Properties --limit 0
+2017-06-15 03:00:00.458829|45ea3034|:000000000072779 select(19)
+2017-06-15 03:00:00.458856|45ea3034|:000000000099998 output(0)
+2017-06-15 03:00:00.458875|45ea3034|<000000000119062 rc=0
+2017-06-15 03:00:00.458986|45ea3034|>quit
+      GROONGA_QUERY_LOG
+      log_file.close
+      result = grndb("check",
+                     "--groonga-query-log-path", log_file.path)
+      assert_equal(<<-MESSAGE, result.output)
+{:timestamp=>Thu Jun 15 03:00:00 2017, :context_id=>"45ea3034", :message=>">select Properties --limit 0"}
+{:timestamp=>Thu Jun 15 03:00:00 2017, :context_id=>"45ea3034", :message=>":000000000072779 select(19)"}
+{:timestamp=>Thu Jun 15 03:00:00 2017, :context_id=>"45ea3034", :message=>":000000000099998 output(0)"}
+{:timestamp=>Thu Jun 15 03:00:00 2017, :context_id=>"45ea3034", :message=>"<000000000119062 rc=0"}
+{:timestamp=>Thu Jun 15 03:00:00 2017, :context_id=>"45ea3034", :message=>">quit"}
+      MESSAGE
+    end
+  end
+
   sub_test_case "Groonga log" do
     def test_failed_to_open
       groonga("status")
