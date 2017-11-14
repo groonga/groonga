@@ -24,11 +24,26 @@
 #include "mrb_thread.h"
 
 static mrb_value
-thread_limit(mrb_state *mrb, mrb_value self)
+thread_get_limit(mrb_state *mrb, mrb_value self)
 {
   uint32_t limit;
   limit = grn_thread_get_limit();
   return mrb_fixnum_value(limit);
+}
+
+static mrb_value
+thread_set_limit(mrb_state *mrb, mrb_value self)
+{
+  mrb_int limit;
+
+  mrb_get_args(mrb, "i", &limit);
+  if (limit < 1) {
+    mrb_raisef(mrb, E_ARGUMENT_ERROR,
+               "thread limit must be 1 or larger: %S",
+               mrb_fixnum_value(limit));
+  }
+  grn_thread_set_limit(limit);
+  return mrb_nil_value();
 }
 
 void
@@ -41,6 +56,8 @@ grn_mrb_thread_init(grn_ctx *ctx)
   thread_module = mrb_define_module_under(mrb, module, "Thread");
 
   mrb_define_class_method(mrb, thread_module,
-                          "limit", thread_limit, MRB_ARGS_NONE());
+                          "limit", thread_get_limit, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, thread_module,
+                          "limit=", thread_set_limit, MRB_ARGS_REQ(1));
 }
 #endif
