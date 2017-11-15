@@ -561,7 +561,7 @@ namespace :pdb do
     sha256_path = "#{zip_path}.sha256"
     url = "https://packages.groonga.org/tmp/#{zip_path}"
     rm_f(zip_path)
-    download(url, ".")
+    download(url, Pathname.new("."))
     sh("7z", "x", zip_path)
     cd(dir_name) do
       sh("bin/generate-pdb.bat")
