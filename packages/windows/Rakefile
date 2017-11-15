@@ -559,7 +559,7 @@ namespace :pdb do
     dir_name = "groonga-#{groonga_version}-#{architecture}#{suffix}"
     zip_path = "#{dir_name}.zip"
     sha256_path = "#{zip_path}.sha256"
-    url = "https://packages.groonga.org/tmp/#{zup_path}"
+    url = "https://packages.groonga.org/tmp/#{zip_path}"
     rm_f(zip_path)
     download(url, ".")
     sh("7z", "x", zip_path)
