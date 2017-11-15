@@ -24,7 +24,6 @@ base_dir = Pathname.new(__FILE__).dirname
 architecture = ENV["ARCHITECTURE"]
 groonga_win32_x86_p = architecture == "x86"
 groonga_version = ENV["VERSION"]
-groonga_source = Pathname.new(ENV["SOURCE"]).expand_path
 debug_build_p = ENV["DEBUG_BUILD"] == "yes"
 memory_debug_build_p = ENV["MEMORY_DEBUG_BUILD"] == "yes"
 
@@ -53,6 +52,10 @@ if groonga_win32_x86_p
 else
   architecture = "x64"
   host = "x86_64-w64-mingw32"
+end
+
+def groonga_source
+  Pathname.new(ENV["SOURCE"]).expand_path
 end
 
 def download(url, download_dir)
