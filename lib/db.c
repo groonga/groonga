@@ -7760,6 +7760,7 @@ grn_obj_get_value_expr(grn_ctx *ctx, grn_obj *expr, grn_id id, grn_obj *value)
   }
 
   switch (code->value->header.type) {
+  case GRN_ACCESSOR :
   case GRN_COLUMN_VAR_SIZE :
   case GRN_COLUMN_FIX_SIZE :
     grn_obj_get_value(ctx, code->value, id, value);
