@@ -3890,7 +3890,7 @@ grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset)
 #define DEFAULT_TERM_EXTRACT_POLICY 0
 #define DEFAULT_WEIGHT_VECTOR_SIZE 4096
 
-#define GRN_SCAN_INFO_MAX_N_ARGS 128
+#define GRN_SCAN_INFO_INITIAL_MAX_N_ARGS 16
 
 struct _grn_scan_info {
   uint32_t start;
@@ -3902,7 +3902,8 @@ struct _grn_scan_info {
   grn_obj wv;
   grn_obj index;
   grn_obj *query;
-  grn_obj *args[GRN_SCAN_INFO_MAX_N_ARGS];
+  grn_obj **args;
+  grn_obj *initial_args[GRN_SCAN_INFO_INITIAL_MAX_N_ARGS];
   int max_interval;
   int similarity_threshold;
   grn_obj scorers;
@@ -3912,6 +3913,7 @@ struct _grn_scan_info {
     grn_bool specified;
     int start;
   } position;
+  int32_t max_nargs;
 };
 
 #define SI_FREE(si) do {\
@@ -3920,6 +3922,9 @@ struct _grn_scan_info {
   GRN_OBJ_FIN(ctx, &(si)->scorers);\
   GRN_OBJ_FIN(ctx, &(si)->scorer_args_exprs);\
   GRN_OBJ_FIN(ctx, &(si)->scorer_args_expr_offsets);\
+  if ((si)->args != (si)->initial_args) {\
+    GRN_FREE((si)->args);\
+  }\
   GRN_FREE(si);\
 } while (0)
 
@@ -3930,6 +3935,8 @@ struct _grn_scan_info {
     (si)->logical_op = GRN_OP_OR;\
     (si)->flags = SCAN_PUSH;\
     (si)->nargs = 0;\
+    (si)->max_nargs = GRN_SCAN_INFO_INITIAL_MAX_N_ARGS;\
+    (si)->args = (si)->initial_args;\
     (si)->max_interval = DEFAULT_MAX_INTERVAL;\
     (si)->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;\
     (si)->start = (st);\
@@ -4249,6 +4256,8 @@ grn_scan_info_open(grn_ctx *ctx, int start)
   si->logical_op = GRN_OP_OR;
   si->flags = SCAN_PUSH;
   si->nargs = 0;
+  si->max_nargs = GRN_SCAN_INFO_INITIAL_MAX_N_ARGS;
+  si->args = si->initial_args;
   si->max_interval = DEFAULT_MAX_INTERVAL;
   si->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;
   si->start = start;
@@ -4366,10 +4375,24 @@ grn_scan_info_set_similarity_threshold(scan_info *si, int similarity_threshold)
 }
 
 grn_bool
-grn_scan_info_push_arg(scan_info *si, grn_obj *arg)
+grn_scan_info_push_arg(grn_ctx *ctx, scan_info *si, grn_obj *arg)
 {
-  if (si->nargs >= GRN_SCAN_INFO_MAX_N_ARGS) {
-    return GRN_FALSE;
+  if (si->nargs >= si->max_nargs) {
+    grn_obj **args;
+    int32_t max_nargs = si->max_nargs * 2;
+    if (si->args == si->initial_args) {
+      args = GRN_MALLOCN(grn_obj *, max_nargs);
+      if (args == NULL) {
+        return GRN_FALSE;
+      }
+    } else {
+      args = (grn_obj **)GRN_REALLOC(si->args, sizeof(grn_obj *) * max_nargs);
+      if (args == NULL) {
+        return GRN_FALSE;
+      }
+    }
+    si->args = args;
+    si->max_nargs = max_nargs;
   }
 
   si->args[si->nargs++] = arg;
@@ -4803,8 +4826,8 @@ grn_scan_info_build_full_not(grn_ctx *ctx,
           return GRN_FALSE;
         }
         all_records_si->op = GRN_OP_CALL;
-        all_records_si->args[all_records_si->nargs++] =
-          grn_ctx_get(ctx, "all_records", -1);
+        grn_scan_info_push_arg(ctx, all_records_si,
+                               grn_ctx_get(ctx, "all_records", -1));
         last_si->logical_op = GRN_OP_AND_NOT;
         last_si->flags &= ~SCAN_PUSH;
         sis[*i] = sis[*i - 1];
@@ -4840,8 +4863,8 @@ grn_scan_info_build_full_not(grn_ctx *ctx,
             return GRN_FALSE;
           }
           all_records_si->op = GRN_OP_CALL;
-          all_records_si->args[all_records_si->nargs++] =
-            grn_ctx_get(ctx, "all_records", -1);
+          grn_scan_info_push_arg(ctx, all_records_si,
+                                 grn_ctx_get(ctx, "all_records", -1));
           sis[*i] = sis[*i - 1];
           sis[*i - 1] = all_records_si;
           (*i)++;
@@ -5081,9 +5104,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
       if (c->value == var) {
         stat = SCAN_VAR;
       } else {
-        if (si->nargs < GRN_SCAN_INFO_MAX_N_ARGS) {
-          si->args[si->nargs++] = c->value;
-        }
+        grn_scan_info_push_arg(ctx, si, c->value);
         if (stat == SCAN_START) { si->flags |= SCAN_PRE_CONST; }
         stat = SCAN_CONST;
       }
@@ -5117,9 +5138,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
       case SCAN_CONST :
       case SCAN_VAR :
         stat = SCAN_COL1;
-        if (si->nargs < GRN_SCAN_INFO_MAX_N_ARGS) {
-          si->args[si->nargs++] = c->value;
-        }
+        grn_scan_info_push_arg(ctx, si, c->value);
         break;
       case SCAN_COL1 :
         {
@@ -5203,9 +5222,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
       case SCAN_START :
         if (!si) { SI_ALLOC(si, i, c - e->codes); }
         stat = SCAN_COL1;
-        if (si->nargs < GRN_SCAN_INFO_MAX_N_ARGS) {
-          si->args[si->nargs++] = c->value;
-        }
+        grn_scan_info_push_arg(ctx, si, c->value);
         break;
       default :
         break;
@@ -5397,8 +5414,8 @@ grn_scan_info_build_simple_operation(grn_ctx *ctx,
   si = sis[0];
   si->end = 2;
   si->op = operator->op;
-  si->args[si->nargs++] = target->value;
-  si->args[si->nargs++] = constant->value;
+  grn_scan_info_push_arg(ctx, si, target->value);
+  grn_scan_info_push_arg(ctx, si, constant->value);
   {
     int32_t weight = 0;
     if (operator->value && operator->value->header.domain == GRN_DB_INT32) {
@@ -5500,8 +5517,8 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
     if (!si) {
       goto exit;
     }
-    si->args[si->nargs++] = target->value;
-    si->args[si->nargs++] = constant->value;
+    grn_scan_info_push_arg(ctx, si, target->value);
+    grn_scan_info_push_arg(ctx, si, constant->value);
     si->op = operator->op;
     si->end = i + 2;
     si->flags &= ~SCAN_PUSH;

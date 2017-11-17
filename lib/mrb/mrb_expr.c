@@ -300,6 +300,7 @@ mrb_grn_scan_info_get_arg(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_grn_scan_info_push_arg(mrb_state *mrb, mrb_value self)
 {
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
   scan_info *si;
   mrb_value mrb_arg;
   grn_bool success;
@@ -307,7 +308,7 @@ mrb_grn_scan_info_push_arg(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "o", &mrb_arg);
 
   si = DATA_PTR(self);
-  success = grn_scan_info_push_arg(si, DATA_PTR(mrb_arg));
+  success = grn_scan_info_push_arg(ctx, si, DATA_PTR(mrb_arg));
 
   return mrb_bool_value(success);
 }
