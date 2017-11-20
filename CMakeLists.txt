@@ -384,12 +384,18 @@ if(NOT ${GRN_WITH_LZ4} STREQUAL "no")
   else()
     if(NOT DEFINED LIBLZ4_FOUND)
       pkg_check_modules(LIBLZ4 liblz4)
+      unset(LIBLZ4_LIBS CACHE)
     endif()
     if(LIBLZ4_FOUND)
-      find_library(LIBLZ4_LIBS
-	NAMES ${LIBLZ4_LIBRARIES}
-	PATHS ${LIBLZ4_LIBRARY_DIRS}
-	NO_DEFAULT_PATH)
+      if(${LIBLZ4_LIBRARY_DIRS})
+	find_library(LIBLZ4_LIBS
+	  NAMES ${LIBLZ4_LIBRARIES}
+	  PATHS ${LIBLZ4_LIBRARY_DIRS}
+	  NO_DEFAULT_PATH)
+      else()
+	find_library(LIBLZ4_LIBS
+	  NAMES ${LIBLZ4_LIBRARIES})
+      endif()
       set(GRN_WITH_LZ4 TRUE)
     else()
       if(${GRN_WITH_LZ4} STREQUAL "yes")
@@ -570,12 +576,18 @@ if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
   else()
     if(NOT DEFINED MESSAGE_PACK_FOUND)
       pkg_check_modules(MESSAGE_PACK msgpack)
+      unset(MESSAGE_PACK_LIBS CACHE)
     endif()
     if(MESSAGE_PACK_FOUND)
-      find_library(MESSAGE_PACK_LIBS
-	NAMES ${MESSAGE_PACK_LIBRARIES}
-	PATHS ${MESSAGE_PACK_LIBRARY_DIRS}
-	NO_DEFAULT_PATH)
+      if(${MESSAGE_PACK_LIBRARY_DIRS})
+	find_library(MESSAGE_PACK_LIBS
+	  NAMES ${MESSAGE_PACK_LIBRARIES}
+	  PATHS ${MESSAGE_PACK_LIBRARY_DIRS}
+	  NO_DEFAULT_PATH)
+      else()
+	find_library(MESSAGE_PACK_LIBS
+	  NAMES ${MESSAGE_PACK_LIBRARIES})
+      endif()
       set(GRN_WITH_MESSAGE_PACK TRUE)
     else()
       if("${GRN_WITH_MESSAGE_PACK}" STREQUAL "yes" OR
