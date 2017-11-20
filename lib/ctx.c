@@ -492,7 +492,7 @@ grn_ctx_fin(grn_ctx *ctx)
     GRN_OBJ_FIN(ctx, &ctx->impl->output.names);
     GRN_OBJ_FIN(ctx, &ctx->impl->output.levels);
     rc = grn_obj_close(ctx, ctx->impl->output.buf);
-    {
+    if (ctx->impl->expr_vars) {
       grn_hash **vp;
       grn_obj *value;
       GRN_HASH_EACH(ctx, ctx->impl->expr_vars, eid, NULL, NULL, &vp, {
@@ -503,8 +503,8 @@ grn_ctx_fin(grn_ctx *ctx)
         }
         grn_hash_close(ctx, *vp);
       });
+      grn_hash_close(ctx, ctx->impl->expr_vars);
     }
-    grn_hash_close(ctx, ctx->impl->expr_vars);
     if (ctx->impl->db && ctx->flags & GRN_CTX_PER_DB) {
       grn_obj *db = ctx->impl->db;
       ctx->impl->db = NULL;
