@@ -240,7 +240,16 @@ grn_ctx_impl_init(grn_ctx *ctx)
   }
   ctx->impl->db = NULL;
 
-  ctx->impl->expr_vars = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_obj *), 0);
+  if (!(ctx->impl->expr_vars = grn_hash_create(ctx, NULL, sizeof(grn_id),
+                                               sizeof(grn_obj *), 0))) {
+    grn_array_close(ctx, ctx->impl->values);
+    grn_pat_close(ctx, ctx->impl->temporary_columns);
+    CRITICAL_SECTION_FIN(ctx->impl->lock);
+    grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
+    grn_hash_close(ctx, ctx->impl->ios);
+    ctx->impl = NULL;
+    return ctx->rc;
+  }
   ctx->impl->stack_curr = 0;
   ctx->impl->curr_expr = NULL;
   GRN_TEXT_INIT(&ctx->impl->current_request_id, 0);
