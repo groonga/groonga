@@ -1508,6 +1508,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
     if (vp - e->values > e->values_tail) { e->values_tail = vp - e->values; }\
   }\
   s1 = s0;\
+  if (sp >= s_ + GRN_STACK_SIZE) { ERR(GRN_INVALID_ARGUMENT, "stack overflow"); goto exit; }\
   *sp++ = s0 = v;\
 } while (0)
 
@@ -1522,6 +1523,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 
 #define ALLOC1(value) do {\
   s1 = s0;\
+  if (sp >= s_ + GRN_STACK_SIZE) { ERR(GRN_INVALID_ARGUMENT, "stack overflow"); goto exit; }\
   *sp++ = s0 = value = vp++;\
   if (vp - e->values > e->values_tail) { e->values_tail = vp - e->values; }\
 } while (0)
