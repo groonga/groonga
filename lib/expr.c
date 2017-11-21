@@ -297,13 +297,33 @@ grn_ctx_pop(grn_ctx *ctx)
 }
 
 grn_rc
+grn_ctx_expand_stack(grn_ctx *ctx)
+{
+  uint32_t stack_size = ctx->impl->stack_size * 2;
+  grn_obj **stack = (grn_obj **)GRN_REALLOC(ctx->impl->stack,
+                                            sizeof(grn_obj *) * stack_size);
+  if (!stack) {
+    return ctx->rc;
+  }
+  ctx->impl->stack = stack;
+  ctx->impl->stack_size = stack_size;
+  return GRN_SUCCESS;
+}
+
+grn_rc
 grn_ctx_push(grn_ctx *ctx, grn_obj *obj)
 {
-  if (ctx && ctx->impl && ctx->impl->stack_curr < GRN_STACK_SIZE) {
-    ctx->impl->stack[ctx->impl->stack_curr++] = obj;
-    return GRN_SUCCESS;
+  if (!ctx || !ctx->impl) {
+    return GRN_INVALID_ARGUMENT;
   }
-  return GRN_STACK_OVER_FLOW;
+  if (ctx->impl->stack_curr >= ctx->impl->stack_size) {
+    grn_rc rc = grn_ctx_expand_stack(ctx);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+  ctx->impl->stack[ctx->impl->stack_curr++] = obj;
+  return GRN_SUCCESS;
 }
 
 grn_obj *
@@ -1427,8 +1447,9 @@ grn_expr_rewrite(grn_ctx *ctx, grn_obj *expr)
   block\
   vp = e->values + e->values_curr;\
   sp = ctx->impl->stack + ctx->impl->stack_curr;\
-  s0 = sp[-1];\
-  s1 = sp[-2];\
+  s_ = ctx->impl->stack;\
+  s0 = (sp > s_) ? sp[-1] : NULL;\
+  s1 = (sp > s_ + 1) ? sp[-2] : NULL;\
 } while (0)
 
 #define GEO_RESOLUTION   3600000
@@ -1508,7 +1529,13 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
     if (vp - e->values > e->values_tail) { e->values_tail = vp - e->values; }\
   }\
   s1 = s0;\
-  if (sp >= s_ + GRN_STACK_SIZE) { ERR(GRN_INVALID_ARGUMENT, "stack overflow"); goto exit; }\
+  if (sp >= s_ + ctx->impl->stack_size) {\
+    if (grn_ctx_expand_stack(ctx) != GRN_SUCCESS) {\
+      goto exit;\
+    }\
+    sp += (ctx->impl->stack - s_);\
+    s_ = ctx->impl->stack;\
+  }\
   *sp++ = s0 = v;\
 } while (0)
 
@@ -1518,12 +1545,18 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   s0 = s1;\
   sp--;\
   if (sp < s_) { ERR(GRN_INVALID_ARGUMENT, "stack underflow"); goto exit; }\
-  s1 = sp[-2];\
+  s1 = (sp > s_ - 1) ? sp[-2] : NULL;\
 } while (0)
 
 #define ALLOC1(value) do {\
   s1 = s0;\
-  if (sp >= s_ + GRN_STACK_SIZE) { ERR(GRN_INVALID_ARGUMENT, "stack overflow"); goto exit; }\
+  if (sp >= s_ + ctx->impl->stack_size) {\
+    if (grn_ctx_expand_stack(ctx) != GRN_SUCCESS) {\
+      goto exit;\
+    }\
+    sp += (ctx->impl->stack - s_);\
+    s_ = ctx->impl->stack;\
+  }\
   *sp++ = s0 = value = vp++;\
   if (vp - e->values > e->values_tail) { e->values_tail = vp - e->values; }\
 } while (0)
@@ -1547,7 +1580,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   arg1 = s1;\
   sp--;\
   if (sp < s_ + 1) { ERR(GRN_INVALID_ARGUMENT, "stack underflow"); goto exit; }\
-  s1 = sp[-2];\
+  s1 = (sp > s_ + 1) ? sp[-2] : NULL;\
   sp[-1] = s0 = value = vp++;\
   if (vp - e->values > e->values_tail) { e->values_tail = vp - e->values; }\
   s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\

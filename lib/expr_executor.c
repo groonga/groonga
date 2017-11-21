@@ -467,6 +467,8 @@ grn_expr_executor_init_proc(grn_ctx *ctx,
   proc->funcs[PROC_INIT](ctx, 0, NULL, &(proc_ctx->user_data));
 }
 
+grn_rc grn_ctx_expand_stack(grn_ctx *ctx);
+
 static grn_obj *
 grn_expr_executor_exec_proc(grn_ctx *ctx,
                             grn_expr_executor *executor,
@@ -496,6 +498,11 @@ grn_expr_executor_exec_proc(grn_ctx *ctx,
   expr->codes -= 1;
 
   args = ctx->impl->stack + ctx->impl->stack_curr;
+  while (ctx->impl->stack_curr + n_args > ctx->impl->stack_size) {
+    if (grn_ctx_expand_stack(ctx) != GRN_SUCCESS) {
+      return NULL;
+    }
+  }
   ctx->impl->stack_curr += n_args;
   expr->values_curr = expr->values_tail;
   result = proc->funcs[PROC_NEXT](ctx,

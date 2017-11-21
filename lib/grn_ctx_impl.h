@@ -161,8 +161,9 @@ struct _grn_ctx_impl {
 #endif
 
   /* expression portion */
-  grn_obj *stack[GRN_STACK_SIZE];
+  grn_obj **stack;
   uint32_t stack_curr;
+  uint32_t stack_size;
   grn_hash *expr_vars;
   grn_obj *curr_expr;
   grn_obj current_request_id;

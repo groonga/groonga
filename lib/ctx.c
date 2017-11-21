@@ -250,7 +250,18 @@ grn_ctx_impl_init(grn_ctx *ctx)
     ctx->impl = NULL;
     return ctx->rc;
   }
+  if (!(ctx->impl->stack = GRN_MALLOCN(grn_obj *, GRN_STACK_SIZE))) {
+    grn_array_close(ctx, ctx->impl->values);
+    grn_pat_close(ctx, ctx->impl->temporary_columns);
+    CRITICAL_SECTION_FIN(ctx->impl->lock);
+    grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
+    grn_hash_close(ctx, ctx->impl->ios);
+    grn_hash_close(ctx, ctx->impl->expr_vars);
+    ctx->impl = NULL;
+    return ctx->rc;
+  }
   ctx->impl->stack_curr = 0;
+  ctx->impl->stack_size = GRN_STACK_SIZE;
   ctx->impl->curr_expr = NULL;
   GRN_TEXT_INIT(&ctx->impl->current_request_id, 0);
   ctx->impl->current_request_timer_id = NULL;
@@ -504,6 +515,9 @@ grn_ctx_fin(grn_ctx *ctx)
         grn_hash_close(ctx, *vp);
       });
       grn_hash_close(ctx, ctx->impl->expr_vars);
+    }
+    if (ctx->impl->stack) {
+      GRN_FREE(ctx->impl->stack);
     }
     if (ctx->impl->db && ctx->flags & GRN_CTX_PER_DB) {
       grn_obj *db = ctx->impl->db;
