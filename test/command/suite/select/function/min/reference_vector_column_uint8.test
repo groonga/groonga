@@ -1,0 +1,20 @@
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users age COLUMN_SCALAR UInt8
+
+table_create Logs TABLE_NO_KEY
+column_create Logs users COLUMN_VECTOR Users
+
+load --table Users
+[
+{"_key": "alice", "age": 12},
+{"_key": "bob",   "age": 29},
+{"_key": "chris", "age": 3}
+]
+
+load --table Logs
+[
+{"users": ["bob", "chris", "alice"]}
+]
+
+select Logs \
+  --output_columns '_id, min(users.age)'
