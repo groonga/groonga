@@ -749,10 +749,10 @@ msgstr ""
 msgid "16.04 LTS Xenial Xerus"
 msgstr ""
 
-msgid "16.10 Yakkety Yak"
+msgid "17.04 Zesty Zapus"
 msgstr ""
 
-msgid "17.04 Zesty Zapus"
+msgid "17.10 Artful Aardvark"
 msgstr ""
 
 msgid "Enable the universe repository to install Groonga::"
