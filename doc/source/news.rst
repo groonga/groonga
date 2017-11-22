@@ -62,6 +62,7 @@ Thanks
 ^^^^^^
 
 * myamanishi3
+* Sergei Golubchik
 
 .. _release-7-0-8:
 
