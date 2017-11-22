@@ -37,11 +37,26 @@ Improvements
 * [:doc:`/reference/commands/logical_count`] Added documentation about
   named parameters.
 
+* [:doc:`/reference/commands/select`] Supported ``--match_columns _key``
+  without index.
+
+* [:doc:`/reference/functions/in_values`] Supported to specify more
+  than 126 values. [GitHub#760] [GitHub#781]
+
+* [httpd] Updated bundled nginx to 1.13.7.
+
 Fixes
 ^^^^^
 
 * [httpd] Fixed build error when old Groonga is already installed.
   [GitHub#775] [Reported by myamanishi3]
+
+* [:doc:`/reference/functions/in_values`] Fixed a bug that
+  ``in_values`` with too many arguments can cause a crash. This bug is
+  found during supporting more than 126 values. [GitHub#780]
+
+* [cmake] Fixed LZ4 and MessagePack detection. [Reported by Sergei
+  Golubchik]
 
 Thanks
 ^^^^^^
