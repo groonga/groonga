@@ -577,8 +577,8 @@ namespace grnarrow {
         columns.push_back(column);
       }
 
-      arrow::RecordBatch record_batch(schema, ids.size(), columns);
-      writer->WriteRecordBatch(record_batch);
+      auto record_batch = arrow::RecordBatch::Make(schema, ids.size(), columns);
+      writer->WriteRecordBatch(*record_batch);
     }
 
     arrow::Status build_boolean_array(std::vector<grn_id> &ids,
