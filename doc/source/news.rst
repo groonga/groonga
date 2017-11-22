@@ -15,11 +15,35 @@ Release 7.0.9 - 2017-11-29
 Improvements
 ^^^^^^^^^^^^
 
+* Supported newer version of Apache Arrow. In this release, 0.8.0 or
+  later is required for Apache Arrow support.
+
+* [sharding] Added new API for dynamic columns.
+
+  * Groonga::LabeledArguments
+
+* [sharding] Added convenient ``Table#select_all`` method.
+
+* [doc:`/reference/commands/logical_range_filter`] Supported dynamic
+  columns. Note that ``initial`` and ``filtered`` stage are only
+  supported.
+
+* [doc:`/reference/commands/logical_range_filter`] Added documentation
+  about ``cache`` parameter and dynamic columns.
+
+* [doc:`/reference/commands/logical_count`] Supported dynamic
+  columns. Note that ``initial`` stage is only supported.
+
 Fixes
 ^^^^^
 
+* [httpd] Fixed build error when old Groonga is already installed.
+  [GitHub#775] [Reported by myamanishi3]
+
 Thanks
 ^^^^^^
+
+* myamanishi3
 
 .. _release-7-0-8:
 
