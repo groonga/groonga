@@ -40,7 +40,7 @@ class TestGrnDBCheck < GroongaTestCase
       grndb("check")
     end
     assert_equal(<<-MESSAGE, error.error_output)
-Database has orphan 'inspect' object. Remove it by '#{grndb_path} recover #{@database_path}'.
+Database has orphan 'inspect' object. Remove it by '#{real_grndb_path} recover #{@database_path}'.
     MESSAGE
   end
 
@@ -164,7 +164,7 @@ load --table Users
         grndb("check")
       end
       assert_equal(<<-MESSAGE, error.error_output)
-[Ages.users_age] Index column is locked. It may be broken. Re-create index by '#{grndb_path} recover #{@database_path}'.
+[Ages.users_age] Index column is locked. It may be broken. Re-create index by '#{real_grndb_path} recover #{@database_path}'.
       MESSAGE
     end
   end
@@ -187,7 +187,7 @@ load --table Users
       grndb("check")
     end
     assert_equal(<<-MESSAGE, error.error_output)
-[Users] Table is corrupt. (1) Truncate the table (truncate Users or '#{grndb_path} recover --force-truncate #{@database_path}') and (2) load data again.
+[Users] Table is corrupt. (1) Truncate the table (truncate Users or '#{real_grndb_path} recover --force-truncate #{@database_path}') and (2) load data again.
     MESSAGE
   end
 
@@ -204,7 +204,7 @@ load --table Users
       grndb("check")
     end
     assert_equal(<<-MESSAGE, error.error_output)
-[Users] Table is corrupt. (1) Truncate the table (truncate Users or '#{grndb_path} recover --force-truncate #{@database_path}') and (2) load data again.
+[Users] Table is corrupt. (1) Truncate the table (truncate Users or '#{real_grndb_path} recover --force-truncate #{@database_path}') and (2) load data again.
     MESSAGE
   end
 
@@ -227,7 +227,7 @@ load --table Users
       grndb("check")
     end
     assert_equal(<<-MESSAGE, error.error_output)
-[Data.text] Data column is corrupt. (1) Truncate the column (truncate Data.text or '#{grndb_path} recover --force-truncate #{@database_path}') and (2) load data again.
+[Data.text] Data column is corrupt. (1) Truncate the column (truncate Data.text or '#{real_grndb_path} recover --force-truncate #{@database_path}') and (2) load data again.
     MESSAGE
   end
 
@@ -362,7 +362,7 @@ load --table Users
       end
       assert_equal(<<-MESSAGE, error.error_output)
 [Ages] Table is locked. It may be broken. (1) Truncate the table (truncate Ages) or clear lock of the table (lock_clear Ages) and (2) load data again.
-[Ages.users_age] Index column is locked. It may be broken. Re-create index by '#{grndb_path} recover #{@database_path}'.
+[Ages.users_age] Index column is locked. It may be broken. Re-create index by '#{real_grndb_path} recover #{@database_path}'.
 [Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
 [Users.age] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.age) or clear lock of the column (lock_clear Users.age) and (2) load data again.
       MESSAGE
@@ -388,7 +388,7 @@ load --table Users
       end
       assert_equal(<<-MESSAGE, error.error_output)
 [Names] Table is locked. It may be broken. (1) Truncate the table (truncate Names) or clear lock of the table (lock_clear Names) and (2) load data again.
-[Names.users_names] Index column is locked. It may be broken. Re-create index by '#{grndb_path} recover #{@database_path}'.
+[Names.users_names] Index column is locked. It may be broken. Re-create index by '#{real_grndb_path} recover #{@database_path}'.
 [Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
 [Users.name] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.name) or clear lock of the column (lock_clear Users.name) and (2) load data again.
       MESSAGE
@@ -421,8 +421,8 @@ load --table Users
       end
       assert_equal(<<-MESSAGE, error.error_output)
 [Users.name] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.name) or clear lock of the column (lock_clear Users.name) and (2) load data again.
-[NormalizedNames.users_name] Index column is locked. It may be broken. Re-create index by '#{grndb_path} recover #{@database_path}'.
-[Names.users_name] Index column is locked. It may be broken. Re-create index by '#{grndb_path} recover #{@database_path}'.
+[NormalizedNames.users_name] Index column is locked. It may be broken. Re-create index by '#{real_grndb_path} recover #{@database_path}'.
+[Names.users_name] Index column is locked. It may be broken. Re-create index by '#{real_grndb_path} recover #{@database_path}'.
 [NormalizedNames] Table is locked. It may be broken. (1) Truncate the table (truncate NormalizedNames) or clear lock of the table (lock_clear NormalizedNames) and (2) load data again.
 [Names] Table is locked. It may be broken. (1) Truncate the table (truncate Names) or clear lock of the table (lock_clear Names) and (2) load data again.
       MESSAGE
@@ -447,7 +447,7 @@ load --table Users
       end
       assert_equal(<<-MESSAGE, error.error_output)
 [Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
-[Users.logs_user] Index column is locked. It may be broken. Re-create index by '#{grndb_path} recover #{@database_path}'.
+[Users.logs_user] Index column is locked. It may be broken. Re-create index by '#{real_grndb_path} recover #{@database_path}'.
 [Logs] Table is locked. It may be broken. (1) Truncate the table (truncate Logs) or clear lock of the table (lock_clear Logs) and (2) load data again.
 [Logs.user] Data column is locked. It may be broken. (1) Truncate the column (truncate Logs.user) or clear lock of the column (lock_clear Logs.user) and (2) load data again.
       MESSAGE

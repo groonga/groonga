@@ -70,16 +70,28 @@ module CommandRunner
     run_command(*command_line)
   end
 
-  def find_program(name)
+  def find_program(name, options={})
     ENV["PATH"].split(File::PATH_SEPARATOR).each do |path|
-      libs_lt_program_path = File.join(path, ".libs", "lt-#{name}")
-      return libs_lt_program_path if File.exist?(libs_lt_program_path)
-
-      libs_program_path = File.join(path, ".libs", name)
-      return libs_program_path if File.exist?(libs_program_path)
-
       program_path = File.join(path, name)
-      return program_path if File.exist?(program_path)
+      libs_lt_program_path = File.join(path, ".libs", "lt-#{name}")
+      libs_program_path = File.join(path, ".libs", name)
+      if options[:prefer_libtool]
+        candidates = [
+          libs_lt_program_path,
+          libs_program_path,
+          program_path,
+        ]
+      else
+        candidates = [
+          program_path,
+          libs_lt_program_path,
+          libs_program_path,
+        ]
+      end
+
+      candidates.each do |candidate_program_path|
+        return candidate_program_path if File.exist?(candidate_program_path)
+      end
     end
 
     name
@@ -91,6 +103,10 @@ module CommandRunner
 
   def grndb_path
     find_program("grndb")
+  end
+
+  def real_grndb_path
+    find_program("grndb", :prefer_libtool => true)
   end
 
   private
