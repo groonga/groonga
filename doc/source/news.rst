@@ -24,15 +24,18 @@ Improvements
 
 * [sharding] Added convenient ``Table#select_all`` method.
 
-* [doc:`/reference/commands/logical_range_filter`] Supported dynamic
+* [:doc:`/reference/commands/logical_range_filter`] Supported dynamic
   columns. Note that ``initial`` and ``filtered`` stage are only
   supported.
 
-* [doc:`/reference/commands/logical_range_filter`] Added documentation
+* [:doc:`/reference/commands/logical_range_filter`] Added documentation
   about ``cache`` parameter and dynamic columns.
 
-* [doc:`/reference/commands/logical_count`] Supported dynamic
+* [:doc:`/reference/commands/logical_count`] Supported dynamic
   columns. Note that ``initial`` stage is only supported.
+
+* [:doc:`/reference/commands/logical_count`] Added documentation about
+  named parameters.
 
 Fixes
 ^^^^^
