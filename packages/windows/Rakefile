@@ -346,8 +346,9 @@ namespace :build do
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
     cp(groonga_source, source_dir)
+    groonga_source_path = groonga_source.to_s
     Dir.chdir(tmp_dir) do
-      sh("tar", "xzf", groonga_source.to_s) or exit(false)
+      sh("tar", "xzf", groonga_source_path) or exit(false)
     end
     Dir.chdir(tmp_dir + "groonga-#{groonga_version}") do
       Dir.chdir("vendor") do
