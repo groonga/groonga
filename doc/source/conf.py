@@ -141,6 +141,8 @@ html_theme_options = {
 
 html_context = {"language": language}
 
+html_copy_source = False
+
 # Add any paths that contain custom themes here, relative to this directory.
 html_theme_path = ["../themes"]
 
