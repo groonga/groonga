@@ -112,15 +112,44 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_release/database.log \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_release/database_release.log \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_release/table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/cache_no.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/columns_name_flags.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/columns_name_stage.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/columns_name_type.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/columns_name_value.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/columns_name_window_group_keys.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/columns_name_window_sort_keys.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/count_shutdown.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/filter.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/logical_table_existent.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/logical_table_nonexistent.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/max.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/max_border.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/min.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/min_border.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/usage.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/usage_plugin_register.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/range_index_always.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/range_index_auto.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/range_index_never.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/usage_get.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/usage_register.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/usage_set.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/cache_no.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/columns_name_flags.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/columns_name_stage.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/columns_name_type.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/columns_name_value.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/columns_name_window_group_keys.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/columns_name_window_sort_keys.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/limit.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/offset.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/output_columns.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/usage_plugin_register.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/cache_no.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/columns_name_flags.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/columns_name_stage.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/columns_name_type.log \
@@ -1040,15 +1069,44 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/lock_release/database.log \
 	source/example/reference/commands/lock_release/database_release.log \
 	source/example/reference/commands/lock_release/table.log \
+	source/example/reference/commands/logical_count/cache_no.log \
+	source/example/reference/commands/logical_count/columns_name_flags.log \
+	source/example/reference/commands/logical_count/columns_name_stage.log \
+	source/example/reference/commands/logical_count/columns_name_type.log \
+	source/example/reference/commands/logical_count/columns_name_value.log \
+	source/example/reference/commands/logical_count/columns_name_window_group_keys.log \
+	source/example/reference/commands/logical_count/columns_name_window_sort_keys.log \
 	source/example/reference/commands/logical_count/count_shutdown.log \
+	source/example/reference/commands/logical_count/filter.log \
+	source/example/reference/commands/logical_count/logical_table_existent.log \
+	source/example/reference/commands/logical_count/logical_table_nonexistent.log \
+	source/example/reference/commands/logical_count/max.log \
+	source/example/reference/commands/logical_count/max_border.log \
+	source/example/reference/commands/logical_count/min.log \
+	source/example/reference/commands/logical_count/min_border.log \
 	source/example/reference/commands/logical_count/setup_data.log \
 	source/example/reference/commands/logical_count/setup_schema.log \
+	source/example/reference/commands/logical_count/usage.log \
+	source/example/reference/commands/logical_count/usage_plugin_register.log \
 	source/example/reference/commands/logical_parameters/range_index_always.log \
 	source/example/reference/commands/logical_parameters/range_index_auto.log \
 	source/example/reference/commands/logical_parameters/range_index_never.log \
 	source/example/reference/commands/logical_parameters/usage_get.log \
 	source/example/reference/commands/logical_parameters/usage_register.log \
 	source/example/reference/commands/logical_parameters/usage_set.log \
+	source/example/reference/commands/logical_range_filter/cache_no.log \
+	source/example/reference/commands/logical_range_filter/columns_name_flags.log \
+	source/example/reference/commands/logical_range_filter/columns_name_stage.log \
+	source/example/reference/commands/logical_range_filter/columns_name_type.log \
+	source/example/reference/commands/logical_range_filter/columns_name_value.log \
+	source/example/reference/commands/logical_range_filter/columns_name_window_group_keys.log \
+	source/example/reference/commands/logical_range_filter/columns_name_window_sort_keys.log \
+	source/example/reference/commands/logical_range_filter/limit.log \
+	source/example/reference/commands/logical_range_filter/offset.log \
+	source/example/reference/commands/logical_range_filter/output_columns.log \
+	source/example/reference/commands/logical_range_filter/usage_plugin_register.log \
+	source/example/reference/commands/logical_range_filter/usage_setup.log \
+	source/example/reference/commands/logical_select/cache_no.log \
 	source/example/reference/commands/logical_select/columns_name_flags.log \
 	source/example/reference/commands/logical_select/columns_name_stage.log \
 	source/example/reference/commands/logical_select/columns_name_type.log \
