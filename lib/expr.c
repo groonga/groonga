@@ -4420,6 +4420,7 @@ grn_scan_info_push_arg(grn_ctx *ctx, scan_info *si, grn_obj *arg)
       if (args == NULL) {
         return GRN_FALSE;
       }
+      grn_memcpy(args, si->args, sizeof(grn_obj *) * si->nargs);
     } else {
       args = (grn_obj **)GRN_REALLOC(si->args, sizeof(grn_obj *) * max_nargs);
       if (args == NULL) {
