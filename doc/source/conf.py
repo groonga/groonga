@@ -56,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Groonga'
-copyright = u'2009-' + unicode(datetime.today().year) + ', Brazil, Inc'
+copyright = u'2009-' + str(datetime.today().year) + u', Brazil, Inc'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -148,9 +148,9 @@ html_theme_path = ["../themes"]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title_format = unicode(_("%(project)s v%(release)s documentation"), "utf-8")
-html_title = html_title_format % {"project": project,
-                                  "release": unicode(release, "utf-8")}
+html_title_format = _("%(project)s v%(release)s documentation")
+html_title = html_title_format % {"project": str(project),
+                                  "release": str(release)}
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
