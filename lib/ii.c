@@ -12232,6 +12232,7 @@ grn_ii_builder_set_sid_bits(grn_ctx *ctx, grn_ii_builder *builder)
       if (rid == GRN_ID_NIL) {
         break;
       }
+      GRN_BULK_REWIND(&obj);
       if (!grn_obj_get_value(ctx, builder->srcs[0], rid, &obj)) {
         continue;
       }
