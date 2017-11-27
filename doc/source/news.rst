@@ -41,7 +41,8 @@ Improvements
   without index.
 
 * [:doc:`/reference/functions/in_values`] Supported to specify more
-  than 126 values. [GitHub#760] [GitHub#781]
+  than 126 values. [GitHub#760] [GitHub#781] [groonga-dev,04449]
+  [Reported by Murata Satoshi]
 
 * [httpd] Updated bundled nginx to 1.13.7.
 
@@ -61,6 +62,7 @@ Fixes
 Thanks
 ^^^^^^
 
+* Murata Satoshi
 * myamanishi3
 * Sergei Golubchik
 
