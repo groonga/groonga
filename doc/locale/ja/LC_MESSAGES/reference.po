@@ -223,6 +223,12 @@ msgstr ""
 "Groongaを全文検索ライブラリとして使うことができます。この節ではGroongaが提供"
 "しているAPIを示します。"
 
+msgid "パラメータ"
+msgstr ""
+
+msgid "戻り値"
+msgstr ""
+
 msgid "Global configurations"
 msgstr "全体設定"
 
