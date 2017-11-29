@@ -59,12 +59,19 @@ Fixes
 * [cmake] Fixed LZ4 and MessagePack detection. [Reported by Sergei
   Golubchik]
 
+* [:ref:`offline-index-construction`] Fixed a bug that offline index
+  construction for vector column consumes unnecessary resources. If
+  you have a log of elements in one vector column and many records,
+  Groogna will crash.
+  [groonga-dev,04533][Reported by Toshio Uchiyama]
+
 Thanks
 ^^^^^^
 
 * Murata Satoshi
 * myamanishi3
 * Sergei Golubchik
+* Toshio Uchiyama
 
 .. _release-7-0-8:
 
