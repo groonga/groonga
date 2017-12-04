@@ -29,6 +29,7 @@ module Groonga
             "shard_key: <#{enumerator.shard_key_name}>"
           raise InvalidArgument, message
         end
+        query_logger.log(:size, ":", "count(#{total})")
         writer.write(total)
       end
 
