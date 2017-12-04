@@ -489,6 +489,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
       report_set_column_value_failure(ctx, key_value,
                                       column_name, column_name_size,
                                       value);
+      loader->n_column_errors++;
       ERRCLR(ctx);
     }
     cols++;
@@ -501,6 +502,9 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   loader->nrecords++;
 exit:
   if (is_record_load) {
+    if (ctx->rc != GRN_SUCCESS) {
+      loader->n_record_errors++;
+    }
     if (loader->output_ids) {
       GRN_UINT32_PUT(ctx, &(loader->ids), id);
     }
@@ -656,6 +660,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
         grn_loader_save_error(ctx, loader);
         report_set_column_value_failure(ctx, key_value,
                                         name, name_size, value);
+        loader->n_column_errors++;
         ERRCLR(ctx);
       }
       grn_obj_unlink(ctx, col);
@@ -668,6 +673,9 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
   }
   loader->nrecords++;
 exit:
+  if (ctx->rc != GRN_SUCCESS) {
+    loader->n_record_errors++;
+  }
   if (loader->output_ids) {
     GRN_UINT32_PUT(ctx, &(loader->ids), id);
   }

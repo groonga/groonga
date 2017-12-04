@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -87,6 +87,8 @@ typedef struct {
   uint32_t unichar;
   uint32_t values_size;
   uint32_t nrecords;
+  uint32_t n_record_errors;
+  uint32_t n_column_errors;
   grn_loader_stat stat;
   grn_content_type input_type;
   grn_loader_columns_status columns_status;

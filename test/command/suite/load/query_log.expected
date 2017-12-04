@@ -1,13 +1,34 @@
 table_create Numbers TABLE_PAT_KEY Int32
 [[0,0.0,0.0],true]
+column_create Numbers value1 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Numbers value2 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
 load --table Numbers
 [
-{"_key": 1},
+{"_key": 1, "value1": 1, "value2": 2},
 {"_key": "string"},
-{"_key": 2}
+{"_key": 2, "value1": "string1", "value2": "string2"},
+{"_key": 3}
 ]
-[[[-22,0.0,0.0],"<Numbers>: failed to cast to <Int32>: <\"string\">"],2]
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "<Numbers.value2>: failed to cast to <Int32>: <\"string2\">"
+  ],
+  3
+]
 #|e| <Numbers>: failed to cast to <Int32>: <"string">
+#|e| <Numbers.value1>: failed to cast to <Int32>: <"string1">
+#|e| [table][load] failed to set column value: <Numbers.value1>: failed to cast to <Int32>: <"string1">: key: <2>, column: <value1>, value: <"string1">
+#|e| <Numbers.value2>: failed to cast to <Int32>: <"string2">
+#|e| [table][load] failed to set column value: <Numbers.value2>: failed to cast to <Int32>: <"string2">: key: <2>, column: <value2>, value: <"string2">
 #>load --table "Numbers"
-#:000000000000000 load(2)
+#:000000000000000 load(3)
+#:000000000000000 record_error(1)
+#:000000000000000 column_error(2)
 #<000000000000000 rc=-22

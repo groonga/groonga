@@ -183,6 +183,12 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                   ":", "load(%d)",
                   ctx->impl->loader.nrecords);
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                  ":", "record_error(%d)",
+                  ctx->impl->loader.n_record_errors);
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                  ":", "column_error(%d)",
+                  ctx->impl->loader.n_column_errors);
     if (grn_ctx_get_command_version(ctx) >= GRN_COMMAND_VERSION_3) {
       int n_elements = 1;
       if (ctx->impl->loader.output_ids) {
