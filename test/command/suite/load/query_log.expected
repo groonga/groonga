@@ -11,5 +11,3 @@ load --table Numbers
 #>load --table "Numbers"
 #:000000000000000 load(2)
 #<000000000000000 rc=-22
-select Numbers
-[[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","Int32"]],[1,1],[2,2]]]]
