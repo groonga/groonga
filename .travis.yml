@@ -44,7 +44,7 @@ matrix:
   #     env: BUILD_TOOL=autotools ENABLE_MRUBY=yes
 before_install:
   # - rvm use 2.3.1 --install --binary --fuzzy
-  - rvm use 2.2
+  # - rvm use 2.2
   - gem update bundler
 install:
   - tools/travis-install.sh
