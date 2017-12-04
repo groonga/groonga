@@ -180,6 +180,9 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       ctx->rc = ctx->impl->loader.rc;
       grn_strcpy(ctx->errbuf, GRN_CTX_MSGSIZE, ctx->impl->loader.errbuf);
     }
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                  ":", "load(%d)",
+                  ctx->impl->loader.nrecords);
     if (grn_ctx_get_command_version(ctx) >= GRN_COMMAND_VERSION_3) {
       int n_elements = 1;
       if (ctx->impl->loader.output_ids) {
@@ -188,9 +191,6 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       if (ctx->impl->loader.output_errors) {
         n_elements++;
       }
-      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                    ":", "load(%d)",
-                    ctx->impl->loader.nrecords);
       GRN_OUTPUT_MAP_OPEN("result", n_elements);
       GRN_OUTPUT_CSTR("n_loaded_records");
       GRN_OUTPUT_INT64(ctx->impl->loader.nrecords);
@@ -240,9 +240,6 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       }
       GRN_OUTPUT_MAP_CLOSE();
     } else {
-      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                    ":", "load(%d)",
-                    ctx->impl->loader.nrecords);
       GRN_OUTPUT_INT64(ctx->impl->loader.nrecords);
     }
     if (ctx->impl->loader.table) {

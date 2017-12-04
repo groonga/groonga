@@ -1,0 +1,10 @@
+table_create Numbers TABLE_PAT_KEY Int32
+
+#@collect-query-log true
+load --table Numbers --command_version 3
+[
+{"_key": 1},
+{"_key": "string"},
+{"_key": 2}
+]
+#@collect-query-log false

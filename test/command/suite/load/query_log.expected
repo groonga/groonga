@@ -1,0 +1,15 @@
+table_create Numbers TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+load --table Numbers
+[
+{"_key": 1},
+{"_key": "string"},
+{"_key": 2}
+]
+[[[-22,0.0,0.0],"<Numbers>: failed to cast to <Int32>: <\"string\">"],2]
+#|e| <Numbers>: failed to cast to <Int32>: <"string">
+#>load --table "Numbers"
+#:000000000000000 load(2)
+#<000000000000000 rc=-22
+select Numbers
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","Int32"]],[1,1],[2,2]]]]
