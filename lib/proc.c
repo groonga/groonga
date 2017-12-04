@@ -188,6 +188,9 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       if (ctx->impl->loader.output_errors) {
         n_elements++;
       }
+      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                    ":", "load(%d)",
+                    ctx->impl->loader.nrecords);
       GRN_OUTPUT_MAP_OPEN("result", n_elements);
       GRN_OUTPUT_CSTR("n_loaded_records");
       GRN_OUTPUT_INT64(ctx->impl->loader.nrecords);
@@ -237,6 +240,9 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       }
       GRN_OUTPUT_MAP_CLOSE();
     } else {
+      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                    ":", "load(%d)",
+                    ctx->impl->loader.nrecords);
       GRN_OUTPUT_INT64(ctx->impl->loader.nrecords);
     }
     if (ctx->impl->loader.table) {
