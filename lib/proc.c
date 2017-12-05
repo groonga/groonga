@@ -584,6 +584,7 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(table_name),
                       GRN_TEXT_LEN(table_name));
+  uint32_t total_table_size = grn_table_size(ctx, table);
   rc = proc_delete_validate_selector(ctx, table, table_name, key, id, filter);
   if (rc != GRN_SUCCESS) { goto exit; }
 
@@ -671,6 +672,10 @@ exit :
   if (table) {
     grn_obj_unlink(ctx, table);
   }
+  uint32_t deleted_table_size = grn_table_size(ctx, table);
+  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                ":", "delete(%d)",
+                total_table_size - deleted_table_size);
   GRN_OUTPUT_BOOL(rc == GRN_SUCCESS);
   return NULL;
 }
