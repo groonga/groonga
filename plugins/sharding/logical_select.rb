@@ -149,6 +149,7 @@ module Groonga
             options[:limit] = current_limit
           end
         end
+        @context.query_logger.log(:size, ":", "select(#{n_hits})")
       end
 
       def write_plain_drilldowns(writer, execute_context)
