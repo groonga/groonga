@@ -117,3 +117,6 @@ logical_select Logs timestamp   --offset 3   --limit 2
     ]
   ]
 ]
+#>logical_select --limit "2" --logical_table "Logs" --offset "3" --shard_key "timestamp"
+#:000000000000000 output(2)
+#<000000000000000 rc=0

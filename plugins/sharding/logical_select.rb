@@ -125,6 +125,7 @@ module Groonga
             writer.write_table_columns(first_result_set, output_columns)
           end
 
+          n_outputs = 0
           current_offset = context.offset
           current_offset += n_hits if current_offset < 0
           current_limit = context.limit
@@ -139,7 +140,9 @@ module Groonga
           result_sets.each do |result_set|
             if result_set.size > current_offset
               writer.write_table_records(result_set, output_columns, options)
-              current_limit -= result_set.size
+              n_written = [result_set.size - current_offset, current_limit].min
+              current_limit -= n_written
+              n_outputs += n_written
             end
             if current_offset > 0
               current_offset = [current_offset - result_set.size, 0].max
@@ -148,6 +151,7 @@ module Groonga
             options[:offset] = current_offset
             options[:limit] = current_limit
           end
+          query_logger.log(:size, ":", "output(#{n_outputs})")
         end
       end
 

@@ -132,3 +132,6 @@ logical_select Logs timestamp   --offset -5
     ]
   ]
 ]
+#>logical_select --logical_table "Logs" --offset "-5" --shard_key "timestamp"
+#:000000000000000 output(5)
+#<000000000000000 rc=0

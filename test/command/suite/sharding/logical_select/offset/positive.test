@@ -68,5 +68,7 @@ load --table Logs_20150205
 }
 ]
 
+#@collect-query-log true
 logical_select Logs timestamp \
   --offset 3
+#@collect-query-log false
