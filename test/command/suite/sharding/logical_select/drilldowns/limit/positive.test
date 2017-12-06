@@ -86,8 +86,10 @@ load --table Logs_20150205
 }
 ]
 
+#@collect-query-log true
 logical_select Logs timestamp \
   --limit 0 \
   --drilldowns[action_date].keys action,date \
   --drilldowns[action_date].output_columns _value.action,_value.date,_nsubrecs \
   --drilldowns[action_date].limit 1
+#@collect-query-log false

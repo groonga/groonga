@@ -159,3 +159,7 @@ logical_select Logs timestamp   --limit 0   --drilldowns[action_date].keys actio
     }
   ]
 ]
+#>logical_select --drilldowns[action_date].keys "action,date" --drilldowns[action_date].offset "-1" --drilldowns[action_date].output_columns "_value.action,_value.date,_nsubrecs" --limit "0" --logical_table "Logs" --shard_key "timestamp"
+#:000000000000000 output(0)
+#:000000000000000 output.drilldowns(1)
+#<000000000000000 rc=0

@@ -167,7 +167,7 @@ module Groonga
 
         drilldowns.each do |drilldown|
           limit = options[:limit]
-          limit += drilldown.size if limit < 0
+          limit += drilldown.size + 1 if limit < 0
           offset = options[:offset]
           offset += drilldown.size if offset < 0
           n_written = [drilldown.size - offset, limit].min
@@ -202,6 +202,11 @@ module Groonga
               :limit  => drilldown.limit,
             }
 
+            limit = options[:limit]
+            limit += result_set.size + 1 if limit < 0
+            offset = options[:offset]
+            offset += result_set.size if offset < 0
+            n_written = [result_set.size - offset, limit].min
             writer.array("RESULTSET", n_elements) do
               writer.array("NHITS", 1) do
                 writer.write(result_set.size)
@@ -217,6 +222,7 @@ module Groonga
                 writer.write_table_records(result_set, output_columns, options)
               end
             end
+            query_logger.log(:size, ":", "output.drilldowns(#{n_written})")
           end
         end
       end
