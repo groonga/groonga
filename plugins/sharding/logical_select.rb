@@ -770,6 +770,9 @@ module Groonga
         end
 
         def add_result_set(result_set, condition)
+          query_logger.log(:size, ":",
+                           "select(#{result_set.size}): #{@shard.table_name}")
+
           if result_set.empty?
             result_set.close
             return
@@ -789,6 +792,10 @@ module Groonga
             sorted_result_set = result_set.sort(@sort_keys)
             @result_sets << sorted_result_set
           end
+        end
+
+        def query_logger
+          Context.instance.query_logger
         end
       end
     end
