@@ -1,0 +1,16 @@
+table_create Users TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice"},
+{"_key": "bob"},
+{"_key": "bill"}
+]
+[[0,0.0,0.0],3]
+delete --table Users --filter '_key @^ "b"'
+[[0,0.0,0.0],true]
+#>delete --filter "_key @^ \"b\"" --table "Users"
+#:000000000000000 filter(2)
+#:000000000000000 delete(2)
+#:000000000000000 error(0)
+#<000000000000000 rc=0
