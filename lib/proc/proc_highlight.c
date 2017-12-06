@@ -374,6 +374,7 @@ func_highlight_full(grn_ctx *ctx, int nargs, grn_obj **args,
                                            string, keywords,
                                            use_html_escape);
     }
+    grn_obj_unlink(ctx, keywords);
   }
 
   if (!highlighted) {
