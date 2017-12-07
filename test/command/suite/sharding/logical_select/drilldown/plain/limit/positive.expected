@@ -134,9 +134,9 @@ logical_select Logs timestamp   --limit 0   --drilldown action   --drilldown_lim
   ]
 ]
 #>logical_select --drilldown "action" --drilldown_limit "1" --limit "0" --logical_table "Logs" --shard_key "timestamp"
-#:000000000000000 select(2): Logs_20150203
-#:000000000000000 select(3): Logs_20150204
-#:000000000000000 select(4): Logs_20150205
+#:000000000000000 select(2)[Logs_20150203]
+#:000000000000000 select(3)[Logs_20150204]
+#:000000000000000 select(4)[Logs_20150205]
 #:000000000000000 output(0)
 #:000000000000000 output.drilldown(1)
 #<000000000000000 rc=0

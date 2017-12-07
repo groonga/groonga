@@ -133,8 +133,8 @@ logical_select Logs timestamp   --offset -5
   ]
 ]
 #>logical_select --logical_table "Logs" --offset "-5" --shard_key "timestamp"
-#:000000000000000 select(2): Logs_20150203
-#:000000000000000 select(3): Logs_20150204
-#:000000000000000 select(4): Logs_20150205
+#:000000000000000 select(2)[Logs_20150203]
+#:000000000000000 select(3)[Logs_20150204]
+#:000000000000000 select(4)[Logs_20150205]
 #:000000000000000 output(5)
 #<000000000000000 rc=0

@@ -771,7 +771,7 @@ module Groonga
 
         def add_result_set(result_set, condition)
           query_logger.log(:size, ":",
-                           "select(#{result_set.size}): #{@shard.table_name}")
+                           "select(#{result_set.size})[#{@shard.table_name}]")
 
           if result_set.empty?
             result_set.close
