@@ -118,5 +118,8 @@ logical_select Logs timestamp   --offset 3   --limit 2
   ]
 ]
 #>logical_select --limit "2" --logical_table "Logs" --offset "3" --shard_key "timestamp"
+#:000000000000000 select(2): Logs_20150203
+#:000000000000000 select(3): Logs_20150204
+#:000000000000000 select(4): Logs_20150205
 #:000000000000000 output(2)
 #<000000000000000 rc=0
