@@ -183,6 +183,17 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                   ":", "load(%d)",
                   ctx->impl->loader.nrecords);
+    {
+      unsigned int n_records;
+      if (ctx->impl->loader.table) {
+        n_records = grn_table_size(ctx, ctx->impl->loader.table);
+      } else {
+        n_records = 0;
+      }
+      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                    ":", "total(%d)",
+                    n_records);
+    }
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                   ":", "record_error(%d)",
                   ctx->impl->loader.n_record_errors);
