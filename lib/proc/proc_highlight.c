@@ -328,6 +328,7 @@ func_highlight(grn_ctx *ctx, int nargs, grn_obj **args,
                                          default_open_tag, default_open_tag_length,
                                          default_close_tag, default_close_tag_length);
       }
+      grn_obj_unlink(ctx, keywords);
     }
   }
 #undef N_REQUIRED_ARGS
