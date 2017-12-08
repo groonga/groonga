@@ -42,7 +42,7 @@ typedef struct {
 #define GRN_RSET_MAX_SIZE       (sizeof(int64_t))
 #define GRN_RSET_MIN_SIZE       (sizeof(int64_t))
 #define GRN_RSET_SUM_SIZE       (sizeof(int64_t))
-#define GRN_RSET_AVG_SIZE       (sizeof(double))
+#define GRN_RSET_AVG_SIZE       (sizeof(double) + sizeof(uint64_t))
 
 #define GRN_RSET_SCORE_SIZE (sizeof(double))
 

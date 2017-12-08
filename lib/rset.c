@@ -37,6 +37,92 @@ grn_rset_recinfo_calc_values_size(grn_ctx *ctx, grn_table_group_flags flags)
   return size;
 }
 
+static void
+grn_rset_recinfo_update_calc_values_bulk(grn_ctx *ctx,
+                                         grn_table_group_flags flags,
+                                         grn_bool is_first_value,
+                                         byte *values,
+                                         grn_obj *value,
+                                         grn_obj *value_int64,
+                                         grn_obj *value_float)
+{
+  if (flags & (GRN_TABLE_GROUP_CALC_MAX |
+               GRN_TABLE_GROUP_CALC_MIN |
+               GRN_TABLE_GROUP_CALC_SUM)) {
+    grn_obj_cast(ctx, value, value_int64, GRN_FALSE);
+  }
+  if (flags & GRN_TABLE_GROUP_CALC_AVG) {
+    grn_obj_cast(ctx, value, value_float, GRN_FALSE);
+  }
+
+  if (flags & GRN_TABLE_GROUP_CALC_MAX) {
+    int64_t current_max = *((int64_t *)values);
+    int64_t value_raw = GRN_INT64_VALUE(value_int64);
+    if (is_first_value || value_raw > current_max) {
+      *((int64_t *)values) = value_raw;
+    }
+    values += GRN_RSET_MAX_SIZE;
+  }
+  if (flags & GRN_TABLE_GROUP_CALC_MIN) {
+    int64_t current_min = *((int64_t *)values);
+    int64_t value_raw = GRN_INT64_VALUE(value_int64);
+    if (is_first_value || value_raw < current_min) {
+      *((int64_t *)values) = value_raw;
+    }
+    values += GRN_RSET_MIN_SIZE;
+  }
+  if (flags & GRN_TABLE_GROUP_CALC_SUM) {
+    int64_t value_raw = GRN_INT64_VALUE(value_int64);
+    *((int64_t *)values) += value_raw;
+    values += GRN_RSET_SUM_SIZE;
+  }
+  if (flags & GRN_TABLE_GROUP_CALC_AVG) {
+    double *current_average = (double *)values;
+    uint64_t *n_values = (uint64_t *)(((double *)values) + 1);
+    double value_raw = GRN_FLOAT_VALUE(value_float);
+    (*n_values)++;
+    *current_average += (value_raw - *current_average) / *n_values;
+    values += GRN_RSET_AVG_SIZE;
+  }
+}
+
+static void
+grn_rset_recinfo_update_calc_values_uvector(grn_ctx *ctx,
+                                            grn_rset_recinfo *ri,
+                                            grn_table_group_flags flags,
+                                            byte *values,
+                                            grn_obj *value,
+                                            grn_obj *value_int64,
+                                            grn_obj *value_float)
+{
+  grn_obj element_value;
+  unsigned int element_size;
+  int i, n_elements;
+
+  element_size = grn_uvector_element_size(ctx, value);
+  if (element_size == 0) {
+    return;
+  }
+
+  GRN_VALUE_FIX_SIZE_INIT(&element_value, 0, value->header.domain);
+  n_elements = grn_vector_size(ctx, value);
+  for (i = 0; i < n_elements; i++) {
+    GRN_BULK_REWIND(&element_value);
+    grn_bulk_write(ctx,
+                   &element_value,
+                   GRN_BULK_HEAD(value) + (element_size * i),
+                   element_size);
+    grn_rset_recinfo_update_calc_values_bulk(ctx,
+                                             flags,
+                                             (ri->n_subrecs == 1 && i == 0),
+                                             values,
+                                             &element_value,
+                                             value_int64,
+                                             value_float);
+  }
+  GRN_OBJ_FIN(ctx, &element_value);
+}
+
 void
 grn_rset_recinfo_update_calc_values(grn_ctx *ctx,
                                     grn_rset_recinfo *ri,
@@ -57,41 +143,27 @@ grn_rset_recinfo_update_calc_values(grn_ctx *ctx,
   GRN_INT64_INIT(&value_int64, 0);
   GRN_FLOAT_INIT(&value_float, 0);
 
-  if (flags & (GRN_TABLE_GROUP_CALC_MAX |
-               GRN_TABLE_GROUP_CALC_MIN |
-               GRN_TABLE_GROUP_CALC_SUM)) {
-    grn_obj_cast(ctx, value, &value_int64, GRN_FALSE);
-  }
-  if (flags & GRN_TABLE_GROUP_CALC_AVG) {
-    grn_obj_cast(ctx, value, &value_float, GRN_FALSE);
-  }
-
-  if (flags & GRN_TABLE_GROUP_CALC_MAX) {
-    int64_t current_max = *((int64_t *)values);
-    int64_t value_raw = GRN_INT64_VALUE(&value_int64);
-    if (ri->n_subrecs == 1 || value_raw > current_max) {
-      *((int64_t *)values) = value_raw;
-    }
-    values += GRN_RSET_MAX_SIZE;
-  }
-  if (flags & GRN_TABLE_GROUP_CALC_MIN) {
-    int64_t current_min = *((int64_t *)values);
-    int64_t value_raw = GRN_INT64_VALUE(&value_int64);
-    if (ri->n_subrecs == 1 || value_raw < current_min) {
-      *((int64_t *)values) = value_raw;
-    }
-    values += GRN_RSET_MIN_SIZE;
-  }
-  if (flags & GRN_TABLE_GROUP_CALC_SUM) {
-    int64_t value_raw = GRN_INT64_VALUE(&value_int64);
-    *((int64_t *)values) += value_raw;
-    values += GRN_RSET_SUM_SIZE;
-  }
-  if (flags & GRN_TABLE_GROUP_CALC_AVG) {
-    double current_average = *((double *)values);
-    double value_raw = GRN_FLOAT_VALUE(&value_float);
-    *((double *)values) += (value_raw - current_average) / ri->n_subrecs;
-    values += GRN_RSET_AVG_SIZE;
+  switch (value->header.type) {
+  case GRN_BULK :
+    grn_rset_recinfo_update_calc_values_bulk(ctx,
+                                             flags,
+                                             ri->n_subrecs == 1,
+                                             values,
+                                             value,
+                                             &value_int64,
+                                             &value_float);
+    break;
+  case GRN_UVECTOR :
+    grn_rset_recinfo_update_calc_values_uvector(ctx,
+                                                ri,
+                                                flags,
+                                                values,
+                                                value,
+                                                &value_int64,
+                                                &value_float);
+    break;
+  default :
+    break;
   }
 
   GRN_OBJ_FIN(ctx, &value_float);
