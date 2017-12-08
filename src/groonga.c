@@ -931,7 +931,11 @@ run_server_loop(grn_ctx *ctx, grn_com_event *ev)
     /* todo : log stat */
   }
   for (;;) {
+    int i;
     MUTEX_LOCK_ENSURE(ctx, q_mutex);
+    for (i = 0; i < n_floating_threads; i++) {
+      COND_SIGNAL(q_cond);
+    }
     if (n_running_threads == n_floating_threads) { break; }
     MUTEX_UNLOCK(q_mutex);
     grn_nanosleep(1000000);
