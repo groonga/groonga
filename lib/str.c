@@ -2132,10 +2132,10 @@ grn_text_ftoa(grn_ctx *ctx, grn_obj *buf, double d)
 #ifdef HAVE_FPCLASSIFY
   switch (fpclassify(d)) {
   case FP_NAN :
-    GRN_TEXT_PUTS(ctx, buf, "#<nan>");
+    GRN_TEXT_PUTS(ctx, buf, "NaN");
     break;
   case FP_INFINITE :
-    GRN_TEXT_PUTS(ctx, buf, d > 0 ? "#i1/0" : "#i-1/0");
+    GRN_TEXT_PUTS(ctx, buf, d > 0 ? "Infinity" : "-Infinity");
     break;
   default :
     ftoa_(ctx, buf, d);
@@ -2144,12 +2144,12 @@ grn_text_ftoa(grn_ctx *ctx, grn_obj *buf, double d)
 #else /* HAVE_FPCLASSIFY */
   if (d == d) {
     if (d != 0 && ((d / 2.0) == d)) {
-      GRN_TEXT_PUTS(ctx, buf, d > 0 ? "#i1/0" : "#i-1/0");
+      GRN_TEXT_PUTS(ctx, buf, d > 0 ? "Infinity" : "-Infinity");
     } else {
       ftoa_(ctx, buf, d);
     }
   } else {
-    GRN_TEXT_PUTS(ctx, buf, "#<nan>");
+    GRN_TEXT_PUTS(ctx, buf, "NaN");
   }
 #endif /* HAVE_FPCLASSIFY */
   return rc;
