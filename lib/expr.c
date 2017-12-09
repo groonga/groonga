@@ -9076,6 +9076,94 @@ grn_expr_syntax_expand_query_by_table(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
+/*
+ * TODO: It's very loose implementations. It just splits regexp by
+ * meta characters to extract keywords. For example, "r.*nga" has "r"
+ * and "nga" keywords.
+ */
+static void
+grn_expr_get_keywords_regexp(grn_ctx *ctx, grn_obj *keywords, grn_obj *regexp)
+{
+  const char *regexp_raw;
+  const char *regexp_raw_end;
+  grn_bool escaping = GRN_FALSE;
+  grn_obj keyword;
+
+  regexp_raw = GRN_TEXT_VALUE(regexp);
+  regexp_raw_end = regexp_raw + GRN_TEXT_LEN(regexp);
+
+  GRN_TEXT_INIT(&keyword, 0);
+  while (regexp_raw < regexp_raw_end) {
+    unsigned int char_len;
+
+    char_len = grn_charlen(ctx, regexp_raw, regexp_raw_end);
+
+    if (char_len == 1) {
+      if (escaping) {
+        escaping = GRN_FALSE;
+        switch (regexp_raw[0]) {
+        case 'A' :
+        case 'z' :
+          if (GRN_TEXT_LEN(&keyword) > 0) {
+            grn_vector_add_element(ctx,
+                                   keywords,
+                                   GRN_TEXT_VALUE(&keyword),
+                                   GRN_TEXT_LEN(&keyword),
+                                   0,
+                                   GRN_DB_TEXT);
+            GRN_BULK_REWIND(&keyword);
+          }
+          break;
+        default :
+          GRN_TEXT_PUTC(ctx, &keyword, regexp_raw[0]);
+          break;
+        }
+      } else {
+        switch (regexp_raw[0]) {
+        case '.' :
+          escaping = GRN_FALSE;
+          break;
+        case '*' :
+          escaping = GRN_FALSE;
+          if (GRN_TEXT_LEN(&keyword) > 0) {
+            grn_vector_add_element(ctx,
+                                   keywords,
+                                   GRN_TEXT_VALUE(&keyword),
+                                   GRN_TEXT_LEN(&keyword),
+                                   0,
+                                   GRN_DB_TEXT);
+            GRN_BULK_REWIND(&keyword);
+          }
+          break;
+        case '\\' :
+          escaping = GRN_TRUE;
+          break;
+        default :
+          escaping = GRN_FALSE;
+          GRN_TEXT_PUTC(ctx, &keyword, regexp_raw[0]);
+          break;
+        }
+      }
+    } else {
+      escaping = GRN_FALSE;
+      GRN_TEXT_PUT(ctx, &keyword, regexp_raw, char_len);
+    }
+
+    regexp_raw += char_len;
+  }
+
+  if (GRN_TEXT_LEN(&keyword) > 0) {
+    grn_vector_add_element(ctx,
+                           keywords,
+                           GRN_TEXT_VALUE(&keyword),
+                           GRN_TEXT_LEN(&keyword),
+                           0,
+                           GRN_DB_TEXT);
+  }
+
+  GRN_OBJ_FIN(ctx, &keyword);
+}
+
 grn_rc
 grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords)
 {
@@ -9109,6 +9197,16 @@ grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords)
                                      GRN_TEXT_LEN(si->query),
                                      0,
                                      GRN_DB_TEXT);
+            }
+            break;
+          case GRN_OP_REGEXP :
+            /* TODO: It should be refined. */
+            if (is_index_searchable_regexp(ctx, si->query)) {
+              if (keywords->header.type == GRN_PVECTOR) {
+                GRN_PTR_PUT(ctx, keywords, si->query);
+              } else {
+                grn_expr_get_keywords_regexp(ctx, keywords, si->query);
+              }
             }
             break;
           case GRN_OP_SIMILAR :
