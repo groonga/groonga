@@ -33,8 +33,5 @@ load --table Numbers --command_version 3
 #|e| <Numbers.value2>: failed to cast to <Int32>: <"string2">
 #|e| [table][load] failed to set column value: <Numbers.value2>: failed to cast to <Int32>: <"string2">: key: <2>, column: <value2>, value: <"string2">
 #>load --command_version "3" --table "Numbers"
-#:000000000000000 load(3)
-#:000000000000000 total(3)
-#:000000000000000 record_error(1)
-#:000000000000000 column_error(2)
+#:000000000000000 load(3): [1][2][3]
 #<000000000000000 rc=-22
