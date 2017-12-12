@@ -691,10 +691,8 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
 exit :
   GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                ":", "delete(%u)",
-                n_deleted);
-  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                ":", "error(%u)",
+                ":", "delete(%u): [%u]",
+                n_deleted,
                 n_errors);
   if (table) {
     grn_obj_unlink(ctx, table);

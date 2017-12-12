@@ -10,6 +10,5 @@ load --table Users
 delete --table Users --key 'bob'
 [[0,0.0,0.0],true]
 #>delete --key "bob" --table "Users"
-#:000000000000000 delete(1)
-#:000000000000000 error(0)
+#:000000000000000 delete(1): [0]
 #<000000000000000 rc=0
