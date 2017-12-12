@@ -1960,7 +1960,13 @@ grn_bulk_write(grn_ctx *ctx, grn_obj *buf, const char *str, unsigned int len)
   grn_rc rc = GRN_SUCCESS;
   char *curr;
   if (GRN_BULK_REST(buf) < len) {
-    if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + len))) { return rc; }
+    unsigned int new_size = GRN_BULK_VSIZE(buf) + len;
+    if (GRN_BULK_OUTP(buf) ||
+        (new_size + grn_bulk_margin_size + 1) > GRN_BULK_BUFSIZE ||
+        new_size < (UINT32_MAX / 2)) {
+      new_size *= 2;
+    }
+    if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
   }
   curr = GRN_BULK_CURR(buf);
   grn_memcpy(curr, str, len);
