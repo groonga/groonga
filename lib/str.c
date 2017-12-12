@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2016 Brazil
+/*
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1954,18 +1955,25 @@ grn_bulk_reinit(grn_ctx *ctx, grn_obj *buf, unsigned int size)
   return grn_bulk_resize(ctx, buf, size);
 }
 
+static unsigned int
+grn_bulk_compute_new_size(grn_ctx *ctx, grn_obj *buf, unsigned int new_size)
+{
+  if ((GRN_BULK_OUTP(buf) ||
+       (new_size + grn_bulk_margin_size + 1) > GRN_BULK_BUFSIZE) &&
+      (new_size < (UINT32_MAX / 2))) {
+    new_size *= 2;
+  }
+  return new_size;
+}
+
 grn_rc
 grn_bulk_write(grn_ctx *ctx, grn_obj *buf, const char *str, unsigned int len)
 {
   grn_rc rc = GRN_SUCCESS;
   char *curr;
   if (GRN_BULK_REST(buf) < len) {
-    unsigned int new_size = GRN_BULK_VSIZE(buf) + len;
-    if ((GRN_BULK_OUTP(buf) ||
-         (new_size + grn_bulk_margin_size + 1) > GRN_BULK_BUFSIZE) &&
-        (new_size < (UINT32_MAX / 2))) {
-      new_size *= 2;
-    }
+    unsigned int new_size;
+    new_size = grn_bulk_compute_new_size(ctx, buf, GRN_BULK_VSIZE(buf) + len);
     if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
   }
   curr = GRN_BULK_CURR(buf);
@@ -1988,7 +1996,9 @@ grn_bulk_reserve(grn_ctx *ctx, grn_obj *buf, unsigned int len)
 {
   grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < len) {
-    if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + len))) { return rc; }
+    unsigned int new_size;
+    new_size = grn_bulk_compute_new_size(ctx, buf, GRN_BULK_VSIZE(buf) + len);
+    if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
   }
   return rc;
 }
@@ -2042,7 +2052,11 @@ grn_text_itoa(grn_ctx *ctx, grn_obj *buf, int i)
     char *curr = GRN_BULK_CURR(buf);
     char *tail = GRN_BULK_TAIL(buf);
     if (grn_itoa(i, curr, tail, &curr)) {
-      if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_WSIZE(buf) + UNIT_SIZE))) { return rc; }
+      unsigned int new_size;
+      new_size = grn_bulk_compute_new_size(ctx,
+                                           buf,
+                                           GRN_BULK_WSIZE(buf) + UNIT_SIZE);
+      if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
     } else {
       GRN_BULK_SET_CURR(buf, curr);
       break;
@@ -2072,7 +2086,11 @@ grn_text_lltoa(grn_ctx *ctx, grn_obj *buf, long long int i)
     char *curr = GRN_BULK_CURR(buf);
     char *tail = GRN_BULK_TAIL(buf);
     if (grn_lltoa(i, curr, tail, &curr)) {
-      if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_WSIZE(buf) + UNIT_SIZE))) { return rc; }
+      unsigned int new_size;
+      new_size = grn_bulk_compute_new_size(ctx,
+                                           buf,
+                                           GRN_BULK_WSIZE(buf) + UNIT_SIZE);
+      if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
     } else {
       GRN_BULK_SET_CURR(buf, curr);
       break;
@@ -2089,7 +2107,11 @@ grn_text_ulltoa(grn_ctx *ctx, grn_obj *buf, unsigned long long int i)
     char *curr = GRN_BULK_CURR(buf);
     char *tail = GRN_BULK_TAIL(buf);
     if (grn_ulltoa(i, curr, tail, &curr)) {
-      if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_WSIZE(buf) + UNIT_SIZE))) { return rc; }
+      unsigned int new_size;
+      new_size = grn_bulk_compute_new_size(ctx,
+                                           buf,
+                                           GRN_BULK_WSIZE(buf) + UNIT_SIZE);
+      if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
     } else {
       GRN_BULK_SET_CURR(buf, curr);
       break;
@@ -2132,8 +2154,13 @@ grn_rc
 grn_text_ftoa(grn_ctx *ctx, grn_obj *buf, double d)
 {
   grn_rc rc = GRN_SUCCESS;
-  if (GRN_BULK_REST(buf) < 32) {
-    if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + 32))) { return rc; }
+  unsigned int required_size = 32;
+  if (GRN_BULK_REST(buf) < required_size) {
+    unsigned int new_size;
+    new_size = grn_bulk_compute_new_size(ctx,
+                                         buf,
+                                         GRN_BULK_VSIZE(buf) + required_size);
+    if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
   }
 #ifdef HAVE_FPCLASSIFY
   switch (fpclassify(d)) {
@@ -2166,7 +2193,11 @@ grn_text_itoh(grn_ctx *ctx, grn_obj *buf, int i, unsigned int len)
 {
   grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < len) {
-    if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + len))) { return rc; }
+    unsigned int new_size;
+    new_size = grn_bulk_compute_new_size(ctx,
+                                         buf,
+                                         GRN_BULK_VSIZE(buf) + len);
+    if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
   }
   grn_itoh(i, GRN_BULK_CURR(buf), len);
   GRN_BULK_INCR_LEN(buf, len);
@@ -2179,7 +2210,11 @@ grn_text_itob(grn_ctx *ctx, grn_obj *buf, grn_id id)
   size_t len = 5;
   grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < len) {
-    if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + len))) { return rc; }
+    unsigned int new_size;
+    new_size = grn_bulk_compute_new_size(ctx,
+                                         buf,
+                                         GRN_BULK_VSIZE(buf) + len);
+    if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
   }
   grn_itob(id, GRN_BULK_CURR(buf));
   GRN_BULK_INCR_LEN(buf, len);
@@ -2192,7 +2227,11 @@ grn_text_lltob32h(grn_ctx *ctx, grn_obj *buf, long long int i)
   size_t len = 13;
   grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < len) {
-    if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + len))) { return rc; }
+    unsigned int new_size;
+    new_size = grn_bulk_compute_new_size(ctx,
+                                         buf,
+                                         GRN_BULK_VSIZE(buf) + len);
+    if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
   }
   grn_lltob32h(i, GRN_BULK_CURR(buf));
   GRN_BULK_INCR_LEN(buf, len);
@@ -2423,8 +2462,13 @@ grn_text_benc(grn_ctx *ctx, grn_obj *buf, unsigned int v)
 {
   grn_rc rc = GRN_SUCCESS;
   uint8_t *p;
-  if (GRN_BULK_REST(buf) < 5) {
-    if ((rc = grn_bulk_resize(ctx, buf, GRN_BULK_VSIZE(buf) + 5))) { return rc; }
+  unsigned int required_size = 5;
+  if (GRN_BULK_REST(buf) < required_size) {
+    unsigned int new_size;
+    new_size = grn_bulk_compute_new_size(ctx,
+                                         buf,
+                                         GRN_BULK_VSIZE(buf) + required_size);
+    if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
   }
   p = (uint8_t *)GRN_BULK_CURR(buf);
   GRN_B_ENC(v, p);
