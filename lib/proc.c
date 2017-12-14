@@ -690,10 +690,17 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
 
 exit :
-  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                ":", "delete(%u): [%u]",
-                n_deleted,
-                n_errors);
+  {
+    unsigned int n_rest_records = 0;
+    if (table) {
+      n_rest_records = grn_table_size(ctx, table);
+    }
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                  ":", "delete(%u): [%u][%u]",
+                  n_deleted,
+                  n_errors,
+                  n_rest_records);
+  }
   if (table) {
     grn_obj_unlink(ctx, table);
   }
