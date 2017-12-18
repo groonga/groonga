@@ -412,8 +412,8 @@ namespace :build do
 
       groonga_log_data_dir = groonga_data_dir + "groonga-log"
       groonga_log_license_dir = license_dir + "groonga-log"
-      mv(groonga_log_data_dir,
-         groonga_log_license_dir)
+      cp_r(groonga_log_data_dir,
+           groonga_log_license_dir)
     end
   end
 
