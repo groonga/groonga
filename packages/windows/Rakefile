@@ -33,7 +33,9 @@ else
   dist_dir = Pathname.new("dist-x64").expand_path
 end
 source_dir = Pathname.new("source").expand_path
-license_dir = dist_dir + "share" + "license"
+data_dir = dist_dir + "share"
+groonga_data_dir = data_dir + "groonga"
+license_dir = data_dir + "license"
 binary_dir = base_dir + dist_dir
 include_dir = binary_dir + "include"
 lib_dir = binary_dir + "lib"
@@ -407,6 +409,11 @@ namespace :build do
         "vendor/onigmo-source/COPYING",
       ]
       cp(files, onigmo_license_dir)
+
+      groonga_log_data_dir = groonga_data_dir + "groonga-log"
+      groonga_log_license_dir = license_dir + "groonga-log"
+      mv(groonga_log_data_dir,
+         groonga_log_license_dir)
     end
   end
 
