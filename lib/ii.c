@@ -144,7 +144,7 @@ grn_ii_init_from_env(void)
     grn_getenv("GRN_II_OVERLAP_TOKEN_SKIP_ENABLE",
                grn_ii_overlap_token_skip_enable_env,
                GRN_ENV_BUFFER_SIZE);
-    if (grn_ii_overlap_token_skip_enable_env[0]) {
+    if (strcmp(grn_ii_overlap_token_skip_enable_env, "yes") == 0) {
       grn_ii_overlap_token_skip_enable = GRN_TRUE;
     } else {
       grn_ii_overlap_token_skip_enable = GRN_FALSE;
