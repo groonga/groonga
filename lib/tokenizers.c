@@ -237,7 +237,7 @@ delimit_null_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 
 /* ngram tokenizer */
 
-static grn_bool grn_ngram_tokenizer_remove_blank_disable = GRN_FALSE;
+static grn_bool grn_ngram_tokenizer_remove_blank_enable = GRN_TRUE;
 
 typedef struct {
   grn_tokenizer_token token;
@@ -270,7 +270,7 @@ ngram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data, ui
   unsigned int normalized_length_in_bytes;
   grn_ngram_tokenizer *tokenizer;
 
-  if (grn_ngram_tokenizer_remove_blank_disable) {
+  if (!grn_ngram_tokenizer_remove_blank_enable) {
     normalize_flags &= ~GRN_STRING_REMOVE_BLANK;
   }
   query = grn_tokenizer_query_open(ctx, nargs, args, normalize_flags);
@@ -815,13 +815,27 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
   GRN_UINT32_INIT(&vars[2].value, 0);
 
   {
-    char grn_ngram_tokenizer_remove_blank_disable_env[GRN_ENV_BUFFER_SIZE];
+    char grn_ngram_tokenizer_remove_blank_enable_env[GRN_ENV_BUFFER_SIZE];
 
-    grn_getenv("GRN_NGRAM_TOKENIZER_REMOVE_BLANK_DISABLE",
-               grn_ngram_tokenizer_remove_blank_disable_env,
+    grn_getenv("GRN_NGRAM_TOKENIZER_REMOVE_BLANK_ENABLE",
+               grn_ngram_tokenizer_remove_blank_enable_env,
                GRN_ENV_BUFFER_SIZE);
-    if (grn_ngram_tokenizer_remove_blank_disable_env[0]) {
-      grn_ngram_tokenizer_remove_blank_disable = GRN_TRUE;
+    if (grn_ngram_tokenizer_remove_blank_enable_env[0]) {
+      if (strcmp(grn_ngram_tokenizer_remove_blank_enable_env, "no") == 0) {
+        grn_ngram_tokenizer_remove_blank_enable = GRN_FALSE;
+      } else {
+        grn_ngram_tokenizer_remove_blank_enable = GRN_TRUE;
+      }
+    } else {
+      /* Deprecated. Use GRN_NGRAM_TOKENIZER_REMOVE_BLANK_ENABLE instead. */
+      char grn_ngram_tokenizer_remove_blank_disable_env[GRN_ENV_BUFFER_SIZE];
+
+      grn_getenv("GRN_NGRAM_TOKENIZER_REMOVE_BLANK_DISABLE",
+                 grn_ngram_tokenizer_remove_blank_disable_env,
+                 GRN_ENV_BUFFER_SIZE);
+      if (grn_ngram_tokenizer_remove_blank_disable_env[0]) {
+        grn_ngram_tokenizer_remove_blank_enable = GRN_FALSE;
+      }
     }
   }
 
