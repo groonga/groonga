@@ -94,6 +94,8 @@ grn_operator grn_proc_option_value_mode(grn_ctx *ctx,
                                         grn_operator default_mode,
                                         const char *context);
 
+int64_t grn_proc_func_arg_int64(grn_ctx *ctx, grn_obj *arg,
+                                const char *context);
 
 void grn_proc_output_object_name(grn_ctx *ctx, grn_obj *obj);
 void grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);
