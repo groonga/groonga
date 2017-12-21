@@ -247,6 +247,76 @@ func_index_column_df_ratio(grn_ctx *ctx,
   }
 }
 
+static grn_obj *
+func_index_column_source_records(grn_ctx *ctx,
+                                 int n_args,
+                                 grn_obj **args,
+                                 grn_user_data *user_data)
+{
+  grn_ii *ii;
+  caller_index_info caller_index_info;
+  int64_t limit = -1;
+
+  if (n_args < 1 || n_args > 2) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "index_column_source_records(): "
+                     "wrong number of arguments (%d for 1..2)", n_args - 1);
+    return NULL;
+  }
+
+  memset(&caller_index_info, 0, sizeof(caller_index_info));
+
+  if (get_caller_index_info(ctx,
+                            args[0],
+                            user_data,
+                            &caller_index_info,
+                            "index_column_source_records()") != GRN_SUCCESS) {
+    return NULL;
+  }
+
+  if (n_args == 2) {
+    limit = grn_plugin_proc_func_arg_int64(ctx, args[1],
+                                           "index_column_source_records()");
+    if (ctx->rc != GRN_SUCCESS) {
+      return NULL;
+    }
+  }
+
+  ii = (grn_ii *)caller_index_info.index_column;
+
+  {
+    grn_obj *records;
+
+    records = grn_plugin_proc_alloc(ctx, user_data,
+                                    grn_obj_get_range(ctx, caller_index_info.index_column),
+                                    GRN_OBJ_VECTOR);
+    if (!records) {
+      return NULL;
+    }
+
+    {
+      grn_ii_cursor *ii_cursor;
+      grn_posting *posting;
+      int64_t n_records = 0;
+      ii_cursor = grn_ii_cursor_open(ctx, ii, caller_index_info.term_id,
+                                     GRN_ID_NIL, GRN_ID_MAX,
+                                     grn_ii_get_n_elements(ctx, ii), 0);
+      if (ii_cursor) {
+        while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
+          if (limit > 0 && n_records >= limit) {
+            break;
+          }
+          GRN_RECORD_PUT(ctx, records, posting->rid);
+          n_records++;
+        }
+        grn_ii_cursor_close(ctx, ii_cursor);
+      }
+    }
+    return records;
+  }
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -268,6 +338,10 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   grn_proc_create(ctx, "index_column_df_ratio", -1,
                   GRN_PROC_FUNCTION,
                   func_index_column_df_ratio, NULL, NULL, 0, NULL);
+
+  grn_proc_create(ctx, "index_column_source_records", -1,
+                  GRN_PROC_FUNCTION,
+                  func_index_column_source_records, NULL, NULL, 0, NULL);
 
   return ctx->rc;
 }

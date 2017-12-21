@@ -1,0 +1,179 @@
+plugin_register functions/index_column
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Memos _key
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is a fast full text search engine."},
+{"_key": "Mroonga is a MySQL storage engine based on Groonga."},
+{"_key": "Rroonga is a Ruby bindings for Groonga."}
+]
+[[0,0.0,0.0],3]
+select Terms   --limit -1   --sort_keys _id   --columns[index_records].stage output   --columns[index_records].type Memos   --columns[index_records].flags COLUMN_VECTOR   --columns[index_records].value 'index_column_source_records("index")'   --output_columns '_id, _key, index_records'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        18
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "index_records",
+          "Memos"
+        ]
+      ],
+      [
+        1,
+        "groonga",
+        [
+          "Groonga is a fast full text search engine.",
+          "Mroonga is a MySQL storage engine based on Groonga.",
+          "Rroonga is a Ruby bindings for Groonga."
+        ]
+      ],
+      [
+        2,
+        "is",
+        [
+          "Groonga is a fast full text search engine.",
+          "Mroonga is a MySQL storage engine based on Groonga.",
+          "Rroonga is a Ruby bindings for Groonga."
+        ]
+      ],
+      [
+        3,
+        "a",
+        [
+          "Groonga is a fast full text search engine.",
+          "Mroonga is a MySQL storage engine based on Groonga.",
+          "Rroonga is a Ruby bindings for Groonga."
+        ]
+      ],
+      [
+        4,
+        "fast",
+        [
+          "Groonga is a fast full text search engine."
+        ]
+      ],
+      [
+        5,
+        "full",
+        [
+          "Groonga is a fast full text search engine."
+        ]
+      ],
+      [
+        6,
+        "text",
+        [
+          "Groonga is a fast full text search engine."
+        ]
+      ],
+      [
+        7,
+        "search",
+        [
+          "Groonga is a fast full text search engine."
+        ]
+      ],
+      [
+        8,
+        "engine",
+        [
+          "Groonga is a fast full text search engine.",
+          "Mroonga is a MySQL storage engine based on Groonga."
+        ]
+      ],
+      [
+        9,
+        ".",
+        [
+          "Groonga is a fast full text search engine.",
+          "Mroonga is a MySQL storage engine based on Groonga.",
+          "Rroonga is a Ruby bindings for Groonga."
+        ]
+      ],
+      [
+        10,
+        "mroonga",
+        [
+          "Mroonga is a MySQL storage engine based on Groonga."
+        ]
+      ],
+      [
+        11,
+        "mysql",
+        [
+          "Mroonga is a MySQL storage engine based on Groonga."
+        ]
+      ],
+      [
+        12,
+        "storage",
+        [
+          "Mroonga is a MySQL storage engine based on Groonga."
+        ]
+      ],
+      [
+        13,
+        "based",
+        [
+          "Mroonga is a MySQL storage engine based on Groonga."
+        ]
+      ],
+      [
+        14,
+        "on",
+        [
+          "Mroonga is a MySQL storage engine based on Groonga."
+        ]
+      ],
+      [
+        15,
+        "rroonga",
+        [
+          "Rroonga is a Ruby bindings for Groonga."
+        ]
+      ],
+      [
+        16,
+        "ruby",
+        [
+          "Rroonga is a Ruby bindings for Groonga."
+        ]
+      ],
+      [
+        17,
+        "bindings",
+        [
+          "Rroonga is a Ruby bindings for Groonga."
+        ]
+      ],
+      [
+        18,
+        "for",
+        [
+          "Rroonga is a Ruby bindings for Groonga."
+        ]
+      ]
+    ]
+  ]
+]
