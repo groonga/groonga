@@ -212,6 +212,9 @@ GRN_API grn_obj *grn_plugin_command_create(grn_ctx *ctx,
                                            grn_expr_var *vars);
 
 
+GRN_API int64_t grn_plugin_proc_func_arg_int64(grn_ctx *ctx, grn_obj *arg,
+                                               const char *context);
+
 #ifdef __cplusplus
 }
 #endif
