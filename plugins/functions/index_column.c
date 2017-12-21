@@ -105,17 +105,103 @@ exit :
   return rc;
 }
 
+typedef struct {
+  grn_id term_id;
+  grn_obj *term_table;
+  grn_obj *index_column;
+} caller_index_info;
+
+grn_rc
+get_caller_index_info(grn_ctx *ctx,
+                      grn_obj *index_column_name,
+                      grn_user_data *user_data,
+                      caller_index_info *caller_index_info,
+                      const char *error_message_label)
+{
+  {
+    grn_obj *expr;
+    grn_obj *variable;
+
+    expr = grn_plugin_proc_get_caller(ctx, user_data);
+    if (!expr) {
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "%s: "
+                       "called directly", error_message_label);
+      return ctx->rc;
+    }
+
+    variable = grn_expr_get_var_by_offset(ctx, expr, 0);
+    if (!variable) {
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "%s: "
+                       "caller expression must have target record information",
+                       error_message_label);
+      return ctx->rc;
+    }
+
+    caller_index_info->term_table = grn_ctx_at(ctx, variable->header.domain);
+    caller_index_info->term_id = GRN_RECORD_VALUE(variable);
+    while (GRN_TRUE) {
+      grn_obj *key_type;
+
+      key_type = grn_ctx_at(ctx, caller_index_info->term_table->header.domain);
+      if (!grn_obj_is_table(ctx, key_type)) {
+        break;
+      }
+
+      grn_table_get_key(ctx,
+                        caller_index_info->term_table,
+                        caller_index_info->term_id,
+                        &(caller_index_info->term_id),
+                        sizeof(grn_id));
+      caller_index_info->term_table = key_type;
+    }
+  }
+
+  if (!grn_obj_is_text_family_bulk(ctx, index_column_name)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, index_column_name);
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s: "
+                     "the first argument must be index column name: %.*s",
+                     error_message_label,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return ctx->rc;
+  }
+
+  caller_index_info->index_column = grn_obj_column(ctx,
+                                                   caller_index_info->term_table,
+                                                   GRN_TEXT_VALUE(index_column_name),
+                                                   GRN_TEXT_LEN(index_column_name));
+  if (!caller_index_info->index_column) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s: "
+                     "nonexistent object: <%.*s>",
+                     error_message_label,
+                     (int)GRN_TEXT_LEN(index_column_name),
+                     GRN_TEXT_VALUE(index_column_name));
+    return ctx->rc;
+  }
+
+  return GRN_SUCCESS;
+}
+
+
 static grn_obj *
 func_index_column_df_ratio(grn_ctx *ctx,
                            int n_args,
                            grn_obj **args,
                            grn_user_data *user_data)
 {
-  grn_obj *term_table;
-  grn_obj *index_column_name;
-  grn_obj *index_column;
   grn_ii *ii;
-  grn_id term_id;
+  caller_index_info caller_index_info;
 
   if (n_args != 1) {
     GRN_PLUGIN_ERROR(ctx,
@@ -125,90 +211,17 @@ func_index_column_df_ratio(grn_ctx *ctx,
     return NULL;
   }
 
-  {
-    grn_obj *expr;
-    grn_obj *variable;
+  memset(&caller_index_info, 0, sizeof(caller_index_info));
 
-    expr = grn_plugin_proc_get_caller(ctx, user_data);
-    if (!expr) {
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_INVALID_ARGUMENT,
-                       "index_column_df_ratio(): "
-                       "called directly");
-      return NULL;
-    }
-
-    variable = grn_expr_get_var_by_offset(ctx, expr, 0);
-    if (!variable) {
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_INVALID_ARGUMENT,
-                       "index_column_df_ratio(): "
-                       "caller expression must have target record information");
-      return NULL;
-    }
-
-    term_table = grn_ctx_at(ctx, variable->header.domain);
-    term_id = GRN_RECORD_VALUE(variable);
-    while (GRN_TRUE) {
-      grn_obj *key_type;
-
-      key_type = grn_ctx_at(ctx, term_table->header.domain);
-      if (!grn_obj_is_table(ctx, key_type)) {
-        break;
-      }
-
-      grn_table_get_key(ctx, term_table, term_id, &term_id, sizeof(grn_id));
-      term_table = key_type;
-    }
-  }
-
-  index_column_name = args[0];
-  if (!grn_obj_is_text_family_bulk(ctx, index_column_name)) {
-    grn_obj inspected;
-    GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect(ctx, &inspected, index_column_name);
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "index_column_df_ratio(): "
-                     "the first argument must be index column name: %.*s",
-                     (int)GRN_TEXT_LEN(&inspected),
-                     GRN_TEXT_VALUE(&inspected));
-    GRN_OBJ_FIN(ctx, &inspected);
+  if (get_caller_index_info(ctx,
+                            args[0],
+                            user_data,
+                            &caller_index_info,
+                            "index_column_df_ratio()") != GRN_SUCCESS) {
     return NULL;
   }
 
-  index_column = grn_obj_column(ctx,
-                                term_table,
-                                GRN_TEXT_VALUE(index_column_name),
-                                GRN_TEXT_LEN(index_column_name));
-  if (!index_column) {
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "index_column_df_ratio(): "
-                     "nonexistent object: <%.*s>",
-                     (int)GRN_TEXT_LEN(index_column_name),
-                     GRN_TEXT_VALUE(index_column_name));
-    return NULL;
-  }
-
-  if (!grn_obj_is_index_column(ctx, index_column)) {
-    grn_obj inspected;
-    GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect(ctx, &inspected, index_column);
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "index_column_df_ratio(): "
-                     "the first argument must be index column: %.*s",
-                     (int)GRN_TEXT_LEN(&inspected),
-                     GRN_TEXT_VALUE(&inspected));
-    GRN_OBJ_FIN(ctx, &inspected);
-    if (grn_obj_is_accessor(ctx, index_column)) {
-      grn_obj_unlink(ctx, index_column);
-    }
-    return NULL;
-  }
-
-  ii = (grn_ii *)index_column;
+  ii = (grn_ii *)caller_index_info.index_column;
 
   {
     grn_obj *source_table;
@@ -217,9 +230,9 @@ func_index_column_df_ratio(grn_ctx *ctx,
     double df_ratio;
     grn_obj *df_ratio_value;
 
-    source_table = grn_ctx_at(ctx, grn_obj_get_range(ctx, index_column));
+    source_table = grn_ctx_at(ctx, grn_obj_get_range(ctx, caller_index_info.index_column));
     n_documents = grn_table_size(ctx, source_table);
-    n_match_documents = grn_ii_estimate_size(ctx, ii, term_id);
+    n_match_documents = grn_ii_estimate_size(ctx, ii, caller_index_info.term_id);
     if (n_match_documents > n_documents) {
       n_match_documents = n_documents;
     }
