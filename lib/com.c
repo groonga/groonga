@@ -1035,7 +1035,7 @@ grn_com_close(grn_ctx *ctx, grn_com *com)
   if (ev) {
     grn_com *acceptor = ev->acceptor;
     grn_com_event_del(ctx, ev, fd);
-    if (acceptor) { grn_com_event_start_accept(ctx, ev); }
+    if (acceptor) { grn_com_event_stop_accept(ctx, ev); }
   }
   if (!com->closed) { grn_com_close_(ctx, com); }
   if (!ev) { GRN_FREE(com); }
