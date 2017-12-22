@@ -276,8 +276,10 @@ func_index_column_source_records(grn_ctx *ctx,
   }
 
   if (n_args == 2) {
-    limit = grn_plugin_proc_func_arg_int64(ctx, args[1],
-                                           "index_column_source_records()");
+    limit = grn_plugin_proc_get_value_int64(ctx,
+                                            args[1],
+                                            limit,
+                                            "index_column_source_records()");
     if (ctx->rc != GRN_SUCCESS) {
       return NULL;
     }

@@ -809,15 +809,22 @@ grn_proc_option_value_content_type(grn_ctx *ctx,
 }
 
 int64_t
-grn_proc_func_arg_int64(grn_ctx *ctx, grn_obj *arg, const char *context)
+grn_proc_get_value_int64(grn_ctx *ctx,
+                         grn_obj *value,
+                         int64_t default_value_raw,
+                         const char *context)
 {
-  int64_t value;
+  int64_t value_raw;
 
-  if (!grn_type_id_is_number_family(ctx, arg->header.domain)) {
+  if (!value) {
+    return default_value_raw;
+  }
+
+  if (!grn_type_id_is_number_family(ctx, value->header.domain)) {
     grn_obj inspected;
 
     GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect(ctx, &inspected, arg);
+    grn_inspect(ctx, &inspected, value);
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                      "%s: value must be a number: <%.*s>",
                      context,
@@ -827,18 +834,18 @@ grn_proc_func_arg_int64(grn_ctx *ctx, grn_obj *arg, const char *context)
     return 0;
   }
 
-  if (arg->header.domain == GRN_DB_INT32) {
-    value = GRN_INT32_VALUE(arg);
-  } else if (arg->header.domain == GRN_DB_INT64) {
-    value = GRN_INT64_VALUE(arg);
+  if (value->header.domain == GRN_DB_INT32) {
+    value_raw = GRN_INT32_VALUE(value);
+  } else if (value->header.domain == GRN_DB_INT64) {
+    value_raw = GRN_INT64_VALUE(value);
   } else {
     grn_obj buffer;
     grn_rc rc;
 
     GRN_INT64_INIT(&buffer, 0);
-    rc = grn_obj_cast(ctx, arg, &buffer, GRN_FALSE);
+    rc = grn_obj_cast(ctx, value, &buffer, GRN_FALSE);
     if (rc == GRN_SUCCESS) {
-      value = GRN_INT64_VALUE(&buffer);
+      value_raw = GRN_INT64_VALUE(&buffer);
     }
     GRN_OBJ_FIN(ctx, &buffer);
 
@@ -846,7 +853,7 @@ grn_proc_func_arg_int64(grn_ctx *ctx, grn_obj *arg, const char *context)
       grn_obj inspected;
 
       GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, arg);
+      grn_inspect(ctx, &inspected, value);
       GRN_PLUGIN_ERROR(ctx, rc,
                        "%s: "
                        "failed to cast value to number: <%.*s>",
@@ -854,10 +861,11 @@ grn_proc_func_arg_int64(grn_ctx *ctx, grn_obj *arg, const char *context)
                        (int)GRN_TEXT_LEN(&inspected),
                        GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
-      return 0;
+      value_raw = default_value_raw;
     }
   }
-  return value;
+
+  return value_raw;
 }
 
 static grn_obj *

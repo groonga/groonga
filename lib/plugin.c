@@ -1397,8 +1397,10 @@ grn_plugin_command_create(grn_ctx *ctx,
 
 
 int64_t
-grn_plugin_proc_func_arg_int64(grn_ctx *ctx, grn_obj *arg,
-                               const char *context)
+grn_plugin_proc_get_value_int64(grn_ctx *ctx,
+                                grn_obj *value,
+                                int64_t default_value_raw,
+                                const char *context)
 {
-  return grn_proc_func_arg_int64(ctx, arg, context);
+  return grn_proc_get_value_int64(ctx, value, default_value_raw, context);
 }
