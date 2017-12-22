@@ -1394,3 +1394,11 @@ grn_plugin_command_create(grn_ctx *ctx,
                          func, NULL, NULL, n_vars, vars);
   return proc;
 }
+
+
+int64_t
+grn_plugin_proc_func_arg_int64(grn_ctx *ctx, grn_obj *arg,
+                               const char *context)
+{
+  return grn_proc_func_arg_int64(ctx, arg, context);
+}
