@@ -1,0 +1,12 @@
+table_create IDs TABLE_NO_KEY
+
+load --table IDs
+[
+{},
+{},
+{}
+]
+
+select IDs \
+  --filter '_id == 2' \
+  --output_columns '_id'

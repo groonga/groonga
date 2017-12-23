@@ -1,0 +1,11 @@
+table_create IDs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+load --table IDs
+[
+{},
+{},
+{}
+]
+[[0,0.0,0.0],3]
+select IDs   --filter '_id == 2'   --output_columns '_id'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"]],[2]]]]
