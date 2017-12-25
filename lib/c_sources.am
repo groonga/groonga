@@ -4,6 +4,7 @@ libgroonga_c_sources =				\
 	cache.c					\
 	grn_cache.h				\
 	column.c				\
+	grn_column.h				\
 	com.c					\
 	grn_com.h				\
 	command.c				\
