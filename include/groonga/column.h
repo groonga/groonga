@@ -22,7 +22,16 @@
 extern "C" {
 #endif
 
+typedef struct _grn_column_cache grn_column_cache;
+
 GRN_API grn_column_flags grn_column_get_flags(grn_ctx *ctx, grn_obj *column);
+
+GRN_API grn_column_cache *grn_column_cache_open(grn_ctx *ctx, grn_obj *column);
+GRN_API void grn_column_cache_close(grn_ctx *ctx, grn_column_cache *cache);
+GRN_API void *grn_column_cache_ref(grn_ctx *ctx,
+                                   grn_column_cache *cache,
+                                   grn_id id,
+                                   size_t *value_size);
 
 #ifdef __cplusplus
 }
