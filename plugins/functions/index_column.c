@@ -315,6 +315,7 @@ func_index_column_source_records(grn_ctx *ctx,
           }
 #undef KEY_EQUAL
         }
+        grn_hash_cursor_close(ctx, cursor);
       }
       break;
     default :
