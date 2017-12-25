@@ -276,12 +276,60 @@ func_index_column_source_records(grn_ctx *ctx,
   }
 
   if (n_args == 2) {
-    limit = grn_plugin_proc_get_value_int64(ctx,
-                                            args[1],
-                                            limit,
-                                            "index_column_source_records()");
-    if (ctx->rc != GRN_SUCCESS) {
-      return NULL;
+    grn_obj *options = args[1];
+
+    switch (options->header.type) {
+    case GRN_TABLE_HASH_KEY :
+      {
+        grn_hash_cursor *cursor;
+        void *key;
+        grn_obj *value;
+        int key_size;
+        cursor = grn_hash_cursor_open(ctx, (grn_hash *)options,
+                                      NULL, 0, NULL, 0,
+                                      0, -1, 0);
+        if (!cursor) {
+          GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                           "index_column_source_records(): failed to open cursor for options");
+          return NULL;
+        }
+        while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
+          grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size,
+                                        (void **)&value);
+
+#define KEY_EQUAL(name)                                                 \
+          (key_size == strlen(name) && memcmp(key, name, strlen(name)) == 0)
+
+          if (KEY_EQUAL("limit")) {
+            limit = grn_plugin_proc_get_value_int64(ctx, value, limit, "index_column_source_records()");
+            if (ctx->rc != GRN_SUCCESS) {
+              grn_hash_cursor_close(ctx, cursor);
+              return NULL;
+            }
+          } else {
+            GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                             "index_column_source_records(): unknown option name: <%.*s>",
+                             key_size, (char *)key);
+            grn_hash_cursor_close(ctx, cursor);
+            return NULL;
+          }
+#undef KEY_EQUAL
+        }
+      }
+      break;
+    default :
+      {
+        grn_obj inspected;
+        GRN_TEXT_INIT(&inspected, 0);
+        grn_inspect(ctx, &inspected, options);
+        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                         "index_column_source_records(): "
+                         "2nd argument must be string or object literal: <%.*s>",
+                         (int)GRN_TEXT_LEN(&inspected),
+                         GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+        return NULL;
+      }
     }
   }
 

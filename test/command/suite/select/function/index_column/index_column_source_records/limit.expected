@@ -13,7 +13,7 @@ load --table Memos
 {"_key": "Rroonga is a Ruby bindings for Groonga."}
 ]
 [[0,0.0,0.0],3]
-select Terms   --limit -1   --sort_keys _id   --columns[index_records].stage output   --columns[index_records].type Memos   --columns[index_records].flags COLUMN_VECTOR   --columns[index_records].value 'index_column_source_records("index", 2)'   --output_columns '_id, _key, index_records'
+select Terms   --limit -1   --sort_keys _id   --columns[index_records].stage output   --columns[index_records].type Memos   --columns[index_records].flags COLUMN_VECTOR   --columns[index_records].value 'index_column_source_records("index", {"limit": 2})'   --output_columns '_id, _key, index_records'
 [
   [
     0,
