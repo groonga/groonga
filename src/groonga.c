@@ -110,6 +110,8 @@ static const char *windows_event_source_name = "Groonga";
 static grn_bool use_windows_event_log = GRN_FALSE;
 static grn_obj http_response_server_line;
 
+static grn_bool running_event_loop = GRN_FALSE;
+
 static int
 grn_rc_to_exit_code(grn_rc rc)
 {
@@ -910,6 +912,7 @@ static void
 run_server_loop(grn_ctx *ctx, grn_com_event *ev)
 {
   request_timer_init();
+  running_event_loop = GRN_TRUE;
   while (!grn_com_event_poll(ctx, ev, request_timer_get_poll_timeout()) &&
          grn_gctx.stat != GRN_CTX_QUIT) {
     grn_edge *edge;
@@ -930,6 +933,7 @@ run_server_loop(grn_ctx *ctx, grn_com_event *ev)
     request_timer_process_timeout();
     /* todo : log stat */
   }
+  running_event_loop = GRN_FALSE;
   for (;;) {
     int i;
     MUTEX_LOCK_ENSURE(ctx, q_mutex);
@@ -2438,7 +2442,7 @@ exit :
   n_running_threads--;
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)",
           n_floating_threads, n_running_threads);
-  if (grn_gctx.stat == GRN_CTX_QUIT) {
+  if (grn_gctx.stat == GRN_CTX_QUIT && running_event_loop) {
     break_accept_event_loop(ctx);
   }
   grn_ctx_fin(ctx);
