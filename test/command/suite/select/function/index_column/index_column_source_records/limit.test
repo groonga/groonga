@@ -20,5 +20,5 @@ select Terms \
   --columns[index_records].stage output \
   --columns[index_records].type Memos \
   --columns[index_records].flags COLUMN_VECTOR \
-  --columns[index_records].value 'index_column_source_records("index", 2)' \
+  --columns[index_records].value 'index_column_source_records("index", {"limit": 2})' \
   --output_columns '_id, _key, index_records'
