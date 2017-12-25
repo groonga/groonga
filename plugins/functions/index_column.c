@@ -324,7 +324,7 @@ func_index_column_source_records(grn_ctx *ctx,
         grn_inspect(ctx, &inspected, options);
         GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                          "index_column_source_records(): "
-                         "2nd argument must be string or object literal: <%.*s>",
+                         "2nd argument must be object literal: <%.*s>",
                          (int)GRN_TEXT_LEN(&inspected),
                          GRN_TEXT_VALUE(&inspected));
         GRN_OBJ_FIN(ctx, &inspected);
