@@ -111,7 +111,7 @@ typedef struct {
   grn_obj *index_column;
 } caller_index_info;
 
-grn_rc
+static grn_rc
 get_caller_index_info(grn_ctx *ctx,
                       grn_obj *index_column_name,
                       grn_user_data *user_data,
