@@ -42,19 +42,6 @@ grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *p_offset, int *p_lim
   int offset = *p_offset;
   int limit = *p_limit;
 
-  if (offset < 0) {
-    offset += size;
-    if (offset < 0) {
-      *p_offset = 0;
-      *p_limit = 0;
-      return GRN_TOO_SMALL_OFFSET;
-    }
-  } else if (offset != 0 && offset >= size) {
-    *p_offset = 0;
-    *p_limit = 0;
-    return GRN_TOO_LARGE_OFFSET;
-  }
-
   if (limit < 0) {
     limit += size + 1;
     if (limit < 0) {
@@ -64,6 +51,24 @@ grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *p_offset, int *p_lim
     }
   } else if (limit > size) {
     limit = size;
+  }
+
+  if (offset < 0) {
+    offset += size;
+    if (offset < 0) {
+      if (limit + offset >= 0) {
+        limit += offset;
+        offset = 0;
+      } else {
+        *p_offset = 0;
+        *p_limit = 0;
+        return GRN_TOO_SMALL_OFFSET;
+      }
+    }
+  } else if (offset != 0 && offset >= size) {
+    *p_offset = 0;
+    *p_limit = 0;
+    return GRN_TOO_LARGE_OFFSET;
   }
 
   /* At this point, offset and limit must be zero or positive. */

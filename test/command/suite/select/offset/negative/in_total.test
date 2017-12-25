@@ -1,0 +1,17 @@
+table_create Records TABLE_PAT_KEY Int32
+
+load --table Records
+[
+{"_key": 1},
+{"_key": 2},
+{"_key": 3},
+{"_key": 4},
+{"_key": 5},
+{"_key": 6},
+{"_key": 7},
+{"_key": 8},
+{"_key": 9},
+{"_key": 10}
+]
+
+select Records --offset -2 --limit 1
