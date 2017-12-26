@@ -92,6 +92,7 @@ static int batchmode;
 static int number_of_lines = 0;
 static int newdb;
 static grn_bool is_daemon_mode = GRN_FALSE;
+static int listen_backlog = GRN_COM_EVENT_LISTEN_BACKLOG_DEFAULT;
 static int (*do_client)(int argc, char **argv);
 static int (*do_server)(char *path);
 static const char *pid_file_path = NULL;
@@ -1024,6 +1025,7 @@ start_service(grn_ctx *ctx, const char *db_path,
         }
       }
       if (exit_code == EXIT_SUCCESS) {
+        grn_com_event_set_listen_backlog(ctx, &ev, listen_backlog);
         exit_code = run_server(ctx, db, &ev, dispatcher, handler);
       }
       grn_obj_close(ctx, db);
@@ -3145,6 +3147,8 @@ show_usage(FILE *output)
           "                                You can make cache persistent by this option\n"
           "                                You must specify path on memory file system\n"
           "                                (default: none; disabled)\n"
+          "      --listen-backlog <backlog>: specify the backlog for listen(2)\n"
+          "                                (default: %d)\n"
           "\n"
           "Memcached options:\n"
           "      --memcached-column <column>:\n"
@@ -3206,6 +3210,7 @@ show_usage(FILE *output)
           default_http_port, default_gqtp_port, default_hostname, default_protocol,
           default_document_root, default_cache_limit, default_max_n_threads,
           default_default_request_timeout,
+          listen_backlog,
           grn_log_level_to_string(default_log_level),
           default_log_path, default_query_log_path,
           default_config_path, default_default_command_version,
@@ -3237,6 +3242,7 @@ main(int argc, char **argv)
   const char *config_path = NULL;
   const char *default_request_timeout_arg = NULL;
   const char *cache_base_path = NULL;
+  const char *listen_backlog_arg = NULL;
   int exit_code = EXIT_SUCCESS;
   int i;
   int flags = 0;
@@ -3279,6 +3285,7 @@ main(int argc, char **argv)
     {'\0', "memcached-column", NULL, 0, GETOPT_OP_NONE},
     {'\0', "default-request-timeout", NULL, 0, GETOPT_OP_NONE},
     {'\0', "cache-base-path", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "listen-backlog", NULL, 0, GETOPT_OP_NONE},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
@@ -3305,6 +3312,7 @@ main(int argc, char **argv)
   opts[29].arg = &memcached_column_name;
   opts[30].arg = &default_request_timeout_arg;
   opts[31].arg = &cache_base_path;
+  opts[32].arg = &listen_backlog_arg;
 
   reset_ready_notify_pipe();
 
@@ -3331,7 +3339,7 @@ main(int argc, char **argv)
     }
   } else if (*default_config_path) {
     const config_file_status status =
-        config_file_load(default_config_path, opts, &flags);
+      config_file_load(default_config_path, opts, &flags);
     if (status != CONFIG_FILE_SUCCESS && status != CONFIG_FILE_FOPEN_ERROR) {
       fprintf(stderr, "%s: failed to parse config file: %s (%s)\n",
               argv[0], default_config_path,
@@ -3654,6 +3662,19 @@ main(int argc, char **argv)
     default_request_timeout = value;
   } else {
     default_request_timeout = default_default_request_timeout;
+  }
+
+  if (listen_backlog_arg) {
+    const char * const end = listen_backlog_arg + strlen(listen_backlog_arg);
+    const char *rest = NULL;
+    int value;
+    value = grn_atoi(listen_backlog_arg, end, &rest);
+    if (rest != end || value <= 0) {
+      fprintf(stderr, "invalid listen backlog: <%s>\n",
+              listen_backlog_arg);
+      return EXIT_FAILURE;
+    }
+    listen_backlog = value;
   }
 
   grn_gctx.errbuf[0] = '\0';

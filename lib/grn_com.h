@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -90,6 +90,8 @@ GRN_API grn_com_queue_entry *grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q)
 # endif /* USE_EPOLL */
 #endif /* USE_SELECT */
 
+#define GRN_COM_EVENT_LISTEN_BACKLOG_DEFAULT 0x1000
+
 typedef struct _grn_com grn_com;
 typedef struct _grn_com_event grn_com_event;
 typedef struct _grn_com_addr grn_com_addr;
@@ -132,6 +134,7 @@ struct _grn_com_event {
   grn_msg_handler *msg_handler;
   grn_com_addr curr_edge_id;
   grn_com *acceptor;
+  int listen_backlog;
   void *opaque;
 #ifndef USE_SELECT
 #ifdef USE_EPOLL
@@ -153,6 +156,10 @@ grn_rc grn_com_init(void);
 void grn_com_fin(void);
 GRN_API grn_rc grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_size);
 GRN_API grn_rc grn_com_event_fin(grn_ctx *ctx, grn_com_event *ev);
+GRN_API void grn_com_event_set_listen_backlog(grn_ctx *ctx,
+                                              grn_com_event *ev,
+                                              int backlog);
+GRN_API int grn_com_event_get_listen_backlog(grn_ctx *ctx, grn_com_event *ev);
 GRN_API grn_rc grn_com_event_start_accept(grn_ctx *ctx, grn_com_event *ev);
 grn_rc grn_com_event_stop_accept(grn_ctx *ctx, grn_com_event *ev);
 grn_rc grn_com_event_add(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_com **com);

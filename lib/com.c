@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/*
+  Copyright(C) 2009-2017 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -280,6 +281,7 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
     ev->msg_handler = NULL;
     memset(&(ev->curr_edge_id), 0, sizeof(grn_com_addr));
     ev->acceptor = NULL;
+    ev->listen_backlog = GRN_COM_EVENT_LISTEN_BACKLOG_DEFAULT;
     ev->opaque = NULL;
 #ifndef USE_SELECT
 # ifdef USE_EPOLL
@@ -336,6 +338,18 @@ grn_com_event_fin(grn_ctx *ctx, grn_com_event *ev)
 # endif /* USE_KQUEUE*/
 #endif /* USE_SELECT */
   return GRN_SUCCESS;
+}
+
+void
+grn_com_event_set_listen_backlog(grn_ctx *ctx, grn_com_event *ev, int backlog)
+{
+  ev->listen_backlog = backlog;
+}
+
+int
+grn_com_event_get_listen_backlog(grn_ctx *ctx, grn_com_event *ev)
+{
+  return ev->listen_backlog;
 }
 
 grn_rc
@@ -461,8 +475,6 @@ grn_com_event_del(grn_ctx *ctx, grn_com_event *ev, grn_sock fd)
   }
 }
 
-#define LISTEN_BACKLOG 0x1000
-
 grn_rc
 grn_com_event_start_accept(grn_ctx *ctx, grn_com_event *ev)
 {
@@ -472,7 +484,7 @@ grn_com_event_start_accept(grn_ctx *ctx, grn_com_event *ev)
 
   GRN_API_ENTER;
   if (!grn_com_event_mod(ctx, ev, com->fd, GRN_COM_POLLIN, NULL)) {
-    if (listen(com->fd, LISTEN_BACKLOG) == 0) {
+    if (listen(com->fd, ev->listen_backlog) == 0) {
       com->accepting = GRN_TRUE;
     } else {
       SOERR("listen - start accept");
@@ -1114,7 +1126,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
     SOERR("bind");
     goto exit;
   }
-  if (listen(lfd, LISTEN_BACKLOG) < 0) {
+  if (listen(lfd, ev->listen_backlog) < 0) {
     SOERR("listen");
     goto exit;
   }
