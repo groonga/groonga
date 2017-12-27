@@ -15,19 +15,19 @@ Release 7.1.0 - 2017-12-29
 Improvements
 ^^^^^^^^^^^^
 
-* [load] Improved the load's query-log format.
+* [:doc:`/reference/commands/load`] Improved the load's query-log format.
   Added detail below items in the load's query-log.
 
     * outputs number of loaded records.
     * outputs number of error records and columns.
     * outputs number of total records.
 
-* [sharding] Improved the logical_count's query-log format.
+* [:doc:`/reference/commands/logical_count`] Improved the logical_count's query-log format.
   Added detail below items in the logical_count's query-log.
 
     * outputs number of count.
 
-* [sharding] Improve the logical_select's query-log format.
+* [:doc:`/reference/commands/logical_select`] Improve the logical_select's query-log format.
   Added detail below items in the logical_select's query-log.
 
     * log N outputs.
@@ -36,13 +36,13 @@ Improvements
     * outputs selected in each shard.
     * use "[...]" for target information.
 
-* [delete] Improved the delete's query-log format.
+* [:doc:`/reference/commands/delete`] Improved the delete's query-log format.
   Added detail below items in the delete's query-log.
 
     * outputs number of deleted and error records.
     * outputs number of rest number of records.
 
-* [groonga server] Ensured stopping by C-c.
+* [:doc:`/reference/executables/groonga-server-http`] Ensured stopping by C-c.
 
 * Used NaN and Infinity, -Infinity instead of Lisp
   representations(#<nan> and  #i1/0, #-i1/0).
@@ -69,12 +69,12 @@ Improvements
 * Added new function index_column_source_records.
   It gets source records of index column.[Patch by Naoya Murakami]
 
-* [select] Supported negative "offset" for "offset + size - limit" >= 0
+* [:doc:`/reference/commands/select`] Supported negative "offset" for "offset + size - limit" >= 0
 
 * Added grn_column_cache.
   It'll improve performance for getter of fixed size column value.
 
-* [groonga] Added --listen-backlog option.
+* [:doc:`/reference/executables/groonga`] Added --listen-backlog option.
   You can customize listen(2)'s backlog by this option.
 
 Fixes
