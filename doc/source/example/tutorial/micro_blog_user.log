@@ -3,32 +3,15 @@ Execution example::
   select --table Users --filter 'geo_in_circle(location,"146710080x-266315480",20000)' --output_columns _key,name
   # [
   #   [
-  #     0, 
+  #     -63, 
   #     1337566253.89858, 
-  #     0.000355720520019531
-  #   ], 
-  #   [
+  #     0.000355720520019531, 
+  #     "Syntax error: <geo_in_circle(location|,|\"146710080x-266315480\",20000)>: [expr][parse] unknown identifier: <location>", 
   #     [
   #       [
-  #         2
-  #       ], 
-  #       [
-  #         [
-  #           "_key", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "name", 
-  #           "ShortText"
-  #         ]
-  #       ], 
-  #       [
-  #         "charlie", 
-  #         "Charlie"
-  #       ], 
-  #       [
-  #         "bob", 
-  #         "Bob"
+  #         "yy_syntax_error", 
+  #         "grn_ecmascript.lemon", 
+  #         41
   #       ]
   #     ]
   #   ]

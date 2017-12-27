@@ -41,46 +41,6 @@ Execution example::
   #         "normalizer", 
   #         "ShortText"
   #       ]
-  #     ], 
-  #     [
-  #       259, 
-  #       "Ages", 
-  #       "/tmp/groonga-databases/commands_table_create.0000103", 
-  #       "TABLE_DAT_KEY|PERSISTENT", 
-  #       "UInt32", 
-  #       null, 
-  #       null, 
-  #       null
-  #     ], 
-  #     [
-  #       257, 
-  #       "Lexicon", 
-  #       "/tmp/groonga-databases/commands_table_create.0000101", 
-  #       "TABLE_PAT_KEY|PERSISTENT", 
-  #       "ShortText", 
-  #       null, 
-  #       "TokenBigram", 
-  #       "NormalizerAuto"
-  #     ], 
-  #     [
-  #       256, 
-  #       "Logs", 
-  #       "/tmp/groonga-databases/commands_table_create.0000100", 
-  #       "TABLE_NO_KEY|PERSISTENT", 
-  #       null, 
-  #       null, 
-  #       null, 
-  #       null
-  #     ], 
-  #     [
-  #       258, 
-  #       "Tags", 
-  #       "/tmp/groonga-databases/commands_table_create.0000102", 
-  #       "TABLE_HASH_KEY|PERSISTENT", 
-  #       "ShortText", 
-  #       null, 
-  #       null, 
-  #       null
   #     ]
   #   ]
   # ]

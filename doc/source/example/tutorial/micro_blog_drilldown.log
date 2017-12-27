@@ -3,86 +3,15 @@ Execution example::
   select --table Comments --filter 'geo_in_circle(location,"146867000x-266280000",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
   # [
   #   [
-  #     0, 
+  #     -63, 
   #     1337566253.89858, 
-  #     0.000355720520019531
-  #   ], 
-  #   [
+  #     0.000355720520019531, 
+  #     "Syntax error: <geo_in_circle(location|,|\"146867000x-266280000\",20000)>: [expr][parse] unknown identifier: <location>", 
   #     [
   #       [
-  #         4
-  #       ], 
-  #       [
-  #         [
-  #           "posted_by.name", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "comment", 
-  #           "ShortText"
-  #         ]
-  #       ], 
-  #       [
-  #         "Charlie", 
-  #         "I'm at the Museum of Modern Art in NY now!"
-  #       ], 
-  #       [
-  #         "Bob", 
-  #         "I've just used 'Try-Groonga' now! #groonga"
-  #       ], 
-  #       [
-  #         "Bob", 
-  #         "I'm come at city of New York for development camp! #groonga #travel"
-  #       ], 
-  #       [
-  #         "Charlie", 
-  #         "@alice @bob I've tried to register!"
-  #       ]
-  #     ], 
-  #     [
-  #       [
-  #         2
-  #       ], 
-  #       [
-  #         [
-  #           "_key", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "_nsubrecs", 
-  #           "Int32"
-  #         ]
-  #       ], 
-  #       [
-  #         "groonga", 
-  #         2
-  #       ], 
-  #       [
-  #         "travel", 
-  #         1
-  #       ]
-  #     ], 
-  #     [
-  #       [
-  #         2
-  #       ], 
-  #       [
-  #         [
-  #           "_key", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "_nsubrecs", 
-  #           "Int32"
-  #         ]
-  #       ], 
-  #       [
-  #         "charlie", 
-  #         2
-  #       ], 
-  #       [
-  #         "bob", 
-  #         2
+  #         "yy_syntax_error", 
+  #         "grn_ecmascript.lemon", 
+  #         41
   #       ]
   #     ]
   #   ]

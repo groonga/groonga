@@ -3,95 +3,15 @@ Execution example::
   select Comments --filter 'last_modified<=1268802000' --output_columns posted_by.name,comment,last_modified --drilldown hash_tags,posted_by
   # [
   #   [
-  #     0, 
+  #     -63, 
   #     1337566253.89858, 
-  #     0.000355720520019531
-  #   ], 
-  #   [
+  #     0.000355720520019531, 
+  #     "Syntax error: <last_modified|<|=1268802000>: [expr][parse] unknown identifier: <last_modified>", 
   #     [
   #       [
-  #         5
-  #       ], 
-  #       [
-  #         [
-  #           "posted_by.name", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "comment", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "last_modified", 
-  #           "Time"
-  #         ]
-  #       ], 
-  #       [
-  #         "Alice", 
-  #         "I've created micro-blog!", 
-  #         1268795100.0
-  #       ], 
-  #       [
-  #         "Bob", 
-  #         "First post. test,test...", 
-  #         1268794800.0
-  #       ], 
-  #       [
-  #         "Alice", 
-  #         "@bob Welcome!!!", 
-  #         1268795100.0
-  #       ], 
-  #       [
-  #         "Bob", 
-  #         "@alice Thanks!", 
-  #         1268798400.0
-  #       ], 
-  #       [
-  #         "Bob", 
-  #         "I've just used 'Try-Groonga' now! #groonga", 
-  #         1268802000.0
-  #       ]
-  #     ], 
-  #     [
-  #       [
-  #         1
-  #       ], 
-  #       [
-  #         [
-  #           "_key", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "_nsubrecs", 
-  #           "Int32"
-  #         ]
-  #       ], 
-  #       [
-  #         "groonga", 
-  #         1
-  #       ]
-  #     ], 
-  #     [
-  #       [
-  #         2
-  #       ], 
-  #       [
-  #         [
-  #           "_key", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "_nsubrecs", 
-  #           "Int32"
-  #         ]
-  #       ], 
-  #       [
-  #         "alice", 
-  #         2
-  #       ], 
-  #       [
-  #         "bob", 
-  #         3
+  #         "yy_syntax_error", 
+  #         "grn_ecmascript.lemon", 
+  #         41
   #       ]
   #     ]
   #   ]

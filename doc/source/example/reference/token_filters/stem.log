@@ -1,7 +1,22 @@
 Execution example::
 
   plugin_register token_filters/stem
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [
+  #   [
+  #     -3, 
+  #     1337566253.89858, 
+  #     0.000355720520019531, 
+  #     "[plugin][register] cannot find plugin file: </home/horimoto/work/release/groonga/groonga.clean/plugins/token_filters/stem.so>", 
+  #     [
+  #       [
+  #         "grn_plugin_set_name_resolve_error", 
+  #         "plugin.c", 
+  #         790
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]
   table_create Memos TABLE_NO_KEY
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   column_create Memos content COLUMN_SCALAR ShortText
@@ -10,7 +25,22 @@ Execution example::
     --default_tokenizer TokenBigram \
     --normalizer NormalizerAuto \
     --token_filters TokenFilterStem
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [
+  #   [
+  #     -22, 
+  #     1337566253.89858, 
+  #     0.000355720520019531, 
+  #     "[table][create][token-filter] nonexistent token filter: <TokenFilterStem>", 
+  #     [
+  #       [
+  #         "grn_proc_table_set_token_filters_put", 
+  #         "proc_table.c", 
+  #         88
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]
   column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   load --table Memos
@@ -30,7 +60,7 @@ Execution example::
   #   [
   #     [
   #       [
-  #         3
+  #         0
   #       ], 
   #       [
   #         [
@@ -41,18 +71,6 @@ Execution example::
   #           "content", 
   #           "ShortText"
   #         ]
-  #       ], 
-  #       [
-  #         1, 
-  #         "I develop Groonga"
-  #       ], 
-  #       [
-  #         2, 
-  #         "I'm developing Groonga"
-  #       ], 
-  #       [
-  #         3, 
-  #         "I developed Groonga"
   #       ]
   #     ]
   #   ]

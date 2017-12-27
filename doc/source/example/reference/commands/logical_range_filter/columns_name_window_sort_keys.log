@@ -8,7 +8,6 @@ Execution example::
     --columns[n_likes_cumulative_sum_per_tag].value 'window_sum(n_likes)' \
     --columns[n_likes_cumulative_sum_per_tag].window.sort_keys _key \
     --columns[n_likes_cumulative_sum_per_tag].window.group_keys tag \
-    --sort_keys _key \
     --output_columns tag,_key,n_likes,n_likes_cumulative_sum_per_tag
   # [
   #   [

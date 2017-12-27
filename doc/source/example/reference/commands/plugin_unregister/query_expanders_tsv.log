@@ -1,4 +1,19 @@
 Execution example::
 
   plugin_unregister query_expanders/tsv
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [
+  #   [
+  #     -3, 
+  #     1337566253.89858, 
+  #     0.000355720520019531, 
+  #     "[plugin][unregister] cannot find plugin file: </home/horimoto/work/release/groonga/groonga.clean/plugins/query_expanders/tsv.so", 
+  #     [
+  #       [
+  #         "grn_plugin_set_name_resolve_error", 
+  #         "plugin.c", 
+  #         790
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]

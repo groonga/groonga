@@ -15,6 +15,7 @@ Execution example::
   #     0.000355720520019531
   #   ], 
   #   {
+  #     "disk_usage": 16842752, 
   #     "name": "Users", 
   #     "n_records": 1, 
   #     "value": {

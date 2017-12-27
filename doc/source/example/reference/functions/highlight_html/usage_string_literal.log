@@ -15,7 +15,7 @@ Execution example::
   #       [
   #         [
   #           "highlight_html", 
-  #           "null"
+  #           null
   #         ]
   #       ], 
   #       [

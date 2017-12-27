@@ -1,8 +1,7 @@
 Execution example::
 
   select LooseItems \
-   --filter 'sub_filter(readings, "prefix_rk_search(_key, \\"nIhO\\")") || \
-             _key @^ "nIhO"' \
+   --filter 'sub_filter(readings, "prefix_rk_search(_key, \\"nIhO\\")") || _key @^ "nIhO"' \
    --output_columns '_key,label'
   # [
   #   [

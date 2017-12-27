@@ -15,7 +15,7 @@ Execution example::
   #       [
   #         [
   #           "html_untag", 
-  #           "null"
+  #           null
   #         ]
   #       ], 
   #       [

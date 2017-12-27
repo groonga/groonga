@@ -3,42 +3,17 @@ Execution example::
   select Memos --output_columns 'tags, vector_size(tags)' --command_version 2
   # [
   #   [
-  #     0, 
+  #     -63, 
   #     1337566253.89858, 
-  #     0.000355720520019531
-  #   ], 
-  #   [
+  #     0.000355720520019531, 
+  #     "Syntax error: <tags, vector_size|(|tags)>", 
   #     [
   #       [
-  #         3
-  #       ], 
-  #       [
-  #         [
-  #           "tags", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "vector_size", 
-  #           "Object"
-  #         ]
-  #       ], 
-  #       [
-  #         [
-  #           "Groonga"
-  #         ], 
-  #         1
-  #       ], 
-  #       [
-  #         [
-  #           "Groonga", 
-  #           "Ruby"
-  #         ], 
-  #         2
-  #       ], 
-  #       [
-  #         [], 
-  #         0
+  #         "yy_syntax_error", 
+  #         "grn_ecmascript.lemon", 
+  #         37
   #       ]
   #     ]
-  #   ]
+  #   ], 
+  #   []
   # ]

@@ -12,7 +12,7 @@ Execution example::
   #     [
   #       [
   #         "Groonga::Sharding::LogicalCountCommand.run_body", 
-  #         "/home/kou/work/c/groonga.clean/plugins/sharding/logical_count.rb", 
+  #         "/home/horimoto/work/release/groonga/groonga.clean/plugins/sharding/logical_count.rb", 
   #         30
   #       ]
   #     ]

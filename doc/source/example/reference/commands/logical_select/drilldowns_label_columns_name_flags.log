@@ -13,62 +13,16 @@ Execution example::
     --drilldowns[tag].output_columns _key,vector
   # [
   #   [
-  #     0, 
+  #     -63, 
   #     1337566253.89858, 
-  #     0.000355720520019531
-  #   ], 
-  #   [
+  #     0.000355720520019531, 
+  #     "syntax error: <Syntax error: <vector_new|(|\"a\", \"b\", \"c\")>: [expr][parse] unknown identifier: <vector_new>>(-63)", 
   #     [
   #       [
-  #         5
-  #       ], 
-  #       [
-  #         [
-  #           "_id", 
-  #           "UInt32"
-  #         ]
+  #         "Groonga::Sharding::DynamicColumnExecuteContext.apply", 
+  #         "/home/horimoto/work/release/groonga/groonga.clean/plugins/sharding/dynamic_columns.rb", 
+  #         110
   #       ]
-  #     ], 
-  #     {
-  #       "tag": [
-  #         [
-  #           3
-  #         ], 
-  #         [
-  #           [
-  #             "_key", 
-  #             "ShortText"
-  #           ], 
-  #           [
-  #             "vector", 
-  #             "ShortText"
-  #           ]
-  #         ], 
-  #         [
-  #           "Hello", 
-  #           [
-  #             "a", 
-  #             "b", 
-  #             "c"
-  #           ]
-  #         ], 
-  #         [
-  #           "Groonga", 
-  #           [
-  #             "a", 
-  #             "b", 
-  #             "c"
-  #           ]
-  #         ], 
-  #         [
-  #           "Senna", 
-  #           [
-  #             "a", 
-  #             "b", 
-  #             "c"
-  #           ]
-  #         ]
-  #       ]
-  #     }
+  #     ]
   #   ]
   # ]

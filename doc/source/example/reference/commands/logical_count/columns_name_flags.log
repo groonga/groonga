@@ -1,7 +1,22 @@
 Execution example::
 
   plugin_register functions/vector
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [
+  #   [
+  #     -3, 
+  #     1337566253.89858, 
+  #     0.000355720520019531, 
+  #     "[plugin][register] cannot find plugin file: </home/horimoto/work/release/groonga/groonga.clean/plugins/functions/vector.so>", 
+  #     [
+  #       [
+  #         "grn_plugin_set_name_resolve_error", 
+  #         "plugin.c", 
+  #         790
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]
   logical_count \
     --logical_table Entries \
     --shard_key created_at \
@@ -10,4 +25,18 @@ Execution example::
     --columns[vector].type UInt32 \
     --columns[vector].value 'vector_new(1, 2, 3)' \
     --filter 'vector_size(vector) > 2'
-  # [[0, 1337566253.89858, 0.000355720520019531], 5]
+  # [
+  #   [
+  #     -63, 
+  #     1337566253.89858, 
+  #     0.000355720520019531, 
+  #     "syntax error: <Syntax error: <vector_new|(|1, 2, 3)>: [expr][parse] unknown identifier: <vector_new>>(-63)", 
+  #     [
+  #       [
+  #         "#<Class:0x56294ceaaca0>.open", 
+  #         "lib/mrb/scripts/table_cursor.rb", 
+  #         12
+  #       ]
+  #     ]
+  #   ]
+  # ]

@@ -1,7 +1,22 @@
 Execution example::
 
   plugin_register functions/number
-  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [
+  #   [
+  #     -3, 
+  #     1337566253.89858, 
+  #     0.000355720520019531, 
+  #     "[plugin][register] cannot find plugin file: </home/horimoto/work/release/groonga/groonga.clean/plugins/functions/number.so>", 
+  #     [
+  #       [
+  #         "grn_plugin_set_name_resolve_error", 
+  #         "plugin.c", 
+  #         790
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]
   select \
     --table Entries \
     --columns[n_likes_sum_per_tag].stage initial \
