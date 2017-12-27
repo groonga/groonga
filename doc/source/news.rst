@@ -15,20 +15,23 @@ Release 7.1.0 - 2017-12-29
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`/reference/commands/load`] Improved the load's query-log format.
-  Added detail below items in the load's query-log.
+* [:doc:`/reference/commands/load`] Improved the ``load``'s
+  query-log format.
+  Added detail below items in the ``load``'s query-log.
 
     * outputs number of loaded records.
     * outputs number of error records and columns.
     * outputs number of total records.
 
-* [:doc:`/reference/commands/logical_count`] Improved the logical_count's query-log format.
-  Added detail below items in the logical_count's query-log.
+* [:doc:`/reference/commands/logical_count`] Improved the
+  ``logical_count``'s query-log format.
+  Added detail below items in the ``logical_count``'s query-log.
 
     * outputs number of count.
 
-* [:doc:`/reference/commands/logical_select`] Improve the logical_select's query-log format.
-  Added detail below items in the logical_select's query-log.
+* [:doc:`/reference/commands/logical_select`] Improve the
+  ``logical_select``'s query-log format.
+  Added detail below items in the ``logical_select``'s query-log.
 
     * log N outputs.
     * outputs plain drilldown.
@@ -36,58 +39,60 @@ Improvements
     * outputs selected in each shard.
     * use "[...]" for target information.
 
-* [:doc:`/reference/commands/delete`] Improved the delete's query-log format.
-  Added detail below items in the delete's query-log.
+* [:doc:`/reference/commands/delete`] Improved the ``delete``'s
+  query-log format.
+  Added detail below items in the ``delete``'s query-log.
 
     * outputs number of deleted and error records.
     * outputs number of rest number of records.
 
-* [:doc:`/reference/executables/groonga-server-http`] Ensured stopping by C-c.
+* [:doc:`/reference/executables/groonga-server-http`] Ensured
+  stopping by C-c.
 
-* Used NaN and Infinity, -Infinity instead of Lisp
-  representations(#<nan> and  #i1/0, #-i1/0).
+* Used ``NaN`` and ``Infinity``, ``-Infinity`` instead of Lisp
+  representations(``#<nan>`` and  ``#i1/0``, ``#-i1/0``).
 
 * Supported vector for drilldown calc target.
 
 * Partially supported keyword extraction from regexp search.
-  It enables highlight_html and snippet_html for regexp search.
+  It enables ``highlight_html`` and ``snippet_html`` for regexp search.
   [GitHub#787][Reported by takagi01]
 
-* [bulk] Reduced the number of realloc.
-  grn_bulk_*() API supports it.
+* [bulk] Reduced the number of ``realloc()``.
+  ``grn_bulk_*()`` API supports it.
 
   It improves performance for large output case on Windows.
   For example, it causes 100x faster for 100MB over output.
 
-  Because realloc() is heavy on Windows.
+  Because ``realloc()`` is heavy on Windows.
 
-* Enabled GRN_II_OVERLAP_TOKEN_SKIP_ENABLE only when its value is "yes".
+* Enabled ``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` only when its value is "yes".
 
-* Deprecated GRN_NGRAM_TOKENIZER_REMOVE_BLANK_DISABLE.
-  Use GRN_NGRAM_TOKENIZER_REMOVE_BLANK_ENABLE=no instead.
+* Deprecated ``GRN_NGRAM_TOKENIZER_REMOVE_BLANK_DISABLE``.
+  Use ``GRN_NGRAM_TOKENIZER_REMOVE_BLANK_ENABLE=no`` instead.
 
-* Added new function index_column_source_records.
+* Added new function ``index_column_source_records``.
   It gets source records of index column.[Patch by Naoya Murakami]
 
 * [:doc:`/reference/commands/select`] Supported negative "offset" for "offset + size - limit" >= 0
 
-* Added grn_column_cache.
+* Added ``grn_column_cache``.
   It'll improve performance for getter of fixed size column value.
 
-* [:doc:`/reference/executables/groonga`] Added --listen-backlog option.
-  You can customize listen(2)'s backlog by this option.
+* [:doc:`/reference/executables/groonga`] Added ``--listen-backlog option``.
+  You can customize ``listen(2)``'s backlog by this option.
 
 Fixes
 ^^^^^
 
-* Fixed a memory leak in highlight_full
+* Fixed a memory leak in ``highlight_full``
 
 * Fixed a crash bug by early unlink
-  It's not caused by instruction in grn_expr_parse() but it's caused when
+  It's not caused by instruction in ``grn_expr_parse()`` but it's caused when
   libgroonga user such as Mroonga uses the following instructions:
 
-    1. grn_expr_append_const("_id")
-    2. grn_expr_append_op(GRN_OP_GET_VALUE)
+    1. ``grn_expr_append_const("_id")``
+    2. ``grn_expr_append_op(GRN_OP_GET_VALUE)``
 
 Thanks
 ^^^^^^
