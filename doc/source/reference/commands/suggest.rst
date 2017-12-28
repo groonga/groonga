@@ -62,6 +62,8 @@ Here are learned data for correction.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/suggest-learn-correction.log
+.. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+.. [
 .. {"sequence": "2", "time": 1312950803.86057, "item": "s"},
 .. {"sequence": "2", "time": 1312950803.96857, "item": "sa"},
 .. {"sequence": "2", "time": 1312950804.26057, "item": "sae"},
