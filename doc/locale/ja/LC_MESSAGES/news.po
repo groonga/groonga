@@ -21,11 +21,190 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 7.0.9 - 2017-11-29"
-msgstr "7.0.9リリース - 2017-11-29"
+msgid "Release 7.1.0 - 2017-12-29"
+msgstr "7.1.0リリース - 2017-12-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[:doc:`/reference/commands/load`] Improved the ``load``'s query-log format. "
+"Added detail below items in the ``load``'s query-log."
+msgstr ""
+"[:doc:`/reference/commands/load`] ``load`` コマンドのクエリーログのフォーマッ"
+"トを改良しました。``load`` コマンドのクエリーログに以下の項目が追加されます。"
+
+msgid "outputs number of loaded records."
+msgstr "ロードしたレコード数を表示します。"
+
+msgid "outputs number of error records and columns."
+msgstr "ロードがエラーになったレコードとカラムの数を表示します。"
+
+msgid "outputs number of total records."
+msgstr "ロード後の総レコード数を表示します。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_count`] Improved the ``logical_count``'s "
+"query-log format. Added detail below items in the ``logical_count``'s query-"
+"log."
+msgstr ""
+"[:doc:`/reference/commands/logical_count`] ``logical_count`` コマンドのクエ"
+"リーログのフォーマットを改良しました。``logical_count`` コマンドのクエリーロ"
+"グに以下の項目が追加されます。"
+
+msgid "outputs number of count."
+msgstr "マッチしたレコード数を表示します。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_select`] Improve the ``logical_select``'s "
+"query-log format. Added detail below items in the ``logical_select``'s query-"
+"log."
+msgstr ""
+"[:doc:`/reference/commands/logical_select`] ``logical_select`` コマンドのクエ"
+"リーログのフォーマットを改良しました。 ``logical_select`` コマンドのクエリー"
+"ログに以下の項目が追加されます。"
+
+msgid "log N outputs."
+msgstr "マッチしたレコード数を表示します。"
+
+msgid "outputs plain drilldown."
+msgstr "ドリルダウンした数を表示します。"
+
+msgid "outputs labeled drilldown."
+msgstr "ラベルつきのドリルダウンをした数を表示します。"
+
+msgid "outputs selected in each shard."
+msgstr "それぞれのシャードで検索にマッチした数を表示します。"
+
+msgid "use \"[...]\" for target information."
+msgstr "検索対象のシャードの情報を\"[...]\"を使って表示します。"
+
+msgid ""
+"[:doc:`/reference/commands/delete`] Improved the ``delete``'s query-log "
+"format. Added detail below items in the ``delete``'s query-log."
+msgstr ""
+"[:doc:`/reference/commands/delete`] ``delete`` コマンドのクエリーログのフォー"
+"マットを改良しました。 ``delete`` コマンドのクエリーログに以下の項目が追加さ"
+"れます。"
+
+msgid "outputs number of deleted and error records."
+msgstr "削除したレコード数と削除に失敗したレコード数を表示します。"
+
+msgid "outputs number of rest number of records."
+msgstr "削除後に残ったレコード数を表示します。"
+
+msgid ""
+"[:doc:`/reference/executables/groonga-server-http`] The server executed by "
+"``groonga -s`` ensure stopping by C-c."
+msgstr ""
+"[:doc:`/reference/executables/groonga-server-http`] ``groonga -s`` で実行した"
+"サーバーをC-c で確実に停止出来るようにしました。"
+
+msgid ""
+"Used ``NaN`` and ``Infinity``, ``-Infinity`` instead of Lisp "
+"representations(``#<nan>`` and  ``#i1/0``, ``#-i1/0``)."
+msgstr ""
+"Lisp表現( ``#<nan>`` 、 ``#i1/0`` 、 ``#-i1/0`` )の代わりに ``Nan`` と "
+"``Infinity`` 、 ``-Infinity`` を使用するように改良しました。"
+
+msgid "Supported vector for drilldown calc target."
+msgstr "ドリルダウンでベクター型のカラムをサポートしました。"
+
+msgid ""
+"Partially supported keyword extraction from regexp search. It enables "
+"``highlight_html`` and ``snippet_html`` for regexp search. [GitHub#787]"
+"[Reported by takagi01]"
+msgstr ""
+"部分的に正規表現を用いて検索から、キワードを抽出出来るように改良しました。こ"
+"れにより、正規表現を用いた検索に ``highlight_html`` と ``snippet_html`` を使"
+"えるようになります。[takagi01さんに報告いただきました]"
+
+msgid ""
+"[bulk] Reduced the number of ``realloc()``. ``grn_bulk_*()`` API supports it."
+msgstr ""
+"``grn_bulk_*()`` APIにおいて、 ``realloc()`` が呼ばれる回数を削減しました。"
+
+msgid ""
+"It improves performance for large output case on Windows. For example, it "
+"causes 100x faster for 100MB over output."
+msgstr ""
+"Windowsにおいて出力が大きいケースでパフォーマンスが向上します。例えば、出力が"
+"100MBを超える場合には、約100倍速くなります。"
+
+msgid "Because ``realloc()`` is heavy on Windows."
+msgstr "``realloc()`` はWindowsでは重い処理であるためです。"
+
+msgid ""
+"Enabled ``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` only when its value is \"yes\"."
+msgstr ""
+"``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` の値にyesが設定された時のみ"
+"``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` を有効にするようにしました。"
+
+msgid ""
+"Deprecated ``GRN_NGRAM_TOKENIZER_REMOVE_BLANK_DISABLE``. Use "
+"``GRN_NGRAM_TOKENIZER_REMOVE_BLANK_ENABLE=no`` instead."
+msgstr ""
+"``GRN_NGRAM_TOKENIZER_REMOVE_BLANK_DISABLE`` は非推奨になりました。代わりに "
+"``GRN_NGRAM_TOKENIZER_REMOVE_BLANK_ENABL=no`` を使って下さい。"
+
+msgid ""
+"Added new function ``index_column_source_records``. It gets source records "
+"of index column.[Patch by Naoya Murakami]"
+msgstr ""
+"関数 ``index_column_source_records`` を新規に追加しました。インデックスカラム"
+"のソースを取得することができます。[村上さんがパッチを提供]"
+
+msgid ""
+"[:doc:`/reference/commands/select`] Supported negative \"offset\" for "
+"\"offset + size - limit\" >= 0"
+msgstr ""
+"[:doc:`/reference/commands/select`] offsetに負の値を設定出来るようにしまし"
+"た。"
+
+msgid ""
+"Added ``grn_column_cache``. It'll improve performance for getter of fixed "
+"size column value."
+msgstr "固定サイズのカラムの値を取得する際のパフォーマンスを向上しました。"
+
+msgid ""
+"[:doc:`/reference/executables/groonga`] Added ``--listen-backlog option``. "
+"You can customize ``listen(2)``'s backlog by this option."
+msgstr ""
+"[:doc:`/reference/executables/groonga`] groongaコマンドの引数に``--listen-"
+"backlog`` オプションを追加しました。listenシステムコールのbacklogをカスタマイ"
+"ズできます。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a memory leak in ``highlight_full``"
+msgstr ""
+"``highlight_full`` 関数を使用するとメモリリークする問題を修正しました。"
+
+msgid ""
+"Fixed a crash bug by early unlink It's not caused by instruction in "
+"``grn_expr_parse()`` but it's caused when libgroonga user such as Mroonga "
+"uses the following instructions:"
+msgstr ""
+"Mroongaで以下ような呼び出しを行った際にクラッシュする問題を修正しました。"
+
+msgid "``grn_expr_append_const(\"_id\")``"
+msgstr " ``grn_expr_append_const(\"_id\")`` "
+
+msgid "``grn_expr_append_op(GRN_OP_GET_VALUE)``"
+msgstr " ``grn_expr_append_op(GRN_OP_GET_VALUE)`` "
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "takagi01"
+msgstr "takagi01"
+
+msgid "Naoya Murakami"
+msgstr "村上さん"
+
+msgid "Release 7.0.9 - 2017-11-29"
+msgstr "7.0.9リリース - 2017-11-29"
 
 msgid ""
 "Supported newer version of Apache Arrow. In this release, 0.8.0 or later is "
@@ -89,9 +268,6 @@ msgstr ""
 msgid "[httpd] Updated bundled nginx to 1.13.7."
 msgstr "[httpd] バンドルしているnginxのバージョンを1.13.7に更新しました。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "[httpd] Fixed build error when old Groonga is already installed. "
 "[GitHub#775] [Reported by myamanishi3]"
@@ -125,9 +301,6 @@ msgstr ""
 "のリソースを使用する問題を修正しました。1つのベクターカラムの要素数が多く、大"
 "量のレコードがある場合はGroongaがクラッシュしていました。 [groonga-dev,04533]"
 "[内山敏郎さんが報告]"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Murata Satoshi"
 msgstr "むらたさん"
@@ -584,9 +757,6 @@ msgstr ""
 "[:doc:`/reference/executables/groonga-httpd`] デフォルトのPIDのパスと再起動時"
 "に想定しているPIDのパスがあっていない問題を修正しました。そのせいで groonga-"
 "httpd の再起動に失敗していました。 [GitHub#743] [sozakiさんが報告]"
-
-msgid "Naoya Murakami"
-msgstr "村上さん"
 
 msgid "Release 7.0.4 - 2017-06-29"
 msgstr "7.0.4リリース - 2017-06-29"
