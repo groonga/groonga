@@ -93,11 +93,10 @@ msgstr "削除したレコード数と削除に失敗したレコード数を表
 msgid "outputs number of rest number of records."
 msgstr "削除後に残ったレコード数を表示します。"
 
-msgid ""
-"[:doc:`/reference/executables/groonga-server-http`] Ensured stopping by C-c."
+msgid "[groonga] Ensured stopping by C-c."
 msgstr ""
-"[:doc:`/reference/executables/groonga-server-http`] groonga-serverを C-C で確"
-"実に停止出来るようにしました。"
+"[groonga] groonga -s で実行したサーバーを C-C で確実に停止出来るようにしまし"
+"た。"
 
 msgid ""
 "Used ``NaN`` and ``Infinity``, ``-Infinity`` instead of Lisp "
