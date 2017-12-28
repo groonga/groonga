@@ -15,18 +15,39 @@ Execution example::
   suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nihon
   # [
   #   [
-  #     -22, 
+  #     0, 
   #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "invalid command name: suggest", 
-  #     [
+  #     0.000355720520019531
+  #   ], 
+  #   {
+  #     "complete": [
   #       [
-  #         "grn_ctx_qe_exec", 
-  #         "ctx.c", 
-  #         1284
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "日本", 
+  #         2
+  #       ], 
+  #       [
+  #         "日本人", 
+  #         2
+  #       ], 
+  #       [
+  #         "日本語", 
+  #         2
   #       ]
   #     ]
-  #   ]
+  #   }
   # ]
   load --table item_query
   [
@@ -36,16 +57,37 @@ Execution example::
   suggest --table item_query --column kana --types complete --frequency_threshold 1 --query nihon
   # [
   #   [
-  #     -22, 
+  #     0, 
   #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "invalid command name: suggest", 
-  #     [
+  #     0.000355720520019531
+  #   ], 
+  #   {
+  #     "complete": [
   #       [
-  #         "grn_ctx_qe_exec", 
-  #         "ctx.c", 
-  #         1284
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "日本人", 
+  #         102
+  #       ], 
+  #       [
+  #         "日本", 
+  #         2
+  #       ], 
+  #       [
+  #         "日本語", 
+  #         2
   #       ]
   #     ]
-  #   ]
+  #   }
   # ]

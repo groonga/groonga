@@ -1,22 +1,7 @@
 Execution example::
 
   plugin_register functions/number
-  # [
-  #   [
-  #     -3, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "[plugin][register] cannot find plugin file: </home/horimoto/work/release/groonga/groonga.clean/plugins/functions/number.so>", 
-  #     [
-  #       [
-  #         "grn_plugin_set_name_resolve_error", 
-  #         "plugin.c", 
-  #         790
-  #       ]
-  #     ]
-  #   ], 
-  #   false
-  # ]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
   select \
     --table Entries \
     --columns[n_likes_class].stage initial \
@@ -27,15 +12,67 @@ Execution example::
     --output_columns n_likes,n_likes_class
   # [
   #   [
-  #     -22, 
+  #     0, 
   #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "[select][column][initial][n_likes_class] failed to parse value: <number_classify(n_likes, 10)>: Syntax error: <number_classify|", 
+  #     0.000355720520019531
+  #   ], 
+  #   [
   #     [
   #       [
-  #         "grn_select_apply_columns", 
-  #         "proc_select.c", 
-  #         1360
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "n_likes_class", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         5, 
+  #         0
+  #       ], 
+  #       [
+  #         10, 
+  #         10
+  #       ], 
+  #       [
+  #         15, 
+  #         10
+  #       ], 
+  #       [
+  #         3, 
+  #         0
+  #       ], 
+  #       [
+  #         3, 
+  #         0
+  #       ]
+  #     ], 
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_nsubrecs", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         10, 
+  #         2
+  #       ], 
+  #       [
+  #         0, 
+  #         3
   #       ]
   #     ]
   #   ]

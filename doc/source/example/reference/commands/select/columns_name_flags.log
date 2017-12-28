@@ -1,22 +1,7 @@
 Execution example::
 
   plugin_register functions/vector
-  # [
-  #   [
-  #     -3, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "[plugin][register] cannot find plugin file: </home/horimoto/work/release/groonga/groonga.clean/plugins/functions/vector.so>", 
-  #     [
-  #       [
-  #         "grn_plugin_set_name_resolve_error", 
-  #         "plugin.c", 
-  #         790
-  #       ]
-  #     ]
-  #   ], 
-  #   false
-  # ]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
   select Entries \
     --columns[vector].stage initial \
     --columns[vector].flags COLUMN_VECTOR \
@@ -25,15 +10,64 @@ Execution example::
     --output_columns _id,vector
   # [
   #   [
-  #     -22, 
+  #     0, 
   #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "[select][column][initial][vector] failed to parse value: <vector_new(1, 2, 3)>: Syntax error: <vector_new|(|1, 2, 3)>: [expr][p", 
+  #     0.000355720520019531
+  #   ], 
+  #   [
   #     [
   #       [
-  #         "grn_select_apply_columns", 
-  #         "proc_select.c", 
-  #         1360
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "vector", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         [
+  #           1, 
+  #           2, 
+  #           3
+  #         ]
+  #       ], 
+  #       [
+  #         2, 
+  #         [
+  #           1, 
+  #           2, 
+  #           3
+  #         ]
+  #       ], 
+  #       [
+  #         3, 
+  #         [
+  #           1, 
+  #           2, 
+  #           3
+  #         ]
+  #       ], 
+  #       [
+  #         4, 
+  #         [
+  #           1, 
+  #           2, 
+  #           3
+  #         ]
+  #       ], 
+  #       [
+  #         5, 
+  #         [
+  #           1, 
+  #           2, 
+  #           3
+  #         ]
   #       ]
   #     ]
   #   ]

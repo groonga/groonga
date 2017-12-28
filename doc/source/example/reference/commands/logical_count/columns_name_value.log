@@ -1,22 +1,7 @@
 Execution example::
 
   plugin_register functions/string
-  # [
-  #   [
-  #     -3, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "[plugin][register] cannot find plugin file: </home/horimoto/work/release/groonga/groonga.clean/plugins/functions/string.so>", 
-  #     [
-  #       [
-  #         "grn_plugin_set_name_resolve_error", 
-  #         "plugin.c", 
-  #         790
-  #       ]
-  #     ]
-  #   ], 
-  #   false
-  # ]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
   logical_count \
     --logical_table Entries \
     --shard_key created_at \
@@ -24,18 +9,4 @@ Execution example::
     --columns[content_length].type UInt32 \
     --columns[content_length].value 'string_length(content)' \
     --filter 'content_length >= 40'
-  # [
-  #   [
-  #     -63, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "syntax error: <Syntax error: <string_length|(|content)>: [expr][parse] unknown identifier: <string_length>>(-63)", 
-  #     [
-  #       [
-  #         "#<Class:0x56294ceaaca0>.open", 
-  #         "lib/mrb/scripts/table_cursor.rb", 
-  #         12
-  #       ]
-  #     ]
-  #   ]
-  # ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 2]

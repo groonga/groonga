@@ -3,15 +3,51 @@ Execution example::
   select --table Comments --query hash_tags:@groonga --output_columns posted_by.name,comment --drilldown posted_by
   # [
   #   [
-  #     -22, 
+  #     0, 
   #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "Syntax error: <hash_tags:@groonga||>: column lookup failed", 
+  #     0.000355720520019531
+  #   ], 
+  #   [
   #     [
   #       [
-  #         "yy_syntax_error", 
-  #         "grn_ecmascript.lemon", 
-  #         41
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "posted_by.name", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "comment", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         "Bob", 
+  #         "I've just used 'Try-Groonga' now! #groonga"
+  #       ], 
+  #       [
+  #         "Bob", 
+  #         "I'm come at city of New York for development camp! #groonga #travel"
+  #       ]
+  #     ], 
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_nsubrecs", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "bob", 
+  #         2
   #       ]
   #     ]
   #   ]

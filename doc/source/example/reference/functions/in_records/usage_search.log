@@ -1,22 +1,7 @@
 Execution example::
 
   plugin_register functions/string
-  # [
-  #   [
-  #     -3, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "[plugin][register] cannot find plugin file: </home/horimoto/work/release/groonga/groonga.clean/plugins/functions/string.so>", 
-  #     [
-  #       [
-  #         "grn_plugin_set_name_resolve_error", 
-  #         "plugin.c", 
-  #         790
-  #       ]
-  #     ]
-  #   ], 
-  #   false
-  # ]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
   select \
     --table Memos \
     --filter 'in_records(Conditions, \
@@ -27,15 +12,38 @@ Execution example::
     --output_columns _key,user,tag
   # [
   #   [
-  #     -63, 
+  #     0, 
   #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "Syntax error: <in_records(Conditions,                        user,                 \"@\", \"user_pattern\",                        ", 
+  #     0.000355720520019531
+  #   ], 
+  #   [
   #     [
   #       [
-  #         "yy_syntax_error", 
-  #         "grn_ecmascript.lemon", 
-  #         41
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "user", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "tag", 
+  #           "Tags"
+  #         ]
+  #       ], 
+  #       [
+  #         "Groonga is fast", 
+  #         "alice", 
+  #         "groonga"
+  #       ], 
+  #       [
+  #         "Droonga is fast", 
+  #         "david", 
+  #         "droonga"
   #       ]
   #     ]
   #   ]
