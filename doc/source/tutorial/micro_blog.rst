@@ -266,132 +266,123 @@ The second, specify the timestamp as string in following format: "(YEAR)/(MONTH)
 when data is loaded.
 
 .. groonga-command
-..
- table_create --name Users --flags TABLE_HASH_KEY --key_type ShortText
- table_create --name Comments --flags TABLE_HASH_KEY --key_type ShortText
- table_create --name HashTags --flags TABLE_HASH_KEY --key_type ShortText
- table_create --name Bigram --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
- table_create --name GeoIndex --flags TABLE_PAT_KEY --key_type WGS84GeoPoint
-
- column_create --table Users --name name --flags COLUMN_SCALAR --type ShortText
- column_create --table Users --name follower --flags COLUMN_VECTOR --type Users
- column_create --table Users --name favorites --flags COLUMN_VECTOR --type Comments
- column_create --table Users --name location --flags COLUMN_SCALAR --type WGS84GeoPoint
- column_create --table Users --name location_str --flags COLUMN_SCALAR --type ShortText
- column_create --table Users --name description --flags COLUMN_SCALAR --type ShortText
- column_create --table Users --name followee --flags COLUMN_INDEX --type Users --source follower
-
- column_create --table Comments --name comment --flags COLUMN_SCALAR --type ShortText
- column_create --table Comments --name last_modified --flags COLUMN_SCALAR --type Time
- column_create --table Comments --name replied_to --flags COLUMN_SCALAR --type Comments
- column_create --table Comments --name replied_users --flags COLUMN_VECTOR --type Users
- column_create --table Comments --name hash_tags --flags COLUMN_VECTOR --type HashTags
- column_create --table Comments --name location --flags COLUMN_SCALAR --type WGS84GeoPoint
- column_create --table Comments --name posted_by --flags COLUMN_SCALAR --type Users
- column_create --table Comments --name favorited_by --flags COLUMN_INDEX --type Users --source favorites
-
- column_create --table HashTags --name hash_index --flags COLUMN_INDEX --type Comments --source hash_tags
-
- column_create --table Bigram --name users_index --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --type Users --source name,location_str,description
- column_create --table Bigram --name comment_index --flags COLUMN_INDEX|WITH_POSITION --type Comments --source comment
-
- column_create --table GeoIndex --name users_location --type Users --flags COLUMN_INDEX --source location
- column_create --table GeoIndex --name comments_location --type Comments --flags COLUMN_INDEX --source location
-
- load --table Users
- [
-   {
-     "_key": "alice",
-     "name": "Alice",
-     "follower": ["bob"],
-     "favorites": [],
-     "location": "152489000x-255829000",
-     "location_str": "Boston, Massachusetts",
-     "description": "Groonga developer"
-   },
-   {
-     "_key": "bob",
-     "name": "Bob",
-     "follower": ["alice","charlie"],
-     "favorites": ["alice:1","charlie:1"],
-     "location": "146249000x-266228000",
-     "location_str": "Brooklyn, New York City",
-     "description": ""
-   },
-   {
-     "_key": "charlie",
-     "name": "Charlie",
-     "follower": ["alice","bob"],
-     "favorites": ["alice:1","bob:1"],
-     "location": "146607190x-267021260",
-     "location_str": "Newark, New Jersey",
-     "description": "Hmm,Hmm"
-   }
- ]
-
- load --table Comments
- [
-   {
-     "_key": "alice:1",
-     "comment": "I've created micro-blog!",
-     "last_modified": "2010/03/17 12:05:00",
-     "posted_by": "alice",
-   },
-   {
-     "_key": "bob:1",
-     "comment": "First post. test,test...",
-     "last_modified": "2010/03/17 12:00:00",
-     "posted_by": "bob",
-   },
-   {
-     "_key": "alice:2",
-     "comment": "@bob Welcome!!!",
-     "last_modified": "2010/03/17 12:05:00",
-     "replied_to": "bob:1",
-     "replied_users": ["bob"],
-     "posted_by": "alice",
-   },
-   {
-     "_key": "bob:2",
-     "comment": "@alice Thanks!",
-     "last_modified": "2010/03/17 13:00:00",
-     "replied_to": "alice:2",
-     "replied_users": ["alice"],
-     "posted_by": "bob",
-   },
-   {
-     "_key": "bob:3",
-     "comment": "I've just used 'Try-Groonga' now! #groonga",
-     "last_modified": "2010/03/17 14:00:00",
-     "hash_tags": ["groonga"],
-     "location": "146566000x-266422000",
-     "posted_by": "bob",
-   },
-   {
-     "_key": "bob:4",
-     "comment": "I'm come at city of New York for development camp! #groonga #travel",
-     "last_modified": "2010/03/17 14:05:00",
-     "hash_tags": ["groonga", "travel"],
-     "location": "146566000x-266422000",
-     "posted_by": "bob",
-   },
-   {
-     "_key": "charlie:1",
-     "comment": "@alice @bob I've tried to register!",
-     "last_modified": "2010/03/17 15:00:00",
-     "replied_users": ["alice", "bob"],
-     "location": "146607190x-267021260",
-     "posted_by": "charlie",
-   }
-   {
-     "_key": "charlie:2",
-     "comment": "I'm at the Museum of Modern Art in NY now!",
-     "last_modified": "2010/03/17 15:05:00",
-     "location": "146741340x-266319590",
-     "posted_by": "charlie",
-   }
- ]
-
+.. table_create --name Users --flags TABLE_HASH_KEY --key_type ShortText
+.. table_create --name Comments --flags TABLE_HASH_KEY --key_type ShortText
+.. table_create --name HashTags --flags TABLE_HASH_KEY --key_type ShortText
+.. table_create --name Bigram --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+.. table_create --name GeoIndex --flags TABLE_PAT_KEY --key_type WGS84GeoPoint
+.. column_create --table Users --name name --flags COLUMN_SCALAR --type ShortText
+.. column_create --table Users --name follower --flags COLUMN_VECTOR --type Users
+.. column_create --table Users --name favorites --flags COLUMN_VECTOR --type Comments
+.. column_create --table Users --name location --flags COLUMN_SCALAR --type WGS84GeoPoint
+.. column_create --table Users --name location_str --flags COLUMN_SCALAR --type ShortText
+.. column_create --table Users --name description --flags COLUMN_SCALAR --type ShortText
+.. column_create --table Users --name followee --flags COLUMN_INDEX --type Users --source follower
+.. column_create --table Comments --name comment --flags COLUMN_SCALAR --type ShortText
+.. column_create --table Comments --name last_modified --flags COLUMN_SCALAR --type Time
+.. column_create --table Comments --name replied_to --flags COLUMN_SCALAR --type Comments
+.. column_create --table Comments --name replied_users --flags COLUMN_VECTOR --type Users
+.. column_create --table Comments --name hash_tags --flags COLUMN_VECTOR --type HashTags
+.. column_create --table Comments --name location --flags COLUMN_SCALAR --type WGS84GeoPoint
+.. column_create --table Comments --name posted_by --flags COLUMN_SCALAR --type Users
+.. column_create --table Comments --name favorited_by --flags COLUMN_INDEX --type Users --source favorites
+.. column_create --table HashTags --name hash_index --flags COLUMN_INDEX --type Comments --source hash_tags
+.. column_create --table Bigram --name users_index --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --type Users --source name,location_str,description
+.. column_create --table Bigram --name comment_index --flags COLUMN_INDEX|WITH_POSITION --type Comments --source comment
+.. column_create --table GeoIndex --name users_location --type Users --flags COLUMN_INDEX --source location
+.. column_create --table GeoIndex --name comments_location --type Comments --flags COLUMN_INDEX --source location
+.. load --table Users
+.. [
+..   {
+..     "_key": "alice",
+..     "name": "Alice",
+..     "follower": ["bob"],
+..     "favorites": [],
+..     "location": "152489000x-255829000",
+..     "location_str": "Boston, Massachusetts",
+..     "description": "Groonga developer"
+..   },
+..   {
+..     "_key": "bob",
+..     "name": "Bob",
+..     "follower": ["alice","charlie"],
+..     "favorites": ["alice:1","charlie:1"],
+..     "location": "146249000x-266228000",
+..     "location_str": "Brooklyn, New York City",
+..     "description": ""
+..   },
+..   {
+..     "_key": "charlie",
+..     "name": "Charlie",
+..     "follower": ["alice","bob"],
+..     "favorites": ["alice:1","bob:1"],
+..     "location": "146607190x-267021260",
+..     "location_str": "Newark, New Jersey",
+..     "description": "Hmm,Hmm"
+..   }
+.. ]
+.. load --table Comments
+.. [
+..   {
+..     "_key": "alice:1",
+..     "comment": "I've created micro-blog!",
+..     "last_modified": "2010/03/17 12:05:00",
+..     "posted_by": "alice",
+..   },
+..   {
+..     "_key": "bob:1",
+..     "comment": "First post. test,test...",
+..     "last_modified": "2010/03/17 12:00:00",
+..     "posted_by": "bob",
+..   },
+..   {
+..     "_key": "alice:2",
+..     "comment": "@bob Welcome!!!",
+..     "last_modified": "2010/03/17 12:05:00",
+..     "replied_to": "bob:1",
+..     "replied_users": ["bob"],
+..     "posted_by": "alice",
+..   },
+..   {
+..     "_key": "bob:2",
+..     "comment": "@alice Thanks!",
+..     "last_modified": "2010/03/17 13:00:00",
+..     "replied_to": "alice:2",
+..     "replied_users": ["alice"],
+..     "posted_by": "bob",
+..   },
+..   {
+..     "_key": "bob:3",
+..     "comment": "I've just used 'Try-Groonga' now! #groonga",
+..     "last_modified": "2010/03/17 14:00:00",
+..     "hash_tags": ["groonga"],
+..     "location": "146566000x-266422000",
+..     "posted_by": "bob",
+..   },
+..   {
+..     "_key": "bob:4",
+..     "comment": "I'm come at city of New York for development camp! #groonga #travel",
+..     "last_modified": "2010/03/17 14:05:00",
+..     "hash_tags": ["groonga", "travel"],
+..     "location": "146566000x-266422000",
+..     "posted_by": "bob",
+..   },
+..   {
+..     "_key": "charlie:1",
+..     "comment": "@alice @bob I've tried to register!",
+..     "last_modified": "2010/03/17 15:00:00",
+..     "replied_users": ["alice", "bob"],
+..     "location": "146607190x-267021260",
+..     "posted_by": "charlie",
+..   }
+..   {
+..     "_key": "charlie:2",
+..     "comment": "I'm at the Museum of Modern Art in NY now!",
+..     "last_modified": "2010/03/17 15:05:00",
+..     "location": "146741340x-266319590",
+..     "posted_by": "charlie",
+..   }
+.. ]
 
 
 Search
