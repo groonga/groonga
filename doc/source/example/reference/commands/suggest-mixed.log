@@ -46,17 +46,17 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         "search", 
+  #         "search engine", 
   #         2
   #       ], 
   #       [
-  #         "search engine", 
-  #         2
+  #         "search", 
+  #         1
   #       ]
   #     ], 
   #     "correct": [
   #       [
-  #         1
+  #         0
   #       ], 
   #       [
   #         [
@@ -67,10 +67,6 @@ Execution example::
   #           "_score", 
   #           "Int32"
   #         ]
-  #       ], 
-  #       [
-  #         "search", 
-  #         2
   #       ]
   #     ]
   #   }

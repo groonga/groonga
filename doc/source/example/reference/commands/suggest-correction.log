@@ -10,7 +10,7 @@ Execution example::
   #   {
   #     "correct": [
   #       [
-  #         1
+  #         0
   #       ], 
   #       [
   #         [
@@ -21,10 +21,6 @@ Execution example::
   #           "_score", 
   #           "Int32"
   #         ]
-  #       ], 
-  #       [
-  #         "search", 
-  #         1
   #       ]
   #     ]
   #   }

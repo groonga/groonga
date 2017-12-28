@@ -11,10 +11,12 @@ Execution example::
   #     "tables": {
   #       "Terms": {
   #         "normalizer": {
+  #           "id": 78, 
   #           "name": "NormalizerAuto"
   #         }, 
   #         "name": "Terms", 
   #         "tokenizer": {
+  #           "id": 67, 
   #           "name": "TokenBigram"
   #         }, 
   #         "command": {
@@ -31,11 +33,13 @@ Execution example::
   #         "indexes": [], 
   #         "key_type": {
   #           "type": "type", 
+  #           "id": 14, 
   #           "name": "ShortText"
   #         }, 
   #         "value_type": null, 
   #         "token_filters": [], 
   #         "type": "patricia trie", 
+  #         "id": 258, 
   #         "columns": {
   #           "memos_content_index": {
   #             "name": "memos_content_index", 
@@ -43,13 +47,13 @@ Execution example::
   #             "section": false, 
   #             "compress": null, 
   #             "command": {
-  #               "command_line": "column_create --table Terms --name memos_content_index --flags COLUMN_INDEX|WITH_POSITION --type Memos --sources content", 
+  #               "command_line": "column_create --table Terms --name memos_content_index --flags COLUMN_INDEX|WITH_POSITION --type Memos --source content", 
   #               "name": "column_create", 
   #               "arguments": {
+  #                 "source": "content", 
   #                 "table": "Terms", 
   #                 "flags": "COLUMN_INDEX|WITH_POSITION", 
   #                 "name": "memos_content_index", 
-  #                 "sources": "content", 
   #                 "type": "Memos"
   #               }
   #             }, 
@@ -57,18 +61,21 @@ Execution example::
   #             "sources": [
   #               {
   #                 "table": "Memos", 
-  #                 "name": "content", 
-  #                 "full_name": "Memos.content"
+  #                 "id": 257, 
+  #                 "full_name": "Memos.content", 
+  #                 "name": "content"
   #               }
   #             ], 
   #             "value_type": {
   #               "type": "reference", 
+  #               "id": 256, 
   #               "name": "Memos"
   #             }, 
   #             "full_name": "Terms.memos_content_index", 
   #             "position": true, 
   #             "table": "Terms", 
-  #             "type": "index"
+  #             "type": "index", 
+  #             "id": 259
   #           }
   #         }
   #       }, 
@@ -88,11 +95,13 @@ Execution example::
   #         "indexes": [], 
   #         "key_type": {
   #           "type": "type", 
+  #           "id": 14, 
   #           "name": "ShortText"
   #         }, 
   #         "value_type": null, 
   #         "token_filters": [], 
   #         "type": "hash table", 
+  #         "id": 256, 
   #         "columns": {
   #           "content": {
   #             "name": "content", 
@@ -113,73 +122,88 @@ Execution example::
   #               {
   #                 "table": "Terms", 
   #                 "section": 0, 
-  #                 "name": "memos_content_index", 
-  #                 "full_name": "Terms.memos_content_index"
+  #                 "id": 259, 
+  #                 "full_name": "Terms.memos_content_index", 
+  #                 "name": "memos_content_index"
   #               }
   #             ], 
   #             "sources": [], 
   #             "value_type": {
   #               "type": "type", 
+  #               "id": 15, 
   #               "name": "Text"
   #             }, 
   #             "full_name": "Memos.content", 
   #             "position": false, 
   #             "table": "Memos", 
-  #             "type": "scalar"
+  #             "type": "scalar", 
+  #             "id": 257
   #           }
   #         }
   #       }
   #     }, 
   #     "normalizers": {
   #       "NormalizerNFKC51": {
+  #         "id": 79, 
   #         "name": "NormalizerNFKC51"
   #       }, 
   #       "NormalizerAuto": {
+  #         "id": 78, 
   #         "name": "NormalizerAuto"
   #       }
   #     }, 
   #     "token_filters": {}, 
   #     "tokenizers": {
   #       "TokenBigramSplitSymbolAlphaDigit": {
+  #         "id": 71, 
   #         "name": "TokenBigramSplitSymbolAlphaDigit"
   #       }, 
   #       "TokenRegexp": {
+  #         "id": 77, 
   #         "name": "TokenRegexp"
   #       }, 
   #       "TokenBigramIgnoreBlankSplitSymbolAlphaDigit": {
+  #         "id": 75, 
   #         "name": "TokenBigramIgnoreBlankSplitSymbolAlphaDigit"
   #       }, 
   #       "TokenBigram": {
+  #         "id": 67, 
   #         "name": "TokenBigram"
   #       }, 
   #       "TokenDelimit": {
+  #         "id": 65, 
   #         "name": "TokenDelimit"
   #       }, 
   #       "TokenUnigram": {
+  #         "id": 66, 
   #         "name": "TokenUnigram"
   #       }, 
   #       "TokenBigramSplitSymbol": {
+  #         "id": 69, 
   #         "name": "TokenBigramSplitSymbol"
   #       }, 
   #       "TokenDelimitNull": {
+  #         "id": 76, 
   #         "name": "TokenDelimitNull"
   #       }, 
   #       "TokenBigramIgnoreBlankSplitSymbolAlpha": {
+  #         "id": 74, 
   #         "name": "TokenBigramIgnoreBlankSplitSymbolAlpha"
   #       }, 
   #       "TokenBigramSplitSymbolAlpha": {
+  #         "id": 70, 
   #         "name": "TokenBigramSplitSymbolAlpha"
   #       }, 
   #       "TokenTrigram": {
+  #         "id": 68, 
   #         "name": "TokenTrigram"
   #       }, 
-  #       "TokenMecab": {
-  #         "name": "TokenMecab"
-  #       }, 
   #       "TokenBigramIgnoreBlankSplitSymbol": {
+  #         "id": 73, 
   #         "name": "TokenBigramIgnoreBlankSplitSymbol"
   #       }, 
   #       "TokenBigramIgnoreBlank": {
+  #         "id": 72, 
   #         "name": "TokenBigramIgnoreBlank"
   #       }
   #     }, 
@@ -187,105 +211,122 @@ Execution example::
   #     "types": {
   #       "UInt64": {
   #         "can_be_key_type": true, 
-  #         "name": "UInt64", 
+  #         "size": 8, 
+  #         "id": 11, 
   #         "can_be_value_type": true, 
-  #         "size": 8
+  #         "name": "UInt64"
   #       }, 
   #       "Int32": {
   #         "can_be_key_type": true, 
-  #         "name": "Int32", 
+  #         "size": 4, 
+  #         "id": 8, 
   #         "can_be_value_type": true, 
-  #         "size": 4
+  #         "name": "Int32"
   #       }, 
   #       "Int16": {
   #         "can_be_key_type": true, 
-  #         "name": "Int16", 
+  #         "size": 2, 
+  #         "id": 6, 
   #         "can_be_value_type": true, 
-  #         "size": 2
+  #         "name": "Int16"
   #       }, 
   #       "LongText": {
   #         "can_be_key_type": false, 
-  #         "name": "LongText", 
+  #         "size": 2147483648, 
+  #         "id": 16, 
   #         "can_be_value_type": false, 
-  #         "size": 2147483648
+  #         "name": "LongText"
   #       }, 
   #       "TokyoGeoPoint": {
   #         "can_be_key_type": true, 
-  #         "name": "TokyoGeoPoint", 
+  #         "size": 8, 
+  #         "id": 17, 
   #         "can_be_value_type": true, 
-  #         "size": 8
+  #         "name": "TokyoGeoPoint"
   #       }, 
   #       "Text": {
   #         "can_be_key_type": false, 
-  #         "name": "Text", 
+  #         "size": 65536, 
+  #         "id": 15, 
   #         "can_be_value_type": false, 
-  #         "size": 65536
+  #         "name": "Text"
   #       }, 
   #       "ShortText": {
   #         "can_be_key_type": true, 
-  #         "name": "ShortText", 
+  #         "size": 4096, 
+  #         "id": 14, 
   #         "can_be_value_type": false, 
-  #         "size": 4096
+  #         "name": "ShortText"
   #       }, 
   #       "Float": {
   #         "can_be_key_type": true, 
-  #         "name": "Float", 
+  #         "size": 8, 
+  #         "id": 12, 
   #         "can_be_value_type": true, 
-  #         "size": 8
+  #         "name": "Float"
   #       }, 
   #       "UInt8": {
   #         "can_be_key_type": true, 
-  #         "name": "UInt8", 
+  #         "size": 1, 
+  #         "id": 5, 
   #         "can_be_value_type": true, 
-  #         "size": 1
+  #         "name": "UInt8"
   #       }, 
   #       "UInt32": {
   #         "can_be_key_type": true, 
-  #         "name": "UInt32", 
+  #         "size": 4, 
+  #         "id": 9, 
   #         "can_be_value_type": true, 
-  #         "size": 4
+  #         "name": "UInt32"
   #       }, 
   #       "Object": {
   #         "can_be_key_type": true, 
-  #         "name": "Object", 
+  #         "size": 8, 
+  #         "id": 2, 
   #         "can_be_value_type": true, 
-  #         "size": 8
+  #         "name": "Object"
   #       }, 
   #       "UInt16": {
   #         "can_be_key_type": true, 
-  #         "name": "UInt16", 
+  #         "size": 2, 
+  #         "id": 7, 
   #         "can_be_value_type": true, 
-  #         "size": 2
+  #         "name": "UInt16"
   #       }, 
   #       "Int64": {
   #         "can_be_key_type": true, 
-  #         "name": "Int64", 
+  #         "size": 8, 
+  #         "id": 10, 
   #         "can_be_value_type": true, 
-  #         "size": 8
+  #         "name": "Int64"
   #       }, 
   #       "Time": {
   #         "can_be_key_type": true, 
-  #         "name": "Time", 
+  #         "size": 8, 
+  #         "id": 13, 
   #         "can_be_value_type": true, 
-  #         "size": 8
+  #         "name": "Time"
   #       }, 
   #       "Bool": {
   #         "can_be_key_type": true, 
-  #         "name": "Bool", 
+  #         "size": 1, 
+  #         "id": 3, 
   #         "can_be_value_type": true, 
-  #         "size": 1
+  #         "name": "Bool"
   #       }, 
   #       "WGS84GeoPoint": {
   #         "can_be_key_type": true, 
-  #         "name": "WGS84GeoPoint", 
+  #         "size": 8, 
+  #         "id": 18, 
   #         "can_be_value_type": true, 
-  #         "size": 8
+  #         "name": "WGS84GeoPoint"
   #       }, 
   #       "Int8": {
   #         "can_be_key_type": true, 
-  #         "name": "Int8", 
+  #         "size": 1, 
+  #         "id": 4, 
   #         "can_be_value_type": true, 
-  #         "size": 1
+  #         "name": "Int8"
   #       }
   #     }
   #   }

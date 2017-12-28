@@ -11,7 +11,7 @@ Execution example::
   #       [
   #         "command_object_remove", 
   #         "proc_object.c", 
-  #         121
+  #         118
   #       ]
   #     ]
   #   ], 

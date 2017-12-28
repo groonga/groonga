@@ -10,13 +10,14 @@ Execution example::
   #   ], 
   #   {
   #     "uptime": 0, 
-  #     "max_command_version": 2, 
-  #     "n_queries": 0, 
+  #     "max_command_version": 3, 
+  #     "start_time": 1514346060, 
   #     "cache_hit_rate": 0.0, 
-  #     "version": "5.0.6-128-g8029ddb", 
-  #     "alloc_count": 206, 
+  #     "version": "7.0.9", 
+  #     "alloc_count": 13365, 
   #     "command_version": 1, 
-  #     "starttime": 1439995916, 
-  #     "default_command_version": 1
+  #     "starttime": 1514346060, 
+  #     "default_command_version": 1, 
+  #     "n_queries": 0
   #   }
   # ]

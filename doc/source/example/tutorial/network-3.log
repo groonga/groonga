@@ -11,14 +11,15 @@ Execution example::
   #   ], 
   #   {
   #     "uptime": 0, 
-  #     "max_command_version": 2, 
-  #     "n_queries": 0, 
+  #     "max_command_version": 3, 
+  #     "start_time": 1514346072, 
   #     "cache_hit_rate": 0.0, 
-  #     "version": "5.0.6-128-g8029ddb", 
-  #     "alloc_count": 185, 
+  #     "version": "7.0.9", 
+  #     "alloc_count": 13344, 
   #     "command_version": 1, 
-  #     "starttime": 1439995935, 
-  #     "default_command_version": 1
+  #     "starttime": 1514346072, 
+  #     "default_command_version": 1, 
+  #     "n_queries": 0
   #   }
   # ]
   http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/select?table=Site&query=title:@this

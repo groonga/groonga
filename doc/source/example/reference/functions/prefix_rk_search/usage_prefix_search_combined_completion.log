@@ -1,8 +1,7 @@
 Execution example::
 
   select Items \
-   --filter 'sub_filter(readings, "prefix_rk_search(_key, \\"niho\\")") || \
-             _key @^ "niho"'
+   --filter 'sub_filter(readings, "prefix_rk_search(_key, \\"niho\\")") || _key @^ "niho"'
   # [
   #   [
   #     0, 

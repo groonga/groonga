@@ -3,20 +3,16 @@ Execution example::
   tokenize TokenMecab "東京都"
   # [
   #   [
-  #     0, 
+  #     -22, 
   #     1337566253.89858, 
-  #     0.000355720520019531
-  #   ], 
-  #   [
-  #     {
-  #       "position": 0, 
-  #       "force_prefix": false, 
-  #       "value": "東京"
-  #     }, 
-  #     {
-  #       "position": 1, 
-  #       "force_prefix": false, 
-  #       "value": "都"
-  #     }
+  #     0.000355720520019531, 
+  #     "[tokenize] nonexistent tokenizer: <TokenMecab>", 
+  #     [
+  #       [
+  #         "create_lexicon_for_tokenize", 
+  #         "proc_tokenize.c", 
+  #         139
+  #       ]
+  #     ]
   #   ]
   # ]

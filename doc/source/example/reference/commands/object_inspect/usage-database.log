@@ -8,7 +8,9 @@ Execution example::
   #     0.000355720520019531
   #   ], 
   #   {
+  #     "disk_usage": 22347776, 
   #     "name_table": {
+  #       "disk_usage": 1052672, 
   #       "name": "", 
   #       "n_records": 256, 
   #       "value": null, 

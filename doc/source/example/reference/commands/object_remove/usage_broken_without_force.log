@@ -6,7 +6,8 @@ Execution example::
   # [[0, 1337566253.89858, 0.000355720520019531], 1]
   database_unmap
   # [[0, 1337566253.89858, 0.000355720520019531], true]
-  echo "BROKEN" > ${DB_PATH}.0000100
+  % echo "BROKEN" > ${DB_PATH}.0000100
+  
   object_remove Users
   # [
   #   [
@@ -18,7 +19,7 @@ Execution example::
   #       [
   #         "command_object_remove", 
   #         "proc_object.c", 
-  #         116
+  #         113
   #       ]
   #     ]
   #   ], 

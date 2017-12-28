@@ -13,24 +13,24 @@ Execution example::
   select Words --filter '_key *T "Groonga is the successor project to Senna."' --output_columns _key
   # [
   #   [
-  #     0,
-  #     1337566253.89858,
+  #     0, 
+  #     1337566253.89858, 
   #     0.000355720520019531
-  #   ],
+  #   ], 
   #   [
   #     [
   #       [
   #         2
-  #       ],
+  #       ], 
   #       [
   #         [
-  #           "_key",
+  #           "_key", 
   #           "ShortText"
   #         ]
-  #       ],
+  #       ], 
   #       [
   #         "groonga"
-  #       ],
+  #       ], 
   #       [
   #         "senna"
   #       ]

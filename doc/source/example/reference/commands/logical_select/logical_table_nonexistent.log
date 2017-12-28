@@ -10,8 +10,8 @@ Execution example::
   #     [
   #       [
   #         "Groonga::Sharding::LogicalSelectCommand::Executor.execute_search", 
-  #         "/home/kou/work/c/groonga.clean/plugins/sharding/logical_select.rb", 
-  #         548
+  #         "/home/horimoto/work/release/groonga/groonga.clean/plugins/sharding/logical_select.rb", 
+  #         560
   #       ]
   #     ]
   #   ]
