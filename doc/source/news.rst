@@ -46,8 +46,7 @@ Improvements
     * outputs number of deleted and error records.
     * outputs number of rest number of records.
 
-* [:doc:`/reference/executables/groonga-server-http`] Ensured
-  stopping by C-c.
+* [groonga] Ensured stopping by C-c.
 
 * Used ``NaN`` and ``Infinity``, ``-Infinity`` instead of Lisp
   representations(``#<nan>`` and  ``#i1/0``, ``#-i1/0``).
