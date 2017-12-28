@@ -240,7 +240,7 @@ Here are schema and data:
 .. include:: ../../example/reference/commands/column_copy/change_table_type_setup.log
 .. table_create Names TABLE_HASH_KEY ShortText
 .. column_create Names used COLUMN_SCALAR Bool
-.. load --table Entries
+.. load --table Names
 .. [
 .. {"_key": "alice", "used": false}
 .. ]
