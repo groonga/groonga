@@ -82,6 +82,8 @@ Improvements
 * [:doc:`/reference/executables/groonga`] Added ``--listen-backlog option``.
   You can customize ``listen(2)``'s backlog by this option.
 
+* [httpd] Updated bundled nginx to 1.13.8.
+
 Fixes
 ^^^^^
 
