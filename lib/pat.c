@@ -555,18 +555,26 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
 grn_rc
 grn_pat_cache_enable(grn_ctx *ctx, grn_pat *pat, uint32_t cache_size)
 {
-  if (pat->cache || pat->cache_size) {
-    ERR(GRN_INVALID_ARGUMENT, "cache is already enabled");
-    return ctx->rc;
-  }
+  grn_id *cache;
+
   if (cache_size & (cache_size - 1)) {
-    ERR(GRN_INVALID_ARGUMENT, "cache_size(%u) must be a power of two", cache_size);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[pat][cache][enable] size must be a power of two: %u",
+        cache_size);
     return ctx->rc;
   }
-  if (!(pat->cache = GRN_CALLOC(cache_size * sizeof(grn_id)))) {
+  if (cache_size <= pat->cache_size) {
+    return GRN_SUCCESS;
+  }
+  if (!(cache = GRN_CALLOC(cache_size * sizeof(grn_id)))) {
     return ctx->rc;
   }
+  if (pat->cache) {
+    GRN_FREE(pat->cache);
+  }
+  pat->cache = cache;
   pat->cache_size = cache_size;
+
   return GRN_SUCCESS;
 }
 
@@ -724,6 +732,22 @@ exit:
   return rc;
 }
 
+static uint32_t
+grn_pat_cache_compute_id(grn_ctx *ctx,
+                         grn_pat *pat,
+                         const uint8_t *key,
+                         uint32_t size)
+{
+  const uint8_t *p = key;
+  uint32_t length = size;
+  uint32_t cache_id = 0;
+  for (cache_id = 0; length--; p++) {
+    cache_id = (cache_id * 37) + *p;
+  }
+  cache_id &= (pat->cache_size - 1);
+  return cache_id;
+}
+
 grn_inline static grn_id
 _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint32_t *new, uint32_t *lkey)
 {
@@ -734,10 +758,7 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
 
   *new = 0;
   if (pat->cache) {
-    const uint8_t *p = key;
-    uint32_t length = size;
-    for (cache_id = 0; length--; p++) { cache_id = (cache_id * 37) + *p; }
-    cache_id &= (pat->cache_size - 1);
+    cache_id = grn_pat_cache_compute_id(ctx, pat, key, size);
     if (pat->cache[cache_id]) {
       PAT_AT(pat, pat->cache[cache_id], rn);
       if (rn) {
@@ -1651,6 +1672,14 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
     PAT_AT(pat, otherside, rno);
     if (!rno) {
       return GRN_FILE_CORRUPT;
+    }
+  }
+
+  if (pat->cache) {
+    uint32_t cache_id;
+    cache_id = grn_pat_cache_compute_id(ctx, pat, key, key_size);
+    if (pat->cache[cache_id]) {
+      pat->cache[cache_id] = GRN_ID_NIL;
     }
   }
 
