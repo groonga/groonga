@@ -115,7 +115,7 @@ msgid ""
 "``highlight_html`` and ``snippet_html`` for regexp search. [GitHub#787]"
 "[Reported by takagi01]"
 msgstr ""
-"部分的に正規表現を用いて検索から、キワードを抽出出来るように改良しました。こ"
+"部分的に正規表現を用いた検索から、キーワードを抽出出来るように改良しました。こ"
 "れにより、正規表現を用いた検索に ``highlight_html`` と ``snippet_html`` を使"
 "えるようになります。[takagi01さんに報告いただきました]"
 
@@ -173,6 +173,9 @@ msgstr ""
 "[:doc:`/reference/executables/groonga`] groongaコマンドの引数に``--listen-"
 "backlog`` オプションを追加しました。listenシステムコールのbacklogをカスタマイ"
 "ズできます。"
+
+msgid "[httpd] Updated bundled nginx to 1.13.8."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.13.8に更新しました。"
 
 msgid "Fixes"
 msgstr "修正"
