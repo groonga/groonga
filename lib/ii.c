@@ -4500,7 +4500,9 @@ grn_ii_expire(grn_ctx *ctx, grn_ii *ii)
   /*
   grn_io_expire(ctx, ii->seg, 128, 1000000);
   */
-  grn_io_expire(ctx, ii->chunk, 0, 1000000);
+  if (ii->chunk->nmaps > ii->chunk->max_map_seg / 2) {
+    grn_io_expire(ctx, ii->chunk, 0, 1000000);
+  }
 }
 
 grn_rc
