@@ -46,6 +46,8 @@ typedef struct {
   unsigned int weight;
 } weight_uvector_entry;
 
+static const uint32_t GRN_TABLE_PAT_KEY_CACHE_SIZE = 1 << 20;
+
 #define IS_WEIGHT_UVECTOR(obj) ((obj)->header.flags & GRN_OBJ_WITH_WEIGHT)
 
 #define GRN_TABLE_GROUPED (0x01<<0)
@@ -8896,6 +8898,9 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
       case GRN_TABLE_PAT_KEY :
         ((grn_pat *)obj)->tokenizer = value;
         ((grn_pat *)obj)->header->tokenizer = grn_obj_id(ctx, value);
+        grn_pat_cache_enable(ctx,
+                             ((grn_pat *)obj),
+                             GRN_TABLE_PAT_KEY_CACHE_SIZE);
         rc = GRN_SUCCESS;
         break;
       case GRN_TABLE_DAT_KEY :
@@ -10514,6 +10519,11 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                   grn_token_filters_unpack(ctx,
                                            &(pat->token_filters),
                                            &decoded_spec);
+                  if (pat->tokenizer) {
+                    grn_pat_cache_enable(ctx,
+                                         pat,
+                                         GRN_TABLE_PAT_KEY_CACHE_SIZE);
+                  }
                 }
                 break;
               case GRN_TABLE_DAT_KEY :

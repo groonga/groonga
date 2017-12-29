@@ -9595,8 +9595,6 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   ii_buffer->block_pos = 0;
 }
 
-const uint32_t PAT_CACHE_SIZE = 1<<20;
-
 /*
  * get_tmp_lexicon returns a temporary lexicon.
  *
@@ -9626,9 +9624,6 @@ get_tmp_lexicon(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
                        GRN_INFO_NORMALIZER, normalizer);
       grn_obj_set_info(ctx, tmp_lexicon,
                        GRN_INFO_TOKEN_FILTERS, token_filters);
-      if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
-        grn_pat_cache_enable(ctx, (grn_pat *)tmp_lexicon, PAT_CACHE_SIZE);
-      }
     }
   }
   return tmp_lexicon;
@@ -10172,10 +10167,6 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
             grn_table_flags flags;
             grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL, NULL,
                                NULL);
-            if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
-              grn_pat_cache_enable(ctx, (grn_pat *)ii->lexicon,
-                                   PAT_CACHE_SIZE);
-            }
             return ii_buffer;
           } else {
             SERR("failed grn_mkstemp(%s)",
@@ -10392,9 +10383,6 @@ grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   grn_table_flags flags;
   grn_table_get_info(ctx, ii_buffer->ii->lexicon, &flags, NULL, NULL, NULL,
                      NULL);
-  if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
-    grn_pat_cache_disable(ctx, (grn_pat *)ii_buffer->ii->lexicon);
-  }
   if (ii_buffer->tmp_lexicon) {
     grn_obj_close(ctx, ii_buffer->tmp_lexicon);
   }
