@@ -98,6 +98,12 @@ query_element ::= IDENTIFIER RELATIVE_OP query_element. {
       GRN_INT32_POP(&efsi->similarity_threshold_stack, similarity_threshold);
     }
     break;
+  case GRN_OP_QUORUM :
+    {
+      int quorum_threshold;
+      GRN_INT32_POP(&efsi->quorum_threshold_stack, quorum_threshold);
+    }
+    break;
   default :
     break;
   }
