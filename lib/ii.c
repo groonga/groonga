@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <float.h>
 
 #ifdef WIN32
 # include <io.h>
@@ -7777,6 +7778,94 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
 }
 
 typedef struct {
+  grn_obj *lexicon;
+  const char *query;
+  unsigned int query_len;
+  grn_hash *result_set;
+  grn_operator op;
+  grn_select_optarg *optarg;
+  grn_operator mode;
+  grn_wv_mode wv_mode;
+  grn_scorer_score_func *score_func;
+  grn_scorer_matched_record record;
+  grn_id previous_min;
+  grn_id current_min;
+  grn_bool set_min_enable_for_and_query;
+} grn_ii_select_data;
+
+static void
+grn_ii_select_data_init(grn_ctx *ctx,
+                        grn_ii_select_data *data,
+                        grn_select_optarg *optarg)
+{
+  data->optarg = optarg;
+  data->mode = GRN_OP_EXACT;
+  data->wv_mode = grn_wv_none;
+  data->score_func = NULL;
+  data->previous_min = GRN_ID_NIL;
+  data->current_min = GRN_ID_NIL;
+  data->set_min_enable_for_and_query = GRN_FALSE;
+
+  if (!optarg) {
+    return;
+  }
+
+  data->mode = optarg->mode;
+
+  if (optarg->func) {
+    data->wv_mode = grn_wv_dynamic;
+  } else if (optarg->vector_size != 0) {
+    if (optarg->weight_vector) {
+      data->wv_mode = grn_wv_static;
+    } else {
+      data->wv_mode = grn_wv_constant;
+    }
+  }
+
+  if (optarg->match_info) {
+    if (optarg->match_info->flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
+      data->previous_min = optarg->match_info->min;
+      data->set_min_enable_for_and_query = GRN_TRUE;
+    }
+  }
+
+  if (optarg->scorer) {
+    grn_proc *scorer = (grn_proc *)(optarg->scorer);
+    data->score_func = scorer->callbacks.scorer.score;
+    data->record.table = grn_ctx_at(ctx, data->result_set->obj.header.domain);
+    data->record.lexicon = data->lexicon;
+    data->record.id = GRN_ID_NIL;
+    GRN_RECORD_INIT(&(data->record.terms), GRN_OBJ_VECTOR,
+                    data->lexicon->header.domain);
+    GRN_UINT32_INIT(&(data->record.term_weights), GRN_OBJ_VECTOR);
+    data->record.total_term_weights = 0;
+    data->record.n_documents = grn_table_size(ctx, data->record.table);
+    data->record.n_occurrences = 0;
+    data->record.n_candidates = 0;
+    data->record.n_tokens = 0;
+    data->record.weight = 0;
+    data->record.args_expr = optarg->scorer_args_expr;
+    data->record.args_expr_offset = optarg->scorer_args_expr_offset;
+  }
+}
+
+static void
+grn_ii_select_data_fin(grn_ctx *ctx,
+                       grn_ii_select_data *data)
+{
+  if (data->score_func) {
+    GRN_OBJ_FIN(ctx, &(data->record.terms));
+    GRN_OBJ_FIN(ctx, &(data->record.term_weights));
+  }
+
+  if (data->set_min_enable_for_and_query) {
+    if (data->current_min > data->previous_min) {
+      data->optarg->match_info->min = data->current_min;
+    }
+  }
+}
+
+typedef struct {
   grn_id rid;
   uint32_t sid;
   uint32_t start_pos;
@@ -8328,6 +8417,153 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
   return rc;
 }
 
+typedef struct {
+  uint32_t n_occurs;
+  double score;
+} grn_ii_quorum_match_record_data;
+
+grn_rc
+grn_ii_quorum_match(grn_ctx *ctx, grn_ii *ii, grn_ii_select_data *data)
+{
+  size_t record_key_size;
+  grn_hash *n_occurs;
+  grn_token_cursor *token_cursor;
+  unsigned int token_flags = 0;
+  int ii_cursor_flags = 0;
+
+  record_key_size = sizeof(grn_id);
+  if (ii->header->flags & GRN_OBJ_WITH_SECTION) {
+    record_key_size += sizeof(uint32_t);
+    ii_cursor_flags |= GRN_OBJ_WITH_SECTION;
+  }
+
+  n_occurs = grn_hash_create(ctx,
+                             NULL,
+                             record_key_size,
+                             sizeof(grn_ii_quorum_match_record_data),
+                             0);
+  if (!n_occurs) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+
+  token_cursor = grn_token_cursor_open(ctx,
+                                       data->lexicon,
+                                       data->query, data->query_len,
+                                       GRN_TOKEN_GET,
+                                       token_flags);
+  if (!token_cursor) {
+    grn_rc rc = ctx->rc;
+    char ii_name[GRN_TABLE_MAX_KEY_SIZE];
+    int ii_name_len;
+
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_UNKNOWN_ERROR;
+    }
+    ii_name_len = grn_obj_name(ctx,
+                               (grn_obj *)ii,
+                               ii_name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(rc,
+        "[ii][quorum-match] failed to create token cursor: <%.*s>: <%.*s>%s%s",
+        ii_name_len, ii_name,
+        data->query_len, data->query,
+        ctx->errbuf[0] ? ": " : "",
+        ctx->errbuf[0] ? ctx->errbuf : "");
+    grn_hash_close(ctx, n_occurs);
+    return rc;
+  }
+  while (token_cursor->status != GRN_TOKEN_CURSOR_DONE &&
+         token_cursor->status != GRN_TOKEN_CURSOR_DONE_SKIP) {
+    grn_id tid;
+    if ((tid = grn_token_cursor_next(ctx, token_cursor)) != GRN_ID_NIL) {
+      grn_ii_cursor *cursor;
+      cursor = grn_ii_cursor_open(ctx, ii, tid,
+                                  GRN_ID_NIL, GRN_ID_MAX, ii->n_elements,
+                                  ii_cursor_flags);
+      while (grn_ii_cursor_next(ctx, cursor)) {
+        grn_ii_quorum_match_record_data *record_data;
+        double weight;
+
+        weight = get_weight(ctx,
+                            data->result_set,
+                            cursor->post->rid,
+                            cursor->post->sid,
+                            data->wv_mode,
+                            data->optarg);
+        if (weight <= DBL_EPSILON) {
+          continue;
+        }
+        if (grn_hash_add(ctx, n_occurs,
+                         cursor->post,
+                         record_key_size,
+                         (void **)&record_data,
+                         NULL)) {
+          record_data->n_occurs++;
+          record_data->score += weight;
+        }
+      }
+      grn_ii_cursor_close(ctx, cursor);
+    }
+  }
+  grn_token_cursor_close(ctx, token_cursor);
+
+  {
+    grn_rset_posinfo posinfo;
+    grn_hash_cursor *cursor;
+
+    memset(&posinfo, 0, sizeof(grn_rset_posinfo));
+    cursor = grn_hash_cursor_open(ctx, n_occurs, NULL, 0, NULL, 0, 0, -1, 0);
+    if (!cursor) {
+      grn_rc rc = ctx->rc;
+      char ii_name[GRN_TABLE_MAX_KEY_SIZE];
+      int ii_name_len;
+
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_UNKNOWN_ERROR;
+      }
+      ii_name_len = grn_obj_name(ctx,
+                                 (grn_obj *)ii,
+                                 ii_name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(rc,
+          "[ii][quorum-match] failed to create count cursor: <%.*s>: <%.*s>%s%s",
+          ii_name_len, ii_name,
+          data->query_len, data->query,
+          ctx->errbuf[0] ? ": " : "",
+          ctx->errbuf[0] ? ctx->errbuf : "");
+      grn_hash_close(ctx, n_occurs);
+      return rc;
+    }
+    {
+      const int quorum_threshold = data->optarg->quorum_threshold;
+      while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
+        grn_posting *posting;
+        grn_ii_quorum_match_record_data *record_data;
+
+        grn_hash_cursor_get_key_value(ctx, cursor,
+                                      (void **)&posting,
+                                      NULL,
+                                      (void **)&record_data);
+        if (record_data->n_occurs >= quorum_threshold) {
+          double score = record_data->score;
+          memcpy(&posinfo, posting, record_key_size);
+          if (data->score_func) {
+            data->record.id = posting->rid;
+            data->record.weight = score / record_data->n_occurs;
+            data->record.n_occurrences = record_data->n_occurs;
+            data->record.total_term_weights = data->record.weight;
+            score = data->score_func(ctx, &(data->record)) * data->record.weight;
+          }
+          res_add(ctx, data->result_set, &posinfo, score, data->op);
+        }
+      }
+    }
+    grn_hash_cursor_close(ctx, cursor);
+  }
+  grn_hash_close(ctx, n_occurs);
+  grn_ii_resolve_sel_and(ctx, data->result_set, data->op);
+
+  return GRN_SUCCESS;
+}
+
 #ifdef GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH
 static grn_bool
 grn_ii_select_sequential_search_should_use(grn_ctx *ctx,
@@ -8557,38 +8793,33 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
   token_info *ti, **tis = NULL, **tip, **tie;
   uint32_t n = 0, rid, sid, nrid, nsid;
   grn_bool only_skip_token = GRN_FALSE;
-  grn_operator mode = GRN_OP_EXACT;
-  grn_wv_mode wvm = grn_wv_none;
-  grn_obj *lexicon = ii->lexicon;
-  grn_scorer_score_func *score_func = NULL;
-  grn_scorer_matched_record record;
-  grn_id previous_min = GRN_ID_NIL;
-  grn_id current_min = GRN_ID_NIL;
-  grn_bool set_min_enable_for_and_query = GRN_FALSE;
+  grn_obj *lexicon;
+  grn_ii_select_data data;
 
-  if (!lexicon || !ii || !s) { return GRN_INVALID_ARGUMENT; }
-  if (optarg) {
-    mode = optarg->mode;
-    if (optarg->func) {
-      wvm = grn_wv_dynamic;
-    } else if (optarg->vector_size) {
-      wvm = optarg->weight_vector ? grn_wv_static : grn_wv_constant;
-    }
-    if (optarg->match_info) {
-      if (optarg->match_info->flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
-        previous_min = optarg->match_info->min;
-        set_min_enable_for_and_query = GRN_TRUE;
-      }
-    }
+  if (!ii) {
+    return GRN_INVALID_ARGUMENT;
   }
-  if (mode == GRN_OP_SIMILAR) {
+
+  lexicon = ii->lexicon;
+  if (!lexicon || !s) { return GRN_INVALID_ARGUMENT; }
+
+  data.lexicon = lexicon;
+  data.query = string;
+  data.query_len = string_len;
+  data.result_set = s;
+  data.op = op;
+  grn_ii_select_data_init(ctx, &data, optarg);
+  if (data.mode == GRN_OP_SIMILAR) {
     return grn_ii_similar_search(ctx, ii, string, string_len, s, op, optarg);
   }
-  if (mode == GRN_OP_TERM_EXTRACT) {
+  if (data.mode == GRN_OP_TERM_EXTRACT) {
     return grn_ii_term_extract(ctx, ii, string, string_len, s, op, optarg);
   }
-  if (mode == GRN_OP_REGEXP) {
+  if (data.mode == GRN_OP_REGEXP) {
     return grn_ii_select_regexp(ctx, ii, string, string_len, s, op, optarg);
+  }
+  if (data.mode == GRN_OP_QUORUM) {
+    return grn_ii_quorum_match(ctx, ii, &data);
   }
   /* todo : support subrec
   rep = (s->record_unit == grn_rec_position || s->subrec_unit == grn_rec_position);
@@ -8600,24 +8831,25 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
   if (!(tis = GRN_MALLOC(sizeof(token_info *) * string_len * 2))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
-  if (mode == GRN_OP_FUZZY) {
+  if (data.mode == GRN_OP_FUZZY) {
     if (token_info_build_fuzzy(ctx, lexicon, ii, string, string_len,
-                               tis, &n, &only_skip_token, previous_min,
-                               mode, &(optarg->fuzzy)) ||
+                               tis, &n, &only_skip_token, data.previous_min,
+                               data.mode, &(optarg->fuzzy)) ||
         !n) {
       goto exit;
     }
   } else {
     if (token_info_build(ctx, lexicon, ii, string, string_len,
-                         tis, &n, &only_skip_token, previous_min, mode) ||
+                         tis, &n, &only_skip_token, data.previous_min,
+                         data.mode) ||
         !n) {
       goto exit;
     }
   }
-  switch (mode) {
+  switch (data.mode) {
   case GRN_OP_NEAR2 :
     token_info_clear_offset(tis, n);
-    mode = GRN_OP_NEAR;
+    data.mode = GRN_OP_NEAR;
     /* fallthru */
   case GRN_OP_NEAR :
     if (!(bt = bt_open(ctx, n))) { rc = GRN_NO_MEMORY_AVAILABLE; goto exit; }
@@ -8656,28 +8888,10 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
   */
 #ifdef GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH
   if (grn_ii_select_sequential_search(ctx, ii, string, string_len,
-                                      s, op, wvm, optarg, tis, n)) {
+                                      s, op, data.wv_mode, optarg, tis, n)) {
     goto exit;
   }
 #endif
-
-  if (optarg && optarg->scorer) {
-    grn_proc *scorer = (grn_proc *)(optarg->scorer);
-    score_func = scorer->callbacks.scorer.score;
-    record.table = grn_ctx_at(ctx, s->obj.header.domain);
-    record.lexicon = lexicon;
-    record.id = GRN_ID_NIL;
-    GRN_RECORD_INIT(&(record.terms), GRN_OBJ_VECTOR, lexicon->header.domain);
-    GRN_UINT32_INIT(&(record.term_weights), GRN_OBJ_VECTOR);
-    record.total_term_weights = 0;
-    record.n_documents = grn_table_size(ctx, record.table);
-    record.n_occurrences = 0;
-    record.n_candidates = 0;
-    record.n_tokens = 0;
-    record.weight = 0;
-    record.args_expr = optarg->scorer_args_expr;
-    record.args_expr_offset = optarg->scorer_args_expr_offset;
-  }
 
   for (;;) {
     rid = (*tis)->p->rid;
@@ -8691,17 +8905,17 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
         break;
       }
     }
-    weight = get_weight(ctx, s, rid, sid, wvm, optarg);
+    weight = get_weight(ctx, s, rid, sid, data.wv_mode, optarg);
     if (tip == tie && weight != 0) {
       grn_rset_posinfo pi = {rid, sid, 0};
       if (orp || grn_hash_get(ctx, s, &pi, s->key_size, NULL)) {
         int count = 0, noccur = 0, pos = 0, score = 0, tscore = 0, min, max;
 
-        if (score_func) {
-          GRN_BULK_REWIND(&(record.terms));
-          GRN_BULK_REWIND(&(record.term_weights));
-          record.n_candidates = 0;
-          record.n_tokens = 0;
+        if (data.score_func) {
+          GRN_BULK_REWIND(&(data.record.terms));
+          GRN_BULK_REWIND(&(data.record.term_weights));
+          data.record.n_candidates = 0;
+          data.record.n_tokens = 0;
         }
 
 #define SKIP_OR_BREAK(pos) {\
@@ -8715,14 +8929,15 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
         if (n == 1 && !rep) {
           noccur = (*tis)->p->tf;
           tscore = (*tis)->p->weight + (*tis)->cursors->bins[0]->weight;
-          if (score_func) {
-            GRN_RECORD_PUT(ctx, &(record.terms), (*tis)->cursors->bins[0]->id);
-            GRN_UINT32_PUT(ctx, &(record.term_weights), tscore);
-            record.n_occurrences = noccur;
-            record.n_candidates = (*tis)->size;
-            record.n_tokens = (*tis)->ntoken;
+          if (data.score_func) {
+            GRN_RECORD_PUT(ctx, &(data.record.terms),
+                           (*tis)->cursors->bins[0]->id);
+            GRN_UINT32_PUT(ctx, &(data.record.term_weights), tscore);
+            data.record.n_occurrences = noccur;
+            data.record.n_candidates = (*tis)->size;
+            data.record.n_tokens = (*tis)->ntoken;
           }
-        } else if (mode == GRN_OP_NEAR) {
+        } else if (data.mode == GRN_OP_NEAR) {
           bt_zap(bt);
           for (tip = tis; tip < tie; tip++) {
             ti = *tip;
@@ -8773,19 +8988,20 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
             } else {
               score = ti->p->weight + ti->cursors->bins[0]->weight; count = 1;
               pos = ti->pos;
-              if (noccur == 0 && score_func) {
-                GRN_BULK_REWIND(&(record.terms));
-                GRN_BULK_REWIND(&(record.term_weights));
-                record.n_candidates = 0;
-                record.n_tokens = 0;
+              if (noccur == 0 && data.score_func) {
+                GRN_BULK_REWIND(&(data.record.terms));
+                GRN_BULK_REWIND(&(data.record.term_weights));
+                data.record.n_candidates = 0;
+                data.record.n_tokens = 0;
               }
             }
-            if (noccur == 0 && score_func) {
-              GRN_RECORD_PUT(ctx, &(record.terms), ti->cursors->bins[0]->id);
-              GRN_UINT32_PUT(ctx, &(record.term_weights),
+            if (noccur == 0 && data.score_func) {
+              GRN_RECORD_PUT(ctx, &(data.record.terms),
+                             ti->cursors->bins[0]->id);
+              GRN_UINT32_PUT(ctx, &(data.record.term_weights),
                              ti->p->weight + ti->cursors->bins[0]->weight);
-              record.n_candidates += ti->size;
-              record.n_tokens += ti->ntoken;
+              data.record.n_candidates += ti->size;
+              data.record.n_tokens += ti->ntoken;
             }
             if (count == n) {
               if (rep) {
@@ -8799,18 +9015,18 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
         }
         if (noccur && !rep) {
           double record_score;
-          if (score_func) {
-            record.id = rid;
-            record.weight = weight;
-            record.n_occurrences = noccur;
-            record.total_term_weights = tscore;
-            record_score = score_func(ctx, &record) * weight;
+          if (data.score_func) {
+            data.record.id = rid;
+            data.record.weight = weight;
+            data.record.n_occurrences = noccur;
+            data.record.total_term_weights = tscore;
+            record_score = data.score_func(ctx, &(data.record)) * weight;
           } else {
             record_score = (noccur + tscore) * weight;
           }
-          if (set_min_enable_for_and_query) {
-            if (current_min == GRN_ID_NIL) {
-              current_min = rid;
+          if (data.set_min_enable_for_and_query) {
+            if (data.current_min == GRN_ID_NIL) {
+              data.current_min = rid;
             }
           }
           res_add(ctx, s, &pi, record_score, op);
@@ -8821,16 +9037,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
     if (token_info_skip(ctx, *tis, nrid, nsid)) { goto exit; }
   }
 exit :
-  if (score_func) {
-    GRN_OBJ_FIN(ctx, &(record.terms));
-    GRN_OBJ_FIN(ctx, &(record.term_weights));
-  }
-
-  if (set_min_enable_for_and_query) {
-    if (current_min > previous_min) {
-      optarg->match_info->min = current_min;
-    }
-  }
+  grn_ii_select_data_fin(ctx, &data);
 
   for (tip = tis; tip < tis + n; tip++) {
     if (*tip) { token_info_close(ctx, *tip); }
@@ -9031,6 +9238,10 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
       case GRN_OP_FUZZY :
         arg.mode = optarg->mode;
         arg.fuzzy = optarg->fuzzy;
+        break;
+      case GRN_OP_QUORUM :
+        arg.mode = optarg->mode;
+        arg.quorum_threshold = optarg->quorum_threshold;
         break;
       default :
         break;

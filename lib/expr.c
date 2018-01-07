@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2017 Brazil
+  Copyright(C) 2010-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1100,6 +1100,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_ADJUST :
     case GRN_OP_TERM_EXTRACT :
     case GRN_OP_REGEXP :
+    case GRN_OP_QUORUM :
       PUSH_CODE(e, op, obj, nargs, code);
       if (nargs) {
         int i = nargs - 1;
@@ -3924,6 +3925,7 @@ grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset)
 #define DEFAULT_DECAYSTEP 2
 #define DEFAULT_MAX_INTERVAL 10
 #define DEFAULT_SIMILARITY_THRESHOLD 0
+#define DEFAULT_QUORUM_THRESHOLD 1
 #define DEFAULT_TERM_EXTRACT_POLICY 0
 #define DEFAULT_WEIGHT_VECTOR_SIZE 4096
 
@@ -3943,6 +3945,7 @@ struct _grn_scan_info {
   grn_obj *initial_args[GRN_SCAN_INFO_INITIAL_MAX_N_ARGS];
   int max_interval;
   int similarity_threshold;
+  int quorum_threshold;
   grn_obj scorers;
   grn_obj scorer_args_exprs;
   grn_obj scorer_args_expr_offsets;
@@ -3976,6 +3979,7 @@ struct _grn_scan_info {
     (si)->args = (si)->initial_args;\
     (si)->max_interval = DEFAULT_MAX_INTERVAL;\
     (si)->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;\
+    (si)->quorum_threshold = DEFAULT_QUORUM_THRESHOLD;\
     (si)->start = (st);\
     (si)->query = NULL;\
     GRN_PTR_INIT(&(si)->scorers, GRN_OBJ_VECTOR, GRN_ID_NIL);\
@@ -4138,7 +4142,11 @@ static const char *opstrs[] = {
   "TABLE_SELECT",
   "TABLE_SORT",
   "TABLE_GROUP",
-  "JSON_PUT"
+  "JSON_PUT",
+  "GET_MEMBER",
+  "REGEXP",
+  "FUZZY",
+  "QUORUM"
 };
 
 static void
@@ -4297,6 +4305,7 @@ grn_scan_info_open(grn_ctx *ctx, int start)
   si->args = si->initial_args;
   si->max_interval = DEFAULT_MAX_INTERVAL;
   si->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;
+  si->quorum_threshold = DEFAULT_QUORUM_THRESHOLD;
   si->start = start;
   GRN_PTR_INIT(&si->scorers, GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_PTR_INIT(&si->scorer_args_exprs, GRN_OBJ_VECTOR, GRN_ID_NIL);
@@ -4409,6 +4418,18 @@ void
 grn_scan_info_set_similarity_threshold(scan_info *si, int similarity_threshold)
 {
   si->similarity_threshold = similarity_threshold;
+}
+
+int
+grn_scan_info_get_quorum_threshold(scan_info *si)
+{
+  return si->quorum_threshold;
+}
+
+void
+grn_scan_info_set_quorum_threshold(scan_info *si, int quorum_threshold)
+{
+  si->quorum_threshold = quorum_threshold;
 }
 
 grn_bool
@@ -4810,6 +4831,15 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, int32_t weight)
           si->query = *p;
         }
         break;
+      case GRN_OP_QUORUM :
+        if (si->nargs == 3 &&
+            *p == si->args[2] &&
+            (*p)->header.domain == GRN_DB_INT32) {
+          si->quorum_threshold = GRN_INT32_VALUE(*p);
+        } else {
+          si->query = *p;
+        }
+        break;
       default :
         si->query = *p;
         break;
@@ -4952,6 +4982,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_GEO_WITHINP8 :
     case GRN_OP_TERM_EXTRACT :
     case GRN_OP_REGEXP :
+    case GRN_OP_QUORUM :
       if (stat < SCAN_COL1 || SCAN_CONST < stat) { return NULL; }
       stat = SCAN_START;
       m++;
@@ -5105,6 +5136,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_GEO_WITHINP8 :
     case GRN_OP_TERM_EXTRACT :
     case GRN_OP_REGEXP :
+    case GRN_OP_QUORUM :
       stat = SCAN_START;
       si->op = code_op;
       si->end = c - e->codes;
@@ -5438,6 +5470,7 @@ grn_scan_info_build_simple_operation(grn_ctx *ctx,
   case GRN_OP_GREATER_EQUAL :
   case GRN_OP_TERM_EXTRACT :
   case GRN_OP_REGEXP :
+  case GRN_OP_QUORUM :
     break;
   default :
     return NULL;
@@ -5519,6 +5552,7 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
     case GRN_OP_GREATER_EQUAL :
     case GRN_OP_TERM_EXTRACT :
     case GRN_OP_REGEXP :
+    case GRN_OP_QUORUM :
       break;
     default :
       return NULL;
@@ -6292,6 +6326,9 @@ grn_table_select_index_match(grn_ctx *ctx,
   case GRN_OP_SIMILAR :
     optarg.similarity_threshold = si->similarity_threshold;
     break;
+  case GRN_OP_QUORUM :
+    optarg.quorum_threshold = si->quorum_threshold;
+    break;
   default :
     break;
   }
@@ -6815,6 +6852,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
     case GRN_OP_NEAR2 :
     case GRN_OP_SIMILAR :
     case GRN_OP_REGEXP :
+    case GRN_OP_QUORUM :
       processed = grn_table_select_index_match(ctx,
                                                table,
                                                index,
@@ -7055,6 +7093,7 @@ typedef struct {
   grn_obj mode_stack;
   grn_obj max_interval_stack;
   grn_obj similarity_threshold_stack;
+  grn_obj quorum_threshold_stack;
   grn_obj weight_stack;
   grn_operator default_op;
   grn_select_optarg opt;
@@ -7134,6 +7173,13 @@ parse_query_op(efs_info *q, efs_op *op, grn_operator *mode, int *option)
     *mode = GRN_OP_EXACT;
     *option = 0;
     start = ++end;
+    q->cur = end;
+    break;
+  case 'Q' :
+    *mode = GRN_OP_QUORUM;
+    start = ++end;
+    *option = grn_atoi(start, q->str_end, (const char **)&end);
+    if (start == end) { *option = DEFAULT_QUORUM_THRESHOLD; }
     q->cur = end;
     break;
   default :
@@ -7317,6 +7363,20 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
       similarity_threshold =
         grn_int32_value_at(&efsi->similarity_threshold_stack, -1);
       grn_expr_append_const_int(efsi->ctx, efsi->e, similarity_threshold,
+                                GRN_OP_PUSH, 1);
+      if (weight == 0) {
+        grn_expr_append_op(efsi->ctx, efsi->e, mode, 3);
+      } else {
+        grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 3);
+      }
+    }
+    break;
+  case GRN_OP_QUORUM :
+    {
+      int quorum_threshold;
+      quorum_threshold =
+        grn_int32_value_at(&efsi->quorum_threshold_stack, -1);
+      grn_expr_append_const_int(efsi->ctx, efsi->e, quorum_threshold,
                                 GRN_OP_PUSH, 1);
       if (weight == 0) {
         grn_expr_append_op(efsi->ctx, efsi->e, mode, 3);
@@ -7634,6 +7694,9 @@ parse_query(grn_ctx *ctx, efs_info *q)
           break;
         case GRN_OP_SIMILAR :
           GRN_INT32_PUT(ctx, &q->similarity_threshold_stack, option);
+          break;
+        case GRN_OP_QUORUM :
+          GRN_INT32_PUT(ctx, &q->quorum_threshold_stack, option);
           break;
         default :
           break;
@@ -8133,6 +8196,22 @@ parse_script(grn_ctx *ctx, efs_info *q)
         PARSE(GRN_EXPR_TOKEN_TERM_EXTRACT);
         q->cur += 2;
         break;
+      case 'Q' :
+        {
+          const char *next_start = q->cur + 2;
+          const char *end;
+          int quorum_threshold;
+          quorum_threshold = grn_atoi(next_start, q->str_end, &end);
+          if (end == next_start) {
+            quorum_threshold = DEFAULT_QUORUM_THRESHOLD;
+          } else {
+            next_start = end;
+          }
+          GRN_INT32_PUT(ctx, &q->quorum_threshold_stack, quorum_threshold);
+          PARSE(GRN_EXPR_TOKEN_QUORUM);
+          q->cur = next_start;
+        }
+        break;
       case '>' :
         PARSE(GRN_EXPR_TOKEN_ADJUST);
         q->cur += 2;
@@ -8489,6 +8568,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_INT32_INIT(&efsi.mode_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.max_interval_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.similarity_threshold_stack, GRN_OBJ_VECTOR);
+    GRN_INT32_INIT(&efsi.quorum_threshold_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.weight_stack, GRN_OBJ_VECTOR);
     GRN_PTR_INIT(&efsi.column_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
     GRN_PTR_INIT(&efsi.token_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
@@ -8547,6 +8627,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_OBJ_FIN(ctx, &efsi.mode_stack);
     GRN_OBJ_FIN(ctx, &efsi.max_interval_stack);
     GRN_OBJ_FIN(ctx, &efsi.similarity_threshold_stack);
+    GRN_OBJ_FIN(ctx, &efsi.quorum_threshold_stack);
     GRN_OBJ_FIN(ctx, &efsi.weight_stack);
     GRN_OBJ_FIN(ctx, &efsi.column_stack);
     GRN_OBJ_FIN(ctx, &efsi.token_stack);
@@ -9212,6 +9293,7 @@ grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords)
             }
             break;
           case GRN_OP_SIMILAR :
+          case GRN_OP_QUORUM :
             if (keywords->header.type == GRN_VECTOR &&
                 GRN_BULK_VSIZE(&(si->index)) > 0) {
               grn_token_cursor *token_cursor;

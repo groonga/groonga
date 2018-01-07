@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2017 Brazil
+  Copyright(C) 2013-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -279,6 +279,29 @@ mrb_grn_scan_info_get_similarity_threshold(mrb_state *mrb, mrb_value self)
   si = DATA_PTR(self);
   similarity_threshold = grn_scan_info_get_similarity_threshold(si);
   return mrb_fixnum_value(similarity_threshold);
+}
+
+static mrb_value
+mrb_grn_scan_info_set_quorum_threshold(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  mrb_int quorum_threshold;
+
+  mrb_get_args(mrb, "i", &quorum_threshold);
+  si = DATA_PTR(self);
+  grn_scan_info_set_quorum_threshold(si, quorum_threshold);
+  return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_get_quorum_threshold(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  int quorum_threshold;
+
+  si = DATA_PTR(self);
+  quorum_threshold = grn_scan_info_get_quorum_threshold(si);
+  return mrb_fixnum_value(quorum_threshold);
 }
 
 static mrb_value
@@ -878,6 +901,10 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_get_similarity_threshold, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "similarity_threshold=",
                     mrb_grn_scan_info_set_similarity_threshold, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "quorum_threshold",
+                    mrb_grn_scan_info_get_quorum_threshold, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "quorum_threshold=",
+                    mrb_grn_scan_info_set_quorum_threshold, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "get_arg",
                     mrb_grn_scan_info_get_arg, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "push_arg",

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright(C) 2014-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -149,6 +149,7 @@ grn_mrb_operator_init(grn_ctx *ctx)
   DEFINE_OPERATOR(GET_MEMBER);
   DEFINE_OPERATOR(REGEXP);
   DEFINE_OPERATOR(FUZZY);
+  DEFINE_OPERATOR(QUORUM);
 
 #undef DEFINE_OPERATOR
 }

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -157,6 +157,7 @@ struct _grn_select_optarg {
   unsigned int scorer_args_expr_offset;
   grn_fuzzy_search_optarg fuzzy;
   grn_match_info *match_info;
+  int quorum_threshold;
 };
 
 GRN_API grn_rc grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id id,

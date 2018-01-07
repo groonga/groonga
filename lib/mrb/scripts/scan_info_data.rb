@@ -12,6 +12,7 @@ module Groonga
     attr_accessor :flags
     attr_accessor :max_interval
     attr_accessor :similarity_threshold
+    attr_accessor :quorum_threshold
     attr_accessor :start_position
     attr_accessor :weight
     def initialize(start)
@@ -25,6 +26,7 @@ module Groonga
       @flags = ScanInfo::Flags::PUSH
       @max_interval = nil
       @similarity_threshold = nil
+      @quorum_threshold = nil
       @start_position = nil
       @weight = 0
     end
@@ -34,6 +36,8 @@ module Groonga
         match_near_resolve_index
       elsif similar_search?
         match_similar_resolve_index
+      elsif quorum_match?
+        match_quorum_resolve_index
       else
         match_generic_resolve_index
       end
@@ -94,6 +98,29 @@ module Groonga
 
       self.query = @args[1]
       self.similarity_threshold = @args[2].value
+    end
+
+    def quorum_match?
+      @op == Operator::QUORUM and @args.size == 3
+    end
+
+    def match_quorum_resolve_index
+      arg = @args[0]
+      case arg
+      when Expression
+        match_resolve_index_expression(arg)
+      when Accessor
+        match_resolve_index_accessor(arg)
+      when Indexable
+        match_resolve_index_indexable(arg)
+      else
+        message =
+          "The first argument of QUORUM must be Expression, Accessor or Indexable: #{arg.class}"
+        raise ErrorMesesage, message
+      end
+
+      self.query = @args[1]
+      self.quorum_threshold = @args[2].value
     end
 
     def match_generic_resolve_index

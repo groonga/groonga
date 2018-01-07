@@ -19,6 +19,9 @@ module Groonga
       if data.similarity_threshold
         self.similarity_threshold = data.similarity_threshold
       end
+      if data.quorum_threshold
+        self.quorum_threshold = data.quorum_threshold
+      end
       data.args.each do |arg|
         push_arg(arg)
       end

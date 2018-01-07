@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3624,6 +3624,9 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx, grn_obj *obj,
           break;
         case GRN_OP_FUZZY :
           tag = "[key][fuzzy]";
+          break;
+        case GRN_OP_QUORUM :
+          tag = "[key][quorum]";
           break;
         default :
           tag = "[key][unknown]";
@@ -12815,6 +12818,7 @@ is_valid_index(grn_ctx *ctx, grn_obj *index_column, grn_operator op)
   case GRN_OP_NEAR :
   case GRN_OP_NEAR2 :
   case GRN_OP_SIMILAR :
+  case GRN_OP_QUORUM :
     return is_valid_match_index(ctx, index_column);
     break;
   case GRN_OP_LESS :
@@ -13141,6 +13145,7 @@ grn_column_find_index_data_accessor(grn_ctx *ctx, grn_obj *obj,
   case GRN_OP_CALL :
   case GRN_OP_REGEXP :
   case GRN_OP_FUZZY :
+  case GRN_OP_QUORUM :
     n = grn_column_find_index_data_accessor_match(ctx, obj, op,
                                                   index_data, n_index_data,
                                                   index_buf, buf_size,
@@ -13176,6 +13181,7 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     case GRN_OP_SIMILAR :
     case GRN_OP_REGEXP :
     case GRN_OP_FUZZY :
+    case GRN_OP_QUORUM :
       n = grn_column_find_index_data_column_match(ctx, obj, op,
                                                   NULL, 0,
                                                   index_buf, buf_size,
@@ -13226,6 +13232,7 @@ grn_column_find_index_data(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     case GRN_OP_SIMILAR :
     case GRN_OP_REGEXP :
     case GRN_OP_FUZZY :
+    case GRN_OP_QUORUM :
       n = grn_column_find_index_data_column_match(ctx, obj, op,
                                                   index_data, n_index_data,
                                                   NULL, 0, NULL);

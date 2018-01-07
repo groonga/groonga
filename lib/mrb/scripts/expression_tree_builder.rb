@@ -21,6 +21,7 @@ module Groonga
       Operator::TERM_EXTRACT,
       Operator::REGEXP,
       Operator::FUZZY,
+      Operator::QUORUM,
     ]
 
     ARITHMETIC_OPERATORS = [

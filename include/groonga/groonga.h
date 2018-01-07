@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -609,7 +609,8 @@ typedef enum {
   GRN_OP_JSON_PUT,
   GRN_OP_GET_MEMBER,
   GRN_OP_REGEXP,
-  GRN_OP_FUZZY
+  GRN_OP_FUZZY,
+  GRN_OP_QUORUM
 } grn_operator;
 
 GRN_API grn_obj *grn_obj_column(grn_ctx *ctx, grn_obj *table,
@@ -809,6 +810,7 @@ struct _grn_search_optarg {
   unsigned int scorer_args_expr_offset;
   grn_fuzzy_search_optarg fuzzy;
   grn_match_info match_info;
+  int quorum_threshold;
 };
 
 GRN_API grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
