@@ -646,6 +646,16 @@ Here are available flags:
        This flag is available only for ``COLUMN_SCALAR`` and
        ``COLUMN_VECTOR``.
 
+   * - ``COMPRESS_ZSTD``
+     - It enables column value compression by Zstandard. You need
+       Groonga that enables Zstandard support.
+
+       Compression by Zstandard is faster than compression by zlib and
+       the same space efficiency as zlib.
+
+       This flag is available only for ``COLUMN_SCALAR`` and
+       ``COLUMN_VECTOR``.
+
    * - ``WITH_SECTION``
      - It enables section support to index column.
 
