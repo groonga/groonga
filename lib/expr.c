@@ -8189,8 +8189,22 @@ parse_script(grn_ctx *ctx, efs_info *q)
         }
         break;
       case 'S' :
-        PARSE(GRN_EXPR_TOKEN_SIMILAR);
-        q->cur += 2;
+        {
+          const char *next_start = q->cur + 2;
+          const char *end;
+          int similarity_threshold;
+          similarity_threshold = grn_atoi(next_start, q->str_end, &end);
+          if (end == next_start) {
+            similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;
+          } else {
+            next_start = end;
+          }
+          GRN_INT32_PUT(ctx,
+                        &q->similarity_threshold_stack,
+                        similarity_threshold);
+          PARSE(GRN_EXPR_TOKEN_SIMILAR);
+          q->cur = next_start;
+        }
         break;
       case 'T' :
         PARSE(GRN_EXPR_TOKEN_TERM_EXTRACT);
