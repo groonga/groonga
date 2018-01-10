@@ -46,7 +46,7 @@ typedef struct {
   unsigned int weight;
 } weight_uvector_entry;
 
-static const uint32_t GRN_TABLE_PAT_KEY_CACHE_SIZE = 1 << 20;
+static const uint32_t GRN_TABLE_PAT_KEY_CACHE_SIZE = 1 << 15;
 
 #define IS_WEIGHT_UVECTOR(obj) ((obj)->header.flags & GRN_OBJ_WITH_WEIGHT)
 
