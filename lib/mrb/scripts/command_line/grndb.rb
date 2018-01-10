@@ -51,6 +51,7 @@ module Groonga
           options = command.options
           options.banner += " DB_PATH"
           options.boolean("--force-truncate", "Force to truncate corrupted objects.")
+          options.boolean("--force-lock-clear", "Force to clear lock with objects.")
 
           command.add_action do |options|
             open_database(command, options) do |database, rest_arguments|
@@ -101,6 +102,7 @@ module Groonga
         recoverer = Recoverer.new
         recoverer.database = database
         recoverer.force_truncate = options[:force_truncate]
+        recoverer.force_lock_clear = options[:force_lock_clear]
         begin
           recoverer.recover
         rescue Error => error
@@ -445,6 +447,7 @@ module Groonga
       class Recoverer
         attr_writer :database
         attr_writer :force_truncate
+        attr_writer :force_lock_clear
 
         def initialize
           @context = Context.instance
@@ -453,6 +456,9 @@ module Groonga
         def recover
           if @force_truncate
             truncate_corrupt_objects
+          end
+          if @force_lock_clear
+            lock_clear_objects
           end
           @database.recover
         end
@@ -478,6 +484,19 @@ module Groonga
                   logger.log_error(message)
                 end
               end
+            end
+          end
+        end
+
+        def lock_clear_objects
+          if @database.locked?
+              @database.unlock
+          end
+          @database.each do |object|
+            case object
+            when Column, Table
+              next unless object.locked?
+              object.unlock
             end
           end
         end
