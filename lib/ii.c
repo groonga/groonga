@@ -4131,7 +4131,7 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
         if (reduced_key_size == 0) {
           reduced_key_size = 1;
         } else {
-          reduced_key_size *= 2;
+          reduced_key_size += (key_size - target_key_size) / 16;
         }
         target_key_size -= reduced_key_size;
       }
