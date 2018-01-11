@@ -121,7 +121,7 @@ static const char *operator_names[] = {
 const char *
 grn_operator_to_string(grn_operator op)
 {
-  if (op <= GRN_OP_LAST) {
+  if (op >= 0 && op <= GRN_OP_LAST) {
     return operator_names[op];
   } else {
     return "unknown";
