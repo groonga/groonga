@@ -61,6 +61,27 @@ object corrupt: <[db][recover] column may be broken: <Users.age>: please truncat
     assert_equal("", result.error_output)
   end
 
+  def test_force_clear_locked_database
+    groonga("lock_acquire")
+    result = grndb("recover", "--force-lock-clear")
+    assert_equal("", result.error_output)
+  end
+
+  def test_force_clear_locked_table
+    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+    groonga("lock_acquire", "Users")
+    result = grndb("recover", "--force-lock-clear")
+    assert_equal("", result.error_output)
+  end
+
+  def test_force_clear_locked_data_column
+    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+    groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
+    groonga("lock_acquire", "Users.age")
+    result = grndb("recover", "--force-lock-clear")
+    assert_equal("", result.error_output)
+  end
+
   def test_empty_file
     groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
     _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
