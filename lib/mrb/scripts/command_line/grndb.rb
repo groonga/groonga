@@ -460,7 +460,7 @@ module Groonga
             truncate_corrupt_objects
           end
           if @force_lock_clear
-            lock_clear_objects
+            clear_locks
           end
           @database.recover
         end
@@ -490,7 +490,7 @@ module Groonga
           end
         end
 
-        def lock_clear_objects
+        def clear_locks
           if @database.locked?
             @database.clear_lock
           end
