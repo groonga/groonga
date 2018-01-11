@@ -153,10 +153,12 @@ break_loop:
   if (!name_end) {
     name_end = current;
   }
-  grn_proc_table_set_token_filters_put(ctx,
-                                       token_filters,
-                                       name_start,
-                                       name_end - name_start);
+  if (!grn_proc_table_set_token_filters_put(ctx,
+                                            token_filters,
+                                            name_start,
+                                            name_end - name_start)) {
+    return GRN_FALSE;
+  }
 
   return GRN_TRUE;
 }
