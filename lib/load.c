@@ -1003,13 +1003,27 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned int str_le
       }
       {
         uint32_t u = loader->unichar;
+        if (u >= 0xd800 && u <= 0xdbff) { /* High-surrogate code points */
+          loader->unichar_hi = u;
+          loader->stat = GRN_LOADER_STRING;
+          str++;
+          break;
+        }
+        if (u >= 0xdc00 && u <= 0xdfff) { /* Low-surrogate code points */
+          u = 0x10000 + (loader->unichar_hi - 0xd800) * 0x400 + u - 0xdc00;
+        }
         if (u < 0x80) {
           GRN_TEXT_PUTC(ctx, loader->last, u);
         } else {
           if (u < 0x800) {
-            GRN_TEXT_PUTC(ctx, loader->last, ((u >> 6) & 0x1f) | 0xc0);
+            GRN_TEXT_PUTC(ctx, loader->last, (u >> 6) | 0xc0);
           } else {
-            GRN_TEXT_PUTC(ctx, loader->last, (u >> 12) | 0xe0);
+            if (u < 0x10000) {
+              GRN_TEXT_PUTC(ctx, loader->last, (u >> 12) | 0xe0);
+            } else {
+              GRN_TEXT_PUTC(ctx, loader->last, (u >> 18) | 0xf0);
+              GRN_TEXT_PUTC(ctx, loader->last, ((u >> 12) & 0x3f) | 0x80);
+            }
             GRN_TEXT_PUTC(ctx, loader->last, ((u >> 6) & 0x3f) | 0x80);
           }
           GRN_TEXT_PUTC(ctx, loader->last, (u & 0x3f) | 0x80);
