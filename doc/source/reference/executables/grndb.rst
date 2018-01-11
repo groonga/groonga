@@ -154,7 +154,7 @@ Here is an example that specifies ``--force-truncate`` option::
 
   % grndb recover --force-truncate --log-level info --log-path /var/log/groonga/grndb.log /var/lib/groonga/db/db
 
-When this option is specified, ``grndb`` does the following:
+When this option is specified, ``grndb`` does the followings:
 
 * check whether there is a corrupted database object (table, column, indexes)
 * truncate a corrupted database object (table, column, indexes)
@@ -174,21 +174,30 @@ against truncated tables or columns to recreate database.
 
 .. versionadded:: 7.1.1
 
-It forces to clear lock of locked objects (database, table, column).
-You can use if you want to database recover even if remain locked of database.
+It forces to clear lock of database, table and data column. It doesn't
+clear lock of index column. If index column has lock, the index column
+is recreated instead of clearing lock.
 
-Here is example that specifies ``--force-lock-clear`` option::
+Normally, you should truncate and load data again instead of just
+clearing lock. Because objects that have lock may be broken. This
+option is provided only for users who know the risk that "the database
+may be broken but I want to keep using it".
+
+Here is an example that specifies ``--force-lock-clear`` option::
 
   % grndb recover --force-lock-clear --log-level info --log-path /var/log/groonga/grndb.log /var/lib/groonga/db/db
 
-When this option is specified, ``grndb`` does the following:
+When this option is specified, ``grndb`` does the followings:
 
-* check whether there are locked objects (database, table, column)
-* clear lock of locked objects (database, table, column)
+* check whether there are database, table or data column that have lock
+* clear lock of these objects
 
 .. note::
 
-   You must use this option only when necessary. Because can not the safty recover database if remain locked of database. This option should be used when even if you can't recover the safety database, you want to recover the database and operating it.
+   You must use this option only when necessary. Because your database
+   may not be recovered. The database that has objects that have lock
+   may be broken or not be broken. You can keep using the database but
+   Groonga may crash if the database is broken.
 
 ``--log-level``
 """""""""""""""
