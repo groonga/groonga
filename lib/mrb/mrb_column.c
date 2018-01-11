@@ -181,6 +181,5 @@ grn_mrb_column_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "truncate",
                     mrb_grn_column_truncate, MRB_ARGS_NONE());
-
 }
 #endif
