@@ -112,10 +112,11 @@ static const char *operator_names[] = {
   "json_put",
   "get_member",
   "regexp",
-  "fuzzy"
+  "fuzzy",
+  "quorum"
 };
 
-#define GRN_OP_LAST GRN_OP_FUZZY
+#define GRN_OP_LAST GRN_OP_QUORUM
 
 const char *
 grn_operator_to_string(grn_operator op)
