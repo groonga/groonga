@@ -55,10 +55,22 @@ object corrupt: <[db][recover] column may be broken: <Users.age>: please truncat
     groonga("table_create", "Ages", "TABLE_PAT_KEY", "UInt8")
     groonga("column_create", "Ages", "users_age", "COLUMN_INDEX", "Users", "age")
 
+    groonga("load",
+            "--table", "Users",
+            "--values",
+            Shellwords.escape(JSON.generate([{"_key" => "alice", "age" => 29}])))
+    groonga("truncate", "Ages")
     groonga("lock_acquire", "Ages.users_age")
+    select_result = groonga_select("Users", "--query", "age:29")
+    n_hits, _columns, *_records = select_result[0]
+    assert_equal([0], n_hits)
 
     result = grndb("recover")
     assert_equal("", result.error_output)
+
+    select_result = groonga_select("Users", "--query", "age:29")
+    n_hits, _columns, *_records = select_result[0]
+    assert_equal([1], n_hits)
   end
 
   def test_force_clear_locked_database
@@ -80,6 +92,31 @@ object corrupt: <[db][recover] column may be broken: <Users.age>: please truncat
     groonga("lock_acquire", "Users.age")
     result = grndb("recover", "--force-lock-clear")
     assert_equal("", result.error_output)
+  end
+
+  def test_force_clear_locked_index_column
+    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+    groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
+
+    groonga("table_create", "Ages", "TABLE_PAT_KEY", "UInt8")
+    groonga("column_create", "Ages", "users_age", "COLUMN_INDEX", "Users", "age")
+
+    groonga("load",
+            "--table", "Users",
+            "--values",
+            Shellwords.escape(JSON.generate([{"_key" => "alice", "age" => 29}])))
+    groonga("truncate", "Ages")
+    groonga("lock_acquire", "Ages.users_age")
+    select_result = groonga_select("Users", "--query", "age:29")
+    n_hits, _columns, *_records = select_result[0]
+    assert_equal([0], n_hits)
+
+    result = grndb("recover", "--force-lock-clear")
+    assert_equal("", result.error_output)
+
+    select_result = groonga_select("Users", "--query", "age:29")
+    n_hits, _columns, *_records = select_result[0]
+    assert_equal([1], n_hits)
   end
 
   def test_empty_file

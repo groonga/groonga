@@ -60,6 +60,16 @@ module CommandRunner
     run_command(*command_line, &block)
   end
 
+  def groonga_select(*select_arguments)
+    result = groonga("select", *select_arguments)
+    select_result = JSON.parse(result.output)
+    header, body = select_result
+    unless header[0].zero?
+      raise "failed to run select: #{select_arguments.join(" ")}: #{PP.pp(select_result, "")}"
+    end
+    body
+  end
+
   def grndb(command, *arguments)
     command_line = [
       grndb_path,

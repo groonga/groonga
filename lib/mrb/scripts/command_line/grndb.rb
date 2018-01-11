@@ -496,6 +496,8 @@ module Groonga
           end
           @database.each do |object|
             case object
+            when IndexColumn
+              # Ignore. It'll be recovered later.
             when Column, Table
               next unless object.locked?
               object.clear_lock
