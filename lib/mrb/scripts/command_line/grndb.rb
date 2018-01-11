@@ -490,7 +490,7 @@ module Groonga
 
         def lock_clear_objects
           if @database.locked?
-              @database.clear_lock
+            @database.clear_lock
           end
           @database.each do |object|
             case object
