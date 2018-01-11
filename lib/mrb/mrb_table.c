@@ -177,7 +177,7 @@ mrb_grn_table_is_locked(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_grn_table_unlock(mrb_state *mrb, mrb_value self)
+mrb_grn_table_clear_lock(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj_clear_lock(ctx, DATA_PTR(self));
@@ -476,8 +476,8 @@ grn_mrb_table_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "locked?",
                     mrb_grn_table_is_locked, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "unlock",
-                    mrb_grn_table_unlock, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "clear_lock",
+                    mrb_grn_table_clear_lock, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "size",
                     mrb_grn_table_get_size, MRB_ARGS_NONE());

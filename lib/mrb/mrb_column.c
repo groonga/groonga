@@ -111,7 +111,7 @@ mrb_grn_column_is_locked(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_grn_column_unlock(mrb_state *mrb, mrb_value self)
+mrb_grn_column_clear_lock(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
 
@@ -173,8 +173,8 @@ grn_mrb_column_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "locked?",
                     mrb_grn_column_is_locked, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "unlock",
-                    mrb_grn_column_unlock, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "clear_lock",
+                    mrb_grn_column_clear_lock, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "table",
                     mrb_grn_column_get_table, MRB_ARGS_NONE());
