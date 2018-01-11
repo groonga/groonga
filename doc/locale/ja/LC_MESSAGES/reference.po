@@ -16626,6 +16626,40 @@ msgstr ""
 "に存在するデータベースのオブジェクトファイルの情報が食い違っているときです。 "
 "他にデータベースを復旧する方法がないときのみ使うべきです。"
 
+msgid "``--force-lock-clear``"
+msgstr ""
+
+msgid ""
+"It forces to clear lock of locked objects (database, table, column). You can "
+"use if you want to database recover even if remain locked of database."
+msgstr ""
+"ロックされているオブジェクト(データベース、テーブル、カラム)のロックを強制的"
+"に解除します。データベースにロックが残留していてもデータベースを復旧させたい"
+"場合に使えます。"
+
+msgid "Here is example that specifies ``--force-lock-clear`` option::"
+msgstr "以下は ``--force-lock-clear`` オプションを指定する例です。"
+
+msgid "check whether there are locked objects (database, table, column)"
+msgstr ""
+"ロックされたオブジェクト(データベース、テーブル、カラム)がないかチェックしま"
+"す。"
+
+msgid "clear lock of locked objects (database, table, column)"
+msgstr ""
+"ロックされたオブジェクト(データベース、テーブル、カラム)のロックを解除しま"
+"す。"
+
+msgid ""
+"You must use this option only when necessary. Because can not the safty "
+"recover database if remain locked of database. This option should be used "
+"when even if you can't recover the safety database, you want to recover the "
+"database and operating it."
+msgstr ""
+"このオプションは必要なときのみ使用します。ロックが残留しているデータベースは"
+"安全に復旧できないからです。このオプションは、安全にデータベースを復旧できな"
+"い場合でも、データベースを復旧して操作したい場合に使用してください。"
+
 msgid "grnslap"
 msgstr ""
 

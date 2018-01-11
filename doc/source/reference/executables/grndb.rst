@@ -169,6 +169,27 @@ against truncated tables or columns to recreate database.
 
    You must use this option only when necessary. It means that you use it when there is a mismatch between database meta information and database object files which exists actually. This options should be used when there is no other way to recover database.
 
+``--force-lock-clear``
+""""""""""""""""""""""
+
+.. versionadded:: 7.1.1
+
+It forces to clear lock of locked objects (database, table, column).
+You can use if you want to database recover even if remain locked of database.
+
+Here is example that specifies ``--force-lock-clear`` option::
+
+  % grndb recover --force-lock-clear --log-level info --log-path /var/log/groonga/grndb.log /var/lib/groonga/db/db
+
+When this option is specified, ``grndb`` does the following:
+
+* check whether there are locked objects (database, table, column)
+* clear lock of locked objects (database, table, column)
+
+.. note::
+
+   You must use this option only when necessary. Because can not the safty recover database if remain locked of database. This option should be used when even if you can't recover the safety database, you want to recover the database and operating it.
+
 ``--log-level``
 """""""""""""""
 
