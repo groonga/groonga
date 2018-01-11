@@ -350,7 +350,8 @@ The default value is none.
 ``token_filters``
 """""""""""""""""
 
-Specifies token filters that is used to some processes tokenized token.
+Specifies token filters separated by ``,``.
+Token filters are used to process tokens.
 
 You cannot use ``token_filters`` with ``TABLE_NO_KEY`` because
 ``TABLE_NO_KEY`` doesn't support key.
