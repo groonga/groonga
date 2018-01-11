@@ -1,0 +1,38 @@
+table_create Characters TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Characters unicode COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Characters
+[
+{"_key": "\uD83C\uDF7A", "unicode": "U+1F37A BEER MUG"}
+]
+[[0,0.0,0.0],1]
+select Characters --output_columns _key,unicode
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "unicode",
+          "ShortText"
+        ]
+      ],
+      [
+        "🍺",
+        "U+1F37A BEER MUG"
+      ]
+    ]
+  ]
+]

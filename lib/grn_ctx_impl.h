@@ -85,6 +85,7 @@ typedef struct {
   grn_obj *ifexists;
   grn_obj *each;
   uint32_t unichar;
+  uint32_t unichar_hi;
   uint32_t values_size;
   uint32_t nrecords;
   uint32_t n_record_errors;
