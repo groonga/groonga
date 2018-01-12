@@ -86,7 +86,7 @@ the following:
 ..   --match_columns "scorer_tf_at_most(message, 3.0)" \
 ..   --query "Notice" \
 ..   --output_columns "message, _score" \
-..   --sortby "-_score"
+..   --sort_keys "-_score"
 
 If a document has three or more ``Notice`` terms, its score is ``3``.
 Because the ``select`` specify ``3.0`` as the max score.

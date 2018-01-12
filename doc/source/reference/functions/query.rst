@@ -96,7 +96,7 @@ Here are the contrasting examples with/without ``query``.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/query/usage_without_query.log
-.. select Users --output_columns name,memo,_score --match_columns "memo * 10" --query "memo:@groonga OR memo:@mroonga OR memo:@user" --sortby -_score
+.. select Users --output_columns name,memo,_score --match_columns "memo * 10" --query "memo:@groonga OR memo:@mroonga OR memo:@user" --sort_keys -_score
 
 In this case, the all keywords ``groonga``, ``mroonga`` and ``user``
 use the default weight. You can't pass different weight value to each
@@ -104,7 +104,7 @@ keyword in this way.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/query/usage_with_query.log
-.. select Users --output_columns name,memo,_score --filter 'query("memo * 10", "groonga") || query("memo * 20", "mroonga") || query("memo * 1", "user")' --sortby -_score
+.. select Users --output_columns name,memo,_score --filter 'query("memo * 10", "groonga") || query("memo * 20", "mroonga") || query("memo * 1", "user")' --sort_keys -_score
 
 On the other hand, by specifying multiple ``query``, the keywords
 ``groonga``, ``mroonga`` and ``user`` use different weight.

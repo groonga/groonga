@@ -55,7 +55,7 @@ Here is the simple usage of ``in_values`` function which selects the records - t
 
 .. groonga-command
 .. include:: ../../example/reference/functions/in_values/usage_only.log
-.. select Memos --output_columns _key,tag --filter 'in_values(tag, "groonga", "mroonga", "droonga")' --sortby _id
+.. select Memos --output_columns _key,tag --filter 'in_values(tag, "groonga", "mroonga", "droonga")' --sort_keys _id
 
 When executing the above query, you can get the records except "rroonga" because "rroonga" is not specified as value in ``in_values``.
 

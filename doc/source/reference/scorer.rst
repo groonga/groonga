@@ -138,7 +138,7 @@ Here is a simplest example:
 ..   --match_columns "scorer_tf_idf(content)" \
 ..   --query "Groonga" \
 ..   --output_columns "content, _score" \
-..   --sortby "-_score"
+..   --sort_keys "-_score"
 
 ``Groonga! Groonga! Groonga! Groonga is very fast!`` contains 4
 ``Groonga``. If you use TF based scorer that is the default scorer,
@@ -153,7 +153,7 @@ Here is an example that uses weight:
 ..   --match_columns "scorer_tf_idf(content) * 10" \
 ..   --query "Groonga" \
 ..   --output_columns "content, _score" \
-..   --sortby "-_score"
+..   --sort_keys "-_score"
 
 ``Groonga! Groonga! Groonga! Groonga is very fast!`` has ``22`` as
 ``_score``. It had ``2`` as ``_score`` in the previous example that
@@ -169,7 +169,7 @@ one argument. You can limit TF score by the scorer.
 ..   --match_columns "scorer_tf_at_most(content, 2.0)" \
 ..   --query "Groonga" \
 ..   --output_columns "content, _score" \
-..   --sortby "-_score"
+..   --sort_keys "-_score"
 
 ``Groonga! Groonga! Groonga! Groonga is very fast!`` contains 4
 ``Groonga``. If you use normal TF based scorer that is the default
@@ -185,7 +185,7 @@ Here is an example that uses multiple scorers:
 ..   --match_columns "scorer_tf_idf(title) || scorer_tf_at_most(content, 2.0)" \
 ..   --query "Groonga" \
 ..   --output_columns "title, content, _score" \
-..   --sortby "-_score"
+..   --sort_keys "-_score"
 
 The ``--match_columns`` uses ``scorer_tf_idf(title)`` and
 ``scorer_tf_at_most(content, 2.0)``. ``_score`` value is sum of them.
@@ -200,7 +200,7 @@ a match column:
 ..   --match_columns "title || scorer_tf_at_most(content, 2.0)" \
 ..   --query "Groonga" \
 ..   --output_columns "title, content, _score" \
-..   --sortby "-_score"
+..   --sort_keys "-_score"
 
 The ``--match_columns`` uses the default scorer (TF) for ``title`` and
 :doc:`/reference/scorers/scorer_tf_at_most` for

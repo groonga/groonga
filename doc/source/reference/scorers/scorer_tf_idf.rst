@@ -105,7 +105,7 @@ following:
 ..   --match_columns "scorer_tf_idf(message)" \
 ..   --query "Error OR Info" \
 ..   --output_columns "message, _score" \
-..   --sortby "-_score"
+..   --sort_keys "-_score"
 
 Both the score of ``Info Info Info`` and the score of ``Error`` are
 ``2`` even ``Info Info Info`` includes three ``Info`` terms. Because
