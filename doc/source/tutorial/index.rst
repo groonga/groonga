@@ -120,4 +120,4 @@ These indexes are also used when sorting the records with geo location search.
 
 .. groonga-command
 .. include:: ../example/tutorial/index-7.log
-.. select --table GeoSite --filter 'geo_in_circle(location, "128515259x503187188", 50000)' --output_columns _key,location,_score --sortby '-geo_distance(location, "128515259x503187188")' --scorer '_score = geo_distance(location, "128515259x503187188")'
+.. select --table GeoSite --filter 'geo_in_circle(location, "128515259x503187188", 50000)' --output_columns _key,location,_score --sort_keys '-geo_distance(location, "128515259x503187188")' --scorer '_score = geo_distance(location, "128515259x503187188")'

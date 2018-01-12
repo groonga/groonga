@@ -46,8 +46,8 @@ This parameter accepts the conditions which is specified by syntax like JavaScri
 
 .. groonga-command
 .. include:: ../example/tutorial/search-3.log
-.. select --table Site --filter "true" --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
-.. select --table Site --filter "true" --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
+.. select --table Site --filter "true" --scorer "_score = rand()" --output_columns _id,_key,_score --sort_keys _score
+.. select --table Site --filter "true" --scorer "_score = rand()" --output_columns _id,_key,_score --sort_keys _score
 
 '_score' is one of a pseudo column. The score of full-text search is assigned to it.
 See :doc:`/reference/columns/pseudo` about '_score' column.
@@ -58,7 +58,7 @@ In the above query, the condition of ``scorer`` parameter is::
 
 In this case, the score of full-text search is overwritten by the value of rand() function.
 
-The condition of ``sortby`` parameter is::
+The condition of ``sort_keys`` parameter is::
 
   _score
 
@@ -104,11 +104,11 @@ Let's show geo distance from Akihabara station in Japan. In world geodetic syste
 
 As you can see, the geo distance between Tokyo station and Akihabara station is 2054 meters, the geo distance between Akihabara station and Shinjyuku station is 6720 meters.
 
-The return value of geo_distance function is also used for sorting by specifying pseudo ``_score`` column to ``sortby`` parameter.
+The return value of geo_distance function is also used for sorting by specifying pseudo ``_score`` column to ``sort_keys`` parameter.
 
 .. groonga-command
 .. include:: ../example/tutorial/search-6.log
-.. select --table Site --query "_id:1 OR _id:2" --output_columns _key,location,_score --scorer '_score = geo_distance(location, "128515259x503187188")' --sortby -_score
+.. select --table Site --query "_id:1 OR _id:2" --output_columns _key,location,_score --scorer '_score = geo_distance(location, "128515259x503187188")' --sort_keys -_score
 
 Groonga also supports to narrow down by "a certain point within specified meters".
 

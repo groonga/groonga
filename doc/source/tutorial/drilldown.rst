@@ -110,11 +110,11 @@ You can get the each result of drilldown at once.
 Sorting drildown results
 ------------------------
 
-Use ``--drilldown_sortby`` if you want to sort the result of drilldown. For example, specify ``_nsubrecs`` as ascending order.
+Use ``--drilldown_sort_keys`` if you want to sort the result of drilldown. For example, specify ``_nsubrecs`` as ascending order.
 
 .. groonga-command
-.. include:: ../example/tutorial/drilldown-sortby.log
-.. select --table Site --limit 0 --drilldown country --drilldown_sortby _nsubrecs
+.. include:: ../example/tutorial/drilldown-sort_keys.log
+.. select --table Site --limit 0 --drilldown country --drilldown_sort_keys _nsubrecs
 
 
 limits drildown results
@@ -124,7 +124,7 @@ The number of drilldown results is limited to 10 as a default. Use ``drilldown_l
 
 .. groonga-command
 .. include:: ../example/tutorial/drilldown-limit.log
-.. select --table Site --limit 0 --drilldown country --drilldown_sortby _nsubrecs --drilldown_limit 2 --drilldown_offset 2
+.. select --table Site --limit 0 --drilldown country --drilldown_sort_keys _nsubrecs --drilldown_limit 2 --drilldown_offset 2
 
 Note that drilldown to the column which stores string is slower than the columns which stores the other types.
 If you drilldown to string type of column, create the table that type of primary key is string, then create the column which refers that table.

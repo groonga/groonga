@@ -267,27 +267,27 @@ An ``offset`` parameter specifies the starting point and a ``limit`` parameter s
 Sort a search result
 --------------------
 
-A :doc:`/reference/commands/select` command sorts its result when used with a ``sortby`` parameter.
+A :doc:`/reference/commands/select` command sorts its result when used with a ``sort_keys`` parameter.
 
-A ``sortby`` parameter specifies a column as a sorting creteria. A search result is arranged in ascending order of the column values. If you want to sort a search result in reverse order, please add a leading hyphen ('-') to the column name in a parameter.
+A ``sort_keys`` parameter specifies a column as a sorting creteria. A search result is arranged in ascending order of the column values. If you want to sort a search result in reverse order, please add a leading hyphen ('-') to the column name in a parameter.
 
 The following example shows records in the Site table in reverse order.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-16.log
-.. select --table Site --sortby -_id
+.. select --table Site --sort_keys -_id
 
 The next example uses the _score column as the sorting criteria for ranking the search result. The result is sorted in relevance order.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-17.log
-.. select --table Site --query title:@test --output_columns _id,_score,title --sortby -_score
+.. select --table Site --query title:@test --output_columns _id,_score,title --sort_keys -_score
 
 If you want to specify more than one columns, please separate column names by commas (','). In such a case, a search result is sorted in order of the values in the first column, and then records having the same values in the first column are sorted in order of the second column values.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-18.log
-.. select --table Site --query title:@test --output_columns _id,_score,title --sortby -_score,_id
+.. select --table Site --query title:@test --output_columns _id,_score,title --sort_keys -_score,_id
 
 .. rubric:: footnote
 
