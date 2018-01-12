@@ -1,6 +1,6 @@
 Execution example::
 
-  select --table Site --sortby -_id
+  select --table Site --sort_keys -_id
   # [
   #   [
   #     0, 

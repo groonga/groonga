@@ -1,6 +1,6 @@
 Execution example::
 
-  select --table Site --filter "true" --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
+  select --table Site --filter "true" --scorer "_score = rand()" --output_columns _id,_key,_score --sort_keys _score
   # [
   #   [
   #     0, 
@@ -74,7 +74,7 @@ Execution example::
   #     ]
   #   ]
   # ]
-  select --table Site --filter "true" --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
+  select --table Site --filter "true" --scorer "_score = rand()" --output_columns _id,_key,_score --sort_keys _score
   # [
   #   [
   #     0, 

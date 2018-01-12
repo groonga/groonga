@@ -1,6 +1,6 @@
 Execution example::
 
-  select --table Site --query "_id:1 OR _id:2" --output_columns _key,location,_score --scorer '_score = geo_distance(location, "128515259x503187188")' --sortby -_score
+  select --table Site --query "_id:1 OR _id:2" --output_columns _key,location,_score --scorer '_score = geo_distance(location, "128515259x503187188")' --sort_keys -_score
   # [
   #   [
   #     0, 

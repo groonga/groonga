@@ -113,7 +113,7 @@ Sorting drildown results
 Use ``--drilldown_sort_keys`` if you want to sort the result of drilldown. For example, specify ``_nsubrecs`` as ascending order.
 
 .. groonga-command
-.. include:: ../example/tutorial/drilldown-sort_keys.log
+.. include:: ../example/tutorial/drilldown-sortby.log
 .. select --table Site --limit 0 --drilldown country --drilldown_sort_keys _nsubrecs
 
 

@@ -1,6 +1,6 @@
 Execution example::
 
-  select --table Site --query title:@test --output_columns _id,_score,title --sortby -_score,_id
+  select --table Site --query title:@test --output_columns _id,_score,title --sort_keys -_score,_id
   # [
   #   [
   #     0, 
