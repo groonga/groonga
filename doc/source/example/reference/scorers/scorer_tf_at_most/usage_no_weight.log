@@ -4,7 +4,7 @@ Execution example::
     --match_columns "scorer_tf_at_most(message, 3.0)" \
     --query "Notice" \
     --output_columns "message, _score" \
-    --sortby "-_score"
+    --sort_keys "-_score"
   # [
   #   [
   #     0, 

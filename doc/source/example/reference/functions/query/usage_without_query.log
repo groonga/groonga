@@ -1,6 +1,6 @@
 Execution example::
 
-  select Users --output_columns name,memo,_score --match_columns "memo * 10" --query "memo:@groonga OR memo:@mroonga OR memo:@user" --sortby -_score
+  select Users --output_columns name,memo,_score --match_columns "memo * 10" --query "memo:@groonga OR memo:@mroonga OR memo:@user" --sort_keys -_score
   # [
   #   [
   #     0, 

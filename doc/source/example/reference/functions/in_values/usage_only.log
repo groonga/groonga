@@ -1,6 +1,6 @@
 Execution example::
 
-  select Memos --output_columns _key,tag --filter 'in_values(tag, "groonga", "mroonga", "droonga")' --sortby _id
+  select Memos --output_columns _key,tag --filter 'in_values(tag, "groonga", "mroonga", "droonga")' --sort_keys _id
   # [
   #   [
   #     0, 

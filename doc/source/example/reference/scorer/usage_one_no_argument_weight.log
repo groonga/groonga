@@ -4,7 +4,7 @@ Execution example::
     --match_columns "scorer_tf_idf(content) * 10" \
     --query "Groonga" \
     --output_columns "content, _score" \
-    --sortby "-_score"
+    --sort_keys "-_score"
   # [
   #   [
   #     0, 

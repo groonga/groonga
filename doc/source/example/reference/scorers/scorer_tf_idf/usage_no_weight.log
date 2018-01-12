@@ -4,7 +4,7 @@ Execution example::
     --match_columns "scorer_tf_idf(message)" \
     --query "Error OR Info" \
     --output_columns "message, _score" \
-    --sortby "-_score"
+    --sort_keys "-_score"
   # [
   #   [
   #     0, 
