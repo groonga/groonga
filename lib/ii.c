@@ -4088,9 +4088,12 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
         grn_pat_cursor_close(ctx, cursor);
       }
     } else {
-      /* For text data */
+      /* For binary data or text data */
+      grn_bool is_binary_data;
       int target_key_size = key_size;
       int reduced_key_size = 0;
+
+      is_binary_data = (ctx->encoding == GRN_ENC_NONE);
 
       while (*lseg == GRN_II_PSEG_NOT_ASSIGNED && target_key_size > 0) {
         grn_id tid;
@@ -4131,7 +4134,9 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
         if (reduced_key_size == 0) {
           reduced_key_size = 1;
         } else {
-          reduced_key_size += (key_size - target_key_size) / 16;
+          if (is_binary_data) {
+            reduced_key_size *= 2;
+          }
         }
         target_key_size -= reduced_key_size;
       }
