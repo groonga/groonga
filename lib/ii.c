@@ -102,6 +102,7 @@ static grn_bool grn_ii_overlap_token_skip_enable = GRN_FALSE;
 static uint32_t grn_ii_builder_block_threshold_force = 0;
 static uint32_t grn_ii_max_n_segments_small = MAX_PSEG_SMALL;
 static uint32_t grn_ii_max_n_chunks_small = GRN_II_MAX_CHUNK_SMALL;
+static grn_bool grn_ii_reduce_expire_enable = GRN_TRUE;
 
 void
 grn_ii_init_from_env(void)
@@ -199,6 +200,18 @@ grn_ii_init_from_env(void)
       if (grn_ii_max_n_chunks_small > GRN_II_MAX_CHUNK) {
         grn_ii_max_n_chunks_small = GRN_II_MAX_CHUNK;
       }
+    }
+  }
+
+  {
+    char grn_ii_reduce_expire_enable_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_REDUCE_EXPIRE_ENABLE",
+               grn_ii_reduce_expire_enable_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (strcmp(grn_ii_reduce_expire_enable_env, "no") == 0) {
+      grn_ii_reduce_expire_enable = GRN_FALSE;
+    } else {
+      grn_ii_reduce_expire_enable = GRN_TRUE;
     }
   }
 }
@@ -4506,7 +4519,11 @@ grn_ii_expire(grn_ctx *ctx, grn_ii *ii)
   /*
   grn_io_expire(ctx, ii->seg, 128, 1000000);
   */
-  if (ii->chunk->nmaps > ii->chunk->max_map_seg / 2) {
+  if (grn_ii_reduce_expire_enable) {
+    if (ii->chunk->nmaps > ii->chunk->max_map_seg / 2) {
+      grn_io_expire(ctx, ii->chunk, 0, 1000000);
+    }
+  } else {
     grn_io_expire(ctx, ii->chunk, 0, 1000000);
   }
 }
