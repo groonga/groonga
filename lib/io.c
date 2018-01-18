@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -64,7 +64,6 @@ typedef struct _grn_io_fileinfo {
 #define IO_HEADER_SIZE 64
 
 static uint32_t grn_io_version_default = GRN_IO_VERSION_DEFAULT;
-static grn_bool grn_io_use_sparse = GRN_FALSE;
 
 grn_inline static grn_rc grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi,
                                        const char *path, int flags);
@@ -129,17 +128,6 @@ grn_io_init_from_env(void)
                GRN_ENV_BUFFER_SIZE);
     if (version_env[0]) {
       grn_io_version_default = atoi(version_env);
-    }
-  }
-
-  {
-    char use_sparse_env[GRN_ENV_BUFFER_SIZE];
-
-    grn_getenv("GRN_IO_USE_SPARSE",
-               use_sparse_env,
-               GRN_ENV_BUFFER_SIZE);
-    if (use_sparse_env[0] && strcmp(use_sparse_env, "yes") == 0) {
-      grn_io_use_sparse = GRN_TRUE;
     }
   }
 }
@@ -1778,7 +1766,7 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
       break;
     }
 
-    if (grn_io_use_sparse) {
+    {
       FILE_SET_SPARSE_BUFFER buffer;
       buffer.SetSparse = TRUE;
       DWORD returned_bytes;
