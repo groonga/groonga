@@ -453,7 +453,7 @@ Here is an example of ``TokenDelimitNull``:
 ^^^^^^^^^^^^^^
 
 ``TokenMecab`` is a tokenizer based on `MeCab
-<http://mecab.sourceforge.net/>`_ part-of-speech and
+<https://taku910.github.io/mecab/>`_ part-of-speech and
 morphological analyzer.
 
 MeCab doesn't depend on Japanese. You can use MeCab for other

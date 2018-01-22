@@ -51,7 +51,7 @@ Libraries
 
 All libraries are optional. Here are optional libraries:
 
-  * `MeCab <http://mecab.sourceforge.net/>`_ for tokenizing full-text
+  * `MeCab <https://taku910.github.io/mecab/>`_ for tokenizing full-text
     search target document by morphological analysis
   * `KyTea <http://www.phontron.com/kytea/>`_ for tokenizing full-text
     search target document by morphological analysis

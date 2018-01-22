@@ -27,7 +27,7 @@ Install::
 
   % brew install groonga
 
-If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
+If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a
 tokenizer, specify ``--with-mecab`` option::
 
   % brew install groonga --with-mecab

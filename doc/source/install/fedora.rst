@@ -38,7 +38,7 @@ Note that additional packages such as ``mecab-dic`` and ``mecab-jumandic`` packa
 
 .. include:: server-use.inc
 
-If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
+If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.
 
 Install groonga-tokenizer-mecab package::
