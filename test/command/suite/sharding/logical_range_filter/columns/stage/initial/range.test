@@ -51,11 +51,11 @@ logical_range_filter Logs \
   --min_border "include" \
   --max "2017/03/17 21:00:00" \
   --max_border "exclude" \
-  --columns[initial_id].stage initial \
-  --columns[initial_id].type UInt32 \
-  --columns[initial_id].flags COLUMN_SCALAR \
-  --columns[initial_id].value 'window_sum(price)' \
-  --columns[initial_id].window.group_keys 'category' \
-  --output_columns _id,initial_id
+  --columns[price_sum_per_category].stage initial \
+  --columns[price_sum_per_category].type UInt32 \
+  --columns[price_sum_per_category].flags COLUMN_SCALAR \
+  --columns[price_sum_per_category].value 'window_sum(price)' \
+  --columns[price_sum_per_category].window.group_keys 'category' \
+  --output_columns _id,price,price_sum_per_category
 log_level --level notice
 #@remove-important-log-levels debug
