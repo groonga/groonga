@@ -15,6 +15,7 @@ module Groonga
                  "limit",
                  "output_columns",
                  "use_range_index",
+                 "post_filter",
                ])
 
       def run_body(input)
@@ -71,6 +72,7 @@ module Groonga
         key << "#{input[:limit]}\0"
         key << "#{input[:output_columns]}\0"
         key << "#{input[:use_range_index]}\0"
+        key << "#{input[:post_filter]}\0"
         dynamic_columns = DynamicColumns.parse(input)
         key << dynamic_columns.cache_key
         key
@@ -90,6 +92,7 @@ module Groonga
         attr_reader :unsorted_result_sets
         attr_reader :temporary_tables
         attr_reader :threshold
+        attr_reader :post_filter
         def initialize(input)
           @input = input
           @use_range_index = parse_use_range_index(@input[:use_range_index])
@@ -109,6 +112,8 @@ module Groonga
           @temporary_tables = []
 
           @threshold = compute_threshold
+
+          @post_filter = @input[:post_filter]
         end
 
         def close
@@ -210,6 +215,7 @@ module Groonga
           @target_table = @shard.table
 
           @filter = @context.filter
+          @post_filter = @context.post_filter
           @result_sets = @context.result_sets
           @unsorted_result_sets = @context.unsorted_result_sets
 
@@ -302,6 +308,11 @@ module Groonga
 
           unless @context.dynamic_columns.empty?
             reason = "dynamic columns are used"
+            return decide_use_range_index(false, reason, __LINE__, __method__)
+          end
+
+          unless @context.post_filter.nil?
+            reason = "post_filter is used"
             return decide_use_range_index(false, reason, __LINE__, __method__)
           end
 
@@ -482,7 +493,7 @@ module Groonga
         def filter_shard_all(range_index, expression_builder)
           table = @target_table
           if @filter.nil?
-            if table.size <= @context.current_offset
+            if @post_filter.nil? and table.size <= @context.current_offset
               @context.current_offset -= table.size
               return
             end
@@ -632,6 +643,13 @@ module Groonga
           end
         end
 
+        def apply_post_filter(table)
+          create_expression(table) do |expression|
+            expression.parse(@post_filter)
+            table.select(expression)
+          end
+        end
+
         def sort_result_set(result_set)
           @context.temporary_tables.delete(result_set)
 
@@ -645,6 +663,12 @@ module Groonga
               result_set = result_set.select_all
             end
             dynamic_column.apply(result_set)
+          end
+
+          unless @post_filter.nil?
+            filtered_table = result_set
+            result_set = apply_post_filter(filtered_table)
+            @context.temporary_tables << filtered_table
           end
 
           if result_set.size <= @context.current_offset
