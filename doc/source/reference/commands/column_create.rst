@@ -135,7 +135,7 @@ You can store multiple values (``["adventurer", "younger-sister"]``)
 by the following :doc:`load` command:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/column_create/usage_scalar_load.log
+.. include:: ../../example/reference/commands/column_create/usage_vector_load.log
 .. load --table People
 .. [
 .. {"_key": "alice", "roles": ["adventurer", "younger-sister"]}

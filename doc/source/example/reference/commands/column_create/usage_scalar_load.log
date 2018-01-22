@@ -2,6 +2,6 @@ Execution example::
 
   load --table People
   [
-  {"_key": "alice", "roles": ["adventurer", "younger-sister"]}
+  {"_key": "alice", "age": 7}
   ]
   # [[0, 1337566253.89858, 0.000355720520019531], 1]
