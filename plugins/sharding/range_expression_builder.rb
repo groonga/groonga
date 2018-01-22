@@ -16,6 +16,21 @@ module Groonga
         @filter = nil
       end
 
+      def build(expression, shard_range)
+        cover_type = @target_range.cover_type(shard_range)
+        case cover_type
+        when :all
+          build_all(expression)
+        when :partial_min
+          build_partial_min(expression)
+        when :partial_max
+          build_partial_max(expression)
+        when :partial_min_and_max
+          build_partial_min_and_max(expression)
+        when :none
+        end
+      end
+
       def build_all(expression)
         build_condition(expression)
       end

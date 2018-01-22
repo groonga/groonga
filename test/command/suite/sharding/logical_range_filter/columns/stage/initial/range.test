@@ -1,0 +1,61 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+column_create Logs_20170315 category COLUMN_SCALAR ShortText
+
+table_create Logs_20170316 TABLE_NO_KEY
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+column_create Logs_20170316 price COLUMN_SCALAR UInt32
+column_create Logs_20170316 category COLUMN_SCALAR ShortText
+
+table_create Logs_20170317 TABLE_NO_KEY
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+column_create Logs_20170317 price COLUMN_SCALAR UInt32
+column_create Logs_20170317 category COLUMN_SCALAR ShortText
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 1000, "category": "X"},
+{"timestamp": "2017/03/15 01:00:00", "price":  900, "category": "X"},
+{"timestamp": "2017/03/15 02:00:00", "price":  300, "category": "X"}
+]
+
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "price":  530, "category": "X"},
+{"timestamp": "2017/03/16 11:00:00", "price":  520, "category": "X"},
+{"timestamp": "2017/03/16 12:00:00", "price":  110, "category": "X"}
+]
+
+load --table Logs_20170317
+[
+{"timestamp": "2017/03/17 20:00:00", "price":  800, "category": "X"},
+{"timestamp": "2017/03/17 21:00:00", "price":  400, "category": "X"},
+{"timestamp": "2017/03/17 22:00:00", "price":  300, "category": "X"}
+]
+
+table_create Times TABLE_PAT_KEY Time
+column_create Times logs_20170315 COLUMN_INDEX Logs_20170315 timestamp
+column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
+column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
+
+#@add-important-log-levels debug
+log_level --level debug
+logical_range_filter Logs \
+  --shard_key timestamp \
+  --min "2017/03/15 01:00:00" \
+  --min_border "include" \
+  --max "2017/03/17 21:00:00" \
+  --max_border "exclude" \
+  --columns[initial_id].stage initial \
+  --columns[initial_id].type UInt32 \
+  --columns[initial_id].flags COLUMN_SCALAR \
+  --columns[initial_id].value 'window_sum(price)' \
+  --columns[initial_id].window.group_keys 'category' \
+  --output_columns _id,initial_id
+log_level --level notice
+#@remove-important-log-levels debug
