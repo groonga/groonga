@@ -704,7 +704,16 @@ module Groonga
 
           @context.dynamic_columns.each_initial do |dynamic_column|
             if @target_table == @shard.table
-              @target_table = @target_table.select_all
+              if @cover_type == :all
+                @target_table = @target_table.select_all
+              else
+                expression_builder = RangeExpressionBuilder.new(shard_key,
+                                                                @target_range)
+                expression = create_expression(@target_table)
+                expression_builder.build(expression, @shard_range)
+                @target_table = @target_table.select(expression)
+                @cover_type = :all
+              end
               @context.temporary_tables << @target_table
             end
             dynamic_column.apply(@target_table)
