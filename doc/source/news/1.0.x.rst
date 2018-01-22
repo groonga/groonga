@@ -170,8 +170,8 @@
 * テキストから数値へのキャスト処理を強化。#612, #613
   （Itagaki Takahiroさんが報告）
 * クライアントモードでの--fileオプションのサポート。#578
-* :doc:`/spec/search` の挙動を動的に変更する``--match-escalation-threshold``
-  起動オプションと``--match_escalation_threshold``selectオプションを追加。 #628
+* :doc:`/spec/search` の挙動を動的に変更する ``--match-escalation-threshold``
+  起動オプションと ``--match_escalation_threshold`` selectオプションを追加。 #628
 
 変更
 ^^^^

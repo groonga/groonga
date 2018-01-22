@@ -137,8 +137,8 @@ msgstr "``realloc()`` はWindowsでは重い処理であるためです。"
 msgid ""
 "Enabled ``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` only when its value is \"yes\"."
 msgstr ""
-"``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` の値にyesが設定された時のみ"
-" ``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` を有効にするようにしました。"
+"``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` の値にyesが設定された時のみ "
+"``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` を有効にするようにしました。"
 
 msgid ""
 "Deprecated ``GRN_NGRAM_TOKENIZER_REMOVE_BLANK_DISABLE``. Use "
@@ -1519,19 +1519,19 @@ msgstr ""
 msgid "デーモンになるときは標準出力を閉じるようにした。"
 msgstr ""
 
-msgid "PIDファイルを指定する``--pid-path``オプションを追加。"
+msgid "PIDファイルを指定する ``--pid-path`` オプションを追加。"
 msgstr ""
 
-msgid "設定ファイルを指定する``--config-path``オプションを追加。"
+msgid "設定ファイルを指定する ``--config-path`` オプションを追加。"
 msgstr ""
 
-msgid "最大キャッシュ数を指定する``--cache-limit``オプションを追加。"
+msgid "最大キャッシュ数を指定する ``--cache-limit`` オプションを追加。"
 msgstr ""
 
-msgid "設定値を表示する``--show-config``オプションを追加。"
+msgid "設定値を表示する ``--show-config`` オプションを追加。"
 msgstr ""
 
-msgid "指定したファイルからコマンドを読み込む``--file``オプションを追加。"
+msgid "指定したファイルからコマンドを読み込む ``--file`` オプションを追加。"
 msgstr ""
 
 msgid ""
@@ -1919,8 +1919,9 @@ msgid "クライアントモードでの--fileオプションのサポート。#
 msgstr ""
 
 msgid ""
-":doc:`/spec/search` の挙動を動的に変更する``--match-escalation-threshold`` 起"
-"動オプションと``--match_escalation_threshold``selectオプションを追加。 #628"
+":doc:`/spec/search` の挙動を動的に変更する ``--match-escalation-threshold`` "
+"起動オプションと ``--match_escalation_threshold`` selectオプションを追加。 "
+"#628"
 msgstr ""
 
 msgid "記号でトークンを区切るTokenBigramSplitSymbolを使用。 #225"
