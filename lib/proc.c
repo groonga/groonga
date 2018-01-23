@@ -2590,32 +2590,33 @@ static grn_rc
 between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
 {
   grn_rc rc = GRN_SUCCESS;
-  grn_obj *min_border;
-  grn_obj *max_border;
-
-  if (nargs != 5) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "between(): wrong number of arguments (%d for 5)", nargs);
-    rc = ctx->rc;
-    goto exit;
-  }
 
   data->value = args[0];
   data->min   = args[1];
-  min_border  = args[2];
-  data->max   = args[3];
-  max_border  = args[4];
-
-  data->min_border_type =
-    between_parse_border(ctx, min_border, "the 3rd argument (min_border)");
-  if (data->min_border_type == BETWEEN_BORDER_INVALID) {
-    rc = ctx->rc;
-    goto exit;
-  }
-
-  data->max_border_type =
-    between_parse_border(ctx, max_border, "the 5th argument (max_border)");
-  if (data->max_border_type == BETWEEN_BORDER_INVALID) {
+  switch (nargs) {
+  case 3 :
+    data->min_border_type = BETWEEN_BORDER_INCLUDE;
+    data->max = args[2];
+    data->max_border_type = BETWEEN_BORDER_INCLUDE;
+    break;
+  case 5 :
+    data->min_border_type =
+      between_parse_border(ctx, args[2], "the 3rd argument (min_border)");
+    if (data->min_border_type == BETWEEN_BORDER_INVALID) {
+      rc = ctx->rc;
+      goto exit;
+    }
+    data->max = args[3];
+    data->max_border_type =
+      between_parse_border(ctx, args[4], "the 5th argument (max_border)");
+    if (data->max_border_type == BETWEEN_BORDER_INVALID) {
+      rc = ctx->rc;
+      goto exit;
+    }
+    break;
+  default :
+    ERR(GRN_INVALID_ARGUMENT,
+        "between(): wrong number of arguments (%d for 3 or 5)", nargs);
     rc = ctx->rc;
     goto exit;
   }
