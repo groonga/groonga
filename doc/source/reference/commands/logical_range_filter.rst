@@ -297,6 +297,8 @@ TODO
 ``post_filter``
 """""""""""""""
 
+.. versionadded:: 7.1.1
+
 Specifies the filter text that is processed after ``filtered`` stage
 dynamic columns are generated. You can use ``post_filter`` to filter
 by ``filtered`` stage dynamic columns. Others are the same as
