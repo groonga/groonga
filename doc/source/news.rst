@@ -7,6 +7,56 @@
 News
 ====
 
+.. _release-7-1-1:
+
+Release 7.1.1 - 2018-01-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Support quorum match[groonga-talk,385][Suggested by 付超群]
+  You can use quorum match in script syntax and query syntax.
+
+* Support custom similarity threshold in script syntax
+  You can use custom similarity threshold in script syntax.
+
+* [:doc:`/reference/executables/grndb`]Add ``--force-lock-clear option``
+  This option force to clear lock of object(Database, Column, Table).
+  You can use if you want to database recover even if remain locked of database.
+
+  But this option very risky.
+  Because can not safty recover database if remain locked of database.
+
+* [:doc:`/reference/commands/load`]Support surrogate pairs
+  upports surrogate pairs in a ``load`` body.
+  For example, \uD83C\uDF7A is decoded to 🍺.
+
+* [windows] Always use sparse file
+  It reduces dist space and there are no performance demerit.
+
+* Add environment variable to disable reducing expire
+  ``GRN_II_REDUCE_EXPIRE_ENABLE=no`` disables. It's enabled by default.
+
+* [:doc:`/reference/commands/logical_range_filter`]Add post_filter
+  Specify filter against after generate dynamic columns in ``filtered`` stage.
+  You can filterd against dynamic columns of ``filtered`` stage.
+
+Fixes
+^^^^^
+
+* Fixed sometimes failed to create new buffer when creating index
+  for reference vector[GitHub#806][Reported by Naoya Murakami]
+
+* When execute ``table_create`` with specify not exist ``token_filters``,
+  raise error and don't create table.[GitHub#226]
+
+Thanks
+^^^^^^
+
+* 付超群
+* Naoya Murakami
+
 .. _release-7-1-0:
 
 Release 7.1.0 - 2017-12-29
