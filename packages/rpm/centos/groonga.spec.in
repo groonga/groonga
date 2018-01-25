@@ -540,6 +540,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Mon Jan 29 2018 Kentaro Hayashi <hayashi@clear-code.com> - 7.1.1-1
+- new upstream release.
+
 * Fri Dec 29 2017 Kentaro Hayashi <hayashi@clear-code.com> - 7.1.0-1
 - new upstream release.
 
