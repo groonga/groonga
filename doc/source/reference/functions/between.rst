@@ -17,10 +17,10 @@ It is often used in combination with :ref:`select-filter` option in :doc:`/refer
 Syntax
 ------
 
-``between`` has five parameters::
+``between`` has three or five parameters::
 
+  between(column_or_value, min, max)
   between(column_or_value, min, min_border, max, max_border)
-
 
 Usage
 -----
@@ -66,38 +66,46 @@ This behavior is used for checking the specified value exists or not in the tabl
 Parameters
 ----------
 
-There are five required parameters, ``column_or_value``, ``min``, ``min_border``, ``max`` and ``max_border``.
+Required parameters
+^^^^^^^^^^^^^^^^^^^
+
+There are three required parameters ``column_or_value``, ``min`` and ``max``.
 
 ``column_or_value``
-^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""
 
 Specifies a column or value.
 
 ``min``
-^^^^^^^
+"""""""
 
 Specifies the minimal border value of the range.
-You can control the behavior that the value of ``min`` is included or excluded with ``min_border`` parameter.
+The range is inclusive by default but you can control the behavior that the value of ``min`` is included or excluded with ``min_border`` parameter.
+
+``max``
+"""""""
+
+Specifies the maximum border value of the range.
+The range is inclusive by default but you can control the behavior that the value of ``max`` is included or excluded with ``max_border`` parameter.
+
+Optional parameter
+^^^^^^^^^^^^^^^^^^
+
+There are two optional parameters ``min_border`` and ``max_border``.
 
 ``min_border``
-^^^^^^^^^^^^^^
+""""""""""""""
 
 Specifies whether the specified range contains the value of ``min`` or not.
 The value of ``min_border`` must be either "include" or "exclude". If it is "include", ``min`` value is included. If it is "exclude", ``min`` value is not included.
 
-``max``
-^^^^^^^
-
-Specifies the maximum border value of the range.
-You can control the behavior that the value of ``max`` is included or excluded with ``max_border`` parameter.
-
 ``max_border``
-^^^^^^^^^^^^^^
+""""""""""""""
 
 Specifies whether the specified range contains the value of ``max`` or not.
 The value of ``max_border`` must be either "include" or "exclude". If it is "include", ``max`` value is included. If it is "exclude", ``max`` value is not included.
 
 Return value
-------------
+""""""""""""
 
 ``between`` returns whether the column value exists in the specified range or not. If a record matches the specified range, it returns true. Otherwise, it returns false.
