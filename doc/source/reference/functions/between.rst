@@ -12,7 +12,7 @@ Summary
 -------
 
 ``between`` is used for checking the specified value exists in the specific range.
-It is often used for combination with :ref:`select-filter` option in :doc:`/reference/commands/select`.
+It is often used in combination with :ref:`select-filter` option in :doc:`/reference/commands/select`.
 
 Syntax
 ------
@@ -25,7 +25,7 @@ Syntax
 Usage
 -----
 
-Here are a schema definition and sample data to show usage:
+Here are a schema definition and sample data to show usage.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/between/usage_setup.log
@@ -43,7 +43,7 @@ Here are a schema definition and sample data to show usage:
 .. {"_key": "Frank",  "age": 21}
 .. ]
 
-Here is the query to show the persons to match PG-13 rating (MPAA).
+Here is a query to show users who match PG-13 rating (MPAA).
 
 .. groonga-command
 .. include:: ../../example/reference/functions/between/usage_age.log
@@ -51,55 +51,53 @@ Here is the query to show the persons to match PG-13 rating (MPAA).
 
 It returns 13, 14, 15 and 16 years old users.
 
-``between`` function accepts not only a column of table, but also the value.
+``between`` function accepts not only a column but also a value.
 
-If you specify the value as 1st parameter, it is checked whether the value is included or not. if it matches to the specified range, it returns the all records because ``between`` function returns true.
-
-If it doesn't match to the specified range, it returns no records because ``between`` function returns false.
+If you specify a value as the 1st parameter, it checks whether the value is included or not. If the value matches the specified range, the ``select`` returns all the records because the ``between`` function returns true.
+If it doesn't match the specified range, the ``select`` returns no records because the ``between`` function returns false.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/between/usage_value.log
 .. select Users --filter 'between(14, 13, "include", 16, "include")'
 
-In the above case, it returns all the records, because 14 exists in between 13 and 16.
+In the above case, it returns all the records because 14 exists in between 13 and 16.
 This behavior is used for checking the specified value exists or not in the table.
 
 Parameters
 ----------
 
-There are five required parameters, ``column_or_value``, and ``min``, ``min_border``, ``max`` and ``max_border``.
+There are five required parameters, ``column_or_value``, ``min``, ``min_border``, ``max`` and ``max_border``.
 
 ``column_or_value``
 ^^^^^^^^^^^^^^^^^^^
 
-Specifies a column of the table or the value.
+Specifies a column or value.
 
 ``min``
 ^^^^^^^
 
 Specifies the minimal border value of the range.
-You can control the behavior that the value of ``max`` is included or excluded by ``max_border`` parameter.
+You can control the behavior that the value of ``min`` is included or excluded with ``min_border`` parameter.
 
 ``min_border``
 ^^^^^^^^^^^^^^
 
 Specifies whether the specified range contains the value of ``min`` or not.
-The value of ``min_border`` are either "include" or "exclude". If it is "include", ``min`` value is included. If it is "exclude", ``min`` value is not included.
+The value of ``min_border`` must be either "include" or "exclude". If it is "include", ``min`` value is included. If it is "exclude", ``min`` value is not included.
 
 ``max``
 ^^^^^^^
 
 Specifies the maximum border value of the range.
-You can control the behavior that the value of ``max`` is included or excluded by ``max_border`` parameter.
+You can control the behavior that the value of ``max`` is included or excluded with ``max_border`` parameter.
 
 ``max_border``
 ^^^^^^^^^^^^^^
 
 Specifies whether the specified range contains the value of ``max`` or not.
-The value of ``max_border`` are either "include" or "exclude". If it is "include", ``max`` value is included. If it is "exclude", ``max`` value is not included.
+The value of ``max_border`` must be either "include" or "exclude". If it is "include", ``max`` value is included. If it is "exclude", ``max`` value is not included.
 
 Return value
 ------------
 
-``between`` returns whether the value of column exists in specified the value of range or not. If record is matched to specified the value of range, it returns true. Otherwise, it returns false.
-
+``between`` returns whether the column value exists in the specified range or not. If a record matches the specified range, it returns true. Otherwise, it returns false.
