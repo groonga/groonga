@@ -169,6 +169,8 @@ against truncated tables or columns to recreate database.
 
    You must use this option only when necessary. It means that you use it when there is a mismatch between database meta information and database object files which exists actually. This options should be used when there is no other way to recover database.
 
+.. _grndb-force-lock-clear:
+
 ``--force-lock-clear``
 """"""""""""""""""""""
 
