@@ -3,8 +3,8 @@
 
 .. highlightlang:: none
 
-トラブルシューティング
-======================
+Troubleshooting
+===============
 
 .. toctree::
    :maxdepth: 2

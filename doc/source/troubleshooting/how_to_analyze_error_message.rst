@@ -2,42 +2,40 @@
 
 .. highlightlang:: none
 
-エラーメッセージの解析方法
-==========================
+How to analyze error messages
+=============================
 
-Groongaは様々なエラーメッセージを出力しますが、出力されたエラーメッセージ
-をもとに、原因を解析する方法はいままで、明文化していませんでした。
-ここでは、エラーメッセージごとの解析方法を記載します。
+This section describes how to analyze Groonga error messages.
 
 
-ソケットエラーの解析方法
-------------------------
+How to analyze socket errors
+----------------------------
 
-ここでは、Groongaで発生するソケットエラーの解析方法について説明します。
+This subsection describes how to analyze socket errors with an example.
 
 
-例
-^^
+Example
+^^^^^^^
 
-Groongaのエラーログで以下のようなエラーログがあります。(xxxxxには任意の数字が入ります。)::
+The following is an example of an error message repoted by Groonga, where xxxxx is an arbitrary number::
 
   socket error[xxxxx]: no buffer: accept
 
 
-解析方法
-^^^^^^^^
+How to analyze
+^^^^^^^^^^^^^^
 
-まず、ソケットエラーを扱うマクロである、SOERR というキーワードでGroongaのソースコードをgrepします。
+First, grep Groonga source files for "SOERR" that is the name of a macro for socket errors.
 
-次に見つかったSOERRの引数にacceptが入っているSOERRをさがします。
-すると次のSOERRが見つかります。ログに出ているのはacceptのみなので、下記の最後の行が例で出力されたエラーメッセージに該当するとわかります。::
+Then, extract SOERRs whose argument contains "accept" from the grep output and you will find the following SOERRs::
 
   lib/com.c:      SOERR("listen - start accept");
   lib/com.c:      SOERR("listen - disable accept");
   lib/com.c:        SOERR("accept");
 
+It is clear that the above error message is associated with the last line because the error message contains only "accept".
 
-該当するエラー出力の周辺のコードを見ると以下のようになっています。::
+The source code around the line is as follows::
 
   grn_sock fd = accept(com->fd, NULL, NULL);
   if (fd == -1) {
@@ -46,29 +44,28 @@ Groongaのエラーログで以下のようなエラーログがあります。(
     } else {
       SOERR("accept");
     }
-  return;
+    return;
   }
 
-上記のコードから、acceptを実行してエラーが発生したことが確認できます。
-次は、acceptが失敗した原因を追っていきます。
+From the above source code, you can confirm that the error occurred due to accept.
+Let's dig into the cause.
 
-acceptが失敗した理由は、::
+The error message provides hints for investigation::
 
   [10055]: no buffer
 
-から追うことができます。
-10055はWindowsのソケットエラーコードを表しています。また、no bufferはSOERRマクロ内でGroongaが用意しているメッセージです。
-Windowsのシステムエラーコードから調査しても良いですし、Groongaが出力しているエラーメッセージから調査しても良いです。
+10055 is a Windows socket error code and "no buffer" is a message by Groonga given in SOERR.
 
-Windowsのシステムエラーコードは以下のページに一覧があります。::
+Windows socket error codes are listed in the following page::
 
   https://msdn.microsoft.com/ja-jp/library/windows/desktop/ms740668(v=vs.85).aspx
 
-システムエラーコードまたは、エラーメッセージから調査すると、acceptが失敗した理由は、WSAENOBUFSであることがわかります。さらに、WSAENOBUFSが発生する原因を調査するとWSAENOBUFSが発生する原因は以下であることがわかります。::
+10055 is assigned to WSAENOBUFS and its description is as follows::
 
   No buffer space available.
 
   An operation on a socket could not be performed because the system lacked sufficient buffer space or because a queue was full.
 
-上記のメッセージから、acceptが失敗する原因は、メモリー不足または、接続数が多すぎる場合であることがわかりました。
-あとは、エラーメッセージが出た際の状況から、接続数が多かったのか、メモリ不足だったのかを判断します。
+From the above description, you can narrow down the causes.
+The possible causes are the lack of memory and too many connections.
+Finally, determine which one is appropriate for the situation when the error occurred.
