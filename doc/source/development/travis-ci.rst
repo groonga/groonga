@@ -5,22 +5,22 @@
 Travis CI
 =========
 
-This section describes about using Groonga on `Travis CI
+This section describes how to use Groonga on `Travis CI
 <http://travis-ci.org/>`_. Travis CI is a hosted continuous
 integration service for the open source community.
 
 You can use Travis CI for your open source software. This section only
 describes about Groonga related configuration. See `Travis CI:
 Documentation <http://about.travis-ci.org/docs/>`_ about general
-Travis CI.
+Travis CI configuration.
 
 Configuration
 -------------
 
-Travis CI is running on 64-bit Ubuntu 12.04 LTS Server Edition. (See `Travis CI: About
+Travis CI is running on 64-bit Ubuntu 14.04 LTS Server Edition. (See `Travis CI: About
 Travis CI Environment
 <http://about.travis-ci.org/docs/user/ci-environment/>`_.)  You can
-use apt-line for Ubuntu 12.04 LTS provided by Groonga project to install
+use apt-line for Ubuntu 14.04 LTS provided by Groonga project to install
 Groonga on Travis CI.
 
 You can custom build lifecycle by ``.travis.yml``. (See `Travis CI:
@@ -41,7 +41,7 @@ Add the following ``sudo`` and ``before_install`` configuration to
 is used in the setup script.
 
 If you need to use ``install`` hook instead of ``before_install``, you
-just substitute ``before_install:`` with ``install:``.
+just have to replace ``before_install:`` with ``install:``.
 
 With the above configuration, you can use Groonga for your build.
 
