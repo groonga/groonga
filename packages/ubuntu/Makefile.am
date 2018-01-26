@@ -1,4 +1,4 @@
-CODE_NAMES = xenial,zesty,artful
+CODE_NAMES = xenial,artful
 SOURCE = ../$(PACKAGE)-$(VERSION).tar.gz
 
 all:
