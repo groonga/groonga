@@ -102,7 +102,7 @@ static grn_bool grn_ii_overlap_token_skip_enable = GRN_FALSE;
 static uint32_t grn_ii_builder_block_threshold_force = 0;
 static uint32_t grn_ii_max_n_segments_small = MAX_PSEG_SMALL;
 static uint32_t grn_ii_max_n_chunks_small = GRN_II_MAX_CHUNK_SMALL;
-static grn_bool grn_ii_reduce_expire_enable = GRN_TRUE;
+static int64_t grn_ii_reduce_expire_threshold = -1;
 
 void
 grn_ii_init_from_env(void)
@@ -204,14 +204,16 @@ grn_ii_init_from_env(void)
   }
 
   {
-    char grn_ii_reduce_expire_enable_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_II_REDUCE_EXPIRE_ENABLE",
-               grn_ii_reduce_expire_enable_env,
+    char grn_ii_reduce_expire_threshold_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_REDUCE_EXPIRE_THRESHOLD",
+               grn_ii_reduce_expire_threshold_env,
                GRN_ENV_BUFFER_SIZE);
-    if (strcmp(grn_ii_reduce_expire_enable_env, "no") == 0) {
-      grn_ii_reduce_expire_enable = GRN_FALSE;
-    } else {
-      grn_ii_reduce_expire_enable = GRN_TRUE;
+    if (grn_ii_reduce_expire_threshold_env[0]) {
+      grn_ii_reduce_expire_threshold =
+        grn_atoll(grn_ii_reduce_expire_threshold_env,
+                  grn_ii_reduce_expire_threshold_env +
+                  strlen(grn_ii_reduce_expire_threshold_env),
+                  NULL);
     }
   }
 }
@@ -4137,9 +4139,26 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
             if (memcmp(((char *)current_key) + target_key_size,
                        key + target_key_size,
                        reduced_key_size) == 0) {
+              /* printf("continue: %d: %d: %c: %.*s\n", */
+              /*        reduced_key_size, */
+              /*        target_key_size, */
+              /*        ((char *)current_key)[target_key_size], */
+              /*        current_key_size, ((char *)current_key)); */
               continue;
             }
             buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
+            if (*lseg == GRN_II_PSEG_NOT_ASSIGNED) {
+              /* printf("miss: %d: %d: %.*s\n", */
+              /*        target_key_size, */
+              /*        reduced_key_size, */
+              /*        current_key_size, ((char *)current_key)); */
+            } else {
+              /* printf("found: %d: %d: %.*s, %.*s\n", */
+              /*        target_key_size, */
+              /*        reduced_key_size, */
+              /*        key_size, key, */
+              /*        current_key_size, ((char *)current_key)); */
+            }
           }
         }
         grn_pat_cursor_close(ctx, cursor);
@@ -4152,6 +4171,11 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
           }
         }
         target_key_size -= reduced_key_size;
+      }
+
+      if (*lseg == GRN_II_PSEG_NOT_ASSIGNED) {
+        /* printf("not found: %.*s\n", */
+        /*        key_size, key); */
       }
     }
   } else {
@@ -4516,14 +4540,15 @@ grn_ii_get_n_elements(grn_ctx *ctx, grn_ii *ii)
 void
 grn_ii_expire(grn_ctx *ctx, grn_ii *ii)
 {
+  int64_t threshold = ii->chunk->max_map_seg / 2;
   /*
   grn_io_expire(ctx, ii->seg, 128, 1000000);
   */
-  if (grn_ii_reduce_expire_enable) {
-    if (ii->chunk->nmaps > ii->chunk->max_map_seg / 2) {
-      grn_io_expire(ctx, ii->chunk, 0, 1000000);
-    }
-  } else {
+  if (0 <= grn_ii_reduce_expire_threshold &&
+      grn_ii_reduce_expire_threshold < threshold) {
+    threshold = grn_ii_reduce_expire_threshold;
+  }
+  if (ii->chunk->nmaps > threshold) {
     grn_io_expire(ctx, ii->chunk, 0, 1000000);
   }
 }
