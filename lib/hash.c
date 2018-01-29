@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -331,6 +331,13 @@ grn_table_queue_lock_init(grn_ctx *ctx, grn_table_queue *queue)
 }
 
 static void
+grn_table_queue_lock_fin(grn_ctx *ctx, grn_table_queue *queue)
+{
+  MUTEX_FIN(queue->mutex);
+  COND_FIN(queue->cond);
+}
+
+static void
 grn_table_queue_init(grn_ctx *ctx, grn_table_queue *queue)
 {
   queue->head = 0;
@@ -338,6 +345,12 @@ grn_table_queue_init(grn_ctx *ctx, grn_table_queue *queue)
   queue->cap = GRN_ARRAY_MAX;
   queue->unblock_requested = GRN_FALSE;
   grn_table_queue_lock_init(ctx, queue);
+}
+
+static void
+grn_table_queue_fin(grn_ctx *ctx, grn_table_queue *queue)
+{
+  grn_table_queue_lock_fin(ctx, queue);
 }
 
 uint32_t
@@ -2100,6 +2113,15 @@ grn_hash_close(grn_ctx *ctx, grn_hash *hash)
   if (grn_hash_is_io_hash(hash)) {
     rc = grn_io_close(ctx, hash->io);
     GRN_OBJ_FIN(ctx, &(hash->token_filters));
+    {
+      grn_table_queue *queue;
+      if (GRN_HASH_IS_LARGE_KEY(hash)) {
+        queue = &(hash->header.large->queue);
+      } else {
+        queue = &(hash->header.normal->queue);
+      }
+      grn_table_queue_fin(ctx, queue);
+    }
   } else {
     GRN_ASSERT(ctx == hash->ctx);
     rc = grn_tiny_hash_fin(ctx, hash);
