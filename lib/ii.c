@@ -4139,26 +4139,9 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
             if (memcmp(((char *)current_key) + target_key_size,
                        key + target_key_size,
                        reduced_key_size) == 0) {
-              /* printf("continue: %d: %d: %c: %.*s\n", */
-              /*        reduced_key_size, */
-              /*        target_key_size, */
-              /*        ((char *)current_key)[target_key_size], */
-              /*        current_key_size, ((char *)current_key)); */
               continue;
             }
             buffer_new_find_segment(ctx, ii, size, tid, h, b, lseg, pseg);
-            if (*lseg == GRN_II_PSEG_NOT_ASSIGNED) {
-              /* printf("miss: %d: %d: %.*s\n", */
-              /*        target_key_size, */
-              /*        reduced_key_size, */
-              /*        current_key_size, ((char *)current_key)); */
-            } else {
-              /* printf("found: %d: %d: %.*s, %.*s\n", */
-              /*        target_key_size, */
-              /*        reduced_key_size, */
-              /*        key_size, key, */
-              /*        current_key_size, ((char *)current_key)); */
-            }
           }
         }
         grn_pat_cursor_close(ctx, cursor);
@@ -4171,11 +4154,6 @@ buffer_new_lexicon_pat(grn_ctx *ctx,
           }
         }
         target_key_size -= reduced_key_size;
-      }
-
-      if (*lseg == GRN_II_PSEG_NOT_ASSIGNED) {
-        /* printf("not found: %.*s\n", */
-        /*        key_size, key); */
       }
     }
   } else {
