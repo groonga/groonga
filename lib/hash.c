@@ -653,6 +653,7 @@ grn_array_close(grn_ctx *ctx, grn_array *array)
   if (array->keys) { GRN_FREE(array->keys); }
   if (grn_array_is_io_array(array)) {
     rc = grn_io_close(ctx, array->io);
+    grn_table_queue_init(ctx, &array->header->queue);
   } else {
     GRN_ASSERT(ctx == array->ctx);
     grn_tiny_array_fin(&array->array);
