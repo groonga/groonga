@@ -42,8 +42,15 @@ Improvements
 * [Windows] Changed to use sparse file on Windows. It reduces disk
   space and there are no performance demerit.
 
-* Added environment variable to disable reducing expire
-  ``GRN_II_REDUCE_EXPIRE_ENABLE=no`` disables. It's enabled by default.
+* [:ref:`online-index-construction`] Added
+  ``GRN_II_REDUCE_EXPIRE_THRESHOLD`` environment variable to control
+  when memory maps are expired in index column. It's ``-1`` by
+  default. It means that expire timing is depends on index column
+  size. If index column is smaller, expire timing is more. If index
+  column is larger, expire timing is less.
+
+  You can use the previous behavior by ``0``. It means that Groonga
+  always tries to expire.
 
 * [:doc:`/reference/commands/logical_range_filter`]
   [:ref:`logical-range-filter-post-filter`] Added a new filter timing.
