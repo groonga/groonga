@@ -16,7 +16,8 @@ case "${TRAVIS_OS_NAME}" in
          libevent-dev \
          libmecab-dev \
          mecab-naist-jdic \
-         cmake
+         cmake \
+         gdb
     ;;
   osx)
     brew update > /dev/null
