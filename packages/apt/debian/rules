@@ -13,5 +13,7 @@ override_dh_install:
 	install -d debian/tmp/usr/share/keyrings/
 	install -m 0644 groonga-keyring.gpg \
 	  debian/tmp/usr/share/keyrings/
+	install -m 0644 groonga-keyring-rsa4096.gpg \
+	  debian/tmp/usr/share/keyrings/
 
 	dh_install

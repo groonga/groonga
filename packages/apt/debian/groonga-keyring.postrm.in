@@ -6,6 +6,7 @@ case "$1" in
     remove)
 	if [ -x /usr/bin/apt-key ]; then
 	    apt-key del @GPG_UID@
+	    apt-key del 2701F317CFCCCB975CADE9C2624CF77434839225
 	fi
 	;;
     purge)

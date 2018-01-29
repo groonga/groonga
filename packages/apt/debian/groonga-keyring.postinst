@@ -8,6 +8,7 @@ case "$1" in
     configure)
 	if [ -x /usr/bin/apt-key ]; then
 	    apt-key add /usr/share/keyrings/groonga-keyring.gpg
+	    apt-key add /usr/share/keyrings/groonga-keyring-rsa4096.gpg
 	fi
         ;;
     abort-upgrade|abort-deconfigure|abort-remove)

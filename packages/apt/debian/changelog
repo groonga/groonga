@@ -1,3 +1,9 @@
+groonga-keyring (2018.01.29-1) unstable; urgency=medium
+
+  * Add new key because weak key (1024bit) is regarded as invalid key by secure apt.
+
+ -- Kentaro Hayashi <hayashi@clear-code.com>  Mon, 29 Jan 2018 15:43:35 +0900
+
 groonga-keyring (2012.05.29-1) unstable; urgency=low
 
   * Replace old key id to new one.
