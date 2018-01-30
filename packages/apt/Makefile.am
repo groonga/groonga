@@ -87,7 +87,7 @@ tmp/$(KEYRING_BASE_NAME).tar.gz: ensure-public-key
 	mkdir -p $(KEYRING_BASE_NAME)
 	gpg --armor --export '$(GPG_UID)' > \
 	  $(KEYRING_BASE_NAME)/groonga-keyring.gpg
-	gpg --armor --export '2701F317CFCCCB975CADE9C2624CF77434839225' > \
+	gpg --armor --export '$(GPG_UID_RSA4096)' > \
 	  $(KEYRING_BASE_NAME)/groonga-keyring-rsa4096.gpg
 	mkdir -p tmp/
 	tar cvzf tmp/$(KEYRING_BASE_NAME).tar.gz $(KEYRING_BASE_NAME)
