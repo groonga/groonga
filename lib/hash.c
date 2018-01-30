@@ -333,8 +333,8 @@ grn_table_queue_lock_init(grn_ctx *ctx, grn_table_queue *queue)
 static void
 grn_table_queue_lock_fin(grn_ctx *ctx, grn_table_queue *queue)
 {
-  MUTEX_FIN(queue->mutex);
   COND_FIN(queue->cond);
+  MUTEX_FIN(queue->mutex);
 }
 
 static void
