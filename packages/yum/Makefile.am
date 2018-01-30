@@ -54,7 +54,7 @@ build-in-vm: source specs env.sh
 	  done;							\
 	done
 
-build-release-rpm: RPM-GPG-KEY-$(PACKAGE)
+build-release-rpm: RPM-GPG-KEY-$(PACKAGE) RPM-GPG-KEY-$(PACKAGE)-RSA4096
 	./build-release-rpm.sh			\
 	  $(PACKAGE)				\
 	  '$(PACKAGE_LABEL)'			\
@@ -69,6 +69,9 @@ ensure-public-key:
 
 RPM-GPG-KEY-$(PACKAGE): ensure-public-key
 	gpg --armor --export '$(GPG_UID)' > $@
+
+RPM-GPG-KEY-$(PACKAGE)-RSA4096: ensure-public-key
+	gpg --armor --export '$(GPG_UID_RSA4096)' > $@
 
 source: tmp/$(PACKAGE)-$(VERSION).tar.gz
 

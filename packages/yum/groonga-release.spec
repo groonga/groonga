@@ -1,6 +1,6 @@
 Summary: Groonga release files
 Name: groonga-release
-Version: 1.3.0
+Version: 1.4.0
 Release: 1
 License: LGPLv2
 URL: https://packages.groonga.org/
@@ -23,6 +23,7 @@ Groonga release files
 %{__rm} -rf %{buildroot}
 
 %{__install} -Dp -m0644 RPM-GPG-KEY-groonga %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga
+%{__install} -Dp -m0644 RPM-GPG-KEY-groonga-RSA4096 %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
 
 %{__install} -Dp -m0644 groonga.repo %{buildroot}%{_sysconfdir}/yum.repos.d/groonga.repo
 
@@ -33,12 +34,17 @@ Groonga release files
 %defattr(-, root, root, 0755)
 %doc *
 %pubkey RPM-GPG-KEY-groonga
+%pubkey RPM-GPG-KEY-groonga-RSA4096
 %dir %{_sysconfdir}/yum.repos.d/
 %config(noreplace) %{_sysconfdir}/yum.repos.d/groonga.repo
 %dir %{_sysconfdir}/pki/rpm-gpg/
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga
+%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
 
 %changelog
+* Mon Jan 29 2018 Kentaro Hayashi <hayashi@clear-code.com> - 1.4.0-1
+- Add new signing key for transition from weak key (1024bit)
+
 * Sat Mar 25 2017 Kentaro Hayashi <hayashi@clear-code.com> - 1.3.0-1
 - Use https instead of http in groonga.repo.
 

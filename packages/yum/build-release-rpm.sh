@@ -74,10 +74,11 @@ baseurl=$BASE_URL_PREFIX/$distribution/\$releasever/\$basearch/
 gpgcheck=1
 enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-$PACKAGE
+       file:///etc/pki/rpm-gpg/RPM-GPG-KEY-$PACKAGE-RSA4096
 EOR
     fi
     run tar cfz $rpm_base_dir/SOURCES/${PACKAGE}-release.tar.gz \
-	-C ${script_base_dir} ${repo} RPM-GPG-KEY-${PACKAGE}
+	-C ${script_base_dir} ${repo} RPM-GPG-KEY-${PACKAGE} RPM-GPG-KEY-${PACKAGE}-RSA4096
     run cp ${script_base_dir}/${PACKAGE}-release.spec $rpm_base_dir/SPECS/
 
     run rpmbuild -ba $rpm_base_dir/SPECS/${PACKAGE}-release.spec
