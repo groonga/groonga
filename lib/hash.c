@@ -652,8 +652,8 @@ grn_array_close(grn_ctx *ctx, grn_array *array)
   if (!ctx || !array) { return GRN_INVALID_ARGUMENT; }
   if (array->keys) { GRN_FREE(array->keys); }
   if (grn_array_is_io_array(array)) {
-    rc = grn_io_close(ctx, array->io);
     grn_table_queue_fin(ctx, &array->header->queue);
+    rc = grn_io_close(ctx, array->io);
   } else {
     GRN_ASSERT(ctx == array->ctx);
     grn_tiny_array_fin(&array->array);
@@ -2112,8 +2112,6 @@ grn_hash_close(grn_ctx *ctx, grn_hash *hash)
   grn_rc rc;
   if (!ctx || !hash) { return GRN_INVALID_ARGUMENT; }
   if (grn_hash_is_io_hash(hash)) {
-    rc = grn_io_close(ctx, hash->io);
-    GRN_OBJ_FIN(ctx, &(hash->token_filters));
     {
       grn_table_queue *queue;
       if (GRN_HASH_IS_LARGE_KEY(hash)) {
@@ -2123,6 +2121,8 @@ grn_hash_close(grn_ctx *ctx, grn_hash *hash)
       }
       grn_table_queue_fin(ctx, queue);
     }
+    rc = grn_io_close(ctx, hash->io);
+    GRN_OBJ_FIN(ctx, &(hash->token_filters));
   } else {
     GRN_ASSERT(ctx == hash->ctx);
     rc = grn_tiny_hash_fin(ctx, hash);
