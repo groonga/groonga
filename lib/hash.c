@@ -2037,6 +2037,15 @@ grn_hash_open(grn_ctx *ctx, const char *path)
               hash->normalizer = grn_ctx_at(ctx, header->normalizer);
             }
             GRN_PTR_INIT(&(hash->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
+            {
+              grn_table_queue *queue;
+              if (GRN_HASH_IS_LARGE_KEY(hash)) {
+                queue = &(hash->header.large->queue);
+              } else {
+                queue = &(hash->header.normal->queue);
+              }
+              grn_table_queue_init(ctx, queue);
+            }
             hash->obj.header.flags = header->flags;
             return hash;
           } else {
