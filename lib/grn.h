@@ -221,17 +221,17 @@ typedef void * grn_thread_func_result;
   (pthread_create(&(thread), NULL, (func), (arg)))
 # define THREAD_JOIN(thread) (pthread_join(thread, NULL))
 typedef pthread_mutex_t grn_mutex;
-# define MUTEX_INIT(m)       pthread_mutex_init(&m, NULL)
-# define MUTEX_LOCK(m)       pthread_mutex_lock(&m)
+# define MUTEX_INIT(m)       pthread_mutex_init(&(m), NULL)
+# define MUTEX_LOCK(m)       pthread_mutex_lock(&(m))
 # define MUTEX_LOCK_CHECK(m) (MUTEX_LOCK(m) == 0)
-# define MUTEX_UNLOCK(m)     pthread_mutex_unlock(&m)
-# define MUTEX_FIN(m)        pthread_mutex_destroy(&m)
+# define MUTEX_UNLOCK(m)     pthread_mutex_unlock(&(m))
+# define MUTEX_FIN(m)        pthread_mutex_destroy(&(m))
 # ifdef HAVE_PTHREAD_MUTEXATTR_SETPSHARED
 #  define MUTEX_INIT_SHARED(m) do {\
   pthread_mutexattr_t mutexattr;\
   pthread_mutexattr_init(&mutexattr);\
   pthread_mutexattr_setpshared(&mutexattr, PTHREAD_PROCESS_SHARED);\
-  pthread_mutex_init(&m, &mutexattr);\
+  pthread_mutex_init(&(m), &mutexattr);\
 } while (0)
 # else
 #  define MUTEX_INIT_SHARED MUTEX_INIT
@@ -244,21 +244,21 @@ typedef pthread_mutex_t grn_critical_section;
 # define CRITICAL_SECTION_FIN(cs)
 
 typedef pthread_cond_t grn_cond;
-# define COND_INIT(c)   pthread_cond_init(&c, NULL)
-# define COND_SIGNAL(c) pthread_cond_signal(&c)
-# define COND_WAIT(c,m) pthread_cond_wait(&c, &m)
-# define COND_BROADCAST(c) pthread_cond_broadcast(&c)
+# define COND_INIT(c)   pthread_cond_init(&(c), NULL)
+# define COND_SIGNAL(c) pthread_cond_signal(&(c))
+# define COND_WAIT(c,m) pthread_cond_wait(&(c), &(m))
+# define COND_BROADCAST(c) pthread_cond_broadcast(&(c))
 # ifdef HAVE_PTHREAD_CONDATTR_SETPSHARED
 #  define COND_INIT_SHARED(c) do {\
   pthread_condattr_t condattr;\
   pthread_condattr_init(&condattr);\
   pthread_condattr_setpshared(&condattr, PTHREAD_PROCESS_SHARED);\
-  pthread_cond_init(&c, &condattr);\
+  pthread_cond_init(&(c), &condattr);\
 } while (0)
 # else
 #  define COND_INIT_SHARED COND_INIT
 # endif /* HAVE_PTHREAD_CONDATTR_SETPSHARE */
-# define COND_FIN(c)    pthread_cond_destroy(&c)
+# define COND_FIN(c)    pthread_cond_destroy(&(c))
 
 typedef pthread_key_t grn_thread_key;
 # define THREAD_KEY_CREATE(key, destr)  pthread_key_create(key, destr)
@@ -319,8 +319,8 @@ typedef HANDLE grn_mutex;
 #  define MUTEX_INIT(m)       ((m) = CreateMutex(0, FALSE, NULL))
 #  define MUTEX_LOCK(m)       WaitForSingleObject((m), INFINITE)
 #  define MUTEX_LOCK_CHECK(m) (MUTEX_LOCK(m) == WAIT_OBJECT_0)
-#  define MUTEX_UNLOCK(m)     ReleaseMutex(m)
-#  define MUTEX_FIN(m)        CloseHandle(m)
+#  define MUTEX_UNLOCK(m)     ReleaseMutex((m))
+#  define MUTEX_FIN(m)        CloseHandle((m))
 typedef CRITICAL_SECTION grn_critical_section;
 #  define CRITICAL_SECTION_INIT(cs)  InitializeCriticalSection(&(cs))
 #  define CRITICAL_SECTION_ENTER(cs) EnterCriticalSection(&(cs))
