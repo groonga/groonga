@@ -275,13 +275,11 @@ struct _grn_hash_header_common {
 struct _grn_hash_header_normal {
   GRN_HASH_HEADER_COMMON_FIELDS;
   grn_id garbages[GRN_HASH_MAX_KEY_SIZE_NORMAL];
-  grn_table_queue queue;
 };
 
 struct _grn_hash_header_large {
   GRN_HASH_HEADER_COMMON_FIELDS;
   grn_id garbages[GRN_HASH_MAX_KEY_SIZE_LARGE];
-  grn_table_queue queue;
 };
 
 struct _grn_hash_cursor {

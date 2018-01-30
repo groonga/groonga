@@ -1880,15 +1880,6 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
   }
   header->truncated = GRN_FALSE;
   GRN_PTR_INIT(&(hash->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
-  {
-    grn_table_queue *queue;
-    if (GRN_HASH_IS_LARGE_KEY(hash)) {
-      queue = &(((grn_hash_header_large *)(header))->queue);
-    } else {
-      queue = &(((grn_hash_header_normal *)(header))->queue);
-    }
-    grn_table_queue_init(ctx, queue);
-  }
 
   hash->obj.header.flags = (header->flags & GRN_OBJ_FLAGS_MASK);
   hash->ctx = ctx;
@@ -2037,15 +2028,6 @@ grn_hash_open(grn_ctx *ctx, const char *path)
               hash->normalizer = grn_ctx_at(ctx, header->normalizer);
             }
             GRN_PTR_INIT(&(hash->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
-            {
-              grn_table_queue *queue;
-              if (GRN_HASH_IS_LARGE_KEY(hash)) {
-                queue = &(hash->header.large->queue);
-              } else {
-                queue = &(hash->header.normal->queue);
-              }
-              grn_table_queue_init(ctx, queue);
-            }
             hash->obj.header.flags = header->flags;
             return hash;
           } else {
@@ -2121,15 +2103,6 @@ grn_hash_close(grn_ctx *ctx, grn_hash *hash)
   grn_rc rc;
   if (!ctx || !hash) { return GRN_INVALID_ARGUMENT; }
   if (grn_hash_is_io_hash(hash)) {
-    {
-      grn_table_queue *queue;
-      if (GRN_HASH_IS_LARGE_KEY(hash)) {
-        queue = &(hash->header.large->queue);
-      } else {
-        queue = &(hash->header.normal->queue);
-      }
-      grn_table_queue_fin(ctx, queue);
-    }
     rc = grn_io_close(ctx, hash->io);
     GRN_OBJ_FIN(ctx, &(hash->token_filters));
   } else {
