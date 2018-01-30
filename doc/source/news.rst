@@ -15,6 +15,9 @@ Release 7.1.1 - 2018-01-29
 Improvements
 ^^^^^^^^^^^^
 
+* [:doc:`/install/ubuntu`] Dropped Ubuntu 17.04 (Zesty Zapus) support.
+  It has reached EOL at Jan 13, 2018.
+
 * Added quorum match support.
   You can use quorum match in both script syntax and query syntax.
   [groonga-talk,385][Suggested by 付超群]
