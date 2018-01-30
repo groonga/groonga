@@ -170,28 +170,6 @@ grn_rc grn_array_truncate(grn_ctx *ctx, grn_array *array);
 grn_rc grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
                                grn_table_sort_key *keys, int n_keys);
 
-/* grn_table_queue */
-
-typedef struct _grn_table_queue grn_table_queue;
-
-struct _grn_table_queue {
-  grn_mutex mutex;
-  grn_cond cond;
-  grn_id head;
-  grn_id tail;
-  grn_id cap;
-  grn_bool unblock_requested;
-};
-
-GRN_API void grn_array_queue_lock_clear(grn_ctx *ctx, grn_array *array);
-GRN_API void grn_array_clear_curr_rec(grn_ctx *ctx, grn_array *array);
-GRN_API grn_table_queue *grn_array_queue(grn_ctx *ctx, grn_array *array);
-GRN_API uint32_t grn_table_queue_size(grn_table_queue *queue);
-GRN_API void grn_table_queue_head_increment(grn_table_queue *queue);
-GRN_API void grn_table_queue_tail_increment(grn_table_queue *queue);
-GRN_API grn_id grn_table_queue_head(grn_table_queue *queue);
-GRN_API grn_id grn_table_queue_tail(grn_table_queue *queue);
-
 /**** grn_hash ****/
 
 #define GRN_HASH_MAX_KEY_SIZE_NORMAL GRN_TABLE_MAX_KEY_SIZE
