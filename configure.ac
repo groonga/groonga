@@ -1688,6 +1688,9 @@ AC_SUBST(LAUNCHPAD_UPLOADER_PGP_KEY)
 GPG_UID=m4_include(gpg_uid)
 AC_SUBST(GPG_UID)
 
+GPG_UID_RSA4096=m4_include(gpg_uid_rsa4096)
+AC_SUBST(GPG_UID_RSA4096)
+
 pkgsysconfdir="\${sysconfdir}/$PACKAGE_NAME"
 AC_SUBST(pkgsysconfdir)
 
