@@ -652,7 +652,7 @@ grn_array_close(grn_ctx *ctx, grn_array *array)
   if (!ctx || !array) { return GRN_INVALID_ARGUMENT; }
   if (array->keys) { GRN_FREE(array->keys); }
   if (grn_array_is_io_array(array)) {
-    grn_table_queue_fin(ctx, &array->header->queue);
+    /* grn_table_queue_fin(ctx, &array->header->queue); */
     rc = grn_io_close(ctx, array->io);
   } else {
     GRN_ASSERT(ctx == array->ctx);
