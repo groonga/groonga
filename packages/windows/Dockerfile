@@ -1,8 +1,8 @@
 FROM debian
 
 RUN dpkg --add-architecture i386
-RUN apt update
-RUN apt install -V -y \
+RUN apt update && \
+    apt install -V -y \
       build-essential \
       devscripts \
       autoconf \
@@ -10,10 +10,12 @@ RUN apt install -V -y \
       cmake \
       pkg-config \
       mingw-w64 \
-      wine \
       wine-binfmt \
+      wine32 \
+      wine64 \
       rsync \
-      ruby
+      ruby && \
+   apt clean
 
 RUN gem install rake
 

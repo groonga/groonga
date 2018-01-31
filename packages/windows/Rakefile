@@ -1,6 +1,6 @@
 # -*- coding: utf-8; mode: ruby -*-
 #
-# Copyright (C) 2011-2017  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011-2018  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -277,11 +277,7 @@ namespace :build do
       mecab_dict_index_bin = binary_dir + "bin" + "mecab-dict-index.exe"
       cp(mecab_dict_index_original,
          mecab_dict_index_bin)
-      if groonga_win32_x86_p
-        mecab_dict_index = "wine32 #{mecab_dict_index_bin}"
-      else
-        mecab_dict_index = "wine64 #{mecab_dict_index_bin}"
-      end
+      mecab_dict_index = "wine #{mecab_dict_index_bin}"
       rm_rf(File.expand_path("~/.wine"))
       sh("make", "mecab_dict_index=#{mecab_dict_index}") or exit(false)
       rm(mecab_dict_index_bin)
