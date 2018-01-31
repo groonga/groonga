@@ -28,6 +28,13 @@ msgid "Improvements"
 msgstr "改良"
 
 msgid ""
+"[:doc:`/install/ubuntu`] Dropped Ubuntu 17.04 (Zesty Zapus) support. It has "
+"reached EOL at Jan 13, 2018."
+msgstr ""
+"[:doc:`/install/ubuntu`] Ubuntu 17.04（Zesty Zapus）のサポートをやめました。"
+"2018年1月13日でサポートが切れた（EOLになった）ためです。"
+
+msgid ""
 "Added quorum match support. You can use quorum match in both script syntax "
 "and query syntax. [groonga-talk,385][Suggested by 付超群]"
 msgstr ""
