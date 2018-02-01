@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -93,6 +93,7 @@ typedef struct {
   grn_table_group_flags calc_types;
   grn_raw_string calc_target_name;
   grn_raw_string filter;
+  grn_raw_string adjuster;
   grn_raw_string table_name;
   grn_columns columns;
   grn_table_group_result result;
@@ -960,6 +961,7 @@ grn_drilldown_data_init(grn_ctx *ctx,
   drilldown->calc_types = 0;
   GRN_RAW_STRING_INIT(drilldown->calc_target_name);
   GRN_RAW_STRING_INIT(drilldown->filter);
+  GRN_RAW_STRING_INIT(drilldown->adjuster);
   GRN_RAW_STRING_INIT(drilldown->table_name);
   grn_columns_init(ctx, &(drilldown->columns));
   drilldown->result.table = NULL;
@@ -999,6 +1001,7 @@ grn_drilldown_data_fill(grn_ctx *ctx,
                         grn_obj *calc_types,
                         grn_obj *calc_target,
                         grn_obj *filter,
+                        grn_obj *adjuster,
                         grn_obj *table)
 {
   GRN_RAW_STRING_FILL(drilldown->keys, keys);
@@ -1037,6 +1040,8 @@ grn_drilldown_data_fill(grn_ctx *ctx,
   GRN_RAW_STRING_FILL(drilldown->calc_target_name, calc_target);
 
   GRN_RAW_STRING_FILL(drilldown->filter, filter);
+
+  GRN_RAW_STRING_FILL(drilldown->adjuster, adjuster);
 
   GRN_RAW_STRING_FILL(drilldown->table_name, table);
 }
@@ -1657,29 +1662,35 @@ grn_select_apply_adjuster_execute(grn_ctx *ctx,
 
 static grn_bool
 grn_select_apply_adjuster(grn_ctx *ctx,
-                          grn_select_data *data)
+                          grn_select_data *data,
+                          grn_raw_string *adjuster_string,
+                          grn_obj *target,
+                          grn_obj *result,
+                          const char *log_tag_prefix,
+                          const char *query_log_tag_prefix)
 {
   grn_obj *adjuster;
   grn_obj *record;
   grn_rc rc;
 
-  if (data->adjuster.length == 0) {
+  if (adjuster_string->length == 0) {
     return GRN_TRUE;
   }
 
-  GRN_EXPR_CREATE_FOR_QUERY(ctx, data->tables.target, adjuster, record);
+  GRN_EXPR_CREATE_FOR_QUERY(ctx, target, adjuster, record);
   if (!adjuster) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
-                     "[select][adjuster] "
+                     "%s[adjuster] "
                      "failed to create expression: %s",
+                     log_tag_prefix,
                      ctx->errbuf);
     return GRN_FALSE;
   }
 
   rc = grn_expr_parse(ctx, adjuster,
-                      data->adjuster.value,
-                      data->adjuster.length,
+                      adjuster_string->value,
+                      adjuster_string->length,
                       NULL,
                       GRN_OP_MATCH, GRN_OP_ADJUST,
                       GRN_EXPR_SYNTAX_ADJUSTER);
@@ -1687,19 +1698,23 @@ grn_select_apply_adjuster(grn_ctx *ctx,
     grn_obj_unlink(ctx, adjuster);
     GRN_PLUGIN_ERROR(ctx,
                      rc,
-                     "[select][adjuster] "
+                     "%s[adjuster] "
                      "failed to parse: %s",
+                     log_tag_prefix,
                      ctx->errbuf);
     return GRN_FALSE;
   }
 
   data->cacheable *= ((grn_expr *)adjuster)->cacheable;
   data->taintable += ((grn_expr *)adjuster)->taintable;
-  grn_select_apply_adjuster_execute(ctx, data->tables.result, adjuster);
+  grn_select_apply_adjuster_execute(ctx, result, adjuster);
   grn_obj_unlink(ctx, adjuster);
 
   GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                ":", "adjust(%d)", grn_table_size(ctx, data->tables.result));
+                ":", "%s%sadjust(%d)",
+                query_log_tag_prefix ? query_log_tag_prefix : "",
+                query_log_tag_prefix ? "." : "",
+                grn_table_size(ctx, result));
 
   return GRN_TRUE;
 }
@@ -2099,16 +2114,38 @@ grn_select_drilldown_execute(grn_ctx *ctx,
                              grn_hash *drilldowns,
                              grn_id id)
 {
+  grn_bool success = GRN_TRUE;
   grn_table_sort_key *keys = NULL;
   unsigned int n_keys = 0;
   grn_obj *target_table = table;
   grn_drilldown_data *drilldown;
   grn_table_group_result *result;
+  grn_obj log_tag_prefix;
+  grn_obj query_log_tag_prefix;
 
   drilldown =
     (grn_drilldown_data *)grn_hash_get_value_(ctx, drilldowns, id, NULL);
-  result = &(drilldown->result);
 
+  GRN_TEXT_INIT(&log_tag_prefix, 0);
+  GRN_TEXT_INIT(&query_log_tag_prefix, 0);
+  grn_text_printf(ctx, &log_tag_prefix,
+                  "[select][drilldowns]%s%.*s%s",
+                  drilldown->label.length > 0 ? "[" : "",
+                  (int)(drilldown->label.length),
+                  drilldown->label.value,
+                  drilldown->label.length > 0 ? "]" : "");
+  GRN_TEXT_PUTC(ctx, &log_tag_prefix, '\0');
+  if (data->drilldown.keys.length == 0) {
+    grn_text_printf(ctx, &query_log_tag_prefix,
+                    "drilldowns[%.*s]",
+                    (int)(drilldown->label.length),
+                    drilldown->label.value);
+  } else {
+    GRN_TEXT_SETS(ctx, &query_log_tag_prefix, "drilldown");
+  }
+  GRN_TEXT_PUTC(ctx, &query_log_tag_prefix, '\0');
+
+  result = &(drilldown->result);
   result->limit = 1;
   result->flags = GRN_TABLE_GROUP_CALC_COUNT;
   result->op = 0;
@@ -2144,13 +2181,13 @@ grn_select_drilldown_execute(grn_ctx *ctx,
       }
       if (dependent_id == GRN_ID_NIL) {
         GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                         "[select][drilldowns][%.*s][table] "
+                         "%s[table] "
                          "nonexistent label: <%.*s>",
-                         (int)(drilldown->label.length),
-                         drilldown->label.value,
+                         GRN_TEXT_VALUE(&log_tag_prefix),
                          (int)(drilldown->table_name.length),
                          drilldown->table_name.value);
-        return GRN_FALSE;
+        success = GRN_FALSE;
+        goto exit;
       }
     } else {
       grn_drilldown_data *dependent_drilldown;
@@ -2175,7 +2212,8 @@ grn_select_drilldown_execute(grn_ctx *ctx,
                                        target_table, &n_keys);
     if (!keys) {
       GRN_PLUGIN_CLEAR_ERROR(ctx);
-      return GRN_FALSE;
+      success = GRN_FALSE;
+      goto exit;
     }
 
     result->key_end = n_keys - 1;
@@ -2209,7 +2247,8 @@ grn_select_drilldown_execute(grn_ctx *ctx,
   }
 
   if (!result->table) {
-    return GRN_FALSE;
+    success = GRN_FALSE;
+    goto exit;
   }
 
   if (drilldown->columns.initial) {
@@ -2226,14 +2265,12 @@ grn_select_drilldown_execute(grn_ctx *ctx,
     if (!expression) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "[select][drilldowns]%s%.*s%s[filter] "
+                       "%s[filter] "
                        "failed to create expression for filter: %s",
-                       drilldown->label.length > 0 ? "[" : "",
-                       (int)(drilldown->label.length),
-                       drilldown->label.value,
-                       drilldown->label.length > 0 ? "]" : "",
+                       GRN_TEXT_VALUE(&log_tag_prefix),
                        ctx->errbuf);
-      return GRN_FALSE;
+      success = GRN_FALSE;
+      goto exit;
     }
     grn_expr_parse(ctx,
                    expression,
@@ -2247,16 +2284,14 @@ grn_select_drilldown_execute(grn_ctx *ctx,
       grn_obj_close(ctx, expression);
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "[select][drilldowns]%s%.*s%s[filter] "
+                       "%s[filter] "
                        "failed to parse filter: <%.*s>: %s",
-                       drilldown->label.length > 0 ? "[" : "",
-                       (int)(drilldown->label.length),
-                       drilldown->label.value,
-                       drilldown->label.length > 0 ? "]" : "",
+                       GRN_TEXT_VALUE(&log_tag_prefix),
                        (int)(drilldown->filter.length),
                        drilldown->filter.value,
                        ctx->errbuf);
-      return GRN_FALSE;
+      success = GRN_FALSE;
+      goto exit;
     }
     drilldown->filtered_result = grn_table_select(ctx,
                                                   result->table,
@@ -2271,18 +2306,32 @@ grn_select_drilldown_execute(grn_ctx *ctx,
       }
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "[select][drilldowns]%s%.*s%s[filter] "
+                       "%s[filter] "
                        "failed to execute filter: <%.*s>: %s",
-                       drilldown->label.length > 0 ? "[" : "",
-                       (int)(drilldown->label.length),
-                       drilldown->label.value,
-                       drilldown->label.length > 0 ? "]" : "",
+                       GRN_TEXT_VALUE(&log_tag_prefix),
                        (int)(drilldown->filter.length),
                        drilldown->filter.value,
                        ctx->errbuf);
-      return GRN_FALSE;
+      success = GRN_FALSE;
+      goto exit;
     }
     grn_obj_close(ctx, expression);
+  }
+
+  {
+    grn_obj *adjuster_result_table;
+    if (drilldown->filtered_result) {
+      adjuster_result_table = drilldown->filtered_result;
+    } else {
+      adjuster_result_table = result->table;
+    }
+    grn_select_apply_adjuster(ctx,
+                              data,
+                              &(drilldown->adjuster),
+                              result->table,
+                              adjuster_result_table,
+                              GRN_TEXT_VALUE(&log_tag_prefix),
+                              GRN_TEXT_VALUE(&query_log_tag_prefix));
   }
 
   {
@@ -2293,20 +2342,17 @@ grn_select_drilldown_execute(grn_ctx *ctx,
     } else {
       n_hits = grn_table_size(ctx, result->table);
     }
-    if (data->drilldown.keys.length == 0) {
-      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                    ":", "drilldowns[%.*s](%u)",
-                    (int)(drilldown->label.length),
-                    drilldown->label.value,
-                    n_hits);
-    } else {
-      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                    ":", "drilldown(%u)",
-                    n_hits);
-    }
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                  ":", "%s(%u)",
+                  GRN_TEXT_VALUE(&query_log_tag_prefix),
+                  n_hits);
   }
 
-  return GRN_TRUE;
+exit :
+  GRN_OBJ_FIN(ctx, &log_tag_prefix);
+  GRN_OBJ_FIN(ctx, &query_log_tag_prefix);
+
+  return success;
 }
 
 typedef enum {
@@ -2543,6 +2589,7 @@ grn_select_prepare_drilldowns(grn_ctx *ctx,
         COPY(calc_types);
         COPY(calc_target_name);
         COPY(filter);
+        COPY(adjuster);
 
 #undef COPY
       }
@@ -2970,6 +3017,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     drilldown->label.length + 1 +               \
     drilldown->calc_target_name.length + 1 +    \
     drilldown->filter.length + 1 +              \
+    drilldown->adjuster.length + 1 +            \
     drilldown->table_name.length + 1 +          \
     sizeof(int) * 2 +                           \
     sizeof(grn_table_group_flags)
@@ -3025,6 +3073,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       PUT_CACHE_KEY(drilldown->label);                          \
       PUT_CACHE_KEY(drilldown->calc_target_name);               \
       PUT_CACHE_KEY(drilldown->filter);                         \
+      PUT_CACHE_KEY(drilldown->adjuster);                       \
       PUT_CACHE_KEY(drilldown->table_name);                     \
       grn_memcpy(cp, &(drilldown->offset), sizeof(int));        \
       cp += sizeof(int);                                        \
@@ -3146,7 +3195,13 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       /* For select results */
       data->output.n_elements = 1;
 
-      if (!grn_select_apply_adjuster(ctx, data)) {
+      if (!grn_select_apply_adjuster(ctx,
+                                     data,
+                                     &(data->adjuster),
+                                     data->tables.target,
+                                     data->tables.result,
+                                     "[select]",
+                                     NULL)) {
         goto exit;
       }
 
@@ -3458,6 +3513,8 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
                                                     "drilldown_calc_target", -1),
                             grn_plugin_proc_get_var(ctx, user_data,
                                                     "drilldown_filter", -1),
+                            grn_plugin_proc_get_var(ctx, user_data,
+                                                    "drilldown_adjuster", -1),
                             NULL);
     return GRN_TRUE;
   } else {
@@ -3484,6 +3541,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
       grn_obj *calc_types = NULL;
       grn_obj *calc_target = NULL;
       grn_obj *filter = NULL;
+      grn_obj *adjuster = NULL;
       grn_obj *table = NULL;
 
       grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
@@ -3539,6 +3597,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
       GET_VAR(calc_types);
       GET_VAR(calc_target);
       GET_VAR(filter);
+      GET_VAR(adjuster);
       GET_VAR(table);
 
 #undef GET_VAR
@@ -3555,6 +3614,7 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
                               calc_types,
                               calc_target,
                               filter,
+                              adjuster,
                               table);
     } GRN_HASH_EACH_END(ctx, cursor);
 
@@ -3714,7 +3774,7 @@ exit :
   return NULL;
 }
 
-#define N_VARS 26
+#define N_VARS 27
 #define DEFINE_VARS grn_expr_var vars[N_VARS]
 
 static void
@@ -3749,6 +3809,7 @@ init_vars(grn_ctx *ctx, grn_expr_var *vars)
   grn_plugin_expr_var_init(ctx, &(vars[23]), "drilldown_filter", -1);
   grn_plugin_expr_var_init(ctx, &(vars[24]), "sort_keys", -1);
   grn_plugin_expr_var_init(ctx, &(vars[25]), "drilldown_sort_keys", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[26]), "drilldown_adjuster", -1);
 }
 
 void
