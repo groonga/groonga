@@ -1,0 +1,90 @@
+table_create Categories TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Tags categories COLUMN_VECTOR|WITH_WEIGHT Categories
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+column_create Categories tags_categories COLUMN_INDEX|WITH_WEIGHT   Tags categories
+[[0,0.0,0.0],true]
+load --table Tags
+[
+{"_key": "groonga", "categories": {"full-text-search": 100}},
+{"_key": "mroonga", "categories": {"mysql": 100, "full-text-search": 80}},
+{"_key": "ruby", "categories": {"language": 100}}
+]
+[[0,0.0,0.0],3]
+load --table Memos
+[
+{
+  "_key": "Groonga is fast",
+  "tags": ["groonga"]
+},
+{
+  "_key": "Mroonga is also fast",
+  "tags": ["mroonga", "groonga"]
+},
+{
+  "_key": "Ruby is an object oriented script language",
+  "tags": ["ruby"]
+}
+]
+[[0,0.0,0.0],3]
+select Memos   --limit 0   --output_columns _id   --drilldowns[groonga_tag].keys tags   --drilldowns[groonga_tag].filter '_key == "groonga"'   --drilldowns[groonga_tag].adjuster 'categories @ "full-text-search" * 2 + categories @ "mysql"'   --drilldowns[groonga_tag].output_columns _key,_nsubrecs,_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ]
+      ]
+    ],
+    {
+      "groonga_tag": [
+        [
+          1
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ],
+          [
+            "_score",
+            "Int32"
+          ]
+        ],
+        [
+          "groonga",
+          2,
+          204
+        ]
+      ]
+    }
+  ]
+]
+#>select --drilldowns[groonga_tag].adjuster "categories @ \"full-text-search\" * 2 + categories @ \"mysql\"" --drilldowns[groonga_tag].filter "_key == \"groonga\"" --drilldowns[groonga_tag].keys "tags" --drilldowns[groonga_tag].output_columns "_key,_nsubrecs,_score" --limit "0" --output_columns "_id" --table "Memos"
+#:000000000000000 select(3)
+#:000000000000000 filter(1)
+#:000000000000000 drilldowns[groonga_tag].adjust(1)
+#:000000000000000 drilldowns[groonga_tag](1)
+#:000000000000000 output(0)
+#:000000000000000 output.drilldowns[groonga_tag](1)
+#<000000000000000 rc=0
