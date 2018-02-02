@@ -1,0 +1,21 @@
+table_create Records TABLE_NO_KEY
+
+load --table Records
+[
+{}
+]
+
+# For use cache
+#@sleep 1
+
+#@collect-query-log true
+#@disable-logging
+select Records --output_columns 'now()'
+#@enable-logging
+
+#@sleep 1
+
+#@disable-logging
+select Records --output_columns 'now()'
+#@enable-logging
+#@collect-query-log false

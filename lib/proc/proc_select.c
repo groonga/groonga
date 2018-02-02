@@ -1227,6 +1227,71 @@ grn_proc_select_output_columns(grn_ctx *ctx,
   return grn_proc_select_output_columns_close(ctx, &format, res);
 }
 
+static grn_bool
+grn_select_output_columns_open(grn_ctx *ctx,
+                               grn_select_data *data,
+                               grn_obj_format *format,
+                               grn_obj *res,
+                               int n_hits,
+                               int offset,
+                               int limit,
+                               const char *columns,
+                               int columns_len,
+                               grn_obj *condition,
+                               uint32_t n_additional_elements)
+{
+  if (!grn_proc_select_output_columns_open(ctx,
+                                           format,
+                                           res,
+                                           n_hits,
+                                           offset,
+                                           limit,
+                                           columns,
+                                           columns_len,
+                                           condition,
+                                           n_additional_elements)) {
+    return GRN_FALSE;
+  }
+
+  if (format->expression) {
+    data->cacheable *= ((grn_expr *)format->expression)->cacheable;
+    data->taintable += ((grn_expr *)format->expression)->taintable;
+  }
+
+  return GRN_TRUE;
+}
+
+static grn_bool
+grn_select_output_columns(grn_ctx *ctx,
+                          grn_select_data *data,
+                          grn_obj *res,
+                          int n_hits,
+                          int offset,
+                          int limit,
+                          const char *columns,
+                          int columns_len,
+                          grn_obj *condition)
+{
+  grn_obj_format format;
+  uint32_t n_additional_elements = 0;
+
+  if (!grn_select_output_columns_open(ctx,
+                                      data,
+                                      &format,
+                                      res,
+                                      n_hits,
+                                      offset,
+                                      limit,
+                                      columns,
+                                      columns_len,
+                                      condition,
+                                      n_additional_elements)) {
+    return GRN_FALSE;
+  }
+
+  return grn_proc_select_output_columns_close(ctx, &format, res);
+}
+
 static grn_obj *
 grn_select_create_all_selected_result_table(grn_ctx *ctx,
                                             grn_obj *table)
@@ -1891,16 +1956,17 @@ grn_select_output_match_open(grn_ctx *ctx,
     output_table = data->tables.result;
   }
   succeeded =
-    grn_proc_select_output_columns_open(ctx,
-                                        format,
-                                        output_table,
-                                        grn_table_size(ctx, data->tables.result),
-                                        offset,
-                                        data->limit,
-                                        data->output_columns.value,
-                                        data->output_columns.length,
-                                        data->filter.condition.expression,
-                                        n_additional_elements);
+    grn_select_output_columns_open(ctx,
+                                   data,
+                                   format,
+                                   output_table,
+                                   grn_table_size(ctx, data->tables.result),
+                                   offset,
+                                   data->limit,
+                                   data->output_columns.value,
+                                   data->output_columns.length,
+                                   data->filter.condition.expression,
+                                   n_additional_elements);
   GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                 ":", "output(%d)", data->limit);
 
@@ -2061,14 +2127,15 @@ grn_select_output_slices(grn_ctx *ctx,
           grn_table_sort(ctx, slice->table, offset, limit,
                          sorted, sort_keys, n_sort_keys);
           data->output.formatter->slice_label(ctx, data, slice);
-          if (!grn_proc_select_output_columns(ctx,
-                                              sorted,
-                                              n_hits,
-                                              0,
-                                              limit,
-                                              slice->output_columns.value,
-                                              slice->output_columns.length,
-                                              slice->filter.condition.expression)) {
+          if (!grn_select_output_columns(ctx,
+                                         data,
+                                         sorted,
+                                         n_hits,
+                                         0,
+                                         limit,
+                                         slice->output_columns.value,
+                                         slice->output_columns.length,
+                                         slice->filter.condition.expression)) {
             succeeded = GRN_FALSE;
           }
           grn_obj_unlink(ctx, sorted);
@@ -2079,14 +2146,15 @@ grn_select_output_slices(grn_ctx *ctx,
       }
     } else {
       data->output.formatter->slice_label(ctx, data, slice);
-      if (!grn_proc_select_output_columns(ctx,
-                                          slice->table,
-                                          n_hits,
-                                          offset,
-                                          limit,
-                                          slice->output_columns.value,
-                                          slice->output_columns.length,
-                                          slice->filter.condition.expression)) {
+      if (!grn_select_output_columns(ctx,
+                                     data,
+                                     slice->table,
+                                     n_hits,
+                                     offset,
+                                     limit,
+                                     slice->output_columns.value,
+                                     slice->output_columns.length,
+                                     slice->filter.condition.expression)) {
         succeeded = GRN_FALSE;
       }
     }
@@ -2701,14 +2769,15 @@ grn_select_output_drilldowns(grn_ctx *ctx,
           grn_table_sort(ctx, target_table, offset, limit,
                          sorted, sort_keys, n_sort_keys);
           data->output.formatter->drilldown_label(ctx, data, drilldown);
-          if (!grn_proc_select_output_columns(ctx,
-                                              sorted,
-                                              n_hits,
-                                              0,
-                                              limit,
-                                              drilldown->output_columns.value,
-                                              drilldown->output_columns.length,
-                                              data->filter.condition.expression)) {
+          if (!grn_select_output_columns(ctx,
+                                         data,
+                                         sorted,
+                                         n_hits,
+                                         0,
+                                         limit,
+                                         drilldown->output_columns.value,
+                                         drilldown->output_columns.length,
+                                         data->filter.condition.expression)) {
             succeeded = GRN_FALSE;
           }
           grn_obj_unlink(ctx, sorted);
@@ -2719,14 +2788,15 @@ grn_select_output_drilldowns(grn_ctx *ctx,
       }
     } else {
       data->output.formatter->drilldown_label(ctx, data, drilldown);
-      if (!grn_proc_select_output_columns(ctx,
-                                          target_table,
-                                          n_hits,
-                                          offset,
-                                          limit,
-                                          drilldown->output_columns.value,
-                                          drilldown->output_columns.length,
-                                          data->filter.condition.expression)) {
+      if (!grn_select_output_columns(ctx,
+                                     data,
+                                     target_table,
+                                     n_hits,
+                                     offset,
+                                     limit,
+                                     drilldown->output_columns.value,
+                                     drilldown->output_columns.length,
+                                     data->filter.condition.expression)) {
         succeeded = GRN_FALSE;
       }
     }
