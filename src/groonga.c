@@ -1136,7 +1136,7 @@ h_output_send(grn_ctx *ctx, grn_sock fd,
     n_buffers++;
   }
   {
-    DWORD sent;
+    DWORD sent = 0;
     if (WSASend(fd, wsabufs, n_buffers, &sent, 0, NULL, NULL) == SOCKET_ERROR) {
       SOERR("WSASend");
     }
