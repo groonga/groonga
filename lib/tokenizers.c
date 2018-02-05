@@ -805,13 +805,16 @@ grn_rc
 grn_db_init_builtin_tokenizers(grn_ctx *ctx)
 {
   grn_obj *obj;
-  grn_expr_var vars[] = {
-    {NULL, 0},
-    {NULL, 0},
-    {NULL, 0}
-  };
+  grn_expr_var vars[3];
+
+  vars[0].name = NULL;
+  vars[0].name_size = 0;
   GRN_TEXT_INIT(&vars[0].value, 0);
+  vars[1].name = NULL;
+  vars[1].name_size = 0;
   GRN_TEXT_INIT(&vars[1].value, 0);
+  vars[2].name = NULL;
+  vars[2].name_size = 0;
   GRN_UINT32_INIT(&vars[2].value, 0);
 
   {
