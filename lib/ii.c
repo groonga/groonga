@@ -102,7 +102,7 @@ static grn_bool grn_ii_overlap_token_skip_enable = GRN_FALSE;
 static uint32_t grn_ii_builder_block_threshold_force = 0;
 static uint32_t grn_ii_max_n_segments_small = MAX_PSEG_SMALL;
 static uint32_t grn_ii_max_n_chunks_small = GRN_II_MAX_CHUNK_SMALL;
-static int64_t grn_ii_reduce_expire_threshold = -1;
+static int64_t grn_ii_reduce_expire_threshold = 32;
 
 void
 grn_ii_init_from_env(void)
