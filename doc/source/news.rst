@@ -17,31 +17,32 @@ Improvements
 
 * [:doc:`/reference/commands/select`] Added ``--drilldown_adjuster`` and
   ``--drilldowns[LABEL].adjuster``.
-  You can score adjust against result of drilldown.
+  You can adjust score against result of drilldown.
 
 * [:ref:`online-index-construction`] Changed environment variable name
   ``GRN_II_REDUCE_EXPIRE_ENABLE`` to ``GRN_II_REDUCE_EXPIRE_THRESHOLD``.
 
-  GRN_II_REDUCE_EXPIRE_THRESHOLD=0 == GRN_II_REDUCE_EXPIRE_ENABLE=no.
-  GRN_II_REDUCE_EXPIRE_THRESHOLD=-1 (default) uses
+  ``GRN_II_REDUCE_EXPIRE_THRESHOLD=0 == GRN_II_REDUCE_EXPIRE_ENABLE=no``.
+  ``GRN_II_REDUCE_EXPIRE_THRESHOLD=32`` (default) uses
   ii->chunk->max_map_seg / 2 as threshold.
-  GRN_II_REDUCE_EXPIRE_THRESHOLD > 0 uses
-  MIN(ii->chunk->max_map_seg / 2, GRN_II_REDUCE_EXPIRE_THRESHOLD)
+  ``GRN_II_REDUCE_EXPIRE_THRESHOLD > 0`` uses
+  MIN(ii->chunk->max_map_seg / 2, ``GRN_II_REDUCE_EXPIRE_THRESHOLD``)
   as threshold.
 
-* [:doc:`/reference/functions/between`] Accept between() without borders.
-  If the number of arguments passed to between() is 3, the 2nd and 3rd
-  arguments are handled as the inclusive edges.[GitHub#685]
+* [:doc:`/reference/functions/between`] Accept ``between()`` without borders.
+  If the number of arguments passed to ``between()`` is 3, the 2nd and 3rd
+  arguments are handled as the inclusive edges. [GitHub#685]
 
 Fixes
 ^^^^^
 
-* Fixed a memory leak for not tiny hash table.
+* Fixed a memory leak for normal hash table.
   [GitHub:mroonga/mroonga#190][Reported by fuku1]
 
-* Fix a memory leak for not tiny array.
+* Fix a memory leak for normal array.
 
-* [:doc:`/reference/commands/select`] Don't cache when output_columns uses not stable function.
+* [:doc:`/reference/commands/select`] Stopped to cache when ``output_columns``
+  uses not stable function.
 
 * [Windows] Fixed wrong value report on WSASend error.
 
