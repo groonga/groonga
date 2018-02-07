@@ -67,10 +67,14 @@ ensure-public-key:
 	gpg --list-keys '$(GPG_UID)' > /dev/null ||			\
 	  gpg --keyserver keyserver.ubuntu.com --recv-key '$(GPG_UID)'
 
+ensure-public-key-rsa4096:
+	gpg --list-keys '$(GPG_UID_RSA4096)' > /dev/null ||			\
+	  gpg --keyserver keyserver.ubuntu.com --recv-key '$(GPG_UID_RSA4096)'
+
 RPM-GPG-KEY-$(PACKAGE): ensure-public-key
 	gpg --armor --export '$(GPG_UID)' > $@
 
-RPM-GPG-KEY-$(PACKAGE)-RSA4096: ensure-public-key
+RPM-GPG-KEY-$(PACKAGE)-RSA4096: ensure-public-key-rsa4096
 	gpg --armor --export '$(GPG_UID_RSA4096)' > $@
 
 source: tmp/$(PACKAGE)-$(VERSION).tar.gz

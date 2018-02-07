@@ -81,6 +81,8 @@ keyring-source: tmp/$(KEYRING_BASE_NAME).tar.gz
 ensure-public-key:
 	gpg --list-keys '$(GPG_UID)' > /dev/null ||			\
 	  gpg --keyserver keyserver.ubuntu.com --recv-key '$(GPG_UID)'
+	gpg --list-keys '$(GPG_UID_RSA4096)' > /dev/null ||			\
+	  gpg --keyserver keyserver.ubuntu.com --recv-key '$(GPG_UID_RSA4096)'
 
 tmp/$(KEYRING_BASE_NAME).tar.gz: ensure-public-key
 	rm -rf $(KEYRING_BASE_NAME)
