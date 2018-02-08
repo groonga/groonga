@@ -12,6 +12,9 @@ News
 Release 8.0.0 - 2018-02-09
 --------------------------
 
+This is a major version up! But It keeps backward compatibility.
+You can upgrade to 8.0.0 without rebuilding database.
+
 Improvements
 ^^^^^^^^^^^^
 
