@@ -23,11 +23,12 @@ Improvements
   ``GRN_II_REDUCE_EXPIRE_ENABLE`` to ``GRN_II_REDUCE_EXPIRE_THRESHOLD``.
 
   ``GRN_II_REDUCE_EXPIRE_THRESHOLD=0 == GRN_II_REDUCE_EXPIRE_ENABLE=no``.
-  ``GRN_II_REDUCE_EXPIRE_THRESHOLD=32`` (default) uses
-  ii->chunk->max_map_seg / 2 as threshold.
+  ``GRN_II_REDUCE_EXPIRE_THRESHOLD=-1`` uses
+  ``ii->chunk->max_map_seg / 2`` as threshold.
   ``GRN_II_REDUCE_EXPIRE_THRESHOLD > 0`` uses
-  MIN(ii->chunk->max_map_seg / 2, ``GRN_II_REDUCE_EXPIRE_THRESHOLD``)
+  ``MIN(ii->chunk->max_map_seg / 2, GRN_II_REDUCE_EXPIRE_THRESHOLD)``
   as threshold.
+  ``GRN_II_REDUCE_EXPIRE_THRESHOLD=32`` is the default.
 
 * [:doc:`/reference/functions/between`] Accept ``between()`` without borders.
   If the number of arguments passed to ``between()`` is 3, the 2nd and 3rd
