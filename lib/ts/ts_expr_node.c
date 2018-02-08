@@ -2618,7 +2618,8 @@ grn_ts_expr_column_node_evaluate_text_vector(grn_ctx *ctx,
       n_bytes = 0;
       n_values = 0;
     }
-    grn_memcpy(&out_ptr[i].ptr, &n_bytes, sizeof(n_bytes));
+    /* The cast is just for suppressing wrong Visual C++ warning. */
+    grn_memcpy((void *)(&out_ptr[i].ptr), &n_bytes, sizeof(n_bytes));
     out_ptr[i].size = n_values;
     total_n_bytes += n_bytes;
     total_n_values += n_values;
