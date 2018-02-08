@@ -13567,7 +13567,8 @@ grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned int str_
         p = r;
       }
     }
-    GRN_FREE(tokbuf);
+    /* The cast is just for suppressing wrong Visual C++ warning. */
+    GRN_FREE((void *)tokbuf);
   }
   if (!ctx->rc && k - keys > 0) {
     *nkeys = k - keys;
@@ -13653,7 +13654,8 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned int str_size
         p = r;
       }
     }
-    GRN_FREE(tokbuf);
+    /* The cast is just for suppressing wrong Visual C++ warning. */
+    GRN_FREE((void *)tokbuf);
   }
   if (!ctx->rc && k - keys > 0) {
     *nkeys = k - keys;
