@@ -95,11 +95,11 @@ Add the Groonga apt repository.
 
 Install::
 
-  % sudo apt-get install apt-transport-https
-  % sudo apt-get update
-  % sudo apt-get install -y --allow-unauthenticated groonga-keyring
-  % sudo apt-get update
-  % sudo apt-get install -y -V groonga
+  % sudo apt install -y -V apt-transport-https
+  % sudo apt update --allow-insecure-repositories
+  % sudo apt install -y -V --allow-unauthenticated groonga-keyring
+  % sudo apt update
+  % sudo apt install -y -V groonga
 
 .. include:: server-use.inc
 
@@ -108,14 +108,14 @@ tokenizer, install groonga-tokenizer-mecab package.
 
 Install groonga-tokenizer-mecab package::
 
-  % sudo apt-get install -y -V groonga-tokenizer-mecab
+  % sudo apt install -y -V groonga-tokenizer-mecab
 
 If you want to use ``TokenFilterStem`` as a token filter, install
 groonga-token-filter-stem package.
 
 Install groonga-token-filter-stem package::
 
-  % sudo apt-get install -y -V groonga-token-filter-stem
+  % sudo apt install -y -V groonga-token-filter-stem
 
 There is a package that provides `Munin
 <http://munin-monitoring.org/>`_ plugins. If you want to monitor
@@ -123,7 +123,7 @@ Groonga status by Munin, install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 
-  % sudo apt-get install -y -V groonga-munin-plugins
+  % sudo apt install -y -V groonga-munin-plugins
 
 There is a package that provides MySQL compatible normalizer as
 a Groonga plugin.
@@ -131,7 +131,7 @@ If you want to use that one, install groonga-normalizer-mysql package.
 
 Install groonga-normalizer-mysql package::
 
-  % sudo apt-get install -y -V groonga-normalizer-mysql
+  % sudo apt install -y -V groonga-normalizer-mysql
 
 .. note::
 
