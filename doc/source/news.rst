@@ -48,7 +48,7 @@ Fixes
 * [:doc:`/reference/commands/select`] Stopped to cache when ``output_columns``
   uses not stable function.
 
-* [Windows] Fixed wrong value report on WSASend error.
+* [Windows] Fixed wrong value report on ``WSASend`` error.
 
 Thanks
 ^^^^^^
