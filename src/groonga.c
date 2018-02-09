@@ -797,16 +797,27 @@ close_ready_notify_pipe(void)
   reset_ready_notify_pipe();
 }
 
-static void
+/* FIXME: callers ignore the return value of send_ready_notify. */
+static grn_bool
 send_ready_notify(void)
 {
   if (ready_notify_pipe[PIPE_WRITE] > 0) {
     const char *ready_notify_message = "ready";
-    write(ready_notify_pipe[PIPE_WRITE],
-          ready_notify_message,
-          strlen(ready_notify_message));
+    const size_t ready_notify_message_len = strlen(ready_notify_message);
+    size_t n = 0;
+    do {
+      ssize_t m = write(ready_notify_pipe[PIPE_WRITE],
+                        ready_notify_message + n,
+                        ready_notify_message_len - n);
+      if (m == -1) {
+        close_ready_notify_pipe();
+        return GRN_FALSE;
+      }
+      n += m;
+    } while (n < ready_notify_message_len);
   }
   close_ready_notify_pipe();
+  return GRN_TRUE;
 }
 
 static void
