@@ -215,7 +215,6 @@ line_editor_fgets(grn_ctx *ctx, grn_obj *buf)
     mbstate_t ps;
     history_w(line_editor_history, &line_editor_history_event, H_ENTER, line);
     memset(&ps, 0, sizeof(ps));
-    wcrtomb(NULL, L'\0', &ps);
     for (i = 0; i < nchar; i++) {
       multibyte_len = wcrtomb(multibyte_buf, line[i], &ps);
       if (multibyte_len == (size_t)-1) {
