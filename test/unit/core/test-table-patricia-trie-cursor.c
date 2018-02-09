@@ -377,6 +377,7 @@ geo_byte_parse(const gchar *geo_byte_string)
 {
     gint i = 0;
     uint8_t geo_byte[sizeof(grn_geo_point)];
+    uint64_t geo_uint;
     grn_geo_point geo_point;
 
     while (geo_byte_string[0]) {
@@ -394,7 +395,8 @@ geo_byte_parse(const gchar *geo_byte_string)
       }
       geo_byte_string++;
     }
-    grn_ntog((uint8_t *)(&geo_point), geo_byte, sizeof(grn_geo_point));
+    grn_memcpy(&geo_uint, geo_byte, sizeof(grn_geo_point));
+    grn_ntog((uint8_t *)(&geo_point), &geo_uint, sizeof(grn_geo_point));
     return cut_take_printf("%dx%d",
                            geo_point.latitude,
                            geo_point.longitude);
