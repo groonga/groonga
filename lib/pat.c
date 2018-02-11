@@ -1556,6 +1556,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
     if (tid != GRN_ID_NIL) {
       id = tid;
     } else {
+      fuzzy_heap_close(ctx, heap);
       return GRN_END_OF_DATA;
     }
   }
@@ -1564,6 +1565,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
   }
   dists = GRN_MALLOC((lx + 1) * (lx + max_distance + 1) * sizeof(uint16_t));
   if (!dists) {
+    fuzzy_heap_close(ctx, heap);
     return GRN_NO_MEMORY_AVAILABLE;
   }
 
