@@ -1,0 +1,18 @@
+table_create Data TABLE_NO_KEY
+column_create Data content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms data_content COLUMN_INDEX|WITH_POSITION Data content
+
+load --table Data
+[
+{"content": "a a a b b c d e f g h i j k"}
+]
+
+select \
+  --table Data \
+  --filter 'content *S2 "a b c"' \
+  --output_columns content,_score \
+  --sortby _id
