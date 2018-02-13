@@ -1,0 +1,10 @@
+table_create Table TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+#>select --filter "all_records()" --table "Table"
+#:000000000000000 filter(0)
+#:000000000000000 select(0)
+#:000000000000000 output(0)
+#<000000000000000 rc=0
+#>select --filter "all_records()" --table "Table"
+#:000000000000000 cache(0)
+#<000000000000000 rc=0

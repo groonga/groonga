@@ -1,0 +1,8 @@
+table_create Table TABLE_HASH_KEY ShortText
+
+#@collect-query-log true
+#@disable-logging
+select Table --filter 'all_records()'
+select Table --filter 'all_records()'
+#@enable-logging
+#@collect-query-log false
