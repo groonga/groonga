@@ -1,0 +1,53 @@
+table_create Paragraphs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Paragraphs content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Words TABLE_PAT_KEY ShortText   --default_tokenizer TokenDelimit   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Words index COLUMN_INDEX Paragraphs content
+[[0,0.0,0.0],true]
+load --table Paragraphs
+[
+{"content": "Groonga is a full text search engine"},
+{"content": "Mroonga is a MySQL storage engine"},
+{"content": "PGroonga is an full text search extension for PostgreSQL"},
+{"content": "Rroonga is a Ruby bindings of GroongaL"}
+]
+[[0,0.0,0.0],4]
+select Paragraphs   --match_columns content   --query '*Q"search engine MySQL"'   --output_columns content,_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "content",
+          "Text"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "Groonga is a full text search engine",
+        2
+      ],
+      [
+        "PGroonga is an full text search extension for PostgreSQL",
+        1
+      ],
+      [
+        "Mroonga is a MySQL storage engine",
+        2
+      ]
+    ]
+  ]
+]
