@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2016 Brazil
+  Copyright(C) 2010-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,12 @@ GRN_API grn_rc grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *offse
 GRN_API char *grn_path_separator_to_system(char *dest, char *groonga_path);
 
 void grn_p_record(grn_ctx *ctx, grn_obj *table, grn_id id);
+grn_rc grn_record_inspect_without_columns(grn_ctx *ctx,
+                                          grn_obj *buffer,
+                                          grn_obj *record);
+grn_rc grn_uvector_record_inspect_without_columns(grn_ctx *ctx,
+                                                  grn_obj *buffer,
+                                                  grn_obj *records);
 
 /*
  * grn_mkstemp generates a unique filename from path_template, creates a

@@ -1222,10 +1222,12 @@ grn_json_load_open_brace_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
-grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+grn_record_inspect_common(grn_ctx *ctx,
+                          grn_obj *buf,
+                          grn_obj *obj,
+                          grn_bool with_columns)
 {
   grn_obj *table;
-  grn_hash *cols;
 
   table = grn_ctx_at(ctx, obj->header.domain);
   GRN_TEXT_PUTS(ctx, buf, "#<record:");
@@ -1245,41 +1247,59 @@ grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   } else {
     grn_id id;
 
-  id = GRN_RECORD_VALUE(obj);
-  grn_text_lltoa(ctx, buf, id);
+    id = GRN_RECORD_VALUE(obj);
+    grn_text_lltoa(ctx, buf, id);
 
-  if (table && grn_table_at(ctx, table, id)) {
-    if (table->header.type != GRN_TABLE_NO_KEY) {
-      grn_obj key;
-      GRN_TEXT_PUTS(ctx, buf, " key:");
-      GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);
-      grn_table_get_key2(ctx, table, id, &key);
-      grn_inspect(ctx, buf, &key);
-      GRN_OBJ_FIN(ctx, &key);
-    }
-    if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                                GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
-      if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
-        grn_id *key;
-        GRN_HASH_EACH(ctx, cols, column_id, &key, NULL, NULL, {
-            grn_obj *col = grn_ctx_at(ctx, *key);
-            if (col) {
-              grn_obj value;
-              GRN_TEXT_INIT(&value, 0);
-              GRN_TEXT_PUTS(ctx, buf, " ");
-              grn_column_name_(ctx, col, buf);
-              GRN_TEXT_PUTS(ctx, buf, ":");
-              grn_obj_get_value(ctx, col, id, &value);
-              grn_inspect(ctx, buf, &value);
-              GRN_OBJ_FIN(ctx, &value);
-            }
-          });
+    if (table && grn_table_at(ctx, table, id)) {
+      if (table->header.type != GRN_TABLE_NO_KEY) {
+        grn_obj key;
+        GRN_TEXT_PUTS(ctx, buf, " key:");
+        GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);
+        grn_table_get_key2(ctx, table, id, &key);
+        grn_inspect(ctx, buf, &key);
+        GRN_OBJ_FIN(ctx, &key);
       }
-      grn_hash_close(ctx, cols);
+
+      if (with_columns) {
+        grn_hash *columns;
+
+        columns = grn_hash_create(ctx,
+                                  NULL,
+                                  sizeof(grn_id),
+                                  0,
+                                  GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+        if (columns) {
+          if (grn_table_columns(ctx, table, "", 0, (grn_obj *)columns)) {
+            grn_obj column_value;
+
+            GRN_VOID_INIT(&column_value);
+            GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
+              void *key;
+              grn_id column_id;
+              grn_obj *column;
+
+              grn_hash_cursor_get_key(ctx, cursor, &key);
+              column_id = *((grn_id *)key);
+              column = grn_ctx_at(ctx, column_id);
+              if (!column) {
+                continue;
+              }
+
+              GRN_TEXT_PUTS(ctx, buf, " ");
+              grn_column_name_(ctx, column, buf);
+              GRN_TEXT_PUTS(ctx, buf, ":");
+              GRN_BULK_REWIND(&column_value);
+              grn_obj_get_value(ctx, column, id, &column_value);
+              grn_inspect(ctx, buf, &column_value);
+            } GRN_HASH_EACH_END(ctx, cursor);
+            GRN_OBJ_FIN(ctx, &column_value);
+          }
+          grn_hash_close(ctx, columns);
+        }
+      }
+    } else {
+      GRN_TEXT_PUTS(ctx, buf, "(nonexistent)");
     }
-  } else {
-    GRN_TEXT_PUTS(ctx, buf, "(nonexistent)");
-  }
   }
 
   GRN_TEXT_PUTS(ctx, buf, ">");
@@ -1287,8 +1307,23 @@ grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   return GRN_SUCCESS;
 }
 
+grn_rc
+grn_record_inspect_without_columns(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  return grn_record_inspect_common(ctx, buf, obj, GRN_FALSE);
+}
+
 static grn_rc
-grn_uvector_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  return grn_record_inspect_common(ctx, buf, obj, GRN_TRUE);
+}
+
+static grn_rc
+grn_uvector_record_inspect_common(grn_ctx *ctx,
+                                  grn_obj *buf,
+                                  grn_obj *obj,
+                                  grn_bool with_columns)
 {
   unsigned int i, n = 0;
   grn_obj record;
@@ -1307,13 +1342,29 @@ grn_uvector_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     id = grn_uvector_get_element(ctx, obj, i, &weight);
     GRN_TEXT_PUTS(ctx, buf, "#<element record:");
     GRN_RECORD_SET(ctx, &record, id);
-    grn_inspect(ctx, buf, &record);
+    grn_record_inspect_common(ctx, buf, &record, with_columns);
     grn_text_printf(ctx, buf, ", weight:%u>", weight);
   }
   GRN_TEXT_PUTS(ctx, buf, "]");
   GRN_OBJ_FIN(ctx, &record);
 
   return GRN_SUCCESS;
+}
+
+grn_rc
+grn_uvector_record_inspect_without_columns(grn_ctx *ctx,
+                                           grn_obj *buf,
+                                           grn_obj *obj)
+{
+  return grn_uvector_record_inspect_common(ctx, buf, obj, GRN_FALSE);
+}
+
+static grn_rc
+grn_uvector_record_inspect(grn_ctx *ctx,
+                           grn_obj *buf,
+                           grn_obj *obj)
+{
+  return grn_uvector_record_inspect_common(ctx, buf, obj, GRN_TRUE);
 }
 
 grn_obj *
