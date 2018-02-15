@@ -45,6 +45,7 @@ static double grn_table_select_enough_filtered_ratio = 0.0;
 static int grn_table_select_max_n_enough_filtered_records = 1000;
 static grn_bool grn_table_select_and_min_skip_enable = GRN_TRUE;
 static grn_bool grn_scan_info_regexp_dot_asterisk_enable = GRN_TRUE;
+static grn_bool grn_query_log_show_condition = GRN_FALSE;
 
 void
 grn_expr_init_from_env(void)
@@ -92,6 +93,18 @@ grn_expr_init_from_env(void)
       grn_scan_info_regexp_dot_asterisk_enable = GRN_FALSE;
     } else {
       grn_scan_info_regexp_dot_asterisk_enable = GRN_TRUE;
+    }
+  }
+
+  {
+    char grn_query_log_show_condition_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_QUERY_LOG_SHOW_CONDITION",
+               grn_query_log_show_condition_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (strcmp(grn_query_log_show_condition_env, "yes") == 0) {
+      grn_query_log_show_condition = GRN_TRUE;
+    } else {
+      grn_query_log_show_condition = GRN_FALSE;
     }
   }
 }
@@ -6941,6 +6954,139 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
   return processed;
 }
 
+static void
+grn_table_select_inspect_condition_argument(grn_ctx *ctx,
+                                            grn_obj *buffer,
+                                            grn_obj *argument)
+{
+  grn_obj *domain;
+
+  switch (argument->header.type) {
+  case GRN_BULK :
+    domain = grn_ctx_at(ctx, argument->header.domain);
+    if (grn_obj_is_table(ctx, domain)) {
+      grn_record_inspect_without_columns(ctx, buffer, argument);
+    } else {
+      grn_inspect(ctx, buffer, argument);
+    }
+    break;
+  case GRN_UVECTOR :
+    domain = grn_ctx_at(ctx, argument->header.domain);
+    if (grn_obj_is_table(ctx, domain)) {
+      grn_uvector_record_inspect_without_columns(ctx, buffer, argument);
+    } else {
+      grn_inspect(ctx, buffer, argument);
+    }
+    break;
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_NO_KEY :
+  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_VAR_SIZE :
+  case GRN_COLUMN_INDEX :
+    grn_inspect_name(ctx, buffer, argument);
+    break;
+  default :
+    grn_inspect(ctx, buffer, argument);
+    break;
+  }
+}
+
+static const char *
+grn_table_select_inspect_condition(grn_ctx *ctx,
+                                   grn_obj *buffer,
+                                   scan_info *si,
+                                   grn_expr *expr)
+{
+  uint32_t i;
+  uint32_t n_codes;
+  grn_operator last_operator;
+
+  if (!grn_query_log_show_condition) {
+    return "";
+  }
+
+  n_codes = si->end - si->start + 1;
+  last_operator = expr->codes[si->end].op;
+
+  GRN_BULK_REWIND(buffer);
+
+  GRN_TEXT_PUTS(ctx, buffer, ": ");
+
+  switch (last_operator) {
+  case GRN_OP_CALL :
+    for (i = si->start; i <= si->end; i++) {
+      grn_expr_code *code = expr->codes + i;
+      if (i == si->start) {
+        if (grn_obj_is_proc(ctx, code->value)) {
+          grn_inspect_name(ctx, buffer, code->value);
+        } else {
+          grn_table_select_inspect_condition_argument(ctx, buffer, code->value);
+        }
+        GRN_TEXT_PUTC(ctx, buffer, '(');
+      } else if (code->value) {
+        if (i > si->start + 1) {
+          GRN_TEXT_PUTS(ctx, buffer, ", ");
+        }
+        grn_table_select_inspect_condition_argument(ctx, buffer, code->value);
+      }
+    }
+    GRN_TEXT_PUTC(ctx, buffer, ')');
+    break;
+  case GRN_OP_EQUAL :
+  case GRN_OP_NOT_EQUAL :
+  case GRN_OP_LESS :
+  case GRN_OP_GREATER :
+  case GRN_OP_LESS_EQUAL :
+  case GRN_OP_GREATER_EQUAL :
+  case GRN_OP_MATCH :
+    if (n_codes == 3) {
+      grn_expr_code *arg1 = expr->codes + si->start;
+      grn_expr_code *arg2 = expr->codes + si->start + 1;
+
+      if (arg1->value->header.type == GRN_EXPR) {
+        GRN_TEXT_PUTS(ctx, buffer, "(match columns)");
+      } else {
+        grn_table_select_inspect_condition_argument(ctx, buffer, arg1->value);
+      }
+      GRN_TEXT_PUTC(ctx, buffer, ' ');
+      GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(last_operator));
+      GRN_TEXT_PUTC(ctx, buffer, ' ');
+      grn_table_select_inspect_condition_argument(ctx, buffer, arg2->value);
+    } else {
+      GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(last_operator));
+      GRN_TEXT_PUTC(ctx, buffer, '(');
+      for (i = si->start; i < si->end; i++) {
+        grn_expr_code *code = expr->codes + i;
+        GRN_TEXT_PUTS(ctx, buffer, ", ");
+        if (code->value) {
+          grn_table_select_inspect_condition_argument(ctx, buffer, code->value);
+        } else {
+          GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(code->op));
+        }
+      }
+      GRN_TEXT_PUTC(ctx, buffer, ')');
+    }
+    break;
+  default :
+    for (i = si->start; i <= si->end; i++) {
+      grn_expr_code *code = expr->codes + i;
+      if (i > si->start) {
+        GRN_TEXT_PUTC(ctx, buffer, ' ');
+      }
+      if (code->value) {
+        grn_table_select_inspect_condition_argument(ctx, buffer, code->value);
+      } else {
+        GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(code->op));
+      }
+    }
+    break;
+  }
+
+  GRN_TEXT_PUTC(ctx, buffer, '\0');
+  return GRN_TEXT_VALUE(buffer);
+}
+
 grn_obj *
 grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                  grn_obj *res, grn_operator op)
@@ -6977,8 +7123,11 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       grn_expr_code *codes = e->codes;
       uint32_t codes_curr = e->codes_curr;
       grn_id min_id = GRN_ID_NIL;
+      grn_obj condition_inspect_buffer;
+
       v = grn_expr_get_var_by_offset(ctx, (grn_obj *)e, 0);
       GRN_PTR_INIT(&res_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      GRN_TEXT_INIT(&condition_inspect_buffer, 0);
       for (i = 0; i < scanner->n_sis; i++) {
         scan_info *si = scanner->sis[i];
         if (si->flags & SCAN_POP) {
@@ -7011,11 +7160,19 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
             e->codes_curr = si->end - si->start + 1;
             grn_table_select_sequential(ctx, table, (grn_obj *)e, v,
                                         res, si->logical_op);
+            e->codes = codes;
+            e->codes_curr = codes_curr;
             min_id = GRN_ID_NIL;
           }
         }
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                      ":", "filter(%d)", grn_table_size(ctx, res));
+                      ":", "filter(%d)%s",
+                      grn_table_size(ctx, res),
+                      grn_table_select_inspect_condition(
+                        ctx,
+                        &condition_inspect_buffer,
+                        si,
+                        e));
         if (ctx->rc) {
           if (res_created) {
             grn_obj_close(ctx, res);
@@ -7024,6 +7181,8 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
           break;
         }
       }
+
+      GRN_OBJ_FIN(ctx, &condition_inspect_buffer);
 
       i = 0;
       if (!res_created) { i++; }
