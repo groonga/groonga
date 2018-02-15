@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2017 Brazil
+  Copyright(C) 2010-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1319,8 +1319,6 @@ grn_uvector_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 grn_obj *
 grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
 {
-  grn_obj *domain;
-
   if (!buffer) {
     buffer = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
   }
@@ -1350,37 +1348,20 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
       grn_json_load_open_brace_inspect(ctx, buffer, obj);
       return buffer;
     default :
-      domain = grn_ctx_at(ctx, obj->header.domain);
-      if (domain) {
-        grn_id type = domain->header.type;
-        switch (type) {
-        case GRN_TABLE_HASH_KEY :
-        case GRN_TABLE_PAT_KEY :
-        case GRN_TABLE_NO_KEY :
-          grn_record_inspect(ctx, buffer, obj);
-          return buffer;
-        default :
-          break;
-        }
+      if (grn_obj_is_table(ctx, grn_ctx_at(ctx, obj->header.domain))) {
+        grn_record_inspect(ctx, buffer, obj);
+        return buffer;
       }
+      break;
     }
     break;
   case GRN_PTR :
     grn_ptr_inspect(ctx, buffer, obj);
     break;
   case GRN_UVECTOR :
-    domain = grn_ctx_at(ctx, obj->header.domain);
-    if (domain) {
-      grn_id type = domain->header.type;
-      switch (type) {
-      case GRN_TABLE_HASH_KEY :
-      case GRN_TABLE_PAT_KEY :
-      case GRN_TABLE_NO_KEY :
-        grn_uvector_record_inspect(ctx, buffer, obj);
-        return buffer;
-      default :
-        break;
-      }
+    if (grn_obj_is_table(ctx, grn_ctx_at(ctx, obj->header.domain))) {
+      grn_uvector_record_inspect(ctx, buffer, obj);
+      return buffer;
     }
     break;
   case GRN_PVECTOR :
