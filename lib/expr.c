@@ -3981,6 +3981,7 @@ struct _grn_scan_info {
     (si)->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;\
     (si)->quorum_threshold = DEFAULT_QUORUM_THRESHOLD;\
     (si)->start = (st);\
+    (si)->end = (st);\
     (si)->query = NULL;\
     GRN_PTR_INIT(&(si)->scorers, GRN_OBJ_VECTOR, GRN_ID_NIL);\
     GRN_PTR_INIT(&(si)->scorer_args_exprs, GRN_OBJ_VECTOR, GRN_ID_NIL);\

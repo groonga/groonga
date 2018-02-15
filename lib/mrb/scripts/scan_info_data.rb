@@ -17,7 +17,7 @@ module Groonga
     attr_accessor :weight
     def initialize(start)
       @start = start
-      @end = 0
+      @end = start
       @op = Operator::NOP
       @logical_op = Operator::OR
       @query = nil

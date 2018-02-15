@@ -78,7 +78,6 @@ module Groonga
           if context.status == :const
             data = context.data
             data.op = Operator::PUSH
-            data.end = data.start
             @data_list << data
             context.data = nil
           end
@@ -100,7 +99,6 @@ module Groonga
           if code.modify > 0 and
               LOGICAL_OPERATORS.include?(codes[i + code.modify].op)
             data.op = Operator::PUSH
-            data.end = data.start
             @data_list << data
             context.data = nil
             context.status = :start
@@ -482,7 +480,6 @@ module Groonga
 
     def create_all_match_data
       data = ScanInfoData.new(0)
-      data.end = 0
       data.flags = ScanInfo::Flags::PUSH
       data.op = Operator::CALL
       data.logical_op = Operator::OR
