@@ -226,16 +226,6 @@ typedef pthread_mutex_t grn_mutex;
 # define MUTEX_LOCK_CHECK(m) (MUTEX_LOCK(m) == 0)
 # define MUTEX_UNLOCK(m)     pthread_mutex_unlock(&(m))
 # define MUTEX_FIN(m)        pthread_mutex_destroy(&(m))
-# ifdef HAVE_PTHREAD_MUTEXATTR_SETPSHARED
-#  define MUTEX_INIT_SHARED(m) do {\
-  pthread_mutexattr_t mutexattr;\
-  pthread_mutexattr_init(&mutexattr);\
-  pthread_mutexattr_setpshared(&mutexattr, PTHREAD_PROCESS_SHARED);\
-  pthread_mutex_init(&(m), &mutexattr);\
-} while (0)
-# else
-#  define MUTEX_INIT_SHARED MUTEX_INIT
-# endif /* HAVE_PTHREAD_MUTEXATTR_SETPSHARED */
 
 typedef pthread_mutex_t grn_critical_section;
 # define CRITICAL_SECTION_INIT(cs)  pthread_mutex_init(&(cs), NULL)
@@ -248,16 +238,6 @@ typedef pthread_cond_t grn_cond;
 # define COND_SIGNAL(c) pthread_cond_signal(&(c))
 # define COND_WAIT(c,m) pthread_cond_wait(&(c), &(m))
 # define COND_BROADCAST(c) pthread_cond_broadcast(&(c))
-# ifdef HAVE_PTHREAD_CONDATTR_SETPSHARED
-#  define COND_INIT_SHARED(c) do {\
-  pthread_condattr_t condattr;\
-  pthread_condattr_init(&condattr);\
-  pthread_condattr_setpshared(&condattr, PTHREAD_PROCESS_SHARED);\
-  pthread_cond_init(&(c), &condattr);\
-} while (0)
-# else
-#  define COND_INIT_SHARED COND_INIT
-# endif /* HAVE_PTHREAD_CONDATTR_SETPSHARE */
 # define COND_FIN(c)    pthread_cond_destroy(&(c))
 
 typedef pthread_key_t grn_thread_key;
@@ -413,9 +393,6 @@ typedef int grn_cond;
 /* todo : must be enhanced! */
 
 # endif /* WIN32 */
-
-# define MUTEX_INIT_SHARED MUTEX_INIT
-# define COND_INIT_SHARED COND_INIT
 
 # define GRN_TEST_YIELD() do {} while (0)
 
