@@ -4622,7 +4622,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
               ERR(ctx->rc,
                   "[ii][update][one] failed to split a buffer: "
                   "<%.*s>: "
-                  "<%u>:<%u><%u>: "
+                  "<%u>:<%u>:<%u>: "
                   "segment:<%u>",
                   name_size, name,
                   u->rid, u->sid, tid,
@@ -4637,7 +4637,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             ERR(ctx->rc,
                 "[ii][update][one] failed to flush a buffer: "
                 "<%.*s>: "
-                "<%u>:<%u><%u>: "
+                "<%u>:<%u>:<%u>: "
                 "segment:<%u>",
                 name_size, name,
                 u->rid, u->sid, tid,
