@@ -216,6 +216,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   s->keys = NULL;
   s->specs = NULL;
   s->config = NULL;
+  s->cache = NULL;
 
   {
     grn_bool use_default_db_key = GRN_TRUE;
@@ -333,6 +334,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
   s->keys = NULL;
   s->specs = NULL;
   s->config = NULL;
+  s->cache = NULL;
 
   {
     uint32_t type = grn_io_detect_type(ctx, path);
@@ -499,6 +501,58 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   }
 
   GRN_API_RETURN(GRN_SUCCESS);
+}
+
+grn_rc
+grn_db_set_cache(grn_ctx *ctx, grn_obj *db, grn_cache *cache)
+{
+  GRN_API_ENTER;
+
+  if (!ctx) {
+    GRN_API_RETURN(GRN_INVALID_ARGUMENT);
+  }
+
+  if (!db) {
+    ERR(GRN_INVALID_ARGUMENT, "[db][cache][set] DB must not NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  if (db->header.type != GRN_DB) {
+    ERR(GRN_INVALID_ARGUMENT, "[db][cache][set] must be DB: %d",
+        db->header.type);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  ((grn_db *)db)->cache = cache;
+
+  GRN_API_RETURN(GRN_SUCCESS);
+}
+
+grn_cache *
+grn_db_get_cache(grn_ctx *ctx, grn_obj *db)
+{
+  grn_cache *cache;
+
+  GRN_API_ENTER;
+
+  if (!ctx) {
+    GRN_API_RETURN(NULL);
+  }
+
+  if (!db) {
+    ERR(GRN_INVALID_ARGUMENT, "[db][cache][get] DB must not NULL");
+    GRN_API_RETURN(NULL);
+  }
+
+  if (db->header.type != GRN_DB) {
+    ERR(GRN_INVALID_ARGUMENT, "[db][cache][get] must be DB: %d",
+        db->header.type);
+    GRN_API_RETURN(NULL);
+  }
+
+  cache = ((grn_db *)db)->cache;
+
+  GRN_API_RETURN(cache);
 }
 
 grn_obj *

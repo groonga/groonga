@@ -333,7 +333,9 @@ ngx_http_groonga_context_init(ngx_http_groonga_loc_conf_t *location_conf,
   }
 
   grn_ctx_use(context, location_conf->database);
-  grn_cache_current_set(context, location_conf->cache);
+  grn_db_set_cache(context,
+                   location_conf->database,
+                   location_conf->cache);
 
   /* TODO: It doesn't work yet. We need to implement request timeout
    * handler. */
@@ -1497,12 +1499,10 @@ ngx_http_groonga_close_database_callback(ngx_http_groonga_loc_conf_t *location_c
   ngx_http_groonga_context_init_query_logger(location_conf,
                                              data->pool,
                                              data->log);
-  grn_cache_current_set(context, location_conf->cache);
 
   grn_obj_close(context, location_conf->database);
   ngx_http_groonga_context_log_error(data->log);
 
-  grn_cache_current_set(context, NULL);
   grn_cache_close(context, location_conf->cache);
 }
 

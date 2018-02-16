@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -48,6 +48,7 @@ struct _grn_db {
   grn_hash *config;
   grn_tiny_array values;
   grn_critical_section lock;
+  grn_cache *cache;
 };
 
 #define GRN_SERIALIZED_SPEC_INDEX_SPEC   0

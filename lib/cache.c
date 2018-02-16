@@ -411,6 +411,9 @@ grn_cache_current_set(grn_ctx *ctx, grn_cache *cache)
 grn_cache *
 grn_cache_current_get(grn_ctx *ctx)
 {
+  if (ctx && ctx->impl && ctx->impl->db && ((grn_db *)ctx->impl->db)->cache) {
+    return ((grn_db *)ctx->impl->db)->cache;
+  }
   return grn_cache_current;
 }
 
