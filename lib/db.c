@@ -492,11 +492,6 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   GRN_FREE(s);
 
   if (ctx_used_db) {
-    grn_cache *cache;
-    cache = grn_cache_current_get(ctx);
-    if (cache) {
-      grn_cache_expire(cache, -1);
-    }
     ctx->impl->db = NULL;
   }
 
