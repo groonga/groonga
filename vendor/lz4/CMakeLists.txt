@@ -1,4 +1,4 @@
-# Copyright(C) 2016 Brazil
+# Copyright(C) 2016-2018 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -85,7 +85,7 @@ if(GRN_WITH_BUNDLED_LZ4)
       DESTINATION "${BIN_DIR}")
     if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
       install(FILES $<TARGET_PDB_FILE:lz4>
-	DESTINATION "${PDB_DIR}"
+	DESTINATION "${BIN_DIR}"
 	OPTIONAL)
     endif()
     install(FILES

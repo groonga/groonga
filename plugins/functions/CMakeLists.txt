@@ -1,4 +1,4 @@
-# Copyright(C) 2015-2017 Brazil
+# Copyright(C) 2015-2018 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -38,7 +38,7 @@ else()
   install(TARGETS vector_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
   if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
     install(FILES $<TARGET_PDB_FILE:vector_functions>
-      DESTINATION "${PDB_DIR}"
+      DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
       OPTIONAL)
   endif()
 endif()
@@ -63,7 +63,7 @@ else()
   install(TARGETS string_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
   if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
     install(FILES $<TARGET_PDB_FILE:string_functions>
-      DESTINATION "${PDB_DIR}"
+      DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
       OPTIONAL)
   endif()
 endif()

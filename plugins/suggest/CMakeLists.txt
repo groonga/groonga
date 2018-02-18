@@ -1,4 +1,4 @@
-# Copyright(C) 2012-2013 Brazil
+# Copyright(C) 2012-2018 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,7 @@ include_directories(
   ${MRUBY_INCLUDE_DIRS}
   ${MESSAGE_PACK_INCLUDE_DIRS})
 
+set(GRN_SUGGEST_PLUGIN_DIR "${GRN_RELATIVE_PLUGINS_DIR}/suggest")
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am SUGGEST_SOURCES)
 set_source_files_properties(${SUGGEST_SOURCES}
   PROPERTIES
@@ -31,10 +32,10 @@ if(GRN_EMBED)
 else()
   add_library(suggest MODULE ${SUGGEST_SOURCES})
   set_target_properties(suggest PROPERTIES PREFIX "")
-  install(TARGETS suggest DESTINATION "${GRN_RELATIVE_PLUGINS_DIR}/suggest")
+  install(TARGETS suggest DESTINATION "${GRN_SUGGEST_PLUGIN_DIR}")
   if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
     install(FILES $<TARGET_PDB_FILE:suggest>
-      DESTINATION "${PDB_DIR}"
+      DESTINATION "${GRN_SUGGEST_PLUGIN_DIR}"
       OPTIONAL)
   endif()
 endif()

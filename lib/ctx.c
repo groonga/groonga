@@ -1633,7 +1633,8 @@ exception_filter(EXCEPTION_POINTERS *info)
     base_dir = grn_windows_base_dir();
     {
       char *current, *end;
-      const char *pdb_dir = "\\lib\\pdb";
+      /* TODO: Add more directories for plugins and so on. */
+      const char *bin_dir = "\\bin";
       current = search_path + strlen(search_path);
       end = current + sizeof(search_path) - 1;
       for (; *base_dir && current < end; base_dir++, current++) {
@@ -1647,7 +1648,7 @@ exception_filter(EXCEPTION_POINTERS *info)
         current--;
       }
       *current = '\0';
-      grn_strcat(search_path, sizeof(search_path), pdb_dir);
+      grn_strcat(search_path, sizeof(search_path), bin_dir);
     }
 
     SymSetSearchPath(process, search_path);

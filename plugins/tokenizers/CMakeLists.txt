@@ -1,4 +1,4 @@
-# Copyright(C) 2012-2013 Brazil
+# Copyright(C) 2012-2018 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -50,7 +50,7 @@ if(GRN_WITH_MECAB)
     install(TARGETS mecab_tokenizer DESTINATION "${TOKENIZERS_DIR}")
     if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
       install(FILES $<TARGET_PDB_FILE:mecab_tokenizer>
-	DESTINATION "${PDB_DIR}"
+	DESTINATION "${TOKENIZERS_DIR}"
 	OPTIONAL)
     endif()
   endif()
@@ -78,7 +78,7 @@ if(GRN_WITH_KYTEA)
     install(TARGETS kytea_tokenizer DESTINATION "${TOKENIZERS_DIR}")
     if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
       install(FILES $<TARGET_PDB_FILE:kytea_tokenizer>
-	DESTINATION "${PDB_DIR}"
+	DESTINATION "${TOKENIZERS_DIR}"
 	OPTIONAL)
     endif()
   endif()

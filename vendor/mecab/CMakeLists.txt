@@ -1,4 +1,4 @@
-# Copyright(C) 2015 Brazil
+# Copyright(C) 2015-2018 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -179,7 +179,7 @@ if(GRN_WITH_BUNDLED_MECAB)
       $<TARGET_PDB_FILE:libmecab>
       $<TARGET_PDB_FILE:mecab>
       $<TARGET_PDB_FILE:mecab-dict-index>
-      DESTINATION "${PDB_DIR}"
+      DESTINATION "${BIN_DIR}"
       OPTIONAL)
   endif()
   install(FILES "${MECAB_SOURCE_DIR}/src/mecab.h"

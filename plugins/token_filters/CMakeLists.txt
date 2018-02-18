@@ -1,4 +1,4 @@
-# Copyright(C) 2014 Brazil
+# Copyright(C) 2014-2018 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -38,7 +38,7 @@ else()
   install(TARGETS stop_word_token_filter DESTINATION "${TOKEN_FILTERS_DIR}")
   if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
     install(FILES $<TARGET_PDB_FILE:stop_word_token_filter>
-      DESTINATION "${PDB_DIR}"
+      DESTINATION "${TOKEN_FILTERS_DIR}"
       OPTIONAL)
   endif()
 endif()
@@ -65,7 +65,7 @@ if(GRN_WITH_LIBSTEMMER)
     install(TARGETS stem_token_filter DESTINATION "${TOKEN_FILTERS_DIR}")
     if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
       install(FILES $<TARGET_PDB_FILE:stem_token_filter>
-	DESTINATION "${PDB_DIR}"
+	DESTINATION "${TOKEN_FILTERS_DIR}"
 	OPTIONAL)
     endif()
   endif()

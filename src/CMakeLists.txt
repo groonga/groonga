@@ -1,4 +1,4 @@
-# Copyright(C) 2012-2013 Brazil
+# Copyright(C) 2012-2018 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@ target_link_libraries(groonga libgroonga)
 install(TARGETS groonga DESTINATION ${BIN_DIR})
 if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
   install(FILES $<TARGET_PDB_FILE:groonga>
-    DESTINATION "${PDB_DIR}"
+    DESTINATION "${BIN_DIR}"
     OPTIONAL)
 endif()
 
@@ -46,7 +46,7 @@ if(GRN_WITH_MRUBY)
   install(TARGETS grndb DESTINATION ${BIN_DIR})
   if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
     install(FILES $<TARGET_PDB_FILE:grndb>
-      DESTINATION "${PDB_DIR}"
+      DESTINATION "${BIN_DIR}"
       OPTIONAL)
   endif()
 endif()
@@ -71,7 +71,7 @@ target_link_libraries(groonga-benchmark libgroonga)
 install(TARGETS groonga-benchmark DESTINATION ${BIN_DIR})
 if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
   install(FILES $<TARGET_PDB_FILE:groonga-benchmark>
-    DESTINATION "${PDB_DIR}"
+    DESTINATION "${BIN_DIR}"
     OPTIONAL)
 endif()
 

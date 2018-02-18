@@ -516,15 +516,14 @@ namespace :pdb do
       generate_pdb_bat.open("w") do |bat|
         cd(binary_dir) do
           Dir.glob("**/*.{exe,dll}") do |binary|
-            pdb = "lib\\pdb\\" + File.basename(binary, ".*") + ".pdb"
             binary = binary.gsub("/", "\\")
+            pdb = binary.gsub(/\.(?:exe|dll)\z/, ".pdb")
             bat.print("bin\\#{cv2pdb.basename} #{binary} #{binary} #{pdb}\r\n")
           end
         end
       end
       chmod(0755, generate_pdb_bat)
       cp(cv2pdb, bin_dir)
-      mkdir_p(lib_dir + "pdb")
 
       cv2pdb_license_dir = license_dir + "cv2pdb"
       mkdir_p(cv2pdb_license_dir)
