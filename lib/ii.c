@@ -12317,7 +12317,8 @@ grn_ii_builder_append_obj(grn_ctx *ctx, grn_ii_builder *builder,
         if (sec->length == 0) {
           continue;
         }
-        if (builder->tokenizer) {
+        if ((builder->ii->header->flags & GRN_OBJ_WITH_SECTION) &&
+            builder->tokenizer) {
           sid = i + 1;
         }
         rc = grn_ii_builder_append_value(ctx, builder, rid, sid, sec->weight,

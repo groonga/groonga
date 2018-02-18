@@ -1,0 +1,46 @@
+plugin_register functions/index_column
+[[0,0.0,0.0],true]
+table_create Docs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Docs sentences COLUMN_VECTOR Text
+[[0,0.0,0.0],true]
+load --table Docs
+[
+{"sentences": ["-", "-", "-"]}
+]
+[[0,0.0,0.0],1]
+table_create Words TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Words docs_sentences COLUMN_INDEX|WITH_POSITION Docs sentences
+[[0,0.0,0.0],true]
+select Words   --limit -1   --sort_keys _key   --output_columns '_key, index_column_source_records("docs_sentences")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "index_column_source_records",
+          null
+        ]
+      ],
+      [
+        "-",
+        [
+          1
+        ]
+      ]
+    ]
+  ]
+]
