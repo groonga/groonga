@@ -92,6 +92,7 @@ module Groonga
         labeled_drilldowns = LabeledDrilldowns.parse(input).sort_by(&:label)
         labeled_drilldowns.each do |drilldown|
           key << "#{drilldown.label}\0"
+          key << "#{drilldown.table}\0"
           key << "#{drilldown.keys.join(',')}\0"
           key << "#{drilldown.output_columns}\0"
           key << "#{drilldown.offset}\0"

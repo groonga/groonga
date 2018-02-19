@@ -154,6 +154,17 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
     }
   ]
 ]
+#>logical_select --drilldowns[action].keys "_key" --drilldowns[action].table "restart" --drilldowns[restart].filter "_key @ 'Restart'" --drilldowns[restart].keys "action" --drilldowns[restart].output_columns "_key" --drilldowns[restart].stage "initial" --drilldowns[start].filter "_key @ 'Start'" --drilldowns[start].keys "action" --drilldowns[start].output_columns "_key" --drilldowns[start].stage "initial" --limit "0" --logical_table "Logs" --output_columns "_id" --shard_key "timestamp"
+#:000000000000000 select(2)[Logs_20150203]
+#:000000000000000 select(3)[Logs_20150204]
+#:000000000000000 select(4)[Logs_20150205]
+#:000000000000000 filter(1)
+#:000000000000000 filter(2)
+#:000000000000000 output(0)
+#:000000000000000 output.drilldowns(1)
+#:000000000000000 output.drilldowns(1)
+#:000000000000000 output.drilldowns(2)
+#<000000000000000 rc=0
 logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id   --drilldowns[action].table start   --drilldowns[action].keys _key   --drilldowns[restart].stage initial   --drilldowns[restart].keys 'action'   --drilldowns[restart].filter "_key @ 'Restart'"   --drilldowns[restart].output_columns _key   --drilldowns[start].stage initial   --drilldowns[start].keys 'action'   --drilldowns[start].filter "_key @ 'Start'"   --drilldowns[start].output_columns _key
 [
   [
@@ -231,3 +242,14 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
     }
   ]
 ]
+#>logical_select --drilldowns[action].keys "_key" --drilldowns[action].table "start" --drilldowns[restart].filter "_key @ 'Restart'" --drilldowns[restart].keys "action" --drilldowns[restart].output_columns "_key" --drilldowns[restart].stage "initial" --drilldowns[start].filter "_key @ 'Start'" --drilldowns[start].keys "action" --drilldowns[start].output_columns "_key" --drilldowns[start].stage "initial" --limit "0" --logical_table "Logs" --output_columns "_id" --shard_key "timestamp"
+#:000000000000000 select(2)[Logs_20150203]
+#:000000000000000 select(3)[Logs_20150204]
+#:000000000000000 select(4)[Logs_20150205]
+#:000000000000000 filter(2)
+#:000000000000000 filter(1)
+#:000000000000000 output(0)
+#:000000000000000 output.drilldowns(2)
+#:000000000000000 output.drilldowns(1)
+#:000000000000000 output.drilldowns(2)
+#<000000000000000 rc=0
