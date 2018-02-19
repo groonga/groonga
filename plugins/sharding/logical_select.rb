@@ -805,7 +805,7 @@ module Groonga
             dynamic_column.apply(result_set, condition)
           end
 
-          unless @post_filter.nil?
+          if @post_filter
             filtered_table = result_set
             result_set = apply_post_filter(filtered_table)
             @context.temporary_tables << filtered_table
