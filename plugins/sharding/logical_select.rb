@@ -28,6 +28,7 @@ module Groonga
                  "match_columns",
                  "query",
                  "drilldown_filter",
+                 "post_filter",
                ])
 
       def run_body(input)
@@ -99,6 +100,7 @@ module Groonga
           key << "#{drilldown.filter}\0"
           key << drilldown.dynamic_columns.cache_key
         end
+        key << "#{input[:post_filter]}\0"
         dynamic_columns = DynamicColumns.parse(input)
         key << dynamic_columns.cache_key
         key
@@ -278,6 +280,7 @@ module Groonga
         attr_reader :labeled_drilldowns
         attr_reader :temporary_tables
         attr_reader :expressions
+        attr_reader :post_filter
         def initialize(input)
           @input = input
           @enumerator = LogicalEnumerator.new("logical_select", @input)
@@ -300,6 +303,8 @@ module Groonga
           @temporary_tables = []
 
           @expressions = []
+
+          @post_filter = @input[:post_filter]
         end
 
         def close
@@ -682,6 +687,7 @@ module Groonga
           @match_columns = @context.match_columns
           @query = @context.query
           @filter = @context.filter
+          @post_filter = @context.post_filter
           @sort_keys = @context.sort_keys
           @result_sets = @context.result_sets
           @unsorted_result_sets = @context.unsorted_result_sets
@@ -778,6 +784,12 @@ module Groonga
           add_result_set(table.select(expression), expression)
         end
 
+        def apply_post_filter(table)
+          expression = create_expression(table)
+          expression.parse(@post_filter)
+          table.select(expression)
+        end
+
         def add_result_set(result_set, condition)
           query_logger.log(:size, ":",
                            "select(#{result_set.size})[#{@shard.table_name}]")
@@ -792,6 +804,12 @@ module Groonga
               result_set = result_set.select_all
             end
             dynamic_column.apply(result_set, condition)
+          end
+
+          unless @post_filter.nil?
+            filtered_table = result_set
+            result_set = apply_post_filter(filtered_table)
+            @context.temporary_tables << filtered_table
           end
 
           if @sort_keys.empty?
