@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1727,11 +1727,10 @@ exception_filter(EXCEPTION_POINTERS *info)
     {
       const char *unknown = "(unknown)";
       GRN_LOG(ctx, GRN_LOG_CRIT,
-              "%s:%d:%d: %p: %.*s(): <%s>: <%s>",
+              "%s:%d:%d: %.*s(): <%s>: <%s>",
               (have_location ? line.FileName : unknown),
               (have_location ? line.LineNumber : -1),
               (have_location ? line_displacement : -1),
-              address,
               (have_symbol_name ? symbol->NameLen : strlen(unknown)),
               (have_symbol_name ? symbol->Name : unknown),
               (have_module_name ? module.ModuleName : unknown),
