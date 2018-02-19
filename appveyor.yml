@@ -79,6 +79,7 @@ before_test:
   - cd test\command\grntest
   - bundle install --binstubs=..\bin
   - cd ..\..\..
+  - del test\command\suite\select\filter\equal\vector_element_float.test
 test_script:
   - ruby test\command\bin\grntest
      --groonga %FULL_GROONGA_INSTALL_FOLDER%\bin\groonga.exe
