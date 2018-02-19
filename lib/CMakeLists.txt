@@ -87,7 +87,9 @@ if(GRN_EMBED)
 else()
   add_library(libgroonga SHARED ${GRN_ALL_SOURCES})
 endif()
-set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
+if(NOT MSVC)
+  set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
+endif()
 
 set(GRN_ALL_LIBRARIES
     ${EXECINFO_LIBS}
