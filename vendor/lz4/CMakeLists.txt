@@ -84,7 +84,10 @@ if(GRN_WITH_BUNDLED_LZ4)
     install(TARGETS lz4
       DESTINATION "${BIN_DIR}")
     if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
-      install(FILES $<TARGET_PDB_FILE:lz4>
+      install(
+	FILES
+	$<TARGET_PDB_FILE:liblz4>
+	$<TARGET_PDB_FILE:lz4>
 	DESTINATION "${BIN_DIR}"
 	OPTIONAL)
     endif()
