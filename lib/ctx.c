@@ -1681,7 +1681,7 @@ exception_filter(EXCEPTION_POINTERS *info)
 
   previous_address = 0;
   while (GRN_TRUE) {
-    DWORD address;
+    DWORD64 address;
     IMAGEHLP_MODULE64 module;
     char *buffer[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)];
     SYMBOL_INFO *symbol = (SYMBOL_INFO *)buffer;
