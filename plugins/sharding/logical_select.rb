@@ -88,6 +88,7 @@ module Groonga
         key << "#{input[:drilldown_calc_types]}\0"
         key << "#{input[:drilldown_calc_target]}\0"
         key << "#{input[:drilldown_filter]}\0"
+        key << "#{input[:post_filter]}\0"
         labeled_drilldowns = LabeledDrilldowns.parse(input).sort_by(&:label)
         labeled_drilldowns.each do |drilldown|
           key << "#{drilldown.label}\0"
@@ -100,7 +101,6 @@ module Groonga
           key << "#{drilldown.filter}\0"
           key << drilldown.dynamic_columns.cache_key
         end
-        key << "#{input[:post_filter]}\0"
         dynamic_columns = DynamicColumns.parse(input)
         key << dynamic_columns.cache_key
         key
@@ -273,6 +273,7 @@ module Groonga
         attr_reader :limit
         attr_reader :sort_keys
         attr_reader :output_columns
+        attr_reader :post_filter
         attr_reader :dynamic_columns
         attr_reader :result_sets
         attr_reader :unsorted_result_sets
@@ -280,7 +281,6 @@ module Groonga
         attr_reader :labeled_drilldowns
         attr_reader :temporary_tables
         attr_reader :expressions
-        attr_reader :post_filter
         def initialize(input)
           @input = input
           @enumerator = LogicalEnumerator.new("logical_select", @input)
@@ -291,6 +291,7 @@ module Groonga
           @limit = (@input[:limit] || 10).to_i
           @sort_keys = parse_keys(@input[:sort_keys] || @input[:sortby])
           @output_columns = @input[:output_columns] || "_id, _key, *"
+          @post_filter = @input[:post_filter]
 
           @dynamic_columns = DynamicColumns.parse(@input)
 
@@ -303,8 +304,6 @@ module Groonga
           @temporary_tables = []
 
           @expressions = []
-
-          @post_filter = @input[:post_filter]
         end
 
         def close
