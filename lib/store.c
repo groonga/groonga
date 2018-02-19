@@ -1768,6 +1768,147 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
   GRN_FREE(zvalue);
   return rc;
 }
+
+grn_inline static grn_rc
+grn_ja_putv_zlib(grn_ctx *ctx,
+                 grn_ja *ja,
+                 grn_id id,
+                 grn_obj *header,
+                 grn_obj *body,
+                 grn_obj *footer,
+                 int flags)
+{
+  grn_rc rc;
+  const size_t header_size = GRN_BULK_VSIZE(header);
+  const size_t body_size = body ? GRN_BULK_VSIZE(body) : 0;
+  const size_t footer_size = GRN_BULK_VSIZE(footer);
+  const size_t size = header_size + body_size + footer_size;
+  z_stream zstream;
+  Bytef *zvalue = NULL;
+  int zwindow_bits = 15;
+  int zmem_level = 8;
+  int zrc;
+
+  if (size < COMPRESS_THRESHOLD_BYTE) {
+    return grn_ja_putv_packed(ctx, ja, id, header, body, footer, flags);
+  }
+
+  zstream.zalloc = Z_NULL;
+  zstream.zfree = Z_NULL;
+  zrc = deflateInit2(&zstream,
+                     Z_DEFAULT_COMPRESSION,
+                     Z_DEFLATED,
+                     zwindow_bits,
+                     zmem_level,
+                     Z_DEFAULT_STRATEGY);
+  if (zrc != Z_OK) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZLIB_ERROR,
+                          "[zlib] failed to initialize compressor",
+                          grn_zrc_to_string(zrc));
+    return ctx->rc;
+  }
+
+  zstream.avail_out = deflateBound(&zstream, size);
+  zvalue = GRN_MALLOC(zstream.avail_out);
+  zstream.next_out = zvalue;
+  if (!zstream.next_out) {
+    deflateEnd(&zstream);
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZLIB_ERROR,
+                          "[zlib] failed to allocate compress buffer",
+                          NULL);
+    return ctx->rc;
+  }
+
+  zstream.next_in = GRN_BULK_HEAD(header);
+  zstream.avail_in = header_size;
+  zrc = deflate(&zstream, Z_NO_FLUSH);
+  if (zrc != Z_OK) {
+    GRN_FREE(zvalue);
+    deflateEnd(&zstream);
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZLIB_ERROR,
+                          "[zlib] failed to compress header",
+                          grn_zrc_to_string(zrc));
+    return ctx->rc;
+  }
+
+  if (body_size > 0) {
+    zstream.next_in = GRN_BULK_HEAD(body);
+    zstream.avail_in = body_size;
+    zrc = deflate(&zstream, Z_NO_FLUSH);
+    if (zrc != Z_OK) {
+      GRN_FREE(zvalue);
+      deflateEnd(&zstream);
+      grn_ja_compress_error(ctx,
+                            ja,
+                            id,
+                            GRN_ZLIB_ERROR,
+                            "[zlib] failed to compress body",
+                            grn_zrc_to_string(zrc));
+      return ctx->rc;
+    }
+  }
+
+  if (footer_size > 0) {
+    zstream.next_in = GRN_BULK_HEAD(footer);
+    zstream.avail_in = footer_size;
+    zrc = deflate(&zstream, Z_NO_FLUSH);
+    if (zrc != Z_OK) {
+      GRN_FREE(zvalue);
+      deflateEnd(&zstream);
+      grn_ja_compress_error(ctx,
+                            ja,
+                            id,
+                            GRN_ZLIB_ERROR,
+                            "[zlib] failed to compress footer",
+                            grn_zrc_to_string(zrc));
+      return ctx->rc;
+    }
+  }
+
+  zrc = deflate(&zstream, Z_FINISH);
+  if (zrc != Z_STREAM_END) {
+    GRN_FREE(zvalue);
+    deflateEnd(&zstream);
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZLIB_ERROR,
+                          "[zlib] failed to finish compression",
+                          grn_zrc_to_string(zrc));
+    return ctx->rc;
+  }
+
+  rc = grn_ja_putv_compressed(ctx,
+                              ja,
+                              id,
+                              zvalue,
+                              zstream.total_out,
+                              size,
+                              flags);
+
+  GRN_FREE(zvalue);
+  zrc = deflateEnd(&zstream);
+  if (zrc != Z_OK) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZLIB_ERROR,
+                          "[zlib] failed to free compressor",
+                          grn_zrc_to_string(zrc));
+    return ctx->rc;
+  }
+
+  return rc;
+}
 #endif /* GRN_WITH_ZLIB */
 
 #ifdef GRN_WITH_LZ4
@@ -2208,9 +2349,9 @@ grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
 
     switch (ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
 #ifdef GRN_WITH_ZLIB
-    /* case GRN_OBJ_COMPRESS_ZLIB : */
-    /*   rc = grn_ja_putv_zlib(ctx, ja, id, &header, body, &footer, flags); */
-    /*   break; */
+    case GRN_OBJ_COMPRESS_ZLIB :
+      rc = grn_ja_putv_zlib(ctx, ja, id, &header, body, &footer, flags);
+      break;
 #endif /* GRN_WITH_ZLIB */
 #ifdef GRN_WITH_LZ4
     case GRN_OBJ_COMPRESS_LZ4 :
