@@ -223,6 +223,12 @@ msgstr ""
 "Groongaを全文検索ライブラリとして使うことができます。この節ではGroongaが提供"
 "しているAPIを示します。"
 
+msgid "パラメータ"
+msgstr ""
+
+msgid "戻り値"
+msgstr ""
+
 msgid "Global configurations"
 msgstr "全体設定"
 
@@ -4478,12 +4484,6 @@ msgstr ""
 "``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
 "さい。"
 
-msgid ""
-"The number of kinds of index target data and the number of handleable "
-"records in a small index column"
-msgstr ""
-"インデックス対象データの種類数と小さなインデックスカラムで扱えるレコード数"
-
 msgid "``column_create``"
 msgstr ""
 
@@ -5022,6 +5022,12 @@ msgstr ""
 "``2`` 、 ``3`` というデータが入っていたとすると、種類数は ``3`` （ ``1`` と "
 "``2`` と ``3`` ）になります。以下の表はインデックス対象データの種類数と扱える"
 "最大レコード数の関係を示しています。"
+
+msgid ""
+"The number of kinds of index target data and the number of handleable "
+"records in a small index column"
+msgstr ""
+"インデックス対象データの種類数と小さなインデックスカラムで扱えるレコード数"
 
 msgid "The number of kinds of index target data"
 msgstr "インデックス対象のデータの種類数"
@@ -8197,6 +8203,15 @@ msgstr ""
 
 msgid "See also :ref:`logical-select-match-columns`."
 msgstr ":ref:`logical-select-match-columns` も参照してください。"
+
+msgid ""
+"Specifies the filter text that is processed after ``filtered`` stage dynamic "
+"columns are generated. You can use ``post_filter`` to filter by ``filtered`` "
+"stage dynamic columns. Others are the same as :ref:`logical-select-filter`."
+msgstr ""
+"``filtered`` ステージの動的カラムが生成されてから実行するフィルターを指定しま"
+"す。 ``post_filter`` を使うと ``filtered`` ステージの動的カラムを使って絞り込"
+"むことができます。他は :ref:`logical-select-filter` と同じです。"
 
 msgid "Advanced search parameters"
 msgstr "高度な検索のための引数"
@@ -25817,9 +25832,6 @@ msgid ""
 "records are fetched."
 msgstr ""
 
-msgid "Characteristics of all tables"
-msgstr "全テーブルの特徴"
-
 msgid "Tables"
 msgstr "テーブル"
 
@@ -25852,6 +25864,9 @@ msgid ""
 msgstr ""
 "以下はGroongaにあるすべてのテーブルの特性表です。（この表の中では ``TABLE_`` "
 "プレフィックスは省略しています。）"
+
+msgid "Characteristics of all tables"
+msgstr "全テーブルの特徴"
 
 msgid "Item"
 msgstr ""

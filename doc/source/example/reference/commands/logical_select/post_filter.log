@@ -1,0 +1,50 @@
+Execution example::
+
+  logical_select \
+    --logical_table Entries \
+    --shard_key created_at \
+    --columns[n_likes_sum_per_tag].stage filtered \
+    --columns[n_likes_sum_per_tag].type UInt32 \
+    --columns[n_likes_sum_per_tag].value 'window_sum(n_likes)' \
+    --columns[n_likes_sum_per_tag].window.group_keys 'tag' \
+    --filter 'content @ "system" || content @ "use"' \
+    --post_filter 'n_likes_sum_per_tag > 10' \
+    --output_columns _key,n_likes,n_likes_sum_per_tag
+  # [
+  #   [
+  #     0, 
+  #     1519030779.410312,
+  #     0.04758048057556152
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "n_likes_sum_per_tag", 
+  #           "UInt32"
+  #         ]
+  #       ]
+  #       [
+  #         "Groonga", 
+  #         10, 
+  #         25
+  #       ], 
+  #       [
+  #         "Mroonga", 
+  #         15, 
+  #         25
+  #       ]
+  #     ]
+  #   ]
+  # ]
