@@ -32,7 +32,7 @@ module Groonga
     end
 
     def find_column(name)
-      Context.instance[absolute_column_name(name)]
+      @table.find_column(name)
     end
   end
 end
