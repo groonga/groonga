@@ -15,6 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "grn.h"
 #include "grn_str.h"
 #include "grn_store.h"
@@ -1119,47 +1120,40 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
   return rc;
 }
 
-grn_rc
-grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
+static grn_rc
+grn_ja_putv_raw(grn_ctx *ctx,
+                grn_ja *ja,
+                grn_id id,
+                grn_obj *header,
+                grn_obj *body,
+                grn_obj *footer,
+                int flags)
 {
-  grn_obj header, footer;
-  grn_rc rc = GRN_SUCCESS;
-  grn_section *vp;
-  int i, f = 0, n = grn_vector_size(ctx, vector);
-  GRN_TEXT_INIT(&header, 0);
-  GRN_TEXT_INIT(&footer, 0);
-  grn_text_benc(ctx, &header, n);
-  for (i = 0, vp = vector->u.v.sections; i < n; i++, vp++) {
-    grn_text_benc(ctx, &header, vp->length);
-    if (vp->weight || vp->domain) { f = 1; }
+  grn_rc rc;
+  grn_io_win iw;
+  grn_ja_einfo einfo;
+  const size_t header_size = GRN_BULK_VSIZE(header);
+  const size_t body_size = body ? GRN_BULK_VSIZE(body) : 0;
+  const size_t footer_size = GRN_BULK_VSIZE(footer);
+  const size_t size = header_size + body_size + footer_size;
+
+  rc = grn_ja_alloc(ctx, ja, id, size, &einfo, &iw);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
-  if (f) {
-    for (i = 0, vp = vector->u.v.sections; i < n; i++, vp++) {
-      grn_text_benc(ctx, &footer, vp->weight);
-      grn_text_benc(ctx, &footer, vp->domain);
-    }
+
+  grn_memcpy(iw.addr, GRN_BULK_HEAD(header), header_size);
+  if (body_size > 0) {
+    grn_memcpy((char *)iw.addr + header_size,
+               GRN_BULK_HEAD(body), body_size);
   }
-  {
-    grn_io_win iw;
-    grn_ja_einfo einfo;
-    grn_obj *body = vector->u.v.body;
-    size_t sizeh = GRN_BULK_VSIZE(&header);
-    size_t sizev = body ? GRN_BULK_VSIZE(body) : 0;
-    size_t sizef = GRN_BULK_VSIZE(&footer);
-    if ((rc = grn_ja_alloc(ctx, ja, id, sizeh + sizev + sizef, &einfo, &iw))) { goto exit; }
-    grn_memcpy(iw.addr, GRN_BULK_HEAD(&header), sizeh);
-    if (body) {
-      grn_memcpy((char *)iw.addr + sizeh, GRN_BULK_HEAD(body), sizev);
-    }
-    if (f) {
-      grn_memcpy((char *)iw.addr + sizeh + sizev, GRN_BULK_HEAD(&footer), sizef);
-    }
-    grn_io_win_unmap(&iw);
-    rc = grn_ja_replace(ctx, ja, id, &einfo, NULL);
+  if (footer_size > 0) {
+    grn_memcpy((char *)iw.addr + header_size + body_size,
+               GRN_BULK_HEAD(footer), footer_size);
   }
-exit :
-  GRN_OBJ_FIN(ctx, &footer);
-  GRN_OBJ_FIN(ctx, &header);
+  grn_io_win_unmap(&iw);
+  rc = grn_ja_replace(ctx, ja, id, &einfo, NULL);
+
   return rc;
 }
 
@@ -1298,6 +1292,85 @@ grn_ja_put_packed(grn_ctx *ctx,
                         cas);
 }
 
+static grn_rc
+grn_ja_putv_packed(grn_ctx *ctx,
+                   grn_ja *ja,
+                   grn_id id,
+                   grn_obj *header,
+                   grn_obj *body,
+                   grn_obj *footer,
+                   int flags)
+{
+  grn_rc rc;
+  grn_io_win iw;
+  grn_ja_einfo einfo;
+  uint64_t packed_value_meta;
+  const size_t meta_size = sizeof(uint64_t);
+  const size_t header_size = GRN_BULK_VSIZE(header);
+  const size_t body_size = body ? GRN_BULK_VSIZE(body) : 0;
+  const size_t footer_size = GRN_BULK_VSIZE(footer);
+  const size_t size = header_size + body_size + footer_size;
+
+  packed_value_meta = size | COMPRESSED_VALUE_META_FLAG_RAW;
+
+  rc = grn_ja_alloc(ctx, ja, id, meta_size + size, &einfo, &iw);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+
+  *((uint64_t *)iw.addr) = packed_value_meta;
+  grn_memcpy(((char *)iw.addr) + meta_size,
+             GRN_BULK_HEAD(header),
+             header_size);
+  if (body_size > 0) {
+    grn_memcpy((char *)iw.addr + meta_size + header_size,
+               GRN_BULK_HEAD(body),
+               body_size);
+  }
+  if (footer_size > 0) {
+    grn_memcpy((char *)iw.addr + meta_size + header_size + body_size,
+               GRN_BULK_HEAD(footer),
+               footer_size);
+  }
+  grn_io_win_unmap(&iw);
+  rc = grn_ja_replace(ctx, ja, id, &einfo, NULL);
+
+  return rc;
+}
+
+static grn_rc
+grn_ja_putv_compressed(grn_ctx *ctx,
+                       grn_ja *ja,
+                       grn_id id,
+                       void *compressed,
+                       size_t compressed_size,
+                       size_t uncompressed_size,
+                       int flags)
+{
+  grn_rc rc;
+  grn_io_win iw;
+  grn_ja_einfo einfo;
+  uint64_t compressed_meta;
+  const size_t meta_size = sizeof(uint64_t);
+  const size_t size = meta_size + compressed_size;
+
+  compressed_meta = uncompressed_size;
+
+  rc = grn_ja_alloc(ctx, ja, id, size, &einfo, &iw);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+
+  *((uint64_t *)iw.addr) = compressed_meta;
+  grn_memcpy(((char *)iw.addr) + meta_size,
+             compressed,
+             compressed_size);
+  grn_io_win_unmap(&iw);
+  rc = grn_ja_replace(ctx, ja, id, &einfo, NULL);
+
+  return rc;
+}
+
 static void
 grn_ja_compress_error(grn_ctx *ctx,
                       grn_ja *ja,
@@ -1315,7 +1388,7 @@ grn_ja_compress_error(grn_ctx *ctx,
   } else {
     name_len = grn_obj_name(ctx, (grn_obj *)ja, name, GRN_TABLE_MAX_KEY_SIZE);
   }
-  ERR(GRN_ZSTD_ERROR,
+  ERR(rc,
       "[ja]%s: %s%.*s%s<%u>%s%s%s",
       message,
       name_len == 0 ? "" : "<",
@@ -1786,6 +1859,82 @@ grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
   GRN_FREE(packed_value);
   return rc;
 }
+
+grn_inline static grn_rc
+grn_ja_putv_lz4(grn_ctx *ctx,
+                grn_ja *ja,
+                grn_id id,
+                grn_obj *header,
+                grn_obj *body,
+                grn_obj *footer,
+                int flags)
+{
+  grn_rc rc;
+  const size_t header_size = GRN_BULK_VSIZE(header);
+  const size_t body_size = body ? GRN_BULK_VSIZE(body) : 0;
+  const size_t footer_size = GRN_BULK_VSIZE(footer);
+  const size_t size = header_size + body_size + footer_size;
+  grn_obj buffer;
+  char *lz4_value;
+  int lz4_value_len_max;
+  int lz4_value_len_real;
+
+  if (size < COMPRESS_THRESHOLD_BYTE) {
+    return grn_ja_putv_packed(ctx, ja, id, header, body, footer, flags);
+  }
+
+  if (size > (uint32_t)LZ4_MAX_INPUT_SIZE) {
+    return grn_ja_putv_packed(ctx, ja, id, header, body, footer, flags);
+  }
+
+  GRN_TEXT_INIT(&buffer, 0);
+  GRN_TEXT_PUT(ctx, &buffer, GRN_BULK_HEAD(header), header_size);
+  if (body_size > 0)
+    GRN_TEXT_PUT(ctx, &buffer, GRN_BULK_HEAD(body), body_size);
+  if (footer_size > 0)
+    GRN_TEXT_PUT(ctx, &buffer, GRN_BULK_HEAD(footer), footer_size);
+
+  lz4_value_len_max = LZ4_compressBound(size);
+  if (!(lz4_value = GRN_MALLOC(lz4_value_len_max))) {
+    GRN_OBJ_FIN(ctx, &buffer);
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_LZ4_ERROR,
+                          "[lz4] failed to allocate compress buffer",
+                          NULL);
+    return ctx->rc;
+  }
+
+  lz4_value_len_real = LZ4_compress_default(GRN_TEXT_VALUE(&buffer),
+                                            lz4_value,
+                                            GRN_TEXT_LEN(&buffer),
+                                            lz4_value_len_max);
+  if (lz4_value_len_real <= 0) {
+    GRN_OBJ_FIN(ctx, &buffer);
+    GRN_FREE(lz4_value);
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_LZ4_ERROR,
+                          "[lz4] failed to compress",
+                          NULL);
+    return ctx->rc;
+  }
+
+  rc = grn_ja_putv_compressed(ctx,
+                              ja,
+                              id,
+                              lz4_value,
+                              lz4_value_len_real,
+                              size,
+                              flags);
+
+  GRN_OBJ_FIN(ctx, &buffer);
+  GRN_FREE(lz4_value);
+
+  return rc;
+}
 #endif /* GRN_WITH_LZ4 */
 
 #ifdef GRN_WITH_ZSTD
@@ -1851,6 +2000,160 @@ grn_ja_put_zstd(grn_ctx *ctx,
   GRN_FREE(packed_value);
   return rc;
 }
+
+grn_inline static grn_rc
+grn_ja_putv_zstd(grn_ctx *ctx,
+                 grn_ja *ja,
+                 grn_id id,
+                 grn_obj *header,
+                 grn_obj *body,
+                 grn_obj *footer,
+                 int flags)
+{
+  grn_rc rc;
+  const size_t header_size = GRN_BULK_VSIZE(header);
+  const size_t body_size = body ? GRN_BULK_VSIZE(body) : 0;
+  const size_t footer_size = GRN_BULK_VSIZE(footer);
+  const size_t size = header_size + body_size + footer_size;
+  ZSTD_CStream *zstd_stream = NULL;
+  ZSTD_inBuffer zstd_input;
+  ZSTD_outBuffer zstd_output;
+  int zstd_compression_level = 3;
+  size_t zstd_result;
+
+  if (size < COMPRESS_THRESHOLD_BYTE) {
+    return grn_ja_putv_packed(ctx, ja, id, header, body, footer, flags);
+  }
+
+  zstd_output.dst = NULL;
+  zstd_output.pos = 0;
+
+  zstd_stream = ZSTD_createCStream();
+  if (!zstd_stream) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZSTD_ERROR,
+                          "[zstd] failed to allocate stream compressor",
+                          NULL);
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  zstd_result = ZSTD_initCStream(zstd_stream, zstd_compression_level);
+  if (ZSTD_isError(zstd_result)) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZSTD_ERROR,
+                          "[zstd] failed to initialize stream compressor",
+                          ZSTD_getErrorName(zstd_result));
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  zstd_output.size = ZSTD_compressBound(size);
+  zstd_output.dst = GRN_MALLOC(zstd_output.size);
+  if (!zstd_output.dst) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZSTD_ERROR,
+                          "[zstd] failed to allocate compress buffer",
+                          NULL);
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  zstd_input.src = GRN_BULK_HEAD(header);
+  zstd_input.size = header_size;
+  zstd_input.pos = 0;
+  zstd_result = ZSTD_compressStream(zstd_stream, &zstd_output, &zstd_input);
+  if (ZSTD_isError(zstd_result)) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZSTD_ERROR,
+                          "[zstd] failed to compress header",
+                          ZSTD_getErrorName(zstd_result));
+    rc = ctx->rc;
+    goto exit;
+  }
+  if (body_size > 0) {
+    zstd_input.src = GRN_BULK_HEAD(body);
+    zstd_input.size = body_size;
+    zstd_input.pos = 0;
+    zstd_result = ZSTD_compressStream(zstd_stream, &zstd_output, &zstd_input);
+    if (ZSTD_isError(zstd_result)) {
+      grn_ja_compress_error(ctx,
+                            ja,
+                            id,
+                            GRN_ZSTD_ERROR,
+                            "[zstd] failed to compress body",
+                            ZSTD_getErrorName(zstd_result));
+      rc = ctx->rc;
+      goto exit;
+    }
+  }
+  if (footer_size > 0) {
+    zstd_input.src = GRN_BULK_HEAD(footer);
+    zstd_input.size = footer_size;
+    zstd_input.pos = 0;
+    zstd_result = ZSTD_compressStream(zstd_stream, &zstd_output, &zstd_input);
+    if (ZSTD_isError(zstd_result)) {
+      grn_ja_compress_error(ctx,
+                            ja,
+                            id,
+                            GRN_ZSTD_ERROR,
+                            "[zstd] failed to compress footer",
+                            ZSTD_getErrorName(zstd_result));
+      rc = ctx->rc;
+      goto exit;
+    }
+  }
+
+  zstd_result = ZSTD_endStream(zstd_stream, &zstd_output);
+  if (ZSTD_isError(zstd_result)) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZSTD_ERROR,
+                          "[zstd] failed to finish stream compression",
+                          ZSTD_getErrorName(zstd_result));
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  if (zstd_result > 0) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_ZSTD_ERROR,
+                          "[zstd] failed to finish stream compression "
+                          "because some data remain buffer",
+                          ZSTD_getErrorName(zstd_result));
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  rc = grn_ja_putv_compressed(ctx,
+                              ja,
+                              id,
+                              zstd_output.dst,
+                              zstd_output.pos,
+                              size,
+                              flags);
+
+exit :
+  if (zstd_stream) {
+    ZSTD_freeCStream(zstd_stream);
+  }
+  if (zstd_output.dst) {
+    GRN_FREE(zstd_output.dst);
+  }
+
+  return rc;
+}
 #endif /* GRN_WITH_ZSTD */
 
 grn_rc
@@ -1873,6 +2176,60 @@ grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
   default :
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
   }
+}
+
+grn_rc
+grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
+{
+  grn_obj header, footer;
+  grn_rc rc = GRN_SUCCESS;
+  grn_section *vp;
+  int i;
+  grn_bool need_footer = GRN_FALSE;
+  const int n = grn_vector_size(ctx, vector);
+
+  GRN_TEXT_INIT(&header, 0);
+  GRN_TEXT_INIT(&footer, 0);
+  grn_text_benc(ctx, &header, n);
+  for (i = 0, vp = vector->u.v.sections; i < n; i++, vp++) {
+    grn_text_benc(ctx, &header, vp->length);
+    if (vp->weight || vp->domain) {
+      need_footer = GRN_TRUE;
+    }
+  }
+  if (need_footer) {
+    for (i = 0, vp = vector->u.v.sections; i < n; i++, vp++) {
+      grn_text_benc(ctx, &footer, vp->weight);
+      grn_text_benc(ctx, &footer, vp->domain);
+    }
+  }
+  {
+    grn_obj *body = vector->u.v.body;
+
+    switch (ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
+#ifdef GRN_WITH_ZLIB
+    /* case GRN_OBJ_COMPRESS_ZLIB : */
+    /*   rc = grn_ja_putv_zlib(ctx, ja, id, &header, body, &footer, flags); */
+    /*   break; */
+#endif /* GRN_WITH_ZLIB */
+#ifdef GRN_WITH_LZ4
+    case GRN_OBJ_COMPRESS_LZ4 :
+      rc = grn_ja_putv_lz4(ctx, ja, id, &header, body, &footer, flags);
+      break;
+#endif /* GRN_WITH_LZ4 */
+#ifdef GRN_WITH_ZSTD
+    case GRN_OBJ_COMPRESS_ZSTD :
+      rc = grn_ja_putv_zstd(ctx, ja, id, &header, body, &footer, flags);
+      break;
+#endif /* GRN_WITH_ZSTD */
+    default :
+      rc = grn_ja_putv_raw(ctx, ja, id, &header, body, &footer, flags);
+      break;
+    }
+  }
+  GRN_OBJ_FIN(ctx, &footer);
+  GRN_OBJ_FIN(ctx, &header);
+  return rc;
 }
 
 static grn_rc
