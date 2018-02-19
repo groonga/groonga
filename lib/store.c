@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -759,8 +759,11 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
           j++;
           addr = grn_io_win_map(ja->io, ctx, iw, j, 0, element_size, grn_io_wronly);
           if (!addr) {
+            ERR(GRN_NO_MEMORY_AVAILABLE,
+                "[ja][alloc] failed to map new window: <%u>:<%u>",
+                id, element_size);
             grn_io_unlock(ja->io);
-            return GRN_NO_MEMORY_AVAILABLE;
+            return ctx->rc;
           }
           EHUGE_ENC(einfo, j, element_size);
           for (; j <= i; j++) { SEGMENTS_HUGE_ON(ja, j); }
@@ -769,9 +772,11 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
         }
       }
     }
-    GRN_LOG(ctx, GRN_LOG_CRIT, "ja full. requested element_size=%d.", element_size);
+    ERR(GRN_NOT_ENOUGH_SPACE,
+        "[ja][alloc] failed to allocate dsegment because of full: <%u>:<%u>",
+        id, element_size);
     grn_io_unlock(ja->io);
-    return GRN_NO_MEMORY_AVAILABLE;
+    return ctx->rc;
   } else {
     ja_pos *vp;
     int m, aligned_size, es = element_size - 1;
@@ -784,9 +789,12 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
         seg = 0;
         while (SEGMENTS_AT(ja, seg)) {
           if (++seg >= JA_N_DSEGMENTS) {
+            ERR(GRN_NOT_ENOUGH_SPACE,
+                "[ja][alloc] failed to allocate segment because of full: "
+                "<%u>:<%u>:<%u>",
+                id, element_size, seg);
             grn_io_unlock(ja->io);
-            GRN_LOG(ctx, GRN_LOG_CRIT, "ja full. seg=%d.", seg);
-            return GRN_NOT_ENOUGH_SPACE;
+            return ctx->rc;
           }
         }
         SEGMENTS_SEQ_ON(ja, seg);
@@ -795,8 +803,11 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
       }
       GRN_IO_SEG_REF(ja->io, seg, addr);
       if (!addr) {
+        ERR(GRN_NO_MEMORY_AVAILABLE,
+            "[ja][alloc] failed to reference segment: <%u>:<%u>:<%u>",
+            id, element_size, seg);
         grn_io_unlock(ja->io);
-        return GRN_NO_MEMORY_AVAILABLE;
+        return ctx->rc;
       }
       *(grn_id *)(addr + pos) = id;
       aligned_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
@@ -822,18 +833,26 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
           GRN_IO_SEG_REF(ja->io, lseg_, ginfo);
           if (!ginfo) {
             if (lseg) { GRN_IO_SEG_UNREF(ja->io, lseg); }
+            ERR(GRN_NO_MEMORY_AVAILABLE,
+                "[ja][alloc] failed to reference garbage segment: "
+                "<%u>:<%u>:<%u>",
+                id, element_size, lseg_);
             grn_io_unlock(ja->io);
-            return GRN_NO_MEMORY_AVAILABLE;
+            return ctx->rc;
           }
           if (ginfo->next || ginfo->nrecs > JA_N_GARBAGES_TH) {
             seg = ginfo->recs[ginfo->tail].seg;
             pos = ginfo->recs[ginfo->tail].pos;
             GRN_IO_SEG_REF(ja->io, seg, addr);
             if (!addr) {
+              ERR(GRN_NO_MEMORY_AVAILABLE,
+                  "[ja][alloc] failed to reference record from garbage segment: "
+                  "<%u>:<%u>:<%u>",
+                  id, element_size, seg);
               if (lseg) { GRN_IO_SEG_UNREF(ja->io, lseg); }
               GRN_IO_SEG_UNREF(ja->io, lseg_);
               grn_io_unlock(ja->io);
-              return GRN_NO_MEMORY_AVAILABLE;
+              return ctx->rc;
             }
             EINFO_ENC(einfo, seg, pos, element_size);
             iw->segment = seg;
@@ -864,8 +883,12 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
         int i = 0;
         while (SEGMENTS_AT(ja, i)) {
           if (++i >= JA_N_DSEGMENTS) {
+            ERR(GRN_NO_MEMORY_AVAILABLE,
+                "[ja][alloc] failed to allocate dsegment from free elements: "
+                "<%u>:<%u>:<%d>",
+                id, element_size, m);
             grn_io_unlock(ja->io);
-            return GRN_NO_MEMORY_AVAILABLE;
+            return ctx->rc;
           }
         }
         SEGMENTS_SEGRE_ON(ja, i, m);
@@ -876,8 +899,12 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
     EINFO_ENC(einfo, vp->seg, vp->pos, element_size);
     GRN_IO_SEG_REF(ja->io, vp->seg, addr);
     if (!addr) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[ja][alloc] failed to reference segment in free elements: "
+          "<%u>:<%u>:<%u>",
+          id, element_size, vp->seg);
       grn_io_unlock(ja->io);
-      return GRN_NO_MEMORY_AVAILABLE;
+      return ctx->rc;
     }
     iw->segment = vp->seg;
     iw->addr = addr + vp->pos;
