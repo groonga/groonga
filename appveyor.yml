@@ -86,6 +86,7 @@ test_script:
      --reporter mark
      --n-workers 1
      --timeout 60
+     --n-retries 2
      test\command\suite
 
 on_success:
