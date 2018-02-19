@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2017 Brazil
+  Copyright(C) 2014-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -98,9 +98,27 @@ mrb_grn_table_find_column(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "o", &mrb_column_name);
 
   table = DATA_PTR(self);
-  column = grn_obj_column(ctx, table,
-                          RSTRING_PTR(mrb_column_name),
-                          RSTRING_LEN(mrb_column_name));
+  switch (mrb_type(mrb_column_name)) {
+  case MRB_TT_SYMBOL :
+    {
+      const char *name;
+      mrb_int name_length;
+
+      name = mrb_sym2name_len(mrb, mrb_symbol(mrb_column_name), &name_length);
+      column = grn_obj_column(ctx, table, name, name_length);
+    }
+    break;
+  case MRB_TT_STRING :
+    column = grn_obj_column(ctx, table,
+                            RSTRING_PTR(mrb_column_name),
+                            RSTRING_LEN(mrb_column_name));
+    break;
+  default :
+    mrb_raisef(mrb, E_ARGUMENT_ERROR,
+               "column name must be Symbol or String: %S",
+               mrb_column_name);
+    break;
+  }
   grn_mrb_ctx_check(mrb);
 
   return grn_mrb_value_from_grn_obj(mrb, column);
