@@ -10,6 +10,7 @@ module Groonga
                  "max",
                  "max_border",
                  "filter",
+                 "post_filter",
                ])
 
       def run_body(input)
@@ -43,6 +44,7 @@ module Groonga
         key << "#{input[:max]}\0"
         key << "#{input[:max_border]}\0"
         key << "#{input[:filter]}\0"
+        key << "#{input[:post_filter]}\0"
         dynamic_columns = DynamicColumns.parse(input)
         key << dynamic_columns.cache_key
         key
@@ -54,6 +56,7 @@ module Groonga
           @filter = input[:filter]
           @dynamic_columns = DynamicColumns.parse(input)
           @target_range = target_range
+          @post_filter = input[:post_filter]
         end
 
         def count(shard, shard_range)
@@ -72,7 +75,7 @@ module Groonga
             if cover_type == :all
               log_use_range_index(false, table_name, "covered",
                                   __LINE__, __method__)
-              if @filter
+              if @filter or @post_filter
                 return filtered_count_n_records(table, shard_key, cover_type)
               else
                 return table.size
@@ -130,6 +133,13 @@ module Groonga
             dynamic_column.apply(table)
           end
 
+          @dynamic_columns.each_filtered do |dynamic_column|
+            if table == shard.table
+              table = table.select_all
+            end
+            dynamic_column.apply(table)
+          end
+
           begin
             yield(table)
           ensure
@@ -139,29 +149,55 @@ module Groonga
 
         def filtered_count_n_records(table, shard_key, cover_type)
           expression = nil
-          filtered_table = nil
+          count = nil
+          filtered_tables = []
+          filters = []
+
+          if @filter and @post_filter.nil?
+            filters << @filter
+          elsif @filter and @post_filter
+            filters << @filter
+            filters << @post_filter
+          elsif @filter.nil? and @post_filter
+            filters << @post_filter
+          elsif @filter.nil? and @post_filter.nil?
+            filters << @filter
+          end
 
           expression_builder = RangeExpressionBuilder.new(shard_key,
                                                           @target_range)
-          expression_builder.filter = @filter
           begin
-            expression = Expression.create(table)
-            case cover_type
-            when :all
-              expression_builder.build_all(expression)
-            when :partial_min
-              expression_builder.build_partial_min(expression)
-            when :partial_max
-              expression_builder.build_partial_max(expression)
-            when :partial_min_and_max
-              expression_builder.build_partial_min_and_max(expression)
+            filters.each do |filter|
+              if filtered_tables.empty?
+                target_table = table
+              else
+                target_table = filtered_tables.last
+              end
+              expression_builder.filter = filter
+              begin
+                expression = Expression.create(target_table)
+                case cover_type
+                when :all
+                  expression_builder.build_all(expression)
+                when :partial_min
+                  expression_builder.build_partial_min(expression)
+                when :partial_max
+                  expression_builder.build_partial_max(expression)
+                when :partial_min_and_max
+                  expression_builder.build_partial_min_and_max(expression)
+                end
+                filtered_tables << target_table.select(expression)
+              ensure
+                expression.close if expression
+              end
+              count = filtered_tables.last.size
             end
-            filtered_table = table.select(expression)
-            filtered_table.size
           ensure
-            filtered_table.close if filtered_table
-            expression.close if expression
+            filtered_tables.each do |filtered_table|
+              filtered_table.close if filtered_table
+            end
           end
+          count
         end
 
         def count_n_records_in_range(range_index, cover_type)
