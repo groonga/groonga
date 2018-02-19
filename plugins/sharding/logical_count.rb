@@ -10,6 +10,7 @@ module Groonga
                  "max",
                  "max_border",
                  "filter",
+                 "post_filter",
                ])
 
       def run_body(input)
@@ -43,6 +44,7 @@ module Groonga
         key << "#{input[:max]}\0"
         key << "#{input[:max_border]}\0"
         key << "#{input[:filter]}\0"
+        key << "#{input[:post_filter]}\0"
         dynamic_columns = DynamicColumns.parse(input)
         key << dynamic_columns.cache_key
         key
@@ -52,6 +54,7 @@ module Groonga
         def initialize(input, target_range)
           @logger = Context.instance.logger
           @filter = input[:filter]
+          @post_filter = input[:post_filter]
           @dynamic_columns = DynamicColumns.parse(input)
           @target_range = target_range
         end
@@ -72,7 +75,7 @@ module Groonga
             if cover_type == :all
               log_use_range_index(false, table_name, "covered",
                                   __LINE__, __method__)
-              if @filter
+              if @filter or @post_filter
                 return filtered_count_n_records(table, shard_key, cover_type)
               else
                 return table.size
@@ -80,7 +83,7 @@ module Groonga
             end
 
             range_index = nil
-            if @filter
+            if @filter or @post_filter
               log_use_range_index(false, table_name, "need filter",
                                   __LINE__, __method__)
             else
@@ -121,7 +124,7 @@ module Groonga
 
         def prepare_table(shard)
           table = shard.table
-          return yield(table) if @filter.nil?
+          return yield(table) if @filter.nil? and @post_filter.nil?
 
           @dynamic_columns.each_initial do |dynamic_column|
             if table == shard.table
@@ -156,10 +159,38 @@ module Groonga
             when :partial_min_and_max
               expression_builder.build_partial_min_and_max(expression)
             end
-            filtered_table = table.select(expression)
-            filtered_table.size
+            if cover_type == :all and @filter.nil?
+              # TODO: We can drop needless select when filtered stage dynamic
+              # doesn't exist.
+              filtered_table = table.select_all
+            else
+              filtered_table = table.select(expression)
+            end
+            if @post_filter
+              post_filtered_count_n_records(filtered_table)
+            else
+              filtered_table.size
+            end
           ensure
             filtered_table.close if filtered_table
+            expression.close if expression
+          end
+        end
+
+        def post_filtered_count_n_records(filtered_table)
+          @dynamic_columns.each_filtered do |dynamic_column|
+            dynamic_column.apply(filtered_table)
+          end
+
+          expression = nil
+          post_filtered_table = nil
+          begin
+            expression = Expression.create(filtered_table)
+            expression.parse(@post_filter)
+            post_filtered_table = filtered_table.select(expression)
+            post_filtered_table.size
+          ensure
+            post_filtered_table.close if post_filtered_table
             expression.close if expression
           end
         end
