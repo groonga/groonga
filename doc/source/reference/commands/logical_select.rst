@@ -51,6 +51,7 @@ parameters are optional::
                  [match_columns=null]
                  [query=null]
                  [drilldown_filter=null]
+                 [post_filter=null]
 
 There are some parameters that can be only used as named
 parameters. You can't use these parameters as ordered parameters. You
@@ -487,6 +488,32 @@ Here is an example:
 ..   --filter "n_likes <= 5"
 
 .. _logical-select-advanced-search-parameters:
+
+``post_filter``
+"""""""""""""""
+
+.. versionadded:: 8.0.1
+
+Specifies the filter text that is processed after ``filtered`` stage
+dynamic columns are generated. You can use ``post_filter`` to filter
+by ``filtered`` stage dynamic columns. Others are the same as
+:ref:`logical-select-filter`.
+
+Here is an example that shows entries only in popular tag. All target
+entries have ``system`` or ``use`` words:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/post_filter.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[n_likes_sum_per_tag].stage filtered \
+..   --columns[n_likes_sum_per_tag].type UInt32 \
+..   --columns[n_likes_sum_per_tag].value 'window_sum(n_likes)' \
+..   --columns[n_likes_sum_per_tag].window.group_keys 'tag' \
+..   --filter 'content @ "system" || content @ "use"' \
+..   --post_filter 'n_likes_sum_per_tag > 10' \
+..   --output_columns _key,n_likes,n_likes_sum_per_tag
 
 Advanced search parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
