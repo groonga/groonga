@@ -7451,7 +7451,7 @@ msgid ""
 msgstr ""
 "``initial`` ステージと ``filtered`` ステージが有効です。なぜなら ``output`` "
 "ステージ以降にはなにも処理がないからです。ただし、``filtered`` ステージはバー"
-"ジョン8.0.0以降で有効です。"
+"ジョン8.0.1以降で有効です。"
 
 msgid ""
 "Here is an example that creates ``is_popular`` column at ``initial`` stage. "
