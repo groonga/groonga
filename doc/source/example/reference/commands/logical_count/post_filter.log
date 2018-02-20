@@ -1,0 +1,13 @@
+Execution example::
+
+  logical_count \
+    --logical_table Entries \
+    --shard_key created_at \
+    --columns[n_likes_sum_per_tag].stage filtered \
+    --columns[n_likes_sum_per_tag].type UInt32 \
+    --columns[n_likes_sum_per_tag].value 'window_sum(n_likes)' \
+    --columns[n_likes_sum_per_tag].window.group_keys 'tag' \
+    --filter 'content @ "system" || content @ "use"' \
+    --post_filter 'n_likes_sum_per_tag > 10' \
+    --output_columns _key,n_likes,n_likes_sum_per_tag
+  # [[0,1519095081.579662,0.4281206130981445],2]

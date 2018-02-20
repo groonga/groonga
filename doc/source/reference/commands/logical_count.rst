@@ -45,6 +45,7 @@ parameters are optional::
     [max=null]
     [max_border="include"]
     [filter=null]
+    [post_filter=null]
 
 There are some parameters that can be only used as named
 parameters. You can't use these parameters as ordered parameters. You
@@ -393,6 +394,31 @@ Here is an example:
 
 .. _logical-count-dynamic-column-related-parameters:
 
+``post_filter``
+"""""""""""""""
+
+.. versionadded:: 8.0.1
+
+Specifies the filter text that is processed after ``filtered`` stage
+dynamic columns are generated. You can use ``post_filter`` to filter
+by ``filtered`` stage dynamic columns. Others are the same as
+:ref:`select-filter`.
+
+Here is an example that shows entries only in popular tag. All target
+entries have ``system`` or ``use`` words:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_count/post_filter.log
+.. logical_cout \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[n_likes_sum_per_tag].stage filtered \
+..   --columns[n_likes_sum_per_tag].type UInt32 \
+..   --columns[n_likes_sum_per_tag].value 'window_sum(n_likes)' \
+..   --columns[n_likes_sum_per_tag].window.group_keys 'tag' \
+..   --filter 'content @ "system" || content @ "use"' \
+..   --post_filter 'n_likes_sum_per_tag > 10' \
+
 Dynamic column related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -414,8 +440,9 @@ Corresponds to :ref:`select-columns-name-stage` in :doc:`select`. See
 
 This is a required parameter.
 
-Only ``initial`` stage is valid. Because there are no processes after
-``filtered`` and ``output`` stages.
+``initial`` stage and ``filtered`` stage are valid. Because there are no processes after
+``output`` stages.
+But ``filtered`` stage is valid in groonga since version 8.0.1.
 
 Here is an example that creates ``is_popular`` column at ``initial``
 stage. You can use ``is_popular`` in all parameters such as ``filter``:
