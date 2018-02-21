@@ -1,0 +1,13 @@
+table_create Values TABLE_NO_KEY
+column_create Values numbers COLUMN_VECTOR Int32
+
+load --table Values
+[
+{"numbers": [2, 1, 3]},
+{"numbers": [2, 3, 4]},
+{"numbers": [8, 9, -1]}
+]
+
+select Values \
+  --filter 'numbers == [2, 3, 4]' \
+  --output_columns 'numbers'

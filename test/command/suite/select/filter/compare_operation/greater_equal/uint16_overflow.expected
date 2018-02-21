@@ -1,0 +1,13 @@
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values number COLUMN_SCALAR UInt16
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"number": 3},
+{"number": 4},
+{"number": -1}
+]
+[[0,0.0,0.0],3]
+select Values   --filter 'number >= 65536'   --output_columns 'number'
+[[0,0.0,0.0],[[[0],[["number","UInt16"]]]]]

@@ -1,0 +1,13 @@
+table_create Values TABLE_NO_KEY
+column_create Values number COLUMN_SCALAR UInt16
+
+load --table Values
+[
+{"number": 3},
+{"number": 0},
+{"number": -1}
+]
+
+select Values \
+  --filter 'number != 65536' \
+  --output_columns 'number'
