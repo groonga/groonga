@@ -1070,13 +1070,17 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
           if (CONSTP(y)) {
             /* todo */
           } else {
-            if (xd != yd) {
+            if (xd != yd &&
+                !(grn_type_id_is_number_family(ctx, xd) &&
+                  grn_type_id_is_number_family(ctx, yd))) {
               grn_expr_append_obj_resolve_const(ctx, x, yd);
             }
           }
         } else {
           if (CONSTP(y)) {
-            if (xd != yd) {
+            if (xd != yd &&
+                !(grn_type_id_is_number_family(ctx, xd) &&
+                  grn_type_id_is_number_family(ctx, yd))) {
               grn_expr_append_obj_resolve_const(ctx, y, xd);
             }
           }
@@ -6033,9 +6037,30 @@ grn_table_select_index_equal(grn_ctx *ctx,
       if (GRN_OBJ_GET_DOMAIN(si->query) == DB_OBJ(domain)->id) {
         tid = GRN_RECORD_VALUE(si->query);
       } else {
+        grn_id key_type;
+        grn_obj *key;
+        grn_obj key_buffer;
+
+        key_type = domain->header.domain;
+        if (key_type == si->query->header.domain) {
+          key = si->query;
+        } else {
+          grn_rc rc;
+          GRN_OBJ_INIT(&key_buffer, GRN_BULK, 0, key_type);
+          rc = grn_obj_cast(ctx, si->query, &key_buffer, GRN_FALSE);
+          if (rc == GRN_SUCCESS) {
+            key = &key_buffer;
+          } else {
+            GRN_OBJ_FIN(ctx, &key_buffer);
+            key = si->query;
+          }
+        }
         tid = grn_table_get(ctx, domain,
-                            GRN_BULK_HEAD(si->query),
-                            GRN_BULK_VSIZE(si->query));
+                            GRN_BULK_HEAD(key),
+                            GRN_BULK_VSIZE(key));
+        if (key == &key_buffer) {
+          GRN_OBJ_FIN(ctx, &key_buffer);
+        }
       }
       if (tid != GRN_ID_NIL) {
         uint32_t sid;
