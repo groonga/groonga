@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2017 Brazil
+  Copyright(C) 2010-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -102,28 +102,6 @@ grn_expr_executor_fin_general(grn_ctx *ctx,
 {
 }
 
-static grn_bool
-grn_expr_executor_is_constant(grn_ctx *ctx, grn_obj *expr)
-{
-  grn_expr *e = (grn_expr *)expr;
-  grn_expr_code *target;
-
-  if (e->codes_curr != 1) {
-    return GRN_FALSE;
-  }
-
-  target = &(e->codes[0]);
-
-  if (target->op != GRN_OP_PUSH) {
-    return GRN_FALSE;
-  }
-  if (!target->value) {
-    return GRN_FALSE;
-  }
-
-  return GRN_TRUE;
-}
-
 static void
 grn_expr_executor_init_constant(grn_ctx *ctx,
                                 grn_expr_executor *executor)
@@ -146,6 +124,31 @@ grn_expr_executor_init_constant(grn_ctx *ctx,
   }
 }
 
+static grn_bool
+grn_expr_executor_is_constant(grn_ctx *ctx,
+                              grn_expr_executor *executor)
+{
+  grn_expr *e = (grn_expr *)(executor->expr);
+  grn_expr_code *target;
+
+  if (e->codes_curr != 1) {
+    return GRN_FALSE;
+  }
+
+  target = &(e->codes[0]);
+
+  if (target->op != GRN_OP_PUSH) {
+    return GRN_FALSE;
+  }
+  if (!target->value) {
+    return GRN_FALSE;
+  }
+
+  grn_expr_executor_init_constant(ctx, executor);
+
+  return GRN_TRUE;
+}
+
 static grn_obj *
 grn_expr_executor_exec_constant(grn_ctx *ctx,
                                 grn_expr_executor *executor,
@@ -161,10 +164,21 @@ grn_expr_executor_fin_constant(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &(executor->data.constant.result_buffer));
 }
 
-static grn_bool
-grn_expr_executor_is_value(grn_ctx *ctx, grn_obj *expr)
+static void
+grn_expr_executor_init_value(grn_ctx *ctx,
+                             grn_expr_executor *executor)
 {
-  grn_expr *e = (grn_expr *)expr;
+  grn_expr *e = (grn_expr *)(executor->expr);
+
+  executor->data.value.column = e->codes[0].value;
+  GRN_VOID_INIT(&(executor->data.value.value_buffer));
+}
+
+static grn_bool
+grn_expr_executor_is_value(grn_ctx *ctx,
+                           grn_expr_executor *executor)
+{
+  grn_expr *e = (grn_expr *)(executor->expr);
   grn_expr_code *target;
 
   if (e->codes_curr != 1) {
@@ -180,17 +194,9 @@ grn_expr_executor_is_value(grn_ctx *ctx, grn_obj *expr)
     return GRN_FALSE;
   }
 
+  grn_expr_executor_init_value(ctx, executor);
+
   return GRN_TRUE;
-}
-
-static void
-grn_expr_executor_init_value(grn_ctx *ctx,
-                             grn_expr_executor *executor)
-{
-  grn_expr *e = (grn_expr *)(executor->expr);
-
-  executor->data.value.column = e->codes[0].value;
-  GRN_VOID_INIT(&(executor->data.value.value_buffer));
 }
 
 static grn_obj *
@@ -214,10 +220,77 @@ grn_expr_executor_fin_value(grn_ctx *ctx,
 }
 
 #ifdef GRN_SUPPORT_REGEXP
-static grn_bool
-grn_expr_executor_is_simple_regexp(grn_ctx *ctx, grn_obj *expr)
+static void
+grn_expr_executor_init_simple_regexp(grn_ctx *ctx,
+                                     grn_expr_executor *executor)
 {
-  grn_expr *e = (grn_expr *)expr;
+  grn_expr *e = (grn_expr *)(executor->expr);
+  grn_obj *result_buffer = &(executor->data.simple_regexp.result_buffer);
+  OnigEncoding onig_encoding;
+  int onig_result;
+  OnigErrorInfo onig_error_info;
+  grn_obj *pattern;
+
+  GRN_BOOL_INIT(result_buffer, 0);
+  GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+
+  if (ctx->encoding == GRN_ENC_NONE) {
+    executor->data.simple_regexp.regex = NULL;
+    return;
+  }
+
+  switch (ctx->encoding) {
+  case GRN_ENC_EUC_JP :
+    onig_encoding = ONIG_ENCODING_EUC_JP;
+    break;
+  case GRN_ENC_UTF8 :
+    onig_encoding = ONIG_ENCODING_UTF8;
+    break;
+  case GRN_ENC_SJIS :
+    onig_encoding = ONIG_ENCODING_CP932;
+    break;
+  case GRN_ENC_LATIN1 :
+    onig_encoding = ONIG_ENCODING_ISO_8859_1;
+    break;
+  case GRN_ENC_KOI8R :
+    onig_encoding = ONIG_ENCODING_KOI8_R;
+    break;
+  default :
+    executor->data.simple_regexp.regex = NULL;
+    return;
+  }
+
+  pattern = e->codes[1].value;
+  onig_result = onig_new(&(executor->data.simple_regexp.regex),
+                         GRN_TEXT_VALUE(pattern),
+                         GRN_TEXT_VALUE(pattern) + GRN_TEXT_LEN(pattern),
+                         ONIG_OPTION_ASCII_RANGE |
+                         ONIG_OPTION_MULTILINE,
+                         onig_encoding,
+                         ONIG_SYNTAX_RUBY,
+                         &onig_error_info);
+  if (onig_result != ONIG_NORMAL) {
+    char message[ONIG_MAX_ERROR_MESSAGE_LEN];
+    onig_error_code_to_str(message, onig_result, onig_error_info);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[expr-executor][regexp] "
+        "failed to create regular expression object: <%.*s>: %s",
+        (int)GRN_TEXT_LEN(pattern), GRN_TEXT_VALUE(pattern),
+        message);
+    return;
+  }
+
+  GRN_VOID_INIT(&(executor->data.simple_regexp.value_buffer));
+
+  executor->data.simple_regexp.normalizer =
+    grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+}
+
+static grn_bool
+grn_expr_executor_is_simple_regexp(grn_ctx *ctx,
+                                   grn_expr_executor *executor)
+{
+  grn_expr *e = (grn_expr *)(executor->expr);
   grn_expr_code *target;
   grn_expr_code *pattern;
   grn_expr_code *operator;
@@ -283,73 +356,9 @@ grn_expr_executor_is_simple_regexp(grn_ctx *ctx, grn_obj *expr)
     return GRN_FALSE;
   }
 
+  grn_expr_executor_init_simple_regexp(ctx, executor);
+
   return GRN_TRUE;
-}
-
-static void
-grn_expr_executor_init_simple_regexp(grn_ctx *ctx,
-                                     grn_expr_executor *executor)
-{
-  grn_expr *e = (grn_expr *)(executor->expr);
-  grn_obj *result_buffer = &(executor->data.simple_regexp.result_buffer);
-  OnigEncoding onig_encoding;
-  int onig_result;
-  OnigErrorInfo onig_error_info;
-  grn_obj *pattern;
-
-  GRN_BOOL_INIT(result_buffer, 0);
-  GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
-
-  if (ctx->encoding == GRN_ENC_NONE) {
-    executor->data.simple_regexp.regex = NULL;
-    return;
-  }
-
-  switch (ctx->encoding) {
-  case GRN_ENC_EUC_JP :
-    onig_encoding = ONIG_ENCODING_EUC_JP;
-    break;
-  case GRN_ENC_UTF8 :
-    onig_encoding = ONIG_ENCODING_UTF8;
-    break;
-  case GRN_ENC_SJIS :
-    onig_encoding = ONIG_ENCODING_CP932;
-    break;
-  case GRN_ENC_LATIN1 :
-    onig_encoding = ONIG_ENCODING_ISO_8859_1;
-    break;
-  case GRN_ENC_KOI8R :
-    onig_encoding = ONIG_ENCODING_KOI8_R;
-    break;
-  default :
-    executor->data.simple_regexp.regex = NULL;
-    return;
-  }
-
-  pattern = e->codes[1].value;
-  onig_result = onig_new(&(executor->data.simple_regexp.regex),
-                         GRN_TEXT_VALUE(pattern),
-                         GRN_TEXT_VALUE(pattern) + GRN_TEXT_LEN(pattern),
-                         ONIG_OPTION_ASCII_RANGE |
-                         ONIG_OPTION_MULTILINE,
-                         onig_encoding,
-                         ONIG_SYNTAX_RUBY,
-                         &onig_error_info);
-  if (onig_result != ONIG_NORMAL) {
-    char message[ONIG_MAX_ERROR_MESSAGE_LEN];
-    onig_error_code_to_str(message, onig_result, onig_error_info);
-    ERR(GRN_INVALID_ARGUMENT,
-        "[expr-executor][regexp] "
-        "failed to create regular expression object: <%.*s>: %s",
-        (int)GRN_TEXT_LEN(pattern), GRN_TEXT_VALUE(pattern),
-        message);
-    return;
-  }
-
-  GRN_VOID_INIT(&(executor->data.simple_regexp.value_buffer));
-
-  executor->data.simple_regexp.normalizer =
-    grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
 }
 
 static grn_obj *
@@ -419,10 +428,30 @@ grn_expr_executor_fin_simple_regexp(grn_ctx *ctx,
 }
 #endif /* GRN_SUPPORT_REGEXP */
 
-static grn_bool
-grn_expr_executor_is_proc(grn_ctx *ctx, grn_obj *expr)
+static void
+grn_expr_executor_init_proc(grn_ctx *ctx,
+                            grn_expr_executor *executor)
 {
-  grn_expr *e = (grn_expr *)expr;
+  grn_proc_ctx *proc_ctx = &(executor->data.proc.proc_ctx);
+  grn_expr *expr;
+  grn_proc *proc;
+
+  expr = (grn_expr *)(executor->expr);
+  proc = (grn_proc *)(expr->codes[0].value);
+  proc_ctx->proc = proc;
+  proc_ctx->caller = executor->expr;
+  proc_ctx->phase = PROC_INIT;
+
+  executor->data.proc.n_args = expr->codes[expr->codes_curr - 1].nargs - 1;
+
+  proc->funcs[PROC_INIT](ctx, 0, NULL, &(proc_ctx->user_data));
+}
+
+static grn_bool
+grn_expr_executor_is_proc(grn_ctx *ctx,
+                          grn_expr_executor *executor)
+{
+  grn_expr *e = (grn_expr *)(executor->expr);
   grn_obj *first;
   grn_proc *proc;
 
@@ -445,26 +474,9 @@ grn_expr_executor_is_proc(grn_ctx *ctx, grn_obj *expr)
     return GRN_FALSE;
   }
 
+  grn_expr_executor_init_proc(ctx, executor);
+
   return GRN_TRUE;
-}
-
-static void
-grn_expr_executor_init_proc(grn_ctx *ctx,
-                            grn_expr_executor *executor)
-{
-  grn_proc_ctx *proc_ctx = &(executor->data.proc.proc_ctx);
-  grn_expr *expr;
-  grn_proc *proc;
-
-  expr = (grn_expr *)(executor->expr);
-  proc = (grn_proc *)(expr->codes[0].value);
-  proc_ctx->proc = proc;
-  proc_ctx->caller = executor->expr;
-  proc_ctx->phase = PROC_INIT;
-
-  executor->data.proc.n_args = expr->codes[expr->codes_curr - 1].nargs - 1;
-
-  proc->funcs[PROC_INIT](ctx, 0, NULL, &(proc_ctx->user_data));
 }
 
 grn_rc grn_ctx_expand_stack(grn_ctx *ctx);
@@ -531,10 +543,61 @@ grn_expr_executor_fin_proc(grn_ctx *ctx,
   }
 }
 
-static grn_bool
-grn_expr_executor_is_simple_condition_ra(grn_ctx *ctx, grn_obj *expr)
+static void
+grn_expr_executor_init_simple_condition_ra(grn_ctx *ctx,
+                                           grn_expr_executor *executor)
 {
-  grn_expr *e = (grn_expr *)expr;
+  grn_expr *e = (grn_expr *)(executor->expr);
+  grn_obj *target;
+  grn_obj *constant;
+  grn_operator op;
+  grn_obj *result_buffer;
+  grn_obj *value_buffer;
+  grn_obj *constant_buffer;
+
+  target = e->codes[0].value;
+  constant = e->codes[1].value;
+  op = e->codes[2].op;
+
+  result_buffer = &(executor->data.simple_condition_ra.result_buffer);
+  GRN_BOOL_INIT(result_buffer, 0);
+  GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+
+  value_buffer = &(executor->data.simple_condition_ra.value_buffer);
+  GRN_VOID_INIT(value_buffer);
+  grn_obj_reinit_for(ctx, value_buffer, target);
+
+  executor->data.simple_condition_ra.ra = (grn_ra *)target;
+  GRN_RA_CACHE_INIT(executor->data.simple_condition_ra.ra,
+                    &(executor->data.simple_condition_ra.ra_cache));
+  grn_ra_info(ctx,
+              executor->data.simple_condition_ra.ra,
+              &(executor->data.simple_condition_ra.ra_element_size));
+
+  executor->data.simple_condition_ra.exec = grn_operator_to_exec_func(op);
+
+  constant_buffer = &(executor->data.simple_condition_ra.constant_buffer);
+  GRN_VOID_INIT(constant_buffer);
+  if (grn_obj_is_scalar_column(ctx, target) &&
+      grn_type_id_is_number_family(ctx, grn_obj_get_range(ctx, target)) &&
+      grn_obj_is_bulk(ctx, constant) &&
+      grn_type_id_is_number_family(ctx, constant->header.domain)) {
+    GRN_VALUE_FIX_SIZE_INIT(constant_buffer, 0, constant->header.domain);
+    grn_bulk_write(ctx,
+                   constant_buffer,
+                   GRN_BULK_HEAD(constant),
+                   GRN_BULK_VSIZE(constant));
+  } else {
+    grn_obj_reinit_for(ctx, constant_buffer, target);
+    grn_obj_cast(ctx, constant, constant_buffer, GRN_FALSE);
+  }
+}
+
+static grn_bool
+grn_expr_executor_is_simple_condition_ra(grn_ctx *ctx,
+                                         grn_expr_executor *executor)
+{
+  grn_expr *e = (grn_expr *)(executor->expr);
   grn_expr_code *target;
   grn_expr_code *constant;
   grn_expr_code *operator;
@@ -597,46 +660,9 @@ grn_expr_executor_is_simple_condition_ra(grn_ctx *ctx, grn_obj *expr)
     }
   }
 
+  grn_expr_executor_init_simple_condition_ra(ctx, executor);
+
   return GRN_TRUE;
-}
-
-static void
-grn_expr_executor_init_simple_condition_ra(grn_ctx *ctx,
-                                           grn_expr_executor *executor)
-{
-  grn_expr *e = (grn_expr *)(executor->expr);
-  grn_obj *target;
-  grn_obj *constant;
-  grn_operator op;
-  grn_obj *result_buffer;
-  grn_obj *value_buffer;
-  grn_obj *constant_buffer;
-
-  target = e->codes[0].value;
-  constant = e->codes[1].value;
-  op = e->codes[2].op;
-
-  result_buffer = &(executor->data.simple_condition_ra.result_buffer);
-  GRN_BOOL_INIT(result_buffer, 0);
-  GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
-
-  value_buffer = &(executor->data.simple_condition_ra.value_buffer);
-  GRN_VOID_INIT(value_buffer);
-  grn_obj_reinit_for(ctx, value_buffer, target);
-
-  executor->data.simple_condition_ra.ra = (grn_ra *)target;
-  GRN_RA_CACHE_INIT(executor->data.simple_condition_ra.ra,
-                    &(executor->data.simple_condition_ra.ra_cache));
-  grn_ra_info(ctx,
-              executor->data.simple_condition_ra.ra,
-              &(executor->data.simple_condition_ra.ra_element_size));
-
-  executor->data.simple_condition_ra.exec = grn_operator_to_exec_func(op);
-
-  constant_buffer = &(executor->data.simple_condition_ra.constant_buffer);
-  GRN_VOID_INIT(constant_buffer);
-  grn_obj_reinit_for(ctx, constant_buffer, target);
-  grn_obj_cast(ctx, constant, constant_buffer, GRN_FALSE);
 }
 
 static grn_obj *
@@ -684,63 +710,6 @@ grn_expr_executor_fin_simple_condition_ra(grn_ctx *ctx,
                    &(executor->data.simple_condition_ra.ra_cache));
   GRN_OBJ_FIN(ctx, &(executor->data.simple_condition_ra.value_buffer));
   GRN_OBJ_FIN(ctx, &(executor->data.simple_condition_ra.constant_buffer));
-}
-
-static grn_bool
-grn_expr_executor_is_simple_condition(grn_ctx *ctx, grn_obj *expr)
-{
-  grn_expr *e = (grn_expr *)expr;
-  grn_expr_code *target;
-  grn_expr_code *constant;
-  grn_expr_code *operator;
-
-  if (e->codes_curr != 3) {
-    return GRN_FALSE;
-  }
-
-  target = &(e->codes[0]);
-  constant = &(e->codes[1]);
-  operator = &(e->codes[2]);
-
-  switch (operator->op) {
-  case GRN_OP_EQUAL :
-  case GRN_OP_NOT_EQUAL :
-  case GRN_OP_LESS :
-  case GRN_OP_GREATER :
-  case GRN_OP_LESS_EQUAL :
-  case GRN_OP_GREATER_EQUAL :
-    break;
-  default :
-    return GRN_FALSE;
-  }
-  if (operator->nargs != 2) {
-    return GRN_FALSE;
-  }
-
-  if (target->op != GRN_OP_GET_VALUE) {
-    return GRN_FALSE;
-  }
-  if (target->nargs != 1) {
-    return GRN_FALSE;
-  }
-  if (!grn_obj_is_scalar_column(ctx, target->value)) {
-    return GRN_FALSE;
-  }
-
-  if (constant->op != GRN_OP_PUSH) {
-    return GRN_FALSE;
-  }
-  if (constant->nargs != 1) {
-    return GRN_FALSE;
-  }
-  if (!constant->value) {
-    return GRN_FALSE;
-  }
-  if (constant->value->header.type != GRN_BULK) {
-    return GRN_FALSE;
-  }
-
-  return GRN_TRUE;
 }
 
 static void
@@ -799,6 +768,66 @@ grn_expr_executor_init_simple_condition(grn_ctx *ctx,
           (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
     }
   }
+}
+
+static grn_bool
+grn_expr_executor_is_simple_condition(grn_ctx *ctx,
+                                      grn_expr_executor *executor)
+{
+  grn_expr *e = (grn_expr *)(executor->expr);
+  grn_expr_code *target;
+  grn_expr_code *constant;
+  grn_expr_code *operator;
+
+  if (e->codes_curr != 3) {
+    return GRN_FALSE;
+  }
+
+  target = &(e->codes[0]);
+  constant = &(e->codes[1]);
+  operator = &(e->codes[2]);
+
+  switch (operator->op) {
+  case GRN_OP_EQUAL :
+  case GRN_OP_NOT_EQUAL :
+  case GRN_OP_LESS :
+  case GRN_OP_GREATER :
+  case GRN_OP_LESS_EQUAL :
+  case GRN_OP_GREATER_EQUAL :
+    break;
+  default :
+    return GRN_FALSE;
+  }
+  if (operator->nargs != 2) {
+    return GRN_FALSE;
+  }
+
+  if (target->op != GRN_OP_GET_VALUE) {
+    return GRN_FALSE;
+  }
+  if (target->nargs != 1) {
+    return GRN_FALSE;
+  }
+  if (!grn_obj_is_scalar_column(ctx, target->value)) {
+    return GRN_FALSE;
+  }
+
+  if (constant->op != GRN_OP_PUSH) {
+    return GRN_FALSE;
+  }
+  if (constant->nargs != 1) {
+    return GRN_FALSE;
+  }
+  if (!constant->value) {
+    return GRN_FALSE;
+  }
+  if (constant->value->header.type != GRN_BULK) {
+    return GRN_FALSE;
+  }
+
+  grn_expr_executor_init_simple_condition(ctx, executor);
+
+  return GRN_TRUE;
 }
 
 static grn_obj *
@@ -885,30 +914,24 @@ grn_expr_executor_open(grn_ctx *ctx, grn_obj *expr)
 
   executor->expr = expr;
   executor->variable = variable;
-  if (grn_expr_executor_is_constant(ctx, expr)) {
-    grn_expr_executor_init_constant(ctx, executor);
+  if (grn_expr_executor_is_constant(ctx, executor)) {
     executor->exec = grn_expr_executor_exec_constant;
     executor->fin = grn_expr_executor_fin_constant;
-  } else if (grn_expr_executor_is_value(ctx, expr)) {
-    grn_expr_executor_init_value(ctx, executor);
+  } else if (grn_expr_executor_is_value(ctx, executor)) {
     executor->exec = grn_expr_executor_exec_value;
     executor->fin = grn_expr_executor_fin_value;
 #ifdef GRN_SUPPORT_REGEXP
-  } else if (grn_expr_executor_is_simple_regexp(ctx, expr)) {
-    grn_expr_executor_init_simple_regexp(ctx, executor);
+  } else if (grn_expr_executor_is_simple_regexp(ctx, executor)) {
     executor->exec = grn_expr_executor_exec_simple_regexp;
     executor->fin = grn_expr_executor_fin_simple_regexp;
 #endif /* GRN_SUPPORT_REGEXP */
-  } else if (grn_expr_executor_is_proc(ctx, expr)) {
-    grn_expr_executor_init_proc(ctx, executor);
+  } else if (grn_expr_executor_is_proc(ctx, executor)) {
     executor->exec = grn_expr_executor_exec_proc;
     executor->fin = grn_expr_executor_fin_proc;
-  } else if (grn_expr_executor_is_simple_condition_ra(ctx, expr)) {
-    grn_expr_executor_init_simple_condition_ra(ctx, executor);
+  } else if (grn_expr_executor_is_simple_condition_ra(ctx, executor)) {
     executor->exec = grn_expr_executor_exec_simple_condition_ra;
     executor->fin = grn_expr_executor_fin_simple_condition_ra;
-  } else if (grn_expr_executor_is_simple_condition(ctx, expr)) {
-    grn_expr_executor_init_simple_condition(ctx, executor);
+  } else if (grn_expr_executor_is_simple_condition(ctx, executor)) {
     executor->exec = grn_expr_executor_exec_simple_condition;
     executor->fin = grn_expr_executor_fin_simple_condition;
   } else {
