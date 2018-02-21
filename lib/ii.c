@@ -2936,6 +2936,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
   if (ctx->rc == GRN_SUCCESS) {
     int j = 0;
     uint8_t *enc;
+    uint32_t encsize_probably_enough;
     uint32_t encsize;
     uint32_t np = posp - dv[ii->n_elements - 1].data;
     uint32_t f_s = (ndf < 3) ? 0 : USE_P_ENC;
@@ -2952,7 +2953,8 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
       uint32_t f_p = ((np < 32) || (np <= (spos >> 13))) ? 0 : USE_P_ENC;
       dv[j].data_size = np; dv[j].flags = f_p|ODD;
     }
-    if ((enc = GRN_MALLOC((ndf * 4 + np) * 2))) {
+    encsize_probably_enough = (ndf * 4 + np) * 3;
+    if ((enc = GRN_MALLOC(encsize_probably_enough))) {
       encsize = grn_p_encv(ctx, dv, ii->n_elements, enc);
       chunk_flush(ctx, ii, cinfo, enc, encsize);
       if (ctx->rc == GRN_SUCCESS) {
