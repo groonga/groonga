@@ -8180,10 +8180,10 @@ msgstr ""
 "ものなら、論理テーブル名は ``Entries`` です。"
 
 msgid ""
-"You can show 10 records by specifying ``logical_table`` and ``shard_key`` "
+"You can show 5 records by specifying ``logical_table`` and ``shard_key`` "
 "parameters. They are required parameters."
 msgstr ""
-"``logical_table`` と ``shard_key`` 引数を指定すると10レコード表示できます。こ"
+"``logical_table`` と ``shard_key`` 引数を指定すると5レコード表示できます。こ"
 "れらの引数は必須の引数です。"
 
 msgid "See :ref:`logical-select-logical-table` how to specify ``shard_key``."

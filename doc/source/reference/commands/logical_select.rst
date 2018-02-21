@@ -284,7 +284,7 @@ Specifies logical table name. It means table name without
 ``Entries_20150708``, ``Entries_20150709`` and so on, logical table
 name is ``Entries``.
 
-You can show 10 records by specifying ``logical_table`` and
+You can show 5 records by specifying ``logical_table`` and
 ``shard_key`` parameters. They are required parameters.
 
 .. groonga-command
