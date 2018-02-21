@@ -219,11 +219,19 @@ There are required parameters, ``logical_table`` and ``shard_key``.
 """""""""""""""""
 
 Specifies logical table name. It means table name without
-``_YYYYMMDD`` postfix.  If you use actual table such as
-``Logs_20150203``, ``Logs_20150203`` and so on, logical table name is
-``Logs``.
+``_YYYYMMDD`` postfix. If you use actual table such as
+``Entries_20150708``, ``Entries_20150709`` and so on, logical table
+name is ``Entries``.
 
-TODO: Add examples
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/logical_table_existent.log
+.. logical_range_filter --logical_table Entries --shard_key created_at
+
+If nonexistent table is specified, an error is returned.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/logical_table_nonexistent.log
+.. logical_range_filter --logical_table Nonexistent --shard_key created_at
 
 ``shard_key``
 """""""""""""

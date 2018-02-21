@@ -1,0 +1,18 @@
+Execution example::
+
+  logical_range_filter --logical_table Nonexistent --shard_key created_at
+  # [
+  #   [
+  #     -22,
+  #     1519132441.586192,
+  #     0.0005924701690673828,
+  #     "[logical_range_filter] no shard exists: logical_table: <Nonexistent>: shard_key: <created_at>",
+  #     [
+  #       [
+  #         "Groonga::Sharding::LogicalRangeFilterCommand::Executor.execute",
+  #         "/tmp/local/lib/groonga/plugins/sharding/logical_range_filter.rb",
+  #         193
+  #       ]
+  #     ]
+  #   ]
+  # ]
