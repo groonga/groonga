@@ -6385,13 +6385,13 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         unsigned int old_n = 0, new_n = 0;
         if (old) {
           old_n = grn_vector_size(ctx, old);
+          GRN_OBJ_INIT(&old_elem, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, old->header.domain);
         }
         if (new) {
           new_n = grn_vector_size(ctx, new);
+          GRN_OBJ_INIT(&new_elem, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, new->header.domain);
         }
         max_n = (old_n > new_n) ? old_n : new_n;
-        GRN_OBJ_INIT(&old_elem, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, old->header.domain);
-        GRN_OBJ_INIT(&new_elem, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, new->header.domain);
         for (i = 0; i < max_n; i++) {
           grn_rc rc;
           grn_obj *old_p = NULL, *new_p = NULL;
@@ -6412,8 +6412,12 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
             break;
           }
         }
-        GRN_OBJ_FIN(ctx, &old_elem);
-        GRN_OBJ_FIN(ctx, &new_elem);
+        if (old) {
+          GRN_OBJ_FIN(ctx, &old_elem);
+        }
+        if (new) {
+          GRN_OBJ_FIN(ctx, &new_elem);
+        }
         return ctx->rc;
       }
     }
