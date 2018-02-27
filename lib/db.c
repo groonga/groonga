@@ -4735,8 +4735,31 @@ grn_obj_column_(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int nam
     if (len) {
       buf[len++] = GRN_DB_DELIMITER;
       if (len + name_size <= GRN_TABLE_MAX_KEY_SIZE) {
+        grn_obj alias_name_buffer;
         grn_memcpy(buf + len, name, name_size);
-        column = grn_ctx_get(ctx, buf, len + name_size);
+        GRN_TEXT_INIT(&alias_name_buffer, 0);
+        column = grn_alias_resolve(ctx,
+                                   buf,
+                                   len + name_size,
+                                   &alias_name_buffer,
+                                   GRN_TRUE);
+        if (!column && GRN_TEXT_LEN(&alias_name_buffer) > 0) {
+          const size_t delimiter_len = 1;
+          const size_t table_name_len = len - delimiter_len;
+          const char *alias_name = GRN_TEXT_VALUE(&alias_name_buffer);
+          size_t alias_name_size = GRN_TEXT_LEN(&alias_name_buffer);
+          if (alias_name_size > len &&
+              alias_name[table_name_len] == GRN_DB_DELIMITER &&
+              strncmp(alias_name, buf, table_name_len) == 0) {
+            alias_name += len;
+            alias_name_size -= len;
+          }
+          column = grn_obj_get_accessor(ctx,
+                                        table,
+                                        alias_name,
+                                        alias_name_size);
+        }
+        GRN_OBJ_FIN(ctx, &alias_name_buffer);
       } else {
         ERR(GRN_INVALID_ARGUMENT, "name is too long");
       }
@@ -4754,48 +4777,6 @@ grn_obj_column(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int name
   if (GRN_OBJ_TABLEP(table)) {
     if (grn_db_check_name(ctx, name, name_size) == GRN_SUCCESS) {
       column = grn_obj_column_(ctx, table, name, name_size);
-      if (!column &&
-          !(DB_OBJ(table)->id & GRN_OBJ_TMP_OBJECT) &&
-          ctx->impl &&
-          ctx->impl->db) {
-        char column_name[GRN_TABLE_MAX_KEY_SIZE];
-        int table_name_size;
-        table_name_size = grn_obj_name(ctx,
-                                       table,
-                                       column_name,
-                                       GRN_TABLE_MAX_KEY_SIZE);
-        if (table_name_size > 0) {
-          int column_name_size = table_name_size;
-          grn_obj alias_name_buffer;
-          column_name[column_name_size++] = GRN_DB_DELIMITER;
-          grn_memcpy(column_name + column_name_size,
-                     name,
-                     name_size);
-          column_name_size += name_size;
-          GRN_TEXT_INIT(&alias_name_buffer, 0);
-          grn_alias_resolve(ctx,
-                            column_name,
-                            column_name_size,
-                            &alias_name_buffer,
-                            GRN_FALSE);
-          if (GRN_TEXT_LEN(&alias_name_buffer) > 0) {
-            const char *alias_name = GRN_TEXT_VALUE(&alias_name_buffer);
-            size_t alias_name_size = GRN_TEXT_LEN(&alias_name_buffer);
-            const size_t delimiter_size = 1;
-            if (alias_name_size > table_name_size + delimiter_size &&
-                alias_name[table_name_size] == GRN_DB_DELIMITER &&
-                strncmp(alias_name, column_name, table_name_size) == 0) {
-              alias_name += table_name_size + 1;
-              alias_name_size -= table_name_size + 1;
-            }
-            column = grn_obj_get_accessor(ctx,
-                                          table,
-                                          alias_name,
-                                          alias_name_size);
-          }
-          GRN_OBJ_FIN(ctx, &alias_name_buffer);
-        }
-      }
     }
     if (!column) {
       column = grn_obj_get_accessor(ctx, table, name, name_size);
