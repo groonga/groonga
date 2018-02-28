@@ -155,7 +155,9 @@ grn_config_delete(grn_ctx *ctx,
     rc = grn_io_lock(ctx, config->io, grn_lock_timeout);
     if (rc != GRN_SUCCESS) {
       if (ctx->rc == GRN_SUCCESS) {
-        ERR(rc, "[config][delete] failed to lock");
+        ERR(rc,
+            "[config][delete] failed to lock: <%.*s>",
+            key_size, key);
       }
       GRN_API_RETURN(rc);
     }
@@ -163,7 +165,9 @@ grn_config_delete(grn_ctx *ctx,
     grn_io_unlock(config->io);
     if (rc != GRN_SUCCESS) {
       if (ctx->rc == GRN_SUCCESS) {
-        ERR(rc, "[config][delete] failed to delete");
+        ERR(rc,
+            "[config][delete] failed to delete: <%.*s>",
+            key_size, key);
       }
     }
   }
