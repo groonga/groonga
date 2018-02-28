@@ -1,3 +1,3 @@
 config_delete key
-[[[-22,0.0,0.0],"[config][delete] failed to delete"],false]
-#|e| [config][delete] failed to delete
+[[[-22,0.0,0.0],"[config][delete] failed to delete: <key>"],false]
+#|e| [config][delete] failed to delete: <key>
