@@ -750,7 +750,7 @@ grn_db_clean(grn_ctx *ctx, grn_obj *db)
   }
 }
 
-static grn_rc
+grn_rc
 grn_db_clear_dirty(grn_ctx *ctx, grn_obj *db)
 {
   grn_obj *keys;

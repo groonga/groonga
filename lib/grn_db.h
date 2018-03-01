@@ -128,6 +128,7 @@ void grn_db_generate_pathname(grn_ctx *ctx,
                               grn_obj *db,
                               grn_id id,
                               char *buffer);
+grn_rc grn_db_clear_dirty(grn_ctx *ctx, grn_obj *db);
 
 grn_rc _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
                                grn_table_delete_optarg *optarg);
