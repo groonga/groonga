@@ -108,6 +108,7 @@ struct _grn_io {
   uint32_t count;
   uint8_t flags;
   uint32_t *lock;
+  grn_ctx *locker;
 };
 
 GRN_API grn_io *grn_io_create(grn_ctx *ctx, const char *path,

@@ -238,6 +238,7 @@ grn_io_create_tmp(grn_ctx *ctx, uint32_t header_size, uint32_t segment_size,
         io->count = 0;
         io->flags = GRN_IO_TEMPORARY;
         io->lock = &header->lock;
+        io->locker = NULL;
         io->path[0] = '\0';
         return io;
       }
@@ -1407,6 +1408,7 @@ grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
       grn_nanosleep(GRN_LOCK_WAIT_TIME_NANOSECOND);
       continue;
     }
+    io->locker = ctx;
     return GRN_SUCCESS;
   }
   ERR(GRN_RESOURCE_DEADLOCK_AVOIDED, "grn_io_lock failed");
@@ -1419,13 +1421,19 @@ grn_io_unlock(grn_io *io)
   if (io) {
     uint32_t lock;
     GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
+    if (lock == 1) {
+      io->locker = NULL;
+    }
   }
 }
 
 void
 grn_io_clear_lock(grn_io *io)
 {
-  if (io) { *io->lock = 0; }
+  if (io) {
+    *io->lock = 0;
+    io->locker = NULL;
+  }
 }
 
 uint32_t
