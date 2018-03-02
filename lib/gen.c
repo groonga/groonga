@@ -16,14 +16,19 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "grn_gen.h"
+#include "grn.h"
 #include "grn_ctx.h"
+#include "grn_ctx_impl.h"
 #include "grn_db.h"
+#include "grn_gen.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+#define LOCK_COUNT_MASK   ((1 << (31 - 11)) - 1) // 20 bits
+#define GEN_ID_MASK       (0xFFF00000) // 11 bits and sign bit
 
 void
 gen_flock(grn_gen *gen)
@@ -98,6 +103,20 @@ grn_gen_path_fill(grn_ctx *ctx, grn_db *db, int id, char *path)
   grn_snprintf(path, PATH_MAX, PATH_MAX, "%s.gen.%03X", db_path, id);
 }
 
+int
+grn_gen_is_alive(grn_ctx *ctx, grn_db *db, int id)
+{
+  grn_gen gen;
+  char gen_path[PATH_MAX];
+  grn_gen_path_fill(ctx, db, id, gen_path);
+  if (!gen_open_file(&gen, gen_path)) return 0;
+  if (gen_flock_nb(&gen)) {
+    gen_close_file(&gen);
+    return 0;
+  }
+  return 1;
+}
+
 grn_rc
 grn_gen_init(grn_ctx *ctx, grn_db *db)
 {
@@ -114,7 +133,6 @@ grn_gen_init(grn_ctx *ctx, grn_db *db)
       gen->table[n] = 0;
     }
     grn_gen_path_fill(ctx, db, i, gen_path);
-    printf("****%s\n", gen_path);
     if (gen_open_file(gen, gen_path)) {
       if (i < min) min = i;
       if (i > max) max = i;
@@ -129,6 +147,7 @@ grn_gen_init(grn_ctx *ctx, grn_db *db)
   gen->id = (max - min < GRN_GEN_SIZE/2) ? max : min;
   for(int i = 0; i < GRN_GEN_SIZE/2; i++) {
     gen->id = (gen->id + 1) % GRN_GEN_SIZE;
+    if (gen->id == 0) gen->id = 1; // gen id is in [1, GRN_GEN_SIZE-1]
     grn_gen_path_fill(ctx, db, gen->id, gen_path);
     if (gen_new_file(gen, gen_path)) break;
   }
@@ -153,4 +172,48 @@ grn_gen_fin(grn_ctx *ctx, grn_db *db)
     db->gen = NULL;
   }
   return GRN_SUCCESS;
+}
+
+int
+grn_gen_lock(grn_ctx *ctx, grn_io *io)
+{
+  grn_db *db = (grn_db*)ctx->impl->db;
+  uint32_t lock;
+  GRN_ATOMIC_ADD_EX(io->lock, 1, lock);
+  if (lock) { // failed
+    GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
+    if (db && db->gen) {
+      int id = (lock & GEN_ID_MASK) >> 20;
+      int n = id>>3, m = id%7, o = 1<<m;
+      if (db->gen->table[n]&o) { // has been active
+        if (!grn_gen_is_alive(ctx, db, id)) { // now is not alive
+          db->gen->table[n] &= ~o; // remove entry
+        }
+      } else { // locked by crashed gen
+        grn_io_clear_lock(io);
+      }
+    }
+    return 0;
+  }
+  // set gen id to lock
+  if (db && db->gen) {
+    GRN_ATOMIC_ADD_EX(io->lock, db->gen->id << 20, lock); // 11 bits of gen id
+  }
+  return 1;
+}
+
+int
+grn_gen_unlock(grn_io *io)
+{
+  uint32_t lock;
+  GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
+  if ((lock & LOCK_COUNT_MASK) == 1) {
+    // remove gen id
+    grn_db *db = (grn_db*)io->locker->impl->db;
+    if (db && db->gen) {
+      GRN_ATOMIC_ADD_EX(io->lock, -(db->gen->id << 20), lock);
+    }
+    return 1;
+  }
+  return 0;
 }

@@ -19,6 +19,7 @@
 #pragma once
 
 #include "grn_db.h"
+#include "grn_io.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,6 +40,8 @@ typedef struct _grn_gen grn_gen;
 
 grn_rc grn_gen_init(grn_ctx *ctx, grn_db *db);
 grn_rc grn_gen_fin(grn_ctx *ctx, grn_db *db);
+int grn_gen_lock(grn_ctx *ctx, grn_io *io);
+int grn_gen_unlock(grn_io *io);
 
 #ifdef __cplusplus
 }
