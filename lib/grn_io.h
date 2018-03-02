@@ -370,6 +370,7 @@ grn_rc grn_io_flush(grn_ctx *ctx, grn_io *io);
 
 /* encode/decode */
 
+/* B is for BER */
 #define GRN_B_ENC(v,p) do {\
   uint8_t *_p = (uint8_t *)p; \
   uint32_t _v = v; \
