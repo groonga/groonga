@@ -40,6 +40,7 @@ extern "C" {
 
 typedef struct _grn_db grn_db;
 typedef struct _grn_proc grn_proc;
+typedef struct _grn_gen grn_gen;
 
 struct _grn_db {
   grn_db_obj obj;
@@ -49,6 +50,7 @@ struct _grn_db {
   grn_tiny_array values;
   grn_critical_section lock;
   grn_cache *cache;
+  grn_gen *gen;
 };
 
 #define GRN_SERIALIZED_SPEC_INDEX_SPEC   0

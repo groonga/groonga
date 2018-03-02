@@ -217,6 +217,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   s->specs = NULL;
   s->config = NULL;
   s->cache = NULL;
+  s->gen = NULL;
 
   {
     grn_bool use_default_db_key = GRN_TRUE;
@@ -335,6 +336,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
   s->specs = NULL;
   s->config = NULL;
   s->cache = NULL;
+  s->gen = NULL;
 
   {
     uint32_t type = grn_io_detect_type(ctx, path);
@@ -448,6 +450,9 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   GRN_API_ENTER;
 
   ctx_used_db = ctx->impl && ctx->impl->db == db;
+  if (ctx_used_db) {
+    grn_gen_fin(ctx, s);
+  }
   if (ctx_used_db) {
     grn_ctx_loader_clear(ctx);
     if (ctx->impl->parser) {
