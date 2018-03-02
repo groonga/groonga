@@ -29,6 +29,29 @@
 
 #define LOCK_COUNT_MASK   ((1 << (31 - 11)) - 1) // 20 bits
 #define GEN_ID_MASK       (0xFFF00000) // 11 bits and sign bit
+#define GEN_ID_SHIFT      (20)
+#define GEN_ID_IDX(id)    ((id) >> 3)
+#define GEN_ID_BIT(id)    (1 << ((id) & 0x7))
+
+int
+gen_file_is_valid(grn_gen *gen)
+{
+#ifdef _WIN32
+  return gen->hFile != INVALID_HANDLE_VALUE;
+#else
+  return gen->fd != -1;
+#endif
+}
+
+int
+gen_id_is_newer(grn_gen *gen, int id)
+{
+  if (id > gen->id) {
+    return (id - gen->id < GRN_GEN_SIZE/2) ? 1 : 0;
+  } else {
+    return (gen->id - id > GRN_GEN_SIZE/2) ? 1 : 0;
+  }
+}
 
 void
 gen_flock(grn_gen *gen)
@@ -41,30 +64,25 @@ gen_flock(grn_gen *gen)
 }
 
 int
-gen_flock_nb(grn_gen *gen)
-{
-#ifdef _WIN32
-  return LockFileEx((gen)->hFile,
-      LOCKFILE_EXCLUSIVE_LOCK|LOCKFILE_FAIL_IMMEDIATELY, 0, TESTSTRLEN, 0, 0);
-#else
-  return flock((gen)->fd, LOCK_EX|LOCK_NB) != -1;
-#endif
-}
-
-int
-gen_open_file(grn_gen *gen, const char *path)
+gen_file_open(grn_gen *gen, const char *path)
 {
 #ifdef _WIN32
     gen->hFile = OpenFile(path, NULL, OF_READWRITE);
-    return gen->hFile != HFILE_ERROR;
 #else
     gen->fd = open(path, O_RDWR);
-    return gen->fd != -1;
+#endif
+    if (!gen_file_is_valid(gen)) return 0;
+#ifdef _WIN32
+    return LockFileEx(gen->hFile,
+        LOCKFILE_EXCLUSIVE_LOCK|LOCKFILE_FAIL_IMMEDIATELY,
+        0, TESTSTRLEN, 0, 0);
+#else
+    return flock(gen->fd, LOCK_EX|LOCK_NB) == 0;
 #endif
 }
 
 void
-gen_close_file(grn_gen *gen)
+gen_file_close(grn_gen *gen)
 {
 #ifdef _WIN32
   CloseHandle(gen->hFile);
@@ -74,11 +92,21 @@ gen_close_file(grn_gen *gen)
 }
 
 int
-gen_new_file(grn_gen *gen, const char *path)
+gen_file_exist(const char *path)
+{
+#ifdef _WIN32
+  return GetFileAttributes(path) != INVALID_FILE_ATTRIBUTES;
+#else
+  return access(path, F_OK) == 0;
+#endif
+}
+
+int
+gen_file_new(grn_gen *gen, const char *path)
 {
 #ifdef _WIN32
     gen->hFile = CreateFile(path, GENERIC_READ|GENERIC_WRITE, 0,
-        NULL, CREATE_NEW, 0, FILE_FLAG_DELETE_ON_CLOSE, 0, NULL);
+        NULL, CREATE_NEW, 0, 0, 0, NULL);
     return gen->hFile != INVALID_HANDLE_VALUE;
 #else
     gen->fd = open(path, O_RDWR|O_CREAT|O_EXCL);
@@ -86,32 +114,22 @@ gen_new_file(grn_gen *gen, const char *path)
 #endif
 }
 
-int
-gen_is_valid_file(grn_gen *gen)
-{
-#ifdef _WIN32
-  return gen->hFile != INVALID_HANDLE_VALUE;
-#else
-  return gen->fd != -1;
-#endif
-}
-
 void
-grn_gen_path_fill(grn_ctx *ctx, grn_db *db, int id, char *path)
+gen_path_fill(grn_ctx *ctx, grn_db *db, int id, char *path)
 {
   const char *db_path = grn_obj_path(ctx, (grn_obj*)db);
   grn_snprintf(path, PATH_MAX, PATH_MAX, "%s.gen.%03X", db_path, id);
 }
 
 int
-grn_gen_is_alive(grn_ctx *ctx, grn_db *db, int id)
+gen_is_alive(grn_ctx *ctx, grn_db *db, int id)
 {
-  grn_gen gen;
   char gen_path[PATH_MAX];
-  grn_gen_path_fill(ctx, db, id, gen_path);
-  if (!gen_open_file(&gen, gen_path)) return 0;
-  if (gen_flock_nb(&gen)) {
-    gen_close_file(&gen);
+  gen_path_fill(ctx, db, id, gen_path);
+  if (!gen_file_exist(gen_path)) return 0;
+  grn_gen gen;
+  if (gen_file_open(&gen, gen_path)) {
+    gen_file_close(&gen);
     return 0;
   }
   return 1;
@@ -125,21 +143,20 @@ grn_gen_init(grn_ctx *ctx, grn_db *db)
   }
 
   grn_gen *gen = GRN_MALLOC(sizeof(grn_gen));
+  memset(gen->table, 0, GRN_GEN_SIZE/8);
   char gen_path[PATH_MAX];
   uint16_t min = GRN_GEN_SIZE - 1, max = 0;
-  for(int i = 0; i < GRN_GEN_SIZE; i++){
-    int n = i>>3, m = i&0x7, o = 1<<m;
-    if (m == 0) {
-      gen->table[n] = 0;
-    }
-    grn_gen_path_fill(ctx, db, i, gen_path);
-    if (gen_open_file(gen, gen_path)) {
+  for(int i = 1; i < GRN_GEN_SIZE; i++){
+    gen_path_fill(ctx, db, i, gen_path);
+    if (gen_file_exist(gen_path)) {
       if (i < min) min = i;
       if (i > max) max = i;
-      if (!gen_flock_nb(gen)) { // alive
-        gen->table[n] |= o;
-      } else { // crashed
-        gen_close_file(gen);
+      if (!gen_file_open(gen, gen_path)) {
+        GRN_LOG(ctx, GRN_OK, "found generation: id=%03x", i);
+        gen->table[GEN_ID_IDX(i)] |= GEN_ID_BIT(i);
+      } else {
+        GRN_LOG(ctx, GRN_WARN, "found crashed generation: id=%03x", i);
+        gen_file_close(gen);
         unlink(gen_path);
       }
     }
@@ -148,15 +165,17 @@ grn_gen_init(grn_ctx *ctx, grn_db *db)
   for(int i = 0; i < GRN_GEN_SIZE/2; i++) {
     gen->id = (gen->id + 1) % GRN_GEN_SIZE;
     if (gen->id == 0) gen->id = 1; // gen id is in [1, GRN_GEN_SIZE-1]
-    grn_gen_path_fill(ctx, db, gen->id, gen_path);
-    if (gen_new_file(gen, gen_path)) break;
+    gen_path_fill(ctx, db, gen->id, gen_path);
+    if (gen_file_new(gen, gen_path)) break;
   }
-  if (!gen_is_valid_file(gen)) {
+  if (!gen_file_is_valid(gen)) {
     GRN_FREE(gen);
     return GRN_TOO_MANY_OPEN_FILES;
   }
+  gen->table[GEN_ID_IDX(gen->id)] |= GEN_ID_BIT(gen->id);
   gen_flock(gen);
   db->gen = gen;
+  GRN_LOG(ctx, GRN_OK, "generation: id=%03x", gen->id);
   return GRN_SUCCESS;
 }
 
@@ -165,8 +184,8 @@ grn_gen_fin(grn_ctx *ctx, grn_db *db)
 {
   if (db->gen) {
     char gen_path[PATH_MAX];
-    grn_gen_path_fill(ctx, db, db->gen->id, gen_path);
-    gen_close_file(db->gen);
+    gen_path_fill(ctx, db, db->gen->id, gen_path);
+    gen_file_close(db->gen);
     unlink(gen_path);
     GRN_FREE(db->gen);
     db->gen = NULL;
@@ -180,24 +199,32 @@ grn_gen_lock(grn_ctx *ctx, grn_io *io)
   grn_db *db = (grn_db*)ctx->impl->db;
   uint32_t lock;
   GRN_ATOMIC_ADD_EX(io->lock, 1, lock);
-  if (lock) { // failed
+  if (lock & LOCK_COUNT_MASK) {
     GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
     if (db && db->gen) {
-      int id = (lock & GEN_ID_MASK) >> 20;
-      int n = id>>3, m = id%7, o = 1<<m;
-      if (db->gen->table[n]&o) { // has been active
-        if (!grn_gen_is_alive(ctx, db, id)) { // now is not alive
-          db->gen->table[n] &= ~o; // remove entry
+      int id = (lock & GEN_ID_MASK) >> GEN_ID_SHIFT;
+      int idx = GEN_ID_IDX(id), bit = GEN_ID_BIT(id);
+      if (db->gen->table[idx] & bit) { // known generation
+        if (!gen_is_alive(ctx, db, id)) {
+          GRN_LOG(ctx, GRN_WARN, "crashed generation in table: id=%03X", id);
+          db->gen->table[idx] &= ~bit; // forget it
         }
-      } else { // locked by crashed gen
+      } else {
+        if (gen_id_is_newer(db->gen, id)) { // check new commer
+          if (gen_is_alive(ctx, db, id)) {
+            GRN_LOG(ctx, GRN_OK, "found newer generation: id=%03X", id);
+            db->gen->table[idx] |= bit;
+            return 0;
+          }
+        }
+        GRN_LOG(ctx, GRN_WARN, "crashed generation found: id=%03X", id);
         grn_io_clear_lock(io);
       }
     }
     return 0;
   }
-  // set gen id to lock
   if (db && db->gen) {
-    GRN_ATOMIC_ADD_EX(io->lock, db->gen->id << 20, lock); // 11 bits of gen id
+    GRN_ATOMIC_ADD_EX(io->lock, db->gen->id << GEN_ID_SHIFT, lock);
   }
   return 1;
 }
@@ -208,10 +235,9 @@ grn_gen_unlock(grn_io *io)
   uint32_t lock;
   GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
   if ((lock & LOCK_COUNT_MASK) == 1) {
-    // remove gen id
     grn_db *db = (grn_db*)io->locker->impl->db;
     if (db && db->gen) {
-      GRN_ATOMIC_ADD_EX(io->lock, -(db->gen->id << 20), lock);
+      GRN_ATOMIC_ADD_EX(io->lock, (-db->gen->id) << GEN_ID_SHIFT, lock);
     }
     return 1;
   }
