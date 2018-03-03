@@ -3742,9 +3742,15 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           }
         } GRN_TABLE_EACH_END(ctx, cursor);
       }
+      if (rc == GRN_SUCCESS) {
+        rc = grn_db_clear_dirty(ctx, target);
+      }
     } else {
       if (is_recursive) {
         rc = grn_obj_flush_recursive(ctx, target);
+        if (rc == GRN_SUCCESS && target->header.type == GRN_DB) {
+          rc = grn_db_clear_dirty(ctx, target);
+        }
       } else {
         rc = grn_obj_flush(ctx, target);
       }

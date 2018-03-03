@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2017 Brazil
+  Copyright(C) 2017-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -58,10 +58,6 @@ grn_file_lock_acquire(grn_ctx *ctx,
 {
   int i;
   int n_lock_tries = timeout;
-
-  if (!file_lock->path) {
-    return GRN_TRUE;
-  }
 
   for (i = 0; i < n_lock_tries; i++) {
 #ifdef WIN32

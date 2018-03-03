@@ -1826,6 +1826,7 @@ datavec_fin(grn_ctx *ctx, datavec *dv)
   if (dv[0].data) { GRN_FREE(dv[0].data); }
 }
 
+/* p is for PForDelta */
 size_t
 grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
 {
