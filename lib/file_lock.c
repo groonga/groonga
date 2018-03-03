@@ -42,7 +42,7 @@ grn_file_lock_init(grn_ctx *ctx,
                    grn_file_lock *file_lock,
                    const char *path)
 {
-  file_lock->path = path;
+  grn_strcpy(file_lock->path, PATH_MAX, path);
 #ifdef WIN32
   file_lock->handle = INVALID_HANDLE_VALUE;
 #else /* WIN32 */
@@ -109,7 +109,7 @@ grn_file_lock_release(grn_ctx *ctx, grn_file_lock *file_lock)
 
   file_lock->fd = -1;
 #endif /* WIN32 */
-  file_lock->path = NULL;
+  grn_strcpy(file_lock->path, PATH_MAX, "");
 }
 
 void
