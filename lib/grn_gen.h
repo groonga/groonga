@@ -20,6 +20,7 @@
 
 #include "grn_db.h"
 #include "grn_io.h"
+#include "grn_file_lock.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,11 +31,7 @@ extern "C" {
 struct _grn_gen {
   int id;
   uint8_t table[GRN_GEN_SIZE/8];
-#ifdef WIN32
-  HFILE hFile;
-#else
-  int fd;
-#endif
+  grn_file_lock file_lock;
 };
 typedef struct _grn_gen grn_gen;
 

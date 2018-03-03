@@ -119,3 +119,62 @@ grn_file_lock_fin(grn_ctx *ctx, grn_file_lock *file_lock)
     grn_file_lock_release(ctx, file_lock);
   }
 }
+
+grn_bool
+grn_file_lock_exist(grn_ctx *ctx, grn_file_lock *file_lock)
+{
+#ifdef WIN32
+  return GetFileAttributes(file_lock->path) != INVALID_FILE_ATTRIBUTES;
+#else
+  return access(file_lock->path, F_OK) == 0;
+#endif
+}
+
+grn_bool
+grn_file_lock_takeover(grn_ctx *ctx, grn_file_lock *file_lock)
+{
+#ifdef WIN32
+  file_lock->handle = OpenFile(file_lock->path, NULL, OF_READWRITE);
+#else
+  file_lock->fd = open(file_lock->path, O_RDWR);
+#endif
+  if (GRN_FILE_LOCK_IS_INVALID(file_lock)) return GRN_FALSE;
+#ifdef WIN32
+  if (!LockFileEx(file_lock->handle,
+      LOCKFILE_EXCLUSIVE_LOCK|LOCKFILE_FAIL_IMMEDIATELY,
+      0, TESTSTRLEN, 0, 0)) {
+#else
+  if (flock(file_lock->fd, LOCK_EX|LOCK_NB) != 0) {
+#endif
+    grn_file_lock_close(ctx, file_lock);
+    return GRN_FALSE;
+  }
+  return GRN_TRUE;
+}
+
+void
+grn_file_lock_close(grn_ctx *ctx, grn_file_lock *file_lock)
+{
+  if (GRN_FILE_LOCK_IS_INVALID(file_lock)) {
+    return;
+  }
+#ifdef WIN32
+  CloseHandle(file_lock->handle);
+  file_lock->handle = INVALID_HANDLE_VALUE;
+#else /* WIN32 */
+  close(file_lock->fd);
+  file_lock->fd = -1;
+#endif /* WIN32 */
+  file_lock->path = NULL;
+}
+
+void
+grn_file_lock_exclusive(grn_ctx *ctx, grn_file_lock *file_lock)
+{
+#ifdef WIN32
+  LockFileEx(file_lock->handle,
+      LOCKFILE_EXCLUSIVE_LOCK, 0, TESTSTRLEN, 0, 0);
+#else
+  flock(file_lock->fd, LOCK_EX);
+#endif
+}
