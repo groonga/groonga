@@ -1,0 +1,77 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+plugin_register functions/time
+[[0,0.0,0.0],true]
+table_create Logs_201703 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_201703 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_201703 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Logs_201703
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 1000},
+{"timestamp": "2017/03/15 01:00:00", "price":  900},
+{"timestamp": "2017/03/15 02:00:00", "price":  300},
+{"timestamp": "2017/03/15 03:00:00", "price":  200},
+{"timestamp": "2017/03/16 10:00:00", "price":  530},
+{"timestamp": "2017/03/16 11:00:00", "price":  520},
+{"timestamp": "2017/03/16 12:00:00", "price":  110},
+{"timestamp": "2017/03/16 13:00:00", "price":  410},
+{"timestamp": "2017/03/16 14:00:00", "price":  710},
+{"timestamp": "2017/03/17 20:00:00", "price":  800},
+{"timestamp": "2017/03/17 21:00:00", "price":  400},
+{"timestamp": "2017/03/17 22:00:00", "price":  500},
+{"timestamp": "2017/03/17 23:00:00", "price":  300}
+]
+[[0,0.0,0.0],13]
+table_create Times TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times logs_201703 COLUMN_INDEX Logs_201703 timestamp
+[[0,0.0,0.0],true]
+log_level --level debug
+[[0,0.0,0.0],true]
+logical_range_filter Logs   --shard_key timestamp   --columns[day].stage filtered   --columns[day].type Time   --columns[day].flags COLUMN_SCALAR   --columns[day].value 'time_classify_day(timestamp)'   --columns[n_records_per_day].stage filtered   --columns[n_records_per_day].type UInt32   --columns[n_records_per_day].flags COLUMN_SCALAR   --columns[n_records_per_day].value 'window_count()'   --columns[n_records_per_day].window.group_keys 'day'   --filter 'price >= 300'   --post_filter 'n_records_per_day >= 3'   --offset 1   --limit 3   --output_columns _id,n_records_per_day,price
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "_id",
+        "UInt32"
+      ],
+      [
+        "n_records_per_day",
+        "UInt32"
+      ],
+      [
+        "price",
+        "UInt32"
+      ]
+    ],
+    [
+      2,
+      3,
+      900
+    ],
+    [
+      3,
+      3,
+      300
+    ],
+    [
+      5,
+      4,
+      530
+    ]
+  ]
+]
+#|d| [logical_range_filter][select] <Logs_201703>: dynamic columns are used
+#|d| [logical_range_filter][window] <Logs_201703>: [2017/03/15 00:00:00,2017/03/16 00:00:00)
+#|d| [logical_range_filter][window] <Logs_201703>: [2017/03/16 00:00:00,2017/03/17 00:00:00)
+log_level --level notice
+[[0,0.0,0.0],true]

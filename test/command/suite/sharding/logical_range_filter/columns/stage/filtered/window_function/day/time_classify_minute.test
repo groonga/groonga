@@ -1,0 +1,59 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+plugin_register functions/time
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+
+table_create Logs_20170316 TABLE_NO_KEY
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+column_create Logs_20170316 price COLUMN_SCALAR UInt32
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 07:00:00", "price": 1000},
+{"timestamp": "2017/03/15 07:01:00", "price":  900},
+{"timestamp": "2017/03/15 07:02:00", "price":  300},
+{"timestamp": "2017/03/15 07:03:00", "price":  200},
+{"timestamp": "2017/03/15 07:10:00", "price":  530},
+{"timestamp": "2017/03/15 07:11:00", "price":  520},
+{"timestamp": "2017/03/15 07:12:00", "price":  110},
+{"timestamp": "2017/03/15 07:13:00", "price":  410},
+{"timestamp": "2017/03/15 07:14:00", "price":  710}
+]
+
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 08:20:00", "price":  800},
+{"timestamp": "2017/03/16 08:21:00", "price":  400},
+{"timestamp": "2017/03/16 08:22:00", "price":  500},
+{"timestamp": "2017/03/16 08:23:00", "price":  300}
+]
+
+table_create Times TABLE_PAT_KEY Time
+column_create Times logs_20170315 COLUMN_INDEX Logs_20170315 timestamp
+column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
+
+#@add-important-log-levels debug
+log_level --level debug
+logical_range_filter Logs \
+  --shard_key timestamp \
+  --columns[five_minute].stage filtered \
+  --columns[five_minute].type Time \
+  --columns[five_minute].flags COLUMN_SCALAR \
+  --columns[five_minute].value 'time_classify_minute(timestamp, 5)' \
+  --columns[n_records_per_five_minute].stage filtered \
+  --columns[n_records_per_five_minute].type UInt32 \
+  --columns[n_records_per_five_minute].flags COLUMN_SCALAR \
+  --columns[n_records_per_five_minute].value 'window_count()' \
+  --columns[n_records_per_five_minute].window.group_keys 'five_minute' \
+  --filter 'price >= 300' \
+  --post_filter 'n_records_per_five_minute >= 3' \
+  --offset 1 \
+  --limit 3 \
+  --output_columns _id,n_records_per_five_minute,price
+log_level --level notice
+#@remove-important-log-levels debug
