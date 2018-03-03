@@ -146,8 +146,8 @@ grn_gen_lock(grn_ctx *ctx, grn_io *io, uint32_t count)
   GRN_ATOMIC_ADD_EX(io->lock, 1, lock);
   if (lock & LOCK_COUNT_MASK) {
     GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
-    if (db && db->gen) {
-      int id = (lock & GEN_ID_MASK) >> GEN_ID_SHIFT;
+    int id = (lock & GEN_ID_MASK) >> GEN_ID_SHIFT;
+    if (id && db && db->gen) {
       int idx = GEN_ID_IDX(id), bit = GEN_ID_BIT(id);
       if (db->gen->table[idx] & bit) { // known generation
         if (count % count_check_border == count_check_border - 1) {
