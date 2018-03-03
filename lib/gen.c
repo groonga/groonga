@@ -103,7 +103,7 @@ grn_gen_init(grn_ctx *ctx, grn_db *db)
         GRN_LOG(ctx, GRN_WARN, "found crashed generation: id=%03x", i);
         grn_file_lock_release(ctx, &file_lock);
       } else {
-        GRN_LOG(ctx, GRN_OK, "found generation: id=%03x", i);
+        GRN_LOG(ctx, GRN_LOG_INFO, "found generation: id=%03x", i);
         gen->table[GEN_ID_IDX(i)] |= GEN_ID_BIT(i);
       }
     }
@@ -122,7 +122,7 @@ grn_gen_init(grn_ctx *ctx, grn_db *db)
   gen->table[GEN_ID_IDX(gen->id)] |= GEN_ID_BIT(gen->id);
   grn_file_lock_exclusive(ctx, &gen->file_lock);
   db->gen = gen;
-  GRN_LOG(ctx, GRN_OK, "generation: id=%03x", gen->id);
+  GRN_LOG(ctx, GRN_LOG_INFO, "generation: id=%03x", gen->id);
   return GRN_SUCCESS;
 }
 
@@ -159,7 +159,7 @@ grn_gen_lock(grn_ctx *ctx, grn_io *io, uint32_t count)
       } else {
         if (gen_id_is_newer(db->gen, id)) { // check new commer
           if (gen_is_alive(ctx, db, id)) {
-            GRN_LOG(ctx, GRN_OK, "found newer generation: id=%03X", id);
+            GRN_LOG(ctx, GRN_LOG_INFO, "found newer generation: id=%03X", id);
             db->gen->table[idx] |= bit;
             return 0;
           }
