@@ -30,7 +30,7 @@ extern "C" {
 struct _grn_gen {
   int id;
   uint8_t table[GRN_GEN_SIZE/8];
-#ifdef _WIN32
+#ifdef WIN32
   HFILE hFile;
 #else
   int fd;

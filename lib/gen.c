@@ -36,7 +36,7 @@
 int
 gen_file_is_valid(grn_gen *gen)
 {
-#ifdef _WIN32
+#ifdef WIN32
   return gen->hFile != INVALID_HANDLE_VALUE;
 #else
   return gen->fd != -1;
@@ -56,7 +56,7 @@ gen_id_is_newer(grn_gen *gen, int id)
 void
 gen_flock(grn_gen *gen)
 {
-#ifdef _WIN32
+#ifdef WIN32
   LockFileEx((gen)->hFile, LOCKFILE_EXCLUSIVE_LOCK, 0, TESTSTRLEN, 0, 0);
 #else
   flock((gen)->fd, LOCK_EX);
@@ -66,13 +66,13 @@ gen_flock(grn_gen *gen)
 int
 gen_file_open(grn_gen *gen, const char *path)
 {
-#ifdef _WIN32
+#ifdef WIN32
     gen->hFile = OpenFile(path, NULL, OF_READWRITE);
 #else
     gen->fd = open(path, O_RDWR);
 #endif
     if (!gen_file_is_valid(gen)) return 0;
-#ifdef _WIN32
+#ifdef WIN32
     return LockFileEx(gen->hFile,
         LOCKFILE_EXCLUSIVE_LOCK|LOCKFILE_FAIL_IMMEDIATELY,
         0, TESTSTRLEN, 0, 0);
@@ -84,7 +84,7 @@ gen_file_open(grn_gen *gen, const char *path)
 void
 gen_file_close(grn_gen *gen)
 {
-#ifdef _WIN32
+#ifdef WIN32
   CloseHandle(gen->hFile);
 #else
   close(gen->fd);
@@ -94,7 +94,7 @@ gen_file_close(grn_gen *gen)
 int
 gen_file_exist(const char *path)
 {
-#ifdef _WIN32
+#ifdef WIN32
   return GetFileAttributes(path) != INVALID_FILE_ATTRIBUTES;
 #else
   return access(path, F_OK) == 0;
@@ -104,7 +104,7 @@ gen_file_exist(const char *path)
 int
 gen_file_new(grn_gen *gen, const char *path)
 {
-#ifdef _WIN32
+#ifdef WIN32
     gen->hFile = CreateFile(path, GENERIC_READ|GENERIC_WRITE, 0,
         NULL, CREATE_NEW, 0, 0, 0, NULL);
     return gen->hFile != INVALID_HANDLE_VALUE;
