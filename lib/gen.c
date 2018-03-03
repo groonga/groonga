@@ -30,10 +30,12 @@
 /*
  * bit layout of generational lock
  *
- * [sggggggg ggggcccc cccccccc cccccccc] uint32_t
+ * [sGGGGGGG Ggggcccc cccccccc cccccccc] uint32_t
  *
  * s: sign 1 bit
- * g: generation id 11 bits
+ * G, g: generation id 11 bits
+ *   G: table index 8 bits
+ *   g: position in the table 3 bits
  * c: lock count 20 bits
  */
 
