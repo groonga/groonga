@@ -194,9 +194,10 @@ grn_gen_fin(grn_ctx *ctx, grn_db *db)
 }
 
 int
-grn_gen_lock(grn_ctx *ctx, grn_io *io)
+grn_gen_lock(grn_ctx *ctx, grn_io *io, uint32_t count)
 {
   grn_db *db = (grn_db*)ctx->impl->db;
+  uint32_t count_check_border = 100;
   uint32_t lock;
   GRN_ATOMIC_ADD_EX(io->lock, 1, lock);
   if (lock & LOCK_COUNT_MASK) {
@@ -205,9 +206,11 @@ grn_gen_lock(grn_ctx *ctx, grn_io *io)
       int id = (lock & GEN_ID_MASK) >> GEN_ID_SHIFT;
       int idx = GEN_ID_IDX(id), bit = GEN_ID_BIT(id);
       if (db->gen->table[idx] & bit) { // known generation
-        if (!gen_is_alive(ctx, db, id)) {
-          GRN_LOG(ctx, GRN_WARN, "crashed generation in table: id=%03X", id);
-          db->gen->table[idx] &= ~bit; // forget it
+        if (count % count_check_border == count_check_border - 1) {
+          if (!gen_is_alive(ctx, db, id)) {
+            GRN_LOG(ctx, GRN_WARN, "lost generation: id=%03X", id);
+            db->gen->table[idx] &= ~bit; // forget it
+          }
         }
       } else {
         if (gen_id_is_newer(db->gen, id)) { // check new commer
@@ -235,10 +238,7 @@ grn_gen_unlock(grn_io *io)
   uint32_t lock;
   GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
   if ((lock & LOCK_COUNT_MASK) == 1) {
-    grn_db *db = (grn_db*)io->locker->impl->db;
-    if (db && db->gen) {
-      GRN_ATOMIC_ADD_EX(io->lock, (-db->gen->id) << GEN_ID_SHIFT, lock);
-    }
+    GRN_ATOMIC_ADD_EX(io->lock, -(lock & GEN_ID_MASK), lock);
     return 1;
   }
   return 0;

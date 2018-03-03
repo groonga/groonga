@@ -1377,7 +1377,7 @@ grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
   _ncalls++;
   if (!io) { return GRN_INVALID_ARGUMENT; }
   for (count = 0;; count++) {
-    if (!grn_gen_lock(ctx, io)) {
+    if (!grn_gen_lock(ctx, io, count)) {
       if (count == count_log_border) {
         GRN_LOG(ctx, GRN_LOG_NOTICE,
                 "io(%s) collisions(%d/%d): lock failed %d times",
