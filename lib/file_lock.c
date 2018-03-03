@@ -165,7 +165,7 @@ grn_file_lock_close(grn_ctx *ctx, grn_file_lock *file_lock)
   close(file_lock->fd);
   file_lock->fd = -1;
 #endif /* WIN32 */
-  file_lock->path = NULL;
+  grn_strcpy(file_lock->path, PATH_MAX, "");
 }
 
 void
