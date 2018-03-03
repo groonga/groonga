@@ -130,8 +130,6 @@ grn_rc
 grn_gen_fin(grn_ctx *ctx, grn_db *db)
 {
   if (db->gen) {
-    GRN_LOG(ctx, GRN_OK, "file_lock: path:'%s' fd:%d",
-        db->gen->file_lock.path, db->gen->file_lock.fd);
     grn_file_lock_fin(ctx, &db->gen->file_lock);
     GRN_FREE(db->gen);
     db->gen = NULL;
