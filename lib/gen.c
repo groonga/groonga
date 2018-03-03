@@ -27,6 +27,16 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+/*
+ * bit layout of generational lock
+ *
+ * [sggggggg ggggcccc cccccccc cccccccc] uint32_t
+ *
+ * s: sign 1 bit
+ * g: generation id 11 bits
+ * c: lock count 20 bits
+ */
+
 #define LOCK_COUNT_MASK   ((1 << (31 - 11)) - 1) // 20 bits
 #define GEN_ID_MASK       (0xFFF00000) // 11 bits and sign bit
 #define GEN_ID_SHIFT      (20)
