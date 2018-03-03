@@ -2698,6 +2698,7 @@ enum {
 #define FLAG_MODE_SERVER     (1 << 7)
 #define FLAG_NEW_DB     (1 << 8)
 #define FLAG_USE_WINDOWS_EVENT_LOG (1 << 9)
+#define FLAG_GEN_LOCK   (1 << 10)
 
 static uint32_t
 get_core_number(void)
@@ -3206,6 +3207,8 @@ show_usage(FILE *output)
           "      --default-match-escalation-threshold <threshold>:\n"
           "                       specify default match escalation threshold"
           " (default: %" GRN_FMT_LLD ")\n"
+          "      --generational-lock:\n"
+          "                       enable generational lock"
           "\n"
           "      --show-config:   show config\n"
           "  -h, --help:          show usage\n"
@@ -3296,6 +3299,7 @@ main(int argc, char **argv)
     {'\0', "default-request-timeout", NULL, 0, GETOPT_OP_NONE},
     {'\0', "cache-base-path", NULL, 0, GETOPT_OP_NONE},
     {'\0', "listen-backlog", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "generational-lock", NULL, FLAG_GEN_LOCK, GETOPT_OP_ON},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
@@ -3772,6 +3776,10 @@ main(int argc, char **argv)
     line_editor_init(argc, argv);
   }
 #endif
+
+  if (flags & FLAG_GEN_LOCK) {
+    grn_gen_enable();
+  }
 
   newdb = (flags & FLAG_NEW_DB);
   is_daemon_mode = (flags & FLAG_MODE_DAEMON);

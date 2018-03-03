@@ -35,6 +35,7 @@ struct _grn_gen {
 };
 typedef struct _grn_gen grn_gen;
 
+void grn_gen_enable();
 grn_rc grn_gen_init(grn_ctx *ctx, grn_db *db);
 grn_rc grn_gen_fin(grn_ctx *ctx, grn_db *db);
 int grn_gen_lock(grn_ctx *ctx, grn_io *io, uint32_t count);

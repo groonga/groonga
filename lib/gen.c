@@ -45,6 +45,16 @@
 #define GEN_ID_IDX(id)    ((id) >> 3)
 #define GEN_ID_BIT(id)    (1 << ((id) & 0x7))
 
+static grn_bool grn_gen_enabled = GRN_FALSE;
+static uint32_t grn_gen_lock_count_mask = 0xFFFFFFFF;
+
+void
+grn_gen_enable()
+{
+  grn_gen_enabled = GRN_TRUE;
+  grn_gen_lock_count_mask = LOCK_COUNT_MASK;
+}
+
 int
 gen_id_is_newer(grn_gen *gen, int id)
 {
@@ -84,9 +94,8 @@ inactive:
 grn_rc
 grn_gen_init(grn_ctx *ctx, grn_db *db)
 {
-  if (db->gen) {
-    return GRN_SUCCESS;
-  }
+  if (!grn_gen_enabled) return GRN_SUCCESS;
+  if (db->gen) return GRN_SUCCESS;
 
   grn_gen *gen = GRN_MALLOC(sizeof(grn_gen));
   memset(gen->table, 0, GRN_GEN_SIZE/8);
@@ -108,6 +117,9 @@ grn_gen_init(grn_ctx *ctx, grn_db *db)
       }
     }
     grn_file_lock_fin(ctx, &file_lock);
+  }
+  if (max == 0) { // you are the first generation to use this db
+    grn_obj_clear_lock(ctx, db);
   }
   gen->id = (max - min < GRN_GEN_SIZE/2) ? max : min;
   for(int i = 0; i < GRN_GEN_SIZE/2; i++) {
@@ -144,7 +156,7 @@ grn_gen_lock(grn_ctx *ctx, grn_io *io, uint32_t count)
   uint32_t count_check_border = 100;
   uint32_t lock;
   GRN_ATOMIC_ADD_EX(io->lock, 1, lock);
-  if (lock & LOCK_COUNT_MASK) {
+  if (lock & grn_gen_lock_count_mask) {
     GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
     int id = (lock & GEN_ID_MASK) >> GEN_ID_SHIFT;
     if (id && db && db->gen) {
@@ -181,7 +193,7 @@ grn_gen_unlock(grn_io *io)
 {
   uint32_t lock;
   GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
-  if ((lock & LOCK_COUNT_MASK) == 1) {
+  if ((lock & grn_gen_lock_count_mask) == 1) {
     GRN_ATOMIC_ADD_EX(io->lock, -(lock & GEN_ID_MASK), lock);
     return 1;
   }
