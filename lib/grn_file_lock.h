@@ -25,7 +25,7 @@ extern "C" {
 #endif
 
 typedef struct {
-  const char *path;
+  char path[PATH_MAX];
 #ifdef WIN32
   HANDLE handle;
 #else /* WIN32 */
