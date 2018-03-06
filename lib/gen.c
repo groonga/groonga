@@ -81,7 +81,7 @@ gen_is_alive(grn_ctx *ctx, grn_db *db, int id)
   grn_file_lock_init(ctx, &file_lock, gen_path);
   if (!grn_file_lock_exist(ctx, &file_lock)) goto inactive;
   if (grn_file_lock_takeover(ctx, &file_lock)) {
-    grn_file_lock_close(ctx, &file_lock);
+    grn_file_lock_abandon(ctx, &file_lock);
     goto inactive;
   }
   grn_file_lock_fin(ctx, &file_lock);

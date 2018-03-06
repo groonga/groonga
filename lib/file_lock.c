@@ -144,14 +144,14 @@ grn_file_lock_takeover(grn_ctx *ctx, grn_file_lock *file_lock)
 #else
   if (flock(file_lock->fd, LOCK_EX|LOCK_NB) != 0) {
 #endif
-    grn_file_lock_close(ctx, file_lock);
+    grn_file_lock_abandon(ctx, file_lock);
     return GRN_FALSE;
   }
   return GRN_TRUE;
 }
 
 void
-grn_file_lock_close(grn_ctx *ctx, grn_file_lock *file_lock)
+grn_file_lock_abandon(grn_ctx *ctx, grn_file_lock *file_lock)
 {
   if (GRN_FILE_LOCK_IS_INVALID(file_lock)) {
     return;
