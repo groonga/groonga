@@ -134,7 +134,7 @@ grn_gen_init(grn_ctx *ctx, grn_db *db)
   gen->table[GEN_ID_IDX(gen->id)] |= GEN_ID_BIT(gen->id);
   grn_file_lock_exclusive(ctx, &gen->file_lock);
   db->gen = gen;
-  GRN_LOG(ctx, GRN_LOG_INFO, "generation: id=%03x", gen->id);
+  GRN_LOG(ctx, GRN_OK, "generation: id=%03x", gen->id);
   return GRN_SUCCESS;
 }
 
@@ -177,7 +177,7 @@ grn_gen_lock(grn_ctx *ctx, grn_io *io, uint32_t count)
           }
         }
         GRN_LOG(ctx, GRN_WARN, "crashed generation found: id=%03X", id);
-        grn_io_clear_lock(io);
+        GRN_ATOMIC_ADD_EX(io->lock, -((id << GEN_ID_SHIFT) + 1), lock);
       }
     }
     return 0;
