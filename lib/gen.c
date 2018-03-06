@@ -69,7 +69,11 @@ void
 gen_path_fill(grn_ctx *ctx, grn_db *db, int id, char *path)
 {
   const char *db_path = grn_obj_path(ctx, (grn_obj*)db);
-  grn_snprintf(path, PATH_MAX, PATH_MAX, "%s.gen.%03X", db_path, id);
+  if (id == 0) {
+    grn_snprintf(path, PATH_MAX, PATH_MAX, "%s.gen", db_path);
+  } else {
+    grn_snprintf(path, PATH_MAX, PATH_MAX, "%s.gen.%03X", db_path, id);
+  }
 }
 
 grn_bool
@@ -99,9 +103,25 @@ grn_gen_init(grn_ctx *ctx, grn_db *db)
 
   grn_gen *gen = GRN_MALLOC(sizeof(grn_gen));
   memset(gen->table, 0, GRN_GEN_SIZE/8);
-  char gen_path[PATH_MAX];
+  char gen_ids_path[PATH_MAX], gen_path[PATH_MAX];
+  gen_path_fill(ctx, db, 0, gen_ids_path);
   uint16_t min = GRN_GEN_SIZE - 1, max = 0;
+  char ids[GRN_GEN_SIZE];
+  grn_file_lock gen_ids_file;
+  grn_file_lock_init(ctx, &gen_ids_file, gen_ids_path);
+  if (!grn_file_lock_takeover(ctx, &gen_ids_file)) {
+    if (!grn_file_lock_acquire(ctx, &gen_ids_file, 1000, "generational lock")) {
+      GRN_LOG(ctx, GRN_CRIT, "Failed to takeover ids file: %s", gen_ids_path);
+      grn_file_lock_fin(ctx, &gen_ids_file);
+      return GRN_NO_LOCKS_AVAILABLE;
+    }
+  }
+  grn_file_lock_exclusive(ctx, &gen_ids_file);
+  if (!grn_file_lock_read(ctx, &gen_ids_file, ids, GRN_GEN_SIZE)) {
+    memset(ids, 0, GRN_GEN_SIZE);
+  }
   for(int i = 1; i < GRN_GEN_SIZE; i++){
+    if (!ids[i]) continue;
     gen_path_fill(ctx, db, i, gen_path);
     grn_file_lock file_lock;
     grn_file_lock_init(ctx, &file_lock, gen_path);
@@ -133,6 +153,12 @@ grn_gen_init(grn_ctx *ctx, grn_db *db)
   }
   gen->table[GEN_ID_IDX(gen->id)] |= GEN_ID_BIT(gen->id);
   grn_file_lock_exclusive(ctx, &gen->file_lock);
+  ids[gen->id] = 1;
+  if (!grn_file_lock_write(ctx, &gen_ids_file, ids, GRN_GEN_SIZE)) {
+    GRN_LOG(ctx, GRN_ERROR, "Failed to write id to %s", gen_ids_path);
+  }
+  grn_file_lock_abandon(ctx, &gen_ids_file);
+  grn_file_lock_fin(ctx, &gen_ids_file);
   db->gen = gen;
   GRN_LOG(ctx, GRN_OK, "generation: id=%03x", gen->id);
   return GRN_SUCCESS;
@@ -142,7 +168,26 @@ grn_rc
 grn_gen_fin(grn_ctx *ctx, grn_db *db)
 {
   if (db->gen) {
+    char gen_ids_path[PATH_MAX];
+    gen_path_fill(ctx, db, 0, gen_ids_path);
+    grn_file_lock gen_ids_file;
+    grn_file_lock_init(ctx, &gen_ids_file, gen_ids_path);
+    if (!grn_file_lock_takeover(ctx, &gen_ids_file)) {
+      GRN_LOG(ctx, GRN_ERROR, "Failed to takeover ids file: %s", gen_ids_path);
+    }
+    grn_file_lock_exclusive(ctx, &gen_ids_file);
     grn_file_lock_fin(ctx, &db->gen->file_lock);
+    char ids[GRN_GEN_SIZE];
+    if (!grn_file_lock_read(ctx, &gen_ids_file, ids, GRN_GEN_SIZE)) {
+      GRN_LOG(ctx, GRN_ERROR, "Failed to read ids file: %s", gen_ids_path);
+    }else{
+      ids[db->gen->id] = 0;
+      if (!grn_file_lock_write(ctx, &gen_ids_file, ids, GRN_GEN_SIZE)) {
+        GRN_LOG(ctx, GRN_ERROR, "Failed to write ids file: %s", gen_ids_path);
+      }
+    }
+    grn_file_lock_abandon(ctx, &gen_ids_file);
+    grn_file_lock_fin(ctx, &gen_ids_file);
     GRN_FREE(db->gen);
     db->gen = NULL;
   }

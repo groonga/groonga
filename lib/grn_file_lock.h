@@ -46,6 +46,10 @@ grn_bool grn_file_lock_exist(grn_ctx *ctx, grn_file_lock *file_lock);
 grn_bool grn_file_lock_takeover(grn_ctx *ctx, grn_file_lock *file_lock);
 void grn_file_lock_abandon(grn_ctx *ctx, grn_file_lock *file_lock);
 void grn_file_lock_exclusive(grn_ctx *ctx, grn_file_lock *file_lock);
+grn_bool grn_file_lock_read(grn_ctx *ctx, grn_file_lock *file_lock,
+    void *buf, size_t len);
+grn_bool grn_file_lock_write(grn_ctx *ctx, grn_file_lock *file_lock,
+    void *buf, size_t len);
 
 #ifdef __cplusplus
 }

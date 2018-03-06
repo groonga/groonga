@@ -176,3 +176,67 @@ grn_file_lock_exclusive(grn_ctx *ctx, grn_file_lock *file_lock)
   flock(file_lock->fd, LOCK_EX);
 #endif
 }
+
+grn_bool
+grn_file_lock_read(grn_ctx *ctx, grn_file_lock *file_lock,
+    void *buf, size_t len)
+{
+#ifdef WIN32
+  SetFilePointer(file_lock->hFile, 0, NULL, FILE_BEGIN);
+#else
+  lseek(file_lock->fd, 0, SEEK_SET);
+#endif
+  while (len > 0) {
+#ifdef WIN32
+    DWORD dwLen;
+    if (!ReadFile(file_lock->hFile, buf, len, &dwLen, NULL)) {
+      return GRN_FALSE;
+    }
+    ssize_t ret = dwLen;
+#else
+    ssize_t ret = read(file_lock->fd, buf, len);
+    if (ret == EAGAIN) continue;
+#endif
+    if (ret > 0) {
+      len -= ret;
+      buf = (char*)buf + ret;
+    } else {
+      return GRN_FALSE;
+    }
+  }
+  return GRN_TRUE;
+}
+
+grn_bool
+grn_file_lock_write(grn_ctx *ctx, grn_file_lock *file_lock,
+    void *buf, size_t len)
+{
+#ifdef WIN32
+  SetFilePointer(file_lock->hFile, 0, NULL, FILE_BEGIN);
+#else
+  lseek(file_lock->fd, 0, SEEK_SET);
+#endif
+  while (len > 0) {
+#ifdef WIN32
+    if (!WriteFile(file_lock->hFile, buf, len, &dwLen, NULL)) {
+      return GRN_FALSE;
+    }
+    ssize_t ret = dwLen;
+#else
+    ssize_t ret = write(file_lock->fd, buf, len);
+    if (ret == EAGAIN) continue;
+#endif
+    if (ret > 0) {
+      len -= ret;
+      buf = (char*)buf + ret;
+    } else {
+      return GRN_FALSE;
+    }
+  }
+#ifdef WIN32
+  FlushFileBuffers(file_lock->hFile);
+#else
+  fsync(file_lock->fd);
+#endif
+  return GRN_TRUE;
+}

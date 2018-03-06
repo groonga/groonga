@@ -29,7 +29,7 @@ extern "C" {
 #define GRN_GEN_SIZE  (256*8)
 
 struct _grn_gen {
-  int id;
+  uint16_t id;
   uint8_t table[GRN_GEN_SIZE/8];
   grn_file_lock file_lock;
 };
