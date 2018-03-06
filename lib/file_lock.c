@@ -24,8 +24,10 @@
 #ifdef WIN32
 # include <io.h>
 # include <share.h>
+# define TESTSTRLEN 11 // see http://bit.ly/2oRb3Ok
 #else /* WIN32 */
 # include <sys/types.h>
+# include <sys/file.h>
 # include <fcntl.h>
 #endif /* WIN32 */
 

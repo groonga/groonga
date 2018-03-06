@@ -49,13 +49,13 @@ static grn_bool grn_gen_enabled = GRN_FALSE;
 static uint32_t grn_gen_lock_count_mask = 0xFFFFFFFF;
 
 void
-grn_gen_enable()
+grn_gen_enable(void)
 {
   grn_gen_enabled = GRN_TRUE;
   grn_gen_lock_count_mask = LOCK_COUNT_MASK;
 }
 
-int
+static int
 gen_id_is_newer(grn_gen *gen, int id)
 {
   if (id > gen->id) {
@@ -119,7 +119,7 @@ grn_gen_init(grn_ctx *ctx, grn_db *db)
     grn_file_lock_fin(ctx, &file_lock);
   }
   if (max == 0) { // you are the first generation to use this db
-    grn_obj_clear_lock(ctx, db);
+    grn_obj_clear_lock(ctx, (grn_obj*)db);
   }
   gen->id = (max - min < GRN_GEN_SIZE/2) ? max : min;
   for(int i = 0; i < GRN_GEN_SIZE/2; i++) {

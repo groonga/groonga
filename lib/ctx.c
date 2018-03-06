@@ -1546,7 +1546,7 @@ grn_ctx_use(grn_ctx *ctx, grn_obj *db)
         grn_obj_get_info(ctx, db, GRN_INFO_ENCODING, &buf);
         ctx->encoding = *(grn_encoding *)GRN_BULK_HEAD(&buf);
         grn_obj_close(ctx, &buf);
-        ctx->rc = grn_gen_init(ctx, db);
+        ctx->rc = grn_gen_init(ctx, (grn_db*)db);
       }
     }
   }
