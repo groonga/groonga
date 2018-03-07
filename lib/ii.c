@@ -6343,27 +6343,6 @@ grn_uvector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid,
   }
 }
 
-static void
-grn_ii_column_update_get_element_value(grn_ctx *ctx,
-                                       grn_obj *vector,
-                                       unsigned int i,
-                                       grn_obj *element_buffer)
-{
-  if (vector->header.type == GRN_UVECTOR) {
-    const unsigned int size = grn_uvector_element_size(ctx, vector);
-    grn_bulk_write_from(ctx,
-                        element_buffer,
-                        GRN_BULK_HEAD(vector) + (size * i),
-                        0,
-                        size);
-  } else {
-    const char *value;
-    unsigned int size;
-    size = grn_vector_get_element(ctx, vector, i, &value, NULL, NULL);
-    GRN_TEXT_SET(ctx, element_buffer, value, size);
-  }
-}
-
 grn_rc
 grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                      grn_obj *oldvalue, grn_obj *newvalue, grn_obj *posting)
@@ -6387,18 +6366,20 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     return ctx->rc;
   }
   if (old || new) {
-    unsigned char type = GRN_VOID;
+    grn_bool is_text_vector_index = GRN_TRUE;
     if (old) {
-      type = (ii->obj.header.domain == old->header.domain)
-        ? GRN_UVECTOR
-        : old->header.type;
+      if (!(old->header.type == GRN_VECTOR &&
+            grn_type_id_is_text_family(ctx, old->header.domain))) {
+        is_text_vector_index = GRN_FALSE;
+      }
     }
     if (new) {
-      type = (ii->obj.header.domain == new->header.domain)
-        ? GRN_UVECTOR
-        : new->header.type;
+      if (!(new->header.type == GRN_VECTOR &&
+            grn_type_id_is_text_family(ctx, new->header.domain))) {
+        is_text_vector_index = GRN_FALSE;
+      }
     }
-    if (type == GRN_VECTOR) {
+    if (is_text_vector_index) {
       grn_obj *tokenizer;
       grn_table_get_info(ctx, ii->lexicon, NULL, NULL, &tokenizer, NULL, NULL);
       if (tokenizer) {
@@ -6406,31 +6387,29 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         unsigned int i, max_n;
         unsigned int old_n = 0, new_n = 0;
         if (old) {
-          grn_obj_flags flags = 0;
           old_n = grn_vector_size(ctx, old);
-          if (old->header.type == GRN_VECTOR) {
-            flags |= GRN_OBJ_DO_SHALLOW_COPY;
-          }
-          GRN_OBJ_INIT(&old_elem, GRN_BULK, flags, old->header.domain);
+          GRN_OBJ_INIT(&old_elem, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, old->header.domain);
         }
         if (new) {
-          grn_obj_flags flags = 0;
           new_n = grn_vector_size(ctx, new);
-          if (old->header.type == GRN_VECTOR) {
-            flags |= GRN_OBJ_DO_SHALLOW_COPY;
-          }
-          GRN_OBJ_INIT(&new_elem, GRN_BULK, flags, new->header.domain);
+          GRN_OBJ_INIT(&new_elem, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, new->header.domain);
         }
         max_n = (old_n > new_n) ? old_n : new_n;
         for (i = 0; i < max_n; i++) {
           grn_rc rc;
           grn_obj *old_p = NULL, *new_p = NULL;
           if (i < old_n) {
-            grn_ii_column_update_get_element_value(ctx, old, i, &old_elem);
+            const char *value;
+            unsigned int size;
+            size = grn_vector_get_element(ctx, old, i, &value, NULL, NULL);
+            GRN_TEXT_SET_REF(&old_elem, value, size);
             old_p = &old_elem;
           }
           if (i < new_n) {
-            grn_ii_column_update_get_element_value(ctx, new, i, &new_elem);
+            const char *value;
+            unsigned int size;
+            size = grn_vector_get_element(ctx, new, i, &value, NULL, NULL);
+            GRN_TEXT_SET_REF(&new_elem, value, size);
             new_p = &new_elem;
           }
           rc = grn_ii_column_update(ctx, ii, rid, section + i, old_p, new_p, posting);
