@@ -6376,7 +6376,7 @@ grn_table_select_index_match(grn_ctx *ctx,
   optarg.vector_size = 1;
   optarg.proc = NULL;
   optarg.max_size = 0;
-  optarg.match_info.flags |= GRN_MATCH_INFO_GET_MIN_RECORD_ID;
+  optarg.match_info.flags = GRN_MATCH_INFO_GET_MIN_RECORD_ID;
   ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
   for (j = 0; j < n_indexes; j++, ip++, wp += 2) {
     uint32_t sid = (uint32_t) wp[0];
@@ -6408,8 +6408,6 @@ grn_table_select_index_match(grn_ctx *ctx,
       GRN_UINT32_VALUE_AT(&(si->scorer_args_expr_offsets), j);
     if (j < n_indexes - 1) {
       if (sid && ip[0] == ip[1]) { continue; }
-    } else {
-      ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
     }
     grn_obj_search(ctx, ip[0], si->query, res, si->logical_op, &optarg);
     if (optarg.weight_vector) {
@@ -6424,6 +6422,10 @@ grn_table_select_index_match(grn_ctx *ctx,
       minimum_min_id_is_set = GRN_TRUE;
       minimum_min_id = optarg.match_info.min;
     }
+  }
+  ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
+  if (!(optarg.match_info.flags & GRN_MATCH_INFO_ONLY_SKIP_TOKEN)) {
+    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
   }
   if ((si->logical_op == GRN_OP_AND) ||
       (si->logical_op == GRN_OP_OR && previous_n_hits == 0)) {

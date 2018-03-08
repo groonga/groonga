@@ -7827,6 +7827,7 @@ typedef struct {
   grn_id previous_min;
   grn_id current_min;
   grn_bool set_min_enable_for_and_query;
+  grn_bool only_skip_token;
 } grn_ii_select_data;
 
 static void
@@ -7841,6 +7842,7 @@ grn_ii_select_data_init(grn_ctx *ctx,
   data->previous_min = GRN_ID_NIL;
   data->current_min = GRN_ID_NIL;
   data->set_min_enable_for_and_query = GRN_FALSE;
+  data->only_skip_token = GRN_FALSE;
 
   if (!optarg) {
     return;
@@ -7898,6 +7900,10 @@ grn_ii_select_data_fin(grn_ctx *ctx,
     if (data->current_min > data->previous_min) {
       data->optarg->match_info->min = data->current_min;
     }
+  }
+
+  if (data->only_skip_token && data->optarg && data->optarg->match_info) {
+    data->optarg->match_info->flags |= GRN_MATCH_INFO_ONLY_SKIP_TOKEN;
   }
 }
 
@@ -8828,7 +8834,6 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
   int rep, orp, weight, max_interval = 0;
   token_info *ti, **tis = NULL, **tip, **tie;
   uint32_t n = 0, rid, sid, nrid, nsid;
-  grn_bool only_skip_token = GRN_FALSE;
   grn_obj *lexicon;
   grn_ii_select_data data;
 
@@ -8869,14 +8874,15 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
   }
   if (data.mode == GRN_OP_FUZZY) {
     if (token_info_build_fuzzy(ctx, lexicon, ii, string, string_len,
-                               tis, &n, &only_skip_token, data.previous_min,
+                               tis, &n, &(data.only_skip_token),
+                               data.previous_min,
                                data.mode, &(optarg->fuzzy)) ||
         !n) {
       goto exit;
     }
   } else {
     if (token_info_build(ctx, lexicon, ii, string, string_len,
-                         tis, &n, &only_skip_token, data.previous_min,
+                         tis, &n, &(data.only_skip_token), data.previous_min,
                          data.mode) ||
         !n) {
       goto exit;
@@ -9073,15 +9079,16 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
     if (token_info_skip(ctx, *tis, nrid, nsid)) { goto exit; }
   }
 exit :
+  if (!data.only_skip_token) {
+    grn_ii_resolve_sel_and(ctx, s, op);
+  }
+
   grn_ii_select_data_fin(ctx, &data);
 
   for (tip = tis; tip < tis + n; tip++) {
     if (*tip) { token_info_close(ctx, *tip); }
   }
   if (tis) { GRN_FREE(tis); }
-  if (!only_skip_token) {
-    grn_ii_resolve_sel_and(ctx, s, op);
-  }
   //  grn_hash_cursor_clear(r);
   bt_close(ctx, bt);
 #ifdef DEBUG
@@ -9299,9 +9306,10 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
       return ctx->rc;
     }
     GRN_LOG(ctx, GRN_LOG_INFO, "exact: %d", GRN_HASH_SIZE(s));
-    if (op == GRN_OP_OR) {
+    if (op == GRN_OP_OR || ctx->impl->force_match_escalation) {
       grn_id min = GRN_ID_NIL;
-      if ((int64_t)GRN_HASH_SIZE(s) <= ctx->impl->match_escalation_threshold) {
+      if ((int64_t)GRN_HASH_SIZE(s) <= ctx->impl->match_escalation_threshold ||
+          ctx->impl->force_match_escalation) {
         arg.mode = GRN_OP_UNSPLIT;
         if (arg.match_info) {
           if (arg.match_info->flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
@@ -9323,7 +9331,8 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
           }
         }
       }
-      if ((int64_t)GRN_HASH_SIZE(s) <= ctx->impl->match_escalation_threshold) {
+      if ((int64_t)GRN_HASH_SIZE(s) <= ctx->impl->match_escalation_threshold ||
+          ctx->impl->force_match_escalation) {
         arg.mode = GRN_OP_PARTIAL;
         if (arg.match_info) {
           if (arg.match_info->flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {

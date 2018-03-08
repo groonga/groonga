@@ -117,6 +117,7 @@ typedef struct {
   grn_raw_string cache;
   grn_raw_string match_escalation_threshold;
   grn_raw_string adjuster;
+  grn_raw_string match_escalation;
   grn_columns columns;
 
   /* for processing */
@@ -3031,7 +3032,8 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   grn_content_type output_type = ctx->impl->output.type;
   char cache_key[GRN_CACHE_MAX_KEY_SIZE];
   uint32_t cache_key_size;
-  long long int threshold, original_threshold = 0;
+  long long int original_match_escalation_threshold = 0;
+  grn_bool original_force_match_escalation = GRN_FALSE;
   grn_cache *cache_obj = grn_cache_current_get(ctx);
 
   if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
@@ -3059,6 +3061,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     data->filter.query_expander.length + 1 +
     data->filter.query_flags.length + 1 +
     data->adjuster.length + 1 +
+    data->match_escalation.length + 1 +
     sizeof(grn_content_type) +
     sizeof(int) * 2 +
     sizeof(grn_command_version) +
@@ -3170,6 +3173,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     PUT_CACHE_KEY(data->filter.query_expander);
     PUT_CACHE_KEY(data->filter.query_flags);
     PUT_CACHE_KEY(data->adjuster);
+    PUT_CACHE_KEY(data->match_escalation);
     grn_memcpy(cp, &output_type, sizeof(grn_content_type));
     cp += sizeof(grn_content_type);
     grn_memcpy(cp, &(data->offset), sizeof(int));
@@ -3193,15 +3197,31 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
       }
     }
   }
-  if (data->match_escalation_threshold.length) {
+
+  original_match_escalation_threshold =
+    grn_ctx_get_match_escalation_threshold(ctx);
+  original_force_match_escalation =
+    grn_ctx_get_force_match_escalation(ctx);
+
+  if (data->match_escalation_threshold.length > 0) {
     const char *end, *rest;
-    original_threshold = grn_ctx_get_match_escalation_threshold(ctx);
+    long long int threshold;
     end =
       data->match_escalation_threshold.value +
       data->match_escalation_threshold.length;
     threshold = grn_atoll(data->match_escalation_threshold.value, end, &rest);
     if (end == rest) {
       grn_ctx_set_match_escalation_threshold(ctx, threshold);
+    }
+  }
+  if (data->match_escalation.length > 0) {
+    if (GRN_RAW_STRING_EQUAL_CSTRING(data->match_escalation, "auto")) {
+      grn_ctx_set_force_match_escalation(ctx, GRN_FALSE);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(data->match_escalation, "yes")) {
+      grn_ctx_set_force_match_escalation(ctx, GRN_TRUE);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(data->match_escalation, "no")) {
+      grn_ctx_set_force_match_escalation(ctx, GRN_FALSE);
+      grn_ctx_set_match_escalation_threshold(ctx, -1);
     }
   }
 
@@ -3318,9 +3338,9 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   }
 
 exit :
-  if (data->match_escalation_threshold.length > 0) {
-    grn_ctx_set_match_escalation_threshold(ctx, original_threshold);
-  }
+  grn_ctx_set_match_escalation_threshold(ctx,
+                                         original_match_escalation_threshold);
+  grn_ctx_set_force_match_escalation(ctx, original_force_match_escalation);
 
   /* GRN_LOG(ctx, GRN_LOG_NONE, "%d", ctx->seqno); */
 
@@ -3775,6 +3795,10 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     grn_plugin_proc_get_var_string(ctx, user_data,
                                    "adjuster", -1,
                                    &(data.adjuster.length));
+  data.match_escalation.value =
+    grn_plugin_proc_get_var_string(ctx, user_data,
+                                   "match_escalation", -1,
+                                   &(data.match_escalation.length));
 
   if (!grn_select_data_fill_slices(ctx, user_data, &data)) {
     goto exit;
@@ -3844,7 +3868,7 @@ exit :
   return NULL;
 }
 
-#define N_VARS 27
+#define N_VARS 28
 #define DEFINE_VARS grn_expr_var vars[N_VARS]
 
 static void
@@ -3880,6 +3904,7 @@ init_vars(grn_ctx *ctx, grn_expr_var *vars)
   grn_plugin_expr_var_init(ctx, &(vars[24]), "sort_keys", -1);
   grn_plugin_expr_var_init(ctx, &(vars[25]), "drilldown_sort_keys", -1);
   grn_plugin_expr_var_init(ctx, &(vars[26]), "drilldown_adjuster", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[27]), "match_escalation", -1);
 }
 
 void

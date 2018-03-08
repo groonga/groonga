@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -212,6 +212,7 @@ struct _grn_ctx_impl {
 
   /* match escalation portion */
   int64_t match_escalation_threshold;
+  grn_bool force_match_escalation;
 
   /* lifetime portion */
   grn_proc_func *finalizer;

@@ -1,0 +1,27 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos title COLUMN_SCALAR ShortText
+column_create Memos content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms title_index COLUMN_INDEX|WITH_POSITION Memos title
+column_create Terms content_index COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"title": "Groonga1", "content": "Groonga is fast"},
+{"title": "Groonga2", "content": "Groonga is the fastest"},
+{"title": "Groonga3", "content": "Groonga is faster"},
+{"title": "Groonga4", "content": "Groonga is not slow"}
+]
+
+#$GRN_QUERY_LOG_SHOW_CONDITION=yes
+#@collect-query-log true
+select Memos \
+  --match_columns content,title \
+  --query 'fas' \
+  --filter '(true || true)' \
+  --match_escalation yes \
+  --output_columns '*,_score'
+#@collect-query-log false

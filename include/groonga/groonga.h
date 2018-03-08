@@ -269,6 +269,8 @@ GRN_API grn_command_version grn_ctx_get_command_version(grn_ctx *ctx);
 GRN_API grn_rc grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version);
 GRN_API long long int grn_ctx_get_match_escalation_threshold(grn_ctx *ctx);
 GRN_API grn_rc grn_ctx_set_match_escalation_threshold(grn_ctx *ctx, long long int threshold);
+GRN_API grn_bool grn_ctx_get_force_match_escalation(grn_ctx *ctx);
+GRN_API grn_rc grn_ctx_set_force_match_escalation(grn_ctx *ctx, grn_bool force);
 GRN_API long long int grn_get_default_match_escalation_threshold(void);
 GRN_API grn_rc grn_set_default_match_escalation_threshold(long long int threshold);
 
@@ -787,6 +789,7 @@ struct _grn_fuzzy_search_optarg {
 };
 
 #define GRN_MATCH_INFO_GET_MIN_RECORD_ID                           (0x01)
+#define GRN_MATCH_INFO_ONLY_SKIP_TOKEN                             (0x02)
 
 typedef struct _grn_match_info grn_match_info;
 

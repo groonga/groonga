@@ -1,0 +1,71 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms title_index COLUMN_INDEX|WITH_POSITION Memos title
+[[0,0.0,0.0],true]
+column_create Terms content_index COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"title": "Groonga1", "content": "Groonga is fast"},
+{"title": "Groonga2", "content": "Groonga is the fastest"},
+{"title": "Groonga3", "content": "Groonga is faster"},
+{"title": "Groonga4", "content": "Groonga is not slow"}
+]
+[[0,0.0,0.0],4]
+select Memos   --match_columns content,title   --query 'fas'   --filter '(true || true)'   --match_escalation yes   --output_columns '*,_score'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "content",
+          "Text"
+        ],
+        [
+          "title",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "Groonga is fast",
+        "Groonga1",
+        4
+      ],
+      [
+        "Groonga is the fastest",
+        "Groonga2",
+        4
+      ],
+      [
+        "Groonga is faster",
+        "Groonga3",
+        4
+      ]
+    ]
+  ]
+]
+#>select --filter "(true || true)" --match_columns "content,title" --match_escalation "yes" --output_columns "*,_score" --query "fas" --table "Memos"
+#:000000000000000 filter(4): true
+#:000000000000000 filter(4): true
+#:000000000000000 filter(3): (match columns) match "fas"
+#:000000000000000 select(3)
+#:000000000000000 output(3)
+#<000000000000000 rc=0

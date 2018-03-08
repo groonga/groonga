@@ -288,6 +288,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
     ctx->impl->match_escalation_threshold =
       grn_get_default_match_escalation_threshold();
   }
+  ctx->impl->force_match_escalation = GRN_FALSE;
 
   ctx->impl->finalizer = NULL;
 
@@ -903,6 +904,27 @@ grn_ctx_set_match_escalation_threshold(grn_ctx *ctx, long long int threshold)
 {
   ctx->impl->match_escalation_threshold = threshold;
   return GRN_SUCCESS;
+}
+
+grn_bool
+grn_ctx_get_force_match_escalation(grn_ctx *ctx)
+{
+  if (ctx->impl) {
+    return ctx->impl->force_match_escalation;
+  } else {
+    return GRN_FALSE;
+  }
+}
+
+grn_rc
+grn_ctx_set_force_match_escalation(grn_ctx *ctx, grn_bool force)
+{
+  if (ctx->impl) {
+    ctx->impl->force_match_escalation = force;
+    return GRN_SUCCESS;
+  } else {
+    return GRN_INVALID_ARGUMENT;
+  }
 }
 
 grn_content_type
