@@ -144,6 +144,7 @@ CMakeFiles
 /packages/rpm/*/*.spec
 /packages/yum/groonga.repo
 /packages/yum/RPM-GPG-KEY-groonga
+/packages/yum/RPM-GPG-KEY-groonga-RSA4096
 /packages/yum/repositories/
 /packages/yum/tmp/
 /packages/yum/.vagrant/
