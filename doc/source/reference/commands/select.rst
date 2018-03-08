@@ -50,6 +50,7 @@ optional::
          [drilldown_filter=null]
          [sort_keys=null]
          [drilldown_sort_keys=null]
+         [match_escalation=auto]
 
 This command has the following named parameters for dynamic columns:
 
@@ -686,6 +687,8 @@ Advanced search parameters
 ``match_escalation_threshold``
 """"""""""""""""""""""""""""""
 
+.. versionadded:: 8.0.1
+
 Specifies threshold to determine whether search storategy
 escalation is used or not. The threshold is compared against the
 number of matched records. If the number of matched records is equal
@@ -726,10 +729,61 @@ is matched against ``groo`` by unsplit search.
 
 The second ``select`` command also searches records that contain a
 word ``groo`` in ``content`` column value from ``Entries`` table. And
-it also doesn't found matched records. In this case, the search
+it also doesn't find matched records. In this case, the search
 storategy escalation is not used because the number of matched
 records (0) is larger than ``match_escalation_threshold`` (-1). So no
 more searches aren't executed. And no records are matched.
+
+.. _select-match-escalation:
+
+``match_escalation``
+""""""""""""""""""""
+
+Specifies how to use match escalation. See also
+:ref:`select-match-escalation` and :doc:`/spec/search` about the match
+escalation.
+
+Here are available values:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Value
+     - Description
+   * - ``auto``
+     - Groonga uses :ref:`select-match-escalation-threshold` to
+       determine whether match escalation is used or not.
+
+       This is the default.
+   * - ``yes``
+     - Groonga always uses match escalation.
+   * - ``no``
+     - Groonga never use match escalation.
+
+``--match_escalation yes`` is stronger than
+``--match_escalation_threshold 9999...999``. ``--filter 'true &&
+column @ "query"`` with ``--match_escalation yes`` uses match
+escalation. ``--filter 'true && column @ "query"`` with
+``--match_escalation_threshold 9999...999`` doesn't use match
+escalation.
+
+Here is a simple ``match_escalation`` usage example. The first
+``select`` doesn't have ``match_escalation`` parameter. The
+second ``select`` has ``match_escalation`` parameter.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/match_escalation.log
+.. select Entries --filter 'true && content @ "groo"'
+.. select Entries --filter 'true && content @ "groo"' --match_escalation yes
+
+The first ``select`` command searches records that contain a word
+``groo`` in ``content`` column value from ``Entries`` table. But no
+records are matched because the ``TokenBigram`` tokenizer tokenizes
+``groonga`` to ``groonga`` not ``gr|ro|oo|on|ng|ga``.
+
+The second ``select`` command also searches records that contain a
+word ``groo`` in ``content`` column value from ``Entries`` table. And
+it uses match escalation. So it can find matched records.
 
 .. _select-query-expansion:
 
