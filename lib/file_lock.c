@@ -219,6 +219,7 @@ grn_file_lock_write(grn_ctx *ctx, grn_file_lock *file_lock,
 #endif
   while (len > 0) {
 #ifdef WIN32
+    DWORD dwLen;
     if (!WriteFile(file_lock->handle, buf, len, &dwLen, NULL)) {
       return GRN_FALSE;
     }
