@@ -4,6 +4,7 @@ ARCHITECTURES = i386 x86_64
 BASE_URL_PREFIX = https://packages.groonga.org
 HAVE_DEVELOPMENT_BRANCH = no
 CENTOS_VERSIONS = 6 7
+SPEC_DIR = $(builddir)/../rpm/centos
 
 release: download build sign-packages update-repository upload
 
@@ -88,6 +89,7 @@ $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz:
 
 specs: tmp/centos/$(PACKAGE).spec
 
-tmp/centos/$(PACKAGE).spec: $(builddir)/../rpm/centos/$(PACKAGE).spec
+tmp/centos/$(PACKAGE).spec: $(SPEC_DIR)/$(PACKAGE).spec.in
 	mkdir -p tmp/centos
-	cp $(builddir)/../rpm/centos/$(PACKAGE).spec tmp/centos/
+	cd $(SPEC_DIR) && $(MAKE)
+	cp $(SPEC_DIR)/$(PACKAGE).spec tmp/centos/
