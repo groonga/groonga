@@ -440,9 +440,12 @@ Corresponds to :ref:`select-columns-name-stage` in :doc:`select`. See
 
 This is a required parameter.
 
-``initial`` stage and ``filtered`` stage are valid. Because there are no processes after
-``output`` stages.
-But ``filtered`` stage is valid in groonga since version 8.0.1.
+``initial`` stage and ``filtered`` stage are valid. Because there are
+no processes after ``output`` stages.
+
+.. versionadded:: 8.0.1
+
+   ``filtered`` stage is valid since 8.0.1.
 
 Here is an example that creates ``is_popular`` column at ``initial``
 stage. You can use ``is_popular`` in all parameters such as ``filter``:
