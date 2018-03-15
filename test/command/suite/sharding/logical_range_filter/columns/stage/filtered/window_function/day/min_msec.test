@@ -14,10 +14,10 @@ column_create Logs_20170316 price COLUMN_SCALAR UInt32
 
 load --table Logs_20170315
 [
-{"timestamp": "2017/03/15 07:00:00", "price": 1000},
-{"timestamp": "2017/03/15 07:01:00", "price":  900},
-{"timestamp": "2017/03/15 07:02:00", "price":  300},
-{"timestamp": "2017/03/15 07:03:00", "price":  200},
+{"timestamp": "2017/03/15 07:01:00.000", "price": 1000},
+{"timestamp": "2017/03/15 07:01:00.001", "price":  900},
+{"timestamp": "2017/03/15 07:01:00.002", "price":  300},
+{"timestamp": "2017/03/15 07:01:00.003", "price":  200},
 {"timestamp": "2017/03/15 07:10:00", "price":  530},
 {"timestamp": "2017/03/15 07:11:00", "price":  520},
 {"timestamp": "2017/03/15 07:12:00", "price":  110},
@@ -40,7 +40,7 @@ column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
 #@add-important-log-levels debug
 log_level --level debug
 logical_range_filter Logs \
-  --min '2017/03/15 07:01:00.000' \
+  --min '2017/03/15 07:01:00.001' \
   --min_border include \
   --shard_key timestamp \
   --columns[five_minute].stage filtered \
