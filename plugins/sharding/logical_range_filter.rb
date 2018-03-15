@@ -420,7 +420,7 @@ module Groonga
           format = "%04d/%02d/%02d %02d:%02d:%02d"
           format_values = [@year, @month, @day, @hour, @minute, @second]
           unless @microsecond.zero?
-            format << "%06d"
+            format << ".%06d"
             format_values << @microsecond
           end
           format % format_values
