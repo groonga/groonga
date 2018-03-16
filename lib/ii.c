@@ -241,7 +241,6 @@ segment_get(grn_ctx *ctx, grn_ii *ii)
     ii->header->bgqtail = (ii->header->bgqtail + 1) & (GRN_II_BGQSIZE - 1);
   } else {
     pseg = ii->header->pnext;
-#ifndef CUT_OFF_COMPATIBILITY
     if (!pseg) {
       int i;
       uint32_t pmax = 0;
@@ -263,7 +262,6 @@ segment_get(grn_ctx *ctx, grn_ii *ii)
       GRN_FREE(used);
       ii->header->pnext = pmax + 1;
     } else
-#endif /* CUT_OFF_COMPATIBILITY */
     if (ii->header->pnext < ii->seg->header->max_segment) {
       ii->header->pnext++;
     }
@@ -1760,7 +1758,6 @@ grn_p_enc(grn_ctx *ctx, uint32_t *data, uint32_t data_size, uint8_t **res)
 }
 
 #define USE_P_ENC (1<<0) /* Use PForDelta */
-#define CUT_OFF   (1<<1) /* Deprecated */
 #define ODD       (1<<2) /* Variable size data */
 
 typedef struct {
@@ -2053,20 +2050,17 @@ int
 grn_p_decv(grn_ctx *ctx, uint8_t *data, uint32_t data_size, datavec *dv, uint32_t dvlen)
 {
   size_t size;
-  uint32_t df, l, i, *rp, nreq;
+  uint32_t df, l, i, *rp;
   uint8_t *dp = data, *dpe = data + data_size;
   if (!data_size) {
     dv[0].data_size = 0;
     return 0;
   }
-  for (nreq = 0; nreq < dvlen; nreq++) {
-    if (dv[nreq].flags & CUT_OFF) { break; }
-  }
-  if (!nreq) { return 0; }
+  if (!dvlen) { return 0; }
   GRN_B_DEC_CHECK(df, dp, dpe);
   if ((df & 1)) {
     df >>= 1;
-    size = nreq == dvlen ? data_size : df * nreq;
+    size = data_size;
     if (dv[dvlen].data < dv[0].data + size) {
       if (dv[0].data) { GRN_FREE(dv[0].data); }
       if (!(rp = GRN_MALLOC(size * sizeof(uint32_t)))) { return 0; }
@@ -2075,7 +2069,6 @@ grn_p_decv(grn_ctx *ctx, uint8_t *data, uint32_t data_size, datavec *dv, uint32_
       rp = dv[0].data;
     }
     for (l = 0; l < dvlen; l++) {
-      if (dv[l].flags & CUT_OFF) { break; }
       dv[l].data = rp;
       if (l < dvlen - 1) {
         for (i = 0; i < df; i++, rp++) { GRN_B_DEC_CHECK(*rp, dp, dpe); }
@@ -2092,7 +2085,7 @@ grn_p_decv(grn_ctx *ctx, uint8_t *data, uint32_t data_size, datavec *dv, uint32_
     } else {
       rest = 0;
     }
-    size = df * nreq + (nreq == dvlen ? rest : 0);
+    size = df * dvlen + rest;
     if (dv[dvlen].data < dv[0].data + size) {
       if (dv[0].data) { GRN_FREE(dv[0].data); }
       if (!(rp = GRN_MALLOC(size * sizeof(uint32_t)))) { return 0; }
@@ -2101,7 +2094,6 @@ grn_p_decv(grn_ctx *ctx, uint8_t *data, uint32_t data_size, datavec *dv, uint32_
       rp = dv[0].data;
     }
     for (l = 0; l < dvlen; l++) {
-      if (dv[l].flags & CUT_OFF) { break; }
       dv[l].data = rp;
       dv[l].data_size = n = (l < dvlen - 1) ? df : df + rest;
       if (usep & (1 << l)) {
