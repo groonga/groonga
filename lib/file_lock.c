@@ -24,8 +24,10 @@
 #ifdef WIN32
 # include <io.h>
 # include <share.h>
+# define TESTSTRLEN 11 // see http://bit.ly/2oRb3Ok
 #else /* WIN32 */
 # include <sys/types.h>
+# include <sys/file.h>
 # include <fcntl.h>
 #endif /* WIN32 */
 
@@ -69,7 +71,8 @@ grn_file_lock_acquire(grn_ctx *ctx,
                                    FILE_ATTRIBUTE_NORMAL,
                                    NULL);
 #else /* WIN32 */
-    file_lock->fd = open(file_lock->path, O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
+    file_lock->fd = open(file_lock->path,
+        O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
 #endif
     if (!GRN_FILE_LOCK_IS_INVALID(file_lock)) {
       break;
@@ -114,4 +117,128 @@ grn_file_lock_fin(grn_ctx *ctx, grn_file_lock *file_lock)
   if (!GRN_FILE_LOCK_IS_INVALID(file_lock)) {
     grn_file_lock_release(ctx, file_lock);
   }
+}
+
+grn_bool
+grn_file_lock_exist(grn_ctx *ctx, grn_file_lock *file_lock)
+{
+#ifdef WIN32
+  return GetFileAttributes(file_lock->path) != INVALID_FILE_ATTRIBUTES;
+#else
+  return access(file_lock->path, F_OK) == 0;
+#endif
+}
+
+grn_bool
+grn_file_lock_takeover(grn_ctx *ctx, grn_file_lock *file_lock)
+{
+#ifdef WIN32
+  file_lock->handle = OpenFile(file_lock->path, NULL, OF_READWRITE);
+#else
+  file_lock->fd = open(file_lock->path, O_RDWR);
+#endif
+  if (GRN_FILE_LOCK_IS_INVALID(file_lock)) return GRN_FALSE;
+#ifdef WIN32
+  if (!LockFileEx(file_lock->handle,
+      LOCKFILE_EXCLUSIVE_LOCK|LOCKFILE_FAIL_IMMEDIATELY,
+      0, TESTSTRLEN, 0, 0)) {
+#else
+  if (flock(file_lock->fd, LOCK_EX|LOCK_NB) != 0) {
+#endif
+    grn_file_lock_abandon(ctx, file_lock);
+    return GRN_FALSE;
+  }
+  return GRN_TRUE;
+}
+
+void
+grn_file_lock_abandon(grn_ctx *ctx, grn_file_lock *file_lock)
+{
+  if (GRN_FILE_LOCK_IS_INVALID(file_lock)) {
+    return;
+  }
+#ifdef WIN32
+  CloseHandle(file_lock->handle);
+  file_lock->handle = INVALID_HANDLE_VALUE;
+#else /* WIN32 */
+  close(file_lock->fd);
+  file_lock->fd = -1;
+#endif /* WIN32 */
+  grn_strcpy(file_lock->path, PATH_MAX, "");
+}
+
+void
+grn_file_lock_exclusive(grn_ctx *ctx, grn_file_lock *file_lock)
+{
+#ifdef WIN32
+  LockFileEx(file_lock->handle,
+      LOCKFILE_EXCLUSIVE_LOCK, 0, TESTSTRLEN, 0, 0);
+#else
+  flock(file_lock->fd, LOCK_EX);
+#endif
+}
+
+grn_bool
+grn_file_lock_read(grn_ctx *ctx, grn_file_lock *file_lock,
+    void *buf, size_t len)
+{
+#ifdef WIN32
+  SetFilePointer(file_lock->handle, 0, NULL, FILE_BEGIN);
+#else
+  lseek(file_lock->fd, 0, SEEK_SET);
+#endif
+  while (len > 0) {
+#ifdef WIN32
+    DWORD dwLen;
+    if (!ReadFile(file_lock->handle, buf, len, &dwLen, NULL)) {
+      return GRN_FALSE;
+    }
+    ssize_t ret = dwLen;
+#else
+    ssize_t ret = read(file_lock->fd, buf, len);
+    if (ret == EAGAIN) continue;
+#endif
+    if (ret > 0) {
+      len -= ret;
+      buf = (char*)buf + ret;
+    } else {
+      return GRN_FALSE;
+    }
+  }
+  return GRN_TRUE;
+}
+
+grn_bool
+grn_file_lock_write(grn_ctx *ctx, grn_file_lock *file_lock,
+    void *buf, size_t len)
+{
+#ifdef WIN32
+  SetFilePointer(file_lock->handle, 0, NULL, FILE_BEGIN);
+#else
+  lseek(file_lock->fd, 0, SEEK_SET);
+#endif
+  while (len > 0) {
+#ifdef WIN32
+    DWORD dwLen;
+    if (!WriteFile(file_lock->handle, buf, len, &dwLen, NULL)) {
+      return GRN_FALSE;
+    }
+    ssize_t ret = dwLen;
+#else
+    ssize_t ret = write(file_lock->fd, buf, len);
+    if (ret == EAGAIN) continue;
+#endif
+    if (ret > 0) {
+      len -= ret;
+      buf = (char*)buf + ret;
+    } else {
+      return GRN_FALSE;
+    }
+  }
+#ifdef WIN32
+  FlushFileBuffers(file_lock->handle);
+#else
+  fsync(file_lock->fd);
+#endif
+  return GRN_TRUE;
 }

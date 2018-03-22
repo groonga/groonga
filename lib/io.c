@@ -1376,10 +1376,7 @@ grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
   _ncalls++;
   if (!io) { return GRN_INVALID_ARGUMENT; }
   for (count = 0;; count++) {
-    uint32_t lock;
-    GRN_ATOMIC_ADD_EX(io->lock, 1, lock);
-    if (lock) {
-      GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
+    if (!grn_gen_lock(ctx, io, count)) {
       if (count == count_log_border) {
         GRN_LOG(ctx, GRN_LOG_NOTICE,
                 "io(%s) collisions(%d/%d): lock failed %d times",
@@ -1417,15 +1414,16 @@ void
 grn_io_unlock(grn_io *io)
 {
   if (io) {
-    uint32_t lock;
-    GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
+    grn_gen_unlock(io);
   }
 }
 
 void
 grn_io_clear_lock(grn_io *io)
 {
-  if (io) { *io->lock = 0; }
+  if (io) {
+    *io->lock = 0;
+  }
 }
 
 uint32_t

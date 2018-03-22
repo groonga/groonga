@@ -110,4 +110,6 @@ libgroonga_c_sources =				\
 	window_function.c			\
 	grn_window_function.h			\
 	window_functions.c			\
-	grn_window_functions.h
+	grn_window_functions.h \
+  gen.c \
+  grn_gen.h

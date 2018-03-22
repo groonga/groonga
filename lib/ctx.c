@@ -35,6 +35,7 @@
 #include "grn_logger.h"
 #include "grn_cache.h"
 #include "grn_expr.h"
+#include "grn_gen.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
@@ -1567,6 +1568,7 @@ grn_ctx_use(grn_ctx *ctx, grn_obj *db)
         grn_obj_get_info(ctx, db, GRN_INFO_ENCODING, &buf);
         ctx->encoding = *(grn_encoding *)GRN_BULK_HEAD(&buf);
         grn_obj_close(ctx, &buf);
+        ctx->rc = grn_gen_init(ctx, (grn_db*)db);
       }
     }
   }
