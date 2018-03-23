@@ -7,6 +7,83 @@
 News
 ====
 
+.. _release-8-0-1:
+
+Release 8.0.1 - 2018-03-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/log`] Added showing condition in each ``filter``
+  to query log.
+  It's disabled by default. You need to set
+  ``GRN_QUERY_LOG_SHOW_CONDITION=yes`` environment variable to
+  enable it.
+
+* Use the same directory as .dll/.exe for .pdb
+
+* [:doc:`/reference/commands/logical_count`] Supported ``filtered``
+  stage dynamic columns.
+
+* [:doc:`/reference/commands/logical_count`]
+  [:ref:`logical-count-post-filter`] Added a new filter timing.
+  It's executed after ``filtered`` stage generated columns are generated.
+
+* [:doc:`/reference/commands/logical_select`]
+  [:ref:`logical-select-post-filter`] Added a new filter timing.
+  It's executed after ``filtered`` stage generated columns are generated.
+
+* Supported LZ4/Zstd/zlib compression for vector data.
+
+* Supported alias to accessor such as ``_key``.
+
+* [:doc:`/reference/commands/logical_range-filter`] optimize applying
+  window function for large result set.
+  If result set is large, applying window function is slow.
+  If enough matched records exist near head windows, we don't need to
+  apply window function to rest windows.
+
+  TODO: Disable this optimization if result set is small. Because this
+  optimization may have non-negligible overhead for small result
+  set. (It's not confirmed yet.)
+
+* [:doc:`/reference/commands/select`] Added match_escalation parameter.
+  You can force to enable match escalation by ``--match_escalation yes``.
+  It's stronger than ``--match_escalation_threshold 99999....999``.
+  Because ``--match_escalation yes`` also works with
+  ``SOME_CONDITIONS && column @ 'query'``.
+  ``--match_escalation_threshold`` isn't used the case.
+
+  The default is ``--match_escalation auto``. It doesn't change the
+  current behavior.
+
+  You can disable match escalation by ``--match_escalation no``.
+  It's the same as ``--match_escalation_threshold -1``.
+
+Fixes
+^^^^^
+
+* Fixed memory leak that prefix query isn't match any token.
+  [GitHub#820][Patch by Naoya Murakami]
+
+* Fixed a bug that returning cache of different databases, when
+  Groonga of the same process had multiple databases.
+
+* Fixed a bug that wrong index constructed bug.
+  It's caused only when vector column is a source and ``WITH_SECTION``
+  isn't specified.
+
+* Fixed a bug that constant value is overflow/underflow-ed in
+  >,>=,<,<=,==,!=.
+  If you set overflow/underflow constant value in >,>=,<,<=,==,!=,
+  query is not return recoards.
+
+Thanks
+^^^^^^
+
+* Naoya Murakami
+
 .. _release-8-0-0:
 
 Release 8.0.0 - 2018-02-09
