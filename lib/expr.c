@@ -1427,6 +1427,21 @@ grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i,
   GRN_API_RETURN(res);
 }
 
+grn_obj *
+grn_expr_append_const_bool(grn_ctx *ctx, grn_obj *expr, grn_bool value,
+                           grn_operator op, int nargs)
+{
+  grn_obj *res = NULL;
+  GRN_API_ENTER;
+  if ((res = grn_expr_alloc_const(ctx, expr))) {
+    GRN_BOOL_INIT(res, 0);
+    GRN_BOOL_SET(ctx, res, value);
+    res->header.impl_flags |= GRN_OBJ_EXPRCONST;
+  }
+  grn_expr_append_obj(ctx, expr, res, op, nargs); /* constant */
+  GRN_API_RETURN(res);
+}
+
 grn_rc
 grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs)
 {
