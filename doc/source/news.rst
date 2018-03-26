@@ -15,45 +15,42 @@ Release 8.0.1 - 2018-03-29
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`/reference/log`] Added showing condition in each ``filter``
-  to query log.
-  It's disabled by default. You need to set
-  ``GRN_QUERY_LOG_SHOW_CONDITION=yes`` environment variable to
-  enable it.
+* [:doc:`/reference/log`] Show ``filter`` conditions in query log.
+  It's disabled by default. To enable it, you need to set an environment
+  variable ``GRN_QUERY_LOG_SHOW_CONDITION=yes``.
 
-* Use the same directory as .dll/.exe for .pdb
+* Install ``*.pdb`` into the directory where ``*.dll`` and ``*.exe``
+  are installed.
 
-* [:doc:`/reference/commands/logical_count`] Supported ``filtered``
+* [:doc:`/reference/commands/logical_count`] Support ``filtered``
   stage dynamic columns.
 
 * [:doc:`/reference/commands/logical_count`]
   [:ref:`logical-count-post-filter`] Added a new filter timing.
-  It's executed after ``filtered`` stage generated columns are generated.
+  It's executed after ``filtered`` stage columns are generated.
 
 * [:doc:`/reference/commands/logical_select`]
   [:ref:`logical-select-post-filter`] Added a new filter timing.
   It's executed after ``filtered`` stage generated columns are generated.
 
-* Supported LZ4/Zstd/zlib compression for vector data.
+* Support LZ4/Zstd/zlib compression for vector data.
 
-* Supported alias to accessor such as ``_key``.
+* Support alias to accessor such as ``_key``.
 
-* [:doc:`/reference/commands/logical_range-filter`] optimize applying
+* [:doc:`/reference/commands/logical_range-filter`] Optimize
   window function for large result set.
-  If result set is large, applying window function is slow.
-  If enough matched records exist near head windows, we don't need to
-  apply window function to rest windows.
+  If we find enough matched records, we don't apply window function
+  to the remaining windows.
 
-  TODO: Disable this optimization if result set is small. Because this
-  optimization may have non-negligible overhead for small result
-  set. (It's not confirmed yet.)
+  TODO: Disable this optimization for small result set if its overhead
+  is not negligible. The overhead is not evaluated yet.
 
-* [:doc:`/reference/commands/select`] Added match_escalation parameter.
+* [:doc:`/reference/commands/select`] Added ``match_escalation`` parameter.
   You can force to enable match escalation by ``--match_escalation yes``.
-  It's stronger than ``--match_escalation_threshold 99999....999``.
-  Because ``--match_escalation yes`` also works with
+  It's stronger than ``--match_escalation_threshold 99999....999``
+  because ``--match_escalation yes`` also works with
   ``SOME_CONDITIONS && column @ 'query'``.
-  ``--match_escalation_threshold`` isn't used the case.
+  ``--match_escalation_threshold`` isn't used in this case.
 
   The default is ``--match_escalation auto``. It doesn't change the
   current behavior.
@@ -64,20 +61,18 @@ Improvements
 Fixes
 ^^^^^
 
-* Fixed memory leak that prefix query isn't match any token.
+* Fixed memory leak that occurs when a prefix query doesn't match any token.
   [GitHub#820][Patch by Naoya Murakami]
 
-* Fixed a bug that returning cache of different databases, when
-  Groonga of the same process had multiple databases.
+* Fixed a bug that a cache for different databases is used when
+  multiple databases are opened in the same process.
 
-* Fixed a bug that wrong index constructed bug.
-  It's caused only when vector column is a source and ``WITH_SECTION``
-  isn't specified.
+* Fixed a bug that a wrong index is constructed.
+  This occurs only when the source of a column is a vector column and
+  ``WITH_SECTION`` isn't specified.
 
-* Fixed a bug that constant value is overflow/underflow-ed in
-  >,>=,<,<=,==,!=.
-  If you set overflow/underflow constant value in >,>=,<,<=,==,!=,
-  query is not return recoards.
+* Fixed a bug that a constant value can overflow or underflow in
+  comparison (>,>=,<,<=,==,!=).
 
 Thanks
 ^^^^^^
