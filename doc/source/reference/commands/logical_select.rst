@@ -487,7 +487,7 @@ Here is an example:
 ..   --shard_key created_at \
 ..   --filter "n_likes <= 5"
 
-.. _logical-select-advanced-search-parameters:
+.. _logical-select-post-filter:
 
 ``post_filter``
 """""""""""""""
@@ -514,6 +514,8 @@ entries have ``system`` or ``use`` words:
 ..   --filter 'content @ "system" || content @ "use"' \
 ..   --post_filter 'n_likes_sum_per_tag > 10' \
 ..   --output_columns _key,n_likes,n_likes_sum_per_tag
+
+.. _logical-select-advanced-search-parameters:
 
 Advanced search parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

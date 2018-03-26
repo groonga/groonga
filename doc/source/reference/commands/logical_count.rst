@@ -392,7 +392,7 @@ Here is an example:
 ..   --shard_key created_at \
 ..   --filter "n_likes <= 5"
 
-.. _logical-count-dynamic-column-related-parameters:
+.. _logical-count-post-filter:
 
 ``post_filter``
 """""""""""""""
@@ -418,6 +418,8 @@ entries have ``system`` or ``use`` words:
 ..   --columns[n_likes_sum_per_tag].window.group_keys 'tag' \
 ..   --filter 'content @ "system" || content @ "use"' \
 ..   --post_filter 'n_likes_sum_per_tag > 10' \
+
+.. _logical-count-dynamic-column-related-parameters:
 
 Dynamic column related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
