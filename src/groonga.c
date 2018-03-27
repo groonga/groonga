@@ -2514,7 +2514,7 @@ h_server(char *path)
 static grn_thread_func_result CALLBACK
 g_worker(void *arg)
 {
-  MUTEX_LOCK_ENSURE(NULL, q_mutex);
+  MUTEX_LOCK_ENSURE(&grn_gctx, q_mutex);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%u/%u)",
           n_floating_threads, n_running_threads);
   while (n_running_threads <= max_n_floating_threads &&
