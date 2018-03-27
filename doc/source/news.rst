@@ -31,7 +31,7 @@ Improvements
 
 * [:doc:`/reference/commands/logical_select`]
   [:ref:`logical-select-post-filter`] Added a new filter timing.
-  It's executed after ``filtered`` stage generated columns are generated.
+  It's executed after ``filtered`` stage columns are generated.
 
 * Support LZ4/Zstd/zlib compression for vector data.
 
