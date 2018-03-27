@@ -58,6 +58,8 @@ Improvements
   You can disable match escalation by ``--match_escalation no``.
   It's the same as ``--match_escalation_threshold -1``.
 
+* [httpd] Updated bundled nginx to 1.13.10.
+
 Fixes
 ^^^^^
 
