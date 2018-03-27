@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2422,7 +2422,7 @@ h_worker(void *arg)
   grn_ctx_use(ctx, (grn_obj *)arg);
   grn_ctx_recv_handler_set(ctx, h_output, &hc);
   MUTEX_LOCK_ENSURE(ctx, q_mutex);
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)",
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%u/%u)",
           n_floating_threads, n_running_threads);
   while (n_running_threads <= max_n_floating_threads &&
          grn_gctx.stat != GRN_CTX_QUIT) {
@@ -2452,7 +2452,7 @@ h_worker(void *arg)
   }
 exit :
   n_running_threads--;
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)",
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%u/%u)",
           n_floating_threads, n_running_threads);
   if (grn_gctx.stat == GRN_CTX_QUIT && running_event_loop) {
     break_accept_event_loop(ctx);
@@ -2515,7 +2515,7 @@ static grn_thread_func_result CALLBACK
 g_worker(void *arg)
 {
   MUTEX_LOCK_ENSURE(NULL, q_mutex);
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%d/%d)",
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%u/%u)",
           n_floating_threads, n_running_threads);
   while (n_running_threads <= max_n_floating_threads &&
          grn_gctx.stat != GRN_CTX_QUIT) {
@@ -2579,7 +2579,7 @@ g_worker(void *arg)
   };
 exit :
   n_running_threads--;
-  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%d/%d)",
+  GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%u/%u)",
           n_floating_threads, n_running_threads);
   MUTEX_UNLOCK(q_mutex);
   return GRN_THREAD_FUNC_RETURN_VALUE;
