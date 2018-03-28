@@ -365,6 +365,105 @@ grn_ctx_impl_set_current_error_message(grn_ctx *ctx)
 }
 
 static grn_rc
+grn_ctx_impl_fin(grn_ctx *ctx)
+{
+  grn_rc rc;
+
+  grn_ctx_impl_clear_n_same_error_messagges(ctx);
+  if (ctx->impl->finalizer) {
+    ctx->impl->finalizer(ctx, 0, NULL, &(ctx->user_data));
+  }
+  {
+    grn_obj *stack;
+    grn_obj *spaces;
+    unsigned int i, n_spaces;
+
+    stack = &(ctx->impl->temporary_open_spaces.stack);
+    spaces = (grn_obj *)GRN_BULK_HEAD(stack);
+    n_spaces = GRN_BULK_VSIZE(stack) / sizeof(grn_obj);
+    for (i = 0; i < n_spaces; i++) {
+      grn_obj *space = spaces + (n_spaces - i - 1);
+      GRN_OBJ_FIN(ctx, space);
+    }
+    GRN_OBJ_FIN(ctx, stack);
+  }
+  grn_ctx_impl_mrb_fin(ctx);
+  grn_ctx_loader_clear(ctx);
+  if (ctx->impl->parser) {
+    grn_expr_parser_close(ctx);
+  }
+  GRN_OBJ_FIN(ctx, &ctx->impl->current_request_id);
+  if (ctx->impl->values) {
+#ifndef USE_MEMORY_DEBUG
+    grn_db_obj *o;
+    GRN_ARRAY_EACH(ctx, ctx->impl->values, 0, 0, id, &o, {
+      grn_obj_close(ctx, *((grn_obj **)o));
+    });
+#endif
+    grn_array_close(ctx, ctx->impl->values);
+  }
+  if (ctx->impl->temporary_columns) {
+#ifndef USE_MEMORY_DEBUG
+    grn_obj *value;
+    GRN_PAT_EACH(ctx, ctx->impl->temporary_columns, id, NULL, NULL, &value, {
+      grn_obj_close(ctx, *((grn_obj **)value));
+    });
+#endif
+    grn_pat_close(ctx, ctx->impl->temporary_columns);
+  }
+  if (ctx->impl->ios) {
+    grn_hash_close(ctx, ctx->impl->ios);
+  }
+  if (ctx->impl->com) {
+    if (ctx->stat != GRN_CTX_QUIT) {
+      int flags;
+      char *str;
+      unsigned int str_len;
+      grn_ctx_send(ctx, "quit", 4, GRN_CTX_HEAD);
+      grn_ctx_recv(ctx, &str, &str_len, &flags);
+    }
+    grn_ctx_send(ctx, "ACK", 3, GRN_CTX_HEAD);
+    rc = grn_com_close(ctx, ctx->impl->com);
+  }
+  GRN_OBJ_FIN(ctx, &ctx->impl->query_log_buf);
+  GRN_OBJ_FIN(ctx, &ctx->impl->output.names);
+  GRN_OBJ_FIN(ctx, &ctx->impl->output.levels);
+  rc = grn_obj_close(ctx, ctx->impl->output.buf);
+  if (ctx->impl->expr_vars) {
+    grn_hash **vp;
+    grn_obj *value;
+    GRN_HASH_EACH(ctx, ctx->impl->expr_vars, eid, NULL, NULL, &vp, {
+      if (*vp) {
+        GRN_HASH_EACH(ctx, *vp, id, NULL, NULL, &value, {
+          GRN_OBJ_FIN(ctx, value);
+        });
+      }
+      grn_hash_close(ctx, *vp);
+    });
+    grn_hash_close(ctx, ctx->impl->expr_vars);
+  }
+  if (ctx->impl->stack) {
+    GRN_FREE(ctx->impl->stack);
+  }
+  if (ctx->impl->db && ctx->flags & GRN_CTX_PER_DB) {
+    grn_obj *db = ctx->impl->db;
+    ctx->impl->db = NULL;
+    grn_obj_close(ctx, db);
+  }
+  grn_alloc_fin_ctx_impl(ctx);
+  grn_alloc_info_dump(ctx);
+  grn_alloc_info_free(ctx);
+  CRITICAL_SECTION_FIN(ctx->impl->lock);
+  {
+    grn_io_mapinfo mi;
+    mi.map = (void *)ctx->impl;
+    grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
+  }
+
+  return rc;
+}
+
+static grn_rc
 grn_ctx_init_internal(grn_ctx *ctx, int flags)
 {
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
@@ -446,96 +545,7 @@ grn_ctx_fin(grn_ctx *ctx)
     CRITICAL_SECTION_LEAVE(grn_glock);
   }
   if (ctx->impl) {
-    grn_ctx_impl_clear_n_same_error_messagges(ctx);
-    if (ctx->impl->finalizer) {
-      ctx->impl->finalizer(ctx, 0, NULL, &(ctx->user_data));
-    }
-    {
-      grn_obj *stack;
-      grn_obj *spaces;
-      unsigned int i, n_spaces;
-
-      stack = &(ctx->impl->temporary_open_spaces.stack);
-      spaces = (grn_obj *)GRN_BULK_HEAD(stack);
-      n_spaces = GRN_BULK_VSIZE(stack) / sizeof(grn_obj);
-      for (i = 0; i < n_spaces; i++) {
-        grn_obj *space = spaces + (n_spaces - i - 1);
-        GRN_OBJ_FIN(ctx, space);
-      }
-      GRN_OBJ_FIN(ctx, stack);
-    }
-    grn_ctx_impl_mrb_fin(ctx);
-    grn_ctx_loader_clear(ctx);
-    if (ctx->impl->parser) {
-      grn_expr_parser_close(ctx);
-    }
-    GRN_OBJ_FIN(ctx, &ctx->impl->current_request_id);
-    if (ctx->impl->values) {
-#ifndef USE_MEMORY_DEBUG
-      grn_db_obj *o;
-      GRN_ARRAY_EACH(ctx, ctx->impl->values, 0, 0, id, &o, {
-        grn_obj_close(ctx, *((grn_obj **)o));
-      });
-#endif
-      grn_array_close(ctx, ctx->impl->values);
-    }
-    if (ctx->impl->temporary_columns) {
-#ifndef USE_MEMORY_DEBUG
-      grn_obj *value;
-      GRN_PAT_EACH(ctx, ctx->impl->temporary_columns, id, NULL, NULL, &value, {
-        grn_obj_close(ctx, *((grn_obj **)value));
-      });
-#endif
-      grn_pat_close(ctx, ctx->impl->temporary_columns);
-    }
-    if (ctx->impl->ios) {
-      grn_hash_close(ctx, ctx->impl->ios);
-    }
-    if (ctx->impl->com) {
-      if (ctx->stat != GRN_CTX_QUIT) {
-        int flags;
-        char *str;
-        unsigned int str_len;
-        grn_ctx_send(ctx, "quit", 4, GRN_CTX_HEAD);
-        grn_ctx_recv(ctx, &str, &str_len, &flags);
-      }
-      grn_ctx_send(ctx, "ACK", 3, GRN_CTX_HEAD);
-      rc = grn_com_close(ctx, ctx->impl->com);
-    }
-    GRN_OBJ_FIN(ctx, &ctx->impl->query_log_buf);
-    GRN_OBJ_FIN(ctx, &ctx->impl->output.names);
-    GRN_OBJ_FIN(ctx, &ctx->impl->output.levels);
-    rc = grn_obj_close(ctx, ctx->impl->output.buf);
-    if (ctx->impl->expr_vars) {
-      grn_hash **vp;
-      grn_obj *value;
-      GRN_HASH_EACH(ctx, ctx->impl->expr_vars, eid, NULL, NULL, &vp, {
-        if (*vp) {
-          GRN_HASH_EACH(ctx, *vp, id, NULL, NULL, &value, {
-            GRN_OBJ_FIN(ctx, value);
-          });
-        }
-        grn_hash_close(ctx, *vp);
-      });
-      grn_hash_close(ctx, ctx->impl->expr_vars);
-    }
-    if (ctx->impl->stack) {
-      GRN_FREE(ctx->impl->stack);
-    }
-    if (ctx->impl->db && ctx->flags & GRN_CTX_PER_DB) {
-      grn_obj *db = ctx->impl->db;
-      ctx->impl->db = NULL;
-      grn_obj_close(ctx, db);
-    }
-    grn_alloc_fin_ctx_impl(ctx);
-    grn_alloc_info_dump(ctx);
-    grn_alloc_info_free(ctx);
-    CRITICAL_SECTION_FIN(ctx->impl->lock);
-    {
-      grn_io_mapinfo mi;
-      mi.map = (void *)ctx->impl;
-      grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
-    }
+    rc = grn_ctx_impl_fin(ctx);
     ctx->impl = NULL;
   }
   ctx->stat = GRN_CTX_FIN;
