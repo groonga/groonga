@@ -21,7 +21,6 @@
 #include "grn_request_canceler.h"
 #include "grn_request_timer.h"
 #include "grn_tokenizers.h"
-#include "grn_options.h"
 #include "grn_ctx_impl.h"
 #include "grn_ii.h"
 #include "grn_pat.h"
