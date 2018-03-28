@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -297,12 +297,12 @@ command_table_create(grn_ctx *ctx,
                          GRN_TEXT_VALUE(name),
                          (int)GRN_TEXT_LEN(default_tokenizer_name),
                          GRN_TEXT_VALUE(default_tokenizer_name));
-        grn_obj_remove(ctx, table);
         goto exit;
       }
       grn_obj_set_info(ctx, table,
                        GRN_INFO_DEFAULT_TOKENIZER,
                        default_tokenizer);
+      grn_obj_unlink(ctx, default_tokenizer);
     }
 
     if (GRN_TEXT_LEN(normalizer_name) > 0) {
@@ -320,22 +320,31 @@ command_table_create(grn_ctx *ctx,
                          GRN_TEXT_VALUE(name),
                          (int)GRN_TEXT_LEN(normalizer_name),
                          GRN_TEXT_VALUE(normalizer_name));
-        grn_obj_remove(ctx, table);
         goto exit;
       }
       grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZER, normalizer);
+      grn_obj_unlink(ctx, normalizer);
     }
 
     if (!grn_proc_table_set_token_filters(ctx, table, token_filters_name)) {
-      grn_obj_remove(ctx, table);
       goto exit;
     }
-
-    grn_obj_unlink(ctx, table);
   }
 
 exit :
-  grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
+  {
+    grn_bool success = (ctx->rc == GRN_SUCCESS);
+    if (success) {
+      if (table) {
+        grn_obj_unlink(ctx, table);
+      }
+    } else {
+      if (table) {
+        grn_obj_remove(ctx, table);
+      }
+    }
+    grn_ctx_output_bool(ctx, success);
+  }
   return NULL;
 }
 
