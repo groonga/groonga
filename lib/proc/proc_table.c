@@ -308,6 +308,7 @@ command_table_create(grn_ctx *ctx,
       grn_obj_set_info(ctx, table,
                        GRN_INFO_DEFAULT_TOKENIZER,
                        default_tokenizer);
+      grn_obj_unlink(ctx, default_tokenizer);
     }
 
     if (normalizer_raw.length > 0) {
