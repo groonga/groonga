@@ -19,6 +19,7 @@
 #pragma once
 
 #include "grn.h"
+#include "grn_raw_string.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -104,7 +105,7 @@ void grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);
 
 grn_bool grn_proc_table_set_token_filters(grn_ctx *ctx,
                                           grn_obj *table,
-                                          grn_obj *token_filter_names);
+                                          grn_raw_string *token_filters_raw);
 
 grn_column_flags grn_proc_column_parse_flags(grn_ctx *ctx,
                                              const char *error_message_tag,
