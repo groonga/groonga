@@ -77,14 +77,10 @@ grn_inline static void * grn_mmap(grn_ctx *ctx, grn_ctx *owner_ctx,
 grn_inline static int grn_munmap(grn_ctx *ctx, grn_ctx *owner_ctx,
                                  grn_io *io, HANDLE *fmo, fileinfo *fi,
                                  void *start, size_t length);
-grn_inline static int grn_msync(grn_ctx *ctx, HANDLE fh,
-                                void *start, size_t length);
 # define GRN_MMAP(ctx,owner_ctx,io,fmo,fi,offset,length)\
   (grn_mmap((ctx), (owner_ctx), (io), (fmo), (fi), (offset), (length)))
 # define GRN_MUNMAP(ctx,owner_ctx,io,fmo,fi,start,length)\
   (grn_munmap((ctx), (owner_ctx), (io), (fmo), (fi), (start), (length)))
-# define GRN_MSYNC(ctx,fh,start,length) \
-  (grn_msync((ctx), (fh), (start), (length)))
 #else /* WIN32 */
 grn_inline static void * grn_mmap(grn_ctx *ctx, grn_ctx *owner_ctx,
                                   grn_io *io, fileinfo *fi,
@@ -92,11 +88,8 @@ grn_inline static void * grn_mmap(grn_ctx *ctx, grn_ctx *owner_ctx,
 grn_inline static int grn_munmap(grn_ctx *ctx, grn_ctx *owner_ctx,
                                  grn_io *io, fileinfo *fi,
                                  void *start, size_t length);
-grn_inline static int grn_msync(grn_ctx *ctx, void *start, size_t length);
 # define GRN_MUNMAP(ctx,owner_ctx,io,fmo,fi,start,length) \
   (grn_munmap((ctx), (owner_ctx), (io), (fi), (start), (length)))
-# define GRN_MSYNC(ctx,fh,start,length) \
-  (grn_msync((ctx), (start), (length)))
 # ifdef USE_FAIL_MALLOC
 grn_inline static void * grn_fail_mmap(grn_ctx *ctx, grn_ctx *owner_ctx,
                                        grn_io *io, fileinfo *fi,
@@ -112,6 +105,14 @@ grn_inline static void * grn_fail_mmap(grn_ctx *ctx, grn_ctx *owner_ctx,
   (grn_mmap((ctx), (owner_ctx), (io), (fi), (offset), (length)))
 # endif /* USE_FAIL_MALLOC */
 #endif  /* WIN32 */
+
+grn_inline static int grn_msync(grn_ctx *ctx,
+                                fileinfo *fi,
+                                void *start,
+                                size_t length);
+# define GRN_MSYNC(ctx,fi,start,length) \
+  (grn_msync((ctx), (fi), (start), (length)))
+
 grn_inline static grn_rc grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf,
                                    size_t count, off_t offset);
 grn_inline static grn_rc grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf,
@@ -323,7 +324,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size,
         header->flags = flags;
         header->lock = 0;
         grn_memcpy(header->idstr, GRN_IO_IDSTR, 16);
-        GRN_MSYNC(ctx, fis[0].fh, header, b);
+        GRN_MSYNC(ctx, &(fis[0]), header, b);
         if ((io = GRN_MALLOCN(grn_io, 1))) {
           grn_io_mapinfo *maps = NULL;
           if ((maps = GRN_CALLOC(sizeof(grn_io_mapinfo) * max_segment))) {
@@ -1448,7 +1449,7 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
   header = io->header;
   aligned_header_size = grn_io_compute_base(header->header_size);
 
-  if (GRN_MSYNC(ctx, io->fis[0].fh, header, aligned_header_size) != 0) {
+  if (GRN_MSYNC(ctx, &(io->fis[0]), header, aligned_header_size) != 0) {
     return ctx->rc;
   }
 
@@ -1485,7 +1486,7 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
 
       nth_file_info = grn_io_compute_nth_file_info(io, i);
       msync_result = GRN_MSYNC(ctx,
-                               io->fis[nth_file_info].fh,
+                               &(io->fis[nth_file_info]),
                                info->map,
                                segment_size);
       GRN_ATOMIC_ADD_EX(pnref, -1, nref);
@@ -1936,7 +1937,7 @@ grn_fileinfo_opened(fileinfo *fi)
 }
 
 grn_inline static int
-grn_msync(grn_ctx *ctx, HANDLE handle, void *start, size_t length)
+grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 {
   BOOL succeeded;
   SYSTEMTIME system_time;
@@ -1949,7 +1950,7 @@ grn_msync(grn_ctx *ctx, HANDLE handle, void *start, size_t length)
     return -1;
   }
 
-  if (handle == INVALID_HANDLE_VALUE) {
+  if (fi->fh == INVALID_HANDLE_VALUE) {
     return 0;
   }
 
@@ -1967,10 +1968,10 @@ grn_msync(grn_ctx *ctx, HANDLE handle, void *start, size_t length)
     return -1;
   }
 
-  succeeded = SetFileTime(handle, NULL, NULL, &file_time);
+  succeeded = SetFileTime(fi->fh, NULL, NULL, &file_time);
   if (!succeeded) {
     SERR("SetFileTime(<%p>, <%p>, <%" GRN_FMT_SIZE ">) failed",
-         handle, start, length);
+         fi->fh, start, length);
     return -1;
   }
 
@@ -2128,10 +2129,24 @@ grn_fail_mmap(grn_ctx *ctx, grn_ctx *owner_ctx, grn_io *io, fileinfo *fi,
 #endif /* USE_FAIL_MALLOC */
 
 grn_inline static int
-grn_msync(grn_ctx *ctx, void *start, size_t length)
+grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 {
   int r = msync(start, length, MS_SYNC);
-  if (r == -1) { SERR("msync"); }
+  if (r == -1) {
+    SERR("msync");
+    return r;
+  }
+
+  if (fi->fd > 0) {
+    struct timespec times[2];
+    times[0].tv_nsec = UTIME_NOW;
+    times[1].tv_nsec = UTIME_NOW;
+    r = futimens(fi->fd, times);
+    if (r == -1) {
+      SERR("futimens failed: <%d>", fi->fd);
+    }
+  }
+
   return r;
 }
 
