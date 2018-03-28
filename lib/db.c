@@ -11549,6 +11549,7 @@ grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj)
       if (db->specs) {
         grn_obj_clear_lock(ctx, (grn_obj *)(db->specs));
       }
+      grn_obj_clear_lock(ctx, (grn_obj *)(db->config));
     }
     break;
   case GRN_TABLE_NO_KEY :
