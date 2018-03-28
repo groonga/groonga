@@ -18,14 +18,8 @@
 
 #pragma once
 
-#ifndef GRN_CTX_H
-# include "grn_ctx.h"
-#endif /* GRN_CTX_H */
-
-#ifndef GRN_COM_H
-# include "grn_com.h"
-#endif /* GRN_COM_H */
-
+#include "grn_ctx.h"
+#include "grn_com.h"
 #include "grn_msgpack.h"
 
 #ifdef GRN_WITH_MRUBY
