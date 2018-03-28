@@ -11591,8 +11591,21 @@ grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj)
   unsigned int res = 0;
   GRN_API_ENTER;
   res = grn_io_is_locked(grn_obj_get_io(ctx, obj));
-  if (obj && obj->header.type == GRN_COLUMN_INDEX) {
-    res += grn_io_is_locked(((grn_ii *)obj)->chunk);
+  if (obj) {
+    switch (obj->header.type) {
+    case GRN_DB:
+      {
+        grn_db *db = (grn_db *)obj;
+        if (db->specs) {
+          res += grn_obj_is_locked(ctx, (grn_obj *)(db->specs));
+        }
+        res += grn_obj_is_locked(ctx, (grn_obj *)db->config);
+      }
+      break;
+    case GRN_COLUMN_INDEX:
+      res += grn_io_is_locked(((grn_ii *)obj)->chunk);
+      break;
+    }
   }
   GRN_API_RETURN(res);
 }
