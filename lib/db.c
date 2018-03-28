@@ -262,21 +262,17 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
         goto exit;
       }
     }
-    if (!grn_db_config_create(ctx, s, path, "[db][create]")) {
-      goto exit;
-    }
-    grn_ctx_use(ctx, (grn_obj *)s);
-    grn_db_init_builtin_types(ctx);
-    grn_obj_flush(ctx, (grn_obj *)s);
-    GRN_API_RETURN((grn_obj *)s);
-  } else {
-    if (!grn_db_config_create(ctx, s, NULL, "[db][create]")) {
-      goto exit;
-    }
-    grn_ctx_use(ctx, (grn_obj *)s);
-    grn_db_init_builtin_types(ctx);
-    GRN_API_RETURN((grn_obj *)s);
   }
+
+  if (!grn_db_config_create(ctx, s, path, "[db][create]")) {
+    goto exit;
+  }
+  grn_ctx_use(ctx, (grn_obj *)s);
+  grn_db_init_builtin_types(ctx);
+  if (path) {
+    grn_obj_flush(ctx, (grn_obj *)s);
+  }
+  GRN_API_RETURN((grn_obj *)s);
 
 exit:
   if (s) {
