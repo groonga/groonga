@@ -2137,6 +2137,8 @@ grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
     return r;
   }
 
+/* TODO: We should check futimens() availability. */
+#ifdef __linux__
   if (fi->fd > 0) {
     struct timespec times[2];
     times[0].tv_nsec = UTIME_NOW;
@@ -2146,6 +2148,7 @@ grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
       SERR("futimens failed: <%d>", fi->fd);
     }
   }
+#endif
 
   return r;
 }
