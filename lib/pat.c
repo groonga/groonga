@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1136,6 +1136,9 @@ grn_pat_prefix_search(grn_ctx *ctx, grn_pat *pat,
   grn_rc rc = grn_pat_error_if_truncated(ctx, pat);
   if (rc != GRN_SUCCESS) {
     return rc;
+  }
+  if (key_size == 0) {
+    return GRN_END_OF_DATA;
   }
   KEY_ENCODE(pat, keybuf, key, key_size);
   PAT_AT(pat, 0, rn);

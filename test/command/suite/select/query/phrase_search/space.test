@@ -1,0 +1,18 @@
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigramSplitSymbolAlphaDigit \
+  --normalizer NormalizerAuto
+
+table_create Memos TABLE_NO_KEY
+column_create Memos body COLUMN_SCALAR Text
+
+load --table Memos
+[
+{"body": "'."}
+]
+
+column_create Terms memos_body COLUMN_INDEX|WITH_POSITION Memos body
+
+select Memos \
+  --match_columns "body" \
+  --query '" "' \
+  --output_columns _id,_score,_key
