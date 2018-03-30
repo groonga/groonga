@@ -5,12 +5,12 @@ table_create Terms TABLE_PAT_KEY ShortText \
 table_create Memos TABLE_NO_KEY
 column_create Memos body COLUMN_SCALAR Text
 
+column_create Terms memos_body COLUMN_INDEX|WITH_POSITION Memos body
+
 load --table Memos
 [
 {"body": "'."}
 ]
-
-column_create Terms memos_body COLUMN_INDEX|WITH_POSITION Memos body
 
 select Memos \
   --match_columns "body" \
