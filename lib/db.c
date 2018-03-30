@@ -12722,6 +12722,33 @@ is_full_text_searchable_index(grn_ctx *ctx, grn_obj *index_column)
   return tokenizer != NULL;
 }
 
+static void
+report_hook_has_dangling_reference_error(grn_ctx *ctx,
+                                         grn_obj *target,
+                                         grn_id reference_id,
+                                         const char *context_tag)
+{
+  char target_name[GRN_TABLE_MAX_KEY_SIZE];
+  int target_name_length;
+  char reference_name[GRN_TABLE_MAX_KEY_SIZE];
+  int reference_name_length;
+
+  target_name_length = grn_obj_name(ctx,
+                                    target,
+                                    target_name,
+                                    GRN_TABLE_MAX_KEY_SIZE);
+  reference_name_length = grn_table_get_key(ctx,
+                                            ctx->impl->db,
+                                            reference_id,
+                                            reference_name,
+                                            GRN_TABLE_MAX_KEY_SIZE);
+  ERR(GRN_OBJECT_CORRUPT,
+      "%s hook has a dangling reference: <%.*s> -> <%.*s>",
+      context_tag,
+      target_name_length, target_name,
+      reference_name_length, reference_name);
+}
+
 static int
 grn_column_find_index_data_column_equal(grn_ctx *ctx, grn_obj *obj,
                                         grn_operator op,
@@ -12738,6 +12765,12 @@ grn_column_find_index_data_column_equal(grn_ctx *ctx, grn_obj *obj,
     grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
     grn_obj *target = grn_ctx_at(ctx, data->target);
     int section;
+    if (!target) {
+      report_hook_has_dangling_reference_error(ctx, obj, data->target,
+                                               "[column][index]"
+                                               "[column][equal]");
+      continue;
+    }
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
     if (obj->header.type != GRN_COLUMN_FIX_SIZE) {
       if (is_full_text_searchable_index(ctx, target)) { continue; }
@@ -12802,6 +12835,13 @@ grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
       grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
       grn_obj *target = grn_ctx_at(ctx, data->target);
       int section;
+      if (!target) {
+        report_hook_has_dangling_reference_error(ctx, obj, data->target,
+                                                 "[column][index]"
+                                                 "[column][match]"
+                                                 "[prefer-full-text-search]");
+        continue;
+      }
       if (target->header.type != GRN_COLUMN_INDEX) { continue; }
       if (!is_full_text_searchable_index(ctx, target)) { continue; }
       section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
@@ -12822,6 +12862,12 @@ grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
     grn_obj *target = grn_ctx_at(ctx, data->target);
     int section;
 
+    if (!target) {
+      report_hook_has_dangling_reference_error(ctx, obj, data->target,
+                                               "[column][index]"
+                                               "[column][equal]");
+      continue;
+    }
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
     if (op == GRN_OP_REGEXP && !is_valid_regexp_index(ctx, target)) {
       continue;
@@ -12875,13 +12921,26 @@ grn_column_find_index_data_column_range(grn_ctx *ctx, grn_obj *obj,
     grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
     grn_obj *target = grn_ctx_at(ctx, data->target);
     int section;
-    if (!target) { continue; }
+    if (!target) {
+      report_hook_has_dangling_reference_error(ctx, obj, data->target,
+                                               "[column][index]"
+                                               "[column][range]");
+      continue;
+    }
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
     section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
     if (section_buf) { *section_buf = section; }
     {
-      grn_obj *tokenizer, *lexicon = grn_ctx_at(ctx, target->header.domain);
-      if (!lexicon) { continue; }
+      grn_obj *lexicon = grn_ctx_at(ctx, target->header.domain);
+      grn_obj *tokenizer;
+      if (!lexicon) {
+        report_hook_has_dangling_reference_error(ctx,
+                                                 target,
+                                                 target->header.domain,
+                                                 "[column][index]"
+                                                 "[column][range][lexicon]");
+        continue;
+      }
       if (lexicon->header.type != GRN_TABLE_PAT_KEY) { continue; }
       /* FIXME: GRN_TABLE_DAT_KEY should be supported */
       grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
@@ -13109,6 +13168,12 @@ grn_column_find_index_data_accessor_match(grn_ctx *ctx, grn_obj *obj,
       grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
       grn_obj *target = grn_ctx_at(ctx, data->target);
 
+      if (!target) {
+        report_hook_has_dangling_reference_error(ctx, obj, data->target,
+                                                 "[column][index]"
+                                                 "[accessor][match]");
+        continue;
+      }
       if (target->header.type != GRN_COLUMN_INDEX) { continue; }
 
       found = GRN_TRUE;
@@ -13401,22 +13466,8 @@ grn_column_get_all_index_data_column(grn_ctx *ctx,
     grn_obj *target = grn_ctx_at(ctx, data->target);
     int section = 0;
     if (!target) {
-      char name[GRN_TABLE_MAX_KEY_SIZE];
-      int length;
-      char hook_name[GRN_TABLE_MAX_KEY_SIZE];
-      int hook_name_length;
-
-      length = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
-      hook_name_length = grn_table_get_key(ctx,
-                                           ctx->impl->db,
-                                           data->target,
-                                           hook_name,
-                                           GRN_TABLE_MAX_KEY_SIZE);
-      ERR(GRN_OBJECT_CORRUPT,
-          "[column][indexes][all] "
-          "hook has a dangling reference: <%.*s> -> <%.*s>",
-          length, name,
-          hook_name_length, hook_name);
+      report_hook_has_dangling_reference_error(ctx, obj, data->target,
+                                               "[column][indexes][all][column]");
       continue;
     }
     if (target->header.type != GRN_COLUMN_INDEX) {
@@ -13506,6 +13557,12 @@ grn_column_get_all_index_data_accessor(grn_ctx *ctx,
       grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
       grn_obj *target = grn_ctx_at(ctx, data->target);
 
+      if (!target) {
+        report_hook_has_dangling_reference_error(ctx, obj, data->target,
+                                                 "[column][indexes]"
+                                                 "[all][accessor]");
+        continue;
+      }
       if (target->header.type != GRN_COLUMN_INDEX) {
         continue;
       }
