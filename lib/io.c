@@ -23,6 +23,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 
 #include "grn_ctx.h"
 #include "grn_io.h"
@@ -2137,18 +2138,15 @@ grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
     return r;
   }
 
-/* TODO: We should check futimens() availability. */
-#ifdef __linux__
   if (fi->fd > 0) {
-    struct timespec times[2];
-    times[0].tv_nsec = UTIME_NOW;
-    times[1].tv_nsec = UTIME_NOW;
-    r = futimens(fi->fd, times);
+    struct timeval times[2];
+    gettimeofday(&(times[0]), NULL);
+    times[1] = times[0];
+    r = futimes(fi->fd, times);
     if (r == -1) {
-      SERR("futimens failed: <%d>", fi->fd);
+      SERR("futimen failed: <%d>", fi->fd);
     }
   }
-#endif
 
   return r;
 }
