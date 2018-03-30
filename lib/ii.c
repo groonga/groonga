@@ -7264,12 +7264,6 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
     case GRN_TOKEN_CURSOR_DONE :
       ti = token_info_open(ctx, lexicon, ii, (const char *)token_cursor->curr,
                            token_cursor->curr_size, 0, ef, NULL, min);
-      /*
-      key = _grn_table_key(ctx, lexicon, tid, &size);
-      ti = token_info_open(ctx, lexicon, ii, token_cursor->curr, token_cursor->curr_size, token_cursor->pos, ef, NULL, GRN_ID_NIL);
-      ti = token_info_open(ctx, lexicon, ii, (char *)token_cursor->orig,
-                           token_cursor->orig_blen, token_cursor->pos, ef, NULL, GRN_ID_NIL);
-      */
       break;
     case GRN_TOKEN_CURSOR_NOT_FOUND :
       ti = token_info_open(ctx, lexicon, ii, (char *)token_cursor->orig,
