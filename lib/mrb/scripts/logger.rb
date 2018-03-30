@@ -1,5 +1,28 @@
 module Groonga
   class Logger
+    def log(log_level, *args)
+      case log_level
+      when Symbol
+        log_level = Level.find(log_level).to_i
+      when String
+        log_level = Level.find(log_level.to_sym).to_i
+      when Level
+        log_level = log_level.to_i
+      end
+
+      if args.size == 1
+        entry = BacktraceEntry.parse(caller(1, 1)[0])
+        file = entry.file
+        line = entry.line
+        method = entry.method
+        message = args[0]
+      else
+        file, line, method, message = args
+      end
+
+      log_raw(log_level, file, line, method, message)
+    end
+
     def log_error(error)
       log_level = Level::ERROR.to_i
 

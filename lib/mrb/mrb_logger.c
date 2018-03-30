@@ -57,7 +57,7 @@ logger_need_log_p(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-logger_log(mrb_state *mrb, mrb_value self)
+logger_log_raw(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   mrb_int level;
@@ -91,7 +91,7 @@ grn_mrb_logger_init(grn_ctx *ctx)
                               logger_s_get_default_level, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "need_log?", logger_need_log_p, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "log", logger_log, MRB_ARGS_REQ(5));
+  mrb_define_method(mrb, klass, "log_raw", logger_log_raw, MRB_ARGS_REQ(5));
 
   grn_mrb_load(ctx, "logger/level.rb");
   grn_mrb_load(ctx, "logger.rb");
