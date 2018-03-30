@@ -479,7 +479,7 @@ module Groonga
                   File.unlink("#{object_dirname}/#{path}")
                   message = "Corrupted <#{object_path}> related file is removed: <#{path}>"
                   $stdout.puts(message)
-                  logger.log(Logger::Level::INFO.to_i, __FILE__, __LINE__, "truncate_corrupt_objects", message)
+                  logger.log(:info, message)
                 rescue Error => error
                   message = "Failed to remove file which is related to corrupted <#{object_path}>: <#{path}>"
                   $stderr.puts(message)
