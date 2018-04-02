@@ -59,6 +59,8 @@ libgroonga_c_sources =				\
 	obj.c					\
 	grn_obj.h				\
 	operator.c				\
+	options.c				\
+	grn_options.h				\
 	output.c				\
 	grn_output.h				\
 	pat.c					\

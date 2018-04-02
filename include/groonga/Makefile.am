@@ -21,6 +21,7 @@ groonga_include_HEADERS =			\
 	ii.h					\
 	obj.h					\
 	operator.h				\
+	option.h				\
 	output.h				\
 	pat.h					\
 	plugin.h				\

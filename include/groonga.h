@@ -39,6 +39,7 @@
 #include "groonga/ii.h"
 #include "groonga/obj.h"
 #include "groonga/operator.h"
+#include "groonga/option.h"
 #include "groonga/output.h"
 #include "groonga/pat.h"
 #include "groonga/request_canceler.h"
