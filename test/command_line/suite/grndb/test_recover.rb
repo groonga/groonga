@@ -43,9 +43,12 @@ object corrupt: <[db][recover] table may be broken: <Users>: please truncate the
     end
 
     def test_force_truncate
+      additional_path = "#{@table_path}.002"
+      FileUtils.touch(additional_path)
       result = grndb("recover", "--force-truncate")
       assert_equal(<<-MESSAGE, result.error_output)
 [Users] Truncated broken object: <#{@table_path}>
+[Users] Removed broken object related file: <#{additional_path}>
       MESSAGE
     end
   end
@@ -72,9 +75,12 @@ object corrupt: <[db][recover] column may be broken: <Users.age>: please truncat
     end
 
     def test_force_truncate
+      additional_path = "#{@column_path}.002"
+      FileUtils.touch(additional_path)
       result = grndb("recover", "--force-truncate")
       assert_equal(<<-MESSAGE, result.error_output)
 [Users.age] Truncated broken object: <#{@column_path}>
+[Users.age] Removed broken object related file: <#{additional_path}>
       MESSAGE
     end
   end

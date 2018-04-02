@@ -496,16 +496,17 @@ module Groonga
 
           Dir.foreach(object_dirname) do |path|
             if path.start_with?("#{object_basename}.")
+              full_path = "#{object_dirname}/#{path}"
               begin
-                File.unlink("#{object_dirname}/#{path}")
+                File.unlink(full_path)
                 message =
-                  "[#{name}] Removed broken object related file: <#{path}>"
-                $stdout.puts(message)
+                  "[#{name}] Removed broken object related file: <#{full_path}>"
+                $stderr.puts(message)
                 logger.log(:info, message)
               rescue Error => error
                 message =
                   "[#{name}] Failed to remove broken object related file: " +
-                  "<#{path}>: #{error.class}: #{error.message}"
+                  "<#{full_path}>: #{error.class}: #{error.message}"
                 $stderr.puts(message)
                 logger.log_error(message)
               end
