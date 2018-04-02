@@ -50,17 +50,32 @@ object corrupt: <[db][recover] table may be broken: <Users>: please truncate the
     end
   end
 
-  def test_locked_data_column
-    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
-    groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
-    groonga("lock_acquire", "Users.age")
-    error = assert_raise(CommandRunner::Error) do
-      grndb("recover")
+  sub_test_case("locked data column") do
+    def setup
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+      groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
+      groonga("lock_acquire", "Users.age")
+
+      _id, _name, path, *_ = JSON.parse(groonga("column_list Users").output)[1][2]
+      @column_path = path
     end
-    assert_equal(<<-MESSAGE, error.error_output)
+
+    def test_default
+      error = assert_raise(CommandRunner::Error) do
+        grndb("recover")
+      end
+      assert_equal(<<-MESSAGE, error.error_output)
 Failed to recover database: <#{@database_path}>
 object corrupt: <[db][recover] column may be broken: <Users.age>: please truncate the column (or clear lock of the column) and load data again>(-55)
-    MESSAGE
+      MESSAGE
+    end
+
+    def test_force_truncate
+      result = grndb("recover", "--force-truncate")
+      assert_equal(<<-MESSAGE, result.error_output)
+[Users.age] Truncated broken object: <#{@column_path}>
+      MESSAGE
+    end
   end
 
   def test_locked_index_column
