@@ -2143,7 +2143,7 @@ grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
     times[1] = times[0];
     r = futimes(fi->fd, times);
     if (r == -1) {
-      SERR("futimen failed: <%d>", fi->fd);
+      SERR("futimes failed: <%d>", fi->fd);
     }
   }
 
