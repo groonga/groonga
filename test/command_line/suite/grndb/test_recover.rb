@@ -23,16 +23,31 @@ object corrupt: <[db][recover] database may be broken. Please re-create the data
     MESSAGE
   end
 
-  def test_locked_table
-    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
-    groonga("lock_acquire", "Users")
-    error = assert_raise(CommandRunner::Error) do
-      grndb("recover")
+  sub_test_case("locked table") do
+    def setup
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+      groonga("lock_acquire", "Users")
+
+      _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+      @table_path = path
     end
-    assert_equal(<<-MESSAGE, error.error_output)
+
+    def test_default
+      error = assert_raise(CommandRunner::Error) do
+        grndb("recover")
+      end
+      assert_equal(<<-MESSAGE, error.error_output)
 Failed to recover database: <#{@database_path}>
 object corrupt: <[db][recover] table may be broken: <Users>: please truncate the table (or clear lock of the table) and load data again>(-55)
-    MESSAGE
+      MESSAGE
+    end
+
+    def test_force_truncate
+      result = grndb("recover", "--force-truncate")
+      assert_equal(<<-MESSAGE, result.error_output)
+[Users] Truncated broken object: <#{@table_path}>
+      MESSAGE
+    end
   end
 
   def test_locked_data_column

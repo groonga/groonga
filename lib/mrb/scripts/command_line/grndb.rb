@@ -457,7 +457,10 @@ module Groonga
 
         def recover
           if @force_truncate
-            truncate_corrupt_objects
+            @database.each do |object|
+              next unless truncate_target?(object)
+              truncate_broken_object(object)
+            end
           end
           if @force_lock_clear
             clear_locks
@@ -465,26 +468,45 @@ module Groonga
           @database.recover
         end
 
-        def truncate_corrupt_objects
-          @database.each do |object|
-            next unless object.corrupt?
-            logger = @context.logger
-            object_path = object.path
-            object_dirname = File.dirname(object_path)
-            object_basename = File.basename(object_path)
-            object.truncate
-            Dir.foreach(object_dirname) do |path|
-              if path.start_with?("#{object_basename}.")
-                begin
-                  File.unlink("#{object_dirname}/#{path}")
-                  message = "Corrupted <#{object_path}> related file is removed: <#{path}>"
-                  $stdout.puts(message)
-                  logger.log(:info, message)
-                rescue Error => error
-                  message = "Failed to remove file which is related to corrupted <#{object_path}>: <#{path}>"
-                  $stderr.puts(message)
-                  logger.log_error(message)
-                end
+        private
+        def truncate_target?(object)
+          return true if object.corrupt?
+
+          case object
+          when IndexColumn
+            false
+          when Column, Table
+            object.locked?
+          else
+            false
+          end
+        end
+
+        def truncate_broken_object(object)
+          logger = @context.logger
+          name = object.name
+          object_path = object.path
+          object_dirname = File.dirname(object_path)
+          object_basename = File.basename(object_path)
+          object.truncate
+          message = "[#{name}] Truncated broken object: <#{object_path}>"
+          $stderr.puts(message)
+          logger.log(:info, message)
+
+          Dir.foreach(object_dirname) do |path|
+            if path.start_with?("#{object_basename}.")
+              begin
+                File.unlink("#{object_dirname}/#{path}")
+                message =
+                  "[#{name}] Removed broken object related file: <#{path}>"
+                $stdout.puts(message)
+                logger.log(:info, message)
+              rescue Error => error
+                message =
+                  "[#{name}] Failed to remove broken object related file: " +
+                  "<#{path}>: #{error.class}: #{error.message}"
+                $stderr.puts(message)
+                logger.log_error(message)
               end
             end
           end
