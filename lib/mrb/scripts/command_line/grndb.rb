@@ -474,6 +474,7 @@ module Groonga
 
           case object
           when IndexColumn
+            # It'll be recovered later.
             false
           when Column, Table
             object.locked?

@@ -56,7 +56,8 @@ object corrupt: <[db][recover] table may be broken: <Users>: please truncate the
       groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
       groonga("lock_acquire", "Users.age")
 
-      _id, _name, path, *_ = JSON.parse(groonga("column_list Users").output)[1][2]
+      users_column_list = JSON.parse(groonga("column_list", "Users").output)
+      _id, _name, path, *_ = users_column_list[1][2]
       @column_path = path
     end
 
@@ -78,29 +79,41 @@ object corrupt: <[db][recover] column may be broken: <Users.age>: please truncat
     end
   end
 
-  def test_locked_index_column
-    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
-    groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
+  sub_test_case("locked index column") do
+    def setup
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+      groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
 
-    groonga("table_create", "Ages", "TABLE_PAT_KEY", "UInt8")
-    groonga("column_create", "Ages", "users_age", "COLUMN_INDEX", "Users", "age")
+      groonga("table_create", "Ages", "TABLE_PAT_KEY", "UInt8")
+      groonga("column_create", "Ages", "users_age",
+              "COLUMN_INDEX", "Users", "age")
 
-    groonga("load",
-            "--table", "Users",
-            "--values",
-            Shellwords.escape(JSON.generate([{"_key" => "alice", "age" => 29}])))
-    groonga("truncate", "Ages")
-    groonga("lock_acquire", "Ages.users_age")
-    select_result = groonga_select("Users", "--query", "age:29")
-    n_hits, _columns, *_records = select_result[0]
-    assert_equal([0], n_hits)
+      values = [{"_key" => "alice", "age" => 29}]
+      groonga("load",
+              "--table", "Users",
+              "--values",
+              Shellwords.escape(JSON.generate(values)))
+      groonga("truncate", "Ages")
+      groonga("lock_acquire", "Ages.users_age")
+    end
 
-    result = grndb("recover")
-    assert_equal("", result.error_output)
+    def test_default
+      result = grndb("recover")
+      assert_equal("", result.error_output)
 
-    select_result = groonga_select("Users", "--query", "age:29")
-    n_hits, _columns, *_records = select_result[0]
-    assert_equal([1], n_hits)
+      select_result = groonga_select("Users", "--query", "age:29")
+      n_hits, _columns, *_records = select_result[0]
+      assert_equal([1], n_hits)
+    end
+
+    def test_force_truncate
+      result = grndb("recover", "--force-truncate")
+      assert_equal("", result.error_output)
+
+      select_result = groonga_select("Users", "--query", "age:29")
+      n_hits, _columns, *_records = select_result[0]
+      assert_equal([1], n_hits)
+    end
   end
 
   def test_force_clear_locked_database
