@@ -837,24 +837,6 @@ GRN_API grn_rc grn_proc_set_is_stable(grn_ctx *ctx,
 GRN_API grn_bool grn_proc_is_stable(grn_ctx *ctx, grn_obj *proc);
 
 /*-------------------------------------------------------------
- * grn_vector
-*/
-
-GRN_API unsigned int grn_vector_size(grn_ctx *ctx, grn_obj *vector);
-
-GRN_API grn_rc grn_vector_add_element(grn_ctx *ctx, grn_obj *vector,
-                                      const char *str, unsigned int str_len,
-                                      unsigned int weight, grn_id domain);
-
-GRN_API unsigned int grn_vector_get_element(grn_ctx *ctx, grn_obj *vector,
-                                            unsigned int offset, const char **str,
-                                            unsigned int *weight, grn_id *domain);
-GRN_API unsigned int grn_vector_pop_element(grn_ctx *ctx, grn_obj *vector,
-                                            const char **str,
-                                            unsigned int *weight,
-                                            grn_id *domain);
-
-/*-------------------------------------------------------------
  * grn_uvector
 */
 
@@ -1610,7 +1592,8 @@ typedef enum {
   GRN_CHAR_HIRAGANA,
   GRN_CHAR_KATAKANA,
   GRN_CHAR_KANJI,
-  GRN_CHAR_OTHERS
+  GRN_CHAR_OTHERS,
+  GRN_CHAR_EMOJI
 } grn_char_type;
 
 GRN_API grn_obj *grn_string_open(grn_ctx *ctx,

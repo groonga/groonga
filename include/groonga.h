@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2014-2017 Brazil
+  Copyright(C) 2014-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -51,3 +51,4 @@
 #include "groonga/window_function.h"
 #include "groonga/windows.h"
 #include "groonga/windows_event_logger.h"
+#include "groonga/vector.h"
