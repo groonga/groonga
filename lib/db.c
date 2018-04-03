@@ -86,9 +86,6 @@ grn_table_cursor_next_inline(grn_ctx *ctx, grn_table_cursor *tc);
 grn_inline static int
 grn_table_cursor_get_value_inline(grn_ctx *ctx, grn_table_cursor *tc, void **value);
 
-static void grn_obj_ensure_bulk(grn_ctx *ctx, grn_obj *obj);
-static void grn_obj_ensure_vector(grn_ctx *ctx, grn_obj *obj);
-
 grn_inline static void
 grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
                        grn_id *range_id, grn_obj_flags *range_flags);
@@ -11073,7 +11070,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
   (obj)->u.b.tail = NULL;\
 } while (0)
 
-static void
+void
 grn_obj_ensure_vector(grn_ctx *ctx, grn_obj *obj)
 {
   if (obj->header.type != GRN_VECTOR) { grn_bulk_fin(ctx, obj); }
@@ -11081,7 +11078,7 @@ grn_obj_ensure_vector(grn_ctx *ctx, grn_obj *obj)
   obj->header.flags &= ~GRN_OBJ_WITH_WEIGHT;
 }
 
-static void
+void
 grn_obj_ensure_bulk(grn_ctx *ctx, grn_obj *obj)
 {
   if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }

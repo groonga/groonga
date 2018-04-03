@@ -463,6 +463,9 @@ void grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj);
 
 grn_rc grn_obj_reinit_for(grn_ctx *ctx, grn_obj *obj, grn_obj *domain_obj);
 
+void grn_obj_ensure_bulk(grn_ctx *ctx, grn_obj *obj);
+void grn_obj_ensure_vector(grn_ctx *ctx, grn_obj *obj);
+
 void grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 GRN_API grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 grn_hash *grn_expr_get_vars(grn_ctx *ctx, grn_obj *expr, unsigned int *nvars);
