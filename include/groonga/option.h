@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include <groonga.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
