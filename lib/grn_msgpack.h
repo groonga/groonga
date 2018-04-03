@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "grn.h"
+
 #ifdef GRN_WITH_MESSAGE_PACK
 # include <msgpack.h>
 
@@ -35,6 +37,9 @@ typedef unsigned int msgpack_size_t;
 #  define MSGPACK_OBJECT_STR_SIZE(object) (object)->via.raw.size
 
 #  define MSGPACK_OBJECT_FLOAT_VALUE(object) (object)->via.dec
+
+#  define MSGPACK_UNPACKER_NEXT(unpacker, unpacked)     \
+  msgpack_unpacker_next((unpacker), (unpacked))
 # else /* MSGPACK_VERSION_MAJOR < 1 */
 typedef size_t msgpack_size_t;
 
@@ -42,5 +47,24 @@ typedef size_t msgpack_size_t;
 #  define MSGPACK_OBJECT_STR_SIZE(object) (object)->via.str.size
 
 #  define MSGPACK_OBJECT_FLOAT_VALUE(object) (object)->via.f64
+
+#  define MSGPACK_UNPACKER_NEXT(unpacker, unpacked)                     \
+  msgpack_unpacker_next((unpacker), (unpacked)) == MSGPACK_UNPACK_SUCCESS
 # endif /* MSGPACK_VERSION_MAJOR < 1 */
+
+grn_rc grn_msgpack_pack_raw_internal(grn_ctx *ctx,
+                                     msgpack_packer *packer,
+                                     const char *value,
+                                     unsigned int value_size,
+                                     grn_id value_domain);
+grn_rc grn_msgpack_pack_internal(grn_ctx *ctx,
+                                 msgpack_packer *packer,
+                                 grn_obj *value);
+grn_rc grn_msgpack_unpack_array_internal(grn_ctx *ctx,
+                                         msgpack_object_array *array,
+                                         grn_obj *vector);
+int64_t grn_msgpack_unpack_ext_time_internal(grn_ctx *ctx,
+                                             msgpack_object_ext *ext);
+
+
 #endif /* GRN_WITH_MESSAGE_PACK */
