@@ -186,7 +186,7 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
                              0,
                              GRN_DB_TEXT);
       break;
-# if MSGPACK_VERSION_MAJOR < 1
+# if MSGPACK_VERSION_MAJOR >= 1
     case MSGPACK_OBJECT_EXT :
       if (element->via.ext.type == GRN_MSGPACK_OBJECT_EXT_TIME) {
         grn_vector_add_element(ctx,
@@ -201,7 +201,7 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
             element->via.ext.type);
       }
       break;
-# endif /* MSGPACK_VERSION_MAJOR < 1 */
+# endif /* MSGPACK_VERSION_MAJOR >= 1 */
     default :
       ERR(GRN_INVALID_ARGUMENT,
           "[msgpack] unexpected element type: <%#x>",
@@ -213,7 +213,7 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
   return ctx->rc;
 }
 
-# if MSGPACK_VERSION_MAJOR < 1
+# if MSGPACK_VERSION_MAJOR >= 1
 int64_t
 grn_msgpack_unpack_ext_time_internal(grn_ctx *ctx,
                                      msgpack_object_ext *ext)
@@ -228,7 +228,7 @@ grn_msgpack_unpack_ext_time_internal(grn_ctx *ctx,
     return 0;
   }
 }
-# endif /* MSGPACK_VERSION_MAJOR < 1 */
+# endif /* MSGPACK_VERSION_MAJOR >= 1 */
 
 grn_rc
 grn_msgpack_pack_raw(grn_ctx *ctx,
@@ -262,7 +262,7 @@ grn_msgpack_unpack_array(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
-# if MSGPACK_VERSION_MAJOR < 1
+# if MSGPACK_VERSION_MAJOR >= 1
 int64_t
 grn_msgpack_unpack_ext_time(grn_ctx *ctx,
                             msgpack_object_ext *ext)
@@ -272,5 +272,5 @@ grn_msgpack_unpack_ext_time(grn_ctx *ctx,
   time = grn_msgpack_unpack_ext_time_internal(ctx, ext);
   GRN_API_RETURN(time);
 }
-# endif /* MSGPACK_VERSION_MAJOR < 1 */
+# endif /* MSGPACK_VERSION_MAJOR >= 1 */
 #endif /* GRN_WITH_MESSAGE_PACK */

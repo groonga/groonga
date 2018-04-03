@@ -63,10 +63,10 @@ grn_rc grn_msgpack_pack_internal(grn_ctx *ctx,
 grn_rc grn_msgpack_unpack_array_internal(grn_ctx *ctx,
                                          msgpack_object_array *array,
                                          grn_obj *vector);
-# if MSGPACK_VERSION_MAJOR < 1
+# if MSGPACK_VERSION_MAJOR >= 1
 int64_t grn_msgpack_unpack_ext_time_internal(grn_ctx *ctx,
                                              msgpack_object_ext *ext);
-# endif /* MSGPACK_VERSION_MAJOR < 1 */
+# endif /* MSGPACK_VERSION_MAJOR >= 1 */
 
 
 #endif /* GRN_WITH_MESSAGE_PACK */
