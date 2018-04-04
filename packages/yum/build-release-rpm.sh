@@ -95,9 +95,11 @@ EOR
   release_spec=$rpm_base_dir/SPECS/${PACKAGE}-release.spec
   release_version=$(grep '^Version: ' ${release_spec} | \
                       sed -e 's/^Version: //')
+  release_release=$(grep '^Release: ' ${release_spec} | \
+                      sed -e 's/^Release: //')
   run cd $top_dir
   run ln -fs \
-      ${PACKAGE}-release-${release_version}.noarch.rpm \
+      ${PACKAGE}-release-${release_version}-${release_release}.noarch.rpm \
       ${PACKAGE}-release-latest.noarch.rpm
   run cd -
 
