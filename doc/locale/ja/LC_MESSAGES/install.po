@@ -176,6 +176,32 @@ msgstr ""
 "Debian stretchでGroongaをビルドするために必要なパッケージをインストールしま"
 "す::"
 
+msgid "Docker"
+msgstr ""
+
+msgid ""
+"This section describes how to install Groonga on Docker. You can install "
+"Groonga image via DockerHub."
+msgstr ""
+"このセクションではDockerでGroongaをインストールする方法を説明します。"
+"GroongaイメージはDockerHub経由でインストールできます。"
+
+msgid "We distribute Alpine Linux Groonga docker image on DockerHub."
+msgstr ""
+"DockerHubにおいて、Alpine LinuxのGroongaのDockerイメージを配布しています。"
+
+msgid "Pulling image"
+msgstr "イメージの取得"
+
+msgid "Then run it with the following command::"
+msgstr "次のコマンドで実行します::"
+
+msgid "With docker-compose"
+msgstr "docker-composeを用いる場合"
+
+msgid "Create docker-compose.yml as follows::"
+msgstr "docker-compose.ymlを次のように作成します::"
+
 msgid "Fedora"
 msgstr ""
 
