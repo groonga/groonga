@@ -92,6 +92,15 @@ EOR
 	${script_base_dir}/RPM-GPG-KEY-${PACKAGE} \
 	$top_dir
 
+    release_spec=$rpm_base_dir/SPECS/${PACKAGE}-release.spec
+    release_version=$(grep '^Version: ' ${release_spec} | \
+			sed -e 's/^Version: //')
+    run cd $top_dir
+    run ln -fs \
+	${PACKAGE}-release-${release_version}.noarch.rpm \
+	${PACKAGE}-release-latest.noarch.rpm
+    run cd -
+
     for distribution_version in $distribution_versions; do
 	cp $top_dir/*.src.rpm $top_dir/$distribution_version/source/SRPMS/
 	if [ -d "$top_dir/$distribution_version/i386/Packages" ]; then
