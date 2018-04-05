@@ -37,6 +37,7 @@ extern "C" {
 #define GRN_TIME_USEC_TO_NSEC(usec) ((usec) * GRN_TIME_NSEC_PER_USEC)
 
 #define GRN_TIME_USEC_PER_SEC 1000000
+#define GRN_TIME_USEC_PER_SEC_F 1000000.0
 #define GRN_TIME_PACK(sec, usec) ((int64_t)(sec) * GRN_TIME_USEC_PER_SEC + (usec))
 #define GRN_TIME_UNPACK(time_value, sec, usec) do {\
   sec = (time_value) / GRN_TIME_USEC_PER_SEC;\
