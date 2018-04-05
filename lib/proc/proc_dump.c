@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -704,6 +704,20 @@ exit :
 }
 
 static void
+dump_optionable_obj_string(grn_ctx *ctx,
+                           grn_dumper *dumper,
+                           grn_obj *string)
+{
+  const char *value = GRN_TEXT_VALUE(string);
+  size_t length = GRN_TEXT_LEN(string);
+  if (length > 0 && value[length - 1] == ')') {
+    grn_text_otoj(ctx, dumper->output, string, NULL);
+  } else {
+    GRN_TEXT_PUT(ctx, dumper->output, value, length);
+  }
+}
+
+static void
 dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 {
   grn_obj *domain = NULL;
@@ -763,8 +777,12 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     grn_obj_unlink(ctx, range);
   }
   if (default_tokenizer) {
+    grn_obj sub_output;
     GRN_TEXT_PUTS(ctx, dumper->output, " --default_tokenizer ");
-    dump_obj_name(ctx, dumper, default_tokenizer);
+    GRN_TEXT_INIT(&sub_output, 0);
+    grn_table_get_tokenizer_string(ctx, table, &sub_output);
+    dump_optionable_obj_string(ctx, dumper, &sub_output);
+    GRN_OBJ_FIN(ctx, &sub_output);
   }
   if (normalizer) {
     GRN_TEXT_PUTS(ctx, dumper->output, " --normalizer ");

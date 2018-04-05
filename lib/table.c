@@ -184,6 +184,29 @@ grn_table_tokenizer_set_options(grn_ctx *ctx,
   }
 }
 
+grn_rc
+grn_table_get_tokenizer_options(grn_ctx *ctx,
+                                grn_obj *table,
+                                grn_obj *options)
+{
+  GRN_API_ENTER;
+
+  if (!grn_obj_is_lexicon(ctx, table)) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][tokenizer-options][get] table must be key table: %s",
+        table ? grn_obj_type_to_string(table->header.type) : "(null)");
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  grn_obj_get_option_values(ctx,
+                            table,
+                            "tokenizer",
+                            -1,
+                            GRN_OPTION_REVISION_NONE,
+                            options);
+  GRN_API_RETURN(ctx->rc);
+}
+
 void *
 grn_table_cache_tokenizer_options(grn_ctx *ctx,
                                   grn_obj *table,
@@ -200,7 +223,7 @@ grn_table_cache_tokenizer_options(grn_ctx *ctx,
 
   if (!table) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[table][tokenizer-options][set] table is NULL");
+        "[table][tokenizer-options][cache] table is NULL");
     GRN_API_RETURN(NULL);
   }
 
@@ -216,7 +239,7 @@ grn_table_cache_tokenizer_options(grn_ctx *ctx,
     break;
   default :
     ERR(GRN_INVALID_ARGUMENT,
-        "[table][tokenizer-options][set] table must key table: %s",
+        "[table][tokenizer-options][cache] table must key table: %s",
         grn_obj_type_to_string(table->header.type));
     GRN_API_RETURN(NULL);
     break;
@@ -245,5 +268,76 @@ exit :
   GRN_OBJ_FIN(ctx, &raw_options);
 
   GRN_API_RETURN(tokenizer->options);
+}
+
+grn_rc
+grn_table_get_tokenizer_string(grn_ctx *ctx,
+                               grn_obj *table,
+                               grn_obj *output)
+{
+  grn_obj *tokenizer;
+  char name[GRN_TABLE_MAX_KEY_SIZE];
+  unsigned int name_size;
+  grn_obj options;
+  unsigned int n = 0;
+
+  GRN_API_ENTER;
+
+  if (!grn_obj_is_lexicon(ctx, table)) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][tokenizer-options][get] table must be key table: %s",
+        table ? grn_obj_type_to_string(table->header.type) : "(null)");
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  grn_table_get_info(ctx, table, NULL, NULL, &tokenizer, NULL, NULL);
+  if (!tokenizer) {
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  name_size = grn_obj_name(ctx, tokenizer, name, GRN_TABLE_MAX_KEY_SIZE);
+  GRN_TEXT_PUT(ctx, output, name, name_size);
+
+  GRN_VOID_INIT(&options);
+  grn_obj_get_option_values(ctx,
+                            table,
+                            "tokenizer",
+                            -1,
+                            GRN_OPTION_REVISION_NONE,
+                            &options);
+  if (options.header.type != GRN_DB_VOID) {
+    n = grn_vector_size(ctx, &options);
+  }
+  if (n > 0) {
+    unsigned int i;
+    grn_obj option;
+
+    GRN_VOID_INIT(&option);
+    GRN_TEXT_PUTS(ctx, output, "(");
+    for (i = 0; i < n; i++) {
+      const char *value;
+      unsigned int value_size;
+      grn_id domain;
+
+      if (i > 0) {
+        GRN_TEXT_PUTS(ctx, output, ", ");
+      }
+
+      value_size = grn_vector_get_element(ctx,
+                                          &options,
+                                          i,
+                                          &value,
+                                          NULL,
+                                          &domain);
+      grn_obj_reinit(ctx, &option, domain, 0);
+      grn_bulk_write(ctx, &option, value, value_size);
+      grn_text_otoj(ctx, output, &option, NULL);
+    }
+    GRN_TEXT_PUTS(ctx, output, ")");
+    GRN_OBJ_FIN(ctx, &option);
+  }
+  GRN_OBJ_FIN(ctx, &options);
+
+  GRN_API_RETURN(ctx->rc);
 }
 

@@ -246,12 +246,18 @@ typedef void *(*grn_tokenizer_open_options_func)(grn_ctx *ctx,
                                                  grn_obj *values,
                                                  void *user_data);
 
+GRN_API grn_rc
+grn_table_get_tokenizer_options(grn_ctx *ctx, grn_obj *table, grn_obj *options);
+
 GRN_API void *
 grn_table_cache_tokenizer_options(grn_ctx *ctx,
                                   grn_obj *table,
                                   grn_tokenizer_open_options_func open_options_func,
                                   grn_close_func close_options_func,
                                   void *user_data);
+
+GRN_API grn_rc
+grn_table_get_tokenizer_string(grn_ctx *ctx, grn_obj *table, grn_obj *output);
 
 #ifdef __cplusplus
 }
