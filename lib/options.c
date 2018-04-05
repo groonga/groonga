@@ -311,8 +311,8 @@ grn_options_get(grn_ctx *ctx,
       for (i = 0; i < map->size; i++) {
         msgpack_object_kv *kv = map->ptr;
         if (kv->key.type == MSGPACK_OBJECT_STR &&
-            kv->key.via.str.size == name_length &&
-            memcmp(kv->key.via.str.ptr, name, name_length) == 0) {
+            MSGPACK_OBJECT_STR_SIZE(&(kv->key)) == name_length &&
+            memcmp(MSGPACK_OBJECT_STR_PTR(&(kv->key)), name, name_length) == 0) {
           if (kv->val.type == MSGPACK_OBJECT_ARRAY) {
             grn_msgpack_unpack_array_internal(ctx,
                                               &(kv->val.via.array),
