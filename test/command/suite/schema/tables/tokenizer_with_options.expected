@@ -1,6 +1,4 @@
-plugin_register token_filters/stop_word
-[[0,0.0,0.0],true]
-table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --token_filters TokenFilterStopWord
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("n", 4)'
 [[0,0.0,0.0],true]
 schema
 [
@@ -11,9 +9,6 @@ schema
   ],
   {
     "plugins": {
-      "token_filters/stop_word": {
-        "name": "token_filters/stop_word"
-      }
     },
     "types": {
       "Bool": {
@@ -209,14 +204,10 @@ schema
       }
     },
     "token_filters": {
-      "TokenFilterStopWord": {
-        "id": 256,
-        "name": "TokenFilterStopWord"
-      }
     },
     "tables": {
       "Terms": {
-        "id": 257,
+        "id": 256,
         "name": "Terms",
         "type": "patricia trie",
         "key_type": {
@@ -226,16 +217,16 @@ schema
         },
         "value_type": null,
         "tokenizer": {
-          "id": 67,
-          "name": "TokenBigram",
-          "options": null
+          "id": 78,
+          "name": "TokenNgram",
+          "options": [
+            "n",
+            4
+          ]
         },
         "normalizer": null,
         "token_filters": [
-          {
-            "id": 256,
-            "name": "TokenFilterStopWord"
-          }
+
         ],
         "indexes": [
 
@@ -246,10 +237,9 @@ schema
             "name": "Terms",
             "flags": "TABLE_PAT_KEY",
             "key_type": "ShortText",
-            "default_tokenizer": "TokenBigram",
-            "token_filters": "TokenFilterStopWord"
+            "default_tokenizer": "TokenNgram(\"n\", 4)"
           },
-          "command_line": "table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --token_filters TokenFilterStopWord"
+          "command_line": "table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer \"TokenNgram(\\\"n\\\", 4)\""
         },
         "columns": {
         }

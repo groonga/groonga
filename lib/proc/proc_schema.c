@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015-2016 Brazil
+  Copyright(C) 2015-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -97,6 +97,30 @@ command_schema_output_value_type(grn_ctx *ctx, grn_obj *value_type)
   command_schema_output_type(ctx, "value_type", value_type);
 }
 
+static grn_bool
+command_schema_output_command_include_special_character(grn_ctx *ctx,
+                                                        const char *value,
+                                                        unsigned int size)
+{
+  const char *end = value + size;
+
+  for (; value < end; value++) {
+    switch (value[0]) {
+    case '(' :
+    case ')' :
+    case ' ' :
+    case '"' :
+    case '\'' :
+      return GRN_TRUE;
+      break;
+    default :
+      break;
+    }
+  }
+
+  return GRN_FALSE;
+}
+
 static void
 command_schema_output_command(grn_ctx *ctx,
                               const char *command_name,
@@ -145,12 +169,22 @@ command_schema_output_command(grn_ctx *ctx,
 
       name_size  = grn_vector_get_element(ctx, arguments, i, &name,
                                           NULL, NULL);
+      grn_text_printf(ctx, &command_line,
+                      " --%.*s ",
+                      name_size, name);
       value_size = grn_vector_get_element(ctx, arguments, i + 1, &value,
                                           NULL, NULL);
-      grn_text_printf(ctx, &command_line,
-                      " --%.*s %.*s",
-                      name_size, name,
-                      value_size, value);
+      if (command_schema_output_command_include_special_character(ctx,
+                                                                  value,
+                                                                  value_size)) {
+        grn_obj value_text;
+        GRN_TEXT_INIT(&value_text, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_TEXT_SET(ctx, &value_text, value, value_size);
+        grn_text_otoj(ctx, &command_line, &value_text, NULL);
+        GRN_OBJ_FIN(ctx, &value_text);
+      } else {
+        GRN_TEXT_PUT(ctx, &command_line, value, value_size);
+      }
     }
     grn_ctx_output_str(ctx,
                        GRN_TEXT_VALUE(&command_line),
@@ -506,13 +540,50 @@ command_schema_table_output_tokenizer(grn_ctx *ctx, grn_obj *table)
     return;
   }
 
-  grn_ctx_output_map_open(ctx, "tokenizer", 2);
+  grn_ctx_output_map_open(ctx, "tokenizer", 3);
 
   grn_ctx_output_cstr(ctx, "id");
   command_schema_output_id(ctx, tokenizer);
 
   grn_ctx_output_cstr(ctx, "name");
   command_schema_output_name(ctx, tokenizer);
+
+  grn_ctx_output_cstr(ctx, "options");
+  {
+    grn_obj options;
+    unsigned int n;
+
+    GRN_VOID_INIT(&options);
+    grn_table_get_tokenizer_options(ctx, table, &options);
+    if (options.header.type == GRN_VOID) {
+      grn_ctx_output_null(ctx);
+    } else {
+      grn_obj option;
+      unsigned int i;
+
+      n = grn_vector_size(ctx, &options);
+      grn_ctx_output_array_open(ctx, "options", n);
+      GRN_VOID_INIT(&option);
+      for (i = 0; i < n; i++) {
+        const char *value;
+        unsigned int length;
+        grn_id domain;
+
+        length = grn_vector_get_element(ctx,
+                                        &options,
+                                        i,
+                                        &value,
+                                        NULL,
+                                        &domain);
+        grn_obj_reinit(ctx, &option, domain, 0);
+        grn_bulk_write(ctx, &option, value, length);
+        grn_ctx_output_obj(ctx, &option, NULL);
+      }
+      GRN_OBJ_FIN(ctx, &option);
+      grn_ctx_output_array_close(ctx);
+    }
+    GRN_OBJ_FIN(ctx, &options);
+  }
 
   grn_ctx_output_map_close(ctx);
 }
@@ -642,7 +713,12 @@ command_schema_table_command_collect_arguments(grn_ctx *ctx,
     grn_obj *tokenizer;
     tokenizer = grn_obj_get_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, NULL);
     if (tokenizer) {
-      ADD_OBJECT_NAME("default_tokenizer", tokenizer);
+      grn_obj sub_output;
+      GRN_TEXT_INIT(&sub_output, 0);
+      grn_table_get_tokenizer_string(ctx, table, &sub_output);
+      GRN_TEXT_PUTC(ctx, &sub_output, '\0');
+      ADD("default_tokenizer", GRN_TEXT_VALUE(&sub_output));
+      GRN_OBJ_FIN(ctx, &sub_output);
     }
   }
 

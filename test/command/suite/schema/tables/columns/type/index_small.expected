@@ -338,7 +338,8 @@ schema
         "value_type": null,
         "tokenizer": {
           "id": 67,
-          "name": "TokenBigram"
+          "name": "TokenBigram",
+          "options": null
         },
         "normalizer": {
           "id": 79,
