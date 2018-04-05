@@ -47,6 +47,9 @@ tokenizer_list
     },
     {
       "name": "TokenRegexp"
+    },
+    {
+      "name": "TokenNgram"
     }
   ]
 ]

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 #include "grn_token_cursor.h"
 #include "grn_string.h"
 #include "grn_plugin.h"
+#include "grn_raw_string.h"
 #include <groonga/tokenizer.h>
 
 grn_obj *grn_tokenizer_uvector = NULL;
@@ -258,8 +259,15 @@ typedef struct {
 } grn_ngram_tokenizer;
 
 static grn_obj *
-ngram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data, uint8_t ngram_unit,
-           uint8_t uni_alpha, uint8_t uni_digit, uint8_t uni_symbol, uint8_t ignore_blank)
+ngram_init_raw(grn_ctx *ctx,
+               int nargs,
+               grn_obj **args,
+               grn_user_data *user_data,
+               uint8_t ngram_unit,
+               uint8_t uni_alpha,
+               uint8_t uni_digit,
+               uint8_t uni_symbol,
+               uint8_t ignore_blank)
 {
   unsigned int normalize_flags =
     GRN_STRING_REMOVE_BLANK |
@@ -311,43 +319,119 @@ ngram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data, ui
 
 static grn_obj *
 unigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, nargs, args, user_data, 1, 1, 1, 1, 0); }
+{ return ngram_init_raw(ctx, nargs, args, user_data, 1, 1, 1, 1, 0); }
 
 static grn_obj *
 bigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, nargs, args, user_data, 2, 1, 1, 1, 0); }
+{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 1, 1, 1, 0); }
 
 static grn_obj *
 trigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, nargs, args, user_data, 3, 1, 1, 1, 0); }
+{ return ngram_init_raw(ctx, nargs, args, user_data, 3, 1, 1, 1, 0); }
 
 static grn_obj *
 bigrams_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, nargs, args, user_data, 2, 1, 1, 0, 0); }
+{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 1, 1, 0, 0); }
 
 static grn_obj *
 bigramsa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, nargs, args, user_data, 2, 0, 1, 0, 0); }
+{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 0, 1, 0, 0); }
 
 static grn_obj *
 bigramsad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, nargs, args, user_data, 2, 0, 0, 0, 0); }
+{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 0, 0, 0, 0); }
 
 static grn_obj *
 bigrami_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, nargs, args, user_data, 2, 1, 1, 1, 1); }
+{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 1, 1, 1, 1); }
 
 static grn_obj *
 bigramis_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, nargs, args, user_data, 2, 1, 1, 0, 1); }
+{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 1, 1, 0, 1); }
 
 static grn_obj *
 bigramisa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, nargs, args, user_data, 2, 0, 1, 0, 1); }
+{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 0, 1, 0, 1); }
 
 static grn_obj *
 bigramisad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, nargs, args, user_data, 2, 0, 0, 0, 1); }
+{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 0, 0, 0, 1); }
+
+typedef struct {
+  uint8_t unit;
+  uint8_t uni_alpha;
+  uint8_t uni_digit;
+  uint8_t uni_symbol;
+  uint8_t ignore_blank;
+} ngram_options;
+
+static void *
+ngram_open_options(grn_ctx *ctx,
+                   grn_obj *lexicon,
+                   grn_obj *raw_options,
+                   void *user_data)
+{
+  ngram_options *options;
+
+  options = GRN_MALLOC(sizeof(ngram_options));
+  if (!options) {
+    return NULL;
+  }
+
+  options->unit = 2;
+  options->uni_alpha = 1;
+  options->uni_digit = 1;
+  options->uni_symbol = 1;
+  options->ignore_blank = 0;
+
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+    grn_raw_string name_raw;
+    name_raw.value = name;
+    name_raw.length = name_length;
+
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "n")) {
+      options->unit = grn_vector_get_element_uint8(ctx,
+                                                   raw_options,
+                                                   i,
+                                                   options->unit);
+    }
+  } GRN_OPTION_VALUES_EACH_END();
+
+  return options;
+}
+
+static void
+ngram_close_options(grn_ctx *ctx, void *data)
+{
+  ngram_options *options = data;
+  GRN_FREE(options);
+}
+
+static grn_obj *
+ngram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *lexicon = args[0];
+  ngram_options *options;
+
+  options = grn_table_get_tokenizer_options(ctx,
+                                            lexicon,
+                                            ngram_open_options,
+                                            ngram_close_options,
+                                            NULL);
+  if (ctx->rc != GRN_SUCCESS) {
+    return NULL;
+  }
+
+  return ngram_init_raw(ctx,
+                        nargs,
+                        args,
+                        user_data,
+                        options->unit,
+                        options->uni_alpha,
+                        options->uni_digit,
+                        options->uni_symbol,
+                        options->ignore_blank);
+}
 
 static grn_obj *
 ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
@@ -873,5 +957,7 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
                 delimit_null_init, delimited_next, delimited_fin, vars);
   DEF_TOKENIZER("TokenRegexp",
                 regexp_init, regexp_next, regexp_fin, vars);
+  DEF_TOKENIZER("TokenNgram",
+                ngram_init, ngram_next, ngram_fin, vars);
   return GRN_SUCCESS;
 }

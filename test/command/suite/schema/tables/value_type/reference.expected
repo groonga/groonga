@@ -178,6 +178,10 @@ schema
         "id": 64,
         "name": "TokenMecab"
       },
+      "TokenNgram": {
+        "id": 78,
+        "name": "TokenNgram"
+      },
       "TokenRegexp": {
         "id": 77,
         "name": "TokenRegexp"
@@ -193,11 +197,11 @@ schema
     },
     "normalizers": {
       "NormalizerAuto": {
-        "id": 78,
+        "id": 79,
         "name": "NormalizerAuto"
       },
       "NormalizerNFKC51": {
-        "id": 79,
+        "id": 80,
         "name": "NormalizerNFKC51"
       }
     },
