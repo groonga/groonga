@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015-2017 Brazil
+  Copyright(C) 2015-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -686,4 +686,47 @@ grn_obj_get_disk_usage(grn_ctx *ctx, grn_obj *obj)
   }
 
   GRN_API_RETURN(usage);
+}
+
+grn_rc
+grn_obj_set_option_values(grn_ctx *ctx,
+                          grn_obj *obj,
+                          const char *name,
+                          int name_length,
+                          grn_obj *values)
+{
+  grn_rc rc;
+
+  GRN_API_ENTER;
+
+  rc = grn_db_set_option_values(ctx,
+                                grn_ctx_db(ctx),
+                                grn_obj_id(ctx, obj),
+                                name,
+                                name_length,
+                                values);
+
+  GRN_API_RETURN(rc);
+}
+
+grn_option_revision
+grn_obj_get_option_values(grn_ctx *ctx,
+                          grn_obj *obj,
+                          const char *name,
+                          int name_length,
+                          grn_option_revision revision,
+                          grn_obj *values)
+{
+  grn_option_revision returned_revision;
+
+  GRN_API_ENTER;
+  returned_revision = grn_db_get_option_values(ctx,
+                                               grn_ctx_db(ctx),
+                                               grn_obj_id(ctx, obj),
+                                               name,
+                                               name_length,
+                                               revision,
+                                               values);
+
+  GRN_API_RETURN(returned_revision);
 }

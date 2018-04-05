@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015-2017 Brazil
+  Copyright(C) 2015-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,8 @@
 */
 
 #pragma once
+
+#include <groonga/option.h>
 
 #ifdef  __cplusplus
 extern "C" {
@@ -75,6 +77,19 @@ GRN_API grn_bool grn_obj_name_is_column(grn_ctx *ctx,
 
 GRN_API grn_bool grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj);
 GRN_API size_t grn_obj_get_disk_usage(grn_ctx *ctx, grn_obj *obj);
+
+GRN_API grn_rc grn_obj_set_option_values(grn_ctx *ctx,
+                                         grn_obj *obj,
+                                         const char *name,
+                                         int name_length,
+                                         grn_obj *values);
+GRN_API grn_option_revision
+grn_obj_get_option_values(grn_ctx *ctx,
+                          grn_obj *obj,
+                          const char *name,
+                          int name_length,
+                          grn_option_revision revision,
+                          grn_obj *values);
 
 #ifdef __cplusplus
 }
