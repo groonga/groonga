@@ -76,7 +76,10 @@ grn_msgpack_pack_raw_internal(grn_ctx *ctx,
     break;
   case GRN_DB_TIME :
 # if MSGPACK_VERSION_MAJOR < 1
-    msgpack_pack_int64(packer, *((int64_t *)value));
+    {
+      double time_value = (*((int64_t *)value) / GRN_TIME_USEC_PER_SEC_F);
+      msgpack_pack_double(packer, time_value);
+    }
 # else /* MSGPACK_VERSION_MAJOR < 1 */
     /* TODO: Use timestamp time in spec. */
     msgpack_pack_ext(packer, sizeof(int64_t), GRN_MSGPACK_OBJECT_EXT_TIME);
