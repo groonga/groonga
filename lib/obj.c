@@ -121,6 +121,27 @@ grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
 }
 
 grn_bool
+grn_obj_is_lexicon(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_bool is_lexicon = GRN_FALSE;
+
+  if (!obj) {
+    return GRN_FALSE;
+  }
+
+  switch (obj->header.type) {
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+    is_lexicon = GRN_TRUE;
+  default :
+    break;
+  }
+
+  return is_lexicon;
+}
+
+grn_bool
 grn_obj_is_column(grn_ctx *ctx, grn_obj *obj)
 {
   grn_bool is_column = GRN_FALSE;
