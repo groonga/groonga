@@ -1,0 +1,326 @@
+From a9cee6636b2e3859fcffb04a6ed5a87ac5aef449 Mon Sep 17 00:00:00 2001
+From: Kouhei Sutou <kou@clear-code.com>
+Date: Thu, 5 Apr 2018 09:26:38 +0900
+Subject: [PATCH] Support Zstandard < 1 again
+
+---
+ lib/store.c | 271 ++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 167 insertions(+), 104 deletions(-)
+
+diff --git a/lib/store.c b/lib/store.c
+index 4fe6444ca..dd4b739ef 100644
+--- a/lib/store.c
++++ b/lib/store.c
+@@ -2156,73 +2156,112 @@ grn_ja_putv_zstd(grn_ctx *ctx,
+   const size_t body_size = body ? GRN_BULK_VSIZE(body) : 0;
+   const size_t footer_size = GRN_BULK_VSIZE(footer);
+   const size_t size = header_size + body_size + footer_size;
+-  ZSTD_CStream *zstd_stream = NULL;
+-  ZSTD_inBuffer zstd_input;
+-  ZSTD_outBuffer zstd_output;
+   int zstd_compression_level = 3;
+-  size_t zstd_result;
++#if ZSTD_VERSION_MAJOR < 1
++  grn_obj all_value;
++  void *zstd_value = NULL;
++
++  GRN_TEXT_INIT(&all_value, 0);
++#else /* ZSTD_VERSION_MAJOR < 1 */
++  ZSTD_CStream *zstd_stream = NULL;
++  ZSTD_outBuffer zstd_output;
++
++  zstd_output.dst = NULL;
++  zstd_output.pos = 0;
++#endif /* ZSTD_VERSION_MAJOR < 1 */
+ 
+   if (size < COMPRESS_THRESHOLD_BYTE) {
+     return grn_ja_putv_packed(ctx, ja, id, header, body, footer, flags);
+   }
+ 
+-  zstd_output.dst = NULL;
+-  zstd_output.pos = 0;
++#if ZSTD_VERSION_MAJOR < 1
++  {
++    int zstd_value_len_max;
++    int zstd_value_len_real;
+ 
+-  zstd_stream = ZSTD_createCStream();
+-  if (!zstd_stream) {
+-    grn_ja_compress_error(ctx,
+-                          ja,
+-                          id,
+-                          GRN_ZSTD_ERROR,
+-                          "[zstd] failed to allocate stream compressor",
+-                          NULL);
+-    rc = ctx->rc;
+-    goto exit;
+-  }
++    zstd_value_len_max = ZSTD_compressBound(size);
++    zstd_value = GRN_MALLOC(zstd_value_len_max);
++    if (!zstd_value) {
++      grn_ja_compress_error(ctx,
++                            ja,
++                            id,
++                            GRN_ZSTD_ERROR,
++                            "[zstd] failed to allocate compress buffer",
++                            NULL);
++      rc = ctx->rc;
++      goto exit;
++    }
+ 
+-  zstd_result = ZSTD_initCStream(zstd_stream, zstd_compression_level);
+-  if (ZSTD_isError(zstd_result)) {
+-    grn_ja_compress_error(ctx,
+-                          ja,
+-                          id,
+-                          GRN_ZSTD_ERROR,
+-                          "[zstd] failed to initialize stream compressor",
+-                          ZSTD_getErrorName(zstd_result));
+-    rc = ctx->rc;
+-    goto exit;
++    GRN_TEXT_PUT(ctx, &all_value, GRN_TEXT_VALUE(header), header_size);
++    if (body_size > 0) {
++      GRN_TEXT_PUT(ctx, &all_value, GRN_TEXT_VALUE(body), body_size);
++    }
++    GRN_TEXT_PUT(ctx, &all_value, GRN_TEXT_VALUE(footer), footer_size);
++    zstd_value_len_real = ZSTD_compress(zstd_value, zstd_value_len_max,
++                                        GRN_TEXT_VALUE(&all_value), size,
++                                        zstd_compression_level);
++    if (ZSTD_isError(zstd_value_len_real)) {
++      grn_ja_compress_error(ctx,
++                            ja,
++                            id,
++                            GRN_ZSTD_ERROR,
++                            "[zstd] failed to compress",
++                            ZSTD_getErrorName(zstd_value_len_real));
++      rc = ctx->rc;
++      goto exit;
++    }
++    rc = grn_ja_putv_compressed(ctx,
++                                ja,
++                                id,
++                                zstd_value,
++                                zstd_value_len_real,
++                                size,
++                                flags);
+   }
++#else /* ZSTD_VERSION_MAJOR < 1 */
++  {
++    ZSTD_inBuffer zstd_input;
++    size_t zstd_result;
+ 
+-  zstd_output.size = ZSTD_compressBound(size);
+-  zstd_output.dst = GRN_MALLOC(zstd_output.size);
+-  if (!zstd_output.dst) {
+-    grn_ja_compress_error(ctx,
+-                          ja,
+-                          id,
+-                          GRN_ZSTD_ERROR,
+-                          "[zstd] failed to allocate compress buffer",
+-                          NULL);
+-    rc = ctx->rc;
+-    goto exit;
+-  }
++    zstd_stream = ZSTD_createCStream();
++    if (!zstd_stream) {
++      grn_ja_compress_error(ctx,
++                            ja,
++                            id,
++                            GRN_ZSTD_ERROR,
++                            "[zstd] failed to allocate stream compressor",
++                            NULL);
++      rc = ctx->rc;
++      goto exit;
++    }
+ 
+-  zstd_input.src = GRN_BULK_HEAD(header);
+-  zstd_input.size = header_size;
+-  zstd_input.pos = 0;
+-  zstd_result = ZSTD_compressStream(zstd_stream, &zstd_output, &zstd_input);
+-  if (ZSTD_isError(zstd_result)) {
+-    grn_ja_compress_error(ctx,
+-                          ja,
+-                          id,
+-                          GRN_ZSTD_ERROR,
+-                          "[zstd] failed to compress header",
+-                          ZSTD_getErrorName(zstd_result));
+-    rc = ctx->rc;
+-    goto exit;
+-  }
+-  if (body_size > 0) {
+-    zstd_input.src = GRN_BULK_HEAD(body);
+-    zstd_input.size = body_size;
++    zstd_result = ZSTD_initCStream(zstd_stream, zstd_compression_level);
++    if (ZSTD_isError(zstd_result)) {
++      grn_ja_compress_error(ctx,
++                            ja,
++                            id,
++                            GRN_ZSTD_ERROR,
++                            "[zstd] failed to initialize stream compressor",
++                            ZSTD_getErrorName(zstd_result));
++      rc = ctx->rc;
++      goto exit;
++    }
++
++    zstd_output.size = ZSTD_compressBound(size);
++    zstd_output.dst = GRN_MALLOC(zstd_output.size);
++    if (!zstd_output.dst) {
++      grn_ja_compress_error(ctx,
++                            ja,
++                            id,
++                            GRN_ZSTD_ERROR,
++                            "[zstd] failed to allocate compress buffer",
++                            NULL);
++      rc = ctx->rc;
++      goto exit;
++    }
++
++    zstd_input.src = GRN_BULK_HEAD(header);
++    zstd_input.size = header_size;
+     zstd_input.pos = 0;
+     zstd_result = ZSTD_compressStream(zstd_stream, &zstd_output, &zstd_input);
+     if (ZSTD_isError(zstd_result)) {
+@@ -2230,68 +2269,92 @@ grn_ja_putv_zstd(grn_ctx *ctx,
+                             ja,
+                             id,
+                             GRN_ZSTD_ERROR,
+-                            "[zstd] failed to compress body",
++                            "[zstd] failed to compress header",
+                             ZSTD_getErrorName(zstd_result));
+       rc = ctx->rc;
+       goto exit;
+     }
+-  }
+-  if (footer_size > 0) {
+-    zstd_input.src = GRN_BULK_HEAD(footer);
+-    zstd_input.size = footer_size;
+-    zstd_input.pos = 0;
+-    zstd_result = ZSTD_compressStream(zstd_stream, &zstd_output, &zstd_input);
+-    if (ZSTD_isError(zstd_result)) {
+-      grn_ja_compress_error(ctx,
+-                            ja,
+-                            id,
+-                            GRN_ZSTD_ERROR,
+-                            "[zstd] failed to compress footer",
+-                            ZSTD_getErrorName(zstd_result));
+-      rc = ctx->rc;
+-      goto exit;
+-    }
+-  }
+-
+-  zstd_result = ZSTD_endStream(zstd_stream, &zstd_output);
+-  if (ZSTD_isError(zstd_result)) {
+-    grn_ja_compress_error(ctx,
+-                          ja,
+-                          id,
+-                          GRN_ZSTD_ERROR,
+-                          "[zstd] failed to finish stream compression",
+-                          ZSTD_getErrorName(zstd_result));
+-    rc = ctx->rc;
+-    goto exit;
+-  }
+-
+-  if (zstd_result > 0) {
+-    grn_ja_compress_error(ctx,
+-                          ja,
+-                          id,
+-                          GRN_ZSTD_ERROR,
+-                          "[zstd] failed to finish stream compression "
+-                          "because some data remain buffer",
+-                          ZSTD_getErrorName(zstd_result));
+-    rc = ctx->rc;
+-    goto exit;
+-  }
+-
+-  rc = grn_ja_putv_compressed(ctx,
++    if (body_size > 0) {
++      zstd_input.src = GRN_BULK_HEAD(body);
++      zstd_input.size = body_size;
++      zstd_input.pos = 0;
++      zstd_result = ZSTD_compressStream(zstd_stream, &zstd_output, &zstd_input);
++      if (ZSTD_isError(zstd_result)) {
++        grn_ja_compress_error(ctx,
+                               ja,
+                               id,
+-                              zstd_output.dst,
+-                              zstd_output.pos,
+-                              size,
+-                              flags);
++                              GRN_ZSTD_ERROR,
++                              "[zstd] failed to compress body",
++                              ZSTD_getErrorName(zstd_result));
++        rc = ctx->rc;
++        goto exit;
++      }
++    }
++    if (footer_size > 0) {
++      zstd_input.src = GRN_BULK_HEAD(footer);
++      zstd_input.size = footer_size;
++      zstd_input.pos = 0;
++      zstd_result = ZSTD_compressStream(zstd_stream, &zstd_output, &zstd_input);
++      if (ZSTD_isError(zstd_result)) {
++        grn_ja_compress_error(ctx,
++                              ja,
++                              id,
++                              GRN_ZSTD_ERROR,
++                              "[zstd] failed to compress footer",
++                              ZSTD_getErrorName(zstd_result));
++        rc = ctx->rc;
++        goto exit;
++      }
++    }
++
++    zstd_result = ZSTD_endStream(zstd_stream, &zstd_output);
++    if (ZSTD_isError(zstd_result)) {
++      grn_ja_compress_error(ctx,
++                            ja,
++                            id,
++                            GRN_ZSTD_ERROR,
++                            "[zstd] failed to finish stream compression",
++                            ZSTD_getErrorName(zstd_result));
++      rc = ctx->rc;
++      goto exit;
++    }
++
++    if (zstd_result > 0) {
++      grn_ja_compress_error(ctx,
++                            ja,
++                            id,
++                            GRN_ZSTD_ERROR,
++                            "[zstd] failed to finish stream compression "
++                            "because some data remain buffer",
++                            ZSTD_getErrorName(zstd_result));
++      rc = ctx->rc;
++      goto exit;
++    }
++
++    rc = grn_ja_putv_compressed(ctx,
++                                ja,
++                                id,
++                                zstd_output.dst,
++                                zstd_output.pos,
++                                size,
++                                flags);
++  }
++#endif /* ZSTD_VERSION_MAJOR < 1 */
+ 
+ exit :
++#if ZSTD_VERSION_MAJOR < 1
++  GRN_OBJ_FIN(ctx, &all_value);
++  if (zstd_value) {
++    GRN_FREE(zstd_value);
++  }
++#else /* ZSTD_VERSION_MAJOR < 1 */
+   if (zstd_stream) {
+     ZSTD_freeCStream(zstd_stream);
+   }
+   if (zstd_output.dst) {
+     GRN_FREE(zstd_output.dst);
+   }
++#endif /* ZSTD_VERSION_MAJOR < 1 */
+ 
+   return rc;
+ }
+-- 
+2.17.0
+
