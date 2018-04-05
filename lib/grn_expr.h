@@ -83,6 +83,12 @@ void grn_p_expr_code(grn_ctx *ctx, grn_expr_code *code);
 
 grn_obj *grn_expr_alloc_const(grn_ctx *ctx, grn_obj *expr);
 
+grn_bool grn_expr_is_simple_function_call(grn_ctx *ctx, grn_obj *expr);
+grn_obj *grn_expr_simple_function_call_get_function(grn_ctx *ctx, grn_obj *expr);
+grn_rc grn_expr_simple_function_call_get_arguments(grn_ctx *ctx,
+                                                   grn_obj *expr,
+                                                   grn_obj *arguments);
+
 #ifdef __cplusplus
 }
 #endif

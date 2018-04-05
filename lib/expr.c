@@ -995,7 +995,8 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
         }
         if (!(grn_obj_is_function_proc(ctx, proc) ||
               grn_obj_is_scorer_proc(ctx, proc) ||
-              grn_obj_is_window_function_proc(ctx, proc))) {
+              grn_obj_is_window_function_proc(ctx, proc) ||
+              grn_obj_is_tokenizer_proc(ctx, proc))) {
           grn_obj buffer;
 
           GRN_TEXT_INIT(&buffer, 0);
@@ -9798,4 +9799,69 @@ grn_expr_estimate_size(grn_ctx *ctx, grn_obj *expr)
   size = grn_expr_estimate_size_raw(ctx, expr, table);
 #endif
   GRN_API_RETURN(size);
+}
+
+grn_bool
+grn_expr_is_simple_function_call(grn_ctx *ctx, grn_obj *expr)
+{
+  grn_expr *e = (grn_expr *)expr;
+  grn_expr_code *codes = e->codes;
+  grn_expr_code *codes_end = codes + e->codes_curr;
+
+  if (codes == codes_end) {
+    return GRN_FALSE;
+  }
+
+  for (; codes < codes_end; codes++) {
+    switch (codes[0].op) {
+    case GRN_OP_PUSH :
+      break;
+    case GRN_OP_CALL :
+      if (codes + 1 != codes_end) {
+        return GRN_FALSE;
+      }
+      break;
+    default :
+      return GRN_FALSE;
+    }
+  }
+
+  return GRN_TRUE;
+}
+
+grn_obj *
+grn_expr_simple_function_call_get_function(grn_ctx *ctx, grn_obj *expr)
+{
+  grn_expr *e = (grn_expr *)expr;
+
+  return e->codes[0].value;
+}
+
+grn_rc
+grn_expr_simple_function_call_get_arguments(grn_ctx *ctx,
+                                            grn_obj *expr,
+                                            grn_obj *arguments)
+{
+  grn_expr *e = (grn_expr *)expr;
+  grn_expr_code *codes = e->codes;
+  grn_expr_code *codes_end = codes + e->codes_curr;
+
+  for (codes++; codes < codes_end - 1; codes++) {
+    grn_obj *value = codes[0].value;
+    switch (codes[0].op) {
+    case GRN_OP_PUSH :
+      grn_vector_add_element(ctx,
+                             arguments,
+                             GRN_BULK_HEAD(value),
+                             GRN_BULK_VSIZE(value),
+                             0,
+                             value->header.domain);
+      break;
+    default :
+      return GRN_INVALID_ARGUMENT;
+      break;
+    }
+  }
+
+  return GRN_SUCCESS;
 }
