@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2017 Brazil
+  Copyright(C) 2017-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,10 @@
 
 #include "grn.h"
 #include "grn_ctx.h"
+#include "grn_dat.h"
 #include "grn_expr_executor.h"
+#include "grn_hash.h"
+#include "grn_pat.h"
 
 grn_rc
 grn_table_apply_expr(grn_ctx *ctx,
@@ -120,3 +123,127 @@ grn_table_find_reference_object(grn_ctx *ctx, grn_obj *table)
 
   GRN_API_RETURN(reference_object_id);
 }
+
+void
+grn_table_tokenizer_init(grn_ctx *ctx,
+                         grn_table_tokenizer *tokenizer,
+                         grn_id tokenizer_id)
+{
+  if (tokenizer_id == GRN_ID_NIL) {
+    tokenizer->proc = NULL;
+  } else {
+    tokenizer->proc = grn_ctx_at(ctx, tokenizer_id);
+  }
+  tokenizer->options = NULL;
+  tokenizer->options_revision = GRN_OPTION_REVISION_NONE;
+  tokenizer->options_close_func = NULL;
+}
+
+static void
+grn_table_tokenizer_fin_options(grn_ctx *ctx,
+                                grn_table_tokenizer *tokenizer)
+{
+  if (tokenizer->options && tokenizer->options_close_func) {
+    tokenizer->options_close_func(ctx, tokenizer->options);
+    tokenizer->options = NULL;
+    tokenizer->options_revision = GRN_OPTION_REVISION_NONE;
+    tokenizer->options_close_func = NULL;
+  }
+}
+
+void
+grn_table_tokenizer_fin(grn_ctx *ctx,
+                        grn_table_tokenizer *tokenizer)
+{
+  grn_table_tokenizer_fin_options(ctx, tokenizer);
+}
+
+void
+grn_table_tokenizer_set_proc(grn_ctx *ctx,
+                             grn_table_tokenizer *tokenizer,
+                             grn_obj *proc)
+{
+  grn_table_tokenizer_fin_options(ctx, tokenizer);
+
+  tokenizer->proc = proc;
+}
+
+void
+grn_table_tokenizer_set_options(grn_ctx *ctx,
+                                grn_table_tokenizer *tokenizer,
+                                void *options,
+                                grn_option_revision revision,
+                                grn_close_func close_func)
+{
+  grn_table_tokenizer_fin_options(ctx, tokenizer);
+
+  tokenizer->options = options;
+  tokenizer->options_revision = revision;
+  if (options) {
+    tokenizer->options_close_func = close_func;
+  }
+}
+
+void *
+grn_table_get_tokenizer_options(grn_ctx *ctx,
+                                grn_obj *table,
+                                grn_tokenizer_open_options_func open_options_func,
+                                grn_close_func close_options_func,
+                                void *user_data)
+{
+  grn_table_tokenizer *tokenizer;
+  grn_option_revision revision;
+  grn_obj raw_options;
+  void *options;
+
+  GRN_API_ENTER;
+
+  if (!table) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][tokenizer-options][set] table is NULL");
+    GRN_API_RETURN(NULL);
+  }
+
+  switch (table->header.type) {
+  case GRN_TABLE_HASH_KEY :
+    tokenizer = &(((grn_hash *)table)->tokenizer);
+    break;
+  case GRN_TABLE_PAT_KEY :
+    tokenizer = &(((grn_pat *)table)->tokenizer);
+    break;
+  case GRN_TABLE_DAT_KEY :
+    tokenizer = &(((grn_dat *)table)->tokenizer);
+    break;
+  default :
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][tokenizer-options][set] table must key table: %s",
+        grn_obj_type_to_string(table->header.type));
+    GRN_API_RETURN(NULL);
+    break;
+  }
+
+  GRN_VOID_INIT(&raw_options);
+  revision = grn_obj_get_option_values(ctx,
+                                       table,
+                                       "tokenizer",
+                                       -1,
+                                       tokenizer->options_revision,
+                                       &raw_options);
+  if ((revision == GRN_OPTION_REVISION_UNCHANGED) ||
+      (revision == GRN_OPTION_REVISION_NONE && tokenizer->options)) {
+    goto exit;
+  }
+
+  options = open_options_func(ctx, table, &raw_options, user_data);
+  grn_table_tokenizer_set_options(ctx,
+                                  tokenizer,
+                                  options,
+                                  revision,
+                                  close_options_func);
+
+exit :
+  GRN_OBJ_FIN(ctx, &raw_options);
+
+  GRN_API_RETURN(tokenizer->options);
+}
+

@@ -514,7 +514,7 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
   pat->header = header;
   pat->key_size = key_size;
   pat->value_size = value_size;
-  pat->tokenizer = NULL;
+  grn_table_tokenizer_init(ctx, &(pat->tokenizer), GRN_ID_NIL);
   pat->encoding = encoding;
   pat->obj.header.flags = header->flags;
   if (!(node0 = pat_get(ctx, pat, 0))) {
@@ -616,7 +616,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   pat->key_size = header->key_size;
   pat->value_size = header->value_size;
   pat->encoding = header->encoding;
-  pat->tokenizer = grn_ctx_at(ctx, header->tokenizer);
+  grn_table_tokenizer_init(ctx, &(pat->tokenizer), header->tokenizer);
   if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
     header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
     pat->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
@@ -670,13 +670,14 @@ grn_pat_close(grn_ctx *ctx, grn_pat *pat)
     GRN_ATOMIC_ADD_EX(&(pat->header->n_dirty_opens), -1, n_dirty_opens);
   }
 
-  if ((rc = grn_io_close(ctx, pat->io))) {
-    ERR(rc, "grn_io_close failed");
-  } else {
-    grn_pvector_fin(ctx, &pat->token_filters);
-    if (pat->cache) { grn_pat_cache_disable(ctx, pat); }
-    GRN_FREE(pat);
+  rc = grn_io_close(ctx, pat->io);
+  if (rc != GRN_SUCCESS) {
+    ERR(rc, "[pat][close] failed to close IO");
   }
+  grn_table_tokenizer_fin(ctx, &(pat->tokenizer));
+  grn_pvector_fin(ctx, &pat->token_filters);
+  if (pat->cache) { grn_pat_cache_disable(ctx, pat); }
+  GRN_FREE(pat);
 
   return rc;
 }

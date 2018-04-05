@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 
 #include "grn.h"
 #include "grn_ctx.h"
+#include "grn_table.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -192,7 +193,7 @@ struct _grn_hash {
   uint32_t *n_garbages;
   uint32_t *n_entries;
   uint32_t *max_offset;
-  grn_obj *tokenizer;
+  grn_table_tokenizer tokenizer;
   grn_obj *normalizer;
   grn_obj token_filters;
 

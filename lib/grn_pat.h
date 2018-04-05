@@ -21,6 +21,7 @@
 #include "grn.h"
 #include "grn_db.h"
 #include "grn_hash.h"
+#include "grn_table.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,7 +37,7 @@ struct _grn_pat {
   grn_encoding encoding;
   uint32_t key_size;
   uint32_t value_size;
-  grn_obj *tokenizer;
+  grn_table_tokenizer tokenizer;
   grn_obj *normalizer;
   grn_obj token_filters;
   grn_id *cache;

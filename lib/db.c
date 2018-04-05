@@ -2418,7 +2418,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
     case GRN_TABLE_PAT_KEY :
       if (flags) { *flags = ((grn_pat *)table)->header->flags; }
       if (encoding) { *encoding = ((grn_pat *)table)->encoding; }
-      if (tokenizer) { *tokenizer = ((grn_pat *)table)->tokenizer; }
+      if (tokenizer) { *tokenizer = ((grn_pat *)table)->tokenizer.proc; }
       if (normalizer) { *normalizer = ((grn_pat *)table)->normalizer; }
       if (token_filters) { *token_filters = &(((grn_pat *)table)->token_filters); }
       rc = GRN_SUCCESS;
@@ -2426,7 +2426,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
     case GRN_TABLE_DAT_KEY :
       if (flags) { *flags = ((grn_dat *)table)->header->flags; }
       if (encoding) { *encoding = ((grn_dat *)table)->encoding; }
-      if (tokenizer) { *tokenizer = ((grn_dat *)table)->tokenizer; }
+      if (tokenizer) { *tokenizer = ((grn_dat *)table)->tokenizer.proc; }
       if (normalizer) { *normalizer = ((grn_dat *)table)->normalizer; }
       if (token_filters) { *token_filters = &(((grn_dat *)table)->token_filters); }
       rc = GRN_SUCCESS;
@@ -2434,7 +2434,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
     case GRN_TABLE_HASH_KEY :
       if (flags) { *flags = ((grn_hash *)table)->header.common->flags; }
       if (encoding) { *encoding = ((grn_hash *)table)->encoding; }
-      if (tokenizer) { *tokenizer = ((grn_hash *)table)->tokenizer; }
+      if (tokenizer) { *tokenizer = ((grn_hash *)table)->tokenizer.proc; }
       if (normalizer) { *normalizer = ((grn_hash *)table)->normalizer; }
       if (token_filters) { *token_filters = &(((grn_hash *)table)->token_filters); }
       rc = GRN_SUCCESS;
@@ -8318,13 +8318,13 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
     case GRN_INFO_DEFAULT_TOKENIZER :
       switch (DB_OBJ(obj)->header.type) {
       case GRN_TABLE_HASH_KEY :
-        valuebuf = ((grn_hash *)obj)->tokenizer;
+        valuebuf = ((grn_hash *)obj)->tokenizer.proc;
         break;
       case GRN_TABLE_PAT_KEY :
-        valuebuf = ((grn_pat *)obj)->tokenizer;
+        valuebuf = ((grn_pat *)obj)->tokenizer.proc;
         break;
       case GRN_TABLE_DAT_KEY :
-        valuebuf = ((grn_dat *)obj)->tokenizer;
+        valuebuf = ((grn_dat *)obj)->tokenizer.proc;
         break;
       }
       break;
@@ -9039,12 +9039,16 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
     if (!value || DB_OBJ(value)->header.type == GRN_PROC) {
       switch (DB_OBJ(obj)->header.type) {
       case GRN_TABLE_HASH_KEY :
-        ((grn_hash *)obj)->tokenizer = value;
+        grn_table_tokenizer_set_proc(ctx,
+                                     &(((grn_hash *)obj)->tokenizer),
+                                     value);
         ((grn_hash *)obj)->header.common->tokenizer = grn_obj_id(ctx, value);
         rc = GRN_SUCCESS;
         break;
       case GRN_TABLE_PAT_KEY :
-        ((grn_pat *)obj)->tokenizer = value;
+        grn_table_tokenizer_set_proc(ctx,
+                                     &(((grn_pat *)obj)->tokenizer),
+                                     value);
         ((grn_pat *)obj)->header->tokenizer = grn_obj_id(ctx, value);
         grn_pat_cache_enable(ctx,
                              ((grn_pat *)obj),
@@ -9052,7 +9056,9 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
         rc = GRN_SUCCESS;
         break;
       case GRN_TABLE_DAT_KEY :
-        ((grn_dat *)obj)->tokenizer = value;
+        grn_table_tokenizer_set_proc(ctx,
+                                     &(((grn_dat *)obj)->tokenizer),
+                                     value);
         ((grn_dat *)obj)->header->tokenizer = grn_obj_id(ctx, value);
         rc = GRN_SUCCESS;
         break;
@@ -10686,7 +10692,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                   grn_token_filters_unpack(ctx,
                                            &(pat->token_filters),
                                            &decoded_spec);
-                  if (pat->tokenizer) {
+                  if (pat->tokenizer.proc) {
                     grn_pat_cache_enable(ctx,
                                          pat,
                                          GRN_TABLE_PAT_KEY_CACHE_SIZE);

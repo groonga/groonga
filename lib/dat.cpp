@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2011-2017 Brazil
+  Copyright(C) 2011-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -127,7 +127,6 @@ grn_dat_init(grn_ctx *, grn_dat *dat)
   dat->encoding = GRN_ENC_DEFAULT;
   dat->trie = NULL;
   dat->old_trie = NULL;
-  dat->tokenizer = NULL;
   dat->normalizer = NULL;
   GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
   CRITICAL_SECTION_INIT(dat->lock);
@@ -150,6 +149,7 @@ grn_dat_fin(grn_ctx *ctx, grn_dat *dat)
     grn_io_close(ctx, dat->io);
     dat->io = NULL;
   }
+  grn_table_tokenizer_fin(ctx, &(dat->tokenizer));
   GRN_OBJ_FIN(ctx, &(dat->token_filters));
 }
 
@@ -355,7 +355,7 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
     dat->header->normalizer = GRN_ID_NIL;
   }
   dat->encoding = encoding;
-  dat->tokenizer = NULL;
+  grn_table_tokenizer_init(ctx, &(dat->tokenizer), GRN_ID_NIL);
   GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
 
   dat->obj.header.flags = dat->header->flags;
@@ -391,7 +391,7 @@ grn_dat_open(grn_ctx *ctx, const char *path)
   }
   dat->file_id = dat->header->file_id;
   dat->encoding = dat->header->encoding;
-  dat->tokenizer = grn_ctx_at(ctx, dat->header->tokenizer);
+  grn_table_tokenizer_init(ctx, &(dat->tokenizer), dat->header->tokenizer);
   if (dat->header->flags & GRN_OBJ_KEY_NORMALIZE) {
     dat->header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
     dat->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);

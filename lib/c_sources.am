@@ -95,6 +95,7 @@ libgroonga_c_sources =				\
 	string.c				\
 	grn_string.h				\
 	table.c					\
+	grn_table.h				\
 	thread.c				\
 	time.c					\
 	grn_time.h				\

@@ -204,6 +204,8 @@ typedef struct _grn_ctx grn_ctx;
 #define GRN_CTX_MSGSIZE                (0x80)
 #define GRN_CTX_FIN                    (0xff)
 
+typedef void (*grn_close_func)(grn_ctx *ctx, void *data);
+
 typedef union {
   int int_value;
   grn_id id;

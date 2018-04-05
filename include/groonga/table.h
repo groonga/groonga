@@ -241,6 +241,18 @@ GRN_API grn_rc grn_table_apply_expr(grn_ctx *ctx,
 
 GRN_API grn_id grn_table_find_reference_object(grn_ctx *ctx, grn_obj *table);
 
+typedef void *(*grn_tokenizer_open_options_func)(grn_ctx *ctx,
+                                                 grn_obj *tokenizer,
+                                                 grn_obj *values,
+                                                 void *user_data);
+
+GRN_API void *
+grn_table_get_tokenizer_options(grn_ctx *ctx,
+                                grn_obj *table,
+                                grn_tokenizer_open_options_func open_options_func,
+                                grn_close_func close_options_func,
+                                void *user_data);
+
 #ifdef __cplusplus
 }
 #endif
