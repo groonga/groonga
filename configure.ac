@@ -1235,7 +1235,7 @@ if test "x$enable_message_pack" != "xno"; then
     _SAVE_LIBS="$LIBS"
     CFLAGS="$CFLAGS -I$with_message_pack/include"
     LDFLAGS="$LDFLAGS -L$with_message_pack/lib"
-    AC_SEARCH_LIBS(msgpack_version, msgpack,
+    AC_SEARCH_LIBS(msgpack_version, msgpackc,
                    [message_pack_available=yes],
                    [message_pack_available=no])
     CFLAGS="$_SAVE_CFLAGS"
