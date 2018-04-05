@@ -1142,11 +1142,6 @@ grn_output_vector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
 {
   grn_bool with_weight = GRN_FALSE;
 
-  if (vector->header.domain == GRN_DB_VOID) {
-    ERR(GRN_INVALID_ARGUMENT, "invalid obj->header.domain");
-    return;
-  }
-
   if (format) {
     if (format->flags & GRN_OBJ_FORMAT_WITH_WEIGHT) {
       with_weight = GRN_TRUE;
