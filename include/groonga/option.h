@@ -22,6 +22,10 @@
 extern "C" {
 #endif
 
+typedef void * grn_option_revision;
+#define GRN_OPTION_REVISION_NONE ((grn_option_revision)0)
+#define GRN_OPTION_REVISION_UNCHANGED ((grn_option_revision)1)
+
 #define GRN_OPTION_VALUES_EACH_BEGIN(ctx,                       \
                                      option_values,             \
                                      i,                         \

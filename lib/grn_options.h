@@ -43,11 +43,16 @@ grn_rc grn_options_flush(grn_ctx *ctx, grn_options *options);
 grn_rc grn_options_set(grn_ctx *ctx,
                        grn_options *options,
                        grn_id id,
+                       const char *name,
+                       int name_length,
                        grn_obj *values);
-grn_bool grn_options_get(grn_ctx *ctx,
-                         grn_options *options,
-                         grn_id id,
-                         grn_obj *values);
+grn_option_revision grn_options_get(grn_ctx *ctx,
+                                    grn_options *options,
+                                    grn_id id,
+                                    const char *name,
+                                    int name_length,
+                                    grn_option_revision revision,
+                                    grn_obj *values);
 
 #ifdef __cplusplus
 }
