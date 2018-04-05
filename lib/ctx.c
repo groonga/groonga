@@ -215,6 +215,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
 
   ctx->impl->values = NULL;
   ctx->impl->temporary_columns = NULL;
+  ctx->impl->temporary_options = NULL;
   ctx->impl->ios = NULL;
   ctx->impl->expr_vars = NULL;
   ctx->impl->stack = NULL;
@@ -228,6 +229,11 @@ grn_ctx_impl_init(grn_ctx *ctx)
                                                       GRN_TABLE_MAX_KEY_SIZE,
                                                       sizeof(grn_obj *),
                                                       0))) {
+    goto exit;
+  }
+  ctx->impl->temporary_options =
+    grn_options_create(ctx, NULL, "[ctx][impl][create]");
+  if (!ctx->impl->temporary_options) {
     goto exit;
   }
   if (!(ctx->impl->ios = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
@@ -314,6 +320,9 @@ exit :
     }
     if (ctx->impl->ios) {
       grn_hash_close(ctx, ctx->impl->ios);
+    }
+    if (ctx->impl->temporary_options) {
+      grn_options_close(ctx, ctx->impl->temporary_options);
     }
     if (ctx->impl->temporary_columns) {
       grn_pat_close(ctx, ctx->impl->temporary_columns);
@@ -420,6 +429,9 @@ grn_ctx_impl_fin(grn_ctx *ctx)
     });
 #endif
     grn_pat_close(ctx, ctx->impl->temporary_columns);
+  }
+  if (ctx->impl->temporary_options) {
+    grn_options_close(ctx, ctx->impl->temporary_options);
   }
   if (ctx->impl->ios) {
     grn_hash_close(ctx, ctx->impl->ios);

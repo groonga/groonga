@@ -20,6 +20,7 @@
 
 #include "grn_ctx.h"
 #include "grn_com.h"
+#include "grn_options.h"
 #include "grn_msgpack.h"
 
 #ifdef GRN_WITH_MRUBY
@@ -214,6 +215,7 @@ struct _grn_ctx_impl {
   grn_obj *db;
   grn_array *values;        /* temporary objects */
   grn_pat *temporary_columns;
+  grn_options *temporary_options;
   grn_hash *ios;        /* IOs */
   grn_com *com;
   unsigned int com_status;

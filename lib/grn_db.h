@@ -20,6 +20,7 @@
 
 #include "grn.h"
 #include "grn_ctx.h"
+#include "grn_options.h"
 #include "grn_store.h"
 #include "grn_rset.h"
 
@@ -49,6 +50,7 @@ struct _grn_db {
   grn_tiny_array values;
   grn_critical_section lock;
   grn_cache *cache;
+  grn_options *options;
 };
 
 #define GRN_SERIALIZED_SPEC_INDEX_SPEC   0
@@ -129,6 +131,21 @@ void grn_db_generate_pathname(grn_ctx *ctx,
                               grn_id id,
                               char *buffer);
 grn_rc grn_db_clear_dirty(grn_ctx *ctx, grn_obj *db);
+
+grn_rc grn_db_set_option_values(grn_ctx *ctx,
+                                grn_obj *db,
+                                grn_id id,
+                                const char *name,
+                                int name_length,
+                                grn_obj *values);
+grn_option_revision
+grn_db_get_option_values(grn_ctx *ctx,
+                         grn_obj *db,
+                         grn_id id,
+                         const char *name,
+                         int name_length,
+                         grn_option_revision revision,
+                         grn_obj *values);
 
 grn_rc _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
                                grn_table_delete_optarg *optarg);

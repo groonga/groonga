@@ -214,6 +214,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   s->specs = NULL;
   s->config = NULL;
   s->cache = NULL;
+  s->options = NULL;
 
   {
     grn_bool use_default_db_key = GRN_TRUE;
@@ -264,6 +265,10 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   if (!grn_db_config_create(ctx, s, path, "[db][create]")) {
     goto exit;
   }
+  s->options = grn_options_create(ctx, path, "[db][create]");
+  if (!s->options) {
+    goto exit;
+  }
   grn_ctx_use(ctx, (grn_obj *)s);
   grn_db_init_builtin_types(ctx);
   if (path) {
@@ -287,6 +292,14 @@ exit:
       specs_path = grn_obj_path(ctx, (grn_obj *)(s->specs));
       grn_ja_close(ctx, s->specs);
       grn_ja_remove(ctx, specs_path);
+    }
+    if (s->config) {
+      grn_hash_close(ctx, s->config);
+      grn_db_config_remove(ctx, path);
+    }
+    if (s->options) {
+      grn_options_close(ctx, s->options);
+      grn_options_remove(ctx, path);
     }
     grn_tiny_array_fin(&s->values);
     CRITICAL_SECTION_FIN(s->lock);
@@ -328,6 +341,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
   s->specs = NULL;
   s->config = NULL;
   s->cache = NULL;
+  s->options = NULL;
 
   {
     uint32_t type = grn_io_detect_type(ctx, path);
@@ -366,6 +380,10 @@ grn_db_open(grn_ctx *ctx, const char *path)
   if (!grn_db_config_open(ctx, s, path)) {
     goto exit;
   }
+  s->options = grn_options_open(ctx, path, "[db][open]");
+  if (!s->options) {
+    goto exit;
+  }
 
   GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
   s->obj.db = (grn_obj *)s;
@@ -395,6 +413,10 @@ grn_db_open(grn_ctx *ctx, const char *path)
 
 exit:
   if (s) {
+    grn_options_close(ctx, s->options);
+    if (s->config) {
+      grn_hash_close(ctx, s->config);
+    }
     if (s->specs) {
       grn_ja_close(ctx, s->specs);
     }
@@ -482,6 +504,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   CRITICAL_SECTION_FIN(s->lock);
   if (s->specs) { grn_ja_close(ctx, s->specs); }
   grn_hash_close(ctx, s->config);
+  grn_options_close(ctx, s->options);
   GRN_FREE(s);
 
   if (ctx_used_db) {
@@ -790,6 +813,9 @@ grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj)
     if (!is_corrupt) {
       is_corrupt = grn_io_is_corrupt(ctx, ((grn_db *)obj)->config->io);
     }
+    if (!is_corrupt) {
+      is_corrupt = grn_options_is_corrupt(ctx, ((grn_db *)obj)->options);
+    }
     break;
   case GRN_TABLE_HASH_KEY :
   case GRN_TABLE_PAT_KEY :
@@ -876,6 +902,37 @@ grn_db_check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
     name += len;
   }
   return GRN_SUCCESS;
+}
+
+grn_rc
+grn_db_set_option_values(grn_ctx *ctx,
+                         grn_obj *db,
+                         grn_id id,
+                         const char *name,
+                         int name_length,
+                         grn_obj *values)
+{
+  grn_db *db_ = (grn_db *)db;
+  return grn_options_set(ctx, db_->options, id, name, name_length, values);
+}
+
+grn_option_revision
+grn_db_get_option_values(grn_ctx *ctx,
+                         grn_obj *db,
+                         grn_id id,
+                         const char *name,
+                         int name_length,
+                         grn_option_revision revision,
+                         grn_obj *values)
+{
+  grn_db *db_ = (grn_db *)db;
+  return grn_options_get(ctx,
+                         db_->options,
+                         id,
+                         name,
+                         name_length,
+                         revision,
+                         values);
 }
 
 static grn_obj *
@@ -9452,6 +9509,11 @@ _grn_obj_remove_db(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
     } else {
       grn_db_config_remove(ctx, path);
     }
+    if (rc == GRN_SUCCESS) {
+      rc = grn_options_remove(ctx, path);
+    } else {
+      grn_options_remove(ctx, path);
+    }
   }
 
   return rc;
@@ -11543,6 +11605,7 @@ grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj)
         grn_obj_clear_lock(ctx, (grn_obj *)(db->specs));
       }
       grn_obj_clear_lock(ctx, (grn_obj *)(db->config));
+      grn_options_clear_lock(ctx, db->options);
     }
     break;
   case GRN_TABLE_NO_KEY :
@@ -11621,6 +11684,9 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
       }
       if (rc == GRN_SUCCESS) {
         rc = grn_obj_flush(ctx, (grn_obj *)(db->config));
+      }
+      if (rc == GRN_SUCCESS) {
+        rc = grn_options_flush(ctx, db->options);
       }
     }
     break;
