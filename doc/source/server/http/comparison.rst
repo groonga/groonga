@@ -150,12 +150,12 @@ version 2 comamnds under ``/api/2/``::
 
       location /api/1/ {
         groonga on;
-        groogna_default_command_version 1;
+        groonga_default_command_version 1;
       }
 
       location /api/2/ {
         groonga on;
-        groogna_default_command_version 2;
+        groonga_default_command_version 2;
       }
     }
   }

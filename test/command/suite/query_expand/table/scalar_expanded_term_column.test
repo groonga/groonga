@@ -5,7 +5,7 @@ column_create TermExpansions expansion COLUMN_SCALAR ShortText
 load --table TermExpansions
 [
 {"term": "PGroonga", "expansion": "PGroonga"},
-{"term": "PGroonga", "expansion": "Groogna PostgreSQL"},
+{"term": "PGroonga", "expansion": "Groonga PostgreSQL"},
 {"term": "Rroonga", "expansion": "Rroonga"},
 {"term": "Rroonga", "expansion": "Ruby Groonga"}
 ]

@@ -27,9 +27,9 @@ Improvements
 * Enabled warning flags on C and C++.
 * Supported ``--with-libevent`` without value configure option.
 * ``grn_table_get()`` supported grn_db. [#1242]
-* [rpm] Removed needless groogna-munin-plugins dependency
+* [rpm] Removed needless groonga-munin-plugins dependency
   from groonga-server. [#1251] [Suggested by Masaharu IWAI]
-* [rpm] Removed needless groogna-doc dependency
+* [rpm] Removed needless groonga-doc dependency
   from groonga. [#1251] [Suggested by Masaharu IWAI]
 * [dat] Supported repair by ``grn_dat_repair()``.
 * ``grn_table_at()`` supported grn_db.

@@ -4,7 +4,7 @@ column_create TermExpansions expansions COLUMN_VECTOR ShortText
 
 load --table TermExpansions
 [
-{"term": "PGroonga", "expansions": ["PGroonga", "Groogna PostgreSQL"]},
+{"term": "PGroonga", "expansions": ["PGroonga", "Groonga PostgreSQL"]},
 {"term": "Rroonga",  "expansions": []},
 {"term": "Rroonga",  "expansions": ["Rroonga", "Ruby Groonga"]},
 {"term": "Rroonga",  "expansions": ["Ruby \"full text search\""]}

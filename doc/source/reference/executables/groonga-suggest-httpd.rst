@@ -117,9 +117,9 @@ The ``groonga-suggest-learner`` process opens two endpoints at
 ``1234`` port and ``1235`` port:
 
   * ``1234`` port: Endpoint that accepts user input data from
-    ``groogna-suggest-httpd``
+    ``groonga-suggest-httpd``
   * ``1235`` port: Endpoint that sends learned suggestion data to
-    ``groogna-suggest-httpd``
+    ``groonga-suggest-httpd``
 
 Launch ``groonga-suggest-httpd``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

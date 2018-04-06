@@ -468,7 +468,7 @@ Release 2.0.2 - 2012-04-29
 .. caution::
 
    The package sign key is changed since this release. Import the new
-   package sign key before updating groogna packages.
+   package sign key before updating groonga packages.
 
    Debian/Ubuntu::
 
