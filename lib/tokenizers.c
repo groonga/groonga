@@ -243,12 +243,12 @@ static grn_bool grn_ngram_tokenizer_remove_blank_enable = GRN_TRUE;
 typedef struct {
   grn_tokenizer_token token;
   grn_tokenizer_query *query;
-  uint8_t uni_alpha;
-  uint8_t uni_digit;
-  uint8_t uni_symbol;
+  grn_bool uni_alpha;
+  grn_bool uni_digit;
+  grn_bool uni_symbol;
   uint8_t ngram_unit;
-  uint8_t ignore_blank;
-  uint8_t overlap;
+  grn_bool ignore_blank;
+  grn_bool overlap;
   int32_t pos;
   uint32_t skip;
   const unsigned char *next;
@@ -264,10 +264,10 @@ ngram_init_raw(grn_ctx *ctx,
                grn_obj **args,
                grn_user_data *user_data,
                uint8_t ngram_unit,
-               uint8_t uni_alpha,
-               uint8_t uni_digit,
-               uint8_t uni_symbol,
-               uint8_t ignore_blank)
+               grn_bool uni_alpha,
+               grn_bool uni_digit,
+               grn_bool uni_symbol,
+               grn_bool ignore_blank)
 {
   unsigned int normalize_flags =
     GRN_STRING_REMOVE_BLANK |
@@ -319,50 +319,120 @@ ngram_init_raw(grn_ctx *ctx,
 
 static grn_obj *
 unigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init_raw(ctx, nargs, args, user_data, 1, 1, 1, 1, 0); }
+{
+  return ngram_init_raw(ctx, nargs, args, user_data,
+                        1,
+                        GRN_TRUE,
+                        GRN_TRUE,
+                        GRN_TRUE,
+                        GRN_FALSE);
+}
 
 static grn_obj *
 bigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 1, 1, 1, 0); }
+{
+  return ngram_init_raw(ctx, nargs, args, user_data,
+                        2,
+                        GRN_TRUE,
+                        GRN_TRUE,
+                        GRN_TRUE,
+                        GRN_FALSE);
+}
 
 static grn_obj *
 trigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init_raw(ctx, nargs, args, user_data, 3, 1, 1, 1, 0); }
+{
+  return ngram_init_raw(ctx, nargs, args, user_data,
+                        3,
+                        GRN_TRUE,
+                        GRN_TRUE,
+                        GRN_TRUE,
+                        GRN_FALSE);
+}
 
 static grn_obj *
 bigrams_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 1, 1, 0, 0); }
+{
+  return ngram_init_raw(ctx, nargs, args, user_data,
+                        2,
+                        GRN_TRUE,
+                        GRN_TRUE,
+                        GRN_FALSE,
+                        GRN_FALSE);
+}
 
 static grn_obj *
 bigramsa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 0, 1, 0, 0); }
+{
+  return ngram_init_raw(ctx, nargs, args, user_data,
+                        2,
+                        GRN_FALSE,
+                        GRN_TRUE,
+                        GRN_FALSE,
+                        GRN_FALSE);
+}
 
 static grn_obj *
 bigramsad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 0, 0, 0, 0); }
+{
+  return ngram_init_raw(ctx, nargs, args, user_data,
+                        2,
+                        GRN_FALSE,
+                        GRN_FALSE,
+                        GRN_FALSE,
+                        GRN_FALSE);
+}
 
 static grn_obj *
 bigrami_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 1, 1, 1, 1); }
+{
+  return ngram_init_raw(ctx, nargs, args, user_data,
+                        2,
+                        GRN_TRUE,
+                        GRN_TRUE,
+                        GRN_TRUE,
+                        GRN_TRUE);
+}
 
 static grn_obj *
 bigramis_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 1, 1, 0, 1); }
+{
+  return ngram_init_raw(ctx, nargs, args, user_data,
+                        2,
+                        GRN_TRUE,
+                        GRN_TRUE,
+                        GRN_FALSE,
+                        GRN_TRUE);
+}
 
 static grn_obj *
 bigramisa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 0, 1, 0, 1); }
+{
+  return ngram_init_raw(ctx, nargs, args, user_data,
+                        2,
+                        GRN_FALSE,
+                        GRN_TRUE,
+                        GRN_FALSE,
+                        GRN_TRUE);
+}
 
 static grn_obj *
 bigramisad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init_raw(ctx, nargs, args, user_data, 2, 0, 0, 0, 1); }
+{
+  return ngram_init_raw(ctx, nargs, args, user_data,
+                        2,
+                        GRN_FALSE,
+                        GRN_FALSE,
+                        GRN_FALSE,
+                        GRN_TRUE);
+}
 
 typedef struct {
   uint8_t unit;
-  uint8_t uni_alpha;
-  uint8_t uni_digit;
-  uint8_t uni_symbol;
-  uint8_t ignore_blank;
+  grn_bool uni_alpha;
+  grn_bool uni_digit;
+  grn_bool uni_symbol;
+  grn_bool ignore_blank;
 } ngram_options;
 
 static void *
@@ -379,10 +449,10 @@ ngram_open_options(grn_ctx *ctx,
   }
 
   options->unit = 2;
-  options->uni_alpha = 1;
-  options->uni_digit = 1;
-  options->uni_symbol = 1;
-  options->ignore_blank = 0;
+  options->uni_alpha = GRN_TRUE;
+  options->uni_digit = GRN_TRUE;
+  options->uni_symbol = GRN_TRUE;
+  options->ignore_blank = GRN_FALSE;
 
   GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
     grn_raw_string name_raw;
