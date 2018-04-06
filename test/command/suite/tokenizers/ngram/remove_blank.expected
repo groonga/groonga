@@ -1,0 +1,45 @@
+tokenize   'TokenNgram("remove_blank", false)'   " a b c "   NormalizerAuto
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": " ",
+      "position": 0,
+      "force_prefix": false
+    },
+    {
+      "value": "a",
+      "position": 1,
+      "force_prefix": false
+    },
+    {
+      "value": " ",
+      "position": 2,
+      "force_prefix": false
+    },
+    {
+      "value": "b",
+      "position": 3,
+      "force_prefix": false
+    },
+    {
+      "value": " ",
+      "position": 4,
+      "force_prefix": false
+    },
+    {
+      "value": "c",
+      "position": 5,
+      "force_prefix": false
+    },
+    {
+      "value": " ",
+      "position": 6,
+      "force_prefix": true
+    }
+  ]
+]

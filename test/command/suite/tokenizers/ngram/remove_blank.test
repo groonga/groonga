@@ -1,0 +1,4 @@
+tokenize \
+  'TokenNgram("remove_blank", false)' \
+  " a b c " \
+  NormalizerAuto

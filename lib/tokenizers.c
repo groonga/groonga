@@ -246,6 +246,7 @@ typedef struct {
   grn_bool uni_digit;
   grn_bool uni_symbol;
   grn_bool ignore_blank;
+  grn_bool remove_blank;
   grn_bool loose_symbol;
 } grn_ngram_options;
 
@@ -278,6 +279,7 @@ ngram_options_init(grn_ngram_options *options, uint8_t unit)
   options->uni_digit = GRN_TRUE;
   options->uni_symbol = GRN_TRUE;
   options->ignore_blank = GRN_FALSE;
+  options->remove_blank = grn_ngram_tokenizer_remove_blank_enable;
   options->loose_symbol = GRN_FALSE;
 }
 
@@ -359,7 +361,7 @@ ngram_init_raw(grn_ctx *ctx,
   unsigned int normalized_length_in_bytes;
   grn_ngram_tokenizer *tokenizer;
 
-  if (!grn_ngram_tokenizer_remove_blank_enable) {
+  if (!options->remove_blank) {
     normalize_flags &= ~GRN_STRING_REMOVE_BLANK;
   }
   query = grn_tokenizer_query_open(ctx, nargs, args, normalize_flags);
@@ -528,6 +530,11 @@ ngram_open_options(grn_ctx *ctx,
                                                    raw_options,
                                                    i,
                                                    options->unit);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "remove_blank")) {
+      options->remove_blank = grn_vector_get_element_bool(ctx,
+                                                          raw_options,
+                                                          i,
+                                                          options->remove_blank);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "loose_symbol")) {
       options->loose_symbol = grn_vector_get_element_bool(ctx,
                                                           raw_options,
