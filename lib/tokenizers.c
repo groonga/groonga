@@ -241,13 +241,17 @@ delimit_null_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 static grn_bool grn_ngram_tokenizer_remove_blank_enable = GRN_TRUE;
 
 typedef struct {
-  grn_tokenizer_token token;
-  grn_tokenizer_query *query;
+  uint8_t unit;
   grn_bool uni_alpha;
   grn_bool uni_digit;
   grn_bool uni_symbol;
-  uint8_t ngram_unit;
   grn_bool ignore_blank;
+} grn_ngram_options;
+
+typedef struct {
+  grn_tokenizer_token token;
+  grn_tokenizer_query *query;
+  grn_ngram_options options;
   grn_bool overlap;
   int32_t pos;
   uint32_t skip;
@@ -258,16 +262,22 @@ typedef struct {
   uint32_t tail;
 } grn_ngram_tokenizer;
 
+static void
+ngram_options_init(grn_ngram_options *options, uint8_t unit)
+{
+  options->unit = unit;
+  options->uni_alpha = GRN_TRUE;
+  options->uni_digit = GRN_TRUE;
+  options->uni_symbol = GRN_TRUE;
+  options->ignore_blank = GRN_FALSE;
+}
+
 static grn_obj *
 ngram_init_raw(grn_ctx *ctx,
                int nargs,
                grn_obj **args,
                grn_user_data *user_data,
-               uint8_t ngram_unit,
-               grn_bool uni_alpha,
-               grn_bool uni_digit,
-               grn_bool uni_symbol,
-               grn_bool ignore_blank)
+               const grn_ngram_options *options)
 {
   unsigned int normalize_flags =
     GRN_STRING_REMOVE_BLANK |
@@ -298,11 +308,7 @@ ngram_init_raw(grn_ctx *ctx,
   grn_tokenizer_token_init(ctx, &(tokenizer->token));
   tokenizer->query = query;
 
-  tokenizer->uni_alpha = uni_alpha;
-  tokenizer->uni_digit = uni_digit;
-  tokenizer->uni_symbol = uni_symbol;
-  tokenizer->ngram_unit = ngram_unit;
-  tokenizer->ignore_blank = ignore_blank;
+  tokenizer->options = *options;
   tokenizer->overlap = GRN_FALSE;
   tokenizer->pos = 0;
   tokenizer->skip = 0;
@@ -320,120 +326,98 @@ ngram_init_raw(grn_ctx *ctx,
 static grn_obj *
 unigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  return ngram_init_raw(ctx, nargs, args, user_data,
-                        1,
-                        GRN_TRUE,
-                        GRN_TRUE,
-                        GRN_TRUE,
-                        GRN_FALSE);
+  grn_ngram_options options;
+  ngram_options_init(&options, 1);
+  return ngram_init_raw(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
 bigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  return ngram_init_raw(ctx, nargs, args, user_data,
-                        2,
-                        GRN_TRUE,
-                        GRN_TRUE,
-                        GRN_TRUE,
-                        GRN_FALSE);
+  grn_ngram_options options;
+  ngram_options_init(&options, 2);
+  return ngram_init_raw(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
 trigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  return ngram_init_raw(ctx, nargs, args, user_data,
-                        3,
-                        GRN_TRUE,
-                        GRN_TRUE,
-                        GRN_TRUE,
-                        GRN_FALSE);
+  grn_ngram_options options;
+  ngram_options_init(&options, 3);
+  return ngram_init_raw(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
 bigrams_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  return ngram_init_raw(ctx, nargs, args, user_data,
-                        2,
-                        GRN_TRUE,
-                        GRN_TRUE,
-                        GRN_FALSE,
-                        GRN_FALSE);
+  grn_ngram_options options;
+  ngram_options_init(&options, 2);
+  options.uni_symbol = GRN_FALSE;
+  return ngram_init_raw(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
 bigramsa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  return ngram_init_raw(ctx, nargs, args, user_data,
-                        2,
-                        GRN_FALSE,
-                        GRN_TRUE,
-                        GRN_FALSE,
-                        GRN_FALSE);
+  grn_ngram_options options;
+  ngram_options_init(&options, 2);
+  options.uni_symbol = GRN_FALSE;
+  options.uni_alpha = GRN_FALSE;
+  return ngram_init_raw(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
 bigramsad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  return ngram_init_raw(ctx, nargs, args, user_data,
-                        2,
-                        GRN_FALSE,
-                        GRN_FALSE,
-                        GRN_FALSE,
-                        GRN_FALSE);
+  grn_ngram_options options;
+  ngram_options_init(&options, 2);
+  options.uni_symbol = GRN_FALSE;
+  options.uni_alpha = GRN_FALSE;
+  options.uni_digit = GRN_FALSE;
+  return ngram_init_raw(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
 bigrami_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  return ngram_init_raw(ctx, nargs, args, user_data,
-                        2,
-                        GRN_TRUE,
-                        GRN_TRUE,
-                        GRN_TRUE,
-                        GRN_TRUE);
+  grn_ngram_options options;
+  ngram_options_init(&options, 2);
+  options.ignore_blank = GRN_TRUE;
+  return ngram_init_raw(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
 bigramis_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  return ngram_init_raw(ctx, nargs, args, user_data,
-                        2,
-                        GRN_TRUE,
-                        GRN_TRUE,
-                        GRN_FALSE,
-                        GRN_TRUE);
+  grn_ngram_options options;
+  ngram_options_init(&options, 2);
+  options.ignore_blank = GRN_TRUE;
+  options.uni_symbol = GRN_FALSE;
+  return ngram_init_raw(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
 bigramisa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  return ngram_init_raw(ctx, nargs, args, user_data,
-                        2,
-                        GRN_FALSE,
-                        GRN_TRUE,
-                        GRN_FALSE,
-                        GRN_TRUE);
+  grn_ngram_options options;
+  ngram_options_init(&options, 2);
+  options.ignore_blank = GRN_TRUE;
+  options.uni_symbol = GRN_FALSE;
+  options.uni_alpha = GRN_FALSE;
+  return ngram_init_raw(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
 bigramisad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  return ngram_init_raw(ctx, nargs, args, user_data,
-                        2,
-                        GRN_FALSE,
-                        GRN_FALSE,
-                        GRN_FALSE,
-                        GRN_TRUE);
+  grn_ngram_options options;
+  ngram_options_init(&options, 2);
+  options.ignore_blank = GRN_TRUE;
+  options.uni_symbol = GRN_FALSE;
+  options.uni_alpha = GRN_FALSE;
+  options.uni_digit = GRN_FALSE;
+  return ngram_init_raw(ctx, nargs, args, user_data, &options);
 }
-
-typedef struct {
-  uint8_t unit;
-  grn_bool uni_alpha;
-  grn_bool uni_digit;
-  grn_bool uni_symbol;
-  grn_bool ignore_blank;
-} ngram_options;
 
 static void *
 ngram_open_options(grn_ctx *ctx,
@@ -441,18 +425,17 @@ ngram_open_options(grn_ctx *ctx,
                    grn_obj *raw_options,
                    void *user_data)
 {
-  ngram_options *options;
+  grn_ngram_options *options;
 
-  options = GRN_MALLOC(sizeof(ngram_options));
+  options = GRN_MALLOC(sizeof(grn_ngram_options));
   if (!options) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[tokenizer][ngram] "
+        "failed to allocate Ngram options");
     return NULL;
   }
 
-  options->unit = 2;
-  options->uni_alpha = GRN_TRUE;
-  options->uni_digit = GRN_TRUE;
-  options->uni_symbol = GRN_TRUE;
-  options->ignore_blank = GRN_FALSE;
+  ngram_options_init(options, 2);
 
   GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
     grn_raw_string name_raw;
@@ -464,6 +447,11 @@ ngram_open_options(grn_ctx *ctx,
                                                    raw_options,
                                                    i,
                                                    options->unit);
+    /* } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "loose_symbol")) { */
+    /*   options->loose_symbol = grn_vector_get_element_bool(ctx, */
+    /*                                                       raw_options, */
+    /*                                                       i, */
+    /*                                                       options->loose_symbol); */
     }
   } GRN_OPTION_VALUES_EACH_END();
 
@@ -473,7 +461,7 @@ ngram_open_options(grn_ctx *ctx,
 static void
 ngram_close_options(grn_ctx *ctx, void *data)
 {
-  ngram_options *options = data;
+  grn_ngram_options *options = data;
   GRN_FREE(options);
 }
 
@@ -481,7 +469,7 @@ static grn_obj *
 ngram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *lexicon = args[0];
-  ngram_options *options;
+  grn_ngram_options *options;
 
   options = grn_table_cache_default_tokenizer_options(ctx,
                                                       lexicon,
@@ -492,15 +480,7 @@ ngram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
 
-  return ngram_init_raw(ctx,
-                        nargs,
-                        args,
-                        user_data,
-                        options->unit,
-                        options->uni_alpha,
-                        options->uni_digit,
-                        options->uni_symbol,
-                        options->ignore_blank);
+  return ngram_init_raw(ctx, nargs, args, user_data, options);
 }
 
 static grn_obj *
@@ -512,36 +492,37 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   int32_t len = 0, pos = tokenizer->pos + tokenizer->skip;
   grn_token_status status = 0;
   const uint_least8_t *cp = tokenizer->ctypes ? tokenizer->ctypes + pos : NULL;
-  if (cp && tokenizer->uni_alpha && GRN_STR_CTYPE(*cp) == GRN_CHAR_ALPHA) {
+  if (cp && tokenizer->options.uni_alpha &&
+      GRN_STR_CTYPE(*cp) == GRN_CHAR_ALPHA) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
                               tokenizer->query->encoding))) {
       len++;
       r += cl;
-      if (/* !tokenizer->ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
+      if (/* !tokenizer->options.ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
       if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_ALPHA) { break; }
     }
     tokenizer->next = r;
     tokenizer->overlap = GRN_FALSE;
   } else if (cp &&
-             tokenizer->uni_digit &&
+             tokenizer->options.uni_digit &&
              GRN_STR_CTYPE(*cp) == GRN_CHAR_DIGIT) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
                               tokenizer->query->encoding))) {
       len++;
       r += cl;
-      if (/* !tokenizer->ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
+      if (/* !tokenizer->options.ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
       if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_DIGIT) { break; }
     }
     tokenizer->next = r;
     tokenizer->overlap = GRN_FALSE;
   } else if (cp &&
-             tokenizer->uni_symbol &&
+             tokenizer->options.uni_symbol &&
              GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
                               tokenizer->query->encoding))) {
       len++;
       r += cl;
-      if (!tokenizer->ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
+      if (!tokenizer->options.ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
       if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_SYMBOL) { break; }
     }
     tokenizer->next = r;
@@ -571,15 +552,18 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       len++;
       r += cl;
       tokenizer->next = r;
-      while (len < tokenizer->ngram_unit &&
+      while (len < tokenizer->options.unit &&
              (cl = grn_charlen_(ctx, (char *)r, (char *)e,
                                 tokenizer->query->encoding))) {
         if (cp) {
-          if (!tokenizer->ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
+          if (!tokenizer->options.ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
           cp++;
-          if ((tokenizer->uni_alpha && GRN_STR_CTYPE(*cp) == GRN_CHAR_ALPHA) ||
-              (tokenizer->uni_digit && GRN_STR_CTYPE(*cp) == GRN_CHAR_DIGIT) ||
-              (tokenizer->uni_symbol && GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL)) {
+          if ((tokenizer->options.uni_alpha &&
+               GRN_STR_CTYPE(*cp) == GRN_CHAR_ALPHA) ||
+              (tokenizer->options.uni_digit &&
+               GRN_STR_CTYPE(*cp) == GRN_CHAR_DIGIT) ||
+              (tokenizer->options.uni_symbol &&
+               GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL)) {
             break;
           }
         }
@@ -589,7 +573,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       if (tokenizer->overlap) {
         status |= GRN_TOKEN_OVERLAP;
       }
-      if (len < tokenizer->ngram_unit) {
+      if (len < tokenizer->options.unit) {
         status |= GRN_TOKEN_UNMATURED;
       }
       tokenizer->overlap = (len > 1) ? GRN_TRUE : GRN_FALSE;
