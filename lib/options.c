@@ -297,7 +297,8 @@ grn_options_get(grn_ctx *ctx,
     name_length = strlen(name);
   }
 
-  msgpack_unpacker_init(&unpacker, length);
+  msgpack_unpacker_init(&unpacker, MSGPACK_UNPACKER_INIT_BUFFER_SIZE);
+  msgpack_unpacker_reserve_buffer(&unpacker, length);
   msgpack_unpacked_init(&unpacked);
   memcpy(msgpack_unpacker_buffer(&unpacker),
          iw.addr,
