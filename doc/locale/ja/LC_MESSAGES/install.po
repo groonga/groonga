@@ -767,7 +767,7 @@ msgstr ""
 
 msgid ""
 "This section describes how to install Groonga on Windows. You can install "
-"Groogna by extracting a zip package or running an installer."
+"Groonga by extracting a zip package or running an installer."
 msgstr ""
 "このセクションではWindows上でGroongaをインストールする方法を説明します。"
 "Groongaをインストールするにはzipパッケージを展開する方法とインストーラーを実"
