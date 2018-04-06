@@ -498,7 +498,7 @@ typedef void (*grn_handler_func)(grn_ctx *ctx, grn_obj *msg);
 
 static grn_com_queue ctx_new;
 static grn_com_queue ctx_old;
-static grn_mutex q_mutex;
+static grn_critical_section q_critical_section;
 static grn_cond q_cond;
 static uint32_t n_running_threads = 0;
 static uint32_t n_floating_threads = 0;
@@ -520,10 +520,10 @@ groonga_set_thread_limit(uint32_t new_limit, void *data)
 
   GRN_ATOMIC_ADD_EX(&n_changing_threads, 1, prev_n_changing_threads);
 
-  MUTEX_LOCK_ENSURE(&grn_gctx, q_mutex);
+  CRITICAL_SECTION_ENTER(q_critical_section);
   current_n_floating_threads = n_floating_threads;
   max_n_floating_threads = new_limit;
-  MUTEX_UNLOCK(q_mutex);
+  CRITICAL_SECTION_LEAVE(q_critical_section);
 
   if (prev_n_changing_threads > 0) {
     GRN_ATOMIC_ADD_EX(&n_changing_threads, -1, prev_n_changing_threads);
@@ -532,20 +532,20 @@ groonga_set_thread_limit(uint32_t new_limit, void *data)
 
   if (current_n_floating_threads > new_limit) {
     for (i = 0; i < current_n_floating_threads; i++) {
-      MUTEX_LOCK_ENSURE(&grn_gctx, q_mutex);
+      CRITICAL_SECTION_ENTER(q_critical_section);
       COND_SIGNAL(q_cond);
-      MUTEX_UNLOCK(q_mutex);
+      CRITICAL_SECTION_LEAVE(q_critical_section);
     }
   }
 
   while (GRN_TRUE) {
     grn_bool is_reduced;
-    MUTEX_LOCK_ENSURE(&grn_gctx, q_mutex);
+    CRITICAL_SECTION_ENTER(q_critical_section);
     is_reduced = (n_running_threads <= max_n_floating_threads);
     if (!is_reduced && n_floating_threads > 0) {
       COND_SIGNAL(q_cond);
     }
-    MUTEX_UNLOCK(q_mutex);
+    CRITICAL_SECTION_LEAVE(q_critical_section);
     if (is_reduced) {
       break;
     }
@@ -947,12 +947,12 @@ run_server_loop(grn_ctx *ctx, grn_com_event *ev)
   running_event_loop = GRN_FALSE;
   for (;;) {
     int i;
-    MUTEX_LOCK_ENSURE(ctx, q_mutex);
+    CRITICAL_SECTION_ENTER(q_critical_section);
     for (i = 0; i < n_floating_threads; i++) {
       COND_SIGNAL(q_cond);
     }
     if (n_running_threads == n_floating_threads) { break; }
-    MUTEX_UNLOCK(q_mutex);
+    CRITICAL_SECTION_LEAVE(q_critical_section);
     grn_nanosleep(1000000);
   }
   {
@@ -2421,7 +2421,7 @@ h_worker(void *arg)
   grn_ctx_init(ctx, 0);
   grn_ctx_use(ctx, (grn_obj *)arg);
   grn_ctx_recv_handler_set(ctx, h_output, &hc);
-  MUTEX_LOCK_ENSURE(ctx, q_mutex);
+  CRITICAL_SECTION_ENTER(q_critical_section);
   GRN_LOG(ctx, GRN_LOG_NOTICE, "thread start (%u/%u)",
           n_floating_threads, n_running_threads);
   while (n_running_threads <= max_n_floating_threads &&
@@ -2432,7 +2432,7 @@ h_worker(void *arg)
     }
     n_floating_threads++;
     while (!(msg = (grn_obj *)grn_com_queue_deque(&grn_gctx, &ctx_new))) {
-      COND_WAIT(q_cond, q_mutex);
+      COND_WAIT(q_cond, q_critical_section);
       if (grn_gctx.stat == GRN_CTX_QUIT) {
         n_floating_threads--;
         goto exit;
@@ -2443,12 +2443,12 @@ h_worker(void *arg)
       }
     }
     n_floating_threads--;
-    MUTEX_UNLOCK(q_mutex);
+    CRITICAL_SECTION_LEAVE(q_critical_section);
     hc.msg = (grn_msg *)msg;
     hc.in_body = GRN_FALSE;
     hc.is_chunked = GRN_FALSE;
     do_htreq(ctx, &hc);
-    MUTEX_LOCK_ENSURE(ctx, q_mutex);
+    CRITICAL_SECTION_ENTER(q_critical_section);
   }
 exit :
   n_running_threads--;
@@ -2458,7 +2458,7 @@ exit :
     break_accept_event_loop(ctx);
   }
   grn_ctx_fin(ctx);
-  MUTEX_UNLOCK(q_mutex);
+  CRITICAL_SECTION_LEAVE(q_critical_section);
   return GRN_THREAD_FUNC_RETURN_VALUE;
 }
 
@@ -2475,7 +2475,7 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
     /* if not keep alive connection */
     grn_com_event_del(ctx, com->ev, fd);
     ((grn_msg *)msg)->u.fd = fd;
-    MUTEX_LOCK_ENSURE(ctx, q_mutex);
+    CRITICAL_SECTION_ENTER(q_critical_section);
     grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)msg);
     if (n_floating_threads == 0 && n_running_threads < max_n_floating_threads) {
       grn_thread thread;
@@ -2486,7 +2486,7 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
       }
     }
     COND_SIGNAL(q_cond);
-    MUTEX_UNLOCK(q_mutex);
+    CRITICAL_SECTION_LEAVE(q_critical_section);
   }
 }
 
@@ -2514,7 +2514,7 @@ h_server(char *path)
 static grn_thread_func_result CALLBACK
 g_worker(void *arg)
 {
-  MUTEX_LOCK_ENSURE(&grn_gctx, q_mutex);
+  CRITICAL_SECTION_ENTER(q_critical_section);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%u/%u)",
           n_floating_threads, n_running_threads);
   while (n_running_threads <= max_n_floating_threads &&
@@ -2523,7 +2523,7 @@ g_worker(void *arg)
     grn_edge *edge;
     n_floating_threads++;
     while (!(edge = (grn_edge *)grn_com_queue_deque(&grn_gctx, &ctx_new))) {
-      COND_WAIT(q_cond, q_mutex);
+      COND_WAIT(q_cond, q_critical_section);
       if (grn_gctx.stat == GRN_CTX_QUIT) {
         n_floating_threads--;
         goto exit;
@@ -2540,7 +2540,7 @@ g_worker(void *arg)
       edge->stat = EDGE_DOING;
       while (!GRN_COM_QUEUE_EMPTYP(&edge->recv_new)) {
         grn_obj *msg;
-        MUTEX_UNLOCK(q_mutex);
+        CRITICAL_SECTION_LEAVE(q_critical_section);
         /* if (edge->flags == GRN_EDGE_WORKER) */
         while (ctx->stat != GRN_CTX_QUIT &&
                (edge->msg = (grn_msg *)grn_com_queue_deque(ctx, &edge->recv_new))) {
@@ -2566,7 +2566,7 @@ g_worker(void *arg)
         while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
           grn_msg_close(ctx, msg);
         }
-        MUTEX_LOCK_ENSURE(ctx, q_mutex);
+        CRITICAL_SECTION_ENTER(q_critical_section);
         if (ctx->stat == GRN_CTX_QUIT || edge->stat == EDGE_ABORT) { break; }
       }
     }
@@ -2581,14 +2581,14 @@ exit :
   n_running_threads--;
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%u/%u)",
           n_floating_threads, n_running_threads);
-  MUTEX_UNLOCK(q_mutex);
+  CRITICAL_SECTION_LEAVE(q_critical_section);
   return GRN_THREAD_FUNC_RETURN_VALUE;
 }
 
 static void
 g_dispatcher(grn_ctx *ctx, grn_edge *edge)
 {
-  MUTEX_LOCK_ENSURE(ctx, q_mutex);
+  CRITICAL_SECTION_ENTER(q_critical_section);
   if (edge->stat == EDGE_IDLE) {
     grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)edge);
     edge->stat = EDGE_WAIT;
@@ -2602,7 +2602,7 @@ g_dispatcher(grn_ctx *ctx, grn_edge *edge)
     }
     COND_SIGNAL(q_cond);
   }
-  MUTEX_UNLOCK(q_mutex);
+  CRITICAL_SECTION_LEAVE(q_critical_section);
 }
 
 static void
@@ -2632,12 +2632,12 @@ g_handler(grn_ctx *ctx, grn_obj *msg)
   if (ctx->rc) {
     if (com->has_sid) {
       if ((edge = com->opaque)) {
-        MUTEX_LOCK_ENSURE(ctx, q_mutex);
+        CRITICAL_SECTION_ENTER(q_critical_section);
         if (edge->stat == EDGE_IDLE) {
           grn_com_queue_enque(ctx, &ctx_old, (grn_com_queue_entry *)edge);
         }
         edge->stat = EDGE_ABORT;
-        MUTEX_UNLOCK(q_mutex);
+        CRITICAL_SECTION_LEAVE(q_critical_section);
       } else {
         grn_com_close(ctx, com);
       }
@@ -3717,7 +3717,7 @@ main(int argc, char **argv)
     grn_cache_set_max_n_entries(&grn_gctx, cache, cache_limit);
   }
 
-  MUTEX_INIT(q_mutex);
+  CRITICAL_SECTION_INIT(q_critical_section);
   COND_INIT(q_cond);
 
   if (input_path) {
@@ -3784,7 +3784,7 @@ main(int argc, char **argv)
   }
 
   COND_FIN(q_cond);
-  MUTEX_FIN(q_mutex);
+  CRITICAL_SECTION_FIN(q_critical_section);
 
   if (input_reader) {
     grn_file_reader_close(&grn_gctx, input_reader);

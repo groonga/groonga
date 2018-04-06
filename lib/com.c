@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -233,10 +233,10 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
       return GRN_INVALID_ARGUMENT;
     }
   }
-  MUTEX_LOCK(peer->ev->mutex);
+  CRITICAL_SECTION_ENTER(peer->ev->critical_section);
   rc = grn_com_queue_enque(ctx, &peer->new_, (grn_com_queue_entry *)msg);
   COND_SIGNAL(peer->ev->cond);
-  MUTEX_UNLOCK(peer->ev->mutex);
+  CRITICAL_SECTION_LEAVE(peer->ev->critical_section);
   return rc;
 }
 
@@ -275,7 +275,7 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
 {
   ev->max_nevents = max_nevents;
   if ((ev->hash = grn_hash_create(ctx, NULL, sizeof(grn_sock), data_size, 0))) {
-    MUTEX_INIT(ev->mutex);
+    CRITICAL_SECTION_INIT(ev->critical_section);
     COND_INIT(ev->cond);
     GRN_COM_QUEUE_INIT(&ev->recv_old);
     ev->msg_handler = NULL;
@@ -337,6 +337,7 @@ grn_com_event_fin(grn_ctx *ctx, grn_com_event *ev)
   grn_close(ev->kqfd);
 # endif /* USE_KQUEUE*/
 #endif /* USE_SELECT */
+  CRITICAL_SECTION_FIN(ev->critical_section);
   return GRN_SUCCESS;
 }
 

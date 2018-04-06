@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -128,7 +128,7 @@ struct _grn_com_event {
   struct _grn_hash *hash;
   int max_nevents;
   grn_ctx *ctx;
-  grn_mutex mutex;
+  grn_critical_section critical_section;
   grn_cond cond;
   grn_com_queue recv_old;
   grn_msg_handler *msg_handler;

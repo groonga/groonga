@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -231,12 +231,12 @@ typedef pthread_mutex_t grn_critical_section;
 # define CRITICAL_SECTION_INIT(cs)  pthread_mutex_init(&(cs), NULL)
 # define CRITICAL_SECTION_ENTER(cs) pthread_mutex_lock(&(cs))
 # define CRITICAL_SECTION_LEAVE(cs) pthread_mutex_unlock(&(cs))
-# define CRITICAL_SECTION_FIN(cs)
+# define CRITICAL_SECTION_FIN(cs)   pthread_mutex_destroy(&(cs))
 
 typedef pthread_cond_t grn_cond;
 # define COND_INIT(c)   pthread_cond_init(&(c), NULL)
 # define COND_SIGNAL(c) pthread_cond_signal(&(c))
-# define COND_WAIT(c,m) pthread_cond_wait(&(c), &(m))
+# define COND_WAIT(c,cs) pthread_cond_wait(&(c), &(cs))
 # define COND_BROADCAST(c) pthread_cond_broadcast(&(c))
 # define COND_FIN(c)    pthread_cond_destroy(&(c))
 
@@ -307,77 +307,12 @@ typedef CRITICAL_SECTION grn_critical_section;
 #  define CRITICAL_SECTION_LEAVE(cs) LeaveCriticalSection(&(cs))
 #  define CRITICAL_SECTION_FIN(cs)   DeleteCriticalSection(&(cs))
 
-typedef struct
-{
-  int waiters_count_;
-  HANDLE waiters_count_lock_;
-  HANDLE sema_;
-  HANDLE waiters_done_;
-  size_t was_broadcast_;
-} grn_cond;
-
-#  define COND_INIT(c) do { \
-  (c).waiters_count_ = 0; \
-  (c).sema_ = CreateSemaphore(NULL, 0, 0x7fffffff, NULL); \
-  MUTEX_INIT((c).waiters_count_lock_); \
-  (c).waiters_done_ = CreateEvent(NULL, FALSE, FALSE, NULL); \
-} while (0)
-
-#  define COND_SIGNAL(c) do { \
-  MUTEX_LOCK((c).waiters_count_lock_); \
-  { \
-    int have_waiters = (c).waiters_count_ > 0; \
-    MUTEX_UNLOCK((c).waiters_count_lock_); \
-    if (have_waiters) { \
-      ReleaseSemaphore((c).sema_, 1, 0); \
-    } \
-  } \
-} while (0)
-
-#  define COND_BROADCAST(c) do { \
-  MUTEX_LOCK((c).waiters_count_lock_); \
-  { \
-    int have_waiters = (c).waiters_count_ > 0; \
-    if ((c).waiters_count_ > 0) { \
-      (c).was_broadcast_ = 1; \
-      have_waiters = 1; \
-    } \
-    if (have_waiters) { \
-      ReleaseSemaphore((c).sema_, (c).waiters_count_, 0); \
-      MUTEX_UNLOCK((c).waiters_count_lock_); \
-      WaitForSingleObject((c).waiters_done_, INFINITE); \
-      (c).was_broadcast_ = 0; \
-    } \
-    else { \
-      MUTEX_UNLOCK((c).waiters_count_lock_); \
-    } \
-  } \
-} while (0)
-
-#  define COND_WAIT(c,m) do { \
-  MUTEX_LOCK((c).waiters_count_lock_); \
-  (c).waiters_count_++; \
-  MUTEX_UNLOCK((c).waiters_count_lock_); \
-  SignalObjectAndWait((m), (c).sema_, INFINITE, FALSE); \
-  MUTEX_LOCK((c).waiters_count_lock_); \
-  (c).waiters_count_--; \
-  { \
-    int last_waiter = (c).was_broadcast_ && (c).waiters_count_ == 0; \
-    MUTEX_UNLOCK((c).waiters_count_lock_); \
-    if (last_waiter)  { \
-      SignalObjectAndWait((c).waiters_done_, (m), INFINITE, FALSE); \
-    } \
-    else { \
-      WaitForSingleObject((m), FALSE); \
-    } \
-  } \
-} while (0)
-
-#  define COND_FIN(c) do { \
-  CloseHandle((c).waiters_done_); \
-  MUTEX_FIN((c).waiters_count_lock_); \
-  CloseHandle((c).sema_); \
-} while (0)
+typedef CONDITION_VARIABLE grn_cond;
+#  define COND_INIT(c) InitializeConditionVariable(&(c))
+#  define COND_SIGNAL(c) WakeConditonVariable(&(c))
+#  define COND_BROADCAST(c) WakeAllConditionVariable(&(c))
+#  define COND_WAIT(c,cs) SleepConditionVariableCS(&(c), &(cs), INFINITE)
+#  define COND_FIN(c)
 
 # else /* WIN32 */
 /* todo */
