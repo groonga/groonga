@@ -309,7 +309,7 @@ typedef CRITICAL_SECTION grn_critical_section;
 
 typedef CONDITION_VARIABLE grn_cond;
 #  define COND_INIT(c) InitializeConditionVariable(&(c))
-#  define COND_SIGNAL(c) WakeConditonVariable(&(c))
+#  define COND_SIGNAL(c) WakeConditionVariable(&(c))
 #  define COND_BROADCAST(c) WakeAllConditionVariable(&(c))
 #  define COND_WAIT(c,cs) SleepConditionVariableCS(&(c), &(cs), INFINITE)
 #  define COND_FIN(c)
