@@ -1,0 +1,48 @@
+FROM ubuntu:14.04
+
+RUN \
+  apt update && \
+  apt install -y \
+    bison \
+    g++ \
+    gcc \
+    gdb \
+    git \
+    libdevent-dev \
+    libmsgpack-dev \
+    make \
+    mecab-naist-jdic \
+    pkg-config \
+    ruby2.0 \
+    ruby2.0-dev \
+    sudo \
+    zlib1g-dev
+
+RUN \
+  gem2.0 install bundler
+
+RUN \
+  useradd --user-group --create-home groonga
+
+RUN \
+  echo "groonga ALL=(ALL:ALL) NOPASSWD:ALL" | \
+    EDITOR=tee visudo -f /etc/sudoers.d/groonga
+
+COPY . /home/groonga/source
+
+USER groonga
+
+WORKDIR /home/groonga
+RUN mkdir -p build
+WORKDIR /home/groonga/build
+
+RUN ../source/configure \
+  --enable-debug \
+  --with-ruby=/usr/bin/ruby2.0 \
+  --enable-mruby
+
+RUN make -j$(nproc) > /dev/null
+
+CMD \
+  BUILD_DIR=test/command \
+    ../source/test/command/run-test.sh
