@@ -9020,6 +9020,10 @@ grn_obj_set_info_default_tokenizer(grn_ctx *ctx,
   }
 
   name_size = grn_obj_name(ctx, table, name, sizeof(name));
+  if (name_size == 0) {
+    grn_strcpy(name, sizeof(name), "(anonymous)");
+    name_size = strlen(name);
+  }
   if (grn_obj_is_text_family_bulk(ctx, default_tokenizer)) {
     if (grn_obj_set_info_is_funcall_call_bulk(ctx, default_tokenizer)) {
       grn_obj *unused;
