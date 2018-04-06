@@ -303,7 +303,7 @@ ngram_init_raw(grn_ctx *ctx,
   tokenizer->uni_symbol = uni_symbol;
   tokenizer->ngram_unit = ngram_unit;
   tokenizer->ignore_blank = ignore_blank;
-  tokenizer->overlap = 0;
+  tokenizer->overlap = GRN_FALSE;
   tokenizer->pos = 0;
   tokenizer->skip = 0;
 
@@ -521,7 +521,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_ALPHA) { break; }
     }
     tokenizer->next = r;
-    tokenizer->overlap = 0;
+    tokenizer->overlap = GRN_FALSE;
   } else if (cp &&
              tokenizer->uni_digit &&
              GRN_STR_CTYPE(*cp) == GRN_CHAR_DIGIT) {
@@ -533,7 +533,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_DIGIT) { break; }
     }
     tokenizer->next = r;
-    tokenizer->overlap = 0;
+    tokenizer->overlap = GRN_FALSE;
   } else if (cp &&
              tokenizer->uni_symbol &&
              GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL) {
@@ -545,7 +545,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_SYMBOL) { break; }
     }
     tokenizer->next = r;
-    tokenizer->overlap = 0;
+    tokenizer->overlap = GRN_FALSE;
   } else {
 #ifdef PRE_DEFINED_UNSPLIT_WORDS
     const unsigned char *key = NULL;
@@ -592,7 +592,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       if (len < tokenizer->ngram_unit) {
         status |= GRN_TOKEN_UNMATURED;
       }
-      tokenizer->overlap = (len > 1) ? 1 : 0;
+      tokenizer->overlap = (len > 1) ? GRN_TRUE : GRN_FALSE;
     }
   }
   tokenizer->pos = pos;
