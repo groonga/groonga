@@ -1,0 +1,77 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("n", 3, "loose_symbol", true)'   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms memos_content COLUMN_INDEX Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "090-1234-5678"},
+{"content": "これはペンです。"}
+]
+[[0,0.0,0.0],2]
+select Terms --output_columns _key --limit -1
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        14
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        "-"
+      ],
+      [
+        "090"
+      ],
+      [
+        "09012345678"
+      ],
+      [
+        "1234"
+      ],
+      [
+        "5678"
+      ],
+      [
+        "。"
+      ],
+      [
+        "これは"
+      ],
+      [
+        "す"
+      ],
+      [
+        "です"
+      ],
+      [
+        "はペン"
+      ],
+      [
+        "れはペ"
+      ],
+      [
+        "ペンで"
+      ],
+      [
+        "ンです"
+      ],
+      [
+        "￰"
+      ]
+    ]
+  ]
+]

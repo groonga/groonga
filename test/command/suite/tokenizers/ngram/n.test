@@ -1,0 +1,1 @@
+tokenize 'TokenNgram("n", 3)' "abcdefg"

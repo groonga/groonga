@@ -1,0 +1,2 @@
+tokenize   'TokenNgram("loose_symbol", true)'   "090-1234-5678"   NormalizerAuto   --mode GET
+[[0,0.0,0.0],[{"value":"09012345678","position":0,"force_prefix":false}]]

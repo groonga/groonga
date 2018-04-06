@@ -1,0 +1,45 @@
+tokenize 'TokenNgram("n", 3)' "abcdefg"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "abc",
+      "position": 0,
+      "force_prefix": false
+    },
+    {
+      "value": "bcd",
+      "position": 1,
+      "force_prefix": false
+    },
+    {
+      "value": "cde",
+      "position": 2,
+      "force_prefix": false
+    },
+    {
+      "value": "def",
+      "position": 3,
+      "force_prefix": false
+    },
+    {
+      "value": "efg",
+      "position": 4,
+      "force_prefix": false
+    },
+    {
+      "value": "fg",
+      "position": 5,
+      "force_prefix": false
+    },
+    {
+      "value": "g",
+      "position": 6,
+      "force_prefix": false
+    }
+  ]
+]

@@ -246,6 +246,7 @@ typedef struct {
   grn_bool uni_digit;
   grn_bool uni_symbol;
   grn_bool ignore_blank;
+  grn_bool loose_symbol;
 } grn_ngram_options;
 
 typedef struct {
@@ -253,6 +254,13 @@ typedef struct {
   grn_tokenizer_query *query;
   grn_ngram_options options;
   grn_bool overlap;
+  struct {
+    grn_bool ing;
+    grn_bool need;
+    grn_bool need_end_mark;
+    grn_obj text;
+    uint_least8_t *ctypes;
+  } loose;
   int32_t pos;
   uint32_t skip;
   const unsigned char *next;
@@ -270,6 +278,69 @@ ngram_options_init(grn_ngram_options *options, uint8_t unit)
   options->uni_digit = GRN_TRUE;
   options->uni_symbol = GRN_TRUE;
   options->ignore_blank = GRN_FALSE;
+  options->loose_symbol = GRN_FALSE;
+}
+
+static void
+ngram_switch_to_loose_mode(grn_ctx *ctx,
+                           grn_ngram_tokenizer *tokenizer)
+{
+  const char *normalized;
+  unsigned int normalized_length_in_bytes;
+  unsigned int normalized_length_in_chars;
+  const char *normalized_end;
+  const uint_least8_t *types = tokenizer->ctypes;
+
+  grn_string_get_normalized(ctx,
+                            tokenizer->query->normalized_query,
+                            &normalized,
+                            &normalized_length_in_bytes,
+                            &normalized_length_in_chars);
+  normalized_end = normalized + normalized_length_in_bytes;
+
+  if (types) {
+    uint_least8_t *loose_types;
+
+    tokenizer->loose.ctypes =
+      GRN_MALLOC(sizeof(uint_least8_t) * normalized_length_in_chars);
+    if (!tokenizer->loose.ctypes) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[tokenizer][ngram][loose] "
+          "failed to allocate memory for character types");
+      return;
+    }
+    loose_types = tokenizer->loose.ctypes;
+    while (normalized < normalized_end) {
+      size_t length;
+      length = grn_charlen_(ctx,
+                            (char *)normalized,
+                            (char *)normalized_end,
+                            tokenizer->query->encoding);
+      if (length == 0) {
+        break;
+      }
+      if (!(tokenizer->options.loose_symbol &&
+            GRN_STR_CTYPE(*types) == GRN_CHAR_SYMBOL)) {
+        GRN_TEXT_PUT(ctx, &(tokenizer->loose.text), normalized, length);
+        *loose_types = *types;
+        loose_types++;
+      }
+      normalized += length;
+      types++;
+    }
+    tokenizer->next =
+      (const unsigned char *)GRN_TEXT_VALUE(&(tokenizer->loose.text));
+    tokenizer->end = tokenizer->next + GRN_TEXT_LEN(&(tokenizer->loose.text));
+    tokenizer->ctypes = tokenizer->loose.ctypes;
+  } else {
+    tokenizer->next = normalized;
+    tokenizer->end = normalized_end;
+  }
+
+  tokenizer->pos = 0;
+  tokenizer->skip = 0;
+  tokenizer->overlap = GRN_FALSE;
+  tokenizer->loose.ing = GRN_TRUE;
 }
 
 static grn_obj *
@@ -310,6 +381,11 @@ ngram_init_raw(grn_ctx *ctx,
 
   tokenizer->options = *options;
   tokenizer->overlap = GRN_FALSE;
+  tokenizer->loose.ing = GRN_FALSE;
+  tokenizer->loose.need = GRN_FALSE;
+  tokenizer->loose.need_end_mark = GRN_FALSE;
+  GRN_TEXT_INIT(&(tokenizer->loose.text), 0);
+  tokenizer->loose.ctypes = NULL;
   tokenizer->pos = 0;
   tokenizer->skip = 0;
 
@@ -320,6 +396,11 @@ ngram_init_raw(grn_ctx *ctx,
   tokenizer->end = tokenizer->next + normalized_length_in_bytes;
   tokenizer->ctypes =
     grn_string_get_types(ctx, tokenizer->query->normalized_query);
+
+  if (tokenizer->query->tokenize_mode == GRN_TOKEN_GET) {
+    ngram_switch_to_loose_mode(ctx, tokenizer);
+  }
+
   return NULL;
 }
 
@@ -431,7 +512,7 @@ ngram_open_options(grn_ctx *ctx,
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[tokenizer][ngram] "
-        "failed to allocate Ngram options");
+        "failed to allocate memory for options");
     return NULL;
   }
 
@@ -447,11 +528,11 @@ ngram_open_options(grn_ctx *ctx,
                                                    raw_options,
                                                    i,
                                                    options->unit);
-    /* } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "loose_symbol")) { */
-    /*   options->loose_symbol = grn_vector_get_element_bool(ctx, */
-    /*                                                       raw_options, */
-    /*                                                       i, */
-    /*                                                       options->loose_symbol); */
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "loose_symbol")) {
+      options->loose_symbol = grn_vector_get_element_bool(ctx,
+                                                          raw_options,
+                                                          i,
+                                                          options->loose_symbol);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
@@ -492,6 +573,26 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   int32_t len = 0, pos = tokenizer->pos + tokenizer->skip;
   grn_token_status status = 0;
   const uint_least8_t *cp = tokenizer->ctypes ? tokenizer->ctypes + pos : NULL;
+
+  if (tokenizer->loose.ing && tokenizer->loose.need_end_mark) {
+    grn_tokenizer_token_push(ctx,
+                             &(tokenizer->token),
+                             GRN_TOKENIZER_END_MARK_UTF8,
+                             GRN_TOKENIZER_END_MARK_UTF8_LEN,
+                             status);
+    ngram_switch_to_loose_mode(ctx, tokenizer);
+    tokenizer->loose.need_end_mark = GRN_FALSE;
+    return NULL;
+  }
+
+  if (cp &&
+      !tokenizer->loose.ing &&
+      !tokenizer->loose.need &&
+      tokenizer->options.loose_symbol &&
+      GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL) {
+    tokenizer->loose.need = GRN_TRUE;
+  }
+
   if (cp && tokenizer->options.uni_alpha &&
       GRN_STR_CTYPE(*cp) == GRN_CHAR_ALPHA) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
@@ -589,11 +690,21 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     tokenizer->skip = tokenizer->overlap ? 1 : len;
   }
   if (r == e) { status |= GRN_TOKEN_REACH_END; }
-  grn_tokenizer_token_push(ctx,
-                           &(tokenizer->token),
-                           (const char *)p,
-                           r - p,
-                           status);
+
+  {
+    if ((status & (GRN_TOKEN_LAST | GRN_TOKEN_REACH_END)) &&
+        !tokenizer->loose.ing && tokenizer->loose.need) {
+      status &= ~(GRN_TOKEN_LAST | GRN_TOKEN_REACH_END);
+      tokenizer->loose.ing = GRN_TRUE;
+      tokenizer->loose.need_end_mark = GRN_TRUE;
+    }
+    grn_tokenizer_token_push(ctx,
+                             &(tokenizer->token),
+                             (const char *)p,
+                             r - p,
+                             status);
+  }
+
   return NULL;
 }
 
@@ -604,6 +715,10 @@ ngram_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (!tokenizer) {
     return NULL;
   }
+  if (tokenizer->loose.ctypes) {
+    GRN_FREE(tokenizer->loose.ctypes);
+  }
+  GRN_OBJ_FIN(ctx, &(tokenizer->loose.text));
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));
   grn_tokenizer_query_close(ctx, tokenizer->query);
   GRN_FREE(tokenizer);
