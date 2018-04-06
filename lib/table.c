@@ -301,7 +301,7 @@ grn_table_cache_default_tokenizer_options(grn_ctx *ctx,
     break;
   }
 
-  GRN_VOID_INIT(&raw_options);
+  GRN_TEXT_INIT(&raw_options, GRN_OBJ_VECTOR);
   revision = grn_obj_get_option_values(ctx,
                                        table,
                                        OPTION_NAME_DEFAULT_TOKENIZER,
