@@ -124,6 +124,9 @@ grn_tiny_array_fin(grn_tiny_array *array)
       array->blocks[block_id] = NULL;
     }
   }
+  if (array->flags & GRN_TINY_ARRAY_THREADSAFE) {
+    CRITICAL_SECTION_FIN(array->lock);
+  }
 }
 
 void *
