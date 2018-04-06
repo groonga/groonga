@@ -554,7 +554,7 @@ command_schema_table_output_tokenizer(grn_ctx *ctx, grn_obj *table)
     unsigned int n;
 
     GRN_VOID_INIT(&options);
-    grn_table_get_tokenizer_options(ctx, table, &options);
+    grn_table_get_default_tokenizer_options(ctx, table, &options);
     if (options.header.type == GRN_VOID) {
       grn_ctx_output_null(ctx);
     } else {
@@ -715,7 +715,7 @@ command_schema_table_command_collect_arguments(grn_ctx *ctx,
     if (tokenizer) {
       grn_obj sub_output;
       GRN_TEXT_INIT(&sub_output, 0);
-      grn_table_get_tokenizer_string(ctx, table, &sub_output);
+      grn_table_get_default_tokenizer_string(ctx, table, &sub_output);
       GRN_TEXT_PUTC(ctx, &sub_output, '\0');
       ADD("default_tokenizer", GRN_TEXT_VALUE(&sub_output));
       GRN_OBJ_FIN(ctx, &sub_output);

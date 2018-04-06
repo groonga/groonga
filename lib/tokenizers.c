@@ -413,11 +413,11 @@ ngram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *lexicon = args[0];
   ngram_options *options;
 
-  options = grn_table_cache_tokenizer_options(ctx,
-                                              lexicon,
-                                              ngram_open_options,
-                                              ngram_close_options,
-                                              NULL);
+  options = grn_table_cache_default_tokenizer_options(ctx,
+                                                      lexicon,
+                                                      ngram_open_options,
+                                                      ngram_close_options,
+                                                      NULL);
   if (ctx->rc != GRN_SUCCESS) {
     return NULL;
   }

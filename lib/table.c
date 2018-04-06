@@ -23,6 +23,8 @@
 #include "grn_hash.h"
 #include "grn_pat.h"
 
+static const char *OPTION_NAME_DEFAULT_TOKENIZER = "default-tokenizer";
+
 grn_rc
 grn_table_apply_expr(grn_ctx *ctx,
                      grn_obj *table,
@@ -185,22 +187,70 @@ grn_table_tokenizer_set_options(grn_ctx *ctx,
 }
 
 grn_rc
-grn_table_get_tokenizer_options(grn_ctx *ctx,
-                                grn_obj *table,
-                                grn_obj *options)
+grn_table_set_default_tokenizer_options(grn_ctx *ctx,
+                                        grn_obj *table,
+                                        grn_obj *options)
 {
   GRN_API_ENTER;
 
   if (!grn_obj_is_lexicon(ctx, table)) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[table][tokenizer-options][get] table must be key table: %s",
+        "[table][default-tokenizer][options][set] table must be key table: %s",
+        table ? grn_obj_type_to_string(table->header.type) : "(null)");
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  if (options &&
+      options->header.type == GRN_VECTOR &&
+      grn_vector_size(ctx, options) > 0) {
+    grn_obj_set_option_values(ctx,
+                              table,
+                              OPTION_NAME_DEFAULT_TOKENIZER,
+                              -1,
+                              options);
+  } else {
+    grn_obj current_options;
+    GRN_VOID_INIT(&current_options);
+    grn_obj_get_option_values(ctx,
+                              table,
+                              OPTION_NAME_DEFAULT_TOKENIZER,
+                              -1,
+                              GRN_OPTION_REVISION_NONE,
+                              &current_options);
+    if (current_options.header.type == GRN_VECTOR &&
+        grn_vector_size(ctx, &current_options) > 1) {
+      grn_obj empty_options;
+      GRN_TEXT_INIT(&empty_options, GRN_OBJ_VECTOR);
+      grn_obj_set_option_values(ctx,
+                                table,
+                                OPTION_NAME_DEFAULT_TOKENIZER,
+                                -1,
+                                &empty_options);
+      GRN_OBJ_FIN(ctx, &empty_options);
+    }
+    GRN_OBJ_FIN(ctx, &current_options);
+  }
+
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_table_get_default_tokenizer_options(grn_ctx *ctx,
+                                        grn_obj *table,
+                                        grn_obj *options)
+{
+  GRN_API_ENTER;
+
+  if (!grn_obj_is_lexicon(ctx, table)) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][default-tokenizer][options][get] table must be key table: %s",
         table ? grn_obj_type_to_string(table->header.type) : "(null)");
     GRN_API_RETURN(ctx->rc);
   }
 
   grn_obj_get_option_values(ctx,
                             table,
-                            "tokenizer",
+                            OPTION_NAME_DEFAULT_TOKENIZER,
                             -1,
                             GRN_OPTION_REVISION_NONE,
                             options);
@@ -208,11 +258,11 @@ grn_table_get_tokenizer_options(grn_ctx *ctx,
 }
 
 void *
-grn_table_cache_tokenizer_options(grn_ctx *ctx,
-                                  grn_obj *table,
-                                  grn_tokenizer_open_options_func open_options_func,
-                                  grn_close_func close_options_func,
-                                  void *user_data)
+grn_table_cache_default_tokenizer_options(grn_ctx *ctx,
+                                          grn_obj *table,
+                                          grn_tokenizer_open_options_func open_options_func,
+                                          grn_close_func close_options_func,
+                                          void *user_data)
 {
   grn_table_tokenizer *tokenizer;
   grn_option_revision revision;
@@ -223,7 +273,7 @@ grn_table_cache_tokenizer_options(grn_ctx *ctx,
 
   if (!table) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[table][tokenizer-options][cache] table is NULL");
+        "[table][default-tokenizer][options][cache] table is NULL");
     GRN_API_RETURN(NULL);
   }
 
@@ -239,7 +289,7 @@ grn_table_cache_tokenizer_options(grn_ctx *ctx,
     break;
   default :
     ERR(GRN_INVALID_ARGUMENT,
-        "[table][tokenizer-options][cache] table must key table: %s",
+        "[table][default-tokenizer][options][cache] table must key table: %s",
         grn_obj_type_to_string(table->header.type));
     GRN_API_RETURN(NULL);
     break;
@@ -248,7 +298,7 @@ grn_table_cache_tokenizer_options(grn_ctx *ctx,
   GRN_VOID_INIT(&raw_options);
   revision = grn_obj_get_option_values(ctx,
                                        table,
-                                       "tokenizer",
+                                       OPTION_NAME_DEFAULT_TOKENIZER,
                                        -1,
                                        tokenizer->options_revision,
                                        &raw_options);
@@ -271,9 +321,9 @@ exit :
 }
 
 grn_rc
-grn_table_get_tokenizer_string(grn_ctx *ctx,
-                               grn_obj *table,
-                               grn_obj *output)
+grn_table_get_default_tokenizer_string(grn_ctx *ctx,
+                                       grn_obj *table,
+                                       grn_obj *output)
 {
   grn_obj *tokenizer;
   char name[GRN_TABLE_MAX_KEY_SIZE];
@@ -285,7 +335,8 @@ grn_table_get_tokenizer_string(grn_ctx *ctx,
 
   if (!grn_obj_is_lexicon(ctx, table)) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[table][tokenizer-options][get] table must be key table: %s",
+        "[table][default-tokenizer][options][string] "
+        "table must be key table: %s",
         table ? grn_obj_type_to_string(table->header.type) : "(null)");
     GRN_API_RETURN(ctx->rc);
   }
@@ -301,7 +352,7 @@ grn_table_get_tokenizer_string(grn_ctx *ctx,
   GRN_VOID_INIT(&options);
   grn_obj_get_option_values(ctx,
                             table,
-                            "tokenizer",
+                            OPTION_NAME_DEFAULT_TOKENIZER,
                             -1,
                             GRN_OPTION_REVISION_NONE,
                             &options);

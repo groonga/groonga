@@ -716,18 +716,14 @@ grn_obj_set_option_values(grn_ctx *ctx,
                           int name_length,
                           grn_obj *values)
 {
-  grn_rc rc;
-
   GRN_API_ENTER;
-
-  rc = grn_db_set_option_values(ctx,
-                                grn_ctx_db(ctx),
-                                grn_obj_id(ctx, obj),
-                                name,
-                                name_length,
-                                values);
-
-  GRN_API_RETURN(rc);
+  grn_db_set_option_values(ctx,
+                           grn_ctx_db(ctx),
+                           grn_obj_id(ctx, obj),
+                           name,
+                           name_length,
+                           values);
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_option_revision

@@ -780,7 +780,7 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     grn_obj sub_output;
     GRN_TEXT_PUTS(ctx, dumper->output, " --default_tokenizer ");
     GRN_TEXT_INIT(&sub_output, 0);
-    grn_table_get_tokenizer_string(ctx, table, &sub_output);
+    grn_table_get_default_tokenizer_string(ctx, table, &sub_output);
     dump_optionable_obj_string(ctx, dumper, &sub_output);
     GRN_OBJ_FIN(ctx, &sub_output);
   }

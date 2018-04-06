@@ -9121,9 +9121,7 @@ grn_obj_set_info_default_tokenizer(grn_ctx *ctx,
     break;
   }
 
-  if (grn_vector_size(ctx, &options) > 0) {
-    grn_obj_set_option_values(ctx, table,  "tokenizer", -1, &options);
-  }
+  grn_table_set_default_tokenizer_options(ctx, table, &options);
 
 exit :
   GRN_OBJ_FIN(ctx, &options);
