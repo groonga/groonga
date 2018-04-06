@@ -1,3 +1,13 @@
 tokenize TokenNonexistent "aBcDe 123"
-[[[-22,0.0,0.0],"[tokenize] nonexistent tokenizer: <TokenNonexistent>"]]
-#|e| [tokenize] nonexistent tokenizer: <TokenNonexistent>
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[tokenize] failed to set tokenizer: <TokenNonexistent>: [info][set][default-tokenizer][(anonymous)] unknown tokenizer: <TokenNo"
+  ]
+]
+#|e| [info][set][default-tokenizer][(anonymous)] unknown tokenizer: <TokenNonexistent>
+#|e| [tokenize] failed to set tokenizer: <TokenNonexistent>: [info][set][default-tokenizer][(anonymous)] unknown tokenizer: <TokenNonexistent>

@@ -124,39 +124,13 @@ create_lexicon_for_tokenize(grn_ctx *ctx,
                             grn_raw_string *token_filters_raw)
 {
   grn_obj *lexicon;
-  grn_obj *tokenizer;
   grn_obj *normalizer = NULL;
-
-  tokenizer = grn_ctx_get(ctx,
-                          tokenizer_raw->value,
-                          tokenizer_raw->length);
-  if (!tokenizer) {
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "[tokenize] nonexistent tokenizer: <%.*s>",
-                     (int)tokenizer_raw->length,
-                     tokenizer_raw->value);
-    return NULL;
-  }
-
-  if (!grn_obj_is_tokenizer_proc(ctx, tokenizer)) {
-    grn_obj inspected;
-    GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect(ctx, &inspected, tokenizer);
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "[tokenize] not tokenizer: %.*s",
-                     (int)GRN_TEXT_LEN(&inspected),
-                     GRN_TEXT_VALUE(&inspected));
-    GRN_OBJ_FIN(ctx, &inspected);
-    grn_obj_unlink(ctx, tokenizer);
-    return NULL;
-  }
 
   if (normalizer_raw->length > 0) {
     normalizer = grn_ctx_get(ctx,
                              normalizer_raw->value,
                              normalizer_raw->length);
     if (!normalizer) {
-      grn_obj_unlink(ctx, tokenizer);
       GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                        "[tokenize] nonexistent normalizer: <%.*s>",
                        (int)normalizer_raw->length,
@@ -166,7 +140,6 @@ create_lexicon_for_tokenize(grn_ctx *ctx,
 
     if (!grn_obj_is_normalizer_proc(ctx, normalizer)) {
       grn_obj inspected;
-      grn_obj_unlink(ctx, tokenizer);
       GRN_TEXT_INIT(&inspected, 0);
       grn_inspect(ctx, &inspected, normalizer);
       GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
@@ -184,9 +157,22 @@ create_lexicon_for_tokenize(grn_ctx *ctx,
                              GRN_OBJ_TABLE_HASH_KEY,
                              grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
                              NULL);
-  grn_obj_set_info(ctx, lexicon,
-                   GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
-  grn_obj_unlink(ctx, tokenizer);
+  {
+    grn_obj tokenizer;
+    GRN_TEXT_INIT(&tokenizer, GRN_OBJ_DO_SHALLOW_COPY);
+    GRN_TEXT_SET(ctx, &tokenizer, tokenizer_raw->value, tokenizer_raw->length);
+    grn_obj_set_info(ctx, lexicon, GRN_INFO_DEFAULT_TOKENIZER, &tokenizer);
+    GRN_OBJ_FIN(ctx, &tokenizer);
+  }
+  if (ctx->rc != GRN_SUCCESS) {
+    grn_obj_close(ctx, lexicon);
+    GRN_PLUGIN_ERROR(ctx, ctx->rc,
+                     "[tokenize] failed to set tokenizer: <%.*s>: %s",
+                     (int)(tokenizer_raw->length),
+                     tokenizer_raw->value,
+                     ctx->errbuf);
+    return NULL;
+  }
   if (normalizer) {
     grn_obj_set_info(ctx, lexicon,
                      GRN_INFO_NORMALIZER, normalizer);
