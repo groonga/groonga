@@ -139,6 +139,7 @@ grn_table_tokenizer_init(grn_ctx *ctx,
   tokenizer->options = NULL;
   tokenizer->options_revision = GRN_OPTION_REVISION_NONE;
   tokenizer->options_close_func = NULL;
+  CRITICAL_SECTION_INIT(tokenizer->lock);
 }
 
 static void
@@ -158,6 +159,7 @@ grn_table_tokenizer_fin(grn_ctx *ctx,
                         grn_table_tokenizer *tokenizer)
 {
   grn_table_tokenizer_fin_options(ctx, tokenizer);
+  CRITICAL_SECTION_FIN(tokenizer->lock);
 }
 
 void
@@ -165,9 +167,11 @@ grn_table_tokenizer_set_proc(grn_ctx *ctx,
                              grn_table_tokenizer *tokenizer,
                              grn_obj *proc)
 {
+  CRITICAL_SECTION_ENTER(tokenizer->lock);
   grn_table_tokenizer_fin_options(ctx, tokenizer);
 
   tokenizer->proc = proc;
+  CRITICAL_SECTION_LEAVE(tokenizer->lock);
 }
 
 void
@@ -177,6 +181,7 @@ grn_table_tokenizer_set_options(grn_ctx *ctx,
                                 grn_option_revision revision,
                                 grn_close_func close_func)
 {
+  CRITICAL_SECTION_ENTER(tokenizer->lock);
   grn_table_tokenizer_fin_options(ctx, tokenizer);
 
   tokenizer->options = options;
@@ -184,6 +189,7 @@ grn_table_tokenizer_set_options(grn_ctx *ctx,
   if (options) {
     tokenizer->options_close_func = close_func;
   }
+  CRITICAL_SECTION_LEAVE(tokenizer->lock);
 }
 
 grn_rc

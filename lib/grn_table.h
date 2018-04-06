@@ -29,6 +29,7 @@ typedef struct {
   void *options;
   grn_option_revision options_revision;
   grn_close_func options_close_func;
+  grn_critical_section lock;
 } grn_table_tokenizer;
 
 void grn_table_tokenizer_init(grn_ctx *ctx,
