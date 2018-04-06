@@ -248,6 +248,7 @@ typedef struct {
   grn_bool ignore_blank;
   grn_bool remove_blank;
   grn_bool loose_symbol;
+  grn_bool loose_blank;
 } grn_ngram_options;
 
 typedef struct {
@@ -281,6 +282,7 @@ ngram_options_init(grn_ngram_options *options, uint8_t unit)
   options->ignore_blank = GRN_FALSE;
   options->remove_blank = grn_ngram_tokenizer_remove_blank_enable;
   options->loose_symbol = GRN_FALSE;
+  options->loose_blank = GRN_FALSE;
 }
 
 static void
@@ -321,10 +323,16 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
       if (length == 0) {
         break;
       }
-      if (!(tokenizer->options.loose_symbol &&
-            GRN_STR_CTYPE(*types) == GRN_CHAR_SYMBOL)) {
+      if (!((tokenizer->options.loose_symbol &&
+             GRN_STR_CTYPE(*types) == GRN_CHAR_SYMBOL) ||
+            (!tokenizer->options.remove_blank &&
+             tokenizer->options.loose_blank &&
+             GRN_STR_ISBLANK(*types)))) {
         GRN_TEXT_PUT(ctx, &(tokenizer->loose.text), normalized, length);
         *loose_types = *types;
+        if (tokenizer->options.loose_blank && GRN_STR_ISBLANK(*types)) {
+          *loose_types &= ~GRN_STR_BLANK;
+        }
         loose_types++;
       }
       normalized += length;
@@ -540,6 +548,11 @@ ngram_open_options(grn_ctx *ctx,
                                                           raw_options,
                                                           i,
                                                           options->loose_symbol);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "loose_blank")) {
+      options->loose_blank = grn_vector_get_element_bool(ctx,
+                                                          raw_options,
+                                                          i,
+                                                          options->loose_blank);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
@@ -592,13 +605,18 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
 
-  if (cp &&
-      !tokenizer->loose.ing &&
-      !tokenizer->loose.need &&
-      tokenizer->options.loose_symbol &&
-      GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL) {
-    tokenizer->loose.need = GRN_TRUE;
-  }
+#define LOOSE_NEED_CHECK(cp, tokenizer) do {                            \
+    if (cp &&                                                           \
+        !tokenizer->loose.ing &&                                        \
+        !tokenizer->loose.need &&                                       \
+        ((tokenizer->options.loose_symbol &&                            \
+          GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL) ||                     \
+         (tokenizer->options.loose_blank && GRN_STR_ISBLANK(*cp)))) {   \
+      tokenizer->loose.need = GRN_TRUE;                                 \
+    }                                                                   \
+  } while (GRN_FALSE)
+
+  LOOSE_NEED_CHECK(cp, tokenizer);
 
   if (cp && tokenizer->options.uni_alpha &&
       GRN_STR_CTYPE(*cp) == GRN_CHAR_ALPHA) {
@@ -606,6 +624,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                               tokenizer->query->encoding))) {
       len++;
       r += cl;
+      LOOSE_NEED_CHECK(cp, tokenizer);
       if (/* !tokenizer->options.ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
       if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_ALPHA) { break; }
     }
@@ -618,6 +637,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                               tokenizer->query->encoding))) {
       len++;
       r += cl;
+      LOOSE_NEED_CHECK(cp, tokenizer);
       if (/* !tokenizer->options.ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
       if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_DIGIT) { break; }
     }
@@ -630,6 +650,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                               tokenizer->query->encoding))) {
       len++;
       r += cl;
+      LOOSE_NEED_CHECK(cp, tokenizer);
       if (!tokenizer->options.ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
       if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_SYMBOL) { break; }
     }
@@ -664,6 +685,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
              (cl = grn_charlen_(ctx, (char *)r, (char *)e,
                                 tokenizer->query->encoding))) {
         if (cp) {
+          LOOSE_NEED_CHECK(cp, tokenizer);
           if (!tokenizer->options.ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
           cp++;
           if ((tokenizer->options.uni_alpha &&

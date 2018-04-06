@@ -1,0 +1,317 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos tel COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("loose_symbol", true, "loose_blank", true)'   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms memos_tel COLUMN_INDEX Memos tel
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"tel": "03-5632-7432"},
+{"tel": "03 5632 7432"},
+{"tel": "(03)5632-7432"},
+{"tel": "0356327432"},
+{"tel": "03-7432-5632"}
+]
+[[0,0.0,0.0],5]
+select Terms --output_columns _key --limit -1
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        9
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        "("
+      ],
+      [
+        ")"
+      ],
+      [
+        "-"
+      ],
+      [
+        "03"
+      ],
+      [
+        "0356327432"
+      ],
+      [
+        "0374325632"
+      ],
+      [
+        "5632"
+      ],
+      [
+        "7432"
+      ],
+      [
+        "￰"
+      ]
+    ]
+  ]
+]
+select Memos --match_columns tel --query '0356327432'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "tel",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "03-5632-7432"
+      ],
+      [
+        2,
+        "03 5632 7432"
+      ],
+      [
+        3,
+        "(03)5632-7432"
+      ],
+      [
+        4,
+        "0356327432"
+      ]
+    ]
+  ]
+]
+select Memos --match_columns tel --query '"03-5632-7432"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "tel",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "03-5632-7432"
+      ],
+      [
+        2,
+        "03 5632 7432"
+      ],
+      [
+        3,
+        "(03)5632-7432"
+      ],
+      [
+        4,
+        "0356327432"
+      ]
+    ]
+  ]
+]
+select Memos --match_columns tel --query '"03 5632 7432"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "tel",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "03-5632-7432"
+      ],
+      [
+        2,
+        "03 5632 7432"
+      ],
+      [
+        3,
+        "(03)5632-7432"
+      ],
+      [
+        4,
+        "0356327432"
+      ]
+    ]
+  ]
+]
+select Memos --match_columns tel --query '5632'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "tel",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "03-5632-7432"
+      ],
+      [
+        2,
+        "03 5632 7432"
+      ],
+      [
+        3,
+        "(03)5632-7432"
+      ],
+      [
+        5,
+        "03-7432-5632"
+      ]
+    ]
+  ]
+]
+select Memos --match_columns tel --query '32'
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["tel","ShortText"]]]]]
+select Memos --match_columns tel --query '0'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "tel",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "03-5632-7432"
+      ],
+      [
+        2,
+        "03 5632 7432"
+      ],
+      [
+        3,
+        "(03)5632-7432"
+      ],
+      [
+        4,
+        "0356327432"
+      ],
+      [
+        5,
+        "03-7432-5632"
+      ]
+    ]
+  ]
+]
+select Memos --match_columns tel --query '03'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "tel",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "03-5632-7432"
+      ],
+      [
+        2,
+        "03 5632 7432"
+      ],
+      [
+        3,
+        "(03)5632-7432"
+      ],
+      [
+        5,
+        "03-7432-5632"
+      ]
+    ]
+  ]
+]

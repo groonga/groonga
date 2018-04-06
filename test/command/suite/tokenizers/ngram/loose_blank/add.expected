@@ -1,0 +1,35 @@
+tokenize   'TokenNgram("loose_blank", true)'   "090 1234 5678"   NormalizerAuto   --mode ADD
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "090",
+      "position": 0,
+      "force_prefix": false
+    },
+    {
+      "value": "1234",
+      "position": 1,
+      "force_prefix": false
+    },
+    {
+      "value": "5678",
+      "position": 2,
+      "force_prefix": false
+    },
+    {
+      "value": "￰",
+      "position": 3,
+      "force_prefix": false
+    },
+    {
+      "value": "09012345678",
+      "position": 4,
+      "force_prefix": false
+    }
+  ]
+]

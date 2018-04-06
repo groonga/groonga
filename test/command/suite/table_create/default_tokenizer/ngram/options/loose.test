@@ -1,0 +1,26 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos tel COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer 'TokenNgram("loose_symbol", true, "loose_blank", true)' \
+  --normalizer NormalizerAuto
+column_create Terms memos_tel COLUMN_INDEX Memos tel
+
+load --table Memos
+[
+{"tel": "03-5632-7432"},
+{"tel": "03 5632 7432"},
+{"tel": "(03)5632-7432"},
+{"tel": "0356327432"},
+{"tel": "03-7432-5632"}
+]
+
+select Terms --output_columns _key --limit -1
+
+select Memos --match_columns tel --query '0356327432'
+select Memos --match_columns tel --query '"03-5632-7432"'
+select Memos --match_columns tel --query '"03 5632 7432"'
+select Memos --match_columns tel --query '5632'
+select Memos --match_columns tel --query '32'
+select Memos --match_columns tel --query '0'
+select Memos --match_columns tel --query '03'
