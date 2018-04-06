@@ -1,13 +1,16 @@
 #!/bin/bash
 
-export BASE_DIR="`dirname $0`"
+export SOURCE_DIR="`dirname $0`"
 if test -z "$BUILD_DIR"; then
-  BUILD_DIR="$BASE_DIR"
+  BUILD_DIR="$SOURCE_DIR"
 fi
 export BUILD_DIR
 
-top_dir="$BUILD_DIR/../.."
-top_dir=$(cd -P "$top_dir" 2>/dev/null || cd "$top_dir"; pwd)
+source_top_dir="$SOURCE_DIR/../.."
+source_top_dir=$(cd -P "$source_top_dir" 2>/dev/null || cd "$source_top_dir"; pwd)
+
+build_top_dir="$BUILD_DIR/../.."
+build_top_dir=$(cd -P "$build_top_dir" 2>/dev/null || cd "$build_top_dir"; pwd)
 
 n_processors=1
 case `uname` in
@@ -27,24 +30,24 @@ if test x"$NO_MAKE" != x"yes"; then
   if test $n_processors -gt 1; then
     MAKE_ARGS="${MAKE_ARGS} -j${n_processors}"
   fi
-  make -C $top_dir ${MAKE_ARGS} > /dev/null || exit 1
+  make -C $build_top_dir ${MAKE_ARGS} > /dev/null || exit 1
 fi
 
-. "${top_dir}/config.sh"
+. "${build_top_dir}/config.sh"
 
-GRN_PLUGINS_DIR="$top_dir/plugins"
+GRN_PLUGINS_DIR="$build_top_dir/plugins"
 export GRN_PLUGINS_DIR
 
-GRN_RUBY_SCRIPTS_DIR="$top_dir/lib/mrb/scripts"
+GRN_RUBY_SCRIPTS_DIR="$source_top_dir/lib/mrb/scripts"
 export GRN_RUBY_SCRIPTS_DIR
 
 case `uname` in
   Linux|*BSD)
-    LD_LIBRARY_PATH="$top_dir/lib/.libs:$LD_LIBRARY_PATH"
+    LD_LIBRARY_PATH="$build_top_dir/lib/.libs:$LD_LIBRARY_PATH"
     export LD_LIBRARY_PATH
     ;;
   Darwin)
-    DYLD_LIBRARY_PATH="$top_dir/lib/.libs:$DYLD_LIBRARY_PATH"
+    DYLD_LIBRARY_PATH="$build_top_dir/lib/.libs:$DYLD_LIBRARY_PATH"
     export DYLD_LIBRARY_PATH
     ;;
   *)
@@ -56,29 +59,28 @@ if test -z "$RUBY"; then
   exit 1
 fi
 
-if ! type bundle > /dev/null; then
+if ! type bundle 2>&1 > /dev/null; then
   $RUBY -S gem install bundler
 fi
 
-grntest_dir="$BASE_DIR/grntest"
+grntest_dir="$BUILD_DIR/grntest"
 if ! test -d "$grntest_dir"; then
   git clone --depth 1 git://github.com/groonga/grntest.git "$grntest_dir"
   (cd "$grntest_dir" && bundle install)
 else
-  BUNDLE_GEMFILE="$grntest_dir/Gemfile"
-  export BUNDLE_GEMFILE
-  if [ "$BUNDLE_GEMFILE" -nt "$BUNDLE_GEMFILE.lock" ]; then
-    $RUBY -S bundle update
-  fi
+  (cd "$grntest_dir";
+   if [ "Gemfile" -nt "Gemfile.lock" ]; then
+     $RUBY -S bundle update
+   fi)
 fi
 
-groonga_command_dir="$BASE_DIR/groonga-command"
+groonga_command_dir="$BUILD_DIR/groonga-command"
 if ! test -d "$groonga_command_dir"; then
   git clone --depth 1 \
       git://github.com/groonga/groonga-command "$groonga_command_dir"
 fi
 
-groonga_command_parser_dir="$BASE_DIR/groonga-command-parser"
+groonga_command_parser_dir="$BUILD_DIR/groonga-command-parser"
 if ! test -d "$groonga_command_parser_dir"; then
   git clone --depth 1 \
       git://github.com/groonga/groonga-command-parser \
@@ -129,7 +131,7 @@ if test "$CI" = "true"; then
   grntest_options=("--reporter" "mark" "${grntest_options[@]}")
 fi
 if test "$have_targets" != "true"; then
-  grntest_options=("${grntest_options[@]}" "${BASE_DIR}/suite")
+  grntest_options=("${grntest_options[@]}" "${SOURCE_DIR}/suite")
 fi
 
 tmpfs_candidates=("/dev/shm" "/run/shm")
@@ -150,5 +152,5 @@ $RUBY \
   --groonga "$GROONGA" \
   --groonga-httpd "$GROONGA_HTTPD" \
   --groonga-suggest-create-dataset "$GROONGA_SUGGEST_CREATE_DATASET" \
-  --base-directory "$BASE_DIR" \
+  --base-directory "$SOURCE_DIR" \
   "${grntest_options[@]}"
