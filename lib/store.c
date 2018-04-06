@@ -1280,9 +1280,9 @@ grn_ja_put_packed(grn_ctx *ctx,
   packed_value_len = value_len + sizeof(uint64_t);
   packed_value_meta = value_len | COMPRESSED_VALUE_META_FLAG_RAW;
   *((uint64_t *)packed_value) = packed_value_meta;
-  memcpy(((uint64_t *)packed_value) + 1,
-         value,
-         value_len);
+  grn_memcpy(((uint64_t *)packed_value) + 1,
+             value,
+             value_len);
   return grn_ja_put_raw(ctx,
                         ja,
                         id,
@@ -1948,9 +1948,9 @@ grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
     }
     packed_value_meta = value_len | COMPRESSED_VALUE_META_FLAG_RAW;
     *((uint64_t *)packed_value) = packed_value_meta;
-    memcpy(((uint64_t *)packed_value) + 1,
-           value,
-           value_len);
+    grn_memcpy(((uint64_t *)packed_value) + 1,
+               value,
+               value_len);
     rc = grn_ja_put_raw(ctx,
                         ja,
                         id,
