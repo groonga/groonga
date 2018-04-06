@@ -16,14 +16,14 @@ timestamp_file = File.expand_path(ARGV.shift)
 
 FileUtils.rm_rf(mruby_build_dir)
 
-Dir.chdir(mruby_source_dir) do
-  unless system(RbConfig.ruby,
-                "minirake",
-                "MRUBY_CONFIG=#{build_config_rb}",
-                "MRUBY_BUILD_DIR=#{mruby_build_dir}",
-                "MRUBY_ONIGURUMA_INCLUDE_PATH=#{oniguruma_include_path}")
-    exit(false)
-  end
+unless system(RbConfig.ruby,
+              "#{mruby_source_dir}/minirake",
+              "-f", "#{mruby_source_dir}/Rakefile",
+              "MRUBY_CONFIG=#{build_config_rb}",
+              "MRUBY_BUILD_DIR=#{mruby_build_dir}",
+              "INSTALL_DIR=#{mruby_build_dir}/bin",
+              "MRUBY_ONIGURUMA_INCLUDE_PATH=#{oniguruma_include_path}")
+  exit(false)
 end
 
 FileUtils.touch(timestamp_file)
