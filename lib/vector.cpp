@@ -42,6 +42,9 @@ namespace grn {
                                     &domain);
     if (length > 0) {
       switch (domain) {
+      case GRN_DB_BOOL :
+        value = *reinterpret_cast<const grn_bool *>(raw_value);
+        break;
       case GRN_DB_INT8 :
         value = *reinterpret_cast<const int8_t *>(raw_value);
         break;
@@ -79,6 +82,15 @@ namespace grn {
 }
 
 extern "C" {
+  grn_bool
+  grn_vector_get_element_bool(grn_ctx *ctx,
+                              grn_obj *vector,
+                              unsigned int offset,
+                              grn_bool default_value)
+  {
+    return grn::vector_get_element<grn_bool>(ctx, vector, offset, default_value);
+  }
+
   int8_t
   grn_vector_get_element_int8(grn_ctx *ctx,
                               grn_obj *vector,
