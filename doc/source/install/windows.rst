@@ -7,7 +7,7 @@ Windows
 =======
 
 This section describes how to install Groonga on Windows. You can
-install Groogna by extracting a zip package or running an installer.
+install Groonga by extracting a zip package or running an installer.
 
 We distribute both 32-bit and 64-bit packages but we strongly
 recommend a 64-bit package for server. You should use a 32-bit package
