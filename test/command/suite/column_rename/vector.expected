@@ -4,7 +4,7 @@ column_create Items prices COLUMN_VECTOR UInt16
 [[0,0.0,0.0],true]
 load --table Items
 [
-{"_key": "Groogna book", "prices": [1029, 2029]}
+{"_key": "Groonga book", "prices": [1029, 2029]}
 ]
 [[0,0.0,0.0],1]
 column_rename Items prices new_prices
@@ -37,7 +37,7 @@ select Items
       ],
       [
         1,
-        "Groogna book",
+        "Groonga book",
         [
           1029,
           2029
