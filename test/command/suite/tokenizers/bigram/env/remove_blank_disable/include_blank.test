@@ -1,3 +1,3 @@
-#@omit "need enable `GRN_NGRAM_TOKENIZER_REMOVE_BLANK_DISABLE` environment variable."
+#$GRN_NGRAM_TOKENIZER_REMOVE_BLANK_DISABLE=yes
 
 tokenize TokenBigramSplitSymbolAlpha "Hong Kong" NormalizerAuto --mode GET
