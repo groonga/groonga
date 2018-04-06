@@ -23,7 +23,7 @@
 #include "grn_hash.h"
 #include "grn_pat.h"
 
-static const char *OPTION_NAME_DEFAULT_TOKENIZER = "default-tokenizer";
+static const char *OPTION_NAME_DEFAULT_TOKENIZER = "default_tokenizer";
 
 grn_rc
 grn_table_apply_expr(grn_ctx *ctx,
