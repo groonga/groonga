@@ -12,7 +12,7 @@ Query syntax is a syntax to specify search condition for common Web
 search form. It is similar to the syntax of Google's search form. For
 example, ``word1 word2`` means that groonga searches records that
 contain both ``word1`` and ``word2``. ``word1 OR word2`` means that
-groogna searches records that contain either ``word1`` or ``word2``.
+groonga searches records that contain either ``word1`` or ``word2``.
 
 Query syntax consists of ``conditional expression``, ``combind
 expression`` and ``assignment expression``. Nomrally ``assignment

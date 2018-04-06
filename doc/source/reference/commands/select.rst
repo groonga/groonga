@@ -589,7 +589,7 @@ a fulltext search form in a Web page. A query text should be formatted
 in :doc:`/reference/grn_expr/query_syntax`. The syntax is similar to common search
 form like Google's search form. For example, ``word1 word2`` means
 that groonga searches records that contain both ``word1`` and
-``word2``. ``word1 OR word2`` means that groogna searches records that
+``word2``. ``word1 OR word2`` means that groonga searches records that
 contain either ``word1`` or ``word2``.
 
 Here is a simple logical and search example.
@@ -701,7 +701,7 @@ is used only when no records are matched.
 The default threshold can be customized by one of the followings.
 
   * ``--with-match-escalation-threshold`` option of configure
-  * ``--match-escalation-threshold`` option of groogna command
+  * ``--match-escalation-threshold`` option of groonga command
   * ``match-escalation-threshold`` configuration item in configuration
     file
 
