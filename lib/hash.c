@@ -1901,6 +1901,17 @@ grn_hash_error_if_truncated(grn_ctx *ctx, grn_hash *hash)
 }
 
 static grn_rc
+grn_io_hash_fin(grn_ctx *ctx, grn_hash *hash)
+{
+  grn_rc rc;
+
+  rc = grn_io_close(ctx, hash->io);
+  grn_table_tokenizer_fin(ctx, &(hash->tokenizer));
+  GRN_OBJ_FIN(ctx, &(hash->token_filters));
+  return rc;
+}
+
+static grn_rc
 grn_tiny_hash_fin(grn_ctx *ctx, grn_hash *hash)
 {
   if (!hash->index) {
@@ -1932,19 +1943,23 @@ grn_tiny_hash_fin(grn_ctx *ctx, grn_hash *hash)
   return GRN_SUCCESS;
 }
 
+static grn_rc
+grn_hash_fin(grn_ctx *ctx, grn_hash *hash)
+{
+  if (grn_hash_is_io_hash(hash)) {
+    return grn_io_hash_fin(ctx, hash);
+  } else {
+    GRN_ASSERT(ctx == hash->ctx);
+    return grn_tiny_hash_fin(ctx, hash);
+  }
+}
+
 grn_rc
 grn_hash_close(grn_ctx *ctx, grn_hash *hash)
 {
   grn_rc rc;
   if (!ctx || !hash) { return GRN_INVALID_ARGUMENT; }
-  if (grn_hash_is_io_hash(hash)) {
-    rc = grn_io_close(ctx, hash->io);
-    grn_table_tokenizer_fin(ctx, &(hash->tokenizer));
-    GRN_OBJ_FIN(ctx, &(hash->token_filters));
-  } else {
-    GRN_ASSERT(ctx == hash->ctx);
-    rc = grn_tiny_hash_fin(ctx, hash);
-  }
+  rc = grn_hash_fin(ctx, hash);
   GRN_FREE(hash);
   return rc;
 }
@@ -1990,14 +2005,15 @@ grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
       /* Only an I/O hash with a valid path uses the `truncated` flag. */
       hash->header.common->truncated = GRN_TRUE;
     }
-    rc = grn_io_close(ctx, hash->io);
+    rc = grn_io_hash_fin(ctx, hash);
     if (!rc) {
       hash->io = NULL;
       if (path) {
         rc = grn_io_remove(ctx, path);
       }
     }
-    GRN_OBJ_FIN(ctx, &(hash->token_filters));
+  } else {
+    rc = grn_tiny_hash_fin(ctx, hash);
   }
   if (!rc) {
     rc = grn_hash_init(ctx, hash, path, key_size, value_size, flags);
