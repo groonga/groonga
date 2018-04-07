@@ -52,4 +52,5 @@ RUN \
 
 CMD \
   BUILD_DIR=test/command \
-    ../source/test/command/run-test.sh
+    ../source/test/command/run-test.sh \
+    test/command/suite

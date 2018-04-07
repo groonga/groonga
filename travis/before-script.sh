@@ -6,6 +6,7 @@ set -u
 : ${DOCKER:=}
 
 if [ -n "${DOCKER}" ]; then
+  ./version-gen.sh
   ./autogen.sh
   docker build \
          -t groonga/groonga-${DOCKER} \
