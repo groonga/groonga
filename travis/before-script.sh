@@ -3,6 +3,8 @@
 set -e
 set -u
 
+: ${DOCKER:=}
+
 if [ -n "${DOCKER}" ]; then
   ./autogen.sh
   docker build \

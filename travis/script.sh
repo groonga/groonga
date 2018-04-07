@@ -3,6 +3,7 @@
 set -e
 set -u
 
+: ${DOCKER:=}
 : ${ENABLE_MRUBY:=no}
 : ${TEST_TARGET:=all}
 
