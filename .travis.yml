@@ -2,7 +2,14 @@ notifications:
   email:
     recipients:
       - groonga-commit@lists.osdn.me
+
 language: cpp
+
+sudo: required
+
+services:
+  - docker
+
 matrix:
   include:
     - os: linux
@@ -38,17 +45,23 @@ matrix:
     - os: osx
       compiler: clang
       env: BUILD_TOOL=cmake ENABLE_MRUBY=yes
+    - os: linux
+      env: DOCKER=ubuntu-14.04
   # allow_failures:
   #   - os: osx
   #     compiler: clang
   #     env: BUILD_TOOL=autotools ENABLE_MRUBY=yes
+
 before_install:
   # - rvm use 2.3.1 --install --binary --fuzzy
   # - rvm use 2.2
   - gem update bundler
+
 install:
-  - tools/travis-install.sh
+  - travis/install.sh
+
 before_script:
-  - tools/travis-before-script.sh
+  - travis/before-script.sh
+
 script:
-  - tools/travis-script.sh
+  - travis/script.sh

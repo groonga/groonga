@@ -3,9 +3,16 @@
 set -e
 set -u
 
-: ${ENABLE_MRUBY:=no}
+if [ -n "${DOCKER}" ]; then
+  ./autogen.sh
+  docker build \
+         -t groonga/groonga-${DOCKER} \
+         -f travis/Dockefile.${DOCKER} \
+         .
+  exit 0
+fi
 
-git submodule update --init --depth 1
+: ${ENABLE_MRUBY:=no}
 
 prefix=/tmp/local
 

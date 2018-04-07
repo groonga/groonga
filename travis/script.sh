@@ -6,6 +6,14 @@ set -u
 : ${ENABLE_MRUBY:=no}
 : ${TEST_TARGET:=all}
 
+if [ -n "${DOCKER}" ]; then
+  docker run \
+         --interactive \
+         --tty \
+          groonga/groonga-${DOCKER}
+  exit 0
+fi
+
 prefix=/tmp/local
 
 command_test_options="--reporter=mark --timeout=60"

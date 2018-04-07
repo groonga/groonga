@@ -5,6 +5,15 @@ set -u
 
 : ${ENABLE_MRUBY:=no}
 
+git submodule update --init --depth 1
+
+if [ -n "${DOCKER}" ]; then
+  sudo apt-get install -qq -y \
+       autotools-dev \
+       autoconf-archive
+  exit 0
+fi
+
 case "${TRAVIS_OS_NAME}" in
   linux)
     curl --silent --location https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
