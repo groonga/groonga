@@ -9,6 +9,7 @@ RUN \
     gdb \
     git \
     libevent-dev \
+    libmecab-dev \
     libmsgpack-dev \
     make \
     mecab-naist-jdic \
@@ -42,6 +43,12 @@ RUN ../source/configure \
   --enable-mruby
 
 RUN make -j$(nproc) > /dev/null
+
+RUN \
+  mkdir -p test/command && \
+  cp -a \
+    ../source/test/command/suite \
+    test/command/suite
 
 CMD \
   BUILD_DIR=test/command \
