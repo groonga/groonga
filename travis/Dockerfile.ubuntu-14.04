@@ -8,7 +8,7 @@ RUN \
     gcc \
     gdb \
     git \
-    libdevent-dev \
+    libevent-dev \
     libmsgpack-dev \
     make \
     mecab-naist-jdic \
