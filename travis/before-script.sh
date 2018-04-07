@@ -9,7 +9,7 @@ if [ -n "${DOCKER}" ]; then
   ./autogen.sh
   docker build \
          -t groonga/groonga-${DOCKER} \
-         -f travis/Dockefile.${DOCKER} \
+         -f travis/Dockerfile.${DOCKER} \
          .
   exit 0
 fi
