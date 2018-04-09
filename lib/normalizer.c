@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012 Brazil
+  Copyright(C) 2012-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -610,8 +610,17 @@ grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char
   return 0;
 }
 
+typedef grn_char_type (*grn_nfkc_char_type_func)(const unsigned char *utf8);
+typedef const char *(*grn_nfkc_decompose_func)(const unsigned char *utf8);
+typedef const char *(*grn_nfkc_compose_func)(const unsigned char *prefix_utf8,
+                                             const unsigned char *suffix_utf8);
+
 grn_inline static grn_obj *
-utf8_normalize(grn_ctx *ctx, grn_string *nstr)
+utf8_normalize(grn_ctx *ctx,
+               grn_string *nstr,
+               grn_nfkc_char_type_func char_type_func,
+               grn_nfkc_decompose_func decompose_func,
+               grn_nfkc_compose_func compose_func)
 {
   int16_t *ch;
   const unsigned char *s, *s_, *s__ = NULL, *p, *p2, *pe, *e;
@@ -659,13 +668,13 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
                                              GRN_ENC_UTF8)) {
       continue;
     }
-    if ((p = (unsigned char *)grn_nfkc_decompose(s))) {
+    if ((p = (unsigned char *)decompose_func(s))) {
       pe = p + strlen((char *)p);
     } else {
       p = s;
       pe = p + ls;
     }
-    if (d_ && (p2 = (unsigned char *)grn_nfkc_compose(d_, p))) {
+    if (d_ && (p2 = (unsigned char *)compose_func(d_, p))) {
       p = p2;
       pe = p + strlen((char *)p);
       if (cp) { cp--; }
@@ -730,7 +739,7 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
         d_ = d;
         d += lp;
         length++;
-        if (cp) { *cp++ = grn_nfkc_char_type(p); }
+        if (cp) { *cp++ = char_type_func(p); }
         if (ch) {
           size_t i;
           if (s_ == s + ls) {
@@ -1124,7 +1133,11 @@ auto_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     break;
   case GRN_ENC_UTF8 :
 #ifdef GRN_WITH_NFKC
-    utf8_normalize(ctx, string);
+    utf8_normalize(ctx,
+                   string,
+                   grn_nfkc_char_type,
+                   grn_nfkc_decompose,
+                   grn_nfkc_compose);
 #else /* GRN_WITH_NFKC */
     ascii_normalize(ctx, string);
 #endif /* GRN_WITH_NFKC */
@@ -1150,7 +1163,23 @@ static grn_obj *
 nfkc51_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_string *string = (grn_string *)(args[0]);
-  utf8_normalize(ctx, string);
+  utf8_normalize(ctx,
+                 string,
+                 grn_nfkc50_char_type,
+                 grn_nfkc50_decompose,
+                 grn_nfkc50_compose);
+  return NULL;
+}
+
+static grn_obj *
+nfkc100_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_string *string = (grn_string *)(args[0]);
+  utf8_normalize(ctx,
+                 string,
+                 grn_nfkc100_char_type,
+                 grn_nfkc100_decompose,
+                 grn_nfkc100_compose);
   return NULL;
 }
 #endif /* GRN_WITH_NFKC */
@@ -1173,6 +1202,7 @@ grn_rc
 grn_db_init_builtin_normalizers(grn_ctx *ctx)
 {
   const char *normalizer_nfkc51_name = "NormalizerNFKC51";
+  const char *normalizer_nfkc100_name = "NormalizerNFKC100";
 
   grn_normalizer_register(ctx, GRN_NORMALIZER_AUTO_NAME, -1,
                           NULL, auto_next, NULL);
@@ -1180,6 +1210,8 @@ grn_db_init_builtin_normalizers(grn_ctx *ctx)
 #ifdef GRN_WITH_NFKC
   grn_normalizer_register(ctx, normalizer_nfkc51_name, -1,
                           NULL, nfkc51_next, NULL);
+  grn_normalizer_register(ctx, normalizer_nfkc100_name, -1,
+                          NULL, nfkc100_next, NULL);
 #else /* GRN_WITH_NFKC */
   grn_normalizer_register(ctx, normalizer_nfkc51_name, -1,
                           NULL, NULL, NULL);

@@ -28,28 +28,52 @@
 const char *
 grn_char_type_to_string(grn_char_type type)
 {
-  switch (type) {
-  case GRN_CHAR_NULL:
-    return "null";
-  case GRN_CHAR_ALPHA:
-    return "alpha";
-  case GRN_CHAR_DIGIT:
-    return "digit";
-  case GRN_CHAR_SYMBOL:
-    return "symbol";
-  case GRN_CHAR_HIRAGANA:
-    return "hiragana";
-  case GRN_CHAR_KATAKANA:
-    return "katakana";
-  case GRN_CHAR_KANJI:
-    return "kanji";
-  case GRN_CHAR_OTHERS:
-    return "others";
-  case GRN_CHAR_EMOJI:
-    return "emoji";
+  const char *string = "unknown";
+
+#define CHAR_TYPE_STRING_WITH_BLANK(type_string) do {   \
+    if (GRN_CHAR_IS_BLANK(type)) {                      \
+      string = type_string "|blank";                    \
+    } else {                                            \
+      string = type_string;                             \
+    }                                                   \
+  } while (GRN_FALSE)
+
+  switch (GRN_CHAR_TYPE(type)) {
+  case GRN_CHAR_NULL :
+    CHAR_TYPE_STRING_WITH_BLANK("null");
+    break;
+  case GRN_CHAR_ALPHA :
+    CHAR_TYPE_STRING_WITH_BLANK("alpha");
+    break;
+  case GRN_CHAR_DIGIT :
+    CHAR_TYPE_STRING_WITH_BLANK("digit");
+    break;
+  case GRN_CHAR_SYMBOL :
+    CHAR_TYPE_STRING_WITH_BLANK("symbol");
+    break;
+  case GRN_CHAR_HIRAGANA :
+    CHAR_TYPE_STRING_WITH_BLANK("hiragana");
+    break;
+  case GRN_CHAR_KATAKANA :
+    CHAR_TYPE_STRING_WITH_BLANK("katakana");
+    break;
+  case GRN_CHAR_KANJI :
+    CHAR_TYPE_STRING_WITH_BLANK("kanji");
+    break;
+  case GRN_CHAR_OTHERS :
+    CHAR_TYPE_STRING_WITH_BLANK("others");
+    break;
+  case GRN_CHAR_EMOJI :
+    CHAR_TYPE_STRING_WITH_BLANK("emoji");
+    break;
+  default :
+    CHAR_TYPE_STRING_WITH_BLANK("unknown");
+    break;
   }
 
-  return "unknown";
+#undef CHAR_TYPE_STRING_WITH_BLANK
+
+  return string;
 }
 
 static grn_string *

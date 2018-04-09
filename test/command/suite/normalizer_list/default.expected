@@ -1,2 +1,19 @@
 normalizer_list
-[[0,0.0,0.0],[{"name":"NormalizerAuto"},{"name":"NormalizerNFKC51"}]]
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "name": "NormalizerAuto"
+    },
+    {
+      "name": "NormalizerNFKC51"
+    },
+    {
+      "name": "NormalizerNFKC100"
+    }
+  ]
+]

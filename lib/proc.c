@@ -1130,54 +1130,6 @@ is_normalizer(grn_ctx *ctx, grn_obj *object)
   return GRN_TRUE;
 }
 
-static const char *
-char_type_name(grn_char_type type)
-{
-  const char *name = "unknown";
-
-#define CHAR_TYPE_NAME_WITH_BLANK(type_name) do {       \
-    if (GRN_CHAR_IS_BLANK(type)) {                      \
-      name = type_name "|blank";                        \
-    } else {                                            \
-      name = type_name;                                 \
-    }                                                   \
-  } while (GRN_FALSE)
-
-  switch (GRN_CHAR_TYPE(type)) {
-  case GRN_CHAR_NULL :
-    CHAR_TYPE_NAME_WITH_BLANK("null");
-    break;
-  case GRN_CHAR_ALPHA :
-    CHAR_TYPE_NAME_WITH_BLANK("alpha");
-    break;
-  case GRN_CHAR_DIGIT :
-    CHAR_TYPE_NAME_WITH_BLANK("digit");
-    break;
-  case GRN_CHAR_SYMBOL :
-    CHAR_TYPE_NAME_WITH_BLANK("symbol");
-    break;
-  case GRN_CHAR_HIRAGANA :
-    CHAR_TYPE_NAME_WITH_BLANK("hiragana");
-    break;
-  case GRN_CHAR_KATAKANA :
-    CHAR_TYPE_NAME_WITH_BLANK("katakana");
-    break;
-  case GRN_CHAR_KANJI :
-    CHAR_TYPE_NAME_WITH_BLANK("kanji");
-    break;
-  case GRN_CHAR_OTHERS :
-    CHAR_TYPE_NAME_WITH_BLANK("others");
-    break;
-  default :
-    CHAR_TYPE_NAME_WITH_BLANK("unknown");
-    break;
-  }
-
-#undef CHAR_TYPE_NAME_WITH_BLANK
-
-  return name;
-}
-
 static grn_obj *
 proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -1250,7 +1202,7 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
         unsigned int i;
         GRN_OUTPUT_ARRAY_OPEN("types", normalized_n_characters);
         for (i = 0; i < normalized_n_characters; i++) {
-          GRN_OUTPUT_CSTR(char_type_name(types[i]));
+          GRN_OUTPUT_CSTR(grn_char_type_to_string(types[i]));
         }
         GRN_OUTPUT_ARRAY_CLOSE();
       } else {

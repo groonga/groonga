@@ -202,6 +202,10 @@ schema
         "id": 79,
         "name": "NormalizerAuto"
       },
+      "NormalizerNFKC100": {
+        "id": 81,
+        "name": "NormalizerNFKC100"
+      },
       "NormalizerNFKC51": {
         "id": 80,
         "name": "NormalizerNFKC51"
