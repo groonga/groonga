@@ -103,7 +103,6 @@ mruby_directory="${abs_top_srcdir}/vendor/mruby-source"
 libmruby_directory="${abs_top_builddir}/vendor/mruby/.libs"
 if [ "${GROONGA_HTTPD_WITH_MRUBY}" = "yes" -a \
      "${GROONGA_HTTPD_WITH_HTTP_REWRITE}" = "yes" ]; then
-  set -x
   if [ "${nginx_mruby_directory}" != "${nginx_mruby_directory_in_build_directory}" ]; then
     rm -rf "${nginx_mruby_directory_in_build_directory}"
     mkdir -p "${nginx_mruby_directory_in_build_directory}/../"
