@@ -96,17 +96,29 @@ fi
 cc_opt="${cc_opt} ${CFLAGS-} ${CPPFLAGS-}"
 ld_opt="${ld_opt} ${LDFLAGS-}"
 
-nginx_mruby_directory="${abs_top_srcdir}/vendor/ngx_mruby-source"
+relative_nginx_mruby_directory="vendor/ngx_mruby-source"
+nginx_mruby_directory="${abs_top_srcdir}/${relative_nginx_mruby_directory}"
+nginx_mruby_directory_in_build_directory="${abs_top_builddir}/${relative_nginx_mruby_directory}"
 mruby_directory="${abs_top_srcdir}/vendor/mruby-source"
 libmruby_directory="${abs_top_builddir}/vendor/mruby/.libs"
 if [ "${GROONGA_HTTPD_WITH_MRUBY}" = "yes" -a \
      "${GROONGA_HTTPD_WITH_HTTP_REWRITE}" = "yes" ]; then
-  cd "${nginx_mruby_directory}"
-  ./configure --with-ngx-src-root=${nginx_directory} \
+  set -x
+  if [ "${nginx_mruby_directory}" != "${nginx_mruby_directory_in_build_directory}" ]; then
+    rm -rf "${nginx_mruby_directory_in_build_directory}"
+    mkdir -p "${nginx_mruby_directory_in_build_directory}/../"
+    cp -a \
+       "${nginx_mruby_directory}" \
+       "${nginx_mruby_directory_in_build_directory}/../"
+  fi
+  cd "${nginx_mruby_directory_in_build_directory}"
+  ./configure \
+    --with-ngx-src-root=${nginx_directory} \
     --with-mruby-incdir="${mruby_directory}/src ${mruby_directory}/include" \
     --with-mruby-libdir=${libmruby_directory}
   make generate_gems_config
-  configure_args="${configure_args} --add-module=${nginx_mruby_directory}/dependence/ngx_devel_kit --add-module=${nginx_mruby_directory}"
+  configure_args="${configure_args} --add-module=${nginx_mruby_directory}/dependence/ngx_devel_kit"
+  configure_args="${configure_args} --add-module=${nginx_mruby_directory_in_build_directory}"
 fi
 
 cd "${nginx_directory_in_build_directory}"

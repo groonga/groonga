@@ -1,16 +1,20 @@
 FROM ubuntu:14.04
 
 RUN \
-  apt update && \
-  apt install -y \
+  apt update -qq && \
+  apt install -qq -y \
     bison \
     g++ \
     gcc \
     gdb \
     git \
     libevent-dev \
+    liblz4-dev \
     libmecab-dev \
     libmsgpack-dev \
+    libssl-dev \
+    libstemmer-dev \
+    libzmq-dev \
     make \
     mecab-naist-jdic \
     pkg-config \
@@ -18,6 +22,13 @@ RUN \
     ruby2.0-dev \
     sudo \
     zlib1g-dev
+
+RUN \
+  apt update -qq && \
+  apt install -qq -y software-properties-common && \
+  add-apt-repository -y ppa:cutter-testing-framework/ppa && \
+  apt update -qq && \
+  apt install -qq -y cutter-testing-framework
 
 RUN \
   gem2.0 install bundler
@@ -38,11 +49,15 @@ RUN mkdir -p build
 WORKDIR /home/groonga/build
 
 RUN ../source/configure \
+  --prefix=/tmp/local \
   --enable-debug \
   --with-ruby=/usr/bin/ruby2.0 \
   --enable-mruby
 
 RUN make -j$(nproc) > /dev/null
+
+RUN \
+  mkdir -p /tmp/local/var/log/groonga/httpd/
 
 RUN \
   mkdir -p test/command && \
@@ -51,6 +66,19 @@ RUN \
     test/command/suite
 
 CMD \
+  BUILD_DIR=test/unit \
+    ../source/test/unit/run-test.sh && \
   BUILD_DIR=test/command \
     ../source/test/command/run-test.sh \
-    test/command/suite
+    test/command/suite \
+    --reporter mark && \
+  BUILD_DIR=test/command \
+    ../source/test/command/run-test.sh \
+    test/command/suite \
+    --reporter mark \
+    --interface http && \
+  BUILD_DIR=test/command \
+    ../source/test/command/run-test.sh \
+    test/command/suite \
+    --reporter mark \
+    --testee groonga-httpd
