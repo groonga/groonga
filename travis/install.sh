@@ -9,6 +9,10 @@ set -u
 git submodule update --init --depth 1
 
 if [ -n "${DOCKER}" ]; then
+  curl \
+    --silent \
+    --location \
+    https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
   sudo apt-get install -qq -y \
        autotools-dev \
        autoconf-archive
@@ -17,7 +21,10 @@ fi
 
 case "${TRAVIS_OS_NAME}" in
   linux)
-    curl --silent --location https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
+    curl \
+      --silent \
+      --location \
+      https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
     sudo apt-get install -qq -y \
          autotools-dev \
          autoconf-archive \
