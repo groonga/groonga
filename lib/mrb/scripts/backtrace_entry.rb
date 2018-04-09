@@ -6,7 +6,7 @@ module Groonga
         file = match_data.pre_match
         line = match_data[1].to_i
         detail_match_data = /\A(in )?(\S+)\s*/.match(match_data.post_match)
-        if detail_match_data[1]
+        if detail_match_data and detail_match_data[1]
           method = detail_match_data[2]
           message = detail_match_data.post_match
         else
