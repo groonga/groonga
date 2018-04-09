@@ -45,6 +45,8 @@ grn_char_type_to_string(grn_char_type type)
     return "kanji";
   case GRN_CHAR_OTHERS:
     return "others";
+  case GRN_CHAR_EMOJI:
+    return "emoji";
   }
 
   return "unknown";

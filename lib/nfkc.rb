@@ -826,7 +826,7 @@ end
 
 ######## main #######
 
-generator_class = SwitchGenerator
+generator_class = TableGenerator
 ARGV.each{|arg|
   case arg
   when /-*c/i
@@ -845,6 +845,7 @@ STDERR.puts("compiling icudump on #{icu_home}")
 system("cc",
        "-Wall",
        "-O3",
+       "-g3",
        "-o", "icudump",
        "-I#{icu_home}/include",
        "-L#{icu_home}/lib",

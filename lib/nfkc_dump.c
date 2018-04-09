@@ -70,8 +70,8 @@ main(int argc, char **argv)
   if (argc == 2) {
     if (strcmp(argv[1], "5") == 0) {
       unicode_version = 5;
-    } else if (strcmp(argv[1], "9") == 0) {
-      unicode_version = 9;
+    } else if (strcmp(argv[1], "10") == 0) {
+      unicode_version = 10;
     } else {
       return EXIT_FAILURE;
     }
@@ -87,6 +87,17 @@ main(int argc, char **argv)
       printf("%#0" GRN_FMT_INT64X ": %s: <%s>\n",
              code_point,
              grn_char_type_to_string(grn_nfkc50_char_type(utf8)),
+             utf8);
+    }
+  } else if (unicode_version == 10) {
+    uint64_t code_point;
+    char utf8[7];
+
+    for (code_point = 1; code_point < MAX_UNICODE; code_point++) {
+      ucs2utf8(code_point, (unsigned char *)utf8);
+      printf("%#0" GRN_FMT_INT64X ": %s: <%s>\n",
+             code_point,
+             grn_char_type_to_string(grn_nfkc100_char_type(utf8)),
              utf8);
     }
   }

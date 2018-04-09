@@ -1594,7 +1594,8 @@ typedef enum {
   GRN_CHAR_HIRAGANA,
   GRN_CHAR_KATAKANA,
   GRN_CHAR_KANJI,
-  GRN_CHAR_OTHERS
+  GRN_CHAR_OTHERS,
+  GRN_CHAR_EMOJI
 } grn_char_type;
 
 GRN_API const char *grn_char_type_to_string(grn_char_type type);

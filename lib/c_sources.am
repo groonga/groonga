@@ -55,6 +55,7 @@ libgroonga_c_sources =				\
 	nfkc.c					\
 	grn_nfkc.h				\
 	nfkc50.c				\
+	nfkc100.c				\
 	normalizer.c				\
 	grn_normalizer.h			\
 	obj.c					\
