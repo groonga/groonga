@@ -94,6 +94,7 @@ CMakeFiles
 /lib/grn_ecmascript.out
 /lib/metadata.rc
 /lib/nfkc_dump
+/lib/icu4c-*-src.tgz
 /lib/tmp/
 /coverage
 /coverage.info
