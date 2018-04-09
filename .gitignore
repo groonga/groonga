@@ -93,6 +93,7 @@ CMakeFiles
 /lib/icudump
 /lib/grn_ecmascript.out
 /lib/metadata.rc
+/lib/nfkc_dump
 /coverage
 /coverage.info
 /test/unit/lib/*-*.*.*/

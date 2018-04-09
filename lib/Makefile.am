@@ -69,6 +69,15 @@ libgroonga_la_LIBADD +=				\
 	$(ATOMIC_LIBS)				\
 	$(ARROW_LIBS)
 
+nfkc_dump_SOURCES =				\
+	nfkc_dump.c
+
+nfkc_dump_LDADD =				\
+	libgroonga.la
+
+noinst_PROGRAMS =				\
+	nfkc_dump
+
 if WITH_LEMON
 BUILT_SOURCES =					\
 	grn_ecmascript.c
