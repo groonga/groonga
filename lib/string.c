@@ -25,6 +25,31 @@
 
 #include <groonga/tokenizer.h>
 
+const char *
+grn_char_type_to_string(grn_char_type type)
+{
+  switch (type) {
+  case GRN_CHAR_NULL:
+    return "null";
+  case GRN_CHAR_ALPHA:
+    return "alpha";
+  case GRN_CHAR_DIGIT:
+    return "digit";
+  case GRN_CHAR_SYMBOL:
+    return "symbol";
+  case GRN_CHAR_HIRAGANA:
+    return "hiragana";
+  case GRN_CHAR_KATAKANA:
+    return "katakana";
+  case GRN_CHAR_KANJI:
+    return "kanji";
+  case GRN_CHAR_OTHERS:
+    return "others";
+  }
+
+  return "unknown";
+}
+
 static grn_string *
 grn_fake_string_open(grn_ctx *ctx, grn_string *string)
 {
