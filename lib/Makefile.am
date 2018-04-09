@@ -106,3 +106,31 @@ EXTRA_DIST =					\
 	CMakeLists.txt
 
 CLEANFILES = *.gcno *.gcda
+
+
+ICU_VERSION_DOT = $$(echo $(ICU_VERSION) | sed -e 's/_/./g')
+
+icu4c-$(ICU_VERSION)-src.tgz:
+	if [ -z "$(ICU_VERSION)" ]; then	\
+	  echo "Must define ICU_VERSION";	\
+	  false;				\
+	fi
+	wget \
+	  http://download.icu-project.org/files/icu4c/$(ICU_VERSION_DOT)/icu4c-$(ICU_VERSION)-src.tgz
+	rm -rf tmp/icu/
+
+tmp/icu/: icu4c-$(ICU_VERSION)-src.tgz
+	tar xvf
+
+tmp/icu-$(ICU_VERSION)/local/: icu4c-$(ICU_VERSION)-src.tgz
+	rm -rf tmp/icu/
+	mkdir -p tmp
+	cd tmp && tar xf ../icu4c-$(ICU_VERSION)-src.tgz
+	cd tmp/icu/source && \
+	  ./configure --prefix=$$PWD/../../icu-$(ICU_VERSION)/local
+	cd tmp/icu/source && $(MAKE) $(MAKEFLAGS)
+	cd tmp/icu/source && $(MAKE) $(MAKEFLAGS) install
+
+update-nfkc: tmp/icu-$(ICU_VERSION)/local/
+	ICU_HOME=$$PWD/tmp/icu-$(ICU_VERSION)/local \
+	  $(RUBY) nfkc.rb

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
 #
-# Copyright(C) 2010-2016 Brazil
+# Copyright(C) 2010-2018 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -840,8 +840,20 @@ ARGV.each{|arg|
   end
 }
 
-STDERR.puts('compiling icudump')
-system('cc -Wall -O3 -o icudump -I/tmp/local/include -L/tmp/local/lib icudump.c -licuuc -licui18n')
+icu_home = ENV["ICU_HOME"] || "/tmp/local"
+STDERR.puts("compiling icudump on #{icu_home}")
+system("cc",
+       "-Wall",
+       "-O3",
+       "-o", "icudump",
+       "-I#{icu_home}/include",
+       "-L#{icu_home}/lib",
+       "icudump.c",
+       "-licuuc",
+       "-licui18n",
+       "-licudata") or exit(false)
+
+ENV["LD_LIBRARY_PATH"] = "#{icu_home}/lib:#{ENV["LD_LIBRARY_PATH"]}"
 
 STDERR.puts('getting Unicode version')
 unicode_version = `./icudump --version`.strip.gsub(".", "")
@@ -859,7 +871,7 @@ File.open("nfkc#{unicode_version}.c", "w") do |output|
   output.puts(<<-HEADER)
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2016 Brazil
+  Copyright(C) #{Time.now.year} Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
