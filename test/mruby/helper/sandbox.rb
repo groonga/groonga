@@ -12,7 +12,8 @@ module Sandbox
   end
 
   def setup_tmp_directory
-    @base_tmp_dir = Pathname(File.dirname(__FILE__)) + "tmp"
+    base_dir = ENV["BASE_DIR"] || __dir__
+    @base_tmp_dir = Pathname(base_dir) + "tmp"
     memory_file_system = "/run/shm"
     if File.exist?(memory_file_system)
       FileUtils.mkdir_p(@base_tmp_dir.parent.to_s)
