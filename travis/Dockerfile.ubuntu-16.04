@@ -81,6 +81,8 @@ CMD \
     ../source/test/unit/run-test.sh && \
   BUILD_DIR=test/mruby \
     ../source/test/mruby/run-test.rb && \
+  BUILD_DIR=test/command_line \
+    ../source/test/command_line/run-test.rb && \
   BUILD_DIR=test/command \
     ../source/test/command/run-test.sh \
     test/command/suite \
