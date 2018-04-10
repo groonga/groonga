@@ -19,6 +19,7 @@ RUN \
     make \
     mecab-naist-jdic \
     pkg-config \
+    rsync \
     ruby \
     ruby-dev \
     sudo \
@@ -65,10 +66,15 @@ RUN \
   mkdir -p /tmp/local/var/log/groonga/httpd/
 
 RUN \
+  rsync -a --include "*.rb" --include "*/" --exclude "*" \
+    ../source/plugins/ \
+    plugins/
+
+RUN \
   mkdir -p test/command && \
-  cp -a \
-    ../source/test/command/suite \
-    test/command/suite
+  rsync -a --delete \
+    ../source/test/command/suite/ \
+    test/command/suite/
 
 CMD \
   BUILD_DIR=test/unit \
