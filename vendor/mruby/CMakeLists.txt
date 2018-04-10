@@ -1,4 +1,4 @@
-# Copyright(C) 2013-2016 Brazil
+# Copyright(C) 2013-2018 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@ if(GRN_WITH_MRUBY)
     "${MRUBY_SOURCE_DIR}/include"
     "${MRUBY_SOURCE_DIR}/src"
     "${MRUBY_SOURCE_DIR}/mrbgems/mruby-compiler/core"
+    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-io/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/../onigmo-source"
   )
 
@@ -35,9 +36,6 @@ if(GRN_WITH_MRUBY)
     set(MRUBY_LEGAL_FILE "${CMAKE_CURRENT_SOURCE_DIR}/LEGAL")
     string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_SOURCE_DIR}/\\1"
       MRUBY_BUILT_SOURCES "${MRUBY_BUILT_SOURCES}")
-    include_directories(
-      "${CMAKE_CURRENT_SOURCE_DIR}/mruby-io/include"
-      )
   else()
     set(mruby_build_timestamp
       "${CMAKE_CURRENT_BINARY_DIR}/mruby_build.timestamp")
@@ -61,9 +59,6 @@ if(GRN_WITH_MRUBY)
     set(MRUBY_LEGAL_FILE "${CMAKE_CURRENT_BINARY_DIR}/LEGAL")
     string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1"
       MRUBY_BUILT_SOURCES "${MRUBY_BUILT_SOURCES}")
-    include_directories(
-      "${CMAKE_CURRENT_BINARY_DIR}/mruby-io/include"
-      )
   endif()
   file(WRITE
     "${CMAKE_CURRENT_BINARY_DIR}/mruby-file-stat/src/config.h"
