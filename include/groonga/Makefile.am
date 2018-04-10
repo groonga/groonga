@@ -30,6 +30,7 @@ groonga_include_HEADERS =			\
 	request_canceler.h			\
 	request_timer.h				\
 	scorer.h				\
+	string.h				\
 	table.h					\
 	thread.h				\
 	time.h					\
