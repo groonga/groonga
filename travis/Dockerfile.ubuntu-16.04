@@ -36,8 +36,8 @@ RUN \
 RUN \
   gem install \
     bundler \
-    pkg-config \
-    groonga-client
+    groonga-client \
+    pkg-config
 
 RUN \
   useradd --user-group --create-home groonga

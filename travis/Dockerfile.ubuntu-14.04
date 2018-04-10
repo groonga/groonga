@@ -31,7 +31,8 @@ RUN \
   apt install -qq -y cutter-testing-framework
 
 RUN \
-  gem2.0 install bundler
+  gem2.0 install \
+    bundler
 
 RUN \
   useradd --user-group --create-home groonga
@@ -60,10 +61,15 @@ RUN \
   mkdir -p /tmp/local/var/log/groonga/httpd/
 
 RUN \
+  rsync -a --include "*.rb" --include "*/" --exclude "*" \
+    ../source/plugins/ \
+    plugins/
+
+RUN \
   mkdir -p test/command && \
-  cp -a \
-    ../source/test/command/suite \
-    test/command/suite
+  rsync -a --delete \
+    ../source/test/command/suite/ \
+    test/command/suite/
 
 CMD \
   BUILD_DIR=test/unit \
