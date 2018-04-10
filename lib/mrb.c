@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2017 Brazil
+  Copyright(C) 2013-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,8 +23,9 @@
 #include <string.h>
 
 #ifdef GRN_WITH_MRUBY
-# include <mruby/proc.h>
 # include <mruby/compile.h>
+# include <mruby/opcode.h>
+# include <mruby/proc.h>
 # include <mruby/string.h>
 #endif
 
@@ -157,6 +158,27 @@ grn_mrb_expand_script_path(grn_ctx *ctx, const char *path,
   return GRN_TRUE;
 }
 
+/* Borrowed from mruby-require.
+ * https://github.com/iij/mruby-require/blob/c8556d98f9877dd4d28ca251cdfa68f84dc8dd66/src/require.c#L51-L60
+ * License: The MIT license
+ * Copyright (c) 2013 Internet Initiative Japan Inc.
+ */
+static void
+grn_mrb_load_disable_stop(mrb_state *mrb, struct RProc *proc)
+{
+  /* For mruby@3e67a116d1d4545c97e8042d094ba9eddd77b441.
+   * It runs all ensure codes on STOP. */
+  mrb_irep *irep = proc->body.irep;
+  if (irep->iseq[irep->ilen - 1] == MKOP_A(OP_STOP, 0)) {
+    irep->iseq = mrb_realloc(mrb,
+                             irep->iseq,
+                             (irep->ilen + 1) * sizeof(mrb_code));
+    irep->iseq[irep->ilen - 1] = MKOP_A(OP_LOADNIL, 0);
+    irep->iseq[irep->ilen] = MKOP_AB(OP_RETURN, 0, OP_R_NORMAL);
+    irep->ilen++;
+  }
+}
+
 mrb_value
 grn_mrb_load(grn_ctx *ctx, const char *path)
 {
@@ -206,9 +228,18 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
 
     {
       struct RProc *proc;
+      int arena_index;
       proc = mrb_generate_code(mrb, parser);
+      grn_mrb_load_disable_stop(mrb, proc);
       MRB_PROC_SET_TARGET_CLASS(proc, mrb->object_class);
-      result = mrb_toplevel_run(mrb, proc);
+      arena_index = mrb_gc_arena_save(mrb);
+      result = mrb_yield_with_class(mrb,
+                                    mrb_obj_value(proc),
+                                    0,
+                                    NULL,
+                                    mrb_top_self(mrb),
+                                    mrb->object_class);
+      mrb_gc_arena_restore(mrb, arena_index);
     }
     mrb_parser_free(parser);
 
