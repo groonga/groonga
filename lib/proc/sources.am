@@ -5,6 +5,7 @@ libgrnproc_la_SOURCES =				\
 	proc_fuzzy_search.c			\
 	proc_highlight.c			\
 	proc_in_records.c			\
+	proc_lexicon.c				\
 	proc_lock.c				\
 	proc_normalize.c			\
 	proc_object.c				\

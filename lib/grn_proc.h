@@ -153,6 +153,12 @@ grn_expr_flags grn_proc_expr_query_flags_parse(grn_ctx *ctx,
                                                size_t query_flags_size,
                                                const char *error_message_tag);
 
+grn_obj *grn_proc_lexicon_open(grn_ctx *ctx,
+                               grn_raw_string *tokenizer_raw,
+                               grn_raw_string *normalizer_raw,
+                               grn_raw_string *token_filters_raw,
+                               const char *context_tag);
+
 #ifdef __cplusplus
 }
 #endif

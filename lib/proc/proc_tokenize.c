@@ -117,72 +117,6 @@ output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon, grn_obj *index_co
   grn_ctx_output_array_close(ctx);
 }
 
-static grn_obj *
-create_lexicon_for_tokenize(grn_ctx *ctx,
-                            grn_raw_string *tokenizer_raw,
-                            grn_raw_string *normalizer_raw,
-                            grn_raw_string *token_filters_raw)
-{
-  grn_obj *lexicon;
-  grn_obj *normalizer = NULL;
-
-  if (normalizer_raw->length > 0) {
-    normalizer = grn_ctx_get(ctx,
-                             normalizer_raw->value,
-                             normalizer_raw->length);
-    if (!normalizer) {
-      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                       "[tokenize] nonexistent normalizer: <%.*s>",
-                       (int)normalizer_raw->length,
-                       normalizer_raw->value);
-      return NULL;
-    }
-
-    if (!grn_obj_is_normalizer_proc(ctx, normalizer)) {
-      grn_obj inspected;
-      GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, normalizer);
-      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                       "[tokenize] not normalizer: %.*s",
-                       (int)GRN_TEXT_LEN(&inspected),
-                       GRN_TEXT_VALUE(&inspected));
-      GRN_OBJ_FIN(ctx, &inspected);
-      grn_obj_unlink(ctx, normalizer);
-      return NULL;
-    }
-  }
-
-  lexicon = grn_table_create(ctx, NULL, 0,
-                             NULL,
-                             GRN_OBJ_TABLE_HASH_KEY,
-                             grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
-                             NULL);
-  {
-    grn_obj tokenizer;
-    GRN_TEXT_INIT(&tokenizer, GRN_OBJ_DO_SHALLOW_COPY);
-    GRN_TEXT_SET(ctx, &tokenizer, tokenizer_raw->value, tokenizer_raw->length);
-    grn_obj_set_info(ctx, lexicon, GRN_INFO_DEFAULT_TOKENIZER, &tokenizer);
-    GRN_OBJ_FIN(ctx, &tokenizer);
-  }
-  if (ctx->rc != GRN_SUCCESS) {
-    grn_obj_close(ctx, lexicon);
-    GRN_PLUGIN_ERROR(ctx, ctx->rc,
-                     "[tokenize] failed to set tokenizer: <%.*s>: %s",
-                     (int)(tokenizer_raw->length),
-                     tokenizer_raw->value,
-                     ctx->errbuf);
-    return NULL;
-  }
-  if (normalizer) {
-    grn_obj_set_info(ctx, lexicon,
-                     GRN_INFO_NORMALIZER, normalizer);
-    grn_obj_unlink(ctx, normalizer);
-  }
-  grn_proc_table_set_token_filters(ctx, lexicon, token_filters_raw);
-
-  return lexicon;
-}
-
 static void
 tokenize(grn_ctx *ctx,
          grn_obj *lexicon,
@@ -348,6 +282,7 @@ grn_proc_init_table_tokenize(grn_ctx *ctx)
 static grn_obj *
 command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
+  const char *context_tag = "[tokenize]";
   grn_raw_string tokenizer_raw;
   grn_raw_string string_raw;
   grn_raw_string normalizer_raw;
@@ -373,12 +308,18 @@ command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
 #undef GET_VALUE
 
   if (tokenizer_raw.length == 0) {
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "[tokenize] tokenizer name is missing");
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s tokenizer name is missing",
+                     context_tag);
     return NULL;
   }
 
   if (string_raw.length == 0) {
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "[tokenize] string is missing");
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s string is missing",
+                     context_tag);
     return NULL;
   }
 
@@ -391,10 +332,11 @@ command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
       return NULL;
     }
 
-    lexicon = create_lexicon_for_tokenize(ctx,
-                                          &tokenizer_raw,
-                                          &normalizer_raw,
-                                          &token_filters_raw);
+    lexicon = grn_proc_lexicon_open(ctx,
+                                    &tokenizer_raw,
+                                    &normalizer_raw,
+                                    &token_filters_raw,
+                                    context_tag);
     if (!lexicon) {
       return NULL;
     }
@@ -413,7 +355,8 @@ command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
         output_tokens(ctx, &tokens, lexicon, NULL);
       } else {
         GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                         "[tokenize] invalid mode: <%.*s>",
+                         "%s invalid mode: <%.*s>",
+                         context_tag,
                          (int)mode_raw.length,
                          mode_raw.value);
       }
