@@ -1,0 +1,112 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Logs_20170315 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Logs_20170316 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170316 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Logs_20170317 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170317 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "price":  300},
+{"timestamp": "2017/03/15 01:00:00", "price": 1000},
+{"timestamp": "2017/03/15 02:00:00", "price":  900}
+]
+[[0,0.0,0.0],3]
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "price":  530},
+{"timestamp": "2017/03/16 11:00:00", "price":  110},
+{"timestamp": "2017/03/16 12:00:00", "price":  520}
+]
+[[0,0.0,0.0],3]
+load --table Logs_20170317
+[
+{"timestamp": "2017/03/17 20:00:00", "price":  400},
+{"timestamp": "2017/03/17 21:00:00", "price":  800},
+{"timestamp": "2017/03/17 22:00:00", "price":  300}
+]
+[[0,0.0,0.0],3]
+table_create Times TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times logs_20170315 COLUMN_INDEX Logs_20170315 timestamp
+[[0,0.0,0.0],true]
+column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
+[[0,0.0,0.0],true]
+column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
+[[0,0.0,0.0],true]
+log_level --level debug
+[[0,0.0,0.0],true]
+logical_range_filter Logs   --shard_key timestamp   --sort_keys 'price'   --output_columns _id,price
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "_id",
+        "UInt32"
+      ],
+      [
+        "price",
+        "UInt32"
+      ]
+    ],
+    [
+      1,
+      300
+    ],
+    [
+      3,
+      900
+    ],
+    [
+      2,
+      1000
+    ],
+    [
+      2,
+      110
+    ],
+    [
+      3,
+      520
+    ],
+    [
+      1,
+      530
+    ],
+    [
+      3,
+      300
+    ],
+    [
+      1,
+      400
+    ],
+    [
+      2,
+      800
+    ]
+  ]
+]
+#|d| [logical_range_filter][select] <Logs_20170315>: sort_keys is used
+#|d| [logical_range_filter][select] <Logs_20170316>: sort_keys is used
+#|d| [logical_range_filter][select] <Logs_20170317>: sort_keys is used
+log_level --level notice
+[[0,0.0,0.0],true]

@@ -16,6 +16,7 @@ module Groonga
                  "output_columns",
                  "use_range_index",
                  "post_filter",
+                 "sort_keys",
                ])
 
       def run_body(input)
@@ -73,18 +74,23 @@ module Groonga
         key << "#{input[:output_columns]}\0"
         key << "#{input[:use_range_index]}\0"
         key << "#{input[:post_filter]}\0"
+        key << "#{input[:sort_keys]}\0"
         dynamic_columns = DynamicColumns.parse(input)
         key << dynamic_columns.cache_key
         key
       end
 
       class ExecuteContext
+        include KeysParsable
+
         attr_reader :use_range_index
         attr_reader :enumerator
         attr_reader :order
         attr_reader :filter
         attr_reader :offset
         attr_reader :limit
+        attr_reader :post_filter
+        attr_reader :sort_keys
         attr_reader :dynamic_columns
         attr_accessor :current_offset
         attr_accessor :current_limit
@@ -92,7 +98,6 @@ module Groonga
         attr_reader :unsorted_result_sets
         attr_reader :temporary_tables
         attr_reader :threshold
-        attr_reader :post_filter
         def initialize(input)
           @input = input
           @use_range_index = parse_use_range_index(@input[:use_range_index])
@@ -101,6 +106,9 @@ module Groonga
           @filter = @input[:filter]
           @offset = (@input[:offset] || 0).to_i
           @limit = (@input[:limit] || 10).to_i
+          @post_filter = @input[:post_filter]
+          @sort_keys = parse_keys(@input[:sort_keys])
+
           @dynamic_columns = DynamicColumns.parse(@input)
 
           @current_offset = @offset
@@ -112,8 +120,6 @@ module Groonga
           @temporary_tables = []
 
           @threshold = compute_threshold
-
-          @post_filter = @input[:post_filter]
         end
 
         def close
@@ -560,6 +566,11 @@ module Groonga
             return decide_use_range_index(false, reason, __LINE__, __method__)
           end
 
+          unless @context.sort_keys.empty?
+            reason = "sort_keys is used"
+            return decide_use_range_index(false, reason, __LINE__, __method__)
+          end
+
           current_limit = @context.current_limit
           if current_limit < 0
             reason = "limit is negative: <#{current_limit}>"
@@ -934,12 +945,25 @@ module Groonga
           end
 
           @unsorted_result_sets << result_set if result_set.temporary?
-          sort_keys = [
-            {
-              :key => @context.enumerator.shard_key_name,
-              :order => @context.order,
-            },
-          ]
+          if @context.sort_keys.empty?
+            sort_keys = [
+              {
+                :key => @context.enumerator.shard_key_name,
+                :order => @context.order,
+              },
+            ]
+          else
+            sort_keys = @context.sort_keys.collect do |sort_key|
+              if sort_key.start_with?("-")
+                key = sort_key[1..-1]
+                order = :descending
+              else
+                key = sort_key
+                order = :ascending
+              end
+              {:key => key, :order => order}
+            end
+          end
           if @context.current_limit > 0
             limit = @context.current_limit
           else
