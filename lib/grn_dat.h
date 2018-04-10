@@ -34,7 +34,7 @@ struct _grn_dat {
   grn_encoding encoding;
   void *trie;
   void *old_trie;
-  grn_table_tokenizer tokenizer;
+  grn_table_module tokenizer;
   grn_obj *normalizer;
   grn_obj token_filters;
   grn_critical_section lock;

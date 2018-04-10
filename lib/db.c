@@ -9101,24 +9101,24 @@ grn_obj_set_info_default_tokenizer(grn_ctx *ctx,
   }
   switch (DB_OBJ(table)->header.type) {
   case GRN_TABLE_HASH_KEY :
-    grn_table_tokenizer_set_proc(ctx,
-                                 &(((grn_hash *)table)->tokenizer),
-                                 tokenizer);
+    grn_table_module_set_proc(ctx,
+                              &(((grn_hash *)table)->tokenizer),
+                              tokenizer);
     ((grn_hash *)table)->header.common->tokenizer = tokenizer_id;
     break;
   case GRN_TABLE_PAT_KEY :
-    grn_table_tokenizer_set_proc(ctx,
-                                 &(((grn_pat *)table)->tokenizer),
-                                 tokenizer);
+    grn_table_module_set_proc(ctx,
+                              &(((grn_pat *)table)->tokenizer),
+                              tokenizer);
     ((grn_pat *)table)->header->tokenizer = tokenizer_id;
     grn_pat_cache_enable(ctx,
                          ((grn_pat *)table),
                          GRN_TABLE_PAT_KEY_CACHE_SIZE);
     break;
   case GRN_TABLE_DAT_KEY :
-    grn_table_tokenizer_set_proc(ctx,
-                                 &(((grn_dat *)table)->tokenizer),
-                                 tokenizer);
+    grn_table_module_set_proc(ctx,
+                              &(((grn_dat *)table)->tokenizer),
+                              tokenizer);
     ((grn_dat *)table)->header->tokenizer = tokenizer_id;
     break;
   default :

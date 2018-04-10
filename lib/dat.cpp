@@ -149,7 +149,7 @@ grn_dat_fin(grn_ctx *ctx, grn_dat *dat)
     grn_io_close(ctx, dat->io);
     dat->io = NULL;
   }
-  grn_table_tokenizer_fin(ctx, &(dat->tokenizer));
+  grn_table_module_fin(ctx, &(dat->tokenizer));
   GRN_OBJ_FIN(ctx, &(dat->token_filters));
 }
 
@@ -355,7 +355,7 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
     dat->header->normalizer = GRN_ID_NIL;
   }
   dat->encoding = encoding;
-  grn_table_tokenizer_init(ctx, &(dat->tokenizer), GRN_ID_NIL);
+  grn_table_module_init(ctx, &(dat->tokenizer), GRN_ID_NIL);
   GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
 
   dat->obj.header.flags = dat->header->flags;
@@ -391,7 +391,7 @@ grn_dat_open(grn_ctx *ctx, const char *path)
   }
   dat->file_id = dat->header->file_id;
   dat->encoding = dat->header->encoding;
-  grn_table_tokenizer_init(ctx, &(dat->tokenizer), dat->header->tokenizer);
+  grn_table_module_init(ctx, &(dat->tokenizer), dat->header->tokenizer);
   if (dat->header->flags & GRN_OBJ_KEY_NORMALIZE) {
     dat->header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
     dat->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);

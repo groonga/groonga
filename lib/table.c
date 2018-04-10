@@ -127,69 +127,69 @@ grn_table_find_reference_object(grn_ctx *ctx, grn_obj *table)
 }
 
 void
-grn_table_tokenizer_init(grn_ctx *ctx,
-                         grn_table_tokenizer *tokenizer,
-                         grn_id tokenizer_id)
+grn_table_module_init(grn_ctx *ctx,
+                      grn_table_module *module,
+                      grn_id module_id)
 {
-  if (tokenizer_id == GRN_ID_NIL) {
-    tokenizer->proc = NULL;
+  if (module_id == GRN_ID_NIL) {
+    module->proc = NULL;
   } else {
-    tokenizer->proc = grn_ctx_at(ctx, tokenizer_id);
+    module->proc = grn_ctx_at(ctx, module_id);
   }
-  tokenizer->options = NULL;
-  tokenizer->options_revision = GRN_OPTION_REVISION_NONE;
-  tokenizer->options_close_func = NULL;
-  CRITICAL_SECTION_INIT(tokenizer->lock);
+  module->options = NULL;
+  module->options_revision = GRN_OPTION_REVISION_NONE;
+  module->options_close_func = NULL;
+  CRITICAL_SECTION_INIT(module->lock);
 }
 
 static void
-grn_table_tokenizer_fin_options(grn_ctx *ctx,
-                                grn_table_tokenizer *tokenizer)
+grn_table_module_fin_options(grn_ctx *ctx,
+                             grn_table_module *module)
 {
-  if (tokenizer->options && tokenizer->options_close_func) {
-    tokenizer->options_close_func(ctx, tokenizer->options);
-    tokenizer->options = NULL;
-    tokenizer->options_revision = GRN_OPTION_REVISION_NONE;
-    tokenizer->options_close_func = NULL;
+  if (module->options && module->options_close_func) {
+    module->options_close_func(ctx, module->options);
+    module->options = NULL;
+    module->options_revision = GRN_OPTION_REVISION_NONE;
+    module->options_close_func = NULL;
   }
 }
 
 void
-grn_table_tokenizer_fin(grn_ctx *ctx,
-                        grn_table_tokenizer *tokenizer)
+grn_table_module_fin(grn_ctx *ctx,
+                     grn_table_module *module)
 {
-  grn_table_tokenizer_fin_options(ctx, tokenizer);
-  CRITICAL_SECTION_FIN(tokenizer->lock);
+  grn_table_module_fin_options(ctx, module);
+  CRITICAL_SECTION_FIN(module->lock);
 }
 
 void
-grn_table_tokenizer_set_proc(grn_ctx *ctx,
-                             grn_table_tokenizer *tokenizer,
-                             grn_obj *proc)
+grn_table_module_set_proc(grn_ctx *ctx,
+                          grn_table_module *module,
+                          grn_obj *proc)
 {
-  CRITICAL_SECTION_ENTER(tokenizer->lock);
-  grn_table_tokenizer_fin_options(ctx, tokenizer);
+  CRITICAL_SECTION_ENTER(module->lock);
+  grn_table_module_fin_options(ctx, module);
 
-  tokenizer->proc = proc;
-  CRITICAL_SECTION_LEAVE(tokenizer->lock);
+  module->proc = proc;
+  CRITICAL_SECTION_LEAVE(module->lock);
 }
 
 void
-grn_table_tokenizer_set_options(grn_ctx *ctx,
-                                grn_table_tokenizer *tokenizer,
-                                void *options,
-                                grn_option_revision revision,
-                                grn_close_func close_func)
+grn_table_module_set_options(grn_ctx *ctx,
+                             grn_table_module *module,
+                             void *options,
+                             grn_option_revision revision,
+                             grn_close_func close_func)
 {
-  CRITICAL_SECTION_ENTER(tokenizer->lock);
-  grn_table_tokenizer_fin_options(ctx, tokenizer);
+  CRITICAL_SECTION_ENTER(module->lock);
+  grn_table_module_fin_options(ctx, module);
 
-  tokenizer->options = options;
-  tokenizer->options_revision = revision;
+  module->options = options;
+  module->options_revision = revision;
   if (options) {
-    tokenizer->options_close_func = close_func;
+    module->options_close_func = close_func;
   }
-  CRITICAL_SECTION_LEAVE(tokenizer->lock);
+  CRITICAL_SECTION_LEAVE(module->lock);
 }
 
 grn_rc
@@ -270,7 +270,7 @@ grn_table_cache_default_tokenizer_options(grn_ctx *ctx,
                                           grn_close_func close_options_func,
                                           void *user_data)
 {
-  grn_table_tokenizer *tokenizer;
+  grn_table_module *tokenizer;
   grn_option_revision revision;
   grn_obj raw_options;
   void *options;
@@ -314,11 +314,11 @@ grn_table_cache_default_tokenizer_options(grn_ctx *ctx,
   }
 
   options = open_options_func(ctx, table, &raw_options, user_data);
-  grn_table_tokenizer_set_options(ctx,
-                                  tokenizer,
-                                  options,
-                                  revision,
-                                  close_options_func);
+  grn_table_module_set_options(ctx,
+                               tokenizer,
+                               options,
+                               revision,
+                               close_options_func);
 
 exit :
   GRN_OBJ_FIN(ctx, &raw_options);

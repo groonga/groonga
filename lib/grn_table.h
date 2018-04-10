@@ -30,21 +30,21 @@ typedef struct {
   grn_option_revision options_revision;
   grn_close_func options_close_func;
   grn_critical_section lock;
-} grn_table_tokenizer;
+} grn_table_module;
 
-void grn_table_tokenizer_init(grn_ctx *ctx,
-                              grn_table_tokenizer *tokenizer,
-                              grn_id tokenizer_id);
-void grn_table_tokenizer_set_proc(grn_ctx *ctx,
-                                  grn_table_tokenizer *tokenizer,
-                                  grn_obj *proc);
-void grn_table_tokenizer_set_options(grn_ctx *ctx,
-                                     grn_table_tokenizer *tokenizer,
-                                     void *options,
-                                     grn_option_revision revision,
-                                     grn_close_func close_func);
-void grn_table_tokenizer_fin(grn_ctx *ctx,
-                             grn_table_tokenizer *tokenizer);
+void grn_table_module_init(grn_ctx *ctx,
+                           grn_table_module *module,
+                           grn_id module_id);
+void grn_table_module_set_proc(grn_ctx *ctx,
+                               grn_table_module *module,
+                               grn_obj *proc);
+void grn_table_module_set_options(grn_ctx *ctx,
+                                  grn_table_module *module,
+                                  void *options,
+                                  grn_option_revision revision,
+                                  grn_close_func close_func);
+void grn_table_module_fin(grn_ctx *ctx,
+                          grn_table_module *module);
 
 #ifdef __cplusplus
 }
