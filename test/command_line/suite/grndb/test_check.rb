@@ -11,8 +11,8 @@ class TestGrnDBCheck < GroongaTestCase
               "--groonga-log-path", "/nonexistent2")
       end
       assert_equal(<<-MESSAGE, error.error_output)
-[/nonexistent1] Can't open Groonga log path: RuntimeError: open
-[/nonexistent2] Can't open Groonga log path: RuntimeError: open
+[/nonexistent1] Can't open Groonga log path: RuntimeError: open /nonexistent1
+[/nonexistent2] Can't open Groonga log path: RuntimeError: open /nonexistent2
       MESSAGE
     end
 
