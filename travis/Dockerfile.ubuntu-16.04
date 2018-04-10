@@ -33,7 +33,10 @@ RUN \
   apt install -qq -y cutter-testing-framework
 
 RUN \
-  gem install bundler
+  gem install \
+    bundler \
+    pkg-config \
+    groonga-client
 
 RUN \
   useradd --user-group --create-home groonga
@@ -70,6 +73,8 @@ RUN \
 CMD \
   BUILD_DIR=test/unit \
     ../source/test/unit/run-test.sh && \
+  BUILD_DIR=test/mruby \
+    ../source/test/mruby/run-test.rb && \
   BUILD_DIR=test/command \
     ../source/test/command/run-test.sh \
     test/command/suite \

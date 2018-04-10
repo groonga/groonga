@@ -4,10 +4,16 @@ require "rbconfig"
 require "pathname"
 require "fileutils"
 
-base_dir_path       = Pathname(__FILE__).expand_path.dirname
-source_top_dir_path = base_dir_path.parent.parent
-build_top_dir_path  = Pathname($0).expand_path.dirname.parent.parent
-build_base_dir_path = build_top_dir_path + "test/mruby"
+source_base_dir_path = Pathname(__dir__).expand_path
+source_top_dir_path = source_base_dir_path.parent.parent
+if ENV["BUILD_DIR"]
+  build_base_dir_path = Pathname(ENV["BUILD_DIR"]).expand_path
+else
+  build_base_dir_path  = Pathname($0).expand_path.dirname
+end
+build_top_dir_path = build_base_dir_path.parent.parent
+
+ENV["BASE_DIR"] ||= build_base_dir_path.to_s
 
 Dir.chdir(build_top_dir_path.to_s) do
   system("make -j8 > /dev/null") or exit(false)
@@ -20,6 +26,12 @@ if rroonga_built_revision_path.exist?
 end
 
 rroonga_dir_path = build_base_dir_path + "rroonga"
+unless rroonga_dir_path.exist?
+  FileUtils.mkdir_p(rroonga_dir_path.parent)
+  system("git", "clone",
+         (source_base_dir_path + "rroonga").to_s,
+         rroonga_dir_path.to_s)
+end
 rroonga_revision = Dir.chdir(rroonga_dir_path) do
   `git describe`
 end
@@ -32,7 +44,7 @@ if rroonga_revision != rroonga_built_revision
       "Libs: -L#{lib_dir} -Wl,-rpath,#{lib_dir} -lgroonga"
     end
     content = content.gsub(/^Cflags: .*$/) do
-      "Cflags: -I#{build_top_dir_path}/include"
+      "Cflags: -I#{source_top_dir_path}/include"
     end
     groonga_pc.puts(content)
   end
@@ -51,8 +63,13 @@ if rroonga_revision != rroonga_built_revision
   end
 end
 
+if build_top_dir_path != source_top_dir_path
+  plugin_relative_path = "plugins/expression_rewriters"
+  FileUtils.cp(Dir.glob(source_top_dir_path + "#{plugin_relative_path}/*.rb"),
+               build_top_dir_path + plugins_relative_path)
+end
 ENV["GRN_PLUGINS_DIR"] = (build_top_dir_path + "plugins").to_s
-ENV["GRN_RUBY_SCRIPTS_DIR"] = (build_top_dir_path + "lib/mrb/scripts").to_s
+ENV["GRN_RUBY_SCRIPTS_DIR"] = (source_top_dir_path + "lib/mrb/scripts").to_s
 ENV["GRN_ORDER_BY_ESTIMATED_SIZE_ENABLE"] = "yes"
 
 $LOAD_PATH.unshift((rroonga_dir_path + "ext" + "groonga").to_s)
@@ -62,4 +79,4 @@ require "groonga"
 
 require_relative "helper"
 
-exit(Test::Unit::AutoRunner.run(true, (base_dir_path + "suite").to_s))
+exit(Test::Unit::AutoRunner.run(true, (source_base_dir_path + "suite").to_s))
