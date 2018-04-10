@@ -65,9 +65,9 @@ build_script:
       set CMAKE_GENERATOR_NAME=%CMAKE_GENERATOR_NAME% 2015
   - if "%ARCH%" == "amd64"
       set CMAKE_GENERATOR_NAME=%CMAKE_GENERATOR_NAME% Win64
-  - ruby -i '.bak' -pe '$_.gsub!(/^MRB_API int mrb_gc_arena_save/, "//")'
+  - ruby -i'.bak' -pe '$_.gsub!(/^MRB_API int mrb_gc_arena_save/, "//")'
       vendor\mruby-source\include\mruby.h
-  - ruby -i '.bak' -pe '$_.gsub!(/^MRB_API void mrb_gc_arena_restore/, "//")'
+  - ruby -i'.bak' -pe '$_.gsub!(/^MRB_API void mrb_gc_arena_restore/, "//")'
       vendor\mruby-source\include\mruby.h
   - cmake . -G "%CMAKE_GENERATOR_NAME%"
       -DCMAKE_INSTALL_PREFIX=%FULL_GROONGA_INSTALL_FOLDER%
