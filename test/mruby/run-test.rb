@@ -64,9 +64,12 @@ if rroonga_revision != rroonga_built_revision
 end
 
 if build_top_dir_path != source_top_dir_path
-  plugin_relative_path = "plugins/expression_rewriters"
-  FileUtils.cp(Dir.glob(source_top_dir_path + "#{plugin_relative_path}/*.rb"),
-               build_top_dir_path + plugin_relative_path)
+  Dir.glob(source_top_dir_path + "plugins/**/*.rb") do |source_rb|
+    relative_path = Pathname(source_rb).relative_path_from(source_top_dir_path)
+    build_rb = build_top_dir_path + relative_path
+    FileUtils.mkdir_p(build_rb.dirname)
+    FileUtils.cp(source_rb, build_rb)
+  end
 end
 ENV["GRN_PLUGINS_DIR"] = (build_top_dir_path + "plugins").to_s
 ENV["GRN_RUBY_SCRIPTS_DIR"] = (source_top_dir_path + "lib/mrb/scripts").to_s
