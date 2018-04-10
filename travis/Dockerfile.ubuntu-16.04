@@ -96,4 +96,5 @@ CMD \
     ../source/test/command/run-test.sh \
     test/command/suite \
     --reporter mark \
-    --testee groonga-httpd
+    --testee groonga-httpd \
+    --n-workers 4
