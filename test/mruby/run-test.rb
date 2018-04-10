@@ -66,7 +66,7 @@ end
 if build_top_dir_path != source_top_dir_path
   plugin_relative_path = "plugins/expression_rewriters"
   FileUtils.cp(Dir.glob(source_top_dir_path + "#{plugin_relative_path}/*.rb"),
-               build_top_dir_path + plugins_relative_path)
+               build_top_dir_path + plugin_relative_path)
 end
 ENV["GRN_PLUGINS_DIR"] = (build_top_dir_path + "plugins").to_s
 ENV["GRN_RUBY_SCRIPTS_DIR"] = (source_top_dir_path + "lib/mrb/scripts").to_s
