@@ -28,12 +28,12 @@ const char *grn_nfkc_decompose(const unsigned char *utf8);
 const char *grn_nfkc_compose(const unsigned char *prefix_utf8,
                              const unsigned char *suffix_utf8);
 
-grn_char_type grn_nfkc50_char_type(const unsigned char *utf8);
+GRN_API grn_char_type grn_nfkc50_char_type(const unsigned char *utf8);
 const char *grn_nfkc50_decompose(const unsigned char *utf8);
 const char *grn_nfkc50_compose(const unsigned char *prefix_utf8,
                                const unsigned char *suffix_utf8);
 
-grn_char_type grn_nfkc100_char_type(const unsigned char *utf8);
+GRN_API grn_char_type grn_nfkc100_char_type(const unsigned char *utf8);
 const char *grn_nfkc100_decompose(const unsigned char *utf8);
 const char *grn_nfkc100_compose(const unsigned char *prefix_utf8,
                                const unsigned char *suffix_utf8);

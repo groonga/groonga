@@ -16,6 +16,10 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#ifdef WIN32
+# define GROONGA_MAIN
+#endif /* WIN32 */
+
 #include "grn.h"
 #include "grn_nfkc.h"
 
