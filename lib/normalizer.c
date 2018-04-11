@@ -622,6 +622,7 @@ typedef struct {
   grn_nfkc_compose_func compose_func;
   grn_bool unify_kana;
   grn_bool unify_kana_case;
+  grn_bool unify_kana_voiced_sound_mark;
 } grn_utf8_normalize_options;
 
 static void
@@ -635,6 +636,7 @@ utf8_normalize_options_init(grn_utf8_normalize_options *options,
   options->compose_func = compose_func;
   options->unify_kana = GRN_FALSE;
   options->unify_kana_case = GRN_FALSE;
+  options->unify_kana_voiced_sound_mark = GRN_FALSE;
 }
 
 grn_inline static const unsigned char *
@@ -748,6 +750,96 @@ utf8_normalize_unify_katakana_case(const unsigned char *utf8_char,
       unified[1] = 0x82;
       unified[2] = 0xb1;
       return unified;
+    }
+  }
+
+  return utf8_char;
+}
+
+grn_inline static const unsigned char *
+utf8_normalize_unify_hiragana_voiced_sound_mark(const unsigned char *utf8_char,
+                                                unsigned char *unified)
+{
+  if (utf8_char[0] == 0xe3) {
+    if ((utf8_char[1] == 0x81 && (0x8c <= utf8_char[2] &&
+                                  utf8_char[2] <= 0xa2))) {
+      /* U+304C HIRAGANA LETTER GA ..
+       * U+3062 HIRAGANA LETTER DI */
+      if (!(utf8_char[2] & 0x1)) {
+        unified[0] = utf8_char[0];
+        unified[1] = utf8_char[1];
+        unified[2] = utf8_char[2] - 1;
+        return unified;
+      }
+    } else if ((utf8_char[1] == 0x81 && (0xa5 <= utf8_char[2] &&
+                                         utf8_char[2] <= 0xa9))) {
+      /* U+3065 HIRAGANA LETTER DU ..
+       * U+3069 HIRAGANA LETTER DO */
+      if (utf8_char[2] & 0x1) {
+        unified[0] = utf8_char[0];
+        unified[1] = utf8_char[1];
+        unified[2] = utf8_char[2] - 1;
+        return unified;
+      }
+    } else if ((utf8_char[1] == 0x81 && (0xb0 <= utf8_char[2] &&
+                                         utf8_char[2] <= 0xbd))) {
+      /* U+3070 HIRAGANA LETTER BA ..
+       * U+307D HIRAGANA LETTER PO */
+      unsigned char mod3 = (utf8_char[2] - 1) % 3;
+      if (mod3 != 0) {
+        unified[0] = utf8_char[0];
+        unified[1] = utf8_char[1];
+        unified[2] = utf8_char[2] - mod3;
+        return unified;
+      }
+    }
+  }
+
+  return utf8_char;
+}
+
+grn_inline static const unsigned char *
+utf8_normalize_unify_katakana_voiced_sound_mark(const unsigned char *utf8_char,
+                                                unsigned char *unified)
+{
+  if (utf8_char[0] == 0xe3) {
+    if (utf8_char[1] == 0x83 && utf8_char[2] == 0x80) {
+      /* U+30C0 KATAKANA LETTER DA */
+      unified[0] = utf8_char[0];
+      unified[1] = 0x82;
+      unified[2] = 0xbf;
+      return unified;
+    } else if ((utf8_char[1] == 0x82 && 0xac <= utf8_char[2]) ||
+               (utf8_char[1] == 0x83 && utf8_char[2] <= 0x82)) {
+      /* U+30AC KATAKANA LETTER GA ..
+       * U+30C2 KATAKANA LETTER DI */
+      if (!(utf8_char[2] & 0x1)) {
+        unified[0] = utf8_char[0];
+        unified[1] = utf8_char[1];
+        unified[2] = utf8_char[2] - 1;
+        return unified;
+      }
+    } else if ((utf8_char[1] == 0x83 && (0x85 <= utf8_char[2] &&
+                                         utf8_char[2] <= 0x89))) {
+      /* U+30C5 KATAKANA LETTER DU ..
+       * U+30C9 KATAKANA LETTER DO */
+      if (utf8_char[2] & 0x1) {
+        unified[0] = utf8_char[0];
+        unified[1] = utf8_char[1];
+        unified[2] = utf8_char[2] - 1;
+        return unified;
+      }
+    } else if ((utf8_char[1] == 0x83 && (0x90 <= utf8_char[2] &&
+                                         utf8_char[2] <= 0x9d))) {
+      /* U+30D0 KATAKANA LETTER BA ..
+       * U+30DD KATAKANA LETTER PO */
+      unsigned char mod3 = (utf8_char[2] - 2) % 3;
+      if (mod3 != 0) {
+        unified[0] = utf8_char[0];
+        unified[1] = utf8_char[1];
+        unified[2] = utf8_char[2] - mod3;
+        return unified;
+      }
     }
   }
 
@@ -879,6 +971,7 @@ utf8_normalize(grn_ctx *ctx,
         {
           unsigned char unified_kana[3];
           unsigned char unified_kana_case[3];
+          unsigned char unified_kana_voiced_sound_mark[3];
 
           if (options->unify_kana &&
               char_type == GRN_CHAR_KATAKANA &&
@@ -899,6 +992,25 @@ utf8_normalize(grn_ctx *ctx,
             case GRN_CHAR_KATAKANA :
               if (lp == 3) {
                 p = utf8_normalize_unify_katakana_case(p, unified_kana_case);
+              }
+              break;
+            default :
+              break;
+            }
+          }
+
+          if (options->unify_kana_voiced_sound_mark) {
+            switch (char_type) {
+            case GRN_CHAR_HIRAGANA :
+              if (lp == 3) {
+                p = utf8_normalize_unify_hiragana_voiced_sound_mark(
+                  p, unified_kana_voiced_sound_mark);
+              }
+              break;
+            case GRN_CHAR_KATAKANA :
+              if (lp == 3) {
+                p = utf8_normalize_unify_katakana_voiced_sound_mark(
+                  p, unified_kana_voiced_sound_mark);
               }
               break;
             default :
@@ -1385,6 +1497,13 @@ nfkc100_open_options(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->unify_kana_case);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "unify_kana_voiced_sound_mark")) {
+      options->unify_kana_voiced_sound_mark =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->unify_kana_voiced_sound_mark);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
