@@ -20,6 +20,7 @@
 
 #include "grn_normalizer.h"
 #include "grn_string.h"
+#include "grn_raw_string.h"
 #include "grn_nfkc.h"
 #include <groonga/normalizer.h>
 #include <groonga/tokenizer.h>
@@ -615,12 +616,29 @@ typedef const char *(*grn_nfkc_decompose_func)(const unsigned char *utf8);
 typedef const char *(*grn_nfkc_compose_func)(const unsigned char *prefix_utf8,
                                              const unsigned char *suffix_utf8);
 
+typedef struct {
+  grn_nfkc_char_type_func char_type_func;
+  grn_nfkc_decompose_func decompose_func;
+  grn_nfkc_compose_func compose_func;
+  grn_bool unify_kana;
+} grn_utf8_normalize_options;
+
+static void
+utf8_normalize_options_init(grn_utf8_normalize_options *options,
+                            grn_nfkc_char_type_func char_type_func,
+                            grn_nfkc_decompose_func decompose_func,
+                            grn_nfkc_compose_func compose_func)
+{
+  options->char_type_func = char_type_func;
+  options->decompose_func = decompose_func;
+  options->compose_func = compose_func;
+  options->unify_kana = GRN_FALSE;
+}
+
 grn_inline static grn_obj *
 utf8_normalize(grn_ctx *ctx,
                grn_string *nstr,
-               grn_nfkc_char_type_func char_type_func,
-               grn_nfkc_decompose_func decompose_func,
-               grn_nfkc_compose_func compose_func)
+               grn_utf8_normalize_options *options)
 {
   int16_t *ch;
   const unsigned char *s, *s_, *s__ = NULL, *p, *p2, *pe, *e;
@@ -668,13 +686,13 @@ utf8_normalize(grn_ctx *ctx,
                                              GRN_ENC_UTF8)) {
       continue;
     }
-    if ((p = (unsigned char *)decompose_func(s))) {
+    if ((p = (unsigned char *)options->decompose_func(s))) {
       pe = p + strlen((char *)p);
     } else {
       p = s;
       pe = p + ls;
     }
-    if (d_ && (p2 = (unsigned char *)compose_func(d_, p))) {
+    if (d_ && (p2 = (unsigned char *)options->compose_func(d_, p))) {
       p = p2;
       pe = p + strlen((char *)p);
       if (cp) { cp--; }
@@ -694,6 +712,8 @@ utf8_normalize(grn_ctx *ctx,
       if ((*p == ' ' && removeblankp) || *p < 0x20  /* skip unprintable ascii */ ) {
         if (cp > nstr->ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
       } else {
+        grn_char_type char_type;
+
         if (de <= d + lp) {
           unsigned char *normalized;
           ds += (ds >> 1) + lp;
@@ -735,11 +755,32 @@ utf8_normalize(grn_ctx *ctx,
             nstr->ctypes = ctypes;
           }
         }
-        grn_memcpy(d, p, lp);
+        char_type = options->char_type_func(p);
+        if (options->unify_kana && char_type == GRN_CHAR_KATAKANA) {
+          if (lp == 3 &&
+              p[0] == 0xe3 &&
+              /* U+30A1 KATAKANA LETTER SMALL A ..
+               * U+30F6 KATAKANA LETTER SMALL KE
+               *
+               * U+30FD KATAKANA ITERATION MARK ..
+               * U+30F6 KATAKANA LETTER SMALL KE */
+              ((p[1] == 0x82 && 0xa1 <= p[2]) ||
+               (p[1] == 0x83 && p[2] <= 0xb6) ||
+               (p[1] == 0x83 && (0xbd <= p[2] && p[2] <= 0xbe)))) {
+            d[0] = p[0];
+            d[1] = p[1] - 1;
+            d[2] = p[2] ^ 0x20;
+            char_type = GRN_CHAR_HIRAGANA;
+          } else {
+            grn_memcpy(d, p, lp);
+          }
+        } else {
+          grn_memcpy(d, p, lp);
+        }
         d_ = d;
         d += lp;
         length++;
-        if (cp) { *cp++ = char_type_func(p); }
+        if (cp) { *cp++ = char_type; }
         if (ch) {
           size_t i;
           if (s_ == s + ls) {
@@ -1133,11 +1174,14 @@ auto_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     break;
   case GRN_ENC_UTF8 :
 #ifdef GRN_WITH_NFKC
-    utf8_normalize(ctx,
-                   string,
-                   grn_nfkc_char_type,
-                   grn_nfkc_decompose,
-                   grn_nfkc_compose);
+    {
+      grn_utf8_normalize_options options;
+      utf8_normalize_options_init(&options,
+                                  grn_nfkc_char_type,
+                                  grn_nfkc_decompose,
+                                  grn_nfkc_compose);
+      utf8_normalize(ctx, string, &options);
+    }
 #else /* GRN_WITH_NFKC */
     ascii_normalize(ctx, string);
 #endif /* GRN_WITH_NFKC */
@@ -1163,23 +1207,89 @@ static grn_obj *
 nfkc51_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_string *string = (grn_string *)(args[0]);
-  utf8_normalize(ctx,
-                 string,
-                 grn_nfkc50_char_type,
-                 grn_nfkc50_decompose,
-                 grn_nfkc50_compose);
+  grn_utf8_normalize_options options;
+
+  utf8_normalize_options_init(&options,
+                              grn_nfkc50_char_type,
+                              grn_nfkc50_decompose,
+                              grn_nfkc50_compose);
+  utf8_normalize(ctx, string, &options);
   return NULL;
+}
+
+static void *
+nfkc100_open_options(grn_ctx *ctx,
+                     grn_obj *string,
+                     grn_obj *raw_options,
+                     void *user_data)
+{
+  grn_utf8_normalize_options *options;
+
+  options = GRN_MALLOC(sizeof(grn_utf8_normalize_options));
+  if (!options) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[normalizer][nfkc100] "
+        "failed to allocate memory for options");
+    return NULL;
+  }
+
+  utf8_normalize_options_init(options,
+                              grn_nfkc100_char_type,
+                              grn_nfkc100_decompose,
+                              grn_nfkc100_compose);
+
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+    grn_raw_string name_raw;
+    name_raw.value = name;
+    name_raw.length = name_length;
+
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_kana")) {
+      options->unify_kana = grn_vector_get_element_bool(ctx,
+                                                        raw_options,
+                                                        i,
+                                                        options->unify_kana);
+    }
+  } GRN_OPTION_VALUES_EACH_END();
+
+  return options;
+}
+
+static void
+nfkc100_close_options(grn_ctx *ctx, void *data)
+{
+  grn_utf8_normalize_options *options = data;
+  GRN_FREE(options);
 }
 
 static grn_obj *
 nfkc100_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_string *string = (grn_string *)(args[0]);
-  utf8_normalize(ctx,
-                 string,
-                 grn_nfkc100_char_type,
-                 grn_nfkc100_decompose,
-                 grn_nfkc100_compose);
+  grn_obj *string = args[0];
+  grn_string *string_ = (grn_string *)string;
+  grn_obj *table;
+  grn_utf8_normalize_options *options;
+  grn_utf8_normalize_options options_raw;
+
+  table = grn_string_get_table(ctx, string);
+  if (table) {
+    options = grn_table_cache_normalizer_options(ctx,
+                                                 table,
+                                                 string,
+                                                 nfkc100_open_options,
+                                                 nfkc100_close_options,
+                                                 NULL);
+    if (ctx->rc != GRN_SUCCESS) {
+      return NULL;
+    }
+  } else {
+    utf8_normalize_options_init(&options_raw,
+                                grn_nfkc100_char_type,
+                                grn_nfkc100_decompose,
+                                grn_nfkc100_compose);
+    options = &options_raw;
+  }
+
+  utf8_normalize(ctx, string_, options);
   return NULL;
 }
 #endif /* GRN_WITH_NFKC */

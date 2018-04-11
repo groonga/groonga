@@ -18,20 +18,17 @@
 
 #include "../grn_proc.h"
 #include "../grn_ctx.h"
-#include "../grn_token_cursor.h"
 
 #include <groonga/plugin.h>
 
 static int
-parse_normalize_flags(grn_ctx *ctx, grn_obj *flag_names)
+parse_normalize_flags(grn_ctx *ctx, grn_raw_string *flags_raw)
 {
   int flags = 0;
   const char *names, *names_end;
-  int length;
 
-  names = GRN_TEXT_VALUE(flag_names);
-  length = GRN_TEXT_LEN(flag_names);
-  names_end = names + length;
+  names = flags_raw->value;
+  names_end = names + flags_raw->length;
   while (names < names_end) {
     if (*names == '|' || *names == ' ') {
       names += 1;
@@ -64,77 +61,69 @@ parse_normalize_flags(grn_ctx *ctx, grn_obj *flag_names)
   return flags;
 }
 
-static grn_bool
-is_normalizer(grn_ctx *ctx, grn_obj *object)
-{
-  if (object->header.type != GRN_PROC) {
-    return GRN_FALSE;
-  }
-
-  if (grn_proc_get_type(ctx, object) != GRN_PROC_NORMALIZER) {
-    return GRN_FALSE;
-  }
-
-  return GRN_TRUE;
-}
-
 static grn_obj *
 command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *normalizer_name;
-  grn_obj *string;
-  grn_obj *flag_names;
+  const char *context_tag = "[normalize]";
+  grn_raw_string normalizer_raw;
+  grn_raw_string string_raw;
+  grn_raw_string flags_raw;
 
-  normalizer_name = grn_plugin_proc_get_var(ctx, user_data, "normalizer", -1);
-  string = grn_plugin_proc_get_var(ctx, user_data, "string", -1);
-  flag_names = grn_plugin_proc_get_var(ctx, user_data, "flags", -1);
-  if (GRN_TEXT_LEN(normalizer_name) == 0) {
-    ERR(GRN_INVALID_ARGUMENT, "normalizer name is missing");
+#define GET_VALUE(name)                                         \
+  name ## _raw.value =                                          \
+    grn_plugin_proc_get_var_string(ctx,                         \
+                                   user_data,                   \
+                                   #name,                       \
+                                   strlen(#name),               \
+                                   &(name ## _raw.length))
+
+  GET_VALUE(normalizer);
+  GET_VALUE(string);
+  GET_VALUE(flags);
+
+#undef GET_VALUE
+
+  if (normalizer_raw.length == 0) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s normalizer name is missing",
+                     context_tag);
     return NULL;
   }
 
   {
-    grn_obj *normalizer;
-    grn_obj *grn_string;
     int flags;
+    grn_obj *lexicon;
+    grn_obj *grn_string;
     unsigned int normalized_length_in_bytes;
     unsigned int normalized_n_characters;
 
-    flags = parse_normalize_flags(ctx, flag_names);
-    normalizer = grn_ctx_get(ctx,
-                             GRN_TEXT_VALUE(normalizer_name),
-                             GRN_TEXT_LEN(normalizer_name));
-    if (!normalizer) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "[normalize] nonexistent normalizer: <%.*s>",
-          (int)GRN_TEXT_LEN(normalizer_name),
-          GRN_TEXT_VALUE(normalizer_name));
+    flags = parse_normalize_flags(ctx, &flags_raw);
+    if (ctx->rc != GRN_SUCCESS) {
       return NULL;
     }
 
-    if (!is_normalizer(ctx, normalizer)) {
-      grn_obj inspected;
-      GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, normalizer);
-      ERR(GRN_INVALID_ARGUMENT,
-          "[normalize] not normalizer: %.*s",
-          (int)GRN_TEXT_LEN(&inspected),
-          GRN_TEXT_VALUE(&inspected));
-      GRN_OBJ_FIN(ctx, &inspected);
-      grn_obj_unlink(ctx, normalizer);
+    lexicon = grn_proc_lexicon_open(ctx,
+                                    NULL,
+                                    &normalizer_raw,
+                                    NULL,
+                                    context_tag);
+    if (!lexicon) {
       return NULL;
     }
 
     grn_string = grn_string_open(ctx,
-                                 GRN_TEXT_VALUE(string), GRN_TEXT_LEN(string),
-                                 normalizer, flags);
-    grn_obj_unlink(ctx, normalizer);
+                                 string_raw.value,
+                                 string_raw.length,
+                                 lexicon,
+                                 flags);
 
     grn_ctx_output_map_open(ctx, "RESULT", 3);
     {
       const char *normalized;
 
-      grn_string_get_normalized(ctx, grn_string,
+      grn_string_get_normalized(ctx,
+                                grn_string,
                                 &normalized,
                                 &normalized_length_in_bytes,
                                 &normalized_n_characters);
@@ -178,6 +167,8 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
     grn_ctx_output_map_close(ctx);
 
     grn_obj_unlink(ctx, grn_string);
+
+    grn_obj_unlink(ctx, lexicon);
   }
 
   return NULL;

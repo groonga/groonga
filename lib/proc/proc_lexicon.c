@@ -29,35 +29,6 @@ grn_proc_lexicon_open(grn_ctx *ctx,
                       const char *context_tag)
 {
   grn_obj *lexicon;
-  grn_obj *normalizer = NULL;
-
-  if (normalizer_raw->length > 0) {
-    normalizer = grn_ctx_get(ctx,
-                             normalizer_raw->value,
-                             normalizer_raw->length);
-    if (!normalizer) {
-      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                       "%s nonexistent normalizer: <%.*s>",
-                       context_tag,
-                       (int)normalizer_raw->length,
-                       normalizer_raw->value);
-      return NULL;
-    }
-
-    if (!grn_obj_is_normalizer_proc(ctx, normalizer)) {
-      grn_obj inspected;
-      GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, normalizer);
-      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                       "%s not normalizer: %.*s",
-                       context_tag,
-                       (int)GRN_TEXT_LEN(&inspected),
-                       GRN_TEXT_VALUE(&inspected));
-      GRN_OBJ_FIN(ctx, &inspected);
-      grn_obj_unlink(ctx, normalizer);
-      return NULL;
-    }
-  }
 
   lexicon = grn_table_create(ctx, NULL, 0,
                              NULL,
@@ -67,7 +38,9 @@ grn_proc_lexicon_open(grn_ctx *ctx,
   {
     grn_obj tokenizer;
     GRN_TEXT_INIT(&tokenizer, GRN_OBJ_DO_SHALLOW_COPY);
-    GRN_TEXT_SET(ctx, &tokenizer, tokenizer_raw->value, tokenizer_raw->length);
+    if (tokenizer_raw) {
+      GRN_TEXT_SET(ctx, &tokenizer, tokenizer_raw->value, tokenizer_raw->length);
+    }
     grn_obj_set_info(ctx, lexicon, GRN_INFO_DEFAULT_TOKENIZER, &tokenizer);
     GRN_OBJ_FIN(ctx, &tokenizer);
   }
@@ -81,12 +54,31 @@ grn_proc_lexicon_open(grn_ctx *ctx,
                      ctx->errbuf);
     return NULL;
   }
-  if (normalizer) {
-    grn_obj_set_info(ctx, lexicon,
-                     GRN_INFO_NORMALIZER, normalizer);
-    grn_obj_unlink(ctx, normalizer);
+  {
+    grn_obj normalizer;
+    GRN_TEXT_INIT(&normalizer, GRN_OBJ_DO_SHALLOW_COPY);
+    if (normalizer_raw) {
+      GRN_TEXT_SET(ctx,
+                   &normalizer,
+                   normalizer_raw->value,
+                 normalizer_raw->length);
+    }
+    grn_obj_set_info(ctx, lexicon, GRN_INFO_NORMALIZER, &normalizer);
+    GRN_OBJ_FIN(ctx, &normalizer);
   }
-  grn_proc_table_set_token_filters(ctx, lexicon, token_filters_raw);
+  if (ctx->rc != GRN_SUCCESS) {
+    grn_obj_close(ctx, lexicon);
+    GRN_PLUGIN_ERROR(ctx, ctx->rc,
+                     "%s failed to set normalizer: <%.*s>: %s",
+                     context_tag,
+                     (int)(normalizer_raw->length),
+                     normalizer_raw->value,
+                     ctx->errbuf);
+    return NULL;
+  }
+  if (token_filters_raw) {
+    grn_proc_table_set_token_filters(ctx, lexicon, token_filters_raw);
+  }
 
   return lexicon;
 }
