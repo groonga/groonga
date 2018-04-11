@@ -588,7 +588,7 @@ larger than one, ``sort_keys`` doesn't work.
 
    There is one exception for multiple shards. When the same value is
    specified for ``shard_key`` and ``sort_keys``, they are supported.
-   ``logical_select`` processes target shards one by one by ascending
+   This command processes target shards one by one by ascending
    order. Thus, in this process, magnitude correlation about the value
    of ``shard_key`` is kept among them. This is because ``sort_keys``
    is supported when ``shard_key`` and ``sort_keys`` is same.

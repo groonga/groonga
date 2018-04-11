@@ -62,6 +62,7 @@ The required parameters are ``logical_table`` and ``shard_key``::
     [output_columns="_key, *"]
     [use_range_index=null]
     [post_filter=null]
+    [sort_keys=null]
 
 There are some parameters that can be only used as named
 parameters. You can't use these parameters as ordered parameters. You
@@ -353,6 +354,55 @@ Here is an example:
 ..   --logical_table Entries \
 ..   --shard_key created_at \
 ..   --output_columns '_key, *'
+
+.. _logical-range-filter-sort-keys:
+
+``sort_keys``
+"""""""""""""
+
+.. versionadded:: 8.0.2
+
+Corresponds to :ref:`select-sort-keys` in :doc:`select`. See
+:ref:`select-sort-keys` for details.
+
+``sort_keys`` has a limitation. It works only when the number of
+search target shards is one. If the number of search target shards is
+larger than one, ``sort_keys`` doesn't work.
+
+.. note::
+
+   There is one exception for multiple shards. When the same value is
+   specified for ``shard_key`` and ``sort_keys``, they are supported.
+   This command processes target shards one by one by ascending
+   order. Thus, in this process, magnitude correlation about the value
+   of ``shard_key`` is kept among them. This is because ``sort_keys``
+   is supported when ``shard_key`` and ``sort_keys`` is same.
+
+Here is an example that uses only one shard:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/sort_keys_one.log
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --sort_keys _key \
+..   --output_columns _key,created_at
+
+Here is an example that uses ``shard_key`` based value as the first
+sort key:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/sort_keys_on_shared_key.log
+.. plugin_register functions/time
+.. logical_select \
+..   --logical_table Entries \
+..   --shard_key created_at \
+..   --columns[hour2].stage filtered \
+..   --columns[hour2].type Time \
+..   --columns[hour2].flags COLUMN_SCALAR \
+..   --columns[hour2].value 'time_classify_hour(created_at, 2)' \
+..   --sort_keys hour2,-n_likes \
+..   --output_columns hour2,n_likes,_key
 
 .. _logical-range-filter-offset:
 

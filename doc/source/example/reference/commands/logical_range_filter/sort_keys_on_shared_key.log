@@ -1,0 +1,66 @@
+Execution example::
+
+  plugin_register functions/time
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  logical_select \
+    --logical_table Entries \
+    --shard_key created_at \
+    --columns[hour2].stage filtered \
+    --columns[hour2].type Time \
+    --columns[hour2].flags COLUMN_SCALAR \
+    --columns[hour2].value 'time_classify_hour(created_at, 2)' \
+    --sort_keys hour2,-n_likes \
+    --output_columns hour2,n_likes,_key
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "hour2", 
+  #           "Time"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         1436367600.0, 
+  #         3, 
+  #         "Good-bye Senna"
+  #       ], 
+  #       [
+  #         1436367600.0, 
+  #         3, 
+  #         "Good-bye Tritonn"
+  #       ], 
+  #       [
+  #         1436281200.0, 
+  #         10, 
+  #         "Groonga"
+  #       ], 
+  #       [
+  #         1436281200.0, 
+  #         5, 
+  #         "The first post!"
+  #       ], 
+  #       [
+  #         1436288400.0, 
+  #         15, 
+  #         "Mroonga"
+  #       ]
+  #     ]
+  #   ]
+  # ]
