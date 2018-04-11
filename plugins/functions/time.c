@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2016 Brazil
+  Copyright(C) 2016-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -319,6 +319,90 @@ func_time_classify_year(grn_ctx *ctx, int n_args, grn_obj **args,
                                 GRN_TIME_CLASSIFY_UNIT_YEAR);
 }
 
+static grn_obj *
+func_time_format(grn_ctx *ctx, int n_args, grn_obj **args,
+                 grn_user_data *user_data)
+{
+  grn_obj *time;
+  grn_obj *format;
+
+  if (n_args != 2) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "time_format(): "
+                     "wrong number of arguments (%d for 2)",
+                     n_args);
+    return NULL;
+  }
+
+  time = args[0];
+  format = args[1];
+
+  if (!(time->header.type == GRN_BULK &&
+        time->header.domain == GRN_DB_TIME)) {
+    grn_obj inspected;
+
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, time);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "time_format(): "
+                     "the first argument must be a time: "
+                     "<%.*s>",
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return NULL;
+  }
+
+  if (!grn_obj_is_text_family_bulk(ctx, format)) {
+    grn_obj inspected;
+
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, format);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "time_format(): "
+                     "the second argument must be a string: "
+                     "<%.*s>",
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return NULL;
+  }
+
+  {
+    int64_t time_raw;
+    struct tm tm;
+    grn_obj nul_terminated_format;
+    grn_obj *formatted_time;
+    char formatted_time_buffer[4096];
+    size_t formatted_time_size;
+
+    time_raw = GRN_TIME_VALUE(time);
+    if (!grn_time_to_tm(ctx, time_raw, &tm)) {
+      return NULL;
+    }
+
+    GRN_TEXT_INIT(&nul_terminated_format, 0);
+    GRN_TEXT_SET(ctx,
+                 &nul_terminated_format,
+                 GRN_TEXT_VALUE(format),
+                 GRN_TEXT_LEN(format));
+    GRN_TEXT_PUTC(ctx, &nul_terminated_format, '\0');
+
+    formatted_time_size = strftime(formatted_time_buffer,
+                                   sizeof(formatted_time_buffer),
+                                   GRN_TEXT_VALUE(&nul_terminated_format),
+                                   &tm);
+
+    formatted_time = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_TEXT, 0);
+    GRN_TEXT_SET(ctx,
+                 formatted_time,
+                 formatted_time_buffer,
+                 formatted_time_size);
+
+    return formatted_time;
+  }
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -364,6 +448,12 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
                   "time_classify_year", -1,
                   GRN_PROC_FUNCTION,
                   func_time_classify_year,
+                  NULL, NULL, 0, NULL);
+
+  grn_proc_create(ctx,
+                  "time_format", -1,
+                  GRN_PROC_FUNCTION,
+                  func_time_format,
                   NULL, NULL, 0, NULL);
 
   return rc;
