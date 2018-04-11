@@ -76,7 +76,8 @@ GRN_API const char *grn_char_type_to_string(grn_char_type type);
 GRN_API grn_obj *grn_string_open(grn_ctx *ctx,
                                  const char *string,
                                  unsigned int length_in_bytes,
-                                 grn_obj *normalizer, int flags);
+                                 grn_obj *lexicon_or_normalizer,
+                                 int flags);
 GRN_API grn_rc grn_string_get_original(grn_ctx *ctx, grn_obj *string,
                                        const char **original,
                                        unsigned int *length_in_bytes);
@@ -98,6 +99,7 @@ GRN_API grn_rc grn_string_set_types(grn_ctx *ctx,
                                     grn_obj *string,
                                     unsigned char *types);
 GRN_API grn_encoding grn_string_get_encoding(grn_ctx *ctx, grn_obj *string);
+GRN_API grn_obj *grn_string_get_table(grn_ctx *ctx, grn_obj *string);
 
 
 GRN_API int grn_charlen(grn_ctx *ctx, const char *str, const char *end);

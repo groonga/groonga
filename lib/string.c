@@ -180,8 +180,12 @@ grn_fake_string_open(grn_ctx *ctx, grn_string *string)
 }
 
 grn_obj *
-grn_string_open_(grn_ctx *ctx, const char *str, unsigned int str_len,
-                 grn_obj *normalizer, int flags, grn_encoding encoding)
+grn_string_open_(grn_ctx *ctx,
+                 const char *str,
+                 unsigned int str_len,
+                 grn_obj *lexicon_or_normalizer,
+                 int flags,
+                 grn_encoding encoding)
 {
   grn_string *string;
   grn_obj *obj;
@@ -191,10 +195,10 @@ grn_string_open_(grn_ctx *ctx, const char *str, unsigned int str_len,
     return NULL;
   }
 
-  is_normalizer_auto = (normalizer == GRN_NORMALIZER_AUTO);
+  is_normalizer_auto = (lexicon_or_normalizer == GRN_NORMALIZER_AUTO);
   if (is_normalizer_auto) {
-    normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-    if (!normalizer) {
+    lexicon_or_normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+    if (!lexicon_or_normalizer) {
       ERR(GRN_INVALID_ARGUMENT,
           "[string][open] NormalizerAuto normalizer isn't available");
       return NULL;
@@ -204,7 +208,7 @@ grn_string_open_(grn_ctx *ctx, const char *str, unsigned int str_len,
   string = GRN_MALLOCN(grn_string, 1);
   if (!string) {
     if (is_normalizer_auto) {
-      grn_obj_unlink(ctx, normalizer);
+      grn_obj_unlink(ctx, lexicon_or_normalizer);
     }
     GRN_LOG(ctx, GRN_LOG_ALERT,
             "[string][open] failed to allocate memory");
@@ -222,29 +226,50 @@ grn_string_open_(grn_ctx *ctx, const char *str, unsigned int str_len,
   string->ctypes = NULL;
   string->encoding = encoding;
   string->flags = flags;
+  string->lexicon = NULL;
 
-  if (!normalizer) {
+  if (!lexicon_or_normalizer) {
     return (grn_obj *)grn_fake_string_open(ctx, string);
   }
 
-  grn_normalizer_normalize(ctx, normalizer, (grn_obj *)string);
+  {
+    grn_obj *normalizer;
+    if (grn_obj_is_table(ctx, lexicon_or_normalizer)) {
+      string->lexicon = lexicon_or_normalizer;
+      normalizer = grn_obj_get_info(ctx,
+                                    string->lexicon,
+                                    GRN_INFO_NORMALIZER,
+                                    NULL);
+    } else {
+      normalizer = lexicon_or_normalizer;
+    }
+    grn_normalizer_normalize(ctx, normalizer, (grn_obj *)string);
+  }
   if (ctx->rc) {
     grn_obj_close(ctx, obj);
     obj = NULL;
   }
 
   if (is_normalizer_auto) {
-    grn_obj_unlink(ctx, normalizer);
+    grn_obj_unlink(ctx, lexicon_or_normalizer);
   }
 
   return obj;
 }
 
 grn_obj *
-grn_string_open(grn_ctx *ctx, const char *str, unsigned int str_len,
-                grn_obj *normalizer, int flags)
+grn_string_open(grn_ctx *ctx,
+                const char *str,
+                unsigned int str_len,
+                grn_obj *lexicon_or_normalizer,
+                int flags)
 {
-  return grn_string_open_(ctx, str, str_len, normalizer, flags, ctx->encoding);
+  return grn_string_open_(ctx,
+                          str,
+                          str_len,
+                          lexicon_or_normalizer,
+                          flags,
+                          ctx->encoding);
 }
 
 grn_rc
@@ -394,6 +419,18 @@ grn_string_get_encoding(grn_ctx *ctx, grn_obj *string)
     encoding = string_->encoding;
   }
   GRN_API_RETURN(encoding);
+}
+
+grn_obj *
+grn_string_get_table(grn_ctx *ctx, grn_obj *string)
+{
+  grn_obj *table = NULL;
+  grn_string *string_ = (grn_string *)string;
+  GRN_API_ENTER;
+  if (string_) {
+    table = string_->lexicon;
+  }
+  GRN_API_RETURN(table);
 }
 
 grn_rc
