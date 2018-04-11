@@ -15,4 +15,4 @@ load --table Timestamps
 select Timestamps \
   --sortby _id \
   --limit -1 \
-  --output_columns '_key, time_format(_key, "%Y-%m-%dT%H:%M:%S%z")'
+  --output_columns '_key, time_format(_key, "%Y-%m-%dT%H:%M:%S")'
