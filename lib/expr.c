@@ -996,7 +996,8 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
         if (!(grn_obj_is_function_proc(ctx, proc) ||
               grn_obj_is_scorer_proc(ctx, proc) ||
               grn_obj_is_window_function_proc(ctx, proc) ||
-              grn_obj_is_tokenizer_proc(ctx, proc))) {
+              grn_obj_is_tokenizer_proc(ctx, proc) ||
+              grn_obj_is_normalizer_proc(ctx, proc))) {
           grn_obj buffer;
 
           GRN_TEXT_INIT(&buffer, 0);

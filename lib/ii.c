@@ -8643,7 +8643,6 @@ grn_ii_select_sequential_search_should_use(grn_ctx *ctx,
 static void
 grn_ii_select_sequential_search_body(grn_ctx *ctx,
                                      grn_ii *ii,
-                                     grn_obj *normalizer,
                                      grn_encoding encoding,
                                      OnigRegex regex,
                                      grn_hash *result,
@@ -8700,7 +8699,9 @@ grn_ii_select_sequential_search_body(grn_ctx *ctx,
         value = grn_string_open_(ctx,
                                  GRN_TEXT_VALUE(&buffer),
                                  GRN_TEXT_LEN(&buffer),
-                                 normalizer, 0, encoding);
+                                 ii->lexicon,
+                                 0,
+                                 encoding);
         grn_string_get_normalized(ctx, value,
                                   &normalized_value, &normalized_value_length,
                                   NULL);
@@ -8765,16 +8766,14 @@ grn_ii_select_sequential_search(grn_ctx *ctx,
 
   {
     grn_encoding encoding;
-    grn_obj *normalizer;
     int nflags = 0;
     grn_obj *query;
     const char *normalized_query;
     unsigned int normalized_query_length;
 
-    grn_table_get_info(ctx, ii->lexicon,
-                       NULL, &encoding, NULL, &normalizer, NULL);
+    grn_table_get_info(ctx, ii->lexicon, NULL, &encoding, NULL, NULL, NULL);
     query = grn_string_open_(ctx, raw_query, raw_query_len,
-                             normalizer, nflags, encoding);
+                             ii->lexicon, nflags, encoding);
     grn_string_get_normalized(ctx, query,
                               &normalized_query, &normalized_query_length,
                               NULL);
@@ -8790,7 +8789,7 @@ grn_ii_select_sequential_search(grn_ctx *ctx,
                              ONIG_SYNTAX_ASIS,
                              &error_info);
       if (onig_result == ONIG_NORMAL) {
-        grn_ii_select_sequential_search_body(ctx, ii, normalizer, encoding,
+        grn_ii_select_sequential_search_body(ctx, ii, encoding,
                                              regex, result, op, wvm, optarg);
         onig_free(regex);
       } else {

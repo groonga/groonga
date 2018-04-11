@@ -63,11 +63,10 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   grn_token_cursor *token_cursor;
   grn_encoding encoding;
   grn_obj *tokenizer;
-  grn_obj *normalizer;
   grn_obj *token_filters;
   grn_table_flags table_flags;
   if (grn_table_get_info(ctx, table, &table_flags, &encoding, &tokenizer,
-                         &normalizer, &token_filters)) {
+                         NULL, &token_filters)) {
     return NULL;
   }
   if (!(token_cursor = GRN_MALLOC(sizeof(grn_token_cursor)))) { return NULL; }
@@ -109,7 +108,7 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   } else {
     int nflags = 0;
     token_cursor->nstr = grn_string_open_(ctx, str, str_len,
-                                          normalizer,
+                                          table,
                                           nflags,
                                           token_cursor->encoding);
     if (token_cursor->nstr) {

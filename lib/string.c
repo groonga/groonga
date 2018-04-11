@@ -233,15 +233,20 @@ grn_string_open_(grn_ctx *ctx,
   }
 
   {
-    grn_obj *normalizer;
-    if (grn_obj_is_table(ctx, lexicon_or_normalizer)) {
-      string->lexicon = lexicon_or_normalizer;
-      normalizer = grn_obj_get_info(ctx,
-                                    string->lexicon,
-                                    GRN_INFO_NORMALIZER,
-                                    NULL);
-    } else {
-      normalizer = lexicon_or_normalizer;
+    grn_obj *normalizer = NULL;
+    if (lexicon_or_normalizer) {
+      if (grn_obj_is_table(ctx, lexicon_or_normalizer)) {
+        string->lexicon = lexicon_or_normalizer;
+        normalizer = grn_obj_get_info(ctx,
+                                      string->lexicon,
+                                      GRN_INFO_NORMALIZER,
+                                      NULL);
+      } else {
+        normalizer = lexicon_or_normalizer;
+      }
+    }
+    if (!normalizer) {
+      return (grn_obj *)grn_fake_string_open(ctx, string);
     }
     grn_normalizer_normalize(ctx, normalizer, (grn_obj *)string);
   }

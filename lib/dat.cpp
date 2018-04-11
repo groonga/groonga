@@ -127,7 +127,6 @@ grn_dat_init(grn_ctx *, grn_dat *dat)
   dat->encoding = GRN_ENC_DEFAULT;
   dat->trie = NULL;
   dat->old_trie = NULL;
-  dat->normalizer = NULL;
   GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
   CRITICAL_SECTION_INIT(dat->lock);
   dat->is_dirty = GRN_FALSE;
@@ -150,6 +149,7 @@ grn_dat_fin(grn_ctx *ctx, grn_dat *dat)
     dat->io = NULL;
   }
   grn_table_module_fin(ctx, &(dat->tokenizer));
+  grn_table_module_fin(ctx, &(dat->normalizer));
   GRN_OBJ_FIN(ctx, &(dat->token_filters));
 }
 
@@ -348,14 +348,14 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
   dat->header->file_id = 0;
   if (dat->header->flags & GRN_OBJ_KEY_NORMALIZE) {
     dat->header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-    dat->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-    dat->header->normalizer = grn_obj_id(ctx, dat->normalizer);
+    grn_obj *normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+    dat->header->normalizer = grn_obj_id(ctx, normalizer);
   } else {
-    dat->normalizer = NULL;
     dat->header->normalizer = GRN_ID_NIL;
   }
   dat->encoding = encoding;
   grn_table_module_init(ctx, &(dat->tokenizer), GRN_ID_NIL);
+  grn_table_module_init(ctx, &(dat->normalizer), dat->header->normalizer);
   GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
 
   dat->obj.header.flags = dat->header->flags;
@@ -394,11 +394,10 @@ grn_dat_open(grn_ctx *ctx, const char *path)
   grn_table_module_init(ctx, &(dat->tokenizer), dat->header->tokenizer);
   if (dat->header->flags & GRN_OBJ_KEY_NORMALIZE) {
     dat->header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-    dat->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-    dat->header->normalizer = grn_obj_id(ctx, dat->normalizer);
-  } else {
-    dat->normalizer = grn_ctx_at(ctx, dat->header->normalizer);
+    grn_obj *normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+    dat->header->normalizer = grn_obj_id(ctx, normalizer);
   }
+  grn_table_module_init(ctx, &(dat->normalizer), dat->header->normalizer);
   GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
   dat->obj.header.flags = dat->header->flags;
   return dat;
@@ -750,10 +749,10 @@ grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
 
   unsigned int num_scan_hits = 0;
   try {
-    if (dat->normalizer) {
+    if (dat->normalizer.proc) {
       int flags = GRN_STRING_WITH_CHECKS;
       grn_obj * const normalized_string = grn_string_open(ctx, str, str_size,
-                                                          dat->normalizer,
+                                                          dat->normalizer.proc,
                                                           flags);
       if (!normalized_string) {
         if (str_rest) {

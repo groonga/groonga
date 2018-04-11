@@ -1,3 +1,13 @@
 normalize Nonexistent "aBcDe"
-[[[-22,0.0,0.0],"[normalize] nonexistent normalizer: <Nonexistent>"]]
-#|e| [normalize] nonexistent normalizer: <Nonexistent>
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[normalize] failed to set normalizer: <Nonexistent>: [info][set][normalizer][(anonymous)] unknown normalizer: <Nonexistent>"
+  ]
+]
+#|e| [info][set][normalizer][(anonymous)] unknown normalizer: <Nonexistent>
+#|e| [normalize] failed to set normalizer: <Nonexistent>: [info][set][normalizer][(anonymous)] unknown normalizer: <Nonexistent>

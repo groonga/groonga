@@ -501,11 +501,11 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
   header->n_garbages = 0;
   header->tokenizer = GRN_ID_NIL;
   if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
+    grn_obj *normalizer;
     header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-    pat->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-    header->normalizer = grn_obj_id(ctx, pat->normalizer);
+    normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+    header->normalizer = grn_obj_id(ctx, normalizer);
   } else {
-    pat->normalizer = NULL;
     header->normalizer = GRN_ID_NIL;
   }
   header->truncated = GRN_FALSE;
@@ -515,6 +515,7 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
   pat->key_size = key_size;
   pat->value_size = value_size;
   grn_table_module_init(ctx, &(pat->tokenizer), GRN_ID_NIL);
+  grn_table_module_init(ctx, &(pat->normalizer), header->normalizer);
   pat->encoding = encoding;
   pat->obj.header.flags = header->flags;
   if (!(node0 = pat_get(ctx, pat, 0))) {
@@ -618,12 +619,12 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   pat->encoding = header->encoding;
   grn_table_module_init(ctx, &(pat->tokenizer), header->tokenizer);
   if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
+    grn_obj *normalizer;
     header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-    pat->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-    header->normalizer = grn_obj_id(ctx, pat->normalizer);
-  } else {
-    pat->normalizer = grn_ctx_at(ctx, header->normalizer);
+    normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+    header->normalizer = grn_obj_id(ctx, normalizer);
   }
+  grn_table_module_init(ctx, &(pat->normalizer), header->normalizer);
   GRN_PTR_INIT(&(pat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
   pat->obj.header.flags = header->flags;
   PAT_AT(pat, 0, node0);
@@ -2196,13 +2197,12 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
   if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
     return 0;
   }
-  if (pat->normalizer) {
+  if (pat->normalizer.proc) {
     int flags =
       GRN_STRING_REMOVE_BLANK |
       GRN_STRING_WITH_TYPES |
       GRN_STRING_WITH_CHECKS;
-    grn_obj *nstr = grn_string_open(ctx, str, str_len,
-                                    pat->normalizer, flags);
+    grn_obj *nstr = grn_string_open(ctx, str, str_len, (grn_obj *)pat, flags);
     if (nstr) {
       const short *cp = grn_string_get_checks(ctx, nstr);
       const unsigned char *tp = grn_string_get_types(ctx, nstr);

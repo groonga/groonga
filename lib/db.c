@@ -61,10 +61,9 @@ static const uint32_t GRN_TABLE_PAT_KEY_CACHE_SIZE = 1 << 15;
    table->header.domain == GRN_ID_NIL)
 
 #define WITH_NORMALIZE(table,key,key_size,block) do {\
-  if ((table)->normalizer && key && key_size > 0) {\
+  if ((table)->normalizer.proc && key && key_size > 0) {\
     grn_obj *nstr;\
-    if ((nstr = grn_string_open(ctx, key, key_size,\
-                                (table)->normalizer, 0))) {\
+    if ((nstr = grn_string_open(ctx, key, key_size, (table), 0))) {\
       const char *key;\
       unsigned int key_size;\
       grn_string_get_normalized(ctx, nstr, &key, &key_size, NULL);\
@@ -2420,7 +2419,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
       if (flags) { *flags = ((grn_pat *)table)->header->flags; }
       if (encoding) { *encoding = ((grn_pat *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_pat *)table)->tokenizer.proc; }
-      if (normalizer) { *normalizer = ((grn_pat *)table)->normalizer; }
+      if (normalizer) { *normalizer = ((grn_pat *)table)->normalizer.proc; }
       if (token_filters) { *token_filters = &(((grn_pat *)table)->token_filters); }
       rc = GRN_SUCCESS;
       break;
@@ -2428,7 +2427,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
       if (flags) { *flags = ((grn_dat *)table)->header->flags; }
       if (encoding) { *encoding = ((grn_dat *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_dat *)table)->tokenizer.proc; }
-      if (normalizer) { *normalizer = ((grn_dat *)table)->normalizer; }
+      if (normalizer) { *normalizer = ((grn_dat *)table)->normalizer.proc; }
       if (token_filters) { *token_filters = &(((grn_dat *)table)->token_filters); }
       rc = GRN_SUCCESS;
       break;
@@ -2436,7 +2435,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
       if (flags) { *flags = ((grn_hash *)table)->header.common->flags; }
       if (encoding) { *encoding = ((grn_hash *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_hash *)table)->tokenizer.proc; }
-      if (normalizer) { *normalizer = ((grn_hash *)table)->normalizer; }
+      if (normalizer) { *normalizer = ((grn_hash *)table)->normalizer.proc; }
       if (token_filters) { *token_filters = &(((grn_hash *)table)->token_filters); }
       rc = GRN_SUCCESS;
       break;
@@ -8332,13 +8331,13 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
     case GRN_INFO_NORMALIZER :
       switch (DB_OBJ(obj)->header.type) {
       case GRN_TABLE_HASH_KEY :
-        valuebuf = ((grn_hash *)obj)->normalizer;
+        valuebuf = ((grn_hash *)obj)->normalizer.proc;
         break;
       case GRN_TABLE_PAT_KEY :
-        valuebuf = ((grn_pat *)obj)->normalizer;
+        valuebuf = ((grn_pat *)obj)->normalizer.proc;
         break;
       case GRN_TABLE_DAT_KEY :
-        valuebuf = ((grn_dat *)obj)->normalizer;
+        valuebuf = ((grn_dat *)obj)->normalizer.proc;
         break;
       }
       break;
@@ -9001,21 +9000,24 @@ grn_obj_set_info_require_key_table(grn_ctx *ctx,
 }
 
 static grn_rc
-grn_obj_set_info_default_tokenizer(grn_ctx *ctx,
-                                   grn_obj *table,
-                                   grn_obj *default_tokenizer)
+grn_obj_set_info_table_module(grn_ctx *ctx,
+                              grn_obj *table,
+                              grn_info_type type,
+                              grn_obj *module,
+                              const char *context_tag,
+                              const char *module_name)
 {
-  const char *tag = "[info][set][default-tokenizer]";
   char name[GRN_TABLE_MAX_KEY_SIZE];
   unsigned int name_size;
-  grn_obj *tokenizer = NULL;
-  grn_id tokenizer_id = GRN_ID_NIL;
+  grn_obj *proc = NULL;
+  grn_id proc_id = GRN_ID_NIL;
   grn_obj *expression = NULL;
   grn_obj options;
 
   GRN_TEXT_INIT(&options, GRN_OBJ_VECTOR);
 
-  if (grn_obj_set_info_require_key_table(ctx, table, tag) != GRN_SUCCESS) {
+  if (grn_obj_set_info_require_key_table(ctx, table, context_tag) !=
+      GRN_SUCCESS) {
     goto exit;
   }
 
@@ -9024,108 +9026,165 @@ grn_obj_set_info_default_tokenizer(grn_ctx *ctx,
     grn_strcpy(name, sizeof(name), "(anonymous)");
     name_size = strlen(name);
   }
-  if (grn_obj_is_text_family_bulk(ctx, default_tokenizer)) {
-    if (grn_obj_set_info_is_funcall_call_bulk(ctx, default_tokenizer)) {
+  if (grn_obj_is_text_family_bulk(ctx, module)) {
+    if (GRN_TEXT_LEN(module) == 0) {
+      proc = NULL;
+    } else if (grn_obj_set_info_is_funcall_call_bulk(ctx, module)) {
       grn_obj *unused;
       GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expression, unused);
       grn_expr_parse(ctx,
                      expression,
-                     GRN_TEXT_VALUE(default_tokenizer),
-                     GRN_TEXT_LEN(default_tokenizer),
+                     GRN_TEXT_VALUE(module),
+                     GRN_TEXT_LEN(module),
                      NULL,
                      GRN_OP_MATCH,
                      GRN_OP_AND,
                      GRN_EXPR_SYNTAX_SCRIPT);
       if (ctx->rc != GRN_SUCCESS) {
         ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s] failed to parse tokenizer options: <%.*s>: %s",
-            tag,
+            "%s[%.*s] failed to parse %s options: <%.*s>: %s",
+            context_tag,
             (int)name_size,
             name,
-            (int)GRN_TEXT_LEN(default_tokenizer),
-            GRN_TEXT_VALUE(default_tokenizer),
+            module_name,
+            (int)GRN_TEXT_LEN(module),
+            GRN_TEXT_VALUE(module),
             ctx->errbuf);
         goto exit;
       }
       if (!grn_expr_is_simple_function_call(ctx, expression)) {
         ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s] must be Tokenizer(option1, option2, ...) format: <%.*s>",
-            tag,
+            "%s[%.*s] must be %s(option1, option2, ...) format: <%.*s>",
+            context_tag,
             (int)name_size,
             name,
-            (int)GRN_TEXT_LEN(default_tokenizer),
-            GRN_TEXT_VALUE(default_tokenizer));
+            module_name,
+            (int)GRN_TEXT_LEN(module),
+            GRN_TEXT_VALUE(module));
         goto exit;
       }
-      tokenizer = grn_expr_simple_function_call_get_function(ctx, expression);
+      proc = grn_expr_simple_function_call_get_function(ctx, expression);
       grn_expr_simple_function_call_get_arguments(ctx, expression, &options);
     } else {
-      tokenizer = grn_ctx_get(ctx,
-                              GRN_TEXT_VALUE(default_tokenizer),
-                              GRN_TEXT_LEN(default_tokenizer));
-      if (!tokenizer) {
+      proc = grn_ctx_get(ctx,
+                         GRN_TEXT_VALUE(module),
+                         GRN_TEXT_LEN(module));
+      if (!proc) {
         ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s] unknown tokenizer: <%.*s>",
-            tag,
+            "%s[%.*s] unknown %s: <%.*s>",
+            context_tag,
             (int)name_size,
             name,
-            (int)GRN_TEXT_LEN(default_tokenizer),
-            GRN_TEXT_VALUE(default_tokenizer));
+            module_name,
+            (int)GRN_TEXT_LEN(module),
+            GRN_TEXT_VALUE(module));
         goto exit;
       }
     }
   } else {
-    tokenizer = default_tokenizer;
+    proc = module;
   }
 
-  if (tokenizer && !grn_obj_is_tokenizer_proc(ctx, tokenizer)) {
-    char tokenizer_name[GRN_TABLE_MAX_KEY_SIZE];
-    unsigned int tokenizer_name_size;
+  if (proc) {
+    grn_bool is_valid_proc = GRN_FALSE;
 
-    tokenizer_name_size = grn_obj_name(ctx,
-                                       tokenizer,
-                                       tokenizer_name,
-                                       sizeof(tokenizer_name));
-    ERR(GRN_INVALID_ARGUMENT,
-        "%s[%.*s] invalid tokenizer: <%.*s>",
-        tag,
-        (int)name_size,
-        name,
-        (int)tokenizer_name_size,
-        tokenizer_name);
-    goto exit;
+    switch (type) {
+    case GRN_INFO_DEFAULT_TOKENIZER :
+      is_valid_proc = grn_obj_is_tokenizer_proc(ctx, proc);
+      break;
+    case GRN_INFO_NORMALIZER :
+      is_valid_proc = grn_obj_is_normalizer_proc(ctx, proc);
+      break;
+    default :
+      break;
+    }
+
+    if (!is_valid_proc) {
+      char proc_name[GRN_TABLE_MAX_KEY_SIZE];
+      unsigned int proc_name_size;
+
+      proc_name_size = grn_obj_name(ctx, proc, proc_name, sizeof(proc_name));
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[%.*s] invalid %s: <%.*s>",
+          context_tag,
+          (int)name_size,
+          name,
+          module_name,
+          (int)proc_name_size,
+          proc_name);
+      goto exit;
+    }
   }
 
-  if (tokenizer) {
-    tokenizer_id = grn_obj_id(ctx, tokenizer);
+  if (proc) {
+    proc_id = grn_obj_id(ctx, proc);
   }
   switch (DB_OBJ(table)->header.type) {
   case GRN_TABLE_HASH_KEY :
-    grn_table_module_set_proc(ctx,
-                              &(((grn_hash *)table)->tokenizer),
-                              tokenizer);
-    ((grn_hash *)table)->header.common->tokenizer = tokenizer_id;
+    switch (type) {
+    case GRN_INFO_DEFAULT_TOKENIZER :
+      grn_table_module_set_proc(ctx,
+                                &(((grn_hash *)table)->tokenizer),
+                                proc);
+      ((grn_hash *)table)->header.common->tokenizer = proc_id;
+      grn_table_set_default_tokenizer_options(ctx, table, &options);
+      break;
+    case GRN_INFO_NORMALIZER :
+      grn_table_module_set_proc(ctx,
+                                &(((grn_hash *)table)->normalizer),
+                                proc);
+      ((grn_hash *)table)->header.common->normalizer = proc_id;
+      grn_table_set_normalizer_options(ctx, table, &options);
+      break;
+    default :
+      break;
+    }
     break;
   case GRN_TABLE_PAT_KEY :
-    grn_table_module_set_proc(ctx,
-                              &(((grn_pat *)table)->tokenizer),
-                              tokenizer);
-    ((grn_pat *)table)->header->tokenizer = tokenizer_id;
-    grn_pat_cache_enable(ctx,
-                         ((grn_pat *)table),
-                         GRN_TABLE_PAT_KEY_CACHE_SIZE);
+    switch (type) {
+    case GRN_INFO_DEFAULT_TOKENIZER :
+      grn_table_module_set_proc(ctx,
+                                &(((grn_pat *)table)->tokenizer),
+                                proc);
+      ((grn_pat *)table)->header->tokenizer = proc_id;
+      grn_pat_cache_enable(ctx,
+                           ((grn_pat *)table),
+                           GRN_TABLE_PAT_KEY_CACHE_SIZE);
+      grn_table_set_default_tokenizer_options(ctx, table, &options);
+      break;
+    case GRN_INFO_NORMALIZER :
+      grn_table_module_set_proc(ctx,
+                                &(((grn_pat *)table)->normalizer),
+                                proc);
+      ((grn_pat *)table)->header->normalizer = proc_id;
+      grn_table_set_normalizer_options(ctx, table, &options);
+      break;
+    default :
+      break;
+    }
     break;
   case GRN_TABLE_DAT_KEY :
-    grn_table_module_set_proc(ctx,
-                              &(((grn_dat *)table)->tokenizer),
-                              tokenizer);
-    ((grn_dat *)table)->header->tokenizer = tokenizer_id;
-    break;
+    switch (type) {
+    case GRN_INFO_DEFAULT_TOKENIZER :
+      grn_table_module_set_proc(ctx,
+                                &(((grn_dat *)table)->tokenizer),
+                                proc);
+      ((grn_dat *)table)->header->tokenizer = proc_id;
+      grn_table_set_default_tokenizer_options(ctx, table, &options);
+      break;
+    case GRN_INFO_NORMALIZER :
+      grn_table_module_set_proc(ctx,
+                                &(((grn_dat *)table)->normalizer),
+                                proc);
+      ((grn_dat *)table)->header->normalizer = proc_id;
+      grn_table_set_normalizer_options(ctx, table, &options);
+      break;
+    default :
+      break;
+    }
   default :
     break;
   }
-
-  grn_table_set_default_tokenizer_options(ctx, table, &options);
 
 exit :
   GRN_OBJ_FIN(ctx, &options);
@@ -9220,28 +9279,20 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
     rc = grn_obj_set_info_source(ctx, obj, value);
     break;
   case GRN_INFO_DEFAULT_TOKENIZER :
-    rc = grn_obj_set_info_default_tokenizer(ctx, obj, value);
+    rc = grn_obj_set_info_table_module(ctx,
+                                       obj,
+                                       type,
+                                       value,
+                                       "[info][set][default-tokenizer]",
+                                       "tokenizer");
     break;
   case GRN_INFO_NORMALIZER :
-    if (!value || DB_OBJ(value)->header.type == GRN_PROC) {
-      switch (DB_OBJ(obj)->header.type) {
-      case GRN_TABLE_HASH_KEY :
-        ((grn_hash *)obj)->normalizer = value;
-        ((grn_hash *)obj)->header.common->normalizer = grn_obj_id(ctx, value);
-        rc = GRN_SUCCESS;
-        break;
-      case GRN_TABLE_PAT_KEY :
-        ((grn_pat *)obj)->normalizer = value;
-        ((grn_pat *)obj)->header->normalizer = grn_obj_id(ctx, value);
-        rc = GRN_SUCCESS;
-        break;
-      case GRN_TABLE_DAT_KEY :
-        ((grn_dat *)obj)->normalizer = value;
-        ((grn_dat *)obj)->header->normalizer = grn_obj_id(ctx, value);
-        rc = GRN_SUCCESS;
-        break;
-      }
-    }
+    rc = grn_obj_set_info_table_module(ctx,
+                                       obj,
+                                       type,
+                                       value,
+                                       "[info][set][normalizer]",
+                                       "normalizer");
     break;
   case GRN_INFO_TOKEN_FILTERS :
     rc = grn_obj_set_info_token_filters(ctx, obj, value);
