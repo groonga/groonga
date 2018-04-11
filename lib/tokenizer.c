@@ -134,11 +134,9 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
 
     {
       grn_obj * const table = args[0];
-      grn_table_flags table_flags;
       grn_encoding table_encoding;
       unsigned int query_length = GRN_TEXT_LEN(query_str);
       char *query_buf = (char *)GRN_PLUGIN_MALLOC(ctx, query_length + 1);
-      grn_obj *normalizer = NULL;
 
       if (query_buf == NULL) {
         GRN_PLUGIN_FREE(ctx, query);
@@ -146,17 +144,14 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
                          "[tokenizer] failed to duplicate query");
         return NULL;
       }
-      grn_table_get_info(ctx, table, &table_flags, &table_encoding, NULL,
-                         &normalizer, NULL);
+      grn_table_get_info(ctx, table, NULL, &table_encoding, NULL,
+                         NULL, NULL);
       {
         grn_obj *normalized_query;
-        if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
-          normalizer = GRN_NORMALIZER_AUTO;
-        }
         normalized_query = grn_string_open_(ctx,
                                             GRN_TEXT_VALUE(query_str),
                                             GRN_TEXT_LEN(query_str),
-                                            normalizer,
+                                            table,
                                             normalize_flags,
                                             table_encoding);
         if (!normalized_query) {
