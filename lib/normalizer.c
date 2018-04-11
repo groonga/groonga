@@ -667,10 +667,13 @@ utf8_normalize_unify_hiragana_case(const unsigned char *utf8_char,
   if (utf8_char[0] == 0xe3) {
     if ((utf8_char[1] == 0x81 && (0x81 <= utf8_char[2] &&
                                   utf8_char[2] <= 0x89)) ||
+        (utf8_char[1] == 0x81 && utf8_char[2] == 0xa3) ||
         (utf8_char[1] == 0x82 && (0x83 <= utf8_char[2] &&
                                   utf8_char[2] <= 0x87))) {
       /* U+3041 HIRAGANA LETTER SMALL A ..
        * U+3049 HIRAGANA LETTER SMALL O
+       *
+       * U+3063 HIRAGANA LETTER SMALL TU
        *
        * U+3083 HIRAGANA LETTER SMALL YA ..
        * U+3087 HIRAGANA LETTER SMALL YO */
@@ -711,10 +714,13 @@ utf8_normalize_unify_katakana_case(const unsigned char *utf8_char,
   if (utf8_char[0] == 0xe3) {
     if ((utf8_char[1] == 0x82 && (0xa1 <= utf8_char[2] &&
                                   utf8_char[2] <= 0xa9)) ||
+        (utf8_char[1] == 0x83 && utf8_char[2] == 0x83) ||
         (utf8_char[1] == 0x83 && (0xa3 <= utf8_char[2] &&
                                   utf8_char[2] <= 0xa7))) {
       /* U+30A1 KATAKANA LETTER SMALL A ..
        * U+30A9 KATAKANA LETTER SMALL O
+       *
+       * U+30C3 KATAKANA LETTER SMALL TU
        *
        * U+30E3 KATAKANA LETTER SMALL YA ..
        * U+30E7 KATAKANA LETTER SMALL YO */
