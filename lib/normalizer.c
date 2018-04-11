@@ -639,7 +639,7 @@ utf8_normalize_options_init(grn_utf8_normalize_options *options,
 
 grn_inline static const unsigned char *
 utf8_normalize_unify_kana(const unsigned char *utf8_char,
-                          unsigned char *unified_kana)
+                          unsigned char *unified)
 {
   if (utf8_char[0] == 0xe3 &&
       /* U+30A1 KATAKANA LETTER SMALL A ..
@@ -651,10 +651,10 @@ utf8_normalize_unify_kana(const unsigned char *utf8_char,
        (utf8_char[1] == 0x83 && utf8_char[2] <= 0xb6) ||
        (utf8_char[1] == 0x83 && (0xbd <= utf8_char[2] &&
                                  utf8_char[2] <= 0xbe)))) {
-    unified_kana[0] = utf8_char[0];
-    unified_kana[1] = utf8_char[1] - 1;
-    unified_kana[2] = utf8_char[2] ^ 0x20;
-    return unified_kana;
+    unified[0] = utf8_char[0];
+    unified[1] = utf8_char[1] - 1;
+    unified[2] = utf8_char[2] ^ 0x20;
+    return unified;
   }
 
   return utf8_char;
@@ -662,7 +662,7 @@ utf8_normalize_unify_kana(const unsigned char *utf8_char,
 
 grn_inline static const unsigned char *
 utf8_normalize_unify_hiragana_case(const unsigned char *utf8_char,
-                                   unsigned char *unified_kana_case)
+                                   unsigned char *unified)
 {
   if (utf8_char[0] == 0xe3) {
     if ((utf8_char[1] == 0x81 && (0x81 <= utf8_char[2] &&
@@ -678,29 +678,29 @@ utf8_normalize_unify_hiragana_case(const unsigned char *utf8_char,
        * U+3083 HIRAGANA LETTER SMALL YA ..
        * U+3087 HIRAGANA LETTER SMALL YO */
       if (utf8_char[2] & 0x1) {
-        unified_kana_case[0] = utf8_char[0];
-        unified_kana_case[1] = utf8_char[1];
-        unified_kana_case[2] = utf8_char[2] + 1;
-        return unified_kana_case;
+        unified[0] = utf8_char[0];
+        unified[1] = utf8_char[1];
+        unified[2] = utf8_char[2] + 1;
+        return unified;
       }
     } else if (utf8_char[1] == 0x82 && utf8_char[2] == 0x8e) {
       /* U+308E HIRAGANA LETTER SMALL WA */
-      unified_kana_case[0] = utf8_char[0];
-      unified_kana_case[1] = utf8_char[1];
-      unified_kana_case[2] = utf8_char[2] + 1;
-      return unified_kana_case;
+      unified[0] = utf8_char[0];
+      unified[1] = utf8_char[1];
+      unified[2] = utf8_char[2] + 1;
+      return unified;
     } else if (utf8_char[1] == 0x82 && utf8_char[2] == 0x95) {
       /* U+3095 HIRAGANA LETTER SMALL KA */
-      unified_kana_case[0] = utf8_char[0];
-      unified_kana_case[1] = 0x81;
-      unified_kana_case[2] = 0x8b;
-      return unified_kana_case;
+      unified[0] = utf8_char[0];
+      unified[1] = 0x81;
+      unified[2] = 0x8b;
+      return unified;
     } else if (utf8_char[1] == 0x82 && utf8_char[2] == 0x96) {
       /* U+3096 HIRAGANA LETTER SMALL KE */
-      unified_kana_case[0] = utf8_char[0];
-      unified_kana_case[1] = 0x81;
-      unified_kana_case[2] = 0x91;
-      return unified_kana_case;
+      unified[0] = utf8_char[0];
+      unified[1] = 0x81;
+      unified[2] = 0x91;
+      return unified;
     }
   }
 
@@ -709,7 +709,7 @@ utf8_normalize_unify_hiragana_case(const unsigned char *utf8_char,
 
 grn_inline static const unsigned char *
 utf8_normalize_unify_katakana_case(const unsigned char *utf8_char,
-                                   unsigned char *unified_kana_case)
+                                   unsigned char *unified)
 {
   if (utf8_char[0] == 0xe3) {
     if ((utf8_char[1] == 0x82 && (0xa1 <= utf8_char[2] &&
@@ -725,29 +725,29 @@ utf8_normalize_unify_katakana_case(const unsigned char *utf8_char,
        * U+30E3 KATAKANA LETTER SMALL YA ..
        * U+30E7 KATAKANA LETTER SMALL YO */
       if (utf8_char[2] & 0x1) {
-        unified_kana_case[0] = utf8_char[0];
-        unified_kana_case[1] = utf8_char[1];
-        unified_kana_case[2] = utf8_char[2] + 1;
-        return unified_kana_case;
+        unified[0] = utf8_char[0];
+        unified[1] = utf8_char[1];
+        unified[2] = utf8_char[2] + 1;
+        return unified;
       }
     } else if (utf8_char[1] == 0x83 && utf8_char[2] == 0xae) {
       /* U+30EE KATAKANA LETTER SMALL WA */
-      unified_kana_case[0] = utf8_char[0];
-      unified_kana_case[1] = utf8_char[1];
-      unified_kana_case[2] = utf8_char[2] + 1;
-      return unified_kana_case;
+      unified[0] = utf8_char[0];
+      unified[1] = utf8_char[1];
+      unified[2] = utf8_char[2] + 1;
+      return unified;
     } else if (utf8_char[1] == 0x83 && utf8_char[2] == 0xb5) {
       /* U+3095 HIRAGANA LETTER SMALL KA */
-      unified_kana_case[0] = utf8_char[0];
-      unified_kana_case[1] = 0x82;
-      unified_kana_case[2] = 0xab;
-      return unified_kana_case;
+      unified[0] = utf8_char[0];
+      unified[1] = 0x82;
+      unified[2] = 0xab;
+      return unified;
     } else if (utf8_char[1] == 0x83 && utf8_char[2] == 0xb6) {
       /* U+3096 HIRAGANA LETTER SMALL KE */
-      unified_kana_case[0] = utf8_char[0];
-      unified_kana_case[1] = 0x82;
-      unified_kana_case[2] = 0xb1;
-      return unified_kana_case;
+      unified[0] = utf8_char[0];
+      unified[1] = 0x82;
+      unified[2] = 0xb1;
+      return unified;
     }
   }
 
