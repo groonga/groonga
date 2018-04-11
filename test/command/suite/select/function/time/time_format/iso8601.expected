@@ -12,7 +12,7 @@ load --table Timestamps
 {"_key": "2016-05-07 00:00:00.000001"}
 ]
 [[0,0.0,0.0],6]
-select Timestamps   --sortby _id   --limit -1   --output_columns '_key, time_format(_key, "%Y-%m-%dT%H:%M:%S%z")'
+select Timestamps   --sortby _id   --limit -1   --output_columns '_key, time_format(_key, "%Y-%m-%dT%H:%M:%S")'
 [
   [
     0,
