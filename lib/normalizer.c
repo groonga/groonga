@@ -969,6 +969,7 @@ utf8_normalize(grn_ctx *ctx,
         }
 
         {
+          const unsigned char *p_original = p;
           unsigned char unified_kana[3];
           unsigned char unified_kana_case[3];
           unsigned char unified_kana_voiced_sound_mark[3];
@@ -1019,6 +1020,7 @@ utf8_normalize(grn_ctx *ctx,
           }
 
           grn_memcpy(d, p, lp);
+          p = p_original;
         }
         d_ = d;
         d += lp;
