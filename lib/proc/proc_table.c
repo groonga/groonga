@@ -198,7 +198,7 @@ command_table_create(grn_ctx *ctx,
   grn_raw_string key_type_raw;
   grn_raw_string value_type_raw;
   grn_obj *default_tokenizer_raw;
-  grn_raw_string normalizer_raw;
+  grn_obj *normalizer_raw;
   grn_raw_string token_filters_raw;
   grn_obj *table;
   const char *rest;
@@ -218,7 +218,7 @@ command_table_create(grn_ctx *ctx,
   GET_VALUE(value_type);
   default_tokenizer_raw = grn_plugin_proc_get_var(ctx, user_data,
                                                   "default_tokenizer", -1);
-  GET_VALUE(normalizer);
+  normalizer_raw = grn_plugin_proc_get_var(ctx, user_data, "normalizer", -1);
   GET_VALUE(token_filters);
 
 #undef GET_VALUE
@@ -307,24 +307,20 @@ command_table_create(grn_ctx *ctx,
       }
     }
 
-    if (normalizer_raw.length > 0) {
-      grn_obj *normalizer;
-
-      normalizer = grn_ctx_get(ctx,
-                               normalizer_raw.value,
-                               normalizer_raw.length);
-      if (!normalizer) {
+    if (GRN_TEXT_LEN(normalizer_raw) > 0) {
+      grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZER, normalizer_raw);
+      if (ctx->rc != GRN_SUCCESS) {
         GRN_PLUGIN_ERROR(ctx,
                          GRN_INVALID_ARGUMENT,
-                         "[table][create][%.*s] unknown normalizer: <%.*s>",
+                         "[table][create][%.*s] "
+                         "failed to set normalizer: <%.*s>: %s",
                          (int)name_raw.length,
                          name_raw.value,
-                         (int)normalizer_raw.length,
-                         normalizer_raw.value);
+                         (int)GRN_TEXT_LEN(normalizer_raw),
+                         GRN_TEXT_VALUE(normalizer_raw),
+                         ctx->errbuf);
         goto exit;
       }
-      grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZER, normalizer);
-      grn_obj_unlink(ctx, normalizer);
     }
 
     if (!grn_proc_table_set_token_filters(ctx, table, &token_filters_raw)) {
