@@ -676,6 +676,7 @@ grn_pat_close(grn_ctx *ctx, grn_pat *pat)
     ERR(rc, "[pat][close] failed to close IO");
   }
   grn_table_module_fin(ctx, &(pat->tokenizer));
+  grn_table_module_fin(ctx, &(pat->normalizer));
   grn_pvector_fin(ctx, &pat->token_filters);
   if (pat->cache) { grn_pat_cache_disable(ctx, pat); }
   GRN_FREE(pat);
