@@ -100,4 +100,4 @@ CMD \
     test/command/suite \
     --reporter mark \
     --testee groonga-httpd \
-    --n-workers 4
+    --n-workers 2
