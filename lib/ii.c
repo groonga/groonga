@@ -3857,7 +3857,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                           {
                             DEFINE_NAME(ii);
                             ERR(rc,
-                                "[ii][buffer[merge] "
+                                "[ii][buffer][merge] "
                                 "failed to unmap a destination chunk2: "
                                 "<%.*s> :"
                                 "segment:<%u>, "
@@ -3903,7 +3903,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                     {
                       DEFINE_NAME(ii);
                       ERR(rc,
-                          "[ii][buffer[merge] "
+                          "[ii][buffer][merge] "
                           "failed to unmap a destination chunk1: "
                           "<%.*s> :"
                           "segment:<%u>, "
