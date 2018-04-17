@@ -1,0 +1,4 @@
+table_create Users TABLE_HASH_KEY ShortText \
+  --normalizer 'NormalizerNFKC100("unify_kana", true)'
+
+dump
