@@ -623,6 +623,7 @@ typedef struct {
   grn_bool unify_kana;
   grn_bool unify_kana_case;
   grn_bool unify_kana_voiced_sound_mark;
+  grn_bool unify_hyphen;
 } grn_utf8_normalize_options;
 
 static void
@@ -637,6 +638,7 @@ utf8_normalize_options_init(grn_utf8_normalize_options *options,
   options->unify_kana = GRN_FALSE;
   options->unify_kana_case = GRN_FALSE;
   options->unify_kana_voiced_sound_mark = GRN_FALSE;
+  options->unify_hyphen = GRN_FALSE;
 }
 
 grn_inline static const unsigned char *
@@ -846,6 +848,53 @@ utf8_normalize_unify_katakana_voiced_sound_mark(const unsigned char *utf8_char,
   return utf8_char;
 }
 
+grn_inline static const grn_bool
+utf8_normalize_is_hyphen_famity(const unsigned char *utf8_char,
+                                size_t length)
+{
+  if (length == 2) {
+    switch (utf8_char[0]) {
+    case 0xcb :
+      if (utf8_char[1] == 0x97) {
+        /* U+02D7 MODIFIER LETTER MINUS SIGN */
+        return GRN_TRUE;
+      }
+      break;
+    case 0xd6 :
+      if (utf8_char[1] == 0x8a) {
+        /* U+058A ARMENIAN HYPHEN */
+        return GRN_TRUE;
+      }
+      break;
+    default :
+      break;
+    }
+  } else if (length == 3) {
+    if (utf8_char[0] == 0xe2) {
+      if (utf8_char[1] == 0x80 &&
+          (0x90 <= utf8_char[2] && utf8_char[2] <= 0x93)) {
+        /* U+2010 HYPHEN ..
+         * U+2013 EN DASH */
+        return GRN_TRUE;
+      } else if (utf8_char[1] == 0x81 &&
+                 (utf8_char[2] == 0x83 ||
+                  utf8_char[2] == 0xbb)) {
+        /* U+2043 HYPHEN BULLET */
+        /* U+207B SUPERSCRIPT MINUS */
+        return GRN_TRUE;
+      } else if (utf8_char[1] == 0x82 && utf8_char[2] == 0x8b) {
+        /* U+208B SUBSCRIPT MINUS */
+        return GRN_TRUE;
+      } else if (utf8_char[1] == 0x88 && utf8_char[2] == 0x92) {
+        /* U+2212 MINUS SIGN */
+        return GRN_TRUE;
+      }
+    }
+  }
+
+  return GRN_FALSE;
+}
+
 grn_inline static grn_obj *
 utf8_normalize(grn_ctx *ctx,
                grn_string *nstr,
@@ -923,6 +972,7 @@ utf8_normalize(grn_ctx *ctx,
       if ((*p == ' ' && removeblankp) || *p < 0x20  /* skip unprintable ascii */ ) {
         if (cp > nstr->ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
       } else {
+        size_t lp_original = lp;
         grn_char_type char_type;
         char_type = options->char_type_func(p);
 
@@ -973,6 +1023,7 @@ utf8_normalize(grn_ctx *ctx,
           unsigned char unified_kana[3];
           unsigned char unified_kana_case[3];
           unsigned char unified_kana_voiced_sound_mark[3];
+          unsigned char unified_hyphen[] = "-";
 
           if (options->unify_kana &&
               char_type == GRN_CHAR_KATAKANA &&
@@ -1019,6 +1070,14 @@ utf8_normalize(grn_ctx *ctx,
             }
           }
 
+          if (options->unify_hyphen) {
+            if (utf8_normalize_is_hyphen_famity(p, lp)) {
+              p = unified_hyphen;
+              lp = 1;
+              char_type = GRN_CHAR_SYMBOL;
+            }
+          }
+
           grn_memcpy(d, p, lp);
           p = p_original;
         }
@@ -1037,6 +1096,7 @@ utf8_normalize(grn_ctx *ctx,
           }
           for (i = lp; i > 1; i--) { *ch++ = 0; }
         }
+        lp = lp_original;
       }
     }
   }
@@ -1506,6 +1566,11 @@ nfkc100_open_options(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->unify_kana_voiced_sound_mark);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_hyphen")) {
+      options->unify_hyphen = grn_vector_get_element_bool(ctx,
+                                                          raw_options,
+                                                          i,
+                                                          options->unify_hyphen);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
