@@ -530,6 +530,39 @@ command_schema_table_output_value_type(grn_ctx *ctx, grn_obj *table)
 }
 
 static void
+command_schema_table_output_options(grn_ctx *ctx, grn_obj *options)
+{
+  if (options->header.type == GRN_VOID) {
+    grn_ctx_output_null(ctx);
+  } else {
+    unsigned int i;
+    unsigned int n;
+    grn_obj option;
+
+    n = grn_vector_size(ctx, options);
+    grn_ctx_output_array_open(ctx, "options", n);
+    GRN_VOID_INIT(&option);
+    for (i = 0; i < n; i++) {
+      const char *value;
+      unsigned int length;
+      grn_id domain;
+
+      length = grn_vector_get_element(ctx,
+                                      options,
+                                      i,
+                                      &value,
+                                      NULL,
+                                      &domain);
+      grn_obj_reinit(ctx, &option, domain, 0);
+      grn_bulk_write(ctx, &option, value, length);
+      grn_ctx_output_obj(ctx, &option, NULL);
+    }
+    GRN_OBJ_FIN(ctx, &option);
+    grn_ctx_output_array_close(ctx);
+  }
+}
+
+static void
 command_schema_table_output_tokenizer(grn_ctx *ctx, grn_obj *table)
 {
   grn_obj *tokenizer;
@@ -551,37 +584,10 @@ command_schema_table_output_tokenizer(grn_ctx *ctx, grn_obj *table)
   grn_ctx_output_cstr(ctx, "options");
   {
     grn_obj options;
-    unsigned int n;
 
     GRN_VOID_INIT(&options);
     grn_table_get_default_tokenizer_options(ctx, table, &options);
-    if (options.header.type == GRN_VOID) {
-      grn_ctx_output_null(ctx);
-    } else {
-      grn_obj option;
-      unsigned int i;
-
-      n = grn_vector_size(ctx, &options);
-      grn_ctx_output_array_open(ctx, "options", n);
-      GRN_VOID_INIT(&option);
-      for (i = 0; i < n; i++) {
-        const char *value;
-        unsigned int length;
-        grn_id domain;
-
-        length = grn_vector_get_element(ctx,
-                                        &options,
-                                        i,
-                                        &value,
-                                        NULL,
-                                        &domain);
-        grn_obj_reinit(ctx, &option, domain, 0);
-        grn_bulk_write(ctx, &option, value, length);
-        grn_ctx_output_obj(ctx, &option, NULL);
-      }
-      GRN_OBJ_FIN(ctx, &option);
-      grn_ctx_output_array_close(ctx);
-    }
+    command_schema_table_output_options(ctx, &options);
     GRN_OBJ_FIN(ctx, &options);
   }
 
@@ -599,13 +605,23 @@ command_schema_table_output_normalizer(grn_ctx *ctx, grn_obj *table)
     return;
   }
 
-  grn_ctx_output_map_open(ctx, "normalizer", 2);
+  grn_ctx_output_map_open(ctx, "normalizer", 3);
 
   grn_ctx_output_cstr(ctx, "id");
   command_schema_output_id(ctx, normalizer);
 
   grn_ctx_output_cstr(ctx, "name");
   command_schema_output_name(ctx, normalizer);
+
+  grn_ctx_output_cstr(ctx, "options");
+  {
+    grn_obj options;
+
+    GRN_VOID_INIT(&options);
+    grn_table_get_normalizer_options(ctx, table, &options);
+    command_schema_table_output_options(ctx, &options);
+    GRN_OBJ_FIN(ctx, &options);
+  }
 
   grn_ctx_output_map_close(ctx);
 }
@@ -729,7 +745,12 @@ command_schema_table_command_collect_arguments(grn_ctx *ctx,
       normalizer = grn_ctx_get(ctx, "NormalizerAuto", -1);
     }
     if (normalizer) {
-      ADD_OBJECT_NAME("normalizer", normalizer);
+      grn_obj sub_output;
+      GRN_TEXT_INIT(&sub_output, 0);
+      grn_table_get_normalizer_string(ctx, table, &sub_output);
+      GRN_TEXT_PUTC(ctx, &sub_output, '\0');
+      ADD("normalizer", GRN_TEXT_VALUE(&sub_output));
+      GRN_OBJ_FIN(ctx, &sub_output);
     }
   }
 

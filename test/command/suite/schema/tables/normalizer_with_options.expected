@@ -1,8 +1,4 @@
-table_create Tags TABLE_DAT_KEY ShortText --normalizer NormalizerAuto
-[[0,0.0,0.0],true]
-table_create Posts TABLE_HASH_KEY ShortText
-[[0,0.0,0.0],true]
-column_create Posts tags COLUMN_VECTOR Tags
+table_create Tags TABLE_PAT_KEY ShortText   --normalizer 'NormalizerNFKC100("unify_kana", true)'
 [[0,0.0,0.0],true]
 schema
 [
@@ -214,72 +210,10 @@ schema
     "token_filters": {
     },
     "tables": {
-      "Posts": {
-        "id": 257,
-        "name": "Posts",
-        "type": "hash table",
-        "key_type": {
-          "id": 14,
-          "name": "ShortText",
-          "type": "type"
-        },
-        "value_type": null,
-        "tokenizer": null,
-        "normalizer": null,
-        "token_filters": [
-
-        ],
-        "indexes": [
-
-        ],
-        "command": {
-          "name": "table_create",
-          "arguments": {
-            "name": "Posts",
-            "flags": "TABLE_HASH_KEY",
-            "key_type": "ShortText"
-          },
-          "command_line": "table_create --name Posts --flags TABLE_HASH_KEY --key_type ShortText"
-        },
-        "columns": {
-          "tags": {
-            "id": 258,
-            "name": "tags",
-            "table": "Posts",
-            "full_name": "Posts.tags",
-            "type": "vector",
-            "value_type": {
-              "id": 256,
-              "name": "Tags",
-              "type": "reference"
-            },
-            "compress": null,
-            "section": false,
-            "weight": false,
-            "position": false,
-            "sources": [
-
-            ],
-            "indexes": [
-
-            ],
-            "command": {
-              "name": "column_create",
-              "arguments": {
-                "table": "Posts",
-                "name": "tags",
-                "flags": "COLUMN_VECTOR",
-                "type": "Tags"
-              },
-              "command_line": "column_create --table Posts --name tags --flags COLUMN_VECTOR --type Tags"
-            }
-          }
-        }
-      },
       "Tags": {
         "id": 256,
         "name": "Tags",
-        "type": "double array trie",
+        "type": "patricia trie",
         "key_type": {
           "id": 14,
           "name": "ShortText",
@@ -288,9 +222,12 @@ schema
         "value_type": null,
         "tokenizer": null,
         "normalizer": {
-          "id": 79,
-          "name": "NormalizerAuto",
-          "options": null
+          "id": 81,
+          "name": "NormalizerNFKC100",
+          "options": [
+            "unify_kana",
+            true
+          ]
         },
         "token_filters": [
 
@@ -302,11 +239,11 @@ schema
           "name": "table_create",
           "arguments": {
             "name": "Tags",
-            "flags": "TABLE_DAT_KEY",
+            "flags": "TABLE_PAT_KEY",
             "key_type": "ShortText",
-            "normalizer": "NormalizerAuto"
+            "normalizer": "NormalizerNFKC100(\"unify_kana\", true)"
           },
-          "command_line": "table_create --name Tags --flags TABLE_DAT_KEY --key_type ShortText --normalizer NormalizerAuto"
+          "command_line": "table_create --name Tags --flags TABLE_PAT_KEY --key_type ShortText --normalizer \"NormalizerNFKC100(\\\"unify_kana\\\", true)\""
         },
         "columns": {
         }

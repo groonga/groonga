@@ -1,0 +1,4 @@
+table_create Tags TABLE_PAT_KEY ShortText \
+  --normalizer 'NormalizerNFKC100("unify_kana", true)'
+
+schema

@@ -223,7 +223,8 @@ schema
         "tokenizer": null,
         "normalizer": {
           "id": 79,
-          "name": "NormalizerAuto"
+          "name": "NormalizerAuto",
+          "options": null
         },
         "token_filters": [
 
