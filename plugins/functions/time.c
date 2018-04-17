@@ -392,6 +392,7 @@ func_time_format(grn_ctx *ctx, int n_args, grn_obj **args,
                                    sizeof(formatted_time_buffer),
                                    GRN_TEXT_VALUE(&nul_terminated_format),
                                    &tm);
+    GRN_OBJ_FIN(ctx, &nul_terminated_format);
 
     formatted_time = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_TEXT, 0);
     GRN_TEXT_SET(ctx,
