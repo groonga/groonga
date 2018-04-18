@@ -1023,7 +1023,7 @@ utf8_normalize(grn_ctx *ctx,
           unsigned char unified_kana[3];
           unsigned char unified_kana_case[3];
           unsigned char unified_kana_voiced_sound_mark[3];
-          unsigned char unified_hyphen[] = "-";
+          const unsigned char unified_hyphen[] = {'-'};
 
           if (options->unify_kana &&
               char_type == GRN_CHAR_KATAKANA &&
