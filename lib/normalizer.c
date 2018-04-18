@@ -625,6 +625,7 @@ typedef struct {
   grn_bool unify_kana_voiced_sound_mark;
   grn_bool unify_hyphen;
   grn_bool unify_prolonged_sound_mark;
+  grn_bool unify_hyphen_and_prolonged_sound_mark;
 } grn_utf8_normalize_options;
 
 static void
@@ -641,6 +642,7 @@ utf8_normalize_options_init(grn_utf8_normalize_options *options,
   options->unify_kana_voiced_sound_mark = GRN_FALSE;
   options->unify_hyphen = GRN_FALSE;
   options->unify_prolonged_sound_mark = GRN_FALSE;
+  options->unify_hyphen_and_prolonged_sound_mark = GRN_FALSE;
 }
 
 grn_inline static const unsigned char *
@@ -854,7 +856,12 @@ grn_inline static const grn_bool
 utf8_normalize_is_hyphen_famity(const unsigned char *utf8_char,
                                 size_t length)
 {
-  if (length == 2) {
+  if (length == 1) {
+    if (utf8_char[0] == '-') {
+      /* U+002D HYPHEN-MINUS */
+      return GRN_TRUE;
+    }
+  } else if (length == 2) {
     switch (utf8_char[0]) {
     case 0xcb :
       if (utf8_char[1] == 0x97) {
@@ -912,6 +919,11 @@ utf8_normalize_is_prolonged_sound_mark_famity(const unsigned char *utf8_char,
           (0x80 <= utf8_char[2] && utf8_char[2] <= 0x81)) {
         /* U+2500 BOX DRAWINGS LIGHT HORIZONTAL ..
          * U+2501 BOX DRAWINGS HEAVY HORIZONTAL */
+        return GRN_TRUE;
+      }
+    } else if (utf8_char[0] == 0xe3) {
+      if (utf8_char[1] == 0x83 && utf8_char[2] == 0xbc) {
+        /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
         return GRN_TRUE;
       }
     } else if (utf8_char[0] == 0xef) {
@@ -1116,6 +1128,15 @@ utf8_normalize(grn_ctx *ctx,
               p = unified_prolonged_sound_mark;
               lp = sizeof(unified_prolonged_sound_mark);
               char_type = GRN_CHAR_KATAKANA;
+            }
+          }
+
+          if (options->unify_hyphen_and_prolonged_sound_mark) {
+            if (utf8_normalize_is_hyphen_famity(p, lp) ||
+                utf8_normalize_is_prolonged_sound_mark_famity(p, lp)) {
+              p = unified_hyphen;
+              lp = sizeof(unified_hyphen);
+              char_type = GRN_CHAR_SYMBOL;
             }
           }
 
@@ -1619,6 +1640,13 @@ nfkc100_open_options(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->unify_prolonged_sound_mark);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "unify_hyphen_and_prolonged_sound_mark")) {
+      options->unify_hyphen_and_prolonged_sound_mark =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->unify_hyphen_and_prolonged_sound_mark);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
