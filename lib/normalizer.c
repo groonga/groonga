@@ -624,6 +624,7 @@ typedef struct {
   grn_bool unify_kana_case;
   grn_bool unify_kana_voiced_sound_mark;
   grn_bool unify_hyphen;
+  grn_bool unify_prolonged_sound_mark;
 } grn_utf8_normalize_options;
 
 static void
@@ -639,6 +640,7 @@ utf8_normalize_options_init(grn_utf8_normalize_options *options,
   options->unify_kana_case = GRN_FALSE;
   options->unify_kana_voiced_sound_mark = GRN_FALSE;
   options->unify_hyphen = GRN_FALSE;
+  options->unify_prolonged_sound_mark = GRN_FALSE;
 }
 
 grn_inline static const unsigned char *
@@ -895,6 +897,34 @@ utf8_normalize_is_hyphen_famity(const unsigned char *utf8_char,
   return GRN_FALSE;
 }
 
+grn_inline static const grn_bool
+utf8_normalize_is_prolonged_sound_mark_famity(const unsigned char *utf8_char,
+                                              size_t length)
+{
+  if (length == 3) {
+    if (utf8_char[0] == 0xe2) {
+      if (utf8_char[1] == 0x80 &&
+          (0x94 <= utf8_char[2] && utf8_char[2] <= 0x95)) {
+        /* U+2014 EM DASH ..
+         * U+2015 HORIZONTAL BAR */
+        return GRN_TRUE;
+      } else if (utf8_char[1] == 0x94 &&
+          (0x80 <= utf8_char[2] && utf8_char[2] <= 0x81)) {
+        /* U+2500 BOX DRAWINGS LIGHT HORIZONTAL ..
+         * U+2501 BOX DRAWINGS HEAVY HORIZONTAL */
+        return GRN_TRUE;
+      }
+    } else if (utf8_char[0] == 0xef) {
+      if (utf8_char[1] == 0xbd && utf8_char[2] == 0xb0) {
+        /* U+FF70 HALFWIDTH KATAKANA-HIRAGANA PROLONGED SOUND MARK */
+        return GRN_TRUE;
+      }
+    }
+  }
+
+  return GRN_FALSE;
+}
+
 grn_inline static grn_obj *
 utf8_normalize(grn_ctx *ctx,
                grn_string *nstr,
@@ -1024,6 +1054,9 @@ utf8_normalize(grn_ctx *ctx,
           unsigned char unified_kana_case[3];
           unsigned char unified_kana_voiced_sound_mark[3];
           const unsigned char unified_hyphen[] = {'-'};
+          /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
+          const unsigned char unified_prolonged_sound_mark[] =
+            {0xe3, 0x83, 0xbc};
 
           if (options->unify_kana &&
               char_type == GRN_CHAR_KATAKANA &&
@@ -1073,8 +1106,16 @@ utf8_normalize(grn_ctx *ctx,
           if (options->unify_hyphen) {
             if (utf8_normalize_is_hyphen_famity(p, lp)) {
               p = unified_hyphen;
-              lp = 1;
+              lp = sizeof(unified_hyphen);
               char_type = GRN_CHAR_SYMBOL;
+            }
+          }
+
+          if (options->unify_prolonged_sound_mark) {
+            if (utf8_normalize_is_prolonged_sound_mark_famity(p, lp)) {
+              p = unified_prolonged_sound_mark;
+              lp = sizeof(unified_prolonged_sound_mark);
+              char_type = GRN_CHAR_KATAKANA;
             }
           }
 
@@ -1571,6 +1612,13 @@ nfkc100_open_options(grn_ctx *ctx,
                                                           raw_options,
                                                           i,
                                                           options->unify_hyphen);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "unify_prolonged_sound_mark")) {
+      options->unify_prolonged_sound_mark =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->unify_prolonged_sound_mark);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
