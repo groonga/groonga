@@ -6424,7 +6424,10 @@ grn_table_select_index_match(grn_ctx *ctx,
     optarg.scorer_args_expr_offset =
       GRN_UINT32_VALUE_AT(&(si->scorer_args_expr_offsets), j);
     if (j < n_indexes - 1) {
-      if (sid && ip[0] == ip[1] && !optarg.scorer) {
+      if (sid &&
+          ip[0] == ip[1] &&
+          !optarg.scorer &&
+          !GRN_PTR_VALUE_AT(&(si->scorers), j + 1)) {
         continue;
       }
     }
