@@ -6424,7 +6424,9 @@ grn_table_select_index_match(grn_ctx *ctx,
     optarg.scorer_args_expr_offset =
       GRN_UINT32_VALUE_AT(&(si->scorer_args_expr_offsets), j);
     if (j < n_indexes - 1) {
-      if (sid && ip[0] == ip[1]) { continue; }
+      if (sid && ip[0] == ip[1] && !optarg.scorer) {
+        continue;
+      }
     }
     grn_obj_search(ctx, ip[0], si->query, res, si->logical_op, &optarg);
     if (optarg.weight_vector) {

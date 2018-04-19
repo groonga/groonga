@@ -1,0 +1,63 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Lexicon memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Memos title,content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+["title", "content"],
+["Groonga", "Groonga"],
+["Groonga Groonga", "Groonga Groonga Groonga Groonga"],
+["Groonga Groonga Groonga", "Groonga"],
+["Ruby Ruby Ruby", "Ruby Ruby Ruby Ruby Ruby"]
+]
+[[0,0.0,0.0],4]
+select Memos   --match_columns 'scorer_tf_at_most(title, 2.0) ||                    scorer_tf_at_most(content, 3.0)'   --query 'groonga'   --output_columns "_score, title, content"   --sortby -_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "title",
+          "ShortText"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        5,
+        "Groonga Groonga",
+        "Groonga Groonga Groonga Groonga"
+      ],
+      [
+        3,
+        "Groonga Groonga Groonga",
+        "Groonga"
+      ],
+      [
+        2,
+        "Groonga",
+        "Groonga"
+      ]
+    ]
+  ]
+]
