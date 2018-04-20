@@ -75,7 +75,7 @@ msgid "Support alias to accessor such as ``_key``."
 msgstr "``_key`` のようなアクセサへのエイリアスをサポートしました。"
 
 msgid ""
-"[:doc:`/reference/commands/logical_range-filter`] Optimize window function "
+"[:doc:`/reference/commands/logical_range_filter`] Optimize window function "
 "for large result set. If we find enough matched records, we don't apply "
 "window function to the remaining windows."
 msgstr ""

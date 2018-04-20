@@ -37,7 +37,7 @@ Improvements
 
 * Support alias to accessor such as ``_key``.
 
-* [:doc:`/reference/commands/logical_range-filter`] Optimize
+* [:doc:`/reference/commands/logical_range_filter`] Optimize
   window function for large result set.
   If we find enough matched records, we don't apply window function
   to the remaining windows.
