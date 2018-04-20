@@ -63,7 +63,7 @@ static const uint32_t GRN_TABLE_PAT_KEY_CACHE_SIZE = 1 << 15;
 #define WITH_NORMALIZE(table,key,key_size,block) do {\
   if ((table)->normalizer.proc && key && key_size > 0) {\
     grn_obj *nstr;\
-    if ((nstr = grn_string_open(ctx, key, key_size, (table), 0))) {\
+    if ((nstr = grn_string_open(ctx, key, key_size, (grn_obj *)(table), 0))) {\
       const char *key;\
       unsigned int key_size;\
       grn_string_get_normalized(ctx, nstr, &key, &key_size, NULL);\
