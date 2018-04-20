@@ -8138,57 +8138,70 @@ static const char *grn_nfkc100_decompose_table_c2[] = {
 };
 
 static const char *grn_nfkc100_decompose_table_c3[] = {
-  "\xc3\xa0", "\xc3\xa1", "\xc3\xa2", "\xc3\xa3", "\xc3\xa4", "\xc3\xa5", NULL, "\xc3\xa7",
+  "\xc3\xa0", "\xc3\xa1", "\xc3\xa2", "\xc3\xa3", "\xc3\xa4", "\xc3\xa5", "\xc3\xa6", "\xc3\xa7",
   "\xc3\xa8", "\xc3\xa9", "\xc3\xaa", "\xc3\xab", "\xc3\xac", "\xc3\xad", "\xc3\xae", "\xc3\xaf",
-  NULL, "\xc3\xb1", "\xc3\xb2", "\xc3\xb3", "\xc3\xb4", "\xc3\xb5", "\xc3\xb6", NULL,
-  NULL, "\xc3\xb9", "\xc3\xba", "\xc3\xbb", "\xc3\xbc", "\xc3\xbd"
+  "\xc3\xb0", "\xc3\xb1", "\xc3\xb2", "\xc3\xb3", "\xc3\xb4", "\xc3\xb5", "\xc3\xb6", NULL,
+  "\xc3\xb8", "\xc3\xb9", "\xc3\xba", "\xc3\xbb", "\xc3\xbc", "\xc3\xbd", "\xc3\xbe"
 };
 
 static const char *grn_nfkc100_decompose_table_c4[] = {
   "\xc4\x81", NULL, "\xc4\x83", NULL, "\xc4\x85", NULL, "\xc4\x87", NULL,
   "\xc4\x89", NULL, "\xc4\x8b", NULL, "\xc4\x8d", NULL, "\xc4\x8f", NULL,
-  NULL, NULL, "\xc4\x93", NULL, "\xc4\x95", NULL, "\xc4\x97", NULL,
+  "\xc4\x91", NULL, "\xc4\x93", NULL, "\xc4\x95", NULL, "\xc4\x97", NULL,
   "\xc4\x99", NULL, "\xc4\x9b", NULL, "\xc4\x9d", NULL, "\xc4\x9f", NULL,
-  "\xc4\xa1", NULL, "\xc4\xa3", NULL, "\xc4\xa5", NULL, NULL, NULL,
+  "\xc4\xa1", NULL, "\xc4\xa3", NULL, "\xc4\xa5", NULL, "\xc4\xa7", NULL,
   "\xc4\xa9", NULL, "\xc4\xab", NULL, "\xc4\xad", NULL, "\xc4\xaf", NULL,
-  "\x69\xcc\x87", NULL, "\x69\x6a", "\x69\x6a", "\xc4\xb5", NULL, "\xc4\xb7", NULL,
-  NULL, "\xc4\xba", NULL, "\xc4\xbc", NULL, "\xc4\xbe", NULL, "\x6c\xc2\xb7"
+  "\x69\xcc\x87", NULL, "\xc4\xb3", "\x69\x6a", "\xc4\xb5", NULL, "\xc4\xb7", NULL,
+  NULL, "\xc4\xba", NULL, "\xc4\xbc", NULL, "\xc4\xbe", NULL, "\xc5\x80"
 };
 
 static const char *grn_nfkc100_decompose_table_c5[] = {
-  "\x6c\xc2\xb7", NULL, NULL, "\xc5\x84", NULL, "\xc5\x86", NULL, "\xc5\x88",
-  NULL, "\xca\xbc\x6e", NULL, NULL, "\xc5\x8d", NULL, "\xc5\x8f", NULL,
-  "\xc5\x91", NULL, NULL, NULL, "\xc5\x95", NULL, "\xc5\x97", NULL,
+  "\x6c\xc2\xb7", "\xc5\x82", NULL, "\xc5\x84", NULL, "\xc5\x86", NULL, "\xc5\x88",
+  NULL, "\xca\xbc\x6e", "\xc5\x8b", NULL, "\xc5\x8d", NULL, "\xc5\x8f", NULL,
+  "\xc5\x91", NULL, "\xc5\x93", NULL, "\xc5\x95", NULL, "\xc5\x97", NULL,
   "\xc5\x99", NULL, "\xc5\x9b", NULL, "\xc5\x9d", NULL, "\xc5\x9f", NULL,
-  "\xc5\xa1", NULL, "\xc5\xa3", NULL, "\xc5\xa5", NULL, NULL, NULL,
+  "\xc5\xa1", NULL, "\xc5\xa3", NULL, "\xc5\xa5", NULL, "\xc5\xa7", NULL,
   "\xc5\xa9", NULL, "\xc5\xab", NULL, "\xc5\xad", NULL, "\xc5\xaf", NULL,
   "\xc5\xb1", NULL, "\xc5\xb3", NULL, "\xc5\xb5", NULL, "\xc5\xb7", NULL,
   "\xc3\xbf", "\xc5\xba", NULL, "\xc5\xbc", NULL, "\xc5\xbe", NULL, "\x73"
 };
 
 static const char *grn_nfkc100_decompose_table_c6[] = {
-  "\xc6\xa1", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, "\xc6\xb0"
+  "\xc9\x93", "\xc6\x83", NULL, "\xc6\x85", NULL, "\xc9\x94", "\xc6\x88", NULL,
+  "\xc9\x96", "\xc9\x97", "\xc6\x8c", NULL, NULL, "\xc7\x9d", "\xc9\x99", "\xc9\x9b",
+  "\xc6\x92", NULL, "\xc9\xa0", "\xc9\xa3", NULL, "\xc9\xa9", "\xc9\xa8", "\xc6\x99",
+  NULL, NULL, NULL, "\xc9\xaf", "\xc9\xb2", NULL, "\xc9\xb5", "\xc6\xa1",
+  NULL, "\xc6\xa3", NULL, "\xc6\xa5", NULL, "\xca\x80", "\xc6\xa8", NULL,
+  "\xca\x83", NULL, NULL, "\xc6\xad", NULL, "\xca\x88", "\xc6\xb0", NULL,
+  "\xca\x8a", "\xca\x8b", "\xc6\xb4", NULL, "\xc6\xb6", NULL, "\xca\x92", "\xc6\xb9",
+  NULL, NULL, NULL, "\xc6\xbd"
 };
 
 static const char *grn_nfkc100_decompose_table_c7[] = {
-  "\x64\xc5\xbe", "\x64\xc5\xbe", "\x64\xc5\xbe", "\x6c\x6a", "\x6c\x6a", "\x6c\x6a", "\x6e\x6a", "\x6e\x6a",
+  "\xc7\x86", "\xc7\x86", "\x64\xc5\xbe", "\xc7\x89", "\xc7\x89", "\x6c\x6a", "\xc7\x8c", "\xc7\x8c",
   "\x6e\x6a", "\xc7\x8e", NULL, "\xc7\x90", NULL, "\xc7\x92", NULL, "\xc7\x94",
   NULL, "\xc7\x96", NULL, "\xc7\x98", NULL, "\xc7\x9a", NULL, "\xc7\x9c",
-  NULL, NULL, "\xc7\x9f", NULL, "\xc7\xa1", NULL, NULL, NULL,
-  NULL, NULL, "\xc7\xa7", NULL, "\xc7\xa9", NULL, "\xc7\xab", NULL,
-  "\xc7\xad", NULL, NULL, NULL, NULL, "\x64\x7a", "\x64\x7a", "\x64\x7a",
-  "\xc7\xb5", NULL, NULL, NULL, "\xc7\xb9", NULL, "\xc7\xbb"
+  NULL, NULL, "\xc7\x9f", NULL, "\xc7\xa1", NULL, "\xc7\xa3", NULL,
+  "\xc7\xa5", NULL, "\xc7\xa7", NULL, "\xc7\xa9", NULL, "\xc7\xab", NULL,
+  "\xc7\xad", NULL, "\xc7\xaf", NULL, NULL, "\xc7\xb3", "\xc7\xb3", "\x64\x7a",
+  "\xc7\xb5", NULL, "\xc6\x95", "\xc6\xbf", "\xc7\xb9", NULL, "\xc7\xbb", NULL,
+  "\xc7\xbd", NULL, "\xc7\xbf"
 };
 
 static const char *grn_nfkc100_decompose_table_c8[] = {
   "\xc8\x81", NULL, "\xc8\x83", NULL, "\xc8\x85", NULL, "\xc8\x87", NULL,
   "\xc8\x89", NULL, "\xc8\x8b", NULL, "\xc8\x8d", NULL, "\xc8\x8f", NULL,
   "\xc8\x91", NULL, "\xc8\x93", NULL, "\xc8\x95", NULL, "\xc8\x97", NULL,
-  "\xc8\x99", NULL, "\xc8\x9b", NULL, NULL, NULL, "\xc8\x9f", NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, "\xc8\xa7", NULL,
+  "\xc8\x99", NULL, "\xc8\x9b", NULL, "\xc8\x9d", NULL, "\xc8\x9f", NULL,
+  "\xc6\x9e", NULL, "\xc8\xa3", NULL, "\xc8\xa5", NULL, "\xc8\xa7", NULL,
   "\xc8\xa9", NULL, "\xc8\xab", NULL, "\xc8\xad", NULL, "\xc8\xaf", NULL,
-  "\xc8\xb1", NULL, "\xc8\xb3"
+  "\xc8\xb1", NULL, "\xc8\xb3", NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, "\xe2\xb1\xa5", "\xc8\xbc", NULL, "\xc6\x9a", "\xe2\xb1\xa6"
+};
+
+static const char *grn_nfkc100_decompose_table_c9[] = {
+  "\xc9\x82", NULL, "\xc6\x80", "\xca\x89", "\xca\x8c", "\xc9\x87", NULL, "\xc9\x89",
+  NULL, "\xc9\x8b", NULL, "\xc9\x8d", NULL, "\xc9\x8f"
 };
 
 static const char *grn_nfkc100_decompose_table_ca[] = {
@@ -8208,21 +8221,81 @@ static const char *grn_nfkc100_decompose_table_cd[] = {
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, "\xca\xb9", NULL, NULL, NULL,
-  NULL, NULL, "\xcd\x85", NULL, NULL, NULL, "\x3b"
+  "\xcd\xb1", NULL, "\xcd\xb3", NULL, "\xca\xb9", NULL, "\xcd\xb7", NULL,
+  NULL, NULL, "\xcd\x85", NULL, NULL, NULL, "\x3b", "\xcf\xb3"
 };
 
 static const char *grn_nfkc100_decompose_table_ce[] = {
-  "\xcc\x81", "\xcc\x88\xcc\x81", NULL, "\xc2\xb7"
+  "\xcc\x81", "\xcc\x88\xcc\x81", "\xce\xac", "\xc2\xb7", "\xce\xad", "\xce\xae", "\xce\xaf", NULL,
+  "\xcf\x8c", NULL, "\xcf\x8d", "\xcf\x8e", NULL, "\xce\xb1", "\xce\xb2", "\xce\xb3",
+  "\xce\xb4", "\xce\xb5", "\xce\xb6", "\xce\xb7", "\xce\xb8", "\xce\xb9", "\xce\xba", "\xce\xbb",
+  "\xce\xbc", "\xce\xbd", "\xce\xbe", "\xce\xbf", "\xcf\x80", "\xcf\x81", NULL, "\xcf\x83",
+  "\xcf\x84", "\xcf\x85", "\xcf\x86", "\xcf\x87", "\xcf\x88", "\xcf\x89", "\xcf\x8a", "\xcf\x8b"
 };
 
 static const char *grn_nfkc100_decompose_table_cf[] = {
-  "\xce\xb2", "\xce\xb8", "\xce\xa5", "\xce\x8e", "\xce\xab", "\xcf\x86", "\xcf\x80", NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xce\xba", "\xcf\x81", "\xcf\x82", NULL, "\xce\x98", "\xce\xb5", NULL, NULL,
-  NULL, "\xce\xa3"
+  "\xcf\x97", "\xce\xb2", "\xce\xb8", "\xcf\x85", "\xcf\x8d", "\xcf\x8b", "\xcf\x86", "\xcf\x80",
+  NULL, "\xcf\x99", NULL, "\xcf\x9b", NULL, "\xcf\x9d", NULL, "\xcf\x9f",
+  NULL, "\xcf\xa1", NULL, "\xcf\xa3", NULL, "\xcf\xa5", NULL, "\xcf\xa7",
+  NULL, "\xcf\xa9", NULL, "\xcf\xab", NULL, "\xcf\xad", NULL, "\xcf\xaf",
+  NULL, "\xce\xba", "\xcf\x81", "\xcf\x82", NULL, "\xce\xb8", "\xce\xb5", NULL,
+  "\xcf\xb8", NULL, "\xcf\xb2", "\xcf\xbb", NULL, NULL, "\xcd\xbb", "\xcd\xbc",
+  "\xcd\xbd"
+};
+
+static const char *grn_nfkc100_decompose_table_d0[] = {
+  "\xd1\x90", "\xd1\x91", "\xd1\x92", "\xd1\x93", "\xd1\x94", "\xd1\x95", "\xd1\x96", "\xd1\x97",
+  "\xd1\x98", "\xd1\x99", "\xd1\x9a", "\xd1\x9b", "\xd1\x9c", "\xd1\x9d", "\xd1\x9e", "\xd1\x9f",
+  "\xd0\xb0", "\xd0\xb1", "\xd0\xb2", "\xd0\xb3", "\xd0\xb4", "\xd0\xb5", "\xd0\xb6", "\xd0\xb7",
+  "\xd0\xb8", "\xd0\xb9", "\xd0\xba", "\xd0\xbb", "\xd0\xbc", "\xd0\xbd", "\xd0\xbe", "\xd0\xbf",
+  "\xd1\x80", "\xd1\x81", "\xd1\x82", "\xd1\x83", "\xd1\x84", "\xd1\x85", "\xd1\x86", "\xd1\x87",
+  "\xd1\x88", "\xd1\x89", "\xd1\x8a", "\xd1\x8b", "\xd1\x8c", "\xd1\x8d", "\xd1\x8e", "\xd1\x8f"
+};
+
+static const char *grn_nfkc100_decompose_table_d1[] = {
+  "\xd1\xa1", NULL, "\xd1\xa3", NULL, "\xd1\xa5", NULL, "\xd1\xa7", NULL,
+  "\xd1\xa9", NULL, "\xd1\xab", NULL, "\xd1\xad", NULL, "\xd1\xaf", NULL,
+  "\xd1\xb1", NULL, "\xd1\xb3", NULL, "\xd1\xb5", NULL, "\xd1\xb7", NULL,
+  "\xd1\xb9", NULL, "\xd1\xbb", NULL, "\xd1\xbd", NULL, "\xd1\xbf"
+};
+
+static const char *grn_nfkc100_decompose_table_d2[] = {
+  "\xd2\x81", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, "\xd2\x8b", NULL, "\xd2\x8d", NULL, "\xd2\x8f", NULL,
+  "\xd2\x91", NULL, "\xd2\x93", NULL, "\xd2\x95", NULL, "\xd2\x97", NULL,
+  "\xd2\x99", NULL, "\xd2\x9b", NULL, "\xd2\x9d", NULL, "\xd2\x9f", NULL,
+  "\xd2\xa1", NULL, "\xd2\xa3", NULL, "\xd2\xa5", NULL, "\xd2\xa7", NULL,
+  "\xd2\xa9", NULL, "\xd2\xab", NULL, "\xd2\xad", NULL, "\xd2\xaf", NULL,
+  "\xd2\xb1", NULL, "\xd2\xb3", NULL, "\xd2\xb5", NULL, "\xd2\xb7", NULL,
+  "\xd2\xb9", NULL, "\xd2\xbb", NULL, "\xd2\xbd", NULL, "\xd2\xbf"
+};
+
+static const char *grn_nfkc100_decompose_table_d3[] = {
+  "\xd3\x8f", "\xd3\x82", NULL, "\xd3\x84", NULL, "\xd3\x86", NULL, "\xd3\x88",
+  NULL, "\xd3\x8a", NULL, "\xd3\x8c", NULL, "\xd3\x8e", NULL, NULL,
+  "\xd3\x91", NULL, "\xd3\x93", NULL, "\xd3\x95", NULL, "\xd3\x97", NULL,
+  "\xd3\x99", NULL, "\xd3\x9b", NULL, "\xd3\x9d", NULL, "\xd3\x9f", NULL,
+  "\xd3\xa1", NULL, "\xd3\xa3", NULL, "\xd3\xa5", NULL, "\xd3\xa7", NULL,
+  "\xd3\xa9", NULL, "\xd3\xab", NULL, "\xd3\xad", NULL, "\xd3\xaf", NULL,
+  "\xd3\xb1", NULL, "\xd3\xb3", NULL, "\xd3\xb5", NULL, "\xd3\xb7", NULL,
+  "\xd3\xb9", NULL, "\xd3\xbb", NULL, "\xd3\xbd", NULL, "\xd3\xbf"
+};
+
+static const char *grn_nfkc100_decompose_table_d4[] = {
+  "\xd4\x81", NULL, "\xd4\x83", NULL, "\xd4\x85", NULL, "\xd4\x87", NULL,
+  "\xd4\x89", NULL, "\xd4\x8b", NULL, "\xd4\x8d", NULL, "\xd4\x8f", NULL,
+  "\xd4\x91", NULL, "\xd4\x93", NULL, "\xd4\x95", NULL, "\xd4\x97", NULL,
+  "\xd4\x99", NULL, "\xd4\x9b", NULL, "\xd4\x9d", NULL, "\xd4\x9f", NULL,
+  "\xd4\xa1", NULL, "\xd4\xa3", NULL, "\xd4\xa5", NULL, "\xd4\xa7", NULL,
+  "\xd4\xa9", NULL, "\xd4\xab", NULL, "\xd4\xad", NULL, "\xd4\xaf", NULL,
+  NULL, "\xd5\xa1", "\xd5\xa2", "\xd5\xa3", "\xd5\xa4", "\xd5\xa5", "\xd5\xa6", "\xd5\xa7",
+  "\xd5\xa8", "\xd5\xa9", "\xd5\xaa", "\xd5\xab", "\xd5\xac", "\xd5\xad", "\xd5\xae", "\xd5\xaf"
+};
+
+static const char *grn_nfkc100_decompose_table_d5[] = {
+  "\xd5\xb0", "\xd5\xb1", "\xd5\xb2", "\xd5\xb3", "\xd5\xb4", "\xd5\xb5", "\xd5\xb6", "\xd5\xb7",
+  "\xd5\xb8", "\xd5\xb9", "\xd5\xba", "\xd5\xbb", "\xd5\xbc", "\xd5\xbd", "\xd5\xbe", "\xd5\xbf",
+  "\xd6\x80", "\xd6\x81", "\xd6\x82", "\xd6\x83", "\xd6\x84", "\xd6\x85", "\xd6\x86"
 };
 
 static const char *grn_nfkc100_decompose_table_d9[] = {
@@ -8274,10 +8347,45 @@ static const char *grn_nfkc100_decompose_table_e0be[] = {
   "\xe0\xbe\x90\xe0\xbe\xb5"
 };
 
+static const char *grn_nfkc100_decompose_table_e182[] = {
+  "\xe2\xb4\x80", "\xe2\xb4\x81", "\xe2\xb4\x82", "\xe2\xb4\x83", "\xe2\xb4\x84", "\xe2\xb4\x85", "\xe2\xb4\x86", "\xe2\xb4\x87",
+  "\xe2\xb4\x88", "\xe2\xb4\x89", "\xe2\xb4\x8a", "\xe2\xb4\x8b", "\xe2\xb4\x8c", "\xe2\xb4\x8d", "\xe2\xb4\x8e", "\xe2\xb4\x8f",
+  "\xe2\xb4\x90", "\xe2\xb4\x91", "\xe2\xb4\x92", "\xe2\xb4\x93", "\xe2\xb4\x94", "\xe2\xb4\x95", "\xe2\xb4\x96", "\xe2\xb4\x97",
+  "\xe2\xb4\x98", "\xe2\xb4\x99", "\xe2\xb4\x9a", "\xe2\xb4\x9b", "\xe2\xb4\x9c", "\xe2\xb4\x9d", "\xe2\xb4\x9e", "\xe2\xb4\x9f"
+};
+
+static const char *grn_nfkc100_decompose_table_e183[] = {
+  "\xe2\xb4\xa0", "\xe2\xb4\xa1", "\xe2\xb4\xa2", "\xe2\xb4\xa3", "\xe2\xb4\xa4", "\xe2\xb4\xa5", NULL, "\xe2\xb4\xa7",
+  NULL, NULL, NULL, NULL, NULL, "\xe2\xb4\xad", NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, "\xe1\x83\x9c"
+};
+
+static const char *grn_nfkc100_decompose_table_e18e[] = {
+  "\xea\xad\xb0", "\xea\xad\xb1", "\xea\xad\xb2", "\xea\xad\xb3", "\xea\xad\xb4", "\xea\xad\xb5", "\xea\xad\xb6", "\xea\xad\xb7",
+  "\xea\xad\xb8", "\xea\xad\xb9", "\xea\xad\xba", "\xea\xad\xbb", "\xea\xad\xbc", "\xea\xad\xbd", "\xea\xad\xbe", "\xea\xad\xbf",
+  "\xea\xae\x80", "\xea\xae\x81", "\xea\xae\x82", "\xea\xae\x83", "\xea\xae\x84", "\xea\xae\x85", "\xea\xae\x86", "\xea\xae\x87",
+  "\xea\xae\x88", "\xea\xae\x89", "\xea\xae\x8a", "\xea\xae\x8b", "\xea\xae\x8c", "\xea\xae\x8d", "\xea\xae\x8e", "\xea\xae\x8f"
+};
+
+static const char *grn_nfkc100_decompose_table_e18f[] = {
+  "\xea\xae\x90", "\xea\xae\x91", "\xea\xae\x92", "\xea\xae\x93", "\xea\xae\x94", "\xea\xae\x95", "\xea\xae\x96", "\xea\xae\x97",
+  "\xea\xae\x98", "\xea\xae\x99", "\xea\xae\x9a", "\xea\xae\x9b", "\xea\xae\x9c", "\xea\xae\x9d", "\xea\xae\x9e", "\xea\xae\x9f",
+  "\xea\xae\xa0", "\xea\xae\xa1", "\xea\xae\xa2", "\xea\xae\xa3", "\xea\xae\xa4", "\xea\xae\xa5", "\xea\xae\xa6", "\xea\xae\xa7",
+  "\xea\xae\xa8", "\xea\xae\xa9", "\xea\xae\xaa", "\xea\xae\xab", "\xea\xae\xac", "\xea\xae\xad", "\xea\xae\xae", "\xea\xae\xaf",
+  "\xea\xae\xb0", "\xea\xae\xb1", "\xea\xae\xb2", "\xea\xae\xb3", "\xea\xae\xb4", "\xea\xae\xb5", "\xea\xae\xb6", "\xea\xae\xb7",
+  "\xea\xae\xb8", "\xea\xae\xb9", "\xea\xae\xba", "\xea\xae\xbb", "\xea\xae\xbc", "\xea\xae\xbd", "\xea\xae\xbe", "\xea\xae\xbf",
+  "\xe1\x8f\xb8", "\xe1\x8f\xb9", "\xe1\x8f\xba", "\xe1\x8f\xbb", "\xe1\x8f\xbc", "\xe1\x8f\xbd"
+};
+
 static const char *grn_nfkc100_decompose_table_e1b4[] = {
-  "\x61", "\xc3\x86", "\x62", NULL, "\x64", "\x65", "\xc6\x8e", "\x67",
+  "\x61", "\xc3\xa6", "\x62", NULL, "\x64", "\x65", "\xc7\x9d", "\x67",
   "\x68", "\x69", "\x6a", "\x6b", "\x6c", "\x6d", "\x6e", NULL,
-  "\x6f", "\xc8\xa2", "\x70", "\x72"
+  "\x6f", "\xc8\xa3", "\x70", "\x72"
 };
 
 static const char *grn_nfkc100_decompose_table_e1b5[] = {
@@ -8325,7 +8433,7 @@ static const char *grn_nfkc100_decompose_table_e1ba[] = {
   "\xe1\xba\x81", NULL, "\xe1\xba\x83", NULL, "\xe1\xba\x85", NULL, "\xe1\xba\x87", NULL,
   "\xe1\xba\x89", NULL, "\xe1\xba\x8b", NULL, "\xe1\xba\x8d", NULL, "\xe1\xba\x8f", NULL,
   "\xe1\xba\x91", NULL, "\xe1\xba\x93", NULL, "\xe1\xba\x95", NULL, NULL, NULL,
-  NULL, NULL, "\x61\xca\xbe", "\xe1\xb9\xa1", NULL, NULL, NULL, NULL,
+  NULL, NULL, "\x61\xca\xbe", "\xe1\xb9\xa1", NULL, NULL, "\xc3\x9f", NULL,
   "\xe1\xba\xa1", NULL, "\xe1\xba\xa3", NULL, "\xe1\xba\xa5", NULL, "\xe1\xba\xa7", NULL,
   "\xe1\xba\xa9", NULL, "\xe1\xba\xab", NULL, "\xe1\xba\xad", NULL, "\xe1\xba\xaf", NULL,
   "\xe1\xba\xb1", NULL, "\xe1\xba\xb3", NULL, "\xe1\xba\xb5", NULL, "\xe1\xba\xb7", NULL,
@@ -8340,27 +8448,48 @@ static const char *grn_nfkc100_decompose_table_e1bb[] = {
   "\xe1\xbb\xa1", NULL, "\xe1\xbb\xa3", NULL, "\xe1\xbb\xa5", NULL, "\xe1\xbb\xa7", NULL,
   "\xe1\xbb\xa9", NULL, "\xe1\xbb\xab", NULL, "\xe1\xbb\xad", NULL, "\xe1\xbb\xaf", NULL,
   "\xe1\xbb\xb1", NULL, "\xe1\xbb\xb3", NULL, "\xe1\xbb\xb5", NULL, "\xe1\xbb\xb7", NULL,
-  "\xe1\xbb\xb9"
+  "\xe1\xbb\xb9", NULL, "\xe1\xbb\xbb", NULL, "\xe1\xbb\xbd", NULL, "\xe1\xbb\xbf"
+};
+
+static const char *grn_nfkc100_decompose_table_e1bc[] = {
+  "\xe1\xbc\x80", "\xe1\xbc\x81", "\xe1\xbc\x82", "\xe1\xbc\x83", "\xe1\xbc\x84", "\xe1\xbc\x85", "\xe1\xbc\x86", "\xe1\xbc\x87",
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xe1\xbc\x90", "\xe1\xbc\x91", "\xe1\xbc\x92", "\xe1\xbc\x93", "\xe1\xbc\x94", "\xe1\xbc\x95", NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xe1\xbc\xa0", "\xe1\xbc\xa1", "\xe1\xbc\xa2", "\xe1\xbc\xa3", "\xe1\xbc\xa4", "\xe1\xbc\xa5", "\xe1\xbc\xa6", "\xe1\xbc\xa7",
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xe1\xbc\xb0", "\xe1\xbc\xb1", "\xe1\xbc\xb2", "\xe1\xbc\xb3", "\xe1\xbc\xb4", "\xe1\xbc\xb5", "\xe1\xbc\xb6", "\xe1\xbc\xb7"
 };
 
 static const char *grn_nfkc100_decompose_table_e1bd[] = {
-  "\xce\xac", NULL, "\xce\xad", NULL, "\xce\xae", NULL, "\xce\xaf", NULL,
-  "\xcf\x8c", NULL, "\xcf\x8d", NULL, "\xcf\x8e"
+  "\xe1\xbd\x80", "\xe1\xbd\x81", "\xe1\xbd\x82", "\xe1\xbd\x83", "\xe1\xbd\x84", "\xe1\xbd\x85", NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, "\xe1\xbd\x91", NULL, "\xe1\xbd\x93", NULL, "\xe1\xbd\x95", NULL, "\xe1\xbd\x97",
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xe1\xbd\xa0", "\xe1\xbd\xa1", "\xe1\xbd\xa2", "\xe1\xbd\xa3", "\xe1\xbd\xa4", "\xe1\xbd\xa5", "\xe1\xbd\xa6", "\xe1\xbd\xa7",
+  NULL, "\xce\xac", NULL, "\xce\xad", NULL, "\xce\xae", NULL, "\xce\xaf",
+  NULL, "\xcf\x8c", NULL, "\xcf\x8d", NULL, "\xcf\x8e"
 };
 
 static const char *grn_nfkc100_decompose_table_e1be[] = {
-  "\xce\x86", NULL, "\xcc\x93", "\xce\xb9", "\xcc\x93"
+  "\xe1\xbe\x80", "\xe1\xbe\x81", "\xe1\xbe\x82", "\xe1\xbe\x83", "\xe1\xbe\x84", "\xe1\xbe\x85", "\xe1\xbe\x86", "\xe1\xbe\x87",
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xe1\xbe\x90", "\xe1\xbe\x91", "\xe1\xbe\x92", "\xe1\xbe\x93", "\xe1\xbe\x94", "\xe1\xbe\x95", "\xe1\xbe\x96", "\xe1\xbe\x97",
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xe1\xbe\xa0", "\xe1\xbe\xa1", "\xe1\xbe\xa2", "\xe1\xbe\xa3", "\xe1\xbe\xa4", "\xe1\xbe\xa5", "\xe1\xbe\xa6", "\xe1\xbe\xa7",
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xe1\xbe\xb0", "\xe1\xbe\xb1", "\xe1\xbd\xb0", "\xe1\xbd\xb1", "\xe1\xbe\xb3", "\xcc\x93", "\xce\xb9", "\xcc\x93"
 };
 
 static const char *grn_nfkc100_decompose_table_e1bf[] = {
   "\xcd\x82", "\xcc\x88\xcd\x82", NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, "\xce\x88", NULL, "\xce\x89", NULL, "\xcc\x93\xcc\x80", "\xcc\x93\xcc\x81", "\xcc\x93\xcd\x82",
+  "\xe1\xbd\xb2", "\xe1\xbd\xb3", "\xe1\xbd\xb4", "\xe1\xbd\xb5", "\xe1\xbf\x83", "\xcc\x93\xcc\x80", "\xcc\x93\xcc\x81", "\xcc\x93\xcd\x82",
   NULL, NULL, NULL, "\xce\x90", NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, "\xce\x8a", NULL, "\xcc\x94\xcc\x80", "\xcc\x94\xcc\x81", "\xcc\x94\xcd\x82",
+  "\xe1\xbf\x90", "\xe1\xbf\x91", "\xe1\xbd\xb6", "\xe1\xbd\xb7", NULL, "\xcc\x94\xcc\x80", "\xcc\x94\xcc\x81", "\xcc\x94\xcd\x82",
   NULL, NULL, NULL, "\xce\xb0", NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, "\xce\x8e", NULL, "\xcc\x88\xcc\x80", "\xcc\x88\xcc\x81", "\x60",
+  "\xe1\xbf\xa0", "\xe1\xbf\xa1", "\xe1\xbd\xba", "\xe1\xbd\xbb", "\xe1\xbf\xa5", "\xcc\x88\xcc\x80", "\xcc\x88\xcc\x81", "\x60",
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, "\xce\x8c", NULL, "\xce\x8f", NULL, "\xcc\x81", "\xcc\x94"
+  "\xe1\xbd\xb8", "\xe1\xbd\xb9", "\xe1\xbd\xbc", "\xe1\xbd\xbd", "\xe1\xbf\xb3", "\xcc\x81", "\xcc\x94"
 };
 
 static const char *grn_nfkc100_decompose_table_e280[] = {
@@ -8395,14 +8524,14 @@ static const char *grn_nfkc100_decompose_table_e282[] = {
 };
 
 static const char *grn_nfkc100_decompose_table_e284[] = {
-  "\x61\x2f\x63", "\x61\x2f\x73", "\x63", "\xc2\xb0\x63", NULL, "\x63\x2f\x6f", "\x63\x2f\x75", "\xc6\x90",
+  "\x61\x2f\x63", "\x61\x2f\x73", "\x63", "\xc2\xb0\x63", NULL, "\x63\x2f\x6f", "\x63\x2f\x75", "\xc9\x9b",
   NULL, "\xc2\xb0\x66", "\x67", "\x68", "\x68", "\x68", "\x68", "\xc4\xa7",
   "\x69", "\x69", "\x6c", "\x6c", NULL, "\x6e", "\x6e\x6f", NULL,
   NULL, "\x70", "\x71", "\x72", "\x72", "\x72", NULL, NULL,
-  "\x73\x6d", "\x74\x65\x6c", "\x74\x6d", NULL, "\x7a", NULL, "\xce\xa9", NULL,
+  "\x73\x6d", "\x74\x65\x6c", "\x74\x6d", NULL, "\x7a", NULL, "\xcf\x89", NULL,
   "\x7a", NULL, "\x6b", "\xc3\xa5", "\x62", "\x63", NULL, "\x65",
-  "\x65", "\x66", NULL, "\x6d", "\x6f", "\xd7\x90", "\xd7\x91", "\xd7\x92",
-  "\xd7\x93", "\x69", NULL, "\x66\x61\x78", "\xcf\x80", "\xce\xb3", "\xce\x93", "\xce\xa0"
+  "\x65", "\x66", "\xe2\x85\x8e", "\x6d", "\x6f", "\xd7\x90", "\xd7\x91", "\xd7\x92",
+  "\xd7\x93", "\x69", NULL, "\x66\x61\x78", "\xcf\x80", "\xce\xb3", "\xce\xb3", "\xcf\x80"
 };
 
 static const char *grn_nfkc100_decompose_table_e285[] = {
@@ -8410,10 +8539,14 @@ static const char *grn_nfkc100_decompose_table_e285[] = {
   "\x69", "\x6a", NULL, NULL, NULL, NULL, NULL, NULL,
   "\x31\xe2\x81\x84\x37", "\x31\xe2\x81\x84\x39", "\x31\xe2\x81\x84\x31\x30", "\x31\xe2\x81\x84\x33", "\x32\xe2\x81\x84\x33", "\x31\xe2\x81\x84\x35", "\x32\xe2\x81\x84\x35", "\x33\xe2\x81\x84\x35",
   "\x34\xe2\x81\x84\x35", "\x31\xe2\x81\x84\x36", "\x35\xe2\x81\x84\x36", "\x31\xe2\x81\x84\x38", "\x33\xe2\x81\x84\x38", "\x35\xe2\x81\x84\x38", "\x37\xe2\x81\x84\x38", "\x31\xe2\x81\x84",
-  "\x69", "\x69\x69", "\x69\x69\x69", "\x69\x76", "\x76", "\x76\x69", "\x76\x69\x69", "\x76\x69\x69\x69",
-  "\x69\x78", "\x78", "\x78\x69", "\x78\x69\x69", "\x6c", "\x63", "\x64", "\x6d",
+  "\xe2\x85\xb0", "\xe2\x85\xb1", "\xe2\x85\xb2", "\xe2\x85\xb3", "\xe2\x85\xb4", "\xe2\x85\xb5", "\xe2\x85\xb6", "\xe2\x85\xb7",
+  "\xe2\x85\xb8", "\xe2\x85\xb9", "\xe2\x85\xba", "\xe2\x85\xbb", "\xe2\x85\xbc", "\xe2\x85\xbd", "\xe2\x85\xbe", "\xe2\x85\xbf",
   "\x69", "\x69\x69", "\x69\x69\x69", "\x69\x76", "\x76", "\x76\x69", "\x76\x69\x69", "\x76\x69\x69\x69",
   "\x69\x78", "\x78", "\x78\x69", "\x78\x69\x69", "\x6c", "\x63", "\x64", "\x6d"
+};
+
+static const char *grn_nfkc100_decompose_table_e286[] = {
+  "\xe2\x86\x84", NULL, NULL, NULL, NULL, NULL, "\x30\xe2\x81\x84\x33"
 };
 
 static const char *grn_nfkc100_decompose_table_e288[] = {
@@ -8438,13 +8571,13 @@ static const char *grn_nfkc100_decompose_table_e292[] = {
   "\x31\x37\x2e", "\x31\x38\x2e", "\x31\x39\x2e", "\x32\x30\x2e", "\x28\x61\x29", "\x28\x62\x29", "\x28\x63\x29", "\x28\x64\x29",
   "\x28\x65\x29", "\x28\x66\x29", "\x28\x67\x29", "\x28\x68\x29", "\x28\x69\x29", "\x28\x6a\x29", "\x28\x6b\x29", "\x28\x6c\x29",
   "\x28\x6d\x29", "\x28\x6e\x29", "\x28\x6f\x29", "\x28\x70\x29", "\x28\x71\x29", "\x28\x72\x29", "\x28\x73\x29", "\x28\x74\x29",
-  "\x28\x75\x29", "\x28\x76\x29", "\x28\x77\x29", "\x28\x78\x29", "\x28\x79\x29", "\x28\x7a\x29", "\x61", "\x62",
-  "\x63", "\x64", "\x65", "\x66", "\x67", "\x68", "\x69", "\x6a"
+  "\x28\x75\x29", "\x28\x76\x29", "\x28\x77\x29", "\x28\x78\x29", "\x28\x79\x29", "\x28\x7a\x29", "\xe2\x93\x90", "\xe2\x93\x91",
+  "\xe2\x93\x92", "\xe2\x93\x93", "\xe2\x93\x94", "\xe2\x93\x95", "\xe2\x93\x96", "\xe2\x93\x97", "\xe2\x93\x98", "\xe2\x93\x99"
 };
 
 static const char *grn_nfkc100_decompose_table_e293[] = {
-  "\x6b", "\x6c", "\x6d", "\x6e", "\x6f", "\x70", "\x71", "\x72",
-  "\x73", "\x74", "\x75", "\x76", "\x77", "\x78", "\x79", "\x7a",
+  "\xe2\x93\x9a", "\xe2\x93\x9b", "\xe2\x93\x9c", "\xe2\x93\x9d", "\xe2\x93\x9e", "\xe2\x93\x9f", "\xe2\x93\xa0", "\xe2\x93\xa1",
+  "\xe2\x93\xa2", "\xe2\x93\xa3", "\xe2\x93\xa4", "\xe2\x93\xa5", "\xe2\x93\xa6", "\xe2\x93\xa7", "\xe2\x93\xa8", "\xe2\x93\xa9",
   "\x61", "\x62", "\x63", "\x64", "\x65", "\x66", "\x67", "\x68",
   "\x69", "\x6a", "\x6b", "\x6c", "\x6d", "\x6e", "\x6f", "\x70",
   "\x71", "\x72", "\x73", "\x74", "\x75", "\x76", "\x77", "\x78",
@@ -8455,8 +8588,41 @@ static const char *grn_nfkc100_decompose_table_e2a9[] = {
   "\x3a\x3a\x3d", "\x3d\x3d", "\x3d\x3d\x3d"
 };
 
+static const char *grn_nfkc100_decompose_table_e2b0[] = {
+  "\xe2\xb0\xb0", "\xe2\xb0\xb1", "\xe2\xb0\xb2", "\xe2\xb0\xb3", "\xe2\xb0\xb4", "\xe2\xb0\xb5", "\xe2\xb0\xb6", "\xe2\xb0\xb7",
+  "\xe2\xb0\xb8", "\xe2\xb0\xb9", "\xe2\xb0\xba", "\xe2\xb0\xbb", "\xe2\xb0\xbc", "\xe2\xb0\xbd", "\xe2\xb0\xbe", "\xe2\xb0\xbf",
+  "\xe2\xb1\x80", "\xe2\xb1\x81", "\xe2\xb1\x82", "\xe2\xb1\x83", "\xe2\xb1\x84", "\xe2\xb1\x85", "\xe2\xb1\x86", "\xe2\xb1\x87",
+  "\xe2\xb1\x88", "\xe2\xb1\x89", "\xe2\xb1\x8a", "\xe2\xb1\x8b", "\xe2\xb1\x8c", "\xe2\xb1\x8d", "\xe2\xb1\x8e", "\xe2\xb1\x8f",
+  "\xe2\xb1\x90", "\xe2\xb1\x91", "\xe2\xb1\x92", "\xe2\xb1\x93", "\xe2\xb1\x94", "\xe2\xb1\x95", "\xe2\xb1\x96", "\xe2\xb1\x97",
+  "\xe2\xb1\x98", "\xe2\xb1\x99", "\xe2\xb1\x9a", "\xe2\xb1\x9b", "\xe2\xb1\x9c", "\xe2\xb1\x9d", "\xe2\xb1\x9e"
+};
+
 static const char *grn_nfkc100_decompose_table_e2b1[] = {
-  "\x6a", "\x76"
+  "\xe2\xb1\xa1", NULL, "\xc9\xab", "\xe1\xb5\xbd", "\xc9\xbd", NULL, NULL, "\xe2\xb1\xa8",
+  NULL, "\xe2\xb1\xaa", NULL, "\xe2\xb1\xac", NULL, "\xc9\x91", "\xc9\xb1", "\xc9\x90",
+  "\xc9\x92", NULL, "\xe2\xb1\xb3", NULL, NULL, "\xe2\xb1\xb6", NULL, NULL,
+  NULL, NULL, NULL, NULL, "\x6a", "\x76", "\xc8\xbf", "\xc9\x80"
+};
+
+static const char *grn_nfkc100_decompose_table_e2b2[] = {
+  "\xe2\xb2\x81", NULL, "\xe2\xb2\x83", NULL, "\xe2\xb2\x85", NULL, "\xe2\xb2\x87", NULL,
+  "\xe2\xb2\x89", NULL, "\xe2\xb2\x8b", NULL, "\xe2\xb2\x8d", NULL, "\xe2\xb2\x8f", NULL,
+  "\xe2\xb2\x91", NULL, "\xe2\xb2\x93", NULL, "\xe2\xb2\x95", NULL, "\xe2\xb2\x97", NULL,
+  "\xe2\xb2\x99", NULL, "\xe2\xb2\x9b", NULL, "\xe2\xb2\x9d", NULL, "\xe2\xb2\x9f", NULL,
+  "\xe2\xb2\xa1", NULL, "\xe2\xb2\xa3", NULL, "\xe2\xb2\xa5", NULL, "\xe2\xb2\xa7", NULL,
+  "\xe2\xb2\xa9", NULL, "\xe2\xb2\xab", NULL, "\xe2\xb2\xad", NULL, "\xe2\xb2\xaf", NULL,
+  "\xe2\xb2\xb1", NULL, "\xe2\xb2\xb3", NULL, "\xe2\xb2\xb5", NULL, "\xe2\xb2\xb7", NULL,
+  "\xe2\xb2\xb9", NULL, "\xe2\xb2\xbb", NULL, "\xe2\xb2\xbd", NULL, "\xe2\xb2\xbf"
+};
+
+static const char *grn_nfkc100_decompose_table_e2b3[] = {
+  "\xe2\xb3\x81", NULL, "\xe2\xb3\x83", NULL, "\xe2\xb3\x85", NULL, "\xe2\xb3\x87", NULL,
+  "\xe2\xb3\x89", NULL, "\xe2\xb3\x8b", NULL, "\xe2\xb3\x8d", NULL, "\xe2\xb3\x8f", NULL,
+  "\xe2\xb3\x91", NULL, "\xe2\xb3\x93", NULL, "\xe2\xb3\x95", NULL, "\xe2\xb3\x97", NULL,
+  "\xe2\xb3\x99", NULL, "\xe2\xb3\x9b", NULL, "\xe2\xb3\x9d", NULL, "\xe2\xb3\x9f", NULL,
+  "\xe2\xb3\xa1", NULL, "\xe2\xb3\xa3", NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, "\xe2\xb3\xac", NULL, "\xe2\xb3\xae", NULL, NULL,
+  NULL, NULL, "\xe2\xb3\xb3"
 };
 
 static const char *grn_nfkc100_decompose_table_e2bc[] = {
@@ -8614,7 +8780,7 @@ static const char *grn_nfkc100_decompose_table_e38e[] = {
 };
 
 static const char *grn_nfkc100_decompose_table_e38f[] = {
-  "\x6b\xce\xa9", "\x6d\xce\xa9", "\x61\x2e\x6d\x2e", "\x62\x71", "\x63\x63", "\x63\x64", "\x63\xe2\x88\x95\x6b\x67", "\x63\x6f\x2e",
+  "\x6b\xcf\x89", "\x6d\xcf\x89", "\x61\x2e\x6d\x2e", "\x62\x71", "\x63\x63", "\x63\x64", "\x63\xe2\x88\x95\x6b\x67", "\x63\x6f\x2e",
   "\x64\x62", "\x67\x79", "\x68\x61", "\x68\x70", "\x69\x6e", "\x6b\x6b", "\x6b\x6d", "\x6b\x74",
   "\x6c\x6d", "\x6c\x6e", "\x6c\x6f\x67", "\x6c\x78", "\x6d\x62", "\x6d\x69\x6c", "\x6d\x6f\x6c", "\x70\x68",
   "\x70\x2e\x6d\x2e", "\x70\x70\x6d", "\x70\x72", "\x73\x72", "\x73\x76", "\x77\x62", "\x76\xe2\x88\x95\x6d", "\x61\xe2\x88\x95\x6d",
@@ -8624,12 +8790,52 @@ static const char *grn_nfkc100_decompose_table_e38f[] = {
   "\x32\x35\xe6\x97\xa5", "\x32\x36\xe6\x97\xa5", "\x32\x37\xe6\x97\xa5", "\x32\x38\xe6\x97\xa5", "\x32\x39\xe6\x97\xa5", "\x33\x30\xe6\x97\xa5", "\x33\x31\xe6\x97\xa5", "\x67\x61\x6c"
 };
 
+static const char *grn_nfkc100_decompose_table_ea99[] = {
+  "\xea\x99\x81", NULL, "\xea\x99\x83", NULL, "\xea\x99\x85", NULL, "\xea\x99\x87", NULL,
+  "\xea\x99\x89", NULL, "\xea\x99\x8b", NULL, "\xea\x99\x8d", NULL, "\xea\x99\x8f", NULL,
+  "\xea\x99\x91", NULL, "\xea\x99\x93", NULL, "\xea\x99\x95", NULL, "\xea\x99\x97", NULL,
+  "\xea\x99\x99", NULL, "\xea\x99\x9b", NULL, "\xea\x99\x9d", NULL, "\xea\x99\x9f", NULL,
+  "\xea\x99\xa1", NULL, "\xea\x99\xa3", NULL, "\xea\x99\xa5", NULL, "\xea\x99\xa7", NULL,
+  "\xea\x99\xa9", NULL, "\xea\x99\xab", NULL, "\xea\x99\xad"
+};
+
 static const char *grn_nfkc100_decompose_table_ea9a[] = {
-  "\xd1\x8a", "\xd1\x8c"
+  "\xea\x9a\x81", NULL, "\xea\x9a\x83", NULL, "\xea\x9a\x85", NULL, "\xea\x9a\x87", NULL,
+  "\xea\x9a\x89", NULL, "\xea\x9a\x8b", NULL, "\xea\x9a\x8d", NULL, "\xea\x9a\x8f", NULL,
+  "\xea\x9a\x91", NULL, "\xea\x9a\x93", NULL, "\xea\x9a\x95", NULL, "\xea\x9a\x97", NULL,
+  "\xea\x9a\x99", NULL, "\xea\x9a\x9b", NULL, "\xd1\x8a", "\xd1\x8c"
+};
+
+static const char *grn_nfkc100_decompose_table_ea9c[] = {
+  "\xea\x9c\xa3", NULL, "\xea\x9c\xa5", NULL, "\xea\x9c\xa7", NULL, "\xea\x9c\xa9", NULL,
+  "\xea\x9c\xab", NULL, "\xea\x9c\xad", NULL, "\xea\x9c\xaf", NULL, NULL, NULL,
+  "\xea\x9c\xb3", NULL, "\xea\x9c\xb5", NULL, "\xea\x9c\xb7", NULL, "\xea\x9c\xb9", NULL,
+  "\xea\x9c\xbb", NULL, "\xea\x9c\xbd", NULL, "\xea\x9c\xbf"
+};
+
+static const char *grn_nfkc100_decompose_table_ea9d[] = {
+  "\xea\x9d\x81", NULL, "\xea\x9d\x83", NULL, "\xea\x9d\x85", NULL, "\xea\x9d\x87", NULL,
+  "\xea\x9d\x89", NULL, "\xea\x9d\x8b", NULL, "\xea\x9d\x8d", NULL, "\xea\x9d\x8f", NULL,
+  "\xea\x9d\x91", NULL, "\xea\x9d\x93", NULL, "\xea\x9d\x95", NULL, "\xea\x9d\x97", NULL,
+  "\xea\x9d\x99", NULL, "\xea\x9d\x9b", NULL, "\xea\x9d\x9d", NULL, "\xea\x9d\x9f", NULL,
+  "\xea\x9d\xa1", NULL, "\xea\x9d\xa3", NULL, "\xea\x9d\xa5", NULL, "\xea\x9d\xa7", NULL,
+  "\xea\x9d\xa9", NULL, "\xea\x9d\xab", NULL, "\xea\x9d\xad", NULL, "\xea\x9d\xaf", NULL,
+  "\xea\x9d\xaf", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, "\xea\x9d\xba", NULL, "\xea\x9d\xbc", NULL, "\xe1\xb5\xb9", "\xea\x9d\xbf"
+};
+
+static const char *grn_nfkc100_decompose_table_ea9e[] = {
+  "\xea\x9e\x81", NULL, "\xea\x9e\x83", NULL, "\xea\x9e\x85", NULL, "\xea\x9e\x87", NULL,
+  NULL, NULL, NULL, "\xea\x9e\x8c", NULL, "\xc9\xa5", NULL, NULL,
+  "\xea\x9e\x91", NULL, "\xea\x9e\x93", NULL, NULL, NULL, "\xea\x9e\x97", NULL,
+  "\xea\x9e\x99", NULL, "\xea\x9e\x9b", NULL, "\xea\x9e\x9d", NULL, "\xea\x9e\x9f", NULL,
+  "\xea\x9e\xa1", NULL, "\xea\x9e\xa3", NULL, "\xea\x9e\xa5", NULL, "\xea\x9e\xa7", NULL,
+  "\xea\x9e\xa9", NULL, "\xc9\xa6", "\xc9\x9c", "\xc9\xa1", "\xc9\xac", "\xc9\xaa", NULL,
+  "\xca\x9e", "\xca\x87", "\xca\x9d", "\xea\xad\x93", "\xea\x9e\xb5", NULL, "\xea\x9e\xb7"
 };
 
 static const char *grn_nfkc100_decompose_table_ea9f[] = {
-  "\xc4\xa6", "\xc5\x93"
+  "\xc4\xa7", "\xc5\x93"
 };
 
 static const char *grn_nfkc100_decompose_table_eaad[] = {
@@ -8894,10 +9100,10 @@ static const char *grn_nfkc100_decompose_table_efbc[] = {
   "\x29", "\x2a", "\x2b", "\x2c", "\x2d", "\x2e", "\x2f", "\x30",
   "\x31", "\x32", "\x33", "\x34", "\x35", "\x36", "\x37", "\x38",
   "\x39", "\x3a", "\x3b", "\x3c", "\x3d", "\x3e", "\x3f", "\x40",
-  "\x61", "\x62", "\x63", "\x64", "\x65", "\x66", "\x67", "\x68",
-  "\x69", "\x6a", "\x6b", "\x6c", "\x6d", "\x6e", "\x6f", "\x70",
-  "\x71", "\x72", "\x73", "\x74", "\x75", "\x76", "\x77", "\x78",
-  "\x79", "\x7a", "\x5b", "\x5c", "\x5d", "\x5e", "\x5f"
+  "\xef\xbd\x81", "\xef\xbd\x82", "\xef\xbd\x83", "\xef\xbd\x84", "\xef\xbd\x85", "\xef\xbd\x86", "\xef\xbd\x87", "\xef\xbd\x88",
+  "\xef\xbd\x89", "\xef\xbd\x8a", "\xef\xbd\x8b", "\xef\xbd\x8c", "\xef\xbd\x8d", "\xef\xbd\x8e", "\xef\xbd\x8f", "\xef\xbd\x90",
+  "\xef\xbd\x91", "\xef\xbd\x92", "\xef\xbd\x93", "\xef\xbd\x94", "\xef\xbd\x95", "\xef\xbd\x96", "\xef\xbd\x97", "\xef\xbd\x98",
+  "\xef\xbd\x99", "\xef\xbd\x9a", "\x5b", "\x5c", "\x5d", "\x5e", "\x5f"
 };
 
 static const char *grn_nfkc100_decompose_table_efbd[] = {
@@ -8929,6 +9135,42 @@ static const char *grn_nfkc100_decompose_table_efbf[] = {
   "\xe1\x85\xb3", "\xe1\x85\xb4", "\xe1\x85\xb5", NULL, NULL, NULL, "\xc2\xa2", "\xc2\xa3",
   "\xc2\xac", "\xcc\x84", "\xc2\xa6", "\xc2\xa5", "\xe2\x82\xa9", NULL, "\xe2\x94\x82", "\xe2\x86\x90",
   "\xe2\x86\x91", "\xe2\x86\x92", "\xe2\x86\x93", "\xe2\x96\xa0", "\xe2\x97\x8b"
+};
+
+static const char *grn_nfkc100_decompose_table_f09090[] = {
+  "\xf0\x90\x90\xa8", "\xf0\x90\x90\xa9", "\xf0\x90\x90\xaa", "\xf0\x90\x90\xab", "\xf0\x90\x90\xac", "\xf0\x90\x90\xad", "\xf0\x90\x90\xae", "\xf0\x90\x90\xaf",
+  "\xf0\x90\x90\xb0", "\xf0\x90\x90\xb1", "\xf0\x90\x90\xb2", "\xf0\x90\x90\xb3", "\xf0\x90\x90\xb4", "\xf0\x90\x90\xb5", "\xf0\x90\x90\xb6", "\xf0\x90\x90\xb7",
+  "\xf0\x90\x90\xb8", "\xf0\x90\x90\xb9", "\xf0\x90\x90\xba", "\xf0\x90\x90\xbb", "\xf0\x90\x90\xbc", "\xf0\x90\x90\xbd", "\xf0\x90\x90\xbe", "\xf0\x90\x90\xbf",
+  "\xf0\x90\x91\x80", "\xf0\x90\x91\x81", "\xf0\x90\x91\x82", "\xf0\x90\x91\x83", "\xf0\x90\x91\x84", "\xf0\x90\x91\x85", "\xf0\x90\x91\x86", "\xf0\x90\x91\x87",
+  "\xf0\x90\x91\x88", "\xf0\x90\x91\x89", "\xf0\x90\x91\x8a", "\xf0\x90\x91\x8b", "\xf0\x90\x91\x8c", "\xf0\x90\x91\x8d", "\xf0\x90\x91\x8e", "\xf0\x90\x91\x8f"
+};
+
+static const char *grn_nfkc100_decompose_table_f09092[] = {
+  "\xf0\x90\x93\x98", "\xf0\x90\x93\x99", "\xf0\x90\x93\x9a", "\xf0\x90\x93\x9b", "\xf0\x90\x93\x9c", "\xf0\x90\x93\x9d", "\xf0\x90\x93\x9e", "\xf0\x90\x93\x9f",
+  "\xf0\x90\x93\xa0", "\xf0\x90\x93\xa1", "\xf0\x90\x93\xa2", "\xf0\x90\x93\xa3", "\xf0\x90\x93\xa4", "\xf0\x90\x93\xa5", "\xf0\x90\x93\xa6", "\xf0\x90\x93\xa7"
+};
+
+static const char *grn_nfkc100_decompose_table_f09093[] = {
+  "\xf0\x90\x93\xa8", "\xf0\x90\x93\xa9", "\xf0\x90\x93\xaa", "\xf0\x90\x93\xab", "\xf0\x90\x93\xac", "\xf0\x90\x93\xad", "\xf0\x90\x93\xae", "\xf0\x90\x93\xaf",
+  "\xf0\x90\x93\xb0", "\xf0\x90\x93\xb1", "\xf0\x90\x93\xb2", "\xf0\x90\x93\xb3", "\xf0\x90\x93\xb4", "\xf0\x90\x93\xb5", "\xf0\x90\x93\xb6", "\xf0\x90\x93\xb7",
+  "\xf0\x90\x93\xb8", "\xf0\x90\x93\xb9", "\xf0\x90\x93\xba", "\xf0\x90\x93\xbb"
+};
+
+static const char *grn_nfkc100_decompose_table_f090b2[] = {
+  "\xf0\x90\xb3\x80", "\xf0\x90\xb3\x81", "\xf0\x90\xb3\x82", "\xf0\x90\xb3\x83", "\xf0\x90\xb3\x84", "\xf0\x90\xb3\x85", "\xf0\x90\xb3\x86", "\xf0\x90\xb3\x87",
+  "\xf0\x90\xb3\x88", "\xf0\x90\xb3\x89", "\xf0\x90\xb3\x8a", "\xf0\x90\xb3\x8b", "\xf0\x90\xb3\x8c", "\xf0\x90\xb3\x8d", "\xf0\x90\xb3\x8e", "\xf0\x90\xb3\x8f",
+  "\xf0\x90\xb3\x90", "\xf0\x90\xb3\x91", "\xf0\x90\xb3\x92", "\xf0\x90\xb3\x93", "\xf0\x90\xb3\x94", "\xf0\x90\xb3\x95", "\xf0\x90\xb3\x96", "\xf0\x90\xb3\x97",
+  "\xf0\x90\xb3\x98", "\xf0\x90\xb3\x99", "\xf0\x90\xb3\x9a", "\xf0\x90\xb3\x9b", "\xf0\x90\xb3\x9c", "\xf0\x90\xb3\x9d", "\xf0\x90\xb3\x9e", "\xf0\x90\xb3\x9f",
+  "\xf0\x90\xb3\xa0", "\xf0\x90\xb3\xa1", "\xf0\x90\xb3\xa2", "\xf0\x90\xb3\xa3", "\xf0\x90\xb3\xa4", "\xf0\x90\xb3\xa5", "\xf0\x90\xb3\xa6", "\xf0\x90\xb3\xa7",
+  "\xf0\x90\xb3\xa8", "\xf0\x90\xb3\xa9", "\xf0\x90\xb3\xaa", "\xf0\x90\xb3\xab", "\xf0\x90\xb3\xac", "\xf0\x90\xb3\xad", "\xf0\x90\xb3\xae", "\xf0\x90\xb3\xaf",
+  "\xf0\x90\xb3\xb0", "\xf0\x90\xb3\xb1", "\xf0\x90\xb3\xb2"
+};
+
+static const char *grn_nfkc100_decompose_table_f091a2[] = {
+  "\xf0\x91\xa3\x80", "\xf0\x91\xa3\x81", "\xf0\x91\xa3\x82", "\xf0\x91\xa3\x83", "\xf0\x91\xa3\x84", "\xf0\x91\xa3\x85", "\xf0\x91\xa3\x86", "\xf0\x91\xa3\x87",
+  "\xf0\x91\xa3\x88", "\xf0\x91\xa3\x89", "\xf0\x91\xa3\x8a", "\xf0\x91\xa3\x8b", "\xf0\x91\xa3\x8c", "\xf0\x91\xa3\x8d", "\xf0\x91\xa3\x8e", "\xf0\x91\xa3\x8f",
+  "\xf0\x91\xa3\x90", "\xf0\x91\xa3\x91", "\xf0\x91\xa3\x92", "\xf0\x91\xa3\x93", "\xf0\x91\xa3\x94", "\xf0\x91\xa3\x95", "\xf0\x91\xa3\x96", "\xf0\x91\xa3\x97",
+  "\xf0\x91\xa3\x98", "\xf0\x91\xa3\x99", "\xf0\x91\xa3\x9a", "\xf0\x91\xa3\x9b", "\xf0\x91\xa3\x9c", "\xf0\x91\xa3\x9d", "\xf0\x91\xa3\x9e", "\xf0\x91\xa3\x9f"
 };
 
 static const char *grn_nfkc100_decompose_table_f09d85[] = {
@@ -9055,40 +9297,40 @@ static const char *grn_nfkc100_decompose_table_f09d9a[] = {
   "\x67", "\x68", "\x69", "\x6a", "\x6b", "\x6c", "\x6d", "\x6e",
   "\x6f", "\x70", "\x71", "\x72", "\x73", "\x74", "\x75", "\x76",
   "\x77", "\x78", "\x79", "\x7a", "\xc4\xb1", "\xc8\xb7", NULL, NULL,
-  "\xce\x91", "\xce\x92", "\xce\x93", "\xce\x94", "\xce\x95", "\xce\x96", "\xce\x97", "\xce\x98",
-  "\xce\x99", "\xce\x9a", "\xce\x9b", "\xce\x9c", "\xce\x9d", "\xce\x9e", "\xce\x9f", "\xce\xa0",
-  "\xce\xa1", "\xce\x98", "\xce\xa3", "\xce\xa4", "\xce\xa5", "\xce\xa6", "\xce\xa7", "\xce\xa8"
+  "\xce\xb1", "\xce\xb2", "\xce\xb3", "\xce\xb4", "\xce\xb5", "\xce\xb6", "\xce\xb7", "\xce\xb8",
+  "\xce\xb9", "\xce\xba", "\xce\xbb", "\xce\xbc", "\xce\xbd", "\xce\xbe", "\xce\xbf", "\xcf\x80",
+  "\xcf\x81", "\xce\xb8", "\xcf\x83", "\xcf\x84", "\xcf\x85", "\xcf\x86", "\xcf\x87", "\xcf\x88"
 };
 
 static const char *grn_nfkc100_decompose_table_f09d9b[] = {
-  "\xce\xa9", "\xe2\x88\x87", "\xce\xb1", "\xce\xb2", "\xce\xb3", "\xce\xb4", "\xce\xb5", "\xce\xb6",
+  "\xcf\x89", "\xe2\x88\x87", "\xce\xb1", "\xce\xb2", "\xce\xb3", "\xce\xb4", "\xce\xb5", "\xce\xb6",
   "\xce\xb7", "\xce\xb8", "\xce\xb9", "\xce\xba", "\xce\xbb", "\xce\xbc", "\xce\xbd", "\xce\xbe",
   "\xce\xbf", "\xcf\x80", "\xcf\x81", "\xcf\x82", "\xcf\x83", "\xcf\x84", "\xcf\x85", "\xcf\x86",
   "\xcf\x87", "\xcf\x88", "\xcf\x89", "\xe2\x88\x82", "\xce\xb5", "\xce\xb8", "\xce\xba", "\xcf\x86",
-  "\xcf\x81", "\xcf\x80", "\xce\x91", "\xce\x92", "\xce\x93", "\xce\x94", "\xce\x95", "\xce\x96",
-  "\xce\x97", "\xce\x98", "\xce\x99", "\xce\x9a", "\xce\x9b", "\xce\x9c", "\xce\x9d", "\xce\x9e",
-  "\xce\x9f", "\xce\xa0", "\xce\xa1", "\xce\x98", "\xce\xa3", "\xce\xa4", "\xce\xa5", "\xce\xa6",
-  "\xce\xa7", "\xce\xa8", "\xce\xa9", "\xe2\x88\x87", "\xce\xb1", "\xce\xb2", "\xce\xb3", "\xce\xb4"
+  "\xcf\x81", "\xcf\x80", "\xce\xb1", "\xce\xb2", "\xce\xb3", "\xce\xb4", "\xce\xb5", "\xce\xb6",
+  "\xce\xb7", "\xce\xb8", "\xce\xb9", "\xce\xba", "\xce\xbb", "\xce\xbc", "\xce\xbd", "\xce\xbe",
+  "\xce\xbf", "\xcf\x80", "\xcf\x81", "\xce\xb8", "\xcf\x83", "\xcf\x84", "\xcf\x85", "\xcf\x86",
+  "\xcf\x87", "\xcf\x88", "\xcf\x89", "\xe2\x88\x87", "\xce\xb1", "\xce\xb2", "\xce\xb3", "\xce\xb4"
 };
 
 static const char *grn_nfkc100_decompose_table_f09d9c[] = {
   "\xce\xb5", "\xce\xb6", "\xce\xb7", "\xce\xb8", "\xce\xb9", "\xce\xba", "\xce\xbb", "\xce\xbc",
   "\xce\xbd", "\xce\xbe", "\xce\xbf", "\xcf\x80", "\xcf\x81", "\xcf\x82", "\xcf\x83", "\xcf\x84",
   "\xcf\x85", "\xcf\x86", "\xcf\x87", "\xcf\x88", "\xcf\x89", "\xe2\x88\x82", "\xce\xb5", "\xce\xb8",
-  "\xce\xba", "\xcf\x86", "\xcf\x81", "\xcf\x80", "\xce\x91", "\xce\x92", "\xce\x93", "\xce\x94",
-  "\xce\x95", "\xce\x96", "\xce\x97", "\xce\x98", "\xce\x99", "\xce\x9a", "\xce\x9b", "\xce\x9c",
-  "\xce\x9d", "\xce\x9e", "\xce\x9f", "\xce\xa0", "\xce\xa1", "\xce\x98", "\xce\xa3", "\xce\xa4",
-  "\xce\xa5", "\xce\xa6", "\xce\xa7", "\xce\xa8", "\xce\xa9", "\xe2\x88\x87", "\xce\xb1", "\xce\xb2",
+  "\xce\xba", "\xcf\x86", "\xcf\x81", "\xcf\x80", "\xce\xb1", "\xce\xb2", "\xce\xb3", "\xce\xb4",
+  "\xce\xb5", "\xce\xb6", "\xce\xb7", "\xce\xb8", "\xce\xb9", "\xce\xba", "\xce\xbb", "\xce\xbc",
+  "\xce\xbd", "\xce\xbe", "\xce\xbf", "\xcf\x80", "\xcf\x81", "\xce\xb8", "\xcf\x83", "\xcf\x84",
+  "\xcf\x85", "\xcf\x86", "\xcf\x87", "\xcf\x88", "\xcf\x89", "\xe2\x88\x87", "\xce\xb1", "\xce\xb2",
   "\xce\xb3", "\xce\xb4", "\xce\xb5", "\xce\xb6", "\xce\xb7", "\xce\xb8", "\xce\xb9", "\xce\xba"
 };
 
 static const char *grn_nfkc100_decompose_table_f09d9d[] = {
   "\xce\xbb", "\xce\xbc", "\xce\xbd", "\xce\xbe", "\xce\xbf", "\xcf\x80", "\xcf\x81", "\xcf\x82",
   "\xcf\x83", "\xcf\x84", "\xcf\x85", "\xcf\x86", "\xcf\x87", "\xcf\x88", "\xcf\x89", "\xe2\x88\x82",
-  "\xce\xb5", "\xce\xb8", "\xce\xba", "\xcf\x86", "\xcf\x81", "\xcf\x80", "\xce\x91", "\xce\x92",
-  "\xce\x93", "\xce\x94", "\xce\x95", "\xce\x96", "\xce\x97", "\xce\x98", "\xce\x99", "\xce\x9a",
-  "\xce\x9b", "\xce\x9c", "\xce\x9d", "\xce\x9e", "\xce\x9f", "\xce\xa0", "\xce\xa1", "\xce\x98",
-  "\xce\xa3", "\xce\xa4", "\xce\xa5", "\xce\xa6", "\xce\xa7", "\xce\xa8", "\xce\xa9", "\xe2\x88\x87",
+  "\xce\xb5", "\xce\xb8", "\xce\xba", "\xcf\x86", "\xcf\x81", "\xcf\x80", "\xce\xb1", "\xce\xb2",
+  "\xce\xb3", "\xce\xb4", "\xce\xb5", "\xce\xb6", "\xce\xb7", "\xce\xb8", "\xce\xb9", "\xce\xba",
+  "\xce\xbb", "\xce\xbc", "\xce\xbd", "\xce\xbe", "\xce\xbf", "\xcf\x80", "\xcf\x81", "\xce\xb8",
+  "\xcf\x83", "\xcf\x84", "\xcf\x85", "\xcf\x86", "\xcf\x87", "\xcf\x88", "\xcf\x89", "\xe2\x88\x87",
   "\xce\xb1", "\xce\xb2", "\xce\xb3", "\xce\xb4", "\xce\xb5", "\xce\xb6", "\xce\xb7", "\xce\xb8",
   "\xce\xb9", "\xce\xba", "\xce\xbb", "\xce\xbc", "\xce\xbd", "\xce\xbe", "\xce\xbf", "\xcf\x80"
 };
@@ -9096,23 +9338,31 @@ static const char *grn_nfkc100_decompose_table_f09d9d[] = {
 static const char *grn_nfkc100_decompose_table_f09d9e[] = {
   "\xcf\x81", "\xcf\x82", "\xcf\x83", "\xcf\x84", "\xcf\x85", "\xcf\x86", "\xcf\x87", "\xcf\x88",
   "\xcf\x89", "\xe2\x88\x82", "\xce\xb5", "\xce\xb8", "\xce\xba", "\xcf\x86", "\xcf\x81", "\xcf\x80",
-  "\xce\x91", "\xce\x92", "\xce\x93", "\xce\x94", "\xce\x95", "\xce\x96", "\xce\x97", "\xce\x98",
-  "\xce\x99", "\xce\x9a", "\xce\x9b", "\xce\x9c", "\xce\x9d", "\xce\x9e", "\xce\x9f", "\xce\xa0",
-  "\xce\xa1", "\xce\x98", "\xce\xa3", "\xce\xa4", "\xce\xa5", "\xce\xa6", "\xce\xa7", "\xce\xa8",
-  "\xce\xa9", "\xe2\x88\x87", "\xce\xb1", "\xce\xb2", "\xce\xb3", "\xce\xb4", "\xce\xb5", "\xce\xb6",
+  "\xce\xb1", "\xce\xb2", "\xce\xb3", "\xce\xb4", "\xce\xb5", "\xce\xb6", "\xce\xb7", "\xce\xb8",
+  "\xce\xb9", "\xce\xba", "\xce\xbb", "\xce\xbc", "\xce\xbd", "\xce\xbe", "\xce\xbf", "\xcf\x80",
+  "\xcf\x81", "\xce\xb8", "\xcf\x83", "\xcf\x84", "\xcf\x85", "\xcf\x86", "\xcf\x87", "\xcf\x88",
+  "\xcf\x89", "\xe2\x88\x87", "\xce\xb1", "\xce\xb2", "\xce\xb3", "\xce\xb4", "\xce\xb5", "\xce\xb6",
   "\xce\xb7", "\xce\xb8", "\xce\xb9", "\xce\xba", "\xce\xbb", "\xce\xbc", "\xce\xbd", "\xce\xbe",
   "\xce\xbf", "\xcf\x80", "\xcf\x81", "\xcf\x82", "\xcf\x83", "\xcf\x84", "\xcf\x85", "\xcf\x86"
 };
 
 static const char *grn_nfkc100_decompose_table_f09d9f[] = {
   "\xcf\x87", "\xcf\x88", "\xcf\x89", "\xe2\x88\x82", "\xce\xb5", "\xce\xb8", "\xce\xba", "\xcf\x86",
-  "\xcf\x81", "\xcf\x80", "\xcf\x9c", "\xcf\x9d", NULL, NULL, "\x30", "\x31",
+  "\xcf\x81", "\xcf\x80", "\xcf\x9d", "\xcf\x9d", NULL, NULL, "\x30", "\x31",
   "\x32", "\x33", "\x34", "\x35", "\x36", "\x37", "\x38", "\x39",
   "\x30", "\x31", "\x32", "\x33", "\x34", "\x35", "\x36", "\x37",
   "\x38", "\x39", "\x30", "\x31", "\x32", "\x33", "\x34", "\x35",
   "\x36", "\x37", "\x38", "\x39", "\x30", "\x31", "\x32", "\x33",
   "\x34", "\x35", "\x36", "\x37", "\x38", "\x39", "\x30", "\x31",
   "\x32", "\x33", "\x34", "\x35", "\x36", "\x37", "\x38", "\x39"
+};
+
+static const char *grn_nfkc100_decompose_table_f09ea4[] = {
+  "\xf0\x9e\xa4\xa2", "\xf0\x9e\xa4\xa3", "\xf0\x9e\xa4\xa4", "\xf0\x9e\xa4\xa5", "\xf0\x9e\xa4\xa6", "\xf0\x9e\xa4\xa7", "\xf0\x9e\xa4\xa8", "\xf0\x9e\xa4\xa9",
+  "\xf0\x9e\xa4\xaa", "\xf0\x9e\xa4\xab", "\xf0\x9e\xa4\xac", "\xf0\x9e\xa4\xad", "\xf0\x9e\xa4\xae", "\xf0\x9e\xa4\xaf", "\xf0\x9e\xa4\xb0", "\xf0\x9e\xa4\xb1",
+  "\xf0\x9e\xa4\xb2", "\xf0\x9e\xa4\xb3", "\xf0\x9e\xa4\xb4", "\xf0\x9e\xa4\xb5", "\xf0\x9e\xa4\xb6", "\xf0\x9e\xa4\xb7", "\xf0\x9e\xa4\xb8", "\xf0\x9e\xa4\xb9",
+  "\xf0\x9e\xa4\xba", "\xf0\x9e\xa4\xbb", "\xf0\x9e\xa4\xbc", "\xf0\x9e\xa4\xbd", "\xf0\x9e\xa4\xbe", "\xf0\x9e\xa4\xbf", "\xf0\x9e\xa5\x80", "\xf0\x9e\xa5\x81",
+  "\xf0\x9e\xa5\x82", "\xf0\x9e\xa5\x83"
 };
 
 static const char *grn_nfkc100_decompose_table_f09eb8[] = {
@@ -9300,7 +9550,7 @@ grn_nfkc100_decompose(const unsigned char *utf8)
       break;
     case 0xc3 :
       if (utf8[1] >= 0x80 &&
-          utf8[1] <= 0x9d) {
+          utf8[1] <= 0x9e) {
         return grn_nfkc100_decompose_table_c3[utf8[1] - 0x80];
       }
       break;
@@ -9309,21 +9559,27 @@ grn_nfkc100_decompose(const unsigned char *utf8)
     case 0xc5 :
       return grn_nfkc100_decompose_table_c5[utf8[1] - 0x80];
     case 0xc6 :
-      if (utf8[1] >= 0xa0 &&
-          utf8[1] <= 0xaf) {
-        return grn_nfkc100_decompose_table_c6[utf8[1] - 0xa0];
+      if (utf8[1] >= 0x81 &&
+          utf8[1] <= 0xbc) {
+        return grn_nfkc100_decompose_table_c6[utf8[1] - 0x81];
       }
       break;
     case 0xc7 :
       if (utf8[1] >= 0x84 &&
-          utf8[1] <= 0xba) {
+          utf8[1] <= 0xbe) {
         return grn_nfkc100_decompose_table_c7[utf8[1] - 0x84];
       }
       break;
     case 0xc8 :
       if (utf8[1] >= 0x80 &&
-          utf8[1] <= 0xb2) {
+          utf8[1] <= 0xbe) {
         return grn_nfkc100_decompose_table_c8[utf8[1] - 0x80];
+      }
+      break;
+    case 0xc9 :
+      if (utf8[1] >= 0x81 &&
+          utf8[1] <= 0x8e) {
+        return grn_nfkc100_decompose_table_c9[utf8[1] - 0x81];
       }
       break;
     case 0xca :
@@ -9339,21 +9595,49 @@ grn_nfkc100_decompose(const unsigned char *utf8)
       }
       break;
     case 0xcd :
-      if (utf8[1] >= 0x80 &&
-          utf8[1] <= 0xbe) {
-        return grn_nfkc100_decompose_table_cd[utf8[1] - 0x80];
-      }
-      break;
+      return grn_nfkc100_decompose_table_cd[utf8[1] - 0x80];
     case 0xce :
       if (utf8[1] >= 0x84 &&
-          utf8[1] <= 0x87) {
+          utf8[1] <= 0xab) {
         return grn_nfkc100_decompose_table_ce[utf8[1] - 0x84];
       }
       break;
     case 0xcf :
-      if (utf8[1] >= 0x90 &&
-          utf8[1] <= 0xb9) {
-        return grn_nfkc100_decompose_table_cf[utf8[1] - 0x90];
+      if (utf8[1] >= 0x8f &&
+          utf8[1] <= 0xbf) {
+        return grn_nfkc100_decompose_table_cf[utf8[1] - 0x8f];
+      }
+      break;
+    case 0xd0 :
+      if (utf8[1] >= 0x80 &&
+          utf8[1] <= 0xaf) {
+        return grn_nfkc100_decompose_table_d0[utf8[1] - 0x80];
+      }
+      break;
+    case 0xd1 :
+      if (utf8[1] >= 0xa0 &&
+          utf8[1] <= 0xbe) {
+        return grn_nfkc100_decompose_table_d1[utf8[1] - 0xa0];
+      }
+      break;
+    case 0xd2 :
+      if (utf8[1] >= 0x80 &&
+          utf8[1] <= 0xbe) {
+        return grn_nfkc100_decompose_table_d2[utf8[1] - 0x80];
+      }
+      break;
+    case 0xd3 :
+      if (utf8[1] >= 0x80 &&
+          utf8[1] <= 0xbe) {
+        return grn_nfkc100_decompose_table_d3[utf8[1] - 0x80];
+      }
+      break;
+    case 0xd4 :
+      return grn_nfkc100_decompose_table_d4[utf8[1] - 0x80];
+    case 0xd5 :
+      if (utf8[1] >= 0x80 &&
+          utf8[1] <= 0x96) {
+        return grn_nfkc100_decompose_table_d5[utf8[1] - 0x80];
       }
       break;
     case 0xd6 :
@@ -9438,9 +9722,28 @@ grn_nfkc100_decompose(const unsigned char *utf8)
       break;
     case 0xe1 :
       switch (utf8[1]) {
+      case 0x82 :
+        if (utf8[2] >= 0xa0 &&
+            utf8[2] <= 0xbf) {
+          return grn_nfkc100_decompose_table_e182[utf8[2] - 0xa0];
+        }
+        break;
       case 0x83 :
-        if (utf8[2] == 0xbc) {
-          return "\xe1\x83\x9c";
+        if (utf8[2] >= 0x80 &&
+            utf8[2] <= 0xbc) {
+          return grn_nfkc100_decompose_table_e183[utf8[2] - 0x80];
+        }
+        break;
+      case 0x8e :
+        if (utf8[2] >= 0xa0 &&
+            utf8[2] <= 0xbf) {
+          return grn_nfkc100_decompose_table_e18e[utf8[2] - 0xa0];
+        }
+        break;
+      case 0x8f :
+        if (utf8[2] >= 0x80 &&
+            utf8[2] <= 0xb5) {
+          return grn_nfkc100_decompose_table_e18f[utf8[2] - 0x80];
         }
         break;
       case 0xb4 :
@@ -9481,20 +9784,26 @@ grn_nfkc100_decompose(const unsigned char *utf8)
         break;
       case 0xbb :
         if (utf8[2] >= 0x80 &&
-            utf8[2] <= 0xb8) {
+            utf8[2] <= 0xbe) {
           return grn_nfkc100_decompose_table_e1bb[utf8[2] - 0x80];
         }
         break;
+      case 0xbc :
+        if (utf8[2] >= 0x88 &&
+            utf8[2] <= 0xbf) {
+          return grn_nfkc100_decompose_table_e1bc[utf8[2] - 0x88];
+        }
+        break;
       case 0xbd :
-        if (utf8[2] >= 0xb1 &&
+        if (utf8[2] >= 0x88 &&
             utf8[2] <= 0xbd) {
-          return grn_nfkc100_decompose_table_e1bd[utf8[2] - 0xb1];
+          return grn_nfkc100_decompose_table_e1bd[utf8[2] - 0x88];
         }
         break;
       case 0xbe :
-        if (utf8[2] >= 0xbb &&
+        if (utf8[2] >= 0x88 &&
             utf8[2] <= 0xbf) {
-          return grn_nfkc100_decompose_table_e1be[utf8[2] - 0xbb];
+          return grn_nfkc100_decompose_table_e1be[utf8[2] - 0x88];
         }
         break;
       case 0xbf :
@@ -9532,8 +9841,9 @@ grn_nfkc100_decompose(const unsigned char *utf8)
       case 0x85 :
         return grn_nfkc100_decompose_table_e285[utf8[2] - 0x80];
       case 0x86 :
-        if (utf8[2] == 0x89) {
-          return "\x30\xe2\x81\x84\x33";
+        if (utf8[2] >= 0x83 &&
+            utf8[2] <= 0x89) {
+          return grn_nfkc100_decompose_table_e286[utf8[2] - 0x83];
         }
         break;
       case 0x88 :
@@ -9578,10 +9888,28 @@ grn_nfkc100_decompose(const unsigned char *utf8)
           return "\xe2\xab\x9d\xcc\xb8";
         }
         break;
+      case 0xb0 :
+        if (utf8[2] >= 0x80 &&
+            utf8[2] <= 0xae) {
+          return grn_nfkc100_decompose_table_e2b0[utf8[2] - 0x80];
+        }
+        break;
       case 0xb1 :
-        if (utf8[2] >= 0xbc &&
-            utf8[2] <= 0xbd) {
-          return grn_nfkc100_decompose_table_e2b1[utf8[2] - 0xbc];
+        if (utf8[2] >= 0xa0 &&
+            utf8[2] <= 0xbf) {
+          return grn_nfkc100_decompose_table_e2b1[utf8[2] - 0xa0];
+        }
+        break;
+      case 0xb2 :
+        if (utf8[2] >= 0x80 &&
+            utf8[2] <= 0xbe) {
+          return grn_nfkc100_decompose_table_e2b2[utf8[2] - 0x80];
+        }
+        break;
+      case 0xb3 :
+        if (utf8[2] >= 0x80 &&
+            utf8[2] <= 0xb2) {
+          return grn_nfkc100_decompose_table_e2b3[utf8[2] - 0x80];
         }
         break;
       case 0xb5 :
@@ -9678,15 +10006,34 @@ grn_nfkc100_decompose(const unsigned char *utf8)
       break;
     case 0xea :
       switch (utf8[1]) {
+      case 0x99 :
+        if (utf8[2] >= 0x80 &&
+            utf8[2] <= 0xac) {
+          return grn_nfkc100_decompose_table_ea99[utf8[2] - 0x80];
+        }
+        break;
       case 0x9a :
-        if (utf8[2] >= 0x9c &&
+        if (utf8[2] >= 0x80 &&
             utf8[2] <= 0x9d) {
-          return grn_nfkc100_decompose_table_ea9a[utf8[2] - 0x9c];
+          return grn_nfkc100_decompose_table_ea9a[utf8[2] - 0x80];
+        }
+        break;
+      case 0x9c :
+        if (utf8[2] >= 0xa2 &&
+            utf8[2] <= 0xbe) {
+          return grn_nfkc100_decompose_table_ea9c[utf8[2] - 0xa2];
         }
         break;
       case 0x9d :
-        if (utf8[2] == 0xb0) {
-          return "\xea\x9d\xaf";
+        if (utf8[2] >= 0x80 &&
+            utf8[2] <= 0xbe) {
+          return grn_nfkc100_decompose_table_ea9d[utf8[2] - 0x80];
+        }
+        break;
+      case 0x9e :
+        if (utf8[2] >= 0x80 &&
+            utf8[2] <= 0xb6) {
+          return grn_nfkc100_decompose_table_ea9e[utf8[2] - 0x80];
         }
         break;
       case 0x9f :
@@ -9817,6 +10164,48 @@ grn_nfkc100_decompose(const unsigned char *utf8)
       break;
     case 0xf0 :
       switch (utf8[1]) {
+      case 0x90 :
+        switch (utf8[2]) {
+        case 0x90 :
+          if (utf8[3] >= 0x80 &&
+              utf8[3] <= 0xa7) {
+            return grn_nfkc100_decompose_table_f09090[utf8[3] - 0x80];
+          }
+          break;
+        case 0x92 :
+          if (utf8[3] >= 0xb0 &&
+              utf8[3] <= 0xbf) {
+            return grn_nfkc100_decompose_table_f09092[utf8[3] - 0xb0];
+          }
+          break;
+        case 0x93 :
+          if (utf8[3] >= 0x80 &&
+              utf8[3] <= 0x93) {
+            return grn_nfkc100_decompose_table_f09093[utf8[3] - 0x80];
+          }
+          break;
+        case 0xb2 :
+          if (utf8[3] >= 0x80 &&
+              utf8[3] <= 0xb2) {
+            return grn_nfkc100_decompose_table_f090b2[utf8[3] - 0x80];
+          }
+          break;
+        default :
+          break;
+        }
+        break;
+      case 0x91 :
+        switch (utf8[2]) {
+        case 0xa2 :
+          if (utf8[3] >= 0xa0 &&
+              utf8[3] <= 0xbf) {
+            return grn_nfkc100_decompose_table_f091a2[utf8[3] - 0xa0];
+          }
+          break;
+        default :
+          break;
+        }
+        break;
       case 0x9d :
         switch (utf8[2]) {
         case 0x85 :
@@ -9878,6 +10267,12 @@ grn_nfkc100_decompose(const unsigned char *utf8)
         break;
       case 0x9e :
         switch (utf8[2]) {
+        case 0xa4 :
+          if (utf8[3] >= 0x80 &&
+              utf8[3] <= 0xa1) {
+            return grn_nfkc100_decompose_table_f09ea4[utf8[3] - 0x80];
+          }
+          break;
         case 0xb8 :
           if (utf8[3] >= 0x80 &&
               utf8[3] <= 0xbb) {
@@ -9997,10 +10392,6 @@ static const char *grn_nfkc100_compose_prefix_cc80_table_c6[] = {
 };
 
 static const char *grn_nfkc100_compose_prefix_cc80_table_ce[] = {
-  "\xe1\xbe\xba", NULL, NULL, NULL, "\xe1\xbf\x88", NULL, "\xe1\xbf\x8a", NULL,
-  "\xe1\xbf\x9a", NULL, NULL, NULL, NULL, NULL, "\xe1\xbf\xb8", NULL,
-  NULL, NULL, NULL, NULL, "\xe1\xbf\xaa", NULL, NULL, NULL,
-  "\xe1\xbf\xba", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbd\xb0", NULL, NULL, NULL, "\xe1\xbd\xb2", NULL, "\xe1\xbd\xb4", NULL,
   "\xe1\xbd\xb6", NULL, NULL, NULL, NULL, NULL, "\xe1\xbd\xb8"
 };
@@ -10010,31 +10401,25 @@ static const char *grn_nfkc100_compose_prefix_cc80_table_cf[] = {
 };
 
 static const char *grn_nfkc100_compose_prefix_cc80_table_d0[] = {
-  "\xd0\x80", NULL, NULL, "\xd0\x8d", NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xd1\x90", NULL, NULL, "\xd1\x9d"
 };
 
 static const char *grn_nfkc100_compose_prefix_cc80_table_e1bc[] = {
   "\xe1\xbc\x82", "\xe1\xbc\x83", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbc\x8a", "\xe1\xbc\x8b", NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbc\x92", "\xe1\xbc\x93", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbc\x9a", "\xe1\xbc\x9b", NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbc\xa2", "\xe1\xbc\xa3", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbc\xaa", "\xe1\xbc\xab", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbc\xb2", "\xe1\xbc\xb3", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbc\xba", "\xe1\xbc\xbb"
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xe1\xbc\xb2", "\xe1\xbc\xb3"
 };
 
 static const char *grn_nfkc100_compose_prefix_cc80_table_e1bd[] = {
   "\xe1\xbd\x82", "\xe1\xbd\x83", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbd\x8a", "\xe1\xbd\x8b", NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbd\x92", "\xe1\xbd\x93", NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, "\xe1\xbd\x9b", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbd\xa2", "\xe1\xbd\xa3", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbd\xaa", "\xe1\xbd\xab"
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xe1\xbd\xa2", "\xe1\xbd\xa3"
 };
 
 static grn_inline const char *
@@ -10073,9 +10458,9 @@ grn_nfkc100_compose_prefix_cc80(const unsigned char *utf8)
       }
       break;
     case 0xce :
-      if (utf8[1] >= 0x91 &&
+      if (utf8[1] >= 0xb1 &&
           utf8[1] <= 0xbf) {
-        return grn_nfkc100_compose_prefix_cc80_table_ce[utf8[1] - 0x91];
+        return grn_nfkc100_compose_prefix_cc80_table_ce[utf8[1] - 0xb1];
       }
       break;
     case 0xcf :
@@ -10085,22 +10470,22 @@ grn_nfkc100_compose_prefix_cc80(const unsigned char *utf8)
       }
       break;
     case 0xd0 :
-      if (utf8[1] >= 0x95 &&
+      if (utf8[1] >= 0xb5 &&
           utf8[1] <= 0xb8) {
-        return grn_nfkc100_compose_prefix_cc80_table_d0[utf8[1] - 0x95];
+        return grn_nfkc100_compose_prefix_cc80_table_d0[utf8[1] - 0xb5];
       }
       break;
     case 0xe1 :
       switch (utf8[1]) {
       case 0xbc :
         if (utf8[2] >= 0x80 &&
-            utf8[2] <= 0xb9) {
+            utf8[2] <= 0xb1) {
           return grn_nfkc100_compose_prefix_cc80_table_e1bc[utf8[2] - 0x80];
         }
         break;
       case 0xbd :
         if (utf8[2] >= 0x80 &&
-            utf8[2] <= 0xa9) {
+            utf8[2] <= 0xa1) {
           return grn_nfkc100_compose_prefix_cc80_table_e1bd[utf8[2] - 0x80];
         }
         break;
@@ -10124,13 +10509,10 @@ static const char *grn_nfkc100_compose_prefix_cc81_table_[] = {
 };
 
 static const char *grn_nfkc100_compose_prefix_cc81_table_c3[] = {
-  "\xc7\xbc", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, "\xc7\xbe", NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, "\xe1\xba\xa5", NULL, NULL, "\xc7\xbb",
-  "\xc7\xbd", "\xe1\xb8\x89", NULL, NULL, "\xe1\xba\xbf", NULL, NULL, NULL,
-  NULL, "\xe1\xb8\xaf", NULL, NULL, NULL, NULL, "\xe1\xbb\x91", "\xe1\xb9\x8d",
-  NULL, NULL, "\xc7\xbf", NULL, NULL, NULL, "\xc7\x98"
+  "\xe1\xba\xa5", NULL, NULL, "\xc7\xbb", "\xc7\xbd", "\xe1\xb8\x89", NULL, NULL,
+  "\xe1\xba\xbf", NULL, NULL, NULL, NULL, "\xe1\xb8\xaf", NULL, NULL,
+  NULL, NULL, "\xe1\xbb\x91", "\xe1\xb9\x8d", NULL, NULL, "\xc7\xbf", NULL,
+  NULL, NULL, "\xc7\x98"
 };
 
 static const char *grn_nfkc100_compose_prefix_cc81_table_c4[] = {
@@ -10152,10 +10534,6 @@ static const char *grn_nfkc100_compose_prefix_cc81_table_c6[] = {
 };
 
 static const char *grn_nfkc100_compose_prefix_cc81_table_ce[] = {
-  "\xce\x86", NULL, NULL, NULL, "\xce\x88", NULL, "\xce\x89", NULL,
-  "\xce\x8a", NULL, NULL, NULL, NULL, NULL, "\xce\x8c", NULL,
-  NULL, NULL, NULL, NULL, "\xce\x8e", NULL, NULL, NULL,
-  "\xce\x8f", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xce\xac", NULL, NULL, NULL, "\xce\xad", NULL, "\xce\xae", NULL,
   "\xce\xaf", NULL, NULL, NULL, NULL, NULL, "\xcf\x8c"
 };
@@ -10165,31 +10543,25 @@ static const char *grn_nfkc100_compose_prefix_cc81_table_cf[] = {
 };
 
 static const char *grn_nfkc100_compose_prefix_cc81_table_d0[] = {
-  "\xd0\x83", NULL, NULL, NULL, NULL, NULL, NULL, "\xd0\x8c",
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xd1\x93", NULL, NULL, NULL, NULL, NULL, NULL, "\xd1\x9c"
 };
 
 static const char *grn_nfkc100_compose_prefix_cc81_table_e1bc[] = {
   "\xe1\xbc\x84", "\xe1\xbc\x85", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbc\x8c", "\xe1\xbc\x8d", NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbc\x94", "\xe1\xbc\x95", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbc\x9c", "\xe1\xbc\x9d", NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbc\xa4", "\xe1\xbc\xa5", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbc\xac", "\xe1\xbc\xad", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbc\xb4", "\xe1\xbc\xb5", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbc\xbc", "\xe1\xbc\xbd"
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xe1\xbc\xb4", "\xe1\xbc\xb5"
 };
 
 static const char *grn_nfkc100_compose_prefix_cc81_table_e1bd[] = {
   "\xe1\xbd\x84", "\xe1\xbd\x85", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbd\x8c", "\xe1\xbd\x8d", NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbd\x94", "\xe1\xbd\x95", NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, "\xe1\xbd\x9d", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbd\xa4", "\xe1\xbd\xa5", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbd\xac", "\xe1\xbd\xad"
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xe1\xbd\xa4", "\xe1\xbd\xa5"
 };
 
 static grn_inline const char *
@@ -10205,9 +10577,9 @@ grn_nfkc100_compose_prefix_cc81(const unsigned char *utf8)
   } else {
     switch (utf8[0]) {
     case 0xc3 :
-      if (utf8[1] >= 0x86 &&
+      if (utf8[1] >= 0xa2 &&
           utf8[1] <= 0xbc) {
-        return grn_nfkc100_compose_prefix_cc81_table_c3[utf8[1] - 0x86];
+        return grn_nfkc100_compose_prefix_cc81_table_c3[utf8[1] - 0xa2];
       }
       break;
     case 0xc4 :
@@ -10229,9 +10601,9 @@ grn_nfkc100_compose_prefix_cc81(const unsigned char *utf8)
       }
       break;
     case 0xce :
-      if (utf8[1] >= 0x91 &&
+      if (utf8[1] >= 0xb1 &&
           utf8[1] <= 0xbf) {
-        return grn_nfkc100_compose_prefix_cc81_table_ce[utf8[1] - 0x91];
+        return grn_nfkc100_compose_prefix_cc81_table_ce[utf8[1] - 0xb1];
       }
       break;
     case 0xcf :
@@ -10241,22 +10613,22 @@ grn_nfkc100_compose_prefix_cc81(const unsigned char *utf8)
       }
       break;
     case 0xd0 :
-      if (utf8[1] >= 0x93 &&
+      if (utf8[1] >= 0xb3 &&
           utf8[1] <= 0xba) {
-        return grn_nfkc100_compose_prefix_cc81_table_d0[utf8[1] - 0x93];
+        return grn_nfkc100_compose_prefix_cc81_table_d0[utf8[1] - 0xb3];
       }
       break;
     case 0xe1 :
       switch (utf8[1]) {
       case 0xbc :
         if (utf8[2] >= 0x80 &&
-            utf8[2] <= 0xb9) {
+            utf8[2] <= 0xb1) {
           return grn_nfkc100_compose_prefix_cc81_table_e1bc[utf8[2] - 0x80];
         }
         break;
       case 0xbd :
         if (utf8[2] >= 0x80 &&
-            utf8[2] <= 0xa9) {
+            utf8[2] <= 0xa1) {
           return grn_nfkc100_compose_prefix_cc81_table_e1bd[utf8[2] - 0x80];
         }
         break;
@@ -10385,23 +10757,9 @@ static const char *grn_nfkc100_compose_prefix_cc88_table_[] = {
   "\xc3\xbf"
 };
 
-static const char *grn_nfkc100_compose_prefix_cc88_table_ce[] = {
-  "\xce\xaa", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, "\xce\xab", NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xcf\x8a"
-};
-
 static const char *grn_nfkc100_compose_prefix_cc88_table_d0[] = {
-  "\xd0\x87", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, "\xd3\x92", NULL, NULL, NULL, NULL, "\xd0\x81",
-  "\xd3\x9c", "\xd3\x9e", "\xd3\xa4", NULL, NULL, NULL, NULL, NULL,
-  "\xd3\xa6", NULL, NULL, NULL, NULL, "\xd3\xb0", NULL, NULL,
-  NULL, "\xd3\xb4", NULL, NULL, NULL, "\xd3\xb8", NULL, "\xd3\xac",
-  NULL, NULL, "\xd3\x93", NULL, NULL, NULL, NULL, "\xd1\x91",
-  "\xd3\x9d", "\xd3\x9f", "\xd3\xa5", NULL, NULL, NULL, NULL, NULL,
-  "\xd3\xa7"
+  "\xd3\x93", NULL, NULL, NULL, NULL, "\xd1\x91", "\xd3\x9d", "\xd3\x9f",
+  "\xd3\xa5", NULL, NULL, NULL, NULL, NULL, "\xd3\xa7"
 };
 
 static const char *grn_nfkc100_compose_prefix_cc88_table_d1[] = {
@@ -10411,9 +10769,9 @@ static const char *grn_nfkc100_compose_prefix_cc88_table_d1[] = {
 };
 
 static const char *grn_nfkc100_compose_prefix_cc88_table_d3[] = {
-  "\xd3\x9a", "\xd3\x9b", NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xd3\x9b", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xd3\xaa", "\xd3\xab"
+  "\xd3\xab"
 };
 
 static grn_inline const char *
@@ -10439,9 +10797,8 @@ grn_nfkc100_compose_prefix_cc88(const unsigned char *utf8)
       }
       break;
     case 0xce :
-      if (utf8[1] >= 0x99 &&
-          utf8[1] <= 0xb9) {
-        return grn_nfkc100_compose_prefix_cc88_table_ce[utf8[1] - 0x99];
+      if (utf8[1] == 0xb9) {
+        return "\xcf\x8a";
       }
       break;
     case 0xcf :
@@ -10450,9 +10807,9 @@ grn_nfkc100_compose_prefix_cc88(const unsigned char *utf8)
       }
       break;
     case 0xd0 :
-      if (utf8[1] >= 0x86 &&
+      if (utf8[1] >= 0xb0 &&
           utf8[1] <= 0xbe) {
-        return grn_nfkc100_compose_prefix_cc88_table_d0[utf8[1] - 0x86];
+        return grn_nfkc100_compose_prefix_cc88_table_d0[utf8[1] - 0xb0];
       }
       break;
     case 0xd1 :
@@ -10462,9 +10819,9 @@ grn_nfkc100_compose_prefix_cc88(const unsigned char *utf8)
       }
       break;
     case 0xd3 :
-      if (utf8[1] >= 0x98 &&
+      if (utf8[1] >= 0x99 &&
           utf8[1] <= 0xa9) {
-        return grn_nfkc100_compose_prefix_cc88_table_d3[utf8[1] - 0x98];
+        return grn_nfkc100_compose_prefix_cc88_table_d3[utf8[1] - 0x99];
       }
       break;
     default :
@@ -10528,13 +10885,10 @@ static const char *grn_nfkc100_compose_prefix_cc84_table_[] = {
 };
 
 static const char *grn_nfkc100_compose_prefix_cc84_table_c3[] = {
-  "\xc7\xa2", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xc7\x9f", NULL, "\xc7\xa3", NULL, NULL, NULL, NULL, NULL,
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, "\xc7\x9f", NULL,
-  "\xc7\xa3", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, "\xc8\xad",
-  "\xc8\xab", NULL, NULL, NULL, NULL, NULL, "\xc7\x96"
+  NULL, "\xc8\xad", "\xc8\xab", NULL, NULL, NULL, NULL, NULL,
+  "\xc7\x96"
 };
 
 static const char *grn_nfkc100_compose_prefix_cc84_table_c8[] = {
@@ -10543,20 +10897,8 @@ static const char *grn_nfkc100_compose_prefix_cc84_table_c8[] = {
 };
 
 static const char *grn_nfkc100_compose_prefix_cc84_table_ce[] = {
-  "\xe1\xbe\xb9", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbf\x99", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, "\xe1\xbf\xa9", NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbe\xb1", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbf\x91"
-};
-
-static const char *grn_nfkc100_compose_prefix_cc84_table_d0[] = {
-  "\xd3\xa2", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, "\xd3\xae", NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xd3\xa3"
 };
 
 static grn_inline const char *
@@ -10572,9 +10914,9 @@ grn_nfkc100_compose_prefix_cc84(const unsigned char *utf8)
   } else {
     switch (utf8[0]) {
     case 0xc3 :
-      if (utf8[1] >= 0x86 &&
+      if (utf8[1] >= 0xa4 &&
           utf8[1] <= 0xbc) {
-        return grn_nfkc100_compose_prefix_cc84_table_c3[utf8[1] - 0x86];
+        return grn_nfkc100_compose_prefix_cc84_table_c3[utf8[1] - 0xa4];
       }
       break;
     case 0xc7 :
@@ -10589,9 +10931,9 @@ grn_nfkc100_compose_prefix_cc84(const unsigned char *utf8)
       }
       break;
     case 0xce :
-      if (utf8[1] >= 0x91 &&
+      if (utf8[1] >= 0xb1 &&
           utf8[1] <= 0xb9) {
-        return grn_nfkc100_compose_prefix_cc84_table_ce[utf8[1] - 0x91];
+        return grn_nfkc100_compose_prefix_cc84_table_ce[utf8[1] - 0xb1];
       }
       break;
     case 0xcf :
@@ -10600,9 +10942,8 @@ grn_nfkc100_compose_prefix_cc84(const unsigned char *utf8)
       }
       break;
     case 0xd0 :
-      if (utf8[1] >= 0x98 &&
-          utf8[1] <= 0xb8) {
-        return grn_nfkc100_compose_prefix_cc84_table_d0[utf8[1] - 0x98];
+      if (utf8[1] == 0xb8) {
+        return "\xd3\xa3";
       }
       break;
     case 0xd1 :
@@ -10641,19 +10982,11 @@ static const char *grn_nfkc100_compose_prefix_cc86_table_[] = {
 };
 
 static const char *grn_nfkc100_compose_prefix_cc86_table_ce[] = {
-  "\xe1\xbe\xb8", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbf\x98", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, "\xe1\xbf\xa8", NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbe\xb0", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbf\x90"
 };
 
 static const char *grn_nfkc100_compose_prefix_cc86_table_d0[] = {
-  "\xd3\x90", NULL, NULL, NULL, NULL, "\xd3\x96", "\xd3\x81", NULL,
-  "\xd0\x99", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, "\xd0\x8e", NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xd3\x91", NULL, NULL, NULL, NULL, "\xd3\x97", "\xd3\x82", NULL,
   "\xd0\xb9"
 };
@@ -10676,9 +11009,9 @@ grn_nfkc100_compose_prefix_cc86(const unsigned char *utf8)
       }
       break;
     case 0xce :
-      if (utf8[1] >= 0x91 &&
+      if (utf8[1] >= 0xb1 &&
           utf8[1] <= 0xb9) {
-        return grn_nfkc100_compose_prefix_cc86_table_ce[utf8[1] - 0x91];
+        return grn_nfkc100_compose_prefix_cc86_table_ce[utf8[1] - 0xb1];
       }
       break;
     case 0xcf :
@@ -10687,9 +11020,9 @@ grn_nfkc100_compose_prefix_cc86(const unsigned char *utf8)
       }
       break;
     case 0xd0 :
-      if (utf8[1] >= 0x90 &&
+      if (utf8[1] >= 0xb0 &&
           utf8[1] <= 0xb8) {
-        return grn_nfkc100_compose_prefix_cc86_table_d0[utf8[1] - 0x90];
+        return grn_nfkc100_compose_prefix_cc86_table_d0[utf8[1] - 0xb0];
       }
       break;
     case 0xd1 :
@@ -10810,11 +11143,6 @@ grn_nfkc100_compose_prefix_cc8c(const unsigned char *utf8)
         return "\xc7\x9a";
       }
       break;
-    case 0xc6 :
-      if (utf8[1] == 0xb7) {
-        return "\xc7\xae";
-      }
-      break;
     case 0xca :
       if (utf8[1] == 0x92) {
         return "\xc7\xaf";
@@ -10844,11 +11172,6 @@ grn_nfkc100_compose_prefix_cc8b(const unsigned char *utf8)
     }
   } else {
     switch (utf8[0]) {
-    case 0xd0 :
-      if (utf8[1] == 0xa3) {
-        return "\xd3\xb2";
-      }
-      break;
     case 0xd1 :
       if (utf8[1] == 0x83) {
         return "\xd3\xb3";
@@ -10888,10 +11211,6 @@ static const char *grn_nfkc100_compose_prefix_cc8f_table_[] = {
   NULL, "\xc8\x91", NULL, NULL, "\xc8\x95"
 };
 
-static const char *grn_nfkc100_compose_prefix_cc8f_table_d1[] = {
-  "\xd1\xb6", "\xd1\xb7"
-};
-
 static grn_inline const char *
 grn_nfkc100_compose_prefix_cc8f(const unsigned char *utf8)
 {
@@ -10905,9 +11224,8 @@ grn_nfkc100_compose_prefix_cc8f(const unsigned char *utf8)
   } else {
     switch (utf8[0]) {
     case 0xd1 :
-      if (utf8[1] >= 0xb4 &&
-          utf8[1] <= 0xb5) {
-        return grn_nfkc100_compose_prefix_cc8f_table_d1[utf8[1] - 0xb4];
+      if (utf8[1] == 0xb5) {
+        return "\xd1\xb7";
       }
       break;
     default :
@@ -11751,10 +12069,6 @@ grn_nfkc100_compose_prefix_cc89(const unsigned char *utf8)
 }
 
 static const char *grn_nfkc100_compose_prefix_cc93_table_ce[] = {
-  "\xe1\xbc\x88", NULL, NULL, NULL, "\xe1\xbc\x98", NULL, "\xe1\xbc\xa8", NULL,
-  "\xe1\xbc\xb8", NULL, NULL, NULL, NULL, NULL, "\xe1\xbd\x88", NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbd\xa8", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbc\x80", NULL, NULL, NULL, "\xe1\xbc\x90", NULL, "\xe1\xbc\xa0", NULL,
   "\xe1\xbc\xb0", NULL, NULL, NULL, NULL, NULL, "\xe1\xbd\x80"
 };
@@ -11770,9 +12084,9 @@ grn_nfkc100_compose_prefix_cc93(const unsigned char *utf8)
   {
     switch (utf8[0]) {
     case 0xce :
-      if (utf8[1] >= 0x91 &&
+      if (utf8[1] >= 0xb1 &&
           utf8[1] <= 0xbf) {
-        return grn_nfkc100_compose_prefix_cc93_table_ce[utf8[1] - 0x91];
+        return grn_nfkc100_compose_prefix_cc93_table_ce[utf8[1] - 0xb1];
       }
       break;
     case 0xcf :
@@ -11790,10 +12104,6 @@ grn_nfkc100_compose_prefix_cc93(const unsigned char *utf8)
 }
 
 static const char *grn_nfkc100_compose_prefix_cc94_table_ce[] = {
-  "\xe1\xbc\x89", NULL, NULL, NULL, "\xe1\xbc\x99", NULL, "\xe1\xbc\xa9", NULL,
-  "\xe1\xbc\xb9", NULL, NULL, NULL, NULL, NULL, "\xe1\xbd\x89", NULL,
-  "\xe1\xbf\xac", NULL, NULL, NULL, "\xe1\xbd\x99", NULL, NULL, NULL,
-  "\xe1\xbd\xa9", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbc\x81", NULL, NULL, NULL, "\xe1\xbc\x91", NULL, "\xe1\xbc\xa1", NULL,
   "\xe1\xbc\xb1", NULL, NULL, NULL, NULL, NULL, "\xe1\xbd\x81"
 };
@@ -11809,9 +12119,9 @@ grn_nfkc100_compose_prefix_cc94(const unsigned char *utf8)
   {
     switch (utf8[0]) {
     case 0xce :
-      if (utf8[1] >= 0x91 &&
+      if (utf8[1] >= 0xb1 &&
           utf8[1] <= 0xbf) {
-        return grn_nfkc100_compose_prefix_cc94_table_ce[utf8[1] - 0x91];
+        return grn_nfkc100_compose_prefix_cc94_table_ce[utf8[1] - 0xb1];
       }
       break;
     case 0xcf :
@@ -11839,20 +12149,18 @@ static const char *grn_nfkc100_compose_prefix_cd82_table_cf[] = {
 
 static const char *grn_nfkc100_compose_prefix_cd82_table_e1bc[] = {
   "\xe1\xbc\x86", "\xe1\xbc\x87", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbc\x8e", "\xe1\xbc\x8f", NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbc\xa6", "\xe1\xbc\xa7", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbc\xae", "\xe1\xbc\xaf", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbc\xb6", "\xe1\xbc\xb7", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbc\xbe", "\xe1\xbc\xbf"
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xe1\xbc\xb6", "\xe1\xbc\xb7"
 };
 
 static const char *grn_nfkc100_compose_prefix_cd82_table_e1bd[] = {
   "\xe1\xbd\x96", "\xe1\xbd\x97", NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, "\xe1\xbd\x9f", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbd\xa6", "\xe1\xbd\xa7", NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbd\xae", "\xe1\xbd\xaf"
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xe1\xbd\xa6", "\xe1\xbd\xa7"
 };
 
 static grn_inline const char *
@@ -11876,13 +12184,13 @@ grn_nfkc100_compose_prefix_cd82(const unsigned char *utf8)
       switch (utf8[1]) {
       case 0xbc :
         if (utf8[2] >= 0x80 &&
-            utf8[2] <= 0xb9) {
+            utf8[2] <= 0xb1) {
           return grn_nfkc100_compose_prefix_cd82_table_e1bc[utf8[2] - 0x80];
         }
         break;
       case 0xbd :
         if (utf8[2] >= 0x90 &&
-            utf8[2] <= 0xa9) {
+            utf8[2] <= 0xa1) {
           return grn_nfkc100_compose_prefix_cd82_table_e1bd[utf8[2] - 0x90];
         }
         break;
@@ -11899,11 +12207,8 @@ grn_nfkc100_compose_prefix_cd82(const unsigned char *utf8)
 }
 
 static const char *grn_nfkc100_compose_prefix_cd85_table_ce[] = {
-  "\xe1\xbe\xbc", NULL, NULL, NULL, NULL, NULL, "\xe1\xbf\x8c", NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbf\xbc", NULL, NULL, "\xe1\xbe\xb4", NULL, "\xe1\xbf\x84", NULL, NULL,
-  "\xe1\xbe\xb3", NULL, NULL, NULL, NULL, NULL, "\xe1\xbf\x83"
+  "\xe1\xbe\xb4", NULL, "\xe1\xbf\x84", NULL, NULL, "\xe1\xbe\xb3", NULL, NULL,
+  NULL, NULL, NULL, "\xe1\xbf\x83"
 };
 
 static const char *grn_nfkc100_compose_prefix_cd85_table_cf[] = {
@@ -11912,16 +12217,15 @@ static const char *grn_nfkc100_compose_prefix_cd85_table_cf[] = {
 
 static const char *grn_nfkc100_compose_prefix_cd85_table_e1bc[] = {
   "\xe1\xbe\x80", "\xe1\xbe\x81", "\xe1\xbe\x82", "\xe1\xbe\x83", "\xe1\xbe\x84", "\xe1\xbe\x85", "\xe1\xbe\x86", "\xe1\xbe\x87",
-  "\xe1\xbe\x88", "\xe1\xbe\x89", "\xe1\xbe\x8a", "\xe1\xbe\x8b", "\xe1\xbe\x8c", "\xe1\xbe\x8d", "\xe1\xbe\x8e", "\xe1\xbe\x8f",
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-  "\xe1\xbe\x90", "\xe1\xbe\x91", "\xe1\xbe\x92", "\xe1\xbe\x93", "\xe1\xbe\x94", "\xe1\xbe\x95", "\xe1\xbe\x96", "\xe1\xbe\x97",
-  "\xe1\xbe\x98", "\xe1\xbe\x99", "\xe1\xbe\x9a", "\xe1\xbe\x9b", "\xe1\xbe\x9c", "\xe1\xbe\x9d", "\xe1\xbe\x9e", "\xe1\xbe\x9f"
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "\xe1\xbe\x90", "\xe1\xbe\x91", "\xe1\xbe\x92", "\xe1\xbe\x93", "\xe1\xbe\x94", "\xe1\xbe\x95", "\xe1\xbe\x96", "\xe1\xbe\x97"
 };
 
 static const char *grn_nfkc100_compose_prefix_cd85_table_e1bd[] = {
   "\xe1\xbe\xa0", "\xe1\xbe\xa1", "\xe1\xbe\xa2", "\xe1\xbe\xa3", "\xe1\xbe\xa4", "\xe1\xbe\xa5", "\xe1\xbe\xa6", "\xe1\xbe\xa7",
-  "\xe1\xbe\xa8", "\xe1\xbe\xa9", "\xe1\xbe\xaa", "\xe1\xbe\xab", "\xe1\xbe\xac", "\xe1\xbe\xad", "\xe1\xbe\xae", "\xe1\xbe\xaf",
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
   "\xe1\xbe\xb2", NULL, NULL, NULL, "\xe1\xbf\x82", NULL, NULL, NULL,
   NULL, NULL, NULL, NULL, "\xe1\xbf\xb2"
 };
@@ -11942,9 +12246,9 @@ grn_nfkc100_compose_prefix_cd85(const unsigned char *utf8)
   {
     switch (utf8[0]) {
     case 0xce :
-      if (utf8[1] >= 0x91 &&
+      if (utf8[1] >= 0xac &&
           utf8[1] <= 0xb7) {
-        return grn_nfkc100_compose_prefix_cd85_table_ce[utf8[1] - 0x91];
+        return grn_nfkc100_compose_prefix_cd85_table_ce[utf8[1] - 0xac];
       }
       break;
     case 0xcf :
@@ -11957,7 +12261,7 @@ grn_nfkc100_compose_prefix_cd85(const unsigned char *utf8)
       switch (utf8[1]) {
       case 0xbc :
         if (utf8[2] >= 0x80 &&
-            utf8[2] <= 0xaf) {
+            utf8[2] <= 0xa7) {
           return grn_nfkc100_compose_prefix_cd85_table_e1bc[utf8[2] - 0x80];
         }
         break;
@@ -81061,7 +81365,12 @@ grn_nfkc100_compose(const unsigned char *prefix_utf8, const unsigned char *suffi
           return NULL;
         }
         break;
+      default :
+        break;
+      }
+      break;
     case 0xf0 :
+      switch (suffix_utf8[1]) {
       case 0x91 :
         switch (suffix_utf8[2]) {
         case 0x82 :

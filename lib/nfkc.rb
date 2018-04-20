@@ -337,14 +337,13 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
     HEADER
 
     prev_common_bytes = []
-    prev_n_common_bytes = 0
+    switch_depth = 0
     first_group = true
     byte_size_groups.keys.sort.each do |common_bytes|
       chars = byte_size_groups[common_bytes]
       chars_bytes = chars.collect(&:bytes).sort
       min = chars_bytes.first.last
       max = chars_bytes.last.last
-      n_common_bytes = 0
       if common_bytes.empty?
         indent = "  "
         yield(:no_common_bytes, indent, chars, chars_bytes)
@@ -359,36 +358,39 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
         common_bytes.each_with_index do |common_byte, i|
           unless found_different_byte
             if prev_common_bytes[i] == common_byte
-              n_common_bytes += 1
               next
             end
             found_different_byte = true
           end
           indent = "  " * i
-          # p [i, prev_common_bytes.collect{|x| "%#04x" % x}, common_bytes.collect{|x| "%#04x" % x}, "%#04x" % common_byte, n_common_bytes, prev_n_common_bytes]
+          # p [type, i, prev_common_bytes.collect{|x| "%#04x" % x}, common_bytes.collect{|x| "%#04x" % x}, "%#04x" % common_byte, switch_depth]
           # TODO: The following code may be able to be simplified.
           if prev_common_bytes[i].nil?
             # p nil
+            switch_depth += 1
             @output.puts(<<-BODY)
     #{indent}switch (#{char_variable}[#{i}]) {
             BODY
-          elsif i < prev_n_common_bytes
+          elsif i < switch_depth - 1
             # p :prev
+            switch_depth -= 1
             @output.puts(<<-BODY)
     #{indent}  default :
     #{indent}    break;
     #{indent}  }
     #{indent}  break;
             BODY
-          elsif n_common_bytes < prev_n_common_bytes
+          elsif i == switch_depth
             # p :common_prev
+            switch_depth += 1
             @output.puts(<<-BODY)
     #{indent}switch (#{char_variable}[#{i}]) {
             BODY
           else
-            # p :else
+            # p [:else, prev_common_bytes.size, common_bytes.size + 1, switch_depth]
             prev_common_bytes.size.downto(common_bytes.size + 1) do |j|
               sub_indent = "  " * (j - 1)
+              switch_depth -= 1
               @output.puts(<<-BODY)
     #{indent}#{sub_indent}default :
     #{indent}#{sub_indent}  break;
@@ -408,11 +410,10 @@ static #{return_type}#{space}#{table_name(type, common_bytes)}[] = {
       end
 
       prev_common_bytes = common_bytes
-      prev_n_common_bytes = n_common_bytes
       first_group = false
     end
 
-    # p [prev_common_bytes.collect{|x| "%#04x" % x}, prev_n_common_bytes]
+    # p [prev_common_bytes.collect{|x| "%#04x" % x}]
 
     (prev_common_bytes.size - 1).step(0, -1) do |i|
       indent = "  " * i
@@ -775,8 +776,12 @@ def create_decompose_map()
     }
   end
   unless $case_sensitive
-    for c in 'A'..'Z'
-      decompose_map[c] = c.downcase
+    (0x1..0x110000).each do |code_point|
+      char = [code_point].pack("U")
+      next unless char.valid_encoding?
+      downcased_char = char.downcase
+      next if char == downcased_char
+      decompose_map[char] = downcased_char
     end
   end
   return decompose_map
