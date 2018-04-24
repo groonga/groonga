@@ -2750,7 +2750,7 @@ typedef struct {
       CRIT(GRN_FILE_CORRUPT,\
            "[ii][broken] invalid posting in chunk: <%.*s>: (%d,%d): <%.*s>",\
            name_size, name, bt->tid, cid.rid,\
-           GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));\
+           (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));\
       GRN_OBJ_FIN(ctx, &token);\
       break;\
     }\
@@ -4600,7 +4600,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
          "<%.*s>: ",
          name_size, name,
          u->rid, u->sid, tid,
-         GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
+         (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
     GRN_OBJ_FIN(ctx, &token);
     return ctx->rc;
   }
@@ -4615,7 +4615,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
          "<%.*s>: ",
          name_size, name,
          u->rid, u->sid, tid,
-         GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
+         (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
     GRN_OBJ_FIN(ctx, &token);
     goto exit;
   }
@@ -4635,7 +4635,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                "segment:<%u>",
                name_size, name,
                u->rid, u->sid, tid,
-               GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+               (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
                pos);
           GRN_OBJ_FIN(ctx, &token);
           goto exit;
@@ -4668,7 +4668,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                   "segment:<%u>",
                   name_size, name,
                   u->rid, u->sid, tid,
-                  GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                  (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
                   pos);
               GRN_OBJ_FIN(ctx, &token);
               goto exit;
@@ -4689,7 +4689,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                 "segment:<%u>",
                 name_size, name,
                 u->rid, u->sid, tid,
-                GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
                 pos);
             GRN_OBJ_FIN(ctx, &token);
             goto exit;
@@ -4713,7 +4713,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                    "segment:<%u>, new-segment:<%u>",
                    name_size, name,
                    u->rid, u->sid, tid,
-                   GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                   (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
                    pos, a[0]);
               GRN_OBJ_FIN(ctx, &token);
             }
@@ -4735,7 +4735,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                  "segment:<%u>, new-segment:<%u>, free:<%u>, required:<%u>",
                  name_size, name,
                  u->rid, u->sid, tid,
-                 GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                 (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
                  pos, a[0], b->header.buffer_free, size);
             GRN_OBJ_FIN(ctx, &token);
             buffer_close(ctx, ii, pseg);
@@ -4775,7 +4775,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                  "token:<%.*s>",
                  name_size, name,
                  u2.rid, u2.sid, tid,
-                 GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
+                 (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
             GRN_OBJ_FIN(ctx, &token);
             goto exit;
           }
@@ -4794,7 +4794,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                    "size:<%u>",
                    name_size, name,
                    u2.rid, u2.sid, tid,
-                   GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                   (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
                    size + size2);
               GRN_OBJ_FIN(ctx, &token);
             }
@@ -4820,7 +4820,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                    "token:<%.*s>",
                    name_size, name,
                    u2.rid, u2.sid, tid,
-                   GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
+                   (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
               GRN_OBJ_FIN(ctx, &token);
             }
             goto exit;
@@ -4859,7 +4859,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
            "size:<%u>",
            name_size, name,
            u->rid, u->sid, tid,
-           GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+           (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
            size);
       GRN_OBJ_FIN(ctx, &token);
       goto exit;
@@ -4958,7 +4958,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
            "token:<%.*s>",
            name_size, name,
            u->rid, u->sid, tid,
-           GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
+           (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
       GRN_OBJ_FIN(ctx, &token);
       goto exit;
     }
@@ -4974,7 +4974,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
            "position:<%u>",
            name_size, name,
            u->rid, u->sid, tid,
-           GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+           (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
            a[0]);
       GRN_OBJ_FIN(ctx, &token);
       goto exit;
@@ -4998,7 +4998,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             "position:<%u>",
             name_size, name,
             u->rid, u->sid, tid,
-            GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+            (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
             a[0]);
         GRN_OBJ_FIN(ctx, &token);
         goto exit;
@@ -5020,7 +5020,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
              "position:<%u>",
              name_size, name,
              u->rid, u->sid, tid,
-             GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+             (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
              a[0]);
         GRN_OBJ_FIN(ctx, &token);
         goto exit;
@@ -5039,7 +5039,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
              "segment:<%u>, free:<%u>, required:<%u>",
              name_size, name,
              u->rid, u->sid, tid,
-             GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+             (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
              a[0], b->header.buffer_free, size);
         GRN_OBJ_FIN(ctx, &token);
         buffer_close(ctx, ii, pseg);
@@ -10458,7 +10458,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
              "token:<%.*s>",
              name_size, name,
              tid,
-             GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
+             (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
         GRN_OBJ_FIN(ctx, &token);
         return;
       }
@@ -10474,7 +10474,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
              "token:<%.*s>",
              name_size, name,
              tid,
-             GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
+             (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
         GRN_OBJ_FIN(ctx, &token);
         return;
       }
@@ -12794,7 +12794,7 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn_ii_builder *builder,
            "token:<%.*s>",
            name_size, name,
            rid, sid, chunk->tid,
-           GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
+           (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
       GRN_OBJ_FIN(ctx, &token);
       return ctx->rc;
     }
@@ -12812,7 +12812,7 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn_ii_builder *builder,
            "token:<%.*s>",
            name_size, name,
            rid, chunk->tid,
-           GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
+           (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
       GRN_OBJ_FIN(ctx, &token);
       return ctx->rc;
     }
@@ -13119,7 +13119,7 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn_ii_builder *builder)
          name_size, name,
          builder->chunk.tid,
          builder->ii->seg->header->max_segment,
-         GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
+         (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token));
     GRN_OBJ_FIN(ctx, &token);
     return ctx->rc;
   }
