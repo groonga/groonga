@@ -49,8 +49,8 @@ Improvements
   as below.
   ``--normalizer NormalizerNFKC100``
 
-* [:doc:`/reference/normalizers`] Added the normalizers that to be able to set options.
-  You can dynamically change normalizer's behavior.
+* [:doc:`/reference/normalizers`] Support options for normalizers.
+  You can change normalizer's behavior dynamically.
   Specific options is as below.
 
     * ``unify_kana`` : Full-width half Hiragana and Full-width half Katakana are
