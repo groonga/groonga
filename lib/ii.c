@@ -108,13 +108,13 @@ static void
 grn_ii_get_token_from_token_id(grn_ctx *ctx, grn_ii *ii,
                                grn_id tid, grn_obj *token)
 {
-   grn_obj key_buf;
    char key[GRN_TABLE_MAX_KEY_SIZE];
    int key_size;
    GRN_TEXT_INIT(token, 0);
    key_size = grn_table_get_key(ctx, ii->lexicon, tid,
                                 key, GRN_TABLE_MAX_KEY_SIZE);
    if (key_size != 0) {
+     grn_obj key_buf;
      GRN_OBJ_INIT(&key_buf, GRN_BULK, 0, ii->lexicon->header.domain);
      GRN_TEXT_SET(ctx, &key_buf, key, key_size);
      grn_inspect(ctx, token, &key_buf);
