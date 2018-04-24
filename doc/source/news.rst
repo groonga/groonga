@@ -25,21 +25,24 @@ Improvements
   You can specify time format against a column of ``Time`` type.
   You can specify with use format of ``strftime`` .
 
-* [:doc:`/reference/tokenizers`] Added the tokenizer that to be able to set options.
-  You can dynamically change tokenizer's behavior.
+* [:doc:`/reference/tokenizers`] Support options for tokenizers.
+  You can change tokenizer's behavior dynamically.
   Specific options is as below.
-  * ``n`` : You can specify "N" of Ngram. For example, Ngram is trigram
-    when you can set "3" to "N".
-  * ``loose_symbol`` : The keywords including symbols are hit, even the
-    keywords not including symbols are hit also.
-    For example, even if "090-1111-2222" is searched as "09011112222",
-    "090", "1111", "2222", "090-1111-2222", hits.
-  * ``remove_blank`` : Ignore blank.
-    For example, even if "a b c" is searched as "abc", "a", "b", "c", hits.
-  * ``loose_blank`` : The keywords including blank are hit, even the
-    keywords not including blank are hit also.
-    For example, even if "080 1111 2222" is searched as "08011112222",
-    "080", "1111", "2222", "080 1111 2222", hits.
+
+    * ``n`` : "N" of Ngram. For example, "3" for trigram.
+    * ``loose_symbol`` : Tokenize keywords including symbols, to be searched
+      by both queries with/without symbols. For example, a keyword
+      "090-1111-2222" will be found by any of "09011112222", "090", "1111",
+      "2222" and "090-1111-2222".
+    * ``loose_blank`` : Tokenize keywords including blanks, to be searched
+      by both queries with/without blanks. For example, a keyword
+      "090 1111 2222" will be found by any of "09011112222", "090", "1111",
+      "2222" and "090 1111 2222".
+    * ``remove_blank`` : Tokenize keywords including blanks, to be searched
+      by queries without blanks. For example, a keyword "090 1111 2222" will
+      be found by any of "09011112222", "090", "1111" or "2222". Note that
+      the keyword won't be found by a query including blanks like
+      "090 1111 2222".
 
 * [:doc:`/reference/normalizers`] Support Unicode 10.0
   You can use a normalizer that supported Unicode 10.0 by specifying
@@ -49,17 +52,18 @@ Improvements
 * [:doc:`/reference/normalizers`] Added the normalizers that to be able to set options.
   You can dynamically change normalizer's behavior.
   Specific options is as below.
-  * ``unify_kana`` : Full-width half Hiragana and Full-width half Katakana are
-    regarded as the same character.
-  * ``unify_kana_case`` : Uppercase and lowercase letters of Full-width half Hiragana
-    and Full-width half Katakana are regarded as the same character.
-  * ``unify_kana_voiced_sound_mark`` : Voiced sound mark and semi voiced sound mark of
-    Full-width half Hiragana and Full-width half Katakana are regarded as the same character.
-  * ``unify_hyphen`` : The characters like hyphen are regarded as the hyphen.
-  * ``unify_prolonged_sound_mark`` : The characters like prolonged sound mark are regarded
-    as the prolonged sound mark.
-  * ``unify_hyphen_and_prolonged_sound_mark`` : The characters like hyphen and prolonged sound
-    mark are regarded as the hyphen.
+
+    * ``unify_kana`` : Full-width half Hiragana and Full-width half Katakana are
+      regarded as the same character.
+    * ``unify_kana_case`` : Uppercase and lowercase letters of Full-width half Hiragana
+      and Full-width half Katakana are regarded as the same character.
+    * ``unify_kana_voiced_sound_mark`` : Voiced sound mark and semi voiced sound mark of
+      Full-width half Hiragana and Full-width half Katakana are regarded as the same character.
+    * ``unify_hyphen`` : The characters like hyphen are regarded as the hyphen.
+    * ``unify_prolonged_sound_mark`` : The characters like prolonged sound mark are regarded
+      as the prolonged sound mark.
+    * ``unify_hyphen_and_prolonged_sound_mark`` : The characters like hyphen and prolonged sound
+      mark are regarded as the hyphen.
 
 * [:doc:`/reference/commands/dump`] Support output of tokenizer's options and normalizer's options.
   If you import dump that makes by Groonga 8.0.2 or later against a database that makes by Groonga
