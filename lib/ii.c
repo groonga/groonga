@@ -114,7 +114,10 @@ grn_ii_get_token_from_token_id(grn_ctx *ctx, grn_ii *ii,
                                 key, GRN_TABLE_MAX_KEY_SIZE);
    if (key_size != 0) {
      grn_obj key_buf;
-     GRN_OBJ_INIT(&key_buf, GRN_BULK, 0, ii->lexicon->header.domain);
+     GRN_OBJ_INIT(&key_buf,
+                  GRN_BULK,
+                  GRN_OBJ_DO_SHALLOW_COPY,
+                  ii->lexicon->header.domain);
      GRN_TEXT_SET(ctx, &key_buf, key, key_size);
      grn_inspect(ctx, token, &key_buf);
      GRN_OBJ_FIN(ctx, &key_buf);
