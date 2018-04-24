@@ -110,7 +110,6 @@ grn_ii_get_token_from_token_id(grn_ctx *ctx, grn_ii *ii,
 {
    char key[GRN_TABLE_MAX_KEY_SIZE];
    int key_size;
-   GRN_TEXT_INIT(token, 0);
    key_size = grn_table_get_key(ctx, ii->lexicon, tid,
                                 key, GRN_TABLE_MAX_KEY_SIZE);
    if (key_size != 0) {
@@ -2742,6 +2741,7 @@ typedef struct {
       }\
     } else {\
       grn_obj token;\
+      GRN_TEXT_INIT(&token, 0);\
       grn_ii_get_token_from_token_id(ctx, ii, bt->tid, &token);\
       DEFINE_NAME(ii);\
       CRIT(GRN_FILE_CORRUPT,\
@@ -4588,6 +4588,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   if (u->sid > ii->header->smax) { ii->header->smax = u->sid; }
   if (!(a = array_get(ctx, ii, tid))) {
     grn_obj token;
+    GRN_TEXT_INIT(&token, 0);
     grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
     DEFINE_NAME(ii);
     MERR("[ii][update][one] failed to allocate an array: "
@@ -4602,6 +4603,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   }
   if (!(bs = encode_rec(ctx, ii, u, &size, 0))) {
     grn_obj token;
+    GRN_TEXT_INIT(&token, 0);
     grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
     DEFINE_NAME(ii);
     MERR("[ii][update][one] failed to encode a record: "
@@ -4620,6 +4622,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
         pos = a[0];
         if ((pseg = buffer_open(ctx, ii, pos, &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
           grn_obj token;
+          GRN_TEXT_INIT(&token, 0);
           grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
           DEFINE_NAME(ii);
           MERR("[ii][update][one] failed to allocate a buffer: "
@@ -4651,6 +4654,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             buffer_split(ctx, ii, LSEG(pos), h);
             if (ctx->rc != GRN_SUCCESS) {
               grn_obj token;
+              GRN_TEXT_INIT(&token, 0);
               grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
               DEFINE_NAME(ii);
               ERR(ctx->rc,
@@ -4671,6 +4675,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
           buffer_flush(ctx, ii, LSEG(pos), h);
           if (ctx->rc != GRN_SUCCESS) {
             grn_obj token;
+            GRN_TEXT_INIT(&token, 0);
             grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
             DEFINE_NAME(ii);
             ERR(ctx->rc,
@@ -4695,6 +4700,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             GRN_LOG(ctx, GRN_LOG_CRIT, "buffer not found a[0]=%d", a[0]);
             {
               grn_obj token;
+              GRN_TEXT_INIT(&token, 0);
               grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
               DEFINE_NAME(ii);
               MERR("[ii][update][one] failed to reallocate a buffer: "
@@ -4716,6 +4722,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                   b->header.nterms, b->header.nterms_void);
           if (b->header.buffer_free < size) {
             grn_obj token;
+            GRN_TEXT_INIT(&token, 0);
             grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
             DEFINE_NAME(ii);
             MERR("[ii][update][one] buffer is full: "
@@ -4756,6 +4763,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
           uint8_t *bs2 = encode_rec(ctx, ii, &u2, &size2, 0);
           if (!bs2) {
             grn_obj token;
+            GRN_TEXT_INIT(&token, 0);
             grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
             DEFINE_NAME(ii);
             MERR("[ii][update][one] failed to encode a record2: "
@@ -4773,6 +4781,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             GRN_FREE(bs2);
             {
               grn_obj token;
+              GRN_TEXT_INIT(&token, 0);
               grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
               DEFINE_NAME(ii);
               MERR("[ii][update][one] failed to create a buffer2: "
@@ -4799,6 +4808,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             buffer_close(ctx, ii, pseg);
             {
               grn_obj token;
+              GRN_TEXT_INIT(&token, 0);
               grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
               DEFINE_NAME(ii);
               MERR("[ii][update][one] failed to put to buffer: "
@@ -4836,6 +4846,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     pseg = buffer_new(ctx, ii, size, &pos, &bt, &br, &b, tid, h);
     if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
       grn_obj token;
+      GRN_TEXT_INIT(&token, 0);
       grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
       DEFINE_NAME(ii);
       MERR("[ii][update][one] failed to create a buffer: "
@@ -4935,6 +4946,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     }
     if (!(bs = encode_rec(ctx, ii, u, &size, 1))) {
       grn_obj token;
+      GRN_TEXT_INIT(&token, 0);
       grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
       DEFINE_NAME(ii);
       MERR("[ii][delete][one] failed to encode a record: "
@@ -4949,6 +4961,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     }
     if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
       grn_obj token;
+      GRN_TEXT_INIT(&token, 0);
       grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
       DEFINE_NAME(ii);
       MERR("[ii][delete][one] failed to allocate a buffer: "
@@ -4971,6 +4984,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
       buffer_flush(ctx, ii, LSEG(a[0]), h);
       if (ctx->rc != GRN_SUCCESS) {
         grn_obj token;
+        GRN_TEXT_INIT(&token, 0);
         grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
         DEFINE_NAME(ii);
         ERR(ctx->rc,
@@ -4993,6 +5007,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
       }
       if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
         grn_obj token;
+        GRN_TEXT_INIT(&token, 0);
         grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
         DEFINE_NAME(ii);
         MERR("[ii][delete][one] failed to reallocate a buffer: "
@@ -5011,6 +5026,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
               b, b->header.buffer_free, LSEG(a[0]));
       if (b->header.buffer_free < size) {
         grn_obj token;
+        GRN_TEXT_INIT(&token, 0);
         grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
         DEFINE_NAME(ii);
         MERR("[ii][delete][one] buffer is full: "
@@ -10430,6 +10446,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       a = array_get(ctx, ii_buffer->ii, tid);
       if (!a) {
         grn_obj token;
+        GRN_TEXT_INIT(&token, 0);
         grn_ii_get_token_from_token_id(ctx, ii_buffer->ii, tid, &token);
         DEFINE_NAME(ii_buffer->ii);
         MERR("[ii][buffer][merge] failed to allocate an array: "
@@ -10445,6 +10462,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       term_buffer = get_term_buffer(ctx, ii_buffer);
       if (!term_buffer) {
         grn_obj token;
+        GRN_TEXT_INIT(&token, 0);
         grn_ii_get_token_from_token_id(ctx, ii_buffer->ii, tid, &token);
         DEFINE_NAME(ii_buffer->ii);
         MERR("[ii][buffer][merge] failed to allocate a term buffer: "
@@ -12764,6 +12782,7 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn_ii_builder *builder,
     a = array_get(ctx, builder->ii, chunk->tid);
     if (!a) {
       grn_obj token;
+      GRN_TEXT_INIT(&token, 0);
       grn_ii_get_token_from_token_id(ctx, builder->ii, chunk->tid, &token);
       DEFINE_NAME(builder->ii);
       MERR("[ii][builder][chunk][pack] failed to allocate an array: "
@@ -12781,6 +12800,7 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn_ii_builder *builder,
     a = array_get(ctx, builder->ii, chunk->tid);
     if (!a) {
       grn_obj token;
+      GRN_TEXT_INIT(&token, 0);
       grn_ii_get_token_from_token_id(ctx, builder->ii, chunk->tid, &token);
       DEFINE_NAME(builder->ii);
       MERR("[ii][builder][chunk][pack] failed to allocate an array: "
@@ -13085,6 +13105,7 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn_ii_builder *builder)
   a = array_get(ctx, builder->ii, builder->chunk.tid);
   if (!a) {
     grn_obj token;
+    GRN_TEXT_INIT(&token, 0);
     grn_ii_get_token_from_token_id(ctx, builder->ii, builder->chunk.tid, &token);
     DEFINE_NAME(builder->ii);
     MERR("[ii][builder][chunk][register] "
