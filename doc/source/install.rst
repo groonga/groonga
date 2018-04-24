@@ -25,4 +25,5 @@ size data.
    install/centos
    install/fedora
    install/solaris
+   install/docker
    install/others
