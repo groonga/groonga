@@ -55,8 +55,6 @@ GRN_API grn_rc grn_ii_posting_add(grn_ctx *ctx, grn_posting *pos,
                                   grn_hash *s, grn_operator op);
 GRN_API void grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_operator op);
 
-GRN_API void grn_ii_get_token_from_token_id(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_obj *token);
-
 /* Experimental */
 typedef struct _grn_ii_cursor grn_ii_cursor;
 GRN_API grn_ii_cursor *grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
