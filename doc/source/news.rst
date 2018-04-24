@@ -53,17 +53,21 @@ Improvements
   You can change normalizer's behavior dynamically.
   Specific options is as below.
 
-    * ``unify_kana`` : Full-width half Hiragana and Full-width half Katakana are
+    * ``unify_kana`` : Same pronounced characters in all of full-width
+      Hiragana, full-width Katakana and half-width Katakana are regarded as
+      the same character.
+    * ``unify_kana_case`` : Large and small versions of same letters in all of
+      full-width Hiragana, full-width Katakana and half-width Katakana are
       regarded as the same character.
-    * ``unify_kana_case`` : Uppercase and lowercase letters of Full-width half Hiragana
-      and Full-width half Katakana are regarded as the same character.
-    * ``unify_kana_voiced_sound_mark`` : Voiced sound mark and semi voiced sound mark of
-      Full-width half Hiragana and Full-width half Katakana are regarded as the same character.
+    * ``unify_kana_voiced_sound_mark`` : Letters with/without voiced sound
+      mark and semi voiced sound mark in all of full-width Hiragana,
+      full-width Katakana and half-width Katakana are regarded as the same
+      character.
     * ``unify_hyphen`` : The characters like hyphen are regarded as the hyphen.
-    * ``unify_prolonged_sound_mark`` : The characters like prolonged sound mark are regarded
-      as the prolonged sound mark.
-    * ``unify_hyphen_and_prolonged_sound_mark`` : The characters like hyphen and prolonged sound
-      mark are regarded as the hyphen.
+    * ``unify_prolonged_sound_mark`` : The characters like prolonged sound mark
+      are regarded as the prolonged sound mark.
+    * ``unify_hyphen_and_prolonged_sound_mark`` : The characters like hyphen
+      and prolonged sound mark are regarded as the hyphen.
 
 * [:doc:`/reference/commands/dump`] Support output of tokenizer's options and normalizer's options.
   If you import dump that makes by Groonga 8.0.2 or later against a database that makes by Groonga
