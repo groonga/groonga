@@ -4596,7 +4596,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
     MERR("[ii][update][one] failed to allocate an array: "
          "<%.*s>: "
-         "<%u>:<%u>:<%u>"
+         "<%u>:<%u>:<%u>:"
          "<%.*s>: ",
          name_size, name,
          u->rid, u->sid, tid,
@@ -4611,7 +4611,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     grn_ii_get_token_from_token_id(ctx, ii, tid, &token);
     MERR("[ii][update][one] failed to encode a record: "
          "<%.*s>: "
-         "<%u>:<%u>:<%u>"
+         "<%u>:<%u>:<%u>:"
          "<%.*s>: ",
          name_size, name,
          u->rid, u->sid, tid,
