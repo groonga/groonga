@@ -9202,7 +9202,7 @@ grn_obj_set_info_token_filters(grn_ctx *ctx,
                                grn_obj *token_filters)
 {
   const char *tag = "[info][set][token-filters]";
-  grn_obj *current_token_filters;
+  grn_obj *current_token_filters = NULL;
   unsigned int i, n_current_token_filters, n_token_filters;
   grn_obj token_filter_names;
 
