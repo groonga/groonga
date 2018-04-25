@@ -11801,7 +11801,7 @@ typedef struct {
   uint64_t sid_mask;   /* Mask bits for section ID */
 
   grn_obj  *lexicon;    /* Block lexicon (to be closed) */
-  grn_obj  *tokenizer;  /* Lexicon's tokenizer */
+  grn_bool have_tokenizer;  /* Whether lexicon has tokenizer */
   grn_obj  *normalizer; /* Lexicon's normalzier */
 
   uint32_t n;   /* Number of integers appended to the current block */
@@ -11855,7 +11855,7 @@ grn_ii_builder_init(grn_ctx *ctx, grn_ii_builder *builder,
   builder->sid_mask = 0;
 
   builder->lexicon = NULL;
-  builder->tokenizer = NULL;
+  builder->have_tokenizer = GRN_FALSE;
   builder->normalizer = NULL;
 
   builder->n = 0;
@@ -11991,9 +11991,11 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn_ii_builder *builder)
   grn_table_flags flags;
   grn_obj *domain = grn_ctx_at(ctx, builder->ii->lexicon->header.domain);
   grn_obj *range = grn_ctx_at(ctx, DB_OBJ(builder->ii->lexicon)->range);
-  grn_obj *tokenizer, *normalizer, *token_filters;
-  grn_rc rc = grn_table_get_info(ctx, builder->ii->lexicon, &flags, NULL,
-                                 &tokenizer, &normalizer, &token_filters);
+  grn_obj *normalizer, *token_filters;
+  grn_rc rc;
+
+  rc = grn_table_get_info(ctx, builder->ii->lexicon, &flags, NULL,
+                          NULL, &normalizer, &token_filters);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -12006,11 +12008,21 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn_ii_builder *builder)
     }
     return ctx->rc;
   }
-  builder->tokenizer = tokenizer;
-  builder->normalizer = normalizer;
-  rc = grn_obj_set_info(ctx, builder->lexicon,
-                        GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
+  {
+    grn_obj tokenizer;
+    GRN_TEXT_INIT(&tokenizer, 0);
+    grn_table_get_default_tokenizer_string(ctx,
+                                           builder->ii->lexicon,
+                                           &tokenizer);
+    if (GRN_TEXT_LEN(&tokenizer) > 0) {
+      builder->have_tokenizer = GRN_TRUE;
+      rc = grn_obj_set_info(ctx, builder->lexicon,
+                            GRN_INFO_DEFAULT_TOKENIZER, &tokenizer);
+    }
+    GRN_OBJ_FIN(ctx, &tokenizer);
+  }
   if (rc == GRN_SUCCESS) {
+    builder->normalizer = normalizer;
     rc = grn_obj_set_info(ctx, builder->lexicon,
                           GRN_INFO_NORMALIZER, normalizer);
     if (rc == GRN_SUCCESS) {
@@ -12433,7 +12445,7 @@ grn_ii_builder_append_value(grn_ctx *ctx, grn_ii_builder *builder,
     builder->pos++;
   }
   if (value_size) {
-    if (!builder->tokenizer && !builder->normalizer) {
+    if (!builder->have_tokenizer && !builder->normalizer) {
       grn_id tid;
       switch (builder->lexicon->header.type) {
       case GRN_TABLE_PAT_KEY :
@@ -12534,7 +12546,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx, grn_ii_builder *builder,
           continue;
         }
         if ((builder->ii->header->flags & GRN_OBJ_WITH_SECTION) &&
-            builder->tokenizer) {
+            builder->have_tokenizer) {
           sid = i + 1;
         }
         rc = grn_ii_builder_append_value(ctx, builder, rid, sid, sec->weight,
@@ -12654,7 +12666,7 @@ static grn_rc
 grn_ii_builder_set_sid_bits(grn_ctx *ctx, grn_ii_builder *builder)
 {
   /* Calculate the number of bits required to represent a section ID. */
-  if (builder->n_srcs == 1 && builder->tokenizer &&
+  if (builder->n_srcs == 1 && builder->have_tokenizer &&
       (builder->srcs[0]->header.flags & GRN_OBJ_COLUMN_VECTOR) != 0) {
     /* If the source column is a vector column and the index has a tokenizer, */
     /* the maximum sid equals to the maximum number of elements. */
