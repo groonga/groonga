@@ -5845,17 +5845,16 @@ cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t 
     }
     if (!grn_ii_cursor_next_pos(ctx, c)) {
       if (grn_logger_pass(ctx, GRN_LOG_ERROR)) {
-        char token[GRN_TABLE_MAX_KEY_SIZE];
-        int token_size;
-        token_size = grn_table_get_key(ctx,
-                                       c->ii->lexicon,
-                                       c->id,
-                                       &token,
-                                       GRN_TABLE_MAX_KEY_SIZE);
+        grn_obj token;
+        GRN_TEXT_INIT(&token, 0);
+        grn_ii_get_token(ctx, c->ii, c->id, &token);
         GRN_LOG(ctx, GRN_LOG_ERROR,
                 "[ii][cursor][heap][push] invalid cursor: "
                 "%p: token:<%.*s>(%u)",
-                c, token_size, token, c->id);
+                c,
+                (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                c->id);
+        GRN_OBJ_FIN(ctx, &token);
       }
       grn_ii_cursor_close(ctx, c);
       return GRN_END_OF_DATA;
@@ -5932,17 +5931,16 @@ cursor_heap_pop(grn_ctx *ctx, cursor_heap *h, grn_id min)
       h->bins[0] = h->bins[--h->n_entries];
     } else if (!grn_ii_cursor_next_pos(ctx, c)) {
       if (grn_logger_pass(ctx, GRN_LOG_ERROR)) {
-        char token[GRN_TABLE_MAX_KEY_SIZE];
-        int token_size;
-        token_size = grn_table_get_key(ctx,
-                                       c->ii->lexicon,
-                                       c->id,
-                                       &token,
-                                       GRN_TABLE_MAX_KEY_SIZE);
+        grn_obj token;
+        GRN_TEXT_INIT(&token, 0);
+        grn_ii_get_token(ctx, c->ii, c->id, &token);
         GRN_LOG(ctx, GRN_LOG_ERROR,
                 "[ii][cursor][heap][pop] invalid cursor: "
                 "%p: token:<%.*s>(%u)",
-                c, token_size, token, c->id);
+                c,
+                (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                c->id);
+        GRN_OBJ_FIN(ctx, &token);
       }
       grn_ii_cursor_close(ctx, c);
       h->bins[0] = h->bins[--h->n_entries];
@@ -5962,17 +5960,16 @@ cursor_heap_pop_pos(grn_ctx *ctx, cursor_heap *h)
         h->bins[0] = h->bins[--h->n_entries];
       } else if (!grn_ii_cursor_next_pos(ctx, c)) {
         if (grn_logger_pass(ctx, GRN_LOG_ERROR)) {
-          char token[GRN_TABLE_MAX_KEY_SIZE];
-          int token_size;
-          token_size = grn_table_get_key(ctx,
-                                         c->ii->lexicon,
-                                         c->id,
-                                         &token,
-                                         GRN_TABLE_MAX_KEY_SIZE);
+          grn_obj token;
+          GRN_TEXT_INIT(&token, 0);
+          grn_ii_get_token(ctx, c->ii, c->id, &token);
           GRN_LOG(ctx, GRN_LOG_ERROR,
                   "[ii][cursor][heap][pop][position] invalid cursor: "
                   "%p: token:<%.*s>(%u)",
-                  c, token_size, token, c->id);
+                  c,
+                  (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                  c->id);
+          GRN_OBJ_FIN(ctx, &token);
         }
         grn_ii_cursor_close(ctx, c);
         h->bins[0] = h->bins[--h->n_entries];
