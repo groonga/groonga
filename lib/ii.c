@@ -11802,7 +11802,7 @@ typedef struct {
 
   grn_obj  *lexicon;    /* Block lexicon (to be closed) */
   grn_bool have_tokenizer;  /* Whether lexicon has tokenizer */
-  grn_obj  *normalizer; /* Lexicon's normalzier */
+  grn_bool have_normalizer; /* Whether lexicon has tokenizer */
 
   uint32_t n;   /* Number of integers appended to the current block */
   grn_id   rid; /* Record ID */
@@ -11856,7 +11856,7 @@ grn_ii_builder_init(grn_ctx *ctx, grn_ii_builder *builder,
 
   builder->lexicon = NULL;
   builder->have_tokenizer = GRN_FALSE;
-  builder->normalizer = NULL;
+  builder->have_normalizer = GRN_FALSE;
 
   builder->n = 0;
   builder->rid = GRN_ID_NIL;
@@ -11991,11 +11991,11 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn_ii_builder *builder)
   grn_table_flags flags;
   grn_obj *domain = grn_ctx_at(ctx, builder->ii->lexicon->header.domain);
   grn_obj *range = grn_ctx_at(ctx, DB_OBJ(builder->ii->lexicon)->range);
-  grn_obj *normalizer, *token_filters;
+  grn_obj *token_filters;
   grn_rc rc;
 
   rc = grn_table_get_info(ctx, builder->ii->lexicon, &flags, NULL,
-                          NULL, &normalizer, &token_filters);
+                          NULL, NULL, &token_filters);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -12022,13 +12022,21 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn_ii_builder *builder)
     GRN_OBJ_FIN(ctx, &tokenizer);
   }
   if (rc == GRN_SUCCESS) {
-    builder->normalizer = normalizer;
-    rc = grn_obj_set_info(ctx, builder->lexicon,
-                          GRN_INFO_NORMALIZER, normalizer);
-    if (rc == GRN_SUCCESS) {
+    grn_obj normalizer;
+    GRN_TEXT_INIT(&normalizer, 0);
+    grn_table_get_normalizer_string(ctx,
+                                    builder->ii->lexicon,
+                                    &normalizer);
+    if (GRN_TEXT_LEN(&normalizer) > 0) {
+      builder->have_normalizer = GRN_TRUE;
       rc = grn_obj_set_info(ctx, builder->lexicon,
-                            GRN_INFO_TOKEN_FILTERS, token_filters);
+                            GRN_INFO_NORMALIZER, &normalizer);
     }
+    GRN_OBJ_FIN(ctx, &normalizer);
+  }
+  if (rc == GRN_SUCCESS) {
+    rc = grn_obj_set_info(ctx, builder->lexicon,
+                          GRN_INFO_TOKEN_FILTERS, token_filters);
   }
   if (rc != GRN_SUCCESS) {
     return rc;
@@ -12445,7 +12453,7 @@ grn_ii_builder_append_value(grn_ctx *ctx, grn_ii_builder *builder,
     builder->pos++;
   }
   if (value_size) {
-    if (!builder->have_tokenizer && !builder->normalizer) {
+    if (!builder->have_tokenizer && !builder->have_normalizer) {
       grn_id tid;
       switch (builder->lexicon->header.type) {
       case GRN_TABLE_PAT_KEY :
