@@ -175,9 +175,9 @@ if test "$GCC" = "yes"; then
   if test "x$check_cflag" = "xyes"; then
     NO_BAD_FUNCTION_CAST_CFLAGS="-Wno-bad-function-cast"
   fi
-  if test "$CLANG" = "no"; then
-    CHECK_BUILD_FLAG([-Wcast-align])
-  fi
+#  if test "$CLANG" = "no"; then
+#   CHECK_BUILD_FLAG([-Wcast-align])
+#  fi
 #  CHECK_BUILD_FLAG([-Wredundant-decls])
 #  CHECK_BUILD_FLAG([-Wunsafe-loop-optimizations])
 #  CHECK_BUILD_FLAG([-Wunreachable-code])
