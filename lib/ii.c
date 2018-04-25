@@ -4729,7 +4729,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             grn_ii_get_token(ctx, ii, tid, &token);
             MERR("[ii][update][one] buffer is full: "
                  "<%.*s>: "
-                 "<%u>:<%u><%u>: "
+                 "<%u>:<%u>:<%u>: "
                  "token:<%.*s>: "
                  "segment:<%u>, new-segment:<%u>, free:<%u>, required:<%u>",
                  name_size, name,
