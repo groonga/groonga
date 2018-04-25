@@ -104,26 +104,6 @@ static uint32_t grn_ii_max_n_segments_small = MAX_PSEG_SMALL;
 static uint32_t grn_ii_max_n_chunks_small = GRN_II_MAX_CHUNK_SMALL;
 static int64_t grn_ii_reduce_expire_threshold = 32;
 
-static void
-grn_ii_get_token_from_token_id(grn_ctx *ctx, grn_ii *ii,
-                               grn_id tid, grn_obj *token)
-{
-   char key[GRN_TABLE_MAX_KEY_SIZE];
-   int key_size;
-   key_size = grn_table_get_key(ctx, ii->lexicon, tid,
-                                key, GRN_TABLE_MAX_KEY_SIZE);
-   if (key_size != 0) {
-     grn_obj key_buf;
-     GRN_OBJ_INIT(&key_buf,
-                  GRN_BULK,
-                  GRN_OBJ_DO_SHALLOW_COPY,
-                  ii->lexicon->header.domain);
-     GRN_TEXT_SET(ctx, &key_buf, key, key_size);
-     grn_inspect(ctx, token, &key_buf);
-     GRN_OBJ_FIN(ctx, &key_buf);
-   }
-}
-
 void
 grn_ii_init_from_env(void)
 {
@@ -248,6 +228,26 @@ grn_bool
 grn_ii_cursor_set_min_enable_get(void)
 {
   return grn_ii_cursor_set_min_enable;
+}
+
+static void
+grn_ii_get_token_from_token_id(grn_ctx *ctx, grn_ii *ii,
+                               grn_id tid, grn_obj *token)
+{
+   char key[GRN_TABLE_MAX_KEY_SIZE];
+   int key_size;
+   key_size = grn_table_get_key(ctx, ii->lexicon, tid,
+                                key, GRN_TABLE_MAX_KEY_SIZE);
+   if (key_size != 0) {
+     grn_obj key_buf;
+     GRN_OBJ_INIT(&key_buf,
+                  GRN_BULK,
+                  GRN_OBJ_DO_SHALLOW_COPY,
+                  ii->lexicon->header.domain);
+     GRN_TEXT_SET(ctx, &key_buf, key, key_size);
+     grn_inspect(ctx, token, &key_buf);
+     GRN_OBJ_FIN(ctx, &key_buf);
+   }
 }
 
 /* segment */
