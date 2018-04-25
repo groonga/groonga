@@ -187,9 +187,7 @@ grn_table_module_set_options(grn_ctx *ctx,
 
   module->options = options;
   module->options_revision = revision;
-  if (options) {
-    module->options_close_func = close_func;
-  }
+  module->options_close_func = close_func;
   CRITICAL_SECTION_LEAVE(module->lock);
 }
 
