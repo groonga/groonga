@@ -10052,20 +10052,37 @@ get_tmp_lexicon(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   if (!tmp_lexicon) {
     grn_obj *domain = grn_ctx_at(ctx, ii_buffer->lexicon->header.domain);
     grn_obj *range = grn_ctx_at(ctx, DB_OBJ(ii_buffer->lexicon)->range);
-    grn_obj *tokenizer;
-    grn_obj *normalizer;
     grn_obj *token_filters;
     grn_table_flags flags;
     grn_table_get_info(ctx, ii_buffer->lexicon, &flags, NULL,
-                       &tokenizer, &normalizer, &token_filters);
+                       NULL, NULL, &token_filters);
     flags &= ~GRN_OBJ_PERSISTENT;
     tmp_lexicon = grn_table_create(ctx, NULL, 0, NULL, flags, domain, range);
     if (tmp_lexicon) {
       ii_buffer->tmp_lexicon = tmp_lexicon;
-      grn_obj_set_info(ctx, tmp_lexicon,
-                       GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
-      grn_obj_set_info(ctx, tmp_lexicon,
-                       GRN_INFO_NORMALIZER, normalizer);
+      {
+        grn_obj tokenizer;
+        GRN_TEXT_INIT(&tokenizer, 0);
+        grn_table_get_default_tokenizer_string(ctx,
+                                               ii_buffer->lexicon,
+                                               &tokenizer);
+        if (GRN_TEXT_LEN(&tokenizer) > 0) {
+          grn_obj_set_info(ctx, tmp_lexicon,
+                           GRN_INFO_DEFAULT_TOKENIZER, &tokenizer);
+        }
+        GRN_OBJ_FIN(ctx, &tokenizer);
+      }
+      {
+        grn_obj normalizer;
+        GRN_TEXT_INIT(&normalizer, 0);
+        grn_table_get_normalizer_string(ctx,
+                                        ii_buffer->lexicon,
+                                        &normalizer);
+        if (GRN_TEXT_LEN(&normalizer) > 0) {
+          grn_obj_set_info(ctx, tmp_lexicon, GRN_INFO_NORMALIZER, &normalizer);
+        }
+        GRN_OBJ_FIN(ctx, &normalizer);
+      }
       grn_obj_set_info(ctx, tmp_lexicon,
                        GRN_INFO_TOKEN_FILTERS, token_filters);
     }
