@@ -2729,7 +2729,7 @@ typedef struct {
         grn_obj token;\
         DEFINE_NAME(ii);\
         GRN_TEXT_INIT(&token, 0);\
-        grn_ii_get_token(ctx, ii, bt->tid, &token);\
+        grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);\
         CRIT(GRN_FILE_CORRUPT,\
              "[ii][broken] posting in list is larger than posting in chunk: "\
              "<%.*s>: <%.*s>(%u): (%u:%u) -> (%u:%u)",\
@@ -2752,7 +2752,7 @@ typedef struct {
       grn_obj token;\
       DEFINE_NAME(ii);\
       GRN_TEXT_INIT(&token, 0);\
-      grn_ii_get_token(ctx, ii, bt->tid, &token);\
+      grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);\
       CRIT(GRN_FILE_CORRUPT,\
            "[ii][broken] invalid posting in chunk: "\
            "<%.*s>: <%.*s>(%u): (%u:%u)",\
@@ -2782,7 +2782,7 @@ typedef struct {
       grn_obj token;\
       DEFINE_NAME(ii);\
       GRN_TEXT_INIT(&token, 0);\
-      grn_ii_get_token(ctx, ii, bt->tid, &token);\
+      grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);\
       CRIT(GRN_FILE_CORRUPT,\
            "[ii][broken] postings in block aren't sorted: "\
            "<%.*s>: <%.*s>(%u): (%d:%d) -> (%d:%d)",\
@@ -2808,7 +2808,7 @@ typedef struct {
         grn_obj token;\
         DEFINE_NAME(ii);\
         GRN_TEXT_INIT(&token, 0);\
-        grn_ii_get_token(ctx, ii, bt->tid, &token);\
+        grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);\
         CRIT(GRN_FILE_CORRUPT,\
              "[ii][broken] posting in list is larger than posting in buffer: "\
              "<%.*s>: <%.*s>(%u): (%u:%u) -> (%u:%u)",\
@@ -2969,7 +2969,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
     grn_obj token;
     DEFINE_NAME(ii);
     GRN_TEXT_INIT(&token, 0);
-    grn_ii_get_token(ctx, ii, bt->tid, &token);
+    grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);
     MERR("[ii][chunk][merge] failed to allocate a source chunk: "
          "<%.*s>: "
          "<%.*s>(%u): "
@@ -3014,7 +3014,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
       grn_obj token;
       DEFINE_NAME(ii);
       GRN_TEXT_INIT(&token, 0);
-      grn_ii_get_token(ctx, ii, bt->tid, &token);
+      grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);
       MERR("[ii][chunk][merge] failed to allocate a encode buffer: "
            "<%.*s>: "
            "<%.*s>(%u): "
@@ -3154,7 +3154,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
             grn_obj token;
             DEFINE_NAME(ii);
             GRN_TEXT_INIT(&token, 0);
-            grn_ii_get_token(ctx, ii, bt->tid, &token);
+            grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);
             MERR("[ii][buffer][merge] failed to allocate chunk info: "
                  "<%.*s>: "
                  "<%.*s>(%u): "
@@ -3189,7 +3189,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                 grn_obj token;
                 DEFINE_NAME(ii);
                 GRN_TEXT_INIT(&token, 0);
-                grn_ii_get_token(ctx, ii, bt->tid, &token);
+                grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);
                 ERR(ctx->rc,
                     "[ii][buffer][merge] failed to merge chunk: "
                     "<%.*s>: "
@@ -3235,7 +3235,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
             grn_obj token;
             DEFINE_NAME(ii);
             GRN_TEXT_INIT(&token, 0);
-            grn_ii_get_token(ctx, ii, bt->tid, &token);
+            grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);
             ERR(ctx->rc,
                 "[ii][buffer][merge] failed to reset data vector: "
                 "<%.*s>: "
@@ -3271,7 +3271,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
         grn_obj token;
         DEFINE_NAME(ii);
         GRN_TEXT_INIT(&token, 0);
-        grn_ii_get_token(ctx, ii, bt->tid, &token);
+        grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);
         ERR(ctx->rc,
             "[ii][buffer][merge] failed to merge chunk: "
             "<%.*s>: "
