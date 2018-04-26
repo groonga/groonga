@@ -27,7 +27,7 @@ Improvements
 
 * [:doc:`/reference/tokenizers`] New tokenizer ``TokenNgram`` is landed.
   You can change its behavior dynamically via options.
-  Specific options is as below.
+  Here is a list of available options:
 
     * ``n`` : "N" of Ngram. For example, "3" for trigram.
     * ``loose_symbol`` : Tokenize keywords including symbols, to be searched
@@ -48,7 +48,7 @@ Improvements
 
 * [:doc:`/reference/normalizers`] Support options for "NormalizerNFKC51" and "NormalizerNFKC100" normalizers.
   You can change their behavior dynamically.
-  Specific options is as below.
+  Here is a list of available options:
 
     * ``unify_kana`` : Same pronounced characters in all of full-width
       Hiragana, full-width Katakana and half-width Katakana are regarded as
