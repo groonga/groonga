@@ -25,7 +25,7 @@ Improvements
   You can specify time format against a column of ``Time`` type.
   You can specify with use format of ``strftime`` .
 
-* [:doc:`/reference/tokenizers`] New tokenizer ``TokenNgram`` is landed.
+* [:doc:`/reference/tokenizers`] Support new tokenizer ``TokenNgram``.
   You can change its behavior dynamically via options.
   Here is a list of available options:
 
@@ -44,7 +44,7 @@ Improvements
       the keyword won't be found by a query including blanks like
       "090 1111 2222".
 
-* [:doc:`/reference/normalizers`] New normalizer "NormalizerNFKC100" based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 10.0 is landed.
+* [:doc:`/reference/normalizers`] Support new normalizer "NormalizerNFKC100" based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 10.0.
 
 * [:doc:`/reference/normalizers`] Support options for "NormalizerNFKC51" and "NormalizerNFKC100" normalizers.
   You can change their behavior dynamically.
