@@ -222,15 +222,34 @@ grn_options_set(grn_ctx *ctx,
 
     msgpack_unpacker_init(&unpacker, MSGPACK_UNPACKER_INIT_BUFFER_SIZE);
     msgpack_unpacked_init(&unpacked);
+
+    msgpack_unpacker_reserve_buffer(&unpacker, length);
+    grn_memcpy(msgpack_unpacker_buffer(&unpacker), raw_value, length);
+    msgpack_unpacker_buffer_consumed(&unpacker, length);
+    while (MSGPACK_UNPACKER_NEXT(&unpacker, &unpacked)) {
+      msgpack_object *object = &(unpacked.data);
+      if (object->type == MSGPACK_OBJECT_MAP) {
+        msgpack_object_map *map = &(object->via.map);
+        uint32_t i;
+        msgpack_pack_map(&packer, map->size + 1);
+        for (i = 0; i < map->size; i++) {
+          msgpack_object_kv *kv = &(map->ptr[i]);
+          msgpack_pack_object(&packer, kv->key);
+          msgpack_pack_object(&packer, kv->val);
+        }
+      }
+    }
+
     msgpack_unpacked_destroy(&unpacked);
     msgpack_unpacker_destroy(&unpacker);
 
     grn_ja_unref(ctx, &iw);
   } else {
     msgpack_pack_map(&packer, 1);
-    msgpack_pack_str(&packer, name_length);
-    msgpack_pack_str_body(&packer, name, name_length);
   }
+
+  msgpack_pack_str(&packer, name_length);
+  msgpack_pack_str_body(&packer, name, name_length);
 
   n = grn_vector_size(ctx, values);
   msgpack_pack_array(&packer, n);
@@ -310,7 +329,7 @@ grn_options_get(grn_ctx *ctx,
       msgpack_object_map *map = &(object->via.map);
       uint32_t i;
       for (i = 0; i < map->size; i++) {
-        msgpack_object_kv *kv = map->ptr;
+        msgpack_object_kv *kv = &(map->ptr[i]);
         if (kv->key.type == MSGPACK_OBJECT_STR &&
             MSGPACK_OBJECT_STR_SIZE(&(kv->key)) == name_length &&
             memcmp(MSGPACK_OBJECT_STR_PTR(&(kv->key)), name, name_length) == 0) {
