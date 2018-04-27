@@ -17,6 +17,7 @@
 */
 
 #include "grn.h"
+#include "grn_ctx_impl.h"
 #include "grn_index_column.h"
 #include "grn_pat.h"
 #include "grn_dat.h"
@@ -716,13 +717,27 @@ grn_obj_set_option_values(grn_ctx *ctx,
                           int name_length,
                           grn_obj *values)
 {
+  grn_id id;
+
   GRN_API_ENTER;
-  grn_db_set_option_values(ctx,
-                           grn_ctx_db(ctx),
-                           grn_obj_id(ctx, obj),
-                           name,
-                           name_length,
-                           values);
+
+  id = grn_obj_id(ctx, obj);
+  if (id & GRN_OBJ_TMP_OBJECT) {
+    grn_options_set(ctx,
+                    ctx->impl->temporary_options,
+                    id & ~GRN_OBJ_TMP_OBJECT,
+                    name,
+                    name_length,
+                    values);
+  } else {
+    grn_db_set_option_values(ctx,
+                             grn_ctx_db(ctx),
+                             id,
+                             name,
+                             name_length,
+                             values);
+  }
+
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -734,16 +749,29 @@ grn_obj_get_option_values(grn_ctx *ctx,
                           grn_option_revision revision,
                           grn_obj *values)
 {
+  grn_id id;
   grn_option_revision returned_revision;
 
   GRN_API_ENTER;
-  returned_revision = grn_db_get_option_values(ctx,
-                                               grn_ctx_db(ctx),
-                                               grn_obj_id(ctx, obj),
-                                               name,
-                                               name_length,
-                                               revision,
-                                               values);
+
+  id = grn_obj_id(ctx, obj);
+  if (id & GRN_OBJ_TMP_OBJECT) {
+    returned_revision = grn_options_get(ctx,
+                                        ctx->impl->temporary_options,
+                                        id & ~GRN_OBJ_TMP_OBJECT,
+                                        name,
+                                        name_length,
+                                        revision,
+                                        values);
+  } else {
+    returned_revision = grn_db_get_option_values(ctx,
+                                                 grn_ctx_db(ctx),
+                                                 id,
+                                                 name,
+                                                 name_length,
+                                                 revision,
+                                                 values);
+  }
 
   GRN_API_RETURN(returned_revision);
 }
