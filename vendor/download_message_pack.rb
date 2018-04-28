@@ -49,7 +49,8 @@ def download(url, base)
   extract_tar_gz(tar_gz)
   Dir.chdir(base) do
     IO.popen(["patch", "-p1"], "r+") do |io|
-      open("https://patch-diff.githubusercontent.com/raw/msgpack/msgpack-c/pull/677.patch") do |patch|
+      open("https://patch-diff.githubusercontent.com/raw/msgpack/msgpack-c/pull/677.patch",
+           :ssl_verify_mode => ssl_verify_mode) do |patch|
         io.write(patch.read)
         io.close_write
         io.read
