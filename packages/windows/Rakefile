@@ -171,7 +171,9 @@ namespace :build do
     tmp_dir = base_tmp_dir + "msgpack"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
-    msgpack_version = "2.0.0"
+    msgpack_version_path =
+      base_dir.parent.parent + "bundled_message_pack_version"
+    msgpack_version = msgpack_version_path.read.strip
     msgpack_base = "msgpack-#{msgpack_version}"
     msgpack_tar_gz = "#{msgpack_base}.tar.gz"
     msgpack_tar_gz_url_base =
