@@ -47,6 +47,15 @@ def download(url, base)
   end
   FileUtils.rm_rf(base)
   extract_tar_gz(tar_gz)
+  Dir.chdir(base) do
+    IO.popen(["patch", "-p1"], "r+") do |io|
+      open("https://patch-diff.githubusercontent.com/raw/msgpack/msgpack-c/pull/677.patch") do |patch|
+        io.write(patch.read)
+        io.close_write
+        io.read
+      end
+    end
+  end
   FileUtils.rm_rf(tar_gz)
 end
 
