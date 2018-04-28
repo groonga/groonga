@@ -52,9 +52,6 @@ matrix:
     - os: linux
       env: DOCKER=ubuntu-18.04
   allow_failures:
-    - os: linux
-      compiler: clang
-      env: BUILD_TOOL=autotools ENABLE_MRUBY=yes
   #   - os: osx
   #     compiler: clang
   #     env: BUILD_TOOL=autotools ENABLE_MRUBY=yes
