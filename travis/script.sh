@@ -44,9 +44,9 @@ if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
   mount -t hfs ${memory_fs_device_path} tmp
 
   command_test_options="${command_test_options} --n-workers=2"
-  if [ "${TEST_TARGET}" = "command" ]; then
-    command_test_options="${command_test_options} --no-suppress-backtrace"
-  fi
+  # if [ "${TEST_TARGET}" = "command" ]; then
+  #   command_test_options="${command_test_options} --no-suppress-backtrace"
+  # fi
 else
   command_test_options="${command_test_options} --n-workers=4"
 fi
