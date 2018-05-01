@@ -3710,7 +3710,6 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx, grn_obj *obj,
   if (table) {
     key_type = table->header.domain;
     need_cast = (query->header.domain != key_type);
-    grn_obj_unlink(ctx, table);
   }
   if (need_cast) {
     GRN_OBJ_INIT(&casted_query, GRN_BULK, 0, key_type);
@@ -4553,9 +4552,6 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
                                                         key_type, table,
                                                         rp->max_n_subrecs,
                                                         additional_value_size);
-        if (key_type) {
-          grn_obj_unlink(ctx, key_type);
-        }
         if (!rp->table) {
           goto exit;
         }
@@ -7701,7 +7697,6 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
                 grn_obj *range_obj;
                 range_obj = grn_ctx_at(ctx, range);
                 ERR_CAST(obj, range_obj, &value_buf);
-                grn_obj_unlink(ctx, range_obj);
               } else {
                 element = GRN_BULK_HEAD(&cast_buf);
                 element_length = GRN_BULK_VSIZE(&cast_buf);
@@ -7770,7 +7765,6 @@ grn_obj_set_value_column_fix_size(grn_ctx *ctx, grn_obj *obj, grn_id id,
       grn_obj *range_obj;
       range_obj = grn_ctx_at(ctx, range);
       ERR_CAST(obj, range_obj, value);
-      grn_obj_unlink(ctx, range_obj);
     } else {
       value_ = &buf;
       v = GRN_BULK_HEAD(&buf);
@@ -8880,19 +8874,12 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
         }
       }
     }
-    grn_obj_unlink(ctx, source);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
   }
 
 exit:
-  if (lexicon) {
-    grn_obj_unlink(ctx, lexicon);
-  }
-  if (lexicon_domain) {
-    grn_obj_unlink(ctx, lexicon_domain);
-  }
   return ctx->rc;
 }
 
