@@ -179,9 +179,6 @@ msgstr ""
 "状態でGroonga 8.0.2およびそれ以降で出力した schema は、Grooga 8.0.1以前のバー"
 "ジョンでは読み込めず、未対応の情報によりエラーとなります。"
 
-msgid "[httpd] Updated bundled nginx to 1.13.12."
-msgstr "[httpd] バンドルしているnginxのバージョンを1.13.12に更新しました。"
-
 msgid "Supported Ubuntu 18.04 (Bionic Beaver)"
 msgstr "Ubuntu 18.04 (Bionic Beaver)をサポートしました。"
 
