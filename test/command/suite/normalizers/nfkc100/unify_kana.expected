@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC100("unify_kana", true)'   "あイｳｪおヽヾ"   WITH_TYPES
+normalize   'NormalizerNFKC100("unify_kana", true)'   "あイｳｪおざジたチなニぱピまミヽヾ"   WITH_TYPES
 [
   [
     0,
@@ -6,8 +6,18 @@ normalize   'NormalizerNFKC100("unify_kana", true)'   "あイｳｪおヽヾ"   
     0.0
   ],
   {
-    "normalized": "あいうぇおゝゞ",
+    "normalized": "あいうぇおざじたちなにぱぴまみゝゞ",
     "types": [
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
       "hiragana",
       "hiragana",
       "hiragana",

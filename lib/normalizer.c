@@ -660,7 +660,11 @@ utf8_normalize_unify_kana(const unsigned char *utf8_char,
        (utf8_char[1] == 0x83 && (0xbd <= utf8_char[2] &&
                                  utf8_char[2] <= 0xbe)))) {
     unified[0] = utf8_char[0];
-    unified[1] = utf8_char[1] - 1;
+    if (utf8_char[2] & 0x20) {
+      unified[1] = utf8_char[1] - 1;
+    } else {
+      unified[1] = utf8_char[1] - 2;
+    }
     unified[2] = utf8_char[2] ^ 0x20;
     return unified;
   }
