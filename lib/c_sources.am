@@ -37,6 +37,7 @@ libgroonga_c_sources =				\
 	grn.h					\
 	hash.c					\
 	grn_hash.h				\
+	highlighter.c				\
 	id.c					\
 	ii.c					\
 	grn_ii.h				\

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -394,24 +394,14 @@ grn_proc_init_highlight_full(grn_ctx *ctx)
                   func_highlight_full, NULL, NULL, 0, NULL);
 }
 
-static grn_obj *
-func_highlight_html_create_keywords_table(grn_ctx *ctx, grn_obj *expression)
+static grn_highlighter *
+func_highlight_html_create_highlighter(grn_ctx *ctx, grn_obj *expression)
 {
-  grn_obj *keywords;
+  grn_highlighter *highlighter;
   grn_obj *condition_ptr = NULL;
   grn_obj *condition = NULL;
 
-  keywords = grn_table_create(ctx, NULL, 0, NULL,
-                              GRN_OBJ_TABLE_PAT_KEY,
-                              grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
-                              NULL);
-
-  {
-    grn_obj *normalizer;
-    normalizer = grn_ctx_get(ctx, "NormalizerAuto", -1);
-    grn_obj_set_info(ctx, keywords, GRN_INFO_NORMALIZER, normalizer);
-    grn_obj_unlink(ctx, normalizer);
-  }
+  highlighter = grn_highlighter_open(ctx);
 
   condition_ptr = grn_expr_get_var(ctx, expression,
                                    GRN_SELECT_INTERNAL_VAR_CONDITION,
@@ -436,16 +426,15 @@ func_highlight_html_create_keywords_table(grn_ctx *ctx, grn_obj *expression)
                                             &keyword,
                                             NULL,
                                             NULL);
-      grn_table_add(ctx,
-                    keywords,
-                    keyword,
-                    keyword_size,
-                    NULL);
+      grn_highlighter_add_keyword(ctx,
+                                  highlighter,
+                                  keyword,
+                                  keyword_size);
     }
     GRN_OBJ_FIN(ctx, &current_keywords);
   }
 
-  return keywords;
+  return highlighter;
 }
 
 static grn_obj *
@@ -458,35 +447,35 @@ func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
   if (nargs == N_REQUIRED_ARGS) {
     grn_obj *string = args[0];
     grn_obj *expression = NULL;
-    grn_obj *keywords;
-    grn_obj *keywords_ptr;
-    grn_bool use_html_escape = GRN_TRUE;
+    grn_highlighter *highlighter;
+    grn_obj *highlighter_ptr;
 
     grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
 
-    keywords_ptr = grn_expr_get_var(ctx, expression,
-                                    GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME,
-                                    strlen(GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME));
-    if (keywords_ptr) {
-      keywords = GRN_PTR_VALUE(keywords_ptr);
+    highlighter_ptr =
+      grn_expr_get_var(ctx, expression,
+                       GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME,
+                       strlen(GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME));
+    if (highlighter_ptr) {
+      highlighter = (grn_highlighter *)GRN_PTR_VALUE(highlighter_ptr);
     } else {
-      keywords_ptr =
+      highlighter_ptr =
         grn_expr_get_or_add_var(ctx, expression,
                                 GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME,
                                 strlen(GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME));
-      GRN_OBJ_FIN(ctx, keywords_ptr);
-      GRN_PTR_INIT(keywords_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
+      GRN_OBJ_FIN(ctx, highlighter_ptr);
+      GRN_PTR_INIT(highlighter_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
 
-      keywords = func_highlight_html_create_keywords_table(ctx, expression);
-      GRN_PTR_SET(ctx, keywords_ptr, keywords);
+      highlighter = func_highlight_html_create_highlighter(ctx, expression);
+      GRN_PTR_SET(ctx, highlighter_ptr, highlighter);
     }
 
-    highlighted = highlight_keywords(ctx, user_data,
-                                     string, keywords, use_html_escape,
-                                     "<span class=\"keyword\">",
-                                     strlen("<span class=\"keyword\">"),
-                                     "</span>",
-                                     strlen("</span>"));
+    highlighted = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_TEXT, 0);
+    grn_highlighter_highlight(ctx,
+                              highlighter,
+                              GRN_TEXT_VALUE(string),
+                              GRN_TEXT_LEN(string),
+                              highlighted);
   }
 #undef N_REQUIRED_ARGS
 

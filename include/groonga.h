@@ -35,6 +35,7 @@
 #include "groonga/file_reader.h"
 #include "groonga/geo.h"
 #include "groonga/hash.h"
+#include "groonga/highlighter.h"
 #include "groonga/id.h"
 #include "groonga/ii.h"
 #include "groonga/obj.h"

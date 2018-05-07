@@ -371,6 +371,7 @@ typedef uint32_t grn_column_flags;
 #define GRN_SNIP                       (0x0b)
 #define GRN_PATSNIP                    (0x0c)
 #define GRN_STRING                     (0x0d)
+#define GRN_HIGHLIGHTER                (0x0e)
 #define GRN_CURSOR_TABLE_HASH_KEY      (0x10)
 #define GRN_CURSOR_TABLE_PAT_KEY       (0x11)
 #define GRN_CURSOR_TABLE_DAT_KEY       (0x12)

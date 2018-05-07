@@ -11214,6 +11214,9 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     case GRN_STRING :
       rc = grn_string_close(ctx, obj);
       break;
+    case GRN_HIGHLIGHTER :
+      rc = grn_highlighter_close(ctx, (grn_highlighter *)obj);
+      break;
     case GRN_CURSOR_TABLE_PAT_KEY :
       grn_pat_cursor_close(ctx, (grn_pat_cursor *)obj);
       break;
