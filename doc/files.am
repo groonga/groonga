@@ -726,6 +726,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install.rst \
 	$(top_srcdir)/doc/source/install/centos.rst \
 	$(top_srcdir)/doc/source/install/debian.rst \
+	$(top_srcdir)/doc/source/install/docker.rst \
 	$(top_srcdir)/doc/source/install/fedora.rst \
 	$(top_srcdir)/doc/source/install/mac_os_x.rst \
 	$(top_srcdir)/doc/source/install/others.rst \
@@ -1692,6 +1693,7 @@ source_files_relative_from_doc_dir = \
 	source/install.rst \
 	source/install/centos.rst \
 	source/install/debian.rst \
+	source/install/docker.rst \
 	source/install/fedora.rst \
 	source/install/mac_os_x.rst \
 	source/install/others.rst \
@@ -2096,6 +2098,7 @@ html_files_relative_from_locale_dir = \
 	html/install.html \
 	html/install/centos.html \
 	html/install/debian.html \
+	html/install/docker.html \
 	html/install/fedora.html \
 	html/install/mac_os_x.html \
 	html/install/others.html \
