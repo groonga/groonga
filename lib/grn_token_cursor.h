@@ -19,9 +19,8 @@
 #pragma once
 
 #include "grn_ctx.h"
+#include "grn_tokenizer.h"
 #include "grn_db.h"
-
-#include <groonga/tokenizer.h>
 
 #ifdef __cplusplus
 extern "C" {

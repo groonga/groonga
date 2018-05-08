@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2012 Brazil
+/*
+  Copyright(C) 2012-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -217,7 +218,7 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
 
   tokenizer->query = query;
 
-  grn_obj *normalized_query = query->normalized_query;
+  grn_obj *string = grn_tokenizer_query_get_normalized_string(ctx, query);
   const char *normalized_string;
   unsigned int normalized_string_length;
   grn_string_get_normalized(ctx,
@@ -225,7 +226,7 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
                             &normalized_string,
                             &normalized_string_length,
                             NULL);
-  if (tokenizer->query->have_tokenized_delimiter) {
+  if (grn_tokenizer_query_have_tokenized_delimiter(ctx, tokenizer->query)) {
     tokenizer->rest_query_string = normalized_string;
     tokenizer->rest_query_string_length = normalized_string_length;
   } else {
@@ -246,6 +247,7 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
     grn_plugin_mutex_unlock(ctx, kytea_mutex);
 
     try {
+      grn_encoding encoding = grn_tokenizer_query_get_encoding(ctx, query);
       for (std::size_t i = 0; i < tokenizer->sentence.words.size(); ++i) {
         const std::string &token =
             kytea_util->showString(tokenizer->sentence.words[i].surface);
@@ -253,9 +255,9 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
         unsigned int left = static_cast<unsigned int>(token.length());
         while (left > 0) {
           const int char_length =
-              grn_tokenizer_charlen(ctx, ptr, left, query->encoding);
+              grn_tokenizer_charlen(ctx, ptr, left, encoding);
           if ((char_length == 0) ||
-              (grn_tokenizer_isspace(ctx, ptr, left, query->encoding) != 0)) {
+              (grn_tokenizer_isspace(ctx, ptr, left, encoding) != 0)) {
             break;
           }
           ptr += char_length;
@@ -282,15 +284,17 @@ grn_obj *grn_kytea_next(grn_ctx *ctx, int num_args, grn_obj **args,
   grn_tokenizer_kytea * const tokenizer =
       static_cast<grn_tokenizer_kytea *>(user_data->ptr);
 
-  if (tokenizer->query->have_tokenized_delimiter) {
+  if (grn_tokenizer_query_have_tokenized_delimiter(ctx, tokenizer->query)) {
     unsigned int rest_query_string_length =
       tokenizer->rest_query_string_length;
+    grn_encoding encoding =
+      grn_tokenizer_query_have_tokenized_delimiter(ctx, tokenizer->query);
     const char *rest_query_string =
       grn_tokenizer_tokenized_delimiter_next(ctx,
                                              &(tokenizer->token),
                                              tokenizer->rest_query_string,
                                              rest_query_string_length,
-                                             tokenizer->query->encoding);
+                                             encoding);
     if (rest_query_string) {
       tokenizer->rest_query_string_length -=
         rest_query_string - tokenizer->rest_query_string;

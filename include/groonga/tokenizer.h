@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012-2016 Brazil
+  Copyright(C) 2012-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 
 #include <groonga/plugin.h>
 #include <groonga/token.h>
+#include <groonga/tokenizer_query_deprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -70,25 +71,6 @@ GRN_PLUGIN_EXPORT grn_bool grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
                                                                   grn_encoding encoding);
 
 /*
-  grn_tokenizer_query is a structure for storing a query. See the following
-  functions.
- */
-typedef struct _grn_tokenizer_query grn_tokenizer_query;
-
-struct _grn_tokenizer_query {
-  grn_obj *normalized_query;
-  char *query_buf;
-  const char *ptr;
-  unsigned int length;
-  grn_encoding encoding;
-  unsigned int flags;
-  grn_bool have_tokenized_delimiter;
-  /* Deprecated since 4.0.8. Use tokenize_mode instead. */
-  grn_token_mode token_mode;
-  grn_tokenize_mode tokenize_mode;
-};
-
-/*
   grn_tokenizer_query_open() parses `args' and returns a new object of
   grn_tokenizer_query. The new object stores information of the query.
   grn_tokenizer_query_open() normalizes the query if the target table
@@ -121,6 +103,28 @@ GRN_PLUGIN_EXPORT void grn_tokenizer_query_close(grn_ctx *ctx, grn_tokenizer_que
   instead.
  */
 void grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query);
+
+GRN_PLUGIN_EXPORT grn_obj *
+grn_tokenizer_query_get_normalized_string(grn_ctx *ctx,
+                                          grn_tokenizer_query *query);
+
+GRN_PLUGIN_EXPORT const char *
+grn_tokenizer_query_get_raw_string(grn_ctx *ctx,
+                                   grn_tokenizer_query *query,
+                                   size_t *length);
+
+GRN_PLUGIN_EXPORT grn_encoding
+grn_tokenizer_query_get_encoding(grn_ctx *ctx, grn_tokenizer_query *query);
+
+GRN_PLUGIN_EXPORT unsigned int
+grn_tokenizer_query_get_flags(grn_ctx *ctx, grn_tokenizer_query *query);
+
+GRN_PLUGIN_EXPORT grn_bool
+grn_tokenizer_query_have_tokenized_delimiter(grn_ctx *ctx,
+                                             grn_tokenizer_query *query);
+
+GRN_PLUGIN_EXPORT grn_tokenize_mode
+grn_tokenizer_query_get_mode(grn_ctx *ctx, grn_tokenizer_query *query);
 
 /*
   grn_tokenizer_token is needed to return tokens. A grn_tokenizer_token object

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -191,7 +191,8 @@ chunked_tokenize_utf8(grn_ctx *ctx,
   const char *current;
   const char *last_delimiter;
   const char *string_end = string + string_bytes;
-  grn_encoding encoding = tokenizer->query->encoding;
+  grn_encoding encoding =
+    grn_tokenizer_query_get_encoding(ctx, tokenizer->query);
 
   if (string_bytes < grn_mecab_chunk_size_threshold) {
     return chunked_tokenize_utf8_chunk(ctx,
@@ -343,9 +344,6 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_mecab_tokenizer *tokenizer;
   unsigned int normalizer_flags = 0;
   grn_tokenizer_query *query;
-  grn_obj *normalized_query;
-  const char *normalized_string;
-  unsigned int normalized_string_length;
 
   query = grn_tokenizer_query_open(ctx, nargs, args, normalizer_flags);
   if (!query) {
@@ -366,15 +364,18 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
 
-  if (query->encoding != sole_mecab_encoding) {
-    grn_tokenizer_query_close(ctx, query);
-    GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                     "[tokenizer][mecab] "
-                     "MeCab dictionary charset (%s) does not match "
-                     "the table encoding: <%s>",
-                     grn_encoding_to_string(sole_mecab_encoding),
-                     grn_encoding_to_string(query->encoding));
-    return NULL;
+  {
+    grn_encoding encoding = grn_tokenizer_query_get_encoding(ctx, query);
+    if (encoding != sole_mecab_encoding) {
+      grn_tokenizer_query_close(ctx, query);
+      GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                       "[tokenizer][mecab] "
+                       "MeCab dictionary charset (%s) does not match "
+                       "the table encoding: <%s>",
+                       grn_encoding_to_string(sole_mecab_encoding),
+                       grn_encoding_to_string(encoding));
+      return NULL;
+    }
   }
 
   if (!(tokenizer = GRN_PLUGIN_MALLOC(ctx, sizeof(grn_mecab_tokenizer)))) {
@@ -387,63 +388,68 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   tokenizer->mecab = sole_mecab;
   tokenizer->query = query;
 
-  normalized_query = query->normalized_query;
-  grn_string_get_normalized(ctx,
-                            normalized_query,
-                            &normalized_string,
-                            &normalized_string_length,
-                            NULL);
-  GRN_TEXT_INIT(&(tokenizer->buf), 0);
-  if (query->have_tokenized_delimiter) {
-    tokenizer->next = normalized_string;
-    tokenizer->end = tokenizer->next + normalized_string_length;
-  } else if (normalized_string_length == 0) {
-    tokenizer->next = "";
-    tokenizer->end = tokenizer->next;
-  } else {
-    grn_bool succeeded;
-    grn_plugin_mutex_lock(ctx, sole_mecab_mutex);
-    if (grn_mecab_chunked_tokenize_enabled &&
-        ctx->encoding == GRN_ENC_UTF8) {
-      succeeded = chunked_tokenize_utf8(ctx,
-                                        tokenizer,
-                                        normalized_string,
-                                        normalized_string_length);
-    } else {
-      const char *s;
-      s = mecab_sparse_tostr2(tokenizer->mecab,
-                              normalized_string,
-                              normalized_string_length);
-      if (!s) {
-        succeeded = GRN_FALSE;
-        GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                         "[tokenizer][mecab] "
-                         "mecab_sparse_tostr() failed len=%d err=%s",
-                         normalized_string_length,
-                         mecab_strerror(tokenizer->mecab));
-      } else {
-        succeeded = GRN_TRUE;
-        GRN_TEXT_PUTS(ctx, &(tokenizer->buf), s);
-      }
-    }
-    grn_plugin_mutex_unlock(ctx, sole_mecab_mutex);
-    if (!succeeded) {
-      grn_tokenizer_query_close(ctx, tokenizer->query);
-      GRN_PLUGIN_FREE(ctx, tokenizer);
-      return NULL;
-    }
-    {
-      char *buf, *p;
-      unsigned int bufsize;
+  {
+    grn_obj *string;
+    const char *normalized_string;
+    unsigned int normalized_string_length;
 
-      buf = GRN_TEXT_VALUE(&(tokenizer->buf));
-      bufsize = GRN_TEXT_LEN(&(tokenizer->buf));
-      /* A certain version of mecab returns trailing lf or spaces. */
-      for (p = buf + bufsize - 2;
-           buf <= p && isspace(*(unsigned char *)p);
-           p--) { *p = '\0'; }
-      tokenizer->next = buf;
-      tokenizer->end = p + 1;
+    string = grn_tokenizer_query_get_normalized_string(ctx, query);
+    grn_string_get_normalized(ctx,
+                              string,
+                              &normalized_string,
+                              &normalized_string_length,
+                              NULL);
+    GRN_TEXT_INIT(&(tokenizer->buf), 0);
+    if (query->have_tokenized_delimiter) {
+      tokenizer->next = normalized_string;
+      tokenizer->end = tokenizer->next + normalized_string_length;
+    } else if (normalized_string_length == 0) {
+      tokenizer->next = "";
+      tokenizer->end = tokenizer->next;
+    } else {
+      grn_bool succeeded;
+      grn_plugin_mutex_lock(ctx, sole_mecab_mutex);
+      if (grn_mecab_chunked_tokenize_enabled && ctx->encoding == GRN_ENC_UTF8) {
+        succeeded = chunked_tokenize_utf8(ctx,
+                                          tokenizer,
+                                          normalized_string,
+                                          normalized_string_length);
+      } else {
+        const char *s;
+        s = mecab_sparse_tostr2(tokenizer->mecab,
+                                normalized_string,
+                                normalized_string_length);
+        if (!s) {
+          succeeded = GRN_FALSE;
+          GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                           "[tokenizer][mecab] "
+                           "mecab_sparse_tostr() failed len=%d err=%s",
+                           normalized_string_length,
+                           mecab_strerror(tokenizer->mecab));
+        } else {
+          succeeded = GRN_TRUE;
+          GRN_TEXT_PUTS(ctx, &(tokenizer->buf), s);
+        }
+      }
+      grn_plugin_mutex_unlock(ctx, sole_mecab_mutex);
+      if (!succeeded) {
+        grn_tokenizer_query_close(ctx, tokenizer->query);
+        GRN_PLUGIN_FREE(ctx, tokenizer);
+        return NULL;
+      }
+      {
+        char *buf, *p;
+        unsigned int bufsize;
+
+        buf = GRN_TEXT_VALUE(&(tokenizer->buf));
+        bufsize = GRN_TEXT_LEN(&(tokenizer->buf));
+        /* A certain version of mecab returns trailing lf or spaces. */
+        for (p = buf + bufsize - 2;
+             buf <= p && isspace(*(unsigned char *)p);
+             p--) { *p = '\0'; }
+        tokenizer->next = buf;
+        tokenizer->end = p + 1;
+      }
     }
   }
   user_data->ptr = tokenizer;

@@ -20,7 +20,6 @@
 #include "grn_string.h"
 #include "grn_plugin.h"
 #include "grn_raw_string.h"
-#include <groonga/tokenizer.h>
 
 grn_obj *grn_tokenizer_uvector = NULL;
 
@@ -107,6 +106,7 @@ typedef struct {
   grn_tokenizer_token token;
   grn_tokenizer_query *query;
   grn_bool have_tokenized_delimiter;
+  grn_encoding encoding;
 } grn_delimited_tokenizer;
 
 static grn_obj *
@@ -115,8 +115,6 @@ delimited_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
 {
   grn_tokenizer_query *query;
   unsigned int normalize_flags = 0;
-  const char *normalized;
-  unsigned int normalized_length_in_bytes;
   grn_delimited_tokenizer *tokenizer;
 
   query = grn_tokenizer_query_open(ctx, nargs, args, normalize_flags);
@@ -135,18 +133,37 @@ delimited_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
 
   tokenizer->query = query;
 
-  tokenizer->have_tokenized_delimiter =
-    grn_tokenizer_have_tokenized_delimiter(ctx,
-                                           tokenizer->query->ptr,
-                                           tokenizer->query->length,
-                                           tokenizer->query->encoding);
+  {
+    const char *raw_string;
+    size_t raw_string_length;
+    grn_encoding encoding;
+
+    raw_string = grn_tokenizer_query_get_raw_string(ctx,
+                                                    tokenizer->query,
+                                                    &raw_string_length);
+    encoding = grn_tokenizer_query_get_encoding(ctx, tokenizer->query);
+    tokenizer->have_tokenized_delimiter =
+      grn_tokenizer_have_tokenized_delimiter(ctx,
+                                             raw_string,
+                                             raw_string_length,
+                                             encoding);
+    tokenizer->encoding = encoding;
+  }
   tokenizer->delimiter = delimiter;
   tokenizer->delimiter_len = delimiter_len;
-  grn_string_get_normalized(ctx, tokenizer->query->normalized_query,
-                            &normalized, &normalized_length_in_bytes,
-                            NULL);
-  tokenizer->next = (const unsigned char *)normalized;
-  tokenizer->end = tokenizer->next + normalized_length_in_bytes;
+  {
+    grn_obj *string;
+    const char *normalized;
+    unsigned int normalized_length_in_bytes;
+
+    string = grn_tokenizer_query_get_normalized_string(ctx, tokenizer->query);
+    grn_string_get_normalized(ctx,
+                              string,
+                              &normalized, &normalized_length_in_bytes,
+                              NULL);
+    tokenizer->next = (const unsigned char *)normalized;
+    tokenizer->end = tokenizer->next + normalized_length_in_bytes;
+  }
 
   grn_tokenizer_token_init(ctx, &(tokenizer->token));
 
@@ -167,15 +184,14 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
         &(tokenizer->token),
         (const char *)tokenizer->next,
         rest_length,
-        tokenizer->query->encoding);
+        tokenizer->encoding);
   } else {
     size_t cl;
     const unsigned char *p = tokenizer->next, *r;
     const unsigned char *e = tokenizer->end;
     grn_token_status status;
     for (r = p; r < e; r += cl) {
-      if (!(cl = grn_charlen_(ctx, (char *)r, (char *)e,
-                              tokenizer->query->encoding))) {
+      if (!(cl = grn_charlen_(ctx, (char *)r, (char *)e, tokenizer->encoding))) {
         tokenizer->next = (unsigned char *)e;
         break;
       }
@@ -303,6 +319,8 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
   normalized_end = normalized + normalized_length_in_bytes;
 
   if (types) {
+    grn_encoding encoding =
+      grn_tokenizer_query_get_encoding(ctx, tokenizer->query);
     uint_least8_t *loose_types;
 
     tokenizer->loose.ctypes =
@@ -319,7 +337,7 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
       length = grn_charlen_(ctx,
                             (char *)normalized,
                             (char *)normalized_end,
-                            tokenizer->query->encoding);
+                            encoding);
       if (length == 0) {
         break;
       }
@@ -365,8 +383,6 @@ ngram_init_raw(grn_ctx *ctx,
     GRN_STRING_WITH_TYPES |
     GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
   grn_tokenizer_query *query;
-  const char *normalized;
-  unsigned int normalized_length_in_bytes;
   grn_ngram_tokenizer *tokenizer;
 
   if (!options->remove_blank) {
@@ -399,15 +415,22 @@ ngram_init_raw(grn_ctx *ctx,
   tokenizer->pos = 0;
   tokenizer->skip = 0;
 
-  grn_string_get_normalized(ctx, tokenizer->query->normalized_query,
-                            &normalized, &normalized_length_in_bytes,
-                            &(tokenizer->len));
-  tokenizer->next = (const unsigned char *)normalized;
-  tokenizer->end = tokenizer->next + normalized_length_in_bytes;
-  tokenizer->ctypes =
-    grn_string_get_types(ctx, tokenizer->query->normalized_query);
+  {
+    grn_obj *string;
+    const char *normalized_raw;
+    unsigned int normalized_length_in_bytes;
 
-  if (tokenizer->query->tokenize_mode == GRN_TOKEN_GET) {
+    string = grn_tokenizer_query_get_normalized_string(ctx, tokenizer->query);
+    grn_string_get_normalized(ctx,
+                              string,
+                              &normalized_raw, &normalized_length_in_bytes,
+                              &(tokenizer->len));
+    tokenizer->next = (const unsigned char *)normalized_raw;
+    tokenizer->end = tokenizer->next + normalized_length_in_bytes;
+    tokenizer->ctypes = grn_string_get_types(ctx, string);
+  }
+
+  if (grn_tokenizer_query_get_mode(ctx, tokenizer->query) == GRN_TOKEN_GET) {
     ngram_switch_to_loose_mode(ctx, tokenizer);
   }
 
@@ -593,6 +616,8 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   int32_t len = 0, pos = tokenizer->pos + tokenizer->skip;
   grn_token_status status = 0;
   const uint_least8_t *cp = tokenizer->ctypes ? tokenizer->ctypes + pos : NULL;
+  grn_encoding encoding =
+    grn_tokenizer_query_get_encoding(ctx, tokenizer->query);
 
   if (tokenizer->loose.ing && tokenizer->loose.need_end_mark) {
     grn_tokenizer_token_push(ctx,
@@ -620,8 +645,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   if (cp && tokenizer->options.uni_alpha &&
       GRN_STR_CTYPE(*cp) == GRN_CHAR_ALPHA) {
-    while ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
-                              tokenizer->query->encoding))) {
+    while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
       len++;
       r += cl;
       LOOSE_NEED_CHECK(cp, tokenizer);
@@ -633,8 +657,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else if (cp &&
              tokenizer->options.uni_digit &&
              GRN_STR_CTYPE(*cp) == GRN_CHAR_DIGIT) {
-    while ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
-                              tokenizer->query->encoding))) {
+    while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
       len++;
       r += cl;
       LOOSE_NEED_CHECK(cp, tokenizer);
@@ -646,8 +669,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   } else if (cp &&
              tokenizer->options.uni_symbol &&
              GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL) {
-    while ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
-                              tokenizer->query->encoding))) {
+    while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
       len++;
       r += cl;
       LOOSE_NEED_CHECK(cp, tokenizer);
@@ -665,9 +687,9 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         tokenizer->status = GRN_TOKEN_CURSOR_NOT_FOUND;
         return NULL;
       }
-      len = grn_str_len(key, tokenizer->query->encoding, NULL);
+      len = grn_str_len(key, encoding, NULL);
     }
-    r = p + grn_charlen_(ctx, p, e, tokenizer->query->encoding);
+    r = p + grn_charlen_(ctx, p, e, encoding);
     if (tid && (len > 1 || r == p)) {
       if (r != p && pos + len - 1 <= tokenizer->tail) { continue; }
       p += strlen(key);
@@ -676,14 +698,12 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       }
     }
 #endif /* PRE_DEFINED_UNSPLIT_WORDS */
-    if ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
-                           tokenizer->query->encoding))) {
+    if ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
       len++;
       r += cl;
       tokenizer->next = r;
       while (len < tokenizer->options.unit &&
-             (cl = grn_charlen_(ctx, (char *)r, (char *)e,
-                                tokenizer->query->encoding))) {
+             (cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
         if (cp) {
           LOOSE_NEED_CHECK(cp, tokenizer);
           if (!tokenizer->options.ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
@@ -778,8 +798,6 @@ regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   unsigned int normalize_flags = GRN_STRING_WITH_TYPES;
   grn_tokenizer_query *query;
-  const char *normalized;
-  unsigned int normalized_length_in_bytes;
   grn_regexp_tokenizer *tokenizer;
 
   query = grn_tokenizer_query_open(ctx, nargs, args, normalize_flags);
@@ -806,14 +824,21 @@ regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   tokenizer->is_start_token = GRN_TRUE;
   tokenizer->is_overlapping = GRN_FALSE;
 
-  grn_string_get_normalized(ctx, tokenizer->query->normalized_query,
-                            &normalized, &normalized_length_in_bytes,
-                            NULL);
-  tokenizer->next = normalized;
-  tokenizer->end = tokenizer->next + normalized_length_in_bytes;
-  tokenizer->nth_char = 0;
-  tokenizer->char_types =
-    grn_string_get_types(ctx, tokenizer->query->normalized_query);
+  {
+    grn_obj *string;
+    const char *normalized;
+    unsigned int normalized_length_in_bytes;
+
+    string = grn_tokenizer_query_get_normalized_string(ctx, tokenizer->query);
+    grn_string_get_normalized(ctx,
+                              string,
+                              &normalized, &normalized_length_in_bytes,
+                              NULL);
+    tokenizer->next = normalized;
+    tokenizer->end = tokenizer->next + normalized_length_in_bytes;
+    tokenizer->nth_char = 0;
+    tokenizer->char_types = grn_string_get_types(ctx, string);
+  }
 
   GRN_TEXT_INIT(&(tokenizer->buffer), 0);
 
@@ -832,7 +857,10 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   const char *current = tokenizer->next;
   const char *end = tokenizer->end;
   const uint_least8_t *char_types = tokenizer->char_types;
-  grn_tokenize_mode mode = tokenizer->query->tokenize_mode;
+  const grn_tokenize_mode mode =
+    grn_tokenizer_query_get_mode(ctx, tokenizer->query);
+  grn_encoding encoding =
+    grn_tokenizer_query_get_encoding(ctx, tokenizer->query);
   grn_bool is_begin = tokenizer->is_begin;
   grn_bool is_start_token = tokenizer->is_start_token;
   grn_bool break_by_blank = GRN_FALSE;
@@ -874,7 +902,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     }
   }
 
-  char_len = grn_charlen_(ctx, current, end, tokenizer->query->encoding);
+  char_len = grn_charlen_(ctx, current, end, encoding);
   if (char_len == 0) {
     status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
     grn_tokenizer_token_push(ctx, &(tokenizer->token), "", 0, status);
@@ -933,8 +961,10 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       }
     }
 
-    char_len = grn_charlen_(ctx, (const char *)current, (const char *)end,
-                            tokenizer->query->encoding);
+    char_len = grn_charlen_(ctx,
+                            (const char *)current,
+                            (const char *)end,
+                            encoding);
     if (char_len == 0) {
       break;
     }

@@ -22,9 +22,10 @@
 #include <string.h>
 
 #include "grn_ctx.h"
+#include "grn_token_cursor.h"
+
 #include "grn_db.h"
 #include "grn_ii.h"
-#include "grn_token_cursor.h"
 #include "grn_output.h"
 #include <groonga/plugin.h>
 

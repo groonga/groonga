@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012-2014 Brazil
+  Copyright(C) 2012-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,8 +15,9 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "grn.h"
-#include <groonga/tokenizer.h>
+#include "grn_tokenizer.h"
 
 #include <string.h>
 
@@ -216,6 +217,49 @@ void
 grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query)
 {
   grn_tokenizer_query_close(ctx, query);
+}
+
+grn_obj *
+grn_tokenizer_query_get_normalized_string(grn_ctx *ctx,
+                                          grn_tokenizer_query *query)
+{
+  return query->normalized_query;
+}
+
+const char *
+grn_tokenizer_query_get_raw_string(grn_ctx *ctx,
+                                   grn_tokenizer_query *query,
+                                   size_t *length)
+{
+  if (length) {
+    *length = query->length;
+  }
+  return query->ptr;
+}
+
+grn_encoding
+grn_tokenizer_query_get_encoding(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  return query->encoding;
+}
+
+unsigned int
+grn_tokenizer_query_get_flags(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  return query->flags;
+}
+
+grn_bool
+grn_tokenizer_query_have_tokenized_delimiter(grn_ctx *ctx,
+                                             grn_tokenizer_query *query)
+{
+  return query->have_tokenized_delimiter;
+}
+
+grn_tokenize_mode
+grn_tokenizer_query_get_mode(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  return query->tokenize_mode;
 }
 
 void
