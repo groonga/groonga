@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012-2018 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,33 +18,20 @@
 
 #pragma once
 
-#include <groonga/plugin.h>
+#include "grn_ctx.h"
 
 #ifdef __cplusplus
 extern "C" {
-#endif  /* __cplusplus */
+#endif
 
-/*
-  grn_tokenizer_query is a structure for storing a query. See the following
-  functions.
-
-  Deprecated since 8.0.2. Use accessors to get data.
- */
-typedef struct _grn_tokenizer_query_deprecated grn_tokenizer_query;
-
-struct _grn_tokenizer_query_deprecated {
-  grn_obj *normalized_query;
-  char *query_buf;
-  const char *ptr;
-  unsigned int length;
-  grn_encoding encoding;
-  unsigned int flags;
-  grn_bool have_tokenized_delimiter;
-  /* Deprecated since 4.0.8. Use tokenize_mode instead. */
-  grn_token_mode token_mode;
-  grn_tokenize_mode tokenize_mode;
+struct _grn_token {
+  grn_obj data;
+  grn_token_status status;
 };
 
+grn_rc grn_token_init(grn_ctx *ctx, grn_token *token);
+grn_rc grn_token_fin(grn_ctx *ctx, grn_token *token);
+
 #ifdef __cplusplus
-}  /* extern "C" */
-#endif  /* __cplusplus */
+}
+#endif

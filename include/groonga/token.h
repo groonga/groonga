@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2016 Brazil
+  Copyright(C) 2014-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -118,17 +118,17 @@ typedef unsigned int grn_token_status;
 
 typedef struct _grn_token grn_token;
 
-GRN_PLUGIN_EXPORT grn_obj *grn_token_get_data(grn_ctx *ctx,
+GRN_API grn_obj *grn_token_get_data(grn_ctx *ctx,
+                                    grn_token *token);
+GRN_API grn_rc grn_token_set_data(grn_ctx *ctx,
+                                  grn_token *token,
+                                  const char *str_ptr,
+                                  int str_length);
+GRN_API grn_token_status grn_token_get_status(grn_ctx *ctx,
                                               grn_token *token);
-GRN_PLUGIN_EXPORT grn_rc grn_token_set_data(grn_ctx *ctx,
-                                            grn_token *token,
-                                            const char *str_ptr,
-                                            int str_length);
-GRN_PLUGIN_EXPORT grn_token_status grn_token_get_status(grn_ctx *ctx,
-                                                        grn_token *token);
-GRN_PLUGIN_EXPORT grn_rc grn_token_set_status(grn_ctx *ctx,
-                                              grn_token *token,
-                                              grn_token_status status);
+GRN_API grn_rc grn_token_set_status(grn_ctx *ctx,
+                                    grn_token *token,
+                                    grn_token_status status);
 
 #ifdef __cplusplus
 }  /* extern "C" */

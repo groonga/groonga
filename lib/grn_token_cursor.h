@@ -38,11 +38,6 @@ typedef enum {
   GRN_TOKEN_CURSOR_NOT_FOUND
 } grn_token_cursor_status;
 
-struct _grn_token {
-  grn_obj data;
-  grn_token_status status;
-};
-
 typedef struct {
   grn_obj *table;
   const unsigned char *orig;

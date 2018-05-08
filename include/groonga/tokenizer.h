@@ -19,7 +19,6 @@
 #pragma once
 
 #include <groonga/plugin.h>
-#include <groonga/token.h>
 #include <groonga/tokenizer_query_deprecated.h>
 
 #ifdef __cplusplus

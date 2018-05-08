@@ -49,6 +49,7 @@
 #include "groonga/table.h"
 #include "groonga/thread.h"
 #include "groonga/time.h"
+#include "groonga/token.h"
 #include "groonga/type.h"
 #include "groonga/util.h"
 #include "groonga/window_function.h"

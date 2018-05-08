@@ -15,6 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
+#include "grn_token.h"
 #include "grn_token_cursor.h"
 #include "grn_string.h"
 #include "grn_pat.h"
@@ -150,12 +152,12 @@ grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
     n_token_filters = 0;
   }
 
-  GRN_TEXT_INIT(&(current_token.data), GRN_OBJ_DO_SHALLOW_COPY);
+  grn_token_init(ctx, &current_token);
   GRN_TEXT_SET(ctx, &(current_token.data),
                GRN_TEXT_VALUE(current_token_data),
                GRN_TEXT_LEN(current_token_data));
   current_token.status = GRN_INT32_VALUE(status);
-  GRN_TEXT_INIT(&(next_token.data), GRN_OBJ_DO_SHALLOW_COPY);
+  grn_token_init(ctx, &next_token);
   GRN_TEXT_SET(ctx, &(next_token.data),
                GRN_TEXT_VALUE(&(current_token.data)),
                GRN_TEXT_LEN(&(current_token.data)));

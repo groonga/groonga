@@ -101,6 +101,8 @@ libgroonga_c_sources =				\
 	thread.c				\
 	time.c					\
 	grn_time.h				\
+	token.c					\
+	grn_token.h				\
 	token_cursor.c				\
 	grn_token_cursor.h			\
 	tokenizer.c				\
