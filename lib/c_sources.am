@@ -104,6 +104,7 @@ libgroonga_c_sources =				\
 	token_cursor.c				\
 	grn_token_cursor.h			\
 	tokenizer.c				\
+	grn_tokenizer.h				\
 	tokenizers.c				\
 	grn_tokenizers.h			\
 	token_filter.c				\
