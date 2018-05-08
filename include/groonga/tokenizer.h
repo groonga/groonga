@@ -103,6 +103,14 @@ GRN_PLUGIN_EXPORT void grn_tokenizer_query_close(grn_ctx *ctx, grn_tokenizer_que
  */
 void grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query);
 
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_query_set_normalize_flags(grn_ctx *ctx,
+                                        grn_tokenizer_query *query,
+                                        unsigned int flags);
+GRN_PLUGIN_EXPORT unsigned int
+grn_tokenizer_query_get_normalize_flags(grn_ctx *ctx,
+                                        grn_tokenizer_query *query);
+
 GRN_PLUGIN_EXPORT grn_obj *
 grn_tokenizer_query_get_normalized_string(grn_ctx *ctx,
                                           grn_tokenizer_query *query);
@@ -124,6 +132,9 @@ grn_tokenizer_query_have_tokenized_delimiter(grn_ctx *ctx,
 
 GRN_PLUGIN_EXPORT grn_tokenize_mode
 grn_tokenizer_query_get_mode(grn_ctx *ctx, grn_tokenizer_query *query);
+
+GRN_PLUGIN_EXPORT grn_obj *
+grn_tokenizer_query_get_lexicon(grn_ctx *ctx, grn_tokenizer_query *query);
 
 /*
   grn_tokenizer_token is needed to return tokens. A grn_tokenizer_token object

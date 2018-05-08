@@ -41,6 +41,10 @@ typedef struct _grn_tokenizer_query {
   grn_token_mode token_mode;
   grn_tokenize_mode tokenize_mode;
   /* End _grn_tokenizer_query_deprecated compatible layout. */
+
+  grn_obj *lexicon;
+  unsigned int normalize_flags;
+  grn_bool need_normalize;
 } grn_tokenizer_query;
 
 #ifdef __cplusplus

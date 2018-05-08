@@ -95,30 +95,81 @@ grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
   return GRN_FALSE;
 }
 
+static void
+grn_tokenizer_query_ensure_normalized(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  if (!query->need_normalize) {
+    return;
+  }
+
+  query->need_normalize = GRN_FALSE;
+
+  if (query->normalized_query) {
+    grn_obj_close(ctx, query->normalized_query);
+  }
+  query->normalized_query = grn_string_open_(ctx,
+                                             query->ptr,
+                                             query->length,
+                                             query->lexicon,
+                                             query->normalize_flags,
+                                             query->encoding);
+  if (!query->normalized_query) {
+    query->have_tokenized_delimiter = GRN_FALSE;
+    GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                     "[tokenizer][normalize] failed to open normalized string");
+    return;
+  }
+
+  if (query->flags & GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER) {
+    const char *normalized_string;
+    unsigned int normalized_string_length;
+
+    grn_string_get_normalized(ctx,
+                              query->normalized_query,
+                              &normalized_string,
+                              &normalized_string_length,
+                              NULL);
+    query->have_tokenized_delimiter =
+      grn_tokenizer_have_tokenized_delimiter(ctx,
+                                             normalized_string,
+                                             normalized_string_length,
+                                             query->encoding);
+  } else {
+    query->have_tokenized_delimiter = GRN_FALSE;
+  }
+}
+
 grn_tokenizer_query *
 grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
                          unsigned int normalize_flags)
 {
-  grn_obj *flags = grn_ctx_pop(ctx);
-  grn_obj *query_str = grn_ctx_pop(ctx);
-  grn_obj *tokenize_mode = grn_ctx_pop(ctx);
+  grn_obj *flags;
+  grn_obj *query_str;
+  grn_obj *tokenize_mode;
+
+  GRN_API_ENTER;
+
+  flags = grn_ctx_pop(ctx);
+  query_str = grn_ctx_pop(ctx);
+  tokenize_mode = grn_ctx_pop(ctx);
 
   if (query_str == NULL) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "missing argument");
-    return NULL;
+    GRN_API_RETURN(NULL);
   }
 
   if ((num_args < 1) || (args == NULL) || (args[0] == NULL)) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "invalid NULL pointer");
-    return NULL;
+    GRN_API_RETURN(NULL);
   }
 
   {
     grn_tokenizer_query * const query =
         GRN_PLUGIN_MALLOC(ctx, sizeof(grn_tokenizer_query));
     if (query == NULL) {
-      return NULL;
+      GRN_API_RETURN(NULL);
     }
+    query->normalize_flags = normalize_flags;
     query->normalized_query = NULL;
     query->query_buf = NULL;
     if (flags) {
@@ -136,6 +187,12 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
     {
       grn_obj * const table = args[0];
       grn_encoding table_encoding;
+      query->lexicon = table;
+      grn_table_get_info(ctx, table, NULL, &table_encoding, NULL,
+                         NULL, NULL);
+      query->encoding = table_encoding;
+    }
+    {
       unsigned int query_length = GRN_TEXT_LEN(query_str);
       char *query_buf = (char *)GRN_PLUGIN_MALLOC(ctx, query_length + 1);
 
@@ -143,53 +200,19 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
         GRN_PLUGIN_FREE(ctx, query);
         GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                          "[tokenizer] failed to duplicate query");
-        return NULL;
+        GRN_API_RETURN(NULL);
       }
-      grn_table_get_info(ctx, table, NULL, &table_encoding, NULL,
-                         NULL, NULL);
-      {
-        grn_obj *normalized_query;
-        normalized_query = grn_string_open_(ctx,
-                                            GRN_TEXT_VALUE(query_str),
-                                            GRN_TEXT_LEN(query_str),
-                                            table,
-                                            normalize_flags,
-                                            table_encoding);
-        if (!normalized_query) {
-          GRN_PLUGIN_FREE(ctx, query_buf);
-          GRN_PLUGIN_FREE(ctx, query);
-          GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                           "[tokenizer] failed to open normalized string");
-          return NULL;
-        }
-        query->normalized_query = normalized_query;
-        grn_memcpy(query_buf, GRN_TEXT_VALUE(query_str), query_length);
-        query_buf[query_length] = '\0';
-        query->query_buf = query_buf;
-        query->ptr = query_buf;
-        query->length = query_length;
-      }
-      query->encoding = table_encoding;
-
-      if (query->flags & GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER) {
-        const char *normalized_string;
-        unsigned int normalized_string_length;
-
-        grn_string_get_normalized(ctx,
-                                  query->normalized_query,
-                                  &normalized_string,
-                                  &normalized_string_length,
-                                  NULL);
-        query->have_tokenized_delimiter =
-          grn_tokenizer_have_tokenized_delimiter(ctx,
-                                                 normalized_string,
-                                                 normalized_string_length,
-                                                 query->encoding);
-      } else {
-        query->have_tokenized_delimiter = GRN_FALSE;
-      }
+      grn_memcpy(query_buf, GRN_TEXT_VALUE(query_str), query_length);
+      query_buf[query_length] = '\0';
+      query->query_buf = query_buf;
+      query->ptr = query_buf;
+      query->length = query_length;
     }
-    return query;
+
+    query->need_normalize = GRN_TRUE;
+    grn_tokenizer_query_ensure_normalized(ctx, query);
+
+    GRN_API_RETURN(query);
   }
 }
 
@@ -202,15 +225,17 @@ grn_tokenizer_query_create(grn_ctx *ctx, int num_args, grn_obj **args)
 void
 grn_tokenizer_query_close(grn_ctx *ctx, grn_tokenizer_query *query)
 {
-  if (query != NULL) {
-    if (query->normalized_query != NULL) {
+  GRN_API_ENTER;
+  if (query) {
+    if (query->normalized_query) {
       grn_obj_unlink(ctx, query->normalized_query);
     }
-    if (query->query_buf != NULL) {
+    if (query->query_buf) {
       GRN_PLUGIN_FREE(ctx, query->query_buf);
     }
     GRN_PLUGIN_FREE(ctx, query);
   }
+  GRN_API_RETURN();
 }
 
 void
@@ -219,11 +244,34 @@ grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query)
   grn_tokenizer_query_close(ctx, query);
 }
 
+grn_rc
+grn_tokenizer_query_set_normalize_flags(grn_ctx *ctx,
+                                        grn_tokenizer_query *query,
+                                        unsigned int normalize_flags)
+{
+  GRN_API_ENTER;
+  if (query->normalize_flags != normalize_flags) {
+    query->normalize_flags = normalize_flags;
+    query->need_normalize = GRN_TRUE;
+  }
+  GRN_API_RETURN(ctx->rc);
+}
+
+unsigned int
+grn_tokenizer_query_get_normalize_flags(grn_ctx *ctx,
+                                        grn_tokenizer_query *query)
+{
+  GRN_API_ENTER;
+  GRN_API_RETURN(query->normalize_flags);
+}
+
 grn_obj *
 grn_tokenizer_query_get_normalized_string(grn_ctx *ctx,
                                           grn_tokenizer_query *query)
 {
-  return query->normalized_query;
+  GRN_API_ENTER;
+  grn_tokenizer_query_ensure_normalized(ctx, query);
+  GRN_API_RETURN(query->normalized_query);
 }
 
 const char *
@@ -231,35 +279,48 @@ grn_tokenizer_query_get_raw_string(grn_ctx *ctx,
                                    grn_tokenizer_query *query,
                                    size_t *length)
 {
+  GRN_API_ENTER;
   if (length) {
     *length = query->length;
   }
-  return query->ptr;
+  GRN_API_RETURN(query->ptr);
 }
 
 grn_encoding
 grn_tokenizer_query_get_encoding(grn_ctx *ctx, grn_tokenizer_query *query)
 {
-  return query->encoding;
+  GRN_API_ENTER;
+  GRN_API_RETURN(query->encoding);
 }
 
 unsigned int
 grn_tokenizer_query_get_flags(grn_ctx *ctx, grn_tokenizer_query *query)
 {
-  return query->flags;
+  GRN_API_ENTER;
+  GRN_API_RETURN(query->flags);
 }
 
 grn_bool
 grn_tokenizer_query_have_tokenized_delimiter(grn_ctx *ctx,
                                              grn_tokenizer_query *query)
 {
-  return query->have_tokenized_delimiter;
+  GRN_API_ENTER;
+  grn_tokenizer_query_ensure_normalized(ctx, query);
+  GRN_API_RETURN(query->have_tokenized_delimiter);
 }
 
 grn_tokenize_mode
 grn_tokenizer_query_get_mode(grn_ctx *ctx, grn_tokenizer_query *query)
 {
-  return query->tokenize_mode;
+  GRN_API_ENTER;
+  GRN_API_RETURN(query->tokenize_mode);
+}
+
+grn_obj *
+grn_tokenizer_query_get_lexicon(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  GRN_API_ENTER;
+  GRN_API_RETURN(query->lexicon);
 }
 
 void
@@ -358,57 +419,75 @@ grn_tokenizer_register(grn_ctx *ctx, const char *plugin_name_ptr,
 }
 
 grn_obj *
-grn_token_get_data(grn_ctx *ctx, grn_token *token)
+grn_tokenizer_create(grn_ctx *ctx,
+                     const char *name,
+                     int name_length)
 {
+  grn_obj *tokenizer;
+
   GRN_API_ENTER;
-  if (!token) {
-    ERR(GRN_INVALID_ARGUMENT, "token must not be NULL");
-    GRN_API_RETURN(NULL);
+  tokenizer = grn_proc_create(ctx,
+                              name,
+                              name_length,
+                              GRN_PROC_TOKENIZER,
+                              NULL,
+                              NULL,
+                              NULL,
+                              0,
+                              NULL);
+  if (!tokenizer) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_TOKENIZER_ERROR,
+                     "[tokenizer][create] failed to create");
   }
-  GRN_API_RETURN(&(token->data));
+
+  GRN_API_RETURN(tokenizer);
 }
 
 grn_rc
-grn_token_set_data(grn_ctx *ctx,
-                   grn_token *token,
-                   const char *str_ptr,
-                   int str_length)
+grn_tokenizer_set_init_func(grn_ctx *ctx,
+                            grn_obj *tokenizer,
+                            grn_tokenizer_init_func *init)
 {
   GRN_API_ENTER;
-  if (!token) {
-    ERR(GRN_INVALID_ARGUMENT, "token must not be NULL");
-    goto exit;
+  if (tokenizer) {
+    ((grn_proc *)tokenizer)->callbacks.tokenizer.init = init;
+  } else {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[tokenizer][init][set] tokenizer is NULL");
   }
-  if (str_length == -1) {
-    str_length = strlen(str_ptr);
-  }
-  GRN_TEXT_SET(ctx, &(token->data), str_ptr, str_length);
-exit:
   GRN_API_RETURN(ctx->rc);
 }
 
-grn_token_status
-grn_token_get_status(grn_ctx *ctx, grn_token *token)
+grn_rc
+grn_tokenizer_set_next_func(grn_ctx *ctx,
+                            grn_obj *tokenizer,
+                            grn_tokenizer_next_func *next)
 {
   GRN_API_ENTER;
-  if (!token) {
-    ERR(GRN_INVALID_ARGUMENT, "token must not be NULL");
-    GRN_API_RETURN(GRN_TOKEN_CONTINUE);
+  if (tokenizer) {
+    ((grn_proc *)tokenizer)->callbacks.tokenizer.next = next;
+  } else {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[tokenizer][next][set] tokenizer is NULL");
   }
-  GRN_API_RETURN(token->status);
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc
-grn_token_set_status(grn_ctx *ctx,
-                     grn_token *token,
-                     grn_token_status status)
+grn_tokenizer_set_fin_func(grn_ctx *ctx,
+                           grn_obj *tokenizer,
+                           grn_tokenizer_fin_func *fin)
 {
   GRN_API_ENTER;
-  if (!token) {
-    ERR(GRN_INVALID_ARGUMENT, "token must not be NULL");
-    goto exit;
+  if (tokenizer) {
+    ((grn_proc *)tokenizer)->callbacks.tokenizer.fin = fin;
+  } else {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[tokenizer][fin][set] tokenizer is NULL");
   }
-  token->status = status;
-exit:
   GRN_API_RETURN(ctx->rc);
 }
