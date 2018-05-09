@@ -1968,7 +1968,7 @@ grn_ctx_output_null(grn_ctx *ctx)
 }
 
 void
-grn_ctx_output_int32(grn_ctx *ctx, int value)
+grn_ctx_output_int32(grn_ctx *ctx, int32_t value)
 {
   grn_output_int32(ctx,
                    ctx->impl->output.buf,

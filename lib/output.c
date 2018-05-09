@@ -326,7 +326,7 @@ grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
 }
 
 void
-grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int value)
+grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int32_t value)
 {
   put_delimiter(ctx, outbuf, output_type);
   switch (output_type) {
