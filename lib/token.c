@@ -40,7 +40,8 @@ grn_token_get_data(grn_ctx *ctx, grn_token *token)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT, "token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][data][get] token must not be NULL");
     GRN_API_RETURN(NULL);
   }
   GRN_API_RETURN(&(token->data));
@@ -51,7 +52,8 @@ grn_token_get_data_raw(grn_ctx *ctx, grn_token *token, size_t *length)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT, "token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][data][get][raw] token must not be NULL");
     if (length) {
       *length = 0;
     }
@@ -71,7 +73,8 @@ grn_token_set_data(grn_ctx *ctx,
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT, "token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][data][set] token must not be NULL");
     goto exit;
   }
   if (str_length == -1) {
@@ -87,7 +90,8 @@ grn_token_get_status(grn_ctx *ctx, grn_token *token)
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT, "token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][status][get] token must not be NULL");
     GRN_API_RETURN(GRN_TOKEN_CONTINUE);
   }
   GRN_API_RETURN(token->status);
@@ -100,7 +104,8 @@ grn_token_set_status(grn_ctx *ctx,
 {
   GRN_API_ENTER;
   if (!token) {
-    ERR(GRN_INVALID_ARGUMENT, "token must not be NULL");
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][status][set] token must not be NULL");
     goto exit;
   }
   token->status = status;
