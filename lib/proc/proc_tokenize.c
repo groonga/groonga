@@ -64,19 +64,36 @@ typedef struct {
   grn_id id;
   int32_t position;
   grn_bool force_prefix;
+  uint64_t source_offset;
+  uint32_t source_length;
 } tokenize_token;
 
 static void
-output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon, grn_obj *index_column)
+output_tokens(grn_ctx *ctx,
+              grn_obj *tokens,
+              grn_obj *lexicon,
+              grn_obj *index_column)
 {
   int i, n_tokens, n_elements;
   grn_obj estimated_size;
+  grn_bool have_source_location;
 
   n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
   n_elements = 3;
   if (index_column) {
     n_elements++;
     GRN_UINT32_INIT(&estimated_size, 0);
+  }
+  for (i = 0; i < n_tokens; i++) {
+    tokenize_token *token;
+    token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
+    if (token->source_offset > 0 || token->source_length > 0) {
+      have_source_location = GRN_TRUE;
+      break;
+    }
+  }
+  if (have_source_location) {
+    n_elements += 2;
   }
 
   grn_ctx_output_array_open(ctx, "TOKENS", n_tokens);
@@ -105,6 +122,14 @@ output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_obj *lexicon, grn_obj *index_co
       grn_obj_get_value(ctx, index_column, token->id, &estimated_size);
       grn_ctx_output_cstr(ctx, "estimated_size");
       grn_ctx_output_int64(ctx, GRN_UINT32_VALUE(&estimated_size));
+    }
+
+    if (have_source_location) {
+      grn_ctx_output_cstr(ctx, "source_offset");
+      grn_ctx_output_uint64(ctx, token->source_offset);
+
+      grn_ctx_output_cstr(ctx, "source_length");
+      grn_ctx_output_uint32(ctx, token->source_length);
     }
 
     grn_ctx_output_map_close(ctx);
@@ -140,15 +165,19 @@ tokenize(grn_ctx *ctx,
 
   while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
     grn_id token_id = grn_token_cursor_next(ctx, token_cursor);
+    grn_token *token;
     tokenize_token *current_token;
     if (token_id == GRN_ID_NIL) {
       continue;
     }
+    token = grn_token_cursor_get_token(ctx, token_cursor);
     grn_bulk_space(ctx, tokens, sizeof(tokenize_token));
     current_token = ((tokenize_token *)(GRN_BULK_CURR(tokens))) - 1;
     current_token->id = token_id;
     current_token->position = token_cursor->pos;
     current_token->force_prefix = token_cursor->force_prefix;
+    current_token->source_offset = grn_token_get_source_offset(ctx, token);
+    current_token->source_length = grn_token_get_source_length(ctx, token);
   }
   grn_token_cursor_close(ctx, token_cursor);
 }
