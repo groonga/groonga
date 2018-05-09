@@ -120,6 +120,21 @@ grn_tokenizer_query_ensure_normalized(grn_ctx *ctx, grn_tokenizer_query *query)
     return;
   }
 
+  query->need_delimiter_check = GRN_TRUE;
+}
+
+static void
+grn_tokenizer_query_ensure_have_tokenized_delimiter(grn_ctx *ctx,
+                                                    grn_tokenizer_query *query)
+{
+  grn_tokenizer_query_ensure_normalized(ctx, query);
+
+  if (!query->need_delimiter_check) {
+    return;
+  }
+
+  query->need_delimiter_check = GRN_FALSE;
+
   if (query->flags & GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER) {
     const char *normalized_string;
     unsigned int normalized_string_length;
@@ -137,6 +152,26 @@ grn_tokenizer_query_ensure_normalized(grn_ctx *ctx, grn_tokenizer_query *query)
   } else {
     query->have_tokenized_delimiter = GRN_FALSE;
   }
+}
+
+grn_rc
+grn_tokenizer_query_init(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  query->normalize_flags = 0;
+  query->normalized_query = NULL;
+  query->query_buf = NULL;
+  query->ptr = NULL;
+  query->length = 0;
+  query->flags = 0;
+  query->tokenize_mode = GRN_TOKENIZE_ADD;
+  query->token_mode = query->tokenize_mode;
+  query->lexicon = NULL;
+  query->encoding = ctx->encoding;
+
+  query->need_normalize = GRN_TRUE;
+  query->need_delimiter_check = GRN_TRUE;
+
+  return ctx->rc;
 }
 
 grn_tokenizer_query *
@@ -166,51 +201,28 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
   {
     grn_tokenizer_query * const query =
         GRN_PLUGIN_MALLOC(ctx, sizeof(grn_tokenizer_query));
-    if (query == NULL) {
+    if (!query) {
       GRN_API_RETURN(NULL);
     }
-    query->normalize_flags = normalize_flags;
-    query->normalized_query = NULL;
-    query->query_buf = NULL;
+    grn_tokenizer_query_init(ctx, query);
+    grn_tokenizer_query_set_raw_string(ctx,
+                                       query,
+                                       GRN_TEXT_VALUE(query_str),
+                                       GRN_TEXT_LEN(query_str));
+    if (ctx->rc != GRN_SUCCESS) {
+      GRN_PLUGIN_FREE(ctx, query);
+      GRN_API_RETURN(NULL);
+    }
     if (flags) {
-      query->flags = GRN_UINT32_VALUE(flags);
-    } else {
-      query->flags = 0;
+      grn_tokenizer_query_set_flags(ctx, query, GRN_UINT32_VALUE(flags));
     }
     if (tokenize_mode) {
-      query->tokenize_mode = GRN_UINT32_VALUE(tokenize_mode);
-    } else {
-      query->tokenize_mode = GRN_TOKENIZE_ADD;
+      grn_tokenizer_query_set_mode(ctx, query, GRN_UINT32_VALUE(tokenize_mode));
     }
-    query->token_mode = query->tokenize_mode;
+    grn_tokenizer_query_set_normalize_flags(ctx, query, normalize_flags);
+    grn_tokenizer_query_set_lexicon(ctx, query, args[0]);
 
-    {
-      grn_obj * const table = args[0];
-      grn_encoding table_encoding;
-      query->lexicon = table;
-      grn_table_get_info(ctx, table, NULL, &table_encoding, NULL,
-                         NULL, NULL);
-      query->encoding = table_encoding;
-    }
-    {
-      unsigned int query_length = GRN_TEXT_LEN(query_str);
-      char *query_buf = (char *)GRN_PLUGIN_MALLOC(ctx, query_length + 1);
-
-      if (query_buf == NULL) {
-        GRN_PLUGIN_FREE(ctx, query);
-        GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                         "[tokenizer] failed to duplicate query");
-        GRN_API_RETURN(NULL);
-      }
-      grn_memcpy(query_buf, GRN_TEXT_VALUE(query_str), query_length);
-      query_buf[query_length] = '\0';
-      query->query_buf = query_buf;
-      query->ptr = query_buf;
-      query->length = query_length;
-    }
-
-    query->need_normalize = GRN_TRUE;
-    grn_tokenizer_query_ensure_normalized(ctx, query);
+    grn_tokenizer_query_ensure_have_tokenized_delimiter(ctx, query);
 
     GRN_API_RETURN(query);
   }
@@ -223,16 +235,22 @@ grn_tokenizer_query_create(grn_ctx *ctx, int num_args, grn_obj **args)
 }
 
 void
+grn_tokenizer_query_fin(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  if (query->normalized_query) {
+    grn_obj_unlink(ctx, query->normalized_query);
+  }
+  if (query->query_buf) {
+    GRN_PLUGIN_FREE(ctx, query->query_buf);
+  }
+}
+
+void
 grn_tokenizer_query_close(grn_ctx *ctx, grn_tokenizer_query *query)
 {
   GRN_API_ENTER;
   if (query) {
-    if (query->normalized_query) {
-      grn_obj_unlink(ctx, query->normalized_query);
-    }
-    if (query->query_buf) {
-      GRN_PLUGIN_FREE(ctx, query->query_buf);
-    }
+    grn_tokenizer_query_fin(ctx, query);
     GRN_PLUGIN_FREE(ctx, query);
   }
   GRN_API_RETURN();
@@ -274,6 +292,39 @@ grn_tokenizer_query_get_normalized_string(grn_ctx *ctx,
   GRN_API_RETURN(query->normalized_query);
 }
 
+grn_rc
+grn_tokenizer_query_set_raw_string(grn_ctx *ctx,
+                                   grn_tokenizer_query *query,
+                                   const char *string,
+                                   size_t string_length)
+{
+  GRN_API_ENTER;
+
+  if (query->query_buf) {
+    GRN_PLUGIN_FREE(ctx, query->query_buf);
+  }
+
+  if (string_length == 0) {
+    query->query_buf = NULL;
+    query->ptr = NULL;
+    query->length = 0;
+    query->need_normalize = GRN_TRUE;
+  } else {
+    query->query_buf = (char *)GRN_PLUGIN_MALLOC(ctx, string_length + 1);
+    if (!query->query_buf) {
+      GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                       "[tokenizer][query] failed to duplicate query");
+      GRN_API_RETURN(ctx->rc);
+    }
+    grn_memcpy(query->query_buf, string, string_length);
+    query->query_buf[string_length] = '\0';
+    query->ptr = query->query_buf;
+    query->length = string_length;
+  }
+
+  GRN_API_RETURN(ctx->rc);
+}
+
 const char *
 grn_tokenizer_query_get_raw_string(grn_ctx *ctx,
                                    grn_tokenizer_query *query,
@@ -293,6 +344,19 @@ grn_tokenizer_query_get_encoding(grn_ctx *ctx, grn_tokenizer_query *query)
   GRN_API_RETURN(query->encoding);
 }
 
+grn_rc
+grn_tokenizer_query_set_flags(grn_ctx *ctx,
+                              grn_tokenizer_query *query,
+                              unsigned int flags)
+{
+  GRN_API_ENTER;
+  if (query->flags != flags) {
+    query->flags = flags;
+    query->need_normalize = GRN_TRUE;
+  }
+  GRN_API_RETURN(ctx->rc);
+}
+
 unsigned int
 grn_tokenizer_query_get_flags(grn_ctx *ctx, grn_tokenizer_query *query)
 {
@@ -305,8 +369,22 @@ grn_tokenizer_query_have_tokenized_delimiter(grn_ctx *ctx,
                                              grn_tokenizer_query *query)
 {
   GRN_API_ENTER;
-  grn_tokenizer_query_ensure_normalized(ctx, query);
+  grn_tokenizer_query_ensure_have_tokenized_delimiter(ctx, query);
   GRN_API_RETURN(query->have_tokenized_delimiter);
+}
+
+grn_rc
+grn_tokenizer_query_set_mode(grn_ctx *ctx,
+                             grn_tokenizer_query *query,
+                             grn_tokenize_mode mode)
+{
+  GRN_API_ENTER;
+  if (query->tokenize_mode != mode) {
+    query->tokenize_mode = mode;
+    query->token_mode = query->tokenize_mode;
+    query->need_normalize = GRN_TRUE;
+  }
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_tokenize_mode
@@ -314,6 +392,32 @@ grn_tokenizer_query_get_mode(grn_ctx *ctx, grn_tokenizer_query *query)
 {
   GRN_API_ENTER;
   GRN_API_RETURN(query->tokenize_mode);
+}
+
+grn_rc
+grn_tokenizer_query_set_lexicon(grn_ctx *ctx,
+                                grn_tokenizer_query *query,
+                                grn_obj *lexicon)
+{
+  GRN_API_ENTER;
+
+  if (query->lexicon != lexicon) {
+    query->lexicon = lexicon;
+    if (query->lexicon) {
+      grn_table_get_info(ctx,
+                         query->lexicon,
+                         NULL,
+                         &(query->encoding),
+                         NULL,
+                         NULL,
+                         NULL);
+    } else {
+      query->encoding = ctx->encoding;
+    }
+    query->need_normalize = GRN_TRUE;
+  }
+
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_obj *

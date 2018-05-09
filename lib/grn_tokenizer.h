@@ -45,7 +45,32 @@ typedef struct _grn_tokenizer_query {
   grn_obj *lexicon;
   unsigned int normalize_flags;
   grn_bool need_normalize;
+  grn_bool need_delimiter_check;
 } grn_tokenizer_query;
+
+grn_rc
+grn_tokenizer_query_init(grn_ctx *ctx,
+                         grn_tokenizer_query *query);
+void
+grn_tokenizer_query_fin(grn_ctx *ctx,
+                        grn_tokenizer_query *query);
+grn_rc
+grn_tokenizer_query_set_raw_string(grn_ctx *ctx,
+                                   grn_tokenizer_query *query,
+                                   const char *string,
+                                   size_t string_length);
+grn_rc
+grn_tokenizer_query_set_flags(grn_ctx *ctx,
+                              grn_tokenizer_query *query,
+                              unsigned int flags);
+grn_rc
+grn_tokenizer_query_set_mode(grn_ctx *ctx,
+                             grn_tokenizer_query *query,
+                             grn_tokenize_mode mode);
+grn_rc
+grn_tokenizer_query_set_lexicon(grn_ctx *ctx,
+                                grn_tokenizer_query *query,
+                                grn_obj *lexicon);
 
 #ifdef __cplusplus
 }
