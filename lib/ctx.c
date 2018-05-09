@@ -1977,6 +1977,15 @@ grn_ctx_output_int32(grn_ctx *ctx, int32_t value)
 }
 
 void
+grn_ctx_output_uint32(grn_ctx *ctx, uint32_t value)
+{
+  grn_output_uint32(ctx,
+                    ctx->impl->output.buf,
+                    ctx->impl->output.type,
+                    value);
+}
+
+void
 grn_ctx_output_int64(grn_ctx *ctx, int64_t value)
 {
   grn_output_int64(ctx,
