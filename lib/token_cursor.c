@@ -216,6 +216,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
   while (token_cursor->status != GRN_TOKEN_CURSOR_DONE) {
     if (tokenizer) {
       grn_proc *tokenizer_proc = (grn_proc *)tokenizer;
+      grn_token_reset(ctx, current_token);
       if (tokenizer_proc->callbacks.tokenizer.next) {
         tokenizer_proc->callbacks.tokenizer.next(ctx,
                                                  query,
