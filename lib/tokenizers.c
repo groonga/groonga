@@ -637,7 +637,8 @@ ngram_next(grn_ctx *ctx,
   grn_ngram_tokenizer *tokenizer = user_data;
   size_t cl;
   const unsigned char *p = tokenizer->next, *r = p, *e = tokenizer->end;
-  int32_t len = 0, pos = tokenizer->pos + tokenizer->skip;
+  int32_t n_characters = 0;
+  int32_t pos = tokenizer->pos + tokenizer->skip;
   grn_token_status status = 0;
   const uint_least8_t *cp = tokenizer->ctypes ? tokenizer->ctypes + pos : NULL;
   grn_encoding encoding = grn_tokenizer_query_get_encoding(ctx, query);
@@ -669,7 +670,7 @@ ngram_next(grn_ctx *ctx,
   if (cp && tokenizer->options.uni_alpha &&
       GRN_STR_CTYPE(*cp) == GRN_CHAR_ALPHA) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
-      len++;
+      n_characters++;
       r += cl;
       LOOSE_NEED_CHECK(cp, tokenizer);
       if (/* !tokenizer->options.ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
@@ -681,7 +682,7 @@ ngram_next(grn_ctx *ctx,
              tokenizer->options.uni_digit &&
              GRN_STR_CTYPE(*cp) == GRN_CHAR_DIGIT) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
-      len++;
+      n_characters++;
       r += cl;
       LOOSE_NEED_CHECK(cp, tokenizer);
       if (/* !tokenizer->options.ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
@@ -693,7 +694,7 @@ ngram_next(grn_ctx *ctx,
              tokenizer->options.uni_symbol &&
              GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
-      len++;
+      n_characters++;
       r += cl;
       LOOSE_NEED_CHECK(cp, tokenizer);
       if (!tokenizer->options.ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
@@ -722,10 +723,10 @@ ngram_next(grn_ctx *ctx,
     }
 #endif /* PRE_DEFINED_UNSPLIT_WORDS */
     if ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
-      len++;
+      n_characters++;
       r += cl;
       tokenizer->next = r;
-      while (len < tokenizer->options.unit &&
+      while (n_characters < tokenizer->options.unit &&
              (cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
         if (cp) {
           LOOSE_NEED_CHECK(cp, tokenizer);
@@ -740,25 +741,25 @@ ngram_next(grn_ctx *ctx,
             break;
           }
         }
-        len++;
+        n_characters++;
         r += cl;
       }
       if (tokenizer->overlap) {
         status |= GRN_TOKEN_OVERLAP;
       }
-      if (len < tokenizer->options.unit) {
+      if (n_characters < tokenizer->options.unit) {
         status |= GRN_TOKEN_UNMATURED;
       }
-      tokenizer->overlap = (len > 1) ? GRN_TRUE : GRN_FALSE;
+      tokenizer->overlap = (n_characters > 1) ? GRN_TRUE : GRN_FALSE;
     }
   }
   tokenizer->pos = pos;
-  tokenizer->tail = pos + len - 1;
+  tokenizer->tail = pos + n_characters - 1;
   if (p == r || tokenizer->next == e) {
     tokenizer->skip = 0;
     status |= GRN_TOKEN_LAST;
   } else {
-    tokenizer->skip = tokenizer->overlap ? 1 : len;
+    tokenizer->skip = tokenizer->overlap ? 1 : n_characters;
   }
   if (r == e) { status |= GRN_TOKEN_REACH_END; }
 
