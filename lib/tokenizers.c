@@ -15,7 +15,9 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include <string.h>
+#include "grn_token.h"
 #include "grn_token_cursor.h"
 #include "grn_string.h"
 #include "grn_plugin.h"
@@ -305,14 +307,16 @@ static void
 ngram_switch_to_loose_mode(grn_ctx *ctx,
                            grn_ngram_tokenizer *tokenizer)
 {
+  grn_obj *string;
   const char *normalized;
   unsigned int normalized_length_in_bytes;
   unsigned int normalized_length_in_chars;
   const char *normalized_end;
   const uint_least8_t *types = tokenizer->ctypes;
 
+  string = grn_tokenizer_query_get_normalized_string(ctx, tokenizer->query);
   grn_string_get_normalized(ctx,
-                            tokenizer->query->normalized_query,
+                            string,
                             &normalized,
                             &normalized_length_in_bytes,
                             &normalized_length_in_chars);
@@ -371,27 +375,21 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
   tokenizer->loose.ing = GRN_TRUE;
 }
 
-static grn_obj *
+static void *
 ngram_init_raw(grn_ctx *ctx,
-               int nargs,
-               grn_obj **args,
-               grn_user_data *user_data,
+               grn_tokenizer_query *query,
                const grn_ngram_options *options)
 {
   unsigned int normalize_flags =
     GRN_STRING_REMOVE_BLANK |
     GRN_STRING_WITH_TYPES |
     GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
-  grn_tokenizer_query *query;
   grn_ngram_tokenizer *tokenizer;
 
   if (!options->remove_blank) {
     normalize_flags &= ~GRN_STRING_REMOVE_BLANK;
   }
-  query = grn_tokenizer_query_open(ctx, nargs, args, normalize_flags);
-  if (!query) {
-    return NULL;
-  }
+  grn_tokenizer_query_set_normalize_flags(ctx, query, normalize_flags);
 
   if (!(tokenizer = GRN_MALLOC(sizeof(grn_ngram_tokenizer)))) {
     grn_tokenizer_query_close(ctx, query);
@@ -400,7 +398,6 @@ ngram_init_raw(grn_ctx *ctx,
         "memory allocation to grn_ngram_tokenizer failed");
     return NULL;
   }
-  user_data->ptr = tokenizer;
 
   grn_tokenizer_token_init(ctx, &(tokenizer->token));
   tokenizer->query = query;
@@ -434,6 +431,31 @@ ngram_init_raw(grn_ctx *ctx,
     ngram_switch_to_loose_mode(ctx, tokenizer);
   }
 
+  return tokenizer;
+}
+
+static grn_obj *
+ngram_init_deprecated(grn_ctx *ctx,
+                      int nargs,
+                      grn_obj **args,
+                      grn_user_data *user_data,
+                      const grn_ngram_options *options)
+{
+  unsigned int normalize_flags =
+    GRN_STRING_REMOVE_BLANK |
+    GRN_STRING_WITH_TYPES |
+    GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
+  grn_tokenizer_query *query;
+
+  if (!options->remove_blank) {
+    normalize_flags &= ~GRN_STRING_REMOVE_BLANK;
+  }
+  query = grn_tokenizer_query_open(ctx, nargs, args, normalize_flags);
+  if (!query) {
+    return NULL;
+  }
+
+  user_data->ptr = ngram_init_raw(ctx, query, options);
   return NULL;
 }
 
@@ -442,7 +464,7 @@ unigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_ngram_options options;
   ngram_options_init(&options, 1);
-  return ngram_init_raw(ctx, nargs, args, user_data, &options);
+  return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
@@ -450,7 +472,7 @@ bigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_ngram_options options;
   ngram_options_init(&options, 2);
-  return ngram_init_raw(ctx, nargs, args, user_data, &options);
+  return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
@@ -458,7 +480,7 @@ trigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_ngram_options options;
   ngram_options_init(&options, 3);
-  return ngram_init_raw(ctx, nargs, args, user_data, &options);
+  return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
@@ -467,7 +489,7 @@ bigrams_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_ngram_options options;
   ngram_options_init(&options, 2);
   options.uni_symbol = GRN_FALSE;
-  return ngram_init_raw(ctx, nargs, args, user_data, &options);
+  return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
@@ -477,7 +499,7 @@ bigramsa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   ngram_options_init(&options, 2);
   options.uni_symbol = GRN_FALSE;
   options.uni_alpha = GRN_FALSE;
-  return ngram_init_raw(ctx, nargs, args, user_data, &options);
+  return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
@@ -488,7 +510,7 @@ bigramsad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   options.uni_symbol = GRN_FALSE;
   options.uni_alpha = GRN_FALSE;
   options.uni_digit = GRN_FALSE;
-  return ngram_init_raw(ctx, nargs, args, user_data, &options);
+  return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
@@ -497,7 +519,7 @@ bigrami_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_ngram_options options;
   ngram_options_init(&options, 2);
   options.ignore_blank = GRN_TRUE;
-  return ngram_init_raw(ctx, nargs, args, user_data, &options);
+  return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
@@ -507,7 +529,7 @@ bigramis_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   ngram_options_init(&options, 2);
   options.ignore_blank = GRN_TRUE;
   options.uni_symbol = GRN_FALSE;
-  return ngram_init_raw(ctx, nargs, args, user_data, &options);
+  return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
@@ -518,7 +540,7 @@ bigramisa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   options.ignore_blank = GRN_TRUE;
   options.uni_symbol = GRN_FALSE;
   options.uni_alpha = GRN_FALSE;
-  return ngram_init_raw(ctx, nargs, args, user_data, &options);
+  return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
 static grn_obj *
@@ -530,7 +552,7 @@ bigramisad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   options.uni_symbol = GRN_FALSE;
   options.uni_alpha = GRN_FALSE;
   options.uni_digit = GRN_FALSE;
-  return ngram_init_raw(ctx, nargs, args, user_data, &options);
+  return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
 static void *
@@ -589,10 +611,10 @@ ngram_close_options(grn_ctx *ctx, void *data)
   GRN_FREE(options);
 }
 
-static grn_obj *
-ngram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+static void *
+ngram_init(grn_ctx *ctx, grn_tokenizer_query *query)
 {
-  grn_obj *lexicon = args[0];
+  grn_obj *lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
   grn_ngram_options *options;
 
   options = grn_table_cache_default_tokenizer_options(ctx,
@@ -604,30 +626,32 @@ ngram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
 
-  return ngram_init_raw(ctx, nargs, args, user_data, options);
+  return ngram_init_raw(ctx, query, options);
 }
 
-static grn_obj *
-ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+static void
+ngram_next(grn_ctx *ctx,
+           grn_tokenizer_query *query,
+           grn_token *token,
+           void *user_data)
 {
+  grn_ngram_tokenizer *tokenizer = user_data;
   size_t cl;
-  grn_ngram_tokenizer *tokenizer = user_data->ptr;
   const unsigned char *p = tokenizer->next, *r = p, *e = tokenizer->end;
   int32_t len = 0, pos = tokenizer->pos + tokenizer->skip;
   grn_token_status status = 0;
   const uint_least8_t *cp = tokenizer->ctypes ? tokenizer->ctypes + pos : NULL;
-  grn_encoding encoding =
-    grn_tokenizer_query_get_encoding(ctx, tokenizer->query);
+  grn_encoding encoding = grn_tokenizer_query_get_encoding(ctx, query);
 
   if (tokenizer->loose.ing && tokenizer->loose.need_end_mark) {
-    grn_tokenizer_token_push(ctx,
-                             &(tokenizer->token),
-                             GRN_TOKENIZER_END_MARK_UTF8,
-                             GRN_TOKENIZER_END_MARK_UTF8_LEN,
-                             status);
+    grn_token_set_data(ctx,
+                       token,
+                       GRN_TOKENIZER_END_MARK_UTF8,
+                       GRN_TOKENIZER_END_MARK_UTF8_LEN);
+    grn_token_set_status(ctx, token, status);
     ngram_switch_to_loose_mode(ctx, tokenizer);
     tokenizer->loose.need_end_mark = GRN_FALSE;
-    return NULL;
+    return;
   }
 
 #define LOOSE_NEED_CHECK(cp, tokenizer) do {                            \
@@ -685,7 +709,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if ((tid = grn_sym_common_prefix_search(sym, p))) {
       if (!(key = _grn_sym_key(sym, tid))) {
         tokenizer->status = GRN_TOKEN_CURSOR_NOT_FOUND;
-        return NULL;
+        return;
       }
       len = grn_str_len(key, encoding, NULL);
     }
@@ -747,30 +771,60 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       tokenizer->loose.ing = GRN_TRUE;
       tokenizer->loose.need_end_mark = GRN_TRUE;
     }
-    grn_tokenizer_token_push(ctx,
-                             &(tokenizer->token),
-                             (const char *)p,
-                             r - p,
-                             status);
+    grn_token_set_data(ctx, token, p, r - p);
+    grn_token_set_status(ctx, token, status);
   }
-
-  return NULL;
 }
 
 static grn_obj *
-ngram_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+ngram_next_deprecated(grn_ctx *ctx,
+                      int nargs,
+                      grn_obj **args,
+                      grn_user_data *user_data)
 {
   grn_ngram_tokenizer *tokenizer = user_data->ptr;
+  grn_token token;
+  grn_obj *token_data;
+
+  grn_token_init(ctx, &token);
+  ngram_next(ctx, tokenizer->query, &token, tokenizer);
+  token_data = grn_token_get_data(ctx, &token);
+  grn_tokenizer_token_push(ctx,
+                           &(tokenizer->token),
+                           GRN_TEXT_VALUE(token_data),
+                           GRN_TEXT_LEN(token_data),
+                           grn_token_get_status(ctx, &token));
+  grn_token_fin(ctx, &token);
+  return NULL;
+}
+
+static void
+ngram_fin(grn_ctx *ctx, void *user_data)
+{
+  grn_ngram_tokenizer *tokenizer = user_data;
+
   if (!tokenizer) {
-    return NULL;
+    return;
   }
   if (tokenizer->loose.ctypes) {
     GRN_FREE(tokenizer->loose.ctypes);
   }
   GRN_OBJ_FIN(ctx, &(tokenizer->loose.text));
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));
-  grn_tokenizer_query_close(ctx, tokenizer->query);
   GRN_FREE(tokenizer);
+}
+
+static grn_obj *
+ngram_fin_deprecated(grn_ctx *ctx,
+                     int nargs,
+                     grn_obj **args,
+                     grn_user_data *user_data)
+{
+  grn_ngram_tokenizer *tokenizer = user_data->ptr;
+  if (tokenizer) {
+    grn_tokenizer_query_close(ctx, tokenizer->query);
+    ngram_fin(ctx, tokenizer);
+  }
   return NULL;
 }
 
@@ -1158,34 +1212,70 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
                       delimit_init, delimited_next, delimited_fin, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_DELIMIT) { return GRN_FILE_CORRUPT; }
   obj = DEF_TOKENIZER("TokenUnigram",
-                      unigram_init, ngram_next, ngram_fin, vars);
+                      unigram_init,
+                      ngram_next_deprecated,
+                      ngram_fin_deprecated,
+                      vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_UNIGRAM) { return GRN_FILE_CORRUPT; }
   obj = DEF_TOKENIZER("TokenBigram",
-                      bigram_init, ngram_next, ngram_fin, vars);
+                      bigram_init,
+                      ngram_next_deprecated,
+                      ngram_fin_deprecated,
+                      vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_BIGRAM) { return GRN_FILE_CORRUPT; }
   obj = DEF_TOKENIZER("TokenTrigram",
-                      trigram_init, ngram_next, ngram_fin, vars);
+                      trigram_init,
+                      ngram_next_deprecated,
+                      ngram_fin_deprecated,
+                      vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_TRIGRAM) { return GRN_FILE_CORRUPT; }
 
   DEF_TOKENIZER("TokenBigramSplitSymbol",
-                bigrams_init, ngram_next, ngram_fin, vars);
+                bigrams_init,
+                ngram_next_deprecated,
+                ngram_fin_deprecated,
+                vars);
   DEF_TOKENIZER("TokenBigramSplitSymbolAlpha",
-                bigramsa_init, ngram_next, ngram_fin, vars);
+                bigramsa_init,
+                ngram_next_deprecated,
+                ngram_fin_deprecated,
+                vars);
   DEF_TOKENIZER("TokenBigramSplitSymbolAlphaDigit",
-                bigramsad_init, ngram_next, ngram_fin, vars);
+                bigramsad_init,
+                ngram_next_deprecated,
+                ngram_fin_deprecated,
+                vars);
   DEF_TOKENIZER("TokenBigramIgnoreBlank",
-                bigrami_init, ngram_next, ngram_fin, vars);
+                bigrami_init,
+                ngram_next_deprecated,
+                ngram_fin_deprecated,
+                vars);
   DEF_TOKENIZER("TokenBigramIgnoreBlankSplitSymbol",
-                bigramis_init, ngram_next, ngram_fin, vars);
+                bigramis_init,
+                ngram_next_deprecated,
+                ngram_fin_deprecated,
+                vars);
   DEF_TOKENIZER("TokenBigramIgnoreBlankSplitSymbolAlpha",
-                bigramisa_init, ngram_next, ngram_fin, vars);
+                bigramisa_init,
+                ngram_next_deprecated,
+                ngram_fin_deprecated,
+                vars);
   DEF_TOKENIZER("TokenBigramIgnoreBlankSplitSymbolAlphaDigit",
-                bigramisad_init, ngram_next, ngram_fin, vars);
+                bigramisad_init,
+                ngram_next_deprecated,
+                ngram_fin_deprecated,
+                vars);
   DEF_TOKENIZER("TokenDelimitNull",
                 delimit_null_init, delimited_next, delimited_fin, vars);
   DEF_TOKENIZER("TokenRegexp",
                 regexp_init, regexp_next, regexp_fin, vars);
-  DEF_TOKENIZER("TokenNgram",
-                ngram_init, ngram_next, ngram_fin, vars);
+  {
+    grn_obj *tokenizer;
+    tokenizer = grn_tokenizer_create(ctx, "TokenNgram", -1);
+    grn_tokenizer_set_init_func(ctx, tokenizer, ngram_init);
+    grn_tokenizer_set_next_func(ctx, tokenizer, ngram_next);
+    grn_tokenizer_set_fin_func(ctx, tokenizer, ngram_fin);
+  }
+
   return GRN_SUCCESS;
 }
