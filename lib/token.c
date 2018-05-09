@@ -170,6 +170,23 @@ grn_token_set_source_length(grn_ctx *ctx,
 exit:
   GRN_API_RETURN(ctx->rc);
 }
+
+grn_rc
+grn_token_reset(grn_ctx *ctx, grn_token *token)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT, "[token][reset] token must not be NULL");
+    goto exit;
+  }
+  GRN_BULK_REWIND(&(token->data));
+  token->status = GRN_TOKEN_CONTINUE;
+  token->source_offset = 0;
+  token->source_length = 0;
+exit:
+  GRN_API_RETURN(ctx->rc);
+}
+
 grn_rc
 grn_token_copy(grn_ctx *ctx,
                grn_token *token,

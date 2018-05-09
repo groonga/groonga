@@ -33,6 +33,7 @@ struct _grn_token {
 
 grn_rc grn_token_init(grn_ctx *ctx, grn_token *token);
 grn_rc grn_token_fin(grn_ctx *ctx, grn_token *token);
+grn_rc grn_token_reset(grn_ctx *ctx, grn_token *token);
 grn_rc grn_token_copy(grn_ctx *ctx, grn_token *token, grn_token *source);
 
 #ifdef __cplusplus
