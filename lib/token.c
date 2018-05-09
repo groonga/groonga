@@ -107,3 +107,22 @@ grn_token_set_status(grn_ctx *ctx,
 exit:
   GRN_API_RETURN(ctx->rc);
 }
+
+grn_rc
+grn_token_copy(grn_ctx *ctx,
+               grn_token *token,
+               grn_token *source)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT, "[token][copy] token must not be NULL");
+    goto exit;
+  }
+  GRN_TEXT_SET(ctx,
+               &(token->data),
+               GRN_TEXT_VALUE(&(source->data)),
+               GRN_TEXT_LEN(&(source->data)));
+  token->status = source->status;
+exit:
+  GRN_API_RETURN(ctx->rc);
+}
