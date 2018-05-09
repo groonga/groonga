@@ -286,7 +286,6 @@ typedef struct {
   const unsigned char *next;
   const unsigned char *end;
   const uint_least8_t *ctypes;
-  uint32_t len;
   uint32_t tail;
 } grn_ngram_tokenizer;
 
@@ -421,7 +420,7 @@ ngram_init_raw(grn_ctx *ctx,
     grn_string_get_normalized(ctx,
                               string,
                               &normalized_raw, &normalized_length_in_bytes,
-                              &(tokenizer->len));
+                              NULL);
     tokenizer->next = (const unsigned char *)normalized_raw;
     tokenizer->end = tokenizer->next + normalized_length_in_bytes;
     tokenizer->ctypes = grn_string_get_types(ctx, string);
@@ -754,7 +753,6 @@ ngram_next(grn_ctx *ctx,
     }
   }
   tokenizer->pos = pos;
-  tokenizer->len = len;
   tokenizer->tail = pos + len - 1;
   if (p == r || tokenizer->next == e) {
     tokenizer->skip = 0;
