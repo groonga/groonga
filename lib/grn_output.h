@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2016 Brazil
+  Copyright(C) 2010-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -37,6 +37,10 @@ GRN_API void grn_output_null(grn_ctx *ctx, grn_obj *outbuf,
                              grn_content_type output_type);
 void grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                       int32_t value);
+void grn_output_uint32(grn_ctx *ctx,
+                       grn_obj *outbuf,
+                       grn_content_type output_type,
+                       uint32_t value);
 GRN_API void grn_output_int64(grn_ctx *ctx, grn_obj *outbuf,
                               grn_content_type output_type,
                               int64_t value);

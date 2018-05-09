@@ -356,6 +356,39 @@ grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
 }
 
 void
+grn_output_uint32(grn_ctx *ctx,
+                  grn_obj *outbuf,
+                  grn_content_type output_type,
+                  uint32_t value)
+{
+  put_delimiter(ctx, outbuf, output_type);
+  switch (output_type) {
+  case GRN_CONTENT_JSON:
+    grn_text_ulltoa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_TSV:
+    grn_text_ulltoa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_XML:
+    GRN_TEXT_PUTS(ctx, outbuf, "<INT>");
+    grn_text_ulltoa(ctx, outbuf, value);
+    GRN_TEXT_PUTS(ctx, outbuf, "</INT>");
+    break;
+  case GRN_CONTENT_MSGPACK :
+#ifdef GRN_WITH_MESSAGE_PACK
+    msgpack_pack_uint32(&ctx->impl->output.msgpacker, value);
+#endif
+    break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    grn_text_ulltoa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_NONE:
+    break;
+  }
+  INCR_LENGTH;
+}
+
+void
 grn_output_int64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int64_t value)
 {
   put_delimiter(ctx, outbuf, output_type);
