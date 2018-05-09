@@ -422,3 +422,9 @@ grn_token_cursor_close(grn_ctx *ctx, grn_token_cursor *token_cursor)
     return GRN_INVALID_ARGUMENT;
   }
 }
+
+grn_token *
+grn_token_cursor_get_token(grn_ctx *ctx, grn_token_cursor *token_cursor)
+{
+  return &(token_cursor->tokenizer.current_token);
+}

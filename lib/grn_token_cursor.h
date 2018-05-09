@@ -76,6 +76,9 @@ GRN_API grn_token_cursor *grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
 GRN_API grn_id grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor);
 GRN_API grn_rc grn_token_cursor_close(grn_ctx *ctx, grn_token_cursor *token_cursor);
 
+GRN_API grn_token *
+grn_token_cursor_get_token(grn_ctx *ctx, grn_token_cursor *token_cursor);
+
 #ifdef __cplusplus
 }
 #endif
