@@ -442,46 +442,52 @@ func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
                     grn_user_data *user_data)
 {
   grn_obj *highlighted = NULL;
+  grn_obj *string;
+  grn_obj *lexicon = NULL;
+  grn_obj *expression = NULL;
+  grn_highlighter *highlighter;
+  grn_obj *highlighter_ptr;
 
-#define N_REQUIRED_ARGS 1
-  if (nargs == N_REQUIRED_ARGS) {
-    grn_obj *string = args[0];
-    grn_obj *expression = NULL;
-    grn_highlighter *highlighter;
-    grn_obj *highlighter_ptr;
-
-    grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
-
-    highlighter_ptr =
-      grn_expr_get_var(ctx, expression,
-                       GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME,
-                       strlen(GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME));
-    if (highlighter_ptr) {
-      highlighter = (grn_highlighter *)GRN_PTR_VALUE(highlighter_ptr);
-    } else {
-      highlighter_ptr =
-        grn_expr_get_or_add_var(ctx, expression,
-                                GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME,
-                                strlen(GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME));
-      GRN_OBJ_FIN(ctx, highlighter_ptr);
-      GRN_PTR_INIT(highlighter_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
-
-      highlighter = func_highlight_html_create_highlighter(ctx, expression);
-      GRN_PTR_SET(ctx, highlighter_ptr, highlighter);
-    }
-
-    highlighted = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_TEXT, 0);
-    grn_highlighter_highlight(ctx,
-                              highlighter,
-                              GRN_TEXT_VALUE(string),
-                              GRN_TEXT_LEN(string),
-                              highlighted);
-  }
-#undef N_REQUIRED_ARGS
-
-  if (!highlighted) {
+  if (!(1 <= nargs && nargs <= 2)) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "highlight_html(): wrong number of arguments (%d for 1..2)",
+                     nargs);
     highlighted = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
+    return highlighted;
   }
+
+  string = args[0];
+  if (nargs == 2) {
+    lexicon = args[1];
+  }
+
+  grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
+
+  highlighter_ptr = grn_expr_get_var(ctx, expression,
+                                     GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME,
+                                     strlen(GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME));
+  if (highlighter_ptr) {
+    highlighter = (grn_highlighter *)GRN_PTR_VALUE(highlighter_ptr);
+  } else {
+    highlighter_ptr =
+      grn_expr_get_or_add_var(ctx, expression,
+                              GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME,
+                              strlen(GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME));
+    GRN_OBJ_FIN(ctx, highlighter_ptr);
+    GRN_PTR_INIT(highlighter_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
+
+    highlighter = func_highlight_html_create_highlighter(ctx, expression);
+    grn_highlighter_set_lexicon(ctx, highlighter, lexicon);
+    GRN_PTR_SET(ctx, highlighter_ptr, highlighter);
+  }
+
+  highlighted = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_TEXT, 0);
+  grn_highlighter_highlight(ctx,
+                            highlighter,
+                            GRN_TEXT_VALUE(string),
+                            GRN_TEXT_LEN(string),
+                            highlighted);
 
   return highlighted;
 }
