@@ -132,6 +132,20 @@ GRN_API grn_token_status grn_token_get_status(grn_ctx *ctx,
 GRN_API grn_rc grn_token_set_status(grn_ctx *ctx,
                                     grn_token *token,
                                     grn_token_status status);
+GRN_API uint64_t
+grn_token_get_source_offset(grn_ctx *ctx,
+                            grn_token *token);
+GRN_API grn_rc
+grn_token_set_source_offset(grn_ctx *ctx,
+                            grn_token *token,
+                            uint64_t offset);
+GRN_API uint32_t
+grn_token_get_source_length(grn_ctx *ctx,
+                            grn_token *token);
+GRN_API grn_rc
+grn_token_set_source_length(grn_ctx *ctx,
+                            grn_token *token,
+                            uint32_t length);
 
 #ifdef __cplusplus
 }  /* extern "C" */

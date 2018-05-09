@@ -27,6 +27,8 @@ extern "C" {
 struct _grn_token {
   grn_obj data;
   grn_token_status status;
+  uint64_t source_offset;
+  uint32_t source_length;
 };
 
 grn_rc grn_token_init(grn_ctx *ctx, grn_token *token);
