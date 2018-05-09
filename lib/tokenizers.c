@@ -839,6 +839,7 @@ ngram_next(grn_ctx *ctx,
     }
     grn_token_set_data(ctx, token, p, data_size);
     grn_token_set_status(ctx, token, status);
+    grn_token_set_overlap(ctx, token, tokenizer->overlap);
     if (checks) {
       size_t i;
       uint32_t uncount_offset = 0;

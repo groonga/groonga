@@ -26,6 +26,7 @@ grn_token_init(grn_ctx *ctx, grn_token *token)
   token->status = GRN_TOKEN_CONTINUE;
   token->source_offset = 0;
   token->source_length = 0;
+  token->is_overlap = GRN_FALSE;
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -171,6 +172,34 @@ exit:
   GRN_API_RETURN(ctx->rc);
 }
 
+grn_bool
+grn_token_is_overlap(grn_ctx *ctx, grn_token *token)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][overlap][get] token must not be NULL");
+    GRN_API_RETURN(0);
+  }
+  GRN_API_RETURN(token->is_overlap);
+}
+
+grn_rc
+grn_token_set_overlap(grn_ctx *ctx,
+                      grn_token *token,
+                      grn_bool is_overlap)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][overlap][set] token must not be NULL");
+    goto exit;
+  }
+  token->is_overlap = is_overlap;
+exit:
+  GRN_API_RETURN(ctx->rc);
+}
+
 grn_rc
 grn_token_reset(grn_ctx *ctx, grn_token *token)
 {
@@ -183,6 +212,7 @@ grn_token_reset(grn_ctx *ctx, grn_token *token)
   token->status = GRN_TOKEN_CONTINUE;
   token->source_offset = 0;
   token->source_length = 0;
+  token->is_overlap = GRN_FALSE;
 exit:
   GRN_API_RETURN(ctx->rc);
 }
@@ -204,6 +234,7 @@ grn_token_copy(grn_ctx *ctx,
   token->status = source->status;
   token->source_offset = source->source_offset;
   token->source_length = source->source_length;
+  token->is_overlap = source->is_overlap;
 exit:
   GRN_API_RETURN(ctx->rc);
 }

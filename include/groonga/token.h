@@ -146,6 +146,13 @@ GRN_API grn_rc
 grn_token_set_source_length(grn_ctx *ctx,
                             grn_token *token,
                             uint32_t length);
+GRN_API grn_bool
+grn_token_is_overlap(grn_ctx *ctx,
+                     grn_token *token);
+GRN_API grn_rc
+grn_token_set_overlap(grn_ctx *ctx,
+                      grn_token *token,
+                      grn_bool is_overlap);
 
 #ifdef __cplusplus
 }  /* extern "C" */
