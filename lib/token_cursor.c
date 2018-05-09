@@ -171,25 +171,27 @@ grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
     n_token_filters = 0;
   }
 
-  grn_token_copy(ctx, next_token, current_token);
-  for (i = 0; i < n_token_filters; i++) {
-    grn_obj *token_filter_object = GRN_PTR_VALUE_AT(token_filters, i);
-    grn_proc *token_filter = (grn_proc *)token_filter_object;
-    void *data = token_cursor->token_filter.data[i];
+  if (n_token_filters > 0) {
+    grn_token_copy(ctx, next_token, current_token);
+    for (i = 0; i < n_token_filters; i++) {
+      grn_obj *token_filter_object = GRN_PTR_VALUE_AT(token_filters, i);
+      grn_proc *token_filter = (grn_proc *)token_filter_object;
+      void *data = token_cursor->token_filter.data[i];
 
-#define SKIP_FLAGS\
-    (GRN_TOKEN_SKIP |\
-     GRN_TOKEN_SKIP_WITH_POSITION)
-    if (grn_token_get_status(ctx, current_token) & SKIP_FLAGS) {
-      break;
-    }
+#define SKIP_FLAGS                              \
+      (GRN_TOKEN_SKIP |                         \
+       GRN_TOKEN_SKIP_WITH_POSITION)
+      if (grn_token_get_status(ctx, current_token) & SKIP_FLAGS) {
+        break;
+      }
 #undef SKIP_FLAGS
 
-    token_filter->callbacks.token_filter.filter(ctx,
-                                                current_token,
-                                                next_token,
-                                                data);
-    grn_token_copy(ctx, current_token, next_token);
+      token_filter->callbacks.token_filter.filter(ctx,
+                                                  current_token,
+                                                  next_token,
+                                                  data);
+      grn_token_copy(ctx, current_token, next_token);
+    }
   }
 
   {
