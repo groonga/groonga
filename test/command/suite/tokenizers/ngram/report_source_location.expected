@@ -1,0 +1,157 @@
+tokenize   'TokenNgram("report_source_location", true, "loose_symbol", true)'   "ア㌕０９０（１23４）５6−７８"   NormalizerAuto
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "アキ",
+      "position": 0,
+      "force_prefix": false,
+      "source_offset": 0,
+      "source_length": 6
+    },
+    {
+      "value": "キロ",
+      "position": 1,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 3
+    },
+    {
+      "value": "ログ",
+      "position": 2,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 3
+    },
+    {
+      "value": "グラ",
+      "position": 3,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 3
+    },
+    {
+      "value": "ラム",
+      "position": 4,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 3
+    },
+    {
+      "value": "ム",
+      "position": 5,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 3
+    },
+    {
+      "value": "090",
+      "position": 6,
+      "force_prefix": false,
+      "source_offset": 6,
+      "source_length": 9
+    },
+    {
+      "value": "(",
+      "position": 7,
+      "force_prefix": false,
+      "source_offset": 15,
+      "source_length": 3
+    },
+    {
+      "value": "1234",
+      "position": 8,
+      "force_prefix": false,
+      "source_offset": 18,
+      "source_length": 8
+    },
+    {
+      "value": ")",
+      "position": 9,
+      "force_prefix": false,
+      "source_offset": 26,
+      "source_length": 3
+    },
+    {
+      "value": "56",
+      "position": 10,
+      "force_prefix": false,
+      "source_offset": 29,
+      "source_length": 4
+    },
+    {
+      "value": "−",
+      "position": 11,
+      "force_prefix": false,
+      "source_offset": 33,
+      "source_length": 3
+    },
+    {
+      "value": "78",
+      "position": 12,
+      "force_prefix": false,
+      "source_offset": 36,
+      "source_length": 6
+    },
+    {
+      "value": "￰",
+      "position": 13,
+      "force_prefix": false,
+      "source_offset": 42,
+      "source_length": 0
+    },
+    {
+      "value": "アキ",
+      "position": 14,
+      "force_prefix": false,
+      "source_offset": 0,
+      "source_length": 6
+    },
+    {
+      "value": "キロ",
+      "position": 15,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 3
+    },
+    {
+      "value": "ログ",
+      "position": 16,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 3
+    },
+    {
+      "value": "グラ",
+      "position": 17,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 3
+    },
+    {
+      "value": "ラム",
+      "position": 18,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 3
+    },
+    {
+      "value": "ム",
+      "position": 19,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 3
+    },
+    {
+      "value": "09012345678",
+      "position": 20,
+      "force_prefix": false,
+      "source_offset": 6,
+      "source_length": 36
+    }
+  ]
+]
