@@ -46,6 +46,23 @@ grn_token_get_data(grn_ctx *ctx, grn_token *token)
   GRN_API_RETURN(&(token->data));
 }
 
+const char *
+grn_token_get_data_raw(grn_ctx *ctx, grn_token *token, size_t *length)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT, "token must not be NULL");
+    if (length) {
+      *length = 0;
+    }
+    GRN_API_RETURN(NULL);
+  }
+  if (length) {
+    *length = GRN_TEXT_LEN(&(token->data));
+  }
+  GRN_API_RETURN(GRN_TEXT_VALUE(&(token->data)));
+}
+
 grn_rc
 grn_token_set_data(grn_ctx *ctx,
                    grn_token *token,

@@ -120,6 +120,9 @@ typedef struct _grn_token grn_token;
 
 GRN_API grn_obj *grn_token_get_data(grn_ctx *ctx,
                                     grn_token *token);
+GRN_API const char *grn_token_get_data_raw(grn_ctx *ctx,
+                                           grn_token *token,
+                                           size_t *length);
 GRN_API grn_rc grn_token_set_data(grn_ctx *ctx,
                                   grn_token *token,
                                   const char *str_ptr,
