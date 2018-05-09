@@ -263,11 +263,43 @@ GRN_PLUGIN_EXPORT const char *grn_tokenizer_tokenized_delimiter_next(grn_ctx *ct
   GRN_SUCCESS on success, an error code on failure. See "groonga.h" for more
   details of grn_proc_func and grn_user_data, that is used as an argument of
   grn_proc_func.
+
+  Deprecated since 8.0.2. Use grn_tokenizer_create() and
+  grn_tokenizer_set_*_func().
  */
-GRN_PLUGIN_EXPORT grn_rc grn_tokenizer_register(grn_ctx *ctx, const char *plugin_name_ptr,
-                                                unsigned int plugin_name_length,
-                                                grn_proc_func *init, grn_proc_func *next,
-                                                grn_proc_func *fin);
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_register(grn_ctx *ctx, const char *plugin_name_ptr,
+                       unsigned int plugin_name_length,
+                       grn_proc_func *init, grn_proc_func *next,
+                       grn_proc_func *fin);
+
+GRN_PLUGIN_EXPORT grn_obj *
+grn_tokenizer_create(grn_ctx *ctx,
+                     const char *name,
+                     int name_length);
+
+typedef void *grn_tokenizer_init_func(grn_ctx *ctx,
+                                      grn_tokenizer_query *query);
+typedef void grn_tokenizer_next_func(grn_ctx *ctx,
+                                     grn_tokenizer_query *query,
+                                     grn_token *token,
+                                     void *user_data);
+typedef void grn_tokenizer_fin_func(grn_ctx *ctx,
+                                    void *user_data);
+
+
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_set_init_func(grn_ctx *ctx,
+                            grn_obj *tokenizer,
+                            grn_tokenizer_init_func *init);
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_set_next_func(grn_ctx *ctx,
+                            grn_obj *tokenizer,
+                            grn_tokenizer_next_func *next);
+GRN_PLUGIN_EXPORT grn_rc
+grn_tokenizer_set_fin_func(grn_ctx *ctx,
+                           grn_obj *tokenizer,
+                           grn_tokenizer_fin_func *fin);
 
 #ifdef __cplusplus
 }  /* extern "C" */

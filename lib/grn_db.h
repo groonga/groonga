@@ -268,6 +268,11 @@ struct _grn_proc {
       grn_command_run_func *run;
     } command;
     struct {
+      grn_tokenizer_init_func *init;
+      grn_tokenizer_next_func *next;
+      grn_tokenizer_fin_func  *fin;
+    } tokenizer;
+    struct {
       grn_token_filter_init_func   *init;
       grn_token_filter_filter_func *filter;
       grn_token_filter_fin_func    *fin;

@@ -19,6 +19,7 @@
 #pragma once
 
 #include "grn_ctx.h"
+#include "grn_token.h"
 #include "grn_tokenizer.h"
 #include "grn_db.h"
 
@@ -50,14 +51,19 @@ typedef struct {
   grn_bool force_prefix;
   grn_obj_flags table_flags;
   grn_encoding encoding;
-  grn_obj *tokenizer;
-  grn_proc_ctx pctx;
+  struct {
+    grn_obj *object;
+    grn_proc_ctx pctx;
+    grn_tokenizer_query query;
+    void *user_data;
+    grn_token current_token;
+    grn_token next_token;
+  } tokenizer;
   struct {
     grn_obj *objects;
     void **data;
   } token_filter;
   uint32_t variant;
-  grn_obj *nstr;
 } grn_token_cursor;
 
 #define GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER (0x01L<<0)
