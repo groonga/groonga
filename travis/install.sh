@@ -42,9 +42,9 @@ case "${TRAVIS_OS_NAME}" in
     brew reinstall libtool
     brew outdated libevent || brew upgrade libevent
     brew outdated pcre || brew upgrade pcre
+    brew outdated msgpack || brew upgrade msgpack
     brew install \
          autoconf-archive \
-         msgpack \
          mecab \
          mecab-ipadic
     brew install --force openssl
