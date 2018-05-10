@@ -76,7 +76,7 @@ output_tokens(grn_ctx *ctx,
 {
   int i, n_tokens, n_elements;
   grn_obj estimated_size;
-  grn_bool have_source_location;
+  grn_bool have_source_location = GRN_FALSE;
 
   n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
   n_elements = 3;
