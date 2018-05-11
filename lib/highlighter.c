@@ -22,6 +22,26 @@
 #include "grn_pat.h"
 #include "grn_str.h"
 
+typedef struct {
+  uint64_t offset;
+  uint32_t length;
+  grn_bool is_overlapping;
+  uint8_t first_character_length;
+} grn_highlighter_location;
+
+static int
+grn_highlighter_location_compare(const void *data1, const void *data2)
+{
+  const grn_highlighter_location *location1 = data1;
+  const grn_highlighter_location *location2 = data2;
+
+  if (location1->offset == location2->offset) {
+    return location1->length - location2->length;
+  } else {
+    return location1->offset - location2->offset;
+  }
+}
+
 /*
  * TODO:
  *   * Support non HTML mode.
@@ -48,8 +68,8 @@ struct _grn_highlighter {
     grn_obj *token_id_chunks;
     grn_obj token_id_chunk;
     grn_obj token_ids;
-    grn_obj offsets;
-    grn_obj lengths;
+    grn_obj token_locations;
+    grn_obj candidates;
   } lexicon;
 
   /* For patricia trie mode */
@@ -92,8 +112,8 @@ grn_highlighter_open(grn_ctx *ctx)
   highlighter->lexicon.token_id_chunks = NULL;
   GRN_TEXT_INIT(&(highlighter->lexicon.token_id_chunk), 0);
   GRN_RECORD_INIT(&(highlighter->lexicon.token_ids), GRN_OBJ_VECTOR, GRN_ID_NIL);
-  GRN_UINT64_INIT(&(highlighter->lexicon.offsets), GRN_OBJ_VECTOR);
-  GRN_UINT32_INIT(&(highlighter->lexicon.lengths), GRN_OBJ_VECTOR);
+  GRN_TEXT_INIT(&(highlighter->lexicon.token_locations), 0);
+  GRN_TEXT_INIT(&(highlighter->lexicon.candidates), 0);
 
   highlighter->pat.keywords = NULL;
 
@@ -117,9 +137,9 @@ grn_highlighter_close(grn_ctx *ctx,
   if (highlighter->lexicon.token_id_chunks) {
     grn_obj_close(ctx, highlighter->lexicon.token_id_chunks);
   }
+  GRN_OBJ_FIN(ctx, &(highlighter->lexicon.candidates));
+  GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_locations));
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_ids));
-  GRN_OBJ_FIN(ctx, &(highlighter->lexicon.offsets));
-  GRN_OBJ_FIN(ctx, &(highlighter->lexicon.lengths));
 
   GRN_OBJ_FIN(ctx, &(highlighter->raw_keywords));
   GRN_FREE(highlighter);
@@ -292,12 +312,11 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
   grn_token_cursor *cursor;
   grn_encoding encoding = highlighter->lexicon.encoding;
   grn_obj *token_ids = &(highlighter->lexicon.token_ids);
-  grn_obj *offsets = &(highlighter->lexicon.offsets);
-  grn_obj *lengths = &(highlighter->lexicon.lengths);
+  grn_obj *token_locations = &(highlighter->lexicon.token_locations);
+  grn_obj *candidates = &(highlighter->lexicon.candidates);
 
   GRN_BULK_REWIND(token_ids);
-  GRN_BULK_REWIND(offsets);
-  GRN_BULK_REWIND(lengths);
+  GRN_BULK_REWIND(token_locations);
   cursor = grn_token_cursor_open(ctx,
                                  highlighter->lexicon.object,
                                  text,
@@ -313,107 +332,171 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
 
   while (cursor->status == GRN_TOKEN_CURSOR_DOING) {
     grn_id token_id = grn_token_cursor_next(ctx, cursor);
+    grn_highlighter_location location;
     grn_token *token;
-    uint32_t length;
 
     if (token_id == GRN_ID_NIL) {
       continue;
     }
     token = grn_token_cursor_get_token(ctx, cursor);
     GRN_RECORD_PUT(ctx, token_ids, token_id);
-    GRN_UINT64_PUT(ctx, offsets, grn_token_get_source_offset(ctx, token));
-    length = grn_token_get_source_length(ctx, token);
-    if (grn_token_is_overlap(ctx, token)) {
+    location.offset = grn_token_get_source_offset(ctx, token);
+    location.length = grn_token_get_source_length(ctx, token);
+    location.is_overlapping = grn_token_is_overlap(ctx, token);
+    {
       const char *data;
       size_t data_length;
-      int first_character_length;
 
       data = grn_token_get_data_raw(ctx, token, &data_length);
-      first_character_length =
+      location.first_character_length =
         grn_charlen_(ctx, data, data + data_length, encoding);
-      GRN_UINT32_PUT(ctx, lengths, first_character_length);
-    } else {
-      GRN_UINT32_PUT(ctx, lengths, length);
     }
+    GRN_TEXT_PUT(ctx, token_locations, &location, sizeof(location));
   }
   grn_token_cursor_close(ctx, cursor);
 
+  GRN_BULK_REWIND(candidates);
   {
     grn_pat *chunks = (grn_pat *)(highlighter->lexicon.token_id_chunks);
-    size_t i, n_token_ids = GRN_BULK_VSIZE(token_ids) / sizeof(grn_id);
+    size_t i;
+    size_t n_token_ids = GRN_BULK_VSIZE(token_ids) / sizeof(grn_id);
     grn_id *raw_token_ids = (grn_id *)GRN_BULK_HEAD(token_ids);
-    uint64_t max_offset = 0;
-    uint32_t last_length = 0;
-    grn_bool have_highlight = GRN_FALSE;
+    grn_highlighter_location *raw_token_locations =
+      (grn_highlighter_location *)GRN_BULK_HEAD(token_locations);
 
     for (i = 0; i < n_token_ids; i++) {
       grn_id chunk_id;
-      uint64_t offset;
-      uint32_t length;
 
       chunk_id = grn_pat_lcp_search(ctx,
                                     chunks,
                                     raw_token_ids + i,
                                     (n_token_ids - i) * sizeof(grn_id));
-      offset = GRN_UINT64_VALUE_AT(offsets, i);
-      if (offset == 0 && GRN_TEXT_LEN(output) > 0) {
-        if (have_highlight) {
-          break;
-        }
-        max_offset = 0;
-        last_length = 0;
-        GRN_BULK_REWIND(output);
-      }
       if (chunk_id == GRN_ID_NIL) {
-        if (offset < max_offset) {
-          continue;
-        }
-        length = GRN_UINT32_VALUE_AT(lengths, i);
-        grn_text_escape_xml(ctx,
-                            output,
-                            text + offset,
-                            length);
-        max_offset = offset + 1;
-        last_length = length;
-      } else {
+        continue;
+      }
+
+      {
         uint32_t key_size;
         size_t j;
         size_t n_ids;
-
-        have_highlight = GRN_TRUE;
-
-        if (last_length > 0 && offset + 1 == max_offset) {
-          grn_bulk_truncate(ctx, output, GRN_TEXT_LEN(output) - last_length);
-          max_offset -= last_length;
-          last_length = 0;
-        } else if (offset < max_offset) {
-          continue;
-        }
+        grn_highlighter_location candidate;
+        grn_highlighter_location *first = raw_token_locations + i;
 
         _grn_pat_key(ctx, chunks, chunk_id, &key_size);
         n_ids = key_size / sizeof(grn_id);
-        GRN_TEXT_PUT(ctx,
-                     output,
-                     highlighter->tag.open,
-                     highlighter->tag.open_length);
-        for (j = 0; j < n_ids; j++) {
-          offset = GRN_UINT64_VALUE_AT(offsets, i + j);
-          if (offset < max_offset) {
-            continue;
+        candidate.offset = first->offset;
+        if (first->is_overlapping && n_ids > 1) {
+          candidate.length = first->first_character_length;
+        } else {
+          candidate.length = first->length;
+        }
+        for (j = 1; j < n_ids; j++) {
+          grn_highlighter_location *current = raw_token_locations + i + j;
+          grn_highlighter_location *previous = current - 1;
+          uint32_t current_length;
+          uint32_t previous_length;
+          if (current->is_overlapping && j + 1 < n_ids) {
+            current_length = current->first_character_length;
+          } else {
+            current_length = current->length;
           }
-          length = GRN_UINT32_VALUE_AT(lengths, i + j);
+          if (previous->is_overlapping && j + 1 < n_ids) {
+            previous_length = previous->first_character_length;
+          } else {
+            previous_length = previous->length;
+          }
+          if (current->offset == previous->offset) {
+            if (current_length > previous_length) {
+              candidate.length += current_length - previous_length;
+            }
+          } else {
+            candidate.length += current_length;
+          }
+        }
+        GRN_TEXT_PUT(ctx, candidates, &candidate, sizeof(candidate));
+        i += n_ids - 1;
+      }
+    }
+  }
+
+  {
+    size_t i;
+    size_t n_candidates =
+      GRN_BULK_VSIZE(candidates) / sizeof(grn_highlighter_location);
+    grn_highlighter_location *raw_candidates =
+      (grn_highlighter_location *)GRN_BULK_HEAD(candidates);
+
+    if (n_candidates == 0) {
+      grn_text_escape_xml(ctx, output, text, text_length);
+    } else {
+      grn_highlighter_location *previous = NULL;
+      uint64_t offset = 0;
+
+      qsort(raw_candidates,
+            n_candidates,
+            sizeof(grn_highlighter_location),
+            grn_highlighter_location_compare);
+      previous = raw_candidates;
+      for (i = 1; i < n_candidates; i++) {
+        grn_highlighter_location *current = raw_candidates + i;
+        if (previous->offset + previous->length >= current->offset) {
+          if (previous->offset + previous->length >
+              current->offset + current->length) {
+            current->length = previous->length;
+          } else {
+            current->length += current->offset - previous->offset;
+          }
+          current->offset = previous->offset;
+          previous = current;
+          continue;
+        }
+        if (current->offset > previous->offset) {
+          if (previous->offset > offset) {
+            grn_text_escape_xml(ctx,
+                                output,
+                                text + offset,
+                                previous->offset - offset);
+          }
+          GRN_TEXT_PUT(ctx,
+                       output,
+                       highlighter->tag.open,
+                       highlighter->tag.open_length);
           grn_text_escape_xml(ctx,
                               output,
-                              text + offset,
-                              length);
-          max_offset = offset + 1;
-          last_length = length;
+                              text + previous->offset,
+                              previous->length);
+          offset = previous->offset + previous->length;
+          GRN_TEXT_PUT(ctx,
+                       output,
+                       highlighter->tag.close,
+                       highlighter->tag.close_length);
         }
-        GRN_TEXT_PUT(ctx,
-                     output,
-                     highlighter->tag.close,
-                     highlighter->tag.close_length);
-        i += n_ids - 1;
+        previous = current;
+      }
+      if (previous->offset > offset) {
+        grn_text_escape_xml(ctx,
+                            output,
+                            text + offset,
+                            previous->offset - offset);
+      }
+      GRN_TEXT_PUT(ctx,
+                   output,
+                   highlighter->tag.open,
+                   highlighter->tag.open_length);
+      grn_text_escape_xml(ctx,
+                          output,
+                          text + previous->offset,
+                          previous->length);
+      offset = previous->offset + previous->length;
+      GRN_TEXT_PUT(ctx,
+                   output,
+                   highlighter->tag.close,
+                   highlighter->tag.close_length);
+      if (offset < text_length) {
+        grn_text_escape_xml(ctx,
+                            output,
+                            text + offset,
+                            text_length - offset);
       }
     }
   }
