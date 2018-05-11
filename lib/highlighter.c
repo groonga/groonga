@@ -302,6 +302,36 @@ grn_highlighter_prepare(grn_ctx *ctx,
   highlighter->need_prepared = GRN_FALSE;
 }
 
+static uint64_t
+grn_highlighter_highlight_lexicon_flush(grn_ctx *ctx,
+                                        grn_highlighter *highlighter,
+                                        const char *text,
+                                        size_t text_length,
+                                        grn_obj *output,
+                                        grn_highlighter_location *location,
+                                        uint64_t offset)
+{
+  if (location->offset > offset) {
+    grn_text_escape_xml(ctx,
+                        output,
+                        text + offset,
+                        location->offset - offset);
+  }
+  GRN_TEXT_PUT(ctx,
+               output,
+               highlighter->tag.open,
+               highlighter->tag.open_length);
+  grn_text_escape_xml(ctx,
+                      output,
+                      text + location->offset,
+                      location->length);
+  GRN_TEXT_PUT(ctx,
+               output,
+               highlighter->tag.close,
+               highlighter->tag.close_length);
+  return location->offset + location->length;
+}
+
 static void
 grn_highlighter_highlight_lexicon(grn_ctx *ctx,
                                   grn_highlighter *highlighter,
@@ -451,47 +481,23 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
           continue;
         }
         if (current->offset > previous->offset) {
-          if (previous->offset > offset) {
-            grn_text_escape_xml(ctx,
-                                output,
-                                text + offset,
-                                previous->offset - offset);
-          }
-          GRN_TEXT_PUT(ctx,
-                       output,
-                       highlighter->tag.open,
-                       highlighter->tag.open_length);
-          grn_text_escape_xml(ctx,
-                              output,
-                              text + previous->offset,
-                              previous->length);
-          offset = previous->offset + previous->length;
-          GRN_TEXT_PUT(ctx,
-                       output,
-                       highlighter->tag.close,
-                       highlighter->tag.close_length);
+          offset = grn_highlighter_highlight_lexicon_flush(ctx,
+                                                           highlighter,
+                                                           text,
+                                                           text_length,
+                                                           output,
+                                                           previous,
+                                                           offset);
         }
         previous = current;
       }
-      if (previous->offset > offset) {
-        grn_text_escape_xml(ctx,
-                            output,
-                            text + offset,
-                            previous->offset - offset);
-      }
-      GRN_TEXT_PUT(ctx,
-                   output,
-                   highlighter->tag.open,
-                   highlighter->tag.open_length);
-      grn_text_escape_xml(ctx,
-                          output,
-                          text + previous->offset,
-                          previous->length);
-      offset = previous->offset + previous->length;
-      GRN_TEXT_PUT(ctx,
-                   output,
-                   highlighter->tag.close,
-                   highlighter->tag.close_length);
+      offset = grn_highlighter_highlight_lexicon_flush(ctx,
+                                                       highlighter,
+                                                       text,
+                                                       text_length,
+                                                       output,
+                                                       previous,
+                                                       offset);
       if (offset < text_length) {
         grn_text_escape_xml(ctx,
                             output,
