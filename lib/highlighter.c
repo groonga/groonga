@@ -25,7 +25,7 @@
 typedef struct {
   uint64_t offset;
   uint32_t length;
-  grn_bool is_overlapping;
+  grn_bool have_overlap;
   uint8_t first_character_length;
 } grn_highlighter_location;
 
@@ -342,7 +342,7 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
     GRN_RECORD_PUT(ctx, token_ids, token_id);
     location.offset = grn_token_get_source_offset(ctx, token);
     location.length = grn_token_get_source_length(ctx, token);
-    location.is_overlapping = grn_token_is_overlap(ctx, token);
+    location.have_overlap = grn_token_have_overlap(ctx, token);
     {
       const char *data;
       size_t data_length;
@@ -385,7 +385,7 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
         _grn_pat_key(ctx, chunks, chunk_id, &key_size);
         n_ids = key_size / sizeof(grn_id);
         candidate.offset = first->offset;
-        if (first->is_overlapping && n_ids > 1) {
+        if (first->have_overlap && n_ids > 1) {
           candidate.length = first->first_character_length;
         } else {
           candidate.length = first->length;
@@ -395,12 +395,12 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
           grn_highlighter_location *previous = current - 1;
           uint32_t current_length;
           uint32_t previous_length;
-          if (current->is_overlapping && j + 1 < n_ids) {
+          if (current->have_overlap && j + 1 < n_ids) {
             current_length = current->first_character_length;
           } else {
             current_length = current->length;
           }
-          if (previous->is_overlapping && j + 1 < n_ids) {
+          if (previous->have_overlap && j + 1 < n_ids) {
             previous_length = previous->first_character_length;
           } else {
             previous_length = previous->length;
