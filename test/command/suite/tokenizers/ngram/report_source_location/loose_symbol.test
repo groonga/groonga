@@ -1,4 +1,4 @@
 tokenize \
   'TokenNgram("report_source_location", true, "loose_symbol", true)' \
-  "ア㌕０９０（１23４）５6−７８" \
+  "０９０（１23４）５6−７８" \
   NormalizerAuto
