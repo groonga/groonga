@@ -1,0 +1,38 @@
+tokenize   'TokenNgram("report_source_location", true)'   "Ａ㌔Ｚ"   NormalizerAuto
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "a",
+      "position": 0,
+      "force_prefix": false,
+      "source_offset": 0,
+      "source_length": 3
+    },
+    {
+      "value": "キロ",
+      "position": 1,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 3
+    },
+    {
+      "value": "ロ",
+      "position": 2,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 3
+    },
+    {
+      "value": "z",
+      "position": 3,
+      "force_prefix": false,
+      "source_offset": 6,
+      "source_length": 3
+    }
+  ]
+]

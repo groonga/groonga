@@ -1,0 +1,4 @@
+tokenize \
+  'TokenNgram("report_source_location", true)' \
+  "あいうえお" \
+  NormalizerAuto

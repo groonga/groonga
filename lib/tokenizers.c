@@ -842,39 +842,35 @@ ngram_next(grn_ctx *ctx,
     grn_token_set_overlap(ctx, token, tokenizer->overlap);
     if (checks) {
       size_t i;
-      uint32_t uncount_offset = 0;
       uint32_t source_length = 0;
+      uint64_t next_offset = tokenizer->source_offset;
+      grn_bool first_character = GRN_TRUE;
       grn_token_set_source_offset(ctx, token, tokenizer->source_offset);
       if (checks[0] == -1) {
         size_t n_leading_bytes = p - tokenizer->start;
         for (i = 1; i <= n_leading_bytes; i++) {
           if (checks[-i] > 0) {
-            uncount_offset = source_length = checks[-i];
+            source_length = checks[-i];
+            if (!tokenizer->overlap) {
+              next_offset += checks[-i];
+            }
+            first_character = GRN_FALSE;
             break;
           }
         }
       }
       for (i = 0; i < data_size; i++) {
         if (checks[i] > 0) {
+          if ((tokenizer->overlap && !first_character) ||
+              !tokenizer->overlap) {
+            next_offset += checks[i];
+          }
           source_length += checks[i];
-        }
-      }
-      if (r < e) {
-        if (checks[i] > 0) {
-          if (!tokenizer->overlap) {
-            uncount_offset = 0;
-          }
-        } else if (checks[i] == -1) {
-          for (; i > 0; i--) {
-            if (checks[i - 1] > 0) {
-              uncount_offset += checks[i - 1];
-              break;
-            }
-          }
+          first_character = GRN_FALSE;
         }
       }
       grn_token_set_source_length(ctx, token, source_length);
-      tokenizer->source_offset += source_length - uncount_offset;
+      tokenizer->source_offset = next_offset;
     }
   }
 }

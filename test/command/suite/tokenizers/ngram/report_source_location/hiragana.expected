@@ -1,0 +1,45 @@
+tokenize   'TokenNgram("report_source_location", true)'   "あいうえお"   NormalizerAuto
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "あい",
+      "position": 0,
+      "force_prefix": false,
+      "source_offset": 0,
+      "source_length": 6
+    },
+    {
+      "value": "いう",
+      "position": 1,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 6
+    },
+    {
+      "value": "うえ",
+      "position": 2,
+      "force_prefix": false,
+      "source_offset": 6,
+      "source_length": 6
+    },
+    {
+      "value": "えお",
+      "position": 3,
+      "force_prefix": false,
+      "source_offset": 9,
+      "source_length": 6
+    },
+    {
+      "value": "お",
+      "position": 4,
+      "force_prefix": false,
+      "source_offset": 12,
+      "source_length": 3
+    }
+  ]
+]
