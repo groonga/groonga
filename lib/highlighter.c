@@ -75,6 +75,7 @@ struct _grn_highlighter {
   /* For patricia trie mode */
   struct {
     grn_obj *keywords;
+    grn_obj keyword_ids;
   } pat;
 };
 
@@ -116,6 +117,7 @@ grn_highlighter_open(grn_ctx *ctx)
   GRN_TEXT_INIT(&(highlighter->lexicon.candidates), 0);
 
   highlighter->pat.keywords = NULL;
+  GRN_RECORD_INIT(&(highlighter->pat.keyword_ids), GRN_OBJ_VECTOR, GRN_ID_NIL);
 
   GRN_API_RETURN(highlighter);
 }
@@ -130,6 +132,7 @@ grn_highlighter_close(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
+  GRN_OBJ_FIN(ctx, &(highlighter->pat.keyword_ids));
   if (highlighter->pat.keywords) {
     grn_obj_close(ctx, highlighter->pat.keywords);
   }
@@ -239,28 +242,36 @@ static void
 grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
                                       grn_highlighter *highlighter)
 {
+  grn_bool have_keywords = GRN_FALSE;
+  grn_obj *keyword_ids = &(highlighter->pat.keyword_ids);
+
   if (highlighter->pat.keywords) {
-    grn_obj_close(ctx, highlighter->pat.keywords);
+    /* TODO: It may be better that we remove all existing records here
+     * for many keywords case. */
+    have_keywords = grn_table_size(ctx, highlighter->pat.keywords) > 0;
+  } else {
+    highlighter->pat.keywords =
+      grn_table_create(ctx,
+                       NULL, 0,
+                       NULL,
+                       GRN_OBJ_TABLE_PAT_KEY,
+                       grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
+                       NULL);
+    if (!highlighter->pat.keywords) {
+      grn_rc rc = ctx->rc;
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_UNKNOWN_ERROR;
+      }
+      ERR(rc,
+          "[highlighter][prepare][no-lexicon] "
+          "failed to create an internal patricia trie: %s",
+          ctx->errbuf);
+      return;
+    }
+    keyword_ids->header.domain = grn_obj_id(ctx, highlighter->pat.keywords);
   }
 
-  highlighter->pat.keywords =
-    grn_table_create(ctx,
-                     NULL, 0,
-                     NULL,
-                     GRN_OBJ_TABLE_PAT_KEY,
-                     grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
-                     NULL);
-  if (!highlighter->pat.keywords) {
-    grn_rc rc = ctx->rc;
-    if (rc == GRN_SUCCESS) {
-      rc = GRN_UNKNOWN_ERROR;
-    }
-    ERR(rc,
-        "[highlighter][prepare][no-lexicon] "
-        "failed to create an internal patricia trie: %s",
-        ctx->errbuf);
-    return;
-  }
+  GRN_BULK_REWIND(keyword_ids);
 
   grn_obj_set_info(ctx,
                    highlighter->pat.keywords,
@@ -274,6 +285,7 @@ grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
     for (i = 0; i < n; i++) {
       const char *keyword;
       unsigned int keyword_size;
+      grn_id id;
 
       keyword_size = grn_vector_get_element(ctx,
                                             &(highlighter->raw_keywords),
@@ -281,11 +293,68 @@ grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
                                             &keyword,
                                             NULL,
                                             NULL);
-      grn_table_add(ctx,
-                    highlighter->pat.keywords,
-                    keyword,
-                    keyword_size,
-                    NULL);
+      id = grn_table_add(ctx,
+                         highlighter->pat.keywords,
+                         keyword,
+                         keyword_size,
+                         NULL);
+      if (!have_keywords) {
+        continue;
+      }
+      if (id == GRN_ID_NIL) {
+        continue;
+      }
+      GRN_RECORD_PUT(ctx, keyword_ids, id);
+    }
+  }
+
+  {
+    size_t i, n;
+    grn_table_cursor *cursor;
+
+    n = GRN_BULK_VSIZE(keyword_ids) / sizeof(grn_id);
+    if (n == 0) {
+      return;
+    }
+
+    cursor = grn_table_cursor_open(ctx,
+                                   highlighter->pat.keywords,
+                                   NULL, 0,
+                                   NULL, 0,
+                                   0, -1, 0);
+    if (!cursor) {
+      grn_rc rc = ctx->rc;
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_UNKNOWN_ERROR;
+      }
+      ERR(rc,
+          "[highlighter][prepare][no-lexicon] "
+          "failed to create a cursor for internal patricia trie: %s",
+          ctx->errbuf);
+      return;
+    }
+
+    for (i = 0; i < n; i++) {
+      grn_id id;
+
+      while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+        size_t i;
+        grn_bool specified = GRN_FALSE;
+
+        for (i = 0; i < n; i++) {
+          if (id == GRN_RECORD_VALUE_AT(keyword_ids, i)) {
+            specified = GRN_TRUE;
+            break;
+          }
+        }
+
+        if (specified) {
+          continue;
+        }
+
+        grn_table_cursor_delete(ctx, cursor);
+      }
+      grn_table_cursor_close(ctx, cursor);
     }
   }
 }
