@@ -1,0 +1,4 @@
+normalize \
+  'NormalizerNFKC100("unify_katakana_bu_sound", true)' \
+  "ヴァヴィヴヴェヴォヴ" \
+  WITH_TYPES

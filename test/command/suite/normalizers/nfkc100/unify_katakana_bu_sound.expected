@@ -1,0 +1,22 @@
+normalize   'NormalizerNFKC100("unify_katakana_bu_sound", true)'   "ヴァヴィヴヴェヴォヴ"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "ブブブブブブ",
+    "types": [
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana"
+    ],
+    "checks": [
+
+    ]
+  }
+]

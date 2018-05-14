@@ -628,6 +628,7 @@ typedef struct {
   grn_bool unify_hyphen_and_prolonged_sound_mark;
   grn_bool unify_middle_dot;
   grn_bool unify_katakana_v_sounds;
+  grn_bool unify_katakana_bu_sound;
 } grn_utf8_normalize_options;
 
 static void
@@ -647,6 +648,7 @@ utf8_normalize_options_init(grn_utf8_normalize_options *options,
   options->unify_hyphen_and_prolonged_sound_mark = GRN_FALSE;
   options->unify_middle_dot = GRN_FALSE;
   options->unify_katakana_v_sounds = GRN_FALSE;
+  options->unify_katakana_bu_sound = GRN_FALSE;
 }
 
 grn_inline static const unsigned char *
@@ -1034,6 +1036,47 @@ utf8_normalize_unify_katakana_v_sounds(const unsigned char *utf8_char,
   return GRN_FALSE;
 }
 
+grn_inline static grn_bool
+utf8_normalize_unify_katakana_bu_sound(const unsigned char *utf8_char,
+                                       size_t length,
+                                       unsigned char *previous_normalized,
+                                       unsigned char *normalized)
+{
+  if (!previous_normalized) {
+    return GRN_FALSE;
+  }
+
+  {
+    size_t previous_length = normalized - previous_normalized;
+
+    /* U+30F4 KATAKANA LETTER VU */
+    if (previous_length == 3 &&
+        previous_normalized[0] == 0xe3 &&
+        previous_normalized[1] == 0x83 &&
+        previous_normalized[2] == 0xb4) {
+      /* U+30D6 KATAKANA LETTER BU */
+      previous_normalized[2] = 0x96;
+      if (length == 3 &&
+          utf8_char[0] == 0xe3 &&
+          utf8_char[1] == 0x82 &&
+          /* U+30A1 KATAKANA LETTER SMALL A */
+          /* U+30A3 KATAKANA LETTER SMALL I */
+          /* U+30A5 KATAKANA LETTER SMALL U */
+          /* U+30A7 KATAKANA LETTER SMALL E */
+          /* U+30A9 KATAKANA LETTER SMALL O */
+          (utf8_char[2] == 0xa1 ||
+           utf8_char[2] == 0xa3 ||
+           utf8_char[2] == 0xa5 ||
+           utf8_char[2] == 0xa7 ||
+           utf8_char[2] == 0xa9)) {
+        return GRN_TRUE;
+      }
+    }
+  }
+
+  return GRN_FALSE;
+}
+
 grn_inline static grn_obj *
 utf8_normalize(grn_ctx *ctx,
                grn_string *nstr,
@@ -1253,6 +1296,12 @@ utf8_normalize(grn_ctx *ctx,
             }
           }
 
+          if (options->unify_katakana_bu_sound) {
+            if (utf8_normalize_unify_katakana_bu_sound(p, lp, d_, d)) {
+              lp = 0;
+            }
+          }
+
           grn_memcpy(d, p, lp);
           p = p_original;
         }
@@ -1280,6 +1329,9 @@ utf8_normalize(grn_ctx *ctx,
   if (cp) { *cp = GRN_CHAR_NULL; }
   if (options->unify_katakana_v_sounds) {
     utf8_normalize_unify_katakana_v_sounds(NULL, 0, d_, d);
+  }
+  if (options->unify_katakana_bu_sound) {
+    utf8_normalize_unify_katakana_bu_sound(NULL, 0, d_, d);
   }
   *d = '\0';
   nstr->n_characters = length;
@@ -1777,6 +1829,12 @@ nfkc100_open_options(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->unify_katakana_v_sounds);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_bu_sound")) {
+      options->unify_katakana_bu_sound =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->unify_katakana_bu_sound);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
