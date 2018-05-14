@@ -627,6 +627,7 @@ typedef struct {
   grn_bool unify_prolonged_sound_mark;
   grn_bool unify_hyphen_and_prolonged_sound_mark;
   grn_bool unify_middle_dot;
+  grn_bool unify_katakana_v_sounds;
 } grn_utf8_normalize_options;
 
 static void
@@ -645,6 +646,7 @@ utf8_normalize_options_init(grn_utf8_normalize_options *options,
   options->unify_prolonged_sound_mark = GRN_FALSE;
   options->unify_hyphen_and_prolonged_sound_mark = GRN_FALSE;
   options->unify_middle_dot = GRN_FALSE;
+  options->unify_katakana_v_sounds = GRN_FALSE;
 }
 
 grn_inline static const unsigned char *
@@ -983,6 +985,55 @@ utf8_normalize_is_middle_dot_family(const unsigned char *utf8_char,
   return GRN_FALSE;
 }
 
+grn_inline static grn_bool
+utf8_normalize_unify_katakana_v_sounds(const unsigned char *utf8_char,
+                                       size_t length,
+                                       unsigned char *previous_normalized,
+                                       unsigned char *normalized)
+{
+  if (!previous_normalized) {
+    return GRN_FALSE;
+  }
+
+  {
+    size_t previous_length = normalized - previous_normalized;
+
+    /* U+30F4 KATAKANA LETTER VU */
+    if (previous_length == 3 &&
+        previous_normalized[0] == 0xe3 &&
+        previous_normalized[1] == 0x83 &&
+        previous_normalized[2] == 0xb4) {
+      if (length == 3 && utf8_char[0] == 0xe3 && utf8_char[1] == 0x82) {
+        if (utf8_char[2] == 0xa1) {        /* U+30A1 KATAKANA LETTER SMALL A */
+          /* U+30D0 KATAKANA LETTER BA */
+          previous_normalized[2] = 0x90;
+          return GRN_TRUE;
+        } else if (utf8_char[2] == 0xa3) { /* U+30A3 KATAKANA LETTER SMALL I */
+          /* U+30D3 KATAKANA LETTER BI */
+          previous_normalized[2] = 0x93;
+          return GRN_TRUE;
+        } else if (utf8_char[2] == 0xa5) { /* U+30A5 KATAKANA LETTER SMALL U */
+          /* U+30D6 KATAKANA LETTER BU */
+          previous_normalized[2] = 0x96;
+          return GRN_TRUE;
+        } else if (utf8_char[2] == 0xa7) { /* U+30A7 KATAKANA LETTER SMALL E */
+          /* U+30D9 KATAKANA LETTER BE */
+          previous_normalized[2] = 0x99;
+          return GRN_TRUE;
+        } else if (utf8_char[2] == 0xa9) { /* U+30A8 KATAKANA LETTER SMALL O */
+          /* U+30DC KATAKANA LETTER BO */
+          previous_normalized[2] = 0x9c;
+          return GRN_TRUE;
+        }
+      }
+      /* U+30D6 KATAKANA LETTER BU */
+      previous_normalized[2] = 0x96;
+    }
+  }
+
+  return GRN_FALSE;
+}
+
 grn_inline static grn_obj *
 utf8_normalize(grn_ctx *ctx,
                grn_string *nstr,
@@ -1196,29 +1247,40 @@ utf8_normalize(grn_ctx *ctx,
             }
           }
 
+          if (options->unify_katakana_v_sounds) {
+            if (utf8_normalize_unify_katakana_v_sounds(p, lp, d_, d)) {
+              lp = 0;
+            }
+          }
+
           grn_memcpy(d, p, lp);
           p = p_original;
         }
         d_ = d;
-        d += lp;
-        length++;
-        if (cp) { *cp++ = char_type; }
-        if (ch) {
-          size_t i;
-          if (s_ == s + ls) {
-            *ch++ = -1;
-          } else {
-            *ch++ = (int16_t)(s + ls - s_);
-            s__ = s_;
-            s_ = s + ls;
+        if (lp > 0) {
+          d += lp;
+          length++;
+          if (cp) { *cp++ = char_type; }
+          if (ch) {
+            size_t i;
+            if (s_ == s + ls) {
+              *ch++ = -1;
+            } else {
+              *ch++ = (int16_t)(s + ls - s_);
+              s__ = s_;
+              s_ = s + ls;
+            }
+            for (i = lp; i > 1; i--) { *ch++ = 0; }
           }
-          for (i = lp; i > 1; i--) { *ch++ = 0; }
         }
         lp = lp_original;
       }
     }
   }
   if (cp) { *cp = GRN_CHAR_NULL; }
+  if (options->unify_katakana_v_sounds) {
+    utf8_normalize_unify_katakana_v_sounds(NULL, 0, d_, d);
+  }
   *d = '\0';
   nstr->n_characters = length;
   nstr->normalized_length_in_bytes = (size_t)(d - (unsigned char *)nstr->normalized);
@@ -1709,6 +1771,12 @@ nfkc100_open_options(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->unify_middle_dot);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_v_sounds")) {
+      options->unify_katakana_v_sounds =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->unify_katakana_v_sounds);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
