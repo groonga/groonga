@@ -1767,7 +1767,7 @@ selector_to_function_data_init(grn_ctx *ctx,
   }
 
   data->records = grn_table_create(ctx, NULL, 0, NULL,
-                                   GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                   GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                    data->table, NULL);
   if (!data->records) {
     return GRN_FALSE;
@@ -2165,7 +2165,7 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
     grn_obj *base_res = NULL;
 
     base_res = grn_table_create(ctx, NULL, 0, NULL,
-                                GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                 scope_domain, NULL);
     grn_table_select(ctx, scope_domain, sub_filter, base_res, GRN_OP_OR);
     if (scope->header.type == GRN_ACCESSOR) {
@@ -3224,7 +3224,7 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
   }
 
   res = grn_table_create(ctx, NULL, 0, NULL,
-                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                         GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                          table, NULL);
   if (!res) {
     ERR(GRN_INVALID_ARGUMENT,
@@ -3779,7 +3779,7 @@ selector_prefix_rk_search(grn_ctx *ctx,
           base_table = a->obj;
         }
         base_res = grn_table_create(ctx, NULL, 0, NULL,
-                                    GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                    GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                     base_table, NULL);
       }
     }

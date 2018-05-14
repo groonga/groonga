@@ -1389,7 +1389,7 @@ grn_table_create_for_group(grn_ctx *ctx, const char *name,
     key_type = grn_ctx_at(ctx, grn_obj_get_range(ctx, group_key));
     if (key_type) {
       res = grn_table_create_with_max_n_subrecs(ctx, name, name_size, path,
-                                                GRN_TABLE_HASH_KEY|
+                                                GRN_OBJ_TABLE_HASH_KEY|
                                                 GRN_OBJ_WITH_SUBREC|
                                                 GRN_OBJ_UNIT_USERDEF_DOCUMENT,
                                                 key_type, value_type,
@@ -1398,7 +1398,7 @@ grn_table_create_for_group(grn_ctx *ctx, const char *name,
     }
   } else {
     res = grn_table_create_with_max_n_subrecs(ctx, name, name_size, path,
-                                              GRN_TABLE_HASH_KEY|
+                                              GRN_OBJ_TABLE_HASH_KEY|
                                               GRN_OBJ_KEY_VAR_SIZE|
                                               GRN_OBJ_WITH_SUBREC|
                                               GRN_OBJ_UNIT_USERDEF_DOCUMENT,
@@ -3290,7 +3290,7 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
     grn_rc rc;
     grn_obj *next_res_domain = grn_ctx_at(ctx, next_res_domain_id);
     *next_res = grn_table_create(ctx, NULL, 0, NULL,
-                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                 GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                  next_res_domain, NULL);
     rc = ctx->rc;
     grn_obj_unlink(ctx, next_res_domain);
@@ -3361,7 +3361,7 @@ grn_accessor_resolve_one_table(grn_ctx *ctx, grn_accessor *accessor,
 
   table = accessor->obj;
   *next_res = grn_table_create(ctx, NULL, 0, NULL,
-                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                               GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                table, NULL);
   if (!*next_res) {
     return ctx->rc;
@@ -3471,7 +3471,7 @@ grn_accessor_resolve_one_data_column(grn_ctx *ctx, grn_accessor *accessor,
     grn_rc rc;
     grn_obj *next_res_domain = grn_ctx_at(ctx, next_res_domain_id);
     *next_res = grn_table_create(ctx, NULL, 0, NULL,
-                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                 GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                  next_res_domain, NULL);
     rc = ctx->rc;
     grn_obj_unlink(ctx, next_res_domain);
@@ -3644,7 +3644,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       grn_obj *base_res;
       grn_obj *range = grn_ctx_at(ctx, DB_OBJ(index)->range);
       base_res = grn_table_create(ctx, NULL, 0, NULL,
-                                  GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                  GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                   range,
                                   NULL);
       rc = ctx->rc;
@@ -4540,7 +4540,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
         grn_obj *key_type = NULL;
         uint32_t additional_value_size;
 
-        flags = GRN_TABLE_HASH_KEY|
+        flags = GRN_OBJ_TABLE_HASH_KEY|
           GRN_OBJ_WITH_SUBREC|
           GRN_OBJ_UNIT_USERDEF_DOCUMENT;
         if (group_by_all_records) {

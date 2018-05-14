@@ -6522,7 +6522,7 @@ grn_table_select_index_call_selector(grn_ctx *ctx,
             base_index = index_data.index;
           }
           base_res = grn_table_create(ctx, NULL, 0, NULL,
-                                      GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                      GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                       base_table, NULL);
         }
       }
@@ -6822,7 +6822,7 @@ grn_table_select_index_range_accessor(grn_ctx *ctx,
       index = last_obj;
       range = last_obj;
       base_res = grn_table_create(ctx, NULL, 0, NULL,
-                                  GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                  GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                   range,
                                   NULL);
       if (!base_res) {
@@ -6840,7 +6840,7 @@ grn_table_select_index_range_accessor(grn_ctx *ctx,
 
       range = grn_ctx_at(ctx, DB_OBJ(index)->range);
       base_res = grn_table_create(ctx, NULL, 0, NULL,
-                                  GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                  GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                   range,
                                   NULL);
       if (!base_res) {
@@ -7154,7 +7154,8 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     }
   } else {
     if (!(res = grn_table_create(ctx, NULL, 0, NULL,
-                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
+                                 GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                 table, NULL))) {
       return NULL;
     }
     res_created = GRN_TRUE;
@@ -7194,7 +7195,8 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
           if (si->flags & SCAN_PUSH) {
             grn_obj *res_ = NULL;
             res_ = grn_table_create(ctx, NULL, 0, NULL,
-                                    GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL);
+                                    GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                    table, NULL);
             if (!res_) {
               break;
             }

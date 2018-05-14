@@ -1301,7 +1301,7 @@ grn_select_create_all_selected_result_table(grn_ctx *ctx,
   grn_posting posting;
 
   result = grn_table_create(ctx, NULL, 0, NULL,
-                            GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                            GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                             table, NULL);
   if (!result) {
     return NULL;
