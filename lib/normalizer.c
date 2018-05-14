@@ -626,6 +626,7 @@ typedef struct {
   grn_bool unify_hyphen;
   grn_bool unify_prolonged_sound_mark;
   grn_bool unify_hyphen_and_prolonged_sound_mark;
+  grn_bool unify_middle_dot;
 } grn_utf8_normalize_options;
 
 static void
@@ -643,6 +644,7 @@ utf8_normalize_options_init(grn_utf8_normalize_options *options,
   options->unify_hyphen = GRN_FALSE;
   options->unify_prolonged_sound_mark = GRN_FALSE;
   options->unify_hyphen_and_prolonged_sound_mark = GRN_FALSE;
+  options->unify_middle_dot = GRN_FALSE;
 }
 
 grn_inline static const unsigned char *
@@ -941,6 +943,46 @@ utf8_normalize_is_prolonged_sound_mark_famity(const unsigned char *utf8_char,
   return GRN_FALSE;
 }
 
+grn_inline static grn_bool
+utf8_normalize_is_middle_dot_family(const unsigned char *utf8_char,
+                                    size_t length)
+{
+  if (length == 3) {
+    if (utf8_char[0] == 0xe1) {
+      if (utf8_char[1] == 0x90 && utf8_char[2] == 0xa7) {
+        /* U+1427 CANADIAN SYLLABICS FINAL MIDDLE DOT */
+        return GRN_TRUE;
+      }
+    } else if (utf8_char[0] == 0xe2) {
+      if (utf8_char[1] == 0x80 && utf8_char[2] == 0xa2) {
+        /* U+2022 BULLET */
+        return GRN_TRUE;
+      } else if (utf8_char[1] == 0x88 && utf8_char[2] == 0x99) {
+        /* U+2219 BULLET OPERATOR */
+        return GRN_TRUE;
+      } else if (utf8_char[1] == 0x8b && utf8_char[2] == 0x85) {
+        /* U+22C5 DOT OPERATOR */
+        return GRN_TRUE;
+      } else if (utf8_char[1] == 0xb8 && utf8_char[2] == 0xb1) {
+        /* U+2E31 WORD SEPARATOR MIDDLE DOT */
+        return GRN_TRUE;
+      }
+    } else if (utf8_char[0] == 0xe3) {
+      if (utf8_char[1] == 0x83 && utf8_char[2] == 0xbb) {
+        /* U+30FB KATAKANA MIDDLE DOT */
+        return GRN_TRUE;
+      }
+    } else if (utf8_char[0] == 0xef) {
+      if (utf8_char[1] == 0xbd && utf8_char[2] == 0xa5) {
+        /* U+FF65 HALFWIDTH KATAKANA MIDDLE DOT */
+        return GRN_TRUE;
+      }
+    }
+  }
+
+  return GRN_FALSE;
+}
+
 grn_inline static grn_obj *
 utf8_normalize(grn_ctx *ctx,
                grn_string *nstr,
@@ -1073,6 +1115,8 @@ utf8_normalize(grn_ctx *ctx,
           /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
           const unsigned char unified_prolonged_sound_mark[] =
             {0xe3, 0x83, 0xbc};
+          /* U+00B7 MIDDLE DOT */
+          const unsigned char unified_middle_dot[] = {0xc2, 0xb7};
 
           if (options->unify_kana &&
               char_type == GRN_CHAR_KATAKANA &&
@@ -1140,6 +1184,14 @@ utf8_normalize(grn_ctx *ctx,
                 utf8_normalize_is_prolonged_sound_mark_famity(p, lp)) {
               p = unified_hyphen;
               lp = sizeof(unified_hyphen);
+              char_type = GRN_CHAR_SYMBOL;
+            }
+          }
+
+          if (options->unify_middle_dot) {
+            if (utf8_normalize_is_middle_dot_family(p, lp)) {
+              p = unified_middle_dot;
+              lp = sizeof(unified_middle_dot);
               char_type = GRN_CHAR_SYMBOL;
             }
           }
@@ -1651,6 +1703,12 @@ nfkc100_open_options(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->unify_hyphen_and_prolonged_sound_mark);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_middle_dot")) {
+      options->unify_middle_dot =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->unify_middle_dot);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
