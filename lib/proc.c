@@ -2122,19 +2122,17 @@ sub_filter_pre_filter_accessor(grn_ctx *ctx,
                                        GRN_RECORD_VALUE(&value),
                                        base_res);
       } else {
-        grn_posting posting;
-        memset(&posting, 0, sizeof(grn_posting));
+        grn_posting posting = {0};
         posting.rid = GRN_RECORD_VALUE(&value);
         grn_ii_posting_add(ctx, &posting, (grn_hash *)base_res, GRN_OP_OR);
       }
     }
     GRN_OBJ_FIN(ctx, &value);
   } else if (grn_obj_is_vector_column(ctx, accessor->obj)) {
-    grn_posting posting;
+    grn_posting posting = {0};
     grn_obj values;
     unsigned int i, n;
 
-    memset(&posting, 0, sizeof(grn_posting));
     GRN_RECORD_INIT(&values, GRN_OBJ_VECTOR, DB_OBJ(accessor->obj)->range);
     grn_obj_get_value(ctx, accessor->obj, id, &values);
     n = grn_vector_size(ctx, &values);
@@ -2143,12 +2141,19 @@ sub_filter_pre_filter_accessor(grn_ctx *ctx,
                                             &values,
                                             i,
                                             &(posting.weight));
-      grn_ii_posting_add(ctx, &posting, (grn_hash *)base_res, GRN_OP_OR);
+      if (accessor->next) {
+        sub_filter_pre_filter_accessor(ctx,
+                                       accessor->next,
+                                       posting.rid,
+                                       base_res);
+      } else {
+        grn_ii_posting_add(ctx, &posting, (grn_hash *)base_res, GRN_OP_OR);
+      }
     }
     GRN_OBJ_FIN(ctx, &values);
   } else if (grn_obj_is_index_column(ctx, accessor->obj)) {
     if (accessor->next) {
-      /* TODO */
+      /* TODO: Report not supported. */
     } else {
       grn_ii_at(ctx,
                 (grn_ii *)(accessor->obj),
@@ -2244,7 +2249,7 @@ sub_filter_pre_filter(grn_ctx *ctx,
       grn_table_cursor_get_key(ctx, cursor, (void **)&matched_id);
       sub_filter_pre_filter_accessor(ctx,
                                      (grn_accessor *)scope,
-                                     id,
+                                     *matched_id,
                                      base_res);
     } GRN_TABLE_EACH_END(ctx, cursor);
     grn_report_accessor(ctx,

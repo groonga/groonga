@@ -1,0 +1,47 @@
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users birthday COLUMN_SCALAR Time
+
+table_create Files TABLE_PAT_KEY ShortText
+column_create Files author COLUMN_SCALAR Users
+
+column_create Users files_author_index COLUMN_INDEX Files author
+
+
+table_create Groups TABLE_PAT_KEY ShortText
+column_create Groups users COLUMN_VECTOR Users
+
+column_create Users groups_index COLUMN_INDEX Groups users
+
+
+load --table Users
+[
+{"_key": "Alice",  "birthday": "1992-02-09 00:00:00"},
+{"_key": "Bob",    "birthday": "1988-01-04 00:00:00"},
+{"_key": "Carlos", "birthday": "1982-12-29 00:00:00"}
+]
+
+load --table Files
+[
+{"_key": "include/groonga.h", "author": "Alice"},
+{"_key": "src/groonga.c",     "author": "Bob"},
+{"_key": "lib/groonga.rb",    "author": "Carlos"},
+{"_key": "README.textile",    "author": "Alice"},
+{"_key": "ha_mroonga.cc",     "author": "Bob"},
+{"_key": "ha_mroonga.hpp",    "author": "Carlos"}
+]
+
+load --table Groups
+[
+{"_key": "group1", "users": ["Alice"]},
+{"_key": "group2", "users": ["Bob"]},
+{"_key": "group3", "users": ["Alice", "Carlos"]}
+]
+
+#@add-important-log-levels info
+log_level --level info
+select Groups \
+  --filter '_key == "group3" && \
+            sub_filter(users.files_author_index, "_key @^ \\"ha_\\"")' \
+  --output_columns '_key, users'
+log_level --level notice
+#@remove-important-log-levels info
