@@ -1,0 +1,86 @@
+table_create Users TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users birthday COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Files TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Files authors COLUMN_VECTOR Users
+[[0,0.0,0.0],true]
+table_create Packages TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Packages files COLUMN_VECTOR Files
+[[0,0.0,0.0],true]
+column_create Users files_authors_index COLUMN_INDEX Files authors
+[[0,0.0,0.0],true]
+column_create Files packages_files_index COLUMN_INDEX Packages files
+[[0,0.0,0.0],true]
+table_create Birthdays TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Birthdays users_birthday COLUMN_INDEX Users birthday
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "Alice",  "birthday": "1992-02-09 00:00:00"},
+{"_key": "Bob",    "birthday": "1988-01-04 00:00:00"},
+{"_key": "Carlos", "birthday": "1982-12-29 00:00:00"},
+{"_key": "David",  "birthday": "1981-12-29 00:00:00"},
+{"_key": "Elvis",  "birthday": "1935-01-08 00:00:00"},
+{"_key": "Frank",  "birthday": "1990-12-29 00:00:00"}
+]
+[[0,0.0,0.0],6]
+load --table Files
+[
+{"_key": "include/groonga.h", "authors": ["Alice", "Bob"]},
+{"_key": "src/groonga.c",     "authors": ["Bob", "Carlos", "David"]},
+{"_key": "lib/groonga.rb",    "authors": ["Elvis"]},
+{"_key": "README.textile",    "authors": []},
+{"_key": "ha_mroonga.cc",     "authors": ["Frank", "Alice"]},
+{"_key": "ha_mroonga.hpp",    "authors": ["Bob"]}
+]
+[[0,0.0,0.0],6]
+load --table Packages
+[
+{"_key": "groonga", "files": ["include/groonga.h", "src/groonga.c"]},
+{"_key": "rroonga", "files": ["lib/groonga.rb", "README.textile"]},
+{"_key": "mroonga", "files": ["ha_mroonga.cc", "ha_mroonga.hpp"]}
+]
+[[0,0.0,0.0],3]
+select Packages   --filter 'sub_filter(files.authors, "birthday >= \\"1988-01-04 00:00:00\\" && birthday < \\"1992-02-09 00:00:00\\"")'   --output_columns '_key, files, files.author.birthday'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "files",
+          "Files"
+        ]
+      ],
+      [
+        "groonga",
+        [
+          "include/groonga.h",
+          "src/groonga.c"
+        ]
+      ],
+      [
+        "mroonga",
+        [
+          "ha_mroonga.cc",
+          "ha_mroonga.hpp"
+        ]
+      ]
+    ]
+  ]
+]
