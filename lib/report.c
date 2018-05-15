@@ -136,3 +136,41 @@ grn_report_column(grn_ctx *ctx,
           GRN_TEXT_VALUE(&description));
   GRN_OBJ_FIN(ctx, &description);
 }
+
+void
+grn_report_accessor(grn_ctx *ctx,
+                    const char *action,
+                    const char *tag,
+                    grn_obj *accessor)
+{
+  grn_obj description;
+  grn_obj *range;
+
+  if (!grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
+    return;
+  }
+
+  GRN_TEXT_INIT(&description, 0);
+  grn_accessor_name(ctx, accessor, &description);
+  range = grn_ctx_at(ctx, grn_obj_get_range(ctx, accessor));
+  if (range) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+
+    name_size = grn_obj_name(ctx, range, name, GRN_TABLE_MAX_KEY_SIZE);
+    GRN_TEXT_PUTS(ctx, &description, " -> ");
+    if (name_size == 0) {
+      GRN_TEXT_PUTS(ctx, &description, "(temporary)");
+    } else {
+      GRN_TEXT_PUTS(ctx, &description, "<");
+      GRN_TEXT_PUT(ctx, &description, name, name_size);
+      GRN_TEXT_PUTS(ctx, &description, ">");
+    }
+  }
+  GRN_LOG(ctx, GRN_REPORT_INDEX_LOG_LEVEL,
+          "%s[accessor]%s %.*s",
+          action, tag,
+          (int)GRN_TEXT_LEN(&description),
+          GRN_TEXT_VALUE(&description));
+  GRN_OBJ_FIN(ctx, &description);
+}

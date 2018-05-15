@@ -47,6 +47,11 @@ void grn_report_column(grn_ctx *ctx,
                        const char *tag,
                        grn_obj *column);
 
+void grn_report_accessor(grn_ctx *ctx,
+                         const char *action,
+                         const char *tag,
+                         grn_obj *accessor);
+
 #ifdef __cplusplus
 }
 #endif
