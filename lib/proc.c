@@ -2117,7 +2117,30 @@ sub_filter_pre_filter(grn_ctx *ctx,
     return GRN_FALSE;
   }
 
-  if (grn_obj_is_vector_column(ctx, scope)) {
+  if (grn_obj_is_scalar_column(ctx, scope)) {
+    grn_obj value;
+
+    memset(&posting, 0, sizeof(grn_posting));
+    GRN_RECORD_INIT(&value, 0, grn_obj_get_range(ctx, scope));
+    GRN_TABLE_EACH_BEGIN(ctx, res, cursor, id) {
+      grn_id *matched_id;
+
+      grn_table_cursor_get_key(ctx, cursor, (void **)&matched_id);
+      GRN_BULK_REWIND(&value);
+      grn_obj_get_value(ctx, scope, *matched_id, &value);
+      if (GRN_BULK_VSIZE(&value) > 0) {
+        posting.rid = GRN_RECORD_VALUE(&value);
+        grn_ii_posting_add(ctx, &posting, (grn_hash *)base_res, GRN_OP_OR);
+      }
+    } GRN_TABLE_EACH_END(ctx, cursor);
+    GRN_OBJ_FIN(ctx, &value);
+
+    grn_report_column(ctx,
+                      "[sub_filter][pre-filter]",
+                      "[scalar]",
+                      scope);
+    return GRN_TRUE;
+  } else if (grn_obj_is_vector_column(ctx, scope)) {
     grn_obj values;
 
     memset(&posting, 0, sizeof(grn_posting));
@@ -2143,29 +2166,6 @@ sub_filter_pre_filter(grn_ctx *ctx,
     grn_report_column(ctx,
                       "[sub_filter][pre-filter]",
                       "[vector]",
-                      scope);
-    return GRN_TRUE;
-  } else if (grn_obj_is_scalar_column(ctx, scope)) {
-    grn_obj value;
-
-    memset(&posting, 0, sizeof(grn_posting));
-    GRN_RECORD_INIT(&value, 0, grn_obj_get_range(ctx, scope));
-    GRN_TABLE_EACH_BEGIN(ctx, res, cursor, id) {
-      grn_id *matched_id;
-
-      grn_table_cursor_get_key(ctx, cursor, (void **)&matched_id);
-      GRN_BULK_REWIND(&value);
-      grn_obj_get_value(ctx, scope, *matched_id, &value);
-      if (GRN_BULK_VSIZE(&value) > 0) {
-        posting.rid = GRN_RECORD_VALUE(&value);
-        grn_ii_posting_add(ctx, &posting, (grn_hash *)base_res, GRN_OP_OR);
-      }
-    } GRN_TABLE_EACH_END(ctx, cursor);
-    GRN_OBJ_FIN(ctx, &value);
-
-    grn_report_column(ctx,
-                      "[sub_filter][pre-filter]",
-                      "[scalar]",
                       scope);
     return GRN_TRUE;
   } else {
