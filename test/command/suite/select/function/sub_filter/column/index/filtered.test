@@ -1,0 +1,40 @@
+table_create Articles TABLE_HASH_KEY ShortText
+column_create Articles content COLUMN_SCALAR Text
+
+table_create Comments TABLE_HASH_KEY ShortText
+column_create Comments content COLUMN_SCALAR ShortText
+column_create Comments article COLUMN_SCALAR Articles
+
+column_create Articles comment_index COLUMN_INDEX Comments article
+
+table_create Lexicon TABLE_PAT_KEY|KEY_NORMALIZE ShortText \
+  --default_tokenizer TokenBigram
+column_create Lexicon comments_content COLUMN_INDEX|WITH_POSITION \
+  Comments content
+
+
+load --table Articles
+[
+{"_key": "article1", "content": "Groonga is fast!"},
+{"_key": "article2", "content": "Groonga is useful!"},
+{"_key": "article3", "content": "Mroonga is fast!"}
+]
+
+load --table Comments
+[
+{"_key": "comment1", "article": "article1", "content": "I'm using Groonga too!"},
+{"_key": "comment2", "article": "article3", "content": "I'm using Groonga and Mroonga!"},
+{"_key": "comment3", "article": "article1", "content": "I'm using Groonga too!"},
+{"_key": "comment4", "article": "article2", "content": "Good news!"},
+{"_key": "comment5", "article": "article3", "content": "Wow!"},
+{"_key": "comment6", "article": "article1", "content": "Mroonga is also fast!"}
+]
+
+#@add-important-log-levels info
+log_level --level info
+select Articles \
+  --filter '_key == "article1" && \
+            sub_filter(comment_index, "content @ \\"Mroonga\\"")' \
+  --output_columns "_key, content"
+log_level --level notice
+#@remove-important-log-levels info

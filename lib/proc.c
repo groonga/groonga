@@ -2111,13 +2111,12 @@ sub_filter_pre_filter(grn_ctx *ctx,
                       grn_obj *scope,
                       grn_obj *base_res)
 {
-  grn_posting posting;
-
   if (grn_table_size(ctx, res) > grn_sub_filter_pre_filter_threshold) {
     return GRN_FALSE;
   }
 
   if (grn_obj_is_scalar_column(ctx, scope)) {
+    grn_posting posting;
     grn_obj value;
 
     memset(&posting, 0, sizeof(grn_posting));
@@ -2141,6 +2140,7 @@ sub_filter_pre_filter(grn_ctx *ctx,
                       scope);
     return GRN_TRUE;
   } else if (grn_obj_is_vector_column(ctx, scope)) {
+    grn_posting posting;
     grn_obj values;
 
     memset(&posting, 0, sizeof(grn_posting));
@@ -2166,6 +2166,22 @@ sub_filter_pre_filter(grn_ctx *ctx,
     grn_report_column(ctx,
                       "[sub_filter][pre-filter]",
                       "[vector]",
+                      scope);
+    return GRN_TRUE;
+  } else if (grn_obj_is_index_column(ctx, scope)) {
+    GRN_TABLE_EACH_BEGIN(ctx, res, cursor, id) {
+      grn_id *matched_id;
+      grn_table_cursor_get_key(ctx, cursor, (void **)&matched_id);
+      grn_ii_at(ctx,
+                (grn_ii *)scope,
+                *matched_id,
+                (grn_hash *)base_res,
+                GRN_OP_OR);
+    } GRN_TABLE_EACH_END(ctx, cursor);
+
+    grn_report_column(ctx,
+                      "[sub_filter][pre-filter]",
+                      "[index]",
                       scope);
     return GRN_TRUE;
   } else {

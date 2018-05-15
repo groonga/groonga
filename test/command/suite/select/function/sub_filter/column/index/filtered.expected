@@ -1,0 +1,74 @@
+table_create Articles TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Articles content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Comments TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Comments content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Comments article COLUMN_SCALAR Articles
+[[0,0.0,0.0],true]
+column_create Articles comment_index COLUMN_INDEX Comments article
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY|KEY_NORMALIZE ShortText   --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Lexicon comments_content COLUMN_INDEX|WITH_POSITION   Comments content
+[[0,0.0,0.0],true]
+load --table Articles
+[
+{"_key": "article1", "content": "Groonga is fast!"},
+{"_key": "article2", "content": "Groonga is useful!"},
+{"_key": "article3", "content": "Mroonga is fast!"}
+]
+[[0,0.0,0.0],3]
+load --table Comments
+[
+{"_key": "comment1", "article": "article1", "content": "I'm using Groonga too!"},
+{"_key": "comment2", "article": "article3", "content": "I'm using Groonga and Mroonga!"},
+{"_key": "comment3", "article": "article1", "content": "I'm using Groonga too!"},
+{"_key": "comment4", "article": "article2", "content": "Good news!"},
+{"_key": "comment5", "article": "article3", "content": "Wow!"},
+{"_key": "comment6", "article": "article1", "content": "Mroonga is also fast!"}
+]
+[[0,0.0,0.0],6]
+log_level --level info
+[[0,0.0,0.0],true]
+select Articles   --filter '_key == "article1" &&             sub_filter(comment_index, "content @ \\"Mroonga\\"")'   --output_columns "_key, content"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        "article1",
+        "Groonga is fast!"
+      ]
+    ]
+  ]
+]
+#|i| [table][select][index][equal][accessor][key] <Articles>
+#|i| [table][select][index][selector][no-index][sub_filter] <Articles>
+#|i| [sub_filter][pre-filter][column][index] <Articles.comment_index> -> <Comments>
+#|i| [object][search][index][key][exact] <Lexicon.comments_content>
+#|i| grn_ii_sel > (Mroonga)
+#|i| n=1 (Mroonga)
+#|i| exact: 3
+#|i| hits=3
+log_level --level notice
+[[0,0.0,0.0],true]
