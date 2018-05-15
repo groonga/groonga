@@ -200,7 +200,7 @@ command_table_create(grn_ctx *ctx,
   grn_obj *default_tokenizer_raw;
   grn_obj *normalizer_raw;
   grn_raw_string token_filters_raw;
-  grn_obj *table;
+  grn_obj *table = NULL;
   const char *rest;
   grn_table_flags flags;
 
