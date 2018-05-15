@@ -230,11 +230,17 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx,
       GRN_TEXT_PUT(ctx, token_id_chunk, &token_id, sizeof(grn_id));
     }
     grn_token_cursor_close(ctx, cursor);
-    grn_table_add(ctx,
-                  highlighter->lexicon.token_id_chunks,
-                  GRN_TEXT_VALUE(token_id_chunk),
-                  GRN_TEXT_LEN(token_id_chunk),
-                  NULL);
+    {
+      grn_encoding encoding = ctx->encoding;
+      /* token_id_chunk is a binary data */
+      ctx->encoding = GRN_ENC_NONE;
+      grn_table_add(ctx,
+                    highlighter->lexicon.token_id_chunks,
+                    GRN_TEXT_VALUE(token_id_chunk),
+                    GRN_TEXT_LEN(token_id_chunk),
+                    NULL);
+      ctx->encoding = encoding;
+    }
   }
 }
 
@@ -466,10 +472,16 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
     for (i = 0; i < n_token_ids; i++) {
       grn_id chunk_id;
 
-      chunk_id = grn_pat_lcp_search(ctx,
-                                    chunks,
-                                    raw_token_ids + i,
-                                    (n_token_ids - i) * sizeof(grn_id));
+      {
+        grn_encoding encoding = ctx->encoding;
+        /* token_id_chunk is a binary data */
+        ctx->encoding = GRN_ENC_NONE;
+        chunk_id = grn_pat_lcp_search(ctx,
+                                      chunks,
+                                      raw_token_ids + i,
+                                      (n_token_ids - i) * sizeof(grn_id));
+        ctx->encoding = encoding;
+      }
       if (chunk_id == GRN_ID_NIL) {
         continue;
       }
