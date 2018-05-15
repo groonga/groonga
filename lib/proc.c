@@ -27,6 +27,7 @@
 #include "grn_expr.h"
 #include "grn_cache.h"
 #include "grn_load.h"
+#include "grn_report.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -2140,6 +2141,11 @@ sub_filter_pre_filter(grn_ctx *ctx,
     }
   } GRN_TABLE_EACH_END(ctx, cursor);
   GRN_OBJ_FIN(ctx, &values);
+
+  grn_report_column(ctx,
+                    "[sub_filter][pre-filter]",
+                    "",
+                    scope);
 
   return GRN_TRUE;
 }

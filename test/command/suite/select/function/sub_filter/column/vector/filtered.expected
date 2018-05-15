@@ -29,6 +29,8 @@ load --table Packages
 {"_key": "mroonga", "files": ["ha_mroonga.cc", "ha_mroonga.hpp"]}
 ]
 [[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
 select Packages   --filter '_key == "rroonga" &&             sub_filter(files, "revision >= 10 && revision < 40")'   --output_columns '_key, files, files.revision'
 [
   [
@@ -69,3 +71,11 @@ select Packages   --filter '_key == "rroonga" &&             sub_filter(files, "
     ]
   ]
 ]
+#|i| [table][select][index][equal][accessor][key] <Packages>
+#|i| [table][select][index][selector][no-index][sub_filter] <Packages>
+#|i| [sub_filter][pre-filter][column] <Packages.files> -> <Files>
+#|i| [table][select][index][range] <Revisions.files_revision>
+#|i| [table][select][index][range] <Revisions.files_revision>
+#|i| [accessor][resolve][data-column][index] <Files.packages_files_index>
+log_level --level notice
+[[0,0.0,0.0],true]

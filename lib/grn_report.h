@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015-2016 Brazil
+  Copyright(C) 2015-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,11 @@ void grn_report_table(grn_ctx *ctx,
                       const char *action,
                       const char *tag,
                       grn_obj *table);
+
+void grn_report_column(grn_ctx *ctx,
+                       const char *action,
+                       const char *tag,
+                       grn_obj *column);
 
 #ifdef __cplusplus
 }

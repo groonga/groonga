@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015-2016 Brazil
+  Copyright(C) 2015-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -91,6 +91,46 @@ grn_report_table(grn_ctx *ctx,
   }
   GRN_LOG(ctx, GRN_REPORT_INDEX_LOG_LEVEL,
           "%s[table]%s %.*s",
+          action, tag,
+          (int)GRN_TEXT_LEN(&description),
+          GRN_TEXT_VALUE(&description));
+  GRN_OBJ_FIN(ctx, &description);
+}
+
+void
+grn_report_column(grn_ctx *ctx,
+                  const char *action,
+                  const char *tag,
+                  grn_obj *column)
+{
+  grn_obj description;
+  grn_obj *target;
+
+  if (!grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
+    return;
+  }
+
+  GRN_TEXT_INIT(&description, 0);
+  for (target = column;
+       target;
+       target = grn_ctx_at(ctx, grn_obj_get_range(ctx, target))) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+
+    name_size = grn_obj_name(ctx, target, name, GRN_TABLE_MAX_KEY_SIZE);
+    if (GRN_TEXT_LEN(&description) > 0) {
+      GRN_TEXT_PUTS(ctx, &description, " -> ");
+    }
+    if (name_size == 0) {
+      GRN_TEXT_PUTS(ctx, &description, "(temporary)");
+    } else {
+      GRN_TEXT_PUTS(ctx, &description, "<");
+      GRN_TEXT_PUT(ctx, &description, name, name_size);
+      GRN_TEXT_PUTS(ctx, &description, ">");
+    }
+  }
+  GRN_LOG(ctx, GRN_REPORT_INDEX_LOG_LEVEL,
+          "%s[column]%s %.*s",
           action, tag,
           (int)GRN_TEXT_LEN(&description),
           GRN_TEXT_VALUE(&description));
