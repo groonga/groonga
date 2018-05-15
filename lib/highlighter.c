@@ -767,6 +767,9 @@ grn_highlighter_add_keyword(grn_ctx *ctx,
                             const char *keyword,
                             int64_t keyword_length)
 {
+  unsigned int i, n_keywords;
+  grn_obj *raw_keywords = &(highlighter->raw_keywords);
+
   GRN_API_ENTER;
 
   if (keyword_length < 0) {
@@ -777,8 +780,25 @@ grn_highlighter_add_keyword(grn_ctx *ctx,
     goto exit;
   }
 
+  n_keywords = grn_vector_size(ctx, raw_keywords);
+  for (i = 0; i < n_keywords; i++) {
+    const char *existing_keyword;
+    unsigned int length;
+
+    length = grn_vector_get_element(ctx,
+                                    raw_keywords,
+                                    i,
+                                    &existing_keyword,
+                                    NULL,
+                                    NULL);
+    if (length == keyword_length &&
+        memcmp(keyword, existing_keyword, length) == 0) {
+      goto exit;
+    }
+  }
+
   grn_vector_add_element(ctx,
-                         &(highlighter->raw_keywords),
+                         raw_keywords,
                          keyword,
                          keyword_length,
                          0,
