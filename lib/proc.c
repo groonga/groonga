@@ -49,6 +49,7 @@ const char *grn_document_root = NULL;
 
 static double grn_between_too_many_index_match_ratio = 0.01;
 static double grn_in_values_too_many_index_match_ratio = 0.01;
+static unsigned int grn_sub_filter_pre_filter_threshold = 10;
 
 void
 grn_proc_init_from_env(void)
@@ -72,6 +73,17 @@ grn_proc_init_from_env(void)
     if (grn_in_values_too_many_index_match_ratio_env[0]) {
       grn_in_values_too_many_index_match_ratio =
         atof(grn_in_values_too_many_index_match_ratio_env);
+    }
+  }
+
+  {
+    char env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_SUB_FILTER_PRE_FILTER_THRESHOLD",
+               env,
+               GRN_ENV_BUFFER_SIZE);
+    if (env[0]) {
+      grn_sub_filter_pre_filter_threshold =
+        grn_atoui(env, env + strlen(env), NULL);
     }
   }
 }
@@ -2093,16 +2105,15 @@ selector_query(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 }
 
 static grn_bool
-sub_filter_restrict_base_res(grn_ctx *ctx,
-                             grn_obj *res,
-                             grn_obj *scope,
-                             grn_obj *base_res)
+sub_filter_pre_filter(grn_ctx *ctx,
+                      grn_obj *res,
+                      grn_obj *scope,
+                      grn_obj *base_res)
 {
   grn_posting posting;
   grn_obj values;
 
-  /* TODO: Cusotmizable */
-  if (grn_table_size(ctx, res) > 10) {
+  if (grn_table_size(ctx, res) > grn_sub_filter_pre_filter_threshold) {
     return GRN_FALSE;
   }
 
@@ -2209,8 +2220,7 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
     base_res = grn_table_create(ctx, NULL, 0, NULL,
                                 GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                 scope_domain, NULL);
-    if (op == GRN_OP_AND &&
-        sub_filter_restrict_base_res(ctx, res, scope, base_res)) {
+    if (op == GRN_OP_AND && sub_filter_pre_filter(ctx, res, scope, base_res)) {
       select_op = GRN_OP_AND;
     }
     grn_table_select(ctx, scope_domain, sub_filter, base_res, select_op);
