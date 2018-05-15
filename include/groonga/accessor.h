@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2012-2016 Brazil
+  Copyright(C) 2012-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,10 @@ GRN_API grn_rc grn_accessor_resolve(grn_ctx *ctx,
                                     grn_obj *base_res,
                                     grn_obj *res,
                                     grn_operator op);
+
+GRN_API grn_rc grn_accessor_name(grn_ctx *ctx,
+                                 grn_obj *accessor,
+                                 grn_obj *name);
 
 #ifdef __cplusplus
 }

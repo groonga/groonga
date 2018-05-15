@@ -1,4 +1,5 @@
 libgroonga_c_sources =				\
+	accessor.c				\
 	alloc.c					\
 	grn_alloc.h				\
 	cache.c					\
