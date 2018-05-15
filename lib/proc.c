@@ -2092,6 +2092,47 @@ selector_query(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   return run_query(ctx, table, nargs - 1, args + 1, res, op);
 }
 
+static grn_bool
+sub_filter_restrict_base_res(grn_ctx *ctx,
+                             grn_obj *res,
+                             grn_obj *scope,
+                             grn_obj *base_res)
+{
+  grn_posting posting;
+  grn_obj values;
+
+  /* TODO: Cusotmizable */
+  if (grn_table_size(ctx, res) > 10) {
+    return GRN_FALSE;
+  }
+
+  if (!grn_obj_is_vector_column(ctx, scope)) {
+    return GRN_FALSE;
+  }
+
+  memset(&posting, 0, sizeof(grn_posting));
+  GRN_VOID_INIT(&values);
+  GRN_TABLE_EACH_BEGIN(ctx, res, cursor, id) {
+    grn_id *matched_id;
+    unsigned int i, n;
+
+    grn_table_cursor_get_key(ctx, cursor, (void **)&matched_id);
+    GRN_BULK_REWIND(&values);
+    grn_obj_get_value(ctx, scope, *matched_id, &values);
+    n = grn_vector_size(ctx, &values);
+    for (i = 0; i < n; i++) {
+      posting.rid = grn_uvector_get_element(ctx,
+                                            &values,
+                                            i,
+                                            &(posting.weight));
+      grn_ii_posting_add(ctx, &posting, (grn_hash *)base_res, GRN_OP_OR);
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  GRN_OBJ_FIN(ctx, &values);
+
+  return GRN_TRUE;
+}
+
 static grn_rc
 run_sub_filter(grn_ctx *ctx, grn_obj *table,
                int nargs, grn_obj **args,
@@ -2163,11 +2204,16 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
 
   {
     grn_obj *base_res = NULL;
+    grn_operator select_op = GRN_OP_OR;
 
     base_res = grn_table_create(ctx, NULL, 0, NULL,
                                 GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                 scope_domain, NULL);
-    grn_table_select(ctx, scope_domain, sub_filter, base_res, GRN_OP_OR);
+    if (op == GRN_OP_AND &&
+        sub_filter_restrict_base_res(ctx, res, scope, base_res)) {
+      select_op = GRN_OP_AND;
+    }
+    grn_table_select(ctx, scope_domain, sub_filter, base_res, select_op);
     if (scope->header.type == GRN_ACCESSOR) {
       rc = grn_accessor_resolve(ctx, scope, -1, base_res, res, op);
     } else {
