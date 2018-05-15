@@ -66,6 +66,7 @@ struct _grn_highlighter {
     grn_obj *object;
     grn_encoding encoding;
     grn_obj *token_id_chunks;
+    grn_obj token_id_chunk_ids;
     grn_obj token_id_chunk;
     grn_obj token_ids;
     grn_obj token_locations;
@@ -111,6 +112,9 @@ grn_highlighter_open(grn_ctx *ctx)
   highlighter->lexicon.object = NULL;
   highlighter->lexicon.encoding = GRN_ENC_NONE;
   highlighter->lexicon.token_id_chunks = NULL;
+  GRN_RECORD_INIT(&(highlighter->lexicon.token_id_chunk_ids),
+                  GRN_OBJ_VECTOR,
+                  GRN_ID_NIL);
   GRN_TEXT_INIT(&(highlighter->lexicon.token_id_chunk), 0);
   GRN_RECORD_INIT(&(highlighter->lexicon.token_ids), GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_TEXT_INIT(&(highlighter->lexicon.token_locations), 0);
@@ -140,6 +144,7 @@ grn_highlighter_close(grn_ctx *ctx,
   if (highlighter->lexicon.token_id_chunks) {
     grn_obj_close(ctx, highlighter->lexicon.token_id_chunks);
   }
+  GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_id_chunk_ids));
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.candidates));
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_locations));
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_ids));
@@ -151,9 +156,60 @@ grn_highlighter_close(grn_ctx *ctx,
 }
 
 static void
+grn_highlighter_remove_unused_ids(grn_ctx *ctx,
+                                  grn_obj *table,
+                                  grn_obj *added_ids,
+                                  const char *tag)
+{
+  grn_table_cursor *cursor;
+  size_t n;
+  grn_id id;
+
+  cursor = grn_table_cursor_open(ctx,
+                                 table,
+                                 NULL, 0,
+                                 NULL, 0,
+                                 0, -1, 0);
+  if (!cursor) {
+    grn_rc rc = ctx->rc;
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_UNKNOWN_ERROR;
+    }
+    ERR(rc,
+        "[highlighter][prepare]%s "
+        "failed to create a cursor for internal patricia trie: %s",
+        tag,
+        ctx->errbuf);
+    return;
+  }
+
+  n = GRN_BULK_VSIZE(added_ids) / sizeof(grn_id);
+  while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+    size_t i;
+    grn_bool using = GRN_FALSE;
+
+    for (i = 0; i < n; i++) {
+      if (id == GRN_RECORD_VALUE_AT(added_ids, i)) {
+        using = GRN_TRUE;
+        break;
+      }
+    }
+
+    if (using) {
+      continue;
+    }
+
+    grn_table_cursor_delete(ctx, cursor);
+  }
+  grn_table_cursor_close(ctx, cursor);
+}
+
+static void
 grn_highlighter_prepare_lexicon(grn_ctx *ctx,
                                 grn_highlighter *highlighter)
 {
+  grn_bool have_token_id_chunks = GRN_FALSE;
+  grn_obj *token_id_chunk_ids = &(highlighter->lexicon.token_id_chunk_ids);
   size_t i, n_keywords;
   grn_obj *token_id_chunk = &(highlighter->lexicon.token_id_chunk);
 
@@ -169,26 +225,34 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx,
                      NULL);
 
   if (highlighter->lexicon.token_id_chunks) {
-    grn_obj_close(ctx, highlighter->lexicon.token_id_chunks);
-  }
-  highlighter->lexicon.token_id_chunks =
-    grn_table_create(ctx,
-                     NULL, 0,
-                     NULL,
-                     GRN_OBJ_TABLE_PAT_KEY,
-                     grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
-                     NULL);
-  if (!highlighter->lexicon.token_id_chunks) {
-    grn_rc rc = ctx->rc;
-    if (rc == GRN_SUCCESS) {
-      rc = GRN_UNKNOWN_ERROR;
+    /* TODO: It may be better that we remove all existing records here
+     * for many keywords case. */
+    have_token_id_chunks =
+      grn_table_size(ctx, highlighter->lexicon.token_id_chunks) > 0;
+  } else {
+    highlighter->lexicon.token_id_chunks =
+      grn_table_create(ctx,
+                       NULL, 0,
+                       NULL,
+                       GRN_OBJ_TABLE_PAT_KEY,
+                       grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
+                       NULL);
+    if (!highlighter->lexicon.token_id_chunks) {
+      grn_rc rc = ctx->rc;
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_UNKNOWN_ERROR;
+      }
+      ERR(rc,
+          "[highlighter][prepare][lexicon] "
+          "failed to create an internal patricia trie: %s",
+          ctx->errbuf);
+      return;
     }
-    ERR(rc,
-        "[highlighter][prepare][lexicon] "
-        "failed to create an internal patricia trie: %s",
-        ctx->errbuf);
-    return;
+    token_id_chunk_ids->header.domain =
+      grn_obj_id(ctx, highlighter->lexicon.token_id_chunks);
   }
+
+  GRN_BULK_REWIND(token_id_chunk_ids);
 
   n_keywords = grn_vector_size(ctx, &(highlighter->raw_keywords));
   for (i = 0; i < n_keywords; i++) {
@@ -230,17 +294,36 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx,
       GRN_TEXT_PUT(ctx, token_id_chunk, &token_id, sizeof(grn_id));
     }
     grn_token_cursor_close(ctx, cursor);
+
     {
-      grn_encoding encoding = ctx->encoding;
-      /* token_id_chunk is a binary data */
-      ctx->encoding = GRN_ENC_NONE;
-      grn_table_add(ctx,
-                    highlighter->lexicon.token_id_chunks,
-                    GRN_TEXT_VALUE(token_id_chunk),
-                    GRN_TEXT_LEN(token_id_chunk),
-                    NULL);
-      ctx->encoding = encoding;
+      grn_id token_id_chunk_id;
+
+      {
+        grn_encoding encoding = ctx->encoding;
+        /* token_id_chunk is a binary data */
+        ctx->encoding = GRN_ENC_NONE;
+        token_id_chunk_id = grn_table_add(ctx,
+                                          highlighter->lexicon.token_id_chunks,
+                                          GRN_TEXT_VALUE(token_id_chunk),
+                                          GRN_TEXT_LEN(token_id_chunk),
+                                          NULL);
+        ctx->encoding = encoding;
+      }
+      if (!have_token_id_chunks) {
+        continue;
+      }
+      if (token_id_chunk_id == GRN_ID_NIL) {
+        continue;
+      }
+      GRN_RECORD_PUT(ctx, token_id_chunk_ids, token_id_chunk_id);
     }
+  }
+
+  if (have_token_id_chunks) {
+    grn_highlighter_remove_unused_ids(ctx,
+                                      highlighter->lexicon.token_id_chunks,
+                                      token_id_chunk_ids,
+                                      "[prepare][lexicon]");
   }
 }
 
@@ -314,54 +397,11 @@ grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
     }
   }
 
-  {
-    size_t i, n;
-    grn_table_cursor *cursor;
-
-    n = GRN_BULK_VSIZE(keyword_ids) / sizeof(grn_id);
-    if (n == 0) {
-      return;
-    }
-
-    cursor = grn_table_cursor_open(ctx,
-                                   highlighter->pat.keywords,
-                                   NULL, 0,
-                                   NULL, 0,
-                                   0, -1, 0);
-    if (!cursor) {
-      grn_rc rc = ctx->rc;
-      if (rc == GRN_SUCCESS) {
-        rc = GRN_UNKNOWN_ERROR;
-      }
-      ERR(rc,
-          "[highlighter][prepare][no-lexicon] "
-          "failed to create a cursor for internal patricia trie: %s",
-          ctx->errbuf);
-      return;
-    }
-
-    for (i = 0; i < n; i++) {
-      grn_id id;
-
-      while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
-        size_t i;
-        grn_bool specified = GRN_FALSE;
-
-        for (i = 0; i < n; i++) {
-          if (id == GRN_RECORD_VALUE_AT(keyword_ids, i)) {
-            specified = GRN_TRUE;
-            break;
-          }
-        }
-
-        if (specified) {
-          continue;
-        }
-
-        grn_table_cursor_delete(ctx, cursor);
-      }
-      grn_table_cursor_close(ctx, cursor);
-    }
+  if (have_keywords) {
+    grn_highlighter_remove_unused_ids(ctx,
+                                      highlighter->pat.keywords,
+                                      keyword_ids,
+                                      "[prepare][no-lexicon]");
   }
 }
 
