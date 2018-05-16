@@ -24,7 +24,7 @@ load --table Users
 {"_key": "Bob",    "birthday": "1988-01-04 00:00:00"},
 {"_key": "Carlos", "birthday": "1982-12-29 00:00:00"},
 {"_key": "David",  "birthday": "1981-12-29 00:00:00"},
-{"_key": "Elvis",  "birthday": "1935-01-08 00:00:00"},
+{"_key": "Elvis",  "birthday": "1975-01-08 00:00:00"},
 {"_key": "Frank",  "birthday": "1990-12-29 00:00:00"}
 ]
 [[0,0.0,0.0],6]
