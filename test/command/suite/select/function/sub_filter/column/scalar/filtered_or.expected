@@ -1,0 +1,42 @@
+table_create Files TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Files revision COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Packages TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Packages file COLUMN_SCALAR Files
+[[0,0.0,0.0],true]
+column_create Files packages_files_index COLUMN_INDEX Packages file
+[[0,0.0,0.0],true]
+table_create Revisions TABLE_PAT_KEY UInt32
+[[0,0.0,0.0],true]
+column_create Revisions files_revision COLUMN_INDEX Files revision
+[[0,0.0,0.0],true]
+load --table Files
+[
+{"_key": "include/groonga.h", "revision": 30},
+{"_key": "lib/groonga.rb",    "revision": 12},
+{"_key": "ha_mroonga.cc",     "revision": 40}
+]
+[[0,0.0,0.0],3]
+load --table Packages
+[
+{"_key": "groonga", "file": "include/groonga.h"},
+{"_key": "rroonga", "file": "lib/groonga.rb"},
+{"_key": "mroonga", "file": "ha_mroonga.cc"}
+]
+[[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
+select Packages   --filter '_key == "rroonga" &&             sub_filter(file, "(revision <= 20 || revision > 30) && (_id > 0 || _id < 10)")'   --output_columns '_key, files, files.revision'
+[[0,0.0,0.0],[[[1],[["_key","ShortText"]],["rroonga"]]]]
+#|i| [table][select][index][equal][accessor][key] <Packages>
+#|i| [table][select][index][selector][no-index][sub_filter] <Packages>
+#|i| [sub_filter][pre-filter][column][scalar] <Packages.file> -> <Files>
+#|i| [table][select][push][initial] <1>
+#|i| [table][select][index][range] <Revisions.files_revision>
+#|i| [table][select][index][range] <Revisions.files_revision>
+#|i| [table][select][push][initial] <1>
+#|i| [accessor][resolve][data-column][index] <Files.packages_files_index>
+log_level --level notice
+[[0,0.0,0.0],true]

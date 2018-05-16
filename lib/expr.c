@@ -7177,10 +7177,34 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       uint32_t codes_curr = e->codes_curr;
       grn_id min_id = GRN_ID_NIL;
       grn_obj condition_inspect_buffer;
+      grn_obj *base_res = NULL;
 
       v = grn_expr_get_var_by_offset(ctx, (grn_obj *)e, 0);
       GRN_PTR_INIT(&res_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
       GRN_TEXT_INIT(&condition_inspect_buffer, 0);
+
+      if (res_size > 0 && op == GRN_OP_AND) {
+        grn_bool have_push = GRN_FALSE;
+        for (i = 0; i < scanner->n_sis; i++) {
+          scan_info *si = scanner->sis[i];
+          if (si->flags & SCAN_PUSH) {
+            have_push = GRN_TRUE;
+            break;
+          }
+        }
+        if (have_push) {
+          base_res = grn_table_create(ctx,
+                                      NULL, 0,
+                                      NULL,
+                                      GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                      table,
+                                      NULL);
+          if (base_res) {
+            grn_table_setoperation(ctx, base_res, res, base_res, GRN_OP_OR);
+          }
+        }
+      }
+
       for (i = 0; i < scanner->n_sis; i++) {
         scan_info *si = scanner->sis[i];
         if (si->flags & SCAN_POP) {
@@ -7199,6 +7223,13 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                                     table, NULL);
             if (!res_) {
               break;
+            }
+            if (base_res && si->logical_op == GRN_OP_OR) {
+              GRN_LOG(ctx, GRN_REPORT_INDEX_LOG_LEVEL,
+                      "[table][select][push][initial] <%u>",
+                      grn_table_size(ctx, base_res));
+              grn_table_setoperation(ctx, res_, base_res, res_, GRN_OP_OR);
+              si->logical_op = GRN_OP_AND;
             }
             GRN_PTR_PUT(ctx, &res_stack, res);
             res = res_;
@@ -7237,6 +7268,9 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       }
 
       GRN_OBJ_FIN(ctx, &condition_inspect_buffer);
+      if (base_res) {
+        grn_obj_close(ctx, base_res);
+      }
 
       i = 0;
       if (!res_created) { i++; }
