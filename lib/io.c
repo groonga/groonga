@@ -2156,13 +2156,13 @@ grn_munmap(grn_ctx *ctx, grn_ctx *owner_ctx, grn_io *io, fileinfo *fi,
 {
   int res;
   res = munmap(start, length);
-  if (res) {
+  if (res == 0) {
+    mmap_size -= length;
+  } else {
     SERR("munmap(%p,%" GRN_FMT_LLU ") failed <%" GRN_FMT_LLU ">",
          start,
          (unsigned long long int)length,
          (unsigned long long int)mmap_size);
-  } else {
-    mmap_size -= length;
   }
   return res;
 }
