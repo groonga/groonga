@@ -1,0 +1,18 @@
+table_create Users TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice"},
+{"_key": "bob"},
+{"_key": "bill"},
+{"_key": "brian"}
+]
+[[0,0.0,0.0],4]
+delete --table Users --filter '_key @^ "b"' --limit 4
+[[0,0.0,0.0],true]
+#>delete --filter "_key @^ \"b\"" --limit "4" --table "Users"
+#:000000000000000 filter(3)
+#:000000000000000 delete(3): [0][1]
+#<000000000000000 rc=0
+select Users
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"alice"]]]]

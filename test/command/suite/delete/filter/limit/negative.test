@@ -1,0 +1,16 @@
+table_create Users TABLE_PAT_KEY ShortText
+
+load --table Users
+[
+{"_key": "alice"},
+{"_key": "bob"},
+{"_key": "bill"},
+{"_key": "brian"},
+{"_key": "bert"}
+]
+
+#@collect-query-log true
+delete --table Users --filter '_key @^ "b"' --limit -2
+#@collect-query-log false
+
+select Users

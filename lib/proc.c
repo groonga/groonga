@@ -594,6 +594,7 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *table = NULL;
   uint32_t n_deleted = 0;
   uint32_t n_errors = 0;
+  int32_t limit;
 
   if (GRN_TEXT_LEN(table_name) == 0) {
     rc = GRN_INVALID_ARGUMENT;
@@ -607,6 +608,14 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   rc = proc_delete_validate_selector(ctx, table, table_name, key, id, filter);
   if (rc != GRN_SUCCESS) { goto exit; }
 
+  limit = grn_plugin_proc_get_var_int32(ctx,
+                                        user_data,
+                                        "limit", -1,
+                                        -1);
+  if (limit == 0) {
+    goto exit;
+  }
+
   if (GRN_TEXT_LEN(key)) {
     grn_obj casted_key;
     if (key->header.domain != table->header.domain) {
@@ -617,25 +626,40 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (ctx->rc) {
       rc = ctx->rc;
     } else {
-      rc = grn_table_delete(ctx, table, GRN_BULK_HEAD(key), GRN_BULK_VSIZE(key));
-      if (rc == GRN_SUCCESS) {
-        n_deleted++;
-      } else {
-        n_errors++;
+      if (limit < 0) {
+        const int32_t n_records = 1;
+        limit += n_records + 1;
       }
-      if (key == &casted_key) {
-        GRN_OBJ_FIN(ctx, &casted_key);
+      if (limit >= 1) {
+        rc = grn_table_delete(ctx,
+                              table,
+                              GRN_BULK_HEAD(key),
+                              GRN_BULK_VSIZE(key));
+        if (rc == GRN_SUCCESS) {
+          n_deleted++;
+        } else {
+          n_errors++;
+        }
       }
+    }
+    if (key == &casted_key) {
+      GRN_OBJ_FIN(ctx, &casted_key);
     }
   } else if (GRN_TEXT_LEN(id)) {
     const char *end;
     grn_id parsed_id = grn_atoui(GRN_TEXT_VALUE(id), GRN_BULK_CURR(id), &end);
     if (end == GRN_BULK_CURR(id)) {
-      rc = grn_table_delete_by_id(ctx, table, parsed_id);
-      if (rc == GRN_SUCCESS) {
-        n_deleted++;
-      } else {
-        n_errors++;
+      if (limit < 0) {
+        const int32_t n_records = 1;
+        limit += n_records + 1;
+      }
+      if (limit >= 1) {
+        rc = grn_table_delete_by_id(ctx, table, parsed_id);
+        if (rc == GRN_SUCCESS) {
+          n_deleted++;
+        } else {
+          n_errors++;
+        }
       }
     } else {
       rc = GRN_INVALID_ARGUMENT;
@@ -670,6 +694,9 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
       records = grn_table_select(ctx, table, cond, NULL, GRN_OP_OR);
       if (records) {
+        if (limit < 0) {
+          limit += grn_table_size(ctx, records) + 1;
+        }
         GRN_TABLE_EACH_BEGIN(ctx, records, cursor, result_id) {
           void *key;
           grn_id id;
@@ -677,6 +704,10 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
           if (grn_table_cursor_get_key(ctx, cursor, &key) == 0) {
             continue;
+          }
+
+          if (n_deleted >= (uint32_t)limit) {
+            break;
           }
 
           id = *(grn_id *)key;
