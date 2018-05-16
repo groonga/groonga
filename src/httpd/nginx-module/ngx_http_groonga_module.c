@@ -85,8 +85,7 @@ typedef void (*ngx_http_groonga_loc_conf_callback_pt)(ngx_http_groonga_loc_conf_
 
 ngx_module_t ngx_http_groonga_module;
 
-static grn_ctx ngx_http_groonga_context;
-static grn_ctx *context = &ngx_http_groonga_context;
+static grn_ctx *context = NULL;
 static ngx_http_groonga_loc_conf_t *ngx_http_groonga_current_location_conf = NULL;
 
 static char *
@@ -1540,8 +1539,8 @@ ngx_http_groonga_init_process(ngx_cycle_t *cycle)
 
   grn_set_segv_handler();
 
-  rc = grn_ctx_init(context, GRN_NO_FLAGS);
-  if (rc != GRN_SUCCESS) {
+  context = grn_ctx_open(GRN_NO_FLAGS);
+  if (!context) {
     return NGX_ERROR;
   }
 
@@ -1566,7 +1565,10 @@ ngx_http_groonga_exit_process(ngx_cycle_t *cycle)
                                  ngx_http_groonga_close_database_callback,
                                  &data);
 
-  grn_ctx_fin(context);
+  if (context) {
+    grn_ctx_close(context);
+    context = NULL;
+  }
 
   grn_fin();
 
