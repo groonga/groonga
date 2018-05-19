@@ -156,12 +156,12 @@ protocol Groonga server.
 Here is the syntax to run shell that executes Groonga command against
 Groonga server that is running at ``192.168.0.1:10043``::
 
-  groonga [options] -c --host 192.168.0.1 --port 10043
+  groonga [options] -c --port 10043 192.168.0.1
 
 Here is the syntax to run Groonga command against Groonga server that
 is running at ``192.168.0.1:10043`` and exit::
 
-  groonga [options] -c --host 192.168.0.1 --port 10043 COMMAND [command arguments]
+  groonga [options] -c --port 10043 192.168.0.1 COMMAND [command arguments]
 
 Options
 -------
