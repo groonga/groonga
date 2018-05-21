@@ -5813,10 +5813,10 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   grn_table_cursor *tc;
   grn_hash_cursor *hc;
   grn_hash *s = (grn_hash *)res;
-  grn_expr_executor *executor;
+  grn_expr_executor executor;
 
-  executor = grn_expr_executor_open(ctx, expr);
-  if (!executor) {
+  grn_expr_executor_init(ctx, &executor, expr);
+  if (ctx->rc != GRN_SUCCESS) {
     return;
   }
   GRN_INT32_INIT(&score_buffer, 0);
@@ -5824,7 +5824,7 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   case GRN_OP_OR :
     if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
       while ((id = grn_table_cursor_next(ctx, tc))) {
-        result = grn_expr_executor_exec(ctx, executor, id);
+        result = grn_expr_executor_exec(ctx, &executor, id);
         if (ctx->rc) {
           break;
         }
@@ -5843,7 +5843,7 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, -1, 0))) {
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
-        result = grn_expr_executor_exec(ctx, executor, *idp);
+        result = grn_expr_executor_exec(ctx, &executor, *idp);
         if (ctx->rc) {
           break;
         }
@@ -5863,7 +5863,7 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, -1, 0))) {
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
-        result = grn_expr_executor_exec(ctx, executor, *idp);
+        result = grn_expr_executor_exec(ctx, &executor, *idp);
         if (ctx->rc) {
           break;
         }
@@ -5879,7 +5879,7 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, -1, 0))) {
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
-        result = grn_expr_executor_exec(ctx, executor, *idp);
+        result = grn_expr_executor_exec(ctx, &executor, *idp);
         if (ctx->rc) {
           break;
         }
@@ -5897,7 +5897,7 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
     break;
   }
   GRN_OBJ_FIN(ctx, &score_buffer);
-  grn_expr_executor_close(ctx, executor);
+  grn_expr_executor_fin(ctx, &executor);
 }
 
 static grn_inline void

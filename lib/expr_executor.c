@@ -29,61 +29,6 @@
 # include <onigmo.h>
 #endif
 
-typedef union {
-  struct {
-    grn_obj *value;
-  } constant;
-  struct {
-    grn_obj *column;
-    grn_obj value_buffer;
-  } value;
-#ifdef GRN_SUPPORT_REGEXP
-  struct {
-    grn_obj result_buffer;
-    OnigRegex regex;
-    grn_obj value_buffer;
-    grn_obj *normalizer;
-  } simple_regexp;
-#endif /* GRN_SUPPORT_REGEXP */
-  struct {
-    grn_proc_ctx proc_ctx;
-    int n_args;
-  } proc;
-  struct {
-    grn_obj result_buffer;
-  } simple_condition_constant;
-  struct {
-    grn_obj result_buffer;
-    grn_ra *ra;
-    grn_ra_cache ra_cache;
-    unsigned int ra_element_size;
-    grn_obj value_buffer;
-    grn_obj constant_buffer;
-    grn_operator_exec_func *exec;
-  } simple_condition_ra;
-  struct {
-    grn_bool need_exec;
-    grn_obj result_buffer;
-    grn_obj value_buffer;
-    grn_obj constant_buffer;
-    grn_operator_exec_func *exec;
-  } simple_condition;
-} grn_expr_executor_data;
-
-typedef grn_obj *(*grn_expr_executor_exec_func)(grn_ctx *ctx,
-                                                grn_expr_executor *executor,
-                                                grn_id id);
-typedef void (*grn_expr_executor_fin_func)(grn_ctx *ctx,
-                                           grn_expr_executor *executor);
-
-struct _grn_expr_executor {
-  grn_obj *expr;
-  grn_obj *variable;
-  grn_expr_executor_exec_func exec;
-  grn_expr_executor_fin_func fin;
-  grn_expr_executor_data data;
-};
-
 static void
 grn_expr_executor_init_general(grn_ctx *ctx,
                                grn_expr_executor *executor)
@@ -216,6 +161,7 @@ grn_expr_executor_init_simple_regexp(grn_ctx *ctx,
   grn_expr *e = (grn_expr *)(executor->expr);
   grn_obj *result_buffer = &(executor->data.simple_regexp.result_buffer);
   OnigEncoding onig_encoding;
+  OnigRegex regex;
   int onig_result;
   OnigErrorInfo onig_error_info;
   grn_obj *pattern;
@@ -250,7 +196,7 @@ grn_expr_executor_init_simple_regexp(grn_ctx *ctx,
   }
 
   pattern = e->codes[1].value;
-  onig_result = onig_new(&(executor->data.simple_regexp.regex),
+  onig_result = onig_new(&regex,
                          GRN_TEXT_VALUE(pattern),
                          GRN_TEXT_VALUE(pattern) + GRN_TEXT_LEN(pattern),
                          ONIG_OPTION_ASCII_RANGE |
@@ -268,6 +214,7 @@ grn_expr_executor_init_simple_regexp(grn_ctx *ctx,
         message);
     return;
   }
+  executor->data.simple_regexp.regex = regex;
 
   GRN_VOID_INIT(&(executor->data.simple_regexp.value_buffer));
 
@@ -1046,11 +993,12 @@ grn_expr_executor_fin_simple_condition(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &(executor->data.simple_condition.constant_buffer));
 }
 
-grn_expr_executor *
-grn_expr_executor_open(grn_ctx *ctx, grn_obj *expr)
+grn_rc
+grn_expr_executor_init(grn_ctx *ctx,
+                       grn_expr_executor *executor,
+                       grn_obj *expr)
 {
   grn_obj *variable;
-  grn_expr_executor *executor;
 
   GRN_API_ENTER;
 
@@ -1063,7 +1011,7 @@ grn_expr_executor_open(grn_ctx *ctx, grn_obj *expr)
         (int)GRN_TEXT_LEN(&inspected),
         GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
-    GRN_API_RETURN(NULL);
+    GRN_API_RETURN(ctx->rc);
   }
 
   variable = grn_expr_get_var_by_offset(ctx, expr, 0);
@@ -1076,15 +1024,7 @@ grn_expr_executor_open(grn_ctx *ctx, grn_obj *expr)
         (int)GRN_TEXT_LEN(&inspected),
         GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
-    GRN_API_RETURN(NULL);
-  }
-
-  executor = GRN_CALLOC(sizeof(grn_expr_executor));
-  if (!executor) {
-    ERR(ctx->rc,
-        "[expr-executor][open] failed to allocate: %s",
-        ctx->errbuf);
-    GRN_API_RETURN(NULL);
+    GRN_API_RETURN(ctx->rc);
   }
 
   executor->expr = expr;
@@ -1118,7 +1058,62 @@ grn_expr_executor_open(grn_ctx *ctx, grn_obj *expr)
     executor->fin = grn_expr_executor_fin_general;
   }
 
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_expr_executor_fin(grn_ctx *ctx,
+                      grn_expr_executor *executor)
+{
+  GRN_API_ENTER;
+
+  if (!executor) {
+    GRN_API_RETURN(GRN_SUCCESS);
+  }
+
+  executor->fin(ctx, executor);
+
+  GRN_API_RETURN(GRN_SUCCESS);
+}
+
+grn_expr_executor *
+grn_expr_executor_open(grn_ctx *ctx, grn_obj *expr)
+{
+  grn_expr_executor *executor;
+
+  GRN_API_ENTER;
+
+  executor = GRN_CALLOC(sizeof(grn_expr_executor));
+  if (!executor) {
+    ERR(ctx->rc,
+        "[expr-executor][open] failed to allocate: %s",
+        ctx->errbuf);
+    GRN_API_RETURN(NULL);
+  }
+
+  grn_expr_executor_init(ctx, executor, expr);
+
+  if (ctx->rc != GRN_SUCCESS) {
+    GRN_FREE(executor);
+    executor = NULL;
+  }
+
   GRN_API_RETURN(executor);
+}
+
+grn_rc
+grn_expr_executor_close(grn_ctx *ctx, grn_expr_executor *executor)
+{
+  GRN_API_ENTER;
+
+  if (!executor) {
+    GRN_API_RETURN(GRN_SUCCESS);
+  }
+
+  grn_expr_executor_fin(ctx, executor);
+  GRN_FREE(executor);
+
+  GRN_API_RETURN(GRN_SUCCESS);
 }
 
 grn_obj *
@@ -1135,19 +1130,4 @@ grn_expr_executor_exec(grn_ctx *ctx, grn_expr_executor *executor, grn_id id)
   value = executor->exec(ctx, executor, id);
 
   GRN_API_RETURN(value);
-}
-
-grn_rc
-grn_expr_executor_close(grn_ctx *ctx, grn_expr_executor *executor)
-{
-  GRN_API_ENTER;
-
-  if (!executor) {
-    GRN_API_RETURN(GRN_SUCCESS);
-  }
-
-  executor->fin(ctx, executor);
-  GRN_FREE(executor);
-
-  GRN_API_RETURN(GRN_SUCCESS);
 }

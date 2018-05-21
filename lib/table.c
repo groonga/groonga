@@ -32,7 +32,7 @@ grn_table_apply_expr(grn_ctx *ctx,
                      grn_obj *output_column,
                      grn_obj *expr)
 {
-  grn_expr_executor *executor;
+  grn_expr_executor executor;
 
   GRN_API_ENTER;
 
@@ -60,13 +60,13 @@ grn_table_apply_expr(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
-  executor = grn_expr_executor_open(ctx, expr);
-  if (!executor) {
+  grn_expr_executor_init(ctx, &executor, expr);
+  if (ctx->rc != GRN_SUCCESS) {
     GRN_API_RETURN(ctx->rc);
   }
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, table, cursor, id, GRN_CURSOR_BY_ID) {
     grn_obj *value;
-    value = grn_expr_executor_exec(ctx, executor, id);
+    value = grn_expr_executor_exec(ctx, &executor, id);
     if (ctx->rc != GRN_SUCCESS) {
       break;
     }
@@ -74,7 +74,7 @@ grn_table_apply_expr(grn_ctx *ctx,
       grn_obj_set_value(ctx, output_column, id, value, GRN_OBJ_SET);
     }
   } GRN_TABLE_EACH_END(ctx, cursor);
-  grn_expr_executor_close(ctx, executor);
+  grn_expr_executor_fin(ctx, &executor);
 
   GRN_API_RETURN(ctx->rc);
 }
