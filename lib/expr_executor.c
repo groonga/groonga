@@ -3376,11 +3376,15 @@ grn_expr_executor_init(grn_ctx *ctx,
   GRN_API_ENTER;
 
   if (!grn_obj_is_expr(ctx, expr)) {
+    grn_rc rc = ctx->rc;
     grn_obj inspected;
     GRN_TEXT_INIT(&inspected, 0);
     grn_inspect(ctx, &inspected, expr);
-    ERR(ctx->rc,
-        "[expr-executor][open] invalid expression: %.*s",
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_INVALID_ARGUMENT;
+    }
+    ERR(rc,
+        "[expr-executor][init] invalid expression: %.*s",
         (int)GRN_TEXT_LEN(&inspected),
         GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
@@ -3389,11 +3393,15 @@ grn_expr_executor_init(grn_ctx *ctx,
 
   variable = grn_expr_get_var_by_offset(ctx, expr, 0);
   if (!variable) {
+    grn_rc rc = ctx->rc;
     grn_obj inspected;
     GRN_TEXT_INIT(&inspected, 0);
     grn_inspect(ctx, &inspected, expr);
-    ERR(ctx->rc,
-        "[expr-executor][open] expression has no variable: %.*s",
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_INVALID_ARGUMENT;
+    }
+    ERR(rc,
+        "[expr-executor][init] expression has no variable: %.*s",
         (int)GRN_TEXT_LEN(&inspected),
         GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
