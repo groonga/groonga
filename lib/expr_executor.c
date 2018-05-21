@@ -2415,7 +2415,14 @@ grn_expr_executor_exec_general(grn_ctx *ctx,
                                grn_expr_executor *executor,
                                grn_id id)
 {
-  GRN_RECORD_SET(ctx, executor->variable, id);
+  if (!executor->variable && id != GRN_ID_NIL) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[expr-executor][exec][general] can't specify ID for no variable expr");
+    return NULL;
+  }
+  if (executor->variable) {
+    GRN_RECORD_SET(ctx, executor->variable, id);
+  }
   return expr_exec(ctx, executor->expr);
 }
 
@@ -2806,7 +2813,9 @@ grn_expr_executor_exec_proc(grn_ctx *ctx,
 
   proc = proc_ctx->proc;
   proc_ctx->phase = PROC_NEXT;
-  GRN_RECORD_SET(ctx, executor->variable, id);
+  if (executor->variable) {
+    GRN_RECORD_SET(ctx, executor->variable, id);
+  }
 
   expr = (grn_expr *)(executor->expr);
   values_curr = expr->values_curr;
@@ -3371,8 +3380,6 @@ grn_expr_executor_init(grn_ctx *ctx,
                        grn_expr_executor *executor,
                        grn_obj *expr)
 {
-  grn_obj *variable;
-
   GRN_API_ENTER;
 
   if (!grn_obj_is_expr(ctx, expr)) {
@@ -3391,25 +3398,8 @@ grn_expr_executor_init(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
-  variable = grn_expr_get_var_by_offset(ctx, expr, 0);
-  if (!variable) {
-    grn_rc rc = ctx->rc;
-    grn_obj inspected;
-    GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect(ctx, &inspected, expr);
-    if (rc == GRN_SUCCESS) {
-      rc = GRN_INVALID_ARGUMENT;
-    }
-    ERR(rc,
-        "[expr-executor][init] expression has no variable: %.*s",
-        (int)GRN_TEXT_LEN(&inspected),
-        GRN_TEXT_VALUE(&inspected));
-    GRN_OBJ_FIN(ctx, &inspected);
-    GRN_API_RETURN(ctx->rc);
-  }
-
   executor->expr = expr;
-  executor->variable = variable;
+  executor->variable = grn_expr_get_var_by_offset(ctx, expr, 0);
   if (grn_expr_executor_is_constant(ctx, executor)) {
     executor->exec = grn_expr_executor_exec_constant;
     executor->fin = grn_expr_executor_fin_constant;

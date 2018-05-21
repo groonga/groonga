@@ -1556,7 +1556,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
   } else {
     grn_expr *e = (grn_expr *)expr;
     grn_expr_executor *executor = &(e->cache.executor);
-    grn_id id;
+    grn_id id = GRN_ID_NIL;
 
     if (e->codes != e->cache.codes ||
         e->codes_curr != e->cache.codes_curr) {
@@ -1573,7 +1573,9 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       e->cache.codes_curr = e->codes_curr;
     }
 
-    id = GRN_RECORD_VALUE(executor->variable);
+    if (executor->variable) {
+      id = GRN_RECORD_VALUE(executor->variable);
+    }
     value = grn_expr_executor_exec(ctx, executor, id);
   }
 exit :
