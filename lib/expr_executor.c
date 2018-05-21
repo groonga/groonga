@@ -31,7 +31,7 @@
 
 typedef union {
   struct {
-    grn_obj result_buffer;
+    grn_obj *value;
   } constant;
   struct {
     grn_obj *column;
@@ -109,22 +109,9 @@ static void
 grn_expr_executor_init_constant(grn_ctx *ctx,
                                 grn_expr_executor *executor)
 {
-  grn_obj *result_buffer = &(executor->data.constant.result_buffer);
-  grn_obj *result;
+  grn_expr *e = (grn_expr *)(executor->expr);
 
-  GRN_VOID_INIT(result_buffer);
-  result = grn_expr_exec(ctx, executor->expr, 0);
-  if (ctx->rc == GRN_SUCCESS) {
-    grn_obj_reinit(ctx,
-                   result_buffer,
-                   result->header.domain,
-                   result->header.flags);
-    /* TODO: Support vector */
-    grn_bulk_write(ctx,
-                   result_buffer,
-                   GRN_BULK_HEAD(result),
-                   GRN_BULK_VSIZE(result));
-  }
+  executor->data.constant.value = e->codes[0].value;
 }
 
 static grn_bool
@@ -157,14 +144,13 @@ grn_expr_executor_exec_constant(grn_ctx *ctx,
                                 grn_expr_executor *executor,
                                 grn_id id)
 {
-  return &(executor->data.constant.result_buffer);
+  return executor->data.constant.value;
 }
 
 static void
 grn_expr_executor_fin_constant(grn_ctx *ctx,
                                grn_expr_executor *executor)
 {
-  GRN_OBJ_FIN(ctx, &(executor->data.constant.result_buffer));
 }
 
 static void
