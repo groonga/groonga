@@ -3,9 +3,9 @@ module Groonga
     class DynamicColumns
       class << self
         def parse(input)
-          initial_contexts = []
-          filtered_contexts = []
-          output_contexts = []
+          initial_contexts = {}
+          filtered_contexts = {}
+          output_contexts = {}
           labeled_arguments = LabeledArguments.new(input, /columns?/)
           labeled_arguments.each do |label, arguments|
             contexts = nil
@@ -19,12 +19,12 @@ module Groonga
             else
               next
             end
-            contexts << DynamicColumnExecuteContext.new(label, arguments)
+            contexts[label] = DynamicColumnExecuteContext.new(label, arguments)
           end
 
-          new(initial_contexts,
-              filtered_contexts,
-              output_contexts)
+          new(DynamicColumnExecuteContexts.new(initial_contexts),
+              DynamicColumnExecuteContexts.new(filtered_contexts),
+              DynamicColumnExecuteContexts.new(output_contexts))
         end
       end
 
@@ -49,15 +49,15 @@ module Groonga
       end
 
       def each_initial(&block)
-        @initial_contexts.each(&block)
+        @initial_contexts.tsort_each(&block)
       end
 
       def each_filtered(&block)
-        @filtered_contexts.each(&block)
+        @filtered_contexts.tsort_each(&block)
       end
 
       def each_output(&block)
-        @output_contexts.each(&block)
+        @output_contexts.tsort_each(&block)
       end
 
       def each(&block)
@@ -90,6 +90,49 @@ module Groonga
           end
         end
         key
+      end
+    end
+
+    class DynamicColumnExecuteContexts
+      include Enumerable
+      include TSort
+
+      def initialize(contexts)
+        @contexts = contexts
+        @dependencies = {}
+        @contexts.each do |label, context|
+          dependencies = []
+          # TODO: Too rough.
+          context.value.split(/[ \(\),]+/).each do |component|
+            depended_context = @contexts[component]
+            dependencies << depended_context if depended_context
+          end
+          context.window_sort_keys.each do |key|
+            depended_context = @contexts[key.gsub(/\A-/, "")]
+            dependencies << depended_context if depended_context
+          end
+          context.window_group_keys.each do |key|
+            depended_context = @contexts[key]
+            dependencies << depended_context if depended_context
+          end
+          @dependencies[label] = dependencies
+        end
+      end
+
+      def empty?
+        @contexts.empty?
+      end
+
+      def each(&block)
+        @contexts.each_value(&block)
+      end
+
+      def tsort_each_node(&block)
+        @contexts.each_value(&block)
+      end
+
+      def tsort_each_child(context, &block)
+        @dependencies[context.label].each(&block)
       end
     end
 
