@@ -803,7 +803,7 @@ module Groonga
 
           if @post_filter
             result_set = apply_post_filter(result_set)
-            @temporary_tables << filtered_table
+            @temporary_tables << result_set
           end
 
           if @sort_keys.empty?
