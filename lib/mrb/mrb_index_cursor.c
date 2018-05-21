@@ -19,6 +19,7 @@
 #include "../grn_ctx_impl.h"
 #include "../grn_ii.h"
 #include "../grn_db.h"
+#include "../grn_expr_executor.h"
 
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
@@ -124,6 +125,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
   int offset = 0;
   int limit = 10;
   int max_n_unmatched_records = -1;
+  grn_expr_executor executor;
   int n_matched_records = 0;
   int n_unmatched_records = 0;
   mrb_value mrb_index;
@@ -181,13 +183,16 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
   if (max_n_unmatched_records < 0) {
     max_n_unmatched_records = INT32_MAX;
   }
+  if (expr) {
+    grn_expr_executor_init(ctx, &executor, expr);
+    grn_mrb_ctx_check(mrb);
+  }
   while ((posting = grn_index_cursor_next(ctx, index_cursor, &term_id))) {
     if (expr) {
       grn_bool matched_raw = GRN_FALSE;
       grn_obj *matched;
 
-      GRN_RECORD_SET(ctx, expr_variable, posting->rid);
-      matched = grn_expr_exec(ctx, expr, 0);
+      matched = grn_expr_executor_exec(ctx, &executor, posting->rid);
       if (matched) {
         matched_raw = grn_obj_is_true(ctx, matched);
       } else {
@@ -197,6 +202,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
       if (!matched_raw) {
         n_unmatched_records++;
         if (n_unmatched_records > max_n_unmatched_records) {
+          grn_expr_executor_fin(ctx, &executor);
           return mrb_fixnum_value(-1);
         }
         continue;
@@ -212,6 +218,9 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
     if (limit == 0) {
       break;
     }
+  }
+  if (expr) {
+    grn_expr_executor_fin(ctx, &executor);
   }
   grn_ii_resolve_sel_and(ctx, result_set, op);
 
