@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015-2016 Brazil
+  Copyright(C) 2015-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,16 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define GRN_EXPR_CODE_RELATIONAL_EXPRESSION (0x01)
+
+typedef struct {
+  grn_obj *value;
+  int32_t nargs;
+  grn_operator op;
+  uint8_t flags;
+  int32_t modify;
+} grn_expr_code;
 
 unsigned int grn_expr_code_n_used_codes(grn_ctx *ctx,
                                         grn_expr_code *start,

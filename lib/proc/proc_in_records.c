@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2017 Brazil
+  Copyright(C) 2017-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,7 @@
 
 #include "../grn_proc.h"
 #include "../grn_db.h"
+#include "../grn_expr.h"
 #include "../grn_store.h"
 
 #include <groonga/plugin.h>

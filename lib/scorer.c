@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 
 #include "grn.h"
 #include "grn_db.h"
+#include "grn_expr.h"
 #include "grn_scorer.h"
 #include <groonga/scorer.h>
 

@@ -19,10 +19,44 @@
 #pragma once
 
 #include "grn_db.h"
+#include "grn_expr_code.h"
+#include "grn_expr_executor.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define GRN_EXPR_CONST_BLK_SIZE GRN_STACK_SIZE
+
+struct _grn_expr {
+  grn_db_obj obj;
+  grn_obj name_buf;
+  grn_expr_var *vars;
+  uint32_t nvars;
+  /* -- compatible with grn_proc -- */
+
+  uint16_t cacheable;
+  uint16_t taintable;
+  grn_obj **const_blks;
+  grn_obj *values;
+  grn_expr_code *codes;
+  uint32_t nconsts;
+  uint32_t values_curr;
+  uint32_t values_tail;
+  uint32_t values_size;
+  uint32_t codes_curr;
+  uint32_t codes_size;
+
+  grn_obj objs;
+  grn_obj dfi;
+  grn_expr_code *code0;
+
+  struct {
+    grn_expr_code *codes;
+    uint32_t codes_curr;
+    grn_expr_executor executor;
+  } cache;
+};
 
 #define SCAN_ACCESSOR                  (0x01)
 #define SCAN_PUSH                      (0x02)
@@ -82,6 +116,8 @@ grn_rc grn_expr_code_inspect_indented(grn_ctx *ctx,
 void grn_p_expr_code(grn_ctx *ctx, grn_expr_code *code);
 
 grn_obj *grn_expr_alloc_const(grn_ctx *ctx, grn_obj *expr);
+
+grn_rc grn_ctx_expand_stack(grn_ctx *ctx);
 
 grn_bool grn_expr_is_simple_function_call(grn_ctx *ctx, grn_obj *expr);
 grn_obj *grn_expr_simple_function_call_get_function(grn_ctx *ctx, grn_obj *expr);
