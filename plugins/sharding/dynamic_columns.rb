@@ -36,6 +36,18 @@ module Groonga
         @output_contexts = output_contexts
       end
 
+      def have_initial?
+        not @initial_contexts.empty?
+      end
+
+      def have_filtered?
+        not @filtered_contexts.empty?
+      end
+
+      def have_output?
+        not @output_contexts.empty?
+      end
+
       def each_initial(&block)
         @initial_contexts.each(&block)
       end

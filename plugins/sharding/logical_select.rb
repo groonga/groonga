@@ -277,7 +277,6 @@ module Groonga
         attr_reader :post_filter
         attr_reader :dynamic_columns
         attr_reader :result_sets
-        attr_reader :unsorted_result_sets
         attr_reader :plain_drilldown
         attr_reader :labeled_drilldowns
         attr_reader :temporary_tables
@@ -297,8 +296,6 @@ module Groonga
           @dynamic_columns = DynamicColumns.parse(@input)
 
           @result_sets = []
-          @unsorted_result_sets = []
-
           @plain_drilldown = PlainDrilldownExecuteContext.new(@input)
           @labeled_drilldowns = LabeledDrilldowns.parse(@input)
 
@@ -308,13 +305,6 @@ module Groonga
         end
 
         def close
-          @result_sets.each do |result_set|
-            result_set.close if result_set.temporary?
-          end
-          @unsorted_result_sets.each do |result_set|
-            result_set.close if result_set.temporary?
-          end
-
           @plain_drilldown.close
           @labeled_drilldowns.close
 
@@ -690,7 +680,7 @@ module Groonga
           @post_filter = @context.post_filter
           @sort_keys = @context.sort_keys
           @result_sets = @context.result_sets
-          @unsorted_result_sets = @context.unsorted_result_sets
+          @temporary_tables = @context.temporary_tables
 
           @target_range = @context.enumerator.target_range
 
@@ -720,7 +710,7 @@ module Groonga
                 @target_table = @target_table.select(expression)
                 @cover_type = :all
               end
-              @context.temporary_tables << @target_table
+              @temporary_tables << @target_table
             end
             dynamic_column.apply(@target_table)
           end
@@ -749,7 +739,6 @@ module Groonga
         def filter_shard_all(expression_builder)
           if @query.nil? and @filter.nil?
             add_result_set(@target_table, nil)
-            @context.temporary_tables.delete(@target_table)
           else
             filter_table do |expression|
               expression_builder.build_all(expression)
@@ -799,24 +788,29 @@ module Groonga
             return
           end
 
-          @context.dynamic_columns.each_filtered do |dynamic_column|
-            if result_set == @shard.table
+          if result_set == @shard.table
+            if @context.dynamic_columns.have_filtered?
               result_set = result_set.select_all
+              @temporary_tables << result_set
             end
+          else
+            @temporary_tables << result_set
+          end
+
+          @context.dynamic_columns.each_filtered do |dynamic_column|
             dynamic_column.apply(result_set, condition)
           end
 
           if @post_filter
-            filtered_table = result_set
-            result_set = apply_post_filter(filtered_table)
-            @context.temporary_tables << filtered_table
+            result_set = apply_post_filter(result_set)
+            @temporary_tables << filtered_table
           end
 
           if @sort_keys.empty?
             @result_sets << result_set
           else
-            @unsorted_result_sets << result_set
             sorted_result_set = result_set.sort(@sort_keys)
+            @temporary_tables << sorted_result_set
             @result_sets << sorted_result_set
           end
         end
