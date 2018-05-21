@@ -557,6 +557,7 @@ module Groonga
           if @context.result_sets.empty?
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
                                           :key_type => first_shard.table)
+            @context.temporary_tables << result_set
             @context.dynamic_columns.each_initial do |dynamic_column|
               dynamic_column.apply(result_set)
             end
@@ -738,6 +739,7 @@ module Groonga
         private
         def filter_shard_all(expression_builder)
           if @query.nil? and @filter.nil?
+            @temporary_tables.delete(@target_table)
             add_result_set(@target_table, nil)
           else
             filter_table do |expression|
