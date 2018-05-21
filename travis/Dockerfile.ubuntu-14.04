@@ -31,8 +31,8 @@ RUN \
   apt install -qq -y cutter-testing-framework
 
 RUN \
-  gem2.0 install \
-    bundler
+  gem2.0 install --development \
+    grntest
 
 RUN \
   useradd --user-group --create-home groonga
