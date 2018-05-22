@@ -27,6 +27,9 @@ module Groonga
           when Operator::AND
             optimized_sub_nodes =
               optimize_and_sub_nodes(table, optimized_sub_nodes)
+          when Operator::OR
+            optimized_sub_nodes =
+              optimize_or_sub_nodes(table, optimized_sub_nodes)
           end
           ExpressionTree::LogicalOperation.new(node.operator,
                                                optimized_sub_nodes)
@@ -50,12 +53,12 @@ module Groonga
         end
       end
 
-      def optimize_and_sub_nodes(table, sub_nodes)
-        grouped_sub_nodes = sub_nodes.group_by do |sub_node|
-          case sub_node
+      def group_nodes(nodes)
+        nodes.group_by do |node|
+          case node
           when ExpressionTree::BinaryOperation
-            if sub_node.left.is_a?(ExpressionTree::Variable)
-              sub_node.left.column
+            if node.left.is_a?(ExpressionTree::Variable)
+              node.left.column
             else
               nil
             end
@@ -63,11 +66,15 @@ module Groonga
             nil
           end
         end
+      end
+
+      def optimize_and_sub_nodes(table, sub_nodes)
+        grouped_sub_nodes = group_nodes(sub_nodes)
 
         optimized_nodes = []
         grouped_sub_nodes.each do |column, grouped_nodes|
           if column
-            grouped_nodes = optimize_grouped_nodes(column, grouped_nodes)
+            grouped_nodes = optimize_grouped_and_nodes(column, grouped_nodes)
           end
           optimized_nodes.concat(grouped_nodes)
         end
@@ -85,7 +92,7 @@ module Groonga
         Operator::LESS_EQUAL,
         Operator::GREATER_EQUAL,
       ]
-      def optimize_grouped_nodes(column, grouped_nodes)
+      def optimize_grouped_and_nodes(column, grouped_nodes)
         target_nodes, done_nodes = grouped_nodes.partition do |node|
           node.is_a?(ExpressionTree::BinaryOperation) and
             COMPARISON_OPERATORS.include?(node.operator) and
@@ -141,6 +148,49 @@ module Groonga
           ExpressionTree::Constant.new(less_border),
         ]
         ExpressionTree::FunctionCall.new(between, arguments)
+      end
+
+      def optimize_or_sub_nodes(table, sub_nodes)
+        grouped_sub_nodes = group_nodes(sub_nodes)
+
+        optimized_nodes = []
+        grouped_sub_nodes.each do |column, grouped_nodes|
+          if column
+            grouped_nodes = optimize_grouped_or_nodes(column, grouped_nodes)
+          end
+          optimized_nodes.concat(grouped_nodes)
+        end
+        optimized_nodes
+      end
+
+      def optimize_grouped_or_nodes(column, grouped_nodes)
+        target_nodes, done_nodes = grouped_nodes.partition do |node|
+          node.is_a?(ExpressionTree::BinaryOperation) and
+            node.operator == Operator::EQUAL and
+            node.right.is_a?(ExpressionTree::Constant)
+        end
+
+        if target_nodes.size > 1
+          in_values_node = try_optimize_in_values(column, target_nodes)
+          if in_values_node
+            done_nodes << in_values_node
+          else
+            done_nodes.concat(target_nodes)
+          end
+        else
+          done_nodes.concat(target_nodes)
+        end
+
+        done_nodes
+      end
+
+      def try_optimize_in_values(column, target_nodes)
+        in_values = ExpressionTree::Procedure.new(context["in_values"])
+        arguments = [ExpressionTree::Variable.new(column)]
+        target_nodes.each do |node|
+          arguments << node.right
+        end
+        ExpressionTree::FunctionCall.new(in_values, arguments)
       end
     end
   end
