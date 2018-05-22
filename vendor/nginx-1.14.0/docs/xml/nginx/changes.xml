@@ -5,6 +5,72 @@
 <change_log title="nginx">
 
 
+<changes ver="1.14.0" date="2018-04-17">
+
+<change>
+<para lang="ru">
+Стабильная ветка 1.14.x.
+</para>
+<para lang="en">
+1.14.x stable branch.
+</para>
+</change>
+
+</changes>
+
+
+<changes ver="1.13.12" date="2018-04-10">
+
+<change type="bugfix">
+<para lang="ru">
+при возврате большого ответа
+соединения с gRPC-бэкендами могли неожиданно закрываться.
+</para>
+<para lang="en">
+connections with gRPC backends might be closed unexpectedly
+when returning a large response.
+</para>
+</change>
+
+</changes>
+
+
+<changes ver="1.13.11" date="2018-04-03">
+
+<change type="feature">
+<para lang="ru">
+параметр proxy_protocol директивы listen
+теперь поддерживает протокол PROXY версии 2.
+</para>
+<para lang="en">
+the "proxy_protocol" parameter of the "listen" directive
+now supports the PROXY protocol version 2.
+</para>
+</change>
+
+<change type="bugfix">
+<para lang="ru">
+nginx не собирался с OpenSSL 1.1.1 статически на Linux.
+</para>
+<para lang="en">
+nginx could not be built with OpenSSL 1.1.1 statically on Linux.
+</para>
+</change>
+
+<change type="bugfix">
+<para lang="ru">
+в параметрах http_404, http_500 и им подобных
+директивы proxy_next_upstream.
+</para>
+<para lang="en">
+in the "http_404", "http_500", etc. parameters
+of the "proxy_next_upstream" directive.
+</para>
+</change>
+
+</changes>
+
+
 <changes ver="1.13.10" date="2018-03-20">
 
 <change type="feature">
