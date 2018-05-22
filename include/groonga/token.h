@@ -146,6 +146,13 @@ GRN_API grn_rc
 grn_token_set_source_length(grn_ctx *ctx,
                             grn_token *token,
                             uint32_t length);
+GRN_API uint32_t
+grn_token_get_source_first_character_length(grn_ctx *ctx,
+                                            grn_token *token);
+GRN_API grn_rc
+grn_token_set_source_first_character_length(grn_ctx *ctx,
+                                            grn_token *token,
+                                            uint32_t length);
 GRN_API grn_bool
 grn_token_have_overlap(grn_ctx *ctx,
                        grn_token *token);

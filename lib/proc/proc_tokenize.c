@@ -66,6 +66,7 @@ typedef struct {
   grn_bool force_prefix;
   uint64_t source_offset;
   uint32_t source_length;
+  uint32_t source_first_character_length;
 } tokenize_token;
 
 static void
@@ -93,7 +94,7 @@ output_tokens(grn_ctx *ctx,
     }
   }
   if (have_source_location) {
-    n_elements += 2;
+    n_elements += 3;
   }
 
   grn_ctx_output_array_open(ctx, "TOKENS", n_tokens);
@@ -130,6 +131,9 @@ output_tokens(grn_ctx *ctx,
 
       grn_ctx_output_cstr(ctx, "source_length");
       grn_ctx_output_uint32(ctx, token->source_length);
+
+      grn_ctx_output_cstr(ctx, "source_first_character_length");
+      grn_ctx_output_uint32(ctx, token->source_first_character_length);
     }
 
     grn_ctx_output_map_close(ctx);
@@ -178,6 +182,8 @@ tokenize(grn_ctx *ctx,
     current_token->force_prefix = token_cursor->force_prefix;
     current_token->source_offset = grn_token_get_source_offset(ctx, token);
     current_token->source_length = grn_token_get_source_length(ctx, token);
+    current_token->source_first_character_length =
+      grn_token_get_source_first_character_length(ctx, token);
   }
   grn_token_cursor_close(ctx, token_cursor);
 }

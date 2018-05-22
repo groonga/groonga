@@ -11,63 +11,72 @@ tokenize   'TokenNgram("report_source_location", true)'   "アイ㌕エオ"   No
       "position": 0,
       "force_prefix": false,
       "source_offset": 0,
-      "source_length": 6
+      "source_length": 6,
+      "source_first_character_length": 3
     },
     {
       "value": "イキ",
       "position": 1,
       "force_prefix": false,
       "source_offset": 3,
-      "source_length": 6
+      "source_length": 6,
+      "source_first_character_length": 3
     },
     {
       "value": "キロ",
       "position": 2,
       "force_prefix": false,
       "source_offset": 6,
-      "source_length": 3
+      "source_length": 3,
+      "source_first_character_length": 3
     },
     {
       "value": "ログ",
       "position": 3,
       "force_prefix": false,
       "source_offset": 6,
-      "source_length": 3
+      "source_length": 3,
+      "source_first_character_length": 3
     },
     {
       "value": "グラ",
       "position": 4,
       "force_prefix": false,
       "source_offset": 6,
-      "source_length": 3
+      "source_length": 3,
+      "source_first_character_length": 3
     },
     {
       "value": "ラム",
       "position": 5,
       "force_prefix": false,
       "source_offset": 6,
-      "source_length": 3
+      "source_length": 3,
+      "source_first_character_length": 3
     },
     {
       "value": "ムエ",
       "position": 6,
       "force_prefix": false,
       "source_offset": 6,
-      "source_length": 6
+      "source_length": 6,
+      "source_first_character_length": 3
     },
     {
       "value": "エオ",
       "position": 7,
       "force_prefix": false,
       "source_offset": 9,
-      "source_length": 6
+      "source_length": 6,
+      "source_first_character_length": 3
     },
     {
       "value": "オ",
       "position": 8,
       "force_prefix": false,
       "source_offset": 12,
-      "source_length": 3
+      "source_length": 3,
+      "source_first_character_length": 3
     }
   ]
 ]

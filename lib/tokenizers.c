@@ -843,6 +843,7 @@ ngram_next(grn_ctx *ctx,
     if (checks) {
       size_t i;
       uint32_t source_length = 0;
+      uint32_t source_first_character_length = 0;
       uint64_t next_offset = tokenizer->source_offset;
       grn_bool first_character = GRN_TRUE;
       grn_token_set_source_offset(ctx, token, tokenizer->source_offset);
@@ -850,7 +851,7 @@ ngram_next(grn_ctx *ctx,
         size_t n_leading_bytes = p - tokenizer->start;
         for (i = 1; i <= n_leading_bytes; i++) {
           if (checks[-i] > 0) {
-            source_length = checks[-i];
+            source_length = source_first_character_length = checks[-i];
             if (!tokenizer->overlap) {
               next_offset += checks[-i];
             }
@@ -865,11 +866,17 @@ ngram_next(grn_ctx *ctx,
               !tokenizer->overlap) {
             next_offset += checks[i];
           }
+          if (first_character) {
+            source_first_character_length = checks[i];
+          }
           source_length += checks[i];
           first_character = GRN_FALSE;
         }
       }
       grn_token_set_source_length(ctx, token, source_length);
+      grn_token_set_source_first_character_length(ctx,
+                                                  token,
+                                                  source_first_character_length);
       tokenizer->source_offset = next_offset;
     }
   }
