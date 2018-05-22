@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2016 Brazil
+  Copyright(C) 2014-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,7 @@
 
 #include "../grn_db.h"
 #include "mrb_bulk.h"
+#include "mrb_converter.h"
 #include "mrb_object.h"
 
 static struct mrb_data_type mrb_grn_bulk_type = {
@@ -245,8 +246,17 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
       }
 
       if (is_record) {
-        mrb_value_ = mrb_fixnum_value(GRN_RECORD_VALUE(bulk));
-        grn_obj_unlink(ctx, domain);
+        grn_mrb_data *data = &(ctx->impl->mrb);
+        struct RClass *mrb_record_class;
+        mrb_value mrb_new_arguments[2];
+
+        mrb_record_class = mrb_class_get_under(mrb, data->module, "Record");
+        mrb_new_arguments[0] = grn_mrb_value_from_grn_obj(mrb, domain);
+        mrb_new_arguments[1] = mrb_fixnum_value(GRN_RECORD_VALUE(bulk));
+        mrb_value_ = mrb_obj_new(mrb,
+                                 mrb_record_class,
+                                 2,
+                                 mrb_new_arguments);
       } else {
 #define MESSAGE_SIZE 4096
         char message[MESSAGE_SIZE];
