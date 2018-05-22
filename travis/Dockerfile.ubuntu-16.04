@@ -34,7 +34,7 @@ RUN \
   apt install -qq -y cutter-testing-framework
 
 RUN \
-  gem install --development \
+  gem install --development-all \
     grntest \
     groonga-client \
     pkg-config

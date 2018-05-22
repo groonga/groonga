@@ -31,7 +31,7 @@ RUN \
   apt install -qq -y cutter-testing-framework
 
 RUN \
-  gem2.0 install --development \
+  gem2.0 install --development-all \
     grntest
 
 RUN \
