@@ -32,8 +32,6 @@
 # include <onigmo.h>
 #endif
 
-#include <math.h>
-
 static void
 grn_expr_executor_init_general(grn_ctx *ctx,
                                grn_expr_executor *executor)
