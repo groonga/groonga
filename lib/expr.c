@@ -4836,7 +4836,17 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                                       table,
                                       NULL);
           if (base_res) {
-            grn_table_setoperation(ctx, base_res, res, base_res, GRN_OP_OR);
+            void *key = NULL, *value = NULL, *base_value = NULL;
+            uint32_t key_size = 0;
+
+            GRN_TABLE_EACH(ctx, res, 0, 0, id, &key, &key_size, &value, {
+              if (grn_table_add_v(ctx, base_res, key, key_size, &base_value, NULL)) {
+                grn_rset_recinfo *ri = value;
+                grn_rset_recinfo *base_ri = base_value;
+                grn_memcpy(base_ri, ri, ((grn_hash *)base_res)->value_size);
+                base_ri->score--;
+              }
+            });
           }
         }
       }
