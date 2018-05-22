@@ -815,10 +815,11 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
     break;
   default :
     {
+      grn_mrb_data *data = &(ctx->impl->mrb);
       struct RClass *klass;
 
       klass = mrb_class(mrb, mrb_constant);
-      if (klass == ctx->impl->mrb.builtin.time_class) {
+      if (klass == data->builtin.time_class) {
         grn_obj constant;
         mrb_value mrb_sec;
         mrb_value mrb_usec;
@@ -828,6 +829,19 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
         GRN_TIME_INIT(&constant, 0);
         GRN_TIME_SET(ctx, &constant,
                      GRN_TIME_PACK(mrb_fixnum(mrb_sec), mrb_fixnum(mrb_usec)));
+        grn_expr_append_const(ctx, expr, &constant, op, n_args);
+        GRN_OBJ_FIN(ctx, &constant);
+      } else if (klass == mrb_class_get_under(mrb, data->module, "Record")) {
+        grn_obj constant;
+        grn_id id;
+        mrb_value mrb_table;
+        grn_obj *domain;
+
+        id = mrb_fixnum(mrb_funcall(mrb, mrb_constant, "id", 0));
+        mrb_table = mrb_funcall(mrb, mrb_constant, "table", 0);
+        domain = DATA_PTR(mrb_table);
+        GRN_RECORD_INIT(&constant, 0, grn_obj_id(ctx, domain));
+        GRN_RECORD_SET(ctx, &constant, id);
         grn_expr_append_const(ctx, expr, &constant, op, n_args);
         GRN_OBJ_FIN(ctx, &constant);
       } else {
