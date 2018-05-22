@@ -53,17 +53,13 @@ mrb_grn_column_array_reference(mrb_state *mrb, mrb_value self)
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *column;
   mrb_int record_id;
-  grn_obj column_value;
-  mrb_value mrb_column_value;
+  grn_obj *column_value;
 
   column = DATA_PTR(self);
   mrb_get_args(mrb, "i", &record_id);
 
-  GRN_VOID_INIT(&column_value);
-  grn_obj_get_value(ctx, column, record_id, &column_value);
-  mrb_column_value = grn_mrb_value_from_grn_obj(mrb, &column_value);
-  GRN_OBJ_FIN(ctx, &column_value);
-  return mrb_column_value;
+  column_value = grn_obj_get_value(ctx, column, record_id, NULL);
+  return grn_mrb_value_from_grn_obj(mrb, column_value);
 }
 
 static mrb_value
