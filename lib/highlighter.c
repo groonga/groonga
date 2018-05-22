@@ -455,7 +455,6 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
                                   grn_obj *output)
 {
   grn_token_cursor *cursor;
-  grn_encoding encoding = highlighter->lexicon.encoding;
   grn_obj *token_ids = &(highlighter->lexicon.token_ids);
   grn_obj *token_locations = &(highlighter->lexicon.token_locations);
   grn_obj *candidates = &(highlighter->lexicon.candidates);
@@ -487,15 +486,9 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
     GRN_RECORD_PUT(ctx, token_ids, token_id);
     location.offset = grn_token_get_source_offset(ctx, token);
     location.length = grn_token_get_source_length(ctx, token);
+    location.first_character_length =
+      grn_token_get_source_first_character_length(ctx, token);
     location.have_overlap = grn_token_have_overlap(ctx, token);
-    {
-      const char *data;
-      size_t data_length;
-
-      data = grn_token_get_data_raw(ctx, token, &data_length);
-      location.first_character_length =
-        grn_charlen_(ctx, data, data + data_length, encoding);
-    }
     GRN_TEXT_PUT(ctx, token_locations, &location, sizeof(location));
   }
   grn_token_cursor_close(ctx, cursor);
