@@ -126,14 +126,14 @@ module Groonga
           table = shard.table
           return yield(table) if @filter.nil? and @post_filter.nil?
 
-          @dynamic_columns.each_initial do |dynamic_column|
-            if table == shard.table
-              table = table.select_all
-            end
-            dynamic_column.apply(table)
-          end
-
           begin
+            @dynamic_columns.each_initial do |dynamic_column|
+              if table == shard.table
+                table = table.select_all
+              end
+              dynamic_column.apply(table)
+            end
+
             yield(table)
           ensure
             table.close if table != shard.table
