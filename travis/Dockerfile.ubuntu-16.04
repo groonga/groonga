@@ -34,10 +34,12 @@ RUN \
   apt install -qq -y cutter-testing-framework
 
 RUN \
-  gem install --development-all \
+  gem install \
+    bundler \
     grntest \
     groonga-client \
-    pkg-config
+    pkg-config \
+    rake
 
 RUN \
   useradd --user-group --create-home groonga
