@@ -21,6 +21,7 @@
 #include "grn_expr.h"
 #include "grn_expr_code.h"
 #include "grn_expr_executor.h"
+#include "grn_geo.h"
 
 #ifdef GRN_WITH_ONIGMO
 # define GRN_SUPPORT_REGEXP
@@ -60,7 +61,6 @@ grn_expr_executor_init_general(grn_ctx *ctx,
 #define GEO_GRS_C1       6335439
 #define GEO_GRS_C2       6378137
 #define GEO_GRS_C3       0.006694
-#define GEO_INT2RAD(x)   ((M_PI * x) / (GEO_RESOLUTION * 180))
 
 #define VAR_SET_VALUE(ctx,var,value) do {\
   if (GRN_DB_OBJP(value)) {\
@@ -1950,13 +1950,13 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         grn_obj *value = NULL;
         double lng1, lat1, lng2, lat2, x, y, d;
         POP1(value);
-        lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lng1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lat1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lng2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1ALLOC1(value, res);
-        lat2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
         y = (lat2 - lat1);
         d = sqrt((x * x) + (y * y)) * GEO_RADIOUS;
@@ -1971,13 +1971,13 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         grn_obj *value = NULL;
         double lng1, lat1, lng2, lat2, x, y, d;
         POP1(value);
-        lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lng1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lat1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lng2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1ALLOC1(value, res);
-        lat2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         x = sin(fabs(lng2 - lng1) * 0.5);
         y = sin(fabs(lat2 - lat1) * 0.5);
         d = asin(sqrt((y * y) + cos(lat1) * cos(lat2) * x * x)) * 2 * GEO_RADIOUS;
@@ -1992,13 +1992,13 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         grn_obj *value = NULL;
         double lng1, lat1, lng2, lat2, p, q, m, n, x, y, d;
         POP1(value);
-        lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lng1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lat1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lng2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1ALLOC1(value, res);
-        lat2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         p = (lat1 + lat2) * 0.5;
         q = (1 - GEO_BES_C3 * sin(p) * sin(p));
         m = GEO_BES_C1 / sqrt(q * q * q);
@@ -2017,13 +2017,13 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         grn_obj *value = NULL;
         double lng1, lat1, lng2, lat2, p, q, m, n, x, y, d;
         POP1(value);
-        lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lng1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lat1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lng2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1ALLOC1(value, res);
-        lat2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         p = (lat1 + lat2) * 0.5;
         q = (1 - GEO_GRS_C3 * sin(p) * sin(p));
         m = GEO_GRS_C1 / sqrt(q * q * q);
@@ -2043,13 +2043,13 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         grn_obj *value = NULL;
         double lng0, lat0, lng1, lat1, x, y, d;
         POP1(value);
-        lng0 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lng0 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lat0 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lat0 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lng1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lat1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1ALLOC1(value, res);
         x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
         y = (lat1 - lat0);
@@ -2077,17 +2077,17 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         grn_obj *value = NULL;
         double lng0, lat0, lng1, lat1, lng2, lat2, x, y, d;
         POP1(value);
-        lng0 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lng0 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lat0 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lat0 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lng1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lng1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lat1 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lat1 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1(value);
-        lng2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lng2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         POP1ALLOC1(value, res);
-        lat2 = GEO_INT2RAD(GRN_INT32_VALUE(value));
+        lat2 = GRN_GEO_INT2RAD(GRN_INT32_VALUE(value));
         x = (lng1 - lng0) * cos((lat0 + lat1) * 0.5);
         y = (lat1 - lat0);
         d = (x * x) + (y * y);
