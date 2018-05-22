@@ -28,7 +28,7 @@ module Groonga
           name = record.key
           rewriter = @rewriters[name]
           if rewriter.nil?
-            plugin_name = record.plugin_name.value
+            plugin_name = record.plugin_name
             require plugin_name
             rewriter = @rewriters[name]
             raise "unknown rewriter: <#{name}>:<#{plugin_name}>" if rewriter.nil?

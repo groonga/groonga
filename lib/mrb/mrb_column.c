@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2017 Brazil
+  Copyright(C) 2013-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -53,13 +53,17 @@ mrb_grn_column_array_reference(mrb_state *mrb, mrb_value self)
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *column;
   mrb_int record_id;
-  grn_obj *column_value;
+  grn_obj column_value;
+  mrb_value rb_column_value;
 
   column = DATA_PTR(self);
   mrb_get_args(mrb, "i", &record_id);
 
-  column_value = grn_obj_get_value(ctx, column, record_id, NULL);
-  return grn_mrb_value_from_grn_obj(mrb, column_value);
+  GRN_VOID_INIT(&column_value);
+  grn_obj_get_value(ctx, column, record_id, &column_value);
+  rb_column_value = grn_mrb_value_from_bulk(mrb, &column_value);
+  GRN_OBJ_FIN(ctx, &column_value);
+  return rb_column_value;
 }
 
 static mrb_value
