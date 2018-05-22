@@ -6,6 +6,10 @@ module Groonga
 
     # Estimate the number of matched records for term ID or query.
     #
+    # @overload estimate_size(:term => term)
+    #   @param term [Record] the term as a Record
+    #   @return [Integer] the number of matched records for the term ID.
+    #
     # @overload estimate_size(:term_id => term_id)
     #   @return [Integer] the number of matched records for the term ID.
     #
@@ -16,6 +20,12 @@ module Groonga
     #   @return [Integer] the number of matched records for the lexicon cursor.
     #
     def estimate_size(parameters)
+      term = parameters[:term]
+      if term
+        # TODO: Validate lexicon
+        return estimate_size_for_term_id(term.id)
+      end
+
       term_id = parameters[:term_id]
       if term_id
         return estimate_size_for_term_id(term_id)
