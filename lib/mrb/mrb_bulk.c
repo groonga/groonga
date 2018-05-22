@@ -369,5 +369,9 @@ grn_mrb_bulk_init(grn_ctx *ctx)
                     mrb_grn_bulk_equal, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "inspect",
                     grn_mrb_object_inspect, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "close",
+                    grn_mrb_object_close, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "closed?",
+                    grn_mrb_object_is_closed, MRB_ARGS_NONE());
 }
 #endif

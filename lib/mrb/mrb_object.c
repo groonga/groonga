@@ -161,8 +161,8 @@ object_hash(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value((mrb_int)((uint64_t)object));
 }
 
-static mrb_value
-object_close(mrb_state *mrb, mrb_value self)
+mrb_value
+grn_mrb_object_close(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *object;
@@ -206,8 +206,8 @@ object_remove(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
-static mrb_value
-object_is_closed(mrb_state *mrb, mrb_value self)
+mrb_value
+grn_mrb_object_is_closed(mrb_state *mrb, mrb_value self)
 {
   grn_obj *object;
 
@@ -322,9 +322,11 @@ grn_mrb_object_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "==", object_equal, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "eql?", object_equal, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "hash", object_hash, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "close", object_close, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "close",
+                    grn_mrb_object_close, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "remove", object_remove, MRB_ARGS_OPT(1));
-  mrb_define_method(mrb, klass, "closed?", object_is_closed, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "closed?",
+                    grn_mrb_object_is_closed, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "domain_id", object_get_domain_id,
                     MRB_ARGS_NONE());

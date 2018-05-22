@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2016 Brazil
+  Copyright(C) 2013-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,8 @@ extern "C" {
 void grn_mrb_object_init(grn_ctx *ctx);
 
 mrb_value grn_mrb_object_inspect(mrb_state *mrb, mrb_value self);
+mrb_value grn_mrb_object_close(mrb_state *mrb, mrb_value self);
+mrb_value grn_mrb_object_is_closed(mrb_state *mrb, mrb_value self);
 
 #ifdef __cplusplus
 }
