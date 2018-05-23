@@ -2,18 +2,12 @@ table_create Users TABLE_NO_KEY
 column_create Users name COLUMN_SCALAR ShortText
 column_create Users memo COLUMN_SCALAR ShortText
 
-table_create Lexicon TABLE_HASH_KEY ShortText \
-  --default_tokenizer TokenBigramSplitSymbolAlphaDigit \
-  --normalizer NormalizerAuto
-column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
-column_create Lexicon users_memo COLUMN_INDEX|WITH_POSITION Users memo
-
 load --table Users
 [
-{"name": "Alice", "memo": "groonga user"},
-{"name": "Bob",   "memo": "rroonga user"}
+{"name": "Alice", "memo": "Groonga user"},
+{"name": "Bob",   "memo": "Rroonga user"}
 ]
 
 select Users \
   --output_columns _score \
-  --filter "memo @ \"groonga\" && query(\"name*10\", \"alice OR bob\")"
+  --filter 'memo @ "Groonga" && query("name", "Alice OR Bob")'
