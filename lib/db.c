@@ -7358,6 +7358,8 @@ call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
         hooks = hooks->next;
         pctx.offset++;
       }
+      GRN_OBJ_FIN(ctx, &id_);
+      GRN_OBJ_FIN(ctx, &flags_);
     }
     grn_obj_close(ctx, oldvalue);
   }
