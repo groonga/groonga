@@ -1,11 +1,3 @@
-table_create Documents TABLE_NO_KEY
-[[0,0.0,0.0],true]
-column_create Documents content COLUMN_SCALAR Text
-[[0,0.0,0.0],true]
-table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
-[[0,0.0,0.0],true]
-column_create Terms documents_content_index COLUMN_INDEX|WITH_POSITION Documents content
-[[0,0.0,0.0],true]
 table_create Users TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Users name COLUMN_SCALAR ShortText
