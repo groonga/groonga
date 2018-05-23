@@ -145,6 +145,7 @@ grn_highlighter_close(grn_ctx *ctx,
     grn_obj_close(ctx, highlighter->lexicon.token_id_chunks);
   }
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_id_chunk_ids));
+  GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_id_chunk));
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.candidates));
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_locations));
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_ids));
