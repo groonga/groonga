@@ -1,0 +1,28 @@
+table_create Documents TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Documents content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms documents_content_index COLUMN_INDEX|WITH_POSITION Documents content
+[[0,0.0,0.0],true]
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_HASH_KEY ShortText   --default_tokenizer TokenBigramSplitSymbolAlphaDigit   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
+[[0,0.0,0.0],true]
+column_create Lexicon users_memo COLUMN_INDEX|WITH_POSITION Users memo
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"name": "Alice", "memo": "groonga user"},
+{"name": "Bob",   "memo": "rroonga user"}
+]
+[[0,0.0,0.0],2]
+select Users   --output_columns _score   --filter "memo @ \"groonga\" && query(\"name*10\", \"alice OR bob\")"
+[[0,0.0,0.0],[[[1],[["_score","Int32"]],[11]]]]
