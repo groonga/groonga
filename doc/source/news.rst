@@ -7,6 +7,69 @@
 News
 ====
 
+.. _release-8-0-3:
+
+Release 8.0.3 - 2018-05-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/functions/highlight_html`] Support highlight of results of
+  the search by NormalizerNFKC100 or TokenNgram.
+
+* [:doc:`/reference/tokenizers`] Added new option for TokenNgram that
+  ``report_source_location option`` .
+  This option used when highlighting with "highlight_html" use a lexicon.
+
+* [:doc:`/reference/normalizers`] Added new option for NormalizerNFKC100 that
+  ``unify_middle_dot option``.
+  This option normalizes middle dot. You can search with or without ``・``
+  (middle dot) and regardless of ``・`` position.
+
+* [:doc:`/reference/normalizers`] Added new option for NormalizerNFKC100 that
+  ``unify_katakana_v_sounds option``.
+  This option normalizes ``ヴァヴィヴヴェヴォ`` (katakana) to ``バビブベボ`` (katakana).
+  For example, you can search ``バイオリン`` (violin) in ``ヴァイオリン`` (violin).
+
+* [:doc:`/reference/normalizers`] Added new option for NormalizerNFKC100 that
+  ``unify_katakana_bu_sound option``.
+  This option normalizes ``ヴァヴィヴゥヴェヴォ`` (katakana) to ``ブ`` (katakana).
+  For example, you can search ``セーブル`` (katakana) and ``セーヴル`` in
+  ``セーヴェル`` (katakana).
+
+* [:doc:`reference/functions/sub_filter`] Supported ``sub_filter`` optimization
+  for the too filter case.
+
+* [:doc:`/reference/executables/groonga-httpd`] Made all workers context address
+  to unique.
+
+* [:doc:`/reference/commands/delete`] Added new options that ``limit``.
+  You can limit the number of delete records as below example.
+  ``delete --table Users --filter '_key @^ "b"' --limit 4``
+
+* [httpd] Updated bundled nginx to 1.14.0.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/commands/logical_select`] Fixed memory leak when an error occurs
+  in filtered dynamic columns.
+
+* [:doc:`/reference/commands/logical_count`] Fixed memory leak on initial dynamic
+  column error.
+
+* [:doc:`/reference/commands/logical_range_filter`] Fixed memory leak when an error
+  occurs in dynamic column evaluation.
+
+* [:doc:`/reference/tokenizers`] Fixed a bug that the wrong score offset for a
+  loose case.
+
+* [:doc:`/reference/normalizers`] Fixed a bug that FULLWIDTH LATIN CAPITAL LETTERs
+  such as U+FF21 FULLWIDTH LATIN CAPITAL LETTER A aren't normalized to LATIN SMALL
+  LETTERs such as U+0061 LATIN SMALL LETTER A.
+  If you have been used NormalizerNFKC100, you must recreate your indexes.
+
 .. _release-8-0-2:
 
 Release 8.0.2 - 2018-04-29
