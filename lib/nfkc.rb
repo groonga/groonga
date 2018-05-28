@@ -781,7 +781,7 @@ def create_decompose_map()
       next unless char.valid_encoding?
       downcased_char = char.downcase
       next if char == downcased_char
-      decompose_map[char] = downcased_char
+      decompose_map[char] ||= downcased_char
     end
   end
   return decompose_map
