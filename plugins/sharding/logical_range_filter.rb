@@ -115,21 +115,12 @@ module Groonga
           @current_limit = @limit
 
           @result_sets = []
-          @unsorted_result_sets = []
-
           @temporary_tables = []
 
           @threshold = compute_threshold
         end
 
         def close
-          @unsorted_result_sets.each do |result_set|
-            result_set.close if result_set.temporary?
-          end
-          @result_sets.each do |result_set|
-            result_set.close if result_set.temporary?
-          end
-
           @temporary_tables.each do |table|
             table.close
           end
@@ -457,7 +448,7 @@ module Groonga
           @filter = @context.filter
           @post_filter = @context.post_filter
           @result_sets = @context.result_sets
-          @unsorted_result_sets = @context.unsorted_result_sets
+          @temporary_tables = @context.temporary_tables
 
           @target_range = @context.enumerator.target_range
 
@@ -502,7 +493,7 @@ module Groonga
                 @cover_type = :all
                 expression_builder.filter = @filter
               end
-              @context.temporary_tables << @target_table
+              @temporary_tables << @target_table
             end
             dynamic_column.apply(@target_table)
           end
@@ -850,6 +841,7 @@ module Groonga
           if @context.current_limit > 0
             @context.current_limit -= result_set.size
           end
+          @temporary_tables << result_set
           @result_sets << result_set
         end
 
@@ -906,10 +898,7 @@ module Groonga
         end
 
         def add_result_set(result_set)
-          @context.temporary_tables.delete(result_set)
-
           if result_set.empty?
-            result_set.close if result_set.temporary?
             return
           end
 
@@ -928,23 +917,21 @@ module Groonga
           @context.dynamic_columns.each_filtered do |dynamic_column|
             if result_set == @shard.table
               result_set = result_set.select_all
+              @temporary_tables << result_set
             end
             dynamic_column.apply(result_set)
           end
 
           unless @post_filter.nil?
-            filtered_table = result_set
-            result_set = apply_post_filter(filtered_table)
-            @context.temporary_tables << filtered_table
+            result_set = apply_post_filter(result_set)
+            @temporary_tables << result_set
           end
 
           if result_set.size <= @context.current_offset
             @context.current_offset -= result_set.size
-            result_set.close if result_set.temporary?
             return
           end
 
-          @unsorted_result_sets << result_set if result_set.temporary?
           if @context.sort_keys.empty?
             sort_keys = [
               {
@@ -972,6 +959,7 @@ module Groonga
           sorted_result_set = result_set.sort(sort_keys,
                                               :offset => @context.current_offset,
                                               :limit => limit)
+          @temporary_tables << sorted_result_set
           @result_sets << sorted_result_set
           if @context.current_offset > 0
             @context.current_offset = 0
