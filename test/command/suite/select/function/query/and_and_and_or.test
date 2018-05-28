@@ -1,0 +1,13 @@
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
+column_create Users memo COLUMN_SCALAR ShortText
+
+load --table Users
+[
+{"name": "Alice", "memo": "Groonga user"},
+{"name": "Bob",   "memo": "Rroonga user"}
+]
+
+select Users \
+  --output_columns _score \
+  --filter 'memo @ "Groonga" && memo @ "Groonga" && memo @ "Groonga" && query("name", "Alice OR Bob")'

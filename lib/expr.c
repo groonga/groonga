@@ -4844,7 +4844,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                 grn_rset_recinfo *ri = value;
                 grn_rset_recinfo *base_ri = base_value;
                 grn_memcpy(base_ri, ri, ((grn_hash *)base_res)->value_size);
-                base_ri->score--;
+                base_ri->score = 0;
               }
             });
           }
