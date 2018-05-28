@@ -1121,7 +1121,7 @@ utf8_normalize(grn_ctx *ctx,
   }
   cp = nstr->ctypes;
   if (options->report_source_offset) {
-    if (!(nstr->offsets = GRN_MALLOC(ds + 1))) {
+    if (!(nstr->offsets = GRN_MALLOC(sizeof(uint64_t) * (ds + 1)))) {
       if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
       if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
       GRN_FREE(nstr->normalized); nstr->normalized = NULL;
@@ -1225,7 +1225,8 @@ utf8_normalize(grn_ctx *ctx,
           }
           if (offsets) {
             uint64_t *new_offsets;
-            if (!(new_offsets = GRN_REALLOC(nstr->offsets, ds + 1))) {
+            if (!(new_offsets = GRN_REALLOC(nstr->offsets,
+                                            sizeof(uint64_t) * (ds + 1)))) {
               GRN_FREE(nstr->offsets); nstr->offsets = NULL;
               if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
               if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
