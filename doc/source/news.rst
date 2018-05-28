@@ -64,8 +64,8 @@ Fixes
 * [:doc:`/reference/commands/logical_range_filter`] Fixed memory leak when an error
   occurs in dynamic column evaluation.
 
-* [:doc:`/reference/tokenizers`] Fixed a bug that the wrong source offset for a
-  loose case.
+* [:doc:`/reference/tokenizers`] Fixed a bug that the wrong ``source_offset`` when a
+  loose tokenizing such as ``loose_symbol`` option.
 
 * [:doc:`/reference/normalizers`] Fixed a bug that FULLWIDTH LATIN CAPITAL LETTERs
   such as U+FF21 FULLWIDTH LATIN CAPITAL LETTER A aren't normalized to LATIN SMALL
