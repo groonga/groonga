@@ -20,7 +20,7 @@ Improvements
 
 * [:doc:`/reference/tokenizers`] Added new option for TokenNgram that
   ``report_source_location option`` .
-  This option used when highlighting with "highlight_html" use a lexicon.
+  This option used when highlighting with ``highlight_html`` use a lexicon.
 
 * [:doc:`/reference/normalizers`] Added new option for NormalizerNFKC100 that
   ``unify_middle_dot option``.
@@ -62,7 +62,7 @@ Fixes
 * [:doc:`/reference/commands/logical_range_filter`] Fixed memory leak when an error
   occurs in dynamic column evaluation.
 
-* [:doc:`/reference/tokenizers`] Fixed a bug that the wrong score offset for a
+* [:doc:`/reference/tokenizers`] Fixed a bug that the wrong source offset for a
   loose case.
 
 * [:doc:`/reference/normalizers`] Fixed a bug that FULLWIDTH LATIN CAPITAL LETTERs
