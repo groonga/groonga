@@ -1,4 +1,4 @@
-tokenize   'TokenNgram("loose_symbol", true,               "report_source_location", true)'   "(あいうえお)"   'NormalizerNFKC100("report_source_offset", true)'
+tokenize   'TokenNgram("loose_symbol", true,               "report_source_location", true)'   "[クリアコード]"   'NormalizerNFKC100("unify_hyphen_and_prolonged_sound_mark", true,                      "report_source_offset", true)'
 [
   [
     0,
@@ -7,7 +7,7 @@ tokenize   'TokenNgram("loose_symbol", true,               "report_source_locati
   ],
   [
     {
-      "value": "(",
+      "value": "[",
       "position": 0,
       "force_prefix": false,
       "source_offset": 0,
@@ -15,7 +15,7 @@ tokenize   'TokenNgram("loose_symbol", true,               "report_source_locati
       "source_first_character_length": 1
     },
     {
-      "value": "あい",
+      "value": "クリ",
       "position": 1,
       "force_prefix": false,
       "source_offset": 1,
@@ -23,7 +23,7 @@ tokenize   'TokenNgram("loose_symbol", true,               "report_source_locati
       "source_first_character_length": 3
     },
     {
-      "value": "いう",
+      "value": "リア",
       "position": 2,
       "force_prefix": false,
       "source_offset": 4,
@@ -31,7 +31,7 @@ tokenize   'TokenNgram("loose_symbol", true,               "report_source_locati
       "source_first_character_length": 3
     },
     {
-      "value": "うえ",
+      "value": "アコ",
       "position": 3,
       "force_prefix": false,
       "source_offset": 7,
@@ -39,15 +39,15 @@ tokenize   'TokenNgram("loose_symbol", true,               "report_source_locati
       "source_first_character_length": 3
     },
     {
-      "value": "えお",
+      "value": "コ",
       "position": 4,
       "force_prefix": false,
       "source_offset": 10,
-      "source_length": 6,
+      "source_length": 3,
       "source_first_character_length": 3
     },
     {
-      "value": "お",
+      "value": "-",
       "position": 5,
       "force_prefix": false,
       "source_offset": 13,
@@ -55,60 +55,68 @@ tokenize   'TokenNgram("loose_symbol", true,               "report_source_locati
       "source_first_character_length": 3
     },
     {
-      "value": ")",
+      "value": "ド",
       "position": 6,
       "force_prefix": false,
       "source_offset": 16,
+      "source_length": 3,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "]",
+      "position": 7,
+      "force_prefix": false,
+      "source_offset": 19,
       "source_length": 1,
       "source_first_character_length": 1
     },
     {
       "value": "￰",
-      "position": 7,
+      "position": 8,
       "force_prefix": false,
-      "source_offset": 17,
+      "source_offset": 20,
       "source_length": 0,
       "source_first_character_length": 0
     },
     {
-      "value": "あい",
-      "position": 8,
+      "value": "クリ",
+      "position": 9,
       "force_prefix": false,
       "source_offset": 1,
       "source_length": 6,
       "source_first_character_length": 4
     },
     {
-      "value": "いう",
-      "position": 9,
+      "value": "リア",
+      "position": 10,
       "force_prefix": false,
       "source_offset": 4,
       "source_length": 6,
       "source_first_character_length": 3
     },
     {
-      "value": "うえ",
-      "position": 10,
-      "force_prefix": false,
-      "source_offset": 7,
-      "source_length": 6,
-      "source_first_character_length": 3
-    },
-    {
-      "value": "えお",
+      "value": "アコ",
       "position": 11,
       "force_prefix": false,
-      "source_offset": 10,
-      "source_length": 6,
+      "source_offset": 7,
+      "source_length": 9,
       "source_first_character_length": 3
     },
     {
-      "value": "お",
+      "value": "コド",
       "position": 12,
       "force_prefix": false,
-      "source_offset": 13,
-      "source_length": 3,
+      "source_offset": 10,
+      "source_length": 9,
       "source_first_character_length": 3
+    },
+    {
+      "value": "ド",
+      "position": 13,
+      "force_prefix": false,
+      "source_offset": 16,
+      "source_length": 3,
+      "source_first_character_length": 6
     }
   ]
 ]

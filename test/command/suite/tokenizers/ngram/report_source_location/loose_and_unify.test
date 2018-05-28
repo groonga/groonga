@@ -1,0 +1,6 @@
+tokenize \
+  'TokenNgram("loose_symbol", true, \
+              "report_source_location", true)' \
+  "[クリアコード]" \
+  'NormalizerNFKC100("unify_hyphen_and_prolonged_sound_mark", true, \
+                     "report_source_offset", true)'

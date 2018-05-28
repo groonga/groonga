@@ -282,14 +282,17 @@ typedef struct {
     grn_obj text;
     uint_least8_t *ctypes;
     int16_t *checks;
+    uint64_t *offsets;
   } loose;
   int32_t pos;
   uint32_t skip;
+  unsigned int n_chars;
   const unsigned char *start;
   const unsigned char *next;
   const unsigned char *end;
   const uint_least8_t *ctypes;
   const int16_t *checks;
+  const uint64_t *offsets;
   uint32_t tail;
   uint64_t source_offset;
 } grn_ngram_tokenizer;
@@ -319,6 +322,7 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
   const char *normalized_end;
   const uint_least8_t *types = tokenizer->ctypes;
   const int16_t *checks = tokenizer->checks;
+  const uint64_t *offsets = tokenizer->offsets;
 
   string = grn_tokenizer_query_get_normalized_string(ctx, tokenizer->query);
   grn_string_get_normalized(ctx,
@@ -333,7 +337,10 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
       grn_tokenizer_query_get_encoding(ctx, tokenizer->query);
     uint_least8_t *loose_types;
     int16_t *loose_checks = NULL;
+    uint64_t *loose_offsets = NULL;
     const int16_t *removed_checks = NULL;
+    uint64_t last_offset = 0;
+    unsigned int n_chars = 0;
 
     tokenizer->loose.ctypes =
       GRN_MALLOC(sizeof(uint_least8_t) * normalized_length_in_chars);
@@ -350,12 +357,23 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
       if (!tokenizer->loose.checks) {
         ERR(GRN_NO_MEMORY_AVAILABLE,
             "[tokenizer][ngram][loose] "
+            "failed to allocate memory for character lengths");
+        return;
+      }
+    }
+    if (offsets) {
+      tokenizer->loose.offsets =
+        GRN_CALLOC(sizeof(uint64_t) * normalized_length_in_chars);
+      if (!tokenizer->loose.offsets) {
+        ERR(GRN_NO_MEMORY_AVAILABLE,
+            "[tokenizer][ngram][loose] "
             "failed to allocate memory for character offsets");
         return;
       }
     }
     loose_types = tokenizer->loose.ctypes;
     loose_checks = tokenizer->loose.checks;
+    loose_offsets = tokenizer->loose.offsets;
     while (normalized < normalized_end) {
       size_t length;
       length = grn_charlen_(ctx,
@@ -372,6 +390,9 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
            GRN_STR_ISBLANK(*types))) {
         if (!removed_checks) {
           removed_checks = checks;
+        }
+        if (offsets && last_offset == 0) {
+          last_offset = *offsets;
         }
       } else {
         GRN_TEXT_PUT(ctx, &(tokenizer->loose.text), normalized, length);
@@ -393,11 +414,28 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
           }
           loose_checks += length;
         }
+        if (loose_offsets) {
+          *loose_offsets = *offsets;
+          loose_offsets++;
+          last_offset = 0;
+        }
+        n_chars++;
       }
       normalized += length;
       types++;
       if (checks) {
         checks += length;
+      }
+      if (offsets) {
+        offsets++;
+      }
+    }
+    *loose_checks = *checks;
+    if (offsets) {
+      if (last_offset) {
+        *loose_offsets = last_offset;
+      } else {
+        *loose_offsets = *offsets;
       }
     }
     tokenizer->start =
@@ -406,6 +444,8 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
     tokenizer->end = tokenizer->start + GRN_TEXT_LEN(&(tokenizer->loose.text));
     tokenizer->ctypes = tokenizer->loose.ctypes;
     tokenizer->checks = tokenizer->loose.checks;
+    tokenizer->offsets = tokenizer->loose.offsets;
+    tokenizer->n_chars = n_chars;
   } else {
     tokenizer->start = normalized;
     tokenizer->next = tokenizer->start;
@@ -457,6 +497,7 @@ ngram_init_raw(grn_ctx *ctx,
   GRN_TEXT_INIT(&(tokenizer->loose.text), 0);
   tokenizer->loose.ctypes = NULL;
   tokenizer->loose.checks = NULL;
+  tokenizer->loose.offsets = NULL;
   tokenizer->pos = 0;
   tokenizer->skip = 0;
   tokenizer->source_offset = 0;
@@ -465,17 +506,21 @@ ngram_init_raw(grn_ctx *ctx,
     grn_obj *string;
     const char *normalized_raw;
     unsigned int normalized_length_in_bytes;
+    unsigned int normalized_length_in_chars;
 
     string = grn_tokenizer_query_get_normalized_string(ctx, tokenizer->query);
     grn_string_get_normalized(ctx,
                               string,
-                              &normalized_raw, &normalized_length_in_bytes,
-                              NULL);
+                              &normalized_raw,
+                              &normalized_length_in_bytes,
+                              &normalized_length_in_chars);
     tokenizer->start = (const unsigned char *)normalized_raw;
     tokenizer->next = tokenizer->start;
     tokenizer->end = tokenizer->start + normalized_length_in_bytes;
+    tokenizer->n_chars = normalized_length_in_chars;
     tokenizer->ctypes = grn_string_get_types(ctx, string);
     tokenizer->checks = grn_string_get_checks(ctx, string);
+    tokenizer->offsets = grn_string_get_offsets(ctx, string);
   }
 
   if (grn_tokenizer_query_get_mode(ctx, tokenizer->query) == GRN_TOKEN_GET) {
@@ -700,6 +745,7 @@ ngram_next(grn_ctx *ctx,
   grn_token_status status = 0;
   const uint_least8_t *cp = tokenizer->ctypes ? tokenizer->ctypes + pos : NULL;
   const int16_t *checks = NULL;
+  const uint64_t *offsets = tokenizer->offsets ? tokenizer->offsets + pos : NULL;
   grn_encoding encoding = grn_tokenizer_query_get_encoding(ctx, query);
 
   if (tokenizer->checks) {
@@ -712,8 +758,14 @@ ngram_next(grn_ctx *ctx,
                        GRN_TOKENIZER_END_MARK_UTF8,
                        GRN_TOKENIZER_END_MARK_UTF8_LEN);
     grn_token_set_status(ctx, token, status);
-    if (checks) {
-      grn_token_set_source_offset(ctx, token, tokenizer->source_offset);
+    if (offsets) {
+      grn_token_set_source_offset(ctx,
+                                  token,
+                                  tokenizer->offsets[tokenizer->n_chars]);
+    } else if (checks) {
+      grn_token_set_source_offset(ctx,
+                                  token,
+                                  tokenizer->source_offset);
     }
     ngram_switch_to_loose_mode(ctx, tokenizer);
     tokenizer->loose.need_end_mark = GRN_FALSE;
@@ -840,51 +892,84 @@ ngram_next(grn_ctx *ctx,
     grn_token_set_data(ctx, token, p, data_size);
     grn_token_set_status(ctx, token, status);
     grn_token_set_overlap(ctx, token, tokenizer->overlap);
-    if (checks) {
-      size_t i;
-      uint32_t source_length = 0;
-      uint32_t source_first_character_length = 0;
-      uint64_t next_offset = tokenizer->source_offset;
-      grn_token_set_source_offset(ctx, token, tokenizer->source_offset);
-      if (checks[0] == -1) {
-        size_t n_leading_bytes = p - tokenizer->start;
-        for (i = 1; i <= n_leading_bytes; i++) {
-          if (checks[-i] > 0) {
-            source_length = source_first_character_length = checks[-i];
-            if (!tokenizer->overlap) {
-              next_offset += checks[-i];
+    /* TODO: Clean and complete... */
+    if (offsets) {
+      grn_token_set_source_offset(ctx, token, offsets[0]);
+      if (checks) {
+        size_t i;
+        uint32_t source_first_character_length = 0;
+        if (checks[0] == -1) {
+          size_t n_leading_bytes = p - tokenizer->start;
+          for (i = 1; i <= n_leading_bytes; i++) {
+            if (checks[-i] > 0) {
+              source_first_character_length = checks[-i];
+              break;
             }
-            break;
           }
         }
-      }
-      {
-        uint64_t first_offset = 0;
-        for (i = 0; i < data_size; i++) {
-          if (checks[i] > 0) {
-            if ((tokenizer->overlap && first_offset == 0) ||
-                !tokenizer->overlap) {
-              if (first_offset == 0) {
-                first_offset = checks[i];
+        {
+          for (i = 0; i < data_size; i++) {
+            if (checks[i] > 0) {
+              if (source_first_character_length == 0) {
+                source_first_character_length = checks[i];
               }
-              next_offset += checks[i];
-            }
-            if (source_first_character_length == 0) {
-              source_first_character_length = checks[i];
-            }
-            source_length += checks[i];
-          } else if (checks[i] < 0) {
-            if (tokenizer->overlap) {
-              next_offset -= first_offset;
             }
           }
         }
+        grn_token_set_source_length(ctx,
+                                    token,
+                                    offsets[n_characters] - offsets[0]);
+        grn_token_set_source_first_character_length(ctx,
+                                                    token,
+                                                    source_first_character_length);
       }
-      grn_token_set_source_length(ctx, token, source_length);
-      grn_token_set_source_first_character_length(ctx,
-                                                  token,
-                                                  source_first_character_length);
-      tokenizer->source_offset = next_offset;
+    } else {
+      if (checks) {
+        size_t i;
+        uint32_t source_length = 0;
+        uint32_t source_first_character_length = 0;
+        uint64_t next_offset = tokenizer->source_offset;
+        grn_token_set_source_offset(ctx, token, tokenizer->source_offset);
+        if (checks[0] == -1) {
+          size_t n_leading_bytes = p - tokenizer->start;
+          for (i = 1; i <= n_leading_bytes; i++) {
+            if (checks[-i] > 0) {
+              source_length = source_first_character_length = checks[-i];
+              if (!tokenizer->overlap) {
+                next_offset += checks[-i];
+              }
+              break;
+            }
+          }
+        }
+        {
+          uint64_t first_offset = 0;
+          for (i = 0; i < data_size; i++) {
+            if (checks[i] > 0) {
+              if ((tokenizer->overlap && first_offset == 0) ||
+                  !tokenizer->overlap) {
+                if (first_offset == 0) {
+                  first_offset = checks[i];
+                }
+                next_offset += checks[i];
+              }
+              if (source_first_character_length == 0) {
+                source_first_character_length = checks[i];
+              }
+              source_length += checks[i];
+            } else if (checks[i] < 0) {
+              if (tokenizer->overlap) {
+                next_offset -= first_offset;
+              }
+            }
+          }
+        }
+        grn_token_set_source_length(ctx, token, source_length);
+        grn_token_set_source_first_character_length(ctx,
+                                                    token,
+                                                    source_first_character_length);
+        tokenizer->source_offset = next_offset;
+      }
     }
   }
 }
@@ -924,6 +1009,9 @@ ngram_fin(grn_ctx *ctx, void *user_data)
   }
   if (tokenizer->loose.checks) {
     GRN_FREE(tokenizer->loose.checks);
+  }
+  if (tokenizer->loose.offsets) {
+    GRN_FREE(tokenizer->loose.offsets);
   }
   GRN_OBJ_FIN(ctx, &(tokenizer->loose.text));
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));

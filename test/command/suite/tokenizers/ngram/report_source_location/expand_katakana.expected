@@ -1,4 +1,4 @@
-tokenize   'TokenNgram("report_source_location", true)'   "アイ㌕エオ"   NormalizerAuto
+tokenize   'TokenNgram("report_source_location", true)'   "アイ㌕エオ"   'NormalizerNFKC100'
 [
   [
     0,

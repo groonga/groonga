@@ -2,4 +2,4 @@ tokenize \
   'TokenNgram("loose_symbol", true, \
               "report_source_location", true)' \
   "(あいうえお)" \
-  'NormalizerNFKC100'
+  'NormalizerNFKC100("report_source_offset", true)'

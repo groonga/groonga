@@ -1,4 +1,4 @@
-tokenize   'TokenNgram("report_source_location", true)'   "あいうえお"   NormalizerAuto
+tokenize   'TokenNgram("report_source_location", true)'   "あいうえお"   'NormalizerNFKC100("report_source_offset", true)'
 [
   [
     0,
