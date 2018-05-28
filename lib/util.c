@@ -837,11 +837,19 @@ grn_table_normalizer_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 static grn_rc
 grn_table_keys_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
+  grn_obj *score = NULL;
   grn_table_cursor *tc;
   int max_n_keys = 10;
 
   /* TODO */
   /* max_n_keys = grn_atoi(grn_getenv("GRN_INSPECT_TABLE_MAX_N_KEYS")); */
+
+  if (obj->header.flags & GRN_OBJ_WITH_SUBREC) {
+    score = grn_obj_column(ctx,
+                           obj,
+                           GRN_COLUMN_NAME_SCORE,
+                           GRN_COLUMN_NAME_SCORE_LEN);
+  }
 
   GRN_TEXT_PUTS(ctx, buf, "keys:[");
   tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
@@ -850,7 +858,9 @@ grn_table_keys_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     int i = 0;
     grn_id id;
     grn_obj key;
+    grn_obj score_value;
     GRN_OBJ_INIT(&key, GRN_BULK, 0, obj->header.domain);
+    GRN_FLOAT_INIT(&score_value, 0);
     while ((id = grn_table_cursor_next(ctx, tc))) {
       if (max_n_keys > 0 && i >= max_n_keys) {
         GRN_TEXT_PUTS(ctx, buf, ", ...");
@@ -860,11 +870,23 @@ grn_table_keys_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
       grn_table_get_key2(ctx, obj, id, &key);
       grn_inspect(ctx, buf, &key);
       GRN_BULK_REWIND(&key);
+      if (score) {
+        GRN_BULK_REWIND(&score_value);
+        grn_obj_get_value(ctx, score, id, &score_value);
+        GRN_TEXT_PUTS(ctx, buf, "(");
+        grn_inspect(ctx, buf, &score_value);
+        GRN_TEXT_PUTS(ctx, buf, ")");
+      }
     }
     GRN_OBJ_FIN(ctx, &key);
+    GRN_OBJ_FIN(ctx, &score_value);
     grn_table_cursor_close(ctx, tc);
   }
   GRN_TEXT_PUTS(ctx, buf, "]");
+
+  if (score) {
+    grn_obj_close(ctx, score);
+  }
 
   return GRN_SUCCESS;
 }
