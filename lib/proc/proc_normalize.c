@@ -93,10 +93,12 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 
   {
     int flags;
+    int n_elements = 3;
     grn_obj *lexicon;
     grn_obj *grn_string;
     unsigned int normalized_length_in_bytes;
     unsigned int normalized_n_characters;
+    const uint64_t *offsets;
 
     flags = parse_normalize_flags(ctx, &flags_raw);
     if (ctx->rc != GRN_SUCCESS) {
@@ -118,7 +120,12 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
                                  lexicon,
                                  flags);
 
-    grn_ctx_output_map_open(ctx, "RESULT", 3);
+    offsets = grn_string_get_offsets(ctx, grn_string);
+    if (offsets) {
+      n_elements++;
+    }
+
+    grn_ctx_output_map_open(ctx, "RESULT", n_elements);
     {
       const char *normalized;
 
@@ -164,6 +171,17 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
         grn_ctx_output_array_close(ctx);
       }
     }
+    if (offsets) {
+      unsigned int i;
+
+      grn_ctx_output_cstr(ctx, "offsets");
+      grn_ctx_output_array_open(ctx, "offsets", normalized_n_characters);
+      for (i = 0; i < normalized_n_characters; i++) {
+        grn_ctx_output_uint64(ctx, offsets[i]);
+      }
+      grn_ctx_output_array_close(ctx);
+    }
+
     grn_ctx_output_map_close(ctx);
 
     grn_obj_unlink(ctx, grn_string);

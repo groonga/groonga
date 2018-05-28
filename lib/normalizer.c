@@ -621,6 +621,7 @@ typedef struct {
   grn_nfkc_decompose_func decompose_func;
   grn_nfkc_compose_func compose_func;
   grn_bool include_removed_source_location;
+  grn_bool report_source_offset;
   grn_bool unify_kana;
   grn_bool unify_kana_case;
   grn_bool unify_kana_voiced_sound_mark;
@@ -642,6 +643,7 @@ utf8_normalize_options_init(grn_utf8_normalize_options *options,
   options->decompose_func = decompose_func;
   options->compose_func = compose_func;
   options->include_removed_source_location = GRN_TRUE;
+  options->report_source_offset = GRN_FALSE;
   options->unify_kana = GRN_FALSE;
   options->unify_kana_case = GRN_FALSE;
   options->unify_kana_voiced_sound_mark = GRN_FALSE;
@@ -1088,6 +1090,7 @@ utf8_normalize(grn_ctx *ctx,
   const unsigned char *s, *s_, *s__ = NULL, *p, *p2, *pe, *e;
   unsigned char *d, *d_, *de;
   uint_least8_t *cp;
+  uint64_t *offsets;
   size_t length = 0, ls, lp, size = nstr->original_length_in_bytes, ds = size * 3;
   int removeblankp = nstr->flags & GRN_STRING_REMOVE_BLANK;
   grn_bool remove_tokenized_delimiter_p =
@@ -1117,6 +1120,17 @@ utf8_normalize(grn_ctx *ctx,
     }
   }
   cp = nstr->ctypes;
+  if (options->report_source_offset) {
+    if (!(nstr->offsets = GRN_MALLOC(ds + 1))) {
+      if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
+      if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
+      GRN_FREE(nstr->normalized); nstr->normalized = NULL;
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[string][utf8] failed to allocate offsets space");
+      return NULL;
+    }
+  }
+  offsets = nstr->offsets;
   d = (unsigned char *)nstr->normalized;
   de = d + ds;
   d_ = NULL;
@@ -1146,6 +1160,9 @@ utf8_normalize(grn_ctx *ctx,
           s_ = s__;
         }
       }
+      if (offsets) {
+        offsets--;
+      }
       d = d_;
       length--;
     }
@@ -1169,6 +1186,7 @@ utf8_normalize(grn_ctx *ctx,
           if (!(normalized = GRN_REALLOC(nstr->normalized, ds + 1))) {
             if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
             if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
+            if (nstr->offsets) { GRN_FREE(nstr->offsets); nstr->offsets = NULL; }
             GRN_FREE(nstr->normalized); nstr->normalized = NULL;
             ERR(GRN_NO_MEMORY_AVAILABLE,
                 "[string][utf8] failed to expand normalized text space");
@@ -1181,6 +1199,7 @@ utf8_normalize(grn_ctx *ctx,
             int16_t *checks;
             if (!(checks = GRN_REALLOC(nstr->checks, ds * sizeof(int16_t) + 1))) {
               if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
+              if (nstr->offsets) { GRN_FREE(nstr->offsets); nstr->offsets = NULL; }
               GRN_FREE(nstr->checks); nstr->checks = NULL;
               GRN_FREE(nstr->normalized); nstr->normalized = NULL;
               ERR(GRN_NO_MEMORY_AVAILABLE,
@@ -1195,6 +1214,7 @@ utf8_normalize(grn_ctx *ctx,
             if (!(ctypes = GRN_REALLOC(nstr->ctypes, ds + 1))) {
               GRN_FREE(nstr->ctypes); nstr->ctypes = NULL;
               if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
+              if (nstr->offsets) { GRN_FREE(nstr->offsets); nstr->offsets = NULL; }
               GRN_FREE(nstr->normalized); nstr->normalized = NULL;
               ERR(GRN_NO_MEMORY_AVAILABLE,
                   "[string][utf8] failed to expand character types space");
@@ -1202,6 +1222,20 @@ utf8_normalize(grn_ctx *ctx,
             }
             cp = ctypes + (cp - nstr->ctypes);
             nstr->ctypes = ctypes;
+          }
+          if (offsets) {
+            uint64_t *new_offsets;
+            if (!(new_offsets = GRN_REALLOC(nstr->offsets, ds + 1))) {
+              GRN_FREE(nstr->offsets); nstr->offsets = NULL;
+              if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
+              if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
+              GRN_FREE(nstr->normalized); nstr->normalized = NULL;
+              ERR(GRN_NO_MEMORY_AVAILABLE,
+                  "[string][utf8] failed to expand offsets space");
+              return NULL;
+            }
+            offsets = new_offsets + (offsets - nstr->offsets);
+            nstr->offsets = new_offsets;
           }
         }
 
@@ -1326,12 +1360,16 @@ utf8_normalize(grn_ctx *ctx,
             }
             for (i = lp; i > 1; i--) { *ch++ = 0; }
           }
+          if (offsets) {
+            *offsets++ = (uint64_t)(s - (const unsigned char *)nstr->original);
+          }
         }
         lp = lp_original;
       }
     }
   }
   if (cp) { *cp = GRN_CHAR_NULL; }
+  if (offsets) { *offsets = nstr->original_length_in_bytes; }
   if (options->unify_katakana_v_sounds) {
     utf8_normalize_unify_katakana_v_sounds(NULL, 0, d_, d);
   }
@@ -1792,6 +1830,12 @@ nfkc100_open_options(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->include_removed_source_location);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "report_source_offset")) {
+      options->report_source_offset =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->report_source_offset);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_kana")) {
       options->unify_kana = grn_vector_get_element_bool(ctx,
                                                         raw_options,

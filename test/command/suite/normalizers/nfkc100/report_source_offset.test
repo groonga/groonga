@@ -1,0 +1,4 @@
+normalize \
+  'NormalizerNFKC100("report_source_offset", true)' \
+  "( あ  いうえお )" \
+  REMOVE_BLANK
