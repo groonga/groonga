@@ -345,7 +345,7 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
     unsigned int n_chars = 0;
 
     tokenizer->loose.ctypes =
-      GRN_MALLOC(sizeof(uint_least8_t) * normalized_length_in_chars);
+      GRN_MALLOC(sizeof(uint_least8_t) * (normalized_length_in_chars + 1));
     if (!tokenizer->loose.ctypes) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[tokenizer][ngram][loose] "
@@ -365,7 +365,7 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
     }
     if (offsets) {
       tokenizer->loose.offsets =
-        GRN_CALLOC(sizeof(uint64_t) * normalized_length_in_chars);
+        GRN_CALLOC(sizeof(uint64_t) * (normalized_length_in_chars + 1));
       if (!tokenizer->loose.offsets) {
         ERR(GRN_NO_MEMORY_AVAILABLE,
             "[tokenizer][ngram][loose] "
