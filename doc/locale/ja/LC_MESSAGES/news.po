@@ -141,7 +141,7 @@ msgid ""
 msgstr ""
 "[:doc:`/reference/normalizers`] U+FF21 FULLWIDTH LATIN CAPITAL LETTER A のよ"
 "うな全角ラテン大文字が、U+0061 LATIN SMALL LETTER A のようなラテン小文字に正"
-"規化されないバグを修正しました。すでに、NormalizerNFKC100を使用している場合"
+"規化されない不具合を修正しました。すでに、NormalizerNFKC100を使用している場合"
 "は、インデックスを再生成する必要があります。"
 
 msgid "Release 8.0.2 - 2018-04-29"
