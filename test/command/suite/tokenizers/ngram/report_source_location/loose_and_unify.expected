@@ -1,4 +1,4 @@
-tokenize   'TokenNgram("loose_symbol", true,               "report_source_location", true)'   "[クリアコード]"   'NormalizerNFKC100("unify_hyphen_and_prolonged_sound_mark", true,                      "report_source_offset", true)'
+tokenize   'TokenNgram("loose_symbol", true,               "include_removed_source_location", false,               "report_source_location", true)'   "[クリアコード]"   'NormalizerNFKC100("unify_hyphen_and_prolonged_sound_mark", true,                      "include_removed_source_location", false,                      "report_source_offset", true)'
 [
   [
     0,
@@ -84,7 +84,7 @@ tokenize   'TokenNgram("loose_symbol", true,               "report_source_locati
       "force_prefix": false,
       "source_offset": 1,
       "source_length": 6,
-      "source_first_character_length": 4
+      "source_first_character_length": 3
     },
     {
       "value": "リア",
@@ -116,7 +116,7 @@ tokenize   'TokenNgram("loose_symbol", true,               "report_source_locati
       "force_prefix": false,
       "source_offset": 16,
       "source_length": 3,
-      "source_first_character_length": 6
+      "source_first_character_length": 3
     }
   ]
 ]

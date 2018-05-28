@@ -1,0 +1,7 @@
+tokenize \
+  'TokenNgram("report_source_location", true, \
+              "include_removed_source_location", false, \
+              "loose_symbol", true)' \
+  "０９０（１23４）５6−７８" \
+  'NormalizerNFKC100("include_removed_source_location", false, \
+                     "report_source_offset", true)'

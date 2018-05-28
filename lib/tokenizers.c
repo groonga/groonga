@@ -268,6 +268,7 @@ typedef struct {
   grn_bool loose_symbol;
   grn_bool loose_blank;
   grn_bool report_source_location;
+  grn_bool include_removed_source_location;
 } grn_ngram_options;
 
 typedef struct {
@@ -309,6 +310,7 @@ ngram_options_init(grn_ngram_options *options, uint8_t unit)
   options->loose_symbol = GRN_FALSE;
   options->loose_blank = GRN_FALSE;
   options->report_source_location = GRN_FALSE;
+  options->include_removed_source_location = GRN_TRUE;
 }
 
 static void
@@ -388,8 +390,10 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
           (!tokenizer->options.remove_blank &&
            tokenizer->options.loose_blank &&
            GRN_STR_ISBLANK(*types))) {
-        if (!removed_checks) {
-          removed_checks = checks;
+        if (tokenizer->options.include_removed_source_location) {
+          if (!removed_checks) {
+            removed_checks = checks;
+          }
         }
         if (offsets && last_offset == 0) {
           last_offset = *offsets;
@@ -403,12 +407,14 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
         loose_types++;
         if (loose_checks) {
           size_t i;
-          for (; removed_checks && removed_checks < checks; removed_checks++) {
-            if (*removed_checks > 0) {
-              *loose_checks += *removed_checks;
+          if (tokenizer->options.include_removed_source_location) {
+            for (; removed_checks && removed_checks < checks; removed_checks++) {
+              if (*removed_checks > 0) {
+                *loose_checks += *removed_checks;
+              }
             }
+            removed_checks = NULL;
           }
-          removed_checks = NULL;
           for (i = 0; i < length; i++) {
             loose_checks[i] += checks[i];
           }
@@ -430,7 +436,9 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
         offsets++;
       }
     }
-    *loose_checks = *checks;
+    if (checks) {
+      *loose_checks = *checks;
+    }
     if (offsets) {
       if (last_offset) {
         *loose_offsets = last_offset;
@@ -700,6 +708,13 @@ ngram_open_options(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->report_source_location);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "include_removed_source_location")) {
+      options->include_removed_source_location =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->include_removed_source_location);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
