@@ -436,9 +436,7 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
         offsets++;
       }
     }
-    if (checks) {
-      *loose_checks = *checks;
-    }
+    *loose_types = *types;
     if (offsets) {
       if (last_offset) {
         *loose_offsets = last_offset;
