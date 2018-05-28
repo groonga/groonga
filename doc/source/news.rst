@@ -40,6 +40,8 @@ Improvements
 
 * [:doc:`reference/functions/sub_filter`] Supported ``sub_filter`` optimization
   for the too filter case.
+  this optimize is valid when records are enough narrowed down before
+  ``sub_filter`` execution as below.
 
 * [:doc:`/reference/executables/groonga-httpd`] Made all workers context address
   to unique.
