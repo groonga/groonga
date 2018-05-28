@@ -37,6 +37,7 @@ typedef struct {
   unsigned int n_characters;
   short *checks;
   unsigned char *ctypes;
+  uint64_t *offsets;
   grn_encoding encoding;
   int flags;
   grn_obj *lexicon;

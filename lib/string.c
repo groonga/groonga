@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2012 Brazil
+  Copyright(C) 2009-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -224,6 +224,7 @@ grn_string_open_(grn_ctx *ctx,
   string->n_characters = 0;
   string->checks = NULL;
   string->ctypes = NULL;
+  string->offsets = NULL;
   string->encoding = encoding;
   string->flags = flags;
   string->lexicon = NULL;
@@ -414,6 +415,36 @@ grn_string_set_types(grn_ctx *ctx, grn_obj *string, unsigned char *types)
   GRN_API_RETURN(rc);
 }
 
+const uint64_t *
+grn_string_get_offsets(grn_ctx *ctx, grn_obj *string)
+{
+  uint64_t *offsets = NULL;
+  grn_string *string_ = (grn_string *)string;
+  GRN_API_ENTER;
+  if (string_) {
+    offsets = string_->offsets;
+  } else {
+    offsets = NULL;
+  }
+  GRN_API_RETURN(offsets);
+}
+
+grn_rc
+grn_string_set_offsets(grn_ctx *ctx, grn_obj *string, uint64_t *offsets)
+{
+  grn_rc rc;
+  grn_string *string_ = (grn_string *)string;
+  GRN_API_ENTER;
+  if (string_) {
+    if (string_->offsets) { GRN_FREE(string_->offsets); }
+    string_->offsets = offsets;
+    rc = GRN_SUCCESS;
+  } else {
+    rc = GRN_INVALID_ARGUMENT;
+  }
+  GRN_API_RETURN(rc);
+}
+
 grn_encoding
 grn_string_get_encoding(grn_ctx *ctx, grn_obj *string)
 {
@@ -500,6 +531,7 @@ grn_string_close(grn_ctx *ctx, grn_obj *string)
     if (string_->normalized) { GRN_FREE(string_->normalized); }
     if (string_->ctypes) { GRN_FREE(string_->ctypes); }
     if (string_->checks) { GRN_FREE(string_->checks); }
+    if (string_->offsets) { GRN_FREE(string_->offsets); }
     GRN_FREE(string);
     rc = GRN_SUCCESS;
   } else {

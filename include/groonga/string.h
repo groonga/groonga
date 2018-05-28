@@ -98,6 +98,10 @@ GRN_API const unsigned char *grn_string_get_types(grn_ctx *ctx, grn_obj *string)
 GRN_API grn_rc grn_string_set_types(grn_ctx *ctx,
                                     grn_obj *string,
                                     unsigned char *types);
+GRN_API const uint64_t *grn_string_get_offsets(grn_ctx *ctx, grn_obj *string);
+GRN_API grn_rc grn_string_set_offsets(grn_ctx *ctx,
+                                      grn_obj *string,
+                                      uint64_t *offsets);
 GRN_API grn_encoding grn_string_get_encoding(grn_ctx *ctx, grn_obj *string);
 GRN_API grn_obj *grn_string_get_table(grn_ctx *ctx, grn_obj *string);
 
