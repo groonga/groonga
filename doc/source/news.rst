@@ -45,6 +45,12 @@ Improvements
 
 * [:doc:`/reference/executables/groonga-httpd`] Made all workers context address
   to unique.
+  context address is ``#{ID}`` of below query log.
+
+    #{TIME_STAMP}|#{MESSAGE}
+    #{TIME_STAMP}|#{ID}|>#{QUERY}
+    #{TIME_STAMP}|#{ID}|:#{ELAPSED_TIME} #{PROGRESS}
+    #{TIME_STAMP}|#{ID}|<#{ELAPSED_TIME} #{RETURN_CODE}
 
 * [:doc:`/reference/commands/delete`] Added new options that ``limit``.
   You can limit the number of delete records as below example.
