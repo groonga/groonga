@@ -886,6 +886,7 @@ module Groonga
           create_expression(table) do |expression|
             yield(expression)
             result_set = table.select(expression)
+            @temporary_tables << result_set
             add_result_set(result_set)
           end
         end
@@ -905,6 +906,7 @@ module Groonga
           window = detect_window
           if window
             window.each(result_set) do |windowed_result_set|
+              @temporary_tables << windowed_result_set
               sort_result_set(windowed_result_set)
               break if @context.current_limit.zero?
             end
