@@ -1,0 +1,2 @@
+normalize   'NormalizerNFKC100("include_removed_source_location", false)'   " aa bbb   c "   REMOVE_BLANK|WITH_CHECKS
+[[0,0.0,0.0],{"normalized":"aabbbc","types":[],"checks":[1,1,1,1,1,1]}]

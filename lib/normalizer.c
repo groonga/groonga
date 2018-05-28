@@ -620,6 +620,7 @@ typedef struct {
   grn_nfkc_char_type_func char_type_func;
   grn_nfkc_decompose_func decompose_func;
   grn_nfkc_compose_func compose_func;
+  grn_bool include_removed_source_location;
   grn_bool unify_kana;
   grn_bool unify_kana_case;
   grn_bool unify_kana_voiced_sound_mark;
@@ -640,6 +641,7 @@ utf8_normalize_options_init(grn_utf8_normalize_options *options,
   options->char_type_func = char_type_func;
   options->decompose_func = decompose_func;
   options->compose_func = compose_func;
+  options->include_removed_source_location = GRN_TRUE;
   options->unify_kana = GRN_FALSE;
   options->unify_kana_case = GRN_FALSE;
   options->unify_kana_voiced_sound_mark = GRN_FALSE;
@@ -1153,6 +1155,9 @@ utf8_normalize(grn_ctx *ctx,
       }
       if ((*p == ' ' && removeblankp) || *p < 0x20  /* skip unprintable ascii */ ) {
         if (cp > nstr->ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
+        if (!options->include_removed_source_location) {
+          s_ += lp;
+        }
       } else {
         size_t lp_original = lp;
         grn_char_type char_type;
@@ -1780,7 +1785,14 @@ nfkc100_open_options(grn_ctx *ctx,
     name_raw.value = name;
     name_raw.length = name_length;
 
-    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_kana")) {
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                     "include_removed_source_location")) {
+      options->include_removed_source_location =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->include_removed_source_location);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_kana")) {
       options->unify_kana = grn_vector_get_element_bool(ctx,
                                                         raw_options,
                                                         i,
