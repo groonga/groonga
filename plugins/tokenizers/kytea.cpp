@@ -222,7 +222,7 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
   const char *normalized_string;
   unsigned int normalized_string_length;
   grn_string_get_normalized(ctx,
-                            normalized_query,
+                            string,
                             &normalized_string,
                             &normalized_string_length,
                             NULL);
