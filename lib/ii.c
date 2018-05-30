@@ -4735,12 +4735,14 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                   "<%.*s>: "
                   "<%.*s>(%u): "
                   "(%u:%u): "
-                  "segment:<%u>",
+                  "segment:<%u>: "
+                  "%s",
                   name_size, name,
                   (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
                   tid,
                   u->rid, u->sid,
-                  pos);
+                  pos,
+                  ctx->errbuf);
               GRN_OBJ_FIN(ctx, &token);
               goto exit;
             }
@@ -4757,11 +4759,13 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                 "<%.*s>: "
                 "<%u>:<%u>:<%u>: "
                 "token:<%.*s>: "
-                "segment:<%u>",
+                "segment:<%u>: "
+                "%s",
                 name_size, name,
                 u->rid, u->sid, tid,
                 (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
-                pos);
+                pos,
+                ctx->errbuf);
             GRN_OBJ_FIN(ctx, &token);
             goto exit;
           }
@@ -4892,11 +4896,13 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
               MERR("[ii][update][one] failed to put to buffer: "
                    "<%.*s>: "
                    "<%.*s>(%u): "
-                   "(%u:%u)",
+                   "(%u:%u): "
+                   "%s",
                    name_size, name,
                    (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
                    tid,
-                   u2.rid, u2.sid);
+                   u2.rid, u2.sid,
+                   ctx->errbuf);
               GRN_OBJ_FIN(ctx, &token);
             }
             goto exit;
@@ -5075,12 +5081,14 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             "<%.*s>: "
             "<%.*s>(%u): "
             "(%u:%u): "
-            "position:<%u>",
+            "position:<%u>: "
+            "%s",
             name_size, name,
             (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
             tid,
             u->rid, u->sid,
-            a[0]);
+            a[0],
+            ctx->errbuf);
         GRN_OBJ_FIN(ctx, &token);
         goto exit;
       }
