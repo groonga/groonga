@@ -32,4 +32,4 @@ load --table Packages
 
 select Packages \
   --filter '_key @ "rroonga" && sub_filter(files, "revision >= 10 && revision < 40")' \
-  --output_columns '_key, files, files.revision'
+  --output_columns '_key, _score, files, files.revision'
