@@ -33,7 +33,7 @@ load --table Packages
 {"_key": "mroonga", "files": ["ha_mroonga.cc", "ha_mroonga.hpp"]}
 ]
 [[0,0.0,0.0],3]
-select Packages   --filter '_key @ "rroonga" && sub_filter(files, "revision >= 10 && revision < 40")'   --output_columns '_key, files, files.revision'
+select Packages   --filter '_key @ "rroonga" && sub_filter(files, "revision >= 10 && revision < 40")'   --output_columns '_key, _score, files, files.revision'
 [
   [
     0,
@@ -51,6 +51,10 @@ select Packages   --filter '_key @ "rroonga" && sub_filter(files, "revision >= 1
           "ShortText"
         ],
         [
+          "_score",
+          "Int32"
+        ],
+        [
           "files",
           "Files"
         ],
@@ -61,6 +65,7 @@ select Packages   --filter '_key @ "rroonga" && sub_filter(files, "revision >= 1
       ],
       [
         "rroonga",
+        5,
         [
           "lib/groonga.rb",
           "README.textile"

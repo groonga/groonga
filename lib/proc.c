@@ -2370,6 +2370,15 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
                                 GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                 scope_domain, NULL);
     if (op == GRN_OP_AND && sub_filter_pre_filter(ctx, res, scope, base_res)) {
+      if (base_res) {
+        void *key = NULL, *value = NULL;
+        uint32_t key_size = 0;
+
+        GRN_TABLE_EACH(ctx, base_res, 0, 0, id, &key, &key_size, &value, {
+          grn_rset_recinfo *ri = value;
+          ri->score = 0;
+        });
+      }
       select_op = GRN_OP_AND;
     }
     grn_table_select(ctx, scope_domain, sub_filter, base_res, select_op);
