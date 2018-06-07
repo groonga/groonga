@@ -802,3 +802,18 @@ grn_highlighter_add_keyword(grn_ctx *ctx,
 exit :
   GRN_API_RETURN(ctx->rc);
 }
+
+grn_rc
+grn_highlighter_clear_keywords(grn_ctx *ctx,
+                               grn_highlighter *highlighter)
+{
+  grn_obj *raw_keywords = &(highlighter->raw_keywords);
+
+  GRN_API_ENTER;
+
+  GRN_BULK_REWIND(raw_keywords);
+  highlighter->need_prepared = GRN_TRUE;
+
+exit :
+  GRN_API_RETURN(ctx->rc);
+}

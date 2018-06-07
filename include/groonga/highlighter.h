@@ -47,6 +47,9 @@ grn_highlighter_add_keyword(grn_ctx *ctx,
                             grn_highlighter *highlighter,
                             const char *keyword,
                             int64_t keyword_length);
+GRN_API grn_rc
+grn_highlighter_clear_keywords(grn_ctx *ctx,
+                               grn_highlighter *highlighter);
 
 
 #ifdef __cplusplus
