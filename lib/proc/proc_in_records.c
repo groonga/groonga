@@ -154,10 +154,10 @@ func_in_records_init(grn_ctx *ctx,
 
     mode_name_i = value_i + 1;
     mode_name = codes[mode_name_i].value;
-    data->condition_modes[nth] = grn_proc_option_value_mode(ctx,
-                                                            mode_name,
-                                                            GRN_OP_EQUAL,
-                                                            "in_records()");
+    data->condition_modes[nth] = grn_proc_get_value_mode(ctx,
+                                                         mode_name,
+                                                         GRN_OP_EQUAL,
+                                                         "in_records()");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -381,10 +381,10 @@ selector_in_records(grn_ctx *ctx,
     grn_obj *condition_column;
 
     mode_name = args[mode_name_i];
-    mode = grn_proc_option_value_mode(ctx,
-                                      mode_name,
-                                      GRN_OP_EQUAL,
-                                      "in_records()");
+    mode = grn_proc_get_value_mode(ctx,
+                                   mode_name,
+                                   GRN_OP_EQUAL,
+                                   "in_records()");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }

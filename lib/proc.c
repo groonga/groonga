@@ -912,6 +912,88 @@ grn_proc_get_value_int64(grn_ctx *ctx,
   return value_raw;
 }
 
+grn_operator
+grn_proc_get_value_mode(grn_ctx *ctx,
+                        grn_obj *value,
+                        grn_operator default_mode,
+                        const char *context)
+{
+  if (!value) {
+    return default_mode;
+  }
+
+  if (value->header.domain != GRN_DB_TEXT) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, value);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s: mode must be text: <%.*s>",
+                     context,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return GRN_OP_NOP;
+  }
+
+  if (GRN_TEXT_LEN(value) == 0) {
+    return default_mode;
+  }
+
+#define EQUAL_MODE(name)                                        \
+  (GRN_TEXT_LEN(value) == strlen(name) &&                       \
+   memcmp(GRN_TEXT_VALUE(value), name, strlen(name)) == 0)
+
+  if (EQUAL_MODE("==") || EQUAL_MODE("EQUAL")) {
+    return GRN_OP_EQUAL;
+  } else if (EQUAL_MODE("!=") || EQUAL_MODE("NOT_EQUAL")) {
+    return GRN_OP_NOT_EQUAL;
+  } else if (EQUAL_MODE("<") || EQUAL_MODE("LESS")) {
+    return GRN_OP_LESS;
+  } else if (EQUAL_MODE(">") || EQUAL_MODE("GREATER")) {
+    return GRN_OP_GREATER;
+  } else if (EQUAL_MODE("<=") || EQUAL_MODE("LESS_EQUAL")) {
+    return GRN_OP_LESS_EQUAL;
+  } else if (EQUAL_MODE(">=") || EQUAL_MODE("GREATER_EQUAL")) {
+    return GRN_OP_GREATER_EQUAL;
+  } else if (EQUAL_MODE("@") || EQUAL_MODE("MATCH")) {
+    return GRN_OP_MATCH;
+  } else if (EQUAL_MODE("*N") || EQUAL_MODE("NEAR")) {
+    return GRN_OP_NEAR;
+  } else if (EQUAL_MODE("*S") || EQUAL_MODE("SIMILAR")) {
+    return GRN_OP_SIMILAR;
+  } else if (EQUAL_MODE("^") || EQUAL_MODE("@^") || EQUAL_MODE("PREFIX")) {
+    return GRN_OP_PREFIX;
+  } else if (EQUAL_MODE("$") || EQUAL_MODE("@$") || EQUAL_MODE("SUFFIX")) {
+    return GRN_OP_SUFFIX;
+  } else if (EQUAL_MODE("~") || EQUAL_MODE("@~") || EQUAL_MODE("REGEXP")) {
+    return GRN_OP_REGEXP;
+  } else {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s: mode must be one of them: "
+                     "["
+                     "\"==\", \"EQUAL\", "
+                     "\"!=\", \"NOT_EQUAL\", "
+                     "\"<\", \"LESS\", "
+                     "\">\", \"GREATER\", "
+                     "\"<=\", \"LESS_EQUAL\", "
+                     "\">=\", \"GREATER_EQUAL\", "
+                     "\"@\", \"MATCH\", "
+                     "\"*N\", \"NEAR\", "
+                     "\"*S\", \"SIMILAR\", "
+                     "\"^\", \"@^\", \"PREFIX\", "
+                     "\"$\", \"@$\", \"SUFFIX\", "
+                     "\"~\", \"@~\", \"REGEXP\""
+                     "]: <%.*s>",
+                     context,
+                     (int)GRN_TEXT_LEN(value),
+                     GRN_TEXT_VALUE(value));
+    return GRN_OP_NOP;
+  }
+
+#undef EQUAL_MODE
+}
+
+
 static grn_obj *
 proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -1847,83 +1929,6 @@ selector_to_function_data_fin(grn_ctx *ctx,
   }
 }
 
-grn_operator
-grn_proc_option_value_mode(grn_ctx *ctx,
-                           grn_obj *option,
-                           grn_operator default_mode,
-                           const char *context)
-{
-  if (option->header.domain != GRN_DB_TEXT) {
-    grn_obj inspected;
-    GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect(ctx, &inspected, option);
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "%s: mode must be text: <%.*s>",
-                     context,
-                     (int)GRN_TEXT_LEN(&inspected),
-                     GRN_TEXT_VALUE(&inspected));
-    GRN_OBJ_FIN(ctx, &inspected);
-    return GRN_OP_NOP;
-  }
-
-  if (GRN_TEXT_LEN(option) == 0) {
-    return default_mode;
-  }
-
-#define EQUAL_MODE(name)                                        \
-  (GRN_TEXT_LEN(option) == strlen(name) &&                      \
-   memcmp(GRN_TEXT_VALUE(option), name, strlen(name)) == 0)
-
-  if (EQUAL_MODE("==") || EQUAL_MODE("EQUAL")) {
-    return GRN_OP_EQUAL;
-  } else if (EQUAL_MODE("!=") || EQUAL_MODE("NOT_EQUAL")) {
-    return GRN_OP_NOT_EQUAL;
-  } else if (EQUAL_MODE("<") || EQUAL_MODE("LESS")) {
-    return GRN_OP_LESS;
-  } else if (EQUAL_MODE(">") || EQUAL_MODE("GREATER")) {
-    return GRN_OP_GREATER;
-  } else if (EQUAL_MODE("<=") || EQUAL_MODE("LESS_EQUAL")) {
-    return GRN_OP_LESS_EQUAL;
-  } else if (EQUAL_MODE(">=") || EQUAL_MODE("GREATER_EQUAL")) {
-    return GRN_OP_GREATER_EQUAL;
-  } else if (EQUAL_MODE("@") || EQUAL_MODE("MATCH")) {
-    return GRN_OP_MATCH;
-  } else if (EQUAL_MODE("*N") || EQUAL_MODE("NEAR")) {
-    return GRN_OP_NEAR;
-  } else if (EQUAL_MODE("*S") || EQUAL_MODE("SIMILAR")) {
-    return GRN_OP_SIMILAR;
-  } else if (EQUAL_MODE("^") || EQUAL_MODE("@^") || EQUAL_MODE("PREFIX")) {
-    return GRN_OP_PREFIX;
-  } else if (EQUAL_MODE("$") || EQUAL_MODE("@$") || EQUAL_MODE("SUFFIX")) {
-    return GRN_OP_SUFFIX;
-  } else if (EQUAL_MODE("~") || EQUAL_MODE("@~") || EQUAL_MODE("REGEXP")) {
-    return GRN_OP_REGEXP;
-  } else {
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "%s: mode must be one of them: "
-                     "["
-                     "\"==\", \"EQUAL\", "
-                     "\"!=\", \"NOT_EQUAL\", "
-                     "\"<\", \"LESS\", "
-                     "\">\", \"GREATER\", "
-                     "\"<=\", \"LESS_EQUAL\", "
-                     "\">=\", \"GREATER_EQUAL\", "
-                     "\"@\", \"MATCH\", "
-                     "\"*N\", \"NEAR\", "
-                     "\"*S\", \"SIMILAR\", "
-                     "\"^\", \"@^\", \"PREFIX\", "
-                     "\"$\", \"@$\", \"SUFFIX\", "
-                     "\"~\", \"@~\", \"REGEXP\""
-                     "]: <%.*s>",
-                     context,
-                     (int)GRN_TEXT_LEN(option),
-                     GRN_TEXT_VALUE(option));
-    return GRN_OP_NOP;
-  }
-
-#undef EQUAL_MODE
-}
-
 static grn_rc
 run_query(grn_ctx *ctx, grn_obj *table,
           int nargs, grn_obj **args,
@@ -1980,10 +1985,10 @@ run_query(grn_ctx *ctx, grn_obj *table,
           if (KEY_EQUAL("expander")) {
             query_expander_name = value;
           } else if (KEY_EQUAL("default_mode")) {
-            default_mode = grn_proc_option_value_mode(ctx,
-                                                      value,
-                                                      GRN_OP_MATCH,
-                                                      "query()");
+            default_mode = grn_proc_get_value_mode(ctx,
+                                                   value,
+                                                   GRN_OP_MATCH,
+                                                   "query()");
             if (ctx->rc != GRN_SUCCESS) {
               grn_hash_cursor_close(ctx, cursor);
               rc = ctx->rc;
