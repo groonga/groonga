@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012-2017 Brazil
+  Copyright(C) 2012-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,6 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "grn.h"
 #include "grn_ctx_impl_mrb.h"
 #include "grn_proc.h"
@@ -1403,4 +1404,13 @@ grn_plugin_proc_get_value_int64(grn_ctx *ctx,
                                 const char *context)
 {
   return grn_proc_get_value_int64(ctx, value, default_value_raw, context);
+}
+
+grn_operator
+grn_plugin_proc_get_value_mode(grn_ctx *ctx,
+                               grn_obj *value,
+                               grn_operator default_mode,
+                               const char *context)
+{
+  return grn_proc_get_value_mode(ctx, value, default_mode, context);
 }
