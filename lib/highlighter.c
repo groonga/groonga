@@ -814,6 +814,5 @@ grn_highlighter_clear_keywords(grn_ctx *ctx,
   GRN_BULK_REWIND(raw_keywords);
   highlighter->need_prepared = GRN_TRUE;
 
-exit :
   GRN_API_RETURN(ctx->rc);
 }
