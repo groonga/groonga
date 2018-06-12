@@ -100,6 +100,16 @@ grn_obj_is_text_family_bulk(grn_ctx *ctx, grn_obj *obj)
 }
 
 grn_bool
+grn_obj_is_number_family_bulk(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_bulk(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  return grn_type_id_is_number_family(ctx, obj->header.domain);
+}
+
+grn_bool
 grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
 {
   grn_bool is_table = GRN_FALSE;
