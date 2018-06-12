@@ -1,0 +1,14 @@
+plugin_register functions/vector
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos numbers COLUMN_VECTOR Int8
+
+load --table Memos
+[
+{"_key": "Positive", "numbers": [1, 2, 3, 4, 5]},
+{"_key": "Even", "numbers": [2, 4, 6, 8, 10]},
+{"_key": "Nothing"}
+]
+
+select Memos \
+  --output_columns 'numbers, vector_find(numbers, 4)'

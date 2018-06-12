@@ -371,6 +371,287 @@ func_vector_new(grn_ctx *ctx, int n_args, grn_obj **args,
   return vector;
 }
 
+static grn_obj *
+func_vector_find_vector(grn_ctx *ctx,
+                        grn_obj *target,
+                        grn_obj *query,
+                        grn_operator operator,
+                        grn_user_data *user_data)
+{
+  grn_obj *found_element = NULL;
+  grn_operator_exec_func *exec;
+  grn_obj element;
+  unsigned int i;
+  unsigned int n_elements = 0;
+
+  exec = grn_operator_to_exec_func(operator);
+  GRN_VOID_INIT(&element);
+  n_elements = grn_vector_size(ctx, target);
+  for (i = 0; i < n_elements; i++) {
+    const char *content;
+    unsigned int content_size;
+    grn_id domain;
+
+    content_size = grn_vector_get_element(ctx,
+                                          target,
+                                          i,
+                                          &content,
+                                          NULL,
+                                          &domain);
+    grn_obj_reinit(ctx, &element, domain, 0);
+    grn_bulk_write(ctx, &element, content, content_size);
+    if (exec(ctx, &element, query)) {
+      found_element = grn_plugin_proc_alloc(ctx, user_data, domain, 0);
+      grn_bulk_write(ctx, found_element, content, content_size);
+      break;
+    }
+  }
+  GRN_OBJ_FIN(ctx, &element);
+
+  return found_element;
+}
+
+static grn_obj *
+func_vector_find_uvector_number(grn_ctx *ctx,
+                                grn_obj *target,
+                                grn_obj *query,
+                                grn_operator operator,
+                                grn_user_data *user_data)
+{
+  grn_obj *found_element = NULL;
+  grn_obj query_number_raw;
+  grn_obj *query_number = NULL;
+  size_t i, n_elements;
+  unsigned int element_size;
+
+  if (query->header.domain == target->header.domain) {
+    query_number = query;
+  } else {
+    GRN_VALUE_FIX_SIZE_INIT(&query_number_raw, 0, target->header.domain);
+    if (grn_obj_cast(ctx, query, &query_number_raw, GRN_FALSE) != GRN_SUCCESS) {
+      GRN_OBJ_FIN(ctx, &query_number_raw);
+      return NULL;
+    }
+    query_number = &query_number_raw;
+  }
+  element_size = grn_uvector_element_size(ctx, target);
+  n_elements = GRN_BULK_VSIZE(target) / element_size;
+  if (operator == GRN_OP_EQUAL) {
+    for (i = 0; i < n_elements; i++) {
+      if (memcmp(GRN_BULK_HEAD(target) + (i * element_size),
+                 GRN_BULK_HEAD(query_number),
+                 element_size) == 0) {
+        found_element = grn_plugin_proc_alloc(ctx,
+                                              user_data,
+                                              target->header.domain,
+                                              0);
+        grn_bulk_write(ctx,
+                       found_element,
+                       GRN_BULK_HEAD(target) + (i * element_size),
+                       element_size);
+        break;
+      }
+    }
+  } else {
+    grn_operator_exec_func *exec;
+    grn_obj element;
+
+    exec = grn_operator_to_exec_func(operator);
+    GRN_VALUE_FIX_SIZE_INIT(&element, 0, target->header.domain);
+    for (i = 0; i < n_elements; i++) {
+      GRN_BULK_REWIND(&element);
+      grn_bulk_write(ctx,
+                     &element,
+                     GRN_BULK_HEAD(target) + (i * element_size),
+                     element_size);
+      if (exec(ctx, &element, query_number)) {
+        found_element = grn_plugin_proc_alloc(ctx,
+                                              user_data,
+                                              target->header.domain,
+                                              0);
+        grn_bulk_write(ctx,
+                       found_element,
+                       GRN_BULK_HEAD(target) + (i * element_size),
+                       element_size);
+        break;
+      }
+    }
+    GRN_OBJ_FIN(ctx, &element);
+  }
+  if (query_number == &query_number_raw) {
+    GRN_OBJ_FIN(ctx, &query_number_raw);
+  }
+
+  return found_element;
+}
+
+static grn_obj *
+func_vector_find_uvector_record(grn_ctx *ctx,
+                                grn_obj *target,
+                                grn_obj *query,
+                                grn_operator operator,
+                                grn_user_data *user_data)
+{
+  grn_obj *found_element = NULL;
+  grn_id query_id = GRN_ID_NIL;
+  grn_id *ids;
+  size_t i, n_elements;
+
+  if (operator != GRN_OP_EQUAL) {
+    return NULL;
+  }
+
+  if (query->header.domain == target->header.domain) {
+    query_id = GRN_RECORD_VALUE(query);
+  } else {
+    grn_obj query_id_raw;
+    GRN_RECORD_INIT(&query_id_raw, 0, target->header.domain);
+    if (grn_obj_cast(ctx, query, &query_id_raw, GRN_FALSE) != GRN_SUCCESS) {
+      GRN_OBJ_FIN(ctx, &query_id_raw);
+      return NULL;
+    }
+    query_id = GRN_RECORD_VALUE(&query_id_raw);
+    GRN_OBJ_FIN(ctx, &query_id_raw);
+  }
+  ids = (grn_id *)GRN_BULK_HEAD(target);
+  n_elements = GRN_BULK_VSIZE(target) / sizeof(grn_id);
+  for (i = 0; i < n_elements; i++) {
+    if (ids[i] == query_id) {
+      found_element = grn_plugin_proc_alloc(ctx,
+                                            user_data,
+                                            target->header.domain,
+                                            0);
+      GRN_RECORD_SET(ctx, found_element, ids[i]);
+      break;
+    }
+  }
+
+  return found_element;
+}
+
+static grn_obj *
+func_vector_find_uvector(grn_ctx *ctx,
+                         grn_obj *target,
+                         grn_obj *query,
+                         grn_operator operator,
+                         grn_user_data *user_data)
+{
+  if (grn_type_id_is_number_family(ctx, target->header.domain)) {
+    return func_vector_find_uvector_number(ctx,
+                                           target,
+                                           query,
+                                           operator,
+                                           user_data);
+  } else if (grn_type_id_is_builtin(ctx, target->header.domain)) {
+    return NULL;
+  } else {
+    return func_vector_find_uvector_record(ctx,
+                                           target,
+                                           query,
+                                           operator,
+                                           user_data);
+  }
+}
+
+static grn_obj *
+func_vector_find_pvector(grn_ctx *ctx,
+                         grn_obj *target,
+                         grn_obj *query,
+                         grn_operator operator,
+                         grn_user_data *user_data)
+{
+  grn_obj *found_element = NULL;
+  grn_operator_exec_func *exec;
+  grn_obj **elements;
+  unsigned int i;
+  unsigned int n_elements = 0;
+
+  exec = grn_operator_to_exec_func(operator);
+  elements = (grn_obj **)GRN_BULK_HEAD(target);
+  n_elements = sizeof(grn_id) / GRN_BULK_VSIZE(target);
+  for (i = 0; i < n_elements; i++) {
+    grn_obj *element = elements[i];
+    if (exec(ctx, element, query)) {
+      found_element =
+        grn_plugin_proc_alloc(ctx, user_data, element->header.domain, 0);
+      grn_bulk_write(ctx,
+                     found_element,
+                     GRN_BULK_HEAD(element),
+                     GRN_BULK_VSIZE(element));
+      break;
+    }
+  }
+
+  return found_element;
+}
+
+static grn_obj *
+func_vector_find(grn_ctx *ctx, int n_args, grn_obj **args,
+                 grn_user_data *user_data)
+{
+  const char *context = "vector_find()";
+  grn_obj *target;
+  grn_obj *query = NULL;
+  grn_operator operator = GRN_OP_EQUAL;
+  grn_obj *found_element = NULL;
+
+  if (n_args < 2 || n_args > 3) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s: wrong number of arguments (%d for 2..3)",
+                     context,
+                     n_args);
+    return NULL;
+  }
+
+  target = args[0];
+  query = args[1];
+  if (n_args == 3) {
+    operator = grn_plugin_proc_get_value_mode(ctx, args[2], operator, context);
+    if (ctx->rc != GRN_SUCCESS) {
+      return NULL;
+    }
+  }
+
+  switch (target->header.type) {
+  case GRN_VECTOR :
+  case GRN_PVECTOR :
+  case GRN_UVECTOR :
+    break;
+  default :
+    {
+      grn_obj inspected;
+
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, target, &inspected);
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "%s: target object must be vector: <%.*s>",
+                       context,
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return NULL;
+    }
+    break;
+  }
+
+  if (target->header.type == GRN_VECTOR) {
+    found_element =
+      func_vector_find_vector(ctx, target, query, operator, user_data);
+  } else if (target->header.type == GRN_UVECTOR) {
+    found_element =
+      func_vector_find_uvector(ctx, target, query, operator, user_data);
+  } else if (target->header.type == GRN_PVECTOR) {
+    found_element =
+      func_vector_find_pvector(ctx, target, query, operator, user_data);
+  }
+
+  if (!found_element) {
+    found_element = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
+  }
+
+  return found_element;
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -389,6 +670,9 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
                   NULL, NULL, 0, NULL);
 
   grn_proc_create(ctx, "vector_new", -1, GRN_PROC_FUNCTION, func_vector_new,
+                  NULL, NULL, 0, NULL);
+
+  grn_proc_create(ctx, "vector_find", -1, GRN_PROC_FUNCTION, func_vector_find,
                   NULL, NULL, 0, NULL);
 
   return rc;

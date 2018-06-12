@@ -1,0 +1,63 @@
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga", "tags": ["Great", "Groonga"]},
+{"_key": "Rroonga", "tags": ["Full text search", "Groonga", "Ruby"]},
+{"_key": "Nothing"}
+]
+[[0,0.0,0.0],3]
+select Memos   --output_columns 'tags, vector_find(tags, "Gr", "invalid")'
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "vector_find(): mode must be one of them: [\"==\", \"EQUAL\", \"!=\", \"NOT_EQUAL\", \"<\", \"LESS\", \">\", \"GREATER\", \"<=\", \"LESS_EQUAL\", \">"
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "tags",
+          "ShortText"
+        ],
+        [
+          "vector_find",
+          null
+        ]
+      ],
+      [
+        [
+          "Great",
+          "Groonga"
+        ],
+        "vector_find(): mode must be one of them: [\"==\", \"EQUAL\", \"!=\", \"NOT_EQUAL\", \"<\", \"LESS\", \">\", \"GREATER\", \"<=\", \"LESS_EQUAL\", \">"
+      ],
+      [
+        [
+          "Full text search",
+          "Groonga",
+          "Ruby"
+        ],
+        "vector_find(): mode must be one of them: [\"==\", \"EQUAL\", \"!=\", \"NOT_EQUAL\", \"<\", \"LESS\", \">\", \"GREATER\", \"<=\", \"LESS_EQUAL\", \">"
+      ],
+      [
+        [
+
+        ],
+        "vector_find(): mode must be one of them: [\"==\", \"EQUAL\", \"!=\", \"NOT_EQUAL\", \"<\", \"LESS\", \">\", \"GREATER\", \"<=\", \"LESS_EQUAL\", \">"
+      ]
+    ]
+  ]
+]
+#|e| vector_find(): mode must be one of them: ["==", "EQUAL", "!=", "NOT_EQUAL", "<", "LESS", ">", "GREATER", "<=", "LESS_EQUAL", ">=", "GREATER_EQUAL", "@", "MATCH", "*N", "NEAR", "*S", "SIMILAR", "^", "@^", "PREFIX", "$", "@$", "SUFFIX", "~", "@~", "REGEXP"]: <invalid>

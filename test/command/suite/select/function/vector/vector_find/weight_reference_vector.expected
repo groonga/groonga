@@ -1,0 +1,61 @@
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga", "tags": {"Groonga": 100, "Full text search": 90}},
+{"_key": "Rroonga", "tags": {"Groonga": 100, "Full text search": 90, "Ruby": 50, "Library": 30}},
+{"_key": "Nothing"}
+]
+[[0,0.0,0.0],3]
+select Memos   --output_columns 'tags, vector_find(tags, "Full text search")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "tags",
+          "Tags"
+        ],
+        [
+          "vector_find",
+          null
+        ]
+      ],
+      [
+        {
+          "Groonga": 100,
+          "Full text search": 90
+        },
+        "Full text search"
+      ],
+      [
+        {
+          "Groonga": 100,
+          "Full text search": 90,
+          "Ruby": 50,
+          "Library": 30
+        },
+        "Full text search"
+      ],
+      [
+        {
+        },
+        null
+      ]
+    ]
+  ]
+]
