@@ -71,20 +71,22 @@ grn_mrb_is_order_by_estimated_size_enabled(void)
 static char *
 grn_mrb_string_locale_to_utf8(grn_ctx *ctx, const char *locale_string)
 {
+  size_t locale_string_bytes;
   wchar_t *wide_string;
   int n_wide_chars;
   char *utf8_string;
   int utf8_string_bytes;
 
+  locale_string_bytes = strlen(locale_string);
   n_wide_chars = MultiByteToWideChar(CP_ACP, 0,
-                                     locale_string, -1,
+                                     locale_string, locale_string_bytes,
                                      NULL, 0);
   wide_string = GRN_MALLOCN(wchar_t, n_wide_chars);
   if (!wide_string) {
     return NULL;
   }
   n_wide_chars = MultiByteToWideChar(CP_ACP, 0,
-                                     locale_string, locale_string_length,
+                                     locale_string, locale_string_bytes,
                                      wide_string, n_wide_chars);
   utf8_string_bytes = WideCharToMultiByte(CP_UTF8, 0,
                                           wide_string, n_wide_chars,
