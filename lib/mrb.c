@@ -68,19 +68,54 @@ grn_mrb_is_order_by_estimated_size_enabled(void)
 
 #ifdef GRN_WITH_MRUBY
 # ifdef WIN32
+static char *
+grn_mrb_string_locale_to_utf8(grn_ctx *ctx, const char *locale_string)
+{
+  wchar_t *wide_string;
+  int n_wide_chars;
+  char *utf8_string;
+  int utf8_string_bytes;
+
+  n_wide_chars = MultiByteToWideChar(CP_ACP, 0,
+                                     locale_string, -1,
+                                     NULL, 0);
+  wide_string = GRN_MALLOCN(wchar_t, n_wide_chars);
+  if (!wide_string) {
+    return NULL;
+  }
+  n_wide_chars = MultiByteToWideChar(CP_ACP, 0,
+                                     locale_string, locale_string_length,
+                                     wide_string, n_wide_chars);
+  utf8_string_bytes = WideCharToMultiByte(CP_UTF8, 0,
+                                          wide_string, n_wide_chars,
+                                          NULL, 0,
+                                          NULL,NULL);
+  utf8_string = GRN_MALLOCN(char, utf8_string_bytes + 1);
+  if (!utf8_string) {
+    GRN_FREE(wide_string);
+    return NULL;
+  }
+  utf8_string_bytes = WideCharToMultiByte(CP_UTF8, 0,
+                                          wide_string, n_wide_chars,
+                                          utf8_string, utf8_string_bytes,
+                                          NULL, NULL);
+  utf8_string[utf8_string_bytes] = '\0';
+  return utf8_string;
+}
+
 static char *windows_ruby_scripts_dir = NULL;
 static char windows_ruby_scripts_dir_buffer[PATH_MAX];
 static const char *
-grn_mrb_get_default_system_ruby_scripts_dir(void)
+grn_mrb_get_default_system_ruby_scripts_dir(grn_ctx *ctx)
 {
   if (!windows_ruby_scripts_dir) {
     const char *base_dir;
     const char *relative_path = GRN_RELATIVE_RUBY_SCRIPTS_DIR;
-    size_t base_dir_length;
+    const char *utf8_base_dir;
 
     base_dir = grn_windows_base_dir();
-    base_dir_length = strlen(base_dir);
-    grn_strcpy(windows_ruby_scripts_dir_buffer, PATH_MAX, base_dir);
+    utf8_base_dir = grn_mrb_string_locale_to_utf8(ctx, base_dir);
+    grn_strcpy(windows_ruby_scripts_dir_buffer, PATH_MAX, utf8_base_dir);
     grn_strcat(windows_ruby_scripts_dir_buffer, PATH_MAX, "/");
     grn_strcat(windows_ruby_scripts_dir_buffer, PATH_MAX, relative_path);
     windows_ruby_scripts_dir = windows_ruby_scripts_dir_buffer;
@@ -90,7 +125,7 @@ grn_mrb_get_default_system_ruby_scripts_dir(void)
 
 # else /* WIN32 */
 static const char *
-grn_mrb_get_default_system_ruby_scripts_dir(void)
+grn_mrb_get_default_system_ruby_scripts_dir(grn_ctx *ctx)
 {
   return GRN_RUBY_SCRIPTS_DIR;
 }
@@ -102,7 +137,7 @@ grn_mrb_get_system_ruby_scripts_dir(grn_ctx *ctx)
   if (grn_mrb_ruby_scripts_dir[0]) {
     return grn_mrb_ruby_scripts_dir;
   } else {
-    return grn_mrb_get_default_system_ruby_scripts_dir();
+    return grn_mrb_get_default_system_ruby_scripts_dir(ctx);
   }
 }
 
