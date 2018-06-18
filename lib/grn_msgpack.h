@@ -21,7 +21,9 @@
 #include "grn.h"
 
 #ifdef GRN_WITH_MESSAGE_PACK
+# define _CRT_SECURE_NO_WARNINGS
 # include <msgpack.h>
+# undef _CRT_SECURE_NO_WARNINGS
 
 # if MSGPACK_VERSION_MAJOR < 1
 typedef unsigned int msgpack_size_t;
