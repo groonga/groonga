@@ -8821,6 +8821,36 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
 
   source_ids = (grn_id *)GRN_BULK_HEAD(value);
   n_source_ids = GRN_BULK_VSIZE(value) / sizeof(grn_id);
+  if (n_source_ids == 1) {
+    grn_obj *source;
+
+    source = grn_ctx_at(ctx, source_ids[0]);
+    switch (source->header.type) {
+    case GRN_COLUMN_VAR_SIZE :
+      switch (source->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
+      case GRN_OBJ_COLUMN_VECTOR :
+        if ((obj->header.flags & GRN_OBJ_COLUMN_INDEX)
+            && (obj->header.flags & GRN_OBJ_WITH_POSITION)) {
+          if (!(obj->header.flags & GRN_OBJ_WITH_SECTION)) {
+            char index_name[GRN_TABLE_MAX_KEY_SIZE];
+            int index_name_size;
+            index_name_size = grn_obj_name(ctx, obj,
+                                           index_name, GRN_TABLE_MAX_KEY_SIZE);
+            ERR(GRN_INVALID_ARGUMENT,
+                "grn_obj_set_info(): GRN_INFO_SOURCE: "
+                "vector column index must be created with WITH_SECTION flag: <%.*s>",
+                index_name_size, index_name);
+            goto exit;
+          }
+        }
+      default:
+        break;
+      }
+    default:
+      break;
+    }
+  }
+
   if (n_source_ids > 1 && !(obj->header.flags & GRN_OBJ_WITH_SECTION)) {
     char index_name[GRN_TABLE_MAX_KEY_SIZE];
     int index_name_size;

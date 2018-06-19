@@ -1,0 +1,25 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": ["Groonga", "Mroonga", "PGroonga"]},
+{"content": ["Hello", "Good-bye"]}
+]
+[[0,0.0,0.0],2]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "grn_obj_set_info(): GRN_INFO_SOURCE: vector column index must be created with WITH_SECTION flag: <Terms.memos_content>"
+  ],
+  false
+]
+#|e| grn_obj_set_info(): GRN_INFO_SOURCE: vector column index must be created with WITH_SECTION flag: <Terms.memos_content>
