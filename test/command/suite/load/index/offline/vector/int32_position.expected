@@ -11,7 +11,7 @@ load --table Entries
 [[0,0.0,0.0],2]
 table_create Numbers TABLE_PAT_KEY Int32
 [[0,0.0,0.0],true]
-column_create Numbers entries_numbers COLUMN_INDEX|WITH_POSITION Entries numbers
+column_create Numbers entries_numbers COLUMN_INDEX|WITH_POSITION|WITH_SECTION Entries numbers
 [[0,0.0,0.0],true]
 select Entries --filter 'numbers[1] > 19'
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["numbers","Int32"]],[2,[100,200]]]]]

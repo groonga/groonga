@@ -9,6 +9,6 @@ load --table Entries
 ]
 
 table_create Numbers TABLE_PAT_KEY Int32
-column_create Numbers entries_numbers COLUMN_INDEX|WITH_POSITION Entries numbers
+column_create Numbers entries_numbers COLUMN_INDEX|WITH_POSITION|WITH_SECTION Entries numbers
 
 select Entries --filter 'numbers[1] > 19'

@@ -12,7 +12,7 @@ column_create Logs_20150205 user_ids COLUMN_VECTOR UserIDs
 table_create Timestamp_20150205 TABLE_PAT_KEY Time
 column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
 
-column_create UserIDs index_20150205 COLUMN_INDEX|WITH_POSITION \
+column_create UserIDs index_20150205 COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
   Logs_20150205 user_ids
 
 
