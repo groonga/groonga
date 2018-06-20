@@ -8838,7 +8838,7 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
                                            index_name, GRN_TABLE_MAX_KEY_SIZE);
             ERR(GRN_INVALID_ARGUMENT,
                 "grn_obj_set_info(): GRN_INFO_SOURCE: "
-                "vector column index must be created with WITH_SECTION flag: <%.*s>",
+                "full text index for vector column index must be created with WITH_SECTION flag: <%.*s>",
                 index_name_size, index_name);
             goto exit;
           }

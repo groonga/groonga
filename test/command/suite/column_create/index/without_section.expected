@@ -18,8 +18,8 @@ column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
       0.0,
       0.0
     ],
-    "grn_obj_set_info(): GRN_INFO_SOURCE: vector column index must be created with WITH_SECTION flag: <Terms.memos_content>"
+    "grn_obj_set_info(): GRN_INFO_SOURCE: full text index for vector column must be created with WITH_SECTION flag: <Terms.memos_con"
   ],
   false
 ]
-#|e| grn_obj_set_info(): GRN_INFO_SOURCE: vector column index must be created with WITH_SECTION flag: <Terms.memos_content>
+#|e| grn_obj_set_info(): GRN_INFO_SOURCE: full text index for vector column must be created with WITH_SECTION flag: <Terms.memos_content>
