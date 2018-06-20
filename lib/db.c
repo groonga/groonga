@@ -8818,6 +8818,12 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   if (!lexicon_domain) {
     goto exit;
   }
+  lexicon_domain_is_table = grn_obj_is_table(ctx, lexicon_domain);
+  {
+    grn_obj *tokenizer;
+    grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
+    lexicon_have_tokenizer = (tokenizer != NULL);
+  }
 
   source_ids = (grn_id *)GRN_BULK_HEAD(value);
   n_source_ids = GRN_BULK_VSIZE(value) / sizeof(grn_id);
@@ -8830,7 +8836,8 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
       switch (source->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
       case GRN_OBJ_COLUMN_VECTOR :
         if ((obj->header.flags & GRN_OBJ_COLUMN_INDEX)
-            && (obj->header.flags & GRN_OBJ_WITH_POSITION)) {
+            && (obj->header.flags & GRN_OBJ_WITH_POSITION)
+            && (lexicon_have_tokenizer)) {
           if (!(obj->header.flags & GRN_OBJ_WITH_SECTION)) {
             char index_name[GRN_TABLE_MAX_KEY_SIZE];
             int index_name_size;
@@ -8863,12 +8870,6 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     goto exit;
   }
 
-  lexicon_domain_is_table = grn_obj_is_table(ctx, lexicon_domain);
-  {
-    grn_obj *tokenizer;
-    grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
-    lexicon_have_tokenizer = (tokenizer != NULL);
-  }
 
   for (i = 0; i < n_source_ids; i++) {
     grn_id source_id = source_ids[i];
