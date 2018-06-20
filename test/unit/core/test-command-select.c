@@ -162,7 +162,7 @@ test_vector_text(void)
                       "TABLE_PAT_KEY|KEY_NORMALIZE ShortText "
                       "--default_tokenizer TokenBigram");
   assert_send_command("column_create Terms Blogs_articles "
-                      "COLUMN_INDEX|WITH_POSITION Blogs articles");
+                      "COLUMN_INDEX|WITH_POSITION|WITH_SECTION Blogs articles");
 
   assert_send_command("load --table Blogs --columns '_key, articles' \n"
                       "[\n"
