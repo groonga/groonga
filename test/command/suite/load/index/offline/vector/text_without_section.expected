@@ -12,18 +12,7 @@ load --table Docs
 table_create Words TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
 [[0,0.0,0.0],true]
 column_create Words docs_sentences COLUMN_INDEX|WITH_POSITION Docs sentences
-[
-  [
-    [
-      -22,
-      0.0,
-      0.0
-    ],
-    "grn_obj_set_info(): GRN_INFO_SOURCE: vector column index must be created with WITH_SECTION flag: <Words.docs_sentences>"
-  ],
-  false
-]
-#|e| grn_obj_set_info(): GRN_INFO_SOURCE: vector column index must be created with WITH_SECTION flag: <Words.docs_sentences>
+[[0,0.0,0.0],true]
 select Words   --limit -1   --sort_keys _key   --output_columns '_key, index_column_source_records("docs_sentences")'
 [
   [
@@ -34,7 +23,7 @@ select Words   --limit -1   --sort_keys _key   --output_columns '_key, index_col
   [
     [
       [
-        0
+        1
       ],
       [
         [
@@ -44,6 +33,12 @@ select Words   --limit -1   --sort_keys _key   --output_columns '_key, index_col
         [
           "index_column_source_records",
           null
+        ]
+      ],
+      [
+        "-",
+        [
+          1
         ]
       ]
     ]

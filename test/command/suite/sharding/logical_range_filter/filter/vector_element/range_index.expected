@@ -14,7 +14,7 @@ table_create Timestamp_20150205 TABLE_PAT_KEY Time
 [[0,0.0,0.0],true]
 column_create Timestamp_20150205 index COLUMN_INDEX Logs_20150205 timestamp
 [[0,0.0,0.0],true]
-column_create UserIDs index_20150205 COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Logs_20150205 user_ids
+column_create UserIDs index_20150205 COLUMN_INDEX|WITH_POSITION   Logs_20150205 user_ids
 [[0,0.0,0.0],true]
 load --table Logs_20150205
 [

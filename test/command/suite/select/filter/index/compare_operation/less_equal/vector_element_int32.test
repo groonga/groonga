@@ -2,7 +2,7 @@ table_create Values TABLE_NO_KEY
 column_create Values numbers COLUMN_VECTOR Int32
 
 table_create Numbers TABLE_PAT_KEY Int32
-column_create Numbers values_numbers COLUMN_INDEX|WITH_POSITION|WITH_SECTION Values numbers
+column_create Numbers values_numbers COLUMN_INDEX|WITH_POSITION Values numbers
 
 load --table Values
 [
