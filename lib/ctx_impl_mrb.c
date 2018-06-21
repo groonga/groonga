@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2017 Brazil
+  Copyright(C) 2013-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -69,6 +69,7 @@
 # include "mrb/mrb_eval_context.h"
 # include "mrb/mrb_thread.h"
 # include "mrb/mrb_window_definition.h"
+# include "mrb/mrb_locale_output.h"
 
 # include <mruby/array.h>
 # include <mruby/string.h>
@@ -185,6 +186,7 @@ mrb_groonga_init(mrb_state *mrb, mrb_value self)
   grn_mrb_eval_context_init(ctx);
   grn_mrb_thread_init(ctx);
   grn_mrb_window_definition_init(ctx);
+  grn_mrb_locale_output_init(ctx);
 
   grn_mrb_load(ctx, "initialize/post.rb");
 

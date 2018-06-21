@@ -29,6 +29,8 @@ require "labeled_arguments"
 
 require "command_line_parser"
 
+require "locale_output"
+
 load_path = ENV["GRN_RUBY_LOAD_PATH"]
 if load_path
   load_path.split(File::PATH_SEPARATOR).each do |path|

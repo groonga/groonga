@@ -20,6 +20,7 @@ RUBY_SCRIPT_FILES =				\
 	index_cursor.rb				\
 	index_info.rb				\
 	labeled_arguments.rb			\
+	locale_output.rb			\
 	logger.rb				\
 	object.rb				\
 	operator.rb				\
