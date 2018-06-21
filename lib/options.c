@@ -319,9 +319,9 @@ grn_options_get(grn_ctx *ctx,
   msgpack_unpacker_init(&unpacker, MSGPACK_UNPACKER_INIT_BUFFER_SIZE);
   msgpack_unpacker_reserve_buffer(&unpacker, length);
   msgpack_unpacked_init(&unpacked);
-  memcpy(msgpack_unpacker_buffer(&unpacker),
-         iw.addr,
-         length);
+  grn_memcpy(msgpack_unpacker_buffer(&unpacker),
+             iw.addr,
+             length);
   msgpack_unpacker_buffer_consumed(&unpacker, length);
   while (MSGPACK_UNPACKER_NEXT(&unpacker, &unpacked)) {
     msgpack_object *object = &(unpacked.data);
