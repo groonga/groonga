@@ -1781,11 +1781,11 @@ exception_filter(EXCEPTION_POINTERS *info)
     {
       const char *unknown = "(unknown)";
       GRN_LOG(ctx, GRN_LOG_CRIT,
-              "%s:%d:%d: %.*s(): <%s>: <%s>",
+              "%s:%lu:%lu: %.*s(): <%s>: <%s>",
               (have_location ? line.FileName : unknown),
               (have_location ? line.LineNumber : -1),
               (have_location ? line_displacement : -1),
-              (have_symbol_name ? symbol->NameLen : strlen(unknown)),
+              (int)(have_symbol_name ? symbol->NameLen : strlen(unknown)),
               (have_symbol_name ? symbol->Name : unknown),
               (have_module_name ? module.ModuleName : unknown),
               (have_module_name ? module.ImageName : unknown));
