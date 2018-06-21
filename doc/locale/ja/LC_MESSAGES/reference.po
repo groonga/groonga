@@ -1493,6 +1493,20 @@ msgstr ""
 msgid "``GRN_TRUE`` for built-in groonga object, ``GRN_FALSE`` otherwise."
 msgstr ""
 
+msgid "Check whether index column."
+msgstr "インデックスカラムかどうかを判定します。"
+
+msgid "The target object."
+msgstr "対象のオブジェクト"
+
+msgid ""
+"``GRN_TRUE`` for if the target object is index column, ``GRN_FALSE`` "
+"otherwise. Even if the target object isn't column, return ``GRN_FALSE``."
+msgstr ""
+"対象のオブジェクトがインデックスカラムの場合には、 ``GRN_TRUE`` です。それ以"
+"外の場合は、 ``GRN_FALSE`` です。対象のオブジェクトがカラム以外の場合も "
+"``GRN_FALSE`` を返します。"
+
 msgid ""
 "objのIDに対応するレコードのvalueを取得します。valueを戻り値として返します。"
 msgstr ""
