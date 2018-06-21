@@ -4,6 +4,8 @@ SUBDIRS =					\
 	proc					\
 	ts
 
+NONEXISTENT_CXX_SOURCE = nonexistent.cpp
+
 lib_LTLIBRARIES = libgroonga.la
 
 include $(top_srcdir)/version.sh
@@ -74,6 +76,8 @@ nfkc_dump_SOURCES =				\
 
 nfkc_dump_LDADD =				\
 	libgroonga.la
+
+nodist_EXTRA_nfkc_dump_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 
 noinst_PROGRAMS =				\
 	nfkc_dump
