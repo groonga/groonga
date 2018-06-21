@@ -31,10 +31,11 @@ RUN \
   apt install -qq -y cutter-testing-framework
 
 RUN \
-  gem2.0 install \
-    bundler \
-    grntest \
-    rake
+  ruby2.0 -r yaml -r rubygems/safe_yaml -S \
+    gem2.0 install \
+      bundler \
+      grntest \
+      rake
 
 RUN \
   useradd --user-group --create-home groonga
