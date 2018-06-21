@@ -20,6 +20,8 @@ libgroonga_c_sources =				\
 	db.c					\
 	grn_db.h				\
 	dump.c					\
+	encoding.c				\
+	grn_encoding.h				\
 	ts.c					\
 	grn_ts.h				\
 	type.c					\
