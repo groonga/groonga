@@ -8781,7 +8781,7 @@ grn_ii_quorum_match(grn_ctx *ctx, grn_ii *ii, grn_ii_select_data *data)
                                       (void **)&record_data);
         if (record_data->n_occurs >= quorum_threshold) {
           double score = record_data->score;
-          memcpy(&posinfo, posting, record_key_size);
+          grn_memcpy(&posinfo, posting, record_key_size);
           if (data->score_func) {
             data->record.id = posting->rid;
             data->record.weight = score / record_data->n_occurs;
