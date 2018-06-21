@@ -68,6 +68,6 @@ endif
 update:
 	cd "$(srcdir)/../mruby-source" && \
 	  (git checkout master && git pull --rebase)
-	(cd "$(srcdir)/../mruby-source" && git describe) > version
+	(cd "$(srcdir)/../mruby-source" && git describe --tags) > version
 	cd "$(srcdir)" && \
 	  ./update.rb build_config.rb ../mruby-source > sources.am
