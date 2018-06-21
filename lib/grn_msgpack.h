@@ -21,9 +21,9 @@
 #include "grn.h"
 
 #ifdef GRN_WITH_MESSAGE_PACK
-# define _CRT_SECURE_NO_WARNINGS
+# define memcpy(dest, src, n) grn_memcpy(dest, src, n)
 # include <msgpack.h>
-# undef _CRT_SECURE_NO_WARNINGS
+# undef memcpy
 
 # if MSGPACK_VERSION_MAJOR < 1
 typedef unsigned int msgpack_size_t;
