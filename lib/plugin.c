@@ -357,8 +357,8 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
     const char *mrb_suffix;
     mrb_suffix = grn_plugin_get_ruby_suffix();
     if (filename_size > strlen(mrb_suffix) &&
-      strcmp(filename + (strlen(filename) - strlen(mrb_suffix)),
-             mrb_suffix) == 0) {
+        strcmp(filename + (strlen(filename) - strlen(mrb_suffix)),
+               mrb_suffix) == 0) {
       id = grn_plugin_open_mrb(ctx, filename, filename_size);
       goto exit;
     }
