@@ -25,6 +25,8 @@
 #include <groonga.h>
 #include <groonga/tokenizer.h>
 
+#include <grn_encoding.h>
+
 #include <mecab.h>
 
 #include <stdlib.h>
@@ -315,11 +317,17 @@ mecab_create(grn_ctx *ctx)
 
   if (!mecab) {
 #ifdef GRN_WITH_BUNDLED_MECAB
-    GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                     "[tokenizer][mecab] failed to create mecab_t: %s: "
-                     "mecab_new(\"%s\", \"%s\", \"%s\", \"%s\")",
-                     mecab_global_error_message(),
-                     argv[0], argv[1], argv[2], argv[3]);
+    {
+      const char *grn_encoding_rc_file;
+      grn_encoding_rc_file =
+        grn_encoding_convert_from_locale(ctx, argv[3], -1, NULL);
+      GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                       "[tokenizer][mecab] failed to create mecab_t: %s: "
+                       "mecab_new(\"%s\", \"%s\", \"%s\", \"%s\")",
+                       mecab_global_error_message(),
+                       argv[0], argv[1], argv[2], grn_encoding_rc_file);
+      grn_encoding_converted_free(ctx, grn_encoding_rc_file);
+    }
 #else /* GRN_WITH_BUNDLED_MECAB */
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer][mecab] failed to create mecab_t: %s: "
