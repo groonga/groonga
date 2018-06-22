@@ -90,7 +90,7 @@ grn_encoding_convert(grn_ctx *ctx,
       goto exit;
     }
 
-    converted_string = GRN_MALLOCN(char, *converted_string_size + 1);
+    converted_string = GRN_MALLOCN(char, converted_string_size_ + 1);
     converted_string_size_ = WideCharToMultiByte(to_code_page,
                                                  0,
                                                  utf16_string,
