@@ -37,7 +37,10 @@ endif
 
 include sources.am
 include built_sources.am
-libmruby_la_SOURCES += $(BUILT_SOURCES)
+BUILT_SOURCES =					\
+	$(built_sources)			\
+	mruby-file-stat/src/config.h
+libmruby_la_SOURCES += $(built_sources)
 nodist_libmruby_la_SOURCES =			\
 	mruby-file-stat/src/config.h
 

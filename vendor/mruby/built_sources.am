@@ -1,4 +1,4 @@
-BUILT_SOURCES =						\
+built_sources =						\
 	mrblib.c					\
 	mrbgems_init.c					\
 	mruby-compiler/core/parse.c			\
