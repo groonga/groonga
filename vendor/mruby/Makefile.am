@@ -52,7 +52,7 @@ if HAVE_SYS_SYSMACROS_H
 mruby-file-stat/src/config.h:
 	echo "#define HAVE_SYS_SYSMACROS_H 1" > "$(builddir)/$@"
 else
-mruby-file-stat/src/config.h: mruby_build.timestamp
+mruby-file-stat/src/config.h:
 	touch "$(builddir)/$@"
 endif
 mruby-dir/src/dir.c: mruby_build.timestamp
