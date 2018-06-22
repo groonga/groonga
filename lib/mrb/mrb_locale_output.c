@@ -51,7 +51,7 @@ mrb_grn_locale_output_write(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "s", &utf8_message, &utf8_message_size);
   locale_message =
-    grn_encoding_convert_to_utf8_from_locale(ctx,
+    grn_encoding_convert_to_locale_from_utf8(ctx,
                                              utf8_message,
                                              utf8_message_size,
                                              &locale_message_size);
