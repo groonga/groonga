@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2016-2017 Brazil
+  Copyright(C) 2016-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -60,14 +60,16 @@ window_sum(grn_ctx *ctx,
   }
 
   target = args[0];
-  if (target->header.type != GRN_ACCESSOR) {
+  if (!(grn_obj_is_scalar_column(ctx, target) ||
+        grn_obj_is_accessor(ctx, target))) {
     grn_obj inspected;
     GRN_TEXT_INIT(&inspected, 0);
     grn_inspect(ctx, &inspected, target);
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
                      "window_sum(): "
-                     "the target column must be accessor: <%.*s>",
+                     "the target column must be "
+                     "scalar column or accessor: <%.*s>",
                      (int)GRN_TEXT_LEN(&inspected),
                      GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
