@@ -1570,9 +1570,13 @@ MRUBY_CPPFLAGS="-DMRB_INT64"
 AC_SUBST(MRUBY_CPPFLAGS)
 
 # For mruby-file-stat
-AC_CHECK_HEADERS(sys/sysmacros.h,
-                 [HAVE_SYS_SYSMACROS_H=yes],
-                 [HAVE_SYS_SYSMACROS_H=no])
+if test "$os_win32" = "yes"; then
+  HAVE_SYS_SYSMACROS_H=no
+else
+  AC_CHECK_HEADERS(sys/sysmacros.h,
+                   [HAVE_SYS_SYSMACROS_H=yes],
+                   [HAVE_SYS_SYSMACROS_H=no])
+fi
 AM_CONDITIONAL(HAVE_SYS_SYSMACROS_H, test "$HAVE_SYS_SYSMACROS_H" = "yes")
 
 # This option is used in vendor/onigmo/configure

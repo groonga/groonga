@@ -636,7 +636,9 @@ endif()
 set(MRUBY_DEFINITIONS "MRB_INT64" "HAVE_ONIGMO_H")
 
 # For mruby-file-stat
-ac_check_headers(sys/sysmacros.h)
+if(NOT WIN32)
+  ac_check_headers(sys/sysmacros.h)
+endif()
 
 # TODO: Support using system Onigmo instead of bundled Onigmo.
 set(GRN_WITH_ONIGMO ON)
