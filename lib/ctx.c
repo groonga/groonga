@@ -22,6 +22,7 @@
 #include "grn_request_timer.h"
 #include "grn_tokenizers.h"
 #include "grn_ctx_impl.h"
+#include "grn_encoding.h"
 #include "grn_ii.h"
 #include "grn_pat.h"
 #include "grn_index_column.h"
@@ -1780,6 +1781,11 @@ exception_filter(EXCEPTION_POINTERS *info)
 
     {
       const char *unknown = "(unknown)";
+      const char *grn_encoding_image_name = unknown;
+      if (have_module_name) {
+        grn_encoding_image_name =
+          grn_encoding_convert_from_locale(ctx, module.ImageName, -1, NULL);
+      }
       GRN_LOG(ctx, GRN_LOG_CRIT,
               "%s:%lu:%lu: %.*s(): <%s>: <%s>",
               (have_location ? line.FileName : unknown),
@@ -1788,7 +1794,10 @@ exception_filter(EXCEPTION_POINTERS *info)
               (int)(have_symbol_name ? symbol->NameLen : strlen(unknown)),
               (have_symbol_name ? symbol->Name : unknown),
               (have_module_name ? module.ModuleName : unknown),
-              (have_module_name ? module.ImageName : unknown));
+              grn_encoding_image_name);
+      if (have_module_name) {
+        grn_encoding_converted_free(ctx, grn_encoding_image_name);
+      }
     }
 
     previous_address = address;
