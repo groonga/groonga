@@ -29,15 +29,14 @@ init:
   - ps: Set-WinSystemLocale ja-JP
   - ps: Start-Sleep -s 10
   - ps: Restart-Computer
-  - set PATH=C:\Ruby25-x64\bin;%PATH%
+
+install:
   - set PATH=C:\Ruby25-x64\bin;%PATH%
   - set PATH=C:\msys64\usr\bin;%PATH%
   - call
       "C:\Program Files (x86)\Microsoft Visual Studio %VS_VERSION%.0\VC\vcvarsall.bat"
       %ARCH%
-#  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
-install:
+  # - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - tzutil /s "Tokyo Standard Time"
   # - choco install -y imdisk-toolkit
   # - mkdir tmp
