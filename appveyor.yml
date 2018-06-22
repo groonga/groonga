@@ -52,7 +52,7 @@ install:
       } else {
         $Env:GROONGA_INSTALL_FOLDER += "-x64"
       }
-      $Env:FULL_GROONGA_INSTALL_FOLDER = $Env:APPVEYOR_BUILD_FOLDER + "\インストール\" + $Env:GROONGA_INSTALL_FOLDER
+      $Env:FULL_GROONGA_INSTALL_FOLDER = $Env:APPVEYOR_BUILD_FOLDER + "\テスト\" + $Env:GROONGA_INSTALL_FOLDER
 
 build_script:
   - git submodule update --init
