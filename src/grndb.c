@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2017 Brazil
+  Copyright(C) 2014-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@
 #include <grn_mrb.h>
 #include <grn_ctx_impl.h>
 #include <grn_ctx_impl_mrb.h>
+#include <grn_encoding.h>
 
 #include <mruby/variable.h>
 #include <mruby/array.h>
@@ -60,7 +61,14 @@ run_command(grn_ctx *ctx, int argc, char **argv)
 
     mrb_argv = mrb_ary_new_capa(mrb, argc);
     for (i = 0; i < argc; i++) {
-      mrb_ary_push(mrb, mrb_argv, mrb_str_new_cstr(mrb, argv[i]));
+      const char *utf8_arg;
+      mrb_value mrb_utf8_arg;
+
+      utf8_arg =
+        grn_encoding_convert_to_utf8_from_locale(ctx, argv[i], -1, NULL);
+      mrb_utf8_arg = mrb_str_new_cstr(mrb, utf8_arg);
+      grn_encoding_converted_free(ctx, utf8_arg);
+      mrb_ary_push(mrb, mrb_argv, mrb_utf8_arg);
     }
     mrb_grndb = mrb_funcall(mrb, mrb_grndb_class, "new", 1, mrb_argv);
     if (mrb->exc) {

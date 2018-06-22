@@ -23,6 +23,7 @@
 #ifdef GRN_WITH_MRUBY
 # include "grn_ctx_impl_mrb.h"
 
+# include "grn_encoding.h"
 # include "grn_mrb.h"
 # include "mrb/mrb_converter.h"
 # include "mrb/mrb_error.h"
@@ -98,11 +99,14 @@ static mrb_value
 mrb_kernel_load(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  char *path;
+  char *utf8_path;
+  const char *path;
 
-  mrb_get_args(mrb, "z", &path);
+  mrb_get_args(mrb, "z", &utf8_path);
 
+  path = grn_encoding_convert_to_locale_from_utf8(ctx, utf8_path, -1, NULL);
   grn_mrb_load(ctx, path);
+  grn_encoding_converted_free(ctx, path);
   if (mrb->exc) {
     mrb_exc_raise(mrb, mrb_obj_value(mrb->exc));
   }
@@ -126,15 +130,29 @@ mrb_groonga_init(mrb_state *mrb, mrb_value self)
   {
     mrb_value load_path;
     const char *plugins_dir;
+    const char *utf8_plugins_dir;
     const char *system_ruby_scripts_dir;
+    const char *utf8_system_ruby_scripts_dir;
 
     load_path = mrb_ary_new(mrb);
+
     plugins_dir = grn_plugin_get_system_plugins_dir();
+    utf8_plugins_dir =
+      grn_encoding_convert_to_utf8_from_locale(ctx, plugins_dir, -1, NULL);
     mrb_ary_push(mrb, load_path,
-                 mrb_str_new_cstr(mrb, plugins_dir));
+                 mrb_str_new_cstr(mrb, utf8_plugins_dir));
+    grn_encoding_converted_free(ctx, utf8_plugins_dir);
+
     system_ruby_scripts_dir = grn_mrb_get_system_ruby_scripts_dir(ctx);
+    utf8_system_ruby_scripts_dir =
+      grn_encoding_convert_to_utf8_from_locale(ctx,
+                                               system_ruby_scripts_dir,
+                                               -1,
+                                               NULL);
     mrb_ary_push(mrb, load_path,
-                 mrb_str_new_cstr(mrb, system_ruby_scripts_dir));
+                 mrb_str_new_cstr(mrb, utf8_system_ruby_scripts_dir));
+    grn_encoding_converted_free(ctx, utf8_system_ruby_scripts_dir);
+
     mrb_gv_set(mrb, mrb_intern_cstr(mrb, "$LOAD_PATH"), load_path);
   }
 

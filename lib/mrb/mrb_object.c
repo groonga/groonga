@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2016 Brazil
+  Copyright(C) 2013-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,8 @@
 #include "mrb_operator.h"
 #include "mrb_options.h"
 #include "mrb_converter.h"
+
+#include "../grn_encoding.h"
 
 static mrb_value
 object_remove_force(mrb_state *mrb, mrb_value self)
@@ -115,7 +117,15 @@ object_get_path(mrb_state *mrb, mrb_value self)
   path = grn_obj_path(ctx, object);
 
   if (path) {
-    return mrb_str_new_cstr(mrb, path);
+    const char *utf8_path;
+    mrb_value mrb_path;
+
+    utf8_path =
+      grn_encoding_convert_to_utf8_from_locale(ctx, path, -1, NULL);
+    mrb_path = mrb_str_new_cstr(mrb, utf8_path);
+    grn_encoding_converted_free(ctx, utf8_path);
+
+    return mrb_path;
   } else {
     return mrb_nil_value();
   }

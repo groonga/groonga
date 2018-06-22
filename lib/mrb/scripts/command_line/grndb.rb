@@ -5,6 +5,7 @@ module Groonga
     class Grndb
       def initialize(argv)
         @program_path, *@arguments = argv
+        @output = LocaleOutput.new($stderr)
         @succeeded = true
         @database_path = nil
       end
@@ -15,9 +16,9 @@ module Groonga
         begin
           options = command_line_parser.parse(@arguments)
         rescue Slop::Error => error
-          $stderr.puts(error.message)
-          $stderr.puts
-          $stderr.puts(command_line_parser.help_message)
+          @output.puts(error.message)
+          @output.puts
+          @output.puts(command_line_parser.help_message)
           return false
         end
         @succeeded
@@ -68,9 +69,9 @@ module Groonga
       def open_database(command, options)
         arguments = options.arguments
         if arguments.empty?
-          $stderr.puts("Database path is missing")
-          $stderr.puts
-          $stderr.puts(command.help_message)
+          @output.puts("Database path is missing")
+          @output.puts
+          @output.puts(command.help_message)
           @succeesed = false
           return
         end
@@ -80,8 +81,8 @@ module Groonga
         begin
           database = Database.open(@database_path)
         rescue Error => error
-          $stderr.puts("Failed to open database: <#{@database_path}>")
-          $stderr.puts(error.message)
+          @output.puts("Failed to open database: <#{@database_path}>")
+          @output.puts(error.message)
           @succeeded = false
           return
         end
@@ -95,7 +96,7 @@ module Groonga
 
       def failed(*messages)
         messages.each do |message|
-          $stderr.puts(message)
+          @output.puts(message)
         end
         @succeeded = false
       end
@@ -491,7 +492,7 @@ module Groonga
           object_basename = File.basename(object_path)
           object.truncate
           message = "[#{name}] Truncated broken object: <#{object_path}>"
-          $stderr.puts(message)
+          @output.puts(message)
           logger.log(:info, message)
 
           Dir.foreach(object_dirname) do |path|
@@ -502,13 +503,13 @@ module Groonga
               File.unlink(full_path)
               message =
                 "[#{name}] Removed broken object related file: <#{full_path}>"
-              $stderr.puts(message)
+              @output.puts(message)
               logger.log(:info, message)
             rescue Error => error
               message =
                 "[#{name}] Failed to remove broken object related file: " +
                 "<#{full_path}>: #{error.class}: #{error.message}"
-              $stderr.puts(message)
+              @output.puts(message)
               logger.log_error(message)
             end
           end

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,8 @@
 #include "../grn_mrb.h"
 #include "mrb_query_logger.h"
 
+#include "../grn_encoding.h"
+
 static mrb_value
 query_logger_need_log_p(mrb_state *mrb, mrb_value self)
 {
@@ -45,12 +47,21 @@ query_logger_log_raw(mrb_state *mrb, mrb_value self)
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   mrb_int flag;
   char *mark;
-  char *message;
-  mrb_int message_size;
+  char *utf8_message;
+  mrb_int utf8_message_size;
+  const char *message;
+  size_t message_size;
 
-  mrb_get_args(mrb, "izs", &flag, &mark, &message, &message_size);
+  mrb_get_args(mrb, "izs", &flag, &mark, &utf8_message, &utf8_message_size);
+  message = grn_encoding_convert_from_utf8(ctx,
+                                           utf8_message,
+                                           utf8_message_size,
+                                           &message_size);
   grn_query_logger_put(ctx, flag, mark,
-                       "%.*s", (int)message_size, message);
+                       "%.*s",
+                       (int)message_size,
+                       message);
+  grn_encoding_converted_free(ctx, message);
 
   return self;
 }

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2017 Brazil
+  Copyright(C) 2014-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -28,10 +28,22 @@
 #include "../grn_mrb.h"
 #include "mrb_logger.h"
 
+#include "../grn_encoding.h"
+
 static mrb_value
 logger_s_get_default_path(mrb_state *mrb, mrb_value self)
 {
-  return mrb_str_new_cstr(mrb, grn_default_logger_get_path());
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  const char *default_path = grn_default_logger_get_path();
+  const char *utf8_default_path;
+  mrb_value mrb_default_path;
+
+  utf8_default_path =
+    grn_encoding_convert_to_utf8_from_locale(ctx, default_path, -1, NULL);
+  mrb_default_path = mrb_str_new_cstr(mrb, utf8_default_path);
+  grn_encoding_converted_free(ctx, utf8_default_path);
+
+  return mrb_default_path;
 }
 
 static mrb_value
@@ -64,13 +76,22 @@ logger_log_raw(mrb_state *mrb, mrb_value self)
   char *file;
   mrb_int line;
   char *method;
-  char *message;
-  mrb_int message_size;
+  char *utf8_message;
+  mrb_int utf8_message_size;
+  const char *message;
+  size_t message_size;
 
   mrb_get_args(mrb, "izizs",
-               &level, &file, &line, &method, &message, &message_size);
+               &level, &file, &line, &method, &utf8_message, &utf8_message_size);
+  message = grn_encoding_convert_from_utf8(ctx,
+                                           utf8_message,
+                                           utf8_message_size,
+                                           &message_size);
   grn_logger_put(ctx, level, file, line, method,
-                 "%.*s", (int)message_size, message);
+                 "%.*s",
+                 (int)message_size,
+                 message);
+  grn_encoding_converted_free(ctx, message);
 
   return self;
 }

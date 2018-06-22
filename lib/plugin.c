@@ -18,6 +18,7 @@
 
 #include "grn.h"
 #include "grn_ctx_impl_mrb.h"
+#include "grn_encoding.h"
 #include "grn_proc.h"
 #include <groonga/plugin.h>
 
@@ -197,8 +198,20 @@ grn_plugin_call_register_mrb(grn_ctx *ctx, grn_id id, grn_plugin *plugin)
 
   arena_index = mrb_gc_arena_save(mrb);
   plugin_loader_class = mrb_class_get_under(mrb, module, "PluginLoader");
-  mrb_funcall(mrb, mrb_obj_value(plugin_loader_class),
-              "load_file", 1, mrb_str_new_cstr(mrb, ctx->impl->plugin_path));
+  {
+    const char *utf8_path;
+    mrb_value mrb_path;
+    utf8_path =
+      grn_encoding_convert_to_utf8_from_locale(ctx,
+                                               ctx->impl->plugin_path,
+                                               -1,
+                                               NULL);
+    mrb_path = mrb_str_new_cstr(mrb, utf8_path);
+    grn_encoding_converted_free(ctx, utf8_path);
+    mrb_funcall(mrb, mrb_obj_value(plugin_loader_class),
+                "load_file",
+                1, mrb_path);
+  }
   mrb_gc_arena_restore(mrb, arena_index);
   return ctx->rc;
 }

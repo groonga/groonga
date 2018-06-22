@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright(C) 2014-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,8 @@
 #include "mrb_database.h"
 #include "mrb_converter.h"
 
+#include "../grn_encoding.h"
+
 static struct mrb_data_type mrb_grn_database_type = {
   "Groonga::Database",
   NULL
@@ -48,11 +50,14 @@ mrb_grn_database_class_open(mrb_state *mrb, mrb_value klass)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *database;
-  char *path;
+  char *utf8_path;
+  const char *path;
 
-  mrb_get_args(mrb, "z", &path);
+  mrb_get_args(mrb, "z", &utf8_path);
 
+  path = grn_encoding_convert_to_locale_from_utf8(ctx, utf8_path, -1, NULL);
   database = grn_db_open(ctx, path);
+  grn_encoding_converted_free(ctx, path);
   grn_mrb_ctx_check(mrb);
 
   return mrb_funcall(mrb, klass, "new", 1, mrb_cptr_value(mrb, database));
@@ -63,11 +68,14 @@ mrb_grn_database_class_create(mrb_state *mrb, mrb_value klass)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *database;
-  char *path;
+  char *utf8_path;
+  const char *path;
 
-  mrb_get_args(mrb, "z", &path);
+  mrb_get_args(mrb, "z", &utf8_path);
 
+  path = grn_encoding_convert_to_locale_from_utf8(ctx, utf8_path, -1, NULL);
   database = grn_db_create(ctx, path, NULL);
+  grn_encoding_converted_free(ctx, path);
   grn_mrb_ctx_check(mrb);
 
   return mrb_funcall(mrb, klass, "new", 1, mrb_cptr_value(mrb, database));

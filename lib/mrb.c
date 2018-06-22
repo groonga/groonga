@@ -18,6 +18,7 @@
 
 #include "grn_mrb.h"
 #include "grn_ctx_impl.h"
+#include "grn_encoding.h"
 #include "grn_util.h"
 
 #include <string.h>
@@ -124,7 +125,8 @@ grn_mrb_expand_script_path(grn_ctx *ctx, const char *path,
 {
   const char *ruby_scripts_dir;
   char dir_last_char;
-  int path_length, max_path_length;
+  int path_length;
+  int max_path_length;
 
   if (grn_mrb_is_absolute_path(path)) {
     expanded_path[0] = '\0';
@@ -144,10 +146,17 @@ grn_mrb_expand_script_path(grn_ctx *ctx, const char *path,
   path_length = strlen(path);
   max_path_length = PATH_MAX - strlen(expanded_path) - 1;
   if (path_length > max_path_length) {
+    const char *grn_encoding_path;
+    grn_encoding_path =
+      grn_encoding_convert_from_locale(ctx,
+                                       path,
+                                       path_length,
+                                       NULL);
     ERR(GRN_INVALID_ARGUMENT,
         "script path is too long: %d (max: %d) <%s%s>",
         path_length, max_path_length,
-        expanded_path, path);
+        expanded_path, grn_encoding_path);
+    grn_encoding_converted_free(ctx, grn_encoding_path);
     return GRN_FALSE;
   }
 
@@ -197,9 +206,14 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
 
   file = grn_fopen(expanded_path, "r");
   if (!file) {
+    const char *grn_encoding_expanded_path;
     mrb_value exception;
+
+    grn_encoding_expanded_path =
+      grn_encoding_convert_from_locale(ctx, expanded_path, -1, NULL);
     SERR("fopen: failed to open mruby script file: <%s>",
-         expanded_path);
+         grn_encoding_expanded_path);
+    grn_encoding_converted_free(ctx, grn_encoding_expanded_path);
     exception = mrb_exc_new(mrb, E_LOAD_ERROR,
                             ctx->errbuf, strlen(ctx->errbuf));
     mrb->exc = mrb_obj_ptr(exception);
@@ -218,7 +232,16 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
     }
 
     parser = mrb_parser_new(mrb);
-    mrb_parser_set_filename(parser, expanded_path);
+    {
+      const char *utf8_expanded_path;
+      utf8_expanded_path =
+        grn_encoding_convert_to_utf8_from_locale(ctx,
+                                                 expanded_path,
+                                                 -1,
+                                                 NULL);
+      mrb_parser_set_filename(parser, utf8_expanded_path);
+      grn_encoding_converted_free(ctx, utf8_expanded_path);
+    }
     parser->s = parser->send = NULL;
     parser->f = file;
     mrb_parser_parse(parser, NULL);
