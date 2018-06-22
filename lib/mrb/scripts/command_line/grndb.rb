@@ -102,7 +102,7 @@ module Groonga
       end
 
       def recover(database, options, arguments)
-        recoverer = Recoverer.new
+        recoverer = Recoverer.new(@output)
         recoverer.database = database
         recoverer.force_truncate = options[:force_truncate]
         recoverer.force_lock_clear = options[:force_lock_clear]
@@ -115,7 +115,7 @@ module Groonga
       end
 
       def check(database, options, arguments)
-        checker = Checker.new
+        checker = Checker.new(@output)
         checker.program_path = @program_path
         checker.database_path = @database_path
         checker.database = database
@@ -143,7 +143,8 @@ module Groonga
         attr_writer :log_paths
         attr_writer :on_failure
 
-        def initialize
+        def initialize(output)
+          @output = output
           @context = Context.instance
           @checked = {}
         end
@@ -452,7 +453,8 @@ module Groonga
         attr_writer :force_truncate
         attr_writer :force_lock_clear
 
-        def initialize
+        def initialize(output)
+          @output = output
           @context = Context.instance
         end
 
