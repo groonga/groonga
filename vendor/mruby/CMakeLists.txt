@@ -72,6 +72,7 @@ if(GRN_WITH_MRUBY)
   set(MRUBY_ALL_SOURCES
     ${MRUBY_SOURCES}
     ${MRUBY_BUILT_SOURCES}
+    "${CMAKE_CURRENT_BINARY_DIR}/mruby-file-stat/src/config.h"
     )
   add_library(mruby STATIC ${MRUBY_ALL_SOURCES})
   set_target_properties(

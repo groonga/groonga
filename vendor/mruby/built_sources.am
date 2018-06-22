@@ -4,6 +4,5 @@ BUILT_SOURCES =						\
 	mruby-compiler/core/parse.c			\
 	mruby-onig-regexp/src/mruby_onig_regexp.c	\
 	mruby-env/src/env.c				\
-	mruby-file-stat/src/config.h			\
 	mruby-file-stat/src/file-stat.c			\
 	mruby-dir/src/dir.c
