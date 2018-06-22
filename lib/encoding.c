@@ -143,8 +143,8 @@ grn_encoding_convert_to_locale(grn_ctx *ctx,
 {
   return grn_encoding_convert(ctx,
                               "[encoding][convert][grn->locale]",
-                              CP_ACP,
                               grn_windows_encoding_to_code_page(ctx->encoding),
+                              CP_ACP,
                               grn_encoding_string,
                               grn_encoding_string_size,
                               converted_string_size);
@@ -158,8 +158,8 @@ grn_encoding_convert_to_utf8(grn_ctx *ctx,
 {
   return grn_encoding_convert(ctx,
                               "[encoding][convert][grn->utf8]",
-                              CP_UTF8,
                               grn_windows_encoding_to_code_page(ctx->encoding),
+                              CP_UTF8,
                               grn_encoding_string,
                               grn_encoding_string_size,
                               converted_string_size);
@@ -173,8 +173,8 @@ grn_encoding_convert_from_locale(grn_ctx *ctx,
 {
   return grn_encoding_convert(ctx,
                               "[encoding][convert][locale->grn]",
-                              grn_windows_encoding_to_code_page(ctx->encoding),
                               CP_ACP,
+                              grn_windows_encoding_to_code_page(ctx->encoding),
                               locale_string,
                               locale_string_size,
                               converted_string_size);
@@ -188,8 +188,8 @@ grn_encoding_convert_from_utf8(grn_ctx *ctx,
 {
   return grn_encoding_convert(ctx,
                               "[encoding][convert][utf8->grn]",
-                              grn_windows_encoding_to_code_page(ctx->encoding),
                               CP_UTF8,
+                              grn_windows_encoding_to_code_page(ctx->encoding),
                               utf8_string,
                               utf8_string_size,
                               converted_string_size);
