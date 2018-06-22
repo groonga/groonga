@@ -39,6 +39,14 @@ Reference
    :param obj: target object
    :return: ``GRN_TRUE`` for built-in groonga object, ``GRN_FALSE`` otherwise.
 
+.. c:function:: grn_bool grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj)
+
+   Check whether index column.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_TRUE`` for if the target object is index column, ``GRN_FALSE`` otherwise. Even if the target object isn't column, return ``GRN_FALSE``.
+
 .. c:function:: grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
 
    objのIDに対応するレコードのvalueを取得します。valueを戻り値として返します。
