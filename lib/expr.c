@@ -4762,10 +4762,16 @@ grn_table_select_inspect_condition(grn_ctx *ctx,
       if (i > si->start) {
         GRN_TEXT_PUTC(ctx, buffer, ' ');
       }
-      if (code->value) {
-        grn_table_select_inspect_condition_argument(ctx, buffer, code->value);
+      if (i < expr->codes_curr) {
+        if (code->value) {
+          grn_table_select_inspect_condition_argument(ctx, buffer, code->value);
+        } else {
+          GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(code->op));
+        }
       } else {
-        GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(code->op));
+        GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(si->op));
+        GRN_TEXT_PUTS(ctx, buffer, ": ");
+        GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(si->logical_op));
       }
     }
     break;
