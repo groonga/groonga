@@ -1569,6 +1569,12 @@ AM_CONDITIONAL(WITH_MRUBY, test "$enable_mruby" = "yes")
 MRUBY_CPPFLAGS="-DMRB_INT64"
 AC_SUBST(MRUBY_CPPFLAGS)
 
+# For mruby-file-stat
+AC_CHECK_HEADERS(sys/sysmacros.h,
+                 [HAVE_SYS_SYSMACROS_H=yes],
+                 [HAVE_SYS_SYSMACROS_H=no])
+AM_CONDITIONAL(HAVE_SYS_SYSMACROS_H, test "$HAVE_SYS_SYSMACROS_H" = "yes")
+
 # This option is used in vendor/onigmo/configure
 AC_ARG_ENABLE(shared-onigmo,
   [AS_HELP_STRING([--enable-shared-onigmo],

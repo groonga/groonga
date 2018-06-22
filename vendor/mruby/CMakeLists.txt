@@ -60,9 +60,14 @@ if(GRN_WITH_MRUBY)
     string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_BINARY_DIR}/\\1"
       MRUBY_BUILT_SOURCES "${MRUBY_BUILT_SOURCES}")
   endif()
+  if(HAVE_SYS_SYSMACROS_H)
+    set(MRUBY_FILE_STAT_CONFIG_H_CONTENT "#define HAVE_SYS_SYSMACROS_H 1")
+  else()
+    set(MRUBY_FILE_STAT_CONFIG_H_CONTENT "")
+  endif()
   file(WRITE
     "${CMAKE_CURRENT_BINARY_DIR}/mruby-file-stat/src/config.h"
-    "")
+    "${MRUBY_FILE_STAT_CONFIG_H_CONTENT}")
 
   set(MRUBY_ALL_SOURCES
     ${MRUBY_SOURCES}

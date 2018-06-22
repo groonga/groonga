@@ -46,8 +46,13 @@ mruby-compiler/core/parse.c: mruby_build.timestamp
 mruby-onig-regexp/src/mruby_onig_regexp.c: mruby_build.timestamp
 mruby-env/src/env.c: mruby_build.timestamp
 mruby-file-stat/src/file-stat.c: mruby_build.timestamp
+if HAVE_SYS_SYSMACROS_H
+mruby-file-stat/src/config.h: mruby_build.timestamp
+	echo "#define HAVE_SYS_SYSMACROS_H 1" > "$(builddir)/$@"
+else
 mruby-file-stat/src/config.h: mruby_build.timestamp
 	touch "$(builddir)/$@"
+endif
 mruby-dir/src/dir.c: mruby_build.timestamp
 mruby-dir/src/Win/dirent.c: mruby_build.timestamp
 

@@ -635,6 +635,9 @@ else()
 endif()
 set(MRUBY_DEFINITIONS "MRB_INT64" "HAVE_ONIGMO_H")
 
+# For mruby-file-stat
+ac_check_headers(sys/sysmacros.h)
+
 # TODO: Support using system Onigmo instead of bundled Onigmo.
 set(GRN_WITH_ONIGMO ON)
 set(ONIGMO_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/vendor/onigmo-source")
