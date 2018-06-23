@@ -1645,6 +1645,7 @@ struct _grn_scan_info {
   if (((si) = GRN_MALLOCN(scan_info, 1))) {\
     GRN_INT32_INIT(&(si)->wv, GRN_OBJ_VECTOR);\
     GRN_PTR_INIT(&(si)->index, GRN_OBJ_VECTOR, GRN_ID_NIL);\
+    (si)->op = GRN_OP_NOP;\
     (si)->logical_op = GRN_OP_OR;\
     (si)->flags = SCAN_PUSH;\
     (si)->nargs = 0;\
