@@ -86,10 +86,6 @@ before_test:
   - cd ..\..\..
   - del test\command\suite\select\filter\equal\vector_element_float.test
 test_script:
-  - "%FULL_GROONGA_INSTALL_FOLDER%\\bin\\mecab.exe --version"
-  - echo test |
-      %FULL_GROONGA_INSTALL_FOLDER%\bin\mecab.exe
-        --rcfile %FULL_GROONGA_INSTALL_FOLDER%\etc\mecabrc
   - ruby test\command\bin\grntest
      --groonga %FULL_GROONGA_INSTALL_FOLDER%\bin\groonga.exe
      --base-directory test\command
