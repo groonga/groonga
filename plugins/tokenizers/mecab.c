@@ -289,10 +289,17 @@ mecab_create(grn_ctx *ctx)
 # ifdef WIN32
   {
     static char windows_mecab_rc_file[PATH_MAX];
+    const char *utf8_base_dir;
 
+    utf8_base_dir =
+      grn_encoding_convert_to_utf8_from_locale(ctx,
+                                               grn_plugin_windows_base_dir(),
+                                               -1,
+                                               NULL);
     grn_strcpy(windows_mecab_rc_file,
                PATH_MAX,
-               grn_plugin_windows_base_dir());
+               utf8_base_dir);
+    grn_encoding_converted_free(ctx, utf8_base_dir);
     grn_strcat(windows_mecab_rc_file,
                PATH_MAX,
                "/");
