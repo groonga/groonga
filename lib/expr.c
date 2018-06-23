@@ -4699,11 +4699,7 @@ grn_table_select_inspect_condition(grn_ctx *ctx,
 
   GRN_TEXT_PUTS(ctx, buffer, ": ");
 
-  if (si->start >= expr->codes_curr) {
-    if (si->op != GRN_OP_NOP) {
-      GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(si->op));
-      GRN_TEXT_PUTS(ctx, buffer, ": ");
-    }
+  if (si->flags & SCAN_POP) {
     GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(si->logical_op));
     GRN_TEXT_PUTC(ctx, buffer, '\0');
     return GRN_TEXT_VALUE(buffer);
