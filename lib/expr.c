@@ -4694,12 +4694,22 @@ grn_table_select_inspect_condition(grn_ctx *ctx,
     return "";
   }
 
-  n_codes = si->end - si->start + 1;
-  last_operator = expr->codes[si->end].op;
-
   GRN_BULK_REWIND(buffer);
 
   GRN_TEXT_PUTS(ctx, buffer, ": ");
+
+  if (si->start >= expr->codes_curr) {
+    if (si->op != GRN_OP_NOP) {
+      GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(si->op));
+      GRN_TEXT_PUTS(ctx, buffer, ": ");
+    }
+    GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(si->logical_op));
+    GRN_TEXT_PUTC(ctx, buffer, '\0');
+    return GRN_TEXT_VALUE(buffer);
+  }
+
+  n_codes = si->end - si->start + 1;
+  last_operator = expr->codes[si->end].op;
 
   switch (last_operator) {
   case GRN_OP_CALL :
@@ -4762,16 +4772,10 @@ grn_table_select_inspect_condition(grn_ctx *ctx,
       if (i > si->start) {
         GRN_TEXT_PUTC(ctx, buffer, ' ');
       }
-      if (i < expr->codes_curr) {
-        if (code->value) {
-          grn_table_select_inspect_condition_argument(ctx, buffer, code->value);
-        } else {
-          GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(code->op));
-        }
+      if (code->value) {
+        grn_table_select_inspect_condition_argument(ctx, buffer, code->value);
       } else {
-        GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(si->op));
-        GRN_TEXT_PUTS(ctx, buffer, ": ");
-        GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(si->logical_op));
+        GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(code->op));
       }
     }
     break;
