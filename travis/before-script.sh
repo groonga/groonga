@@ -5,6 +5,8 @@ set -u
 
 : ${DOCKER:=}
 
+touch lib/grn_ecmascript.c
+
 if [ -n "${DOCKER}" ]; then
   ./version-gen.sh
   ./autogen.sh
