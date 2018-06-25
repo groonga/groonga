@@ -41,6 +41,7 @@ install:
   # - choco install -y imdisk-toolkit
   # - mkdir tmp
   # - imdisk -a -t file -m tmp -o awe -s 1G -p "/fs:ntfs /q /y"
+  - set GROONGA_INSTALL_SUB_FOLDER=インストール
   - ps: |
       $Env:GROONGA_VERSION = (Get-Content base_version)
       if ($Env:APPVEYOR_REPO_TAG -eq "false") {
@@ -52,7 +53,7 @@ install:
       } else {
         $Env:GROONGA_INSTALL_FOLDER += "-x64"
       }
-      $Env:FULL_GROONGA_INSTALL_FOLDER = $Env:APPVEYOR_BUILD_FOLDER + "\インストール\" + $Env:GROONGA_INSTALL_FOLDER
+      $Env:FULL_GROONGA_INSTALL_FOLDER = $Env:APPVEYOR_BUILD_FOLDER + "\" + $Env:GROONGA_INSTALL_SUB_FOLDER + "\" + $Env:GROONGA_INSTALL_FOLDER
 
 build_script:
   - git submodule update --init
@@ -96,6 +97,8 @@ test_script:
      test\command\suite
 
 on_success:
+  - cd %GROONGA_INSTALL_SUB_FOLDER%
   - set ARTIFACT=%GROONGA_INSTALL_FOLDER%.zip
-  - 7z a %ARTIFACT% %GROONGA_INSTALL_FOLDER%
+  - 7z a %ARTIFACT% %FULL_GROONGA_INSTALL_FOLDER%
   - ps: Push-AppveyorArtifact $Env:ARTIFACT
+  - cd ..
