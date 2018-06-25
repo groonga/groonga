@@ -8804,6 +8804,7 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   grn_obj *lexicon_domain = NULL;
   grn_bool lexicon_domain_is_table;
   grn_bool lexicon_have_tokenizer;
+  grn_bool is_full_text_search_index;
   grn_id *source_ids;
   int i, n_source_ids;
 
@@ -8818,9 +8819,20 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   if (!lexicon_domain) {
     goto exit;
   }
+  lexicon_domain_is_table = grn_obj_is_table(ctx, lexicon_domain);
+  {
+    grn_obj *tokenizer;
+    grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
+    lexicon_have_tokenizer = (tokenizer != NULL);
+  }
+  is_full_text_search_index =
+    (grn_obj_is_index_column(ctx, obj) &&
+     (obj->header.flags & GRN_OBJ_WITH_POSITION) &&
+     lexicon_have_tokenizer);
 
   source_ids = (grn_id *)GRN_BULK_HEAD(value);
   n_source_ids = GRN_BULK_VSIZE(value) / sizeof(grn_id);
+
   if (n_source_ids > 1 && !(obj->header.flags & GRN_OBJ_WITH_SECTION)) {
     char index_name[GRN_TABLE_MAX_KEY_SIZE];
     int index_name_size;
@@ -8833,11 +8845,44 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     goto exit;
   }
 
-  lexicon_domain_is_table = grn_obj_is_table(ctx, lexicon_domain);
-  {
-    grn_obj *tokenizer;
-    grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
-    lexicon_have_tokenizer = (tokenizer != NULL);
+  if (is_full_text_search_index) {
+    grn_bool have_vector_source_column = GRN_FALSE;
+
+    for (i = 0; i < n_source_ids; i++) {
+      grn_obj *source;
+
+      source = grn_ctx_at(ctx, source_ids[i]);
+      if (!grn_obj_is_vector_column(ctx, source)) {
+        continue;
+      }
+
+      have_vector_source_column = GRN_TRUE;
+      if (!(obj->header.flags & GRN_OBJ_WITH_SECTION)) {
+        char index_name[GRN_TABLE_MAX_KEY_SIZE];
+        int index_name_size;
+        index_name_size = grn_obj_name(ctx, obj,
+                                       index_name, GRN_TABLE_MAX_KEY_SIZE);
+        ERR(GRN_INVALID_ARGUMENT,
+            "grn_obj_set_info(): GRN_INFO_SOURCE: "
+            "full text index for vector column "
+            "must be created with WITH_SECTION flag: <%.*s>",
+            index_name_size, index_name);
+        goto exit;
+      }
+    }
+
+    if (have_vector_source_column && n_source_ids > 1) {
+      char index_name[GRN_TABLE_MAX_KEY_SIZE];
+      int index_name_size;
+      index_name_size = grn_obj_name(ctx, obj,
+                                     index_name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT,
+          "grn_obj_set_info(): GRN_INFO_SOURCE: "
+          "multi column full text index with vector column isn't supported yet: "
+          "<%.*s>",
+          index_name_size, index_name);
+      goto exit;
+    }
   }
 
   for (i = 0; i < n_source_ids; i++) {
