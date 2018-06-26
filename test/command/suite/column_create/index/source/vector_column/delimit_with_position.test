@@ -1,0 +1,8 @@
+plugin_register functions/index_column
+
+table_create Tags TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
+
+table_create Docs TABLE_NO_KEY
+column_create Docs tags COLUMN_VECTOR Tags
+
+column_create Tags docs_tags COLUMN_INDEX|WITH_POSITION Docs tags

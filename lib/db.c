@@ -8824,11 +8824,13 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     grn_obj *tokenizer;
     grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
     lexicon_have_tokenizer = (tokenizer != NULL);
+
+    is_full_text_search_index =
+      (grn_obj_is_index_column(ctx, obj) &&
+       (obj->header.flags & GRN_OBJ_WITH_POSITION) &&
+       lexicon_have_tokenizer &&
+       grn_obj_id(ctx, tokenizer) != GRN_DB_DELIMIT);
   }
-  is_full_text_search_index =
-    (grn_obj_is_index_column(ctx, obj) &&
-     (obj->header.flags & GRN_OBJ_WITH_POSITION) &&
-     lexicon_have_tokenizer);
 
   source_ids = (grn_id *)GRN_BULK_HEAD(value);
   n_source_ids = GRN_BULK_VSIZE(value) / sizeof(grn_id);
