@@ -37,6 +37,37 @@ grn_windows_base_dir(void)
       windows_base_dir = grn_strdup_raw(".");
     } else {
       DWORD ansi_dll_filename_size;
+
+      {
+        DWORD i;
+
+        absolute_dll_filename[absolute_dll_filename_size] = L'\0';
+
+        for (i = 0; i < absolute_dll_filename_size; i++) {
+          if (absolute_dll_filename[i] == L'\\') {
+            absolute_dll_filename[i] = L'/';
+          }
+        }
+
+        /* Remove basename (DLL filename). */
+        for (i = absolute_dll_filename_size - 1; i > 0; i--) {
+          if (absolute_dll_filename[i] == L'/') {
+            absolute_dll_filename[i] = L'\0';
+            absolute_dll_filename_size = i;
+            break;
+          }
+        }
+
+        if ((absolute_dll_filename_size >= 4) &&
+            ((_wcsicmp(absolute_dll_filename + absolute_dll_filename_size - 4,
+                       L"/bin") == 0) ||
+             (_wcsicmp(absolute_dll_filename + absolute_dll_filename_size - 4,
+                       L"/lib") == 0))) {
+          absolute_dll_filename_size -= 4;
+          absolute_dll_filename[absolute_dll_filename_size] = L'\0';
+        }
+      }
+
       ansi_dll_filename_size =
         WideCharToMultiByte(CP_ACP, 0,
                             absolute_dll_filename, absolute_dll_filename_size,
@@ -44,29 +75,12 @@ grn_windows_base_dir(void)
       if (ansi_dll_filename_size == 0) {
         windows_base_dir = grn_strdup_raw(".");
       } else {
-        char *path;
         windows_base_dir = malloc(ansi_dll_filename_size + 1);
         WideCharToMultiByte(CP_ACP, 0,
                             absolute_dll_filename, absolute_dll_filename_size,
                             windows_base_dir, ansi_dll_filename_size,
                             NULL, NULL);
         windows_base_dir[ansi_dll_filename_size] = '\0';
-        if ((path = strrchr(windows_base_dir, '\\'))) {
-          *path = '\0';
-        }
-        path = strrchr(windows_base_dir, '\\');
-        if (path && (grn_strcasecmp(path + 1, "bin") == 0 ||
-                     grn_strcasecmp(path + 1, "lib") == 0)) {
-          *path = '\0';
-        } else {
-          path = windows_base_dir + strlen(windows_base_dir);
-          *path = '\0';
-        }
-        for (path = windows_base_dir; *path; path++) {
-          if (*path == '\\') {
-            *path = '/';
-          }
-        }
       }
     }
   }
