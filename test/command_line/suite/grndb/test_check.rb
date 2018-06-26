@@ -17,7 +17,7 @@ class TestGrnDBCheck < GroongaTestCase
     end
 
     def test_normal
-      # TODO: This test should be removed when we put check cases.
+      omit("This feature isn't implemented yet.")
       groonga("status")
       log_file = Tempfile.new(["grndb-check-log-path", ".log"])
       log_file.puts(<<-GROONGA_LOG)
