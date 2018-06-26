@@ -445,7 +445,7 @@ grn_highlighter_prepare(grn_ctx *ctx,
   highlighter->need_prepared = GRN_FALSE;
 }
 
-static inline grn_bool
+static grn_bool
 grn_ids_is_included(grn_id *ids, size_t n_ids, grn_id id)
 {
   size_t i;
