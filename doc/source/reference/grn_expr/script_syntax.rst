@@ -1059,6 +1059,9 @@ The expression matches records that have similar content to ``I
 migrated all Solr system!``. In this case, records that have ``I
 migrated all XXX system!`` content are matched.
 
+You should use ``TokenMecab`` tokenizer for similar search against Japanese documents.
+Because ``TokenMecab`` will tokenize target documents to almost words, it improves similar search precision.
+
 .. _script-syntax-term-extract-operator:
 
 Term extract operator
