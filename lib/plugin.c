@@ -784,24 +784,34 @@ static void
 grn_plugin_set_name_resolve_error(grn_ctx *ctx, const char *name,
                                   const char *tag)
 {
-  const char *prefix, *prefix_separator, *suffix;
-
   if (name[0] == '/') {
-    prefix = "";
-    prefix_separator = "";
-    suffix = "";
+    ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+        "%s cannot find plugin file: <%s>",
+        tag, name);
   } else {
-    prefix = grn_plugin_get_system_plugins_dir();
-    if (prefix[strlen(prefix) - 1] != '/') {
-      prefix_separator = "/";
+    const char *grn_encoding_plugins_dir;
+    size_t grn_encoding_plugins_dir_length;
+    const char *plugins_dir_path_separator;
+
+    grn_encoding_plugins_dir =
+      grn_encoding_convert_from_locale(ctx,
+                                       grn_plugin_get_system_plugins_dir(),
+                                       -1,
+                                       &grn_encoding_plugins_dir_length);
+    if (grn_encoding_plugins_dir[grn_encoding_plugins_dir_length - 1] != '/') {
+      plugins_dir_path_separator = "/";
     } else {
-      prefix_separator = "";
+      plugins_dir_path_separator = "";
     }
-    suffix = grn_plugin_get_suffix();
+    ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+        "%s cannot find plugin file: <%s%s%s%s>",
+        tag,
+        grn_encoding_plugins_dir,
+        plugins_dir_path_separator,
+        name,
+        grn_plugin_get_suffix());
+    grn_encoding_converted_free(ctx, grn_encoding_plugins_dir);
   }
-  ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
-      "%s cannot find plugin file: <%s%s%s%s>",
-      tag, prefix, prefix_separator, name, suffix);
 }
 
 grn_rc
