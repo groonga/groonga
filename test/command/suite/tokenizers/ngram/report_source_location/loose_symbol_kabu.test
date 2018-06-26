@@ -1,0 +1,5 @@
+tokenize \
+  'TokenNgram("loose_symbol", true, \
+              "report_source_location", true)' \
+  "ここは㈱グルンガ" \
+  'NormalizerNFKC100("report_source_offset", true)'

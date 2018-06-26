@@ -1,0 +1,154 @@
+tokenize   'TokenNgram("loose_symbol", true,               "report_source_location", true)'   "ここは㈱グルンガ"   'NormalizerNFKC100("report_source_offset", true)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "ここ",
+      "position": 0,
+      "force_prefix": false,
+      "source_offset": 0,
+      "source_length": 6,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "こは",
+      "position": 1,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 6,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "は",
+      "position": 2,
+      "force_prefix": false,
+      "source_offset": 6,
+      "source_length": 3,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "(",
+      "position": 3,
+      "force_prefix": false,
+      "source_offset": 9,
+      "source_length": 0,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "株",
+      "position": 4,
+      "force_prefix": false,
+      "source_offset": 9,
+      "source_length": 0,
+      "source_first_character_length": 3
+    },
+    {
+      "value": ")",
+      "position": 5,
+      "force_prefix": false,
+      "source_offset": 9,
+      "source_length": 3,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "グル",
+      "position": 6,
+      "force_prefix": false,
+      "source_offset": 12,
+      "source_length": 6,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "ルン",
+      "position": 7,
+      "force_prefix": false,
+      "source_offset": 15,
+      "source_length": 6,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "ンガ",
+      "position": 8,
+      "force_prefix": false,
+      "source_offset": 18,
+      "source_length": 6,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "￰",
+      "position": 9,
+      "force_prefix": false,
+      "source_offset": 24,
+      "source_length": 0,
+      "source_first_character_length": 0
+    },
+    {
+      "value": "ここ",
+      "position": 10,
+      "force_prefix": false,
+      "source_offset": 0,
+      "source_length": 6,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "こは",
+      "position": 11,
+      "force_prefix": false,
+      "source_offset": 3,
+      "source_length": 6,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "は株",
+      "position": 12,
+      "force_prefix": false,
+      "source_offset": 6,
+      "source_length": 6,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "株グ",
+      "position": 13,
+      "force_prefix": false,
+      "source_offset": 9,
+      "source_length": 6,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "グル",
+      "position": 14,
+      "force_prefix": false,
+      "source_offset": 12,
+      "source_length": 6,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "ルン",
+      "position": 15,
+      "force_prefix": false,
+      "source_offset": 15,
+      "source_length": 6,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "ンガ",
+      "position": 16,
+      "force_prefix": false,
+      "source_offset": 18,
+      "source_length": 6,
+      "source_first_character_length": 3
+    },
+    {
+      "value": "ガ",
+      "position": 17,
+      "force_prefix": false,
+      "source_offset": 21,
+      "source_length": 3,
+      "source_first_character_length": 3
+    }
+  ]
+]

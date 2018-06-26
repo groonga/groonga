@@ -416,7 +416,9 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
             removed_checks = NULL;
           }
           for (i = 0; i < length; i++) {
-            loose_checks[i] += checks[i];
+            if (checks[i] != -1) {
+              loose_checks[i] += checks[i];
+            }
           }
           loose_checks += length;
         }
