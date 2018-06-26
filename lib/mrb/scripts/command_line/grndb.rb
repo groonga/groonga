@@ -212,6 +212,8 @@ module Groonga
 
         private
         def check_log_file(log_file)
+          return # Disable for now
+
           parser = GroongaLog::Parser.new
           parser.parse(log_file) do |statistic|
             p statistic.to_h
