@@ -13,7 +13,8 @@ Summary
 
 .. versionadded:: 6.0.7
 
-To enable this function, register ``functions/vector`` plugin by following the command::
+To enable this function, register ``functions/vector`` plugin by
+the following command::
 
   plugin_register functions/vector
 

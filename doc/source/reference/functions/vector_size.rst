@@ -15,7 +15,8 @@ Summary
 
 ``vector_size`` returns the value of vector column size.
 
-To enable this function, register ``functions/vector`` plugin by following the command::
+To enable this function, register ``functions/vector`` plugin by
+the following command::
 
   plugin_register functions/vector
 
