@@ -98,10 +98,7 @@ namespace :build do
     mkdir_p(tmp_dir)
     zlib_version = "1.2.11"
     zlib_base = "zlib-#{zlib_version}"
-    zlib_tar_gz_url_base =
-      "https://downloads.sourceforge.net/project/libpng/zlib"
-    zlib_tar_gz_url =
-      "#{zlib_tar_gz_url_base}/#{zlib_version}/#{zlib_base}.tar.gz"
+    zlib_tar_gz_url = "http://zlib.net/#{zlib_base}.tar.gz"
     zlib_tar_gz = download(zlib_tar_gz_url, download_dir)
     cp(zlib_tar_gz, source_dir)
     Dir.chdir(tmp_dir) do
