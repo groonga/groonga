@@ -44,8 +44,8 @@ MRuby::Build.new do |conf|
            :checksum_hash => "ddda20ca273ba532f2025d4ff7ddc8bb223ad8c2"
   conf.gem :github => "kou/mruby-slop",
            :checksum_hash => "752d1a3e2bc4fdc40ee92d668812a99c8fc5e1cc"
-  conf.gem :github => "kou/mruby-file-stat",
-           :checksum_hash => "e2fe6be688262fbce0070efa21ae01d9a0b9b6a1"
+  conf.gem :github => "ksss/mruby-file-stat",
+           :checksum_hash => "12871584f2e5e2d24f5c54325d3ba3338414e2a4"
   conf.gem :github => "kou/mruby-tsort",
            :checksum_hash => "6d7f5a56ac7a90847f84186ce1dbc780e41928dc"
   conf.gem :github => "iij/mruby-dir",
