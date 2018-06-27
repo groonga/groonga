@@ -27,34 +27,31 @@ Improvements
 * Suppress memcpy warnings in msgpack
 * Update mruby
   * from 1.0.0 to 1.4.1
-* ? windows: never use clock_gettime()
 * doc: add api reference for "grn_obj_is_index_column"
   * Merge pull request #855 from komainu8/add_api_document
 * windows: suppress printf format warnings
-* ? windows: use grn_memcpy()
 * windows: suppress warning by msgpack
-* ? windows: use grn_memcpy()
-* ? Add encoding converter
-* ? mrb: add LocaleOutput
-* ? windows: convert image path to grn_encoding
-* windows: support install path that has non-ascii characters again
-* ? Check sys/sysmacros.h for mruby-file-stat
-* ? Stop to check sys/sysmacros on Windows
-* ? Stop to include config.h into tar.gz
-* ? mecab: convert error message encoding
-* ? grndb: fix output channel
-* ? windows convert: fix inverted from/to
-* ? window_sum: support dynamic column as a target column
+* Add encoding converter
+  * windows convert: fix inverted from/to 関連
+* mrb: add LocaleOutput
+  * windows: support install path that has non-ascii characters again 関連？
+* windows: convert image path to grn_encoding
+* mecab: convert error message encoding
+  * TokenMecab windows: MeCab requires UTF-8 for rcfile 関連？
+* grndb: fix output channel
+* window_sum: support dynamic column as a target column
 * query-log show-condition: (maybe) fix a crash bug
 * doc: add api reference for "grn_obj_is_vector_column"
 * ? Fix codes_curr check position
-* ? TokenMecab windows: MeCab requires UTF-8 for rcfile
+  * We should not touch expr->codes[si->end] when si->start >=
+    expr->codes_curr.
+  * -#:000000000000000 filter(1): nop: and
+  * +#:000000000000000 filter(1): and
 * column_create: add more validations
   * 08e2456ba35407e3d5172f71a0200fac2a770142 に詳細有り
 * highlighter lexicon: fix a not highlighted bug
   * If keyword is less than N, the keyword wasn't highlighted.
-* ? Add missing path encoding conversion on plugin load error
-* ? Remove not required inline
+* Add missing path encoding conversion on plugin load error
 * windows: fix a base path detection bug
   * If system locale DLL path includes 0x5c ("\" in ASCII) such as "U+8868
     CJK UNIFIED IDEOGRAPH-8868" in CP932, the base path detection is
@@ -63,9 +60,9 @@ Improvements
   * Disable for now
   * Because it's not completed yet.
 * TokenNgram: fix wrong first character length
-* ? mruby-file-stat: fix a memory leak
 * column_create: accept TokenDelmit with WITH_POSITION
   * It's useful pattern for tag search.
+  * column_create: add more validations 関連
 * doc vector_find: add
   * TODO: translation
 
