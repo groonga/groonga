@@ -17,8 +17,6 @@ Improvements
 
 * [log] Add sub error for error message ``[ii][update][one]``.
 
-* [:doc:`reference/functions/sub_filter`] Fixed too much score with a too filtered case.
-
 * Added a new API: ``grn_highlighter_clear_keywords()``.
 
 * Added a new predicate: ``grn_obj_is_number_family_bulk()``.
@@ -72,6 +70,8 @@ Improvements
 
 Fixes
 ^^^^^
+
+* [:doc:`reference/functions/sub_filter`] Fixed too much score with a too filtered case.
 
 * Fixed build error if KyTea is installed.
 
