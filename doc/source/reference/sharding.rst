@@ -97,8 +97,9 @@ TODO
 Commands
 --------
 
-.. toctree::
-   :maxdepth: 1
-   :glob:
-
-   commands/logical_*
+  * :doc:commands/logical_count
+  * :doc:commands/logical_parameters
+  * :doc:commands/logical_range_filter
+  * :doc:commands/logical_select
+  * :doc:commands/logical_shard_list
+  * :doc:commands/logical_table_remove

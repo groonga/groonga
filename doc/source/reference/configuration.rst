@@ -43,8 +43,6 @@ You can confirm all configuration items by
 Commands
 --------
 
-.. toctree::
-   :maxdepth: 1
-   :glob:
-
-   commands/config_*
+  * :doc:commands/config_delete
+  * :doc:commands/config_get
+  * :doc:commands/config_set

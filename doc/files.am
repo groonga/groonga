@@ -780,7 +780,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/api/grn_user_data.rst \
 	$(top_srcdir)/doc/source/reference/api/overview.rst \
 	$(top_srcdir)/doc/source/reference/api/plugin.rst \
-	$(top_srcdir)/doc/source/reference/cast.rst \
 	$(top_srcdir)/doc/source/reference/column.rst \
 	$(top_srcdir)/doc/source/reference/columns/index.rst \
 	$(top_srcdir)/doc/source/reference/columns/pseudo.rst \
@@ -1753,7 +1752,6 @@ source_files_relative_from_doc_dir = \
 	source/reference/api/grn_user_data.rst \
 	source/reference/api/overview.rst \
 	source/reference/api/plugin.rst \
-	source/reference/cast.rst \
 	source/reference/column.rst \
 	source/reference/columns/index.rst \
 	source/reference/columns/pseudo.rst \
@@ -2159,7 +2157,6 @@ html_files_relative_from_locale_dir = \
 	html/reference/api/grn_user_data.html \
 	html/reference/api/overview.html \
 	html/reference/api/plugin.html \
-	html/reference/cast.html \
 	html/reference/column.html \
 	html/reference/columns/index.html \
 	html/reference/columns/pseudo.html \

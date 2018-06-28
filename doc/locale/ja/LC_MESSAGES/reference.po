@@ -16540,6 +16540,15 @@ msgstr ":doc:`/reference/commands/dump` ですべての設定項目を確認で�
 msgid "Commands"
 msgstr "コマンド一覧"
 
+msgid ":doc:commands/config_delete"
+msgstr ""
+
+msgid ":doc:commands/config_get"
+msgstr ""
+
+msgid ":doc:commands/config_set"
+msgstr ""
+
 msgid "Executables"
 msgstr "実行ファイル"
 
@@ -25335,6 +25344,25 @@ msgstr ""
 
 msgid "Rules"
 msgstr "ルール"
+
+msgid ":doc:commands/logical_count"
+msgstr ""
+
+#, fuzzy
+msgid ":doc:commands/logical_parameters"
+msgstr "コマンドライン引数"
+
+msgid ":doc:commands/logical_range_filter"
+msgstr ""
+
+msgid ":doc:commands/logical_select"
+msgstr ""
+
+msgid ":doc:commands/logical_shard_list"
+msgstr ""
+
+msgid ":doc:commands/logical_table_remove"
+msgstr ""
 
 msgid "Suggest"
 msgstr "サジェスト"
