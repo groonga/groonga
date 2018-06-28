@@ -171,8 +171,8 @@ used when you just specify ``keyword`` instead of
 ``column:@keyword``. See :doc:`/reference/grn_expr/query_syntax` for
 more syntax details.
 
-Here are available modes. The default is ``MATCH`` mode. It does full
-text search.
+Here are available modes. The default is ``"MATCH"`` mode. It does
+full text search.
 
 .. list-table::
    :header-rows: 1
@@ -180,50 +180,50 @@ text search.
    * - Mode
      - Aliases
      - Description
-   * - ``EQUAL``
-     - ``==``
+   * - ``"EQUAL"``
+     - ``"=="``
      - It uses :ref:`query-syntax-equal-condition` as the default mode.
-   * - ``NOT_EQUAL``
-     - ``!=``
+   * - ``"NOT_EQUAL"``
+     - ``"!="``
      - It uses :ref:`query-syntax-not-equal-condition` as the default mode.
-   * - ``LESS``
-     - ``<``
+   * - ``"LESS"``
+     - ``"<"``
      - It uses :ref:`query-syntax-less-than-condition` as the default mode.
-   * - ``GREATER``
-     - ``>``
+   * - ``"GREATER"``
+     - ``">"``
      - It uses :ref:`query-syntax-greater-than-condition` as the default mode.
-   * - ``LESS_EQUAL``
-     - ``<=``
+   * - ``"LESS_EQUAL"``
+     - ``"<="``
      - It uses :ref:`query-syntax-less-than-or-equal-condition` as the
        default mode.
-   * - ``GREATER_EQUAL``
-     - ``>=``
+   * - ``"GREATER_EQUAL"``
+     - ``">="``
      - It uses :ref:`query-syntax-greater-than-or-equal-condition` as the
        default mode.
-   * - ``MATCH``
-     - ``@``
+   * - ``"MATCH"``
+     - ``"@"``
      - It uses :ref:`query-syntax-full-text-search-condition` as the
        default mode.
 
        It's the default.
-   * - ``NEAR``
-     - ``*N``
+   * - ``"NEAR"``
+     - ``"*N"``
      - It uses :ref:`query-syntax-near-search-condition` as the default
        mode.
-   * - ``SIMILAR``
-     - ``*S``
+   * - ``"SIMILAR"``
+     - ``"*S"``
      - It uses :ref:`query-syntax-similar-search-condition` as the default
        mode.
-   * - ``PREFIX``
-     - ``^``, ``@^``
+   * - ``"PREFIX"``
+     - ``"^"``, ``"@^"``
      - It uses :ref:`query-syntax-prefix-search-condition` as the default
        mode.
-   * - ``SUFFIX``
-     - ``$``, ``@$``
+   * - ``"SUFFIX"``
+     - ``"$"``, ``"@$"``
      - It uses :ref:`query-syntax-suffix-search-condition` as the default
        mode.
-   * - ``REGEXP``
-     - ``~``, ``@~``
+   * - ``"REGEXP"``
+     - ``"~"``, ``"@~"``
      - It uses :ref:`query-syntax-regular-expression-condition` as the default
        mode.
 

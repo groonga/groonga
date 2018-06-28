@@ -429,7 +429,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_without_sub_filter.log \
 	$(top_srcdir)/doc/source/example/reference/functions/vector_find/usage_find.log \
-	$(top_srcdir)/doc/source/example/reference/functions/vector_find/usage_find_operator.log \
+	$(top_srcdir)/doc/source/example/reference/functions/vector_find/usage_find_mode.log \
 	$(top_srcdir)/doc/source/example/reference/functions/vector_find/usage_register.log \
 	$(top_srcdir)/doc/source/example/reference/functions/vector_find/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/vector_find/usage_setup_schema.log \
@@ -1402,7 +1402,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
 	source/example/reference/functions/sub_filter/usage_without_sub_filter.log \
 	source/example/reference/functions/vector_find/usage_find.log \
-	source/example/reference/functions/vector_find/usage_find_operator.log \
+	source/example/reference/functions/vector_find/usage_find_mode.log \
 	source/example/reference/functions/vector_find/usage_register.log \
 	source/example/reference/functions/vector_find/usage_setup_data.log \
 	source/example/reference/functions/vector_find/usage_setup_schema.log \

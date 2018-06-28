@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015-2017 Brazil
+  Copyright(C) 2015-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -375,7 +375,7 @@ static grn_obj *
 func_vector_find_vector(grn_ctx *ctx,
                         grn_obj *target,
                         grn_obj *query,
-                        grn_operator operator,
+                        grn_operator mode,
                         grn_user_data *user_data)
 {
   grn_obj *found_element = NULL;
@@ -384,7 +384,7 @@ func_vector_find_vector(grn_ctx *ctx,
   unsigned int i;
   unsigned int n_elements = 0;
 
-  exec = grn_operator_to_exec_func(operator);
+  exec = grn_operator_to_exec_func(mode);
   GRN_VOID_INIT(&element);
   n_elements = grn_vector_size(ctx, target);
   for (i = 0; i < n_elements; i++) {
@@ -415,7 +415,7 @@ static grn_obj *
 func_vector_find_uvector_number(grn_ctx *ctx,
                                 grn_obj *target,
                                 grn_obj *query,
-                                grn_operator operator,
+                                grn_operator mode,
                                 grn_user_data *user_data)
 {
   grn_obj *found_element = NULL;
@@ -436,7 +436,7 @@ func_vector_find_uvector_number(grn_ctx *ctx,
   }
   element_size = grn_uvector_element_size(ctx, target);
   n_elements = GRN_BULK_VSIZE(target) / element_size;
-  if (operator == GRN_OP_EQUAL) {
+  if (mode == GRN_OP_EQUAL) {
     for (i = 0; i < n_elements; i++) {
       if (memcmp(GRN_BULK_HEAD(target) + (i * element_size),
                  GRN_BULK_HEAD(query_number),
@@ -456,7 +456,7 @@ func_vector_find_uvector_number(grn_ctx *ctx,
     grn_operator_exec_func *exec;
     grn_obj element;
 
-    exec = grn_operator_to_exec_func(operator);
+    exec = grn_operator_to_exec_func(mode);
     GRN_VALUE_FIX_SIZE_INIT(&element, 0, target->header.domain);
     for (i = 0; i < n_elements; i++) {
       GRN_BULK_REWIND(&element);
@@ -489,7 +489,7 @@ static grn_obj *
 func_vector_find_uvector_record(grn_ctx *ctx,
                                 grn_obj *target,
                                 grn_obj *query,
-                                grn_operator operator,
+                                grn_operator mode,
                                 grn_user_data *user_data)
 {
   grn_obj *found_element = NULL;
@@ -497,7 +497,7 @@ func_vector_find_uvector_record(grn_ctx *ctx,
   grn_id *ids;
   size_t i, n_elements;
 
-  if (operator != GRN_OP_EQUAL) {
+  if (mode != GRN_OP_EQUAL) {
     return NULL;
   }
 
@@ -533,14 +533,14 @@ static grn_obj *
 func_vector_find_uvector(grn_ctx *ctx,
                          grn_obj *target,
                          grn_obj *query,
-                         grn_operator operator,
+                         grn_operator mode,
                          grn_user_data *user_data)
 {
   if (grn_type_id_is_number_family(ctx, target->header.domain)) {
     return func_vector_find_uvector_number(ctx,
                                            target,
                                            query,
-                                           operator,
+                                           mode,
                                            user_data);
   } else if (grn_type_id_is_builtin(ctx, target->header.domain)) {
     return NULL;
@@ -548,7 +548,7 @@ func_vector_find_uvector(grn_ctx *ctx,
     return func_vector_find_uvector_record(ctx,
                                            target,
                                            query,
-                                           operator,
+                                           mode,
                                            user_data);
   }
 }
@@ -557,7 +557,7 @@ static grn_obj *
 func_vector_find_pvector(grn_ctx *ctx,
                          grn_obj *target,
                          grn_obj *query,
-                         grn_operator operator,
+                         grn_operator mode,
                          grn_user_data *user_data)
 {
   grn_obj *found_element = NULL;
@@ -566,7 +566,7 @@ func_vector_find_pvector(grn_ctx *ctx,
   unsigned int i;
   unsigned int n_elements = 0;
 
-  exec = grn_operator_to_exec_func(operator);
+  exec = grn_operator_to_exec_func(mode);
   elements = (grn_obj **)GRN_BULK_HEAD(target);
   n_elements = sizeof(grn_id) / GRN_BULK_VSIZE(target);
   for (i = 0; i < n_elements; i++) {
@@ -592,7 +592,7 @@ func_vector_find(grn_ctx *ctx, int n_args, grn_obj **args,
   const char *context = "vector_find()";
   grn_obj *target;
   grn_obj *query = NULL;
-  grn_operator operator = GRN_OP_EQUAL;
+  grn_operator mode = GRN_OP_EQUAL;
   grn_obj *found_element = NULL;
 
   if (n_args < 2 || n_args > 3) {
@@ -606,7 +606,7 @@ func_vector_find(grn_ctx *ctx, int n_args, grn_obj **args,
   target = args[0];
   query = args[1];
   if (n_args == 3) {
-    operator = grn_plugin_proc_get_value_mode(ctx, args[2], operator, context);
+    mode = grn_plugin_proc_get_value_mode(ctx, args[2], mode, context);
     if (ctx->rc != GRN_SUCCESS) {
       return NULL;
     }
@@ -636,13 +636,13 @@ func_vector_find(grn_ctx *ctx, int n_args, grn_obj **args,
 
   if (target->header.type == GRN_VECTOR) {
     found_element =
-      func_vector_find_vector(ctx, target, query, operator, user_data);
+      func_vector_find_vector(ctx, target, query, mode, user_data);
   } else if (target->header.type == GRN_UVECTOR) {
     found_element =
-      func_vector_find_uvector(ctx, target, query, operator, user_data);
+      func_vector_find_uvector(ctx, target, query, mode, user_data);
   } else if (target->header.type == GRN_PVECTOR) {
     found_element =
-      func_vector_find_pvector(ctx, target, query, operator, user_data);
+      func_vector_find_pvector(ctx, target, query, mode, user_data);
   }
 
   if (!found_element) {

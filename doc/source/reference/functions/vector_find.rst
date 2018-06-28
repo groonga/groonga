@@ -32,7 +32,7 @@ Syntax
 ``vector_find`` has two or three parameters::
 
   vector_find(vector, value);
-  vector_find(vector, value, operator);
+  vector_find(vector, value, mode);
 
 If you omit the third argument, each element in the ``vector`` is
 compared with ``value`` by equality comparison.
@@ -86,7 +86,7 @@ You can customize how to compare with each value by the third
 argument. Here is a usage to use full text search to find an element:
 
 .. groonga-command
-.. include:: ../../example/reference/functions/vector_find/usage_find_operator.log
+.. include:: ../../example/reference/functions/vector_find/usage_find_mode.log
 .. select \
 ..   --table Memos \
 ..   --output_columns 'tags, vector_find(tags, "roonga", "@")'
@@ -135,59 +135,22 @@ Specifies a value to be compared.
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
-``operator`` is optional.
+``mode`` is optional.
 
-.. _vector-find-operator:
+.. _vector-find-mode:
 
-``operator``
-""""""""""""
+``mode``
+""""""""
 
-Specifies an operator to determine how to compare each value with
+Specifies a mode that specifies how to compare each element with
 :ref:`vector-find-value`.
 
-Here are available operators. The default is ``EQUAL`` operator. It
-does equality comparison.
+See :ref:`query-default-mode` for available mode names. All mode names
+except ``"NEAR"``, ``"SIMILAR"`` and ``"SUFFIX"`` are supported.
 
-.. list-table::
-   :header-rows: 1
-
-   * - Mode
-     - Aliases
-     - Description
-   * - ``EQUAL``
-     - ``==``
-     - It uses :ref:`query-syntax-equal-condition` as the default mode.
-
-       It's the default.
-   * - ``NOT_EQUAL``
-     - ``!=``
-     - It uses :ref:`query-syntax-not-equal-condition` as the default mode.
-   * - ``LESS``
-     - ``<``
-     - It uses :ref:`query-syntax-less-than-condition` as the default mode.
-   * - ``GREATER``
-     - ``>``
-     - It uses :ref:`query-syntax-greater-than-condition` as the default mode.
-   * - ``LESS_EQUAL``
-     - ``<=``
-     - It uses :ref:`query-syntax-less-than-or-equal-condition` as the
-       default mode.
-   * - ``GREATER_EQUAL``
-     - ``>=``
-     - It uses :ref:`query-syntax-greater-than-or-equal-condition` as the
-       default mode.
-   * - ``MATCH``
-     - ``@``
-     - It uses :ref:`query-syntax-full-text-search-condition` as the
-       default mode.
-   * - ``PREFIX``
-     - ``^``, ``@^``
-     - It uses :ref:`query-syntax-prefix-search-condition` as the default
-       mode.
-   * - ``REGEXP``
-     - ``~``, ``@~``
-     - It uses :ref:`query-syntax-regular-expression-condition` as the default
-       mode.
+The default mode is ``"EQUAL"``. Note that :ref:`query-default-mode`
+says the default mode is ``"MATCH"`` but the default mode of
+``vector_find`` is ``"EQUAL"``.
 
 Return value
 ------------

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2018-06-28 12:32+0900\n"
+"PO-Revision-Date: 2018-06-28 12:46+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -20171,10 +20171,11 @@ msgstr ""
 
 msgid ""
 "See :ref:`query-default-mode` for available mode names. All mode names "
-"except ``NEAR``, ``SIMILAR`` and ``SUFFIX`` are supported."
+"except ``\"NEAR\"``, ``\"SIMILAR\"`` and ``\"SUFFIX\"`` are supported."
 msgstr ""
-"利用可能なモード名は :ref:`query-default-mode` を見てください。 ``NEAR`` 、 "
-"``SIMILAR`` と ``SUFFIX`` 以外のすべてのモード名をサポートしています。"
+"利用可能なモード名は :ref:`query-default-mode` を見てください。 ``\"NEAR"
+"\"`` 、 ``\"SIMILAR\"`` と ``\"SUFFIX\"`` 以外のすべてのモード名をサポートし"
+"ています。"
 
 msgid "``condition_column_name``"
 msgstr ""
@@ -20605,11 +20606,11 @@ msgstr ""
 "reference/grn_expr/query_syntax` を見てください。"
 
 msgid ""
-"Here are available modes. The default is ``MATCH`` mode. It does full text "
-"search."
+"Here are available modes. The default is ``\"MATCH\"`` mode. It does full "
+"text search."
 msgstr ""
-"以下は利用可能なモードです。デフォルトは ``MATCH`` モードです。このモードでは"
-"全文検索をします。"
+"以下は利用可能なモードです。デフォルトは ``\"MATCH\"`` モードです。このモード"
+"では全文検索をします。"
 
 msgid "Mode"
 msgstr "モード"
@@ -20617,40 +20618,40 @@ msgstr "モード"
 msgid "Aliases"
 msgstr "別名"
 
-msgid "``EQUAL``"
+msgid "``\"EQUAL\"``"
 msgstr ""
 
-msgid "``==``"
+msgid "``\"==\"``"
 msgstr ""
 
 msgid "It uses :ref:`query-syntax-equal-condition` as the default mode."
 msgstr ""
 "デフォルトのモードとして :ref:`query-syntax-equal-condition` を使います。"
 
-msgid "``NOT_EQUAL``"
+msgid "``\"NOT_EQUAL\"``"
 msgstr ""
 
-msgid "``!=``"
+msgid "``\"!=\"``"
 msgstr ""
 
 msgid "It uses :ref:`query-syntax-not-equal-condition` as the default mode."
 msgstr ""
 "デフォルトのモードとして :ref:`query-syntax-not-equal-condition` を使います。"
 
-msgid "``LESS``"
+msgid "``\"LESS\"``"
 msgstr ""
 
-msgid "``<``"
+msgid "``\"<\"``"
 msgstr ""
 
 msgid "It uses :ref:`query-syntax-less-than-condition` as the default mode."
 msgstr ""
 "デフォルトのモードとして :ref:`query-syntax-less-than-condition` を使います。"
 
-msgid "``GREATER``"
+msgid "``\"GREATER\"``"
 msgstr ""
 
-msgid "``>``"
+msgid "``\">\"``"
 msgstr ""
 
 msgid "It uses :ref:`query-syntax-greater-than-condition` as the default mode."
@@ -20658,10 +20659,10 @@ msgstr ""
 "デフォルトのモードとして :ref:`query-syntax-greater-than-condition` を使いま"
 "す。"
 
-msgid "``LESS_EQUAL``"
+msgid "``\"LESS_EQUAL\"``"
 msgstr ""
 
-msgid "``<=``"
+msgid "``\"<=\"``"
 msgstr ""
 
 msgid ""
@@ -20670,10 +20671,10 @@ msgstr ""
 "デフォルトのモードとして :ref:`query-syntax-less-than-or-equal-condition` を"
 "使います。"
 
-msgid "``GREATER_EQUAL``"
+msgid "``\"GREATER_EQUAL\"``"
 msgstr ""
 
-msgid "``>=``"
+msgid "``\">=\"``"
 msgstr ""
 
 msgid ""
@@ -20683,10 +20684,10 @@ msgstr ""
 "デフォルトのモードとして :ref:`query-syntax-greater-than-or-equal-condition` "
 "を使います。"
 
-msgid "``MATCH``"
+msgid "``\"MATCH\"``"
 msgstr ""
 
-msgid "``@``"
+msgid "``\"@\"``"
 msgstr ""
 
 msgid ""
@@ -20698,10 +20699,10 @@ msgstr ""
 msgid "It's the default."
 msgstr "これがデフォルトです。"
 
-msgid "``NEAR``"
+msgid "``\"NEAR\"``"
 msgstr ""
 
-msgid "``*N``"
+msgid "``\"*N\"``"
 msgstr ""
 
 msgid "It uses :ref:`query-syntax-near-search-condition` as the default mode."
@@ -20709,10 +20710,10 @@ msgstr ""
 "デフォルトのモードとして :ref:`query-syntax-near-search-condition` を使いま"
 "す。"
 
-msgid "``SIMILAR``"
+msgid "``\"SIMILAR\"``"
 msgstr ""
 
-msgid "``*S``"
+msgid "``\"*S\"``"
 msgstr ""
 
 msgid ""
@@ -20721,10 +20722,10 @@ msgstr ""
 "デフォルトのモードとして :ref:`query-syntax-similar-search-condition` を使い"
 "ます。"
 
-msgid "``PREFIX``"
+msgid "``\"PREFIX\"``"
 msgstr ""
 
-msgid "``^``, ``@^``"
+msgid "``\"^\"``, ``\"@^\"``"
 msgstr ""
 
 msgid ""
@@ -20733,10 +20734,10 @@ msgstr ""
 "デフォルトのモードとして :ref:`query-syntax-prefix-search-condition` を使いま"
 "す。"
 
-msgid "``SUFFIX``"
+msgid "``\"SUFFIX\"``"
 msgstr ""
 
-msgid "``$``, ``@$``"
+msgid "``\"$\"``, ``\"@$\"``"
 msgstr ""
 
 msgid ""
@@ -20745,10 +20746,10 @@ msgstr ""
 "デフォルトのモードとして :ref:`query-syntax-suffix-search-condition` を使いま"
 "す。"
 
-msgid "``REGEXP``"
+msgid "``\"REGEXP\"``"
 msgstr ""
 
-msgid "``~``, ``@~``"
+msgid "``\"~\"``, ``\"@~\"``"
 msgstr ""
 
 msgid ""
@@ -21159,23 +21160,23 @@ msgstr ""
 msgid "Specifies a vector value to be searched an element."
 msgstr "検索対象のベクターを指定します。"
 
-msgid "``operator`` is optional."
-msgstr "``operator`` は省略可能です。"
-
-msgid "``operator``"
-msgstr ""
+msgid "``mode`` is optional."
+msgstr "``mode`` は省略可能です。"
 
 msgid ""
-"Specifies an operator to determine how to compare each value with :ref:"
+"Specifies a mode that specifies how to compare each element with :ref:"
 "`vector-find-value`."
-msgstr ":ref:`vector-find-value` と各要素を比較する方法を指定します。"
+msgstr ""
+":ref:`vector-find-value` と各要素を比較する方法（モード）を指定します。"
 
 msgid ""
-"Here are available operators. The default is ``EQUAL`` operator. It does "
-"equality comparison."
+"The default mode is ``\"EQUAL\"``. Note that :ref:`query-default-mode` says "
+"the default mode is ``\"MATCH\"`` but the default mode of ``vector_find`` is "
+"``\"EQUAL\"``."
 msgstr ""
-"以下は利用可能なオペレーターです。デフォルトは ``EQUAL`` オペレーターです。こ"
-"のオペレーターは等価比較をします。"
+"デフォルトのモードは ``\"EQUAL\"`` です。 :ref:`query-default-mode` ではデ"
+"フォルトのモードは ``\"MATCH\"`` ですが、 ``vector_find`` のデフォルトのモー"
+"ドは ``\"EQUAL\"`` です。"
 
 msgid "The matched element on match, ``null`` otherwise."
 msgstr "マッチした場合はマッチした要素。マッチしない場合は ``null`` 。"

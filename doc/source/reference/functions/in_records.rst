@@ -171,7 +171,8 @@ Specifies a value to be compared.
 
 Specifies a mode name that specifies how to compare :ref:`in-records-value` with a value of :ref:`in-records-condition-column-name`.
 
-See :ref:`query-default-mode` for available mode names. All mode names except ``NEAR``, ``SIMILAR`` and ``SUFFIX`` are supported.
+See :ref:`query-default-mode` for available mode names. All mode names
+except ``"NEAR"``, ``"SIMILAR"`` and ``"SUFFIX"`` are supported.
 
 .. _in-records-condition-column-name:
 
