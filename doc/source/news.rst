@@ -15,61 +15,81 @@ Release 8.0.4 - 2018-06-29
 Improvements
 ^^^^^^^^^^^^
 
-* kytea: follow variable name change
-  * Fix build error.
-* ii: add sub error message
-  * Improve error message.
-* sub_filter: fix too much score with a too filtered case
-* highlighter: add grn_highlighter_clear_keywords()
-* Add a new predicate: grn_obj_is_number_family_bulk()
-* Add a new API: grn_plugin_proc_get_value_mode()
-* vector_find: add
-* Suppress memcpy warnings in msgpack
-* Update mruby
-  * from 1.0.0 to 1.4.1
-* doc: add api reference for "grn_obj_is_index_column"
-  * Merge pull request #855 from komainu8/add_api_document
-* windows: suppress printf format warnings
-* windows: suppress warning by msgpack
-* Add encoding converter
-  * windows convert: fix inverted from/to 関連
-* mrb: add LocaleOutput
-  * windows: support install path that has non-ascii characters again 関連？
-* windows: convert image path to grn_encoding
-* mecab: convert error message encoding
-  * TokenMecab windows: MeCab requires UTF-8 for rcfile 関連？
-* grndb: fix output channel
-* window_sum: support dynamic column as a target column
-* query-log show-condition: (maybe) fix a crash bug
-* doc: add api reference for "grn_obj_is_vector_column"
-* ? Fix codes_curr check position
-  * We should not touch expr->codes[si->end] when si->start >=
-    expr->codes_curr.
-  * -#:000000000000000 filter(1): nop: and
-  * +#:000000000000000 filter(1): and
-* column_create: add more validations
-  * 08e2456ba35407e3d5172f71a0200fac2a770142 に詳細有り
-* highlighter lexicon: fix a not highlighted bug
-  * If keyword is less than N, the keyword wasn't highlighted.
-* Add missing path encoding conversion on plugin load error
-* windows: fix a base path detection bug
-  * If system locale DLL path includes 0x5c ("\" in ASCII) such as "U+8868
-    CJK UNIFIED IDEOGRAPH-8868" in CP932, the base path detection is
-    buggy.
-* grndb: disabling log check
-  * Disable for now
-  * Because it's not completed yet.
-* TokenNgram: fix wrong first character length
-* column_create: accept TokenDelmit with WITH_POSITION
-  * It's useful pattern for tag search.
-  * column_create: add more validations 関連
-* doc vector_find: add
-  * TODO: translation
+* [log] Add sub error for error message ``[ii][update][one]``.
+
+* [:doc:`reference/functions/sub_filter`] Fixed too much score with a too filtered case.
+
+* Added a new API: ``grn_highlighter_clear_keywords()``.
+
+* Added a new predicate: ``grn_obj_is_number_family_bulk()``.
+
+* Added a new API: ``grn_plugin_proc_get_value_mode()``.
+
+* [:doc:`reference/functions/vector_find`] Added a new function ``vector_find()``.
+
+* Suppress memcpy warnings in msgpack.
+
+* Updated mruby from 1.0.0 to 1.4.1.
+
+* [doc][:doc:`/reference/api/grn_obj`] Added API reference for ``grn_obj_is_index_column()``.
+
+* [windows] Suppress printf format warnings.
+
+* [windows] Suppress warning by msgpack.
+
+* [:doc:`/reference/api/grn_obj`][:doc:`/reference/api/plugin`] Added encoding converter.
+  rules:
+
+  * grn_ctx::errbuf: grn_encoding
+
+  * grn_logger_put: grn_encoding
+
+  * mruby: UTF-8
+
+  * path: locale
+
+* [mrb] Added ``LocaleOutput``.
+
+* [windows] Supported converting image path to grn_encoding.
+
+* [:doc:`/reference/tokenizers`][TokenMecab] Convert error message encoding.
+
+* [:doc:`/reference/window_functions/window_sum`] Supported dynamic column as a target column.
+
+* [doc][:doc:`/reference/api/grn_obj`] Added API reference for ``grn_obj_is_vector_column()``.
+
+* [:doc:`/reference/commands/column_create`] Added more validations.
+
+  * 1: Full text search index for vector column must have ``WITH_SECTION`` flag.
+    (Note that TokenDelmit with ``WITH_POSITION`` without ``WITH_SECTION`` is permitted.
+    It's useful pattern for tag search.)
+
+  * 2: Full text search index for vector column must not be multi column index.
+    detail: https://github.com/groonga/groonga/commit/08e2456ba35407e3d5172f71a0200fac2a770142
+
+* [:doc:`/reference/executables/grndb`] Disabled log check temporarily.
+  Because it's not completed yet.
 
 Fixes
 ^^^^^
 
-* ...
+* Fixed build error if KyTea is installed.
+
+* [:doc:`/reference/executables/grndb`] Fixed output channel.
+
+* [query-log][show-condition] Maybe fixed a crash bug.
+  We need to check scan_info that doesn't have corresponding expr_code.
+
+* [highlighter][lexicon] Fixed a not highlighted bug.
+  If keyword is less than N, the keyword wasn't highlighted.
+
+* [windows] Fixed a base path detection bug.
+  If system locale DLL path includes 0x5c (``\`` in ASCII) such as "U+8868
+  CJK UNIFIED IDEOGRAPH-8868" in CP932, the base path detection is buggy.
+
+* [:doc:`/reference/tokenizers`][TokenNgram] Fixed wrong first character length.
+  It's caused for "PARENTHESIZED IDEOGRAPH" characters such as
+  "U+3231 PARENTHESIZED IDEOGRAPH STOCK".
 
 .. _release-8-0-3:
 
