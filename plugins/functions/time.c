@@ -320,6 +320,63 @@ func_time_classify_year(grn_ctx *ctx, int n_args, grn_obj **args,
 }
 
 static grn_obj *
+func_time_classify_day_of_the_week(grn_ctx *ctx, int n_args, grn_obj **args,
+                                   grn_user_data *user_data)
+{
+  const char *function_name = "time_classify_day_of_the_week";
+  grn_obj *time;
+
+  if (n_args != 1) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s(): "
+                     "wrong number of arguments (%d for 1)",
+                     function_name,
+                     n_args);
+    return NULL;
+  }
+
+  time = args[0];
+  if (!(time->header.type == GRN_BULK &&
+        time->header.domain == GRN_DB_TIME)) {
+    grn_obj inspected;
+
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, time);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s(): "
+                     "the first argument must be a time: "
+                     "<%.*s>",
+                     function_name,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return NULL;
+  }
+
+  {
+    int64_t time_raw;
+    struct tm tm;
+    grn_obj *day_of_the_week;
+
+    time_raw = GRN_TIME_VALUE(time);
+    if (!grn_time_to_tm(ctx, time_raw, &tm)) {
+      return NULL;
+    }
+
+    day_of_the_week = grn_plugin_proc_alloc(ctx,
+                                            user_data,
+                                            GRN_DB_UINT8,
+                                            0);
+    if (!day_of_the_week) {
+      return NULL;
+    }
+    GRN_TIME_SET(ctx, day_of_the_week, tm.tm_wday);
+
+    return day_of_the_week;
+  }
+}
+
+static grn_obj *
 func_time_format(grn_ctx *ctx, int n_args, grn_obj **args,
                  grn_user_data *user_data)
 {
@@ -449,6 +506,11 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
                   "time_classify_year", -1,
                   GRN_PROC_FUNCTION,
                   func_time_classify_year,
+                  NULL, NULL, 0, NULL);
+  grn_proc_create(ctx,
+                  "time_classify_day_of_the_week", -1,
+                  GRN_PROC_FUNCTION,
+                  func_time_classify_day_of_the_week,
                   NULL, NULL, 0, NULL);
 
   grn_proc_create(ctx,
