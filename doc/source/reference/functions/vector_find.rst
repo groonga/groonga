@@ -13,8 +13,8 @@ Summary
 
 .. versionadded:: 8.0.4
 
-It finds the first element that matches the given condition from the
-given vector. If no element is found, ``null`` is returned.
+It returns the first element that matches the given condition from the
+given vector. If no element is found, it returns ``null``.
 
 You can use not only equal condition but also less than condition,
 prefix equal condition and so on.
@@ -82,8 +82,8 @@ Here is a simple usage of ``vector_find`` that searches an element in
 It returns ``"mroonga"`` when the ``tags`` column value includes
 ``"mroonga"`` element. It returns ``null`` otherwise.
 
-You can custom how to compare with each value by the third argument.
-Here is a usage to use full text search to find an element:
+You can customize how to compare with each value by the third
+argument. Here is a usage to use full text search to find an element:
 
 .. groonga-command
 .. include:: ../../example/reference/functions/vector_find/usage_find_operator.log
@@ -107,7 +107,7 @@ Parameters
 
 It requires two parameters.
 
-It has one optional parameter.
+There is an optional parameter.
 
 .. _vector-find-required-parameters:
 
@@ -128,7 +128,7 @@ Specifies a vector value to be searched an element.
 ``value``
 """""""""
 
-Specifies a value to be used as a condition.
+Specifies a value to be compared.
 
 .. _vector-find-optional-parameters:
 

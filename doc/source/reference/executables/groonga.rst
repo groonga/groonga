@@ -150,8 +150,8 @@ protocol Groonga server. Its usage is similar to
 execute one command. You need to specify server address instead of
 local database.
 
-Note that you cannot use ``groonga`` executable file as a client for HTTP
-protocol Groonga server.
+Note that you can't use ``groonga`` executable file as a client for
+Groonga server that uses HTTP.
 
 Here is the syntax to run shell that executes Groonga command against
 Groonga server that is running at ``192.168.0.1:10043``::
