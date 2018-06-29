@@ -78,10 +78,10 @@ Fixes
 * [:doc:`/reference/executables/grndb`] Fixed output channel.
 
 * [query-log][show-condition] Maybe fixed a crash bug.
-  We need to check scan_info that doesn't have corresponding expr_code.
 
 * [highlighter][lexicon] Fixed a not highlighted bug.
-  If keyword is less than N, the keyword wasn't highlighted.
+  The keyword wasn't highlighted if keyword length is less than N ("N"-gram.
+  In many cases, it's Bigram so "less than 2").
 
 * [windows] Fixed a base path detection bug.
   If system locale DLL path includes 0x5c (``\`` in ASCII) such as "U+8868
