@@ -21130,7 +21130,7 @@ msgid ""
 "\"mroonga\"`` element. It returns ``null`` otherwise."
 msgstr ""
 "この例では ``tags`` カラムの中に ``\"mroonga\"`` がある場合は ``\"mroonga"
-"\"`` を返しし、そうでない場合は ``null`` を返しています。"
+"\"`` を返し、そうでない場合は ``null`` を返しています。"
 
 msgid ""
 "You can customize how to compare with each value by the third argument. Here "
