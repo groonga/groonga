@@ -143,6 +143,8 @@ status. You can know whether the database is recoverable or not by
 
 ``recover`` has some options.
 
+.. _grndb-force-truncate:
+
 ``--force-truncate``
 """"""""""""""""""""
 
