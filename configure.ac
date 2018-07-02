@@ -386,6 +386,13 @@ AC_SYS_LARGEFILE
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 AC_CHECK_SIZEOF(off_t)
+AC_CHECK_MEMBERS(
+  [struct tm.tm_gmtoff],
+  ,
+  ,
+  [
+#include <time.h>
+  ])
 
 # MAP_HUGETLB
 AC_ARG_ENABLE(map-hugetlb,

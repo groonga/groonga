@@ -125,6 +125,9 @@
 #cmakedefine HAVE_LIBM
 #cmakedefine HAVE_LIBRT
 
+/* members */
+#cmakedefine HAVE_STRUCT_TM_TM_GMTOFF
+
 /* structs */
 #cmakedefine HAVE_MECAB_DICTIONARY_INFO_T
 

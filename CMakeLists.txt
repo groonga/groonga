@@ -67,6 +67,7 @@ include(CheckIncludeFile)
 include(CheckFunctionExists)
 include(CheckLibraryExists)
 include(CheckSymbolExists)
+include(CheckStructHasMember)
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(FindPkgConfig)
@@ -282,6 +283,12 @@ if(GRN_EMBED)
     set(STDCPP_LIBS "stdc++")
   endif()
 endif()
+
+check_struct_has_member(
+  "struct tm",
+  "tm_gmtoff",
+  "include.h",
+  HAVE_STRUCT_TM_TM_GMTOFF)
 
 if(UNIX)
   ac_check_headers(pthread.h)

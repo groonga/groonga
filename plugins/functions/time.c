@@ -20,6 +20,10 @@
 # define GRN_PLUGIN_FUNCTION_TAG functions_time
 #endif /* GRN_EMBEDDED */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif /* HAVE_CONFIG_H */
+
 #include <groonga/plugin.h>
 
 #include <math.h>
@@ -523,13 +527,13 @@ func_time_format_iso8601(grn_ctx *ctx, int n_args, grn_obj **args,
                     tm.tm_min,
                     tm.tm_sec,
                     (int32_t)(time_raw % GRN_TIME_USEC_PER_SEC));
-#if defined(__linux__)
+#ifdef HAVE_STRUCT_TM_TM_GMTOFF
     grn_text_printf(ctx,
                     formatted_time,
                     "%+03d:%02d",
                     (int32_t)(tm.tm_gmtoff / 3600),
                     abs(tm.tm_gmtoff % 3600));
-#elif defined(WIN32)
+#elif defined(WIN32) /* HAVE_STRUCT_TM_TM_GMTOFF */
     {
       long gmtoff;
       if (_get_timezone(gmtoff) == 0) {
@@ -540,7 +544,7 @@ func_time_format_iso8601(grn_ctx *ctx, int n_args, grn_obj **args,
                         abs(gmtoff % 3600));
       }
     }
-#endif
+#endif /* HAVE_STRUCT_TM_TM_GMTOFF */
     return formatted_time;
   }
 }
