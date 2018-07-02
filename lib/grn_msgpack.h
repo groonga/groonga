@@ -21,9 +21,16 @@
 #include "grn.h"
 
 #ifdef GRN_WITH_MESSAGE_PACK
-# define memcpy(dest, src, n) grn_memcpy(dest, src, n)
+# ifdef memcpy
+#  define GRN_WITH_CUSTOM_MEMCPY
+# endif /* memcpy */
+# ifndef GRN_WITH_CUSTOM_MEMCPY
+#  define memcpy(dest, src, n) grn_memcpy(dest, src, n)
+# endif /* GRN_WITH_CUSTOM_MEMCPY */
 # include <msgpack.h>
-# undef memcpy
+# ifndef GRN_WITH_CUSTOM_MEMCPY
+#  undef memcpy
+# endif /* GRN_WITH_CUSTOM_MEMCPY */
 
 # if MSGPACK_VERSION_MAJOR < 1
 typedef unsigned int msgpack_size_t;
