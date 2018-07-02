@@ -282,13 +282,12 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
 grn_obj *grn_kytea_next(grn_ctx *ctx, int num_args, grn_obj **args,
                         grn_user_data *user_data) {
   grn_tokenizer_kytea * const tokenizer =
-      static_cast<grn_tokenizer_kytea *>(user_data->ptr);
+    static_cast<grn_tokenizer_kytea *>(user_data->ptr);
+  grn_tokenizer_query * const query = tokenizer->query;
 
-  if (grn_tokenizer_query_have_tokenized_delimiter(ctx, tokenizer->query)) {
-    unsigned int rest_query_string_length =
-      tokenizer->rest_query_string_length;
-    grn_encoding encoding =
-      grn_tokenizer_query_have_tokenized_delimiter(ctx, tokenizer->query);
+  if (grn_tokenizer_query_have_tokenized_delimiter(ctx, query)) {
+    unsigned int rest_query_string_length = tokenizer->rest_query_string_length;
+    grn_encoding encoding = grn_tokenizer_query_get_encoding(ctx, query);
     const char *rest_query_string =
       grn_tokenizer_tokenized_delimiter_next(ctx,
                                              &(tokenizer->token),
