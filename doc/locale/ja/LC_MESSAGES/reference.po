@@ -23204,6 +23204,15 @@ msgstr ""
 "す。この場合は、 ``I migrated all XXX system!`` という内容のレコードがマッチ"
 "します。"
 
+msgid ""
+"You should use ``TokenMecab`` tokenizer for similar search against Japanese "
+"documents. Because ``TokenMecab`` will tokenize target documents to almost "
+"words, it improves similar search precision."
+msgstr ""
+"日本語の文書に対して類似文書検索を行う場合は、 ``TokenMecab`` を使う方が良い"
+"です。``TokenMecab`` は、対象の文書をほぼ単語にトークナイズするので、類似文書"
+"検索の精度が向上するためです。"
+
 msgid "Term extract operator"
 msgstr "単語抽出演算子"
 
