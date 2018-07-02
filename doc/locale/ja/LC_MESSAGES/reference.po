@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2018-06-28 12:46+0900\n"
+"PO-Revision-Date: 2018-07-02 15:03+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -5651,7 +5651,7 @@ msgid "The type of the column. It is one of the followings:"
 msgstr "カラムの型。次のうちのどれかです。"
 
 msgid "Value"
-msgstr ""
+msgstr "値"
 
 msgid "``fix``"
 msgstr ""
@@ -21064,6 +21064,62 @@ msgstr ""
 
 msgid "``time_classify_day``"
 msgstr ""
+
+msgid "``time_classify_day_of_the_week``"
+msgstr ""
+
+msgid ""
+"It returns the day of the week of the given time as a ``UInt8`` value. ``0`` "
+"is Sunday. ``6`` is Saturday."
+msgstr ""
+"指定された時刻の曜日を ``UInt8`` の値として返します。 ``0`` は日曜日で、 "
+"``6`` は土曜日です。"
+
+msgid ""
+"To enable this function, register ``functions/time`` plugin by the following "
+"command::"
+msgstr ""
+"この関数を有効にするには、以下のコマンドで ``functions/time`` プラグインを登"
+"録します。::"
+
+msgid "You need to register ``functions/time`` plugin at first:"
+msgstr "まず ``functions/time`` プラグインを登録します。"
+
+msgid "Here is a simple usage of ``time_classify_day_of_the_week``:"
+msgstr "以下は簡単な ``time_classify_day_of_the_week`` の使用例です。"
+
+msgid ""
+"It returns ``0`` for Sunday, ``1`` for Monday, ... and ``6`` for Saturday."
+msgstr ""
+"日曜日の場合は ``0`` 、月曜日の場合は ``1`` …、土曜日の場合は ``6`` を返しま"
+"す。"
+
+msgid "The day of the week as ``UInt8``. Here are available values:"
+msgstr "``UInt8`` で表現した曜日。有効な値は次の通りです。"
+
+msgid "The day of the week"
+msgstr "曜日"
+
+msgid "Sunday"
+msgstr "日曜日"
+
+msgid "Monday"
+msgstr "月曜日"
+
+msgid "Tuesday"
+msgstr "火曜日"
+
+msgid "Wednesday"
+msgstr "水曜日"
+
+msgid "Thursday"
+msgstr "木曜日"
+
+msgid "Friday"
+msgstr "金曜日"
+
+msgid "Saturday"
+msgstr "土曜日"
 
 msgid "``time_classify_hour``"
 msgstr ""

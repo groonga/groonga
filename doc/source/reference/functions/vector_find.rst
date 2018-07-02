@@ -31,8 +31,8 @@ Syntax
 
 ``vector_find`` has two or three parameters::
 
-  vector_find(vector, value);
-  vector_find(vector, value, mode);
+  vector_find(vector, value)
+  vector_find(vector, value, mode)
 
 If you omit the third argument, each element in the ``vector`` is
 compared with ``value`` by equality comparison.
