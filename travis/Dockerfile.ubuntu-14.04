@@ -8,6 +8,7 @@ RUN \
     gcc \
     gdb \
     git \
+    libboost-all-dev \
     libevent-dev \
     libkytea-dev \
     liblz4-dev \
