@@ -370,7 +370,7 @@ func_time_classify_day_of_the_week(grn_ctx *ctx, int n_args, grn_obj **args,
     if (!day_of_the_week) {
       return NULL;
     }
-    GRN_TIME_SET(ctx, day_of_the_week, tm.tm_wday);
+    GRN_UINT8_SET(ctx, day_of_the_week, tm.tm_wday);
 
     return day_of_the_week;
   }
