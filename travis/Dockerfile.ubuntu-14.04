@@ -9,6 +9,7 @@ RUN \
     gdb \
     git \
     libevent-dev \
+    libkytea-dev \
     liblz4-dev \
     libmecab-dev \
     libmsgpack-dev \
