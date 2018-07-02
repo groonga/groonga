@@ -17,12 +17,14 @@
 */
 
 #ifdef GRN_EMBEDDED
-#  define GRN_PLUGIN_FUNCTION_TAG functions_time
-#endif
+# define GRN_PLUGIN_FUNCTION_TAG functions_time
+#endif /* GRN_EMBEDDED */
 
 #include <groonga/plugin.h>
 
 #include <math.h>
+#include <stdlib.h>
+#include <time.h>
 
 typedef enum {
   GRN_TIME_CLASSIFY_UNIT_SECOND,
@@ -461,6 +463,88 @@ func_time_format(grn_ctx *ctx, int n_args, grn_obj **args,
   }
 }
 
+static grn_obj *
+func_time_format_iso8601(grn_ctx *ctx, int n_args, grn_obj **args,
+                         grn_user_data *user_data)
+{
+  const char *function_name = "time_format_iso8601";
+  grn_obj *time;
+
+  if (n_args != 1) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s(): "
+                     "wrong number of arguments (%d for 1)",
+                     function_name,
+                     n_args);
+    return NULL;
+  }
+
+  time = args[0];
+
+  if (!(time->header.type == GRN_BULK &&
+        time->header.domain == GRN_DB_TIME)) {
+    grn_obj inspected;
+
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, time);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s(): "
+                     "the first argument must be a time: "
+                     "<%.*s>",
+                     function_name,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return NULL;
+  }
+
+  {
+    int64_t time_raw;
+    struct tm tm;
+    grn_obj *formatted_time;
+
+    time_raw = GRN_TIME_VALUE(time);
+    if (!grn_time_to_tm(ctx, time_raw, &tm)) {
+      return NULL;
+    }
+
+    formatted_time = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_TEXT, 0);
+    if (!formatted_time) {
+      return NULL;
+    }
+
+    grn_text_printf(ctx,
+                    formatted_time,
+                    "%04d-%02d-%02dT%02d:%02d:%02d.%06d",
+                    tm.tm_year + 1900,
+                    tm.tm_mon + 1,
+                    tm.tm_mday,
+                    tm.tm_hour,
+                    tm.tm_min,
+                    tm.tm_sec,
+                    (int32_t)(time_raw % GRN_TIME_USEC_PER_SEC));
+#if defined(__linux__)
+    grn_text_printf(ctx,
+                    formatted_time,
+                    "%+03d:%02d",
+                    (int32_t)(tm.tm_gmtoff / 3600),
+                    abs(tm.tm_gmtoff % 3600));
+#elif defined(WIN32)
+    {
+      long gmtoff;
+      if (_get_timezone(gmtoff) == 0) {
+        grn_text_printf(ctx,
+                        formatted_time,
+                        "%+03d:%02d",
+                        (int32_t)(gmtoff / 3600),
+                        abs(gmtoff % 3600));
+      }
+    }
+#endif
+    return formatted_time;
+  }
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -517,6 +601,11 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
                   "time_format", -1,
                   GRN_PROC_FUNCTION,
                   func_time_format,
+                  NULL, NULL, 0, NULL);
+  grn_proc_create(ctx,
+                  "time_format_iso8601", -1,
+                  GRN_PROC_FUNCTION,
+                  func_time_format_iso8601,
                   NULL, NULL, 0, NULL);
 
   return rc;
