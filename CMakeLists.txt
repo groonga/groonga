@@ -1,4 +1,4 @@
-# Copyright(C) 2012-2017 Brazil
+# Copyright(C) 2012-2018 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -285,9 +285,9 @@ if(GRN_EMBED)
 endif()
 
 check_struct_has_member(
-  "struct tm",
-  "tm_gmtoff",
-  "include.h",
+  "struct tm"
+  "tm_gmtoff"
+  "include.h"
   HAVE_STRUCT_TM_TM_GMTOFF)
 
 if(UNIX)
