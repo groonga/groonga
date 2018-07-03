@@ -287,7 +287,7 @@ endif()
 check_struct_has_member(
   "struct tm"
   "tm_gmtoff"
-  "include.h"
+  "time.h"
   HAVE_STRUCT_TM_TM_GMTOFF)
 
 if(UNIX)
