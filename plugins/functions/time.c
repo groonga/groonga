@@ -326,10 +326,10 @@ func_time_classify_year(grn_ctx *ctx, int n_args, grn_obj **args,
 }
 
 static grn_obj *
-func_time_classify_day_of_the_week(grn_ctx *ctx, int n_args, grn_obj **args,
-                                   grn_user_data *user_data)
+func_time_classify_day_of_week(grn_ctx *ctx, int n_args, grn_obj **args,
+                               grn_user_data *user_data)
 {
-  const char *function_name = "time_classify_day_of_the_week";
+  const char *function_name = "time_classify_day_of_week";
   grn_obj *time;
 
   if (n_args != 1) {
@@ -362,23 +362,23 @@ func_time_classify_day_of_the_week(grn_ctx *ctx, int n_args, grn_obj **args,
   {
     int64_t time_raw;
     struct tm tm;
-    grn_obj *day_of_the_week;
+    grn_obj *day_of_week;
 
     time_raw = GRN_TIME_VALUE(time);
     if (!grn_time_to_tm(ctx, time_raw, &tm)) {
       return NULL;
     }
 
-    day_of_the_week = grn_plugin_proc_alloc(ctx,
-                                            user_data,
-                                            GRN_DB_UINT8,
-                                            0);
-    if (!day_of_the_week) {
+    day_of_week = grn_plugin_proc_alloc(ctx,
+                                        user_data,
+                                        GRN_DB_UINT8,
+                                        0);
+    if (!day_of_week) {
       return NULL;
     }
-    GRN_UINT8_SET(ctx, day_of_the_week, tm.tm_wday);
+    GRN_UINT8_SET(ctx, day_of_week, tm.tm_wday);
 
-    return day_of_the_week;
+    return day_of_week;
   }
 }
 
@@ -596,9 +596,9 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
                   func_time_classify_year,
                   NULL, NULL, 0, NULL);
   grn_proc_create(ctx,
-                  "time_classify_day_of_the_week", -1,
+                  "time_classify_day_of_week", -1,
                   GRN_PROC_FUNCTION,
-                  func_time_classify_day_of_the_week,
+                  func_time_classify_day_of_week,
                   NULL, NULL, 0, NULL);
 
   grn_proc_create(ctx,

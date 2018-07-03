@@ -12,7 +12,7 @@ load --table Timestamps
 {"_key": "2016-05-08 00:00:00.000000"}
 ]
 [[0,0.0,0.0],6]
-select Timestamps   --sortby _id   --limit -1   --output_columns '_key, time_classify_day_of_the_week(_key)'
+select Timestamps   --sortby _id   --limit -1   --output_columns '_key, time_classify_day_of_week(_key)'
 [
   [
     0,
@@ -30,7 +30,7 @@ select Timestamps   --sortby _id   --limit -1   --output_columns '_key, time_cla
           "Time"
         ],
         [
-          "time_classify_day_of_the_week",
+          "time_classify_day_of_week",
           null
         ]
       ],

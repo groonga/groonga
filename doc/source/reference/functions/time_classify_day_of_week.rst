@@ -3,10 +3,10 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. database: functions_time_classify_day_of_the_week
+.. database: functions_time_classify_day_of_week
 
-``time_classify_day_of_the_week``
-=================================
+``time_classify_day_of_week``
+=============================
 
 Summary
 -------
@@ -28,7 +28,7 @@ Syntax
 
 This function has only one parameter::
 
-  time_classify_day_of_the_week(time)
+  time_classify_day_of_week(time)
 
 Usage
 -----
@@ -36,7 +36,7 @@ Usage
 You need to register ``functions/time`` plugin at first:
 
 .. groonga-command
-.. include:: ../../example/reference/functions/time_classify_day_of_the_week/usage_register.log
+.. include:: ../../example/reference/functions/time_classify_day_of_week/usage_register.log
 .. plugin_register functions/time
 
 Here is a schema definition and sample data.
@@ -44,14 +44,14 @@ Here is a schema definition and sample data.
 Sample schema:
 
 .. groonga-command
-.. include:: ../../example/reference/functions/time_classify_day_of_the_week/usage_setup_schema.log
+.. include:: ../../example/reference/functions/time_classify_day_of_week/usage_setup_schema.log
 .. table_create  Memos TABLE_HASH_KEY ShortText
 .. column_create Memos created_at COLUMN_SCALAR Time
 
 Sample data:
 
 .. groonga-command
-.. include:: ../../example/reference/functions/time_classify_day_of_the_week/usage_setup_data.log
+.. include:: ../../example/reference/functions/time_classify_day_of_week/usage_setup_data.log
 .. load --table Memos
 .. [
 .. {"_key": "Sunday",    "created_at": "2018-07-01 00:00:00"},
@@ -63,13 +63,13 @@ Sample data:
 .. {"_key": "Saturday",  "created_at": "2018-07-07 00:00:00"}
 .. ]
 
-Here is a simple usage of ``time_classify_day_of_the_week``:
+Here is a simple usage of ``time_classify_day_of_week``:
 
 .. groonga-command
-.. include:: ../../example/reference/functions/time_classify_day_of_the_week/usage_classify.log
+.. include:: ../../example/reference/functions/time_classify_day_of_week/usage_classify.log
 .. select \
 ..   --table Memos \
-..   --output_columns '_key, time_classify_day_of_the_week(created_at)'
+..   --output_columns '_key, time_classify_day_of_week(created_at)'
 
 It returns ``0`` for Sunday, ``1`` for Monday, ... and ``6`` for
 Saturday.

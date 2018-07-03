@@ -2,7 +2,7 @@ Execution example::
 
   select \
     --table Memos \
-    --output_columns '_key, time_classify_day_of_the_week(created_at)'
+    --output_columns '_key, time_classify_day_of_week(created_at)'
   # [
   #   [
   #     0, 
@@ -20,7 +20,7 @@ Execution example::
   #           "ShortText"
   #         ], 
   #         [
-  #           "time_classify_day_of_the_week", 
+  #           "time_classify_day_of_week", 
   #           null
   #         ]
   #       ], 

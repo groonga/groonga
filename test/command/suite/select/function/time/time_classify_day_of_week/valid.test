@@ -15,4 +15,4 @@ load --table Timestamps
 select Timestamps \
   --sortby _id \
   --limit -1 \
-  --output_columns '_key, time_classify_day_of_the_week(_key)'
+  --output_columns '_key, time_classify_day_of_week(_key)'

@@ -428,10 +428,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_without_sub_filter.log \
-	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day_of_the_week/usage_classify.log \
-	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day_of_the_week/usage_register.log \
-	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day_of_the_week/usage_setup_data.log \
-	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day_of_the_week/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day_of_week/usage_classify.log \
+	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day_of_week/usage_register.log \
+	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day_of_week/usage_setup_data.log \
+	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day_of_week/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/vector_find/usage_find.log \
 	$(top_srcdir)/doc/source/example/reference/functions/vector_find/usage_find_mode.log \
 	$(top_srcdir)/doc/source/example/reference/functions/vector_find/usage_register.log \
@@ -892,7 +892,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/string_substring.rst \
 	$(top_srcdir)/doc/source/reference/functions/sub_filter.rst \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_day.rst \
-	$(top_srcdir)/doc/source/reference/functions/time_classify_day_of_the_week.rst \
+	$(top_srcdir)/doc/source/reference/functions/time_classify_day_of_week.rst \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_hour.rst \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_minute.rst \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_month.rst \
@@ -1406,10 +1406,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/sub_filter/usage_setup_schema.log \
 	source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
 	source/example/reference/functions/sub_filter/usage_without_sub_filter.log \
-	source/example/reference/functions/time_classify_day_of_the_week/usage_classify.log \
-	source/example/reference/functions/time_classify_day_of_the_week/usage_register.log \
-	source/example/reference/functions/time_classify_day_of_the_week/usage_setup_data.log \
-	source/example/reference/functions/time_classify_day_of_the_week/usage_setup_schema.log \
+	source/example/reference/functions/time_classify_day_of_week/usage_classify.log \
+	source/example/reference/functions/time_classify_day_of_week/usage_register.log \
+	source/example/reference/functions/time_classify_day_of_week/usage_setup_data.log \
+	source/example/reference/functions/time_classify_day_of_week/usage_setup_schema.log \
 	source/example/reference/functions/vector_find/usage_find.log \
 	source/example/reference/functions/vector_find/usage_find_mode.log \
 	source/example/reference/functions/vector_find/usage_register.log \
@@ -1870,7 +1870,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/string_substring.rst \
 	source/reference/functions/sub_filter.rst \
 	source/reference/functions/time_classify_day.rst \
-	source/reference/functions/time_classify_day_of_the_week.rst \
+	source/reference/functions/time_classify_day_of_week.rst \
 	source/reference/functions/time_classify_hour.rst \
 	source/reference/functions/time_classify_minute.rst \
 	source/reference/functions/time_classify_month.rst \
@@ -2277,7 +2277,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/string_substring.html \
 	html/reference/functions/sub_filter.html \
 	html/reference/functions/time_classify_day.html \
-	html/reference/functions/time_classify_day_of_the_week.html \
+	html/reference/functions/time_classify_day_of_week.html \
 	html/reference/functions/time_classify_hour.html \
 	html/reference/functions/time_classify_minute.html \
 	html/reference/functions/time_classify_month.html \
