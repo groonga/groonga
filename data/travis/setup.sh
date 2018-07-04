@@ -31,7 +31,7 @@ if [ "$GROONGA_MASTER" = "yes" ]; then
   cd groonga
   ./autogen.sh
   ./configure --prefix=/usr --localstatedir=/var --enable-debug
-  make -j$(grep '^processor' /proc/cpuinfo | wc -l) > /dev/null
+  make -j$(nproc) > /dev/null
   sudo make install > /dev/null
   cd ..
 else
