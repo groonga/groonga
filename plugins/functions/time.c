@@ -30,6 +30,10 @@
 #include <stdlib.h>
 #include <time.h>
 
+#ifdef WIN32
+# define timegm _mkgmtime
+#endif /* WIN32 */
+
 typedef enum {
   GRN_TIME_CLASSIFY_UNIT_SECOND,
   GRN_TIME_CLASSIFY_UNIT_MINUTE,
@@ -505,12 +509,16 @@ func_time_format_iso8601(grn_ctx *ctx, int n_args, grn_obj **args,
   {
     int64_t time_raw;
     struct tm tm;
+    int64_t time_sec;
+    int32_t time_usec;
     grn_obj *formatted_time;
 
     time_raw = GRN_TIME_VALUE(time);
     if (!grn_time_to_tm(ctx, time_raw, &tm)) {
       return NULL;
     }
+
+    GRN_TIME_UNPACK(time_raw, time_sec, time_usec);
 
     formatted_time = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_TEXT, 0);
     if (!formatted_time) {
@@ -526,23 +534,21 @@ func_time_format_iso8601(grn_ctx *ctx, int n_args, grn_obj **args,
                     tm.tm_hour,
                     tm.tm_min,
                     tm.tm_sec,
-                    (int32_t)(time_raw % GRN_TIME_USEC_PER_SEC));
+                    time_usec);
 #ifdef HAVE_STRUCT_TM_TM_GMTOFF
     grn_text_printf(ctx,
                     formatted_time,
                     "%+03d:%02d",
                     (int32_t)(tm.tm_gmtoff / 3600),
                     abs(tm.tm_gmtoff % 3600));
-#elif defined(WIN32) /* HAVE_STRUCT_TM_TM_GMTOFF */
+#else
     {
-      long gmtoff;
-      if (_get_timezone(gmtoff) == 0) {
-        grn_text_printf(ctx,
-                        formatted_time,
-                        "%+03d:%02d",
-                        (int32_t)(gmtoff / 3600),
-                        abs(gmtoff % 3600));
-      }
+      time_t gmtoff = timegm(&tm) - time_sec;
+      grn_text_printf(ctx,
+                      formatted_time,
+                      "%+03d:%02d",
+                      (int32_t)(gmtoff / 3600),
+                      abs(gmtoff % 3600));
     }
 #endif /* HAVE_STRUCT_TM_TM_GMTOFF */
     return formatted_time;
