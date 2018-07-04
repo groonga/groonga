@@ -1,0 +1,34 @@
+#@include fixture/sharding/logical_range_filter/strategy/uint_range/schema.grn
+
+load --table Logs_2018030
+[
+{"year_day": 2018030, "memo": "2018-01-30 00:00:00", "message": "Start"},
+{"year_day": 2018038, "memo": "2018-02-07 00:00:00", "message": "Shutdown"},
+{"year_day": 2018039, "memo": "2018-02-08 00:00:00", "message": "Start"},
+{"year_day": 2018039, "memo": "2018-02-08 23:59:59", "message": "Shutdown"}
+]
+
+load --table Logs_2018040
+[
+{"year_day": 2018040, "memo": "2018-02-09 00:00:00", "message": "Start"},
+{"year_day": 2018048, "memo": "2018-02-17 00:00:00", "message": "Shutdown"},
+{"year_day": 2018049, "memo": "2018-02-18 00:00:00", "message": "Start"},
+{"year_day": 2018049, "memo": "2018-02-18 23:59:59", "message": "Shutdown"}
+]
+
+load --table Logs_2018050
+[
+{"year_day": 2018050, "memo": "2018-02-19 00:00:00", "message": "Start"},
+{"year_day": 2018058, "memo": "2018-02-27 00:00:00", "message": "Shutdown"},
+{"year_day": 2018059, "memo": "2018-02-28 00:00:00", "message": "Start"},
+{"year_day": 2018059, "memo": "2018-02-28 23:59:59", "message": "Shutdown"}
+]
+
+logical_range_filter \
+  --logical_table Logs \
+  --shard_key year_day \
+  --strategy "uint-range" \
+  --filter 'message == "Shutdown"' \
+  --max 2018049 \
+  --max_border "exclude"
+

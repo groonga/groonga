@@ -322,7 +322,7 @@ module Groonga
             microsecond = max.usec
             border = @target_range.max_border
           else
-            next_shard_edge = @shard_range.least_over_time
+            next_shard_edge = @shard_range.least_over_value
             year = next_shard_edge.year
             month = next_shard_edge.month
             day = next_shard_edge.day

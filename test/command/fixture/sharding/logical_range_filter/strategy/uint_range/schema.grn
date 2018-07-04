@@ -1,0 +1,47 @@
+#@disable-logging
+
+#@on-error omit
+register sharding
+#@on-error default
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+
+table_create Logs_2018030 TABLE_NO_KEY
+column_create Logs_2018030 year_day COLUMN_SCALAR UInt32
+column_create Logs_2018030 memo COLUMN_SCALAR ShortText
+column_create Logs_2018030 message COLUMN_SCALAR Text
+
+table_create YearDay_2018030 TABLE_PAT_KEY UInt32
+column_create YearDay_2018030 index COLUMN_INDEX Logs_2018030 year_day
+
+column_create Terms index_2018030 COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Logs_2018030 memo,message
+
+
+table_create Logs_2018040 TABLE_NO_KEY
+column_create Logs_2018040 year_day COLUMN_SCALAR UInt32
+column_create Logs_2018040 memo COLUMN_SCALAR ShortText
+column_create Logs_2018040 message COLUMN_SCALAR Text
+
+table_create YearDay_2018040 TABLE_PAT_KEY UInt32
+column_create YearDay_2018040 index COLUMN_INDEX Logs_2018040 year_day
+
+column_create Terms index_2018040 COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Logs_2018040 memo,message
+
+
+table_create Logs_2018050 TABLE_NO_KEY
+column_create Logs_2018050 year_day COLUMN_SCALAR UInt32
+column_create Logs_2018050 memo COLUMN_SCALAR ShortText
+column_create Logs_2018050 message COLUMN_SCALAR Text
+
+table_create YearDay_2018050 TABLE_PAT_KEY UInt32
+column_create YearDay_2018050 index COLUMN_INDEX Logs_2018050 year_day
+
+column_create Terms index_2018050 COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Logs_2018050 memo,message
+
+
+#@enable-logging
