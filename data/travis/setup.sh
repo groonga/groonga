@@ -29,6 +29,7 @@ if [ "$GROONGA_MASTER" = "yes" ]; then
        pkg-config
   git clone --recursive --depth 1 --branch master https://github.com/groonga/groonga.git
   cd groonga
+  touch lib/grn_ecmascript.c
   ./autogen.sh
   ./configure --prefix=/usr --localstatedir=/var --enable-debug
   make -j$(nproc) > /dev/null
