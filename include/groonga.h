@@ -43,6 +43,7 @@
 #include "groonga/option.h"
 #include "groonga/output.h"
 #include "groonga/pat.h"
+#include "groonga/raw_string.h"
 #include "groonga/request_canceler.h"
 #include "groonga/request_timer.h"
 #include "groonga/string.h"

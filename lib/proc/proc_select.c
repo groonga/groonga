@@ -17,7 +17,6 @@
 */
 
 #include "../grn_proc.h"
-#include "../grn_raw_string.h"
 #include "../grn_expr.h"
 #include "../grn_str.h"
 #include "../grn_output.h"

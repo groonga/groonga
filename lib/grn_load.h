@@ -19,7 +19,6 @@
 #pragma once
 
 #include "grn.h"
-#include "grn_raw_string.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2016-2017 Brazil
+  Copyright(C) 2016-2018 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,8 +17,6 @@
 */
 
 #pragma once
-
-#include "grn.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,7 +53,7 @@ typedef struct {
   size_t length;
 } grn_raw_string;
 
-void grn_raw_string_lstrip(grn_ctx *ctx, grn_raw_string *string);
+GRN_API void grn_raw_string_lstrip(grn_ctx *ctx, grn_raw_string *string);
 
 #ifdef __cplusplus
 }

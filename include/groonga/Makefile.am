@@ -28,6 +28,7 @@ groonga_include_HEADERS =			\
 	pat.h					\
 	plugin.h				\
 	portability.h				\
+	raw_string.h				\
 	request_canceler.h			\
 	request_timer.h				\
 	scorer.h				\

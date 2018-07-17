@@ -21,7 +21,6 @@
 #include "grn_token_cursor.h"
 #include "grn_string.h"
 #include "grn_plugin.h"
-#include "grn_raw_string.h"
 
 grn_obj *grn_tokenizer_uvector = NULL;
 
