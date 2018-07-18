@@ -231,9 +231,30 @@ grn_options_set(grn_ctx *ctx,
       if (object->type == MSGPACK_OBJECT_MAP) {
         msgpack_object_map *map = &(object->via.map);
         uint32_t i;
-        msgpack_pack_map(&packer, map->size + 1);
+        grn_bool have_same_key = GRN_FALSE;
+        uint32_t same_key_index = 0;
+
         for (i = 0; i < map->size; i++) {
           msgpack_object_kv *kv = &(map->ptr[i]);
+          msgpack_object *key = &(kv->key);
+          if (key->type == MSGPACK_OBJECT_STR &&
+              name_length == MSGPACK_OBJECT_STR_SIZE(key) &&
+              memcmp(name, MSGPACK_OBJECT_STR_PTR(key), name_length) == 0) {
+            have_same_key = GRN_TRUE;
+            same_key_index = i;
+            break;
+          }
+        }
+        if (have_same_key) {
+          msgpack_pack_map(&packer, map->size);
+        } else {
+          msgpack_pack_map(&packer, map->size + 1);
+        }
+        for (i = 0; i < map->size; i++) {
+          msgpack_object_kv *kv = &(map->ptr[i]);
+          if (have_same_key && i == same_key_index) {
+            continue;
+          }
           msgpack_pack_object(&packer, kv->key);
           msgpack_pack_object(&packer, kv->val);
         }
