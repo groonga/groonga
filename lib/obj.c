@@ -785,3 +785,25 @@ grn_obj_get_option_values(grn_ctx *ctx,
 
   GRN_API_RETURN(returned_revision);
 }
+
+grn_rc
+grn_obj_clear_option_values(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_id id;
+  grn_rc rc;
+
+  GRN_API_ENTER;
+
+  id = grn_obj_id(ctx, obj);
+  if (id & GRN_OBJ_TMP_OBJECT) {
+    rc = grn_options_clear(ctx,
+                           ctx->impl->temporary_options,
+                           id & ~GRN_OBJ_TMP_OBJECT);
+  } else {
+    rc = grn_db_clear_option_values(ctx,
+                                    grn_ctx_db(ctx),
+                                    id);
+  }
+
+  GRN_API_RETURN(rc);
+}

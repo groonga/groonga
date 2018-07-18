@@ -375,3 +375,11 @@ grn_options_get(grn_ctx *ctx,
   return GRN_OPTION_REVISION_NONE;
 #endif /* GRN_WITH_MESSAGE_PACK */
 }
+
+grn_rc
+grn_options_clear(grn_ctx *ctx,
+                  grn_options *options,
+                  grn_id id)
+{
+  return grn_ja_put(ctx, options->values, id, NULL, 0, GRN_OBJ_SET, NULL);
+}

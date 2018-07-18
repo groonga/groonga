@@ -146,6 +146,9 @@ grn_db_get_option_values(grn_ctx *ctx,
                          int name_length,
                          grn_option_revision revision,
                          grn_obj *values);
+grn_rc grn_db_clear_option_values(grn_ctx *ctx,
+                                  grn_obj *db,
+                                  grn_id id);
 
 grn_rc _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
                                grn_table_delete_optarg *optarg);

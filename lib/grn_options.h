@@ -53,6 +53,9 @@ grn_option_revision grn_options_get(grn_ctx *ctx,
                                     int name_length,
                                     grn_option_revision revision,
                                     grn_obj *values);
+grn_rc grn_options_clear(grn_ctx *ctx,
+                         grn_options *options,
+                         grn_id id);
 
 #ifdef __cplusplus
 }

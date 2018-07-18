@@ -92,6 +92,7 @@ grn_obj_get_option_values(grn_ctx *ctx,
                           int name_length,
                           grn_option_revision revision,
                           grn_obj *values);
+GRN_API grn_rc grn_obj_clear_option_values(grn_ctx *ctx, grn_obj *obj);
 
 #ifdef __cplusplus
 }

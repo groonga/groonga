@@ -938,6 +938,15 @@ grn_db_get_option_values(grn_ctx *ctx,
                          values);
 }
 
+grn_rc
+grn_db_clear_option_values(grn_ctx *ctx,
+                            grn_obj *db,
+                            grn_id id)
+{
+  grn_db *db_ = (grn_db *)db;
+  return grn_options_clear(ctx, db_->options, id);
+}
+
 static grn_obj *
 grn_type_open(grn_ctx *ctx, grn_obj_spec *spec)
 {
@@ -10285,6 +10294,7 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj, grn_bool dependent)
   if (GRN_DB_OBJP(obj)) {
     id = DB_OBJ(obj)->id;
     db = DB_OBJ(obj)->db;
+    rc = grn_obj_clear_option_values(ctx, obj);
   }
   switch (obj->header.type) {
   case GRN_DB :
@@ -11205,12 +11215,13 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
   if (obj) {
-    if (grn_obj_is_table(ctx, obj) &&
-        (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT)) {
-      grn_table_close_columns(ctx, obj);
-    }
     if (GRN_DB_OBJP(obj)) {
+      grn_id id = DB_OBJ(obj)->id;
       grn_hook_entry entry;
+
+      if (grn_obj_is_table(ctx, obj) && (id & GRN_OBJ_TMP_OBJECT)) {
+        grn_table_close_columns(ctx, obj);
+      }
       if (DB_OBJ(obj)->finalizer) {
         DB_OBJ(obj)->finalizer(ctx, 1, &obj, &DB_OBJ(obj)->user_data);
       }
@@ -11220,7 +11231,10 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       for (entry = 0; entry < N_HOOK_ENTRIES; entry++) {
         grn_hook_free(ctx, DB_OBJ(obj)->hooks[entry]);
       }
-      grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, DB_OBJ(obj)->id, GRN_FALSE);
+      if (id & GRN_OBJ_TMP_OBJECT) {
+        grn_obj_clear_option_values(ctx, obj);
+      }
+      grn_obj_delete_by_id(ctx, DB_OBJ(obj)->db, id, GRN_FALSE);
     }
     switch (obj->header.type) {
     case GRN_VECTOR :
