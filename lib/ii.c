@@ -6563,7 +6563,10 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     return ctx->rc;
   }
   if (rid == GRN_ID_NIL) {
-    ERR(GRN_INVALID_ARGUMENT, "[ii][column][update] record ID is nil");
+    DEFINE_NAME(ii);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[ii][column][update] record ID is nil: <%.*s>",
+        name_size, name);
     return ctx->rc;
   }
   if (old || new) {
