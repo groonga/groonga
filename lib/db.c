@@ -592,7 +592,7 @@ grn_alias_resolve(grn_ctx *ctx,
 
       id = grn_table_get(ctx, db->keys, name, name_size);
       if (id) {
-        return  grn_ctx_at(ctx, id);
+        return grn_ctx_at(ctx, id);
       }
     }
 
