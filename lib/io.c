@@ -49,6 +49,18 @@
 # define GRN_IO_FILE_SIZE_V0  GRN_IO_FILE_SIZE_V1
 #endif /* WIN32 */
 
+#ifndef WIN32
+# ifdef HAVE_FUTIMENS
+#  define grn_futimens(fd, times) futimens((fd), (times))
+#  define grn_futimens_name "futimens"
+# elif defined(HAVE_FUTIMES) /* HAVE_FUTIMENS */
+#  define grn_futimens(fd, times) futimes((fd), (times))
+#  define grn_futimens_name "futimes"
+# else /* HAVE_FUTIMENS */
+#  error Support for either the futimens() or futimens() function is required
+# endif /* HAVE_FUTIMENS */
+#endif /* WIN32 */
+
 typedef struct _grn_io_fileinfo {
 #ifdef WIN32
   HANDLE fh;
@@ -2141,9 +2153,9 @@ grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
     struct timeval times[2];
     gettimeofday(&(times[0]), NULL);
     times[1] = times[0];
-    r = futimes(fi->fd, times);
+    r = grn_futimens(fi->fd, times);
     if (r == -1) {
-      SERR("futimes failed: <%d>", fi->fd);
+      SERR("%s failed: <%d>", grn_futimens_name, fi->fd);
     }
   }
 
