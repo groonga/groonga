@@ -12,7 +12,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     },
     {
       :id => "debian-stretch-amd64",
-      :box => "bento/debian-9.4",
+      :box => "bento/debian-9.5",
     },
   ]
 
