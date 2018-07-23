@@ -1,4 +1,4 @@
-CODE_NAMES = xenial,artful,bionic
+CODE_NAMES = xenial,bionic
 SOURCE = ../$(PACKAGE)-$(VERSION).tar.gz
 
 all:
