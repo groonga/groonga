@@ -277,7 +277,7 @@ make update-poコマンドの実行により更新した各種.poファイルを
     % make -C doc/locale/ja html
     % make -C doc/locale/en html
 
-修正が必要な箇所を調べて、 ``***.edit`` というファイルを適宜修正します。
+修正が必要な箇所を調べて、 ``***.edit`` というファイルを適宜修正します。::
 
     % cd groonga/doc/locale
     % git diff
