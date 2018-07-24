@@ -7,6 +7,54 @@
 News
 ====
 
+.. _release-8-0-5:
+
+Release 8.0.5 - 2018-07-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/grn_expr/script_syntax`] Added complementary explain about similar search against Japanese documents.
+  [GitHub#858][Patch by Yasuhiro Horimoto]
+
+* [:doc:`/reference/functions/time_classify_day_of_week`] Added a new API: ``time_classify_day_of_week()``.
+
+* Suppressed a warning with ``-fstack-protector``.
+  Suggested by OBATA Akio.
+
+* Added a new API: ``time_format_iso8601()``.
+
+* Exported a struct ``grn_raw_string``.
+
+* Added a new API: ``grn_obj_clear_option_values()``.
+  It allows you to clear option values on remove (for persistent) / close (for temporary.)
+
+* Reported the name of an index column on error around ``column_update``.
+
+* Deferred close of plugins on database, because a table may refer plugin.
+  For example, normalizer with options call normalizer's close options function.
+  ``groonga-normalizer-mysql`` provides it as a plugin. If plugin is closed before
+  the table that has normalizer with options, Groonga crashes.
+
+* [httpd] Updated bundled nginx to 1.15.1.
+
+* [:doc:`/install/ubuntu`] Dropped Ubuntu 17.10 (Artful Aardvark) support.
+  It has reached EOL at July 19, 2018.
+
+* [:doc:`/install/debian`] Dropped jessie support.
+  Debian's security and release team will no longer produce updates for jessie.
+
+Fixes
+^^^^^
+
+* Fixed wrong function call around KyTea.
+
+* [:doc:`/reference/executables/grndb`] Added a missing label for ``grndb``'s ``--force-truncate`` option.
+
+* Fixed a bug that normalizer/tokenizer options may be ignored.
+  It's occurred when the same object ID is reused.
+
 .. _release-8-0-4:
 
 Release 8.0.4 - 2018-06-29
