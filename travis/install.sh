@@ -21,9 +21,11 @@ fi
 
 if [ -n "${TARGET}" ]; then
   ENABLE_MRUBY=yes
+  ENABLE_DOCUMENT=yes
 fi
 
 : ${ENABLE_MRUBY:=no}
+: ${ENABLE_DOCUMENT:=no}
 
 case "${TRAVIS_OS_NAME}" in
   linux)
@@ -41,20 +43,18 @@ case "${TRAVIS_OS_NAME}" in
          mecab-naist-jdic \
          cmake \
          gdb
+    if [ "${ENABLE_DOCUMENT}" = "yes" ]; then
+      sudo apt-get intall -qq -y \
+           python3-pip
+      sudo pip3 install Sphinx
+    fi
     ;;
   osx)
     brew update > /dev/null
-    brew outdated pkg-config || brew upgrade pkg-config
-    brew reinstall libtool
-    brew outdated libevent || brew upgrade libevent
-    brew outdated pcre || brew upgrade pcre
-    brew outdated msgpack || brew upgrade msgpack
-    brew install \
-         autoconf-archive \
-         mecab \
-         mecab-ipadic
-    brew install --force openssl
-    # brew install cutter
+    brew bundle
+    if [ "${ENABLE_DOCUMENT}" = "yes" ]; then
+      pip3 install Sphinx
+    fi
     ;;
 esac
 
