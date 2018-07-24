@@ -1593,9 +1593,11 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
         int recv_flags = 0;
         recv_length = recv(fd, buffer, POST_BUFFER_SIZE, recv_flags);
         if (recv_length == 0) {
+	  grn_ctx_clear_keep_command(ctx);
           break;
         }
         if (recv_length == -1) {
+	  grn_ctx_clear_keep_command(ctx);
           SOERR("recv");
           break;
         }

@@ -346,6 +346,12 @@ grn_ctx_set_keep_command(grn_ctx *ctx, grn_obj *command)
   ctx->impl->command.keep.version = ctx->impl->command.version;
 }
 
+void
+grn_ctx_clear_keep_command(grn_ctx *ctx)
+{
+  ctx->impl->command.keep.command = NULL;
+}
+
 static void
 grn_ctx_impl_clear_n_same_error_messagges(grn_ctx *ctx)
 {
