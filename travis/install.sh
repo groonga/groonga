@@ -4,7 +4,7 @@ set -e
 set -u
 
 : ${DOCKER:=}
-: ${ENABLE_MRUBY:=no}
+: ${TARGET:=}
 
 git submodule update --init --depth 1
 
@@ -16,8 +16,14 @@ if [ -n "${DOCKER}" ]; then
   sudo apt-get install -qq -y \
        autotools-dev \
        autoconf-archive
-  exit 0
+  exit $?
 fi
+
+if [ -n "${TARGET}" ]; then
+  ENABLE_MRUBY=yes
+fi
+
+: ${ENABLE_MRUBY:=no}
 
 case "${TRAVIS_OS_NAME}" in
   linux)

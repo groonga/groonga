@@ -4,16 +4,27 @@ set -e
 set -u
 
 : ${DOCKER:=}
-: ${ENABLE_MRUBY:=no}
-: ${TEST_TARGET:=all}
+: ${TARGET:=}
 
 if [ -n "${DOCKER}" ]; then
   docker run \
          --interactive \
          --tty \
           groonga/groonga-${DOCKER}
-  exit 0
+  exit $?
 fi
+
+if [ -n "${TARGET}" ]; then
+  make \
+    -C packages/${TARGET} \
+    build \
+    DEBUG_BUILD=yes \
+    ARCHITECTURES=${ARCHITECTURES}
+  exit $?
+fi
+
+: ${ENABLE_MRUBY:=no}
+: ${TEST_TARGET:=all}
 
 prefix=/tmp/local
 

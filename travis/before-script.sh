@@ -4,6 +4,7 @@ set -e
 set -u
 
 : ${DOCKER:=}
+: ${TARGET:=}
 
 touch lib/grn_ecmascript.c
 
@@ -14,10 +15,19 @@ if [ -n "${DOCKER}" ]; then
          -t groonga/groonga-${DOCKER} \
          -f travis/Dockerfile.${DOCKER} \
          .
-  exit 0
+  exit $?
+fi
+
+if [ -n "${TARGET}" ]; then
+  BUILD_TOOL=autotools
+  ENABLE_MRUBY=yes
+  ENABLE_DOCUMENT=yes
+  ENABLE_MAINTAINER_MODE=yes
 fi
 
 : ${ENABLE_MRUBY:=no}
+: ${ENABLE_DOCUMENT:=no}
+: ${ENABLE_MAINTAINER_MODE:=no}
 
 prefix=/tmp/local
 
@@ -36,6 +46,12 @@ case "${BUILD_TOOL}" in
     if [ "${ENABLE_MRUBY}" = "yes" ]; then
       configure_args="${configure_args} --with-ruby --enable-mruby"
     fi
+    if [ "${ENABLE_DOCUMENT}" = "yes" ]; then
+      configure_args="${configure_args} --enable-document"
+    fi
+    if [ "${ENABLE_MAINTAINER_MODE}" = "yes" ]; then
+      configure_args="${configure_args} --enable-maintainer-mode"
+    fi
 
     ./configure --prefix=${prefix} --with-ruby ${configure_args}
     ;;
@@ -52,7 +68,7 @@ esac
 
 case "$(uname)" in
   Linux)
-    n_processors="$(grep '^processor' /proc/cpuinfo | wc -l)"
+    n_processors="$(nproc)"
     ;;
   Darwin)
     n_processors="$(/usr/sbin/sysctl -n hw.ncpu)"
@@ -62,4 +78,8 @@ case "$(uname)" in
     ;;
 esac
 
-make -j${n_processors} > /dev/null
+if [ -n "${TARGET}" ]; then
+  make dist -j${n_processors} > /dev/null
+else
+  make -j${n_processors} > /dev/null
+fi
