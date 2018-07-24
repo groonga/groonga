@@ -280,7 +280,7 @@ make update-poコマンドの実行により更新した各種.poファイルを
 修正が必要な箇所を調べて、 ``***.edit`` というファイルを適宜修正します。
 
     % cd groonga/doc/locale
-    % gir diff
+    % git diff
 
 ファイルを編集したら、再度poファイルとHTMLを更新するために以下のコマンドを実行します。::
 
