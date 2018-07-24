@@ -30,7 +30,7 @@ Improvements
 * Added a new API: ``grn_obj_clear_option_values()``.
   It allows you to clear option values on remove (for persistent) / close (for temporary.)
 
-* Reported the name of an index column on error around ``column_update``.
+* [log] Reported index column name for error message ``[ii][update][one]``.
 
 * Deferred close of plugins on database, because a table may refer plugin.
   For example, normalizer with options call normalizer's close options function.
