@@ -333,6 +333,9 @@ msgstr ""
 "title を指定しているので、参照先の主キーとタイトルをそれぞれ配列にしたものが"
 "表示されています。"
 
+msgid "Drilldown by ``domain`` column"
+msgstr "``domain`` カラムによるドリルダウン"
+
 msgid "Drilldown"
 msgstr "ドリルダウン"
 
@@ -408,9 +411,6 @@ msgstr ""
 
 msgid "Here is a summary of above query."
 msgstr "上記のクエリの集計結果です。"
-
-msgid "Drilldown by ``domain`` column"
-msgstr "``domain`` カラムによるドリルダウン"
 
 msgid "Group by"
 msgstr "グループ化するカラムの値"

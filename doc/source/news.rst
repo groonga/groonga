@@ -50,7 +50,7 @@ Fixes
 
 * Fixed wrong function call around KyTea.
 
-* [:doc:`/reference/executables/grndb`] Added a missing label for ``grndb``'s ``--force-truncate`` option.
+* [:doc:`/reference/executables/grndb`] Added a missing label for the ``--force-truncate`` option.
 
 * Fixed a bug that normalizer/tokenizer options may be ignored.
   It's occurred when the same object ID is reused.
