@@ -282,6 +282,7 @@ make update-poコマンドの実行により更新した各種.poファイルを
     % cd groonga/doc/locale
     % git diff
 
+``***.edit`` というファイルの編集中は、翻訳元のファイルは絶対に編集しないで下さい（編集すると、``***.edit`` に加えた変更が make update-po の実行時に失われます）。
 ファイルを編集したら、再度poファイルとHTMLを更新するために以下のコマンドを実行します。::
 
     % make update-po
