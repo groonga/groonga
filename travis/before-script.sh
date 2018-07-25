@@ -79,7 +79,7 @@ case "$(uname)" in
 esac
 
 if [ -n "${TARGET}" ]; then
-  make dist -j${n_processors} > /dev/null
+  make dist > /dev/null
 else
   make -j${n_processors} > /dev/null
 fi
