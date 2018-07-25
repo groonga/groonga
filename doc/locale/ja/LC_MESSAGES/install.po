@@ -122,7 +122,7 @@ msgstr ""
 "このセクションではDebian GNU/Linux上でGroonga関連のdebパッケージをインストー"
 "ルする方法を説明します。これらのパッケージは ``apt`` でインストールできます。"
 
-msgid "jessie"
+msgid "stretch"
 msgstr ""
 
 msgid "Add the Groonga apt repository."
@@ -161,9 +161,6 @@ msgid "For groonga-server-gqtp:"
 msgstr "groonga-server-gtqp向け:"
 
 msgid "% sudo systemctl enable groonga-server-gqtp"
-msgstr ""
-
-msgid "stretch"
 msgstr ""
 
 msgid "Install required packages to build Groonga for Debian jessie::"
@@ -775,10 +772,7 @@ msgstr ""
 msgid "16.04 LTS Xenial Xerus"
 msgstr ""
 
-msgid "17.04 Zesty Zapus"
-msgstr ""
-
-msgid "17.10 Artful Aardvark"
+msgid "18.04 Bionic Beaver"
 msgstr ""
 
 msgid "Enable the universe repository to install Groonga::"

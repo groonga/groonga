@@ -113,6 +113,11 @@ msgstr ""
 msgid "Fixes"
 msgstr "修正"
 
+msgid "Fixed returning wrong result after unfinished ``/d/load`` data by POST."
+msgstr ""
+"POSTでの ``/d/load`` へのデータ送信が中断された後に誤った結果が返されていたの"
+"を修正しました。"
+
 msgid "Fixed wrong function call around KyTea."
 msgstr "KyTeaに関する間違った関数呼び出しを修正しました。"
 
