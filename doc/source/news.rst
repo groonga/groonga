@@ -48,6 +48,8 @@ Improvements
 Fixes
 ^^^^^
 
+* Fixed returning wrong result after unfinished ``/d/load`` data by POST.
+
 * Fixed wrong function call around KyTea.
 
 * [:doc:`/reference/executables/grndb`] Added a missing label for the ``--force-truncate`` option.
