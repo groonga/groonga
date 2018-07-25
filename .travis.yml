@@ -59,6 +59,10 @@ matrix:
   #   - os: osx
   #     compiler: clang
   #     env: BUILD_TOOL=autotools ENABLE_MRUBY=yes
+    - os: linux
+      env: TARGET=windows ARCHITECTURES=x86
+    - os: linux
+      env: TARGET=windows ARCHITECTURES=x64
 
 before_install:
   # - rvm use 2.3.1 --install --binary --fuzzy
