@@ -32,11 +32,6 @@ Improvements
 
 * [log] Reported index column name for error message ``[ii][update][one]``.
 
-* Deferred close of plugins on database, because a table may refer plugin.
-  For example, normalizer with options call normalizer's close options function.
-  ``groonga-normalizer-mysql`` provides it as a plugin. If plugin is closed before
-  the table that has normalizer with options, Groonga crashes.
-
 * [httpd] Updated bundled nginx to 1.15.1.
 
 * [:doc:`/install/ubuntu`] Dropped Ubuntu 17.10 (Artful Aardvark) support.
@@ -53,6 +48,8 @@ Fixes
 * Fixed wrong function call around KyTea.
 
 * [:doc:`/reference/executables/grndb`] Added a missing label for the ``--force-truncate`` option.
+
+* Fixed crash on closing of a database, when a normalizer provided by a plugin (ex. ``groonga-normalizer-mysql``) is used with any option.
 
 * Fixed a bug that normalizer/tokenizer options may be ignored.
   It's occurred when the same object ID is reused.
