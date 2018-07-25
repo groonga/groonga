@@ -301,10 +301,9 @@ namespace :build do
     tmp_dir = base_tmp_dir + "pcre"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
-    pcre_version = "8.41"
+    pcre_version = "8.42"
     pcre_base = "pcre-#{pcre_version}"
-    pcre_tar_gz_url_base =
-      "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre"
+    pcre_tar_gz_url_base = "https://ftp.pcre.org/pub/pcre/"
     pcre_tar_gz_url =
       "#{pcre_tar_gz_url_base}/pcre-#{pcre_version}.tar.gz"
     pcre_tar_gz = download(pcre_tar_gz_url, download_dir)
