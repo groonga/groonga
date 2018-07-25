@@ -1575,6 +1575,7 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
   }
 
   {
+    grn_bool is_tail_sent = GRN_FALSE;
     grn_obj chunk_buffer;
     long long int read_content_length = 0;
 
@@ -1631,6 +1632,7 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
             flags |= GRN_CTX_MORE;
           } else {
             flags |= GRN_CTX_TAIL;
+            is_tail_sent = GRN_TRUE;
           }
           grn_ctx_send(ctx,
                        GRN_TEXT_VALUE(&chunk_buffer),
@@ -1652,13 +1654,13 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
       }
     }
 
-    if (ctx->rc == GRN_CANCEL) {
-      h_output(ctx, GRN_CTX_TAIL, hc);
-    } else if (ctx->rc == GRN_SUCCESS && GRN_TEXT_LEN(&chunk_buffer) > 0) {
+    if (ctx->rc == GRN_SUCCESS && GRN_TEXT_LEN(&chunk_buffer) > 0) {
       grn_ctx_send(ctx,
                    GRN_TEXT_VALUE(&chunk_buffer),
                    GRN_TEXT_LEN(&chunk_buffer),
                    GRN_CTX_TAIL);
+    } else if (!is_tail_sent) {
+      grn_ctx_send(ctx, NULL, 0, GRN_CTX_TAIL);
     }
 
     GRN_OBJ_FIN(ctx, &chunk_buffer);
