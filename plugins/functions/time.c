@@ -31,7 +31,14 @@
 #include <time.h>
 
 #ifdef WIN32
-# define timegm _mkgmtime
+# if defined(__GNUC__) && defined(__i386__)
+   /* 32bit MinGW doesn't provide _mkgmtime(). */
+# else /* defined(__GNUC__) && defined(__i386__) */
+#  define timegm _mkgmtime
+#  define HAVE_TIMEGM
+# endif /* defined(__GNUC__) && defined(__i386__) */
+#else /* WIN32 */
+# define HAVE_TIMEGM
 #endif /* WIN32 */
 
 typedef enum {
@@ -541,7 +548,7 @@ func_time_format_iso8601(grn_ctx *ctx, int n_args, grn_obj **args,
                     "%+03d:%02d",
                     (int32_t)(tm.tm_gmtoff / 3600),
                     abs(tm.tm_gmtoff % 3600));
-#else
+#elif defined(HAVE_TIMEGM) /* HAVE_STRUCT_TM_TM_GMTOFF */
     {
       time_t gmtoff = timegm(&tm) - time_sec;
       grn_text_printf(ctx,
