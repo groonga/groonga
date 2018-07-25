@@ -415,7 +415,7 @@ namespace :build do
     tmp_dir = base_tmp_dir + "groonga-normalizer-mysql"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
-    groonga_normalizer_mysql_base = "groonga-normalizer-mysql-1.1.1"
+    groonga_normalizer_mysql_base = "groonga-normalizer-mysql-1.1.4"
     groonga_normalizer_mysql_tar_gz_url =
       "http://packages.groonga.org/source/groonga-normalizer-mysql/" +
       "#{groonga_normalizer_mysql_base}.tar.gz"
