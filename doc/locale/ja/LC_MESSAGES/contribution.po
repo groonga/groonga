@@ -1587,6 +1587,11 @@ msgid ""
 "groonga.orgへと反映します。"
 msgstr ""
 
+msgid ""
+"また、``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョン"
+"番号と日付を表す情報の指定があるので、これらも更新します。::"
+msgstr ""
+
 msgid "Homebrewの更新"
 msgstr ""
 
