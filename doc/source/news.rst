@@ -32,7 +32,7 @@ Improvements
 
 * [log] Reported index column name for error message ``[ii][update][one]``.
 
-* [httpd] Updated bundled nginx to 1.15.1.
+* [httpd] Updated bundled nginx to 1.15.2.
 
 * [:doc:`/install/ubuntu`] Dropped Ubuntu 17.10 (Artful Aardvark) support.
   It has reached EOL at July 19, 2018.
