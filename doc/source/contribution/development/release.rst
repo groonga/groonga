@@ -672,8 +672,10 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 
 そのためにはまず ``groonga`` のリポジトリをカレントディレクトリにして以下のコマンドを実行します。::
 
-    % make update-document
+    % GROONGA_VERSION=$(git tag --list | tail -n 1 | tr -d v)
+    % make update-document DOCUMENT_VERSION=$GROONGA_VERSION DOCUMENT_VERSION_FULL=$GROONGA_VERSION
 
+ここでは最新のtagに基づいてリリースバージョンを調べ、明示的にそのバージョンを指定してドキュメントを更新するようにしています。
 これによりcloneしておいたgroonga.orgのdoc/locale以下に更新したドキュメントがコピーされます。
 
 生成されているドキュメントに問題のないことを確認できたら、コミット、pushしてgroonga.orgへと反映します。
@@ -784,12 +786,3 @@ centosの場合、CENTOS_VERSIONSを指定することで特定のバージョ�
 パッケージの署名に必要な秘密鍵のパスフレーズについては
 リリース担当者向けの秘密鍵を復号したテキストの1行目に記載してあります。
 
-
-バージョンを明示的に指定してドキュメントを生成したい
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-リリース後にドキュメントの一部を差し替えたい場合、特に何も指定しないと生成したHTMLに埋め込まれるバージョンが「v3.0.1-xxxxxドキュメント」となってしまうことがあります。gitでのコミット時ハッシュの一部が使われるためです。
-
-これを回避するには、以下のようにDOCUMENT_VERSIONやDOCUMENT_VERSION_FULLを明示的に指定します。::
-
-    % make update-document DOCUMENT_VERSION=3.0.1 DOCUMENT_VERSION_FULL=3.0.1
