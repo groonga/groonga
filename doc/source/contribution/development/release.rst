@@ -34,7 +34,11 @@
 
 なお、ビルド環境としては Debian GNU/Linux (sid)を前提として説明しているため、その他の環境では適宜読み替えて下さい。::
 
-    % sudo apt-get install -V debootstrap createrepo rpm mercurial python-docutils python-jinja2 ruby-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2 dh-autoreconf python-sphinx bison
+    % sudo apt-get install -V debootstrap createrepo rpm mercurial python-docutils python-jinja2 ruby-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2 dh-autoreconf bison
+
+また、Sphinxは常に最新のバージョンを使う事を推奨します。 ``pip`` を使用して最新のSphinxをインストールするようにして下さい。
+
+    % pip install --upgrade sphinx
 
 Debian系（.deb）やRed Hat系（.rpm）パッケージのビルドには `Vagrant <https://www.vagrantup.com/>`_ を使用します。apt-getでインストールできるのは古いバージョンなので、Webサイトから最新版をダウンロードしてインストールすることをおすすめします。
 
@@ -666,7 +670,7 @@ jekyllのインストールを行ったら、以下のコマンドでローカ�
 
 doc/source以下のドキュメントを更新、翻訳まで完了している状態で、ドキュメントのアップロード作業を行います。
 
-そのためにはまず以下のコマンドを実行します。::
+そのためにはまず ``groonga`` のリポジトリをカレントディレクトリにして以下のコマンドを実行します。::
 
     % make update-document
 
