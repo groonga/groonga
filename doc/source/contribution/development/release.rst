@@ -680,6 +680,12 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 
 生成されているドキュメントに問題のないことを確認できたら、コミット、pushしてgroonga.orgへと反映します。
 
+また、``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョン番号と日付を表す情報の指定があるので、これらも更新します。::
+
+    groonga_version: x.x.x
+    groonga_release_date: xxxx-xx-xx
+
+
 Homebrewの更新
 --------------
 
