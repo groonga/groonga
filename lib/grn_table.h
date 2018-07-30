@@ -46,6 +46,25 @@ void grn_table_module_set_options(grn_ctx *ctx,
 void grn_table_module_fin(grn_ctx *ctx,
                           grn_table_module *module);
 
+#define GRN_TABLE_LOCK_BEGIN(ctx, table) do {                           \
+  grn_io *io_ = grn_obj_get_io(ctx, table);                             \
+  grn_bool locked_ = GRN_FALSE;                                         \
+  grn_bool can_run_ = GRN_TRUE;                                         \
+  if (io_ && !(io_->flags & GRN_IO_TEMPORARY)) {                        \
+    if (grn_io_lock(ctx, io_, grn_lock_timeout) == GRN_SUCCESS) {       \
+      locked_ = GRN_TRUE;                                               \
+    } else {                                                            \
+      can_run_ = GRN_FALSE;                                             \
+    }                                                                   \
+  }                                                                     \
+  if (can_run_) {
+#define GRN_TABLE_LOCK_END(ctx, table)          \
+  }                                             \
+  if (locked_) {                                \
+    grn_io_unlock(io_);                         \
+  }                                             \
+} while (GRN_FALSE)
+
 #ifdef __cplusplus
 }
 #endif
