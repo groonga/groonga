@@ -2897,12 +2897,13 @@ grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc)
         grn_pat_cursor *pc = (grn_pat_cursor *)tc;
         id = pc->curr_rec;
         table = (grn_obj *)(pc->pat);
-        key = _grn_pat_key(ctx, pc->pat, id, &key_size);
-        rc = grn_table_delete_prepare(ctx, table, id, key, key_size);
-        if (rc != GRN_SUCCESS) {
-          goto exit;
-        }
-        rc = grn_pat_cursor_delete(ctx, pc, NULL);
+        GRN_TABLE_LOCK_BEGIN(ctx, table) {
+          key = _grn_pat_key(ctx, pc->pat, id, &key_size);
+          rc = grn_table_delete_prepare(ctx, table, id, key, key_size);
+          if (rc == GRN_SUCCESS) {
+            rc = grn_pat_cursor_delete(ctx, pc, NULL);
+          }
+        } GRN_TABLE_LOCK_END(ctx, table);
       }
       break;
     case GRN_CURSOR_TABLE_DAT_KEY :
@@ -2913,12 +2914,13 @@ grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc)
         grn_hash_cursor *hc = (grn_hash_cursor *)tc;
         id = hc->curr_rec;
         table = (grn_obj *)(hc->hash);
-        key = _grn_hash_key(ctx, hc->hash, id, &key_size);
-        rc = grn_table_delete_prepare(ctx, table, id, key, key_size);
-        if (rc != GRN_SUCCESS) {
-          goto exit;
-        }
-        rc = grn_hash_cursor_delete(ctx, hc, NULL);
+        GRN_TABLE_LOCK_BEGIN(ctx, table) {
+          key = _grn_hash_key(ctx, hc->hash, id, &key_size);
+          rc = grn_table_delete_prepare(ctx, table, id, key, key_size);
+          if (rc == GRN_SUCCESS) {
+            rc = grn_hash_cursor_delete(ctx, hc, NULL);
+          }
+        } GRN_TABLE_LOCK_END(ctx, table);
       }
       break;
     case GRN_CURSOR_TABLE_NO_KEY :
@@ -2926,11 +2928,12 @@ grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc)
         grn_array_cursor *ac = (grn_array_cursor *)tc;
         id = ac->curr_rec;
         table = (grn_obj *)(ac->array);
-        rc = grn_table_delete_prepare(ctx, table, id, key, key_size);
-        if (rc != GRN_SUCCESS) {
-          goto exit;
-        }
-        rc = grn_array_cursor_delete(ctx, ac, NULL);
+        GRN_TABLE_LOCK_BEGIN(ctx, table) {
+          rc = grn_table_delete_prepare(ctx, table, id, key, key_size);
+          if (rc == GRN_SUCCESS) {
+            rc = grn_array_cursor_delete(ctx, ac, NULL);
+          }
+        } GRN_TABLE_LOCK_END(ctx, table);
       }
       break;
     default :
@@ -2938,7 +2941,6 @@ grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc)
       break;
     }
   }
-exit :
   GRN_API_RETURN(rc);
 }
 
