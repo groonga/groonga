@@ -1014,6 +1014,7 @@ GRN_API grn_rc grn_snip_get_result(grn_ctx *ctx, grn_obj *snip, const unsigned i
 #define GRN_LOG_MESSAGE                (0x01<<2)
 #define GRN_LOG_LOCATION               (0x01<<3)
 #define GRN_LOG_PID                    (0x01<<4)
+#define GRN_LOG_THREAD_ID              (0x01<<5)
 
 /* Deprecated since 2.1.2. Use grn_logger instead. */
 typedef struct _grn_logger_info grn_logger_info;

@@ -429,6 +429,12 @@ grn_logger_putv(grn_ctx *ctx,
     } else if (current_logger.flags & GRN_LOG_PID) {
       grn_snprintf(lbuf, LBUFSIZE, LBUFSIZE,
                    "%d", grn_getpid());
+    } else if (current_logger.flags & GRN_LOG_THREAD_ID) {
+#ifdef HAVE_PTHREAD_H
+      grn_snprintf(lbuf, LBUFSIZE, LBUFSIZE, "%08x", (uint32_t)pthread_self());
+#elif defined(WIN32) /* HAVE_PTHREAD_H */
+      grn_snprintf(lbuf, LBUFSIZE, LBUFSIZE, "%08x", (uint32_t)GetCurrentThread());
+#endif /* HAVE_PTHREAD_H */
     } else {
       lbuf[0] = '\0';
     }
