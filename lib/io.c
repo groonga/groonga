@@ -51,10 +51,10 @@
 
 #ifndef WIN32
 # ifdef HAVE_FUTIMENS
-#  define grn_futimens(fd, times) futimens((fd), (times))
+#  define grn_futimens(fd, time_values, time_specs) futimens((fd), (time_specs))
 #  define grn_futimens_name "futimens"
 # elif defined(HAVE_FUTIMES) /* HAVE_FUTIMENS */
-#  define grn_futimens(fd, times) futimes((fd), (times))
+#  define grn_futimens(fd, time_values, time_specs) futimes((fd), (time_values))
 #  define grn_futimens_name "futimes"
 # else /* HAVE_FUTIMENS */
 #  error Support for either the futimens() or futimens() function is required
@@ -2150,10 +2150,14 @@ grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
   }
 
   if (fi->fd > 0) {
-    struct timeval times[2];
-    gettimeofday(&(times[0]), NULL);
-    times[1] = times[0];
-    r = grn_futimens(fi->fd, times);
+    struct timeval time_values[2];
+    struct timespec time_specs[2];
+    gettimeofday(&(time_values[0]), NULL);
+    time_values[1] = time_values[0];
+    time_specs[0].tv_sec = time_values[0].tv_sec;
+    time_specs[0].tv_nsec = time_values[0].tv_usec * 1000;
+    time_specs[1] = time_specs[0];
+    r = grn_futimens(fi->fd, time_values, time_specs);
     if (r == -1) {
       SERR("%s failed: <%d>", grn_futimens_name, fi->fd);
     }
