@@ -1652,7 +1652,8 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         grn_proc_ctx pctx = {{0}, hooks->proc, NULL, hooks, hooks, PROC_INIT, 4, 4};
         GRN_UINT32_INIT(&id_, 0);
         GRN_UINT32_INIT(&flags_, 0);
-        GRN_TEXT_INIT(&oldvalue_, 0);
+        GRN_VOID_INIT(&oldvalue_);
+        grn_obj_reinit_for(ctx, &oldvalue_, table);
         GRN_TEXT_INIT(&value_, GRN_OBJ_DO_SHALLOW_COPY);
         GRN_TEXT_SET_REF(&value_, key, key_size);
         GRN_UINT32_SET(ctx, &id_, id);
