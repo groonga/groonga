@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1674,6 +1675,10 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
           hooks = hooks->next;
           pctx.offset++;
         }
+        GRN_OBJ_FIN(ctx, &id_);
+        GRN_OBJ_FIN(ctx, &flags_);
+        GRN_OBJ_FIN(ctx, &oldvalue_);
+        GRN_OBJ_FIN(ctx, &value_);
       }
     }
   }
