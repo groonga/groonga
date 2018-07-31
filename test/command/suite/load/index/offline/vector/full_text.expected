@@ -5,13 +5,13 @@ column_create Users name COLUMN_VECTOR ShortText
 load --table Users
 [
 ["name"],
-["Alice"],
-["Bob"]
+[["Alice"]],
+[["Bob"]]
 ]
 [[0,0.0,0.0],2]
 table_create Words TABLE_PAT_KEY --key_type ShortText   --default_tokenizer TokenBigramSplitSymbolAlpha
 [[0,0.0,0.0],true]
-column_create Words users_name COLUMN_INDEX Users name
+column_create Words users_name COLUMN_INDEX|WITH_POSITION|WITH_SECTION Users name
 [[0,0.0,0.0],true]
 select Words --output_columns _key
 [
