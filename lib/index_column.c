@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2015 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -57,24 +58,26 @@ grn_index_column_init_from_env(void)
 }
 
 grn_inline static void
-grn_index_column_build_call_hook(grn_ctx *ctx, grn_obj *obj,
-                                 grn_id id, grn_obj *value, int flags)
+grn_index_column_build_call_hook(grn_ctx *ctx,
+                                 grn_obj *obj,
+                                 grn_id id,
+                                 grn_obj *old_value,
+                                 grn_obj *value,
+                                 int flags)
 {
   grn_hook *hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET];
 
   if (hooks) {
-    grn_obj oldvalue;
     /* todo : grn_proc_ctx_open() */
     grn_obj id_, flags_;
     grn_proc_ctx pctx = {{0}, hooks->proc, NULL, hooks, hooks, PROC_INIT, 4, 4};
-    GRN_TEXT_INIT(&oldvalue, 0);
     GRN_UINT32_INIT(&id_, 0);
     GRN_UINT32_INIT(&flags_, 0);
     GRN_UINT32_SET(ctx, &id_, id);
     GRN_UINT32_SET(ctx, &flags_, flags);
     while (hooks) {
       grn_ctx_push(ctx, &id_);
-      grn_ctx_push(ctx, &oldvalue);
+      grn_ctx_push(ctx, old_value);
       grn_ctx_push(ctx, value);
       grn_ctx_push(ctx, &flags_);
       pctx.caller = NULL;
@@ -85,14 +88,51 @@ grn_index_column_build_call_hook(grn_ctx *ctx, grn_obj *obj,
         grn_obj_default_set_value_hook(ctx, 1, &obj, &pctx.user_data);
       }
       if (ctx->rc) {
-        grn_obj_close(ctx, &oldvalue);
         return;
       }
       hooks = hooks->next;
       pctx.offset++;
     }
-    grn_obj_close(ctx, &oldvalue);
   }
+}
+
+static void
+grn_index_column_build_column(grn_ctx *ctx,
+                              grn_obj *index_column,
+                              grn_obj *table,
+                              grn_obj *column)
+{
+  grn_obj old_value;
+  grn_obj value;
+  int cursor_flags = GRN_CURSOR_BY_ID;
+
+  GRN_VOID_INIT(&old_value);
+  grn_obj_reinit_for(ctx, &old_value, column);
+  GRN_VOID_INIT(&value);
+  grn_obj_reinit_for(ctx, &value, column);
+  if (GRN_OBJ_TABLEP(column)) {
+    GRN_TABLE_EACH_BEGIN_FLAGS(ctx,
+                               table,
+                               cursor,
+                               id,
+                               cursor_flags) {
+      GRN_BULK_REWIND(&value);
+      grn_table_get_key2(ctx, column, id, &value);
+      grn_index_column_build_call_hook(ctx, column, id, &old_value, &value, 0);
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  } else {
+    GRN_TABLE_EACH_BEGIN_FLAGS(ctx,
+                               table,
+                               cursor,
+                               id,
+                               cursor_flags) {
+      GRN_BULK_REWIND(&value);
+      grn_obj_get_value(ctx, column, id, &value);
+      grn_index_column_build_call_hook(ctx, column, id, &old_value, &value, 0);
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  }
+  GRN_OBJ_FIN(ctx, &old_value);
+  GRN_OBJ_FIN(ctx, &value);
 }
 
 grn_rc
@@ -147,25 +187,9 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
             grn_ii_build(ctx, ii, grn_index_sparsity);
           }
         } else {
-          grn_table_cursor  *tc;
-          if ((tc = grn_table_cursor_open(ctx, target, NULL, 0, NULL, 0,
-                                          0, -1, GRN_CURSOR_BY_ID))) {
-            grn_id id;
-            grn_obj rv;
-            GRN_TEXT_INIT(&rv, 0);
-            while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
-              for (cp = col, i = ncol; i; i--, cp++) {
-                GRN_BULK_REWIND(&rv);
-                if (GRN_OBJ_TABLEP(*cp)) {
-                  grn_table_get_key2(ctx, *cp, id, &rv);
-                } else {
-                  grn_obj_get_value(ctx, *cp, id, &rv);
-                }
-                grn_index_column_build_call_hook(ctx, *cp, id, &rv, 0);
-              }
-            }
-            GRN_OBJ_FIN(ctx, &rv);
-            grn_table_cursor_close(ctx, tc);
+          for (i = 0; i < ncol; i++) {
+            grn_obj *column = col[i];
+            grn_index_column_build_column(ctx, index_column, target, column);
           }
         }
         GRN_FREE(col);
