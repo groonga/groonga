@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -7883,7 +7884,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     rep = 0;
     if (optarg->func) {
       wvm = grn_wv_dynamic;
-    } else if (optarg->vector_size) {
+    } else if (optarg->vector_size > 0) {
       wvm = optarg->weight_vector ? grn_wv_static : grn_wv_constant;
     }
     for (j = 1; j <= limit; j++) {
