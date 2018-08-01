@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2010-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -4043,7 +4044,7 @@ grn_table_select_index_match(grn_ctx *ctx,
     } else {
       optarg.match_info.min = GRN_ID_NIL;
     }
-    if (sid) {
+    if (sid > 0) {
       int weight_index = sid - 1;
       int current_vector_size;
       current_vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
@@ -4064,7 +4065,7 @@ grn_table_select_index_match(grn_ctx *ctx,
     optarg.scorer_args_expr_offset =
       GRN_UINT32_VALUE_AT(&(si->scorer_args_expr_offsets), j);
     if (j < n_indexes - 1) {
-      if (sid &&
+      if (sid > 0 &&
           ip[0] == ip[1] &&
           !optarg.scorer &&
           !GRN_PTR_VALUE_AT(&(si->scorers), j + 1)) {
