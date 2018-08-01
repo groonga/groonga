@@ -7760,7 +7760,7 @@ typedef enum {
   grn_wv_constant
 } grn_wv_mode;
 
-grn_inline static double
+static double
 get_weight(grn_ctx *ctx, grn_hash *s, grn_id rid, int sid,
            grn_wv_mode wvm, grn_select_optarg *optarg)
 {
