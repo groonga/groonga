@@ -1,0 +1,75 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos contents COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Lexicon memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Memos contents
+[[0,0.0,0.0],true]
+load --table Memos
+[
+["contents"],
+[["a",
+  "a a",
+  "a a a",
+  "a a a a",
+  "a a a a a",
+  "a a a a a a",
+  "a a a a a a a",
+  "a a a a a a a a",
+  "a a a a a a a a a",
+  "a a a a a a a a a a",
+  "a a a a a a a a a a a",
+  "a a a a a a a a a a a a",
+  "a a a a a a a a a a a a a",
+  "a a a a a a a a a a a a a a",
+  "a a a a a a a a a a a a a a a",
+  "a a a a a a a a a a a a a a a a"]]
+]
+[[0,0.0,0.0],1]
+select Memos   --match_columns "Lexicon.memo_index[0] || Lexicon.memo_index[15]"   --query a   --output_columns "contents, _score"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "contents",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        [
+          "a",
+          "a a",
+          "a a a",
+          "a a a a",
+          "a a a a a",
+          "a a a a a a",
+          "a a a a a a a",
+          "a a a a a a a a",
+          "a a a a a a a a a",
+          "a a a a a a a a a a",
+          "a a a a a a a a a a a",
+          "a a a a a a a a a a a a",
+          "a a a a a a a a a a a a a",
+          "a a a a a a a a a a a a a a",
+          "a a a a a a a a a a a a a a a",
+          "a a a a a a a a a a a a a a a a"
+        ],
+        16
+      ]
+    ]
+  ]
+]

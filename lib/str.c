@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2029,13 +2030,13 @@ grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, unsigned int len)
 {
   if (GRN_BULK_OUTP(bulk)) {
     if ((bulk->u.b.tail - bulk->u.b.head) < len) {
-      return grn_bulk_space_clear(ctx, bulk, len);
+      return grn_bulk_space_clear(ctx, bulk, len - GRN_BULK_VSIZE(bulk));
     } else {
       bulk->u.b.curr = bulk->u.b.head + len;
     }
   } else {
     if (GRN_BULK_BUFSIZE < len) {
-      return grn_bulk_space_clear(ctx, bulk, len);
+      return grn_bulk_space_clear(ctx, bulk, len - GRN_BULK_VSIZE(bulk));
     } else {
       bulk->header.flags &= ~GRN_BULK_BUFSIZE_MAX;
       bulk->header.flags += len;
