@@ -4029,8 +4029,7 @@ grn_table_select_index_match(grn_ctx *ctx,
   default :
     break;
   }
-  optarg.weight_vector = (int *)GRN_BULK_HEAD(&wv);
-  /* optarg.vector_size = GRN_BULK_VSIZE(&si->wv); */
+  optarg.weight_vector = NULL;
   optarg.vector_size = 1;
   optarg.proc = NULL;
   optarg.max_size = 0;
