@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -133,7 +134,7 @@ break_accept_event_loop(grn_ctx *ctx)
     address = "127.0.0.1";
   } else if (strcmp(bind_address, "::") == 0) {
     address = "::1";
-    } else {
+  } else {
     address = bind_address;
   }
   client = grn_com_copen(ctx, NULL, address, port);
