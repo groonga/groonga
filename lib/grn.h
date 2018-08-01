@@ -129,6 +129,7 @@ typedef int64_t off64_t;
 
 typedef SOCKET grn_sock;
 # define grn_sock_close(sock) closesocket(sock)
+# define GRN_INVALID_SOCKET INVALID_SOCKET
 
 # define CALLBACK __stdcall
 
@@ -165,6 +166,7 @@ typedef unsigned char uint_least8_t;
 # endif /* UINT_LEAST8_MAX */
 typedef int grn_sock;
 # define grn_sock_close(sock) close(sock)
+# define GRN_INVALID_SOCKET -1
 # define CALLBACK
 
 #endif /* WIN32 */
@@ -676,12 +678,6 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 #endif /* HOST_NAME_MAX */
 
 #define GRN_NEXT_ADDR(p) (((byte *)(p)) + sizeof(*(p)))
-
-#ifdef WIN32
-# define GRN_INVALID_SOCKET INVALID_SOCKET
-#else /* WIN32 */
-# define GRN_INVALID_SOCKET -1
-#endif /* WIN32 */
 
 GRN_API void grn_sleep(uint32_t seconds);
 GRN_API void grn_nanosleep(uint64_t nanoseconds);
