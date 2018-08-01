@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -675,6 +676,12 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 #endif /* HOST_NAME_MAX */
 
 #define GRN_NEXT_ADDR(p) (((byte *)(p)) + sizeof(*(p)))
+
+#ifdef WIN32
+# define GRN_INVALID_SOCKET INVALID_SOCKET
+#else /* WIN32 */
+# define GRN_INVALID_SOCKET -1
+#endif /* WIN32 */
 
 GRN_API void grn_sleep(uint32_t seconds);
 GRN_API void grn_nanosleep(uint64_t nanoseconds);

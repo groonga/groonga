@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -982,7 +983,7 @@ grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
        addrinfo_ptr = addrinfo_ptr->ai_next) {
     fd = socket(addrinfo_ptr->ai_family, addrinfo_ptr->ai_socktype,
                 addrinfo_ptr->ai_protocol);
-    if (fd == -1) {
+    if (fd == GRN_INVALID_SOCKET) {
       SOERR("socket");
       continue;
     }
