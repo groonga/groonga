@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -459,8 +460,35 @@ grn_ids_is_included(grn_id *ids, size_t n_ids, grn_id id)
   return GRN_FALSE;
 }
 
+static void
+grn_highlighter_log_location(grn_ctx *ctx,
+                             grn_log_level level,
+                             const char *tag,
+                             grn_highlighter_location *location,
+                             const char *text,
+                             size_t text_length)
+{
+  if (!grn_logger_pass(ctx, level)) {
+    return;
+  }
+
+  GRN_LOG(ctx,
+          level,
+          "%s[location] "
+          "[%" GRN_FMT_INT64U "...%" GRN_FMT_INT64U "](%u)[%s] <%.*s>",
+          tag,
+          location->offset,
+          location->offset + location->length,
+          location->first_character_length,
+          location->have_overlap ? "overlapped" : "not-overlapped",
+          (int)location->length,
+          text + location->offset);
+}
+
 static uint64_t
 grn_highlighter_highlight_lexicon_flush(grn_ctx *ctx,
+                                        grn_log_level log_level,
+                                        const char *tag,
                                         grn_highlighter *highlighter,
                                         const char *text,
                                         size_t text_length,
@@ -468,6 +496,7 @@ grn_highlighter_highlight_lexicon_flush(grn_ctx *ctx,
                                         grn_highlighter_location *location,
                                         uint64_t offset)
 {
+  grn_highlighter_log_location(ctx, log_level, tag, location, text, text_length);
   if (location->offset > offset) {
     grn_text_escape_xml(ctx,
                         output,
@@ -496,6 +525,8 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
                                   size_t text_length,
                                   grn_obj *output)
 {
+  const char *tag = "[highlighter][highlight][lexicon]";
+  grn_log_level log_level = GRN_LOG_DEBUG;
   grn_token_cursor *cursor;
   grn_obj *lazy_keyword_ids = &(highlighter->lexicon.lazy_keyword_ids);
   grn_obj *token_ids = &(highlighter->lexicon.token_ids);
@@ -513,11 +544,13 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
                                  0);
   if (!cursor) {
     ERR(ctx->rc,
-        "[highlighter][highlight][lexicon] failed to start tokenizing: %s",
+        "%s failed to start tokenizing: %s",
+        tag,
         ctx->errbuf);
     return;
   }
 
+  GRN_LOG(ctx, log_level, "%s[tokenize][start]", tag);
   while (cursor->status == GRN_TOKEN_CURSOR_DOING) {
     grn_id token_id = grn_token_cursor_next(ctx, cursor);
     grn_highlighter_location location;
@@ -534,8 +567,15 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
       grn_token_get_source_first_character_length(ctx, token);
     location.have_overlap = grn_token_have_overlap(ctx, token);
     GRN_TEXT_PUT(ctx, token_locations, &location, sizeof(location));
+    grn_highlighter_log_location(ctx,
+                                 log_level,
+                                 tag,
+                                 &location,
+                                 text,
+                                 text_length);
   }
   grn_token_cursor_close(ctx, cursor);
+  GRN_LOG(ctx, log_level, "%s[tokenize][end]", tag);
 
   {
     grn_obj *lexicon = highlighter->lexicon.object;
@@ -555,27 +595,53 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
                                               &keyword,
                                               NULL,
                                               NULL);
+      GRN_LOG(ctx,
+              log_level,
+              "%s[prefix-search][start] %" GRN_FMT_SIZE ":<%.*s>",
+              tag,
+              i,
+              (int)keyword_length,
+              keyword);
       GRN_TABLE_EACH_BEGIN_MIN(ctx,
                                lexicon,
                                cursor,
                                id,
                                keyword, keyword_length,
                                GRN_CURSOR_PREFIX) {
-        void *key;
-        int key_size;
         int added = 0;
 
-        key_size = grn_table_cursor_get_key(ctx, cursor, &key);
         {
           grn_encoding encoding = ctx->encoding;
           ctx->encoding = GRN_ENC_NONE;
           grn_table_add(ctx, chunks, &id, sizeof(grn_id), &added);
           ctx->encoding = encoding;
         }
+        if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+          void *key;
+          int key_size;
+          key_size = grn_table_cursor_get_key(ctx, cursor, &key);
+          GRN_LOG(ctx,
+                  log_level,
+                  "%s[prefix-search][%s] %" GRN_FMT_SIZE ":<%.*s>:<%.*s>",
+                  tag,
+                  added ? "added" : "not-added",
+                  i,
+                  (int)keyword_length,
+                  keyword,
+                  key_size,
+                  (const char *)key);
+        }
         if (added) {
           GRN_RECORD_PUT(ctx, lazy_keyword_ids, id);
         }
       } GRN_TABLE_EACH_END(ctx, cursor);
+      GRN_LOG(ctx,
+              log_level,
+              "%s[prefix-search][end] %" GRN_FMT_SIZE ":<%.*s>",
+              tag,
+              i,
+              (int)keyword_length,
+              keyword);
     }
   }
 
@@ -597,6 +663,11 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
     for (i = 0; i < n_token_ids; i++) {
       grn_id chunk_id;
 
+      GRN_LOG(ctx,
+              log_level,
+              "%s[lcp-search][start] %" GRN_FMT_SIZE,
+              tag,
+              i);
       {
         grn_encoding encoding = ctx->encoding;
         /* token_id_chunk is a binary data */
@@ -608,6 +679,11 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
         ctx->encoding = encoding;
       }
       if (chunk_id == GRN_ID_NIL) {
+        GRN_LOG(ctx,
+                log_level,
+                "%s[lcp-search][end][nonexistent] %" GRN_FMT_SIZE,
+                tag,
+                i);
         continue;
       }
 
@@ -618,6 +694,9 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
         size_t n_ids;
         grn_highlighter_location candidate;
         grn_highlighter_location *first = raw_token_locations + i;
+
+        candidate.have_overlap = GRN_FALSE;
+        candidate.first_character_length = 0;
 
         {
           grn_encoding encoding = ctx->encoding;
@@ -661,6 +740,17 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
           }
         }
         GRN_TEXT_PUT(ctx, candidates, &candidate, sizeof(candidate));
+        grn_highlighter_log_location(ctx,
+                                     log_level,
+                                     tag,
+                                     &candidate,
+                                     text,
+                                     text_length);
+        GRN_LOG(ctx,
+                log_level,
+                "%s[lcp-search][end] %" GRN_FMT_SIZE,
+                tag,
+                i);
         i += n_ids - 1;
       }
     }
@@ -687,6 +777,11 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
     grn_highlighter_location *raw_candidates =
       (grn_highlighter_location *)GRN_BULK_HEAD(candidates);
 
+    GRN_LOG(ctx,
+            log_level,
+            "%s[highlight][start] %" GRN_FMT_SIZE,
+            tag,
+            n_candidates);
     if (n_candidates == 0) {
       grn_text_escape_xml(ctx, output, text, text_length);
     } else {
@@ -713,6 +808,8 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
         }
         if (current->offset > previous->offset) {
           offset = grn_highlighter_highlight_lexicon_flush(ctx,
+                                                           log_level,
+                                                           tag,
                                                            highlighter,
                                                            text,
                                                            text_length,
@@ -723,6 +820,8 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
         previous = current;
       }
       offset = grn_highlighter_highlight_lexicon_flush(ctx,
+                                                       log_level,
+                                                       tag,
                                                        highlighter,
                                                        text,
                                                        text_length,
@@ -736,6 +835,11 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
                             text_length - offset);
       }
     }
+    GRN_LOG(ctx,
+            log_level,
+            "%s[highlight][end] %" GRN_FMT_SIZE,
+            tag,
+            n_candidates);
   }
 }
 
