@@ -307,7 +307,8 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx,
     GRN_BULK_REWIND(token_id_chunk);
     while ((token_id = grn_token_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
       GRN_TEXT_PUT(ctx, token_id_chunk, &token_id, sizeof(grn_id));
-      if (cursor->force_prefix) {
+      if (cursor->force_prefix &&
+          highlighter->lexicon.object->header.type != GRN_TABLE_HASH_KEY) {
         grn_token *token;
         const char *data;
         size_t data_length;
