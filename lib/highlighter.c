@@ -566,7 +566,12 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
         int added = 0;
 
         key_size = grn_table_cursor_get_key(ctx, cursor, &key);
-        grn_table_add(ctx, chunks, &id, sizeof(grn_id), &added);
+        {
+          grn_encoding encoding = ctx->encoding;
+          ctx->encoding = GRN_ENC_NONE;
+          grn_table_add(ctx, chunks, &id, sizeof(grn_id), &added);
+          ctx->encoding = encoding;
+        }
         if (added) {
           GRN_RECORD_PUT(ctx, lazy_keyword_ids, id);
         }
@@ -614,7 +619,12 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
         grn_highlighter_location candidate;
         grn_highlighter_location *first = raw_token_locations + i;
 
-        ids = (grn_id *)_grn_pat_key(ctx, chunks, chunk_id, &key_size);
+        {
+          grn_encoding encoding = ctx->encoding;
+          ctx->encoding = GRN_ENC_NONE;
+          ids = (grn_id *)_grn_pat_key(ctx, chunks, chunk_id, &key_size);
+          ctx->encoding = encoding;
+        }
         n_ids = key_size / sizeof(grn_id);
         candidate.offset = first->offset;
         if (n_ids == 1 &&
@@ -663,7 +673,10 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
     n_ids = GRN_BULK_VSIZE(lazy_keyword_ids) / sizeof(grn_id);
     for (i = 0; i < n_ids; i++) {
       grn_id id = GRN_RECORD_VALUE_AT(lazy_keyword_ids, i);
+      grn_encoding encoding = ctx->encoding;
+      ctx->encoding = GRN_ENC_NONE;
       grn_table_delete(ctx, chunks, &id, sizeof(grn_id));
+      ctx->encoding = encoding;
     }
   }
 
