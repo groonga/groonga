@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1741,8 +1742,17 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
 {
   /* may be wrong if flags is just only O_RDWR */
   if ((flags & O_CREAT)) {
+    grn_bool exist = GRN_FALSE;
     DWORD dwCreationDisposition;
     const char *flags_description;
+
+    {
+      struct stat stat_buffer;
+      if (stat(path, &stat_buffer) == 0) {
+        exist = GRN_TRUE;
+      }
+    }
+
     if (flags & O_EXCL) {
       dwCreationDisposition = CREATE_NEW;
       flags_description = "O_RDWR|O_CREAT|O_EXCL";
@@ -1757,6 +1767,16 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
     if (fi->fh == INVALID_HANDLE_VALUE) {
       SERR("CreateFile(<%s>, <%s>) failed",
            path, flags_description);
+      if (!exist) {
+        struct stat stat_buffer;
+        if (stat(path, &stat_buffer) == 0) {
+          GRN_LOG(ctx, GRN_LOG_INFO,
+                  "[io][open] "
+                  "delete a newly created file because of open error: <%s>",
+                  path);
+          DeleteFile(path);
+        }
+      }
       goto exit;
     }
 
