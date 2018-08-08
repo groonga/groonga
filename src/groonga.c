@@ -512,10 +512,11 @@ groonga_get_thread_limit(void *data)
 }
 
 static void
-groonga_set_thread_limit(uint32_t new_limit, void *data)
+groonga_set_thread_limit_with_ctx(grn_ctx *ctx, uint32_t new_limit, void *data)
 {
   uint32_t i;
   uint32_t current_n_floating_threads;
+  uint32_t current_max_n_floating_threads;
   static uint32_t n_changing_threads = 0;
   uint32_t prev_n_changing_threads;
 
@@ -523,6 +524,7 @@ groonga_set_thread_limit(uint32_t new_limit, void *data)
 
   CRITICAL_SECTION_ENTER(q_critical_section);
   current_n_floating_threads = n_floating_threads;
+  current_max_n_floating_threads = max_n_floating_threads;
   max_n_floating_threads = new_limit;
   CRITICAL_SECTION_LEAVE(q_critical_section);
 
@@ -550,10 +552,22 @@ groonga_set_thread_limit(uint32_t new_limit, void *data)
     if (is_reduced) {
       break;
     }
+    if (ctx && ctx->rc == GRN_CANCEL) {
+      CRITICAL_SECTION_ENTER(q_critical_section);
+      max_n_floating_threads = current_max_n_floating_threads;
+      CRITICAL_SECTION_LEAVE(q_critical_section);
+      break;
+    }
     grn_nanosleep(1000000);
   }
 
   GRN_ATOMIC_ADD_EX(&n_changing_threads, -1, prev_n_changing_threads);
+}
+
+static void
+groonga_set_thread_limit(uint32_t new_limit, void *data)
+{
+  groonga_set_thread_limit_with_ctx(NULL, new_limit, data);
 }
 
 typedef struct {
@@ -3571,6 +3585,7 @@ main(int argc, char **argv)
 
   grn_thread_set_get_limit_func(groonga_get_thread_limit, NULL);
   grn_thread_set_set_limit_func(groonga_set_thread_limit, NULL);
+  grn_thread_set_set_limit_with_ctx_func(groonga_set_thread_limit_with_ctx, NULL);
 
   if (output_fd_arg) {
     const char * const end = output_fd_arg + strlen(output_fd_arg);
