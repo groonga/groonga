@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3772,7 +3773,7 @@ proc_thread_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   grn_obj *max_bulk;
   uint32_t current_limit;
 
-  current_limit = grn_thread_get_limit();
+  current_limit = grn_thread_get_limit_with_ctx(ctx);
   GRN_OUTPUT_INT64(current_limit);
 
   max_bulk = VAR(0);
@@ -3798,7 +3799,7 @@ proc_thread_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
           max_text);
       return NULL;
     }
-    grn_thread_set_limit(max);
+    grn_thread_set_limit_with_ctx(ctx, max);
   }
 
   return NULL;
@@ -3811,7 +3812,7 @@ proc_database_unmap(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_rc rc;
   uint32_t current_limit;
 
-  current_limit = grn_thread_get_limit();
+  current_limit = grn_thread_get_limit_with_ctx(ctx);
   if (current_limit != 1) {
     ERR(GRN_OPERATION_NOT_PERMITTED,
         "[database_unmap] the max number of threads must be 1: <%u>",

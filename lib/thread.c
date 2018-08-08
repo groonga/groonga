@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2015 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,6 +24,11 @@ static void *get_limit_func_data = NULL;
 static grn_thread_set_limit_func set_limit_func = NULL;
 static void *set_limit_func_data = NULL;
 
+static grn_thread_get_limit_with_ctx_func get_limit_with_ctx_func = NULL;
+static void *get_limit_with_ctx_func_data = NULL;
+static grn_thread_set_limit_with_ctx_func set_limit_with_ctx_func = NULL;
+static void *set_limit_with_ctx_func_data = NULL;
+
 uint32_t
 grn_thread_get_limit(void)
 {
@@ -43,6 +49,26 @@ grn_thread_set_limit(uint32_t new_limit)
   set_limit_func(new_limit, set_limit_func_data);
 }
 
+uint32_t
+grn_thread_get_limit_with_ctx(grn_ctx *ctx)
+{
+  if (get_limit_with_ctx_func) {
+    return get_limit_with_ctx_func(ctx, get_limit_with_ctx_func_data);
+  } else {
+    return grn_thread_get_limit();
+  }
+}
+
+void
+grn_thread_set_limit_with_ctx(grn_ctx *ctx, uint32_t new_limit)
+{
+  if (set_limit_with_ctx_func) {
+    set_limit_with_ctx_func(ctx, new_limit, set_limit_func_data);
+  } else {
+    grn_thread_set_limit(new_limit);
+  }
+}
+
 void
 grn_thread_set_get_limit_func(grn_thread_get_limit_func func,
                               void *data)
@@ -56,4 +82,20 @@ grn_thread_set_set_limit_func(grn_thread_set_limit_func func, void *data)
 {
   set_limit_func = func;
   set_limit_func_data = data;
+}
+
+void
+grn_thread_set_get_limit_with_ctx_func(grn_thread_get_limit_with_ctx_func func,
+                                       void *data)
+{
+  get_limit_with_ctx_func = func;
+  get_limit_with_ctx_func_data = data;
+}
+
+void
+grn_thread_set_set_limit_with_ctx_func(grn_thread_set_limit_with_ctx_func func,
+                                       void *data)
+{
+  set_limit_with_ctx_func = func;
+  set_limit_with_ctx_func_data = data;
 }

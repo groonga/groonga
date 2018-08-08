@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2016 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -26,14 +27,16 @@
 static mrb_value
 thread_get_limit(mrb_state *mrb, mrb_value self)
 {
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
   uint32_t limit;
-  limit = grn_thread_get_limit();
+  limit = grn_thread_get_limit_with_ctx(ctx);
   return mrb_fixnum_value(limit);
 }
 
 static mrb_value
 thread_set_limit(mrb_state *mrb, mrb_value self)
 {
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
   mrb_int limit;
 
   mrb_get_args(mrb, "i", &limit);
@@ -42,7 +45,7 @@ thread_set_limit(mrb_state *mrb, mrb_value self)
                "thread limit must be 1 or larger: %S",
                mrb_fixnum_value(limit));
   }
-  grn_thread_set_limit(limit);
+  grn_thread_set_limit_with_ctx(ctx, limit);
   return mrb_nil_value();
 }
 

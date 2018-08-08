@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2015-2016 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -26,6 +27,9 @@ extern "C" {
 GRN_API uint32_t grn_thread_get_limit(void);
 GRN_API void grn_thread_set_limit(uint32_t new_limit);
 
+GRN_API uint32_t grn_thread_get_limit_with_ctx(grn_ctx *ctx);
+GRN_API void grn_thread_set_limit_with_ctx(grn_ctx *ctx, uint32_t new_limit);
+
 
 typedef uint32_t (*grn_thread_get_limit_func)(void *data);
 GRN_API void grn_thread_set_get_limit_func(grn_thread_get_limit_func func,
@@ -33,6 +37,17 @@ GRN_API void grn_thread_set_get_limit_func(grn_thread_get_limit_func func,
 typedef void (*grn_thread_set_limit_func)(uint32_t new_limit, void *data);
 GRN_API void grn_thread_set_set_limit_func(grn_thread_set_limit_func func,
                                            void *data);
+
+typedef uint32_t (*grn_thread_get_limit_with_ctx_func)(grn_ctx *ctx,
+                                                       void *data);
+GRN_API void
+grn_thread_set_get_limit_with_ctx_func(grn_thread_get_limit_with_ctx_func func,
+                                       void *data);
+typedef void (*grn_thread_set_limit_with_ctx_func)(grn_ctx *ctx,
+                                                   uint32_t new_limit,
+                                                   void *data);
+GRN_API void grn_thread_set_set_limit_with_ctx_func(grn_thread_set_limit_with_ctx_func func,
+                                                    void *data);
 
 #ifdef __cplusplus
 }
