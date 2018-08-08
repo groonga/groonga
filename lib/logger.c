@@ -450,7 +450,7 @@ grn_logger_putv(grn_ctx *ctx,
                      "%s%08x", prefix, (uint32_t)pthread_self());
 #elif defined(WIN32) /* HAVE_PTHREAD_H */
         grn_snprintf(lbuf_current, lbuf_rest_size, lbuf_rest_size,
-                     "%s%08x", prefix, (uint32_t)GetCurrentThread());
+                     "%s%08x", prefix, GetCurrentThread());
 #endif /* HAVE_PTHREAD_H */
         lbuf_size = strlen(lbuf_current);
         lbuf_current += lbuf_size;
