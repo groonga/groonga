@@ -1,0 +1,5 @@
+#@on-error omit
+tokenize \
+  'TokenMecab("chunked_tokenize", true, "chunk_size_threshold", 30)' \
+  '日本のエンジンとエンジン'
+#@on-error default

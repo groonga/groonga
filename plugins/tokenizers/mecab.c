@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -38,15 +39,20 @@ static grn_plugin_mutex *sole_mecab_mutex = NULL;
 static grn_encoding sole_mecab_encoding = GRN_ENC_NONE;
 
 static grn_bool grn_mecab_chunked_tokenize_enabled = GRN_FALSE;
-static int grn_mecab_chunk_size_threshold = 8192;
+static int32_t grn_mecab_chunk_size_threshold = 8192;
 
 typedef struct {
+  grn_bool chunked_tokenize;
+  int32_t chunk_size_threshold;
+} grn_mecab_tokenizer_options;
+
+typedef struct {
+  grn_mecab_tokenizer_options *options;
   mecab_t *mecab;
   grn_obj buf;
   const char *next;
   const char *end;
   grn_tokenizer_query *query;
-  grn_tokenizer_token token;
 } grn_mecab_tokenizer;
 
 static const char *
@@ -91,6 +97,62 @@ get_mecab_encoding(mecab_t *mecab)
     encoding = translate_mecab_charset_to_grn_encoding(charset);
   }
   return encoding;
+}
+
+static void
+mecab_tokenizer_options_init(grn_mecab_tokenizer_options *options)
+{
+  options->chunked_tokenize = grn_mecab_chunked_tokenize_enabled;
+  options->chunk_size_threshold = grn_mecab_chunk_size_threshold;
+}
+
+static void *
+mecab_tokenizer_options_open(grn_ctx *ctx,
+                             grn_obj *lexicon,
+                             grn_obj *raw_options,
+                             void *user_data)
+{
+  grn_mecab_tokenizer_options *options;
+
+  options = GRN_PLUGIN_MALLOC(ctx, sizeof(grn_mecab_tokenizer_options));
+  if (!options) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_NO_MEMORY_AVAILABLE,
+                     "[tokenizer][mecab] "
+                     "failed to allocate memory for options");
+    return NULL;
+  }
+
+  mecab_tokenizer_options_init(options);
+
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+    grn_raw_string name_raw;
+    name_raw.value = name;
+    name_raw.length = name_length;
+
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "chunked_tokenize")) {
+      options->chunked_tokenize =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->chunked_tokenize);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "chunk_size_threshold")) {
+      options->chunk_size_threshold =
+        grn_vector_get_element_int32(ctx,
+                                     raw_options,
+                                     i,
+                                     options->chunk_size_threshold);
+    }
+  } GRN_OPTION_VALUES_EACH_END();
+
+  return options;
+}
+
+static void
+mecab_tokenizer_options_close(grn_ctx *ctx, void *data)
+{
+  grn_mecab_tokenizer_options *options = data;
+  GRN_PLUGIN_FREE(ctx, options);
 }
 
 static grn_inline grn_bool
@@ -196,7 +258,7 @@ chunked_tokenize_utf8(grn_ctx *ctx,
   grn_encoding encoding =
     grn_tokenizer_query_get_encoding(ctx, tokenizer->query);
 
-  if (string_bytes < grn_mecab_chunk_size_threshold) {
+  if (string_bytes < tokenizer->options->chunk_size_threshold) {
     return chunked_tokenize_utf8_chunk(ctx,
                                        tokenizer,
                                        string,
@@ -243,7 +305,7 @@ chunked_tokenize_utf8(grn_ctx *ctx,
       last_delimiter = current;
     }
 
-    if ((current - chunk_start) >= grn_mecab_chunk_size_threshold) {
+    if ((current - chunk_start) >= tokenizer->options->chunk_size_threshold) {
       grn_bool succeeded;
       if (last_delimiter) {
         succeeded = chunked_tokenize_utf8_chunk(ctx,
@@ -353,17 +415,32 @@ mecab_create(grn_ctx *ctx)
   The return value of this function is ignored. When an error occurs in this
   function, `ctx->rc' is overwritten with an error code (not GRN_SUCCESS).
  */
-static grn_obj *
-mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+static void *
+mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
 {
+  grn_obj *lexicon;
   grn_mecab_tokenizer *tokenizer;
-  unsigned int normalizer_flags = 0;
-  grn_tokenizer_query *query;
 
-  query = grn_tokenizer_query_open(ctx, nargs, args, normalizer_flags);
-  if (!query) {
+  lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
+
+  if (!(tokenizer = GRN_PLUGIN_MALLOC(ctx, sizeof(grn_mecab_tokenizer)))) {
+    GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                     "[tokenizer][mecab] "
+                     "memory allocation to grn_mecab_tokenizer failed");
     return NULL;
   }
+
+  tokenizer->options =
+    grn_table_cache_default_tokenizer_options(ctx,
+                                              lexicon,
+                                              mecab_tokenizer_options_open,
+                                              mecab_tokenizer_options_close,
+                                              NULL);
+  if (ctx->rc != GRN_SUCCESS) {
+    GRN_PLUGIN_FREE(ctx, tokenizer);
+    return NULL;
+  }
+
   if (!sole_mecab) {
     grn_plugin_mutex_lock(ctx, sole_mecab_mutex);
     if (!sole_mecab) {
@@ -375,14 +452,14 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     grn_plugin_mutex_unlock(ctx, sole_mecab_mutex);
   }
   if (!sole_mecab) {
-    grn_tokenizer_query_close(ctx, query);
+    GRN_PLUGIN_FREE(ctx, tokenizer);
     return NULL;
   }
 
   {
     grn_encoding encoding = grn_tokenizer_query_get_encoding(ctx, query);
     if (encoding != sole_mecab_encoding) {
-      grn_tokenizer_query_close(ctx, query);
+      GRN_PLUGIN_FREE(ctx, tokenizer);
       GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                        "[tokenizer][mecab] "
                        "MeCab dictionary charset (%s) does not match "
@@ -393,13 +470,6 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     }
   }
 
-  if (!(tokenizer = GRN_PLUGIN_MALLOC(ctx, sizeof(grn_mecab_tokenizer)))) {
-    grn_tokenizer_query_close(ctx, query);
-    GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                     "[tokenizer][mecab] "
-                     "memory allocation to grn_mecab_tokenizer failed");
-    return NULL;
-  }
   tokenizer->mecab = sole_mecab;
   tokenizer->query = query;
 
@@ -424,7 +494,8 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     } else {
       grn_bool succeeded;
       grn_plugin_mutex_lock(ctx, sole_mecab_mutex);
-      if (grn_mecab_chunked_tokenize_enabled && ctx->encoding == GRN_ENC_UTF8) {
+      if (tokenizer->options->chunked_tokenize &&
+          ctx->encoding == GRN_ENC_UTF8) {
         succeeded = chunked_tokenize_utf8(ctx,
                                           tokenizer,
                                           normalized_string,
@@ -448,7 +519,6 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       }
       grn_plugin_mutex_unlock(ctx, sole_mecab_mutex);
       if (!succeeded) {
-        grn_tokenizer_query_close(ctx, tokenizer->query);
         GRN_PLUGIN_FREE(ctx, tokenizer);
         return NULL;
       }
@@ -467,30 +537,40 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       }
     }
   }
-  user_data->ptr = tokenizer;
 
-  grn_tokenizer_token_init(ctx, &(tokenizer->token));
-
-  return NULL;
+  return tokenizer;
 }
 
 /*
   This function returns tokens one by one.
  */
-static grn_obj *
-mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+static void
+mecab_next(grn_ctx *ctx,
+           grn_tokenizer_query *query,
+           grn_token *token,
+           void *user_data)
 {
-  /* grn_obj *table = args[0]; */
-  grn_mecab_tokenizer *tokenizer = user_data->ptr;
+  grn_mecab_tokenizer *tokenizer = user_data;
   grn_encoding encoding = tokenizer->query->encoding;
 
   if (tokenizer->query->have_tokenized_delimiter) {
+    grn_tokenizer_token tokenizer_token;
+    grn_tokenizer_token_init(ctx, &tokenizer_token);
+    /* TODO: Need grn_token version. */
     tokenizer->next =
       grn_tokenizer_tokenized_delimiter_next(ctx,
-                                             &(tokenizer->token),
+                                             &tokenizer_token,
                                              tokenizer->next,
                                              tokenizer->end - tokenizer->next,
                                              encoding);
+    grn_token_set_data(ctx,
+                       token,
+                       GRN_TEXT_VALUE(&(tokenizer_token.str)),
+                       GRN_TEXT_LEN(&(tokenizer_token.str)));
+    grn_token_set_status(ctx,
+                         token,
+                         GRN_UINT32_VALUE(&(tokenizer_token.status)));
+    grn_tokenizer_token_fin(ctx, &tokenizer_token);
   } else {
     size_t cl;
     const char *p = tokenizer->next, *r;
@@ -523,31 +603,27 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     }
 
     if (r == e || tokenizer->next == e) {
-      status = GRN_TOKENIZER_LAST;
+      status = GRN_TOKEN_LAST;
     } else {
-      status = GRN_TOKENIZER_CONTINUE;
+      status = GRN_TOKEN_CONTINUE;
     }
-    grn_tokenizer_token_push(ctx, &(tokenizer->token), p, r - p, status);
+    grn_token_set_data(ctx, token, p, r - p);
+    grn_token_set_status(ctx, token, status);
   }
-
-  return NULL;
 }
 
 /*
   This function finalizes a tokenization.
  */
-static grn_obj *
-mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+static void
+mecab_fin(grn_ctx *ctx, void *user_data)
 {
-  grn_mecab_tokenizer *tokenizer = user_data->ptr;
+  grn_mecab_tokenizer *tokenizer = user_data;
   if (!tokenizer) {
-    return NULL;
+    return;
   }
-  grn_tokenizer_token_fin(ctx, &(tokenizer->token));
-  grn_tokenizer_query_close(ctx, tokenizer->query);
   grn_obj_unlink(ctx, &(tokenizer->buf));
   GRN_PLUGIN_FREE(ctx, tokenizer);
-  return NULL;
 }
 
 static void
@@ -635,15 +711,17 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
 grn_rc
 GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
-  grn_rc rc;
+  grn_rc rc = GRN_SUCCESS;
+  grn_obj *tokenizer;
 
-  rc = grn_tokenizer_register(ctx, "TokenMecab", 10,
-                              mecab_init, mecab_next, mecab_fin);
-  if (rc == GRN_SUCCESS) {
-    grn_obj *token_mecab;
-    token_mecab = grn_ctx_get(ctx, "TokenMecab", 10);
+  tokenizer = grn_tokenizer_create(ctx, "TokenMecab", -1);
+  if (tokenizer) {
+    grn_tokenizer_set_init_func(ctx, tokenizer, mecab_init);
+    grn_tokenizer_set_next_func(ctx, tokenizer, mecab_next);
+    grn_tokenizer_set_fin_func(ctx, tokenizer, mecab_fin);
+
     /* Just for backward compatibility. TokenMecab was built-in not plugin. */
-    if (token_mecab && grn_obj_id(ctx, token_mecab) != GRN_DB_MECAB) {
+    if (grn_obj_id(ctx, tokenizer) != GRN_DB_MECAB) {
       rc = GRN_FILE_CORRUPT;
     }
   }
