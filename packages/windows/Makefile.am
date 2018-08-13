@@ -42,6 +42,7 @@ prepare-build:
 	  echo "MEMORY_DEBUG_BUILD='$(MEMORY_DEBUG_BUILD)'";	\
 	  echo "ARCHITECTURES='$(ARCHITECTURES)'";		\
 	) > tmp/env.sh
+	cp $(top_srcdir)/bundled_lz4_version tmp/
 	cp $(top_srcdir)/bundled_message_pack_version tmp/
 	docker build					\
 	  --tag groonga/windows-build			\
