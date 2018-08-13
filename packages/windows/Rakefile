@@ -133,12 +133,13 @@ namespace :build do
     tmp_dir = base_tmp_dir + "lz4"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
-    lz4_version = "r126"
+    lz4_version_path = base_dir + "tmp" + "bundled_lz4_version"
+    lz4_version = lz4_version_path.read.strip
     lz4_base = "lz4-#{lz4_version}"
     lz4_tar_gz_url_base =
-      "https://github.com/Cyan4973/lz4/archive"
+      "https://github.com/lz4/lz4/archive"
     lz4_tar_gz_url =
-      "#{lz4_tar_gz_url_base}/#{lz4_version}.tar.gz"
+      "#{lz4_tar_gz_url_base}/v#{lz4_version}.tar.gz"
     lz4_tar_gz = download(lz4_tar_gz_url, download_dir)
     cp(lz4_tar_gz, source_dir)
     Dir.chdir(tmp_dir) do
