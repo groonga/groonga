@@ -485,7 +485,7 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
                               &normalized_string_length,
                               NULL);
     GRN_TEXT_INIT(&(tokenizer->buf), 0);
-    if (query->have_tokenized_delimiter) {
+    if (grn_tokenizer_query_have_tokenized_delimiter(ctx, query)) {
       tokenizer->next = normalized_string;
       tokenizer->end = tokenizer->next + normalized_string_length;
     } else if (normalized_string_length == 0) {
@@ -553,7 +553,7 @@ mecab_next(grn_ctx *ctx,
   grn_mecab_tokenizer *tokenizer = user_data;
   grn_encoding encoding = tokenizer->query->encoding;
 
-  if (tokenizer->query->have_tokenized_delimiter) {
+  if (grn_tokenizer_query_have_tokenized_delimiter(ctx, tokenizer->query)) {
     grn_tokenizer_token tokenizer_token;
     grn_tokenizer_token_init(ctx, &tokenizer_token);
     /* TODO: Need grn_token version. */
