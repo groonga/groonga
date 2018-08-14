@@ -2,6 +2,8 @@ notifications:
   email:
     recipients:
       - groonga-commit@lists.osdn.me
+  webhooks:
+    - https://webhook.commit-email.info/
 
 language: cpp
 
