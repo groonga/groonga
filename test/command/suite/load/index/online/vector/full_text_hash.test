@@ -1,13 +1,13 @@
 table_create Users TABLE_NO_KEY
-column_create Users name COLUMN_VECTOR ShortText
+column_create Users names COLUMN_VECTOR ShortText
 
 table_create Words TABLE_HASH_KEY --key_type ShortText \
   --default_tokenizer TokenBigramSplitSymbolAlpha
-column_create Words users_name COLUMN_INDEX|WITH_POSITION|WITH_SECTION Users name
+column_create Words users_name COLUMN_INDEX|WITH_POSITION|WITH_SECTION Users names
 
 load --table Users
 [
-["name"],
+["names"],
 [["Alice", "Bob"]],
 [["Bob"]]
 ]

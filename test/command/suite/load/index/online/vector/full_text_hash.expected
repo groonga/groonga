@@ -1,14 +1,14 @@
 table_create Users TABLE_NO_KEY
 [[0,0.0,0.0],true]
-column_create Users name COLUMN_VECTOR ShortText
+column_create Users names COLUMN_VECTOR ShortText
 [[0,0.0,0.0],true]
 table_create Words TABLE_HASH_KEY --key_type ShortText   --default_tokenizer TokenBigramSplitSymbolAlpha
 [[0,0.0,0.0],true]
-column_create Words users_name COLUMN_INDEX|WITH_POSITION|WITH_SECTION Users name
+column_create Words users_name COLUMN_INDEX|WITH_POSITION|WITH_SECTION Users names
 [[0,0.0,0.0],true]
 load --table Users
 [
-["name"],
+["names"],
 [["Alice", "Bob"]],
 [["Bob"]]
 ]
@@ -31,7 +31,7 @@ select Users --match_columns "Words.users_name[1]" --query Bob
           "UInt32"
         ],
         [
-          "name",
+          "names",
           "ShortText"
         ]
       ],
