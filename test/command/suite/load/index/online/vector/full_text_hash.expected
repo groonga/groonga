@@ -1,0 +1,47 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+table_create Words TABLE_HASH_KEY --key_type ShortText   --default_tokenizer TokenBigramSplitSymbolAlpha
+[[0,0.0,0.0],true]
+column_create Words users_name COLUMN_INDEX|WITH_POSITION|WITH_SECTION Users name
+[[0,0.0,0.0],true]
+load --table Users
+[
+["name"],
+[["Alice", "Bob"]],
+[["Bob"]]
+]
+[[0,0.0,0.0],2]
+select Users --match_columns "Words.users_name[1]" --query Bob
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        [
+          "Alice",
+          "Bob"
+        ]
+      ]
+    ]
+  ]
+]
