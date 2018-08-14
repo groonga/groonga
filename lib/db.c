@@ -2276,9 +2276,13 @@ grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id)
 {
   grn_rc rc;
   GRN_API_ENTER;
+  rc = ctx->rc;
   GRN_TABLE_LOCK_BEGIN(ctx, table) {
     rc = _grn_table_delete_by_id(ctx, table, id, NULL);
   } GRN_TABLE_LOCK_END(ctx, table);
+  if (rc == GRN_SUCCESS && ctx->rc != GRN_SUCCESS) {
+    rc = ctx->rc;
+  }
   if (rc == GRN_SUCCESS) {
     grn_obj_touch(ctx, table, NULL);
   }
