@@ -824,9 +824,9 @@ module Groonga
                 return
               end
             end
-          rescue
+          rescue => error
             result_set.close
-            raise
+            raise error
           end
 
           if n_matched_records <= @context.current_offset

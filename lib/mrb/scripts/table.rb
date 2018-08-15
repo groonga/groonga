@@ -28,9 +28,9 @@ module Groonga
         sorted = Array.create("", self)
         begin
           sort_raw(sort_keys, offset, limit, sorted)
-        rescue Exception
+        rescue Exception => error
           sorted.close
-          raise
+          raise error
         end
         sorted
       end
