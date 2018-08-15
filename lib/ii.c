@@ -281,8 +281,7 @@ segment_get(grn_ctx *ctx, grn_ii *ii)
       for (pseg = 0; pseg < max_segment && used[pseg]; pseg++) ;
       GRN_FREE(used);
       ii->header->pnext = pmax + 1;
-    } else
-    if (ii->header->pnext < ii->seg->header->max_segment) {
+    } else if (ii->header->pnext < ii->seg->header->max_segment) {
       ii->header->pnext++;
     }
   }
