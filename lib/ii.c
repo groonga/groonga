@@ -3461,7 +3461,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
     DEFINE_NAME(ii);
     CRIT(GRN_FILE_CORRUPT,
          "[ii][buffer][flush] invalid segment: "
-         "<%.*s> :"
+         "<%.*s>: "
          "request:<%u>, max:<%u>",
          name_size, name,
          seg, ii->seg->header->max_segment);
@@ -3470,7 +3470,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
   if ((ds = segment_get(ctx, ii)) == ii->seg->header->max_segment) {
     DEFINE_NAME(ii);
     MERR("[ii][buffer][flush] segment is full: "
-         "<%.*s> :"
+         "<%.*s>: "
          "request:<%u>, max:<%u>",
          name_size, name,
          seg, ii->seg->header->max_segment);
@@ -3480,7 +3480,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
   if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
     DEFINE_NAME(ii);
     MERR("[ii][buffer][flush] failed to open buffer: "
-         "<%.*s> :"
+         "<%.*s>: "
          "segment:<%u>, position:<%u>, max:<%u>",
          name_size, name,
          seg, SEG2POS(seg, 0), ii->seg->header->max_segment);
