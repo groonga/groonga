@@ -231,6 +231,7 @@ AC_CONFIG_FILES([
   lib/mrb/scripts/Makefile
   lib/mrb/scripts/command_line/Makefile
   lib/mrb/scripts/context/Makefile
+  lib/mrb/scripts/expression_rewriters/Makefile
   lib/mrb/scripts/expression_tree/Makefile
   lib/mrb/scripts/initialize/Makefile
   lib/mrb/scripts/logger/Makefile
@@ -247,7 +248,6 @@ AC_CONFIG_FILES([
   plugins/token_filters/Makefile
   plugins/sharding/Makefile
   plugins/functions/Makefile
-  plugins/expression_rewriters/Makefile
   examples/Makefile
   examples/dictionary/Makefile
   examples/dictionary/edict/Makefile

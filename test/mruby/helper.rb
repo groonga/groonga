@@ -11,6 +11,22 @@ class GroongaTestCase < Test::Unit::TestCase
 
   setup :setup_sandbox, :before => :prepend
   teardown :teardown_sandbox, :after => :append
+
+  setup do |&test|
+    change_env("GRN_EXPR_OPTIMIZE", "yes") do
+      test.call
+    end
+  end
+
+  def change_env(key, value)
+    current_value = ENV[key]
+    begin
+      ENV[key] = value
+      yield
+    ensure
+      ENV[key] = current_value
+    end
+  end
 end
 
 class QueryOptimizerTestCase < GroongaTestCase

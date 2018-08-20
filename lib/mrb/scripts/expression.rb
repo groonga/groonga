@@ -1,5 +1,8 @@
 require "expression_rewriter"
 require "expression_rewriters"
+if ENV["GRN_EXPR_OPTIMIZE"] == "yes"
+  require "expression_rewriters/optimizer"
+end
 
 require "expression_tree_builder"
 
@@ -14,7 +17,6 @@ module Groonga
     def rewrite
       rewritten = nil
       begin
-        return nil unless ExpressionRewriters.enabled?
         source = self
         ExpressionRewriters.classes.each do |rewriter_class|
           rewriter = rewriter_class.new(source)

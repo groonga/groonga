@@ -1,6 +1,7 @@
 SUBDIRS =					\
 	command_line				\
 	context					\
+	expression_rewriters			\
 	expression_tree				\
 	initialize				\
 	logger					\

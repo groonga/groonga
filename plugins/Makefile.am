@@ -5,8 +5,7 @@ SUBDIRS =					\
 	ruby					\
 	token_filters				\
 	sharding				\
-	functions				\
-	expression_rewriters
+	functions
 
 EXTRA_DIST =					\
 	CMakeLists.txt

@@ -1,12 +1,6 @@
 class TestAndOrder < ExpressionRewriterTestCase
   def setup
     Groonga::Schema.define do |schema|
-      schema.create_table("expression_rewriters",
-                          :type => :hash,
-                          :key_type => :short_text) do |table|
-        table.text("plugin_name")
-      end
-
       schema.create_table("Logs") do |table|
         table.time("created_at")
         table.time("updated_at")
@@ -19,10 +13,6 @@ class TestAndOrder < ExpressionRewriterTestCase
         table.index("Logs.updated_at")
       end
     end
-
-    @rewriters = Groonga["expression_rewriters"]
-    @rewriters.add("optimizer",
-                   :plugin_name => "expression_rewriters/optimizer")
 
     @logs = Groonga["Logs"]
     setup_logs

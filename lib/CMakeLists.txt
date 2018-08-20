@@ -153,6 +153,24 @@ if(GRN_WITH_MRUBY)
     FILES ${CONTEXT_RUBY_SCRIPTS}
     DESTINATION "${GRN_RELATIVE_RUBY_SCRIPTS_DIR}/context")
 
+  read_file_list(
+    ${CMAKE_CURRENT_SOURCE_DIR}/mrb/scripts/expression_rewriters/sources.am
+    EXPRESSION_REWRITERS_RUBY_SCRIPTS)
+  string(REGEX REPLACE "([^;]+)" "mrb/scripts/expression_rewriters/\\1"
+    EXPRESSION_REWRITERS_RUBY_SCRIPTS "${EXPRESSION_REWRITERS_RUBY_SCRIPTS}")
+  install(
+    FILES ${EXPRESSION_REWRITERS_RUBY_SCRIPTS}
+    DESTINATION "${GRN_RELATIVE_RUBY_SCRIPTS_DIR}/expression_rewriters")
+
+  read_file_list(
+    ${CMAKE_CURRENT_SOURCE_DIR}/mrb/scripts/expression_tree/sources.am
+    EXPRESSION_TREE_RUBY_SCRIPTS)
+  string(REGEX REPLACE "([^;]+)" "mrb/scripts/expression_tree/\\1"
+    EXPRESSION_TREE_RUBY_SCRIPTS "${EXPRESSION_TREE_RUBY_SCRIPTS}")
+  install(
+    FILES ${EXPRESSION_TREE_RUBY_SCRIPTS}
+    DESTINATION "${GRN_RELATIVE_RUBY_SCRIPTS_DIR}/expression_tree")
+
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/scripts/initialize/sources.am
     INITIALIZE_RUBY_SCRIPTS)
   string(REGEX REPLACE "([^;]+)" "mrb/scripts/initialize/\\1"
@@ -176,12 +194,4 @@ if(GRN_WITH_MRUBY)
   install(
     FILES ${QUERY_LOGGER_RUBY_SCRIPTS}
     DESTINATION "${GRN_RELATIVE_RUBY_SCRIPTS_DIR}/query_logger")
-
-  read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/scripts/expression_tree/sources.am
-    EXPRESSION_TREE_RUBY_SCRIPTS)
-  string(REGEX REPLACE "([^;]+)" "mrb/scripts/expression_tree/\\1"
-    EXPRESSION_TREE_RUBY_SCRIPTS "${EXPRESSION_TREE_RUBY_SCRIPTS}")
-  install(
-    FILES ${EXPRESSION_TREE_RUBY_SCRIPTS}
-    DESTINATION "${GRN_RELATIVE_RUBY_SCRIPTS_DIR}/expression_tree")
 endif()
