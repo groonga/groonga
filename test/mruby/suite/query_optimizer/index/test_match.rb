@@ -187,13 +187,13 @@ class TestIndexMatch < QueryOptimizerTestCase
   logical_op: <or>
   index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
   query:      <"Rroonga">
-  expr:       <3..5>
+  expr:       <0..2>
 [1]
   op:         <match>
   logical_op: <and>
   index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
   query:      <"Groonga">
-  expr:       <0..2>
+  expr:       <3..5>
 [2]
   op:         <match>
   logical_op: <and_not>
