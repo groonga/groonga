@@ -45,6 +45,10 @@ module Groonga
       Operator::ADJUST,
     ]
 
+    UNARY_OPERATIONS = [
+      Operator::NOT,
+    ]
+
     def initialize(expression)
       @expression = expression
     end
@@ -66,6 +70,10 @@ module Groonga
           right = stack.pop
           left = stack.pop
           node = ExpressionTree::BinaryOperation.new(code.op, left, right)
+          stack.push(node)
+        when *UNARY_OPERATIONS
+          value = stack.pop
+          node = ExpressionTree::UnaryOperation.new(code.op, value)
           stack.push(node)
         when Operator::GET_VALUE
           node = ExpressionTree::Variable.new(code.value)

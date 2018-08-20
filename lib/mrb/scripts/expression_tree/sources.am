@@ -7,4 +7,5 @@ RUBY_SCRIPT_FILES =				\
 	logical_operation.rb			\
 	options.rb				\
 	procedure.rb				\
+	unary_operation.rb			\
 	variable.rb
