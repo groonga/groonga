@@ -7438,18 +7438,13 @@ grn_expr_syntax_escape_query(grn_ctx *ctx, const char *query, int query_size,
 grn_rc
 grn_expr_dump_plan(grn_ctx *ctx, grn_obj *expr, grn_obj *buffer)
 {
-  int n;
-  scan_info **sis;
+  grn_scanner *scanner;
 
   GRN_API_ENTER;
-  sis = grn_scan_info_build(ctx, expr, &n, GRN_OP_OR, GRN_FALSE);
-  if (sis) {
-    int i;
-    grn_inspect_scan_info_list(ctx, buffer, sis, n);
-    for (i = 0; i < n; i++) {
-      SI_FREE(sis[i]);
-    }
-    GRN_FREE(sis);
+  scanner = grn_scanner_open(ctx, expr, GRN_OP_OR, GRN_FALSE);
+  if (scanner) {
+    grn_inspect_scan_info_list(ctx, buffer, scanner->sis, scanner->n_sis);
+    grn_scanner_close(ctx, scanner);
   } else {
     GRN_TEXT_PUTS(ctx, buffer, "sequential search\n");
   }
