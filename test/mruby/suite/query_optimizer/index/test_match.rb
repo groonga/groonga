@@ -158,8 +158,6 @@ class TestIndexMatch < QueryOptimizerTestCase
     end
 
     def test_and
-      omit("AND only expression is processed in C for now. " +
-           "We should reconsider about it. (Optimize in C or mruby?)")
       filter = "(message @ 'Groonga') && (message @ 'Rroonga')"
       assert_equal(<<-DUMP, dump_plan(filter))
 [0]
@@ -167,13 +165,13 @@ class TestIndexMatch < QueryOptimizerTestCase
   logical_op: <or>
   index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
   query:      <"Rroonga">
-  expr:       <3..5>
+  expr:       <0..2>
 [1]
   op:         <match>
   logical_op: <and>
   index:      <[#<column:index Terms.Logs_message range:Logs sources:[Logs.message] flags:POSITION>]>
   query:      <"Groonga">
-  expr:       <0..2>
+  expr:       <3..5>
       DUMP
     end
 
