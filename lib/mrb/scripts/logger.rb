@@ -49,8 +49,10 @@ module Groonga
       backtrace.each_with_index do |raw_entry, i|
         entry = BacktraceEntry.parse(raw_entry)
         message = entry.message
-        message = raw_entry if message.empty?
-        log(log_level, entry.file, entry.line, entry.method, raw_entry)
+        if message.empty? and entry.file.empty?
+          message = raw_entry
+        end
+        log(log_level, entry.file, entry.line, entry.method, message)
       end
     end
   end
