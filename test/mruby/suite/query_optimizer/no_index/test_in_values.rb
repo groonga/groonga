@@ -18,7 +18,7 @@ class TestInValues < QueryOptimizerTestCase
   def test_only
     code =
       "tag == 'run' || tag == 'crash' || tag == 'shutdown'"
-    assert_equal(<<-DUMP, dump_rewritten_plan(code))
+    assert_equal(<<-DUMP, dump_plan(code))
 [0]
   op:         <call>
   logical_op: <or>
@@ -34,7 +34,7 @@ class TestInValues < QueryOptimizerTestCase
   def test_combined
     code =
       "tag != 'error' && (tag == 'run' || tag == 'crash' || tag == 'shutdown')"
-    assert_equal(<<-DUMP, dump_rewritten_plan(code))
+    assert_equal(<<-DUMP, dump_plan(code))
 [0]
   op:         <not_equal>
   logical_op: <or>

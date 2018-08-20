@@ -26,7 +26,7 @@ class TestBetween < QueryOptimizerTestCase
     code =
       "timestamp >= '2015-10-01 00:00:00' && " +
       "timestamp <  '2015-11-00 00:00:00'"
-    assert_equal(<<-DUMP, dump_rewritten_plan(code))
+    assert_equal(<<-DUMP, dump_plan(code))
 [0]
   op:         <call>
   logical_op: <or>
@@ -46,7 +46,7 @@ class TestBetween < QueryOptimizerTestCase
       "1 == 1 && " +
       "true && " +
       "timestamp >= '2015-10-01 00:00:00'"
-    assert_equal(<<-DUMP, dump_rewritten_plan(code))
+    assert_equal(<<-DUMP, dump_plan(code))
 [0]
   op:         <call>
   logical_op: <or>
@@ -77,7 +77,7 @@ class TestBetween < QueryOptimizerTestCase
       "between(timestamp, '2015-09-01 00:00:00', 'include', '2015-10-15 00:00:00', 'include') && " +
       "timestamp >= '2015-10-01 00:00:00' && " +
       "timestamp <  '2015-11-00 00:00:00'"
-    assert_equal(<<-DUMP, dump_rewritten_plan(code))
+    assert_equal(<<-DUMP, dump_plan(code))
 [0]
   op:         <call>
   logical_op: <or>
@@ -106,7 +106,7 @@ class TestBetween < QueryOptimizerTestCase
       "Terms.Logs_message @ 'Groonga' && " +
       "timestamp >= '2015-10-01 00:00:00' && " +
       "timestamp <  '2015-11-00 00:00:00'"
-    assert_equal(<<-DUMP, dump_rewritten_plan(code))
+    assert_equal(<<-DUMP, dump_plan(code))
 [0]
   op:         <match>
   logical_op: <or>
@@ -131,7 +131,7 @@ class TestBetween < QueryOptimizerTestCase
       "Terms.Logs_message.message @ 'Groonga' && " +
       "timestamp >= '2015-10-01 00:00:00' && " +
       "timestamp <  '2015-11-00 00:00:00'"
-    assert_equal(<<-DUMP, dump_rewritten_plan(code))
+    assert_equal(<<-DUMP, dump_plan(code))
 [0]
   op:         <match>
   logical_op: <or>
@@ -156,7 +156,7 @@ class TestBetween < QueryOptimizerTestCase
       "fuzzy_search(message, 'roonga', {\"max_distance\": 1}) && " +
       "timestamp >= '2015-10-01 00:00:00' && " +
       "timestamp <  '2015-11-00 00:00:00'"
-    assert_equal(<<-DUMP, dump_rewritten_plan(code))
+    assert_equal(<<-DUMP, dump_plan(code))
 [0]
   op:         <call>
   logical_op: <or>

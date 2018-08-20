@@ -44,7 +44,7 @@ class TestAndOrder < QueryOptimizerTestCase
     code =
       "created_at <= '2015-10-01 00:00:00' && " +
       "updated_at >= '2015-10-03 00:00:00'"
-    assert_equal(<<-DUMP, dump_rewritten_plan(code))
+    assert_equal(<<-DUMP, dump_plan(code))
 [0]
   op:         <greater_equal>
   logical_op: <or>

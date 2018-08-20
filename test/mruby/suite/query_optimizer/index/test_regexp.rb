@@ -36,7 +36,7 @@ class TestRegexp < QueryOptimizerTestCase
 
   def test_and
     filter = "(message @~ 'Groonga') && (message @~ 'Rroonga')"
-    assert_equal(<<-DUMP, dump_rewritten_plan(filter))
+    assert_equal(<<-DUMP, dump_plan(filter))
 [0]
   op:         <regexp>
   logical_op: <or>
