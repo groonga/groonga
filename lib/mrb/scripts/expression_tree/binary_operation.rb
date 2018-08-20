@@ -22,10 +22,21 @@ module Groonga
         Operator::LESS_EQUAL,
         Operator::GREATER_EQUAL,
       ]
+      QUERY_OPERATIONS = [
+        Operator::MATCH,
+        Operator::NEAR,
+        Operator::NEAR2,
+        Operator::SIMILAR,
+        Operator::EXACT,
+        Operator::REGEXP,
+        Operator::FUZZY,
+      ]
       def estimate_size(table)
         case @operator
         when *RANGE_OPERATORS
           estimate_size_range(table)
+        when *QUERY_OPERATIONS
+          estimate_size_query(table)
         else
           table.size
         end
@@ -61,6 +72,20 @@ module Groonga
         TableCursor.open(lexicon, options) do |cursor|
           index_column.estimate_size(:lexicon_cursor => cursor)
         end
+      end
+
+      def estimate_size_query(table)
+        return table.size unless @left.is_a?(Variable)
+        return table.size unless @right.is_a?(Constant)
+
+        column = @left.column
+        value = @right.value
+        index_info = column.find_index(@operator)
+        return table.size if index_info.nil?
+
+        index_column = index_info.index
+        index_column.estimate_size(:query => value,
+                                   :mode => @operator)
       end
     end
   end
