@@ -1,4 +1,4 @@
-class TestInValues < ExpressionRewriterTestCase
+class TestInValues < QueryOptimizerTestCase
   def setup
     Groonga::Schema.define do |schema|
       schema.create_table("Events") do |table|
