@@ -69,6 +69,18 @@ logger_need_log_p(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+logger_need_location_in_message_p(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  if (grn_logger_is_default_logger(ctx)) {
+    return mrb_bool_value(!(grn_default_logger_get_flags() & GRN_LOG_LOCATION));
+  } else {
+    return mrb_true_value();
+  }
+}
+
+static mrb_value
 logger_log_raw(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -112,6 +124,8 @@ grn_mrb_logger_init(grn_ctx *ctx)
                               logger_s_get_default_level, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "need_log?", logger_need_log_p, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "need_location_in_message?",
+                    logger_need_location_in_message_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "log_raw", logger_log_raw, MRB_ARGS_REQ(5));
 
   grn_mrb_load(ctx, "logger/level.rb");
