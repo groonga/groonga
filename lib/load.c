@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -308,19 +309,58 @@ parse_id_value(grn_ctx *ctx, grn_obj *value)
 }
 
 static void
+bracket_close_set_values(grn_ctx *ctx,
+                         grn_loader *loader,
+                         grn_id id,
+                         grn_obj *key,
+                         grn_obj *value,
+                         uint32_t n_values)
+{
+  uint32_t i;
+  grn_obj **columns; /* Columns except _id and _key. */
+
+  columns = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
+  for (i = 0; i < n_values; i++, value = values_next(ctx, value)) {
+    grn_obj *column;
+
+    if (i == loader->id_offset || i == loader->key_offset) {
+      /* Skip _id and _key, because it's already used to get id. */
+       continue;
+    }
+    column = *columns;
+    if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
+      set_vector(ctx, column, id, value);
+    } else if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
+      set_weight_vector(ctx, column, id, value);
+    } else {
+      grn_obj_set_value(ctx, column, id, value, GRN_OBJ_SET);
+    }
+    if (ctx->rc != GRN_SUCCESS) {
+      char column_name[GRN_TABLE_MAX_KEY_SIZE];
+      unsigned int column_name_size;
+      grn_loader_save_error(ctx, loader);
+      column_name_size = grn_obj_name(ctx, column, column_name,
+                                      GRN_TABLE_MAX_KEY_SIZE);
+      report_set_column_value_failure(ctx, key,
+                                      column_name, column_name_size,
+                                      value);
+      loader->n_column_errors++;
+      ERRCLR(ctx);
+    }
+    columns++;
+  }
+}
+
+static void
 bracket_close(grn_ctx *ctx, grn_loader *loader)
 {
   grn_id id = GRN_ID_NIL;
-  grn_obj *value, *value_end, *id_value = NULL, *key_value = NULL;
-  grn_obj *col, **cols; /* Columns except _id and _key. */
+  grn_obj *value, *value_end, *key = NULL;
   uint32_t i, begin;
-  uint32_t ncols;   /* Number of columns except _id and _key. */
   uint32_t nvalues; /* Number of values in brackets. */
   uint32_t depth;
   grn_bool is_record_load = GRN_FALSE;
 
-  cols = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
-  ncols = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
   GRN_UINT32_POP(&loader->level, begin);
   value = (grn_obj *)GRN_TEXT_VALUE(&loader->values) + begin;
   value_end = (grn_obj *)GRN_TEXT_VALUE(&loader->values) + loader->values_size;
@@ -345,6 +385,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
     for (i = 0; i < nvalues; i++) {
       const char *col_name;
       unsigned int col_name_size;
+      grn_obj *col;
       if (value->header.domain != GRN_DB_TEXT) {
         grn_obj buffer;
         GRN_TEXT_INIT(&buffer, 0);
@@ -438,7 +479,8 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
      */
     id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
   } else {
-    uint32_t expected_nvalues = ncols;
+    uint32_t expected_nvalues =
+      GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
     if (loader->id_offset != -1 || loader->key_offset != -1) {
       expected_nvalues++;
     }
@@ -450,14 +492,14 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
       goto exit;
     }
     if (loader->id_offset != -1) {
-      id_value = value + loader->id_offset;
-      id = parse_id_value(ctx, id_value);
+      grn_obj *id_bulk = value + loader->id_offset;
+      id = parse_id_value(ctx, id_bulk);
       if (grn_table_at(ctx, loader->table, id) == GRN_ID_NIL) {
         id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
       }
     } else if (loader->key_offset != -1) {
-      key_value = value + loader->key_offset;
-      id = loader_add(ctx, key_value);
+      key = value + loader->key_offset;
+      id = loader_add(ctx, key);
     } else {
       id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
     }
@@ -467,33 +509,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
     goto exit;
   }
 
-  for (i = 0; i < nvalues; i++, value = values_next(ctx, value)) {
-    if (i == loader->id_offset || i == loader->key_offset) {
-       /* Skip _id and _key, because it's already used to get id. */
-       continue;
-    }
-    col = *cols;
-    if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
-      set_vector(ctx, col, id, value);
-    } else if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
-      set_weight_vector(ctx, col, id, value);
-    } else {
-      grn_obj_set_value(ctx, col, id, value, GRN_OBJ_SET);
-    }
-    if (ctx->rc != GRN_SUCCESS) {
-      char column_name[GRN_TABLE_MAX_KEY_SIZE];
-      unsigned int column_name_size;
-      grn_loader_save_error(ctx, loader);
-      column_name_size = grn_obj_name(ctx, col, column_name,
-                                      GRN_TABLE_MAX_KEY_SIZE);
-      report_set_column_value_failure(ctx, key_value,
-                                      column_name, column_name_size,
-                                      value);
-      loader->n_column_errors++;
-      ERRCLR(ctx);
-    }
-    cols++;
-  }
+  bracket_close_set_values(ctx, loader, id, key, value, nvalues);
   if (loader->each) {
     grn_obj *v = grn_expr_get_var_by_offset(ctx, loader->each, 0);
     GRN_RECORD_SET(ctx, v, id);
