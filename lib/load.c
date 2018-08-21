@@ -545,11 +545,70 @@ exit:
 }
 
 static void
+brace_close_set_values(grn_ctx *ctx,
+                       grn_loader *loader,
+                       grn_id id,
+                       grn_obj *key,
+                       grn_obj *values_begin,
+                       grn_obj *values_end)
+{
+  grn_obj *value;
+
+  for (value = values_begin;
+       value + 1 < values_end;
+       value = values_next(ctx, value)) {
+    const char *name = GRN_TEXT_VALUE(value);
+    unsigned int name_size = GRN_TEXT_LEN(value);
+    grn_obj *column;
+    value++;
+    if (name_equal(name, name_size, GRN_COLUMN_NAME_ID) ||
+        name_equal(name, name_size, GRN_COLUMN_NAME_KEY)) {
+      /* Skip _id and _key, because it's already used to get id. */
+      continue;
+    }
+    column = grn_obj_column(ctx, loader->table, name, name_size);
+    if (!column) {
+      GRN_LOG(ctx, GRN_LOG_ERROR, "invalid column('%.*s')",
+              (int)name_size,
+              name);
+      /* Automatic column creation is disabled. */
+      /*
+      if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
+        grn_obj *v = value + 1;
+        col = grn_column_create(ctx, loader->table, name, name_size,
+                                NULL, GRN_OBJ_PERSISTENT|GRN_OBJ_COLUMN_VECTOR,
+                                grn_ctx_at(ctx, v->header.domain));
+      } else {
+        col = grn_column_create(ctx, loader->table, name, name_size,
+                                NULL, GRN_OBJ_PERSISTENT,
+                                grn_ctx_at(ctx, value->header.domain));
+      }
+      */
+    } else {
+      if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
+        set_vector(ctx, column, id, value);
+      } else if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
+        set_weight_vector(ctx, column, id, value);
+      } else {
+        grn_obj_set_value(ctx, column, id, value, GRN_OBJ_SET);
+      }
+      if (ctx->rc != GRN_SUCCESS) {
+        grn_loader_save_error(ctx, loader);
+        report_set_column_value_failure(ctx, key, name, name_size, value);
+        loader->n_column_errors++;
+        ERRCLR(ctx);
+      }
+      grn_obj_unlink(ctx, column);
+    }
+  }
+}
+
+static void
 brace_close(grn_ctx *ctx, grn_loader *loader)
 {
   grn_id id = GRN_ID_NIL;
   grn_obj *value, *value_begin, *value_end;
-  grn_obj *id_value = NULL, *key_value = NULL;
+  grn_obj *id_bulk = NULL, *key = NULL;
   uint32_t begin;
 
   GRN_UINT32_POP(&loader->level, begin);
@@ -582,28 +641,28 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
     }
     value++;
     if (name_equal(name, name_size, GRN_COLUMN_NAME_ID)) {
-      if (id_value || key_value) {
+      if (id_bulk || key) {
         if (loader->table->header.type == GRN_TABLE_NO_KEY) {
           GRN_LOG(ctx, GRN_LOG_ERROR, "duplicated '_id' column");
           goto exit;
         } else {
           GRN_LOG(ctx, GRN_LOG_ERROR,
                   "duplicated key columns: %s and %s",
-                  id_value ? GRN_COLUMN_NAME_ID : GRN_COLUMN_NAME_KEY,
+                  id_bulk ? GRN_COLUMN_NAME_ID : GRN_COLUMN_NAME_KEY,
                   GRN_COLUMN_NAME_ID);
           goto exit;
         }
       }
-      id_value = value;
+      id_bulk = value;
     } else if (name_equal(name, name_size, GRN_COLUMN_NAME_KEY)) {
-      if (id_value || key_value) {
+      if (id_bulk || key) {
         GRN_LOG(ctx, GRN_LOG_ERROR,
                 "duplicated key columns: %s and %s",
-                id_value ? GRN_COLUMN_NAME_ID : GRN_COLUMN_NAME_KEY,
+                id_bulk ? GRN_COLUMN_NAME_ID : GRN_COLUMN_NAME_KEY,
                 GRN_COLUMN_NAME_KEY);
         goto exit;
       }
-      key_value = value;
+      key = value;
     }
   }
 
@@ -612,29 +671,29 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_DAT_KEY :
     /* The target table requires _id or _key. */
-    if (!id_value && !key_value) {
+    if (!id_bulk && !key) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "neither _key nor _id is assigned");
       goto exit;
     }
     break;
   default :
     /* The target table does not have _key. */
-    if (key_value) {
+    if (key) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "nonexistent key value");
       goto exit;
     }
     break;
   }
 
-  if (id_value) {
-    id = parse_id_value(ctx, id_value);
+  if (id_bulk) {
+    id = parse_id_value(ctx, id_bulk);
     if (grn_table_at(ctx, loader->table, id) == GRN_ID_NIL) {
       if (ctx->rc == GRN_SUCCESS) {
         id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
       }
     }
-  } else if (key_value) {
-    id = loader_add(ctx, key_value);
+  } else if (key) {
+    id = loader_add(ctx, key);
   } else {
     id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
   }
@@ -643,51 +702,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
     goto exit;
   }
 
-  for (value = value_begin; value + 1 < value_end;
-       value = values_next(ctx, value)) {
-    grn_obj *col;
-    const char *name = GRN_TEXT_VALUE(value);
-    unsigned int name_size = GRN_TEXT_LEN(value);
-    value++;
-    if (value == id_value || value == key_value) {
-      /* Skip _id and _key, because it's already used to get id. */
-      continue;
-    }
-    col = grn_obj_column(ctx, loader->table, name, name_size);
-    if (!col) {
-      GRN_LOG(ctx, GRN_LOG_ERROR, "invalid column('%.*s')",
-              (int)name_size, name);
-      /* Automatic column creation is disabled. */
-      /*
-      if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
-        grn_obj *v = value + 1;
-        col = grn_column_create(ctx, loader->table, name, name_size,
-                                NULL, GRN_OBJ_PERSISTENT|GRN_OBJ_COLUMN_VECTOR,
-                                grn_ctx_at(ctx, v->header.domain));
-      } else {
-        col = grn_column_create(ctx, loader->table, name, name_size,
-                                NULL, GRN_OBJ_PERSISTENT,
-                                grn_ctx_at(ctx, value->header.domain));
-      }
-      */
-    } else {
-      if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
-        set_vector(ctx, col, id, value);
-      } else if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
-        set_weight_vector(ctx, col, id, value);
-      } else {
-        grn_obj_set_value(ctx, col, id, value, GRN_OBJ_SET);
-      }
-      if (ctx->rc != GRN_SUCCESS) {
-        grn_loader_save_error(ctx, loader);
-        report_set_column_value_failure(ctx, key_value,
-                                        name, name_size, value);
-        loader->n_column_errors++;
-        ERRCLR(ctx);
-      }
-      grn_obj_unlink(ctx, col);
-    }
-  }
+  brace_close_set_values(ctx, loader, id, key, value_begin, value_end);
   if (loader->each) {
     value = grn_expr_get_var_by_offset(ctx, loader->each, 0);
     GRN_RECORD_SET(ctx, value, id);
