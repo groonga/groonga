@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -360,6 +361,12 @@ grn_logger_set(grn_ctx *ctx, const grn_logger *logger)
     current_logger = default_logger;
   }
   return GRN_SUCCESS;
+}
+
+grn_bool
+grn_logger_is_default_logger(grn_ctx *ctx)
+{
+  return current_logger.log == default_logger.log;
 }
 
 void

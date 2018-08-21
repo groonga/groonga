@@ -1,5 +1,6 @@
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1086,6 +1087,8 @@ GRN_API void grn_logger_putv(grn_ctx *ctx,
 GRN_API void grn_logger_reopen(grn_ctx *ctx);
 
 GRN_API grn_bool grn_logger_pass(grn_ctx *ctx, grn_log_level level);
+
+GRN_API grn_bool grn_logger_is_default_logger(grn_ctx *ctx);
 
 #ifndef GRN_LOG_DEFAULT_LEVEL
 # define GRN_LOG_DEFAULT_LEVEL GRN_LOG_NOTICE
