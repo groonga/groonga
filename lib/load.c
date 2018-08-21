@@ -313,14 +313,17 @@ bracket_close_set_values(grn_ctx *ctx,
                          grn_loader *loader,
                          grn_id id,
                          grn_obj *key,
-                         grn_obj *value,
+                         grn_obj *values,
                          uint32_t n_values)
 {
   uint32_t i;
+  grn_obj *value;
   grn_obj **columns; /* Columns except _id and _key. */
 
   columns = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
-  for (i = 0; i < n_values; i++, value = values_next(ctx, value)) {
+  for (i = 0, value = values;
+       i < n_values;
+       i++, value = values_next(ctx, value)) {
     grn_obj *column;
 
     if (i == loader->id_offset || i == loader->key_offset) {
@@ -355,15 +358,18 @@ static void
 bracket_close(grn_ctx *ctx, grn_loader *loader)
 {
   grn_id id = GRN_ID_NIL;
-  grn_obj *value, *value_end, *key = NULL;
+  grn_obj *value_begin, *value_end;
+  grn_obj *value;
+  grn_obj *key = NULL;
   uint32_t i, begin;
   uint32_t nvalues; /* Number of values in brackets. */
   uint32_t depth;
   grn_bool is_record_load = GRN_FALSE;
 
   GRN_UINT32_POP(&loader->level, begin);
-  value = (grn_obj *)GRN_TEXT_VALUE(&loader->values) + begin;
+  value_begin = (grn_obj *)GRN_TEXT_VALUE(&loader->values) + begin;
   value_end = (grn_obj *)GRN_TEXT_VALUE(&loader->values) + loader->values_size;
+  value = value_begin;
   GRN_ASSERT(value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET);
   GRN_UINT32_SET(ctx, value, loader->values_size - begin - 1);
   value++;
