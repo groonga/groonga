@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -514,6 +515,13 @@ ngram_init_raw(grn_ctx *ctx,
     const char *normalized_raw;
     unsigned int normalized_length_in_bytes;
     unsigned int normalized_length_in_chars;
+    const unsigned char *start;
+    const unsigned char *next;
+    const unsigned char *end;
+    unsigned int n_chars;
+    const uint_least8_t *ctypes;
+    const int16_t *checks;
+    const uint64_t *offsets;
 
     string = grn_tokenizer_query_get_normalized_string(ctx, tokenizer->query);
     grn_string_get_normalized(ctx,
@@ -521,17 +529,25 @@ ngram_init_raw(grn_ctx *ctx,
                               &normalized_raw,
                               &normalized_length_in_bytes,
                               &normalized_length_in_chars);
-    tokenizer->start = (const unsigned char *)normalized_raw;
-    tokenizer->next = tokenizer->start;
-    tokenizer->end = tokenizer->start + normalized_length_in_bytes;
-    tokenizer->n_chars = normalized_length_in_chars;
-    tokenizer->ctypes = grn_string_get_types(ctx, string);
-    tokenizer->checks = grn_string_get_checks(ctx, string);
-    tokenizer->offsets = grn_string_get_offsets(ctx, string);
-  }
-
-  if (grn_tokenizer_query_get_mode(ctx, tokenizer->query) == GRN_TOKEN_GET) {
-    ngram_switch_to_loose_mode(ctx, tokenizer);
+    tokenizer->start = start = (const unsigned char *)normalized_raw;
+    tokenizer->next = next = tokenizer->start;
+    tokenizer->end = end = tokenizer->start + normalized_length_in_bytes;
+    tokenizer->n_chars = n_chars = normalized_length_in_chars;
+    tokenizer->ctypes = ctypes = grn_string_get_types(ctx, string);
+    tokenizer->checks = checks = grn_string_get_checks(ctx, string);
+    tokenizer->offsets = offsets = grn_string_get_offsets(ctx, string);
+    if (grn_tokenizer_query_get_mode(ctx, tokenizer->query) == GRN_TOKEN_GET) {
+      ngram_switch_to_loose_mode(ctx, tokenizer);
+      if (tokenizer->n_chars == 0) {
+        tokenizer->start = start;
+        tokenizer->next = next;
+        tokenizer->end = end;
+        tokenizer->n_chars = n_chars;
+        tokenizer->ctypes = ctypes;
+        tokenizer->checks = checks;
+        tokenizer->offsets = offsets;
+      }
+    }
   }
 
   return tokenizer;

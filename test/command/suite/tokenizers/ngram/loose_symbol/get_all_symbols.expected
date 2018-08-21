@@ -1,0 +1,25 @@
+tokenize   'TokenNgram("loose_symbol", true)'   "? ? ?"   NormalizerAuto   --mode GET
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "?",
+      "position": 0,
+      "force_prefix": false
+    },
+    {
+      "value": "?",
+      "position": 1,
+      "force_prefix": false
+    },
+    {
+      "value": "?",
+      "position": 2,
+      "force_prefix": false
+    }
+  ]
+]

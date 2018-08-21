@@ -1,0 +1,5 @@
+tokenize \
+  'TokenNgram("loose_symbol", true)' \
+  "? ? ?" \
+  NormalizerAuto \
+  --mode GET
