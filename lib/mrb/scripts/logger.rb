@@ -38,7 +38,6 @@ module Groonga
         file = first_entry.file
         line = first_entry.line
         method = first_entry.method
-        # message = "#{file}:#{line}:#{method}: #{message}"
       else
         file = ""
         line = 0
@@ -48,12 +47,20 @@ module Groonga
 
       backtrace.each_with_index do |raw_entry, i|
         entry = BacktraceEntry.parse(raw_entry)
-        message = entry.message
-        if message.empty? and entry.file.empty?
+        if use_raw_entry_as_message?(entry)
           message = raw_entry
+        else
+          message = entry.message
         end
         log(log_level, entry.file, entry.line, entry.method, message)
       end
+    end
+
+    private
+    def use_raw_entry_as_message?(entry)
+      return false unless entry.message.empty?
+      return true if entry.file.empty?
+      need_location_in_message?
     end
   end
 end
