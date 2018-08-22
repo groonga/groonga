@@ -914,6 +914,8 @@ if test "x$with_lz4" != "xno"; then
       AC_MSG_ERROR("No liblz4 found")
     fi
   fi
+else
+  GRN_WITH_LZ4=no
 fi
 
 # Zstandard
@@ -938,6 +940,8 @@ if test "x$with_zstd" != "xno"; then
       AC_MSG_ERROR("No libzstd found")
     fi
   fi
+else
+  GRN_WITH_ZSTD=no
 fi
 
 # jemalloc
@@ -1795,6 +1799,16 @@ echo "  MessagePack:           $message_pack_available"
 if test "x$message_pack_available" = "xyes"; then
   echo "    CFLAGS:              ${MESSAGE_PACK_CFLAGS}"
   echo "    LIBS:                ${MESSAGE_PACK_LIBS}"
+fi
+echo "  LZ4:                   $GRN_WITH_LZ4"
+if test "x$GRN_WITH_LZ4" = "xyes"; then
+  echo "    CFLAGS:              ${LIBLZ4_CFLAGS}"
+  echo "    LIBS:                ${LIBLZ4_LIBS}"
+fi
+echo "  Zstandard:             $GRN_WITH_ZSTD"
+if test "x$GRN_WITH_ZSTD" = "xyes"; then
+  echo "    CFLAGS:              ${LIBZSTD_CFLAGS}"
+  echo "    LIBS:                ${LIBZSTD_LIBS}"
 fi
 echo "  mruby:                 $enable_mruby"
 echo "  jemalloc:              $jemalloc_available"
