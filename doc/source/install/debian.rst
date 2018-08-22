@@ -23,14 +23,12 @@ Add the Groonga apt repository.
 
 /etc/apt/sources.list.d/groonga.list::
 
-  deb https://packages.groonga.org/debian/ stretch main
-  deb-src https://packages.groonga.org/debian/ stretch main
+  deb [signed-by=/usr/share/keyrings/groonga-archive-keyring.gpg] https://packages.groonga.org/debian/ stretch main
+  deb-src [signed-by=/usr/share/keyrings/groonga-archive-keyring.gpg] https://packages.groonga.org/debian/ stretch main
 
 Install::
 
-  % sudo apt install -y -V apt-transport-https
-  % sudo apt update --allow-insecure-repositories
-  % sudo apt install -y -V --allow-unauthenticated groonga-keyring
+  % sudo wget -O /usr/share/keyrings/groonga-archive-keyring.gpg https://packages.groonga.org/debian/groonga-archive-keyring.gpg
   % sudo apt update
   % sudo apt install -y -V groonga
 
