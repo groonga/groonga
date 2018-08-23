@@ -1,0 +1,14 @@
+table_create Items TABLE_NO_KEY
+
+load --table Items
+[
+{},
+{}
+]
+
+select Items \
+  --columns[invalid].stage initial \
+  --columns[invalid].type UInt32 \
+  --columns[invalid].flags COLUMN_SCALAR \
+  --columns[invalid].value '"0garbage"' \
+  --sort_keys _id

@@ -6422,8 +6422,12 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
     grn_obj buf;\
     GRN_VOID_INIT(&buf);\
     rc = grn_aton(ctx, str, str_end, &rest, &buf);\
-    if (!rc) {\
-      rc = grn_obj_cast(ctx, &buf, dest, add_record_if_not_exist);\
+    if (rc == GRN_SUCCESS) {\
+      if (rest == str_end) {\
+        rc = grn_obj_cast(ctx, &buf, dest, add_record_if_not_exist);\
+      } else {\
+        rc = GRN_INVALID_ARGUMENT;\
+      }\
     }\
     GRN_OBJ_FIN(ctx, &buf);\
   } else {\
