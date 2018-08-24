@@ -47,6 +47,10 @@ upload: ensure-rsync-path
 	     dists pool $(RSYNC_PATH)/$${distribution});	\
 	done
 
+upload-archive-keyring: archive-keyring
+	rsync -avz --progress $(KEYRING_FILE) $(RSYNC_PATH)/debian/
+	rsync -avz --progress tmp/$(KEYRING_BASE_NAME).tar.gz $(RSYNC_PATH)/source/groonga-keyring/
+
 build: build-package-deb build-keyring-deb
 
 run-vagrant:
