@@ -429,7 +429,7 @@ fi
 %dir %{_libdir}/groonga/scripts/ruby
 %dir %{_libdir}/groonga/scripts/ruby/command_line
 %dir %{_libdir}/groonga/scripts/ruby/context
-%dir %{_libdir}/groonga/scripts/ruby/expression_rewriteres
+%dir %{_libdir}/groonga/scripts/ruby/expression_rewriters
 %dir %{_libdir}/groonga/scripts/ruby/expression_tree
 %dir %{_libdir}/groonga/scripts/ruby/initialize
 %dir %{_libdir}/groonga/scripts/ruby/logger
