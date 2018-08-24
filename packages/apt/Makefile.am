@@ -74,9 +74,6 @@ tmp/$(PACKAGE)-$(VERSION).tar.gz: $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.
 	cp $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz $@
 
 
-build-keyring-deb: prepare-build-keyring-deb
-	$(MAKE) run-vagrant
-
 keyring-source: tmp/$(KEYRING_BASE_NAME).tar.gz
 
 ensure-public-key:
@@ -94,13 +91,6 @@ tmp/$(KEYRING_BASE_NAME).tar.gz: ensure-public-key
 	  $(KEYRING_BASE_NAME)/groonga-keyring-rsa4096.gpg
 	mkdir -p tmp/
 	tar cvzf tmp/$(KEYRING_BASE_NAME).tar.gz $(KEYRING_BASE_NAME)
-
-prepare-build-keyring-deb: keyring-source
-	echo "PACKAGE=$(KEYRING_PACKAGE)" > tmp/env.sh
-	echo "VERSION=$(KEYRING_VERSION)" >> tmp/env.sh
-	echo "DEPENDED_PACKAGES='gnupg'" >> tmp/env.sh
-	rm -rf tmp/debian
-	cp -a $(srcdir)/debian/ tmp/
 
 archive-keyring: keyring-source
 	rm -f $(KEYRING_FILE)
