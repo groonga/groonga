@@ -5,6 +5,7 @@ CODE_NAMES = stretch
 KEYRING_PACKAGE = groonga-keyring
 KEYRING_VERSION = 2018.01.29
 KEYRING_BASE_NAME = $(KEYRING_PACKAGE)-$(KEYRING_VERSION)
+KEYRING_FILE = groonga-archive-keyring.gpg
 
 all:
 
@@ -100,3 +101,13 @@ prepare-build-keyring-deb: keyring-source
 	echo "DEPENDED_PACKAGES='gnupg'" >> tmp/env.sh
 	rm -rf tmp/debian
 	cp -a $(srcdir)/debian/ tmp/
+
+archive-keyring: keyring-source
+	rm -f $(KEYRING_FILE)
+	touch $(KEYRING_FILE)
+	gpg --no-default-keyring \
+	  --keyring ./$(KEYRING_FILE) \
+	  --import $(KEYRING_BASE_NAME)/groonga-keyring.gpg
+	gpg --no-default-keyring \
+	  --keyring ./$(KEYRING_FILE) \
+	  --import $(KEYRING_BASE_NAME)/groonga-keyring-rsa4096.gpg
