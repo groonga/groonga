@@ -3090,9 +3090,14 @@ grn_expr_executor_init_simple_condition_ra(grn_ctx *ctx,
   executor->data.simple_condition_ra.exec = grn_operator_to_exec_func(op);
 
   constant_buffer = &(executor->data.simple_condition_ra.constant_buffer);
-  GRN_VOID_INIT(constant_buffer);
-  grn_obj_reinit_for(ctx, constant_buffer, target);
-  grn_obj_cast(ctx, constant, constant_buffer, GRN_FALSE);
+  if (grn_obj_is_reference_column(ctx, target)) {
+    GRN_OBJ_INIT(constant_buffer, GRN_BULK, 0, constant->header.domain);
+    grn_obj_cast(ctx, constant, constant_buffer, GRN_FALSE);
+  } else {
+    GRN_VOID_INIT(constant_buffer);
+    grn_obj_reinit_for(ctx, constant_buffer, target);
+    grn_obj_cast(ctx, constant, constant_buffer, GRN_FALSE);
+  }
 }
 
 static grn_bool
@@ -3150,7 +3155,7 @@ grn_expr_executor_is_simple_condition_ra(grn_ctx *ctx,
     return GRN_FALSE;
   }
 
-  {
+  if (!grn_obj_is_reference_column(ctx, target->value)) {
     grn_obj constant_buffer;
     grn_rc rc;
     GRN_VOID_INIT(&constant_buffer);

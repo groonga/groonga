@@ -1,0 +1,14 @@
+table_create types TABLE_PAT_KEY ShortText
+
+table_create memos TABLE_HASH_KEY ShortText
+column_create memos type COLUMN_SCALAR types
+
+load --table memos
+[
+{"_key": "a", "type": "10"},
+{"_key": "b", "type": "20"},
+{"_key": "c", "type": "30"}
+]
+
+select memos \
+  --filter 'type >= "20"'
