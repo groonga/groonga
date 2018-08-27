@@ -17,9 +17,10 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "grn_load.h"
 #include "grn_ctx_impl.h"
 #include "grn_db.h"
+#include "grn_load.h"
+#include "grn_obj.h"
 #include "grn_util.h"
 
 static void
@@ -531,8 +532,17 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
     goto exit;
   }
 
-  bracket_close_set_values(ctx, loader, id, key, value, nvalues);
-  grn_loader_apply_each(ctx, loader, id);
+  if (loader->lock_table) {
+    GRN_TABLE_LOCK_BEGIN(ctx, loader->table) {
+      if (grn_table_at(ctx, loader->table, id) == id) {
+        bracket_close_set_values(ctx, loader, id, key, value, nvalues);
+        grn_loader_apply_each(ctx, loader, id);
+      }
+    } GRN_TABLE_LOCK_END(ctx, table);
+  } else {
+    bracket_close_set_values(ctx, loader, id, key, value, nvalues);
+    grn_loader_apply_each(ctx, loader, id);
+  }
   loader->nrecords++;
 exit:
   if (is_record_load) {
@@ -722,8 +732,17 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
     goto exit;
   }
 
-  brace_close_set_values(ctx, loader, id, key, value_begin, value_end);
-  grn_loader_apply_each(ctx, loader, id);
+  if (loader->lock_table) {
+    GRN_TABLE_LOCK_BEGIN(ctx, loader->table) {
+      if (grn_table_at(ctx, loader->table, id) == id) {
+        brace_close_set_values(ctx, loader, id, key, value_begin, value_end);
+        grn_loader_apply_each(ctx, loader, id);
+      }
+    } GRN_TABLE_LOCK_END(ctx, loader->table);
+  } else {
+    brace_close_set_values(ctx, loader, id, key, value_begin, value_end);
+    grn_loader_apply_each(ctx, loader, id);
+  }
   loader->nrecords++;
 exit:
   if (ctx->rc != GRN_SUCCESS) {
@@ -1246,6 +1265,7 @@ grn_load_internal(grn_ctx *ctx, grn_load_input *input)
     }
     loader->output_ids = input->output_ids;
     loader->output_errors = input->output_errors;
+    loader->lock_table = input->lock_table;
   } else {
     if (!loader->table) {
       ERR(GRN_INVALID_ARGUMENT, "mandatory \"table\" parameter is absent");
@@ -1297,6 +1317,7 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
     input.each.length = each_len;
     input.output_ids = GRN_FALSE;
     input.output_errors = GRN_FALSE;
+    input.lock_table = GRN_FALSE;
     input.emit_level = 1;
     grn_load_internal(ctx, &input);
   }

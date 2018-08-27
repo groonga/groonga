@@ -178,6 +178,10 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                                      user_data,
                                                      "output_errors", -1,
                                                      GRN_FALSE);
+  input.lock_table = grn_plugin_proc_get_var_bool(ctx,
+                                                  user_data,
+                                                  "lock_table", -1,
+                                                  GRN_FALSE);
   input.emit_level = 1;
 
   grn_load_internal(ctx, &input);
@@ -4063,7 +4067,8 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
   DEF_VAR(vars[5], "each");
   DEF_VAR(vars[6], "output_ids");
   DEF_VAR(vars[7], "output_errors");
-  DEF_COMMAND("load", proc_load, 8, vars);
+  DEF_VAR(vars[8], "lock_table");
+  DEF_COMMAND("load", proc_load, 9, vars);
 
   DEF_COMMAND("status", proc_status, 0, vars);
 

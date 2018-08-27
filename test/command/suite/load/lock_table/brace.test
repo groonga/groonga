@@ -1,0 +1,11 @@
+# This test case does test nothing about locked...
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos content COLUMN_SCALAR Text
+
+load --table Memos --lock_table yes
+[
+{"_key": "Groonga", "content": "Fast full text search engine!"}
+]
+
+select Memos

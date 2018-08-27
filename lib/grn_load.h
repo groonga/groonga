@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -36,6 +37,7 @@ typedef struct grn_load_input_ {
   grn_raw_string each;
   grn_bool output_ids;
   grn_bool output_errors;
+  grn_bool lock_table;
   uint32_t emit_level;
 } grn_load_input;
 

@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -92,6 +93,7 @@ typedef struct {
   char errbuf[GRN_CTX_MSGSIZE];
   grn_bool output_ids;
   grn_bool output_errors;
+  grn_bool lock_table;
 } grn_loader;
 
 #define GRN_CTX_N_SEGMENTS 512
