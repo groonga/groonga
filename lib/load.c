@@ -309,6 +309,22 @@ parse_id_value(grn_ctx *ctx, grn_obj *value)
 }
 
 static void
+grn_loader_apply_each(grn_ctx *ctx,
+                      grn_loader *loader,
+                      grn_id id)
+{
+  grn_obj *var;
+
+  if (!loader->each) {
+    return;
+  }
+
+  var = grn_expr_get_var_by_offset(ctx, loader->each, 0);
+  GRN_RECORD_SET(ctx, var, id);
+  grn_expr_exec(ctx, loader->each, 0);
+}
+
+static void
 bracket_close_set_values(grn_ctx *ctx,
                          grn_loader *loader,
                          grn_id id,
@@ -516,11 +532,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   }
 
   bracket_close_set_values(ctx, loader, id, key, value, nvalues);
-  if (loader->each) {
-    grn_obj *v = grn_expr_get_var_by_offset(ctx, loader->each, 0);
-    GRN_RECORD_SET(ctx, v, id);
-    grn_expr_exec(ctx, loader->each, 0);
-  }
+  grn_loader_apply_each(ctx, loader, id);
   loader->nrecords++;
 exit:
   if (is_record_load) {
@@ -711,11 +723,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
   }
 
   brace_close_set_values(ctx, loader, id, key, value_begin, value_end);
-  if (loader->each) {
-    value = grn_expr_get_var_by_offset(ctx, loader->each, 0);
-    GRN_RECORD_SET(ctx, value, id);
-    grn_expr_exec(ctx, loader->each, 0);
-  }
+  grn_loader_apply_each(ctx, loader, id);
   loader->nrecords++;
 exit:
   if (ctx->rc != GRN_SUCCESS) {
