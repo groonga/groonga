@@ -33,7 +33,7 @@ load --table Logs_20170415
 {"timestamp": "2017/04/15 02:00:00", "item": "item1", "cateogry": "Pen"}
 ]
 [[0,0.0,0.0],3]
-#|e| invalid column('cateogry')
+#|e| [load] nonexistent column: <Logs_20170415.cateogry>
 load --table Logs_20170416
 [
 {"timestamp": "2017/04/16 10:00:00", "item": "item2", "category": "Pen"},

@@ -568,7 +568,15 @@ brace_close_set_values(grn_ctx *ctx,
     }
     column = grn_obj_column(ctx, loader->table, name, name_size);
     if (!column) {
-      GRN_LOG(ctx, GRN_LOG_ERROR, "invalid column('%.*s')",
+      char table_name[GRN_TABLE_MAX_KEY_SIZE];
+      int table_name_size;
+      table_name_size = grn_obj_name(ctx,
+                                     loader->table,
+                                     table_name,
+                                     GRN_TABLE_MAX_KEY_SIZE);
+      GRN_LOG(ctx, GRN_LOG_ERROR, "[load] nonexistent column: <%.*s.%.*s>",
+              table_name_size,
+              table_name,
               (int)name_size,
               name);
       /* Automatic column creation is disabled. */
