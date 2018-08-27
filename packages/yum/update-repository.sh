@@ -24,7 +24,14 @@ run()
 
 for distribution in ${DISTRIBUTIONS}; do
     for dir in ${DESTINATION}${distribution}/*/*; do
-	test -d $dir &&	run createrepo $dir
+        case $dir in
+            repositories/centos/5*)
+                continue
+                ;;
+            *)
+                test -d $dir &&	run createrepo $dir
+                ;;
+        esac
     done;
 
     run gpg --armor --export ${GPG_UID} > \
