@@ -7,6 +7,61 @@
 News
 ====
 
+.. _release-8-0-6:
+
+Release 8.0.6 - 2018-08-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* TokenMecab: add ``chunked_tokenize`` and ``chunk_size_threshold`` options.
+
+* [optimizer] support estimation for query family expressions.
+  It will generate more effective execution plan with query family expressions such as ``column @ query", "column @~ pattern" and so on.
+
+* [optimizer] plug-in -> built-in
+  It's disabled by default for now.
+  We can enable it by defining ``GRN_EXPR_OPTIMIZE=yes environment``
+  variable or using expression_rewriters table as before.
+
+* Enable sequential search for enough filtered case by default.
+  If the current result is enough filtered, sequential search is faster than index search. If the current result has only 1% records and less than 1000 records, sequential search is used even when index search is available.
+  You can disable this feature by ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO=0.0`` environment variable.
+
+* [load] improve error message.
+  Table name is included.
+
+* [load] add ``lock_table`` option.
+  If ``--lock_table yes`` is specified, ``load`` locks the target table while updating columns and applying ``--each``.
+  This option avoids "load" and "delete" conflicts but it'll reduce load performance.
+
+* [vector_find] avoid to crash with unsupported modes
+
+Fixes
+^^^^^
+
+* [index] fix a bug that offline index construction for text vector with ``HASH_KEY``.
+  It creates index with invalid section ID.
+
+* Fix a bug that ``--match_columns 'index[0] || index[9]'`` uses wrong section.
+
+* highlighter: fix a wrong highlight bug
+  It's caused when lexicon is hash table and keyword is less than N of N-gram.
+
+* [mruby] fix a bug that real error is hidden.
+  mruby doesn't support error propagation by no argument raise.
+  https://github.com/mruby/mruby/issues/290
+
+* TokenNgram loose: fix a not found bug when query has only loose types.
+  ``highlight_html()`` with lexicon was also broken.
+
+* Fix a bug that text->number cast ignores trailing garbage.
+  "0garbage" should be cast error.
+
+* Fix an optimization bug for ``reference_column >= 'key_value'`` case
+
+
 .. _release-8-0-5:
 
 Release 8.0.5 - 2018-07-29
