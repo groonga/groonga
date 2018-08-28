@@ -385,6 +385,12 @@ func_vector_find_vector(grn_ctx *ctx,
   unsigned int n_elements = 0;
 
   exec = grn_operator_to_exec_func(mode);
+  if (!exec) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "vector_find(): unsupported mode: <%s>",
+                     grn_operator_to_string(mode));
+    return NULL;
+  }
   GRN_VOID_INIT(&element);
   n_elements = grn_vector_size(ctx, target);
   for (i = 0; i < n_elements; i++) {
@@ -457,6 +463,12 @@ func_vector_find_uvector_number(grn_ctx *ctx,
     grn_obj element;
 
     exec = grn_operator_to_exec_func(mode);
+    if (!exec) {
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "vector_find(): unsupported mode: <%s>",
+                       grn_operator_to_string(mode));
+      return NULL;
+    }
     GRN_VALUE_FIX_SIZE_INIT(&element, 0, target->header.domain);
     for (i = 0; i < n_elements; i++) {
       GRN_BULK_REWIND(&element);
@@ -498,6 +510,9 @@ func_vector_find_uvector_record(grn_ctx *ctx,
   size_t i, n_elements;
 
   if (mode != GRN_OP_EQUAL) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "vector_find(): unsupported mode: <%s>",
+                     grn_operator_to_string(mode));
     return NULL;
   }
 
@@ -567,6 +582,12 @@ func_vector_find_pvector(grn_ctx *ctx,
   unsigned int n_elements = 0;
 
   exec = grn_operator_to_exec_func(mode);
+  if (!exec) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "vector_find(): unsupported mode: <%s>",
+                     grn_operator_to_string(mode));
+    return NULL;
+  }
   elements = (grn_obj **)GRN_BULK_HEAD(target);
   n_elements = sizeof(grn_id) / GRN_BULK_VSIZE(target);
   for (i = 0; i < n_elements; i++) {
