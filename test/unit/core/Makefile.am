@@ -37,7 +37,6 @@ noinst_LTLIBRARIES =				\
 	test-function.la			\
 	test-function-edit-distance.la		\
 	test-store-ja.la			\
-	test-log.la				\
 	test-log-level.la			\
 	test-table-sort-key-from-str.la		\
 	test-inspect.la				\
