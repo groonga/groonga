@@ -18,15 +18,16 @@ Improvements
 * TokenMecab: add ``chunked_tokenize`` and ``chunk_size_threshold`` options.
 
 * [optimizer] support estimation for query family expressions.
-  It will generate more effective execution plan with query family expressions such as ``column @ query", "column @~ pattern" and so on.
+  It will generate more effective execution plan with query family expressions such as ``column @ query``, ``column @~ pattern`` and so on.
 
 * [optimizer] plug-in -> built-in
   It's disabled by default for now.
   We can enable it by defining ``GRN_EXPR_OPTIMIZE=yes environment``
-  variable or using expression_rewriters table as before.
+  variable or using ``expression_rewriters`` table as before.
 
 * Enable sequential search for enough filtered case by default.
-  If the current result is enough filtered, sequential search is faster than index search. If the current result has only 1% records and less than 1000 records, sequential search is used even when index search is available.
+  If the current result is enough filtered, sequential search is faster than index search.
+  If the current result has only 1% records and less than 1000 records, sequential search is used even when index search is available.
   You can disable this feature by ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO=0.0`` environment variable.
 
 * [load] improve error message.
@@ -34,7 +35,7 @@ Improvements
 
 * [load] add ``lock_table`` option.
   If ``--lock_table yes`` is specified, ``load`` locks the target table while updating columns and applying ``--each``.
-  This option avoids "load" and "delete" conflicts but it'll reduce load performance.
+  This option avoids ``load`` and ``delete`` conflicts but it'll reduce load performance.
 
 * [vector_find] avoid to crash with unsupported modes
 
