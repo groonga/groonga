@@ -15,7 +15,7 @@ Release 8.0.6 - 2018-08-29
 Improvements
 ^^^^^^^^^^^^
 
-* TokenMecab: add ``chunked_tokenize`` and ``chunk_size_threshold`` options.
+* [:doc:`/reference/tokenizers`][TokenMecab] add ``chunked_tokenize`` and ``chunk_size_threshold`` options.
 
 * [optimizer] support estimation for query family expressions.
   It will generate more effective execution plan with query family expressions such as ``column @ query``, ``column @~ pattern`` and so on.
@@ -47,14 +47,14 @@ Fixes
 
 * Fix a bug that ``--match_columns 'index[0] || index[9]'`` uses wrong section.
 
-* highlighter: fix a wrong highlight bug
+* [highlighter] fix a wrong highlight bug
   It's caused when lexicon is hash table and keyword is less than N of N-gram.
 
 * [mruby] fix a bug that real error is hidden.
   mruby doesn't support error propagation by no argument raise.
   https://github.com/mruby/mruby/issues/290
 
-* TokenNgram loose: fix a not found bug when query has only loose types.
+* [:doc:`/reference/tokenizers`][TokenNgram loose]: fix a not found bug when query has only loose types.
   ``highlight_html()`` with lexicon was also broken.
 
 * Fix a bug that text->number cast ignores trailing garbage.
