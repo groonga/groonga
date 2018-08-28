@@ -111,7 +111,8 @@ def execmd(command, fout):
     fout.write(formatted_command_line)
   is_load_data_end = re.match("^\]", command)
   if is_load_command:
-    return
+    if not re.search(" --values ", command):
+      return
   if not is_command and not is_load_data_end:
     return
   output_buffer = ""

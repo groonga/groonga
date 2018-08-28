@@ -1,0 +1,7 @@
+Execution example::
+
+  load --table Entries
+  [
+  {"_key": "Groonga", "content": "It's very fast!!"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 1]

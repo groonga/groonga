@@ -102,6 +102,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/target_name_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/target_name_database.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/target_name_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/load/usage_lock_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/load/usage_parameter.log \
+	$(top_srcdir)/doc/source/example/reference/commands/load/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/load/usage_standard_input.log \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_acquire/column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_acquire/database.log \
 	$(top_srcdir)/doc/source/example/reference/commands/lock_acquire/database_release.log \
@@ -1080,6 +1084,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/io_flush/target_name_column.log \
 	source/example/reference/commands/io_flush/target_name_database.log \
 	source/example/reference/commands/io_flush/target_name_table.log \
+	source/example/reference/commands/load/usage_lock_table.log \
+	source/example/reference/commands/load/usage_parameter.log \
+	source/example/reference/commands/load/usage_setup.log \
+	source/example/reference/commands/load/usage_standard_input.log \
 	source/example/reference/commands/lock_acquire/column.log \
 	source/example/reference/commands/lock_acquire/database.log \
 	source/example/reference/commands/lock_acquire/database_release.log \
