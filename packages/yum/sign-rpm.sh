@@ -38,7 +38,7 @@ run rm -rf tmp/sign-key
 
 rpms=""
 for distribution in ${DISTRIBUTIONS}; do
-    rpms="${rpms} $(find ${DESTINATION}${distribution} -name '*.rpm' | unsigned_rpms)"
+    rpms="${rpms} $(find ${DESTINATION}${distribution}/[67] -name '*.rpm' | unsigned_rpms)"
 done
 
 echo "NOTE: YOU JUST ENTER! YOU DON'T NEED TO INPUT PASSWORD!"
