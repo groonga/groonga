@@ -22,8 +22,7 @@ Improvements
 
 * [optimizer] plug-in -> built-in
   It's disabled by default for now.
-  We can enable it by defining ``GRN_EXPR_OPTIMIZE=yes environment``
-  variable or using ``expression_rewriters`` table as before.
+  We can enable it by defining ``GRN_EXPR_OPTIMIZE=yes`` environment variable or using ``expression_rewriters`` table as before.
 
 * Enable sequential search for enough filtered case by default.
   If the current result is enough filtered, sequential search is faster than index search.
