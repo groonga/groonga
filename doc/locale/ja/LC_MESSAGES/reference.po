@@ -6671,40 +6671,75 @@ msgstr ""
 "``load`` は、使用しているデータベースのテーブルにレコードを登録し、カラムの値"
 "を更新します。"
 
-msgid "``values``"
+#, fuzzy
+msgid ""
+"The required parameters are only ``values`` and ``table``. Other parameters "
+"are optional::"
+msgstr "必須の引数は ``table`` だけです。残りは省略できます::"
+
+msgid ""
+"This command is a special command. Other commands need to pass all "
+"parameters to one line but this command can accept ``values`` as followed "
+"data."
 msgstr ""
 
 msgid ""
-"Specifies values loaded to records. Values should satisfy ``input_type`` "
-"format. If you specify \"json\" as ``input_type``, you can choose a format "
-"from below:"
+"If you use command line style, you can pass ``values`` like the following::"
+msgstr ""
+
+msgid "``[...]`` is value of ``values``."
+msgstr ""
+
+msgid "If you use HTTP style, you can pass ``values`` as body::"
+msgstr ""
+
+#, fuzzy
+msgid "Here are schema definitions to show usage:"
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+#, fuzzy
+msgid "Here is an example to add records to ``Entries`` table by parameter:"
+msgstr "テーブルEntryにレコードを登録します。::"
+
+#, fuzzy
+msgid ""
+"Here is an example to add records to ``Entries`` table from standard input:"
+msgstr "テーブルEntryにレコードを登録します。::"
+
+#, fuzzy
+msgid "Here is an example to lock table while updating columns:"
+msgstr "以下は中サイズのインデックスカラムを作る例です。"
+
+msgid "This section describes all parameters. Parameters are categorized."
+msgstr ""
+"このセクションではすべての引数について説明します。引数はカテゴリわけしていま"
+"す。"
+
+msgid "``values``"
+msgstr ""
+
+#, fuzzy
+msgid "Specifies values to be loaded."
+msgstr "比較対象の値を指定します。"
+
+#, fuzzy
+msgid ""
+"Values should satisfy ``input_type`` format. If you specify ``json`` as "
+"``input_type``, you can choose a format from below:"
 msgstr ""
 "input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。\n"
 "input_typeがjsonである場合には、以下のいずれかの形式が使用できます。"
 
+msgid "Bracket style::"
+msgstr ""
+
+msgid "Brace style::"
+msgstr ""
+
+#, fuzzy
 msgid ""
-"[[COLUMN_NAME1, COLUMN_NAME2,..], [VALUE1, VALUE2,..], [VALUE1, "
-"VALUE2,..],..]"
-msgstr ""
-"[[カラム名1, カラム名2,..], [カラム値1, カラム値2,..], [カラム値1, カラム値"
-"2,..],..]"
-
-msgid "``Format 1:``"
-msgstr ""
-
-msgid ""
-"[{COLUMN_NAME1: VALUE1, COLUMN_NAME2: VALUE2}, {COLUMN_NAME1: VALUE1, "
-"COLUMN_NAME2: VALUE2},..]"
-msgstr ""
-"[{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラム"
-"名2: カラム値2},..]"
-
-msgid "``Format 2:``"
-msgstr ""
-
-msgid ""
-"``[COLUMN_NAME1, COLUMN_NAME2,..]`` format in ``Format 1`` is effective only "
-"when ``columns`` parameter isn't specified."
+"``[COLUMN_NAME1, COLUMN_NAME2, ...]`` in bracket style is effective only "
+"when ref:`load-columns` parameter isn't specified."
 msgstr ""
 "形式1の[カラム名1, カラム名2,..]の要素は ``columns`` 引数が省略された場合のみ"
 "有効です。"
@@ -6718,22 +6753,14 @@ msgstr ""
 
 msgid ""
 "If ``values`` isn't specified any values, they are read from the standard "
-"input until all opened parenthes match their closed ones. You don't have to "
-"enclose them with single-quotes or double-quotes, but if you specified "
-"values with ``values`` parameter, you should do."
+"input in command line style or body in HTTP style."
 msgstr ""
-"``values`` 引数が省略された場合には、括弧の対応が取れるまで標準入力から "
-"``values`` の値を読み取ります。引数として値を指定する場合は、文字列のエスケー"
-"プが必要ですが、標準入力から与える文字列はエスケープする必要がありません。"
-
-msgid ""
-"In following values, you also don't have to enclose any spaces (' ') with "
-"single-quotes or double-quotes."
-msgstr ""
-"続きの文字列については、空白文字(' ')をエスケープする必要はありません。"
 
 msgid "Specifies a table name you want to add records."
 msgstr "レコードを追加しようとするテーブルの名前を指定します。"
+
+msgid "There are some optional parameters."
+msgstr "いくつか省略可能な引数があります。"
 
 msgid "``columns``"
 msgstr ""
@@ -6746,11 +6773,18 @@ msgstr ""
 msgid "``ifexists``"
 msgstr ""
 
+#, fuzzy
 msgid ""
-"Specifies executed ``grn_expr`` string when the same primary key as added "
-"records already exists in your table. If ``ifexists`` specifies ``grn_expr`` "
-"string (default: true) and its value is true, values in other (all columns "
-"excluding ``_key`` column) columns is updated."
+"Specifies executed expression in :doc:`/reference/grn_expr/script_syntax` "
+"when the same primary key as added records already exists in your table."
+msgstr ""
+":doc:`/reference/grn_expr/query_syntax` で検索条件を指定します。このパラメー"
+"ターは ``select`` コマンドの ``query`` パラメーターと同じ役割です。"
+
+#, fuzzy
+msgid ""
+"If ``ifexists`` specifies expression and its value is ``true``, values in "
+"other (all columns excluding ``_key`` column) columns is updated."
 msgstr ""
 "指定した主キーに対応するレコードが既にテーブルに登録済みであった場合に実行す"
 "るscript形式の ``grn_expr`` 文字列を指定します。 ``ifexists`` に "
@@ -6760,20 +6794,90 @@ msgstr ""
 msgid "``input_type``"
 msgstr ""
 
-msgid "Specifies an input format for ``values``. It supports JSON only."
+#, fuzzy
+msgid ""
+"Specifies an input format for ``values``. It supports only ``json`` for now. "
+"It means format of ``values`` is JSON."
 msgstr "入力形式を指定します。JSONのみに対応しています。"
 
-msgid "Here is an example to add records to \"Entry\" table. ::"
-msgstr "テーブルEntryにレコードを登録します。::"
+#, fuzzy
+msgid "The default value is ``json``."
+msgstr "デフォルト値は ``no`` です。"
 
-msgid "This example shows how to add values from standard input. ::"
-msgstr "標準入力からvaluesの値を与えます。::"
+msgid "``each``"
+msgstr ""
 
-msgid "JSON format"
-msgstr "JSON形式"
+msgid "``output_ids``"
+msgstr ""
 
-msgid "``load`` returns the number of added records such as ::"
-msgstr "テーブルに登録されたレコードの件数が返されます。"
+msgid "``output_errors``"
+msgstr ""
+
+#, fuzzy
+msgid "``lock_table``"
+msgstr "``置換テーブル``"
+
+#, fuzzy
+msgid "Specifies whether locking table while updating columns."
+msgstr "コピー先のカラムのテーブル名を指定します。"
+
+#, fuzzy
+msgid "The default is ``no``."
+msgstr "デフォルト値は ``no`` です。"
+
+msgid ""
+"If you may run destructive commands such as ``load``, ``delete`` and so on "
+"concurrently, it may break database. For example, if you're updating a "
+"record by ``load`` and deleting the updating record by ``delete``, the "
+"``load`` may refer the delete record."
+msgstr ""
+
+msgid ""
+"You can guard the update conflict by locking the target table but it reduces "
+"load performance."
+msgstr ""
+
+msgid ""
+"If you specify ``yes`` to this parameter, you can lock the target table "
+"while updating columns. Here is the update sequence of each record:"
+msgstr ""
+
+#, fuzzy
+msgid "Lock the target table"
+msgstr "現在のテーブルを削除する"
+
+#, fuzzy
+msgid "Add or refer a record to the target table"
+msgstr "調査対象のテーブルのレコード数。"
+
+#, fuzzy
+msgid "Unlock the target table"
+msgstr "現在のテーブルを削除する"
+
+msgid "Lock the target table when ``lock_table`` is ``yes``"
+msgstr ""
+
+#, fuzzy
+msgid "Update columns of the target record"
+msgstr "テーブルのカラム。"
+
+msgid "Unlock the target table when ``lock_table`` is ``yes``"
+msgstr ""
+
+msgid "The command returns a response with the following format::"
+msgstr "このコマンドは以下のフォーマットのレスポンスを返します::"
+
+#, fuzzy
+msgid ""
+"The command returns a response with the following format with :doc:`/"
+"reference/command/command_version` 3 or later::"
+msgstr "このコマンドは以下のフォーマットのレスポンスを返します::"
+
+msgid "``loaded_ids`` is only included when :ref:`load-output-ids` is ``yes``."
+msgstr ""
+
+msgid "``errors`` is only included when :ref:`load-output-errors` is ``yes``."
+msgstr ""
 
 msgid "``lock_acquire``"
 msgstr ""
@@ -7644,9 +7748,6 @@ msgstr "このクエリーの出力をキャッシュする。デフォルト値
 
 msgid "Here is an example to disable caching the result of this query:"
 msgstr "このクエリーの結果をキャッシュしないようにする例です。"
-
-msgid "The command returns a response with the following format::"
-msgstr "このコマンドは以下のフォーマットのレスポンスを返します::"
 
 msgid "``N_HITS`` is the number of matched records."
 msgstr "``N_HITS`` はマッチしたレコード数です。"
@@ -12174,11 +12275,6 @@ msgid "See :ref:`select-window-function-related-parameters` for details."
 msgstr ""
 "詳細は :ref:`select-window-function-related-parameters` を見てください。"
 
-msgid "This section describes all parameters. Parameters are categorized."
-msgstr ""
-"このセクションではすべての引数について説明します。引数はカテゴリわけしていま"
-"す。"
-
 msgid "There is a required parameter, ``table``."
 msgstr "``table`` だけが必須の引数です。"
 
@@ -15445,9 +15541,6 @@ msgstr ""
 msgid "Specifies a table name to be created. ``name`` must be specified."
 msgstr ""
 "作成するテーブル名を指定します。 ``name`` は必ず指定しなければいけません。"
-
-msgid "There are some optional parameters."
-msgstr "いくつか省略可能な引数があります。"
 
 msgid "Specifies a table type and table customize options."
 msgstr "テーブルの型とテーブルをカスタマイズするオプションを指定します。"
@@ -27678,3 +27771,43 @@ msgstr ""
 
 msgid "``window_sum``"
 msgstr ""
+
+#~ msgid "``load`` returns the number of added records such as ::"
+#~ msgstr "テーブルに登録されたレコードの件数が返されます。"
+
+#~ msgid "JSON format"
+#~ msgstr "JSON形式"
+
+#~ msgid "This example shows how to add values from standard input. ::"
+#~ msgstr "標準入力からvaluesの値を与えます。::"
+
+#~ msgid ""
+#~ "In following values, you also don't have to enclose any spaces (' ') with "
+#~ "single-quotes or double-quotes."
+#~ msgstr ""
+#~ "続きの文字列については、空白文字(' ')をエスケープする必要はありません。"
+
+#~ msgid ""
+#~ "If ``values`` isn't specified any values, they are read from the standard "
+#~ "input until all opened parenthes match their closed ones. You don't have "
+#~ "to enclose them with single-quotes or double-quotes, but if you specified "
+#~ "values with ``values`` parameter, you should do."
+#~ msgstr ""
+#~ "``values`` 引数が省略された場合には、括弧の対応が取れるまで標準入力から "
+#~ "``values`` の値を読み取ります。引数として値を指定する場合は、文字列のエス"
+#~ "ケープが必要ですが、標準入力から与える文字列はエスケープする必要がありませ"
+#~ "ん。"
+
+#~ msgid ""
+#~ "[{COLUMN_NAME1: VALUE1, COLUMN_NAME2: VALUE2}, {COLUMN_NAME1: VALUE1, "
+#~ "COLUMN_NAME2: VALUE2},..]"
+#~ msgstr ""
+#~ "[{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラ"
+#~ "ム名2: カラム値2},..]"
+
+#~ msgid ""
+#~ "[[COLUMN_NAME1, COLUMN_NAME2,..], [VALUE1, VALUE2,..], [VALUE1, "
+#~ "VALUE2,..],..]"
+#~ msgstr ""
+#~ "[[カラム名1, カラム名2,..], [カラム値1, カラム値2,..], [カラム値1, カラム"
+#~ "値2,..],..]"
