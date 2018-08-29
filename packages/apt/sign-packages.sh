@@ -24,10 +24,10 @@ run()
 for code_name in ${CODES}; do
     case ${code_name} in
 	jessie|stretch|unstable)
-	    distribution=debian
+	    distribution=debian/pool/${code_name}
 	    ;;
 	*)
-	    distribution=ubuntu
+	    distribution=ubuntu/pool/${code_name}
 	    ;;
     esac
 
