@@ -128,7 +128,7 @@ Brace style::
   ]
 
 ``[COLUMN_NAME1, COLUMN_NAME2, ...]`` in bracket style is effective
-only when ref:`load-columns` parameter isn't specified.
+only when :ref:`load-columns` parameter isn't specified.
 
 When a target table contains primary key, you must specify ``_key``
 column (pseudo column associated primary key) as the one of

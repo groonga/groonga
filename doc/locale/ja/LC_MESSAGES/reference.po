@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2018-07-25 10:59+0900\n"
+"PO-Revision-Date: 2018-08-30 15:47+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -6671,44 +6671,45 @@ msgstr ""
 "``load`` は、使用しているデータベースのテーブルにレコードを登録し、カラムの値"
 "を更新します。"
 
-#, fuzzy
 msgid ""
 "The required parameters are only ``values`` and ``table``. Other parameters "
 "are optional::"
-msgstr "必須の引数は ``table`` だけです。残りは省略できます::"
+msgstr "必須の引数は ``values`` と ``table`` だけです。残りは省略できます。::"
 
 msgid ""
 "This command is a special command. Other commands need to pass all "
 "parameters to one line but this command can accept ``values`` as followed "
 "data."
 msgstr ""
+"このコマンドは特別なコマンドです。他のコマンドはすべてのパラメーターを1行で指"
+"定する必要がありますが、このコマンドは ``values`` の値を別途指定することもで"
+"きます。"
 
 msgid ""
 "If you use command line style, you can pass ``values`` like the following::"
 msgstr ""
+"コマンドラインスタイルを使っている場合は次のように ``values`` の値を指定でき"
+"ます。::"
 
 msgid "``[...]`` is value of ``values``."
-msgstr ""
+msgstr "``[...]`` は ``values`` の値です。"
 
 msgid "If you use HTTP style, you can pass ``values`` as body::"
-msgstr ""
+msgstr "HTTPスタイルを使っている場合はボディに ``values`` を指定できます。"
 
-#, fuzzy
 msgid "Here are schema definitions to show usage:"
-msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+msgstr "使い方を示すために使うスキーマ定義は以下の通りです。"
 
-#, fuzzy
 msgid "Here is an example to add records to ``Entries`` table by parameter:"
-msgstr "テーブルEntryにレコードを登録します。::"
+msgstr "パラメーター指定で ``Entries`` テーブルにレコードを追加する例です。"
 
-#, fuzzy
 msgid ""
 "Here is an example to add records to ``Entries`` table from standard input:"
-msgstr "テーブルEntryにレコードを登録します。::"
+msgstr ""
+"標準入力のデータを使って ``Entries`` テーブルにレコードを追加する例です。"
 
-#, fuzzy
 msgid "Here is an example to lock table while updating columns:"
-msgstr "以下は中サイズのインデックスカラムを作る例です。"
+msgstr "カラム更新中にテーブルをロックする例です。"
 
 msgid "This section describes all parameters. Parameters are categorized."
 msgstr ""
@@ -6718,43 +6719,44 @@ msgstr ""
 msgid "``values``"
 msgstr ""
 
-#, fuzzy
 msgid "Specifies values to be loaded."
-msgstr "比較対象の値を指定します。"
+msgstr "ロードする値を指定します。"
 
-#, fuzzy
 msgid ""
 "Values should satisfy ``input_type`` format. If you specify ``json`` as "
 "``input_type``, you can choose a format from below:"
 msgstr ""
-"input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。\n"
-"input_typeがjsonである場合には、以下のいずれかの形式が使用できます。"
+"ロードする値は ``input_type`` フォーマットになっていないといけません。 "
+"``input_type`` に ``json`` を指定した場合は次のいずれかのフォーマットにしま"
+"す。"
 
 msgid "Bracket style::"
-msgstr ""
+msgstr "角括弧スタイル::"
 
 msgid "Brace style::"
-msgstr ""
+msgstr "波括弧スタイル::"
 
 #, fuzzy
 msgid ""
 "``[COLUMN_NAME1, COLUMN_NAME2, ...]`` in bracket style is effective only "
-"when ref:`load-columns` parameter isn't specified."
+"when :ref:`load-columns` parameter isn't specified."
 msgstr ""
-"形式1の[カラム名1, カラム名2,..]の要素は ``columns`` 引数が省略された場合のみ"
-"有効です。"
+"角括弧スタイルの ``[COLUMN_NAME1, COLUMN_NAME2, ...]`` は :ref:`load-"
+"columns` パラメーターを指定していないときだけ有効です。"
 
 msgid ""
 "When a target table contains primary key, you must specify ``_key`` column "
 "(pseudo column associated primary key) as the one of ``COLUMN_NAME``."
 msgstr ""
-"対象のテーブルが主キーを持つテーブルであった場合は、カラム名の中に ``_key`` "
-"(主キーを示す疑似カラム名)が含まれていなければなりません。"
+"対象のテーブルが主キーを持つテーブルであった場合は、カラム名のどれかを "
+"``_key`` （主キーを示す疑似カラム名）にしなければいけません。"
 
 msgid ""
 "If ``values`` isn't specified any values, they are read from the standard "
 "input in command line style or body in HTTP style."
 msgstr ""
+"``values`` を指定していない場合、コマンドラインスタイルのときは標準入力から読"
+"み込んだ値を使い、HTTPスタイルのときはボディの値を使います。"
 
 msgid "Specifies a table name you want to add records."
 msgstr "レコードを追加しようとするテーブルの名前を指定します。"
@@ -6773,36 +6775,32 @@ msgstr ""
 msgid "``ifexists``"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "Specifies executed expression in :doc:`/reference/grn_expr/script_syntax` "
 "when the same primary key as added records already exists in your table."
 msgstr ""
-":doc:`/reference/grn_expr/query_syntax` で検索条件を指定します。このパラメー"
-"ターは ``select`` コマンドの ``query`` パラメーターと同じ役割です。"
+"追加する主キーのレコードがすでにテーブル中に存在するときに実行する式を :doc:"
+"`/reference/grn_expr/script_syntax` で指定します。"
 
-#, fuzzy
 msgid ""
 "If ``ifexists`` specifies expression and its value is ``true``, values in "
 "other (all columns excluding ``_key`` column) columns is updated."
 msgstr ""
-"指定した主キーに対応するレコードが既にテーブルに登録済みであった場合に実行す"
-"るscript形式の ``grn_expr`` 文字列を指定します。 ``ifexists`` に "
-"``grn_expr`` が指定された場合は、式の値が真である場合に限り、その他のカラムの"
-"値が更新されます。(デフォルトはtrue)"
+"``ifexists`` に式を指定し、その式の評価結果が ``true`` のときは、他のカラム"
+"（ ``_key`` カラム以外のすべてのカラム）の値をすべて更新します。"
 
 msgid "``input_type``"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "Specifies an input format for ``values``. It supports only ``json`` for now. "
 "It means format of ``values`` is JSON."
-msgstr "入力形式を指定します。JSONのみに対応しています。"
+msgstr ""
+"``values`` の入力フォーマットを指定します。現在のところ ``json`` のみサポート"
+"しています。つまり、 ``values`` のフォーマットはJSONでなければいけません。"
 
-#, fuzzy
 msgid "The default value is ``json``."
-msgstr "デフォルト値は ``no`` です。"
+msgstr "デフォルト値は ``json`` です。"
 
 msgid "``each``"
 msgstr ""
@@ -6813,15 +6811,12 @@ msgstr ""
 msgid "``output_errors``"
 msgstr ""
 
-#, fuzzy
 msgid "``lock_table``"
-msgstr "``置換テーブル``"
+msgstr ""
 
-#, fuzzy
 msgid "Specifies whether locking table while updating columns."
-msgstr "コピー先のカラムのテーブル名を指定します。"
+msgstr "カラム更新中にテーブルをロックするかどうかを指定します。"
 
-#, fuzzy
 msgid "The default is ``no``."
 msgstr "デフォルト値は ``no`` です。"
 
@@ -6831,53 +6826,60 @@ msgid ""
 "record by ``load`` and deleting the updating record by ``delete``, the "
 "``load`` may refer the delete record."
 msgstr ""
+"もし、 ``load`` や ``delete`` などといった破壊的な変更をするコマンドを同時に"
+"実行すると、データベースが壊れる可能性があります。たとえば、 ``load`` でレ"
+"コードを更新中にそのレコードを ``delete`` で削除すると ``load`` は削除された"
+"レコードを参照してしまうかもしれません。"
 
 msgid ""
 "You can guard the update conflict by locking the target table but it reduces "
 "load performance."
 msgstr ""
+"更新対象のテーブルをロックすることで更新の衝突を防ぐことができますが、書き込"
+"み性能は下がります。"
 
 msgid ""
 "If you specify ``yes`` to this parameter, you can lock the target table "
 "while updating columns. Here is the update sequence of each record:"
 msgstr ""
+"このパラメーターに ``yes`` を指定するとカラム更新中は更新対象のテーブルをロッ"
+"クします。それぞれのレコードの更新手順は次のようになります。"
 
-#, fuzzy
 msgid "Lock the target table"
-msgstr "現在のテーブルを削除する"
+msgstr "更新対象のテーブルをロックする"
 
-#, fuzzy
 msgid "Add or refer a record to the target table"
-msgstr "調査対象のテーブルのレコード数。"
+msgstr "更新対象のテーブルにレコードを追加する、あるいは、レコードを参照する"
 
-#, fuzzy
 msgid "Unlock the target table"
-msgstr "現在のテーブルを削除する"
+msgstr "更新対象のテーブルのロックを解除する"
 
 msgid "Lock the target table when ``lock_table`` is ``yes``"
-msgstr ""
+msgstr "``lock_table`` が ``yes`` の場合は更新対象のテーブルをロックする"
 
-#, fuzzy
 msgid "Update columns of the target record"
-msgstr "テーブルのカラム。"
+msgstr "対象レコードのカラムを更新する"
 
 msgid "Unlock the target table when ``lock_table`` is ``yes``"
-msgstr ""
+msgstr "``lock_table`` が ``yes`` の場合は更新対象のテーブルのロックを解除する"
 
 msgid "The command returns a response with the following format::"
-msgstr "このコマンドは以下のフォーマットのレスポンスを返します::"
+msgstr "このコマンドは以下のフォーマットのレスポンスを返します。::"
 
-#, fuzzy
 msgid ""
 "The command returns a response with the following format with :doc:`/"
 "reference/command/command_version` 3 or later::"
-msgstr "このコマンドは以下のフォーマットのレスポンスを返します::"
+msgstr ""
+"このコマンドは :doc:`/reference/command/command_version` 3以降のときは以下の"
+"フォーマットのレスポンスを返します。::"
 
 msgid "``loaded_ids`` is only included when :ref:`load-output-ids` is ``yes``."
 msgstr ""
+":ref:`load-output-ids` が ``yes`` のときだけ ``loaded_ids`` を含みます。"
 
 msgid "``errors`` is only included when :ref:`load-output-errors` is ``yes``."
 msgstr ""
+":ref:`load-output-errors` が ``yes`` のときだけ ``errors`` を含みます。"
 
 msgid "``lock_acquire``"
 msgstr ""
