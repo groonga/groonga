@@ -204,6 +204,8 @@ TODO
 ``lock_table``
 """"""""""""""
 
+.. versionadded:: 8.0.6
+
 Specifies whether locking table while updating columns.
 
 The default is ``no``.
