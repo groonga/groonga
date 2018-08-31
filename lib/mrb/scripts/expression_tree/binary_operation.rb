@@ -79,13 +79,37 @@ module Groonga
         return table.size unless @right.is_a?(Constant)
 
         column = @left.column
-        value = @right.value
-        index_info = column.find_index(@operator)
-        return table.size if index_info.nil?
+        indexes = []
+        case column
+        when Expression
+          column.codes.each do |code|
+            case code.op
+            when Operator::GET_VALUE
+              value = code.value
+              case value
+              when IndexColumn
+                indexes << index
+              when Column
+                index_info = value.find_index(@operator)
+                return table.size if index_info.nil?
+                indexes << index_info.index
+              end
+            end
+          end
+        else
+          index_info = column.find_index(@operator)
+          return table.size if index_info.nil?
+          indexes << index_info.index
+        end
 
-        index_column = index_info.index
-        index_column.estimate_size(:query => value,
-                                   :mode => @operator)
+        return table.size if indexes.empty?
+
+        value = @right.value
+        sizes = indexes.collect do |index|
+          index.estimate_size(:query => value,
+                              :mode => @operator)
+        end
+        sizes.max
       end
     end
   end
