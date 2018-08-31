@@ -15,7 +15,7 @@ build_top_dir=$(cd -P "$build_top_dir" 2>/dev/null || cd "$build_top_dir"; pwd)
 n_processors=1
 case `uname` in
   Linux)
-    n_processors="$(grep '^processor' /proc/cpuinfo | wc -l)"
+    n_processors="$(nproc)"
     ;;
   Darwin)
     n_processors="$(/usr/sbin/sysctl -n hw.ncpu)"
