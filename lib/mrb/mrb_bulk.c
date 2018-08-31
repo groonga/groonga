@@ -307,7 +307,7 @@ mrb_grn_bulk_s_is_true(mrb_state *mrb, mrb_value klass)
 
   mrb_get_args(mrb, "o", &mrb_value_);
 
-  GRN_TEXT_INIT(&bulk, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_VOID_INIT(&bulk);
   grn_mrb_value_to_bulk(mrb, mrb_value_, &bulk);
   is_true = grn_obj_is_true(ctx, &bulk);
   GRN_OBJ_FIN(ctx, &bulk);
