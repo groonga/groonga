@@ -763,6 +763,8 @@ else
   if test "x$RUBY" = "xyes"; then
     AC_PATH_PROGS(RUBY,
                   [ dnl
+                    ruby2.5 ruby25 dnl
+                    ruby2.4 ruby24 dnl
                     ruby2.3 ruby23 dnl
                     ruby2.2 ruby22 dnl
                     ruby2.1 ruby21 dnl
