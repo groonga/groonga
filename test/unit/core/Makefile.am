@@ -129,7 +129,6 @@ test_plugin_la_SOURCES			= test-plugin.c
 test_function_la_SOURCES		= test-function.c
 test_function_edit_distance_la_SOURCES	= test-function-edit-distance.c
 test_store_ja_la_SOURCES		= test-store-ja.c
-test_log_la_SOURCES			= test-log.c
 test_log_level_la_SOURCES		= test-log-level.c
 test_table_sort_key_from_str_la_SOURCES	= test-table-sort-key-from-str.c
 test_inspect_la_SOURCES			= test-inspect.c
