@@ -5,4 +5,4 @@ load --table Memos
 {"_key": "1", "content": "Groonga"},
 {"_key": "2", "content": "mruby"}
 ]
-select Memos --filter 'content @~ "^(?!.*Groonga).*$\"'
+select Memos --filter 'content @~ "(?!Groonga).+"'
