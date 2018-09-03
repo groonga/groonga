@@ -1,0 +1,44 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "1", "content": "Groonga"},
+{"_key": "2", "content": "mruby"}
+]
+[[0,0.0,0.0],2]
+select Memos --filter 'content @~ "^(?!.*Groonga).*$\"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "2",
+        "mruby"
+      ]
+    ]
+  ]
+]
