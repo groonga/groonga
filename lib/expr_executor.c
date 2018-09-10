@@ -333,6 +333,20 @@ grn_expr_executor_init_general(grn_ctx *ctx,
                                       text_operation,                   \
                                       invalid_type_error) do {          \
   switch (x->header.domain) {                                           \
+  case GRN_DB_BOOL :                                                    \
+    {                                                                   \
+      uint8_t x_;                                                       \
+      x_ = GRN_BOOL_VALUE(x) ? 1 : 0;                                   \
+      left_expression_check(x_);                                        \
+      NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_UINT8_SET,              \
+                                            GRN_UINT8_VALUE,            \
+                                            x_, y, res,                 \
+                                            integer8_operation,         \
+                                            float_operation,            \
+                                            right_expression_check,     \
+                                            invalid_type_error);        \
+    }                                                                   \
+    break;                                                              \
   case GRN_DB_INT8 :                                                    \
     {                                                                   \
       int8_t x_;                                                        \
