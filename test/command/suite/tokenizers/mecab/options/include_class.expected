@@ -1,0 +1,55 @@
+tokenize   'TokenMecab("include_class", true)'   'これはペンです。'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "これ",
+      "position": 0,
+      "force_prefix": false,
+      "metadata": {
+        "class": "名詞",
+        "subclass0": "代名詞",
+        "subclass1": "一般"
+      }
+    },
+    {
+      "value": "は",
+      "position": 1,
+      "force_prefix": false,
+      "metadata": {
+        "class": "助詞",
+        "subclass0": "係助詞"
+      }
+    },
+    {
+      "value": "ペン",
+      "position": 2,
+      "force_prefix": false,
+      "metadata": {
+        "class": "名詞",
+        "subclass0": "一般"
+      }
+    },
+    {
+      "value": "です",
+      "position": 3,
+      "force_prefix": false,
+      "metadata": {
+        "class": "助動詞"
+      }
+    },
+    {
+      "value": "。",
+      "position": 4,
+      "force_prefix": false,
+      "metadata": {
+        "class": "記号",
+        "subclass0": "句点"
+      }
+    }
+  ]
+]

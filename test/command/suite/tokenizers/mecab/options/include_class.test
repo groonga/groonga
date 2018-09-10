@@ -1,0 +1,5 @@
+#@on-error omit
+tokenize \
+  'TokenMecab("include_class", true)' \
+  'これはペンです。'
+#@on-error default

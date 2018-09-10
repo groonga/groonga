@@ -34,9 +34,14 @@
 #include <string.h>
 #include <ctype.h>
 
-static mecab_t *sole_mecab = NULL;
-static grn_plugin_mutex *sole_mecab_mutex = NULL;
-static grn_encoding sole_mecab_encoding = GRN_ENC_NONE;
+typedef struct {
+  mecab_t *mecab;
+  grn_plugin_mutex *mutex;
+  grn_encoding encoding;
+} grn_mecab;
+
+static grn_mecab mecab_default;
+static grn_mecab mecab_wakati;
 
 static grn_bool grn_mecab_chunked_tokenize_enabled = GRN_FALSE;
 static int32_t grn_mecab_chunk_size_threshold = 8192;
@@ -44,11 +49,12 @@ static int32_t grn_mecab_chunk_size_threshold = 8192;
 typedef struct {
   grn_bool chunked_tokenize;
   int32_t chunk_size_threshold;
+  grn_bool include_class;
 } grn_mecab_tokenizer_options;
 
 typedef struct {
   grn_mecab_tokenizer_options *options;
-  mecab_t *mecab;
+  grn_mecab *mecab;
   grn_obj buf;
   const char *next;
   const char *end;
@@ -86,6 +92,37 @@ translate_mecab_charset_to_grn_encoding(const char *charset)
   return GRN_ENC_NONE;
 }
 
+static void
+grn_mecab_init(grn_ctx *ctx,
+               grn_mecab *mecab,
+               const char *tag)
+{
+  mecab->mecab = NULL;
+  mecab->mutex = grn_plugin_mutex_open(ctx);
+  if (!mecab->mutex) {
+    GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                     "[plugin][tokenizer][mecab][init]%s "
+                     "failed to initialize mutex",
+                     tag);
+    return;
+  }
+  mecab->encoding = GRN_ENC_NONE;
+}
+
+static void
+grn_mecab_fin(grn_ctx *ctx, grn_mecab *mecab)
+{
+  if (mecab->mecab) {
+    mecab_destroy(mecab->mecab);
+    mecab->mecab = NULL;
+  }
+  if (mecab->mutex) {
+    grn_plugin_mutex_close(ctx, mecab->mutex);
+    mecab->mutex = NULL;
+  }
+  mecab->encoding = GRN_ENC_NONE;
+}
+
 static grn_encoding
 get_mecab_encoding(mecab_t *mecab)
 {
@@ -104,6 +141,21 @@ mecab_tokenizer_options_init(grn_mecab_tokenizer_options *options)
 {
   options->chunked_tokenize = grn_mecab_chunked_tokenize_enabled;
   options->chunk_size_threshold = grn_mecab_chunk_size_threshold;
+  options->include_class = GRN_FALSE;
+}
+
+static grn_bool
+mecab_tokenizer_options_need_default_output(grn_mecab_tokenizer_options *options)
+{
+  if (!options) {
+    return GRN_FALSE;
+  }
+
+  if (options->include_class) {
+    return GRN_TRUE;
+  }
+
+  return GRN_FALSE;
 }
 
 static void *
@@ -142,6 +194,12 @@ mecab_tokenizer_options_open(grn_ctx *ctx,
                                      raw_options,
                                      i,
                                      options->chunk_size_threshold);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "include_class")) {
+      options->include_class =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->include_class);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
@@ -218,13 +276,15 @@ chunked_tokenize_utf8_chunk(grn_ctx *ctx,
   const char *tokenized_chunk;
   size_t tokenized_chunk_length;
 
-  tokenized_chunk = mecab_sparse_tostr2(tokenizer->mecab, chunk, chunk_bytes);
+  tokenized_chunk = mecab_sparse_tostr2(tokenizer->mecab->mecab,
+                                        chunk,
+                                        chunk_bytes);
   if (!tokenized_chunk) {
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer][mecab][chunk] "
                      "mecab_sparse_tostr2() failed len=%d err=%s",
                      chunk_bytes,
-                     mecab_strerror(tokenizer->mecab));
+                     mecab_strerror(tokenizer->mecab->mecab));
     return GRN_FALSE;
   }
 
@@ -338,14 +398,27 @@ chunked_tokenize_utf8(grn_ctx *ctx,
 }
 
 static mecab_t *
-mecab_create(grn_ctx *ctx)
+mecab_create(grn_ctx *ctx,
+             grn_mecab_tokenizer_options *options)
 {
   mecab_t *mecab;
   int argc = 0;
   const char *argv[4];
+  const char *tag;
+  grn_bool need_default_output = GRN_FALSE;
+
+  need_default_output = mecab_tokenizer_options_need_default_output(options);
+
+  if (need_default_output) {
+    tag = "[default]";
+  } else {
+    tag = "[wakati]";
+  }
 
   argv[argc++] = "Groonga";
-  argv[argc++] = "-Owakati";
+  if (!need_default_output) {
+    argv[argc++] = "-Owakati";
+  }
 #ifdef GRN_WITH_BUNDLED_MECAB
   argv[argc++] = "--rcfile";
 # ifdef WIN32
@@ -389,24 +462,69 @@ mecab_create(grn_ctx *ctx)
     {
       const char *grn_encoding_rc_file;
       grn_encoding_rc_file =
-        grn_encoding_convert_from_locale(ctx, argv[3], -1, NULL);
-      GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                       "[tokenizer][mecab] failed to create mecab_t: %s: "
-                       "mecab_new(\"%s\", \"%s\", \"%s\", \"%s\")",
-                       mecab_global_error_message(),
-                       argv[0], argv[1], argv[2], grn_encoding_rc_file);
+        grn_encoding_convert_from_locale(ctx, argv[argc - 1], -1, NULL);
+      if (need_default_output) {
+        GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                         "[tokenizer][mecab][create]%s "
+                         "failed to create mecab_t: %s: "
+                         "mecab_new(\"%s\", \"%s\", \"%s\")",
+                         tag,
+                         mecab_global_error_message(),
+                         argv[0], argv[1], grn_encoding_rc_file);
+      } else {
+        GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                         "[tokenizer][mecab][create]%s "
+                         "failed to create mecab_t: %s: "
+                         "mecab_new(\"%s\", \"%s\", \"%s\", \"%s\")",
+                         tag,
+                         mecab_global_error_message(),
+                         argv[0], argv[1], argv[2], grn_encoding_rc_file);
+      }
       grn_encoding_converted_free(ctx, grn_encoding_rc_file);
     }
 #else /* GRN_WITH_BUNDLED_MECAB */
-    GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                     "[tokenizer][mecab] failed to create mecab_t: %s: "
-                     "mecab_new(\"%s\", \"%s\")",
-                     mecab_global_error_message(),
-                     argv[0], argv[1]);
+    if (need_default_output) {
+      GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                       "[tokenizer][mecab][create]%s "
+                       "failed to create mecab_t: %s: "
+                       "mecab_new(\"%s\")",
+                       tag,
+                       mecab_global_error_message(),
+                       argv[0]);
+    } else {
+      GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                       "[tokenizer][mecab][create]%s "
+                       "failed to create mecab_t: %s: "
+                       "mecab_new(\"%s\", \"%s\")",
+                       tag,
+                       mecab_global_error_message(),
+                       argv[0], argv[1]);
+    }
 #endif /* GRN_WITH_BUNDLED_MECAB */
   }
 
   return mecab;
+}
+
+static void
+mecab_init_mecab(grn_ctx *ctx, grn_mecab_tokenizer *tokenizer)
+{
+  if (mecab_tokenizer_options_need_default_output(tokenizer->options)) {
+    tokenizer->mecab = &mecab_default;
+  } else {
+    tokenizer->mecab = &mecab_wakati;
+  }
+
+  if (!tokenizer->mecab->mecab) {
+    grn_plugin_mutex_lock(ctx, tokenizer->mecab->mutex);
+    if (!tokenizer->mecab->mecab) {
+      tokenizer->mecab->mecab = mecab_create(ctx, tokenizer->options);
+      if (tokenizer->mecab->mecab) {
+        tokenizer->mecab->encoding = get_mecab_encoding(tokenizer->mecab->mecab);
+      }
+    }
+    grn_plugin_mutex_unlock(ctx, tokenizer->mecab->mutex);
+  }
 }
 
 /*
@@ -441,36 +559,26 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
     return NULL;
   }
 
-  if (!sole_mecab) {
-    grn_plugin_mutex_lock(ctx, sole_mecab_mutex);
-    if (!sole_mecab) {
-      sole_mecab = mecab_create(ctx);
-      if (sole_mecab) {
-        sole_mecab_encoding = get_mecab_encoding(sole_mecab);
-      }
-    }
-    grn_plugin_mutex_unlock(ctx, sole_mecab_mutex);
-  }
-  if (!sole_mecab) {
+  mecab_init_mecab(ctx, tokenizer);
+  if (!tokenizer->mecab->mecab) {
     GRN_PLUGIN_FREE(ctx, tokenizer);
     return NULL;
   }
 
   {
     grn_encoding encoding = grn_tokenizer_query_get_encoding(ctx, query);
-    if (encoding != sole_mecab_encoding) {
+    if (encoding != tokenizer->mecab->encoding) {
       GRN_PLUGIN_FREE(ctx, tokenizer);
       GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                        "[tokenizer][mecab] "
                        "MeCab dictionary charset (%s) does not match "
                        "the table encoding: <%s>",
-                       grn_encoding_to_string(sole_mecab_encoding),
+                       grn_encoding_to_string(tokenizer->mecab->encoding),
                        grn_encoding_to_string(encoding));
       return NULL;
     }
   }
 
-  tokenizer->mecab = sole_mecab;
   tokenizer->query = query;
 
   {
@@ -493,7 +601,7 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
       tokenizer->end = tokenizer->next;
     } else {
       grn_bool succeeded;
-      grn_plugin_mutex_lock(ctx, sole_mecab_mutex);
+      grn_plugin_mutex_lock(ctx, tokenizer->mecab->mutex);
       if (tokenizer->options->chunked_tokenize &&
           ctx->encoding == GRN_ENC_UTF8) {
         succeeded = chunked_tokenize_utf8(ctx,
@@ -502,7 +610,7 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
                                           normalized_string_length);
       } else {
         const char *s;
-        s = mecab_sparse_tostr2(tokenizer->mecab,
+        s = mecab_sparse_tostr2(tokenizer->mecab->mecab,
                                 normalized_string,
                                 normalized_string_length);
         if (!s) {
@@ -511,13 +619,13 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
                            "[tokenizer][mecab] "
                            "mecab_sparse_tostr() failed len=%d err=%s",
                            normalized_string_length,
-                           mecab_strerror(tokenizer->mecab));
+                           mecab_strerror(tokenizer->mecab->mecab));
         } else {
           succeeded = GRN_TRUE;
           GRN_TEXT_PUTS(ctx, &(tokenizer->buf), s);
         }
       }
-      grn_plugin_mutex_unlock(ctx, sole_mecab_mutex);
+      grn_plugin_mutex_unlock(ctx, tokenizer->mecab->mutex);
       if (!succeeded) {
         GRN_PLUGIN_FREE(ctx, tokenizer);
         return NULL;
@@ -541,6 +649,208 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
   return tokenizer;
 }
 
+static void
+mecab_next_default_format_skip_eos(grn_ctx *ctx,
+                                   grn_mecab_tokenizer *tokenizer)
+{
+  if (tokenizer->next + 4 < tokenizer->end) {
+    return;
+  }
+
+  if (strncmp(tokenizer->next, "EOS", 3) == 0) {
+    const char *current = tokenizer->next;
+    if (current + 1 < tokenizer->end && current[0] == '\r') {
+      current++;
+    }
+    if (current + 1 < tokenizer->end && current[0] == '\n') {
+      current++;
+      tokenizer->next = current;
+    }
+  }
+}
+
+typedef struct {
+  grn_token *token;
+  grn_obj *features;
+  grn_bool ignore_empty_value;
+  grn_bool ignore_asterisk_value;
+} add_feature_data;
+
+static void
+mecab_next_default_format_add_feature(grn_ctx *ctx,
+                                      add_feature_data *data,
+                                      const char *name,
+                                      size_t i)
+{
+  grn_token *token = data->token;
+  grn_obj *features = data->features;
+  size_t n_locations = GRN_BULK_VSIZE(features) / sizeof(uint64_t);
+  const char *feature_start;
+  const char *feature_end;
+  size_t feature_length;
+  grn_obj value;
+
+  if (i + 1 > n_locations) {
+    return;
+  }
+
+  feature_start = (const char *)(GRN_UINT64_VALUE_AT(features, i));
+  feature_end = ((const char *)(GRN_UINT64_VALUE_AT(features, i + 1))) - 1;
+  feature_length = feature_end - feature_start;
+
+  if (data->ignore_empty_value && feature_length == 0) {
+    return;
+  }
+  if (data->ignore_asterisk_value &&
+      feature_length == 1 &&
+      feature_start[0] == '*') {
+    return;
+  }
+
+  GRN_TEXT_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_TEXT_SET(ctx, &value, feature_start, feature_length);
+  grn_token_metadata_add(ctx,
+                         grn_token_get_metadata(ctx, token),
+                         name,
+                         -1,
+                         &value);
+  GRN_OBJ_FIN(ctx, &value);
+}
+
+static void
+mecab_next_default_format(grn_ctx *ctx,
+                          grn_mecab_tokenizer *tokenizer,
+                          grn_token *token)
+{
+  grn_encoding encoding = tokenizer->query->encoding;
+  const char *start;
+  const char *current;
+  const char *end = tokenizer->end;
+  int length = 0;
+  const char *surface;
+  size_t surface_length = 0;
+  grn_obj features;
+
+  mecab_next_default_format_skip_eos(ctx, tokenizer);
+  start = surface = tokenizer->next;
+  GRN_UINT64_INIT(&features, GRN_OBJ_VECTOR);
+  for (current = start; current < end; current += length) {
+    length = grn_charlen_(ctx, current, end, encoding);
+    if (length == 0) {
+      break;
+    }
+
+    if (length == 1) {
+      if (current[0] == '\r') {
+        if (surface_length == 0) {
+          surface_length = current - surface;
+        } else {
+          GRN_UINT64_PUT(ctx, &features, current);
+        }
+        current++;
+        if (current < end &&
+            grn_charlen_(ctx, current, end, encoding) == 1 &&
+            current[0] == '\n') {
+          current++;
+        }
+        break;
+      } else if (current[0] == '\n') {
+        if (surface_length == 0) {
+          surface_length = current - surface;
+        } else {
+          GRN_UINT64_PUT(ctx, &features, current);
+        }
+        current++;
+        break;
+      }
+    }
+
+    if (surface_length == 0) {
+      if (length == 1 && current[0] == '\t') {
+        surface_length = current - surface;
+        if (current + 1 < end) {
+          GRN_UINT64_PUT(ctx, &features, current + 1);
+        }
+      }
+    } else {
+      if (length == 1 && current[0] == ',' && current + 1 < end) {
+        GRN_UINT64_PUT(ctx, &features, current + 1);
+      }
+    }
+  }
+  tokenizer->next = current;
+  mecab_next_default_format_skip_eos(ctx, tokenizer);
+
+  grn_token_set_data(ctx, token, surface, surface_length);
+  {
+    grn_tokenizer_status status;
+    if (current == end || tokenizer->next == end) {
+      status = GRN_TOKEN_LAST;
+    } else {
+      status = GRN_TOKEN_CONTINUE;
+    }
+    grn_token_set_status(ctx, token, status);
+  }
+  if (tokenizer->options->include_class) {
+    add_feature_data data;
+    data.token = token;
+    data.features = &features;
+    data.ignore_empty_value = GRN_TRUE;
+    data.ignore_asterisk_value = GRN_TRUE;
+    mecab_next_default_format_add_feature(ctx, &data, "class", 0);
+    mecab_next_default_format_add_feature(ctx, &data, "subclass0", 1);
+    mecab_next_default_format_add_feature(ctx, &data, "subclass1", 2);
+    mecab_next_default_format_add_feature(ctx, &data, "subclass2", 3);
+  }
+  GRN_OBJ_FIN(ctx, &features);
+}
+
+static void
+mecab_next_wakati_format(grn_ctx *ctx,
+                         grn_mecab_tokenizer *tokenizer,
+                         grn_token *token)
+{
+  grn_encoding encoding = tokenizer->query->encoding;
+  size_t cl;
+  const char *p = tokenizer->next, *r;
+  const char *e = tokenizer->end;
+  grn_tokenizer_status status;
+
+  for (r = p; r < e; r += cl) {
+    int space_len;
+
+    space_len = grn_isspace(r, encoding);
+    if (space_len > 0 && r == p) {
+      cl = space_len;
+      p = r + cl;
+      continue;
+    }
+
+    if (!(cl = grn_charlen_(ctx, r, e, encoding))) {
+      tokenizer->next = e;
+      break;
+    }
+
+    if (space_len > 0) {
+      const char *q = r + space_len;
+      while (q < e && (space_len = grn_isspace(q, encoding))) {
+        q += space_len;
+      }
+      tokenizer->next = q;
+      break;
+    }
+  }
+
+  if (r == e || tokenizer->next == e) {
+    status = GRN_TOKEN_LAST;
+  } else {
+    status = GRN_TOKEN_CONTINUE;
+  }
+  grn_token_set_data(ctx, token, p, r - p);
+  grn_token_set_status(ctx, token, status);
+}
+
+
 /*
   This function returns tokens one by one.
  */
@@ -551,9 +861,9 @@ mecab_next(grn_ctx *ctx,
            void *user_data)
 {
   grn_mecab_tokenizer *tokenizer = user_data;
-  grn_encoding encoding = tokenizer->query->encoding;
 
   if (grn_tokenizer_query_have_tokenized_delimiter(ctx, tokenizer->query)) {
+    grn_encoding encoding = tokenizer->query->encoding;
     grn_tokenizer_token tokenizer_token;
     grn_tokenizer_token_init(ctx, &tokenizer_token);
     /* TODO: Need grn_token version. */
@@ -571,44 +881,10 @@ mecab_next(grn_ctx *ctx,
                          token,
                          GRN_UINT32_VALUE(&(tokenizer_token.status)));
     grn_tokenizer_token_fin(ctx, &tokenizer_token);
+  } else if (mecab_tokenizer_options_need_default_output(tokenizer->options)) {
+    mecab_next_default_format(ctx, tokenizer, token);
   } else {
-    size_t cl;
-    const char *p = tokenizer->next, *r;
-    const char *e = tokenizer->end;
-    grn_tokenizer_status status;
-
-    for (r = p; r < e; r += cl) {
-      int space_len;
-
-      space_len = grn_isspace(r, encoding);
-      if (space_len > 0 && r == p) {
-        cl = space_len;
-        p = r + cl;
-        continue;
-      }
-
-      if (!(cl = grn_charlen_(ctx, r, e, encoding))) {
-        tokenizer->next = e;
-        break;
-      }
-
-      if (space_len > 0) {
-        const char *q = r + space_len;
-        while (q < e && (space_len = grn_isspace(q, encoding))) {
-          q += space_len;
-        }
-        tokenizer->next = q;
-        break;
-      }
-    }
-
-    if (r == e || tokenizer->next == e) {
-      status = GRN_TOKEN_LAST;
-    } else {
-      status = GRN_TOKEN_CONTINUE;
-    }
-    grn_token_set_data(ctx, token, p, r - p);
-    grn_token_set_status(ctx, token, status);
+    mecab_next_wakati_format(ctx, tokenizer, token);
   }
 }
 
@@ -634,7 +910,7 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
   grn_encoding encoding;
   grn_bool have_same_encoding_dictionary;
 
-  mecab = mecab_create(ctx);
+  mecab = mecab_create(ctx, NULL);
   if (!mecab) {
     return;
   }
@@ -688,18 +964,16 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
     }
   }
 
-  sole_mecab = NULL;
-  sole_mecab_mutex = grn_plugin_mutex_open(ctx);
-  if (!sole_mecab_mutex) {
-    GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                     "[tokenizer][mecab] grn_plugin_mutex_open() failed");
+  grn_mecab_init(ctx, &mecab_default, "[default]");
+  grn_mecab_init(ctx, &mecab_wakati, "[wakati]");
+  if (ctx->rc != GRN_SUCCESS) {
     return ctx->rc;
   }
 
   check_mecab_dictionary_encoding(ctx);
   if (ctx->rc != GRN_SUCCESS) {
-    grn_plugin_mutex_close(ctx, sole_mecab_mutex);
-    sole_mecab_mutex = NULL;
+    grn_mecab_fin(ctx, &mecab_default);
+    grn_mecab_fin(ctx, &mecab_wakati);
   }
 
   return ctx->rc;
@@ -735,14 +1009,8 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 grn_rc
 GRN_PLUGIN_FIN(grn_ctx *ctx)
 {
-  if (sole_mecab) {
-    mecab_destroy(sole_mecab);
-    sole_mecab = NULL;
-  }
-  if (sole_mecab_mutex) {
-    grn_plugin_mutex_close(ctx, sole_mecab_mutex);
-    sole_mecab_mutex = NULL;
-  }
+  grn_mecab_fin(ctx, &mecab_default);
+  grn_mecab_fin(ctx, &mecab_wakati);
 
   return GRN_SUCCESS;
 }
