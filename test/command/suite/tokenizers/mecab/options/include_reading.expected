@@ -1,0 +1,34 @@
+tokenize   'TokenMecab("include_reading", true)'   '焼き肉と焼きにく'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "焼き肉",
+      "position": 0,
+      "force_prefix": false,
+      "metadata": {
+        "reading": "ヤキニク"
+      }
+    },
+    {
+      "value": "と",
+      "position": 1,
+      "force_prefix": false,
+      "metadata": {
+        "reading": "ト"
+      }
+    },
+    {
+      "value": "焼きにく",
+      "position": 2,
+      "force_prefix": false,
+      "metadata": {
+        "reading": "ヤキニク"
+      }
+    }
+  ]
+]
