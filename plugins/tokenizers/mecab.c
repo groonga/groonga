@@ -642,7 +642,10 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
         GRN_PLUGIN_FREE(ctx, tokenizer);
         return NULL;
       }
-      {
+      if (mecab_tokenizer_options_need_default_output(tokenizer->options)) {
+        tokenizer->next = GRN_TEXT_VALUE(&(tokenizer->buf));
+        tokenizer->end = tokenizer->next + GRN_TEXT_LEN(&(tokenizer->buf));
+      } else {
         char *buf, *p;
         unsigned int bufsize;
 
@@ -670,11 +673,11 @@ mecab_next_default_format_skip_eos(grn_ctx *ctx,
   }
 
   if (strncmp(tokenizer->next, "EOS", 3) == 0) {
-    const char *current = tokenizer->next;
-    if (current + 1 < tokenizer->end && current[0] == '\r') {
+    const char *current = tokenizer->next + 3;
+    if (current < tokenizer->end && current[0] == '\r') {
       current++;
     }
-    if (current + 1 < tokenizer->end && current[0] == '\n') {
+    if (current < tokenizer->end && current[0] == '\n') {
       current++;
       tokenizer->next = current;
     }
@@ -702,7 +705,7 @@ mecab_next_default_format_add_feature(grn_ctx *ctx,
   size_t feature_length;
   grn_obj value;
 
-  if (i + 1 > n_locations) {
+  if (i + 2 > n_locations) {
     return;
   }
 
