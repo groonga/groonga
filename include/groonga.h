@@ -1,5 +1,6 @@
 /*
   Copyright(C) 2014-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -51,6 +52,7 @@
 #include "groonga/thread.h"
 #include "groonga/time.h"
 #include "groonga/token.h"
+#include "groonga/token_metadata.h"
 #include "groonga/type.h"
 #include "groonga/util.h"
 #include "groonga/window_function.h"

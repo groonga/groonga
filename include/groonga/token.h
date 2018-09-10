@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2014-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -160,6 +161,10 @@ GRN_API grn_rc
 grn_token_set_overlap(grn_ctx *ctx,
                       grn_token *token,
                       grn_bool have_overlap);
+
+GRN_API grn_obj *
+grn_token_get_metadata(grn_ctx *ctx,
+                       grn_token *token);
 
 #ifdef __cplusplus
 }  /* extern "C" */

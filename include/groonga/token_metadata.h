@@ -1,6 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
   Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -19,27 +18,32 @@
 
 #pragma once
 
-#include "grn_ctx.h"
-
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif  /* __cplusplus */
 
-struct _grn_token {
-  grn_obj data;
-  grn_token_status status;
-  uint64_t source_offset;
-  uint32_t source_length;
-  uint32_t source_first_character_length;
-  grn_bool have_overlap;
-  grn_obj metadata;
-};
-
-grn_rc grn_token_init(grn_ctx *ctx, grn_token *token);
-grn_rc grn_token_fin(grn_ctx *ctx, grn_token *token);
-grn_rc grn_token_reset(grn_ctx *ctx, grn_token *token);
-grn_rc grn_token_copy(grn_ctx *ctx, grn_token *token, grn_token *source);
+GRN_API size_t
+grn_token_metadata_get_size(grn_ctx *ctx,
+                            grn_obj *metadata);
+GRN_API grn_rc
+grn_token_metadata_at(grn_ctx *ctx,
+                      grn_obj *metadata,
+                      size_t i,
+                      grn_obj *name,
+                      grn_obj *value);
+GRN_API grn_rc
+grn_token_metadata_get(grn_ctx *ctx,
+                       grn_obj *metadata,
+                       const char *name,
+                       int name_length,
+                       grn_obj *value);
+GRN_API grn_rc
+grn_token_metadata_add(grn_ctx *ctx,
+                       grn_obj *metadata,
+                       const char *name,
+                       int name_length,
+                       grn_obj *value);
 
 #ifdef __cplusplus
-}
-#endif
+}  /* extern "C" */
+#endif  /* __cplusplus */

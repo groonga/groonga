@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2012-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,6 +18,7 @@
 */
 
 #include "grn_token.h"
+#include "grn_token_metadata.h"
 
 grn_rc
 grn_token_init(grn_ctx *ctx, grn_token *token)
@@ -28,6 +30,7 @@ grn_token_init(grn_ctx *ctx, grn_token *token)
   token->source_length = 0;
   token->source_first_character_length = 0;
   token->have_overlap = GRN_FALSE;
+  grn_token_metadata_init(ctx, &(token->metadata));
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -35,6 +38,7 @@ grn_rc
 grn_token_fin(grn_ctx *ctx, grn_token *token)
 {
   GRN_API_ENTER;
+  grn_token_metadata_fin(ctx, &(token->metadata));
   GRN_OBJ_FIN(ctx, &(token->data));
   GRN_API_RETURN(ctx->rc);
 }
@@ -229,6 +233,18 @@ exit:
   GRN_API_RETURN(ctx->rc);
 }
 
+grn_obj *
+grn_token_get_metadata(grn_ctx *ctx, grn_token *token)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][data][get][metadata] token must not be NULL");
+    GRN_API_RETURN(NULL);
+  }
+  GRN_API_RETURN(&(token->metadata));
+}
+
 grn_rc
 grn_token_reset(grn_ctx *ctx, grn_token *token)
 {
@@ -243,6 +259,7 @@ grn_token_reset(grn_ctx *ctx, grn_token *token)
   token->source_length = 0;
   token->source_first_character_length = 0;
   token->have_overlap = GRN_FALSE;
+  grn_token_metadata_reset(ctx, &(token->metadata));
 exit:
   GRN_API_RETURN(ctx->rc);
 }
@@ -266,6 +283,8 @@ grn_token_copy(grn_ctx *ctx,
   token->source_length = source->source_length;
   token->source_first_character_length = source->source_first_character_length;
   token->have_overlap = source->have_overlap;
+  grn_token_metadata_reset(ctx, &(token->metadata));
+  grn_token_metadata_copy(ctx, &(token->metadata), &(source->metadata));
 exit:
   GRN_API_RETURN(ctx->rc);
 }
