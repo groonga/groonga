@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -67,7 +68,31 @@ typedef struct {
   uint64_t source_offset;
   uint32_t source_length;
   uint32_t source_first_character_length;
+  grn_obj metadata;
 } tokenize_token;
+
+static void
+init_tokens(grn_ctx *ctx,
+            grn_obj *tokens)
+{
+  GRN_VALUE_FIX_SIZE_INIT(tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
+}
+
+static void
+fin_tokens(grn_ctx *ctx,
+           grn_obj *tokens)
+{
+  int i;
+  int n_tokens;
+
+  n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
+  for (i = 0; i < n_tokens; i++) {
+    tokenize_token *token;
+    token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
+    GRN_OBJ_FIN(ctx, &(token->metadata));
+  }
+  GRN_OBJ_FIN(ctx, tokens);
+}
 
 static void
 output_tokens(grn_ctx *ctx,
@@ -78,6 +103,7 @@ output_tokens(grn_ctx *ctx,
   int i, n_tokens, n_elements;
   grn_obj estimated_size;
   grn_bool have_source_location = GRN_FALSE;
+  grn_bool have_metadata = GRN_FALSE;
 
   n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
   n_elements = 3;
@@ -90,11 +116,16 @@ output_tokens(grn_ctx *ctx,
     token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
     if (token->source_offset > 0 || token->source_length > 0) {
       have_source_location = GRN_TRUE;
-      break;
+    }
+    if (grn_vector_size(ctx, &(token->metadata)) > 0) {
+      have_metadata = GRN_TRUE;
     }
   }
   if (have_source_location) {
     n_elements += 3;
+  }
+  if (have_metadata) {
+    n_elements += 1;
   }
 
   grn_ctx_output_array_open(ctx, "TOKENS", n_tokens);
@@ -136,6 +167,45 @@ output_tokens(grn_ctx *ctx,
       grn_ctx_output_uint32(ctx, token->source_first_character_length);
     }
 
+    if (have_metadata) {
+      size_t i;
+      size_t n_metadata;
+      grn_obj value;
+
+      n_metadata = grn_vector_size(ctx, &(token->metadata)) / 2;
+      GRN_VOID_INIT(&value);
+      grn_ctx_output_cstr(ctx, "metadata");
+      grn_ctx_output_map_open(ctx, "METADATA", n_metadata);
+      for (i = 0; i < n_metadata; i++) {
+        const char *raw_name;
+        unsigned int raw_name_length;
+        const char *raw_value;
+        unsigned int raw_value_length;
+        grn_id value_domain;
+
+        raw_name_length = grn_vector_get_element(ctx,
+                                                 &(token->metadata),
+                                                 i * 2,
+                                                 &raw_name,
+                                                 NULL,
+                                                 NULL);
+        grn_ctx_output_str(ctx, raw_name, raw_name_length);
+
+        raw_value_length = grn_vector_get_element(ctx,
+                                                  &(token->metadata),
+                                                  i * 2 + 1,
+                                                  &raw_value,
+                                                  NULL,
+                                                  &value_domain);
+        grn_obj_reinit(ctx, &value, value_domain, 0);
+        grn_bulk_write(ctx, &value, raw_value, raw_value_length);
+        grn_ctx_output_obj(ctx, &value, NULL);
+      }
+      grn_ctx_output_map_close(ctx);
+
+      GRN_OBJ_FIN(ctx, &value);
+    }
+
     grn_ctx_output_map_close(ctx);
   }
 
@@ -171,6 +241,7 @@ tokenize(grn_ctx *ctx,
     grn_id token_id = grn_token_cursor_next(ctx, token_cursor);
     grn_token *token;
     tokenize_token *current_token;
+
     if (token_id == GRN_ID_NIL) {
       continue;
     }
@@ -184,6 +255,38 @@ tokenize(grn_ctx *ctx,
     current_token->source_length = grn_token_get_source_length(ctx, token);
     current_token->source_first_character_length =
       grn_token_get_source_first_character_length(ctx, token);
+
+    {
+      grn_obj *metadata;
+      size_t n_metadata;
+      size_t i;
+      grn_obj name;
+      grn_obj value;
+
+      GRN_TEXT_INIT(&(current_token->metadata), GRN_OBJ_VECTOR);
+      metadata = grn_token_get_metadata(ctx, token);
+      n_metadata = grn_token_metadata_get_size(ctx, metadata);
+      GRN_TEXT_INIT(&name, 0);
+      GRN_VOID_INIT(&value);
+      for (i = 0; i < n_metadata; i++) {
+        grn_token_metadata_at(ctx, metadata, i, &name, &value);
+        if (GRN_TEXT_LEN(&name) == 0) {
+          continue;
+        }
+        grn_vector_add_element(ctx,
+                               &(current_token->metadata),
+                               GRN_BULK_HEAD(&name),
+                               GRN_BULK_VSIZE(&name),
+                               0,
+                               name.header.domain);
+        grn_vector_add_element(ctx,
+                               &(current_token->metadata),
+                               GRN_BULK_HEAD(&value),
+                               GRN_BULK_VSIZE(&value),
+                               0,
+                               value.header.domain);
+      }
+    }
   }
   grn_token_cursor_close(ctx, token_cursor);
 }
@@ -269,7 +372,7 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
 
     {
       grn_obj tokens;
-      GRN_VALUE_FIX_SIZE_INIT(&tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      init_tokens(ctx, &tokens);
       if (mode_raw.length == 0 ||
           GRN_RAW_STRING_EQUAL_CSTRING(mode_raw, "GET")) {
         tokenize(ctx, lexicon, &string_raw, GRN_TOKEN_GET, flags, &tokens);
@@ -283,7 +386,7 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
                          (int)mode_raw.length,
                          mode_raw.value);
       }
-      GRN_OBJ_FIN(ctx, &tokens);
+      fin_tokens(ctx, &tokens);
     }
 #undef MODE_NAME_EQUAL
 
@@ -378,7 +481,8 @@ command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
 
     {
       grn_obj tokens;
-      GRN_VALUE_FIX_SIZE_INIT(&tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      init_tokens(ctx, &tokens);
+      fin_tokens(ctx, &tokens);
       if (mode_raw.length == 0 ||
           GRN_RAW_STRING_EQUAL_CSTRING(mode_raw, "ADD")) {
         tokenize(ctx, lexicon, &string_raw, GRN_TOKEN_ADD, flags, &tokens);
@@ -395,7 +499,7 @@ command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
                          (int)mode_raw.length,
                          mode_raw.value);
       }
-      GRN_OBJ_FIN(ctx, &tokens);
+      fin_tokens(ctx, &tokens);
     }
 #undef MODE_NAME_EQUAL
 
