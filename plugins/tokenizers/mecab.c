@@ -51,6 +51,7 @@ typedef struct {
   int32_t chunk_size_threshold;
   grn_bool include_class;
   grn_bool include_reading;
+  grn_bool include_form;
 } grn_mecab_tokenizer_options;
 
 typedef struct {
@@ -144,6 +145,7 @@ mecab_tokenizer_options_init(grn_mecab_tokenizer_options *options)
   options->chunk_size_threshold = grn_mecab_chunk_size_threshold;
   options->include_class = GRN_FALSE;
   options->include_reading = GRN_FALSE;
+  options->include_form = GRN_FALSE;
 }
 
 static grn_bool
@@ -158,6 +160,10 @@ mecab_tokenizer_options_need_default_output(grn_mecab_tokenizer_options *options
   }
 
   if (options->include_reading) {
+    return GRN_TRUE;
+  }
+
+  if (options->include_form) {
     return GRN_TRUE;
   }
 
@@ -212,6 +218,12 @@ mecab_tokenizer_options_open(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->include_reading);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "include_form")) {
+      options->include_form =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->include_form);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
@@ -824,6 +836,16 @@ mecab_next_default_format(grn_ctx *ctx,
     data.ignore_empty_value = GRN_TRUE;
     data.ignore_asterisk_value = GRN_FALSE;
     mecab_next_default_format_add_feature(ctx, &data, "reading", 7);
+  }
+  if (tokenizer->options->include_form) {
+    add_feature_data data;
+    data.token = token;
+    data.features = &features;
+    data.ignore_empty_value = GRN_TRUE;
+    data.ignore_asterisk_value = GRN_TRUE;
+    mecab_next_default_format_add_feature(ctx, &data, "inflected_type", 4);
+    mecab_next_default_format_add_feature(ctx, &data, "inflected_form", 5);
+    mecab_next_default_format_add_feature(ctx, &data, "base_form", 6);
   }
   GRN_OBJ_FIN(ctx, &features);
 }

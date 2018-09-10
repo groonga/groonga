@@ -1,0 +1,40 @@
+tokenize   'TokenMecab("include_form", true)'   '行きました'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "行き",
+      "position": 0,
+      "force_prefix": false,
+      "metadata": {
+        "inflected_type": "五段・カ行促音便",
+        "inflected_form": "連用形",
+        "base_form": "行く"
+      }
+    },
+    {
+      "value": "まし",
+      "position": 1,
+      "force_prefix": false,
+      "metadata": {
+        "inflected_type": "特殊・マス",
+        "inflected_form": "連用形",
+        "base_form": "ます"
+      }
+    },
+    {
+      "value": "た",
+      "position": 2,
+      "force_prefix": false,
+      "metadata": {
+        "inflected_type": "特殊・タ",
+        "inflected_form": "基本形",
+        "base_form": "た"
+      }
+    }
+  ]
+]

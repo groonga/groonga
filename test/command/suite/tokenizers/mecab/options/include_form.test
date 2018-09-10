@@ -1,0 +1,5 @@
+#@on-error omit
+tokenize \
+  'TokenMecab("include_form", true)' \
+  '行きました'
+#@on-error default
