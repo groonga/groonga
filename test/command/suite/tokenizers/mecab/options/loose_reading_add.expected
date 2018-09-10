@@ -1,0 +1,65 @@
+tokenize   'TokenMecab("loose_reading", true)'   '焼き肉と焼きにくとyakiniku'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "焼き肉",
+      "position": 0,
+      "force_prefix": false
+    },
+    {
+      "value": "と",
+      "position": 1,
+      "force_prefix": false
+    },
+    {
+      "value": "焼きにく",
+      "position": 2,
+      "force_prefix": false
+    },
+    {
+      "value": "と",
+      "position": 3,
+      "force_prefix": false
+    },
+    {
+      "value": "yakiniku",
+      "position": 4,
+      "force_prefix": false
+    },
+    {
+      "value": "￰",
+      "position": 5,
+      "force_prefix": false
+    },
+    {
+      "value": "ヤキニク",
+      "position": 6,
+      "force_prefix": false
+    },
+    {
+      "value": "ト",
+      "position": 7,
+      "force_prefix": false
+    },
+    {
+      "value": "ヤキニク",
+      "position": 8,
+      "force_prefix": false
+    },
+    {
+      "value": "ト",
+      "position": 9,
+      "force_prefix": false
+    },
+    {
+      "value": "yakiniku",
+      "position": 10,
+      "force_prefix": false
+    }
+  ]
+]
