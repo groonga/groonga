@@ -28,6 +28,11 @@ extern "C" {
 #define GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8     "\xEF\xBF\xBE"
 #define GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8_LEN 3
 
+#define GRN_TOKENIZER_BEGIN_MARK_UTF8     "\xEF\xBF\xAF"
+#define GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN 3
+#define GRN_TOKENIZER_END_MARK_UTF8       "\xEF\xBF\xB0"
+#define GRN_TOKENIZER_END_MARK_UTF8_LEN   3
+
 /*
   grn_tokenizer_charlen() returns the length (#bytes) of the first character
   in the string specified by `str_ptr' and `str_length'. If the starting bytes
