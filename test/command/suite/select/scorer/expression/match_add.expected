@@ -9,5 +9,5 @@ load --table Users
 {"_key": "alice", "tags": "wonder", "name": "Alice in Wonderland"}
 ]
 [[0,0.0,0.0],1]
-select Users   --filter true   --scorer '_score = (tags @ "wonder") + (name @ "Alice")'   --output_columns _score
+select Users   --filter true   --scorer '_score = (tags @ "wonder") + (name @ "Alice") + (name @ "not match")'   --output_columns _score
 [[0,0.0,0.0],[[[1],[["_score","Int32"]],[2]]]]

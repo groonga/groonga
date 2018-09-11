@@ -11,5 +11,5 @@ load --table Users
 
 select Users \
   --filter true \
-  --scorer '_score = (tags @ "wonder") + (tags @ "nonexistent") + (tags @ "nonexistent")' \
+  --scorer '_score = (tags @ "wonder")' \
   --output_columns _score

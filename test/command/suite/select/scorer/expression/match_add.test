@@ -9,5 +9,5 @@ load --table Users
 
 select Users \
   --filter true \
-  --scorer '_score = (tags @ "wonder") + (name @ "Alice")' \
+  --scorer '_score = (tags @ "wonder") + (name @ "Alice") + (name @ "not match")' \
   --output_columns _score

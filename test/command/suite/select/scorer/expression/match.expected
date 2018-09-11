@@ -11,5 +11,5 @@ load --table Users
 {"_key": "alice", "tags": {"wonder": 100}}
 ]
 [[0,0.0,0.0],1]
-select Users   --filter true   --scorer '_score = (tags @ "wonder") + (tags @ "nonexistent") + (tags @ "nonexistent")'   --output_columns _score
+select Users   --filter true   --scorer '_score = (tags @ "wonder")'   --output_columns _score
 [[0,0.0,0.0],[[[1],[["_score","Int32"]],[1]]]]
