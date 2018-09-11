@@ -1,5 +1,5 @@
 #@on-error omit
 tokenize \
   'TokenMecab("include_reading", true)' \
-  '焼き肉と焼きにくとyakiniku'
+  '焼き肉と焼肉とyakiniku'
 #@on-error default
