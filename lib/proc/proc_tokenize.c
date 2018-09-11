@@ -269,6 +269,8 @@ tokenize(grn_ctx *ctx,
       GRN_TEXT_INIT(&name, 0);
       GRN_VOID_INIT(&value);
       for (i = 0; i < n_metadata; i++) {
+        GRN_BULK_REWIND(&name);
+        GRN_BULK_REWIND(&value);
         grn_token_metadata_at(ctx, metadata, i, &name, &value);
         if (GRN_TEXT_LEN(&name) == 0) {
           continue;
@@ -286,6 +288,8 @@ tokenize(grn_ctx *ctx,
                                0,
                                value.header.domain);
       }
+      GRN_OBJ_FIN(ctx, &name);
+      GRN_OBJ_FIN(ctx, &value);
     }
   }
   grn_token_cursor_close(ctx, token_cursor);
