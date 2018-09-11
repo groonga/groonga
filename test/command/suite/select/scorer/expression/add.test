@@ -1,0 +1,13 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users tags COLUMN_SCALAR ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+load --table Users
+[
+{"_key": "alice", "tags": "wonder", "name": "Alice in Wonderland"}
+]
+
+select Users \
+  --filter true \
+  --scorer '_score = (tags @ "wonder") + (name @ "Alice")' \
+  --output_columns _score
