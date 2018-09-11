@@ -1,4 +1,4 @@
-tokenize   'TokenMecab("loose_reading", true)'   '焼き肉と焼きにくとyakiniku'
+tokenize   'TokenMecab("loose_reading", true)'   '焼き肉と焼肉とyakiniku'
 [
   [
     0,
@@ -17,7 +17,7 @@ tokenize   'TokenMecab("loose_reading", true)'   '焼き肉と焼きにくとyak
       "force_prefix": false
     },
     {
-      "value": "焼きにく",
+      "value": "焼肉",
       "position": 2,
       "force_prefix": false
     },
