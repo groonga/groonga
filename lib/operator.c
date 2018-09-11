@@ -168,7 +168,7 @@ grn_operator_to_exec_func(grn_operator op)
   return func;
 }
 
-#define DO_EQ_SUB do {\
+#define DO_EQ_SUB(y, r) do {\
   switch (y->header.domain) {\
   case GRN_DB_INT8 :\
     r = (x_ == GRN_INT8_VALUE(y));\
@@ -223,43 +223,43 @@ grn_operator_to_exec_func(grn_operator op)
   case GRN_DB_INT8 :\
     {\
       int8_t x_ = GRN_INT8_VALUE(x);\
-      DO_EQ_SUB;\
+      DO_EQ_SUB(y, r);\
     }\
     break;\
   case GRN_DB_UINT8 :\
     {\
       uint8_t x_ = GRN_UINT8_VALUE(x);\
-      DO_EQ_SUB;\
+      DO_EQ_SUB(y, r);\
     }\
     break;\
   case GRN_DB_INT16 :\
     {\
       int16_t x_ = GRN_INT16_VALUE(x);\
-      DO_EQ_SUB;\
+      DO_EQ_SUB(y, r);\
     }\
     break;\
   case GRN_DB_UINT16 :\
     {\
       uint16_t x_ = GRN_UINT16_VALUE(x);\
-      DO_EQ_SUB;\
+      DO_EQ_SUB(y, r);\
     }\
     break;\
   case GRN_DB_INT32 :\
     {\
       int32_t x_ = GRN_INT32_VALUE(x);\
-      DO_EQ_SUB;\
+      DO_EQ_SUB(y, r);\
     }\
     break;\
   case GRN_DB_UINT32 :\
     {\
       uint32_t x_ = GRN_UINT32_VALUE(x);\
-      DO_EQ_SUB;\
+      DO_EQ_SUB(y, r);\
     }\
     break;\
   case GRN_DB_INT64 :\
     {\
       int64_t x_ = GRN_INT64_VALUE(x);\
-      DO_EQ_SUB;\
+      DO_EQ_SUB(y, r);\
     }\
     break;\
   case GRN_DB_TIME :\
@@ -305,7 +305,7 @@ grn_operator_to_exec_func(grn_operator op)
   case GRN_DB_UINT64 :\
     {\
       uint64_t x_ = GRN_UINT64_VALUE(x);\
-      DO_EQ_SUB;\
+      DO_EQ_SUB(y, r);\
     }\
     break;\
   case GRN_DB_FLOAT :\
@@ -352,7 +352,7 @@ grn_operator_to_exec_func(grn_operator op)
     } else {\
       const char *q_ = GRN_TEXT_VALUE(x);\
       int x_ = grn_atoi(q_, q_ + GRN_TEXT_LEN(x), NULL);\
-      DO_EQ_SUB;\
+      DO_EQ_SUB(y, r);\
     }\
     break;\
   default :\
@@ -384,12 +384,112 @@ grn_operator_to_exec_func(grn_operator op)
   }\
 } while (0)
 
+static grn_bool
+exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
+{
+  switch (x->header.type) {
+  case GRN_BULK :
+    if (y->header.type == GRN_BULK) {
+      grn_bool is_equal = GRN_FALSE;
+      DO_EQ(x, y, is_equal);
+      return is_equal;
+    } else {
+      return GRN_FALSE;
+    }
+    break;
+  case GRN_VECTOR :
+    if (y->header.type == GRN_VECTOR) {
+      grn_bool is_equal = GRN_TRUE;
+      unsigned int x_size = grn_vector_size(ctx, x);
+      unsigned int y_size = grn_vector_size(ctx, y);
+      unsigned int i;
+      grn_obj x_element;
+      grn_obj y_element;
+      if (x_size != y_size) {
+        return GRN_FALSE;
+      }
+      GRN_VOID_INIT(&x_element);
+      GRN_VOID_INIT(&y_element);
+      for (i = 0; i < x_size; i++) {
+        const char *x_value;
+        unsigned int x_size;
+        unsigned int x_weight;
+        grn_id x_domain;
+        const char *y_value;
+        unsigned int y_size;
+        unsigned int y_weight;
+        grn_id y_domain;
+
+        x_size = grn_vector_get_element(ctx, x, i, &x_value, &x_weight, &x_domain);
+        y_size = grn_vector_get_element(ctx, y, i, &y_value, &y_weight, &y_domain);
+        if (x_weight != y_weight) {
+          is_equal = GRN_FALSE;
+          break;
+        }
+        grn_obj_reinit(ctx, &x_element, x_domain, 0);
+        grn_bulk_write(ctx, &x_element, x_value, x_size);
+        grn_obj_reinit(ctx, &y_element, y_domain, 0);
+        grn_bulk_write(ctx, &y_element, y_value, y_size);
+        DO_EQ((&x_element), (&y_element), is_equal);
+        if (!is_equal) {
+          break;
+        }
+      }
+      GRN_OBJ_FIN(ctx, &x_element);
+      GRN_OBJ_FIN(ctx, &y_element);
+      return is_equal;
+    } else {
+      return GRN_FALSE;
+    }
+    break;
+  case GRN_UVECTOR :
+    if (y->header.type == GRN_UVECTOR) {
+      grn_bool is_equal = GRN_TRUE;
+      unsigned int x_size = grn_vector_size(ctx, x);
+      unsigned int y_size = grn_vector_size(ctx, y);
+      unsigned int i;
+      grn_obj x_element;
+      grn_obj y_element;
+      unsigned int x_element_size = grn_uvector_element_size(ctx, x);
+      unsigned int y_element_size = grn_uvector_element_size(ctx, y);
+      if (x_size != y_size) {
+        return GRN_FALSE;
+      }
+      GRN_OBJ_INIT(&x_element, GRN_BULK, 0, x->header.domain);
+      GRN_OBJ_INIT(&y_element, GRN_BULK, 0, y->header.domain);
+      for (i = 0; i < x_size; i++) {
+        const char *x_value;
+        const char *y_value;
+
+        x_value = GRN_BULK_HEAD(x) + (x_element_size * i);
+        y_value = GRN_BULK_HEAD(y) + (y_element_size * i);
+        GRN_BULK_REWIND(&x_element);
+        GRN_BULK_REWIND(&y_element);
+        grn_bulk_write(ctx, &x_element, x_value, x_element_size);
+        grn_bulk_write(ctx, &y_element, y_value, y_element_size);
+        DO_EQ((&x_element), (&y_element), is_equal);
+        if (!is_equal) {
+          break;
+        }
+      }
+      GRN_OBJ_FIN(ctx, &x_element);
+      GRN_OBJ_FIN(ctx, &y_element);
+      return is_equal;
+    } else {
+      return GRN_FALSE;
+    }
+    break;
+  default :
+    return GRN_FALSE;
+  }
+}
+
 grn_bool
 grn_operator_exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 {
   grn_bool r = GRN_FALSE;
   GRN_API_ENTER;
-  DO_EQ(x, y, r);
+  r = exec_equal(ctx, x, y);
   GRN_API_RETURN(r);
 }
 
@@ -398,7 +498,7 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 {
   grn_bool r = GRN_FALSE;
   GRN_API_ENTER;
-  DO_EQ(x, y, r);
+  r = exec_equal(ctx, x, y);
   GRN_API_RETURN(!r);
 }
 
