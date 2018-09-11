@@ -797,7 +797,10 @@ mecab_next_default_format(grn_ctx *ctx,
   grn_token_set_data(ctx, token, surface, surface_length);
   {
     grn_tokenizer_status status;
-    if (tokenizer->next == tokenizer->end) {
+    if (surface_length == 0) {
+      /* Error */
+      status = GRN_TOKEN_LAST;
+    } else if (tokenizer->next == tokenizer->end) {
       if (tokenizer->loose.need) {
         tokenizer->loose.ing = GRN_TRUE;
         status = GRN_TOKEN_CONTINUE;
