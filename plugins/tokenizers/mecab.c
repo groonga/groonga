@@ -62,6 +62,7 @@ typedef struct {
   const char *next;
   const char *end;
   grn_tokenizer_query *query;
+  grn_obj feature_locations;
   struct {
     grn_bool ing;
     grn_bool need;
@@ -570,6 +571,320 @@ mecab_init_mecab(grn_ctx *ctx, grn_mecab_tokenizer *tokenizer)
   }
 }
 
+static void
+mecab_next_default_format_skip_eos(grn_ctx *ctx,
+                                   grn_mecab_tokenizer *tokenizer)
+{
+  if (tokenizer->next + 4 < tokenizer->end) {
+    return;
+  }
+
+  if (strncmp(tokenizer->next, "EOS", 3) == 0) {
+    const char *current = tokenizer->next + 3;
+    if (current < tokenizer->end && current[0] == '\r') {
+      current++;
+    }
+    if (current < tokenizer->end && current[0] == '\n') {
+      current++;
+      tokenizer->next = current;
+    }
+  }
+}
+
+typedef struct {
+  grn_token *token;
+  grn_obj *feature_locations;
+  grn_bool ignore_empty_value;
+  grn_bool ignore_asterisk_value;
+} add_feature_data;
+
+static size_t
+mecab_get_feature(grn_ctx *ctx,
+                  grn_obj *feature_locations,
+                  size_t i,
+                  const char **value)
+{
+  size_t n_locations = GRN_BULK_VSIZE(feature_locations) / sizeof(uint64_t);
+  const char *start;
+  const char *end;
+
+  if (i + 2 > n_locations) {
+    *value = NULL;
+    return 0;
+  }
+
+  start = (const char *)(GRN_UINT64_VALUE_AT(feature_locations, i));
+  end = ((const char *)(GRN_UINT64_VALUE_AT(feature_locations, i + 1))) - 1;
+  *value = start;
+  return end - start;
+}
+
+static void
+mecab_next_default_format_add_feature(grn_ctx *ctx,
+                                      add_feature_data *data,
+                                      const char *name,
+                                      size_t i)
+{
+  grn_token *token = data->token;
+  grn_obj *feature_locations = data->feature_locations;
+  const char *feature = NULL;
+  size_t feature_length;
+  grn_obj value;
+
+  feature_length = mecab_get_feature(ctx, feature_locations, i, &feature);
+  if (data->ignore_empty_value && feature_length == 0) {
+    return;
+  }
+  if (data->ignore_asterisk_value &&
+      feature_length == 1 &&
+      feature[0] == '*') {
+    return;
+  }
+
+  GRN_TEXT_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_TEXT_SET(ctx, &value, feature, feature_length);
+  grn_token_metadata_add(ctx,
+                         grn_token_get_metadata(ctx, token),
+                         name,
+                         -1,
+                         &value);
+  GRN_OBJ_FIN(ctx, &value);
+}
+
+static size_t
+mecab_next_default_format_consume_token(grn_ctx *ctx,
+                                        grn_mecab_tokenizer *tokenizer,
+                                        const char **surface_output)
+{
+  grn_encoding encoding = tokenizer->query->encoding;
+  grn_obj *feature_locations = &(tokenizer->feature_locations);
+  const char *start;
+  const char *current;
+  const char *end = tokenizer->end;
+  const char *surface = NULL;
+  int length = 0;
+  size_t surface_length = 0;
+
+  if (surface_output) {
+    *surface_output = NULL;
+  }
+
+  GRN_BULK_REWIND(feature_locations);
+  mecab_next_default_format_skip_eos(ctx, tokenizer);
+  start = surface = tokenizer->next;
+  for (current = start; current < end; current += length) {
+    length = grn_charlen_(ctx, current, end, encoding);
+    if (length == 0) {
+      if (surface_output) {
+        *surface_output = NULL;
+      }
+      return 0;
+    }
+
+    if (length == 1) {
+      if (current[0] == '\r') {
+        if (surface_length == 0) {
+          surface_length = current - surface;
+        } else {
+          GRN_UINT64_PUT(ctx, feature_locations, current);
+        }
+        current++;
+        if (current < end &&
+            grn_charlen_(ctx, current, end, encoding) == 1 &&
+            current[0] == '\n') {
+          current++;
+        }
+        break;
+      } else if (current[0] == '\n') {
+        if (surface_length == 0) {
+          surface_length = current - surface;
+        } else {
+          GRN_UINT64_PUT(ctx, feature_locations, current);
+        }
+        current++;
+        break;
+      }
+    }
+
+    if (surface_length == 0) {
+      if (length == 1 && current[0] == '\t') {
+        surface_length = current - surface;
+        if (current + 1 < end) {
+          GRN_UINT64_PUT(ctx, feature_locations, current + 1);
+        }
+      }
+    } else {
+      if (length == 1 && current[0] == ',' && current + 1 < end) {
+        GRN_UINT64_PUT(ctx, feature_locations, current + 1);
+      }
+    }
+  }
+  tokenizer->next = current;
+  mecab_next_default_format_skip_eos(ctx, tokenizer);
+
+  if (tokenizer->options->loose_reading) {
+    const char *reading = NULL;
+    size_t reading_length;
+    reading_length = mecab_get_feature(ctx, feature_locations, 7, &reading);
+    if (reading_length > 0) {
+      tokenizer->loose.need = GRN_TRUE;
+      tokenizer->loose.need_end_mark = GRN_TRUE;
+      grn_vector_add_element(ctx,
+                             &(tokenizer->loose.readings),
+                             reading,
+                             reading_length,
+                             0,
+                             GRN_DB_TEXT);
+    } else {
+      grn_vector_add_element(ctx,
+                             &(tokenizer->loose.readings),
+                             surface,
+                             surface_length,
+                             0,
+                             GRN_DB_TEXT);
+    }
+  }
+
+  if (surface_output) {
+    *surface_output = surface;
+  }
+  return surface_length;
+}
+
+static void
+mecab_next_default_format(grn_ctx *ctx,
+                          grn_mecab_tokenizer *tokenizer,
+                          grn_token *token)
+{
+  const char *surface;
+  size_t surface_length = 0;
+
+  if (tokenizer->loose.ing && tokenizer->loose.need_end_mark) {
+    grn_tokenizer_status status = GRN_TOKEN_CONTINUE;
+    grn_token_set_data(ctx,
+                       token,
+                       GRN_TOKENIZER_END_MARK_UTF8,
+                       GRN_TOKENIZER_END_MARK_UTF8_LEN);
+    grn_token_set_status(ctx, token, status);
+    tokenizer->loose.need_end_mark = GRN_FALSE;
+    return;
+  }
+
+  if (tokenizer->loose.ing) {
+    grn_tokenizer_status status = GRN_TOKEN_CONTINUE;
+    const char *reading = NULL;
+    unsigned int reading_length;
+
+    if (tokenizer->loose.offset + 1 ==
+        grn_vector_size(ctx, &(tokenizer->loose.readings))) {
+      status = GRN_TOKEN_LAST;
+    }
+    reading_length = grn_vector_get_element(ctx,
+                                            &(tokenizer->loose.readings),
+                                            tokenizer->loose.offset,
+                                            &reading,
+                                            NULL,
+                                            NULL);
+    grn_token_set_data(ctx, token, reading, reading_length);
+    grn_token_set_status(ctx, token, status);
+    tokenizer->loose.offset++;
+    return;
+  }
+
+  surface_length = mecab_next_default_format_consume_token(ctx,
+                                                           tokenizer,
+                                                           &surface);
+  grn_token_set_data(ctx, token, surface, surface_length);
+  {
+    grn_tokenizer_status status;
+    if (tokenizer->next == tokenizer->end) {
+      if (tokenizer->loose.need) {
+        tokenizer->loose.ing = GRN_TRUE;
+        status = GRN_TOKEN_CONTINUE;
+      } else {
+        status = GRN_TOKEN_LAST;
+      }
+    } else {
+      status = GRN_TOKEN_CONTINUE;
+    }
+    grn_token_set_status(ctx, token, status);
+  }
+  if (tokenizer->options->include_class) {
+    add_feature_data data;
+    data.token = token;
+    data.feature_locations = &(tokenizer->feature_locations);
+    data.ignore_empty_value = GRN_TRUE;
+    data.ignore_asterisk_value = GRN_TRUE;
+    mecab_next_default_format_add_feature(ctx, &data, "class", 0);
+    mecab_next_default_format_add_feature(ctx, &data, "subclass0", 1);
+    mecab_next_default_format_add_feature(ctx, &data, "subclass1", 2);
+    mecab_next_default_format_add_feature(ctx, &data, "subclass2", 3);
+  }
+  if (tokenizer->options->include_reading) {
+    add_feature_data data;
+    data.token = token;
+    data.feature_locations = &(tokenizer->feature_locations);
+    data.ignore_empty_value = GRN_TRUE;
+    data.ignore_asterisk_value = GRN_FALSE;
+    mecab_next_default_format_add_feature(ctx, &data, "reading", 7);
+  }
+  if (tokenizer->options->include_form) {
+    add_feature_data data;
+    data.token = token;
+    data.feature_locations = &(tokenizer->feature_locations);
+    data.ignore_empty_value = GRN_TRUE;
+    data.ignore_asterisk_value = GRN_TRUE;
+    mecab_next_default_format_add_feature(ctx, &data, "inflected_type", 4);
+    mecab_next_default_format_add_feature(ctx, &data, "inflected_form", 5);
+    mecab_next_default_format_add_feature(ctx, &data, "base_form", 6);
+  }
+}
+
+static void
+mecab_next_wakati_format(grn_ctx *ctx,
+                         grn_mecab_tokenizer *tokenizer,
+                         grn_token *token)
+{
+  grn_encoding encoding = tokenizer->query->encoding;
+  size_t cl;
+  const char *p = tokenizer->next, *r;
+  const char *e = tokenizer->end;
+  grn_tokenizer_status status;
+
+  for (r = p; r < e; r += cl) {
+    int space_len;
+
+    space_len = grn_isspace(r, encoding);
+    if (space_len > 0 && r == p) {
+      cl = space_len;
+      p = r + cl;
+      continue;
+    }
+
+    if (!(cl = grn_charlen_(ctx, r, e, encoding))) {
+      tokenizer->next = e;
+      break;
+    }
+
+    if (space_len > 0) {
+      const char *q = r + space_len;
+      while (q < e && (space_len = grn_isspace(q, encoding))) {
+        q += space_len;
+      }
+      tokenizer->next = q;
+      break;
+    }
+  }
+
+  if (r == e || tokenizer->next == e) {
+    status = GRN_TOKEN_LAST;
+  } else {
+    status = GRN_TOKEN_CONTINUE;
+  }
+  grn_token_set_data(ctx, token, p, r - p);
+  grn_token_set_status(ctx, token, status);
+}
+
 /*
   This function is called for a full text search query or a document to be
   indexed. This means that both short/long strings are given.
@@ -692,305 +1007,26 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
     }
   }
 
+  GRN_UINT64_INIT(&(tokenizer->feature_locations), GRN_OBJ_VECTOR);
+
   tokenizer->loose.ing = GRN_FALSE;
   tokenizer->loose.need = GRN_FALSE;
   tokenizer->loose.need_end_mark = GRN_FALSE;
   GRN_TEXT_INIT(&(tokenizer->loose.readings), GRN_OBJ_VECTOR);
   tokenizer->loose.offset = 0;
 
+  if (tokenizer->options->loose_reading &&
+      grn_tokenizer_query_get_mode(ctx, tokenizer->query) == GRN_TOKEN_GET) {
+    while (mecab_next_default_format_consume_token(ctx, tokenizer, NULL) > 0) {
+      /* Do nothing */
+    }
+    tokenizer->loose.ing = GRN_TRUE;
+    tokenizer->loose.need = GRN_TRUE;
+    tokenizer->loose.need_end_mark = GRN_FALSE;
+  }
+
   return tokenizer;
 }
-
-static void
-mecab_next_default_format_skip_eos(grn_ctx *ctx,
-                                   grn_mecab_tokenizer *tokenizer)
-{
-  if (tokenizer->next + 4 < tokenizer->end) {
-    return;
-  }
-
-  if (strncmp(tokenizer->next, "EOS", 3) == 0) {
-    const char *current = tokenizer->next + 3;
-    if (current < tokenizer->end && current[0] == '\r') {
-      current++;
-    }
-    if (current < tokenizer->end && current[0] == '\n') {
-      current++;
-      tokenizer->next = current;
-    }
-  }
-}
-
-typedef struct {
-  grn_token *token;
-  grn_obj *features;
-  grn_bool ignore_empty_value;
-  grn_bool ignore_asterisk_value;
-} add_feature_data;
-
-static size_t
-mecab_get_feature(grn_ctx *ctx,
-                  grn_obj *features,
-                  size_t i,
-                  const char **value)
-{
-  size_t n_locations = GRN_BULK_VSIZE(features) / sizeof(uint64_t);
-  const char *start;
-  const char *end;
-
-  if (i + 2 > n_locations) {
-    *value = NULL;
-    return 0;
-  }
-
-  start = (const char *)(GRN_UINT64_VALUE_AT(features, i));
-  end = ((const char *)(GRN_UINT64_VALUE_AT(features, i + 1))) - 1;
-  *value = start;
-  return end - start;
-}
-
-static void
-mecab_next_default_format_add_feature(grn_ctx *ctx,
-                                      add_feature_data *data,
-                                      const char *name,
-                                      size_t i)
-{
-  grn_token *token = data->token;
-  grn_obj *features = data->features;
-  const char *feature = NULL;
-  size_t feature_length;
-  grn_obj value;
-
-  feature_length = mecab_get_feature(ctx, features, i, &feature);
-  if (data->ignore_empty_value && feature_length == 0) {
-    return;
-  }
-  if (data->ignore_asterisk_value &&
-      feature_length == 1 &&
-      feature[0] == '*') {
-    return;
-  }
-
-  GRN_TEXT_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY);
-  GRN_TEXT_SET(ctx, &value, feature, feature_length);
-  grn_token_metadata_add(ctx,
-                         grn_token_get_metadata(ctx, token),
-                         name,
-                         -1,
-                         &value);
-  GRN_OBJ_FIN(ctx, &value);
-}
-
-static void
-mecab_next_default_format(grn_ctx *ctx,
-                          grn_mecab_tokenizer *tokenizer,
-                          grn_token *token)
-{
-  grn_encoding encoding = tokenizer->query->encoding;
-  const char *start;
-  const char *current;
-  const char *end = tokenizer->end;
-  int length = 0;
-  const char *surface;
-  size_t surface_length = 0;
-  grn_obj features;
-
-  if (tokenizer->loose.ing && tokenizer->loose.need_end_mark) {
-    grn_tokenizer_status status = GRN_TOKEN_CONTINUE;
-    grn_token_set_data(ctx,
-                       token,
-                       GRN_TOKENIZER_END_MARK_UTF8,
-                       GRN_TOKENIZER_END_MARK_UTF8_LEN);
-    grn_token_set_status(ctx, token, status);
-    tokenizer->loose.need_end_mark = GRN_FALSE;
-    return;
-  }
-
-  if (tokenizer->loose.ing) {
-    grn_tokenizer_status status = GRN_TOKEN_CONTINUE;
-    const char *reading = NULL;
-    unsigned int reading_length;
-
-    if (tokenizer->loose.offset + 1 ==
-        grn_vector_size(ctx, &(tokenizer->loose.readings))) {
-      status = GRN_TOKEN_LAST;
-    }
-    reading_length = grn_vector_get_element(ctx,
-                                            &(tokenizer->loose.readings),
-                                            tokenizer->loose.offset,
-                                            &reading,
-                                            NULL,
-                                            NULL);
-    grn_token_set_data(ctx, token, reading, reading_length);
-    grn_token_set_status(ctx, token, status);
-    tokenizer->loose.offset++;
-    return;
-  }
-
-  mecab_next_default_format_skip_eos(ctx, tokenizer);
-  start = surface = tokenizer->next;
-  GRN_UINT64_INIT(&features, GRN_OBJ_VECTOR);
-  for (current = start; current < end; current += length) {
-    length = grn_charlen_(ctx, current, end, encoding);
-    if (length == 0) {
-      break;
-    }
-
-    if (length == 1) {
-      if (current[0] == '\r') {
-        if (surface_length == 0) {
-          surface_length = current - surface;
-        } else {
-          GRN_UINT64_PUT(ctx, &features, current);
-        }
-        current++;
-        if (current < end &&
-            grn_charlen_(ctx, current, end, encoding) == 1 &&
-            current[0] == '\n') {
-          current++;
-        }
-        break;
-      } else if (current[0] == '\n') {
-        if (surface_length == 0) {
-          surface_length = current - surface;
-        } else {
-          GRN_UINT64_PUT(ctx, &features, current);
-        }
-        current++;
-        break;
-      }
-    }
-
-    if (surface_length == 0) {
-      if (length == 1 && current[0] == '\t') {
-        surface_length = current - surface;
-        if (current + 1 < end) {
-          GRN_UINT64_PUT(ctx, &features, current + 1);
-        }
-      }
-    } else {
-      if (length == 1 && current[0] == ',' && current + 1 < end) {
-        GRN_UINT64_PUT(ctx, &features, current + 1);
-      }
-    }
-  }
-  tokenizer->next = current;
-  mecab_next_default_format_skip_eos(ctx, tokenizer);
-
-  grn_token_set_data(ctx, token, surface, surface_length);
-  {
-    grn_tokenizer_status status;
-    if (current == end || tokenizer->next == end) {
-      if (tokenizer->loose.need) {
-        tokenizer->loose.ing = GRN_TRUE;
-        status = GRN_TOKEN_CONTINUE;
-      } else {
-        status = GRN_TOKEN_LAST;
-      }
-    } else {
-      status = GRN_TOKEN_CONTINUE;
-    }
-    grn_token_set_status(ctx, token, status);
-  }
-  if (tokenizer->options->include_class) {
-    add_feature_data data;
-    data.token = token;
-    data.features = &features;
-    data.ignore_empty_value = GRN_TRUE;
-    data.ignore_asterisk_value = GRN_TRUE;
-    mecab_next_default_format_add_feature(ctx, &data, "class", 0);
-    mecab_next_default_format_add_feature(ctx, &data, "subclass0", 1);
-    mecab_next_default_format_add_feature(ctx, &data, "subclass1", 2);
-    mecab_next_default_format_add_feature(ctx, &data, "subclass2", 3);
-  }
-  if (tokenizer->options->include_reading) {
-    add_feature_data data;
-    data.token = token;
-    data.features = &features;
-    data.ignore_empty_value = GRN_TRUE;
-    data.ignore_asterisk_value = GRN_FALSE;
-    mecab_next_default_format_add_feature(ctx, &data, "reading", 7);
-  }
-  if (tokenizer->options->include_form) {
-    add_feature_data data;
-    data.token = token;
-    data.features = &features;
-    data.ignore_empty_value = GRN_TRUE;
-    data.ignore_asterisk_value = GRN_TRUE;
-    mecab_next_default_format_add_feature(ctx, &data, "inflected_type", 4);
-    mecab_next_default_format_add_feature(ctx, &data, "inflected_form", 5);
-    mecab_next_default_format_add_feature(ctx, &data, "base_form", 6);
-  }
-  if (tokenizer->options->loose_reading) {
-    const char *reading = NULL;
-    size_t reading_length;
-    reading_length = mecab_get_feature(ctx, &features, 7, &reading);
-    if (reading_length > 0) {
-      tokenizer->loose.need = GRN_TRUE;
-      tokenizer->loose.need_end_mark = GRN_TRUE;
-      grn_vector_add_element(ctx,
-                             &(tokenizer->loose.readings),
-                             reading,
-                             reading_length,
-                             0,
-                             GRN_DB_TEXT);
-    } else {
-      grn_vector_add_element(ctx,
-                             &(tokenizer->loose.readings),
-                             surface,
-                             surface_length,
-                             0,
-                             GRN_DB_TEXT);
-    }
-  }
-  GRN_OBJ_FIN(ctx, &features);
-}
-
-static void
-mecab_next_wakati_format(grn_ctx *ctx,
-                         grn_mecab_tokenizer *tokenizer,
-                         grn_token *token)
-{
-  grn_encoding encoding = tokenizer->query->encoding;
-  size_t cl;
-  const char *p = tokenizer->next, *r;
-  const char *e = tokenizer->end;
-  grn_tokenizer_status status;
-
-  for (r = p; r < e; r += cl) {
-    int space_len;
-
-    space_len = grn_isspace(r, encoding);
-    if (space_len > 0 && r == p) {
-      cl = space_len;
-      p = r + cl;
-      continue;
-    }
-
-    if (!(cl = grn_charlen_(ctx, r, e, encoding))) {
-      tokenizer->next = e;
-      break;
-    }
-
-    if (space_len > 0) {
-      const char *q = r + space_len;
-      while (q < e && (space_len = grn_isspace(q, encoding))) {
-        q += space_len;
-      }
-      tokenizer->next = q;
-      break;
-    }
-  }
-
-  if (r == e || tokenizer->next == e) {
-    status = GRN_TOKEN_LAST;
-  } else {
-    status = GRN_TOKEN_CONTINUE;
-  }
-  grn_token_set_data(ctx, token, p, r - p);
-  grn_token_set_status(ctx, token, status);
-}
-
 
 /*
   This function returns tokens one by one.
@@ -1040,6 +1076,7 @@ mecab_fin(grn_ctx *ctx, void *user_data)
     return;
   }
   GRN_OBJ_FIN(ctx, &(tokenizer->loose.readings));
+  GRN_OBJ_FIN(ctx, &(tokenizer->feature_locations));
   GRN_OBJ_FIN(ctx, &(tokenizer->buf));
   GRN_PLUGIN_FREE(ctx, tokenizer);
 }

@@ -1,0 +1,6 @@
+#@on-error omit
+tokenize \
+  'TokenMecab("loose_reading", true)' \
+  '焼き肉と焼肉とyakiniku' \
+  --mode GET
+#@on-error default
