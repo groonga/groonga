@@ -1271,7 +1271,7 @@ get_sysinfo(grn_ctx *ctx, const char *path, grn_obj *result)
     grn_text_printf(ctx, result, "{");
     grn_text_printf(ctx, result, "\"script\": \"%s.scr\",\n", grntest_scriptname);
     grn_text_printf(ctx, result, "  \"user\": \"%s\",\n", grntest_username);
-    grn_text_printf(ctx, reuslt, "  \"date\": \"%s\",\n", grntest_date);
+    grn_text_printf(ctx, result, "  \"date\": \"%s\",\n", grntest_date);
   }
 
   memset(cpustring, 0, 64);
@@ -1298,7 +1298,7 @@ get_sysinfo(grn_ctx *ctx, const char *path, grn_obj *result)
     if (grntest_outtype == OUT_TSV) {
       grn_text_printf(ctx, result, "64BIT\n");
     } else {
-      grn_text_printf(ctx, reuslt, "  \"BIT\": 64,\n");
+      grn_text_printf(ctx, result, "  \"BIT\": 64,\n");
     }
   } else {
     grntest_osinfo = OS_WINDOWS32;
