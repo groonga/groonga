@@ -539,7 +539,11 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     goto exit;                                                          \
   }                                                                     \
   if (y != res) {                                                       \
-    res->header.domain = x->header.domain;                              \
+    if (x->header.domain == GRN_DB_BOOL) {                              \
+      res->header.domain = GRN_DB_UINT8;                                \
+    } else {                                                            \
+      res->header.domain = x->header.domain;                            \
+    }                                                                   \
   }                                                                     \
   ARITHMETIC_OPERATION_DISPATCH(x, y, res,                              \
                                 integer8_operation,                     \
@@ -552,7 +556,11 @@ grn_expr_executor_init_general(grn_ctx *ctx,
                                 text_operation,                         \
                                 invalid_type_error);                    \
   if (y == res) {                                                       \
-    res->header.domain = x->header.domain;                              \
+    if (x->header.domain == GRN_DB_BOOL) {                              \
+      res->header.domain = GRN_DB_UINT8;                                \
+    } else {                                                            \
+      res->header.domain = x->header.domain;                            \
+    }                                                                   \
   }                                                                     \
 } while (0)
 
