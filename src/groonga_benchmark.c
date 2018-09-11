@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2010-2014 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -114,6 +115,7 @@ static grn_obj *grntest_db = NULL;
 
 #define BUF_LEN 1024
 #define LARGE_BUF_LEN 2048
+#define VERY_LARGE_BUF_LEN 10240
 #define MAX_PATH_LEN 256
 
 #define J_DO_LOCAL  1  /* do_local */
@@ -394,12 +396,16 @@ output_result_final(grn_ctx *ctx, int qnum)
 }
 
 static int
-output_sysinfo(char *sysinfo)
+output_sysinfo(grn_obj *sysinfo)
 {
   if (grntest_outtype == OUT_TSV) {
-    fprintf(grntest_log_file, "%s", sysinfo);
+    fprintf(grntest_log_file, "%.*s",
+            (int)GRN_TEXT_LEN(sysinfo),
+            GRN_TEXT_VALUE(sysinfo));
   } else {
-    fprintf(grntest_log_file, "[%s\n", sysinfo);
+    fprintf(grntest_log_file, "[%.*s\n",
+            (int)GRN_TEXT_LEN(sysinfo),
+            GRN_TEXT_VALUE(sysinfo));
   }
   return 0;
 }
@@ -1248,10 +1254,8 @@ error_exit(grn_ctx *ctx, int ret)
 }
 
 static int
-get_sysinfo(const char *path, char *result, int olen)
+get_sysinfo(grn_ctx *ctx, const char *path, grn_obj *result)
 {
-  char tmpbuf[256];
-
 #ifdef WIN32
   ULARGE_INTEGER dinfo;
   char cpustring[64];
@@ -1260,21 +1264,14 @@ get_sysinfo(const char *path, char *result, int olen)
   OSVERSIONINFO osinfo;
 
   if (grntest_outtype == OUT_TSV) {
-    result[0] = '\0';
-    sprintf(tmpbuf, "script\t%s\n", grntest_scriptname);
-    grn_strcat(result, olen, tmpbuf);
-    sprintf(tmpbuf, "user\t%s\n", grntest_username);
-    grn_strcat(result, olen, tmpbuf);
-    sprintf(tmpbuf, "date\t%s\n", grntest_date);
-    grn_strcat(result, olen, tmpbuf);
+    grn_text_printf(ctx, result, "script\t%s\n", grntest_scriptname);
+    grn_text_printf(ctx, result, "user\t%s\n", grntest_username);
+    grn_text_printf(ctx, result, "date\t%s\n", grntest_date);
   } else {
-    grn_strcpy(result, olen, "{");
-    sprintf(tmpbuf, "\"script\": \"%s.scr\",\n", grntest_scriptname);
-    grn_strcat(result, olen, tmpbuf);
-    sprintf(tmpbuf, "  \"user\": \"%s\",\n", grntest_username);
-    grn_strcat(result, olen, tmpbuf);
-    sprintf(tmpbuf, "  \"date\": \"%s\",\n", grntest_date);
-    grn_strcat(result, olen, tmpbuf);
+    grn_text_printf(ctx, result, "{");
+    grn_text_printf(ctx, result, "\"script\": \"%s.scr\",\n", grntest_scriptname);
+    grn_text_printf(ctx, result, "  \"user\": \"%s\",\n", grntest_username);
+    grn_text_printf(ctx, reuslt, "  \"date\": \"%s\",\n", grntest_date);
   }
 
   memset(cpustring, 0, 64);
@@ -1291,117 +1288,93 @@ get_sysinfo(const char *path, char *result, int olen)
 #endif
 
   if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "%s\n", cpustring);
+    grn_text_printf(ctx, result, "%s\n", cpustring);
   } else {
-    sprintf(tmpbuf, "  \"CPU\": \"%s\",\n", cpustring);
+    grn_text_printf(ctx, result, "  \"CPU\": \"%s\",\n", cpustring);
   }
-  grn_strcat(result, olen, tmpbuf);
 
   if (sizeof(int *) == 8) {
     grntest_osinfo = OS_WINDOWS64;
     if (grntest_outtype == OUT_TSV) {
-      sprintf(tmpbuf, "64BIT\n");
+      grn_text_printf(ctx, result, "64BIT\n");
     } else {
-      sprintf(tmpbuf, "  \"BIT\": 64,\n");
+      grn_text_printf(ctx, reuslt, "  \"BIT\": 64,\n");
     }
   } else {
     grntest_osinfo = OS_WINDOWS32;
     if (grntest_outtype == OUT_TSV) {
-      sprintf(tmpbuf, "32BIT\n");
+      grn_text_printf(ctx, result, "32BIT\n");
     } else {
-      sprintf(tmpbuf, "  \"BIT\": 32,\n");
+      grn_text_printf(ctx, result, "  \"BIT\": 32,\n");
     }
   }
-  grn_strcat(result, olen, tmpbuf);
 
   GetSystemInfo(&sinfo);
   if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "CORE\t%lu\n", sinfo.dwNumberOfProcessors);
+    grn_text_printf(ctx, result, "CORE\t%lu\n", sinfo.dwNumberOfProcessors);
   } else {
-    sprintf(tmpbuf, "  \"CORE\": %lu,\n", sinfo.dwNumberOfProcessors);
+    grn_text_printf(ctx, result, "  \"CORE\": %lu,\n", sinfo.dwNumberOfProcessors);
   }
-  grn_strcat(result, olen, tmpbuf);
 
   minfo.dwLength = sizeof(MEMORYSTATUSEX);
   GlobalMemoryStatusEx(&minfo);
   if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "RAM\t%I64dMByte\n", minfo.ullTotalPhys/(1024*1024));
+    grn_text_printf(ctx, result, "RAM\t%I64dMByte\n", minfo.ullTotalPhys/(1024*1024));
   } else {
-    sprintf(tmpbuf, "  \"RAM\": \"%I64dMByte\",\n", minfo.ullTotalPhys/(1024*1024));
+    grn_text_printf(ctx, result, "  \"RAM\": \"%I64dMByte\",\n", minfo.ullTotalPhys/(1024*1024));
   }
-  grn_strcat(result, olen, tmpbuf);
 
   GetDiskFreeSpaceEx(NULL, NULL, &dinfo, NULL);
   if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "HDD\t%I64dKBytes\n", dinfo.QuadPart/1024 );
+    grn_text_printf(ctx, result, "HDD\t%I64dKBytes\n", dinfo.QuadPart/1024 );
   } else {
-    sprintf(tmpbuf, "  \"HDD\": \"%I64dKBytes\",\n", dinfo.QuadPart/1024 );
+    grn_text_printf(ctx, result, "  \"HDD\": \"%I64dKBytes\",\n", dinfo.QuadPart/1024 );
   }
-  grn_strcat(result, olen, tmpbuf);
 
   osinfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO); GetVersionEx(&osinfo);
   if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "Windows %ld.%ld\n",
-            osinfo.dwMajorVersion, osinfo.dwMinorVersion);
+    grn_text_printf(ctx, result, "Windows %ld.%ld\n",
+                    osinfo.dwMajorVersion, osinfo.dwMinorVersion);
   } else {
-    sprintf(tmpbuf, "  \"OS\": \"Windows %lu.%lu\",\n", osinfo.dwMajorVersion,
-            osinfo.dwMinorVersion);
+    grn_text_printf(ctx, result, "  \"OS\": \"Windows %lu.%lu\",\n",
+                    osinfo.dwMajorVersion,
+                    osinfo.dwMinorVersion);
   }
-  grn_strcat(result, olen, tmpbuf);
 
   if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "%s\n", grntest_serverhost);
+    grn_text_printf(ctx, result, "%s\n", grntest_serverhost);
   } else {
-    sprintf(tmpbuf, "  \"HOST\": \"%s\",\n", grntest_serverhost);
+    grn_text_printf(ctx, result, "  \"HOST\": \"%s\",\n", grntest_serverhost);
   }
-  grn_strcat(result, olen, tmpbuf);
 
   if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "%d\n", grntest_serverport);
+    grn_text_printf(ctx, result, "%d\n", grntest_serverport);
   } else {
-    sprintf(tmpbuf, "  \"PORT\": \"%d\",\n", grntest_serverport);
+    grn_text_printf(ctx, result, "  \"PORT\": \"%d\",\n", grntest_serverport);
   }
-  grn_strcat(result, olen, tmpbuf);
 
   if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "%s\"\n", grn_get_version());
+    grn_text_printf(ctx, result, "%s\"\n", grn_get_version());
   } else {
-    sprintf(tmpbuf, "  \"VERSION\": \"%s\"\n", grn_get_version());
+    grn_text_printf(ctx, result, "  \"VERSION\": \"%s\"\n", grn_get_version());
   }
 
-  grn_strcat(result, olen, tmpbuf);
   if (grntest_outtype != OUT_TSV) {
-    grn_strcat(result, olen, "}");
+    grn_text_printf(ctx, result, "}");
   }
 
 #else /* linux only */
   FILE *fp;
-  int ret;
-  int cpunum = 0;
-  int minfo = 0;
-  int unevictable = 0;
-  int mlocked = 0;
-#define CPU_STRING_SIZE 256
-  char cpu_string[CPU_STRING_SIZE];
-  struct utsname ubuf;
-  struct statvfs vfsbuf;
 
   if (grntest_outtype == OUT_TSV) {
-    result[0] = '\0';
-    sprintf(tmpbuf, "sctipt\t%s\n", grntest_scriptname);
-    grn_strcat(result, olen, tmpbuf);
-    sprintf(tmpbuf, "user\t%s\n", grntest_username);
-    grn_strcat(result, olen, tmpbuf);
-    sprintf(tmpbuf, "date\t%s\n", grntest_date);
-    grn_strcat(result, olen, tmpbuf);
+    grn_text_printf(ctx, result, "sctipt\t%s\n", grntest_scriptname);
+    grn_text_printf(ctx, result, "user\t%s\n", grntest_username);
+    grn_text_printf(ctx, result, "date\t%s\n", grntest_date);
   } else {
-    grn_strcpy(result, olen, "{");
-    sprintf(tmpbuf, "\"script\": \"%s.scr\",\n", grntest_scriptname);
-    grn_strcat(result, olen, tmpbuf);
-    sprintf(tmpbuf, "  \"user\": \"%s\",\n", grntest_username);
-    grn_strcat(result, olen, tmpbuf);
-    sprintf(tmpbuf, "  \"date\": \"%s\",\n", grntest_date);
-    grn_strcat(result, olen, tmpbuf);
+    grn_text_printf(ctx, result, "{");
+    grn_text_printf(ctx, result, "\"script\": \"%s.scr\",\n", grntest_scriptname);
+    grn_text_printf(ctx, result, "  \"user\": \"%s\",\n", grntest_username);
+    grn_text_printf(ctx, result, "  \"date\": \"%s\",\n", grntest_date);
   }
 
   fp = fopen("/proc/cpuinfo", "r");
@@ -1409,134 +1382,132 @@ get_sysinfo(const char *path, char *result, int olen)
     fprintf(stderr, "Cannot open cpuinfo\n");
     exit(1);
   }
-  while (fgets(tmpbuf, 256, fp) != NULL) {
-    tmpbuf[strlen(tmpbuf)-1] = '\0';
-    if (!strncmp(tmpbuf, "model name\t: ", 13)) {
-      grn_strcpy(cpu_string, CPU_STRING_SIZE, &tmpbuf[13]);
+  {
+    char tmpbuf[256];
+    while (fgets(tmpbuf, 256, fp) != NULL) {
+      tmpbuf[strlen(tmpbuf)-1] = '\0';
+      if (!strncmp(tmpbuf, "model name\t: ", 13)) {
+        const char *cpu_string = tmpbuf + 13;
+        if (grntest_outtype == OUT_TSV) {
+          grn_text_printf(ctx, result, "%s\n", cpu_string);
+        } else {
+          grn_text_printf(ctx, result, "  \"CPU\": \"%s\",\n", cpu_string);
+        }
+      }
     }
   }
   fclose(fp);
-#undef CPU_STRING_SIZE
-
-  cpunum = sysconf(_SC_NPROCESSORS_CONF);
-
-  if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "%s\n", cpu_string);
-  } else {
-    sprintf(tmpbuf, "  \"CPU\": \"%s\",\n", cpu_string);
-  }
-  grn_strcat(result, olen, tmpbuf);
 
   if (sizeof(int *) == 8) {
     grntest_osinfo = OS_LINUX64;
     if (grntest_outtype == OUT_TSV) {
-      sprintf(tmpbuf, "64BIT\n");
+      grn_text_printf(ctx, result, "64BIT\n");
     } else {
-      sprintf(tmpbuf, "  \"BIT\": 64,\n");
+      grn_text_printf(ctx, result, "  \"BIT\": 64,\n");
     }
   } else {
     grntest_osinfo = OS_LINUX32;
     if (grntest_outtype == OUT_TSV) {
-      sprintf(tmpbuf, "32BIT\n");
+      grn_text_printf(ctx, result, "32BIT\n");
     } else {
-      sprintf(tmpbuf, "  \"BIT\": 32,\n");
+      grn_text_printf(ctx, result, "  \"BIT\": 32,\n");
     }
   }
-  grn_strcat(result, olen, tmpbuf);
 
-  if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "CORE\t%d\n", cpunum);
-  } else {
-    sprintf(tmpbuf, "  \"CORE\": %d,\n", cpunum);
+  {
+    int cpunum = sysconf(_SC_NPROCESSORS_CONF);
+    if (grntest_outtype == OUT_TSV) {
+      grn_text_printf(ctx, result, "CORE\t%d\n", cpunum);
+    } else {
+      grn_text_printf(ctx, result, "  \"CORE\": %d,\n", cpunum);
+    }
   }
-  grn_strcat(result, olen, tmpbuf);
 
   fp = fopen("/proc/meminfo", "r");
   if (!fp) {
     fprintf(stderr, "Cannot open meminfo\n");
     exit(1);
   }
-  while (fgets(tmpbuf, 256, fp) != NULL) {
-    tmpbuf[strlen(tmpbuf)-1] = '\0';
-    if (!strncmp(tmpbuf, "MemTotal:", 9)) {
-      minfo = grntest_atoi(&tmpbuf[10], &tmpbuf[10] + 40, NULL);
+  {
+    int minfo = 0;
+    int unevictable = 0;
+    int mlocked = 0;
+    char tmpbuf[256];
+    while (fgets(tmpbuf, 256, fp) != NULL) {
+      tmpbuf[strlen(tmpbuf)-1] = '\0';
+      if (!strncmp(tmpbuf, "MemTotal:", 9)) {
+        minfo = grntest_atoi(&tmpbuf[10], &tmpbuf[10] + 40, NULL);
+      }
+      if (!strncmp(tmpbuf, "Unevictable:", 12)) {
+        unevictable = grntest_atoi(&tmpbuf[13], &tmpbuf[13] + 40, NULL);
+      }
+      if (!strncmp(tmpbuf, "Mlocked:", 8)) {
+        mlocked = grntest_atoi(&tmpbuf[9], &tmpbuf[9] + 40, NULL);
+      }
     }
-    if (!strncmp(tmpbuf, "Unevictable:", 12)) {
-      unevictable = grntest_atoi(&tmpbuf[13], &tmpbuf[13] + 40, NULL);
-    }
-    if (!strncmp(tmpbuf, "Mlocked:", 8)) {
-      mlocked = grntest_atoi(&tmpbuf[9], &tmpbuf[9] + 40, NULL);
+    if (grntest_outtype == OUT_TSV) {
+      grn_text_printf(ctx, result, "%dMBytes\n", minfo/1024);
+      grn_text_printf(ctx, result, "%dMBytes_Unevictable\n", unevictable/1024);
+      grn_text_printf(ctx, result, "%dMBytes_Mlocked\n", mlocked/1024);
+    } else {
+      grn_text_printf(ctx, result, "  \"RAM\": \"%dMBytes\",\n", minfo/1024);
+      grn_text_printf(ctx, result, "  \"Unevictable\": \"%dMBytes\",\n", unevictable/1024);
+      grn_text_printf(ctx, result, "  \"Mlocked\": \"%dMBytes\",\n", mlocked/1024);
     }
   }
   fclose(fp);
-  if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "%dMBytes\n", minfo/1024);
-    grn_strcat(result, olen, tmpbuf);
-    sprintf(tmpbuf, "%dMBytes_Unevictable\n", unevictable/1024);
-    grn_strcat(result, olen, tmpbuf);
-    sprintf(tmpbuf, "%dMBytes_Mlocked\n", mlocked/1024);
-    grn_strcat(result, olen, tmpbuf);
-  } else {
-    sprintf(tmpbuf, "  \"RAM\": \"%dMBytes\",\n", minfo/1024);
-    grn_strcat(result, olen, tmpbuf);
-    sprintf(tmpbuf, "  \"Unevictable\": \"%dMBytes\",\n", unevictable/1024);
-    grn_strcat(result, olen, tmpbuf);
-    sprintf(tmpbuf, "  \"Mlocked\": \"%dMBytes\",\n", mlocked/1024);
-    grn_strcat(result, olen, tmpbuf);
+
+  {
+    struct statvfs vfsbuf;
+    int ret = statvfs(path, &vfsbuf);
+    if (ret) {
+      fprintf(stderr, "Cannot access %s\n", path);
+      exit(1);
+    }
+
+    if (grntest_outtype == OUT_TSV) {
+      grn_text_printf(ctx, result, "%" GRN_FMT_INT64U "KBytes\n", vfsbuf.f_blocks * 4);
+    } else {
+      grn_text_printf(ctx, result,
+                      "  \"HDD\": \"%" GRN_FMT_INT64U "KBytes\",\n",
+                      vfsbuf.f_blocks * 4);
+    }
   }
 
-  ret = statvfs(path, &vfsbuf);
-  if (ret) {
-    fprintf(stderr, "Cannot access %s\n", path);
-    exit(1);
+  {
+    struct utsname ubuf;
+    uname(&ubuf);
+    if (grntest_outtype == OUT_TSV) {
+      grn_text_printf(ctx, result,
+                      "%s %s\n", ubuf.sysname, ubuf.release);
+    } else {
+      grn_text_printf(ctx, result,
+                      "  \"OS\": \"%s %s\",\n", ubuf.sysname, ubuf.release);
+    }
   }
 
   if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "%" GRN_FMT_INT64U "KBytes\n", vfsbuf.f_blocks * 4);
+    grn_text_printf(ctx, result, "%s\n", grntest_serverhost);
   } else {
-    sprintf(tmpbuf,
-            "  \"HDD\": \"%" GRN_FMT_INT64U "KBytes\",\n",
-            vfsbuf.f_blocks * 4);
+    grn_text_printf(ctx, result, "  \"HOST\": \"%s\",\n", grntest_serverhost);
   }
-  grn_strcat(result, olen, tmpbuf);
-
-  uname(&ubuf);
-  if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "%s %s\n", ubuf.sysname, ubuf.release);
-  } else {
-    sprintf(tmpbuf, "  \"OS\": \"%s %s\",\n", ubuf.sysname, ubuf.release);
-  }
-  grn_strcat(result, olen, tmpbuf);
 
   if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "%s\n", grntest_serverhost);
+    grn_text_printf(ctx, result, "%d\n", grntest_serverport);
   } else {
-    sprintf(tmpbuf, "  \"HOST\": \"%s\",\n", grntest_serverhost);
+    grn_text_printf(ctx, result, "  \"PORT\": \"%d\",\n", grntest_serverport);
   }
-  grn_strcat(result, olen, tmpbuf);
 
   if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "%d\n", grntest_serverport);
+    grn_text_printf(ctx, result, "%s\n", grn_get_version());
   } else {
-    sprintf(tmpbuf, "  \"PORT\": \"%d\",\n", grntest_serverport);
+    grn_text_printf(ctx, result, "  \"VERSION\": \"%s\"\n", grn_get_version());
   }
-  grn_strcat(result, olen, tmpbuf);
-
-  if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "%s\n", grn_get_version());
-  } else {
-    sprintf(tmpbuf, "  \"VERSION\": \"%s\"\n", grn_get_version());
-  }
-  grn_strcat(result, olen, tmpbuf);
 
   if (grntest_outtype != OUT_TSV) {
-    grn_strcat(result, olen, "},");
+    grn_text_printf(ctx, result, "},");
   }
 #endif /* WIN32 */
-  if (strlen(result) >= olen) {
-    fprintf(stderr, "buffer overrun in get_sysinfo!\n");
-    exit(1);
-  }
   return 0;
 }
 
@@ -1758,7 +1729,7 @@ parse_line(grn_ctx *ctx, char *buf, int start, int end, int num)
         return 13;
       }
     } else {
-      char outlog[BUF_LEN];
+      char outlog[LARGE_BUF_LEN];
       grntest_job[num].inputlog = grn_file_reader_open(ctx, tmpbuf);
       if (grntest_job[num].inputlog == NULL) {
         fprintf(stderr, "Cannot open %s\n", tmpbuf);
@@ -2949,8 +2920,7 @@ main(int argc, char **argv)
   int qnum, i, mode = 0;
   int exit_code = EXIT_SUCCESS;
   grn_ctx context;
-  char sysinfo[BUF_LEN];
-  char log_path_buffer[BUF_LEN];
+  char log_path_buffer[VERY_LARGE_BUF_LEN];
   const char *log_path = NULL;
   const char *pid_path = NULL;
   const char *portstr = NULL, *hoststr = NULL, *dbname = NULL, *scrname = NULL, *outdir = NULL, *outtype = NULL;
@@ -3099,14 +3069,19 @@ main(int argc, char **argv)
   if (!log_path) {
     if (outdir) {
       sprintf(log_path_buffer,
-              "%s/%s-%s-%" GRN_FMT_LLD "-%s.log", outdir, grntest_scriptname,
+              "%s/%s-%s-%" GRN_FMT_LLD "-%s.log",
+              outdir,
+              grntest_scriptname,
               grntest_username,
-              GRN_TIME_VALUE(&grntest_starttime), grn_get_version());
+              GRN_TIME_VALUE(&grntest_starttime),
+              grn_get_version());
     } else {
       sprintf(log_path_buffer,
-              "%s-%s-%" GRN_FMT_LLD "-%s.log", grntest_scriptname,
+              "%s-%s-%" GRN_FMT_LLD "-%s.log",
+              grntest_scriptname,
               grntest_username,
-              GRN_TIME_VALUE(&grntest_starttime), grn_get_version());
+              GRN_TIME_VALUE(&grntest_starttime),
+              grn_get_version());
     }
     log_path = log_path_buffer;
   }
@@ -3117,8 +3092,13 @@ main(int argc, char **argv)
     goto exit;
   }
 
-  get_sysinfo(dbname, sysinfo, BUF_LEN);
-  output_sysinfo(sysinfo);
+  {
+    grn_obj sysinfo;
+    GRN_TEXT_INIT(&sysinfo, 0);
+    get_sysinfo(&context, dbname, &sysinfo);
+    output_sysinfo(&sysinfo);
+    GRN_OBJ_FIN(&context, &sysinfo);
+  }
 
 #ifndef WIN32
   setsigint();
