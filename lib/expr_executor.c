@@ -222,6 +222,14 @@ grn_expr_executor_init_general(grn_ctx *ctx,
                                               right_expression_check,   \
                                               invalid_type_error) do {  \
   switch (y->header.domain) {                                           \
+  case GRN_DB_BOOL :                                                    \
+    {                                                                   \
+      uint8_t y_;                                                       \
+      y_ = GRN_BOOL_VALUE(y) ? 1 : 0;                                   \
+      right_expression_check(y_);                                       \
+      set(ctx, res, integer_operation(x_, y_));                         \
+    }                                                                   \
+    break;                                                              \
   case GRN_DB_INT8 :                                                    \
     {                                                                   \
       int8_t y_;                                                        \
