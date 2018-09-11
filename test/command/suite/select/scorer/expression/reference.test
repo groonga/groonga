@@ -7,5 +7,5 @@ load --table Users
 ]
 select Users \
   --filter true \
-  --scorer '_score = (tags._key != "")' \
+  --scorer '_score = (tags._key != "cat")' \
   --output_columns _score
