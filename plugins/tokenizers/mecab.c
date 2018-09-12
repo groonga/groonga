@@ -1020,7 +1020,8 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
 
   if (tokenizer->options->loose_reading &&
       grn_tokenizer_query_get_mode(ctx, tokenizer->query) == GRN_TOKEN_GET) {
-    while (mecab_next_default_format_consume_token(ctx, tokenizer, NULL) > 0) {
+    while (tokenizer->next < tokenizer->end &&
+           mecab_next_default_format_consume_token(ctx, tokenizer, NULL) > 0) {
       /* Do nothing */
     }
     tokenizer->loose.ing = GRN_TRUE;
