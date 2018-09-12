@@ -2478,11 +2478,14 @@ grn_table_size(grn_ctx *ctx, grn_obj *table)
       n = grn_array_size(ctx, (grn_array *)table);
       break;
     default :
-      ERR(GRN_INVALID_ARGUMENT, "not supported");
+      ERR(GRN_INVALID_ARGUMENT,
+          "[table][size] must be table or DB: <%s>(%u)",
+          grn_obj_type_to_string(table->header.type),
+          table->header.type);
       break;
     }
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "invalid table assigned");
+    ERR(GRN_INVALID_ARGUMENT, "[table][size] must not NULL");
   }
   GRN_API_RETURN(n);
 }
