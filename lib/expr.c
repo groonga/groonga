@@ -40,7 +40,7 @@ static double grn_table_select_enough_filtered_ratio = 0.01;
 static int grn_table_select_max_n_enough_filtered_records = 1000;
 static grn_bool grn_table_select_and_min_skip_enable = GRN_TRUE;
 static grn_bool grn_scan_info_regexp_dot_asterisk_enable = GRN_TRUE;
-static grn_bool grn_query_log_show_condition = GRN_FALSE;
+static grn_bool grn_query_log_show_condition = GRN_TRUE;
 
 void
 grn_expr_init_from_env(void)
@@ -96,10 +96,10 @@ grn_expr_init_from_env(void)
     grn_getenv("GRN_QUERY_LOG_SHOW_CONDITION",
                grn_query_log_show_condition_env,
                GRN_ENV_BUFFER_SIZE);
-    if (strcmp(grn_query_log_show_condition_env, "yes") == 0) {
-      grn_query_log_show_condition = GRN_TRUE;
-    } else {
+    if (strcmp(grn_query_log_show_condition_env, "no") == 0) {
       grn_query_log_show_condition = GRN_FALSE;
+    } else {
+      grn_query_log_show_condition = GRN_TRUE;
     }
   }
 }
