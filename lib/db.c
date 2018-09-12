@@ -2587,6 +2587,9 @@ grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
   if (!table) { return tc; }
   GRN_API_ENTER;
   table_size = grn_table_size(ctx, table);
+  if (ctx->rc != GRN_SUCCESS) {
+    GRN_API_RETURN(NULL);
+  }
   if (flags & GRN_CURSOR_PREFIX) {
     if (offset < 0) {
       ERR(GRN_TOO_SMALL_OFFSET,
