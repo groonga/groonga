@@ -91,11 +91,11 @@ logical_select Logs   --shard_key timestamp   --columns[filtered_id].stage filte
   ]
 ]
 #>logical_select --columns[filtered_id].flags "COLUMN_SCALAR" --columns[filtered_id].stage "filtered" --columns[filtered_id].type "UInt32" --columns[filtered_id].value "_id" --filter "price < 910" --logical_table "Logs" --output_columns "_id,filtered_id,price" --shard_key "timestamp"
-#:000000000000000 filter(1)
+#:000000000000000 filter(1): Logs_20170315.price less 910
 #:000000000000000 select(1)[Logs_20170315]
-#:000000000000000 filter(2)
+#:000000000000000 filter(2): Logs_20170316.price less 910
 #:000000000000000 select(2)[Logs_20170316]
-#:000000000000000 filter(2)
+#:000000000000000 filter(2): Logs_20170317.price less 910
 #:000000000000000 select(2)[Logs_20170317]
 #:000000000000000 output(5)
 #<000000000000000 rc=0

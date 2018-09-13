@@ -158,8 +158,8 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
 #:000000000000000 select(2)[Logs_20150203]
 #:000000000000000 select(3)[Logs_20150204]
 #:000000000000000 select(4)[Logs_20150205]
-#:000000000000000 filter(1)
-#:000000000000000 filter(2)
+#:000000000000000 filter(1): #<accessor _key(anonymous)> match "Restart"
+#:000000000000000 filter(2): #<accessor _key(anonymous)> match "Start"
 #:000000000000000 output(0)
 #:000000000000000 output.drilldowns(1)
 #:000000000000000 output.drilldowns(1)
@@ -246,8 +246,8 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
 #:000000000000000 select(2)[Logs_20150203]
 #:000000000000000 select(3)[Logs_20150204]
 #:000000000000000 select(4)[Logs_20150205]
-#:000000000000000 filter(2)
-#:000000000000000 filter(1)
+#:000000000000000 filter(2): #<accessor _key(anonymous)> match "Start"
+#:000000000000000 filter(1): #<accessor _key(anonymous)> match "Restart"
 #:000000000000000 output(0)
 #:000000000000000 output.drilldowns(2)
 #:000000000000000 output.drilldowns(1)
