@@ -122,55 +122,6 @@ test_register_function(void)
 }
 
 void
-test_register_too_long_name(void)
-{
-  GString *long_name;
-  const gchar *full_path;
-  const gchar *error_message_without_path;
-  const gchar *error_message_without_name;
-  gint i, max_name_length;
-
-  long_name = gcut_take_new_string(NULL);
-  max_name_length = (PATH_MAX - strlen(plugins_dir) - 1) - 1;
-  for (i = 0; i < max_name_length; i++) {
-    g_string_append_c(long_name, 'x');
-  }
-  full_path = cut_take_string(g_build_filename(plugins_dir,
-                                               long_name->str,
-                                               NULL));
-  error_message_without_path = "too long plugin path: <";
-  grn_test_assert_send_command_error(
-    context,
-    GRN_FILENAME_TOO_LONG,
-    cut_take_printf("%s%.*s",
-                    error_message_without_path,
-                    (int)(GRN_CTX_MSGSIZE -
-                          strlen(error_message_without_path) -
-                          1),
-                    full_path),
-    cut_take_printf("register %s", long_name->str));
-
-  g_string_append_c(long_name, 'x');
-  full_path = cut_take_string(g_build_filename(plugins_dir,
-                                               long_name->str,
-                                               NULL));
-  error_message_without_name =
-    cut_take_printf("plugin name is too long: %d (max: %d) <",
-                    (int)(long_name->len),
-                    max_name_length);
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    cut_take_printf("%s%.*s",
-                    error_message_without_name,
-                    (int)(GRN_CTX_MSGSIZE -
-                          strlen(error_message_without_name) -
-                          1),
-                    full_path),
-    cut_take_printf("register %s", long_name->str));
-}
-
-void
 test_register_by_absolute_path(void)
 {
   assert_send_command(cut_take_printf("register %s/string", plugins_dir));
