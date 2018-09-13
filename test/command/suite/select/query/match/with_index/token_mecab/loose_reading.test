@@ -8,8 +8,7 @@ column_create Terms index COLUMN_INDEX|WITH_POSITION Menus name
 
 load --table Menus
 [
-{"name": "焼肉定食"},
-{"name": "やきにく定食"}
+{"name": "焼肉定食"}
 ]
 
 select Menus --match_columns name --query "焼き肉"

@@ -8,40 +8,8 @@ column_create Terms index COLUMN_INDEX|WITH_POSITION Menus name
 [[0,0.0,0.0],true]
 load --table Menus
 [
-{"name": "焼肉定食"},
-{"name": "やきにく定食"}
+{"name": "焼肉定食"}
 ]
-[[0,0.0,0.0],2]
+[[0,0.0,0.0],1]
 select Menus --match_columns name --query "焼き肉"
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        2
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "name",
-          "Text"
-        ]
-      ],
-      [
-        1,
-        "焼肉定食"
-      ],
-      [
-        2,
-        "やきにく定食"
-      ]
-    ]
-  ]
-]
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["name","Text"]],[1,"焼肉定食"]]]]
