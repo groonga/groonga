@@ -124,7 +124,6 @@ test_text_la_SOURCES			= test-text.c
 test_cast_basic_la_SOURCES		= test-cast-basic.c
 test_cast_table_la_SOURCES		= test-cast-table.c
 test_encoding_la_SOURCES		= test-encoding.c
-test_plugin_la_SOURCES			= test-plugin.c
 test_function_la_SOURCES		= test-function.c
 test_function_edit_distance_la_SOURCES	= test-function-edit-distance.c
 test_store_ja_la_SOURCES		= test-store-ja.c
