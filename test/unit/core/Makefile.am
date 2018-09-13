@@ -33,7 +33,6 @@ noinst_LTLIBRARIES =				\
 	test-cast-basic.la			\
 	test-cast-table.la			\
 	test-encoding.la			\
-	test-plugin.la				\
 	test-function.la			\
 	test-function-edit-distance.la		\
 	test-store-ja.la			\
