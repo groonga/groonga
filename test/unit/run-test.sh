@@ -52,8 +52,10 @@ fi
 CUTTER_ARGS="$CUTTER_ARGS --exclude-directory fixtures"
 CUTTER_ARGS="$CUTTER_ARGS --exclude-directory lib"
 
-GRN_PLUGINS_DIR="$build_top_dir/plugins"
+GRN_PLUGINS_DIR="$source_top_dir/plugins"
+GRN_PLUGINS_PATH="$build_top_dir/plugins"
 export GRN_PLUGINS_DIR
+export GRN_PLUGINS_PATH
 
 GRN_RUBY_SCRIPTS_DIR="$source_top_dir/lib/mrb/scripts"
 export GRN_RUBY_SCRIPTS_DIR
