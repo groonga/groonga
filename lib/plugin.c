@@ -49,6 +49,24 @@
 static grn_hash *grn_plugins = NULL;
 static grn_critical_section grn_plugins_lock;
 static grn_ctx grn_plugins_ctx;
+static grn_obj grn_plugins_path;
+
+#define GRN_PLUGINS_DIR_EACH_BEGIN(dir, dir_length) do {                \
+  unsigned int i_;                                                      \
+  const unsigned int n_dirs_ = grn_vector_size(&grn_plugins_ctx,        \
+                                               &grn_plugins_path);      \
+  for (i_ = 0; i_ < n_dirs_; i_++) {                                    \
+    const char *dir = NULL;                                             \
+    unsigned int dir_length;                                            \
+    dir_length = grn_vector_get_element(&grn_plugins_ctx,               \
+                                        &grn_plugins_path,              \
+                                        i_,                             \
+                                        &dir,                           \
+                                        NULL,                           \
+                                        NULL);
+#define GRN_PLUGINS_DIR_EACH_END()                                      \
+  }                                                                     \
+} while (GRN_FALSE)
 
 #ifdef HAVE_DLFCN_H
 #  include <dlfcn.h>
@@ -71,13 +89,17 @@ static grn_ctx grn_plugins_ctx;
 
 #define GRN_PLUGIN_KEY_SIZE(filename) (strlen((filename)) + 1)
 
-static char grn_plugins_dir[GRN_ENV_BUFFER_SIZE];
+static char grn_plugins_path_env[GRN_ENV_BUFFER_SIZE];
+static char grn_plugins_dir_env[GRN_ENV_BUFFER_SIZE];
 
 void
 grn_plugin_init_from_env(void)
 {
+  grn_getenv("GRN_PLUGINS_PATH",
+             grn_plugins_path_env,
+             GRN_ENV_BUFFER_SIZE);
   grn_getenv("GRN_PLUGINS_DIR",
-             grn_plugins_dir,
+             grn_plugins_dir_env,
              GRN_ENV_BUFFER_SIZE);
 }
 
@@ -118,8 +140,6 @@ grn_plugin_path(grn_ctx *ctx, grn_id id)
   const char *path;
   grn_plugin *plugin;
   int value_size;
-  const char *system_plugins_dir;
-  size_t system_plugins_dir_size;
 
   if (id == GRN_ID_NIL) {
     return NULL;
@@ -134,18 +154,18 @@ grn_plugin_path(grn_ctx *ctx, grn_id id)
   }
 
   path = plugin->path;
-  system_plugins_dir = grn_plugin_get_system_plugins_dir();
-  system_plugins_dir_size = strlen(system_plugins_dir);
-  if (strncmp(system_plugins_dir, path, system_plugins_dir_size) == 0) {
-    const char *plugin_name = path + system_plugins_dir_size;
-    while (plugin_name[0] == '/') {
-      plugin_name++;
+  GRN_PLUGINS_DIR_EACH_BEGIN(dir, dir_length) {
+    if (strncmp(dir, path, dir_length) == 0) {
+      const char *plugin_name = path + dir_length;
+      while (plugin_name[0] == '/') {
+        plugin_name++;
+      }
+      /* TODO: remove suffix too? */
+      return plugin_name;
     }
-    /* TODO: remove suffix too? */
-    return plugin_name;
-  } else {
-    return path;
-  }
+  } GRN_PLUGINS_DIR_EACH_END();
+
+  return path;
 }
 
 #define GRN_PLUGIN_FUNC_PREFIX "grn_plugin_impl_"
@@ -497,17 +517,111 @@ exit:
   return func;
 }
 
+#ifdef WIN32
+static void
+grn_plugins_init_path(grn_ctx *ctx, grn_obj *path, const char *path_env)
+{
+  /* TODO */
+}
+#else /* WIN32 */
+static void
+grn_plugins_init_path(grn_ctx *ctx, grn_obj *path, const char *path_env)
+{
+  const char separator = ':';
+  const char *start = path_env;
+  const char *current;
+
+  for (current = path_env; current[0]; current++) {
+    if (current[0] == separator) {
+      if (current - start > 0) {
+        grn_vector_add_element(&grn_plugins_ctx,
+                               &grn_plugins_path,
+                               start,
+                               current - start,
+                               0,
+                               GRN_DB_TEXT);
+      }
+      start = current + 1;
+    }
+  }
+
+  if (start[0] && current - start > 0) {
+    grn_vector_add_element(&grn_plugins_ctx,
+                           &grn_plugins_path,
+                           start,
+                           current - start,
+                           0,
+                           GRN_DB_TEXT);
+  }
+}
+#endif /* WIN32 */
+
+#ifdef WIN32
+static char *windows_plugins_dir = NULL;
+static char windows_plugins_dir_buffer[PATH_MAX];
+static const char *
+grn_plugin_get_default_system_plugins_dir(void)
+{
+  if (!windows_plugins_dir) {
+    const char *base_dir;
+    const char *relative_path = GRN_RELATIVE_PLUGINS_DIR;
+    size_t base_dir_length;
+
+    base_dir = grn_windows_base_dir();
+    base_dir_length = strlen(base_dir);
+    grn_strcpy(windows_plugins_dir_buffer, PATH_MAX, base_dir);
+    grn_strcat(windows_plugins_dir_buffer, PATH_MAX, "/");
+    grn_strcat(windows_plugins_dir_buffer, PATH_MAX, relative_path);
+    windows_plugins_dir = windows_plugins_dir_buffer;
+  }
+  return windows_plugins_dir;
+}
+
+#else /* WIN32 */
+static const char *
+grn_plugin_get_default_system_plugins_dir(void)
+{
+  return GRN_PLUGINS_DIR;
+}
+#endif /* WIN32 */
+
+const char *
+grn_plugin_get_system_plugins_dir(void)
+{
+  if (grn_plugins_dir_env[0]) {
+    return grn_plugins_dir_env;
+  } else {
+    return grn_plugin_get_default_system_plugins_dir();
+  }
+}
+
 grn_rc
 grn_plugins_init(void)
 {
   CRITICAL_SECTION_INIT(grn_plugins_lock);
   grn_ctx_init(&grn_plugins_ctx, 0);
+  GRN_TEXT_INIT(&grn_plugins_path, GRN_OBJ_VECTOR);
   grn_plugins = grn_hash_create(&grn_plugins_ctx, NULL,
                                 PATH_MAX, sizeof(grn_plugin *),
                                 GRN_OBJ_KEY_VAR_SIZE);
   if (!grn_plugins) {
+    GRN_OBJ_FIN(&grn_plugins_ctx, &grn_plugins_path);
     grn_ctx_fin(&grn_plugins_ctx);
     return GRN_NO_MEMORY_AVAILABLE;
+  }
+  if (grn_plugins_path_env[0]) {
+    grn_plugins_init_path(&grn_plugins_ctx,
+                          &grn_plugins_path,
+                          grn_plugins_path_env);
+  }
+  {
+    const char *system_plugins_dir = grn_plugin_get_system_plugins_dir();
+    grn_vector_add_element(&grn_plugins_ctx,
+                           &grn_plugins_path,
+                           system_plugins_dir,
+                           strlen(system_plugins_dir),
+                           0,
+                           GRN_DB_TEXT);
   }
   return GRN_SUCCESS;
 }
@@ -521,6 +635,7 @@ grn_plugins_fin(void)
     grn_plugin_close(&grn_plugins_ctx, id);
   });
   rc = grn_hash_close(&grn_plugins_ctx, grn_plugins);
+  GRN_OBJ_FIN(&grn_plugins_ctx, &grn_plugins_path);
   grn_ctx_fin(&grn_plugins_ctx);
   CRITICAL_SECTION_FIN(grn_plugins_lock);
   return rc;
@@ -560,45 +675,6 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
     ERR(GRN_INVALID_ARGUMENT, "invalid db assigned");
   }
   GRN_API_RETURN(ctx->rc);
-}
-
-#ifdef WIN32
-static char *windows_plugins_dir = NULL;
-static char windows_plugins_dir_buffer[PATH_MAX];
-static const char *
-grn_plugin_get_default_system_plugins_dir(void)
-{
-  if (!windows_plugins_dir) {
-    const char *base_dir;
-    const char *relative_path = GRN_RELATIVE_PLUGINS_DIR;
-    size_t base_dir_length;
-
-    base_dir = grn_windows_base_dir();
-    base_dir_length = strlen(base_dir);
-    grn_strcpy(windows_plugins_dir_buffer, PATH_MAX, base_dir);
-    grn_strcat(windows_plugins_dir_buffer, PATH_MAX, "/");
-    grn_strcat(windows_plugins_dir_buffer, PATH_MAX, relative_path);
-    windows_plugins_dir = windows_plugins_dir_buffer;
-  }
-  return windows_plugins_dir;
-}
-
-#else /* WIN32 */
-static const char *
-grn_plugin_get_default_system_plugins_dir(void)
-{
-  return GRN_PLUGINS_DIR;
-}
-#endif /* WIN32 */
-
-const char *
-grn_plugin_get_system_plugins_dir(void)
-{
-  if (grn_plugins_dir[0]) {
-    return grn_plugins_dir;
-  } else {
-    return grn_plugin_get_default_system_plugins_dir();
-  }
 }
 
 static char *
@@ -711,39 +787,11 @@ grn_plugin_find_path_libs_so(grn_ctx *ctx, const char *path, size_t path_len)
   return grn_plugin_find_path_raw(ctx, libs_so_path);
 }
 
-char *
-grn_plugin_find_path(grn_ctx *ctx, const char *name)
+static char *
+grn_plugin_find_path_one(grn_ctx *ctx, const char *path)
 {
-  const char *plugins_dir;
-  char dir_last_char;
-  char path[PATH_MAX];
-  int name_length, max_name_length;
   char *found_path = NULL;
   size_t path_len;
-
-  GRN_API_ENTER;
-  if (name[0] == '/') {
-    path[0] = '\0';
-  } else {
-    plugins_dir = grn_plugin_get_system_plugins_dir();
-    grn_strcpy(path, PATH_MAX, plugins_dir);
-
-    dir_last_char = plugins_dir[strlen(path) - 1];
-    if (dir_last_char != '/') {
-      grn_strcat(path, PATH_MAX, "/");
-    }
-  }
-
-  name_length = strlen(name);
-  max_name_length = PATH_MAX - strlen(path) - 1;
-  if (name_length > max_name_length) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "plugin name is too long: %d (max: %d) <%s%s>",
-        name_length, max_name_length,
-        path, name);
-    goto exit;
-  }
-  grn_strcat(path, PATH_MAX, name);
 
   found_path = grn_plugin_find_path_raw(ctx, path);
   if (found_path) {
@@ -777,6 +825,53 @@ grn_plugin_find_path(grn_ctx *ctx, const char *name)
   }
 
 exit :
+  return found_path;
+}
+
+char *
+grn_plugin_find_path(grn_ctx *ctx, const char *name)
+{
+  char *found_path = NULL;
+
+  GRN_API_ENTER;
+
+  if (name[0] == '/') {
+    found_path = grn_plugin_find_path_one(ctx, name);
+  } else {
+    GRN_PLUGINS_DIR_EACH_BEGIN(dir, dir_length) {
+      char dir_last_char;
+      char path[PATH_MAX];
+      int name_length, max_name_length;
+
+      grn_strncpy(path, PATH_MAX, dir, dir_length);
+      path[dir_length] = '\0';
+
+      dir_last_char = dir[dir_length - 1];
+      if (dir_last_char != '/') {
+        grn_strcat(path, PATH_MAX, "/");
+      }
+
+      name_length = strlen(name);
+      max_name_length = PATH_MAX - strlen(path) - 1;
+      if (name_length > max_name_length) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "plugin name is too long: %d (max: %d) <%s%s>",
+            name_length, max_name_length,
+            path, name);
+        break;
+      }
+      grn_strcat(path, PATH_MAX, name);
+
+      found_path = grn_plugin_find_path_one(ctx, path);
+      if (found_path) {
+        break;
+      }
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+    } GRN_PLUGINS_DIR_EACH_END();
+  }
+
   GRN_API_RETURN(found_path);
 }
 
