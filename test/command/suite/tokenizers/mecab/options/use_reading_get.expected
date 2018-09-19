@@ -1,0 +1,35 @@
+tokenize   'TokenMecab("use_reading", true)'   '焼き肉と焼肉とyakiniku'   --mode GET
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "ヤキニク",
+      "position": 0,
+      "force_prefix": false
+    },
+    {
+      "value": "ト",
+      "position": 1,
+      "force_prefix": false
+    },
+    {
+      "value": "ヤキニク",
+      "position": 2,
+      "force_prefix": false
+    },
+    {
+      "value": "ト",
+      "position": 3,
+      "force_prefix": false
+    },
+    {
+      "value": "yakiniku",
+      "position": 4,
+      "force_prefix": false
+    }
+  ]
+]

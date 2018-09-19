@@ -1,4 +1,4 @@
-tokenize   'TokenMecab("loose_reading", true)'   '焼き肉と焼肉とyakiniku'   --mode GET
+tokenize   'TokenMecab("use_reading", true)'   '焼き肉と焼肉とyakiniku'
 [
   [
     0,
