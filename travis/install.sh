@@ -51,7 +51,7 @@ case "${TRAVIS_OS_NAME}" in
     ;;
   osx)
     brew update > /dev/null
-    brew bundle
+    brew bundle --verbose
     if [ "${ENABLE_DOCUMENT}" = "yes" ]; then
       pip3 install Sphinx
     fi
