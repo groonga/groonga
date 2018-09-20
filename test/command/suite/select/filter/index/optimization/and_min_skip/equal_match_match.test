@@ -1,0 +1,31 @@
+table_create Tags TABLE_HASH_KEY ShortText
+column_create Tags label COLUMN_SCALAR ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tag COLUMN_SCALAR Tags
+column_create Memos content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalize NormalizerNFKC100 \
+  --default_tokenizer TokenBigram
+column_create Terms tags_label COLUMN_INDEX|WITH_POSITION Tags label
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+column_create Tags memos_tag COLUMN_INDEX Memos tag
+
+load --table Tags
+[
+{"_key": "mroonga",  "label": "Mroonga"},
+{"_key": "pgroonga", "label": "PGroonga"},
+{"_key": "groonga",  "label": "Groonga"}
+]
+
+load --table Memos
+[
+{"_key": "groonga",  "tag": "groonga",  "content": "Groonga is fast"},
+{"_key": "mroonga",  "tag": "mroonga",  "content": "Mroonga is based on Groonga"},
+{"_key": "pgroonga", "tag": "pgroonga", "content": "PGroonga is based on Groonga"}
+]
+
+select Memos \
+  --filter '_key == "groonga" && tag.label @ "Groonga" && content @ "Groonga"'
