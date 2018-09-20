@@ -260,9 +260,9 @@ static grn_bool grn_ngram_tokenizer_remove_blank_enable = GRN_TRUE;
 
 typedef struct {
   uint8_t unit;
-  grn_bool uni_alpha;
-  grn_bool uni_digit;
-  grn_bool uni_symbol;
+  grn_bool unify_alphabet;
+  grn_bool unify_digit;
+  grn_bool unify_symbol;
   grn_bool ignore_blank;
   grn_bool remove_blank;
   grn_bool loose_symbol;
@@ -302,9 +302,9 @@ static void
 ngram_options_init(grn_ngram_options *options, uint8_t unit)
 {
   options->unit = unit;
-  options->uni_alpha = GRN_TRUE;
-  options->uni_digit = GRN_TRUE;
-  options->uni_symbol = GRN_TRUE;
+  options->unify_alphabet = GRN_TRUE;
+  options->unify_digit = GRN_TRUE;
+  options->unify_symbol = GRN_TRUE;
   options->ignore_blank = GRN_FALSE;
   options->remove_blank = grn_ngram_tokenizer_remove_blank_enable;
   options->loose_symbol = GRN_FALSE;
@@ -607,7 +607,7 @@ bigrams_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_ngram_options options;
   ngram_options_init(&options, 2);
-  options.uni_symbol = GRN_FALSE;
+  options.unify_symbol = GRN_FALSE;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
@@ -616,8 +616,8 @@ bigramsa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_ngram_options options;
   ngram_options_init(&options, 2);
-  options.uni_symbol = GRN_FALSE;
-  options.uni_alpha = GRN_FALSE;
+  options.unify_symbol = GRN_FALSE;
+  options.unify_alphabet = GRN_FALSE;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
@@ -626,9 +626,9 @@ bigramsad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
 {
   grn_ngram_options options;
   ngram_options_init(&options, 2);
-  options.uni_symbol = GRN_FALSE;
-  options.uni_alpha = GRN_FALSE;
-  options.uni_digit = GRN_FALSE;
+  options.unify_symbol = GRN_FALSE;
+  options.unify_alphabet = GRN_FALSE;
+  options.unify_digit = GRN_FALSE;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
@@ -647,7 +647,7 @@ bigramis_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_ngram_options options;
   ngram_options_init(&options, 2);
   options.ignore_blank = GRN_TRUE;
-  options.uni_symbol = GRN_FALSE;
+  options.unify_symbol = GRN_FALSE;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
@@ -657,8 +657,8 @@ bigramisa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   grn_ngram_options options;
   ngram_options_init(&options, 2);
   options.ignore_blank = GRN_TRUE;
-  options.uni_symbol = GRN_FALSE;
-  options.uni_alpha = GRN_FALSE;
+  options.unify_symbol = GRN_FALSE;
+  options.unify_alphabet = GRN_FALSE;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
@@ -668,9 +668,9 @@ bigramisad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   grn_ngram_options options;
   ngram_options_init(&options, 2);
   options.ignore_blank = GRN_TRUE;
-  options.uni_symbol = GRN_FALSE;
-  options.uni_alpha = GRN_FALSE;
-  options.uni_digit = GRN_FALSE;
+  options.unify_symbol = GRN_FALSE;
+  options.unify_alphabet = GRN_FALSE;
+  options.unify_digit = GRN_FALSE;
   return ngram_init_deprecated(ctx, nargs, args, user_data, &options);
 }
 
@@ -730,6 +730,12 @@ ngram_open_options(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->include_removed_source_location);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_alphabet")) {
+      options->unify_alphabet =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->unify_alphabet);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
@@ -815,7 +821,7 @@ ngram_next(grn_ctx *ctx,
 
   LOOSE_NEED_CHECK(cp, tokenizer);
 
-  if (cp && tokenizer->options.uni_alpha &&
+  if (cp && tokenizer->options.unify_alphabet &&
       GRN_STR_CTYPE(*cp) == GRN_CHAR_ALPHA) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
       n_characters++;
@@ -827,7 +833,7 @@ ngram_next(grn_ctx *ctx,
     tokenizer->next = r;
     tokenizer->overlap = GRN_FALSE;
   } else if (cp &&
-             tokenizer->options.uni_digit &&
+             tokenizer->options.unify_digit &&
              GRN_STR_CTYPE(*cp) == GRN_CHAR_DIGIT) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
       n_characters++;
@@ -839,7 +845,7 @@ ngram_next(grn_ctx *ctx,
     tokenizer->next = r;
     tokenizer->overlap = GRN_FALSE;
   } else if (cp &&
-             tokenizer->options.uni_symbol &&
+             tokenizer->options.unify_symbol &&
              GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, encoding))) {
       n_characters++;
@@ -880,11 +886,11 @@ ngram_next(grn_ctx *ctx,
           LOOSE_NEED_CHECK(cp, tokenizer);
           if (!tokenizer->options.ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
           cp++;
-          if ((tokenizer->options.uni_alpha &&
+          if ((tokenizer->options.unify_alphabet &&
                GRN_STR_CTYPE(*cp) == GRN_CHAR_ALPHA) ||
-              (tokenizer->options.uni_digit &&
+              (tokenizer->options.unify_digit &&
                GRN_STR_CTYPE(*cp) == GRN_CHAR_DIGIT) ||
-              (tokenizer->options.uni_symbol &&
+              (tokenizer->options.unify_symbol &&
                GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL)) {
             break;
           }

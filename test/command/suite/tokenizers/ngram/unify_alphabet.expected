@@ -1,0 +1,35 @@
+tokenize   'TokenNgram("unify_alphabet", false)'   "abcde"   NormalizerAuto
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "ab",
+      "position": 0,
+      "force_prefix": false
+    },
+    {
+      "value": "bc",
+      "position": 1,
+      "force_prefix": false
+    },
+    {
+      "value": "cd",
+      "position": 2,
+      "force_prefix": false
+    },
+    {
+      "value": "de",
+      "position": 3,
+      "force_prefix": false
+    },
+    {
+      "value": "e",
+      "position": 4,
+      "force_prefix": false
+    }
+  ]
+]

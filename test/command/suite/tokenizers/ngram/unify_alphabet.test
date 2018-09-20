@@ -1,0 +1,4 @@
+tokenize \
+  'TokenNgram("unify_alphabet", false)' \
+  "abcde" \
+  NormalizerAuto
