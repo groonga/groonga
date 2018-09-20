@@ -1,0 +1,40 @@
+tokenize   'TokenNgram("unify_digit", false)'   "012345"   NormalizerAuto
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "01",
+      "position": 0,
+      "force_prefix": false
+    },
+    {
+      "value": "12",
+      "position": 1,
+      "force_prefix": false
+    },
+    {
+      "value": "23",
+      "position": 2,
+      "force_prefix": false
+    },
+    {
+      "value": "34",
+      "position": 3,
+      "force_prefix": false
+    },
+    {
+      "value": "45",
+      "position": 4,
+      "force_prefix": false
+    },
+    {
+      "value": "5",
+      "position": 5,
+      "force_prefix": false
+    }
+  ]
+]

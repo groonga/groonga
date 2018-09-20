@@ -1,0 +1,4 @@
+tokenize \
+  'TokenNgram("unify_digit", false)' \
+  "012345" \
+  NormalizerAuto
