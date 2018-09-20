@@ -1,0 +1,4 @@
+tokenize \
+  'TokenNgram("unify_symbol", false)' \
+  "___---" \
+  NormalizerAuto

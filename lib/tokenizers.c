@@ -736,6 +736,12 @@ ngram_open_options(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->unify_alphabet);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_symbol")) {
+      options->unify_symbol =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->unify_symbol);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
