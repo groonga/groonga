@@ -61,7 +61,6 @@ Fixes
 
 * Fix an optimization bug for ``reference_column >= 'key_value'`` case
 
-
 .. _release-8-0-5:
 
 Release 8.0.5 - 2018-07-29
