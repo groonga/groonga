@@ -7,6 +7,64 @@
 News
 ====
 
+.. _release-8-0-7:
+
+Release 8.0.7 - 2018-09-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/tokenizers`][TokenMecab] support outputting metadata of Mecab.
+
+  * Added new option for ``TokenMecab`` that ``include_class`` .
+
+    This option outputting ``class`` and ``subclass`` in Mecab's metadata.
+
+  * Added new option for ``TokenMecab`` that ``include_reading``.
+
+    This option outputting ``reading`` in Mecab's metadata.
+
+  * Added new option for ``TokenMecab`` that ``include_form``.
+
+    This option outputting ``inflected_type``, ``inflected_form`` and ``base_form`` in Mecab's metadata.
+
+  * Added new option for ``TokenMecab`` that ``use_reading``.
+
+    This option supporting a search by kana.
+
+    This option is useful for countermeasure of orthographical variants because it searches with kana.
+
+* [plugin] support multiple plugin search directories.
+
+  You can specify multiple directories to ``GRN_PLUGINS_PATH`` separated with ":" on non Windows, ";" on Windows.
+
+  ``GRN_PLUGINS_PATH`` has high priority than the existing ``GRN_PLUGINS_DIR``.
+  Currently, this option is not supported Windows.
+
+* [:doc:`/reference/tokenizers`][TokenNgram] Added new option for ``TokenNgram`` that
+  ``unify_alphabet`` option.
+
+  ``TokenNgram("unify_alphabet", false)`` is same behavior of ``TokenBigramSplitAlpha``.
+
+* [:doc:`/reference/tokenizers`][TokenNgram] Added new option for ``TokenNgram`` that
+  ``unify_symbol`` option.
+
+  ``TokenNgram("unify_symbol", false)`` is same behavior of ``TokenBigramSplitSymbol``.
+
+* [:doc:`/reference/tokenizers`][TokenNgram] Added new option for ``TokenNgram`` that
+  ``unify_difit`` option.
+
+  ``TokenNgram("unify_digit", false)`` is same behavior of ``TokenBigramSplitDigit``.
+
+Fixes
+^^^^^
+
+* Fixed a bug that wrong score may be calculated.
+
+  * It's caused when adding, multiplication or division numeric to a bool value.
+  * It's caused when comparing a scalar and vector columns using ``!=`` or ``==``.
+
 .. _release-8-0-6:
 
 Release 8.0.6 - 2018-08-29
