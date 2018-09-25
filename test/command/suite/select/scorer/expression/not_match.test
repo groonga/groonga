@@ -1,0 +1,7 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users tags COLUMN_VECTOR ShortText
+load --table Users
+[
+{"_key": "alice"}
+]
+select Users   --filter true   --scorer '_score = (tags != "")'   --output_columns _score
