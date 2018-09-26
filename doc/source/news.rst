@@ -57,6 +57,8 @@ Improvements
 
   ``TokenNgram("unify_digit", false)`` is same behavior of ``TokenBigramSplitDigit``.
 
+* [httpd] Updated bundled nginx to 1.15.4.
+
 Fixes
 ^^^^^
 

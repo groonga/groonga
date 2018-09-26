@@ -143,6 +143,9 @@ msgstr ""
 "``TokenNgram(\"unify_digit\", false)`` は、 ``TokenBigramSplitDigit`` と同じ"
 "動作です。"
 
+msgid "[httpd] Updated bundled nginx to 1.15.4."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.15.4に更新しました。"
+
 msgid "Fixes"
 msgstr "修正"
 
