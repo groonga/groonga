@@ -26228,7 +26228,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Don't execute above query via HTTP request because enourmous number of "
+"Don't execute above query via HTTP request because enormous number of "
 "records are fetched."
 msgstr ""
 
