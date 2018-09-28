@@ -17,43 +17,40 @@ Improvements
 
 * [:doc:`/reference/tokenizers`][TokenMecab] support outputting metadata of Mecab.
 
-  * Added new option for ``TokenMecab`` that ``include_class`` .
+  * Added new option ``include_class`` for ``TokenMecab``.
 
-    This option outputting ``class`` and ``subclass`` in Mecab's metadata.
+    This option outputs ``class`` and ``subclass`` in Mecab's metadata.
 
-  * Added new option for ``TokenMecab`` that ``include_reading``.
+  * Added new option ``include_reading`` for ``TokenMecab``.
 
-    This option outputting ``reading`` in Mecab's metadata.
+    This option outputs ``reading`` in Mecab's metadata.
 
-  * Added new option for ``TokenMecab`` that ``include_form``.
+  * Added new option ``include_form`` for ``TokenMecab``.
 
-    This option outputting ``inflected_type``, ``inflected_form`` and ``base_form`` in Mecab's metadata.
+    This option outputs ``inflected_type``, ``inflected_form`` and ``base_form`` in Mecab's metadata.
 
-  * Added new option for ``TokenMecab`` that ``use_reading``.
+  * Added new option ``use_reading`` for ``TokenMecab``.
 
-    This option supporting a search by kana.
+    This option supports a search by kana.
 
     This option is useful for countermeasure of orthographical variants because it searches with kana.
 
-* [plugin] support multiple plugin search directories.
+* [plugin] Groonga now can grab plugins from multiple directories.
 
   You can specify multiple directories to ``GRN_PLUGINS_PATH`` separated with ":" on non Windows, ";" on Windows.
 
   ``GRN_PLUGINS_PATH`` has high priority than the existing ``GRN_PLUGINS_DIR``.
   Currently, this option is not supported Windows.
 
-* [:doc:`/reference/tokenizers`][TokenNgram] Added new option for ``TokenNgram`` that
-  ``unify_alphabet`` option.
+* [:doc:`/reference/tokenizers`][TokenNgram] Added new option ``unify_alphabet`` for ``TokenNgram``.
 
   ``TokenNgram("unify_alphabet", false)`` is same behavior of ``TokenBigramSplitAlpha``.
 
-* [:doc:`/reference/tokenizers`][TokenNgram] Added new option for ``TokenNgram`` that
-  ``unify_symbol`` option.
+* [:doc:`/reference/tokenizers`][TokenNgram] Added new option ``unify_symbol`` for ``TokenNgram``.
 
   ``TokenNgram("unify_symbol", false)`` is same behavior of ``TokenBigramSplitSymbol``.
 
-* [:doc:`/reference/tokenizers`][TokenNgram] Added new option for ``TokenNgram`` that
-  ``unify_difit`` option.
+* [:doc:`/reference/tokenizers`][TokenNgram] Added new option ``unify_difit`` for ``TokenNgram``.
 
   ``TokenNgram("unify_digit", false)`` is same behavior of ``TokenBigramSplitDigit``.
 
@@ -62,7 +59,7 @@ Improvements
 Fixes
 ^^^^^
 
-* Fixed a bug that wrong score may be calculated.
+* Fixed wrong score calculations on some cases.
 
   * It's caused when adding, multiplication or division numeric to a bool value.
   * It's caused when comparing a scalar and vector columns using ``!=`` or ``==``.
