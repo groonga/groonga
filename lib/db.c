@@ -12919,8 +12919,24 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
             }
           }
         } else {
-          if (kp->key->header.type == GRN_COLUMN_INDEX) {
+          switch (kp->key->header.type) {
+          case GRN_ACCESSOR :
+            {
+              grn_accessor *accessor = (grn_accessor *)(kp->key);
+              while (accessor->next) {
+                accessor = accessor->next;
+              }
+              if (accessor->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
+                  accessor->obj->header.type == GRN_COLUMN_INDEX) {
+                have_index_value_get = GRN_TRUE;
+              }
+            }
+            break;
+          case GRN_COLUMN_INDEX :
             have_index_value_get = GRN_TRUE;
+            break;
+          default :
+            break;
           }
           kp->offset = KEY_UINT32;
         }
