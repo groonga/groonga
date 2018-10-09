@@ -45,6 +45,22 @@ list.
 Note that ``io_flush`` may be a heavy process. If there are many
 changes in memory, flushing them to disk is a heavy process.
 
+.. versionadded:: 8.0.8
+
+   ``io_flush`` locks Groonga database while flushing. It means that
+   you can't run the following commands while ``io_flush``:
+
+     * :doc:`truncate`
+     * :doc:`table_create`
+     * :doc:`table_remove`
+     * :doc:`table_rename`
+     * :doc:`column_create`
+     * :doc:`column_remove`
+     * :doc:`column_rename`
+     * :doc:`plugin_register`
+     * :doc:`plugin_unregister`
+     * :doc:`logical_table_remove`
+
 Syntax
 ------
 
