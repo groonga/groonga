@@ -51,7 +51,7 @@ case "${TRAVIS_OS_NAME}" in
     ;;
   osx)
     brew update > /dev/null
-    brew bundle --verbose
+    brew bundle --verbose || : # Ignore error for now: TODO: Remove me
     if [ "${ENABLE_DOCUMENT}" = "yes" ]; then
       pip3 install Sphinx
     fi
