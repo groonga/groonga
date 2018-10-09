@@ -3777,7 +3777,7 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   {
     grn_rc unlock_rc;
     unlock_rc = grn_obj_unlock(ctx, db, GRN_ID_NIL);
-    if (rc != GRN_SUCCESS) {
+    if (rc == GRN_SUCCESS) {
       rc = unlock_rc;
     }
   }
