@@ -1663,6 +1663,8 @@ exception_filter(EXCEPTION_POINTERS *info)
   DWORD machine_type;
   DWORD previous_address;
 
+  GRN_LOG(ctx, GRN_LOG_CRIT, "-- CRASHED!!! --");
+
   process = GetCurrentProcess();
   thread = GetCurrentThread();
   context = info->ContextRecord;
@@ -1802,6 +1804,7 @@ exception_filter(EXCEPTION_POINTERS *info)
 
     previous_address = address;
   }
+  GRN_LOG(ctx, GRN_LOG_CRIT, "----------------");
 
   return EXCEPTION_CONTINUE_SEARCH;
 }
