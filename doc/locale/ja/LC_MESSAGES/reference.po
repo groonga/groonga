@@ -6399,10 +6399,31 @@ msgstr ""
 "は、Groongaデータベースに変更を加えた後に ``io_flush`` を使うとよいです。以下"
 "はGroongaデータベースに変更を加えるコマンドのリストです。"
 
+msgid ":doc:`column_create`"
+msgstr ""
+
+msgid ":doc:`column_remove`"
+msgstr ""
+
+msgid ":doc:`column_rename`"
+msgstr ""
+
 msgid ":doc:`delete`"
 msgstr ""
 
-msgid ":doc:`truncate`"
+msgid ":doc:`logical_table_remove`"
+msgstr ""
+
+msgid ":doc:`object_remove`"
+msgstr ""
+
+msgid ":doc:`plugin_register`"
+msgstr ""
+
+msgid ":doc:`plugin_remove`"
+msgstr ""
+
+msgid ":doc:`plugin_unregister`"
 msgstr ""
 
 msgid ":doc:`table_create`"
@@ -6414,22 +6435,7 @@ msgstr ""
 msgid ":doc:`table_rename`"
 msgstr ""
 
-msgid ":doc:`column_create`"
-msgstr ""
-
-msgid ":doc:`column_remove`"
-msgstr ""
-
-msgid ":doc:`column_rename`"
-msgstr ""
-
-msgid ":doc:`plugin_register`"
-msgstr ""
-
-msgid ":doc:`plugin_unregister`"
-msgstr ""
-
-msgid ":doc:`logical_table_remove`"
+msgid ":doc:`truncate`"
 msgstr ""
 
 msgid ""

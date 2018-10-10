@@ -25,18 +25,20 @@ process.) It's better that you use ``io_flush`` after you change your
 Groonga database for the case. Here are commands that change your
 Groonga database:
 
-  * :doc:`load`
-  * :doc:`delete`
-  * :doc:`truncate`
-  * :doc:`table_create`
-  * :doc:`table_remove`
-  * :doc:`table_rename`
   * :doc:`column_create`
   * :doc:`column_remove`
   * :doc:`column_rename`
-  * :doc:`plugin_register`
-  * :doc:`plugin_unregister`
+  * :doc:`delete`
+  * :doc:`load`
   * :doc:`logical_table_remove`
+  * :doc:`object_remove`
+  * :doc:`plugin_register`
+  * :doc:`plugin_remove`
+  * :doc:`plugin_unregister`
+  * :doc:`table_create`
+  * :doc:`table_remove`
+  * :doc:`table_rename`
+  * :doc:`truncate`
 
 If you're using :ref:`select-scorer` parameter in :doc:`select` to
 change existing column values, :doc:`select` is added to the above
@@ -50,16 +52,17 @@ changes in memory, flushing them to disk is a heavy process.
    ``io_flush`` locks Groonga database while flushing. It means that
    you can't run the following commands while ``io_flush``:
 
-     * :doc:`truncate`
-     * :doc:`table_create`
-     * :doc:`table_remove`
-     * :doc:`table_rename`
      * :doc:`column_create`
      * :doc:`column_remove`
      * :doc:`column_rename`
+     * :doc:`logical_table_remove`
+     * :doc:`object_remove`
+     * :doc:`plugin_remove`
      * :doc:`plugin_register`
      * :doc:`plugin_unregister`
-     * :doc:`logical_table_remove`
+     * :doc:`table_create`
+     * :doc:`table_remove`
+     * :doc:`table_rename`
 
 Syntax
 ------
