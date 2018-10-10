@@ -33,7 +33,6 @@ Groonga database:
   * :doc:`logical_table_remove`
   * :doc:`object_remove`
   * :doc:`plugin_register`
-  * :doc:`plugin_remove`
   * :doc:`plugin_unregister`
   * :doc:`table_create`
   * :doc:`table_remove`
@@ -57,7 +56,6 @@ changes in memory, flushing them to disk is a heavy process.
      * :doc:`column_rename`
      * :doc:`logical_table_remove`
      * :doc:`object_remove`
-     * :doc:`plugin_remove`
      * :doc:`plugin_register`
      * :doc:`plugin_unregister`
      * :doc:`table_create`

@@ -6420,9 +6420,6 @@ msgstr ""
 msgid ":doc:`plugin_register`"
 msgstr ""
 
-msgid ":doc:`plugin_remove`"
-msgstr ""
-
 msgid ":doc:`plugin_unregister`"
 msgstr ""
 
