@@ -5,7 +5,7 @@ load --table Data
 {"_key": "100"}
 ]
 [[0,0.0,0.0],1]
-select Data   --output_columns '_key, cast_loose(Int64, _key, 0)'
+select Data   --output_columns '_key, cast_loose(Int64, _key, 10)'
 [
   [
     0,
