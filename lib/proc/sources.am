@@ -1,4 +1,5 @@
 libgrnproc_la_SOURCES =				\
+	proc_cast.c				\
 	proc_column.c				\
 	proc_config.c				\
 	proc_dump.c				\

@@ -4339,4 +4339,6 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
   grn_proc_init_query_log_flags_set(ctx);
   grn_proc_init_query_log_flags_add(ctx);
   grn_proc_init_query_log_flags_remove(ctx);
+
+  grn_proc_init_cast_loose(ctx);
 }

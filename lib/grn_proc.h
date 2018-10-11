@@ -36,6 +36,7 @@ void grn_proc_init_from_env(void);
 GRN_VAR const char *grn_document_root;
 void grn_db_init_builtin_commands(grn_ctx *ctx);
 
+void grn_proc_init_cast_loose(grn_ctx *ctx);
 void grn_proc_init_clearlock(grn_ctx *ctx);
 void grn_proc_init_column_copy(grn_ctx *ctx);
 void grn_proc_init_column_create(grn_ctx *ctx);

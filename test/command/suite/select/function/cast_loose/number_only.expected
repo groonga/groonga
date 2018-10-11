@@ -6,31 +6,4 @@ load --table Data
 ]
 [[0,0.0,0.0],1]
 select Data   --output_columns '_key, cast_loose(Int64, _key, 10)'
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        1
-      ],
-      [
-        [
-          "_key",
-          "ShortText"
-        ],
-        [
-          "cast_loose",
-          null
-        ]
-      ],
-      [
-        "100",
-        100
-      ]
-    ]
-  ]
-]
+[[0,0.0,0.0],[[[1],[["_key","ShortText"],["cast_loose",null]],["100",100]]]]
