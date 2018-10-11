@@ -1,0 +1,6 @@
+table_create Memos TABLE_HASH_KEY ShortText
+load --table Memos
+[
+{"_key": "100"}
+]
+select Memos   --output_columns '_key, cast_loose(Int64, _key, 0)'
