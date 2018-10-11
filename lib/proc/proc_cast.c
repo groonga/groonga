@@ -24,22 +24,30 @@
 static grn_obj *
 func_cast_loose(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
+  grn_obj *type;
+  grn_obj *value;
+  grn_obj *default_value;
+  grn_id type_id;
+  grn_rc rc;
   grn_obj *casted_value = NULL;
 
-  if (nargs == 3) {
-    grn_obj *type = args[0];
-    grn_obj *cast_value = args[1];
-    grn_obj *default_value = args[2];
-    grn_id type_id;
-    grn_rc rc;
+  if (nargs != 3) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "cast_loose(): wrong number of arguments (%d for 3)",
+                     nargs);
+    return NULL;
+  }
 
-    type_id = grn_obj_id(ctx, type);
-    casted_value = grn_plugin_proc_alloc(ctx, user_data, type_id, 0);
+  type = args[0];
+  value = args[1];
+  default_value = args[2];
 
-    rc = grn_obj_cast(ctx, cast_value, casted_value, GRN_FALSE);
-    if (rc != GRN_SUCCESS) {
-      grn_obj_cast(ctx, default_value, casted_value, GRN_FALSE);
-    }
+  type_id = grn_obj_id(ctx, type);
+  casted_value = grn_plugin_proc_alloc(ctx, user_data, type_id, 0);
+
+  rc = grn_obj_cast(ctx, value, casted_value, GRN_FALSE);
+  if (rc != GRN_SUCCESS) {
+    grn_obj_cast(ctx, default_value, casted_value, GRN_FALSE);
   }
 
   return casted_value;
