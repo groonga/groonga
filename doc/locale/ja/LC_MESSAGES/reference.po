@@ -19332,6 +19332,46 @@ msgstr ""
 "``between`` は指定した範囲にカラムの値が含まれるかを返します。もし該当するレ"
 "コードがあれば、 ``true`` を返します。そうでなければ ``false`` を返します。"
 
+msgid "``cast_loose``"
+msgstr ""
+
+msgid ""
+"``cast_loose`` cast loosely a string to the type specified. If the target "
+"string can cast, ``cast_loose`` has cast the string to the type specified by "
+"the argument. If the target string can't cast, ``cast_loose`` set the "
+"default value specified by the argument."
+msgstr ""
+"``cast_loose`` は文字列を指定した型へ緩くキャストします。対象の文字列がキャス"
+"トできる場合、 ``cast_loose`` は、文字列を引数で指定された型にキャストしま"
+"す。対象の文字列がキャストできない場合、 ``cast_loose`` は、引数で指定された"
+"デフォルト値を設定します。"
+
+msgid "``cast_loose`` has three parameters::"
+msgstr "``cast_loose`` は3つの引数を受け取ります。"
+
+msgid "``type`` : Specify the type of after casted value."
+msgstr "``type`` : キャスト後の値の型を指定します。"
+
+msgid "``value`` : Specify the target of a cast."
+msgstr "``value`` : キャスト対象を指定します。"
+
+msgid "``default_value`` : Speficy the value of setting when failed a cast."
+msgstr "``default_value`` : キャストに失敗した時に設定する値を指定します。"
+
+msgid ""
+"The following example is cast \"100\" and \"100abc\" with ``cast_loose``."
+msgstr "以下の例では、\"100\"と\"100abc\"を ``cast_loose`` でキャストします。"
+
+msgid ""
+"``cast_loose`` cast \"100\" to 100 and \"100abc\" to 10. Because \"100\" can "
+"cast to the Int64 and \"100abc\" can't cast to the Int64."
+msgstr ""
+"``cast_loose`` は\"100\"を100に\"100abc\"を10にキャストします。\"100\"はInt64"
+"にキャストできますが、\"100abc\"はInt64にキャストできないためです。"
+
+msgid "``cast_loose`` returns the casted value or default value."
+msgstr "``cast_loose`` はキャスト後の値かデフォルト値を返します。"
+
 msgid "edit_distance"
 msgstr ""
 
@@ -25354,6 +25394,15 @@ msgid "Score is computed as TF-IDF based algorithm."
 msgstr "スコアーはTF-IDFベースのアルゴリズムで計算します。"
 
 msgid ""
+"You don't need to resolve scoring only by score function. Score function is "
+"highly depends on search query. You may be able to use metadata of matched "
+"record."
+msgstr ""
+"スコアー関数だけでスコアの計算をする必要はありません。スコアー関数は検索クエ"
+"リーに非常に依存しています。検索クエリーだけでなく、マッチしたレコードのメタ"
+"データも使えないか検討しましょう。"
+
+msgid ""
 "For example, Google uses `PageRank <https://en.wikipedia.org/wiki/"
 "PageRank>`_ for scoring. You may be able to use data type (\"title\" data "
 "are important rather than \"memo\" data), tag, geolocation and so on."
@@ -25365,15 +25414,6 @@ msgstr ""
 
 msgid "Please stop to think about only score function for scoring."
 msgstr "スコアーの計算をスコアー関数だけで考えることはやめましょう。"
-
-msgid ""
-"You don't need to resolve scoring only by score function. Score function is "
-"highly depends on search query. You may be able to use metadata of matched "
-"record."
-msgstr ""
-"スコアー関数だけでスコアの計算をする必要はありません。スコアー関数は検索クエ"
-"リーに非常に依存しています。検索クエリーだけでなく、マッチしたレコードのメタ"
-"データも使えないか検討しましょう。"
 
 msgid "Sharding"
 msgstr "シャーディング"

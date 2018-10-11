@@ -1,0 +1,35 @@
+Execution example::
+
+  select Data   --output_columns '_key, cast_loose(Int64, _key, 10)'
+  # [
+  #   [
+  #     0,
+  #     0.0,
+  #     0.0
+  #   ],
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ],
+  #       [
+  #         [
+  #           "_key",
+  #           "ShortText"
+  #         ],
+  #         [
+  #           "cast_loose",
+  #           null
+  #         ]
+  #       ],
+  #       [
+  #         "100abc",
+  #         10
+  #       ]
+  #       [
+  #         "100",
+  #         100
+  #       ]
+  #     ]
+  #   ]
+  # ]
