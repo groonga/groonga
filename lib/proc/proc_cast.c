@@ -39,10 +39,22 @@ func_cast_loose(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   }
 
   type = args[0];
+  if (!grn_obj_is_type(ctx, type)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, type);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "cast_loose(): the first argument must be type: <%.*s>",
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return NULL;
+  }
+  type_id = grn_obj_id(ctx, type);
+
   value = args[1];
   default_value = args[2];
 
-  type_id = grn_obj_id(ctx, type);
   casted_value = grn_plugin_proc_alloc(ctx, user_data, type_id, 0);
 
   rc = grn_obj_cast(ctx, value, casted_value, GRN_FALSE);
