@@ -56,10 +56,29 @@ func_cast_loose(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   default_value = args[2];
 
   casted_value = grn_plugin_proc_alloc(ctx, user_data, type_id, 0);
+  if (!casted_value) {
+    return NULL;
+  }
 
   rc = grn_obj_cast(ctx, value, casted_value, GRN_FALSE);
   if (rc != GRN_SUCCESS) {
-    grn_obj_cast(ctx, default_value, casted_value, GRN_FALSE);
+    rc = grn_obj_cast(ctx, default_value, casted_value, GRN_FALSE);
+    if (rc != GRN_SUCCESS) {
+      char type_name[GRN_TABLE_MAX_KEY_SIZE];
+      int type_name_size;
+      grn_obj inspected;
+      type_name_size = grn_obj_name(ctx, type, type_name, sizeof(type_name));
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, default_value);
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "cast_loose(): failed to set the default value: "
+                       "<%.*s>: <%.*s>",
+                       type_name_size,
+                       type_name,
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+    }
   }
 
   return casted_value;
