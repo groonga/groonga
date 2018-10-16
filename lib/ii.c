@@ -8448,6 +8448,9 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
                           grn_obj *parsed_strings)
 {
   grn_bool escaping = GRN_FALSE;
+  grn_bool in_paren = GRN_FALSE;
+  const char *all_off_options = "?-mix:";
+  size_t all_off_options_len = strlen(all_off_options);
   int nth_char = 0;
   const char *current = string;
   const char *string_end = string + string_len;
@@ -8482,7 +8485,11 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
           }
           break;
         case 'z' :
-          if (current == string_end) {
+          if (current == string_end ||
+              (in_paren &&
+               grn_charlen(ctx, current, string_end) == 1 &&
+               *current == ')' &&
+               (current + 1) == string_end)) {
             target = GRN_TOKENIZER_END_MARK_UTF8;
             char_len = GRN_TOKENIZER_END_MARK_UTF8_LEN;
           }
@@ -8495,6 +8502,15 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
       if (char_len == 1) {
         if (*target == '\\') {
           escaping = GRN_TRUE;
+          continue;
+        } else if (*target == '(' &&
+                   (string_end - current) >= all_off_options_len &&
+                   memcmp(current, all_off_options, all_off_options_len) == 0) {
+          current += all_off_options_len;
+          in_paren = GRN_TRUE;
+          continue;
+        } else if (*target == ')') {
+          in_paren = GRN_FALSE;
           continue;
         } else if (*target == '.' &&
                    grn_charlen(ctx, current, string_end) == 1 &&

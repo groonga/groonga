@@ -10,5 +10,5 @@ load --table Entries
 ]
 
 select Entries \
-  --filter "body @~ 'ro.*ga'" \
+  --filter "body @~ '(?-mix:ro.*ga)'" \
   --output_columns "highlight_html(body)"

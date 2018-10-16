@@ -1,0 +1,20 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+
+table_create RegexpTokens TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenRegexp
+column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION \
+  Memos content
+
+load --table Memos
+[
+{"content": "Groonga"},
+{"content": "Rroonga"},
+{"content": "Rroonga and Ruby"}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Memos --filter 'content @~ "(?-mix:onga\\\\z)"'
+#@remove-important-log-levels info
+log_level --level notice

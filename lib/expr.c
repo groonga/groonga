@@ -2324,9 +2324,12 @@ scan_info_build_match_expr(grn_ctx *ctx,
 static grn_bool
 is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
 {
+  const char *all_off_options = "?-mix:";
+  size_t all_off_options_length = strlen(all_off_options);
   const char *regexp_raw;
   const char *regexp_raw_end;
   grn_bool escaping = GRN_FALSE;
+  grn_bool in_paren = GRN_FALSE;
   grn_bool dot = GRN_FALSE;
 
   if (!(regexp->header.domain == GRN_DB_SHORT_TEXT ||
@@ -2380,15 +2383,35 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
         }
       } else {
         switch (regexp_raw[0]) {
+        case '(' :
+          if (in_paren) {
+            return GRN_FALSE;
+          } else {
+            const char *options = regexp_raw + 1;
+            if (regexp_raw_end - options >= all_off_options_length &&
+                memcmp(options, all_off_options, all_off_options_length) == 0) {
+              in_paren = GRN_TRUE;
+              regexp_raw += all_off_options_length;
+              continue;
+            } else {
+              return GRN_FALSE;
+            }
+          }
+          break;
+        case ')' :
+          if (in_paren) {
+            in_paren = GRN_FALSE;
+          } else {
+            return GRN_FALSE;
+          }
+          break;
         case '.' :
-          escaping = GRN_FALSE;
           if (dot) {
             return GRN_FALSE;
           }
           dot = GRN_TRUE;
           break;
         case '*' :
-          escaping = GRN_FALSE;
           if (!dot) {
             return GRN_FALSE;
           }
@@ -2406,9 +2429,6 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
         case '}' :
         case '^' :
         case '$' :
-        case '(' :
-        case ')' :
-          escaping = GRN_FALSE;
           return GRN_FALSE;
         case '\\' :
           if (dot) {
@@ -2420,7 +2440,6 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
           if (dot) {
             return GRN_FALSE;
           }
-          escaping = GRN_FALSE;
           break;
         }
       }
@@ -2429,6 +2448,13 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
     }
 
     regexp_raw += char_len;
+  }
+
+  if (dot) {
+    return GRN_FALSE;
+  }
+  if (in_paren) {
+    return GRN_FALSE;
   }
 
   return GRN_TRUE;
@@ -7086,6 +7112,8 @@ grn_expr_syntax_expand_query_by_table(grn_ctx *ctx,
 static void
 grn_expr_get_keywords_regexp(grn_ctx *ctx, grn_obj *keywords, grn_obj *regexp)
 {
+  const char *all_off_options = "?-mix:";
+  size_t all_off_options_length = strlen(all_off_options);
   const char *regexp_raw;
   const char *regexp_raw_end;
   grn_bool escaping = GRN_FALSE;
@@ -7122,11 +7150,14 @@ grn_expr_get_keywords_regexp(grn_ctx *ctx, grn_obj *keywords, grn_obj *regexp)
         }
       } else {
         switch (regexp_raw[0]) {
+        case '(' :
+          regexp_raw += all_off_options_length;
+          break;
+        case ')' :
+          break;
         case '.' :
-          escaping = GRN_FALSE;
           break;
         case '*' :
-          escaping = GRN_FALSE;
           if (GRN_TEXT_LEN(&keyword) > 0) {
             grn_vector_add_element(ctx,
                                    keywords,
@@ -7141,7 +7172,6 @@ grn_expr_get_keywords_regexp(grn_ctx *ctx, grn_obj *keywords, grn_obj *regexp)
           escaping = GRN_TRUE;
           break;
         default :
-          escaping = GRN_FALSE;
           GRN_TEXT_PUTC(ctx, &keyword, regexp_raw[0]);
           break;
         }

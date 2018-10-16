@@ -148,6 +148,8 @@ module Groonga
     def index_searchable_regexp?(pattern)
       return false if pattern.nil?
 
+      paren = :outside
+      dot = false
       previous_char = nil
       pattern.value.each_char do |char|
         if previous_char == "\\"
@@ -167,13 +169,50 @@ module Groonga
             next
           end
         else
-          case char
-          when ".", "[", "]", "|", "?", "+", "*", "{", "}", "^", "$", "(", ")"
-            return false
+          case paren
+          when :starting
+            case char
+            when "?"
+              return false if previous_char != "("
+            when "-"
+              return false if previous_char != "?"
+            when "m"
+              return false if previous_char != "-"
+            when "i"
+              return false if previous_char != "m"
+            when "x"
+              return false if previous_char != "i"
+            when ":"
+              return false if previous_char != "x"
+              paren = :inside
+            else
+              return false
+            end
+          else
+            case char
+            when "("
+              return false unless paren == :outside
+              paren = :starting
+            when ")"
+              return false unless paren == :inside
+              paren = :outside
+            when "."
+              return false if dot
+              dot = true
+            when "*"
+              return false unless dot
+              dot = false
+            when "[", "]", "|", "?", "+", "{", "}", "^", "$"
+              return false
+            else
+              return false if dot
+            end
           end
         end
         previous_char = char
       end
+      return false if dot
+      return false unless paren == :outside
       true
     end
 

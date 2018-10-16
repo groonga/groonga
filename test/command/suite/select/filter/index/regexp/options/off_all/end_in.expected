@@ -1,0 +1,57 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create RegexpTokens TABLE_PAT_KEY ShortText   --default_tokenizer TokenRegexp
+[[0,0.0,0.0],true]
+column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION   Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "Groonga"},
+{"content": "Rroonga"},
+{"content": "Rroonga and Ruby"}
+]
+[[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
+select Memos --filter 'content @~ "(?-mix:onga\\\\z)"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "Groonga"
+      ],
+      [
+        2,
+        "Rroonga"
+      ]
+    ]
+  ]
+]
+#|i| [object][search][index][key][regexp] <RegexpTokens.memos_content>
+#|i| grn_ii_sel > ((?-mix:onga\z))
+#|i| n=3 (onga￰)
+#|i| exact: 2
+#|i| hits=2
+log_level --level notice
+[[0,0.0,0.0],true]
