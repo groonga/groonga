@@ -1743,6 +1743,8 @@ grn_rc
 grn_aton(grn_ctx *ctx, const char *p, const char *end, const char **rest,
          grn_obj *res)
 {
+  grn_rc rc = GRN_SUCCESS;
+
   if (*p == '+') {
     p++;
   }
@@ -1778,27 +1780,33 @@ grn_aton(grn_ctx *ctx, const char *p, const char *end, const char **rest,
         if (end != *rest) {
           if (rest_char == '.' || rest_char == 'e' || rest_char == 'E' ||
               (rest_char >= '0' && rest_char <= '9')) {
+            grn_obj buffer;
             char *rest_float;
             double d;
             errno = 0;
-            d = strtod(p, &rest_float);
-            if (!errno && rest_float == end) {
+            GRN_TEXT_INIT(&buffer, 0);
+            GRN_TEXT_SET(ctx, &buffer, p, end - p);
+            GRN_TEXT_PUTC(ctx, &buffer, '\0');
+            d = strtod(GRN_TEXT_VALUE(&buffer), &rest_float);
+            if (errno == 0 && rest_float + 1 == GRN_BULK_CURR(&buffer)) {
               grn_obj_reinit(ctx, res, GRN_DB_FLOAT, 0);
               GRN_FLOAT_SET(ctx, res, d);
-              *rest = rest_float;
+              *rest = end;
             } else {
-              return GRN_INVALID_ARGUMENT;
+              rc = GRN_INVALID_ARGUMENT;
             }
+            GRN_OBJ_FIN(ctx, &buffer);
           }
         }
       }
     }
     break;
   default :
-    return GRN_INVALID_ARGUMENT;
+    rc = GRN_INVALID_ARGUMENT;
+    break;
   }
 
-  return GRN_SUCCESS;
+  return rc;
 }
 
 int

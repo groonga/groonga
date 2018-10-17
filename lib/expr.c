@@ -6448,13 +6448,20 @@ parse_script(grn_ctx *ctx, efs_info *q)
         if (q->str_end != rest &&
             (*rest == '.' || *rest == 'e' || *rest == 'E' ||
              (*rest >= '0' && *rest <= '9'))) {
+          grn_obj buffer;
           char *rest_float;
-          double d = strtod(q->cur, &rest_float);
+          double d;
           grn_obj floatbuf;
+          GRN_TEXT_INIT(&buffer, 0);
+          GRN_TEXT_SET(ctx, &buffer, q->cur, q->str_end - q->cur);
+          GRN_TEXT_PUTC(ctx, &buffer, '\0');
+          errno = 0;
+          d = strtod(GRN_TEXT_VALUE(&buffer), &rest_float);
+          rest = q->cur + (rest_float - GRN_TEXT_VALUE(&buffer));
+          GRN_OBJ_FIN(ctx, &buffer);
           GRN_FLOAT_INIT(&floatbuf, 0);
           GRN_FLOAT_SET(ctx, &floatbuf, d);
           grn_expr_append_const(ctx, q->e, &floatbuf, GRN_OP_PUSH, 1);
-          rest = rest_float;
         } else {
           const char *rest64 = rest;
           grn_atoui(q->cur, q->str_end, &rest);
