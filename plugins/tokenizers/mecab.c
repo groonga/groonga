@@ -46,6 +46,10 @@ static grn_mecab mecab_wakati;
 static grn_bool grn_mecab_chunked_tokenize_enabled = GRN_FALSE;
 static int32_t grn_mecab_chunk_size_threshold = 8192;
 
+static const size_t GRN_MECAB_FEATURE_LOCATION_CLASS = 0;
+static const size_t GRN_MECAB_FEATURE_LOCATION_SUBCLASS0 = 1;
+static const size_t GRN_MECAB_FEATURE_LOCATION_SUBCLASS1 = 2;
+static const size_t GRN_MECAB_FEATURE_LOCATION_SUBCLASS2 = 3;
 static const size_t GRN_MECAB_FEATURE_LOCATION_READING = 7;
 
 typedef struct {
@@ -55,6 +59,7 @@ typedef struct {
   grn_bool include_reading;
   grn_bool include_form;
   grn_bool use_reading;
+  grn_obj target_classes;
 } grn_mecab_tokenizer_options;
 
 typedef struct {
@@ -151,10 +156,12 @@ mecab_tokenizer_options_init(grn_mecab_tokenizer_options *options)
   options->include_reading = GRN_FALSE;
   options->include_form = GRN_FALSE;
   options->use_reading = GRN_FALSE;
+  GRN_TEXT_INIT(&(options->target_classes), GRN_OBJ_VECTOR);
 }
 
 static grn_bool
-mecab_tokenizer_options_need_default_output(grn_mecab_tokenizer_options *options)
+mecab_tokenizer_options_need_default_output(grn_ctx *ctx,
+                                            grn_mecab_tokenizer_options *options)
 {
   if (!options) {
     return GRN_FALSE;
@@ -173,6 +180,10 @@ mecab_tokenizer_options_need_default_output(grn_mecab_tokenizer_options *options
   }
 
   if (options->use_reading) {
+    return GRN_TRUE;
+  }
+
+  if (grn_vector_size(ctx, &(options->target_classes)) > 0) {
     return GRN_TRUE;
   }
 
@@ -239,6 +250,25 @@ mecab_tokenizer_options_open(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->use_reading);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "target_class")) {
+      const char *target_class = NULL;
+      unsigned int target_class_length;
+      grn_id domain;
+
+      target_class_length = grn_vector_get_element(ctx,
+                                                   raw_options,
+                                                   i,
+                                                   &target_class,
+                                                   NULL,
+                                                   &domain);
+      if (grn_type_id_is_text_family(ctx, domain) && target_class_length > 0) {
+        grn_vector_add_element(ctx,
+                               &(options->target_classes),
+                               target_class,
+                               target_class_length,
+                               0,
+                               GRN_DB_TEXT);
+      }
     }
   } GRN_OPTION_VALUES_EACH_END();
 
@@ -249,6 +279,7 @@ static void
 mecab_tokenizer_options_close(grn_ctx *ctx, void *data)
 {
   grn_mecab_tokenizer_options *options = data;
+  GRN_OBJ_FIN(ctx, &(options->target_classes));
   GRN_PLUGIN_FREE(ctx, options);
 }
 
@@ -446,7 +477,8 @@ mecab_create(grn_ctx *ctx,
   const char *tag;
   grn_bool need_default_output = GRN_FALSE;
 
-  need_default_output = mecab_tokenizer_options_need_default_output(options);
+  need_default_output =
+    mecab_tokenizer_options_need_default_output(ctx, options);
 
   if (need_default_output) {
     tag = "[default]";
@@ -548,7 +580,7 @@ mecab_create(grn_ctx *ctx,
 static void
 mecab_init_mecab(grn_ctx *ctx, grn_mecab_tokenizer *tokenizer)
 {
-  if (mecab_tokenizer_options_need_default_output(tokenizer->options)) {
+  if (mecab_tokenizer_options_need_default_output(ctx, tokenizer->options)) {
     tokenizer->mecab = &mecab_default;
   } else {
     tokenizer->mecab = &mecab_wakati;
@@ -724,6 +756,65 @@ mecab_next_default_format_consume_token(grn_ctx *ctx,
 }
 
 static void
+mecab_next_default_format_consume_needless_tokens(grn_ctx *ctx,
+                                                  grn_mecab_tokenizer *tokenizer)
+{
+  grn_obj *target_classes = &(tokenizer->options->target_classes);
+  unsigned int n_target_classes;
+  const char *last_next = tokenizer->next;
+  grn_bool is_target = GRN_FALSE;
+
+  n_target_classes = grn_vector_size(ctx, target_classes);
+
+  if (n_target_classes == 0) {
+    return;
+  }
+
+  while (tokenizer->next != tokenizer->end && !is_target) {
+    const char *surface = NULL;
+    size_t surface_length = 0;
+    unsigned int i;
+    grn_obj *feature_locations;
+    const char *class = NULL;
+    size_t class_length;
+
+    last_next = tokenizer->next;
+    surface_length = mecab_next_default_format_consume_token(ctx,
+                                                             tokenizer,
+                                                             &surface);
+
+    if (surface_length == 0) {
+      break;
+    }
+
+    feature_locations = &(tokenizer->feature_locations);
+    class_length = mecab_get_feature(ctx,
+                                     feature_locations,
+                                     GRN_MECAB_FEATURE_LOCATION_CLASS,
+                                     &class);
+    for (i = 0; i < n_target_classes; i++) {
+      const char *target_class;
+      unsigned int target_class_length;
+      target_class_length = grn_vector_get_element(ctx,
+                                                   target_classes,
+                                                   i,
+                                                   &target_class,
+                                                   NULL,
+                                                   NULL);
+      if (target_class_length == class_length &&
+          memcmp(target_class, class, target_class_length) == 0) {
+        is_target = GRN_TRUE;
+        break;
+      }
+    }
+  }
+
+  if (is_target) {
+    tokenizer->next = last_next;
+  }
+}
+
+static void
 mecab_next_default_format(grn_ctx *ctx,
                           grn_mecab_tokenizer *tokenizer,
                           grn_token *token)
@@ -750,28 +841,20 @@ mecab_next_default_format(grn_ctx *ctx,
   } else {
     grn_token_set_data(ctx, token, surface, surface_length);
   }
-  {
-    grn_tokenizer_status status;
-    if (surface_length == 0) {
-      /* Error */
-      status = GRN_TOKEN_LAST;
-    } else if (tokenizer->next == tokenizer->end) {
-      status = GRN_TOKEN_LAST;
-    } else {
-      status = GRN_TOKEN_CONTINUE;
-    }
-    grn_token_set_status(ctx, token, status);
-  }
   if (tokenizer->options->include_class) {
     add_feature_data data;
     data.token = token;
     data.feature_locations = &(tokenizer->feature_locations);
     data.ignore_empty_value = GRN_TRUE;
     data.ignore_asterisk_value = GRN_TRUE;
-    mecab_next_default_format_add_feature(ctx, &data, "class", 0);
-    mecab_next_default_format_add_feature(ctx, &data, "subclass0", 1);
-    mecab_next_default_format_add_feature(ctx, &data, "subclass1", 2);
-    mecab_next_default_format_add_feature(ctx, &data, "subclass2", 3);
+    mecab_next_default_format_add_feature(ctx, &data, "class",
+                                          GRN_MECAB_FEATURE_LOCATION_CLASS);
+    mecab_next_default_format_add_feature(ctx, &data, "subclass0",
+                                          GRN_MECAB_FEATURE_LOCATION_SUBCLASS0);
+    mecab_next_default_format_add_feature(ctx, &data, "subclass1",
+                                          GRN_MECAB_FEATURE_LOCATION_SUBCLASS1);
+    mecab_next_default_format_add_feature(ctx, &data, "subclass2",
+                                          GRN_MECAB_FEATURE_LOCATION_SUBCLASS2);
   }
   if (tokenizer->options->include_reading) {
     add_feature_data data;
@@ -793,6 +876,21 @@ mecab_next_default_format(grn_ctx *ctx,
     mecab_next_default_format_add_feature(ctx, &data, "inflected_type", 4);
     mecab_next_default_format_add_feature(ctx, &data, "inflected_form", 5);
     mecab_next_default_format_add_feature(ctx, &data, "base_form", 6);
+  }
+  {
+    grn_tokenizer_status status;
+    if (surface_length == 0) {
+      /* Error */
+      status = GRN_TOKEN_LAST;
+    } else {
+      mecab_next_default_format_consume_needless_tokens(ctx, tokenizer);
+      if (tokenizer->next == tokenizer->end) {
+        status = GRN_TOKEN_LAST;
+      } else {
+        status = GRN_TOKEN_CONTINUE;
+      }
+    }
+    grn_token_set_status(ctx, token, status);
   }
 }
 
@@ -944,7 +1042,7 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
         GRN_PLUGIN_FREE(ctx, tokenizer);
         return NULL;
       }
-      if (mecab_tokenizer_options_need_default_output(tokenizer->options)) {
+      if (mecab_tokenizer_options_need_default_output(ctx, tokenizer->options)) {
         tokenizer->next = GRN_TEXT_VALUE(&(tokenizer->buf));
         tokenizer->end = tokenizer->next + GRN_TEXT_LEN(&(tokenizer->buf));
       } else {
@@ -964,6 +1062,8 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
   }
 
   GRN_UINT64_INIT(&(tokenizer->feature_locations), GRN_OBJ_VECTOR);
+
+  mecab_next_default_format_consume_needless_tokens(ctx, tokenizer);
 
   return tokenizer;
 }
@@ -998,7 +1098,7 @@ mecab_next(grn_ctx *ctx,
                          token,
                          GRN_UINT32_VALUE(&(tokenizer_token.status)));
     grn_tokenizer_token_fin(ctx, &tokenizer_token);
-  } else if (mecab_tokenizer_options_need_default_output(tokenizer->options)) {
+  } else if (mecab_tokenizer_options_need_default_output(ctx, tokenizer->options)) {
     mecab_next_default_format(ctx, tokenizer, token);
   } else {
     mecab_next_wakati_format(ctx, tokenizer, token);
