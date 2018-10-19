@@ -1,0 +1,6 @@
+#@on-error omit
+tokenize \
+  'TokenMecab("include_class", true, \
+              "target_class", "+名詞")' \
+  '私の名前は中野です。'
+#@on-error default

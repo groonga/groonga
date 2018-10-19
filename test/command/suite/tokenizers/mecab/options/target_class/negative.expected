@@ -1,4 +1,4 @@
-tokenize   'TokenMecab("include_class", true,               "target_class", "名詞")'   '私の名前は中野です。'
+tokenize   'TokenMecab("include_class", true,               "target_class", "-助詞",               "target_class", "+")'   '私の名前は中野です。'
 [
   [
     0,
@@ -34,6 +34,23 @@ tokenize   'TokenMecab("include_class", true,               "target_class", "名
         "subclass0": "固有名詞",
         "subclass1": "人名",
         "subclass2": "姓"
+      }
+    },
+    {
+      "value": "です",
+      "position": 3,
+      "force_prefix": false,
+      "metadata": {
+        "class": "助動詞"
+      }
+    },
+    {
+      "value": "。",
+      "position": 4,
+      "force_prefix": false,
+      "metadata": {
+        "class": "記号",
+        "subclass0": "句点"
       }
     }
   ]

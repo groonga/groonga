@@ -1,0 +1,21 @@
+tokenize   'TokenMecab("include_class", true,               "target_class", "名詞/固有名詞/人名/姓")'   '私の名前は中野太郎です。'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "中野",
+      "position": 0,
+      "force_prefix": false,
+      "metadata": {
+        "class": "名詞",
+        "subclass0": "固有名詞",
+        "subclass1": "人名",
+        "subclass2": "姓"
+      }
+    }
+  ]
+]

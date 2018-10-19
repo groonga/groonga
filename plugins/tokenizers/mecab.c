@@ -755,6 +755,24 @@ mecab_next_default_format_consume_token(grn_ctx *ctx,
   return surface_length;
 }
 
+static grn_bool
+mecab_next_default_format_match_class(grn_ctx *ctx,
+                                      const char *target_class,
+                                      size_t target_class_length,
+                                      const char *class,
+                                      size_t class_length)
+{
+  if (class_length == 0) {
+    return GRN_FALSE;
+  }
+
+  if (target_class_length < class_length) {
+    return GRN_FALSE;
+  }
+
+  return memcmp(target_class, class, class_length) == 0;
+}
+
 static void
 mecab_next_default_format_consume_needless_tokens(grn_ctx *ctx,
                                                   grn_mecab_tokenizer *tokenizer)
@@ -775,8 +793,9 @@ mecab_next_default_format_consume_needless_tokens(grn_ctx *ctx,
     size_t surface_length = 0;
     unsigned int i;
     grn_obj *feature_locations;
-    const char *class = NULL;
-    size_t class_length;
+    const size_t n_classes = 4;
+    const char *classes[4];
+    size_t class_lengths[4];
 
     last_next = tokenizer->next;
     surface_length = mecab_next_default_format_consume_token(ctx,
@@ -788,22 +807,81 @@ mecab_next_default_format_consume_needless_tokens(grn_ctx *ctx,
     }
 
     feature_locations = &(tokenizer->feature_locations);
-    class_length = mecab_get_feature(ctx,
-                                     feature_locations,
-                                     GRN_MECAB_FEATURE_LOCATION_CLASS,
-                                     &class);
+    class_lengths[0] = mecab_get_feature(ctx,
+                                         feature_locations,
+                                         GRN_MECAB_FEATURE_LOCATION_CLASS,
+                                         &(classes[0]));
+    class_lengths[1] = mecab_get_feature(ctx,
+                                         feature_locations,
+                                         GRN_MECAB_FEATURE_LOCATION_SUBCLASS0,
+                                         &(classes[1]));
+    class_lengths[2] = mecab_get_feature(ctx,
+                                         feature_locations,
+                                         GRN_MECAB_FEATURE_LOCATION_SUBCLASS1,
+                                         &(classes[2]));
+    class_lengths[3] = mecab_get_feature(ctx,
+                                         feature_locations,
+                                         GRN_MECAB_FEATURE_LOCATION_SUBCLASS2,
+                                         &(classes[3]));
     for (i = 0; i < n_target_classes; i++) {
       const char *target_class;
       unsigned int target_class_length;
+      grn_bool positive = GRN_TRUE;
+      size_t j;
+      grn_bool matched = GRN_FALSE;
+
       target_class_length = grn_vector_get_element(ctx,
                                                    target_classes,
                                                    i,
                                                    &target_class,
                                                    NULL,
                                                    NULL);
-      if (target_class_length == class_length &&
-          memcmp(target_class, class, target_class_length) == 0) {
-        is_target = GRN_TRUE;
+      if (target_class_length > 0) {
+        switch (target_class[0]) {
+        case '+' :
+          target_class++;
+          target_class_length--;
+          break;
+        case '-' :
+          positive = GRN_FALSE;
+          target_class++;
+          target_class_length--;
+          break;
+        default :
+          break;
+        }
+      }
+
+      for (j = 0; j < n_classes; j++) {
+        const size_t class_length = class_lengths[j];
+
+        if (target_class_length == 0) {
+          is_target = positive;
+          matched = GRN_TRUE;
+          break;
+        }
+
+        if (!mecab_next_default_format_match_class(ctx,
+                                                   target_class,
+                                                   target_class_length,
+                                                   classes[j],
+                                                   class_length)) {
+          break;
+        }
+        target_class += class_length;
+        target_class_length -= class_length;
+        if (target_class_length == 0) {
+          is_target = positive;
+          matched = GRN_TRUE;
+          break;
+        }
+        if (target_class[0] != '/') {
+          break;
+        }
+        target_class++;
+        target_class_length--;
+      }
+      if (matched) {
         break;
       }
     }
