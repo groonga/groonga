@@ -2,5 +2,5 @@
 tokenize \
   'TokenMecab("include_class", true, \
               "target_class", "+名詞")' \
-  '私の名前は中野です。'
+  '私の名前は山田です。'
 #@on-error default

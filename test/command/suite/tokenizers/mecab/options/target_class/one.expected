@@ -1,4 +1,4 @@
-tokenize   'TokenMecab("include_class", true,               "target_class", "名詞")'   '私の名前は中野です。'
+tokenize   'TokenMecab("include_class", true,               "target_class", "名詞")'   '私の名前は山田です。'
 [
   [
     0,
@@ -26,7 +26,7 @@ tokenize   'TokenMecab("include_class", true,               "target_class", "名
       }
     },
     {
-      "value": "中野",
+      "value": "山田",
       "position": 2,
       "force_prefix": false,
       "metadata": {
