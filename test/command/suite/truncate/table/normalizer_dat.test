@@ -1,4 +1,5 @@
-table_create Tags TABLE_DAT_KEY ShortText --normalizer NormalizerNFKC51
+table_create Tags TABLE_DAT_KEY ShortText \
+  --normalizer 'NormalizerNFKC100("unify_kana", true)'
 dump
 
 truncate Tags

@@ -1,8 +1,8 @@
-table_create Tags TABLE_DAT_KEY ShortText --normalizer NormalizerNFKC51
+table_create Tags TABLE_DAT_KEY ShortText   --normalizer 'NormalizerNFKC100("unify_kana", true)'
 [[0,0.0,0.0],true]
 dump
-table_create Tags TABLE_DAT_KEY ShortText --normalizer NormalizerNFKC51
+table_create Tags TABLE_DAT_KEY ShortText --normalizer "NormalizerNFKC100(\"unify_kana\", true)"
 truncate Tags
 [[0,0.0,0.0],true]
 dump
-table_create Tags TABLE_DAT_KEY ShortText --normalizer NormalizerNFKC51
+table_create Tags TABLE_DAT_KEY ShortText --normalizer "NormalizerNFKC100(\"unify_kana\", true)"
