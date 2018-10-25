@@ -1,0 +1,52 @@
+table_create Readings TABLE_HASH_KEY ShortText   --normalizer 'NormalizerNFKC100("unify_kana", true)'
+[[0,0.0,0.0],true]
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items reading COLUMN_SCALAR Readings
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "林檎", "reading": "りんご"},
+{"_key": "リンゴ", "reading": "リンゴ"},
+{"_key": "なし", "reading": "なし"}
+]
+[[0,0.0,0.0],3]
+select Items --filter 'reading @ "リンゴ"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "reading",
+          "Readings"
+        ]
+      ],
+      [
+        1,
+        "林檎",
+        "りんご"
+      ],
+      [
+        2,
+        "リンゴ",
+        "りんご"
+      ]
+    ]
+  ]
+]

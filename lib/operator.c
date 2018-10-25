@@ -1187,7 +1187,7 @@ exec_text_operator_record_text(grn_ctx *ctx,
       norm_query = grn_string_open(ctx,
                                    GRN_TEXT_VALUE(query),
                                    GRN_TEXT_LEN(query),
-                                   normalizer,
+                                   table,
                                    0);
       grn_string_get_normalized(ctx, norm_query,
                                 &norm_query_raw,
