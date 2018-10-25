@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -371,7 +372,7 @@ output_table_info(grn_ctx *ctx, grn_obj *table)
   grn_obj o;
   const char *path;
   grn_table_flags flags;
-  grn_obj *default_tokenizer;
+  grn_obj default_tokenizer;
   grn_obj *normalizer;
   grn_obj *token_filters;
 
@@ -387,14 +388,24 @@ output_table_info(grn_ctx *ctx, grn_obj *table)
   grn_table_get_info(ctx, table,
                      &flags,
                      NULL,
-                     &default_tokenizer,
+                     NULL,
                      &normalizer,
                      &token_filters);
+
   grn_dump_table_create_flags(ctx, flags, &o);
   grn_ctx_output_obj(ctx, &o, NULL);
   grn_proc_output_object_id_name(ctx, table->header.domain);
   grn_proc_output_object_id_name(ctx, grn_obj_get_range(ctx, table));
-  grn_proc_output_object_name(ctx, default_tokenizer);
+
+  GRN_TEXT_INIT(&default_tokenizer, 0);
+  grn_table_get_default_tokenizer_string(ctx, table, &default_tokenizer);
+  if (GRN_TEXT_LEN(&default_tokenizer) == 0) {
+    grn_ctx_output_null(ctx);
+  } else {
+    grn_ctx_output_obj(ctx, &default_tokenizer, NULL);
+  }
+  GRN_OBJ_FIN(ctx, &default_tokenizer);
+
   grn_proc_output_object_name(ctx, normalizer);
   grn_ctx_output_array_close(ctx);
   GRN_OBJ_FIN(ctx, &o);

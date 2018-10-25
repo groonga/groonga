@@ -1,0 +1,3 @@
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer 'TokenNgram("n", 3)'
+table_list
