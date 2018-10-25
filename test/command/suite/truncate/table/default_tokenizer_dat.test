@@ -1,4 +1,5 @@
-table_create Tags TABLE_DAT_KEY ShortText --default_tokenizer TokenDelimit
+table_create Tags TABLE_DAT_KEY ShortText \
+  --default_tokenizer 'TokenNgram("n", 3)'
 dump
 
 truncate Tags
