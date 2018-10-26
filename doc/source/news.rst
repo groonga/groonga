@@ -7,6 +7,61 @@
 News
 ====
 
+.. _release-8-0-8:
+
+Release 8.0.8 - 2018-10-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/table_list`] Supported output options of default tokenizer.
+
+  * If you specify a tokenizer like ``TokenNgram`` or ``TokenMecab`` etc that has options, you can output these options with ``table_list`` command.
+
+* [:doc:`/reference/commands/select`] Supported normalizer options in sequential match with ``record @ 'query'``.
+
+* [:doc:`/reference/commands/truncate`] Supported a table that it has tokenizer option.
+
+  * You can ``truncate`` even a tabel that it has tokenizer like ``TokenNgram`` or ``TokenMecab`` etc that has options.
+
+* [:doc:`/reference/tokenizers`][TokenMecab] Added new option ``target_class``
+
+  * This option searches a token of specifying a part-of-speech. For example, you can search only a noun.
+  * This option can also specify subclasses and exclude or add specific part-of-speech of specific using ``+`` or ``-``. So, you can also search except a pronoun as below.
+
+    ``'TokenMecab("target_class", "-名詞/代名詞", "target_class", "+")'``
+
+* [:doc:`/reference/commands/io_flush`] Supported locking of a database during a ``io_flush``.
+
+  * Because Groonga had a problem taht is a crash when deleteing a table of a target of a ``io_flush`` during execution of a ``io_flush``.
+
+* [:doc:`/reference/functions/cast_loose`] Added a new function ``cast_loose``.
+
+  * This function cast to a type to specify. If a value to specify can't cast, it become to a default value to specify.
+
+* Added optimize the order of evaluation of a conditional expression.(experimental)
+
+  * You can active this feature by setting environment value as below.
+
+    ``GRN_EXPR_OPTIMIZE=yes``
+
+* Supported ``(?-mix:XXX)`` form for index searchable regular expression. [groonga-dev,04683][Reported by Masatoshi SEKI]
+
+  * ``(?-mix:XXX)`` form treats the same as XXX.
+
+* [httpd] Updated bundled nginx to 1.15.5.
+
+* Supported Ubuntu 18.10 (Cosmic Cuttlefish)
+
+Fixes
+^^^^^
+
+* Fixed a bug that the Groonga GQTP server may fail to accept a new connection. [groonga-dev,04688][Reported by Yutaro Shimamura]
+
+  * It's caused when interruption client process without using quit.
+
+
 .. _release-8-0-7:
 
 Release 8.0.7 - 2018-09-29
