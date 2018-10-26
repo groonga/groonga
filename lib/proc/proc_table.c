@@ -365,51 +365,59 @@ grn_proc_init_table_create(grn_ctx *ctx)
                             vars);
 }
 
-static int
+static void
 output_table_info(grn_ctx *ctx, grn_obj *table)
 {
+  grn_obj buffer;
   grn_id id;
-  grn_obj o;
   const char *path;
   grn_table_flags flags;
-  grn_obj default_tokenizer;
+  grn_obj *default_tokenizer;
   grn_obj *normalizer;
   grn_obj *token_filters;
 
-  id = grn_obj_id(ctx, table);
-  path = grn_obj_path(ctx, table);
-  GRN_TEXT_INIT(&o, 0);
+  GRN_TEXT_INIT(&buffer, 0);
+
   grn_ctx_output_array_open(ctx, "TABLE", 8);
+
+  id = grn_obj_id(ctx, table);
   grn_ctx_output_int64(ctx, id);
   grn_proc_output_object_id_name(ctx, id);
+  path = grn_obj_path(ctx, table);
   grn_ctx_output_cstr(ctx, path);
-  GRN_BULK_REWIND(&o);
 
   grn_table_get_info(ctx, table,
                      &flags,
                      NULL,
-                     NULL,
+                     &default_tokenizer,
                      &normalizer,
                      &token_filters);
 
-  grn_dump_table_create_flags(ctx, flags, &o);
-  grn_ctx_output_obj(ctx, &o, NULL);
+  grn_dump_table_create_flags(ctx, flags, &buffer);
+  grn_ctx_output_obj(ctx, &buffer, NULL);
+
   grn_proc_output_object_id_name(ctx, table->header.domain);
   grn_proc_output_object_id_name(ctx, grn_obj_get_range(ctx, table));
 
-  GRN_TEXT_INIT(&default_tokenizer, 0);
-  grn_table_get_default_tokenizer_string(ctx, table, &default_tokenizer);
-  if (GRN_TEXT_LEN(&default_tokenizer) == 0) {
-    grn_ctx_output_null(ctx);
+  if (default_tokenizer) {
+    GRN_BULK_REWIND(&buffer);
+    grn_table_get_default_tokenizer_string(ctx, table, &buffer);
+    grn_ctx_output_obj(ctx, &buffer, NULL);
   } else {
-    grn_ctx_output_obj(ctx, &default_tokenizer, NULL);
+    grn_ctx_output_null(ctx);
   }
-  GRN_OBJ_FIN(ctx, &default_tokenizer);
 
-  grn_proc_output_object_name(ctx, normalizer);
+  if (normalizer) {
+    GRN_BULK_REWIND(&buffer);
+    grn_table_get_normalizer_string(ctx, table, &buffer);
+    grn_ctx_output_obj(ctx, &buffer, NULL);
+  } else {
+    grn_ctx_output_null(ctx);
+  }
+
   grn_ctx_output_array_close(ctx);
-  GRN_OBJ_FIN(ctx, &o);
-  return 1;
+
+  GRN_OBJ_FIN(ctx, &buffer);
 }
 
 static grn_obj *

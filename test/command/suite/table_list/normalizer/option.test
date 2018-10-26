@@ -1,0 +1,3 @@
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalizer 'NormalizerNFKC100("unify_kana", true)'
+table_list
