@@ -5352,6 +5352,9 @@ grn_vector_size(grn_ctx *ctx, grn_obj *vector)
   case GRN_UVECTOR :
     size = grn_uvector_size_internal(ctx, vector);
     break;
+  case GRN_PVECTOR :
+    size = GRN_BULK_VSIZE(vector) / sizeof(grn_obj *);
+    break;
   case GRN_VECTOR :
     size = vector->u.v.n_sections;
     break;
