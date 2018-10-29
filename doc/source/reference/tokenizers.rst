@@ -461,6 +461,9 @@ languages by creating dictionary for the languages. You can use `NAIST
 Japanese Dictionary <http://osdn.jp/projects/naist-jdic/>`_
 for Japanese.
 
+You need to install an additional package to using TokenMecab.
+For more detail of how to installing an additional package, see `how to install each OS <http://groonga.org/docs/install.html>`_ .
+
 ``TokenMecab`` is good for precision rather than recall. You can find
 ``東京都`` and ``京都`` texts by ``京都`` query with
 :ref:`token-bigram` but ``東京都`` isn't expected. You can find only
