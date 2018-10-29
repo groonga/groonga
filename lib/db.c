@@ -2427,7 +2427,9 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
       if (encoding) { *encoding = ((grn_pat *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_pat *)table)->tokenizer.proc; }
       if (normalizer) { *normalizer = ((grn_pat *)table)->normalizer.proc; }
-      if (token_filters) { *token_filters = &(((grn_pat *)table)->token_filter_procs); }
+      if (token_filters) {
+        *token_filters = &(((grn_pat *)table)->token_filter_procs);
+      }
       rc = GRN_SUCCESS;
       break;
     case GRN_TABLE_DAT_KEY :
@@ -2435,7 +2437,9 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
       if (encoding) { *encoding = ((grn_dat *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_dat *)table)->tokenizer.proc; }
       if (normalizer) { *normalizer = ((grn_dat *)table)->normalizer.proc; }
-      if (token_filters) { *token_filters = &(((grn_dat *)table)->token_filters); }
+      if (token_filters) {
+        *token_filters = &(((grn_dat *)table)->token_filter_procs);
+      }
       rc = GRN_SUCCESS;
       break;
     case GRN_TABLE_HASH_KEY :
@@ -2443,7 +2447,9 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
       if (encoding) { *encoding = ((grn_hash *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_hash *)table)->tokenizer.proc; }
       if (normalizer) { *normalizer = ((grn_hash *)table)->normalizer.proc; }
-      if (token_filters) { *token_filters = &(((grn_hash *)table)->token_filter_procs); }
+      if (token_filters) {
+        *token_filters = &(((grn_hash *)table)->token_filter_procs);
+      }
       rc = GRN_SUCCESS;
       break;
     case GRN_TABLE_NO_KEY :
@@ -8379,7 +8385,7 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
         valuebuf = &(((grn_pat *)obj)->token_filter_procs);
         break;
       case GRN_TABLE_DAT_KEY :
-        valuebuf = &(((grn_dat *)obj)->token_filters);
+        valuebuf = &(((grn_dat *)obj)->token_filter_procs);
         break;
       default :
         ERR(GRN_INVALID_ARGUMENT,
@@ -8662,7 +8668,7 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
     grn_vector_delimit(ctx, &v, 0, 0);
     break;
   case GRN_TABLE_DAT_KEY :
-    grn_token_filters_pack(ctx, &(((grn_dat *)obj)->token_filters), b);
+    grn_token_filters_pack(ctx, &(((grn_dat *)obj)->token_filter_procs), b);
     grn_vector_delimit(ctx, &v, 0, 0);
     break;
   case GRN_EXPR :
@@ -9429,7 +9435,8 @@ grn_obj_set_info_token_filters(grn_ctx *ctx,
     token_filter_procs = &(((grn_pat *)table)->token_filter_procs);
     break;
   case GRN_TABLE_DAT_KEY :
-    token_filter_procs = &(((grn_dat *)table)->token_filters);
+    token_filters = &(((grn_dat *)table)->token_filters);
+    token_filter_procs = &(((grn_dat *)table)->token_filter_procs);
     break;
   default :
     break;
@@ -11194,7 +11201,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                   UNPACK_INFO(spec, &decoded_spec);
                   vp->ptr->header.flags = flags;
                   grn_token_filters_unpack(ctx,
-                                           &(dat->token_filters),
+                                           &(dat->token_filter_procs),
                                            &decoded_spec);
                 }
                 break;

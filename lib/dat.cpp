@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2011-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -127,9 +128,27 @@ grn_dat_init(grn_ctx *, grn_dat *dat)
   dat->encoding = GRN_ENC_DEFAULT;
   dat->trie = NULL;
   dat->old_trie = NULL;
-  GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_TEXT_INIT(&(dat->token_filters), 0);
+  GRN_PTR_INIT(&(dat->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
   CRITICAL_SECTION_INIT(dat->lock);
   dat->is_dirty = GRN_FALSE;
+}
+
+static void
+grn_dat_close_token_filters(grn_ctx *ctx, grn_dat *dat)
+{
+  grn_obj *token_filters = &(dat->token_filters);
+  grn_table_module *raw_token_filters =
+    (grn_table_module *)GRN_BULK_HEAD(token_filters);
+  size_t i, n;
+
+  n = GRN_BULK_VSIZE(token_filters) / sizeof(grn_table_module);
+  for (i = 0; i < n; i++) {
+    grn_table_module *raw_token_filter = raw_token_filters + i;
+    grn_table_module_fin(ctx, raw_token_filter);
+  }
+  GRN_OBJ_FIN(ctx, token_filters);
+  GRN_OBJ_FIN(ctx, &(dat->token_filter_procs));
 }
 
 void
@@ -150,7 +169,7 @@ grn_dat_fin(grn_ctx *ctx, grn_dat *dat)
   }
   grn_table_module_fin(ctx, &(dat->tokenizer));
   grn_table_module_fin(ctx, &(dat->normalizer));
-  GRN_OBJ_FIN(ctx, &(dat->token_filters));
+  grn_dat_close_token_filters(ctx, dat);
 }
 
 /*
@@ -356,7 +375,8 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
   dat->encoding = encoding;
   grn_table_module_init(ctx, &(dat->tokenizer), GRN_ID_NIL);
   grn_table_module_init(ctx, &(dat->normalizer), dat->header->normalizer);
-  GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_TEXT_INIT(&(dat->token_filters), 0);
+  GRN_PTR_INIT(&(dat->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
 
   dat->obj.header.flags = dat->header->flags;
 
@@ -398,7 +418,8 @@ grn_dat_open(grn_ctx *ctx, const char *path)
     dat->header->normalizer = grn_obj_id(ctx, normalizer);
   }
   grn_table_module_init(ctx, &(dat->normalizer), dat->header->normalizer);
-  GRN_PTR_INIT(&(dat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_TEXT_INIT(&(dat->token_filters), 0);
+  GRN_PTR_INIT(&(dat->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
   dat->obj.header.flags = dat->header->flags;
   return dat;
 }

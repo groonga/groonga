@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2011-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -37,6 +38,8 @@ struct _grn_dat {
   grn_table_module tokenizer;
   grn_table_module normalizer;
   grn_obj token_filters;
+  /* For backward compatibility */
+  grn_obj token_filter_procs;
   grn_critical_section lock;
   grn_bool is_dirty;
 };
