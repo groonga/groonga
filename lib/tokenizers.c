@@ -676,7 +676,7 @@ bigramisad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 
 static void *
 ngram_open_options(grn_ctx *ctx,
-                   grn_obj *lexicon,
+                   grn_obj *tokenizer,
                    grn_obj *raw_options,
                    void *user_data)
 {

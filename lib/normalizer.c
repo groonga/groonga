@@ -1799,7 +1799,7 @@ nfkc51_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
 static void *
 nfkc100_open_options(grn_ctx *ctx,
-                     grn_obj *string,
+                     grn_obj *normalizer,
                      grn_obj *raw_options,
                      void *user_data)
 {

@@ -1,5 +1,7 @@
+/* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -241,10 +243,12 @@ GRN_API grn_rc grn_table_apply_expr(grn_ctx *ctx,
 
 GRN_API grn_id grn_table_find_reference_object(grn_ctx *ctx, grn_obj *table);
 
-typedef void *(*grn_tokenizer_open_options_func)(grn_ctx *ctx,
-                                                 grn_obj *tokenizer,
-                                                 grn_obj *values,
-                                                 void *user_data);
+typedef void *(*grn_table_module_open_options_func)(grn_ctx *ctx,
+                                                    grn_obj *proc,
+                                                    grn_obj *values,
+                                                    void *user_data);
+/* Deprecated since 8.0.9. Use grn_table_module_option_options_func instead. */
+typedef grn_table_module_open_options_func grn_tokenizer_open_options_func;
 
 GRN_API grn_rc
 grn_table_set_default_tokenizer_options(grn_ctx *ctx,
@@ -259,7 +263,7 @@ grn_table_get_default_tokenizer_options(grn_ctx *ctx,
 GRN_API void *
 grn_table_cache_default_tokenizer_options(grn_ctx *ctx,
                                           grn_obj *table,
-                                          grn_tokenizer_open_options_func open_options_func,
+                                          grn_table_module_open_options_func open_options_func,
                                           grn_close_func close_options_func,
                                           void *user_data);
 
@@ -269,10 +273,8 @@ grn_table_get_default_tokenizer_string(grn_ctx *ctx,
                                        grn_obj *output);
 
 
-typedef void *(*grn_normalizer_open_options_func)(grn_ctx *ctx,
-                                                  grn_obj *string,
-                                                  grn_obj *values,
-                                                  void *user_data);
+/* Deprecated since 8.0.9. Use grn_table_module_open_options_func instead. */
+typedef grn_table_module_open_options_func grn_normalizer_open_options_func;
 
 GRN_API grn_rc
 grn_table_set_normalizer_options(grn_ctx *ctx,
@@ -284,11 +286,12 @@ grn_table_get_normalizer_options(grn_ctx *ctx,
                                  grn_obj *table,
                                  grn_obj *options);
 
+/* TODO: Remove string argument. It's needless. */
 GRN_API void *
 grn_table_cache_normalizer_options(grn_ctx *ctx,
                                    grn_obj *table,
                                    grn_obj *string,
-                                   grn_normalizer_open_options_func open_options_func,
+                                   grn_table_module_open_options_func open_options_func,
                                    grn_close_func close_options_func,
                                    void *user_data);
 
