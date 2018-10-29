@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2017-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,8 +24,11 @@
 #include "grn_hash.h"
 #include "grn_pat.h"
 
+#include <stdio.h>
+
 static const char *OPTION_NAME_DEFAULT_TOKENIZER = "default_tokenizer";
 static const char *OPTION_NAME_NORMALIZER = "normalizer";
+static const char *OPTION_NAME_TOKEN_FILTER = "token_filter";
 
 grn_rc
 grn_table_apply_expr(grn_ctx *ctx,
@@ -272,6 +276,7 @@ typedef struct {
   const char *context_tag;
   const char *module_name;
   grn_info_type type;
+  unsigned int token_filter_index;
   grn_table_module_open_options_func open_options_func;
   grn_close_func close_options_func;
   void *user_data;
@@ -326,6 +331,27 @@ grn_table_cache_module_options(grn_ctx *ctx,
       break;
     default :
       break;
+    }
+    break;
+  case GRN_INFO_TOKEN_FILTERS :
+    {
+      grn_obj *token_filters;
+      switch (table->header.type) {
+      case GRN_TABLE_HASH_KEY :
+        token_filters = &(((grn_hash *)table)->token_filters);
+        break;
+      case GRN_TABLE_PAT_KEY :
+        token_filters = &(((grn_pat *)table)->token_filters);
+        break;
+      case GRN_TABLE_DAT_KEY :
+        token_filters = &(((grn_dat *)table)->token_filters);
+        break;
+      default :
+        break;
+      }
+      module =
+        ((grn_table_module *)GRN_BULK_HEAD(token_filters)) +
+        data->token_filter_index;
     }
     break;
   default :
@@ -446,6 +472,56 @@ grn_table_get_module_string(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
+static grn_rc
+grn_table_get_module_strings(grn_ctx *ctx,
+                             grn_obj *table,
+                             grn_obj *output,
+                             grn_info_type type,
+                             const char *module_name,
+                             const char *context_tag)
+{
+  grn_obj *procs;
+  unsigned int i, n;
+
+  GRN_API_ENTER;
+
+  if (!grn_obj_is_lexicon(ctx, table)) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][%s][options][strings] table must be key table: %s",
+        context_tag,
+        table ? grn_obj_type_to_string(table->header.type) : "(null)");
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  procs = grn_obj_get_info(ctx, table, type, NULL);
+  if (!procs) {
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  n = grn_vector_size(ctx, procs);
+  if (n == 0) {
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  for (i = 0; i < n; i++) {
+    char real_module_name[GRN_TABLE_MAX_KEY_SIZE];
+    grn_obj *proc = GRN_PTR_VALUE_AT(procs, i);
+
+    if (i > 0) {
+      GRN_TEXT_PUTS(ctx, output, ", ");
+    }
+    grn_snprintf(real_module_name,
+                 GRN_TABLE_MAX_KEY_SIZE,
+                 GRN_TABLE_MAX_KEY_SIZE,
+                 "%s%u",
+                 module_name,
+                 i);
+    grn_table_get_module_string_raw(ctx,
+                                    table,
+                                    output,
+                                    proc,
+                                    real_module_name);
+  }
 
   GRN_API_RETURN(ctx->rc);
 }
@@ -562,4 +638,85 @@ grn_table_get_normalizer_string(grn_ctx *ctx,
                                      GRN_INFO_NORMALIZER,
                                      OPTION_NAME_NORMALIZER,
                                      "normalizer");
+}
+
+grn_rc
+grn_table_set_token_filter_options(grn_ctx *ctx,
+                                   grn_obj *table,
+                                   unsigned int i,
+                                   grn_obj *options)
+{
+  char module_name[GRN_TABLE_MAX_KEY_SIZE];
+  grn_snprintf(module_name,
+               GRN_TABLE_MAX_KEY_SIZE,
+               GRN_TABLE_MAX_KEY_SIZE,
+               "%s%u",
+               OPTION_NAME_TOKEN_FILTER,
+               i);
+  return grn_table_set_module_options(ctx,
+                                      table,
+                                      module_name,
+                                      options,
+                                      "token-filter");
+}
+
+grn_rc
+grn_table_get_token_filter_options(grn_ctx *ctx,
+                                   grn_obj *table,
+                                   unsigned int i,
+                                   grn_obj *options)
+{
+  char module_name[GRN_TABLE_MAX_KEY_SIZE];
+  grn_snprintf(module_name,
+               GRN_TABLE_MAX_KEY_SIZE,
+               GRN_TABLE_MAX_KEY_SIZE,
+               "%s%u",
+               OPTION_NAME_TOKEN_FILTER,
+               i);
+  return grn_table_get_module_options(ctx,
+                                      table,
+                                      module_name,
+                                      options,
+                                      "token-filter");
+}
+
+void *
+grn_table_cache_token_filter_options(grn_ctx *ctx,
+                                     grn_obj *table,
+                                     unsigned int i,
+                                     grn_table_module_open_options_func open_options_func,
+                                     grn_close_func close_options_func,
+                                     void *user_data)
+{
+  grn_table_cache_data data;
+  char module_name[GRN_TABLE_MAX_KEY_SIZE];
+  grn_snprintf(module_name,
+               GRN_TABLE_MAX_KEY_SIZE,
+               GRN_TABLE_MAX_KEY_SIZE,
+               "%s%u",
+               OPTION_NAME_TOKEN_FILTER,
+               i);
+
+  memset(&data, 0, sizeof(data));
+  data.context_tag = "token-filter";
+  data.module_name = module_name;
+  data.type = GRN_INFO_TOKEN_FILTERS;
+  data.token_filter_index = i;
+  data.open_options_func = open_options_func;
+  data.close_options_func = close_options_func;
+  data.user_data = user_data;
+  return grn_table_cache_module_options(ctx, table, &data);
+}
+
+grn_rc
+grn_table_get_token_filter_strings(grn_ctx *ctx,
+                                   grn_obj *table,
+                                   grn_obj *output)
+{
+  return grn_table_get_module_strings(ctx,
+                                      table,
+                                      output,
+                                      GRN_INFO_TOKEN_FILTERS,
+                                      OPTION_NAME_TOKEN_FILTER,
+                                      "token-filter");
 }

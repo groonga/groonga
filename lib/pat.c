@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -509,7 +510,8 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
     header->normalizer = GRN_ID_NIL;
   }
   header->truncated = GRN_FALSE;
-  GRN_PTR_INIT(&(pat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_TEXT_INIT(&(pat->token_filters), 0);
+  GRN_PTR_INIT(&(pat->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
   pat->io = io;
   pat->header = header;
   pat->key_size = key_size;
@@ -625,7 +627,8 @@ grn_pat_open(grn_ctx *ctx, const char *path)
     header->normalizer = grn_obj_id(ctx, normalizer);
   }
   grn_table_module_init(ctx, &(pat->normalizer), header->normalizer);
-  GRN_PTR_INIT(&(pat->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_TEXT_INIT(&(pat->token_filters), 0);
+  GRN_PTR_INIT(&(pat->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
   pat->obj.header.flags = header->flags;
   PAT_AT(pat, 0, node0);
   if (!node0) {
@@ -659,6 +662,23 @@ grn_pat_error_if_truncated(grn_ctx *ctx, grn_pat *pat)
   return GRN_SUCCESS;
 }
 
+static void
+grn_pat_close_token_filters(grn_ctx *ctx, grn_pat *pat)
+{
+  grn_obj *token_filters = &(pat->token_filters);
+  grn_table_module *raw_token_filters =
+    (grn_table_module *)GRN_BULK_HEAD(token_filters);
+  size_t i, n;
+
+  n = GRN_BULK_VSIZE(token_filters) / sizeof(grn_table_module);
+  for (i = 0; i < n; i++) {
+    grn_table_module *raw_token_filter = raw_token_filters + i;
+    grn_table_module_fin(ctx, raw_token_filter);
+  }
+  GRN_OBJ_FIN(ctx, token_filters);
+  GRN_OBJ_FIN(ctx, &(pat->token_filter_procs));
+}
+
 grn_rc
 grn_pat_close(grn_ctx *ctx, grn_pat *pat)
 {
@@ -677,7 +697,7 @@ grn_pat_close(grn_ctx *ctx, grn_pat *pat)
   }
   grn_table_module_fin(ctx, &(pat->tokenizer));
   grn_table_module_fin(ctx, &(pat->normalizer));
-  grn_pvector_fin(ctx, &pat->token_filters);
+  grn_pat_close_token_filters(ctx, pat);
   if (pat->cache) { grn_pat_cache_disable(ctx, pat); }
   GRN_FREE(pat);
 
@@ -723,7 +743,7 @@ grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
   if ((rc = grn_io_close(ctx, pat->io))) { goto exit; }
   grn_table_module_fin(ctx, &(pat->tokenizer));
   grn_table_module_fin(ctx, &(pat->normalizer));
-  grn_pvector_fin(ctx, &pat->token_filters);
+  grn_pat_close_token_filters(ctx, pat);
   pat->io = NULL;
   if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
   if (!_grn_pat_create(ctx, pat, path, key_size, value_size, flags)) {

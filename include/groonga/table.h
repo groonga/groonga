@@ -300,6 +300,32 @@ grn_table_get_normalizer_string(grn_ctx *ctx,
                                 grn_obj *table,
                                 grn_obj *output);
 
+
+GRN_API grn_rc
+grn_table_set_token_filter_options(grn_ctx *ctx,
+                                   grn_obj *table,
+                                   unsigned int i,
+                                   grn_obj *options);
+
+GRN_API grn_rc
+grn_table_get_token_filter_options(grn_ctx *ctx,
+                                   grn_obj *table,
+                                   unsigned int i,
+                                   grn_obj *options);
+
+GRN_API void *
+grn_table_cache_token_filter_options(grn_ctx *ctx,
+                                     grn_obj *table,
+                                     unsigned int i,
+                                     grn_table_module_open_options_func open_options_func,
+                                     grn_close_func close_options_func,
+                                     void *user_data);
+
+GRN_API grn_rc
+grn_table_get_token_filter_strings(grn_ctx *ctx,
+                                   grn_obj *table,
+                                   grn_obj *output);
+
 #ifdef __cplusplus
 }
 #endif
