@@ -1,0 +1,20 @@
+#@on-error omit
+plugin_register token_filters/stem
+#@on-error default
+
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto \
+  --token_filters 'TokenFilterStem("algorithm", "french")'
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"content": "maintenait"},
+{"content": "maintenant"}
+]
+
+select Memos --match_columns content --query "maintenir"

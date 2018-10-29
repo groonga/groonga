@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2014 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,15 +32,92 @@
 #include <libstemmer.h>
 
 typedef struct {
+  grn_obj algorithm;
+} grn_stem_token_filter_options;
+
+typedef struct {
+  grn_stem_token_filter_options *options;
   struct sb_stemmer *stemmer;
   grn_tokenizer_token token;
   grn_obj buffer;
 } grn_stem_token_filter;
 
-static void *
-stem_init(grn_ctx *ctx, grn_obj *table, grn_token_mode mode)
+static void
+stem_options_init(grn_ctx *ctx, grn_stem_token_filter_options *options)
 {
+  GRN_TEXT_INIT(&(options->algorithm), 0);
+  GRN_TEXT_SETS(ctx, &(options->algorithm), "english");
+  GRN_TEXT_PUTC(ctx, &(options->algorithm), '\0');
+}
+
+static void *
+stem_open_options(grn_ctx *ctx,
+                  grn_obj *tokenizer,
+                  grn_obj *raw_options,
+                  void *user_data)
+{
+  grn_stem_token_filter_options *options;
+
+  options = GRN_PLUGIN_MALLOC(ctx, sizeof(grn_stem_token_filter_options));
+  if (!options) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_NO_MEMORY_AVAILABLE,
+                     "[token-filter][stem] "
+                     "failed to allocate memory for options");
+    return NULL;
+  }
+
+  stem_options_init(ctx, options);
+
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+    grn_raw_string name_raw;
+    name_raw.value = name;
+    name_raw.length = name_length;
+
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "algorithm")) {
+      const char *algorithm;
+      unsigned int length;
+      length = grn_vector_get_element(ctx,
+                                      raw_options,
+                                      i,
+                                      &algorithm,
+                                      NULL,
+                                      NULL);
+      GRN_TEXT_SET(ctx, &(options->algorithm), algorithm, length);
+      GRN_TEXT_PUTC(ctx, &(options->algorithm), '\0');
+    }
+  } GRN_OPTION_VALUES_EACH_END();
+
+  return options;
+}
+
+static void
+stem_close_options(grn_ctx *ctx, void *data)
+{
+  grn_stem_token_filter_options *options = data;
+  GRN_OBJ_FIN(ctx, &(options->algorithm));
+  GRN_PLUGIN_FREE(ctx, options);
+}
+
+static void *
+stem_init(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  grn_obj *lexicon;
+  unsigned int i;
+  grn_stem_token_filter_options *options;
   grn_stem_token_filter *token_filter;
+
+  lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
+  i = grn_tokenizer_query_get_token_filter_index(ctx, query);
+  options = grn_table_cache_token_filter_options(ctx,
+                                                 lexicon,
+                                                 i,
+                                                 stem_open_options,
+                                                 stem_close_options,
+                                                 NULL);
+  if (ctx->rc != GRN_SUCCESS) {
+    return NULL;
+  }
 
   token_filter = GRN_PLUGIN_MALLOC(ctx, sizeof(grn_stem_token_filter));
   if (!token_filter) {
@@ -48,10 +126,11 @@ stem_init(grn_ctx *ctx, grn_obj *table, grn_token_mode mode)
                      "failed to allocate grn_stem_token_filter");
     return NULL;
   }
+  token_filter->options = options;
 
   {
-    /* TODO: Support other languages. */
-    const char *algorithm = "english";
+    const char *algorithm = GRN_TEXT_VALUE(&(token_filter->options->algorithm));
+    /* TODO: Support other encoding. */
     const char *encoding = "UTF_8";
     token_filter->stemmer = sb_stemmer_new(algorithm, encoding);
     if (!token_filter->stemmer) {
@@ -261,15 +340,14 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
 grn_rc
 GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
-  grn_rc rc;
+  grn_obj *token_filter;
 
-  rc = grn_token_filter_register(ctx,
-                                 "TokenFilterStem", -1,
-                                 stem_init,
-                                 stem_filter,
-                                 stem_fin);
+  token_filter = grn_token_filter_create(ctx, "TokenFilterStem", -1);
+  grn_token_filter_set_init_func(ctx, token_filter, stem_init);
+  grn_token_filter_set_filter_func(ctx, token_filter, stem_filter);
+  grn_token_filter_set_fin_func(ctx, token_filter, stem_fin);
 
-  return rc;
+  return ctx->rc;
 }
 
 grn_rc
