@@ -167,6 +167,15 @@ msgstr ""
 msgid "It's caused when interruption client process without using quit."
 msgstr "quitを使わずにクライアントプロセスを中断した時に発生します。"
 
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Masatoshi SEKI"
+msgstr "Masatoshi SEKIさん"
+
+msgid "Yutaro Shimamura"
+msgstr "Yutaro Shimamuraさん"
+
 msgid "Release 8.0.7 - 2018-09-29"
 msgstr "8.0.7リリース - 2018-09-29"
 
@@ -948,9 +957,6 @@ msgstr ""
 msgid ""
 "Fixed a bug that it may also take so much time to change \"thread_limit\"."
 msgstr "「thread_limit」の変更に時間がかかりすぎる問題を修正しました。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "satouyuzh"
 msgstr "satouyuzhさん"

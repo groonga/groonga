@@ -61,6 +61,11 @@ Fixes
 
   * It's caused when interruption client process without using quit.
 
+Thanks
+^^^^^^
+
+* Masatoshi SEKI
+* Yutaro Shimamura
 
 .. _release-8-0-7:
 
