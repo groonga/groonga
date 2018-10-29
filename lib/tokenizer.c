@@ -540,9 +540,13 @@ grn_tokenizer_create(grn_ctx *ctx,
                               0,
                               NULL);
   if (!tokenizer) {
+    if (name_length < 0) {
+      name_length = strlen(name);
+    }
     GRN_PLUGIN_ERROR(ctx,
                      GRN_TOKENIZER_ERROR,
-                     "[tokenizer][create] failed to create");
+                     "[tokenizer][create] failed to create: <%.*s>",
+                     name_length, name);
   }
 
   GRN_API_RETURN(tokenizer);
