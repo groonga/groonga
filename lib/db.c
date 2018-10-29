@@ -9421,14 +9421,14 @@ grn_obj_set_info_token_filters(grn_ctx *ctx,
 
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY :
-    token_filters = &(((grn_hash *)table)->token_filters);
+    token_filter_procs = &(((grn_hash *)table)->token_filters);
     break;
   case GRN_TABLE_PAT_KEY :
     token_filters = &(((grn_pat *)table)->token_filters);
     token_filter_procs = &(((grn_pat *)table)->token_filter_procs);
     break;
   case GRN_TABLE_DAT_KEY :
-    token_filters = &(((grn_dat *)table)->token_filters);
+    token_filter_procs = &(((grn_dat *)table)->token_filters);
     break;
   default :
     break;
