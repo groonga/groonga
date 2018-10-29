@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2012-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -167,6 +168,7 @@ grn_tokenizer_query_init(grn_ctx *ctx, grn_tokenizer_query *query)
   query->token_mode = query->tokenize_mode;
   query->lexicon = NULL;
   query->encoding = ctx->encoding;
+  query->token_filter_index = 0;
 
   query->need_normalize = GRN_TRUE;
   query->need_delimiter_check = GRN_TRUE;
@@ -425,6 +427,24 @@ grn_tokenizer_query_get_lexicon(grn_ctx *ctx, grn_tokenizer_query *query)
 {
   GRN_API_ENTER;
   GRN_API_RETURN(query->lexicon);
+}
+
+grn_rc
+grn_tokenizer_query_set_token_filter_index(grn_ctx *ctx,
+                                           grn_tokenizer_query *query,
+                                           unsigned int index)
+{
+  GRN_API_ENTER;
+  query->token_filter_index = index;
+  GRN_API_RETURN(ctx->rc);
+}
+
+unsigned int
+grn_tokenizer_query_get_token_filter_index(grn_ctx *ctx,
+                                           grn_tokenizer_query *query)
+{
+  GRN_API_ENTER;
+  GRN_API_RETURN(query->token_filter_index);
 }
 
 void

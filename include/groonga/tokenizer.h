@@ -141,6 +141,10 @@ grn_tokenizer_query_get_mode(grn_ctx *ctx, grn_tokenizer_query *query);
 GRN_PLUGIN_EXPORT grn_obj *
 grn_tokenizer_query_get_lexicon(grn_ctx *ctx, grn_tokenizer_query *query);
 
+GRN_PLUGIN_EXPORT unsigned int
+grn_tokenizer_query_get_token_filter_index(grn_ctx *ctx,
+                                           grn_tokenizer_query *query);
+
 /*
   grn_tokenizer_token is needed to return tokens. A grn_tokenizer_token object
   stores a token to be returned and it must be maintained until a request for
