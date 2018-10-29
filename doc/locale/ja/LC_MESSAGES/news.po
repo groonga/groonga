@@ -12545,12 +12545,3 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
-
-#~ msgid "Added new option ``target_class`` for ``TokenMecab``."
-#~ msgstr "``TokenMecab`` に ``target_class`` オプションを追加しました。"
-
-#~ msgid ""
-#~ "You can output a default tokenizer option with a ``table_list`` command."
-#~ msgstr ""
-#~ "``table_list`` コマンドで、デフォルトトークナイザーのオプションを出力でき"
-#~ "ます。"
