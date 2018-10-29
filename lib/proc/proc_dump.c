@@ -793,7 +793,7 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     dump_optionable_obj_string(ctx, dumper, &sub_output);
     GRN_OBJ_FIN(ctx, &sub_output);
   }
-  if (token_filters) {
+  if (token_filters && GRN_BULK_VSIZE(token_filters) > 0) {
     grn_obj sub_output;
     GRN_TEXT_PUTS(ctx, dumper->output, " --token_filters ");
     GRN_TEXT_INIT(&sub_output, 0);
