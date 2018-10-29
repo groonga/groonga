@@ -486,7 +486,6 @@ grn_table_cache_default_tokenizer_options(grn_ctx *ctx,
   memset(&data, 0, sizeof(data));
   data.context_tag = "default-tokenizer";
   data.module_name = OPTION_NAME_DEFAULT_TOKENIZER;
-  data.tokenizer.open_options_func = open_options_func;
   data.type = GRN_INFO_DEFAULT_TOKENIZER;
   data.open_options_func = open_options_func;
   data.close_options_func = close_options_func;
