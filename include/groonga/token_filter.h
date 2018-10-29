@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2014-2016 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,9 +25,13 @@
 extern "C" {
 #endif  /* __cplusplus */
 
+/* Deprecated since 8.0.9. Use grn_token_filter_init_query_func instead. */
 typedef void *grn_token_filter_init_func(grn_ctx *ctx,
                                          grn_obj *table,
                                          grn_tokenize_mode mode);
+
+typedef void *grn_token_filter_init_query_func(grn_ctx *ctx,
+                                               grn_tokenizer_query *query);
 
 typedef void grn_token_filter_filter_func(grn_ctx *ctx,
                                           grn_token *current_token,
@@ -54,6 +59,9 @@ typedef void grn_token_filter_fin_func(grn_ctx *ctx,
 
   grn_token_filter_register() returns GRN_SUCCESS on success, an error
   code on failure.
+
+  Deprecated since 8.0.9. Use grn_token_filter_create() and
+  grn_token_filter_set_XXX_func() instead.
  */
 GRN_PLUGIN_EXPORT grn_rc grn_token_filter_register(grn_ctx *ctx,
                                                    const char *plugin_name_ptr,
@@ -61,6 +69,22 @@ GRN_PLUGIN_EXPORT grn_rc grn_token_filter_register(grn_ctx *ctx,
                                                    grn_token_filter_init_func *init,
                                                    grn_token_filter_filter_func *filter,
                                                    grn_token_filter_fin_func *fin);
+
+GRN_PLUGIN_EXPORT grn_obj *
+grn_token_filter_create(grn_ctx *ctx, const char *name, int name_length);
+
+GRN_PLUGIN_EXPORT grn_rc
+grn_token_filter_set_init_func(grn_ctx *ctx,
+                               grn_obj *token_filter,
+                               grn_token_filter_init_query_func *init);
+GRN_PLUGIN_EXPORT grn_rc
+grn_token_filter_set_filter_func(grn_ctx *ctx,
+                                 grn_obj *token_filter,
+                                 grn_token_filter_filter_func *filter);
+GRN_PLUGIN_EXPORT grn_rc
+grn_token_filter_set_fin_func(grn_ctx *ctx,
+                              grn_obj *token_filter,
+                              grn_token_filter_fin_func *fin);
 
 #ifdef __cplusplus
 }  /* extern "C" */

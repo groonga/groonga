@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -277,6 +278,7 @@ struct _grn_proc {
     } tokenizer;
     struct {
       grn_token_filter_init_func   *init;
+      grn_token_filter_init_query_func *init_query;
       grn_token_filter_filter_func *filter;
       grn_token_filter_fin_func    *fin;
     } token_filter;

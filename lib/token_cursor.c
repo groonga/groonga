@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -28,6 +29,7 @@ grn_token_cursor_open_initialize_token_filters(grn_ctx *ctx,
 {
   grn_obj *token_filters = token_cursor->token_filter.objects;
   unsigned int i, n_token_filters;
+  grn_tokenizer_query *query = &(token_cursor->tokenizer.query);
 
   token_cursor->token_filter.data = NULL;
 
@@ -50,10 +52,16 @@ grn_token_cursor_open_initialize_token_filters(grn_ctx *ctx,
     grn_obj *token_filter_object = GRN_PTR_VALUE_AT(token_filters, i);
     grn_proc *token_filter = (grn_proc *)token_filter_object;
 
-    token_cursor->token_filter.data[i] =
-      token_filter->callbacks.token_filter.init(ctx,
-                                                token_cursor->table,
-                                                token_cursor->mode);
+    if (token_filter->callbacks.token_filter.init_query) {
+      grn_tokenizer_query_set_token_filter_index(ctx, query, i);
+      token_cursor->token_filter.data[i] =
+        token_filter->callbacks.token_filter.init_query(ctx, query);
+    } else {
+      token_cursor->token_filter.data[i] =
+        token_filter->callbacks.token_filter.init(ctx,
+                                                  token_cursor->table,
+                                                  token_cursor->mode);
+    }
   }
 }
 
@@ -164,6 +172,7 @@ grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
   unsigned int i, n_token_filters;
   grn_token *current_token = &(token_cursor->tokenizer.current_token);
   grn_token *next_token = &(token_cursor->tokenizer.next_token);
+  grn_tokenizer_query *query = &(token_cursor->tokenizer.query);
 
   if (token_filters) {
     n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
@@ -177,6 +186,8 @@ grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
       grn_obj *token_filter_object = GRN_PTR_VALUE_AT(token_filters, i);
       grn_proc *token_filter = (grn_proc *)token_filter_object;
       void *data = token_cursor->token_filter.data[i];
+
+      grn_tokenizer_query_set_token_filter_index(ctx, query, i);
 
 #define SKIP_FLAGS                              \
       (GRN_TOKEN_SKIP |                         \
@@ -371,6 +382,7 @@ grn_token_cursor_close_token_filters(grn_ctx *ctx,
 {
   grn_obj *token_filters = token_cursor->token_filter.objects;
   unsigned int i, n_token_filters;
+  grn_tokenizer_query *query = &(token_cursor->tokenizer.query);
 
   if (!token_cursor->token_filter.data) {
     return;
@@ -391,6 +403,7 @@ grn_token_cursor_close_token_filters(grn_ctx *ctx,
     grn_proc *token_filter = (grn_proc *)token_filter_object;
     void *data = token_cursor->token_filter.data[i];
 
+    grn_tokenizer_query_set_token_filter_index(ctx, query, i);
     token_filter->callbacks.token_filter.fin(ctx, data);
   }
   GRN_FREE(token_cursor->token_filter.data);
