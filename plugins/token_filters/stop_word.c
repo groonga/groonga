@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2014 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,22 +28,97 @@
 
 #include <string.h>
 
-#define COLUMN_NAME "is_stop_word"
+typedef struct {
+  grn_obj column;
+} grn_stop_word_token_filter_options;
 
 typedef struct {
-  grn_obj *table;
-  grn_token_mode mode;
+  grn_stop_word_token_filter_options *options;
+  grn_obj *lexicon;
   grn_obj *column;
   grn_obj value;
   grn_tokenizer_token token;
 } grn_stop_word_token_filter;
 
-static void *
-stop_word_init(grn_ctx *ctx, grn_obj *table, grn_token_mode mode)
+static void
+stop_word_options_init(grn_ctx *ctx,
+                       grn_stop_word_token_filter_options *options)
 {
+  GRN_TEXT_INIT(&(options->column), 0);
+  GRN_TEXT_SETS(ctx, &(options->column), "is_stop_word");
+}
+
+static void *
+stop_word_open_options(grn_ctx *ctx,
+                       grn_obj *tokenizer,
+                       grn_obj *raw_options,
+                       void *user_data)
+{
+  grn_stop_word_token_filter_options *options;
+
+  options = GRN_PLUGIN_MALLOC(ctx, sizeof(grn_stop_word_token_filter_options));
+  if (!options) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_NO_MEMORY_AVAILABLE,
+                     "[token-filter][stop-word] "
+                     "failed to allocate memory for options");
+    return NULL;
+  }
+
+  stop_word_options_init(ctx, options);
+
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+    grn_raw_string name_raw;
+    name_raw.value = name;
+    name_raw.length = name_length;
+
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "column")) {
+      const char *column;
+      unsigned int length;
+      length = grn_vector_get_element(ctx,
+                                      raw_options,
+                                      i,
+                                      &column,
+                                      NULL,
+                                      NULL);
+      GRN_TEXT_SET(ctx, &(options->column), name, length);
+    }
+  } GRN_OPTION_VALUES_EACH_END();
+
+  return options;
+}
+
+static void
+stop_word_close_options(grn_ctx *ctx, void *data)
+{
+  grn_stop_word_token_filter_options *options = data;
+  GRN_OBJ_FIN(ctx, &(options->column));
+  GRN_PLUGIN_FREE(ctx, options);
+}
+
+static void *
+stop_word_init(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  grn_tokenize_mode mode;
+  grn_obj *lexicon;
+  unsigned int i;
+  grn_stop_word_token_filter_options *options;
   grn_stop_word_token_filter *token_filter;
 
+  mode = grn_tokenizer_query_get_mode(ctx, query);
   if (mode != GRN_TOKEN_GET) {
+    return NULL;
+  }
+
+  lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
+  i = grn_tokenizer_query_get_token_filter_index(ctx, query);
+  options = grn_table_cache_token_filter_options(ctx,
+                                                 lexicon,
+                                                 i,
+                                                 stop_word_open_options,
+                                                 stop_word_close_options,
+                                                 NULL);
+  if (ctx->rc != GRN_SUCCESS) {
     return NULL;
   }
 
@@ -54,26 +130,27 @@ stop_word_init(grn_ctx *ctx, grn_obj *table, grn_token_mode mode)
     return NULL;
   }
 
-  token_filter->table = table;
-  token_filter->mode = mode;
+  token_filter->options = options;
+  token_filter->lexicon = lexicon;
   token_filter->column = grn_obj_column(ctx,
-                                        token_filter->table,
-                                        COLUMN_NAME,
-                                        strlen(COLUMN_NAME));
+                                        token_filter->lexicon,
+                                        GRN_TEXT_VALUE(&(options->column)),
+                                        GRN_TEXT_LEN(&(options->column)));
   if (!token_filter->column) {
-    char table_name[GRN_TABLE_MAX_KEY_SIZE];
-    unsigned int table_name_size;
+    char lexicon_name[GRN_TABLE_MAX_KEY_SIZE];
+    unsigned int lexicon_name_size;
 
-    table_name_size = grn_obj_name(ctx,
-                                   token_filter->table,
-                                   table_name,
-                                   GRN_TABLE_MAX_KEY_SIZE);
+    lexicon_name_size = grn_obj_name(ctx,
+                                     token_filter->lexicon,
+                                     lexicon_name,
+                                     GRN_TABLE_MAX_KEY_SIZE);
     GRN_PLUGIN_ERROR(ctx, GRN_TOKEN_FILTER_ERROR,
                      "[token-filter][stop-word] "
-                     "column for judging stop word doesn't exit: <%.*s.%s>",
-                     table_name_size,
-                     table_name,
-                     COLUMN_NAME);
+                     "column for judging stop word doesn't exit: <%.*s.%.*s>",
+                     lexicon_name_size,
+                     lexicon_name,
+                     (int)(GRN_TEXT_LEN(&(options->column))),
+                     GRN_TEXT_VALUE(&(options->column)));
     GRN_PLUGIN_FREE(ctx, token_filter);
     return NULL;
   }
@@ -100,7 +177,7 @@ stop_word_filter(grn_ctx *ctx,
 
   data = grn_token_get_data(ctx, current_token);
   id = grn_table_get(ctx,
-                     token_filter->table,
+                     token_filter->lexicon,
                      GRN_TEXT_VALUE(data),
                      GRN_TEXT_LEN(data));
   if (id != GRN_ID_NIL) {
@@ -141,15 +218,14 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
 grn_rc
 GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
-  grn_rc rc;
+  grn_obj *token_filter;
 
-  rc = grn_token_filter_register(ctx,
-                                 "TokenFilterStopWord", -1,
-                                 stop_word_init,
-                                 stop_word_filter,
-                                 stop_word_fin);
+  token_filter = grn_token_filter_create(ctx, "TokenFilterStopWord", -1);
+  grn_token_filter_set_init_func(ctx, token_filter, stop_word_init);
+  grn_token_filter_set_filter_func(ctx, token_filter, stop_word_filter);
+  grn_token_filter_set_fin_func(ctx, token_filter, stop_word_fin);
 
-  return rc;
+  return ctx->rc;
 }
 
 grn_rc
