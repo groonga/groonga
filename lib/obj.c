@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2015-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -107,6 +108,16 @@ grn_obj_is_number_family_bulk(grn_ctx *ctx, grn_obj *obj)
   }
 
   return grn_type_id_is_number_family(ctx, obj->header.domain);
+}
+
+grn_bool
+grn_obj_is_vector(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!obj) {
+    return GRN_FALSE;
+  }
+
+  return obj->header.type == GRN_VECTOR;
 }
 
 grn_bool
