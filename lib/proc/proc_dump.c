@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -792,21 +793,13 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     dump_optionable_obj_string(ctx, dumper, &sub_output);
     GRN_OBJ_FIN(ctx, &sub_output);
   }
-  if (table->header.type != GRN_TABLE_NO_KEY) {
-    int n_token_filters;
-
-    n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
-    if (n_token_filters > 0) {
-      int i;
-      GRN_TEXT_PUTS(ctx, dumper->output, " --token_filters ");
-      for (i = 0; i < n_token_filters; i++) {
-        grn_obj *token_filter = GRN_PTR_VALUE_AT(token_filters, i);
-        if (i > 0) {
-          GRN_TEXT_PUTC(ctx, dumper->output, ',');
-        }
-        dump_obj_name(ctx, dumper, token_filter);
-      }
-    }
+  if (token_filters) {
+    grn_obj sub_output;
+    GRN_TEXT_PUTS(ctx, dumper->output, " --token_filters ");
+    GRN_TEXT_INIT(&sub_output, 0);
+    grn_table_get_token_filters_string(ctx, table, &sub_output);
+    dump_optionable_obj_string(ctx, dumper, &sub_output);
+    GRN_OBJ_FIN(ctx, &sub_output);
   }
 
   GRN_TEXT_PUTC(ctx, dumper->output, '\n');
