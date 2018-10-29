@@ -322,7 +322,7 @@ grn_table_cache_token_filter_options(grn_ctx *ctx,
                                      void *user_data);
 
 GRN_API grn_rc
-grn_table_get_token_filter_strings(grn_ctx *ctx,
+grn_table_get_token_filters_string(grn_ctx *ctx,
                                    grn_obj *table,
                                    grn_obj *output);
 

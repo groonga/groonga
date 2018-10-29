@@ -473,7 +473,7 @@ grn_table_get_module_string(grn_ctx *ctx,
 }
 
 static grn_rc
-grn_table_get_module_strings(grn_ctx *ctx,
+grn_table_get_modules_string(grn_ctx *ctx,
                              grn_obj *table,
                              grn_obj *output,
                              grn_info_type type,
@@ -487,7 +487,7 @@ grn_table_get_module_strings(grn_ctx *ctx,
 
   if (!grn_obj_is_lexicon(ctx, table)) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[table][%s][options][strings] table must be key table: %s",
+        "[table][%s][options][string] table must be key table: %s",
         context_tag,
         table ? grn_obj_type_to_string(table->header.type) : "(null)");
     GRN_API_RETURN(ctx->rc);
@@ -709,11 +709,11 @@ grn_table_cache_token_filter_options(grn_ctx *ctx,
 }
 
 grn_rc
-grn_table_get_token_filter_strings(grn_ctx *ctx,
+grn_table_get_token_filters_string(grn_ctx *ctx,
                                    grn_obj *table,
                                    grn_obj *output)
 {
-  return grn_table_get_module_strings(ctx,
+  return grn_table_get_modules_string(ctx,
                                       table,
                                       output,
                                       GRN_INFO_TOKEN_FILTERS,
