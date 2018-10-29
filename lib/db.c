@@ -2443,7 +2443,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
       if (encoding) { *encoding = ((grn_hash *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_hash *)table)->tokenizer.proc; }
       if (normalizer) { *normalizer = ((grn_hash *)table)->normalizer.proc; }
-      if (token_filters) { *token_filters = &(((grn_hash *)table)->token_filters); }
+      if (token_filters) { *token_filters = &(((grn_hash *)table)->token_filter_procs); }
       rc = GRN_SUCCESS;
       break;
     case GRN_TABLE_NO_KEY :
@@ -8373,7 +8373,7 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
     case GRN_INFO_TOKEN_FILTERS :
       switch (obj->header.type) {
       case GRN_TABLE_HASH_KEY :
-        valuebuf = &(((grn_hash *)obj)->token_filters);
+        valuebuf = &(((grn_hash *)obj)->token_filter_procs);
         break;
       case GRN_TABLE_PAT_KEY :
         valuebuf = &(((grn_pat *)obj)->token_filter_procs);
@@ -8654,7 +8654,7 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
   grn_vector_delimit(ctx, &v, 0, 0);
   switch (obj->header.type) {
   case GRN_TABLE_HASH_KEY :
-    grn_token_filters_pack(ctx, &(((grn_hash *)obj)->token_filters), b);
+    grn_token_filters_pack(ctx, &(((grn_hash *)obj)->token_filter_procs), b);
     grn_vector_delimit(ctx, &v, 0, 0);
     break;
   case GRN_TABLE_PAT_KEY :
@@ -9421,7 +9421,8 @@ grn_obj_set_info_token_filters(grn_ctx *ctx,
 
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY :
-    token_filter_procs = &(((grn_hash *)table)->token_filters);
+    token_filters = &(((grn_hash *)table)->token_filters);
+    token_filter_procs = &(((grn_hash *)table)->token_filter_procs);
     break;
   case GRN_TABLE_PAT_KEY :
     token_filters = &(((grn_pat *)table)->token_filters);
@@ -11162,7 +11163,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                   UNPACK_INFO(spec, &decoded_spec);
                   vp->ptr->header.flags = flags;
                   grn_token_filters_unpack(ctx,
-                                           &(hash->token_filters),
+                                           &(hash->token_filter_procs),
                                            &decoded_spec);
                 }
                 break;
@@ -11175,7 +11176,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                   UNPACK_INFO(spec, &decoded_spec);
                   vp->ptr->header.flags = flags;
                   grn_token_filters_unpack(ctx,
-                                           &(pat->token_filters),
+                                           &(pat->token_filter_procs),
                                            &decoded_spec);
                   if (pat->tokenizer.proc) {
                     grn_pat_cache_enable(ctx,

@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1713,7 +1714,8 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
     header->normalizer = GRN_ID_NIL;
   }
   header->truncated = GRN_FALSE;
-  GRN_PTR_INIT(&(hash->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_TEXT_INIT(&(hash->token_filters), 0);
+  GRN_PTR_INIT(&(hash->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
 
   hash->obj.header.flags = (header->flags & GRN_OBJ_FLAGS_MASK);
   hash->ctx = ctx;
@@ -1788,7 +1790,8 @@ grn_tiny_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
   hash->garbages = GRN_ID_NIL;
   grn_table_module_init(ctx, &(hash->tokenizer), GRN_ID_NIL);
   grn_table_module_init(ctx, &(hash->normalizer), GRN_ID_NIL);
-  GRN_PTR_INIT(&(hash->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_TEXT_INIT(&(hash->token_filters), 0);
+  GRN_PTR_INIT(&(hash->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
   grn_tiny_array_init(ctx, &hash->a, entry_size, GRN_TINY_ARRAY_CLEAR);
   grn_tiny_bitmap_init(ctx, &hash->bitmap);
   return GRN_SUCCESS;
@@ -1862,7 +1865,8 @@ grn_hash_open(grn_ctx *ctx, const char *path)
               header->normalizer = grn_obj_id(ctx, normalizer);
             }
             grn_table_module_init(ctx, &(hash->normalizer), header->normalizer);
-            GRN_PTR_INIT(&(hash->token_filters), GRN_OBJ_VECTOR, GRN_ID_NIL);
+            GRN_TEXT_INIT(&(hash->token_filters), 0);
+            GRN_PTR_INIT(&(hash->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
             hash->obj.header.flags = header->flags;
             return hash;
           } else {
@@ -1901,6 +1905,23 @@ grn_hash_error_if_truncated(grn_ctx *ctx, grn_hash *hash)
   return GRN_SUCCESS;
 }
 
+static void
+grn_hash_close_token_filters(grn_ctx *ctx, grn_hash *hash)
+{
+  grn_obj *token_filters = &(hash->token_filters);
+  grn_table_module *raw_token_filters =
+    (grn_table_module *)GRN_BULK_HEAD(token_filters);
+  size_t i, n;
+
+  n = GRN_BULK_VSIZE(token_filters) / sizeof(grn_table_module);
+  for (i = 0; i < n; i++) {
+    grn_table_module *raw_token_filter = raw_token_filters + i;
+    grn_table_module_fin(ctx, raw_token_filter);
+  }
+  GRN_OBJ_FIN(ctx, token_filters);
+  GRN_OBJ_FIN(ctx, &(hash->token_filter_procs));
+}
+
 static grn_rc
 grn_io_hash_fin(grn_ctx *ctx, grn_hash *hash)
 {
@@ -1909,7 +1930,7 @@ grn_io_hash_fin(grn_ctx *ctx, grn_hash *hash)
   rc = grn_io_close(ctx, hash->io);
   grn_table_module_fin(ctx, &(hash->tokenizer));
   grn_table_module_fin(ctx, &(hash->normalizer));
-  GRN_OBJ_FIN(ctx, &(hash->token_filters));
+  grn_hash_close_token_filters(ctx, hash);
   return rc;
 }
 
@@ -1922,7 +1943,7 @@ grn_tiny_hash_fin(grn_ctx *ctx, grn_hash *hash)
 
   grn_table_module_fin(ctx, &(hash->tokenizer));
   grn_table_module_fin(ctx, &(hash->normalizer));
-  GRN_OBJ_FIN(ctx, &(hash->token_filters));
+  grn_hash_close_token_filters(ctx, hash);
 
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     uint32_t num_remaining_entries = *hash->n_entries;
