@@ -480,7 +480,7 @@ grn_table_get_modules_string(grn_ctx *ctx,
                              const char *module_name,
                              const char *context_tag)
 {
-  grn_obj *procs;
+  grn_obj procs;
   unsigned int i, n;
 
   GRN_API_ENTER;
@@ -493,19 +493,21 @@ grn_table_get_modules_string(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
-  procs = grn_obj_get_info(ctx, table, type, NULL);
-  if (!procs) {
+  GRN_PTR_INIT(&procs, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_obj_get_info(ctx, table, type, &procs);
+  if (GRN_BULK_VSIZE(&procs) == 0) {
+    GRN_OBJ_FIN(ctx, &procs);
     GRN_API_RETURN(ctx->rc);
   }
 
-  n = grn_vector_size(ctx, procs);
+  n = grn_vector_size(ctx, &procs);
   if (n == 0) {
     GRN_API_RETURN(ctx->rc);
   }
 
   for (i = 0; i < n; i++) {
     char real_module_name[GRN_TABLE_MAX_KEY_SIZE];
-    grn_obj *proc = GRN_PTR_VALUE_AT(procs, i);
+    grn_obj *proc = GRN_PTR_VALUE_AT(&procs, i);
 
     if (i > 0) {
       GRN_TEXT_PUTS(ctx, output, ", ");
@@ -522,6 +524,8 @@ grn_table_get_modules_string(grn_ctx *ctx,
                                     proc,
                                     real_module_name);
   }
+
+  GRN_OBJ_FIN(ctx, &procs);
 
   GRN_API_RETURN(ctx->rc);
 }
