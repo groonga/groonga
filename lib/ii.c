@@ -10079,10 +10079,9 @@ get_tmp_lexicon(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   if (!tmp_lexicon) {
     grn_obj *domain = grn_ctx_at(ctx, ii_buffer->lexicon->header.domain);
     grn_obj *range = grn_ctx_at(ctx, DB_OBJ(ii_buffer->lexicon)->range);
-    grn_obj *token_filters;
     grn_table_flags flags;
     grn_table_get_info(ctx, ii_buffer->lexicon, &flags, NULL,
-                       NULL, NULL, &token_filters);
+                       NULL, NULL, NULL);
     flags &= ~GRN_OBJ_PERSISTENT;
     tmp_lexicon = grn_table_create(ctx, NULL, 0, NULL, flags, domain, range);
     if (tmp_lexicon) {
@@ -10110,8 +10109,20 @@ get_tmp_lexicon(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
         }
         GRN_OBJ_FIN(ctx, &normalizer);
       }
-      grn_obj_set_info(ctx, tmp_lexicon,
-                       GRN_INFO_TOKEN_FILTERS, token_filters);
+      {
+        grn_obj token_filters;
+        GRN_TEXT_INIT(&token_filters, 0);
+        grn_table_get_token_filters_string(ctx,
+                                           ii_buffer->lexicon,
+                                           &token_filters);
+        if (GRN_TEXT_LEN(&token_filters) > 0) {
+          grn_obj_set_info(ctx,
+                           tmp_lexicon,
+                           GRN_INFO_TOKEN_FILTERS,
+                           &token_filters);
+        }
+        GRN_OBJ_FIN(ctx, &token_filters);
+      }
     }
   }
   return tmp_lexicon;
@@ -12035,11 +12046,10 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn_ii_builder *builder)
   grn_table_flags flags;
   grn_obj *domain = grn_ctx_at(ctx, builder->ii->lexicon->header.domain);
   grn_obj *range = grn_ctx_at(ctx, DB_OBJ(builder->ii->lexicon)->range);
-  grn_obj *token_filters;
   grn_rc rc;
 
   rc = grn_table_get_info(ctx, builder->ii->lexicon, &flags, NULL,
-                          NULL, NULL, &token_filters);
+                          NULL, NULL, NULL);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
@@ -12079,8 +12089,18 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn_ii_builder *builder)
     GRN_OBJ_FIN(ctx, &normalizer);
   }
   if (rc == GRN_SUCCESS) {
-    rc = grn_obj_set_info(ctx, builder->lexicon,
-                          GRN_INFO_TOKEN_FILTERS, token_filters);
+    grn_obj token_filters;
+    GRN_TEXT_INIT(&token_filters, 0);
+    grn_table_get_token_filters_string(ctx,
+                                       builder->ii->lexicon,
+                                       &token_filters);
+    if (GRN_TEXT_LEN(&token_filters) > 0) {
+      rc = grn_obj_set_info(ctx,
+                            builder->lexicon,
+                            GRN_INFO_TOKEN_FILTERS,
+                            &token_filters);
+    }
+    GRN_OBJ_FIN(ctx, &token_filters);
   }
   if (rc != GRN_SUCCESS) {
     return rc;
