@@ -7601,9 +7601,8 @@ grn_expr_simple_function_call_get_arguments(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
-/* TODO: Support multiple calls. */
 grn_bool
-grn_expr_is_simple_function_calls(grn_ctx *ctx, grn_obj *expr)
+grn_expr_is_module_list(grn_ctx *ctx, grn_obj *expr)
 {
   grn_expr *e = (grn_expr *)expr;
   grn_expr_code *codes = e->codes;
@@ -7622,6 +7621,8 @@ grn_expr_is_simple_function_calls(grn_ctx *ctx, grn_obj *expr)
         return GRN_FALSE;
       }
       break;
+    case GRN_OP_COMMA :
+      break;
     default :
       return GRN_FALSE;
     }
@@ -7630,36 +7631,112 @@ grn_expr_is_simple_function_calls(grn_ctx *ctx, grn_obj *expr)
   return GRN_TRUE;
 }
 
-/* TODO: Support multiple calls. */
 unsigned int
-grn_expr_simple_function_calls_get_n_calls(grn_ctx *ctx, grn_obj *expr)
-{
-  return 1;
-}
-
-/* TODO: Support multiple calls. */
-grn_obj *
-grn_expr_simple_function_calls_get_function(grn_ctx *ctx,
-                                            grn_obj *expr,
-                                            unsigned int i)
-{
-  grn_expr *e = (grn_expr *)expr;
-
-  return e->codes[0].value;
-}
-
-/* TODO: Support multiple calls. */
-grn_rc
-grn_expr_simple_function_calls_get_arguments(grn_ctx *ctx,
-                                             grn_obj *expr,
-                                             unsigned int i,
-                                             grn_obj *arguments)
+grn_expr_module_list_get_n_modules(grn_ctx *ctx, grn_obj *expr)
 {
   grn_expr *e = (grn_expr *)expr;
   grn_expr_code *codes = e->codes;
   grn_expr_code *codes_end = codes + e->codes_curr;
+  unsigned int n = 1;
 
-  for (codes++; codes < codes_end - 1; codes++) {
+  for (; codes < codes_end; codes++) {
+    if (codes[0].op == GRN_OP_COMMA) {
+      n++;
+    }
+  }
+
+  return n;
+}
+
+static void
+grn_expr_module_list_detect_module(grn_ctx *ctx,
+                                   grn_obj *expr,
+                                   unsigned int i,
+                                   grn_expr_code **module_start,
+                                   grn_expr_code **module_end)
+{
+  grn_expr *e = (grn_expr *)expr;
+  grn_expr_code *codes = e->codes;
+  grn_expr_code *codes_end = codes + e->codes_curr;
+  unsigned int j = 0;
+
+  *module_start = codes;
+  *module_end = codes_end;
+
+  if (i == 0) {
+    for (codes = e->codes; codes < codes_end; codes++) {
+      switch (codes[0].op) {
+      case GRN_OP_CALL :
+        *module_start = codes - codes[0].nargs;
+        *module_end = codes;
+        return;
+      case GRN_OP_COMMA :
+        if (codes[-1].op == GRN_OP_CALL) {
+          *module_start = codes - codes[-1].nargs - 1;
+          *module_end = codes - codes[-1].nargs;
+        } else {
+          *module_start = codes - 2;
+          *module_end = codes - 1;
+        }
+        return;
+      default :
+        break;
+      }
+    }
+    return;
+  } else {
+    for (codes = e->codes; codes < codes_end; codes++) {
+      if (codes[0].op != GRN_OP_COMMA) {
+        continue;
+      }
+      j++;
+      if (i == j) {
+        if (codes > e->codes && codes[-1].op == GRN_OP_CALL) {
+          *module_start = codes - codes[-1].nargs;
+          *module_end = codes - 1;
+        } else {
+          *module_start = codes - 1;
+          *module_end = codes;
+        }
+        return;
+      }
+    }
+  }
+
+  *module_start = NULL;
+  *module_end = NULL;
+}
+
+grn_obj *
+grn_expr_module_list_get_function(grn_ctx *ctx,
+                                  grn_obj *expr,
+                                  unsigned int i)
+{
+  grn_expr_code *module_start;
+  grn_expr_code *module_end;
+
+  grn_expr_module_list_detect_module(ctx, expr, i, &module_start, &module_end);
+
+  if (module_start) {
+    return module_start[0].value;
+  } else {
+    return NULL;
+  }
+}
+
+grn_rc
+grn_expr_module_list_get_arguments(grn_ctx *ctx,
+                                   grn_obj *expr,
+                                   unsigned int i,
+                                   grn_obj *arguments)
+{
+  grn_expr_code *codes;
+  grn_expr_code *module_start;
+  grn_expr_code *module_end;
+
+  grn_expr_module_list_detect_module(ctx, expr, i, &module_start, &module_end);
+
+  for (codes = module_start + 1; codes < module_end; codes++) {
     grn_obj *value = codes[0].value;
     switch (codes[0].op) {
     case GRN_OP_PUSH :

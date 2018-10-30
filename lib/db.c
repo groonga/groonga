@@ -9349,7 +9349,7 @@ grn_obj_set_info_table_modules(grn_ctx *ctx,
         ctx->errbuf);
     goto exit;
   }
-  if (!grn_expr_is_simple_function_calls(ctx, expression)) {
+  if (!grn_expr_is_module_list(ctx, expression)) {
     ERR(GRN_INVALID_ARGUMENT,
         "%s[%.*s] must be %s(option1, option2, ...), ... format: <%.*s>",
         context_tag,
@@ -9361,18 +9361,15 @@ grn_obj_set_info_table_modules(grn_ctx *ctx,
     goto exit;
   }
 
-  n = grn_expr_simple_function_calls_get_n_calls(ctx, expression);
+  n = grn_expr_module_list_get_n_modules(ctx, expression);
   for (i = 0; i < n; i++) {
     grn_obj *proc;
     grn_id proc_id;
     grn_bool is_valid_proc = GRN_FALSE;
 
-    proc = grn_expr_simple_function_calls_get_function(ctx, expression, i);
+    proc = grn_expr_module_list_get_function(ctx, expression, i);
     GRN_BULK_REWIND(&options);
-    grn_expr_simple_function_calls_get_arguments(ctx,
-                                                 expression,
-                                                 i,
-                                                 &options);
+    grn_expr_module_list_get_arguments(ctx, expression, i, &options);
 
     switch (type) {
     case GRN_INFO_TOKEN_FILTERS :

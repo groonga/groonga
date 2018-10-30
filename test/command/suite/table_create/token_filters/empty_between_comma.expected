@@ -8,10 +8,11 @@ table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   -
       0.0,
       0.0
     ],
-    "[table][create][token-filter] empty token filter name: <TokenFilterStopWord,| |,TokenFilterStopWord>"
+    "[info][set][token-filters][Terms] failed to parse token filters: <TokenFilterStopWord, ,TokenFilterStopWord>: Syntax error: <To"
   ],
   false
 ]
-#|e| [table][create][token-filter] empty token filter name: <TokenFilterStopWord,| |,TokenFilterStopWord>
+#|e| Syntax error: <TokenFilterStopWord, |,|TokenFilterStopWord>
+#|e| [info][set][token-filters][Terms] failed to parse token filters: <TokenFilterStopWord, ,TokenFilterStopWord>: [info][set][token-filters][Terms] failed to parse token filters: <TokenFilterStopWord, ,TokenFilterStopWord>: Syntax error: <To
 dump
 plugin_register token_filters/stop_word

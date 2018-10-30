@@ -5,4 +5,4 @@ table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   -
 dump
 plugin_register token_filters/stop_word
 
-table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto --token_filters TokenFilterStopWord,TokenFilterStopWord
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto --token_filters "TokenFilterStopWord, TokenFilterStopWord"

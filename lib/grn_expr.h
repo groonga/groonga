@@ -126,16 +126,16 @@ grn_rc grn_expr_simple_function_call_get_arguments(grn_ctx *ctx,
                                                    grn_obj *expr,
                                                    grn_obj *arguments);
 
-grn_bool grn_expr_is_simple_function_calls(grn_ctx *ctx, grn_obj *expr);
-unsigned int grn_expr_simple_function_calls_get_n_calls(grn_ctx *ctx,
-                                                        grn_obj *expr);
-grn_obj *grn_expr_simple_function_calls_get_function(grn_ctx *ctx,
-                                                     grn_obj *expr,
-                                                     unsigned int i);
-grn_rc grn_expr_simple_function_calls_get_arguments(grn_ctx *ctx,
-                                                    grn_obj *expr,
-                                                    unsigned int i,
-                                                    grn_obj *arguments);
+grn_bool grn_expr_is_module_list(grn_ctx *ctx, grn_obj *expr);
+unsigned int grn_expr_module_list_get_n_modules(grn_ctx *ctx,
+                                                grn_obj *expr);
+grn_obj *grn_expr_module_list_get_function(grn_ctx *ctx,
+                                           grn_obj *expr,
+                                           unsigned int i);
+grn_rc grn_expr_module_list_get_arguments(grn_ctx *ctx,
+                                          grn_obj *expr,
+                                          unsigned int i,
+                                          grn_obj *arguments);
 
 #ifdef __cplusplus
 }
