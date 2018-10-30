@@ -1,0 +1,9 @@
+#@on-error omit
+plugin_register token_filters/stem
+#@on-error default
+
+tokenize \
+  TokenBigram \
+  "maintenait" \
+  NormalizerAuto \
+  --token_filters 'TokenFilterStem("algorithm", "french")'

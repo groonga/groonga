@@ -1,0 +1,4 @@
+plugin_register token_filters/stem
+[[0,0.0,0.0],true]
+tokenize   TokenBigram   "maintenait"   NormalizerAuto   --token_filters 'TokenFilterStem("algorithm", "french")'
+[[0,0.0,0.0],[{"value":"mainten","position":0,"force_prefix":false}]]
