@@ -50,7 +50,7 @@ stop_word_options_init(grn_ctx *ctx,
 
 static void *
 stop_word_open_options(grn_ctx *ctx,
-                       grn_obj *tokenizer,
+                       grn_obj *token_filter,
                        grn_obj *raw_options,
                        void *user_data)
 {

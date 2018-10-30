@@ -52,7 +52,7 @@ stem_options_init(grn_ctx *ctx, grn_stem_token_filter_options *options)
 
 static void *
 stem_open_options(grn_ctx *ctx,
-                  grn_obj *tokenizer,
+                  grn_obj *token_filter,
                   grn_obj *raw_options,
                   void *user_data)
 {
