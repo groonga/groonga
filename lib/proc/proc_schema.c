@@ -98,15 +98,15 @@ command_schema_output_value_type(grn_ctx *ctx, grn_obj *value_type)
   command_schema_output_type(ctx, "value_type", value_type);
 }
 
-static grn_bool
-command_schema_output_command_include_special_character(grn_ctx *ctx,
-                                                        const char *value,
-                                                        unsigned int size)
+grn_bool
+grn_proc_text_include_special_character(grn_ctx *ctx,
+                                        const char *text,
+                                        size_t size)
 {
-  const char *end = value + size;
+  const char *end = text + size;
 
-  for (; value < end; value++) {
-    switch (value[0]) {
+  for (; text < end; text++) {
+    switch (text[0]) {
     case '(' :
     case ')' :
     case ' ' :
@@ -175,9 +175,7 @@ command_schema_output_command(grn_ctx *ctx,
                       name_size, name);
       value_size = grn_vector_get_element(ctx, arguments, i + 1, &value,
                                           NULL, NULL);
-      if (command_schema_output_command_include_special_character(ctx,
-                                                                  value,
-                                                                  value_size)) {
+      if (grn_proc_text_include_special_character(ctx, value, value_size)) {
         grn_obj value_text;
         GRN_TEXT_INIT(&value_text, GRN_OBJ_DO_SHALLOW_COPY);
         GRN_TEXT_SET(ctx, &value_text, value, value_size);

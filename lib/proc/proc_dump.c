@@ -711,26 +711,8 @@ dump_optionable_obj_string(grn_ctx *ctx,
 {
   const char *value = GRN_TEXT_VALUE(string);
   size_t length = GRN_TEXT_LEN(string);
-  grn_bool need_quote = GRN_FALSE;
-  size_t i;
 
-  for (i = 0; i < length; i++) {
-    switch (value[i]) {
-    case '(' :
-    case ')' :
-    case ',' :
-    case ' ' :
-      need_quote = GRN_TRUE;
-      break;
-    default :
-      break;
-    }
-    if (need_quote) {
-      break;
-    }
-  }
-
-  if (need_quote) {
+  if (grn_proc_text_include_special_character(ctx, value, length)) {
     grn_text_otoj(ctx, dumper->output, string, NULL);
   } else {
     GRN_TEXT_PUT(ctx, dumper->output, value, length);
