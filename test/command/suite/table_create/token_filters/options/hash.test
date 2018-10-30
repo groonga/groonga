@@ -5,6 +5,9 @@ table_create Terms TABLE_HASH_KEY ShortText \
   --normalizer NormalizerAuto \
   --token_filters 'TokenFilterStopWord("column", "ignore")'
 
+#@disable-logging
+thread_limit 1
+#@enable-logging
 database_unmap
 
 dump
