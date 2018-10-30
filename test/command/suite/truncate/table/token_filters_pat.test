@@ -1,0 +1,9 @@
+plugin_register token_filters/stop_word
+
+table_create Tags TABLE_PAT_KEY ShortText \
+  --default_tokenizer 'TokenNgram("n", 3)' \
+  --token_filters 'TokenFilterStopWord("column", "ignore")'
+dump
+
+truncate Tags
+dump

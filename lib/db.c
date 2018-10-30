@@ -2357,8 +2357,8 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
       grn_table_get_default_tokenizer_string(ctx, table, &tokenizer);
       GRN_TEXT_INIT(&normalizer, 0);
       grn_table_get_normalizer_string(ctx, table, &normalizer);
-      GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, GRN_ID_NIL);
-      grn_obj_get_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
+      GRN_TEXT_INIT(&token_filters, 0);
+      grn_table_get_token_filters_string(ctx, table, &token_filters);
     }
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
@@ -2401,7 +2401,9 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
         grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZER, &normalizer);
       }
       GRN_OBJ_FIN(ctx, &normalizer);
-      grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
+      if (GRN_TEXT_LEN(&token_filters) > 0) {
+        grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
+      }
       GRN_OBJ_FIN(ctx, &token_filters);
     }
     if (rc == GRN_SUCCESS) {
