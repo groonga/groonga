@@ -8377,23 +8377,39 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
       }
       break;
     case GRN_INFO_TOKEN_FILTERS :
-      switch (obj->header.type) {
-      case GRN_TABLE_HASH_KEY :
-        valuebuf = &(((grn_hash *)obj)->token_filter_procs);
-        break;
-      case GRN_TABLE_PAT_KEY :
-        valuebuf = &(((grn_pat *)obj)->token_filter_procs);
-        break;
-      case GRN_TABLE_DAT_KEY :
-        valuebuf = &(((grn_dat *)obj)->token_filter_procs);
-        break;
-      default :
-        ERR(GRN_INVALID_ARGUMENT,
-            /* TODO: Show type name instead of type ID */
-            "[info][get][token-filters] target object must be one of "
-            "GRN_TABLE_HASH_KEY, GRN_TABLE_PAT_KEY and GRN_TABLE_DAT_KEY: %d",
-            obj->header.type);
-        break;
+      if (!valuebuf) {
+        if (!(valuebuf = grn_obj_open(ctx, GRN_PVECTOR, 0, 0))) {
+          ERR(GRN_NO_MEMORY_AVAILABLE,
+              "grn_obj_get_info: failed to allocate value buffer");
+          goto exit;
+        }
+      }
+      {
+        grn_obj *token_filters = NULL;
+        switch (obj->header.type) {
+        case GRN_TABLE_HASH_KEY :
+          token_filters = &(((grn_hash *)obj)->token_filter_procs);
+          break;
+        case GRN_TABLE_PAT_KEY :
+          token_filters = &(((grn_pat *)obj)->token_filter_procs);
+          break;
+        case GRN_TABLE_DAT_KEY :
+          token_filters = &(((grn_dat *)obj)->token_filter_procs);
+          break;
+        default :
+          ERR(GRN_INVALID_ARGUMENT,
+              /* TODO: Show type name instead of type ID */
+              "[info][get][token-filters] target object must be one of "
+              "GRN_TABLE_HASH_KEY, GRN_TABLE_PAT_KEY and GRN_TABLE_DAT_KEY: %d",
+              obj->header.type);
+          break;
+        }
+        if (token_filters) {
+          grn_bulk_write(ctx,
+                         valuebuf,
+                         GRN_BULK_HEAD(token_filters),
+                         GRN_BULK_VSIZE(token_filters));
+        }
       }
       break;
     default :
