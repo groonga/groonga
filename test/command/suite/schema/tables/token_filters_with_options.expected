@@ -1,6 +1,6 @@
 plugin_register token_filters/stop_word
 [[0,0.0,0.0],true]
-table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --token_filters TokenFilterStopWord
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --token_filters 'TokenFilterStopWord("column", "ignore")'
 [[0,0.0,0.0],true]
 schema
 [
@@ -239,7 +239,10 @@ schema
           {
             "id": 256,
             "name": "TokenFilterStopWord",
-            "options": null
+            "options": [
+              "column",
+              "ignore"
+            ]
           }
         ],
         "indexes": [
@@ -252,9 +255,9 @@ schema
             "flags": "TABLE_PAT_KEY",
             "key_type": "ShortText",
             "default_tokenizer": "TokenBigram",
-            "token_filters": "TokenFilterStopWord"
+            "token_filters": "TokenFilterStopWord(\"column\", \"ignore\")"
           },
-          "command_line": "table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --token_filters TokenFilterStopWord"
+          "command_line": "table_create --name Terms --flags TABLE_PAT_KEY --key_type ShortText --default_tokenizer TokenBigram --token_filters \"TokenFilterStopWord(\\\"column\\\", \\\"ignore\\\")\""
         },
         "columns": {
         }

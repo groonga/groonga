@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2015-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -644,13 +645,23 @@ command_schema_table_output_token_filters(grn_ctx *ctx, grn_obj *table)
 
     token_filter = GRN_PTR_VALUE_AT(&token_filters, i);
 
-    grn_ctx_output_map_open(ctx, "token_filter", 2);
+    grn_ctx_output_map_open(ctx, "token_filter", 3);
 
     grn_ctx_output_cstr(ctx, "id");
     command_schema_output_id(ctx, token_filter);
 
     grn_ctx_output_cstr(ctx, "name");
     command_schema_output_name(ctx, token_filter);
+
+    grn_ctx_output_cstr(ctx, "options");
+    {
+      grn_obj options;
+
+      GRN_VOID_INIT(&options);
+      grn_table_get_token_filter_options(ctx, table, i, &options);
+      command_schema_table_output_options(ctx, &options);
+      GRN_OBJ_FIN(ctx, &options);
+    }
 
     grn_ctx_output_map_close(ctx);
   }
@@ -756,32 +767,15 @@ command_schema_table_command_collect_arguments(grn_ctx *ctx,
 
   if (table->header.type != GRN_TABLE_NO_KEY) {
     grn_obj token_filters;
-    int n;
-
-    GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
+    GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, GRN_ID_NIL);
     grn_obj_get_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
-    n = GRN_BULK_VSIZE(&token_filters) / sizeof(grn_obj *);
-    if (n > 0) {
-      grn_obj token_filter_names;
-      int i;
-
-      GRN_TEXT_INIT(&token_filter_names, 0);
-      for (i = 0; i < n; i++) {
-        grn_obj *token_filter;
-        char name[GRN_TABLE_MAX_KEY_SIZE];
-        int name_size;
-
-        token_filter = GRN_PTR_VALUE_AT(&token_filters, i);
-        name_size = grn_obj_name(ctx, token_filter,
-                                 name, GRN_TABLE_MAX_KEY_SIZE);
-        if (i > 0) {
-          GRN_TEXT_PUTC(ctx, &token_filter_names, ',');
-        }
-        GRN_TEXT_PUT(ctx, &token_filter_names, name, name_size);
-      }
-      GRN_TEXT_PUTC(ctx, &token_filter_names, '\0');
-      ADD("token_filters", GRN_TEXT_VALUE(&token_filter_names));
-      GRN_OBJ_FIN(ctx, &token_filter_names);
+    if (grn_vector_size(ctx, &token_filters) > 0) {
+      grn_obj sub_output;
+      GRN_TEXT_INIT(&sub_output, 0);
+      grn_table_get_token_filters_string(ctx, table, &sub_output);
+      GRN_TEXT_PUTC(ctx, &sub_output, '\0');
+      ADD("token_filters", GRN_TEXT_VALUE(&sub_output));
+      GRN_OBJ_FIN(ctx, &sub_output);
     }
     GRN_OBJ_FIN(ctx, &token_filters);
   }
