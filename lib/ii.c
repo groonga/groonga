@@ -5472,8 +5472,8 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                   if (decoded_size == 0) {
                     GRN_LOG(ctx, GRN_LOG_WARNING,
                             "[ii][cursor][next][chunk][last] "
-                            "failed to decode the last chunk: "
-                            "Another tread might change "
+                            "failed to decode the last chunk. "
+                            "Another thread might change "
                             "the chunk while decoding: <%p>: <%d>: <%d>",
                             c,
                             c->curr_chunk,
@@ -5518,10 +5518,12 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                   if (decoded_size == 0) {
                     GRN_LOG(ctx, GRN_LOG_WARNING,
                             "[ii][cursor][next][chunk] "
-                            "chunk(%d) is changed by another thread "
-                            "while decoding: %p",
-                            c->cinfo[c->curr_chunk].segno,
-                            c);
+                            "failed to decode the next chunk. "
+                            "Another thread might change "
+                            "the chunk while decoding: <%p>: <%d>: <%d>",
+                            c,
+                            c->curr_chunk,
+                            c->cinfo ? c->cinfo[c->curr_chunk].segno : -1);
                     c->pc.rid = GRN_ID_NIL;
                     break;
                   }
