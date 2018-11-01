@@ -1,2 +1,6 @@
-tokenize TokenDelimit "リンゴ りんご 林檎" \
+#@on-error omit
+tokenize \
+  'TokenMecab("use_reading", true)' \
+  "私は林檎を食べます。" \
   --token_filters 'TokenFilterNFKC100("unify_kana", true)'
+#@on-error default

@@ -1,4 +1,4 @@
-tokenize TokenDelimit "リンゴ りんご 林檎"   --token_filters 'TokenFilterNFKC100("unify_kana", true)'
+tokenize   'TokenMecab("use_reading", true)'   "私は林檎を食べます。"   --token_filters 'TokenFilterNFKC100("unify_kana", true)'
 [
   [
     0,
@@ -7,18 +7,38 @@ tokenize TokenDelimit "リンゴ りんご 林檎"   --token_filters 'TokenFilte
   ],
   [
     {
-      "value": "りんご",
+      "value": "わたし",
       "position": 0,
       "force_prefix": false
     },
     {
-      "value": "りんご",
+      "value": "は",
       "position": 1,
       "force_prefix": false
     },
     {
-      "value": "林檎",
+      "value": "りんご",
       "position": 2,
+      "force_prefix": false
+    },
+    {
+      "value": "を",
+      "position": 3,
+      "force_prefix": false
+    },
+    {
+      "value": "たべ",
+      "position": 4,
+      "force_prefix": false
+    },
+    {
+      "value": "ます",
+      "position": 5,
+      "force_prefix": false
+    },
+    {
+      "value": "。",
+      "position": 6,
       "force_prefix": false
     }
   ]
