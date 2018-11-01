@@ -43,13 +43,23 @@ typedef struct {
   grn_obj *lexicon;
 } grn_string;
 
+grn_rc grn_string_init(grn_ctx *ctx,
+                       grn_obj *string,
+                       grn_obj *lexicon_or_normalizer,
+                       int flags,
+                       grn_encoding encoding);
 grn_obj *grn_string_open_(grn_ctx *ctx,
                           const char *str,
                           unsigned int str_len,
                           grn_obj *lexicon_or_normalizer,
                           int flags,
                           grn_encoding encoding);
+grn_rc grn_string_fin(grn_ctx *ctx, grn_obj *string);
 grn_rc grn_string_close(grn_ctx *ctx, grn_obj *string);
+grn_rc grn_string_set_original(grn_ctx *ctx,
+                               grn_obj *string,
+                               const char *original,
+                               unsigned int length_in_bytes);
 grn_rc grn_string_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *string);
 
 #ifdef __cplusplus

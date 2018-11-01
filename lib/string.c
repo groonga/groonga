@@ -179,6 +179,37 @@ grn_fake_string_open(grn_ctx *ctx, grn_string *string)
   return nstr;
 }
 
+grn_rc
+grn_string_init(grn_ctx *ctx,
+                grn_obj *string,
+                grn_obj *lexicon_or_normalizer,
+                int flags,
+                grn_encoding encoding)
+{
+  grn_string *string_ = (grn_string *)string;
+
+  GRN_OBJ_INIT(string, GRN_STRING, 0, GRN_ID_NIL);
+  string_->original = NULL;
+  string_->original_length_in_bytes = 0;
+  string_->normalized = NULL;
+  string_->normalized_length_in_bytes = 0;
+  string_->n_characters = 0;
+  string_->checks = NULL;
+  string_->ctypes = NULL;
+  string_->offsets = NULL;
+  string_->encoding = encoding;
+  string_->flags = flags;
+  string_->lexicon = NULL;
+
+  if (lexicon_or_normalizer &&
+      lexicon_or_normalizer != GRN_NORMALIZER_AUTO &&
+      grn_obj_is_table(ctx, lexicon_or_normalizer)) {
+    string_->lexicon = lexicon_or_normalizer;
+  }
+
+  return ctx->rc;
+}
+
 grn_obj *
 grn_string_open_(grn_ctx *ctx,
                  const char *str,
@@ -187,80 +218,65 @@ grn_string_open_(grn_ctx *ctx,
                  int flags,
                  grn_encoding encoding)
 {
-  grn_string *string;
-  grn_obj *obj;
-  grn_bool is_normalizer_auto;
+  grn_string *string_;
+  grn_obj *string;
 
   if (!str || !str_len) {
     return NULL;
   }
 
-  is_normalizer_auto = (lexicon_or_normalizer == GRN_NORMALIZER_AUTO);
-  if (is_normalizer_auto) {
-    lexicon_or_normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-    if (!lexicon_or_normalizer) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "[string][open] NormalizerAuto normalizer isn't available");
-      return NULL;
-    }
-  }
-
-  string = GRN_MALLOCN(grn_string, 1);
-  if (!string) {
-    if (is_normalizer_auto) {
-      grn_obj_unlink(ctx, lexicon_or_normalizer);
-    }
+  string_ = GRN_MALLOCN(grn_string, 1);
+  if (!string_) {
     GRN_LOG(ctx, GRN_LOG_ALERT,
             "[string][open] failed to allocate memory");
     return NULL;
   }
 
-  obj = (grn_obj *)string;
-  GRN_OBJ_INIT(obj, GRN_STRING, GRN_OBJ_ALLOCATED, GRN_ID_NIL);
-  string->original = str;
-  string->original_length_in_bytes = str_len;
-  string->normalized = NULL;
-  string->normalized_length_in_bytes = 0;
-  string->n_characters = 0;
-  string->checks = NULL;
-  string->ctypes = NULL;
-  string->offsets = NULL;
-  string->encoding = encoding;
-  string->flags = flags;
-  string->lexicon = NULL;
+  string = (grn_obj *)string_;
+  grn_string_init(ctx, string, lexicon_or_normalizer, flags, encoding);
+  string->header.impl_flags |= GRN_OBJ_ALLOCATED;
+  string_->original = str;
+  string_->original_length_in_bytes = str_len;
 
   if (!lexicon_or_normalizer) {
-    return (grn_obj *)grn_fake_string_open(ctx, string);
+    return (grn_obj *)grn_fake_string_open(ctx, string_);
   }
 
   {
     grn_obj *normalizer = NULL;
     if (lexicon_or_normalizer) {
-      if (grn_obj_is_table(ctx, lexicon_or_normalizer)) {
-        string->lexicon = lexicon_or_normalizer;
+      if (string_->lexicon) {
         normalizer = grn_obj_get_info(ctx,
-                                      string->lexicon,
+                                      string_->lexicon,
                                       GRN_INFO_NORMALIZER,
                                       NULL);
       } else {
-        normalizer = lexicon_or_normalizer;
+        grn_bool is_normalizer_auto;
+        is_normalizer_auto = (lexicon_or_normalizer == GRN_NORMALIZER_AUTO);
+        if (is_normalizer_auto) {
+          normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+          if (!lexicon_or_normalizer) {
+            grn_obj_close(ctx, string);
+            ERR(GRN_INVALID_ARGUMENT,
+                "[string][open] NormalizerAuto normalizer isn't available");
+            return NULL;
+          }
+        } else {
+          normalizer = lexicon_or_normalizer;
+        }
       }
     }
     if (!normalizer) {
-      return (grn_obj *)grn_fake_string_open(ctx, string);
+      return (grn_obj *)grn_fake_string_open(ctx, string_);
     }
-    grn_normalizer_normalize(ctx, normalizer, (grn_obj *)string);
+    grn_normalizer_normalize(ctx, normalizer, string);
   }
-  if (ctx->rc) {
-    grn_obj_close(ctx, obj);
-    obj = NULL;
-  }
-
-  if (is_normalizer_auto) {
-    grn_obj_unlink(ctx, lexicon_or_normalizer);
+  if (ctx->rc != GRN_SUCCESS) {
+    grn_obj_close(ctx, string);
+    string = NULL;
   }
 
-  return obj;
+  return string;
 }
 
 grn_obj *
@@ -291,6 +307,26 @@ grn_string_get_original(grn_ctx *ctx, grn_obj *string,
     if (length_in_bytes) {
       *length_in_bytes = string_->original_length_in_bytes;
     }
+    rc = GRN_SUCCESS;
+  } else {
+    rc = GRN_INVALID_ARGUMENT;
+  }
+  GRN_API_RETURN(rc);
+}
+
+grn_rc
+grn_string_set_original(grn_ctx *ctx,
+                        grn_obj *string,
+                        const char *original,
+                        unsigned int length_in_bytes)
+{
+  grn_rc rc;
+  grn_string *string_ = (grn_string *)string;
+  GRN_API_ENTER;
+  if (string_) {
+    grn_string_fin(ctx, string);
+    string_->original = original;
+    string_->original_length_in_bytes = length_in_bytes;
     rc = GRN_SUCCESS;
   } else {
     rc = GRN_INVALID_ARGUMENT;
@@ -523,15 +559,43 @@ grn_string_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *string)
 }
 
 grn_rc
+grn_string_fin(grn_ctx *ctx, grn_obj *string)
+{
+  grn_rc rc;
+  grn_string *string_ = (grn_string *)string;
+  if (string_) {
+    if (string_->normalized) {
+      GRN_FREE(string_->normalized);
+      string_->normalized = NULL;
+      string_->normalized_length_in_bytes = 0;
+      string_->n_characters = 0;
+    }
+    if (string_->checks) {
+      GRN_FREE(string_->checks);
+      string_->checks = NULL;
+    }
+    if (string_->ctypes) {
+      GRN_FREE(string_->ctypes);
+      string_->ctypes = NULL;
+    }
+    if (string_->offsets) {
+      GRN_FREE(string_->offsets);
+      string_->ctypes = NULL;
+    }
+    rc = GRN_SUCCESS;
+  } else {
+    rc = GRN_INVALID_ARGUMENT;
+  }
+  return rc;
+}
+
+grn_rc
 grn_string_close(grn_ctx *ctx, grn_obj *string)
 {
   grn_rc rc;
   grn_string *string_ = (grn_string *)string;
   if (string_) {
-    if (string_->normalized) { GRN_FREE(string_->normalized); }
-    if (string_->ctypes) { GRN_FREE(string_->ctypes); }
-    if (string_->checks) { GRN_FREE(string_->checks); }
-    if (string_->offsets) { GRN_FREE(string_->offsets); }
+    grn_string_fin(ctx, string);
     GRN_FREE(string);
     rc = GRN_SUCCESS;
   } else {
