@@ -213,6 +213,10 @@ schema
       }
     },
     "token_filters": {
+      "TokenFilterNFKC100": {
+        "id": 214,
+        "name": "TokenFilterNFKC100"
+      },
       "TokenFilterStopWord": {
         "id": 256,
         "name": "TokenFilterStopWord"

@@ -210,6 +210,10 @@ schema
       }
     },
     "token_filters": {
+      "TokenFilterNFKC100": {
+        "id": 214,
+        "name": "TokenFilterNFKC100"
+      }
     },
     "tables": {
       "Logs": {

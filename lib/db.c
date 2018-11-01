@@ -31,6 +31,7 @@
 #include "grn_ctx_impl.h"
 #include "grn_token_cursor.h"
 #include "grn_tokenizers.h"
+#include "grn_token_filters.h"
 #include "grn_proc.h"
 #include "grn_plugin.h"
 #include "grn_geo.h"
@@ -408,6 +409,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
     grn_db_init_builtin_scorers(ctx);
     grn_db_init_builtin_commands(ctx);
     grn_db_init_builtin_window_functions(ctx);
+    grn_db_init_builtin_token_filters(ctx);
 
     if (grn_table_size(ctx, (grn_obj *)s) > n_records) {
       grn_obj_flush(ctx, (grn_obj *)s);
@@ -13308,6 +13310,7 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   }
   grn_db_init_builtin_commands(ctx);
   grn_db_init_builtin_window_functions(ctx);
+  grn_db_init_builtin_token_filters(ctx);
   for (id = grn_db_curr_id(ctx, db) + 1; id < GRN_N_RESERVED_TYPES; id++) {
     grn_itoh(id, buf + 3, 2);
     grn_obj_register(ctx, db, buf, 5);

@@ -1,0 +1,2 @@
+tokenize TokenDelimit "リンゴ りんご 林檎" \
+  --token_filters 'TokenFilterNFKC100("unify_kana", true)'

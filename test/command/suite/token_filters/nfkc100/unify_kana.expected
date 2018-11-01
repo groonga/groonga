@@ -1,0 +1,25 @@
+tokenize TokenDelimit "リンゴ りんご 林檎"   --token_filters 'TokenFilterNFKC100("unify_kana", true)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "りんご",
+      "position": 0,
+      "force_prefix": false
+    },
+    {
+      "value": "りんご",
+      "position": 1,
+      "force_prefix": false
+    },
+    {
+      "value": "林檎",
+      "position": 2,
+      "force_prefix": false
+    }
+  ]
+]
