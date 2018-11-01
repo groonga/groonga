@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2012-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,8 +20,6 @@
 #include <string.h>
 
 #include "grn_normalizer.h"
-#include "grn_string.h"
-#include "grn_nfkc.h"
 #include <groonga/normalizer.h>
 #include <groonga/tokenizer.h>
 
@@ -610,53 +609,9 @@ grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char
   return 0;
 }
 
-typedef grn_char_type (*grn_nfkc_char_type_func)(const unsigned char *utf8);
-typedef const char *(*grn_nfkc_decompose_func)(const unsigned char *utf8);
-typedef const char *(*grn_nfkc_compose_func)(const unsigned char *prefix_utf8,
-                                             const unsigned char *suffix_utf8);
-
-typedef struct {
-  grn_nfkc_char_type_func char_type_func;
-  grn_nfkc_decompose_func decompose_func;
-  grn_nfkc_compose_func compose_func;
-  grn_bool include_removed_source_location;
-  grn_bool report_source_offset;
-  grn_bool unify_kana;
-  grn_bool unify_kana_case;
-  grn_bool unify_kana_voiced_sound_mark;
-  grn_bool unify_hyphen;
-  grn_bool unify_prolonged_sound_mark;
-  grn_bool unify_hyphen_and_prolonged_sound_mark;
-  grn_bool unify_middle_dot;
-  grn_bool unify_katakana_v_sounds;
-  grn_bool unify_katakana_bu_sound;
-} grn_utf8_normalize_options;
-
-static void
-utf8_normalize_options_init(grn_utf8_normalize_options *options,
-                            grn_nfkc_char_type_func char_type_func,
-                            grn_nfkc_decompose_func decompose_func,
-                            grn_nfkc_compose_func compose_func)
-{
-  options->char_type_func = char_type_func;
-  options->decompose_func = decompose_func;
-  options->compose_func = compose_func;
-  options->include_removed_source_location = GRN_TRUE;
-  options->report_source_offset = GRN_FALSE;
-  options->unify_kana = GRN_FALSE;
-  options->unify_kana_case = GRN_FALSE;
-  options->unify_kana_voiced_sound_mark = GRN_FALSE;
-  options->unify_hyphen = GRN_FALSE;
-  options->unify_prolonged_sound_mark = GRN_FALSE;
-  options->unify_hyphen_and_prolonged_sound_mark = GRN_FALSE;
-  options->unify_middle_dot = GRN_FALSE;
-  options->unify_katakana_v_sounds = GRN_FALSE;
-  options->unify_katakana_bu_sound = GRN_FALSE;
-}
-
 grn_inline static const unsigned char *
-utf8_normalize_unify_kana(const unsigned char *utf8_char,
-                          unsigned char *unified)
+grn_nfkc_normalize_unify_kana(const unsigned char *utf8_char,
+                              unsigned char *unified)
 {
   if (utf8_char[0] == 0xe3 &&
       /* U+30A1 KATAKANA LETTER SMALL A ..
@@ -682,8 +637,8 @@ utf8_normalize_unify_kana(const unsigned char *utf8_char,
 }
 
 grn_inline static const unsigned char *
-utf8_normalize_unify_hiragana_case(const unsigned char *utf8_char,
-                                   unsigned char *unified)
+grn_nfkc_normalize_unify_hiragana_case(const unsigned char *utf8_char,
+                                       unsigned char *unified)
 {
   if (utf8_char[0] == 0xe3) {
     if ((utf8_char[1] == 0x81 && (0x81 <= utf8_char[2] &&
@@ -729,8 +684,8 @@ utf8_normalize_unify_hiragana_case(const unsigned char *utf8_char,
 }
 
 grn_inline static const unsigned char *
-utf8_normalize_unify_katakana_case(const unsigned char *utf8_char,
-                                   unsigned char *unified)
+grn_nfkc_normalize_unify_katakana_case(const unsigned char *utf8_char,
+                                       unsigned char *unified)
 {
   if (utf8_char[0] == 0xe3) {
     if ((utf8_char[1] == 0x82 && (0xa1 <= utf8_char[2] &&
@@ -776,8 +731,8 @@ utf8_normalize_unify_katakana_case(const unsigned char *utf8_char,
 }
 
 grn_inline static const unsigned char *
-utf8_normalize_unify_hiragana_voiced_sound_mark(const unsigned char *utf8_char,
-                                                unsigned char *unified)
+grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(const unsigned char *utf8_char,
+                                                    unsigned char *unified)
 {
   if (utf8_char[0] == 0xe3) {
     if ((utf8_char[1] == 0x81 && (0x8c <= utf8_char[2] &&
@@ -818,8 +773,8 @@ utf8_normalize_unify_hiragana_voiced_sound_mark(const unsigned char *utf8_char,
 }
 
 grn_inline static const unsigned char *
-utf8_normalize_unify_katakana_voiced_sound_mark(const unsigned char *utf8_char,
-                                                unsigned char *unified)
+grn_nfkc_normalize_unify_katakana_voiced_sound_mark(const unsigned char *utf8_char,
+                                                    unsigned char *unified)
 {
   if (utf8_char[0] == 0xe3) {
     if (utf8_char[1] == 0x83 && utf8_char[2] == 0x80) {
@@ -866,8 +821,8 @@ utf8_normalize_unify_katakana_voiced_sound_mark(const unsigned char *utf8_char,
 }
 
 grn_inline static const grn_bool
-utf8_normalize_is_hyphen_famity(const unsigned char *utf8_char,
-                                size_t length)
+grn_nfkc_normalize_is_hyphen_famity(const unsigned char *utf8_char,
+                                    size_t length)
 {
   if (length == 1) {
     if (utf8_char[0] == '-') {
@@ -918,8 +873,8 @@ utf8_normalize_is_hyphen_famity(const unsigned char *utf8_char,
 }
 
 grn_inline static const grn_bool
-utf8_normalize_is_prolonged_sound_mark_famity(const unsigned char *utf8_char,
-                                              size_t length)
+grn_nfkc_normalize_is_prolonged_sound_mark_famity(const unsigned char *utf8_char,
+                                                  size_t length)
 {
   if (length == 3) {
     if (utf8_char[0] == 0xe2) {
@@ -951,8 +906,8 @@ utf8_normalize_is_prolonged_sound_mark_famity(const unsigned char *utf8_char,
 }
 
 grn_inline static grn_bool
-utf8_normalize_is_middle_dot_family(const unsigned char *utf8_char,
-                                    size_t length)
+grn_nfkc_normalize_is_middle_dot_family(const unsigned char *utf8_char,
+                                        size_t length)
 {
   if (length == 3) {
     if (utf8_char[0] == 0xe1) {
@@ -991,10 +946,10 @@ utf8_normalize_is_middle_dot_family(const unsigned char *utf8_char,
 }
 
 grn_inline static grn_bool
-utf8_normalize_unify_katakana_v_sounds(const unsigned char *utf8_char,
-                                       size_t length,
-                                       unsigned char *previous_normalized,
-                                       unsigned char *normalized)
+grn_nfkc_normalize_unify_katakana_v_sounds(const unsigned char *utf8_char,
+                                           size_t length,
+                                           unsigned char *previous_normalized,
+                                           unsigned char *normalized)
 {
   if (!previous_normalized) {
     return GRN_FALSE;
@@ -1040,10 +995,10 @@ utf8_normalize_unify_katakana_v_sounds(const unsigned char *utf8_char,
 }
 
 grn_inline static grn_bool
-utf8_normalize_unify_katakana_bu_sound(const unsigned char *utf8_char,
-                                       size_t length,
-                                       unsigned char *previous_normalized,
-                                       unsigned char *normalized)
+grn_nfkc_normalize_unify_katakana_bu_sound(const unsigned char *utf8_char,
+                                           size_t length,
+                                           unsigned char *previous_normalized,
+                                           unsigned char *normalized)
 {
   if (!previous_normalized) {
     return GRN_FALSE;
@@ -1080,61 +1035,56 @@ utf8_normalize_unify_katakana_bu_sound(const unsigned char *utf8_char,
   return GRN_FALSE;
 }
 
-grn_inline static grn_obj *
-utf8_normalize(grn_ctx *ctx,
-               grn_string *nstr,
-               grn_utf8_normalize_options *options)
+grn_rc
+grn_nfkc_normalize(grn_ctx *ctx,
+                   grn_obj *string,
+                   grn_nfkc_normalize_options *options)
 {
+  grn_string *string_ = (grn_string *)string;
   int16_t *ch;
   const unsigned char *s, *s_, *s__ = NULL, *p, *p2, *pe, *e;
   unsigned char *d, *d_, *de;
   uint_least8_t *cp;
   uint64_t *offsets;
-  size_t length = 0, ls, lp, size = nstr->original_length_in_bytes, ds = size * 3;
-  int removeblankp = nstr->flags & GRN_STRING_REMOVE_BLANK;
+  size_t length = 0, ls, lp;
+  size_t size = string_->original_length_in_bytes, ds = size * 3;
+  int removeblankp = string_->flags & GRN_STRING_REMOVE_BLANK;
   grn_bool remove_tokenized_delimiter_p =
-    nstr->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
-  if (!(nstr->normalized = GRN_MALLOC(ds + 1))) {
+    string_->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
+  if (!(string_->normalized = GRN_MALLOC(ds + 1))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[string][utf8] failed to allocate normalized text space");
-    return NULL;
+        "[normalize][nfkc] failed to allocate normalized text space");
+    goto exit;
   }
-  if (nstr->flags & GRN_STRING_WITH_CHECKS) {
-    if (!(nstr->checks = GRN_MALLOC(ds * sizeof(int16_t) + 1))) {
-      GRN_FREE(nstr->normalized);
-      nstr->normalized = NULL;
+  if (string_->flags & GRN_STRING_WITH_CHECKS) {
+    if (!(string_->checks = GRN_MALLOC(ds * sizeof(int16_t) + 1))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[string][utf8] failed to allocate checks space");
-      return NULL;
+          "[normalize][nfkc] failed to allocate checks space");
+      goto exit;
     }
   }
-  ch = nstr->checks;
-  if (nstr->flags & GRN_STRING_WITH_TYPES) {
-    if (!(nstr->ctypes = GRN_MALLOC(ds + 1))) {
-      if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
-      GRN_FREE(nstr->normalized); nstr->normalized = NULL;
+  ch = string_->checks;
+  if (string_->flags & GRN_STRING_WITH_TYPES) {
+    if (!(string_->ctypes = GRN_MALLOC(ds + 1))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[string][utf8] failed to allocate character types space");
-      return NULL;
+          "[normalize][nfkc] failed to allocate character types space");
+      goto exit;
     }
   }
-  cp = nstr->ctypes;
+  cp = string_->ctypes;
   if (options->report_source_offset) {
-    if (!(nstr->offsets = GRN_MALLOC(sizeof(uint64_t) * (ds + 1)))) {
-      if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
-      if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
-      GRN_FREE(nstr->normalized); nstr->normalized = NULL;
+    if (!(string_->offsets = GRN_MALLOC(sizeof(uint64_t) * (ds + 1)))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[string][utf8] failed to allocate offsets space");
-      return NULL;
+          "[normalize][nfkc] failed to allocate offsets space");
+      goto exit;
     }
   }
-  offsets = nstr->offsets;
-  d = (unsigned char *)nstr->normalized;
+  offsets = string_->offsets;
+  d = (unsigned char *)string_->normalized;
   de = d + ds;
   d_ = NULL;
-  e = (unsigned char *)nstr->original + size;
-  for (s = s_ = (unsigned char *)nstr->original; ; s += ls) {
+  e = (unsigned char *)string_->original + size;
+  for (s = s_ = (unsigned char *)string_->original; ; s += ls) {
     if (!(ls = grn_str_charlen_utf8(ctx, s, e))) {
       break;
     }
@@ -1170,7 +1120,7 @@ utf8_normalize(grn_ctx *ctx,
         break;
       }
       if ((*p == ' ' && removeblankp) || *p < 0x20  /* skip unprintable ascii */ ) {
-        if (cp > nstr->ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
+        if (cp > string_->ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
         if (!options->include_removed_source_location) {
           s_ += lp;
         }
@@ -1182,60 +1132,45 @@ utf8_normalize(grn_ctx *ctx,
         if (de <= d + lp) {
           unsigned char *normalized;
           ds += (ds >> 1) + lp;
-          if (!(normalized = GRN_REALLOC(nstr->normalized, ds + 1))) {
-            if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
-            if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
-            if (nstr->offsets) { GRN_FREE(nstr->offsets); nstr->offsets = NULL; }
-            GRN_FREE(nstr->normalized); nstr->normalized = NULL;
+          if (!(normalized = GRN_REALLOC(string_->normalized, ds + 1))) {
             ERR(GRN_NO_MEMORY_AVAILABLE,
-                "[string][utf8] failed to expand normalized text space");
-            return NULL;
+                "[normalize][nfkc] failed to expand normalized text space");
+            goto exit;
           }
           de = normalized + ds;
-          d = normalized + (d - (unsigned char *)nstr->normalized);
-          nstr->normalized = (char *)normalized;
+          d = normalized + (d - (unsigned char *)string_->normalized);
+          string_->normalized = (char *)normalized;
           if (ch) {
             int16_t *checks;
-            if (!(checks = GRN_REALLOC(nstr->checks, ds * sizeof(int16_t) + 1))) {
-              if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
-              if (nstr->offsets) { GRN_FREE(nstr->offsets); nstr->offsets = NULL; }
-              GRN_FREE(nstr->checks); nstr->checks = NULL;
-              GRN_FREE(nstr->normalized); nstr->normalized = NULL;
+            if (!(checks = GRN_REALLOC(string_->checks,
+                                       ds * sizeof(int16_t) + 1))) {
               ERR(GRN_NO_MEMORY_AVAILABLE,
-                  "[string][utf8] failed to expand checks space");
-              return NULL;
+                  "[normalize][nfkc] failed to expand checks space");
+              goto exit;
             }
-            ch = checks + (ch - nstr->checks);
-            nstr->checks = checks;
+            ch = checks + (ch - string_->checks);
+            string_->checks = checks;
           }
           if (cp) {
             uint_least8_t *ctypes;
-            if (!(ctypes = GRN_REALLOC(nstr->ctypes, ds + 1))) {
-              GRN_FREE(nstr->ctypes); nstr->ctypes = NULL;
-              if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
-              if (nstr->offsets) { GRN_FREE(nstr->offsets); nstr->offsets = NULL; }
-              GRN_FREE(nstr->normalized); nstr->normalized = NULL;
+            if (!(ctypes = GRN_REALLOC(string_->ctypes, ds + 1))) {
               ERR(GRN_NO_MEMORY_AVAILABLE,
-                  "[string][utf8] failed to expand character types space");
-              return NULL;
+                  "[normalize][nfkc] failed to expand character types space");
+              goto exit;
             }
-            cp = ctypes + (cp - nstr->ctypes);
-            nstr->ctypes = ctypes;
+            cp = ctypes + (cp - string_->ctypes);
+            string_->ctypes = ctypes;
           }
           if (offsets) {
             uint64_t *new_offsets;
-            if (!(new_offsets = GRN_REALLOC(nstr->offsets,
+            if (!(new_offsets = GRN_REALLOC(string_->offsets,
                                             sizeof(uint64_t) * (ds + 1)))) {
-              GRN_FREE(nstr->offsets); nstr->offsets = NULL;
-              if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
-              if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
-              GRN_FREE(nstr->normalized); nstr->normalized = NULL;
               ERR(GRN_NO_MEMORY_AVAILABLE,
-                  "[string][utf8] failed to expand offsets space");
-              return NULL;
+                  "[normalize][nfkc] failed to expand offsets space");
+              goto exit;
             }
-            offsets = new_offsets + (offsets - nstr->offsets);
-            nstr->offsets = new_offsets;
+            offsets = new_offsets + (offsets - string_->offsets);
+            string_->offsets = new_offsets;
           }
         }
 
@@ -1254,7 +1189,7 @@ utf8_normalize(grn_ctx *ctx,
           if (options->unify_kana &&
               char_type == GRN_CHAR_KATAKANA &&
               lp == 3) {
-            p = utf8_normalize_unify_kana(p, unified_kana);
+            p = grn_nfkc_normalize_unify_kana(p, unified_kana);
             if (p == unified_kana) {
               char_type = GRN_CHAR_HIRAGANA;
             }
@@ -1264,12 +1199,12 @@ utf8_normalize(grn_ctx *ctx,
             switch (char_type) {
             case GRN_CHAR_HIRAGANA :
               if (lp == 3) {
-                p = utf8_normalize_unify_hiragana_case(p, unified_kana_case);
+                p = grn_nfkc_normalize_unify_hiragana_case(p, unified_kana_case);
               }
               break;
             case GRN_CHAR_KATAKANA :
               if (lp == 3) {
-                p = utf8_normalize_unify_katakana_case(p, unified_kana_case);
+                p = grn_nfkc_normalize_unify_katakana_case(p, unified_kana_case);
               }
               break;
             default :
@@ -1281,13 +1216,13 @@ utf8_normalize(grn_ctx *ctx,
             switch (char_type) {
             case GRN_CHAR_HIRAGANA :
               if (lp == 3) {
-                p = utf8_normalize_unify_hiragana_voiced_sound_mark(
+                p = grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
                   p, unified_kana_voiced_sound_mark);
               }
               break;
             case GRN_CHAR_KATAKANA :
               if (lp == 3) {
-                p = utf8_normalize_unify_katakana_voiced_sound_mark(
+                p = grn_nfkc_normalize_unify_katakana_voiced_sound_mark(
                   p, unified_kana_voiced_sound_mark);
               }
               break;
@@ -1297,7 +1232,7 @@ utf8_normalize(grn_ctx *ctx,
           }
 
           if (options->unify_hyphen) {
-            if (utf8_normalize_is_hyphen_famity(p, lp)) {
+            if (grn_nfkc_normalize_is_hyphen_famity(p, lp)) {
               p = unified_hyphen;
               lp = sizeof(unified_hyphen);
               char_type = GRN_CHAR_SYMBOL;
@@ -1305,7 +1240,7 @@ utf8_normalize(grn_ctx *ctx,
           }
 
           if (options->unify_prolonged_sound_mark) {
-            if (utf8_normalize_is_prolonged_sound_mark_famity(p, lp)) {
+            if (grn_nfkc_normalize_is_prolonged_sound_mark_famity(p, lp)) {
               p = unified_prolonged_sound_mark;
               lp = sizeof(unified_prolonged_sound_mark);
               char_type = GRN_CHAR_KATAKANA;
@@ -1313,8 +1248,8 @@ utf8_normalize(grn_ctx *ctx,
           }
 
           if (options->unify_hyphen_and_prolonged_sound_mark) {
-            if (utf8_normalize_is_hyphen_famity(p, lp) ||
-                utf8_normalize_is_prolonged_sound_mark_famity(p, lp)) {
+            if (grn_nfkc_normalize_is_hyphen_famity(p, lp) ||
+                grn_nfkc_normalize_is_prolonged_sound_mark_famity(p, lp)) {
               p = unified_hyphen;
               lp = sizeof(unified_hyphen);
               char_type = GRN_CHAR_SYMBOL;
@@ -1322,7 +1257,7 @@ utf8_normalize(grn_ctx *ctx,
           }
 
           if (options->unify_middle_dot) {
-            if (utf8_normalize_is_middle_dot_family(p, lp)) {
+            if (grn_nfkc_normalize_is_middle_dot_family(p, lp)) {
               p = unified_middle_dot;
               lp = sizeof(unified_middle_dot);
               char_type = GRN_CHAR_SYMBOL;
@@ -1330,13 +1265,13 @@ utf8_normalize(grn_ctx *ctx,
           }
 
           if (options->unify_katakana_v_sounds) {
-            if (utf8_normalize_unify_katakana_v_sounds(p, lp, d_, d)) {
+            if (grn_nfkc_normalize_unify_katakana_v_sounds(p, lp, d_, d)) {
               lp = 0;
             }
           }
 
           if (options->unify_katakana_bu_sound) {
-            if (utf8_normalize_unify_katakana_bu_sound(p, lp, d_, d)) {
+            if (grn_nfkc_normalize_unify_katakana_bu_sound(p, lp, d_, d)) {
               lp = 0;
             }
           }
@@ -1361,7 +1296,7 @@ utf8_normalize(grn_ctx *ctx,
             for (i = lp; i > 1; i--) { *ch++ = 0; }
           }
           if (offsets) {
-            *offsets++ = (uint64_t)(s - (const unsigned char *)nstr->original);
+            *offsets++ = (uint64_t)(s - (const unsigned char *)string_->original);
           }
         }
         lp = lp_original;
@@ -1369,17 +1304,36 @@ utf8_normalize(grn_ctx *ctx,
     }
   }
   if (cp) { *cp = GRN_CHAR_NULL; }
-  if (offsets) { *offsets = nstr->original_length_in_bytes; }
+  if (offsets) { *offsets = string_->original_length_in_bytes; }
   if (options->unify_katakana_v_sounds) {
-    utf8_normalize_unify_katakana_v_sounds(NULL, 0, d_, d);
+    grn_nfkc_normalize_unify_katakana_v_sounds(NULL, 0, d_, d);
   }
   if (options->unify_katakana_bu_sound) {
-    utf8_normalize_unify_katakana_bu_sound(NULL, 0, d_, d);
+    grn_nfkc_normalize_unify_katakana_bu_sound(NULL, 0, d_, d);
   }
   *d = '\0';
-  nstr->n_characters = length;
-  nstr->normalized_length_in_bytes = (size_t)(d - (unsigned char *)nstr->normalized);
-  return NULL;
+  string_->n_characters = length;
+  string_->normalized_length_in_bytes = (size_t)(d - (unsigned char *)string_->normalized);
+exit:
+  if (ctx->rc != GRN_SUCCESS) {
+    if (string_->normalized) {
+      GRN_FREE(string_->normalized);
+      string_->normalized = NULL;
+    }
+    if (string_->checks) {
+      GRN_FREE(string_->checks);
+      string_->checks = NULL;
+    }
+    if (string_->ctypes) {
+      GRN_FREE(string_->ctypes);
+      string_->ctypes = NULL;
+    }
+    if (string_->offsets) {
+      GRN_FREE(string_->offsets);
+      string_->offsets = NULL;
+    }
+  }
+  return ctx->rc;
 }
 #endif /* GRN_WITH_NFKC */
 
@@ -1747,36 +1701,39 @@ koi8r_normalize(grn_ctx *ctx, grn_string *nstr)
 static grn_obj *
 auto_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_string *string = (grn_string *)(args[0]);
-  switch (string->encoding) {
+  grn_obj *string = args[0];
+  grn_string *string_ = (grn_string *)(string);
+  switch (string_->encoding) {
   case GRN_ENC_EUC_JP :
-    eucjp_normalize(ctx, string);
+    eucjp_normalize(ctx, string_);
     break;
   case GRN_ENC_UTF8 :
 #ifdef GRN_WITH_NFKC
     {
-      grn_utf8_normalize_options options;
-      utf8_normalize_options_init(&options,
-                                  grn_nfkc_char_type,
-                                  grn_nfkc_decompose,
-                                  grn_nfkc_compose);
-      utf8_normalize(ctx, string, &options);
+      grn_nfkc_normalize_options options;
+      grn_nfkc_normalize_options_init(ctx,
+                                      &options,
+                                      grn_nfkc_char_type,
+                                      grn_nfkc_decompose,
+                                      grn_nfkc_compose);
+      grn_nfkc_normalize(ctx, string, &options);
+      grn_nfkc_normalize_options_fin(ctx, &options);
     }
 #else /* GRN_WITH_NFKC */
-    ascii_normalize(ctx, string);
+    ascii_normalize(ctx, string_);
 #endif /* GRN_WITH_NFKC */
     break;
   case GRN_ENC_SJIS :
-    sjis_normalize(ctx, string);
+    sjis_normalize(ctx, string_);
     break;
   case GRN_ENC_LATIN1 :
-    latin1_normalize(ctx, string);
+    latin1_normalize(ctx, string_);
     break;
   case GRN_ENC_KOI8R :
-    koi8r_normalize(ctx, string);
+    koi8r_normalize(ctx, string_);
     break;
   default :
-    ascii_normalize(ctx, string);
+    ascii_normalize(ctx, string_);
     break;
   }
   return NULL;
@@ -1786,14 +1743,16 @@ auto_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 nfkc51_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_string *string = (grn_string *)(args[0]);
-  grn_utf8_normalize_options options;
+  grn_obj *string = args[0];
+  grn_nfkc_normalize_options options;
 
-  utf8_normalize_options_init(&options,
-                              grn_nfkc50_char_type,
-                              grn_nfkc50_decompose,
-                              grn_nfkc50_compose);
-  utf8_normalize(ctx, string, &options);
+  grn_nfkc_normalize_options_init(ctx,
+                                  &options,
+                                  grn_nfkc50_char_type,
+                                  grn_nfkc50_decompose,
+                                  grn_nfkc50_compose);
+  grn_nfkc_normalize(ctx, string, &options);
+  grn_nfkc_normalize_options_fin(ctx, &options);
   return NULL;
 }
 
@@ -1803,9 +1762,9 @@ nfkc100_open_options(grn_ctx *ctx,
                      grn_obj *raw_options,
                      void *user_data)
 {
-  grn_utf8_normalize_options *options;
+  grn_nfkc_normalize_options *options;
 
-  options = GRN_MALLOC(sizeof(grn_utf8_normalize_options));
+  options = GRN_MALLOC(sizeof(grn_nfkc_normalize_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[normalizer][nfkc100] "
@@ -1813,86 +1772,9 @@ nfkc100_open_options(grn_ctx *ctx,
     return NULL;
   }
 
-  utf8_normalize_options_init(options,
-                              grn_nfkc100_char_type,
-                              grn_nfkc100_decompose,
-                              grn_nfkc100_compose);
+  grn_nfkc100_normalize_options_init(ctx, options);
 
-  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
-    grn_raw_string name_raw;
-    name_raw.value = name;
-    name_raw.length = name_length;
-
-    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
-                                     "include_removed_source_location")) {
-      options->include_removed_source_location =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->include_removed_source_location);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "report_source_offset")) {
-      options->report_source_offset =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->report_source_offset);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_kana")) {
-      options->unify_kana = grn_vector_get_element_bool(ctx,
-                                                        raw_options,
-                                                        i,
-                                                        options->unify_kana);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_kana_case")) {
-      options->unify_kana_case =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->unify_kana_case);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
-                                            "unify_kana_voiced_sound_mark")) {
-      options->unify_kana_voiced_sound_mark =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->unify_kana_voiced_sound_mark);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_hyphen")) {
-      options->unify_hyphen = grn_vector_get_element_bool(ctx,
-                                                          raw_options,
-                                                          i,
-                                                          options->unify_hyphen);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
-                                            "unify_prolonged_sound_mark")) {
-      options->unify_prolonged_sound_mark =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->unify_prolonged_sound_mark);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
-                                            "unify_hyphen_and_prolonged_sound_mark")) {
-      options->unify_hyphen_and_prolonged_sound_mark =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->unify_hyphen_and_prolonged_sound_mark);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_middle_dot")) {
-      options->unify_middle_dot =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->unify_middle_dot);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_v_sounds")) {
-      options->unify_katakana_v_sounds =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->unify_katakana_v_sounds);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_bu_sound")) {
-      options->unify_katakana_bu_sound =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->unify_katakana_bu_sound);
-    }
-  } GRN_OPTION_VALUES_EACH_END();
+  grn_nfkc_normalize_options_apply(ctx, options, raw_options);
 
   return options;
 }
@@ -1900,7 +1782,8 @@ nfkc100_open_options(grn_ctx *ctx,
 static void
 nfkc100_close_options(grn_ctx *ctx, void *data)
 {
-  grn_utf8_normalize_options *options = data;
+  grn_nfkc_normalize_options *options = data;
+  grn_nfkc_normalize_options_fin(ctx, options);
   GRN_FREE(options);
 }
 
@@ -1908,10 +1791,9 @@ static grn_obj *
 nfkc100_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *string = args[0];
-  grn_string *string_ = (grn_string *)string;
   grn_obj *table;
-  grn_utf8_normalize_options *options;
-  grn_utf8_normalize_options options_raw;
+  grn_nfkc_normalize_options *options;
+  grn_nfkc_normalize_options options_raw;
 
   table = grn_string_get_table(ctx, string);
   if (table) {
@@ -1925,14 +1807,14 @@ nfkc100_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       return NULL;
     }
   } else {
-    utf8_normalize_options_init(&options_raw,
-                                grn_nfkc100_char_type,
-                                grn_nfkc100_decompose,
-                                grn_nfkc100_compose);
+    grn_nfkc100_normalize_options_init(ctx, &options_raw);
     options = &options_raw;
   }
 
-  utf8_normalize(ctx, string_, options);
+  grn_nfkc_normalize(ctx, string, options);
+  if (!table) {
+    grn_nfkc_normalize_options_fin(ctx, options);
+  }
   return NULL;
 }
 #endif /* GRN_WITH_NFKC */
