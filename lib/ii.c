@@ -5470,11 +5470,15 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                     grn_p_decv(ctx, c->cp, c->cpe - c->cp,
                                c->rdv, c->ii->n_elements);
                   if (decoded_size == 0) {
+                    DEFINE_NAME(c->ii);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
                             "[ii][cursor][next][chunk][last] "
                             "failed to decode the last chunk. "
                             "Another thread might change "
-                            "the chunk while decoding: <%p>: <%d>: <%d>",
+                            "the chunk while decoding: "
+                            "<%.*s>: <%u>: <%p>: <%d>: <%d>",
+                            name_size, name,
+                            c->id,
                             c,
                             c->curr_chunk,
                             c->cinfo ? c->cinfo[c->curr_chunk].segno : -1);
@@ -5482,9 +5486,13 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                     break;
                   }
                   if (buffer_is_reused(ctx, c->ii, c)) {
+                    DEFINE_NAME(c->ii);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
                             "[ii][cursor][next][chunk][last] "
-                            "buffer is reused by another thread: %p",
+                            "buffer is reused by another thread: "
+                            "<%.*s>: <%u>: <%p>",
+                            name_size, name,
+                            c->id,
                             c);
                     c->pc.rid = GRN_ID_NIL;
                     break;
@@ -5492,11 +5500,15 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                   if (chunk_is_reused(ctx, c->ii, c,
                                       c->buf->header.chunk,
                                       c->buf->header.chunk_size)) {
+                    DEFINE_NAME(c->ii);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
                             "[ii][cursor][next][chunk][last] "
-                            "chunk(%d) is reused by another thread: %p",
-                            c->buf->header.chunk,
-                            c);
+                            "chunk is reused by another thread: "
+                            "<%.*s>: <%u>: <%p>: <%d>",
+                            name_size, name,
+                            c->id,
+                            c,
+                            c->buf->header.chunk);
                     c->pc.rid = GRN_ID_NIL;
                     break;
                   }
@@ -5516,11 +5528,15 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                     grn_p_decv(ctx, cp, size, c->rdv, c->ii->n_elements);
                   grn_io_win_unmap(&iw);
                   if (decoded_size == 0) {
+                    DEFINE_NAME(c->ii);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
                             "[ii][cursor][next][chunk] "
                             "failed to decode the next chunk. "
                             "Another thread might change "
-                            "the chunk while decoding: <%p>: <%d>: <%d>",
+                            "the chunk while decoding: "
+                            "<%.*s>: <%u>: <%p>: <%d>: <%d>",
+                            name_size, name,
+                            c->id,
                             c,
                             c->curr_chunk,
                             c->cinfo ? c->cinfo[c->curr_chunk].segno : -1);
@@ -5529,11 +5545,15 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                   }
                   if (chunk_is_reused(ctx, c->ii, c,
                                       c->cinfo[c->curr_chunk].segno, size)) {
+                    DEFINE_NAME(c->ii);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
                             "[ii][cursor][next][chunk] "
-                            "chunk(%d) is reused by another thread: %p",
-                            c->cinfo[c->curr_chunk].segno,
-                            c);
+                            "chunk is reused by another thread: "
+                            "<%.*s>: <%u>: <%p>: <%d>",
+                            name_size, name,
+                            c->id,
+                            c,
+                            c->cinfo[c->curr_chunk].segno);
                     c->pc.rid = GRN_ID_NIL;
                     break;
                   }
@@ -5576,11 +5596,16 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
             uint32_t lrid = c->pb.rid, lsid = c->pb.sid; /* for check */
             buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
             if (buffer_is_reused(ctx, c->ii, c)) {
+              DEFINE_NAME(c->ii);
               GRN_LOG(ctx, GRN_LOG_WARNING,
                       "[ii][cursor][next][buffer] "
-                      "buffer(%d,%d) is reused by another thread: %p",
-                      c->buffer_pseg, *c->ppseg,
-                      c);
+                      "buffer is reused by another thread: "
+                      "<%.*s>: <%d>: <%p>: <%d>: <%d>",
+                      name_size, name,
+                      c->id,
+                      c,
+                      c->buffer_pseg,
+                      *c->ppseg);
               c->pb.rid = GRN_ID_NIL;
               break;
             }
