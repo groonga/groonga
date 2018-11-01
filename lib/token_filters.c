@@ -105,7 +105,6 @@ nfkc100_filter(grn_ctx *ctx,
                void *user_data)
 {
   grn_nfkc100_token_filter *token_filter = user_data;
-  grn_id id;
   grn_obj *data;
   grn_obj *string;
 
