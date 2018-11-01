@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -61,7 +62,7 @@ grn_proc_lexicon_open(grn_ctx *ctx,
       GRN_TEXT_SET(ctx,
                    &normalizer,
                    normalizer_raw->value,
-                 normalizer_raw->length);
+                   normalizer_raw->length);
     }
     grn_obj_set_info(ctx, lexicon, GRN_INFO_NORMALIZER, &normalizer);
     GRN_OBJ_FIN(ctx, &normalizer);
@@ -78,6 +79,16 @@ grn_proc_lexicon_open(grn_ctx *ctx,
   }
   if (token_filters_raw) {
     grn_proc_table_set_token_filters(ctx, lexicon, token_filters_raw);
+  }
+  if (ctx->rc != GRN_SUCCESS) {
+    grn_obj_close(ctx, lexicon);
+    GRN_PLUGIN_ERROR(ctx, ctx->rc,
+                     "%s failed to set token filters: <%.*s>: %s",
+                     context_tag,
+                     (int)(token_filters_raw->length),
+                     token_filters_raw->value,
+                     ctx->errbuf);
+    return NULL;
   }
 
   return lexicon;
