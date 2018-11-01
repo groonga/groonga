@@ -46,6 +46,19 @@ that can be evaluated by index are described later.
    If you write ``disk`` regular expression for case-insensitive
    match, Groonga can search the pattern with index. It's fast.
 
+   By full text search normally, Groonga normalize search keywords
+   using the normalizer specified in a lexicon.
+   By using regular expression search, Groonga doesn't normalize search
+   keywords.
+   Because the regular expression has specified meaning in uppercase and
+   lowercase.
+
+   So, if you regular expression search that doesn't use the index,
+   we suggest that use :doc:`/reference/commands/normalize` command to
+   normalize search keywords before a search.
+   By using :doc:`/reference/commands/normalize` command, you don't have
+   to need to think about how to normalize search keywords.
+
    You may feel the behavior is strange. But fast search based on this
    behavior will help you.
 
