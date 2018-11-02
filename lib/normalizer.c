@@ -634,6 +634,56 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
   data->e = (unsigned char *)(data->string->original) + data->size;
 }
 
+grn_inline static void
+grn_nfkc_normalize_expand(grn_ctx *ctx,
+                          grn_nfkc_normalize_data *data)
+{
+  unsigned char *normalized;
+  data->ds += (data->ds >> 1) + data->lp;
+  normalized = GRN_REALLOC(data->string->normalized, data->ds + 1);
+  if (!normalized) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[normalize][nfkc] failed to expand normalized text space");
+    return;
+  }
+  data->de = normalized + data->ds;
+  data->d =
+    normalized + (data->d - (unsigned char *)(data->string->normalized));
+  data->string->normalized = (char *)normalized;
+  if (data->ch) {
+    int16_t *checks;
+    if (!(checks = GRN_REALLOC(data->string->checks,
+                               data->ds * sizeof(int16_t) + 1))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalize][nfkc] failed to expand checks space");
+      return;
+    }
+    data->ch = checks + (data->ch - data->string->checks);
+    data->string->checks = checks;
+  }
+  if (data->cp) {
+    uint_least8_t *ctypes;
+    if (!(ctypes = GRN_REALLOC(data->string->ctypes, data->ds + 1))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalize][nfkc] failed to expand character types space");
+      return;
+    }
+    data->cp = ctypes + (data->cp - data->string->ctypes);
+    data->string->ctypes = ctypes;
+  }
+  if (data->offsets) {
+    uint64_t *new_offsets;
+    if (!(new_offsets = GRN_REALLOC(data->string->offsets,
+                                    sizeof(uint64_t) * (data->ds + 1)))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalize][nfkc] failed to expand offsets space");
+      return;
+    }
+    data->offsets = new_offsets + (data->offsets - data->string->offsets);
+    data->string->offsets = new_offsets;
+  }
+}
+
 grn_inline static const unsigned char *
 grn_nfkc_normalize_unify_kana(const unsigned char *utf8_char,
                               unsigned char *unified)
@@ -1124,49 +1174,9 @@ grn_nfkc_normalize(grn_ctx *ctx,
         char_type = data.options->char_type_func(data.p);
 
         if (data.de <= data.d + data.lp) {
-          unsigned char *normalized;
-          data.ds += (data.ds >> 1) + data.lp;
-          normalized = GRN_REALLOC(data.string->normalized, data.ds + 1);
-          if (!normalized) {
-            ERR(GRN_NO_MEMORY_AVAILABLE,
-                "[normalize][nfkc] failed to expand normalized text space");
+          grn_nfkc_normalize_expand(ctx, &data);
+          if (ctx->rc != GRN_SUCCESS) {
             goto exit;
-          }
-          data.de = normalized + data.ds;
-          data.d =
-            normalized + (data.d - (unsigned char *)(data.string->normalized));
-          data.string->normalized = (char *)normalized;
-          if (data.ch) {
-            int16_t *checks;
-            if (!(checks = GRN_REALLOC(data.string->checks,
-                                       data.ds * sizeof(int16_t) + 1))) {
-              ERR(GRN_NO_MEMORY_AVAILABLE,
-                  "[normalize][nfkc] failed to expand checks space");
-              goto exit;
-            }
-            data.ch = checks + (data.ch - data.string->checks);
-            data.string->checks = checks;
-          }
-          if (data.cp) {
-            uint_least8_t *ctypes;
-            if (!(ctypes = GRN_REALLOC(data.string->ctypes, data.ds + 1))) {
-              ERR(GRN_NO_MEMORY_AVAILABLE,
-                  "[normalize][nfkc] failed to expand character types space");
-              goto exit;
-            }
-            data.cp = ctypes + (data.cp - data.string->ctypes);
-            data.string->ctypes = ctypes;
-          }
-          if (data.offsets) {
-            uint64_t *new_offsets;
-            if (!(new_offsets = GRN_REALLOC(data.string->offsets,
-                                            sizeof(uint64_t) * (data.ds + 1)))) {
-              ERR(GRN_NO_MEMORY_AVAILABLE,
-                  "[normalize][nfkc] failed to expand offsets space");
-              goto exit;
-            }
-            data.offsets = new_offsets + (data.offsets - data.string->offsets);
-            data.string->offsets = new_offsets;
           }
         }
 
