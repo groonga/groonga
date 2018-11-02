@@ -457,6 +457,8 @@ grn_table_apply_window_function(grn_ctx *ctx,
     }
     grn_window_fin(ctx, &window);
 
+    grn_obj_close(ctx, sorted);
+
     GRN_FREE(sort_keys);
   }
 
