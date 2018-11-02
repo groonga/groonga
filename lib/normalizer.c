@@ -584,56 +584,6 @@ typedef struct {
   grn_bool remove_tokenized_delimiter_p;
 } grn_nfkc_normalize_data;
 
-static grn_inline int
-grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char *end)
-{
-  /* MEMO: This function allows non-null-terminated string as str. */
-  /*       But requires the end of string. */
-  const unsigned char *p = str;
-  if (end <= p || !*p) { return 0; }
-  if (*p & 0x80) {
-    int b, w;
-    int size;
-    int i;
-    for (b = 0x40, w = 0; b && (*p & b); b >>= 1, w++);
-    if (!w) {
-      GRN_LOG(ctx, GRN_LOG_WARNING,
-              "invalid utf8 string: the first bit is 0x80: <%.*s>: <%.*s>",
-              (int)(end - p), p,
-              (int)(end - str), str);
-      return 0;
-    }
-    size = w + 1;
-    for (i = 1; i < size; i++) {
-      if (++p >= end) {
-        GRN_LOG(ctx, GRN_LOG_WARNING,
-                "invalid utf8 string: too short: "
-                "%d byte is required but %d byte is given: <%.*s>",
-                size, i,
-                (int)(end - str), str);
-        return 0;
-      }
-      if (!*p) {
-        GRN_LOG(ctx, GRN_LOG_WARNING,
-                "invalid utf8 string: NULL character is found: <%.*s>",
-                (int)(end - str), str);
-        return 0;
-      }
-      if ((*p & 0xc0) != 0x80) {
-        GRN_LOG(ctx, GRN_LOG_WARNING,
-                "invalid utf8 string: 0x80 is not allowed: <%.*s>: <%.*s>",
-                (int)(end - p), p,
-                (int)(end - str), str);
-        return 0;
-      }
-    }
-    return size;
-  } else {
-    return 1;
-  }
-  return 0;
-}
-
 grn_inline static const unsigned char *
 grn_nfkc_normalize_unify_kana(const unsigned char *utf8_char,
                               unsigned char *unified)
@@ -1111,7 +1061,7 @@ grn_nfkc_normalize(grn_ctx *ctx,
   for (data.s = data.s_ = (unsigned char *)(data.string->original);
        ;
        data.s += data.ls) {
-    if (!(data.ls = grn_str_charlen_utf8(ctx, data.s, data.e))) {
+    if (!(data.ls = grn_charlen_(ctx, data.s, data.e, GRN_ENC_UTF8))) {
       break;
     }
     if (data.remove_tokenized_delimiter_p &&
@@ -1145,7 +1095,7 @@ grn_nfkc_normalize(grn_ctx *ctx,
       data.length--;
     }
     for (; ; data.p += data.lp) {
-      if (!(data.lp = grn_str_charlen_utf8(ctx, data.p, data.pe))) {
+      if (!(data.lp = grn_charlen_(ctx, data.p, data.pe, GRN_ENC_UTF8))) {
         break;
       }
       if ((*(data.p) == ' ' && data.remove_blank_p) ||
