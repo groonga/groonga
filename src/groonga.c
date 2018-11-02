@@ -3742,7 +3742,7 @@ main(int argc, char **argv)
     input_reader = grn_file_reader_open(&grn_gctx, input_path);
     if (!input_reader) {
       fprintf(stderr, "can't open input file: <%s>: %s\n",
-              input_path, ctx->errbuf);
+              input_path, grn_gctx.errbuf);
       return EXIT_FAILURE;
     }
     batchmode = GRN_TRUE;
