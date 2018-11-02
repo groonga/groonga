@@ -559,6 +559,31 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
 }
 
 #ifdef GRN_WITH_NFKC
+typedef struct {
+  grn_string *string;
+  grn_nfkc_normalize_options *options;
+  int16_t *ch;
+  const unsigned char *s;
+  const unsigned char *s_;
+  const unsigned char *s__;
+  const unsigned char *p;
+  const unsigned char *p2;
+  const unsigned char *pe;
+  const unsigned char *e;
+  unsigned char *d;
+  unsigned char *d_;
+  unsigned char *de;
+  uint_least8_t *cp;
+  uint64_t *offsets;
+  size_t length;
+  size_t ls;
+  size_t lp;
+  size_t size;
+  size_t ds;
+  grn_bool remove_blank_p;
+  grn_bool remove_tokenized_delimiter_p;
+} grn_nfkc_normalize_data;
+
 static grn_inline int
 grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char *end)
 {
@@ -1040,142 +1065,149 @@ grn_nfkc_normalize(grn_ctx *ctx,
                    grn_obj *string,
                    grn_nfkc_normalize_options *options)
 {
-  grn_string *string_ = (grn_string *)string;
-  int16_t *ch;
-  const unsigned char *s, *s_, *s__ = NULL, *p, *p2, *pe, *e;
-  unsigned char *d, *d_, *de;
-  uint_least8_t *cp;
-  uint64_t *offsets;
-  size_t length = 0, ls, lp;
-  size_t size = string_->original_length_in_bytes, ds = size * 3;
-  int removeblankp = string_->flags & GRN_STRING_REMOVE_BLANK;
-  grn_bool remove_tokenized_delimiter_p =
-    string_->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
-  if (!(string_->normalized = GRN_MALLOC(ds + 1))) {
+  grn_nfkc_normalize_data data;
+
+  memset(&data, 0, sizeof(grn_nfkc_normalize_data));
+  data.string = (grn_string *)string;
+  data.options = options;
+  data.size = data.string->original_length_in_bytes;
+  data.ds = data.size * 3;
+  data.remove_blank_p = (data.string->flags & GRN_STRING_REMOVE_BLANK);
+  data.remove_tokenized_delimiter_p =
+    (data.string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
+  if (!(data.string->normalized = GRN_MALLOC(data.ds + 1))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[normalize][nfkc] failed to allocate normalized text space");
     goto exit;
   }
-  if (string_->flags & GRN_STRING_WITH_CHECKS) {
-    if (!(string_->checks = GRN_MALLOC(ds * sizeof(int16_t) + 1))) {
+  if (data.string->flags & GRN_STRING_WITH_CHECKS) {
+    if (!(data.string->checks = GRN_MALLOC(data.ds * sizeof(int16_t) + 1))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[normalize][nfkc] failed to allocate checks space");
       goto exit;
     }
   }
-  ch = string_->checks;
-  if (string_->flags & GRN_STRING_WITH_TYPES) {
-    if (!(string_->ctypes = GRN_MALLOC(ds + 1))) {
+  data.ch = data.string->checks;
+  if (data.string->flags & GRN_STRING_WITH_TYPES) {
+    if (!(data.string->ctypes = GRN_MALLOC(data.ds + 1))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[normalize][nfkc] failed to allocate character types space");
       goto exit;
     }
   }
-  cp = string_->ctypes;
-  if (options->report_source_offset) {
-    if (!(string_->offsets = GRN_MALLOC(sizeof(uint64_t) * (ds + 1)))) {
+  data.cp = data.string->ctypes;
+  if (data.options->report_source_offset) {
+    if (!(data.string->offsets = GRN_MALLOC(sizeof(uint64_t) * (data.ds + 1)))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[normalize][nfkc] failed to allocate offsets space");
       goto exit;
     }
   }
-  offsets = string_->offsets;
-  d = (unsigned char *)string_->normalized;
-  de = d + ds;
-  d_ = NULL;
-  e = (unsigned char *)string_->original + size;
-  for (s = s_ = (unsigned char *)string_->original; ; s += ls) {
-    if (!(ls = grn_str_charlen_utf8(ctx, s, e))) {
+  data.offsets = data.string->offsets;
+  data.d = (unsigned char *)(data.string->normalized);
+  data.de = data.d + data.ds;
+  data.d_ = NULL;
+  data.e = (unsigned char *)(data.string->original) + data.size;
+  for (data.s = data.s_ = (unsigned char *)(data.string->original);
+       ;
+       data.s += data.ls) {
+    if (!(data.ls = grn_str_charlen_utf8(ctx, data.s, data.e))) {
       break;
     }
-    if (remove_tokenized_delimiter_p &&
-        grn_tokenizer_is_tokenized_delimiter(ctx, (const char *)s, ls,
+    if (data.remove_tokenized_delimiter_p &&
+        grn_tokenizer_is_tokenized_delimiter(ctx,
+                                             (const char *)(data.s),
+                                             data.ls,
                                              GRN_ENC_UTF8)) {
       continue;
     }
-    if ((p = (unsigned char *)options->decompose_func(s))) {
-      pe = p + strlen((char *)p);
+    if ((data.p = (unsigned char *)data.options->decompose_func(data.s))) {
+      data.pe = data.p + strlen((char *)data.p);
     } else {
-      p = s;
-      pe = p + ls;
+      data.p = data.s;
+      data.pe = data.p + data.ls;
     }
-    if (d_ && (p2 = (unsigned char *)options->compose_func(d_, p))) {
-      p = p2;
-      pe = p + strlen((char *)p);
-      if (cp) { cp--; }
-      if (ch) {
-        ch -= (d - d_);
-        if (ch[0] >= 0) {
-          s_ = s__;
+    if (data.d_ &&
+        (data.p2 = (unsigned char *)options->compose_func(data.d_, data.p))) {
+      data.p = data.p2;
+      data.pe = data.p + strlen((char *)(data.p));
+      if (data.cp) { data.cp--; }
+      if (data.ch) {
+        data.ch -= (data.d - data.d_);
+        if (data.ch[0] >= 0) {
+          data.s_ = data.s__;
         }
       }
-      if (offsets) {
-        offsets--;
+      if (data.offsets) {
+        data.offsets--;
       }
-      d = d_;
-      length--;
+      data.d = data.d_;
+      data.length--;
     }
-    for (; ; p += lp) {
-      if (!(lp = grn_str_charlen_utf8(ctx, p, pe))) {
+    for (; ; data.p += data.lp) {
+      if (!(data.lp = grn_str_charlen_utf8(ctx, data.p, data.pe))) {
         break;
       }
-      if ((*p == ' ' && removeblankp) || *p < 0x20  /* skip unprintable ascii */ ) {
-        if (cp > string_->ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
-        if (!options->include_removed_source_location) {
-          s_ += lp;
+      if ((*(data.p) == ' ' && data.remove_blank_p) ||
+          *(data.p) < 0x20 /* skip unprintable ascii */) {
+        if (data.cp > data.string->ctypes) { *(data.cp - 1) |= GRN_CHAR_BLANK; }
+        if (!data.options->include_removed_source_location) {
+          data.s_ += data.lp;
         }
       } else {
-        size_t lp_original = lp;
+        size_t lp_original = data.lp;
         grn_char_type char_type;
-        char_type = options->char_type_func(p);
+        char_type = data.options->char_type_func(data.p);
 
-        if (de <= d + lp) {
+        if (data.de <= data.d + data.lp) {
           unsigned char *normalized;
-          ds += (ds >> 1) + lp;
-          if (!(normalized = GRN_REALLOC(string_->normalized, ds + 1))) {
+          data.ds += (data.ds >> 1) + data.lp;
+          normalized = GRN_REALLOC(data.string->normalized, data.ds + 1);
+          if (!normalized) {
             ERR(GRN_NO_MEMORY_AVAILABLE,
                 "[normalize][nfkc] failed to expand normalized text space");
             goto exit;
           }
-          de = normalized + ds;
-          d = normalized + (d - (unsigned char *)string_->normalized);
-          string_->normalized = (char *)normalized;
-          if (ch) {
+          data.de = normalized + data.ds;
+          data.d =
+            normalized + (data.d - (unsigned char *)(data.string->normalized));
+          data.string->normalized = (char *)normalized;
+          if (data.ch) {
             int16_t *checks;
-            if (!(checks = GRN_REALLOC(string_->checks,
-                                       ds * sizeof(int16_t) + 1))) {
+            if (!(checks = GRN_REALLOC(data.string->checks,
+                                       data.ds * sizeof(int16_t) + 1))) {
               ERR(GRN_NO_MEMORY_AVAILABLE,
                   "[normalize][nfkc] failed to expand checks space");
               goto exit;
             }
-            ch = checks + (ch - string_->checks);
-            string_->checks = checks;
+            data.ch = checks + (data.ch - data.string->checks);
+            data.string->checks = checks;
           }
-          if (cp) {
+          if (data.cp) {
             uint_least8_t *ctypes;
-            if (!(ctypes = GRN_REALLOC(string_->ctypes, ds + 1))) {
+            if (!(ctypes = GRN_REALLOC(data.string->ctypes, data.ds + 1))) {
               ERR(GRN_NO_MEMORY_AVAILABLE,
                   "[normalize][nfkc] failed to expand character types space");
               goto exit;
             }
-            cp = ctypes + (cp - string_->ctypes);
-            string_->ctypes = ctypes;
+            data.cp = ctypes + (data.cp - data.string->ctypes);
+            data.string->ctypes = ctypes;
           }
-          if (offsets) {
+          if (data.offsets) {
             uint64_t *new_offsets;
-            if (!(new_offsets = GRN_REALLOC(string_->offsets,
-                                            sizeof(uint64_t) * (ds + 1)))) {
+            if (!(new_offsets = GRN_REALLOC(data.string->offsets,
+                                            sizeof(uint64_t) * (data.ds + 1)))) {
               ERR(GRN_NO_MEMORY_AVAILABLE,
                   "[normalize][nfkc] failed to expand offsets space");
               goto exit;
             }
-            offsets = new_offsets + (offsets - string_->offsets);
-            string_->offsets = new_offsets;
+            data.offsets = new_offsets + (data.offsets - data.string->offsets);
+            data.string->offsets = new_offsets;
           }
         }
 
         {
-          const unsigned char *p_original = p;
+          const unsigned char *p_original = data.p;
           unsigned char unified_kana[3];
           unsigned char unified_kana_case[3];
           unsigned char unified_kana_voiced_sound_mark[3];
@@ -1186,25 +1218,27 @@ grn_nfkc_normalize(grn_ctx *ctx,
           /* U+00B7 MIDDLE DOT */
           const unsigned char unified_middle_dot[] = {0xc2, 0xb7};
 
-          if (options->unify_kana &&
+          if (data.options->unify_kana &&
               char_type == GRN_CHAR_KATAKANA &&
-              lp == 3) {
-            p = grn_nfkc_normalize_unify_kana(p, unified_kana);
-            if (p == unified_kana) {
+              data.lp == 3) {
+            data.p = grn_nfkc_normalize_unify_kana(data.p, unified_kana);
+            if (data.p == unified_kana) {
               char_type = GRN_CHAR_HIRAGANA;
             }
           }
 
-          if (options->unify_kana_case) {
+          if (data.options->unify_kana_case) {
             switch (char_type) {
             case GRN_CHAR_HIRAGANA :
-              if (lp == 3) {
-                p = grn_nfkc_normalize_unify_hiragana_case(p, unified_kana_case);
+              if (data.lp == 3) {
+                data.p = grn_nfkc_normalize_unify_hiragana_case(
+                  data.p, unified_kana_case);
               }
               break;
             case GRN_CHAR_KATAKANA :
-              if (lp == 3) {
-                p = grn_nfkc_normalize_unify_katakana_case(p, unified_kana_case);
+              if (data.lp == 3) {
+                data.p = grn_nfkc_normalize_unify_katakana_case(
+                  data.p, unified_kana_case);
               }
               break;
             default :
@@ -1212,18 +1246,18 @@ grn_nfkc_normalize(grn_ctx *ctx,
             }
           }
 
-          if (options->unify_kana_voiced_sound_mark) {
+          if (data.options->unify_kana_voiced_sound_mark) {
             switch (char_type) {
             case GRN_CHAR_HIRAGANA :
-              if (lp == 3) {
-                p = grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
-                  p, unified_kana_voiced_sound_mark);
+              if (data.lp == 3) {
+                data.p = grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
+                  data.p, unified_kana_voiced_sound_mark);
               }
               break;
             case GRN_CHAR_KATAKANA :
-              if (lp == 3) {
-                p = grn_nfkc_normalize_unify_katakana_voiced_sound_mark(
-                  p, unified_kana_voiced_sound_mark);
+              if (data.lp == 3) {
+                data.p = grn_nfkc_normalize_unify_katakana_voiced_sound_mark(
+                  data.p, unified_kana_voiced_sound_mark);
               }
               break;
             default :
@@ -1231,106 +1265,108 @@ grn_nfkc_normalize(grn_ctx *ctx,
             }
           }
 
-          if (options->unify_hyphen) {
-            if (grn_nfkc_normalize_is_hyphen_famity(p, lp)) {
-              p = unified_hyphen;
-              lp = sizeof(unified_hyphen);
+          if (data.options->unify_hyphen) {
+            if (grn_nfkc_normalize_is_hyphen_famity(data.p, data.lp)) {
+              data.p = unified_hyphen;
+              data.lp = sizeof(unified_hyphen);
               char_type = GRN_CHAR_SYMBOL;
             }
           }
 
-          if (options->unify_prolonged_sound_mark) {
-            if (grn_nfkc_normalize_is_prolonged_sound_mark_famity(p, lp)) {
-              p = unified_prolonged_sound_mark;
-              lp = sizeof(unified_prolonged_sound_mark);
+          if (data.options->unify_prolonged_sound_mark) {
+            if (grn_nfkc_normalize_is_prolonged_sound_mark_famity(data.p, data.lp)) {
+              data.p = unified_prolonged_sound_mark;
+              data.lp = sizeof(unified_prolonged_sound_mark);
               char_type = GRN_CHAR_KATAKANA;
             }
           }
 
           if (options->unify_hyphen_and_prolonged_sound_mark) {
-            if (grn_nfkc_normalize_is_hyphen_famity(p, lp) ||
-                grn_nfkc_normalize_is_prolonged_sound_mark_famity(p, lp)) {
-              p = unified_hyphen;
-              lp = sizeof(unified_hyphen);
+            if (grn_nfkc_normalize_is_hyphen_famity(data.p, data.lp) ||
+                grn_nfkc_normalize_is_prolonged_sound_mark_famity(data.p, data.lp)) {
+              data.p = unified_hyphen;
+              data.lp = sizeof(unified_hyphen);
               char_type = GRN_CHAR_SYMBOL;
             }
           }
 
-          if (options->unify_middle_dot) {
-            if (grn_nfkc_normalize_is_middle_dot_family(p, lp)) {
-              p = unified_middle_dot;
-              lp = sizeof(unified_middle_dot);
+          if (data.options->unify_middle_dot) {
+            if (grn_nfkc_normalize_is_middle_dot_family(data.p, data.lp)) {
+              data.p = unified_middle_dot;
+              data.lp = sizeof(unified_middle_dot);
               char_type = GRN_CHAR_SYMBOL;
             }
           }
 
-          if (options->unify_katakana_v_sounds) {
-            if (grn_nfkc_normalize_unify_katakana_v_sounds(p, lp, d_, d)) {
-              lp = 0;
+          if (data.options->unify_katakana_v_sounds) {
+            if (grn_nfkc_normalize_unify_katakana_v_sounds(data.p, data.lp, data.d_, data.d)) {
+              data.lp = 0;
             }
           }
 
-          if (options->unify_katakana_bu_sound) {
-            if (grn_nfkc_normalize_unify_katakana_bu_sound(p, lp, d_, d)) {
-              lp = 0;
+          if (data.options->unify_katakana_bu_sound) {
+            if (grn_nfkc_normalize_unify_katakana_bu_sound(data.p, data.lp, data.d_, data.d)) {
+              data.lp = 0;
             }
           }
 
-          grn_memcpy(d, p, lp);
-          p = p_original;
+          grn_memcpy(data.d, data.p, data.lp);
+          data.p = p_original;
         }
-        d_ = d;
-        if (lp > 0) {
-          d += lp;
-          length++;
-          if (cp) { *cp++ = char_type; }
-          if (ch) {
+        data.d_ = data.d;
+        if (data.lp > 0) {
+          data.d += data.lp;
+          data.length++;
+          if (data.cp) { *(data.cp++) = char_type; }
+          if (data.ch) {
             size_t i;
-            if (s_ == s + ls) {
-              *ch++ = -1;
+            if (data.s_ == data.s + data.ls) {
+              *(data.ch++) = -1;
             } else {
-              *ch++ = (int16_t)(s + ls - s_);
-              s__ = s_;
-              s_ = s + ls;
+              *(data.ch++) = (int16_t)(data.s + data.ls - data.s_);
+              data.s__ = data.s_;
+              data.s_ = data.s + data.ls;
             }
-            for (i = lp; i > 1; i--) { *ch++ = 0; }
+            for (i = data.lp; i > 1; i--) { *(data.ch++) = 0; }
           }
-          if (offsets) {
-            *offsets++ = (uint64_t)(s - (const unsigned char *)string_->original);
+          if (data.offsets) {
+            *(data.offsets++) =
+              (uint64_t)(data.s - (const unsigned char *)(data.string->original));
           }
         }
-        lp = lp_original;
+        data.lp = lp_original;
       }
     }
   }
-  if (cp) { *cp = GRN_CHAR_NULL; }
-  if (offsets) { *offsets = string_->original_length_in_bytes; }
-  if (options->unify_katakana_v_sounds) {
-    grn_nfkc_normalize_unify_katakana_v_sounds(NULL, 0, d_, d);
+  if (data.cp) { *(data.cp) = GRN_CHAR_NULL; }
+  if (data.offsets) { *(data.offsets) = data.string->original_length_in_bytes; }
+  if (data.options->unify_katakana_v_sounds) {
+    grn_nfkc_normalize_unify_katakana_v_sounds(NULL, 0, data.d_, data.d);
   }
-  if (options->unify_katakana_bu_sound) {
-    grn_nfkc_normalize_unify_katakana_bu_sound(NULL, 0, d_, d);
+  if (data.options->unify_katakana_bu_sound) {
+    grn_nfkc_normalize_unify_katakana_bu_sound(NULL, 0, data.d_, data.d);
   }
-  *d = '\0';
-  string_->n_characters = length;
-  string_->normalized_length_in_bytes = (size_t)(d - (unsigned char *)string_->normalized);
+  *(data.d) = '\0';
+  data.string->n_characters = data.length;
+  data.string->normalized_length_in_bytes =
+    (size_t)(data.d - (unsigned char *)(data.string->normalized));
 exit:
   if (ctx->rc != GRN_SUCCESS) {
-    if (string_->normalized) {
-      GRN_FREE(string_->normalized);
-      string_->normalized = NULL;
+    if (data.string->normalized) {
+      GRN_FREE(data.string->normalized);
+      data.string->normalized = NULL;
     }
-    if (string_->checks) {
-      GRN_FREE(string_->checks);
-      string_->checks = NULL;
+    if (data.string->checks) {
+      GRN_FREE(data.string->checks);
+      data.string->checks = NULL;
     }
-    if (string_->ctypes) {
-      GRN_FREE(string_->ctypes);
-      string_->ctypes = NULL;
+    if (data.string->ctypes) {
+      GRN_FREE(data.string->ctypes);
+      data.string->ctypes = NULL;
     }
-    if (string_->offsets) {
-      GRN_FREE(string_->offsets);
-      string_->offsets = NULL;
+    if (data.string->offsets) {
+      GRN_FREE(data.string->offsets);
+      data.string->offsets = NULL;
     }
   }
   return ctx->rc;
