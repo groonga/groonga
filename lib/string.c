@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -255,7 +256,7 @@ grn_string_open_(grn_ctx *ctx,
         is_normalizer_auto = (lexicon_or_normalizer == GRN_NORMALIZER_AUTO);
         if (is_normalizer_auto) {
           normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-          if (!lexicon_or_normalizer) {
+          if (!normalizer) {
             grn_obj_close(ctx, string);
             ERR(GRN_INVALID_ARGUMENT,
                 "[string][open] NormalizerAuto normalizer isn't available");
