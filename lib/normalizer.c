@@ -584,6 +584,56 @@ typedef struct {
   grn_bool remove_tokenized_delimiter_p;
 } grn_nfkc_normalize_data;
 
+grn_inline static void
+grn_nfkc_normalize_data_init(grn_ctx *ctx,
+                             grn_nfkc_normalize_data *data,
+                             grn_obj *string,
+                             grn_nfkc_normalize_options *options)
+{
+  memset(data, 0, sizeof(grn_nfkc_normalize_data));
+  data->string = (grn_string *)string;
+  data->options = options;
+  data->size = data->string->original_length_in_bytes;
+  data->ds = data->size * 3;
+  data->remove_blank_p = (data->string->flags & GRN_STRING_REMOVE_BLANK);
+  data->remove_tokenized_delimiter_p =
+    (data->string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
+  if (!(data->string->normalized = GRN_MALLOC(data->ds + 1))) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[normalize][nfkc] failed to allocate normalized text space");
+    return;
+  }
+  if (data->string->flags & GRN_STRING_WITH_CHECKS) {
+    if (!(data->string->checks = GRN_MALLOC(data->ds * sizeof(int16_t) + 1))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalize][nfkc] failed to allocate checks space");
+      return;
+    }
+  }
+  data->ch = data->string->checks;
+  if (data->string->flags & GRN_STRING_WITH_TYPES) {
+    if (!(data->string->ctypes = GRN_MALLOC(data->ds + 1))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalize][nfkc] failed to allocate character types space");
+      return;
+    }
+  }
+  data->cp = data->string->ctypes;
+  if (data->options->report_source_offset) {
+    data->string->offsets = GRN_MALLOC(sizeof(uint64_t) * (data->ds + 1));
+    if (!data->string->offsets) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalize][nfkc] failed to allocate offsets space");
+      return;
+    }
+  }
+  data->offsets = data->string->offsets;
+  data->d = (unsigned char *)(data->string->normalized);
+  data->de = data->d + data->ds;
+  data->d_ = NULL;
+  data->e = (unsigned char *)(data->string->original) + data->size;
+}
+
 grn_inline static const unsigned char *
 grn_nfkc_normalize_unify_kana(const unsigned char *utf8_char,
                               unsigned char *unified)
@@ -1017,47 +1067,11 @@ grn_nfkc_normalize(grn_ctx *ctx,
 {
   grn_nfkc_normalize_data data;
 
-  memset(&data, 0, sizeof(grn_nfkc_normalize_data));
-  data.string = (grn_string *)string;
-  data.options = options;
-  data.size = data.string->original_length_in_bytes;
-  data.ds = data.size * 3;
-  data.remove_blank_p = (data.string->flags & GRN_STRING_REMOVE_BLANK);
-  data.remove_tokenized_delimiter_p =
-    (data.string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
-  if (!(data.string->normalized = GRN_MALLOC(data.ds + 1))) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[normalize][nfkc] failed to allocate normalized text space");
+  grn_nfkc_normalize_data_init(ctx, &data, string, options);
+  if (ctx->rc != GRN_SUCCESS) {
     goto exit;
   }
-  if (data.string->flags & GRN_STRING_WITH_CHECKS) {
-    if (!(data.string->checks = GRN_MALLOC(data.ds * sizeof(int16_t) + 1))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[normalize][nfkc] failed to allocate checks space");
-      goto exit;
-    }
-  }
-  data.ch = data.string->checks;
-  if (data.string->flags & GRN_STRING_WITH_TYPES) {
-    if (!(data.string->ctypes = GRN_MALLOC(data.ds + 1))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[normalize][nfkc] failed to allocate character types space");
-      goto exit;
-    }
-  }
-  data.cp = data.string->ctypes;
-  if (data.options->report_source_offset) {
-    if (!(data.string->offsets = GRN_MALLOC(sizeof(uint64_t) * (data.ds + 1)))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[normalize][nfkc] failed to allocate offsets space");
-      goto exit;
-    }
-  }
-  data.offsets = data.string->offsets;
-  data.d = (unsigned char *)(data.string->normalized);
-  data.de = data.d + data.ds;
-  data.d_ = NULL;
-  data.e = (unsigned char *)(data.string->original) + data.size;
+
   for (data.s = data.s_ = (unsigned char *)(data.string->original);
        ;
        data.s += data.ls) {
