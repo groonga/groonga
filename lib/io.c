@@ -1631,6 +1631,11 @@ grn_munmap_v1(grn_ctx *ctx, grn_ctx *owner_ctx, HANDLE *fmo, fileinfo *fi,
   }
 
   if (*fmo) {
+    if (!FlushViewOfFile(start, length)) {
+      SERR("FlushViewOfFile(<%p>, <%" GRN_FMT_SIZE ">) failed on unmap",
+           start, length);
+      r = -1;
+    }
     if (UnmapViewOfFile(start)) {
       mmap_size -= length;
     } else {
@@ -1722,14 +1727,21 @@ grn_inline static int
 grn_munmap_v0(grn_ctx *ctx, grn_ctx *owner_ctx, fileinfo *fi, void *start,
               size_t length)
 {
+  int r = 0;
+
   if (!fi) {
     GRN_FREE(start);
     return 0;
   }
 
+  if (!FlushViewOfFile(start, length)) {
+    SERR("FlushViewOfFile(<%p>, <%" GRN_FMT_SIZE ">) failed on unmap",
+         start, length);
+    r = -1;
+  }
   if (UnmapViewOfFile(start)) {
     mmap_size -= length;
-    return 0;
+    return r;
   } else {
     SERR("UnmapViewOfFile(%p,%" GRN_FMT_SIZE ") failed <%" GRN_FMT_SIZE ">",
          start, length, mmap_size);
@@ -1977,7 +1989,7 @@ grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 
   succeeded = FlushViewOfFile(start, length);
   if (!succeeded) {
-    SERR("FlushViewOfFile(<%p>, <%" GRN_FMT_SIZE ">) failed",
+    SERR("FlushViewOfFile(<%p>, <%" GRN_FMT_SIZE ">) failed on sync",
          start, length);
     return -1;
   }
