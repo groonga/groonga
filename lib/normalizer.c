@@ -1134,7 +1134,6 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
   const unsigned char *current = data->string->normalized;
   const unsigned char *end = data->d;
   size_t i_byte;
-  size_t n_bytes = end - current;
   size_t i_character;
   unsigned char *unified = NULL;
   unsigned char *unified_end = NULL;
@@ -1147,7 +1146,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
   uint64_t *unified_offsets = NULL;
   uint64_t *unified_offsets_current = NULL;
   unsigned int unified_n_characters = 0;
-  size_t unified_data_size = n_bytes;
+  size_t unified_data_size = data->ds;
 
   if (!(data->options->unify_kana ||
         data->options->unify_kana_case ||
