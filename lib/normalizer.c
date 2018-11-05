@@ -573,7 +573,7 @@ typedef struct {
   unsigned char *d;
   unsigned char *d_;
   unsigned char *de;
-  uint_least8_t *cp;
+  uint8_t *cp;
   uint64_t *offsets;
   size_t length;
   size_t ls;
@@ -678,7 +678,7 @@ grn_nfkc_normalize_expand(grn_ctx *ctx,
     data->string->checks = checks;
   }
   if (data->cp) {
-    uint_least8_t *ctypes;
+    uint8_t *ctypes;
     if (!(ctypes = GRN_REALLOC(data->string->ctypes, data->ds + 1))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[normalize][nfkc] failed to expand character types space");
@@ -1126,104 +1126,269 @@ grn_nfkc_normalize_unify_katakana_bu_sound(const unsigned char *utf8_char,
   return GRN_FALSE;
 }
 
-grn_inline static grn_char_type
+static void
 grn_nfkc_normalize_unify(grn_ctx *ctx,
-                         grn_nfkc_normalize_data *data,
-                         grn_char_type char_type)
+                         grn_nfkc_normalize_data *data)
 {
-  if (data->options->unify_kana &&
-      char_type == GRN_CHAR_KATAKANA &&
-      data->lp == 3) {
-    data->p = grn_nfkc_normalize_unify_kana(data->p, data->unified_kana);
-    if (data->p == data->unified_kana) {
-      char_type = GRN_CHAR_HIRAGANA;
-    }
+  const unsigned char *current = data->string->normalized;
+  const unsigned char *end = data->d;
+  size_t i_byte;
+  size_t n_bytes = end - current;
+  size_t i_character;
+  unsigned char *unified = NULL;
+  unsigned char *unified_end = NULL;
+  unsigned char *unified_previous = NULL;
+  unsigned char *unified_current;
+  uint8_t *unified_char_types = NULL;
+  uint8_t *unified_char_types_current = NULL;
+  int16_t *unified_checks = NULL;
+  int16_t *unified_checks_current = NULL;
+  uint64_t *unified_offsets = NULL;
+  uint64_t *unified_offsets_current = NULL;
+  unsigned int unified_n_characters = 0;
+  size_t unified_data_size = n_bytes;
+
+  if (!(data->options->unify_kana ||
+        data->options->unify_kana_case ||
+        data->options->unify_kana_voiced_sound_mark ||
+        data->options->unify_hyphen ||
+        data->options->unify_prolonged_sound_mark ||
+        data->options->unify_hyphen_and_prolonged_sound_mark ||
+        data->options->unify_middle_dot ||
+        data->options->unify_katakana_v_sounds ||
+        data->options->unify_katakana_bu_sound ||
+        data->options->unify_hyphen)) {
+    return;
   }
 
-  if (data->options->unify_kana_case) {
-    switch (char_type) {
-    case GRN_CHAR_HIRAGANA :
-      if (data->lp == 3) {
-        data->p = grn_nfkc_normalize_unify_hiragana_case(
-          data->p, data->unified_kana_case);
+  unified = GRN_MALLOC(unified_data_size + 1);
+  if (!unified) {goto exit;}
+  unified_end = unified + unified_data_size;
+  unified_current = unified;
+
+  if (data->ch) {
+    unified_checks = GRN_MALLOC(sizeof(int16_t) * (unified_data_size + 1));
+    if (!unified_checks) {
+      goto exit;
+    }
+    unified_checks_current = unified_checks;
+  }
+  if (data->cp) {
+    unified_char_types = GRN_MALLOC(sizeof(uint8_t) * (unified_data_size + 1));
+    if (!unified_char_types) {
+      goto exit;
+    }
+    unified_char_types_current = unified_char_types;
+  }
+
+  if (data->offsets) {
+    unified_offsets = GRN_MALLOC(sizeof(uint64_t) * (unified_data_size + 1));
+    if (!unified_char_types) {
+      goto exit;
+    }
+    unified_offsets_current = unified_offsets;
+  }
+
+  i_byte = 0;
+  i_character = 0;
+  while (current < end) {
+    const unsigned char *unifying = current;
+    size_t char_length;
+    size_t unified_char_length;
+    grn_char_type char_type;
+    grn_bool skip = GRN_FALSE;
+
+    char_length = grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+    unified_char_length = char_length;
+
+    if (data->cp) {
+      char_type = data->string->ctypes[i_character];
+    } else {
+      char_type = data->options->char_type_func(current);
+    }
+
+    if (data->options->unify_kana &&
+        char_type == GRN_CHAR_KATAKANA &&
+        unified_char_length == 3) {
+      unifying = grn_nfkc_normalize_unify_kana(unifying, data->unified_kana);
+      if (unifying == data->unified_kana) {
+        char_type = GRN_CHAR_HIRAGANA;
       }
-      break;
-    case GRN_CHAR_KATAKANA :
-      if (data->lp == 3) {
-        data->p = grn_nfkc_normalize_unify_katakana_case(
-          data->p, data->unified_kana_case);
+    }
+
+    if (data->options->unify_kana_case) {
+      switch (char_type) {
+      case GRN_CHAR_HIRAGANA :
+        if (unified_char_length == 3) {
+          unifying = grn_nfkc_normalize_unify_hiragana_case(
+            unifying, data->unified_kana_case);
+        }
+        break;
+      case GRN_CHAR_KATAKANA :
+        if (unified_char_length == 3) {
+          unifying = grn_nfkc_normalize_unify_katakana_case(
+            unifying, data->unified_kana_case);
+        }
+        break;
+      default :
+        break;
       }
-      break;
-    default :
-      break;
     }
-  }
 
-  if (data->options->unify_kana_voiced_sound_mark) {
-    switch (char_type) {
-    case GRN_CHAR_HIRAGANA :
-      if (data->lp == 3) {
-        data->p = grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
-          data->p, data->unified_kana_voiced_sound_mark);
+    if (data->options->unify_kana_voiced_sound_mark) {
+      switch (char_type) {
+      case GRN_CHAR_HIRAGANA :
+        if (unified_char_length == 3) {
+          unifying = grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
+            unifying, data->unified_kana_voiced_sound_mark);
+        }
+        break;
+      case GRN_CHAR_KATAKANA :
+        if (unified_char_length == 3) {
+          unifying = grn_nfkc_normalize_unify_katakana_voiced_sound_mark(
+            unifying, data->unified_kana_voiced_sound_mark);
+        }
+        break;
+      default :
+        break;
       }
-      break;
-    case GRN_CHAR_KATAKANA :
-      if (data->lp == 3) {
-        data->p = grn_nfkc_normalize_unify_katakana_voiced_sound_mark(
-          data->p, data->unified_kana_voiced_sound_mark);
+    }
+
+    if (data->options->unify_hyphen) {
+      if (grn_nfkc_normalize_is_hyphen_famity(unifying, unified_char_length)) {
+        unifying = data->unified_hyphen;
+        unified_char_length = sizeof(data->unified_hyphen);
+        char_type = GRN_CHAR_SYMBOL;
       }
-      break;
-    default :
-      break;
     }
-  }
 
-  if (data->options->unify_hyphen) {
-    if (grn_nfkc_normalize_is_hyphen_famity(data->p, data->lp)) {
-      data->p = data->unified_hyphen;
-      data->lp = sizeof(data->unified_hyphen);
-      char_type = GRN_CHAR_SYMBOL;
+    if (data->options->unify_prolonged_sound_mark) {
+      if (grn_nfkc_normalize_is_prolonged_sound_mark_famity(unifying,
+                                                            unified_char_length)) {
+        unifying = data->unified_prolonged_sound_mark;
+        unified_char_length = sizeof(data->unified_prolonged_sound_mark);
+        char_type = GRN_CHAR_KATAKANA;
+      }
     }
-  }
 
-  if (data->options->unify_prolonged_sound_mark) {
-    if (grn_nfkc_normalize_is_prolonged_sound_mark_famity(data->p, data->lp)) {
-      data->p = data->unified_prolonged_sound_mark;
-      data->lp = sizeof(data->unified_prolonged_sound_mark);
-      char_type = GRN_CHAR_KATAKANA;
+    if (data->options->unify_hyphen_and_prolonged_sound_mark) {
+      if (grn_nfkc_normalize_is_hyphen_famity(unifying, unified_char_length) ||
+          grn_nfkc_normalize_is_prolonged_sound_mark_famity(unifying,
+                                                            unified_char_length)) {
+        unifying = data->unified_hyphen;
+        unified_char_length = sizeof(data->unified_hyphen);
+        char_type = GRN_CHAR_SYMBOL;
+      }
     }
-  }
 
-  if (data->options->unify_hyphen_and_prolonged_sound_mark) {
-    if (grn_nfkc_normalize_is_hyphen_famity(data->p, data->lp) ||
-        grn_nfkc_normalize_is_prolonged_sound_mark_famity(data->p, data->lp)) {
-      data->p = data->unified_hyphen;
-      data->lp = sizeof(data->unified_hyphen);
-      char_type = GRN_CHAR_SYMBOL;
+    if (data->options->unify_middle_dot) {
+      if (grn_nfkc_normalize_is_middle_dot_family(unifying,
+                                                  unified_char_length)) {
+        unifying = data->unified_middle_dot;
+        unified_char_length = sizeof(data->unified_middle_dot);
+        char_type = GRN_CHAR_SYMBOL;
+      }
     }
-  }
 
-  if (data->options->unify_middle_dot) {
-    if (grn_nfkc_normalize_is_middle_dot_family(data->p, data->lp)) {
-      data->p = data->unified_middle_dot;
-      data->lp = sizeof(data->unified_middle_dot);
-      char_type = GRN_CHAR_SYMBOL;
+    if (data->options->unify_katakana_v_sounds) {
+      if (grn_nfkc_normalize_unify_katakana_v_sounds(unifying,
+                                                     unified_char_length,
+                                                     unified_previous,
+                                                     unified_current)) {
+        skip = GRN_TRUE;
+      }
     }
-  }
 
+    if (data->options->unify_katakana_bu_sound) {
+      if (grn_nfkc_normalize_unify_katakana_bu_sound(unifying,
+                                                     unified_char_length,
+                                                     unified_previous,
+                                                     unified_current)) {
+        skip = GRN_TRUE;
+      }
+    }
+
+    if (!skip) {
+      if (unified_current + unified_char_length >= unified_end) {
+        /* TODO: Expand automatically. */
+        ERR(GRN_NO_MEMORY_AVAILABLE,
+            "[normalize][nfkc] too large unified data");
+        goto exit;
+      }
+      grn_memcpy(unified_current, unifying, unified_char_length);
+      unified_previous = unified_current;
+      unified_current += unified_char_length;
+      unified_n_characters++;
+      if (unified_char_types_current) {
+        *(unified_char_types_current++) = char_type;
+      }
+      if (unified_checks_current) {
+        size_t i;
+        *(unified_checks_current++) = data->string->checks[i_byte];
+        for (i = 1; i < unified_char_length; i++) {
+          *(unified_checks_current++) = 0;
+        }
+      }
+      if (unified_offsets_current) {
+        *(unified_offsets_current++) = data->string->offsets[i_character];
+      }
+    }
+
+    i_byte += char_length;
+    current += char_length;
+    i_character++;
+  }
   if (data->options->unify_katakana_v_sounds) {
-    if (grn_nfkc_normalize_unify_katakana_v_sounds(data->p, data->lp, data->d_, data->d)) {
-      data->lp = 0;
-    }
+    grn_nfkc_normalize_unify_katakana_v_sounds(NULL,
+                                               0,
+                                               unified_previous,
+                                               unified_current);
   }
-
   if (data->options->unify_katakana_bu_sound) {
-    if (grn_nfkc_normalize_unify_katakana_bu_sound(data->p, data->lp, data->d_, data->d)) {
-      data->lp = 0;
-    }
+    grn_nfkc_normalize_unify_katakana_bu_sound(NULL,
+                                               0,
+                                               unified_previous,
+                                               unified_current);
   }
 
-  return char_type;
+  GRN_FREE(data->string->normalized);
+  if (data->string->checks) {
+    GRN_FREE(data->string->checks);
+  }
+  if (data->string->ctypes) {
+    GRN_FREE(data->string->ctypes);
+  }
+  if (data->string->offsets) {
+    GRN_FREE(data->string->offsets);
+  }
+  data->string->normalized = unified;
+  data->d = unified_current;
+  data->d_ = unified_previous;
+  data->string->checks = unified_checks;
+  data->ch = unified_checks_current;
+  data->string->ctypes = unified_char_types;
+  data->cp = unified_char_types_current;
+  data->string->offsets = unified_offsets;
+  data->offsets = unified_offsets_current;
+  data->length = unified_n_characters;
+  unified = NULL;
+  unified_checks = NULL;
+  unified_char_types = NULL;
+  unified_offsets = NULL;
+
+exit:
+  if (unified) {
+    GRN_FREE(unified);
+  }
+  if (unified_checks) {
+    GRN_FREE(unified_checks);
+  }
+  if (unified_char_types) {
+    GRN_FREE(unified_char_types);
+  }
+  if (unified_offsets) {
+    GRN_FREE(unified_offsets);
+  }
 }
 
 grn_rc
@@ -1285,10 +1450,6 @@ grn_nfkc_normalize(grn_ctx *ctx,
           data.s_ += data.lp;
         }
       } else {
-        size_t lp_original = data.lp;
-        grn_char_type char_type;
-        char_type = data.options->char_type_func(data.p);
-
         if (data.de <= data.d + data.lp) {
           grn_nfkc_normalize_expand(ctx, &data);
           if (ctx->rc != GRN_SUCCESS) {
@@ -1296,18 +1457,16 @@ grn_nfkc_normalize(grn_ctx *ctx,
           }
         }
 
-        {
-          const unsigned char *p = data.p;
-          char_type = grn_nfkc_normalize_unify(ctx, &data, char_type);
-          grn_memcpy(data.d, data.p, data.lp);
-          data.p = p;
-        }
-
+        grn_memcpy(data.d, data.p, data.lp);
         data.d_ = data.d;
         if (data.lp > 0) {
           data.d += data.lp;
           data.length++;
-          if (data.cp) { *(data.cp++) = char_type; }
+          if (data.cp) {
+            grn_char_type char_type;
+            char_type = data.options->char_type_func(data.p);
+            *(data.cp++) = char_type;
+          }
           if (data.ch) {
             size_t i;
             if (data.s_ == data.s + data.ls) {
@@ -1324,18 +1483,12 @@ grn_nfkc_normalize(grn_ctx *ctx,
               (uint64_t)(data.s - (const unsigned char *)(data.string->original));
           }
         }
-        data.lp = lp_original;
       }
     }
   }
+  grn_nfkc_normalize_unify(ctx, &data);
   if (data.cp) { *(data.cp) = GRN_CHAR_NULL; }
   if (data.offsets) { *(data.offsets) = data.string->original_length_in_bytes; }
-  if (data.options->unify_katakana_v_sounds) {
-    grn_nfkc_normalize_unify_katakana_v_sounds(NULL, 0, data.d_, data.d);
-  }
-  if (data.options->unify_katakana_bu_sound) {
-    grn_nfkc_normalize_unify_katakana_bu_sound(NULL, 0, data.d_, data.d);
-  }
   *(data.d) = '\0';
   data.string->n_characters = data.length;
   data.string->normalized_length_in_bytes =
