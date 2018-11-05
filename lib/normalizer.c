@@ -578,7 +578,6 @@ typedef struct {
   size_t length;
   size_t ls;
   size_t lp;
-  size_t size;
   size_t ds;
   grn_bool remove_blank_p;
   grn_bool remove_tokenized_delimiter_p;
@@ -597,11 +596,13 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
                              grn_obj *string,
                              grn_nfkc_normalize_options *options)
 {
+  size_t size;
+
   memset(data, 0, sizeof(grn_nfkc_normalize_data));
   data->string = (grn_string *)string;
   data->options = options;
-  data->size = data->string->original_length_in_bytes;
-  data->ds = data->size * 3;
+  size = data->string->original_length_in_bytes;
+  data->ds = size * 3;
   data->remove_blank_p = (data->string->flags & GRN_STRING_REMOVE_BLANK);
   data->remove_tokenized_delimiter_p =
     (data->string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
@@ -638,7 +639,7 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
   data->d = (unsigned char *)(data->string->normalized);
   data->de = data->d + data->ds;
   data->d_ = NULL;
-  data->e = (unsigned char *)(data->string->original) + data->size;
+  data->e = (unsigned char *)(data->string->original) + size;
 
   data->unified_hyphen[0] = '-';
   /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
