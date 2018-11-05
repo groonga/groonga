@@ -392,7 +392,7 @@ grn_string_set_normalized(grn_ctx *ctx, grn_obj *string,
   GRN_API_RETURN(rc);
 }
 
-const short *
+const int16_t *
 grn_string_get_checks(grn_ctx *ctx, grn_obj *string)
 {
   int16_t *checks = NULL;
@@ -407,7 +407,7 @@ grn_string_get_checks(grn_ctx *ctx, grn_obj *string)
 }
 
 grn_rc
-grn_string_set_checks(grn_ctx *ctx, grn_obj *string, short *checks)
+grn_string_set_checks(grn_ctx *ctx, grn_obj *string, int16_t *checks)
 {
   grn_rc rc;
   grn_string *string_ = (grn_string *)string;
@@ -422,10 +422,10 @@ grn_string_set_checks(grn_ctx *ctx, grn_obj *string, short *checks)
   GRN_API_RETURN(rc);
 }
 
-const unsigned char *
+const uint8_t *
 grn_string_get_types(grn_ctx *ctx, grn_obj *string)
 {
-  unsigned char *types = NULL;
+  uint8_t *types = NULL;
   grn_string *string_ = (grn_string *)string;
   GRN_API_ENTER;
   if (string_) {
@@ -437,7 +437,7 @@ grn_string_get_types(grn_ctx *ctx, grn_obj *string)
 }
 
 grn_rc
-grn_string_set_types(grn_ctx *ctx, grn_obj *string, unsigned char *types)
+grn_string_set_types(grn_ctx *ctx, grn_obj *string, uint8_t *types)
 {
   grn_rc rc;
   grn_string *string_ = (grn_string *)string;

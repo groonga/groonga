@@ -35,8 +35,8 @@ typedef struct {
   char *normalized;
   unsigned int normalized_length_in_bytes;
   unsigned int n_characters;
-  short *checks;
-  unsigned char *ctypes;
+  int16_t *checks;
+  uint8_t *ctypes;
   uint64_t *offsets;
   grn_encoding encoding;
   int flags;

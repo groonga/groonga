@@ -27,8 +27,8 @@ extern "C" {
 typedef struct {
   const char *orig;
   char *norm;
-  short *checks;
-  unsigned char *ctypes;
+  int16_t *checks;
+  uint8_t *ctypes;
   int flags;
   unsigned int orig_blen;
   unsigned int norm_blen;
@@ -90,14 +90,14 @@ GRN_API grn_rc grn_string_set_normalized(grn_ctx *ctx, grn_obj *string,
                                          char *normalized,
                                          unsigned int length_in_bytes,
                                          unsigned int n_characters);
-GRN_API const short *grn_string_get_checks(grn_ctx *ctx, grn_obj *string);
+GRN_API const int16_t *grn_string_get_checks(grn_ctx *ctx, grn_obj *string);
 GRN_API grn_rc grn_string_set_checks(grn_ctx *ctx,
                                      grn_obj *string,
-                                     short *checks);
-GRN_API const unsigned char *grn_string_get_types(grn_ctx *ctx, grn_obj *string);
+                                     int16_t *checks);
+GRN_API const uint8_t *grn_string_get_types(grn_ctx *ctx, grn_obj *string);
 GRN_API grn_rc grn_string_set_types(grn_ctx *ctx,
                                     grn_obj *string,
-                                    unsigned char *types);
+                                    uint8_t *types);
 GRN_API const uint64_t *grn_string_get_offsets(grn_ctx *ctx, grn_obj *string);
 GRN_API grn_rc grn_string_set_offsets(grn_ctx *ctx,
                                       grn_obj *string,
