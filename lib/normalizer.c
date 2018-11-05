@@ -112,7 +112,7 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   d0 = (unsigned char *) nstr->normalized;
   if (nstr->flags & GRN_STRING_WITH_CHECKS) {
-    if (!(nstr->checks = GRN_MALLOC(size * 2 * sizeof(int16_t) + 1))) {
+    if (!(nstr->checks = GRN_MALLOC((size * 2 + 1) * sizeof(int16_t)))) {
       GRN_FREE(nstr->normalized);
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
@@ -357,7 +357,7 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   d0 = (unsigned char *) nstr->normalized;
   if (nstr->flags & GRN_STRING_WITH_CHECKS) {
-    if (!(nstr->checks = GRN_MALLOC(size * 2 * sizeof(int16_t) + 1))) {
+    if (!(nstr->checks = GRN_MALLOC((size * 2 + 1) * sizeof(int16_t)))) {
       GRN_FREE(nstr->normalized);
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
@@ -611,7 +611,7 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
     return;
   }
   if (data->string->flags & GRN_STRING_WITH_CHECKS) {
-    if (!(data->string->checks = GRN_MALLOC(data->ds * sizeof(int16_t) + 1))) {
+    if (!(data->string->checks = GRN_MALLOC(sizeof(int16_t) * (data->ds + 1)))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[normalize][nfkc] failed to allocate checks space");
       return;
@@ -669,7 +669,7 @@ grn_nfkc_normalize_expand(grn_ctx *ctx,
   if (data->ch) {
     int16_t *checks;
     if (!(checks = GRN_REALLOC(data->string->checks,
-                               data->ds * sizeof(int16_t) + 1))) {
+                               sizeof(int16_t) * (data->ds + 1)))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[normalize][nfkc] failed to expand checks space");
       return;
@@ -1379,7 +1379,7 @@ ascii_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   d0 = (unsigned char *) nstr->normalized;
   if (nstr->flags & GRN_STRING_WITH_CHECKS) {
-    if (!(nstr->checks = GRN_MALLOC(size * sizeof(int16_t) + 1))) {
+    if (!(nstr->checks = GRN_MALLOC((size + 1) * sizeof(int16_t)))) {
       GRN_FREE(nstr->normalized);
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
@@ -1481,7 +1481,7 @@ latin1_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   d0 = (unsigned char *) nstr->normalized;
   if (nstr->flags & GRN_STRING_WITH_CHECKS) {
-    if (!(nstr->checks = GRN_MALLOC(size * sizeof(int16_t) + 1))) {
+    if (!(nstr->checks = GRN_MALLOC((size + 1) * sizeof(int16_t)))) {
       GRN_FREE(nstr->normalized);
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
@@ -1616,7 +1616,7 @@ koi8r_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   d0 = (unsigned char *) nstr->normalized;
   if (nstr->flags & GRN_STRING_WITH_CHECKS) {
-    if (!(nstr->checks = GRN_MALLOC(size * sizeof(int16_t) + 1))) {
+    if (!(nstr->checks = GRN_MALLOC((size + 1) * sizeof(int16_t)))) {
       GRN_FREE(nstr->normalized);
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
