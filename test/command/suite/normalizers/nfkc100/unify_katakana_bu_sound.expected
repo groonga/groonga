@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC100("unify_katakana_bu_sound", true)'   "ヴァヴィヴヴェヴォヴ"   WITH_TYPES
+normalize   'NormalizerNFKC100("unify_katakana_bu_sound", true,                      "report_source_offset", true)'   "ヴァヴィヴヴェヴォヴ"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,
@@ -16,7 +16,32 @@ normalize   'NormalizerNFKC100("unify_katakana_bu_sound", true)'   "ヴァヴィ
       "katakana"
     ],
     "checks": [
-
+      3,
+      0,
+      0,
+      6,
+      0,
+      0,
+      6,
+      0,
+      0,
+      3,
+      0,
+      0,
+      6,
+      0,
+      0,
+      6,
+      0,
+      0
+    ],
+    "offsets": [
+      0,
+      6,
+      12,
+      15,
+      21,
+      27
     ]
   }
 ]

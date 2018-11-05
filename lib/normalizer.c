@@ -1338,7 +1338,11 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       }
     }
 
-    if (!skip) {
+    if (skip) {
+      if (unify.c) {
+        unify.c[0] += data->context.checks[i_byte];
+      }
+    } else {
       if (unify.d + unified_char_length >= unify.dest_end) {
         grn_nfkc_normalize_context_expand(ctx,
                                           &unify,
@@ -1357,10 +1361,11 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       }
       if (unify.c) {
         size_t i;
-        *(unify.c++) = data->context.checks[i_byte];
+        *(unify.c++) += data->context.checks[i_byte];
         for (i = 1; i < unified_char_length; i++) {
           *(unify.c++) = 0;
         }
+        unify.c[0] = 0;
       }
       if (unify.o) {
         *(unify.o++) = data->context.offsets[i_character];
