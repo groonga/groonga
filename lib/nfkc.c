@@ -63,6 +63,7 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->unify_middle_dot = GRN_FALSE;
   options->unify_katakana_v_sounds = GRN_FALSE;
   options->unify_katakana_bu_sound = GRN_FALSE;
+  options->unify_to_romaji = GRN_FALSE;
 }
 
 void
@@ -154,6 +155,12 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->unify_katakana_bu_sound);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_to_romaji")) {
+      options->unify_to_romaji =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->unify_to_romaji);
     }
   } GRN_OPTION_VALUES_EACH_END();
 

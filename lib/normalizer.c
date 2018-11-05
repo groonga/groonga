@@ -616,6 +616,7 @@ grn_nfkc_normalize_context_init(grn_ctx *ctx,
           "[normalize][nfkc] failed to allocate checks space");
       return;
     }
+    context->checks[0] = 0;
   }
   context->c = context->checks;
 
@@ -1184,6 +1185,227 @@ grn_nfkc_normalize_unify_katakana_bu_sound(const unsigned char *utf8_char,
   return GRN_FALSE;
 }
 
+grn_inline static grn_bool
+grn_nfkc_normalize_unify_to_romaji(grn_ctx *ctx,
+                                   const unsigned char *unifying,
+                                   grn_char_type char_type,
+                                   char *romaji)
+{
+  static char aiueo[] = "aiueo";
+  static char auo[] = "auo";
+  static char aaieo[] = "aaieo";
+  size_t n_romajis = 0;
+
+  if (!(char_type == GRN_CHAR_HIRAGANA ||
+        char_type == GRN_CHAR_KATAKANA)) {
+    return n_romajis;
+  }
+
+  switch (unifying[0]) {
+  case 0xe3 :
+    switch (unifying[1]) {
+    case 0x81 :
+      if (0x81 <= unifying[2] && unifying[2] <= 0x8a) {
+        /* U+3042 HIRAGANA LETTER SMALL A ..
+         * U+304A HIRAGANA LETTER O */
+        if ((unifying[2] % 2) == 1) { /* SMALL */
+          romaji[n_romajis++] = 'x';
+        }
+        romaji[n_romajis++] = aiueo[(unifying[2] - 0x81) / 2];
+      } else if (0x8b <= unifying[2] && unifying[2] <= 0x94) {
+        /* U+304B HIRAGANA LETTER KA ..
+         * U+3054 HIRAGANA LETTER GO */
+        const char *gk = "gk";
+        romaji[n_romajis++] = gk[unifying[2] % 2];
+        romaji[n_romajis++] = aiueo[(unifying[2] - 0x8b) / 2];
+      } else if (0x95 <= unifying[2] && unifying[2] <= 0x9e) {
+        /* U+3055 HIRAGANA LETTER SA ..
+         * U+305E HIRAGANA LETTER ZO */
+        const char *zs = "zs";
+        romaji[n_romajis++] = zs[unifying[2] % 2];
+        romaji[n_romajis++] = aiueo[(unifying[2] - 0x95) / 2];
+      } else if (0x9f <= unifying[2] && unifying[2] <= 0xa9) {
+        /* U+305F HIRAGANA LETTER TA ..
+         * U+3069 HIRAGANA LETTER DO */
+        const char *tdtdttdtdtd = "tdtdttdtdtd";
+        const char *aaiiuuueeoo = "aaiiuuueeoo";
+        if (unifying[2] == 0xa3) { /* SMALL */
+          romaji[n_romajis++] = 'x';
+        }
+        romaji[n_romajis++] = tdtdttdtdtd[unifying[2] - 0x9f];
+        romaji[n_romajis++] = aaiiuuueeoo[unifying[2] - 0x9f];
+      } else if (0xaa <= unifying[2] && unifying[2] <= 0xae) {
+        /* U+306A HIRAGANA LETTER NA ..
+         * U+306E HIRAGANA LETTER NO */
+        romaji[n_romajis++] = 'n';
+        romaji[n_romajis++] = aiueo[(unifying[2] - 0xaa)];
+      } else if (0xaf <= unifying[2] && unifying[2] <= 0xbd) {
+        /* U+306F HIRAGANA LETTER HA ..
+         * U+307D HIRAGANA LETTER PO */
+        const char *phb = "phb";
+        romaji[n_romajis++] = phb[unifying[2] % 3];
+        romaji[n_romajis++] = aiueo[(unifying[2] - 0xaf) / 3];
+      } else if (0xbe <= unifying[2] && unifying[2] <= 0xbf) {
+        /* U+307E HIRAGANA LETTER MA ..
+         * U+307F HIRAGANA LETTER MI */
+        romaji[n_romajis++] = 'm';
+        romaji[n_romajis++] = aiueo[(unifying[2] - 0xbe)];
+      }
+      break;
+    case 0x82 :
+      if (0x80 <= unifying[2] && unifying[2] <= 0x82) {
+        /* U+3080 HIRAGANA LETTER MU ..
+         * U+3082 HIRAGANA LETTER MO */
+        romaji[n_romajis++] = 'm';
+        romaji[n_romajis++] = aiueo[(unifying[2] - 0x80) + 2];
+      } else if (0x83 <= unifying[2] && unifying[2] <= 0x88) {
+        /* U+3083 HIRAGANA LETTER SMALL YA ..
+         * U+3088 HIRAGANA LETTER YO */
+        if ((unifying[2] % 2) == 1) { /* SMALL */
+          romaji[n_romajis++] = 'x';
+        }
+        romaji[n_romajis++] = 'y';
+        romaji[n_romajis++] = auo[(unifying[2] - 0x83) / 2];
+      } else if (0x89 <= unifying[2] && unifying[2] <= 0x8d) {
+        /* U+3089 HIRAGANA LETTER RA ..
+         * U+308D HIRAGANA LETTER RO */
+        romaji[n_romajis++] = 'r';
+        romaji[n_romajis++] = aiueo[unifying[2] - 0x89];
+      } else if (0x8e <= unifying[2] && unifying[2] <= 0x92) {
+        /* U+308E HIRAGANA LETTER SMALL WA ..
+         * U+3092 HIRAGANA LETTER WO */
+        if (unifying[2] == 0x8e) { /* SMALL */
+          romaji[n_romajis++] = 'x';
+        }
+        romaji[n_romajis++] = 'w';
+        romaji[n_romajis++] = aaieo[unifying[2] - 0x8e];
+      } else if (unifying[2] == 0x93) {
+        /* U+3093 HIRAGANA LETTER N */
+        romaji[n_romajis++] = 'n';
+        romaji[n_romajis++] = 'n';
+      } else if (unifying[2] == 0x94) {
+        /* U+3094 HIRAGANA LETTER VU */
+        romaji[n_romajis++] = 'v';
+        romaji[n_romajis++] = 'u';
+      } else if (unifying[2] == 0x95) {
+        /* U+3095 HIRAGANA LETTER SMALL KA */
+        romaji[n_romajis++] = 'x';
+        romaji[n_romajis++] = 'k';
+        romaji[n_romajis++] = 'a';
+      } else if (unifying[2] == 0x96) {
+        /* U+3096 HIRAGANA LETTER SMALL KE */
+        romaji[n_romajis++] = 'x';
+        romaji[n_romajis++] = 'k';
+        romaji[n_romajis++] = 'e';
+      } else if (0xa1 <= unifying[2] && unifying[2] <= 0xaa) {
+        /* U+30A1 KATAKANA LETTER SMALL A ..
+         * U+30AA KATAKANA LETTER O */
+        if ((unifying[2] % 2) == 1) { /* SMALL */
+          romaji[n_romajis++] = 'x';
+        }
+        romaji[n_romajis++] = aiueo[(unifying[2] - 0xa1) / 2];
+      } else if (0xab <= unifying[2] && unifying[2] <= 0xb4) {
+        /* U+30AB KATAKANA LETTER KA ..
+         * U+30B4 KATAKANA LETTER GO */
+        const char *gk = "gk";
+        romaji[n_romajis++] = gk[unifying[2] % 2];
+        romaji[n_romajis++] = aiueo[(unifying[2] - 0xab) / 2];
+      } else if (0xb5 <= unifying[2] && unifying[2] <= 0xbe) {
+        /* U+30B5 KATAKANA LETTER SA ..
+         * U+30BE KATAKANA LETTER ZO */
+        const char *zs = "zs";
+        romaji[n_romajis++] = zs[unifying[2] % 2];
+        romaji[n_romajis++] = aiueo[(unifying[2] - 0xb5) / 2];
+      } else if (unifying[2] == 0xbf) {
+        /* U+30BF KATAKANA LETTER TA */
+        romaji[n_romajis++] = 't';
+        romaji[n_romajis++] = 'a';
+      }
+      break;
+    case 0x83 :
+      if (0x80 <= unifying[2] && unifying[2] <= 0x89) {
+        /* U+30C0 KATAKANA LETTER DA ..
+         * U+30C9 KATAKANA LETTER DO */
+        const char *aiiuuueeoo = "aiiuuueeoo";
+        if (unifying[2] == 0x83) { /* SMALL */
+          romaji[n_romajis++] = 'x';
+        }
+        romaji[n_romajis++] = 't';
+        romaji[n_romajis++] = aiiuuueeoo[unifying[2] - 0x80];
+      } else if (0x8a <= unifying[2] && unifying[2] <= 0x8e) {
+        /* U+30CA KATAKANA LETTER NA ..
+         * U+30CE KATAKANA LETTER NO */
+        romaji[n_romajis++] = 'n';
+        romaji[n_romajis++] = aiueo[unifying[2] - 0x8a];
+      } else if (0x8f <= unifying[2] && unifying[2] <= 0x9d) {
+        /* U+30CF KATAKANA LETTER HA ..
+         * U+30DD KATAKANA LETTER PO */
+        const char *bph = "bph";
+        romaji[n_romajis++] = bph[unifying[2] % 3];
+        romaji[n_romajis++] = aiueo[(unifying[2] - 0x8f) / 3];
+      } else if (0x9e <= unifying[2] && unifying[2] <= 0xa2) {
+        /* U+30DE KATAKANA LETTER MA ..
+         * U+30E2 KATAKANA LETTER MO */
+        romaji[n_romajis++] = 'm';
+        romaji[n_romajis++] = aiueo[unifying[2] - 0x9e];
+      } else if (0xa3 <= unifying[2] && unifying[2] <= 0xa8) {
+        /* U+30E3 KATAKANA LETTER SMALL YA ..
+         * U+30E8 KATAKANA LETTER YO */
+        if ((unifying[2] % 2) == 1) { /* SMALL */
+          romaji[n_romajis++] = 'x';
+        }
+        romaji[n_romajis++] = 'y';
+        romaji[n_romajis++] = auo[(unifying[2] - 0xa3) / 2];
+      } else if (0xa9 <= unifying[2] && unifying[2] <= 0xad) {
+        /* U+30E9 KATAKANA LETTER RA ..
+         * U+30ED KATAKANA LETTER RO */
+        romaji[n_romajis++] = 'r';
+        romaji[n_romajis++] = aiueo[unifying[2] - 0xa9];
+      } else if (0xae <= unifying[2] && unifying[2] <= 0xb2) {
+        /* U+30EE KATAKANA LETTER SMALL WA ..
+         * U+30F2 KATAKANA LETTER WO */
+        if (unifying[2] == 0xae) { /* SMALL */
+          romaji[n_romajis++] = 'x';
+        }
+        romaji[n_romajis++] = 'w';
+        romaji[n_romajis++] = aaieo[unifying[2] - 0xae];
+      } else if (unifying[2] == 0xb3) {
+        /* U+30F3 KATAKANA LETTER N */
+        romaji[n_romajis++] = 'n';
+        romaji[n_romajis++] = 'n';
+      } else if (unifying[2] == 0xb4) {
+        /* U+30F4 KATAKANA LETTER VU */
+        romaji[n_romajis++] = 'v';
+        romaji[n_romajis++] = 'u';
+      } else if (unifying[2] == 0xb5) {
+        /* U+30F5 KATAKANA LETTER SMALL KA */
+        romaji[n_romajis++] = 'x';
+        romaji[n_romajis++] = 'k';
+        romaji[n_romajis++] = 'a';
+      } else if (unifying[2] == 0xb6) {
+        /* U+30F6 KATAKANA LETTER SMALL KE */
+        romaji[n_romajis++] = 'x';
+        romaji[n_romajis++] = 'k';
+        romaji[n_romajis++] = 'e';
+      } else if (0xb7 <= unifying[2] && unifying[2] <= 0xba) {
+        /* U+30F7 KATAKANA LETTER VA ..
+         * U+30FA KATAKANA LETTER VO */
+        static char aieo[] = "aieo";
+        romaji[n_romajis++] = 'v';
+        romaji[n_romajis++] = aieo[unifying[2] - 0xb7];
+      }
+      break;
+    default :
+      break;
+    }
+    break;
+  default :
+    break;
+  }
+
+  return n_romajis;
+}
+
 static void
 grn_nfkc_normalize_unify(grn_ctx *ctx,
                          grn_nfkc_normalize_data *data)
@@ -1203,7 +1425,8 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
         data->options->unify_middle_dot ||
         data->options->unify_katakana_v_sounds ||
         data->options->unify_katakana_bu_sound ||
-        data->options->unify_hyphen)) {
+        data->options->unify_hyphen ||
+        data->options->unify_to_romaji)) {
     return;
   }
 
@@ -1343,32 +1566,81 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
         unify.c[0] += data->context.checks[i_byte];
       }
     } else {
-      if (unify.d + unified_char_length >= unify.dest_end) {
-        grn_nfkc_normalize_context_expand(ctx,
-                                          &unify,
-                                          unified_char_length,
-                                          "[unify]");
-        if (ctx->rc != GRN_SUCCESS) {
-          goto exit;
+      char romaji[3];
+      size_t n_romajis = 0;
+
+      if (data->options->unify_to_romaji) {
+        n_romajis = grn_nfkc_normalize_unify_to_romaji(ctx,
+                                                       unifying,
+                                                       char_type,
+                                                       romaji);
+      }
+
+      if (n_romajis == 0) {
+        if (unify.d + unified_char_length >= unify.dest_end) {
+          grn_nfkc_normalize_context_expand(ctx,
+                                            &unify,
+                                            unified_char_length,
+                                            "[unify]");
+          if (ctx->rc != GRN_SUCCESS) {
+            goto exit;
+          }
         }
-      }
-      grn_memcpy(unify.d, unifying, unified_char_length);
-      unify.d_ = unify.d;
-      unify.d += unified_char_length;
-      unify.n_characters++;
-      if (unify.t) {
-        *(unify.t++) = char_type;
-      }
-      if (unify.c) {
-        size_t i;
-        *(unify.c++) += data->context.checks[i_byte];
-        for (i = 1; i < unified_char_length; i++) {
-          *(unify.c++) = 0;
+
+        grn_memcpy(unify.d, unifying, unified_char_length);
+        unify.d_ = unify.d;
+        unify.d += unified_char_length;
+        unify.n_characters++;
+        if (unify.t) {
+          *(unify.t++) = char_type;
         }
-        unify.c[0] = 0;
-      }
-      if (unify.o) {
-        *(unify.o++) = data->context.offsets[i_character];
+        if (unify.c) {
+          size_t i;
+          *(unify.c++) += data->context.checks[i_byte];
+          for (i = 1; i < unified_char_length; i++) {
+            *(unify.c++) = 0;
+          }
+          unify.c[0] = 0;
+        }
+        if (unify.o) {
+          *(unify.o++) = data->context.offsets[i_character];
+        }
+      } else {
+        if (unify.d + n_romajis >= unify.dest_end) {
+          grn_nfkc_normalize_context_expand(ctx,
+                                            &unify,
+                                            n_romajis,
+                                            "[unify][romaji]");
+          if (ctx->rc != GRN_SUCCESS) {
+            goto exit;
+          }
+        }
+
+        grn_memcpy(unify.d, romaji, n_romajis);
+
+        unify.d += n_romajis;
+        unify.d_ = unify.d - 1;
+        unify.n_characters += n_romajis;
+        if (unify.t) {
+          size_t i;
+          for (i = 0; i < n_romajis; i++) {
+            *(unify.t++) = GRN_CHAR_ALPHA;
+          }
+        }
+        if (unify.c) {
+          size_t i;
+          *(unify.c++) += data->context.checks[i_byte];
+          for (i = 1; i < n_romajis; i++) {
+            *(unify.c++) = -1;
+          }
+          unify.c[0] = 0;
+        }
+        if (unify.o) {
+          size_t i;
+          for (i = 0; i < n_romajis; i++) {
+            *(unify.o++) = data->context.offsets[i_character];
+          }
+        }
       }
     }
 
