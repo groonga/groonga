@@ -560,25 +560,28 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
 
 #ifdef GRN_WITH_NFKC
 typedef struct {
+  size_t size;
+
+  unsigned char *dest;
+  unsigned char *dest_end;
+  unsigned char *d;
+  unsigned char *d_; /* -1 */
+  size_t n_characters;
+
+  int16_t *checks;
+  int16_t *c;
+
+  uint8_t *types;
+  uint8_t *t;
+
+  uint64_t *offsets;
+  uint64_t *o;
+} grn_nfkc_normalize_context;
+
+typedef struct {
   grn_string *string;
   grn_nfkc_normalize_options *options;
-  int16_t *ch;
-  const unsigned char *s;
-  const unsigned char *s_;
-  const unsigned char *s__;
-  const unsigned char *p;
-  const unsigned char *p2;
-  const unsigned char *pe;
-  const unsigned char *e;
-  unsigned char *d;
-  unsigned char *d_;
-  unsigned char *de;
-  uint8_t *cp;
-  uint64_t *offsets;
-  size_t length;
-  size_t ls;
-  size_t lp;
-  size_t ds;
+  grn_nfkc_normalize_context context;
   grn_bool remove_blank_p;
   grn_bool remove_tokenized_delimiter_p;
 
@@ -591,6 +594,69 @@ typedef struct {
 } grn_nfkc_normalize_data;
 
 grn_inline static void
+grn_nfkc_normalize_context_init(grn_ctx *ctx,
+                                grn_nfkc_normalize_context *context,
+                                grn_bool need_checks,
+                                grn_bool need_types,
+                                grn_bool need_offsets,
+                                const char *context_tag)
+{
+  if (!(context->dest = GRN_MALLOC(context->size + 1))) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[normalize][nfkc] failed to allocate normalized text space");
+    return;
+  }
+  context->dest_end = context->dest + context->size;
+  context->d = context->dest;
+  context->d_ = NULL;
+
+  if (need_checks) {
+    if (!(context->checks = GRN_MALLOC(sizeof(int16_t) * (context->size + 1)))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalize][nfkc] failed to allocate checks space");
+      return;
+    }
+  }
+  context->c = context->checks;
+
+  if (need_types) {
+    if (!(context->types = GRN_MALLOC(sizeof(uint8_t) * (context->size + 1)))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalize][nfkc] failed to allocate character types space");
+      return;
+    }
+  }
+  context->t = context->types;
+
+  if (need_offsets) {
+    if (!(context->offsets = GRN_MALLOC(sizeof(uint64_t) * (context->size + 1)))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalize][nfkc] failed to allocate offsets space");
+      return;
+    }
+  }
+  context->o = context->offsets;
+}
+
+grn_inline static void
+grn_nfkc_normalize_context_fin(grn_ctx *ctx,
+                               grn_nfkc_normalize_context *context)
+{
+  if (context->dest) {
+    GRN_FREE(context->dest);
+  }
+  if (context->checks) {
+    GRN_FREE(context->checks);
+  }
+  if (context->types) {
+    GRN_FREE(context->types);
+  }
+  if (context->offsets) {
+    GRN_FREE(context->offsets);
+  }
+}
+
+grn_inline static void
 grn_nfkc_normalize_data_init(grn_ctx *ctx,
                              grn_nfkc_normalize_data *data,
                              grn_obj *string,
@@ -601,45 +667,19 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
   memset(data, 0, sizeof(grn_nfkc_normalize_data));
   data->string = (grn_string *)string;
   data->options = options;
-  size = data->string->original_length_in_bytes;
-  data->ds = size * 3;
   data->remove_blank_p = (data->string->flags & GRN_STRING_REMOVE_BLANK);
   data->remove_tokenized_delimiter_p =
     (data->string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
-  if (!(data->string->normalized = GRN_MALLOC(data->ds + 1))) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[normalize][nfkc] failed to allocate normalized text space");
-    return;
-  }
-  if (data->string->flags & GRN_STRING_WITH_CHECKS) {
-    if (!(data->string->checks = GRN_MALLOC(sizeof(int16_t) * (data->ds + 1)))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[normalize][nfkc] failed to allocate checks space");
-      return;
-    }
-  }
-  data->ch = data->string->checks;
-  if (data->string->flags & GRN_STRING_WITH_TYPES) {
-    if (!(data->string->ctypes = GRN_MALLOC(data->ds + 1))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[normalize][nfkc] failed to allocate character types space");
-      return;
-    }
-  }
-  data->cp = data->string->ctypes;
-  if (data->options->report_source_offset) {
-    data->string->offsets = GRN_MALLOC(sizeof(uint64_t) * (data->ds + 1));
-    if (!data->string->offsets) {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[normalize][nfkc] failed to allocate offsets space");
-      return;
-    }
-  }
-  data->offsets = data->string->offsets;
-  data->d = (unsigned char *)(data->string->normalized);
-  data->de = data->d + data->ds;
-  data->d_ = NULL;
-  data->e = (unsigned char *)(data->string->original) + size;
+
+  size = data->string->original_length_in_bytes;
+  data->context.size = size * 3;
+
+  grn_nfkc_normalize_context_init(ctx,
+                                  &(data->context),
+                                  data->string->flags & GRN_STRING_WITH_CHECKS,
+                                  data->string->flags & GRN_STRING_WITH_TYPES,
+                                  data->options->report_source_offset,
+                                  "");
 
   data->unified_hyphen[0] = '-';
   /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
@@ -652,53 +692,70 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
 }
 
 grn_inline static void
-grn_nfkc_normalize_expand(grn_ctx *ctx,
-                          grn_nfkc_normalize_data *data)
+grn_nfkc_normalize_context_expand(grn_ctx *ctx,
+                                  grn_nfkc_normalize_context *context,
+                                  size_t least_required_size,
+                                  const char *context_tag)
 {
-  unsigned char *normalized;
-  data->ds += (data->ds >> 1) + data->lp;
-  normalized = GRN_REALLOC(data->string->normalized, data->ds + 1);
-  if (!normalized) {
+  unsigned char *dest;
+  context->size += (context->size >> 1) + least_required_size;
+  dest = GRN_REALLOC(context->dest, context->size + 1);
+  if (!dest) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[normalize][nfkc] failed to expand normalized text space");
+        "[normalize][nfkc]%s failed to expand destination text space",
+        context_tag);
     return;
   }
-  data->de = normalized + data->ds;
-  data->d =
-    normalized + (data->d - (unsigned char *)(data->string->normalized));
-  data->string->normalized = (char *)normalized;
-  if (data->ch) {
+  context->dest_end = dest + context->size;
+  context->d = dest + (context->d - context->dest);
+  context->dest = dest;
+  if (context->c) {
     int16_t *checks;
-    if (!(checks = GRN_REALLOC(data->string->checks,
-                               sizeof(int16_t) * (data->ds + 1)))) {
+    if (!(checks = GRN_REALLOC(context->c,
+                               sizeof(int16_t) * (context->size + 1)))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[normalize][nfkc] failed to expand checks space");
+          "[normalize][nfkc]%s failed to expand checks space",
+          context_tag);
       return;
     }
-    data->ch = checks + (data->ch - data->string->checks);
-    data->string->checks = checks;
+    context->c = checks + (context->c - context->checks);
+    context->checks = checks;
   }
-  if (data->cp) {
-    uint8_t *ctypes;
-    if (!(ctypes = GRN_REALLOC(data->string->ctypes, data->ds + 1))) {
+  if (context->t) {
+    uint8_t *types;
+    if (!(types = GRN_REALLOC(context->types,
+                              sizeof(uint8_t) * (context->size + 1)))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[normalize][nfkc] failed to expand character types space");
+          "[normalize][nfkc]%s failed to expand character types space",
+        context_tag);
       return;
     }
-    data->cp = ctypes + (data->cp - data->string->ctypes);
-    data->string->ctypes = ctypes;
+    context->t = types + (context->t - context->types);
+    context->types = types;
   }
-  if (data->offsets) {
-    uint64_t *new_offsets;
-    if (!(new_offsets = GRN_REALLOC(data->string->offsets,
-                                    sizeof(uint64_t) * (data->ds + 1)))) {
+  if (context->o) {
+    uint64_t *offsets;
+    if (!(offsets = GRN_REALLOC(context->offsets,
+                                sizeof(uint64_t) * (context->size + 1)))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[normalize][nfkc] failed to expand offsets space");
+          "[normalize][nfkc]%s failed to expand offsets space",
+          context_tag);
       return;
     }
-    data->offsets = new_offsets + (data->offsets - data->string->offsets);
-    data->string->offsets = new_offsets;
+    context->o = offsets + (context->o - context->offsets);
+    context->offsets = offsets;
   }
+}
+
+grn_inline static void
+grn_nfkc_normalize_expand(grn_ctx *ctx,
+                          grn_nfkc_normalize_data *data,
+                          size_t least_required_size)
+{
+  grn_nfkc_normalize_context_expand(ctx,
+                                    &(data->context),
+                                    least_required_size,
+                                    "");
 }
 
 grn_inline static const unsigned char *
@@ -1131,22 +1188,11 @@ static void
 grn_nfkc_normalize_unify(grn_ctx *ctx,
                          grn_nfkc_normalize_data *data)
 {
-  const unsigned char *current = data->string->normalized;
-  const unsigned char *end = data->d;
+  const unsigned char *current = data->context.dest;
+  const unsigned char *end = data->context.d;
   size_t i_byte;
   size_t i_character;
-  unsigned char *unified = NULL;
-  unsigned char *unified_end = NULL;
-  unsigned char *unified_previous = NULL;
-  unsigned char *unified_current;
-  uint8_t *unified_char_types = NULL;
-  uint8_t *unified_char_types_current = NULL;
-  int16_t *unified_checks = NULL;
-  int16_t *unified_checks_current = NULL;
-  uint64_t *unified_offsets = NULL;
-  uint64_t *unified_offsets_current = NULL;
-  unsigned int unified_n_characters = 0;
-  size_t unified_data_size = data->ds;
+  grn_nfkc_normalize_context unify;
 
   if (!(data->options->unify_kana ||
         data->options->unify_kana_case ||
@@ -1161,32 +1207,16 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     return;
   }
 
-  unified = GRN_MALLOC(unified_data_size + 1);
-  if (!unified) {goto exit;}
-  unified_end = unified + unified_data_size;
-  unified_current = unified;
-
-  if (data->ch) {
-    unified_checks = GRN_MALLOC(sizeof(int16_t) * (unified_data_size + 1));
-    if (!unified_checks) {
-      goto exit;
-    }
-    unified_checks_current = unified_checks;
-  }
-  if (data->cp) {
-    unified_char_types = GRN_MALLOC(sizeof(uint8_t) * (unified_data_size + 1));
-    if (!unified_char_types) {
-      goto exit;
-    }
-    unified_char_types_current = unified_char_types;
-  }
-
-  if (data->offsets) {
-    unified_offsets = GRN_MALLOC(sizeof(uint64_t) * (unified_data_size + 1));
-    if (!unified_char_types) {
-      goto exit;
-    }
-    unified_offsets_current = unified_offsets;
+  memset(&unify, 0, sizeof(grn_nfkc_normalize_context));
+  unify.size = data->context.size;
+  grn_nfkc_normalize_context_init(ctx,
+                                  &unify,
+                                  data->context.checks != NULL,
+                                  data->context.types != NULL,
+                                  data->context.offsets != NULL,
+                                  "[unify]");
+  if (ctx->rc != GRN_SUCCESS) {
+    goto exit;
   }
 
   i_byte = 0;
@@ -1201,8 +1231,8 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     char_length = grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
     unified_char_length = char_length;
 
-    if (data->cp) {
-      char_type = data->string->ctypes[i_character];
+    if (data->context.t) {
+      char_type = data->context.types[i_character];
     } else {
       char_type = data->options->char_type_func(current);
     }
@@ -1293,8 +1323,8 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     if (data->options->unify_katakana_v_sounds) {
       if (grn_nfkc_normalize_unify_katakana_v_sounds(unifying,
                                                      unified_char_length,
-                                                     unified_previous,
-                                                     unified_current)) {
+                                                     unify.d_,
+                                                     unify.d)) {
         skip = GRN_TRUE;
       }
     }
@@ -1302,35 +1332,38 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     if (data->options->unify_katakana_bu_sound) {
       if (grn_nfkc_normalize_unify_katakana_bu_sound(unifying,
                                                      unified_char_length,
-                                                     unified_previous,
-                                                     unified_current)) {
+                                                     unify.d_,
+                                                     unify.d)) {
         skip = GRN_TRUE;
       }
     }
 
     if (!skip) {
-      if (unified_current + unified_char_length >= unified_end) {
-        /* TODO: Expand automatically. */
-        ERR(GRN_NO_MEMORY_AVAILABLE,
-            "[normalize][nfkc] too large unified data");
-        goto exit;
-      }
-      grn_memcpy(unified_current, unifying, unified_char_length);
-      unified_previous = unified_current;
-      unified_current += unified_char_length;
-      unified_n_characters++;
-      if (unified_char_types_current) {
-        *(unified_char_types_current++) = char_type;
-      }
-      if (unified_checks_current) {
-        size_t i;
-        *(unified_checks_current++) = data->string->checks[i_byte];
-        for (i = 1; i < unified_char_length; i++) {
-          *(unified_checks_current++) = 0;
+      if (unify.d + unified_char_length >= unify.dest_end) {
+        grn_nfkc_normalize_context_expand(ctx,
+                                          &unify,
+                                          unified_char_length,
+                                          "[unify]");
+        if (ctx->rc != GRN_SUCCESS) {
+          goto exit;
         }
       }
-      if (unified_offsets_current) {
-        *(unified_offsets_current++) = data->string->offsets[i_character];
+      grn_memcpy(unify.d, unifying, unified_char_length);
+      unify.d_ = unify.d;
+      unify.d += unified_char_length;
+      unify.n_characters++;
+      if (unify.t) {
+        *(unify.t++) = char_type;
+      }
+      if (unify.c) {
+        size_t i;
+        *(unify.c++) = data->context.checks[i_byte];
+        for (i = 1; i < unified_char_length; i++) {
+          *(unify.c++) = 0;
+        }
+      }
+      if (unify.o) {
+        *(unify.o++) = data->context.offsets[i_character];
       }
     }
 
@@ -1339,56 +1372,36 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     i_character++;
   }
   if (data->options->unify_katakana_v_sounds) {
-    grn_nfkc_normalize_unify_katakana_v_sounds(NULL,
-                                               0,
-                                               unified_previous,
-                                               unified_current);
+    grn_nfkc_normalize_unify_katakana_v_sounds(NULL, 0, unify.d_, unify.d);
   }
   if (data->options->unify_katakana_bu_sound) {
-    grn_nfkc_normalize_unify_katakana_bu_sound(NULL,
-                                               0,
-                                               unified_previous,
-                                               unified_current);
+    grn_nfkc_normalize_unify_katakana_bu_sound(NULL, 0, unify.d_, unify.d);
   }
 
-  GRN_FREE(data->string->normalized);
-  if (data->string->checks) {
-    GRN_FREE(data->string->checks);
-  }
-  if (data->string->ctypes) {
-    GRN_FREE(data->string->ctypes);
-  }
-  if (data->string->offsets) {
-    GRN_FREE(data->string->offsets);
-  }
-  data->string->normalized = unified;
-  data->d = unified_current;
-  data->d_ = unified_previous;
-  data->string->checks = unified_checks;
-  data->ch = unified_checks_current;
-  data->string->ctypes = unified_char_types;
-  data->cp = unified_char_types_current;
-  data->string->offsets = unified_offsets;
-  data->offsets = unified_offsets_current;
-  data->length = unified_n_characters;
-  unified = NULL;
-  unified_checks = NULL;
-  unified_char_types = NULL;
-  unified_offsets = NULL;
+  grn_nfkc_normalize_context_fin(ctx, &(data->context));
+
+  data->context.size = unify.size;
+
+  data->context.dest = unify.dest;
+  data->context.d = unify.d;
+  data->context.d_ = unify.d_;
+  data->context.n_characters = unify.n_characters;
+  unify.dest = NULL;
+
+  data->context.checks = unify.checks;
+  data->context.c = unify.c;
+  unify.checks = NULL;
+
+  data->context.types = unify.types;
+  data->context.t = unify.t;
+  unify.types = NULL;
+
+  data->context.offsets = unify.offsets;
+  data->context.o = unify.o;
+  unify.offsets = NULL;
 
 exit:
-  if (unified) {
-    GRN_FREE(unified);
-  }
-  if (unified_checks) {
-    GRN_FREE(unified_checks);
-  }
-  if (unified_char_types) {
-    GRN_FREE(unified_char_types);
-  }
-  if (unified_offsets) {
-    GRN_FREE(unified_offsets);
-  }
+  grn_nfkc_normalize_context_fin(ctx, &unify);
 }
 
 grn_rc
@@ -1397,120 +1410,133 @@ grn_nfkc_normalize(grn_ctx *ctx,
                    grn_nfkc_normalize_options *options)
 {
   grn_nfkc_normalize_data data;
+  const unsigned char *source;
+  const unsigned char *source_ = NULL; /* -1 */
+  const unsigned char *source__ = NULL; /* -2 */
+  const unsigned char *source_end;
+  size_t source_char_length;
+  grn_nfkc_normalize_context *context;
 
   grn_nfkc_normalize_data_init(ctx, &data, string, options);
+  context = &(data.context);
   if (ctx->rc != GRN_SUCCESS) {
     goto exit;
   }
 
-  for (data.s = data.s_ = (unsigned char *)(data.string->original);
-       ;
-       data.s += data.ls) {
-    if (!(data.ls = grn_charlen_(ctx, data.s, data.e, GRN_ENC_UTF8))) {
+  source = source_ = (unsigned char *)(data.string->original);
+  source_end = source + data.string->original_length_in_bytes;
+  for (; source < source_end; source += source_char_length) {
+    source_char_length = grn_charlen_(ctx, source, source_end, GRN_ENC_UTF8);
+    if (source_char_length == 0) {
       break;
     }
     if (data.remove_tokenized_delimiter_p &&
         grn_tokenizer_is_tokenized_delimiter(ctx,
-                                             (const char *)(data.s),
-                                             data.ls,
+                                             (const char *)source,
+                                             source_char_length,
                                              GRN_ENC_UTF8)) {
       continue;
     }
-    if ((data.p = (unsigned char *)data.options->decompose_func(data.s))) {
-      data.pe = data.p + strlen((char *)data.p);
-    } else {
-      data.p = data.s;
-      data.pe = data.p + data.ls;
-    }
-    if (data.d_ &&
-        (data.p2 = (unsigned char *)options->compose_func(data.d_, data.p))) {
-      data.p = data.p2;
-      data.pe = data.p + strlen((char *)(data.p));
-      if (data.cp) { data.cp--; }
-      if (data.ch) {
-        data.ch -= (data.d - data.d_);
-        if (data.ch[0] >= 0) {
-          data.s_ = data.s__;
-        }
-      }
-      if (data.offsets) {
-        data.offsets--;
-      }
-      data.d = data.d_;
-      data.length--;
-    }
-    for (; ; data.p += data.lp) {
-      if (!(data.lp = grn_charlen_(ctx, data.p, data.pe, GRN_ENC_UTF8))) {
-        break;
-      }
-      if ((*(data.p) == ' ' && data.remove_blank_p) ||
-          *(data.p) < 0x20 /* skip unprintable ascii */) {
-        if (data.cp > data.string->ctypes) { *(data.cp - 1) |= GRN_CHAR_BLANK; }
-        if (!data.options->include_removed_source_location) {
-          data.s_ += data.lp;
-        }
-      } else {
-        if (data.de <= data.d + data.lp) {
-          grn_nfkc_normalize_expand(ctx, &data);
-          if (ctx->rc != GRN_SUCCESS) {
-            goto exit;
-          }
-        }
+    {
+      const char *decomposed;
+      const unsigned char *current;
+      const unsigned char *current_end;
+      size_t current_length;
 
-        grn_memcpy(data.d, data.p, data.lp);
-        data.d_ = data.d;
-        if (data.lp > 0) {
-          data.d += data.lp;
-          data.length++;
-          if (data.cp) {
-            grn_char_type char_type;
-            char_type = data.options->char_type_func(data.p);
-            *(data.cp++) = char_type;
-          }
-          if (data.ch) {
-            size_t i;
-            if (data.s_ == data.s + data.ls) {
-              *(data.ch++) = -1;
-            } else {
-              *(data.ch++) = (int16_t)(data.s + data.ls - data.s_);
-              data.s__ = data.s_;
-              data.s_ = data.s + data.ls;
+      decomposed = data.options->decompose_func(source);
+      if (decomposed) {
+        current = decomposed;
+        current_end = current + strlen(decomposed);
+      } else {
+        current = source;
+        current_end = current + source_char_length;
+      }
+      if (context->d_) {
+        const char *composed = NULL;
+        composed = options->compose_func(context->d_, current);
+        if (composed) {
+          current = composed;
+          current_end = current + strlen(composed);
+          if (context->t) { context->t--; }
+          if (context->c) {
+            context->c -= (context->d - context->d_);
+            if (context->c[0] >= 0) {
+              source_ = source__;
             }
-            for (i = data.lp; i > 1; i--) { *(data.ch++) = 0; }
           }
-          if (data.offsets) {
-            *(data.offsets++) =
-              (uint64_t)(data.s - (const unsigned char *)(data.string->original));
+          if (context->o) {
+            context->o--;
+          }
+          context->d = context->d_;
+          context->n_characters--;
+        }
+      }
+      for (; current < current_end; current += current_length) {
+        current_length = grn_charlen_(ctx, current, current_end, GRN_ENC_UTF8);
+        if (current_length == 0) {
+          break;
+        }
+        if ((current[0] == ' ' && data.remove_blank_p) ||
+            current[0] < 0x20 /* skip unprintable ascii */) {
+          if (context->t > context->types) {
+            context->t[-1] |= GRN_CHAR_BLANK;
+          }
+          if (!data.options->include_removed_source_location) {
+            source_ += current_length;
+          }
+        } else {
+          if (context->dest_end <= context->d + current_length) {
+            grn_nfkc_normalize_expand(ctx, &data, current_length);
+            if (ctx->rc != GRN_SUCCESS) {
+              goto exit;
+            }
+          }
+
+          grn_memcpy(context->d, current, current_length);
+          context->d_ = context->d;
+          context->d += current_length;
+          context->n_characters++;
+          if (context->t) {
+            grn_char_type char_type;
+            char_type = data.options->char_type_func(current);
+            *(context->t++) = char_type;
+          }
+          if (context->c) {
+            size_t i;
+            if (source_ == source + source_char_length) {
+              *(context->c++) = -1;
+            } else {
+              *(context->c++) = (int16_t)(source + source_char_length - source_);
+              source__ = source_;
+              source_ = source + source_char_length;
+            }
+            for (i = current_length; i > 1; i--) { *(context->c++) = 0; }
+          }
+          if (context->o) {
+            *(context->o++) =
+              (uint64_t)(source - (const unsigned char *)(data.string->original));
           }
         }
       }
     }
   }
   grn_nfkc_normalize_unify(ctx, &data);
-  if (data.cp) { *(data.cp) = GRN_CHAR_NULL; }
-  if (data.offsets) { *(data.offsets) = data.string->original_length_in_bytes; }
-  *(data.d) = '\0';
-  data.string->n_characters = data.length;
-  data.string->normalized_length_in_bytes =
-    (size_t)(data.d - (unsigned char *)(data.string->normalized));
+  if (context->t) { *(context->t) = GRN_CHAR_NULL; }
+  if (context->o) { *(context->o) = data.string->original_length_in_bytes; }
+  *(context->d) = '\0';
+  data.string->n_characters = context->n_characters;
+  data.string->normalized = context->dest;
+  data.string->normalized_length_in_bytes = (size_t)(context->d - context->dest);
+  data.string->checks = context->checks;
+  data.string->ctypes = context->types;
+  data.string->offsets = context->offsets;
+  context->dest = NULL;
+  context->checks = NULL;
+  context->types = NULL;
+  context->offsets = NULL;
 exit:
   if (ctx->rc != GRN_SUCCESS) {
-    if (data.string->normalized) {
-      GRN_FREE(data.string->normalized);
-      data.string->normalized = NULL;
-    }
-    if (data.string->checks) {
-      GRN_FREE(data.string->checks);
-      data.string->checks = NULL;
-    }
-    if (data.string->ctypes) {
-      GRN_FREE(data.string->ctypes);
-      data.string->ctypes = NULL;
-    }
-    if (data.string->offsets) {
-      GRN_FREE(data.string->offsets);
-      data.string->offsets = NULL;
-    }
+    grn_nfkc_normalize_context_fin(ctx, context);
   }
   return ctx->rc;
 }
