@@ -712,7 +712,7 @@ grn_nfkc_normalize_context_expand(grn_ctx *ctx,
   context->dest = dest;
   if (context->c) {
     int16_t *checks;
-    if (!(checks = GRN_REALLOC(context->c,
+    if (!(checks = GRN_REALLOC(context->checks,
                                sizeof(int16_t) * (context->size + 1)))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[normalize][nfkc]%s failed to expand checks space",
