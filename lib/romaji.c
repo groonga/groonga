@@ -355,20 +355,36 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
     next = current + char_length;
     next_char_length = grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
     if (next_char_length == 3) {
-      if (next[0] == 0xe3 &&
-          next[1] == 0x82 &&
-          (next[2] == 0x83 || /* U+3083 HIRAGANA LETTER SMALL YA */
-           next[2] == 0x85 || /* U+3085 HIRAGANA LETTER SMALL YU */
-           next[2] == 0x87)) { /* U+3087 HIRAGANA LETTER SMALL YO */
-        next_small_y = GRN_TRUE;
-        next_small_yayuyo = aiueo[(next[2] - 1) % 5];
-      } else if (next[0] == 0xe3 &&
-                 next[1] == 0x83 &&
-                 (next[2] == 0xa3 || /* U+30E3 KATAKANA LETTER SMALL YA */
-                  next[2] == 0xa5 || /* U+30E5 KATAKANA LETTER SMALL YU */
-                  next[2] == 0xa7)) { /* U+30E7 KATAKANA LETTER SMALL YO */
-        next_small_y = GRN_TRUE;
-        next_small_yayuyo = aiueo[(next[2] - 3) % 5];
+      switch (next[0]) {
+      case 0xe3 :
+        switch (next[1]) {
+        case 0x82 :
+          switch (next[2]) {
+          case 0x83 : /* U+3083 HIRAGANA LETTER SMALL YA */
+          case 0x85 : /* U+3085 HIRAGANA LETTER SMALL YU */
+          case 0x87 : /* U+3087 HIRAGANA LETTER SMALL YO */
+            next_small_y = GRN_TRUE;
+            next_small_yayuyo = aiueo[(next[2] - 1) % 5];
+            break;
+          default :
+            break;
+          }
+        case 0x83 :
+          switch (next[2]) {
+          case 0xa3 : /* U+30E3 KATAKANA LETTER SMALL YA */
+          case 0xa5 : /* U+30E5 KATAKANA LETTER SMALL YU */
+          case 0xa7 : /* U+30E7 KATAKANA LETTER SMALL YO */
+            next_small_y = GRN_TRUE;
+            next_small_yayuyo = aiueo[(next[2] - 3) % 5];
+            break;
+          default :
+            break;
+          }
+        default :
+          break;
+        }
+      default :
+        break;
       }
     }
   }
