@@ -290,7 +290,6 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
   size_t next_char_length = 0;
   grn_bool next_small_y = GRN_FALSE;
   char next_small_yayuyo = '\0';
-  grn_bool next_pbm = GRN_FALSE;
   grn_bool next_aiueoy = GRN_FALSE;
   const char aiueo[] = "aiueo";
   const char auo[] = "auo";
@@ -303,7 +302,6 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
   if (char_length == 3) {
     next = current + char_length;
     next_char_length = grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
-    next_pbm = grn_romaji_hepburn_is_pbm(next, next_char_length);
     if (next_char_length == 3) {
       if (next[0] == 0xe3 &&
           next[1] == 0x82 &&
@@ -541,7 +539,7 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
         buffer[(*n_bytes)++] = aaieo[current[2] - 0x8e];
       } else if (current[2] == 0x93) {
         /* U+3093 HIRAGANA LETTER N */
-        if (next_pbm) {
+        if (grn_romaji_hepburn_is_pbm(next, next_char_length)) {
           buffer[(*n_bytes)++] = 'm';
         } else {
           buffer[(*n_bytes)++] = 'n';
@@ -745,7 +743,7 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
         buffer[(*n_bytes)++] = aaieo[current[2] - 0xae];
       } else if (current[2] == 0xb3) {
         /* U+30F3 KATAKANA LETTER N */
-        if (next_pbm) {
+        if (grn_romaji_hepburn_is_pbm(next, next_char_length)) {
           buffer[(*n_bytes)++] = 'm';
         } else {
           buffer[(*n_bytes)++] = 'n';
