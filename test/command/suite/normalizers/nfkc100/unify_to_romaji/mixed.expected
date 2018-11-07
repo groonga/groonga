@@ -6,7 +6,7 @@ normalize   'NormalizerNFKC100("unify_to_romaji", true,                      "re
     0.0
   ],
   {
-    "normalized": "aiuxeozazitachinanipapimamiヽヾ漢字",
+    "normalized": "aiuxeozajitachinanipapimamiヽヾ漢字",
     "types": [
       "alpha",
       "alpha",

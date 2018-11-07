@@ -62,7 +62,7 @@ grn_romaji_convert_hepburn(grn_ctx *ctx,
                   next[2] == 0xa5 || /* U+30E5 KATAKANA LETTER SMALL YU */
                   next[2] == 0xa7)) { /* U+30E7 KATAKANA LETTER SMALL YO */
         next_small_y = GRN_TRUE;
-        next_small_yayuyo = auo[(next[2] - 3) % 5];
+        next_small_yayuyo = aiueo[(next[2] - 3) % 5];
       } else if (next[0] == 0xe3 &&
                  ((next[1] == 0x81 &&
                    (next[2] == 0xb0 || /* U+3070 HIRAGANA LETTER BA */
@@ -244,8 +244,8 @@ grn_romaji_convert_hepburn(grn_ctx *ctx,
           if (0x80 <= next[2] && next[2] <= 0x89) {
             /* U+30C0 KATAKANA LETTER DA ..
              * U+30C9 KATAKANA LETTER DO */
-            const char *tdtjxtztdtd = "tdtjxtztdtd";
-            next_consonant = tdtjxtztdtd[next[2] - 0x80];
+            const char *dtjxtztdtd = "dtjxtztdtd";
+            next_consonant = dtjxtztdtd[next[2] - 0x80];
           } else if (0x8a <= next[2] && next[2] <= 0x8e) {
             /* U+30CA KATAKANA LETTER NA ..
              * U+30CE KATAKANA LETTER NO */
@@ -557,7 +557,7 @@ grn_romaji_convert_hepburn(grn_ctx *ctx,
             /* U+30B7 KATAKANA LETTER SI */
             buffer[(*n_bytes)++] = 's';
             buffer[(*n_bytes)++] = 'h';
-          } else if (current[2] == 0x98) {
+          } else if (current[2] == 0xb8) {
             /* U+30B8 KATAKANA LETTER ZI */
             buffer[(*n_bytes)++] = 'j';
           } else {
@@ -602,6 +602,7 @@ grn_romaji_convert_hepburn(grn_ctx *ctx,
             /* U+30C2 KATAKANA LETTER DI */
             buffer[(*n_bytes)++] = 'j';
           } else if (current[2] == 0x83) {
+            /* U+30C3 KATAKANA LETTER SMALL TU */
             buffer[(*n_bytes)++] = 'x';
             buffer[(*n_bytes)++] = 't';
             buffer[(*n_bytes)++] = 's';
@@ -610,8 +611,8 @@ grn_romaji_convert_hepburn(grn_ctx *ctx,
             buffer[(*n_bytes)++] = 't';
             buffer[(*n_bytes)++] = 's';
           } else {
-            const char *td_____tdtd = "td_____tdtd";
-            buffer[(*n_bytes)++] = td_____tdtd[current[2] - 0x80];
+            const char *d____ztdtd = "d____ztdtd";
+            buffer[(*n_bytes)++] = d____ztdtd[current[2] - 0x80];
           }
           buffer[(*n_bytes)++] = aiiuuueeoo[current[2] - 0x80];
         }
