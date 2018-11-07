@@ -74,6 +74,207 @@ grn_romaji_hepburn_is_pbm(const unsigned char *utf8,
   }
 }
 
+static grn_inline unsigned char
+grn_romaji_hepburn_consonant(grn_ctx *ctx,
+                             const unsigned char *current,
+                             size_t char_length,
+                             const unsigned char *end)
+{
+  if (char_length != 3) {
+    return '\0';
+  }
+
+  switch (current[0]) {
+  case 0xe3 :
+    switch (current[1]) {
+    case 0x81 :
+      if (0x81 <= current[2] && current[2] <= 0x8a) {
+        /* U+3042 HIRAGANA LETTER SMALL A ..
+         * U+304A HIRAGANA LETTER O */
+        if ((current[2] % 2) == 1) { /* SMALL */
+          return 'x';
+        }
+      } else if (0x8b <= current[2] && current[2] <= 0x94) {
+        /* U+304B HIRAGANA LETTER KA ..
+         * U+3054 HIRAGANA LETTER GO */
+        const char *gk = "gk";
+        return gk[current[2] % 2];
+      } else if (0x95 <= current[2] && current[2] <= 0x9e) {
+        /* U+3055 HIRAGANA LETTER SA ..
+         * U+305E HIRAGANA LETTER ZO */
+        if (current[2] == 0x97) {
+          /* U+3057 HIRAGANA LETTER SI */
+          return 's';
+        } else if (current[2] == 0x98) {
+          /* U+3058 HIRAGANA LETTER ZI */
+          return 'j';
+        } else {
+          const char *zs = "zs";
+          return zs[current[2] % 2];
+        }
+      } else if (0x9f <= current[2] && current[2] <= 0xa9) {
+        /* U+305F HIRAGANA LETTER TA ..
+         * U+3069 HIRAGANA LETTER DO */
+        const char *tdtjxtztdtd = "tdtjxtztdtd";
+        return tdtjxtztdtd[current[2] - 0x9f];
+      } else if (0xaa <= current[2] && current[2] <= 0xae) {
+        /* U+306A HIRAGANA LETTER NA ..
+         * U+306E HIRAGANA LETTER NO */
+        return 'n';
+      } else if (0xaf <= current[2] && current[2] <= 0xbd) {
+        /* U+306F HIRAGANA LETTER HA ..
+         * U+307D HIRAGANA LETTER PO */
+        const char *phb = "phb";
+        return phb[current[2] % 3];
+      } else if (0xbe <= current[2] && current[2] <= 0xbf) {
+        /* U+307E HIRAGANA LETTER MA ..
+         * U+307F HIRAGANA LETTER MI */
+        return 'm';
+      }
+      break;
+    case 0x82 :
+      if (0x80 <= current[2] && current[2] <= 0x82) {
+        /* U+3080 HIRAGANA LETTER MU ..
+         * U+3082 HIRAGANA LETTER MO */
+        return 'm';
+      } else if (0x83 <= current[2] && current[2] <= 0x88) {
+        /* U+3083 HIRAGANA LETTER SMALL YA ..
+         * U+3088 HIRAGANA LETTER YO */
+        if ((current[2] % 2) == 1) { /* SMALL */
+          return 'x';
+        } else {
+          return 'y';
+        }
+      } else if (0x89 <= current[2] && current[2] <= 0x8d) {
+        /* U+3089 HIRAGANA LETTER RA ..
+         * U+308D HIRAGANA LETTER RO */
+        return 'r';
+      } else if (0x8e <= current[2] && current[2] <= 0x92) {
+        /* U+308E HIRAGANA LETTER SMALL WA ..
+         * U+3092 HIRAGANA LETTER WO */
+        if (current[2] == 0x8e) { /* SMALL */
+          return 'x';
+        } else {
+          return 'w';
+        }
+      } else if (current[2] == 0x93) {
+        /* U+3093 HIRAGANA LETTER N */
+        const unsigned char *next = current + char_length;
+        size_t next_char_length = grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
+        if (grn_romaji_hepburn_is_pbm(next, next_char_length)) {
+          return 'm';
+        } else {
+          return 'n';
+        }
+      } else if (current[2] == 0x94) {
+        /* U+3094 HIRAGANA LETTER VU */
+        return 'v';
+      } else if (current[2] == 0x95) {
+        /* U+3095 HIRAGANA LETTER SMALL KA */
+        return 'x';
+      } else if (current[2] == 0x96) {
+        /* U+3096 HIRAGANA LETTER SMALL KE */
+        return 'x';
+      } else if (0xa1 <= current[2] && current[2] <= 0xaa) {
+        /* U+30A1 KATAKANA LETTER SMALL A ..
+         * U+30AA KATAKANA LETTER O */
+        if ((current[2] % 2) == 1) { /* SMALL */
+          return 'x';
+        }
+      } else if (0xab <= current[2] && current[2] <= 0xb4) {
+        /* U+30AB KATAKANA LETTER KA ..
+         * U+30B4 KATAKANA LETTER GO */
+        const char *gk = "gk";
+        return gk[current[2] % 2];
+      } else if (0xb5 <= current[2] && current[2] <= 0xbe) {
+        /* U+30B5 KATAKANA LETTER SA ..
+         * U+30BE KATAKANA LETTER ZO */
+        if (current[2] == 0xb7) {
+          /* U+30B7 KATAKANA LETTER SI */
+          return 's';
+        } else if (current[2] == 0x98) {
+          /* U+30B8 KATAKANA LETTER ZI */
+          return 'j';
+        } else {
+          const char *zs = "zs";
+          return zs[current[2] % 2];
+        }
+      } else if (current[2] == 0xbf) {
+        /* U+30BF KATAKANA LETTER TA */
+        return 't';
+      }
+      break;
+    case 0x83 :
+      if (0x80 <= current[2] && current[2] <= 0x89) {
+        /* U+30C0 KATAKANA LETTER DA ..
+         * U+30C9 KATAKANA LETTER DO */
+        const char *dtjxtztdtd = "dtjxtztdtd";
+        return dtjxtztdtd[current[2] - 0x80];
+      } else if (0x8a <= current[2] && current[2] <= 0x8e) {
+        /* U+30CA KATAKANA LETTER NA ..
+         * U+30CE KATAKANA LETTER NO */
+        return 'n';
+      } else if (0x8f <= current[2] && current[2] <= 0x9d) {
+        /* U+30CF KATAKANA LETTER HA ..
+         * U+30DD KATAKANA LETTER PO */
+        const char *bph = "bph";
+        return bph[current[2] % 3];
+      } else if (0x9e <= current[2] && current[2] <= 0xa2) {
+        /* U+30DE KATAKANA LETTER MA ..
+         * U+30E2 KATAKANA LETTER MO */
+        return 'm';
+      } else if (0xa3 <= current[2] && current[2] <= 0xa8) {
+        /* U+30E3 KATAKANA LETTER SMALL YA ..
+         * U+30E8 KATAKANA LETTER YO */
+        if ((current[2] % 2) == 1) { /* SMALL */
+          return 'x';
+        } else {
+          return 'y';
+        }
+      } else if (0xa9 <= current[2] && current[2] <= 0xad) {
+        /* U+30E9 KATAKANA LETTER RA ..
+         * U+30ED KATAKANA LETTER RO */
+        return 'r';
+      } else if (0xae <= current[2] && current[2] <= 0xb2) {
+        /* U+30EE KATAKANA LETTER SMALL WA ..
+         * U+30F2 KATAKANA LETTER WO */
+        if (current[2] == 0xae) { /* SMALL */
+          return 'x';
+        } else {
+          return 'w';
+        }
+      } else if (current[2] == 0xb3) {
+        /* U+30F3 KATAKANA LETTER N */
+        const unsigned char *next = current + char_length;
+        size_t next_char_length = grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
+        if (grn_romaji_hepburn_is_pbm(next, next_char_length)) {
+          return 'm';
+        } else {
+          return 'n';
+        }
+      } else if (current[2] == 0xb4) {
+        /* U+30F4 KATAKANA LETTER VU */
+        return 'v';
+      } else if (current[2] == 0xb5) {
+        /* U+30F5 KATAKANA LETTER SMALL KA */
+        return 'x';
+      } else if (current[2] == 0xb6) {
+        /* U+30F6 KATAKANA LETTER SMALL KE */
+        return 'x';
+      } else if (0xb7 <= current[2] && current[2] <= 0xba) {
+        /* U+30F7 KATAKANA LETTER VA ..
+         * U+30FA KATAKANA LETTER VO */
+        return 'v';
+      }
+      break;
+    default :
+      break;
+    }
+  }
+
+  return '\0';
+}
+
 const unsigned char *
 grn_romaji_hepburn_convert(grn_ctx *ctx,
                            const unsigned char *current,
@@ -91,7 +292,6 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
   char next_small_yayuyo = '\0';
   grn_bool next_pbm = GRN_FALSE;
   grn_bool next_aiueoy = GRN_FALSE;
-  char next_consonant = '\0';
   const char aiueo[] = "aiueo";
   const char auo[] = "auo";
   const char aaieo[] = "aaieo";
@@ -147,200 +347,6 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
                   next[2] == 0xa6 || /* U+30E6 KATAKANA LETTER YU */
                   next[2] == 0xa8)) { /* U+30E8 KATAKANA LETTER YO */
         next_aiueoy = GRN_TRUE;
-      }
-
-      switch (next[0]) {
-      case 0xe3 :
-        switch (next[1]) {
-        case 0x81 :
-          if (0x81 <= next[2] && next[2] <= 0x8a) {
-            /* U+3042 HIRAGANA LETTER SMALL A ..
-             * U+304A HIRAGANA LETTER O */
-            if ((next[2] % 2) == 1) { /* SMALL */
-              next_consonant = 'x';
-            }
-          } else if (0x8b <= next[2] && next[2] <= 0x94) {
-            /* U+304B HIRAGANA LETTER KA ..
-             * U+3054 HIRAGANA LETTER GO */
-            const char *gk = "gk";
-            next_consonant = gk[next[2] % 2];
-          } else if (0x95 <= next[2] && next[2] <= 0x9e) {
-            /* U+3055 HIRAGANA LETTER SA ..
-             * U+305E HIRAGANA LETTER ZO */
-            if (next[2] == 0x97) {
-              /* U+3057 HIRAGANA LETTER SI */
-              next_consonant = 's';
-            } else if (next[2] == 0x98) {
-              /* U+3058 HIRAGANA LETTER ZI */
-              next_consonant = 'j';
-            } else {
-              const char *zs = "zs";
-              next_consonant = zs[next[2] % 2];
-            }
-          } else if (0x9f <= next[2] && next[2] <= 0xa9) {
-            /* U+305F HIRAGANA LETTER TA ..
-             * U+3069 HIRAGANA LETTER DO */
-            const char *tdtjxtztdtd = "tdtjxtztdtd";
-            next_consonant = tdtjxtztdtd[next[2] - 0x9f];
-          } else if (0xaa <= next[2] && next[2] <= 0xae) {
-            /* U+306A HIRAGANA LETTER NA ..
-             * U+306E HIRAGANA LETTER NO */
-            next_consonant = 'n';
-          } else if (0xaf <= next[2] && next[2] <= 0xbd) {
-            /* U+306F HIRAGANA LETTER HA ..
-             * U+307D HIRAGANA LETTER PO */
-            const char *phb = "phb";
-            next_consonant = phb[next[2] % 3];
-          } else if (0xbe <= next[2] && next[2] <= 0xbf) {
-            /* U+307E HIRAGANA LETTER MA ..
-             * U+307F HIRAGANA LETTER MI */
-            next_consonant = 'm';
-          }
-          break;
-        case 0x82 :
-          if (0x80 <= next[2] && next[2] <= 0x82) {
-            /* U+3080 HIRAGANA LETTER MU ..
-             * U+3082 HIRAGANA LETTER MO */
-            next_consonant = 'm';
-          } else if (0x83 <= next[2] && next[2] <= 0x88) {
-            /* U+3083 HIRAGANA LETTER SMALL YA ..
-             * U+3088 HIRAGANA LETTER YO */
-            if ((next[2] % 2) == 1) { /* SMALL */
-              next_consonant = 'x';
-            } else {
-              next_consonant = 'y';
-            }
-          } else if (0x89 <= next[2] && next[2] <= 0x8d) {
-            /* U+3089 HIRAGANA LETTER RA ..
-             * U+308D HIRAGANA LETTER RO */
-            next_consonant = 'r';
-          } else if (0x8e <= next[2] && next[2] <= 0x92) {
-            /* U+308E HIRAGANA LETTER SMALL WA ..
-             * U+3092 HIRAGANA LETTER WO */
-            if (next[2] == 0x8e) { /* SMALL */
-              next_consonant = 'x';
-            } else {
-              next_consonant = 'w';
-            }
-          } else if (next[2] == 0x93) {
-            /* U+3093 HIRAGANA LETTER N */
-            const unsigned char *next_next = next + next_char_length;
-            size_t next_next_char_length = grn_charlen_(ctx,
-                                                        next_next,
-                                                        end,
-                                                        GRN_ENC_UTF8);
-            if (grn_romaji_hepburn_is_pbm(next_next, next_next_char_length)) {
-              next_consonant = 'm';
-            } else {
-              next_consonant = 'n';
-            }
-          } else if (next[2] == 0x94) {
-            /* U+3094 HIRAGANA LETTER VU */
-            next_consonant = 'v';
-          } else if (next[2] == 0x95) {
-            /* U+3095 HIRAGANA LETTER SMALL KA */
-            next_consonant = 'x';
-          } else if (next[2] == 0x96) {
-            /* U+3096 HIRAGANA LETTER SMALL KE */
-            next_consonant = 'x';
-          } else if (0xa1 <= next[2] && next[2] <= 0xaa) {
-            /* U+30A1 KATAKANA LETTER SMALL A ..
-             * U+30AA KATAKANA LETTER O */
-            if ((next[2] % 2) == 1) { /* SMALL */
-              next_consonant = 'x';
-            }
-          } else if (0xab <= next[2] && next[2] <= 0xb4) {
-            /* U+30AB KATAKANA LETTER KA ..
-             * U+30B4 KATAKANA LETTER GO */
-            const char *gk = "gk";
-            next_consonant = gk[next[2] % 2];
-          } else if (0xb5 <= next[2] && next[2] <= 0xbe) {
-            /* U+30B5 KATAKANA LETTER SA ..
-             * U+30BE KATAKANA LETTER ZO */
-            if (next[2] == 0xb7) {
-              /* U+30B7 KATAKANA LETTER SI */
-              next_consonant = 's';
-            } else if (next[2] == 0x98) {
-              /* U+30B8 KATAKANA LETTER ZI */
-              next_consonant = 'j';
-            } else {
-              const char *zs = "zs";
-              next_consonant = zs[next[2] % 2];
-            }
-          } else if (next[2] == 0xbf) {
-            /* U+30BF KATAKANA LETTER TA */
-            next_consonant = 't';
-          }
-          break;
-        case 0x83 :
-          if (0x80 <= next[2] && next[2] <= 0x89) {
-            /* U+30C0 KATAKANA LETTER DA ..
-             * U+30C9 KATAKANA LETTER DO */
-            const char *dtjxtztdtd = "dtjxtztdtd";
-            next_consonant = dtjxtztdtd[next[2] - 0x80];
-          } else if (0x8a <= next[2] && next[2] <= 0x8e) {
-            /* U+30CA KATAKANA LETTER NA ..
-             * U+30CE KATAKANA LETTER NO */
-            next_consonant = 'n';
-          } else if (0x8f <= next[2] && next[2] <= 0x9d) {
-            /* U+30CF KATAKANA LETTER HA ..
-             * U+30DD KATAKANA LETTER PO */
-            const char *bph = "bph";
-            next_consonant = bph[next[2] % 3];
-          } else if (0x9e <= next[2] && next[2] <= 0xa2) {
-            /* U+30DE KATAKANA LETTER MA ..
-             * U+30E2 KATAKANA LETTER MO */
-            next_consonant = 'm';
-          } else if (0xa3 <= next[2] && next[2] <= 0xa8) {
-            /* U+30E3 KATAKANA LETTER SMALL YA ..
-             * U+30E8 KATAKANA LETTER YO */
-            if ((next[2] % 2) == 1) { /* SMALL */
-              next_consonant = 'x';
-            } else {
-              next_consonant = 'y';
-            }
-          } else if (0xa9 <= next[2] && next[2] <= 0xad) {
-            /* U+30E9 KATAKANA LETTER RA ..
-             * U+30ED KATAKANA LETTER RO */
-            next_consonant = 'r';
-          } else if (0xae <= next[2] && next[2] <= 0xb2) {
-            /* U+30EE KATAKANA LETTER SMALL WA ..
-             * U+30F2 KATAKANA LETTER WO */
-            if (next[2] == 0xae) { /* SMALL */
-              next_consonant = 'x';
-            } else {
-              next_consonant = 'w';
-            }
-          } else if (next[2] == 0xb3) {
-            /* U+30F3 KATAKANA LETTER N */
-            const unsigned char *next_next = next + next_char_length;
-            size_t next_next_char_length = grn_charlen_(ctx,
-                                                        next_next,
-                                                        end,
-                                                        GRN_ENC_UTF8);
-            if (grn_romaji_hepburn_is_pbm(next_next, next_next_char_length)) {
-              next_consonant = 'm';
-            } else {
-              next_consonant = 'n';
-            }
-          } else if (next[2] == 0xb4) {
-            /* U+30F4 KATAKANA LETTER VU */
-            next_consonant = 'v';
-          } else if (next[2] == 0xb5) {
-            /* U+30F5 KATAKANA LETTER SMALL KA */
-            next_consonant = 'x';
-          } else if (next[2] == 0xb6) {
-            /* U+30F6 KATAKANA LETTER SMALL KE */
-            next_consonant = 'x';
-          } else if (0xb7 <= next[2] && next[2] <= 0xba) {
-            /* U+30F7 KATAKANA LETTER VA ..
-             * U+30FA KATAKANA LETTER VO */
-            next_consonant = 'v';
-          }
-          break;
-        default :
-          break;
-        }
       }
     }
   }
@@ -417,9 +423,17 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
           buffer[(*n_bytes)++] = next_small_yayuyo;
           (*n_used_bytes) += next_char_length;
           (*n_used_characters)++;
-        } else if (next_consonant != '\0' && current[2] == 0xa3) {
+        } else if (current[2] == 0xa3) {
           /* U+3063 HIRAGANA LETTER SMALL TU */
-          buffer[(*n_bytes)++] = next_consonant;
+          const unsigned char next_consonant =
+            grn_romaji_hepburn_consonant(ctx, next, next_char_length, end);
+          if (next_consonant == '\0') {
+            buffer[(*n_bytes)++] = 'x';
+            buffer[(*n_bytes)++] = 't';
+            buffer[(*n_bytes)++] = 's';
+          } else {
+            buffer[(*n_bytes)++] = next_consonant;
+          }
         } else {
           const char *aaiiuuueeoo = "aaiiuuueeoo";
           if (current[2] == 0xa1) {
@@ -429,11 +443,6 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
           } else if (current[2] == 0xa2) {
             /* U+3062 HIRAGANA LETTER DI */
             buffer[(*n_bytes)++] = 'j';
-          } else if (current[2] == 0xa3) {
-            /* U+3063 HIRAGANA LETTER SMALL TU */
-            buffer[(*n_bytes)++] = 'x';
-            buffer[(*n_bytes)++] = 't';
-            buffer[(*n_bytes)++] = 's';
           } else if (current[2] == 0xa4) {
             /* U+3064 HIRAGANA LETTER TU */
             buffer[(*n_bytes)++] = 't';
@@ -629,9 +638,17 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
           buffer[(*n_bytes)++] = next_small_yayuyo;
           (*n_used_bytes) += next_char_length;
           (*n_used_characters)++;
-        } else if (next_consonant != '\0' && current[2] == 0x83) {
+        } else if (current[2] == 0x83) {
           /* U+30C3 KATAKANA LETTER SMALL TU */
-          buffer[(*n_bytes)++] = next_consonant;
+          const unsigned char next_consonant =
+            grn_romaji_hepburn_consonant(ctx, next, next_char_length, end);
+          if (next_consonant == '\0') {
+            buffer[(*n_bytes)++] = 'x';
+            buffer[(*n_bytes)++] = 't';
+            buffer[(*n_bytes)++] = 's';
+          } else {
+            buffer[(*n_bytes)++] = next_consonant;
+          }
         } else {
           const char *aiiuuueeoo = "aiiuuueeoo";
           if (current[2] == 0x81) {
