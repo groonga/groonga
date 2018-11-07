@@ -82,6 +82,8 @@ libgroonga_c_sources =				\
 	grn_request_canceler.h			\
 	request_timer.c				\
 	grn_request_timer.h			\
+	romaji.c				\
+	grn_romaji.h				\
 	rset.c					\
 	grn_rset.h				\
 	scanner.c				\
