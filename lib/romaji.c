@@ -74,6 +74,59 @@ grn_romaji_hepburn_is_pbm(const unsigned char *utf8,
   }
 }
 
+static grn_inline grn_bool
+grn_romaji_hepburn_is_aiueoy(const unsigned char *utf8,
+                             size_t length)
+{
+  if (length != 3) {
+    return GRN_FALSE;
+  }
+
+  switch (utf8[0]) {
+  case 0xe3 :
+    switch (utf8[1]) {
+    case 0x81 :
+      switch (utf8[2]) {
+      case 0x82 : /* U+3042 HIRAGANA LETTER A */
+      case 0x84 : /* U+3044 HIRAGANA LETTER I */
+      case 0x86 : /* U+3046 HIRAGANA LETTER U */
+      case 0x88 : /* U+3048 HIRAGANA LETTER E */
+      case 0x8a : /* U+304A HIRAGANA LETTER O */
+        return GRN_TRUE;
+      default :
+        return GRN_FALSE;
+      }
+    case 0x82 :
+      switch (utf8[2]) {
+      case 0x84 : /* U+3084 HIRAGANA LETTER YA */
+      case 0x86 : /* U+3086 HIRAGANA LETTER YU */
+      case 0x88 : /* U+3088 HIRAGANA LETTER YO */
+      case 0xa2 : /* U+30A2 KATAKANA LETTER A */
+      case 0xa4 : /* U+30A4 KATAKANA LETTER I */
+      case 0xa6 : /* U+30A6 KATAKANA LETTER U */
+      case 0xa8 : /* U+30A8 KATAKANA LETTER E */
+      case 0xaa : /* U+30AA KATAKANA LETTER O */
+        return GRN_TRUE;
+      default :
+        return GRN_FALSE;
+      }
+    case 0x83 :
+      switch (utf8[2]) {
+      case 0xa4 : /* U+30E4 KATAKANA LETTER YA */
+      case 0xa6 : /* U+30E6 KATAKANA LETTER YU */
+      case 0xa8 : /* U+30E8 KATAKANA LETTER YO */
+        return GRN_TRUE;
+      default :
+        return GRN_FALSE;
+      }
+    default :
+      return GRN_FALSE;
+    }
+  default :
+    return GRN_FALSE;
+  }
+}
+
 static grn_inline unsigned char
 grn_romaji_hepburn_consonant(grn_ctx *ctx,
                              const unsigned char *current,
@@ -290,7 +343,6 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
   size_t next_char_length = 0;
   grn_bool next_small_y = GRN_FALSE;
   char next_small_yayuyo = '\0';
-  grn_bool next_aiueoy = GRN_FALSE;
   const char aiueo[] = "aiueo";
   const char auo[] = "auo";
   const char aaieo[] = "aaieo";
@@ -317,34 +369,6 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
                   next[2] == 0xa7)) { /* U+30E7 KATAKANA LETTER SMALL YO */
         next_small_y = GRN_TRUE;
         next_small_yayuyo = aiueo[(next[2] - 3) % 5];
-      } else if (next[0] == 0xe3 &&
-                 next[1] == 0x81 &&
-                 (next[2] == 0x82 || /* U+3042 HIRAGANA LETTER A */
-                  next[2] == 0x84 || /* U+3044 HIRAGANA LETTER I */
-                  next[2] == 0x86 || /* U+3046 HIRAGANA LETTER U */
-                  next[2] == 0x88 || /* U+3048 HIRAGANA LETTER E */
-                  next[2] == 0x8a)) { /* U+304A HIRAGANA LETTER O */
-        next_aiueoy = GRN_TRUE;
-      } else if (next[0] == 0xe3 &&
-                 next[1] == 0x82 &&
-                 (next[2] == 0x84 || /* U+3084 HIRAGANA LETTER YA */
-                  next[2] == 0x86 || /* U+3086 HIRAGANA LETTER YU */
-                  next[2] == 0x88)) { /* U+3088 HIRAGANA LETTER YO */
-        next_aiueoy = GRN_TRUE;
-      } else if (next[0] == 0xe3 &&
-                 next[1] == 0x82 &&
-                 (next[2] == 0xa2 || /* U+30A2 KATAKANA LETTER A */
-                  next[2] == 0xa4 || /* U+30A4 KATAKANA LETTER I */
-                  next[2] == 0xa6 || /* U+30A6 KATAKANA LETTER U */
-                  next[2] == 0xa8 || /* U+30A8 KATAKANA LETTER E */
-                  next[2] == 0xaa)) { /* U+30AA KATAKANA LETTER O */
-        next_aiueoy = GRN_TRUE;
-      } else if (next[0] == 0xe3 &&
-                 next[1] == 0x83 &&
-                 (next[2] == 0xa4 || /* U+30E4 KATAKANA LETTER YA */
-                  next[2] == 0xa6 || /* U+30E6 KATAKANA LETTER YU */
-                  next[2] == 0xa8)) { /* U+30E8 KATAKANA LETTER YO */
-        next_aiueoy = GRN_TRUE;
       }
     }
   }
@@ -544,7 +568,7 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
         } else {
           buffer[(*n_bytes)++] = 'n';
         }
-        if (next_aiueoy) {
+        if (grn_romaji_hepburn_is_aiueoy(next, next_char_length)) {
           buffer[(*n_bytes)++] = '-';
         }
       } else if (current[2] == 0x94) {
@@ -748,7 +772,7 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
         } else {
           buffer[(*n_bytes)++] = 'n';
         }
-        if (next_aiueoy) {
+        if (grn_romaji_hepburn_is_aiueoy(next, next_char_length)) {
           buffer[(*n_bytes)++] = '-';
         }
       } else if (current[2] == 0xb4) {
