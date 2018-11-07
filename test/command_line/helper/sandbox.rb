@@ -30,6 +30,14 @@ module Sandbox
     @error_output_log_path = @tmp_dir + "error-output.log"
   end
 
+  def use_large_tmp_dir
+    if @base_tmp_dir.symlink?
+      FileUtils.rm_rf(@tmp_dir.to_s)
+      FileUtils.rm_rf(@base_tmp_dir.to_s)
+      FileUtils.mkdir_p(@tmp_dir.to_s)
+    end
+  end
+
   def setup_database_path
     name_for_path = name.gsub(/[\(\)\[\]: ]/, "-")
     @database_path = @tmp_dir + "#{name_for_path}.db"

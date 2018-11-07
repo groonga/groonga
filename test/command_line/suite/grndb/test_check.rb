@@ -170,6 +170,7 @@ load --table Users
   end
 
   def test_corrupt_table
+    use_large_tmp_dir
     groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
     groonga do |external_process|
       external_process.input.puts("load --table Users")
@@ -209,6 +210,7 @@ load --table Users
   end
 
   def test_corrupt_data_column
+    use_large_tmp_dir
     groonga("table_create", "Data", "TABLE_NO_KEY")
     groonga("column_create", "Data", "text", "COLUMN_SCALAR", "Text")
     groonga do |external_process|
