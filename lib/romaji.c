@@ -19,8 +19,63 @@
 #include "grn_romaji.h"
 #include "grn_str.h"
 
+static grn_inline grn_bool
+grn_romaji_hepburn_is_pbm(const unsigned char *utf8,
+                          size_t length)
+{
+  if (length != 3) {
+    return GRN_FALSE;
+  }
+
+  switch (utf8[0]) {
+  case 0xe3 :
+    switch (utf8[1]) {
+    case 0x81 :
+      switch (utf8[2]) {
+      case 0xb0 : /* U+3070 HIRAGANA LETTER BA */
+      case 0xb1 : /* U+3071 HIRAGANA LETTER PA */
+      case 0xb3 : /* U+3073 HIRAGANA LETTER BI */
+      case 0xb4 : /* U+3074 HIRAGANA LETTER PI */
+      case 0xb6 : /* U+3076 HIRAGANA LETTER BU */
+      case 0xb7 : /* U+3077 HIRAGANA LETTER PU */
+      case 0xb9 : /* U+3079 HIRAGANA LETTER BE */
+      case 0xba : /* U+307A HIRAGANA LETTER PE */
+        return GRN_TRUE;
+      default :
+        /* U+3079 HIRAGANA LETTER BO ..
+         * U+307F HIRAGANA LETTER MI */
+        return utf8[2] >= 0xbc;
+      }
+    case 0x82 :
+      /* U+3080 HIRAGANA LETTER MU ..
+       * U+3082 HIRAGANA LETTER MO */
+      return (0x80 <= utf8[2] && utf8[2] <= 0x82);
+    case 0x83 :
+      switch (utf8[2]) {
+      case 0x90 : /* U+30D0 KATAKANA LETTER BA */
+      case 0x91 : /* U+30D1 KATAKANA LETTER PA */
+      case 0x93 : /* U+30D3 KATAKANA LETTER BI */
+      case 0x94 : /* U+30D4 KATAKANA LETTER PI */
+      case 0x96 : /* U+30D6 KATAKANA LETTER BU */
+      case 0x97 : /* U+30D7 KATAKANA LETTER PU */
+      case 0x99 : /* U+30D9 KATAKANA LETTER BE */
+      case 0x9a : /* U+30DA KATAKANA LETTER PE */
+        return GRN_TRUE;
+      default :
+        /* U+30DC KATAKANA LETTER BO ..
+         * U+30E2 KATAKANA LETTER MO */
+        return (0x9c <= utf8[2] && utf8[2] <= 0xa2);
+      }
+    default :
+      return GRN_FALSE;
+    }
+  default :
+    return GRN_FALSE;
+  }
+}
+
 const unsigned char *
-grn_romaji_convert_hepburn(grn_ctx *ctx,
+grn_romaji_hepburn_convert(grn_ctx *ctx,
                            const unsigned char *current,
                            const unsigned char *end,
                            size_t *n_used_bytes,
@@ -48,6 +103,7 @@ grn_romaji_convert_hepburn(grn_ctx *ctx,
   if (char_length == 3) {
     next = current + char_length;
     next_char_length = grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
+    next_pbm = grn_romaji_hepburn_is_pbm(next, next_char_length);
     if (next_char_length == 3) {
       if (next[0] == 0xe3 &&
           next[1] == 0x82 &&
@@ -63,38 +119,6 @@ grn_romaji_convert_hepburn(grn_ctx *ctx,
                   next[2] == 0xa7)) { /* U+30E7 KATAKANA LETTER SMALL YO */
         next_small_y = GRN_TRUE;
         next_small_yayuyo = aiueo[(next[2] - 3) % 5];
-      } else if (next[0] == 0xe3 &&
-                 ((next[1] == 0x81 &&
-                   (next[2] == 0xb0 || /* U+3070 HIRAGANA LETTER BA */
-                    next[2] == 0xb1 || /* U+3071 HIRAGANA LETTER PA */
-                    next[2] == 0xb3 || /* U+3073 HIRAGANA LETTER BI */
-                    next[2] == 0xb4 || /* U+3074 HIRAGANA LETTER PI */
-                    next[2] == 0xb6 || /* U+3076 HIRAGANA LETTER BU */
-                    next[2] == 0xb7 || /* U+3077 HIRAGANA LETTER PU */
-                    next[2] == 0xb9 || /* U+3079 HIRAGANA LETTER BE */
-                    next[2] == 0xba || /* U+307A HIRAGANA LETTER PE */
-                    /* U+3079 HIRAGANA LETTER BO ..
-                     * U+307F HIRAGANA LETTER MI */
-                    0xbc <= next[2])) ||
-                  (next[1] == 0x82 &&
-                  /* U+3080 HIRAGANA LETTER MU ..
-                   * U+3082 HIRAGANA LETTER MO */
-                   (0x80 <= next[2] && next[2] <= 0x82)))) {
-        next_pbm = GRN_TRUE;
-      } else if (next[0] == 0xe3 &&
-                 next[1] == 0x83 &&
-                 (next[2] == 0x90 || /* U+30D0 KATAKANA LETTER BA */
-                   next[2] == 0x91 || /* U+30D1 KATAKANA LETTER PA */
-                   next[2] == 0x93 || /* U+30D3 KATAKANA LETTER BI */
-                   next[2] == 0x94 || /* U+30D4 KATAKANA LETTER PI */
-                   next[2] == 0x96 || /* U+30D6 KATAKANA LETTER BU */
-                   next[2] == 0x97 || /* U+30D7 KATAKANA LETTER PU */
-                   next[2] == 0x99 || /* U+30D9 KATAKANA LETTER BE */
-                   next[2] == 0x9a || /* U+30DA KATAKANA LETTER PE */
-                  /* U+30DC KATAKANA LETTER BO ..
-                   * U+30E2 KATAKANA LETTER MO */
-                  (0x9c <= next[2] && next[2] <= 0xa2))) {
-        next_pbm = GRN_TRUE;
       } else if (next[0] == 0xe3 &&
                  next[1] == 0x81 &&
                  (next[2] == 0x82 || /* U+3042 HIRAGANA LETTER A */
@@ -200,8 +224,16 @@ grn_romaji_convert_hepburn(grn_ctx *ctx,
             }
           } else if (next[2] == 0x93) {
             /* U+3093 HIRAGANA LETTER N */
-            /* TODO: Maybe 'm' */
-            next_consonant = 'n';
+            const unsigned char *next_next = next + next_char_length;
+            size_t next_next_char_length = grn_charlen_(ctx,
+                                                        next_next,
+                                                        end,
+                                                        GRN_ENC_UTF8);
+            if (grn_romaji_hepburn_is_pbm(next_next, next_next_char_length)) {
+              next_consonant = 'm';
+            } else {
+              next_consonant = 'n';
+            }
           } else if (next[2] == 0x94) {
             /* U+3094 HIRAGANA LETTER VU */
             next_consonant = 'v';
@@ -281,8 +313,16 @@ grn_romaji_convert_hepburn(grn_ctx *ctx,
             }
           } else if (next[2] == 0xb3) {
             /* U+30F3 KATAKANA LETTER N */
-            /* TODO: Maybe 'm' */
-            next_consonant = 'n';
+            const unsigned char *next_next = next + next_char_length;
+            size_t next_next_char_length = grn_charlen_(ctx,
+                                                        next_next,
+                                                        end,
+                                                        GRN_ENC_UTF8);
+            if (grn_romaji_hepburn_is_pbm(next_next, next_next_char_length)) {
+              next_consonant = 'm';
+            } else {
+              next_consonant = 'n';
+            }
           } else if (next[2] == 0xb4) {
             /* U+30F4 KATAKANA LETTER VU */
             next_consonant = 'v';

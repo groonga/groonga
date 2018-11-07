@@ -25,7 +25,7 @@ extern "C" {
 #endif
 
 const unsigned char *
-grn_romaji_convert_hepburn(grn_ctx *ctx,
+grn_romaji_hepburn_convert(grn_ctx *ctx,
                            const unsigned char *current,
                            const unsigned char *end,
                            size_t *n_used_bytes,

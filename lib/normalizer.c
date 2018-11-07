@@ -1580,7 +1580,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     grn_nfkc_normalize_unify_stateful(ctx,
                                       data,
                                       &unify,
-                                      grn_romaji_convert_hepburn,
+                                      grn_romaji_hepburn_convert,
                                       "[unify][romaji]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
