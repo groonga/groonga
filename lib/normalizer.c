@@ -1481,6 +1481,7 @@ grn_nfkc_normalize_unify_stateful(grn_ctx *ctx,
               for (i = 1; i < unified_char_length; i++) {
                 *(unify->c++) = 0;
               }
+              unify->c[0] = 0;
             }
             if (unify->o) {
               *(unify->o++) = data->context.offsets[i_character];
