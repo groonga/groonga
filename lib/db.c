@@ -9511,12 +9511,15 @@ grn_obj_set_info_token_filters(grn_ctx *ctx,
     }
 
     for (i = 0; i < n_new_token_filters; i++) {
+      grn_obj *token_filter;
+      grn_obj token_filter_name;
+      grn_id token_filter_id = GRN_ID_NIL;
+      grn_table_module *raw_token_filter;
+      unsigned int current_token_filters_size = GRN_BULK_VSIZE(token_filters);
+
       if (is_token_filter_names) {
-        grn_obj token_filter;
-        grn_id token_filter_id = GRN_ID_NIL;
         const char *name;
         unsigned int name_size;
-        grn_table_module *raw_token_filter;
 
         name_size = grn_vector_get_element(ctx,
                                            new_token_filters,
@@ -9524,26 +9527,34 @@ grn_obj_set_info_token_filters(grn_ctx *ctx,
                                            &name,
                                            NULL,
                                            NULL);
-        GRN_TEXT_INIT(&token_filter, GRN_OBJ_DO_SHALLOW_COPY);
-        GRN_TEXT_SET(ctx, &token_filter, name, name_size);
-        grn_bulk_space(ctx, token_filters, sizeof(grn_table_module));
-        raw_token_filter =
-          ((grn_table_module *)GRN_BULK_HEAD(token_filters)) + i;
-        grn_table_module_init(ctx, raw_token_filter, GRN_ID_NIL);
-        grn_obj_set_info_table_module_raw(ctx,
-                                          table,
-                                          GRN_INFO_TOKEN_FILTERS,
-                                          raw_token_filter,
-                                          &token_filter_id,
-                                          i,
-                                          &token_filter,
-                                          context_tag,
-                                          module_name);
-        GRN_PTR_PUT(ctx, token_filter_procs, raw_token_filter->proc);
-        GRN_OBJ_FIN(ctx, &token_filter);
+        GRN_TEXT_INIT(&token_filter_name, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_TEXT_SET(ctx, &token_filter_name, name, name_size);
+        token_filter = &token_filter_name;
       } else {
-        grn_obj *token_filter = GRN_PTR_VALUE_AT(new_token_filters, i);
-        GRN_PTR_PUT(ctx, token_filter_procs, token_filter);
+        token_filter = GRN_PTR_VALUE_AT(new_token_filters, i);
+      }
+
+      grn_bulk_space(ctx, token_filters, sizeof(grn_table_module));
+      raw_token_filter = ((grn_table_module *)GRN_BULK_HEAD(token_filters)) + i;
+      grn_table_module_init(ctx, raw_token_filter, GRN_ID_NIL);
+      grn_obj_set_info_table_module_raw(ctx,
+                                        table,
+                                        GRN_INFO_TOKEN_FILTERS,
+                                        raw_token_filter,
+                                        &token_filter_id,
+                                        i,
+                                        token_filter,
+                                        context_tag,
+                                        module_name);
+      if (ctx->rc != GRN_SUCCESS) {
+        grn_table_module_fin(ctx, raw_token_filter);
+        grn_bulk_truncate(ctx, token_filters, current_token_filters_size);
+        return ctx->rc;
+      }
+      GRN_PTR_PUT(ctx, token_filter_procs, raw_token_filter->proc);
+
+      if (token_filter == &token_filter_name) {
+        GRN_OBJ_FIN(ctx, &token_filter_name);
       }
     }
   }
