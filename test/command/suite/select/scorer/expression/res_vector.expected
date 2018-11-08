@@ -1,0 +1,13 @@
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos categories COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga", "categories": ["full-text-search"]}
+]
+[[0,0.0,0.0],1]
+select    --filter "true"    --output_columns "_key, _score"    --scorer "(_score = _score + (vector_size(categories) > 0))"    --table "Memos"
+[[0,0.0,0.0],[[[1],[["_key","ShortText"],["_score","Int32"]],["Groonga",2]]]]
