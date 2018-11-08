@@ -70,6 +70,8 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
                       const char *str, size_t str_len,
                       grn_tokenize_mode mode, unsigned int flags)
 {
+  GRN_API_ENTER;
+
   grn_token_cursor *token_cursor;
   grn_encoding encoding;
   grn_obj *tokenizer;
@@ -77,7 +79,9 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   grn_table_flags table_flags;
   if (grn_table_get_info(ctx, table, &table_flags, &encoding, &tokenizer,
                          NULL, &token_filters)) {
-    return NULL;
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token-cursor][open] failed to get table information");
+    GRN_API_RETURN(NULL);
   }
   if (!(token_cursor = GRN_MALLOC(sizeof(grn_token_cursor)))) { return NULL; }
   token_cursor->table = table;
@@ -161,7 +165,7 @@ exit :
     grn_token_cursor_close(ctx, token_cursor);
     token_cursor = NULL;
   }
-  return token_cursor;
+  GRN_API_RETURN(token_cursor);
 }
 
 static int
@@ -217,6 +221,8 @@ grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
 grn_id
 grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
 {
+  GRN_API_ENTER;
+
   int status;
   grn_id tid = GRN_ID_NIL;
   grn_obj *table = token_cursor->table;
@@ -373,7 +379,19 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
     token_cursor->pos++;
     break;
   }
-  return tid;
+  GRN_API_RETURN(tid);
+}
+
+grn_token_cursor_status
+grn_token_cursor_get_status(grn_ctx *ctx, grn_token_cursor *token_cursor)
+{
+  GRN_API_ENTER;
+  if (!token_cursor) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token-cursor][status] token cursor must not NULL");
+    GRN_API_RETURN(GRN_TOKEN_CURSOR_DONE);
+  }
+  GRN_API_RETURN(token_cursor->status);
 }
 
 static void
@@ -412,32 +430,34 @@ grn_token_cursor_close_token_filters(grn_ctx *ctx,
 grn_rc
 grn_token_cursor_close(grn_ctx *ctx, grn_token_cursor *token_cursor)
 {
-  if (token_cursor) {
-    if (token_cursor->tokenizer.object) {
-      grn_proc *tokenizer_proc = (grn_proc *)(token_cursor->tokenizer.object);
-      if (tokenizer_proc->callbacks.tokenizer.fin) {
-        void *user_data = token_cursor->tokenizer.user_data;
-        tokenizer_proc->callbacks.tokenizer.fin(ctx, user_data);
-      } else if (tokenizer_proc->funcs[PROC_FIN]) {
-        tokenizer_proc->funcs[PROC_FIN](ctx,
-                                        1,
-                                        &token_cursor->table,
-                                        &token_cursor->tokenizer.pctx.user_data);
-      }
-    }
-    grn_token_fin(ctx, &(token_cursor->tokenizer.current_token));
-    grn_token_fin(ctx, &(token_cursor->tokenizer.next_token));
-    grn_tokenizer_query_fin(ctx, &(token_cursor->tokenizer.query));
-    grn_token_cursor_close_token_filters(ctx, token_cursor);
-    GRN_FREE(token_cursor);
-    return GRN_SUCCESS;
-  } else {
-    return GRN_INVALID_ARGUMENT;
+  GRN_API_ENTER;
+  if (!token_cursor) {
+    GRN_API_RETURN(GRN_INVALID_ARGUMENT);
   }
+
+  if (token_cursor->tokenizer.object) {
+    grn_proc *tokenizer_proc = (grn_proc *)(token_cursor->tokenizer.object);
+    if (tokenizer_proc->callbacks.tokenizer.fin) {
+      void *user_data = token_cursor->tokenizer.user_data;
+      tokenizer_proc->callbacks.tokenizer.fin(ctx, user_data);
+    } else if (tokenizer_proc->funcs[PROC_FIN]) {
+      tokenizer_proc->funcs[PROC_FIN](ctx,
+                                      1,
+                                      &token_cursor->table,
+                                      &token_cursor->tokenizer.pctx.user_data);
+    }
+  }
+  grn_token_fin(ctx, &(token_cursor->tokenizer.current_token));
+  grn_token_fin(ctx, &(token_cursor->tokenizer.next_token));
+  grn_tokenizer_query_fin(ctx, &(token_cursor->tokenizer.query));
+  grn_token_cursor_close_token_filters(ctx, token_cursor);
+  GRN_FREE(token_cursor);
+  GRN_API_RETURN(GRN_SUCCESS);
 }
 
 grn_token *
 grn_token_cursor_get_token(grn_ctx *ctx, grn_token_cursor *token_cursor)
 {
-  return &(token_cursor->tokenizer.current_token);
+  GRN_API_ENTER;
+  GRN_API_RETURN(&(token_cursor->tokenizer.current_token));
 }

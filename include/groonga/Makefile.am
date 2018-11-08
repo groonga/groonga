@@ -37,6 +37,7 @@ groonga_include_HEADERS =			\
 	thread.h				\
 	time.h					\
 	token.h					\
+	token_cursor.h				\
 	token_filter.h				\
 	token_metadata.h			\
 	tokenizer.h				\

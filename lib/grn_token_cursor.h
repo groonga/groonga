@@ -27,14 +27,7 @@
 extern "C" {
 #endif
 
-typedef enum {
-  GRN_TOKEN_CURSOR_DOING = 0,
-  GRN_TOKEN_CURSOR_DONE,
-  GRN_TOKEN_CURSOR_DONE_SKIP,
-  GRN_TOKEN_CURSOR_NOT_FOUND
-} grn_token_cursor_status;
-
-typedef struct {
+struct _grn_token_cursor {
   grn_obj *table;
   const unsigned char *orig;
   const unsigned char *curr;
@@ -59,20 +52,7 @@ typedef struct {
     void **data;
   } token_filter;
   uint32_t variant;
-} grn_token_cursor;
-
-#define GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER (0x01L<<0)
-
-GRN_API grn_token_cursor *grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
-                                                const char *str, size_t str_len,
-                                                grn_tokenize_mode mode,
-                                                unsigned int flags);
-
-GRN_API grn_id grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor);
-GRN_API grn_rc grn_token_cursor_close(grn_ctx *ctx, grn_token_cursor *token_cursor);
-
-GRN_API grn_token *
-grn_token_cursor_get_token(grn_ctx *ctx, grn_token_cursor *token_cursor);
+};
 
 #ifdef __cplusplus
 }

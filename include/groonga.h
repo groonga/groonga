@@ -52,6 +52,7 @@
 #include "groonga/thread.h"
 #include "groonga/time.h"
 #include "groonga/token.h"
+#include "groonga/token_cursor.h"
 #include "groonga/token_metadata.h"
 #include "groonga/type.h"
 #include "groonga/util.h"
