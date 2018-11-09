@@ -22,3 +22,11 @@
 #define GRN_VERSION_MAJOR @GRN_VERSION_MAJOR@
 #define GRN_VERSION_MINOR @GRN_VERSION_MINOR@
 #define GRN_VERSION_MICRO @GRN_VERSION_MICRO@
+
+#define GRN_VERSION_OR_LATER(major, minor, micro)       \
+  (GRN_VERSION_MAJOR > (major) ||                       \
+   (GRN_VERSION_MAJOR == (major) &&                     \
+    GRN_VERSION_MINOR > (minor)) ||                     \
+   (GRN_VERSION_MAJOR == (major) &&                     \
+    GRN_VERSION_MINOR == (minor) &&                     \
+    GRN_VERSION_MICRO >= (micro)))
