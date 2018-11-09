@@ -44,7 +44,7 @@ if rroonga_revision != rroonga_built_revision
       "Libs: -L#{lib_dir} -Wl,-rpath,#{lib_dir} -lgroonga"
     end
     content = content.gsub(/^Cflags: .*$/) do
-      "Cflags: -I#{source_top_dir_path}/include"
+      "Cflags: -I#{build_top_dir_path}/include -I#{source_top_dir_path}/include"
     end
     groonga_pc.puts(content)
   end
