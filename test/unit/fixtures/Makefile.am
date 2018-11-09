@@ -10,11 +10,12 @@ noinst_LTLIBRARIES =				\
 	suite-groonga-test-fixtures.la
 endif
 
-AM_CPPFLAGS =			\
-	-I$(srcdir)		\
-	-I$(srcdir)/../lib	\
-	-I$(top_srcdir)/include	\
-	-I$(top_srcdir)/lib	\
+AM_CPPFLAGS =					\
+	-I$(top_builddir)/include		\
+	-I$(srcdir)				\
+	-I$(srcdir)/../lib			\
+	-I$(top_srcdir)/include			\
+	-I$(top_srcdir)/lib			\
 	$(GROONGA_INCLUDEDIR)
 
 AM_LDFLAGS =					\

@@ -28,6 +28,7 @@ AM_LDFLAGS = -no-undefined
 
 DEFAULT_INCLUDES =				\
 	-I$(top_builddir)			\
+	-I$(top_builddir)/include		\
 	-I$(srcdir)				\
 	-I$(top_srcdir)/include			\
 	-I$(top_srcdir)/lib			\

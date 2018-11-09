@@ -1,4 +1,5 @@
 # Copyright(C) 2012-2018 Brazil
+# Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -60,8 +61,18 @@ else()
   endif()
 endif()
 string(REGEX REPLACE "(^.*=|\n)" "" GRN_VERSION "${GRN_VERSION}")
+string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\1"
+  GRN_VERSION_MAJOR "${VERSION}")
+string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\2"
+  GRN_VERSION_MINOR "${VERSION}")
+string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\3"
+  GRN_VERSION_MICRO "${VERSION}")
 string(REGEX REPLACE "\\." "," GRN_VERSION_RC "${GRN_VERSION}")
 string(REGEX REPLACE "-.*$" "" GRN_VERSION_RC "${GRN_VERSION_RC}")
+
+configure_file(
+  include/groonga/version.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/include/groonga/version.h)
 
 include(CheckIncludeFile)
 include(CheckFunctionExists)
@@ -224,6 +235,7 @@ endif()
 include_directories(
   BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/lib
   )

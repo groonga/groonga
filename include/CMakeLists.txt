@@ -1,4 +1,5 @@
 # Copyright(C) 2012 Brazil
+# Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,4 +16,7 @@
 
 install(FILES groonga.h DESTINATION "${GRN_INCLUDE_DIR}")
 install(DIRECTORY groonga DESTINATION "${GRN_INCLUDE_DIR}"
+  FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/groonga"
+  DESTINATION "${GRN_INCLUDE_DIR}"
   FILES_MATCHING PATTERN "*.h")

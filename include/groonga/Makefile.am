@@ -49,4 +49,5 @@ groonga_include_HEADERS =			\
 	window_function.h			\
 	windows.h				\
 	windows_event_logger.h			\
-	vector.h
+	vector.h				\
+	version.h

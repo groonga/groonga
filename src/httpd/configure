@@ -69,7 +69,8 @@ if [ "${GROONGA_HTTPD_DEBUG}" = "yes" ]; then
   configure_args="${configure_args} --with-debug"
 fi
 
-groonga_cflags="-I${GROONGA_HTTPD_IN_TREE_INCLUDE_PATH}"
+groonga_cflags="-I${GROONGA_HTTPD_IN_TREE_BUILD_INCLUDE_PATH}"
+groonga_cflags="${groonga_cflags} -I${GROONGA_HTTPD_IN_TREE_SOURCE_INCLUDE_PATH}"
 groonga_ldflags="-L${GROONGA_HTTPD_IN_TREE_LINK_PATH}"
 if [ "${GROONGA_HTTPD_WITH_ONIGMO}" = "yes" ]; then
   groonga_ldflags="$groonga_ldflags -L${GROONGA_HTTPD_ONIGMO_IN_TREE_LINK_PATH}"

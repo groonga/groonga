@@ -65,6 +65,7 @@ cmake_install.cmake
 /stamp-h1
 /CMakeCache.txt
 /install_manifest.txt
+/include/groonga/version.sh
 /src/groonga
 /src/groonga-benchmark
 /src/grnslap

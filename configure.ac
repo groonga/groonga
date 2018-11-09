@@ -4,6 +4,13 @@ AC_INIT([groonga], groonga_version, [groonga@razil.jp])
 AC_CONFIG_MACRO_DIR([m4])
 AM_CONFIG_HEADER(config.h)
 
+GRN_VERSION_MAJOR=`echo groonga_version | cut -d. -f1`
+AC_SUBST(GRN_VERSION_MAJOR)
+GRN_VERSION_MINOR=`echo groonga_version | cut -d. -f2`
+AC_SUBST(GRN_VERSION_MINOR)
+GRN_VERSION_MICRO=`echo groonga_version | cut -d. -f3`
+AC_SUBST(GRN_VERSION_MICRO)
+
 GRN_VERSION_RC=`echo groonga_version | sed -e 's/\./,/g'`
 AC_SUBST(GRN_VERSION_RC)
 
@@ -1731,6 +1738,7 @@ GROONGA_HTTPD_DEFAULT_DATABASE_PATH="`
 AC_SUBST(GROONGA_HTTPD_DEFAULT_DATABASE_PATH)
 
 AC_OUTPUT([
+  include/groonga/version.h
   lib/metadata.rc
   packages/rpm/centos/groonga.spec
   packages/apt/debian/groonga-keyring.postrm

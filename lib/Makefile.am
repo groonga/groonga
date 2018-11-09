@@ -33,6 +33,7 @@ BUNDLED_LIBRARIES_CFLAGS =			\
 
 DEFAULT_INCLUDES =				\
 	-I$(top_builddir)			\
+	-I$(top_builddir)/include		\
 	-I$(top_srcdir)/include			\
 	$(BUNDLED_LIBRARIES_CFLAGS)
 

@@ -25,10 +25,11 @@ endif
 EXTRA_DIST =					\
 	run-test.sh
 
-AM_CPPFLAGS =			\
-	-I$(srcdir)		\
-	-I$(top_srcdir)/include	\
-	-I$(top_srcdir)/lib	\
+AM_CPPFLAGS =					\
+	-I$(top_builddir)/include		\
+	-I$(srcdir)				\
+	-I$(top_srcdir)/include			\
+	-I$(top_srcdir)/lib			\
 	$(GROONGA_INCLUDEDIR)
 
 AM_LDFLAGS = -module -rpath $(libdir) -avoid-version

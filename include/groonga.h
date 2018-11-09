@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "groonga/version.h"
+
 #include "groonga/portability.h"
 #include "groonga/groonga.h"
 
