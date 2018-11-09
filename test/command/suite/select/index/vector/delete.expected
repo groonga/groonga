@@ -1,0 +1,113 @@
+plugin_register functions/index_column
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+column_create Terms memos   COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Memos tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+  {
+    "_key": "Groonga",
+    "tags": ["groonga", "full-text-search"]
+  }
+]
+[[0,0.0,0.0],1]
+delete --table Memos --filter true
+[[0,0.0,0.0],true]
+select Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        0
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "ShortText"
+        ]
+      ]
+    ]
+  ]
+]
+select Terms   --limit -1   --sort_keys _id   --columns[index_records].stage output   --columns[index_records].type Memos   --columns[index_records].flags COLUMN_VECTOR   --columns[index_records].value 'index_column_source_records("memos")'   --output_columns '_id, _key, index_records'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "index_records",
+          "Memos"
+        ]
+      ],
+      [
+        1,
+        "groonga",
+        [
+
+        ]
+      ],
+      [
+        2,
+        "full",
+        [
+
+        ]
+      ],
+      [
+        3,
+        "-",
+        [
+
+        ]
+      ],
+      [
+        4,
+        "text",
+        [
+
+        ]
+      ],
+      [
+        5,
+        "search",
+        [
+
+        ]
+      ]
+    ]
+  ]
+]
