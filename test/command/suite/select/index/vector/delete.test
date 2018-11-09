@@ -1,0 +1,33 @@
+plugin_register functions/index_column
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tags COLUMN_VECTOR ShortText
+
+column_create Terms memos \
+  COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Memos tags
+
+load --table Memos
+[
+  {
+    "_key": "Groonga",
+    "tags": ["groonga", "full-text-search"]
+  }
+]
+
+delete --table Memos --filter true
+
+select Memos
+
+select Terms \
+  --limit -1 \
+  --sort_keys _id \
+  --columns[index_records].stage output \
+  --columns[index_records].type Memos \
+  --columns[index_records].flags COLUMN_VECTOR \
+  --columns[index_records].value 'index_column_source_records("memos")' \
+  --output_columns '_id, _key, index_records'
