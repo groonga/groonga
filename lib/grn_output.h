@@ -27,37 +27,6 @@
 extern "C" {
 #endif
 
-GRN_API void grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
-                           const char *name, int nelements);
-GRN_API void grn_output_array_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type);
-GRN_API void grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
-                                 const char *name, int nelements);
-GRN_API void grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type);
-GRN_API void grn_output_null(grn_ctx *ctx, grn_obj *outbuf,
-                             grn_content_type output_type);
-void grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
-                      int32_t value);
-void grn_output_uint32(grn_ctx *ctx,
-                       grn_obj *outbuf,
-                       grn_content_type output_type,
-                       uint32_t value);
-GRN_API void grn_output_int64(grn_ctx *ctx, grn_obj *outbuf,
-                              grn_content_type output_type,
-                              int64_t value);
-GRN_API void grn_output_uint64(grn_ctx *ctx, grn_obj *outbuf,
-                               grn_content_type output_type,
-                               uint64_t value);
-void grn_output_float(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
-                      double value);
-GRN_API void grn_output_cstr(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
-                             const char *value);
-GRN_API void grn_output_str(grn_ctx *ctx, grn_obj *outbuf,
-                            grn_content_type output_type,
-                            const char *value, size_t value_len);
-GRN_API void grn_output_bool(grn_ctx *ctx, grn_obj *outbuf,
-                             grn_content_type output_type,
-                             grn_bool value);
-
 GRN_API void grn_output_result_set_open(grn_ctx *ctx,
                                         grn_obj *outbuf,
                                         grn_content_type output_type,

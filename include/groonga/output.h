@@ -1,5 +1,6 @@
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -74,6 +75,59 @@ GRN_API void grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type outp
 GRN_API void grn_output_envelope(grn_ctx *ctx, grn_rc rc,
                                  grn_obj *head, grn_obj *body, grn_obj *foot,
                                  const char *file, int line);
+
+GRN_API void grn_output_array_open(grn_ctx *ctx,
+                                   grn_obj *outbuf,
+                                   grn_content_type output_type,
+                                   const char *name,
+                                   int n_elements);
+GRN_API void grn_output_array_close(grn_ctx *ctx,
+                                    grn_obj *outbuf,
+                                    grn_content_type output_type);
+GRN_API void grn_output_map_open(grn_ctx *ctx,
+                                 grn_obj *outbuf,
+                                 grn_content_type output_type,
+                                 const char *name,
+                                 int n_elements);
+GRN_API void grn_output_map_close(grn_ctx *ctx,
+                                  grn_obj *outbuf,
+                                  grn_content_type output_type);
+GRN_API void grn_output_null(grn_ctx *ctx,
+                             grn_obj *outbuf,
+                             grn_content_type output_type);
+GRN_API void grn_output_int32(grn_ctx *ctx,
+                              grn_obj *outbuf,
+                              grn_content_type output_type,
+                              int32_t value);
+GRN_API void grn_output_uint32(grn_ctx *ctx,
+                               grn_obj *outbuf,
+                               grn_content_type output_type,
+                               uint32_t value);
+GRN_API void grn_output_int64(grn_ctx *ctx,
+                              grn_obj *outbuf,
+                              grn_content_type output_type,
+                              int64_t value);
+GRN_API void grn_output_uint64(grn_ctx *ctx,
+                               grn_obj *outbuf,
+                               grn_content_type output_type,
+                               uint64_t value);
+GRN_API void grn_output_float(grn_ctx *ctx,
+                              grn_obj *outbuf,
+                              grn_content_type output_type,
+                              double value);
+GRN_API void grn_output_cstr(grn_ctx *ctx,
+                             grn_obj *outbuf,
+                             grn_content_type output_type,
+                             const char *value);
+GRN_API void grn_output_str(grn_ctx *ctx,
+                            grn_obj *outbuf,
+                            grn_content_type output_type,
+                            const char *value,
+                            size_t value_len);
+GRN_API void grn_output_bool(grn_ctx *ctx,
+                             grn_obj *outbuf,
+                             grn_content_type output_type,
+                             grn_bool value);
 
 GRN_API void grn_ctx_output_flush(grn_ctx *ctx, int flags);
 GRN_API void grn_ctx_output_array_open(grn_ctx *ctx,
