@@ -2066,7 +2066,8 @@ grn_p_dec(grn_ctx *ctx, uint8_t *data, uint32_t data_size, uint32_t nreq, uint32
 }
 
 int
-grn_p_decv(grn_ctx *ctx, uint8_t *data, uint32_t data_size, datavec *dv, uint32_t dvlen)
+grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
+           uint8_t *data, uint32_t data_size, datavec *dv, uint32_t dvlen)
 {
   size_t size;
   uint32_t df, l, i, *rp;
@@ -2133,8 +2134,33 @@ grn_p_decv(grn_ctx *ctx, uint8_t *data, uint32_t data_size, datavec *dv, uint32_
     }
     GRN_ASSERT(dp == dpe);
     if (dp != dpe) {
-      GRN_LOG(ctx, GRN_LOG_DEBUG, "data_size=%d, %" GRN_FMT_LLD,
-              data_size, (long long int)(dpe - dp));
+      grn_obj token;
+      DEFINE_NAME(ii);
+      GRN_TEXT_INIT(&token, 0);
+      if (id != GRN_ID_NIL) {
+        grn_ii_get_token(ctx, ii, id, &token);
+      }
+      if (df == 0) {
+        GRN_LOG(ctx, GRN_LOG_WARNING,
+                "[ii][p-decv] encoded data frequency is unexpectedly 0: "
+                "<%.*s>: <%.*s>(%u): <%u(%u)>",
+                name_size, name,
+                (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                id,
+                data_size,
+                (uint32_t)(dp - data));
+      } else {
+        GRN_LOG(ctx, GRN_LOG_DEBUG,
+                "[ii][p-decv] failed to decode: "
+                "<%.*s>: <%.*s>(%u): <%u>: <%u(%u)>",
+                name_size, name,
+                (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                id,
+                data_size,
+                df,
+                (uint32_t)(dp - data));
+      }
+      GRN_OBJ_FIN(ctx, &token);
     }
   }
   return rp - dv[0].data;
@@ -2931,7 +2957,8 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
     if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
       rdv[ii->n_elements - 1].flags = ODD;
     }
-    bufsize += grn_p_decv(ctx, scp, cinfo->size, rdv, ii->n_elements);
+    bufsize += grn_p_decv(ctx, ii, bt->tid & GRN_ID_MAX,
+                          scp, cinfo->size, rdv, ii->n_elements);
     // (df in chunk list) = a[1] - sdf;
     {
       int j = 0;
@@ -3215,7 +3242,8 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
         }
       }
       if (sce > scp) {
-        size += grn_p_decv(ctx, scp, sce - scp, rdv, ii->n_elements);
+        size += grn_p_decv(ctx, ii, bt->tid & GRN_ID_MAX,
+                           scp, sce - scp, rdv, ii->n_elements);
         {
           int j = 0;
           sdf = rdv[j].data_size;
@@ -3686,7 +3714,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
         }
       }
       if (sce > scp) {
-        size += grn_p_decv(ctx, scp, sce - scp, rdv, ii->n_elements);
+        size += grn_p_decv(ctx, ii, crid, scp, sce - scp, rdv, ii->n_elements);
         {
           int j = 0;
           sdf = rdv[j].data_size;
@@ -5467,7 +5495,8 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                 if (c->cp < c->cpe) {
                   int decoded_size;
                   decoded_size =
-                    grn_p_decv(ctx, c->cp, c->cpe - c->cp,
+                    grn_p_decv(ctx, c->ii, c->id,
+                               c->cp, c->cpe - c->cp,
                                c->rdv, c->ii->n_elements);
                   if (decoded_size == 0) {
                     DEFINE_NAME(c->ii);
@@ -5525,7 +5554,8 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                                           size, grn_io_rdonly))) {
                   int decoded_size;
                   decoded_size =
-                    grn_p_decv(ctx, cp, size, c->rdv, c->ii->n_elements);
+                    grn_p_decv(ctx, c->ii, c->id,
+                               cp, size, c->rdv, c->ii->n_elements);
                   grn_io_win_unmap(&iw);
                   if (decoded_size == 0) {
                     DEFINE_NAME(c->ii);
