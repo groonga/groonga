@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -36,7 +37,6 @@ struct _grn_token_cursor {
   int32_t pos;
   grn_tokenize_mode mode;
   grn_token_cursor_status status;
-  grn_bool force_prefix;
   grn_obj_flags table_flags;
   grn_encoding encoding;
   struct {

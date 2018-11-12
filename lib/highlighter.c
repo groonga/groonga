@@ -306,14 +306,14 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx,
     }
     GRN_BULK_REWIND(token_id_chunk);
     while ((token_id = grn_token_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+      grn_token *token;
       GRN_TEXT_PUT(ctx, token_id_chunk, &token_id, sizeof(grn_id));
-      if (cursor->force_prefix &&
+      token = grn_token_cursor_get_token(ctx, cursor);
+      if (grn_token_get_force_prefix_search(ctx, token) &&
           highlighter->lexicon.object->header.type != GRN_TABLE_HASH_KEY) {
-        grn_token *token;
         const char *data;
         size_t data_length;
 
-        token = grn_token_cursor_get_token(ctx, cursor);
         data = grn_token_get_data_raw(ctx, token, &data_length);
         grn_vector_add_element(ctx,
                                lazy_keywords,

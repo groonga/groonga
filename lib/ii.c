@@ -7251,7 +7251,9 @@ token_candidate_init(grn_ctx *ctx, grn_ii *ii, grn_token_cursor *token_cursor,
     }
     tid = grn_token_cursor_next(ctx, token_cursor);
     if (token_cursor->status != GRN_TOKEN_CURSOR_DONE_SKIP) {
-      if (token_cursor->force_prefix) { ef |= EX_PREFIX; }
+      grn_token *token;
+      token = grn_token_cursor_get_token(ctx, token_cursor);
+      if (grn_token_get_force_prefix_search(ctx, token)) { ef |= EX_PREFIX; }
       TOKEN_CANDIDATE_NODE_SET();
       token_candidate_adjacent_set(ctx, token_cursor, top, curr);
       if (curr->estimated_size > *max_estimated_size) {
@@ -7511,6 +7513,7 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
   } else {
     grn_id tid;
     int ef;
+    grn_token *token;
     switch (mode) {
     case GRN_OP_PREFIX :
       ef = EX_PREFIX;
@@ -7526,7 +7529,8 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
       break;
     }
     tid = grn_token_cursor_next(ctx, token_cursor);
-    if (token_cursor->force_prefix) { ef |= EX_PREFIX; }
+    token = grn_token_cursor_get_token(ctx, token_cursor);
+    if (grn_token_get_force_prefix_search(ctx, token)) { ef |= EX_PREFIX; }
     switch (token_cursor->status) {
     case GRN_TOKEN_CURSOR_DOING :
       key = _grn_table_key(ctx, lexicon, tid, &size);
@@ -7556,8 +7560,10 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
     }
 
     while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
+      grn_token *token;
       tid = grn_token_cursor_next(ctx, token_cursor);
-      if (token_cursor->force_prefix) { ef |= EX_PREFIX; }
+      token = grn_token_cursor_get_token(ctx, token_cursor);
+      if (grn_token_get_force_prefix_search(ctx, token)) { ef |= EX_PREFIX; }
       switch (token_cursor->status) {
       case GRN_TOKEN_CURSOR_DONE_SKIP :
         continue;

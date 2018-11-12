@@ -31,6 +31,8 @@ grn_token_init(grn_ctx *ctx, grn_token *token)
   token->source_first_character_length = 0;
   token->have_overlap = GRN_FALSE;
   grn_token_metadata_init(ctx, &(token->metadata));
+  token->force_prefix_search = GRN_FALSE;
+  token->position = 0;
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -225,7 +227,7 @@ grn_token_set_overlap(grn_ctx *ctx,
   GRN_API_ENTER;
   if (!token) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[token][overlapping][set] token must not be NULL");
+        "[token][overlap][set] token must not be NULL");
     goto exit;
   }
   token->have_overlap = have_overlap;
@@ -239,10 +241,60 @@ grn_token_get_metadata(grn_ctx *ctx, grn_token *token)
   GRN_API_ENTER;
   if (!token) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[token][data][get][metadata] token must not be NULL");
+        "[token][metadata][get] token must not be NULL");
     GRN_API_RETURN(NULL);
   }
   GRN_API_RETURN(&(token->metadata));
+}
+
+grn_bool
+grn_token_get_force_prefix_search(grn_ctx *ctx, grn_token *token)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][force-prefix-search][get] token must not be NULL");
+    GRN_API_RETURN(GRN_FALSE);
+  }
+  GRN_API_RETURN(token->force_prefix_search);
+}
+
+grn_rc
+grn_token_set_force_prefix_search(grn_ctx *ctx, grn_token *token, grn_bool force)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][force-prefix-search][set] token must not be NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+  token->force_prefix_search = force;
+  GRN_API_RETURN(ctx->rc);
+}
+
+uint32_t
+grn_token_get_position(grn_ctx *ctx, grn_token *token)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][position][get] token must not be NULL");
+    GRN_API_RETURN(0);
+  }
+  GRN_API_RETURN(token->position);
+}
+
+grn_rc
+grn_token_set_position(grn_ctx *ctx, grn_token *token, uint32_t position)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][position][set] token must not be NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+  token->position = position;
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc
@@ -260,6 +312,8 @@ grn_token_reset(grn_ctx *ctx, grn_token *token)
   token->source_first_character_length = 0;
   token->have_overlap = GRN_FALSE;
   grn_token_metadata_reset(ctx, &(token->metadata));
+  token->force_prefix_search = GRN_FALSE;
+  token->position = 0;
 exit:
   GRN_API_RETURN(ctx->rc);
 }
@@ -285,6 +339,8 @@ grn_token_copy(grn_ctx *ctx,
   token->have_overlap = source->have_overlap;
   grn_token_metadata_reset(ctx, &(token->metadata));
   grn_token_metadata_copy(ctx, &(token->metadata), &(source->metadata));
+  token->force_prefix_search = source->force_prefix_search;
+  token->position = source->position;
 exit:
   GRN_API_RETURN(ctx->rc);
 }

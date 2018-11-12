@@ -249,8 +249,8 @@ tokenize(grn_ctx *ctx,
     grn_bulk_space(ctx, tokens, sizeof(tokenize_token));
     current_token = ((tokenize_token *)(GRN_BULK_CURR(tokens))) - 1;
     current_token->id = token_id;
-    current_token->position = token_cursor->pos;
-    current_token->force_prefix = token_cursor->force_prefix;
+    current_token->position = grn_token_get_position(ctx, token);
+    current_token->force_prefix = grn_token_get_force_prefix_search(ctx, token);
     current_token->source_offset = grn_token_get_source_offset(ctx, token);
     current_token->source_length = grn_token_get_source_length(ctx, token);
     current_token->source_first_character_length =

@@ -165,6 +165,20 @@ grn_token_set_overlap(grn_ctx *ctx,
 GRN_API grn_obj *
 grn_token_get_metadata(grn_ctx *ctx,
                        grn_token *token);
+GRN_API grn_bool
+grn_token_get_force_prefix_search(grn_ctx *ctx,
+                                  grn_token *token);
+GRN_API grn_rc
+grn_token_set_force_prefix_search(grn_ctx *ctx,
+                                  grn_token *token,
+                                  grn_bool force);
+GRN_API uint32_t
+grn_token_get_position(grn_ctx *ctx,
+                       grn_token *token);
+GRN_API grn_rc
+grn_token_set_position(grn_ctx *ctx,
+                       grn_token *token,
+                       uint32_t position);
 
 #ifdef __cplusplus
 }  /* extern "C" */

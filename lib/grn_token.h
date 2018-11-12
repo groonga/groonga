@@ -33,6 +33,8 @@ struct _grn_token {
   uint32_t source_first_character_length;
   grn_bool have_overlap;
   grn_obj metadata;
+  grn_bool force_prefix_search;
+  uint32_t position;
 };
 
 grn_rc grn_token_init(grn_ctx *ctx, grn_token *token);
