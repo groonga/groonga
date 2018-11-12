@@ -1,0 +1,22 @@
+tokenize   'TokenDelimit("delimiter", "\t",                 "delimiter", " ")'   "A\t \tB"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "A",
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "B",
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]

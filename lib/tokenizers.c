@@ -101,39 +101,115 @@ uvector_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 typedef struct {
-  const uint8_t *delimiter;
-  uint32_t delimiter_len;
-  const unsigned char *next;
-  const unsigned char *end;
+  grn_obj delimiters;
+} grn_delimit_options;
+
+typedef struct {
+  const char *delimiter;
+  size_t delimiter_length;
+} grn_delimit_options_default;
+
+typedef struct {
   grn_tokenizer_token token;
   grn_tokenizer_query *query;
+  grn_delimit_options *options;
   grn_bool have_tokenized_delimiter;
   grn_encoding encoding;
-} grn_delimited_tokenizer;
+  const unsigned char *next;
+  const unsigned char *end;
+} grn_delimit_tokenizer;
 
-static grn_obj *
-delimited_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data,
-               const uint8_t *delimiter, uint32_t delimiter_len)
+static void
+delimit_options_init(grn_delimit_options *options)
 {
-  grn_tokenizer_query *query;
-  unsigned int normalize_flags = 0;
-  grn_delimited_tokenizer *tokenizer;
+  GRN_TEXT_INIT(&(options->delimiters), GRN_OBJ_VECTOR);
+}
 
-  query = grn_tokenizer_query_open(ctx, nargs, args, normalize_flags);
-  if (!query) {
-    return NULL;
-  }
+static void *
+delimit_open_options(grn_ctx *ctx,
+                     grn_obj *tokenizer,
+                     grn_obj *raw_options,
+                     void *user_data)
+{
+  grn_delimit_options *options;
+  grn_delimit_options_default *options_default = user_data;
+  grn_bool have_delimiter = GRN_FALSE;
 
-  if (!(tokenizer = GRN_MALLOC(sizeof(grn_delimited_tokenizer)))) {
+  options = GRN_MALLOC(sizeof(grn_delimit_options));
+  if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[tokenizer][delimit] "
-        "memory allocation to grn_delimited_tokenizer failed");
-    grn_tokenizer_query_close(ctx, query);
+        "failed to allocate memory for options");
     return NULL;
   }
-  user_data->ptr = tokenizer;
 
+  delimit_options_init(options);
+
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+    grn_raw_string name_raw;
+    name_raw.value = name;
+    name_raw.length = name_length;
+
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "delimiter")) {
+      const char *delimiter;
+      unsigned int delimiter_length;
+      grn_id domain;
+
+      have_delimiter = GRN_TRUE;
+      delimiter_length = grn_vector_get_element(ctx,
+                                                raw_options,
+                                                i,
+                                                &delimiter,
+                                                NULL,
+                                                &domain);
+      if (grn_type_id_is_text_family(ctx, domain) && delimiter_length > 0) {
+        grn_vector_add_element(ctx,
+                               &(options->delimiters),
+                               delimiter,
+                               delimiter_length,
+                               0,
+                               GRN_DB_TEXT);
+      }
+    }
+  } GRN_OPTION_VALUES_EACH_END();
+
+  if (!have_delimiter) {
+    grn_vector_add_element(ctx,
+                           &(options->delimiters),
+                           options_default->delimiter,
+                           options_default->delimiter_length,
+                           0,
+                           GRN_DB_TEXT);
+  }
+
+  return options;
+}
+
+static void
+delimit_close_options(grn_ctx *ctx, void *data)
+{
+  grn_delimit_options *options = data;
+  GRN_OBJ_FIN(ctx, &(options->delimiters));
+  GRN_FREE(options);
+}
+
+static void *
+delimit_init_raw(grn_ctx *ctx,
+                 grn_tokenizer_query *query,
+                 grn_delimit_options *options)
+{
+  grn_delimit_tokenizer *tokenizer;
+
+  if (!(tokenizer = GRN_MALLOC(sizeof(grn_delimit_tokenizer)))) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[tokenizer][delimit] "
+        "memory allocation to grn_delimit_tokenizer failed");
+    return NULL;
+  }
+
+  grn_tokenizer_token_init(ctx, &(tokenizer->token));
   tokenizer->query = query;
+  tokenizer->options = options;
 
   {
     const char *raw_string;
@@ -151,8 +227,6 @@ delimited_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                                              encoding);
     tokenizer->encoding = encoding;
   }
-  tokenizer->delimiter = delimiter;
-  tokenizer->delimiter_len = delimiter_len;
   {
     grn_obj *string;
     const char *normalized;
@@ -167,15 +241,38 @@ delimited_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     tokenizer->end = tokenizer->next + normalized_length_in_bytes;
   }
 
-  grn_tokenizer_token_init(ctx, &(tokenizer->token));
-
-  return NULL;
+  return tokenizer;
 }
 
-static grn_obj *
-delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+static void *
+delimit_init(grn_ctx *ctx, grn_tokenizer_query *query)
 {
-  grn_delimited_tokenizer *tokenizer = user_data->ptr;
+  grn_obj *lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
+  grn_delimit_options *options;
+  grn_delimit_options_default options_default;
+
+  options_default.delimiter = " ";
+  options_default.delimiter_length = 1;
+
+  options = grn_table_cache_default_tokenizer_options(ctx,
+                                                      lexicon,
+                                                      delimit_open_options,
+                                                      delimit_close_options,
+                                                      &options_default);
+  if (ctx->rc != GRN_SUCCESS) {
+    return NULL;
+  }
+
+  return delimit_init_raw(ctx, query, options);
+}
+
+static void
+delimit_next(grn_ctx *ctx,
+             grn_tokenizer_query *query,
+             grn_token *token,
+             void *user_data)
+{
+  grn_delimit_tokenizer *tokenizer = user_data;
 
   if (tokenizer->have_tokenized_delimiter) {
     unsigned int rest_length;
@@ -192,6 +289,10 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     const unsigned char *p = tokenizer->next, *r;
     const unsigned char *e = tokenizer->end;
     grn_token_status status;
+    grn_obj *delimiters;
+    unsigned int i, n_delimiters;
+    delimiters = &(tokenizer->options->delimiters);
+    n_delimiters = grn_vector_size(ctx, delimiters);
     for (r = p; r < e; r += cl) {
       if (!(cl = grn_charlen_(ctx, (char *)r, (char *)e, tokenizer->encoding))) {
         tokenizer->next = (unsigned char *)e;
@@ -200,12 +301,28 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
       {
         grn_bool found_delimiter = GRN_FALSE;
         const unsigned char *current_end = r;
-        while (current_end + tokenizer->delimiter_len <= e &&
-               !memcmp(current_end,
-                       tokenizer->delimiter, tokenizer->delimiter_len)) {
-          current_end += tokenizer->delimiter_len;
-          tokenizer->next = current_end;
-          found_delimiter = GRN_TRUE;
+        while (GRN_TRUE) {
+          grn_bool found_delimiter_sub = GRN_FALSE;
+          for (i = 0; i < n_delimiters; i++) {
+            const char *delimiter;
+            unsigned int delimiter_length;
+            delimiter_length = grn_vector_get_element(ctx,
+                                                    delimiters,
+                                                      i,
+                                                      &delimiter,
+                                                      NULL,
+                                                      NULL);
+            if (current_end + delimiter_length <= e &&
+                memcmp(current_end, delimiter, delimiter_length) == 0) {
+              current_end += delimiter_length;
+              tokenizer->next = current_end;
+              found_delimiter = GRN_TRUE;
+              found_delimiter_sub = GRN_TRUE;
+            }
+          }
+          if (!found_delimiter_sub) {
+            break;
+          }
         }
         if (found_delimiter) {
           break;
@@ -217,41 +334,46 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     } else {
       status = GRN_TOKEN_CONTINUE;
     }
-    grn_tokenizer_token_push(ctx,
-                             &(tokenizer->token),
-                             (const char *)p,
-                             r - p,
-                             status);
+    grn_token_set_data(ctx,
+                       token,
+                       (const char *)p,
+                       r - p);
+    grn_token_set_status(ctx, token, status);
   }
-
-  return NULL;
 }
 
-static grn_obj *
-delimited_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+static void
+delimit_fin(grn_ctx *ctx, void *user_data)
 {
-  grn_delimited_tokenizer *tokenizer = user_data->ptr;
+  grn_delimit_tokenizer *tokenizer = user_data;
+
   if (!tokenizer) {
-    return NULL;
+    return;
   }
-  grn_tokenizer_query_close(ctx, tokenizer->query);
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));
   GRN_FREE(tokenizer);
-  return NULL;
 }
 
-static grn_obj *
-delimit_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+static void *
+delimit_null_init(grn_ctx *ctx, grn_tokenizer_query *query)
 {
-  static const uint8_t delimiter[1] = {' '};
-  return delimited_init(ctx, nargs, args, user_data, delimiter, 1);
-}
+  grn_obj *lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
+  grn_delimit_options *options;
+  grn_delimit_options_default options_default;
 
-static grn_obj *
-delimit_null_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{
-  static const uint8_t delimiter[1] = {'\0'};
-  return delimited_init(ctx, nargs, args, user_data, delimiter, 1);
+  options_default.delimiter = "\0";
+  options_default.delimiter_length = 1;
+
+  options = grn_table_cache_default_tokenizer_options(ctx,
+                                                      lexicon,
+                                                      delimit_open_options,
+                                                      delimit_close_options,
+                                                      &options_default);
+  if (ctx->rc != GRN_SUCCESS) {
+    return NULL;
+  }
+
+  return delimit_init_raw(ctx, query, options);
 }
 
 /* ngram tokenizer */
@@ -487,7 +609,6 @@ ngram_init_raw(grn_ctx *ctx,
   grn_tokenizer_query_set_normalize_flags(ctx, query, normalize_flags);
 
   if (!(tokenizer = GRN_MALLOC(sizeof(grn_ngram_tokenizer)))) {
-    grn_tokenizer_query_close(ctx, query);
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[tokenizer][ngram] "
         "memory allocation to grn_ngram_tokenizer failed");
@@ -575,6 +696,9 @@ ngram_init_deprecated(grn_ctx *ctx,
   }
 
   user_data->ptr = ngram_init_raw(ctx, query, options);
+  if (!user_data->ptr) {
+    grn_tokenizer_query_close(ctx, query);
+  }
   return NULL;
 }
 
@@ -1460,9 +1584,16 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
     }
   }
 
-  obj = DEF_TOKENIZER("TokenDelimit",
-                      delimit_init, delimited_next, delimited_fin, vars);
-  if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_DELIMIT) { return GRN_FILE_CORRUPT; }
+  {
+    grn_obj *tokenizer;
+    tokenizer = grn_tokenizer_create(ctx, "TokenDelimit", -1);
+    if (!tokenizer || DB_OBJ(tokenizer)->id != GRN_DB_DELIMIT) {
+      return GRN_FILE_CORRUPT;
+    }
+    grn_tokenizer_set_init_func(ctx, tokenizer, delimit_init);
+    grn_tokenizer_set_next_func(ctx, tokenizer, delimit_next);
+    grn_tokenizer_set_fin_func(ctx, tokenizer, delimit_fin);
+  }
   obj = DEF_TOKENIZER("TokenUnigram",
                       unigram_init,
                       ngram_next_deprecated,
@@ -1517,8 +1648,13 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
                 ngram_next_deprecated,
                 ngram_fin_deprecated,
                 vars);
-  DEF_TOKENIZER("TokenDelimitNull",
-                delimit_null_init, delimited_next, delimited_fin, vars);
+  {
+    grn_obj *tokenizer;
+    tokenizer = grn_tokenizer_create(ctx, "TokenDelimitNull", -1);
+    grn_tokenizer_set_init_func(ctx, tokenizer, delimit_null_init);
+    grn_tokenizer_set_next_func(ctx, tokenizer, delimit_next);
+    grn_tokenizer_set_fin_func(ctx, tokenizer, delimit_fin);
+  }
   DEF_TOKENIZER("TokenRegexp",
                 regexp_init, regexp_next, regexp_fin, vars);
   {

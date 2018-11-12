@@ -1,0 +1,4 @@
+tokenize \
+  'TokenDelimit("delimiter", "\t", \
+                "delimiter", " ")' \
+  "A\t \tB"
