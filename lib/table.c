@@ -335,7 +335,7 @@ grn_table_cache_module_options(grn_ctx *ctx,
     break;
   case GRN_INFO_TOKEN_FILTERS :
     {
-      grn_obj *token_filters;
+      grn_obj *token_filters = NULL;
       switch (table->header.type) {
       case GRN_TABLE_HASH_KEY :
         token_filters = &(((grn_hash *)table)->token_filters);
