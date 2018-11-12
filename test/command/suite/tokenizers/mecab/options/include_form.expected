@@ -10,6 +10,7 @@ tokenize   'TokenMecab("include_form", true)'   '行きました'
       "value": "行き",
       "position": 0,
       "force_prefix": false,
+      "force_prefix_search": false,
       "metadata": {
         "inflected_type": "五段・カ行促音便",
         "inflected_form": "連用形",
@@ -20,6 +21,7 @@ tokenize   'TokenMecab("include_form", true)'   '行きました'
       "value": "まし",
       "position": 1,
       "force_prefix": false,
+      "force_prefix_search": false,
       "metadata": {
         "inflected_type": "特殊・マス",
         "inflected_form": "連用形",
@@ -30,6 +32,7 @@ tokenize   'TokenMecab("include_form", true)'   '行きました'
       "value": "た",
       "position": 2,
       "force_prefix": false,
+      "force_prefix_search": false,
       "metadata": {
         "inflected_type": "特殊・タ",
         "inflected_form": "基本形",

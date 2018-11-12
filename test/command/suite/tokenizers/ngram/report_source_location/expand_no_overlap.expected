@@ -10,6 +10,7 @@ tokenize   'TokenNgram("report_source_location", true)'   "Ａ㌔Ｚ"   'Normali
       "value": "a",
       "position": 0,
       "force_prefix": false,
+      "force_prefix_search": false,
       "source_offset": 0,
       "source_length": 3,
       "source_first_character_length": 3
@@ -18,6 +19,7 @@ tokenize   'TokenNgram("report_source_location", true)'   "Ａ㌔Ｚ"   'Normali
       "value": "キロ",
       "position": 1,
       "force_prefix": false,
+      "force_prefix_search": false,
       "source_offset": 3,
       "source_length": 3,
       "source_first_character_length": 3
@@ -26,6 +28,7 @@ tokenize   'TokenNgram("report_source_location", true)'   "Ａ㌔Ｚ"   'Normali
       "value": "ロ",
       "position": 2,
       "force_prefix": false,
+      "force_prefix_search": false,
       "source_offset": 3,
       "source_length": 3,
       "source_first_character_length": 3
@@ -34,6 +37,7 @@ tokenize   'TokenNgram("report_source_location", true)'   "Ａ㌔Ｚ"   'Normali
       "value": "z",
       "position": 3,
       "force_prefix": false,
+      "force_prefix_search": false,
       "source_offset": 6,
       "source_length": 3,
       "source_first_character_length": 3

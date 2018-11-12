@@ -10,6 +10,7 @@ tokenize   'TokenNgram("report_source_location", true, "loose_symbol", true)'   
       "value": "090",
       "position": 0,
       "force_prefix": false,
+      "force_prefix_search": false,
       "source_offset": 0,
       "source_length": 9,
       "source_first_character_length": 3
@@ -18,6 +19,7 @@ tokenize   'TokenNgram("report_source_location", true, "loose_symbol", true)'   
       "value": "(",
       "position": 1,
       "force_prefix": false,
+      "force_prefix_search": false,
       "source_offset": 9,
       "source_length": 3,
       "source_first_character_length": 3
@@ -26,6 +28,7 @@ tokenize   'TokenNgram("report_source_location", true, "loose_symbol", true)'   
       "value": "1234",
       "position": 2,
       "force_prefix": false,
+      "force_prefix_search": false,
       "source_offset": 12,
       "source_length": 8,
       "source_first_character_length": 3
@@ -34,6 +37,7 @@ tokenize   'TokenNgram("report_source_location", true, "loose_symbol", true)'   
       "value": ")",
       "position": 3,
       "force_prefix": false,
+      "force_prefix_search": false,
       "source_offset": 20,
       "source_length": 3,
       "source_first_character_length": 3
@@ -42,6 +46,7 @@ tokenize   'TokenNgram("report_source_location", true, "loose_symbol", true)'   
       "value": "56",
       "position": 4,
       "force_prefix": false,
+      "force_prefix_search": false,
       "source_offset": 23,
       "source_length": 4,
       "source_first_character_length": 3
@@ -50,6 +55,7 @@ tokenize   'TokenNgram("report_source_location", true, "loose_symbol", true)'   
       "value": "−",
       "position": 5,
       "force_prefix": false,
+      "force_prefix_search": false,
       "source_offset": 27,
       "source_length": 3,
       "source_first_character_length": 3
@@ -58,6 +64,7 @@ tokenize   'TokenNgram("report_source_location", true, "loose_symbol", true)'   
       "value": "78",
       "position": 6,
       "force_prefix": false,
+      "force_prefix_search": false,
       "source_offset": 30,
       "source_length": 6,
       "source_first_character_length": 3
@@ -66,6 +73,7 @@ tokenize   'TokenNgram("report_source_location", true, "loose_symbol", true)'   
       "value": "￰",
       "position": 7,
       "force_prefix": false,
+      "force_prefix_search": false,
       "source_offset": 36,
       "source_length": 0,
       "source_first_character_length": 0
@@ -74,6 +82,7 @@ tokenize   'TokenNgram("report_source_location", true, "loose_symbol", true)'   
       "value": "09012345678",
       "position": 8,
       "force_prefix": false,
+      "force_prefix_search": false,
       "source_offset": 0,
       "source_length": 36,
       "source_first_character_length": 3

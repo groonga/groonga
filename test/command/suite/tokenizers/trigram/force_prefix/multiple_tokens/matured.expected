@@ -9,12 +9,14 @@ tokenize TokenTrigram "ABCだよね" NormalizerAuto --mode GET
     {
       "value": "abc",
       "position": 0,
-      "force_prefix": false
+      "force_prefix": false,
+      "force_prefix_search": false
     },
     {
       "value": "だよね",
       "position": 1,
-      "force_prefix": false
+      "force_prefix": false,
+      "force_prefix_search": false
     }
   ]
 ]

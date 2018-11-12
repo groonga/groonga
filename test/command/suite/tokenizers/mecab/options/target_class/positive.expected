@@ -10,6 +10,7 @@ tokenize   'TokenMecab("include_class", true,               "target_class", "+�
       "value": "私",
       "position": 0,
       "force_prefix": false,
+      "force_prefix_search": false,
       "metadata": {
         "class": "名詞",
         "subclass0": "代名詞",
@@ -20,6 +21,7 @@ tokenize   'TokenMecab("include_class", true,               "target_class", "+�
       "value": "名前",
       "position": 1,
       "force_prefix": false,
+      "force_prefix_search": false,
       "metadata": {
         "class": "名詞",
         "subclass0": "一般"
@@ -29,6 +31,7 @@ tokenize   'TokenMecab("include_class", true,               "target_class", "+�
       "value": "山田",
       "position": 2,
       "force_prefix": false,
+      "force_prefix_search": false,
       "metadata": {
         "class": "名詞",
         "subclass0": "固有名詞",

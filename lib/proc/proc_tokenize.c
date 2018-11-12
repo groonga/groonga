@@ -64,7 +64,7 @@ parse_tokenize_flags(grn_ctx *ctx, grn_raw_string *flags_raw)
 typedef struct {
   grn_id id;
   int32_t position;
-  grn_bool force_prefix;
+  grn_bool force_prefix_search;
   uint64_t source_offset;
   uint32_t source_length;
   uint32_t source_first_character_length;
@@ -106,7 +106,7 @@ output_tokens(grn_ctx *ctx,
   grn_bool have_metadata = GRN_FALSE;
 
   n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
-  n_elements = 3;
+  n_elements = 4;
   if (index_column) {
     n_elements++;
     GRN_UINT32_INIT(&estimated_size, 0);
@@ -146,8 +146,12 @@ output_tokens(grn_ctx *ctx,
     grn_ctx_output_cstr(ctx, "position");
     grn_ctx_output_int32(ctx, token->position);
 
+    /* For backward compatibility. */
     grn_ctx_output_cstr(ctx, "force_prefix");
-    grn_ctx_output_bool(ctx, token->force_prefix);
+    grn_ctx_output_bool(ctx, token->force_prefix_search);
+
+    grn_ctx_output_cstr(ctx, "force_prefix_search");
+    grn_ctx_output_bool(ctx, token->force_prefix_search);
 
     if (index_column) {
       GRN_BULK_REWIND(&estimated_size);
@@ -250,7 +254,8 @@ tokenize(grn_ctx *ctx,
     current_token = ((tokenize_token *)(GRN_BULK_CURR(tokens))) - 1;
     current_token->id = token_id;
     current_token->position = grn_token_get_position(ctx, token);
-    current_token->force_prefix = grn_token_get_force_prefix_search(ctx, token);
+    current_token->force_prefix_search =
+      grn_token_get_force_prefix_search(ctx, token);
     current_token->source_offset = grn_token_get_source_offset(ctx, token);
     current_token->source_length = grn_token_get_source_length(ctx, token);
     current_token->source_first_character_length =

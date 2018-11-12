@@ -21,12 +21,14 @@ table_tokenize Terms "あいabアイ" --mode GET
     {
       "value": "あい",
       "position": 0,
-      "force_prefix": false
+      "force_prefix": false,
+      "force_prefix_search": false
     },
     {
       "value": "ab",
       "position": 2,
-      "force_prefix": false
+      "force_prefix": false,
+      "force_prefix_search": false
     }
   ]
 ]

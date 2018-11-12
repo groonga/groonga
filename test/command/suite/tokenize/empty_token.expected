@@ -9,12 +9,14 @@ tokenize TokenDelimit "aB￾￾c" NormalizerAuto ENABLE_TOKENIZED_DELIMITER
     {
       "value": "ab",
       "position": 0,
-      "force_prefix": false
+      "force_prefix": false,
+      "force_prefix_search": false
     },
     {
       "value": "c",
       "position": 1,
-      "force_prefix": false
+      "force_prefix": false,
+      "force_prefix_search": false
     }
   ]
 ]

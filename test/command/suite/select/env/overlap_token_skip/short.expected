@@ -23,42 +23,49 @@ table_tokenize Terms "HongKong" --index_column index
       "value": "ho",
       "position": 0,
       "force_prefix": false,
+      "force_prefix_search": false,
       "estimated_size": 1
     },
     {
       "value": "on",
       "position": 1,
       "force_prefix": false,
+      "force_prefix_search": false,
       "estimated_size": 3
     },
     {
       "value": "ng",
       "position": 2,
       "force_prefix": false,
+      "force_prefix_search": false,
       "estimated_size": 3
     },
     {
       "value": "gk",
       "position": 3,
       "force_prefix": false,
+      "force_prefix_search": false,
       "estimated_size": 1
     },
     {
       "value": "ko",
       "position": 4,
       "force_prefix": false,
+      "force_prefix_search": false,
       "estimated_size": 1
     },
     {
       "value": "on",
       "position": 5,
       "force_prefix": false,
+      "force_prefix_search": false,
       "estimated_size": 3
     },
     {
       "value": "ng",
       "position": 6,
       "force_prefix": false,
+      "force_prefix_search": false,
       "estimated_size": 3
     }
   ]

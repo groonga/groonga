@@ -1,2 +1,16 @@
 tokenize TokenBigram "だよ" NormalizerAuto --mode GET
-[[0,0.0,0.0],[{"value":"だよ","position":0,"force_prefix":false}]]
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "だよ",
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]

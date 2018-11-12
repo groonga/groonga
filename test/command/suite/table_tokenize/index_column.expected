@@ -25,30 +25,35 @@ table_tokenize Terms "a ruby bindings of Groonga" --mode GET --index_column inde
       "value": "a",
       "position": 0,
       "force_prefix": false,
+      "force_prefix_search": false,
       "estimated_size": 5
     },
     {
       "value": "ruby",
       "position": 1,
       "force_prefix": false,
+      "force_prefix_search": false,
       "estimated_size": 1
     },
     {
       "value": "bindings",
       "position": 2,
       "force_prefix": false,
+      "force_prefix_search": false,
       "estimated_size": 1
     },
     {
       "value": "of",
       "position": 3,
       "force_prefix": false,
+      "force_prefix_search": false,
       "estimated_size": 1
     },
     {
       "value": "groonga",
       "position": 4,
       "force_prefix": false,
+      "force_prefix_search": false,
       "estimated_size": 5
     }
   ]

@@ -23,6 +23,7 @@ table_tokenize Terms "HongKong" --index_column index
       "value": "hongkong",
       "position": 0,
       "force_prefix": false,
+      "force_prefix_search": false,
       "estimated_size": 1
     }
   ]

@@ -9,12 +9,14 @@ tokenize TokenBigram "ABCだ" NormalizerAuto --mode GET
     {
       "value": "abc",
       "position": 0,
-      "force_prefix": false
+      "force_prefix": false,
+      "force_prefix_search": false
     },
     {
       "value": "だ",
       "position": 1,
-      "force_prefix": true
+      "force_prefix": true,
+      "force_prefix_search": true
     }
   ]
 ]

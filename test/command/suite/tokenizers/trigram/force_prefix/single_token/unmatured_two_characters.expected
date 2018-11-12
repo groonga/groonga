@@ -1,2 +1,16 @@
 tokenize TokenTrigram "だよ" NormalizerAuto --mode GET
-[[0,0.0,0.0],[{"value":"だよ","position":0,"force_prefix":true}]]
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "だよ",
+      "position": 0,
+      "force_prefix": true,
+      "force_prefix_search": true
+    }
+  ]
+]
