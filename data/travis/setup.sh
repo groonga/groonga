@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2013-2017  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2013-2018  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@ if [ "$GROONGA_MASTER" = "yes" ]; then
        libmecab-dev \
        libmsgpack-dev \
        libstemmer-dev \
+       mecab-naist-jdic \
        pkg-config
   git clone --recursive --depth 1 --branch master https://github.com/groonga/groonga.git
   cd groonga
