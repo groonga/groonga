@@ -9261,8 +9261,8 @@ grn_obj_set_info_table_module(grn_ctx *ctx,
                               const char *context_tag,
                               const char *module_name)
 {
-  grn_table_module *table_module;
-  grn_id *proc_id;
+  grn_table_module *table_module = NULL;
+  grn_id *proc_id = NULL;
 
   if (grn_obj_set_info_require_key_table(ctx,
                                          table,
