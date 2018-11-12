@@ -1847,6 +1847,7 @@ size_t
 grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
 {
   uint8_t *rp = res, freq[33];
+  /* f in df is for frequency */
   uint32_t pgap, usep, l, df, data_size, *dp, *dpe;
   if (!dvlen || !(df = dv[0].data_size)) { return 0; }
   for (usep = 0, data_size = 0, l = 0; l < dvlen; l++) {
