@@ -276,6 +276,8 @@ delimit_next(grn_ctx *ctx,
 
   if (tokenizer->have_tokenized_delimiter) {
     unsigned int rest_length;
+    grn_obj *status;
+    grn_obj *data;
     rest_length = tokenizer->end - tokenizer->next;
     tokenizer->next =
       (unsigned char *)grn_tokenizer_tokenized_delimiter_next(
@@ -284,6 +286,13 @@ delimit_next(grn_ctx *ctx,
         (const char *)tokenizer->next,
         rest_length,
         tokenizer->encoding);
+    status = grn_ctx_pop(ctx);
+    data = grn_ctx_pop(ctx);
+    grn_token_set_data(ctx,
+                       token,
+                       GRN_TEXT_VALUE(data),
+                       GRN_TEXT_LEN(data));
+    grn_token_set_status(ctx, token, GRN_UINT32_VALUE(status));
   } else {
     size_t cl;
     const unsigned char *p = tokenizer->next, *r;
