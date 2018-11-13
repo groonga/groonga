@@ -1159,23 +1159,12 @@ mecab_next(grn_ctx *ctx,
 
   if (grn_tokenizer_query_have_tokenized_delimiter(ctx, tokenizer->query)) {
     grn_encoding encoding = tokenizer->query->encoding;
-    grn_tokenizer_token tokenizer_token;
-    grn_tokenizer_token_init(ctx, &tokenizer_token);
-    /* TODO: Need grn_token version. */
     tokenizer->next =
-      grn_tokenizer_tokenized_delimiter_next(ctx,
-                                             &tokenizer_token,
-                                             tokenizer->next,
-                                             tokenizer->end - tokenizer->next,
-                                             encoding);
-    grn_token_set_data(ctx,
-                       token,
-                       GRN_TEXT_VALUE(&(tokenizer_token.str)),
-                       GRN_TEXT_LEN(&(tokenizer_token.str)));
-    grn_token_set_status(ctx,
-                         token,
-                         GRN_UINT32_VALUE(&(tokenizer_token.status)));
-    grn_tokenizer_token_fin(ctx, &tokenizer_token);
+      grn_tokenizer_next_by_tokenized_delimiter(ctx,
+                                                token,
+                                                tokenizer->next,
+                                                tokenizer->end - tokenizer->next,
+                                                encoding);
   } else if (mecab_tokenizer_options_need_default_output(ctx, tokenizer->options)) {
     mecab_next_default_format(ctx, tokenizer, token);
   } else {

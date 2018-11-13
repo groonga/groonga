@@ -110,7 +110,6 @@ typedef struct {
 } grn_delimit_options_default;
 
 typedef struct {
-  grn_tokenizer_token token;
   grn_tokenizer_query *query;
   grn_delimit_options *options;
   grn_bool have_tokenized_delimiter;
@@ -207,7 +206,6 @@ delimit_init_raw(grn_ctx *ctx,
     return NULL;
   }
 
-  grn_tokenizer_token_init(ctx, &(tokenizer->token));
   tokenizer->query = query;
   tokenizer->options = options;
 
@@ -276,23 +274,14 @@ delimit_next(grn_ctx *ctx,
 
   if (tokenizer->have_tokenized_delimiter) {
     unsigned int rest_length;
-    grn_obj *status;
-    grn_obj *data;
     rest_length = tokenizer->end - tokenizer->next;
     tokenizer->next =
-      (unsigned char *)grn_tokenizer_tokenized_delimiter_next(
+      (unsigned char *)grn_tokenizer_next_by_tokenized_delimiter(
         ctx,
-        &(tokenizer->token),
+        token,
         (const char *)tokenizer->next,
         rest_length,
         tokenizer->encoding);
-    status = grn_ctx_pop(ctx);
-    data = grn_ctx_pop(ctx);
-    grn_token_set_data(ctx,
-                       token,
-                       GRN_TEXT_VALUE(data),
-                       GRN_TEXT_LEN(data));
-    grn_token_set_status(ctx, token, GRN_UINT32_VALUE(status));
   } else {
     size_t cl;
     const unsigned char *p = tokenizer->next, *r;
@@ -359,7 +348,6 @@ delimit_fin(grn_ctx *ctx, void *user_data)
   if (!tokenizer) {
     return;
   }
-  grn_tokenizer_token_fin(ctx, &(tokenizer->token));
   GRN_FREE(tokenizer);
 }
 

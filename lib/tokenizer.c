@@ -510,6 +510,41 @@ grn_tokenizer_tokenized_delimiter_next(grn_ctx *ctx,
   return next_start;
 }
 
+const char *
+grn_tokenizer_next_by_tokenized_delimiter(grn_ctx *ctx,
+                                          grn_token *token,
+                                          const char *str_ptr,
+                                          unsigned int str_length,
+                                          grn_encoding encoding)
+{
+  size_t char_length = 0;
+  const char *start = str_ptr;
+  const char *current;
+  const char *end = str_ptr + str_length;
+  const char *next_start = NULL;
+
+  for (current = start; current < end; current += char_length) {
+    char_length = grn_charlen_(ctx, current, end, encoding);
+    if (char_length == 0) {
+      break;
+    }
+    if (grn_tokenizer_is_tokenized_delimiter(ctx, current, char_length,
+                                             encoding)) {
+      next_start = str_ptr + (current - start + char_length);
+      break;
+    }
+  }
+
+  grn_token_set_data(ctx, token, start, current - start);
+  if (current == end) {
+    grn_token_set_status(ctx, token, GRN_TOKEN_LAST);
+  } else {
+    grn_token_set_status(ctx, token, GRN_TOKEN_CONTINUE);
+  }
+
+  return next_start;
+}
+
 grn_rc
 grn_tokenizer_register(grn_ctx *ctx, const char *plugin_name_ptr,
                        unsigned int plugin_name_length,

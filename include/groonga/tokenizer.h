@@ -254,12 +254,31 @@ GRN_PLUGIN_EXPORT void grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_toke
   the next token into `token'. It returns the string after the next
   token. The returned string may be `NULL' when all tokens are
   extracted.
+
+  @deprecated since 8.0.9. It's for old tokenizer next API. Use
+  grn_tokenizer_next_by_tokenized_delimiter() for new tokenizer next
+  API (grn_tokenizer_next_func).
  */
 GRN_PLUGIN_EXPORT const char *grn_tokenizer_tokenized_delimiter_next(grn_ctx *ctx,
                                                                      grn_tokenizer_token *token,
                                                                      const char *str_ptr,
                                                                      unsigned int str_length,
                                                                      grn_encoding encoding);
+
+/*
+  Extract the next token by delimiting by
+  GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8.
+
+  This is for grn_tokenizer_next_func.
+
+  @since 8.0.9.
+ */
+GRN_PLUGIN_EXPORT const char *
+grn_tokenizer_next_by_tokenized_delimiter(grn_ctx *ctx,
+                                          grn_token *token,
+                                          const char *str_ptr,
+                                          unsigned int str_length,
+                                          grn_encoding encoding);
 
 /*
   grn_tokenizer_register() registers a plugin to the database which is
@@ -273,7 +292,7 @@ GRN_PLUGIN_EXPORT const char *grn_tokenizer_tokenized_delimiter_next(grn_ctx *ct
   details of grn_proc_func and grn_user_data, that is used as an argument of
   grn_proc_func.
 
-  Deprecated since 8.0.2. Use grn_tokenizer_create() and
+  @deprecated since 8.0.2. Use grn_tokenizer_create() and
   grn_tokenizer_set_*_func().
  */
 GRN_PLUGIN_EXPORT grn_rc
