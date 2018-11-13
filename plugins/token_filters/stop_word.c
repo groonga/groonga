@@ -81,7 +81,7 @@ stop_word_open_options(grn_ctx *ctx,
                                       &column,
                                       NULL,
                                       NULL);
-      GRN_TEXT_SET(ctx, &(options->column), name, length);
+      GRN_TEXT_SET(ctx, &(options->column), column, length);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
