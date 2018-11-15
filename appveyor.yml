@@ -71,8 +71,8 @@ build_script:
       -DGRN_WITH_BUNDLED_MECAB=yes
       -DGRN_WITH_BUNDLED_MESSAGE_PACK=yes
       -DGRN_WITH_BUNDLED_LZ4=yes
-  - cmake --build . --config RelWithDebInfo
-  - cmake --build . --config RelWithDebInfo --target Install
+  - cmake --build . --config Release
+  - cmake --build . --config Release --target Install
 
 before_test:
   - git clone --depth 1
