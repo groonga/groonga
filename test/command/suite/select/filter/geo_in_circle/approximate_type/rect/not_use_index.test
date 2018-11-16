@@ -1,6 +1,9 @@
 #@include fixture/geo/taiyaki/init.grn
 
+#$GRN_QUERY_LOG_SHOW_CONDITION=yes
+#@collect-query-log true
 select Shops --sortby '+_score, +name' \
   --output_columns 'name, _score, location' \
   --filter 'geo_in_circle(location, "128429532x503148672", 3000, "rect") > 0' \
   --scorer '_score = geo_distance(location, "128429532x503148672", "rect") * 1000'
+#@collect-query-log false

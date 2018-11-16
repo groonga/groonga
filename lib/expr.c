@@ -4712,6 +4712,34 @@ grn_table_select_inspect_condition_argument(grn_ctx *ctx,
   }
 }
 
+static void
+grn_table_select_inspect_condition_call(grn_ctx *ctx,
+                                        grn_obj *buffer,
+                                        grn_expr_code *codes,
+                                        uint32_t start,
+                                        uint32_t end)
+{
+  uint32_t i;
+
+  for (i = start; i <= end; i++) {
+    grn_expr_code *code = codes + i;
+    if (i == start) {
+      if (grn_obj_is_proc(ctx, code->value)) {
+        grn_inspect_name(ctx, buffer, code->value);
+      } else {
+        grn_table_select_inspect_condition_argument(ctx, buffer, code->value);
+      }
+      GRN_TEXT_PUTC(ctx, buffer, '(');
+    } else if (code->value) {
+      if (i > start + 1) {
+        GRN_TEXT_PUTS(ctx, buffer, ", ");
+      }
+      grn_table_select_inspect_condition_argument(ctx, buffer, code->value);
+    }
+  }
+  GRN_TEXT_PUTC(ctx, buffer, ')');
+}
+
 static const char *
 grn_table_select_inspect_condition(grn_ctx *ctx,
                                    grn_obj *buffer,
@@ -4741,23 +4769,11 @@ grn_table_select_inspect_condition(grn_ctx *ctx,
 
   switch (last_operator) {
   case GRN_OP_CALL :
-    for (i = si->start; i <= si->end; i++) {
-      grn_expr_code *code = expr->codes + i;
-      if (i == si->start) {
-        if (grn_obj_is_proc(ctx, code->value)) {
-          grn_inspect_name(ctx, buffer, code->value);
-        } else {
-          grn_table_select_inspect_condition_argument(ctx, buffer, code->value);
-        }
-        GRN_TEXT_PUTC(ctx, buffer, '(');
-      } else if (code->value) {
-        if (i > si->start + 1) {
-          GRN_TEXT_PUTS(ctx, buffer, ", ");
-        }
-        grn_table_select_inspect_condition_argument(ctx, buffer, code->value);
-      }
-    }
-    GRN_TEXT_PUTC(ctx, buffer, ')');
+    grn_table_select_inspect_condition_call(ctx,
+                                            buffer,
+                                            expr->codes,
+                                            si->start,
+                                            si->end);
     break;
   case GRN_OP_EQUAL :
   case GRN_OP_NOT_EQUAL :
@@ -4784,11 +4800,29 @@ grn_table_select_inspect_condition(grn_ctx *ctx,
       GRN_TEXT_PUTC(ctx, buffer, '(');
       for (i = si->start; i < si->end; i++) {
         grn_expr_code *code = expr->codes + i;
-        GRN_TEXT_PUTS(ctx, buffer, ", ");
-        if (code->value) {
-          grn_table_select_inspect_condition_argument(ctx, buffer, code->value);
+        if (i != si->start) {
+          GRN_TEXT_PUTS(ctx, buffer, ", ");
+        }
+        if (code->modify > 0 && code[code->modify].op == GRN_OP_CALL) {
+          grn_table_select_inspect_condition_call(ctx,
+                                                  buffer,
+                                                  code,
+                                                  0,
+                                                  code->modify);
+          if (i + code->modify < si->end &&
+              code[code->modify + 1].op == GRN_OP_PUSH) {
+            i += code->modify;
+          } else {
+            i += code->modify - 1;
+          }
         } else {
-          GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(code->op));
+          if (code->value) {
+            grn_table_select_inspect_condition_argument(ctx,
+                                                        buffer,
+                                                        code->value);
+          } else {
+            GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(code->op));
+          }
         }
       }
       GRN_TEXT_PUTC(ctx, buffer, ')');
