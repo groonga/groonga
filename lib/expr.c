@@ -3631,6 +3631,33 @@ grn_table_select_index_use_sequential_search(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
+static grn_inline grn_id
+grn_table_select_index_resolve_key(grn_ctx *ctx,
+                                   grn_obj *domain,
+                                   grn_obj *key)
+{
+  if (GRN_OBJ_GET_DOMAIN(key) == DB_OBJ(domain)->id) {
+    return GRN_RECORD_VALUE(key);
+  } else if (GRN_OBJ_GET_DOMAIN(key) == domain->header.domain) {
+    return grn_table_get(ctx,
+                         domain,
+                         GRN_BULK_HEAD(key),
+                         GRN_BULK_VSIZE(key));
+  } else {
+    grn_id id = GRN_ID_NIL;
+    grn_obj casted_key;
+    GRN_OBJ_INIT(&casted_key, GRN_BULK, 0, domain->header.domain);
+    if (grn_obj_cast(ctx, key, &casted_key, GRN_FALSE) == GRN_SUCCESS) {
+      id = grn_table_get(ctx,
+                         domain,
+                         GRN_BULK_HEAD(&casted_key),
+                         GRN_BULK_VSIZE(&casted_key));
+    }
+    GRN_OBJ_FIN(ctx, &casted_key);
+    return id;
+  }
+}
+
 static grn_inline grn_bool
 grn_table_select_index_equal(grn_ctx *ctx,
                              grn_obj *table,
@@ -3719,34 +3746,7 @@ grn_table_select_index_equal(grn_ctx *ctx,
 
       grn_table_select_index_report(ctx, tag, index);
 
-      if (GRN_OBJ_GET_DOMAIN(si->query) == DB_OBJ(domain)->id) {
-        tid = GRN_RECORD_VALUE(si->query);
-      } else {
-        grn_id key_type;
-        grn_obj *key;
-        grn_obj key_buffer;
-
-        key_type = domain->header.domain;
-        if (key_type == si->query->header.domain) {
-          key = si->query;
-        } else {
-          grn_rc rc;
-          GRN_OBJ_INIT(&key_buffer, GRN_BULK, 0, key_type);
-          rc = grn_obj_cast(ctx, si->query, &key_buffer, GRN_FALSE);
-          if (rc == GRN_SUCCESS) {
-            key = &key_buffer;
-          } else {
-            GRN_OBJ_FIN(ctx, &key_buffer);
-            key = si->query;
-          }
-        }
-        tid = grn_table_get(ctx, domain,
-                            GRN_BULK_HEAD(key),
-                            GRN_BULK_VSIZE(key));
-        if (key == &key_buffer) {
-          GRN_OBJ_FIN(ctx, &key_buffer);
-        }
-      }
+      tid = grn_table_select_index_resolve_key(ctx, domain, si->query);
       if (tid != GRN_ID_NIL) {
         uint32_t sid;
         int32_t weight;
@@ -3855,27 +3855,10 @@ grn_table_select_index_not_equal(grn_ctx *ctx,
     grn_obj *domain = grn_ctx_at(ctx, index->header.domain);
     if (domain) {
       grn_id tid;
-      if (GRN_OBJ_GET_DOMAIN(si->query) == DB_OBJ(domain)->id) {
-        tid = GRN_RECORD_VALUE(si->query);
-      } else {
-        if (GRN_OBJ_GET_DOMAIN(si->query) == domain->header.domain) {
-          tid = grn_table_get(ctx, domain,
-                              GRN_BULK_HEAD(si->query),
-                              GRN_BULK_VSIZE(si->query));
-        } else {
-          grn_obj casted_query;
-          GRN_OBJ_INIT(&casted_query, GRN_BULK, 0, domain->header.domain);
-          if (grn_obj_cast(ctx, si->query, &casted_query, GRN_FALSE) ==
-              GRN_SUCCESS) {
-            tid = grn_table_get(ctx, domain,
-                                GRN_BULK_HEAD(&casted_query),
-                                GRN_BULK_VSIZE(&casted_query));
-          } else {
-            tid = GRN_ID_NIL;
-          }
-          GRN_OBJ_FIN(ctx, &casted_query);
-        }
-      }
+
+      grn_table_select_index_report(ctx, "[not-equal]", index);
+
+      tid = grn_table_select_index_resolve_key(ctx, domain, si->query);
       if (tid == GRN_ID_NIL) {
         processed = GRN_TRUE;
       } else {
@@ -3883,8 +3866,6 @@ grn_table_select_index_not_equal(grn_ctx *ctx,
         int32_t weight;
         grn_ii *ii = (grn_ii *)index;
         grn_ii_cursor *ii_cursor;
-
-        grn_table_select_index_report(ctx, "[not-equal]", index);
 
         sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
         weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
