@@ -1,0 +1,17 @@
+table_create Types TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries type COLUMN_SCALAR Types
+[[0,0.0,0.0],true]
+column_create Types entries COLUMN_INDEX Entries type
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"type": "10"},
+{"type": "29"},
+{"type": "fast"}
+]
+[[0,0.0,0.0],3]
+select Entries --filter 'true && type != 29'
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["type","Types"]],[1,"10"],[3,"fast"]]]]

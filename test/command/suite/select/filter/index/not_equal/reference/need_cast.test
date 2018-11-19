@@ -1,0 +1,15 @@
+table_create Types TABLE_PAT_KEY ShortText
+
+table_create Entries TABLE_NO_KEY
+column_create Entries type COLUMN_SCALAR Types
+
+column_create Types entries COLUMN_INDEX Entries type
+
+load --table Entries
+[
+{"type": "10"},
+{"type": "29"},
+{"type": "fast"}
+]
+
+select Entries --filter 'true && type != 29'
