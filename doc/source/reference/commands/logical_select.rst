@@ -156,6 +156,9 @@ But there are some differences from :doc:`select`:
     doesn't work with multiple shards. It works with one
     shard. ``_key`` in ``drilldowns[${LABEL}].sort_keys`` work with
     multiple shards.
+  * ``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].output_columns``
+    also doesn't work with multiple shards either. It works with one
+    shard.
   * ``match_escalation_threshold`` isn't supported yet.
   * ``query_flags`` isn't supported yet.
   * ``query_expander`` isn't supported yet.
@@ -1064,6 +1067,11 @@ Here is an example:
 Corresponds to :ref:`select-drilldowns-label-output-columns` in
 :doc:`select`. See :ref:`select-drilldowns-label-output-columns` for
 details.
+
+``drilldowns[${LABEL}].output_columns`` has a limitation.
+
+``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].output_columns`` doesn't
+work with multiple shards. It works with one shard.
 
 Here is an example:
 

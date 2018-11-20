@@ -223,12 +223,6 @@ msgstr ""
 "Groongaを全文検索ライブラリとして使うことができます。この節ではGroongaが提供"
 "しているAPIを示します。"
 
-msgid "パラメータ"
-msgstr ""
-
-msgid "戻り値"
-msgstr ""
-
 msgid "Global configurations"
 msgstr "全体設定"
 
@@ -8341,6 +8335,14 @@ msgstr ""
 "``_value.${KEY_NAME}`` を使えません。1つのシャードのみを使った場合は使えま"
 "す。"
 
+msgid ""
+"``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].output_columns`` also "
+"doesn't work with multiple shards either. It works with one shard."
+msgstr ""
+"複数のシャードを使った場合、 ``drilldowns[${LABEL}].output_columns`` の中で"
+"も ``_value.${KEY_NAME}`` を使えません。1つのシャードのみを使った場合は使えま"
+"す。"
+
 msgid "``match_escalation_threshold`` isn't supported yet."
 msgstr "``match_escalation_threshold`` はまだサポートしていません。"
 
@@ -8570,6 +8572,17 @@ msgid ""
 msgstr ""
 ":doc:`select` の :ref:`select-drilldowns-label-output-columns` に対応していま"
 "す。詳細は :ref:`select-drilldowns-label-output-columns` を見てください。"
+
+msgid "``drilldowns[${LABEL}].output_columns`` has a limitation."
+msgstr "``drilldowns[${LABEL}].output_columns`` には制限があります。"
+
+msgid ""
+"``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].output_columns`` doesn't "
+"work with multiple shards. It works with one shard."
+msgstr ""
+"複数のシャードを使った場合、 ``drilldowns[${LABEL}].output_columns`` の中で "
+"``_value.${KEY_NAME}`` を使えません。1つのシャードのみを使った場合は使えま"
+"す。"
 
 msgid "``drilldowns[${LABEL}].sortby``"
 msgstr ""
