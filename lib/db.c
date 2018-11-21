@@ -7075,6 +7075,7 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
           }
         }
         GRN_OBJ_FIN(ctx, &sub_value);
+        GRN_OBJ_FIN(ctx, &sub_records);
         return value;
       } else {
         vp = GRN_BULK_HEAD(value) + size0;

@@ -1,0 +1,24 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Entries TABLE_NO_KEY
+column_create Entries tags COLUMN_VECTOR Tags
+
+load --table Entries
+[
+{
+  "tags": [
+    "tag0",
+    "tag1",
+    "tag2",
+    "tag3",
+    "tag4",
+    "tag5",
+    "tag6",
+    "tag7",
+    "tag8",
+    "tag9"
+  ]
+}
+]
+
+select Entries --filter 'tags._key'
