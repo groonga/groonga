@@ -2272,7 +2272,7 @@ Here is an example to refer each group key in multiple group keys by
 ``_value.${KEY_NAME}`` syntax:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log
+.. include:: ../../example/reference/commands/select/drilldowns_label_output_columns_multiple_group_key.log
 .. select Entries \
 ..   --limit 0 \
 ..   --output_columns _id \

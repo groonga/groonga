@@ -1,0 +1,60 @@
+Execution example::
+
+  select Entries \
+    --limit 0 \
+    --output_columns _id \
+    --drilldowns[tag.n_likes].keys tag,n_likes \
+    --drilldowns[tag.n_likes].output_columns _value.tag,_value.n_likes
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ]
+  #       ]
+  #     ], 
+  #     {
+  #       "tag.n_likes": [
+  #         [
+  #           4
+  #         ], 
+  #         [
+  #           [
+  #             "tag", 
+  #             "ShortText"
+  #           ], 
+  #           [
+  #             "n_likes", 
+  #             "UInt32"
+  #           ]
+  #         ], 
+  #         [
+  #           "Hello", 
+  #           5
+  #         ], 
+  #         [
+  #           "Groonga", 
+  #           10
+  #         ], 
+  #         [
+  #           "Groonga", 
+  #           15
+  #         ], 
+  #         [
+  #           "Senna", 
+  #           3
+  #         ]
+  #       ]
+  #     }
+  #   ]
+  # ]

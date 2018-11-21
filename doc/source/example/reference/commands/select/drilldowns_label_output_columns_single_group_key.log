@@ -1,58 +1,47 @@
 Execution example::
 
-  select Entries \
-    --limit 0 \
-    --output_columns _id \
-    --drilldowns[tag.n_likes].keys tag,n_likes \
-    --drilldowns[tag.n_likes].output_columns _value.tag,_value.n_likes
+ select Entries \
+   --limit 0 \
+   --output_columns _id \
+   --drilldowns[tag.n_likes].keys tag \
+   --drilldowns[tag.n_likes].output_columns _key
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
-  #     0.000355720520019531
-  #   ], 
+  #     0,
+  #     1542772065.869136,
+  #     0.0003108978271484375
+  #   ],
   #   [
   #     [
   #       [
   #         5
-  #       ], 
+  #       ],
   #       [
   #         [
-  #           "_id", 
+  #           "_id",
   #           "UInt32"
   #         ]
   #       ]
-  #     ], 
+  #     ],
   #     {
   #       "tag.n_likes": [
   #         [
-  #           4
-  #         ], 
-  #         [
-  #           [
-  #             "tag", 
-  #             "ShortText"
-  #           ], 
-  #           [
-  #             "n_likes", 
-  #             "UInt32"
-  #           ]
-  #         ], 
-  #         [
-  #           "Hello", 
-  #           5
-  #         ], 
-  #         [
-  #           "Groonga", 
-  #           10
-  #         ], 
-  #         [
-  #           "Groonga", 
-  #           15
-  #         ], 
-  #         [
-  #           "Senna", 
   #           3
+  #         ],
+  #         [
+  #           [
+  #             "_key",
+  #             "ShortText"
+  #           ]
+  #         ],
+  #         [
+  #           "Hello"
+  #         ],
+  #         [
+  #           "Groonga"
+  #         ],
+  #         [
+  #           "Senna"
   #         ]
   #       ]
   #     }
