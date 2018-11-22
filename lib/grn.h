@@ -679,6 +679,10 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 
 #define GRN_NEXT_ADDR(p) (((byte *)(p)) + sizeof(*(p)))
 
+#ifdef GRN_WITH_ONIGMO
+# define GRN_SUPPORT_REGEXP
+#endif /* GRN_WITH_ONIGMO */
+
 GRN_API void grn_sleep(uint32_t seconds);
 GRN_API void grn_nanosleep(uint64_t nanoseconds);
 

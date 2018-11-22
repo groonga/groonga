@@ -40,10 +40,6 @@
 #include <stdarg.h>
 #include <time.h>
 
-#ifdef GRN_WITH_ONIGMO
-# define GRN_SUPPORT_REGEXP
-#endif /* GRN_WITH_ONIGMO */
-
 #ifdef GRN_SUPPORT_REGEXP
 # include <onigmo.h>
 #endif /* GRN_SUPPORT_REGEXP */

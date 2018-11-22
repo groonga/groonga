@@ -25,10 +25,6 @@
 #include <math.h>
 #include <float.h>
 
-#ifdef GRN_WITH_ONIGMO
-# define GRN_SUPPORT_REGEXP
-#endif
-
 #ifdef GRN_SUPPORT_REGEXP
 # include <onigmo.h>
 #endif

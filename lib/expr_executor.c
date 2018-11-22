@@ -23,10 +23,6 @@
 #include "grn_expr_executor.h"
 #include "grn_geo.h"
 
-#ifdef GRN_WITH_ONIGMO
-# define GRN_SUPPORT_REGEXP
-#endif
-
 #ifdef GRN_SUPPORT_REGEXP
 # include "grn_normalizer.h"
 # include <onigmo.h>
