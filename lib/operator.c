@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2014-2017 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,14 +21,11 @@
 #include "grn_db.h"
 #include "grn_str.h"
 #include "grn_normalizer.h"
+#include "grn_onigmo.h"
 
 #include <string.h>
 #include <math.h>
 #include <float.h>
-
-#ifdef GRN_SUPPORT_REGEXP
-# include <onigmo.h>
-#endif
 
 static const char *operator_names[] = {
   "push",
@@ -879,63 +877,6 @@ exec_match_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *query)
 }
 
 #ifdef GRN_SUPPORT_REGEXP
-static OnigRegex
-regexp_compile(grn_ctx *ctx,
-               const char *pattern,
-               unsigned int pattern_len,
-               const OnigSyntaxType *syntax)
-{
-  OnigRegex regex;
-  OnigEncoding onig_encoding;
-  int onig_result;
-  OnigErrorInfo onig_error_info;
-
-  if (ctx->encoding == GRN_ENC_NONE) {
-    return NULL;
-  }
-
-  switch (ctx->encoding) {
-  case GRN_ENC_EUC_JP :
-    onig_encoding = ONIG_ENCODING_EUC_JP;
-    break;
-  case GRN_ENC_UTF8 :
-    onig_encoding = ONIG_ENCODING_UTF8;
-    break;
-  case GRN_ENC_SJIS :
-    onig_encoding = ONIG_ENCODING_CP932;
-    break;
-  case GRN_ENC_LATIN1 :
-    onig_encoding = ONIG_ENCODING_ISO_8859_1;
-    break;
-  case GRN_ENC_KOI8R :
-    onig_encoding = ONIG_ENCODING_KOI8_R;
-    break;
-  default :
-    return NULL;
-  }
-
-  onig_result = onig_new(&regex,
-                         pattern,
-                         pattern + pattern_len,
-                         ONIG_OPTION_ASCII_RANGE |
-                         ONIG_OPTION_MULTILINE,
-                         onig_encoding,
-                         syntax,
-                         &onig_error_info);
-  if (onig_result != ONIG_NORMAL) {
-    char message[ONIG_MAX_ERROR_MESSAGE_LEN];
-    onig_error_code_to_str(message, onig_result, onig_error_info);
-    ERR(GRN_INVALID_ARGUMENT,
-        "[operator][regexp] "
-        "failed to create regular expression object: <%.*s>: %s",
-        pattern_len, pattern,
-        message);
-    return NULL;
-  }
-
-  return regex;
-}
-
 static grn_bool
 regexp_is_match(grn_ctx *ctx, OnigRegex regex,
                 const char *target, unsigned int target_len)
@@ -967,11 +908,16 @@ string_have_sub_text(grn_ctx *ctx,
   }
 
 #ifdef GRN_SUPPORT_REGEXP
-  {
+  if (grn_onigmo_is_valid_encoding(ctx)) {
     OnigRegex regex;
     grn_bool matched;
 
-    regex = regexp_compile(ctx, sub_text, sub_text_len, ONIG_SYNTAX_ASIS);
+    regex = grn_onigmo_new(ctx,
+                           sub_text,
+                           sub_text_len,
+                           GRN_ONIGMO_OPTION_DEFAULT,
+                           ONIG_SYNTAX_ASIS,
+                           "[operator]");
     if (!regex) {
       return GRN_FALSE;
     }
@@ -1048,7 +994,11 @@ string_match_regexp(grn_ctx *ctx,
   OnigRegex regex;
   grn_bool matched;
 
-  regex = regexp_compile(ctx, pattern, pattern_len, ONIG_SYNTAX_RUBY);
+  regex = grn_onigmo_new(ctx,
+                         pattern, pattern_len,
+                         GRN_ONIGMO_OPTION_DEFAULT,
+                         GRN_ONIGMO_SYNTAX_DEFAULT,
+                         "[operator]");
   if (!regex) {
     return GRN_FALSE;
   }
@@ -1307,10 +1257,12 @@ exec_regexp_uvector_bulk(grn_ctx *ctx, grn_obj *uvector, grn_obj *pattern)
     return GRN_FALSE;
   }
 
-  regex = regexp_compile(ctx,
+  regex = grn_onigmo_new(ctx,
                          GRN_TEXT_VALUE(pattern),
                          GRN_TEXT_LEN(pattern),
-                         ONIG_SYNTAX_RUBY);
+                         GRN_ONIGMO_OPTION_DEFAULT,
+                         GRN_ONIGMO_SYNTAX_DEFAULT,
+                         "[operator]");
   if (!regex) {
     return GRN_FALSE;
   }
@@ -1389,10 +1341,12 @@ exec_regexp_vector_bulk(grn_ctx *ctx, grn_obj *vector, grn_obj *pattern)
     return GRN_FALSE;
   }
 
-  regex = regexp_compile(ctx,
+  regex = grn_onigmo_new(ctx,
                          GRN_TEXT_VALUE(pattern),
                          GRN_TEXT_LEN(pattern),
-                         ONIG_SYNTAX_RUBY);
+                         GRN_ONIGMO_OPTION_DEFAULT,
+                         GRN_ONIGMO_SYNTAX_DEFAULT,
+                         "[operator]");
   if (!regex) {
     return GRN_FALSE;
   }

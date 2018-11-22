@@ -37,14 +37,14 @@
 #include "grn_scorer.h"
 #include "grn_util.h"
 
-#ifdef GRN_WITH_ONIGMO
+#ifdef GRN_SUPPORT_REGEXP
 # define GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH
-#endif
+#endif /* GRN_SUPPORT_REGEXP */
 
 #ifdef GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH
 # include "grn_string.h"
-# include <onigmo.h>
-#endif
+# include "grn_onigmo.h"
+#endif /* GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH */
 
 #define MAX_PSEG                 0x20000
 #define MAX_PSEG_SMALL           0x00200
@@ -9073,26 +9073,17 @@ grn_ii_select_sequential_search(grn_ctx *ctx,
                               NULL);
     {
       OnigRegex regex;
-      int onig_result;
-      OnigErrorInfo error_info;
-      onig_result = onig_new(&regex,
+      regex = grn_onigmo_new(ctx,
                              normalized_query,
-                             normalized_query + normalized_query_length,
+                             normalized_query_length,
                              ONIG_OPTION_NONE,
-                             ONIG_ENCODING_UTF8,
                              ONIG_SYNTAX_ASIS,
-                             &error_info);
-      if (onig_result == ONIG_NORMAL) {
+                             "[ii][select][sequential]");
+      if (regex) {
         grn_ii_select_sequential_search_body(ctx, ii, encoding,
                                              regex, result, op, wvm, optarg);
         onig_free(regex);
       } else {
-        char message[ONIG_MAX_ERROR_MESSAGE_LEN];
-        onig_error_code_to_str(message, onig_result, error_info);
-        GRN_LOG(ctx, GRN_LOG_WARNING,
-                "[ii][select][sequential] "
-                "failed to create regular expression object: %s",
-                message);
         processed = GRN_FALSE;
       }
     }

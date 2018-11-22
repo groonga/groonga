@@ -25,7 +25,7 @@
 
 #ifdef GRN_SUPPORT_REGEXP
 # include "grn_normalizer.h"
-# include <onigmo.h>
+# include "grn_onigmo.h"
 #endif
 
 static void
@@ -2555,61 +2555,22 @@ grn_expr_executor_init_simple_regexp(grn_ctx *ctx,
 {
   grn_expr *e = (grn_expr *)(executor->expr);
   grn_obj *result_buffer = &(executor->data.simple_regexp.result_buffer);
-  OnigEncoding onig_encoding;
-  OnigRegex regex;
-  int onig_result;
-  OnigErrorInfo onig_error_info;
   grn_obj *pattern;
 
   GRN_BOOL_INIT(result_buffer, 0);
   GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
 
-  if (ctx->encoding == GRN_ENC_NONE) {
-    executor->data.simple_regexp.regex = NULL;
-    return;
-  }
-
-  switch (ctx->encoding) {
-  case GRN_ENC_EUC_JP :
-    onig_encoding = ONIG_ENCODING_EUC_JP;
-    break;
-  case GRN_ENC_UTF8 :
-    onig_encoding = ONIG_ENCODING_UTF8;
-    break;
-  case GRN_ENC_SJIS :
-    onig_encoding = ONIG_ENCODING_CP932;
-    break;
-  case GRN_ENC_LATIN1 :
-    onig_encoding = ONIG_ENCODING_ISO_8859_1;
-    break;
-  case GRN_ENC_KOI8R :
-    onig_encoding = ONIG_ENCODING_KOI8_R;
-    break;
-  default :
-    executor->data.simple_regexp.regex = NULL;
-    return;
-  }
-
   pattern = e->codes[1].value;
-  onig_result = onig_new(&regex,
-                         GRN_TEXT_VALUE(pattern),
-                         GRN_TEXT_VALUE(pattern) + GRN_TEXT_LEN(pattern),
-                         ONIG_OPTION_ASCII_RANGE |
-                         ONIG_OPTION_MULTILINE,
-                         onig_encoding,
-                         ONIG_SYNTAX_RUBY,
-                         &onig_error_info);
-  if (onig_result != ONIG_NORMAL) {
-    char message[ONIG_MAX_ERROR_MESSAGE_LEN];
-    onig_error_code_to_str(message, onig_result, onig_error_info);
-    ERR(GRN_INVALID_ARGUMENT,
-        "[expr-executor][regexp] "
-        "failed to create regular expression object: <%.*s>: %s",
-        (int)GRN_TEXT_LEN(pattern), GRN_TEXT_VALUE(pattern),
-        message);
+  executor->data.simple_regexp.regex =
+    grn_onigmo_new(ctx,
+                   GRN_TEXT_VALUE(pattern),
+                   GRN_TEXT_LEN(pattern),
+                   GRN_ONIGMO_OPTION_DEFAULT,
+                   GRN_ONIGMO_SYNTAX_DEFAULT,
+                   "[expr-executor]");
+  if (!executor->data.simple_regexp.regex) {
     return;
   }
-  executor->data.simple_regexp.regex = regex;
 
   GRN_VOID_INIT(&(executor->data.simple_regexp.value_buffer));
 
@@ -2684,6 +2645,10 @@ grn_expr_executor_is_simple_regexp(grn_ctx *ctx,
   case GRN_DB_LONG_TEXT :
     break;
   default :
+    return GRN_FALSE;
+  }
+
+  if (!grn_onigmo_is_valid_encoding(ctx)) {
     return GRN_FALSE;
   }
 

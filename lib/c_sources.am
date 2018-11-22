@@ -64,6 +64,8 @@ libgroonga_c_sources =				\
 	grn_normalizer.h			\
 	obj.c					\
 	grn_obj.h				\
+	onigmo.c				\
+	grn_onigmo.h				\
 	operator.c				\
 	options.c				\
 	grn_options.h				\
