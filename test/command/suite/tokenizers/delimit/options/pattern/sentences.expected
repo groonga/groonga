@@ -1,4 +1,4 @@
-tokenize   'TokenDelimit("pattern", "(?:(?<!(?:Mr|bldg))[.]|。)\\\\s*")'   "りんごです。ペンです。This is an apple. Mr. X."
+tokenize   'TokenDelimit("pattern", "(?:(?<!(?:Mr|bldg))\\\\.|。)\\\\s*")'   "りんごです。ペンです。This is an apple. Mr. X."
 [
   [
     0,
