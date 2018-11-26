@@ -1,2 +1,16 @@
 tokenize   'TokenDelimit("pattern", "nonexistent")'   "Hello"
-[[0,0.0,0.0],[]]
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "Hello",
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]

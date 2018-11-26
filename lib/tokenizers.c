@@ -337,14 +337,14 @@ delimit_next(grn_ctx *ctx,
     if (position == ONIG_MISMATCH) {
       grn_token_set_data(ctx,
                          token,
-                         NULL,
-                         0);
+                         tokenizer->next,
+                         tokenizer->end - tokenizer->next);
       grn_token_set_status(ctx, token, GRN_TOKEN_LAST);
     } else {
       grn_token_set_data(ctx,
                          token,
-                         tokenizer->start + region.beg[0],
-                         region.end[0] - region.beg[0]);
+                         tokenizer->next,
+                         (tokenizer->start + region.beg[0]) - tokenizer->next);
       grn_token_set_status(ctx, token, GRN_TOKEN_CONTINUE);
       tokenizer->next = tokenizer->start + region.end[0];
       onig_region_free(&region, 0);
