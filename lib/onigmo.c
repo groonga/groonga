@@ -83,7 +83,7 @@ grn_onigmo_new(grn_ctx *ctx,
                          &onig_error_info);
   if (onig_result != ONIG_NORMAL) {
     char message[ONIG_MAX_ERROR_MESSAGE_LEN];
-    onig_error_code_to_str(message, onig_result, onig_error_info);
+    onig_error_code_to_str(message, onig_result, &onig_error_info);
     ERR(GRN_INVALID_ARGUMENT,
         "%s[regexp][new] "
         "failed to create regular expression object: <%.*s>: %s",
