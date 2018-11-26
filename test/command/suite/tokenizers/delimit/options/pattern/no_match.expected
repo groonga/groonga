@@ -1,0 +1,2 @@
+tokenize   'TokenDelimit("pattern", "nonexistent")'   "Hello"
+[[0,0.0,0.0],[]]

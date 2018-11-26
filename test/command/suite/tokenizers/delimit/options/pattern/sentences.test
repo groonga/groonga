@@ -1,0 +1,3 @@
+tokenize \
+  'TokenDelimit("pattern", "[^\\\\s].*?[.。]")' \
+  "りんごです。ペンです。This is an apple. Mr. X."

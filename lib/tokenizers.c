@@ -22,6 +22,7 @@
 #include "grn_token_cursor.h"
 #include "grn_string.h"
 #include "grn_plugin.h"
+#include "grn_onigmo.h"
 
 grn_obj *grn_tokenizer_uvector = NULL;
 
@@ -102,6 +103,9 @@ uvector_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
 typedef struct {
   grn_obj delimiters;
+#ifdef GRN_SUPPORT_REGEXP
+  OnigRegex regex;
+#endif /* GRN_SUPPORT_REGEXP */
 } grn_delimit_options;
 
 typedef struct {
@@ -114,6 +118,7 @@ typedef struct {
   grn_delimit_options *options;
   grn_bool have_tokenized_delimiter;
   grn_encoding encoding;
+  const unsigned char *start;
   const unsigned char *next;
   const unsigned char *end;
 } grn_delimit_tokenizer;
@@ -122,6 +127,9 @@ static void
 delimit_options_init(grn_delimit_options *options)
 {
   GRN_TEXT_INIT(&(options->delimiters), GRN_OBJ_VECTOR);
+#ifdef GRN_SUPPORT_REGEXP
+  options->regex = NULL;
+#endif /* GRN_SUPPORT_REGEXP */
 }
 
 static void *
@@ -169,6 +177,30 @@ delimit_open_options(grn_ctx *ctx,
                                0,
                                GRN_DB_TEXT);
       }
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "pattern")) {
+#ifdef GRN_SUPPORT_REGEXP
+      const char *pattern;
+      unsigned int pattern_length;
+      grn_id domain;
+
+      pattern_length = grn_vector_get_element(ctx,
+                                              raw_options,
+                                              i,
+                                              &pattern,
+                                              NULL,
+                                              &domain);
+      if (grn_type_id_is_text_family(ctx, domain) && pattern_length > 0) {
+        if (options->regex) {
+          onig_free(options->regex);
+        }
+        options->regex = grn_onigmo_new(ctx,
+                                        pattern,
+                                        pattern_length,
+                                        GRN_ONIGMO_OPTION_DEFAULT,
+                                        GRN_ONIGMO_SYNTAX_DEFAULT,
+                                        "[tokenizer][delimit]");
+      }
+#endif /* GRN_SUPPORT_REGEXP */
     }
   } GRN_OPTION_VALUES_EACH_END();
 
@@ -188,7 +220,13 @@ static void
 delimit_close_options(grn_ctx *ctx, void *data)
 {
   grn_delimit_options *options = data;
+
   GRN_OBJ_FIN(ctx, &(options->delimiters));
+#ifdef GRN_SUPPORT_REGEXP
+  if (options->regex) {
+    onig_free(options->regex);
+  }
+#endif /* GRN_SUPPORT_REGEXP */
   GRN_FREE(options);
 }
 
@@ -235,8 +273,9 @@ delimit_init_raw(grn_ctx *ctx,
                               string,
                               &normalized, &normalized_length_in_bytes,
                               NULL);
-    tokenizer->next = (const unsigned char *)normalized;
-    tokenizer->end = tokenizer->next + normalized_length_in_bytes;
+    tokenizer->start = (const unsigned char *)normalized;
+    tokenizer->next = tokenizer->start;
+    tokenizer->end = tokenizer->start + normalized_length_in_bytes;
   }
 
   return tokenizer;
@@ -282,6 +321,35 @@ delimit_next(grn_ctx *ctx,
         (const char *)tokenizer->next,
         rest_length,
         tokenizer->encoding);
+#ifdef GRN_SUPPORT_REGEXP
+  } else if (tokenizer->options->regex) {
+    OnigPosition position;
+    OnigRegion region;
+
+    onig_region_init(&region);
+    position = onig_search(tokenizer->options->regex,
+                           tokenizer->start,
+                           tokenizer->end,
+                           tokenizer->next,
+                           tokenizer->end,
+                           &region,
+                           ONIG_OPTION_NONE);
+    if (position == ONIG_MISMATCH) {
+      grn_token_set_data(ctx,
+                         token,
+                         NULL,
+                         0);
+      grn_token_set_status(ctx, token, GRN_TOKEN_LAST);
+    } else {
+      grn_token_set_data(ctx,
+                         token,
+                         tokenizer->start + region.beg[0],
+                         region.end[0] - region.beg[0]);
+      grn_token_set_status(ctx, token, GRN_TOKEN_CONTINUE);
+      tokenizer->next = tokenizer->start + region.end[0];
+      onig_region_free(&region, 0);
+    }
+#endif /* GRN_SUPPORT_REGEXP */
   } else {
     size_t cl;
     const unsigned char *p = tokenizer->next, *r;

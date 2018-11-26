@@ -1,0 +1,40 @@
+tokenize   'TokenDelimit("pattern", "[^\\\\s].*?[.。]")'   "りんごです。ペンです。This is an apple. Mr. X."
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "りんごです。",
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "ペンです。",
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "This is an apple.",
+      "position": 2,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "Mr.",
+      "position": 3,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "X.",
+      "position": 4,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]
