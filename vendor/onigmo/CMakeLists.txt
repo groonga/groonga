@@ -57,6 +57,8 @@ if(GRN_WITH_ONIGMO)
     add_definitions(-DHAVE_INTTYPES_H)
   endif()
 
+  check_cflag("-Wno-missing-field-initializers")
+
   include_directories(
     BEFORE
     ${ONIGMO_BINARY_DIR}
