@@ -75,6 +75,7 @@ Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   adduser,
+  lsb-base,
   groonga-server-common (= ${binary:Version})
 Description: Fulltext search engine (metapackage for GQTP server use)
  Groonga is an open-source fulltext search engine and column store.
@@ -188,6 +189,7 @@ Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   curl,
+  lsb-base,
   groonga-server-common (= ${source:Version})
 Description: Groonga HTTP server
  Groonga is an open-source fulltext search engine and column store.
