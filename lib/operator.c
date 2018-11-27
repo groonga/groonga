@@ -926,7 +926,7 @@ string_have_sub_text(grn_ctx *ctx,
     onig_free(regex);
     return matched;
   }
-#else /* GRN_SUPPORT_REGEXP */
+#endif /* GRN_SUPPORT_REGEXP */
   {
     const char *text_current = text;
     const char *text_end = text + text_len;
@@ -973,7 +973,6 @@ string_have_sub_text(grn_ctx *ctx,
 
     return GRN_FALSE;
   }
-#endif /* GRN_SUPPORT_REGEXP */
 }
 
 static grn_bool
