@@ -27,6 +27,8 @@
 
 #ifdef WIN32
 # include <share.h>
+#else /* WIN32 */
+# include <sys/file.h>
 #endif /* WIN32 */
 
 static const char *log_level_names[] = {
@@ -43,6 +45,17 @@ static const char *log_level_names[] = {
 };
 
 #define GRN_LOG_LAST GRN_LOG_DUMP
+
+#define INITIAL_LOGGER {                        \
+  GRN_LOG_DEFAULT_LEVEL,                        \
+  GRN_LOG_TIME|GRN_LOG_MESSAGE,                 \
+  NULL,                                         \
+  NULL,                                         \
+  NULL,                                         \
+  NULL                                          \
+}
+
+static grn_logger current_logger = INITIAL_LOGGER;
 
 const char *
 grn_log_level_to_string(grn_log_level level)
@@ -155,6 +168,14 @@ default_logger_log(grn_ctx *ctx, grn_log_level level,
     if (default_logger_file) {
       char label = *(slev + level);
       int written;
+#ifndef WIN32
+      grn_bool need_flock = (current_logger.flags & GRN_LOG_PID);
+      if (need_flock) {
+        if (flock(fileno(default_logger_file), LOCK_EX) == -1) {
+          need_flock = GRN_FALSE;
+        }
+      }
+#endif /* WIN32 */
       if (location && *location) {
         if (title && *title) {
           written = fprintf(default_logger_file, "%s|%c|%s: %s %s\n",
@@ -178,6 +199,11 @@ default_logger_log(grn_ctx *ctx, grn_log_level level,
           fflush(default_logger_file);
         }
       }
+#ifndef WIN32
+      if (need_flock) {
+        flock(fileno(default_logger_file), LOCK_UN);
+      }
+#endif /* WIN32 */
     }
     CRITICAL_SECTION_LEAVE(default_logger_lock);
   }
@@ -215,17 +241,6 @@ static grn_logger default_logger = {
   default_logger_reopen,
   default_logger_fin
 };
-
-#define INITIAL_LOGGER {                        \
-  GRN_LOG_DEFAULT_LEVEL,                        \
-  GRN_LOG_TIME|GRN_LOG_MESSAGE,                 \
-  NULL,                                         \
-  NULL,                                         \
-  NULL,                                         \
-  NULL                                          \
-}
-
-static grn_logger current_logger = INITIAL_LOGGER;
 
 void
 grn_default_logger_set_max_level(grn_log_level max_level)
@@ -574,6 +589,14 @@ default_query_logger_log(grn_ctx *ctx, unsigned int flag,
     }
     if (default_query_logger_file) {
       int written;
+#ifndef WIN32
+      grn_bool need_flock = (current_logger.flags & GRN_LOG_PID);
+      if (need_flock) {
+        if (flock(fileno(default_query_logger_file), LOCK_EX) == -1) {
+          need_flock = GRN_FALSE;
+        }
+      }
+#endif /* WIN32 */
       written = fprintf(default_query_logger_file, "%s|%s%s\n",
                         timestamp, info, message);
       if (written > 0) {
@@ -587,7 +610,12 @@ default_query_logger_log(grn_ctx *ctx, unsigned int flag,
           fflush(default_query_logger_file);
         }
       }
-    }
+#ifndef WIN32
+      if (need_flock) {
+        flock(fileno(default_query_logger_file), LOCK_UN);
+      }
+#endif /* WIN32 */
+   }
     CRITICAL_SECTION_LEAVE(default_query_logger_lock);
   }
 }
