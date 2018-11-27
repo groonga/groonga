@@ -78,6 +78,9 @@ typedef struct {
 
     ngx_uint_t                 id;
 
+    ngx_uint_t                 pings;
+    ngx_uint_t                 settings;
+
     ssize_t                    send_window;
     size_t                     recv_window;
 
@@ -246,6 +249,13 @@ static ngx_command_t  ngx_http_grpc_commands[] = {
       ngx_http_upstream_bind_set_slot,
       NGX_HTTP_LOC_CONF_OFFSET,
       offsetof(ngx_http_grpc_loc_conf_t, upstream.local),
+      NULL },
+
+    { ngx_string("grpc_socket_keepalive"),
+      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_FLAG,
+      ngx_conf_set_flag_slot,
+      NGX_HTTP_LOC_CONF_OFFSET,
+      offsetof(ngx_http_grpc_loc_conf_t, upstream.socket_keepalive),
       NULL },
 
     { ngx_string("grpc_connect_timeout"),
@@ -3577,6 +3587,12 @@ ngx_http_grpc_parse_settings(ngx_http_request_t *r, ngx_http_grpc_ctx_t *ctx,
                           ctx->rest);
             return NGX_ERROR;
         }
+
+        if (ctx->free == NULL && ctx->settings++ > 1000) {
+            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                          "upstream sent too many settings frames");
+            return NGX_ERROR;
+        }
     }
 
     for (p = b->pos; p < last; p++) {
@@ -3727,6 +3743,12 @@ ngx_http_grpc_parse_ping(ngx_http_request_t *r,
         if (ctx->flags & NGX_HTTP_V2_ACK_FLAG) {
             ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
                           "upstream sent ping frame with ack flag");
+            return NGX_ERROR;
+        }
+
+        if (ctx->free == NULL && ctx->pings++ > 1000) {
+            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                          "upstream sent too many ping frames");
             return NGX_ERROR;
         }
     }
@@ -4150,6 +4172,7 @@ ngx_http_grpc_create_loc_conf(ngx_conf_t *cf)
      */
 
     conf->upstream.local = NGX_CONF_UNSET_PTR;
+    conf->upstream.socket_keepalive = NGX_CONF_UNSET;
     conf->upstream.next_upstream_tries = NGX_CONF_UNSET_UINT;
     conf->upstream.connect_timeout = NGX_CONF_UNSET_MSEC;
     conf->upstream.send_timeout = NGX_CONF_UNSET_MSEC;
@@ -4204,6 +4227,9 @@ ngx_http_grpc_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
 
     ngx_conf_merge_ptr_value(conf->upstream.local,
                               prev->upstream.local, NULL);
+
+    ngx_conf_merge_value(conf->upstream.socket_keepalive,
+                              prev->upstream.socket_keepalive, 0);
 
     ngx_conf_merge_uint_value(conf->upstream.next_upstream_tries,
                               prev->upstream.next_upstream_tries, 0);
