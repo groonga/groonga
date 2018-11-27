@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2012-2017 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,6 +24,12 @@
 #include <ngx_config.h>
 #include <ngx_core.h>
 #include <ngx_http.h>
+
+#ifndef ngx_lock_fd_n
+/* TODO: Support Windows with LockFileEx() and UnlockFileEx(). */
+# define ngx_lock_fd(fd)
+# define ngx_unlock_fd(fd)
+#endif
 
 #include <groonga.h>
 #include <groonga/plugin.h>
@@ -152,26 +159,22 @@ ngx_http_groonga_grn_rc_to_http_status(grn_rc rc)
 }
 
 static void
-ngx_http_groonga_write_fd(ngx_fd_t fd,
-                          u_char *buffer, size_t buffer_size,
-                          const char *message, size_t message_size)
+ngx_http_groonga_write_fd(ngx_fd_t fd, const char *message, size_t message_size)
 {
   size_t rest_message_size = message_size;
   const char *current_message = message;
 
   while (rest_message_size > 0) {
-    size_t current_message_size;
-
-    if (rest_message_size > NGX_MAX_ERROR_STR) {
-      current_message_size = NGX_MAX_ERROR_STR;
-    } else {
-      current_message_size = rest_message_size;
+    ssize_t written_size;
+    /* TODO: Remove the no const cast when ngx_write_fd() put const to
+     * "void *buf". */
+    written_size = ngx_write_fd(fd, (void *)current_message, rest_message_size);
+    if (written_size == -1) {
+      /* TODO: Should we report this error? But where? */
+      break;
     }
-
-    grn_memcpy(buffer, current_message, current_message_size);
-    ngx_write_fd(fd, buffer, current_message_size);
-    rest_message_size -= current_message_size;
-    current_message += current_message_size;
+    rest_message_size -= written_size;
+    current_message += written_size;
   }
 }
 
@@ -183,39 +186,33 @@ ngx_http_groonga_logger_log(grn_ctx *ctx, grn_log_level level,
 {
   ngx_open_file_t *file = user_data;
   char level_marks[] = " EACewnid-";
-  u_char buffer[NGX_MAX_ERROR_STR];
 
   if (!file) {
     return;
   }
 
-  ngx_http_groonga_write_fd(file->fd,
-                            buffer, NGX_MAX_ERROR_STR,
-                            timestamp, strlen(timestamp));
-  ngx_write_fd(file->fd, "|", 1);
-  ngx_write_fd(file->fd, level_marks + level, 1);
-  ngx_write_fd(file->fd, "|", 1);
+  ngx_lock_fd(file->fd);
+
+  ngx_http_groonga_write_fd(file->fd, timestamp, strlen(timestamp));
+  ngx_http_groonga_write_fd(file->fd, "|", 1);
+  ngx_http_groonga_write_fd(file->fd, level_marks + level, 1);
+  ngx_http_groonga_write_fd(file->fd, "|", 1);
   if (location && *location) {
-    ngx_http_groonga_write_fd(file->fd,
-                              buffer, NGX_MAX_ERROR_STR,
-                              location, strlen(location));
-    ngx_write_fd(file->fd, ": ", 2);
+    ngx_http_groonga_write_fd(file->fd, location, strlen(location));
+    ngx_http_groonga_write_fd(file->fd, ": ", 2);
     if (title && *title) {
-      ngx_http_groonga_write_fd(file->fd,
-                                buffer, NGX_MAX_ERROR_STR,
-                                title, strlen(title));
-      ngx_write_fd(file->fd, " ", 1);
+      ngx_http_groonga_write_fd(file->fd, title, strlen(title));
+      ngx_http_groonga_write_fd(file->fd, " ", 1);
     }
   } else {
-    ngx_http_groonga_write_fd(file->fd,
-                              buffer, NGX_MAX_ERROR_STR,
-                              title, strlen(title));
-    ngx_write_fd(file->fd, " ", 1);
+    ngx_http_groonga_write_fd(file->fd, title, strlen(title));
+    ngx_http_groonga_write_fd(file->fd, " ", 1);
   }
   ngx_http_groonga_write_fd(file->fd,
-                            buffer, NGX_MAX_ERROR_STR,
                             message, strlen(message));
-  ngx_write_fd(file->fd, "\n", 1);
+  ngx_http_groonga_write_fd(file->fd, "\n", 1);
+
+  ngx_unlock_fd(file->fd);
 }
 
 static void
@@ -263,17 +260,18 @@ ngx_http_groonga_query_logger_log(grn_ctx *ctx, unsigned int flag,
                                   const char *message, void *user_data)
 {
   ngx_open_file_t *file = user_data;
-  u_char buffer[NGX_MAX_ERROR_STR];
-  u_char *last;
 
   if (!file) {
     return;
   }
 
-  last = ngx_slprintf(buffer, buffer + NGX_MAX_ERROR_STR,
-                      "%s|%s%s\n",
-                      timestamp, info, message);
-  ngx_write_fd(file->fd, buffer, last - buffer);
+  ngx_lock_fd(file->fd);
+  ngx_http_groonga_write_fd(file->fd, timestamp, strlen(timestamp));
+  ngx_http_groonga_write_fd(file->fd, "|", 1);
+  ngx_http_groonga_write_fd(file->fd, info, strlen(info));
+  ngx_http_groonga_write_fd(file->fd, message, strlen(message));
+  ngx_http_groonga_write_fd(file->fd, "\n", 1);
+  ngx_unlock_fd(file->fd);
 }
 
 static void
