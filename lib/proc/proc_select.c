@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1176,6 +1177,8 @@ grn_proc_select_output_columns_open(grn_ctx *ctx,
                                    columns,
                                    columns_len,
                                    condition)) {
+    GRN_OUTPUT_RESULT_SET_OPEN(res, NULL, 0);
+    GRN_OUTPUT_RESULT_SET_CLOSE(res, NULL);
     return GRN_FALSE;
   }
 
