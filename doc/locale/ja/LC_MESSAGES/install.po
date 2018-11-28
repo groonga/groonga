@@ -775,6 +775,9 @@ msgstr ""
 msgid "18.04 Bionic Beaver"
 msgstr ""
 
+msgid "18.10 Cosmic Cuttlefish"
+msgstr ""
+
 msgid "Enable the universe repository to install Groonga::"
 msgstr ""
 "Groongaをインストールするためにuniverseリポジトリを有効にしてください::"
