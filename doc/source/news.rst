@@ -7,6 +7,90 @@
 News
 ====
 
+.. _release-8-0-9:
+
+Release 8.0.9 - 2018-11-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/tokenizers`] Improved that output a tokenizer name in error message when create tokenizer fail.
+
+* [:doc:`/reference/tokenizers`][TokenDelimit] Supported that customizing delimiter of a token.
+
+  * You can use token other than whitespace as a token of delimiter.
+
+* [:doc:`/reference/tokenizers`][TokenDelimit] Added new option ``pattern``.
+
+  * You can specify delimiter with regular expression by this option.
+
+* [:doc:`/reference/tokenizers`] Added force_prefix_search value to each token information.
+
+  * "force_prefix" is kept for backward compatibility.
+
+* [:doc:`/reference/token_filters`] Added built-in token filter ``TokenFilterNFKC100``.
+
+  * You can convert katakana to hiragana like NormalizerNFKC100 with a ``unify_kana`` option.
+
+* [:doc:`/reference/token_filters`][TokenFilterStem] Added new option ``algorithm``.
+
+  * You can also stem language other than English(French, Spanish, Portuguese, Italian, Romanian, German, Dutch, Swedish, Norwegian, Danish, Russian, Finnish) by this option.
+
+* [:doc:`/reference/token_filters`][TokenFilterStopWord] Added new option ``column``.
+
+  * You can specify stop word in a column other than is_stop_word column by this option.
+
+* [:doc:`/reference/commands/dump`] Supported output options of token filter options.
+
+  * If you specify a tokenizer like ``TokenNgram`` or ``TokenMecab`` etc that has options, you can output these options with ``table_list`` command.
+
+* [:doc:`/reference/commands/truncate`] Supported a table that it has token filter option.
+
+  * You can ``truncate`` even a tabel that it has token filter like ``TokenFilterStem`` or ``TokenStopWord`` that has options.
+
+* [:doc:`/reference/commands/schema`] Support output of options of token filter.
+
+* [:doc:`/reference/normalizers`] Added new option for ``NormalizerNFKC100`` that ``unify_to_romaji`` option.
+
+  * You can normalize hiragana and katakana to romaji by this option.
+
+* [query-log][show-condition] Supported "func() > 0" case.
+
+* [Windows] Improved that ensure flushing on unmap.
+
+* Improved error message on opening input file error.
+
+* [httpd] Updated bundled nginx to 1.15.7.
+
+  * contains security fix for CVE-2018-16843 and CVE-2018-16844.
+
+Fixes
+^^^^^
+
+* Fixed a memory leak when evaluating window function.
+
+* [:doc:`/reference/executables/groonga-httpd`] Fixed bug that log content may be mixed.
+
+* Fixed a bug that generates invalid JSON when occurs error of slice on output_columns.
+
+* Fixed a memory leak when getting nested reference vector column value.
+
+* Fixed a crash bug when outputting warning logs of index corruption.
+
+* Fix a crash bug when temporary vector is reused in expression evaluation.
+
+  * For example, crash when evaluating an expression that uses a vector as below.
+
+  ``_score = _score + (vector_size(categories) > 0)``
+
+* Fix a bug that hits a value of vector columns deleted by a delete command.[GitHub PGroonga#85][Reported by dodaisuke]
+
+Thanks
+^^^^^^
+
+* dodaisuke
+
 .. _release-8-0-8:
 
 Release 8.0.8 - 2018-10-29

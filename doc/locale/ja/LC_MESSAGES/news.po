@@ -33,18 +33,98 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 8.0.8 - 2018-10-29"
-msgstr "8.0.8リリース - 2018-10-29"
+msgid "Release 8.0.9 - 2018-11-29"
+msgstr "8.0.9リリース - 2018-11-29"
 
 msgid "Improvements"
 msgstr "改良"
 
 msgid ""
-"[:doc:`/reference/commands/table_list`] Supported output options of default "
-"tokenizer."
+"[:doc:`/reference/tokenizers`] Improved that output a tokenizer name in "
+"error message when create tokenizer fail."
 msgstr ""
-"[:doc:`/reference/commands/table_list`] デフォルトトークナイザーのオプション"
-"をサポートしました。"
+"[:doc:`/reference/tokenizers`] トークナイザーの作成に失敗した際のエラーメッ"
+"セージにトークナイザーの名前を出力するよう改良。"
+
+msgid ""
+"[:doc:`/reference/tokenizers`][TokenDelimit] Supported that customizing "
+"delimiter of a token."
+msgstr ""
+"[:doc:`/reference/tokenizers`][TokenDelimit] トークンの区切り文字のカスタマイ"
+"ズをサポートしました。"
+
+msgid "You can use token other than whitespace as a token of delimiter."
+msgstr "空白以外のトークンを区切り文字に使えます。"
+
+msgid ""
+"[:doc:`/reference/tokenizers`][TokenDelimit] Added new option ``pattern``."
+msgstr ""
+"[:doc:`/reference/tokenizers`][TokenDelimit] 新しいオプション ``pattern`` を"
+"追加しました。 "
+
+msgid "You can specify delimiter with regular expression by this option."
+msgstr "このオプションにより、区切り文字にに正規表現を指定できます。"
+
+msgid ""
+"[:doc:`/reference/tokenizers`] Added force_prefix_search value to each token "
+"information."
+msgstr ""
+"[:doc:`/reference/tokenizers`] 各トークンの情報に ``force_prefix_search`` の"
+"値を追加しました。"
+
+msgid "\"force_prefix\" is kept for backward compatibility."
+msgstr "\"force_prefix\" は後方互換のため残しています。"
+
+msgid ""
+"[:doc:`/reference/token_filters`] Added built-in token filter "
+"``TokenFilterNFKC100``."
+msgstr ""
+"[:doc:`/reference/token_filters`] ビルトインのトークンフィルタ "
+"``TokenFilterNFKC100`` を追加しました。"
+
+msgid ""
+"You can convert katakana to hiragana like NormalizerNFKC100 with a "
+"``unify_kana`` option."
+msgstr ""
+"NormalizerNFKC100のように ``unify_kana`` オプションで、カタカナをひらがなへ変"
+"換できます。"
+
+msgid ""
+"[:doc:`/reference/token_filters`][TokenFilterStem] Added new option "
+"``algorithm``."
+msgstr ""
+"[:doc:`/reference/token_filters`][TokenFilterStem] 新しオプション "
+"``algorithm`` を追加しました。"
+
+msgid ""
+"You can also stem language other than English(French, Spanish, Portuguese, "
+"Italian, Romanian, German, Dutch, Swedish, Norwegian, Danish, Russian, "
+"Finnish) by this option."
+msgstr ""
+"このオプションによって、英語以外の言語(フランス語、スペイン語、ポルトガル語、"
+"イタリア語、ルーマニア語、ドイツ語、オランダ語、スウェーデン語、ノルウェー"
+"語、デンマーク語、ロシア語、フィンランド語)をステミングできます。"
+
+msgid ""
+"[:doc:`/reference/token_filters`][TokenFilterStopWord] Added new option "
+"``column``."
+msgstr ""
+"[:doc:`/reference/token_filters`][TokenFilterStopWord] 新しいオプション "
+"``column`` を追加しました"
+
+msgid ""
+"You can specify stop word in a column other than is_stop_word column by this "
+"option."
+msgstr ""
+"このオプションによって、is_stop_word以外のカラムをスットプワードに指定できま"
+"す。"
+
+msgid ""
+"[:doc:`/reference/commands/dump`] Supported output options of token filter "
+"options."
+msgstr ""
+"[:doc:`/reference/commands/dump`] トークンフィルターのオプションの出力をサ"
+"ポートしました。"
 
 msgid ""
 "If you specify a tokenizer like ``TokenNgram`` or ``TokenMecab`` etc that "
@@ -52,6 +132,118 @@ msgid ""
 msgstr ""
 "``TokenNgram`` や ``TokenMecab`` 等のようなオプションを持つトークナイザーを指"
 "定した場合、それらのオプションも ``table_list`` コマンドで出力できます。"
+
+msgid ""
+"[:doc:`/reference/commands/truncate`] Supported a table that it has token "
+"filter option."
+msgstr ""
+"[:doc:`/reference/commands/truncate`] トークンフィルターのオプションを持った"
+"テーブルをサポートしました。"
+
+msgid ""
+"You can ``truncate`` even a tabel that it has token filter like "
+"``TokenFilterStem`` or ``TokenStopWord`` that has options."
+msgstr ""
+"``TokenFilterStem`` や ``TokenStopWord`` 等のようなオプションを持つトークナイ"
+"ザーを持つテーブルでも ``truncate`` できます。"
+
+msgid ""
+"[:doc:`/reference/commands/schema`] Support output of options of token "
+"filter."
+msgstr ""
+"[:doc:`/reference/commands/schema`] トークンフィルターのオプションの出力をサ"
+"ポートしました。"
+
+msgid ""
+"[:doc:`/reference/normalizers`] Added new option for ``NormalizerNFKC100`` "
+"that ``unify_to_romaji`` option."
+msgstr ""
+"[:doc:`/reference/normalizers`] ``NormalizerNFKC100`` に新しいオプション "
+"``unify_to_romaji`` を追加しました。"
+
+msgid "You can normalize hiragana and katakana to romaji by this option."
+msgstr "このオプションによって、ひらがなとカタカナをローマ字に正規化できます。"
+
+msgid "[query-log][show-condition] Supported \"func() > 0\" case."
+msgstr "[query-log][show-condition] \"func() > 0\"をサポートしました。"
+
+msgid "[Windows] Improved that ensure flushing on unmap."
+msgstr "[Windows] アンマップ前のフラッシュを確実にするよう改善しました。"
+
+msgid "Improved error message on opening input file error."
+msgstr "ファイル入力のエラーメッセージを改善しました。"
+
+msgid "[httpd] Updated bundled nginx to 1.15.7."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.15.7に更新しました。"
+
+msgid "contains security fix for CVE-2018-16843 and CVE-2018-16844."
+msgstr "CVE-2018-16843とCVE-2018-16844のセキュリティの修正が含まれています。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a memory leak when evaluating window function."
+msgstr "ウインドウ関数を評価する際にメモリリークする問題を修正しました。"
+
+msgid ""
+"[:doc:`/reference/executables/groonga-httpd`] Fixed bug that log content may "
+"be mixed."
+msgstr ""
+"[:doc:`/reference/executables/groonga-httpd`] ログの内容が混在することがある"
+"バグを修正しました。"
+
+msgid ""
+"Fixed a bug that generates invalid JSON when occurs error of slice on "
+"output_columns."
+msgstr ""
+"output_columnsのスライスのエラーが発生した際に、無効なJSONが生成されるバグを"
+"修正しました。"
+
+msgid "Fixed a memory leak when getting nested reference vector column value."
+msgstr ""
+"ネストして参照されているベクターカラムの値を取得する際にメモリリークする問題"
+"を修正しました。"
+
+msgid "Fixed a crash bug when outputting warning logs of index corruption."
+msgstr ""
+"インデックス破損を警告するログを出力するする際にクラッシュするバグを修正しま"
+"した。"
+
+msgid ""
+"Fix a crash bug when temporary vector is reused in expression evaluation."
+msgstr ""
+"式の評価で一時的なベクターが再利用された時にクラッシュするバグを修正しまし"
+"た。"
+
+msgid ""
+"For example, crash when evaluating an expression that uses a vector as below."
+msgstr "例えば、以下のようにベクターを使った式を評価する時にクラッシュします。"
+
+msgid "``_score = _score + (vector_size(categories) > 0)``"
+msgstr ""
+
+msgid ""
+"Fix a bug that hits a value of vector columns deleted by a delete command."
+"[GitHub PGroonga#85][Reported by dodaisuke]"
+msgstr ""
+"deleteコマンドで削除したベクターカラムの値がヒットするバグを修正しました。"
+"[dodaisukeさんの報告]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "dodaisuke"
+msgstr "dodaisukeさん"
+
+msgid "Release 8.0.8 - 2018-10-29"
+msgstr "8.0.8リリース - 2018-10-29"
+
+msgid ""
+"[:doc:`/reference/commands/table_list`] Supported output options of default "
+"tokenizer."
+msgstr ""
+"[:doc:`/reference/commands/table_list`] デフォルトトークナイザーのオプション"
+"をサポートしました。"
 
 msgid ""
 "[:doc:`/reference/commands/select`] Supported normalizer options in "
@@ -154,9 +346,6 @@ msgstr "[httpd] バンドルしているnginxのバージョンを1.15.5に更�
 msgid "Supported Ubuntu 18.10 (Cosmic Cuttlefish)"
 msgstr "Ubuntu 18.10 (Cosmic Cuttlefish)をサポートしました。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "Fixed a bug that the Groonga GQTP server may fail to accept a new "
 "connection. [groonga-dev,04688][Reported by Yutaro Shimamura]"
@@ -166,9 +355,6 @@ msgstr ""
 
 msgid "It's caused when interruption client process without using quit."
 msgstr "quitを使わずにクライアントプロセスを中断した時に発生します。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Masatoshi SEKI"
 msgstr "Masatoshi SEKIさん"
