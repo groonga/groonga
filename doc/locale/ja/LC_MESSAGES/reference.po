@@ -223,12 +223,6 @@ msgstr ""
 "Groongaを全文検索ライブラリとして使うことができます。この節ではGroongaが提供"
 "しているAPIを示します。"
 
-msgid "パラメータ"
-msgstr ""
-
-msgid "戻り値"
-msgstr ""
-
 msgid "Global configurations"
 msgstr "全体設定"
 
@@ -21421,15 +21415,6 @@ msgstr ""
 
 msgid "``vector_size`` returns the value of vector column size."
 msgstr "``vector_size`` はベクターカラムのサイズを返します。"
-
-msgid ""
-"Then, use ``vector_size`` function with ``--command_version 2`` option. Note "
-"that you must specify ``--command_version 2`` to use ``vector_size`` "
-"function.\""
-msgstr ""
-"その後、 ``--command_version 2`` オプションと一緒に ``vector_size`` 関数を"
-"使ってください。``vector_size`` を使うには ``--command_version 2`` を指定しな"
-"ければならないことに注意してください。"
 
 msgid "``vector_size`` requires one argument - ``target``."
 msgstr "``vector_size`` は引数を一つだけとります。 それは ``target`` です。"

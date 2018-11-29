@@ -20,8 +20,6 @@ the following command::
 
   plugin_register functions/vector
 
-Then, use ``vector_size`` function with ``--command_version 2`` option. Note that you must specify ``--command_version 2`` to use ``vector_size`` function."
-
 Syntax
 ------
 
@@ -59,7 +57,7 @@ Here is the simple usage of ``vector_size`` function which returns tags and size
 
 .. groonga-command
 .. include:: ../../example/reference/functions/vector_size/usage_only.log
-.. select Memos --output_columns 'tags, vector_size(tags)' --command_version 2
+.. select Memos --output_columns 'tags, vector_size(tags)'
 
 Parameters
 ----------
