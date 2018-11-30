@@ -206,8 +206,8 @@ msgstr ""
 
 msgid "Fixed a crash bug when outputting warning logs of index corruption."
 msgstr ""
-"インデックス破損を警告するログを出力するする際にクラッシュするバグを修正しま"
-"した。"
+"インデックス破損を警告するログを出力する際にクラッシュするバグを修正しまし"
+"た。"
 
 msgid ""
 "Fix a crash bug when temporary vector is reused in expression evaluation."
