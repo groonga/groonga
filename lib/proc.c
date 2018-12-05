@@ -3781,6 +3781,13 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       rc = unlock_rc;
     }
   }
+  {
+    grn_rc flush_rc;
+    flush_rc = grn_obj_flush(ctx, db);
+    if (rc == GRN_SUCCESS) {
+      rc = flush_rc;
+    }
+  }
   GRN_OUTPUT_BOOL(rc == GRN_SUCCESS);
 
   return NULL;
