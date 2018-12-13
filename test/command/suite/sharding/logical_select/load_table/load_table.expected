@@ -34,7 +34,7 @@ load --table Logs_20150204
 }
 ]
 [[0,0.0,0.0],1]
-logical_select --logical_table Logs --shard_key timestamp --load_table Temp --load_columns "memo, timestamp" --load_values "timestamp, memo"
+logical_select   --logical_table Logs   --shard_key timestamp   --load_table Temp   --load_columns "memo, timestamp"   --load_values "timestamp, memo"
 [
   [
     0,
