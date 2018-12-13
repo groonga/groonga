@@ -1,0 +1,26 @@
+plugin_register sharding
+table_create Logs_20150203 TABLE_NO_KEY
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+column_create Logs_20150203 memo COLUMN_SCALAR ShortText
+table_create Logs_20150204 TABLE_NO_KEY
+column_create Logs_20150204 timestamp COLUMN_SCALAR Time
+column_create Logs_20150204 memo COLUMN_SCALAR ShortText
+table_create Temp TABLE_NO_KEY
+column_create Temp timestamp COLUMN_SCALAR Time
+column_create Temp memo COLUMN_SCALAR ShortText
+load --table Logs_20150203
+[
+{
+  "timestamp": "2015-02-03 12:49:00",
+  "memo":      "2015-02-03 12:49:00"
+}
+]
+load --table Logs_20150204
+[
+{
+  "timestamp": "2015-02-04 00:00:00",
+  "memo":      "2015-02-04 00:00:00"
+}
+]
+logical_select --logical_table Logs --shard_key timestamp --load_table Temp --load_columns "memo, timestamp" --load_values "timestamp, memo"
+select --table Temp
