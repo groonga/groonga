@@ -33,6 +33,6 @@ logical_select \
   --logical_table Logs \
   --shard_key timestamp \
   --load_table Temp \
-  --load_columns "memo, timestamp" \
+  --load_columns "temp_memo, temp_timestamp" \
   --load_values "timestamp, memo"
 select --table Temp
