@@ -29,6 +29,7 @@ module Groonga
                  "query",
                  "drilldown_filter",
                  "post_filter",
+                 "load_table",
                ])
 
       def run_body(input)
@@ -89,6 +90,7 @@ module Groonga
         key << "#{input[:drilldown_calc_target]}\0"
         key << "#{input[:drilldown_filter]}\0"
         key << "#{input[:post_filter]}\0"
+        key << "#{input[:load_table]}\0"
         labeled_drilldowns = LabeledDrilldowns.parse(input).sort_by(&:label)
         labeled_drilldowns.each do |drilldown|
           key << "#{drilldown.label}\0"
@@ -275,6 +277,7 @@ module Groonga
         attr_reader :sort_keys
         attr_reader :output_columns
         attr_reader :post_filter
+        attr_reader :load_table
         attr_reader :dynamic_columns
         attr_reader :result_sets
         attr_reader :plain_drilldown
@@ -292,6 +295,7 @@ module Groonga
           @sort_keys = parse_keys(@input[:sort_keys] || @input[:sortby])
           @output_columns = @input[:output_columns] || "_id, _key, *"
           @post_filter = @input[:post_filter]
+          @load_table = @input[:load_table]
 
           @dynamic_columns = DynamicColumns.parse(@input)
 
@@ -536,6 +540,9 @@ module Groonga
           elsif @context.labeled_drilldowns.have_keys?
             execute_labeled_drilldowns
           end
+          if @context.load_table
+            execute_load_table
+          end
         end
 
         private
@@ -641,6 +648,12 @@ module Groonga
             ensure
               group_result.close
             end
+          end
+        end
+
+        def execute_load_table
+          @context.result_sets.each do |result_set|
+            # load_tableで指定したテーブルへresult_setを格納する。
           end
         end
 
