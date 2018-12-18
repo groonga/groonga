@@ -1,6 +1,6 @@
 Execution example::
 
-  tokenize 'TokenDelimit("delimiter", ",")' "Hello,Wold"
+  tokenize 'TokenDelimit("delimiter", ",")' "Hello,World"
   # [
   #   [
   #     0, 
@@ -15,7 +15,7 @@ Execution example::
   #       "force_prefix_search": false
   #     },
   #     {
-  #       "value": "Wold",
+  #       "value": "World",
   #       "position": 1,
   #       "force_prefix": false,
   #       "force_prefix_search": false
