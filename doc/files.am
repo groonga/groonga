@@ -567,7 +567,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol-and-alphabet.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-with-white-spaces.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit-delimiter-option.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit-null.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit-pattern-option.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-regexp-add.log \
@@ -1553,7 +1555,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol-and-alphabet.log \
 	source/example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol.log \
 	source/example/reference/tokenizers/token-bigram-with-white-spaces.log \
+	source/example/reference/tokenizers/token-delimit-delimiter-option.log \
 	source/example/reference/tokenizers/token-delimit-null.log \
+	source/example/reference/tokenizers/token-delimit-pattern-option.log \
 	source/example/reference/tokenizers/token-delimit.log \
 	source/example/reference/tokenizers/token-mecab.log \
 	source/example/reference/tokenizers/token-regexp-add.log \
