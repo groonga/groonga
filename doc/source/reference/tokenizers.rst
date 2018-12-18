@@ -429,6 +429,32 @@ Here is an example of ``TokenDelimit``:
 .. include:: ../example/reference/tokenizers/token-delimit.log
 .. tokenize TokenDelimit "Groonga full-text-search HTTP" NormalizerAuto
 
+``TokenDelimit`` can also specify options.
+``TokenDelimit`` has ``delimiter`` option and ``pattern`` option.
+``delimiter`` option can split token with a specified characters.
+
+For example, ``Hello,Wold`` is tokenize to ``Hello`` and ``Wold``
+with ``delimiter`` option as below.
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-delimit-delimiter-option.log
+.. tokenize 'TokenDelimit("delimiter", ",")' "Hello,Wold"
+
+``pattern`` option can split token with a regular expression.
+You can except needless space by ``pattern`` option.
+
+For example, ``This is a pen. This is an apple`` is tokenize to ``This is a pen`` and
+``This is an apple`` with ``pattern`` option as below.
+
+Normally, when ``This is a pen. This is an apple.`` is splitted by ``.``,
+needless spaces are included at the beginning of "This is an apple.".
+
+You can except the needless spaces by a ``pattern`` option as below example.
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-delimit-pattern-option.log
+.. tokenize 'TokenDelimit("pattern", "\\.\\s*")' "This is a pen. This is an apple."
+
 .. _token-delimit-null:
 
 ``TokenDelimitNull``
