@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,11 +20,13 @@
 #include "grn.h"
 
 #include <string.h>
-#include "grn_str.h"
+
 #include "grn_db.h"
 #include "grn_expr.h"
-#include "grn_util.h"
 #include "grn_output.h"
+#include "grn_output_columns.h"
+#include "grn_str.h"
+#include "grn_util.h"
 
 #define LEVELS (&ctx->impl->output.levels)
 #define DEPTH (GRN_BULK_VSIZE(LEVELS)>>2)
@@ -2897,12 +2900,11 @@ grn_output_format_set_columns(grn_ctx *ctx, grn_obj_format *format,
   if (is_output_columns_format_v1(ctx, columns, columns_len)) {
     rc = grn_obj_columns(ctx, table, columns, columns_len, &(format->columns));
   } else {
-    grn_obj *variable;
-    GRN_EXPR_CREATE_FOR_QUERY(ctx, table, format->expression, variable);
-    rc = grn_expr_parse(ctx, format->expression,
-                        columns, columns_len, NULL,
-                        GRN_OP_MATCH, GRN_OP_AND,
-                        GRN_EXPR_SYNTAX_OUTPUT_COLUMNS);
+    format->expression = grn_output_columns_parse(ctx,
+                                                  table,
+                                                  columns,
+                                                  columns_len);
+    rc = ctx->rc;
   }
 
   return rc;
