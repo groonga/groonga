@@ -1,5 +1,6 @@
 /*
   Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -32,6 +33,9 @@ GRN_API void *grn_column_cache_ref(grn_ctx *ctx,
                                    grn_column_cache *cache,
                                    grn_id id,
                                    size_t *value_size);
+
+GRN_API grn_rc
+grn_column_copy(grn_ctx *ctx, grn_obj *from, grn_obj *to);
 
 #ifdef __cplusplus
 }
