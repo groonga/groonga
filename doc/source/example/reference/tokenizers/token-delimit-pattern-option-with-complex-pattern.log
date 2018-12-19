@@ -1,0 +1,30 @@
+Execution example::
+
+  tokenize 'TokenDelimit("pattern", "([。！？]+(?![）」])|[\\r\\n]+)\\s*")' "これはペンですか！？リンゴですか？「リンゴです。」"
+  # [
+  #   [
+  #     0,
+  #     1545179416.22277,
+  #     0.0002887248992919922
+  #   ],
+  #   [
+  #     {
+  #       "value": "これはペンですか",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "リンゴですか",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "「リンゴです。」",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     }
+  #   ]
+  # ]
