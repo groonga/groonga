@@ -1,6 +1,6 @@
 Execution example::
 
-  tokenize 'TokenDelimit("delimiter", ",")' "Hello,World"
+  tokenize 'TokenDelimit("delimiter", ",", "delimiter", " ")' "Hello, World"
   # [
   #   [
   #     0, 

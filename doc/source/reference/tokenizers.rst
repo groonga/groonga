@@ -433,19 +433,28 @@ Here is an example of ``TokenDelimit``:
 ``TokenDelimit`` has ``delimiter`` option and ``pattern`` option.
 
 ``delimiter`` option can split token with a specified characters.
-``delimiter`` option can also specify multiple delimiters.
 
-For example, ``Hello, World`` is tokenize to ``Hello`` and ``World``
+For example, ``Hello,World`` is tokenized to ``Hello`` and ``World``
 with ``delimiter`` option as below.
 
 .. groonga-command
 .. include:: ../example/reference/tokenizers/token-delimit-delimiter-option.log
+.. tokenize 'TokenDelimit("delimiter", ",")' "Hello,World"
+
+
+``delimiter`` option can also specify multiple delimiters.
+
+For example, ``Hello, World`` is tokenized to ``Hello`` and ``World``.
+``,`` and `` `` are delimiters in below example.
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-delimit-delimiter-option-multiple-delimiters.log
 .. tokenize 'TokenDelimit("delimiter", ",", "delimiter", " ")' "Hello, World"
 
 ``pattern`` option can split token with a regular expression.
 You can except needless space by ``pattern`` option.
 
-For example, ``This is a pen. This is an apple`` is tokenize to ``This is a pen`` and
+For example, ``This is a pen. This is an apple`` is tokenized to ``This is a pen`` and
 ``This is an apple`` with ``pattern`` option as below.
 
 Normally, when ``This is a pen. This is an apple.`` is splitted by ``.``,
