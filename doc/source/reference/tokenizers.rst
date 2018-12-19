@@ -457,6 +457,34 @@ You can except the needless spaces by a ``pattern`` option as below example.
 .. include:: ../example/reference/tokenizers/token-delimit-pattern-option.log
 .. tokenize 'TokenDelimit("pattern", "\\.\\s*")' "This is a pen. This is an apple."
 
+You can extract token in complex conditions by ``pattern`` option.
+
+For example, ``これはペンですか！？リンゴですか？「リンゴです。」`` is tokenize to ``これはペンですか`` and ``リンゴですか``, ``「リンゴです。」`` with ``delimiter`` option as below.
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-delimit-pattern-option-with-complex-pattern.log
+.. tokenize 'TokenDelimit("pattern", "([。！？]+(?![）」])|[\\r\\n]+)\\s*")' "これはペンですか！？リンゴですか？「リンゴです。」"
+
+``\\s*`` of the end of above regular expression match 0 or more spaces after a delimiter.
+
+``[。！？]+`` matches 1 or more ``。`` or ``！``, ``？``.
+For example, ``[。！？]+`` matches ``！？`` of ``これはペンですか！？``.
+
+``(?![）」])`` is negative lookahead.
+``(?![）」])`` matches if a character is not matched ``）`` or ``」``.
+negative lookahead interprets in combination regular expression of just before.
+
+Therefore it interprets ``[。！？]+(?![）」])``.
+
+``[。！？]+(?![）」])`` matches if there are not ``）`` or ``」`` after ``。`` or ``！``, ``？``.
+
+In other words, ``[。！？]+(?![）」])`` matches ``。`` of ``これはペンですか。``. But ``[。！？]+(?![）」])`` doesn't match ``。`` of ``「リンゴです。」``.
+Because there is ``」`` after ``。``.
+
+``[\\r\\n]+`` match 1 or more newline character.
+
+In conclusion, ``([。！？]+(?![）」])|[\\r\\n]+)\\s*`` uses ``。`` and ``！`` and ``？``, newline character as delimiter. However, ``。`` and ``!``, ``？`` are not delimiters if there is ``）`` or ``」`` after ``。`` or ``！``, ``？``.
+
 .. _token-delimit-null:
 
 ``TokenDelimitNull``
