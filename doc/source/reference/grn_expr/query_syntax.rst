@@ -82,7 +82,6 @@ Here is a special character list:
     substitute ``[space]`` with a white space character that is 0x20
     in ASCII and ``[backslash]`` with ``\\``.)
   * ``"`` (escaped as ``\"``)
-  * ``'`` (escaped as ``\'``)
   * ``(`` (escaped as ``\(``)
   * ``)`` (escaped as ``\)``)
   * ``\`` (escaped as ``\\``)
@@ -91,10 +90,11 @@ You can use quote instead of escape special characters except ``\``
 (backslash). You need to use backslash for escaping backslash like
 ``\\`` in quote.
 
-Quote syntax is ``"..."`` or ``'...'``. You need escape ``"`` as
-``\"`` in ``"..."`` quote syntax.  You need escape ``'`` as ``\'`` in
-``'...'`` quote syntax. For example, ``Alice's brother (Bob)`` can be
-quoted ``"Alice's brother (Bob)"`` or ``'Alice\'s brother (Bob)'``.
+Quote syntax is ``"..."``. You need escape ``"`` as
+``\"`` in ``"..."`` quote syntax. For example, ``You say "Hello Alice!"`` can be
+quoted ``"You say \"Hello Alice!\""``.
+
+In addition ``'...'`` isn't  available in query syntax.
 
 .. note::
 
