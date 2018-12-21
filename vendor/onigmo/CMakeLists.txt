@@ -1,4 +1,5 @@
-# Copyright(C) 2015 Brazil
+# Copyright(C) 2015-2018 Brazil
+# Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -144,6 +145,7 @@ if(GRN_WITH_ONIGMO)
   install(FILES
     "${ONIGMO_SOURCE_DIR}/AUTHORS"
     "${ONIGMO_SOURCE_DIR}/COPYING"
+    "${ONIGMO_SOURCE_DIR}/HISTORY"
     "${ONIGMO_SOURCE_DIR}/README"
     DESTINATION "${GRN_DATA_DIR}/onigmo")
 endif()
