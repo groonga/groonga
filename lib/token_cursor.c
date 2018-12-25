@@ -318,6 +318,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         }
       }
     } else {
+      grn_token_cursor_next_apply_token_filters(ctx, token_cursor);
       token_cursor->status = GRN_TOKEN_CURSOR_DONE;
     }
     if (token_cursor->mode == GRN_TOKENIZE_ADD) {
