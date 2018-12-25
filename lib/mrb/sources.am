@@ -57,6 +57,8 @@ libgrnmrb_la_SOURCES =				\
 	mrb_operator.h				\
 	mrb_options.c				\
 	mrb_options.h				\
+	mrb_output_columns.c			\
+	mrb_output_columns.h			\
 	mrb_patricia_trie.c			\
 	mrb_patricia_trie.h			\
 	mrb_pointer.c				\
