@@ -25,6 +25,7 @@ groonga_include_HEADERS =			\
 	operator.h				\
 	option.h				\
 	output.h				\
+	output_columns.h			\
 	pat.h					\
 	plugin.h				\
 	portability.h				\

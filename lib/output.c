@@ -24,7 +24,6 @@
 #include "grn_db.h"
 #include "grn_expr.h"
 #include "grn_output.h"
-#include "grn_output_columns.h"
 #include "grn_str.h"
 #include "grn_util.h"
 

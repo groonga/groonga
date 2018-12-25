@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include "grn.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif

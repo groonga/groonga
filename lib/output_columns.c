@@ -18,7 +18,6 @@
 */
 
 #include "grn_expr.h"
-#include "grn_output_columns.h"
 
 grn_obj *
 grn_output_columns_parse(grn_ctx *ctx,

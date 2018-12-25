@@ -45,6 +45,7 @@
 #include "groonga/operator.h"
 #include "groonga/option.h"
 #include "groonga/output.h"
+#include "groonga/output_columns.h"
 #include "groonga/pat.h"
 #include "groonga/raw_string.h"
 #include "groonga/request_canceler.h"
