@@ -28,7 +28,9 @@ module Groonga
                  "match_columns",
                  "query",
                  "drilldown_filter",
-                 "post_filter",
+                 "load_table",
+                 "load_columns",
+                 "load_values",
                ])
 
       def run_body(input)
@@ -89,6 +91,9 @@ module Groonga
         key << "#{input[:drilldown_calc_target]}\0"
         key << "#{input[:drilldown_filter]}\0"
         key << "#{input[:post_filter]}\0"
+        key << "#{input[:load_table]}\0"
+        key << "#{input[:load_columns]}\0"
+        key << "#{input[:load_values]}\0"
         labeled_drilldowns = LabeledDrilldowns.parse(input).sort_by(&:label)
         labeled_drilldowns.each do |drilldown|
           key << "#{drilldown.label}\0"
@@ -275,6 +280,9 @@ module Groonga
         attr_reader :sort_keys
         attr_reader :output_columns
         attr_reader :post_filter
+        attr_reader :load_table
+        attr_reader :load_columns
+        attr_reader :load_values
         attr_reader :dynamic_columns
         attr_reader :result_sets
         attr_reader :plain_drilldown
@@ -292,6 +300,9 @@ module Groonga
           @sort_keys = parse_keys(@input[:sort_keys] || @input[:sortby])
           @output_columns = @input[:output_columns] || "_id, _key, *"
           @post_filter = @input[:post_filter]
+          @load_table = @input[:load_table]
+          @load_columns = @input[:load_columns]
+          @load_values = @input[:load_values]
 
           @dynamic_columns = DynamicColumns.parse(@input)
 
@@ -531,6 +542,7 @@ module Groonga
 
         def execute
           execute_search
+          execute_load_table
           if @context.plain_drilldown.have_keys?
             execute_plain_drilldown
           elsif @context.labeled_drilldowns.have_keys?
@@ -565,6 +577,35 @@ module Groonga
               dynamic_column.apply(result_set)
             end
             @context.result_sets << result_set
+          end
+        end
+
+        def execute_load_table
+          load_table = @context.load_table
+          load_columns = @context.load_columns
+          load_values = @context.load_values
+          return if load_table.nil?
+          return if load_columns.nil?
+          return if load_values.nil?
+
+          to = Context.instance[load_table]
+          to_columns = []
+          begin
+            load_columns.split(/\s*,\s*/).each do |name|
+              to_columns << to.find_column(name)
+            end
+            @context.result_sets.each do |result_set|
+              output_columns = result_set.parse_output_columns(load_values)
+              begin
+                output_columns.apply(to_columns)
+              ensure
+                output_columns.close
+              end
+            end
+          ensure
+            to_columns.each do |column|
+              column.close if column.is_a?(Accessor)
+            end
           end
         end
 
