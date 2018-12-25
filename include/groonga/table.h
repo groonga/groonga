@@ -329,6 +329,13 @@ grn_table_get_token_filters_string(grn_ctx *ctx,
 GRN_API grn_rc
 grn_table_copy(grn_ctx *ctx, grn_obj *from, grn_obj *to);
 
+GRN_API grn_rc
+grn_table_copy_values(grn_ctx *ctx,
+                      grn_obj *from,
+                      grn_obj *from_values,
+                      grn_obj *to,
+                      grn_obj *to_columns);
+
 #ifdef __cplusplus
 }
 #endif

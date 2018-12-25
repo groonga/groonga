@@ -17,7 +17,6 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "grn.h"
 #include "grn_ctx.h"
 #include "grn_dat.h"
 #include "grn_expr_executor.h"
@@ -905,5 +904,76 @@ grn_table_copy(grn_ctx *ctx, grn_obj *from, grn_obj *to)
   }
 
 exit :
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_table_copy_values(grn_ctx *ctx,
+                      grn_obj *from,
+                      grn_obj *from_values,
+                      grn_obj *to,
+                      grn_obj *to_columns)
+{
+  grn_obj *output_columns = NULL;
+  grn_obj columns;
+
+  GRN_API_ENTER;
+
+  GRN_PTR_INIT(&columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+
+  output_columns = grn_output_columns_parse(ctx,
+                                            from,
+                                            GRN_TEXT_VALUE(from_values),
+                                            GRN_TEXT_LEN(from_values));
+  if (ctx->rc != GRN_SUCCESS) {
+    char from_name[GRN_TABLE_MAX_KEY_SIZE];
+    int from_name_size;
+    from_name_size = grn_obj_name(ctx, from, from_name, sizeof(from_name));
+    ERR(ctx->rc,
+        "[table][copy-values] invalid copy from values: <%.*s>: <%.*s>: %s",
+        from_name_size, from_name,
+        (int)GRN_TEXT_LEN(from_values),
+        GRN_TEXT_VALUE(from_values),
+        ctx->errbuf);
+    goto exit;
+  }
+
+  grn_obj_columns(ctx,
+                  to,
+                  GRN_TEXT_VALUE(to_columns),
+                  GRN_TEXT_LEN(to_columns),
+                  &columns);
+  if (ctx->rc != GRN_SUCCESS) {
+    char to_name[GRN_TABLE_MAX_KEY_SIZE];
+    int to_name_size;
+    to_name_size = grn_obj_name(ctx, to, to_name, sizeof(to_name));
+    ERR(ctx->rc,
+        "[table][copy-values] invalid copy to columns: <%.*s>: <%.*s>: %s",
+        to_name_size, to_name,
+        (int)GRN_TEXT_LEN(to_columns),
+        GRN_TEXT_VALUE(to_columns),
+        ctx->errbuf);
+    goto exit;
+  }
+
+  grn_output_columns_apply(ctx, output_columns, to_columns);
+
+exit :
+  if (output_columns) {
+    grn_obj_close(ctx, output_columns);
+  }
+
+  {
+    size_t i;
+    size_t n = GRN_BULK_VSIZE(&columns) / sizeof(grn_obj *);
+    for (i = 0; i < n; i++) {
+      grn_obj *column = GRN_PTR_VALUE_AT(&columns, i);
+      if (grn_obj_is_accessor(ctx, column)) {
+        grn_obj_unlink(ctx, column);
+      }
+    }
+    GRN_OBJ_FIN(ctx, &columns);
+  }
+
   GRN_API_RETURN(ctx->rc);
 }
