@@ -28,6 +28,11 @@ grn_output_columns_parse(grn_ctx *ctx,
                          const char *raw_output_columns,
                          size_t raw_output_columns_size);
 
+GRN_API grn_rc
+grn_output_columns_apply(grn_ctx *ctx,
+                         grn_obj *output_columns,
+                         grn_obj *columns);
+
 #ifdef __cplusplus
 }
 #endif
