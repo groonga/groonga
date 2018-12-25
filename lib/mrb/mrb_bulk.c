@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2014-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -366,8 +367,8 @@ grn_mrb_bulk_init(grn_ctx *ctx)
   klass = mrb_define_class_under(mrb, module, "Bulk", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
-  mrb_define_singleton_method(mrb, (struct RObject *)klass, "true?",
-                              mrb_grn_bulk_s_is_true, MRB_ARGS_REQ(1));
+  mrb_define_class_method(mrb, (struct RObject *)klass, "true?",
+                          mrb_grn_bulk_s_is_true, MRB_ARGS_REQ(1));
 
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_bulk_initialize, MRB_ARGS_REQ(1));
