@@ -367,7 +367,7 @@ grn_mrb_bulk_init(grn_ctx *ctx)
   klass = mrb_define_class_under(mrb, module, "Bulk", mrb->object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
-  mrb_define_class_method(mrb, (struct RObject *)klass, "true?",
+  mrb_define_class_method(mrb, klass, "true?",
                           mrb_grn_bulk_s_is_true, MRB_ARGS_REQ(1));
 
   mrb_define_method(mrb, klass, "initialize",
