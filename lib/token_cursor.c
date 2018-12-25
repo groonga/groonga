@@ -153,6 +153,13 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
                               &(token_cursor->curr_size),
                               NULL);
     token_cursor->curr = (const unsigned char *)normalized;
+    grn_token_set_data(ctx,
+                       &(token_cursor->tokenizer.current_token),
+                       token_cursor->curr,
+                       token_cursor->curr_size);
+    grn_token_set_status(ctx,
+                         &(token_cursor->tokenizer.current_token),
+                         GRN_TOKEN_LAST);
   }
 
   if (ctx->rc == GRN_SUCCESS) {
