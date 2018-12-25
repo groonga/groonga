@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2014-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -467,6 +468,31 @@ mrb_grn_table_apply_window_function_raw(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+static mrb_value
+mrb_grn_table_parse_output_columns(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_mrb_data *data = &(ctx->impl->mrb);
+  mrb_value mrb_raw_output_columns;
+  grn_obj *table;
+  grn_obj *output_columns;
+  struct RClass *klass;
+  mrb_value mrb_new_arguments[1];
+
+  mrb_get_args(mrb, "S", &mrb_raw_output_columns);
+
+  table = DATA_PTR(self);
+  output_columns = grn_output_columns_parse(ctx,
+                                            table,
+                                            RSTRING_PTR(mrb_raw_output_columns),
+                                            RSTRING_LEN(mrb_raw_output_columns));
+  grn_mrb_ctx_check(mrb);
+
+  klass = mrb_class_get_under(mrb, data->module, "OutputColumns");
+  mrb_new_arguments[0] = mrb_cptr_value(mrb, output_columns);
+  return mrb_obj_new(mrb, klass, 1, mrb_new_arguments);
+}
+
 void
 grn_mrb_table_init(grn_ctx *ctx)
 {
@@ -519,5 +545,8 @@ grn_mrb_table_init(grn_ctx *ctx)
                     mrb_grn_table_apply_expression, MRB_ARGS_REQ(2));
   mrb_define_method(mrb, klass, "apply_window_function_raw",
                     mrb_grn_table_apply_window_function_raw, MRB_ARGS_REQ(4));
+
+  mrb_define_method(mrb, klass, "parse_output_columns",
+                    mrb_grn_table_parse_output_columns, MRB_ARGS_REQ(1));
 }
 #endif
