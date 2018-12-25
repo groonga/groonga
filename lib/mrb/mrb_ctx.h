@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2013-2016 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,6 +26,7 @@ extern "C" {
 #endif
 
 void grn_mrb_ctx_init(grn_ctx *ctx);
+mrb_value grn_mrb_ctx_to_exception(mrb_state *mrb);
 void grn_mrb_ctx_check(mrb_state *mrb);
 
 #ifdef __cplusplus

@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2013-2018 Brazil
+  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -22,6 +23,7 @@
 #include <mruby.h>
 #include <mruby/class.h>
 #include <mruby/data.h>
+#include <mruby/error.h>
 #include <mruby/variable.h>
 #include <mruby/string.h>
 
@@ -288,8 +290,8 @@ ctx_is_opened(mrb_state *mrb, mrb_value self)
   return mrb_bool_value(grn_ctx_is_opened(ctx, mrb_id));
 }
 
-void
-grn_mrb_ctx_check(mrb_state *mrb)
+mrb_value
+grn_mrb_ctx_to_exception(mrb_state *mrb)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_mrb_data *data = &(ctx->impl->mrb);
@@ -300,7 +302,7 @@ grn_mrb_ctx_check(mrb_state *mrb)
   const char *utf8_error_message;
 
   if (ctx->rc == GRN_SUCCESS) {
-    return;
+    return mrb_nil_value();
   }
 
   utf8_error_message = grn_encoding_convert_to_utf8(ctx, ctx->errbuf, -1, NULL);
@@ -802,7 +804,20 @@ grn_mrb_ctx_check(mrb_state *mrb)
   grn_encoding_converted_free(ctx, utf8_error_message);
 #undef MESSAGE_SIZE
 
-  mrb_raise(mrb, error_class, message);
+  return mrb_exc_new_str(mrb, error_class, mrb_str_new_cstr(mrb, message));
+}
+
+void
+grn_mrb_ctx_check(mrb_state *mrb)
+{
+  mrb_value mrb_exception;
+
+  mrb_exception = grn_mrb_ctx_to_exception(mrb);
+  if (mrb_nil_p(mrb_exception)) {
+    return;
+  }
+
+  mrb_exc_raise(mrb, mrb_exception);
 }
 
 void
