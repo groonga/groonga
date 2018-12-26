@@ -547,6 +547,28 @@ and ``都``. They don't include ``京都``:
 .. include:: ../example/reference/tokenizers/token-mecab.log
 .. tokenize TokenMecab "東京都"
 
+``TokenMecab`` can also specify options.
+``TokenMecab`` has ``target_class`` option, ``include_class`` option,
+``include_reading`` option, ``include_form`` option and ``use_reading``.
+
+``target_class`` option searches a token of specifying a part-of-speech.
+For example, you can search only a noun as below.
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-mecab-target-class-option.log
+.. tokenize 'TokenMecab("target_class", "名詞")' '彼の名前は山田さんのはずです。'
+
+``target_class`` option can also specify subclasses and exclude or add specific
+part-of-speech of specific using + or -.
+So, you can also search a noun with excluding non-independent word and suffix of
+person name as below.
+
+In this way you can search exclude the noise of token.
+
+.. groonga-command
+.. include:: ../example/reference/tokenizers/token-mecab-target-class-option-complex.log
+.. tokenize 'TokenMecab("target_class", "-名詞/非自立", "target_class", "-名詞/接尾/人名", "target_class", "名詞")' '彼の名前は山田さんのはずです。'
+
 .. _token-regexp:
 
 ``TokenRegexp``

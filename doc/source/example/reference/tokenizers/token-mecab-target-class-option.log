@@ -1,0 +1,42 @@
+Execution example::
+
+  tokenize 'TokenMecab("target_class", "名詞")' '彼の名前は山田さんのはずです。'
+  # [
+  #   [
+  #     0,
+  #     1545810238.195525,
+  #     0.0003066062927246094
+  #   ],
+  #   [
+  #     {
+  #       "value": "彼",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "名前",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "山田",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "さん",
+  #       "position": 3,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "はず",
+  #       "position": 4,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     }
+  #   ]
+  # ]
