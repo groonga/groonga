@@ -4,19 +4,11 @@ table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   -
 [[0,0.0,0.0],true]
 column_create Terms tags_key COLUMN_INDEX|WITH_POSITION Tags _key
 [[0,0.0,0.0],true]
-table_create Memos TABLE_NO_KEY
-[[0,0.0,0.0],true]
-column_create Memos tags COLUMN_VECTOR Tags
-[[0,0.0,0.0],true]
-load --table Memos
+load --table Tags
 [
-{"tags": ["Great"]}
+{"_key": "Great"}
 ]
 [[0,0.0,0.0],1]
-select Tags   --match_columns '_key'   --query 'Great'
-[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"Great"]]]]
-select Memos --output_columns tags
-[[0,0.0,0.0],[[[1],[["tags","Tags"]],[["Great"]]]]]
 select Terms
 [
   [
@@ -53,8 +45,6 @@ select Terms
 ]
 truncate Tags
 [[0,0.0,0.0],true]
-select Memos --output_columns tags
-[[0,0.0,0.0],[[[1],[["tags","Tags"]],[[]]]]]
 select Terms
 [
   [

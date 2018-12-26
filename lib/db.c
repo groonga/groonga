@@ -2358,7 +2358,7 @@ exit :
 }
 
 static grn_rc
-grn_table_truncate_reference_columns(grn_ctx *ctx, grn_obj *table)
+grn_table_truncate_reference_objects(grn_ctx *ctx, grn_obj *table)
 {
   grn_bool is_close_opened_object_mode;
   grn_table_cursor *cursor;
@@ -2384,9 +2384,14 @@ grn_table_truncate_reference_columns(grn_ctx *ctx, grn_obj *table)
     }
 
     object = grn_ctx_at(ctx, id);
-    if (grn_obj_is_column(ctx, object) &&
-        grn_obj_get_range(ctx, object) == table_id) {
-      grn_column_truncate(ctx, object);
+    if (grn_obj_is_column(ctx, object)) {
+      if (grn_obj_get_range(ctx, object) == table_id) {
+        grn_column_truncate(ctx, object);
+      }
+    } else if (grn_obj_is_lexicon(ctx, object)) {
+      if (object->header.domain == table_id) {
+        grn_table_truncate(ctx, object);
+      }
     }
 
     if (is_close_opened_object_mode) {
@@ -2408,7 +2413,6 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
   if (table) {
-    grn_hook *hooks;
     grn_hash *cols;
     grn_obj tokenizer;
     grn_obj normalizer;
@@ -2432,7 +2436,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
       GRN_TEXT_INIT(&token_filters, 0);
       grn_table_get_token_filters_string(ctx, table, &token_filters);
 
-      rc = grn_table_truncate_reference_columns(ctx, table);
+      rc = grn_table_truncate_reference_objects(ctx, table);
       if (rc != GRN_SUCCESS) {
         goto exit;
       }

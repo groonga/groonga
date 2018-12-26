@@ -1,0 +1,15 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create TagReferences TABLE_HASH_KEY Tags
+[[0,0.0,0.0],true]
+load --table TagReferences
+[
+{"_key": "Great"}
+]
+[[0,0.0,0.0],1]
+select TagReferences
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"Great"]]]]
+truncate Tags
+[[0,0.0,0.0],true]
+select TagReferences
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]

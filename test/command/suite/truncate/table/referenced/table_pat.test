@@ -1,0 +1,13 @@
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create TagReferences TABLE_HASH_KEY Tags
+load --table TagReferences
+[
+{"_key": "Great"}
+]
+
+select TagReferences
+
+truncate Tags
+
+select TagReferences

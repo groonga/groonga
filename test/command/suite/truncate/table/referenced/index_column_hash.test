@@ -5,21 +5,13 @@ table_create Terms TABLE_PAT_KEY ShortText \
   --normalizer NormalizerAuto
 column_create Terms tags_key COLUMN_INDEX|WITH_POSITION Tags _key
 
-table_create Memos TABLE_NO_KEY
-column_create Memos tags COLUMN_VECTOR Tags
-load --table Memos
+load --table Tags
 [
-{"tags": ["Great"]}
+{"_key": "Great"}
 ]
 
-select Tags \
-  --match_columns '_key' \
-  --query 'Great'
-
-select Memos --output_columns tags
 select Terms
 
 truncate Tags
 
-select Memos --output_columns tags
 select Terms

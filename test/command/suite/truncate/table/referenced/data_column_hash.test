@@ -1,0 +1,14 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Memos TABLE_NO_KEY
+column_create Memos tags COLUMN_VECTOR Tags
+load --table Memos
+[
+{"tags": ["Great"]}
+]
+
+select Memos --output_columns tags
+
+truncate Tags
+
+select Memos --output_columns tags
