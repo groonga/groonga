@@ -373,7 +373,7 @@ delimit_next(grn_ctx *ctx,
             const char *delimiter;
             unsigned int delimiter_length;
             delimiter_length = grn_vector_get_element(ctx,
-                                                    delimiters,
+                                                      delimiters,
                                                       i,
                                                       &delimiter,
                                                       NULL,
