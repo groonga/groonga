@@ -1,0 +1,104 @@
+Execution example::
+
+  tokenize 'TokenMecab("include_form", true)' '彼の名前は山田さんのはずです。'
+  # [
+  #   [
+  #     0,
+  #     1545892987.209944,
+  #     0.0004286766052246094
+  #   ],
+  #   [
+  #     {
+  #       "value": "彼",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "base_form": "彼"
+  #       }
+  #     },
+  #     {
+  #       "value": "の",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "base_form": "の"
+  #       }
+  #     },
+  #     {
+  #       "value": "名前",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "base_form": "名前"
+  #       }
+  #     },
+  #     {
+  #       "value": "は",
+  #       "position": 3,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "base_form": "は"
+  #       }
+  #     },
+  #     {
+  #       "value": "山田",
+  #       "position": 4,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "base_form": "山田"
+  #       }
+  #     },
+  #     {
+  #       "value": "さん",
+  #       "position": 5,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "base_form": "さん"
+  #       }
+  #     },
+  #     {
+  #       "value": "の",
+  #       "position": 6,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "base_form": "の"
+  #       }
+  #     },
+  #     {
+  #       "value": "はず",
+  #       "position": 7,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "base_form": "はず"
+  #       }
+  #     },
+  #     {
+  #       "value": "です",
+  #       "position": 8,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "inflected_type": "特殊・デス",
+  #         "inflected_form": "基本形",
+  #         "base_form": "です"
+  #       }
+  #     },
+  #     {
+  #       "value": "。",
+  #       "position": 9,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "base_form": "。"
+  #       }
+  #     }
+  #   ]
+  # ]

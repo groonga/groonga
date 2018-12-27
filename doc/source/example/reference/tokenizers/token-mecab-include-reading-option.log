@@ -1,0 +1,102 @@
+Execution example::
+
+  tokenize 'TokenMecab("include_reading", true)' '彼の名前は山田さんのはずです。'
+  # [
+  #   [
+  #     0,
+  #     1545892913.226588,
+  #     0.0003414154052734375
+  #   ],
+  #   [
+  #     {
+  #       "value": "彼",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "reading": "カレ"
+  #       }
+  #     },
+  #     {
+  #       "value": "の",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "reading": "ノ"
+  #       }
+  #     },
+  #     {
+  #       "value": "名前",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "reading": "ナマエ"
+  #       }
+  #     },
+  #     {
+  #       "value": "は",
+  #       "position": 3,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "reading": "ハ"
+  #       }
+  #     },
+  #     {
+  #       "value": "山田",
+  #       "position": 4,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "reading": "ヤマダ"
+  #       }
+  #     },
+  #     {
+  #       "value": "さん",
+  #       "position": 5,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "reading": "サン"
+  #       }
+  #     },
+  #     {
+  #       "value": "の",
+  #       "position": 6,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "reading": "ノ"
+  #       }
+  #     },
+  #     {
+  #       "value": "はず",
+  #       "position": 7,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "reading": "ハズ"
+  #       }
+  #     },
+  #     {
+  #       "value": "です",
+  #       "position": 8,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "reading": "デス"
+  #       }
+  #     },
+  #     {
+  #       "value": "。",
+  #       "position": 9,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false,
+  #       "metadata": {
+  #         "reading": "。"
+  #       }
+  #     }
+  #   ]
+  # ]
