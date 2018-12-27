@@ -114,9 +114,9 @@ Parameters
 Optional parameter
 ^^^^^^^^^^^^^^^^^^
 
-There are two optional parameters ``delimiters`` and ``parameters``.
+There are two optional parameters ``delimiter`` and ``pattern``.
 
-``delimiters``
+``delimiter``
 """"""""""""""
 
 Split token with a specified character.
