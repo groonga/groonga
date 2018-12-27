@@ -24,10 +24,13 @@ Syntax
 
 ``TokenDelimit`` has optional parameter::
 
-  TokenDelimit[("delimiter", "delimiter_character1"],
-               ...
-               ["delimiter", "delimiter_characterN"],
-               ["pattern", "regular_expression1"])]
+  TokenDelimit
+
+  TokenDelimit("delimiter",  "delimiter1", delimiter", "delimiter2", ...)
+
+  TokenDelimit("pattern", pattern)
+
+The ``delimiter`` option and a ``pattern`` option are not use at the same time.
 
 Usage
 -----
@@ -120,6 +123,8 @@ There are two optional parameters ``delimiter`` and ``pattern``.
 """"""""""""""
 
 Split token with a specified character.
+
+You can use one or more characters for a delimiter.
 
 ``pattern``
 """""""""""
