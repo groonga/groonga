@@ -33,11 +33,66 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 8.0.9 - 2018-11-29"
-msgstr "8.0.9リリース - 2018-11-29"
+msgid "Release 8.1.0 - 2018-12-29"
+msgstr "8.1.0リリース - 2018-12-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[:doc:`/reference/commands/logical_select`] Added new options ``load_table`` "
+"and ``load_columns``, ``load_values``."
+msgstr ""
+"[:doc:`/reference/commands/logical_select`] 新しいオプション "
+"``load_table`` 、``load_columns`` 、 ``load_values`` を追加しました。 "
+
+msgid ""
+"You can store a result of ``logical_select`` in a table that specifying "
+"``load_table``."
+msgstr ""
+"``logical_select`` の結果を ``load_table`` で指定したテーブルへ格納できます。"
+
+msgid ""
+"``load_values`` option specifies columns of result of ``logical_select``."
+msgstr ""
+"``load_values`` オプションは、``logical_select`` の結果のカラムを指定します。"
+
+msgid ""
+"``load_columns`` options specifies columns of table that specifying "
+"``load_table``."
+msgstr ""
+"``load_columns`` オプションは、``load_table`` で指定したテーブルのカラムを指"
+"定します。"
+
+msgid ""
+"In this way, you can store values of columns that specifying with "
+"``load_values`` into columns that specifying with ``load_columns``."
+msgstr ""
+"このようにして、``load_values`` で指定したカラムの値を、 ``load_columns`` で"
+"指定したカラムへ格納できます。"
+
+msgid "[httpd] Updated bundled nginx to 1.15.8."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.15.8に更新しました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"Fixed a bug that unlock against DB is always executed after flush when after "
+"execute a ``io_flush`` command."
+msgstr ""
+"``io_flush`` コマンド実行後に、DBに対するアンロックが常にフラッシュの実行後に"
+"なってしまうバグを修正しました。"
+
+msgid ""
+"Fixed a bug that ``reindex`` command doesn't finish when execute a "
+"``reindex`` command against table that has record that has not references."
+msgstr ""
+"参照先を持たないレコードを持つテーブルに対して ``reindex`` コマンドを実行した"
+"際に、 ``reindex`` コマンドが終了しないバグを修正しました。"
+
+msgid "Release 8.0.9 - 2018-11-29"
+msgstr "8.0.9リリース - 2018-11-29"
 
 msgid ""
 "[:doc:`/reference/tokenizers`] Improved that output a tokenizer name in "
@@ -178,9 +233,6 @@ msgstr "[httpd] バンドルしているnginxのバージョンを1.15.7に更�
 
 msgid "contains security fix for CVE-2018-16843 and CVE-2018-16844."
 msgstr "CVE-2018-16843とCVE-2018-16844のセキュリティの修正が含まれています。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "Fixed a memory leak when evaluating window function."
 msgstr "ウインドウ関数を評価する際にメモリリークする問題を修正しました。"

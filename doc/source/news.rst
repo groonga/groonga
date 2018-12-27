@@ -7,6 +7,30 @@
 News
 ====
 
+.. _release-8-1-0:
+
+Release 8.1.0 - 2018-12-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/logical_select`] Added new options ``load_table`` and ``load_columns``, ``load_values``.
+
+  * You can store a result of ``logical_select`` in a table that specifying ``load_table``.
+  * ``load_values`` option specifies columns of result of ``logical_select``.
+  * ``load_columns`` options specifies columns of table that specifying ``load_table``.
+  * In this way, you can store values of columns that specifying with ``load_values`` into columns that specifying with ``load_columns``.
+
+* [httpd] Updated bundled nginx to 1.15.8.
+
+Fixes
+^^^^^
+
+* Fixed a bug that unlock against DB is always executed after flush when after execute a ``io_flush`` command.
+
+* Fixed a bug that ``reindex`` command doesn't finish when execute a ``reindex`` command against table that has record that has not references.
+
 .. _release-8-0-9:
 
 Release 8.0.9 - 2018-11-29
