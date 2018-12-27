@@ -24,6 +24,7 @@
 #include "grn_db.h"
 #include "grn_expr.h"
 #include "grn_output.h"
+#include "grn_output_columns.h"
 #include "grn_str.h"
 #include "grn_util.h"
 
@@ -1336,28 +1337,6 @@ grn_output_table_column_info(grn_ctx *ctx,
   }
 }
 
-static grn_inline int
-count_n_elements_in_expression(grn_ctx *ctx, grn_obj *expression)
-{
-  int n_elements = 0;
-  grn_bool is_first_comma = GRN_TRUE;
-  grn_expr *expr = (grn_expr *)expression;
-  grn_expr_code *code;
-  grn_expr_code *code_end = expr->codes + expr->codes_curr;
-
-  for (code = expr->codes; code < code_end; code++) {
-    if (code->op == GRN_OP_COMMA) {
-      n_elements++;
-      if (is_first_comma) {
-        n_elements++;
-        is_first_comma = GRN_FALSE;
-      }
-    }
-  }
-
-  return n_elements;
-}
-
 static grn_bool
 is_score_accessor(grn_ctx *ctx, grn_obj *obj)
 {
@@ -1498,58 +1477,33 @@ grn_output_table_columns_by_expression(grn_ctx *ctx, grn_obj *outbuf,
                                        grn_obj *table, grn_obj_format *format,
                                        grn_obj *buf)
 {
-  int n_elements;
-  int previous_comma_offset = -1;
-  grn_bool is_first_comma = GRN_TRUE;
-  grn_bool have_comma = GRN_FALSE;
   grn_expr *expr = (grn_expr *)format->expression;
-  grn_expr_code *code;
-  grn_expr_code *code_end = expr->codes + expr->codes_curr;
+  grn_obj offsets;
+  size_t i, n;
 
-  n_elements = count_n_elements_in_expression(ctx, format->expression);
+  GRN_UINT32_INIT(&offsets, GRN_OBJ_VECTOR);
+  grn_output_columns_get_offsets(ctx, format->expression, &offsets);
 
-  grn_output_table_columns_open(ctx, outbuf, output_type, n_elements);
+  n = GRN_BULK_VSIZE(&offsets) / sizeof(uint32_t) / 2;
 
-  for (code = expr->codes; code < code_end; code++) {
-    int code_start_offset;
+  grn_output_table_columns_open(ctx, outbuf, output_type, n);
 
-    if (code->op != GRN_OP_COMMA) {
-      continue;
-    }
+  for (i = 0; i < n; i++) {
+    uint32_t code_start_offset;
+    uint32_t code_end_offset;
 
-    have_comma = GRN_TRUE;
-    if (is_first_comma) {
-      unsigned int n_used_codes;
-      int code_end_offset;
-
-      n_used_codes = grn_expr_code_n_used_codes(ctx, expr->codes, code - 1);
-      code_end_offset = code - expr->codes - n_used_codes;
-
-      grn_output_table_column_by_expression(ctx, outbuf, output_type,
-                                            expr->codes,
-                                            expr->codes + code_end_offset,
-                                            buf);
-      code_start_offset = code_end_offset;
-      is_first_comma = GRN_FALSE;
-    } else {
-      code_start_offset = previous_comma_offset + 1;
-    }
+    code_start_offset = GRN_UINT32_VALUE_AT(&offsets, i * 2);
+    code_end_offset = GRN_UINT32_VALUE_AT(&offsets, i * 2 + 1);
 
     grn_output_table_column_by_expression(ctx, outbuf, output_type,
                                           expr->codes + code_start_offset,
-                                          code,
-                                          buf);
-    previous_comma_offset = code - expr->codes;
-  }
-
-  if (!have_comma && expr->codes_curr > 0) {
-    grn_output_table_column_by_expression(ctx, outbuf, output_type,
-                                          expr->codes,
-                                          code_end,
+                                          expr->codes + code_end_offset,
                                           buf);
   }
 
   grn_output_table_columns_close(ctx, outbuf, output_type);
+
+  GRN_OBJ_FIN(ctx, &offsets);
 }
 
 static grn_inline void
@@ -1627,9 +1581,16 @@ grn_output_table_record_by_expression(grn_ctx *ctx,
                                       grn_obj *outbuf,
                                       grn_content_type output_type,
                                       grn_obj *expression,
+                                      uint32_t code_start_offset,
+                                      uint32_t code_end_offset,
                                       grn_obj *record)
 {
   grn_expr *expr = (grn_expr *)expression;
+  grn_expr_code *codes = expr->codes;
+  uint32_t codes_curr = expr->codes_curr;
+
+  expr->codes += code_start_offset;
+  expr->codes_curr = code_end_offset - code_start_offset;
 
   if (expr->codes_curr == 1 && expr->codes[0].op == GRN_OP_GET_VALUE) {
     grn_obj *column = expr->codes[0].value;
@@ -1647,6 +1608,9 @@ grn_output_table_record_by_expression(grn_ctx *ctx,
       grn_output_cstr(ctx, outbuf, output_type, ctx->errbuf);
     }
   }
+
+  expr->codes = codes;
+  expr->codes_curr = codes_curr;
 }
 
 static grn_inline void
@@ -1655,69 +1619,39 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
                                        grn_table_cursor *tc,
                                        grn_obj_format *format)
 {
-  int n_elements = 0;
+  grn_obj offsets;
+  size_t n;
   grn_id id;
   grn_obj *record;
-  grn_expr *expr = (grn_expr *)format->expression;
-  grn_expr_code *code;
-  grn_expr_code *code_end = expr->codes + expr->codes_curr;
 
-  n_elements = count_n_elements_in_expression(ctx, format->expression);
+  GRN_UINT32_INIT(&offsets, GRN_OBJ_VECTOR);
+  grn_output_columns_get_offsets(ctx, format->expression, &offsets);
+  n = GRN_BULK_VSIZE(&offsets) / sizeof(uint32_t) / 2;
   record = grn_expr_get_var_by_offset(ctx, format->expression, 0);
   while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
-    int previous_comma_offset = -1;
-    grn_bool is_first_comma = GRN_TRUE;
-    grn_bool have_comma = GRN_FALSE;
+    size_t i;
+
     GRN_RECORD_SET(ctx, record, id);
-    grn_output_table_record_open(ctx, outbuf, output_type, n_elements);
-    for (code = expr->codes; code < code_end; code++) {
-      if (code->op == GRN_OP_COMMA) {
-        int code_start_offset = previous_comma_offset + 1;
-        int code_end_offset;
-        int original_codes_curr = expr->codes_curr;
+    grn_output_table_record_open(ctx, outbuf, output_type, n);
+    for (i = 0; i < n; i++) {
+      uint32_t code_start_offset;
+      uint32_t code_end_offset;
 
-        have_comma = GRN_TRUE;
-        if (is_first_comma) {
-          int second_code_offset;
-          unsigned int second_code_n_used_codes;
-          second_code_offset = code - expr->codes - 1;
-          second_code_n_used_codes =
-            grn_expr_code_n_used_codes(ctx,
-                                       expr->codes,
-                                       expr->codes + second_code_offset);
-          expr->codes_curr = second_code_offset - second_code_n_used_codes + 1;
-          grn_output_table_record_by_expression(ctx,
-                                                outbuf,
-                                                output_type,
-                                                format->expression,
-                                                record);
-          code_start_offset = expr->codes_curr;
-          is_first_comma = GRN_FALSE;
-        }
-        code_end_offset = code - expr->codes - code_start_offset;
-        expr->codes += code_start_offset;
-        expr->codes_curr = code_end_offset;
-        grn_output_table_record_by_expression(ctx,
-                                              outbuf,
-                                              output_type,
-                                              format->expression,
-                                              record);
-        expr->codes -= code_start_offset;
-        expr->codes_curr = original_codes_curr;
-        previous_comma_offset = code - expr->codes;
-      }
-    }
-
-    if (!have_comma && expr->codes_curr > 0) {
+      code_start_offset = GRN_UINT32_VALUE_AT(&offsets, i * 2);
+      code_end_offset = GRN_UINT32_VALUE_AT(&offsets, i * 2 + 1);
       grn_output_table_record_by_expression(ctx,
                                             outbuf,
                                             output_type,
                                             format->expression,
+                                            code_start_offset,
+                                            code_end_offset,
                                             record);
     }
 
     grn_output_table_record_close(ctx, outbuf, output_type);
   }
+
+  GRN_OBJ_FIN(ctx, &offsets);
 }
 
 static grn_inline void

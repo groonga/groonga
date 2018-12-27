@@ -72,6 +72,7 @@ libgroonga_c_sources =				\
 	output.c				\
 	grn_output.h				\
 	output_columns.c			\
+	grn_output_columns.h			\
 	pat.c					\
 	grn_pat.h				\
 	plugin.c				\
