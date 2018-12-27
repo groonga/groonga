@@ -567,10 +567,14 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol-and-alphabet.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-bigram-with-white-spaces.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit-delimiter-option-multiple-delimiters.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit-delimiter-option.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit-null.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit-pattern-option-with-complex-pattern.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit-pattern-option.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab-target-class-option-complex.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab-target-class-option.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-regexp-add.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-trigram.log \
@@ -939,6 +943,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/tables.rst \
 	$(top_srcdir)/doc/source/reference/token_filters.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_delimit.rst \
 	$(top_srcdir)/doc/source/reference/tuning.rst \
 	$(top_srcdir)/doc/source/reference/types.rst \
 	$(top_srcdir)/doc/source/reference/window_function.rst \
@@ -1555,10 +1560,14 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol-and-alphabet.log \
 	source/example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol.log \
 	source/example/reference/tokenizers/token-bigram-with-white-spaces.log \
+	source/example/reference/tokenizers/token-delimit-delimiter-option-multiple-delimiters.log \
 	source/example/reference/tokenizers/token-delimit-delimiter-option.log \
 	source/example/reference/tokenizers/token-delimit-null.log \
+	source/example/reference/tokenizers/token-delimit-pattern-option-with-complex-pattern.log \
 	source/example/reference/tokenizers/token-delimit-pattern-option.log \
 	source/example/reference/tokenizers/token-delimit.log \
+	source/example/reference/tokenizers/token-mecab-target-class-option-complex.log \
+	source/example/reference/tokenizers/token-mecab-target-class-option.log \
 	source/example/reference/tokenizers/token-mecab.log \
 	source/example/reference/tokenizers/token-regexp-add.log \
 	source/example/reference/tokenizers/token-trigram.log \
@@ -1927,6 +1936,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/tables.rst \
 	source/reference/token_filters.rst \
 	source/reference/tokenizers.rst \
+	source/reference/tokenizers/token_delimit.rst \
 	source/reference/tuning.rst \
 	source/reference/types.rst \
 	source/reference/window_function.rst \
@@ -2334,6 +2344,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/tables.html \
 	html/reference/token_filters.html \
 	html/reference/tokenizers.html \
+	html/reference/tokenizers/token_delimit.html \
 	html/reference/tuning.html \
 	html/reference/types.html \
 	html/reference/window_function.html \
