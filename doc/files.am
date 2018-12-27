@@ -573,8 +573,13 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit-pattern-option-with-complex-pattern.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit-pattern-option.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-delimit.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab-include-class-option.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab-include-form-option.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab-include-reading-option.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab-target-class-and-include-class-option.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab-target-class-option-complex.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab-target-class-option.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab-use-reading-option.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-regexp-add.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-trigram.log \
@@ -944,6 +949,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/token_filters.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_delimit.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_mecab.rst \
 	$(top_srcdir)/doc/source/reference/tuning.rst \
 	$(top_srcdir)/doc/source/reference/types.rst \
 	$(top_srcdir)/doc/source/reference/window_function.rst \
@@ -1566,8 +1572,13 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/tokenizers/token-delimit-pattern-option-with-complex-pattern.log \
 	source/example/reference/tokenizers/token-delimit-pattern-option.log \
 	source/example/reference/tokenizers/token-delimit.log \
+	source/example/reference/tokenizers/token-mecab-include-class-option.log \
+	source/example/reference/tokenizers/token-mecab-include-form-option.log \
+	source/example/reference/tokenizers/token-mecab-include-reading-option.log \
+	source/example/reference/tokenizers/token-mecab-target-class-and-include-class-option.log \
 	source/example/reference/tokenizers/token-mecab-target-class-option-complex.log \
 	source/example/reference/tokenizers/token-mecab-target-class-option.log \
+	source/example/reference/tokenizers/token-mecab-use-reading-option.log \
 	source/example/reference/tokenizers/token-mecab.log \
 	source/example/reference/tokenizers/token-regexp-add.log \
 	source/example/reference/tokenizers/token-trigram.log \
@@ -1937,6 +1948,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/token_filters.rst \
 	source/reference/tokenizers.rst \
 	source/reference/tokenizers/token_delimit.rst \
+	source/reference/tokenizers/token_mecab.rst \
 	source/reference/tuning.rst \
 	source/reference/types.rst \
 	source/reference/window_function.rst \
@@ -2345,6 +2357,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/token_filters.html \
 	html/reference/tokenizers.html \
 	html/reference/tokenizers/token_delimit.html \
+	html/reference/tokenizers/token_mecab.html \
 	html/reference/tuning.html \
 	html/reference/types.html \
 	html/reference/window_function.html \
