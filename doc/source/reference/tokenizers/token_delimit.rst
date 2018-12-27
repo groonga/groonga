@@ -120,7 +120,7 @@ Optional parameter
 There are two optional parameters ``delimiter`` and ``pattern``.
 
 ``delimiter``
-""""""""""""""
+"""""""""""""
 
 Split token with a specified character.
 
