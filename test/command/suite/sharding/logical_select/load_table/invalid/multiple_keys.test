@@ -1,0 +1,42 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Logs_20150203 TABLE_HASH_KEY ShortText
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+
+table_create Logs_20150204 TABLE_HASH_KEY ShortText
+column_create Logs_20150204 timestamp COLUMN_SCALAR Time
+
+table_create Logs TABLE_HASH_KEY ShortText
+column_create Logs original_id COLUMN_SCALAR UInt32
+column_create Logs timestamp_text COLUMN_SCALAR ShortText
+
+load --table Logs_20150203
+[
+{
+  "_key": "2015-02-03:1",
+  "timestamp": "2015-02-03 10:49:00"
+},
+{
+  "_key": "2015-02-03:2",
+  "timestamp": "2015-02-03 12:49:00"
+}
+]
+
+load --table Logs_20150204
+[
+{
+  "_key": "2015-02-04:1",
+  "timestamp": "2015-02-04 00:00:00"
+}
+]
+
+logical_select \
+  --logical_table Logs \
+  --shard_key timestamp \
+  --load_table Logs \
+  --load_columns "original_id, _key, timestamp_text, _key" \
+  --load_values "_id, _id, timestamp, _id"
+
+select --table Logs
