@@ -67,7 +67,7 @@ You can specify stop word in column except ``is_stop_columns`` by ``columns`` op
 
 .. groonga-command
 .. database: token_filters_stop_word
-.. include:: ../../example/reference/token_filters/stop_word-columns-option.log
+.. include:: ../../example/reference/token_filters/stop-word-columns-option.log
 .. plugin_register token_filters/stop_word
 .. table_create Memos TABLE_NO_KEY
 .. column_create Memos content COLUMN_SCALAR ShortText
