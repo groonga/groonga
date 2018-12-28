@@ -24,9 +24,15 @@ Syntax
 
 ``TokenDelimit`` has optional parameter::
 
+No options(Extracts token by splitting one or more space characters (``U+0020``))::
+
   TokenDelimit
 
+Specify delimiter::
+
   TokenDelimit("delimiter",  "delimiter1", delimiter", "delimiter2", ...)
+
+Specify delimiter with regular expression::
 
   TokenDelimit("pattern", pattern)
 
