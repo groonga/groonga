@@ -122,6 +122,12 @@ Here is a list of built-in tokenizers:
   * ``TokenMecab``
   * ``TokenRegexp``
 
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   tokenizers/*
+
 .. _token-bigram:
 
 ``TokenBigram``
@@ -410,90 +416,6 @@ token. ``TokenTrigram`` uses 3 characters per token.
 .. include:: ../example/reference/tokenizers/token-trigram.log
 .. tokenize TokenTrigram "10000cents!!!!!" NormalizerAuto
 
-.. _token-delimit:
-
-``TokenDelimit``
-^^^^^^^^^^^^^^^^
-
-``TokenDelimit`` extracts token by splitting one or more space
-characters (``U+0020``). For example, ``Hello World`` is tokenized to
-``Hello`` and ``World``.
-
-``TokenDelimit`` is suitable for tag text. You can extract ``groonga``
-and ``full-text-search`` and ``http`` as tags from ``groonga
-full-text-search http``.
-
-Here is an example of ``TokenDelimit``:
-
-.. groonga-command
-.. include:: ../example/reference/tokenizers/token-delimit.log
-.. tokenize TokenDelimit "Groonga full-text-search HTTP" NormalizerAuto
-
-``TokenDelimit`` can also specify options.
-``TokenDelimit`` has ``delimiter`` option and ``pattern`` option.
-
-``delimiter`` option can split token with a specified characters.
-
-For example, ``Hello,World`` is tokenized to ``Hello`` and ``World``
-with ``delimiter`` option as below.
-
-.. groonga-command
-.. include:: ../example/reference/tokenizers/token-delimit-delimiter-option.log
-.. tokenize 'TokenDelimit("delimiter", ",")' "Hello,World"
-
-
-``delimiter`` option can also specify multiple delimiters.
-
-For example, ``Hello, World`` is tokenized to ``Hello`` and ``World``.
-``,`` and `` `` are delimiters in below example.
-
-.. groonga-command
-.. include:: ../example/reference/tokenizers/token-delimit-delimiter-option-multiple-delimiters.log
-.. tokenize 'TokenDelimit("delimiter", ",", "delimiter", " ")' "Hello, World"
-
-``pattern`` option can split token with a regular expression.
-You can except needless space by ``pattern`` option.
-
-For example, ``This is a pen. This is an apple`` is tokenized to ``This is a pen`` and
-``This is an apple`` with ``pattern`` option as below.
-
-Normally, when ``This is a pen. This is an apple.`` is splitted by ``.``,
-needless spaces are included at the beginning of "This is an apple.".
-
-You can except the needless spaces by a ``pattern`` option as below example.
-
-.. groonga-command
-.. include:: ../example/reference/tokenizers/token-delimit-pattern-option.log
-.. tokenize 'TokenDelimit("pattern", "\\.\\s*")' "This is a pen. This is an apple."
-
-You can extract token in complex conditions by ``pattern`` option.
-
-For example, ``これはペンですか！？リンゴですか？「リンゴです。」`` is tokenize to ``これはペンですか`` and ``リンゴですか``, ``「リンゴです。」`` with ``delimiter`` option as below.
-
-.. groonga-command
-.. include:: ../example/reference/tokenizers/token-delimit-pattern-option-with-complex-pattern.log
-.. tokenize 'TokenDelimit("pattern", "([。！？]+(?![）」])|[\\r\\n]+)\\s*")' "これはペンですか！？リンゴですか？「リンゴです。」"
-
-``\\s*`` of the end of above regular expression match 0 or more spaces after a delimiter.
-
-``[。！？]+`` matches 1 or more ``。`` or ``！``, ``？``.
-For example, ``[。！？]+`` matches ``！？`` of ``これはペンですか！？``.
-
-``(?![）」])`` is negative lookahead.
-``(?![）」])`` matches if a character is not matched ``）`` or ``」``.
-negative lookahead interprets in combination regular expression of just before.
-
-Therefore it interprets ``[。！？]+(?![）」])``.
-
-``[。！？]+(?![）」])`` matches if there are not ``）`` or ``」`` after ``。`` or ``！``, ``？``.
-
-In other words, ``[。！？]+(?![）」])`` matches ``。`` of ``これはペンですか。``. But ``[。！？]+(?![）」])`` doesn't match ``。`` of ``「リンゴです。」``.
-Because there is ``」`` after ``。``.
-
-``[\\r\\n]+`` match 1 or more newline character.
-
-In conclusion, ``([。！？]+(?![）」])|[\\r\\n]+)\\s*`` uses ``。`` and ``！`` and ``？``, newline character as delimiter. However, ``。`` and ``!``, ``？`` are not delimiters if there is ``）`` or ``」`` after ``。`` or ``！``, ``？``.
-
 .. _token-delimit-null:
 
 ``TokenDelimitNull``
@@ -511,63 +433,6 @@ Here is an example of ``TokenDelimitNull``:
 .. groonga-command
 .. include:: ../example/reference/tokenizers/token-delimit-null.log
 .. tokenize TokenDelimitNull "Groonga\u0000full-text-search\u0000HTTP" NormalizerAuto
-
-.. _token-mecab:
-
-``TokenMecab``
-^^^^^^^^^^^^^^
-
-``TokenMecab`` is a tokenizer based on `MeCab
-<https://taku910.github.io/mecab/>`_ part-of-speech and
-morphological analyzer.
-
-MeCab doesn't depend on Japanese. You can use MeCab for other
-languages by creating dictionary for the languages. You can use `NAIST
-Japanese Dictionary <http://osdn.jp/projects/naist-jdic/>`_
-for Japanese.
-
-You need to install an additional package to using TokenMecab.
-For more detail of how to installing an additional package, see `how to install each OS <http://groonga.org/docs/install.html>`_ .
-
-``TokenMecab`` is good for precision rather than recall. You can find
-``東京都`` and ``京都`` texts by ``京都`` query with
-:ref:`token-bigram` but ``東京都`` isn't expected. You can find only
-``京都`` text by ``京都`` query with ``TokenMecab``.
-
-If you want to support neologisms, you need to keep updating your
-MeCab dictionary. It needs maintain cost. (:ref:`token-bigram` doesn't
-require dictionary maintenance because :ref:`token-bigram` doesn't use
-dictionary.) `mecab-ipadic-NEologd : Neologism dictionary for MeCab
-<https://github.com/neologd/mecab-ipadic-neologd>`_ may help you.
-
-Here is an example of ``TokenMeCab``. ``東京都`` is tokenized to ``東京``
-and ``都``. They don't include ``京都``:
-
-.. groonga-command
-.. include:: ../example/reference/tokenizers/token-mecab.log
-.. tokenize TokenMecab "東京都"
-
-``TokenMecab`` can also specify options.
-``TokenMecab`` has ``target_class`` option, ``include_class`` option,
-``include_reading`` option, ``include_form`` option and ``use_reading``.
-
-``target_class`` option searches a token of specifying a part-of-speech.
-For example, you can search only a noun as below.
-
-.. groonga-command
-.. include:: ../example/reference/tokenizers/token-mecab-target-class-option.log
-.. tokenize 'TokenMecab("target_class", "名詞")' '彼の名前は山田さんのはずです。'
-
-``target_class`` option can also specify subclasses and exclude or add specific
-part-of-speech of specific using + or -.
-So, you can also search a noun with excluding non-independent word and suffix of
-person name as below.
-
-In this way you can search exclude the noise of token.
-
-.. groonga-command
-.. include:: ../example/reference/tokenizers/token-mecab-target-class-option-complex.log
-.. tokenize 'TokenMecab("target_class", "-名詞/非自立", "target_class", "-名詞/接尾/人名", "target_class", "名詞")' '彼の名前は山田さんのはずです。'
 
 .. _token-regexp:
 
