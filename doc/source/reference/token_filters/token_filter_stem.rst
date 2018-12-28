@@ -83,6 +83,11 @@ There is a optional parameters ``algorithm``.
 
 Specify a steming algorithm.
 
+Steming algorithm is extract the stem. It is prepared for each language.
+
+You can extract the stem of each language by changing steming algorithm.
+For example, if you want extract the stem of the French, you specify French to ``algorithm`` option.
+
 Here are support steming algorithm::
 
   French
