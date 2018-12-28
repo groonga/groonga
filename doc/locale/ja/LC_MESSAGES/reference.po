@@ -27576,8 +27576,8 @@ msgstr "省略可能引数は2つあります。 ``delimiter`` と ``pattern`` �
 msgid "``delimiter``"
 msgstr ""
 
-msgid "Split token with a specified character."
-msgstr "指定した文字でトークンを分割します。"
+msgid "Split token with a specified one or more characters."
+msgstr "指定した1つ以上の文字でトークンを分割します。"
 
 msgid "You can use one or more characters for a delimiter."
 msgstr "区切り文字には、1つ以上の文字を指定できます。"

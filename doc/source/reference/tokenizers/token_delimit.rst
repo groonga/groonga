@@ -128,7 +128,7 @@ There are two optional parameters ``delimiter`` and ``pattern``.
 ``delimiter``
 """""""""""""
 
-Split token with a specified character.
+Split token with a specified one or more characters.
 
 You can use one or more characters for a delimiter.
 
