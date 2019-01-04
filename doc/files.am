@@ -587,7 +587,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab-use-reading-option.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-regexp-add.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-trigram-non-ascii.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-trigram.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-unigram-non-ascii.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-unigram.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/tokenize-example.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-1.log \
@@ -1606,7 +1608,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/tokenizers/token-mecab-use-reading-option.log \
 	source/example/reference/tokenizers/token-mecab.log \
 	source/example/reference/tokenizers/token-regexp-add.log \
+	source/example/reference/tokenizers/token-trigram-non-ascii.log \
 	source/example/reference/tokenizers/token-trigram.log \
+	source/example/reference/tokenizers/token-unigram-non-ascii.log \
 	source/example/reference/tokenizers/token-unigram.log \
 	source/example/reference/tokenizers/tokenize-example.log \
 	source/example/tutorial/data-1.log \
