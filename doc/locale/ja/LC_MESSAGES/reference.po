@@ -26964,29 +26964,11 @@ msgstr "組み込みトークナイザー"
 msgid "Here is a list of built-in tokenizers:"
 msgstr "以下は組み込みのトークナイザーのリストです。"
 
-msgid "``TokenTrigram``"
-msgstr ""
-
-msgid "``TokenDelimit``"
-msgstr ""
-
 msgid "``TokenDelimitNull``"
-msgstr ""
-
-msgid "``TokenMecab``"
 msgstr ""
 
 msgid "``TokenRegexp``"
 msgstr ""
-
-msgid ""
-"``TokenTrigram`` is similar to :ref:`token-bigram`. The differences between "
-"them is token unit. :ref:`token-bigram` uses 2 characters per token. "
-"``TokenTrigram`` uses 3 characters per token."
-msgstr ""
-"``TokenTrigram`` は :ref:`token-bigram` に似ています。違いはトークンの単位で"
-"す。 :ref:`token-bigram` は各トークンが2文字ですが、 ``TokenTrigram`` は各"
-"トークンが3文字です。"
 
 msgid ""
 "``TokenDelimitNull`` is similar to :ref:`token-delimit`. The difference "
@@ -27427,6 +27409,9 @@ msgstr ""
 "ズ方法にバイグラムを使います。つまり、すべての文字をバイグラムでトークナイズ"
 "します。"
 
+msgid "``TokenDelimit``"
+msgstr ""
+
 msgid ""
 "``TokenDelimit`` extracts token by splitting one or more space characters "
 "(``U+0020``). For example, ``Hello World`` is tokenized to ``Hello`` and "
@@ -27613,6 +27598,12 @@ msgstr "正規表現を使って、トークンを分割します。"
 msgid ":doc:`../commands/tokenize`"
 msgstr ""
 
+msgid "``TokenDelimitNull`` hasn't parameter::"
+msgstr "``TokenDelimitNull`` には、引数がありません。"
+
+msgid "``TokenMecab``"
+msgstr ""
+
 msgid ""
 "``TokenMecab`` is a tokenizer based on `MeCab <https://taku910.github.io/"
 "mecab/>`_ part-of-speech and morphological analyzer."
@@ -27775,6 +27766,9 @@ msgstr ""
 
 msgid "Outputs reading of token."
 msgstr "トークンの読みがなを出力します。"
+
+msgid "``TokenTrigram``"
+msgstr ""
 
 msgid ""
 "``TokenTrigram`` is similar to :ref:`token-bigram`. The differences between "
@@ -28294,3 +28288,12 @@ msgstr ""
 
 msgid "``window_sum``"
 msgstr ""
+
+#~ msgid ""
+#~ "``TokenTrigram`` is similar to :ref:`token-bigram`. The differences "
+#~ "between them is token unit. :ref:`token-bigram` uses 2 characters per "
+#~ "token. ``TokenTrigram`` uses 3 characters per token."
+#~ msgstr ""
+#~ "``TokenTrigram`` は :ref:`token-bigram` に似ています。違いはトークンの単位"
+#~ "です。 :ref:`token-bigram` は各トークンが2文字ですが、 ``TokenTrigram`` は"
+#~ "各トークンが3文字です。"

@@ -107,7 +107,6 @@ Built-in tokenizsers
 
 Here is a list of built-in tokenizers:
 
-  * ``TokenDelimitNull``
   * ``TokenRegexp``
 
 .. toctree::
@@ -115,24 +114,6 @@ Here is a list of built-in tokenizers:
    :glob:
 
    tokenizers/*
-
-.. _token-delimit-null:
-
-``TokenDelimitNull``
-^^^^^^^^^^^^^^^^^^^^
-
-``TokenDelimitNull`` is similar to :ref:`token-delimit`. The
-difference between them is separator character. :ref:`token-delimit`
-uses space character (``U+0020``) but ``TokenDelimitNull`` uses NUL
-character (``U+0000``).
-
-``TokenDelimitNull`` is also suitable for tag text.
-
-Here is an example of ``TokenDelimitNull``:
-
-.. groonga-command
-.. include:: ../example/reference/tokenizers/token-delimit-null.log
-.. tokenize TokenDelimitNull "Groonga\u0000full-text-search\u0000HTTP" NormalizerAuto
 
 .. _token-regexp:
 
