@@ -26964,76 +26964,6 @@ msgstr "組み込みトークナイザー"
 msgid "Here is a list of built-in tokenizers:"
 msgstr "以下は組み込みのトークナイザーのリストです。"
 
-msgid "``TokenDelimitNull``"
-msgstr ""
-
-msgid "``TokenRegexp``"
-msgstr ""
-
-msgid ""
-"``TokenDelimitNull`` is similar to :ref:`token-delimit`. The difference "
-"between them is separator character. :ref:`token-delimit` uses space "
-"character (``U+0020``) but ``TokenDelimitNull`` uses NUL character (``U"
-"+0000``)."
-msgstr ""
-"``TokenDelimitNull`` は :ref:`token-delimit` に似ています。違いは区切り文字で"
-"す。 :ref:`token-delimit` は空白文字（ ``U+0020`` ）を使いますが、 "
-"``TokenDelimitNull`` はNUL文字（ ``U+0000`` ）を使います。"
-
-msgid "``TokenDelimitNull`` is also suitable for tag text."
-msgstr "``TokenDelimitNull`` もタグテキストに適切です。"
-
-msgid "Here is an example of ``TokenDelimitNull``:"
-msgstr "以下は ``TokenDelimitNull`` の例です。"
-
-msgid "This tokenizer is experimental. Specification may be changed."
-msgstr "このトークナイザーは実験的です。仕様が変わる可能性があります。"
-
-msgid ""
-"This tokenizer can be used only with UTF-8. You can't use this tokenizer "
-"with EUC-JP, Shift_JIS and so on."
-msgstr ""
-"このトークナイザーはUTF-8でしか使えません。EUC-JPやShift_JISなどと一緒には使"
-"えません。"
-
-msgid ""
-"``TokenRegexp`` is a tokenizer for supporting regular expression search by "
-"index."
-msgstr ""
-"``TokenRegexp`` はインデックスを使った正規表現検索をサポートするトークナイ"
-"ザーです。"
-
-msgid ""
-"In general, regular expression search is evaluated as sequential search. But "
-"the following cases can be evaluated as index search:"
-msgstr ""
-"一般的に、正規表現検索は逐次検索で実行します。しかし、次のケースはインデック"
-"スを使って検索できます。"
-
-msgid "Literal only case such as ``hello``"
-msgstr "``hello`` のようにリテラルしかないケース"
-
-msgid "The beginning of text and literal case such as ``\\A/home/alice``"
-msgstr ""
-"``\\A/home/alice`` のようにテキストの最初でのマッチとリテラルのみのケース"
-
-msgid "The end of text and literal case such as ``\\.txt\\z``"
-msgstr "``\\.txt\\z`` のようにテキストの最後でのマッチとリテラルのみのケース"
-
-msgid "In most cases, index search is faster than sequential search."
-msgstr ""
-"多くのケースでは、逐次検索よりもインデックスを使った検索の方が高速です。"
-
-msgid ""
-"``TokenRegexp`` is based on bigram tokenize method. ``TokenRegexp`` adds the "
-"beginning of text mark (``U+FFEF``) at the begging of text and the end of "
-"text mark (``U+FFF0``) to the end of text when you index text:"
-msgstr ""
-"``TokenRegexp`` はベースはバイグラムを使います。 ``TokenRegexp`` は、インデッ"
-"クス時に、テキストの先頭にテキストの先頭であるというマーク（ ``U+FFEF`` ）を"
-"入れ、テキストの最後にテキストの最後であるというマーク（ ``U+FFF0`` ）を入れ"
-"ます。"
-
 msgid "``TokenBigram``"
 msgstr ""
 
@@ -27598,8 +27528,27 @@ msgstr "正規表現を使って、トークンを分割します。"
 msgid ":doc:`../commands/tokenize`"
 msgstr ""
 
+msgid "``TokenDelimitNull``"
+msgstr ""
+
+msgid ""
+"``TokenDelimitNull`` is similar to :ref:`token-delimit`. The difference "
+"between them is separator character. :ref:`token-delimit` uses space "
+"character (``U+0020``) but ``TokenDelimitNull`` uses NUL character (``U"
+"+0000``)."
+msgstr ""
+"``TokenDelimitNull`` は :ref:`token-delimit` に似ています。違いは区切り文字で"
+"す。 :ref:`token-delimit` は空白文字（ ``U+0020`` ）を使いますが、 "
+"``TokenDelimitNull`` はNUL文字（ ``U+0000`` ）を使います。"
+
 msgid "``TokenDelimitNull`` hasn't parameter::"
 msgstr "``TokenDelimitNull`` には、引数がありません。"
+
+msgid "``TokenDelimitNull`` is also suitable for tag text."
+msgstr "``TokenDelimitNull`` もタグテキストに適切です。"
+
+msgid "Here is an example of ``TokenDelimitNull``:"
+msgstr "以下は ``TokenDelimitNull`` の例です。"
 
 msgid "``TokenMecab``"
 msgstr ""
@@ -27766,6 +27715,60 @@ msgstr ""
 
 msgid "Outputs reading of token."
 msgstr "トークンの読みがなを出力します。"
+
+msgid "``TokenRegexp``"
+msgstr ""
+
+msgid "This tokenizer is experimental. Specification may be changed."
+msgstr "このトークナイザーは実験的です。仕様が変わる可能性があります。"
+
+msgid ""
+"This tokenizer can be used only with UTF-8. You can't use this tokenizer "
+"with EUC-JP, Shift_JIS and so on."
+msgstr ""
+"このトークナイザーはUTF-8でしか使えません。EUC-JPやShift_JISなどと一緒には使"
+"えません。"
+
+msgid ""
+"``TokenRegexp`` is a tokenizer for supporting regular expression search by "
+"index."
+msgstr ""
+"``TokenRegexp`` はインデックスを使った正規表現検索をサポートするトークナイ"
+"ザーです。"
+
+msgid "``TokenRegexp`` hasn't parameter::"
+msgstr "``TokenRegexp`` には、引数がありません。"
+
+msgid ""
+"In general, regular expression search is evaluated as sequential search. But "
+"the following cases can be evaluated as index search:"
+msgstr ""
+"一般的に、正規表現検索は逐次検索で実行します。しかし、次のケースはインデック"
+"スを使って検索できます。"
+
+msgid "Literal only case such as ``hello``"
+msgstr "``hello`` のようにリテラルしかないケース"
+
+msgid "The beginning of text and literal case such as ``\\A/home/alice``"
+msgstr ""
+"``\\A/home/alice`` のようにテキストの最初でのマッチとリテラルのみのケース"
+
+msgid "The end of text and literal case such as ``\\.txt\\z``"
+msgstr "``\\.txt\\z`` のようにテキストの最後でのマッチとリテラルのみのケース"
+
+msgid "In most cases, index search is faster than sequential search."
+msgstr ""
+"多くのケースでは、逐次検索よりもインデックスを使った検索の方が高速です。"
+
+msgid ""
+"``TokenRegexp`` is based on bigram tokenize method. ``TokenRegexp`` adds the "
+"beginning of text mark (``U+FFEF``) at the begging of text and the end of "
+"text mark (``U+FFF0``) to the end of text when you index text:"
+msgstr ""
+"``TokenRegexp`` はベースはバイグラムを使います。 ``TokenRegexp`` は、インデッ"
+"クス時に、テキストの先頭にテキストの先頭であるというマーク（ ``U+FFEF`` ）を"
+"入れ、テキストの最後にテキストの最後であるというマーク（ ``U+FFF0`` ）を入れ"
+"ます。"
 
 msgid "``TokenTrigram``"
 msgstr ""
