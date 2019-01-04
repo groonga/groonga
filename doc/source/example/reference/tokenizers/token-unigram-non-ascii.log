@@ -1,6 +1,6 @@
 Execution example::
 
-  tokenize TokenUnigram "日本語の勉強" NormalizerAuto --output_pretty yes
+  tokenize TokenUnigram "日本語の勉強" NormalizerAuto
   # [
   #   [
   #     0,
