@@ -27405,6 +27405,9 @@ msgstr ""
 "入れ、テキストの最後にテキストの最後であるというマーク（ ``U+FFF0`` ）を入れ"
 "ます。"
 
+msgid "``TokenBigram`` hasn't parameter::"
+msgstr "``TokenBigram`` には、引数がありません。"
+
 msgid ""
 "``TokenDelimit`` extracts token by splitting one or more space characters "
 "(``U+0020``). For example, ``Hello World`` is tokenized to ``Hello`` and "
