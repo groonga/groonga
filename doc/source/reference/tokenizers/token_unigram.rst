@@ -26,9 +26,13 @@ Syntax
 Usage
 -----
 
-:ref:`token-bigram` uses 2 characters per
-token. ``TokenUnigram`` uses 1 character per token as below example.
+If normalizer is used, ``TokenUnigram`` uses white-space-separate like
+tokenize method for ASCII characters. ``TokenUnigram`` uses unigram
+tokenize method for non-ASCII characters.
+
+If ``TokenUnigram`` tokenize non-ASCII charactors, ``TokenUnigram`` uses
+1 character per token as below example.
 
 .. groonga-command
-.. include:: ../../example/reference/tokenizers/token-unigram.log
+.. include:: ../../example/reference/tokenizers/token-unigram-non-ascii.log
 .. tokenize TokenUnigram "100cents!!!" NormalizerAuto
