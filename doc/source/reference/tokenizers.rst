@@ -107,10 +107,7 @@ Built-in tokenizsers
 
 Here is a list of built-in tokenizers:
 
-  * ``TokenTrigram``
-  * ``TokenDelimit``
   * ``TokenDelimitNull``
-  * ``TokenMecab``
   * ``TokenRegexp``
 
 .. toctree::
@@ -118,19 +115,6 @@ Here is a list of built-in tokenizers:
    :glob:
 
    tokenizers/*
-
-.. _token-trigram:
-
-``TokenTrigram``
-^^^^^^^^^^^^^^^^
-
-``TokenTrigram`` is similar to :ref:`token-bigram`. The differences
-between them is token unit. :ref:`token-bigram` uses 2 characters per
-token. ``TokenTrigram`` uses 3 characters per token.
-
-.. groonga-command
-.. include:: ../example/reference/tokenizers/token-trigram.log
-.. tokenize TokenTrigram "10000cents!!!!!" NormalizerAuto
 
 .. _token-delimit-null:
 

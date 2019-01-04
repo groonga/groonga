@@ -27776,26 +27776,22 @@ msgstr ""
 msgid "Outputs reading of token."
 msgstr "トークンの読みがなを出力します。"
 
-#, fuzzy
 msgid ""
 "``TokenTrigram`` is similar to :ref:`token-bigram`. The differences between "
 "them is token unit."
 msgstr ""
-"``TokenBigramSplitSymbol`` は :ref:`token-bigram` と似ています。違いは記号の"
-"扱いです。"
+"``TokenTrigram`` は :ref:`token-bigram` と似ています。違いはトークンの単位で"
+"す。"
 
-#, fuzzy
 msgid "``TokenTrigram`` hasn't parameter::"
-msgstr "``TokenBigram`` には、引数がありません。"
+msgstr "``TokenTrigram`` には、引数がありません。"
 
-#, fuzzy
 msgid ""
 ":ref:`token-bigram` uses 2 characters per token. ``TokenTrigram`` uses 3 "
 "characters per token as below example."
 msgstr ""
-"``TokenTrigram`` は :ref:`token-bigram` に似ています。違いはトークンの単位で"
-"す。 :ref:`token-bigram` は各トークンが2文字ですが、 ``TokenTrigram`` は各"
-"トークンが3文字です。"
+":ref:`token-bigram` は各トークンが2文字ですが、以下の例のように "
+"``TokenTrigram`` は各トークンが3文字です。"
 
 msgid "``TokenUnigram``"
 msgstr ""
