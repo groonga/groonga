@@ -26,9 +26,13 @@ Syntax
 Usage
 -----
 
-:ref:`token-bigram` uses 2 characters per
-token. ``TokenTrigram`` uses 3 characters per token as below example.
+If normalizer is used, ``TokenTrigram`` uses white-space-separate like
+tokenize method for ASCII characters. ``TokenTrigram`` uses trigram
+tokenize method for non-ASCII characters.
+
+If ``TokenTrigram`` tokenize non-ASCII charactors, ``TokenTrigram`` uses
+3 character per token as below example.
 
 .. groonga-command
-.. include:: ../../example/reference/tokenizers/token-trigram.log
-.. tokenize TokenTrigram "10000cents!!!!!" NormalizerAuto
+.. include:: ../../example/reference/tokenizers/token-trigram-non-ascii.log
+.. tokenize TokenTrigram "日本語の勉強" NormalizerAuto
