@@ -107,7 +107,6 @@ Built-in tokenizsers
 
 Here is a list of built-in tokenizers:
 
-  * ``TokenUnigram``
   * ``TokenTrigram``
   * ``TokenDelimit``
   * ``TokenDelimitNull``
@@ -119,19 +118,6 @@ Here is a list of built-in tokenizers:
    :glob:
 
    tokenizers/*
-
-.. _token-unigram:
-
-``TokenUnigram``
-^^^^^^^^^^^^^^^^
-
-``TokenUnigram`` is similar to :ref:`token-bigram`. The differences
-between them is token unit. :ref:`token-bigram` uses 2 characters per
-token. ``TokenUnigram`` uses 1 character per token.
-
-.. groonga-command
-.. include:: ../example/reference/tokenizers/token-unigram.log
-.. tokenize TokenUnigram "100cents!!!" NormalizerAuto
 
 .. _token-trigram:
 

@@ -26964,12 +26964,6 @@ msgstr "組み込みトークナイザー"
 msgid "Here is a list of built-in tokenizers:"
 msgstr "以下は組み込みのトークナイザーのリストです。"
 
-msgid "``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``"
-msgstr ""
-
-msgid "``TokenUnigram``"
-msgstr ""
-
 msgid "``TokenTrigram``"
 msgstr ""
 
@@ -26984,59 +26978,6 @@ msgstr ""
 
 msgid "``TokenRegexp``"
 msgstr ""
-
-msgid ""
-"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` is similar to :ref:`token-"
-"bigram`. The differences between them are the followings:"
-msgstr ""
-"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` は :ref:`token-bigram` と似て"
-"います。違いは次の通りです。"
-
-msgid "Blank handling"
-msgstr "空白文字の扱い"
-
-msgid "Symbol, alphabet and digit handling"
-msgstr "記号とアルファベットと数字の扱い"
-
-msgid ""
-"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` ignores white-spaces in "
-"continuous symbols and non-ASCII characters."
-msgstr ""
-"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` は連続した記号と非ASCII文字の"
-"間の空白文字を無視します。"
-
-msgid ""
-"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` tokenizes symbols, alphabets "
-"and digits by bigram tokenize method. It means that all characters are "
-"tokenized by bigram tokenize method."
-msgstr ""
-"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` は記号、アルファベット、数字"
-"をバイグラムでトークナイズします。つまり、すべての文字をバイグラムでトークナ"
-"イズします。"
-
-msgid ""
-"You can find difference of them by ``Hello 日 本 語 ! ! ! 777`` text because "
-"it has symbols and non-ASCII characters with white spaces, alphabets and "
-"digits."
-msgstr ""
-"``Hello 日 本 語 ! ! ! 777`` というテキストを使うと違いがわかります。なぜな"
-"ら、このテキストは空白文字入りの記号と非ASCII文字だけでなく、アルファベットと"
-"数字も含んでいるからです。"
-
-msgid "Here is a result by :ref:`token-bigram` :"
-msgstr ":ref:`token-bigram` での実行結果です。"
-
-msgid "Here is a result by ``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``:"
-msgstr "``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` の実行結果です。"
-
-msgid ""
-"``TokenUnigram`` is similar to :ref:`token-bigram`. The differences between "
-"them is token unit. :ref:`token-bigram` uses 2 characters per token. "
-"``TokenUnigram`` uses 1 character per token."
-msgstr ""
-"``TokenUnigram`` は :ref:`token-bigram` に似ています。違いはトークンの単位で"
-"す。 :ref:`token-bigram` は各トークンが2文字ですが、 ``TokenUnigram`` は各"
-"トークンが1文字です。"
 
 msgid ""
 "``TokenTrigram`` is similar to :ref:`token-bigram`. The differences between "
@@ -27300,6 +27241,9 @@ msgstr ""
 "``日 本 語 ! ! !`` というテキストを使うと違いがわかります。なぜならこのテキス"
 "トは記号と非ASCII文字を両方含んでいるからです。"
 
+msgid "Here is a result by :ref:`token-bigram` :"
+msgstr ":ref:`token-bigram` での実行結果です。"
+
 msgid "Here is a result by ``TokenBigramIgnoreBlank``:"
 msgstr "``TokenBigramIgnoreBlank`` での実行結果です。"
 
@@ -27312,6 +27256,9 @@ msgid ""
 msgstr ""
 "``TokenBigramIgnoreBlankSplitSymbol`` は :ref:`token-bigram` と似ています。違"
 "いは次の通りです。"
+
+msgid "Blank handling"
+msgstr "空白文字の扱い"
 
 msgid "Symbol handling"
 msgstr "記号の扱い"
@@ -27376,9 +27323,50 @@ msgstr ""
 msgid "Here is a result by ``TokenBigramIgnoreBlankSplitSymbolAlpha``:"
 msgstr "``TokenBigramIgnoreBlankSplitSymbolAlpha`` の実行結果です。"
 
+msgid "``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``"
+msgstr ""
+
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` is similar to :ref:`token-"
+"bigram`. The differences between them are the followings:"
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` は :ref:`token-bigram` と似て"
+"います。違いは次の通りです。"
+
+msgid "Symbol, alphabet and digit handling"
+msgstr "記号とアルファベットと数字の扱い"
+
 msgid "``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` hasn't parameter::"
 msgstr ""
 "``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` には、引数がありません。"
+
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` ignores white-spaces in "
+"continuous symbols and non-ASCII characters."
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` は連続した記号と非ASCII文字の"
+"間の空白文字を無視します。"
+
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` tokenizes symbols, alphabets "
+"and digits by bigram tokenize method. It means that all characters are "
+"tokenized by bigram tokenize method."
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` は記号、アルファベット、数字"
+"をバイグラムでトークナイズします。つまり、すべての文字をバイグラムでトークナ"
+"イズします。"
+
+msgid ""
+"You can find difference of them by ``Hello 日 本 語 ! ! ! 777`` text because "
+"it has symbols and non-ASCII characters with white spaces, alphabets and "
+"digits."
+msgstr ""
+"``Hello 日 本 語 ! ! ! 777`` というテキストを使うと違いがわかります。なぜな"
+"ら、このテキストは空白文字入りの記号と非ASCII文字だけでなく、アルファベットと"
+"数字も含んでいるからです。"
+
+msgid "Here is a result by ``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``:"
+msgstr "``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` の実行結果です。"
 
 msgid "``TokenBigramSplitSymbol``"
 msgstr ""
@@ -27787,6 +27775,47 @@ msgstr ""
 
 msgid "Outputs reading of token."
 msgstr "トークンの読みがなを出力します。"
+
+#, fuzzy
+msgid ""
+"``TokenTrigram`` is similar to :ref:`token-bigram`. The differences between "
+"them is token unit."
+msgstr ""
+"``TokenBigramSplitSymbol`` は :ref:`token-bigram` と似ています。違いは記号の"
+"扱いです。"
+
+#, fuzzy
+msgid "``TokenTrigram`` hasn't parameter::"
+msgstr "``TokenBigram`` には、引数がありません。"
+
+#, fuzzy
+msgid ""
+":ref:`token-bigram` uses 2 characters per token. ``TokenTrigram`` uses 3 "
+"characters per token as below example."
+msgstr ""
+"``TokenTrigram`` は :ref:`token-bigram` に似ています。違いはトークンの単位で"
+"す。 :ref:`token-bigram` は各トークンが2文字ですが、 ``TokenTrigram`` は各"
+"トークンが3文字です。"
+
+msgid "``TokenUnigram``"
+msgstr ""
+
+msgid ""
+"``TokenUnigram`` is similar to :ref:`token-bigram`. The differences between "
+"them is token unit."
+msgstr ""
+"``TokenUnigram`` は :ref:`token-bigram` と似ています。違いはトークンの単位で"
+"す。"
+
+msgid "``TokenUnigram`` hasn't parameter::"
+msgstr "``TokenUnigram`` には、引数がありません。"
+
+msgid ""
+":ref:`token-bigram` uses 2 characters per token. ``TokenUnigram`` uses 1 "
+"character per token as below example."
+msgstr ""
+":ref:`token-bigram` は各トークンが2文字ですが、以下の例のように "
+"``TokenUnigram`` は各トークンが1文字です。"
 
 msgid "Tuning"
 msgstr "チューニング"
