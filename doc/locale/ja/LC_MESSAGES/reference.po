@@ -27422,25 +27422,22 @@ msgid "``TokenBigramSplitSymbol`` tokenizes symbols by bigram tokenize method:"
 msgstr ""
 "``TokenBigramSplitSymbol`` は記号のトークナイズ方法にバイグラムを使います。"
 
-#, fuzzy
 msgid ""
 "``TokenBigramSplitSymbolAlpha`` is similar to :ref:`token-bigram`. The "
 "difference between them is symbol and alphabet handling."
 msgstr ""
-"``TokenBigramIgnoreBlankSplitSymbolAlpha`` は :ref:`token-bigram` と似ていま"
-"す。違いは次の通りです。"
+"``TokenBigramSplitSymbolAlpha`` は :ref:`token-bigram` と似ています。違いは記"
+"号とアルファベットの扱いです。"
 
-#, fuzzy
 msgid "``TokenBigramSplitSymbolAlpha`` hasn't parameter::"
-msgstr "``TokenBigram`` には、引数がありません。"
+msgstr "``TokenBigramSplitSymbolAlpha`` には、引数がありません。"
 
-#, fuzzy
 msgid ""
 "``TokenBigramSplitSymbolAlpha`` tokenizes symbols and alphabets by bigram "
 "tokenize method:"
 msgstr ""
-"``TokenBigramIgnoreBlankSplitSymbolAlpha`` は記号とアルファベットをバイグラム"
-"でトークナイズします。"
+"``TokenBigramSplitSymbolAlpha`` は記号とアルファベットのトークナイズ方法にバ"
+"イグラムを使います。"
 
 msgid ""
 "``TokenDelimit`` extracts token by splitting one or more space characters "
