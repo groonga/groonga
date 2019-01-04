@@ -5,6 +5,8 @@
 .. groonga-command
 .. database: tokenizers
 
+.. _token-bigram-split-symbol-alpha-digit:
+
 ``TokenBigramSplitSymbolAlphaDigit``
 ====================================
 
