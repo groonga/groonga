@@ -27379,6 +27379,9 @@ msgstr "``TokenBigramIgnoreBlank`` には、引数がありません。"
 msgid "Here is a result by ``TokenBigramIgnoreBlank``:"
 msgstr "``TokenBigramIgnoreBlank`` での実行結果です。"
 
+msgid "``TokenBigramIgnoreBlankSplitSymbol`` hasn't parameter::"
+msgstr "``TokenBigramIgnoreBlankSplitSymbol`` には、引数がありません。"
+
 msgid ""
 "``TokenBigramSplitSymbol`` is similar to :ref:`token-bigram`. The difference "
 "between them is symbol handling."
