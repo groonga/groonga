@@ -956,8 +956,20 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_stem.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_stop_word.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_bigram.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_bigram_ignore_blank.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_bigram_ignore_blank_split_symbol.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_bigram_ignore_blank_split_symbol_alpha.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_bigram_ignore_blank_split_symbol_alpha_digit.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_bigram_split_symbol.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_bigram_split_symbol_alpha.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_bigram_split_symbol_alpha_digit.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_delimit.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_delimit_null.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_mecab.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_regexp.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_trigram.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_unigram.rst \
 	$(top_srcdir)/doc/source/reference/tuning.rst \
 	$(top_srcdir)/doc/source/reference/types.rst \
 	$(top_srcdir)/doc/source/reference/window_function.rst \
@@ -1963,8 +1975,20 @@ source_files_relative_from_doc_dir = \
 	source/reference/token_filters/token_filter_stem.rst \
 	source/reference/token_filters/token_filter_stop_word.rst \
 	source/reference/tokenizers.rst \
+	source/reference/tokenizers/token_bigram.rst \
+	source/reference/tokenizers/token_bigram_ignore_blank.rst \
+	source/reference/tokenizers/token_bigram_ignore_blank_split_symbol.rst \
+	source/reference/tokenizers/token_bigram_ignore_blank_split_symbol_alpha.rst \
+	source/reference/tokenizers/token_bigram_ignore_blank_split_symbol_alpha_digit.rst \
+	source/reference/tokenizers/token_bigram_split_symbol.rst \
+	source/reference/tokenizers/token_bigram_split_symbol_alpha.rst \
+	source/reference/tokenizers/token_bigram_split_symbol_alpha_digit.rst \
 	source/reference/tokenizers/token_delimit.rst \
+	source/reference/tokenizers/token_delimit_null.rst \
 	source/reference/tokenizers/token_mecab.rst \
+	source/reference/tokenizers/token_regexp.rst \
+	source/reference/tokenizers/token_trigram.rst \
+	source/reference/tokenizers/token_unigram.rst \
 	source/reference/tuning.rst \
 	source/reference/types.rst \
 	source/reference/window_function.rst \
@@ -2375,8 +2399,20 @@ html_files_relative_from_locale_dir = \
 	html/reference/token_filters/token_filter_stem.html \
 	html/reference/token_filters/token_filter_stop_word.html \
 	html/reference/tokenizers.html \
+	html/reference/tokenizers/token_bigram.html \
+	html/reference/tokenizers/token_bigram_ignore_blank.html \
+	html/reference/tokenizers/token_bigram_ignore_blank_split_symbol.html \
+	html/reference/tokenizers/token_bigram_ignore_blank_split_symbol_alpha.html \
+	html/reference/tokenizers/token_bigram_ignore_blank_split_symbol_alpha_digit.html \
+	html/reference/tokenizers/token_bigram_split_symbol.html \
+	html/reference/tokenizers/token_bigram_split_symbol_alpha.html \
+	html/reference/tokenizers/token_bigram_split_symbol_alpha_digit.html \
 	html/reference/tokenizers/token_delimit.html \
+	html/reference/tokenizers/token_delimit_null.html \
 	html/reference/tokenizers/token_mecab.html \
+	html/reference/tokenizers/token_regexp.html \
+	html/reference/tokenizers/token_trigram.html \
+	html/reference/tokenizers/token_unigram.html \
 	html/reference/tuning.html \
 	html/reference/types.html \
 	html/reference/window_function.html \
