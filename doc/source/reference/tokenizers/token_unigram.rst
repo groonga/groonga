@@ -35,4 +35,4 @@ If ``TokenUnigram`` tokenize non-ASCII charactors, ``TokenUnigram`` uses
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-unigram-non-ascii.log
-.. tokenize TokenUnigram "100cents!!!" NormalizerAuto
+.. tokenize TokenUnigram "日本語の勉強" NormalizerAuto
