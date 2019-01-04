@@ -27409,6 +27409,40 @@ msgid "``TokenBigram`` hasn't parameter::"
 msgstr "``TokenBigram`` には、引数がありません。"
 
 msgid ""
+"``TokenBigramSplitSymbol`` is similar to :ref:`token-bigram`. The difference "
+"between them is symbol handling."
+msgstr ""
+"``TokenBigramSplitSymbol`` は :ref:`token-bigram` と似ています。違いは記号の"
+"扱いです。"
+
+msgid "``TokenBigramSplitSymbol`` hasn't parameter::"
+msgstr "``TokenBigramSplitSymbol`` には、引数がありません。"
+
+msgid "``TokenBigramSplitSymbol`` tokenizes symbols by bigram tokenize method:"
+msgstr ""
+"``TokenBigramSplitSymbol`` は記号のトークナイズ方法にバイグラムを使います。"
+
+#, fuzzy
+msgid ""
+"``TokenBigramSplitSymbolAlpha`` is similar to :ref:`token-bigram`. The "
+"difference between them is symbol and alphabet handling."
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbolAlpha`` は :ref:`token-bigram` と似ていま"
+"す。違いは次の通りです。"
+
+#, fuzzy
+msgid "``TokenBigramSplitSymbolAlpha`` hasn't parameter::"
+msgstr "``TokenBigram`` には、引数がありません。"
+
+#, fuzzy
+msgid ""
+"``TokenBigramSplitSymbolAlpha`` tokenizes symbols and alphabets by bigram "
+"tokenize method:"
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbolAlpha`` は記号とアルファベットをバイグラム"
+"でトークナイズします。"
+
+msgid ""
 "``TokenDelimit`` extracts token by splitting one or more space characters "
 "(``U+0020``). For example, ``Hello World`` is tokenized to ``Hello`` and "
 "``World``."
