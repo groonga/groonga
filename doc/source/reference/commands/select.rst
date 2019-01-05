@@ -809,6 +809,7 @@ Here are available values:
 * ``ALLOW_COLUMN``
 * ``ALLOW_UPDATE``
 * ``ALLOW_LEADING_NOT``
+* ``QUERY_NO_SYNTAX_ERROR``
 * ``NONE``
 
 ``ALLOW_PRAGMA`` enables pragma at the head of ``query``. This is not
@@ -827,6 +828,10 @@ syntax. The query searches records that doesn't match
 ``WORD``. Leading NOT condition query is heavy query in many cases
 because it matches many records. So this flag is disabled by
 default. Be careful about it when you use the flag.
+
+``QUERY_NO_SYNTAX_ERROR`` enables never causes syntax error for query.
+This flag is useful when an application uses user input directly and doesn't want to show syntax error to the user and in a log.
+This flag is disabled by default.
 
 ``NONE`` is just ignores. You can use ``NONE`` for specifying no flags.
 
@@ -870,6 +875,32 @@ Here is a usage example of ``ALLOW_LEADING_NOT``.
 
 The ``select`` command searches records that don't contain ``mroonga``
 in ``content`` column value from ``Entries`` table.
+
+Here is a usage example of ``QUERY_NO_SYNTAX_ERROR``.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/query_flags_query_no_syntax_error.log
+.. table_create --name Magazine --flags TABLE_HASH_KEY --key_type ShortText
+.. column_create --table Magazine --name title --type ShortText
+.. load --table Magazine
+.. [
+.. {"_key":"http://test.jp/magazine/webplus","title":"WEB+"},
+.. {"_key":"http://test.jp/magazine/database","title":"DataBase"},
+.. ]
+.. select Magazine --output_pretty yes --match_columns title --query 'WEB +'  --query_flags ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR
+
+If you don't specify this flag, this query of example causes a syntax error as below.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/query_flags_no_query_no_syntax_error.log
+.. table_create --name Magazine --flags TABLE_HASH_KEY --key_type ShortText
+.. column_create --table Magazine --name title --type ShortText
+.. load --table Magazine
+.. [
+.. {"_key":"http://test.jp/magazine/webplus","title":"WEB+"},
+.. {"_key":"http://test.jp/magazine/database","title":"DataBase"},
+.. ]
+.. select Magazine --output_pretty yes --match_columns title --query 'WEB +'  --query_flags ALLOW_PRAGMA|ALLOW_COLUMN
 
 Here is a usage example of ``NONE``.
 
