@@ -28045,7 +28045,7 @@ msgid ""
 "``include_reading`` option as below."
 msgstr ""
 "加えて、以下のように ``include_reading`` を使って、ノイズを除去したトークンの"
-"読みがなを取得できます。"
+"読みを取得できます。"
 
 msgid ""
 "There are four optional parameters ``include_class`` , ``target_class`` , "
@@ -28077,7 +28077,7 @@ msgid "``use_reading``"
 msgstr ""
 
 msgid "Outputs reading of token."
-msgstr "トークンの読みがなを出力します。"
+msgstr "トークンの読みを出力します。"
 
 msgid "``TokenRegexp``"
 msgstr ""
