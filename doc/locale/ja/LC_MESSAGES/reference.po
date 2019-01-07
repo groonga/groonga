@@ -27994,7 +27994,7 @@ msgstr ""
 "下のように名詞のみを検索できます。"
 
 msgid ""
-"``include_class`` option outputs class and subclass in MeCab’s metadata as "
+"``include_class`` option outputs class and subclass in MeCab's metadata as "
 "below."
 msgstr ""
 "``include_class`` オプションは、以下のようにMeCabのメタデータの品詞と品詞細分"
@@ -28007,7 +28007,7 @@ msgstr ""
 "このオプションで出力する品詞と品詞細分類と ``target_class`` で不要なトークン"
 "を取り除くことができます。"
 
-msgid "``include_reading`` outputs reading in MeCab’s metadata as below."
+msgid "``include_reading`` outputs reading in MeCab's metadata as below."
 msgstr ""
 "``include_reading`` は以下のように、MeCabのメタデータの読みを出力します。"
 
@@ -28016,7 +28016,7 @@ msgstr "このオプションを使って、トークンの読みを取得でき
 
 msgid ""
 "``include_form`` outputs inflected_type, inflected_form and base_form in "
-"MeCab’s metadata as below."
+"MeCab's metadata as below."
 msgstr ""
 "``include_form`` は、以下のようにMeCabのメタデータの活用型と活用形を出力しま"
 "す。"
@@ -28057,7 +28057,7 @@ msgstr ""
 msgid "``include_class``"
 msgstr ""
 
-msgid "Outputs class and subclass in MeCab’s metadata."
+msgid "Outputs class and subclass in MeCab's metadata."
 msgstr "MeCabのメタデータの品詞と品詞細分類を出力します。"
 
 msgid "``target_class``"
@@ -28070,7 +28070,7 @@ msgid "``include_form``"
 msgstr ""
 
 msgid ""
-"Outputs inflected_type, inflected_form and base_form in MeCab’s metadata."
+"Outputs inflected_type, inflected_form and base_form in MeCab's metadata."
 msgstr "MeCabのメタデータの活用型と活用形を出力します。"
 
 msgid "``use_reading``"
