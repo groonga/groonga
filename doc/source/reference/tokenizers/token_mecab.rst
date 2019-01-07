@@ -39,17 +39,28 @@ Syntax
 
 ``TokenMecab`` has optional parameter::
 
+No options::
+
   TokenMecab
+
+Specify option::
 
   TokenMecab("include_class", true)
 
-  TokenMecab("target_class", true)
+  TokenMecab("target_class", "a_part_of_speech")
 
   TokenMecab("include_reading", true)
 
   TokenMecab("include_form", true)
 
   TokenMecab("use_reading", true)
+
+Specify multiple options::
+
+  TokenMecab("target_class", "名詞", "include_reading", true)
+
+``TokenMecab`` also specify multiple options as above.
+You can also specify mingle multiple options except above example.
 
 Usage
 -----
