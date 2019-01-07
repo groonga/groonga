@@ -28066,6 +28066,12 @@ msgstr ""
 msgid "Outputs a token of specifying a part-of-speech."
 msgstr "指定した品詞のトークンを出力します。"
 
+msgid "``include_reading``"
+msgstr ""
+
+msgid "Outputs reading in MeCab's metadata."
+msgstr "MeCabのメタデータの読みを出力します。"
+
 msgid "``include_form``"
 msgstr ""
 
@@ -28672,43 +28678,3 @@ msgstr ""
 
 msgid "``window_sum``"
 msgstr ""
-
-#~ msgid "unify_katakana_v_sounds is added."
-#~ msgstr "unify_katakana_v_sounds 追加。"
-
-#~ msgid "unify_katakana_bu_sounds is added."
-#~ msgstr "unify_katakana_bu_sounds 追加。"
-
-#~ msgid "unify_to_romaji is added."
-#~ msgstr "unify_to_romaji 追加。"
-
-#~ msgid ""
-#~ ":ref:`normalizeser-nfkc100-unify-middle-dot` is added. :ref:`normalizeser-"
-#~ "nfkc100-unify-katakana-v-sounds` is added. :ref:`normalizeser-nfkc100-"
-#~ "unify-katakana-bu-sounds` is added."
-#~ msgstr ""
-#~ ":ref:`normalizeser-nfkc100-unify-middle-dot` 追加。 :ref:`normalizeser-"
-#~ "nfkc100-unify-katakana-v-sounds` 追加。 :ref:`normalizeser-nfkc100-unify-"
-#~ "katakana-bu-sounds` 追加。"
-
-#~ msgid ""
-#~ ":ref:`token-bigram` uses 2 characters per token. ``TokenTrigram`` uses 3 "
-#~ "characters per token as below example."
-#~ msgstr ""
-#~ ":ref:`token-bigram` は各トークンが2文字ですが、以下の例のように "
-#~ "``TokenTrigram`` は各トークンが3文字です。"
-
-#~ msgid ""
-#~ "``TokenTrigram`` is similar to :ref:`token-bigram`. The differences "
-#~ "between them is token unit. :ref:`token-bigram` uses 2 characters per "
-#~ "token. ``TokenTrigram`` uses 3 characters per token."
-#~ msgstr ""
-#~ "``TokenTrigram`` は :ref:`token-bigram` に似ています。違いはトークンの単位"
-#~ "です。 :ref:`token-bigram` は各トークンが2文字ですが、 ``TokenTrigram`` は"
-#~ "各トークンが3文字です。"
-
-#~ msgid "for Unicode version 10.0."
-#~ msgstr "Unicode 10.0用"
-
-#~ msgid "unify_middle_dot is added."
-#~ msgstr "unify_middle_dot 追加。"

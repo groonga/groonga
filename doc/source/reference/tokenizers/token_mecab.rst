@@ -45,6 +45,8 @@ Syntax
 
   TokenMecab("target_class", true)
 
+  TokenMecab("include_reading", true)
+
   TokenMecab("include_form", true)
 
   TokenMecab("use_reading", true)
@@ -139,6 +141,11 @@ Outputs class and subclass in MeCab's metadata.
 """"""""""""""""
 
 Outputs a token of specifying a part-of-speech.
+
+``include_reading``
+"""""""""""""""""""
+
+Outputs reading in MeCab's metadata.
 
 ``include_form``
 """"""""""""""""
