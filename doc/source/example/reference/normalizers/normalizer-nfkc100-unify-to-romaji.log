@@ -1,0 +1,32 @@
+Execution example::
+
+  normalize   'NormalizerNFKC100("unify_to_romaji", true)'   "アァイィウゥエェオォ"   WITH_TYPES
+  # [
+  #   [
+  #     0,
+  #     1546841200.15132,
+  #     0.0001931190490722656
+  #   ],
+  #   {
+  #     "normalized": "axaixiuxuexeoxo",
+  #     "types": [
+  #       "alpha",
+  #       "alpha",
+  #       "alpha",
+  #       "alpha",
+  #       "alpha",
+  #       "alpha",
+  #       "alpha",
+  #       "alpha",
+  #       "alpha",
+  #       "alpha",
+  #       "alpha",
+  #       "alpha",
+  #       "alpha",
+  #       "alpha",
+  #       "alpha"
+  #     ],
+  #     "checks": [
+  #     ]
+  #   }
+  # ]

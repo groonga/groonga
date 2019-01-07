@@ -1,0 +1,38 @@
+Execution example::
+
+  normalize   'NormalizerNFKC100("unify_hyphen_and_prolonged_sound_mark", true)'   "-˗֊‐‑‒–⁃⁻₋− ﹣－ ー—―─━ｰ"   WITH_TYPES
+  # [
+  #   [
+  #     0,
+  #     1546840930.462605,
+  #     0.0001947879791259766
+  #   ],
+  #   {
+  #     "normalized": "----------- -- ------",
+  #     "types": [
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "others",
+  #       "symbol",
+  #       "symbol",
+  #       "others",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol"
+  #     ],
+  #     "checks": [
+  #     ]
+  #   }
+  # ]

@@ -1,0 +1,25 @@
+Execution example::
+
+  normalize   'NormalizerNFKC100("unify_middle_dot", true)'   "·ᐧ•∙⋅⸱・･"   WITH_TYPES
+  # [
+  #   [
+  #     0,
+  #     1546840999.582769,
+  #     0.0001835823059082031
+  #   ],
+  #   {
+  #     "normalized": "········",
+  #     "types": [
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol"
+  #     ],
+  #     "checks": [
+  #     ]
+  #   }
+  # ]

@@ -1,0 +1,62 @@
+Execution example::
+
+  normalize   'NormalizerNFKC100("unify_kana_voiced_sound_mark", true)'   "カガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドハバパヒビピフブプヘベペホボポ"   WITH_TYPES
+  # [
+  #   [
+  #     0,
+  #     1546840704.477687,
+  #     0.0002183914184570312
+  #   ],
+  #   {
+  #     "normalized": "カカキキククケケココササシシススセセソソタタチチツツテテトトハハハヒヒヒフフフヘヘヘホホホ",
+  #     "types": [
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana"
+  #     ],
+  #     "checks": [
+  #     ]
+  #   }
+  # ]

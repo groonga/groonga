@@ -1,0 +1,23 @@
+Execution example::
+
+  normalize   'NormalizerNFKC100("unify_katakana_v_sounds", true)'   "ヴァヴィヴヴェヴォヴ"   WITH_TYPES
+  # [
+  #   [
+  #     0,
+  #     1546841068.702912,
+  #     0.0002088546752929688
+  #   ],
+  #   {
+  #     "normalized": "バビブベボブ",
+  #     "types": [
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana"
+  #     ],
+  #     "checks": [
+  #     ]
+  #   }
+  # ]

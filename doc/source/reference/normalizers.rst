@@ -73,6 +73,12 @@ Here is a list of built-in normalizers:
   * ``NormalizerAuto``
   * ``NormalizerNFKC51``
 
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   normalizers/*
+
 .. _normalizer-auto:
 
 ``NormalizerAuto``

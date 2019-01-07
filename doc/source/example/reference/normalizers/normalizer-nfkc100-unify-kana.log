@@ -1,0 +1,24 @@
+Execution example::
+
+  normalize   'NormalizerNFKC100("unify_kana", true)'   "あイｳｪおヽヾ"   WITH_TYPES
+  # [
+  #   [
+  #     0,
+  #     1546840210.809296,
+  #     0.0002298355102539062
+  #   ],
+  #   {
+  #     "normalized": "あいうぇおゝゞ",
+  #     "types": [
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana"
+  #     ],
+  #     "checks": [
+  #     ]
+  #   }
+  # ]

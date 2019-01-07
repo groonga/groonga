@@ -1,0 +1,23 @@
+Execution example::
+
+  normalize   'NormalizerNFKC100("unify_prolonged_sound_mark", true)'   "ー—―─━ｰ"   WITH_TYPES
+  # [
+  #   [
+  #     0,
+  #     1546840846.654316,
+  #     0.0001988410949707031
+  #   ],
+  #   {
+  #     "normalized": "ーーーーーー",
+  #     "types": [
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana"
+  #     ],
+  #     "checks": [
+  #     ]
+  #   }
+  # ]

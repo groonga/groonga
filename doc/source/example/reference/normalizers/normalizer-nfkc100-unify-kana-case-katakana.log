@@ -1,0 +1,39 @@
+Execution example::
+
+  normalize   'NormalizerNFKC100("unify_kana_case", true)'   "ァアィイゥウェエォオャヤュユョヨヮワヵカヶケ"   WITH_TYPES
+  # [
+  #   [
+  #     0,
+  #     1546840469.179984,
+  #     0.0002634525299072266
+  #   ],
+  #   {
+  #     "normalized": "アアイイウウエエオオヤヤユユヨヨワワカカケケ",
+  #     "types": [
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana",
+  #       "katakana"
+  #     ],
+  #     "checks": [
+  #     ]
+  #   }
+  # ]

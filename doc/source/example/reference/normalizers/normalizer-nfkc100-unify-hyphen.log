@@ -1,0 +1,28 @@
+Execution example::
+
+  normalize   'NormalizerNFKC100("unify_hyphen", true)'   "-˗֊‐‑‒–⁃⁻₋−"   WITH_TYPES
+  # [
+  #   [
+  #     0,
+  #     1546840778.422051,
+  #     0.0001845359802246094
+  #   ],
+  #   {
+  #     "normalized": "-----------",
+  #     "types": [
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol",
+  #       "symbol"
+  #     ],
+  #     "checks": [
+  #     ]
+  #   }
+  # ]

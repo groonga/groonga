@@ -1,0 +1,62 @@
+Execution example::
+
+  normalize   'NormalizerNFKC100("unify_kana_voiced_sound_mark", true)'   "かがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどはばぱひびぴふぶぷへべぺほぼぽ"   WITH_TYPES
+  # [
+  #   [
+  #     0,
+  #     1546840544.908633,
+  #     0.0002522468566894531
+  #   ],
+  #   {
+  #     "normalized": "かかききくくけけここささししすすせせそそたたちちつつててととはははひひひふふふへへへほほほ",
+  #     "types": [
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana",
+  #       "hiragana"
+  #     ],
+  #     "checks": [
+  #     ]
+  #   }
+  # ]

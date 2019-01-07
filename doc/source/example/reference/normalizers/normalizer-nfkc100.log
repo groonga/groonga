@@ -1,0 +1,18 @@
+Execution example::
+
+  normalize NormalizerNFKC100 "©" WITH_TYPES
+  # [
+  #   [
+  #     0,
+  #     1546840077.247264,
+  #     0.0001680850982666016
+  #   ],
+  #   {
+  #     "normalized": "©",
+  #     "types": [
+  #       "emoji"
+  #     ],
+  #     "checks": [
+  #     ]
+  #   }
+  # ]
