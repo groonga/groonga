@@ -73,7 +73,7 @@ For example, you can search only a noun as below.
 .. include:: ../../example/reference/tokenizers/token-mecab-target-class-option.log
 .. tokenize 'TokenMecab("target_class", "名詞")' '彼の名前は山田さんのはずです。'
 
-``include_class`` option outputs class and subclass in MeCab’s metadata as below.
+``include_class`` option outputs class and subclass in MeCab's metadata as below.
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-mecab-include-class-option.log
@@ -81,7 +81,7 @@ For example, you can search only a noun as below.
 
 You can exclude needless token with ``target_class`` and class and sub class of this option outputs.
 
-``include_reading`` outputs reading in MeCab’s metadata as below.
+``include_reading`` outputs reading in MeCab's metadata as below.
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-mecab-include-reading-option.log
@@ -89,7 +89,7 @@ You can exclude needless token with ``target_class`` and class and sub class of 
 
 You can get reading of a token with this option.
 
-``include_form`` outputs inflected_type, inflected_form and base_form in MeCab’s metadata as below.
+``include_form`` outputs inflected_type, inflected_form and base_form in MeCab's metadata as below.
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-mecab-include-form-option.log
@@ -133,7 +133,7 @@ There are four optional parameters ``include_class`` , ``target_class`` , ``incl
 ``include_class``
 """""""""""""""""
 
-Outputs class and subclass in MeCab’s metadata.
+Outputs class and subclass in MeCab's metadata.
 
 ``target_class``
 """"""""""""""""
@@ -143,7 +143,7 @@ Outputs a token of specifying a part-of-speech.
 ``include_form``
 """"""""""""""""
 
-Outputs inflected_type, inflected_form and base_form in MeCab’s metadata.
+Outputs inflected_type, inflected_form and base_form in MeCab's metadata.
 
 ``use_reading``
 """""""""""""""
