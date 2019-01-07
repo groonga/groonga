@@ -515,6 +515,20 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/normalizers/example-load.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/example-table-create.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-auto.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-hyphen-and-prolonged-sound-mark.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-hyphen.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-kana-case-hiragana.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-kana-case-katakana.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-kana.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-katakana-bu-sounds.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-katakana-v-sounds.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-middle-dot.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-prolonged-sound-mark.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-to-romaji-complex.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-to-romaji.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-voiced-sound-mark-hiragana.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100-unify-voiced-sound-mark-katakana.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc100.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc51.log \
 	$(top_srcdir)/doc/source/example/reference/operations/prefix_rk_search/usage_register_kana.log \
 	$(top_srcdir)/doc/source/example/reference/regular_expression/anchor_z.log \
@@ -937,6 +951,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/indexing.rst \
 	$(top_srcdir)/doc/source/reference/log.rst \
 	$(top_srcdir)/doc/source/reference/normalizers.rst \
+	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc100.rst \
 	$(top_srcdir)/doc/source/reference/operations.rst \
 	$(top_srcdir)/doc/source/reference/operations/geolocation_search.rst \
 	$(top_srcdir)/doc/source/reference/operations/prefix_rk_search.rst \
@@ -1538,6 +1553,20 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/normalizers/example-load.log \
 	source/example/reference/normalizers/example-table-create.log \
 	source/example/reference/normalizers/normalizer-auto.log \
+	source/example/reference/normalizers/normalizer-nfkc100-unify-hyphen-and-prolonged-sound-mark.log \
+	source/example/reference/normalizers/normalizer-nfkc100-unify-hyphen.log \
+	source/example/reference/normalizers/normalizer-nfkc100-unify-kana-case-hiragana.log \
+	source/example/reference/normalizers/normalizer-nfkc100-unify-kana-case-katakana.log \
+	source/example/reference/normalizers/normalizer-nfkc100-unify-kana.log \
+	source/example/reference/normalizers/normalizer-nfkc100-unify-katakana-bu-sounds.log \
+	source/example/reference/normalizers/normalizer-nfkc100-unify-katakana-v-sounds.log \
+	source/example/reference/normalizers/normalizer-nfkc100-unify-middle-dot.log \
+	source/example/reference/normalizers/normalizer-nfkc100-unify-prolonged-sound-mark.log \
+	source/example/reference/normalizers/normalizer-nfkc100-unify-to-romaji-complex.log \
+	source/example/reference/normalizers/normalizer-nfkc100-unify-to-romaji.log \
+	source/example/reference/normalizers/normalizer-nfkc100-unify-voiced-sound-mark-hiragana.log \
+	source/example/reference/normalizers/normalizer-nfkc100-unify-voiced-sound-mark-katakana.log \
+	source/example/reference/normalizers/normalizer-nfkc100.log \
 	source/example/reference/normalizers/normalizer-nfkc51.log \
 	source/example/reference/operations/prefix_rk_search/usage_register_kana.log \
 	source/example/reference/regular_expression/anchor_z.log \
@@ -1960,6 +1989,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/indexing.rst \
 	source/reference/log.rst \
 	source/reference/normalizers.rst \
+	source/reference/normalizers/normalizer_nfkc100.rst \
 	source/reference/operations.rst \
 	source/reference/operations/geolocation_search.rst \
 	source/reference/operations/prefix_rk_search.rst \
@@ -2385,6 +2415,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/indexing.html \
 	html/reference/log.html \
 	html/reference/normalizers.html \
+	html/reference/normalizers/normalizer_nfkc100.html \
 	html/reference/operations.html \
 	html/reference/operations/geolocation_search.html \
 	html/reference/operations/prefix_rk_search.html \
