@@ -567,6 +567,18 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/suggest/suggest/select.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/example-table-create.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-hiragana-and-kanji.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-hyphen-and-prolonged-sound-mark.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-hyphen.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-kana-case-hiragana.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-kana-case-katakana.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-kana.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-katakana-bu-sounds.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-katakana-v-sounds.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-middle-dot.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-prolonged-sound-mark.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-to-romaji.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-voiced-sound-mark-hiragana.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-voiced-sound-mark-katakana.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-with-token-mecab.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/stem-algorithm-option.log \
@@ -974,6 +986,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_nfkc100.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_stem.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_stop_word.rst \
+	$(top_srcdir)/doc/source/reference/tokenizer/summary.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_bigram.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_bigram_ignore_blank.rst \
@@ -1605,6 +1618,18 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/suggest/suggest/select.log \
 	source/example/reference/token_filters/example-table-create.log \
 	source/example/reference/token_filters/nfkc100-hiragana-and-kanji.log \
+	source/example/reference/token_filters/nfkc100-unify-hyphen-and-prolonged-sound-mark.log \
+	source/example/reference/token_filters/nfkc100-unify-hyphen.log \
+	source/example/reference/token_filters/nfkc100-unify-kana-case-hiragana.log \
+	source/example/reference/token_filters/nfkc100-unify-kana-case-katakana.log \
+	source/example/reference/token_filters/nfkc100-unify-kana.log \
+	source/example/reference/token_filters/nfkc100-unify-katakana-bu-sounds.log \
+	source/example/reference/token_filters/nfkc100-unify-katakana-v-sounds.log \
+	source/example/reference/token_filters/nfkc100-unify-middle-dot.log \
+	source/example/reference/token_filters/nfkc100-unify-prolonged-sound-mark.log \
+	source/example/reference/token_filters/nfkc100-unify-to-romaji.log \
+	source/example/reference/token_filters/nfkc100-unify-voiced-sound-mark-hiragana.log \
+	source/example/reference/token_filters/nfkc100-unify-voiced-sound-mark-katakana.log \
 	source/example/reference/token_filters/nfkc100-with-token-mecab.log \
 	source/example/reference/token_filters/nfkc100.log \
 	source/example/reference/token_filters/stem-algorithm-option.log \
@@ -2012,6 +2037,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/token_filters/token_filter_nfkc100.rst \
 	source/reference/token_filters/token_filter_stem.rst \
 	source/reference/token_filters/token_filter_stop_word.rst \
+	source/reference/tokenizer/summary.rst \
 	source/reference/tokenizers.rst \
 	source/reference/tokenizers/token_bigram.rst \
 	source/reference/tokenizers/token_bigram_ignore_blank.rst \
@@ -2437,6 +2463,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/token_filters/token_filter_nfkc100.html \
 	html/reference/token_filters/token_filter_stem.html \
 	html/reference/token_filters/token_filter_stop_word.html \
+	html/reference/tokenizer/summary.html \
 	html/reference/tokenizers.html \
 	html/reference/tokenizers/token_bigram.html \
 	html/reference/tokenizers/token_bigram_ignore_blank.html \
