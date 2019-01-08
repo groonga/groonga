@@ -982,6 +982,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/suggest/introduction.rst \
 	$(top_srcdir)/doc/source/reference/suggest/suggestion.rst \
 	$(top_srcdir)/doc/source/reference/tables.rst \
+	$(top_srcdir)/doc/source/reference/token_filter/summary.rst \
 	$(top_srcdir)/doc/source/reference/token_filters.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_nfkc100.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_stem.rst \
@@ -2033,6 +2034,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/suggest/introduction.rst \
 	source/reference/suggest/suggestion.rst \
 	source/reference/tables.rst \
+	source/reference/token_filter/summary.rst \
 	source/reference/token_filters.rst \
 	source/reference/token_filters/token_filter_nfkc100.rst \
 	source/reference/token_filters/token_filter_stem.rst \
@@ -2459,6 +2461,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/suggest/introduction.html \
 	html/reference/suggest/suggestion.html \
 	html/reference/tables.html \
+	html/reference/token_filter/summary.html \
 	html/reference/token_filters.html \
 	html/reference/token_filters/token_filter_nfkc100.html \
 	html/reference/token_filters/token_filter_stem.html \
