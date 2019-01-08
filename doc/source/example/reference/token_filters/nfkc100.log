@@ -1,15 +1,15 @@
 Execution example::
 
-  tokenize TokenDelimit "リンゴ"   --token_filters 'TokenFilterNFKC100("unify_kana", true)'
+  tokenize TokenDelimit "㎡" --token_filters 'TokenFilterNFKC100'
   # [
   #   [
   #     0,
-  #     1545901643.191951,
-  #     0.0003898143768310547
+  #     1546906509.304568,
+  #     0.0002825260162353516
   #   ],
   #   [
   #     {
-  #       "value": "りんご",
+  #       "value": "m2",
   #       "position": 0,
   #       "force_prefix": false,
   #       "force_prefix_search": false
