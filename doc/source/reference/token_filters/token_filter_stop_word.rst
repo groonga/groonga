@@ -5,6 +5,8 @@
 .. groonga-command
 .. database: token_filters_example
 
+.. _token-filter-stop-word:
+
 ``TokenFilterStopWord``
 =======================
 
