@@ -26967,9 +26967,6 @@ msgstr ""
 "テーブルを分割したり、データベースを分割したり（シャーディング）、それぞれの"
 "キーのサイズを減らしてください。"
 
-msgid "Token filters"
-msgstr "トークンフィルター"
-
 msgid "Groonga has token filter module that some processes tokenized token."
 msgstr ""
 "Groongaにはトークナイズされたトークンに所定の処理を行うトークンフィルターモ"
@@ -27001,11 +26998,8 @@ msgstr ""
 "以下は ``TokenFilterStopWord`` トークンフィルターモジュールを使う "
 "``table_create`` の例です。"
 
-msgid "Available token filters"
-msgstr "利用可能なトークンフィルター"
-
-msgid "Here is the list of available token filters:"
-msgstr "以下は組み込みのトークンフィルターのリストです。"
+msgid "Token filters"
+msgstr "トークンフィルター"
 
 msgid "``TokenFilterNFKC100``"
 msgstr ""
