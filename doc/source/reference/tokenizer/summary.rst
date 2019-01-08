@@ -39,7 +39,7 @@ try :ref:`token-bigram` tokenizer by
 :doc:`/reference/commands/tokenize`:
 
 .. groonga-command
-.. include:: ../example/reference/tokenizers/tokenize-example.log
+.. include:: ../../example/reference/tokenizers/tokenize-example.log
 .. tokenize TokenBigram "Hello World"
 
 "tokenize" is the process that extracts zero or more tokens from a

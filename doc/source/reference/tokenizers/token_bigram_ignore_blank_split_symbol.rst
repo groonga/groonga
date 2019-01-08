@@ -41,11 +41,11 @@ has symbols and non-ASCII characters.
 Here is a result by :ref:`token-bigram` :
 
 .. groonga-command
-.. include:: ../example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol.log
+.. include:: ../../example/reference/tokenizers/token-bigram-with-white-spaces-and-symbol.log
 .. tokenize TokenBigram "日 本 語 ! ! !" NormalizerAuto
 
 Here is a result by ``TokenBigramIgnoreBlankSplitSymbol``:
 
 .. groonga-command
-.. include:: ../example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol.log
+.. include:: ../../example/reference/tokenizers/token-bigram-ignore-blank-split-symbol-with-white-spaces-and-symbol.log
 .. tokenize TokenBigramIgnoreBlankSplitSymbol "日 本 語 ! ! !" NormalizerAuto

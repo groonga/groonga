@@ -56,7 +56,7 @@ If no normalizer is used, ``TokenBigram`` uses pure bigram (all tokens
 except the last token have two characters) tokenize method:
 
 .. groonga-command
-.. include:: ../example/reference/tokenizers/token-bigram-no-normalizer.log
+.. include:: ../../example/reference/tokenizers/token-bigram-no-normalizer.log
 .. tokenize TokenBigram "Hello World"
 
 If normalizer is used, ``TokenBigram`` uses white-space-separate like
