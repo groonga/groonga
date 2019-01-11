@@ -3114,7 +3114,7 @@ buffer_merge_dump_datavec(grn_ctx *ctx,
  */
 static grn_rc
 buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
-              buffer *sb, uint8_t *sc, buffer *db, uint8_t *dc)
+             buffer *sb, uint8_t *sc, buffer *db, uint8_t *dc)
 {
   buffer_term *bt;
   uint8_t *sbp = NULL, *dcp = dc;
@@ -4730,12 +4730,16 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                "<%.*s>: "
                "<%.*s>(%u): "
                "(%u:%u): "
-               "segment:<%u>",
+               "segment:<%u>, "
+               "free:<%u>, "
+               "required:<%u>",
                name_size, name,
                (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
                tid,
                u->rid, u->sid,
-               pos);
+               pos,
+               b->header.buffer_free,
+               size);
           GRN_OBJ_FIN(ctx, &token);
           goto exit;
         }
@@ -4764,13 +4768,17 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                   "<%.*s>: "
                   "<%.*s>(%u): "
                   "(%u:%u): "
-                  "segment:<%u>: "
+                  "segment:<%u>, "
+                  "free:<%u>, "
+                  "required:<%u>, "
                   "%s",
                   name_size, name,
                   (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
                   tid,
                   u->rid, u->sid,
                   pos,
+                  b->header.buffer_free,
+                  size,
                   ctx->errbuf);
               GRN_OBJ_FIN(ctx, &token);
               goto exit;
@@ -4787,13 +4795,17 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                 "[ii][update][one] failed to flush a buffer: "
                 "<%.*s>: "
                 "<%u>:<%u>:<%u>: "
-                "token:<%.*s>: "
-                "segment:<%u>: "
+                "token:<%.*s>, "
+                "segment:<%u>, "
+                "free:<%u>, "
+                "required:<%u>: "
                 "%s",
                 name_size, name,
                 u->rid, u->sid, tid,
                 (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
                 pos,
+                b->header.buffer_free,
+                size,
                 ctx->errbuf);
             GRN_OBJ_FIN(ctx, &token);
             goto exit;
@@ -4814,12 +4826,18 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                    "<%.*s>: "
                    "<%.*s>(%u): "
                    "(%u:%u): "
-                   "segment:<%u>, new-segment:<%u>",
+                   "segment:<%u>, "
+                   "new-segment:<%u>, "
+                   "free:<%u>, "
+                   "required:<%u>",
                    name_size, name,
                    (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
                    tid,
                    u->rid, u->sid,
-                   pos, a[0]);
+                   pos,
+                   a[0],
+                   b->header.buffer_free,
+                   size);
               GRN_OBJ_FIN(ctx, &token);
             }
             goto exit;
@@ -4837,7 +4855,10 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                  "<%.*s>: "
                  "<%.*s>(%u): "
                  "(%u:%u): "
-                 "segment:<%u>, new-segment:<%u>, free:<%u>, required:<%u>",
+                 "segment:<%u>, "
+                 "new-segment:<%u>, "
+                 "free:<%u>, "
+                 "required:<%u>",
                  name_size, name,
                  (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
                  tid,
