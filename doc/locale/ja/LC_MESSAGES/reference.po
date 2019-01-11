@@ -23976,6 +23976,24 @@ msgid ""
 "mysql>`_"
 msgstr ""
 
+msgid "``NormalizerAuto`` hasn't parameter::"
+msgstr "``NormalizerAuto`` には引数はありません。::"
+
+msgid ""
+"``NormalizerAuto`` normalizes half-width katakana (such as U+FF76 HALFWIDTH "
+"KATAKANA LETTER KA) + half-width katakana voiced sound mark (U+FF9E "
+"HALFWIDTH KATAKANA VOICED SOUND MARK) to full-width katakana with voiced "
+"sound mark (U+30AC KATAKANA LETTER GA). The former is two characters but the "
+"latter is one character."
+msgstr ""
+"``NormalizerAuto`` は、半角カタカナ（例えば「ｶ」: U+FF76 HALFWIDTH KATAKANA "
+"LETTER KA） + 半角カタカナの濁点（「ﾞ」: U+FF9E HALFWIDTH KATAKANA VOICED "
+"SOUND MARK）を濁点付きの全角カタカナ（「ガ」: U+30AC KATAKANA LETTER GA）に正"
+"規化します。前者は2文字ですが、後者は1文字です。"
+
+msgid ":doc:`../commands/normalize`"
+msgstr ""
+
 msgid "``NormalizerNFKC100``"
 msgstr ""
 
@@ -24317,9 +24335,6 @@ msgstr ""
 
 msgid "This option enables normalize hiragana and katakana to romaji."
 msgstr "このオプションは、ひらがなとカタカナをローマ字に正規化します。"
-
-msgid ":doc:`../commands/normalize`"
-msgstr ""
 
 msgid "Operations"
 msgstr "操作方法"
