@@ -118,6 +118,40 @@ grn_log_level_parse(const char *string, grn_log_level *level)
   }
 }
 
+int
+grn_log_flags_parse(const char *string)
+{
+  const char *string_end = string + strlen(string);
+  int flags = GRN_LOG_TIME|GRN_LOG_MESSAGE;
+
+  if (!string) {
+    return flags;
+  }
+
+  while (string < string_end) {
+    if (*string == '|' || *string == ' ') {
+      string += 1;
+      continue;
+    }
+
+    if (strcmp(string, "+pid")) {
+      flags |= GRN_LOG_PID;
+      string += strlen(string);
+      continue;
+    } else if (strcmp(string, "+threadi-id")) {
+      flags |= GRN_LOG_THREAD_ID;
+      string += strlen(string);
+      continue;
+    } else if (strcmp(string, "+location")) {
+      flags |= GRN_LOG_LOCATION;
+      string += strlen(string);
+      continue;
+    }
+  }
+
+  return flags;
+}
+
 static void
 rotate_log_file(grn_ctx *ctx, const char *current_path)
 {

@@ -3270,6 +3270,7 @@ main(int argc, char **argv)
   const char *default_request_timeout_arg = NULL;
   const char *cache_base_path = NULL;
   const char *listen_backlog_arg = NULL;
+  const char *log_flags_arg = NULL;
   int exit_code = EXIT_SUCCESS;
   int i;
   int flags = 0;
@@ -3313,6 +3314,7 @@ main(int argc, char **argv)
     {'\0', "default-request-timeout", NULL, 0, GETOPT_OP_NONE},
     {'\0', "cache-base-path", NULL, 0, GETOPT_OP_NONE},
     {'\0', "listen-backlog", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "log-flags", NULL, 0, GETOPT_OP_NONE},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
@@ -3340,6 +3342,7 @@ main(int argc, char **argv)
   opts[30].arg = &default_request_timeout_arg;
   opts[31].arg = &cache_base_path;
   opts[32].arg = &listen_backlog_arg;
+  opts[33].arg = &log_flags_arg;
 
   reset_ready_notify_pipe();
 
@@ -3520,6 +3523,13 @@ main(int argc, char **argv)
       return EXIT_FAILURE;
     }
     grn_default_logger_set_rotate_threshold_size(value);
+  }
+
+  if (log_flags_arg) {
+    int log_flags = grn_log_flags_parse(log_flags_arg);
+    if (!log_flags) {
+      grn_default_logger_set_flags(log_flags);
+    }
   }
 
   if (query_log_path_arg) {
