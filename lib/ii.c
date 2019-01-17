@@ -2717,6 +2717,371 @@ typedef struct {
   uint32_t flags;
 } docinfo;
 
+typedef struct {
+  grn_log_level log_level;
+  const char *tag;
+  grn_ii *ii;
+  buffer *buffer;
+  uint8_t *chunk;
+  buffer_term *term;
+  uint16_t nth_term;
+  uint16_t n_terms;
+  uint32_t nth_chunk;
+  uint32_t n_chunks;
+  datavec data_vector[MAX_N_ELEMENTS + 1];
+  char name[GRN_TABLE_MAX_KEY_SIZE];
+  int name_size;
+  grn_obj inspected_term;
+  grn_obj inspected_entries;
+  uint32_t n_inspected_entries;
+} buffer_merge_dump_source_data;
+
+#define BUFFER_MERGE_DUMP_SOURCE_BATCH_SIZE 10
+
+static void
+buffer_merge_dump_source_add_entry(grn_ctx *ctx,
+                                   buffer_merge_dump_source_data *data,
+                                   grn_id record_id,
+                                   uint32_t section_id)
+{
+  if (GRN_TEXT_LEN(&(data->inspected_entries)) > 0) {
+    GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ' ');
+  }
+  grn_text_printf(ctx,
+                  &(data->inspected_entries),
+                  "(%d:%d)",
+                  record_id,
+                  section_id);
+  data->n_inspected_entries++;
+  if (data->n_inspected_entries == BUFFER_MERGE_DUMP_SOURCE_BATCH_SIZE) {
+    GRN_LOG(ctx, data->log_level,
+            "%.*s",
+            (int)GRN_TEXT_LEN(&(data->inspected_entries)),
+            GRN_TEXT_VALUE(&(data->inspected_entries)));
+    GRN_BULK_REWIND(&(data->inspected_entries));
+    data->n_inspected_entries = 0;
+  }
+}
+
+static void
+buffer_merge_dump_source_flush_entries(grn_ctx *ctx,
+                                       buffer_merge_dump_source_data *data)
+{
+  if (GRN_TEXT_LEN(&(data->inspected_entries)) == 0) {
+    return;
+  }
+
+  GRN_LOG(ctx, data->log_level,
+          "%.*s",
+          (int)GRN_TEXT_LEN(&(data->inspected_entries)),
+          GRN_TEXT_VALUE(&(data->inspected_entries)));
+  GRN_BULK_REWIND(&(data->inspected_entries));
+  data->n_inspected_entries = 0;
+}
+
+static void
+buffer_merge_dump_chunk_raw(grn_ctx *ctx,
+                            buffer_merge_dump_source_data *data,
+                            uint8_t *chunk_start,
+                            uint8_t *chunk_end)
+{
+  uint8_t *chunk_current = chunk_start;
+  int decoded_size;
+
+  if (chunk_end - chunk_current == 0) {
+    GRN_LOG(ctx, data->log_level,
+            "%s[%.*s][%d/%d] <%.*s>(%u): %u/%u: no data",
+            data->tag,
+            data->name_size, data->name,
+            data->nth_term, data->n_terms,
+            (int)GRN_TEXT_LEN(&(data->inspected_term)),
+            GRN_TEXT_VALUE(&(data->inspected_term)),
+            data->term->tid & GRN_ID_MAX,
+            data->nth_chunk, data->n_chunks);
+    return;
+  }
+
+  decoded_size = grn_p_decv(ctx,
+                            data->ii,
+                            data->term->tid & GRN_ID_MAX,
+                            chunk_current,
+                            chunk_end - chunk_current,
+                            data->data_vector,
+                            data->ii->n_elements);
+  if (decoded_size == 0) {
+    GRN_LOG(ctx, data->log_level,
+            "%s[%.*s][%d/%d] <%.*s>(%u): %u/%u: failed to decode",
+            data->tag,
+            data->name_size, data->name,
+            data->nth_term, data->n_terms,
+            (int)GRN_TEXT_LEN(&(data->inspected_term)),
+            GRN_TEXT_VALUE(&(data->inspected_term)),
+            data->term->tid & GRN_ID_MAX,
+            data->nth_chunk, data->n_chunks);
+    return;
+  }
+
+  {
+    uint32_t n_documents;
+    uint32_t *record_id_diffs;
+    uint32_t *section_id_diffs = NULL;
+    uint32_t *n_terms_list;
+    uint32_t *weights;
+    uint32_t *positions;
+
+    {
+      int i = 0;
+      n_documents = data->data_vector[i].data_size;
+      record_id_diffs = data->data_vector[i++].data;
+      if (data->ii->header->flags & GRN_OBJ_WITH_SECTION) {
+        section_id_diffs = data->data_vector[i++].data;
+      }
+      n_terms_list = data->data_vector[i++].data;
+      if (data->ii->header->flags & GRN_OBJ_WITH_WEIGHT) {
+        weights = data->data_vector[i++].data;
+      }
+      if (data->ii->header->flags & GRN_OBJ_WITH_POSITION) {
+        positions = data->data_vector[i++].data;
+      }
+    }
+
+    {
+      uint32_t i;
+      grn_id record_id = GRN_ID_NIL;
+      uint32_t section_id = 0;
+
+      for (i = 0; i < n_documents; i++) {
+        uint32_t record_id_diff = record_id_diffs[i];
+        uint32_t n_terms;
+        uint32_t weight;
+
+        record_id += record_id_diff;
+        if (data->ii->header->flags & GRN_OBJ_WITH_SECTION) {
+          if (record_id_diff > 0) {
+            section_id = 0;
+          }
+          section_id += 1 + section_id_diffs[i];
+        } else {
+          section_id = 1;
+        }
+        n_terms = 1 + n_terms_list[i];
+        if (data->ii->header->flags & GRN_OBJ_WITH_WEIGHT) {
+          weight = weights[i];
+        } else {
+          weight = 0;
+        }
+
+        buffer_merge_dump_source_add_entry(ctx, data, record_id, section_id);
+      }
+      buffer_merge_dump_source_flush_entries(ctx, data);
+    }
+  }
+}
+
+static void
+buffer_merge_dump_chunk(grn_ctx *ctx,
+                        buffer_merge_dump_source_data *data)
+{
+  uint8_t *chunk_start = data->chunk + data->term->pos_in_chunk;
+  uint8_t *chunk_end = chunk_start + data->term->size_in_chunk;
+
+  if (data->term->tid & CHUNK_SPLIT) {
+    uint8_t *chunk_current = chunk_start;
+
+    GRN_B_DEC(data->n_chunks, chunk_current);
+    GRN_LOG(ctx, data->log_level,
+            "%s[%.*s][%d/%d] <%.*s>(%u): chunk: %u",
+            data->tag,
+            data->name_size, data->name,
+            data->nth_term, data->n_terms,
+            (int)GRN_TEXT_LEN(&(data->inspected_term)),
+            GRN_TEXT_VALUE(&(data->inspected_term)),
+            data->term->tid & GRN_ID_MAX,
+            data->n_chunks);
+
+    for (data->nth_chunk = 0;
+         data->nth_chunk < data->n_chunks;
+         data->nth_chunk++) {
+      chunk_info info;
+
+      if (chunk_current < chunk_end) {
+        GRN_LOG(ctx, data->log_level,
+                "%s[%.*s][%d/%d] <%.*s>(%u): chunk: %u/%u: no data",
+                data->tag,
+                data->name_size, data->name,
+                data->nth_term, data->n_terms,
+                (int)GRN_TEXT_LEN(&(data->inspected_term)),
+                GRN_TEXT_VALUE(&(data->inspected_term)),
+                data->term->tid & GRN_ID_MAX,
+                data->nth_chunk, data->n_chunks);
+        return;
+      }
+
+      GRN_B_DEC(info.segno, chunk_current);
+      GRN_B_DEC(info.size, chunk_current);
+      GRN_B_DEC(info.dgap, chunk_current);
+
+      GRN_LOG(ctx, data->log_level,
+              "%s[%.*s][%d/%d] <%.*s>(%u): chunk: %u/%u: "
+              "segment:<%d>, size:<%d>, gap:<%d>",
+              data->tag,
+              data->name_size, data->name,
+              data->nth_term, data->n_terms,
+              (int)GRN_TEXT_LEN(&(data->inspected_term)),
+              GRN_TEXT_VALUE(&(data->inspected_term)),
+              data->term->tid & GRN_ID_MAX,
+              data->nth_chunk, data->n_chunks,
+              info.segno,
+              info.size,
+              info.dgap);
+      if (info.size == 0) {
+        continue;
+      }
+      {
+        grn_io_win iw;
+        uint8_t *sub_chunk;
+        sub_chunk = WIN_MAP(data->ii->chunk,
+                            ctx,
+                            &iw,
+                            info.segno,
+                            0,
+                            info.size,
+                            grn_io_rdonly);
+        if (!sub_chunk) {
+          GRN_LOG(ctx, data->log_level,
+                  "%s[%.*s][%d/%d] <%.*s>(%u): chunk: "
+                  "%u/%u: failed to open sub chunk",
+                  data->tag,
+                  data->name_size, data->name,
+                  data->nth_term, data->n_terms,
+                  (int)GRN_TEXT_LEN(&(data->inspected_term)),
+                  GRN_TEXT_VALUE(&(data->inspected_term)),
+                  data->term->tid & GRN_ID_MAX,
+                  data->nth_chunk, data->n_chunks);
+          continue;
+        }
+        buffer_merge_dump_chunk_raw(ctx,
+                                    data,
+                                    sub_chunk,
+                                    sub_chunk + info.size);
+        grn_io_win_unmap(&iw);
+      }
+    }
+  } else {
+    data->nth_chunk = 0;
+    data->n_chunks = 0;
+    GRN_LOG(ctx, data->log_level,
+            "%s[%.*s][%d/%d] <%.*s>(%u): chunk: %u",
+            data->tag,
+            data->name_size, data->name,
+            data->nth_term, data->n_terms,
+            (int)GRN_TEXT_LEN(&(data->inspected_term)),
+            GRN_TEXT_VALUE(&(data->inspected_term)),
+            data->term->tid & GRN_ID_MAX,
+            data->n_chunks);
+    buffer_merge_dump_chunk_raw(ctx,
+                                data,
+                                chunk_start,
+                                chunk_end);
+  }
+}
+
+static void
+buffer_merge_dump_source(grn_ctx *ctx,
+                         grn_ii *ii,
+                         buffer *buffer,
+                         uint8_t *chunk,
+                         grn_log_level log_level)
+{
+  buffer_merge_dump_source_data data;
+
+  data.log_level = log_level;
+  data.tag = "[ii][buffer][merge][source]";
+  data.ii = ii;
+  data.buffer = buffer;
+  data.chunk = chunk;
+  data.term = NULL;
+  data.nth_term = 0;
+  data.n_terms = buffer->header.nterms;
+  data.nth_chunk = 0;
+  data.n_chunks = 0;
+  datavec_init(ctx, data.data_vector, ii->n_elements, 0, 0);
+  if (ii->header->flags & GRN_OBJ_WITH_POSITION) {
+    data.data_vector[ii->n_elements - 1].flags = ODD;
+  }
+  {
+    DEFINE_NAME(ii);
+    grn_memcpy(data.name, name, name_size);
+    data.name_size = name_size;
+  }
+  GRN_TEXT_INIT(&(data.inspected_term), 0);
+  GRN_TEXT_INIT(&(data.inspected_entries), 0);
+  data.n_inspected_entries = 0;
+
+  GRN_LOG(ctx, data->log_level,
+          "%s[%.*s] %u",
+          data.tag,
+          data.name_size, data.name,
+          data.n_terms);
+  for (data.nth_term = 0; data.nth_term < data.n_terms; data.nth_term++) {
+    uint16_t position;
+
+    data.term = buffer->terms + data.nth_term;
+    if (data.term->tid == 0) {
+      GRN_LOG(ctx, data->log_level,
+              "%s[%.*s][%d] void",
+              data.tag,
+              data.name_size, data.name,
+              data.nth_term);
+      continue;
+    }
+
+    GRN_BULK_REWIND(&(data.inspected_term));
+    grn_ii_get_term(ctx,
+                    ii,
+                    data.term->tid & GRN_ID_MAX,
+                    &(data.inspected_term));
+    GRN_LOG(ctx, data->log_level,
+            "%s[%.*s][%d/%d] <%.*s>(%u): chunk:<%u:%u>, buffer:<%u:%u>",
+            data.tag,
+            data.name_size, data.name,
+            data.nth_term, data.n_terms,
+            (int)GRN_TEXT_LEN(&(data.inspected_term)),
+            GRN_TEXT_VALUE(&(data.inspected_term)),
+            data.term->tid & GRN_ID_MAX,
+            data.term->pos_in_chunk, data.term->size_in_chunk,
+            data.term->pos_in_buffer, data.term->size_in_buffer);
+
+    position = data.term->pos_in_buffer;
+    while (position > 0) {
+      buffer_rec *record = BUFFER_REC_AT(buffer, position);
+      uint8_t *record_data = GRN_NEXT_ADDR(record);
+      grn_id record_id;
+      grn_id section_id = 1;
+      uint32_t weight = 0;
+
+      GRN_B_DEC(record_id, record_data);
+      if (ii->header->flags & GRN_OBJ_WITH_SECTION) {
+        GRN_B_DEC(section_id, record_data);
+      }
+      if (ii->header->flags & GRN_OBJ_WITH_WEIGHT) {
+        GRN_B_DEC(weight, record_data);
+      }
+      buffer_merge_dump_source_add_entry(ctx, &data, record_id, section_id);
+      position = record->step;
+    }
+    buffer_merge_dump_source_flush_entries(ctx, &data);
+
+    if (chunk && data.term->size_in_chunk > 0) {
+      buffer_merge_dump_chunk(ctx, &data);
+    }
+  }
+
+  datavec_fin(ctx, data.data_vector);
+  GRN_OBJ_FIN(ctx, &(data.inspected_term));
+  GRN_OBJ_FIN(ctx, &(data.inspected_entries));
+}
+
 #define GETNEXTC() do {\
   if (sdf) {\
     uint32_t dgap = *srp++;\
@@ -2765,6 +3130,7 @@ typedef struct {
              bt->tid,\
              lid.rid, lid.sid, cid.rid, cid.sid);\
         GRN_OBJ_FIN(ctx, &term);\
+        buffer_merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
         break;\
       }\
       PUTNEXT_(cid);\
@@ -2788,6 +3154,7 @@ typedef struct {
            bt->tid,\
            cid.rid, cid.sid);\
       GRN_OBJ_FIN(ctx, &term);\
+      buffer_merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
       break;\
     }\
   }\
@@ -2819,6 +3186,7 @@ typedef struct {
            lrid, lsid,\
            bid.rid, bid.sid);\
       GRN_OBJ_FIN(ctx, &term);\
+      buffer_merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
       break;\
     }\
     nextb = br->step;\
@@ -2844,6 +3212,8 @@ typedef struct {
              bt->tid,\
              lid.rid, lid.sid,\
              bid.rid, bid.sid);\
+        GRN_OBJ_FIN(ctx, &term);\
+        buffer_merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
         break;\
       }\
       if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {\
