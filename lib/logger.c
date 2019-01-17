@@ -138,7 +138,7 @@ grn_log_flags_parse(const char *string)
       flags |= GRN_LOG_PID;
       string += strlen(string);
       continue;
-    } else if (strcmp(string, "+threadi-id")) {
+    } else if (strcmp(string, "+thread-id")) {
       flags |= GRN_LOG_THREAD_ID;
       string += strlen(string);
       continue;
