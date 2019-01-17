@@ -232,7 +232,7 @@ grn_ii_cursor_set_min_enable_get(void)
 }
 
 static void
-grn_ii_get_token(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_obj *token)
+grn_ii_get_term(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_obj *term)
 {
    char key[GRN_TABLE_MAX_KEY_SIZE];
    int key_size;
@@ -245,7 +245,7 @@ grn_ii_get_token(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_obj *token)
                   GRN_OBJ_DO_SHALLOW_COPY,
                   ii->lexicon->header.domain);
      GRN_TEXT_SET(ctx, &key_buf, key, key_size);
-     grn_inspect(ctx, token, &key_buf);
+     grn_inspect(ctx, term, &key_buf);
      GRN_OBJ_FIN(ctx, &key_buf);
    }
 }
@@ -2135,18 +2135,18 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
     }
     GRN_ASSERT(dp == dpe);
     if (dp != dpe) {
-      grn_obj token;
+      grn_obj term;
       DEFINE_NAME(ii);
-      GRN_TEXT_INIT(&token, 0);
+      GRN_TEXT_INIT(&term, 0);
       if (id != GRN_ID_NIL) {
-        grn_ii_get_token(ctx, ii, id, &token);
+        grn_ii_get_term(ctx, ii, id, &term);
       }
       if (df == 0) {
         GRN_LOG(ctx, GRN_LOG_WARNING,
                 "[ii][p-decv] encoded data frequency is unexpectedly 0: "
                 "<%.*s>: <%.*s>(%u): <%u(%u)>",
                 name_size, name,
-                (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                 id,
                 data_size,
                 (uint32_t)(dp - data));
@@ -2155,13 +2155,13 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
                 "[ii][p-decv] failed to decode: "
                 "<%.*s>: <%.*s>(%u): <%u>: <%u(%u)>",
                 name_size, name,
-                (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                 id,
                 data_size,
                 df,
                 (uint32_t)(dp - data));
       }
-      GRN_OBJ_FIN(ctx, &token);
+      GRN_OBJ_FIN(ctx, &term);
     }
   }
   return rp - dv[0].data;
@@ -2753,18 +2753,18 @@ typedef struct {
   if (cid.rid) {\
     if (cid.tf) {\
       if (lid.rid > cid.rid || (lid.rid == cid.rid && lid.sid >= cid.sid)) {\
-        grn_obj token;\
+        grn_obj term;\
         DEFINE_NAME(ii);\
-        GRN_TEXT_INIT(&token, 0);\
-        grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);\
+        GRN_TEXT_INIT(&term, 0);\
+        grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);\
         CRIT(GRN_FILE_CORRUPT,\
              "[ii][broken] posting in list is larger than posting in chunk: "\
              "<%.*s>: <%.*s>(%u): (%u:%u) -> (%u:%u)",\
              name_size, name,\
-             (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),\
+             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),\
              bt->tid,\
              lid.rid, lid.sid, cid.rid, cid.sid);\
-        GRN_OBJ_FIN(ctx, &token);\
+        GRN_OBJ_FIN(ctx, &term);\
         break;\
       }\
       PUTNEXT_(cid);\
@@ -2776,18 +2776,18 @@ typedef struct {
         }\
       }\
     } else {\
-      grn_obj token;\
+      grn_obj term;\
       DEFINE_NAME(ii);\
-      GRN_TEXT_INIT(&token, 0);\
-      grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);\
+      GRN_TEXT_INIT(&term, 0);\
+      grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);\
       CRIT(GRN_FILE_CORRUPT,\
            "[ii][broken] invalid posting in chunk: "\
            "<%.*s>: <%.*s>(%u): (%u:%u)",\
            name_size, name,\
-           (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),\
+           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),\
            bt->tid,\
            cid.rid, cid.sid);\
-      GRN_OBJ_FIN(ctx, &token);\
+      GRN_OBJ_FIN(ctx, &term);\
       break;\
     }\
   }\
@@ -2806,19 +2806,19 @@ typedef struct {
       bid.sid = 1;\
     }\
     if (lrid > bid.rid || (lrid == bid.rid && lsid >= bid.sid)) {\
-      grn_obj token;\
+      grn_obj term;\
       DEFINE_NAME(ii);\
-      GRN_TEXT_INIT(&token, 0);\
-      grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);\
+      GRN_TEXT_INIT(&term, 0);\
+      grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);\
       CRIT(GRN_FILE_CORRUPT,\
            "[ii][broken] postings in block aren't sorted: "\
            "<%.*s>: <%.*s>(%u): (%d:%d) -> (%d:%d)",\
            name_size, name,\
-           (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),\
+           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),\
            bt->tid,\
            lrid, lsid,\
            bid.rid, bid.sid);\
-      GRN_OBJ_FIN(ctx, &token);\
+      GRN_OBJ_FIN(ctx, &term);\
       break;\
     }\
     nextb = br->step;\
@@ -2832,15 +2832,15 @@ typedef struct {
     GRN_B_DEC(bid.tf, sbp);\
     if (bid.tf > 0) {\
       if (lid.rid > bid.rid || (lid.rid == bid.rid && lid.sid >= bid.sid)) {\
-        grn_obj token;\
+        grn_obj term;\
         DEFINE_NAME(ii);\
-        GRN_TEXT_INIT(&token, 0);\
-        grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);\
+        GRN_TEXT_INIT(&term, 0);\
+        grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);\
         CRIT(GRN_FILE_CORRUPT,\
              "[ii][broken] posting in list is larger than posting in buffer: "\
              "<%.*s>: <%.*s>(%u): (%u:%u) -> (%u:%u)",\
              name_size, name,\
-             (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),\
+             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),\
              bt->tid,\
              lid.rid, lid.sid,\
              bid.rid, bid.sid);\
@@ -2994,21 +2994,21 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
     datavec_fin(ctx, rdv);
     grn_io_win_unmap(&sw);
   } else {
-    grn_obj token;
+    grn_obj term;
     DEFINE_NAME(ii);
-    GRN_TEXT_INIT(&token, 0);
-    grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);
+    GRN_TEXT_INIT(&term, 0);
+    grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
     MERR("[ii][chunk][merge] failed to allocate a source chunk: "
          "<%.*s>: "
          "<%.*s>(%u): "
          "record:<%u>, segment:<%u>, size:<%u>",
          name_size, name,
-         (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+         (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
          bt->tid,
          rid,
          segno,
          size);
-    GRN_OBJ_FIN(ctx, &token);
+    GRN_OBJ_FIN(ctx, &term);
   }
   if (ctx->rc == GRN_SUCCESS) {
     int j = 0;
@@ -3039,21 +3039,21 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
       }
       GRN_FREE(enc);
     } else {
-      grn_obj token;
+      grn_obj term;
       DEFINE_NAME(ii);
-      GRN_TEXT_INIT(&token, 0);
-      grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);
+      GRN_TEXT_INIT(&term, 0);
+      grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
       MERR("[ii][chunk][merge] failed to allocate a encode buffer: "
            "<%.*s>: "
            "<%.*s>(%u): "
            "record:<%u>, segment:<%u>, size:<%u>",
            name_size, name,
-           (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
            bt->tid,
            rid,
            segno,
            size);
-      GRN_OBJ_FIN(ctx, &token);
+      GRN_OBJ_FIN(ctx, &term);
     }
   }
   *balance += (ndf - sdf);
@@ -3179,10 +3179,10 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           datavec_fin(ctx, dv);
           datavec_fin(ctx, rdv);
           {
-            grn_obj token;
+            grn_obj term;
             DEFINE_NAME(ii);
-            GRN_TEXT_INIT(&token, 0);
-            grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);
+            GRN_TEXT_INIT(&term, 0);
+            grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
             MERR("[ii][buffer][merge] failed to allocate chunk info: "
                  "<%.*s>: "
                  "<%.*s>(%u): "
@@ -3191,13 +3191,13 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                  "unit-size:<%" GRN_FMT_SIZE ">, "
                  "total-size:<%" GRN_FMT_SIZE ">",
                  name_size, name,
-                 (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                  bt->tid,
                  seg,
                  nchunks,
                  unitsize,
                  totalsize);
-            GRN_OBJ_FIN(ctx, &token);
+            GRN_OBJ_FIN(ctx, &term);
           }
           return ctx->rc;
         }
@@ -3214,10 +3214,10 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
               datavec_fin(ctx, dv);
               datavec_fin(ctx, rdv);
               {
-                grn_obj token;
+                grn_obj term;
                 DEFINE_NAME(ii);
-                GRN_TEXT_INIT(&token, 0);
-                grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);
+                GRN_TEXT_INIT(&term, 0);
+                grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
                 ERR(ctx->rc,
                     "[ii][buffer][merge] failed to merge chunk: "
                     "<%.*s>: "
@@ -3225,11 +3225,11 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                     "chunk:<%u>, "
                     "n-chunks:<%u>",
                     name_size, name,
-                    (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                    (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                     bt->tid,
                     i,
                     nchunks);
-                GRN_OBJ_FIN(ctx, &token);
+                GRN_OBJ_FIN(ctx, &term);
               }
               return ctx->rc;
             }
@@ -3261,10 +3261,10 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           datavec_fin(ctx, dv);
           datavec_fin(ctx, rdv);
           {
-            grn_obj token;
+            grn_obj term;
             DEFINE_NAME(ii);
-            GRN_TEXT_INIT(&token, 0);
-            grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);
+            GRN_TEXT_INIT(&term, 0);
+            grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
             ERR(ctx->rc,
                 "[ii][buffer][merge] failed to reset data vector: "
                 "<%.*s>: "
@@ -3272,11 +3272,11 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                 "unit-size:<%" GRN_FMT_SIZE ">, "
                 "total-size:<%" GRN_FMT_SIZE ">",
                 name_size, name,
-                (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                 bt->tid,
                 (size_t)(sdf + S_SEGMENT),
                 size);
-            GRN_OBJ_FIN(ctx, &token);
+            GRN_OBJ_FIN(ctx, &term);
           }
           return ctx->rc;
         }
@@ -3297,18 +3297,18 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
       datavec_fin(ctx, dv);
       datavec_fin(ctx, rdv);
       {
-        grn_obj token;
+        grn_obj term;
         DEFINE_NAME(ii);
-        GRN_TEXT_INIT(&token, 0);
-        grn_ii_get_token(ctx, ii, bt->tid & GRN_ID_MAX, &token);
+        GRN_TEXT_INIT(&term, 0);
+        grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
         ERR(ctx->rc,
             "[ii][buffer][merge] failed to merge chunk: "
             "<%.*s>: "
             "<%.*s>(%u)",
             name_size, name,
-            (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
             bt->tid);
-        GRN_OBJ_FIN(ctx, &token);
+        GRN_OBJ_FIN(ctx, &term);
       }
       return ctx->rc;
     }
@@ -4686,35 +4686,35 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   if (!u->tf || !u->sid) { return grn_ii_delete_one(ctx, ii, tid, u, h); }
   if (u->sid > ii->header->smax) { ii->header->smax = u->sid; }
   if (!(a = array_get(ctx, ii, tid))) {
-    grn_obj token;
+    grn_obj term;
     DEFINE_NAME(ii);
-    GRN_TEXT_INIT(&token, 0);
-    grn_ii_get_token(ctx, ii, tid, &token);
+    GRN_TEXT_INIT(&term, 0);
+    grn_ii_get_term(ctx, ii, tid, &term);
     MERR("[ii][update][one] failed to allocate an array: "
          "<%.*s>: "
          "<%.*s>(%u): "
          "(%u:%u)",
          name_size, name,
-         (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+         (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
          tid,
          u->rid, u->sid);
-    GRN_OBJ_FIN(ctx, &token);
+    GRN_OBJ_FIN(ctx, &term);
     return ctx->rc;
   }
   if (!(bs = encode_rec(ctx, ii, u, &size, 0))) {
-    grn_obj token;
+    grn_obj term;
     DEFINE_NAME(ii);
-    GRN_TEXT_INIT(&token, 0);
-    grn_ii_get_token(ctx, ii, tid, &token);
+    GRN_TEXT_INIT(&term, 0);
+    grn_ii_get_term(ctx, ii, tid, &term);
     MERR("[ii][update][one] failed to encode a record: "
          "<%.*s>: "
          "<%.*s>(%u): "
          "(%u:%u)",
          name_size, name,
-         (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+         (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
          tid,
          u->rid, u->sid);
-    GRN_OBJ_FIN(ctx, &token);
+    GRN_OBJ_FIN(ctx, &term);
     goto exit;
   }
   for (;;) {
@@ -4722,10 +4722,10 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
       if (!(a[0] & 1)) {
         pos = a[0];
         if ((pseg = buffer_open(ctx, ii, pos, &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
-          grn_obj token;
+          grn_obj term;
           DEFINE_NAME(ii);
-          GRN_TEXT_INIT(&token, 0);
-          grn_ii_get_token(ctx, ii, tid, &token);
+          GRN_TEXT_INIT(&term, 0);
+          grn_ii_get_term(ctx, ii, tid, &term);
           MERR("[ii][update][one] failed to allocate a buffer: "
                "<%.*s>: "
                "<%.*s>(%u): "
@@ -4734,13 +4734,13 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                "free:<%u>, "
                "required:<%u>",
                name_size, name,
-               (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+               (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                tid,
                u->rid, u->sid,
                pos,
                b->header.buffer_free,
                size);
-          GRN_OBJ_FIN(ctx, &token);
+          GRN_OBJ_FIN(ctx, &term);
           goto exit;
         }
         if (b->header.buffer_free < size) {
@@ -4759,10 +4759,10 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                     ii->header->total_chunk_size >> 10);
             buffer_split(ctx, ii, LSEG(pos), h);
             if (ctx->rc != GRN_SUCCESS) {
-              grn_obj token;
+              grn_obj term;
               DEFINE_NAME(ii);
-              GRN_TEXT_INIT(&token, 0);
-              grn_ii_get_token(ctx, ii, tid, &token);
+              GRN_TEXT_INIT(&term, 0);
+              grn_ii_get_term(ctx, ii, tid, &term);
               ERR(ctx->rc,
                   "[ii][update][one] failed to split a buffer: "
                   "<%.*s>: "
@@ -4773,41 +4773,41 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                   "required:<%u>, "
                   "%s",
                   name_size, name,
-                  (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                  (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                   tid,
                   u->rid, u->sid,
                   pos,
                   b->header.buffer_free,
                   size,
                   ctx->errbuf);
-              GRN_OBJ_FIN(ctx, &token);
+              GRN_OBJ_FIN(ctx, &term);
               goto exit;
             }
             continue;
           }
           buffer_flush(ctx, ii, LSEG(pos), h);
           if (ctx->rc != GRN_SUCCESS) {
-            grn_obj token;
+            grn_obj term;
             DEFINE_NAME(ii);
-            GRN_TEXT_INIT(&token, 0);
-            grn_ii_get_token(ctx, ii, tid, &token);
+            GRN_TEXT_INIT(&term, 0);
+            grn_ii_get_term(ctx, ii, tid, &term);
             ERR(ctx->rc,
                 "[ii][update][one] failed to flush a buffer: "
                 "<%.*s>: "
                 "<%u>:<%u>:<%u>: "
-                "token:<%.*s>, "
+                "term:<%.*s>, "
                 "segment:<%u>, "
                 "free:<%u>, "
                 "required:<%u>: "
                 "%s",
                 name_size, name,
                 u->rid, u->sid, tid,
-                (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                 pos,
                 b->header.buffer_free,
                 size,
                 ctx->errbuf);
-            GRN_OBJ_FIN(ctx, &token);
+            GRN_OBJ_FIN(ctx, &term);
             goto exit;
           }
           if (a[0] != pos) {
@@ -4818,10 +4818,10 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
           if ((pseg = buffer_open(ctx, ii, pos, &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
             GRN_LOG(ctx, GRN_LOG_CRIT, "buffer not found a[0]=%d", a[0]);
             {
-              grn_obj token;
+              grn_obj term;
               DEFINE_NAME(ii);
-              GRN_TEXT_INIT(&token, 0);
-              grn_ii_get_token(ctx, ii, tid, &token);
+              GRN_TEXT_INIT(&term, 0);
+              grn_ii_get_term(ctx, ii, tid, &term);
               MERR("[ii][update][one] failed to reallocate a buffer: "
                    "<%.*s>: "
                    "<%.*s>(%u): "
@@ -4831,14 +4831,14 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                    "free:<%u>, "
                    "required:<%u>",
                    name_size, name,
-                   (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                   (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                    tid,
                    u->rid, u->sid,
                    pos,
                    a[0],
                    b->header.buffer_free,
                    size);
-              GRN_OBJ_FIN(ctx, &token);
+              GRN_OBJ_FIN(ctx, &term);
             }
             goto exit;
           }
@@ -4847,10 +4847,10 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                   a[0], LSEG(a[0]), b, bfb, b->header.buffer_free,
                   b->header.nterms, b->header.nterms_void);
           if (b->header.buffer_free < size) {
-            grn_obj token;
+            grn_obj term;
             DEFINE_NAME(ii);
-            GRN_TEXT_INIT(&token, 0);
-            grn_ii_get_token(ctx, ii, tid, &token);
+            GRN_TEXT_INIT(&term, 0);
+            grn_ii_get_term(ctx, ii, tid, &term);
             MERR("[ii][update][one] buffer is full: "
                  "<%.*s>: "
                  "<%.*s>(%u): "
@@ -4860,11 +4860,11 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                  "free:<%u>, "
                  "required:<%u>",
                  name_size, name,
-                 (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                  tid,
                  u->rid, u->sid,
                  pos, a[0], b->header.buffer_free, size);
-            GRN_OBJ_FIN(ctx, &token);
+            GRN_OBJ_FIN(ctx, &term);
             buffer_close(ctx, ii, pseg);
             /* todo: direct merge */
             goto exit;
@@ -4892,40 +4892,40 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
         if (u2.rid != u->rid || u2.sid != u->sid) {
           uint8_t *bs2 = encode_rec(ctx, ii, &u2, &size2, 0);
           if (!bs2) {
-            grn_obj token;
+            grn_obj term;
             DEFINE_NAME(ii);
-            GRN_TEXT_INIT(&token, 0);
-            grn_ii_get_token(ctx, ii, tid, &token);
+            GRN_TEXT_INIT(&term, 0);
+            grn_ii_get_term(ctx, ii, tid, &term);
             MERR("[ii][update][one] failed to encode a record2: "
                  "<%.*s>: "
                  "<%.*s>(%u): "
                  "(%u:%u)",
                  name_size, name,
-                 (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                  tid,
                  u2.rid, u2.sid);
-            GRN_OBJ_FIN(ctx, &token);
+            GRN_OBJ_FIN(ctx, &term);
             goto exit;
           }
           pseg = buffer_new(ctx, ii, size + size2, &pos, &bt, &br, &b, tid, h);
           if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
             GRN_FREE(bs2);
             {
-              grn_obj token;
+              grn_obj term;
               DEFINE_NAME(ii);
-              GRN_TEXT_INIT(&token, 0);
-              grn_ii_get_token(ctx, ii, tid, &token);
+              GRN_TEXT_INIT(&term, 0);
+              grn_ii_get_term(ctx, ii, tid, &term);
               MERR("[ii][update][one] failed to create a buffer2: "
                    "<%.*s>: "
                    "<%.*s>(%u): "
                    "(%u:%u): "
                    "size:<%u>",
                    name_size, name,
-                   (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                   (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                    tid,
                    u2.rid, u2.sid,
                    size + size2);
-              GRN_OBJ_FIN(ctx, &token);
+              GRN_OBJ_FIN(ctx, &term);
             }
             goto exit;
           }
@@ -4939,21 +4939,21 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             GRN_FREE(bs2);
             buffer_close(ctx, ii, pseg);
             {
-              grn_obj token;
+              grn_obj term;
               DEFINE_NAME(ii);
-              GRN_TEXT_INIT(&token, 0);
-              grn_ii_get_token(ctx, ii, tid, &token);
+              GRN_TEXT_INIT(&term, 0);
+              grn_ii_get_term(ctx, ii, tid, &term);
               MERR("[ii][update][one] failed to put to buffer: "
                    "<%.*s>: "
                    "<%.*s>(%u): "
                    "(%u:%u): "
                    "%s",
                    name_size, name,
-                   (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                   (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                    tid,
                    u2.rid, u2.sid,
                    ctx->errbuf);
-              GRN_OBJ_FIN(ctx, &token);
+              GRN_OBJ_FIN(ctx, &term);
             }
             goto exit;
           }
@@ -4980,21 +4980,21 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     }
     pseg = buffer_new(ctx, ii, size, &pos, &bt, &br, &b, tid, h);
     if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
-      grn_obj token;
+      grn_obj term;
       DEFINE_NAME(ii);
-      GRN_TEXT_INIT(&token, 0);
-      grn_ii_get_token(ctx, ii, tid, &token);
+      GRN_TEXT_INIT(&term, 0);
+      grn_ii_get_term(ctx, ii, tid, &term);
       MERR("[ii][update][one] failed to create a buffer: "
            "<%.*s>: "
            "<%.*s>(%u): "
            "(%u:%u): "
            "size:<%u>",
            name_size, name,
-           (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
            tid,
            u->rid, u->sid,
            size);
-      GRN_OBJ_FIN(ctx, &token);
+      GRN_OBJ_FIN(ctx, &term);
       goto exit;
     }
     bt->tid = tid;
@@ -5025,10 +5025,10 @@ exit :
       source_table_name_size = strlen(source_table_name);
     }
     {
-      grn_obj token;
+      grn_obj term;
       DEFINE_NAME(ii);
-      GRN_TEXT_INIT(&token, 0);
-      grn_ii_get_token(ctx, ii, tid, &token);
+      GRN_TEXT_INIT(&term, 0);
+      grn_ii_get_term(ctx, ii, tid, &term);
       GRN_LOG(ctx, GRN_LOG_WARNING,
               "[ii][update][one] too many postings: "
               "<%.*s>: "
@@ -5037,13 +5037,13 @@ exit :
               "n-postings:<%d>, "
               "n-discarded-postings:<%d>",
               name_size, name,
-              (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+              (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
               tid,
               source_table_name_size, source_table_name,
               u->rid,
               u->atf,
               u->atf - u->tf);
-      GRN_OBJ_FIN(ctx, &token);
+      GRN_OBJ_FIN(ctx, &term);
     }
   }
   grn_ii_expire(ctx, ii);
@@ -5082,37 +5082,37 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
       goto exit;
     }
     if (!(bs = encode_rec(ctx, ii, u, &size, 1))) {
-      grn_obj token;
+      grn_obj term;
       DEFINE_NAME(ii);
-      GRN_TEXT_INIT(&token, 0);
-      grn_ii_get_token(ctx, ii, tid, &token);
+      GRN_TEXT_INIT(&term, 0);
+      grn_ii_get_term(ctx, ii, tid, &term);
       MERR("[ii][delete][one] failed to encode a record: "
            "<%.*s>: "
            "<%.*s>(%u): "
            "(%u:%u)",
            name_size, name,
-           (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
            tid,
            u->rid, u->sid);
-      GRN_OBJ_FIN(ctx, &token);
+      GRN_OBJ_FIN(ctx, &term);
       goto exit;
     }
     if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
-      grn_obj token;
+      grn_obj term;
       DEFINE_NAME(ii);
-      GRN_TEXT_INIT(&token, 0);
-      grn_ii_get_token(ctx, ii, tid, &token);
+      GRN_TEXT_INIT(&term, 0);
+      grn_ii_get_term(ctx, ii, tid, &term);
       MERR("[ii][delete][one] failed to allocate a buffer: "
            "<%.*s>: "
            "<%.*s>(%u): "
            "(%u:%u): "
            "position:<%u>",
            name_size, name,
-           (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
            tid,
            u->rid, u->sid,
            a[0]);
-      GRN_OBJ_FIN(ctx, &token);
+      GRN_OBJ_FIN(ctx, &term);
       goto exit;
     }
     if (b->header.buffer_free < size) {
@@ -5122,10 +5122,10 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
       buffer_close(ctx, ii, pseg);
       buffer_flush(ctx, ii, LSEG(a[0]), h);
       if (ctx->rc != GRN_SUCCESS) {
-        grn_obj token;
+        grn_obj term;
         DEFINE_NAME(ii);
-        GRN_TEXT_INIT(&token, 0);
-        grn_ii_get_token(ctx, ii, tid, &token);
+        GRN_TEXT_INIT(&term, 0);
+        grn_ii_get_term(ctx, ii, tid, &term);
         ERR(ctx->rc,
             "[ii][delete][one] failed to flush a buffer: "
             "<%.*s>: "
@@ -5134,12 +5134,12 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             "position:<%u>: "
             "%s",
             name_size, name,
-            (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
             tid,
             u->rid, u->sid,
             a[0],
             ctx->errbuf);
-        GRN_OBJ_FIN(ctx, &token);
+        GRN_OBJ_FIN(ctx, &term);
         goto exit;
       }
       if (a[0] != _a) {
@@ -5148,41 +5148,41 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
         continue;
       }
       if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
-        grn_obj token;
+        grn_obj term;
         DEFINE_NAME(ii);
-        GRN_TEXT_INIT(&token, 0);
-        grn_ii_get_token(ctx, ii, tid, &token);
+        GRN_TEXT_INIT(&term, 0);
+        grn_ii_get_term(ctx, ii, tid, &term);
         MERR("[ii][delete][one] failed to reallocate a buffer: "
              "<%.*s>: "
              "<%.*s>(%u): "
              "(%u:%u): "
              "position:<%u>",
              name_size, name,
-             (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
              tid,
              u->rid, u->sid,
              a[0]);
-        GRN_OBJ_FIN(ctx, &token);
+        GRN_OBJ_FIN(ctx, &term);
         goto exit;
       }
       GRN_LOG(ctx, GRN_LOG_DEBUG, "flushed!  b=%p free=%d, seg(%d)",
               b, b->header.buffer_free, LSEG(a[0]));
       if (b->header.buffer_free < size) {
-        grn_obj token;
+        grn_obj term;
         DEFINE_NAME(ii);
-        GRN_TEXT_INIT(&token, 0);
-        grn_ii_get_token(ctx, ii, tid, &token);
+        GRN_TEXT_INIT(&term, 0);
+        grn_ii_get_term(ctx, ii, tid, &term);
         MERR("[ii][delete][one] buffer is full: "
              "<%.*s>: "
              "<%.*s>(%u): "
              "(%u:%u): "
              "segment:<%u>, free:<%u>, required:<%u>",
              name_size, name,
-             (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
              tid,
              u->rid, u->sid,
              a[0], b->header.buffer_free, size);
-        GRN_OBJ_FIN(ctx, &token);
+        GRN_OBJ_FIN(ctx, &term);
         buffer_close(ctx, ii, pseg);
         goto exit;
       }
@@ -6018,16 +6018,16 @@ cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t 
     }
     if (!grn_ii_cursor_next_pos(ctx, c)) {
       if (grn_logger_pass(ctx, GRN_LOG_ERROR)) {
-        grn_obj token;
-        GRN_TEXT_INIT(&token, 0);
-        grn_ii_get_token(ctx, c->ii, c->id, &token);
+        grn_obj term;
+        GRN_TEXT_INIT(&term, 0);
+        grn_ii_get_term(ctx, c->ii, c->id, &term);
         GRN_LOG(ctx, GRN_LOG_ERROR,
                 "[ii][cursor][heap][push] invalid cursor: "
-                "%p: token:<%.*s>(%u)",
+                "%p: <%.*s>(%u)",
                 c,
-                (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                 c->id);
-        GRN_OBJ_FIN(ctx, &token);
+        GRN_OBJ_FIN(ctx, &term);
       }
       grn_ii_cursor_close(ctx, c);
       return GRN_END_OF_DATA;
@@ -6104,16 +6104,16 @@ cursor_heap_pop(grn_ctx *ctx, cursor_heap *h, grn_id min)
       h->bins[0] = h->bins[--h->n_entries];
     } else if (!grn_ii_cursor_next_pos(ctx, c)) {
       if (grn_logger_pass(ctx, GRN_LOG_ERROR)) {
-        grn_obj token;
-        GRN_TEXT_INIT(&token, 0);
-        grn_ii_get_token(ctx, c->ii, c->id, &token);
+        grn_obj term;
+        GRN_TEXT_INIT(&term, 0);
+        grn_ii_get_term(ctx, c->ii, c->id, &term);
         GRN_LOG(ctx, GRN_LOG_ERROR,
                 "[ii][cursor][heap][pop] invalid cursor: "
-                "%p: token:<%.*s>(%u)",
+                "%p: <%.*s>(%u)",
                 c,
-                (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                 c->id);
-        GRN_OBJ_FIN(ctx, &token);
+        GRN_OBJ_FIN(ctx, &term);
       }
       grn_ii_cursor_close(ctx, c);
       h->bins[0] = h->bins[--h->n_entries];
@@ -6133,16 +6133,16 @@ cursor_heap_pop_pos(grn_ctx *ctx, cursor_heap *h)
         h->bins[0] = h->bins[--h->n_entries];
       } else if (!grn_ii_cursor_next_pos(ctx, c)) {
         if (grn_logger_pass(ctx, GRN_LOG_ERROR)) {
-          grn_obj token;
-          GRN_TEXT_INIT(&token, 0);
-          grn_ii_get_token(ctx, c->ii, c->id, &token);
+          grn_obj term;
+          GRN_TEXT_INIT(&term, 0);
+          grn_ii_get_term(ctx, c->ii, c->id, &term);
           GRN_LOG(ctx, GRN_LOG_ERROR,
                   "[ii][cursor][heap][pop][position] invalid cursor: "
-                  "%p: token:<%.*s>(%u)",
+                  "%p: <%.*s>(%u)",
                   c,
-                  (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                  (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                   c->id);
-          GRN_OBJ_FIN(ctx, &token);
+          GRN_OBJ_FIN(ctx, &term);
         }
         grn_ii_cursor_close(ctx, c);
         h->bins[0] = h->bins[--h->n_entries];
@@ -10664,7 +10664,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
         grn_obj token;
         DEFINE_NAME(ii_buffer->ii);
         GRN_TEXT_INIT(&token, 0);
-        grn_ii_get_token(ctx, ii_buffer->ii, tid, &token);
+        grn_ii_get_term(ctx, ii_buffer->ii, tid, &token);
         MERR("[ii][buffer][merge] failed to allocate an array: "
              "<%.*s>: "
              "<%.*s>(%u)",
@@ -10679,7 +10679,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
         grn_obj token;
         DEFINE_NAME(ii_buffer->ii);
         GRN_TEXT_INIT(&token, 0);
-        grn_ii_get_token(ctx, ii_buffer->ii, tid, &token);
+        grn_ii_get_term(ctx, ii_buffer->ii, tid, &token);
         MERR("[ii][buffer][merge] failed to allocate a term buffer: "
              "<%.*s>: "
              "<%.*s>(%u)",
@@ -13027,7 +13027,7 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn_ii_builder *builder,
       grn_obj token;
       DEFINE_NAME(builder->ii);
       GRN_TEXT_INIT(&token, 0);
-      grn_ii_get_token(ctx, builder->ii, chunk->tid, &token);
+      grn_ii_get_term(ctx, builder->ii, chunk->tid, &token);
       MERR("[ii][builder][chunk][pack] failed to allocate an array: "
            "<%.*s>: "
            "<%.*s>(%u): "
@@ -13046,7 +13046,7 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn_ii_builder *builder,
       grn_obj token;
       DEFINE_NAME(builder->ii);
       GRN_TEXT_INIT(&token, 0);
-      grn_ii_get_token(ctx, builder->ii, chunk->tid, &token);
+      grn_ii_get_term(ctx, builder->ii, chunk->tid, &token);
       MERR("[ii][builder][chunk][pack] failed to allocate an array: "
            "<%.*s>: "
            "<%.*s>(%u): "
@@ -13352,7 +13352,7 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn_ii_builder *builder)
     grn_obj token;
     DEFINE_NAME(builder->ii);
     GRN_TEXT_INIT(&token, 0);
-    grn_ii_get_token(ctx, builder->ii, builder->chunk.tid, &token);
+    grn_ii_get_term(ctx, builder->ii, builder->chunk.tid, &token);
     MERR("[ii][builder][chunk][register] "
          "failed to allocate an array in segment: "
          "<%.*s>: "
