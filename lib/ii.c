@@ -2718,6 +2718,12 @@ typedef struct {
 } docinfo;
 
 typedef struct {
+  uint32_t segno;
+  uint32_t size;
+  uint32_t dgap;
+} chunk_info;
+
+typedef struct {
   grn_log_level log_level;
   const char *tag;
   grn_ii *ii;
@@ -3018,7 +3024,7 @@ buffer_merge_dump_source(grn_ctx *ctx,
   GRN_TEXT_INIT(&(data.inspected_entries), 0);
   data.n_inspected_entries = 0;
 
-  GRN_LOG(ctx, data->log_level,
+  GRN_LOG(ctx, data.log_level,
           "%s[%.*s] %u",
           data.tag,
           data.name_size, data.name,
@@ -3028,7 +3034,7 @@ buffer_merge_dump_source(grn_ctx *ctx,
 
     data.term = buffer->terms + data.nth_term;
     if (data.term->tid == 0) {
-      GRN_LOG(ctx, data->log_level,
+      GRN_LOG(ctx, data.log_level,
               "%s[%.*s][%d] void",
               data.tag,
               data.name_size, data.name,
@@ -3041,7 +3047,7 @@ buffer_merge_dump_source(grn_ctx *ctx,
                     ii,
                     data.term->tid & GRN_ID_MAX,
                     &(data.inspected_term));
-    GRN_LOG(ctx, data->log_level,
+    GRN_LOG(ctx, data.log_level,
             "%s[%.*s][%d/%d] <%.*s>(%u): chunk:<%u:%u>, buffer:<%u:%u>",
             data.tag,
             data.name_size, data.name,
@@ -3267,12 +3273,6 @@ buffer_merge_dump_source(grn_ctx *ctx,
   }\
 } while (cond)
 
-typedef struct {
-  uint32_t segno;
-  uint32_t size;
-  uint32_t dgap;
-} chunk_info;
-
 static grn_rc
 chunk_flush(grn_ctx *ctx, grn_ii *ii, chunk_info *cinfo, uint8_t *enc, uint32_t encsize)
 {
@@ -3352,7 +3352,10 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
         posp = dv[j].data;
       }
       GETNEXTC();
-      MERGE_BC(bid.rid <= rid || cid.rid);
+      {
+        uint8_t *sc = NULL;
+        MERGE_BC(bid.rid <= rid || cid.rid);
+      }
       if (ctx->rc == GRN_SUCCESS) {
         *sbpp = sbp;
         *nextbp = nextb;
