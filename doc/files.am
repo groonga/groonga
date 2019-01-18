@@ -963,7 +963,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/indexing.rst \
 	$(top_srcdir)/doc/source/reference/log.rst \
 	$(top_srcdir)/doc/source/reference/normalizers.rst \
+	$(top_srcdir)/doc/source/reference/normalizers/normalizer_auto.rst \
 	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc100.rst \
+	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc51.rst \
 	$(top_srcdir)/doc/source/reference/operations.rst \
 	$(top_srcdir)/doc/source/reference/operations/geolocation_search.rst \
 	$(top_srcdir)/doc/source/reference/operations/prefix_rk_search.rst \
@@ -2015,7 +2017,9 @@ source_files_relative_from_doc_dir = \
 	source/reference/indexing.rst \
 	source/reference/log.rst \
 	source/reference/normalizers.rst \
+	source/reference/normalizers/normalizer_auto.rst \
 	source/reference/normalizers/normalizer_nfkc100.rst \
+	source/reference/normalizers/normalizer_nfkc51.rst \
 	source/reference/operations.rst \
 	source/reference/operations/geolocation_search.rst \
 	source/reference/operations/prefix_rk_search.rst \
@@ -2443,7 +2447,9 @@ html_files_relative_from_locale_dir = \
 	html/reference/indexing.html \
 	html/reference/log.html \
 	html/reference/normalizers.html \
+	html/reference/normalizers/normalizer_auto.html \
 	html/reference/normalizers/normalizer_nfkc100.html \
+	html/reference/normalizers/normalizer_nfkc51.html \
 	html/reference/operations.html \
 	html/reference/operations/geolocation_search.html \
 	html/reference/operations/prefix_rk_search.html \
