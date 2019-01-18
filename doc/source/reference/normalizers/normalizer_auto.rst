@@ -46,7 +46,6 @@ Here is an example that uses ``NormalizerAuto`` normalizer:
 .. groonga-command
 .. include:: ../../example/reference/normalizers/normalizer-auto.log
 .. table_create NormalLexicon TABLE_HASH_KEY ShortText --normalizer NormalizerAuto
-.. _normalizer-auto:
 
 See also
 ----------
