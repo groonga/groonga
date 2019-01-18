@@ -17,7 +17,7 @@ end
 parser.parse!
 
 if use_section
-  columns = 5.times {|i| "value#{i}"}
+  columns = 5.times.collect {|i| "value#{i}"}
 else
   columns = ["value"]
 end
