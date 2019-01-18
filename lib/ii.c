@@ -2910,7 +2910,7 @@ buffer_merge_dump_chunk(grn_ctx *ctx,
          data->nth_chunk++) {
       chunk_info info;
 
-      if (chunk_current < chunk_end) {
+      if (!(chunk_current < chunk_end)) {
         GRN_LOG(ctx, data->log_level,
                 "%s[%.*s][%d/%d] <%.*s>(%u): chunk: %u/%u: no data",
                 data->tag,
