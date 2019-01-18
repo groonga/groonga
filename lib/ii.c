@@ -2740,18 +2740,18 @@ typedef struct {
   grn_obj inspected_term;
   grn_obj inspected_entries;
   uint32_t n_inspected_entries;
-} buffer_merge_dump_source_data;
+} merge_dump_source_data;
 
-#define BUFFER_MERGE_DUMP_SOURCE_BATCH_SIZE 10
+#define MERGE_DUMP_SOURCE_BATCH_SIZE 10
 
 typedef enum {
-  BUFFER_MERGE_DUMP_SOURCE_ENTRY_BUFFER,
-  BUFFER_MERGE_DUMP_SOURCE_ENTRY_CHUNK,
-} buffer_merge_dump_source_entry_type;
+  MERGE_DUMP_SOURCE_ENTRY_BUFFER,
+  MERGE_DUMP_SOURCE_ENTRY_CHUNK,
+} merge_dump_source_entry_type;
 
 static void
-buffer_merge_dump_source_flush_entries(grn_ctx *ctx,
-                                       buffer_merge_dump_source_data *data)
+merge_dump_source_flush_entries(grn_ctx *ctx,
+                                merge_dump_source_data *data)
 {
   if (GRN_TEXT_LEN(&(data->inspected_entries)) == 0) {
     return;
@@ -2766,11 +2766,11 @@ buffer_merge_dump_source_flush_entries(grn_ctx *ctx,
 }
 
 static void
-buffer_merge_dump_source_add_entry(grn_ctx *ctx,
-                                   buffer_merge_dump_source_data *data,
-                                   buffer_merge_dump_source_entry_type type,
-                                   docinfo *info,
-                                   uint8_t *position_diffs)
+merge_dump_source_add_entry(grn_ctx *ctx,
+                            merge_dump_source_data *data,
+                            merge_dump_source_entry_type type,
+                            docinfo *info,
+                            uint8_t *position_diffs)
 {
   if (GRN_TEXT_LEN(&(data->inspected_entries)) > 0) {
     GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ' ');
@@ -2793,7 +2793,7 @@ buffer_merge_dump_source_add_entry(grn_ctx *ctx,
       if (i > 0) {
         GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ',');
       }
-      if (type == BUFFER_MERGE_DUMP_SOURCE_ENTRY_BUFFER) {
+      if (type == MERGE_DUMP_SOURCE_ENTRY_BUFFER) {
         GRN_B_DEC(position_diff, position_diffs);
       } else {
         position_diff = ((uint32_t *)position_diffs)[i];
@@ -2807,16 +2807,16 @@ buffer_merge_dump_source_add_entry(grn_ctx *ctx,
     GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ']');
   }
   data->n_inspected_entries++;
-  if (data->n_inspected_entries == BUFFER_MERGE_DUMP_SOURCE_BATCH_SIZE) {
-    buffer_merge_dump_source_flush_entries(ctx, data);
+  if (data->n_inspected_entries == MERGE_DUMP_SOURCE_BATCH_SIZE) {
+    merge_dump_source_flush_entries(ctx, data);
   }
 }
 
 static void
-buffer_merge_dump_chunk_raw(grn_ctx *ctx,
-                            buffer_merge_dump_source_data *data,
-                            uint8_t *chunk_start,
-                            uint8_t *chunk_end)
+merge_dump_chunk_raw(grn_ctx *ctx,
+                     merge_dump_source_data *data,
+                     uint8_t *chunk_start,
+                     uint8_t *chunk_end)
 {
   uint8_t *chunk_current = chunk_start;
   int decoded_size;
@@ -2905,20 +2905,20 @@ buffer_merge_dump_chunk_raw(grn_ctx *ctx,
           info.weight = 0;
         }
 
-        buffer_merge_dump_source_add_entry(ctx,
-                                           data,
-                                           BUFFER_MERGE_DUMP_SOURCE_ENTRY_CHUNK,
-                                           &info,
-                                           (uint8_t *)position_diffs);
+        merge_dump_source_add_entry(ctx,
+                                    data,
+                                    MERGE_DUMP_SOURCE_ENTRY_CHUNK,
+                                    &info,
+                                    (uint8_t *)position_diffs);
       }
-      buffer_merge_dump_source_flush_entries(ctx, data);
+      merge_dump_source_flush_entries(ctx, data);
     }
   }
 }
 
 static void
-buffer_merge_dump_chunk(grn_ctx *ctx,
-                        buffer_merge_dump_source_data *data)
+merge_dump_chunk(grn_ctx *ctx,
+                 merge_dump_source_data *data)
 {
   uint8_t *chunk_start = data->chunk + data->term->pos_in_chunk;
   uint8_t *chunk_end = chunk_start + data->term->size_in_chunk;
@@ -2998,10 +2998,10 @@ buffer_merge_dump_chunk(grn_ctx *ctx,
                   data->nth_chunk, data->n_chunks);
           continue;
         }
-        buffer_merge_dump_chunk_raw(ctx,
-                                    data,
-                                    sub_chunk,
-                                    sub_chunk + info.size);
+        merge_dump_chunk_raw(ctx,
+                             data,
+                             sub_chunk,
+                             sub_chunk + info.size);
         grn_io_win_unmap(&iw);
       }
     }
@@ -3017,24 +3017,24 @@ buffer_merge_dump_chunk(grn_ctx *ctx,
             GRN_TEXT_VALUE(&(data->inspected_term)),
             data->term->tid & GRN_ID_MAX,
             data->n_chunks);
-    buffer_merge_dump_chunk_raw(ctx,
-                                data,
-                                chunk_start,
-                                chunk_end);
+    merge_dump_chunk_raw(ctx,
+                         data,
+                         chunk_start,
+                         chunk_end);
   }
 }
 
 static void
-buffer_merge_dump_source(grn_ctx *ctx,
-                         grn_ii *ii,
-                         buffer *buffer,
-                         uint8_t *chunk,
-                         grn_log_level log_level)
+merge_dump_source(grn_ctx *ctx,
+                  grn_ii *ii,
+                  buffer *buffer,
+                  uint8_t *chunk,
+                  grn_log_level log_level)
 {
-  buffer_merge_dump_source_data data;
+  merge_dump_source_data data;
 
   data.log_level = log_level;
-  data.tag = "[ii][buffer][merge][source]";
+  data.tag = "[ii][merge][source]";
   data.ii = ii;
   data.buffer = buffer;
   data.chunk = chunk;
@@ -3108,17 +3108,17 @@ buffer_merge_dump_source(grn_ctx *ctx,
       } else {
         info.weight = 0;
       }
-      buffer_merge_dump_source_add_entry(ctx,
-                                         &data,
-                                         BUFFER_MERGE_DUMP_SOURCE_ENTRY_BUFFER,
-                                         &info,
-                                         record_data);
+      merge_dump_source_add_entry(ctx,
+                                  &data,
+                                  MERGE_DUMP_SOURCE_ENTRY_BUFFER,
+                                  &info,
+                                  record_data);
       position = record->step;
     }
-    buffer_merge_dump_source_flush_entries(ctx, &data);
+    merge_dump_source_flush_entries(ctx, &data);
 
     if (chunk && data.term->size_in_chunk > 0) {
-      buffer_merge_dump_chunk(ctx, &data);
+      merge_dump_chunk(ctx, &data);
     }
   }
 
@@ -3175,7 +3175,7 @@ buffer_merge_dump_source(grn_ctx *ctx,
              bt->tid,\
              lid.rid, lid.sid, cid.rid, cid.sid);\
         GRN_OBJ_FIN(ctx, &term);\
-        buffer_merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
+        merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
         break;\
       }\
       PUTNEXT_(cid);\
@@ -3199,7 +3199,7 @@ buffer_merge_dump_source(grn_ctx *ctx,
            bt->tid,\
            cid.rid, cid.sid);\
       GRN_OBJ_FIN(ctx, &term);\
-      buffer_merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
+      merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
       break;\
     }\
   }\
@@ -3231,7 +3231,7 @@ buffer_merge_dump_source(grn_ctx *ctx,
            lrid, lsid,\
            bid.rid, bid.sid);\
       GRN_OBJ_FIN(ctx, &term);\
-      buffer_merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
+      merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
       break;\
     }\
     nextb = br->step;\
@@ -3258,7 +3258,7 @@ buffer_merge_dump_source(grn_ctx *ctx,
              lid.rid, lid.sid,\
              bid.rid, bid.sid);\
         GRN_OBJ_FIN(ctx, &term);\
-        buffer_merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
+        merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
         break;\
       }\
       if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {\
