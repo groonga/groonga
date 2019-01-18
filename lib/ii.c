@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2744,30 +2744,10 @@ typedef struct {
 
 #define BUFFER_MERGE_DUMP_SOURCE_BATCH_SIZE 10
 
-static void
-buffer_merge_dump_source_add_entry(grn_ctx *ctx,
-                                   buffer_merge_dump_source_data *data,
-                                   grn_id record_id,
-                                   uint32_t section_id)
-{
-  if (GRN_TEXT_LEN(&(data->inspected_entries)) > 0) {
-    GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ' ');
-  }
-  grn_text_printf(ctx,
-                  &(data->inspected_entries),
-                  "(%d:%d)",
-                  record_id,
-                  section_id);
-  data->n_inspected_entries++;
-  if (data->n_inspected_entries == BUFFER_MERGE_DUMP_SOURCE_BATCH_SIZE) {
-    GRN_LOG(ctx, data->log_level,
-            "%.*s",
-            (int)GRN_TEXT_LEN(&(data->inspected_entries)),
-            GRN_TEXT_VALUE(&(data->inspected_entries)));
-    GRN_BULK_REWIND(&(data->inspected_entries));
-    data->n_inspected_entries = 0;
-  }
-}
+typedef enum {
+  BUFFER_MERGE_DUMP_SOURCE_ENTRY_BUFFER,
+  BUFFER_MERGE_DUMP_SOURCE_ENTRY_CHUNK,
+} buffer_merge_dump_source_entry_type;
 
 static void
 buffer_merge_dump_source_flush_entries(grn_ctx *ctx,
@@ -2783,6 +2763,53 @@ buffer_merge_dump_source_flush_entries(grn_ctx *ctx,
           GRN_TEXT_VALUE(&(data->inspected_entries)));
   GRN_BULK_REWIND(&(data->inspected_entries));
   data->n_inspected_entries = 0;
+}
+
+static void
+buffer_merge_dump_source_add_entry(grn_ctx *ctx,
+                                   buffer_merge_dump_source_data *data,
+                                   buffer_merge_dump_source_entry_type type,
+                                   docinfo *info,
+                                   uint8_t *position_diffs)
+{
+  if (GRN_TEXT_LEN(&(data->inspected_entries)) > 0) {
+    GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ' ');
+  }
+  grn_text_printf(ctx,
+                  &(data->inspected_entries),
+                  "(%u:%u:%u:%u)",
+                  info->rid,
+                  info->sid,
+                  info->tf,
+                  info->weight);
+  if (data->ii->header->flags & GRN_OBJ_WITH_POSITION) {
+    uint32_t i;
+    uint32_t position = 0;
+
+    GRN_TEXT_PUTC(ctx, &(data->inspected_entries), '[');
+    for (i = 0; i < info->tf; i++) {
+      uint32_t position_diff;
+
+      if (i > 0) {
+        GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ',');
+      }
+      if (type == BUFFER_MERGE_DUMP_SOURCE_ENTRY_BUFFER) {
+        GRN_B_DEC(position_diff, position_diffs);
+      } else {
+        position_diff = ((uint32_t *)position_diffs)[i];
+      }
+      position += position_diff;
+      grn_text_printf(ctx,
+                      &(data->inspected_entries),
+                      "%u",
+                      position);
+    }
+    GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ']');
+  }
+  data->n_inspected_entries++;
+  if (data->n_inspected_entries == BUFFER_MERGE_DUMP_SOURCE_BATCH_SIZE) {
+    buffer_merge_dump_source_flush_entries(ctx, data);
+  }
 }
 
 static void
@@ -2833,7 +2860,7 @@ buffer_merge_dump_chunk_raw(grn_ctx *ctx,
     uint32_t *section_id_diffs = NULL;
     uint32_t *n_terms_list;
     uint32_t *weights;
-    uint32_t *positions;
+    uint32_t *position_diffs = NULL;
 
     {
       int i = 0;
@@ -2847,7 +2874,7 @@ buffer_merge_dump_chunk_raw(grn_ctx *ctx,
         weights = data->data_vector[i++].data;
       }
       if (data->ii->header->flags & GRN_OBJ_WITH_POSITION) {
-        positions = data->data_vector[i++].data;
+        position_diffs = data->data_vector[i++].data;
       }
     }
 
@@ -2858,10 +2885,10 @@ buffer_merge_dump_chunk_raw(grn_ctx *ctx,
 
       for (i = 0; i < n_documents; i++) {
         uint32_t record_id_diff = record_id_diffs[i];
-        uint32_t n_terms;
-        uint32_t weight;
+        docinfo info;
 
         record_id += record_id_diff;
+        info.rid = record_id;
         if (data->ii->header->flags & GRN_OBJ_WITH_SECTION) {
           if (record_id_diff > 0) {
             section_id = 0;
@@ -2870,14 +2897,19 @@ buffer_merge_dump_chunk_raw(grn_ctx *ctx,
         } else {
           section_id = 1;
         }
-        n_terms = 1 + n_terms_list[i];
+        info.sid = section_id;
+        info.tf = 1 + n_terms_list[i];
         if (data->ii->header->flags & GRN_OBJ_WITH_WEIGHT) {
-          weight = weights[i];
+          info.weight = weights[i];
         } else {
-          weight = 0;
+          info.weight = 0;
         }
 
-        buffer_merge_dump_source_add_entry(ctx, data, record_id, section_id);
+        buffer_merge_dump_source_add_entry(ctx,
+                                           data,
+                                           BUFFER_MERGE_DUMP_SOURCE_ENTRY_CHUNK,
+                                           &info,
+                                           (uint8_t *)position_diffs);
       }
       buffer_merge_dump_source_flush_entries(ctx, data);
     }
@@ -3062,18 +3094,25 @@ buffer_merge_dump_source(grn_ctx *ctx,
     while (position > 0) {
       buffer_rec *record = BUFFER_REC_AT(buffer, position);
       uint8_t *record_data = GRN_NEXT_ADDR(record);
-      grn_id record_id;
-      grn_id section_id = 1;
-      uint32_t weight = 0;
+      docinfo info;
 
-      GRN_B_DEC(record_id, record_data);
+      GRN_B_DEC(info.rid, record_data);
       if (ii->header->flags & GRN_OBJ_WITH_SECTION) {
-        GRN_B_DEC(section_id, record_data);
+        GRN_B_DEC(info.sid, record_data);
+      } else {
+        info.sid = 1;
       }
+      GRN_B_DEC(info.tf, record_data);
       if (ii->header->flags & GRN_OBJ_WITH_WEIGHT) {
-        GRN_B_DEC(weight, record_data);
+        GRN_B_DEC(info.weight, record_data);
+      } else {
+        info.weight = 0;
       }
-      buffer_merge_dump_source_add_entry(ctx, &data, record_id, section_id);
+      buffer_merge_dump_source_add_entry(ctx,
+                                         &data,
+                                         BUFFER_MERGE_DUMP_SOURCE_ENTRY_BUFFER,
+                                         &info,
+                                         record_data);
       position = record->step;
     }
     buffer_merge_dump_source_flush_entries(ctx, &data);
