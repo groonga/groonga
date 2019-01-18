@@ -23902,10 +23902,18 @@ msgstr "組み込みノーマライザー"
 msgid "Here is a list of built-in normalizers:"
 msgstr "以下は組み込みのノーマライザーのリストです。"
 
-msgid "``NormalizerAuto``"
+msgid "Additional normalizers"
+msgstr "追加のノーマライザー一覧"
+
+msgid "There are additional normalizers:"
+msgstr "いくつか追加のノーマライザーがあります。"
+
+msgid ""
+"`groonga-normalizer-mysql <https://github.com/groonga/groonga-normalizer-"
+"mysql>`_"
 msgstr ""
 
-msgid "``NormalizerNFKC51``"
+msgid "``NormalizerAuto``"
 msgstr ""
 
 msgid ""
@@ -23931,51 +23939,6 @@ msgstr ""
 "正規化をします。これらの独自の正規化の結果はNFKCでの結果と似たものになりま"
 "す。"
 
-msgid ""
-"For example, half-width katakana (such as U+FF76 HALFWIDTH KATAKANA LETTER "
-"KA) + half-width katakana voiced sound mark (U+FF9E HALFWIDTH KATAKANA "
-"VOICED SOUND MARK) is normalized to full-width katakana with voiced sound "
-"mark (U+30AC KATAKANA LETTER GA). The former is two characters but the "
-"latter is one character."
-msgstr ""
-"例えば、半角カタカナ（例えば「ｶ」: U+FF76 HALFWIDTH KATAKANA LETTER KA） + 半"
-"角カタカナの濁点（「ﾞ」: U+FF9E HALFWIDTH KATAKANA VOICED SOUND MARK）は濁点"
-"付きの全角カタカナ（「ガ」: U+30AC KATAKANA LETTER GA）に正規化されます。前者"
-"は2文字ですが、後者は1文字です。"
-
-msgid "Here is an example that uses ``NormalizerAuto`` normalizer:"
-msgstr "以下は ``NormalizerAuto`` ノーマライザーを使う例です。"
-
-msgid ""
-"``NormalizerNFKC51`` normalizes texts by Unicode NFKC (Normalization Form "
-"Compatibility Composition) for Unicode version 5.1. It supports only UTF-8 "
-"encoding."
-msgstr ""
-"``NormalizerNFKC51`` はUnicode 5.1用のUnicode NFKC（Normalization Form "
-"Compatibility Composition）を使ってテキストを正規化します。UTF-8エンコーディ"
-"ングのみをサポートしています。"
-
-msgid ""
-"Normally you don't need to use ``NormalizerNFKC51`` explicitly. You can use "
-"``NormalizerAuto`` instead."
-msgstr ""
-"通常、 ``NormalizerNFKC51`` を明示的に使う必要はありません。代わりに "
-"``NormalizerAuto`` を使ってください。"
-
-msgid "Here is an example that uses ``NormalizerNFKC51`` normalizer:"
-msgstr "以下は ``NormalizerNFKC51`` ノーマライザーを使う例です。"
-
-msgid "Additional normalizers"
-msgstr "追加のノーマライザー一覧"
-
-msgid "There are additional normalizers:"
-msgstr "いくつか追加のノーマライザーがあります。"
-
-msgid ""
-"`groonga-normalizer-mysql <https://github.com/groonga/groonga-normalizer-"
-"mysql>`_"
-msgstr ""
-
 msgid "``NormalizerAuto`` hasn't parameter::"
 msgstr "``NormalizerAuto`` には引数はありません。::"
 
@@ -23990,6 +23953,9 @@ msgstr ""
 "LETTER KA） + 半角カタカナの濁点（「ﾞ」: U+FF9E HALFWIDTH KATAKANA VOICED "
 "SOUND MARK）を濁点付きの全角カタカナ（「ガ」: U+30AC KATAKANA LETTER GA）に正"
 "規化します。前者は2文字ですが、後者は1文字です。"
+
+msgid "Here is an example that uses ``NormalizerAuto`` normalizer:"
+msgstr "以下は ``NormalizerAuto`` ノーマライザーを使う例です。"
 
 msgid ":doc:`../commands/normalize`"
 msgstr ""
@@ -24335,6 +24301,31 @@ msgstr ""
 
 msgid "This option enables normalize hiragana and katakana to romaji."
 msgstr "このオプションは、ひらがなとカタカナをローマ字に正規化します。"
+
+msgid "``NormalizerNFKC51``"
+msgstr ""
+
+msgid ""
+"``NormalizerNFKC51`` normalizes texts by Unicode NFKC (Normalization Form "
+"Compatibility Composition) for Unicode version 5.1. It supports only UTF-8 "
+"encoding."
+msgstr ""
+"``NormalizerNFKC51`` はUnicode 5.1用のUnicode NFKC（Normalization Form "
+"Compatibility Composition）を使ってテキストを正規化します。UTF-8エンコーディ"
+"ングのみをサポートしています。"
+
+msgid ""
+"Normally you don't need to use ``NormalizerNFKC51`` explicitly. You can use "
+"``NormalizerAuto`` instead."
+msgstr ""
+"通常、 ``NormalizerNFKC51`` を明示的に使う必要はありません。代わりに "
+"``NormalizerAuto`` を使ってください。"
+
+msgid "``NormalizerNFKC51`` hasn't parameter::"
+msgstr "``NormalizerNFKC51`` には引数はありません。::"
+
+msgid "Here is an example that uses ``NormalizerNFKC51`` normalizer:"
+msgstr "以下は ``NormalizerNFKC51`` ノーマライザーを使う例です。"
 
 msgid "Operations"
 msgstr "操作方法"
