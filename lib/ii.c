@@ -3033,6 +3033,10 @@ merge_dump_source(grn_ctx *ctx,
 {
   merge_dump_source_data data;
 
+  if (grn_logger_pass(ctx, log_level)) {
+    return;
+  }
+
   data.log_level = log_level;
   data.tag = "[ii][merge][source]";
   data.ii = ii;
