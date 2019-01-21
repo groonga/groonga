@@ -3100,6 +3100,25 @@ merge_dump_source(grn_ctx *ctx,
       uint8_t *record_data = GRN_NEXT_ADDR(record);
       docinfo info;
 
+      grn_text_printf(ctx,
+                      &(data.inspected_entries),
+                      "record: %u: <%u:%u%s>",
+                      position,
+                      record->step,
+                      record->jump,
+                      BUFFER_REC_DELETED(record) ? ":deleted" : "");
+
+      position = record->step;
+
+      if (BUFFER_REC_DELETED(record)) {
+        merge_dump_source_flush_entries(ctx, &data);
+        continue;
+      }
+
+      GRN_TEXT_PUTC(ctx,
+                    &(data.inspected_entries),
+                    ' ');
+
       GRN_B_DEC(info.rid, record_data);
       if (ii->header->flags & GRN_OBJ_WITH_SECTION) {
         GRN_B_DEC(info.sid, record_data);
@@ -3117,9 +3136,8 @@ merge_dump_source(grn_ctx *ctx,
                                   MERGE_DUMP_SOURCE_ENTRY_BUFFER,
                                   &info,
                                   record_data);
-      position = record->step;
+      merge_dump_source_flush_entries(ctx, &data);
     }
-    merge_dump_source_flush_entries(ctx, &data);
 
     if (chunk && data.term->size_in_chunk > 0) {
       merge_dump_chunk(ctx, &data);
