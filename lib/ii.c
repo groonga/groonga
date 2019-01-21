@@ -2821,7 +2821,7 @@ merge_dump_chunk_raw(grn_ctx *ctx,
   uint8_t *chunk_current = chunk_start;
   int decoded_size;
 
-  if (chunk_end - chunk_current == 0) {
+  if ((chunk_end - chunk_current) == 0) {
     GRN_LOG(ctx, data->log_level,
             "%s[%.*s][%d/%d] <%.*s>(%u): %u/%u: no data",
             data->tag,
