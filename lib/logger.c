@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2017 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -46,9 +46,15 @@ static const char *log_level_names[] = {
 
 #define GRN_LOG_LAST GRN_LOG_DUMP
 
+typedef enum {
+  GRN_FLAGS_OPERATOR_ADD,
+  GRN_FLAGS_OPERATOR_REMOVE,
+  GRN_FLAGS_OPERATOR_REPLACE,
+} grn_flags_operator;
+
 #define INITIAL_LOGGER {                        \
   GRN_LOG_DEFAULT_LEVEL,                        \
-  GRN_LOG_TIME|GRN_LOG_MESSAGE,                 \
+  GRN_LOG_DEFAULT,                              \
   NULL,                                         \
   NULL,                                         \
   NULL,                                         \
@@ -118,38 +124,77 @@ grn_log_level_parse(const char *string, grn_log_level *level)
   }
 }
 
-int
-grn_log_flags_parse(const char *string)
+grn_bool
+grn_log_flags_parse(const char *string,
+                    int string_size,
+                    int *flags)
 {
-  const char *string_end = string + strlen(string);
-  int flags = GRN_LOG_TIME|GRN_LOG_MESSAGE;
+  const char *string_end;
+
+  *flags = GRN_LOG_DEFAULT;
 
   if (!string) {
-    return flags;
+    return GRN_TRUE;
   }
 
+  if (string_size < 0) {
+    string_size = strlen(string);
+  }
+
+  string_end = string + string_size;
+
   while (string < string_end) {
+    grn_flags_operator operator = GRN_FLAGS_OPERATOR_REPLACE;
+
     if (*string == '|' || *string == ' ') {
       string += 1;
       continue;
     }
 
-    if (strcmp(string, "+pid")) {
-      flags |= GRN_LOG_PID;
-      string += strlen(string);
-      continue;
-    } else if (strcmp(string, "+thread-id")) {
-      flags |= GRN_LOG_THREAD_ID;
-      string += strlen(string);
-      continue;
-    } else if (strcmp(string, "+location")) {
-      flags |= GRN_LOG_LOCATION;
-      string += strlen(string);
-      continue;
+    if (*string == '+') {
+      operator = GRN_FLAGS_OPERATOR_ADD;
+      string++;
+    } else if (*string == '-') {
+      operator = GRN_FLAGS_OPERATOR_REMOVE;
+      string++;
     }
+
+#define CHECK_FLAG(name)                                        \
+    if (((string_end - string) >= (sizeof(#name) - 1)) &&       \
+        (strncasecmp(string, #name, sizeof(#name) - 1) == 0) &&  \
+        (((string_end - string) == (sizeof(#name) - 1)) ||      \
+         (string[sizeof(#name) - 1] == '|') ||                  \
+         (string[sizeof(#name) - 1] == ' ') ||                  \
+         (string[sizeof(#name) - 1] == '+') ||                  \
+         (string[sizeof(#name) - 1] == '-'))) {                 \
+      if (operator == GRN_FLAGS_OPERATOR_ADD) {                 \
+        *flags |= GRN_LOG_ ## name;                             \
+      } else if (operator == GRN_FLAGS_OPERATOR_REMOVE) {       \
+        *flags &= ~GRN_LOG_ ## name;                            \
+      } else {                                                  \
+        *flags = GRN_LOG_ ## name;                              \
+      }                                                         \
+      string += sizeof(#name) - 1;                              \
+      continue;                                                 \
+    }
+
+    CHECK_FLAG(NONE);
+    CHECK_FLAG(TIME);
+    CHECK_FLAG(TITLE);
+    CHECK_FLAG(MESSAGE);
+    CHECK_FLAG(LOCATION);
+    CHECK_FLAG(PID);
+    CHECK_FLAG(PROCESS_ID);
+    CHECK_FLAG(THREAD_ID);
+    CHECK_FLAG(ALL);
+    CHECK_FLAG(DEFAULT);
+
+#undef CHECK_FLAG
+
+    return GRN_FALSE;
   }
 
-  return flags;
+  return GRN_TRUE;
 }
 
 static void
@@ -269,7 +314,7 @@ default_logger_fin(grn_ctx *ctx, void *user_data)
 
 static grn_logger default_logger = {
   GRN_LOG_DEFAULT_LEVEL,
-  GRN_LOG_TIME|GRN_LOG_MESSAGE,
+  GRN_LOG_DEFAULT,
   NULL,
   default_logger_log,
   default_logger_reopen,

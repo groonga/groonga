@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1010,12 +1010,24 @@ GRN_API grn_rc grn_snip_get_result(grn_ctx *ctx, grn_obj *snip, const unsigned i
 
 /* log */
 
+#define GRN_LOG_NONE                   (0x00<<0)
 #define GRN_LOG_TIME                   (0x01<<0)
 #define GRN_LOG_TITLE                  (0x01<<1)
 #define GRN_LOG_MESSAGE                (0x01<<2)
 #define GRN_LOG_LOCATION               (0x01<<3)
 #define GRN_LOG_PID                    (0x01<<4)
+#define GRN_LOG_PROCESS_ID             GRN_LOG_PID
 #define GRN_LOG_THREAD_ID              (0x01<<5)
+#define GRN_LOG_ALL                             \
+  (GRN_LOG_TIME |                               \
+   GRN_LOG_TITLE |                              \
+   GRN_LOG_MESSAGE |                            \
+   GRN_LOG_LOCATION |                           \
+   GRN_LOG_PROCESS_ID |                         \
+   GRN_LOG_THREAD_ID)
+#define GRN_LOG_DEFAULT                         \
+  (GRN_LOG_TIME |                               \
+   GRN_LOG_MESSAGE)
 
 /* Deprecated since 2.1.2. Use grn_logger instead. */
 typedef struct _grn_logger_info grn_logger_info;
@@ -1044,7 +1056,9 @@ struct _grn_logger {
   void (*fin)(grn_ctx *ctx, void *user_data);
 };
 
-GRN_API int grn_log_flags_parse(const char *string);
+GRN_API grn_bool grn_log_flags_parse(const char *string,
+                                     int string_size,
+                                     int *flags);
 
 GRN_API grn_rc grn_logger_set(grn_ctx *ctx, const grn_logger *logger);
 

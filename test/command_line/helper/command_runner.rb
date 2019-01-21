@@ -1,3 +1,18 @@
+# Copyright(C) 2016-2019 Kouhei Sutou <kou@clear-code.com>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License version 2.1 as published by the Free Software Foundation.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
 module CommandRunner
   class Error < StandardError
     attr_reader :output
@@ -49,11 +64,18 @@ module CommandRunner
   end
 
   def groonga(*groonga_command_line, &block)
+    if groonga_command_line.last.is_a?(Hash)
+      options = groonga_command_line.pop
+    end
     command_line = [
       groonga_path,
       "--log-path", @log_path.to_s,
       "--query-log-path", @query_log_path.to_s,
     ]
+    if options
+      more_command_line = options[:command_line]
+      command_line.concat(more_command_line) if more_command_line
+    end
     command_line << "-n" unless @database_path.exist?
     command_line << @database_path.to_s
     command_line.concat(groonga_command_line)

@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3189,6 +3189,18 @@ show_usage(FILE *output)
           "                           [none|emergency|alert|critical|\n"
           "                            error|warning|notice|info|debug|dump]\n"
           "                           (default: %s)\n"
+          "      --log-flags <log flags>:\n"
+          "                           specify log flags\n"
+          "                           '+' prefix means that 'add the flag'\n"
+          "                           '-' prefix means that 'remove the flag'\n"
+          "                           No prefix means that 'replace existing flags'\n"
+          "                           Multiple log flags can be specified by\n"
+          "                           separating flags with '|'\n"
+          "                           Example: default|+pid|-time\n"
+          "                           [none|time|title|message|location|\n"
+          "                            pid|process_id|thread_id|\n"
+          "                            all|default]\n"
+          "                           (default: %s)\n"
           "      --log-path <path>:   specify log path\n"
           "                           (default: %s)\n"
           "      --log-rotate-threshold-size <threshold>:\n"
@@ -3239,6 +3251,7 @@ show_usage(FILE *output)
           default_default_request_timeout,
           listen_backlog,
           grn_log_level_to_string(default_log_level),
+          "time|message", /* TODO: Generate from GRN_LOG_DEFAULT */
           default_log_path, default_query_log_path,
           default_config_path, default_default_command_version,
           (long long int)default_default_match_escalation_threshold,
@@ -3526,10 +3539,13 @@ main(int argc, char **argv)
   }
 
   if (log_flags_arg) {
-    int log_flags = grn_log_flags_parse(log_flags_arg);
-    if (!log_flags) {
-      grn_default_logger_set_flags(log_flags);
+    int log_flags = GRN_LOG_DEFAULT;
+    if (!grn_log_flags_parse(log_flags_arg, -1, &log_flags)) {
+      fprintf(stderr, "invalid log flags: <%s>\n",
+              log_flags_arg);
+      return EXIT_FAILURE;
     }
+    grn_default_logger_set_flags(log_flags);
   }
 
   if (query_log_path_arg) {
