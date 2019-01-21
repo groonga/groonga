@@ -3400,12 +3400,37 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, uint8_t *sc, buffer_term *bt,
     uint8_t *sbp = *sbpp;
     datavec rdv[MAX_N_ELEMENTS + 1];
     size_t bufsize = S_SEGMENT * ii->n_elements;
+    int decoded_size;
     datavec_init(ctx, rdv, ii->n_elements, 0, 0);
     if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
       rdv[ii->n_elements - 1].flags = ODD;
     }
-    bufsize += grn_p_decv(ctx, ii, bt->tid & GRN_ID_MAX,
-                          scp, cinfo->size, rdv, ii->n_elements);
+    decoded_size = grn_p_decv(ctx, ii, bt->tid & GRN_ID_MAX,
+                              scp, cinfo->size, rdv, ii->n_elements);
+    if (decoded_size == 0) {
+      datavec_fin(ctx, rdv);
+      grn_io_win_unmap(&sw);
+      {
+        grn_obj term;
+        grn_rc rc = ctx->rc;
+        DEFINE_NAME(ii);
+        GRN_TEXT_INIT(&term, 0);
+        grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+        if (rc == GRN_SUCCESS) {
+          rc = GRN_UNKNOWN_ERROR;
+        }
+        ERR(rc,
+            "[ii][chunk][merge] failed to decode: "
+            "<%.*s>: "
+            "<%.*s>(%u)",
+            name_size, name,
+            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+            bt->tid);
+        GRN_OBJ_FIN(ctx, &term);
+      }
+      return ctx->rc;
+    }
+    bufsize += decoded_size;
     // (df in chunk list) = a[1] - sdf;
     {
       int j = 0;
@@ -3455,6 +3480,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, uint8_t *sc, buffer_term *bt,
          segno,
          size);
     GRN_OBJ_FIN(ctx, &term);
+    return ctx->rc;
   }
   if (ctx->rc == GRN_SUCCESS) {
     int j = 0;
@@ -3689,8 +3715,36 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
         }
       }
       if (sce > scp) {
-        size += grn_p_decv(ctx, ii, bt->tid & GRN_ID_MAX,
-                           scp, sce - scp, rdv, ii->n_elements);
+        int decoded_size;
+        decoded_size = grn_p_decv(ctx, ii, bt->tid & GRN_ID_MAX,
+                                  scp, sce - scp, rdv, ii->n_elements);
+        if (decoded_size == 0) {
+          if (cinfo) { GRN_FREE(cinfo); }
+          datavec_fin(ctx, dv);
+          datavec_fin(ctx, rdv);
+          {
+            grn_obj term;
+            grn_rc rc = ctx->rc;
+            DEFINE_NAME(ii);
+            GRN_TEXT_INIT(&term, 0);
+            grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+            if (rc == GRN_SUCCESS) {
+              rc = GRN_UNKNOWN_ERROR;
+            }
+            ERR(rc,
+                "[ii][buffer][merge] failed to decode: "
+                "<%.*s>: "
+                "<%.*s>(%u): "
+                "n-chunks:<%u>",
+                name_size, name,
+                (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+                bt->tid,
+                nvchunks);
+            GRN_OBJ_FIN(ctx, &term);
+          }
+          return ctx->rc;
+        }
+        size += decoded_size;
         {
           int j = 0;
           sdf = rdv[j].data_size;
