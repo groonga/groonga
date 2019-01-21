@@ -7377,7 +7377,6 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
       } else {
         grn_ii_delete_one(ctx, ii, *tp, *u, n);
       }
-      grn_ii_updspec_close(ctx, *u);
       if (ctx->rc != GRN_SUCCESS) {
         break;
       }
@@ -7387,7 +7386,6 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     grn_hash *n = (grn_hash *)new;
     GRN_HASH_EACH(ctx, n, id, &tp, NULL, &u, {
       grn_ii_update_one(ctx, ii, *tp, *u, n);
-      grn_ii_updspec_close(ctx, *u);
       if (ctx->rc != GRN_SUCCESS) {
         break;
       }
@@ -7399,8 +7397,20 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
   }
 exit :
   grn_io_unlock(ii->seg);
-  if (old && old != oldvalue) { grn_obj_close(ctx, old); }
-  if (new && new != newvalue) { grn_obj_close(ctx, new); }
+  if (old) {
+    grn_hash *o = (grn_hash *)old;
+    GRN_HASH_EACH(ctx, o, id, &tp, NULL, &u, {
+      grn_ii_updspec_close(ctx, *u);
+    });
+    if (old != oldvalue) { grn_obj_close(ctx, old); }
+  }
+  if (new) {
+    grn_hash *n = (grn_hash *)new;
+    GRN_HASH_EACH(ctx, n, id, &tp, NULL, &u, {
+      grn_ii_updspec_close(ctx, *u);
+    });
+    if (new != newvalue) { grn_obj_close(ctx, new); }
+  }
   return ctx->rc;
 }
 
