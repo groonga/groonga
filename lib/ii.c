@@ -3117,7 +3117,7 @@ merge_dump_source(grn_ctx *ctx,
 
       GRN_TEXT_PUTC(ctx,
                     &(data.inspected_entries),
-                    ' ');
+                    ':');
 
       GRN_B_DEC(info.rid, record_data);
       if (ii->header->flags & GRN_OBJ_WITH_SECTION) {
