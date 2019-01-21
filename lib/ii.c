@@ -2813,10 +2813,10 @@ merge_dump_source_add_entry(grn_ctx *ctx,
 }
 
 static void
-merge_dump_chunk_raw(grn_ctx *ctx,
-                     merge_dump_source_data *data,
-                     uint8_t *chunk_start,
-                     uint8_t *chunk_end)
+merge_dump_source_chunk_raw(grn_ctx *ctx,
+                            merge_dump_source_data *data,
+                            uint8_t *chunk_start,
+                            uint8_t *chunk_end)
 {
   uint8_t *chunk_current = chunk_start;
   int decoded_size;
@@ -2917,8 +2917,8 @@ merge_dump_chunk_raw(grn_ctx *ctx,
 }
 
 static void
-merge_dump_chunk(grn_ctx *ctx,
-                 merge_dump_source_data *data)
+merge_dump_source_chunk(grn_ctx *ctx,
+                        merge_dump_source_data *data)
 {
   uint8_t *chunk_start = data->chunk + data->term->pos_in_chunk;
   uint8_t *chunk_end = chunk_start + data->term->size_in_chunk;
@@ -2998,10 +2998,10 @@ merge_dump_chunk(grn_ctx *ctx,
                   data->nth_chunk, data->n_chunks);
           continue;
         }
-        merge_dump_chunk_raw(ctx,
-                             data,
-                             sub_chunk,
-                             sub_chunk + info.size);
+        merge_dump_source_chunk_raw(ctx,
+                                    data,
+                                    sub_chunk,
+                                    sub_chunk + info.size);
         grn_io_win_unmap(&iw);
       }
     }
@@ -3015,10 +3015,10 @@ merge_dump_chunk(grn_ctx *ctx,
               GRN_TEXT_VALUE(&(data->inspected_term)),
               data->term->tid & GRN_ID_MAX,
               data->n_chunks);
-      merge_dump_chunk_raw(ctx,
-                           data,
-                           chunk_current,
-                           chunk_end);
+      merge_dump_source_chunk_raw(ctx,
+                                  data,
+                                  chunk_current,
+                                  chunk_end);
     }
   } else {
     data->nth_chunk = 0;
@@ -3032,10 +3032,10 @@ merge_dump_chunk(grn_ctx *ctx,
             GRN_TEXT_VALUE(&(data->inspected_term)),
             data->term->tid & GRN_ID_MAX,
             data->n_chunks);
-    merge_dump_chunk_raw(ctx,
-                         data,
-                         chunk_start,
-                         chunk_end);
+    merge_dump_source_chunk_raw(ctx,
+                                data,
+                                chunk_start,
+                                chunk_end);
   }
 }
 
@@ -3155,7 +3155,7 @@ merge_dump_source(grn_ctx *ctx,
     }
 
     if (chunk && data.term->size_in_chunk > 0) {
-      merge_dump_chunk(ctx, &data);
+      merge_dump_source_chunk(ctx, &data);
     }
   }
 
