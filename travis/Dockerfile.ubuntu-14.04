@@ -35,7 +35,9 @@ RUN \
 RUN \
   ruby2.0 -r yaml -r rubygems/safe_yaml -S \
     gem2.0 install \
-      bundler \
+      bundler -v "< 2" && \
+  ruby2.0 -r yaml -r rubygems/safe_yaml -S \
+    gem2.0 install \
       grntest \
       rake
 
