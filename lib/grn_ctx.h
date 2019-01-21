@@ -125,12 +125,12 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
   ctx_->errfile = __FILE__;\
   ctx_->errline = __LINE__;\
   ctx_->errfunc = __FUNCTION__;\
+  grn_ctx_log(ctx, __VA_ARGS__);\
   if (grn_ctx_impl_should_log(ctx)) {\
     grn_ctx_impl_set_current_error_message(ctx);\
     GRN_LOG(ctx, lvl, __VA_ARGS__);\
     if (lvl <= GRN_LOG_ERROR) { LOGTRACE(ctx, lvl); }\
   }\
-  grn_ctx_log(ctx, __VA_ARGS__);\
 } while (0)
 
 #define ERRP(ctx,lvl) \
