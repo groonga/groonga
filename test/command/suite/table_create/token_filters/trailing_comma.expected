@@ -13,6 +13,6 @@ table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   -
   false
 ]
 #|e| Syntax error: <TokenFilterStopWord,||>
-#|e| [info][set][token-filters][Terms] failed to parse token filters: <TokenFilterStopWord,>: [info][set][token-filters][Terms] failed to parse token filters: <TokenFilterStopWord,>: Syntax error: <TokenFilterStopWord,||>
+#|e| [info][set][token-filters][Terms] failed to parse token filters: <TokenFilterStopWord,>: Syntax error: <TokenFilterStopWord,||>
 dump
 plugin_register token_filters/stop_word

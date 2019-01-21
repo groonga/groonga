@@ -24,4 +24,4 @@ select Memos   --match_columns Memos.nonexistent_column   --query Groonga   --qu
   ]
 ]
 #|e| [expr][parse] unknown identifier: <Memos.nonexistent_column>
-#|e| Syntax error: <Memos.nonexistent_column||>: Syntax error: <Memos.nonexistent_column||>: [expr][parse] unknown identifier: <Memos.nonexistent_column>
+#|e| Syntax error: <Memos.nonexistent_column||>: [expr][parse] unknown identifier: <Memos.nonexistent_column>

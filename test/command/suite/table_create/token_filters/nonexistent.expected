@@ -13,7 +13,7 @@ table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   -
   false
 ]
 #|e| [expr][parse] unknown identifier: <TokenFilterNonexistent>
-#|e| Syntax error: <TokenFilterStopWord,TokenFilterNonexistent|,|TokenFilterStopWord>: Syntax error: <TokenFilterStopWord,TokenFilterNonexistent|,|TokenFilterStopWord>: [expr][parse] unknown identifier: <TokenFilte
-#|e| [info][set][token-filters][Terms] failed to parse token filters: <TokenFilterStopWord,TokenFilterNonexistent,TokenFilterStopWord>: [info][set][token-filters][Terms] failed to parse token filters: <TokenFilterStopWord,TokenFilterNonexistent,TokenFilterStopWor
+#|e| Syntax error: <TokenFilterStopWord,TokenFilterNonexistent|,|TokenFilterStopWord>: [expr][parse] unknown identifier: <TokenFilterNonexistent>
+#|e| [info][set][token-filters][Terms] failed to parse token filters: <TokenFilterStopWord,TokenFilterNonexistent,TokenFilterStopWord>: Syntax error: <TokenFilterStopWord,TokenFilterNonexistent|,|TokenFilterStopWord>: [expr][parse] unknown identifier: <TokenFilte
 dump
 plugin_register token_filters/stop_word

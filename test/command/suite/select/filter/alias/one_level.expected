@@ -25,7 +25,7 @@ select Memos --filter 'caption == "Groonga"'
   ]
 ]
 #|e| [expr][parse] unknown identifier: <caption>
-#|e| Syntax error: <caption| |== "Groonga">: Syntax error: <caption| |== "Groonga">: [expr][parse] unknown identifier: <caption>
+#|e| Syntax error: <caption| |== "Groonga">: [expr][parse] unknown identifier: <caption>
 load --table Aliases
 [
 {"_key": "Memos.caption", "real_name": "Memos.title"}

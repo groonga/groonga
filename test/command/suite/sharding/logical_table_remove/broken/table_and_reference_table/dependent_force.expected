@@ -59,7 +59,7 @@ logical_table_remove Logs timestamp   --min "2015-02-04 00:00:00"   --min_border
 #|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000118>
 #|e| grn_ctx_at: failed to open object: <280>(<Reference_20150204.data>):<65>(<column:var_size>)
 #|e| grn_ctx_at: failed to open object: <280>(<Reference_20150204.data>):<65>(<column:var_size>)
-#|e| [object][remove] column is broken: <Reference_20150204.data>: [object][remove] column is broken: <Reference_20150204.data>: [io][open] file size is too small: <8>(required: >= 64): <db/db.0
+#|e| [object][remove] column is broken: <Reference_20150204.data>: [io][open] file size is too small: <8>(required: >= 64): <db/db.0000118>
 #|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000118>
 #|e| grn_ctx_at: failed to open object: <280>(<Reference_20150204.data>):<65>(<column:var_size>)
 #|e| grn_ctx_at: failed to open object: <280>(<Reference_20150204.data>):<65>(<column:var_size>)
