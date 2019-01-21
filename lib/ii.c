@@ -3005,6 +3005,21 @@ merge_dump_chunk(grn_ctx *ctx,
         grn_io_win_unmap(&iw);
       }
     }
+    if (chunk_current < chunk_end) {
+      GRN_LOG(ctx, data->log_level,
+              "%s[%.*s][%d/%d] <%.*s>(%u): chunk: %u",
+              data->tag,
+              data->name_size, data->name,
+              data->nth_term, data->n_terms,
+              (int)GRN_TEXT_LEN(&(data->inspected_term)),
+              GRN_TEXT_VALUE(&(data->inspected_term)),
+              data->term->tid & GRN_ID_MAX,
+              data->n_chunks);
+      merge_dump_chunk_raw(ctx,
+                           data,
+                           chunk_current,
+                           chunk_end);
+    }
   } else {
     data->nth_chunk = 0;
     data->n_chunks = 0;
