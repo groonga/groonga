@@ -3383,7 +3383,7 @@ chunk_flush(grn_ctx *ctx, grn_ii *ii, chunk_info *cinfo, uint8_t *enc, uint32_t 
 }
 
 static grn_rc
-chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
+chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, uint8_t *sc, buffer_term *bt,
             chunk_info *cinfo, grn_id rid, datavec *dv,
             uint16_t *nextbp, uint8_t **sbpp, docinfo *bidp, int32_t *balance)
 {
@@ -3428,10 +3428,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, buffer_term *bt,
         posp = dv[j].data;
       }
       GETNEXTC();
-      {
-        uint8_t *sc = NULL;
-        MERGE_BC(bid.rid <= rid || cid.rid);
-      }
+      MERGE_BC(bid.rid <= rid || cid.rid);
       if (ctx->rc == GRN_SUCCESS) {
         *sbpp = sbp;
         *nextbp = nextb;
@@ -3656,7 +3653,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           GRN_B_DEC(cinfo[i].dgap, scp);
           crid += cinfo[i].dgap;
           if (bid.rid <= crid) {
-            chunk_merge(ctx, ii, sb, bt, &cinfo[i], crid, dv,
+            chunk_merge(ctx, ii, sb, sc, bt, &cinfo[i], crid, dv,
                         &nextb, &sbp, &bid, &balance);
             if (ctx->rc != GRN_SUCCESS) {
               if (cinfo) { GRN_FREE(cinfo); }
