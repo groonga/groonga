@@ -5206,9 +5206,11 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             buffer_split(ctx, ii, LSEG(pos), h);
             if (ctx->rc != GRN_SUCCESS) {
               grn_obj term;
+              char errbuf[GRN_CTX_MSGSIZE];
               DEFINE_NAME(ii);
               GRN_TEXT_INIT(&term, 0);
               grn_ii_get_term(ctx, ii, tid, &term);
+              grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
               ERR(ctx->rc,
                   "[ii][update][one] failed to split a buffer: "
                   "<%.*s>: "
@@ -5225,7 +5227,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                   pos,
                   b->header.buffer_free,
                   size,
-                  ctx->errbuf);
+                  errbuf);
               GRN_OBJ_FIN(ctx, &term);
               goto exit;
             }
@@ -5234,9 +5236,11 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
           buffer_flush(ctx, ii, LSEG(pos), h);
           if (ctx->rc != GRN_SUCCESS) {
             grn_obj term;
+            char errbuf[GRN_CTX_MSGSIZE];
             DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
             grn_ii_get_term(ctx, ii, tid, &term);
+            grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
             ERR(ctx->rc,
                 "[ii][update][one] failed to flush a buffer: "
                 "<%.*s>: "
@@ -5252,7 +5256,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                 pos,
                 b->header.buffer_free,
                 size,
-                ctx->errbuf);
+                errbuf);
             GRN_OBJ_FIN(ctx, &term);
             goto exit;
           }
@@ -5386,9 +5390,11 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             buffer_close(ctx, ii, pseg);
             {
               grn_obj term;
+              char errbuf[GRN_CTX_MSGSIZE];
               DEFINE_NAME(ii);
               GRN_TEXT_INIT(&term, 0);
               grn_ii_get_term(ctx, ii, tid, &term);
+              grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
               MERR("[ii][update][one] failed to put to buffer: "
                    "<%.*s>: "
                    "<%.*s>(%u): "
@@ -5398,7 +5404,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                    (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                    tid,
                    u2.rid, u2.sid,
-                   ctx->errbuf);
+                   errbuf);
               GRN_OBJ_FIN(ctx, &term);
             }
             goto exit;
@@ -5569,9 +5575,11 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
       buffer_flush(ctx, ii, LSEG(a[0]), h);
       if (ctx->rc != GRN_SUCCESS) {
         grn_obj term;
+        char errbuf[GRN_CTX_MSGSIZE];
         DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
         grn_ii_get_term(ctx, ii, tid, &term);
+        grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
         ERR(ctx->rc,
             "[ii][delete][one] failed to flush a buffer: "
             "<%.*s>: "
@@ -5584,7 +5592,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             tid,
             u->rid, u->sid,
             a[0],
-            ctx->errbuf);
+            errbuf);
         GRN_OBJ_FIN(ctx, &term);
         goto exit;
       }
@@ -8731,9 +8739,11 @@ grn_ii_select_cursor_open(grn_ctx *ctx,
 
   cursor = GRN_CALLOC(sizeof(grn_ii_select_cursor));
   if (!cursor) {
+    char errbuf[GRN_CTX_MSGSIZE];
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
     ERR(ctx->rc,
         "[ii][select][cursor][open] failed to allocate cursor: %s",
-        ctx->errbuf);
+        errbuf);
     return NULL;
   }
 
@@ -8741,9 +8751,11 @@ grn_ii_select_cursor_open(grn_ctx *ctx,
   cursor->mode = mode;
 
   if (!(cursor->tis = GRN_MALLOC(sizeof(token_info *) * string_len * 2))) {
+    char errbuf[GRN_CTX_MSGSIZE];
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
     ERR(ctx->rc,
         "[ii][select][cursor][open] failed to allocate token info container: %s",
-        ctx->errbuf);
+        errbuf);
     GRN_FREE(cursor);
     return NULL;
   }
@@ -8781,9 +8793,11 @@ grn_ii_select_cursor_open(grn_ctx *ctx,
     /* fallthru */
   case GRN_OP_NEAR :
     if (!(cursor->bt = bt_open(ctx, cursor->n_tis))) {
+      char errbuf[GRN_CTX_MSGSIZE];
+      grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
       ERR(ctx->rc,
           "[ii][select][cursor][open] failed to allocate btree: %s",
-          ctx->errbuf);
+          errbuf);
       grn_ii_select_cursor_close(ctx, cursor);
       return NULL;
     }
@@ -9254,6 +9268,7 @@ grn_ii_quorum_match(grn_ctx *ctx, grn_ii *ii, grn_ii_select_data *data)
     grn_rc rc = ctx->rc;
     char ii_name[GRN_TABLE_MAX_KEY_SIZE];
     int ii_name_len;
+    char errbuf[GRN_CTX_MSGSIZE];
 
     if (rc == GRN_SUCCESS) {
       rc = GRN_UNKNOWN_ERROR;
@@ -9261,12 +9276,13 @@ grn_ii_quorum_match(grn_ctx *ctx, grn_ii *ii, grn_ii_select_data *data)
     ii_name_len = grn_obj_name(ctx,
                                (grn_obj *)ii,
                                ii_name, GRN_TABLE_MAX_KEY_SIZE);
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
     ERR(rc,
         "[ii][quorum-match] failed to create token cursor: <%.*s>: <%.*s>%s%s",
         ii_name_len, ii_name,
         data->query_len, data->query,
-        ctx->errbuf[0] ? ": " : "",
-        ctx->errbuf[0] ? ctx->errbuf : "");
+        errbuf[0] ? ": " : "",
+        errbuf[0] ? errbuf : "");
     grn_hash_close(ctx, n_occurs);
     return rc;
   }
@@ -9315,6 +9331,7 @@ grn_ii_quorum_match(grn_ctx *ctx, grn_ii *ii, grn_ii_select_data *data)
       grn_rc rc = ctx->rc;
       char ii_name[GRN_TABLE_MAX_KEY_SIZE];
       int ii_name_len;
+      char errbuf[GRN_CTX_MSGSIZE];
 
       if (rc == GRN_SUCCESS) {
         rc = GRN_UNKNOWN_ERROR;
@@ -9322,12 +9339,13 @@ grn_ii_quorum_match(grn_ctx *ctx, grn_ii *ii, grn_ii_select_data *data)
       ii_name_len = grn_obj_name(ctx,
                                  (grn_obj *)ii,
                                  ii_name, GRN_TABLE_MAX_KEY_SIZE);
+      grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
       ERR(rc,
           "[ii][quorum-match] failed to create count cursor: <%.*s>: <%.*s>%s%s",
           ii_name_len, ii_name,
           data->query_len, data->query,
-          ctx->errbuf[0] ? ": " : "",
-          ctx->errbuf[0] ? ctx->errbuf : "");
+          errbuf[0] ? ": " : "",
+          errbuf[0] ? errbuf : "");
       grn_hash_close(ctx, n_occurs);
       return rc;
     }

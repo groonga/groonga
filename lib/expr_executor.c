@@ -3439,9 +3439,11 @@ grn_expr_executor_open(grn_ctx *ctx, grn_obj *expr)
 
   executor = GRN_CALLOC(sizeof(grn_expr_executor));
   if (!executor) {
+    char errbuf[GRN_CTX_MSGSIZE];
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
     ERR(ctx->rc,
         "[expr-executor][open] failed to allocate: %s",
-        ctx->errbuf);
+        errbuf);
     GRN_API_RETURN(NULL);
   }
 

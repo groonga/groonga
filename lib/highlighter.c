@@ -92,9 +92,11 @@ grn_highlighter_open(grn_ctx *ctx)
 
   highlighter = GRN_MALLOCN(grn_highlighter, 1);
   if (!highlighter) {
+    char errbuf[GRN_CTX_MSGSIZE];
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
     ERR(ctx->rc,
         "[highlighter][open] failed to allocate memory: %s",
-        ctx->errbuf);
+        errbuf);
     GRN_API_RETURN(NULL);
   }
 
@@ -182,14 +184,16 @@ grn_highlighter_remove_unused_ids(grn_ctx *ctx,
                                  0, -1, 0);
   if (!cursor) {
     grn_rc rc = ctx->rc;
+    char errbuf[GRN_CTX_MSGSIZE];
     if (rc == GRN_SUCCESS) {
       rc = GRN_UNKNOWN_ERROR;
     }
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
     ERR(rc,
         "[highlighter][prepare]%s "
         "failed to create a cursor for internal patricia trie: %s",
         tag,
-        ctx->errbuf);
+        errbuf);
     return;
   }
 
@@ -254,13 +258,15 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx,
                        NULL);
     if (!highlighter->lexicon.token_id_chunks) {
       grn_rc rc = ctx->rc;
+      char errbuf[GRN_CTX_MSGSIZE];
       if (rc == GRN_SUCCESS) {
         rc = GRN_UNKNOWN_ERROR;
       }
+      grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
       ERR(rc,
           "[highlighter][prepare][lexicon] "
           "failed to create an internal patricia trie: %s",
-          ctx->errbuf);
+          errbuf);
       return;
     }
     token_id_chunk_ids->header.domain =
@@ -378,13 +384,15 @@ grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
                        NULL);
     if (!highlighter->pat.keywords) {
       grn_rc rc = ctx->rc;
+      char errbuf[GRN_CTX_MSGSIZE];
       if (rc == GRN_SUCCESS) {
         rc = GRN_UNKNOWN_ERROR;
       }
+      grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
       ERR(rc,
           "[highlighter][prepare][no-lexicon] "
           "failed to create an internal patricia trie: %s",
-          ctx->errbuf);
+          errbuf);
       return;
     }
     keyword_ids->header.domain = grn_obj_id(ctx, highlighter->pat.keywords);
@@ -544,10 +552,12 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
                                  GRN_TOKENIZE_ADD,
                                  0);
   if (!cursor) {
+    char errbuf[GRN_CTX_MSGSIZE];
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
     ERR(ctx->rc,
         "%s failed to start tokenizing: %s",
         tag,
-        ctx->errbuf);
+        errbuf);
     return;
   }
 

@@ -9179,6 +9179,8 @@ grn_obj_set_info_table_module_raw(grn_ctx *ctx,
                      GRN_OP_AND,
                      GRN_EXPR_SYNTAX_SCRIPT);
       if (ctx->rc != GRN_SUCCESS) {
+        char errbuf[GRN_CTX_MSGSIZE];
+        grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
         ERR(GRN_INVALID_ARGUMENT,
             "%s[%.*s] failed to parse %s options: <%.*s>: %s",
             context_tag,
@@ -9187,7 +9189,7 @@ grn_obj_set_info_table_module_raw(grn_ctx *ctx,
             module_name,
             (int)GRN_TEXT_LEN(module),
             GRN_TEXT_VALUE(module),
-            ctx->errbuf);
+            errbuf);
         goto exit;
       }
       if (!grn_expr_is_simple_function_call(ctx, expression)) {
@@ -9420,6 +9422,8 @@ grn_obj_set_info_table_modules(grn_ctx *ctx,
                  GRN_OP_AND,
                  GRN_EXPR_SYNTAX_SCRIPT);
   if (ctx->rc != GRN_SUCCESS) {
+    char errbuf[GRN_CTX_MSGSIZE];
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
     ERR(GRN_INVALID_ARGUMENT,
         "%s[%.*s] failed to parse %s: <%.*s>: %s",
         context_tag,
@@ -9428,7 +9432,7 @@ grn_obj_set_info_table_modules(grn_ctx *ctx,
         module_name,
         (int)GRN_TEXT_LEN(modules),
         GRN_TEXT_VALUE(modules),
-        ctx->errbuf);
+        errbuf);
     goto exit;
   }
   if (!grn_expr_is_module_list(ctx, expression)) {
@@ -9887,10 +9891,12 @@ remove_columns(grn_ctx *ctx, grn_obj *obj)
                 "[object][remove] column is broken: <%.*s>",
                 name_size, name);
           } else {
+            char errbuf[GRN_CTX_MSGSIZE];
+            grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
             ERR(ctx->rc,
                 "[object][remove] column is broken: <%.*s>: %s",
                 name_size, name,
-                ctx->errbuf);
+                errbuf);
           }
           rc = ctx->rc;
           break;
@@ -10908,15 +10914,17 @@ grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned int name_
     int added;
     if (!(id = grn_table_add(ctx, s->keys, name, name_size, &added))) {
       grn_rc rc;
+      char errbuf[GRN_CTX_MSGSIZE];
       rc = ctx->rc;
       if (rc == GRN_SUCCESS) {
         rc = GRN_NO_MEMORY_AVAILABLE;
       }
+      grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
       ERR(rc,
           "[object][register] failed to register a name: <%.*s>%s%s%s",
           name_size, name,
           ctx->rc == GRN_SUCCESS ? "" : ": <",
-          ctx->rc == GRN_SUCCESS ? "" : ctx->errbuf,
+          ctx->rc == GRN_SUCCESS ? "" : errbuf,
           ctx->rc == GRN_SUCCESS ? "" : ">");
     } else if (!added) {
       ERR(GRN_INVALID_ARGUMENT,

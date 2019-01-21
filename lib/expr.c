@@ -6749,33 +6749,39 @@ grn_expr_syntax_expand_term_by_table(grn_ctx *ctx,
 
   GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expression, variable);
   if (ctx->rc != GRN_SUCCESS) {
+    char errbuf[GRN_CTX_MSGSIZE];
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
     ERR(ctx->rc,
         "[query][expand][table] "
         "failed to create expression: <%s>",
-        ctx->errbuf);
+        errbuf);
     return ctx->rc;
   }
   grn_expr_append_const(ctx, expression, term_column, GRN_OP_GET_VALUE, 1);
   grn_expr_append_const_str(ctx, expression, term, term_len, GRN_OP_PUSH, 1);
   grn_expr_append_op(ctx, expression, GRN_OP_EQUAL, 2);
   if (ctx->rc != GRN_SUCCESS) {
+    char errbuf[GRN_CTX_MSGSIZE];
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
     grn_obj_close(ctx, expression);
     ERR(ctx->rc,
         "[query][expand][table] "
         "failed to build expression: <%s>",
-        ctx->errbuf);
+        errbuf);
     return ctx->rc;
   }
 
   found_terms = grn_table_select(ctx, table, expression, NULL, GRN_OP_OR);
   grn_obj_close(ctx, expression);
   if (!found_terms) {
+    char errbuf[GRN_CTX_MSGSIZE];
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
     ERR(ctx->rc,
         "[query][expand][table] "
         "failed to find term: <%.*s>: <%s>",
         (int)term_len,
         term,
-        ctx->errbuf);
+        errbuf);
     return ctx->rc;
   }
 

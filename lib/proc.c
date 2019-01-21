@@ -687,13 +687,15 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                    NULL, GRN_OP_MATCH, GRN_OP_AND,
                    GRN_EXPR_SYNTAX_SCRIPT);
     if (ctx->rc) {
+      char errbuf[GRN_CTX_MSGSIZE];
+      grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
       rc = ctx->rc;
       ERR(rc,
           "[table][record][delete] failed to parse filter: "
           "table: <%.*s>, filter: <%.*s>, detail: <%s>",
           (int)GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
           (int)GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter),
-          ctx->errbuf);
+          errbuf);
     } else {
       grn_obj *records;
 
@@ -3738,7 +3740,9 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   rc = grn_obj_lock(ctx, db, GRN_ID_NIL, grn_lock_timeout);
   if (rc != GRN_SUCCESS) {
-    ERR(rc, "[io_flush] failed to lock DB: %s", ctx->errbuf);
+    char errbuf[GRN_CTX_MSGSIZE];
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
+    ERR(rc, "[io_flush] failed to lock DB: %s", errbuf);
     GRN_OUTPUT_BOOL(GRN_FALSE);
     return NULL;
   }

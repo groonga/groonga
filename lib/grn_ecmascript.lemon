@@ -36,9 +36,11 @@
       ERR(GRN_SYNTAX_ERROR, "Syntax error: <%.*s>",
           (int)GRN_TEXT_LEN(&message), GRN_TEXT_VALUE(&message));
     } else {
+      char errbuf[GRN_CTX_MSGSIZE];
+      grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
       ERR(ctx->rc, "Syntax error: <%.*s>: %s",
           (int)GRN_TEXT_LEN(&message), GRN_TEXT_VALUE(&message),
-          ctx->errbuf);
+          errbuf);
     }
     GRN_OBJ_FIN(ctx, &message);
   }

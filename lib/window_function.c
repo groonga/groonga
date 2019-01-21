@@ -214,10 +214,12 @@ grn_window_function_create(grn_ctx *ctx,
                                     GRN_PROC_WINDOW_FUNCTION,
                                     NULL, NULL, NULL, 0, NULL);
   if (!window_function) {
+    char errbuf[GRN_CTX_MSGSIZE];
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
     ERR(GRN_WINDOW_FUNCTION_ERROR,
         "[window-function][%.*s] failed to create proc: %s",
         name_size, name,
-        ctx->errbuf);
+        errbuf);
     GRN_API_RETURN(NULL);
   }
 
@@ -330,13 +332,15 @@ grn_table_apply_window_function(grn_ctx *ctx,
     sort_keys = GRN_MALLOCN(grn_table_sort_key, n_sort_keys);
     if (!sort_keys) {
       grn_rc rc = ctx->rc;
+      char errbuf[GRN_CTX_MSGSIZE];
       if (rc == GRN_SUCCESS) {
         rc = GRN_NO_MEMORY_AVAILABLE;
       }
+      grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
       ERR(rc,
           "[table][apply][window-function] "
           "failed to allocate internal sort keys: %s",
-          ctx->errbuf);
+          errbuf);
       GRN_API_RETURN(ctx->rc);
     }
     {
@@ -355,14 +359,16 @@ grn_table_apply_window_function(grn_ctx *ctx,
                               table);
     if (!sorted) {
       grn_rc rc = ctx->rc;
+      char errbuf[GRN_CTX_MSGSIZE];
       if (rc == GRN_SUCCESS) {
         rc = GRN_NO_MEMORY_AVAILABLE;
       }
+      grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
       GRN_FREE(sort_keys);
       ERR(rc,
           "[table][apply][window-function] "
           "failed to allocate table to store sorted result: %s",
-          ctx->errbuf);
+          errbuf);
       GRN_API_RETURN(ctx->rc);
     }
     grn_table_sort(ctx,
