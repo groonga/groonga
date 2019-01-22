@@ -159,23 +159,23 @@ grn_log_flags_parse(const char *string,
       string++;
     }
 
-#define CHECK_FLAG(name)                                        \
-    if (((string_end - string) >= (sizeof(#name) - 1)) &&       \
-        (strncasecmp(string, #name, sizeof(#name) - 1) == 0) &&  \
-        (((string_end - string) == (sizeof(#name) - 1)) ||      \
-         (string[sizeof(#name) - 1] == '|') ||                  \
-         (string[sizeof(#name) - 1] == ' ') ||                  \
-         (string[sizeof(#name) - 1] == '+') ||                  \
-         (string[sizeof(#name) - 1] == '-'))) {                 \
-      if (operator == GRN_FLAGS_OPERATOR_ADD) {                 \
-        *flags |= GRN_LOG_ ## name;                             \
-      } else if (operator == GRN_FLAGS_OPERATOR_REMOVE) {       \
-        *flags &= ~GRN_LOG_ ## name;                            \
-      } else {                                                  \
-        *flags = GRN_LOG_ ## name;                              \
-      }                                                         \
-      string += sizeof(#name) - 1;                              \
-      continue;                                                 \
+#define CHECK_FLAG(name)                                                \
+    if (((string_end - string) >= (sizeof(#name) - 1)) &&               \
+        (grn_strncasecmp(string, #name, sizeof(#name) - 1) == 0) &&     \
+        (((string_end - string) == (sizeof(#name) - 1)) ||              \
+         (string[sizeof(#name) - 1] == '|') ||                          \
+         (string[sizeof(#name) - 1] == ' ') ||                          \
+         (string[sizeof(#name) - 1] == '+') ||                          \
+         (string[sizeof(#name) - 1] == '-'))) {                         \
+      if (operator == GRN_FLAGS_OPERATOR_ADD) {                         \
+        *flags |= GRN_LOG_ ## name;                                     \
+      } else if (operator == GRN_FLAGS_OPERATOR_REMOVE) {               \
+        *flags &= ~GRN_LOG_ ## name;                                    \
+      } else {                                                          \
+        *flags = GRN_LOG_ ## name;                                      \
+      }                                                                 \
+      string += sizeof(#name) - 1;                                      \
+      continue;                                                         \
     }
 
     CHECK_FLAG(NONE);
