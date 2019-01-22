@@ -18811,7 +18811,7 @@ msgid "Client mode"
 msgstr "クライアントモード"
 
 msgid ""
-"There are common options in these modes. These common options is described "
+"There are common options in these modes. These common options are described "
 "later section."
 msgstr ""
 "これらのモードは共通のオプションを持ちます。これらの共通のオプションについて"

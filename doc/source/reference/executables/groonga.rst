@@ -52,7 +52,7 @@ Syntax
   * Daemon mode
   * Client mode
 
-There are common options in these modes. These common options is
+There are common options in these modes. These common options are
 described later section.
 
 .. _groonga-executable-file-standalone-mode:
