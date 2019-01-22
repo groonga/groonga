@@ -19051,6 +19051,72 @@ msgid ""
 "groonga.logです)"
 msgstr ""
 
+msgid "Specify log flags. Default value is ``time|message``."
+msgstr "ログフラグを指定します。デフォルト値は ``time|message`` です。"
+
+msgid "``+`` prefix means that ``add the flag``."
+msgstr "``+`` 接頭辞は、フラグを追加します。"
+
+msgid "``-`` prefix means that ``remove the flag``."
+msgstr "``-`` 接頭辞は、フラグを削除します。"
+
+msgid "No prefix means that ``replace existing flags``."
+msgstr "接頭辞無しは、既存のフラグを置き換えます。"
+
+msgid "Multiple log flags can be specified by separating flags with ``|``."
+msgstr "``|`` でフラグを区切ることで、複数のログフラグを指定できます。"
+
+msgid "We can specify flags below."
+msgstr "指定できるフラグは以下の通りです。"
+
+msgid "Output nothing into the log."
+msgstr "ログに何も出力しません。"
+
+msgid "Output time stamp into the log."
+msgstr "タイムスタンプをログに出力します。"
+
+msgid "``time``"
+msgstr ""
+
+msgid "Output log message into the log."
+msgstr "ログメッセージをログに出力します。"
+
+msgid ""
+"Output process id and a location of an output of the log (file name, line "
+"and function name) into the log."
+msgstr ""
+"プロセスIDとログの出力場所(ファイル名、行数、関数名)をログに出力します。"
+
+msgid "Output process id into the log."
+msgstr "プロセスIDをログに出力します。"
+
+msgid "``process_id``"
+msgstr ""
+
+msgid "This flag is an alias of ``process_id``."
+msgstr "このフラグは、 ``process_id`` の別名です。"
+
+msgid "``pid``"
+msgstr ""
+
+msgid "Output thread id into log"
+msgstr "スレッドIDををログに出力します。"
+
+msgid "``thread_id``"
+msgstr ""
+
+msgid "This flag specifies all flags except ``none`` flag."
+msgstr "このフラグは、 ``none`` フラグ以外のフラグ全てを指定します。"
+
+msgid "``all``"
+msgstr ""
+
+msgid "``default``"
+msgstr ""
+
+msgid "Output time stamp and log message into the log."
+msgstr "タイムスタンプとログメッセージをログに出力します。"
+
 msgid ""
 "Specifies threshold for log rotation. Log file is rotated when log file size "
 "is larger than or equals to the threshold (default: 0; disabled)."

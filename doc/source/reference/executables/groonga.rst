@@ -266,6 +266,49 @@ Options
 
    ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/groonga.logです)
 
+.. option:: --log-flags <log flags>
+
+   .. versionadded:: 8.1.1
+
+   Specify log flags. Default value is ``time|message``.
+
+   ``+`` prefix means that ``add the flag``.
+
+   ``-`` prefix means that ``remove the flag``.
+
+   No prefix means that ``replace existing flags``.
+
+   Multiple log flags can be specified by separating flags with ``|``.
+
+   We can specify flags below.
+
+   ``none``
+     Output nothing into the log.
+
+   ``time``
+     Output time stamp into the log.
+
+   ``message``
+     Output log message into the log.
+
+   ``location``
+     Output process id and a location of an output of the log (file name, line and function name) into the log.
+
+   ``process_id``
+     Output process id into the log.
+
+   ``pid``
+     This flag is an alias of ``process_id``.
+
+   ``thread_id``
+     Output thread id into log
+
+   ``all``
+     This flag specifies all flags except ``none`` flag.
+
+   ``default``
+     Output time stamp and log message into the log.
+
 .. option:: --log-rotate-threshold-size <threshold>
 
    .. versionadded:: 5.0.3
