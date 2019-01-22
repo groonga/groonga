@@ -18799,21 +18799,23 @@ msgid "``groonga`` executable file has the following four modes:"
 msgstr "``groonga`` 実行ファイルには以下の4つのモードがあります。"
 
 msgid "Standalone mode"
-msgstr ""
+msgstr "スタンドアローンモード"
 
 msgid "Server mode"
-msgstr ""
+msgstr "サーバーモード"
 
 msgid "Daemon mode"
-msgstr ""
+msgstr "デーモンモード"
 
 msgid "Client mode"
-msgstr ""
+msgstr "クライアントモード"
 
 msgid ""
 "There are common options in these modes. These common options is described "
 "later section."
 msgstr ""
+"これらのモードは共通のオプションを持ちます。これらの共通のオプションについて"
+"は後のセクションで説明します。"
 
 msgid ""
 "In standalone mode, ``groonga`` executable file runs one or more Groonga :"
