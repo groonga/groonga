@@ -27,6 +27,7 @@ static int grn_fmalloc_prob = 0;
 static char *grn_fmalloc_func = NULL;
 static char *grn_fmalloc_file = NULL;
 static int grn_fmalloc_line = 0;
+static int grn_fmalloc_max_alloc_count = 0;
 #endif /* USE_FAIL_MALLOC */
 
 #ifdef USE_EXACT_ALLOC_COUNT
@@ -39,6 +40,7 @@ static int grn_fmalloc_line = 0;
   alloc_count += count; \
 } while (0)
 #endif
+
 
 void
 grn_alloc_init_from_env(void)
@@ -87,6 +89,38 @@ grn_alloc_init_from_env(void)
                GRN_ENV_BUFFER_SIZE);
     if (grn_fmalloc_line_env[0]) {
       grn_fmalloc_line = atoi(grn_fmalloc_line_env);
+    }
+  }
+  {
+    static char grn_fmalloc_max_alloc_count_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_FMALLOC_MAX_ALLOC_COUNT",
+               grn_fmalloc_max_alloc_count_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_fmalloc_max_alloc_count_env[0]) {
+      long temp = strtol(grn_fmalloc_max_alloc_count_env, NULL, 10);
+      if (temp == 0) {
+        GRN_LOG(ctx, GRN_LOG_WARNING,
+             "GRN_FMALLOC_MAX_ALLOC_COUNT could not convert to a number: %s\n",
+             grn_fmalloc_max_alloc_count_env);
+        return;
+      }
+      if (errno == ERANGE || temp > INT_MAX || temp < INT_MIN) {
+        GRN_LOG(ctx, GRN_LOG_WARNING,
+             "GRN_FMALLOC_MAX_ALLOC_COUNT overflowing or underflowing: %s\n"
+             "A valid range for this value from 0 to INT_MAX",
+             grn_fmalloc_max_alloc_count_env);
+        return;
+      }
+      if (temp < 0)
+      {
+        GRN_LOG(ctx, GRN_LOG_WARNING,
+             "GRN_FMALLOC_MAX_ALLOC_COUNT is invalid value: %s\n"
+             "Because GRN_FMALLOC_MAX_ALLOC_COUNT is 0 or less"
+             "A valid range for this value from 0 to INT_MAX",
+             grn_fmalloc_max_alloc_count_env);
+        return;
+      }
+      grn_fmalloc_max_alloc_count = (int)temp;
     }
   }
 #endif /* USE_FAIL_MALLOC */
@@ -903,6 +937,9 @@ grn_fail_malloc_check(size_t size,
     return 1;
   }
   if (grn_fmalloc_prob && grn_fmalloc_prob >= rand()) {
+    return 0;
+  }
+  if (grn_fmalloc_max_alloc_count < alloc_count) {
     return 0;
   }
   return 1;
