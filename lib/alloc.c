@@ -41,7 +41,6 @@ static int grn_fmalloc_max_alloc_count = 0;
 } while (0)
 #endif
 
-
 void
 grn_alloc_init_from_env(void)
 {
@@ -111,8 +110,7 @@ grn_alloc_init_from_env(void)
              grn_fmalloc_max_alloc_count_env);
         return;
       }
-      if (temp < 0)
-      {
+      if (temp < 0) {
         GRN_LOG(ctx, GRN_LOG_WARNING,
              "GRN_FMALLOC_MAX_ALLOC_COUNT is invalid value: %s\n"
              "Because GRN_FMALLOC_MAX_ALLOC_COUNT is 0 or less"
@@ -927,20 +925,20 @@ grn_strdup_default(grn_ctx *ctx, const char *s,
 }
 
 #ifdef USE_FAIL_MALLOC
-int
+grn_bool
 grn_fail_malloc_check(size_t size,
                       const char *file, int line, const char *func)
 {
   if ((grn_fmalloc_file && strcmp(file, grn_fmalloc_file)) ||
       (grn_fmalloc_line && line != grn_fmalloc_line) ||
       (grn_fmalloc_func && strcmp(func, grn_fmalloc_func))) {
-    return 1;
+    return GRN_TRUE;
   }
   if (grn_fmalloc_prob && grn_fmalloc_prob >= rand()) {
-    return 0;
+    return GRN_FALSE;
   }
   if (grn_fmalloc_max_alloc_count < alloc_count) {
-    return 0;
+    return GRN_FALSE;
   }
   return 1;
 }

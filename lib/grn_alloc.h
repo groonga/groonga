@@ -149,7 +149,7 @@ GRN_API char *grn_strdup_default(grn_ctx *ctx, const char *s, const char* file, 
 GRN_API void grn_free_default(grn_ctx *ctx, void *ptr, const char* file, int line, const char *func);
 
 #ifdef USE_FAIL_MALLOC
-int grn_fail_malloc_check(size_t size, const char *file, int line, const char *func);
+grn_bool grn_fail_malloc_check(size_t size, const char *file, int line, const char *func);
 void *grn_malloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
 void *grn_calloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
 void *grn_realloc_fail(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line, const char *func);
