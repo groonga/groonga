@@ -23866,7 +23866,7 @@ msgid "QUERY"
 msgstr ""
 
 msgid "Elapsed time in nanoseconds since query is started."
-msgstr "クエリーの処理を開始してからの時間。単位はマイクロ秒。"
+msgstr "クエリーの処理を開始してからの時間。単位はナノ秒。"
 
 msgid "ELAPSED_TIME"
 msgstr ""
