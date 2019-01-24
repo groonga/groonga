@@ -24,9 +24,10 @@ There are some limitations:
 
 See :doc:`/reference/command/request_id` about request ID.
 
-If request is canceled, the canceled request has ``-5``
-(``GRN_INTERRUPTED_FUNCTION_CALL``) as
-:doc:`/reference/command/return_code`.
+If the request is canceled, a :doc:`/reference/command/return_code` of the canceled request as below.
+
+  * ``-5`` (``GRN_INTERRUPTED_FUNCTION_CALL``) (Groonga version 6.0.1 before)
+  * ``-77`` (``GRN_CANCEL``) (Groonga version 6.0.1 or later)
 
 Syntax
 ------

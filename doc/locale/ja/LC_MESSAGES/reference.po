@@ -11167,12 +11167,19 @@ msgstr ""
 "い。"
 
 msgid ""
-"If request is canceled, the canceled request has ``-5`` "
-"(``GRN_INTERRUPTED_FUNCTION_CALL``) as :doc:`/reference/command/return_code`."
+"If the request is canceled, a :doc:`/reference/command/return_code` of the "
+"canceled request as below."
 msgstr ""
 "リクエストがキャンセルされたら、キャンセルされたリクエストの :doc:`/"
-"reference/command/return_code` は ``-5`` "
-"（ ``GRN_INTERRUPTED_FUNCTION_CALL`` ）になります。"
+"reference/command/return_code` は、以下のようになります。"
+
+msgid ""
+"``-5`` (``GRN_INTERRUPTED_FUNCTION_CALL``) (Groonga version 6.0.1 before)"
+msgstr ""
+"``-5`` (``GRN_INTERRUPTED_FUNCTION_CALL``) (Groonga version 6.0.1 より前)"
+
+msgid "``-77`` (``GRN_CANCEL``) (Groonga version 6.0.1 or later)"
+msgstr "``-77`` (``GRN_CANCEL``) (Groonga version 6.0.1 以降)"
 
 msgid "Here is an example of ``request_cancel`` command::"
 msgstr "以下は ``request_cancel`` コマンドの使用例です::"
