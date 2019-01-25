@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2012-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -660,6 +660,18 @@ grn_nfkc_normalize_context_swap(grn_ctx *ctx,
   tmp = *context1;
   *context1 = *context2;
   *context2 = tmp;
+}
+
+grn_inline static void
+grn_nfkc_normalize_context_rewind(grn_ctx *ctx,
+                                  grn_nfkc_normalize_context *context)
+{
+  context->d = context->dest;
+  context->d_ = NULL;
+  context->n_characters = 0;
+  context->c = context->checks;
+  context->t = context->types;
+  context->o = context->offsets;
 }
 
 grn_inline static void
@@ -1337,6 +1349,9 @@ grn_nfkc_normalize_unify_katakana_v_sounds(grn_ctx *ctx,
     return unified_buffer;
   }
 
+  *n_unified_bytes = *n_used_bytes;
+  *n_unified_characters = *n_used_characters;
+
   return current;
 }
 
@@ -1390,6 +1405,9 @@ grn_nfkc_normalize_unify_katakana_bu_sound(grn_ctx *ctx,
     return unified_buffer;
   }
 
+  *n_unified_bytes = *n_used_bytes;
+  *n_unified_characters = *n_used_characters;
+
   return current;
 }
 
@@ -1436,7 +1454,7 @@ grn_nfkc_normalize_unify_stateful(grn_ctx *ctx,
       }
       if (unify->c) {
         size_t i;
-        *(unify->c++) += data->context.checks[i_byte];
+        *(unify->c++) = data->context.checks[i_byte];
         for (i = 1; i < n_unified_bytes; i++) {
           *(unify->c++) = 0;
         }
@@ -1547,6 +1565,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
   if (data->options->unify_katakana_v_sounds) {
     if (need_swap) {
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
     grn_nfkc_normalize_unify_stateful(ctx,
                                       data,
@@ -1562,6 +1581,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
   if (data->options->unify_katakana_bu_sound) {
     if (need_swap) {
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
     grn_nfkc_normalize_unify_stateful(ctx,
                                       data,
@@ -1577,6 +1597,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
   if (data->options->unify_to_romaji) {
     if (need_swap) {
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
     grn_nfkc_normalize_unify_stateful(ctx,
                                       data,
