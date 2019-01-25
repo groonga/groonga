@@ -7456,14 +7456,14 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
   }
 exit :
   grn_io_unlock(ii->seg);
-  if (old) {
+  if (old && old->header.type == GRN_TABLE_HASH_KEY) {
     grn_hash *o = (grn_hash *)old;
     GRN_HASH_EACH(ctx, o, id, &tp, NULL, &u, {
       grn_ii_updspec_close(ctx, *u);
     });
     if (old != oldvalue) { grn_obj_close(ctx, old); }
   }
-  if (new) {
+  if (new && new->header.type == GRN_TABLE_HASH_KEY) {
     grn_hash *n = (grn_hash *)new;
     GRN_HASH_EACH(ctx, n, id, &tp, NULL, &u, {
       grn_ii_updspec_close(ctx, *u);
