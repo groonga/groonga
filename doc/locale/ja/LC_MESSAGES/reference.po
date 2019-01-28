@@ -19081,7 +19081,7 @@ msgstr "指定できるフラグは以下の通りです。"
 msgid "Output nothing into the log."
 msgstr "ログに何も出力しません。"
 
-msgid "Output time stamp into the log."
+msgid "Output timestamp into the log."
 msgstr "タイムスタンプをログに出力します。"
 
 msgid "``time``"
@@ -19123,7 +19123,7 @@ msgstr ""
 msgid "``default``"
 msgstr ""
 
-msgid "Output time stamp and log message into the log."
+msgid "Output timestamp and log message into the log."
 msgstr "タイムスタンプとログメッセージをログに出力します。"
 
 msgid ""
@@ -28229,6 +28229,21 @@ msgstr ""
 
 msgid "Outputs reading of token."
 msgstr "トークンの読みを出力します。"
+
+msgid "``TokenNgram``"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"``TokenNgram`` is a bigram based tokenizer. It's recommended to use this "
+"tokenizer for most cases."
+msgstr ""
+"``TokenBigram`` はバイグラムベースのトークナイザーです。多くのケースでは、こ"
+"のトークナイザーを使うことをオススメします。"
+
+#, fuzzy
+msgid "``TokenNgram`` hasn't parameter::"
+msgstr "``TokenBigram`` には、引数がありません。"
 
 msgid "``TokenRegexp``"
 msgstr ""

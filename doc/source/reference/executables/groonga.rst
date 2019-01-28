@@ -286,7 +286,7 @@ Options
      Output nothing into the log.
 
    ``time``
-     Output time stamp into the log.
+     Output timestamp into the log.
 
    ``message``
      Output log message into the log.
@@ -307,7 +307,7 @@ Options
      This flag specifies all flags except ``none`` flag.
 
    ``default``
-     Output time stamp and log message into the log.
+     Output timestamp and log message into the log.
 
 .. option:: --log-rotate-threshold-size <threshold>
 
