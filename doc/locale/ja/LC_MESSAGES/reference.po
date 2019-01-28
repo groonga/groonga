@@ -19114,8 +19114,9 @@ msgstr "スレッドIDををログに出力します。"
 msgid "``thread_id``"
 msgstr ""
 
-msgid "This flag specifies all flags except ``none`` flag."
-msgstr "このフラグは、 ``none`` フラグ以外のフラグ全てを指定します。"
+msgid "This flag specifies all flags except ``none`` and ``default`` flags."
+msgstr ""
+"このフラグは、 ``none`` と ``default`` フラグ以外の全てのフラグを指定します。"
 
 msgid "``all``"
 msgstr ""

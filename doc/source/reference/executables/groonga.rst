@@ -304,7 +304,7 @@ Options
      Output thread id into log
 
    ``all``
-     This flag specifies all flags except ``none`` flag.
+     This flag specifies all flags except ``none`` and ``default`` flags.
 
    ``default``
      Output timestamp and log message into the log.
