@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -145,15 +145,6 @@ struct _grn_ctx_impl {
   int32_t currseg;
   grn_critical_section lock;
   grn_io_mapinfo segs[GRN_CTX_N_SEGMENTS];
-
-#ifdef USE_DYNAMIC_MALLOC_CHANGE
-  /* memory allocation portion */
-  grn_malloc_func malloc_func;
-  grn_calloc_func calloc_func;
-  grn_realloc_func realloc_func;
-  grn_strdup_func strdup_func;
-  grn_free_func free_func;
-#endif
 
 #ifdef USE_MEMORY_DEBUG
   /* memory debug portion */

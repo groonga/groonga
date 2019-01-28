@@ -531,9 +531,6 @@ AC_ARG_ENABLE(uyield,
   [enable_uyield="no"])
 AC_MSG_RESULT($enable_uyield)
 
-## malloc
-force_enable_dynamic_malloc_change="no"
-
 # exact-alloc-count
 AC_MSG_CHECKING([whether enable exact-alloc-count])
 AC_ARG_ENABLE(exact-alloc-count,
@@ -544,52 +541,6 @@ if test "x$enable_exact_alloc_count" != "xno"; then
   AC_DEFINE(USE_EXACT_ALLOC_COUNT, [1], [alloc_count with atomic])
 fi
 AC_MSG_RESULT($enable_exact_alloc_count)
-
-# failmalloc
-AC_MSG_CHECKING([whether enable fmalloc])
-AC_ARG_ENABLE(fmalloc,
-  [AS_HELP_STRING([--enable-fmalloc],
-    [make memory allocation failed in specified condition for debug. [default=no]])],
-  ,
-  [enable_fmalloc="no"])
-if test "x$enable_fmalloc" != "xno"; then
-  force_enable_dynamic_malloc_change="yes"
-  AC_DEFINE(USE_FAIL_MALLOC, [1], [use fmalloc])
-fi
-AC_MSG_RESULT($enable_fmalloc)
-
-# abort
-AC_MSG_CHECKING([whether enable abort])
-AC_ARG_ENABLE(abort,
-  [AS_HELP_STRING([--enable-abort],
-    [enable query abortion. [default=no]])],
-  ,
-  [enable_abort="no"])
-if test "x$enable_abort" != "xno"; then
-  force_enable_dynamic_malloc_change="yes"
-  AC_DEFINE(USE_QUERY_ABORT, [1], [use abort])
-fi
-AC_MSG_RESULT($enable_abort)
-
-# dynamic malloc change
-AC_MSG_CHECKING([whether allow dynamic memory allocation change])
-AC_ARG_ENABLE(dynamic-malloc-change,
-  [AS_HELP_STRING([--enable-dynamic-malloc-change],
-    [allow dynamic memory allocation change for testing. [default=no]])],
-  ,
-  [enable_dynamic_malloc_change="no"])
-if test "x$enable_dynamic_malloc_change" != "xyes" -a \
-     "x$force_enable_dynamic_malloc_change" = "xyes"; then
-  enable_dynamic_malloc_change="yes"
-  AC_MSG_RESULT([$enable_dynamic_malloc_change (force)])
-else
-  AC_MSG_RESULT([$enable_dynamic_malloc_change])
-fi
-
-if test "x$enable_dynamic_malloc_change" = "xyes"; then
-  AC_DEFINE(USE_DYNAMIC_MALLOC_CHANGE, [1],
-            [Define to 1 if you enable dynamic malloc change])
-fi
 
 # memory debug
 AC_MSG_CHECKING([whether debug memory management])

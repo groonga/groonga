@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -84,39 +84,42 @@ grn_inline static void grn_fileinfo_init(fileinfo *fis, int nfis);
 grn_inline static int grn_fileinfo_opened(fileinfo *fi);
 grn_inline static grn_rc grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi);
 #ifdef WIN32
-grn_inline static void * grn_mmap(grn_ctx *ctx, grn_ctx *owner_ctx,
-                                  grn_io *io, HANDLE *fmo, fileinfo *fi,
-                                  off_t offset, size_t length);
+grn_inline static void *grn_mmap(grn_ctx *ctx,
+                                 grn_ctx *owner_ctx,
+                                 grn_io *io,
+                                 HANDLE *fmo,
+                                 fileinfo *fi,
+                                 off_t offset,
+                                 size_t length,
+                                 const char *file,
+                                 int line,
+                                 const char *func);
 grn_inline static int grn_munmap(grn_ctx *ctx, grn_ctx *owner_ctx,
                                  grn_io *io, HANDLE *fmo, fileinfo *fi,
                                  void *start, size_t length);
 # define GRN_MMAP(ctx,owner_ctx,io,fmo,fi,offset,length)\
-  (grn_mmap((ctx), (owner_ctx), (io), (fmo), (fi), (offset), (length)))
+  (grn_mmap((ctx), (owner_ctx), (io), (fmo), (fi), (offset), (length),\
+            __FILE__, __LINE__, __FUNCTION__))
 # define GRN_MUNMAP(ctx,owner_ctx,io,fmo,fi,start,length)\
   (grn_munmap((ctx), (owner_ctx), (io), (fmo), (fi), (start), (length)))
 #else /* WIN32 */
-grn_inline static void * grn_mmap(grn_ctx *ctx, grn_ctx *owner_ctx,
-                                  grn_io *io, fileinfo *fi,
-                                  off_t offset, size_t length);
+grn_inline static void *grn_mmap(grn_ctx *ctx,
+                                 grn_ctx *owner_ctx,
+                                 grn_io *io,
+                                 fileinfo *fi,
+                                 off_t offset,
+                                 size_t length,
+                                 const char *file,
+                                 int line,
+                                 const char *func);
 grn_inline static int grn_munmap(grn_ctx *ctx, grn_ctx *owner_ctx,
                                  grn_io *io, fileinfo *fi,
                                  void *start, size_t length);
+# define GRN_MMAP(ctx,owner_ctx,io,fmo,fi,offset,length)\
+  (grn_mmap((ctx), (owner_ctx), (io), (fi), (offset), (length),\
+            __FILE__, __LINE__, __FUNCTION__))
 # define GRN_MUNMAP(ctx,owner_ctx,io,fmo,fi,start,length) \
   (grn_munmap((ctx), (owner_ctx), (io), (fi), (start), (length)))
-# ifdef USE_FAIL_MALLOC
-grn_inline static void * grn_fail_mmap(grn_ctx *ctx, grn_ctx *owner_ctx,
-                                       grn_io *io, fileinfo *fi,
-                                       off_t offset, size_t length,
-                                       const char* file,
-                                       int line,
-                                       const char *func);
-#  define GRN_MMAP(ctx,owner_ctx,io,fmo,fi,offset,length)\
-  (grn_fail_mmap((ctx), (owner_ctx), (io), (fi), (offset), (length),\
-                 __FILE__, __LINE__, __FUNCTION__))
-# else /* USE_FAIL_MALLOC */
-#  define GRN_MMAP(ctx,owner_ctx,io,fmo,fi,offset,length)\
-  (grn_mmap((ctx), (owner_ctx), (io), (fi), (offset), (length)))
-# endif /* USE_FAIL_MALLOC */
 #endif  /* WIN32 */
 
 grn_inline static int grn_msync(grn_ctx *ctx,
@@ -1921,17 +1924,41 @@ grn_guess_io_version(grn_ctx *ctx, grn_io *io, fileinfo *fi)
 }
 
 grn_inline static void *
-grn_mmap(grn_ctx *ctx, grn_ctx *owner_ctx, grn_io *io, HANDLE *fmo,
-         fileinfo *fi, off_t offset, size_t length)
+grn_mmap(grn_ctx *ctx,
+         grn_ctx *owner_ctx,
+         grn_io *io,
+         HANDLE *fmo,
+         fileinfo *fi,
+         off_t offset,
+         size_t length,
+         const char *file,
+         int line,
+         const char *func)
 {
-  int version;
-
-  version = grn_guess_io_version(ctx, io, fi);
-
-  if (version == 0) {
-    return grn_mmap_v0(ctx, owner_ctx, fi, offset, length);
+  if (grn_fail_malloc_should_fail(length, file, line, func)) {
+    MERR("[alloc][fail][mmap] <%d>: <%" GRN_FMT_SIZE ">: <%s>: "
+         "<%p:%" GRN_FMT_INT64U ":%" GRN_FMT_SIZE ">: "
+         "%s:%d: %s",
+         grn_alloc_count(),
+         mmap_size,
+         io ? (io->path[0] ? io->path : "(memory)") : "(null)",
+         fi ? fi->fh : NULL,
+         (uint64_t)offset,
+         length,
+         file,
+         line,
+         func);
+    return NULL;
   } else {
-    return grn_mmap_v1(ctx, owner_ctx, fmo, fi, offset, length);
+    int version;
+
+    version = grn_guess_io_version(ctx, io, fi);
+
+    if (version == 0) {
+      return grn_mmap_v0(ctx, owner_ctx, fi, offset, length);
+    } else {
+      return grn_mmap_v1(ctx, owner_ctx, fmo, fi, offset, length);
+    }
   }
 }
 
@@ -2120,57 +2147,57 @@ grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
 #include <sys/mman.h>
 
 grn_inline static void *
-grn_mmap(grn_ctx *ctx, grn_ctx *owner_ctx, grn_io *io, fileinfo *fi,
-         off_t offset, size_t length)
+grn_mmap(grn_ctx *ctx,
+         grn_ctx *owner_ctx,
+         grn_io *io,
+         fileinfo *fi,
+         off_t offset,
+         size_t length,
+         const char *file,
+         int line,
+         const char *func)
 {
-  void *res;
-  int fd, flags;
-  if (fi) {
-    struct stat s;
-    off_t tail = offset + length;
-    fd = fi->fd;
-    if ((fstat(fd, &s) == -1) || (s.st_size < tail && ftruncate(fd, tail) == -1)) {
-      SERR("fstat");
-      return NULL;
-    }
-    flags = MAP_SHARED;
-  } else {
-    fd = -1;
-    flags = MAP_PRIVATE|MAP_ANONYMOUS;
-  }
-  res = mmap(NULL, length, PROT_READ|PROT_WRITE, flags, fd, offset);
-  if (MAP_FAILED == res) {
-    MERR("mmap(%" GRN_FMT_LLU ",%d,%" GRN_FMT_LLD ")=%s <%" GRN_FMT_LLU ">",
-         (unsigned long long int)length, fd, (long long int)offset,
-         strerror(errno), (unsigned long long int)mmap_size);
-    return NULL;
-  }
-  mmap_size += length;
-  return res;
-}
-
-#ifdef USE_FAIL_MALLOC
-grn_inline static void *
-grn_fail_mmap(grn_ctx *ctx, grn_ctx *owner_ctx, grn_io *io, fileinfo *fi,
-              off_t offset, size_t length,
-              const char* file, int line, const char *func)
-{
-  if (grn_fail_malloc_check(length, file, line, func)) {
-    return grn_mmap(ctx, io, fi, offset, length);
-  } else {
-    MERR("fail_mmap(%" GRN_FMT_SIZE ",%d,%" GRN_FMT_LLU ") "
-         "(%s:%d@%s) <%" GRN_FMT_SIZE ">",
-         length,
+  if (grn_fail_malloc_should_fail(length, file, line, func)) {
+    MERR("[alloc][fail][mmap] <%d>: <%" GRN_FMT_SIZE ">: <%s>: "
+         "<%d:%" GRN_FMT_INT64U ":%" GRN_FMT_SIZE ">: "
+         "%s:%d: %s",
+         grn_alloc_count(),
+         mmap_size,
+         io ? (io->path[0] ? io->path : "(memory)") : "(null)",
          fi ? fi->fd : 0,
-         (long long unsigned int)offset,
+         (uint64_t)offset,
+         length,
          file,
          line,
-         func,
-         mmap_size);
+         func);
     return NULL;
+  } else {
+    void *res;
+    int fd, flags;
+    if (fi) {
+      struct stat s;
+      off_t tail = offset + length;
+      fd = fi->fd;
+      if ((fstat(fd, &s) == -1) || (s.st_size < tail && ftruncate(fd, tail) == -1)) {
+        SERR("fstat");
+        return NULL;
+      }
+      flags = MAP_SHARED;
+    } else {
+      fd = -1;
+      flags = MAP_PRIVATE|MAP_ANONYMOUS;
+    }
+    res = mmap(NULL, length, PROT_READ|PROT_WRITE, flags, fd, offset);
+    if (MAP_FAILED == res) {
+      MERR("mmap(%" GRN_FMT_LLU ",%d,%" GRN_FMT_LLD ")=%s <%" GRN_FMT_LLU ">",
+           (unsigned long long int)length, fd, (long long int)offset,
+           strerror(errno), (unsigned long long int)mmap_size);
+      return NULL;
+    }
+    mmap_size += length;
+    return res;
   }
 }
-#endif /* USE_FAIL_MALLOC */
 
 grn_inline static int
 grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)

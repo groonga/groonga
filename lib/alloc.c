@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -22,12 +23,12 @@
 
 static int alloc_count = 0;
 
-#ifdef USE_FAIL_MALLOC
-static int grn_fmalloc_prob = 0;
-static char *grn_fmalloc_func = NULL;
-static char *grn_fmalloc_file = NULL;
-static int grn_fmalloc_line = 0;
-#endif /* USE_FAIL_MALLOC */
+static grn_bool grn_fail_malloc_enable = GRN_FALSE;
+static int grn_fail_malloc_prob = 0;
+static grn_bool grn_fail_malloc_location = GRN_FALSE;
+static char *grn_fail_malloc_func = NULL;
+static char *grn_fail_malloc_file = NULL;
+static int grn_fail_malloc_line = 0;
 
 #ifdef USE_EXACT_ALLOC_COUNT
 # define GRN_ADD_ALLOC_COUNT(count) do { \
@@ -40,56 +41,74 @@ static int grn_fmalloc_line = 0;
 } while (0)
 #endif
 
+int
+grn_alloc_count(void)
+{
+  return alloc_count;
+}
+
 void
 grn_alloc_init_from_env(void)
 {
-#ifdef USE_FAIL_MALLOC
   {
-    char grn_fmalloc_prob_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_FMALLOC_PROB",
-               grn_fmalloc_prob_env,
+    char grn_fail_malloc_enable_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_FAIL_MALLOC_ENABLE",
+               grn_fail_malloc_enable_env,
                GRN_ENV_BUFFER_SIZE);
-    if (grn_fmalloc_prob_env[0]) {
-      char grn_fmalloc_seed_env[GRN_ENV_BUFFER_SIZE];
-      grn_fmalloc_prob = strtod(grn_fmalloc_prob_env, 0) * RAND_MAX;
-      grn_getenv("GRN_FMALLOC_SEED",
-                 grn_fmalloc_seed_env,
+    if (strcmp(grn_fail_malloc_enable_env, "yes") == 0) {
+      grn_fail_malloc_enable = GRN_TRUE;
+    } else {
+      grn_fail_malloc_enable = GRN_FALSE;
+    }
+  }
+  {
+    char grn_fail_malloc_prob_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_FAIL_MALLOC_PROB",
+               grn_fail_malloc_prob_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_fail_malloc_prob_env[0]) {
+      char grn_fail_malloc_seed_env[GRN_ENV_BUFFER_SIZE];
+      grn_fail_malloc_prob = strtod(grn_fail_malloc_prob_env, 0) * RAND_MAX;
+      grn_getenv("GRN_FAIL_MALLOC_SEED",
+                 grn_fail_malloc_seed_env,
                  GRN_ENV_BUFFER_SIZE);
-      if (grn_fmalloc_seed_env[0]) {
-        srand((unsigned int)atoi(grn_fmalloc_seed_env));
+      if (grn_fail_malloc_seed_env[0]) {
+        srand((unsigned int)atoi(grn_fail_malloc_seed_env));
       } else {
         srand((unsigned int)time(NULL));
       }
     }
   }
   {
-    static char grn_fmalloc_func_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_FMALLOC_FUNC",
-               grn_fmalloc_func_env,
+    static char grn_fail_malloc_func_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_FAIL_MALLOC_FUNC",
+               grn_fail_malloc_func_env,
                GRN_ENV_BUFFER_SIZE);
-    if (grn_fmalloc_func_env[0]) {
-      grn_fmalloc_func = grn_fmalloc_func_env;
+    if (grn_fail_malloc_func_env[0]) {
+      grn_fail_malloc_location = GRN_TRUE;
+      grn_fail_malloc_func = grn_fail_malloc_func_env;
     }
   }
   {
-    static char grn_fmalloc_file_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_FMALLOC_FILE",
-               grn_fmalloc_file_env,
+    static char grn_fail_malloc_file_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_FAIL_MALLOC_FILE",
+               grn_fail_malloc_file_env,
                GRN_ENV_BUFFER_SIZE);
-    if (grn_fmalloc_file_env[0]) {
-      grn_fmalloc_file = grn_fmalloc_file_env;
+    if (grn_fail_malloc_file_env[0]) {
+      grn_fail_malloc_location = GRN_TRUE;
+      grn_fail_malloc_file = grn_fail_malloc_file_env;
     }
   }
   {
-    char grn_fmalloc_line_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_FMALLOC_LINE",
-               grn_fmalloc_line_env,
+    char grn_fail_malloc_line_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_FAIL_MALLOC_LINE",
+               grn_fail_malloc_line_env,
                GRN_ENV_BUFFER_SIZE);
-    if (grn_fmalloc_line_env[0]) {
-      grn_fmalloc_line = atoi(grn_fmalloc_line_env);
+    if (grn_fail_malloc_line_env[0]) {
+      grn_fail_malloc_location = GRN_TRUE;
+      grn_fail_malloc_line = atoi(grn_fail_malloc_line_env);
     }
   }
-#endif /* USE_FAIL_MALLOC */
 }
 
 #ifdef USE_MEMORY_DEBUG
@@ -321,20 +340,6 @@ grn_alloc_info_free(grn_ctx *ctx)
 void
 grn_alloc_init_ctx_impl(grn_ctx *ctx)
 {
-#ifdef USE_DYNAMIC_MALLOC_CHANGE
-# ifdef USE_FAIL_MALLOC
-  ctx->impl->malloc_func = grn_malloc_fail;
-  ctx->impl->calloc_func = grn_calloc_fail;
-  ctx->impl->realloc_func = grn_realloc_fail;
-  ctx->impl->strdup_func = grn_strdup_fail;
-# else
-  ctx->impl->malloc_func = grn_malloc_default;
-  ctx->impl->calloc_func = grn_calloc_default;
-  ctx->impl->realloc_func = grn_realloc_default;
-  ctx->impl->strdup_func = grn_strdup_default;
-# endif
-#endif
-
 #ifdef USE_MEMORY_DEBUG
   ctx->impl->alloc_info = NULL;
 #endif
@@ -644,83 +649,12 @@ grn_ctx_free_lifo(grn_ctx *ctx, void *ptr,
   }
 }
 
-#if USE_DYNAMIC_MALLOC_CHANGE
-grn_malloc_func
-grn_ctx_get_malloc(grn_ctx *ctx)
-{
-  if (!ctx || !ctx->impl) { return NULL; }
-  return ctx->impl->malloc_func;
-}
-
-void
-grn_ctx_set_malloc(grn_ctx *ctx, grn_malloc_func malloc_func)
-{
-  if (!ctx || !ctx->impl) { return; }
-  ctx->impl->malloc_func = malloc_func;
-}
-
-grn_calloc_func
-grn_ctx_get_calloc(grn_ctx *ctx)
-{
-  if (!ctx || !ctx->impl) { return NULL; }
-  return ctx->impl->calloc_func;
-}
-
-void
-grn_ctx_set_calloc(grn_ctx *ctx, grn_calloc_func calloc_func)
-{
-  if (!ctx || !ctx->impl) { return; }
-  ctx->impl->calloc_func = calloc_func;
-}
-
-grn_realloc_func
-grn_ctx_get_realloc(grn_ctx *ctx)
-{
-  if (!ctx || !ctx->impl) { return NULL; }
-  return ctx->impl->realloc_func;
-}
-
-void
-grn_ctx_set_realloc(grn_ctx *ctx, grn_realloc_func realloc_func)
-{
-  if (!ctx || !ctx->impl) { return; }
-  ctx->impl->realloc_func = realloc_func;
-}
-
-grn_strdup_func
-grn_ctx_get_strdup(grn_ctx *ctx)
-{
-  if (!ctx || !ctx->impl) { return NULL; }
-  return ctx->impl->strdup_func;
-}
-
-void
-grn_ctx_set_strdup(grn_ctx *ctx, grn_strdup_func strdup_func)
-{
-  if (!ctx || !ctx->impl) { return; }
-  ctx->impl->strdup_func = strdup_func;
-}
-
-grn_free_func
-grn_ctx_get_free(grn_ctx *ctx)
-{
-  if (!ctx || !ctx->impl) { return NULL; }
-  return ctx->impl->free_func;
-}
-
-void
-grn_ctx_set_free(grn_ctx *ctx, grn_free_func free_func)
-{
-  if (!ctx || !ctx->impl) { return; }
-  ctx->impl->free_func = free_func;
-}
-
 void *
 grn_malloc(grn_ctx *ctx, size_t size,
            const char* file, int line, const char *func)
 {
-  if (ctx && ctx->impl && ctx->impl->malloc_func) {
-    return ctx->impl->malloc_func(ctx, size, file, line, func);
+  if (grn_fail_malloc_should_fail(size, file, line, func)) {
+    return grn_malloc_fail(ctx, size, file, line, func);
   } else {
     return grn_malloc_default(ctx, size, file, line, func);
   }
@@ -730,8 +664,8 @@ void *
 grn_calloc(grn_ctx *ctx, size_t size,
            const char* file, int line, const char *func)
 {
-  if (ctx && ctx->impl && ctx->impl->calloc_func) {
-    return ctx->impl->calloc_func(ctx, size, file, line, func);
+  if (grn_fail_malloc_should_fail(size, file, line, func)) {
+    return grn_calloc_fail(ctx, size, file, line, func);
   } else {
     return grn_calloc_default(ctx, size, file, line, func);
   }
@@ -741,8 +675,8 @@ void *
 grn_realloc(grn_ctx *ctx, void *ptr, size_t size,
             const char* file, int line, const char *func)
 {
-  if (ctx && ctx->impl && ctx->impl->realloc_func) {
-    return ctx->impl->realloc_func(ctx, ptr, size, file, line, func);
+  if (grn_fail_malloc_should_fail(size, file, line, func)) {
+    return grn_realloc_fail(ctx, ptr, size, file, line, func);
   } else {
     return grn_realloc_default(ctx, ptr, size, file, line, func);
   }
@@ -752,8 +686,10 @@ char *
 grn_strdup(grn_ctx *ctx, const char *string,
            const char* file, int line, const char *func)
 {
-  if (ctx && ctx->impl && ctx->impl->strdup_func) {
-    return ctx->impl->strdup_func(ctx, string, file, line, func);
+  /* TODO: strlen(string) when we use size in grn_fail_malloc_should_fail(). */
+  size_t size = 0;
+  if (grn_fail_malloc_should_fail(size, file, line, func)) {
+    return grn_strdup_fail(ctx, string, file, line, func);
   } else {
     return grn_strdup_default(ctx, string, file, line, func);
   }
@@ -763,13 +699,8 @@ void
 grn_free(grn_ctx *ctx, void *ptr,
          const char* file, int line, const char *func)
 {
-  if (ctx && ctx->impl && ctx->impl->free_func) {
-    return ctx->impl->free_func(ctx, ptr, file, line, func);
-  } else {
-    return grn_free_default(ctx, ptr, file, line, func);
-  }
+  grn_free_default(ctx, ptr, file, line, func);
 }
-#endif
 
 void *
 grn_malloc_default(grn_ctx *ctx, size_t size,
@@ -864,12 +795,6 @@ grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size,
   return res;
 }
 
-int
-grn_alloc_count(void)
-{
-  return alloc_count;
-}
-
 char *
 grn_strdup_default(grn_ctx *ctx, const char *s,
                    const char* file, int line, const char *func)
@@ -892,70 +817,75 @@ grn_strdup_default(grn_ctx *ctx, const char *s,
   }
 }
 
-#ifdef USE_FAIL_MALLOC
-int
-grn_fail_malloc_check(size_t size,
-                      const char *file, int line, const char *func)
+grn_bool
+grn_fail_malloc_should_fail(size_t size,
+                            const char *file, int line, const char *func)
 {
-  if ((grn_fmalloc_file && strcmp(file, grn_fmalloc_file)) ||
-      (grn_fmalloc_line && line != grn_fmalloc_line) ||
-      (grn_fmalloc_func && strcmp(func, grn_fmalloc_func))) {
-    return 1;
+  if (!grn_fail_malloc_enable) {
+    return GRN_FALSE;
   }
-  if (grn_fmalloc_prob && grn_fmalloc_prob >= rand()) {
-    return 0;
+
+  if (grn_fail_malloc_location) {
+    if (grn_fail_malloc_file) {
+      if (strcmp(file, grn_fail_malloc_file) != 0) {
+        return GRN_FALSE;
+      }
+    }
+    if (grn_fail_malloc_line > 0) {
+      if (line != grn_fail_malloc_line) {
+        return GRN_FALSE;
+      }
+    }
+    if (grn_fail_malloc_func) {
+      if (strcmp(func, grn_fail_malloc_func) != 0) {
+        return GRN_FALSE;
+      }
+    }
+    return GRN_TRUE;
   }
-  return 1;
+
+  if (grn_fail_malloc_prob > 0 && grn_fail_malloc_prob >= rand()) {
+    return GRN_TRUE;
+  }
+
+  return GRN_FALSE;
 }
 
 void *
 grn_malloc_fail(grn_ctx *ctx, size_t size,
                 const char* file, int line, const char *func)
 {
-  if (grn_fail_malloc_check(size, file, line, func)) {
-    return grn_malloc_default(ctx, size, file, line, func);
-  } else {
-    MERR("fail_malloc (%" GRN_FMT_SIZE ") (%s:%d@%s) <%d>",
-         size, file, line, func, alloc_count);
-    return NULL;
-  }
+  MERR("[alloc][fail][malloc] <%d>: <%" GRN_FMT_SIZE ">: %s:%d: %s",
+       alloc_count, size, file, line, func);
+  return NULL;
 }
 
 void *
 grn_calloc_fail(grn_ctx *ctx, size_t size,
                 const char* file, int line, const char *func)
 {
-  if (grn_fail_malloc_check(size, file, line, func)) {
-    return grn_calloc_default(ctx, size, file, line, func);
-  } else {
-    MERR("fail_calloc (%" GRN_FMT_SIZE ") (%s:%d@%s) <%d>",
-         size, file, line, func, alloc_count);
-    return NULL;
-  }
+  MERR("[alloc][fail][calloc] <%d>: <%" GRN_FMT_SIZE ">: %s:%d: %s",
+       alloc_count, size, file, line, func);
+  return NULL;
 }
 
 void *
 grn_realloc_fail(grn_ctx *ctx, void *ptr, size_t size,
                  const char* file, int line, const char *func)
 {
-  if (grn_fail_malloc_check(size, file, line, func)) {
-    return grn_realloc_default(ctx, ptr, size, file, line, func);
-  } else {
-    MERR("fail_realloc (%p,%" GRN_FMT_SIZE ") (%s:%d@%s) <%d>",
-         ptr, size, file, line, func, alloc_count);
-    return NULL;
-  }
+  MERR("[alloc][fail][realloc] <%d>: <%p:%" GRN_FMT_SIZE ">: %s:%d: %s",
+       alloc_count, ptr, size, file, line, func);
+  return NULL;
 }
 
 char *
 grn_strdup_fail(grn_ctx *ctx, const char *s,
                 const char* file, int line, const char *func)
 {
-  if (grn_fail_malloc_check(strlen(s), file, line, func)) {
-    return grn_strdup_default(ctx, s, file, line, func);
-  } else {
-    MERR("fail_strdup(%p) (%s:%d@%s) <%d>", s, file, line, func, alloc_count);
-    return NULL;
-  }
+  MERR("[alloc][fail][strdup] <%d>: <%" GRN_FMT_SIZE ">: %s:%d: %s: <%s>",
+       alloc_count,
+       s ? strlen(s) : 0,
+       file, line, func,
+       s ? s : "(null)");
+  return NULL;
 }
-#endif /* USE_FAIL_MALLOC */

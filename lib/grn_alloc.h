@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,6 +24,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+int grn_alloc_count(void);
 
 void grn_alloc_init_from_env(void);
 
@@ -81,28 +84,6 @@ void *grn_ctx_alloc_lifo(grn_ctx *ctx,
 void grn_ctx_free_lifo(grn_ctx *ctx, void *ptr,
                        const char* file, int line, const char *func);
 
-#ifdef USE_DYNAMIC_MALLOC_CHANGE
-typedef void *(*grn_malloc_func) (grn_ctx *ctx, size_t size,
-                                  const char *file, int line, const char *func);
-typedef void *(*grn_calloc_func) (grn_ctx *ctx, size_t size,
-                                  const char *file, int line, const char *func);
-typedef void *(*grn_realloc_func) (grn_ctx *ctx, void *ptr, size_t size,
-                                   const char *file, int line, const char *func);
-typedef char *(*grn_strdup_func) (grn_ctx *ctx, const char *string,
-                                  const char *file, int line, const char *func);
-typedef void (*grn_free_func) (grn_ctx *ctx, void *ptr,
-                               const char *file, int line, const char *func);
-grn_malloc_func grn_ctx_get_malloc(grn_ctx *ctx);
-void grn_ctx_set_malloc(grn_ctx *ctx, grn_malloc_func malloc_func);
-grn_calloc_func grn_ctx_get_calloc(grn_ctx *ctx);
-void grn_ctx_set_calloc(grn_ctx *ctx, grn_calloc_func calloc_func);
-grn_realloc_func grn_ctx_get_realloc(grn_ctx *ctx);
-void grn_ctx_set_realloc(grn_ctx *ctx, grn_realloc_func realloc_func);
-grn_strdup_func grn_ctx_get_strdup(grn_ctx *ctx);
-void grn_ctx_set_strdup(grn_ctx *ctx, grn_strdup_func strdup_func);
-grn_free_func grn_ctx_get_free(grn_ctx *ctx);
-void grn_ctx_set_free(grn_ctx *ctx, grn_free_func free_func);
-
 void *grn_malloc(grn_ctx *ctx,
                  size_t size,
                  const char *file,
@@ -121,13 +102,6 @@ void *grn_realloc(grn_ctx *ctx,
                   const char *func) GRN_ATTRIBUTE_ALLOC_SIZE(3);
 char *grn_strdup(grn_ctx *ctx, const char *s, const char* file, int line, const char *func);
 void grn_free(grn_ctx *ctx, void *ptr, const char *file, int line, const char *func);
-#else
-#  define grn_malloc  grn_malloc_default
-#  define grn_calloc  grn_calloc_default
-#  define grn_realloc grn_realloc_default
-#  define grn_strdup  grn_strdup_default
-#  define grn_free    grn_free_default
-#endif
 
 GRN_API void *grn_malloc_default(grn_ctx *ctx,
                                  size_t size,
@@ -148,15 +122,14 @@ void *grn_realloc_default(grn_ctx *ctx,
 GRN_API char *grn_strdup_default(grn_ctx *ctx, const char *s, const char* file, int line, const char *func);
 GRN_API void grn_free_default(grn_ctx *ctx, void *ptr, const char* file, int line, const char *func);
 
-#ifdef USE_FAIL_MALLOC
-int grn_fail_malloc_check(size_t size, const char *file, int line, const char *func);
+grn_bool grn_fail_malloc_should_fail(size_t size,
+                                     const char *file,
+                                     int line,
+                                     const char *func);
 void *grn_malloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
 void *grn_calloc_fail(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
 void *grn_realloc_fail(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line, const char *func);
 char *grn_strdup_fail(grn_ctx *ctx, const char *s, const char* file, int line, const char *func);
-#endif
-
-int grn_alloc_count(void);
 
 #ifdef __cplusplus
 }

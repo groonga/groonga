@@ -53,16 +53,13 @@
 #cmakedefine USE_MEMORY_DEBUG
 #cmakedefine USE_MAP_HUGETLB
 #cmakedefine USE_AIO
-#cmakedefine USE_DYNAMIC_MALLOC_CHANGE
 #cmakedefine USE_EPOLL
 #cmakedefine USE_EXACT_ALLOC_COUNT
-#cmakedefine USE_FAIL_MALLOC
 #cmakedefine USE_FUTEX
 #cmakedefine USE_KQUEUE
 #cmakedefine USE_MSG_MORE
 #cmakedefine USE_MSG_NOSIGNAL
 #cmakedefine USE_POLL
-#cmakedefine USE_QUERY_ABORT
 #cmakedefine USE_SELECT
 
 /* compiler specific build options */
