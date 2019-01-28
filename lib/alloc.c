@@ -29,6 +29,7 @@ static grn_bool grn_fail_malloc_location = GRN_FALSE;
 static char *grn_fail_malloc_func = NULL;
 static char *grn_fail_malloc_file = NULL;
 static int grn_fail_malloc_line = 0;
+static int grn_fail_malloc_max_count = -1;
 
 #ifdef USE_EXACT_ALLOC_COUNT
 # define GRN_ADD_ALLOC_COUNT(count) do { \
@@ -107,6 +108,15 @@ grn_alloc_init_from_env(void)
     if (grn_fail_malloc_line_env[0]) {
       grn_fail_malloc_location = GRN_TRUE;
       grn_fail_malloc_line = atoi(grn_fail_malloc_line_env);
+    }
+  }
+  {
+    char grn_fail_malloc_max_count_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_FAIL_MALLOC_MAX_COUNT",
+               grn_fail_malloc_max_count_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_fail_malloc_max_count_env[0]) {
+      grn_fail_malloc_max_count = atoi(grn_fail_malloc_max_count_env);
     }
   }
 }
@@ -845,6 +855,11 @@ grn_fail_malloc_should_fail(size_t size,
   }
 
   if (grn_fail_malloc_prob > 0 && grn_fail_malloc_prob >= rand()) {
+    return GRN_TRUE;
+  }
+
+  if (grn_fail_malloc_max_count >= 0 &&
+      alloc_count >= grn_fail_malloc_max_count) {
     return GRN_TRUE;
   }
 
