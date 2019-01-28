@@ -7,6 +7,118 @@
 News
 ====
 
+.. _release-8-1-1:
+
+Release 8.1.1 - 2019-01-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/logical_select`] Added new argument ``--load_table``, ``--load_columns`` and ``--load_values``.
+
+  * You can store a result of ``logical_select`` in a table that specifying ``--load_table``.
+
+  * ``--load_values`` option specifies columns of result of ``logical_select``.
+
+  * ``--load_columns`` options specifies columns of table that specifying ``--load_table``.
+
+  * In this way, you can store values of columns that specifying with ``--load_values`` into columns that specifying with ``--load_columns``.
+
+* Improve error log when update error of index.
+
+  * Added more information in the log.
+
+    * For example, output source buffer and chunk when occur merge of posting lists error.
+    * Also, outputting the log a free space size of a buffer and request size of a buffer when occurs error of allocating a buffer.
+
+* [:doc:`/reference/executables/groonga`] Added a new option ``--log-flags``.
+
+  * We can specify output items of a log of the Groonga.
+
+  * We can output as below items.
+
+    * Timestamp
+    * Log message
+    * Location(the location where the log was output)
+    * Process id
+    * Thread id
+
+  * We can specify prefix as below.
+
+    * ``+``
+
+      * This prefix means that "add the flag".
+
+    * ``-``
+
+      * This prefix means that "remove the flag".
+
+    * No prefix means that "replace existing flags".
+
+  * Specifically, we can specify flags as below.
+
+    * ``none``
+
+      * Output nothing into the log.
+
+    * ``time``
+
+      * Output a timestamp into the log.
+
+    * ``message``
+
+      * Output log messages into the log.
+
+    * ``location``
+
+      * Output the location where the log was output( a file name, a line and a function name) and process id.
+
+    * ``process_id``
+
+      * Output a process id into the log.
+
+    * ``pid``
+
+      * This flag is an alias of ``process_id``.
+
+    * ``thread_id``
+
+      * Output thread id into the log.
+
+    * ``all``
+
+      * This flag specifies all flags except ``none`` and ``default`` flags.
+
+    * ``default``
+
+      * Output a timestamp and log messages into the log.
+
+  * We can also specify multiple log flags by separating flags with ``|``.
+
+Fixes
+^^^^^
+
+* Fixed a memory leak when occurs index update error.
+
+* [:doc:`/reference/normalizers`] Fixed a bug that stateless normalizers and stateful normalizers return wrong results when we use them at the same time.
+
+    * Stateless normalizers are below.
+
+      * ``unify_kana``
+      * ``unify_kana_case``
+      * ``unify_kana_voiced_sound_mark``
+      * ``unify_hyphen``
+      * ``unify_prolonged_sound_mark``
+      * ``unify_hyphen_and_prolonged_sound_mark``
+      * ``unify_middle_dot``
+
+    * Stateful normalizers are below.
+
+      * ``unify_katakana_v_sounds``
+      * ``unify_katakana_bu_sound``
+      * ``unify_to_romaji``
+
 .. _release-8-1-0:
 
 Release 8.1.0 - 2018-12-29

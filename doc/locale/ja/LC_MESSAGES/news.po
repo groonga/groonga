@@ -33,17 +33,229 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 8.1.0 - 2018-12-29"
-msgstr "8.1.0リリース - 2018-12-29"
+msgid "Release 8.1.1 - 2019-01-29"
+msgstr "8.1.1リリース - 2019-01-29"
 
 msgid "Improvements"
 msgstr "改良"
 
-msgid "[httpd] Updated bundled nginx to 1.15.8."
-msgstr "[httpd] バンドルしているnginxのバージョンを1.15.8に更新しました。"
+msgid ""
+"[:doc:`/reference/commands/logical_select`] Added new argument ``--"
+"load_table``, ``--load_columns`` and ``--load_values``."
+msgstr ""
+"[:doc:`/reference/commands/logical_select`] 新しい引数 ``--load_table`` 、"
+"``--load_columns`` 、 ``--load_values`` を追加しました。 "
+
+msgid ""
+"You can store a result of ``logical_select`` in a table that specifying ``--"
+"load_table``."
+msgstr ""
+"``logical_select`` の結果を ``--load_table`` で指定したテーブルへ格納できま"
+"す。"
+
+msgid ""
+"``--load_values`` option specifies columns of result of ``logical_select``."
+msgstr ""
+"``--load_values`` オプションは、``logical_select`` の結果のカラムを指定しま"
+"す。"
+
+msgid ""
+"``--load_columns`` options specifies columns of table that specifying ``--"
+"load_table``."
+msgstr ""
+"``--load_columns`` オプションは、``--load_table`` で指定したテーブルのカラム"
+"を指定します。"
+
+msgid ""
+"In this way, you can store values of columns that specifying with ``--"
+"load_values`` into columns that specifying with ``--load_columns``."
+msgstr ""
+"このようにして、``--load_values`` で指定したカラムの値を、 ``--"
+"load_columns`` で指定したカラムへ格納できます。"
+
+msgid "Improve error log when update error of index."
+msgstr "インデックスの更新エラー時のログを改善しました。"
+
+msgid "Added more information in the log."
+msgstr "ログに、より詳細な情報を追加しました。"
+
+msgid ""
+"For example, output source buffer and chunk when occur merge of posting "
+"lists error."
+msgstr ""
+"例えば、ポスティングリストのマージに失敗した時にマージ元のバッファーとチャン"
+"クを出力します。"
+
+msgid ""
+"Also, outputting the log a free space size of a buffer and request size of a "
+"buffer when occurs error of allocating a buffer."
+msgstr ""
+"また、バッファー確保のエラーが発生した時は、バッファーの空き領域と要求サイズ"
+"をログに出力します。"
+
+msgid ""
+"[:doc:`/reference/executables/groonga`] Added a new option ``--log-flags``."
+msgstr ""
+"[:doc:`/reference/executables/groonga`] 新しいオプション ``--log-flags`` を追"
+"加しました。"
+
+msgid "We can specify output items of a log of the Groonga."
+msgstr "Groongaのログに出力する項目を指定できます。"
+
+msgid "We can output as below items."
+msgstr "以下のような項目を出力できます。"
+
+msgid "Timestamp"
+msgstr "タイムスタンプ"
+
+msgid "Log message"
+msgstr "ログメッセージ"
+
+msgid "Location(the location where the log was output)"
+msgstr "ロケーション(ログが出力された場所)"
+
+msgid "Process id"
+msgstr "プロセスID"
+
+msgid "Thread id"
+msgstr "スレッドID"
+
+msgid "We can specify prefix as below."
+msgstr "以下のように接頭辞を指定できます。"
+
+msgid "``+``"
+msgstr ""
+
+msgid "This prefix means that \"add the flag\"."
+msgstr "この接頭辞は、 \"フラグを追加する\"という意味です。"
+
+msgid "``-``"
+msgstr ""
+
+msgid "This prefix means that \"remove the flag\"."
+msgstr "この接頭辞は、\"フラグを削除する\"という意味です。"
+
+msgid "No prefix means that \"replace existing flags\"."
+msgstr "接頭辞無しは、\"存在しているフラグを置き換える\"という意味です。"
+
+msgid "Specifically, we can specify flags as below."
+msgstr "具体的には、以下のようにフラグ指定できます。"
+
+msgid "``none``"
+msgstr ""
+
+msgid "Output nothing into the log."
+msgstr "ログに何も出力しません。"
+
+msgid "``time``"
+msgstr ""
+
+msgid "Output a timestamp into the log."
+msgstr "ログにタイムスタンプを出力します。"
+
+msgid "``message``"
+msgstr ""
+
+msgid "Output log messages into the log."
+msgstr "ログにメッセージを出力します。"
+
+msgid "``location``"
+msgstr ""
+
+msgid ""
+"Output the location where the log was output( a file name, a line and a "
+"function name) and process id."
+msgstr "ログの出力場所(ファイル名、行数、関数名)とプロセスIDを出力します。"
+
+msgid "``process_id``"
+msgstr ""
+
+msgid "Output a process id into the log."
+msgstr "ログにプロセスIDを出力します。"
+
+msgid "``pid``"
+msgstr ""
+
+msgid "This flag is an alias of ``process_id``."
+msgstr "このフラグは、 ``process_id`` のエイリアスです。"
+
+msgid "``thread_id``"
+msgstr ""
+
+msgid "Output thread id into the log."
+msgstr "ログにスレッドIDを出力します。"
+
+msgid "``all``"
+msgstr ""
+
+msgid "This flag specifies all flags except ``none`` and ``default`` flags."
+msgstr ""
+"このフラグは、 ``none`` と ``default`` 以外の全てのフラグを指定します。"
+
+msgid "``default``"
+msgstr ""
+
+msgid "Output a timestamp and log messages into the log."
+msgstr "ログに、タイムスタンプとログメッセージを出力します。"
+
+msgid "We can also specify multiple log flags by separating flags with ``|``."
+msgstr "``|`` を使って、複数のフラグを指定することもできます。"
 
 msgid "Fixes"
 msgstr "修正"
+
+msgid "Fixed a memory leak when occurs index update error."
+msgstr "インデックスの更新エラー発生時にメモリリークする問題を修正しました。"
+
+msgid ""
+"[:doc:`/reference/normalizers`] Fixed a bug that stateless normalizers and "
+"stateful normalizers return wrong results when we use them at the same time."
+msgstr ""
+"[:doc:`/reference/normalizers`] ステートレスなノーマライザーとステートフルな"
+"ノーマライザーを同時に使用した時に、それらが誤った結果を返すバグを修正しまし"
+"た。"
+
+msgid "Stateless normalizers are below."
+msgstr "ステートレスなノーマライザーとは以下です。"
+
+msgid "``unify_kana``"
+msgstr ""
+
+msgid "``unify_kana_case``"
+msgstr ""
+
+msgid "``unify_kana_voiced_sound_mark``"
+msgstr ""
+
+msgid "``unify_hyphen``"
+msgstr ""
+
+msgid "``unify_prolonged_sound_mark``"
+msgstr ""
+
+msgid "``unify_hyphen_and_prolonged_sound_mark``"
+msgstr ""
+
+msgid "``unify_middle_dot``"
+msgstr ""
+
+msgid "Stateful normalizers are below."
+msgstr "ステートフルなノーマライザーとは以下です。"
+
+msgid "``unify_katakana_v_sounds``"
+msgstr ""
+
+msgid "``unify_katakana_bu_sound``"
+msgstr ""
+
+msgid "``unify_to_romaji``"
+msgstr ""
+
+msgid "Release 8.1.0 - 2018-12-29"
+msgstr "8.1.0リリース - 2018-12-29"
+
+msgid "[httpd] Updated bundled nginx to 1.15.8."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.15.8に更新しました。"
 
 msgid ""
 "Fixed a bug that unlock against DB is always executed after flush when after "
@@ -12758,36 +12970,11 @@ msgid ""
 "MODE' supported"
 msgstr ""
 
-#~ msgid ""
-#~ "[:doc:`/reference/commands/logical_select`] Added new options "
-#~ "``load_table`` and ``load_columns``, ``load_values``."
-#~ msgstr ""
-#~ "[:doc:`/reference/commands/logical_select`] 新しいオプション "
-#~ "``load_table`` 、``load_columns`` 、 ``load_values`` を追加しました。 "
+#~ msgid "Location"
+#~ msgstr "ロケーション"
 
 #~ msgid ""
-#~ "You can store a result of ``logical_select`` in a table that specifying "
-#~ "``load_table``."
+#~ "Fixed a bug that stateful normalization breaks stateless normalization."
 #~ msgstr ""
-#~ "``logical_select`` の結果を ``load_table`` で指定したテーブルへ格納できま"
-#~ "す。"
-
-#~ msgid ""
-#~ "``load_values`` option specifies columns of result of ``logical_select``."
-#~ msgstr ""
-#~ "``load_values`` オプションは、``logical_select`` の結果のカラムを指定しま"
-#~ "す。"
-
-#~ msgid ""
-#~ "``load_columns`` options specifies columns of table that specifying "
-#~ "``load_table``."
-#~ msgstr ""
-#~ "``load_columns`` オプションは、``load_table`` で指定したテーブルのカラムを"
-#~ "指定します。"
-
-#~ msgid ""
-#~ "In this way, you can store values of columns that specifying with "
-#~ "``load_values`` into columns that specifying with ``load_columns``."
-#~ msgstr ""
-#~ "このようにして、``load_values`` で指定したカラムの値を、 ``load_columns`` "
-#~ "で指定したカラムへ格納できます。"
+#~ "ステートフルなノーマライザーがステートレスなノーマライザーを壊すバグを修正"
+#~ "しました。"
