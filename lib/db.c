@@ -294,9 +294,11 @@ exit:
     }
     if (s->specs) {
       const char *specs_path;
+      char specs_path_copy[PATH_MAX];
       specs_path = grn_obj_path(ctx, (grn_obj *)(s->specs));
+      grn_strcpy(specs_path_copy, sizeof(specs_path_copy), specs_path);
       grn_ja_close(ctx, s->specs);
-      grn_ja_remove(ctx, specs_path);
+      grn_ja_remove(ctx, specs_path_copy);
     }
     if (s->config) {
       grn_hash_close(ctx, s->config);
