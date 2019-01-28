@@ -28231,21 +28231,6 @@ msgstr ""
 msgid "Outputs reading of token."
 msgstr "トークンの読みを出力します。"
 
-msgid "``TokenNgram``"
-msgstr ""
-
-#, fuzzy
-msgid ""
-"``TokenNgram`` is a bigram based tokenizer. It's recommended to use this "
-"tokenizer for most cases."
-msgstr ""
-"``TokenBigram`` はバイグラムベースのトークナイザーです。多くのケースでは、こ"
-"のトークナイザーを使うことをオススメします。"
-
-#, fuzzy
-msgid "``TokenNgram`` hasn't parameter::"
-msgstr "``TokenBigram`` には、引数がありません。"
-
 msgid "``TokenRegexp``"
 msgstr ""
 
