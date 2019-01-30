@@ -1,0 +1,129 @@
+Execution example::
+
+  table_create Logs_20150203 TABLE_HASH_KEY ShortText
+  column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+  table_create Logs_20150204 TABLE_HASH_KEY ShortText
+  column_create Logs_20150204 timestamp COLUMN_SCALAR Time
+
+  table_create Logs TABLE_HASH_KEY ShortText
+  column_create Logs original_id COLUMN_SCALAR UInt32
+  column_create Logs timestamp_text COLUMN_SCALAR ShortText
+
+  load --table Logs_20150203
+  [
+  {
+    "_key": "2015-02-03:1",
+    "timestamp": "2015-02-03 10:49:00"
+  },
+  {
+    "_key": "2015-02-03:2",
+    "timestamp": "2015-02-03 12:49:00"
+  }
+  ]
+  load --table Logs_20150204
+  [
+  {
+    "_key": "2015-02-04:1",
+    "timestamp": "2015-02-04 00:00:00"
+  }
+  ]
+  logical_select \
+    --logical_table Logs \
+    --shard_key timestamp \
+    --load_table Logs \
+    --load_columns "original_id, timestamp_text" \
+    --load_values "_id, timestamp"
+  # [
+  #   [
+  #     0,
+  #     0.0,
+  #     0.0
+  #   ],
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ],
+  #       [
+  #         [
+  #           "_id",
+  #           "UInt32"
+  #         ],
+  #         [
+  #           "_key",
+  #           "ShortText"
+  #         ],
+  #         [
+  #           "timestamp",
+  #           "Time"
+  #         ]
+  #       ],
+  #       [
+  #         1,
+  #         "2015-02-03:1",
+  #         1422928140.0
+  #       ],
+  #       [
+  #         2,
+  #         "2015-02-03:2",
+  #         1422935340.0
+  #       ],
+  #       [
+  #         1,
+  #         "2015-02-04:1",
+  #         1422975600.0
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  select --table Logs
+  # [
+  #   [
+  #     0,
+  #     0.0,
+  #     0.0
+  #   ],
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ],
+  #       [
+  #         [
+  #           "_id",
+  #           "UInt32"
+  #         ],
+  #         [
+  #           "_key",
+  #           "ShortText"
+  #         ],
+  #         [
+  #           "original_id",
+  #           "UInt32"
+  #         ],
+  #         [
+  #           "timestamp_text",
+  #           "ShortText"
+  #         ]
+  #       ],
+  #       [
+  #         1,
+  #         "2015-02-03:1",
+  #         1,
+  #         "1422928140000000"
+  #       ],
+  #       [
+  #         2,
+  #         "2015-02-03:2",
+  #         2,
+  #         "1422935340000000"
+  #       ],
+  #       [
+  #         3,
+  #         "2015-02-04:1",
+  #         1,
+  #         "1422975600000000"
+  #       ]
+  #     ]
+  #   ]
+  # ]

@@ -52,6 +52,9 @@ parameters are optional::
                  [query=null]
                  [drilldown_filter=null]
                  [post_filter=null]
+                 [load_table=null]
+                 [load_columns=null]
+                 [load_values=null]
 
 There are some parameters that can be only used as named
 parameters. You can't use these parameters as ordered parameters. You
@@ -517,6 +520,89 @@ entries have ``system`` or ``use`` words:
 ..   --filter 'content @ "system" || content @ "use"' \
 ..   --post_filter 'n_likes_sum_per_tag > 10' \
 ..   --output_columns _key,n_likes,n_likes_sum_per_tag
+
+.. _logical-select-load-table:
+
+``load_table``
+""""""""""""""
+
+.. versionadded:: 8.1.1
+
+You can store specified a table a result of ``logical_select`` with ``--load_table``, ``--load-columns`` and ``--load_values`` arguments.
+``--load_table`` specifies a table name for storing a result of ``logical_select``.
+
+You must specify a table that already exists.
+
+This argument must use with :ref:`logical-select-load-columns` and :ref:`logical-select-load-values`.
+
+Here is an example that can store ``_id`` and ``timestamp`` that a result of ``logical_select`` in a Logs table specified by ``--load_table``.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/load_table.log
+.. table_create Logs_20150203 TABLE_HASH_KEY ShortText
+.. column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+.. table_create Logs_20150204 TABLE_HASH_KEY ShortText
+.. column_create Logs_20150204 timestamp COLUMN_SCALAR Time
+.. 
+.. table_create Logs TABLE_HASH_KEY ShortText
+.. column_create Logs original_id COLUMN_SCALAR UInt32
+.. column_create Logs timestamp_text COLUMN_SCALAR ShortText
+.. 
+.. load --table Logs_20150203
+.. [
+.. {
+..   "_key": "2015-02-03:1",
+..   "timestamp": "2015-02-03 10:49:00"
+.. },
+.. {
+..   "_key": "2015-02-03:2",
+..   "timestamp": "2015-02-03 12:49:00"
+.. }
+.. ]
+.. load --table Logs_20150204
+.. [
+.. {
+..   "_key": "2015-02-04:1",
+..   "timestamp": "2015-02-04 00:00:00"
+.. }
+.. ]
+.. logical_select \
+..   --logical_table Logs \
+..   --shard_key timestamp \
+..   --load_table Logs \
+..   --load_columns "original_id, timestamp_text" \
+..   --load_values "_id, timestamp"
+.. select --table Logs
+
+.. _logical-select-load-columns:
+
+``load_columns``
+""""""""""""""""
+
+.. versionadded:: 8.1.1
+
+Specifies columns of a table that specifying ``--load-table``.
+Stores value of columns that specified with :ref:`logical-select-load-values` in columns that specified with this argument.
+You must specify columns that already exists.
+
+This argument must use with :ref:`logical-select-load-table` and :ref:`logical-select-load-values`.
+
+See example of ``--load_table`` for how to use this argument.
+
+.. _logical-select-load-values:
+
+``load_values``
+"""""""""""""""
+
+.. versionadded:: 8.1.1
+
+Specifies columns of result of ``logical_select``.
+Specifies columns for storing values into columns that specified with :ref:`logical-select-load-columns`.
+You must specify columns that already exists.
+
+This argument must use with :ref:`logical-select-load-table` and :ref:`logical-select-load-columns`.
+
+See example of ``--load_table`` for how to use this argument.
 
 .. _logical-select-advanced-search-parameters:
 
