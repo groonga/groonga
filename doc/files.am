@@ -189,6 +189,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/drilldowns_label_sort_keys.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/filter.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/limit.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/load_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/logical_table_existent.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/logical_table_nonexistent.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/match_columns.log \
@@ -1243,6 +1244,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_select/drilldowns_label_sort_keys.log \
 	source/example/reference/commands/logical_select/filter.log \
 	source/example/reference/commands/logical_select/limit.log \
+	source/example/reference/commands/logical_select/load_table.log \
 	source/example/reference/commands/logical_select/logical_table_existent.log \
 	source/example/reference/commands/logical_select/logical_table_nonexistent.log \
 	source/example/reference/commands/logical_select/match_columns.log \
