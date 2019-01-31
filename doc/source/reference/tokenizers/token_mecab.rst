@@ -37,7 +37,7 @@ dictionary.) `mecab-ipadic-NEologd : Neologism dictionary for MeCab
 Syntax
 ------
 
-``TokenMecab`` has optional parameter::
+``TokenMecab`` has optional parameter.
 
 No options::
 

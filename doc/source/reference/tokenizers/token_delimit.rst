@@ -24,7 +24,7 @@ full-text-search http``.
 Syntax
 ------
 
-``TokenDelimit`` has optional parameter::
+``TokenDelimit`` has optional parameter.
 
 No options(Extracts token by splitting one or more space characters (``U+0020``))::
 

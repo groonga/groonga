@@ -24121,8 +24121,8 @@ msgstr ""
 msgid "This normalizer can change behavior by specifying options."
 msgstr "このノーマライザーはオプションを指定することで、動作を変更できます。"
 
-msgid "``NormalizerNFKC100`` has optional parameter::"
-msgstr "``TokenFilterNFKC100`` は省略可能な引数があります。::"
+msgid "``NormalizerNFKC100`` has optional parameter."
+msgstr "``TokenFilterNFKC100`` は省略可能な引数があります。"
 
 msgid "No options::"
 msgstr "オプションなし::"
@@ -27169,7 +27169,7 @@ msgstr ""
 "の意味が失われることがあるため、このトークンフィルターは、トークナイズ後に"
 "ノーマライズするために使用します。"
 
-msgid "``TokenFilterNFKC100`` has optional parameter::"
+msgid "``TokenFilterNFKC100`` has optional parameter."
 msgstr "``TokenFilterNFKC100`` は省略可能な引数があります。"
 
 msgid ""
@@ -27934,7 +27934,7 @@ msgstr ""
 "http`` というテキストから ``groonga`` 、 ``full-text-search`` 、 ``http`` を"
 "抽出します。"
 
-msgid "``TokenDelimit`` has optional parameter::"
+msgid "``TokenDelimit`` has optional parameter."
 msgstr "``TokenDelimit`` は、省略可能な引数があります。"
 
 msgid ""
@@ -28177,7 +28177,7 @@ msgstr ""
 "<https://github.com/neologd/mecab-ipadic-neologd>`_ が役に立つかもしれませ"
 "ん。"
 
-msgid "``TokenMecab`` has optional parameter::"
+msgid "``TokenMecab`` has optional parameter."
 msgstr "``TokenMecab`` は、省略可能な引数があります。"
 
 msgid ""

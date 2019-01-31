@@ -20,7 +20,7 @@ Because, if you normalize before tokenizing with ``TokenMecab`` , the meaning of
 Syntax
 ------
 
-``TokenFilterNFKC100`` has optional parameter::
+``TokenFilterNFKC100`` has optional parameter.
 
 No options::
 

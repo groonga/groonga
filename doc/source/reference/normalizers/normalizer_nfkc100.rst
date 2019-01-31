@@ -23,7 +23,7 @@ This normalizer can change behavior by specifying options.
 Syntax
 ------
 
-``NormalizerNFKC100`` has optional parameter::
+``NormalizerNFKC100`` has optional parameter.
 
 No options::
 
