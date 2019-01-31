@@ -17,8 +17,10 @@ environment:
       ARCH: amd64
     - VS_VERSION: 15
       ARCH: x86
+      VCVARS: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat'
     - VS_VERSION: 15
       ARCH: amd64
+      VCVARS: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat'
 
 # matrix:
 #   allow_failures:
@@ -33,17 +35,12 @@ init:
 install:
   - set PATH=C:\Ruby25-x64\bin;%PATH%
   - set PATH=C:\msys64\usr\bin;%PATH%
-  - if "%VS_VERSION%" == "15" if "%ARCH" == "x86" (
-      call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
-    )
-  - if "%VS_VERSION%" == "15" if "%ARCH" == "amd64" (
-      call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
-    )
-  - if not "%VS_VERSION%" == "15" (
-      call
-      "C:\Program Files (x86)\Microsoft Visual Studio %VS_VERSION%.0\VC\vcvarsall.bat"
-      %ARCH%
-    )
+  - if "%VS_VERSION%" == "15"
+    call %VCVARS%
+  - if not "%VS_VERSION%" == "15"
+    call
+    "C:\Program Files (x86)\Microsoft Visual Studio %VS_VERSION%.0\VC\vcvarsall.bat"
+    %ARCH%
   # - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - tzutil /s "Tokyo Standard Time"
   # - choco install -y imdisk-toolkit
