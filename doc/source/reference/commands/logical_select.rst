@@ -268,7 +268,13 @@ OK. The schema and data for examples are ready.
 Simple usage
 ^^^^^^^^^^^^
 
-TODO
+Here is an example that specifies only required parameters.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_select/logical_table_existent.log
+.. logical_select --logical_table Entries --shard_key created_at
+
+It is shown that is searched from Entries_20150708 and Entries_20150709 in above example.
 
 Parameters
 ----------

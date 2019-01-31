@@ -8362,6 +8362,16 @@ msgstr "``query_expander`` はまだサポートしていません。"
 msgid "``adjuster`` isn't supported yet."
 msgstr "``adjuster`` はまだサポートしていません。"
 
+msgid "Here is an example that specifies only required parameters."
+msgstr "以下は必須のパラメータのみを指定した例です。"
+
+msgid ""
+"It is shown that is searched from Entries_20150708 and Entries_20150709 in "
+"above example."
+msgstr ""
+"上記の例では、 ``Entries_20150708`` と ``Entries_20150709`` から検索されてい"
+"ることがわかります。"
+
 msgid "This section describes parameters of ``logical_select``."
 msgstr "このセクションでは ``logical_select`` の引数について説明します。"
 
