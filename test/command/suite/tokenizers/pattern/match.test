@@ -1,0 +1,3 @@
+tokenize \
+  'TokenPattern("pattern", "\\\\d+円")' \
+  "私は100円のりんごを29円で買いました。"

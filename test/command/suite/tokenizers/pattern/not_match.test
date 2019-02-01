@@ -1,0 +1,3 @@
+tokenize \
+  'TokenPattern("pattern", "nonexistent")' \
+  "This is a pen."

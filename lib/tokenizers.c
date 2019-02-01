@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1542,6 +1542,219 @@ regexp_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
+/* pattern tokenizer */
+
+typedef struct {
+#ifdef GRN_SUPPORT_REGEXP
+  OnigRegex regex;
+#else /* GRN_SUPPORT_REGEXP */
+  void *regex;
+#endif /* GRN_SUPPORT_REGEXP */
+} grn_pattern_options;
+
+typedef struct {
+  grn_tokenizer_token token;
+  grn_tokenizer_query *query;
+  grn_pattern_options *options;
+  grn_bool have_tokenized_delimiter;
+  grn_encoding encoding;
+  const unsigned char *start;
+  const unsigned char *next;
+  const unsigned char *end;
+} grn_pattern_tokenizer;
+
+static void
+pattern_options_init(grn_pattern_options *options)
+{
+  options->regex = NULL;
+}
+
+static void *
+pattern_open_options(grn_ctx *ctx,
+                     grn_obj *tokenizer,
+                     grn_obj *raw_options,
+                     void *user_data)
+{
+  grn_pattern_options *options;
+
+  options = GRN_MALLOC(sizeof(grn_pattern_options));
+  if (!options) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[tokenizer][pattern] "
+        "failed to allocate memory for options");
+    return NULL;
+  }
+
+  pattern_options_init(options);
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+    grn_raw_string name_raw;
+    name_raw.value = name;
+    name_raw.length = name_length;
+
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "pattern")) {
+#ifdef GRN_SUPPORT_REGEXP
+      const char *pattern;
+      unsigned int pattern_length;
+      grn_id domain;
+
+      pattern_length = grn_vector_get_element(ctx,
+                                              raw_options,
+                                              i,
+                                              &pattern,
+                                              NULL,
+                                              &domain);
+      if (grn_type_id_is_text_family(ctx, domain) && pattern_length > 0) {
+        if (options->regex) {
+          onig_free(options->regex);
+        }
+        options->regex = grn_onigmo_new(ctx,
+                                        pattern,
+                                        pattern_length,
+                                        GRN_ONIGMO_OPTION_DEFAULT,
+                                        GRN_ONIGMO_SYNTAX_DEFAULT,
+                                        "[tokenizer][delimit]");
+      }
+#endif /* GRN_SUPPORT_REGEXP */
+    }
+  } GRN_OPTION_VALUES_EACH_END();
+
+  return options;
+}
+
+static void
+pattern_close_options(grn_ctx *ctx, void *data)
+{
+  grn_pattern_options *options = data;
+
+#ifdef GRN_SUPPORT_REGEXP
+  if (options->regex) {
+    onig_free(options->regex);
+  }
+#endif /* GRN_SUPPORT_REGEXP */
+  GRN_FREE(options);
+}
+
+static void *
+pattern_init(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  grn_obj *lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
+  grn_pattern_options *options;
+  grn_pattern_tokenizer *tokenizer;
+
+  options = grn_table_cache_default_tokenizer_options(ctx,
+                                                      lexicon,
+                                                      pattern_open_options,
+                                                      pattern_close_options,
+                                                      NULL);
+  if (ctx->rc != GRN_SUCCESS) {
+    return NULL;
+  }
+
+  if (!(tokenizer = GRN_MALLOC(sizeof(grn_pattern_tokenizer)))) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[tokenizer][pattern] "
+        "memory allocation to grn_pattern_tokenizer failed");
+    return NULL;
+  }
+
+  tokenizer->query = query;
+  tokenizer->options = options;
+
+  {
+    const char *raw_string;
+    size_t raw_string_length;
+    grn_encoding encoding;
+
+    raw_string = grn_tokenizer_query_get_raw_string(ctx,
+                                                    tokenizer->query,
+                                                    &raw_string_length);
+    encoding = grn_tokenizer_query_get_encoding(ctx, tokenizer->query);
+    tokenizer->have_tokenized_delimiter =
+      grn_tokenizer_have_tokenized_delimiter(ctx,
+                                             raw_string,
+                                             raw_string_length,
+                                             encoding);
+    tokenizer->encoding = encoding;
+  }
+  {
+    grn_obj *string;
+    const char *normalized;
+    unsigned int normalized_length_in_bytes;
+
+    string = grn_tokenizer_query_get_normalized_string(ctx, tokenizer->query);
+    grn_string_get_normalized(ctx,
+                              string,
+                              &normalized, &normalized_length_in_bytes,
+                              NULL);
+    tokenizer->start = (const unsigned char *)normalized;
+    tokenizer->next = tokenizer->start;
+    tokenizer->end = tokenizer->start + normalized_length_in_bytes;
+  }
+
+  return tokenizer;
+}
+
+static void
+pattern_next(grn_ctx *ctx,
+             grn_tokenizer_query *query,
+             grn_token *token,
+             void *user_data)
+{
+  grn_pattern_tokenizer *tokenizer = user_data;
+
+  if (tokenizer->have_tokenized_delimiter) {
+    unsigned int rest_length;
+    rest_length = tokenizer->end - tokenizer->next;
+    tokenizer->next =
+      (unsigned char *)grn_tokenizer_next_by_tokenized_delimiter(
+        ctx,
+        token,
+        (const char *)tokenizer->next,
+        rest_length,
+        tokenizer->encoding);
+#ifdef GRN_SUPPORT_REGEXP
+  } else if (tokenizer->options->regex) {
+    OnigPosition position;
+    OnigRegion region;
+
+    onig_region_init(&region);
+    position = onig_search(tokenizer->options->regex,
+                           tokenizer->start,
+                           tokenizer->end,
+                           tokenizer->next,
+                           tokenizer->end,
+                           &region,
+                           ONIG_OPTION_NONE);
+    if (position == ONIG_MISMATCH) {
+      grn_token_set_data(ctx, token, NULL, 0);
+      grn_token_set_status(ctx, token, GRN_TOKEN_LAST);
+    } else {
+      grn_token_set_data(ctx,
+                         token,
+                         tokenizer->start + region.beg[0],
+                         region.end[0] - region.beg[0]);
+      grn_token_set_status(ctx, token, GRN_TOKEN_CONTINUE);
+      tokenizer->next = tokenizer->start + region.end[0];
+      onig_region_free(&region, 0);
+    }
+#endif /* GRN_SUPPORT_REGEXP */
+  } else {
+    grn_token_set_data(ctx, token, NULL, 0);
+    grn_token_set_status(ctx, token, GRN_TOKEN_LAST);
+  }
+}
+
+static void
+pattern_fin(grn_ctx *ctx, void *user_data)
+{
+  grn_pattern_tokenizer *tokenizer = user_data;
+
+  if (!tokenizer) {
+    return;
+  }
+  GRN_FREE(tokenizer);
+}
+
 /* external */
 
 grn_rc
@@ -1728,6 +1941,13 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
     grn_tokenizer_set_init_func(ctx, tokenizer, ngram_init);
     grn_tokenizer_set_next_func(ctx, tokenizer, ngram_next);
     grn_tokenizer_set_fin_func(ctx, tokenizer, ngram_fin);
+  }
+  {
+    grn_obj *tokenizer;
+    tokenizer = grn_tokenizer_create(ctx, "TokenPattern", -1);
+    grn_tokenizer_set_init_func(ctx, tokenizer, pattern_init);
+    grn_tokenizer_set_next_func(ctx, tokenizer, pattern_next);
+    grn_tokenizer_set_fin_func(ctx, tokenizer, pattern_fin);
   }
 
   return GRN_SUCCESS;

@@ -1,0 +1,3 @@
+tokenize \
+  'TokenPattern' \
+  "This is a pen."
