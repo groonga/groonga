@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2016 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -46,6 +46,7 @@ typedef struct {
   grn_bool unify_katakana_v_sounds;
   grn_bool unify_katakana_bu_sound;
   grn_bool unify_to_romaji;
+  grn_bool remove_blank;
 } grn_nfkc_normalize_options;
 
 const char *grn_nfkc_decompose(const unsigned char *utf8);

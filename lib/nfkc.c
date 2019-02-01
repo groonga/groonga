@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2010-2016 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -64,6 +64,7 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->unify_katakana_v_sounds = GRN_FALSE;
   options->unify_katakana_bu_sound = GRN_FALSE;
   options->unify_to_romaji = GRN_FALSE;
+  options->remove_blank = GRN_FALSE;
 }
 
 void
@@ -161,6 +162,12 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->unify_to_romaji);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "remove_blank")) {
+      options->remove_blank =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->remove_blank);
     }
   } GRN_OPTION_VALUES_EACH_END();
 

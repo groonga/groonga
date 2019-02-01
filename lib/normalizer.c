@@ -685,7 +685,9 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
   memset(data, 0, sizeof(grn_nfkc_normalize_data));
   data->string = (grn_string *)string;
   data->options = options;
-  data->remove_blank_p = (data->string->flags & GRN_STRING_REMOVE_BLANK);
+  data->remove_blank_p =
+    (data->string->flags & GRN_STRING_REMOVE_BLANK) ||
+    data->options->remove_blank;
   data->remove_tokenized_delimiter_p =
     (data->string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
 
