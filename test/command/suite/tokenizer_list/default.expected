@@ -50,6 +50,9 @@ tokenizer_list
     },
     {
       "name": "TokenNgram"
+    },
+    {
+      "name": "TokenPattern"
     }
   ]
 ]
