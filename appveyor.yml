@@ -11,9 +11,11 @@ environment:
       ARCH: x86
     - VS_VERSION: 12
       ARCH: amd64
-    - VS_VERSION: 14
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      VS_VERSION: 14
       ARCH: x86
-    - VS_VERSION: 14
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      VS_VERSION: 14
       ARCH: amd64
 
 # matrix:
