@@ -1246,7 +1246,7 @@ GRN_API grn_rc grn_text_itoa(grn_ctx *ctx, grn_obj *bulk, int i);
 GRN_API grn_rc grn_text_itoa_padded(grn_ctx *ctx, grn_obj *bulk, int i, char ch, unsigned int len);
 GRN_API grn_rc grn_text_lltoa(grn_ctx *ctx, grn_obj *bulk, long long int i);
 GRN_API grn_rc grn_text_ftoa(grn_ctx *ctx, grn_obj *bulk, double d);
-GRN_API grn_rc grn_text_itoh(grn_ctx *ctx, grn_obj *bulk, int i, unsigned int len);
+GRN_API grn_rc grn_text_itoh(grn_ctx *ctx, grn_obj *bulk, unsigned int i, unsigned int len);
 GRN_API grn_rc grn_text_itob(grn_ctx *ctx, grn_obj *bulk, grn_id id);
 GRN_API grn_rc grn_text_lltob32h(grn_ctx *ctx, grn_obj *bulk, long long int i);
 GRN_API grn_rc grn_text_benc(grn_ctx *ctx, grn_obj *bulk, unsigned int v);

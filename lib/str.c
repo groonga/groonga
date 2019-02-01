@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2017 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2198,7 +2198,7 @@ grn_text_ftoa(grn_ctx *ctx, grn_obj *buf, double d)
 }
 
 grn_rc
-grn_text_itoh(grn_ctx *ctx, grn_obj *buf, int i, unsigned int len)
+grn_text_itoh(grn_ctx *ctx, grn_obj *buf, unsigned int i, unsigned int len)
 {
   grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < len) {
