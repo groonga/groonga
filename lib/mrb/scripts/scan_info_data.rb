@@ -93,7 +93,7 @@ module Groonga
       else
         message =
           "The first argument of SIMILAR must be Expression, Accessor or Indexable: #{arg.class}"
-        raise ErrorMesesage, message
+        raise ErrorMessage, message
       end
 
       self.query = @args[1]
