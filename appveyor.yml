@@ -17,6 +17,12 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       VS_VERSION: 14
       ARCH: amd64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      VS_VERSION: 15
+      ARCH: x86
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      VS_VERSION: 15
+      ARCH: amd64
 
 # matrix:
 #   allow_failures:
@@ -31,7 +37,14 @@ init:
 install:
   - set PATH=C:\Ruby25-x64\bin;%PATH%
   - set PATH=C:\msys64\usr\bin;%PATH%
-  - call
+  - if "%VS_VERSION%" == "15" if "%ARCH%" == "x86" set VS2017_X86=TRUE
+  - if "%VS_VERSION%" == "15" if "%ARCH%" == "amd64" set VS2017_AMD64=TRUE
+  - if "%VS2017_X86%" == "TRUE"
+      call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
+  - if "%VS2017_AMD64%" == "TRUE"
+      call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+  - if not "%VS_VERSION%" == "15"
+      call
       "C:\Program Files (x86)\Microsoft Visual Studio %VS_VERSION%.0\VC\vcvarsall.bat"
       %ARCH%
   # - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
@@ -65,6 +78,8 @@ build_script:
       set CMAKE_GENERATOR_NAME=%CMAKE_GENERATOR_NAME% 2013
   - if "%VS_VERSION%" == "14"
       set CMAKE_GENERATOR_NAME=%CMAKE_GENERATOR_NAME% 2015
+  - if "%VS_VERSION%" == "15"
+      set CMAKE_GENERATOR_NAME=%CMAKE_GENERATOR_NAME% 2017
   - if "%ARCH%" == "amd64"
       set CMAKE_GENERATOR_NAME=%CMAKE_GENERATOR_NAME% Win64
   - cmake . -G "%CMAKE_GENERATOR_NAME%"
