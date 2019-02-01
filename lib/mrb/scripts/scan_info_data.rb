@@ -88,6 +88,8 @@ module Groonga
         match_resolve_index_expression(arg)
       when Accessor
         match_resolve_index_accessor(arg)
+      when IndexColumn
+        match_resolve_index_index_column(arg)
       when Indexable
         match_resolve_index_indexable(arg)
       else
