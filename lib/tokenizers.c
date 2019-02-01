@@ -1576,6 +1576,7 @@ pattern_open_options(grn_ctx *ctx,
                      void *user_data)
 {
   grn_pattern_options *options;
+  grn_obj all_patterns;
 
   options = GRN_MALLOC(sizeof(grn_pattern_options));
   if (!options) {
@@ -1586,6 +1587,7 @@ pattern_open_options(grn_ctx *ctx,
   }
 
   pattern_options_init(options);
+  GRN_TEXT_INIT(&all_patterns, 0);
   GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
     grn_raw_string name_raw;
     name_raw.value = name;
@@ -1604,19 +1606,26 @@ pattern_open_options(grn_ctx *ctx,
                                               NULL,
                                               &domain);
       if (grn_type_id_is_text_family(ctx, domain) && pattern_length > 0) {
-        if (options->regex) {
-          onig_free(options->regex);
+        if (GRN_TEXT_LEN(&all_patterns) > 0) {
+          GRN_TEXT_PUTS(ctx, &all_patterns, "|");
         }
-        options->regex = grn_onigmo_new(ctx,
-                                        pattern,
-                                        pattern_length,
-                                        GRN_ONIGMO_OPTION_DEFAULT,
-                                        GRN_ONIGMO_SYNTAX_DEFAULT,
-                                        "[tokenizer][delimit]");
+        GRN_TEXT_PUTS(ctx, &all_patterns, "(?:");
+        GRN_TEXT_PUT(ctx, &all_patterns, pattern, pattern_length);
+        GRN_TEXT_PUTS(ctx, &all_patterns, ")");
       }
 #endif /* GRN_SUPPORT_REGEXP */
     }
   } GRN_OPTION_VALUES_EACH_END();
+
+  if (GRN_TEXT_LEN(&all_patterns) > 0) {
+    options->regex = grn_onigmo_new(ctx,
+                                    GRN_TEXT_VALUE(&all_patterns),
+                                    GRN_TEXT_LEN(&all_patterns),
+                                    GRN_ONIGMO_OPTION_DEFAULT,
+                                    GRN_ONIGMO_SYNTAX_DEFAULT,
+                                    "[tokenizer][pattern]");
+  }
+  GRN_OBJ_FIN(ctx, &all_patterns);
 
   return options;
 }

@@ -1,0 +1,40 @@
+tokenize   'TokenPattern("pattern", "\\\\d+円",                 "pattern", "りんご|みかん")'   "私は100円のりんごと50円のみかんを129円で買いました。"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "100円",
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "りんご",
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "50円",
+      "position": 2,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "みかん",
+      "position": 3,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "129円",
+      "position": 4,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]
