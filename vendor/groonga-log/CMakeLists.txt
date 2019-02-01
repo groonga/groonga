@@ -30,5 +30,5 @@ if(GRN_WITH_MRUBY)
     FILES
     "${GROONGA_LOG_SOURCE_DIR}/README.md"
     "${GROONGA_LOG_SOURCE_DIR}/doc/text/lgpl-2.1.txt"
-    DESTINATION "${GRN_DATA_DIR}/groonga-log"
+    DESTINATION "${GRN_DATA_DIR}/groonga-log")
 endif()
