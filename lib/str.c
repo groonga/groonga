@@ -2256,7 +2256,18 @@ grn_text_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
 
   GRN_TEXT_PUTC(ctx, buf, '"');
   for (e = s + len; s < e; s += l) {
-    if (!(l = grn_charlen(ctx, s, e))) { break; }
+    l = grn_charlen(ctx, s, e);
+    if (l == 0) {
+      rc = grn_bulk_write(ctx, buf, "\\u", 2);
+      if (rc != GRN_SUCCESS) { return rc; }
+      rc = grn_text_itoh(ctx, buf, (uint8_t)*s, 4);
+      if (rc != GRN_SUCCESS) {
+        GRN_BULK_INCR_LEN(buf, -2);
+        return rc;
+      }
+      l = 1;
+      continue;
+    }
     if (l == 1) {
       switch (*s) {
       case '"' :

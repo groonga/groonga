@@ -1,0 +1,8 @@
+table_create Data TABLE_HASH_KEY ShortText
+
+load --table Data
+[
+{"_key": "\u0000\u0001\u0002"}
+]
+
+dump
