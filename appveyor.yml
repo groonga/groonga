@@ -52,7 +52,8 @@ install:
   # - choco install -y imdisk-toolkit
   # - mkdir tmp
   # - imdisk -a -t file -m tmp -o awe -s 1G -p "/fs:ntfs /q /y"
-  - set GROONGA_INSTALL_SUB_FOLDER=インストール
+  # - set GROONGA_INSTALL_SUB_FOLDER=インストール
+  - set GROONGA_INSTALL_SUB_FOLDER=install
   - ps: |
       $Env:GROONGA_VERSION = (Get-Content base_version)
       if ($Env:APPVEYOR_REPO_TAG -eq "false") {
