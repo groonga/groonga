@@ -804,7 +804,14 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
     const uint8_t *s, *d;
     for (;;) {
       if (!(r0 = *p0)) {
-        if (!(s = pat_node_get_key(ctx, pat, rn0))) { return GRN_ID_NIL; }
+        if (!(s = pat_node_get_key(ctx, pat, rn0))) {
+          char name[GRN_TABLE_MAX_KEY_SIZE];
+          int name_size;
+          name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
+          ERR(GRN_INVALID_ARGUMENT, "[pat][key] failed to get key from node: <%.*s>",
+              name_size, name);
+          return GRN_ID_NIL;
+        }
         size2 = PAT_LEN(rn0);
         break;
       }
@@ -819,7 +826,15 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
           p0 = &rn0->lr[nth_bit(key, c0, len)];
         }
       } else {
-        if (!(s = pat_node_get_key(ctx, pat, rn0))) { return GRN_ID_NIL; }
+        if (!(s = pat_node_get_key(ctx, pat, rn0))) {
+          char name[GRN_TABLE_MAX_KEY_SIZE];
+          int name_size;
+          name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
+          ERR(GRN_INVALID_ARGUMENT, "[pat][key] failed to get key from node "
+              "c0 < rn0->check < len: <%.*s>: <%d> <%d> <%d>",
+              name_size, name, c0, rn0->check, len);
+          return GRN_ID_NIL;
+        }
         size2 = PAT_LEN(rn0);
         if (size == size2 && !memcmp(s, key, size)) {
           if (pat->cache) { pat->cache[cache_id] = r0; }
@@ -848,7 +863,13 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
           p0 = &rn0->lr[1];
           while ((r0 = *p0)) {
             PAT_AT(pat, r0, rn0);
-            if (!rn0) { return GRN_ID_NIL; }
+            if (!rn0) {
+              char name[GRN_TABLE_MAX_KEY_SIZE];
+              int name_size;
+              name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
+              ERR(GRN_INVALID_ARGUMENT, "[pat] failed to detect by node: <%.*s>", name_size, name);
+              return GRN_ID_NIL;
+            }
             c0 = PAT_CHK(rn0);
             if (c < c0) { break; }
             if (c0 & 1) {
@@ -890,7 +911,14 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
         r = pat->header->garbages[size2];
         PAT_AT(pat, r, rn);
         if (!rn) { return GRN_ID_NIL; }
-        if (!(keybuf = pat_node_get_key(ctx, pat, rn))) { return GRN_ID_NIL; }
+        if (!(keybuf = pat_node_get_key(ctx, pat, rn))) {
+          char name[GRN_TABLE_MAX_KEY_SIZE];
+          int name_size;
+          name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
+          ERR(GRN_INVALID_ARGUMENT, "[pat][add] failed to get key from node. header garbages[%u]: <%.*s>",
+              size2, name_size, name);
+          return GRN_ID_NIL;
+        }
         pat->header->n_entries++;
         pat->header->n_garbages--;
         pat->header->garbages[size2] = rn->lr[0];
@@ -900,7 +928,21 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
         r = pat->header->curr_rec + 1;
         rn = pat_get(ctx, pat, r);
         if (!rn) { return GRN_ID_NIL; }
-        if (pat_node_set_key(ctx, pat, rn, key, size)) { return GRN_ID_NIL; }
+        if (pat_node_set_key(ctx, pat, rn, key, size)) {
+          char name[GRN_TABLE_MAX_KEY_SIZE];
+          int name_size;
+          grn_obj buffer, key_buffer;
+          name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
+          GRN_TEXT_INIT(&buffer, 0);
+          GRN_OBJ_INIT(&key_buffer, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, ((grn_obj *)pat)->header.domain);
+          GRN_TEXT_SET(ctx, &key_buffer, key, size);
+          grn_inspect(ctx, &buffer, &key_buffer);
+          GRN_OBJ_FIN(ctx, &key_buffer);
+          ERR(GRN_INVALID_ARGUMENT, "[pat] failed to set key to pat node: <%.*s>: <%.*s>",
+              name_size, name, (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+          GRN_OBJ_FIN(ctx, &buffer);
+          return GRN_ID_NIL;
+        }
         pat->header->curr_rec = r;
         pat->header->n_entries++;
       }
@@ -1007,14 +1049,40 @@ grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
   if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
     return GRN_ID_NIL;
   }
-  if (!key || !key_size) { return GRN_ID_NIL; }
+  if (!key) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT, "[pat][add] key must not NULL: <%.*s>",
+        name_size, name);
+    return GRN_ID_NIL;
+  }
+  if (!key_size) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT, "[pat][add] key size must not zero: <%.*s>",
+        name_size, name);
+    return GRN_ID_NIL;
+  }
   if (key_size > GRN_TABLE_MAX_KEY_SIZE) {
-    ERR(GRN_INVALID_ARGUMENT, "too long key: (%u)", key_size);
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT, "[pat][add] too long key: <%.*s>: <%u>",
+        name_size, name, key_size);
     return GRN_ID_NIL;
   }
   KEY_ENCODE(pat, keybuf, key, key_size);
   r0 = _grn_pat_add(ctx, pat, (uint8_t *)key, key_size, &new, &lkey);
-  if (r0 == GRN_ID_NIL) { return GRN_ID_NIL; }
+  if (r0 == GRN_ID_NIL) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT, "[pat][add] failed to add a key: <%.*s>: <%u>: <%u>",
+        name_size, name, new, lkey);
+    return GRN_ID_NIL;
+  }
   if (added) { *added = new; }
   if (r0 && (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) &&
       (*((uint8_t *)key) & 0x80)) { // todo: refine!!
