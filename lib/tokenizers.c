@@ -1561,6 +1561,8 @@ typedef struct {
   const unsigned char *start;
   const unsigned char *next;
   const unsigned char *end;
+  const unsigned char *current;
+  size_t current_length;
 } grn_pattern_tokenizer;
 
 static void
@@ -1698,10 +1700,41 @@ pattern_init(grn_ctx *ctx, grn_tokenizer_query *query)
     tokenizer->start = (const unsigned char *)normalized;
     tokenizer->next = tokenizer->start;
     tokenizer->end = tokenizer->start + normalized_length_in_bytes;
+    tokenizer->current = NULL;
+    tokenizer->current_length = 0;
   }
 
   return tokenizer;
 }
+
+#ifdef GRN_SUPPORT_REGEXP
+static void
+pattern_search(grn_ctx *ctx,
+               grn_pattern_tokenizer *tokenizer)
+{
+  OnigPosition position;
+  OnigRegion region;
+
+  onig_region_init(&region);
+  position = onig_search(tokenizer->options->regex,
+                         tokenizer->start,
+                         tokenizer->end,
+                         tokenizer->next,
+                         tokenizer->end,
+                         &region,
+                         ONIG_OPTION_NONE);
+  if (position == ONIG_MISMATCH) {
+    tokenizer->current = NULL;
+    tokenizer->current_length = 0;
+    tokenizer->next = tokenizer->end;
+  } else {
+    tokenizer->current = tokenizer->start + region.beg[0];
+    tokenizer->current_length = region.end[0] - region.beg[0];
+    tokenizer->next = tokenizer->start + region.end[0];
+  }
+  onig_region_free(&region, 0);
+}
+#endif
 
 static void
 pattern_next(grn_ctx *ctx,
@@ -1723,29 +1756,21 @@ pattern_next(grn_ctx *ctx,
         tokenizer->encoding);
 #ifdef GRN_SUPPORT_REGEXP
   } else if (tokenizer->options->regex) {
-    OnigPosition position;
-    OnigRegion region;
-
-    onig_region_init(&region);
-    position = onig_search(tokenizer->options->regex,
-                           tokenizer->start,
-                           tokenizer->end,
-                           tokenizer->next,
-                           tokenizer->end,
-                           &region,
-                           ONIG_OPTION_NONE);
-    if (position == ONIG_MISMATCH) {
-      grn_token_set_data(ctx, token, NULL, 0);
-      grn_token_set_status(ctx, token, GRN_TOKEN_LAST);
-    } else {
-      grn_token_set_data(ctx,
-                         token,
-                         tokenizer->start + region.beg[0],
-                         region.end[0] - region.beg[0]);
-      grn_token_set_status(ctx, token, GRN_TOKEN_CONTINUE);
-      tokenizer->next = tokenizer->start + region.end[0];
-      onig_region_free(&region, 0);
+    grn_token_status status = GRN_TOKEN_CONTINUE;
+    if (tokenizer->next == tokenizer->start) {
+      pattern_search(ctx, tokenizer);
     }
+    grn_token_set_data(ctx,
+                       token,
+                       tokenizer->current,
+                       tokenizer->current_length);
+    if (tokenizer->next != tokenizer->end) {
+      pattern_search(ctx, tokenizer);
+    }
+    if (tokenizer->next == tokenizer->end) {
+      status = GRN_TOKEN_LAST;
+    }
+    grn_token_set_status(ctx, token, status);
 #endif /* GRN_SUPPORT_REGEXP */
   } else {
     grn_token_set_data(ctx, token, NULL, 0);

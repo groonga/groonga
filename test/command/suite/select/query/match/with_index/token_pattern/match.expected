@@ -1,0 +1,16 @@
+table_create Menus TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Menus name COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Keywords TABLE_PAT_KEY ShortText   --normalize NormalizerNFKC100   --default_tokenizer 'TokenPattern("pattern", "焼き?肉")'
+[[0,0.0,0.0],true]
+column_create Keywords index COLUMN_INDEX Menus name
+[[0,0.0,0.0],true]
+load --table Menus
+[
+{"name": "焼肉定食"},
+{"name": "焼き肉定食"}
+]
+[[0,0.0,0.0],2]
+select Menus --match_columns name --query "焼き肉弁当"
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["name","Text"]],[2,"焼き肉定食"]]]]
