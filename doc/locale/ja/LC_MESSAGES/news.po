@@ -33,11 +33,84 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 8.1.1 - 2019-01-29"
-msgstr "8.1.1リリース - 2019-01-29"
+msgid "Release 9.0.0 - 2019-02-09"
+msgstr "9.0.0リリース - 2019-02-09"
+
+msgid ""
+"This is a major version up! But It keeps backward compatibility. You can "
+"upgrade to 9.0.0 without rebuilding database."
+msgstr ""
+"メジャーバージョンアップです! メジャーバージョンアップですが、互換性は壊れて"
+"いないので、データベースを再構築することなく9.0.0へアップグレードできます。"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "[:doc:`/reference/tokenizers`] Added a new tokenizer ``TokenPattern``."
+msgstr ""
+"[:doc:`/reference/tokenizers`] 新しいトークナイザー ``TokenPattern`` を追加し"
+"ました。 "
+
+msgid "You can extract tokens by regular expression."
+msgstr "正規表現を使ってトークンを抽出できます。"
+
+msgid "This tokenizer extracts only token that matches the regular expression."
+msgstr "このトークナイザーは正規表現にマッチしたトークンのみを抽出します。"
+
+msgid "You can also specify multiple patterns of regular expression."
+msgstr "正規表現のパターンは複数指定できます。"
+
+msgid "[:doc:`/reference/tokenizers`] Added a new tokenizer ``TokenTable``."
+msgstr ""
+"[:doc:`/reference/tokenizers`] 新しいトークナイザー ``TokenTable`` を追加しま"
+"した。"
+
+msgid "You can extract tokens by a value of columns of existing a table."
+msgstr "既存のテーブルのカラムの値を使ってトークンを抽出できます。"
+
+msgid "[:doc:`/reference/commands/dump`] Supported dumping binary data."
+msgstr ""
+"[:doc:`/reference/commands/dump`] バイナリデータのダンプに対応しました。"
+
+msgid ""
+"[:doc:`/reference/commands/select`] Supported similer search against index "
+"column."
+msgstr ""
+"[:doc:`/reference/commands/select`] インデックスカラムに対する類似文書検索を"
+"サポートしました。"
+
+msgid ""
+"If you have used multi column index, you can similar search against all "
+"source columns by this feature."
+msgstr ""
+"マルチカラムインデックスを使用している場合、この機能を使って、全てのソースカ"
+"ラムに対して類似文書検索ができます。"
+
+msgid ""
+"[:doc:`/reference/normalizers`] Added new option ``remove_blank`` for "
+"``NormalizerNFKC100``."
+msgstr ""
+"[:doc:`/reference/normalizers`] ``NormalizerNFKC100`` に新しいオプション "
+"``remove_blank`` を追加しました。"
+
+msgid "This option remove white spaces."
+msgstr "このオプションは空白を取り除きます。"
+
+msgid ""
+"[:doc:`/reference/executables/groonga`] Improve display of thread id in log."
+msgstr ""
+"[:doc:`/reference/executables/groonga`] ログ内のThreadIDの表示を改善しまし"
+"た。"
+
+msgid ""
+"Because It was easy to confuse thread id and process id on Windows version, "
+"it made clear which is a thread id or a process id."
+msgstr ""
+"Windows版では、ProcessIDとThreadIDを混同しやすかったので、どちらがThreadIDで"
+"どちらがProcessIDかを明確にしました。"
+
+msgid "Release 8.1.1 - 2019-01-29"
+msgstr "8.1.1リリース - 2019-01-29"
 
 msgid ""
 "[:doc:`/reference/commands/logical_select`] Added new argument ``--"

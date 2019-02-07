@@ -7,6 +7,43 @@
 News
 ====
 
+.. _release-9-0-0:
+
+Release 9.0.0 - 2019-02-09
+--------------------------
+
+This is a major version up! But It keeps backward compatibility.
+You can upgrade to 9.0.0 without rebuilding database.
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/tokenizers`] Added a new tokenizer ``TokenPattern``.
+
+  * You can extract tokens by regular expression.
+
+    * This tokenizer extracts only token that matches the regular expression.
+
+  * You can also specify multiple patterns of regular expression.
+
+* [:doc:`/reference/tokenizers`] Added a new tokenizer ``TokenTable``.
+
+  * You can extract tokens by a value of columns of existing a table.
+
+* [:doc:`/reference/commands/dump`] Supported dumping binary data.
+
+* [:doc:`/reference/commands/select`] Supported similer search against index column.
+
+  * If you have used multi column index, you can similar search against all source columns by this feature.
+
+* [:doc:`/reference/normalizers`] Added new option ``remove_blank`` for ``NormalizerNFKC100``.
+
+  * This option remove white spaces.
+
+* [:doc:`/reference/executables/groonga`] Improve display of thread id in log.
+
+  * Because It was easy to confuse thread id and process id on Windows version, it made clear which is a thread id or a process id.
+
 .. _release-8-1-1:
 
 Release 8.1.1 - 2019-01-29
