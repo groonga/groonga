@@ -188,6 +188,10 @@ schema
         "id": 77,
         "name": "TokenRegexp"
       },
+      "TokenTable": {
+        "id": 80,
+        "name": "TokenTable"
+      },
       "TokenTrigram": {
         "id": 68,
         "name": "TokenTrigram"
@@ -199,15 +203,15 @@ schema
     },
     "normalizers": {
       "NormalizerAuto": {
-        "id": 80,
+        "id": 81,
         "name": "NormalizerAuto"
       },
       "NormalizerNFKC100": {
-        "id": 82,
+        "id": 83,
         "name": "NormalizerNFKC100"
       },
       "NormalizerNFKC51": {
-        "id": 81,
+        "id": 82,
         "name": "NormalizerNFKC51"
       }
     },

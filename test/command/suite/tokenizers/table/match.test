@@ -1,0 +1,12 @@
+table_create Keywords TABLE_PAT_KEY ShortText --normalizer NormalizerNFKC100
+
+load --table Keywords
+[
+{"_key": "100円"},
+{"_key": "りんご"},
+{"_key": "29円"}
+]
+
+tokenize \
+  'TokenTable("table", "Keywords")' \
+  "私は100円のりんごを２9円で買いました。"

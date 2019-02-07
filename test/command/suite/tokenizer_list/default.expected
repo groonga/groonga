@@ -53,6 +53,9 @@ tokenizer_list
     },
     {
       "name": "TokenPattern"
+    },
+    {
+      "name": "TokenTable"
     }
   ]
 ]

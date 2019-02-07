@@ -1764,6 +1764,249 @@ pattern_fin(grn_ctx *ctx, void *user_data)
   GRN_FREE(tokenizer);
 }
 
+/* table tokenizer */
+
+typedef struct {
+  grn_obj *table;
+} grn_table_options;
+
+typedef struct {
+  grn_tokenizer_token token;
+  grn_tokenizer_query *query;
+  grn_table_options *options;
+  grn_bool have_tokenized_delimiter;
+  grn_encoding encoding;
+  const unsigned char *start;
+  const unsigned char *current;
+  const unsigned char *next;
+  const unsigned char *end;
+  grn_pat_scan_hit hits[1024];
+  int n_hits;
+  int current_hit;
+} grn_table_tokenizer;
+
+static void
+table_options_init(grn_table_options *options)
+{
+  options->table = NULL;
+}
+
+static void *
+table_open_options(grn_ctx *ctx,
+                   grn_obj *tokenizer,
+                   grn_obj *raw_options,
+                   void *user_data)
+{
+  grn_table_options *options;
+
+  options = GRN_MALLOC(sizeof(grn_table_options));
+  if (!options) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[tokenizer][table] "
+        "failed to allocate memory for options");
+    return NULL;
+  }
+
+  table_options_init(options);
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+    grn_raw_string name_raw;
+    name_raw.value = name;
+    name_raw.length = name_length;
+
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "table")) {
+      const char *name;
+      unsigned int name_length;
+      grn_id domain;
+
+      name_length = grn_vector_get_element(ctx,
+                                           raw_options,
+                                           i,
+                                           &name,
+                                           NULL,
+                                           &domain);
+      if (grn_type_id_is_text_family(ctx, domain) && name_length > 0) {
+        options->table = grn_ctx_get(ctx, name, name_length);
+        if (!options->table) {
+          ERR(GRN_INVALID_ARGUMENT,
+              "[tokenizer][table] nonexistent table: <%.*s>",
+              (int)name_length, name);
+          break;
+        }
+        if (options->table->header.type != GRN_TABLE_PAT_KEY) {
+          grn_obj inspected;
+          GRN_TEXT_INIT(&inspected, 0);
+          grn_inspect(ctx, &inspected, options->table);
+          ERR(GRN_INVALID_ARGUMENT,
+              "[tokenizer][table] table must be a patricia trie table: "
+              "<%.*s>: <%.*s>",
+              (int)name_length,
+              name,
+              (int)GRN_TEXT_LEN(&inspected),
+              GRN_TEXT_VALUE(&inspected));
+          GRN_OBJ_FIN(ctx, &inspected);
+          break;
+        }
+      }
+    }
+  } GRN_OPTION_VALUES_EACH_END();
+
+  if (ctx->rc == GRN_SUCCESS && !options->table) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[tokenizer][table] table isn't specified");
+  }
+
+  return options;
+}
+
+static void
+table_close_options(grn_ctx *ctx, void *data)
+{
+  grn_table_options *options = data;
+  GRN_FREE(options);
+}
+
+static void *
+table_init(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  grn_obj *lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
+  grn_table_options *options;
+  grn_table_tokenizer *tokenizer;
+
+  options = grn_table_cache_default_tokenizer_options(ctx,
+                                                      lexicon,
+                                                      table_open_options,
+                                                      table_close_options,
+                                                      NULL);
+  if (ctx->rc != GRN_SUCCESS) {
+    return NULL;
+  }
+
+  if (!(tokenizer = GRN_MALLOC(sizeof(grn_table_tokenizer)))) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[tokenizer][table] "
+        "memory allocation to grn_table_tokenizer failed");
+    return NULL;
+  }
+
+  tokenizer->query = query;
+  tokenizer->options = options;
+
+  {
+    const char *raw_string;
+    size_t raw_string_length;
+    grn_encoding encoding;
+
+    raw_string = grn_tokenizer_query_get_raw_string(ctx,
+                                                    tokenizer->query,
+                                                    &raw_string_length);
+    encoding = grn_tokenizer_query_get_encoding(ctx, tokenizer->query);
+    tokenizer->have_tokenized_delimiter =
+      grn_tokenizer_have_tokenized_delimiter(ctx,
+                                             raw_string,
+                                             raw_string_length,
+                                             encoding);
+    tokenizer->encoding = encoding;
+  }
+  {
+    grn_obj *string;
+    const char *normalized;
+    unsigned int normalized_length_in_bytes;
+
+    string = grn_tokenizer_query_get_normalized_string(ctx, tokenizer->query);
+    grn_string_get_normalized(ctx,
+                              string,
+                              &normalized, &normalized_length_in_bytes,
+                              NULL);
+    tokenizer->start = (const unsigned char *)normalized;
+    tokenizer->next = tokenizer->start;
+    tokenizer->current = tokenizer->start;
+    tokenizer->end = tokenizer->start + normalized_length_in_bytes;
+  }
+
+  tokenizer->n_hits = 0;
+  tokenizer->current_hit = -1;
+
+  return tokenizer;
+}
+
+static void
+table_scan(grn_ctx *ctx,
+           grn_table_tokenizer *tokenizer)
+{
+  const char *rest;
+  tokenizer->n_hits = grn_pat_scan(ctx,
+                                   (grn_pat *)(tokenizer->options->table),
+                                   tokenizer->next,
+                                   tokenizer->end - tokenizer->next,
+                                   tokenizer->hits,
+                                   sizeof(tokenizer->hits) /
+                                   sizeof(*(tokenizer->hits)),
+                                   &rest);
+  tokenizer->current = tokenizer->next;
+  tokenizer->next = rest;
+  tokenizer->current_hit = 0;
+}
+
+static void
+table_next(grn_ctx *ctx,
+           grn_tokenizer_query *query,
+           grn_token *token,
+           void *user_data)
+{
+  grn_table_tokenizer *tokenizer = user_data;
+
+  if (tokenizer->have_tokenized_delimiter) {
+    unsigned int rest_length;
+    rest_length = tokenizer->end - tokenizer->next;
+    tokenizer->next =
+      (unsigned char *)grn_tokenizer_next_by_tokenized_delimiter(
+        ctx,
+        token,
+        (const char *)tokenizer->next,
+        rest_length,
+        tokenizer->encoding);
+  } else {
+    if (tokenizer->current_hit == -1) {
+      table_scan(ctx, tokenizer);
+    }
+    if (tokenizer->current_hit < tokenizer->n_hits) {
+      grn_pat_scan_hit *hit = &(tokenizer->hits[tokenizer->current_hit]);
+      grn_token_set_data(ctx,
+                         token,
+                         tokenizer->current + hit->offset,
+                         hit->length);
+      tokenizer->current_hit++;
+      if (tokenizer->current_hit == tokenizer->n_hits) {
+        grn_token_status status = GRN_TOKEN_CONTINUE;
+        tokenizer->current_hit = -1;
+        if (tokenizer->next != tokenizer->end) {
+          table_scan(ctx, tokenizer);
+        }
+        if (tokenizer->next == tokenizer->end) {
+          status = GRN_TOKEN_LAST;
+        }
+        grn_token_set_status(ctx, token, status);
+      } else {
+        grn_token_set_status(ctx, token, GRN_TOKEN_CONTINUE);
+      }
+    } else {
+      grn_token_set_data(ctx, token, NULL, 0);
+      grn_token_set_status(ctx, token, GRN_TOKEN_LAST);
+    }
+  }
+}
+
+static void
+table_fin(grn_ctx *ctx, void *user_data)
+{
+  grn_table_tokenizer *tokenizer = user_data;
+
+  if (!tokenizer) {
+    return;
+  }
+  GRN_FREE(tokenizer);
+}
+
 /* external */
 
 grn_rc
@@ -1957,6 +2200,13 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
     grn_tokenizer_set_init_func(ctx, tokenizer, pattern_init);
     grn_tokenizer_set_next_func(ctx, tokenizer, pattern_next);
     grn_tokenizer_set_fin_func(ctx, tokenizer, pattern_fin);
+  }
+  {
+    grn_obj *tokenizer;
+    tokenizer = grn_tokenizer_create(ctx, "TokenTable", -1);
+    grn_tokenizer_set_init_func(ctx, tokenizer, table_init);
+    grn_tokenizer_set_next_func(ctx, tokenizer, table_next);
+    grn_tokenizer_set_fin_func(ctx, tokenizer, table_fin);
   }
 
   return GRN_SUCCESS;

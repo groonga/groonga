@@ -1,0 +1,3 @@
+tokenize   'TokenTable'   "This is a pen."
+[[[-22,0.0,0.0],"[tokenizer][table] table isn't specified"],[]]
+#|e| [tokenizer][table] table isn't specified
