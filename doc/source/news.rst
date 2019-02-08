@@ -30,9 +30,9 @@ Improvements
 
   * You can extract tokens by a value of columns of existing a table.
 
-* [:doc:`/reference/commands/dump`] Supported dumping binary data.
+* [:doc:`/reference/commands/dump`] Added support for dumping binary data.
 
-* [:doc:`/reference/commands/select`] Supported similer search against index column.
+* [:doc:`/reference/commands/select`] Added support for similer search against index column.
 
   * If you have used multi column index, you can similar search against all source columns by this feature.
 
