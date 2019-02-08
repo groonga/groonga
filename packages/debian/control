@@ -110,9 +110,6 @@ Pre-Depends: ${misc:Pre-Depends}
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
-  liblz4-1,
-  zlib1g,
-  libjemalloc1
 Description: Library files for Groonga
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
