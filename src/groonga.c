@@ -961,7 +961,7 @@ run_server_loop(grn_ctx *ctx, grn_com_event *ev)
   }
   running_event_loop = GRN_FALSE;
   for (;;) {
-    int i;
+    uint32_t i;
     CRITICAL_SECTION_ENTER(q_critical_section);
     for (i = 0; i < n_floating_threads; i++) {
       COND_SIGNAL(q_cond);
