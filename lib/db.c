@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -7832,6 +7832,9 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
       break;
     case GRN_VECTOR :
       rc = grn_ja_putv(ctx, (grn_ja *)obj, id, value, 0);
+      break;
+    case GRN_VOID :
+      rc = grn_ja_put(ctx, (grn_ja *)obj, id, NULL, 0, flags, NULL);
       break;
     default :
       ERR(GRN_INVALID_ARGUMENT, "vector or bulk required");

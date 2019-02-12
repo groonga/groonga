@@ -1,0 +1,14 @@
+plugin_register functions/vector
+
+table_create Data TABLE_NO_KEY
+load --table Data
+[
+{}
+]
+
+select Data \
+  --columns[vector].stage output \
+  --columns[vector].type ShortText \
+  --columns[vector].flags COLUMN_VECTOR \
+  --columns[vector].value "null" \
+  --output_columns vector
