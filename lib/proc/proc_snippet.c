@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -46,13 +47,13 @@ snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *text,
     return NULL;
   }
 
-  if (n_results == 0) {
-    return grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
-  }
-
   snippets = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_SHORT_TEXT, GRN_OBJ_VECTOR);
   if (!snippets) {
     return NULL;
+  }
+
+  if (n_results == 0) {
+    return snippets;
   }
 
   GRN_TEXT_INIT(&snippet_buffer, 0);
