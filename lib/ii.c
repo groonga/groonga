@@ -2717,6 +2717,8 @@ typedef struct {
   uint32_t flags;
 } docinfo;
 
+static docinfo null_docinfo = {0};
+
 typedef struct {
   uint32_t segno;
   uint32_t size;
@@ -3164,190 +3166,258 @@ merge_dump_source(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &(data.inspected_entries));
 }
 
-#define GETNEXTC() do {\
-  if (sdf) {\
-    uint32_t dgap = *srp++;\
-    cid.rid += dgap;\
-    if (dgap) { cid.sid = 0; }\
-    snp += cid.tf;\
-    cid.tf = 1 + *stp++;\
-    if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) { cid.weight = *sop++; }\
-    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {\
-      cid.sid += 1 + *ssp++;\
-    } else {\
-      cid.sid = 1;\
-    }\
-    sdf--;\
-  } else {\
-    cid.rid = 0;\
-  }\
-} while (0)
+typedef struct {
+  grn_ii *ii;
+  buffer_term *bt;
+  buffer *sb;
+  uint8_t *sc;
+  uint8_t *scp;
+  uint8_t *sce;
+  docinfo bid;
+  docinfo cid;
+  docinfo lid;
+  grn_id sid;
+  uint32_t *snp;
+  uint32_t snn;
+  uint32_t *srp;
+  uint32_t *stp;
+  uint32_t *sop;
+  uint32_t *ssp;
+  uint32_t sdf;
+  uint32_t *ridp;
+  uint32_t *sidp;
+  uint32_t *tfp;
+  uint32_t *weightp;
+  uint32_t *posp;
+  uint64_t spos;
+  uint16_t nextb;
+  uint8_t *sbp;
+} merger_data;
 
-#define PUTNEXT_(id) do {\
-  uint32_t dgap = id.rid - lid.rid;\
-  uint32_t sgap = (dgap ? id.sid : id.sid - lid.sid) - 1;\
-  *ridp++ = dgap;\
-  if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {\
-    *sidp++ = sgap;\
-  }\
-  *tfp++ = id.tf - 1;\
-  if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) { *weightp++ = id.weight; }\
-  lid.rid = id.rid;\
-  lid.sid = id.sid;\
-} while (0)
+grn_inline static void
+merger_get_next_chunk(grn_ctx *ctx, merger_data *data)
+{
+  if (data->sdf) {
+    uint32_t dgap = *data->srp;
+    data->srp++;
+    data->cid.rid += dgap;
+    if (dgap) { data->cid.sid = 0; }
+    data->snp += data->cid.tf;
+    data->cid.tf = 1 + *data->stp;
+    data->stp++;
+    if ((data->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+      data->cid.weight = *data->sop;
+      data->sop++;
+    }
+    if ((data->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+      data->cid.sid += 1 + *data->ssp;
+      data->ssp++;
+    } else {
+      data->cid.sid = 1;
+    }
+    data->sdf--;
+  } else {
+    data->cid.rid = 0;
+  }
+}
 
-#define PUTNEXTC() do {\
-  if (cid.rid) {\
-    if (cid.tf) {\
-      if (lid.rid > cid.rid || (lid.rid == cid.rid && lid.sid >= cid.sid)) {\
-        grn_obj term;\
-        DEFINE_NAME(ii);\
-        GRN_TEXT_INIT(&term, 0);\
-        grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);\
-        CRIT(GRN_FILE_CORRUPT,\
-             "[ii][broken] posting in list is larger than posting in chunk: "\
-             "<%.*s>: <%.*s>(%u): (%u:%u) -> (%u:%u)",\
-             name_size, name,\
-             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),\
-             bt->tid,\
-             lid.rid, lid.sid, cid.rid, cid.sid);\
-        GRN_OBJ_FIN(ctx, &term);\
-        merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
-        break;\
-      }\
-      PUTNEXT_(cid);\
-      if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {\
-        uint32_t i;\
-        for (i = 0; i < cid.tf; i++) {\
-          *posp++ = snp[i];\
-          spos += snp[i];\
-        }\
-      }\
-    } else {\
-      grn_obj term;\
-      DEFINE_NAME(ii);\
-      GRN_TEXT_INIT(&term, 0);\
-      grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);\
-      CRIT(GRN_FILE_CORRUPT,\
-           "[ii][broken] invalid posting in chunk: "\
-           "<%.*s>: <%.*s>(%u): (%u:%u)",\
-           name_size, name,\
-           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),\
-           bt->tid,\
-           cid.rid, cid.sid);\
-      GRN_OBJ_FIN(ctx, &term);\
-      merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
-      break;\
-    }\
-  }\
-  GETNEXTC();\
-} while (0)
+grn_inline static void
+merger_put_next_id(grn_ctx *ctx, merger_data *data, docinfo *id)
+{
+  uint32_t dgap = id->rid - data->lid.rid;
+  uint32_t sgap = (dgap ? id->sid : id->sid - data->lid.sid) - 1;
+  *(data->ridp) = dgap;
+  data->ridp++;
+  if ((data->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+    *(data->sidp) = sgap;
+    data->sidp++;
+  }
+  *(data->tfp) = id->tf - 1;
+  data->tfp++;
+  if ((data->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+    *data->weightp = id->weight;
+    data->weightp++;
+  }
+  data->lid.rid = id->rid;
+  data->lid.sid = id->sid;
+}
 
-#define GETNEXTB() do {\
-  if (nextb) {\
-    uint32_t lrid = bid.rid, lsid = bid.sid;\
-    buffer_rec *br = BUFFER_REC_AT(sb, nextb);\
-    sbp = GRN_NEXT_ADDR(br);\
-    GRN_B_DEC(bid.rid, sbp);\
-    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {\
-      GRN_B_DEC(bid.sid, sbp);\
-    } else {\
-      bid.sid = 1;\
-    }\
-    if (lrid > bid.rid || (lrid == bid.rid && lsid >= bid.sid)) {\
-      grn_obj term;\
-      DEFINE_NAME(ii);\
-      GRN_TEXT_INIT(&term, 0);\
-      grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);\
-      CRIT(GRN_FILE_CORRUPT,\
-           "[ii][broken] postings in block aren't sorted: "\
-           "<%.*s>: <%.*s>(%u): (%d:%d) -> (%d:%d)",\
-           name_size, name,\
-           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),\
-           bt->tid,\
-           lrid, lsid,\
-           bid.rid, bid.sid);\
-      GRN_OBJ_FIN(ctx, &term);\
-      merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
-      break;\
-    }\
-    nextb = br->step;\
-  } else {\
-    bid.rid = 0;\
-  }\
-} while (0)
+grn_inline static void
+merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
+{
+  if (data->cid.rid) {
+    if (data->cid.tf) {
+      if (data->lid.rid > data->cid.rid ||
+          (data->lid.rid == data->cid.rid && data->lid.sid >= data->cid.sid)) {
+        grn_obj term;
+        DEFINE_NAME(data->ii);
+        GRN_TEXT_INIT(&term, 0);
+        grn_ii_get_term(ctx, data->ii, data->bt->tid & GRN_ID_MAX, &term);
+        CRIT(GRN_FILE_CORRUPT,
+             "[ii][broken] posting in list is larger than posting in chunk: "
+             "<%.*s>: <%.*s>(%u): (%u:%u) -> (%u:%u)",
+             name_size, name,
+             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+             data->bt->tid,
+             data->lid.rid, data->lid.sid,
+             data->cid.rid, data->cid.sid);
+        GRN_OBJ_FIN(ctx, &term);
+        merge_dump_source(ctx, data->ii, data->sb, data->sc, GRN_LOG_CRIT);
+        return;
+      }
+      merger_put_next_id(ctx, data, &(data->cid));
+      if ((data->ii->header->flags & GRN_OBJ_WITH_POSITION)) {
+        uint32_t i;
+        for (i = 0; i < data->cid.tf; i++) {
+          *(data->posp) = data->snp[i];
+          data->posp++;
+          data->spos += data->snp[i];
+        }
+      }
+    } else {
+      grn_obj term;
+      DEFINE_NAME(data->ii);
+      GRN_TEXT_INIT(&term, 0);
+      grn_ii_get_term(ctx, data->ii, data->bt->tid & GRN_ID_MAX, &term);
+      CRIT(GRN_FILE_CORRUPT,
+           "[ii][broken] invalid posting in chunk: "
+           "<%.*s>: <%.*s>(%u): (%u:%u)",
+           name_size, name,
+           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+           data->bt->tid,
+           data->cid.rid, data->cid.sid);
+      GRN_OBJ_FIN(ctx, &term);
+      merge_dump_source(ctx, data->ii, data->sb, data->sc, GRN_LOG_CRIT);
+      return;
+    }
+  }
+  merger_get_next_chunk(ctx, data);
+}
 
-#define PUTNEXTB() do {\
-  if (bid.rid && bid.sid) {\
-    GRN_B_DEC(bid.tf, sbp);\
-    if (bid.tf > 0) {\
-      if (lid.rid > bid.rid || (lid.rid == bid.rid && lid.sid >= bid.sid)) {\
-        grn_obj term;\
-        DEFINE_NAME(ii);\
-        GRN_TEXT_INIT(&term, 0);\
-        grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);\
-        CRIT(GRN_FILE_CORRUPT,\
-             "[ii][broken] posting in list is larger than posting in buffer: "\
-             "<%.*s>: <%.*s>(%u): (%u:%u) -> (%u:%u)",\
-             name_size, name,\
-             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),\
-             bt->tid,\
-             lid.rid, lid.sid,\
-             bid.rid, bid.sid);\
-        GRN_OBJ_FIN(ctx, &term);\
-        merge_dump_source(ctx, ii, sb, sc, GRN_LOG_CRIT);\
-        break;\
-      }\
-      if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {\
-        GRN_B_DEC(bid.weight, sbp);\
-      }\
-      PUTNEXT_(bid);\
-      if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {\
-        while (bid.tf--) { GRN_B_DEC(*posp, sbp); spos += *posp++; }\
-      }\
-    }\
-  }\
-  GETNEXTB();\
-} while (0)
+grn_inline static void
+merger_get_next_buffer(grn_ctx *ctx, merger_data *data)
+{
+  if (data->nextb) {
+    uint32_t lrid = data->bid.rid;
+    uint32_t lsid = data->bid.sid;
+    buffer_rec *br = BUFFER_REC_AT(data->sb, data->nextb);
+    data->sbp = GRN_NEXT_ADDR(br);
+    GRN_B_DEC(data->bid.rid, data->sbp);
+    if ((data->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+      GRN_B_DEC(data->bid.sid, data->sbp);
+    } else {
+      data->bid.sid = 1;
+    }
+    if (lrid > data->bid.rid ||
+        (lrid == data->bid.rid && lsid >= data->bid.sid)) {
+      grn_obj term;
+      DEFINE_NAME(data->ii);
+      GRN_TEXT_INIT(&term, 0);
+      grn_ii_get_term(ctx, data->ii, data->bt->tid & GRN_ID_MAX, &term);
+      CRIT(GRN_FILE_CORRUPT,
+           "[ii][broken] postings in block aren't sorted: "
+           "<%.*s>: <%.*s>(%u): (%d:%d) -> (%d:%d)",
+           name_size, name,
+           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+           data->bt->tid,
+           lrid, lsid,
+           data->bid.rid, data->bid.sid);
+      GRN_OBJ_FIN(ctx, &term);
+      merge_dump_source(ctx, data->ii, data->sb, data->sc, GRN_LOG_CRIT);
+      return;
+    }
+    data->nextb = br->step;
+  } else {
+    data->bid.rid = 0;
+  }
+}
 
-#define MERGE_BC(cond) do {\
-  if (bid.rid) {\
-    if (cid.rid) {\
-      if (cid.rid < bid.rid) {\
-        PUTNEXTC();\
-        if (ctx->rc != GRN_SUCCESS) { break; }\
-      } else {\
-        if (bid.rid < cid.rid) {\
-          PUTNEXTB();\
-          if (ctx->rc != GRN_SUCCESS) { break; }\
-        } else {\
-          if (bid.sid) {\
-            if (cid.sid < bid.sid) {\
-              PUTNEXTC();\
-              if (ctx->rc != GRN_SUCCESS) { break; }\
-            } else {\
-              if (bid.sid == cid.sid) { GETNEXTC(); }\
-              PUTNEXTB();\
-              if (ctx->rc != GRN_SUCCESS) { break; }\
-            }\
-          } else {\
-            GETNEXTC();\
-          }\
-        }\
-      }\
-    } else {\
-      PUTNEXTB();\
-      if (ctx->rc != GRN_SUCCESS) { break; }\
-    }\
-  } else {\
-    if (cid.rid) {\
-      PUTNEXTC();\
-      if (ctx->rc != GRN_SUCCESS) { break; }\
-    } else {\
-      break;\
-    }\
-  }\
-} while (cond)
+grn_inline static void
+merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
+{
+  if (data->bid.rid && data->bid.sid) {
+    GRN_B_DEC(data->bid.tf, data->sbp);
+    if (data->bid.tf > 0) {
+      if (data->lid.rid > data->bid.rid ||
+          (data->lid.rid == data->bid.rid &&
+           data->lid.sid >= data->bid.sid)) {
+        grn_obj term;
+        DEFINE_NAME(data->ii);
+        GRN_TEXT_INIT(&term, 0);
+        grn_ii_get_term(ctx, data->ii, data->bt->tid & GRN_ID_MAX, &term);
+        CRIT(GRN_FILE_CORRUPT,
+             "[ii][broken] posting in list is larger than posting in buffer: "
+             "<%.*s>: <%.*s>(%u): (%u:%u) -> (%u:%u)",
+             name_size, name,
+             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+             data->bt->tid,
+             data->lid.rid, data->lid.sid,
+             data->bid.rid, data->bid.sid);
+        GRN_OBJ_FIN(ctx, &term);
+        merge_dump_source(ctx, data->ii, data->sb, data->sc, GRN_LOG_CRIT);
+        return;
+      }
+      if ((data->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+        GRN_B_DEC(data->bid.weight, data->sbp);
+      }
+      merger_put_next_id(ctx, data, &(data->bid));
+      if ((data->ii->header->flags & GRN_OBJ_WITH_POSITION)) {
+        while (data->bid.tf--) {
+          GRN_B_DEC(*(data->posp), data->sbp);
+          data->spos += *(data->posp);
+          data->posp++;
+        }
+      }
+    }
+  }
+  merger_get_next_buffer(ctx, data);
+}
+
+grn_inline static grn_bool
+merger_merge(grn_ctx *ctx, merger_data *data)
+{
+  if (data->bid.rid) {
+    if (data->cid.rid) {
+      if (data->cid.rid < data->bid.rid) {
+        merger_put_next_chunk(ctx, data);
+        if (ctx->rc != GRN_SUCCESS) { return GRN_FALSE; }
+      } else {
+        if (data->bid.rid < data->cid.rid) {
+          merger_put_next_buffer(ctx, data);
+          if (ctx->rc != GRN_SUCCESS) { return GRN_FALSE; }
+        } else {
+          if (data->bid.sid) {
+            if (data->cid.sid < data->bid.sid) {
+              merger_put_next_chunk(ctx, data);
+              if (ctx->rc != GRN_SUCCESS) { return GRN_FALSE; }
+            } else {
+              if (data->bid.sid == data->cid.sid) {
+                merger_get_next_chunk(ctx, data);
+                if (ctx->rc != GRN_SUCCESS) { return GRN_FALSE; }
+              }
+              merger_put_next_buffer(ctx, data);
+              if (ctx->rc != GRN_SUCCESS) { return GRN_FALSE; }
+            }
+          } else {
+            merger_get_next_chunk(ctx, data);
+            if (ctx->rc != GRN_SUCCESS) { return GRN_FALSE; }
+          }
+        }
+      }
+    } else {
+      merger_put_next_buffer(ctx, data);
+      if (ctx->rc != GRN_SUCCESS) { return GRN_FALSE; }
+    }
+  } else {
+    if (data->cid.rid) {
+      merger_put_next_chunk(ctx, data);
+      if (ctx->rc != GRN_SUCCESS) { return GRN_FALSE; }
+    } else {
+      return GRN_FALSE;
+    }
+  }
+  return GRN_TRUE;
+}
 
 static grn_rc
 chunk_flush(grn_ctx *ctx, grn_ii *ii, chunk_info *cinfo, uint8_t *enc, uint32_t encsize)
@@ -3383,29 +3453,36 @@ chunk_flush(grn_ctx *ctx, grn_ii *ii, chunk_info *cinfo, uint8_t *enc, uint32_t 
 }
 
 static grn_rc
-chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, uint8_t *sc, buffer_term *bt,
-            chunk_info *cinfo, grn_id rid, datavec *dv,
-            uint16_t *nextbp, uint8_t **sbpp, docinfo *bidp, int32_t *balance)
+chunk_merge(grn_ctx *ctx,
+            merger_data *data,
+            chunk_info *cinfo,
+            grn_id rid,
+            datavec *dv,
+            int32_t *balance)
 {
+  grn_ii *ii = data->ii;
   grn_io_win sw;
-  uint64_t spos = 0;
-  uint32_t segno = cinfo->segno, size = cinfo->size, sdf = 0, ndf = 0;
-  uint32_t *ridp = NULL, *sidp = NULL, *tfp, *weightp = NULL, *posp = NULL;
-  docinfo cid = {0, 0, 0, 0, 0}, lid = {0, 0, 0, 0, 0}, bid = *bidp;
+  uint32_t segno = cinfo->segno;
+  uint32_t size = cinfo->size;
+  uint32_t ndf = 0;
   uint8_t *scp = WIN_MAP(ii->chunk, ctx, &sw, segno, 0, size, grn_io_rdonly);
 
+  data->lid = null_docinfo;
+
   if (scp) {
-    uint16_t nextb = *nextbp;
-    uint32_t snn = 0, *srp, *ssp = NULL, *stp, *sop = NULL, *snp;
-    uint8_t *sbp = *sbpp;
     datavec rdv[MAX_N_ELEMENTS + 1];
     size_t bufsize = S_SEGMENT * ii->n_elements;
     int decoded_size;
+
+    data->snn = 0;
+    data->ssp = NULL;
+    data->sop = NULL;
+
     datavec_init(ctx, rdv, ii->n_elements, 0, 0);
     if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
       rdv[ii->n_elements - 1].flags = ODD;
     }
-    decoded_size = grn_p_decv(ctx, ii, bt->tid & GRN_ID_MAX,
+    decoded_size = grn_p_decv(ctx, ii, data->bt->tid & GRN_ID_MAX,
                               scp, cinfo->size, rdv, ii->n_elements);
     if (decoded_size == 0) {
       datavec_fin(ctx, rdv);
@@ -3415,7 +3492,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, uint8_t *sc, buffer_term *bt,
         grn_rc rc = ctx->rc;
         DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
-        grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+        grn_ii_get_term(ctx, ii, data->bt->tid & GRN_ID_MAX, &term);
         if (rc == GRN_SUCCESS) {
           rc = GRN_UNKNOWN_ERROR;
         }
@@ -3425,7 +3502,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, uint8_t *sc, buffer_term *bt,
             "<%.*s>(%u)",
             name_size, name,
             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-            bt->tid);
+            data->bt->tid);
         GRN_OBJ_FIN(ctx, &term);
       }
       return ctx->rc;
@@ -3434,32 +3511,41 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, uint8_t *sc, buffer_term *bt,
     // (df in chunk list) = a[1] - sdf;
     {
       int j = 0;
-      sdf = rdv[j].data_size;
-      srp = rdv[j++].data;
-      if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) { ssp = rdv[j++].data; }
-      stp = rdv[j++].data;
-      if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) { sop = rdv[j++].data; }
-      snn = rdv[j].data_size;
-      snp = rdv[j].data;
+      data->sdf = rdv[j].data_size;
+      data->srp = rdv[j++].data;
+      if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+        data->ssp = rdv[j++].data;
+      }
+      data->stp = rdv[j++].data;
+      if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+        data->sop = rdv[j++].data;
+      }
+      data->snn = rdv[j].data_size;
+      data->snp = rdv[j].data;
     }
-    datavec_reset(ctx, dv, ii->n_elements, sdf + S_SEGMENT, bufsize);
+    datavec_reset(ctx, dv, ii->n_elements, data->sdf + S_SEGMENT, bufsize);
     if (ctx->rc == GRN_SUCCESS) {
       {
         int j = 0;
-        ridp = dv[j++].data;
-        if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) { sidp = dv[j++].data; }
-        tfp = dv[j++].data;
-        if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) { weightp = dv[j++].data; }
-        posp = dv[j].data;
+        data->ridp = dv[j++].data;
+        if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+          data->sidp = dv[j++].data;
+        }
+        data->tfp = dv[j++].data;
+        if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+          data->weightp = dv[j++].data;
+        }
+        data->posp = dv[j].data;
       }
-      GETNEXTC();
-      MERGE_BC(bid.rid <= rid || cid.rid);
+      merger_get_next_chunk(ctx, data);
+      do {
+        if (!merger_merge(ctx, data)) {
+          break;
+        }
+      } while (data->bid.rid <= rid || data->cid.rid);
       if (ctx->rc == GRN_SUCCESS) {
-        *sbpp = sbp;
-        *nextbp = nextb;
-        *bidp = bid;
-        GRN_ASSERT(posp < dv[ii->n_elements].data);
-        ndf = ridp - dv[0].data;
+        GRN_ASSERT(data->posp < dv[ii->n_elements].data);
+        ndf = data->ridp - dv[0].data;
       }
     }
     datavec_fin(ctx, rdv);
@@ -3468,14 +3554,14 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, uint8_t *sc, buffer_term *bt,
     grn_obj term;
     DEFINE_NAME(ii);
     GRN_TEXT_INIT(&term, 0);
-    grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+    grn_ii_get_term(ctx, ii, data->bt->tid & GRN_ID_MAX, &term);
     MERR("[ii][chunk][merge] failed to allocate a source chunk: "
          "<%.*s>: "
          "<%.*s>(%u): "
          "record:<%u>, segment:<%u>, size:<%u>",
          name_size, name,
          (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-         bt->tid,
+         data->bt->tid,
          rid,
          segno,
          size);
@@ -3487,9 +3573,9 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, uint8_t *sc, buffer_term *bt,
     uint8_t *enc;
     uint32_t encsize_probably_enough;
     uint32_t encsize;
-    uint32_t np = posp - dv[ii->n_elements - 1].data;
+    uint32_t np = data->posp - dv[ii->n_elements - 1].data;
     uint32_t f_s = (ndf < 3) ? 0 : USE_P_ENC;
-    uint32_t f_d = ((ndf < 16) || (ndf <= (lid.rid >> 8))) ? 0 : USE_P_ENC;
+    uint32_t f_d = ((ndf < 16) || (ndf <= (data->lid.rid >> 8))) ? 0 : USE_P_ENC;
     dv[j].data_size = ndf; dv[j++].flags = f_d;
     if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
       dv[j].data_size = ndf; dv[j++].flags = f_s;
@@ -3499,7 +3585,7 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, uint8_t *sc, buffer_term *bt,
       dv[j].data_size = ndf; dv[j++].flags = f_s;
     }
     if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
-      uint32_t f_p = ((np < 32) || (np <= (spos >> 13))) ? 0 : USE_P_ENC;
+      uint32_t f_p = ((np < 32) || (np <= (data->spos >> 13))) ? 0 : USE_P_ENC;
       dv[j].data_size = np; dv[j].flags = f_p|ODD;
     }
     encsize_probably_enough = (ndf * 4 + np) * 3;
@@ -3514,21 +3600,21 @@ chunk_merge(grn_ctx *ctx, grn_ii *ii, buffer *sb, uint8_t *sc, buffer_term *bt,
       grn_obj term;
       DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
-      grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+      grn_ii_get_term(ctx, ii, data->bt->tid & GRN_ID_MAX, &term);
       MERR("[ii][chunk][merge] failed to allocate a encode buffer: "
            "<%.*s>: "
            "<%.*s>(%u): "
            "record:<%u>, segment:<%u>, size:<%u>",
            name_size, name,
            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-           bt->tid,
+           data->bt->tid,
            rid,
            segno,
            size);
       GRN_OBJ_FIN(ctx, &term);
     }
   }
-  *balance += (ndf - sdf);
+  *balance += (ndf - data->sdf);
   return ctx->rc;
 }
 
@@ -3589,13 +3675,14 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
              buffer *sb, uint8_t *sc, buffer *db, uint8_t *dc)
 {
   buffer_term *bt;
-  uint8_t *sbp = NULL, *dcp = dc;
+  uint8_t *dcp = dc;
   datavec dv[MAX_N_ELEMENTS + 1];
   datavec rdv[MAX_N_ELEMENTS + 1];
   uint16_t n = db->header.nterms, nterms_void = 0;
   size_t unitsize = (S_SEGMENT + sb->header.chunk_size / sb->header.nterms) * 2;
   // size_t unitsize = (S_SEGMENT + sb->header.chunk_size) * 2 + (1<<24);
   size_t totalsize = unitsize * ii->n_elements;
+
   //todo : realloc
   datavec_init(ctx, dv, ii->n_elements, unitsize, totalsize);
   if (ctx->rc != GRN_SUCCESS) {
@@ -3611,85 +3698,98 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
     return ctx->rc;
   }
   datavec_init(ctx, rdv, ii->n_elements, 0, 0);
+  if (ctx->rc != GRN_SUCCESS) {
+    datavec_fin(ctx, dv);
+    DEFINE_NAME(ii);
+    ERR(ctx->rc,
+        "[ii][buffer][merge] failed to initialize data vector for read: "
+        "<%.*s>",
+        name_size, name);
+    return ctx->rc;
+  }
   if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
     rdv[ii->n_elements - 1].flags = ODD;
   }
   for (bt = db->terms; n; n--, bt++) {
-    uint16_t nextb;
-    uint64_t spos = 0;
+    merger_data data = {0};
     int32_t balance = 0;
-    uint32_t *ridp, *sidp = NULL, *tfp, *weightp = NULL, *posp, nchunks = 0;
+    uint32_t nchunks = 0;
     uint32_t nvchunks = 0;
     chunk_info *cinfo = NULL;
     grn_id crid = GRN_ID_NIL;
-    docinfo cid = {0, 0, 0, 0, 0}, lid = {0, 0, 0, 0, 0}, bid = {0, 0};
-    uint32_t sdf = 0, snn = 0, ndf;
-    uint32_t *srp = NULL, *ssp = NULL, *stp = NULL, *sop = NULL, *snp = NULL;
-    if (!bt->tid) {
+    uint32_t ndf;
+
+    data.ii = ii;
+    data.sb = sb;
+    data.sc = sc;
+    data.bt = bt;
+
+    if (!data.bt->tid) {
       nterms_void++;
       continue;
     }
-    if (!bt->pos_in_buffer) {
-      GRN_ASSERT(!bt->size_in_buffer);
-      if (bt->size_in_chunk) {
-        grn_memcpy(dcp, sc + bt->pos_in_chunk, bt->size_in_chunk);
-        bt->pos_in_chunk = (uint32_t)(dcp - dc);
-        dcp += bt->size_in_chunk;
+
+    if (!data.bt->pos_in_buffer) {
+      GRN_ASSERT(!data.bt->size_in_buffer);
+      if (data.bt->size_in_chunk) {
+        grn_memcpy(dcp,
+                   data.sc + data.bt->pos_in_chunk,
+                   data.bt->size_in_chunk);
+        data.bt->pos_in_chunk = (uint32_t)(dcp - dc);
+        dcp += data.bt->size_in_chunk;
       }
       continue;
     }
-    nextb = bt->pos_in_buffer;
-    GETNEXTB();
-    if (sc && bt->size_in_chunk) {
-      uint8_t *scp = sc + bt->pos_in_chunk;
-      uint8_t *sce = scp + bt->size_in_chunk;
+
+    data.spos = 0;
+    data.nextb = bt->pos_in_buffer;
+    merger_get_next_buffer(ctx, &data);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    if (data.sc && data.bt->size_in_chunk) {
+      data.scp = data.sc + data.bt->pos_in_chunk;
+      data.sce = data.scp + data.bt->size_in_chunk;
       size_t size = S_SEGMENT * ii->n_elements;
-      if ((bt->tid & CHUNK_SPLIT)) {
+      if ((data.bt->tid & CHUNK_SPLIT)) {
         int i;
-        GRN_B_DEC(nchunks, scp);
+        GRN_B_DEC(nchunks, data.scp);
         if (!(cinfo = GRN_MALLOCN(chunk_info, nchunks + 1))) {
-          datavec_fin(ctx, dv);
-          datavec_fin(ctx, rdv);
-          {
-            grn_obj term;
-            DEFINE_NAME(ii);
-            GRN_TEXT_INIT(&term, 0);
-            grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
-            MERR("[ii][buffer][merge] failed to allocate chunk info: "
-                 "<%.*s>: "
-                 "<%.*s>(%u): "
-                 "segment:<%u>, "
-                 "n-chunks:<%u>, "
-                 "unit-size:<%" GRN_FMT_SIZE ">, "
-                 "total-size:<%" GRN_FMT_SIZE ">",
-                 name_size, name,
-                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-                 bt->tid,
-                 seg,
-                 nchunks,
-                 unitsize,
-                 totalsize);
-            GRN_OBJ_FIN(ctx, &term);
-          }
-          return ctx->rc;
+          grn_obj term;
+          DEFINE_NAME(ii);
+          GRN_TEXT_INIT(&term, 0);
+          grn_ii_get_term(ctx, ii, data.bt->tid & GRN_ID_MAX, &term);
+          MERR("[ii][buffer][merge] failed to allocate chunk info: "
+               "<%.*s>: "
+               "<%.*s>(%u): "
+               "segment:<%u>, "
+               "n-chunks:<%u>, "
+               "unit-size:<%" GRN_FMT_SIZE ">, "
+               "total-size:<%" GRN_FMT_SIZE ">",
+               name_size, name,
+               (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+               data.bt->tid,
+               seg,
+               nchunks,
+               unitsize,
+               totalsize);
+          GRN_OBJ_FIN(ctx, &term);
+          goto exit;
         }
         for (i = 0; i < nchunks; i++) {
-          GRN_B_DEC(cinfo[i].segno, scp);
-          GRN_B_DEC(cinfo[i].size, scp);
-          GRN_B_DEC(cinfo[i].dgap, scp);
+          GRN_B_DEC(cinfo[i].segno, data.scp);
+          GRN_B_DEC(cinfo[i].size, data.scp);
+          GRN_B_DEC(cinfo[i].dgap, data.scp);
           crid += cinfo[i].dgap;
-          if (bid.rid <= crid) {
-            chunk_merge(ctx, ii, sb, sc, bt, &cinfo[i], crid, dv,
-                        &nextb, &sbp, &bid, &balance);
+          if (data.bid.rid <= crid) {
+            chunk_merge(ctx, &data, &cinfo[i], crid, dv, &balance);
             if (ctx->rc != GRN_SUCCESS) {
               if (cinfo) { GRN_FREE(cinfo); }
-              datavec_fin(ctx, dv);
-              datavec_fin(ctx, rdv);
               {
                 grn_obj term;
                 DEFINE_NAME(ii);
                 GRN_TEXT_INIT(&term, 0);
-                grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+                grn_ii_get_term(ctx, ii, data.bt->tid & GRN_ID_MAX, &term);
                 ERR(ctx->rc,
                     "[ii][buffer][merge] failed to merge chunk: "
                     "<%.*s>: "
@@ -3698,12 +3798,12 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                     "n-chunks:<%u>",
                     name_size, name,
                     (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-                    bt->tid,
+                    data.bt->tid,
                     i,
                     nchunks);
                 GRN_OBJ_FIN(ctx, &term);
               }
-              return ctx->rc;
+              goto exit;
             }
           }
           if (cinfo[i].size) {
@@ -3714,20 +3814,23 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           }
         }
       }
-      if (sce > scp) {
+      if (data.sce > data.scp) {
         int decoded_size;
-        decoded_size = grn_p_decv(ctx, ii, bt->tid & GRN_ID_MAX,
-                                  scp, sce - scp, rdv, ii->n_elements);
+        decoded_size = grn_p_decv(ctx,
+                                  ii,
+                                  data.bt->tid & GRN_ID_MAX,
+                                  data.scp,
+                                  data.sce - data.scp,
+                                  rdv,
+                                  ii->n_elements);
         if (decoded_size == 0) {
           if (cinfo) { GRN_FREE(cinfo); }
-          datavec_fin(ctx, dv);
-          datavec_fin(ctx, rdv);
           {
             grn_obj term;
             grn_rc rc = ctx->rc;
             DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
-            grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+            grn_ii_get_term(ctx, ii, data.bt->tid & GRN_ID_MAX, &term);
             if (rc == GRN_SUCCESS) {
               rc = GRN_UNKNOWN_ERROR;
             }
@@ -3738,33 +3841,35 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                 "n-chunks:<%u>",
                 name_size, name,
                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-                bt->tid,
+                data.bt->tid,
                 nvchunks);
             GRN_OBJ_FIN(ctx, &term);
           }
-          return ctx->rc;
+          goto exit;
         }
         size += decoded_size;
         {
           int j = 0;
-          sdf = rdv[j].data_size;
-          srp = rdv[j++].data;
-          if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) { ssp = rdv[j++].data; }
-          stp = rdv[j++].data;
-          if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) { sop = rdv[j++].data; }
-          snn = rdv[j].data_size;
-          snp = rdv[j].data;
+          data.sdf = rdv[j].data_size;
+          data.srp = rdv[j++].data;
+          if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+            data.ssp = rdv[j++].data;
+          }
+          data.stp = rdv[j++].data;
+          if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+            data.sop = rdv[j++].data;
+          }
+          data.snn = rdv[j].data_size;
+          data.snp = rdv[j].data;
         }
-        datavec_reset(ctx, dv, ii->n_elements, sdf + S_SEGMENT, size);
+        datavec_reset(ctx, dv, ii->n_elements, data.sdf + S_SEGMENT, size);
         if (ctx->rc != GRN_SUCCESS) {
           if (cinfo) { GRN_FREE(cinfo); }
-          datavec_fin(ctx, dv);
-          datavec_fin(ctx, rdv);
           {
             grn_obj term;
             DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
-            grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+            grn_ii_get_term(ctx, ii, data.bt->tid & GRN_ID_MAX, &term);
             ERR(ctx->rc,
                 "[ii][buffer][merge] failed to reset data vector: "
                 "<%.*s>: "
@@ -3773,111 +3878,96 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                 "total-size:<%" GRN_FMT_SIZE ">",
                 name_size, name,
                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-                bt->tid,
-                (size_t)(sdf + S_SEGMENT),
+                data.bt->tid,
+                (size_t)(data.sdf + S_SEGMENT),
                 size);
             GRN_OBJ_FIN(ctx, &term);
           }
-          return ctx->rc;
+          goto exit;
         }
       }
     }
     {
       int j = 0;
-      ridp =   dv[j++].data;
-      if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) { sidp = dv[j++].data; }
-      tfp =    dv[j++].data;
-      if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) { weightp = dv[j++].data; }
-      posp = dv[j].data;
+      data.ridp = dv[j++].data;
+      if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+        data.sidp = dv[j++].data;
+      }
+      data.tfp = dv[j++].data;
+      if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+        data.weightp = dv[j++].data;
+      }
+      data.posp = dv[j].data;
     }
-    GETNEXTC();
-    MERGE_BC(1);
+    data.lid = null_docinfo;
+    merger_get_next_chunk(ctx, &data);
     if (ctx->rc != GRN_SUCCESS) {
       if (cinfo) { GRN_FREE(cinfo); }
-      datavec_fin(ctx, dv);
-      datavec_fin(ctx, rdv);
+      goto exit;
+    }
+    while (merger_merge(ctx, &data)) {
+    }
+    if (ctx->rc != GRN_SUCCESS) {
+      if (cinfo) { GRN_FREE(cinfo); }
       {
         grn_obj term;
         DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
-        grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+        grn_ii_get_term(ctx, ii, data.bt->tid & GRN_ID_MAX, &term);
         ERR(ctx->rc,
             "[ii][buffer][merge] failed to merge chunk: "
             "<%.*s>: "
             "<%.*s>(%u)",
             name_size, name,
             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-            bt->tid);
+            data.bt->tid);
         GRN_OBJ_FIN(ctx, &term);
       }
-      return ctx->rc;
+      goto exit;
     }
-    GRN_ASSERT(posp < dv[ii->n_elements].data);
-    ndf = ridp - dv[0].data;
-    /*
+    GRN_ASSERT(data.posp < dv[ii->n_elements].data);
+    ndf = data.ridp - dv[0].data;
     {
-      grn_obj buf;
-      uint32_t rid, sid, tf, i, pos, *pp;
-      GRN_TEXT_INIT(&buf, 0);
-      rid = 0;
-      pp = dv[3].data;
-      for (i = 0; i < ndf; i++) {
-        GRN_BULK_REWIND(&buf);
-        rid += dv[0].data[i];
-        if (dv[0].data[i]) { sid = 0; }
-        sid += dv[1].data[i] + 1;
-        tf = dv[2].data[i] + 1;
-        pos = 0;
-        grn_text_itoa(ctx, &buf, rid);
-        GRN_TEXT_PUTC(ctx, &buf, ':');
-        grn_text_itoa(ctx, &buf, sid);
-        GRN_TEXT_PUTC(ctx, &buf, ':');
-        grn_text_itoa(ctx, &buf, tf);
-        GRN_TEXT_PUTC(ctx, &buf, ':');
-        while (tf--) {
-          pos += *pp++;
-          grn_text_itoa(ctx, &buf, pos);
-          if (tf) { GRN_TEXT_PUTC(ctx, &buf, ','); }
-        }
-        GRN_TEXT_PUTC(ctx, &buf, '\0');
-        GRN_LOG(ctx, GRN_LOG_DEBUG, "Posting:%s", GRN_TEXT_VALUE(&buf));
-      }
-      GRN_OBJ_FIN(ctx, &buf);
-    }
-    */
-    {
-      grn_id tid = bt->tid & GRN_ID_MAX;
+      grn_id tid = data.bt->tid & GRN_ID_MAX;
       uint32_t *a = array_at(ctx, ii, tid);
       if (!a) {
+        /* TODO: warning */
         GRN_LOG(ctx, GRN_LOG_DEBUG, "array_entry not found tid=%d", tid);
-        memset(bt, 0, sizeof(buffer_term));
+        memset(data.bt, 0, sizeof(buffer_term));
         nterms_void++;
       } else {
         if (!ndf && !nvchunks) {
           a[0] = 0;
           a[1] = 0;
           lexicon_delete(ctx, ii, tid, h);
-          memset(bt, 0, sizeof(buffer_term));
+          memset(data.bt, 0, sizeof(buffer_term));
           nterms_void++;
-        } else if ((ii->header->flags & GRN_OBJ_WITH_SECTION)
-                   && !nvchunks && ndf == 1 && lid.rid < 0x100000 &&
-                   lid.sid < 0x800 && lid.tf == 1 && lid.weight == 0) {
-          a[0] = (lid.rid << 12) + (lid.sid << 1) + 1;
-          a[1] = (ii->header->flags & GRN_OBJ_WITH_POSITION) ? posp[-1] : 0;
-          memset(bt, 0, sizeof(buffer_term));
+        } else if ((ii->header->flags & GRN_OBJ_WITH_SECTION) &&
+                   !nvchunks &&
+                   ndf == 1 &&
+                   data.lid.rid < 0x100000 &&
+                   data.lid.sid < 0x800 &&
+                   data.lid.tf == 1 &&
+                   data.lid.weight == 0) {
+          a[0] = (data.lid.rid << 12) + (data.lid.sid << 1) + 1;
+          a[1] = (ii->header->flags & GRN_OBJ_WITH_POSITION) ? data.posp[-1] : 0;
+          memset(data.bt, 0, sizeof(buffer_term));
           nterms_void++;
-        } else if (!(ii->header->flags & GRN_OBJ_WITH_SECTION)
-                   && !nvchunks && ndf == 1 && lid.tf == 1 && lid.weight == 0) {
-          a[0] = (lid.rid << 1) + 1;
-          a[1] = (ii->header->flags & GRN_OBJ_WITH_POSITION) ? posp[-1] : 0;
-          memset(bt, 0, sizeof(buffer_term));
+        } else if (!(ii->header->flags & GRN_OBJ_WITH_SECTION) &&
+                   !nvchunks &&
+                   ndf == 1 &&
+                   data.lid.tf == 1 &&
+                   data.lid.weight == 0) {
+          a[0] = (data.lid.rid << 1) + 1;
+          a[1] = (ii->header->flags & GRN_OBJ_WITH_POSITION) ? data.posp[-1] : 0;
+          memset(data.bt, 0, sizeof(buffer_term));
           nterms_void++;
         } else {
           int j = 0;
           uint8_t *dcp0;
           uint32_t encsize;
           uint32_t f_s = (ndf < 3) ? 0 : USE_P_ENC;
-          uint32_t f_d = ((ndf < 16) || (ndf <= (lid.rid >> 8))) ? 0 : USE_P_ENC;
+          uint32_t f_d = ((ndf < 16) || (ndf <= (data.lid.rid >> 8))) ? 0 : USE_P_ENC;
           dv[j].data_size = ndf; dv[j++].flags = f_d;
           if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
             dv[j].data_size = ndf; dv[j++].flags = f_s;
@@ -3887,12 +3977,12 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
             dv[j].data_size = ndf; dv[j++].flags = f_s;
           }
           if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
-            uint32_t np = posp - dv[ii->n_elements - 1].data;
-            uint32_t f_p = ((np < 32) || (np <= (spos >> 13))) ? 0 : USE_P_ENC;
+            uint32_t np = data.posp - dv[ii->n_elements - 1].data;
+            uint32_t f_p = ((np < 32) || (np <= (data.spos >> 13))) ? 0 : USE_P_ENC;
             dv[j].data_size = np; dv[j].flags = f_p|ODD;
           }
           dcp0 = dcp;
-          a[1] = (bt->size_in_chunk ? a[1] : 0) + (ndf - sdf) + balance;
+          a[1] = (data.bt->size_in_chunk ? a[1] : 0) + (ndf - data.sdf) + balance;
           if (nvchunks) {
             int i;
             GRN_B_ENC(nvchunks, dcp);
@@ -3907,14 +3997,14 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           encsize = grn_p_encv(ctx, dv, ii->n_elements, dcp);
 
           if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
-            if (sb->header.chunk_size + S_SEGMENT <= (dcp - dc) + encsize) {
+            if (data.sb->header.chunk_size + S_SEGMENT <= (dcp - dc) + encsize) {
               GRN_LOG(ctx, GRN_LOG_DEBUG,
                       "cs(%d)+(%d)=(%d)"
                       "<=(%" GRN_FMT_LLD ")+(%d)="
                       "(%" GRN_FMT_LLD ")",
-                      sb->header.chunk_size,
+                      data.sb->header.chunk_size,
                       S_SEGMENT,
-                      sb->header.chunk_size + S_SEGMENT,
+                      data.sb->header.chunk_size + S_SEGMENT,
                       (long long int)(dcp - dc),
                       encsize,
                       (long long int)((dcp - dc) + encsize));
@@ -3926,7 +4016,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
               (cinfo || (cinfo = GRN_MALLOCN(chunk_info, nchunks + 1))) &&
               !chunk_flush(ctx, ii, &cinfo[nchunks], dcp, encsize)) {
             int i;
-            cinfo[nchunks].dgap = lid.rid - crid;
+            cinfo[nchunks].dgap = data.lid.rid - crid;
             nvchunks++;
             dcp = dcp0;
             GRN_B_ENC(nvchunks, dcp);
@@ -3937,30 +4027,33 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                 GRN_B_ENC(cinfo[i].dgap, dcp);
               }
             }
+            /* TODO: format */
             GRN_LOG(ctx, GRN_LOG_DEBUG, "split (%d) encsize=%d", tid, encsize);
-            bt->tid |= CHUNK_SPLIT;
+            data.bt->tid |= CHUNK_SPLIT;
           } else {
             dcp += encsize;
             if (!nvchunks) {
-              bt->tid &= ~CHUNK_SPLIT;
+              data.bt->tid &= ~CHUNK_SPLIT;
             }
           }
-          bt->pos_in_chunk = (uint32_t)(dcp0 - dc);
-          bt->size_in_chunk = (uint32_t)(dcp - dcp0);
-          bt->size_in_buffer = 0;
-          bt->pos_in_buffer = 0;
+          data.bt->pos_in_chunk = (uint32_t)(dcp0 - dc);
+          data.bt->size_in_chunk = (uint32_t)(dcp - dcp0);
+          data.bt->size_in_buffer = 0;
+          data.bt->pos_in_buffer = 0;
         }
         array_unref(ii, tid);
       }
     }
     if (cinfo) { GRN_FREE(cinfo); }
   }
-  datavec_fin(ctx, rdv);
-  datavec_fin(ctx, dv);
   db->header.chunk_size = (uint32_t)(dcp - dc);
   db->header.buffer_free =
     S_SEGMENT - sizeof(buffer_header) - db->header.nterms * sizeof(buffer_term);
   db->header.nterms_void = nterms_void;
+
+exit :
+  datavec_fin(ctx, dv);
+  datavec_fin(ctx, rdv);
   return ctx->rc;
 }
 
@@ -4119,7 +4212,6 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   uint32_t pseg, scn, nterms_with_corrupt_chunk = 0, nterm_with_chunk = 0;
   uint32_t ndeleted_terms_with_value = 0;
   buffer_term *bt;
-  uint8_t *sbp = NULL;
   datavec rdv[MAX_N_ELEMENTS + 1];
   uint16_t n;
   int nterms_void = 0;
@@ -4167,13 +4259,11 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
     grn_id tid, tid_;
     char key[GRN_TABLE_MAX_KEY_SIZE];
     int key_size;
-    uint16_t nextb;
     uint32_t nchunks = 0;
     chunk_info *cinfo = NULL;
     grn_id crid = GRN_ID_NIL;
-    docinfo bid = {0, 0};
-    uint32_t sdf = 0, snn = 0;
-    uint32_t *srp = NULL, *ssp = NULL, *stp = NULL, *sop = NULL, *snp = NULL;
+    merger_data data = {0};
+
     if (!bt->tid && !bt->pos_in_buffer && !bt->size_in_buffer) {
       nterms_void++;
       continue;
@@ -4187,14 +4277,20 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
     GRN_OUTPUT_OBJ(&buf, NULL);
     GRN_OUTPUT_INT64(bt->tid);
     GRN_OUTPUT_INT64(tid_);
-    nextb = bt->pos_in_buffer;
+
     size_in_buffer += bt->size_in_buffer;
     if (tid != tid_ && (bt->size_in_buffer || bt->size_in_chunk)) {
       ndeleted_terms_with_value++;
     }
-    GETNEXTB();
     GRN_OUTPUT_INT64(bt->size_in_buffer);
     GRN_OUTPUT_INT64(bt->size_in_chunk);
+
+    data.ii = ii;
+    data.bt = bt;
+    data.sb = sb;
+    data.sc = sc;
+    data.nextb = bt->pos_in_buffer;
+    merger_get_next_buffer(ctx, &data);
     if (sc && bt->size_in_chunk) {
       uint8_t *scp = sc + bt->pos_in_chunk;
       uint8_t *sce = scp + bt->size_in_chunk;
@@ -4218,18 +4314,22 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
         size += grn_p_decv(ctx, ii, crid, scp, sce - scp, rdv, ii->n_elements);
         {
           int j = 0;
-          sdf = rdv[j].data_size;
-          GRN_OUTPUT_INT64(sdf);
-          srp = rdv[j++].data;
-          if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) { ssp = rdv[j++].data; }
-          if (sdf != rdv[j].data_size) {
+          data.sdf = rdv[j].data_size;
+          GRN_OUTPUT_INT64(data.sdf);
+          data.srp = rdv[j++].data;
+          if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+            data.ssp = rdv[j++].data;
+          }
+          if (data.sdf != rdv[j].data_size) {
             nterms_with_corrupt_chunk++;
           }
-          stp = rdv[j++].data;
-          if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) { sop = rdv[j++].data; }
+          data.stp = rdv[j++].data;
+          if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+            data.sop = rdv[j++].data;
+          }
           GRN_OUTPUT_INT64(rdv[j].data_size);
-          snn = rdv[j].data_size;
-          snp = rdv[j].data;
+          data.snn = rdv[j].data_size;
+          data.snp = rdv[j].data;
         }
         nterm_with_chunk++;
       }
