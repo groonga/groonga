@@ -2216,12 +2216,10 @@ typedef struct {
   uint16_t nterms_void;
 } buffer_header;
 
-struct grn_ii_buffer {
+typedef struct {
   buffer_header header;
   buffer_term terms[(S_SEGMENT - sizeof(buffer_header))/sizeof(buffer_term)];
-};
-
-typedef struct grn_ii_buffer buffer;
+} buffer;
 
 grn_inline static uint32_t
 buffer_open(grn_ctx *ctx, grn_ii *ii, uint32_t pos, buffer_term **bt, buffer **b)
@@ -5845,7 +5843,7 @@ struct _grn_ii_cursor {
   uint8_t *cpe;
   datavec rdv[MAX_N_ELEMENTS + 1];
 
-  struct grn_ii_buffer *buf;
+  buffer *buf;
   uint16_t stat;
   uint16_t nextb;
   uint32_t buffer_pseg;
