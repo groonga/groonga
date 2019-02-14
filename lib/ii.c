@@ -2783,7 +2783,7 @@ merge_dump_source_add_entry(grn_ctx *ctx,
                             merge_dump_source_data *data,
                             merge_dump_source_entry_type type,
                             docinfo *info,
-                            uint8_t *position_diffs)
+                            uint8_t *position_gaps)
 {
   if (GRN_TEXT_LEN(&(data->inspected_entries)) > 0) {
     GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ' ');
@@ -2801,17 +2801,17 @@ merge_dump_source_add_entry(grn_ctx *ctx,
 
     GRN_TEXT_PUTC(ctx, &(data->inspected_entries), '[');
     for (i = 0; i < info->tf; i++) {
-      uint32_t position_diff;
+      uint32_t position_gap;
 
       if (i > 0) {
         GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ',');
       }
       if (type == MERGE_DUMP_SOURCE_ENTRY_BUFFER) {
-        GRN_B_DEC(position_diff, position_diffs);
+        GRN_B_DEC(position_gap, position_gaps);
       } else {
-        position_diff = ((uint32_t *)position_diffs)[i];
+        position_gap = ((uint32_t *)position_gaps)[i];
       }
-      position += position_diff;
+      position += position_gap;
       grn_text_printf(ctx,
                       &(data->inspected_entries),
                       "%u",
@@ -2869,25 +2869,25 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
 
   {
     uint32_t n_documents;
-    uint32_t *record_id_diffs;
-    uint32_t *section_id_diffs = NULL;
+    uint32_t *record_id_gaps;
+    uint32_t *section_id_gaps = NULL;
     uint32_t *n_terms_list;
     uint32_t *weights;
-    uint32_t *position_diffs = NULL;
+    uint32_t *position_gaps = NULL;
 
     {
       int i = 0;
       n_documents = data->data_vector[i].data_size;
-      record_id_diffs = data->data_vector[i++].data;
+      record_id_gaps = data->data_vector[i++].data;
       if (data->ii->header->flags & GRN_OBJ_WITH_SECTION) {
-        section_id_diffs = data->data_vector[i++].data;
+        section_id_gaps = data->data_vector[i++].data;
       }
       n_terms_list = data->data_vector[i++].data;
       if (data->ii->header->flags & GRN_OBJ_WITH_WEIGHT) {
         weights = data->data_vector[i++].data;
       }
       if (data->ii->header->flags & GRN_OBJ_WITH_POSITION) {
-        position_diffs = data->data_vector[i++].data;
+        position_gaps = data->data_vector[i++].data;
       }
     }
 
@@ -2897,16 +2897,16 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
       uint32_t section_id = 0;
 
       for (i = 0; i < n_documents; i++) {
-        uint32_t record_id_diff = record_id_diffs[i];
+        uint32_t record_id_gap = record_id_gaps[i];
         docinfo info;
 
-        record_id += record_id_diff;
+        record_id += record_id_gap;
         info.rid = record_id;
         if (data->ii->header->flags & GRN_OBJ_WITH_SECTION) {
-          if (record_id_diff > 0) {
+          if (record_id_gap > 0) {
             section_id = 0;
           }
-          section_id += 1 + section_id_diffs[i];
+          section_id += 1 + section_id_gaps[i];
         } else {
           section_id = 1;
         }
@@ -2922,7 +2922,7 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
                                     data,
                                     MERGE_DUMP_SOURCE_ENTRY_CHUNK,
                                     &info,
-                                    (uint8_t *)position_diffs);
+                                    (uint8_t *)position_gaps);
       }
       merge_dump_source_flush_entries(ctx, data);
     }
@@ -3187,14 +3187,21 @@ typedef struct {
 
 typedef struct {
   grn_ii *ii;
+  docinfo last_id;
   struct {
     merge_buffer_data buffer;
   } source;
+  struct {
+    uint32_t *record_id_gaps;
+    uint32_t *section_id_gaps;
+    uint32_t *tfs;
+    uint32_t *weights;
+    uint32_t *position_gaps;
+  } dest;
   uint8_t *sc;
   uint8_t *scp;
   uint8_t *sce;
   docinfo cid;
-  docinfo last_id;
   grn_id sid;
   uint32_t *snp;
   uint32_t snn;
@@ -3203,11 +3210,6 @@ typedef struct {
   uint32_t *sop;
   uint32_t *ssp;
   uint32_t sdf;
-  uint32_t *ridp;
-  uint32_t *sidp;
-  uint32_t *tfp;
-  uint32_t *weightp;
-  uint32_t *posp;
   uint64_t spos;
 } merger_data;
 
@@ -3275,19 +3277,24 @@ merger_get_next_chunk(grn_ctx *ctx, merger_data *data)
 grn_inline static void
 merger_put_next_id(grn_ctx *ctx, merger_data *data, docinfo *id)
 {
-  uint32_t dgap = id->rid - data->last_id.rid;
-  uint32_t sgap = (dgap ? id->sid : id->sid - data->last_id.sid) - 1;
-  *(data->ridp) = dgap;
-  data->ridp++;
+  uint32_t record_id_gap = id->rid - data->last_id.rid;
+  *(data->dest.record_id_gaps) = record_id_gap;
+  data->dest.record_id_gaps++;
   if ((data->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-    *(data->sidp) = sgap;
-    data->sidp++;
+    uint32_t section_id_gap;
+    if (record_id_gap) {
+      section_id_gap = id->sid - 1;
+    } else {
+      section_id_gap = id->sid - data->last_id.sid - 1;
+    }
+    *(data->dest.section_id_gaps) = section_id_gap;
+    data->dest.section_id_gaps++;
   }
-  *(data->tfp) = id->tf - 1;
-  data->tfp++;
+  *(data->dest.tfs) = id->tf - 1;
+  data->dest.tfs++;
   if ((data->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
-    *data->weightp = id->weight;
-    data->weightp++;
+    *(data->dest.weights) = id->weight;
+    data->dest.weights++;
   }
   data->last_id.rid = id->rid;
   data->last_id.sid = id->sid;
@@ -3313,8 +3320,8 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
       if ((data->ii->header->flags & GRN_OBJ_WITH_POSITION)) {
         uint32_t i;
         for (i = 0; i < data->cid.tf; i++) {
-          *(data->posp) = data->snp[i];
-          data->posp++;
+          *(data->dest.position_gaps) = data->snp[i];
+          data->dest.position_gaps++;
           data->spos += data->snp[i];
         }
       }
@@ -3388,9 +3395,9 @@ merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
       merger_put_next_id(ctx, data, &(buffer_data->id));
       if ((data->ii->header->flags & GRN_OBJ_WITH_POSITION)) {
         while (buffer_data->id.tf--) {
-          GRN_B_DEC(*(data->posp), buffer_data->data);
-          data->spos += *(data->posp);
-          data->posp++;
+          GRN_B_DEC(*(data->dest.position_gaps), buffer_data->data);
+          data->spos += *(data->dest.position_gaps);
+          data->dest.position_gaps++;
         }
       }
     }
@@ -3555,15 +3562,15 @@ chunk_merge(grn_ctx *ctx,
     if (ctx->rc == GRN_SUCCESS) {
       {
         int j = 0;
-        data->ridp = dv[j++].data;
+        data->dest.record_id_gaps = dv[j++].data;
         if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-          data->sidp = dv[j++].data;
+          data->dest.section_id_gaps = dv[j++].data;
         }
-        data->tfp = dv[j++].data;
+        data->dest.tfs = dv[j++].data;
         if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
-          data->weightp = dv[j++].data;
+          data->dest.weights = dv[j++].data;
         }
-        data->posp = dv[j].data;
+        data->dest.position_gaps = dv[j].data;
       }
       merger_get_next_chunk(ctx, data);
       do {
@@ -3572,8 +3579,7 @@ chunk_merge(grn_ctx *ctx,
         }
       } while (buffer_data->id.rid <= rid || data->cid.rid);
       if (ctx->rc == GRN_SUCCESS) {
-        GRN_ASSERT(data->posp < dv[ii->n_elements].data);
-        ndf = data->ridp - dv[0].data;
+        ndf = data->dest.record_id_gaps - dv[0].data;
       }
     }
     datavec_fin(ctx, rdv);
@@ -3601,7 +3607,7 @@ chunk_merge(grn_ctx *ctx,
     uint8_t *enc;
     uint32_t encsize_probably_enough;
     uint32_t encsize;
-    uint32_t np = data->posp - dv[ii->n_elements - 1].data;
+    uint32_t np = data->dest.position_gaps - dv[ii->n_elements - 1].data;
     uint32_t f_s = (ndf < 3) ? 0 : USE_P_ENC;
     uint32_t f_d = ((ndf < 16) || (ndf <= (data->last_id.rid >> 8))) ? 0 : USE_P_ENC;
     dv[j].data_size = ndf; dv[j++].flags = f_d;
@@ -3918,15 +3924,15 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
     }
     {
       int j = 0;
-      data.ridp = dv[j++].data;
+      data.dest.record_id_gaps = dv[j++].data;
       if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-        data.sidp = dv[j++].data;
+        data.dest.section_id_gaps = dv[j++].data;
       }
-      data.tfp = dv[j++].data;
+      data.dest.tfs = dv[j++].data;
       if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
-        data.weightp = dv[j++].data;
+        data.dest.weights = dv[j++].data;
       }
-      data.posp = dv[j].data;
+      data.dest.position_gaps = dv[j].data;
     }
     data.last_id = null_docinfo;
     merger_get_next_chunk(ctx, &data);
@@ -3954,8 +3960,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
       }
       goto exit;
     }
-    GRN_ASSERT(data.posp < dv[ii->n_elements].data);
-    ndf = data.ridp - dv[0].data;
+    ndf = data.dest.record_id_gaps - dv[0].data;
     {
       grn_id tid = bt->tid & GRN_ID_MAX;
       uint32_t *a = array_at(ctx, ii, tid);
@@ -3979,7 +3984,11 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                    data.last_id.tf == 1 &&
                    data.last_id.weight == 0) {
           a[0] = (data.last_id.rid << 12) + (data.last_id.sid << 1) + 1;
-          a[1] = (ii->header->flags & GRN_OBJ_WITH_POSITION) ? data.posp[-1] : 0;
+          if (ii->header->flags & GRN_OBJ_WITH_POSITION) {
+            a[1] = data.dest.position_gaps[-1];
+          } else {
+            a[1] = 0;
+          }
           memset(bt, 0, sizeof(buffer_term));
           nterms_void++;
         } else if (!(ii->header->flags & GRN_OBJ_WITH_SECTION) &&
@@ -3988,7 +3997,11 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                    data.last_id.tf == 1 &&
                    data.last_id.weight == 0) {
           a[0] = (data.last_id.rid << 1) + 1;
-          a[1] = (ii->header->flags & GRN_OBJ_WITH_POSITION) ? data.posp[-1] : 0;
+          if (ii->header->flags & GRN_OBJ_WITH_POSITION) {
+            a[1] = data.dest.position_gaps[-1];
+          } else {
+            a[1] = 0;
+          }
           memset(bt, 0, sizeof(buffer_term));
           nterms_void++;
         } else {
@@ -4006,7 +4019,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
             dv[j].data_size = ndf; dv[j++].flags = f_s;
           }
           if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
-            uint32_t np = data.posp - dv[ii->n_elements - 1].data;
+            uint32_t np = data.dest.position_gaps - dv[ii->n_elements - 1].data;
             uint32_t f_p = ((np < 32) || (np <= (data.spos >> 13))) ? 0 : USE_P_ENC;
             dv[j].data_size = np; dv[j].flags = f_p|ODD;
           }
