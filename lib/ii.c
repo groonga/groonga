@@ -3183,13 +3183,13 @@ typedef struct {
   uint8_t *data;
   docinfo id;
   uint16_t next_position;
-} merge_buffer_data;
+} merger_buffer_data;
 
 typedef struct {
   grn_ii *ii;
   docinfo last_id;
   struct {
-    merge_buffer_data buffer;
+    merger_buffer_data buffer;
   } source;
   struct {
     uint32_t *record_id_gaps;
@@ -3220,7 +3220,7 @@ merger_report_error(grn_ctx *ctx,
                     docinfo *posting1,
                     docinfo *posting2)
 {
-  merge_buffer_data *buffer_data = &(data->source.buffer);
+  merger_buffer_data *buffer_data = &(data->source.buffer);
   grn_obj term;
   DEFINE_NAME(data->ii);
   GRN_TEXT_INIT(&term, 0);
@@ -3340,7 +3340,7 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
 grn_inline static void
 merger_get_next_buffer(grn_ctx *ctx, merger_data *data)
 {
-  merge_buffer_data *buffer_data = &(data->source.buffer);
+  merger_buffer_data *buffer_data = &(data->source.buffer);
   if (buffer_data->next_position > 0) {
     docinfo last_id = {
       buffer_data->id.rid,
@@ -3374,7 +3374,7 @@ merger_get_next_buffer(grn_ctx *ctx, merger_data *data)
 grn_inline static void
 merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
 {
-  merge_buffer_data *buffer_data = &(data->source.buffer);
+  merger_buffer_data *buffer_data = &(data->source.buffer);
   if (buffer_data->id.rid && buffer_data->id.sid) {
     GRN_B_DEC(buffer_data->id.tf, buffer_data->data);
     if (buffer_data->id.tf > 0) {
@@ -3408,7 +3408,7 @@ merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
 grn_inline static grn_bool
 merger_merge(grn_ctx *ctx, merger_data *data)
 {
-  merge_buffer_data *buffer_data = &(data->source.buffer);
+  merger_buffer_data *buffer_data = &(data->source.buffer);
   if (buffer_data->id.rid) {
     if (data->cid.rid) {
       if (data->cid.rid < buffer_data->id.rid) {
@@ -3493,7 +3493,7 @@ chunk_merge(grn_ctx *ctx,
             datavec *dv,
             int32_t *balance)
 {
-  merge_buffer_data *buffer_data = &(data->source.buffer);
+  merger_buffer_data *buffer_data = &(data->source.buffer);
   grn_ii *ii = data->ii;
   grn_io_win sw;
   uint32_t segno = cinfo->segno;
@@ -3799,7 +3799,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
   }
   for (bt = db->terms; n; n--, bt++) {
     merger_data data = {0};
-    merge_buffer_data *buffer_data = &(data.source.buffer);
+    merger_buffer_data *buffer_data = &(data.source.buffer);
     int32_t balance = 0;
     uint32_t nchunks = 0;
     uint32_t nvchunks = 0;
