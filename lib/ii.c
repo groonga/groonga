@@ -3500,91 +3500,10 @@ chunk_merge(grn_ctx *ctx,
   uint32_t size = cinfo->size;
   uint32_t ndf = 0;
   uint8_t *scp = WIN_MAP(ii->chunk, ctx, &sw, segno, 0, size, grn_io_rdonly);
+  datavec rdv[MAX_N_ELEMENTS + 1];
+  size_t bufsize = S_SEGMENT * ii->n_elements;
 
-  data->last_id = null_docinfo;
-
-  if (scp) {
-    datavec rdv[MAX_N_ELEMENTS + 1];
-    size_t bufsize = S_SEGMENT * ii->n_elements;
-    int decoded_size;
-
-    data->snn = 0;
-    data->ssp = NULL;
-    data->sop = NULL;
-
-    datavec_init(ctx, rdv, ii->n_elements, 0, 0);
-    if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
-      rdv[ii->n_elements - 1].flags = ODD;
-    }
-    decoded_size = grn_p_decv(ctx, ii,
-                              buffer_data->term->tid & GRN_ID_MAX,
-                              scp, cinfo->size, rdv, ii->n_elements);
-    if (decoded_size == 0) {
-      datavec_fin(ctx, rdv);
-      grn_io_win_unmap(&sw);
-      {
-        grn_obj term;
-        grn_rc rc = ctx->rc;
-        DEFINE_NAME(ii);
-        GRN_TEXT_INIT(&term, 0);
-        grn_ii_get_term(ctx, ii, buffer_data->term->tid & GRN_ID_MAX, &term);
-        if (rc == GRN_SUCCESS) {
-          rc = GRN_UNKNOWN_ERROR;
-        }
-        ERR(rc,
-            "[ii][chunk][merge] failed to decode: "
-            "<%.*s>: "
-            "<%.*s>(%u)",
-            name_size, name,
-            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-            buffer_data->term->tid);
-        GRN_OBJ_FIN(ctx, &term);
-      }
-      return ctx->rc;
-    }
-    bufsize += decoded_size;
-    // (df in chunk list) = a[1] - sdf;
-    {
-      int j = 0;
-      data->sdf = rdv[j].data_size;
-      data->srp = rdv[j++].data;
-      if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-        data->ssp = rdv[j++].data;
-      }
-      data->stp = rdv[j++].data;
-      if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
-        data->sop = rdv[j++].data;
-      }
-      data->snn = rdv[j].data_size;
-      data->snp = rdv[j].data;
-    }
-    datavec_reset(ctx, dv, ii->n_elements, data->sdf + S_SEGMENT, bufsize);
-    if (ctx->rc == GRN_SUCCESS) {
-      {
-        int j = 0;
-        data->dest.record_id_gaps = dv[j++].data;
-        if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-          data->dest.section_id_gaps = dv[j++].data;
-        }
-        data->dest.tfs = dv[j++].data;
-        if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
-          data->dest.weights = dv[j++].data;
-        }
-        data->dest.position_gaps = dv[j].data;
-      }
-      merger_get_next_chunk(ctx, data);
-      do {
-        if (!merger_merge(ctx, data)) {
-          break;
-        }
-      } while (buffer_data->id.rid <= rid || data->cid.rid);
-      if (ctx->rc == GRN_SUCCESS) {
-        ndf = data->dest.record_id_gaps - dv[0].data;
-      }
-    }
-    datavec_fin(ctx, rdv);
-    grn_io_win_unmap(&sw);
-  } else {
+  if (!scp) {
     grn_obj term;
     DEFINE_NAME(ii);
     GRN_TEXT_INIT(&term, 0);
@@ -3602,7 +3521,134 @@ chunk_merge(grn_ctx *ctx,
     GRN_OBJ_FIN(ctx, &term);
     return ctx->rc;
   }
-  if (ctx->rc == GRN_SUCCESS) {
+
+  data->last_id = null_docinfo;
+  data->snn = 0;
+  data->ssp = NULL;
+  data->sop = NULL;
+
+  datavec_init(ctx, rdv, ii->n_elements, 0, 0);
+  if (ctx->rc != GRN_SUCCESS) {
+    grn_io_win_unmap(&sw);
+    {
+      DEFINE_NAME(ii);
+      ERR(ctx->rc,
+          "[ii][chunk][merge] failed to initialize data vector: <%.*s>",
+          name_size, name);
+    }
+    return ctx->rc;
+  }
+
+  if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
+    rdv[ii->n_elements - 1].flags = ODD;
+  }
+  {
+    int decoded_size;
+    decoded_size = grn_p_decv(ctx, ii,
+                              buffer_data->term->tid & GRN_ID_MAX,
+                              scp, cinfo->size, rdv, ii->n_elements);
+    if (decoded_size == 0) {
+      grn_obj term;
+      grn_rc rc = ctx->rc;
+      DEFINE_NAME(ii);
+      GRN_TEXT_INIT(&term, 0);
+      grn_ii_get_term(ctx, ii, buffer_data->term->tid & GRN_ID_MAX, &term);
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_UNKNOWN_ERROR;
+      }
+      ERR(rc,
+          "[ii][chunk][merge] failed to decode: "
+          "<%.*s>: "
+          "<%.*s>(%u)",
+          name_size, name,
+          (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+          buffer_data->term->tid);
+      GRN_OBJ_FIN(ctx, &term);
+      goto exit;
+    }
+    bufsize += decoded_size;
+  }
+  /* (df in chunk list) = a[1] - sdf; */
+  {
+    int j = 0;
+    data->sdf = rdv[j].data_size;
+    data->srp = rdv[j++].data;
+    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+      data->ssp = rdv[j++].data;
+    }
+    data->stp = rdv[j++].data;
+    if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+      data->sop = rdv[j++].data;
+    }
+    data->snn = rdv[j].data_size;
+    data->snp = rdv[j].data;
+  }
+  datavec_reset(ctx, dv, ii->n_elements, data->sdf + S_SEGMENT, bufsize);
+  if (ctx->rc != GRN_SUCCESS) {
+    grn_obj term;
+    DEFINE_NAME(ii);
+    GRN_TEXT_INIT(&term, 0);
+    grn_ii_get_term(ctx, ii, buffer_data->term->tid & GRN_ID_MAX, &term);
+    ERR(ctx->rc,
+        "[ii][chunk][merge] failed to reset data vector: "
+        "<%.*s>: "
+        "<%.*s>(%u)",
+        name_size, name,
+        (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+        buffer_data->term->tid);
+    GRN_OBJ_FIN(ctx, &term);
+    goto exit;
+  }
+  {
+    int j = 0;
+    data->dest.record_id_gaps = dv[j++].data;
+    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+      data->dest.section_id_gaps = dv[j++].data;
+    }
+    data->dest.tfs = dv[j++].data;
+    if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+      data->dest.weights = dv[j++].data;
+    }
+    data->dest.position_gaps = dv[j].data;
+  }
+  merger_get_next_chunk(ctx, data);
+  if (ctx->rc != GRN_SUCCESS) {
+    grn_obj term;
+    DEFINE_NAME(ii);
+    GRN_TEXT_INIT(&term, 0);
+    grn_ii_get_term(ctx, ii, buffer_data->term->tid & GRN_ID_MAX, &term);
+    ERR(ctx->rc,
+        "[ii][chunk][merge] failed to get the next chunk posting: "
+        "<%.*s>: "
+        "<%.*s>(%u)",
+        name_size, name,
+        (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+        buffer_data->term->tid);
+    GRN_OBJ_FIN(ctx, &term);
+    goto exit;
+  }
+  do {
+    if (!merger_merge(ctx, data)) {
+      break;
+    }
+  } while (buffer_data->id.rid <= rid || data->cid.rid);
+  if (ctx->rc != GRN_SUCCESS) {
+    grn_obj term;
+    DEFINE_NAME(ii);
+    GRN_TEXT_INIT(&term, 0);
+    grn_ii_get_term(ctx, ii, buffer_data->term->tid & GRN_ID_MAX, &term);
+    ERR(ctx->rc,
+        "[ii][chunk][merge] failed to merge: "
+        "<%.*s>: "
+        "<%.*s>(%u)",
+        name_size, name,
+        (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+        buffer_data->term->tid);
+    GRN_OBJ_FIN(ctx, &term);
+    goto exit;
+  }
+  ndf = data->dest.record_id_gaps - dv[0].data;
+  {
     int j = 0;
     uint8_t *enc;
     uint32_t encsize_probably_enough;
@@ -3623,14 +3669,8 @@ chunk_merge(grn_ctx *ctx,
       dv[j].data_size = np; dv[j].flags = f_p|ODD;
     }
     encsize_probably_enough = (ndf * 4 + np) * 3;
-    if ((enc = GRN_MALLOC(encsize_probably_enough))) {
-      encsize = grn_p_encv(ctx, dv, ii->n_elements, enc);
-      chunk_flush(ctx, ii, cinfo, enc, encsize);
-      if (ctx->rc == GRN_SUCCESS) {
-        chunk_free(ctx, ii, segno, 0, size);
-      }
-      GRN_FREE(enc);
-    } else {
+    enc = GRN_MALLOC(encsize_probably_enough);
+    if (!enc) {
       grn_obj term;
       DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
@@ -3646,9 +3686,22 @@ chunk_merge(grn_ctx *ctx,
            segno,
            size);
       GRN_OBJ_FIN(ctx, &term);
+      goto exit;
     }
+    encsize = grn_p_encv(ctx, dv, ii->n_elements, enc);
+    chunk_flush(ctx, ii, cinfo, enc, encsize);
+    GRN_FREE(enc);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    chunk_free(ctx, ii, segno, 0, size);
   }
   *balance += (ndf - data->sdf);
+
+exit :
+  datavec_fin(ctx, rdv);
+  grn_io_win_unmap(&sw);
+
   return ctx->rc;
 }
 
