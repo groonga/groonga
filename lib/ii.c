@@ -3186,10 +3186,26 @@ typedef struct {
 } merger_buffer_data;
 
 typedef struct {
+  uint8_t *data_start;
+  uint8_t *data_end;
+  uint8_t *data;
+  docinfo id;
+  uint32_t n_documents;
+  uint32_t *record_id_gaps;
+  uint32_t *section_id_gaps;
+  uint32_t *tfs;
+  uint32_t *weights;
+  uint32_t *position_gaps;
+  uint32_t n_position_gaps;
+} merger_chunk_data;
+
+typedef struct {
   grn_ii *ii;
   docinfo last_id;
+  uint64_t position;
   struct {
     merger_buffer_data buffer;
+    merger_chunk_data chunk;
   } source;
   struct {
     uint32_t *record_id_gaps;
@@ -3198,19 +3214,6 @@ typedef struct {
     uint32_t *weights;
     uint32_t *position_gaps;
   } dest;
-  uint8_t *sc;
-  uint8_t *scp;
-  uint8_t *sce;
-  docinfo cid;
-  grn_id sid;
-  uint32_t *snp;
-  uint32_t snn;
-  uint32_t *srp;
-  uint32_t *stp;
-  uint32_t *sop;
-  uint32_t *ssp;
-  uint32_t sdf;
-  uint64_t spos;
 } merger_data;
 
 grn_inline static void
@@ -3221,6 +3224,7 @@ merger_report_error(grn_ctx *ctx,
                     docinfo *posting2)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
+  merger_chunk_data *chunk_data = &(data->source.chunk);
   grn_obj term;
   DEFINE_NAME(data->ii);
   GRN_TEXT_INIT(&term, 0);
@@ -3244,33 +3248,40 @@ merger_report_error(grn_ctx *ctx,
          posting1->rid, posting1->sid);
   }
   GRN_OBJ_FIN(ctx, &term);
-  merge_dump_source(ctx, data->ii, buffer_data->buffer, data->sc, GRN_LOG_CRIT);
+  merge_dump_source(ctx,
+                    data->ii,
+                    buffer_data->buffer,
+                    chunk_data->data_start,
+                    GRN_LOG_CRIT);
 }
 
 grn_inline static void
 merger_get_next_chunk(grn_ctx *ctx, merger_data *data)
 {
-  if (data->sdf) {
-    uint32_t dgap = *data->srp;
-    data->srp++;
-    data->cid.rid += dgap;
-    if (dgap) { data->cid.sid = 0; }
-    data->snp += data->cid.tf;
-    data->cid.tf = 1 + *data->stp;
-    data->stp++;
+  merger_chunk_data *chunk_data = &(data->source.chunk);
+  if (chunk_data->n_documents == 0) {
+    chunk_data->id.rid = 0;
+  } else {
+    uint32_t record_id_gap = *chunk_data->record_id_gaps;
+    chunk_data->record_id_gaps++;
+    chunk_data->id.rid += record_id_gap;
+    if (record_id_gap > 0) {
+      chunk_data->id.sid = 0;
+    }
+    chunk_data->position_gaps += chunk_data->id.tf;
+    chunk_data->id.tf = 1 + *chunk_data->tfs;
+    chunk_data->tfs++;
     if ((data->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
-      data->cid.weight = *data->sop;
-      data->sop++;
+      chunk_data->id.weight = *chunk_data->weights;
+      chunk_data->weights++;
     }
     if ((data->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-      data->cid.sid += 1 + *data->ssp;
-      data->ssp++;
+      chunk_data->id.sid += 1 + *chunk_data->section_id_gaps;
+      chunk_data->section_id_gaps++;
     } else {
-      data->cid.sid = 1;
+      chunk_data->id.sid = 1;
     }
-    data->sdf--;
-  } else {
-    data->cid.rid = 0;
+    chunk_data->n_documents--;
   }
 }
 
@@ -3303,33 +3314,34 @@ merger_put_next_id(grn_ctx *ctx, merger_data *data, docinfo *id)
 grn_inline static void
 merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
 {
-  if (data->cid.rid) {
-    if (data->cid.tf) {
-      if (data->last_id.rid > data->cid.rid ||
-          (data->last_id.rid == data->cid.rid &&
-           data->last_id.sid >= data->cid.sid)) {
+  merger_chunk_data *chunk_data = &(data->source.chunk);
+  if (chunk_data->id.rid > 0) {
+    if (chunk_data->id.tf > 0) {
+      if (data->last_id.rid > chunk_data->id.rid ||
+          (data->last_id.rid == chunk_data->id.rid &&
+           data->last_id.sid >= chunk_data->id.sid)) {
         merger_report_error(ctx,
                             data,
                             "the last posting is larger than "
                             "the next posting in chunk",
                             &(data->last_id),
-                            &(data->cid));
+                            &(chunk_data->id));
         return;
       }
-      merger_put_next_id(ctx, data, &(data->cid));
+      merger_put_next_id(ctx, data, &(chunk_data->id));
       if ((data->ii->header->flags & GRN_OBJ_WITH_POSITION)) {
         uint32_t i;
-        for (i = 0; i < data->cid.tf; i++) {
-          *(data->dest.position_gaps) = data->snp[i];
+        for (i = 0; i < chunk_data->id.tf; i++) {
+          *(data->dest.position_gaps) = chunk_data->position_gaps[i];
           data->dest.position_gaps++;
-          data->spos += data->snp[i];
+          data->position += chunk_data->position_gaps[i];
         }
       }
     } else {
       merger_report_error(ctx,
                           data,
                           "invalid posting in chunk",
-                          &(data->cid),
+                          &(chunk_data->id),
                           NULL);
       return;
     }
@@ -3396,7 +3408,7 @@ merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
       if ((data->ii->header->flags & GRN_OBJ_WITH_POSITION)) {
         while (buffer_data->id.tf--) {
           GRN_B_DEC(*(data->dest.position_gaps), buffer_data->data);
-          data->spos += *(data->dest.position_gaps);
+          data->position += *(data->dest.position_gaps);
           data->dest.position_gaps++;
         }
       }
@@ -3409,22 +3421,23 @@ grn_inline static grn_bool
 merger_merge(grn_ctx *ctx, merger_data *data)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
-  if (buffer_data->id.rid) {
-    if (data->cid.rid) {
-      if (data->cid.rid < buffer_data->id.rid) {
+  merger_chunk_data *chunk_data = &(data->source.chunk);
+  if (buffer_data->id.rid > 0) {
+    if (chunk_data->id.rid > 0) {
+      if (chunk_data->id.rid < buffer_data->id.rid) {
         merger_put_next_chunk(ctx, data);
         if (ctx->rc != GRN_SUCCESS) { return GRN_FALSE; }
       } else {
-        if (buffer_data->id.rid < data->cid.rid) {
+        if (buffer_data->id.rid < chunk_data->id.rid) {
           merger_put_next_buffer(ctx, data);
           if (ctx->rc != GRN_SUCCESS) { return GRN_FALSE; }
         } else {
-          if (buffer_data->id.sid) {
-            if (data->cid.sid < buffer_data->id.sid) {
+          if (buffer_data->id.sid > 0) {
+            if (chunk_data->id.sid < buffer_data->id.sid) {
               merger_put_next_chunk(ctx, data);
               if (ctx->rc != GRN_SUCCESS) { return GRN_FALSE; }
             } else {
-              if (buffer_data->id.sid == data->cid.sid) {
+              if (buffer_data->id.sid == chunk_data->id.sid) {
                 merger_get_next_chunk(ctx, data);
                 if (ctx->rc != GRN_SUCCESS) { return GRN_FALSE; }
               }
@@ -3442,7 +3455,7 @@ merger_merge(grn_ctx *ctx, merger_data *data)
       if (ctx->rc != GRN_SUCCESS) { return GRN_FALSE; }
     }
   } else {
-    if (data->cid.rid) {
+    if (chunk_data->id.rid > 0) {
       merger_put_next_chunk(ctx, data);
       if (ctx->rc != GRN_SUCCESS) { return GRN_FALSE; }
     } else {
@@ -3494,6 +3507,7 @@ chunk_merge(grn_ctx *ctx,
             int32_t *balance)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
+  merger_chunk_data *chunk_data = &(data->source.chunk);
   grn_ii *ii = data->ii;
   grn_io_win sw;
   uint32_t segno = cinfo->segno;
@@ -3523,9 +3537,8 @@ chunk_merge(grn_ctx *ctx,
   }
 
   data->last_id = null_docinfo;
-  data->snn = 0;
-  data->ssp = NULL;
-  data->sop = NULL;
+  chunk_data->section_id_gaps = NULL;
+  chunk_data->weights = NULL;
 
   datavec_init(ctx, rdv, ii->n_elements, 0, 0);
   if (ctx->rc != GRN_SUCCESS) {
@@ -3568,22 +3581,26 @@ chunk_merge(grn_ctx *ctx,
     }
     bufsize += decoded_size;
   }
-  /* (df in chunk list) = a[1] - sdf; */
+  /* (df in chunk list) = a[1] - chunk_data->n_documents; */
   {
     int j = 0;
-    data->sdf = rdv[j].data_size;
-    data->srp = rdv[j++].data;
+    chunk_data->n_documents = rdv[j].data_size;
+    chunk_data->record_id_gaps = rdv[j++].data;
     if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-      data->ssp = rdv[j++].data;
+      chunk_data->section_id_gaps = rdv[j++].data;
     }
-    data->stp = rdv[j++].data;
+    chunk_data->tfs = rdv[j++].data;
     if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
-      data->sop = rdv[j++].data;
+      chunk_data->weights = rdv[j++].data;
     }
-    data->snn = rdv[j].data_size;
-    data->snp = rdv[j].data;
+    chunk_data->position_gaps = rdv[j].data;
+    chunk_data->n_position_gaps = rdv[j].data_size;
   }
-  datavec_reset(ctx, dv, ii->n_elements, data->sdf + S_SEGMENT, bufsize);
+  datavec_reset(ctx,
+                dv,
+                ii->n_elements,
+                chunk_data->n_documents + S_SEGMENT,
+                bufsize);
   if (ctx->rc != GRN_SUCCESS) {
     grn_obj term;
     DEFINE_NAME(ii);
@@ -3631,7 +3648,7 @@ chunk_merge(grn_ctx *ctx,
     if (!merger_merge(ctx, data)) {
       break;
     }
-  } while (buffer_data->id.rid <= rid || data->cid.rid);
+  } while (buffer_data->id.rid <= rid || chunk_data->id.rid);
   if (ctx->rc != GRN_SUCCESS) {
     grn_obj term;
     DEFINE_NAME(ii);
@@ -3665,7 +3682,12 @@ chunk_merge(grn_ctx *ctx,
       dv[j].data_size = ndf; dv[j++].flags = f_s;
     }
     if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
-      uint32_t f_p = ((np < 32) || (np <= (data->spos >> 13))) ? 0 : USE_P_ENC;
+      uint32_t f_p;
+      if ((np < 32) || (np <= (data->position >> 13))) {
+        f_p = 0;
+      } else {
+        f_p = USE_P_ENC;
+      }
       dv[j].data_size = np; dv[j].flags = f_p|ODD;
     }
     encsize_probably_enough = (ndf * 4 + np) * 3;
@@ -3696,7 +3718,7 @@ chunk_merge(grn_ctx *ctx,
     }
     chunk_free(ctx, ii, segno, 0, size);
   }
-  *balance += (ndf - data->sdf);
+  *balance += (ndf - chunk_data->n_documents);
 
 exit :
   datavec_fin(ctx, rdv);
@@ -3800,6 +3822,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
   for (bt = db->terms; n; n--, bt++) {
     merger_data data = {0};
     merger_buffer_data *buffer_data = &(data.source.buffer);
+    merger_chunk_data *chunk_data = &(data.source.chunk);
     int32_t balance = 0;
     uint32_t nchunks = 0;
     uint32_t nvchunks = 0;
@@ -3808,9 +3831,9 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
     uint32_t ndf;
 
     data.ii = ii;
-    data.sc = sc;
     buffer_data->buffer = sb;
     buffer_data->term = bt;
+    chunk_data->data_start = sc;
 
     if (!bt->tid) {
       nterms_void++;
@@ -3821,7 +3844,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
       GRN_ASSERT(!bt->size_in_buffer);
       if (bt->size_in_chunk) {
         grn_memcpy(dcp,
-                   data.sc + bt->pos_in_chunk,
+                   chunk_data->data_start + bt->pos_in_chunk,
                    bt->size_in_chunk);
         bt->pos_in_chunk = (uint32_t)(dcp - dc);
         dcp += bt->size_in_chunk;
@@ -3829,19 +3852,19 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
       continue;
     }
 
-    data.spos = 0;
+    data.position = 0;
     buffer_data->next_position = bt->pos_in_buffer;
     merger_get_next_buffer(ctx, &data);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    if (data.sc && bt->size_in_chunk) {
-      data.scp = data.sc + bt->pos_in_chunk;
-      data.sce = data.scp + bt->size_in_chunk;
+    if (chunk_data->data_start && bt->size_in_chunk) {
+      chunk_data->data = chunk_data->data_start + bt->pos_in_chunk;
+      chunk_data->data_end = chunk_data->data + bt->size_in_chunk;
       size_t size = S_SEGMENT * ii->n_elements;
       if ((bt->tid & CHUNK_SPLIT)) {
         int i;
-        GRN_B_DEC(nchunks, data.scp);
+        GRN_B_DEC(nchunks, chunk_data->data);
         if (!(cinfo = GRN_MALLOCN(chunk_info, nchunks + 1))) {
           grn_obj term;
           DEFINE_NAME(ii);
@@ -3865,9 +3888,9 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           goto exit;
         }
         for (i = 0; i < nchunks; i++) {
-          GRN_B_DEC(cinfo[i].segno, data.scp);
-          GRN_B_DEC(cinfo[i].size, data.scp);
-          GRN_B_DEC(cinfo[i].dgap, data.scp);
+          GRN_B_DEC(cinfo[i].segno, chunk_data->data);
+          GRN_B_DEC(cinfo[i].size, chunk_data->data);
+          GRN_B_DEC(cinfo[i].dgap, chunk_data->data);
           crid += cinfo[i].dgap;
           if (buffer_data->id.rid <= crid) {
             chunk_merge(ctx, &data, &cinfo[i], crid, dv, &balance);
@@ -3902,13 +3925,13 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           }
         }
       }
-      if (data.sce > data.scp) {
+      if (chunk_data->data_end > chunk_data->data) {
         int decoded_size;
         decoded_size = grn_p_decv(ctx,
                                   ii,
                                   bt->tid & GRN_ID_MAX,
-                                  data.scp,
-                                  data.sce - data.scp,
+                                  chunk_data->data,
+                                  chunk_data->data_end - chunk_data->data,
                                   rdv,
                                   ii->n_elements);
         if (decoded_size == 0) {
@@ -3938,19 +3961,23 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
         size += decoded_size;
         {
           int j = 0;
-          data.sdf = rdv[j].data_size;
-          data.srp = rdv[j++].data;
+          chunk_data->n_documents = rdv[j].data_size;
+          chunk_data->record_id_gaps = rdv[j++].data;
           if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-            data.ssp = rdv[j++].data;
+            chunk_data->section_id_gaps = rdv[j++].data;
           }
-          data.stp = rdv[j++].data;
+          chunk_data->tfs = rdv[j++].data;
           if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
-            data.sop = rdv[j++].data;
+            chunk_data->weights = rdv[j++].data;
           }
-          data.snn = rdv[j].data_size;
-          data.snp = rdv[j].data;
+          chunk_data->position_gaps = rdv[j].data;
+          chunk_data->n_position_gaps = rdv[j].data_size;
         }
-        datavec_reset(ctx, dv, ii->n_elements, data.sdf + S_SEGMENT, size);
+        datavec_reset(ctx,
+                      dv,
+                      ii->n_elements,
+                      chunk_data->n_documents + S_SEGMENT,
+                      size);
         if (ctx->rc != GRN_SUCCESS) {
           if (cinfo) { GRN_FREE(cinfo); }
           {
@@ -3967,7 +3994,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                 name_size, name,
                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                 bt->tid,
-                (size_t)(data.sdf + S_SEGMENT),
+                (size_t)(chunk_data->n_documents + S_SEGMENT),
                 size);
             GRN_OBJ_FIN(ctx, &term);
           }
@@ -4073,11 +4100,19 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           }
           if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
             uint32_t np = data.dest.position_gaps - dv[ii->n_elements - 1].data;
-            uint32_t f_p = ((np < 32) || (np <= (data.spos >> 13))) ? 0 : USE_P_ENC;
+            uint32_t f_p;
+            if ((np < 32) || (np <= (data.position >> 13))) {
+              f_p = 0;
+            } else {
+              f_p = USE_P_ENC;
+            }
             dv[j].data_size = np; dv[j].flags = f_p|ODD;
           }
           dcp0 = dcp;
-          a[1] = (bt->size_in_chunk ? a[1] : 0) + (ndf - data.sdf) + balance;
+          a[1] =
+            (bt->size_in_chunk ? a[1] : 0) +
+            (ndf - chunk_data->n_documents) +
+            balance;
           if (nvchunks) {
             int i;
             GRN_B_ENC(nvchunks, dcp);
@@ -4363,6 +4398,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
     chunk_info *cinfo = NULL;
     grn_id crid = GRN_ID_NIL;
     merger_data data = {0};
+    merger_chunk_data *chunk_data = &(data.source.chunk);
 
     if (!bt->tid && !bt->pos_in_buffer && !bt->size_in_buffer) {
       nterms_void++;
@@ -4389,47 +4425,53 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
     data.source.buffer.term = bt;
     data.source.buffer.buffer = sb;
     data.source.buffer.next_position = bt->pos_in_buffer;
-    data.sc = sc;
+    chunk_data->data_start = sc;
     merger_get_next_buffer(ctx, &data);
     if (sc && bt->size_in_chunk) {
-      uint8_t *scp = sc + bt->pos_in_chunk;
-      uint8_t *sce = scp + bt->size_in_chunk;
       size_t size = S_SEGMENT * ii->n_elements;
+      chunk_data->data = chunk_data->data_start + bt->pos_in_chunk;
+      chunk_data->data_end = chunk_data->data + bt->size_in_chunk;
       if ((bt->tid & CHUNK_SPLIT)) {
         int i;
-        GRN_B_DEC(nchunks, scp);
+        GRN_B_DEC(nchunks, chunk_data->data);
         if (!(cinfo = GRN_MALLOCN(chunk_info, nchunks + 1))) {
           datavec_fin(ctx, rdv);
           GRN_OBJ_FIN(ctx, &buf);
           return;
         }
         for (i = 0; i < nchunks; i++) {
-          GRN_B_DEC(cinfo[i].segno, scp);
-          GRN_B_DEC(cinfo[i].size, scp);
-          GRN_B_DEC(cinfo[i].dgap, scp);
+          GRN_B_DEC(cinfo[i].segno, chunk_data->data);
+          GRN_B_DEC(cinfo[i].size, chunk_data->data);
+          GRN_B_DEC(cinfo[i].dgap, chunk_data->data);
           crid += cinfo[i].dgap;
         }
       }
-      if (sce > scp) {
-        size += grn_p_decv(ctx, ii, crid, scp, sce - scp, rdv, ii->n_elements);
+      if (chunk_data->data_end > chunk_data->data) {
+        size += grn_p_decv(ctx,
+                           ii,
+                           crid,
+                           chunk_data->data,
+                           chunk_data->data_end - chunk_data->data,
+                           rdv,
+                           ii->n_elements);
         {
           int j = 0;
-          data.sdf = rdv[j].data_size;
-          GRN_OUTPUT_INT64(data.sdf);
-          data.srp = rdv[j++].data;
+          chunk_data->n_documents = rdv[j].data_size;
+          GRN_OUTPUT_INT64(chunk_data->n_documents);
+          chunk_data->record_id_gaps = rdv[j++].data;
           if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-            data.ssp = rdv[j++].data;
+            chunk_data->section_id_gaps = rdv[j++].data;
           }
-          if (data.sdf != rdv[j].data_size) {
+          if (chunk_data->n_documents != rdv[j].data_size) {
             nterms_with_corrupt_chunk++;
           }
-          data.stp = rdv[j++].data;
+          chunk_data->tfs = rdv[j++].data;
           if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
-            data.sop = rdv[j++].data;
+            chunk_data->weights = rdv[j++].data;
           }
           GRN_OUTPUT_INT64(rdv[j].data_size);
-          data.snn = rdv[j].data_size;
-          data.snp = rdv[j].data;
+          chunk_data->position_gaps = rdv[j].data;
+          chunk_data->n_position_gaps = rdv[j].data_size;
         }
         nterm_with_chunk++;
       }
