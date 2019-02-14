@@ -11,15 +11,17 @@
 Summary
 -------
 
-dump - データベースのスキーマとデータを出力する
+dump - Output a schema and data of a database.
 
-Groonga組込コマンドの一つであるdumpについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、
-またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+We explain about dump that one of built-in command of Groonga.
+Built-in commands of Groonga execute by sending a request to groonga server via argument of groonga execution file, standard input, and socket.
 
-dumpはデータベースのスキーマとデータを後から読み込めるフォーマットで出力します。dumpの結果は大きくなるため、
-主にコマンドラインから使うことを想定しています。データベースのバックアップが主な利用方法です。
+The dump command outputs schemas and data of a database as a format that can read from after.
 
-dumpが出力するフォーマットは直接Groongaが解釈できるフォーマットです。そのため、以下のようにしてデータベースをコピーすることができます。::
+The dump command mainly uses from a command line. Because a dump result is big.
+The dump command mainly uses for the backup of databases.
+
+Groonga can directly understand the format of the dump command. Therefore, we can copy databases as below. ::
 
   % groonga original/db dump > dump.grn
   % mkdir backup
