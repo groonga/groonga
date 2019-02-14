@@ -3195,6 +3195,39 @@ typedef struct {
 } merger_data;
 
 grn_inline static void
+merger_report_error(grn_ctx *ctx,
+                    merger_data *data,
+                    const char *message,
+                    docinfo *posting1,
+                    docinfo *posting2)
+{
+  grn_obj term;
+  DEFINE_NAME(data->ii);
+  GRN_TEXT_INIT(&term, 0);
+  grn_ii_get_term(ctx, data->ii, data->bt->tid & GRN_ID_MAX, &term);
+  if (posting1 && posting2) {
+    CRIT(GRN_FILE_CORRUPT,
+         "[ii][broken] %s: <%.*s>: <%.*s>(%u): (%u:%u) -> (%u:%u)",
+         message,
+         name_size, name,
+         (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+         data->bt->tid,
+         posting1->rid, posting1->sid,
+         posting2->rid, posting2->sid);
+  } else {
+    CRIT(GRN_FILE_CORRUPT,
+         "[ii][broken] %s: <%.*s>: <%.*s>(%u): (%u:%u)",
+         message,
+         name_size, name,
+         (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+         data->bt->tid,
+         posting1->rid, posting1->sid);
+  }
+  GRN_OBJ_FIN(ctx, &term);
+  merge_dump_source(ctx, data->ii, data->sb, data->sc, GRN_LOG_CRIT);
+}
+
+grn_inline static void
 merger_get_next_chunk(grn_ctx *ctx, merger_data *data)
 {
   if (data->sdf) {
@@ -3249,20 +3282,12 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
     if (data->cid.tf) {
       if (data->lid.rid > data->cid.rid ||
           (data->lid.rid == data->cid.rid && data->lid.sid >= data->cid.sid)) {
-        grn_obj term;
-        DEFINE_NAME(data->ii);
-        GRN_TEXT_INIT(&term, 0);
-        grn_ii_get_term(ctx, data->ii, data->bt->tid & GRN_ID_MAX, &term);
-        CRIT(GRN_FILE_CORRUPT,
-             "[ii][broken] posting in list is larger than posting in chunk: "
-             "<%.*s>: <%.*s>(%u): (%u:%u) -> (%u:%u)",
-             name_size, name,
-             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-             data->bt->tid,
-             data->lid.rid, data->lid.sid,
-             data->cid.rid, data->cid.sid);
-        GRN_OBJ_FIN(ctx, &term);
-        merge_dump_source(ctx, data->ii, data->sb, data->sc, GRN_LOG_CRIT);
+        merger_report_error(ctx,
+                            data,
+                            "the last posting is larger than "
+                            "the next posting in chunk",
+                            &(data->lid),
+                            &(data->cid));
         return;
       }
       merger_put_next_id(ctx, data, &(data->cid));
@@ -3275,19 +3300,11 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
         }
       }
     } else {
-      grn_obj term;
-      DEFINE_NAME(data->ii);
-      GRN_TEXT_INIT(&term, 0);
-      grn_ii_get_term(ctx, data->ii, data->bt->tid & GRN_ID_MAX, &term);
-      CRIT(GRN_FILE_CORRUPT,
-           "[ii][broken] invalid posting in chunk: "
-           "<%.*s>: <%.*s>(%u): (%u:%u)",
-           name_size, name,
-           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-           data->bt->tid,
-           data->cid.rid, data->cid.sid);
-      GRN_OBJ_FIN(ctx, &term);
-      merge_dump_source(ctx, data->ii, data->sb, data->sc, GRN_LOG_CRIT);
+      merger_report_error(ctx,
+                          data,
+                          "invalid posting in chunk",
+                          &(data->cid),
+                          NULL);
       return;
     }
   }
@@ -3310,20 +3327,12 @@ merger_get_next_buffer(grn_ctx *ctx, merger_data *data)
     }
     if (lrid > data->bid.rid ||
         (lrid == data->bid.rid && lsid >= data->bid.sid)) {
-      grn_obj term;
-      DEFINE_NAME(data->ii);
-      GRN_TEXT_INIT(&term, 0);
-      grn_ii_get_term(ctx, data->ii, data->bt->tid & GRN_ID_MAX, &term);
-      CRIT(GRN_FILE_CORRUPT,
-           "[ii][broken] postings in block aren't sorted: "
-           "<%.*s>: <%.*s>(%u): (%d:%d) -> (%d:%d)",
-           name_size, name,
-           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-           data->bt->tid,
-           lrid, lsid,
-           data->bid.rid, data->bid.sid);
-      GRN_OBJ_FIN(ctx, &term);
-      merge_dump_source(ctx, data->ii, data->sb, data->sc, GRN_LOG_CRIT);
+      docinfo last_id = {lrid, lsid};
+      merger_report_error(ctx,
+                          data,
+                          "postings in block aren't sorted",
+                          &last_id,
+                          &(data->bid));
       return;
     }
     data->nextb = br->step;
@@ -3341,20 +3350,12 @@ merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
       if (data->lid.rid > data->bid.rid ||
           (data->lid.rid == data->bid.rid &&
            data->lid.sid >= data->bid.sid)) {
-        grn_obj term;
-        DEFINE_NAME(data->ii);
-        GRN_TEXT_INIT(&term, 0);
-        grn_ii_get_term(ctx, data->ii, data->bt->tid & GRN_ID_MAX, &term);
-        CRIT(GRN_FILE_CORRUPT,
-             "[ii][broken] posting in list is larger than posting in buffer: "
-             "<%.*s>: <%.*s>(%u): (%u:%u) -> (%u:%u)",
-             name_size, name,
-             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-             data->bt->tid,
-             data->lid.rid, data->lid.sid,
-             data->bid.rid, data->bid.sid);
-        GRN_OBJ_FIN(ctx, &term);
-        merge_dump_source(ctx, data->ii, data->sb, data->sc, GRN_LOG_CRIT);
+        merger_report_error(ctx,
+                            data,
+                            "the last posting is larger than "
+                            "the next posting in buffer",
+                            &(data->lid),
+                            &(data->bid));
         return;
       }
       if ((data->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
