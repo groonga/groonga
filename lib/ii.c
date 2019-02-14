@@ -104,6 +104,7 @@ static uint32_t grn_ii_builder_block_threshold_force = 0;
 static uint32_t grn_ii_max_n_segments_small = MAX_PSEG_SMALL;
 static uint32_t grn_ii_max_n_chunks_small = GRN_II_MAX_CHUNK_SMALL;
 static int64_t grn_ii_reduce_expire_threshold = 32;
+static grn_bool grn_ii_dump_index_source_on_merge = GRN_FALSE;
 
 void
 grn_ii_init_from_env(void)
@@ -215,6 +216,18 @@ grn_ii_init_from_env(void)
                   grn_ii_reduce_expire_threshold_env +
                   strlen(grn_ii_reduce_expire_threshold_env),
                   NULL);
+    }
+  }
+
+  {
+    char grn_ii_dump_index_source_on_merge_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_DUMP_INDEX_SOURCE_ON_MERGE",
+               grn_ii_dump_index_source_on_merge_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (strcmp(grn_ii_dump_index_source_on_merge_env, "yes") == 0) {
+      grn_ii_dump_index_source_on_merge = GRN_TRUE;
+    } else {
+      grn_ii_dump_index_source_on_merge = GRN_FALSE;
     }
   }
 }
@@ -4067,6 +4080,10 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
   db->header.buffer_free =
     S_SEGMENT - sizeof(buffer_header) - db->header.nterms * sizeof(buffer_term);
   db->header.nterms_void = nterms_void;
+
+  if (grn_ii_dump_index_source_on_merge) {
+    merge_dump_source(ctx, ii, sb, sc, GRN_LOG_DEBUG);
+  }
 
 exit :
   datavec_fin(ctx, dv);
