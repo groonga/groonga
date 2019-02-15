@@ -3828,7 +3828,6 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
     uint32_t nvchunks = 0;
     chunk_info *cinfo = NULL;
     grn_id crid = GRN_ID_NIL;
-    uint32_t ndf;
 
     data.ii = ii;
     buffer_data->buffer = sb;
@@ -4040,8 +4039,8 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
       }
       goto exit;
     }
-    ndf = data.dest.record_id_gaps - dv[0].data;
     {
+      uint32_t ndf = data.dest.record_id_gaps - dv[0].data;
       grn_id tid = bt->tid & GRN_ID_MAX;
       uint32_t *a = array_at(ctx, ii, tid);
       if (!a) {
