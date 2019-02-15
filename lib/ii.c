@@ -3213,6 +3213,7 @@ typedef struct {
     uint32_t *tfs;
     uint32_t *weights;
     uint32_t *position_gaps;
+    uint32_t *position_gaps_end;
   } dest;
 } merger_data;
 
@@ -3334,6 +3335,9 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
         uint32_t rest_n_positiongs =
           (uint32_t)(chunk_data->position_gaps_end -
                      chunk_data->position_gaps);
+        uint32_t rest_n_dest_positiongs =
+          (uint32_t)(data->dest.position_gaps_end -
+                     data->dest.position_gaps);
         if (chunk_data->id.tf > rest_n_positiongs) {
           merger_buffer_data *buffer_data = &(data->source.buffer);
           grn_obj term;
@@ -3345,8 +3349,8 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
                           &term);
           GRN_LOG(ctx,
                   GRN_LOG_WARNING,
-                  "[ii][merge][chunk] "
-                  "the number of terms are larger than the number positions: "
+                  "[ii][merge][put][chunk] "
+                  "the number of terms are larger than the number of positions: "
                   "<%.*s>: <%.*s>(%u): (%u:%u): (%u:%u)",
                   name_size, name,
                   (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
@@ -3354,6 +3358,30 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
                   chunk_data->id.rid, chunk_data->id.sid,
                   chunk_data->id.tf,
                   rest_n_positiongs);
+          GRN_OBJ_FIN(ctx, &term);
+        }
+        if (chunk_data->id.tf > rest_n_dest_positiongs) {
+          /* TODO: Make this case error. */
+          merger_buffer_data *buffer_data = &(data->source.buffer);
+          grn_obj term;
+          DEFINE_NAME(data->ii);
+          GRN_TEXT_INIT(&term, 0);
+          grn_ii_get_term(ctx,
+                          data->ii,
+                          buffer_data->term->tid & GRN_ID_MAX,
+                          &term);
+          GRN_LOG(ctx,
+                  GRN_LOG_WARNING,
+                  "[ii][merge][put][chunk] "
+                  "the number of terms are larger than "
+                  "the rest destination number of positions: "
+                  "<%.*s>: <%.*s>(%u): (%u:%u): (%u:%u)",
+                  name_size, name,
+                  (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+                  buffer_data->term->tid,
+                  chunk_data->id.rid, chunk_data->id.sid,
+                  chunk_data->id.tf,
+                  rest_n_dest_positiongs);
           GRN_OBJ_FIN(ctx, &term);
         }
         for (i = 0; i < chunk_data->id.tf; i++) {
@@ -3431,6 +3459,33 @@ merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
       }
       merger_put_next_id(ctx, data, &(buffer_data->id));
       if ((data->ii->header->flags & GRN_OBJ_WITH_POSITION)) {
+         uint32_t rest_n_dest_positiongs =
+          (uint32_t)(data->dest.position_gaps_end -
+                     data->dest.position_gaps);
+       if (buffer_data->id.tf > rest_n_dest_positiongs) {
+          /* TODO: Make this case error. */
+          merger_buffer_data *buffer_data = &(data->source.buffer);
+          grn_obj term;
+          DEFINE_NAME(data->ii);
+          GRN_TEXT_INIT(&term, 0);
+          grn_ii_get_term(ctx,
+                          data->ii,
+                          buffer_data->term->tid & GRN_ID_MAX,
+                          &term);
+          GRN_LOG(ctx,
+                  GRN_LOG_WARNING,
+                  "[ii][merge][put][buffer] "
+                  "the number of terms are larger than "
+                  "the rest destination number of positions: "
+                  "<%.*s>: <%.*s>(%u): (%u:%u): (%u:%u)",
+                  name_size, name,
+                  (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+                  buffer_data->term->tid,
+                  buffer_data->id.rid, buffer_data->id.sid,
+                  buffer_data->id.tf,
+                  rest_n_dest_positiongs);
+          GRN_OBJ_FIN(ctx, &term);
+        }
         while (buffer_data->id.tf--) {
           GRN_B_DEC(*(data->dest.position_gaps), buffer_data->data);
           data->position += *(data->dest.position_gaps);
@@ -3651,7 +3706,8 @@ chunk_merge(grn_ctx *ctx,
     if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
       data->dest.weights = dv[j++].data;
     }
-    data->dest.position_gaps = dv[j].data;
+    data->dest.position_gaps = dv[j++].data;
+    data->dest.position_gaps_end = dv[j].data;
   }
   merger_get_next_chunk(ctx, data);
   if (ctx->rc != GRN_SUCCESS) {
@@ -4054,7 +4110,8 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
       if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
         data.dest.weights = dv[j++].data;
       }
-      data.dest.position_gaps = dv[j].data;
+      data.dest.position_gaps = dv[j++].data;
+      data.dest.position_gaps_end = dv[j].data;
     }
     data.last_id = null_docinfo;
     merger_get_next_chunk(ctx, &data);
