@@ -3196,7 +3196,7 @@ typedef struct {
   uint32_t *tfs;
   uint32_t *weights;
   uint32_t *position_gaps;
-  uint32_t n_position_gaps;
+  uint32_t *position_gaps_end;
 } merger_chunk_data;
 
 typedef struct {
@@ -3331,6 +3331,31 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
       merger_put_next_id(ctx, data, &(chunk_data->id));
       if ((data->ii->header->flags & GRN_OBJ_WITH_POSITION)) {
         uint32_t i;
+        uint32_t rest_n_positiongs =
+          (uint32_t)(chunk_data->position_gaps_end -
+                     chunk_data->position_gaps);
+        if (chunk_data->id.tf > rest_n_positiongs) {
+          merger_buffer_data *buffer_data = &(data->source.buffer);
+          grn_obj term;
+          DEFINE_NAME(data->ii);
+          GRN_TEXT_INIT(&term, 0);
+          grn_ii_get_term(ctx,
+                          data->ii,
+                          buffer_data->term->tid & GRN_ID_MAX,
+                          &term);
+          GRN_LOG(ctx,
+                  GRN_LOG_WARNING,
+                  "[ii][merge][chunk] "
+                  "the number of terms are larger than the number positions: "
+                  "<%.*s>: <%.*s>(%u): (%u:%u): (%u:%u)",
+                  name_size, name,
+                  (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+                  buffer_data->term->tid,
+                  chunk_data->id.rid, chunk_data->id.sid,
+                  chunk_data->id.tf,
+                  rest_n_positiongs);
+          GRN_OBJ_FIN(ctx, &term);
+        }
         for (i = 0; i < chunk_data->id.tf; i++) {
           *(data->dest.position_gaps) = chunk_data->position_gaps[i];
           data->dest.position_gaps++;
@@ -3594,7 +3619,7 @@ chunk_merge(grn_ctx *ctx,
       chunk_data->weights = rdv[j++].data;
     }
     chunk_data->position_gaps = rdv[j].data;
-    chunk_data->n_position_gaps = rdv[j].data_size;
+    chunk_data->position_gaps_end = chunk_data->position_gaps + rdv[j].data_size;
   }
   datavec_reset(ctx,
                 dv,
@@ -3987,7 +4012,8 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
             chunk_data->weights = rdv[j++].data;
           }
           chunk_data->position_gaps = rdv[j].data;
-          chunk_data->n_position_gaps = rdv[j].data_size;
+          chunk_data->position_gaps_end =
+            chunk_data->position_gaps + rdv[j].data_size;
         }
         datavec_reset(ctx,
                       dv,
@@ -4489,7 +4515,8 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
           }
           GRN_OUTPUT_INT64(rdv[j].data_size);
           chunk_data->position_gaps = rdv[j].data;
-          chunk_data->n_position_gaps = rdv[j].data_size;
+          chunk_data->position_gaps_end =
+            chunk_data->position_gaps + rdv[j].data_size;
         }
         nterm_with_chunk++;
       }
