@@ -3875,9 +3875,9 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
       goto exit;
     }
     if (chunk_data->data_start && bt->size_in_chunk > 0) {
+      size_t size = S_SEGMENT * ii->n_elements;
       chunk_data->data = chunk_data->data_start + bt->pos_in_chunk;
       chunk_data->data_end = chunk_data->data + bt->size_in_chunk;
-      size_t size = S_SEGMENT * ii->n_elements;
       if ((bt->tid & CHUNK_SPLIT)) {
         int i;
         GRN_B_DEC(nchunks, chunk_data->data);
