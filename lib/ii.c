@@ -3644,6 +3644,7 @@ chunk_merge(grn_ctx *ctx,
     GRN_OBJ_FIN(ctx, &term);
     goto exit;
   }
+  data->position = 0;
   do {
     if (!merger_merge(ctx, data)) {
       break;
@@ -3868,7 +3869,6 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
       continue;
     }
 
-    data.position = 0;
     buffer_data->next_position = bt->pos_in_buffer;
     merger_get_next_buffer(ctx, &data);
     if (ctx->rc != GRN_SUCCESS) {
@@ -4036,6 +4036,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
       if (cinfo) { GRN_FREE(cinfo); }
       goto exit;
     }
+    data.position = 0;
     while (merger_merge(ctx, &data)) {
     }
     if (ctx->rc != GRN_SUCCESS) {
