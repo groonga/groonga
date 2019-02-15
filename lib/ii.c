@@ -3353,7 +3353,9 @@ grn_inline static void
 merger_get_next_buffer(grn_ctx *ctx, merger_data *data)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
-  if (buffer_data->next_position > 0) {
+  if (buffer_data->next_position == 0) {
+    buffer_data->id.rid = 0;
+  } else {
     docinfo last_id = {
       buffer_data->id.rid,
       buffer_data->id.sid
@@ -3378,8 +3380,6 @@ merger_get_next_buffer(grn_ctx *ctx, merger_data *data)
       return;
     }
     buffer_data->next_position = record->step;
-  } else {
-    buffer_data->id.rid = 0;
   }
 }
 
