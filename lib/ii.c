@@ -3839,9 +3839,26 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
       continue;
     }
 
-    if (!bt->pos_in_buffer) {
-      GRN_ASSERT(!bt->size_in_buffer);
-      if (bt->size_in_chunk) {
+    if (bt->pos_in_buffer == 0) {
+      if (bt->size_in_buffer > 0) {
+        grn_obj term;
+        DEFINE_NAME(ii);
+        GRN_TEXT_INIT(&term, 0);
+        grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
+        GRN_LOG(ctx,
+                GRN_WARN,
+                "[ii][buffer][merge] invalid size for buffer term: "
+                "<%.*s>: "
+                "<%.*s>(%u): "
+                "size:<%u>",
+                name_size, name,
+                (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+                bt->tid,
+                bt->size_in_buffer);
+        GRN_OBJ_FIN(ctx, &term);
+        goto exit;
+      }
+      if (bt->size_in_chunk > 0) {
         grn_memcpy(dcp,
                    chunk_data->data_start + bt->pos_in_chunk,
                    bt->size_in_chunk);
