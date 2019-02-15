@@ -3293,7 +3293,7 @@ merger_put_next_id(grn_ctx *ctx, merger_data *data, docinfo *id)
   data->dest.record_id_gaps++;
   if ((data->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
     uint32_t section_id_gap;
-    if (record_id_gap) {
+    if (record_id_gap > 0) {
       section_id_gap = id->sid - 1;
     } else {
       section_id_gap = id->sid - data->last_id.sid - 1;
@@ -3387,7 +3387,7 @@ grn_inline static void
 merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
-  if (buffer_data->id.rid && buffer_data->id.sid) {
+  if (buffer_data->id.rid > 0 && buffer_data->id.sid > 0) {
     GRN_B_DEC(buffer_data->id.tf, buffer_data->data);
     if (buffer_data->id.tf > 0) {
       if (data->last_id.rid > buffer_data->id.rid ||
@@ -3874,7 +3874,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    if (chunk_data->data_start && bt->size_in_chunk) {
+    if (chunk_data->data_start && bt->size_in_chunk > 0) {
       chunk_data->data = chunk_data->data_start + bt->pos_in_chunk;
       chunk_data->data_end = chunk_data->data + bt->size_in_chunk;
       size_t size = S_SEGMENT * ii->n_elements;
