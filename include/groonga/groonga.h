@@ -36,7 +36,7 @@ extern "C" {
 # endif /* defined(_WIN32) || defined(_WIN64) */
 #endif /* GRN_API */
 
-typedef unsigned int grn_id;
+typedef uint32_t grn_id;
 typedef uint8_t grn_bool;
 
 #define GRN_ID_NIL                     (0x00)
