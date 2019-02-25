@@ -742,9 +742,10 @@ grn_arrow_load(grn_ctx *ctx,
   std::shared_ptr<arrow::io::MemoryMappedFile> input;
   auto status =
     arrow::io::MemoryMappedFile::Open(path, arrow::io::FileMode::READ, &input);
+  std::ostringstream context;
   if (!grnarrow::check_status(ctx,
                               status,
-                              std::ostringstream() <<
+                              context <<
                               "[arrow][load] failed to open path: " <<
                               "<" << path << ">")) {
     GRN_API_RETURN(ctx->rc);
@@ -763,9 +764,10 @@ grn_arrow_load(grn_ctx *ctx,
   for (int i = 0; i < n_record_batches; ++i) {
     std::shared_ptr<arrow::RecordBatch> record_batch;
     status = reader->ReadRecordBatch(i, &record_batch);
+    std::ostringstream context;
     if (!grnarrow::check_status(ctx,
                                 status,
-                                std::ostringstream("") <<
+                                context <<
                                 "[arrow][load] failed to get " <<
                                 "the " << i << "-th " << "record")) {
       break;
@@ -830,9 +832,10 @@ grn_arrow_dump_columns(grn_ctx *ctx,
 #ifdef GRN_WITH_ARROW
   std::shared_ptr<arrow::io::FileOutputStream> output;
   auto status = arrow::io::FileOutputStream::Open(path, &output);
+  std::stringstream context;
   if (!grnarrow::check_status(ctx,
                               status,
-                              std::stringstream() <<
+                              context <<
                               "[arrow][dump] failed to open path: " <<
                               "<" << path << ">")) {
     GRN_API_RETURN(ctx->rc);
