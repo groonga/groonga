@@ -146,7 +146,6 @@ module CommandRunner
 
   private
   def run_command_interactive(*command_line)
-    env = {}
     IO.pipe do |input_read, input_write|
       IO.pipe do |output_read, output_write|
         options = {
@@ -154,7 +153,7 @@ module CommandRunner
           :out => output_write,
           :err => @error_output_log_path.to_s,
         }
-        pid = spawn(env, *command_line, options)
+        pid = spawn(*command_line, options)
         input_read.close
         output_write.close
         external_process = ExternalProcess.new(pid, input_write, output_read)
@@ -174,12 +173,11 @@ module CommandRunner
   end
 
   def run_command_sync(*command_line)
-    env = {}
     options = {
       :out => @output_log_path.to_s,
       :err => @error_output_log_path.to_s,
     }
-    succeeded = system(env, *command_line, options)
+    succeeded = system(*command_line, options)
     output = @output_log_path.read
     error_output = @error_output_log_path.read
     unless succeeded
