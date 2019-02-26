@@ -103,7 +103,7 @@ module CommandRunner
   end
 
   def find_program(name, options={})
-    name = name + RbConfig::CONFIG["EXEEXT"]
+    name += RbConfig::CONFIG["EXEEXT"]
     ENV["PATH"].split(File::PATH_SEPARATOR).each do |path|
       program_path = [path, name].join(File::ALT_SEPARATOR || File::SEPARATOR)
       libs_lt_program_path = File.join(path, ".libs", "lt-#{name}")
