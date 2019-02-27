@@ -39,7 +39,7 @@ RUN \
     apt-transport-https \
     curl \
     lsb-release && \
-  curl https://dist.apache.org/repos/dist/dev/arrow/KEYS | apt-key add - \
+  curl https://dist.apache.org/repos/dist/dev/arrow/KEYS | apt-key add - && \
   echo "deb [arch=amd64] https://dl.bintray.com/apache/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/ $(lsb_release --codename --short) main" > \
     /etc/apt/sources.list.d/apache-arrow.list && \
   apt update -qq && \
