@@ -65,31 +65,19 @@ fi
 case "${BUILD_TOOL}" in
   autotools)
     case "${TEST_TARGET}" in
-      command)
-        test/command/run-test.sh ${command_test_options}
-        ;;
-      command-http)
-        retry test/command/run-test.sh ${command_test_options} \
-              --interface http
-        ;;
-      command-httpd)
-        mkdir -p ${prefix}/var/log/groonga/httpd
-        retry test/command/run-test.sh ${command_test_options} \
-              --testee groonga-httpd
-        ;;
-      *)
+      if [ "${TRAVIS_OS_NAME}" != "osx" ]; then
         test/unit/run-test.sh -v v
-        test/command/run-test.sh ${command_test_options}
-        if [ "${ENABLE_MRUBY}" = "yes" ]; then
-          test/mruby/run-test.rb
-          test/command_line/run-test.rb
-        fi
-        retry test/command/run-test.sh ${command_test_options} \
-              --interface http
-        mkdir -p ${prefix}/var/log/groonga/httpd
-        retry test/command/run-test.sh ${command_test_options} \
-              --testee groonga-httpd
-        ;;
+      fi
+      test/command/run-test.sh ${command_test_options}
+      if [ "${ENABLE_MRUBY}" = "yes" ]; then
+        test/mruby/run-test.rb
+        test/command_line/run-test.rb
+      fi
+      retry test/command/run-test.sh ${command_test_options} \
+            --interface http
+      mkdir -p ${prefix}/var/log/groonga/httpd
+      retry test/command/run-test.sh ${command_test_options} \
+            --testee groonga-httpd
     esac
     ;;
   cmake)

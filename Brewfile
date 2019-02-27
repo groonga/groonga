@@ -1,3 +1,4 @@
+brew "apache-arrow"
 brew "autoconf-archive"
 # brew "cutter"
 brew "libevent"

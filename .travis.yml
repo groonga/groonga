@@ -11,84 +11,78 @@ services:
 
 matrix:
   include:
-    - os: linux
-      compiler: gcc
-      env:
-        - BUILD_TOOL=autotools
-    - os: linux
-      compiler: gcc
-      env:
-        - BUILD_TOOL=autotools
-        - ENABLE_MRUBY=yes
-    - os: linux
+    - name: "Autotools"
+      os: linux
       compiler: gcc
       env:
         - BUILD_TOOL=autotools
         - CFLAGS=-funsigned-char
         - CXXFLAGS=-funsigned-char
-    - os: linux
+    - name: "Autotools: mruby"
+      os: linux
+      compiler: gcc
+      env:
+        - BUILD_TOOL=autotools
+        - ENABLE_MRUBY=yes
+    - name: "Autotools: clang"
+      os: linux
+      compiler: clang
+      env:
+        - BUILD_TOOL=autotools
+        - ENABLE_MRUBY=yes
+    - name: "CMake"
+      os: linux
       compiler: gcc
       env:
         - BUILD_TOOL=cmake
-    - os: linux
+    - name: "CMake: mruby"
+      os: linux
       compiler: gcc
       env:
         - BUILD_TOOL=cmake
         - ENABLE_MRUBY=yes
-    - os: linux
-      compiler: clang
-      env:
-        - BUILD_TOOL=autotools
-        - ENABLE_MRUBY=yes
-    - os: linux
+    - name: "CMake: clang"
+      os: linux
       compiler: clang
       env:
         - BUILD_TOOL=cmake
         - ENABLE_MRUBY=yes
-    - os: osx
+    - name: "Autotools: macOS"
+      os: osx
       compiler: clang
       env:
         - BUILD_TOOL=autotools
         - ENABLE_MRUBY=yes
-        - TEST_TARGET=command
-    - os: osx
-      compiler: clang
-      env:
-        - BUILD_TOOL=autotools
-        - ENABLE_MRUBY=yes
-        - TEST_TARGET=command-http
-    - os: osx
-      compiler: clang
-      env:
-        - BUILD_TOOL=autotools
-        - ENABLE_MRUBY=yes
-        - TEST_TARGET=command-httpd
-    - os: osx
+    - name: "CMake: macOS"
+      os: osx
       compiler: clang
       env:
         - BUILD_TOOL=cmake
         - ENABLE_MRUBY=yes
-    - os: linux
+    - name: "Ubuntu 14.04"
+      os: linux
       env:
         - DOCKER=ubuntu-14.04
-    - os: linux
+    - name: "Ubuntu 16.04"
+      os: linux
       env:
         - DOCKER=ubuntu-16.04
-    - os: linux
+    - name: "Ubuntu 18.04"
+      os: linux
       env:
         - DOCKER=ubuntu-18.04
-    - os: linux
+    - name: "MinGW32"
+      os: linux
       env:
         - TARGET=windows
         - ARCHITECTURES=x86
-    - os: linux
+    - name: "MinGW64"
+      os: linux
       env:
         - TARGET=windows
         - ARCHITECTURES=x64
 
 before_install:
-  # - rvm use 2.3.1 --install --binary --fuzzy
-  # - rvm use 2.2
   - gem update bundler
 
 install:
