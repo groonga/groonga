@@ -74,9 +74,11 @@ case "${BUILD_TOOL}" in
     fi
     retry test/command/run-test.sh ${command_test_options} \
           --interface http
-    mkdir -p ${prefix}/var/log/groonga/httpd
-    retry test/command/run-test.sh ${command_test_options} \
-          --testee groonga-httpd
+    if [ "${TRAVIS_OS_NAME}" != "osx" ]; then
+      mkdir -p ${prefix}/var/log/groonga/httpd
+      retry test/command/run-test.sh ${command_test_options} \
+            --testee groonga-httpd
+    fi
     ;;
   cmake)
     test/command/run-test.sh ${command_test_options}
