@@ -89,6 +89,11 @@ module Groonga
         when Operator::GET_VALUE
           node = ExpressionTree::Variable.new(code.value)
           stack.push(node)
+        when Operator::GET_MEMBER
+          index = stack.pop
+          variable = stack.pop
+          node = ExpressionTree::Member.new(variable, index)
+          stack.push(node)
         when Operator::ASSIGN
           value = stack.pop
           variable = stack.pop
