@@ -34,22 +34,39 @@ module Groonga
           ExpressionTree::LogicalOperation.new(node.operator,
                                                optimized_sub_nodes)
         when ExpressionTree::BinaryOperation
-          optimized_left = optimize_node(table, node.left)
-          optimized_right = optimize_node(table, node.right)
+          optimize_binary_operation_node(table, node)
+        else
+          node
+        end
+      end
+
+      def optimize_binary_operation_node(table, node)
+        optimized_left = optimize_node(table, node.left)
+        optimized_right = optimize_node(table, node.right)
+        if node.option
+          optimized_option = optimize_node(table, node.option)
+        else
+          optimized_option = nil
+        end
+        case node.operator
+        when Operator::EQUAL
           if optimized_left.is_a?(ExpressionTree::Constant) and
-              optimized_right.is_a?(ExpressionTree::Variable)
+            optimized_right.is_a?(ExpressionTree::Variable)
             ExpressionTree::BinaryOperation.new(node.operator,
                                                 optimized_right,
-                                                optimized_left)
-          elsif node.left == optimized_left and node.right == optimized_right
-            node
+                                                optimized_left,
+                                                optimized_option)
           else
             ExpressionTree::BinaryOperation.new(node.operator,
                                                 optimized_left,
-                                                optimized_right)
+                                                optimized_right,
+                                                optimized_option)
           end
         else
-          node
+          ExpressionTree::BinaryOperation.new(node.operator,
+                                              optimized_left,
+                                              optimized_right,
+                                              optimized_option)
         end
       end
 
