@@ -22,7 +22,7 @@ load --table Terms
 {"_key": "and", "is_stop_word": true}
 ]
 [[0,0.0,0.0],1]
-select Memos --match_columns content --query "Hello and"
+select Memos   --match_columns content   --query "Hello and"   --match_escalation_threshold -1   --sort_keys -_score
 [
   [
     0,

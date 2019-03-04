@@ -22,7 +22,7 @@ load --table Memos
 {"content": "Good-bye"}
 ]
 [[0,0.0,0.0],3]
-select Memos --match_columns content --query "Hello and"
+select Memos   --match_columns content   --query "Hello and"   --match_escalation_threshold -1
 [
   [
     0,

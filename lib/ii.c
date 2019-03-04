@@ -9043,7 +9043,8 @@ grn_ii_select_data_fin(grn_ctx *ctx,
     GRN_OBJ_FIN(ctx, &(data->record.term_weights));
   }
 
-  if (data->set_min_enable_for_and_query) {
+  if (data->set_min_enable_for_and_query &&
+      !data->only_skip_token) {
     if (data->current_min > data->previous_min) {
       data->optarg->match_info->min = data->current_min;
     }

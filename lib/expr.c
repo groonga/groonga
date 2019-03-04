@@ -3474,6 +3474,8 @@ typedef struct {
   scan_info *scan_info;
   grn_obj *res;
   grn_id min_id;
+  grn_bool is_skipped;
+  grn_bool is_first_unskipped_scan_info;
 } grn_table_select_data;
 
 static void
@@ -4125,7 +4127,9 @@ grn_table_select_index_match(grn_ctx *ctx,
     }
   }
   ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
-  if (!(optarg.match_info.flags & GRN_MATCH_INFO_ONLY_SKIP_TOKEN)) {
+  if (optarg.match_info.flags & GRN_MATCH_INFO_ONLY_SKIP_TOKEN) {
+    data->is_skipped = GRN_TRUE;
+  } else {
     grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
   }
   if ((si->logical_op == GRN_OP_AND) ||
@@ -4905,6 +4909,8 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       data.scanner = scanner;
       data.res = res;
       data.min_id = GRN_ID_NIL;
+      data.is_skipped = GRN_FALSE;
+      data.is_first_unskipped_scan_info = GRN_TRUE;
       if (res_size > 0 && op == GRN_OP_AND) {
         grn_bool have_push = GRN_FALSE;
         for (i = 0; i < scanner->n_sis; i++) {
@@ -4941,6 +4947,16 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
         scan_info *si = scanner->sis[i];
         data.nth_scan_info = i;
         data.scan_info = si;
+        if (i > 0 && data.is_first_unskipped_scan_info) {
+          if (data.is_skipped) {
+            if (si->logical_op == GRN_OP_AND) {
+              si->logical_op = GRN_OP_OR;
+            }
+          } else {
+            data.is_first_unskipped_scan_info = GRN_FALSE;
+          }
+        }
+        data.is_skipped = GRN_FALSE;
         if (si->flags & SCAN_POP) {
           grn_obj *res_;
           GRN_PTR_POP(&res_stack, res_);

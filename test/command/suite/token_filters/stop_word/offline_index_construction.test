@@ -22,4 +22,8 @@ load --table Terms
 {"_key": "and", "is_stop_word": true}
 ]
 
-select Memos --match_columns content --query "Hello and"
+select Memos \
+  --match_columns content \
+  --query "Hello and" \
+  --match_escalation_threshold -1 \
+  --sort_keys -_score
