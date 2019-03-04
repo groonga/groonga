@@ -33,7 +33,9 @@ load --table Packages
 {"_key": "mroonga", "files": ["ha_mroonga.cc", "ha_mroonga.hpp"]}
 ]
 [[0,0.0,0.0],3]
-select Packages   --filter '_key @ "rroonga" && sub_filter(files, "revision >= 10 && revision < 40")'   --output_columns '_key, _score, files, files.revision'
+log_level --level info
+[[0,0.0,0.0],true]
+select Packages   --filter '_key @ "rroonga" && sub_filter(files, "revision >= 10 && revision < 40")'   --output_columns '_key, files, files.revision'
 [
   [
     0,
@@ -51,10 +53,6 @@ select Packages   --filter '_key @ "rroonga" && sub_filter(files, "revision >= 1
           "ShortText"
         ],
         [
-          "_score",
-          "Int32"
-        ],
-        [
           "files",
           "Files"
         ],
@@ -65,7 +63,6 @@ select Packages   --filter '_key @ "rroonga" && sub_filter(files, "revision >= 1
       ],
       [
         "rroonga",
-        5,
         [
           "lib/groonga.rb",
           "README.textile"
@@ -78,3 +75,15 @@ select Packages   --filter '_key @ "rroonga" && sub_filter(files, "revision >= 1
     ]
   ]
 ]
+#|i| [object][search][index][key][exact] <Names.packages_key_index>
+#|i| grn_ii_sel > (rroonga)
+#|i| n=6 (rroonga)
+#|i| exact: 1
+#|i| hits=1
+#|i| [table][select][index][selector][no-index][sub_filter] <Packages>
+#|i| [sub_filter][pre-filter][column][vector] <Packages.files> -> <Files>
+#|i| [table][select][index][range] <Revisions.files_revision_index>
+#|i| [table][select][index][range] <Revisions.files_revision_index>
+#|i| [accessor][resolve][data-column][index] <Files.packages_files_index>
+log_level --level notice
+[[0,0.0,0.0],true]
