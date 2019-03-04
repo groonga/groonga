@@ -393,7 +393,12 @@ Improvements
 
 * Enable sequential search for enough filtered case by default.
   If the current result is enough filtered, sequential search is faster than index search.
-  If the current result has only 1% records and less than 1000 records, sequential search is used even when index search is available.
+  If the current result has only 1% records of all records in a table and less than 1000 records, sequential search is used even when index search is available.
+
+  Cullently, this optimization is applied when search by ``==``, ``>``, ``<``, ``>=``, or ``<=``.
+
+  When a key of a table that has columns specified by the filter is ``ShortText``, you must set ``NormalizerAuto`` to normalizer of the table to apply this optimization.
+
   You can disable this feature by ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO=0.0`` environment variable.
 
 * [load] improve error message.
