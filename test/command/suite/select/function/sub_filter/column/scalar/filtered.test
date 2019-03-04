@@ -1,3 +1,5 @@
+#$GRN_EXPR_OPTIMIZE=no
+
 table_create Files TABLE_PAT_KEY ShortText
 column_create Files revision COLUMN_SCALAR UInt32
 
