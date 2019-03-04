@@ -142,6 +142,8 @@ module Groonga
             node = ExpressionTree::Accessor.new(code.value)
           when Table
             node = ExpressionTree::Table.new(code.value)
+          when Void
+            node = ExpressionTree::Null.new
           else
             node = ExpressionTree::Constant.new(code.value.value)
           end
