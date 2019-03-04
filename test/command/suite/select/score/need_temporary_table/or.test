@@ -15,4 +15,5 @@ load --table Movies
 
 select Movies \
   --output_columns "_key, _score" \
-  --filter '(tags @ "English" && tags @ "SF") || (tags @ "US" &! tags @ "Keanu Reeves")'
+  --filter '(tags @ "English" && tags @ "SF") || (tags @ "US" &! tags @ "Keanu Reeves")' \
+  --sort_keys -_score

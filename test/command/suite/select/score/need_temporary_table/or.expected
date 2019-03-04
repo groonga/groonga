@@ -14,7 +14,7 @@ load --table Movies
 {"_key": "Star Wars", "tags": ["George Lucas", "SF", "English", "US"]}
 ]
 [[0,0.0,0.0],4]
-select Movies   --output_columns "_key, _score"   --filter '(tags @ "English" && tags @ "SF") || (tags @ "US" &! tags @ "Keanu Reeves")'
+select Movies   --output_columns "_key, _score"   --filter '(tags @ "English" && tags @ "SF") || (tags @ "US" &! tags @ "Keanu Reeves")'   --sort_keys -_score
 [
   [
     0,
@@ -37,16 +37,16 @@ select Movies   --output_columns "_key, _score"   --filter '(tags @ "English" &&
         ]
       ],
       [
-        "The Last Samurai",
-        1
+        "Star Wars",
+        3
       ],
       [
         "The Matrix",
         2
       ],
       [
-        "Star Wars",
-        3
+        "The Last Samurai",
+        1
       ]
     ]
   ]
