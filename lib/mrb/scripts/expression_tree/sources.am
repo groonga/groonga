@@ -5,7 +5,7 @@ RUBY_SCRIPT_FILES =				\
 	function_call.rb			\
 	index_column.rb				\
 	logical_operation.rb			\
-	options.rb				\
 	procedure.rb				\
+	table.rb				\
 	unary_operation.rb			\
 	variable.rb
