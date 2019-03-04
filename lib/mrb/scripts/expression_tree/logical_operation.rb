@@ -15,6 +15,12 @@ module Groonga
         end
       end
 
+      def estimatable?
+        @nodes.all? do |node|
+          node.estimatable?
+        end
+      end
+
       def estimate_size(table)
         estimated_sizes = @nodes.collect do |node|
           node.estimate_size(table)

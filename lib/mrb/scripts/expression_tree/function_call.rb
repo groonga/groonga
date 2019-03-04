@@ -16,6 +16,10 @@ module Groonga
         expression.append_operator(Operator::CALL, @arguments.size)
       end
 
+      def estimatable?
+        true
+      end
+
       def estimate_size(table)
         return table.size unless @procedure.name == "between"
 

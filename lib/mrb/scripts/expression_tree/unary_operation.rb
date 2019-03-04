@@ -13,6 +13,10 @@ module Groonga
         expression.append_operator(@operator, 1)
       end
 
+      def estimatable?
+        true
+      end
+
       def estimate_size(table)
         # TODO
         table.size

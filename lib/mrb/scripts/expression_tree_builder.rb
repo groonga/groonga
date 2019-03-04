@@ -34,6 +34,7 @@ module Groonga
       Operator::PLUS,
       Operator::MINUS,
       Operator::STAR,
+      Operator::SLASH,
       Operator::MOD,
     ]
 
@@ -47,6 +48,25 @@ module Groonga
     UNARY_OPERATIONS = [
       Operator::NOT,
       Operator::BITWISE_NOT,
+      Operator::MINUS,
+      Operator::INCR,
+      Operator::DECR,
+      Operator::INCR_POST,
+      Operator::DECR_POST,
+    ]
+
+    ASSIGN_ARITHMETIC_OPERATIONS = [
+      Operator::STAR_ASSIGN,
+      Operator::SLASH_ASSIGN,
+      Operator::MOD_ASSIGN,
+      Operator::PLUS_ASSIGN,
+      Operator::MINUS_ASSIGN,
+      Operator::SHIFTL_ASSIGN,
+      Operator::SHIFTR_ASSIGN,
+      Operator::SHIFTRR_ASSIGN,
+      Operator::AND_ASSIGN,
+      Operator::XOR_ASSIGN,
+      Operator::OR_ASSIGN,
     ]
 
     def initialize(expression)
@@ -80,6 +100,13 @@ module Groonga
         when *UNARY_OPERATIONS
           value = stack.pop
           node = ExpressionTree::UnaryOperation.new(code.op, value)
+          stack.push(node)
+        when *ASSIGN_ARITHMETIC_OPERATIONS
+          value = stack.pop
+          variable = stack.pop
+          node = ExpressionTree::AssignBinaryOperation.new(code.op,
+                                                           variable,
+                                                           value)
           stack.push(node)
         when Operator::GET_REF
           node = ExpressionTree::Reference.new(code.value)

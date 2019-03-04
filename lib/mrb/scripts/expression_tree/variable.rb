@@ -10,6 +10,10 @@ module Groonga
         expression.append_object(@column, Operator::GET_VALUE, 1)
       end
 
+      def estimatable?
+        true
+      end
+
       def estimate_size(table)
         table.size
       end

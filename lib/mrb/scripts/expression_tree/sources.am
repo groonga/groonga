@@ -1,6 +1,7 @@
 RUBY_SCRIPT_FILES =				\
 	accessor.rb				\
 	assign.rb				\
+	assign_binary_operation.rb		\
 	binary_operation.rb			\
 	constant.rb				\
 	function_call.rb			\

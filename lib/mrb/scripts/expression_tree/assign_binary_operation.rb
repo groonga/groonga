@@ -1,9 +1,11 @@
 module Groonga
   module ExpressionTree
-    class Assign
+    class AssignBinaryOperation
+      attr_reader :operator
       attr_reader :variable
       attr_reader :value
-      def initialize(variable, value)
+      def initialize(operator, variable, value)
+        @operator = operator
         @variable = variable
         @value = value
       end
@@ -11,7 +13,7 @@ module Groonga
       def build(expression)
         @variable.build(expression)
         @value.build(expression)
-        expression.append_operator(Operator::ASSIGN, 2)
+        expression.append_operator(@operator, 2)
       end
 
       def estimatable?

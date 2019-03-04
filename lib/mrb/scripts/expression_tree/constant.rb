@@ -10,6 +10,10 @@ module Groonga
         expression.append_constant(@value, Operator::PUSH, 1)
       end
 
+      def estimatable?
+        true
+      end
+
       def estimate_size(table)
         if Bulk.true?(@value)
           table.size

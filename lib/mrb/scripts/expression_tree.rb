@@ -1,5 +1,6 @@
 require "expression_tree/accessor"
 require "expression_tree/assign"
+require "expression_tree/assign_binary_operation"
 require "expression_tree/binary_operation"
 require "expression_tree/constant"
 require "expression_tree/function_call"

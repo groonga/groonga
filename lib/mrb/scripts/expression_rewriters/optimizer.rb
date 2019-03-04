@@ -139,6 +139,8 @@ module Groonga
       end
 
       def optimize_and_sub_nodes(table, sub_nodes)
+        return sub_nodes unless sub_nodes.all?(&:estimatable?)
+
         grouped_sub_nodes = group_nodes(sub_nodes)
 
         optimized_nodes = []

@@ -29,6 +29,10 @@ module Groonga
         end
       end
 
+      def estimatable?
+        true
+      end
+
       RANGE_OPERATORS = [
         Operator::LESS,
         Operator::GREATER,
