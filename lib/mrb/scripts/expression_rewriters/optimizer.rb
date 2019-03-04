@@ -96,11 +96,11 @@ module Groonga
       def optimize_binary_operation_node(table, node)
         optimized_left = optimize_node(table, node.left)
         optimized_right = optimize_node(table, node.right)
-        if node.option
-          optimized_option = optimize_node(table, node.option)
-        else
-          optimized_option = nil
+        optimized_options = {}
+        if node.parameter
+          optimized_options[:parameter] = optimize_node(table, node.parameter)
         end
+        optimized_options[:value] = node.value
         case node.operator
         when Operator::EQUAL
           if optimized_left.is_a?(ExpressionTree::Constant) and
@@ -108,18 +108,18 @@ module Groonga
             ExpressionTree::BinaryOperation.new(node.operator,
                                                 optimized_right,
                                                 optimized_left,
-                                                optimized_option)
+                                                optimized_options)
           else
             ExpressionTree::BinaryOperation.new(node.operator,
                                                 optimized_left,
                                                 optimized_right,
-                                                optimized_option)
+                                                optimized_options)
           end
         else
           ExpressionTree::BinaryOperation.new(node.operator,
                                               optimized_left,
                                               optimized_right,
-                                              optimized_option)
+                                              optimized_options)
         end
       end
 

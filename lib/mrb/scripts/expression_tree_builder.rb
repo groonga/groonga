@@ -67,17 +67,15 @@ module Groonga
           node = ExpressionTree::LogicalOperation.new(code.op, nodes)
           stack.push(node)
         when *RELATION_OPERATORS, *ARITHMETIC_OPERATORS
-          if code.n_args == 3
-            option = stack.pop
-          else
-            option = nil
-          end
+          options = {}
+          options[:parameter] = stack.pop if code.n_args == 3
+          options[:value] = code.value.value if code.value
           right = stack.pop
           left = stack.pop
           node = ExpressionTree::BinaryOperation.new(code.op,
                                                      left,
                                                      right,
-                                                     option)
+                                                     options)
           stack.push(node)
         when *UNARY_OPERATIONS
           value = stack.pop
