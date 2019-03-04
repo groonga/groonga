@@ -32,7 +32,6 @@ module Groonga
       Operator::SHIFTR,
       Operator::SHIFTRR,
       Operator::PLUS,
-      Operator::MINUS,
       Operator::STAR,
       Operator::SLASH,
       Operator::MOD,
@@ -48,7 +47,6 @@ module Groonga
     UNARY_OPERATIONS = [
       Operator::NOT,
       Operator::BITWISE_NOT,
-      Operator::MINUS,
       Operator::INCR,
       Operator::DECR,
       Operator::INCR_POST,
@@ -107,6 +105,16 @@ module Groonga
           node = ExpressionTree::AssignBinaryOperation.new(code.op,
                                                            variable,
                                                            value)
+          stack.push(node)
+        when Operator::MINUS
+          if code.n_args == 1
+            value = stack.pop
+            node = ExpressionTree::UnaryOperation.new(code.op, value)
+          else
+            right = stack.pop
+            left = stack.pop
+            node = ExpressionTree::BinaryOperation.new(code.op, left, right)
+          end
           stack.push(node)
         when Operator::GET_REF
           node = ExpressionTree::Reference.new(code.value)
