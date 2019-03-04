@@ -102,6 +102,7 @@ before_test:
   - cd ..\..\..
   - del test\command\suite\select\filter\equal\vector_element_float.test
 test_script:
+  - set GRN_EXPR_OPTIMIZE=yes
   - ruby test\command\bin\grntest
      --groonga %FULL_GROONGA_INSTALL_FOLDER%\bin\groonga.exe
      --base-directory test\command

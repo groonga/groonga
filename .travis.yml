@@ -24,6 +24,13 @@ matrix:
       env:
         - BUILD_TOOL=autotools
         - ENABLE_MRUBY=yes
+    - name: "Autotools: mruby: optimize"
+      os: linux
+      compiler: gcc
+      env:
+        - BUILD_TOOL=autotools
+        - ENABLE_MRUBY=yes
+        - GRN_EXPR_OPTIMIZE=yes
     - name: "Autotools: clang"
       os: linux
       compiler: clang
