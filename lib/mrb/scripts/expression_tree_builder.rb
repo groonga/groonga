@@ -28,7 +28,6 @@ module Groonga
       Operator::BITWISE_OR,
       Operator::BITWISE_XOR,
       Operator::BITWISE_AND,
-      Operator::BITWISE_NOT,
       Operator::SHIFTL,
       Operator::SHIFTR,
       Operator::SHIFTRR,
@@ -47,6 +46,7 @@ module Groonga
 
     UNARY_OPERATIONS = [
       Operator::NOT,
+      Operator::BITWISE_NOT,
     ]
 
     def initialize(expression)
