@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2014-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -81,9 +81,12 @@ grn_mrb_value_to_bulk(mrb_state *mrb, mrb_value mrb_value_, grn_obj *bulk)
     break;
   default :
     {
+      grn_mrb_data *data = &(ctx->impl->mrb);
       struct RClass *klass;
+      struct RClass *mrb_record_class;
 
       klass = mrb_class(mrb, mrb_value_);
+      mrb_record_class = mrb_class_get_under(mrb, data->module, "Record");
       if (klass == ctx->impl->mrb.builtin.time_class) {
         mrb_value mrb_sec;
         mrb_value mrb_usec;
@@ -93,6 +96,18 @@ grn_mrb_value_to_bulk(mrb_state *mrb, mrb_value mrb_value_, grn_obj *bulk)
         grn_obj_reinit(ctx, bulk, GRN_DB_TIME, 0);
         GRN_TIME_SET(ctx, bulk,
                      GRN_TIME_PACK(mrb_fixnum(mrb_sec), mrb_fixnum(mrb_usec)));
+      } else if (klass == mrb_record_class) {
+        mrb_value mrb_table;
+        grn_obj *table;
+        mrb_value mrb_record_id;
+
+        mrb_table = mrb_funcall(mrb, mrb_value_, "table", 0);
+        table = DATA_PTR(mrb_table);
+        mrb_record_id = mrb_funcall(mrb, mrb_value_, "id", 0);
+        grn_obj_reinit(ctx, bulk, grn_obj_id(ctx, table), 0);
+        if (!mrb_nil_p(mrb_value_)) {
+          GRN_RECORD_SET(ctx, bulk, mrb_fixnum(mrb_record_id));
+        }
       } else {
         mrb_raisef(mrb, E_ARGUMENT_ERROR,
                    "unsupported object to convert to bulk: %S",
