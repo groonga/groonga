@@ -1,11 +1,13 @@
 RUBY_SCRIPT_FILES =				\
 	accessor.rb				\
+	assign.rb				\
 	binary_operation.rb			\
 	constant.rb				\
 	function_call.rb			\
 	index_column.rb				\
 	logical_operation.rb			\
 	procedure.rb				\
+	reference.rb				\
 	table.rb				\
 	unary_operation.rb			\
 	variable.rb

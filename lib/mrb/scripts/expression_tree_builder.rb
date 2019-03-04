@@ -83,8 +83,16 @@ module Groonga
           value = stack.pop
           node = ExpressionTree::UnaryOperation.new(code.op, value)
           stack.push(node)
+        when Operator::GET_REF
+          node = ExpressionTree::Reference.new(code.value)
+          stack.push(node)
         when Operator::GET_VALUE
           node = ExpressionTree::Variable.new(code.value)
+          stack.push(node)
+        when Operator::ASSIGN
+          value = stack.pop
+          variable = stack.pop
+          node = ExpressionTree::Assign.new(variable, value)
           stack.push(node)
         when Operator::PUSH
           case code.value
