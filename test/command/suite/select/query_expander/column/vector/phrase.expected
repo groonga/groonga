@@ -25,7 +25,7 @@ load --table Synonyms
 ["groonga storage engine", ["groonga storage engine", "mroonga"]]
 ]
 [[0,0.0,0.0],1]
-select --table Memos --query_expander Synonyms.words   --match_columns content --query '"groonga storage engine"'
+select   --table Memos   --query_expander Synonyms.words   --match_columns content --query '"groonga storage engine"'   --sort_keys -_score
 [
   [
     0,
@@ -48,12 +48,12 @@ select --table Memos --query_expander Synonyms.words   --match_columns content -
         ]
       ],
       [
-        2,
-        "Start mroonga!"
-      ],
-      [
         4,
         "Setup groonga storage engine!"
+      ],
+      [
+        2,
+        "Start mroonga!"
       ]
     ]
   ]

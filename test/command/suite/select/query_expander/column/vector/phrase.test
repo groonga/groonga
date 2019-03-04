@@ -22,5 +22,8 @@ load --table Synonyms
 ["groonga storage engine", ["groonga storage engine", "mroonga"]]
 ]
 
-select --table Memos --query_expander Synonyms.words \
-  --match_columns content --query '"groonga storage engine"'
+select \
+  --table Memos \
+  --query_expander Synonyms.words \
+  --match_columns content --query '"groonga storage engine"' \
+  --sort_keys -_score
