@@ -118,11 +118,11 @@ class TestNoIndexCompare < QueryOptimizerTestCase
   query:      <29>
   expr:       <0..2>
 [1]
-  op:         <greater_equal>
-  logical_op: <and>
+  op:         <less>
+  logical_op: <and_not>
   index:      <[]>
   query:      <29>
-  expr:       <3..6>
+  expr:       <3..5>
       DUMP
     end
   end
