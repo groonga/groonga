@@ -160,7 +160,12 @@ module Groonga
           raise "unknown operator: #{code.inspect}"
         end
       end
-      stack.pop
+      if stack.size == 1
+        stack.pop
+      else
+        # Unsupported expression
+        nil
+      end
     end
 
     private

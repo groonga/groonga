@@ -6,6 +6,7 @@ module Groonga
       def rewrite
         builder = ExpressionTreeBuilder.new(@expression)
         root_node = builder.build
+        return @expression if root_node.nil?
 
         variable = @expression[0]
         table = context[variable.domain]
