@@ -37,6 +37,7 @@ module Groonga
         Operator::EXACT,
         Operator::REGEXP,
         Operator::FUZZY,
+        Operator::QUORUM,
       ]
       def estimate_size(table)
         case @operator
