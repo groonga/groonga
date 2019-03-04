@@ -4,16 +4,23 @@ module Groonga
       attr_reader :operator
       attr_reader :left
       attr_reader :right
-      def initialize(operator, left, right)
+      attr_reader :option
+      def initialize(operator, left, right, option=nil)
         @operator = operator
         @left = left
         @right = right
+        @option = option
       end
 
       def build(expression)
         @left.build(expression)
         @right.build(expression)
-        expression.append_operator(@operator, 2)
+        if @option
+          @option.build(expression)
+          expression.append_operator(@operator, 3)
+        else
+          expression.append_operator(@operator, 2)
+        end
       end
 
       RANGE_OPERATORS = [
