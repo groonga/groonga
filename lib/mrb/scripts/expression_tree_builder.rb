@@ -131,7 +131,8 @@ module Groonga
     private
     def add_logical_operation_node(operator, nodes, node)
       if node.is_a?(ExpressionTree::LogicalOperation) and
-          node.operator == operator
+          node.operator == operator and
+          node.operator != Operator::AND_NOT
         nodes.concat(node.nodes)
       else
         nodes << node
