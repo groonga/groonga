@@ -73,6 +73,16 @@ mrb_grn_accessor_object(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_accessor_key_p(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *accessor;
+
+  accessor = DATA_PTR(self);
+  return mrb_bool_value(grn_obj_is_key_accessor(ctx, accessor));
+}
+
+static mrb_value
 mrb_grn_accessor_name(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -114,6 +124,8 @@ grn_mrb_accessor_init(grn_ctx *ctx)
                     mrb_grn_accessor_have_next_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "object",
                     mrb_grn_accessor_object, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "key?",
+                    mrb_grn_accessor_key_p, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "name",
                     mrb_grn_accessor_name, MRB_ARGS_NONE());
