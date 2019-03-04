@@ -20,23 +20,76 @@ module Groonga
       def optimize_node(table, node)
         case node
         when ExpressionTree::LogicalOperation
-          optimized_sub_nodes = node.nodes.collect do |sub_node|
-            optimize_node(table, sub_node)
+          optimize_and_not(table, node) do |optimized_node|
+            optimized_sub_nodes = optimized_node.nodes.collect do |sub_node|
+              optimize_node(table, sub_node)
+            end
+            case optimized_node.operator
+            when Operator::AND
+              optimized_sub_nodes =
+                optimize_and_sub_nodes(table, optimized_sub_nodes)
+            when Operator::OR
+              optimized_sub_nodes =
+                optimize_or_sub_nodes(table, optimized_sub_nodes)
+            end
+            ExpressionTree::LogicalOperation.new(optimized_node.operator,
+                                                 optimized_sub_nodes)
           end
-          case node.operator
-          when Operator::AND
-            optimized_sub_nodes =
-              optimize_and_sub_nodes(table, optimized_sub_nodes)
-          when Operator::OR
-            optimized_sub_nodes =
-              optimize_or_sub_nodes(table, optimized_sub_nodes)
-          end
-          ExpressionTree::LogicalOperation.new(node.operator,
-                                               optimized_sub_nodes)
         when ExpressionTree::BinaryOperation
           optimize_binary_operation_node(table, node)
         else
           node
+        end
+      end
+
+      def optimize_and_not(table, node)
+        return yield(node) unless node.operator == Operator::AND
+
+        optimized_sub_nodes = []
+        sub_nodes = []
+        node.nodes.each do |sub_node|
+          if sub_node.respond_to?(:operator)
+            sub_node_operator = sub_node.operator
+          else
+            sub_node_oeprator = nil
+          end
+          unless sub_node_operator == Operator::NOT
+            sub_nodes << sub_node
+            next
+          end
+
+          case sub_nodes.size
+          when 0
+            sub_nodes << sub_node
+          when 1
+            and_not_node =
+              ExpressionTree::LogicalOperation.new(Operator::AND_NOT,
+                                                   [sub_nodes.first,
+                                                    sub_node.value])
+            optimized_sub_nodes << yield(and_not_node)
+            sub_nodes = []
+          else
+            and_nodes = ExpressionTree::LogicalOperation.new(node.operator,
+                                                             sub_nodes)
+            optimized_and_nodes = yield(and_nodes)
+            and_not_node =
+              ExpressionTree::LogicalOperation.new(Operator::AND_NOT,
+                                                   [optimized_and_nodes,
+                                                    sub_node.value])
+            optimized_sub_nodes << yield(and_not_node)
+            sub_nodes = []
+          end
+        end
+        unless sub_nodes.empty?
+          and_nodes = ExpressionTree::LogicalOperation.new(node.operator,
+                                                           sub_nodes)
+          optimized_sub_nodes << yield(and_nodes)
+        end
+        if optimized_sub_nodes.size == 1
+          optimized_sub_nodes.first
+        else
+          ExpressionTree::LogicalOperation.new(node.operator,
+                                               optimized_sub_nodes)
         end
       end
 
