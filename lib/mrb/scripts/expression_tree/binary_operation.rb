@@ -45,6 +45,8 @@ module Groonga
           estimate_size_range(table)
         when *QUERY_OPERATIONS
           estimate_size_query(table)
+        when Operator::PREFIX
+          estimate_size_prefix(table)
         else
           table.size
         end
@@ -118,6 +120,18 @@ module Groonga
                               :mode => @operator)
         end
         sizes.max
+      end
+
+      def estimate_size_prefix(table)
+        return table.size unless @left.is_a?(Variable)
+        return table.size unless @right.is_a?(Constant)
+
+        key = @left.column
+        return table.size unless key.is_a?(Groonga::Accessor)
+        return table.size unless key.key?
+
+        # TODO: Improve
+        table.size / 10
       end
     end
   end
