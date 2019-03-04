@@ -129,11 +129,11 @@ class TestIndexCompare < QueryOptimizerTestCase
   query:      <29>
   expr:       <0..2>
 [1]
-  op:         <greater_equal>
+  op:         <less>
   logical_op: <and>
   index:      <[#<column:index Numbers.Values_number range:Values sources:[Values.number] flags:NONE>]>
   query:      <29>
-  expr:       <3..6>
+  expr:       <3..5>
       DUMP
     end
   end
