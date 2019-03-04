@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2010-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3467,6 +3467,15 @@ exec_result_to_score(grn_ctx *ctx, grn_obj *result, grn_obj *score_buffer)
   }
 }
 
+typedef struct {
+  grn_obj *variable;
+  grn_scanner *scanner;
+  int nth_scan_info;
+  scan_info *scan_info;
+  grn_obj *res;
+  grn_id min_id;
+} grn_table_select_data;
+
 static void
 grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                             grn_obj *v, grn_obj *res, grn_operator op)
@@ -3662,9 +3671,10 @@ static grn_inline grn_bool
 grn_table_select_index_equal(grn_ctx *ctx,
                              grn_obj *table,
                              grn_obj *index,
-                             scan_info *si,
-                             grn_obj *res)
+                             grn_table_select_data *data)
 {
+  scan_info *si = data->scan_info;
+  grn_obj *res = data->res;
   grn_bool processed = GRN_FALSE;
 
   if (GRN_BULK_VSIZE(si->query) == 0) {
@@ -3800,9 +3810,10 @@ static grn_inline grn_bool
 grn_table_select_index_not_equal(grn_ctx *ctx,
                                  grn_obj *table,
                                  grn_obj *index,
-                                 scan_info *si,
-                                 grn_obj *res)
+                                 grn_table_select_data *data)
 {
+  scan_info *si = data->scan_info;
+  grn_obj *res = data->res;
   grn_bool processed = GRN_FALSE;
 
   if (GRN_BULK_VSIZE(si->query) == 0) {
@@ -3908,9 +3919,10 @@ static grn_bool
 grn_table_select_index_prefix(grn_ctx *ctx,
                               grn_obj *table,
                               grn_obj *index,
-                              scan_info *si,
-                              grn_obj *res)
+                              grn_table_select_data *data)
 {
+  scan_info *si = data->scan_info;
+  grn_obj *res = data->res;
   grn_bool processed = GRN_FALSE;
   if (si->flags & SCAN_ACCESSOR) {
     if (index->header.type == GRN_ACCESSOR &&
@@ -3994,9 +4006,9 @@ static grn_bool
 grn_table_select_index_suffix(grn_ctx *ctx,
                               grn_obj *table,
                               grn_obj *index,
-                              scan_info *si,
-                              grn_obj *res)
+                              grn_table_select_data *data)
 {
+  scan_info *si = data->scan_info;
   grn_obj *domain;
   if (si->flags & SCAN_ACCESSOR) {
     domain = table;
@@ -4009,18 +4021,19 @@ grn_table_select_index_suffix(grn_ctx *ctx,
   if (!(domain->header.flags & GRN_OBJ_KEY_WITH_SIS)) {
     return GRN_FALSE;
   }
-  return grn_table_select_index_prefix(ctx, table, index, si, res);
+  return grn_table_select_index_prefix(ctx, table, index, data);
 }
 
 static grn_inline grn_bool
 grn_table_select_index_match(grn_ctx *ctx,
                              grn_obj *table,
                              grn_obj *index,
-                             scan_info *si,
-                             grn_obj *res,
-                             grn_id *min_id)
+                             grn_table_select_data *data)
 {
-  grn_obj wv, **ip = &GRN_PTR_VALUE(&si->index);
+  scan_info *si = data->scan_info;
+  grn_obj *res = data->res;
+  grn_obj wv;
+  grn_obj **ip = &GRN_PTR_VALUE(&si->index);
   int j;
   int n_indexes = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
   int32_t *wp = &GRN_INT32_VALUE(&si->wv);
@@ -4092,7 +4105,7 @@ grn_table_select_index_match(grn_ctx *ctx,
     use_and_min_skip_enable =
       (grn_table_select_and_min_skip_enable && !GRN_ACCESSORP(ip[0]));
     if (use_and_min_skip_enable) {
-      optarg.match_info.min = *min_id;
+      optarg.match_info.min = data->min_id;
     } else {
       optarg.match_info.min = GRN_ID_NIL;
     }
@@ -4117,9 +4130,9 @@ grn_table_select_index_match(grn_ctx *ctx,
   }
   if ((si->logical_op == GRN_OP_AND) ||
       (si->logical_op == GRN_OP_OR && previous_n_hits == 0)) {
-    *min_id = minimum_min_id;
+    data->min_id = minimum_min_id;
   } else {
-    *min_id = GRN_ID_NIL;
+    data->min_id = GRN_ID_NIL;
   }
   GRN_OBJ_FIN(ctx, &wv);
 
@@ -4130,12 +4143,13 @@ static grn_inline grn_bool
 grn_table_select_index_call_selector(grn_ctx *ctx,
                                      grn_obj *table,
                                      grn_obj *index,
-                                     scan_info *si,
                                      grn_obj *selector,
-                                     grn_obj *res)
+                                     grn_table_select_data *data)
 {
   grn_bool processed = GRN_FALSE;
   grn_proc *proc = (grn_proc *)selector;
+  scan_info *si = data->scan_info;
+  grn_obj *res = data->res;
   grn_rc rc;
 
   if (grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
@@ -4529,32 +4543,37 @@ grn_table_select_index_range_accessor(grn_ctx *ctx,
 }
 
 static grn_inline grn_bool
-grn_table_select_index_range(grn_ctx *ctx, grn_obj *table, grn_obj *index,
-                             scan_info *si, grn_obj *res)
+grn_table_select_index_range(grn_ctx *ctx,
+                             grn_obj *table,
+                             grn_obj *index,
+                             grn_table_select_data *data)
 {
+  scan_info *si = data->scan_info;
   if (si->flags & SCAN_ACCESSOR) {
     switch (index->header.type) {
     case GRN_TABLE_PAT_KEY :
     case GRN_TABLE_DAT_KEY :
       /* table == index */
       return grn_table_select_index_range_key(ctx, table, si,
-                                              si->logical_op, res);
+                                              si->logical_op, data->res);
     case GRN_ACCESSOR :
       return grn_table_select_index_range_accessor(ctx, table, index, si,
-                                                   si->logical_op, res);
+                                                   si->logical_op, data->res);
     default :
       return GRN_FALSE;
     }
   } else {
     return grn_table_select_index_range_column(ctx, table, index, si,
-                                               si->logical_op, res);
+                                               si->logical_op, data->res);
   }
 }
 
 static grn_inline grn_bool
-grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
-                       grn_obj *res, grn_id *min_id)
+grn_table_select_index(grn_ctx *ctx,
+                       grn_obj *table,
+                       grn_table_select_data *data)
 {
+  scan_info *si = data->scan_info;
   grn_bool processed = GRN_FALSE;
   if (!si->query) {
     if (si->op != GRN_OP_CALL || !grn_obj_is_selector_proc(ctx, si->args[0])) {
@@ -4565,16 +4584,16 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
     grn_obj *index = GRN_PTR_VALUE(&si->index);
     switch (si->op) {
     case GRN_OP_EQUAL :
-      processed = grn_table_select_index_equal(ctx, table, index, si, res);
+      processed = grn_table_select_index_equal(ctx, table, index, data);
       break;
     case GRN_OP_NOT_EQUAL :
-      processed = grn_table_select_index_not_equal(ctx, table, index, si, res);
+      processed = grn_table_select_index_not_equal(ctx, table, index, data);
       break;
     case GRN_OP_PREFIX :
-      processed = grn_table_select_index_prefix(ctx, table, index, si, res);
+      processed = grn_table_select_index_prefix(ctx, table, index, data);
       break;
     case GRN_OP_SUFFIX :
-      processed = grn_table_select_index_suffix(ctx, table, index, si, res);
+      processed = grn_table_select_index_suffix(ctx, table, index, data);
       break;
     case GRN_OP_MATCH :
     case GRN_OP_NEAR :
@@ -4582,12 +4601,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
     case GRN_OP_SIMILAR :
     case GRN_OP_REGEXP :
     case GRN_OP_QUORUM :
-      processed = grn_table_select_index_match(ctx,
-                                               table,
-                                               index,
-                                               si,
-                                               res,
-                                               min_id);
+      processed = grn_table_select_index_match(ctx, table, index, data);
       break;
     case GRN_OP_TERM_EXTRACT :
       if (si->flags & SCAN_ACCESSOR) {
@@ -4599,8 +4613,11 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             grn_table_select_index_report(ctx, "[term-extract][accessor][key]",
                                           table);
             grn_table_search(ctx, table,
-                             GRN_TEXT_VALUE(si->query), GRN_TEXT_LEN(si->query),
-                             GRN_OP_TERM_EXTRACT, res, si->logical_op);
+                             GRN_TEXT_VALUE(si->query),
+                             GRN_TEXT_LEN(si->query),
+                             GRN_OP_TERM_EXTRACT,
+                             data->res,
+                             si->logical_op);
             processed = GRN_TRUE;
             break;
           }
@@ -4612,16 +4629,15 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         processed = grn_table_select_index_call_selector(ctx,
                                                          table,
                                                          index,
-                                                         si,
                                                          si->args[0],
-                                                         res);
+                                                         data);
       }
       break;
     case GRN_OP_LESS :
     case GRN_OP_GREATER :
     case GRN_OP_LESS_EQUAL :
     case GRN_OP_GREATER_EQUAL :
-      processed = grn_table_select_index_range(ctx, table, index, si, res);
+      processed = grn_table_select_index_range(ctx, table, index, data);
       break;
     default :
       /* todo : implement */
@@ -4650,7 +4666,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                                                NULL,
                                                si->nargs,
                                                si->args,
-                                               res,
+                                               data->res,
                                                si->logical_op);
         if (rc) {
           if (rc == GRN_FUNCTION_NOT_IMPLEMENTED) {
@@ -4870,22 +4886,25 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   GRN_API_ENTER;
   res_size = GRN_HASH_SIZE((grn_hash *)res);
   if (op == GRN_OP_OR || res_size) {
-    int i;
     grn_scanner *scanner;
     scanner = grn_scanner_open(ctx, expr, op, res_size > 0);
     if (scanner) {
+      int i;
       grn_obj res_stack;
       grn_expr *e = (grn_expr *)scanner->expr;
       grn_expr_code *codes = e->codes;
       uint32_t codes_curr = e->codes_curr;
-      grn_id min_id = GRN_ID_NIL;
       grn_obj condition_inspect_buffer;
       grn_obj *base_res = NULL;
+      grn_table_select_data data;
 
-      v = grn_expr_get_var_by_offset(ctx, (grn_obj *)e, 0);
       GRN_PTR_INIT(&res_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
       GRN_TEXT_INIT(&condition_inspect_buffer, 0);
 
+      data.variable = grn_expr_get_var_by_offset(ctx, (grn_obj *)e, 0);
+      data.scanner = scanner;
+      data.res = res;
+      data.min_id = GRN_ID_NIL;
       if (res_size > 0 && op == GRN_OP_AND) {
         grn_bool have_push = GRN_FALSE;
         for (i = 0; i < scanner->n_sis; i++) {
@@ -4906,7 +4925,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
             void *key = NULL, *value = NULL, *base_value = NULL;
             uint32_t key_size = 0;
 
-            GRN_TABLE_EACH(ctx, res, 0, 0, id, &key, &key_size, &value, {
+            GRN_TABLE_EACH(ctx, data.res, 0, 0, id, &key, &key_size, &value, {
               if (grn_table_add_v(ctx, base_res, key, key_size, &base_value, NULL)) {
                 grn_rset_recinfo *ri = value;
                 grn_rset_recinfo *base_ri = base_value;
@@ -4920,13 +4939,15 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
 
       for (i = 0; i < scanner->n_sis; i++) {
         scan_info *si = scanner->sis[i];
+        data.nth_scan_info = i;
+        data.scan_info = si;
         if (si->flags & SCAN_POP) {
           grn_obj *res_;
           GRN_PTR_POP(&res_stack, res_);
-          grn_table_setoperation(ctx, res_, res, res_, si->logical_op);
-          grn_obj_close(ctx, res);
-          res = res_;
-          min_id = GRN_ID_NIL;
+          grn_table_setoperation(ctx, res_, data.res, res_, si->logical_op);
+          grn_obj_close(ctx, data.res);
+          data.res = res_;
+          data.min_id = GRN_ID_NIL;
         } else {
           grn_bool processed = GRN_FALSE;
           if (si->flags & SCAN_PUSH) {
@@ -4944,28 +4965,28 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               grn_table_setoperation(ctx, res_, base_res, res_, GRN_OP_OR);
               si->logical_op = GRN_OP_AND;
             }
-            GRN_PTR_PUT(ctx, &res_stack, res);
-            res = res_;
-            min_id = GRN_ID_NIL;
+            GRN_PTR_PUT(ctx, &res_stack, data.res);
+            data.res = res_;
+            data.min_id = GRN_ID_NIL;
           }
           if (si->logical_op != GRN_OP_AND) {
-            min_id = GRN_ID_NIL;
+            data.min_id = GRN_ID_NIL;
           }
-          processed = grn_table_select_index(ctx, table, si, res, &min_id);
+          processed = grn_table_select_index(ctx, table, &data);
           if (!processed) {
             if (ctx->rc) { break; }
             e->codes = codes + si->start;
             e->codes_curr = si->end - si->start + 1;
             grn_table_select_sequential(ctx, table, (grn_obj *)e, v,
-                                        res, si->logical_op);
+                                        data.res, si->logical_op);
             e->codes = codes;
             e->codes_curr = codes_curr;
-            min_id = GRN_ID_NIL;
+            data.min_id = GRN_ID_NIL;
           }
         }
         GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                       ":", "filter(%d)%s",
-                      grn_table_size(ctx, res),
+                      grn_table_size(ctx, data.res),
                       grn_table_select_inspect_condition(
                         ctx,
                         &condition_inspect_buffer,
@@ -4973,12 +4994,13 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                         e));
         if (ctx->rc) {
           if (res_created) {
-            grn_obj_close(ctx, res);
+            grn_obj_close(ctx, data.res);
           }
-          res = NULL;
+          data.res = NULL;
           break;
         }
       }
+      res = data.res;
 
       GRN_OBJ_FIN(ctx, &condition_inspect_buffer);
       if (base_res) {
