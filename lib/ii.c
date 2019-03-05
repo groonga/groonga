@@ -3674,7 +3674,8 @@ chunk_merge(grn_ctx *ctx,
       chunk_data->weights = rdv[j++].data;
     }
     chunk_data->position_gaps = rdv[j].data;
-    chunk_data->position_gaps_end = chunk_data->position_gaps + rdv[j].data_size;
+    chunk_data->position_gaps_end =
+      chunk_data->position_gaps + (rdv[j].data_size / sizeof(uint32_t));
   }
   datavec_reset(ctx,
                 dv,
