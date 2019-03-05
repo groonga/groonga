@@ -3675,7 +3675,7 @@ chunk_merge(grn_ctx *ctx,
     }
     chunk_data->position_gaps = rdv[j].data;
     chunk_data->position_gaps_end =
-      chunk_data->position_gaps + (rdv[j].data_size / sizeof(uint32_t));
+      chunk_data->position_gaps + rdv[j].data_size;
   }
   datavec_reset(ctx,
                 dv,
@@ -4070,7 +4070,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           }
           chunk_data->position_gaps = rdv[j].data;
           chunk_data->position_gaps_end =
-            chunk_data->position_gaps + (rdv[j].data_size / sizeof(uint32_t));
+            chunk_data->position_gaps + rdv[j].data_size;
         }
         datavec_reset(ctx,
                       dv,
@@ -4574,7 +4574,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
           GRN_OUTPUT_INT64(rdv[j].data_size);
           chunk_data->position_gaps = rdv[j].data;
           chunk_data->position_gaps_end =
-            chunk_data->position_gaps + (rdv[j].data_size / sizeof(uint32_t));
+            chunk_data->position_gaps + rdv[j].data_size;
         }
         nterm_with_chunk++;
       }
