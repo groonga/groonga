@@ -3332,13 +3332,13 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
       merger_put_next_id(ctx, data, &(chunk_data->id));
       if ((data->ii->header->flags & GRN_OBJ_WITH_POSITION)) {
         uint32_t i;
-        uint32_t rest_n_positiongs =
+        uint32_t rest_n_positions =
           (uint32_t)(chunk_data->position_gaps_end -
                      chunk_data->position_gaps);
-        uint32_t rest_n_dest_positiongs =
+        uint32_t rest_n_dest_positions =
           (uint32_t)(data->dest.position_gaps_end -
                      data->dest.position_gaps);
-        if (chunk_data->id.tf > rest_n_positiongs) {
+        if (chunk_data->id.tf > rest_n_positions) {
           merger_buffer_data *buffer_data = &(data->source.buffer);
           grn_obj term;
           DEFINE_NAME(data->ii);
@@ -3357,10 +3357,10 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
                   buffer_data->term->tid,
                   chunk_data->id.rid, chunk_data->id.sid,
                   chunk_data->id.tf,
-                  rest_n_positiongs);
+                  rest_n_positions);
           GRN_OBJ_FIN(ctx, &term);
         }
-        if (chunk_data->id.tf > rest_n_dest_positiongs) {
+        if (chunk_data->id.tf > rest_n_dest_positions) {
           /* TODO: Make this case error. */
           merger_buffer_data *buffer_data = &(data->source.buffer);
           grn_obj term;
@@ -3381,7 +3381,7 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
                   buffer_data->term->tid,
                   chunk_data->id.rid, chunk_data->id.sid,
                   chunk_data->id.tf,
-                  rest_n_dest_positiongs);
+                  rest_n_dest_positions);
           GRN_OBJ_FIN(ctx, &term);
         }
         for (i = 0; i < chunk_data->id.tf; i++) {
