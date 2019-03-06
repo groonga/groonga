@@ -3218,6 +3218,28 @@ typedef struct {
 } merger_data;
 
 grn_inline static void
+merger_init_chunk_data(grn_ctx *ctx,
+                       merger_data *data,
+                       datavec *rdv)
+{
+  merger_chunk_data *chunk_data = &(data->source.chunk);
+  grn_ii *ii = data->ii;
+  int j = 0;
+  memset(&(chunk_data->id), 0, sizeof(docinfo));
+  chunk_data->n_documents = rdv[j].data_size;
+  chunk_data->record_id_gaps = rdv[j++].data;
+  if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+    chunk_data->section_id_gaps = rdv[j++].data;
+  }
+  chunk_data->tfs = rdv[j++].data;
+  if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+    chunk_data->weights = rdv[j++].data;
+  }
+  chunk_data->position_gaps = rdv[j].data;
+  chunk_data->position_gaps_end = chunk_data->position_gaps + rdv[j].data_size;
+}
+
+grn_inline static void
 merger_report_error(grn_ctx *ctx,
                     merger_data *data,
                     const char *message,
@@ -3661,22 +3683,8 @@ chunk_merge(grn_ctx *ctx,
     }
     bufsize += decoded_size;
   }
+  merger_init_chunk_data(ctx, data, rdv);
   /* (df in chunk list) = a[1] - chunk_data->n_documents; */
-  {
-    int j = 0;
-    chunk_data->n_documents = rdv[j].data_size;
-    chunk_data->record_id_gaps = rdv[j++].data;
-    if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-      chunk_data->section_id_gaps = rdv[j++].data;
-    }
-    chunk_data->tfs = rdv[j++].data;
-    if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
-      chunk_data->weights = rdv[j++].data;
-    }
-    chunk_data->position_gaps = rdv[j].data;
-    chunk_data->position_gaps_end =
-      chunk_data->position_gaps + rdv[j].data_size;
-  }
   datavec_reset(ctx,
                 dv,
                 ii->n_elements,
@@ -4057,21 +4065,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           goto exit;
         }
         size += decoded_size;
-        {
-          int j = 0;
-          chunk_data->n_documents = rdv[j].data_size;
-          chunk_data->record_id_gaps = rdv[j++].data;
-          if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-            chunk_data->section_id_gaps = rdv[j++].data;
-          }
-          chunk_data->tfs = rdv[j++].data;
-          if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
-            chunk_data->weights = rdv[j++].data;
-          }
-          chunk_data->position_gaps = rdv[j].data;
-          chunk_data->position_gaps_end =
-            chunk_data->position_gaps + rdv[j].data_size;
-        }
+        merger_init_chunk_data(ctx, &data, rdv);
         datavec_reset(ctx,
                       dv,
                       ii->n_elements,
@@ -4556,25 +4550,23 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
                            chunk_data->data_end - chunk_data->data,
                            rdv,
                            ii->n_elements);
+        merger_init_chunk_data(ctx, &data, rdv);
+        GRN_OUTPUT_INT64(chunk_data->n_documents);
+        GRN_OUTPUT_INT64(chunk_data->position_gaps_end -
+                         chunk_data->position_gaps);
         {
           int j = 0;
-          chunk_data->n_documents = rdv[j].data_size;
-          GRN_OUTPUT_INT64(chunk_data->n_documents);
-          chunk_data->record_id_gaps = rdv[j++].data;
+          j++;
           if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
-            chunk_data->section_id_gaps = rdv[j++].data;
+            j++;
           }
           if (chunk_data->n_documents != rdv[j].data_size) {
             nterms_with_corrupt_chunk++;
           }
-          chunk_data->tfs = rdv[j++].data;
+          j++;
           if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
-            chunk_data->weights = rdv[j++].data;
+            j++;
           }
-          GRN_OUTPUT_INT64(rdv[j].data_size);
-          chunk_data->position_gaps = rdv[j].data;
-          chunk_data->position_gaps_end =
-            chunk_data->position_gaps + rdv[j].data_size;
         }
         nterm_with_chunk++;
       }
