@@ -4,8 +4,6 @@ notifications:
 
 language: cpp
 
-sudo: required
-
 services:
   - docker
 
