@@ -42,7 +42,7 @@ table_create Data TABLE_NO_KEY
 COMMANDS
 columns.each do |column|
   puts(<<-COMMANDS)
-column_create Data #{column} COLUMN_SCALAR Text
+column_create Data #{column} COLUMN_SCALAR|COMPRESS_ZSTD Text
   COMMANDS
 end
 
