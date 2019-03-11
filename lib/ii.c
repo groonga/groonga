@@ -10250,10 +10250,16 @@ exit :
   bt_close(ctx, bt);
 #ifdef DEBUG
   {
-    uint32_t segno = GRN_II_MAX_LSEG, nnref = 0;
+    uint32_t i;
+    uint32_t n_segments = ii->seg->header->max_segment;
+    uint32_t n_nrefs = 0;
     grn_io_mapinfo *info = ii->seg->maps;
-    for (; segno; segno--, info++) { if (info->nref) { nnref++; } }
-    GRN_LOG(ctx, GRN_LOG_INFO, "nnref=%d", nnref);
+    for (i = 0; i < n_segments; i++, info++) {
+      if (info->nref > 0) {
+        n_nrefs++;
+      }
+    }
+    GRN_LOG(ctx, GRN_LOG_INFO, "n_nrefs=%u", n_nrefs);
   }
 #endif /* DEBUG */
   return rc;
