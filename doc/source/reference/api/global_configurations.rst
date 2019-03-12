@@ -45,5 +45,5 @@ Reference
      * negative value: It means that Groonga retries acquiring a lock
        until Groonga can acquire a lock.
 
-   :param timeuot: The new lock timeout.
+   :param timeout: The new lock timeout.
    :return: ``GRN_SUCCESS``. It doesn't fail.
