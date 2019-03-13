@@ -4025,9 +4025,6 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           }
           if (cinfo[i].size) {
             nvchunks++;
-          } else {
-            crid -= cinfo[i].dgap;
-            cinfo[i + 1].dgap += cinfo[i].dgap;
           }
         }
       }
