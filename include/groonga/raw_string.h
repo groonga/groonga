@@ -48,6 +48,17 @@ extern "C" {
     memcmp(string.value, cstring, string.length) == 0) :        \
    (string.length == 0))
 
+#define GRN_RAW_STRING_SPRIT(string, separator, splited_string, n_splited_string)       \
+  unsigned int i;                                                                       \
+  splited_string->value = strtok(string->value, separator);                             \
+  splited_string->length = strlen(splited_string->value);                               \
+  splited_string++;                                                                     \
+  for (i = 0; i < n_splited_string-1; i++) {                                            \
+    splited_string->value = strtok(NULL, separator);                                    \
+    splited_string->length = strlen(splited_string->value);                             \
+    splited_string++;                                                                   \
+  }                                                                                     
+
 typedef struct {
   const char *value;
   size_t length;

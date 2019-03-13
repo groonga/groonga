@@ -119,6 +119,9 @@ typedef struct {
   grn_raw_string adjuster;
   grn_raw_string match_escalation;
   grn_columns columns;
+  grn_raw_string load_table;
+  grn_raw_string load_columns;
+  grn_raw_string load_values;
 
   /* for processing */
   struct {
@@ -2701,6 +2704,85 @@ grn_select_prepare_drilldowns(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
+void
+grn_load_columns_collect(grn_raw_string *load_columns_names,
+                         grn_raw_string *to_columns,
+                         unsigned int n_columns)
+{
+  GRN_RAW_STRING_SPRIT(load_columns_names,
+                       ",",
+                       to_columns, n_columns);
+}
+
+static grn_bool
+grn_select_load_table(grn_ctx *ctx,
+                      grn_select_data *data)
+{
+  grn_obj *to_columns;
+  grn_raw_string *to_columns_string;
+  unsigned int n_columns = 0;
+  unsigned int i = 0;
+
+  grn_raw_string *load_table_string = &data->load_table;
+  grn_raw_string *load_columns_string = &data->load_columns;
+  grn_raw_string *load_values_string = &data->load_values;
+
+  if (load_table_string->length == 0
+      || load_columns_string->length == 0
+      || load_values_string->length == 0) {
+    return GRN_TRUE;
+  }
+
+#define GRN_RAW_STRING_CHAR_COUNT(string, search_cahr, n_columns)   \
+  while (strchr(string->value, search_cahr)) {                      \
+    n_columns++;                                                    \
+  }                                                                 \
+  n_columns++;
+
+  GRN_RAW_STRING_CHAR_COUNT(load_columns_string, ',', n_columns);
+#undef GRN_RAW_STRING_CHAR_COUNT
+
+  to_columns_string = GRN_MALLOC(sizeof(grn_raw_string) * n_columns);
+  grn_load_columns_collect(load_values_string, to_columns_string, n_columns);
+
+  to_columns = GRN_MALLOC(sizeof(to_columns) * n_columns);
+  for (i = 0; i< n_columns; i++) {
+    to_columns = grn_ctx_get(ctx, to_columns_string->value, to_columns_string->length);
+    if (!to_columns) {
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[select][load_columns] invalid name: <%.*s>",
+                       (int)(to_columns_string->length),
+                       to_columns_string->value);
+      GRN_FREE(to_columns_string);
+      GRN_FREE(to_columns);
+      return GRN_FALSE;
+    }
+    to_columns++;
+  }
+
+  GRN_TABLE_EACH_BEGIN(ctx, data->tables.result, cursor, id) {
+    grn_obj *output_columns = NULL;
+    grn_obj *variable;
+
+    GRN_EXPR_CREATE_FOR_QUERY(ctx, data->tables.result, output_columns, variable);
+    if (ctx->rc == GRN_SUCCESS) {
+      grn_expr_parse(ctx,
+                     output_columns,
+                     load_values_string->value,
+                     load_values_string->length,
+                     NULL,
+                     GRN_OP_MATCH,
+                     GRN_OP_AND,
+                     GRN_EXPR_SYNTAX_OUTPUT_COLUMNS);
+    }
+    grn_output_columns_apply(ctx, output_columns, to_columns);
+  } GRN_TABLE_EACH_END(ctx, cursor);
+
+  GRN_FREE(to_columns_string);
+  return GRN_TRUE;
+}
+
 static grn_bool
 grn_select_output_drilldowns(grn_ctx *ctx,
                              grn_select_data *data)
@@ -3320,6 +3402,10 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         goto exit;
       }
 
+      if (!grn_select_load_table(ctx, data)) {
+        goto exit;
+      }
+
       succeeded = grn_select_output(ctx, data);
       if (!succeeded) {
         goto exit;
@@ -3802,6 +3888,21 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                                    "match_escalation", -1,
                                    &(data.match_escalation.length));
 
+  data.load_table.value =
+    grn_plugin_proc_get_var_string(ctx, user_data,
+                                   "load_table", -1,
+                                   &(data.load_table.length));
+
+  data.load_columns.value =
+    grn_plugin_proc_get_var_string(ctx, user_data,
+                                   "load_columns", -1,
+                                   &(data.load_columns.length));
+
+  data.load_values.value =
+    grn_plugin_proc_get_var_string(ctx, user_data,
+                                   "load_values", -1,
+                                   &(data.load_values.length));
+
   if (!grn_select_data_fill_slices(ctx, user_data, &data)) {
     goto exit;
   }
@@ -3870,7 +3971,7 @@ exit :
   return NULL;
 }
 
-#define N_VARS 28
+#define N_VARS 31
 #define DEFINE_VARS grn_expr_var vars[N_VARS]
 
 static void
@@ -3907,6 +4008,9 @@ init_vars(grn_ctx *ctx, grn_expr_var *vars)
   grn_plugin_expr_var_init(ctx, &(vars[25]), "drilldown_sort_keys", -1);
   grn_plugin_expr_var_init(ctx, &(vars[26]), "drilldown_adjuster", -1);
   grn_plugin_expr_var_init(ctx, &(vars[27]), "match_escalation", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[28]), "load_table", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[29]), "load_values", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[30]), "load_columns", -1);
 }
 
 void

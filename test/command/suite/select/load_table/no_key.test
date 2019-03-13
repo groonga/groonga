@@ -1,0 +1,24 @@
+table_create Logs_20150203 TABLE_NO_KEY
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+
+table_create Logs TABLE_NO_KEY
+column_create Logs original_id COLUMN_SCALAR UInt32
+column_create Logs timestamp_text COLUMN_SCALAR ShortText
+
+load --table Logs_20150203
+[
+{
+  "timestamp": "2015-02-03 10:49:00"
+},
+{
+  "timestamp": "2015-02-03 12:49:00"
+}
+]
+
+select \
+  --table Logs_20150203 \
+  --load_table Logs \
+  --load_columns "original_id, timestamp_text" \
+  --load_values "_id, timestamp"
+
+select --table Logs
