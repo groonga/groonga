@@ -289,6 +289,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_less_than.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/limit_negative.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/limit_simple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/load_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/match_columns_simple.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/match_columns_some_columns.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/match_columns_weight.log \
@@ -1344,6 +1345,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/filter_less_than.log \
 	source/example/reference/commands/select/limit_negative.log \
 	source/example/reference/commands/select/limit_simple.log \
+	source/example/reference/commands/select/load_table.log \
 	source/example/reference/commands/select/match_columns_simple.log \
 	source/example/reference/commands/select/match_columns_some_columns.log \
 	source/example/reference/commands/select/match_columns_weight.log \

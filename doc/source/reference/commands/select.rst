@@ -51,6 +51,9 @@ optional::
          [sort_keys=null]
          [drilldown_sort_keys=null]
          [match_escalation=auto]
+         [load_table=null]
+         [load_columns=null]
+         [load_values=null]
 
 This command has the following named parameters for dynamic columns:
 
@@ -676,6 +679,79 @@ The ``select`` command searches records that ``n_likes`` column value
 is less than ``11`` from ``Entries`` table.
 
 See :doc:`/reference/grn_expr/script_syntax` for other operators.
+
+.. _select-load-table:
+
+``load_table``
+""""""""""""""
+
+.. versionadded:: 9.0.1
+
+You can store specified a table a result of ``select`` with ``--load_table``, ``--load-columns`` and ``--load_values`` arguments.
+``--load_table`` specifies a table name for storing a result of ``select``.
+
+You must specify a table that already exists.
+
+This argument must use with :ref:`select-load-columns` and :ref:`select-load-values`.
+
+Here is an example that can store ``_id`` and ``timestamp`` that a result of ``select`` in a Logs table specified by ``--load_table``.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/load_table.log
+.. table_create Logs_20150203 TABLE_HASH_KEY ShortText
+.. column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+..
+.. table_create Logs TABLE_HASH_KEY ShortText
+.. column_create Logs original_id COLUMN_SCALAR UInt32
+.. column_create Logs timestamp_text COLUMN_SCALAR ShortText
+..
+.. load --table Logs_20150203
+.. [
+.. {
+..   "_key": "2015-02-03:1",
+..   "timestamp": "2015-02-03 10:49:00"
+.. },
+.. {
+..   "_key": "2015-02-03:2",
+..   "timestamp": "2015-02-03 12:49:00"
+.. }
+.. ]
+.. select \
+..   --table Logs_20150203 \
+..   --load_table Logs \
+..   --load_columns "original_id, timestamp_text" \
+..   --load_values "_id, timestamp"
+.. select --table Logs
+
+.. _select-load-columns:
+
+``load_columns``
+""""""""""""""""
+
+.. versionadded:: 9.0.1
+
+Specifies columns of a table that specifying ``--load-table``.
+Stores value of columns that specified with :ref:`select-load-values` in columns that specified with this argument.
+You must specify columns that already exists.
+
+This argument must use with :ref:`select-load-table` and :ref:`select-load-values`.
+
+See example of ``--load_table`` for how to use this argument.
+
+.. _select-load-values:
+
+``load_values``
+"""""""""""""""
+
+.. versionadded:: 9.0.1
+
+Specifies columns of result of ``select``.
+Specifies columns for storing values into columns that specified with :ref:`select-load-columns`.
+You must specify columns that already exists.
+
+This argument must use with :ref:`select-load-table` and :ref:`select-load-columns`.
+
+See example of ``--load_table`` for how to use this argument.
 
 .. _select-advanced-search-parameters:
 
