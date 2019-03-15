@@ -1,0 +1,104 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create LoadedLogs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create LoadedLogs original_id COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+column_create LoadedLogs timestamp_text COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{
+  "timestamp": "2015-02-03 10:49:00"
+},
+{
+  "timestamp": "2015-02-03 12:49:00"
+},
+{
+  "timestamp": "2015-02-04 00:00:00"
+}
+]
+[[0,0.0,0.0],3]
+select   Logs   --load_table LoadedLogs   --load_columns "original_id, timestamp_text"   --load_values "_id, timestamp"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ],
+      [
+        1,
+        1422928140.0
+      ],
+      [
+        2,
+        1422935340.0
+      ],
+      [
+        3,
+        1422975600.0
+      ]
+    ]
+  ]
+]
+select --table LoadedLogs
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "original_id",
+          "UInt32"
+        ],
+        [
+          "timestamp_text",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        1,
+        "1422928140000000"
+      ],
+      [
+        2,
+        2,
+        "1422935340000000"
+      ],
+      [
+        3,
+        3,
+        "1422975600000000"
+      ]
+    ]
+  ]
+]

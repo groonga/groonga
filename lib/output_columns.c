@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,10 @@ grn_output_columns_parse(grn_ctx *ctx,
                    GRN_OP_MATCH,
                    GRN_OP_AND,
                    GRN_EXPR_SYNTAX_OUTPUT_COLUMNS);
+    if (ctx->rc != GRN_SUCCESS) {
+      grn_obj_close(ctx, output_columns);
+      output_columns = NULL;
+    }
   }
 
   GRN_API_RETURN(output_columns);

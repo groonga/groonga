@@ -1,0 +1,32 @@
+table_create Logs TABLE_HASH_KEY ShortText
+column_create Logs timestamp COLUMN_SCALAR Time
+
+table_create LoadedLogs TABLE_HASH_KEY ShortText
+column_create LoadedLogs original_id COLUMN_SCALAR UInt32
+column_create LoadedLogs timestamp_text COLUMN_SCALAR ShortText
+
+load --table Logs
+[
+{
+  "_key": "2015-02-03:1",
+  "timestamp": "2015-02-03 10:49:00"
+},
+{
+  "_key": "2015-02-03:2",
+  "timestamp": "2015-02-03 12:49:00"
+},
+{
+  "_key": "2015-02-04:1",
+  "timestamp": "2015-02-04 00:00:00"
+}
+]
+
+#@collect-query-log true
+select \
+  Logs \
+  --load_table LoadedLogs \
+  --load_columns "_key, original_id, timestamp_text" \
+  --load_values "cast_loose(ShortText, timestamp, '') + ':' + _id, _id, timestamp"
+#@collect-query-log false
+
+select --table LoadedLogs

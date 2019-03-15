@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -134,6 +134,11 @@ typedef struct {
     int n_elements;
     grn_select_output_formatter *formatter;
   } output;
+  struct {
+    grn_raw_string table;
+    grn_raw_string columns;
+    grn_raw_string values;
+  } load;
 } grn_select_data;
 
 typedef void grn_select_output_slices_label_func(grn_ctx *ctx,
@@ -1916,6 +1921,102 @@ grn_select_sort(grn_ctx *ctx,
 }
 
 static grn_bool
+grn_select_load(grn_ctx *ctx,
+                grn_select_data *data)
+{
+  grn_obj *table;
+  grn_obj columns;
+  grn_obj *output_columns = NULL;
+
+  if (data->load.table.length == 0) {
+    return GRN_TRUE;
+  }
+  if (data->load.columns.length == 0) {
+    return GRN_TRUE;
+  }
+  if (data->load.values.length == 0) {
+    return GRN_TRUE;
+  }
+
+  table = grn_ctx_get(ctx,
+                      data->load.table.value,
+                      data->load.table.length);
+  if (!table) {
+    GRN_PLUGIN_ERROR(ctx,
+                     ctx->rc,
+                     "[select][load] "
+                     "nonexistent load table: <%.*s>",
+                     (int)(data->load.table.length),
+                     data->load.table.value);
+    return GRN_FALSE;
+  }
+
+  GRN_PTR_INIT(&columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_obj_columns(ctx,
+                  table,
+                  data->load.columns.value,
+                  data->load.columns.length,
+                  &columns);
+  if (ctx->rc != GRN_SUCCESS) {
+    GRN_PLUGIN_ERROR(ctx,
+                     ctx->rc,
+                     "[select][load] "
+                     "failed to parse columns: <%.*s>: %s",
+                     (int)(data->load.columns.length),
+                     data->load.columns.value,
+                     ctx->errbuf);
+    goto exit;
+  }
+
+  output_columns = grn_output_columns_parse(ctx,
+                                            data->tables.result,
+                                            data->load.values.value,
+                                            data->load.values.length);
+  if (!output_columns) {
+    GRN_PLUGIN_ERROR(ctx,
+                     ctx->rc,
+                     "[select][load] "
+                     "failed to parse values: <%.*s>: %s",
+                     (int)(data->load.values.length),
+                     data->load.values.value,
+                     ctx->errbuf);
+    goto exit;
+  }
+
+  grn_output_columns_apply(ctx, output_columns, &columns);
+  if (ctx->rc != GRN_SUCCESS) {
+    GRN_PLUGIN_ERROR(ctx,
+                     ctx->rc,
+                     "[select][load] "
+                     "failed to load: <%.*s>: %s",
+                     (int)(data->load.values.length),
+                     data->load.values.value,
+                     ctx->errbuf);
+  }
+
+  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                ":", "load(%d)", grn_table_size(ctx, data->tables.result));
+
+exit :
+  if (output_columns) {
+    grn_obj_close(ctx, output_columns);
+  }
+  {
+    size_t i;
+    size_t n_columns = GRN_BULK_VSIZE(&columns) / sizeof(grn_obj *);
+    for (i = 0; i < n_columns; i++) {
+      grn_obj *column = GRN_PTR_VALUE_AT(&columns, i);
+      if (grn_obj_is_accessor(ctx, column)) {
+        grn_obj_close(ctx, column);
+      }
+    }
+    GRN_OBJ_FIN(ctx, &columns);
+  }
+
+  return ctx->rc == GRN_SUCCESS;
+}
+
+static grn_bool
 grn_select_apply_output_columns(grn_ctx *ctx,
                                 grn_select_data *data)
 {
@@ -3176,6 +3277,9 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     PUT_CACHE_KEY(data->filter.query_flags);
     PUT_CACHE_KEY(data->adjuster);
     PUT_CACHE_KEY(data->match_escalation);
+    PUT_CACHE_KEY(data->load.table);
+    PUT_CACHE_KEY(data->load.columns);
+    PUT_CACHE_KEY(data->load.values);
     grn_memcpy(cp, &output_type, sizeof(grn_content_type));
     cp += sizeof(grn_content_type);
     grn_memcpy(cp, &(data->offset), sizeof(int));
@@ -3305,6 +3409,10 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
                                      &(data->offset), &(data->limit));
 
       if (!grn_select_sort(ctx, data)) {
+        goto exit;
+      }
+
+      if (!grn_select_load(ctx, data)) {
         goto exit;
       }
 
@@ -3801,6 +3909,18 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     grn_plugin_proc_get_var_string(ctx, user_data,
                                    "match_escalation", -1,
                                    &(data.match_escalation.length));
+  data.load.table.value =
+    grn_plugin_proc_get_var_string(ctx, user_data,
+                                   "load_table", -1,
+                                   &(data.load.table.length));
+  data.load.columns.value =
+    grn_plugin_proc_get_var_string(ctx, user_data,
+                                   "load_columns", -1,
+                                   &(data.load.columns.length));
+  data.load.values.value =
+    grn_plugin_proc_get_var_string(ctx, user_data,
+                                   "load_values", -1,
+                                   &(data.load.values.length));
 
   if (!grn_select_data_fill_slices(ctx, user_data, &data)) {
     goto exit;
@@ -3870,7 +3990,7 @@ exit :
   return NULL;
 }
 
-#define N_VARS 28
+#define N_VARS 31
 #define DEFINE_VARS grn_expr_var vars[N_VARS]
 
 static void
@@ -3907,6 +4027,9 @@ init_vars(grn_ctx *ctx, grn_expr_var *vars)
   grn_plugin_expr_var_init(ctx, &(vars[25]), "drilldown_sort_keys", -1);
   grn_plugin_expr_var_init(ctx, &(vars[26]), "drilldown_adjuster", -1);
   grn_plugin_expr_var_init(ctx, &(vars[27]), "match_escalation", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[28]), "load_table", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[29]), "load_columns", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[30]), "load_values", -1);
 }
 
 void

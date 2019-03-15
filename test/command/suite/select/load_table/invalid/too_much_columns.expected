@@ -1,0 +1,72 @@
+table_create Logs TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Logs timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create LoadedLogs TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create LoadedLogs original_id COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+column_create LoadedLogs timestamp_text COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{
+  "_key": "2015-02-03:1",
+  "timestamp": "2015-02-03 10:49:00"
+},
+{
+  "_key": "2015-02-03:2",
+  "timestamp": "2015-02-03 12:49:00"
+},
+{
+  "_key": "2015-02-04:1",
+  "timestamp": "2015-02-04 00:00:00"
+}
+]
+[[0,0.0,0.0],3]
+select   Logs   --load_table LoadedLogs   --load_columns "original_id, timestamp_text, _key"   --load_values "_id, timestamp"
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[select][load] failed to load: <_id, timestamp>: [output-columns][apply] the number of columns (3) must be 2: [<LoadedLogs.orig"
+  ]
+]
+#|e| [output-columns][apply] the number of columns (3) must be 2: [<LoadedLogs.original_id>, <LoadedLogs.timestamp_text>, #<accessor _key(LoadedLogs)>]
+#|e| [select][load] failed to load: <_id, timestamp>: [output-columns][apply] the number of columns (3) must be 2: [<LoadedLogs.original_id>, <LoadedLogs.timestamp_text>, #<accessor
+select --table LoadedLogs
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        0
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "original_id",
+          "UInt32"
+        ],
+        [
+          "timestamp_text",
+          "ShortText"
+        ]
+      ]
+    ]
+  ]
+]
