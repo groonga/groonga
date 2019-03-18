@@ -310,6 +310,8 @@ typedef uint32_t grn_column_flags;
 #define GRN_OBJ_KEY_WITH_SIS           (0x01<<6)
 #define GRN_OBJ_KEY_NORMALIZE          (0x01<<7)
 
+/* flags for grn_obj_flags and grn_column_flags */
+
 #define GRN_OBJ_COLUMN_TYPE_MASK       (0x07)
 #define GRN_OBJ_COLUMN_SCALAR          (0x00)
 #define GRN_OBJ_COLUMN_VECTOR          (0x01)
