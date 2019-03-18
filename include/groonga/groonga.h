@@ -1573,6 +1573,21 @@ GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_RECORD_POP(obj, value) GRN_BULK_POP(obj, value, grn_id, GRN_ID_NIL)
 #define GRN_PTR_POP(obj, value) GRN_BULK_POP(obj, value, grn_obj *, NULL)
 
+#define GRN_BULK_VECTOR_SIZE(obj, type) (GRN_BULK_VSIZE(obj) / sizeof(type))
+#define GRN_BOOL_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, unsigned char)
+#define GRN_INT8_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, int8_t)
+#define GRN_UINT8_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, uint8_t)
+#define GRN_INT16_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, int16_t)
+#define GRN_UINT16_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, uint16_t)
+#define GRN_INT32_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, int32_t)
+#define GRN_UINT32_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, uint32_t)
+#define GRN_INT64_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, int64_t)
+#define GRN_UINT64_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, uint64_t)
+#define GRN_FLOAT_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, double)
+#define GRN_TIME_VECTOR_SIZE GRN_INT64_VECTOR_SIZE
+#define GRN_RECORD_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, grn_id)
+#define GRN_PTR_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, grn_obj *)
+
 GRN_API grn_rc grn_ctx_push(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_obj *grn_ctx_pop(grn_ctx *ctx);
 
