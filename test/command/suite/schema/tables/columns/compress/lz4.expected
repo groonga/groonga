@@ -219,7 +219,7 @@ schema
     },
     "token_filters": {
       "TokenFilterNFKC100": {
-        "id": 214,
+        "id": 215,
         "name": "TokenFilterNFKC100"
       }
     },
