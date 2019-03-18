@@ -20,6 +20,7 @@ groonga_include_HEADERS =			\
 	groonga.h				\
 	id.h					\
 	ii.h					\
+	index_column.h				\
 	msgpack.h				\
 	obj.h					\
 	operator.h				\

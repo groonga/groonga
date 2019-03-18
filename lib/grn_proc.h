@@ -54,6 +54,7 @@ void grn_proc_init_highlight(grn_ctx *ctx);
 void grn_proc_init_highlight_full(grn_ctx *ctx);
 void grn_proc_init_highlight_html(grn_ctx *ctx);
 void grn_proc_init_in_records(grn_ctx *ctx);
+void grn_proc_init_index_column_diff(grn_ctx *ctx);
 void grn_proc_init_lock_acquire(grn_ctx *ctx);
 void grn_proc_init_lock_clear(grn_ctx *ctx);
 void grn_proc_init_lock_release(grn_ctx *ctx);

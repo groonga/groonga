@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2014-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,7 @@
 #include "groonga/highlighter.h"
 #include "groonga/id.h"
 #include "groonga/ii.h"
+#include "groonga/index_column.h"
 #include "groonga/obj.h"
 #include "groonga/operator.h"
 #include "groonga/option.h"

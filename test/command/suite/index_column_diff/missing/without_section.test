@@ -1,0 +1,23 @@
+table_create Data TABLE_NO_KEY
+column_create Data value COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC100
+column_create Terms data_value_index COLUMN_INDEX|WITH_POSITION Data value
+
+load --table Data
+[
+{"value": "Hello World"},
+{"value": "Hello Groonga"}
+]
+
+truncate Terms.data_value_index
+
+load --table Data
+[
+{"value": "Good-by World"},
+{"value": "Good-by Groonga"}
+]
+
+index_column_diff Terms data_value_index
