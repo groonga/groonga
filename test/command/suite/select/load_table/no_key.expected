@@ -21,43 +21,8 @@ load --table Logs
 }
 ]
 [[0,0.0,0.0],3]
-select   Logs   --load_table LoadedLogs   --load_columns "original_id, timestamp_text"   --load_values "_id, timestamp"
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        3
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "timestamp",
-          "Time"
-        ]
-      ],
-      [
-        1,
-        1422928140.0
-      ],
-      [
-        2,
-        1422935340.0
-      ],
-      [
-        3,
-        1422975600.0
-      ]
-    ]
-  ]
-]
+select   Logs   --load_table LoadedLogs   --load_columns "original_id, timestamp_text"   --load_values "_id, timestamp"   --limit 0
+[[0,0.0,0.0],[[[3],[["_id","UInt32"],["timestamp","Time"]]]]]
 select --table LoadedLogs
 [
   [

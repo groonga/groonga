@@ -34,6 +34,7 @@ logical_select \
   --shard_key timestamp \
   --load_table Logs \
   --load_columns "original_id, timestamp_text" \
-  --load_values "_id, timestamp"
+  --load_values "_id, timestamp" \
+  --limit 0
 
 select --table Logs

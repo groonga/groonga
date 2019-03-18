@@ -37,6 +37,7 @@ logical_select \
   --shard_key timestamp \
   --load_table Logs \
   --load_columns "_key, original_id, timestamp_text" \
-  --load_values "cast_loose(ShortText, timestamp, '') + ':' + _id, _id, timestamp"
+  --load_values "cast_loose(ShortText, timestamp, '') + ':' + _id, _id, timestamp" \
+  --limit 0
 
 select --table Logs

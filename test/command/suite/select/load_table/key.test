@@ -26,7 +26,8 @@ select \
   Logs \
   --load_table LoadedLogs \
   --load_columns "_key, original_id, timestamp_text" \
-  --load_values "cast_loose(ShortText, timestamp, '') + ':' + _id, _id, timestamp"
+  --load_values "cast_loose(ShortText, timestamp, '') + ':' + _id, _id, timestamp" \
+  --limit 0
 #@collect-query-log false
 
 select --table LoadedLogs

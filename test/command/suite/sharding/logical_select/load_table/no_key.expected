@@ -31,43 +31,8 @@ load --table Logs_20150204
 }
 ]
 [[0,0.0,0.0],1]
-logical_select   --logical_table Logs   --shard_key timestamp   --load_table Logs   --load_columns "original_id, timestamp_text"   --load_values "_id, timestamp"
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        3
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "timestamp",
-          "Time"
-        ]
-      ],
-      [
-        1,
-        1422928140.0
-      ],
-      [
-        2,
-        1422935340.0
-      ],
-      [
-        1,
-        1422975600.0
-      ]
-    ]
-  ]
-]
+logical_select   --logical_table Logs   --shard_key timestamp   --load_table Logs   --load_columns "original_id, timestamp_text"   --load_values "_id, timestamp"   --limit 0
+[[0,0.0,0.0],[[[3],[["_id","UInt32"],["timestamp","Time"]]]]]
 select --table Logs
 [
   [
