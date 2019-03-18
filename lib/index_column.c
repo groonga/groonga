@@ -412,6 +412,26 @@ grn_index_column_diff_find_posting(grn_ctx *ctx,
   return -1;
 }
 
+static double
+grn_index_column_diff_format_time(grn_ctx *ctx,
+                                  double seconds,
+                                  const char **unit)
+{
+  if (seconds < 60) {
+    *unit = "s";
+    return seconds;
+  } else if (seconds < (60 * 60)) {
+    *unit = "m";
+    return seconds / 60;
+  } else if (seconds < (60 * 60 * 24)) {
+    *unit = "h";
+    return seconds / 60 / 60;
+  } else {
+    *unit = "d";
+    return seconds / 60 / 60 / 24;
+  }
+}
+
 static void
 grn_index_column_diff_compute(grn_ctx *ctx,
                               grn_index_column_diff_data *data)
@@ -425,12 +445,42 @@ grn_index_column_diff_compute(grn_ctx *ctx,
   const grn_bool with_section = data->index.with_section;
   const grn_bool with_position = data->index.with_position;
   const size_t n_posting_elements = data->n_posting_elements;
+  const unsigned int n_records = grn_table_size(ctx, data->source_table);
+  unsigned int i_record = 0;
+  const grn_log_level progress_log_level = GRN_LOG_DEBUG;
+  grn_timeval start_time;
+  grn_timeval_now(ctx, &start_time);
 
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx,
                              data->source_table,
                              cursor,
                              id,
                              GRN_CURSOR_BY_ID) {
+    if (grn_logger_pass(ctx, progress_log_level) &&
+        i_record > 0 &&
+        (i_record % 10000) == 0) {
+      grn_timeval current_time;
+      grn_timeval_now(ctx, &current_time);
+      double elapsed_seconds = current_time.tv_sec - start_time.tv_sec;
+      double remained_seconds =
+        elapsed_seconds * ((double)n_records / (double)i_record);
+      const char *elapsed_unit = NULL;
+      double elapsed_time =
+        grn_index_column_diff_format_time(ctx, elapsed_seconds, &elapsed_unit);
+      const char *remained_unit = NULL;
+      double remained_time =
+        grn_index_column_diff_format_time(ctx, remained_seconds, &remained_unit);
+      GRN_LOG(ctx,
+              progress_log_level,
+              "[index-column][diff][progress] %u/%u %.0f%% %.2f%s(%.2f%s)",
+              i_record,
+              n_records,
+              ((double)i_record / (double)n_records) * 100,
+              elapsed_time, elapsed_unit,
+              remained_time, remained_unit);
+    }
+    i_record++;
+
     for (size_t i = 0; i < n_source_columns; i++) {
       grn_posting current_posting = {0};
       current_posting.rid = id;
