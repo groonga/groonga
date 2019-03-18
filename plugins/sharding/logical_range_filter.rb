@@ -198,6 +198,7 @@ module Groonga
             @context.dynamic_columns.each_filtered do |dynamic_column|
               dynamic_column.apply(result_set)
             end
+            @context.temporary_tables << result_set
             @context.result_sets << result_set
           end
         end
