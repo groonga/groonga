@@ -34,7 +34,7 @@ load --table Logs_20150204
 }
 ]
 [[0,0.0,0.0],1]
-logical_select   --logical_table Logs   --shard_key timestamp   --load_table Logs   --load_columns "_key, original_id, timestamp_text"   --load_values "cast_loose(ShortText, timestamp, '') + ':' + _id, _id, timestamp"   --limit 0
+logical_select   --logical_table Logs   --shard_key timestamp   --filter true   --load_table Logs   --load_columns "_key, original_id, timestamp_text"   --load_values "cast_loose(ShortText, timestamp, '') + ':' + _id, _id, timestamp"   --limit 0
 [
   [
     0,
@@ -63,6 +63,16 @@ logical_select   --logical_table Logs   --shard_key timestamp   --load_table Log
     ]
   ]
 ]
+#>logical_select --filter "true" --limit "0" --load_columns "_key, original_id, timestamp_text" --load_table "Logs" --load_values "cast_loose(ShortText, timestamp, '') + ':' + _id, _id, timestamp" --logical_table "Logs" --shard_key "timestamp"
+#:000000000000000 filter(2): true
+#:000000000000000 select(2)[Logs_20150203]
+#:000000000000000 filter(1): true
+#:000000000000000 select(1)[Logs_20150204]
+#:000000000000000 load(2)[Logs_20150203]: [Logs][2]
+#:000000000000000 load(1)[Logs_20150204]: [Logs][3]
+#:000000000000000 load(3): [Logs][3]
+#:000000000000000 output(0)
+#<000000000000000 rc=0
 select --table Logs
 [
   [

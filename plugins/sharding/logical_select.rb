@@ -39,6 +39,8 @@ module Groonga
           executor = Executor.new(context)
           executor.execute
 
+          load_records(context)
+
           n_results = 1
           n_plain_drilldowns = context.plain_drilldown.n_result_sets
           n_labeled_drilldowns = context.labeled_drilldowns.n_result_sets
@@ -110,6 +112,57 @@ module Groonga
         dynamic_columns = DynamicColumns.parse(input)
         key << dynamic_columns.cache_key
         key
+      end
+
+      def resolve_target_table_name(result_set)
+        target_table = result_set
+        while target_table.domain_id
+          domain = Context.instance[target_table.domain_id]
+          break unless domain.is_a?(Table)
+          target_table = domain
+        end
+        target_table.name
+      end
+
+      def load_records(context)
+        load_table = context.load_table
+        load_columns = context.load_columns
+        load_values = context.load_values
+        return if load_table.nil?
+        return if load_columns.nil?
+        return if load_values.nil?
+
+        n_loaded_records = 0
+        to = Context.instance[load_table]
+        to_columns = []
+        begin
+          load_columns.split(/\s*,\s*/).each do |name|
+            to_columns << to.find_column(name)
+          end
+          context.result_sets.each do |result_set|
+            output_columns = result_set.parse_output_columns(load_values)
+            begin
+              output_columns.apply(to_columns)
+            ensure
+              output_columns.close
+            end
+            n_sub_loaded_records = result_set.size
+            query_logger.log(:size,
+                             ":",
+                             "load(#{n_sub_loaded_records})" +
+                             "[#{resolve_target_table_name(result_set)}]: " +
+                             "[#{load_table}][#{to.size}]")
+            n_loaded_records += n_sub_loaded_records
+          end
+        ensure
+          to_columns.each do |column|
+            column.close if column.is_a?(Accessor)
+          end
+        end
+        query_logger.log(:size,
+                         ":",
+                         "load(#{n_loaded_records}): " +
+                         "[#{load_table}][#{to.size}]")
       end
 
       def write_records(writer, context)
@@ -542,7 +595,6 @@ module Groonga
 
         def execute
           execute_search
-          execute_load_table
           if @context.plain_drilldown.have_keys?
             execute_plain_drilldown
           elsif @context.labeled_drilldowns.have_keys?
@@ -577,35 +629,6 @@ module Groonga
               dynamic_column.apply(result_set)
             end
             @context.result_sets << result_set
-          end
-        end
-
-        def execute_load_table
-          load_table = @context.load_table
-          load_columns = @context.load_columns
-          load_values = @context.load_values
-          return if load_table.nil?
-          return if load_columns.nil?
-          return if load_values.nil?
-
-          to = Context.instance[load_table]
-          to_columns = []
-          begin
-            load_columns.split(/\s*,\s*/).each do |name|
-              to_columns << to.find_column(name)
-            end
-            @context.result_sets.each do |result_set|
-              output_columns = result_set.parse_output_columns(load_values)
-              begin
-                output_columns.apply(to_columns)
-              ensure
-                output_columns.close
-              end
-            end
-          ensure
-            to_columns.each do |column|
-              column.close if column.is_a?(Accessor)
-            end
           end
         end
 
