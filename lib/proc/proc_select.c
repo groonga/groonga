@@ -1995,7 +1995,12 @@ grn_select_load(grn_ctx *ctx,
   }
 
   GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                ":", "load(%d)", grn_table_size(ctx, data->tables.result));
+                ":",
+                "load(%d): [%.*s][%d]",
+                grn_table_size(ctx, data->tables.result),
+                (int)(data->load.table.length),
+                data->load.table.value,
+                grn_table_size(ctx, table));
 
 exit :
   if (output_columns) {
