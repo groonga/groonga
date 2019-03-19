@@ -336,6 +336,26 @@ grn_index_column_diff_format_time(grn_ctx *ctx,
   }
 }
 
+static double
+grn_index_column_diff_format_memory(grn_ctx *ctx,
+                                    uint64_t usage,
+                                    const char **unit)
+{
+  if (usage < 1024) {
+    *unit = "B";
+    return usage;
+  } else if (usage < (1024 * 1024)) {
+    *unit = "KiB";
+    return usage / 1024.0;
+  } else if (usage < (1024 * 1024 * 1024)) {
+    *unit = "MiB";
+    return usage / 1024.0 / 1024.0;
+  } else {
+    *unit = "GiB";
+    return usage / 1024.0 / 1024.0 / 1024.0;
+  }
+}
+
 static void
 grn_index_column_diff_progress(grn_ctx *ctx,
                                grn_index_column_diff_data *data)
@@ -380,10 +400,16 @@ grn_index_column_diff_progress(grn_ctx *ctx,
     grn_index_column_diff_format_time(ctx,
                                       current_interval_seconds,
                                       &interval_unit);
+  const char *memory_unit = NULL;
+  const double memory_usage =
+    grn_index_column_diff_format_memory(ctx,
+                                        grn_memory_get_usage(ctx),
+                                        &memory_unit);
+
   GRN_LOG(ctx,
           data->progress.log_level,
           "[index-column][diff][progress] "
-          "%*u/%u %3.0f%% %.2f%s/%.2f%s %2.2f%s(%.2frecords/s)",
+          "%*u/%u %3.0f%% %.2f%s/%.2f%s %.2f%s(%.2frecords/s) %.2f%s",
           data->progress.n_records_digits,
           i,
           n_records,
@@ -391,7 +417,8 @@ grn_index_column_diff_progress(grn_ctx *ctx,
           elapsed_time, elapsed_unit,
           remained_time, remained_unit,
           interval_time, interval_unit,
-          throughput);
+          throughput,
+          memory_usage, memory_unit);
   data->progress.previous_time = current_time;
 }
 
