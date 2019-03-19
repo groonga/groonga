@@ -1,0 +1,79 @@
+table_create Data TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC100
+[[0,0.0,0.0],true]
+column_create Terms data_index COLUMN_INDEX|WITH_POSITION Data _key
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"_key": "Hello World"},
+{"_key": "Hello Groonga"}
+]
+[[0,0.0,0.0],2]
+truncate Terms.data_index
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"_key": "Good-by World"},
+{"_key": "Good-by Groonga"}
+]
+[[0,0.0,0.0],2]
+index_column_diff Terms data_index
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "token": {
+        "id": 1,
+        "value": "hello"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 1,
+          "position": 0
+        },
+        {
+          "record_id": 2,
+          "position": 0
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 2,
+        "value": "world"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 1,
+          "position": 1
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 3,
+        "value": "groonga"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 2,
+          "position": 1
+        }
+      ]
+    }
+  ]
+]

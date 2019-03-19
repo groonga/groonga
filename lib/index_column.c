@@ -705,6 +705,12 @@ grn_index_column_diff(grn_ctx *ctx,
     for (size_t i = 0; i < n_columns; i++) {
       grn_id source_id = GRN_RECORD_VALUE_AT(&source_columns, i);
       grn_obj *source = grn_ctx_at(ctx, source_id);
+      if (grn_obj_is_table(ctx, source)) {
+        source = grn_obj_column(ctx,
+                                source,
+                                GRN_COLUMN_NAME_KEY,
+                                GRN_COLUMN_NAME_KEY_LEN);
+      }
       GRN_PTR_PUT(ctx, &(data.source_columns), source);
     }
     GRN_OBJ_FIN(ctx, &source_columns);
