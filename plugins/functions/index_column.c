@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2017 Brazil
+  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -283,7 +284,6 @@ func_index_column_source_records(grn_ctx *ctx,
       {
         grn_hash_cursor *cursor;
         void *key;
-        grn_obj *value;
         int key_size;
         cursor = grn_hash_cursor_open(ctx, (grn_hash *)options,
                                       NULL, 0, NULL, 0,
@@ -294,14 +294,19 @@ func_index_column_source_records(grn_ctx *ctx,
           return NULL;
         }
         while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
-          grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size,
-                                        (void **)&value);
+          void *value;
+          grn_obj *proc_value;
+          grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, &value);
+          proc_value = value;
 
 #define KEY_EQUAL(name)                                                 \
           (key_size == strlen(name) && memcmp(key, name, strlen(name)) == 0)
 
           if (KEY_EQUAL("limit")) {
-            limit = grn_plugin_proc_get_value_int64(ctx, value, limit, "index_column_source_records()");
+            limit = grn_plugin_proc_get_value_int64(ctx,
+                                                    proc_value,
+                                                    limit,
+                                                    "index_column_source_records()");
             if (ctx->rc != GRN_SUCCESS) {
               grn_hash_cursor_close(ctx, cursor);
               return NULL;
