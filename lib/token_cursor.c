@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -83,7 +83,9 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
         "[token-cursor][open] failed to get table information");
     GRN_API_RETURN(NULL);
   }
-  if (!(token_cursor = GRN_MALLOC(sizeof(grn_token_cursor)))) { return NULL; }
+  if (!(token_cursor = GRN_MALLOC(sizeof(grn_token_cursor)))) {
+    GRN_API_RETURN(NULL);
+  }
   token_cursor->table = table;
   token_cursor->mode = mode;
   token_cursor->encoding = encoding;
