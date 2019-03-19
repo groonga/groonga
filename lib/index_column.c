@@ -238,6 +238,7 @@ grn_index_column_rebuild(grn_ctx *ctx, grn_obj *index_column)
 
 static const char *remains_column_name = "remains";
 static const char *missings_column_name = "missings";
+#define GRN_INDEX_COLUMN_DIFF_CACHE_SIZE 256
 
 typedef struct {
   grn_obj *lexicon;
@@ -255,8 +256,6 @@ typedef struct {
   grn_obj *missings;
   struct {
     grn_obj value;
-    grn_obj postings;
-    grn_obj new_postings;
     grn_obj missings;
   } buffers;
   struct {
@@ -268,6 +267,12 @@ typedef struct {
     grn_timeval start_time;
     grn_timeval previous_time;
   } progress;
+  struct {
+    grn_id token_id;
+    grn_obj buffer1;
+    grn_obj buffer2;
+    grn_obj *postings;
+  } cache[GRN_INDEX_COLUMN_DIFF_CACHE_SIZE];
 } grn_index_column_diff_data;
 
 static void
@@ -276,9 +281,14 @@ grn_index_column_diff_data_init(grn_ctx *ctx,
 {
   GRN_PTR_INIT(&(data->source_columns), GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_VOID_INIT(&(data->buffers.value));
-  GRN_UINT32_INIT(&(data->buffers.postings), GRN_OBJ_VECTOR);
-  GRN_UINT32_INIT(&(data->buffers.new_postings), GRN_OBJ_VECTOR);
   GRN_UINT32_INIT(&(data->buffers.missings), GRN_OBJ_VECTOR);
+
+  for (size_t i = 0; i < GRN_INDEX_COLUMN_DIFF_CACHE_SIZE; i++) {
+    data->cache[i].token_id = GRN_ID_NIL;
+    GRN_UINT32_INIT(&(data->cache[i].buffer1), GRN_OBJ_VECTOR);
+    GRN_UINT32_INIT(&(data->cache[i].buffer2), GRN_OBJ_VECTOR);
+    data->cache[i].postings = NULL;
+  }
 }
 
 static void
@@ -297,9 +307,107 @@ grn_index_column_diff_data_fin(grn_ctx *ctx,
   }
 
   GRN_OBJ_FIN(ctx, &(data->buffers.value));
-  GRN_OBJ_FIN(ctx, &(data->buffers.postings));
-  GRN_OBJ_FIN(ctx, &(data->buffers.new_postings));
   GRN_OBJ_FIN(ctx, &(data->buffers.missings));
+
+  for (size_t i = 0; i < GRN_INDEX_COLUMN_DIFF_CACHE_SIZE; i++) {
+    if (data->cache[i].token_id == GRN_ID_NIL) {
+      continue;
+    }
+    GRN_OBJ_FIN(ctx, &(data->cache[i].buffer1));
+    GRN_OBJ_FIN(ctx, &(data->cache[i].buffer2));
+  }
+}
+
+static size_t
+grn_index_column_diff_cache_compute_key(grn_id token_id)
+{
+  return token_id % GRN_INDEX_COLUMN_DIFF_CACHE_SIZE;
+}
+
+static grn_obj *
+grn_index_column_diff_cache_allocate(grn_ctx *ctx,
+                                     grn_index_column_diff_data *data,
+                                     grn_id token_id)
+{
+  const size_t cache_key = grn_index_column_diff_cache_compute_key(token_id);
+  const grn_id cached_token_id = data->cache[cache_key].token_id;
+  if (cached_token_id != GRN_ID_NIL) {
+    grn_obj_set_value(ctx,
+                      data->remains,
+                      token_id,
+                      data->cache[cache_key].postings,
+                      GRN_OBJ_SET);
+  }
+  data->cache[cache_key].token_id = token_id;
+  data->cache[cache_key].postings = &(data->cache[cache_key].buffer1);
+  return data->cache[cache_key].postings;
+}
+
+static grn_obj *
+grn_index_column_diff_cache_get(grn_ctx *ctx,
+                                grn_index_column_diff_data *data,
+                                grn_id token_id)
+{
+  const size_t cache_key = grn_index_column_diff_cache_compute_key(token_id);
+  const grn_id cached_token_id = data->cache[cache_key].token_id;
+  if (cached_token_id == token_id) {
+    return data->cache[cache_key].postings;
+  } else {
+    grn_obj *postings =
+      grn_index_column_diff_cache_allocate(ctx, data, token_id);
+    GRN_BULK_REWIND(postings);
+    grn_obj_get_value(ctx, data->remains, token_id, postings);
+    return postings;
+  }
+}
+
+static void
+grn_index_column_diff_cache_remove_posting(grn_ctx *ctx,
+                                           grn_index_column_diff_data *data,
+                                           grn_id token_id,
+                                           int64_t nth_posting)
+{
+  const size_t cache_key = grn_index_column_diff_cache_compute_key(token_id);
+  grn_obj *postings = data->cache[cache_key].postings;
+  grn_obj *new_postings = NULL;
+  if (postings == &(data->cache[cache_key].buffer1)) {
+    new_postings = &(data->cache[cache_key].buffer2);
+  } else {
+    new_postings = &(data->cache[cache_key].buffer1);
+  }
+
+  GRN_BULK_REWIND(new_postings);
+  const size_t n_posting_elements = data->n_posting_elements;
+  const size_t posting_size = sizeof(uint32_t) * n_posting_elements;
+  grn_bulk_write(ctx,
+                 new_postings,
+                 GRN_BULK_HEAD(postings),
+                 posting_size * nth_posting);
+  const size_t n_postings =
+    GRN_UINT32_VECTOR_SIZE(postings) / n_posting_elements;
+  grn_bulk_write(ctx,
+                 new_postings,
+                 GRN_BULK_HEAD(postings) +
+                 (posting_size * (nth_posting + 1)),
+                 posting_size * (n_postings - nth_posting - 1));
+  data->cache[cache_key].postings = new_postings;
+}
+
+static void
+grn_index_column_diff_cache_flush(grn_ctx *ctx,
+                                  grn_index_column_diff_data *data)
+{
+  for (size_t i = 0; i < GRN_INDEX_COLUMN_DIFF_CACHE_SIZE; i++) {
+    const grn_id token_id = data->cache[i].token_id;
+    if (token_id == GRN_ID_NIL) {
+      continue;
+    }
+    grn_obj_set_value(ctx,
+                      data->remains,
+                      token_id,
+                      data->cache[i].postings,
+                      GRN_OBJ_SET);
+  }
 }
 
 static void
@@ -415,20 +523,19 @@ grn_index_column_diff_progress(grn_ctx *ctx,
   }
 }
 
-static void
+static grn_obj *
 grn_index_column_diff_get_postings(grn_ctx *ctx,
                                    grn_index_column_diff_data *data,
                                    grn_id token_id)
 {
-  grn_obj *postings = &(data->buffers.postings);
-
   int added = 0;
   grn_table_add(ctx, data->tokens, &token_id, sizeof(grn_id), &added);
   if (!added) {
-    grn_obj_get_value(ctx, data->remains, token_id, postings);
-    return;
+    return grn_index_column_diff_cache_get(ctx, data, token_id);
   }
 
+  grn_obj *postings = grn_index_column_diff_cache_allocate(ctx, data, token_id);
+  GRN_BULK_REWIND(postings);
   const unsigned int ii_cursor_flags = 0;
   grn_ii_cursor *ii_cursor = grn_ii_cursor_open(ctx,
                                                 data->ii,
@@ -462,17 +569,16 @@ grn_index_column_diff_get_postings(grn_ctx *ctx,
     }
     grn_ii_cursor_close(ctx, ii_cursor);
   }
-
-  grn_obj_set_value(ctx, data->remains, token_id, postings, GRN_OBJ_SET);
+  return postings;
 }
 
 static int
 grn_index_column_diff_compare_posting(grn_ctx *ctx,
                                       grn_index_column_diff_data *data,
+                                      grn_obj *postings,
                                       size_t nth_posting,
                                       const grn_posting *current_posting)
 {
-  grn_obj *postings = &(data->buffers.postings);
   const grn_bool with_section = data->index.with_section;
   const grn_bool with_position = data->index.with_position;
   const size_t n_posting_elements = data->n_posting_elements;
@@ -512,16 +618,20 @@ grn_index_column_diff_compare_posting(grn_ctx *ctx,
 static int64_t
 grn_index_column_diff_find_posting(grn_ctx *ctx,
                                    grn_index_column_diff_data *data,
+                                   grn_obj *postings,
                                    const grn_posting *current_posting)
 {
-  grn_obj *postings = &(data->buffers.postings);
   const size_t n_posting_elements = data->n_posting_elements;
   int64_t min = 0;
   int64_t max = (GRN_UINT32_VECTOR_SIZE(postings) / n_posting_elements) - 1;
   while (min <= max) {
     const int64_t middle = min + ((max - min) / 2);
     const int compared =
-      grn_index_column_diff_compare_posting(ctx, data, middle, current_posting);
+      grn_index_column_diff_compare_posting(ctx,
+                                            data,
+                                            postings,
+                                            middle,
+                                            current_posting);
     if (compared == 0) {
       return middle;
     } else if (compared < 0) {
@@ -540,12 +650,9 @@ grn_index_column_diff_compute(grn_ctx *ctx,
   grn_obj *source_columns = &(data->source_columns);
   const size_t n_source_columns = GRN_PTR_VECTOR_SIZE(source_columns);
   grn_obj *value = &(data->buffers.value);
-  grn_obj *postings = &(data->buffers.postings);
-  grn_obj *new_postings = &(data->buffers.new_postings);
   grn_obj *missings = &(data->buffers.missings);
   const grn_bool with_section = data->index.with_section;
   const grn_bool with_position = data->index.with_position;
-  const size_t n_posting_elements = data->n_posting_elements;
 
   grn_index_column_diff_init_progress(ctx, data);
 
@@ -590,30 +697,19 @@ grn_index_column_diff_compute(grn_ctx *ctx,
         grn_token *token = grn_token_cursor_get_token(ctx, token_cursor);
         current_posting.pos = grn_token_get_position(ctx, token);
 
-        GRN_BULK_REWIND(postings);
-        grn_index_column_diff_get_postings(ctx, data, token_id);
+        grn_obj *postings =
+          grn_index_column_diff_get_postings(ctx, data, token_id);
 
         int64_t nth_posting =
-          grn_index_column_diff_find_posting(ctx, data, &current_posting);
+          grn_index_column_diff_find_posting(ctx,
+                                             data,
+                                             postings,
+                                             &current_posting);
         if (nth_posting >= 0) {
-          GRN_BULK_REWIND(new_postings);
-          const size_t posting_size = sizeof(uint32_t) * n_posting_elements;
-          grn_bulk_write(ctx,
-                         new_postings,
-                         GRN_BULK_HEAD(postings),
-                         posting_size * nth_posting);
-          const size_t n_postings =
-            GRN_UINT32_VECTOR_SIZE(postings) / n_posting_elements;
-          grn_bulk_write(ctx,
-                         new_postings,
-                         GRN_BULK_HEAD(postings) +
-                         (posting_size * (nth_posting + 1)),
-                         posting_size * (n_postings - nth_posting - 1));
-          grn_obj_set_value(ctx,
-                            data->remains,
-                            token_id,
-                            new_postings,
-                            GRN_OBJ_SET);
+          grn_index_column_diff_cache_remove_posting(ctx,
+                                                     data,
+                                                     token_id,
+                                                     nth_posting);
         } else {
           GRN_BULK_REWIND(missings);
           GRN_UINT32_PUT(ctx, missings, current_posting.rid);
@@ -634,19 +730,23 @@ grn_index_column_diff_compute(grn_ctx *ctx,
     }
   } GRN_TABLE_EACH_END(ctx, cursor);
 
-  GRN_TABLE_EACH_BEGIN(ctx, data->tokens, cursor, id) {
-    GRN_BULK_REWIND(postings);
-    grn_obj_get_value(ctx, data->remains, id, postings);
-    if (GRN_UINT32_VECTOR_SIZE(postings) > 0) {
-      continue;
-    }
-    GRN_BULK_REWIND(missings);
-    grn_obj_get_value(ctx, data->missings, id, missings);
-    if (GRN_UINT32_VECTOR_SIZE(missings) > 0) {
-      continue;
-    }
-    grn_table_cursor_delete(ctx, cursor);
-  } GRN_TABLE_EACH_END(ctx, cursor);
+  grn_index_column_diff_cache_flush(ctx, data);
+
+  {
+    GRN_TABLE_EACH_BEGIN(ctx, data->tokens, cursor, id) {
+      GRN_BULK_REWIND(missings);
+      grn_obj_get_value(ctx, data->remains, id, missings);
+      if (GRN_UINT32_VECTOR_SIZE(missings) > 0) {
+        continue;
+      }
+      GRN_BULK_REWIND(missings);
+      grn_obj_get_value(ctx, data->missings, id, missings);
+      if (GRN_UINT32_VECTOR_SIZE(missings) > 0) {
+        continue;
+      }
+      grn_table_cursor_delete(ctx, cursor);
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  }
 }
 
 grn_rc
