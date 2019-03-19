@@ -471,7 +471,7 @@ grn_index_column_diff_compute(grn_ctx *ctx,
       const double throughput =
         progress_interval / current_interval_seconds;
       const double remained_seconds =
-        elapsed_seconds * ((double)n_records / (double)i_record);
+        elapsed_seconds + ((n_records - i_record) / throughput);
       const char *elapsed_unit = NULL;
       const double elapsed_time =
         grn_index_column_diff_format_time(ctx, elapsed_seconds, &elapsed_unit);
