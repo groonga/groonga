@@ -347,7 +347,7 @@ static int
 grn_index_column_diff_compare_posting(grn_ctx *ctx,
                                       grn_index_column_diff_data *data,
                                       size_t nth_posting,
-                                      grn_posting *current_posting)
+                                      const grn_posting *current_posting)
 {
   grn_obj *postings = &(data->buffers.postings);
   const grn_bool with_section = data->index.with_section;
@@ -356,31 +356,29 @@ grn_index_column_diff_compare_posting(grn_ctx *ctx,
 
   size_t i = nth_posting * n_posting_elements;
 
-  grn_posting posting = {0};
-  posting.rid = GRN_UINT32_VALUE_AT(postings, i);
-
-  if (posting.rid < current_posting->rid) {
+  const grn_id record_id = GRN_UINT32_VALUE_AT(postings, i);
+  if (record_id < current_posting->rid) {
     return -1;
-  } else if (posting.rid > current_posting->rid) {
+  } else if (record_id > current_posting->rid) {
     return 1;
   }
 
   if (with_section) {
     i++;
-    posting.sid = GRN_UINT32_VALUE_AT(postings, i);
-    if (posting.sid < current_posting->sid) {
+    const uint32_t section_id = GRN_UINT32_VALUE_AT(postings, i);
+    if (section_id < current_posting->sid) {
       return -1;
-    } else if (posting.sid > current_posting->sid) {
+    } else if (section_id > current_posting->sid) {
       return 1;
     }
   }
 
   if (with_position) {
     i++;
-    posting.pos = GRN_UINT32_VALUE_AT(postings, i);
-    if (posting.pos < current_posting->pos) {
+    const uint32_t position = GRN_UINT32_VALUE_AT(postings, i);
+    if (position < current_posting->pos) {
       return -1;
-    } else if (posting.pos > current_posting->pos) {
+    } else if (position > current_posting->pos) {
       return 1;
     }
   }
@@ -391,15 +389,15 @@ grn_index_column_diff_compare_posting(grn_ctx *ctx,
 static int64_t
 grn_index_column_diff_find_posting(grn_ctx *ctx,
                                    grn_index_column_diff_data *data,
-                                   grn_posting *current_posting)
+                                   const grn_posting *current_posting)
 {
   grn_obj *postings = &(data->buffers.postings);
   const size_t n_posting_elements = data->n_posting_elements;
   int64_t min = 0;
   int64_t max = (GRN_UINT32_VECTOR_SIZE(postings) / n_posting_elements) - 1;
   while (min <= max) {
-    int64_t middle = min + ((max - min) / 2);
-    int compared =
+    const int64_t middle = min + ((max - min) / 2);
+    const int compared =
       grn_index_column_diff_compare_posting(ctx, data, middle, current_posting);
     if (compared == 0) {
       return middle;
