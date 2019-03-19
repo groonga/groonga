@@ -20,6 +20,12 @@
 
 #include <stdio.h>
 
+#ifdef WIN32
+/* For Windows Server 2018 or earlier. */
+# define PSAPI_VERSION 1
+# include <psapi.h>
+#endif
+
 uint64_t
 grn_memory_get_usage(grn_ctx *ctx)
 {

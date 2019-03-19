@@ -644,7 +644,7 @@ int main(int argc, char **argv)
 # MinGW
 if test "$os_win32" = "yes"; then
   WINDOWS_LDFLAGS="-mwindows"
-  WINDOWS_LIBS="-ladvapi32 -lws2_32 -ldbghelp"
+  WINDOWS_LIBS="-ladvapi32 -lws2_32 -ldbghelp -lpsapi"
 else
   WINDOWS_LDFLAGS=
   WINDOWS_LIBS=
@@ -1471,7 +1471,6 @@ GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_DOCUMENT_ROOT=\\\"\"\$(GRN_DEFAULT_DOCUMENT_RO
 GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_RELATIVE_DOCUMENT_ROOT=\\\"\"\$(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT)\"\\\""
 AC_SUBST(GRN_DEFS)
 CFLAGS="$CFLAGS $OPT_CFLAGS "
-LIBS="$LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 
 # For groonga.org
