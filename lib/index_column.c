@@ -447,9 +447,12 @@ grn_index_column_diff_compute(grn_ctx *ctx,
   const size_t n_posting_elements = data->n_posting_elements;
   const unsigned int n_records = grn_table_size(ctx, data->source_table);
   unsigned int i_record = 0;
+  const unsigned int progress_interval = 10000;
   const grn_log_level progress_log_level = GRN_LOG_DEBUG;
   grn_timeval start_time;
   grn_timeval_now(ctx, &start_time);
+  grn_timeval previous_time;
+  previous_time = start_time;
 
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx,
                              data->source_table,
@@ -458,26 +461,42 @@ grn_index_column_diff_compute(grn_ctx *ctx,
                              GRN_CURSOR_BY_ID) {
     if (grn_logger_pass(ctx, progress_log_level) &&
         i_record > 0 &&
-        (i_record % 10000) == 0) {
+        (i_record % progress_interval) == 0) {
       grn_timeval current_time;
       grn_timeval_now(ctx, &current_time);
-      double elapsed_seconds = current_time.tv_sec - start_time.tv_sec;
-      double remained_seconds =
+      const double elapsed_seconds =
+        (current_time.tv_sec + current_time.tv_nsec / GRN_TIME_NSEC_PER_SEC_F) -
+        (start_time.tv_sec + start_time.tv_nsec / GRN_TIME_NSEC_PER_SEC_F);
+      const double current_interval_seconds =
+        (current_time.tv_sec + current_time.tv_nsec / GRN_TIME_NSEC_PER_SEC_F) -
+        (previous_time.tv_sec + previous_time.tv_nsec / GRN_TIME_NSEC_PER_SEC_F);
+      const double throughput =
+        progress_interval / current_interval_seconds;
+      const double remained_seconds =
         elapsed_seconds * ((double)n_records / (double)i_record);
       const char *elapsed_unit = NULL;
-      double elapsed_time =
+      const double elapsed_time =
         grn_index_column_diff_format_time(ctx, elapsed_seconds, &elapsed_unit);
       const char *remained_unit = NULL;
-      double remained_time =
+      const double remained_time =
         grn_index_column_diff_format_time(ctx, remained_seconds, &remained_unit);
+      const char *interval_unit = NULL;
+      const double interval_time =
+        grn_index_column_diff_format_time(ctx,
+                                          current_interval_seconds,
+                                          &interval_unit);
       GRN_LOG(ctx,
               progress_log_level,
-              "[index-column][diff][progress] %u/%u %.0f%% %.2f%s(%.2f%s)",
+              "[index-column][diff][progress] "
+              "%u/%u %.0f%% %.2f%s/%.2f%s %2.2f%s(%.2frecords/s)",
               i_record,
               n_records,
               ((double)i_record / (double)n_records) * 100,
               elapsed_time, elapsed_unit,
-              remained_time, remained_unit);
+              remained_time, remained_unit,
+              interval_time, interval_unit,
+              throughput);
+      previous_time = current_time;
     }
     i_record++;
 
