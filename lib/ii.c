@@ -2872,7 +2872,7 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
     uint32_t *record_id_gaps;
     uint32_t *section_id_gaps = NULL;
     uint32_t *n_terms_list;
-    uint32_t *weights;
+    uint32_t *weights = NULL;
     uint32_t *position_gaps = NULL;
 
     {
