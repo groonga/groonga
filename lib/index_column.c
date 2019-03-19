@@ -564,6 +564,10 @@ grn_index_column_diff_compute(grn_ctx *ctx,
       GRN_BULK_REWIND(value);
       grn_obj_get_value(ctx, source, id, value);
 
+      if (GRN_BULK_VSIZE(value) == 0) {
+        continue;
+      }
+
       const unsigned int token_cursor_flags = 0;
       grn_token_cursor *token_cursor =
         grn_token_cursor_open(ctx,
