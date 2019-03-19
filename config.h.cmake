@@ -138,6 +138,7 @@
 #cmakedefine HAVE_FPCLASSIFY
 #cmakedefine HAVE_FUTIMENS
 #cmakedefine HAVE_FUTIMES
+#cmakedefine HAVE_GETRUSAGE
 #cmakedefine HAVE_GMTIME_R
 #cmakedefine HAVE_LOCALTIME_R
 #cmakedefine HAVE_MKSTEMP

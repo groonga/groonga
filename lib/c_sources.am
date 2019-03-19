@@ -52,6 +52,7 @@ libgroonga_c_sources =				\
 	grn_load.h				\
 	logger.c				\
 	grn_logger.h				\
+	memory.c				\
 	mrb.c					\
 	grn_mrb.h				\
 	msgpack.c				\

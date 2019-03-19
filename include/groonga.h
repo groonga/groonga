@@ -42,6 +42,7 @@
 #include "groonga/id.h"
 #include "groonga/ii.h"
 #include "groonga/index_column.h"
+#include "groonga/memory.h"
 #include "groonga/obj.h"
 #include "groonga/operator.h"
 #include "groonga/option.h"
