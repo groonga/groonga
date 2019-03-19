@@ -360,66 +360,59 @@ static void
 grn_index_column_diff_progress(grn_ctx *ctx,
                                grn_index_column_diff_data *data)
 {
-  const unsigned int i = data->progress.i;
   data->progress.i++;
 
-  if (!grn_logger_pass(ctx, data->progress.log_level)) {
-    return;
-  }
-
-  if (i == 0) {
-    return;
-  }
+  const unsigned int i = data->progress.i;
   const unsigned int interval = data->progress.interval;
-  if ((i % interval) != 0) {
-    return;
-  }
-
-  grn_timeval current_time;
-  grn_timeval_now(ctx, &current_time);
-  const grn_timeval *start_time = &(data->progress.start_time);
-  const grn_timeval *previous_time = &(data->progress.previous_time);
-  const double elapsed_seconds =
-    (current_time.tv_sec + current_time.tv_nsec / GRN_TIME_NSEC_PER_SEC_F) -
-    (start_time->tv_sec + start_time->tv_nsec / GRN_TIME_NSEC_PER_SEC_F);
-  const double current_interval_seconds =
-    (current_time.tv_sec + current_time.tv_nsec / GRN_TIME_NSEC_PER_SEC_F) -
-    (previous_time->tv_sec + previous_time->tv_nsec / GRN_TIME_NSEC_PER_SEC_F);
-  const double throughput = interval / current_interval_seconds;
   const unsigned int n_records = data->progress.n_records;
-  const double remained_seconds =
-    elapsed_seconds + ((n_records - i) / throughput);
-  const char *elapsed_unit = NULL;
-  const double elapsed_time =
-    grn_index_column_diff_format_time(ctx, elapsed_seconds, &elapsed_unit);
-  const char *remained_unit = NULL;
-  const double remained_time =
-    grn_index_column_diff_format_time(ctx, remained_seconds, &remained_unit);
-  const char *interval_unit = NULL;
-  const double interval_time =
-    grn_index_column_diff_format_time(ctx,
-                                      current_interval_seconds,
-                                      &interval_unit);
-  const char *memory_unit = NULL;
-  const double memory_usage =
-    grn_index_column_diff_format_memory(ctx,
-                                        grn_memory_get_usage(ctx),
-                                        &memory_unit);
+  if (grn_logger_pass(ctx, data->progress.log_level) &&
+      (((i % interval) == 0) ||
+       (i == n_records))) {
+    grn_timeval current_time;
+    grn_timeval_now(ctx, &current_time);
+    const grn_timeval *start_time = &(data->progress.start_time);
+    const grn_timeval *previous_time = &(data->progress.previous_time);
+    const double elapsed_seconds =
+      (current_time.tv_sec + current_time.tv_nsec / GRN_TIME_NSEC_PER_SEC_F) -
+      (start_time->tv_sec + start_time->tv_nsec / GRN_TIME_NSEC_PER_SEC_F);
+    const double current_interval_seconds =
+      (current_time.tv_sec + current_time.tv_nsec / GRN_TIME_NSEC_PER_SEC_F) -
+      (previous_time->tv_sec + previous_time->tv_nsec / GRN_TIME_NSEC_PER_SEC_F);
+    const double throughput = interval / current_interval_seconds;
+    const double remained_seconds =
+      elapsed_seconds + ((n_records - i) / throughput);
+    const char *elapsed_unit = NULL;
+    const double elapsed_time =
+      grn_index_column_diff_format_time(ctx, elapsed_seconds, &elapsed_unit);
+    const char *remained_unit = NULL;
+    const double remained_time =
+      grn_index_column_diff_format_time(ctx, remained_seconds, &remained_unit);
+    const char *interval_unit = NULL;
+    const double interval_time =
+      grn_index_column_diff_format_time(ctx,
+                                        current_interval_seconds,
+                                        &interval_unit);
+    const char *memory_unit = NULL;
+    const double memory_usage =
+      grn_index_column_diff_format_memory(ctx,
+                                          grn_memory_get_usage(ctx),
+                                          &memory_unit);
 
-  GRN_LOG(ctx,
-          data->progress.log_level,
-          "[index-column][diff][progress] "
-          "%*u/%u %3.0f%% %.2f%s/%.2f%s %.2f%s(%.2frecords/s) %.2f%s",
-          data->progress.n_records_digits,
-          i,
-          n_records,
-          ((double)i / (double)n_records) * 100,
-          elapsed_time, elapsed_unit,
-          remained_time, remained_unit,
-          interval_time, interval_unit,
-          throughput,
-          memory_usage, memory_unit);
-  data->progress.previous_time = current_time;
+    GRN_LOG(ctx,
+            data->progress.log_level,
+            "[index-column][diff][progress] "
+            "%*u/%u %3.0f%% %.2f%s/%.2f%s %.2f%s(%.2frecords/s) %.2f%s",
+            data->progress.n_records_digits,
+            i,
+            n_records,
+            ((double)i / (double)n_records) * 100,
+            elapsed_time, elapsed_unit,
+            remained_time, remained_unit,
+            interval_time, interval_unit,
+            throughput,
+            memory_usage, memory_unit);
+    data->progress.previous_time = current_time;
+  }
 }
 
 static void
