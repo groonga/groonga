@@ -1145,7 +1145,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
         unified_char_length == 3) {
       unifying = grn_nfkc_normalize_unify_kana(unifying, unified_kana);
       if (unifying == unified_kana) {
-        char_type = GRN_CHAR_HIRAGANA;
+        char_type = GRN_CHAR_HIRAGANA | (char_type & GRN_CHAR_BLANK);
       }
     }
 
@@ -1191,7 +1191,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
       if (grn_nfkc_normalize_is_hyphen_famity(unifying, unified_char_length)) {
         unifying = unified_hyphen;
         unified_char_length = sizeof(unified_hyphen);
-        char_type = GRN_CHAR_SYMBOL;
+        char_type = GRN_CHAR_SYMBOL | (char_type & GRN_CHAR_BLANK);
       }
     }
 
@@ -1200,7 +1200,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
                                                             unified_char_length)) {
         unifying = unified_prolonged_sound_mark;
         unified_char_length = sizeof(unified_prolonged_sound_mark);
-        char_type = GRN_CHAR_KATAKANA;
+        char_type = GRN_CHAR_KATAKANA | (char_type & GRN_CHAR_BLANK);
       }
     }
 
@@ -1210,7 +1210,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
                                                             unified_char_length)) {
         unifying = unified_hyphen;
         unified_char_length = sizeof(unified_hyphen);
-        char_type = GRN_CHAR_SYMBOL;
+        char_type = GRN_CHAR_SYMBOL | (char_type & GRN_CHAR_BLANK);
       }
     }
 
@@ -1219,7 +1219,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
                                                   unified_char_length)) {
         unifying = unified_middle_dot;
         unified_char_length = sizeof(unified_middle_dot);
-        char_type = GRN_CHAR_SYMBOL;
+        char_type = GRN_CHAR_SYMBOL | (char_type & GRN_CHAR_BLANK);
       }
     }
 
