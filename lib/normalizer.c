@@ -1141,7 +1141,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
     }
 
     if (data->options->unify_kana &&
-        char_type == GRN_CHAR_KATAKANA &&
+        GRN_CHAR_TYPE(char_type) == GRN_CHAR_KATAKANA &&
         unified_char_length == 3) {
       unifying = grn_nfkc_normalize_unify_kana(unifying, unified_kana);
       if (unifying == unified_kana) {
@@ -1150,7 +1150,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
     }
 
     if (data->options->unify_kana_case) {
-      switch (char_type) {
+      switch (GRN_CHAR_TYPE(char_type)) {
       case GRN_CHAR_HIRAGANA :
         if (unified_char_length == 3) {
           unifying = grn_nfkc_normalize_unify_hiragana_case(unifying,
@@ -1169,7 +1169,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
     }
 
     if (data->options->unify_kana_voiced_sound_mark) {
-      switch (char_type) {
+      switch (GRN_CHAR_TYPE(char_type)) {
       case GRN_CHAR_HIRAGANA :
         if (unified_char_length == 3) {
           unifying = grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
