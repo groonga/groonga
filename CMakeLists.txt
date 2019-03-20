@@ -332,6 +332,8 @@ if(WIN32)
 
   SET(DBGHELP_LIBS "dbghelp.lib")
 
+  SET(PSAPI_LIBS "psapi.lib")
+
   set(USE_SELECT TRUE)
 else()
   ac_check_headers(sys/epoll.h)

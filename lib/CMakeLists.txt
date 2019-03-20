@@ -103,15 +103,9 @@ set(GRN_ALL_LIBRARIES
     ${M_LIBS}
     ${WS2_32_LIBS}
     ${DBGHELP_LIBS}
+    ${PSAPI_LIBS}
     ${MRUBY_LIBS}
     ${ONIGMO_LIBS})
-if(WIN32)
-  list(APPEND GRN_ALL_LIBRARIES
-    -ladvapi32
-    -lws2_32
-    -lgdbhelp
-    -lpsapi)
-endif()
 if(GRN_EMBED)
   set(GRN_EMBEDDED_PLUGIN_LIBRARIES "")
   if(GRN_WITH_MECAB)
