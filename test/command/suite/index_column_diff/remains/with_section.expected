@@ -1,0 +1,114 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data value1 COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Data value2 COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Patterns TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC100
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer "TokenTable('table', 'Patterns')"   --normalizer NormalizerNFKC100
+[[0,0.0,0.0],true]
+column_create Terms data_values_index   COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Data value1,value2
+[[0,0.0,0.0],true]
+load --table Patterns
+[
+{"_key": "World"},
+{"_key": "Groonga"}
+]
+[[0,0.0,0.0],2]
+load --table Data
+[
+{"value1": "Hello World",
+ "value2": "Good-by World"},
+{"value1": "Hello Groonga",
+ "value2": "Good-by Groonga"}
+]
+[[0,0.0,0.0],2]
+truncate Patterns
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"_id": 1,
+ "value1": "Hello Groonga",
+ "value2": "Good-by Groonga"},
+{"_id": 2,
+ "value1": "Hello World",
+ "value2": "Good-by World"}
+]
+[[0,0.0,0.0],2]
+load --table Patterns
+[
+{"_key": "World"},
+{"_key": "Groonga"}
+]
+[[0,0.0,0.0],2]
+index_column_diff Terms data_values_index
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "token": {
+        "id": 2,
+        "value": "groonga"
+      },
+      "remains": [
+        {
+          "record_id": 2,
+          "section_id": 1,
+          "position": 0
+        },
+        {
+          "record_id": 2,
+          "section_id": 2,
+          "position": 0
+        }
+      ],
+      "missings": [
+        {
+          "record_id": 1,
+          "section_id": 1,
+          "position": 0
+        },
+        {
+          "record_id": 1,
+          "section_id": 2,
+          "position": 0
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 1,
+        "value": "world"
+      },
+      "remains": [
+        {
+          "record_id": 1,
+          "section_id": 1,
+          "position": 0
+        },
+        {
+          "record_id": 1,
+          "section_id": 2,
+          "position": 0
+        }
+      ],
+      "missings": [
+        {
+          "record_id": 2,
+          "section_id": 1,
+          "position": 0
+        },
+        {
+          "record_id": 2,
+          "section_id": 2,
+          "position": 0
+        }
+      ]
+    }
+  ]
+]

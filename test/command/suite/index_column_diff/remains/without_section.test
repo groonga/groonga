@@ -1,0 +1,38 @@
+table_create Data TABLE_NO_KEY
+column_create Data value COLUMN_SCALAR ShortText
+
+table_create Patterns TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNFKC100
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer "TokenTable('table', 'Patterns')" \
+  --normalizer NormalizerNFKC100
+column_create Terms data_value_index COLUMN_INDEX|WITH_POSITION Data value
+
+load --table Patterns
+[
+{"_key": "World"},
+{"_key": "Groonga"}
+]
+
+load --table Data
+[
+{"value": "Hello World"},
+{"value": "Hello Groonga"}
+]
+
+truncate Patterns
+
+load --table Data
+[
+{"_id": 1, "value": "Hello Groonga"},
+{"_id": 2, "value": "Hello World"}
+]
+
+load --table Patterns
+[
+{"_key": "World"},
+{"_key": "Groonga"}
+]
+
+index_column_diff Terms data_value_index
