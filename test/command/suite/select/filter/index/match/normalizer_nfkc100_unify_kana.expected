@@ -1,0 +1,45 @@
+table_create Memos --flags TABLE_HASH_KEY --key_type ShortText
+[[0,0.0,0.0],true]
+column_create --table Memos --name content --type LongText
+[[0,0.0,0.0],true]
+table_create   --name Term   --flags TABLE_PAT_KEY   --key_type ShortText   --default_tokenizer TokenBigram   --normalizer "NormalizerNFKC100(\"unify_kana\", true)"
+[[0,0.0,0.0],true]
+column_create   --table Term   --name content   --flags COLUMN_INDEX|WITH_POSITION   --type Memos   --source content
+[[0,0.0,0.0],true]
+load --table Memos
+{"_key":"1", "content":"ヤマダ です"}
+[[0,0.0,0.0],1]
+select Memos --filter 'content @ "やまだ"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content",
+          "LongText"
+        ]
+      ],
+      [
+        1,
+        "1",
+        "ヤマダ です"
+      ]
+    ]
+  ]
+]
