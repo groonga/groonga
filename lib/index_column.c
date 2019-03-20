@@ -318,9 +318,6 @@ grn_index_column_diff_data_fin(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &(data->buffers.postings));
 
   for (size_t i = 0; i < GRN_INDEX_COLUMN_DIFF_CACHE_SIZE; i++) {
-    if (data->cache[i].token_id == GRN_ID_NIL) {
-      continue;
-    }
     GRN_OBJ_FIN(ctx, &(data->cache[i].postings));
   }
 }
