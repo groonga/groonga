@@ -3950,6 +3950,26 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
         goto exit;
       }
       if (bt->size_in_chunk > 0) {
+        if ((sizeof(dc) - (dcp - dc)) < 0) {
+          dc = grn_realloc(ctx,
+                           dc,
+                           labs((uint32_t)sizeof(dc) - (uint32_t)(dcp - dc)),
+                           __FILE__,
+                           __LINE__,
+                           __FUNCTION__);
+          GRN_LOG(ctx,
+                  GRN_LOG_NOTICE,
+                  "[ii][buffer][merge] realloc destination chunk area: "
+                  "realloc size:<%ld>: ",
+                  labs((uint32_t)sizeof(dc) - (uint32_t)(dcp - dc)));
+          if (!dc) {
+            GRN_LOG(ctx,
+                    GRN_LOG_ERROR,
+                    "[ii][buffer][merge] could not realloc destination chunk area: "
+                    "realloc size:<%ld>: ",
+                    labs((uint32_t)sizeof(dc) - (uint32_t)(dcp - dc)));
+          }
+        }
         grn_memcpy(dcp,
                    chunk_data->data_start + bt->pos_in_chunk,
                    bt->size_in_chunk);
