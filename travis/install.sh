@@ -48,6 +48,7 @@ case "${TRAVIS_OS_NAME}" in
            python3-pip
       sudo pip3 install Sphinx
     fi
+    rvm use ruby-2.6.2 --install --binary --fuzzy
     ;;
   osx)
     brew update > /dev/null
