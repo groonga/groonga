@@ -65,24 +65,30 @@ if ! type bundle 2>&1 > /dev/null; then
   $RUBY -S gem install bundler
 fi
 
-grntest_dir="$BUILD_DIR/grntest"
+grntest_dir="$SOURCE_DIR/grntest"
 if ! test -d "$grntest_dir"; then
+  grntest_dir="$BUILD_DIR/grntest"
   git clone --depth 1 git://github.com/groonga/grntest.git "$grntest_dir"
   (cd "$grntest_dir" && bundle install)
-else
-  (cd "$grntest_dir";
-   if [ "Gemfile" -nt "Gemfile.lock" ]; then
-     $RUBY -S bundle update
-   fi)
 fi
+(cd "$grntest_dir";
+ if [ "Gemfile" -nt "Gemfile.lock" ]; then
+   $RUBY -S bundle update
+ fi)
 
-groonga_command_dir="$BUILD_DIR/groonga-command"
+groonga_command_dir="$SOURCE_DIR/groonga-command"
+if ! test -d "$groonga_command_dir"; then
+  groonga_command_dir="$BUILD_DIR/groonga-command"
+fi
 if ! test -d "$groonga_command_dir"; then
   git clone --depth 1 \
       git://github.com/groonga/groonga-command "$groonga_command_dir"
 fi
 
-groonga_command_parser_dir="$BUILD_DIR/groonga-command-parser"
+groonga_command_parser_dir="$SOURCE_DIR/groonga-command-parser"
+if ! test -d "$groonga_command_parser_dir"; then
+  groonga_command_parser_dir="$BUILD_DIR/groonga-command-parser"
+fi
 if ! test -d "$groonga_command_parser_dir"; then
   git clone --depth 1 \
       git://github.com/groonga/groonga-command-parser \
