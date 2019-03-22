@@ -9,6 +9,8 @@ dist: xenial
 services:
   - docker
 
+rvm: 2.6
+
 matrix:
   include:
     - name: "Autotools"
