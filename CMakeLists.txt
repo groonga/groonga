@@ -394,31 +394,34 @@ file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_lz4_version"
 string(STRIP
   "${GRN_BUNDLED_LZ4_VERSION}"
   GRN_BUNDLED_LZ4_VERSION)
-option(GRN_WITH_BUNDLED_LZ4 "use bundled LZ4" OFF)
 
+set(GRN_WITH_BUNDLED_LZ4 FALSE)
 set(GRN_WITH_LZ4 "auto"
   CACHE STRING "Support data compression by LZ4.")
 if(NOT ${GRN_WITH_LZ4} STREQUAL "no")
-  if(GRN_WITH_BUNDLED_LZ4)
-    set(LIBLZ4_INCLUDE_DIRS
-      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/lz4-${GRN_BUNDLED_LZ4_VERSION}/lib")
-    set(LIBLZ4_LIBS liblz4)
-  else()
-    if(NOT DEFINED LIBLZ4_FOUND)
-      pkg_check_modules(LIBLZ4 liblz4)
-      unset(LIBLZ4_LIBS)
-      unset(LIBLZ4_LIBS CACHE)
+  if(NOT DEFINED LIBLZ4_FOUND)
+    pkg_check_modules(LIBLZ4 liblz4)
+    unset(LIBLZ4_LIBS)
+    unset(LIBLZ4_LIBS CACHE)
+  endif()
+  if(LIBLZ4_FOUND)
+    if(${LIBLZ4_LIBRARY_DIRS})
+      find_library(LIBLZ4_LIBS
+	NAMES ${LIBLZ4_LIBRARIES}
+	PATHS ${LIBLZ4_LIBRARY_DIRS}
+	NO_DEFAULT_PATH)
+    else()
+      find_library(LIBLZ4_LIBS
+	NAMES ${LIBLZ4_LIBRARIES})
     endif()
-    if(LIBLZ4_FOUND)
-      if(${LIBLZ4_LIBRARY_DIRS})
-	find_library(LIBLZ4_LIBS
-	  NAMES ${LIBLZ4_LIBRARIES}
-	  PATHS ${LIBLZ4_LIBRARY_DIRS}
-	  NO_DEFAULT_PATH)
-      else()
-	find_library(LIBLZ4_LIBS
-	  NAMES ${LIBLZ4_LIBRARIES})
-      endif()
+    set(GRN_WITH_LZ4 TRUE)
+  else()
+    set(GRN_BUNDLDED_LZ4_DIR
+      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/lz4-${GRN_BUNDLED_LZ4_VERSION}")
+    if(EXISTS ${GRN_BUNDLED_LZ4_DIR})
+      set(LIBLZ4_INCLUDE_DIRS "${GRN_BUNDLED_LZ4_DIR}/lib")
+      set(LIBLZ4_LIBS liblz4)
+      set(GRN_WITH_BUNDLED_LZ4 TRUE)
       set(GRN_WITH_LZ4 TRUE)
     else()
       if(${GRN_WITH_LZ4} STREQUAL "yes")
@@ -427,6 +430,8 @@ if(NOT ${GRN_WITH_LZ4} STREQUAL "no")
       set(GRN_WITH_LZ4 FALSE)
     endif()
   endif()
+else()
+  set(GRN_WITH_LZ4 FALSE)
 endif()
 
 
@@ -440,42 +445,44 @@ file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_mecab_naist_jdic_version"
 string(STRIP
   "${GRN_BUNDLED_MECAB_NAIST_JDIC_VERSION}"
   GRN_BUNDLED_MECAB_NAIST_JDIC_VERSION)
-option(GRN_WITH_BUNDLED_MECAB "use bundled MeCab" OFF)
 
+set(GRN_WITH_BUNDLED_MECAB FALSE)
 set(GRN_WITH_MECAB "auto"
   CACHE STRING "use MeCab for morphological analysis")
 if(NOT ${GRN_WITH_MECAB} STREQUAL "no")
-  if(GRN_WITH_BUNDLED_MECAB)
-    set(MECAB_INCLUDE_DIRS
-      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mecab-${GRN_BUNDLED_MECAB_VERSION}/src")
-    set(MECAB_LIBRARY_DIRS
-      "${CMAKE_CURRENT_BUILD_DIR}/vendor/mecab")
-    set(MECAB_LIBRARIES libmecab)
-  else()
-    set(GRN_MECAB_CONFIG "mecab-config" CACHE FILEPATH "mecab-config path")
-    if(NOT CMAKE_CROSSCOMPILING)
-      find_program(GRN_MECAB_CONFIG_ABSOLUTE_PATH "${GRN_MECAB_CONFIG}")
-    endif()
-    if(EXISTS "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}")
-      execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --inc-dir
-	OUTPUT_VARIABLE MECAB_INCLUDE_DIRS
-	OUTPUT_STRIP_TRAILING_WHITESPACE)
-      execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --libs-only-L
-	OUTPUT_VARIABLE MECAB_LIBRARY_DIRS
-	OUTPUT_STRIP_TRAILING_WHITESPACE)
-      set(MECAB_LIBRARIES "mecab")
-      ac_check_lib(${MECAB_LIBRARIES} mecab_new)
-      if(HAVE_LIBMECAB)
-	set(GRN_WITH_MECAB TRUE)
-      else()
-	if(${GRN_WITH_MECAB} STREQUAL "yes")
-	  message(FATAL_ERROR
-	    "No MeCab library found: "
-	    "include directories: <${MECAB_INCLUDE_DIRS}>, "
-	    "library directories: <${MECAB_LIBRARY_DIRS}>")
-	endif()
-	set(GRN_WITH_MECAB FALSE)
+  set(GRN_MECAB_CONFIG "mecab-config" CACHE FILEPATH "mecab-config path")
+  if(NOT CMAKE_CROSSCOMPILING)
+    find_program(GRN_MECAB_CONFIG_ABSOLUTE_PATH "${GRN_MECAB_CONFIG}")
+  endif()
+  if(EXISTS "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}")
+    execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --inc-dir
+      OUTPUT_VARIABLE MECAB_INCLUDE_DIRS
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --libs-only-L
+      OUTPUT_VARIABLE MECAB_LIBRARY_DIRS
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(MECAB_LIBRARIES "mecab")
+    ac_check_lib(${MECAB_LIBRARIES} mecab_new)
+    if(HAVE_LIBMECAB)
+      set(GRN_WITH_MECAB TRUE)
+    else()
+      if(${GRN_WITH_MECAB} STREQUAL "yes")
+	message(FATAL_ERROR
+	  "No MeCab library found: "
+	  "include directories: <${MECAB_INCLUDE_DIRS}>, "
+	  "library directories: <${MECAB_LIBRARY_DIRS}>")
       endif()
+      set(GRN_WITH_MECAB FALSE)
+    endif()
+  else()
+    set(GRN_BUNDLED_MECAB_DIR
+      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mecab-${GRN_BUNDLED_MECAB_VERSION}")
+    if(EXISTS ${GRN_BUNDLED_MECAB_DIR})
+      set(MECAB_INCLUDE_DIRS "${GRN_BUNDLED_MECAB_DIR}/src")
+      set(MECAB_LIBRARY_DIRS "${CMAKE_CURRENT_BUILD_DIR}/vendor/mecab")
+      set(MECAB_LIBRARIES libmecab)
+      set(GRN_WITH_MECAB TRUE)
+      set(GRN_WITH_BUNDLED_MECAB TRUE)
     else()
       if(${GRN_WITH_MECAB} STREQUAL "yes")
 	message(FATAL_ERROR "No mecab-config found: <${GRN_MECAB_CONFIG}>")
@@ -587,46 +594,49 @@ file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_message_pack_version"
 string(STRIP
   "${GRN_BUNDLED_MESSAGE_PACK_VERSION}"
   GRN_BUNDLED_MESSAGE_PACK_VERSION)
-option(GRN_WITH_BUNDLED_MESSAGE_PACK "use bundled MessagePack" OFF)
 
+set(GRN_WITH_BUNDLED_MESSAGE_PACK FALSE)
 set(GRN_WITH_MESSAGE_PACK "auto"
   CACHE STRING "use MessagePack for suggestion")
 if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
-  if(GRN_WITH_BUNDLED_MESSAGE_PACK)
-    set(MESSAGE_PACK_INCLUDE_DIRS
-      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/msgpack-${GRN_BUNDLED_MESSAGE_PACK_VERSION}/include")
-    set(MESSAGE_PACK_LIBS msgpackc)
-  else()
-    if(NOT DEFINED MESSAGE_PACK_FOUND)
-      pkg_check_modules(MESSAGE_PACK msgpack)
-      unset(MESSAGE_PACK_LIBS)
-      unset(MESSAGE_PACK_LIBS CACHE)
+  if(NOT DEFINED MESSAGE_PACK_FOUND)
+    pkg_check_modules(MESSAGE_PACK msgpack)
+    unset(MESSAGE_PACK_LIBS)
+    unset(MESSAGE_PACK_LIBS CACHE)
+  endif()
+  if(MESSAGE_PACK_FOUND)
+    if(${MESSAGE_PACK_LIBRARY_DIRS})
+      find_library(MESSAGE_PACK_LIBS
+	NAMES ${MESSAGE_PACK_LIBRARIES}
+	PATHS ${MESSAGE_PACK_LIBRARY_DIRS}
+	NO_DEFAULT_PATH)
+    else()
+      find_library(MESSAGE_PACK_LIBS
+	NAMES ${MESSAGE_PACK_LIBRARIES})
     endif()
-    if(MESSAGE_PACK_FOUND)
-      if(${MESSAGE_PACK_LIBRARY_DIRS})
-	find_library(MESSAGE_PACK_LIBS
-	  NAMES ${MESSAGE_PACK_LIBRARIES}
-	  PATHS ${MESSAGE_PACK_LIBRARY_DIRS}
-	  NO_DEFAULT_PATH)
-      else()
-	find_library(MESSAGE_PACK_LIBS
-	  NAMES ${MESSAGE_PACK_LIBRARIES})
-      endif()
+    set(GRN_WITH_MESSAGE_PACK TRUE)
+  else()
+    if("${GRN_WITH_MESSAGE_PACK}" STREQUAL "yes" OR
+	"${GRN_WITH_MESSAGE_PACK}" STREQUAL "auto")
+      set(MESSAGE_PACK_INCLUDE_DIRS "")
+      set(MESSAGE_PACK_LIBRARY_DIRS "")
+    else()
+      set(MESSAGE_PACK_INCLUDE_DIRS "${GRN_WITH_MESSAGE_PACK}/include")
+      set(MESSAGE_PACK_LIBRARY_DIRS "${GRN_WITH_MESSAGE_PACK}/lib")
+    endif()
+    set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
+    ac_check_lib(msgpackc msgpack_version "${MESSAGE_PACK_LIBRARY_DIRS}")
+    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES_SAVE})
+    if(HAVE_LIBMSGPACKC)
+      set(MESSAGE_PACK_LIBS msgpackc)
       set(GRN_WITH_MESSAGE_PACK TRUE)
     else()
-      if("${GRN_WITH_MESSAGE_PACK}" STREQUAL "yes" OR
-	  "${GRN_WITH_MESSAGE_PACK}" STREQUAL "auto")
-	set(MESSAGE_PACK_INCLUDE_DIRS "")
-	set(MESSAGE_PACK_LIBRARY_DIRS "")
-      else()
-	set(MESSAGE_PACK_INCLUDE_DIRS "${GRN_WITH_MESSAGE_PACK}/include")
-	set(MESSAGE_PACK_LIBRARY_DIRS "${GRN_WITH_MESSAGE_PACK}/lib")
-      endif()
-      set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
-      ac_check_lib(msgpackc msgpack_version "${MESSAGE_PACK_LIBRARY_DIRS}")
-      set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES_SAVE})
-      if(HAVE_LIBMSGPACKC)
+      set(GRN_BUNDLED_MESSAGE_PACK_DIR
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/msgpack-${GRN_BUNDLED_MESSAGE_PACK_VERSION}")
+      if(EXISTS "${GRN_BUNDLED_MESSAGE_PACK_DIR}")
+	set(MESSAGE_PACK_INCLUDE_DIRS "${GRN_BUNDLED_MESSAGE_PACK_DIR}/include")
 	set(MESSAGE_PACK_LIBS msgpackc)
+	set(GRN_WITH_BUNDLED_MESSAGE_PACK TRUE)
 	set(GRN_WITH_MESSAGE_PACK TRUE)
       else()
 	if(${GRN_WITH_MESSAGE_PACK} STREQUAL "yes")

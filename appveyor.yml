@@ -86,9 +86,6 @@ build_script:
   - cmake . -G "%CMAKE_GENERATOR_NAME%"
       -DCMAKE_INSTALL_PREFIX=%FULL_GROONGA_INSTALL_FOLDER%
       -DGRN_WITH_MRUBY=yes
-      -DGRN_WITH_BUNDLED_MECAB=yes
-      -DGRN_WITH_BUNDLED_MESSAGE_PACK=yes
-      -DGRN_WITH_BUNDLED_LZ4=yes
   - set CMAKE_BUILD_PARALLEL_LEVEL=4
   - cmake --build . --config RelWithDebInfo
   - cmake --build . --config RelWithDebInfo --target Install
