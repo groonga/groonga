@@ -1,0 +1,158 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data values COLUMN_VECTOR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC100
+[[0,0.0,0.0],true]
+column_create Terms data_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Data values
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"values": ["Hello World", "Good-by World"]},
+{"values": ["Hello Groonga", "Good-by Groonga"]}
+]
+[[0,0.0,0.0],2]
+truncate Terms.data_index
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"values": ["Morning World", "Afternoon World"]},
+{"values": ["Morning Groonga", "Afternoon World"]}
+]
+[[0,0.0,0.0],2]
+index_column_diff Terms data_index
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "token": {
+        "id": 1,
+        "value": "hello"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 1,
+          "section_id": 1,
+          "position": 0
+        },
+        {
+          "record_id": 2,
+          "section_id": 1,
+          "position": 0
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 2,
+        "value": "world"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 1,
+          "section_id": 1,
+          "position": 1
+        },
+        {
+          "record_id": 1,
+          "section_id": 2,
+          "position": 3
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 3,
+        "value": "good"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 1,
+          "section_id": 2,
+          "position": 0
+        },
+        {
+          "record_id": 2,
+          "section_id": 2,
+          "position": 0
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 4,
+        "value": "-"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 1,
+          "section_id": 2,
+          "position": 1
+        },
+        {
+          "record_id": 2,
+          "section_id": 2,
+          "position": 1
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 5,
+        "value": "by"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 1,
+          "section_id": 2,
+          "position": 2
+        },
+        {
+          "record_id": 2,
+          "section_id": 2,
+          "position": 2
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 6,
+        "value": "groonga"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 2,
+          "section_id": 1,
+          "position": 1
+        },
+        {
+          "record_id": 2,
+          "section_id": 2,
+          "position": 3
+        }
+      ]
+    }
+  ]
+]

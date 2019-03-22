@@ -826,6 +826,19 @@ grn_index_column_diff_compute(grn_ctx *ctx,
 
       switch (value->header.type) {
       case GRN_VECTOR :
+        {
+          const size_t n_elements = grn_vector_size(ctx, value);
+          for (size_t j = 0; j < n_elements; j++) {
+            const char *element = NULL;
+            const unsigned int element_size =
+              grn_vector_get_element(ctx, value, j, &element, NULL, NULL);
+            data->current.posting.sid = j + 1;
+            grn_index_column_diff_process_token(ctx,
+                                                data,
+                                                element,
+                                                element_size);
+          }
+        }
         break;
       case GRN_UVECTOR :
         if (is_reference) {

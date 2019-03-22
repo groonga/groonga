@@ -1,0 +1,24 @@
+table_create Data TABLE_NO_KEY
+column_create Data values COLUMN_VECTOR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC100
+column_create Terms data_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Data values
+
+load --table Data
+[
+{"values": ["Hello World", "Good-by World"]},
+{"values": ["Hello Groonga", "Good-by Groonga"]}
+]
+
+truncate Terms.data_index
+
+load --table Data
+[
+{"values": ["Morning World", "Afternoon World"]},
+{"values": ["Morning Groonga", "Afternoon World"]}
+]
+
+index_column_diff Terms data_index
