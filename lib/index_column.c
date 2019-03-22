@@ -26,6 +26,7 @@
 
 static uint64_t grn_index_sparsity = 10;
 static grn_bool grn_index_chunk_split_enable = GRN_TRUE;
+static size_t grn_index_column_diff_cache_size_max = 256;
 
 void
 grn_index_column_init_from_env(void)
@@ -54,6 +55,21 @@ grn_index_column_init_from_env(void)
       grn_index_chunk_split_enable = GRN_FALSE;
     } else {
       grn_index_chunk_split_enable = GRN_TRUE;
+    }
+  }
+
+  {
+    char grn_index_column_diff_cache_size_max_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_INDEX_COLUMN_DIFF_CACHE_SIZE_MAX",
+               grn_index_column_diff_cache_size_max_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_index_column_diff_cache_size_max_env[0]) {
+      uint64_t size;
+      errno = 0;
+      size = strtoull(grn_index_column_diff_cache_size_max_env, NULL, 0);
+      if (errno == 0 && size > 0) {
+        grn_index_column_diff_cache_size_max = size;
+      }
     }
   }
 }
@@ -239,7 +255,13 @@ grn_index_column_rebuild(grn_ctx *ctx, grn_obj *index_column)
 static const char *postings_column_name = "postings";
 static const char *remains_column_name = "remains";
 static const char *missings_column_name = "missings";
-#define GRN_INDEX_COLUMN_DIFF_CACHE_SIZE 256
+
+typedef struct {
+  grn_id token_id;
+  grn_id diff_id;
+  grn_obj postings;
+  size_t offset;
+} grn_index_column_diff_cache;
 
 typedef struct {
   grn_obj *lexicon;
@@ -277,12 +299,8 @@ typedef struct {
     grn_timeval start_time;
     grn_timeval previous_time;
   } progress;
-  struct {
-    grn_id token_id;
-    grn_id diff_id;
-    grn_obj postings;
-    size_t offset;
-  } cache[GRN_INDEX_COLUMN_DIFF_CACHE_SIZE];
+  grn_index_column_diff_cache *cache;
+  size_t cache_size;
 } grn_index_column_diff_data;
 
 static void
@@ -293,12 +311,44 @@ grn_index_column_diff_data_init(grn_ctx *ctx,
   GRN_VOID_INIT(&(data->buffers.value));
   GRN_UINT32_INIT(&(data->buffers.postings), GRN_OBJ_VECTOR);
 
-  for (size_t i = 0; i < GRN_INDEX_COLUMN_DIFF_CACHE_SIZE; i++) {
+  data->cache = NULL;
+  data->cache_size = 0;
+}
+
+static void
+grn_index_column_diff_data_init_cache(grn_ctx *ctx,
+                                      grn_index_column_diff_data *data)
+{
+  size_t cache_size;
+  const size_t n_tokens = grn_table_size(ctx, data->lexicon);
+  if (n_tokens == 0) {
+    cache_size = 1;
+  } else if (n_tokens < grn_index_column_diff_cache_size_max) {
+    cache_size = n_tokens;
+  } else {
+    cache_size = n_tokens * 0.01;
+    if (cache_size >= grn_index_column_diff_cache_size_max) {
+      cache_size = grn_index_column_diff_cache_size_max;
+    }
+  }
+
+  data->cache = GRN_MALLOCN(grn_index_column_diff_cache, cache_size);
+  if (!data->cache) {
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[index-column][diff] failed to allocate cache: <%" GRN_FMT_SIZE ">: %s",
+        cache_size,
+        message);
+    return;
+  }
+  for (size_t i = 0; i < cache_size; i++) {
     data->cache[i].token_id = GRN_ID_NIL;
     data->cache[i].diff_id = GRN_ID_NIL;
     GRN_UINT32_INIT(&(data->cache[i].postings), GRN_OBJ_VECTOR);
     data->cache[i].offset = 0;
   }
+  data->cache_size = cache_size;
 }
 
 static void
@@ -319,9 +369,10 @@ grn_index_column_diff_data_fin(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &(data->buffers.value));
   GRN_OBJ_FIN(ctx, &(data->buffers.postings));
 
-  for (size_t i = 0; i < GRN_INDEX_COLUMN_DIFF_CACHE_SIZE; i++) {
+  for (size_t i = 0; i < data->cache_size; i++) {
     GRN_OBJ_FIN(ctx, &(data->cache[i].postings));
   }
+  GRN_FREE(data->cache);
 }
 
 static void
@@ -440,9 +491,11 @@ grn_index_column_diff_progress(grn_ctx *ctx,
 }
 
 static size_t
-grn_index_column_diff_cache_compute_key(grn_id token_id)
+grn_index_column_diff_cache_compute_key(grn_ctx *ctx,
+                                        grn_index_column_diff_data *data,
+                                        grn_id token_id)
 {
-  return token_id % GRN_INDEX_COLUMN_DIFF_CACHE_SIZE;
+  return token_id % data->cache_size;
 }
 
 static void
@@ -486,7 +539,7 @@ static void
 grn_index_column_diff_cache_flush_all(grn_ctx *ctx,
                                       grn_index_column_diff_data *data)
 {
-  for (size_t i = 0; i < GRN_INDEX_COLUMN_DIFF_CACHE_SIZE; i++) {
+  for (size_t i = 0; i < data->cache_size; i++) {
     grn_index_column_diff_cache_flush(ctx, data, i);
   }
 }
@@ -496,7 +549,8 @@ grn_index_column_diff_cache_allocate(grn_ctx *ctx,
                                      grn_index_column_diff_data *data)
 {
   const grn_id token_id = data->current.token_id;
-  const size_t cache_key = grn_index_column_diff_cache_compute_key(token_id);
+  const size_t cache_key =
+    grn_index_column_diff_cache_compute_key(ctx, data, token_id);
   grn_index_column_diff_cache_flush(ctx, data, cache_key);
   data->cache[cache_key].token_id = token_id;
   data->cache[cache_key].diff_id = data->current.diff_id;
@@ -509,7 +563,8 @@ grn_index_column_diff_cache_get(grn_ctx *ctx,
                                 size_t *n_postings)
 {
   const grn_id token_id = data->current.token_id;
-  const size_t cache_key = grn_index_column_diff_cache_compute_key(token_id);
+  const size_t cache_key
+    = grn_index_column_diff_cache_compute_key(ctx, data, token_id);
   const grn_id cached_token_id = data->cache[cache_key].token_id;
   grn_obj *postings;
   if (cached_token_id == token_id) {
@@ -533,7 +588,8 @@ grn_index_column_diff_cache_remove_posting(grn_ctx *ctx,
                                            size_t nth_posting)
 {
   const grn_id token_id = data->current.token_id;
-  const size_t cache_key = grn_index_column_diff_cache_compute_key(token_id);
+  const size_t cache_key =
+    grn_index_column_diff_cache_compute_key(ctx, data, token_id);
   const size_t n_posting_elements = data->n_posting_elements;
   size_t n_postings = 0;
   const uint32_t *postings =
@@ -852,6 +908,10 @@ grn_index_column_diff(grn_ctx *ctx,
   }
 
   data.lexicon = grn_ctx_at(ctx, index_column->header.domain);
+  grn_index_column_diff_data_init_cache(ctx, &data);
+  if (ctx->rc != GRN_SUCCESS) {
+    goto exit;
+  }
 
   data.diff = grn_table_create(ctx,
                                NULL, 0,
