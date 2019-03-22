@@ -82,7 +82,7 @@ if ! test -d "$groonga_command_dir"; then
 fi
 if ! test -d "$groonga_command_dir"; then
   git clone --depth 1 \
-      git://github.com/groonga/groonga-command "$groonga_command_dir"
+      https://github.com/groonga/groonga-command "$groonga_command_dir"
 fi
 
 groonga_command_parser_dir="$SOURCE_DIR/groonga-command-parser"
@@ -91,7 +91,7 @@ if ! test -d "$groonga_command_parser_dir"; then
 fi
 if ! test -d "$groonga_command_parser_dir"; then
   git clone --depth 1 \
-      git://github.com/groonga/groonga-command-parser \
+      https://github.com/groonga/groonga-command-parser \
       "$groonga_command_parser_dir"
 fi
 
