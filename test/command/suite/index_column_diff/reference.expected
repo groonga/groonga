@@ -1,0 +1,60 @@
+table_create Values TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data value COLUMN_SCALAR Values
+[[0,0.0,0.0],true]
+column_create Values data_index COLUMN_INDEX Data value
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"value": "Hello World"},
+{"value": "Hello Groonga"}
+]
+[[0,0.0,0.0],2]
+truncate Values.data_index
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"value": "Good-by World"},
+{"value": "Good-by Groonga"}
+]
+[[0,0.0,0.0],2]
+index_column_diff Values data_index
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "token": {
+        "id": 1,
+        "value": "Hello World"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 1
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 2,
+        "value": "Hello Groonga"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 2
+        }
+      ]
+    }
+  ]
+]

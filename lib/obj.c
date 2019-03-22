@@ -219,13 +219,16 @@ grn_obj_is_weight_vector_column(grn_ctx *ctx, grn_obj *obj)
 grn_bool
 grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_obj *range;
-
   if (!grn_obj_is_column(ctx, obj)) {
     return GRN_FALSE;
   }
 
-  range = grn_ctx_at(ctx, grn_obj_get_range(ctx, obj));
+  const grn_id range_id = grn_obj_get_range(ctx, obj);
+  if (grn_id_is_builtin(ctx, range_id)) {
+    return GRN_FALSE;
+  }
+
+  grn_obj *range = range = grn_ctx_at(ctx, range_id);
   if (!range) {
     return GRN_FALSE;
   }

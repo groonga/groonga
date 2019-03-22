@@ -816,6 +816,7 @@ grn_index_column_diff_compute(grn_ctx *ctx,
     grn_index_column_diff_progress(ctx, data);
     for (size_t i = 0; i < n_source_columns; i++) {
       grn_obj *source = GRN_PTR_VALUE_AT(source_columns, i);
+      const grn_bool is_reference = grn_obj_is_reference_column(ctx, source);
 
       data->current.posting.rid = id;
       data->current.posting.sid = i + 1;
@@ -839,10 +840,18 @@ grn_index_column_diff_compute(grn_ctx *ctx,
         }
         break;
       case GRN_BULK :
-        grn_index_column_diff_process_token(ctx,
-                                            data,
-                                            GRN_BULK_HEAD(value),
-                                            GRN_BULK_VSIZE(value));
+        if (is_reference) {
+          if (GRN_BULK_VSIZE(value) > 0) {
+            data->current.token_id = GRN_RECORD_VALUE(value);
+            data->current.posting.pos = 0;
+            grn_index_column_diff_process_token_id(ctx, data);
+          }
+        } else {
+          grn_index_column_diff_process_token(ctx,
+                                              data,
+                                              GRN_BULK_HEAD(value),
+                                              GRN_BULK_VSIZE(value));
+        }
         break;
       default :
         break;
