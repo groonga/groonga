@@ -7,7 +7,9 @@ table_create   --name Term   --flags TABLE_PAT_KEY   --key_type ShortText   --de
 column_create   --table Term   --name content   --flags COLUMN_INDEX|WITH_POSITION   --type Memos   --source content
 [[0,0.0,0.0],true]
 load --table Memos
+[
 {"_key":"1", "content":"ヤマダ です"}
+]
 [[0,0.0,0.0],1]
 select Memos --filter 'content @ "やまだ"'
 [
