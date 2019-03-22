@@ -3,7 +3,7 @@ table_create Values TABLE_HASH_KEY ShortText
 table_create Data TABLE_NO_KEY
 column_create Data values COLUMN_VECTOR Values
 
-column_create Values data_index COLUMN_INDEX Data values
+column_create Values data_index COLUMN_INDEX|WITH_SECTION Data values
 
 load --table Data
 [

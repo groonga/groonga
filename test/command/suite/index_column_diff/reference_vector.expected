@@ -4,7 +4,7 @@ table_create Data TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Data values COLUMN_VECTOR Values
 [[0,0.0,0.0],true]
-column_create Values data_index COLUMN_INDEX Data values
+column_create Values data_index COLUMN_INDEX|WITH_SECTION Data values
 [[0,0.0,0.0],true]
 load --table Data
 [
@@ -38,7 +38,8 @@ index_column_diff Values data_index
       ],
       "missings": [
         {
-          "record_id": 1
+          "record_id": 1,
+          "section_id": 1
         }
       ]
     },
@@ -52,7 +53,8 @@ index_column_diff Values data_index
       ],
       "missings": [
         {
-          "record_id": 1
+          "record_id": 1,
+          "section_id": 1
         }
       ]
     },
@@ -66,7 +68,8 @@ index_column_diff Values data_index
       ],
       "missings": [
         {
-          "record_id": 2
+          "record_id": 2,
+          "section_id": 1
         }
       ]
     },
@@ -80,7 +83,8 @@ index_column_diff Values data_index
       ],
       "missings": [
         {
-          "record_id": 2
+          "record_id": 2,
+          "section_id": 1
         }
       ]
     }
