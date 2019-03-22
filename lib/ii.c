@@ -3993,6 +3993,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           GRN_OBJ_FIN(ctx, &term);
           goto exit;
         }
+        grn_id dgap_keep = GRN_ID_NIL;
         for (i = 0; i < nchunks; i++) {
           GRN_B_DEC(cinfo[i].segno, chunk_data->data);
           GRN_B_DEC(cinfo[i].size, chunk_data->data);
@@ -4023,7 +4024,11 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
               goto exit;
             }
           }
-          if (cinfo[i].size) {
+          if (cinfo[i].size == 0) {
+            dgap_keep += cinfo[i].dgap;
+          } else {
+            cinfo[i].dgap += dgap_keep;
+            dgap_keep = GRN_ID_NIL;
             nvchunks++;
           }
         }
