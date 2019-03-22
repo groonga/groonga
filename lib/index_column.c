@@ -245,6 +245,8 @@ typedef struct {
   grn_obj *lexicon;
   grn_ii *ii;
   struct {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
     grn_bool with_section;
     grn_bool with_position;
     uint32_t n_elements;
@@ -420,8 +422,10 @@ grn_index_column_diff_progress(grn_ctx *ctx,
 
     GRN_LOG(ctx,
             data->progress.log_level,
-            "[index-column][diff][progress] "
+            "[index-column][diff][progress][%.*s] "
             "%*u/%u %3.0f%% %.2f%s/%.2f%s %.2f%s(%.2frecords/s) %.2f%s",
+            data->index.name_size,
+            data->index.name,
             data->progress.n_records_digits,
             i,
             n_records,
@@ -806,6 +810,11 @@ grn_index_column_diff(grn_ctx *ctx,
   }
   data.ii = (grn_ii *)index_column;
   {
+    data.index.name_size =
+      grn_obj_name(ctx,
+                   index_column,
+                   data.index.name,
+                   sizeof(data.index.name));
     grn_column_flags flags = grn_column_get_flags(ctx, index_column);
     data.index.with_section =
       ((flags & GRN_OBJ_WITH_SECTION) == GRN_OBJ_WITH_SECTION);
@@ -853,11 +862,10 @@ grn_index_column_diff(grn_ctx *ctx,
   if (!data.diff) {
     char message[GRN_CTX_MSGSIZE];
     grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
-    char name[GRN_TABLE_MAX_KEY_SIZE];
-    int name_size = grn_obj_name(ctx, index_column, name, sizeof(name));
     ERR(GRN_INVALID_ARGUMENT,
         "[index-column][diff] failed to create diff table: <%.*s>: %s",
-        name_size, name,
+        data.index.name_size,
+        data.index.name,
         message);
     goto exit;
   }
@@ -871,11 +879,10 @@ grn_index_column_diff(grn_ctx *ctx,
   if (!data.postings) {
     char message[GRN_CTX_MSGSIZE];
     grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
-    char name[GRN_TABLE_MAX_KEY_SIZE];
-    int name_size = grn_obj_name(ctx, index_column, name, sizeof(name));
     ERR(GRN_INVALID_ARGUMENT,
         "[index-column][diff] failed to create postings column: <%.*s>: %s",
-        name_size, name,
+        data.index.name_size,
+        data.index.name,
         message);
     goto exit;
   }
@@ -889,11 +896,10 @@ grn_index_column_diff(grn_ctx *ctx,
   if (!data.remains) {
     char message[GRN_CTX_MSGSIZE];
     grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
-    char name[GRN_TABLE_MAX_KEY_SIZE];
-    int name_size = grn_obj_name(ctx, index_column, name, sizeof(name));
     ERR(GRN_INVALID_ARGUMENT,
         "[index-column][diff] failed to create remains column: <%.*s>: %s",
-        name_size, name,
+        data.index.name_size,
+        data.index.name,
         message);
     goto exit;
   }
@@ -907,11 +913,10 @@ grn_index_column_diff(grn_ctx *ctx,
   if (!data.missings) {
     char message[GRN_CTX_MSGSIZE];
     grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
-    char name[GRN_TABLE_MAX_KEY_SIZE];
-    int name_size = grn_obj_name(ctx, index_column, name, sizeof(name));
     ERR(GRN_INVALID_ARGUMENT,
         "[index-column][diff] failed to create missings column: <%.*s>: %s",
-        name_size, name,
+        data.index.name_size,
+        data.index.name,
         message);
     goto exit;
   }
