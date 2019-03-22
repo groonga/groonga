@@ -353,6 +353,23 @@ if test "x$grn_debug" != "xno"; then
 fi
 AC_SUBST(grn_debug)
 
+# For optimization
+AC_ARG_ENABLE(optimize,
+  [AS_HELP_STRING([--enable-optimize],
+                  [use optimize flags (default=no)])],
+  [grn_optimize="$enableval"],
+  [grn_optimize="no"])
+if test "x$grn_optimize" != "xno"; then
+  grn_optimize="yes"
+  if test "$CLANG" = "yes"; then
+    CFLAGS="$CFLAGS -O3 -march=native"
+    CXXFLAGS="$CXXFLAGS -O3 -march=native"
+  elif test "$GCC" = "yes"; then
+    CFLAGS="$CFLAGS -O3 -march=native"
+    CXXFLAGS="$CXXFLAGS -O3 -march=native"
+  fi
+fi
+
 AC_SEARCH_LIBS(log, m, [], [AC_MSG_ERROR("No libm found")])
 AC_MSG_CHECKING([for fpclassify])
 AC_LINK_IFELSE(
