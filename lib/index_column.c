@@ -853,17 +853,17 @@ grn_index_column_diff_compute(grn_ctx *ctx,
         }
         break;
       case GRN_BULK :
-        if (is_reference) {
-          if (GRN_BULK_VSIZE(value) > 0) {
+        if (GRN_BULK_VSIZE(value) > 0) {
+          if (is_reference) {
             data->current.token_id = GRN_RECORD_VALUE(value);
             data->current.posting.pos = 0;
             grn_index_column_diff_process_token_id(ctx, data);
+          } else {
+            grn_index_column_diff_process_token(ctx,
+                                                data,
+                                                GRN_BULK_HEAD(value),
+                                                GRN_BULK_VSIZE(value));
           }
-        } else {
-          grn_index_column_diff_process_token(ctx,
-                                              data,
-                                              GRN_BULK_HEAD(value),
-                                              GRN_BULK_VSIZE(value));
         }
         break;
       default :
