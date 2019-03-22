@@ -828,12 +828,25 @@ grn_index_column_diff_compute(grn_ctx *ctx,
       case GRN_VECTOR :
         break;
       case GRN_UVECTOR :
-        {
+        if (is_reference) {
           const size_t n_elements = grn_uvector_size(ctx, value);
           for (size_t i = 0; i < n_elements; i++) {
             const grn_id element =
               grn_uvector_get_element(ctx, value, i, NULL);
             data->current.token_id = element;
+            data->current.posting.pos = 0;
+            grn_index_column_diff_process_token_id(ctx, data);
+          }
+        } else {
+          const size_t n_elements = grn_uvector_size(ctx, value);
+          const size_t element_size = grn_uvector_element_size(ctx, value);
+          for (size_t i = 0; i < n_elements; i++) {
+            const char *element = GRN_BULK_HEAD(value) + (element_size * i);
+            data->current.token_id =
+              grn_table_get(ctx, data->lexicon, element, element_size);
+            if (data->current.token_id == GRN_ID_NIL) {
+              continue;
+            }
             data->current.posting.pos = 0;
             grn_index_column_diff_process_token_id(ctx, data);
           }

@@ -1,0 +1,21 @@
+table_create Data TABLE_NO_KEY
+column_create Data values COLUMN_VECTOR Int64
+
+table_create Numbers TABLE_HASH_KEY Int64
+column_create Numbers data_index COLUMN_INDEX Data values
+
+load --table Data
+[
+{"values": [-9223372036854775808, 9223372036854775807]},
+{"values": [-9223372036854775807, 9223372036854775806]}
+]
+
+truncate Numbers.data_index
+
+load --table Data
+[
+{"values": [-1, 1]},
+{"values": [-2, 2]}
+]
+
+index_column_diff Numbers data_index

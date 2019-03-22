@@ -1,0 +1,88 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data values COLUMN_VECTOR Int64
+[[0,0.0,0.0],true]
+table_create Numbers TABLE_HASH_KEY Int64
+[[0,0.0,0.0],true]
+column_create Numbers data_index COLUMN_INDEX Data values
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"values": [-9223372036854775808, 9223372036854775807]},
+{"values": [-9223372036854775807, 9223372036854775806]}
+]
+[[0,0.0,0.0],2]
+truncate Numbers.data_index
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"values": [-1, 1]},
+{"values": [-2, 2]}
+]
+[[0,0.0,0.0],2]
+index_column_diff Numbers data_index
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "token": {
+        "id": 1,
+        "value": -9223372036854775808
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 1
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 2,
+        "value": 9223372036854775807
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 1
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 3,
+        "value": -9223372036854775807
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 2
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 4,
+        "value": 9223372036854775806
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 2
+        }
+      ]
+    }
+  ]
+]
