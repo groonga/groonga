@@ -4,6 +4,8 @@ notifications:
 
 language: cpp
 
+dist: xenial
+
 services:
   - docker
 
