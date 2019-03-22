@@ -830,9 +830,9 @@ grn_index_column_diff_compute(grn_ctx *ctx,
       case GRN_UVECTOR :
         if (is_reference) {
           const size_t n_elements = grn_uvector_size(ctx, value);
-          for (size_t i = 0; i < n_elements; i++) {
+          for (size_t j = 0; j < n_elements; j++) {
             const grn_id element =
-              grn_uvector_get_element(ctx, value, i, NULL);
+              grn_uvector_get_element(ctx, value, j, NULL);
             data->current.token_id = element;
             data->current.posting.pos = 0;
             grn_index_column_diff_process_token_id(ctx, data);
@@ -840,8 +840,8 @@ grn_index_column_diff_compute(grn_ctx *ctx,
         } else {
           const size_t n_elements = grn_uvector_size(ctx, value);
           const size_t element_size = grn_uvector_element_size(ctx, value);
-          for (size_t i = 0; i < n_elements; i++) {
-            const char *element = GRN_BULK_HEAD(value) + (element_size * i);
+          for (size_t j = 0; j < n_elements; j++) {
+            const char *element = GRN_BULK_HEAD(value) + (element_size * j);
             data->current.token_id =
               grn_table_get(ctx, data->lexicon, element, element_size);
             if (data->current.token_id == GRN_ID_NIL) {
