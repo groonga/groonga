@@ -719,6 +719,85 @@ grn_index_column_diff_find_posting(grn_ctx *ctx,
 }
 
 static void
+grn_index_column_diff_process_token_id(grn_ctx *ctx,
+                                       grn_index_column_diff_data *data)
+{
+  {
+    int added = 0;
+    data->current.diff_id =
+      grn_table_add(ctx,
+                    data->diff,
+                    &(data->current.token_id), sizeof(grn_id),
+                    &added);
+    data->current.is_new_diff = (added != 0);
+  }
+
+  const int64_t nth_posting =
+    grn_index_column_diff_find_posting(ctx, data);
+  if (nth_posting >= 0) {
+    grn_index_column_diff_cache_remove_posting(ctx,
+                                               data,
+                                               (size_t)nth_posting);
+  } else {
+    grn_obj *postings = &(data->buffers.postings);
+    GRN_BULK_REWIND(postings);
+    const grn_posting *posting = &(data->current.posting);
+    GRN_UINT32_PUT(ctx, postings, posting->rid);
+    if (data->index.with_section) {
+      GRN_UINT32_PUT(ctx, postings, posting->sid);
+    }
+    if (data->index.with_position) {
+      GRN_UINT32_PUT(ctx, postings, posting->pos);
+    }
+    grn_obj_set_value(ctx,
+                      data->missings,
+                      data->current.diff_id,
+                      postings,
+                      GRN_OBJ_APPEND);
+  }
+}
+
+static void
+grn_index_column_diff_process_token(grn_ctx *ctx,
+                                    grn_index_column_diff_data *data,
+                                    const void *value_data,
+                                    size_t value_size)
+{
+  if (value_size == 0) {
+    return;
+  }
+
+  const unsigned int token_cursor_flags = 0;
+  grn_token_cursor *token_cursor =
+    grn_token_cursor_open(ctx,
+                          data->lexicon,
+                          value_data,
+                          value_size,
+                          GRN_TOKEN_ADD,
+                          token_cursor_flags);
+  if (!token_cursor) {
+    return;
+  }
+
+  const grn_bool with_position = data->index.with_position;
+  while (grn_token_cursor_get_status(ctx, token_cursor) ==
+         GRN_TOKEN_CURSOR_DOING) {
+    data->current.token_id = grn_token_cursor_next(ctx, token_cursor);
+    if (data->current.token_id == GRN_ID_NIL) {
+      continue;
+    }
+
+    if (with_position) {
+      grn_token *token = grn_token_cursor_get_token(ctx, token_cursor);
+      data->current.posting.pos = grn_token_get_position(ctx, token);
+    }
+
+    grn_index_column_diff_process_token_id(ctx, data);
+  }
+  grn_token_cursor_close(ctx, token_cursor);
+}
+
+static void
 grn_index_column_diff_compute(grn_ctx *ctx,
                               grn_index_column_diff_data *data)
 {
@@ -726,8 +805,6 @@ grn_index_column_diff_compute(grn_ctx *ctx,
   const size_t n_source_columns = GRN_PTR_VECTOR_SIZE(source_columns);
   grn_obj *value = &(data->buffers.value);
   grn_obj *postings = &(data->buffers.postings);
-  const grn_bool with_section = data->index.with_section;
-  const grn_bool with_position = data->index.with_position;
 
   grn_index_column_diff_init_progress(ctx, data);
 
@@ -746,68 +823,30 @@ grn_index_column_diff_compute(grn_ctx *ctx,
       GRN_BULK_REWIND(value);
       grn_obj_get_value(ctx, source, id, value);
 
-      if (GRN_BULK_VSIZE(value) == 0) {
-        continue;
-      }
-
-      const unsigned int token_cursor_flags = 0;
-      grn_token_cursor *token_cursor =
-        grn_token_cursor_open(ctx,
-                              data->lexicon,
-                              GRN_BULK_HEAD(value),
-                              GRN_BULK_VSIZE(value),
-                              GRN_TOKEN_ADD,
-                              token_cursor_flags);
-      if (!token_cursor) {
-        continue;
-      }
-
-      while (grn_token_cursor_get_status(ctx, token_cursor) ==
-             GRN_TOKEN_CURSOR_DOING) {
-        data->current.token_id = grn_token_cursor_next(ctx, token_cursor);
-        if (data->current.token_id == GRN_ID_NIL) {
-          continue;
-        }
-
-        if (with_position) {
-          grn_token *token = grn_token_cursor_get_token(ctx, token_cursor);
-          data->current.posting.pos = grn_token_get_position(ctx, token);
-        }
-
+      switch (value->header.type) {
+      case GRN_VECTOR :
+        break;
+      case GRN_UVECTOR :
         {
-          int added = 0;
-          data->current.diff_id =
-            grn_table_add(ctx,
-                          data->diff,
-                          &(data->current.token_id), sizeof(grn_id),
-                          &added);
-          data->current.is_new_diff = (added != 0);
-        }
-
-        const int64_t nth_posting =
-          grn_index_column_diff_find_posting(ctx, data);
-        if (nth_posting >= 0) {
-          grn_index_column_diff_cache_remove_posting(ctx,
-                                                     data,
-                                                     (size_t)nth_posting);
-        } else {
-          const grn_posting *posting = &(data->current.posting);
-          GRN_BULK_REWIND(postings);
-          GRN_UINT32_PUT(ctx, postings, posting->rid);
-          if (with_section) {
-            GRN_UINT32_PUT(ctx, postings, posting->sid);
+          const size_t n_elements = grn_uvector_size(ctx, value);
+          for (size_t i = 0; i < n_elements; i++) {
+            const grn_id element =
+              grn_uvector_get_element(ctx, value, i, NULL);
+            data->current.token_id = element;
+            data->current.posting.pos = 0;
+            grn_index_column_diff_process_token_id(ctx, data);
           }
-          if (with_position) {
-            GRN_UINT32_PUT(ctx, postings, posting->pos);
-          }
-          grn_obj_set_value(ctx,
-                            data->missings,
-                            data->current.diff_id,
-                            postings,
-                            GRN_OBJ_APPEND);
         }
+        break;
+      case GRN_BULK :
+        grn_index_column_diff_process_token(ctx,
+                                            data,
+                                            GRN_BULK_HEAD(value),
+                                            GRN_BULK_VSIZE(value));
+        break;
+      default :
+        break;
       }
-      grn_token_cursor_close(ctx, token_cursor);
     }
   } GRN_TABLE_EACH_END(ctx, cursor);
 

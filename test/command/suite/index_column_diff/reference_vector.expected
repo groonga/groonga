@@ -1,0 +1,88 @@
+table_create Values TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data values COLUMN_VECTOR Values
+[[0,0.0,0.0],true]
+column_create Values data_index COLUMN_INDEX Data values
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"values": ["Hello World", "Good-by World"]},
+{"values": ["Hello Groonga", "Good-by Groonga"]}
+]
+[[0,0.0,0.0],2]
+truncate Values.data_index
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"values": ["Morning World", "Afternoon World"]},
+{"values": ["Morning Groonga", "Afternoon World"]}
+]
+[[0,0.0,0.0],2]
+index_column_diff Values data_index
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "token": {
+        "id": 1,
+        "value": "Hello World"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 1
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 2,
+        "value": "Good-by World"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 1
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 3,
+        "value": "Hello Groonga"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 2
+        }
+      ]
+    },
+    {
+      "token": {
+        "id": 4,
+        "value": "Good-by Groonga"
+      },
+      "remains": [
+
+      ],
+      "missings": [
+        {
+          "record_id": 2
+        }
+      ]
+    }
+  ]
+]

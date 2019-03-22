@@ -1,0 +1,22 @@
+table_create Values TABLE_HASH_KEY ShortText
+
+table_create Data TABLE_NO_KEY
+column_create Data values COLUMN_VECTOR Values
+
+column_create Values data_index COLUMN_INDEX Data values
+
+load --table Data
+[
+{"values": ["Hello World", "Good-by World"]},
+{"values": ["Hello Groonga", "Good-by Groonga"]}
+]
+
+truncate Values.data_index
+
+load --table Data
+[
+{"values": ["Morning World", "Afternoon World"]},
+{"values": ["Morning Groonga", "Afternoon World"]}
+]
+
+index_column_diff Values data_index
