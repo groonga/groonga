@@ -48,7 +48,6 @@ case "${TRAVIS_OS_NAME}" in
            python3-pip
       sudo pip3 install Sphinx
     fi
-    sudo gem install grntest
     ;;
   osx)
     brew update > /dev/null

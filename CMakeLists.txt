@@ -651,6 +651,9 @@ else()
 endif()
 
 find_program(RUBY NAMES
+  "ruby2.6" "ruby26"
+  "ruby2.5" "ruby25"
+  "ruby2.4" "ruby24"
   "ruby2.3" "ruby23"
   "ruby2.2" "ruby22"
   "ruby2.1" "ruby21"
