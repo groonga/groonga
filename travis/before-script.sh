@@ -44,7 +44,7 @@ case "${BUILD_TOOL}" in
       configure_args="${configure_args} --enable-debug"
     #fi
     if [ "${ENABLE_MRUBY}" = "yes" ]; then
-      configure_args="${configure_args} --with-ruby=$(which ruby) --enable-mruby"
+      configure_args="${configure_args} --enable-mruby"
     fi
     if [ "${ENABLE_DOCUMENT}" = "yes" ]; then
       configure_args="${configure_args} --enable-document"
@@ -53,7 +53,7 @@ case "${BUILD_TOOL}" in
       configure_args="${configure_args} --enable-maintainer-mode"
     fi
 
-    ./configure --prefix=${prefix} --with-ruby ${configure_args}
+    ./configure --prefix=${prefix} --with-ruby=$(which ruby) ${configure_args}
     ;;
   cmake)
     cmake_args=""
