@@ -36,6 +36,7 @@ case "${BUILD_TOOL}" in
     ./autogen.sh
 
     configure_args=""
+    configure_args="${configure_args} --with-ruby=$(which ruby)"
     if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
       pkg_config_path="$(brew --prefix openssl)/lib/pkgconfig"
       configure_args="${configure_args} PKG_CONFIG_PATH=${pkg_config_path}"
@@ -53,13 +54,14 @@ case "${BUILD_TOOL}" in
       configure_args="${configure_args} --enable-maintainer-mode"
     fi
 
-    ./configure --prefix=${prefix} --with-ruby=$(which ruby) ${configure_args}
+    ./configure --prefix=${prefix} ${configure_args}
     ;;
   cmake)
     cmake_args=""
+    cmake_args="${cmake_args} -DRUBY=$(which ruby)"
     cmake_args="${cmake_args} -DGRN_WITH_DEBUG=yes"
     if [ "${ENABLE_MRUBY}" = "yes" ]; then
-      cmake_args="${cmake_args} -DRUBY=$(which ruby) -DGRN_WITH_MRUBY=yes"
+      cmake_args="${cmake_args} -DGRN_WITH_MRUBY=yes"
     fi
 
     cmake . ${cmake_args}
