@@ -370,6 +370,8 @@ grn_rc grn_io_flush(grn_ctx *ctx, grn_io *io);
 
 /* encode/decode */
 
+#define GRN_B_ENC_MAX_SIZE 5
+
 /* B is for BER */
 #define GRN_B_ENC(v,p) do {\
   uint8_t *_p = (uint8_t *)p; \

@@ -1723,6 +1723,9 @@ pack_(uint32_t *p, uint32_t i, int w, uint8_t *rp)
   }
 }
 
+/* TODO: This is too rough. I hope that this is large enough. */
+#define PACK_MAX_SIZE ((UNIT_SIZE / 8) * 32 + (UNIT_SIZE * GRN_B_ENC_MAX_SIZE))
+
 static uint8_t *
 pack(uint32_t *p, uint32_t i, uint8_t *freq, uint8_t *rp)
 {
@@ -1856,10 +1859,11 @@ datavec_fin(grn_ctx *ctx, datavec *dv)
 }
 
 /* p is for PForDelta */
-size_t
+static size_t
 grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
 {
   uint8_t *rp = res, freq[33];
+  size_t estimated = 0;
   /* f in df is for frequency */
   uint32_t pgap, usep, l, df, data_size, *dp, *dpe;
   if (!dvlen || !(df = dv[0].data_size)) { return 0; }
@@ -1874,18 +1878,34 @@ grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
   }
   pgap = data_size - df * dvlen;
   if (!usep) {
-    GRN_B_ENC((df << 1) + 1, rp);
+    if (rp) {
+      GRN_B_ENC((df << 1) + 1, rp);
+    } else {
+      estimated += GRN_B_ENC_MAX_SIZE;
+    }
     for (l = 0; l < dvlen; l++) {
       for (dp = dv[l].data, dpe = dp + dv[l].data_size; dp < dpe; dp++) {
-        GRN_B_ENC(*dp, rp);
+        if (rp) {
+          GRN_B_ENC(*dp, rp);
+        } else {
+          estimated += GRN_B_ENC_MAX_SIZE;
+        }
       }
     }
   } else {
     uint32_t buf[UNIT_SIZE];
-    GRN_B_ENC((usep << 1), rp);
-    GRN_B_ENC(df, rp);
+    if (rp) {
+      GRN_B_ENC((usep << 1), rp);
+      GRN_B_ENC(df, rp);
+    } else {
+      estimated += GRN_B_ENC_MAX_SIZE * 2;
+    }
     if (dv[dvlen - 1].flags & ODD) {
-      GRN_B_ENC(pgap, rp);
+      if (rp) {
+        GRN_B_ENC(pgap, rp);
+      } else {
+        estimated += GRN_B_ENC_MAX_SIZE;
+      }
     } else {
       GRN_ASSERT(!pgap);
     }
@@ -1897,7 +1917,11 @@ grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
         memset(freq, 0, 33);
         while (dp < dpe) {
           if (j == UNIT_SIZE) {
-            rp = pack(buf, j, freq, rp);
+            if (rp) {
+              rp = pack(buf, j, freq, rp);
+            } else {
+              estimated += PACK_MAX_SIZE;
+            }
             memset(freq, 0, 33);
             j = 0;
           }
@@ -1909,13 +1933,29 @@ grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
             freq[0]++;
           }
         }
-        if (j) { rp = pack(buf, j, freq, rp); }
+        if (j > 0) {
+          if (rp) {
+            rp = pack(buf, j, freq, rp);
+          } else {
+            estimated += PACK_MAX_SIZE;
+          }
+        }
       } else {
-        while (dp < dpe) { GRN_B_ENC(*dp++, rp); }
+        for (; dp < dpe; dp++) {
+          if (rp) {
+            GRN_B_ENC(*dp, rp);
+          } else {
+            estimated += GRN_B_ENC_MAX_SIZE;
+          }
+        }
       }
     }
   }
-  return rp - res;
+  if (rp) {
+    return rp - res;
+  } else {
+    return estimated;
+  }
 }
 
 #define GRN_B_DEC_CHECK(v,p,pe) do { \
@@ -3867,15 +3907,63 @@ buffer_merge_dump_datavec(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &buffer);
 }
 
-/* If dc doesn't have enough space, program may be crashed.
- * TODO: Support auto space extension or max size check.
- */
+static void
+buffer_merge_ensure_dc(grn_ctx *ctx,
+                       grn_ii *ii,
+                       uint8_t **dc,
+                       uint8_t **dcp,
+                       size_t *dc_size,
+                       size_t required_size,
+                       const char *tag)
+{
+  size_t dc_used_size = *dcp - *dc;
+  if (required_size <= (*dc_size - dc_used_size)) {
+    return;
+  }
+
+  size_t new_dc_size = *dc_size * 2;
+  while (required_size > (new_dc_size - dc_used_size)) {
+    new_dc_size *= 2;
+  }
+  uint8_t *new_dc = GRN_REALLOC(*dc, new_dc_size);
+  if (new_dc) {
+    DEFINE_NAME(ii);
+    GRN_LOG(ctx,
+            GRN_LOG_INFO,
+            "[ii][buffer][merge]%s destination chunk is expanded: "
+            "<%.*s>: "
+            "<%" GRN_FMT_SIZE "> -> <%" GRN_FMT_SIZE ">",
+            tag,
+            name_size, name,
+            *dc_size,
+            new_dc_size);
+    *dcp = new_dc + dc_used_size;
+    *dc = new_dc;
+    *dc_size = new_dc_size;
+  } else {
+    grn_rc rc = ctx->rc;
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_NO_MEMORY_AVAILABLE;
+    }
+    DEFINE_NAME(ii);
+    ERR(rc,
+        "[ii][buffer][merge]%s failed to expand destination chunk: "
+        "<%.*s>: "
+        "<%" GRN_FMT_SIZE "> -> <%" GRN_FMT_SIZE ">",
+        tag,
+        name_size, name,
+        *dc_size,
+        new_dc_size);
+  }
+}
+
 static grn_rc
 buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
-             buffer *sb, uint8_t *sc, buffer *db, uint8_t *dc)
+             buffer *sb, uint8_t *sc, buffer *db, uint8_t **dc_output)
 {
   buffer_term *bt;
-  uint8_t *dcp = dc;
+  uint8_t *dc = NULL;
+  uint8_t *dcp = NULL;
   datavec dv[MAX_N_ELEMENTS + 1];
   datavec rdv[MAX_N_ELEMENTS + 1];
   uint16_t n = db->header.nterms, nterms_void = 0;
@@ -3910,6 +3998,24 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
   if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
     rdv[ii->n_elements - 1].flags = ODD;
   }
+
+  size_t dc_size = (sb->header.chunk_size + S_SEGMENT) * 2;
+  dc = GRN_MALLOC(dc_size);
+  if (!dc) {
+    grn_rc rc = ctx->rc;
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_NO_MEMORY_AVAILABLE;
+    }
+    DEFINE_NAME(ii);
+    ERR(rc,
+        "[ii][buffer][merge] failed to allocate destination chunk: "
+        "<%.*s>: <%" GRN_FMT_SIZE ">",
+        name_size, name,
+        dc_size);
+    goto exit;
+  }
+  dcp = dc;
+
   for (bt = db->terms; n; n--, bt++) {
     merger_data data = {0};
     merger_buffer_data *buffer_data = &(data.source.buffer);
@@ -3950,6 +4056,16 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
         goto exit;
       }
       if (bt->size_in_chunk > 0) {
+        buffer_merge_ensure_dc(ctx,
+                               ii,
+                               &dc,
+                               &dcp,
+                               &dc_size,
+                               bt->size_in_chunk,
+                               "[copy-chunk]");
+        if (ctx->rc != GRN_SUCCESS) {
+          goto exit;
+        }
         grn_memcpy(dcp,
                    chunk_data->data_start + bt->pos_in_chunk,
                    bt->size_in_chunk);
@@ -4184,7 +4300,6 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           nterms_void++;
         } else {
           int j = 0;
-          uint8_t *dcp0;
           uint32_t encsize;
           uint32_t f_s = (ndf < 3) ? 0 : USE_P_ENC;
           uint32_t f_d = ((ndf < 16) || (ndf <= (data.last_id.rid >> 8))) ? 0 : USE_P_ENC;
@@ -4206,15 +4321,27 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
             }
             dv[j].data_size = np; dv[j].flags = f_p|ODD;
           }
-          dcp0 = dcp;
+
+          const size_t dc_offset = dcp - dc;
           a[1] =
             (bt->size_in_chunk ? a[1] : 0) +
             (ndf - chunk_data->n_documents) +
             balance;
           if (nvchunks) {
-            int i;
+            buffer_merge_ensure_dc(ctx,
+                                   ii,
+                                   &dc,
+                                   &dcp,
+                                   &dc_size,
+                                   GRN_B_ENC_MAX_SIZE * (1 + 3 * nchunks),
+                                   "[encode-chunk-metadata]");
+            if (ctx->rc != GRN_SUCCESS) {
+              if (cinfo) { GRN_FREE(cinfo); }
+              array_unref(ii, tid);
+              goto exit;
+            }
             GRN_B_ENC(nvchunks, dcp);
-            for (i = 0; i < nchunks; i++) {
+            for (uint32_t i = 0; i < nchunks; i++) {
               if (cinfo[i].size) {
                 GRN_B_ENC(cinfo[i].segno, dcp);
                 GRN_B_ENC(cinfo[i].size, dcp);
@@ -4222,24 +4349,24 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
               }
             }
           }
-          encsize = grn_p_encv(ctx, dv, ii->n_elements, dcp);
-
-          if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
-            if (buffer_data->buffer->header.chunk_size + S_SEGMENT <=
-                (dcp - dc) + encsize) {
-              GRN_LOG(ctx, GRN_LOG_DEBUG,
-                      "cs(%d)+(%d)=(%d)"
-                      "<=(%" GRN_FMT_LLD ")+(%d)="
-                      "(%" GRN_FMT_LLD ")",
-                      buffer_data->buffer->header.chunk_size,
-                      S_SEGMENT,
-                      buffer_data->buffer->header.chunk_size + S_SEGMENT,
-                      (long long int)(dcp - dc),
-                      encsize,
-                      (long long int)((dcp - dc) + encsize));
-              buffer_merge_dump_datavec(ctx, ii, dv, rdv);
-            }
+          const size_t estimated_encsize = grn_p_encv(ctx,
+                                                      dv,
+                                                      ii->n_elements,
+                                                      NULL);
+          buffer_merge_ensure_dc(ctx,
+                                 ii,
+                                 &dc,
+                                 &dcp,
+                                 &dc_size,
+                                 estimated_encsize,
+                                 "[encode-data-vector]");
+          if (ctx->rc != GRN_SUCCESS) {
+            buffer_merge_dump_datavec(ctx, ii, dv, rdv);
+            if (cinfo) { GRN_FREE(cinfo); }
+            array_unref(ii, tid);
+            goto exit;
           }
+          encsize = grn_p_encv(ctx, dv, ii->n_elements, dcp);
 
           if (encsize > CHUNK_SPLIT_THRESHOLD &&
               (cinfo || (cinfo = GRN_MALLOCN(chunk_info, nchunks + 1))) &&
@@ -4247,7 +4374,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
             int i;
             cinfo[nchunks].dgap = data.last_id.rid - crid;
             nvchunks++;
-            dcp = dcp0;
+            dcp = dc + dc_offset;
             GRN_B_ENC(nvchunks, dcp);
             for (i = 0; i <= nchunks; i++) {
               if (cinfo[i].size) {
@@ -4265,8 +4392,8 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
               bt->tid &= ~CHUNK_SPLIT;
             }
           }
-          bt->pos_in_chunk = (uint32_t)(dcp0 - dc);
-          bt->size_in_chunk = (uint32_t)(dcp - dcp0);
+          bt->pos_in_chunk = (uint32_t)dc_offset;
+          bt->size_in_chunk = (uint32_t)(dcp - (dc + dc_offset));
           bt->size_in_buffer = 0;
           bt->pos_in_buffer = 0;
         }
@@ -4285,6 +4412,13 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
   }
 
 exit :
+  if (ctx->rc == GRN_SUCCESS) {
+    *dc_output = dc;
+  } else {
+    if (dc) {
+      GRN_FREE(dc);
+    }
+  }
   datavec_fin(ctx, dv);
   datavec_fin(ctx, rdv);
   return ctx->rc;
@@ -4309,7 +4443,6 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
 {
   grn_io_win sw, dw;
   buffer *sb, *db = NULL;
-  uint8_t *dc, *sc = NULL;
   uint32_t ds, pseg, scn, dcn = 0;
   if (ii->header->binfo[seg] == GRN_II_PSEG_NOT_ASSIGNED) {
     DEFINE_NAME(ii);
@@ -4343,83 +4476,64 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
   {
     GRN_IO_SEG_REF(ii->seg, ds, db);
     if (db) {
-      uint32_t actual_chunk_size = 0;
-      uint32_t max_dest_chunk_size = sb->header.chunk_size + S_SEGMENT;
-      if ((dc = GRN_MALLOC(max_dest_chunk_size * 2))) {
-        if ((scn = sb->header.chunk) == GRN_II_PSEG_NOT_ASSIGNED ||
-            (sc = WIN_MAP(ii->chunk, ctx, &sw, scn, 0,
-                          sb->header.chunk_size, grn_io_rdonly))) {
-          uint16_t n = sb->header.nterms;
-          memset(db, 0, S_SEGMENT);
-          grn_memcpy(db->terms, sb->terms, n * sizeof(buffer_term));
-          db->header.nterms = n;
-          buffer_merge(ctx, ii, seg, h, sb, sc, db, dc);
+      uint8_t *sc = NULL;
+      if ((scn = sb->header.chunk) == GRN_II_PSEG_NOT_ASSIGNED ||
+          (sc = WIN_MAP(ii->chunk, ctx, &sw, scn, 0,
+                        sb->header.chunk_size, grn_io_rdonly))) {
+        uint16_t n = sb->header.nterms;
+        memset(db, 0, S_SEGMENT);
+        grn_memcpy(db->terms, sb->terms, n * sizeof(buffer_term));
+        db->header.nterms = n;
+        uint8_t *dc = NULL;
+        buffer_merge(ctx, ii, seg, h, sb, sc, db, &dc);
+        if (ctx->rc == GRN_SUCCESS) {
+          const uint32_t actual_chunk_size = db->header.chunk_size;
+          if (actual_chunk_size > 0) {
+            chunk_new(ctx, ii, &dcn, actual_chunk_size);
+          }
           if (ctx->rc == GRN_SUCCESS) {
-            actual_chunk_size = db->header.chunk_size;
-            if (actual_chunk_size > 0) {
-              chunk_new(ctx, ii, &dcn, actual_chunk_size);
-            }
-            if (ctx->rc == GRN_SUCCESS) {
-              grn_rc rc;
-              db->header.chunk =
-                actual_chunk_size ? dcn : GRN_II_PSEG_NOT_ASSIGNED;
-              fake_map(ctx, ii->chunk, &dw, dc, dcn, actual_chunk_size);
-              rc = grn_io_win_unmap(&dw);
-              if (rc == GRN_SUCCESS) {
-                buffer_segment_update(ii, seg, ds);
-                ii->header->total_chunk_size += actual_chunk_size;
-                if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
-                  grn_io_win_unmap(&sw);
-                  chunk_free(ctx, ii, scn, 0, sb->header.chunk_size);
-                  ii->header->total_chunk_size -= sb->header.chunk_size;
-                }
-              } else {
-                GRN_FREE(dc);
-                if (actual_chunk_size) {
-                  chunk_free(ctx, ii, dcn, 0, actual_chunk_size);
-                }
-                if (scn != GRN_II_PSEG_NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
-                {
-                  DEFINE_NAME(ii);
-                  ERR(rc,
-                      "[ii][buffer][flush] failed to unmap a destination chunk: "
-                      "<%.*s> : "
-                      "segment:<%u>, destination-segment:<%u>, actual-size:<%u>",
-                      name_size, name,
-                      seg,
-                      dcn,
-                      actual_chunk_size);
-                }
+            grn_rc rc;
+            db->header.chunk =
+              (actual_chunk_size > 0) ? dcn : GRN_II_PSEG_NOT_ASSIGNED;
+            fake_map(ctx, ii->chunk, &dw, dc, dcn, actual_chunk_size);
+            rc = grn_io_win_unmap(&dw);
+            if (rc == GRN_SUCCESS) {
+              dc = NULL;
+              buffer_segment_update(ii, seg, ds);
+              ii->header->total_chunk_size += actual_chunk_size;
+              if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
+                chunk_free(ctx, ii, scn, 0, sb->header.chunk_size);
+                ii->header->total_chunk_size -= sb->header.chunk_size;
               }
             } else {
-              GRN_FREE(dc);
-              if (scn != GRN_II_PSEG_NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
+              DEFINE_NAME(ii);
+              ERR(rc,
+                  "[ii][buffer][flush] failed to unmap a destination chunk: "
+                  "<%.*s> : "
+                  "segment:<%u>, destination-segment:<%u>, actual-size:<%u>",
+                  name_size, name,
+                  seg,
+                  dcn,
+                  actual_chunk_size);
             }
-          } else {
-            GRN_FREE(dc);
-            if (scn != GRN_II_PSEG_NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
+            if (actual_chunk_size > 0) {
+              chunk_free(ctx, ii, dcn, 0, actual_chunk_size);
+            }
           }
-        } else {
-          GRN_FREE(dc);
-          {
-            DEFINE_NAME(ii);
-            MERR("[ii][buffer][flush] failed to map a source chunk: "
-                 "<%.*s>: "
-                 "segment:<%u>, source-segment:<%u>, chunk-size:<%u>",
-                 name_size, name,
-                 seg,
-                 scn,
-                 sb->header.chunk_size);
+          if (dc) {
+            GRN_FREE(dc);
           }
         }
+        if (scn != GRN_II_PSEG_NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
       } else {
         DEFINE_NAME(ii);
-        MERR("[ii][buffer][flush] failed to allocate a destination chunk: "
+        MERR("[ii][buffer][flush] failed to map a source chunk: "
              "<%.*s>: "
-             "segment:<%u>, destination-segment:<%u>",
+             "segment:<%u>, source-segment:<%u>, chunk-size:<%u>",
              name_size, name,
              seg,
-             ds);
+             scn,
+             sb->header.chunk_size);
       }
       GRN_IO_SEG_UNREF(ii->seg, ds);
     } else {
@@ -4720,7 +4834,6 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
 {
   grn_io_win sw, dw0, dw1;
   buffer *sb, *db0 = NULL, *db1 = NULL;
-  uint8_t *sc = NULL, *dc0, *dc1;
   uint32_t dps0 = 0, dps1 = 0, dls0 = 0, dls1 = 0, sps, scn, dcn0 = 0, dcn1 = 0;
   if (ii->header->binfo[seg] == GRN_II_PSEG_NOT_ASSIGNED) {
     DEFINE_NAME(ii);
@@ -4756,178 +4869,116 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
     if (db0) {
       GRN_IO_SEG_REF(ii->seg, dps1, db1);
       if (db1) {
-        uint32_t actual_db0_chunk_size = 0;
-        uint32_t actual_db1_chunk_size = 0;
-        uint32_t max_dest_chunk_size = sb->header.chunk_size + S_SEGMENT;
-        if ((dc0 = GRN_MALLOC(max_dest_chunk_size * 2))) {
-          if ((dc1 = GRN_MALLOC(max_dest_chunk_size * 2))) {
-            if ((scn = sb->header.chunk) == GRN_II_PSEG_NOT_ASSIGNED ||
-                (sc = WIN_MAP(ii->chunk, ctx, &sw, scn, 0,
-                              sb->header.chunk_size, grn_io_rdonly))) {
-              term_split(ctx, ii->lexicon, sb, db0, db1);
-              buffer_merge(ctx, ii, seg, h, sb, sc, db0, dc0);
-              if (ctx->rc == GRN_SUCCESS) {
-                actual_db0_chunk_size = db0->header.chunk_size;
-                if (actual_db0_chunk_size > 0) {
-                  chunk_new(ctx, ii, &dcn0, actual_db0_chunk_size);
-                }
+        uint8_t *sc = NULL;
+        if ((scn = sb->header.chunk) == GRN_II_PSEG_NOT_ASSIGNED ||
+            (sc = WIN_MAP(ii->chunk, ctx, &sw, scn, 0,
+                          sb->header.chunk_size, grn_io_rdonly))) {
+          term_split(ctx, ii->lexicon, sb, db0, db1);
+          uint8_t *dc0 = NULL;
+          buffer_merge(ctx, ii, seg, h, sb, sc, db0, &dc0);
+          if (ctx->rc == GRN_SUCCESS) {
+            const uint32_t actual_db0_chunk_size = db0->header.chunk_size;
+            if (actual_db0_chunk_size > 0) {
+              chunk_new(ctx, ii, &dcn0, actual_db0_chunk_size);
+            }
+            if (ctx->rc == GRN_SUCCESS) {
+              grn_rc rc;
+              db0->header.chunk =
+                actual_db0_chunk_size ? dcn0 : GRN_II_PSEG_NOT_ASSIGNED;
+              fake_map(ctx, ii->chunk, &dw0, dc0, dcn0, actual_db0_chunk_size);
+              rc = grn_io_win_unmap(&dw0);
+              if (rc == GRN_SUCCESS) {
+                dc0 = NULL;
+                uint8_t *dc1 = NULL;
+                buffer_merge(ctx, ii, seg, h, sb, sc, db1, &dc1);
                 if (ctx->rc == GRN_SUCCESS) {
-                  grn_rc rc;
-                  db0->header.chunk =
-                    actual_db0_chunk_size ? dcn0 : GRN_II_PSEG_NOT_ASSIGNED;
-                  fake_map(ctx, ii->chunk, &dw0, dc0, dcn0, actual_db0_chunk_size);
-                  rc = grn_io_win_unmap(&dw0);
-                  if (rc == GRN_SUCCESS) {
-                    buffer_merge(ctx, ii, seg, h, sb, sc, db1, dc1);
-                    if (ctx->rc == GRN_SUCCESS) {
-                      actual_db1_chunk_size = db1->header.chunk_size;
-                      if (actual_db1_chunk_size > 0) {
-                        chunk_new(ctx, ii, &dcn1, actual_db1_chunk_size);
-                      }
-                      if (ctx->rc == GRN_SUCCESS) {
-                        fake_map(ctx, ii->chunk, &dw1, dc1, dcn1,
-                                 actual_db1_chunk_size);
-                        rc = grn_io_win_unmap(&dw1);
-                        if (rc == GRN_SUCCESS) {
-                          db1->header.chunk =
-                            actual_db1_chunk_size ? dcn1 : GRN_II_PSEG_NOT_ASSIGNED;
-                          buffer_segment_update(ii, dls0, dps0);
-                          buffer_segment_update(ii, dls1, dps1);
-                          array_update(ctx, ii, dls0, db0);
-                          array_update(ctx, ii, dls1, db1);
-                          buffer_segment_clear(ii, seg);
-                          ii->header->total_chunk_size += actual_db0_chunk_size;
-                          ii->header->total_chunk_size += actual_db1_chunk_size;
-                          if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
-                            grn_io_win_unmap(&sw);
-                            chunk_free(ctx, ii, scn, 0, sb->header.chunk_size);
-                            ii->header->total_chunk_size -= sb->header.chunk_size;
-                          }
-                        } else {
-                          if (actual_db1_chunk_size) {
-                            chunk_free(ctx, ii, dcn1, 0, actual_db1_chunk_size);
-                          }
-                          if (actual_db0_chunk_size) {
-                            chunk_free(ctx, ii, dcn0, 0, actual_db0_chunk_size);
-                          }
-                          GRN_FREE(dc1);
-                          if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
-                            grn_io_win_unmap(&sw);
-                          }
-                          {
-                            DEFINE_NAME(ii);
-                            ERR(rc,
-                                "[ii][buffer][merge] "
-                                "failed to unmap a destination chunk2: "
-                                "<%.*s> :"
-                                "segment:<%u>, "
-                                "destination-chunk1:<%u>, "
-                                "destination-chunk2:<%u>, "
-                                "actual-size1:<%u>, "
-                                "actual-size2:<%u>",
-                                name_size, name,
-                                seg,
-                                dcn0,
-                                dcn1,
-                                actual_db0_chunk_size,
-                                actual_db1_chunk_size);
-                          }
-                        }
-                      } else {
-                        if (actual_db0_chunk_size) {
-                          chunk_free(ctx, ii, dcn0, 0, actual_db0_chunk_size);
-                        }
-                        GRN_FREE(dc1);
-                        if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
-                          grn_io_win_unmap(&sw);
-                        }
+                  const uint32_t actual_db1_chunk_size = db1->header.chunk_size;
+                  if (actual_db1_chunk_size > 0) {
+                    chunk_new(ctx, ii, &dcn1, actual_db1_chunk_size);
+                  }
+                  if (ctx->rc == GRN_SUCCESS) {
+                    fake_map(ctx, ii->chunk, &dw1, dc1, dcn1,
+                             actual_db1_chunk_size);
+                    rc = grn_io_win_unmap(&dw1);
+                    if (rc == GRN_SUCCESS) {
+                      dc1 = NULL;
+                      db1->header.chunk =
+                        (actual_db1_chunk_size > 0) ?
+                        dcn1 :
+                        GRN_II_PSEG_NOT_ASSIGNED;
+                      buffer_segment_update(ii, dls0, dps0);
+                      buffer_segment_update(ii, dls1, dps1);
+                      array_update(ctx, ii, dls0, db0);
+                      array_update(ctx, ii, dls1, db1);
+                      buffer_segment_clear(ii, seg);
+                      ii->header->total_chunk_size += actual_db0_chunk_size;
+                      ii->header->total_chunk_size += actual_db1_chunk_size;
+                      if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
+                        chunk_free(ctx, ii, scn, 0, sb->header.chunk_size);
+                        ii->header->total_chunk_size -= sb->header.chunk_size;
                       }
                     } else {
-                      if (actual_db0_chunk_size) {
-                        chunk_free(ctx, ii, dcn0, 0, actual_db0_chunk_size);
-                      }
-                      GRN_FREE(dc1);
-                      if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
-                        grn_io_win_unmap(&sw);
-                      }
-                    }
-                  } else {
-                    if (actual_db0_chunk_size) {
-                      chunk_free(ctx, ii, dcn0, 0, actual_db0_chunk_size);
-                    }
-                    GRN_FREE(dc1);
-                    GRN_FREE(dc0);
-                    if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
-                      grn_io_win_unmap(&sw);
-                    }
-                    {
                       DEFINE_NAME(ii);
                       ERR(rc,
                           "[ii][buffer][merge] "
-                          "failed to unmap a destination chunk1: "
-                          "<%.*s> :"
+                          "failed to unmap a destination chunk2: "
+                          "<%.*s>: "
                           "segment:<%u>, "
                           "destination-chunk1:<%u>, "
-                          "actual-size1:<%u>",
+                          "destination-chunk2:<%u>, "
+                          "actual-size1:<%u>, "
+                          "actual-size2:<%u>",
                           name_size, name,
                           seg,
                           dcn0,
-                          actual_db0_chunk_size);
+                          dcn1,
+                          actual_db0_chunk_size,
+                          actual_db1_chunk_size);
+                    }
+                    if (actual_db1_chunk_size > 0) {
+                      chunk_free(ctx, ii, dcn1, 0, actual_db1_chunk_size);
                     }
                   }
-                } else {
-                  GRN_FREE(dc1);
-                  GRN_FREE(dc0);
-                  if (scn != GRN_II_PSEG_NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
+                  if (dc1) {
+                    GRN_FREE(dc1);
+                  }
                 }
               } else {
-                GRN_FREE(dc1);
-                GRN_FREE(dc0);
-                if (scn != GRN_II_PSEG_NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
-              }
-            } else {
-              GRN_FREE(dc1);
-              GRN_FREE(dc0);
-              {
                 DEFINE_NAME(ii);
-                MERR("[ii][buffer][split] failed to map a source chunk: "
-                     "<%.*s> :"
-                     "segment:<%u>, "
-                     "source-segment:<%u>, "
-                     "chunk-size:<%u>",
-                     name_size, name,
-                     seg,
-                     scn,
-                     sb->header.chunk_size);
+                ERR(rc,
+                    "[ii][buffer][merge] "
+                    "failed to unmap a destination chunk1: "
+                    "<%.*s> :"
+                    "segment:<%u>, "
+                    "destination-chunk1:<%u>, "
+                    "actual-size1:<%u>",
+                    name_size, name,
+                    seg,
+                    dcn0,
+                    actual_db0_chunk_size);
+              }
+              if (actual_db0_chunk_size > 0) {
+                chunk_free(ctx, ii, dcn0, 0, actual_db0_chunk_size);
               }
             }
-          } else {
-            GRN_FREE(dc0);
-            {
-              DEFINE_NAME(ii);
-              MERR("[ii][buffer][split] "
-                   "failed to allocate a destination chunk2: "
-                   "<%.*s> :"
-                   "segment:<%u>, "
-                   "destination-segment1:<%u>, "
-                   "destination-segment2:<%u>",
-                   name_size, name,
-                   seg,
-                   dps0,
-                   dps1);
+            if (dc0) {
+              GRN_FREE(dc0);
             }
+          }
+          if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
+            grn_io_win_unmap(&sw);
           }
         } else {
           DEFINE_NAME(ii);
-          MERR("[ii][buffer][split] failed to allocate a destination chunk1: "
-               "<%.*s>: "
+          MERR("[ii][buffer][split] failed to map a source chunk: "
+               "<%.*s> :"
                "segment:<%u>, "
-               "destination-segment1:<%u>, "
-               "destination-segment2:<%u>",
+               "source-segment:<%u>, "
+               "chunk-size:<%u>",
                name_size, name,
                seg,
-               dps0,
-               dps1);
+               scn,
+               sb->header.chunk_size);
         }
         GRN_IO_SEG_UNREF(ii->seg, dps1);
       } else {
