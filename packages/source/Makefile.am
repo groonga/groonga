@@ -24,10 +24,15 @@ ensure-signed-archive: $(FILES)
 	    gpg2 --local-user $(GPG_UID) --armor --detach-sign $$file);	\
 	done
 
+ensure-latest-archive: $(FILES)
+	cd files &&							\
+	ln -sf groonga-$(VERSION).zip groonga-latest.zip;		\
+	ln -sf groonga-$(VERSION).tar.gz groonga-latest.tar.gz
+
 download: ensure-rsync-path
 	rsync -avz --progress --delete $(RSYNC_PATH)/source/groonga/ files
 
-upload: ensure-rsync-path $(FILES) ensure-signed-archive
+upload: ensure-rsync-path $(FILES) ensure-signed-archive ensure-latest-archive
 	rsync -avz --progress --delete files/ $(RSYNC_PATH)/source/groonga
 
 upload-to-tmp: $(TMP_FILES)
