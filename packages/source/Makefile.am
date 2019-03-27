@@ -26,8 +26,8 @@ ensure-signed-archive: $(FILES)
 
 ensure-latest-archive: $(FILES)
 	cd files &&							\
-	ln -sf groonga-$(VERSION).zip groonga-latest.zip;		\
-	ln -sf groonga-$(VERSION).tar.gz groonga-latest.tar.gz
+	ln -sf $(PACKAGE)-$(VERSION).zip $(PACKAGE)-latest.zip;		\
+	ln -sf $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-latest.tar.gz
 
 download: ensure-rsync-path
 	rsync -avz --progress --delete $(RSYNC_PATH)/source/groonga/ files
