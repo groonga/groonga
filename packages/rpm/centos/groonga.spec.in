@@ -14,7 +14,7 @@
 
 Name:		groonga
 Version:	@VERSION@
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	An Embeddable Fulltext Search Engine
 
 Group:		Applications/Text
@@ -541,8 +541,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
-* Fri Mar 29 2019 Kentaro Hayashi <hayashi@clear-code.com> - 9.0.1-1
+* Fri Mar 29 2019 Kentaro Hayashi <hayashi@clear-code.com> - 9.0.1-2
 - new upstream release.
+- as shipping evaluation package before official release, Release: is changed to -2.
 
 * Sat Feb 09 2019 Kentaro Hayashi <hayashi@clear-code.com> - 9.0.0-1
 - new upstream release.
