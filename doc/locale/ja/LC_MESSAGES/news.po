@@ -33,6 +33,221 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
+msgid "Release 9.0.1 - 2019-03-29"
+msgstr "9.0.1リリース - 2019-03-29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "Added support to acccept null for vector value."
+msgstr "ベクターの値にnullが使えるようになりました。"
+
+msgid ""
+"You can use `select ... --columns[vector].flags COLUMN_VECTOR --"
+"columns[vector].value \"null\"`"
+msgstr ""
+"`select ... --columns[vector].flags COLUMN_VECTOR --columns[vector].value "
+"\"null\"` のように使用できます。"
+
+msgid "[:doc:`/reference/commands/dump`] Translated document into English."
+msgstr "[:doc:`/reference/commands/dump`] ドキュメントを英語に翻訳しました。"
+
+msgid ""
+"Added more checks and logging for invalid indexes. It helps to clarify the "
+"index related bugs."
+msgstr ""
+"無効なインデックスのチェックとログへの記録を強化しました。インデックス関連の"
+"バグを発見するのに役立ちます。"
+
+msgid ""
+"Improved an explanation about ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO`` "
+"behavior in news at :ref:`release-8-0-6`."
+msgstr ""
+":ref:`release-8-0-6` の ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO`` の説明を改"
+"善しました。"
+
+msgid ""
+"[:doc:`/reference/commands/select`] Added new argument ``--load_table``, ``--"
+"load_columns`` and ``--load_values``."
+msgstr ""
+"[:doc:`/reference/commands/select`] 新しい引数 ``--load_table`` 、``--"
+"load_columns`` 、 ``--load_values`` を追加しました。 "
+
+msgid ""
+"You can store a result of ``select`` in a table that specifying ``--"
+"load_table``."
+msgstr ""
+"``select`` の結果を ``--load_table`` で指定したテーブルへ格納できます。"
+
+msgid "``--load_values`` option specifies columns of result of ``select``."
+msgstr ""
+"``--load_values`` オプションは、``select`` の結果のカラムを指定します。"
+
+msgid ""
+"``--load_columns`` options specifies columns of table that specifying ``--"
+"load_table``."
+msgstr ""
+"``--load_columns`` オプションは、``--load_table`` で指定したテーブルのカラム"
+"を指定します。"
+
+msgid ""
+"In this way, you can store values of columns that specifying with ``--"
+"load_values`` into columns that specifying with ``--load_columns``."
+msgstr ""
+"このようにして、``--load_values`` で指定したカラムの値を、 ``--"
+"load_columns`` で指定したカラムへ格納できます。"
+
+msgid ""
+"[:doc:`/reference/commands/select`] Added documentation about "
+"``load_table``, ``load_columns`` and ``load_values``."
+msgstr ""
+"[:doc:`/reference/commands/select`] 新しい引数 ``--load_table`` 、``--"
+"load_columns`` 、 ``--load_values`` を追加しました。 "
+
+msgid ""
+"[:doc:`/reference/commands/load`] Added supoort to display a table of load "
+"destination in a query log."
+msgstr ""
+"[:doc:`/reference/commands/load`] ロード先のテーブルをクエリーログに表示する"
+"ようにしました。"
+
+msgid ""
+"A name of table of load destination display as string in ``[]`` as below."
+msgstr ""
+"以下のように、ロード先のテーブル名は ``[]`` 内の文字列として表示します　。"
+
+msgid "``:000000000000000 load(3): [LoadedLogs][3]``"
+msgstr ""
+
+msgid "Added a new API:"
+msgstr "以下のAPIを追加しました。"
+
+msgid "``grn_ii_get_flags()``"
+msgstr ""
+
+msgid "``grn_index_column_diff()``"
+msgstr ""
+
+msgid "``grn_memory_get_usage()``"
+msgstr ""
+
+msgid ""
+"Added ``index_column_diff`` command to check broken index column. If you "
+"want to log progress of command execution, set log level to debug."
+msgstr ""
+"壊れたインデックスをチェックするためのコマンド ``index_column_diff`` を追加し"
+"ました。コマンド実行の進捗を記録したい場合は、ログレベルをdebugに設定してくだ"
+"さい。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"[:doc:`/reference/functions/snippet_html`] Changed to return an empty vector "
+"for no match."
+msgstr ""
+"[:doc:`/reference/functions/snippet_html`] 一致しない場合、空のベクターを返す"
+"よう変更しました。"
+
+msgid "In such a case, an empty vector ``[]`` is returned instead of ``null``."
+msgstr "そのような場合、 ``null`` の代わりに空のベクター ``[]`` が返されます。"
+
+msgid ""
+"Fixed a warning about possibility of counting threads overflow. In real "
+"world, it doesn't affect user because enourmous number of threads is not "
+"used. [GitHub#904]"
+msgstr ""
+"スレッドカウントがオーバフローする可能性についての警告を修正しました。実運用"
+"では、膨大な数のスレッドが使用されていないため、ユーザーに影響はありません。"
+"[GitHub#904]"
+
+msgid "Fixed build error on macOS [GitHub#909] [Reported by shiro615]"
+msgstr ""
+"maxOSでのビルドエラーを修正しました。 [GitHub#909] [shiro615さんが報告]"
+
+msgid "Fixed a stop word handling bug."
+msgstr "ストップワードの処理のバグを修正しました。"
+
+msgid ""
+"This bug occurs when we set the first token as a stop word in our query."
+msgstr ""
+"このバグは、クエリーの最初のトークンをストップワードとして設定すると発生しま"
+"す。"
+
+msgid "If this bug occurs, our search query isn't hit."
+msgstr "このバグが発生した場合、検索クエリーはヒットしません。"
+
+msgid ""
+"[:doc:`/reference/api/global_configurations`] Fixed a typo about parameter "
+"name of ``grn_lock_set_timeout``."
+msgstr ""
+"[:doc:`/reference/api/global_configurations`] ``grn_lock_set_timeout`` のパラ"
+"メーター名の誤字を修正しました。"
+
+msgid ""
+"Fixed a bug that deleted records may be matched because of updating indexes "
+"incorrectly."
+msgstr ""
+"インデックスの破損によって、削除されたレコードがマッチするバグを修正しまし"
+"た。"
+
+msgid "It may occure when large number of records is added or deleted."
+msgstr "大量のレコードを追加または、削除した時に発生することがあります。"
+
+msgid ""
+"Fixed a memory leak when ``logical_range_filter`` returns no records. "
+"[GitHub#911] [Reported by HashidaTKS]"
+msgstr ""
+"``logical_range_filter`` がレコードを返さない場合のメモリリークを修正しまし"
+"た。[GitHub#911] [HashidaTKSさんが報告]"
+
+msgid ""
+"Fixed a bug that query will not match because of loading data is not "
+"normalized correctly. [PGroonga#GitHub#93, GitHub#912,GitHub#913] [Reported "
+"by kamicup and dodaisuke]"
+msgstr ""
+"ロードしているデータが正しくノーマライズされないことによってクエリーにマッチ"
+"しないバグを修正しました。[PGroonga#GitHub#93, GitHub#912,GitHub#913] "
+"[kamicupさんとdodaisukeさんが報告]"
+
+msgid ""
+"This bug occurs when load data contains whitespace after KATAKANA and "
+"``unify_kana`` option is used for tokenizer."
+msgstr ""
+"このバグは、カタカナの後ろに空白のあるデータをロードし、トークナイザーに "
+"``unify_kana`` オプションが使用された時に発生します。"
+
+msgid "Fixed a bug that an indexes is broken during updating indexes."
+msgstr "インデックスの更新中にインデックスが破損するバグを修正しました。"
+
+msgid ""
+"It may occurs when repeating to add large number of records or delete them "
+"for a long term."
+msgstr ""
+"長期間、大量のレコードの追加、削除を繰り返した時に発生することがあります。"
+
+msgid ""
+"Fixed a crash bug that allocated working area is not enough size when "
+"updating indexes."
+msgstr ""
+"インデックス更新時に十分な作業領域を確保できずにクラッシュするバクを修正しま"
+"した。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "shiro615"
+msgstr "shiro615さん"
+
+msgid "HashidaTKS"
+msgstr "HashidaTKSさん"
+
+msgid "kamicup"
+msgstr "kamicupさん"
+
+msgid "dodaisuke"
+msgstr "dodaisukeさん"
+
 msgid "Release 9.0.0 - 2019-02-09"
 msgstr "9.0.0リリース - 2019-02-09"
 
@@ -42,9 +257,6 @@ msgid ""
 msgstr ""
 "メジャーバージョンアップです! メジャーバージョンアップですが、互換性は壊れて"
 "いないので、データベースを再構築することなく9.0.0へアップグレードできます。"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "[:doc:`/reference/tokenizers`] Added a new tokenizer ``TokenPattern``."
 msgstr ""
@@ -132,20 +344,6 @@ msgid ""
 msgstr ""
 "``--load_values`` オプションは、``logical_select`` の結果のカラムを指定しま"
 "す。"
-
-msgid ""
-"``--load_columns`` options specifies columns of table that specifying ``--"
-"load_table``."
-msgstr ""
-"``--load_columns`` オプションは、``--load_table`` で指定したテーブルのカラム"
-"を指定します。"
-
-msgid ""
-"In this way, you can store values of columns that specifying with ``--"
-"load_values`` into columns that specifying with ``--load_columns``."
-msgstr ""
-"このようにして、``--load_values`` で指定したカラムの値を、 ``--"
-"load_columns`` で指定したカラムへ格納できます。"
 
 msgid "Improve error log when update error of index."
 msgstr "インデックスの更新エラー時のログを改善しました。"
@@ -274,9 +472,6 @@ msgstr "ログに、タイムスタンプとログメッセージを出力しま
 
 msgid "We can also specify multiple log flags by separating flags with ``|``."
 msgstr "``|`` を使って、複数のフラグを指定することもできます。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "Fixed a memory leak when occurs index update error."
 msgstr "インデックスの更新エラー発生時にメモリリークする問題を修正しました。"
@@ -534,12 +729,6 @@ msgid ""
 msgstr ""
 "deleteコマンドで削除したベクターカラムの値がヒットするバグを修正しました。"
 "[dodaisukeさんの報告]"
-
-msgid "Thanks"
-msgstr "感謝"
-
-msgid "dodaisuke"
-msgstr "dodaisukeさん"
 
 msgid "Release 8.0.8 - 2018-10-29"
 msgstr "8.0.8リリース - 2018-10-29"
@@ -13063,3 +13252,10 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
+
+#~ msgid ""
+#~ "[:doc:`/reference/commands/select`] [:doc:`/reference/commands/"
+#~ "logical_select`] Added supoort to log load status as query log."
+#~ msgstr ""
+#~ "[:doc:`/reference/commands/select`][:doc:`/reference/commands/"
+#~ "logical_select`] クエリーログにロードの状態を記録するようにしました。"
