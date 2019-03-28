@@ -25,9 +25,23 @@ Improvements
 
 * Improved an explanation about ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO`` behavior in news at :ref:`release-8-0-6`.
 
+* [:doc:`/reference/commands/select`] Added new argument ``--load_table``, ``--load_columns`` and ``--load_values``.
+
+  * You can store a result of ``select`` in a table that specifying ``--load_table``.
+
+  * ``--load_values`` option specifies columns of result of ``select``.
+
+  * ``--load_columns`` options specifies columns of table that specifying ``--load_table``.
+
+  * In this way, you can store values of columns that specifying with ``--load_values`` into columns that specifying with ``--load_columns``.
+
 * [:doc:`/reference/commands/select`] Added documentation about ``load_table``, ``load_columns`` and ``load_values``.
 
-* [:doc:`/reference/commands/select`] [:doc:`/reference/commands/logical_select`] Added supoort to log load status as query log.
+* [:doc:`/reference/commands/load`] Added supoort to display a table of load destination in a query log.
+
+  * A name of table of load destination display as string in ``[]`` as below.
+
+  * ``:000000000000000 load(3): [LoadedLogs][3]``
 
 * Added a new API:
 
@@ -53,7 +67,9 @@ Fixes
 
 * Fixed a stop word handling bug.
 
-  * For example, first token ``and`` in ``--query("and Hello")`` is skipped as a stop word, following search was buggy.
+  * This bug occurs when we set the first token as a stop word in our query.
+
+  * If this bug occurs, our search query isn't hit.
 
 * [:doc:`/reference/api/global_configurations`] Fixed a typo about parameter name of ``grn_lock_set_timeout``.
 
@@ -63,7 +79,8 @@ Fixes
 
 * Fixed a memory leak when ``logical_range_filter`` returns no records. [GitHub#911] [Reported by HashidaTKS]
 
-* Fixed a bug that query will not match because of loading data is not normalized correctly. [GitHub#912,GitHub#913] [Reported by kamicup]
+* Fixed a bug that query will not match because of loading data is not normalized correctly.
+  [PGroonga#GitHub#93, GitHub#912,GitHub#913] [Reported by kamicup and dodaisuke]
 
   * This bug occurs when load data contains whitespace after KATAKANA and ``unify_kana`` option is used for tokenizer.
 
@@ -81,6 +98,8 @@ Thanks
 * HashidaTKS
 
 * kamicup
+
+* dodaisuke
 
 .. _release-9-0-0:
 
