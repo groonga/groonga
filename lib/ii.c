@@ -4488,8 +4488,12 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
         buffer_merge(ctx, ii, seg, h, sb, sc, db, &dc);
         if (ctx->rc == GRN_SUCCESS) {
           const uint32_t actual_chunk_size = db->header.chunk_size;
+          bool need_chunk_free = true;
           if (actual_chunk_size > 0) {
             chunk_new(ctx, ii, &dcn, actual_chunk_size);
+            if (ctx->rc == GRN_SUCCESS) {
+              need_chunk_free = true;
+            }
           }
           if (ctx->rc == GRN_SUCCESS) {
             grn_rc rc;
@@ -4501,6 +4505,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
               dc = NULL;
               buffer_segment_update(ii, seg, ds);
               ii->header->total_chunk_size += actual_chunk_size;
+              need_chunk_free = false;
               if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
                 chunk_free(ctx, ii, scn, 0, sb->header.chunk_size);
                 ii->header->total_chunk_size -= sb->header.chunk_size;
@@ -4516,9 +4521,9 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                   dcn,
                   actual_chunk_size);
             }
-            if (actual_chunk_size > 0) {
-              chunk_free(ctx, ii, dcn, 0, actual_chunk_size);
-            }
+          }
+          if (need_chunk_free) {
+            chunk_free(ctx, ii, dcn, 0, actual_chunk_size);
           }
           if (dc) {
             GRN_FREE(dc);
@@ -4878,8 +4883,12 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
           buffer_merge(ctx, ii, seg, h, sb, sc, db0, &dc0);
           if (ctx->rc == GRN_SUCCESS) {
             const uint32_t actual_db0_chunk_size = db0->header.chunk_size;
+            bool need_db0_chunk_free = false;
             if (actual_db0_chunk_size > 0) {
               chunk_new(ctx, ii, &dcn0, actual_db0_chunk_size);
+              if (ctx->rc == GRN_SUCCESS) {
+                need_db0_chunk_free = true;
+              }
             }
             if (ctx->rc == GRN_SUCCESS) {
               grn_rc rc;
@@ -4893,8 +4902,12 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                 buffer_merge(ctx, ii, seg, h, sb, sc, db1, &dc1);
                 if (ctx->rc == GRN_SUCCESS) {
                   const uint32_t actual_db1_chunk_size = db1->header.chunk_size;
+                  bool need_db1_chunk_free = false;
                   if (actual_db1_chunk_size > 0) {
                     chunk_new(ctx, ii, &dcn1, actual_db1_chunk_size);
+                    if (ctx->rc == GRN_SUCCESS) {
+                      need_db1_chunk_free = true;
+                    }
                   }
                   if (ctx->rc == GRN_SUCCESS) {
                     fake_map(ctx, ii->chunk, &dw1, dc1, dcn1,
@@ -4913,6 +4926,8 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                       buffer_segment_clear(ii, seg);
                       ii->header->total_chunk_size += actual_db0_chunk_size;
                       ii->header->total_chunk_size += actual_db1_chunk_size;
+                      need_db0_chunk_free = false;
+                      need_db1_chunk_free = false;
                       if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
                         chunk_free(ctx, ii, scn, 0, sb->header.chunk_size);
                         ii->header->total_chunk_size -= sb->header.chunk_size;
@@ -4935,9 +4950,9 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                           actual_db0_chunk_size,
                           actual_db1_chunk_size);
                     }
-                    if (actual_db1_chunk_size > 0) {
-                      chunk_free(ctx, ii, dcn1, 0, actual_db1_chunk_size);
-                    }
+                  }
+                  if (need_db1_chunk_free) {
+                    chunk_free(ctx, ii, dcn1, 0, actual_db1_chunk_size);
                   }
                   if (dc1) {
                     GRN_FREE(dc1);
@@ -4957,9 +4972,9 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                     dcn0,
                     actual_db0_chunk_size);
               }
-              if (actual_db0_chunk_size > 0) {
-                chunk_free(ctx, ii, dcn0, 0, actual_db0_chunk_size);
-              }
+            }
+            if (need_db0_chunk_free) {
+              chunk_free(ctx, ii, dcn0, 0, actual_db0_chunk_size);
             }
             if (dc0) {
               GRN_FREE(dc0);
