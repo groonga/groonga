@@ -23,11 +23,7 @@ Improvements
 
 * Added more checks and logging for invalid indexes. It helps to clarify the index related bugs.
 
-* Improved an explanation about ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO`` behavior.
-
-* Added support for more query optimization.
-
-  * For example, "A && !B" is optimized to "A &! B".
+* Improved an explanation about ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO`` behavior in news at :ref:`release-8-0-6`.
 
 * [:doc:`/reference/commands/select`] Added documentation about ``load_table``, ``load_columns`` and ``load_values``.
 
