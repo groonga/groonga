@@ -51,7 +51,7 @@ Fixes
   * In such a case, an empty vector ``[]`` is returned instead of ``null``.
 
 * Fixed a warning about possibility of counting threads overflow.
-  In real world, it doesn't affect user because enourmous number of threads is not used. [GitHub#94]
+  In real world, it doesn't affect user because enourmous number of threads is not used. [GitHub#904]
 
 * Fixed build error on macOS [GitHub#909] [Reported by shiro615]
 
