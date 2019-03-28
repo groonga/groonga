@@ -7,6 +7,85 @@
 News
 ====
 
+.. _release-9-0-1:
+
+Release 9.0.1 - 2019-03-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added support to acccept null for vector value.
+
+  * You can use `select ... --columns[vector].flags COLUMN_VECTOR --columns[vector].value "null"`
+
+* [:doc:`/reference/commands/dump`] Translated document into English.
+
+* Added more checks and logging for invalid indexes. It helps to clarify the index related bugs.
+
+* Improved an explanation about ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO`` behavior.
+
+* Added support for more query optimization.
+
+  * For example, "A && !B" is optimized to "A &! B".
+
+* [:doc:`/reference/commands/select`] Added documentation about ``load_table``, ``load_columns`` and ``load_values``.
+
+* [:doc:`/reference/commands/select`] [:doc:`/reference/commands/logical_select`] Added supoort to log load status as query log.
+
+* Added a new API:
+
+  * ``grn_ii_get_flags()``
+
+  * ``grn_index_column_diff()``
+
+  * ``grn_memory_get_usage()``
+
+* Added ``index_column_diff`` command to check broken index column. If you want to log progress of command execution, set log level to debug.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/functions/snippet_html`] Changed to return an empty vector for no match.
+
+  * In such a case, an empty vector ``[]`` is returned instead of ``null``.
+
+* Fixed a warning about possibility of counting threads overflow.
+  In real world, it doesn't affect user because enourmous number of threads is not used. [GitHub#94]
+
+* Fixed build error on macOS [GitHub#909] [Reported by shiro615]
+
+* Fixed a stop word handling bug.
+
+  * For example, first token ``and`` in ``--query("and Hello")`` is skipped as a stop word, following search was buggy.
+
+* [:doc:`/reference/api/global_configurations`] Fixed a typo about parameter name of ``grn_lock_set_timeout``.
+
+* Fixed a bug that deleted records may be matched because of updating indexes incorrectly.
+
+  * It may occure when large number of records is added or deleted.
+
+* Fixed a memory leak when ``logical_range_filter`` returns no records. [GitHub#911] [Reported by HashidaTKS]
+
+* Fixed a bug that query will not match because of loading data is not normalized correctly. [GitHub#912,GitHub#913] [Reported by kamicup]
+
+  * This bug occurs when load data contains whitespace after KATAKANA and ``unify_kana`` option is used for tokenizer.
+
+* Fixed a bug that an indexes is broken during updating indexes.
+
+  * It may occurs when repeating to add large number of records or delete them for a long term.
+
+* Fixed a crash bug that allocated working area is not enough size when updating indexes.
+
+Thanks
+^^^^^^
+
+* shiro615
+
+* HashidaTKS
+
+* kamicup
+
 .. _release-9-0-0:
 
 Release 9.0.0 - 2019-02-09
@@ -1602,8 +1681,8 @@ Improvements
 * [:doc:`/reference/functions/highlight_html`] Supported similar
   search.
 
-* [:doc:`/reference/commands/logical_select`] Supported ``initial`` 
-  and stage dynamic columns in labeled drilldown. The example is: 
+* [:doc:`/reference/commands/logical_select`] Supported ``initial``
+  and stage dynamic columns in labeled drilldown. The example is:
   ``--drilldowns[LABEL].stage initial``.
 
 * [:doc:`/reference/commands/logical_select`] Supported window
@@ -1654,7 +1733,7 @@ Thanks
 ^^^^^^
 
 * Gurunavi, Inc.
-  
+
 .. _release-7-0-0:
 
 Release 7.0.0 - 2017-02-09
