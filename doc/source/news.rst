@@ -82,7 +82,7 @@ Fixes
 * Fixed a bug that query will not match because of loading data is not normalized correctly.
   [PGroonga#GitHub#93, GitHub#912,GitHub#913] [Reported by kamicup and dodaisuke]
 
-  * This bug occurs when load data contains whitespace after KATAKANA and ``unify_kana`` option is used for tokenizer.
+  * This bug occurs when load data contains whitespace after KATAKANA and ``unify_kana`` option is used for normalizer.
 
 * Fixed a bug that an indexes is broken during updating indexes.
 

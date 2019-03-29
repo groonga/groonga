@@ -212,9 +212,9 @@ msgstr ""
 
 msgid ""
 "This bug occurs when load data contains whitespace after KATAKANA and "
-"``unify_kana`` option is used for tokenizer."
+"``unify_kana`` option is used for normalizer."
 msgstr ""
-"このバグは、カタカナの後ろに空白のあるデータをロードし、トークナイザーに "
+"このバグは、カタカナの後ろに空白のあるデータをロードし、ノーマライザーに "
 "``unify_kana`` オプションが使用された時に発生します。"
 
 msgid "Fixed a bug that an indexes is broken during updating indexes."
