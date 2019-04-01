@@ -359,6 +359,7 @@ typedef uint32_t grn_column_flags;
 
 #define GRN_OBJ_INDEX_SMALL            (0x01<<16)
 #define GRN_OBJ_INDEX_MEDIUM           (0x01<<17)
+#define GRN_OBJ_INDEX_LARGE            (0x01<<18)
 
 /* obj types */
 

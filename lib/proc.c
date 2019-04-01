@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1074,7 +1074,7 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     case GRN_COLUMN_INDEX :
       {
         grn_ii *ii = (grn_ii *)obj;
-        struct grn_ii_header *h = ii->header;
+        grn_ii_header_common *h = ii->header.common;
         char buf[8];
         GRN_OUTPUT_ARRAY_OPEN("RESULT", 8);
         {
@@ -1138,8 +1138,12 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           }
           GRN_OUTPUT_ARRAY_CLOSE();
           GRN_OUTPUT_MAP_CLOSE();
-          for (i = 0; i < GRN_II_MAX_LSEG; i++) {
-            if (h->binfo[i] < 0x20000) { grn_ii_buffer_check(ctx, ii, i); }
+          const uint32_t n_logical_segments = grn_ii_n_logical_segments(ii);
+          for (uint32_t lseg = 0; lseg < n_logical_segments; lseg++) {
+            const uint32_t pseg = grn_ii_get_buffer_pseg(ii, lseg);
+            if (pseg != GRN_II_PSEG_NOT_ASSIGNED) {
+              grn_ii_buffer_check(ctx, ii, lseg);
+            }
           }
         }
         GRN_OUTPUT_ARRAY_CLOSE();

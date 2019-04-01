@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2016-2017 Brazil
+  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -243,7 +244,7 @@ command_object_inspect_column_index_value_statistics(grn_ctx *ctx,
 {
   grn_ctx_output_map_open(ctx, "statistics", 11);
   {
-    struct grn_ii_header *h = ii->header;
+    grn_ii_header_common *h = ii->header.common;
 
     grn_ctx_output_cstr(ctx, "max_section_id");
     grn_ctx_output_uint64(ctx, grn_ii_max_section(ii));
@@ -268,16 +269,15 @@ command_object_inspect_column_index_value_statistics(grn_ctx *ctx,
         grn_ctx_output_uint64(ctx, n_garbage_segments);
       }
 
+      const uint32_t n_logical_segments = grn_ii_n_logical_segments(ii);
       grn_ctx_output_cstr(ctx, "max_array_segment_id");
       grn_ctx_output_uint64(ctx, h->amax);
       grn_ctx_output_cstr(ctx, "n_array_segments");
       {
-        uint32_t i;
-
-        for (i = 0; i < GRN_II_MAX_LSEG; i++) {
-          uint32_t id = h->ainfo[i];
-          if (id != GRN_II_PSEG_NOT_ASSIGNED) {
-            if (id > max_id) { max_id = id; }
+        for (uint32_t lseg = 0; lseg < n_logical_segments; lseg++) {
+          const uint32_t pseg = grn_ii_get_array_pseg(ii, lseg);
+          if (pseg != GRN_II_PSEG_NOT_ASSIGNED) {
+            if (pseg > max_id) { max_id = pseg; }
             n_array_segments++;
           }
         }
@@ -288,12 +288,10 @@ command_object_inspect_column_index_value_statistics(grn_ctx *ctx,
       grn_ctx_output_uint64(ctx, h->bmax);
       grn_ctx_output_cstr(ctx, "n_buffer_segments");
       {
-        uint32_t i;
-
-        for (i = 0; i < GRN_II_MAX_LSEG; i++) {
-          uint32_t id = h->binfo[i];
-          if (id != GRN_II_PSEG_NOT_ASSIGNED) {
-            if (id > max_id) { max_id = id; }
+        for (uint32_t lseg = 0; lseg < n_logical_segments; lseg++) {
+          const uint32_t pseg = grn_ii_get_buffer_pseg(ii, lseg);
+          if (pseg != GRN_II_PSEG_NOT_ASSIGNED) {
+            if (pseg > max_id) { max_id = pseg; }
             n_buffer_segments++;
           }
         }
@@ -411,6 +409,8 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
         grn_ctx_output_cstr(ctx, "small");
       } else if ((column_flags & GRN_OBJ_INDEX_MEDIUM) != 0) {
         grn_ctx_output_cstr(ctx, "medium");
+      } else if ((column_flags & GRN_OBJ_INDEX_LARGE) != 0) {
+        grn_ctx_output_cstr(ctx, "large");
       } else {
         grn_ctx_output_cstr(ctx, "normal");
       }

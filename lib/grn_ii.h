@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,6 +30,10 @@
 extern "C" {
 #endif
 
+typedef struct _grn_ii_header_common grn_ii_header_common;
+typedef struct _grn_ii_header_normal grn_ii_header_normal;
+typedef struct _grn_ii_header_large  grn_ii_header_large;
+
 struct _grn_ii {
   grn_db_obj obj;
   grn_io *seg;           /* I/O for a variety of segments */
@@ -39,7 +44,11 @@ struct _grn_ii {
                          /* This member is used for matching */
   uint32_t n_elements;   /* Number of elements in postings */
                          /* rid, [sid], tf, [weight] and [pos] */
-  struct grn_ii_header *header;
+  union {
+    grn_ii_header_common *common;
+    grn_ii_header_normal *normal;
+    grn_ii_header_large *large;
+  } header;
 };
 
 /* BGQ is buffer garbage queue? */
@@ -62,25 +71,38 @@ struct _grn_ii {
 
 #define GRN_II_PSEG_NOT_ASSIGNED  0xffffffff
 
-struct grn_ii_header {
-  uint64_t total_chunk_size;
-  uint64_t bmax;
-  uint32_t flags;
-  uint32_t amax;
-  uint32_t smax;
-  uint32_t param1;
-  uint32_t param2;
-  uint32_t pnext;
-  uint32_t bgqhead;
-  uint32_t bgqtail;
-  uint32_t bgqbody[GRN_II_BGQSIZE];
-  uint32_t reserved[288];
-  uint32_t ainfo[GRN_II_MAX_LSEG]; /* array info */
-  uint32_t binfo[GRN_II_MAX_LSEG]; /* buffer info */
-  uint32_t free_chunks[GRN_II_N_CHUNK_VARIATION + 1];
-  uint32_t garbages[GRN_II_N_CHUNK_VARIATION + 1];
-  uint32_t ngarbages[GRN_II_N_CHUNK_VARIATION + 1];
-  uint8_t chunks[GRN_II_MAX_CHUNK >> 3];
+#define GRN_II_HEADER_COMMON_FIELDS                     \
+  uint64_t total_chunk_size;                            \
+  uint64_t bmax;                                        \
+  uint32_t flags;                                       \
+  uint32_t amax;                                        \
+  uint32_t smax;                                        \
+  uint32_t param1;                                      \
+  uint32_t param2;                                      \
+  uint32_t pnext;                                       \
+  uint32_t bgqhead;                                     \
+  uint32_t bgqtail;                                     \
+  uint32_t bgqbody[GRN_II_BGQSIZE];                     \
+  uint32_t reserved[288];                               \
+  uint32_t ainfo[GRN_II_MAX_LSEG]; /* array info */     \
+  uint32_t binfo[GRN_II_MAX_LSEG]; /* buffer info */    \
+  uint32_t free_chunks[GRN_II_N_CHUNK_VARIATION + 1];   \
+  uint32_t garbages[GRN_II_N_CHUNK_VARIATION + 1];      \
+  uint32_t ngarbages[GRN_II_N_CHUNK_VARIATION + 1];     \
+  uint8_t chunks[GRN_II_MAX_CHUNK >> 3]
+
+struct _grn_ii_header_common {
+  GRN_II_HEADER_COMMON_FIELDS;
+};
+
+struct _grn_ii_header_normal {
+  GRN_II_HEADER_COMMON_FIELDS;
+};
+
+struct _grn_ii_header_large {
+  GRN_II_HEADER_COMMON_FIELDS;
+  uint32_t ainfo_extend[GRN_II_MAX_LSEG]; /* array info (extended) */
+  uint32_t binfo_extend[GRN_II_MAX_LSEG]; /* buffer info (extended) */
 };
 
 struct _grn_ii_pos {
@@ -125,6 +147,10 @@ size_t grn_ii_get_disk_usage(grn_ctx *ctx, grn_ii *ii);
 
 grn_ii_cursor *grn_ii_cursor_openv1(grn_ii *ii, uint32_t key);
 grn_rc grn_ii_cursor_openv2(grn_ii_cursor **cursors, int ncursors);
+
+uint32_t grn_ii_get_array_pseg(grn_ii *ii, uint32_t lseg);
+uint32_t grn_ii_get_buffer_pseg(grn_ii *ii, uint32_t pseg);
+uint32_t grn_ii_n_logical_segments(grn_ii *ii);
 
 uint32_t grn_ii_max_section(grn_ii *ii);
 

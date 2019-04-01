@@ -180,12 +180,18 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
     target = GRN_OBJ_TABLEP(src) ? src : grn_ctx_at(ctx, src->header.domain);
     if (target) {
       int i, ncol = DB_OBJ(index_column)->source_size / sizeof(grn_id);
-      grn_table_flags flags;
+      grn_table_flags lexicon_flags;
       grn_ii *ii = (grn_ii *)index_column;
       grn_bool use_grn_ii_build;
       grn_obj *tokenizer = NULL;
-      grn_table_get_info(ctx, ii->lexicon, &flags, NULL, &tokenizer, NULL, NULL);
-      switch (flags & GRN_OBJ_TABLE_TYPE_MASK) {
+      grn_table_get_info(ctx,
+                         ii->lexicon,
+                         &lexicon_flags,
+                         NULL,
+                         &tokenizer,
+                         NULL,
+                         NULL);
+      switch (lexicon_flags & GRN_OBJ_TABLE_TYPE_MASK) {
       case GRN_OBJ_TABLE_PAT_KEY :
       case GRN_OBJ_TABLE_DAT_KEY :
         use_grn_ii_build = GRN_TRUE;
@@ -194,10 +200,11 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
         use_grn_ii_build = GRN_FALSE;
         break;
       }
-      if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+      const grn_column_flags flags = grn_ii_get_flags(ctx, ii);
+      if ((flags & GRN_OBJ_WITH_WEIGHT)) {
         use_grn_ii_build = GRN_FALSE;
       }
-      if ((ii->header->flags & GRN_OBJ_WITH_POSITION) &&
+      if ((flags & GRN_OBJ_WITH_POSITION) &&
           (!tokenizer &&
            !GRN_TYPE_IS_TEXT_FAMILY(ii->lexicon->header.domain))) {
         /* TODO: Support offline index construction for WITH_POSITION

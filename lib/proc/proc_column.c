@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2016 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -61,6 +61,7 @@ grn_proc_column_parse_flags(grn_ctx *ctx,
     CHECK_FLAG(RING_BUFFER);
     CHECK_FLAG(INDEX_SMALL);
     CHECK_FLAG(INDEX_MEDIUM);
+    CHECK_FLAG(INDEX_LARGE);
 
 #undef CHECK_FLAG
 
