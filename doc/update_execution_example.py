@@ -157,16 +157,14 @@ def execmd(command, fout):
             fout.write(first_lines_re.sub(prefix, formatted_output.strip()))
             fout.write("\n")
           if current_log:
-            log = current_log.read().strip()
-            if len(log) > 0:
-              prefix = "  # log: "
-              first_lines_re = re.compile("^", re.M)
-              formatted_log = first_lines_re.sub(prefix, log)
-              stdout.write(first_lines_re.sub(prefix, log))
-              stdout.write("\n")
-              if output_log and fout:
-                fout.write(formatted_log)
-                fout.write("\n")
+            prefix = "  # log: "
+            for line in current_log.readlines():
+                formatted_line = prefix + line.strip()
+                stdout.write(formatted_line)
+                stdout.write("\n")
+                if output_log and fout:
+                    fout.write(formatted_line)
+                    fout.write("\n")
           output_buffer = ""
     else:
       stdout.flush()
