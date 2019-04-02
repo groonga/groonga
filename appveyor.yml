@@ -89,6 +89,17 @@ build_script:
   - set CMAKE_BUILD_PARALLEL_LEVEL=4
   - cmake --build . --config RelWithDebInfo
   - cmake --build . --config RelWithDebInfo --target Install
+  - mkdir %FULL_GROONGA_INSTALL_FOLDER%\share\license
+  - move %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\groonga-log %FULL_GROONGA_INSTALL_FOLDER%\share\license\groonga-log
+  - move %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\lz4 %FULL_GROONGA_INSTALL_FOLDER%\share\license\lz4
+  - move %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\mecab %FULL_GROONGA_INSTALL_FOLDER%\share\license\mecab
+  - move %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\mecab-naist-jdic %FULL_GROONGA_INSTALL_FOLDER%\share\license\mecab-naist-jdic
+  - move %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\mruby %FULL_GROONGA_INSTALL_FOLDER%\share\license\mruby
+  - move %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\msgpack %FULL_GROONGA_INSTALL_FOLDER%\share\license\msgpack
+  - move %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\onigmo %FULL_GROONGA_INSTALL_FOLDER%\share\license\onigmo
+  - mkdir %FULL_GROONGA_INSTALL_FOLDER%\share\license\groonga
+  - move %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\COPYING %FULL_GROONGA_INSTALL_FOLDER%\share\license\groonga
+  - move %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\README.md %FULL_GROONGA_INSTALL_FOLDER%\share\license\groonga
 
 before_test:
   - git clone --depth 1
