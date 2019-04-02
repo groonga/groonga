@@ -20,9 +20,10 @@
 #pragma once
 
 #include <stdarg.h>
-#include <sys/types.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
+#include <sys/types.h>
 
 #ifdef  __cplusplus
 extern "C" {
@@ -37,13 +38,14 @@ extern "C" {
 #endif /* GRN_API */
 
 typedef uint32_t grn_id;
-typedef uint8_t grn_bool;
+/* Deprecated since 9.0.2. Use bool directly. */
+typedef bool grn_bool;
 
 #define GRN_ID_NIL                     (0x00)
 #define GRN_ID_MAX                     (0x3fffffff)
 
-#define GRN_TRUE                       (1)
-#define GRN_FALSE                      (0)
+#define GRN_TRUE                       true
+#define GRN_FALSE                      false
 
 typedef enum {
   GRN_SUCCESS = 0,
