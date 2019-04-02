@@ -413,7 +413,7 @@ column and multiple columns index column.
 
 In this example, ``Names`` table is created for equal search and
 prefix search. It uses ``TABLE_PAT_KEY`` because ``TABLE_PAT_KEY``
-supports prefix search. See :ref:`../tables` for details.
+supports prefix search. See :doc:`../tables` for details.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/column_create/usage_multiple_columns_index_create_table.log
