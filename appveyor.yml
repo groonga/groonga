@@ -67,6 +67,10 @@ install:
         $Env:GROONGA_INSTALL_FOLDER += "-x64"
       }
       $Env:FULL_GROONGA_INSTALL_FOLDER = $Env:APPVEYOR_BUILD_FOLDER + "\" + $Env:GROONGA_INSTALL_SUB_FOLDER + "\" + $Env:GROONGA_INSTALL_FOLDER
+  - curl -O http://packages.groonga.org/source/groonga-normalizer-mysql/groonga-normalizer-mysql-latest.zip
+  - 7z x groonga-normalizer-mysql-latest.zip
+  - del groonga-normalizer-mysql-latest.zip
+  - move groonga-normalizer-mysql* vendor\plugins\groonga-normalizer-mysql
 
 build_script:
   - git submodule update --init
