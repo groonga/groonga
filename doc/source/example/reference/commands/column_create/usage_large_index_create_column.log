@@ -2,8 +2,8 @@ Execution example::
 
   column_create \
     --table Terms \
-    --name people_key_index \
-    --flags COLUMN_INDEX|WITH_POSITION \
+    --name people_roles_large_index \
+    --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION|INDEX_LARGE \
     --type People \
-    --source _key
+    --source roles
   # [[0, 1337566253.89858, 0.000355720520019531], true]

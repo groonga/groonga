@@ -314,7 +314,7 @@ search index column. You need to add ``WITH_POSITION`` to the
 difference.
 
 Here is an example to create a full text search index column for the
-``roles`` column of the ``People`` table.
+key of the ``People`` table.
 
 First, you need to create a table for full text search index
 column. See :ref:`table-create-lexicon` for details. This example
@@ -330,22 +330,22 @@ creates the ``Terms`` table as :ref:`table-pat-key` with
 ..   --default_tokenizer TokenBigram \
 ..   --normalizer NormalizerAuto
 
-Now, you can create a full text search index column for the ``roles``
-column of the ``People`` table. ``COLUMN_INDEX|WITH_POSITION`` in the
-``flags`` parameter, ``People`` in the ``type`` parameter and
-``roles`` in the ``source`` parameter are important:
+Now, you can create a full text search index column for the key of the
+``People`` table. ``COLUMN_INDEX|WITH_POSITION`` in the ``flags``
+parameter, ``People`` in the ``type`` parameter and ``_key`` in the
+``source`` parameter are important:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/column_create/usage_full_text_search_index_create_column.log
 .. column_create \
 ..   --table Terms \
-..   --name people_roles_index \
+..   --name people_key_index \
 ..   --flags COLUMN_INDEX|WITH_POSITION \
 ..   --type People \
-..   --source roles
+..   --source _key
 
-You can confirm that ``--match_columns roles`` and ``--query Sister``
-are evaluated by the ``Terms.people_roles_index`` newly created full
+You can confirm that ``--match_columns _key`` and ``--query Alice``
+are evaluated by the ``Terms.people_key_index`` newly created full
 text search index column from log. Groonga reports used index columns
 in ``info`` log level. You can change log level dynamically by
 :doc:`log_level` command.
@@ -356,19 +356,19 @@ in ``info`` log level. You can change log level dynamically by
 .. log_level --level info
 .. select \
 ..   --table People \
-..   --match_columns roles \
-..   --query Sister
+..   --match_columns _key \
+..   --query Alice
 .. log_level --level notice
 .. log: false
 
-You can confirm that the ``Terms.people_roles_index`` is used from the
+You can confirm that the ``Terms.people_key_index`` is used from the
 following log::
 
-  [object][search][index][key][exact] <Terms.people_roles_index>
+  [object][search][index][key][exact] <Terms.people_key_index>
 
-The log says ``Terms.people_roles_index`` index column is used for
-full text search. (To be precise, the index column is used for exact
-term search by inverted index.)
+The log says ``Terms.people_key_index`` index column is used for full
+text search. (To be precise, the index column is used for exact term
+search by inverted index.)
 
 .. _column-create-index-multiple-columns:
 
@@ -404,35 +404,45 @@ search, you need to specify
 parameter. See :ref:`column-create-index-full-text-search` for full
 text search index column details.
 
-Here is an example to create a multiple columns full text search index
-column for the key of the ``People`` table and the ``roles`` column of
-the ``People`` table.
+Here is an example to create a multiple columns index column for the
+key of the ``People`` table and the ``roles`` column of the ``People``
+table.
 
 There is no difference between index table for single column index
-column and multiple columns index column. In this example, the
-``Terms`` table created at :ref:`column-create-index-full-text-search`
-is used.
+column and multiple columns index column.
 
-You can create a multiple columns full text search index column for
-the key of the ``People`` table and ``roles`` column of the ``People``
-table. ``COLUMN_INDEX|WITH_POSITION|WITH_SECTION`` in the ``flags``
-parameter, ``People`` in the ``type`` parameter and ``_key,roles`` in
-the ``source`` parameter are important:
+In this example, ``Names`` table is created for equal search and
+prefix search. It uses ``TABLE_PAT_KEY`` because ``TABLE_PAT_KEY``
+supports prefix search. See :ref:`../tables` for details.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_multiple_columns_index_create_table.log
+.. table_create \
+..   --name Names \
+..   --flags TABLE_PAT_KEY \
+..   --key_type ShortText \
+..   --normalizer NormalizerAuto
+
+You can create a multiple columns index column for the key of the
+``People`` table and ``roles`` column of the ``People``
+table. ``COLUMN_INDEX|WITH_SECTION`` in the ``flags`` parameter,
+``People`` in the ``type`` parameter and ``_key,roles`` in the
+``source`` parameter are important:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/column_create/usage_multiple_columns_index_create_column.log
 .. column_create \
-..   --table Terms \
+..   --table Names \
 ..   --name people_key_roles_index \
-..   --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+..   --flags COLUMN_INDEX|WITH_SECTION \
 ..   --type People \
 ..   --source _key,roles
 
-You can confirm that ``--match_columns _key`` and ``--query
-Alice`` are evaluated by the ``Terms.people_key_roles_index`` newly
-created multiple columns full text search index column from log. Groonga
-reports used index columns in ``info`` log level. You can change log level
-dynamically by :doc:`log_level` command.
+You can confirm that ``--filter 'roles @^ "Younger"`` is evaluated by
+the ``Names.people_key_roles_index`` newly created multiple columns
+index column from log. Groonga reports used index columns in ``info``
+log level. You can change log level dynamically by :doc:`log_level`
+command.
 
 .. groonga-command
 .. log: true
@@ -440,19 +450,17 @@ dynamically by :doc:`log_level` command.
 .. log_level --level info
 .. select \
 ..   --table People \
-..   --match_columns _key,roles \
-..   --query Alice
+..   --filter 'roles @^ "Younger"'
 .. log_level --level notice
 .. log: false
 
-You can confirm that the ``Terms.people_roles_index`` is used from the
-following log::
+You can confirm that the ``Names.people_key_roles_index`` is used from
+the following log::
 
-  [object][search][index][key][exact] <Terms.people_key_roles_index>
+  [table][select][index][prefix] <Names.people_key_roles_index>
 
-The log says ``Terms.people_roles_index`` index column is used for
-full text search. (To be precise, the index column is used for exact
-term search by inverted index.)
+The log says ``Names.people_key_roles_index`` index column is used for
+prefix search.
 
 .. _column-create-index-small:
 
@@ -552,6 +560,44 @@ Here is an example to create a medium index column:
 ..   --flags COLUMN_INDEX|INDEX_MEDIUM \
 ..   --type People \
 ..   --source age
+
+.. _column-create-index-large:
+
+Create a large index column
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you know index target data are large, you need to use large index
+column. It uses increases memory usage for the index column but it can
+accept more data. Memory usage is 2 times larger than the default
+index column.
+
+How many data are large? It depends on data.
+
+If index target is only one scalar column, it's not large data.
+
+Large data must have many records (normally at least 10 millions
+records) and at least one of the following features:
+
+  * Index targets are multiple columns
+  * Index table has tokenizer
+
+You need to add ``INDEX_LARGE`` to the ``flags`` parameter such as
+``COLUMN_INDEX|INDEX_LARGE`` to create a medium index column.
+
+You can use a large index column for an index column of the ``_key``
+of the ``People`` table and the ``role`` column of the ``People``
+table.
+
+Here is an example to create a large index column:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/usage_large_index_create_column.log
+.. column_create \
+..   --table Terms \
+..   --name people_roles_large_index \
+..   --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION|INDEX_LARGE \
+..   --type People \
+..   --source roles
 
 Parameters
 ----------
@@ -730,6 +776,19 @@ Here are available flags:
        Medium index column uses fewer memory than a normal index
        column. See also :ref:`column-create-index-medium` for knowing
        what are "medium data" and how to use this flag.
+
+       This flag is available only for ``COLUMN_INDEX``.
+
+   * - ``INDEX_LARGE``
+     - .. versionadded:: 9.0.2
+
+       It requires to create a large index column.
+
+       If index target data are large, you need to use large index
+       column. Large index column uses more memory than a normal index
+       column but accepts more data than a normal index column. See
+       also :ref:`column-create-index-large` for knowing what are
+       "large data" and how to use this flag.
 
        This flag is available only for ``COLUMN_INDEX``.
 
