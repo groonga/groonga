@@ -27,11 +27,11 @@ from pkg_resources import parse_version
 #sys.path.append(os.path.abspath('.'))
 
 if parse_version(sphinx.__version__) < parse_version(SPHINX_VERSION_REQUIRED):
-  print 'sphinx version is old. %s is requred. exec "easy_install -U sphinx"' % SPHINX_VERSION_REQUIRED
+  print('sphinx version is old. %s is requred. exec "easy_install -U sphinx"' % SPHINX_VERSION_REQUIRED)
   sys.exit(1)
 
 #if sphinx.__version__ != SPHINX_VERSION_REQUIRED:
-#  print 'sphinx version is different. %s is requred. exec "easy_install -U sphinx"' % SPHINX_VERSION_REQUIRED
+#  print('sphinx version is different. %s is requred. exec "easy_install -U sphinx"' % SPHINX_VERSION_REQUIRED)
 #  sys.exit(1)
 
 # -- General configuration -----------------------------------------------------
@@ -55,8 +55,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Groonga'
-copyright = u'2009-' + str(datetime.today().year) + u', Brazil, Inc'
+project = 'Groonga'
+copyright = '2009-' + str(datetime.today().year) + ', Brazil, Inc'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -149,8 +149,8 @@ html_theme_path = ["../themes"]
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
 html_title_format = _("%(project)s v%(release)s documentation")
-html_title = html_title_format % {"project": str(project),
-                                  "release": str(release)}
+html_title = html_title_format % {"project": project,
+                                  "release": release}
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
