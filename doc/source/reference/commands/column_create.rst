@@ -50,6 +50,7 @@ This section describes about the followings:
   * :ref:`column-create-index-multiple-columns`
   * :ref:`column-create-index-small`
   * :ref:`column-create-index-medium`
+  * :ref:`column-create-index-large`
 
 Here is the ``People`` table definition. The ``People`` table is used
 in examples:
@@ -582,7 +583,7 @@ records) and at least one of the following features:
   * Index table has tokenizer
 
 You need to add ``INDEX_LARGE`` to the ``flags`` parameter such as
-``COLUMN_INDEX|INDEX_LARGE`` to create a medium index column.
+``COLUMN_INDEX|INDEX_LARGE`` to create a large index column.
 
 You can use a large index column for an index column of the ``_key``
 of the ``People`` table and the ``role`` column of the ``People``
