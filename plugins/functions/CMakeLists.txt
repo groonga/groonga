@@ -86,6 +86,11 @@ else()
     PREFIX ""
     OUTPUT_NAME "number")
   install(TARGETS number_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+    install(FILES $<TARGET_PDB_FILE:number_functions>
+      DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
+      OPTIONAL)
+  endif()
 endif()
 target_link_libraries(number_functions libgroonga "${M_LIBS}")
 
@@ -106,6 +111,11 @@ else()
     PREFIX ""
     OUTPUT_NAME "time")
   install(TARGETS time_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+    install(FILES $<TARGET_PDB_FILE:time_functions>
+      DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
+      OPTIONAL)
+  endif()
 endif()
 target_link_libraries(time_functions libgroonga)
 
@@ -127,6 +137,11 @@ else()
     OUTPUT_NAME "index_column")
   install(TARGETS index_column_functions
     DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+    install(FILES $<TARGET_PDB_FILE:index_column_functions>
+      DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
+      OPTIONAL)
+  endif()
 endif()
 target_link_libraries(index_column_functions libgroonga)
 
@@ -147,5 +162,10 @@ else()
     PREFIX ""
     OUTPUT_NAME "math")
   install(TARGETS math_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
+  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+    install(FILES $<TARGET_PDB_FILE:math_functions>
+      DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
+      OPTIONAL)
+  endif()
 endif()
 target_link_libraries(math_functions libgroonga)
