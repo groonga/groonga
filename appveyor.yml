@@ -98,7 +98,9 @@ build_script:
   - curl -O http://packages.groonga.org/source/groonga-admin/groonga-admin.tar.gz
   - 7z x groonga-admin.tar.gz
   - 7z x groonga-admin.tar
-  - move groonga-admin-*\html %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\html\admin
+  - cd groonga-admin-*
+  - move html %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\html\admin
+  - cd ..
 
 before_test:
   - git clone --depth 1
