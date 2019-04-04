@@ -121,6 +121,15 @@ test_script:
      --timeout 60
      --n-retries 2
      test\command\suite
+  - ruby test\command\bin\grntest
+     --groonga %FULL_GROONGA_INSTALL_FOLDER%\bin\groonga.exe
+     --base-directory test\command
+     --reporter mark
+     --n-workers 1
+     --timeout 60
+     --n-retries 2
+     --interface http
+     test\command\suite
   - ruby test\command_line\run-test.rb
      --groonga-install-prefix=%FULL_GROONGA_INSTALL_FOLDER%
 
