@@ -6,7 +6,7 @@ column_create Memos content COLUMN_SCALAR Text
 [[0,0.0,0.0],true]
 table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto   --default_tokenizer TokenBigram
 [[0,0.0,0.0],true]
-column_create Terms memos_title_content   COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Memos title,content
+column_create Terms memos_title_content   COLUMN_INDEX|WITH_POSITION|WITH_SECTION|INDEX_LARGE   Memos title,content
 [[0,0.0,0.0],true]
 object_inspect Terms.memos_title_content
 [
@@ -65,7 +65,7 @@ object_inspect Terms.memos_title_content
       "section": true,
       "weight": false,
       "position": true,
-      "size": "normal",
+      "size": "large",
       "statistics": {
         "max_section_id": 0,
         "n_garbage_segments": 0,
@@ -95,7 +95,7 @@ object_inspect Terms.memos_title_content
           0
         ],
         "next_physical_segment_id": 0,
-        "max_n_next_physical_segments": 131072
+        "max_n_next_physical_segments": 262144
       }
     },
     "sources": [
