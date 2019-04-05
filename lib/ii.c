@@ -2330,14 +2330,20 @@ typedef struct {
   buffer_term terms[(S_SEGMENT - sizeof(buffer_header))/sizeof(buffer_term)];
 } buffer;
 
-/* L is for logical? */
+#define GRN_II_POS_LSEG_SHIFT_SIZE (32 - GRN_II_W_LSEG)
+#define GRN_II_POS_LSEG_SHIFT_SIZE_LARGE (32 - GRN_II_W_LSEG_LARGE)
+#define GRN_II_POS_LOFFSET_SHIFT_SIZE           \
+  ((16 - GRN_II_W_LOFFSET) + 2)
+#define GRN_II_POS_LOFFSET_SHIFT_SIZE_LARGE     \
+  ((16 - GRN_II_W_LOFFSET_LARGE) + 2)
+
 grn_inline static uint32_t
 grn_ii_pos_lseg(grn_ii *ii, uint32_t pos)
 {
   if (ii->header.common->flags & GRN_OBJ_INDEX_LARGE) {
-    return pos >> 17;
+    return pos >> GRN_II_POS_LSEG_SHIFT_SIZE_LARGE;
   } else {
-    return pos >> 16;
+    return pos >> GRN_II_POS_LSEG_SHIFT_SIZE;
   }
 }
 
@@ -2345,9 +2351,13 @@ grn_inline static uint32_t
 grn_ii_pos_loffset(grn_ii *ii, uint32_t pos)
 {
   if (ii->header.common->flags & GRN_OBJ_INDEX_LARGE) {
-    return (pos & 0xffff) << 3;
+    return
+      (pos & ((1 << GRN_II_W_LOFFSET_LARGE) - 1)) <<
+      GRN_II_POS_LOFFSET_SHIFT_SIZE_LARGE;
   } else {
-    return (pos & 0xffff) << 2;
+    return
+      (pos & ((1 << GRN_II_W_LOFFSET) - 1)) <<
+      GRN_II_POS_LOFFSET_SHIFT_SIZE;
   }
 }
 
@@ -2355,9 +2365,13 @@ grn_inline static uint32_t
 grn_ii_pos_pack(grn_ii *ii, uint32_t lseg, uint32_t loffset)
 {
   if (ii->header.common->flags & GRN_OBJ_INDEX_LARGE) {
-    return (lseg << 17) + (loffset >> 3);
+    return
+      (lseg << GRN_II_POS_LSEG_SHIFT_SIZE_LARGE) +
+      (loffset >> GRN_II_POS_LOFFSET_SHIFT_SIZE_LARGE);
   } else {
-    return (lseg << 16) + (loffset >> 2);
+    return
+      (lseg << GRN_II_POS_LSEG_SHIFT_SIZE) +
+      (loffset >> GRN_II_POS_LOFFSET_SHIFT_SIZE);
   }
 }
 

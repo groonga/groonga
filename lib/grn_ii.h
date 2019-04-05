@@ -53,8 +53,13 @@ struct _grn_ii {
 
 /* BGQ is buffer garbage queue? */
 #define GRN_II_BGQSIZE 16
+/* L is for logical? */
 #define GRN_II_MAX_LSEG           0x10000
+#define GRN_II_W_LSEG             16
+#define GRN_II_W_LOFFSET          (32 - GRN_II_W_LSEG)
 #define GRN_II_MAX_LSEG_EXTEND    0x10000
+#define GRN_II_W_LSEG_LARGE       17
+#define GRN_II_W_LOFFSET_LARGE    (32 - GRN_II_W_LSEG_LARGE)
 #define GRN_II_W_TOTAL_CHUNK      40
 #define GRN_II_W_CHUNK            22
 #define GRN_II_W_LEAST_CHUNK      (GRN_II_W_TOTAL_CHUNK - 32)
