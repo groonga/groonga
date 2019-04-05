@@ -334,7 +334,7 @@ if(WIN32)
 
   SET(PSAPI_LIBS "psapi.lib")
 
-  set(USE_EXACT_ALLOC_COUNT)
+  set(USE_EXACT_ALLOC_COUNT TRUE)
   set(USE_SELECT TRUE)
 else()
   ac_check_headers(sys/epoll.h)
