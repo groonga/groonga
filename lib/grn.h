@@ -135,7 +135,7 @@ typedef SOCKET grn_sock;
 
 # ifndef __GNUC__
 #  include <intrin.h>
-#  pragma intrinsic (_InterlockedExchangeAdd)
+#  pragma intrinsic(_InterlockedExchangeAdd)
 #  include <sys/timeb.h>
 #  include <errno.h>
 # endif
