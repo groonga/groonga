@@ -91,6 +91,12 @@
 #define LSEG(pos) ((pos) >> 16)
 #define LPOS(pos) (((pos) & 0xffff) << 2)
 #define SEG2POS(seg,pos) ((((uint32_t)(seg)) << 16) + (((uint32_t)(pos)) >> 2))
+#define POS_IS_EMBED(pos) ((pos) & 1)
+#define POS_EMBED_RID(rid) (((rid) << 1) | 1)
+#define POS_EMBED_RID_SID(rid, sid) ((((rid) << 12) + ((sid) << 1)) | 1)
+#define POS_RID_EXTRACT(pos) ((pos) >> 1)
+#define POS_RID_SID_EXTRACT_RID(pos) BIT31_12((pos))
+#define POS_RID_SID_EXTRACT_SID(pos) BIT11_01((pos))
 
 #ifndef S_IRUSR
 # define S_IRUSR 0400
@@ -5108,7 +5114,7 @@ buffer_new_find_segment(grn_ctx *ctx,
 
   for (;;) {
     uint32_t pos = a[0];
-    if (!pos || (pos & 1)) { break; }
+    if (!pos || POS_IS_EMBED(pos)) { break; }
     *pseg = buffer_open(ctx, ii, pos, NULL, b);
     if (*pseg == GRN_II_PSEG_NOT_ASSIGNED) { break; }
     if ((*b)->header.buffer_free >= size + sizeof(buffer_term)) {
@@ -5695,7 +5701,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   }
   for (;;) {
     if (a[0]) {
-      if (!(a[0] & 1)) {
+      if (!POS_IS_EMBED(a[0])) {
         pos = a[0];
         if ((pseg = buffer_open(ctx, ii, pos, &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
           grn_obj term;
@@ -5861,10 +5867,10 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
         pos2.next = NULL;
         u2.pos = &pos2;
         if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
-          u2.rid = BIT31_12(v);
-          u2.sid = BIT11_01(v);
+          u2.rid = POS_RID_SID_EXTRACT_RID(v);
+          u2.sid = POS_RID_SID_EXTRACT_SID(v);
         } else {
-          u2.rid = v >> 1;
+          u2.rid = POS_RID_EXTRACT(v);
           u2.sid = 1;
         }
         u2.tf = 1;
@@ -5987,7 +5993,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   }
   buffer_put(ctx, ii, b, bt, br, bs, u, size);
   buffer_close(ctx, ii, pseg);
-  if (!a[0] || (a[0] & 1)) { a[0] = pos; }
+  if (!a[0] || POS_IS_EMBED(a[0])) { a[0] = pos; }
 exit :
   array_unref(ii, tid);
   if (bs) { GRN_FREE(bs); }
@@ -6045,17 +6051,18 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     return ctx->rc;
   }
   for (;;) {
-    if (!a[0]) { goto exit; }
-    if (a[0] & 1) {
+    const uint32_t pos = a[0];
+    if (pos == 0) { goto exit; }
+    if (POS_IS_EMBED(pos)) {
       if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
-        uint32_t rid = BIT31_12(a[0]);
-        uint32_t sid = BIT11_01(a[0]);
+        const uint32_t rid = POS_RID_SID_EXTRACT_RID(pos);
+        const uint32_t sid = POS_RID_SID_EXTRACT_SID(pos);
         if (u->rid == rid && (!u->sid || u->sid == sid)) {
           a[0] = 0;
           lexicon_delete(ctx, ii, tid, h);
         }
       } else {
-        uint32_t rid = a[0] >> 1;
+        const uint32_t rid = POS_RID_EXTRACT(pos);
         if (u->rid == rid) {
           a[0] = 0;
           lexicon_delete(ctx, ii, tid, h);
@@ -6079,7 +6086,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
       GRN_OBJ_FIN(ctx, &term);
       goto exit;
     }
-    if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
+    if ((pseg = buffer_open(ctx, ii, pos, &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
       grn_obj term;
       DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
@@ -6093,16 +6100,16 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
            tid,
            u->rid, u->sid,
-           a[0]);
+           pos);
       GRN_OBJ_FIN(ctx, &term);
       goto exit;
     }
     if (b->header.buffer_free < size) {
-      uint32_t _a = a[0];
+      const uint32_t pos_keep = pos;
       GRN_LOG(ctx, GRN_LOG_DEBUG, "flushing! b=%p free=%d, seg(%d)",
-              b, b->header.buffer_free, LSEG(a[0]));
+              b, b->header.buffer_free, LSEG(pos));
       buffer_close(ctx, ii, pseg);
-      buffer_flush(ctx, ii, LSEG(a[0]), h);
+      buffer_flush(ctx, ii, LSEG(pos), h);
       if (ctx->rc != GRN_SUCCESS) {
         grn_obj term;
         char errbuf[GRN_CTX_MSGSIZE];
@@ -6121,14 +6128,14 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
             tid,
             u->rid, u->sid,
-            a[0],
+            pos,
             errbuf);
         GRN_OBJ_FIN(ctx, &term);
         goto exit;
       }
-      if (a[0] != _a) {
+      if (a[0] != pos_keep) {
         GRN_LOG(ctx, GRN_LOG_DEBUG, "grn_ii_delete_one: a[0] changed %d->%d)",
-                a[0], _a);
+                a[0], pos_keep);
         continue;
       }
       if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
@@ -6306,13 +6313,13 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
     c->nelements = nelements;
     c->flags = flags;
     c->weight = 0;
-    if (pos & 1) {
+    if (POS_IS_EMBED(pos)) {
       c->stat = 0;
       if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
-        c->pb.rid = BIT31_12(pos);
-        c->pb.sid = BIT11_01(pos);
+        c->pb.rid = POS_RID_SID_EXTRACT_RID(pos);
+        c->pb.sid = POS_RID_SID_EXTRACT_SID(pos);
       } else {
-        c->pb.rid = pos >> 1;
+        c->pb.rid = POS_RID_EXTRACT(pos);
         c->pb.sid = 1;
       }
       c->pb.tf = 1;
@@ -6853,7 +6860,7 @@ grn_ii_get_chunksize(grn_ctx *ctx, grn_ii *ii, grn_id tid)
   a = array_at(ctx, ii, tid);
   if (!a) { return 0; }
   if ((pos = a[0])) {
-    if (pos & 1) {
+    if (POS_IS_EMBED(pos)) {
       res = 0;
     } else {
       buffer *buf;
@@ -6880,7 +6887,7 @@ grn_ii_estimate_size(grn_ctx *ctx, grn_ii *ii, grn_id tid)
   a = array_at(ctx, ii, tid);
   if (!a) { return 0; }
   if ((pos = a[0])) {
-    if (pos & 1) {
+    if (POS_IS_EMBED(pos)) {
       res = 1;
     } else {
       buffer *buf;
@@ -6918,7 +6925,7 @@ grn_ii_entry_info(grn_ctx *ctx, grn_ii *ii, grn_id tid, unsigned int *a,
   a[0] = *ap;
   array_unref(ii, tid);
   if (!a[0]) { return 1; }
-  if (a[0] & 1) { return 2; }
+  if (POS_IS_EMBED(a[0])) { return 2; }
   if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) { return 3; }
   *chunk = b->header.chunk;
   *chunk_size = b->header.chunk_size;
@@ -14073,7 +14080,7 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn_ii_builder *builder,
       GRN_OBJ_FIN(ctx, &token);
       return ctx->rc;
     }
-    a[0] = ((rid << 12) + (sid << 1)) | 1;
+    a[0] = POS_EMBED_RID_SID(rid, sid);
   } else {
     a = array_get(ctx, builder->ii, chunk->tid);
     if (!a) {
@@ -14092,7 +14099,7 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn_ii_builder *builder,
       GRN_OBJ_FIN(ctx, &token);
       return ctx->rc;
     }
-    a[0] = (rid << 1) | 1;
+    a[0] = POS_EMBED_RID(rid);
   }
   pos = 0;
   if (chunk->pos_buf) {
