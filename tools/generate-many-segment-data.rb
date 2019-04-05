@@ -57,7 +57,7 @@ if columns.size > 1
   index_column_flags += "|WITH_SECTION"
 end
 puts(<<-COMMANDS)
-table_create Terms TABLE_PAT_KEY ShortText \
+table_create Terms TABLE_HASH_KEY ShortText \
   --normalizer NormalizerNFKC100 \
   --default_tokenizer TokenRegexp
 column_create Terms index #{index_column_flags} Data #{columns.join(",")}
