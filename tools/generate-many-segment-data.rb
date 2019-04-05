@@ -22,6 +22,7 @@ n_records = 50_000_000
 max_code_point = 0xFFFF
 n_characters_per_record = 100
 use_section = false
+use_index_large = false
 parser = OptionParser.new
 parser.on("--n-records=N", Integer,
           "[#{n_records}]") do |n|
@@ -34,6 +35,10 @@ end
 parser.on("--[no-]use-section",
           "[#{use_section}]") do |boolean|
   use_section = boolean
+end
+parser.on("--[no-]use-index-large",
+          "[#{use_index_large}]") do |boolean|
+  use_index_large = boolean
 end
 parser.parse!
 
@@ -55,6 +60,9 @@ end
 index_column_flags = "COLUMN_INDEX|WITH_POSITION"
 if columns.size > 1
   index_column_flags += "|WITH_SECTION"
+end
+if use_index_large
+  index_column_flags += "|INDEX_LARGE"
 end
 puts(<<-COMMANDS)
 table_create Terms TABLE_HASH_KEY ShortText \
