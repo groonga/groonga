@@ -324,7 +324,7 @@ grn_inline static uint32_t
 grn_ii_n_logical_segments_inline(grn_ii *ii)
 {
   if (ii->header.common->flags & GRN_OBJ_INDEX_LARGE) {
-    return GRN_II_MAX_LSEG * 2;
+    return GRN_II_MAX_LSEG + GRN_II_MAX_LSEG_EXTEND;
   } else {
     return GRN_II_MAX_LSEG;
   }
@@ -5488,7 +5488,7 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
   }
   if (flags & GRN_OBJ_INDEX_LARGE) {
     grn_ii_header_large *header_large = (grn_ii_header_large *)header;
-    for (i = 0; i < GRN_II_MAX_LSEG; i++) {
+    for (i = 0; i < GRN_II_MAX_LSEG_EXTEND; i++) {
       header_large->ainfo_extend[i] = GRN_II_PSEG_NOT_ASSIGNED;
       header_large->binfo_extend[i] = GRN_II_PSEG_NOT_ASSIGNED;
     }

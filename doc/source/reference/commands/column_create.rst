@@ -569,7 +569,7 @@ Create a large index column
 
 If you know index target data are large, you need to use large index
 column. It uses increases memory usage for the index column but it can
-accept more data. Memory usage is 2 times larger than the default
+accept more data. Memory usage is 4 times larger than the default
 index column.
 
 How many data are large? It depends on data.

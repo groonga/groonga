@@ -54,6 +54,7 @@ struct _grn_ii {
 /* BGQ is buffer garbage queue? */
 #define GRN_II_BGQSIZE 16
 #define GRN_II_MAX_LSEG           0x10000
+#define GRN_II_MAX_LSEG_EXTEND    0x30000
 #define GRN_II_W_TOTAL_CHUNK      40
 #define GRN_II_W_CHUNK            22
 #define GRN_II_W_LEAST_CHUNK      (GRN_II_W_TOTAL_CHUNK - 32)
@@ -101,8 +102,8 @@ struct _grn_ii_header_normal {
 
 struct _grn_ii_header_large {
   GRN_II_HEADER_COMMON_FIELDS;
-  uint32_t ainfo_extend[GRN_II_MAX_LSEG]; /* array info (extended) */
-  uint32_t binfo_extend[GRN_II_MAX_LSEG]; /* buffer info (extended) */
+  uint32_t ainfo_extend[GRN_II_MAX_LSEG_EXTEND]; /* array info (extended) */
+  uint32_t binfo_extend[GRN_II_MAX_LSEG_EXTEND]; /* buffer info (extended) */
 };
 
 struct _grn_ii_pos {
