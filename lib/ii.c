@@ -2335,7 +2335,7 @@ grn_inline static uint32_t
 grn_ii_pos_lseg(grn_ii *ii, uint32_t pos)
 {
   if (ii->header.common->flags & GRN_OBJ_INDEX_LARGE) {
-    return pos >> 18;
+    return pos >> 17;
   } else {
     return pos >> 16;
   }
@@ -2345,7 +2345,7 @@ grn_inline static uint32_t
 grn_ii_pos_loffset(grn_ii *ii, uint32_t pos)
 {
   if (ii->header.common->flags & GRN_OBJ_INDEX_LARGE) {
-    return (pos & 0xffff) << 4;
+    return (pos & 0xffff) << 3;
   } else {
     return (pos & 0xffff) << 2;
   }
@@ -2355,7 +2355,7 @@ grn_inline static uint32_t
 grn_ii_pos_pack(grn_ii *ii, uint32_t lseg, uint32_t loffset)
 {
   if (ii->header.common->flags & GRN_OBJ_INDEX_LARGE) {
-    return (lseg << 18) + (loffset >> 4);
+    return (lseg << 17) + (loffset >> 3);
   } else {
     return (lseg << 16) + (loffset >> 2);
   }
