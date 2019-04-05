@@ -135,6 +135,7 @@ typedef SOCKET grn_sock;
 
 # ifndef __GNUC__
 #  include <intrin.h>
+#  pragma intrinsic (_InterlockedExchangeAdd)
 #  include <sys/timeb.h>
 #  include <errno.h>
 # endif
@@ -466,7 +467,7 @@ typedef int grn_cond;
 #elif (defined(WIN32) || defined (_WIN64)) /* __GNUC__ */
 
 # define GRN_ATOMIC_ADD_EX(p,i,r) \
-  ((r) = InterlockedExchangeAdd((p), (i)))
+  ((r) = _InterlockedExchangeAdd((p), (i)))
 # if defined(_WIN64) /* ATOMIC 64BIT SET */
 #  define GRN_SET_64BIT(p,v) \
   (*(p) = (v))
