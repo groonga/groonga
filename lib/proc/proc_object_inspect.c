@@ -348,7 +348,7 @@ command_object_inspect_column_index_value_statistics(grn_ctx *ctx,
     grn_ctx_output_cstr(ctx, "next_physical_segment_id");
     grn_ctx_output_uint64(ctx, h->pnext);
 
-    grn_ctx_output_cstr(ctx, "max_n_next_physical_segments");
+    grn_ctx_output_cstr(ctx, "max_n_physical_segments");
     grn_ctx_output_uint64(ctx, ii->seg->header->max_segment);
   }
   grn_ctx_output_map_close(ctx);

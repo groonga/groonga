@@ -95,7 +95,7 @@ object_inspect Terms.memos_title_content
           0
         ],
         "next_physical_segment_id": 0,
-        "max_n_next_physical_segments": 131072
+        "max_n_physical_segments": 131072
       }
     },
     "sources": [
