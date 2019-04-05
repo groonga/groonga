@@ -87,17 +87,6 @@
     }                                                                   \
   } while (GRN_FALSE)
 
-/* L is for logical? */
-#define LSEG(pos) ((pos) >> 16)
-#define LPOS(pos) (((pos) & 0xffff) << 2)
-#define SEG2POS(seg,pos) ((((uint32_t)(seg)) << 16) + (((uint32_t)(pos)) >> 2))
-#define POS_IS_EMBED(pos) ((pos) & 1)
-#define POS_EMBED_RID(rid) (((rid) << 1) | 1)
-#define POS_EMBED_RID_SID(rid, sid) ((((rid) << 12) + ((sid) << 1)) | 1)
-#define POS_RID_EXTRACT(pos) ((pos) >> 1)
-#define POS_RID_SID_EXTRACT_RID(pos) BIT31_12((pos))
-#define POS_RID_SID_EXTRACT_SID(pos) BIT11_01((pos))
-
 #ifndef S_IRUSR
 # define S_IRUSR 0400
 #endif /* S_IRUSR */
@@ -305,6 +294,17 @@ grn_ii_get_buffer_pseg_inline(grn_ii *ii,
     return ii->header.common->binfo[lseg];
   } else {
     return ii->header.large->binfo_extend[lseg - GRN_II_MAX_LSEG];
+  }
+}
+
+grn_inline static uint32_t *
+grn_ii_get_buffer_pseg_address_inline(grn_ii *ii,
+                                      uint32_t lseg)
+{
+  if (lseg < GRN_II_MAX_LSEG) {
+    return &(ii->header.common->binfo[lseg]);
+  } else {
+    return &(ii->header.large->binfo_extend[lseg - GRN_II_MAX_LSEG]);
   }
 }
 
@@ -2330,17 +2330,84 @@ typedef struct {
   buffer_term terms[(S_SEGMENT - sizeof(buffer_header))/sizeof(buffer_term)];
 } buffer;
 
+/* L is for logical? */
+grn_inline static uint32_t
+grn_ii_pos_lseg(grn_ii *ii, uint32_t pos)
+{
+  if (ii->header.common->flags & GRN_OBJ_INDEX_LARGE) {
+    return pos >> 18;
+  } else {
+    return pos >> 16;
+  }
+}
+
+grn_inline static uint32_t
+grn_ii_pos_loffset(grn_ii *ii, uint32_t pos)
+{
+  if (ii->header.common->flags & GRN_OBJ_INDEX_LARGE) {
+    return (pos & 0xffff) << 4;
+  } else {
+    return (pos & 0xffff) << 2;
+  }
+}
+
+grn_inline static uint32_t
+grn_ii_pos_pack(grn_ii *ii, uint32_t lseg, uint32_t loffset)
+{
+  if (ii->header.common->flags & GRN_OBJ_INDEX_LARGE) {
+    return (lseg << 18) + (loffset >> 4);
+  } else {
+    return (lseg << 16) + (loffset >> 2);
+  }
+}
+
+#define POS_LOFFSET_HEADER sizeof(buffer_header)
+#define POS_LOFFSET_TERM sizeof(buffer_term)
+
+grn_inline static bool
+grn_ii_pos_is_available(grn_ctx *ctx,
+                        uint32_t flags,
+                        const char *context)
+{
+  if (flags & GRN_OBJ_INDEX_LARGE) {
+    if ((POS_LOFFSET_HEADER % 4) != 0) {
+      ERR(GRN_OPERATION_NOT_SUPPORTED,
+          "%s INDEX_LARGE requires 32bit aligned offset header: "
+          "<%" GRN_FMT_SIZE ">",
+          context,
+          POS_LOFFSET_HEADER);
+      return false;
+    }
+    if ((POS_LOFFSET_TERM % 4) != 0) {
+      ERR(GRN_OPERATION_NOT_SUPPORTED,
+          "%s INDEX_LARGE requires 32bit aligned offset term: "
+          "<%" GRN_FMT_SIZE ">",
+          context,
+          POS_LOFFSET_TERM);
+      return false;
+    }
+  }
+  return true;
+}
+
+#define POS_IS_EMBED(pos) ((pos) & 1)
+#define POS_EMBED_RID(rid) (((rid) << 1) | 1)
+#define POS_EMBED_RID_SID(rid, sid) ((((rid) << 12) + ((sid) << 1)) | 1)
+#define POS_RID_EXTRACT(pos) ((pos) >> 1)
+#define POS_RID_SID_EXTRACT_RID(pos) BIT31_12((pos))
+#define POS_RID_SID_EXTRACT_SID(pos) BIT11_01((pos))
+
 grn_inline static uint32_t
 buffer_open(grn_ctx *ctx, grn_ii *ii, uint32_t pos, buffer_term **bt, buffer **b)
 {
-  const uint16_t lseg = (uint16_t) (LSEG(pos));
+  const uint32_t lseg = grn_ii_pos_lseg(ii, pos);
   const uint32_t pseg = grn_ii_get_buffer_pseg_inline(ii, lseg);
   if (pseg != GRN_II_PSEG_NOT_ASSIGNED) {
     byte *p = NULL;
     GRN_IO_SEG_REF(ii->seg, pseg, p);
     if (!p) { return GRN_II_PSEG_NOT_ASSIGNED; }
     if (b) { *b = (buffer *)p; }
-    if (bt) { *bt = (buffer_term *)(p + LPOS(pos)); }
+    if (bt) { *bt = (buffer_term *)(p + grn_ii_pos_loffset(ii, pos)); }
   }
   return pseg;
 }
@@ -2357,9 +2424,10 @@ buffer_close(grn_ctx *ctx, grn_ii *ii, uint32_t pseg)
 }
 
 grn_inline static uint32_t
-buffer_open_if_capable(grn_ctx *ctx, grn_ii *ii, int32_t seg, int size, buffer **b)
+buffer_open_if_capable(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, int size, buffer **b)
 {
-  uint32_t pseg, pos = SEG2POS(seg, 0);
+  const uint32_t pos = grn_ii_pos_pack(ii, lseg, 0);
+  uint32_t pseg;
   if ((pseg = buffer_open(ctx, ii, pos, NULL, b)) != GRN_II_PSEG_NOT_ASSIGNED) {
     uint16_t nterms = (*b)->header.nterms - (*b)->header.nterms_void;
     if (!((nterms < 4096 ||
@@ -4499,19 +4567,19 @@ fake_map(grn_ctx *ctx, grn_io *io, grn_io_win *iw, void *addr, uint32_t seg, uin
 }
 
 static grn_rc
-buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
+buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
 {
   grn_io_win sw, dw;
   buffer *sb, *db = NULL;
   uint32_t ds, pseg, scn, dcn = 0;
-  if (grn_ii_get_buffer_pseg_inline(ii, seg) == GRN_II_PSEG_NOT_ASSIGNED) {
+  if (grn_ii_get_buffer_pseg_inline(ii, lseg) == GRN_II_PSEG_NOT_ASSIGNED) {
     DEFINE_NAME(ii);
     CRIT(GRN_FILE_CORRUPT,
          "[ii][buffer][flush] invalid segment: "
          "<%.*s>: "
          "request:<%u>, max:<%u>",
          name_size, name,
-         seg, ii->seg->header->max_segment);
+         lseg, ii->seg->header->max_segment);
     return ctx->rc;
   }
   if ((ds = segment_get(ctx, ii)) == ii->seg->header->max_segment) {
@@ -4520,17 +4588,19 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
          "<%.*s>: "
          "request:<%u>, max:<%u>",
          name_size, name,
-         seg, ii->seg->header->max_segment);
+         lseg, ii->seg->header->max_segment);
     return ctx->rc;
   }
-  pseg = buffer_open(ctx, ii, SEG2POS(seg, 0), NULL, &sb);
+  pseg = buffer_open(ctx, ii, grn_ii_pos_pack(ii, lseg, 0), NULL, &sb);
   if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
     DEFINE_NAME(ii);
     MERR("[ii][buffer][flush] failed to open buffer: "
          "<%.*s>: "
          "segment:<%u>, position:<%u>, max:<%u>",
          name_size, name,
-         seg, SEG2POS(seg, 0), ii->seg->header->max_segment);
+         lseg,
+         grn_ii_pos_pack(ii, lseg, 0),
+         ii->seg->header->max_segment);
     return ctx->rc;
   }
   {
@@ -4545,7 +4615,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
         grn_memcpy(db->terms, sb->terms, n * sizeof(buffer_term));
         db->header.nterms = n;
         uint8_t *dc = NULL;
-        buffer_merge(ctx, ii, seg, h, sb, sc, db, &dc);
+        buffer_merge(ctx, ii, lseg, h, sb, sc, db, &dc);
         if (ctx->rc == GRN_SUCCESS) {
           const uint32_t actual_chunk_size = db->header.chunk_size;
           bool need_chunk_free = true;
@@ -4563,7 +4633,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
             rc = grn_io_win_unmap(&dw);
             if (rc == GRN_SUCCESS) {
               dc = NULL;
-              buffer_segment_update(ii, seg, ds);
+              buffer_segment_update(ii, lseg, ds);
               ii->header.common->total_chunk_size += actual_chunk_size;
               need_chunk_free = false;
               if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
@@ -4577,7 +4647,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                   "<%.*s> : "
                   "segment:<%u>, destination-segment:<%u>, actual-size:<%u>",
                   name_size, name,
-                  seg,
+                  lseg,
                   dcn,
                   actual_chunk_size);
             }
@@ -4596,7 +4666,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
              "<%.*s>: "
              "segment:<%u>, source-segment:<%u>, chunk-size:<%u>",
              name_size, name,
-             seg,
+             lseg,
              scn,
              sb->header.chunk_size);
       }
@@ -4607,7 +4677,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
            "<%.*s>: "
            "segment:<%u>, destination-segment:<%u>",
            name_size, name,
-           seg,
+           lseg,
            ds);
     }
     buffer_close(ctx, ii, pseg);
@@ -4616,7 +4686,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
 }
 
 void
-grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
+grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
 {
   grn_io_win sw;
   buffer *sb;
@@ -4631,11 +4701,11 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   grn_obj buf;
   size_t lower_bound;
   int64_t nloops = 0, nviolations = 0;
-  if (grn_ii_get_buffer_pseg_inline(ii, seg) == GRN_II_PSEG_NOT_ASSIGNED) {
+  if (grn_ii_get_buffer_pseg_inline(ii, lseg) == GRN_II_PSEG_NOT_ASSIGNED) {
     GRN_OUTPUT_BOOL(GRN_FALSE);
     return;
   }
-  pseg = buffer_open(ctx, ii, SEG2POS(seg, 0), NULL, &sb);
+  pseg = buffer_open(ctx, ii, grn_ii_pos_pack(ii, lseg, 0), NULL, &sb);
   if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
     GRN_OUTPUT_BOOL(GRN_FALSE);
     return;
@@ -4649,7 +4719,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   }
   GRN_OUTPUT_MAP_OPEN("BUFFER", -1);
   GRN_OUTPUT_CSTR("buffer id");
-  GRN_OUTPUT_INT64(seg);
+  GRN_OUTPUT_INT64(lseg);
   if ((scn = sb->header.chunk) == GRN_II_PSEG_NOT_ASSIGNED) {
     GRN_OUTPUT_CSTR("void chunk size");
     GRN_OUTPUT_INT64(sb->header.chunk_size);
@@ -4879,35 +4949,36 @@ array_update(grn_ctx *ctx, grn_ii *ii, uint32_t dls, buffer *db)
 {
   uint16_t n;
   buffer_term *bt;
-  uint32_t *a, pos = SEG2POS(dls, sizeof(buffer_header));
+  uint32_t loffset = POS_LOFFSET_HEADER;
+  uint32_t *a;
   for (n = db->header.nterms, bt = db->terms; n; n--, bt++) {
     if (bt->tid) {
       grn_id tid = bt->tid & GRN_ID_MAX;
       if ((a = array_at(ctx, ii, tid))) {
-        a[0] = pos;
+        a[0] = grn_ii_pos_pack(ii, dls, loffset);
         array_unref(ii, tid);
       } else {
         GRN_LOG(ctx, GRN_LOG_WARNING, "array_at failed (%d)", tid);
       }
     }
-    pos += sizeof(buffer_term) >> 2;
+    loffset += POS_LOFFSET_HEADER;
   }
 }
 
 static grn_rc
-buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
+buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
 {
   grn_io_win sw, dw0, dw1;
   buffer *sb, *db0 = NULL, *db1 = NULL;
   uint32_t dps0 = 0, dps1 = 0, dls0 = 0, dls1 = 0, sps, scn, dcn0 = 0, dcn1 = 0;
-  if (grn_ii_get_buffer_pseg_inline(ii, seg) == GRN_II_PSEG_NOT_ASSIGNED) {
+  if (grn_ii_get_buffer_pseg_inline(ii, lseg) == GRN_II_PSEG_NOT_ASSIGNED) {
     DEFINE_NAME(ii);
     CRIT(GRN_FILE_CORRUPT,
          "[ii][buffer][split] invalid segment: "
          "<%.*s> :"
          "request:<%u>, max:<%u>",
          name_size, name,
-         seg, ii->seg->header->max_segment);
+         lseg, ii->seg->header->max_segment);
     return ctx->rc;
   }
   buffer_segment_reserve(ctx, ii, &dls0, &dps0, &dls1, &dps1);
@@ -4918,17 +4989,19 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
         "<%.*s> :"
         "request:<%u>, max:<%u>",
         name_size, name,
-        seg, ii->seg->header->max_segment);
+        lseg, ii->seg->header->max_segment);
     return ctx->rc;
   }
-  sps = buffer_open(ctx, ii, SEG2POS(seg, 0), NULL, &sb);
+  sps = buffer_open(ctx, ii, grn_ii_pos_pack(ii, lseg, 0), NULL, &sb);
   if (sps == GRN_II_PSEG_NOT_ASSIGNED) {
     DEFINE_NAME(ii);
     MERR("[ii][buffer][split] failed to open buffer: "
          "<%.*s> :"
          "segment:<%u>, position:<%u>, max-segment:<%u>",
          name_size, name,
-         seg, SEG2POS(seg, 0), ii->seg->header->max_segment);
+         lseg,
+         grn_ii_pos_pack(ii, lseg, 0),
+         ii->seg->header->max_segment);
   } else {
     GRN_IO_SEG_REF(ii->seg, dps0, db0);
     if (db0) {
@@ -4940,7 +5013,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                           sb->header.chunk_size, grn_io_rdonly))) {
           term_split(ctx, ii->lexicon, sb, db0, db1);
           uint8_t *dc0 = NULL;
-          buffer_merge(ctx, ii, seg, h, sb, sc, db0, &dc0);
+          buffer_merge(ctx, ii, lseg, h, sb, sc, db0, &dc0);
           if (ctx->rc == GRN_SUCCESS) {
             const uint32_t actual_db0_chunk_size = db0->header.chunk_size;
             bool need_db0_chunk_free = false;
@@ -4959,7 +5032,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
               if (rc == GRN_SUCCESS) {
                 dc0 = NULL;
                 uint8_t *dc1 = NULL;
-                buffer_merge(ctx, ii, seg, h, sb, sc, db1, &dc1);
+                buffer_merge(ctx, ii, lseg, h, sb, sc, db1, &dc1);
                 if (ctx->rc == GRN_SUCCESS) {
                   const uint32_t actual_db1_chunk_size = db1->header.chunk_size;
                   bool need_db1_chunk_free = false;
@@ -4983,7 +5056,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                       buffer_segment_update(ii, dls1, dps1);
                       array_update(ctx, ii, dls0, db0);
                       array_update(ctx, ii, dls1, db1);
-                      buffer_segment_clear(ii, seg);
+                      buffer_segment_clear(ii, lseg);
                       ii->header.common->total_chunk_size +=
                         actual_db0_chunk_size +
                         actual_db1_chunk_size;
@@ -5006,7 +5079,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                           "actual-size1:<%u>, "
                           "actual-size2:<%u>",
                           name_size, name,
-                          seg,
+                          lseg,
                           dcn0,
                           dcn1,
                           actual_db0_chunk_size,
@@ -5030,7 +5103,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                     "destination-chunk1:<%u>, "
                     "actual-size1:<%u>",
                     name_size, name,
-                    seg,
+                    lseg,
                     dcn0,
                     actual_db0_chunk_size);
               }
@@ -5053,7 +5126,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
                "source-segment:<%u>, "
                "chunk-size:<%u>",
                name_size, name,
-               seg,
+               lseg,
                scn,
                sb->header.chunk_size);
         }
@@ -5066,7 +5139,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
              "destination-segment1:<%u>, "
              "destination-segment2:<%u>",
              name_size, name,
-             seg,
+             lseg,
              dps0,
              dps1);
       }
@@ -5079,7 +5152,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
            "destination-segment1:<%u>, "
            "destination-segment2:<%u>",
            name_size, name,
-           seg,
+           lseg,
            dps0,
            dps1);
     }
@@ -5118,7 +5191,7 @@ buffer_new_find_segment(grn_ctx *ctx,
     *pseg = buffer_open(ctx, ii, pos, NULL, b);
     if (*pseg == GRN_II_PSEG_NOT_ASSIGNED) { break; }
     if ((*b)->header.buffer_free >= size + sizeof(buffer_term)) {
-      *lseg = LSEG(pos);
+      *lseg = grn_ii_pos_lseg(ii, pos);
       break;
     }
     buffer_close(ctx, ii, *pseg);
@@ -5131,14 +5204,14 @@ buffer_new_find_segment(grn_ctx *ctx,
               (*b)->header.nterms,
               (*b)->header.chunk_size,
               ii->header.common->total_chunk_size >> 10);
-      if (buffer_split(ctx, ii, LSEG(pos), h)) { break; }
+      if (buffer_split(ctx, ii, grn_ii_pos_lseg(ii, pos), h)) { break; }
     } else {
       if (S_SEGMENT - sizeof(buffer_header)
           - (*b)->header.nterms * sizeof(buffer_term)
           < size + sizeof(buffer_term)) {
         break;
       }
-      if (buffer_flush(ctx, ii, LSEG(pos), h)) { break; }
+      if (buffer_flush(ctx, ii, grn_ii_pos_lseg(ii, pos), h)) { break; }
     }
   }
 
@@ -5300,7 +5373,11 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
   }
   if (lseg == GRN_II_PSEG_NOT_ASSIGNED) {
     if (buffer_segment_new(ctx, ii, &lseg) ||
-        (pseg = buffer_open(ctx, ii, SEG2POS(lseg, 0), NULL, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
+        (pseg = buffer_open(ctx,
+                            ii,
+                            grn_ii_pos_pack(ii, lseg, 0),
+                            NULL,
+                            &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
       return GRN_II_PSEG_NOT_ASSIGNED;
     }
     memset(b, 0, S_SEGMENT);
@@ -5324,7 +5401,9 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
     offset = b->header.nterms++;
     b->header.buffer_free -= size + sizeof(buffer_term);
   }
-  *pos = SEG2POS(lseg, (sizeof(buffer_header) + sizeof(buffer_term) * offset));
+  *pos = grn_ii_pos_pack(ii,
+                         lseg,
+                         POS_LOFFSET_HEADER + POS_LOFFSET_TERM * offset);
   *bt = &b->terms[offset];
   *br = (buffer_rec *)(((byte *)&b->terms[b->header.nterms]) + b->header.buffer_free);
   *bp = b;
@@ -5357,6 +5436,10 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
     return NULL;
   }
   if (path && strlen(path) + 6 >= PATH_MAX) { return NULL; }
+
+  if (!grn_ii_pos_is_available(ctx, flags, "[ii][create]")) {
+    return NULL;
+  }
 
   if (flags & GRN_OBJ_INDEX_SMALL) {
     header_size = sizeof(grn_ii_header_normal);
@@ -5728,7 +5811,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
         if (b->header.buffer_free < size) {
           int bfb = b->header.buffer_free;
           GRN_LOG(ctx, GRN_LOG_DEBUG, "flushing a[0]=%d seg=%d(%p) free=%d",
-                  a[0], LSEG(a[0]), b, b->header.buffer_free);
+                  a[0], grn_ii_pos_lseg(ii, a[0]), b, b->header.buffer_free);
           buffer_close(ctx, ii, pseg);
           if (SPLIT_COND(ii, b)) {
             /*((S_SEGMENT - sizeof(buffer_header) + ii->header.common->bmax -
@@ -5739,7 +5822,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                     b->header.nterms,
                     b->header.chunk_size,
                     ii->header.common->total_chunk_size >> 10);
-            buffer_split(ctx, ii, LSEG(pos), h);
+            buffer_split(ctx, ii, grn_ii_pos_lseg(ii, pos), h);
             if (ctx->rc != GRN_SUCCESS) {
               grn_obj term;
               char errbuf[GRN_CTX_MSGSIZE];
@@ -5769,7 +5852,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             }
             continue;
           }
-          buffer_flush(ctx, ii, LSEG(pos), h);
+          buffer_flush(ctx, ii, grn_ii_pos_lseg(ii, pos), h);
           if (ctx->rc != GRN_SUCCESS) {
             grn_obj term;
             char errbuf[GRN_CTX_MSGSIZE];
@@ -5830,7 +5913,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
           }
           GRN_LOG(ctx, GRN_LOG_DEBUG,
                   "flushed  a[0]=%d seg=%d(%p) free=%d->%d nterms=%d v=%d",
-                  a[0], LSEG(a[0]), b, bfb, b->header.buffer_free,
+                  a[0], grn_ii_pos_lseg(ii, a[0]), b, bfb, b->header.buffer_free,
                   b->header.nterms, b->header.nterms_void);
           if (b->header.buffer_free < size) {
             grn_obj term;
@@ -6107,9 +6190,9 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     if (b->header.buffer_free < size) {
       const uint32_t pos_keep = pos;
       GRN_LOG(ctx, GRN_LOG_DEBUG, "flushing! b=%p free=%d, seg(%d)",
-              b, b->header.buffer_free, LSEG(pos));
+              b, b->header.buffer_free, grn_ii_pos_lseg(ii, pos));
       buffer_close(ctx, ii, pseg);
-      buffer_flush(ctx, ii, LSEG(pos), h);
+      buffer_flush(ctx, ii, grn_ii_pos_lseg(ii, pos), h);
       if (ctx->rc != GRN_SUCCESS) {
         grn_obj term;
         char errbuf[GRN_CTX_MSGSIZE];
@@ -6157,7 +6240,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
         goto exit;
       }
       GRN_LOG(ctx, GRN_LOG_DEBUG, "flushed!  b=%p free=%d, seg(%d)",
-              b, b->header.buffer_free, LSEG(a[0]));
+              b, b->header.buffer_free, grn_ii_pos_lseg(ii, a[0]));
       if (b->header.buffer_free < size) {
         grn_obj term;
         DEFINE_NAME(ii);
@@ -6334,7 +6417,8 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
         c = NULL;
         goto exit;
       }
-      c->ppseg = &ii->header.common->binfo[LSEG(pos)];
+      const uint32_t lseg = grn_ii_pos_lseg(ii, pos);
+      c->ppseg = grn_ii_get_buffer_pseg_address_inline(ii, lseg);
       if (bt->size_in_chunk && (chunk = c->buf->header.chunk) != GRN_II_PSEG_NOT_ASSIGNED) {
         if (!(c->cp = WIN_MAP(ii->chunk, ctx, &c->iw, chunk, bt->pos_in_chunk,
                               bt->size_in_chunk, grn_io_rdonly))) {
@@ -11732,8 +11816,9 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       }
       nterm = term_buffer->header.nterms++;
       bt = &term_buffer->terms[nterm];
-      a[0] = SEG2POS(ii_buffer->lseg,
-                     (sizeof(buffer_header) + sizeof(buffer_term) * nterm));
+      a[0] = grn_ii_pos_pack(ii_buffer->ii,
+                             ii_buffer->lseg,
+                             POS_LOFFSET_HEADER + POS_LOFFSET_TERM * nterm);
       packed_len = grn_p_encv(ctx, ii_buffer->data_vectors,
                               ii_buffer->ii->n_elements,
                               ii_buffer->packed_buf +
@@ -14406,8 +14491,9 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn_ii_builder *builder)
     GRN_OBJ_FIN(ctx, &token);
     return ctx->rc;
   }
-  a[0] = SEG2POS(builder->buf.buf_id,
-                 sizeof(buffer_header) + buf_tid * sizeof(buffer_term));
+  a[0] = grn_ii_pos_pack(builder->ii,
+                         builder->buf.buf_id,
+                         POS_LOFFSET_HEADER + POS_LOFFSET_TERM * buf_tid);
   a[1] = builder->df;
   array_unref(builder->ii, builder->chunk.tid);
 
