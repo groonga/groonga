@@ -25,7 +25,11 @@ use_section = false
 parser = OptionParser.new
 parser.on("--n-records=N", Integer,
           "[#{n_records}]") do |n|
-  n_records = n
+  if n < 0
+    n_records = Float::INFINITY
+  else
+    n_records = n
+  end
 end
 parser.on("--[no-]use-section",
           "[#{use_section}]") do |boolean|
@@ -63,8 +67,8 @@ puts(<<-LOAD)
 load --table Data
 [
 LOAD
-n_records.times do
-  record = {}
+(1..n_records).each do |id|
+  record = {"_id" => id}
   columns.each do |column|
     value = ""
     n_characters_per_record.times do
