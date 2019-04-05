@@ -4405,7 +4405,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                    data.last_id.sid < 0x800 &&
                    data.last_id.tf == 1 &&
                    data.last_id.weight == 0) {
-          a[0] = (data.last_id.rid << 12) + (data.last_id.sid << 1) + 1;
+          a[0] = POS_EMBED_RID_SID(data.last_id.rid, data.last_id.sid);
           if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
             a[1] = data.dest.position_gaps[-1];
           } else {
@@ -4418,7 +4418,7 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
                    ndf == 1 &&
                    data.last_id.tf == 1 &&
                    data.last_id.weight == 0) {
-          a[0] = (data.last_id.rid << 1) + 1;
+          a[0] = POS_EMBED_RID(data.last_id.rid);
           if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
             a[1] = data.dest.position_gaps[-1];
           } else {
