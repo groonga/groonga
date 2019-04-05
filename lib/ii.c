@@ -287,7 +287,7 @@ grn_ii_set_array_pseg_inline(grn_ii *ii,
   if (lseg < GRN_II_MAX_LSEG) {
     ii->header.common->ainfo[lseg] = pseg;
   } else {
-    ii->header.large->ainfo[lseg - GRN_II_MAX_LSEG] = pseg;
+    ii->header.large->ainfo_extend[lseg - GRN_II_MAX_LSEG] = pseg;
   }
 }
 
@@ -298,7 +298,7 @@ grn_ii_get_buffer_pseg_inline(grn_ii *ii,
   if (lseg < GRN_II_MAX_LSEG) {
     return ii->header.common->binfo[lseg];
   } else {
-    return ii->header.large->binfo[lseg - GRN_II_MAX_LSEG];
+    return ii->header.large->binfo_extend[lseg - GRN_II_MAX_LSEG];
   }
 }
 
@@ -310,7 +310,7 @@ grn_ii_set_buffer_pseg_inline(grn_ii *ii,
   if (lseg < GRN_II_MAX_LSEG) {
     ii->header.common->binfo[lseg] = pseg;
   } else {
-    ii->header.large->binfo[lseg - GRN_II_MAX_LSEG] = pseg;
+    ii->header.large->binfo_extend[lseg - GRN_II_MAX_LSEG] = pseg;
   }
 }
 
