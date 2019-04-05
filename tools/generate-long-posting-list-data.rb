@@ -20,14 +20,23 @@ require "optparse"
 
 n_records = 100000
 use_section = false
+content = "XX XX XX"
 parser = OptionParser.new
 parser.on("--n-records=N", Integer,
           "[#{n_records}]") do |n|
-  n_records = n
+  if n < 0
+    n_records = Float::INFINITY
+  else
+    n_records = n
+  end
 end
 parser.on("--[no-]use-section",
           "[#{use_section}]") do |boolean|
   use_section = boolean
+end
+parser.on("--content=CONTENT",
+          "[#{content}]") do |_content|
+  content = _content
 end
 parser.parse!
 
@@ -61,10 +70,10 @@ puts(<<-LOAD)
 load --table Data
 [
 LOAD
-n_records.times do
-  record = {}
+(1..n_records).each do |id|
+  record = {"_id" => id}
   columns.each do |column|
-    record[column] = "XX XX XX"
+    record[column] = content
   end
   puts(record.to_json)
 end
