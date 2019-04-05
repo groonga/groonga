@@ -7,9 +7,11 @@ clone_depth: 10
 
 environment:
   matrix:
-    - VS_VERSION: 12
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      VS_VERSION: 15
       ARCH: x86
-    - VS_VERSION: 12
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      VS_VERSION: 15
       ARCH: amd64
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       VS_VERSION: 14
@@ -17,11 +19,9 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       VS_VERSION: 14
       ARCH: amd64
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      VS_VERSION: 15
+    - VS_VERSION: 12
       ARCH: x86
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      VS_VERSION: 15
+    - VS_VERSION: 12
       ARCH: amd64
 
 # matrix:
