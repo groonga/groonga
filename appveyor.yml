@@ -9,20 +9,20 @@ environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VS_VERSION: 15
-      ARCH: x86
+      ARCH: amd64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      VS_VERSION: 14
+      ARCH: amd64
+    - VS_VERSION: 12
+      ARCH: amd64
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VS_VERSION: 15
-      ARCH: amd64
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      VS_VERSION: 14
       ARCH: x86
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       VS_VERSION: 14
-      ARCH: amd64
-    - VS_VERSION: 12
       ARCH: x86
     - VS_VERSION: 12
-      ARCH: amd64
+      ARCH: x86
 
 # matrix:
 #   allow_failures:
