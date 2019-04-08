@@ -26,7 +26,8 @@
 #define GRN_FUNC_SNIPPET_HTML_CACHE_NAME "$snippet_html"
 
 static grn_obj *
-snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *text,
+snippet_exec(grn_ctx *ctx, grn_obj *snip,
+             grn_obj *text, grn_obj *kind_of_return_value,
              grn_user_data *user_data,
              const char *prefix, int prefix_length,
              const char *suffix, int suffix_length)
@@ -47,13 +48,17 @@ snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *text,
     return NULL;
   }
 
+  if (n_results == 0) {
+    if (kind_of_return_value == NULL) {
+      return grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
+    } else if(strcmp(GRN_TEXT_VALUE(kind_of_return_value), "[]")) {
+      return grn_plugin_proc_alloc(ctx, user_data, GRN_DB_SHORT_TEXT, GRN_OBJ_VECTOR);
+    }
+  }
+
   snippets = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_SHORT_TEXT, GRN_OBJ_VECTOR);
   if (!snippets) {
     return NULL;
-  }
-
-  if (n_results == 0) {
-    return snippets;
   }
 
   GRN_TEXT_INIT(&snippet_buffer, 0);
@@ -95,6 +100,10 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 #define KEYWORD_SET_SIZE 3
   if (nargs > N_REQUIRED_ARGS) {
     grn_obj *text = args[0];
+    grn_obj *kind_of_return_value = NULL;
+    if (nargs == 2) {
+      kind_of_return_value = args[1]; 
+    }
     grn_obj *end_arg = args[nargs - 1];
     grn_obj *snip = NULL;
     unsigned int width = 200;
@@ -221,7 +230,8 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                  NULL, 0);
         }
       }
-      snippets = snippet_exec(ctx, snip, text, user_data,
+      snippets = snippet_exec(ctx, snip, text, kind_of_return_value,
+                              user_data,
                               prefix, prefix_length,
                               suffix, suffix_length);
     }
@@ -251,8 +261,12 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_obj *snippets = NULL;
 
   /* TODO: support parameters */
-  if (nargs == 1) {
+  if (nargs > 0) {
     grn_obj *text = args[0];
+    grn_obj *kind_of_return_value = NULL;
+    if (nargs == 2) {
+      kind_of_return_value = args[1]; 
+    }
     grn_obj *expression = NULL;
     grn_obj *condition_ptr = NULL;
     grn_obj *condition = NULL;
@@ -301,7 +315,8 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
     }
 
     if (snip) {
-      snippets = snippet_exec(ctx, snip, text, user_data, NULL, 0, NULL, 0);
+      snippets = snippet_exec(ctx, snip, text, kind_of_return_value,
+                              user_data, NULL, 0, NULL, 0);
     }
   }
 
