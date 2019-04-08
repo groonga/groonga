@@ -53,8 +53,8 @@ install:
   # - choco install -y imdisk-toolkit
   # - mkdir tmp
   # - imdisk -a -t file -m tmp -o awe -s 1G -p "/fs:ntfs /q /y"
-  # - set GROONGA_INSTALL_SUB_FOLDER=インストール
-  - set GROONGA_INSTALL_SUB_FOLDER=install
+  - set GROONGA_INSTALL_SUB_FOLDER=インストール
+  #- set GROONGA_INSTALL_SUB_FOLDER=install
   - ps: |
       $Env:GROONGA_VERSION = (Get-Content base_version)
       if ($Env:APPVEYOR_REPO_TAG -eq "false") {
@@ -122,7 +122,7 @@ test_script:
      --n-retries 2
      test\command\suite
   - ruby test\command_line\run-test.rb
-     --groonga-install-prefix=%FULL_GROONGA_INSTALL_FOLDER%
+     --groonga-install-prefix=%APPVEYOR_BUILD_FOLDER%\\\u7E67\uFF64\u7E5D\uFF73\u7E67\uFF79\u7E5D\u533B\u30FB\u7E5D\uFF6B\\%GROONGA_INSTALL_FOLDER%
 
 on_success:
   - cd %GROONGA_INSTALL_SUB_FOLDER%
