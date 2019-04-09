@@ -8,7 +8,7 @@
 .. _token-ngram:
 
 ``TokenNgram``
-===============
+==============
 
 Summary
 -------
@@ -87,18 +87,27 @@ There are eight optional parameters.
 ``n``
 """""
 
+This option shows ``N`` of Ngram. For example, ``n`` is ``3`` for trigram.
 
 ``loose_symbol``
 """"""""""""""""
 
+Tokenize keywords including symbols, to be searched by both queries with/without symbols.
+For example, a keyword ``090-1111-2222`` will be found by any of ``09011112222``, ``090``, ``1111``, ``2222`` and ``090-1111-2222``.
 
 ``loose_blank``
 """""""""""""""
 
+Tokenize keywords including blanks, to be searched by both queries with/without blanks.
+For example, a keyword ``090 1111 2222`` will be found by any of ``09011112222``, ``090``, ``1111``, ``2222`` and ``090 1111 2222``.
 
 ``remove_blank``
 """"""""""""""""
 
+Tokenize keywords including blanks, to be searched by queries without blanks.
+For example, a keyword ``090 1111 2222`` will be found by any of ``09011112222``, ``090``, ``1111`` or ``2222``.
+
+Note that the keyword won’t be found by a query including blanks like ``090 1111 2222``.
 
 ``report_source_location``
 """"""""""""""""""""""""""
