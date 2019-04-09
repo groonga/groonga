@@ -4300,7 +4300,8 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
   DEF_VAR(vars[0], "target_name");
   DEF_VAR(vars[1], "recursive");
   DEF_VAR(vars[2], "only_opened");
-  DEF_COMMAND("io_flush", proc_io_flush, 3, vars);
+  DEF_VAR(vars[3], "dependent");
+  DEF_COMMAND("io_flush", proc_io_flush, 4, vars);
 
   grn_proc_init_object_exist(ctx);
 
