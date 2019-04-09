@@ -1,0 +1,16 @@
+table_create Groups TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Groups name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users group COLUMN_SCALAR Groups
+[[0,0.0,0.0],true]
+io_flush Users.group --dependent yes
+[[0,0.0,0.0],true]
+#>io_flush --dependent "yes" --target_name "Users.group"
+#:000000000000000 flush(Users.group)
+#:000000000000000 flush(Groups)
+#<000000000000000 rc=0
