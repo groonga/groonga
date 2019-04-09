@@ -3715,15 +3715,18 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *target_name;
   grn_obj *recursive;
   grn_obj *only_opened;
+  grn_obj *dependent;
   grn_obj *db;
   grn_obj *target;
   grn_rc rc;
   grn_bool is_recursive;
   grn_bool is_only_opened;
+  grn_bool is_dependent;
 
   target_name = VAR(0);
   recursive = VAR(1);
   only_opened = VAR(2);
+  dependent = VAR(4);
 
   db = grn_ctx_db(ctx);
 
@@ -3752,6 +3755,7 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   is_recursive = grn_proc_option_value_bool(ctx, recursive, GRN_TRUE);
   is_only_opened = grn_proc_option_value_bool(ctx, only_opened, GRN_FALSE);
+  is_dependent = grn_proc_option_value_bool(ctx, dependent, GRN_TRUE);
   {
     if (target->header.type == GRN_DB && is_only_opened) {
       GRN_TABLE_EACH_BEGIN_FLAGS(ctx, target, cursor, id, GRN_CURSOR_BY_ID) {
@@ -3777,7 +3781,21 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     } else {
       if (is_recursive) {
         rc = grn_obj_flush_recursive(ctx, target);
+        if (is_dependent) {
+          if (grn_obj_is_reference_column(ctx, target)) {
+            const grn_id range_id = grn_obj_get_range(ctx, target);
+            grn_obj *range = range = grn_ctx_at(ctx, range_id);
+            rc = grn_obj_flush(ctx, range);
+          }
+        }
       } else {
+        if (is_dependent) {
+          if (grn_obj_is_reference_column(ctx, target)) {
+            const grn_id range_id = grn_obj_get_range(ctx, target);
+            grn_obj *range = grn_ctx_at(ctx, range_id);
+            rc = grn_obj_flush(ctx, range);
+          }
+        }
         rc = grn_obj_flush(ctx, target);
       }
     }
