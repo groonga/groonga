@@ -1,0 +1,9 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText
+column_create Terms users_name COLUMN_INDEX|WITH_POSITION Users name
+
+#@collect-query-log true
+io_flush Users --dependent no
+#@collect-query-log false
