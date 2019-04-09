@@ -12302,6 +12302,16 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
 
   GRN_API_ENTER;
 
+  {
+    char object_name[GRN_TABLE_MAX_KEY_SIZE];
+    int object_name_size;
+    object_name_size = grn_obj_name(ctx, obj, object_name, GRN_TABLE_MAX_KEY_SIZE);
+    if (object_name_size > 0) {
+      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                    ":", "flush(%.*s)",
+                    object_name_size, object_name);
+    }
+  }
   switch (obj->header.type) {
   case GRN_DB :
     {
