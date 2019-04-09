@@ -97,9 +97,9 @@ TODO
 Commands
 --------
 
-  * :doc:commands/logical_count
-  * :doc:commands/logical_parameters
-  * :doc:commands/logical_range_filter
-  * :doc:commands/logical_select
-  * :doc:commands/logical_shard_list
-  * :doc:commands/logical_table_remove
+* :doc:`commands/logical_count`
+* :doc:`commands/logical_parameters`
+* :doc:`commands/logical_range_filter`
+* :doc:`commands/logical_select`
+* :doc:`commands/logical_shard_list`
+* :doc:`commands/logical_table_remove`
