@@ -12464,6 +12464,21 @@ grn_obj_flush_dependent(grn_ctx *ctx, grn_obj *obj)
     const grn_id range_id = grn_obj_get_range(ctx, obj);
     grn_obj *range = range = grn_ctx_at(ctx, range_id);
     rc = grn_obj_flush(ctx, range);
+  } else if (grn_obj_is_data_column(ctx, obj)) {
+    grn_hook *hooks;
+    for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
+      grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
+      grn_obj *target = grn_ctx_at(ctx, data->target);
+      if (target->header.type != GRN_COLUMN_INDEX) {
+        continue;
+      }
+      rc = grn_obj_flush(ctx, target);
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+      grn_obj *lexicon = grn_ctx_at(ctx, target->header.domain);
+      rc = grn_obj_flush(ctx, lexicon);
+    }
   }
 
   GRN_API_RETURN(rc);
