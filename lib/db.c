@@ -12453,6 +12453,22 @@ grn_obj_flush_recursive(grn_ctx *ctx, grn_obj *obj)
   GRN_API_RETURN(rc);
 }
 
+grn_rc
+grn_obj_flush_dependent(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_rc rc = GRN_SUCCESS;
+
+  GRN_API_ENTER;
+
+  if (grn_obj_is_reference_column(ctx, obj)) {
+    const grn_id range_id = grn_obj_get_range(ctx, obj);
+    grn_obj *range = range = grn_ctx_at(ctx, range_id);
+    rc = grn_obj_flush(ctx, range);
+  }
+
+  GRN_API_RETURN(rc);
+}
+
 grn_obj *
 grn_obj_db(grn_ctx *ctx, grn_obj *obj)
 {

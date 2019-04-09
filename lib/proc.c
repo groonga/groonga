@@ -3782,19 +3782,11 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       if (is_recursive) {
         rc = grn_obj_flush_recursive(ctx, target);
         if (is_dependent) {
-          if (grn_obj_is_reference_column(ctx, target)) {
-            const grn_id range_id = grn_obj_get_range(ctx, target);
-            grn_obj *range = range = grn_ctx_at(ctx, range_id);
-            rc = grn_obj_flush(ctx, range);
-          }
+          rc = grn_obj_flush_dependent(ctx, target);
         }
       } else {
         if (is_dependent) {
-          if (grn_obj_is_reference_column(ctx, target)) {
-            const grn_id range_id = grn_obj_get_range(ctx, target);
-            grn_obj *range = grn_ctx_at(ctx, range_id);
-            rc = grn_obj_flush(ctx, range);
-          }
+          rc = grn_obj_flush_dependent(ctx, target);
         }
         rc = grn_obj_flush(ctx, target);
       }
