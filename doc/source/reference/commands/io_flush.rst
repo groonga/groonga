@@ -72,10 +72,15 @@ All parameters are optional::
   io_flush [target_name=null]
            [recursive=yes]
            [only_opened=no]
+           [dependent=yes]
 
 .. versionadded:: 7.0.4
 
    :ref:`io-flush-only-opened` is added.
+
+.. versionadded:: 9.0.2
+
+   :ref:`io-flush-dependent` is added.
 
 Usage
 -----
@@ -309,6 +314,61 @@ and all columns:
 .. groonga-command
 .. include:: ../../example/reference/commands/io_flush/only_opened_yes.log
 .. io_flush --only_opened yes
+
+.. _io-flush-dependent:
+
+``dependent``
+"""""""""""""
+
+.. versionadded:: 9.0.2
+
+Specifies whether not only child objects of the flush target object,
+but also related index columns and table which contains related index
+columns are flushed.
+
+This option is similar to ``recursive``, but there is a different that
+related index columns and table are also flushed.  It is useful for
+users because this option take care of the objects which objects are related.
+It supports not to forget flushing related objects.
+
+``dependent`` value must be ``yes`` or ``no``. ``yes`` means that all
+of the specified flush target object and child objects, related objects.
+``no`` means that only the specified flush target object is flushed.
+
+For example, ``--dependent yes`` is enabled for ``TABLE_NAME``, this
+option executes equivalent to the following commands internally.
+
+- Table and its columns::
+
+    io_flush --target_name TABLE_NAME
+
+- A referenced table::
+
+    io_flush --target_name REFERENCED_TABLE_NAME --recursive no
+
+- A related table of an index column (There is source column in TABLE_NAME)::
+
+    io_flush --target_name TABLE_NAME_OF_INDEX_COLUMN --recursive no
+
+- An related index column (There is source column in TABLE_NAME)::
+
+    io_flush --target_name TABLE_NAME_OF_INDEX_COLUMN.INDEX_COLUMN
+
+The following ``io_flush`` flushes all changes in database, all tables
+and all columns:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/io_flush/dependent_yes.log
+.. io_flush --target_name Users --dependent yes
+
+To confirm whether all target objects are flushed correctly, you can check query log::
+
+    > io_flush --dependent "yes" --target_name "Users"
+    :000000000000000 flush(Users.name)
+    :000000000000000 flush(Users)
+    :000000000000000 flush(Terms.users_name)
+    :000000000000000 flush(Terms)
+    <000000000000000 rc=0
 
 Return value
 ------------
