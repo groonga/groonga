@@ -352,34 +352,32 @@ typedef int grn_cond;
 } while (GRN_FALSE)
 
 /* format string for printf */
-#ifdef HAVE_INTTYPES_H
+#ifdef WIN32
+# define GRN_FMT_INT32D "I32d"
+# define GRN_FMT_INT32U "I32u"
+# define GRN_FMT_INT64D "I64d"
+# define GRN_FMT_INT64U "I64u"
+# define GRN_FMT_INT64X "I64x"
+#elif defined(HAVE_INTTYPES_H)
 # include <inttypes.h>
 # define GRN_FMT_INT32D PRId32
 # define GRN_FMT_INT32U PRIu32
 # define GRN_FMT_INT64D PRId64
 # define GRN_FMT_INT64U PRIu64
 # define GRN_FMT_INT64X PRIx64
-#else /* HAVE_INTTYPES_H */
-# ifdef WIN32
-#  define GRN_FMT_INT32D "I32d"
-#  define GRN_FMT_INT32U "I32u"
-#  define GRN_FMT_INT64D "I64d"
-#  define GRN_FMT_INT64U "I64u"
-#  define GRN_FMT_INT64X "I64x"
-# else /* WIN32 */
-#  define GRN_FMT_INT32D "d"
-#  define GRN_FMT_INT32U "u"
-#  ifdef __x86_64__
-#   define GRN_FMT_INT64D "ld"
-#   define GRN_FMT_INT64U "lu"
-#   define GRN_FMT_INT64X "lx"
-#  else /* __x86_64__ */
-#   define GRN_FMT_INT64D "lld"
-#   define GRN_FMT_INT64U "llu"
-#   define GRN_FMT_INT64X "llx"
-#  endif /* __x86_64__ */
-# endif /* WIN32 */
-#endif /* HAVE_INTTYPES_H */
+#else /* WIN32 */
+# define GRN_FMT_INT32D "d"
+# define GRN_FMT_INT32U "u"
+# ifdef __x86_64__
+#  define GRN_FMT_INT64D "ld"
+#  define GRN_FMT_INT64U "lu"
+#  define GRN_FMT_INT64X "lx"
+# else /* __x86_64__ */
+#  define GRN_FMT_INT64D "lld"
+#  define GRN_FMT_INT64U "llu"
+#  define GRN_FMT_INT64X "llx"
+# endif /* __x86_64__ */
+#endif /* WIN32 */
 
 #ifdef WIN32
 # define GRN_FMT_LLD "I64d"
