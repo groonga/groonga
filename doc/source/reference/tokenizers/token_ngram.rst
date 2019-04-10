@@ -116,14 +116,18 @@ Note that the keyword won’t be found by a query including blanks like ``090 11
 ``unify_alphabet``
 """"""""""""""""""
 
+If we set false, ``TokenNgram`` uses bigram tokenize method for ASCII character.
 
 ``unify_symbol``
 """"""""""""""""
 
+If we set false, ``TokenNgram`` uses bigram tokenize method for symbols.
+``TokenNgram("unify_symbol", false)`` is same behavior of ``TokenBigramSplitSymbol``.
 
 ``unify_digit``
 """""""""""""""
 
+If we set false, ``TokenNgram`` uses bigram tokenize method for digits.
 
 See also
 ----------
