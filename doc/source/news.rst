@@ -448,15 +448,15 @@ Improvements
 
 * [:doc:`/reference/tokenizers`][TokenNgram] Added new option ``unify_alphabet`` for ``TokenNgram``.
 
-  ``TokenNgram("unify_alphabet", false)`` is same behavior of ``TokenBigramSplitAlpha``.
+  If we use ``unify_alphabet`` as ``false``, ``TokenNgram`` uses bigram tokenize method for ASCII character.
 
 * [:doc:`/reference/tokenizers`][TokenNgram] Added new option ``unify_symbol`` for ``TokenNgram``.
 
   ``TokenNgram("unify_symbol", false)`` is same behavior of ``TokenBigramSplitSymbol``.
 
-* [:doc:`/reference/tokenizers`][TokenNgram] Added new option ``unify_difit`` for ``TokenNgram``.
+* [:doc:`/reference/tokenizers`][TokenNgram] Added new option ``unify_digit`` for ``TokenNgram``.
 
-  ``TokenNgram("unify_digit", false)`` is same behavior of ``TokenBigramSplitDigit``.
+  If we use ``unify_digit`` as ``false``, If we set false, ``TokenNgram`` uses bigram tokenize method for digits.
 
 * [httpd] Updated bundled nginx to 1.15.4.
 
