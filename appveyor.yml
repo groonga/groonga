@@ -129,6 +129,7 @@ on_success:
   - set ARTIFACT=%GROONGA_INSTALL_FOLDER%.zip
   - 7z a %ARTIFACT% %FULL_GROONGA_INSTALL_FOLDER%
   - ps: Push-AppveyorArtifact $Env:ARTIFACT
+  - mkdir %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\vcruntime
   - if "%ARCH%" == "amd64" set ARCH=x64
   - ps: |
       switch -Exact ($Env:VS_VERSION) {
@@ -137,20 +138,24 @@ on_success:
           $Env:VCREDIST_DIR = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\$Env:REDIST_VERSION\$Env:ARCH"
           $Env:VCREDIST_VCRUNTIME = "$Env:VCREDIST_DIR\Microsoft.VC141.CRT\vcruntime140.dll"
           $Env:VCREDIST_MSVCP = "$Env:VCREDIST_DIR\Microsoft.VC141.CRT\msvcp140.dll"
+          $Env:LICENSE_FILE = $Env:APPVEYOR_BUILD_FOLDER + "\packages\windows\vcruntime\vs2017\readme.txt"
         }
         "14" {
           $Env:VCREDIST_DIR = "C:\Program Files (x86)\Microsoft Visual Studio $Env:VS_VERSION.0\VC\redist\$Env:ARCH"
           $Env:VCREDIST_VCRUNTIME = "$Env:VCREDIST_DIR\Microsoft.VC140.CRT\vcruntime140.dll"
           $Env:VCREDIST_MSVCP = "$Env:VCREDIST_DIR\Microsoft.VC140.CRT\msvcp140.dll"
+          $Env:LICENSE_FILE = $Env:APPVEYOR_BUILD_FOLDER + "\packages\windows\vcruntime\vs2015\readme.txt"
         }
         "12" {
           $Env:VCREDIST_DIR = "C:\Program Files (x86)\Microsoft Visual Studio $Env:VS_VERSION.0\VC\redist\$Env:ARCH"
           $Env:VCREDIST_VCRUNTIME = "$Env:VCREDIST_DIR\Microsoft.VC120.CRT\msvcr120.dll"
           $Env:VCREDIST_MSVCP = "$Env:VCREDIST_DIR\Microsoft.VC120.CRT\msvcp120.dll"
+          $Env:LICENSE_FILE = $Env:APPVEYOR_BUILD_FOLDER + "\packages\windows\vcruntime\vs2013\readme.txt"
         }
       }
   - copy "%VCREDIST_VCRUNTIME%" "%FULL_GROONGA_INSTALL_FOLDER%\bin"
   - copy "%VCREDIST_MSVCP%" "%FULL_GROONGA_INSTALL_FOLDER%\bin"
+  - copy "%LICENSE_FILE%" "%FULL_GROONGA_INSTALL_FOLDER%\share\groonga\vcruntime"
   - set ARTIFACT=%GROONGA_INSTALL_FOLDER%-with-vcruntime.zip
   - 7z a %ARTIFACT% %FULL_GROONGA_INSTALL_FOLDER%
   - ps: Push-AppveyorArtifact $Env:ARTIFACT
