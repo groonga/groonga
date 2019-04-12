@@ -338,6 +338,8 @@ module Groonga
         attr_reader :load_values
         attr_reader :dynamic_columns
         attr_reader :result_sets
+        attr_reader :shard_targets
+        attr_reader :shard_results
         attr_reader :plain_drilldown
         attr_reader :labeled_drilldowns
         attr_reader :temporary_tables
@@ -360,6 +362,8 @@ module Groonga
           @dynamic_columns = DynamicColumns.parse(@input)
 
           @result_sets = []
+          @shard_targets = []
+          @shard_results = []
           @plain_drilldown = PlainDrilldownExecuteContext.new(@input)
           @labeled_drilldowns = LabeledDrilldowns.parse(@input)
 
@@ -609,7 +613,7 @@ module Groonga
           enumerator.each do |shard, shard_range|
             first_shard ||= shard
             shard_executor = ShardExecutor.new(@context, shard, shard_range)
-            shard_executor.execute
+            shard_executor.execute_pre
           end
           if first_shard.nil?
             message =
@@ -618,17 +622,35 @@ module Groonga
               "shard_key: <#{enumerator.shard_key_name}>"
             raise InvalidArgument, message
           end
-          if @context.result_sets.empty?
+
+          if @context.dynamic_columns.have_initial?
+            targets = []
+            @context.shard_targets.each do |_, target_table|
+              targets << [target_table, nil]
+            end
+            @context.dynamic_columns.apply_initial(targets)
+          end
+          @context.shard_targets.each do |shard_executor, target_table|
+            shard_executor.execute
+          end
+
+          if @context.shard_results.empty?
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
                                           :key_type => first_shard.table)
             @context.temporary_tables << result_set
-            @context.dynamic_columns.each_initial do |dynamic_column|
-              dynamic_column.apply(result_set)
-            end
-            @context.dynamic_columns.each_filtered do |dynamic_column|
-              dynamic_column.apply(result_set)
-            end
+            targets = [[result_set, nil]]
+            @context.dynamic_columns.apply_initial(targets)
+            @context.dynamic_columns.apply_filtered(targets)
             @context.result_sets << result_set
+          else
+            targets = []
+            @context.shard_results.each do |_, result_set, condition|
+              targets << [result_set, condition]
+            end
+            @context.dynamic_columns.apply_filtered(targets)
+            @context.shard_results.each do |shard_executor, result_set, _|
+              shard_executor.execute_post(result_set)
+            end
           end
         end
 
@@ -691,9 +713,7 @@ module Groonga
                 end
               end
               result_set = group_result.table
-              drilldown.dynamic_columns.each_initial do |dynamic_column|
-                dynamic_column.apply(result_set)
-              end
+              drilldown.dynamic_columns.apply_initial([[result_set, nil]])
               result_set = apply_drilldown_filter(drilldown, result_set)
               if drilldown.sort_keys.empty?
                 drilldown.result_set = result_set
@@ -745,6 +765,8 @@ module Groonga
           @post_filter = @context.post_filter
           @sort_keys = @context.sort_keys
           @result_sets = @context.result_sets
+          @shard_targets = @context.shard_targets
+          @shard_results = @context.shard_results
           @temporary_tables = @context.temporary_tables
 
           @target_range = @context.enumerator.target_range
@@ -752,7 +774,7 @@ module Groonga
           @cover_type = @target_range.cover_type(@shard_range)
         end
 
-        def execute
+        def execute_pre
           return if @cover_type == :none
           return if @target_table.empty?
 
@@ -763,7 +785,7 @@ module Groonga
             raise InvalidArgument, message
           end
 
-          @context.dynamic_columns.each_initial do |dynamic_column|
+          if @context.dynamic_columns.have_initial?
             if @target_table == @shard.table
               if @cover_type == :all
                 @target_table = @target_table.select_all
@@ -777,10 +799,12 @@ module Groonga
               end
               @temporary_tables << @target_table
             end
-            dynamic_column.apply(@target_table)
           end
+          @shard_targets << [self, @target_table]
+        end
 
-          create_expression_builder(shard_key) do |expression_builder|
+        def execute
+          create_expression_builder(@shard.key) do |expression_builder|
             case @cover_type
             when :all
               filter_shard_all(expression_builder)
@@ -800,11 +824,26 @@ module Groonga
           end
         end
 
+        def execute_post(result_set)
+          if @post_filter
+            result_set = apply_post_filter(result_set)
+            @temporary_tables << result_set
+          end
+
+          if @sort_keys.empty?
+            @result_sets << result_set
+          else
+            sorted_result_set = result_set.sort(@sort_keys)
+            @temporary_tables << sorted_result_set
+            @result_sets << sorted_result_set
+          end
+        end
+
         private
         def filter_shard_all(expression_builder)
           if @query.nil? and @filter.nil?
             @temporary_tables.delete(@target_table)
-            add_result_set(@target_table, nil)
+            add_result(@target_table, nil)
           else
             filter_table do |expression|
               expression_builder.build_all(expression)
@@ -836,7 +875,7 @@ module Groonga
           table = @target_table
           expression = create_expression(table)
           yield(expression)
-          add_result_set(table.select(expression), expression)
+          add_result(table.select(expression), expression)
         end
 
         def apply_post_filter(table)
@@ -845,7 +884,7 @@ module Groonga
           table.select(expression)
         end
 
-        def add_result_set(result_set, condition)
+        def add_result(result_set, condition)
           query_logger.log(:size, ":",
                            "select(#{result_set.size})[#{@shard.table_name}]")
 
@@ -863,22 +902,7 @@ module Groonga
             @temporary_tables << result_set
           end
 
-          @context.dynamic_columns.each_filtered do |dynamic_column|
-            dynamic_column.apply(result_set, condition)
-          end
-
-          if @post_filter
-            result_set = apply_post_filter(result_set)
-            @temporary_tables << result_set
-          end
-
-          if @sort_keys.empty?
-            @result_sets << result_set
-          else
-            sorted_result_set = result_set.sort(@sort_keys)
-            @temporary_tables << sorted_result_set
-            @result_sets << sorted_result_set
-          end
+          @shard_results << [self, result_set, condition]
         end
 
         def query_logger

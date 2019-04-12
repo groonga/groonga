@@ -50,6 +50,7 @@ groonga_include_HEADERS =			\
 	normalizer.h				\
 	util.h					\
 	window_function.h			\
+	window_function_executor.h		\
 	windows.h				\
 	windows_event_logger.h			\
 	vector.h				\

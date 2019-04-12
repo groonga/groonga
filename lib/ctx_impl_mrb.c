@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2013-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -71,6 +71,7 @@
 # include "mrb/mrb_eval_context.h"
 # include "mrb/mrb_thread.h"
 # include "mrb/mrb_window_definition.h"
+# include "mrb/mrb_window_function_executor.h"
 # include "mrb/mrb_locale_output.h"
 # include "mrb/mrb_output_columns.h"
 
@@ -206,6 +207,7 @@ mrb_groonga_init(mrb_state *mrb, mrb_value self)
   grn_mrb_eval_context_init(ctx);
   grn_mrb_thread_init(ctx);
   grn_mrb_window_definition_init(ctx);
+  grn_mrb_window_function_executor_init(ctx);
   grn_mrb_locale_output_init(ctx);
   grn_mrb_output_columns_init(ctx);
 

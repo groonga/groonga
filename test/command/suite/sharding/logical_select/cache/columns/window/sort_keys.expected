@@ -60,11 +60,11 @@ logical_select Logs   --shard_key timestamp   --columns[sum].stage initial   --c
       ],
       [
         300,
-        300
+        600
       ],
       [
         400,
-        700
+        1000
       ]
     ]
   ]
@@ -101,11 +101,11 @@ logical_select Logs   --shard_key timestamp   --columns[sum].stage initial   --c
       ],
       [
         300,
-        700
+        1000
       ],
       [
         400,
-        400
+        700
       ]
     ]
   ]

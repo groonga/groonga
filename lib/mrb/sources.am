@@ -93,5 +93,7 @@ libgrnmrb_la_SOURCES =				\
 	mrb_void.h				\
 	mrb_window_definition.c			\
 	mrb_window_definition.h			\
+	mrb_window_function_executor.c		\
+	mrb_window_function_executor.h		\
 	mrb_writer.c				\
 	mrb_writer.h

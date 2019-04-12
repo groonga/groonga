@@ -66,6 +66,18 @@ module Groonga
         each_output(&block)
       end
 
+      def apply_initial(targets)
+        apply(@initial_contexts, targets)
+      end
+
+      def apply_filtered(targets)
+        apply(@filtered_contexts, targets)
+      end
+
+      def apply_output(targets)
+        apply(@output_contexts, targets)
+      end
+
       def empty?
         @initial_contexts.empty? and
           @filtered_contexts.empty? and
@@ -90,6 +102,30 @@ module Groonga
           end
         end
         key
+      end
+
+      private
+      def apply(contexts, targets)
+        window_function_contexts = []
+        normal_contexts = []
+        contexts.each do |context|
+          if context.window_function?
+            window_function_contexts << context
+          else
+            normal_contexts << context
+          end
+        end
+
+        result_sets = []
+        targets.each do |result_set, condition|
+          normal_contexts.each do |context|
+            context.apply(result_set, condition)
+          end
+          result_sets << result_set
+        end
+        window_function_contexts.each do |context|
+          context.apply_window_function(result_sets)
+        end
       end
     end
 
@@ -156,6 +192,11 @@ module Groonga
         @window_group_keys = parse_keys(arguments["window.group_keys"])
       end
 
+      def window_function?
+        (not @window_sort_keys.empty?) or
+          (not @window_group_keys.empty?)
+      end
+
       def apply(table, condition=nil)
         column = table.create_column(@label, @flags, @type)
         return if table.empty?
@@ -163,16 +204,28 @@ module Groonga
         expression = Expression.create(table)
         begin
           expression.parse(@value)
-          if @window_sort_keys.empty? and @window_group_keys.empty?
-            expression.condition = condition if condition
-            table.apply_expression(column, expression)
-          else
-            table.apply_window_function(column, expression,
-                                        :sort_keys => @window_sort_keys,
-                                        :group_keys => @window_group_keys)
-          end
+          expression.condition = condition if condition
+          table.apply_expression(column, expression)
         ensure
           expression.close
+        end
+      end
+
+      def apply_window_function(tables)
+        executor = WindowFunctionExecutor.new
+        begin
+          executor.source = @value
+          executor.sort_keys = @window_sort_keys.join(", ")
+          executor.group_keys = @window_group_keys.join(", ")
+          executor.output_column_name = @label
+          tables.each do |table|
+            column = table.create_column(@label, @flags, @type)
+            return if table.empty?
+            executor.add_table(table)
+          end
+          executor.execute
+        ensure
+          executor.close
         end
       end
 

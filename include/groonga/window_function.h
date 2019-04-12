@@ -1,5 +1,6 @@
 /*
   Copyright(C) 2016 Brazil
+  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -38,8 +39,15 @@ GRN_API grn_rc grn_window_set_direction(grn_ctx *ctx,
                                         grn_window_direction direction);
 GRN_API grn_obj *grn_window_get_table(grn_ctx *ctx,
                                       grn_window *window);
-GRN_API grn_bool grn_window_is_sorted(grn_ctx *ctx,
-                                      grn_window *window);
+GRN_API grn_obj *grn_window_get_output_column(grn_ctx *ctx,
+                                              grn_window *window);
+GRN_API size_t grn_window_get_n_arguments(grn_ctx *ctx,
+                                          grn_window *window);
+GRN_API grn_obj *grn_window_get_argument(grn_ctx *ctx,
+                                         grn_window *window,
+                                         size_t i);
+GRN_API bool grn_window_is_sorted(grn_ctx *ctx,
+                                  grn_window *window);
 GRN_API size_t grn_window_get_size(grn_ctx *ctx,
                                    grn_window *window);
 
@@ -51,17 +59,18 @@ typedef struct _grn_window_definition {
 } grn_window_definition;
 
 typedef grn_rc grn_window_function_func(grn_ctx *ctx,
-                                        grn_obj *output_column,
+                                        grn_obj *first_output_column,
                                         grn_window *window,
-                                        grn_obj **args,
-                                        int n_args);
+                                        grn_obj **first_args,
+                                        int first_n_args);
 
 GRN_API grn_obj *grn_window_function_create(grn_ctx *ctx,
                                             const char *name,
                                             int name_size,
                                             grn_window_function_func func);
 
-
+/* Deprecated since 9.0.2.
+   Use grn_window_function_executor() instead. */
 GRN_API grn_rc grn_table_apply_window_function(grn_ctx *ctx,
                                                grn_obj *table,
                                                grn_obj *output_column,

@@ -192,12 +192,9 @@ module Groonga
           if @context.result_sets.empty?
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
                                           :key_type => first_shard.table)
-            @context.dynamic_columns.each_initial do |dynamic_column|
-              dynamic_column.apply(result_set)
-            end
-            @context.dynamic_columns.each_filtered do |dynamic_column|
-              dynamic_column.apply(result_set)
-            end
+            targets = [[result_set, nil]]
+            @context.dynamic_columns.apply_initial(targets)
+            @context.dynamic_columns.apply_filtered(targets)
             @context.temporary_tables << result_set
             @context.result_sets << result_set
           end
@@ -481,7 +478,7 @@ module Groonga
             range_index = nil
           end
 
-          @context.dynamic_columns.each_initial do |dynamic_column|
+          if @context.dynamic_columns.have_initial?
             if @target_table == @shard.table
               if @cover_type == :all
                 @target_table = @target_table.select_all
@@ -496,7 +493,7 @@ module Groonga
               end
               @temporary_tables << @target_table
             end
-            dynamic_column.apply(@target_table)
+            @context.dynamic_columns.apply_initial([[@target_table, nil]])
           end
 
           execute_filter(range_index, expression_builder)
@@ -917,12 +914,12 @@ module Groonga
         end
 
         def sort_result_set(result_set)
-          @context.dynamic_columns.each_filtered do |dynamic_column|
+          if @context.dynamic_columns.have_filtered?
             if result_set == @shard.table
               result_set = result_set.select_all
               @temporary_tables << result_set
             end
-            dynamic_column.apply(result_set)
+            @context.dynamic_columns.apply_filtered([[result_set, nil]])
           end
 
           unless @post_filter.nil?
