@@ -192,10 +192,10 @@ module Groonga
           if @context.result_sets.empty?
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
                                           :key_type => first_shard.table)
+            @context.temporary_tables << result_set
             targets = [[result_set, nil]]
             @context.dynamic_columns.apply_initial(targets)
             @context.dynamic_columns.apply_filtered(targets)
-            @context.temporary_tables << result_set
             @context.result_sets << result_set
           end
         end
