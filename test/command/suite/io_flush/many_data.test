@@ -12,5 +12,7 @@ column_create Lexicon sources_value COLUMN_INDEX Sources value
 #@generate-series 0 1090000 Sources '{"value" => i}'
 #@enable-logging
 
+#@collect-query-log true
 io_flush Lexicon.sources_value
+#@collect-query-log false
 #@timeout default

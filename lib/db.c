@@ -12302,6 +12302,9 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
 
   GRN_API_ENTER;
 
+  char name[GRN_TABLE_MAX_KEY_SIZE];
+  int name_size = 0;
+  bool flushed = false;
   switch (obj->header.type) {
   case GRN_DB :
     {
@@ -12317,12 +12320,17 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
         rc = grn_options_flush(ctx, db->options);
       }
     }
+    grn_strcpy(name, GRN_TABLE_MAX_KEY_SIZE, "(DB)");
+    name_size = strlen(name);
+    flushed = true;
     break;
   case GRN_TABLE_DAT_KEY :
     rc = grn_dat_flush(ctx, (grn_dat *)obj);
+    flushed = true;
     break;
   case GRN_COLUMN_INDEX :
     rc = grn_ii_flush(ctx, (grn_ii *)obj);
+    flushed = true;
     break;
   default :
     {
@@ -12330,9 +12338,28 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
       io = grn_obj_get_io(ctx, obj);
       if (io) {
         rc = grn_io_flush(ctx, io);
+        flushed = true;
       }
     }
     break;
+  }
+
+  if (flushed && name_size == 0) {
+    name_size = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
+    if (name_size == 0) {
+      grn_strcpy(name, GRN_TABLE_MAX_KEY_SIZE, "(anonymous:");
+      grn_strcat(name, GRN_TABLE_MAX_KEY_SIZE,
+                 grn_obj_type_to_string(obj->header.type));
+      grn_strcat(name, GRN_TABLE_MAX_KEY_SIZE, ")");
+      name_size = strlen(name);
+    }
+  }
+
+  if (name_size > 0) {
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                  ":",
+                  "flush[%.*s]",
+                  name_size, name);
   }
 
   if (rc == GRN_SUCCESS &&
@@ -12441,6 +12468,371 @@ grn_obj_flush_recursive(grn_ctx *ctx, grn_obj *obj)
   }
 
   GRN_API_RETURN(rc);
+}
+
+typedef struct {
+  grn_hash *flushed;
+  bool is_close_opened_object_mode;
+} flush_dependent_data;
+
+static bool
+grn_obj_flush_dependent_need_flush(grn_ctx *ctx,
+                                   flush_dependent_data *data,
+                                   grn_id id)
+{
+  int added = 0;
+  grn_id flushed_id = grn_hash_add(ctx,
+                                   data->flushed,
+                                   &id, sizeof(grn_id),
+                                   NULL,
+                                   &added);
+  if (flushed_id == GRN_ID_NIL) {
+    grn_rc rc = ctx->rc;
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_NO_MEMORY_AVAILABLE;
+    }
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    ERR(rc,
+        "[io_flush] failed to register flushed ID: <%u>: %s",
+        id,
+        message);
+    return false;
+  }
+  return added != 0;
+}
+
+static void
+grn_obj_flush_dependent_internal(grn_ctx *ctx,
+                                 grn_obj *obj,
+                                 flush_dependent_data *data);
+
+static void
+grn_obj_flush_dependent_internal_db(grn_ctx *ctx,
+                                    grn_obj *db,
+                                    flush_dependent_data *data)
+{
+  GRN_TABLE_EACH_BEGIN(ctx, db, cursor, id) {
+    if (!grn_obj_flush_dependent_need_flush(ctx, data, id)) {
+      if (ctx->rc == GRN_SUCCESS) {
+        continue;
+      } else {
+        break;
+      }
+    }
+
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+
+    grn_obj *object = grn_ctx_at(ctx, id);
+    if (grn_obj_is_table(ctx, object)) {
+      grn_obj_flush_dependent_internal(ctx, object, data);
+    } else {
+      if (ctx->rc != GRN_SUCCESS) {
+        ERRCLR(ctx);
+      }
+    }
+
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+
+  grn_obj_flush(ctx, db);
+}
+
+static void
+grn_obj_flush_dependent_internal_table(grn_ctx *ctx,
+                                       grn_obj *table,
+                                       flush_dependent_data *data)
+{
+  if (grn_obj_is_lexicon(ctx, table)) {
+    grn_id domain_id = table->header.domain;
+    if (grn_obj_flush_dependent_need_flush(ctx, data, domain_id)) {
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_push_temporary_open_space(ctx);
+      }
+      grn_obj *domain = grn_ctx_at(ctx, domain_id);
+      if (grn_obj_is_table(ctx, domain)) {
+        grn_obj_flush_dependent_internal(ctx, domain, data);
+      }
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_pop_temporary_open_space(ctx);
+      }
+    }
+    if (ctx->rc != GRN_SUCCESS) {
+      return;
+    }
+  }
+
+  grn_hash *columns = grn_hash_create(ctx,
+                                      NULL,
+                                      sizeof(grn_id),
+                                      0,
+                                      GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
+  if (!columns) {
+    grn_rc rc = ctx->rc;
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_NO_MEMORY_AVAILABLE;
+    }
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    char table_name[GRN_TABLE_MAX_KEY_SIZE];
+    int table_name_size;
+    table_name_size = grn_obj_name(ctx,
+                                   table,
+                                   table_name,
+                                   GRN_TABLE_MAX_KEY_SIZE);
+    ERR(rc,
+        "[io_flush] failed to create internal hash table "
+        "to store columns: <%.*s>: %s",
+        table_name_size, table_name,
+        message);
+    return;
+  }
+
+  if (grn_table_columns(ctx, table, "", 0, (grn_obj *)columns) > 0) {
+    GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
+      void *key;
+      if (grn_hash_cursor_get_key(ctx, cursor, &key) == 0) {
+        continue;
+      }
+
+      grn_id *column_id = key;
+      if (!grn_obj_flush_dependent_need_flush(ctx, data, *column_id)) {
+        if (ctx->rc == GRN_SUCCESS) {
+          continue;
+        } else {
+          break;
+        }
+      }
+
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_push_temporary_open_space(ctx);
+      }
+      grn_obj *column = grn_ctx_at(ctx, *column_id);
+      if (column) {
+        grn_obj_flush_dependent_internal(ctx, column, data);
+      }
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_pop_temporary_open_space(ctx);
+      }
+
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+    } GRN_HASH_EACH_END(ctx, cursor);
+  }
+  grn_hash_close(ctx, columns);
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+
+  grn_obj_flush(ctx, table);
+}
+
+static void
+grn_obj_flush_dependent_internal_column_data(grn_ctx *ctx,
+                                             grn_obj *column,
+                                             flush_dependent_data *data)
+{
+  grn_id table_id = column->header.domain;
+  if (grn_obj_flush_dependent_need_flush(ctx, data, table_id)) {
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+    grn_obj *table = grn_ctx_at(ctx, table_id);
+    if (table) {
+      grn_obj_flush_dependent_internal(ctx, table, data);
+    }
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+  }
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+
+  grn_id range_id = grn_obj_get_range(ctx, column);
+  if (grn_obj_flush_dependent_need_flush(ctx, data, range_id)) {
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+    grn_obj *range = grn_ctx_at(ctx, range_id);
+    if (grn_obj_is_table(ctx, range)) {
+      grn_obj_flush_dependent_internal(ctx, range, data);
+    }
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+  }
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+
+  for (grn_hook *hooks = DB_OBJ(column)->hooks[GRN_HOOK_SET];
+       hooks;
+       hooks = hooks->next) {
+    grn_obj_default_set_value_hook_data *hook_data =
+      (grn_obj_default_set_value_hook_data *)GRN_NEXT_ADDR(hooks);
+    if (grn_obj_flush_dependent_need_flush(ctx, data, hook_data->target)) {
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_push_temporary_open_space(ctx);
+      }
+      grn_obj *index = grn_ctx_at(ctx, hook_data->target);
+      if (index) {
+        grn_obj_flush_dependent_internal(ctx, index, data);
+      }
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_pop_temporary_open_space(ctx);
+      }
+      if (ctx->rc != GRN_SUCCESS) {
+        return;
+      }
+    }
+  }
+
+  grn_obj_flush(ctx, column);
+}
+
+static void
+grn_obj_flush_dependent_internal_column_index(grn_ctx *ctx,
+                                              grn_obj *column,
+                                              flush_dependent_data *data)
+{
+  grn_id lexicon_id = column->header.domain;
+  if (grn_obj_flush_dependent_need_flush(ctx, data, lexicon_id)) {
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+    grn_obj *lexicon = grn_ctx_at(ctx, lexicon_id);
+    if (lexicon) {
+      grn_obj_flush_dependent_internal(ctx, lexicon, data);
+    }
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+  }
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+
+  grn_obj source_ids;
+  GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
+  grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
+  size_t n = GRN_UINT32_VECTOR_SIZE(&source_ids);
+  for (size_t i = 0; i < n; i++) {
+    grn_id source_id = GRN_UINT32_VALUE_AT(&source_ids, i);
+    if (!grn_obj_flush_dependent_need_flush(ctx, data, source_id)) {
+      if (ctx->rc == GRN_SUCCESS) {
+        continue;
+      } else {
+        break;
+      }
+    }
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+    grn_obj *source = grn_ctx_at(ctx, source_id);
+    if (source) {
+      grn_obj_flush_dependent_internal(ctx, source, data);
+    }
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+  }
+  GRN_OBJ_FIN(ctx, &source_ids);
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+
+  grn_obj_flush(ctx, column);
+}
+
+static void
+grn_obj_flush_dependent_internal(grn_ctx *ctx,
+                                 grn_obj *obj,
+                                 flush_dependent_data *data)
+{
+  switch (obj->header.type) {
+  case GRN_DB :
+    grn_obj_flush_dependent_internal_db(ctx, obj, data);
+    break;
+  case GRN_TABLE_NO_KEY :
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+    grn_obj_flush_dependent_internal_table(ctx, obj, data);
+    break;
+  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_VAR_SIZE :
+    grn_obj_flush_dependent_internal_column_data(ctx, obj, data);
+    break;
+  case GRN_COLUMN_INDEX :
+    grn_obj_flush_dependent_internal_column_index(ctx, obj, data);
+    break;
+  default :
+    {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, obj);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[flush] object must be DB, table or column: <%.*s>",
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+    }
+    break;
+  }
+}
+
+grn_rc
+grn_obj_flush_dependent(grn_ctx *ctx, grn_obj *obj)
+{
+  GRN_API_ENTER;
+
+  flush_dependent_data data;
+  data.flushed = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                 GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+  if (!data.flushed) {
+    grn_rc rc = ctx->rc;
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_NO_MEMORY_AVAILABLE;
+    }
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(rc,
+        "[flush][dependent] failed to create an internal hash table "
+        "to manage flushed objects: <%.*s>: %s",
+        name_size, name,
+        message);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  data.is_close_opened_object_mode = (grn_thread_get_limit() == 1);
+
+  grn_id id = grn_obj_id(ctx, obj);
+  if (grn_obj_flush_dependent_need_flush(ctx, &data, id)) {
+    grn_obj_flush_dependent_internal(ctx, obj, &data);
+  }
+
+  grn_hash_close(ctx, data.flushed);
+
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_obj *

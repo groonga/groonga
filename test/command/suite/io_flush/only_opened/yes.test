@@ -13,4 +13,6 @@ database_unmap
 
 select Users
 
+#@collect-query-log true
 io_flush --only_opened yes
+#@collect-query-log false

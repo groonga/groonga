@@ -6,4 +6,6 @@ table_create Terms TABLE_PAT_KEY ShortText \
   --normalizer NormalizerAuto
 column_create Terms users_name COLUMN_INDEX|WITH_POSITION Users name
 
-io_flush --recursive no
+#@collect-query-log true
+io_flush --recursive no --dependent no
+#@collect-query-log false
