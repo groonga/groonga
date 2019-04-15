@@ -335,6 +335,9 @@ It supports not to forget flushing related objects.
 of the specified flush target object and child objects, related objects.
 ``no`` means that only the specified flush target object is flushed.
 
+If you specify ``yes`` to ``dependent``, :ref:`io-flush-recursive`
+is ignored.
+
 For example, ``--dependent yes`` is enabled for ``TABLE_NAME``, this
 option executes equivalent to the following commands internally.
 
