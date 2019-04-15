@@ -3747,9 +3747,6 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   bool is_only_opened = grn_plugin_proc_get_var_bool(ctx, user_data,
                                                      "only_opened", -1,
                                                      GRN_FALSE);
-  bool is_dependent = grn_plugin_proc_get_var_bool(ctx, user_data,
-                                                   "dependent", -1,
-                                                   GRN_TRUE);
   if (target->header.type == GRN_DB && is_only_opened) {
     GRN_TABLE_EACH_BEGIN_FLAGS(ctx, target, cursor, id, GRN_CURSOR_BY_ID) {
       if (id < GRN_N_RESERVED_TYPES) {
@@ -3770,9 +3767,7 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       rc = grn_obj_flush(ctx, target);
     }
   } else {
-    if (is_dependent) {
-      rc = grn_obj_flush_dependent(ctx, target);
-    } else if (is_recursive) {
+    if (is_recursive) {
       rc = grn_obj_flush_recursive(ctx, target);
     } else {
       rc = grn_obj_flush(ctx, target);
@@ -4293,8 +4288,7 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
   DEF_VAR(vars[0], "target_name");
   DEF_VAR(vars[1], "recursive");
   DEF_VAR(vars[2], "only_opened");
-  DEF_VAR(vars[3], "dependent");
-  DEF_COMMAND("io_flush", proc_io_flush, 4, vars);
+  DEF_COMMAND("io_flush", proc_io_flush, 3, vars);
 
   grn_proc_init_object_exist(ctx);
 
