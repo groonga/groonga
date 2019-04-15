@@ -367,10 +367,15 @@ and all columns:
 To confirm whether all target objects are flushed correctly, you can check query log::
 
     > io_flush --dependent "yes" --target_name "Users"
-    :000000000000000 flush(Users.name)
-    :000000000000000 flush(Users)
-    :000000000000000 flush(Terms.users_name)
-    :000000000000000 flush(Terms)
+    :000000000000000 flush[Users]
+    :000000000000000 flush[Terms]
+    :000000000000000 flush[Terms.users_name]
+    :000000000000000 flush[Users.name]
+    :000000000000000 flush[(anonymous:table:dat_key)]
+    :000000000000000 flush[(anonymous:column:var_size)]
+    :000000000000000 flush[(anonymous:table:hash_key)]
+    :000000000000000 flush[(anonymous:column:var_size)]
+    :000000000000000 flush[(DB)]
     <000000000000000 rc=0
 
 Return value
