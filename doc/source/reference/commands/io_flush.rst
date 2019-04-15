@@ -378,6 +378,9 @@ To confirm whether all target objects are flushed correctly, you can check query
     :000000000000000 flush[(DB)]
     <000000000000000 rc=0
 
+In above example, specified not only `Users` table, related lexicon table `Terms` and
+index column `Terms.users_name` (data source is `Users.name`) are also flushed.
+
 Return value
 ------------
 
