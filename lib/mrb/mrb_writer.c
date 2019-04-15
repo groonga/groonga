@@ -50,7 +50,7 @@ writer_write(mrb_state *mrb, mrb_value self)
     GRN_OUTPUT_BOOL(GRN_TRUE);
     break;
   case MRB_TT_FIXNUM :
-    GRN_OUTPUT_INT32(mrb_fixnum(target));
+    GRN_OUTPUT_INT64(mrb_fixnum(target));
     break;
   case MRB_TT_FLOAT :
     GRN_OUTPUT_FLOAT(mrb_float(target));
