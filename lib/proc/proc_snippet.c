@@ -276,20 +276,11 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
 
     if (args[1] && args[1]->header.type == GRN_TABLE_HASH_KEY) {
       grn_obj *options = args[1];
-      grn_hash_cursor *cursor;
       void *key;
       int key_size;
       grn_obj *value;
   
-      cursor = grn_hash_cursor_open(ctx, (grn_hash *)options,
-                                    NULL, 0, NULL, 0,
-                                    0, -1, 0);
-      if (!cursor) {
-        GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                         "snippet_html(): couldn't open cursor");
-        goto exit;
-      }
-      while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
+      GRN_HASH_EACH_BEGIN(ctx, (grn_hash *)options, cursor, id) {
         grn_hash_cursor_get_key_value(ctx, cursor,
                                       &key, &key_size,
                                       (void **)&value);
@@ -302,8 +293,7 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
           grn_hash_cursor_close(ctx, cursor);
           goto exit;
         }
-      }
-      grn_hash_cursor_close(ctx, cursor);
+      }GRN_HASH_EACH_END(ctx, cursor);
     }
 
     grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
