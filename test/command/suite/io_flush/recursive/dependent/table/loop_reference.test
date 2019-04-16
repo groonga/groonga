@@ -1,0 +1,11 @@
+table_create Users TABLE_HASH_KEY ShortText
+
+table_create Groups TABLE_HASH_KEY Users
+column_create Groups name COLUMN_SCALAR ShortText
+
+column_create Users name COLUMN_SCALAR ShortText
+column_create Users group COLUMN_SCALAR Groups
+
+#@collect-query-log true
+io_flush Users --recursive dependent
+#@collect-query-log false
