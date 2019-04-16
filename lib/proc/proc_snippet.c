@@ -260,7 +260,6 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
 {
   grn_obj *snippets = NULL;
 
-  /* TODO: support parameters */
   if (nargs > 0) {
     grn_obj *text = args[0];
     grn_obj *expression = NULL;
