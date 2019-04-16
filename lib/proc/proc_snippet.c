@@ -293,7 +293,7 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
           default_return_value = value;
         } else {
           GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                           "invalid option name: <%.*s>",
+                           "snippet_html(): invalid option name: <%.*s>",
                            key_size, (char *)key);
           grn_hash_cursor_close(ctx, cursor);
           goto exit;
