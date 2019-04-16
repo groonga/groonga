@@ -1,0 +1,49 @@
+plugin_register sharding
+
+table_create Logs_20170415 TABLE_NO_KEY
+column_create Logs_20170415 timestamp COLUMN_SCALAR Time
+column_create Logs_20170415 price COLUMN_SCALAR UInt32
+column_create Logs_20170415 n_likes COLUMN_SCALAR UInt32
+column_create Logs_20170415 name COLUMN_SCALAR ShortText
+
+table_create Logs_20170416 TABLE_NO_KEY
+column_create Logs_20170416 timestamp COLUMN_SCALAR Time
+column_create Logs_20170416 price COLUMN_SCALAR UInt32
+column_create Logs_20170416 n_likes COLUMN_SCALAR UInt32
+column_create Logs_20170416 name COLUMN_SCALAR ShortText
+
+load --table Logs_20170415
+[
+{"timestamp": "2017/04/15 00:00:00", "n_likes": 2, "price": 100, "name": "item1"},
+{"timestamp": "2017/04/15 01:00:00", "n_likes": 1, "price": 100, "name": "item1"},
+{"timestamp": "2017/04/15 01:00:00", "n_likes": 2, "price": 200, "name": "item2"}
+]
+
+load --table Logs_20170416
+[
+{"timestamp": "2017/04/16 10:00:00", "n_likes": 1, "price": 200, "name": "item2"},
+{"timestamp": "2017/04/16 11:00:00", "n_likes": 2, "price": 300, "name": "item3"},
+{"timestamp": "2017/04/16 11:00:00", "n_likes": 1, "price": 300, "name": "item5"}
+]
+
+logical_select Logs \
+  --shard_key timestamp \
+  --filter 'price > 100' \
+  --columns[count].stage filtered \
+  --columns[count].type UInt32 \
+  --columns[count].flags COLUMN_SCALAR \
+  --columns[count].value 'window_count()' \
+  --columns[count].window.group_keys n_likes,price \
+  --columns[count].window.sort_keys _id \
+  --output_columns _id,n_likes,price,count
+
+logical_select Logs \
+  --shard_key timestamp \
+  --filter 'price > 100' \
+  --columns[count].stage filtered \
+  --columns[count].type UInt32 \
+  --columns[count].flags COLUMN_SCALAR \
+  --columns[count].value 'window_count()' \
+  --columns[count].window.group_keys price,name \
+  --columns[count].window.sort_keys _id \
+  --output_columns _id,price,name,count
