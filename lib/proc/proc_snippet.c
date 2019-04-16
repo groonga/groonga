@@ -49,10 +49,10 @@ snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *text,
   }
 
   if (n_results == 0) {
-    if (default_return_value == NULL) {
-      return grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
-    } else {
+    if (default_return_value) {
       return default_return_value;
+    } else {
+      return grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
     }
   }
 
