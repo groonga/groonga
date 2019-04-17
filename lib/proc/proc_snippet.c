@@ -286,10 +286,10 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
         option_name.length = strlen("default");
 
         grn_hash_cursor_get_key_value(ctx, cursor,
-                                      &key, &key_size,
+                                      &(option_name.value),
+                                      &(option_name.length),
                                       (void **)&value);
-        if (key_size == option_name.length
-            && !memcmp(key, option_name.value, option_name.length)) {
+        if (GRN_RAW_STRING_EQUAL_CSTRING(option_name, "default")) {
           default_return_value = value;
         } else {
           GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
