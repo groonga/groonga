@@ -286,10 +286,10 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
         option_name.length = strlen("default");
 
         grn_hash_cursor_get_key_value(ctx, cursor,
-                                      &(option_name.value),
-                                      &(option_name.length),
+                                      &key, &key_size,
                                       (void **)&value);
-        if (GRN_RAW_STRING_EQUAL_CSTRING(option_name, "default")) {
+        if (key_size == option_name.length
+            && !memcmp(key, option_name.value, option_name.length)) {
           default_return_value = value;
         } else {
           GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
@@ -298,7 +298,7 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
           grn_hash_cursor_close(ctx, cursor);
           goto exit;
         }
-      }GRN_HASH_EACH_END(ctx, cursor);
+      } GRN_HASH_EACH_END(ctx, cursor);
     }
 
     grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
