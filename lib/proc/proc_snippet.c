@@ -342,7 +342,6 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
     }
   }
 
-exit :
   if (!snippets) {
     snippets = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
   }
