@@ -1,0 +1,39 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Labels TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Labels owner COLUMN_SCALR Users
+[[[-22,0.0,0.0],"[column][create][flags] unknown flag: <COLUMN_SCALR>"],false]
+#|e| [column][create][flags] unknown flag: <COLUMN_SCALR>
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Tags label COLUMN_SCALAR Labels
+[[0,0.0,0.0],true]
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+column_create Memos timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --default_normalizer NormalizerNFKC100
+[[0,0.0,0.0],true]
+column_create Terms tags_index   COLUMN_INDEX|WITH_POSITION|WITH_SECTION Tags _key,label
+[[0,0.0,0.0],true]
+column_create Terms is_stop_word COLUMN_SCALAR Bool
+[[0,0.0,0.0],true]
+io_flush Memos.tags --recursive dependent
+[[0,0.0,0.0],true]
+#>io_flush --recursive "dependent" --target_name "Memos.tags"
+#:000000000000000 flush[Memos]
+#:000000000000000 flush[Terms]
+#:000000000000000 flush[Labels]
+#:000000000000000 flush[Tags.label]
+#:000000000000000 flush[Terms.tags_index]
+#:000000000000000 flush[Tags]
+#:000000000000000 flush[Memos.tags]
+#:000000000000000 flush[(anonymous:table:dat_key)]
+#:000000000000000 flush[(anonymous:column:var_size)]
+#:000000000000000 flush[(anonymous:table:hash_key)]
+#:000000000000000 flush[(anonymous:column:var_size)]
+#:000000000000000 flush[(DB)]
+#<000000000000000 rc=0

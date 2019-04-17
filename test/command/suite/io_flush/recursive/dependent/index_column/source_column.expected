@@ -1,0 +1,22 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Timestamps TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Timestamps memos_timestamp_index COLUMN_INDEX Memos timestamp
+[[0,0.0,0.0],true]
+column_create Timestamps is_special COLUMN_SCALAR Bool
+[[0,0.0,0.0],true]
+io_flush Timestamps.memos_timestamp_index --recursive dependent
+[[0,0.0,0.0],true]
+#>io_flush --recursive "dependent" --target_name "Timestamps.memos_timestamp_index"
+#:000000000000000 flush[Timestamps]
+#:000000000000000 flush[Memos.timestamp]
+#:000000000000000 flush[Timestamps.memos_timestamp_index]
+#:000000000000000 flush[(anonymous:table:dat_key)]
+#:000000000000000 flush[(anonymous:column:var_size)]
+#:000000000000000 flush[(anonymous:table:hash_key)]
+#:000000000000000 flush[(anonymous:column:var_size)]
+#:000000000000000 flush[(DB)]
+#<000000000000000 rc=0

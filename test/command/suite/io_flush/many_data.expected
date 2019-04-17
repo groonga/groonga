@@ -9,9 +9,6 @@ column_create Lexicon sources_value COLUMN_INDEX Sources value
 io_flush Lexicon.sources_value
 [[0,0.0,0.0],true]
 #>io_flush --target_name "Lexicon.sources_value"
-#:000000000000000 flush[Lexicon]
-#:000000000000000 flush[Sources]
-#:000000000000000 flush[Sources.value]
 #:000000000000000 flush[Lexicon.sources_value]
 #:000000000000000 flush[(anonymous:table:dat_key)]
 #:000000000000000 flush[(anonymous:column:var_size)]

@@ -1,0 +1,13 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+column_create Memos timestamp COLUMN_SCALAR Time
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --default_normalizer NormalizerNFKC100
+column_create Terms memos_key_index COLUMN_INDEX|WITH_POSITION Memos content
+column_create Terms is_stop_word COLUMN_SCALAR Bool
+
+#@collect-query-log true
+io_flush Memos.content --recursive dependent
+#@collect-query-log false

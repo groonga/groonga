@@ -9,8 +9,6 @@ column_create Terms users_name COLUMN_INDEX|WITH_POSITION Users name
 io_flush Users
 [[0,0.0,0.0],true]
 #>io_flush --target_name "Users"
-#:000000000000000 flush[Terms]
-#:000000000000000 flush[Terms.users_name]
 #:000000000000000 flush[Users.name]
 #:000000000000000 flush[Users]
 #:000000000000000 flush[(anonymous:table:dat_key)]

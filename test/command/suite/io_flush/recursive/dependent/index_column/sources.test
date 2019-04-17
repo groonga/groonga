@@ -1,0 +1,15 @@
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos title COLUMN_SCALAR ShortText
+column_create Memos content COLUMN_SCALAR Text
+column_create Memos timestamp COLUMN_SCALAR Time
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --default_normalizer NormalizerNFKC100
+column_create Terms memos_index \
+  COLUMN_INDEX|WITH_POSITION|WITH_SECTION Memos _key,title,content
+column_create Terms is_stop_word COLUMN_SCALAR Bool
+
+#@collect-query-log true
+io_flush Terms.memos_index --recursive dependent
+#@collect-query-log false

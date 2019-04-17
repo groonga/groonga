@@ -3741,9 +3741,10 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
 
-  bool is_recursive = grn_plugin_proc_get_var_bool(ctx, user_data,
+  grn_raw_string recursive;
+  recursive.value = grn_plugin_proc_get_var_string(ctx, user_data,
                                                    "recursive", -1,
-                                                   GRN_TRUE);
+                                                   &(recursive.length));
   bool is_only_opened = grn_plugin_proc_get_var_bool(ctx, user_data,
                                                      "only_opened", -1,
                                                      GRN_FALSE);
@@ -3767,10 +3768,12 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       rc = grn_obj_flush(ctx, target);
     }
   } else {
-    if (is_recursive) {
-      rc = grn_obj_flush_recursive(ctx, target);
-    } else {
+    if (GRN_RAW_STRING_EQUAL_CSTRING(recursive, "dependent")) {
+      rc = grn_obj_flush_recursive_dependent(ctx, target);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(recursive, "no")) {
       rc = grn_obj_flush(ctx, target);
+    } else {
+      rc = grn_obj_flush_recursive(ctx, target);
     }
   }
 
