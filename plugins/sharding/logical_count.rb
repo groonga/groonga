@@ -151,7 +151,7 @@ module Groonga
                 table = context.table.select_all
                 @temporary_tables << table
                 context.table = table
-                apply_targets << [table, nil]
+                apply_targets << [table]
               end
               @dynamic_columns.apply_initial(apply_targets)
             end
@@ -162,7 +162,7 @@ module Groonga
           if @post_filter
             if @dynamic_columns.have_filtered?
               apply_targets = @contexts.collect do |context|
-                [context.table, nil]
+                [context.table]
               end
               @dynamic_columns.apply_filtered(apply_targets)
             end

@@ -95,7 +95,6 @@ module Groonga
         attr_accessor :current_offset
         attr_accessor :current_limit
         attr_reader :result_sets
-        attr_reader :unsorted_result_sets
         attr_reader :temporary_tables
         attr_reader :threshold
         def initialize(input)
@@ -193,7 +192,7 @@ module Groonga
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
                                           :key_type => first_shard.table)
             @context.temporary_tables << result_set
-            targets = [[result_set, nil]]
+            targets = [[result_set]]
             @context.dynamic_columns.apply_initial(targets)
             @context.dynamic_columns.apply_filtered(targets)
             @context.result_sets << result_set
@@ -493,7 +492,9 @@ module Groonga
               end
               @temporary_tables << @target_table
             end
-            @context.dynamic_columns.apply_initial([[@target_table, nil]])
+            apply_targets = []
+            apply_targets << [@target_table]
+            @context.dynamic_columns.apply_initial(apply_targets)
           end
 
           execute_filter(range_index, expression_builder)
@@ -829,7 +830,7 @@ module Groonga
 
           if n_matched_records <= @context.current_offset
             @context.current_offset -= n_matched_records
-            result_set.close
+            @temporary_tables << result_set
             return
           end
 
@@ -919,7 +920,9 @@ module Groonga
               result_set = result_set.select_all
               @temporary_tables << result_set
             end
-            @context.dynamic_columns.apply_filtered([[result_set, nil]])
+            apply_targets = []
+            apply_targets << [result_set]
+            @context.dynamic_columns.apply_filtered(apply_targets)
           end
 
           unless @post_filter.nil?

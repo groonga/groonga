@@ -626,7 +626,7 @@ module Groonga
           if @context.dynamic_columns.have_initial?
             targets = []
             @context.shard_targets.each do |_, target_table|
-              targets << [target_table, nil]
+              targets << [target_table]
             end
             @context.dynamic_columns.apply_initial(targets)
           end
@@ -638,14 +638,14 @@ module Groonga
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
                                           :key_type => first_shard.table)
             @context.temporary_tables << result_set
-            targets = [[result_set, nil]]
+            targets = [[result_set]]
             @context.dynamic_columns.apply_initial(targets)
             @context.dynamic_columns.apply_filtered(targets)
             @context.result_sets << result_set
           else
             targets = []
             @context.shard_results.each do |_, result_set, condition|
-              targets << [result_set, condition]
+              targets << [result_set, {condition: condition}]
             end
             @context.dynamic_columns.apply_filtered(targets)
             @context.shard_results.each do |shard_executor, result_set, _|
@@ -713,7 +713,7 @@ module Groonga
                 end
               end
               result_set = group_result.table
-              drilldown.dynamic_columns.apply_initial([[result_set, nil]])
+              drilldown.dynamic_columns.apply_initial([[result_set]])
               result_set = apply_drilldown_filter(drilldown, result_set)
               if drilldown.sort_keys.empty?
                 drilldown.result_set = result_set

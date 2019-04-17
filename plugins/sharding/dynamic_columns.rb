@@ -116,15 +116,13 @@ module Groonga
           end
         end
 
-        result_sets = []
-        targets.each do |result_set, condition|
+        targets.each do |result_set, options|
           normal_contexts.each do |context|
-            context.apply(result_set, condition)
+            context.apply(result_set, options)
           end
-          result_sets << result_set
         end
         window_function_contexts.each do |context|
-          context.apply_window_function(result_sets)
+          context.apply_window_function(targets)
         end
       end
     end
@@ -197,10 +195,19 @@ module Groonga
           (not @window_group_keys.empty?)
       end
 
-      def apply(table, condition=nil)
-        column = table.create_column(@label, @flags, @type)
+      def apply(table, options=nil)
+        pp [table, options, context_target?(options)]
+        if context_target?(options)
+          column = table.find_column(@label)
+          p column if column.is_a?(Accessor)
+        else
+          column = table.create_column(@label, @flags, @type)
+        end
+        p column
         return if table.empty?
 
+        condition = nil
+        condition = options[:condition] if options
         expression = Expression.create(table)
         begin
           expression.parse(@value)
@@ -211,16 +218,18 @@ module Groonga
         end
       end
 
-      def apply_window_function(tables)
+      def apply_window_function(targets)
         executor = WindowFunctionExecutor.new
         begin
           executor.source = @value
           executor.sort_keys = @window_sort_keys.join(", ")
           executor.group_keys = @window_group_keys.join(", ")
           executor.output_column_name = @label
-          tables.each do |table|
-            column = table.create_column(@label, @flags, @type)
-            return if table.empty?
+          targets.each do |table, options|
+            unless context_target?(options)
+              table.create_column(@label, @flags, @type)
+            end
+            next if table.empty?
             executor.add_table(table)
           end
           executor.execute
@@ -250,6 +259,10 @@ module Groonga
 
       def parse_flags(flags_raw)
         Column.parse_flags(error_message_tag, flags_raw)
+      end
+
+      def context_target?(options)
+        options and options[:context]
       end
 
       def error_message_tag
