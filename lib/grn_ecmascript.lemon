@@ -419,10 +419,12 @@ primary_expression ::= NULL.
 
 array_literal ::= BRACKETL element_list BRACKETR. {
   grn_ctx *ctx = efsi->ctx;
-  grn_expr_take_obj(ctx, efsi->e, efsi->array_literal);
-  grn_expr_append_obj(ctx, efsi->e, efsi->array_literal,
-                      GRN_OP_PUSH, 1);
-  efsi->array_literal = NULL;
+  if (efsi->array_literal) {
+    grn_expr_take_obj(ctx, efsi->e, efsi->array_literal);
+    grn_expr_append_obj(ctx, efsi->e, efsi->array_literal,
+                        GRN_OP_PUSH, 1);
+    efsi->array_literal = NULL;
+  }
 }
 
 element_list ::= . {
@@ -440,6 +442,9 @@ element_list ::= assignment_expression. {
   grn_expr *e = (grn_expr *)(efsi->e);
   grn_expr_code *code = &(e->codes[e->codes_curr - 1]);
   if (code->op != GRN_OP_PUSH) {
+    if (!efsi->array_literal) {
+      efsi->array_literal = grn_obj_open(ctx, GRN_VECTOR, 0, GRN_ID_NIL);
+    }
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
         "complex expression in array literal isn't supported yet: <%.*s>",
         (int)(efsi->str_end - efsi->str), efsi->str);
