@@ -274,7 +274,7 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
     const char *close_tag = "</span>";
     grn_snip_mapping *mapping = GRN_SNIP_MAPPING_HTML_ESCAPE;
 
-    if (args[1] && args[1]->header.type == GRN_TABLE_HASH_KEY) {
+    if (nargs > 1 && args[1]->header.type == GRN_TABLE_HASH_KEY) {
       grn_obj *options = args[1];
       void *key;
       int key_size;
