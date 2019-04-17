@@ -51,8 +51,8 @@ log_level --level debug
 [[0,0.0,0.0],true]
 logical_count Logs   --shard_key timestamp   --columns[price_with_tax].stage initial   --columns[price_with_tax].type UInt32   --columns[price_with_tax].flags COLUMN_SCALAR   --columns[price_with_tax].value 'price * 1.08'   --filter 'price_with_tax > 550'
 [[0,0.0,0.0],5]
-#|d| [logical_count][select] <Logs_20170315>: covered
-#|d| [logical_count][select] <Logs_20170316>: covered
-#|d| [logical_count][select] <Logs_20170317>: covered
+#|d| [logical_count][select] <Logs_20170315>: need filter
+#|d| [logical_count][select] <Logs_20170316>: need filter
+#|d| [logical_count][select] <Logs_20170317>: need filter
 log_level --level notice
 [[0,0.0,0.0],true]

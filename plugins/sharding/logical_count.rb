@@ -19,9 +19,14 @@ module Groonga
         counter = Counter.new(input, enumerator.target_range)
         total = 0
         have_shard = false
-        enumerator.each do |shard, shard_range|
-          have_shard = true
-          total += counter.count(shard, shard_range)
+        begin
+          enumerator.each do |shard, shard_range|
+            have_shard = true
+            counter.count_pre(shard, shard_range)
+          end
+          total += counter.count
+        ensure
+          counter.close
         end
         unless have_shard
           message =
@@ -50,6 +55,19 @@ module Groonga
         key
       end
 
+      class ShardCountContext
+        attr_reader :shard
+        attr_reader :cover_type
+        attr_reader :range_index
+        attr_accessor :table
+        def initialize(shard, cover_type, range_index)
+          @shard = shard
+          @cover_type = cover_type
+          @range_idnex = range_index
+          @table = shard.table
+        end
+      end
+
       class Counter
         def initialize(input, target_range)
           @logger = Context.instance.logger
@@ -57,11 +75,14 @@ module Groonga
           @post_filter = input[:post_filter]
           @dynamic_columns = DynamicColumns.parse(input)
           @target_range = target_range
+          @contexts = []
+          @temporary_tables = []
+          @temporary_expressions = []
         end
 
-        def count(shard, shard_range)
+        def count_pre(shard, shard_range)
           cover_type = @target_range.cover_type(shard_range)
-          return 0 if cover_type == :none
+          return if cover_type == :none
 
           shard_key = shard.key
           if shard_key.nil?
@@ -69,41 +90,41 @@ module Groonga
                       "<#{shard.key_name}>"
             raise InvalidArgument, message
           end
+
           table_name = shard.table_name
-
-          prepare_table(shard) do |table|
-            if cover_type == :all
-              log_use_range_index(false, table_name, "covered",
-                                  __LINE__, __method__)
-              if @filter or @post_filter
-                return filtered_count_n_records(table, shard_key, cover_type)
-              else
-                return table.size
-              end
-            end
-
-            range_index = nil
-            if @filter or @post_filter
-              log_use_range_index(false, table_name, "need filter",
-                                  __LINE__, __method__)
-            else
-              index_info = shard_key.find_index(Operator::LESS)
-              range_index = index_info.index if index_info
-              if range_index
-                log_use_range_index(true, table_name, "range index is available",
-                                    __LINE__, __method__)
-              else
-                log_use_range_index(false, table_name, "no range index",
-                                    __LINE__, __method__)
-              end
-            end
-
+          range_index = nil
+          if @filter or @post_filter
+            log_use_range_index(false, table_name, "need filter",
+                                __LINE__, __method__)
+          elsif cover_type == :all
+            log_use_range_index(false, table_name, "covered",
+                                __LINE__, __method__)
+          else
+            index_info = shard_key.find_index(Operator::LESS)
+            range_index = index_info.index if index_info
             if range_index
-              count_n_records_in_range(range_index, cover_type)
+              log_use_range_index(true, table_name, "range index is available",
+                                  __LINE__, __method__)
             else
-              filtered_count_n_records(table, shard_key, cover_type)
+              log_use_range_index(false, table_name, "no range index",
+                                  __LINE__, __method__)
             end
           end
+          @contexts << ShardCountContext.new(shard, cover_type, range_index)
+        end
+
+        def count
+          prepare_contexts
+          total = 0
+          @contexts.each do |context|
+            total += count_shard(context)
+          end
+          total
+        end
+
+        def close
+          @temporary_tables.each(&:close)
+          @temporary_expressions.each(&:close)
         end
 
         private
@@ -122,34 +143,51 @@ module Groonga
                       message)
         end
 
-        def prepare_table(shard)
-          table = shard.table
-          return yield(table) if @filter.nil? and @post_filter.nil?
-
-          begin
-            @dynamic_columns.each_initial do |dynamic_column|
-              if table == shard.table
-                table = table.select_all
+        def prepare_contexts
+          if @filter or @post_filter
+            if @dynamic_columns.have_initial?
+              apply_targets = []
+              @contexts.each do |context|
+                table = context.table.select_all
+                @temporary_tables << table
+                context.table = table
+                apply_targets << [table, nil]
               end
-              dynamic_column.apply(table)
+              @dynamic_columns.apply_initial(apply_targets)
             end
-
-            yield(table)
-          ensure
-            table.close if table != shard.table
+          end
+          @contexts.each do |context|
+            filter_shard(context)
+          end
+          if @post_filter
+            if @dynamic_columns.have_filtered?
+              apply_targets = @contexts.collect do |context|
+                [context.table, nil]
+              end
+              @dynamic_columns.apply_filtered(apply_targets)
+            end
+            @contexts.each do |context|
+              post_filter_shard(context)
+            end
           end
         end
 
-        def filtered_count_n_records(table, shard_key, cover_type)
-          expression = nil
-          filtered_table = nil
+        def filter_shard(context)
+          return if context.range_index
 
-          expression_builder = RangeExpressionBuilder.new(shard_key,
-                                                          @target_range)
-          expression_builder.filter = @filter
-          begin
-            expression = Expression.create(table)
-            case cover_type
+          if context.cover_type == :all and @filter.nil?
+            if @post_filter and @dynamic_columns.have_filtered?
+              filtered_table = context.table.select_all
+              @temporary_tables << filtered_table
+              context.table = filtered_table
+            end
+          else
+            expression = Expression.create(context.table)
+            @temporary_expressions << expression
+            expression_builder = RangeExpressionBuilder.new(context.shard.key,
+                                                            @target_range)
+            expression_builder.filter = @filter
+            case context.cover_type
             when :all
               expression_builder.build_all(expression)
             when :partial_min
@@ -159,44 +197,33 @@ module Groonga
             when :partial_min_and_max
               expression_builder.build_partial_min_and_max(expression)
             end
-            if cover_type == :all and @filter.nil?
-              # TODO: We can drop needless select when filtered stage dynamic
-              # doesn't exist.
-              filtered_table = table.select_all
-            else
-              filtered_table = table.select(expression)
-            end
-            if @post_filter
-              post_filtered_count_n_records(filtered_table)
-            else
-              filtered_table.size
-            end
-          ensure
-            filtered_table.close if filtered_table
-            expression.close if expression
+            filtered_table = context.table.select(expression)
+            @temporary_tables << filtered_table
+            context.table = filtered_table
           end
         end
 
-        def post_filtered_count_n_records(filtered_table)
-          @dynamic_columns.each_filtered do |dynamic_column|
-            dynamic_column.apply(filtered_table)
+        def count_shard(context)
+          if context.range_index
+            count_n_records_in_range(context)
+          else
+            context.table.size
           end
+        end
 
+        def post_filter_shard(context)
           expression = nil
           post_filtered_table = nil
-          begin
-            expression = Expression.create(filtered_table)
-            expression.parse(@post_filter)
-            post_filtered_table = filtered_table.select(expression)
-            post_filtered_table.size
-          ensure
-            post_filtered_table.close if post_filtered_table
-            expression.close if expression
-          end
+          expression = Expression.create(context.table)
+          @temporary_expressions << expression
+          expression.parse(@post_filter)
+          filtered_table = context.table.select(expression)
+          @temporary_tables << filtered_table
+          context.table = filtered_table
         end
 
-        def count_n_records_in_range(range_index, cover_type)
-          case cover_type
+        def count_n_records_in_range(context)
+          case context.cover_type
           when :partial_min
             min = @target_range.min
             min_border = @target_range.min_border
@@ -228,7 +255,7 @@ module Groonga
             flags |= TableCursorFlags::LT
           end
 
-          TableCursor.open(range_index.table,
+          TableCursor.open(context.range_index.table,
                            :min => min,
                            :max => max,
                            :flags => flags) do |table_cursor|
