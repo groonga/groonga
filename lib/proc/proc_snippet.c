@@ -296,9 +296,12 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
                            "snippet_html(): invalid option name: <%.*s>",
                            key_size, (char *)key);
           grn_hash_cursor_close(ctx, cursor);
-          goto exit;
+          break;
         }
       } GRN_HASH_EACH_END(ctx, cursor);
+      if (!default_return_value) {
+        goto exit;
+      }
     }
 
     grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
