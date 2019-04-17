@@ -137,20 +137,14 @@ correspondence table between command and flush targets for Groonga 9.0.2 or late
        referenced tables and tables of corresponding index columns and corresponding index
        columns at once::
 
-         io_flush --target_name TABLE_NAME --recursive=dependent
+         io_flush --target_name TABLE_NAME --recursive dependent
 
-       Then flush database::
-
-         io_flush --recursive no
    * - :doc:`table_create`
      - Target table and database.
      - Table::
 
-         io_flush --target_name TABLE_NAME
+         io_flush --target_name TABLE_NAME --recursive dependent
 
-       Database::
-
-         io_flush --recursive no
    * - :doc:`table_remove`, :doc:`table_rename` and :doc:`logical_table_remove`
      - Database.
      - Database::
@@ -160,11 +154,7 @@ correspondence table between command and flush targets for Groonga 9.0.2 or late
      - Target column and database.
      - Table::
 
-         io_flush --target_name TABLE_NAME.COLUMN_NAME
-
-       Database::
-
-         io_flush --recursive no
+         io_flush --target_name TABLE_NAME.COLUMN_NAME --recursive dependent
    * - :doc:`column_remove` and :doc:`column_rename`
      - Database.
      - Database::
