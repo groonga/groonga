@@ -196,14 +196,11 @@ module Groonga
       end
 
       def apply(table, options=nil)
-        pp [table, options, context_target?(options)]
         if context_target?(options)
           column = table.find_column(@label)
-          p column if column.is_a?(Accessor)
         else
           column = table.create_column(@label, @flags, @type)
         end
-        p column
         return if table.empty?
 
         condition = nil
