@@ -79,7 +79,7 @@ All parameters are optional::
 
 .. versionadded:: 9.0.2
 
-   ``--recursive=dependent`` option is added. It is recommended way to flush
+   ``--recursive dependent`` option is added. It is recommended way to flush
    target object and its related objects since 9.0.2. See :ref:`io-flush-recursive` about details.
 
 Usage
