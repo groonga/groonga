@@ -5105,6 +5105,7 @@ typedef struct {
   grn_hash *weight_set;
   snip_cond *snip_conds;
   grn_hash *object_literal;
+  grn_obj *array_literal;
   int paren_depth;
   struct {
     const char *string;
@@ -6609,6 +6610,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     efsi.opt.weight_vector = NULL;
     efsi.weight_set = NULL;
     efsi.object_literal = NULL;
+    efsi.array_literal = NULL;
     efsi.paren_depth = 0;
     efsi.pending_token.string = NULL;
     efsi.pending_token.string_length = 0;
@@ -6658,6 +6660,9 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
         GRN_OBJ_FIN(ctx, value);
       });
       grn_hash_close(ctx, efsi.object_literal);
+    }
+    if (efsi.array_literal) {
+      GRN_OBJ_FIN(ctx, efsi.array_literal);
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "variable is not defined correctly");

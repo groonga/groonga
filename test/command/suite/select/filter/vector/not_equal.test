@@ -3,8 +3,8 @@ column_create Memos tags COLUMN_VECTOR ShortText
 
 load --table Memos
 [
-{"_key": "groonga is very fast", "tags": ["groonga"]}
+{"_key": "Groonga is very fast", "tags": ["groonga"]},
+{"_key": "Rroonga is very fast", "tags": ["rroonga"]}
 ]
 
-# TODO: support it!
 select Memos --filter 'tags != ["rroonga"]'
