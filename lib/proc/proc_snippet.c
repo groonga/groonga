@@ -294,7 +294,6 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
           GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                            "snippet_html(): invalid option name: <%.*s>",
                            key_size, (char *)key);
-          grn_hash_cursor_close(ctx, cursor);
           break;
         }
       } GRN_HASH_EACH_END(ctx, cursor);
