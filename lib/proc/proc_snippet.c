@@ -297,9 +297,6 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
           break;
         }
       } GRN_HASH_EACH_END(ctx, cursor);
-      if (!default_return_value) {
-        goto exit;
-      }
     }
 
     grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
