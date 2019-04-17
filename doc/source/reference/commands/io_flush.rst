@@ -366,8 +366,8 @@ Since 9.0.2, ``--recursive dependent`` is added to flush not only target object
 and child objects, but also related objects. The related objects are:
 
 * A referenced table
-* A related index column (There is source column in target TABLE_NAME)
-* A table of related index column (There is source column in target TABLE_NAME)
+* A related index column (There is source column in target ``TABLE_NAME``)
+* A table of related index column (There is source column in target ``TABLE_NAME``)
 
 It is useful not to forget flushing related objects.
 
@@ -382,11 +382,11 @@ option executes equivalent to the following commands internally.
 
     io_flush --target_name REFERENCED_TABLE_NAME --recursive no
 
-- Flush a related index column (There is source column in TABLE_NAME)::
+- Flush a related index column (There is source column in ``TABLE_NAME``)::
 
     io_flush --target_name TABLE_NAME_OF_INDEX_COLUMN.INDEX_COLUMN
 
-- Flush a table of related index column (There is source column in TABLE_NAME)::
+- Flush a table of related index column (There is source column in ``TABLE_NAME``)::
 
     io_flush --target_name TABLE_NAME_OF_INDEX_COLUMN --recursive no
 
