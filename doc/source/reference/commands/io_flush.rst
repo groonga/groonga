@@ -95,8 +95,8 @@ If you know what is changed, you can narrow flush targets. Here is a
 correspondence table between command and flush targets for Groonga 9.0.2 or later.
 
 .. note:: There is a different recommended way which depends on Groonga version.
-   If Groonga is 9.0.1 or earlier ( ``recursive=dependent`` is not available ), you
-   need to flush related objects explicitly, otherwise, using ``recursive=dependent``
+   If Groonga is 9.0.1 or earlier ( ``--recursive dependent`` is not available ), you
+   need to flush related objects explicitly, otherwise, using ``--recursive dependent``
    is a recommended way not to forget flush target objects.
 
 .. list-table::
@@ -115,11 +115,11 @@ correspondence table between command and flush targets for Groonga 9.0.2 or late
        tables of corresponding index columns and corresponding index
        columns are also flush targets.
 
-     - Use ``--recursive=dependent`` to flush target table and
+     - Use ``--recursive dependent`` to flush target table and
        its columns, referenced tables and tables of corresponding index columns
        and corresponding index columns at once::
 
-         io_flush --target_name TABLE_NAME --recursive=dependent
+         io_flush --target_name TABLE_NAME --recursive dependent
 
    * - :doc:`truncate`
      - Target table and its columns.
@@ -133,7 +133,7 @@ correspondence table between command and flush targets for Groonga 9.0.2 or late
 
        Database is also flush target.
 
-     - Use ``--recursive=dependent`` to flush target table and its columns,
+     - Use ``--recursive dependent`` to flush target table and its columns,
        referenced tables and tables of corresponding index columns and corresponding index
        columns at once::
 
@@ -176,7 +176,7 @@ correspondence table between command and flush targets for Groonga 9.0.2 or late
 
          io_flush --recursive no
 
-If Groonga is 9.0.1 or earlier ( ``recursive=dependent`` is not available ), flush
+If Groonga is 9.0.1 or earlier ( ``--recursive dependent`` is not available ), flush
 objects explicitly. Here is a correspondence table between command and flush targets
 for Groonga 9.0.1 or earlier.
 
@@ -372,7 +372,7 @@ isn't specified:
 .. include:: ../../example/reference/commands/io_flush/recursive_default.log
 .. io_flush
 
-Since 9.0.2, ``recursive=dependent`` is added to flush not only target object
+Since 9.0.2, ``--recursive dependent`` is added to flush not only target object
 and child objects, but also related objects. The related objects are:
 
 * A referenced table
@@ -381,7 +381,7 @@ and child objects, but also related objects. The related objects are:
 
 It is useful not to forget flushing related objects.
 
-For example, ``--recursive=dependent`` is specified for ``TABLE_NAME``, this
+For example, ``--recursive dependent`` is specified for ``TABLE_NAME``, this
 option executes equivalent to the following commands internally.
 
 - Flush table and its columns::
