@@ -39,6 +39,7 @@ typedef struct {
   grn_bool unify_kana;
   grn_bool unify_kana_case;
   grn_bool unify_kana_voiced_sound_mark;
+  grn_bool unify_kana_v_sounds;
   grn_bool unify_hyphen;
   grn_bool unify_prolonged_sound_mark;
   grn_bool unify_hyphen_and_prolonged_sound_mark;

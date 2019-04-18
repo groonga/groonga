@@ -1,0 +1,22 @@
+normalize   --normalizer 'NormalizerNFKC100("unify_kana_v_sounds", true)'   --string "ゔぁゔぃゔゔぇゔぉゔ"   --flags WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "ばびぶべぼぶ",
+    "types": [
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana"
+    ],
+    "checks": [
+
+    ]
+  }
+]

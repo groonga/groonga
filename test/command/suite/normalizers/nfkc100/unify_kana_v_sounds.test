@@ -1,0 +1,4 @@
+normalize \
+  --normalizer 'NormalizerNFKC100("unify_kana_v_sounds", true)' \
+  --string "ゔぁゔぃゔゔぇゔぉゔ" \
+  --flags WITH_TYPES

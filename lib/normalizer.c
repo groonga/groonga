@@ -1268,6 +1268,96 @@ typedef const unsigned char *
                                           size_t *n_unified_characters);
 
 static const unsigned char *
+grn_nfkc_normalize_unify_kana_v_sounds(grn_ctx *ctx,
+                                       const unsigned char *current,
+                                       const unsigned char *end,
+                                       size_t *n_used_bytes,
+                                       size_t *n_used_characters,
+                                       unsigned char *unified_buffer,
+                                       size_t *n_unified_bytes,
+                                       size_t *n_unified_characters)
+{
+  size_t char_length;
+
+  char_length = grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+
+  *n_used_bytes = char_length;
+  *n_used_characters = 1;
+
+  /* U+3094 HIRAGANA LETTER VU */
+  if (char_length == 3 &&
+      current[0] == 0xe3 &&
+      current[1] == 0x82 &&
+      current[2] == 0x94) {
+    const unsigned char *next = current + char_length;
+    size_t next_char_length;
+
+    next_char_length = grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
+    if (next_char_length == 3 &&
+        next[0] == 0xe3 &&
+        next[1] == 0x81) {
+      if (next[2] == 0x81) { /* U+3041 HIRAGANA LETTER SMALL A */
+        /* U+3070 HIRAGANA LETTER BA */
+        unified_buffer[(*n_unified_bytes)++] = current[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x81;
+        unified_buffer[(*n_unified_bytes)++] = 0xB0;
+        (*n_unified_characters)++;
+        (*n_used_bytes) += next_char_length;
+        (*n_used_characters)++;
+        return unified_buffer;
+      } else if (next[2] == 0x83) { /* U+3043 HIRAGANA LETTER SMALL I */
+        /* U+3073 HIRAGANA LETTER BI */
+        unified_buffer[(*n_unified_bytes)++] = current[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x81;
+        unified_buffer[(*n_unified_bytes)++] = 0xB3;
+        (*n_unified_characters)++;
+        (*n_used_bytes) += next_char_length;
+        (*n_used_characters)++;
+        return unified_buffer;
+      } else if (next[2] == 0x85) { /* U+3045 HIRAGANA LETTER SMALL U */
+        /* U+3076 HIRAGANA LETTER BU */
+        unified_buffer[(*n_unified_bytes)++] = current[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x81;
+        unified_buffer[(*n_unified_bytes)++] = 0xB6;
+        (*n_unified_characters)++;
+        (*n_used_bytes) += next_char_length;
+        (*n_used_characters)++;
+        return unified_buffer;
+      } else if (next[2] == 0x87) { /* U+3047 HIRAGANA LETTER SMALL E */
+        /* U+3079 HIRAGANA LETTER BE */
+        unified_buffer[(*n_unified_bytes)++] = current[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x81;
+        unified_buffer[(*n_unified_bytes)++] = 0xB9;
+        (*n_unified_characters)++;
+        (*n_used_bytes) += next_char_length;
+        (*n_used_characters)++;
+        return unified_buffer;
+      } else if (next[2] == 0x89) { /* U+3049 HIRAGANA LETTER SMALL O */
+        /* U+307C HIRAGANA LETTER BO */
+        unified_buffer[(*n_unified_bytes)++] = current[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x81;
+        unified_buffer[(*n_unified_bytes)++] = 0xbc;
+        (*n_unified_characters)++;
+        (*n_used_bytes) += next_char_length;
+        (*n_used_characters)++;
+        return unified_buffer;
+      }
+    }
+    /* U+3076 HIRAGANA LETTER BU */
+    unified_buffer[(*n_unified_bytes)++] = current[0];
+    unified_buffer[(*n_unified_bytes)++] = 0x81;
+    unified_buffer[(*n_unified_bytes)++] = 0xB6;
+    (*n_unified_characters)++;
+    return unified_buffer;
+  }
+
+  *n_unified_bytes = *n_used_bytes;
+  *n_unified_characters = *n_used_characters;
+
+  return current;
+}
+
+static const unsigned char *
 grn_nfkc_normalize_unify_katakana_v_sounds(grn_ctx *ctx,
                                            const unsigned char *current,
                                            const unsigned char *end,
@@ -1528,6 +1618,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
   if (!(data->options->unify_kana ||
         data->options->unify_kana_case ||
         data->options->unify_kana_voiced_sound_mark ||
+        data->options->unify_kana_v_sounds ||
         data->options->unify_hyphen ||
         data->options->unify_prolonged_sound_mark ||
         data->options->unify_hyphen_and_prolonged_sound_mark ||
@@ -1558,6 +1649,22 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       data->options->unify_hyphen_and_prolonged_sound_mark ||
       data->options->unify_middle_dot) {
     grn_nfkc_normalize_unify_stateless(ctx, data, &unify);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    need_swap = GRN_TRUE;
+  }
+
+  if (data->options->unify_kana_v_sounds) {
+    if (need_swap) {
+      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
+    }
+    grn_nfkc_normalize_unify_stateful(ctx,
+                                      data,
+                                      &unify,
+                                      grn_nfkc_normalize_unify_kana_v_sounds,
+                                      "[unify][kana-v-sounds]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }

@@ -57,6 +57,7 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->unify_kana = GRN_FALSE;
   options->unify_kana_case = GRN_FALSE;
   options->unify_kana_voiced_sound_mark = GRN_FALSE;
+  options->unify_kana_v_sounds = GRN_FALSE;
   options->unify_hyphen = GRN_FALSE;
   options->unify_prolonged_sound_mark = GRN_FALSE;
   options->unify_hyphen_and_prolonged_sound_mark = GRN_FALSE;
@@ -119,6 +120,12 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->unify_kana_voiced_sound_mark);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_kana_v_sounds")) {
+      options->unify_kana_v_sounds =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->unify_kana_v_sounds);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_hyphen")) {
       options->unify_hyphen = grn_vector_get_element_bool(ctx,
                                                           raw_options,
