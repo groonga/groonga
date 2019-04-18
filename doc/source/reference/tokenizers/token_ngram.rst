@@ -75,6 +75,26 @@ We can also specify mingle multiple options except the above example.
 Usage
 -----
 
+Simple usage
+------------
+
+Here is an example of ``TokenNgram``.
+
+If we use ``TokenNgram`` in the nothing of option.
+``TokenNgram`` behavior is the same as ``TokenBigram`` as below:
+
+* If no normalizer is used.
+
+.. groonga-command
+.. include:: ../../example/reference/tokenizers/token-ngram-no-option.log
+.. tokenize --tokenizer TokenNgram --string "Hello World"
+
+* If normalizer is used.
+
+.. groonga-command
+.. include:: ../../example/reference/tokenizers/token-ngram-no-option-with-normalizer.log
+.. tokenize --tokenizer TokenNgram --string "Hello World" --normalizer NormalizerAuto
+
 
 Parameters
 ----------
@@ -84,10 +104,14 @@ Optional parameter
 
 There are eight optional parameters.
 
+.. _token-ngram-n:
+
 ``n``
 """""
 
 This option shows ``N`` of Ngram. For example, ``n`` is ``3`` for trigram.
+
+.. _token-ngram-loose-symbol:
 
 ``loose_symbol``
 """"""""""""""""
@@ -95,11 +119,15 @@ This option shows ``N`` of Ngram. For example, ``n`` is ``3`` for trigram.
 Tokenize keywords including symbols, to be searched by both queries with/without symbols.
 For example, a keyword ``090-1111-2222`` will be found by any of ``09011112222``, ``090``, ``1111``, ``2222`` and ``090-1111-2222``.
 
+.. _token-ngram-loose-blank:
+
 ``loose_blank``
 """""""""""""""
 
 Tokenize keywords including blanks, to be searched by both queries with/without blanks.
 For example, a keyword ``090 1111 2222`` will be found by any of ``09011112222``, ``090``, ``1111``, ``2222`` and ``090 1111 2222``.
+
+.. _token-ngram-remove-blank:
 
 ``remove_blank``
 """"""""""""""""
@@ -109,20 +137,37 @@ For example, a keyword ``090 1111 2222`` will be found by any of ``09011112222``
 
 Note that the keyword won’t be found by a query including blanks like ``090 1111 2222``.
 
+.. _token-ngram-report-source-location:
+
 ``report_source_location``
 """"""""""""""""""""""""""
 
+This option tells us a location of token of highlight target when we highlight token by ``highlight_html``.
+
+We only use this option when we want to highlight token by ``highlight_html``.
+
+When Groonga tokenizes token, always used ``NormalizerAuto`` to normalizer until now.
+Therefore, if we use ``NormalizerNFKC100`` to normalizer, sometimes the position of the highlight shift.
+Because we use different normalizer to normalize token.
+
+This option is its to reduce the shift of the position of the highlight.
+
+.. _token-ngram-unify-alphabet:
 
 ``unify_alphabet``
 """"""""""""""""""
 
 If we set false, ``TokenNgram`` uses bigram tokenize method for ASCII character.
 
+.. _token-ngram-unify-symbol:
+
 ``unify_symbol``
 """"""""""""""""
 
 If we set false, ``TokenNgram`` uses bigram tokenize method for symbols.
 ``TokenNgram("unify_symbol", false)`` is same behavior of ``TokenBigramSplitSymbol``.
+
+.. _token-ngram-unify-digit:
 
 ``unify_digit``
 """""""""""""""
