@@ -21,8 +21,10 @@ if (ARGV[0] || "").start_with?("--groonga-install-prefix=")
 end
 
 if groonga_install_prefix
+  unescaped_prefix = groonga_install_prefix.gsub(/\\u([\da-fA-F]{4})/) { [$1].pack('H*').unpack('n*').pack("U*")}
   ENV["PATH"] = [
     [groonga_install_prefix, "bin"].join(File::ALT_SEPARATOR || File::SEPARATOR),
+    [unescaped_prefix, "bin"].join(File::ALT_SEPARATOR || File::SEPARATOR),
     ENV["PATH"],
   ].join(File::PATH_SEPARATOR)
 else
