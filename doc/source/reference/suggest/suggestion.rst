@@ -117,7 +117,7 @@ following command::
 How to extract learning data
 ----------------------------
 
-The learning data is stored into item_DATASET and pair_DATASET tables.
+The learning data is stored into ``item_DATASET`` and ``pair_DATASET`` tables.
 By using select command for such tables, you can all extract learing data.
 
 Here is the query to extract all learning data::
@@ -126,7 +126,7 @@ Here is the query to extract all learning data::
   select pair_DATASET --filter 'freq0 > 0 || freq1 > 0 || freq2 > 0' --limit -1
 
 Without '--limit -1', you can't get all data.
-In pair table, the valid value of freq0, freq1 and freq2 column must be larger than 0.
+In pair table, the valid value of ``freq0``, ``freq1`` and ``freq2`` column must be larger than 0.
 
 Don't execute above query via HTTP request because enormous number of records are fetched.
  
