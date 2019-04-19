@@ -12,7 +12,7 @@ load --table Documents
 ["Groonga", "Groonga can be used with MySQL."]
 ]
 [[0,0.0,0.0],1]
-select Documents   --match_columns content --query 'MySQL'   --output_columns '_key, snippet_html(_key, {"...": {}})'
+select Documents   --match_columns content --query 'MySQL'   --output_columns '_key, snippet_html(_key, {"nonexistent": {}})'
 [
   [
     [
@@ -20,7 +20,7 @@ select Documents   --match_columns content --query 'MySQL'   --output_columns '_
       0.0,
       0.0
     ],
-    "snippet_html(): invalid option name: <...>"
+    "snippet_html(): invalid option name: <nonexistent>"
   ],
   [
     [
@@ -39,9 +39,9 @@ select Documents   --match_columns content --query 'MySQL'   --output_columns '_
       ],
       [
         "Groonga",
-        "snippet_html(): invalid option name: <...>"
+        "snippet_html(): invalid option name: <nonexistent>"
       ]
     ]
   ]
 ]
-#|e| snippet_html(): invalid option name: <...>
+#|e| snippet_html(): invalid option name: <nonexistent>
