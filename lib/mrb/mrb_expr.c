@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2013-2018 Brazil
+  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -844,6 +845,12 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
         GRN_RECORD_SET(ctx, &constant, id);
         grn_expr_append_const(ctx, expr, &constant, op, n_args);
         GRN_OBJ_FIN(ctx, &constant);
+      } else if (klass == mrb_class_get_under(mrb, data->module, "Bulk")) {
+        grn_obj *bulk = DATA_PTR(mrb_constant);
+        grn_expr_append_const(ctx, expr, bulk, op, n_args);
+      } else if (klass == mrb_class_get_under(mrb, data->module, "Vector")) {
+        grn_obj *vector = DATA_PTR(mrb_constant);
+        grn_expr_append_const(ctx, expr, vector, op, n_args);
       } else {
         mrb_raisef(mrb, E_ARGUMENT_ERROR,
                    "unsupported constant to append to expression: %S",

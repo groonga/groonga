@@ -74,6 +74,7 @@
 # include "mrb/mrb_window_function_executor.h"
 # include "mrb/mrb_locale_output.h"
 # include "mrb/mrb_output_columns.h"
+# include "mrb/mrb_vector.h"
 
 # include <mruby/array.h>
 # include <mruby/string.h>
@@ -210,6 +211,7 @@ mrb_groonga_init(mrb_state *mrb, mrb_value self)
   grn_mrb_window_function_executor_init(ctx);
   grn_mrb_locale_output_init(ctx);
   grn_mrb_output_columns_init(ctx);
+  grn_mrb_vector_init(ctx);
 
   grn_mrb_load(ctx, "initialize/post.rb");
 

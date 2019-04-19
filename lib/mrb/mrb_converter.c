@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2013-2015 Brazil
+  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -208,6 +209,9 @@ grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object)
     break;
   case GRN_PTR :
     klass = mrb_class_get_under(mrb, data->module, "Pointer");
+    break;
+  case GRN_VECTOR :
+    klass = mrb_class_get_under(mrb, data->module, "Vector");
     break;
   case GRN_ACCESSOR :
     klass = mrb_class_get_under(mrb, data->module, "Accessor");
