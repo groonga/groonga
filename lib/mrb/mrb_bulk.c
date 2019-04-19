@@ -391,6 +391,8 @@ grn_mrb_bulk_init(grn_ctx *ctx)
                     mrb_grn_bulk_get_domain, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "value",
                     mrb_grn_bulk_get_value, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "true?",
+                    grn_mrb_object_is_true, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "==",
                     mrb_grn_bulk_equal, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "inspect",

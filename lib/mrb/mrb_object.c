@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2013-2018 Brazil
+  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -280,8 +281,8 @@ object_is_persistent(mrb_state *mrb, mrb_value self)
   return mrb_bool_value((flags & GRN_OBJ_PERSISTENT) == GRN_OBJ_PERSISTENT);
 }
 
-static mrb_value
-object_is_true(mrb_state *mrb, mrb_value self)
+mrb_value
+grn_mrb_object_is_true(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *object;
@@ -348,7 +349,8 @@ grn_mrb_object_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "persistent?", object_is_persistent,
                     MRB_ARGS_NONE());
 
-  mrb_define_method(mrb, klass, "true?", object_is_true, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "true?", grn_mrb_object_is_true,
+                    MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "check_corrupt", object_check_corrupt,
                     MRB_ARGS_NONE());
