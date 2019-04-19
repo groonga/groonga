@@ -15,11 +15,9 @@ load --table Documents
 select Documents   --match_columns content   --query 'MySQL'   --output_columns '_key, snippet_html(_key, {"default": ""})'
 [
   [
-    [
-      0,
-      0.0,
-      0.0
-    ],
+    0,
+    0.0,
+    0.0
   ],
   [
     [
