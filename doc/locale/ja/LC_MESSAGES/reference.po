@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-04-17 17:50+0900\n"
+"PO-Revision-Date: 2019-04-23 14:57+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -17285,6 +17285,25 @@ msgstr "``grndb`` のログ出力先のパスを指定します。"
 msgid "Here is an example that specifies ``--log-path`` option::"
 msgstr "以下は ``--log-path`` オプションを指定する例です。"
 
+msgid "``--log-flags``"
+msgstr ""
+
+msgid ""
+"It specifies a logged content in ``grndb`` log by flags. The default value "
+"of ``--log-flags`` is ``time|message``. It means that timestamp and log "
+"messages are logged into ``grndb`` log."
+msgstr ""
+"``grndb`` のログに出力する内容をフラグで指定します。 ``--log-flags`` のデフォ"
+"ルト値は ``time|message`` です。 ``grndb`` のログにタイムスタンプとログメッ"
+"セージを出力することを意味します。"
+
+msgid "Here is an example that specifies ``--log-flags`` option::"
+msgstr "以下は ``--log-flags`` オプションを指定する例です。"
+
+msgid "See :doc:`groonga` to know about supported log flags."
+msgstr ""
+"サポートされているログフラグについては :doc:`groonga` を参照してください。"
+
 msgid "``recover``"
 msgstr ""
 
@@ -29266,3 +29285,6 @@ msgstr ""
 
 msgid "``window_sum``"
 msgstr ""
+
+#~ msgid "It specifies a flag of ``grndb`` log."
+#~ msgstr "``grndb`` のログに出力する内容を指定します。"
