@@ -1,0 +1,48 @@
+plugin_register sharding
+plugin_register functions/time
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+
+table_create Logs_20170316 TABLE_NO_KEY
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+column_create Logs_20170316 price COLUMN_SCALAR UInt32
+
+table_create Logs_20170427 TABLE_NO_KEY
+column_create Logs_20170427 timestamp COLUMN_SCALAR Time
+column_create Logs_20170427 price COLUMN_SCALAR UInt32
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 1000},
+{"timestamp": "2017/03/15 01:00:00", "price":  900},
+{"timestamp": "2017/03/15 02:00:00", "price":  300}
+]
+
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 00:00:00", "price":  530},
+{"timestamp": "2017/03/16 01:00:00", "price":  520},
+{"timestamp": "2017/03/16 02:00:00", "price":  110}
+]
+
+load --table Logs_20170427
+[
+{"timestamp": "2017/04/27 00:00:00", "price":  800},
+{"timestamp": "2017/04/27 01:00:00", "price":  400},
+{"timestamp": "2017/04/27 02:00:00", "price":  300}
+]
+
+logical_count Logs \
+  --shard_key timestamp \
+  --columns[month].stage initial \
+  --columns[month].type Time \
+  --columns[month].flags COLUMN_SCALAR \
+  --columns[month].value 'time_classify_month(timestamp)' \
+  --columns[price_per_month].stage initial \
+  --columns[price_per_month].type UInt32 \
+  --columns[price_per_month].flags COLUMN_SCALAR \
+  --columns[price_per_month].value 'window_sum(price)' \
+  --columns[price_per_month].window.group_keys 'month' \
+  --post_filter 'price_per_month > 2000'
