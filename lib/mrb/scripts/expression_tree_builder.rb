@@ -145,7 +145,7 @@ module Groonga
           when Void
             node = ExpressionTree::Null.new
           else
-            node = ExpressionTree::Constant.new(code.value.value)
+            node = ExpressionTree::Constant.new(code.value)
           end
           stack.push(node)
         when Operator::CALL

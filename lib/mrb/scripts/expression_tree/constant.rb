@@ -3,6 +3,8 @@ module Groonga
     class Constant
       attr_reader :value
       def initialize(value)
+        # Groonga::Bulk, Groonga::Vector or raw Ruby object.
+        # Should we unify to Groonga::*?
         @value = value
       end
 
@@ -15,10 +17,19 @@ module Groonga
       end
 
       def estimate_size(table)
-        if Bulk.true?(@value)
+        if true_value?
           table.size
         else
           0
+        end
+      end
+
+      private
+      def true_value?
+        if @value.respond_to?(:true?)
+          @value.true?
+        else
+          Bulk.true?(@value)
         end
       end
     end
