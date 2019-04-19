@@ -1074,6 +1074,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
             /* todo */
           } else {
             if (xd != yd &&
+                grn_obj_is_bulk(ctx, x) &&
                 !(grn_type_id_is_number_family(ctx, xd) &&
                   grn_type_id_is_number_family(ctx, yd))) {
               grn_expr_append_obj_resolve_const(ctx, x, yd);
@@ -1082,6 +1083,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
         } else {
           if (CONSTP(y)) {
             if (xd != yd &&
+                grn_obj_is_bulk(ctx, y) &&
                 !(grn_type_id_is_number_family(ctx, xd) &&
                   grn_type_id_is_number_family(ctx, yd))) {
               grn_expr_append_obj_resolve_const(ctx, y, xd);
@@ -1378,6 +1380,28 @@ grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
       case GRN_UVECTOR :
         GRN_OBJ_INIT(res, obj->header.type, 0, obj->header.domain);
         grn_bulk_write(ctx, res, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj));
+        break;
+      case GRN_VECTOR :
+        GRN_OBJ_INIT(res, obj->header.type, 0, obj->header.domain);
+        unsigned int n = grn_vector_size(ctx, obj);
+        for (unsigned int i = 0; i < n; i++) {
+          const char *content;
+          unsigned int content_length;
+          unsigned int weight;
+          grn_id domain;
+          content_length = grn_vector_get_element(ctx,
+                                                  obj,
+                                                  i,
+                                                  &content,
+                                                  &weight,
+                                                  &domain);
+          grn_vector_add_element(ctx,
+                                 res,
+                                 content,
+                                 content_length,
+                                 weight,
+                                 domain);
+        }
         break;
       default :
         res = NULL;
