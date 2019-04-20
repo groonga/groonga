@@ -509,7 +509,9 @@ namespace :pdb do
   namespace :extractor do
     desc "Generate PDB extractor"
     task :generate do
-      cv2pdb_url = "https://ci.appveyor.com/api/projects/rainers/visuald/artifacts/cv2pdb.exe?job=Environment%3A%20os%3DVisual%20Studio%202013%2C%20VS%3D12%2C%20APPVEYOR_BUILD_WORKER_IMAGE%3DVisual%20Studio%202015"
+      # We need to update this link every 6 months because AppVeyor deletes
+      # old artifacts.
+      cv2pdb_url = "https://ci.appveyor.com/api/buildjobs/gl3b0arc0rp8chhe/artifacts/cv2pdb.exe"
       cv2pdb = download(cv2pdb_url, download_dir)
       chmod(0755, cv2pdb)
       generate_pdb_bat = bin_dir + "generate-pdb.bat"
