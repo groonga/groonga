@@ -1,3 +1,5 @@
+#@omit TODO: Implemente me
+
 #@on-error omit
 plugin_register sharding
 plugin_register functions/time
@@ -44,11 +46,11 @@ logical_range_filter Logs \
   --shard_key timestamp \
   --max '2017/03/17 10:00:00.000' \
   --max_border exclude \
+  --filter 'price >= 300' \
   --columns[day].stage filtered \
   --columns[day].type Time \
   --columns[day].flags COLUMN_SCALAR \
   --columns[day].value 'time_classify_day(timestamp-36000000000)' \
-  --filter 'price >= 300' \
   --columns[price_per_day].stage filtered \
   --columns[price_per_day].type UInt32 \
   --columns[price_per_day].flags COLUMN_SCALAR \
