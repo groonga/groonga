@@ -32,4 +32,4 @@ logical_select Logs \
   --columns[count].flags COLUMN_SCALAR \
   --columns[count].value 'window_count()' \
   --columns[count].window.sort_keys price \
-  --output_columns _id,n_likes,count
+  --output_columns _id,price,count

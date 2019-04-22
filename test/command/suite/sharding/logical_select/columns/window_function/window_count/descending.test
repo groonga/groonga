@@ -14,14 +14,14 @@ load --table Logs_20170415
 [
 {"timestamp": "2017/04/15 00:00:00", "n_likes": 2, "price": 100},
 {"timestamp": "2017/04/15 01:00:00", "n_likes": 1, "price": 200},
-{"timestamp": "2017/04/15 01:00:00", "n_likes": 2, "price": 300}
+{"timestamp": "2017/04/15 02:00:00", "n_likes": 2, "price": 300}
 ]
 
 load --table Logs_20170416
 [
 {"timestamp": "2017/04/16 10:00:00", "n_likes": 1, "price": 400},
 {"timestamp": "2017/04/16 11:00:00", "n_likes": 2, "price": 500},
-{"timestamp": "2017/04/16 11:00:00", "n_likes": 1, "price": 600}
+{"timestamp": "2017/04/16 12:00:00", "n_likes": 1, "price": 600}
 ]
 
 logical_select Logs \
@@ -31,4 +31,4 @@ logical_select Logs \
   --columns[count].flags COLUMN_SCALAR \
   --columns[count].value 'window_count()' \
   --columns[count].window.sort_keys -price \
-  --output_columns _id,n_likes,count
+  --output_columns _id,price,count

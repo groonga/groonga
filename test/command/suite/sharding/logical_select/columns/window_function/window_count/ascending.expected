@@ -30,7 +30,7 @@ load --table Logs_20170416
 {"timestamp": "2017/04/16 11:00:00", "n_likes": 1, "price": 600}
 ]
 [[0,0.0,0.0],3]
-logical_select Logs   --shard_key timestamp   --columns[count].stage initial   --columns[count].type UInt32   --columns[count].flags COLUMN_SCALAR   --columns[count].value 'window_count()'   --columns[count].window.sort_keys price   --output_columns _id,n_likes,count
+logical_select Logs   --shard_key timestamp   --columns[count].stage initial   --columns[count].type UInt32   --columns[count].flags COLUMN_SCALAR   --columns[count].value 'window_count()'   --columns[count].window.sort_keys price   --output_columns _id,price,count
 [
   [
     0,
@@ -48,7 +48,7 @@ logical_select Logs   --shard_key timestamp   --columns[count].stage initial   -
           "UInt32"
         ],
         [
-          "n_likes",
+          "price",
           "UInt32"
         ],
         [
@@ -58,32 +58,32 @@ logical_select Logs   --shard_key timestamp   --columns[count].stage initial   -
       ],
       [
         1,
-        2,
+        100,
         1
       ],
       [
         2,
-        1,
+        200,
         2
       ],
       [
         3,
-        2,
+        300,
         3
       ],
       [
         1,
-        1,
+        400,
         4
       ],
       [
         2,
-        2,
+        500,
         5
       ],
       [
         3,
-        1,
+        600,
         6
       ]
     ]
