@@ -1,5 +1,7 @@
+#@on-error omit
 plugin_register sharding
 plugin_register functions/time
+#@on-error default
 
 table_create Logs_20170315 TABLE_NO_KEY
 column_create Logs_20170315 timestamp COLUMN_SCALAR Time
