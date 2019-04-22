@@ -565,11 +565,15 @@ details.
 .. note::
 
    Window function over multiple tables aren't supported version 9.0.1 or before.
-   Groonga supported it version 9.0.2 or later.
+   Groonga supported it since version 9.0.2 or later.
    However, we need to align the same order for shard key and leading group key or sort key.
 
    For example, we can apply the window function to over multiple tables as below case.
    Because the below example aligns the same order for shard key and leading group key.
+
+   The leading group key is ``price`` and shard key is ``timestamp`` in the below example.
+   We can apply the window function to over multiple tables in the below example.
+   Because ``price`` and ``timestamp`` aligns the same order.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/logical_count/window_function_for_over_shard.log
