@@ -1,0 +1,58 @@
+plugin_register sharding
+
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items price COLUMN_SCALAR UInt32
+column_create Items type COLUMN_SCALAR ShortText
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 item COLUMN_SCALAR Items
+
+table_create Logs_20170316 TABLE_NO_KEY
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+column_create Logs_20170316 item COLUMN_SCALAR Items
+
+table_create Logs_20170317 TABLE_NO_KEY
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+column_create Logs_20170317 item COLUMN_SCALAR Items
+
+load --table Items
+[
+{"_key": "item1", "price": 100, "type": "C"},
+{"_key": "item2", "price": 200, "type": "A"},
+{"_key": "item3", "price": 200, "type": "A"},
+{"_key": "item4", "price": 300, "type": "B"},
+{"_key": "item5", "price": 300, "type": "C"},
+{"_key": "item6", "price": 400, "type": "A"}
+]
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "item": "item1"},
+{"timestamp": "2017/03/15 01:00:00", "item": "item2"}
+]
+
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "item": "item2"},
+{"timestamp": "2017/03/16 11:00:00", "item": "item3"}
+]
+
+load --table Logs_20170317
+[
+{"timestamp": "2017/03/17 20:00:00", "item": "item3"},
+{"timestamp": "2017/03/17 20:00:00", "item": "item4"}
+]
+
+logical_select Logs \
+  --shard_key timestamp \
+  --output_columns _id \
+  --limit 0 \
+  --drilldowns[item].keys item \
+  --drilldowns[item].columns[sum].stage initial \
+  --drilldowns[item].columns[sum].type UInt32 \
+  --drilldowns[item].columns[sum].flags COLUMN_SCALAR \
+  --drilldowns[item].columns[sum].value 'window_sum(price)' \
+  --drilldowns[item].columns[sum].window.group_keys price \
+  --drilldowns[item].columns[sum].window.sort_keys _key \
+  --drilldowns[item].output_columns 'sum, _key, price, type'
