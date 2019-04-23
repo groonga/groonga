@@ -118,6 +118,19 @@ Here is an example that specifies ``--log-path`` option::
 
   % grndb check --log-path /var/log/groonga/grndb.log /var/lib/groonga/db/db
 
+``--log-flags``
+"""""""""""""""
+
+.. versionadded:: 9.0.2
+
+It specifies a logged content in ``grndb`` log by flags.
+The default value of ``--log-flags`` is ``time|message``. It means that timestamp and log messages are logged into ``grndb`` log.
+
+Here is an example that specifies ``--log-flags`` option::
+
+  % grndb check --log-path /var/log/groonga/grndb.log --log-flags "time|pid|message" /var/lib/groonga/db/db
+
+See :doc:`groonga` to know about supported log flags.
 
 ``recover``
 ^^^^^^^^^^^
@@ -227,3 +240,16 @@ Here is an example that specifies ``--log-path`` option::
 
   % grndb recover --log-path /var/log/groonga/grndb.log /var/lib/groonga/db/db
 
+``--log-flags``
+"""""""""""""""
+
+.. versionadded:: 9.0.2
+
+It specifies a logged content in ``grndb`` log by flags.
+The default value of ``--log-flags`` is ``time|message``. It means that timestamp and log messages are logged into ``grndb`` log.
+
+Here is an example that specifies ``--log-flags`` option::
+
+  % grndb check --log-path /var/log/groonga/grndb.log --log-flags "time|pid|message" /var/lib/groonga/db/db
+
+See :doc:`groonga` to know about supported log flags.
