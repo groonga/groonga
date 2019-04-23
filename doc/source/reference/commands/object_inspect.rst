@@ -557,6 +557,8 @@ Here is a list of index column sizes:
      - ``"small"``
    * - ``INDEX_MEDIUM``
      - ``"medium"``
+   * - ``INDEX_LARGE``
+     - ``"large"``
    * - Default
      - ``"normal"``
 
@@ -599,6 +601,8 @@ The max value is the max number of segments. It depends on index size:
      - ``2**9`` (512)
    * - ``INDEX_MEDIUM``
      - ``2**16`` (65536)
+   * - ``INDEX_LARGE``
+     - ``2**17 * 2`` (262144)
    * - Default
      - ``2**17`` (131072)
 

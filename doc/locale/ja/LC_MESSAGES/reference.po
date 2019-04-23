@@ -10403,6 +10403,9 @@ msgstr ""
 msgid "``\"medium\"``"
 msgstr ""
 
+msgid "``\"large\"``"
+msgstr ""
+
 msgid "Default"
 msgstr "デフォルト"
 
@@ -10462,6 +10465,9 @@ msgid "``2**9`` (512)"
 msgstr ""
 
 msgid "``2**16`` (65536)"
+msgstr ""
+
+msgid "``2**17 * 2`` (262144)"
 msgstr ""
 
 msgid "``2**17`` (131072)"
