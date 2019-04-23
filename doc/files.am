@@ -139,6 +139,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/usage.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_count/usage_plugin_register.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_count/window_function_for_over_shard.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/range_index_always.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/range_index_auto.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_parameters/range_index_never.log \
@@ -162,6 +163,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/sort_keys_one.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/usage_plugin_register.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/window_function_for_over_shard.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/cache_no.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/columns_name_flags.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/columns_name_stage.log \
@@ -207,6 +209,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/sort_keys.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/usage_plugin_register.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_select/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_select/window_function_for_over_shard.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_shard_list/logical_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_shard_list/usage_list.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_shard_list/usage_register.log \
@@ -1197,6 +1200,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_count/setup_schema.log \
 	source/example/reference/commands/logical_count/usage.log \
 	source/example/reference/commands/logical_count/usage_plugin_register.log \
+	source/example/reference/commands/logical_count/window_function_for_over_shard.log \
 	source/example/reference/commands/logical_parameters/range_index_always.log \
 	source/example/reference/commands/logical_parameters/range_index_auto.log \
 	source/example/reference/commands/logical_parameters/range_index_never.log \
@@ -1220,6 +1224,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_range_filter/sort_keys_one.log \
 	source/example/reference/commands/logical_range_filter/usage_plugin_register.log \
 	source/example/reference/commands/logical_range_filter/usage_setup.log \
+	source/example/reference/commands/logical_range_filter/window_function_for_over_shard.log \
 	source/example/reference/commands/logical_select/cache_no.log \
 	source/example/reference/commands/logical_select/columns_name_flags.log \
 	source/example/reference/commands/logical_select/columns_name_stage.log \
@@ -1265,6 +1270,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_select/sort_keys.log \
 	source/example/reference/commands/logical_select/usage_plugin_register.log \
 	source/example/reference/commands/logical_select/usage_setup.log \
+	source/example/reference/commands/logical_select/window_function_for_over_shard.log \
 	source/example/reference/commands/logical_shard_list/logical_table.log \
 	source/example/reference/commands/logical_shard_list/usage_list.log \
 	source/example/reference/commands/logical_shard_list/usage_register.log \
@@ -2227,9 +2233,15 @@ html_files_relative_from_locale_dir = \
 	html/_images/geo-points.png \
 	html/_images/used-when-indexing.png \
 	html/_images/used-when-searching.png \
+	html/_static/ajax-loader.gif \
 	html/_static/basic.css \
+	html/_static/comment-bright.png \
+	html/_static/comment-close.png \
+	html/_static/comment.png \
 	html/_static/doctools.js \
 	html/_static/documentation_options.js \
+	html/_static/down-pressed.png \
+	html/_static/down.png \
 	html/_static/favicon.ico \
 	html/_static/file.png \
 	html/_static/groonga.css \
@@ -2245,6 +2257,9 @@ html_files_relative_from_locale_dir = \
 	html/_static/searchtools.js \
 	html/_static/underscore-1.3.1.js \
 	html/_static/underscore.js \
+	html/_static/up-pressed.png \
+	html/_static/up.png \
+	html/_static/websupport.js \
 	html/characteristic.html \
 	html/client.html \
 	html/community.html \
