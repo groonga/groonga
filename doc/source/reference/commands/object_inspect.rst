@@ -617,8 +617,8 @@ for the max number of segments.
 
 .. _object-inspect-return-value-index-column-value-statistics-n-array-segments:
 
-``INDEX_COLUMN_VALUE_STATISTICS_MAX_ARRAY_SEGMENT_ID``
-""""""""""""""""""""""""""""""""""""""""""""""""""""""
+``INDEX_COLUMN_VALUE_STATISTICS_N_ARRAY_SEGMENTS``
+""""""""""""""""""""""""""""""""""""""""""""""""""
 
 The number of segments used for "array" in the inspected index column.
 
@@ -644,8 +644,8 @@ for the max number of segments.
 
 .. _object-inspect-return-value-index-column-value-statistics-n-buffer-segments:
 
-``INDEX_COLUMN_VALUE_STATISTICS_MAX_BUFFER_SEGMENT_ID``
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+``INDEX_COLUMN_VALUE_STATISTICS_N_BUFFER_SEGMENTS``
+"""""""""""""""""""""""""""""""""""""""""""""""""""
 
 The number of segments used for "buffer" in the inspected index column.
 

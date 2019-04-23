@@ -10487,6 +10487,9 @@ msgstr ""
 "inspect-return-value-index-column-value-statistics-n-garbage-segments` を見て"
 "ください。"
 
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_N_ARRAY_SEGMENTS``"
+msgstr ""
+
 msgid ""
 "The number of segments used for \"array\" in the inspected index column."
 msgstr "調査対象のインデックスカラム内の「array」に使っているセグメント数。"
@@ -10510,6 +10513,9 @@ msgstr ""
 
 msgid "\"buffer\" is used for storing posting lists."
 msgstr "「buffer」はポスティングリストを保存する場所です。"
+
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_N_BUFFER_SEGMENTS``"
+msgstr ""
 
 msgid ""
 "The number of segments used for \"buffer\" in the inspected index column."
