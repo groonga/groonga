@@ -20,19 +20,19 @@ Uni-gram:
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-ngram-uni-gram.log
-.. tokenize 'TokenNgram("n", 1)' "Hello World"
+.. tokenize --tokenizer 'TokenNgram("n", 1)' --string "Hello World"
 
 Bi-gram:
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-ngram-bi-gram.log
-.. tokenize 'TokenNgram("n", 2)' "Hello World"
+.. tokenize --tokenizer 'TokenNgram("n", 2)' --string "Hello World"
 
 tri-gram:
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-ngram-tri-gram.log
-.. tokenize 'TokenNgram("n", 3)' "Hello World"
+.. tokenize --tokenizer 'TokenNgram("n", 3)' --string "Hello World"
 
 This tokenizer also has options other than the above.
 
