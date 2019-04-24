@@ -28,6 +28,12 @@
 # include <share.h>
 #endif /* WIN32 */
 
+#ifndef bool
+  #define false 0
+  #define true 1
+  #define bool int
+#endif
+
 #include "grn_ii.h"
 #include "grn_ctx_impl.h"
 #include "grn_token_cursor.h"
