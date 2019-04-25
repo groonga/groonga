@@ -93,15 +93,15 @@ grn_inspect_key_with_table_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *table, c
 {
   grn_obj inspected;
 
-  GRN_TEXT_INIT(&inspected, 0);
-  grn_inspect_limited(ctx, &inspected, table);
-
   if (!table) {
-    grn_text_printf(ctx, buffer, "table must not NULL: <%.*s>",
-                 (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
-    GRN_OBJ_FIN(ctx, &inspected);
+    ERR(GRN_INVALID_ARGUMENT,
+        "failed to inspect key with type of table: table must not NULL",
+        (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
     return buffer;
   }
+
+  GRN_TEXT_INIT(&inspected, 0);
+  grn_inspect_limited(ctx, &inspected, table);
 
   if (key && key_size > 0) {
     grn_obj key_buffer;
