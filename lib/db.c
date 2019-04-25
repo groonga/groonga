@@ -1660,7 +1660,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         if (id == GRN_ID_NIL) {
           grn_obj buffer;
           GRN_TEXT_INIT(&buffer, 0);
-          grn_inspect_key_with_table_name(ctx, &buffer, table, key, key_size);
+          grn_inspect_key_with_table(ctx, &buffer, table, key, key_size);
           ERR(GRN_INVALID_ARGUMENT,
               "[table][add] failed to add pat: %.*s",
               (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
@@ -1680,7 +1680,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         if (id == GRN_ID_NIL) {
           grn_obj buffer;
           GRN_TEXT_INIT(&buffer, 0);
-          grn_inspect_key_with_table_name(ctx, &buffer, table, key, key_size);
+          grn_inspect_key_with_table(ctx, &buffer, table, key, key_size);
           ERR(GRN_INVALID_ARGUMENT,
               "[table][add] failed to add dat: %.*s",
               (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
@@ -1700,7 +1700,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         if (id == GRN_ID_NIL) {
           grn_obj buffer;
           GRN_TEXT_INIT(&buffer, 0);
-          grn_inspect_key_with_table_name(ctx, &buffer, table, key, key_size);
+          grn_inspect_key_with_table(ctx, &buffer, table, key, key_size);
           ERR(GRN_INVALID_ARGUMENT,
               "[table][add] failed to add hash: %.*s",
               (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
@@ -1719,7 +1719,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         if (id == GRN_ID_NIL) {
           grn_obj buffer;
           GRN_TEXT_INIT(&buffer, 0);
-          grn_inspect_key_with_table_name(ctx, &buffer, table, key, key_size);
+          grn_inspect_key_with_table(ctx, &buffer, table, key, key_size);
           ERR(GRN_INVALID_ARGUMENT,
               "[table][add] failed to add: %.*s",
               (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
