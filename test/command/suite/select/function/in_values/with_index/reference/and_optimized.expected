@@ -1,0 +1,65 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+column_create Tags memos_tag COLUMN_INDEX Memos tag
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast",          "tag": "groonga"},
+{"_key": "Mroonga is fast",          "tag": "mroonga"},
+{"_key": "Rroonga is fast",          "tag": "rroonga"},
+{"_key": "Droonga is fast",          "tag": "droonga"},
+{"_key": "Groonga is a HTTP server", "tag": "groonga"}
+]
+[[0,0.0,0.0],5]
+select Memos   --output_columns _key,tag   --filter 'all_records() && (tag == "groonga" || tag == "mroonga" || tag == "droonga")'   --sortby _id
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tag",
+          "Tags"
+        ]
+      ],
+      [
+        "Groonga is fast",
+        "groonga"
+      ],
+      [
+        "Mroonga is fast",
+        "mroonga"
+      ],
+      [
+        "Droonga is fast",
+        "droonga"
+      ],
+      [
+        "Groonga is a HTTP server",
+        "groonga"
+      ]
+    ]
+  ]
+]
+#>select --filter "all_records() && (tag == \"groonga\" || tag == \"mroonga\" || tag == \"droonga\")" --output_columns "_key,tag" --sortby "_id" --table "Memos"
+#:000000000000000 filter(5): all_records()
+#:000000000000000 filter(4): in_values(Memos.tag, #<record:pat:Tags id:1 key:"groonga">, #<record:pat:Tags id:2 key:"mroonga">, #<record:pat:Tags id:4 key:"droonga">)
+#:000000000000000 select(4)
+#:000000000000000 sort(4)
+#:000000000000000 output(4)
+#<000000000000000 rc=0

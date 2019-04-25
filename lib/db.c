@@ -3753,26 +3753,12 @@ grn_obj_search_column_index_by_id(grn_ctx *ctx, grn_obj *obj,
                                   grn_obj *res, grn_operator op,
                                   grn_search_optarg *optarg)
 {
-  grn_ii_cursor *c;
-
   grn_obj_search_index_report(ctx, "[id]", obj);
-
-  c = grn_ii_cursor_open(ctx, (grn_ii *)obj, tid,
-                         GRN_ID_NIL, GRN_ID_MAX, 1, 0);
-  if (c) {
-    grn_posting *pos;
-    grn_hash *s = (grn_hash *)res;
-    while ((pos = grn_ii_cursor_next(ctx, c))) {
-      /* todo: support orgarg(op)
-         res_add(ctx, s, (grn_rset_posinfo *) pos,
-         get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg), op);
-      */
-      grn_hash_add(ctx, s, pos, s->key_size, NULL, NULL);
-    }
-    grn_ii_cursor_close(ctx, c);
+  grn_ii_at(ctx, (grn_ii *)obj, tid, (grn_hash *)res, op);
+  if (ctx->rc == GRN_SUCCESS) {
+    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
   }
-
-  return GRN_SUCCESS;
+  return ctx->rc;
 }
 
 static grn_rc

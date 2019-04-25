@@ -1,0 +1,24 @@
+#$GRN_EXPR_OPTIMIZE=yes
+
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tag COLUMN_SCALAR Tags
+
+column_create Tags memos_tag COLUMN_INDEX Memos tag
+
+load --table Memos
+[
+{"_key": "Groonga is fast",          "tag": "groonga"},
+{"_key": "Mroonga is fast",          "tag": "mroonga"},
+{"_key": "Rroonga is fast",          "tag": "rroonga"},
+{"_key": "Droonga is fast",          "tag": "droonga"},
+{"_key": "Groonga is a HTTP server", "tag": "groonga"}
+]
+
+#@collect-query-log true
+select Memos \
+  --output_columns _key,tag \
+  --filter 'all_records() && (tag == "groonga" || tag == "mroonga" || tag == "droonga")' \
+  --sortby _id
+#@collect-query-log false
