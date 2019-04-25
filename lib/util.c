@@ -1460,6 +1460,61 @@ grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
   return buffer;
 }
 
+grn_obj *
+grn_inspect_key_with_table(grn_ctx *ctx, grn_obj *buffer, grn_obj *table, const void *key, unsigned int key_size)
+{
+  grn_obj inspected;
+
+  if (!buffer) {
+    buffer = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
+  }
+
+  if (!table) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "failed to inspect key with table: table must not NULL");
+    return buffer;
+  }
+
+  if (table->header.type == GRN_TABLE_NO_KEY) {
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect_name(ctx, &inspected, table);
+    grn_text_printf(ctx, buffer, "no need to inspect key because table is no_key: <%.*s>",
+                    (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return buffer;
+  }
+  grn_obj table_type, table_name, key_type;
+  GRN_TEXT_INIT(&table_type, 0);
+  GRN_TEXT_INIT(&table_name, 0);
+  GRN_TEXT_INIT(&key_type, 0);
+  grn_table_type_inspect(ctx, &table_type, table);
+  grn_inspect_name(ctx, &table_name, table);
+  grn_table_key_inspect(ctx, &key_type, table);
+  if (key && key_size > 0) {
+    grn_obj key_buffer;
+    GRN_TEXT_INIT(&key_buffer, 0);
+    GRN_OBJ_INIT(&key_buffer, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, table->header.domain);
+    GRN_TEXT_SET(ctx, &key_buffer, key, key_size);
+    grn_inspect(ctx, &inspected, &key_buffer);
+    GRN_OBJ_FIN(ctx, &key_buffer);
+    grn_text_printf(ctx, buffer, "<%.*s>: <%.*s>: <%.*s>: <%.*s>",
+                    (int)GRN_TEXT_LEN(&table_type), GRN_TEXT_VALUE(&table_type),
+                    (int)GRN_TEXT_LEN(&table_name), GRN_TEXT_VALUE(&table_name),
+                    (int)GRN_TEXT_LEN(&key_type), GRN_TEXT_VALUE(&key_type),
+                    (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+  } else {
+    grn_text_printf(ctx, buffer, "<%.*s>: <%.*s>: <%.*s>: <(nil)>",
+                    (int)GRN_TEXT_LEN(&table_type), GRN_TEXT_VALUE(&table_type),
+                    (int)GRN_TEXT_LEN(&table_name), GRN_TEXT_VALUE(&table_name),
+                    (int)GRN_TEXT_LEN(&key_type), GRN_TEXT_VALUE(&key_type));
+  }
+  GRN_OBJ_FIN(ctx, &table_type);
+  GRN_OBJ_FIN(ctx, &table_name);
+  GRN_OBJ_FIN(ctx, &key_type);
+  GRN_OBJ_FIN(ctx, &inspected);
+  return buffer;
+}
+
 void
 grn_p(grn_ctx *ctx, grn_obj *obj)
 {

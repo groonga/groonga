@@ -88,41 +88,6 @@ static const uint32_t GRN_TABLE_PAT_KEY_CACHE_SIZE = 1 << 15;
   }\
 } while (0)
 
-static grn_obj *
-grn_inspect_key_with_table_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *table, const void *key, unsigned int key_size)
-{
-  grn_obj inspected;
-
-  if (!table) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "failed to inspect key with type of table: table must not NULL",
-        (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
-    return buffer;
-  }
-
-  GRN_TEXT_INIT(&inspected, 0);
-  grn_inspect_limited(ctx, &inspected, table);
-
-  if (table->header.type == GRN_TABLE_NO_KEY) {
-    grn_text_printf(ctx, buffer, "no need to inspect key because table is TABLE_NO_KEY: <%.*s>",
-                    (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
-    GRN_OBJ_FIN(ctx, &inspected);
-    return;
-  }
-  if (key && key_size > 0) {
-    grn_obj key_buffer;
-    GRN_OBJ_INIT(&key_buffer, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, table->header.domain);
-    GRN_TEXT_SET(ctx, &key_buffer, key, key_size);
-    grn_inspect(ctx, buffer, &key_buffer);
-    GRN_OBJ_FIN(ctx, &key_buffer);
-    grn_text_printf(ctx, buffer, "<%.*s>: <%.*s>",
-                    (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected),
-                    (int)GRN_TEXT_LEN(&key_buffer), GRN_TEXT_VALUE(&key_buffer));
-  }
-  GRN_OBJ_FIN(ctx, &inspected);
-  return buffer;
-}
-
 grn_inline static grn_id
 grn_table_add_v_inline(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
                        void **value, int *added);
