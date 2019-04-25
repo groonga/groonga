@@ -1662,7 +1662,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
           GRN_TEXT_INIT(&buffer, 0);
           grn_inspect_key_with_table(ctx, &buffer, table, key, key_size);
           ERR(GRN_INVALID_ARGUMENT,
-              "[table][add] failed to add pat: %.*s",
+              "[table][add][pat] failed to add: %.*s",
               (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
           GRN_OBJ_FIN(ctx, &buffer);
         }
@@ -1682,7 +1682,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
           GRN_TEXT_INIT(&buffer, 0);
           grn_inspect_key_with_table(ctx, &buffer, table, key, key_size);
           ERR(GRN_INVALID_ARGUMENT,
-              "[table][add] failed to add dat: %.*s",
+              "[table][add][dat] failed to add: %.*s",
               (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
           GRN_OBJ_FIN(ctx, &buffer);
         }
@@ -1702,7 +1702,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
           GRN_TEXT_INIT(&buffer, 0);
           grn_inspect_key_with_table(ctx, &buffer, table, key, key_size);
           ERR(GRN_INVALID_ARGUMENT,
-              "[table][add] failed to add hash: %.*s",
+              "[table][add][hash] failed to add: %.*s",
               (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
           GRN_OBJ_FIN(ctx, &buffer);
         }
