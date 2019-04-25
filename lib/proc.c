@@ -1859,7 +1859,7 @@ selector_all_records(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   memset(&posting, 0, sizeof(grn_posting));
   GRN_TABLE_EACH(ctx, table, 0, 0, id, NULL, NULL, NULL, {
     posting.rid = id;
-    grn_ii_posting_add(ctx, &posting, (grn_hash *)res, GRN_OP_OR);
+    grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
   });
 
   return ctx->rc;

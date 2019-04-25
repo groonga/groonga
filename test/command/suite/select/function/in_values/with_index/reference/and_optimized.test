@@ -1,4 +1,7 @@
 #$GRN_EXPR_OPTIMIZE=yes
+#@on-error omit
+plugin_register ruby/eval
+#@on-error default
 
 table_create Tags TABLE_PAT_KEY ShortText
 
