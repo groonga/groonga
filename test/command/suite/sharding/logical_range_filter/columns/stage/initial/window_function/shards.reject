@@ -1,0 +1,121 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+plugin_register functions/time
+[[0,0.0,0.0],true]
+table_create Logs_20170315 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Logs_20170316 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170316 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Logs_20170317 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170317 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 1000},
+{"timestamp": "2017/03/15 11:00:00", "price":  900},
+{"timestamp": "2017/03/15 12:00:00", "price":  300},
+{"timestamp": "2017/03/15 13:00:00", "price":  200}
+]
+[[0,0.0,0.0],4]
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 04:00:00", "price":  530},
+{"timestamp": "2017/03/16 05:00:00", "price":  520},
+{"timestamp": "2017/03/16 09:00:00", "price":  110},
+{"timestamp": "2017/03/16 13:00:00", "price":  410},
+{"timestamp": "2017/03/16 14:00:00", "price":  710}
+]
+[[0,0.0,0.0],5]
+load --table Logs_20170317
+[
+{"timestamp": "2017/03/17 09:00:00", "price":  800},
+{"timestamp": "2017/03/17 21:00:00", "price":  400},
+{"timestamp": "2017/03/17 22:00:00", "price":  500},
+{"timestamp": "2017/03/17 23:00:00", "price":  300}
+]
+[[0,0.0,0.0],4]
+logical_range_filter Logs   --shard_key timestamp   --max '2017/03/17 10:00:00.000'   --max_border exclude   --columns[day].stage initial   --columns[day].type Time   --columns[day].flags COLUMN_SCALAR   --columns[day].value 'time_classify_day(timestamp-36000000000)'   --columns[price_per_day].stage initial   --columns[price_per_day].type UInt32   --columns[price_per_day].flags COLUMN_SCALAR   --columns[price_per_day].value 'window_sum(price)'   --columns[price_per_day].window.group_keys 'day'   --output_columns _id,day,price_per_day
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "_id",
+        "UInt32"
+      ],
+      [
+        "day",
+        "Time"
+      ],
+      [
+        "price_per_day",
+        "UInt32"
+      ]
+    ],
+    [
+      1,
+      1489417200.0,
+      1000
+    ],
+    [
+      2,
+      1489503600.0,
+      1400
+    ],
+    [
+      3,
+      1489503600.0,
+      1400
+    ],
+    [
+      4,
+      1489503600.0,
+      1400
+    ],
+    [
+      1,
+      1489503600.0,
+      1160
+    ],
+    [
+      2,
+      1489503600.0,
+      1160
+    ],
+    [
+      3,
+      1489503600.0,
+      1160
+    ],
+    [
+      4,
+      1489590000.0,
+      1120
+    ],
+    [
+      5,
+      1489590000.0,
+      1120
+    ],
+    [
+      1,
+      1489590000.0,
+      800
+    ]
+  ]
+]

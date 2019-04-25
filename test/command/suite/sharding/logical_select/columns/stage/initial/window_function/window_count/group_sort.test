@@ -1,4 +1,6 @@
+#@on-error omit
 plugin_register sharding
+#@on-error default
 
 table_create Logs_20170415 TABLE_NO_KEY
 column_create Logs_20170415 timestamp COLUMN_SCALAR Time
@@ -31,4 +33,5 @@ logical_select Logs \
   --columns[count].flags COLUMN_SCALAR \
   --columns[count].value 'window_count()' \
   --columns[count].window.group_keys price \
-  --output_columns price,count
+  --columns[count].window.sort_keys price \
+  --output_columns _id,price,count
