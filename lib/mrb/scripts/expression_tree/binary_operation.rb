@@ -51,6 +51,8 @@ module Groonga
       ]
       def estimate_size(table)
         case @operator
+        when Operator::EQUAL
+          estimate_size_equal(table)
         when *RANGE_OPERATORS
           estimate_size_range(table)
         when *QUERY_OPERATIONS
@@ -63,6 +65,32 @@ module Groonga
       end
 
       private
+      def estimate_size_equal(table)
+        return table.size unless @left.is_a?(Variable)
+        return table.size unless @right.is_a?(Constant)
+
+        column = @left.column
+        value = @right.value
+        index_info = column.find_index(@operator)
+        return table.size if index_info.nil?
+
+        index_column = index_info.index
+        return table.size unless index_column.respond_to?(:lexicon)
+
+        lexicon = index_column.lexicon
+        term = value.value
+        if value.domain == lexicon.id
+          term_id = term.id
+        else
+          term_id = lexicon[term]
+        end
+        if term_id.nil?
+          0
+        else
+          index_column.estimate_size(term_id: term_id)
+        end
+      end
+
       def estimate_size_range(table)
         return table.size unless @left.is_a?(Variable)
         return table.size unless @right.is_a?(Constant)

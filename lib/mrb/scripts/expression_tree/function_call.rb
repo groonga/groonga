@@ -21,8 +21,18 @@ module Groonga
       end
 
       def estimate_size(table)
-        return table.size unless @procedure.name == "between"
+        case @procedure.name
+        when "between"
+          estimate_size_between(table)
+        when "in_values"
+          estimate_size_in_values(table)
+        else
+          table.size
+        end
+      end
 
+      private
+      def estimate_size_between(table)
         column, min, min_border, max, max_border = @arguments
 
         if column.is_a?(Groonga::ExpressionTree::IndexColumn)
@@ -63,6 +73,14 @@ module Groonga
 
         TableCursor.open(lexicon, options) do |cursor|
           index_column.estimate_size(:lexicon_cursor => cursor)
+        end
+      end
+
+      def estimate_size_in_values(table)
+        column, *values = @arguments
+        values.inject(0) do |sum, value|
+          node = BinaryOperation.new(Operator::EQUAL, column, value)
+          sum + node.estimate_size(table)
         end
       end
     end
