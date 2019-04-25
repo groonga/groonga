@@ -1,4 +1,4 @@
-CODE_NAMES = xenial,bionic,cosmic
+CODE_NAMES = xenial,bionic,cosmic,disco
 SOURCE = ../$(PACKAGE)-$(VERSION).tar.gz
 
 all:
