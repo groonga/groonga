@@ -78,9 +78,16 @@ module Groonga
 
       def estimate_size_in_values(table)
         column, *values = @arguments
-        values.inject(0) do |sum, value|
+        total = values.inject(0) do |sum, value|
           node = BinaryOperation.new(Operator::EQUAL, column, value)
           sum + node.estimate_size(table)
+        end
+        duplicated_ratio = 0.3 # No reason :p
+        estimated_size = (total * (1 - duplicated_ratio)).round
+        if estimated_size < table.size
+          estimated_size
+        else
+          table.size
         end
       end
     end
