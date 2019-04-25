@@ -1,4 +1,6 @@
+#@on-error omit
 plugin_register sharding
+#@on-error default
 
 table_create Items TABLE_HASH_KEY ShortText
 column_create Items price COLUMN_SCALAR UInt32
