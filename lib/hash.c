@@ -2239,7 +2239,7 @@ grn_io_hash_add(grn_ctx *ctx, grn_hash *hash, uint32_t hash_value,
       char name[GRN_TABLE_MAX_KEY_SIZE];
       int name_size;
       name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
-      ERR(GRN_INVALID_ARGUMENT, "[io][hash][add] failed to reuse entry: <%.*s>: <%u>",
+      ERR(GRN_INVALID_ARGUMENT, "[hash][io][add] failed to reuse entry: <%.*s>: <%u>",
           name_size, name, entry_id);
       return GRN_ID_NIL;
     }
@@ -2261,7 +2261,7 @@ grn_io_hash_add(grn_ctx *ctx, grn_hash *hash, uint32_t hash_value,
       char name[GRN_TABLE_MAX_KEY_SIZE];
       int name_size;
       name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
-      ERR(GRN_INVALID_ARGUMENT, "[io][hash][add] failed to add entry: <%.*s>: <%u>",
+      ERR(GRN_INVALID_ARGUMENT, "[hash][io][add] failed to add entry: <%.*s>: <%u>",
           name_size, name, entry_id);
       return GRN_ID_NIL;
     }
@@ -2272,7 +2272,7 @@ grn_io_hash_add(grn_ctx *ctx, grn_hash *hash, uint32_t hash_value,
     char name[GRN_TABLE_MAX_KEY_SIZE];
     int name_size;
     name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
-    ERR(GRN_INVALID_ARGUMENT, "[io][hash][add] failed to set a bit for the entry: <%.*s>: <%u>",
+    ERR(GRN_INVALID_ARGUMENT, "[hash][io][add] failed to set a bit for the entry: <%.*s>: <%u>",
         name_size, name, entry_id);
     return GRN_ID_NIL;
   }
@@ -2291,12 +2291,12 @@ grn_io_hash_add(grn_ctx *ctx, grn_hash *hash, uint32_t hash_value,
       char name[GRN_TABLE_MAX_KEY_SIZE];
       int name_size;
       name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
-      ERR(rc, "[io][hash][add] failed to put key: <%.*s>: <%.*s>",
+      ERR(rc, "[hash][io][add] failed to put key: <%.*s>: <%.*s>",
           name_size, name, (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
       GRN_OBJ_FIN(ctx, &buffer);
       rc = grn_hash_delete_by_id(ctx, hash, entry_id, NULL);
       if (rc != GRN_SUCCESS) {
-        ERR(rc, "[io][hash][add] failed to delete by id: <%.*s>: <%u>",
+        ERR(rc, "[hash][io][add] failed to delete by id: <%.*s>: <%u>",
             name_size, name, entry_id);
       }
       return GRN_ID_NIL;
