@@ -1,5 +1,3 @@
-#@omit TODO: Implement me
-
 #@on-error omit
 plugin_register sharding
 #@on-error default

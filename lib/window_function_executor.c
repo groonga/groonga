@@ -262,6 +262,30 @@ grn_window_function_executor_set_output_column_name(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
+static bool
+grn_window_function_executor_is_ascending(grn_ctx *ctx,
+                                          grn_window_function_executor *executor)
+{
+  const size_t sort_keys_len = GRN_TEXT_LEN(&(executor->sort_keys));
+  if (sort_keys_len == 0) {
+    return true;
+  }
+
+  const char *sort_keys = GRN_TEXT_VALUE(&(executor->sort_keys));
+  for (size_t i = 0; i < sort_keys_len; i++) {
+    switch (sort_keys[i]) {
+    case ' ' :
+      break;
+    case '-' :
+      return false;
+    default :
+      return true;
+    }
+  }
+
+  return true;
+}
+
 grn_rc
 grn_window_function_executor_execute(grn_ctx *ctx,
                                      grn_window_function_executor *executor)
@@ -300,8 +324,11 @@ grn_window_function_executor_execute(grn_ctx *ctx,
 
   grn_window_function_executor_rewind(ctx, executor);
 
+  const bool is_ascending =
+    grn_window_function_executor_is_ascending(ctx, executor);
   for (size_t i = 0; i < n_tables; i++) {
-    grn_obj *table = GRN_PTR_VALUE_AT(&(executor->tables), i);
+    size_t nth_table = (is_ascending ? i : (n_tables - i - 1));
+    grn_obj *table = GRN_PTR_VALUE_AT(&(executor->tables), nth_table);
 
     grn_obj *output_column = grn_obj_column(ctx,
                                             table,
