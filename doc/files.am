@@ -833,6 +833,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/api/grn_ii.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_index_cursor.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_info.rst \
+	$(top_srcdir)/doc/source/reference/api/grn_inspect.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_match_escalation.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_obj.rst \
 	$(top_srcdir)/doc/source/reference/api/grn_proc.rst \
@@ -1894,6 +1895,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/api/grn_ii.rst \
 	source/reference/api/grn_index_cursor.rst \
 	source/reference/api/grn_info.rst \
+	source/reference/api/grn_inspect.rst \
 	source/reference/api/grn_match_escalation.rst \
 	source/reference/api/grn_obj.rst \
 	source/reference/api/grn_proc.rst \
@@ -2233,15 +2235,9 @@ html_files_relative_from_locale_dir = \
 	html/_images/geo-points.png \
 	html/_images/used-when-indexing.png \
 	html/_images/used-when-searching.png \
-	html/_static/ajax-loader.gif \
 	html/_static/basic.css \
-	html/_static/comment-bright.png \
-	html/_static/comment-close.png \
-	html/_static/comment.png \
 	html/_static/doctools.js \
 	html/_static/documentation_options.js \
-	html/_static/down-pressed.png \
-	html/_static/down.png \
 	html/_static/favicon.ico \
 	html/_static/file.png \
 	html/_static/groonga.css \
@@ -2257,9 +2253,6 @@ html_files_relative_from_locale_dir = \
 	html/_static/searchtools.js \
 	html/_static/underscore-1.3.1.js \
 	html/_static/underscore.js \
-	html/_static/up-pressed.png \
-	html/_static/up.png \
-	html/_static/websupport.js \
 	html/characteristic.html \
 	html/client.html \
 	html/community.html \
@@ -2325,6 +2318,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/api/grn_ii.html \
 	html/reference/api/grn_index_cursor.html \
 	html/reference/api/grn_info.html \
+	html/reference/api/grn_inspect.html \
 	html/reference/api/grn_match_escalation.html \
 	html/reference/api/grn_obj.html \
 	html/reference/api/grn_proc.html \
