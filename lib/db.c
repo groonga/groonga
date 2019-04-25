@@ -103,6 +103,12 @@ grn_inspect_key_with_table_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *table, c
   GRN_TEXT_INIT(&inspected, 0);
   grn_inspect_limited(ctx, &inspected, table);
 
+  if (table->header.type == GRN_TABLE_NO_KEY) {
+    grn_text_printf(ctx, buffer, "no need to inspect key because table is TABLE_NO_KEY: <%.*s>",
+                    (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return;
+  }
   if (key && key_size > 0) {
     grn_obj key_buffer;
     GRN_OBJ_INIT(&key_buffer, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, table->header.domain);
@@ -112,11 +118,6 @@ grn_inspect_key_with_table_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *table, c
     grn_text_printf(ctx, buffer, "<%.*s>: <%.*s>",
                     (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected),
                     (int)GRN_TEXT_LEN(&key_buffer), GRN_TEXT_VALUE(&key_buffer));
-  } else {
-    if (table->header.type != GRN_TABLE_NO_KEY) {
-      grn_text_printf(ctx, buffer, "key must not NULL: <%.*s>",
-                      (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
-    }
   }
   GRN_OBJ_FIN(ctx, &inspected);
   return buffer;
