@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2013-2015 Brazil
+  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -73,6 +74,16 @@ mrb_grn_accessor_object(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_accessor_id_p(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *accessor;
+
+  accessor = DATA_PTR(self);
+  return mrb_bool_value(grn_obj_is_id_accessor(ctx, accessor));
+}
+
+static mrb_value
 mrb_grn_accessor_key_p(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -124,6 +135,8 @@ grn_mrb_accessor_init(grn_ctx *ctx)
                     mrb_grn_accessor_have_next_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "object",
                     mrb_grn_accessor_object, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "id?",
+                    mrb_grn_accessor_id_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "key?",
                     mrb_grn_accessor_key_p, MRB_ARGS_NONE());
 
