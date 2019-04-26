@@ -1461,7 +1461,7 @@ grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
 }
 
 grn_obj *
-grn_inspect_key_with_table(grn_ctx *ctx, grn_obj *buffer, grn_obj *table, const void *key, unsigned int key_size)
+grn_inspect_key(grn_ctx *ctx, grn_obj *buffer, grn_obj *table, const void *key, unsigned int key_size)
 {
   grn_obj inspected;
 

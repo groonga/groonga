@@ -51,8 +51,8 @@ int grn_tokenize(const char *str, size_t str_len,
                  const char **rest);
 
 grn_obj *
-grn_inspect_key_with_table(grn_ctx *ctx, grn_obj *buffer,
-                           grn_obj *table, const void *key, unsigned int key_size);
+grn_inspect_key(grn_ctx *ctx, grn_obj *buffer,
+                grn_obj *table, const void *key, unsigned int key_size);
 
 #ifdef __cplusplus
 }
