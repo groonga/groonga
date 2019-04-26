@@ -1,5 +1,3 @@
-#@omit TODO: Implemente me
-
 #@on-error omit
 plugin_register sharding
 plugin_register functions/time

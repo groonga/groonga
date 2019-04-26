@@ -1,6 +1,8 @@
 module Groonga
   module Sharding
     class DynamicColumns
+      include Enumerable
+
       class << self
         def parse(input)
           initial_contexts = {}
@@ -48,6 +50,12 @@ module Groonga
         not @output_contexts.empty?
       end
 
+      def have_window_function?
+        any? do |context|
+          context.window_function?
+        end
+      end
+
       def each_initial(&block)
         @initial_contexts.tsort_each(&block)
       end
@@ -66,16 +74,16 @@ module Groonga
         each_output(&block)
       end
 
-      def apply_initial(targets)
-        apply(@initial_contexts, targets)
+      def apply_initial(targets, options={})
+        apply(@initial_contexts, targets, options)
       end
 
-      def apply_filtered(targets)
-        apply(@filtered_contexts, targets)
+      def apply_filtered(targets, options={})
+        apply(@filtered_contexts, targets, options)
       end
 
-      def apply_output(targets)
-        apply(@output_contexts, targets)
+      def apply_output(targets, options={})
+        apply(@output_contexts, targets, options)
       end
 
       def empty?
@@ -105,7 +113,7 @@ module Groonga
       end
 
       private
-      def apply(contexts, targets)
+      def apply(contexts, targets, options)
         window_function_contexts = []
         normal_contexts = []
         contexts.each do |context|
@@ -116,13 +124,17 @@ module Groonga
           end
         end
 
-        targets.each do |result_set, options|
-          normal_contexts.each do |context|
-            context.apply(result_set, options)
+        if options.fetch(:normal, true)
+          targets.each do |result_set, options|
+            normal_contexts.each do |context|
+              context.apply(result_set, options)
+            end
           end
         end
-        window_function_contexts.each do |context|
-          context.apply_window_function(targets)
+        if options.fetch(:window_function, true)
+          window_function_contexts.each do |context|
+            context.apply_window_function(targets)
+          end
         end
       end
     end
@@ -196,11 +208,8 @@ module Groonga
       end
 
       def apply(table, options=nil)
-        if context_target?(options)
-          column = table.find_column(@label)
-        else
-          column = table.create_column(@label, @flags, @type)
-        end
+        return if table.find_column(@label)
+        column = table.create_column(@label, @flags, @type)
         return if table.empty?
 
         condition = nil
@@ -223,11 +232,15 @@ module Groonga
           executor.group_keys = @window_group_keys.join(", ")
           executor.output_column_name = @label
           targets.each do |table, options|
-            unless context_target?(options)
-              table.create_column(@label, @flags, @type)
-            end
+            is_context_table = context_target?(options)
+            column = table.find_column(@label)
+            column ||= table.create_column(@label, @flags, @type)
             next if table.empty?
-            executor.add_table(table)
+            if is_context_table
+              executor.add_context_table(table)
+            else
+              executor.add_table(table)
+            end
           end
           executor.execute
         ensure

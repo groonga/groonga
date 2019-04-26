@@ -97,6 +97,7 @@ module Groonga
         attr_reader :result_sets
         attr_reader :temporary_tables
         attr_reader :threshold
+        attr_reader :time_classify_types
         def initialize(input)
           @input = input
           @use_range_index = parse_use_range_index(@input[:use_range_index])
@@ -117,12 +118,20 @@ module Groonga
           @temporary_tables = []
 
           @threshold = compute_threshold
+
+          @time_classify_types = detect_time_classify_types
         end
 
         def close
           @temporary_tables.each do |table|
             table.close
           end
+        end
+
+        def need_look_ahead?
+          return false unless @dynamic_columns.have_window_function?
+          return false unless @time_classify_types.empty?
+          true
         end
 
         private
@@ -159,6 +168,33 @@ module Groonga
           default_threshold = 0.2
           (threshold_env || default_threshold).to_f
         end
+
+        def detect_time_classify_types
+          window_group_keys = []
+          @dynamic_columns.each_filtered do |dynamic_column|
+            window_group_keys.concat(dynamic_column.window_group_keys)
+          end
+          return [] if window_group_keys.empty?
+
+          types = []
+          @dynamic_columns.each do |dynamic_column|
+            next unless window_group_keys.include?(dynamic_column.label)
+            case dynamic_column.value.strip
+            when /\Atime_classify_(.+?)\s*\(\s*([a-zA-Z\d_]+)\s*[,)]/
+              type = $1
+              column = $2
+              next if column != @enumerator.shard_key_name
+
+              case type
+              when "minute", "second"
+                types << type
+              when "day", "hour"
+                types << type
+              end
+            end
+          end
+          types
+        end
       end
 
       class Executor
@@ -168,20 +204,13 @@ module Groonga
 
         def execute
           first_shard = nil
-          enumerator = @context.enumerator
-          target_range = enumerator.target_range
-          if @context.order == :descending
-            each_method = :reverse_each
-          else
-            each_method = :each
-          end
-          enumerator.send(each_method) do |shard, shard_range|
-            first_shard ||= shard
-            shard_executor = ShardExecutor.new(@context, shard, shard_range)
+          each_shard_executor do |shard_executor|
+            first_shard ||= shard_executor.shard
             shard_executor.execute
             break if @context.current_limit.zero?
           end
           if first_shard.nil?
+            enumerator = @context.enumerator
             message =
               "[logical_range_filter] no shard exists: " +
               "logical_table: <#{enumerator.logical_table}>: " +
@@ -196,6 +225,36 @@ module Groonga
             @context.dynamic_columns.apply_initial(targets)
             @context.dynamic_columns.apply_filtered(targets)
             @context.result_sets << result_set
+          end
+        end
+
+        private
+        def each_shard_executor(&block)
+          enumerator = @context.enumerator
+          target_range = enumerator.target_range
+          if @context.order == :descending
+            each_method = :reverse_each
+          else
+            each_method = :each
+          end
+          if @context.need_look_ahead?
+            executors = []
+            previous_executor = nil
+            enumerator.send(each_method) do |shard, shard_range|
+              current_executor = ShardExecutor.new(@context, shard, shard_range)
+              if previous_executor
+                previous_executor.next_executor = current_executor
+                current_executor.previous_executor = previous_executor
+                executors << previous_executor
+              end
+              previous_executor = current_executor
+            end
+            executors << previous_executor if previous_executor
+            executors.each(&block)
+          else
+            enumerator.send(each_method) do |shard, shard_range|
+              yield(ShardExecutor.new(@context, shard, shard_range))
+            end
           end
         end
       end
@@ -435,72 +494,137 @@ module Groonga
       end
 
       class ShardExecutor
+        attr_reader :shard
+        attr_writer :previous_executor
+        attr_writer :next_executor
         def initialize(context, shard, shard_range)
           @context = context
           @shard = shard
           @shard_range = shard_range
 
+          @shard_key = shard.key
           @target_table = @shard.table
 
           @filter = @context.filter
           @post_filter = @context.post_filter
           @result_sets = @context.result_sets
+          @filtered_result_sets = []
           @temporary_tables = @context.temporary_tables
 
           @target_range = @context.enumerator.target_range
 
           @cover_type = @target_range.cover_type(@shard_range)
+
+          @previous_executor = nil
+          @next_executor = nil
+
+          @initital_table = nil
+
+          @range_index = nil
+          @window = nil
+
+          @prepared = false
+          @filtered = false
         end
 
         def execute
-          return if @cover_type == :none
-          return if @target_table.empty?
+          ensure_filtered
 
-          shard_key = @shard.key
-          if shard_key.nil?
+          return if @filtered_result_sets.empty?
+
+          if @window
+            @filtered_result_sets.each do |result_set|
+              @window.each(result_set) do |windowed_result_set|
+                @temporary_tables << windowed_result_set
+                if @context.dynamic_columns.have_filtered?
+                  apply_targets = [[windowed_result_set]]
+                  @context.dynamic_columns.apply_filtered(apply_targets)
+                end
+                sort_result_set(windowed_result_set)
+                return if @context.current_limit.zero?
+              end
+            end
+          else
+            apply_targets = []
+            if @previous_executor
+              @previous_executor.add_filtered_stage_context(apply_targets)
+            end
+            @filtered_result_sets.each do |result_set|
+              apply_targets << [result_set]
+            end
+            if @next_executor
+              @next_executor.add_filtered_stage_context(apply_targets)
+            end
+            options = {}
+            if @context.need_look_ahead?
+              options[:normal] = false
+            end
+            @context.dynamic_columns.apply_filtered(apply_targets, options)
+            @filtered_result_sets.each do |result_set|
+              sort_result_set(result_set)
+            end
+          end
+        end
+
+        def add_initial_stage_context(apply_targets)
+          ensure_prepared
+          return unless @initial_table
+          apply_targets << [@initial_table, {context: true}]
+        end
+
+        def add_filtered_stage_context(apply_targets)
+          ensure_filtered
+          @filtered_result_sets.each do |table|
+            apply_targets << [table, {context: true}]
+          end
+        end
+
+        private
+        def have_record?
+          return false if @cover_type == :none
+          return false if @target_table.empty?
+          true
+        end
+
+        def ensure_prepared
+          return if @prepared
+          @prepared = true
+
+          return unless have_record?
+
+          if @shard_key.nil?
             message = "[logical_range_filter] shard_key doesn't exist: " +
                       "<#{@shard.key_name}>"
             raise InvalidArgument, message
           end
 
-          expression_builder = RangeExpressionBuilder.new(shard_key,
-                                                          @target_range)
-          expression_builder.filter = @filter
-
-          index_info = shard_key.find_index(Operator::LESS)
-          if index_info
-            range_index = index_info.index
-            unless use_range_index?(range_index, expression_builder)
-              range_index = nil
-            end
-          else
-            range_index = nil
+          @expression_builder = RangeExpressionBuilder.new(@shard_key,
+                                                           @target_range)
+          @expression_builder.filter = @filter
+          index_info = @shard_key.find_index(Operator::LESS)
+          if index_info and use_range_index?
+            @range_index = index_info.index
           end
 
           if @context.dynamic_columns.have_initial?
-            if @target_table == @shard.table
-              if @cover_type == :all
-                @target_table = @target_table.select_all
-              else
-                expression_builder.filter = nil
-                @target_table = create_expression(@target_table) do |expression|
-                  expression_builder.build(expression, @shard_range)
-                  @target_table.select(expression)
-                end
-                @cover_type = :all
-                expression_builder.filter = @filter
+            if @cover_type == :all
+              @target_table = @target_table.select_all
+            else
+              @expression_builder.filter = nil
+              @target_table = create_expression(@target_table) do |expression|
+                @expression_builder.build(expression, @shard_range)
+                @target_table.select(expression)
               end
-              @temporary_tables << @target_table
+              @expression_builder.filter = @filter
+              @cover_type = :all
             end
-            apply_targets = []
-            apply_targets << [@target_table]
-            @context.dynamic_columns.apply_initial(apply_targets)
+            @temporary_tables << @target_table
+            @initial_table = @target_table
           end
 
-          execute_filter(range_index, expression_builder)
+          @window = detect_window
         end
 
-        private
         def decide_use_range_index(use, reason, line, method)
           message = "[logical_range_filter]"
           if use
@@ -519,7 +643,7 @@ module Groonga
           use
         end
 
-        def use_range_index?(range_index, expression_builder)
+        def use_range_index?
           use_range_index_parameter_message =
             "force by use_range_index parameter"
           case @context.use_range_index
@@ -595,7 +719,7 @@ module Groonga
           when :all
             if @filter
               create_expression(table) do |expression|
-                expression_builder.build_all(expression)
+                @expression_builder.build_all(expression)
                 unless range_index_available_expression?(expression,
                                                          __LINE__, __method__)
                   return false
@@ -607,7 +731,7 @@ module Groonga
             end
           when :partial_min
             create_expression(table) do |expression|
-              expression_builder.build_partial_min(expression)
+              @expression_builder.build_partial_min(expression)
               unless range_index_available_expression?(expression,
                                                        __LINE__, __method__)
                 return false
@@ -616,7 +740,7 @@ module Groonga
             end
           when :partial_max
             create_expression(table) do |expression|
-              expression_builder.build_partial_max(expression)
+              @expression_builder.build_partial_max(expression)
               unless range_index_available_expression?(expression,
                                                        __LINE__, __method__)
                 return false
@@ -625,7 +749,7 @@ module Groonga
             end
           when :partial_min_and_max
             create_expression(table) do |expression|
-              expression_builder.build_partial_min_and_max(expression)
+              @expression_builder.build_partial_min_and_max(expression)
               unless range_index_available_expression?(expression,
                                                        __LINE__, __method__)
                 return false
@@ -698,65 +822,102 @@ module Groonga
           nil
         end
 
-        def execute_filter(range_index, expression_builder)
+        def ensure_filtered
+          return if @filtered
+
+          @filtered = true
+
+          ensure_prepared
+          return unless have_record?
+
+          if @context.dynamic_columns.have_initial?
+            apply_targets = []
+            if @previous_executor
+              @previous_executor.add_initial_stage_context(apply_targets)
+            end
+            apply_targets << [@target_table]
+            if @next_executor
+              @next_executor.add_initial_stage_context(apply_targets)
+            end
+            @context.dynamic_columns.apply_initial(apply_targets)
+          end
+
+          execute_filter(@range_index)
+
+          return unless @context.need_look_ahead?
+
+          apply_targets = []
+          @filtered_result_sets = @filtered_result_sets.collect do |result_set|
+            if result_set == @shard.table
+              result_set = result_set.select_all
+              @temporary_tables << result_set
+            end
+            apply_targets << [result_set]
+            result_set
+          end
+          @context.dynamic_columns.apply_filtered(apply_targets,
+                                                  window_function: false)
+        end
+
+        def execute_filter(range_index)
           case @cover_type
           when :all
-            filter_shard_all(range_index, expression_builder)
+            filter_shard_all(range_index)
           when :partial_min
             if range_index
-              filter_by_range(range_index, expression_builder,
+              filter_by_range(range_index,
                               @target_range.min, @target_range.min_border,
                               nil, nil)
             else
               filter_table do |expression|
-                expression_builder.build_partial_min(expression)
+                @expression_builder.build_partial_min(expression)
               end
             end
           when :partial_max
             if range_index
-              filter_by_range(range_index, expression_builder,
+              filter_by_range(range_index,
                               nil, nil,
                               @target_range.max, @target_range.max_border)
             else
               filter_table do |expression|
-                expression_builder.build_partial_max(expression)
+                @expression_builder.build_partial_max(expression)
               end
             end
           when :partial_min_and_max
             if range_index
-              filter_by_range(range_index, expression_builder,
+              filter_by_range(range_index,
                               @target_range.min, @target_range.min_border,
                               @target_range.max, @target_range.max_border)
             else
               filter_table do |expression|
-                expression_builder.build_partial_min_and_max(expression)
+                @expression_builder.build_partial_min_and_max(expression)
               end
             end
           end
         end
 
-        def filter_shard_all(range_index, expression_builder)
+        def filter_shard_all(range_index)
           table = @target_table
           if @filter.nil?
             if @post_filter.nil? and table.size <= @context.current_offset
               @context.current_offset -= table.size
               return
             end
-            if range_index
-              filter_by_range(range_index, expression_builder,
+            if @range_index
+              filter_by_range(range_index,
                               nil, nil,
                               nil, nil)
             else
-              add_result_set(table)
+              add_filtered_result_set(table)
             end
           else
-            if range_index
-              filter_by_range(range_index, expression_builder,
+            if @range_index
+              filter_by_range(range_index,
                               nil, nil,
                               nil, nil)
             else
               filter_table do |expression|
-                expression_builder.build_all(expression)
+                @expression_builder.build_all(expression)
               end
             end
           end
@@ -771,8 +932,7 @@ module Groonga
           end
         end
 
-        def filter_by_range(range_index, expression_builder,
-                            min, min_border, max, max_border)
+        def filter_by_range(range_index, min, min_border, max, max_border)
           lexicon = range_index.domain
           data_table = range_index.range
           flags = build_range_search_flags(min_border, max_border)
@@ -819,7 +979,7 @@ module Groonga
                 decide_use_range_index(false,
                                        fallback_message,
                                        __LINE__, __method__)
-                execute_filter(nil, expression_builder)
+                execute_filter(nil)
                 return
               end
             end
@@ -886,7 +1046,7 @@ module Groonga
             yield(expression)
             result_set = table.select(expression)
             @temporary_tables << result_set
-            add_result_set(result_set)
+            add_filtered_result_set(result_set)
           end
         end
 
@@ -897,34 +1057,12 @@ module Groonga
           end
         end
 
-        def add_result_set(result_set)
-          if result_set.empty?
-            return
-          end
-
-          window = detect_window
-          if window
-            window.each(result_set) do |windowed_result_set|
-              @temporary_tables << windowed_result_set
-              sort_result_set(windowed_result_set)
-              break if @context.current_limit.zero?
-            end
-          else
-            sort_result_set(result_set)
-          end
+        def add_filtered_result_set(result_set)
+          return if result_set.empty?
+          @filtered_result_sets << result_set
         end
 
         def sort_result_set(result_set)
-          if @context.dynamic_columns.have_filtered?
-            if result_set == @shard.table
-              result_set = result_set.select_all
-              @temporary_tables << result_set
-            end
-            apply_targets = []
-            apply_targets << [result_set]
-            @context.dynamic_columns.apply_filtered(apply_targets)
-          end
-
           unless @post_filter.nil?
             result_set = apply_post_filter(result_set)
             @temporary_tables << result_set
@@ -973,30 +1111,15 @@ module Groonga
         end
 
         def detect_window
-          window_group_keys = []
-          @context.dynamic_columns.each_filtered do |dynamic_column|
-            window_group_keys.concat(dynamic_column.window_group_keys)
-          end
-          return nil if window_group_keys.empty?
-
           # TODO: return nil if result_set is small enough
-
           windows = []
-          @context.dynamic_columns.each do |dynamic_column|
-            next unless window_group_keys.include?(dynamic_column.label)
-            case dynamic_column.value.strip
-            when /\Atime_classify_(.+?)\s*\(\s*([a-zA-Z\d_]+)/
-              type = $1
-              column = $2
-              next if column != @context.enumerator.shard_key_name
-
-              case type
-              when "minute", "second"
-                windows << Window.new(@context, @shard, @shard_range, :hour, 1)
-              when "day", "hour"
-                unless @shard_range.is_a?(LogicalEnumerator::DayShardRange)
-                  windows << Window.new(@context, @shard, @shard_range, :day, 1)
-                end
+          @context.time_classify_types.each do |type|
+            case type
+            when "minute", "second"
+              windows << Window.new(@context, @shard, @shard_range, :hour, 1)
+            when "day", "hour"
+              unless @shard_range.is_a?(LogicalEnumerator::DayShardRange)
+                windows << Window.new(@context, @shard, @shard_range, :day, 1)
               end
             end
           end
