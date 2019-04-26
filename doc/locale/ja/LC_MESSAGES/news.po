@@ -33,11 +33,134 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 9.0.1 - 2019-03-29"
-msgstr "9.0.1リリース - 2019-03-29"
+msgid "Release 9.0.2 - 2019-04-29"
+msgstr "9.0.2リリース - 2019-04-29"
+
+msgid "We provide a package for Windows made from VC++ from this release."
+msgstr "このリリースからVC++で作成したWindows版パッケージを提供します。"
+
+msgid ""
+"We also provide a package for Windows made form MinGW as in the past. "
+"However, we will only provide it made from VC++ sooner or later."
+msgstr ""
+"今までどおりMinGWで作成したWindows版パッケージも提供していますが、近いうちに"
+"VC++で作成したもののみを提供する予定です。"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[:doc:`/reference/commands/column_create`] Added a new flag ``INDEX_LARGE`` "
+"for index column."
+msgstr ""
+"[:doc:`/reference/commands/column_create`] 新しいフラグ ``INDEX_LARGE`` を追"
+"加しました。"
+
+msgid ""
+"We can make an index column has space that two times of default by this flag."
+msgstr ""
+"このフラグによって、デフォルトの2倍の領域を持つインデックスカラムを作成できま"
+"す。"
+
+msgid "However, note that it also uses two times of memory usage."
+msgstr "ただ、メモリ使用量も2倍となることに注意して下さい。"
+
+msgid "This flag useful when index target data are large."
+msgstr "このフラグは、インデックス対象のデータが大きい時に有用です。"
+
+msgid ""
+"Large data must have many records (normally at least 10 millions records) "
+"and at least one of the following features."
+msgstr ""
+"大きいデータとは、大量のレコード（通常は少なくとも1000万レコード以上）があ"
+"り、少なくとも次のうちの1つ以上の特徴があります。"
+
+msgid "Index targets are multiple columns"
+msgstr "インデックス対象が複数のカラム"
+
+msgid "Index table has tokenizer"
+msgstr "インデックステーブルにトークナイザーが付いている"
+
+msgid ""
+"[:doc:`/reference/commands/object_inspect`] Added a new statistics "
+"``next_physical_segment_id`` and ``max_n_physical_segments`` for physical "
+"segment information."
+msgstr ""
+"[:doc:`/reference/commands/object_inspect`] セグメントの新しい統計値 "
+"``next_physical_segment_id`` と ``max_n_physical_segments`` を追加しました。"
+
+msgid ""
+"We can confirm usage of index column space and max value of index column "
+"space by this information."
+msgstr ""
+"この情報で、インデックスカラムの領域の使用量とインデックスカラムの領域の最大"
+"値を確認できます。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_select`] Added support for window "
+"function over shard."
+msgstr ""
+"[:doc:`/reference/commands/logical_select`] シャードをまたがったウィンドウ関"
+"数をサポートしました。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_range_filter`] Added support for window "
+"function over shard."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] シャードをまたがったウイン"
+"ドウ関数をサポートしました。"
+
+msgid ""
+"[:doc:`/reference/commands/logical_count`] Added support for window function "
+"over shard."
+msgstr ""
+"[:doc:`/reference/commands/logical_count`] シャードをまたがったウインドウ関数"
+"をサポートしました。"
+
+msgid "We provided a package for Windows made from VC++."
+msgstr ""
+"このリリースからVC++で作成したWindows版パッケージを提供するようにしました。"
+
+msgid ""
+"[:doc:`/reference/commands/io_flush`] Added a new option ``--recursive "
+"dependent``"
+msgstr ""
+"[:doc:`reference/commands/io_flush`] 新しいオプション ``--recursive "
+"dependent`` を追加しました。"
+
+msgid ""
+"We can all of the specified flush target object, child objects, "
+"corresponding table of an index column and corresponding index column are "
+"flush target objects."
+msgstr ""
+"指定した書き出し対象オブジェクトとその子オブジェクトすべて、参照先のテーブ"
+"ル、インデックスが張られているカラムがある場合、対応するインデックスカラムと"
+"そのインデックスカラムのテーブルを書き出し対象オブジェクトにできます。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"Fixed \"unknown type name 'bool'\" compilation error in some environments."
+msgstr ""
+"一部の環境でコンパイルエラー \"unknown type name 'bool'\" が発生する問題を修"
+"正しました。"
+
+msgid ""
+"Fixed a bug that incorrect output number over Int32. [GitHub#936] [Patch by "
+"HashidaTKS]"
+msgstr ""
+"Int32を超える数を正しく出力できない問題を修正しました。[GitHub#936] "
+"[HashidaTKSさんがパッチ提供]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "HashidaTKS"
+msgstr "HashidaTKSさん"
+
+msgid "Release 9.0.1 - 2019-03-29"
+msgstr "9.0.1リリース - 2019-03-29"
 
 msgid "Added support to acccept null for vector value."
 msgstr "ベクターの値にnullが使えるようになりました。"
@@ -139,9 +262,6 @@ msgstr ""
 "ました。コマンド実行の進捗を記録したい場合は、ログレベルをdebugに設定してくだ"
 "さい。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "[:doc:`/reference/functions/snippet_html`] Changed to return an empty vector "
 "for no match."
@@ -196,10 +316,10 @@ msgstr "大量のレコードを追加または、削除した時に発生する
 
 msgid ""
 "Fixed a memory leak when ``logical_range_filter`` returns no records. "
-"[GitHub#911] [Reported by HashidaTKS]"
+"[GitHub#911] [Patch by HashidaTKS]"
 msgstr ""
 "``logical_range_filter`` がレコードを返さない場合のメモリリークを修正しまし"
-"た。[GitHub#911] [HashidaTKSさんが報告]"
+"た。[GitHub#911] [HashidaTKSさんがパッチ提供]"
 
 msgid ""
 "Fixed a bug that query will not match because of loading data is not "
@@ -233,14 +353,8 @@ msgstr ""
 "インデックス更新時に十分な作業領域を確保できずにクラッシュするバクを修正しま"
 "した。"
 
-msgid "Thanks"
-msgstr "感謝"
-
 msgid "shiro615"
 msgstr "shiro615さん"
-
-msgid "HashidaTKS"
-msgstr "HashidaTKSさん"
 
 msgid "kamicup"
 msgstr "kamicupさん"
@@ -13252,3 +13366,6 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
+
+#~ msgid "Used an Appveyor's artifact for Windows package."
+#~ msgstr "Windows版パッケージにAppVeyorの成果物を使うようにしました。"

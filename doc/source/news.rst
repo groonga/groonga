@@ -7,6 +7,57 @@
 News
 ====
 
+.. _release-9-0-2:
+
+Release 9.0.2 - 2019-04-29
+--------------------------
+
+We provide a package for Windows made from VC++ from this release.
+
+We also provide a package for Windows made form MinGW as in the past.
+However, we will only provide it made from VC++ sooner or later.
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/column_create`] Added a new flag ``INDEX_LARGE`` for index column.
+
+  * We can make an index column has space that two times of default by this flag.
+  * However, note that it also uses two times of memory usage.
+  * This flag useful when index target data are large.
+  * Large data must have many records (normally at least 10 millions records) and at least one of the following features.
+
+    * Index targets are multiple columns
+    * Index table has tokenizer
+
+* [:doc:`/reference/commands/object_inspect`] Added a new statistics ``next_physical_segment_id`` and ``max_n_physical_segments`` for physical segment information.
+
+  * We can confirm usage of index column space and max value of index column space by this information.
+
+* [:doc:`/reference/commands/logical_select`] Added support for window function over shard.
+
+* [:doc:`/reference/commands/logical_range_filter`] Added support for window function over shard.
+
+* [:doc:`/reference/commands/logical_count`] Added support for window function over shard.
+
+* We provided a package for Windows made from VC++.
+
+* [:doc:`/reference/commands/io_flush`] Added a new option ``--recursive dependent``
+
+  * We can all of the specified flush target object, child objects, corresponding table of an index column and corresponding index column are flush target objects.
+
+Fixes
+^^^^^
+
+* Fixed "unknown type name 'bool'" compilation error in some environments.
+
+* Fixed a bug that incorrect output number over Int32. [GitHub#936] [Patch by HashidaTKS]
+
+Thanks
+^^^^^^
+
+* HashidaTKS
+
 .. _release-9-0-1:
 
 Release 9.0.1 - 2019-03-29
@@ -77,7 +128,7 @@ Fixes
 
   * It may occure when large number of records is added or deleted.
 
-* Fixed a memory leak when ``logical_range_filter`` returns no records. [GitHub#911] [Reported by HashidaTKS]
+* Fixed a memory leak when ``logical_range_filter`` returns no records. [GitHub#911] [Patch by HashidaTKS]
 
 * Fixed a bug that query will not match because of loading data is not normalized correctly.
   [PGroonga#GitHub#93, GitHub#912,GitHub#913] [Reported by kamicup and dodaisuke]
