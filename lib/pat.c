@@ -808,7 +808,7 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
           char name[GRN_TABLE_MAX_KEY_SIZE];
           int name_size;
           name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
-          ERR(GRN_INVALID_ARGUMENT, "[pat][key] failed to get key from node: <%.*s>",
+          ERR(GRN_INVALID_ARGUMENT, "[pat][add] failed to get key from node: <%.*s>",
               name_size, name);
           return GRN_ID_NIL;
         }
@@ -830,7 +830,7 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
           char name[GRN_TABLE_MAX_KEY_SIZE];
           int name_size;
           name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
-          ERR(GRN_INVALID_ARGUMENT, "[pat][key] failed to get key from node "
+          ERR(GRN_INVALID_ARGUMENT, "[pat][add] failed to get key from node "
               "c0 < rn0->check < len: <%.*s>: <%d> <%d> <%d>",
               name_size, name, c0, rn0->check, len);
           return GRN_ID_NIL;
@@ -867,7 +867,7 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
               char name[GRN_TABLE_MAX_KEY_SIZE];
               int name_size;
               name_size = grn_pat_name(ctx, pat, name, GRN_TABLE_MAX_KEY_SIZE);
-              ERR(GRN_INVALID_ARGUMENT, "[pat] failed to detect by node: <%.*s>", name_size, name);
+              ERR(GRN_INVALID_ARGUMENT, "[pat][add] failed to detect by node: <%.*s>", name_size, name);
               return GRN_ID_NIL;
             }
             c0 = PAT_CHK(rn0);
@@ -938,7 +938,7 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
           GRN_TEXT_SET(ctx, &key_buffer, key, size);
           grn_inspect(ctx, &buffer, &key_buffer);
           GRN_OBJ_FIN(ctx, &key_buffer);
-          ERR(GRN_INVALID_ARGUMENT, "[pat] failed to set key to pat node: <%.*s>: <%.*s>",
+          ERR(GRN_INVALID_ARGUMENT, "[pat][add] failed to set key to pat node: <%.*s>: <%.*s>",
               name_size, name, (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
           GRN_OBJ_FIN(ctx, &buffer);
           return GRN_ID_NIL;
