@@ -22,3 +22,5 @@ load --table Users --command_version 3 --output_ids yes
     ]
   }
 }
+#|e| [hash][add] key must not NULL: <Users>
+#|e| [table][add][hash] failed to add: #<key (nil) table:#<hash Users key:ShortText>>

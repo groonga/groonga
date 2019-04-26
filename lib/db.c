@@ -74,6 +74,14 @@ static const uint32_t GRN_TABLE_PAT_KEY_CACHE_SIZE = 1 << 15;
       grn_string_get_normalized(ctx, nstr, &key, &key_size, NULL);\
       block\
       grn_obj_close(ctx, nstr);\
+    } else {\
+      char name[GRN_TABLE_MAX_KEY_SIZE];\
+      int name_size;\
+      name_size = grn_obj_name(ctx, (grn_obj *)(table), name, GRN_TABLE_MAX_KEY_SIZE);\
+      ERR(GRN_INVALID_ARGUMENT,\
+          "[key][normalize] failed to normalize: <%.*s>: <%.*s>",\
+          name_size, name,\
+          (int)key_size, (const char *)key);\
     }\
   } else {\
     block\
@@ -1614,6 +1622,15 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
           } GRN_TABLE_LOCK_END(ctx, table);
         });
         if (added) { *added = added_; }
+        if (id == GRN_ID_NIL) {
+          grn_obj buffer;
+          GRN_TEXT_INIT(&buffer, 0);
+          grn_inspect_key(ctx, &buffer, table, key, key_size);
+          ERR(GRN_INVALID_ARGUMENT,
+              "[table][add][pat] failed to add: %.*s",
+              (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+          GRN_OBJ_FIN(ctx, &buffer);
+        }
       }
       break;
     case GRN_TABLE_DAT_KEY :
@@ -1625,6 +1642,15 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
           } GRN_TABLE_LOCK_END(ctx, table);
         });
         if (added) { *added = added_; }
+        if (id == GRN_ID_NIL) {
+          grn_obj buffer;
+          GRN_TEXT_INIT(&buffer, 0);
+          grn_inspect_key(ctx, &buffer, table, key, key_size);
+          ERR(GRN_INVALID_ARGUMENT,
+              "[table][add][dat] failed to add: %.*s",
+              (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+          GRN_OBJ_FIN(ctx, &buffer);
+        }
       }
       break;
     case GRN_TABLE_HASH_KEY :
@@ -1636,6 +1662,15 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
           } GRN_TABLE_LOCK_END(ctx, table);
         });
         if (added) { *added = added_; }
+        if (id == GRN_ID_NIL) {
+          grn_obj buffer;
+          GRN_TEXT_INIT(&buffer, 0);
+          grn_inspect_key(ctx, &buffer, table, key, key_size);
+          ERR(GRN_INVALID_ARGUMENT,
+              "[table][add][hash] failed to add: %.*s",
+              (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+          GRN_OBJ_FIN(ctx, &buffer);
+        }
       }
       break;
     case GRN_TABLE_NO_KEY :
@@ -1646,6 +1681,15 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         } GRN_TABLE_LOCK_END(ctx, table);
         added_ = id ? 1 : 0;
         if (added) { *added = added_; }
+        if (id == GRN_ID_NIL) {
+          grn_obj buffer;
+          GRN_TEXT_INIT(&buffer, 0);
+          grn_inspect_key(ctx, &buffer, table, key, key_size);
+          ERR(GRN_INVALID_ARGUMENT,
+              "[table][add] failed to add: %.*s",
+              (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+          GRN_OBJ_FIN(ctx, &buffer);
+        }
       }
       break;
     }
@@ -1685,6 +1729,9 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         GRN_OBJ_FIN(ctx, &value_);
       }
     }
+  } else {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][add] failed to add: table must not NULL");
   }
   GRN_API_RETURN(id);
 }

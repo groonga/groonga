@@ -1460,6 +1460,47 @@ grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
   return buffer;
 }
 
+grn_obj *
+grn_inspect_key(grn_ctx *ctx, grn_obj *buffer, grn_obj *table, const void *key, unsigned int key_size)
+{
+  if (!buffer) {
+    buffer = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
+  }
+
+  if (!table) {
+    GRN_TEXT_PUTS(ctx, buffer, "(NULL)");
+    return buffer;
+  }
+
+  if (table->header.type == GRN_TABLE_NO_KEY) {
+    GRN_TEXT_PUTS(ctx, buffer, "#<key (nil) table:#<");
+    grn_table_type_inspect(ctx, buffer, table);
+    GRN_TEXT_PUTS(ctx, buffer, " ");
+    grn_inspect_name(ctx, buffer, table);
+    GRN_TEXT_PUTS(ctx, buffer, ">>");
+    return buffer;
+  }
+  if (key && key_size > 0) {
+    grn_obj key_buffer;
+    GRN_TEXT_INIT(&key_buffer, 0);
+    GRN_OBJ_INIT(&key_buffer, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, table->header.domain);
+    GRN_TEXT_SET(ctx, &key_buffer, key, key_size);
+    GRN_TEXT_PUTS(ctx, buffer, "#<key ");
+    grn_inspect(ctx, buffer, &key_buffer);
+    GRN_OBJ_FIN(ctx, &key_buffer);
+  } else {
+    GRN_TEXT_PUTS(ctx, buffer, "#<key (nil)");
+  }
+  GRN_TEXT_PUTS(ctx, buffer, " table:#<");
+  grn_table_type_inspect(ctx, buffer, table);
+  GRN_TEXT_PUTS(ctx, buffer, " ");
+  grn_inspect_name(ctx, buffer, table);
+  GRN_TEXT_PUTS(ctx, buffer, " ");
+  grn_table_key_inspect(ctx, buffer, table);
+  GRN_TEXT_PUTS(ctx, buffer, ">>");
+  return buffer;
+}
+
 void
 grn_p(grn_ctx *ctx, grn_obj *obj)
 {

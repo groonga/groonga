@@ -63,6 +63,21 @@ class CriticalSection {
   CriticalSection &operator=(const CriticalSection &);
 };
 
+grn_inline static int
+grn_dat_name(grn_ctx *ctx, grn_dat *dat, char *buffer, int buffer_size)
+{
+  int name_size;
+
+  if (DB_OBJ(dat)->id == GRN_ID_NIL) {
+    grn_strcpy(buffer, buffer_size, "(anonymous)");
+    name_size = strlen(buffer);
+  } else {
+    name_size = grn_obj_name(ctx, (grn_obj *)dat, buffer, buffer_size);
+  }
+
+  return name_size;
+}
+
 /*
   grn_dat_remove_file() removes a file specified by `path' and then returns
   true on success, false on failure. Note that grn_dat_remove_file() does not
@@ -498,6 +513,11 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
             unsigned int key_size, void **, int *added)
 {
   if (!key_size) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_dat_name(ctx, dat, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT, "[dat] key size must not zero: <%.*s>",
+        name_size, name);
     return GRN_ID_NIL;
   } else if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return GRN_ID_NIL;

@@ -2236,6 +2236,11 @@ grn_io_hash_add(grn_ctx *ctx, grn_hash *hash, uint32_t hash_value,
   if (entry_id) {
     entry = grn_io_hash_entry_at(ctx, hash, entry_id, GRN_TABLE_ADD);
     if (!entry) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT, "[hash][io][add] failed to reuse entry: <%.*s>: <%u>",
+          name_size, name, entry_id);
       return GRN_ID_NIL;
     }
     garbages[key_size - 1] = *(grn_id *)entry;
@@ -2253,18 +2258,49 @@ grn_io_hash_add(grn_ctx *ctx, grn_hash *hash, uint32_t hash_value,
     entry_id = header->curr_rec + 1;
     entry = grn_hash_entry_at(ctx, hash, entry_id, GRN_TABLE_ADD);
     if (!entry) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT, "[hash][io][add] failed to add entry: <%.*s>: <%u>",
+          name_size, name, entry_id);
       return GRN_ID_NIL;
     }
     header->curr_rec = entry_id;
   }
 
   if (!grn_io_array_bit_on(ctx, hash->io, GRN_HASH_BITMAP_SEGMENT, entry_id)) {
-    /* TODO: error handling. */
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT, "[hash][io][add] failed to set a bit for the entry: <%.*s>: <%u>",
+        name_size, name, entry_id);
+    return GRN_ID_NIL;
   }
 
-  if (grn_hash_entry_put_key(ctx, hash, entry, hash_value, key, key_size)) {
-    grn_hash_delete_by_id(ctx, hash, entry_id, NULL);
-    return GRN_ID_NIL;
+  {
+    grn_rc rc;
+    rc = grn_hash_entry_put_key(ctx, hash, entry, hash_value, key, key_size);
+    if (rc != GRN_SUCCESS) {
+      grn_obj buffer, key_buffer;
+      GRN_TEXT_INIT(&buffer, 0);
+      GRN_OBJ_INIT(&key_buffer, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, ((grn_obj *)hash)->header.domain);
+      GRN_TEXT_SET(ctx, &key_buffer, key, key_size);
+      grn_inspect(ctx, &buffer, &key_buffer);
+      GRN_OBJ_FIN(ctx, &key_buffer);
+
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(rc, "[hash][io][add] failed to put key: <%.*s>: <%.*s>",
+          name_size, name, (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+      GRN_OBJ_FIN(ctx, &buffer);
+      rc = grn_hash_delete_by_id(ctx, hash, entry_id, NULL);
+      if (rc != GRN_SUCCESS) {
+        ERR(rc, "[hash][io][add] failed to delete by id: <%.*s>: <%u>",
+            name_size, name, entry_id);
+      }
+      return GRN_ID_NIL;
+    }
   }
 
   if (value) {
@@ -2314,18 +2350,39 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
   if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
     return GRN_ID_NIL;
   }
-  if (!key || !key_size) {
+  if (!key) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT, "[hash][add] key must not NULL: <%.*s>",
+        name_size, name);
+    return GRN_ID_NIL;
+  }
+  if (!key_size) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT, "[hash][add] key size must not zero: <%.*s>",
+        name_size, name);
     return GRN_ID_NIL;
   }
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     if (key_size > hash->key_size) {
-      ERR(GRN_INVALID_ARGUMENT, "too long key");
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT, "[hash][add] too long key: <%.*s>",
+          name_size, name);
       return GRN_ID_NIL;
     }
     hash_value = grn_hash_calculate_hash_value(key, key_size);
   } else {
     if (key_size != hash->key_size) {
-      ERR(GRN_INVALID_ARGUMENT, "key size unmatch");
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT, "[hash][add] key size unmatch: <%.*s>",
+          name_size, name);
       return GRN_ID_NIL;
     }
     if (key_size == sizeof(uint32_t)) {
@@ -2344,15 +2401,34 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
     /* lock */
     if ((*hash->n_entries + *hash->n_garbages) * 2 > *hash->max_offset) {
       if (*hash->max_offset > (1 << 29)) {
-        ERR(GRN_TOO_LARGE_OFFSET, "hash table size limit");
+        char name[GRN_TABLE_MAX_KEY_SIZE];
+        int name_size;
+        name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+        ERR(GRN_TOO_LARGE_OFFSET, "[hash][add] hash table size limit: <%.*s>",
+            name_size, name);
         return GRN_ID_NIL;
       }
-      grn_hash_reset(ctx, hash, 0);
+      {
+        grn_rc rc;
+        rc = grn_hash_reset(ctx, hash, 0);
+        if (rc != GRN_SUCCESS) {
+          char name[GRN_TABLE_MAX_KEY_SIZE];
+          int name_size;
+          name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+          ERR(rc, "[hash][add] failed to reset hash: <%.*s>", name_size, name);
+          return GRN_ID_NIL;
+        }
+      }
     }
 
     for (i = hash_value; ; i += step) {
       index = grn_hash_idx_at(ctx, hash, i);
       if (!index) {
+        char name[GRN_TABLE_MAX_KEY_SIZE];
+        int name_size;
+        name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+        ERR(GRN_INVALID_ARGUMENT, "[hash][add] failed to detect index: <%.*s>: <%u>",
+            name_size, name, i);
         return GRN_ID_NIL;
       }
       id = *index;
@@ -2368,6 +2444,11 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
 
       entry = grn_hash_entry_at(ctx, hash, id, GRN_TABLE_ADD);
       if (!entry) {
+        char name[GRN_TABLE_MAX_KEY_SIZE];
+        int name_size;
+        name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+        ERR(GRN_INVALID_ARGUMENT, "[hash][add] failed to find an entry: <%.*s>: <%u>",
+            name_size, name, id);
         return GRN_ID_NIL;
       }
       if (grn_hash_entry_compare_key(ctx, hash, entry, hash_value,
@@ -2388,6 +2469,11 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
       id = grn_tiny_hash_add(ctx, hash, hash_value, key, key_size, value);
     }
     if (!id) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT, "[hash][add] failed to add: <%.*s>: <%.*s>",
+          name_size, name, (int)key_size, (const char *)key);
       return GRN_ID_NIL;
     }
     if (garbage_index) {
