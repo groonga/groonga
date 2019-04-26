@@ -33,8 +33,12 @@ module Groonga
               optimized_sub_nodes =
                 optimize_or_sub_nodes(table, optimized_sub_nodes)
             end
-            ExpressionTree::LogicalOperation.new(optimized_node.operator,
-                                                 optimized_sub_nodes)
+            if optimized_sub_nodes.size == 1
+              optimized_sub_nodes[0]
+            else
+              ExpressionTree::LogicalOperation.new(optimized_node.operator,
+                                                   optimized_sub_nodes)
+            end
           end
         when ExpressionTree::BinaryOperation
           optimize_binary_operation_node(table, node)
