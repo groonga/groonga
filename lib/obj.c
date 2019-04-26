@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2015-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -273,6 +273,23 @@ grn_obj_is_accessor(grn_ctx *ctx, grn_obj *obj)
   }
 
   return obj->header.type == GRN_ACCESSOR;
+}
+
+grn_bool
+grn_obj_is_id_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  accessor = (grn_accessor *)obj;
+  if (accessor->next) {
+    return GRN_FALSE;
+  }
+
+  return accessor->action == GRN_ACCESSOR_GET_ID;
 }
 
 grn_bool

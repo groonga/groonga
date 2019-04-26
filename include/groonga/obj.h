@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2015-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -48,6 +48,7 @@ GRN_API grn_bool grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_data_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_accessor(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_bool grn_obj_is_id_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_key_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_type(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_text_family_type(grn_ctx *ctx, grn_obj *obj);
