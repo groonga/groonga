@@ -9,7 +9,7 @@ source_top_dir_path = source_base_dir_path.parent.parent
 if ENV["BUILD_DIR"]
   build_base_dir_path = Pathname(ENV["BUILD_DIR"]).expand_path
 else
-  build_base_dir_path  = Pathname($0).expand_path.dirname
+  build_base_dir_path = Pathname($0).expand_path.dirname
 end
 build_top_dir_path = build_base_dir_path.parent.parent
 
