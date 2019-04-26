@@ -1,3 +1,5 @@
+#$GRN_EXPR_OPTIMIZE=no
+
 plugin_register functions/time
 
 table_create Users TABLE_HASH_KEY ShortText
