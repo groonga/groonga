@@ -1473,48 +1473,31 @@ grn_inspect_key(grn_ctx *ctx, grn_obj *buffer, grn_obj *table, const void *key, 
   }
 
   if (table->header.type == GRN_TABLE_NO_KEY) {
-    grn_obj table_type, table_name;
-    GRN_TEXT_INIT(&table_type, 0);
-    GRN_TEXT_INIT(&table_name, 0);
-    grn_table_type_inspect(ctx, &table_type, table);
-    grn_inspect_name(ctx, &table_name, table);
-    grn_text_printf(ctx, buffer, "#<key: (nil) table:#<%.*s %.*s>>",
-                    (int)GRN_TEXT_LEN(&table_type), GRN_TEXT_VALUE(&table_type),
-                    (int)GRN_TEXT_LEN(&table_name), GRN_TEXT_VALUE(&table_name));
-    GRN_OBJ_FIN(ctx, &table_type);
-    GRN_OBJ_FIN(ctx, &table_name);
+    GRN_TEXT_PUTS(ctx, buffer, "#<key: (nil) table:#<");
+    grn_table_type_inspect(ctx, buffer, table);
+    GRN_TEXT_PUTS(ctx, buffer, " ");
+    grn_inspect_name(ctx, buffer, table);
+    GRN_TEXT_PUTS(ctx, buffer, ">>");
     return buffer;
   }
-  grn_obj table_type, table_name, key_type;
-  GRN_TEXT_INIT(&table_type, 0);
-  GRN_TEXT_INIT(&table_name, 0);
-  GRN_TEXT_INIT(&key_type, 0);
-  grn_table_type_inspect(ctx, &table_type, table);
-  grn_inspect_name(ctx, &table_name, table);
-  grn_table_key_inspect(ctx, &key_type, table);
   if (key && key_size > 0) {
-    grn_obj key_buffer, sub_buffer;
+    grn_obj key_buffer;
     GRN_TEXT_INIT(&key_buffer, 0);
-    GRN_TEXT_INIT(&sub_buffer, 0);
     GRN_OBJ_INIT(&key_buffer, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, table->header.domain);
     GRN_TEXT_SET(ctx, &key_buffer, key, key_size);
-    grn_inspect(ctx, &sub_buffer, &key_buffer);
+    GRN_TEXT_PUTS(ctx, buffer, "#<key: ");
+    grn_inspect(ctx, buffer, &key_buffer);
     GRN_OBJ_FIN(ctx, &key_buffer);
-    grn_text_printf(ctx, buffer, "#<key: %.*s table:#<%.*s %.*s %.*s>>",
-                    (int)GRN_TEXT_LEN(&table_type), GRN_TEXT_VALUE(&table_type),
-                    (int)GRN_TEXT_LEN(&table_name), GRN_TEXT_VALUE(&table_name),
-                    (int)GRN_TEXT_LEN(&key_type), GRN_TEXT_VALUE(&key_type),
-                    (int)GRN_TEXT_LEN(&sub_buffer), GRN_TEXT_VALUE(&sub_buffer));
-    GRN_OBJ_FIN(ctx, &sub_buffer);
   } else {
-    grn_text_printf(ctx, buffer, "#<key: (nil) table:#<%.*s %.*s %.*s>>",
-                    (int)GRN_TEXT_LEN(&table_type), GRN_TEXT_VALUE(&table_type),
-                    (int)GRN_TEXT_LEN(&table_name), GRN_TEXT_VALUE(&table_name),
-                    (int)GRN_TEXT_LEN(&key_type), GRN_TEXT_VALUE(&key_type));
+    GRN_TEXT_PUTS(ctx, buffer, "#<key: (nil)");
   }
-  GRN_OBJ_FIN(ctx, &table_type);
-  GRN_OBJ_FIN(ctx, &table_name);
-  GRN_OBJ_FIN(ctx, &key_type);
+  GRN_TEXT_PUTS(ctx, buffer, " table:#<");
+  grn_table_type_inspect(ctx, buffer, table);
+  GRN_TEXT_PUTS(ctx, buffer, " ");
+  grn_inspect_name(ctx, buffer, table);
+  GRN_TEXT_PUTS(ctx, buffer, " ");
+  grn_table_key_inspect(ctx, buffer, table);
+  GRN_TEXT_PUTS(ctx, buffer, ">>");
   return buffer;
 }
 
