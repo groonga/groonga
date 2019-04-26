@@ -15,7 +15,7 @@ Release 9.0.2 - 2019-04-29
 We provide a package for Windows made from VC++ from this release.
 
 We also provide a package for Windows made form MinGW as in the past.
-However, we will only provide it made from VC++ sooner or later.
+However, we will provide it made from VC++ instead of making from MinGW sooner or later.
 
 Improvements
 ^^^^^^^^^^^^
@@ -51,7 +51,7 @@ Fixes
 
 * Fixed "unknown type name 'bool'" compilation error in some environments.
 
-* Fixed a bug that incorrect output number over Int32. [GitHub#936] [Patch by HashidaTKS]
+* Fixed a bug that incorrect output number over Int32 by command of execute via mruby (e.g. ``logical_select``, ``logical_range_filter``, ``logical_count``, etc.). [GitHub#936] [Patch by HashidaTKS]
 
 Thanks
 ^^^^^^
