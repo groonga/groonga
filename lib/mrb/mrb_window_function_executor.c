@@ -102,6 +102,21 @@ mrb_grn_window_function_executor_add_table(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_window_function_executor_add_context_table(mrb_state *mrb, mrb_value self)
+{
+  mrb_value mrb_table;
+  mrb_get_args(mrb, "o", &mrb_table);
+
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_window_function_executor *executor = DATA_PTR(self);
+  grn_obj *table = GRN_MRB_DATA_PTR(mrb_table);
+  grn_window_function_executor_add_context_table(ctx, executor, table);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
+}
+
+static mrb_value
 mrb_grn_window_function_executor_set_sort_keys(mrb_state *mrb, mrb_value self)
 {
   char *keys;
@@ -182,6 +197,9 @@ grn_mrb_window_function_executor_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "add_table",
                     mrb_grn_window_function_executor_add_table,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "add_context_table",
+                    mrb_grn_window_function_executor_add_context_table,
                     MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "source=",
                     mrb_grn_window_function_executor_set_source,

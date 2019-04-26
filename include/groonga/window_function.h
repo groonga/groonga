@@ -4,8 +4,7 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  License version 2.1 as published by the Free Software Foundation.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,6 +38,8 @@ GRN_API grn_rc grn_window_set_direction(grn_ctx *ctx,
                                         grn_window_direction direction);
 GRN_API grn_obj *grn_window_get_table(grn_ctx *ctx,
                                       grn_window *window);
+GRN_API bool grn_window_is_context_table(grn_ctx *ctx,
+                                         grn_window *window);
 GRN_API grn_obj *grn_window_get_output_column(grn_ctx *ctx,
                                               grn_window *window);
 GRN_API size_t grn_window_get_n_arguments(grn_ctx *ctx,

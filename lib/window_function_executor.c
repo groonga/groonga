@@ -26,6 +26,7 @@ grn_window_function_executor_init(grn_ctx *ctx,
   GRN_API_ENTER;
 
   GRN_PTR_INIT(&(executor->tables), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_BOOL_INIT(&(executor->is_context_tables), 0);
   GRN_TEXT_INIT(&(executor->source), 0);
   GRN_TEXT_INIT(&(executor->sort_keys), 0);
   GRN_TEXT_INIT(&(executor->group_keys), 0);
@@ -118,6 +119,7 @@ grn_window_function_executor_fin(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &(executor->group_keys));
   GRN_OBJ_FIN(ctx, &(executor->sort_keys));
   GRN_OBJ_FIN(ctx, &(executor->source));
+  GRN_OBJ_FIN(ctx, &(executor->is_context_tables));
   GRN_OBJ_FIN(ctx, &(executor->tables));
 
   GRN_API_RETURN(GRN_SUCCESS);
@@ -182,6 +184,28 @@ grn_window_function_executor_add_table(grn_ctx *ctx,
   grn_window_function_executor_rewind(ctx, executor);
 
   GRN_PTR_PUT(ctx, &(executor->tables), table);
+  GRN_BOOL_PUT(ctx, &(executor->is_context_tables), false);
+
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_window_function_executor_add_context_table(grn_ctx *ctx,
+                                               grn_window_function_executor *executor,
+                                               grn_obj *table)
+{
+  GRN_API_ENTER;
+
+  if (!executor) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[window-function-executor][context-table][add] executor is NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  grn_window_function_executor_rewind(ctx, executor);
+
+  GRN_PTR_PUT(ctx, &(executor->tables), table);
+  GRN_BOOL_PUT(ctx, &(executor->is_context_tables), true);
 
   GRN_API_RETURN(ctx->rc);
 }
@@ -326,9 +350,22 @@ grn_window_function_executor_execute(grn_ctx *ctx,
 
   const bool is_ascending =
     grn_window_function_executor_is_ascending(ctx, executor);
+  bool in_before_context = true;
+  bool in_after_context = false;
   for (size_t i = 0; i < n_tables; i++) {
     size_t nth_table = (is_ascending ? i : (n_tables - i - 1));
     grn_obj *table = GRN_PTR_VALUE_AT(&(executor->tables), nth_table);
+    const bool is_context_table =
+      GRN_BOOL_VALUE_AT(&(executor->is_context_tables), nth_table);
+    if (in_before_context) {
+      if (!is_context_table) {
+        in_before_context = false;
+      }
+    } else if (!in_after_context) {
+      if (is_context_table) {
+        in_after_context = true;
+      }
+    }
 
     grn_obj *output_column = grn_obj_column(ctx,
                                             table,
@@ -556,15 +593,21 @@ grn_window_function_executor_execute(grn_ctx *ctx,
 
         if (is_group_key_changed &&
             !grn_window_is_empty(ctx, &(executor->window))) {
-          grn_window_execute(ctx, &(executor->window));
-          if (ctx->rc != GRN_SUCCESS) {
-            break;
+          if (!in_before_context) {
+            grn_window_execute(ctx, &(executor->window));
+            if (ctx->rc != GRN_SUCCESS) {
+              break;
+            }
           }
           grn_window_reset(ctx, &(executor->window));
+          if (in_after_context) {
+            break;
+          }
         }
         grn_window_add_record(ctx,
                               &(executor->window),
                               table,
+                              is_context_table,
                               record_id,
                               window_function_call,
                               output_column);
@@ -582,6 +625,7 @@ grn_window_function_executor_execute(grn_ctx *ctx,
         grn_window_add_record(ctx,
                               &(executor->window),
                               table,
+                              is_context_table,
                               record_id,
                               window_function_call,
                               output_column);

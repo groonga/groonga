@@ -26,6 +26,7 @@ extern "C" {
 
 struct _grn_window_function_executor {
   grn_obj tables;
+  grn_obj is_context_tables;
   grn_obj source;
   grn_obj sort_keys;
   grn_obj group_keys;

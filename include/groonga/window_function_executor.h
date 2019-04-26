@@ -34,6 +34,10 @@ grn_window_function_executor_add_table(grn_ctx *ctx,
                                        grn_window_function_executor *executor,
                                        grn_obj *table);
 GRN_API grn_rc
+grn_window_function_executor_add_context_table(grn_ctx *ctx,
+                                               grn_window_function_executor *executor,
+                                               grn_obj *table);
+GRN_API grn_rc
 grn_window_function_executor_set_source(grn_ctx *ctx,
                                         grn_window_function_executor *executor,
                                         const char *source,

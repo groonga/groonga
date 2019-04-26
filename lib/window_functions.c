@@ -35,7 +35,9 @@ window_record_number(grn_ctx *ctx,
   while ((id = grn_window_next(ctx, window))) {
     GRN_UINT32_SET(ctx, &value, nth_record);
     grn_obj *output_column = grn_window_get_output_column(ctx, window);
-    grn_obj_set_value(ctx, output_column, id, &value, GRN_OBJ_SET);
+    if (output_column) {
+      grn_obj_set_value(ctx, output_column, id, &value, GRN_OBJ_SET);
+    }
     nth_record++;
   }
   GRN_OBJ_FIN(ctx, &value);
@@ -200,7 +202,9 @@ window_sum(grn_ctx *ctx,
         break;
       }
       grn_obj *output_column = grn_window_get_output_column(ctx, window);
-      grn_obj_set_value(ctx, output_column, id, &sum, GRN_OBJ_SET);
+      if (output_column) {
+        grn_obj_set_value(ctx, output_column, id, &sum, GRN_OBJ_SET);
+      }
     }
   } else {
     int64_t sum_raw_int64 = 0;
@@ -266,7 +270,9 @@ window_sum(grn_ctx *ctx,
     grn_window_rewind(ctx, window);
     while ((id = grn_window_next(ctx, window))) {
       grn_obj *output_column = grn_window_get_output_column(ctx, window);
-      grn_obj_set_value(ctx, output_column, id, &sum, GRN_OBJ_SET);
+      if (output_column) {
+        grn_obj_set_value(ctx, output_column, id, &sum, GRN_OBJ_SET);
+      }
     }
   }
 
@@ -352,7 +358,9 @@ window_count(grn_ctx *ctx,
         break;
       }
       grn_obj *output_column = grn_window_get_output_column(ctx, window);
-      grn_obj_set_value(ctx, output_column, id, &n_records, GRN_OBJ_SET);
+      if (output_column) {
+        grn_obj_set_value(ctx, output_column, id, &n_records, GRN_OBJ_SET);
+      }
     }
   } else {
     uint32_t n_records_raw = 0;
@@ -382,7 +390,9 @@ window_count(grn_ctx *ctx,
     grn_window_rewind(ctx, window);
     while ((id = grn_window_next(ctx, window))) {
       grn_obj *output_column = grn_window_get_output_column(ctx, window);
-      grn_obj_set_value(ctx, output_column, id, &n_records, GRN_OBJ_SET);
+      if (output_column) {
+        grn_obj_set_value(ctx, output_column, id, &n_records, GRN_OBJ_SET);
+      }
     }
   }
 

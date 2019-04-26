@@ -28,10 +28,12 @@ static void
 grn_window_shard_init(grn_ctx *ctx,
                       grn_window_shard *shard,
                       grn_obj *table,
+                      bool is_context_table,
                       grn_obj *window_function_call,
                       grn_obj *output_column)
 {
   shard->table = table;
+  shard->is_context_table = is_context_table;
   shard->window_function_call = window_function_call;
   grn_expr *expr = (grn_expr *)(window_function_call);
   shard->window_function = (grn_proc *)(expr->codes[0].value);
@@ -167,6 +169,24 @@ grn_window_get_table(grn_ctx *ctx, grn_window *window)
   GRN_API_RETURN(shard->table);
 }
 
+bool
+grn_window_is_context_table(grn_ctx *ctx, grn_window *window)
+{
+  GRN_API_ENTER;
+
+  if (!window) {
+    ERR(GRN_INVALID_ARGUMENT, "[window][is-context-table] window is NULL");
+    GRN_API_RETURN(false);
+  }
+
+  if (window->current_shard < 0) {
+    GRN_API_RETURN(false);
+  }
+
+  grn_window_shard *shard = &(window->shards[window->current_shard]);
+  GRN_API_RETURN(shard->is_context_table);
+}
+
 grn_obj *
 grn_window_get_output_column(grn_ctx *ctx, grn_window *window)
 {
@@ -182,7 +202,11 @@ grn_window_get_output_column(grn_ctx *ctx, grn_window *window)
   }
 
   grn_window_shard *shard = &(window->shards[window->current_shard]);
-  GRN_API_RETURN(shard->output_column);
+  if (shard->is_context_table) {
+    GRN_API_RETURN(NULL);
+  } else {
+    GRN_API_RETURN(shard->output_column);
+  }
 }
 
 size_t
@@ -346,6 +370,7 @@ grn_rc
 grn_window_add_record(grn_ctx *ctx,
                       grn_window *window,
                       grn_obj *table,
+                      bool is_context_table,
                       grn_id record_id,
                       grn_obj *window_function_call,
                       grn_obj *output_column)
@@ -365,6 +390,7 @@ grn_window_add_record(grn_ctx *ctx,
     grn_window_shard_init(ctx,
                           &(window->shards[0]),
                           table,
+                          is_context_table,
                           window_function_call,
                           output_column);
     window->current_shard = 0;
@@ -399,6 +425,7 @@ grn_window_add_record(grn_ctx *ctx,
     grn_window_shard_init(ctx,
                           &(window->shards[window->n_shards - 1]),
                           table,
+                          is_context_table,
                           window_function_call,
                           output_column);
   }
@@ -644,6 +671,7 @@ grn_table_apply_window_function(grn_ctx *ctx,
       grn_window_add_record(ctx,
                             &window,
                             table,
+                            false,
                             record_id,
                             window_function_call,
                             output_column);
@@ -665,6 +693,7 @@ grn_table_apply_window_function(grn_ctx *ctx,
       grn_window_add_record(ctx,
                             &window,
                             table,
+                            false,
                             record_id,
                             window_function_call,
                             output_column);
