@@ -71,10 +71,16 @@ module Groonga
 
         column = @left.column
         value = @right.value
-        index_info = column.find_index(@operator)
-        return table.size if index_info.nil?
-
-        index_column = index_info.index
+        case column
+        when Groonga::Accessor
+          return estimate_size_equal_accessor(table, column, value)
+        when Groonga::IndexColumn
+          index_column = column
+        else
+          index_info = column.find_index(@operator)
+          return table.size if index_info.nil?
+          index_column = index_info.index
+        end
         return table.size unless index_column.respond_to?(:lexicon)
 
         lexicon = index_column.lexicon
@@ -91,18 +97,58 @@ module Groonga
         end
       end
 
+      def estimate_size_equal_accessor(table, accessor, value)
+        if accessor.id?
+          if table.id?(value.value)
+            return 1
+          else
+            return 0
+          end
+        else
+          if table[value]
+            return 1
+          else
+            return 0
+          end
+        end
+      end
+
       def estimate_size_range(table)
         return table.size unless @left.is_a?(Variable)
         return table.size unless @right.is_a?(Constant)
 
+        is_table_search = false
         column = @left.column
         value = @right.value
-        index_info = column.find_index(@operator)
-        return table.size if index_info.nil?
+        case column
+        when Table
+          is_table_search = true
+          lexicon = column
+        when Groonga::Accessor
+          is_table_search = true
+          lexicon = column.object
+          case lexicon
+          when PatriciaTrie, DoubleArrayTrie
+            # range searchable
+          else
+            return table.size
+          end
+        when Groonga::IndexColumn
+          index_column = column
+          lexicon = column.lexicon
+        else
+          index_info = column.find_index(@operator)
+          return table.size if index_info.nil?
 
-        index_column = index_info.index
-        lexicon = index_column.lexicon
-        options = {}
+          index_column = index_info.index
+          lexicon = index_column.lexicon
+        end
+        n_terms = lexicon.size
+        return 0 if n_terms.zero?
+
+        options = {
+          limit: sampling_cursor_limit(n_terms),
+        }
         case @operator
         when Operator::LESS
           options[:max] = value
@@ -118,7 +164,13 @@ module Groonga
           options[:flags] = TableCursorFlags::GE
         end
         TableCursor.open(lexicon, options) do |cursor|
-          index_column.estimate_size(:lexicon_cursor => cursor)
+          if is_table_search
+            size = 1
+          else
+            size = index_column.estimate_size(:lexicon_cursor => cursor)
+          end
+          size += 1 if cursor.next != ID::NIL
+          size
         end
       end
 
@@ -144,6 +196,8 @@ module Groonga
               end
             end
           end
+        when Groonga::IndexColumn
+          indexes << column
         else
           index_info = column.find_index(@operator)
           return table.size if index_info.nil?
@@ -164,12 +218,47 @@ module Groonga
         return table.size unless @left.is_a?(Variable)
         return table.size unless @right.is_a?(Constant)
 
-        key = @left.column
-        return table.size unless key.is_a?(Groonga::Accessor)
-        return table.size unless key.key?
+        is_table_search = false
+        column = @left.column
+        case column
+        when Groonga::Accessor
+          return table.size unless column.key?
+          is_table_search = true
+          lexicon = column.object
+        when Groonga::IndexColumn
+          lexicon = column.lexicon
+        else
+          return table.size
+        end
+        n_terms = lexicon.size
+        return 0 if n_terms.zero?
 
-        # TODO: Improve
-        table.size / 10
+        value = @right.value
+        options = {
+          min: value,
+          limit: sampling_cursor_limit(n_terms),
+          flags: TableCursorFlags::PREFIX,
+        }
+        TableCursor.open(lexicon, options) do |cursor|
+          if is_table_search
+            size = 1
+          else
+            size = column.estimate_size(:lexicon_cursor => cursor)
+          end
+          size += 1 if cursor.next != ID::NIL
+          size
+        end
+      end
+
+      def sampling_cursor_limit(n_terms)
+        limit = n_terms * 0.01
+        if limit < 10
+          10
+        elsif limit > 1000
+          1000
+        else
+          limit.to_i
+        end
       end
     end
   end
