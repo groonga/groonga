@@ -1596,7 +1596,6 @@ pattern_open_options(grn_ctx *ctx,
     name_raw.length = name_length;
 
     if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "pattern")) {
-#ifdef GRN_SUPPORT_REGEXP
       const char *pattern;
       unsigned int pattern_length;
       grn_id domain;
@@ -1615,17 +1614,18 @@ pattern_open_options(grn_ctx *ctx,
         GRN_TEXT_PUT(ctx, &all_patterns, pattern, pattern_length);
         GRN_TEXT_PUTS(ctx, &all_patterns, ")");
       }
-#endif /* GRN_SUPPORT_REGEXP */
     }
   } GRN_OPTION_VALUES_EACH_END();
 
   if (GRN_TEXT_LEN(&all_patterns) > 0) {
+#ifdef GRN_SUPPORT_REGEXP
     options->regex = grn_onigmo_new(ctx,
                                     GRN_TEXT_VALUE(&all_patterns),
                                     GRN_TEXT_LEN(&all_patterns),
                                     GRN_ONIGMO_OPTION_DEFAULT,
                                     GRN_ONIGMO_SYNTAX_DEFAULT,
                                     "[tokenizer][pattern]");
+#endif /* GRN_SUPPORT_REGEXP */
   }
   GRN_OBJ_FIN(ctx, &all_patterns);
 
