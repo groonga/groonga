@@ -1,4 +1,5 @@
 /var/log/groonga/httpd/*.log {
+    su groonga groonga
     daily
     missingok
     rotate 30

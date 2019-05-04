@@ -1,11 +1,11 @@
 /var/log/groonga/httpd/*.log {
+    su groonga groonga
     daily
     missingok
     rotate 30
     compress
     delaycompress
     notifempty
-    create 640 groonga groonga
     sharedscripts
     postrotate
         . /etc/default/groonga-httpd
