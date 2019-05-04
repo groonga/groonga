@@ -1,0 +1,35 @@
+Execution example::
+
+  normalize --normalizer NormalizerAuto --string "㌖" --flags WITH_CHECKS --output_pretty yes
+  # [
+  #   [
+  #     0,
+  #     1557005290.083241,
+  #     0.0001597404479980469
+  #   ],
+  #   {
+  #     "normalized": "キロメートル",
+  #     "types": [
+  #     ],
+  #     "checks": [
+  #       3,
+  #       0,
+  #       0,
+  #       -1,
+  #       0,
+  #       0,
+  #       -1,
+  #       0,
+  #       0,
+  #       -1,
+  #       0,
+  #       0,
+  #       -1,
+  #       0,
+  #       0,
+  #       -1,
+  #       0,
+  #       0
+  #     ]
+  #   }
+  # ]

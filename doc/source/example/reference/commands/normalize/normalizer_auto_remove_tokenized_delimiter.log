@@ -1,0 +1,17 @@
+Execution example::
+
+  normalize --normalizer NormalizerAuto --string "a￾b￾c" --flags REMOVE_TOKENIZED_DELIMITER
+  # [
+  #   [
+  #     0,
+  #     1557150221.367695,
+  #     0.0001389980316162109
+  #   ],
+  #   {
+  #     "normalized": "abc",
+  #     "types": [
+  #     ],
+  #     "checks": [
+  #     ]
+  #   }
+  # ]

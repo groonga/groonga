@@ -103,25 +103,37 @@ Here are available flags.
    * - ``NONE``
      - Just ignored.
    * - ``REMOVE_BLANK``
-     - TODO
+     - Output remove blanks from characters of beforing normalize.
    * - ``WITH_TYPES``
-     - TODO
+     - Output kind of character after normalize.
    * - ``WITH_CHECKS``
-     - TODO
+     - Output where was position of character before normalize.
    * - ``REMOVE_TOKENIZED_DELIMITER``
-     - TODO
+     - Output remove tokenized delimiter(U+FFFE) from character of beforing normalize.
 
 Here is an example that uses ``REMOVE_BLANK``.
 
-TODO
+.. groonga-command
+.. include:: ../../example/reference/commands/normalize/normalizer_auto_remove_blank.log
+.. normalize --normalizer NormalizerAuto --string "abc 123" --flags REMOVE_BLANK
 
 Here is an example that uses ``WITH_TYPES``.
 
-TODO
+.. groonga-command
+.. include:: ../../example/reference/commands/normalize/normalizer_nfkc100_with_types.log
+.. normalize --normalizer 'NormalizerNFKC100("unify_to_romaji", true)' --string "あいうえお" --flags WITH_TYPES
+
+Here is an example that uses ``WITH_CHECKS``.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/normalize/normalizer_auto_with_checks.log
+.. normalize --normalizer NormalizerAuto --string "㌖" --flags WITH_CHECKS
 
 Here is an example that uses ``REMOVE_TOKENIZED_DELIMITER``.
 
-TODO
+.. groonga-command
+.. include:: ../../example/reference/commands/normalize/normalizer_auto_remove_tokenized_delimiter.log
+.. normalize --normalizer NormalizerAuto --string "a￾b￾c" --flags REMOVE_TOKENIZED_DELIMITER
 
 Return value
 ------------

@@ -9974,20 +9974,39 @@ msgstr "無視されます。"
 msgid "``REMOVE_BLANK``"
 msgstr ""
 
+msgid "Output remove blanks from characters of beforing normalize."
+msgstr "ノーマライズ前の文字から空白を削除して出力します。"
+
 msgid "``WITH_TYPES``"
 msgstr ""
+
+msgid "Output kind of character after normalize."
+msgstr "ノーマライズ後の文字の種類を出力します。"
 
 msgid "``WITH_CHECKS``"
 msgstr ""
 
+msgid "Output where was position of character before normalize."
+msgstr "ノーマライズ前の文字がどの位置にあったかを出力します。"
+
 msgid "``REMOVE_TOKENIZED_DELIMITER``"
 msgstr ""
+
+msgid ""
+"Output remove tokenized delimiter(U+FFFE) from character of beforing "
+"normalize."
+msgstr ""
+"ノーマライズ前の文字からトークナイズの区切り文字(U+FFFE)を削除して出力しま"
+"す。"
 
 msgid "Here is an example that uses ``REMOVE_BLANK``."
 msgstr "以下は ``REMOVE_BLANK`` を使った例です。"
 
 msgid "Here is an example that uses ``WITH_TYPES``."
 msgstr "以下は ``WITH_TYPES`` を使った例です。"
+
+msgid "Here is an example that uses ``WITH_CHECKS``."
+msgstr "以下は ``WITH_CHECKS`` を使った例です。"
 
 msgid "Here is an example that uses ``REMOVE_TOKENIZED_DELIMITER``."
 msgstr "以下は ``REMOVE_TOKENIZED_DELIMITER`` を使った例です。"

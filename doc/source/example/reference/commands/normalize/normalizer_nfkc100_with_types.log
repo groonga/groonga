@@ -1,0 +1,22 @@
+Execution example::
+
+  normalize --normalizer 'NormalizerNFKC100("unify_to_romaji", true)' --string "あいうえお" --flags WITH_TYPES
+  # [
+  #   [
+  #     0,
+  #     1556919589.198674,
+  #     0.0001828670501708984
+  #   ],
+  #   {
+  #     "normalized": "aiueo",
+  #     "types": [
+  #       "alpha",
+  #       "alpha",
+  #       "alpha",
+  #       "alpha",
+  #       "alpha"
+  #     ],
+  #     "checks": [
+  #     ]
+  #   }
+  # ]
