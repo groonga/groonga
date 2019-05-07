@@ -31,6 +31,8 @@ Reference
    :param table: 対象tableを指定します。
    :param name: カラム名を指定します。
 
+.. c:function:: grn_bool grn_obj_is_accessor(grn_ctx *ctx, grn_obj *obj)
+
 .. c:function:: grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
 
    Check whether Groonga built-in object.
@@ -38,6 +40,20 @@ Reference
    :param ctx: context
    :param obj: target object
    :return: ``GRN_TRUE`` for built-in groonga object, ``GRN_FALSE`` otherwise.
+
+.. c:function:: grn_bool grn_obj_is_bulk(grn_ctx *ctx, grn_obj *obj);
+
+.. c:function:: grn_bool grn_obj_is_column(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_data_column(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_dirty(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_expr(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_function_proc(grn_ctx *ctx, grn_obj *obj)
 
 .. c:function:: grn_bool grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj)
 
@@ -47,6 +63,44 @@ Reference
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is index column, ``GRN_FALSE`` otherwise. Even if the target object isn't column, return ``GRN_FALSE``.
 
+.. c:function:: grn_bool grn_obj_is_id_accessor(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_key_accessor(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_lexicon(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_number_family_bulk(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_normalizer_proc(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_proc(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_scalar_column(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_scorer_proc(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_selector_proc(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_selector_only_proc(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_text_family_bulk(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_text_family_type(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_tokenizer_proc(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_token_filter_proc(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_type(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: grn_bool grn_obj_is_vector(grn_ctx *ctx, grn_obj *obj)
+
 .. c:function:: grn_bool grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj)
 
    Check whether vector column.
@@ -54,6 +108,15 @@ Reference
    :param ctx: The context object.
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is vector column, ``GRN_FALSE`` otherwise. Even if the target object isn't column, return ``GRN_FALSE``.
+
+.. c:function:: grn_bool grn_obj_is_weight_vector_column(grn_ctx *ctx, grn_obj *obj)
+
+
+.. c:function:: grn_bool grn_obj_is_window_function_proc(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: size_t grn_obj_get_disk_usage(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: uint32_t grn_obj_get_last_modified(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
 
 .. c:function:: grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
 
@@ -188,6 +251,8 @@ Reference
    :param namebuf: 名前を格納するバッファ（呼出側で準備する）を指定します。
    :param buf_size: namebufのサイズ（byte長）を指定します。
 
+.. c:function:: grn_bool grn_obj_name_is_column(grn_ctx *ctx, const char *name, int name_len)
+
 .. c:function:: grn_id grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
 
    objパラメータのとる値の範囲を表わしているオブジェクトのIDを返します。例えば、:c:type:`grn_builtin_type` にある ``GRN_DB_INT`` などを返します。
@@ -260,7 +325,7 @@ Reference
    :param id: The object (table, column and so on) ID to be deleted.
    :param buffer: path string corresponding to the id will be set in this buffer.
 
-.. c:function:: grn_rc grn_obj_cast_by_id(grn_ctx *ctx, grn_obj *source, grn_obj *destination, grn_bool add_record_if_not_exist)
+.. c:function:: grn_rc grn_obj_cast(grn_ctx *ctx, grn_obj *source, grn_obj *destination, grn_bool add_record_if_not_exist)
 
    It casts value of ``source`` to value with type of
    ``destination``. Casted value is appended to ``destination``.
@@ -283,3 +348,14 @@ Reference
                                    is only used when ``destination``
                                    is a reference type bulk.
    :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
+
+.. c:function:: grn_rc grn_obj_reindex(grn_ctx *ctx, grn_obj *obj)
+
+.. c:function:: void grn_obj_touch(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
+
+.. c:function:: const char *grn_obj_type_to_string(uint8_t type);
+
+.. c:function:: grn_rc grn_obj_set_option_values(grn_ctx *ctx, grn_obj *obj, const char *name, int name_length, grn_obj *values)
+
+.. c:function:: grn_option_revision grn_obj_get_option_values(grn_ctx *ctx, grn_obj *obj, const char *name, int name_length, grn_option_revision revision, grn_obj *values)
+.. c:function:: grn_rc grn_obj_clear_option_values(grn_ctx *ctx, grn_obj *obj)
