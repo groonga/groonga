@@ -744,8 +744,7 @@ for the max number of chunks.
 
 .. versionadded:: 9.0.2
 
-This value the ID of the segment to the inspected index column use next.
-
+This value is the ID of the segment. The inspected index column use it as the next segment ID.
 The max value is the max number of segments. See
 :ref:`object-inspect-return-value-index-column-value-statistics-n-physical-segments`
 for the max number of segments.
