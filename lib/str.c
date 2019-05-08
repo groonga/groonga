@@ -2608,6 +2608,7 @@ grn_text_vprintf(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
 #ifdef WIN32
     grn_rc rc;
     int required_size;
+    va_list copied_args;
 
     va_copy(copied_args, args);
     required_size = vsnprintf(NULL, 0, format, copied_args);
