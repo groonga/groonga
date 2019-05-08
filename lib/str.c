@@ -2599,49 +2599,44 @@ grn_text_vprintf(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
                              format, copied_args);
     va_end(copied_args);
 
-    if (0 <= written_size && written_size < rest_size) {
+    if (written_size < rest_size) {
       is_written = GRN_TRUE;
     }
   }
 
   if (!is_written) {
 #ifdef WIN32
-# define N_NEW_SIZES 3
-    int i;
-    int new_sizes[N_NEW_SIZES];
-
-    new_sizes[0] = GRN_BULK_REST(bulk) + strlen(format) * 2;
-    new_sizes[1] = new_sizes[0] + 4096;
-    new_sizes[2] = new_sizes[0] + 65536;
-
-    for (i = 0; i < N_NEW_SIZES; i++) {
-      grn_rc rc;
-      int new_size = new_sizes[i];
-      va_list copied_args;
-
-      rc = grn_bulk_reserve(ctx, bulk, GRN_BULK_VSIZE(bulk) + new_size);
-      if (rc) {
-        return rc;
-      }
-      va_copy(copied_args, args);
-      written_size = vsnprintf(GRN_BULK_CURR(bulk), new_size,
-                               format, copied_args);
-      va_end(copied_args);
-      if (written_size != -1) {
-        break;
-      }
-    }
-# undef N_NEW_SIZES
-#else /* WIN32 */
     grn_rc rc;
-    int required_size = written_size + 1; /* "+ 1" for terminate '\0'. */
+    int required_size;
 
-    rc = grn_bulk_reserve(ctx, bulk, GRN_BULK_VSIZE(bulk) + required_size);
+    va_copy(copied_args, args);
+    required_size = vsnprintf(NULL, 0, format, copied_args);
+    va_end(copied_args);
+
+    if (required_size < 0) {
+      return GRN_INVALID_ARGUMENT;
+    }
+    required_size++; /* for terminate '\0'. */
+    rc = grn_bulk_reserve(ctx, bulk, required_size);
     if (rc) {
       return rc;
     }
+    va_copy(copied_args, args);
     written_size = vsnprintf(GRN_BULK_CURR(bulk), required_size,
-                             format, args);
+                             format, copied_args);
+    va_end(copied_args);
+#else /* WIN32 */
+    if (written_size >= 0) {
+      grn_rc rc;
+      int required_size = written_size + 1; /* "+ 1" for terminate '\0'. */
+
+      rc = grn_bulk_reserve(ctx, bulk, required_size);
+      if (rc) {
+        return rc;
+      }
+      written_size = vsnprintf(GRN_BULK_CURR(bulk), required_size,
+                               format, args);
+    }
 #endif /* WIN32 */
   }
 
