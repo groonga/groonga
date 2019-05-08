@@ -116,7 +116,6 @@ allow_unsigned_uploads = 0
                     "-d",
                     "-S",
                     "-sa",
-                    "-pgpg2",
                     "-k#{@pgp_sign_key}")
         run_command("dput", @dput_configuration_name,
                     "../#{@package}_#{deb_version}_source.changes")
