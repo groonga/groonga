@@ -1010,6 +1010,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_delimit.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_delimit_null.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_mecab.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_ngram.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_regexp.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_trigram.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_unigram.rst \
@@ -2072,6 +2073,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/tokenizers/token_delimit.rst \
 	source/reference/tokenizers/token_delimit_null.rst \
 	source/reference/tokenizers/token_mecab.rst \
+	source/reference/tokenizers/token_ngram.rst \
 	source/reference/tokenizers/token_regexp.rst \
 	source/reference/tokenizers/token_trigram.rst \
 	source/reference/tokenizers/token_unigram.rst \
@@ -2235,16 +2237,21 @@ html_files_relative_from_locale_dir = \
 	html/_images/geo-points.png \
 	html/_images/used-when-indexing.png \
 	html/_images/used-when-searching.png \
+	html/_static/ajax-loader.gif \
 	html/_static/basic.css \
+	html/_static/comment-bright.png \
+	html/_static/comment-close.png \
+	html/_static/comment.png \
 	html/_static/doctools.js \
 	html/_static/documentation_options.js \
+	html/_static/down-pressed.png \
+	html/_static/down.png \
 	html/_static/favicon.ico \
 	html/_static/file.png \
 	html/_static/groonga.css \
 	html/_static/header-background.png \
 	html/_static/jquery-3.2.1.js \
 	html/_static/jquery.js \
-	html/_static/language_data.js \
 	html/_static/logo.png \
 	html/_static/minus.png \
 	html/_static/navigation-bar.png \
@@ -2253,6 +2260,9 @@ html_files_relative_from_locale_dir = \
 	html/_static/searchtools.js \
 	html/_static/underscore-1.3.1.js \
 	html/_static/underscore.js \
+	html/_static/up-pressed.png \
+	html/_static/up.png \
+	html/_static/websupport.js \
 	html/characteristic.html \
 	html/client.html \
 	html/community.html \
@@ -2494,6 +2504,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/tokenizers/token_delimit.html \
 	html/reference/tokenizers/token_delimit_null.html \
 	html/reference/tokenizers/token_mecab.html \
+	html/reference/tokenizers/token_ngram.html \
 	html/reference/tokenizers/token_regexp.html \
 	html/reference/tokenizers/token_trigram.html \
 	html/reference/tokenizers/token_unigram.html \
