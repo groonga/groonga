@@ -279,7 +279,15 @@ TODO: Add examples
 ``order``
 """"""""""
 
-TODO
+Specifies order of search result.
+Specify ``ascending`` or ``descending`` as the value of this parameter.
+
+If we set ``ascending`` in this parameter, search results are ordered ascending base on ``shard_key``.
+If we set ``descending`` in this parameter, search results are ordered descending base on ``shard_key``.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/logical_range_filter/order_existent.log
+.. logical_range_filter --logical_table Entries --shard_key created_at --order "descending"
 
 .. _logical-range-filter-search-related-parameters:
 

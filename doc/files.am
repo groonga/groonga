@@ -157,6 +157,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/logical_table_existent.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/logical_table_nonexistent.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/offset.log \
+	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/order_existent.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/output_columns.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/post_filter.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_range_filter/sort_keys_on_shared_key.log \
@@ -1219,6 +1220,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_range_filter/logical_table_existent.log \
 	source/example/reference/commands/logical_range_filter/logical_table_nonexistent.log \
 	source/example/reference/commands/logical_range_filter/offset.log \
+	source/example/reference/commands/logical_range_filter/order_existent.log \
 	source/example/reference/commands/logical_range_filter/output_columns.log \
 	source/example/reference/commands/logical_range_filter/post_filter.log \
 	source/example/reference/commands/logical_range_filter/sort_keys_on_shared_key.log \
