@@ -41,7 +41,7 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
 
-   Check whether target object is a built-in object.
+   Check whether target object is a built-in object. The built-in objects are listed in :doc:`/reference/types`.
 
    :param ctx: context
    :param obj: target object
@@ -245,7 +245,7 @@ Reference
 
    :param ctx: The context object.
    :param obj: The target object.
-   :return: ``GRN_TRUE`` for if the target object is true. ``GRN_FALSE`` otherwise. TODO:
+   :return: ``GRN_TRUE`` for if the target object is true. ``GRN_FALSE`` otherwise. If target object type is ``Int32`` or ``UInt32``, ``GRN_TRUE`` means that the value is not zero. If target object type is ``ShortText``, ``GRN_TRUE`` means that it is not empty string.
 
 .. c:function:: grn_bool grn_obj_is_type(grn_ctx *ctx, grn_obj *obj)
 
