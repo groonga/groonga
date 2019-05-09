@@ -542,11 +542,55 @@ Reference
 
 .. c:function:: grn_rc grn_obj_reindex(grn_ctx *ctx, grn_obj *obj)
 
+   Reindex target object.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
+
 .. c:function:: void grn_obj_touch(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
+
+   Touch target object.
+
+   :param ctx: The context object.
+   :param obj: The target object.
 
 .. c:function:: const char *grn_obj_type_to_string(uint8_t type);
 
+   Convert specified type to string.
+
+   :param type: The type.
+   :return: string corresponding to specified ``type``.
+
 .. c:function:: grn_rc grn_obj_set_option_values(grn_ctx *ctx, grn_obj *obj, const char *name, int name_length, grn_obj *values)
 
+   Set specified option values.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :param name: The name of ``values``.
+   :param name_length: The length of ``name``.
+   :param values: The option value.
+   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
+
 .. c:function:: grn_option_revision grn_obj_get_option_values(grn_ctx *ctx, grn_obj *obj, const char *name, int name_length, grn_option_revision revision, grn_obj *values)
+   Get specified option values.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :param name: The name of ``values``.
+   :param name_length: The length of ``name``.
+   :param revision: The revision of specified option.
+   :param values: The option value.
+   :return: TODO:
+
 .. c:function:: grn_rc grn_obj_clear_option_values(grn_ctx *ctx, grn_obj *obj)
+
+   Clear option values.
+
+   :param ctx: The context object.
+   :param obj: The target object.
+   :param name_length: The length of ``name``.
+   :param revision: The revision of specified option.
+   :param values: The option value.
+   :return: TODO:
