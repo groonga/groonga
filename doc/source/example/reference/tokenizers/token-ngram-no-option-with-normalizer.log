@@ -1,0 +1,24 @@
+Execution example::
+
+  tokenize --tokenizer TokenNgram --string "Hello World" --normalizer NormalizerAuto
+  # [
+  #   [
+  #     0,
+  #     1556063752.798628,
+  #     0.0001776218414306641
+  #   ],
+  #   [
+  #     {
+  #       "value": "hello",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "world",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     }
+  #   ]
+  # ]
