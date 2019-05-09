@@ -621,6 +621,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab-target-class-option.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab-use-reading-option.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-ngram-bi-gram.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-ngram-loose-symbol-and-loose-blank.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-ngram-no-option-with-normalizer.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-ngram-no-option.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-ngram-tri-gram.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-ngram-uni-gram.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-regexp-add.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-trigram-non-ascii.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-trigram.log \
@@ -1684,6 +1690,12 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/tokenizers/token-mecab-target-class-option.log \
 	source/example/reference/tokenizers/token-mecab-use-reading-option.log \
 	source/example/reference/tokenizers/token-mecab.log \
+	source/example/reference/tokenizers/token-ngram-bi-gram.log \
+	source/example/reference/tokenizers/token-ngram-loose-symbol-and-loose-blank.log \
+	source/example/reference/tokenizers/token-ngram-no-option-with-normalizer.log \
+	source/example/reference/tokenizers/token-ngram-no-option.log \
+	source/example/reference/tokenizers/token-ngram-tri-gram.log \
+	source/example/reference/tokenizers/token-ngram-uni-gram.log \
 	source/example/reference/tokenizers/token-regexp-add.log \
 	source/example/reference/tokenizers/token-trigram-non-ascii.log \
 	source/example/reference/tokenizers/token-trigram.log \
@@ -2252,6 +2264,7 @@ html_files_relative_from_locale_dir = \
 	html/_static/header-background.png \
 	html/_static/jquery-3.2.1.js \
 	html/_static/jquery.js \
+	html/_static/language_data.js \
 	html/_static/logo.png \
 	html/_static/minus.png \
 	html/_static/navigation-bar.png \

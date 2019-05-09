@@ -14,7 +14,7 @@ Summary
 -------
 
 ``TokenNgram`` can define its behavior dynamically via its options.
-For example, we can use unigram, bigram, trigram and so on with changing ``n`` option value as below.
+For example, we can use it as unigram, bigram, trigram on with changing ``n`` option value as below.
 
 Uni-gram:
 
@@ -95,6 +95,20 @@ If we use ``TokenNgram`` in the nothing of option.
 .. include:: ../../example/reference/tokenizers/token-ngram-no-option-with-normalizer.log
 .. tokenize --tokenizer TokenNgram --string "Hello World" --normalizer NormalizerAuto
 
+Advanced usage
+--------------
+
+We can specify multiple options for ``TokenNgram``.
+
+For example, we can deal with orthographic variantsas of phone number by using ``loose_symbol`` and ``loose_blank`` as below.
+
+We can search ``0123(45)6789``, ``0123-45-6789`` and, ``0123 45 6789`` by using ``0123456789`` as below example.
+
+.. groonga-command
+.. include:: ../../example/reference/tokenizers/token-ngram-loose-symbol-and-loose-blank.log
+.. tokenize --tokenizer 'TokenNgram("loose_symbol", true, "loose_blank", true)' --string "0123(45)6789" --normalizer NormalizerAuto
+.. tokenize --tokenizer 'TokenNgram("loose_symbol", true, "loose_blank", true)' --string "0123-45-6789" --normalizer NormalizerAuto
+.. tokenize --tokenizer 'TokenNgram("loose_symbol", true, "loose_blank", true)' --string "0123 45 6789" --normalizer NormalizerAuto
 
 Parameters
 ----------
@@ -146,7 +160,7 @@ This option tells us a location of token of highlight target when we highlight t
 
 We only use this option when we want to highlight token by ``highlight_html``.
 
-When Groonga tokenizes token, always used ``NormalizerAuto`` to normalizer until now.
+When Groonga tokenize texts that target highlight, always used ``NormalizerAuto`` to normalizer until now.
 Therefore, if we use ``NormalizerNFKC100`` to normalizer, sometimes the position of the highlight shift.
 Because we use different normalizer to normalize token.
 
