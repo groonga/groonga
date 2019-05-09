@@ -82,7 +82,8 @@ if ! test -d "$groonga_command_dir"; then
 fi
 if ! test -d "$groonga_command_dir"; then
   git clone --depth 1 \
-      https://github.com/groonga/groonga-command "$groonga_command_dir"
+      https://github.com/groonga/groonga-command.git \
+      "$groonga_command_dir"
 fi
 
 groonga_command_parser_dir="$SOURCE_DIR/groonga-command-parser"
@@ -91,8 +92,48 @@ if ! test -d "$groonga_command_parser_dir"; then
 fi
 if ! test -d "$groonga_command_parser_dir"; then
   git clone --depth 1 \
-      https://github.com/groonga/groonga-command-parser \
+      https://github.com/groonga/groonga-command-parser.git \
       "$groonga_command_parser_dir"
+fi
+
+gqtp_dir="$SOURCE_DIR/gqtp"
+if ! test -d "$gqtp_dir"; then
+  gqtp_dir="$BUILD_DIR/gqtp"
+fi
+if ! test -d "$gqtp_dir"; then
+  git clone --depth 1 \
+      https://github.com/ranguba/gqtp.git \
+      "$gqtp_dir"
+fi
+
+groonga_client_dir="$SOURCE_DIR/groonga-client"
+if ! test -d "$groonga_client_dir"; then
+  groonga_client_dir="$BUILD_DIR/groonga-client"
+fi
+if ! test -d "$groonga_client_dir"; then
+  git clone --depth 1 \
+      https://github.com/ranguba/groonga-client.git \
+      "$groonga_client_dir"
+fi
+
+groonga_log_dir="$SOURCE_DIR/groonga-log"
+if ! test -d "$groonga_log_dir"; then
+  groonga_log_dir="$BUILD_DIR/groonga-log"
+fi
+if ! test -d "$groonga_log_dir"; then
+  git clone --depth 1 \
+      https://github.com/groonga/groonga-log.git \
+      "$groonga_log_dir"
+fi
+
+groonga_query_log_dir="$SOURCE_DIR/groonga-query-log"
+if ! test -d "$groonga_query_log_dir"; then
+  groonga_query_log_dir="$BUILD_DIR/groonga-query-log"
+fi
+if ! test -d "$groonga_query_log_dir"; then
+  git clone --depth 1 \
+      https://github.com/groonga/groonga-query-log.git \
+      "$groonga_query_log_dir"
 fi
 
 have_targets="false"
@@ -156,6 +197,10 @@ $RUBY \
   -I "$grntest_dir/lib" \
   -I "$groonga_command_dir/lib" \
   -I "$groonga_command_parser_dir/lib" \
+  -I "$gqtp_dir/lib" \
+  -I "$groonga_client_dir/lib" \
+  -I "$groonga_log_dir/lib" \
+  -I "$groonga_query_log_dir/lib" \
   "$grntest_dir/bin/grntest" \
   --groonga "$GROONGA" \
   --groonga-httpd "$GROONGA_HTTPD" \
