@@ -399,7 +399,6 @@ module Groonga
         attr_reader :calc_types
         attr_reader :filter
         attr_reader :result_sets
-        attr_reader :unsorted_result_sets
         attr_reader :temporary_tables
         attr_reader :expressions
         def initialize(input)
@@ -416,7 +415,6 @@ module Groonga
           @filter = @input[:drilldown_filter]
 
           @result_sets = []
-          @unsorted_result_sets = []
 
           @temporary_tables = []
 
@@ -424,13 +422,6 @@ module Groonga
         end
 
         def close
-          @result_sets.each do |result_set|
-            result_set.close
-          end
-          @unsorted_result_sets.each do |result_set|
-            result_set.close
-          end
-
           @temporary_tables.each do |table|
             table.close
           end
@@ -529,7 +520,6 @@ module Groonga
         attr_reader :table
         attr_reader :dynamic_columns
         attr_accessor :result_set
-        attr_accessor :unsorted_result_set
         attr_reader :temporary_tables
         attr_reader :expressions
         def initialize(label, parameters)
@@ -549,7 +539,6 @@ module Groonga
           @dynamic_columns = DynamicColumns.parse(parameters)
 
           @result_set = nil
-          @unsorted_result_set = nil
 
           @temporary_tables = []
 
@@ -557,9 +546,6 @@ module Groonga
         end
 
         def close
-          @result_set.close if @result_set
-          @unsorted_result_set.close if @unsorted_result_set
-
           @temporary_tables.each do |table|
             table.close
           end
@@ -671,12 +657,13 @@ module Groonga
               end
               result_set = group_result.table
               result_set = apply_drilldown_filter(drilldown, result_set)
-              if drilldown.sort_keys.empty?
-                drilldown.result_sets << result_set
-              else
-                drilldown.result_sets << result_set.sort(drilldown.sort_keys)
-                drilldown.unsorted_result_sets << result_set
+              drilldown.temporary_tables << result_set
+              group_result.table = nil
+              unless drilldown.sort_keys.empty?
+                result_set = result_set.sort(drilldown.sort_keys)
+                drilldown.temporary_tables << result_set
               end
+              drilldown.result_sets << result_set
               group_result.table = nil
             end
           ensure
@@ -715,13 +702,13 @@ module Groonga
               result_set = group_result.table
               drilldown.dynamic_columns.apply_initial([[result_set]])
               result_set = apply_drilldown_filter(drilldown, result_set)
-              if drilldown.sort_keys.empty?
-                drilldown.result_set = result_set
-              else
-                drilldown.result_set = result_set.sort(drilldown.sort_keys)
-                drilldown.unsorted_result_set = result_set
-              end
+              drilldown.temporary_tables << result_set
               group_result.table = nil
+              unless drilldown.sort_keys.empty?
+                result_set = result_set.sort(drilldown.sort_keys)
+                drilldown.temporary_tables << result_set
+              end
+              drilldown.result_set = result_set
             ensure
               group_result.close
             end
