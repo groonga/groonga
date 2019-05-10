@@ -138,7 +138,7 @@ grn_log_flags_parse(const char *string,
   }
 
   if (string_size < 0) {
-    string_size = strlen(string);
+    string_size = (int)strlen(string);
   }
 
   string_end = string + string_size;
@@ -633,7 +633,7 @@ grn_query_log_flags_parse(const char *string,
   }
 
   if (string_size < 0) {
-    string_size = strlen(string);
+    string_size = (int)strlen(string);
   }
 
   string_end = string + string_size;
