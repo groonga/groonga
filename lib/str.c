@@ -2586,39 +2586,31 @@ grn_text_printf(grn_ctx *ctx, grn_obj *bulk, const char *format, ...)
 grn_rc
 grn_text_vprintf(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
 {
-  grn_bool is_written = GRN_FALSE;
-  int written_size;
+  int written_size = -1;
+  const int rest_size = GRN_BULK_REST(bulk);
 
-  {
-    int rest_size;
+#ifdef WIN32
+  bool is_written = false;
+  if (rest_size > 0) {
     va_list copied_args;
-
-    rest_size = GRN_BULK_REST(bulk);
     va_copy(copied_args, args);
     written_size = vsnprintf(GRN_BULK_CURR(bulk), rest_size,
                              format, copied_args);
     va_end(copied_args);
-
-    if (written_size < rest_size) {
-      is_written = GRN_TRUE;
-    }
+    is_written = (written_size + 1 <= rest_size);
   }
 
   if (!is_written) {
-#ifdef WIN32
-    grn_rc rc;
-    int required_size;
     va_list copied_args;
-
     va_copy(copied_args, args);
-    required_size = vsnprintf(NULL, 0, format, copied_args);
+    const int to_be_written_size = vsnprintf(NULL, 0, format, copied_args);
     va_end(copied_args);
 
-    if (required_size < 0) {
+    if (to_be_written_size < 0) {
       return GRN_INVALID_ARGUMENT;
     }
-    required_size++; /* for terminate '\0'. */
-    rc = grn_bulk_reserve(ctx, bulk, required_size);
+    const int required_size = to_be_written_size + 1; /* for terminate '\0'. */
+    const grn_rc rc = grn_bulk_reserve(ctx, bulk, required_size);
     if (rc) {
       return rc;
     }
@@ -2626,20 +2618,25 @@ grn_text_vprintf(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
     written_size = vsnprintf(GRN_BULK_CURR(bulk), required_size,
                              format, copied_args);
     va_end(copied_args);
-#else /* WIN32 */
-    if (written_size >= 0) {
-      grn_rc rc;
-      int required_size = written_size + 1; /* "+ 1" for terminate '\0'. */
-
-      rc = grn_bulk_reserve(ctx, bulk, required_size);
-      if (rc) {
-        return rc;
-      }
-      written_size = vsnprintf(GRN_BULK_CURR(bulk), required_size,
-                               format, args);
-    }
-#endif /* WIN32 */
   }
+#else /* WIN32 */
+  va_list copied_args;
+  va_copy(copied_args, args);
+  written_size = vsnprintf(GRN_BULK_CURR(bulk), rest_size, format, copied_args);
+  va_end(copied_args);
+  const bool is_written = (written_size + 1 <= rest_size);
+  if (!is_written) {
+    const int required_size = written_size + 1; /* "+ 1" for terminate '\0'. */
+    const grn_rc rc = grn_bulk_reserve(ctx, bulk, required_size);
+    if (rc) {
+      return rc;
+    }
+    va_copy(copied_args, args);
+    written_size = vsnprintf(GRN_BULK_CURR(bulk), required_size,
+                             format, copied_args);
+    va_end(copied_args);
+  }
+#endif /* WIN32 */
 
   if (written_size < 0) {
     return GRN_INVALID_ARGUMENT;
