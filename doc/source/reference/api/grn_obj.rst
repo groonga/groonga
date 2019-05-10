@@ -33,6 +33,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_accessor(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded: 5.1.0
+
    Check whether target object is a accessor object.
 
    :param ctx: The context object.
@@ -67,6 +69,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_column(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded:: 6.0.0
+
    Check whether target object is a column object.
 
    :param ctx: The context object.
@@ -85,6 +89,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded:: 7.0.4
+
    Check whether target object is corrupted.
 
    :param ctx: The context object.
@@ -92,6 +98,8 @@ Reference
    :return: ``GRN_TRUE`` for if the target object is corrupted, ``GRN_FALSE`` otherwise.
 
 .. c:function:: grn_bool grn_obj_is_data_column(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 7.0.1
 
    Check whether column is a data column.
 
@@ -101,6 +109,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_dirty(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded:: 6.0.5
+
    Check whether target object is marked as dirty.
 
    :param ctx: The context object.
@@ -108,6 +118,8 @@ Reference
    :return: ``GRN_TRUE`` for if the target object status is dirty. ``GRN_FALSE`` otherwise. TODO: dirty
 
 .. c:function:: grn_bool grn_obj_is_expr(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 7.0.1
 
    Check whether target object is an expression object.
 
@@ -117,6 +129,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_function_proc(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded:: 5.0.1
+
    Check whether target object is a function procedure.
 
    :param ctx: The context object.
@@ -124,6 +138,8 @@ Reference
    :return: ``GRN_TRUE`` for if the target object is function object. ``GRN_FALSE`` otherwise. TODO:
 
 .. c:function:: grn_bool grn_obj_is_index_column(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 8.0.4
 
    Check whether index column.
 
@@ -133,6 +149,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_id_accessor(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded:: 9.0.2
+
    Check whether target object is a id accessor.
 
    :param ctx: The context object.
@@ -140,6 +158,8 @@ Reference
    :return: ``GRN_TRUE`` for if the target object is id accessor. ``GRN_FALSE`` otherwise. TODO: difference between is_accessor and is_id_accessor.
 
 .. c:function:: grn_bool grn_obj_is_key_accessor(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.1.0
 
    Check whether target object is a key accessor.
 
@@ -149,6 +169,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_lexicon(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded: 8.0.2
+
    Check whether target object is a lexicon.
 
    :param ctx: The context object.
@@ -156,6 +178,8 @@ Reference
    :return: ``GRN_TRUE`` for if the target object is a lexicon. ``GRN_FALSE`` otherwise. TODO:
 
 .. c:function:: grn_bool grn_obj_is_number_family_bulk(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 8.0.4
 
    Check whether target object is a number bulk object.
 
@@ -165,6 +189,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_normalizer_proc(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded: 5.0.9
+
    Check whether target object is a normalizer object.
 
    :param ctx: The context object.
@@ -172,6 +198,8 @@ Reference
    :return: ``GRN_TRUE`` for if the target object is a normalizer object. ``GRN_FALSE`` otherwise. TODO:
 
 .. c:function:: grn_bool grn_obj_is_proc(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.0.9
 
    Check whether target object is a procedure.
 
@@ -181,6 +209,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded:: 6.0.0
+
    Check whether target object is a reference column.
 
    :param ctx: The context object.
@@ -188,6 +218,8 @@ Reference
    :return: ``GRN_TRUE`` for if the target object is a reference column. ``GRN_FALSE`` otherwise. TODO:
 
 .. c:function:: grn_bool grn_obj_is_scalar_column(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 7.0.1
 
    Check whether target object is a scalar column.
 
@@ -197,6 +229,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_scorer_proc(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded: 5.0.9
+
    Check whether target object is a scorer procedure.
 
    :param ctx: The context object.
@@ -204,6 +238,8 @@ Reference
    :return: ``GRN_TRUE`` for if the target object is a scorer procedure. ``GRN_FALSE`` otherwise. TODO:
 
 .. c:function:: grn_bool grn_obj_is_selector_proc(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.0.9
 
    Check whether target object is a selector procedure.
 
@@ -221,6 +257,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded: 5.0.9
+
    Check whether target object is a table.
 
    :param ctx: The context object.
@@ -237,6 +275,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_text_family_type(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded:: 6.0.1
+
    Check whether target object is a type which belongs to text family.
 
    :param ctx: The context object.
@@ -245,6 +285,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_tokenizer_proc(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded: 5.0.9
+
    Check whether target object is a tokenizer procedure.
 
    :param ctx: The context object.
@@ -252,6 +294,8 @@ Reference
    :return: ``GRN_TRUE`` for if the target object is a tokenizer procedure. ``GRN_FALSE`` otherwise. TODO:
 
 .. c:function:: grn_bool grn_obj_is_token_filter_proc(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded: 5.0.9
 
    Check whether target object is a token filter procedure.
 
@@ -269,6 +313,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_type(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded: 5.0.9
+
    Check whether target object is a type.
 
    :param ctx: The context object.
@@ -277,6 +323,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_vector(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded:: 8.0.8
+
    Check whether target object is a vector.
 
    :param ctx: The context object.
@@ -284,6 +332,8 @@ Reference
    :return: ``GRN_TRUE`` for if the target object is a vector object. ``GRN_FALSE`` otherwise. TODO:
 
 .. c:function:: grn_bool grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj)
+
+   .. versionadded:: 8.0.4
 
    Check whether target object is a vector column.
 
@@ -301,6 +351,8 @@ Reference
 
 .. c:function:: grn_bool grn_obj_is_window_function_proc(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded: 5.0.9
+
    Check whether target object is a window function procedure.
 
    :param ctx: The context object.
@@ -316,6 +368,8 @@ Reference
    :return: The amount of disk usage about specified ``obj``.
 
 .. c:function:: uint32_t grn_obj_get_last_modified(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
+
+   .. versionadded:: 6.0.5
 
    Check last modified timestamp of target object.
 
@@ -562,6 +616,8 @@ Reference
 
 .. c:function:: grn_rc grn_obj_reindex(grn_ctx *ctx, grn_obj *obj)
 
+   .. versionadded: 5.1.0
+
    Reindex target object.
 
    :param ctx: The context object.
@@ -569,6 +625,8 @@ Reference
    :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
 
 .. c:function:: void grn_obj_touch(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
+
+   .. versionadded:: 6.0.5
 
    Touch target object.
 
