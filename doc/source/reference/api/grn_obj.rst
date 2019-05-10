@@ -47,6 +47,16 @@ Reference
    :param obj: target object
    :return: ``GRN_TRUE`` for built-in groonga object, ``GRN_FALSE`` otherwise.
 
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Int8", strlen("Int8"));
+      printf("builtin?: %s\n", grn_obj_is_builtin(ctx, obj) ? "true" : "false");
+
+   As ``Int8`` is built-in object, it prints like the following::
+
+     builtin?: true
+
 .. c:function:: grn_bool grn_obj_is_bulk(grn_ctx *ctx, grn_obj *obj);
 
    Check whether target object is a bulk object.
@@ -62,6 +72,16 @@ Reference
    :param ctx: The context object.
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is column, ``GRN_FALSE`` otherwise.
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Users.name", strlen("Users.name"));
+      printf("column?: %s\n", grn_obj_is_column(ctx, obj) ? "true" : "false");
+
+   If ``Users.name`` is column object, it prints like the following::
+
+     column?: true
 
 .. c:function:: grn_bool grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj)
 
