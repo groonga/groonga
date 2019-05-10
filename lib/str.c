@@ -2597,7 +2597,7 @@ grn_text_vprintf(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
     written_size = vsnprintf(GRN_BULK_CURR(bulk), rest_size,
                              format, copied_args);
     va_end(copied_args);
-    is_written = (written_size + 1 <= rest_size);
+    is_written = (written_size >= 0 && (written_size + 1 <= rest_size));
   }
 
   if (!is_written) {
@@ -2624,7 +2624,7 @@ grn_text_vprintf(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
   va_copy(copied_args, args);
   written_size = vsnprintf(GRN_BULK_CURR(bulk), rest_size, format, copied_args);
   va_end(copied_args);
-  const bool is_written = (written_size + 1 <= rest_size);
+  const bool is_written = (written_size >= 0 && (written_size + 1 <= rest_size));
   if (!is_written) {
     const int required_size = written_size + 1; /* "+ 1" for terminate '\0'. */
     const grn_rc rc = grn_bulk_reserve(ctx, bulk, required_size);
