@@ -25,12 +25,12 @@ select Sites --filter "_key @ uri"
   ]
 ]
 #|e| invalid expression: can't use column as a value: <Sites.uri>: <#<expr
-  vars:{
-    $1:#<record:hash:Sites id:(no value)>
-  },
-  codes:{
-    0:<get_value n_args:1, flags:0, modify:2, value:#<accessor _key(Sites)>>,
-    1:<get_value n_args:1, flags:0, modify:0, value:#<column:var_size Sites.uri range:ShortText type:scalar compress:none>>,
-    2:<match n_args:2, flags:0, modify:0, value:(NULL)>
-  }
->>
+#|e|   vars:{
+#|e|     $1:#<record:hash:Sites id:(no value)>
+#|e|   },
+#|e|   codes:{
+#|e|     0:<get_value n_args:1, flags:0, modify:2, value:#<accessor _key(Sites)>>,
+#|e|     1:<get_value n_args:1, flags:0, modify:0, value:#<column:var_size Sites.uri range:ShortText type:scalar compress:none>>,
+#|e|     2:<match n_args:2, flags:0, modify:0, value:(NULL)>
+#|e|   }
+#|e| >>

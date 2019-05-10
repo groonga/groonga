@@ -558,8 +558,32 @@ grn_logger_putv(grn_ctx *ctx,
         lbuf_rest_size -= lbuf_size;
       }
     }
-    current_logger.log(ctx, level, tbuf, "", mbuf, lbuf,
-                       current_logger.user_data);
+
+    if (mbuf[0] == '\0') {
+      current_logger.log(ctx, level, tbuf, "", mbuf, lbuf,
+                         current_logger.user_data);
+    } else {
+      const char *mbuf_line_start = mbuf;
+      const char *mbuf_end = mbuf + strlen(mbuf);
+      int mbuf_char_length = 0;
+      for (char *mbuf_current = mbuf;
+           mbuf_current < mbuf_end;
+           mbuf_current += mbuf_char_length) {
+        mbuf_char_length = grn_charlen(ctx, mbuf_current, mbuf_end);
+        if (mbuf_char_length == 0) {
+          break;
+        } else if (mbuf_char_length == 1 && mbuf_current[0] == '\n') {
+          mbuf_current[0] = '\0';
+          current_logger.log(ctx, level, tbuf, "", mbuf_line_start, lbuf,
+                             current_logger.user_data);
+          mbuf_line_start = mbuf_current + 1;
+        }
+      }
+      if (mbuf_line_start < mbuf_end) {
+        current_logger.log(ctx, level, tbuf, "", mbuf_line_start, lbuf,
+                           current_logger.user_data);
+      }
+    }
   }
 }
 
