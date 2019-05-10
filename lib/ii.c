@@ -10329,7 +10329,21 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
     grn_log("o=%d n=%d s=%d r=%d", ti->offset, ti->ntoken, ti->size, ti->rid);
   }
   */
-  GRN_LOG(ctx, GRN_LOG_INFO, "n=%d (%.*s)", n, string_len, string);
+  if (grn_logger_pass(ctx, GRN_LOG_INFO)) {
+    if (grn_type_id_is_text_family(ctx, ii->lexicon->header.domain)) {
+      GRN_LOG(ctx, GRN_LOG_INFO, "n=%d (%.*s)", n, string_len, string);
+    } else {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect_key(ctx, &inspected, ii->lexicon, string, string_len);
+      GRN_LOG(ctx, GRN_LOG_INFO,
+              "n=%d (%.*s)",
+              n,
+              (int)GRN_TEXT_LEN(&inspected),
+              GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+    }
+  }
   /* todo : array as result
   if (n == 1 && (*tis)->cursors->n_entries == 1 && op == GRN_OP_OR
       && !GRN_HASH_SIZE(s) && !s->garbages
@@ -10685,7 +10699,20 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
            grn_hash *s, grn_operator op, grn_search_optarg *optarg)
 {
   ERRCLR(ctx);
-  GRN_LOG(ctx, GRN_LOG_INFO, "grn_ii_sel > (%.*s)", string_len, string);
+  if (grn_logger_pass(ctx, GRN_LOG_INFO)) {
+    if (grn_type_id_is_text_family(ctx, ii->lexicon->header.domain)) {
+      GRN_LOG(ctx, GRN_LOG_INFO, "grn_ii_sel > (%.*s)", string_len, string);
+    } else {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect_key(ctx, &inspected, ii->lexicon, string, string_len);
+      GRN_LOG(ctx, GRN_LOG_INFO,
+              "grn_ii_sel > (%.*s)",
+              (int)GRN_TEXT_LEN(&inspected),
+              GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+    }
+  }
   {
     grn_select_optarg arg;
     if (!s) { return GRN_INVALID_ARGUMENT; }
