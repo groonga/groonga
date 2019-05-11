@@ -828,6 +828,24 @@ exit :
   return found_path;
 }
 
+static bool
+grn_plugin_find_path_is_absolute_path(grn_ctx *ctx, const char *name)
+{
+  /* UNIX */
+  if (name[0] == '/') {
+    return true;
+  }
+
+  /* Windows */
+  if ((('a' <= name[0] <= 'z') || ('A' <= name[0] <= 'Z')) &&
+      name[1] == ':' &&
+      name[2] == '/') {
+    return true;
+  }
+
+  return false;
+}
+
 char *
 grn_plugin_find_path(grn_ctx *ctx, const char *name)
 {
@@ -835,7 +853,7 @@ grn_plugin_find_path(grn_ctx *ctx, const char *name)
 
   GRN_API_ENTER;
 
-  if (name[0] == '/') {
+  if (grn_plugin_find_path_is_absolute_path(ctx, name)) {
     found_path = grn_plugin_find_path_one(ctx, name);
   } else {
     GRN_PLUGINS_DIR_EACH_BEGIN(dir, dir_length) {
