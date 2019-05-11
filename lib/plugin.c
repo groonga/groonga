@@ -837,7 +837,8 @@ grn_plugin_find_path_is_absolute_path(grn_ctx *ctx, const char *name)
   }
 
   /* Windows */
-  if ((('a' <= name[0] <= 'z') || ('A' <= name[0] <= 'Z')) &&
+  if ((('a' <= name[0] && name[0] <= 'z') ||
+       ('A' <= name[0] && name[0] <= 'Z')) &&
       name[1] == ':' &&
       name[2] == '/') {
     return true;
