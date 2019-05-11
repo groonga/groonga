@@ -51,9 +51,27 @@
 # include <netinet/in.h>
 #endif /* WIN32 */
 
-#define GRN_CTX_INITIALIZER(enc) \
-  { GRN_SUCCESS, 0, enc, 0, GRN_LOG_NOTICE,\
-    GRN_CTX_FIN, 0, 0, 0, 0, {0}, NULL, NULL, NULL, NULL, NULL }
+#define GRN_CTX_INITIALIZER(enc)                \
+  {                                             \
+    /* rc */ GRN_SUCCESS,                       \
+    /* flags */ 0,                              \
+    /* encoding */ enc,                         \
+    /* ntrace */ 0,                             \
+    /* errlvl */ GRN_LOG_NOTICE,                \
+    /* stat */ GRN_CTX_FIN,                     \
+    /* seqno */ 0,                              \
+    /* subno */ 0,                              \
+    /* seqno2 */ 0,                             \
+    /* errline */ 0,                            \
+    /* user_data */ {0},                        \
+    /* prev */ NULL,                            \
+    /* next */ NULL,                            \
+    /* errfile */ NULL,                         \
+    /* errfunc */ NULL,                         \
+    /* impl */ NULL,                            \
+    /* trace */ {0},                            \
+    /* errbuf */ {0}                            \
+  }
 
 #define GRN_CTX_CLOSED(ctx) ((ctx)->stat == GRN_CTX_FIN)
 
