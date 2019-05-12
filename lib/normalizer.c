@@ -32,9 +32,8 @@ grn_normalizer_register(grn_ctx *ctx,
                         grn_proc_func *next,
                         grn_proc_func *fin)
 {
-  grn_expr_var vars[] = {
-    { NULL, 0 }
-  };
+  grn_expr_var vars[1];
+  memset(vars, 0, sizeof(vars));
   GRN_PTR_INIT(&vars[0].value, 0, GRN_ID_NIL);
 
   if (name_length < 0) {

@@ -87,7 +87,8 @@ grn_index_column_build_call_hook(grn_ctx *ctx,
   if (hooks) {
     /* todo : grn_proc_ctx_open() */
     grn_obj id_, flags_;
-    grn_proc_ctx pctx = {{0}, hooks->proc, NULL, hooks, hooks, PROC_INIT, 4, 4};
+    grn_proc_ctx pctx;
+    grn_proc_ctx_init(&pctx, hooks, 4, 4);
     GRN_UINT32_INIT(&id_, 0);
     GRN_UINT32_INIT(&flags_, 0);
     GRN_UINT32_SET(ctx, &id_, id);

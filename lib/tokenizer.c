@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2012-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -551,11 +551,8 @@ grn_tokenizer_register(grn_ctx *ctx, const char *plugin_name_ptr,
                        grn_proc_func *init, grn_proc_func *next,
                        grn_proc_func *fin)
 {
-  grn_expr_var vars[] = {
-    { NULL, 0 },
-    { NULL, 0 },
-    { NULL, 0 }
-  };
+  grn_expr_var vars[3];
+  memset(vars, 0, sizeof(vars));
   GRN_TEXT_INIT(&vars[0].value, 0);
   GRN_TEXT_INIT(&vars[1].value, 0);
   GRN_UINT32_INIT(&vars[2].value, 0);

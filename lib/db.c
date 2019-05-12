@@ -1698,7 +1698,8 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
       if (hooks) {
         // todo : grn_proc_ctx_open()
         grn_obj id_, flags_, oldvalue_, value_;
-        grn_proc_ctx pctx = {{0}, hooks->proc, NULL, hooks, hooks, PROC_INIT, 4, 4};
+        grn_proc_ctx pctx;
+        grn_proc_ctx_init(&pctx, hooks, 4, 4);
         GRN_UINT32_INIT(&id_, 0);
         GRN_UINT32_INIT(&flags_, 0);
         GRN_VOID_INIT(&oldvalue_);
@@ -2032,7 +2033,8 @@ call_delete_hook(grn_ctx *ctx, grn_obj *table, grn_id rid, const void *key, unsi
     if (hooks) {
       // todo : grn_proc_ctx_open()
       grn_obj id_, flags_, oldvalue_, value_;
-      grn_proc_ctx pctx = {{0}, hooks->proc, NULL, hooks, hooks, PROC_INIT, 4, 4};
+      grn_proc_ctx pctx;
+      grn_proc_ctx_init(&pctx, hooks, 4, 4);
       GRN_UINT32_INIT(&id_, 0);
       GRN_UINT32_INIT(&flags_, 0);
       GRN_TEXT_INIT(&oldvalue_, GRN_OBJ_DO_SHALLOW_COPY);
@@ -7453,7 +7455,8 @@ call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
     if (hooks) {
       // todo : grn_proc_ctx_open()
       grn_obj id_, flags_;
-      grn_proc_ctx pctx = {{0}, hooks->proc, NULL, hooks, hooks, PROC_INIT, 4, 4};
+      grn_proc_ctx pctx;
+      grn_proc_ctx_init(&pctx, hooks, 4, 4);
       GRN_UINT32_INIT(&id_, 0);
       GRN_UINT32_INIT(&flags_, 0);
       GRN_UINT32_SET(ctx, &id_, id);

@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -252,6 +252,21 @@ struct _grn_proc_ctx {
   unsigned short offset;
   grn_user_data data[16];
 };
+
+static inline void
+grn_proc_ctx_init(grn_proc_ctx *pctx,
+                  grn_hook *hooks,
+                  unsigned short n_args,
+                  unsigned short offset)
+{
+  memset(pctx, 0, sizeof(*pctx));
+  pctx->proc = hooks->proc;
+  pctx->hooks = hooks;
+  pctx->currh = hooks;
+  pctx->phase = PROC_INIT;
+  pctx->nargs = n_args;
+  pctx->offset = offset;
+}
 
 struct _grn_proc {
   grn_db_obj obj;

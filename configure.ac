@@ -193,6 +193,7 @@ if test "$GCC" = "yes"; then
 #  CHECK_BUILD_FLAG([-Wconversion])
   CHECK_BUILD_FLAG([-Wwrite-strings])
 #  CHECK_BUILD_FLAG([-Winline])
+  CHECK_BUILD_FLAG([-Wmissing-field-initializers])
 
   CHECK_CXXFLAG([-fexceptions])
   CHECK_CXXFLAG([-fimplicit-templates])

@@ -3615,7 +3615,10 @@ merger_get_next_buffer(grn_ctx *ctx, merger_data *data)
   } else {
     docinfo last_id = {
       buffer_data->id.rid,
-      buffer_data->id.sid
+      buffer_data->id.sid,
+      0,
+      0,
+      0
     };
     buffer_rec *record = BUFFER_REC_AT(buffer_data->buffer,
                                        buffer_data->next_position);
@@ -7913,9 +7916,13 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     grn_ii_updspec *u_;
     uint32_t offset = 0;
     grn_id tid_ = 0, gap, tid, *tpe;
-    grn_table_sort_optarg arg = {GRN_TABLE_SORT_ASC|
-                                 GRN_TABLE_SORT_AS_NUMBER|
-                                 GRN_TABLE_SORT_AS_UNSIGNED, NULL, NULL,0 };
+    grn_table_sort_optarg arg = {
+      GRN_TABLE_SORT_ASC|GRN_TABLE_SORT_AS_NUMBER|GRN_TABLE_SORT_AS_UNSIGNED,
+      NULL,
+      NULL,
+      NULL,
+      0,
+    };
     grn_array *sorted = grn_array_create(ctx, NULL, sizeof(grn_id), 0);
     grn_hash_sort(ctx, (grn_hash *)new, -1, sorted, &arg);
     GRN_TEXT_PUT(ctx, posting, ((grn_hash *)new)->n_entries, sizeof(uint32_t));
@@ -9071,6 +9078,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     grn_wv_mode wvm = grn_wv_none;
     grn_table_sort_optarg arg = {
       GRN_TABLE_SORT_DESC|GRN_TABLE_SORT_BY_VALUE|GRN_TABLE_SORT_AS_NUMBER,
+      NULL,
       NULL,
       NULL,
       0
