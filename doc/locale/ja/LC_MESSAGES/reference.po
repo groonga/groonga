@@ -10883,6 +10883,13 @@ msgstr ""
 msgid "``2**17`` (131072)"
 msgstr ""
 
+msgid ""
+"If the number of segments tend to exceeds near the future, you need to "
+"consider to adopt ``INDEX_XXX`` flags."
+msgstr ""
+"近い将来、セグメント数を超過する傾向がある場合は、 ``INDEX_XXX`` フラグの採用"
+"を検討する必要があります。"
+
 msgid "``INDEX_COLUMN_SOURCE_ID``"
 msgstr ""
 

@@ -772,6 +772,8 @@ This value the max number of segments. It depends on index size:
    * - Default
      - ``2**17`` (131072)
 
+If the number of segments tend to exceeds near the future, you need to consider to adopt ``INDEX_XXX`` flags.
+
 .. _object-inspect-return-value-index-column-source-id:
 
 ``INDEX_COLUMN_SOURCE_ID``
