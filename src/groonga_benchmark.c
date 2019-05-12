@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2010-2014 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3069,7 +3069,7 @@ main(int argc, char **argv)
   if (!log_path) {
     if (outdir) {
       sprintf(log_path_buffer,
-              "%s/%s-%s-%" GRN_FMT_LLD "-%s.log",
+              "%s/%s-%s-%" GRN_FMT_INT64D "-%s.log",
               outdir,
               grntest_scriptname,
               grntest_username,
@@ -3077,7 +3077,7 @@ main(int argc, char **argv)
               grn_get_version());
     } else {
       sprintf(log_path_buffer,
-              "%s-%s-%" GRN_FMT_LLD "-%s.log",
+              "%s-%s-%" GRN_FMT_INT64D "-%s.log",
               grntest_scriptname,
               grntest_username,
               GRN_TIME_VALUE(&grntest_starttime),
