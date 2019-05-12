@@ -1,3 +1,5 @@
+#@omit "This isn't portable for non UTF-8 path environment."
+
 plugin_register "token_filters/stop_word"
 object_exist TokenFilterStopWord
 
