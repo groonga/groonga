@@ -226,7 +226,6 @@ module Groonga
         return if table.find_column(@label)
         column = table.create_column(@label, @flags, @type)
 
-        p options
         query_log_prefix = nil
         query_log_prefix = options[:query_log_prefix] if options
         unless table.empty?
