@@ -979,7 +979,7 @@ grn_nfkc_normalize_unify_katakana_voiced_sound_mark(const unsigned char *utf8_ch
   return utf8_char;
 }
 
-grn_inline static const grn_bool
+grn_inline static grn_bool
 grn_nfkc_normalize_is_hyphen_famity(const unsigned char *utf8_char,
                                     size_t length)
 {
@@ -1031,7 +1031,7 @@ grn_nfkc_normalize_is_hyphen_famity(const unsigned char *utf8_char,
   return GRN_FALSE;
 }
 
-grn_inline static const grn_bool
+grn_inline static grn_bool
 grn_nfkc_normalize_is_prolonged_sound_mark_famity(const unsigned char *utf8_char,
                                                   size_t length)
 {
