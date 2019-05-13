@@ -253,7 +253,7 @@ struct _grn_proc_ctx {
   grn_user_data data[16];
 };
 
-static inline void
+static grn_inline void
 grn_proc_ctx_init(grn_proc_ctx *pctx,
                   grn_hook *hooks,
                   unsigned short n_args,
