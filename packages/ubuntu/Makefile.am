@@ -1,4 +1,5 @@
-CODE_NAMES = xenial,bionic,cosmic,disco
+UBUNTU_CODE_NAMES = xenial,bionic,cosmic,disco
+UBUNTU_VERSIONS = 16.04,18.04,18.10,19.04
 SOURCE = ../$(PACKAGE)-$(VERSION).tar.gz
 
 all:
@@ -14,7 +15,8 @@ upload: source ensure-launchpad-configuration
 	  --package '$(PACKAGE)' \
 	  --version '$(VERSION)' \
 	  --source-archive '$(SOURCE)' \
-	  --code-names '$(CODE_NAMES)' \
+	  --ubuntu-code-names '$(UBUNTU_CODE_NAMES)' \
+	  --ubuntu-versions '$(UBUNTU_VERSIONS)' \
 	  --debian-directory '$(srcdir)/../debian/' \
 	  --ppa '$(LAUNCHPAD_PPA)' \
 	  --pgp-sign-key '$(LAUNCHPAD_UPLOADER_PGP_KEY)'

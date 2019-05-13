@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Copyright(C) 2014-2017  Kouhei Sutou <kou@clear-code.com>
+# Copyright(C) 2014-2019  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ require "pathname"
 class Uploader
   def initialize
     @dput_configuration_name = "groonga-ppa"
+    @dput_ppa_incoming = "~groonga/ppa/ubuntu/"
   end
 
   def run
@@ -29,8 +30,8 @@ class Uploader
 
     parse_command_line!
 
-    @code_names.each do |code_name|
-      upload(code_name)
+    @ubuntu_code_names.zip(@ubuntu_versions) do |code_name, version|
+      upload(code_name, version || code_name)
     end
   end
 
@@ -52,7 +53,7 @@ class Uploader
 [#{@dput_configuration_name}]
 fqdn = ppa.launchpad.net
 method = ftp
-incoming = ~groonga/ppa/ubuntu/
+incoming = #{@dput_ppa_incoming}
 login = anonymous
 allow_unsigned_uploads = 0
       CONFIGURATION
@@ -75,8 +76,17 @@ allow_unsigned_uploads = 0
       @source_archive = Pathname.new(source_archive).expand_path
     end
     parser.on("--code-names=CODE_NAME1,CODE_NAME2,CODE_NAME3,...", Array,
+              "The target code names",
+              "Deprecated. Use --ubuntu-code-names instead.") do |code_names|
+      @ubuntu_code_names = code_names
+    end
+    parser.on("--ubuntu-code-names=CODE_NAME1,CODE_NAME2,CODE_NAME3,...", Array,
               "The target code names") do |code_names|
-      @code_names = code_names
+      @ubuntu_code_names = code_names
+    end
+    parser.on("--ubuntu-versions=VERSION1,VERSION2,VERSION3,...", Array,
+              "The target versions") do |versions|
+      @ubuntu_versions = versions
     end
     parser.on("--debian-directory=DIRECTORY",
               "The debian/ directory") do |debian_directory|
@@ -87,14 +97,20 @@ allow_unsigned_uploads = 0
       @pgp_sign_key = pgp_sign_key
     end
     parser.on("--ppa=PPA",
-              "The personal package archive name (groonga-ppa or groonga-nightly") do |ppa|
+              "The personal package archive name (groonga-ppa or groonga-nightly",
+              "(#{@dput_configuration_name})") do |ppa|
       @dput_configuration_name = ppa
+    end
+    parser.on("--ppa-incoming=INCOMING",
+              "The incoming value in dput.cf for personal package archive",
+              "(#{@dput_incoming})") do |incoming|
+      @dput_incoming = incoming
     end
 
     parser.parse!
   end
 
-  def upload(code_name)
+  def upload(ubuntu_code_name, ubuntu_version)
     in_temporary_directory do
       FileUtils.cp(@source_archive.to_s,
                    "#{@package}_#{@version}.orig.tar.gz")
@@ -102,11 +118,16 @@ allow_unsigned_uploads = 0
       directory_name = "#{@package}-#{@version}"
       Dir.chdir(directory_name) do
         FileUtils.cp_r(@debian_directory.to_s, "debian")
-        deb_version = "#{current_deb_version.succ}~#{code_name}1"
+        if ubuntu_version
+          version_suffix = "ubuntu#{ubuntu_version}.1"
+        else
+          version_suffix = "#{ubuntu_code_name}1"
+        end
+        deb_version = "#{current_deb_version.succ}~#{version_suffix}"
         run_command("dch",
-                    "--distribution", code_name,
+                    "--distribution", ubuntu_code_name,
                     "--newversion", deb_version,
-                    "Build for #{code_name}.")
+                    "Build for #{ubuntu_code_name}.")
         run_command("debuild",
                     "--set-envvar=LINTIAN_PROFILE=ubuntu",
                     # Workaround for Launchpad. Launchpad doesn't accept
