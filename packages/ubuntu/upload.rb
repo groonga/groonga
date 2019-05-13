@@ -22,13 +22,13 @@ require "pathname"
 class Uploader
   def initialize
     @dput_configuration_name = "groonga-ppa"
-    @dput_ppa_incoming = "~groonga/ppa/ubuntu/"
+    @dput_incoming = "~groonga/ppa/ubuntu/"
   end
 
   def run
-    ensure_dput_configuration
-
     parse_command_line!
+
+    ensure_dput_configuration
 
     @ubuntu_code_names.zip(@ubuntu_versions) do |code_name, version|
       upload(code_name, version || code_name)
@@ -53,7 +53,7 @@ class Uploader
 [#{@dput_configuration_name}]
 fqdn = ppa.launchpad.net
 method = ftp
-incoming = #{@dput_ppa_incoming}
+incoming = #{@dput_incoming}
 login = anonymous
 allow_unsigned_uploads = 0
       CONFIGURATION
