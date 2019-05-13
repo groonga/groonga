@@ -158,12 +158,17 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
 #:000000000000000 select(2)[Logs_20150203]
 #:000000000000000 select(3)[Logs_20150204]
 #:000000000000000 select(4)[Logs_20150205]
+#:000000000000000 drilldowns[restart](3)
 #:000000000000000 filter(1): #<accessor _key(anonymous)> match "Restart"
+#:000000000000000 drilldowns[restart].filter(1)
+#:000000000000000 drilldowns[action](1)
+#:000000000000000 drilldowns[start](3)
 #:000000000000000 filter(2): #<accessor _key(anonymous)> match "Start"
+#:000000000000000 drilldowns[start].filter(2)
 #:000000000000000 output(0)
-#:000000000000000 output.drilldowns(1)
-#:000000000000000 output.drilldowns(1)
-#:000000000000000 output.drilldowns(2)
+#:000000000000000 output.drilldowns[action](1)
+#:000000000000000 output.drilldowns[restart](1)
+#:000000000000000 output.drilldowns[start](2)
 #<000000000000000 rc=0
 logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id   --drilldowns[action].table start   --drilldowns[action].keys _key   --drilldowns[restart].stage initial   --drilldowns[restart].keys 'action'   --drilldowns[restart].filter "_key @ 'Restart'"   --drilldowns[restart].output_columns _key   --drilldowns[start].stage initial   --drilldowns[start].keys 'action'   --drilldowns[start].filter "_key @ 'Start'"   --drilldowns[start].output_columns _key
 [
@@ -246,10 +251,15 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
 #:000000000000000 select(2)[Logs_20150203]
 #:000000000000000 select(3)[Logs_20150204]
 #:000000000000000 select(4)[Logs_20150205]
+#:000000000000000 drilldowns[start](3)
 #:000000000000000 filter(2): #<accessor _key(anonymous)> match "Start"
+#:000000000000000 drilldowns[start].filter(2)
+#:000000000000000 drilldowns[action](2)
+#:000000000000000 drilldowns[restart](3)
 #:000000000000000 filter(1): #<accessor _key(anonymous)> match "Restart"
+#:000000000000000 drilldowns[restart].filter(1)
 #:000000000000000 output(0)
-#:000000000000000 output.drilldowns(2)
-#:000000000000000 output.drilldowns(1)
-#:000000000000000 output.drilldowns(2)
+#:000000000000000 output.drilldowns[action](2)
+#:000000000000000 output.drilldowns[restart](1)
+#:000000000000000 output.drilldowns[start](2)
 #<000000000000000 rc=0

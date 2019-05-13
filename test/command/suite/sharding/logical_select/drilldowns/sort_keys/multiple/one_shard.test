@@ -92,6 +92,7 @@ load --table Logs_20150205
 }
 ]
 
+#@collect-query-log true
 logical_select Logs timestamp \
   --min "2015-02-05 00:00:00" \
   --min_border "include" \
@@ -101,3 +102,4 @@ logical_select Logs timestamp \
   --drilldowns[action_date].keys action,date \
   --drilldowns[action_date].output_columns _value.action,_value.date,_nsubrecs \
   --drilldowns[action_date].sort_keys -_nsubrecs,_value.date,_value.action
+#@collect-query-log false

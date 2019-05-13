@@ -13,8 +13,10 @@ load --table Memos
 {"_key": "Groonga is good!", "tag": "Groonga", "date": "2014-11-17 00:00:00"}
 ]
 
+#@collect-query-log true
 select Memos \
   --filter true \
   --drilldowns[tag].keys tag,date \
   --drilldowns[tag].output_columns _key[0],_key[1],_nsubrecs \
   --drilldowns[tag].sort_keys _value.tag._key,_value.date
+#@collect-query-log false

@@ -4,7 +4,7 @@ module Groonga
       include Enumerable
 
       class << self
-        def parse(input)
+        def parse(tag, input)
           initial_contexts = {}
           filtered_contexts = {}
           output_contexts = {}
@@ -21,7 +21,9 @@ module Groonga
             else
               next
             end
-            contexts[label] = DynamicColumnExecuteContext.new(label, arguments)
+            contexts[label] = DynamicColumnExecuteContext.new(tag,
+                                                              label,
+                                                              arguments)
           end
 
           new(DynamicColumnExecuteContexts.new(initial_contexts),
@@ -125,15 +127,26 @@ module Groonga
         end
 
         if options.fetch(:normal, true)
-          targets.each do |result_set, options|
+          targets.each do |result_set, target_options|
             normal_contexts.each do |context|
-              context.apply(result_set, options)
+              global_options = nil
+              if options and options[:query_log_prefix]
+                global_options = {
+                  query_log_prefix: options[:query_log_prefix],
+                }
+              end
+              if target_options and global_options
+                target_options = global_options.merge(target_options)
+              elsif global_options
+                target_options = global_options
+              end
+              context.apply(result_set, target_options)
             end
           end
         end
         if options.fetch(:window_function, true)
           window_function_contexts.each do |context|
-            context.apply_window_function(targets)
+            context.apply_window_function(targets, options)
           end
         end
       end
@@ -183,6 +196,7 @@ module Groonga
     end
 
     class DynamicColumnExecuteContext
+      include QueryLoggable
       include KeysParsable
 
       attr_reader :label
@@ -192,7 +206,8 @@ module Groonga
       attr_reader :value
       attr_reader :window_sort_keys
       attr_reader :window_group_keys
-      def initialize(label, arguments)
+      def initialize(tag, label, arguments)
+        @tag = tag
         @label = label
         @stage = arguments["stage"]
         @type = parse_type(arguments["type"])
@@ -210,22 +225,29 @@ module Groonga
       def apply(table, options=nil)
         return if table.find_column(@label)
         column = table.create_column(@label, @flags, @type)
-        return if table.empty?
 
-        condition = nil
-        condition = options[:condition] if options
-        expression = Expression.create(table)
-        begin
-          expression.parse(@value)
-          expression.condition = condition if condition
-          table.apply_expression(column, expression)
-        ensure
-          expression.close
+        p options
+        query_log_prefix = nil
+        query_log_prefix = options[:query_log_prefix] if options
+        unless table.empty?
+          condition = nil
+          condition = options[:condition] if options
+          expression = Expression.create(table)
+          begin
+            expression.parse(@value)
+            expression.condition = condition if condition
+            table.apply_expression(column, expression)
+          ensure
+            expression.close
+          end
         end
+        query_logger.log(:size, ":",
+                         "#{query_log_prefix}columns[#{@label}](#{table.size})")
       end
 
-      def apply_window_function(targets)
+      def apply_window_function(targets, options=nil)
         executor = WindowFunctionExecutor.new
+        n_records = 0
         begin
           executor.source = @value
           executor.sort_keys = @window_sort_keys.join(", ")
@@ -240,12 +262,17 @@ module Groonga
               executor.add_context_table(table)
             else
               executor.add_table(table)
+              n_records += table.size
             end
           end
           executor.execute
         ensure
           executor.close
         end
+        query_log_prefix = nil
+        query_log_prefix = options[:query_log_prefix] if options
+        query_logger.log(:size, ":",
+                         "#{query_log_prefix}columns[#{@label}](#{n_records})")
       end
 
       private
@@ -276,7 +303,7 @@ module Groonga
       end
 
       def error_message_tag
-        "[logical_select][columns][#{@stage}][#{@label}]"
+        "#{@tag}[columns][#{@stage}][#{@label}]"
       end
     end
   end

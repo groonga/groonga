@@ -11,6 +11,8 @@ load --table Memos
 {"_key": "Rroonga is fast!", "tag": "Rroonga"}
 ]
 
+#@collect-query-log true
 select Memos \
   --drilldowns[tag].keys tag \
   --drilldowns[tag].filter '_key != "Groonga"'
+#@collect-query-log false

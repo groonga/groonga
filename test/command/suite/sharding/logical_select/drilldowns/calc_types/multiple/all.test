@@ -48,6 +48,7 @@ load --table Memos_20150710
  "created_at": "2015/07/10 07:00:00"}
 ]
 
+#@collect-query-log true
 logical_select Memos \
   --shard_key created_at \
   --limit 0 \
@@ -55,3 +56,4 @@ logical_select Memos \
   --drilldowns[tag].calc_types 'AVG, MAX, MIN, SUM' \
   --drilldowns[tag].calc_target priority \
   --drilldowns[tag].output_columns _value.tag,_value.user,_max,_min,_sum,_avg
+#@collect-query-log false

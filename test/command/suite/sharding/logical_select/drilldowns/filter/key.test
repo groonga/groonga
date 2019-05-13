@@ -74,7 +74,9 @@ load --table Logs_20150205
 }
 ]
 
+#@collect-query-log true
 logical_select Logs timestamp \
   --limit 0 \
   --drilldowns[action].keys action \
   --drilldowns[action].filter '_key == "Restart"'
+#@collect-query-log false

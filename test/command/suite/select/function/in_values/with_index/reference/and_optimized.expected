@@ -62,6 +62,6 @@ select Memos   --output_columns _key,tag   --filter 'all_records() && (tag == "g
 #:000000000000000 filter(4): in_values(Memos.tag, #<record:pat:Tags id:1 key:"groonga">, #<record:pat:Tags id:2 key:"mroonga">, #<record:pat:Tags id:4 key:"droonga">)
 #:000000000000000 filter(4): all_records()
 #:000000000000000 select(4)
-#:000000000000000 sort(4)
+#:000000000000000 sort(4): _id
 #:000000000000000 output(4)
 #<000000000000000 rc=0

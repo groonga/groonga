@@ -109,7 +109,7 @@ module Groonga
           key << "#{drilldown.filter}\0"
           key << drilldown.dynamic_columns.cache_key
         end
-        dynamic_columns = DynamicColumns.parse(input)
+        dynamic_columns = DynamicColumns.parse("[logical_select]", input)
         key << dynamic_columns.cache_key
         key
       end
@@ -200,7 +200,18 @@ module Groonga
           end
           result_sets.each do |result_set|
             if result_set.size > current_offset
-              writer.write_table_records(result_set, output_columns, options)
+              if context.sort_keys.empty?
+                writer.write_table_records(result_set, output_columns, options)
+              else
+                sorted_result_set = result_set.sort(context.sort_keys, options)
+                context.temporary_tables << sorted_result_set
+                message = "sort(#{sorted_result_set.size}): "
+                message << context.sort_keys.join(",")
+                query_logger.log(:size, ":", message)
+                writer.write_table_records(sorted_result_set,
+                                           output_columns,
+                                           offset: 0, limit: -1)
+              end
               n_written = [result_set.size - current_offset, current_limit].min
               current_limit -= n_written
               n_outputs += n_written
@@ -220,23 +231,33 @@ module Groonga
         plain_drilldown = execute_context.plain_drilldown
 
         drilldowns = plain_drilldown.result_sets
+        sort_keys = plain_drilldown.sort_keys
         output_columns = plain_drilldown.output_columns
-        options = {
-          :offset => plain_drilldown.offset,
-          :limit  => plain_drilldown.limit,
-        }
 
         drilldowns.each do |drilldown|
+          options = {
+            :offset => plain_drilldown.offset,
+            :limit  => plain_drilldown.limit,
+          }
+          n_records = drilldown.size
           limit = options[:limit]
-          limit += drilldown.size + 1 if limit < 0
+          limit += n_records + 1 if limit < 0
           offset = options[:offset]
-          offset += drilldown.size if offset < 0
-          n_written = [drilldown.size - offset, limit].min
+          offset += n_records if offset < 0
+          n_written = [n_records - offset, limit].min
           n_elements = 2 # for N hits and columns
           n_elements += n_written
+          unless sort_keys.empty?
+            drilldown = drilldown.sort(sort_keys, options)
+            plain_drilldown.temporary_tables << drilldown
+            message = "drilldown.sort(#{drilldown.size}): "
+            message << sort_keys.join(",")
+            query_logger.log(:size, ":", message)
+            options = {offset: 0, limit: -1}
+          end
           writer.array("RESULTSET", n_elements) do
             writer.array("NHITS", 1) do
-              writer.write(drilldown.size)
+              writer.write(n_records)
             end
             writer.write_table_columns(drilldown, output_columns)
             writer.write_table_records(drilldown, output_columns,
@@ -252,11 +273,14 @@ module Groonga
 
         writer.map("DRILLDOWNS", labeled_drilldowns.n_result_sets) do
           labeled_drilldowns.each do |drilldown|
+            query_log_tag = "drilldowns[#{drilldown.label}]"
+
             writer.write(drilldown.label)
 
             result_set = drilldown.result_set
+            n_records = result_set.size
             n_elements = 2 # for N hits and columns
-            n_elements += result_set.size
+            n_elements += n_records
             output_columns = drilldown.output_columns
             options = {
               :offset => drilldown.offset,
@@ -267,10 +291,20 @@ module Groonga
             limit += result_set.size + 1 if limit < 0
             offset = options[:offset]
             offset += result_set.size if offset < 0
-            n_written = [result_set.size - offset, limit].min
+            if drilldown.sort_keys.empty?
+              n_written = [n_records - offset, limit].min
+            else
+              result_set = result_set.sort(drilldown.sort_keys, options)
+              drilldown.temporary_tables << result_set
+              message = "#{query_log_tag}.sort(#{result_set.size}): "
+              message << drilldown.sort_keys.join(",")
+              query_logger.log(:size, ":", message)
+              options = {offset: 0, limit: -1}
+              n_written = result_set.size
+            end
             writer.array("RESULTSET", n_elements) do
               writer.array("NHITS", 1) do
-                writer.write(result_set.size)
+                writer.write(n_records)
               end
               writer.write_table_columns(result_set, output_columns)
               if is_command_version1 and drilldown.need_command_version2?
@@ -283,7 +317,9 @@ module Groonga
                 writer.write_table_records(result_set, output_columns, options)
               end
             end
-            query_logger.log(:size, ":", "output.drilldowns(#{n_written})")
+            query_logger.log(:size,
+                             ":",
+                             "output.#{query_log_tag}(#{n_written})")
           end
         end
       end
@@ -359,7 +395,7 @@ module Groonga
           @load_columns = @input[:load_columns]
           @load_values = @input[:load_values]
 
-          @dynamic_columns = DynamicColumns.parse(@input)
+          @dynamic_columns = DynamicColumns.parse("[logical_select]", @input)
 
           @result_sets = []
           @shard_targets = []
@@ -536,7 +572,8 @@ module Groonga
           @filter = parameters["filter"]
           @table = parameters["table"]
 
-          @dynamic_columns = DynamicColumns.parse(parameters)
+          tag = "[logical_select][drilldowns][#{@label}]"
+          @dynamic_columns = DynamicColumns.parse(tag, parameters)
 
           @result_set = nil
 
@@ -579,6 +616,8 @@ module Groonga
       end
 
       class Executor
+        include QueryLoggable
+
         def initialize(context)
           @context = context
         end
@@ -642,6 +681,7 @@ module Groonga
 
         def execute_plain_drilldown
           drilldown = @context.plain_drilldown
+          query_log_prefix = "drilldown"
           group_result = TableGroupResult.new
           begin
             group_result.key_begin = 0
@@ -656,15 +696,15 @@ module Groonga
                 end
               end
               result_set = group_result.table
-              result_set = apply_drilldown_filter(drilldown, result_set)
+              query_logger.log(:size,
+                               ":",
+                               "#{query_log_prefix}(#{result_set.size})")
+              result_set = apply_drilldown_filter(query_log_prefix,
+                                                  drilldown,
+                                                  result_set)
               drilldown.temporary_tables << result_set
               group_result.table = nil
-              unless drilldown.sort_keys.empty?
-                result_set = result_set.sort(drilldown.sort_keys)
-                drilldown.temporary_tables << result_set
-              end
               drilldown.result_sets << result_set
-              group_result.table = nil
             end
           ensure
             group_result.close
@@ -675,6 +715,7 @@ module Groonga
           drilldowns = @context.labeled_drilldowns
 
           drilldowns.tsort_each do |drilldown|
+            query_log_prefix = "drilldowns[#{drilldown.label}]"
             group_result = TableGroupResult.new
             keys = drilldown.keys
             begin
@@ -700,14 +741,17 @@ module Groonga
                 end
               end
               result_set = group_result.table
-              drilldown.dynamic_columns.apply_initial([[result_set]])
-              result_set = apply_drilldown_filter(drilldown, result_set)
+              query_logger.log(:size,
+                               ":",
+                               "#{query_log_prefix}(#{result_set.size})")
+              options = {query_log_prefix: "#{query_log_prefix}."}
+              drilldown.dynamic_columns.apply_initial([[result_set]],
+                                                      options)
+              result_set = apply_drilldown_filter(query_log_prefix,
+                                                  drilldown,
+                                                  result_set)
               drilldown.temporary_tables << result_set
               group_result.table = nil
-              unless drilldown.sort_keys.empty?
-                result_set = result_set.sort(drilldown.sort_keys)
-                drilldown.temporary_tables << result_set
-              end
               drilldown.result_set = result_set
             ensure
               group_result.close
@@ -725,7 +769,7 @@ module Groonga
           end
         end
 
-        def apply_drilldown_filter(drilldown, result_set)
+        def apply_drilldown_filter(query_log_prefix, drilldown, result_set)
           filter = drilldown.filter
           return result_set if filter.nil?
 
@@ -734,6 +778,10 @@ module Groonga
           expression.parse(filter)
           filtered_result_set = result_set.select(expression)
           drilldown.temporary_tables << result_set
+          n_records = filtered_result_set.size
+          query_logger.log(:size,
+                           ":",
+                           "#{query_log_prefix}.filter(#{n_records})")
           filtered_result_set
         end
       end
@@ -818,14 +866,7 @@ module Groonga
             result_set = apply_post_filter(result_set)
             @temporary_tables << result_set
           end
-
-          if @sort_keys.empty?
-            @result_sets << result_set
-          else
-            sorted_result_set = result_set.sort(@sort_keys)
-            @temporary_tables << sorted_result_set
-            @result_sets << sorted_result_set
-          end
+          @result_sets << result_set
         end
 
         private

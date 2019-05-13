@@ -93,3 +93,9 @@ select Terms --filter true --sort_keys -index
     ]
   ]
 ]
+#>select --filter "true" --sort_keys "-index" --table "Terms"
+#:000000000000000 filter(11): true
+#:000000000000000 select(11)
+#:000000000000000 sort(10): -index
+#:000000000000000 output(10)
+#<000000000000000 rc=0

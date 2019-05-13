@@ -10,9 +10,11 @@ load --table Memos
 {"_key": "Groonga is good!", "tags": ["Groonga"]}
 ]
 
+#@collect-query-log true
 select Memos \
   --limit 0 \
   --output_columns _id \
   --drilldown tags \
   --drilldown_output_columns _key,_nsubrecs \
   --drilldown_sort_keys -_nsubrecs,_key
+#@collect-query-log false

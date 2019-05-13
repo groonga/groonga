@@ -50,7 +50,7 @@ module Groonga
         key << "#{input[:max_border]}\0"
         key << "#{input[:filter]}\0"
         key << "#{input[:post_filter]}\0"
-        dynamic_columns = DynamicColumns.parse(input)
+        dynamic_columns = DynamicColumns.parse("[logical_count]", input)
         key << dynamic_columns.cache_key
         key
       end
@@ -74,7 +74,7 @@ module Groonga
         def initialize(input, target_range)
           @filter = input[:filter]
           @post_filter = input[:post_filter]
-          @dynamic_columns = DynamicColumns.parse(input)
+          @dynamic_columns = DynamicColumns.parse("[logical_count]", input)
           @target_range = target_range
           @contexts = []
           @temporary_tables = []

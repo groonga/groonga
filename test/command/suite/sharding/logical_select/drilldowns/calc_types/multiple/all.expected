@@ -160,3 +160,10 @@ logical_select Memos   --shard_key created_at   --limit 0   --drilldowns[tag].ke
     }
   ]
 ]
+#>logical_select --drilldowns[tag].calc_target "priority" --drilldowns[tag].calc_types "AVG, MAX, MIN, SUM" --drilldowns[tag].keys "tag,user" --drilldowns[tag].output_columns "_value.tag,_value.user,_max,_min,_sum,_avg" --limit "0" --logical_table "Memos" --shard_key "created_at"
+#:000000000000000 select(4)[Memos_20150709]
+#:000000000000000 select(8)[Memos_20150710]
+#:000000000000000 drilldowns[tag](4)
+#:000000000000000 output(0)
+#:000000000000000 output.drilldowns[tag](4)
+#<000000000000000 rc=0

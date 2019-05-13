@@ -135,3 +135,13 @@ logical_select Logs timestamp   --limit 0   --drilldowns[action].keys action   -
     }
   ]
 ]
+#>logical_select --drilldowns[action].filter "_key == \"Restart\"" --drilldowns[action].keys "action" --limit "0" --logical_table "Logs" --shard_key "timestamp"
+#:000000000000000 select(2)[Logs_20150203]
+#:000000000000000 select(3)[Logs_20150204]
+#:000000000000000 select(4)[Logs_20150205]
+#:000000000000000 drilldowns[action](3)
+#:000000000000000 filter(1): #<accessor _key(anonymous)> equal "Restart"
+#:000000000000000 drilldowns[action].filter(1)
+#:000000000000000 output(0)
+#:000000000000000 output.drilldowns[action](1)
+#<000000000000000 rc=0

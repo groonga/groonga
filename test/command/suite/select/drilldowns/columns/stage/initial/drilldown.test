@@ -21,6 +21,7 @@ load --table Items
 {"_key": "Drink", "price": 300}
 ]
 
+#@collect-query-log true
 select Shops \
   --drilldowns[item].keys items \
   --drilldowns[item].sortby price \
@@ -31,3 +32,4 @@ select Shops \
   --drilldowns[item].columns[price_with_tax].value 'price * 1.08' \
   --drilldowns[real_price].table item \
   --drilldowns[real_price].keys price_with_tax
+#@collect-query-log false

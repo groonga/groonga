@@ -75,7 +75,8 @@ module Groonga
         key << "#{input[:use_range_index]}\0"
         key << "#{input[:post_filter]}\0"
         key << "#{input[:sort_keys]}\0"
-        dynamic_columns = DynamicColumns.parse(input)
+        dynamic_columns = DynamicColumns.parse("[logical_range_filter]",
+                                               input)
         key << dynamic_columns.cache_key
         key
       end
@@ -109,7 +110,8 @@ module Groonga
           @post_filter = @input[:post_filter]
           @sort_keys = parse_keys(@input[:sort_keys])
 
-          @dynamic_columns = DynamicColumns.parse(@input)
+          @dynamic_columns = DynamicColumns.parse("[logical_range_filter]",
+                                                  @input)
 
           @current_offset = @offset
           @current_limit = @limit

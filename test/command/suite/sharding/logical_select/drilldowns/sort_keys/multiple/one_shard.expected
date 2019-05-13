@@ -175,3 +175,10 @@ logical_select Logs timestamp   --min "2015-02-05 00:00:00"   --min_border "incl
     }
   ]
 ]
+#>logical_select --drilldowns[action_date].keys "action,date" --drilldowns[action_date].output_columns "_value.action,_value.date,_nsubrecs" --drilldowns[action_date].sort_keys "-_nsubrecs,_value.date,_value.action" --limit "0" --logical_table "Logs" --max "2015-02-06 00:00:00" --max_border "exclude" --min "2015-02-05 00:00:00" --min_border "include" --shard_key "timestamp"
+#:000000000000000 select(5)[Logs_20150205]
+#:000000000000000 drilldowns[action_date](3)
+#:000000000000000 output(0)
+#:000000000000000 drilldowns[action_date].sort(3): -_nsubrecs,_value.date,_value.action
+#:000000000000000 output.drilldowns[action_date](3)
+#<000000000000000 rc=0

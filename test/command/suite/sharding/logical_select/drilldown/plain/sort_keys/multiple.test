@@ -74,7 +74,9 @@ load --table Logs_20150205
 }
 ]
 
+#@collect-query-log true
 logical_select Logs timestamp \
   --limit 0 \
   --drilldown action \
   --drilldown_sort_keys -_nsubrecs,_key
+#@collect-query-log false

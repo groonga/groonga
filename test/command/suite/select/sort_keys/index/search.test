@@ -14,4 +14,6 @@ load --table Logs
 ["Error: invalid argument."]
 ]
 
+#@collect-query-log true
 select Terms --filter true --sort_keys -index
+#@collect-query-log false
