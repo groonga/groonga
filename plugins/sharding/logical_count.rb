@@ -69,8 +69,9 @@ module Groonga
       end
 
       class Counter
+        include Loggable
+
         def initialize(input, target_range)
-          @logger = Context.instance.logger
           @filter = input[:filter]
           @post_filter = input[:post_filter]
           @dynamic_columns = DynamicColumns.parse(input)
@@ -136,11 +137,11 @@ module Groonga
             message << "[select]"
           end
           message << " <#{table_name}>: #{reason}"
-          @logger.log(Logger::Level::DEBUG,
-                      __FILE__,
-                      line,
-                      method.to_s,
-                      message)
+          logger.log(Logger::Level::DEBUG,
+                     __FILE__,
+                     line,
+                     method.to_s,
+                     message)
         end
 
         def prepare_contexts

@@ -451,6 +451,8 @@ module Groonga
       end
 
       class Recoverer
+        include Loggable
+
         attr_writer :database
         attr_writer :force_truncate
         attr_writer :force_lock_clear
@@ -489,7 +491,6 @@ module Groonga
         end
 
         def truncate_broken_object(object)
-          logger = @context.logger
           name = object.name
           object_path = object.path
           object_dirname = File.dirname(object_path)

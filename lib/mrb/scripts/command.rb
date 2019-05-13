@@ -1,5 +1,8 @@
 module Groonga
   class Command
+    include Loggable
+    include QueryLoggable
+
     @@classes = {}
     class << self
       def register_class(name, klass)
@@ -18,10 +21,6 @@ module Groonga
 
     def writer
       @writer ||= context.writer
-    end
-
-    def query_logger
-      @query_logger ||= context.query_logger
     end
 
     def cache_key(input)

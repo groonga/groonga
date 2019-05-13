@@ -739,6 +739,8 @@ module Groonga
       end
 
       class ShardExecutor
+        include QueryLoggable
+
         def initialize(context, shard, shard_range)
           @context = context
           @shard = shard
@@ -890,10 +892,6 @@ module Groonga
           end
 
           @shard_results << [self, result_set, condition]
-        end
-
-        def query_logger
-          Context.instance.query_logger
         end
       end
     end

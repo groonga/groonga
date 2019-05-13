@@ -21,10 +21,12 @@ RUBY_SCRIPT_FILES =				\
 	index_info.rb				\
 	labeled_arguments.rb			\
 	locale_output.rb			\
+	loggable.rb				\
 	logger.rb				\
 	object.rb				\
 	operator.rb				\
 	plugin_loader.rb			\
+	query_loggable.rb			\
 	query_logger.rb				\
 	record.rb				\
 	require.rb				\

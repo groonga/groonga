@@ -261,6 +261,7 @@ module Groonga
 
       class Window
         include Comparable
+        include Loggable
 
         attr_reader :unit
         attr_reader :step
@@ -326,11 +327,11 @@ module Groonga
                 message = "[logical_range_filter][window] "
                 message << "<#{@shard.table_name}>: "
                 message << inspect_range(current_min, current_max)
-                Context.instance.logger.log(Logger::Level::DEBUG,
-                                            __FILE__,
-                                            __LINE__,
-                                            __method__.to_s,
-                                            message)
+                logger.log(Logger::Level::DEBUG,
+                           __FILE__,
+                           __LINE__,
+                           __method__.to_s,
+                           message)
                 yield(windowed_table)
               end
               current_min = next_min
@@ -494,6 +495,8 @@ module Groonga
       end
 
       class ShardExecutor
+        include Loggable
+
         attr_reader :shard
         attr_writer :previous_executor
         attr_writer :next_executor
@@ -634,12 +637,11 @@ module Groonga
           end
           message << "<#{@shard.table_name}>: "
           message << reason
-          Context.instance.logger.log(Logger::Level::DEBUG,
-                                      __FILE__,
-                                      line,
-                                      method.to_s,
-                                      message)
-
+          logger.log(Logger::Level::DEBUG,
+                     __FILE__,
+                     line,
+                     method.to_s,
+                     message)
           use
         end
 
