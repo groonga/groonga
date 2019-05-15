@@ -242,6 +242,16 @@ Reference
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is a reference column. ``GRN_FALSE`` otherwise. TODO:
 
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Site.user", strlen("Site.user"));
+      printf("reference column?: %s\n", grn_obj_is_reference_column(ctx, obj) ? "true" : "false");
+
+   If ``Site.user`` is reference column, it prints like the following::
+
+     reference column?: true
+
 .. c:function:: grn_bool grn_obj_is_scalar_column(grn_ctx *ctx, grn_obj *obj)
 
    .. versionadded:: 7.0.1
@@ -251,6 +261,16 @@ Reference
    :param ctx: The context object.
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is a scalar column. ``GRN_FALSE`` otherwise. TODO:
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Users.name", strlen("Users.name"));
+      printf("scalar column?: %s\n", grn_obj_is_scalar_column(ctx, obj) ? "true" : "false");
+
+   If ``Users.name`` is scalar column, it prints like the following::
+
+     scalar column?: true
 
 .. c:function:: grn_bool grn_obj_is_scorer_proc(grn_ctx *ctx, grn_obj *obj)
 
@@ -365,6 +385,16 @@ Reference
    :param ctx: The context object.
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is vector column, ``GRN_FALSE`` otherwise. Even if the target object isn't column, return ``GRN_FALSE``.
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Users.names", strlen("Users.names"));
+      printf("scalar column?: %s\n", grn_obj_is_vector_column(ctx, obj) ? "true" : "false");
+
+   If ``Users.names`` is vector column, it prints like the following::
+
+     vector column?: true
 
 .. c:function:: grn_bool grn_obj_is_weight_vector_column(grn_ctx *ctx, grn_obj *obj)
 
