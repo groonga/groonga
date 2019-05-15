@@ -92,6 +92,16 @@ Reference
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is corrupted, ``GRN_FALSE`` otherwise.
 
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Users", strlen("Users"));
+      printf("corrupted?: %s\n", grn_obj_is_corrupt(ctx, obj) ? "true" : "false");
+
+   If ``Users`` table is corrupted, it prints like the following::
+
+     corrupted?: true
+
 .. c:function:: grn_bool grn_obj_is_data_column(grn_ctx *ctx, grn_obj *obj)
 
    .. versionadded:: 7.0.1
@@ -101,6 +111,16 @@ Reference
    :param ctx: The context object.
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is data column, ``GRN_FALSE`` otherwise. Even if the target object isn't column, return ``GRN_FALSE``.
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Users.name", strlen("Users.name"));
+      printf("data column?: %s\n", grn_obj_is_data_column(ctx, obj) ? "true" : "false");
+
+   If ``Users.name`` is data column, it prints like the following::
+
+     data column?: true
 
 .. c:function:: grn_bool grn_obj_is_dirty(grn_ctx *ctx, grn_obj *obj)
 
@@ -141,6 +161,16 @@ Reference
    :param ctx: The context object.
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is index column, ``GRN_FALSE`` otherwise. Even if the target object isn't column, return ``GRN_FALSE``.
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Terms.name_index", strlen("Terms.name_index"));
+      printf("index column?: %s\n", grn_obj_is_index_column(ctx, obj) ? "true" : "false");
+
+   If ``Terms.name_index`` is index column, it prints like the following::
+
+     index column?: true
 
 .. c:function:: grn_bool grn_obj_is_id_accessor(grn_ctx *ctx, grn_obj *obj)
 
