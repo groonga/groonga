@@ -8,12 +8,7 @@
 Summary
 -------
 
-TODO...
-
-Example
--------
-
-TODO...
+:c:type:`grn_obj` is the object which stores comprehensive data such as built-in object, table, column and so on.
 
 Reference
 ---------
