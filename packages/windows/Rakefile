@@ -393,7 +393,7 @@ namespace :build do
         "vendor/mruby-source/README.md",
         "vendor/mruby-source/AUTHORS",
         "vendor/mruby-source/LEGAL",
-        "vendor/mruby-source/MITL",
+        "vendor/mruby-source/LICENSE",
       ]
       cp(files, mruby_license_dir)
 
