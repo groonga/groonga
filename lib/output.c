@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1824,6 +1824,7 @@ grn_output_result_set_open_v3(grn_ctx *ctx,
       grn_text_esc(ctx, outbuf, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
     } GRN_TABLE_EACH_END(ctx, cursor);
     grn_output_array_close(ctx, outbuf, output_type);
+    grn_output_map_close(ctx, outbuf, output_type);
     grn_obj_unlink(ctx, column);
   }
   GRN_OBJ_FIN(ctx, &buf);
