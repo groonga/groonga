@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC100("unify_to_katakana", true,                      "report_source_offset", true)'   "ゔゕゖゝゞゟ"   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC100("unify_to_katakana", true,                      "report_source_offset", true)'   "ゔゕゖゝゞゟ ゙ ゚゛゜"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,
@@ -6,7 +6,7 @@ normalize   'NormalizerNFKC100("unify_to_katakana", true,                      "
     0.0
   ],
   {
-    "normalized": "ヴヵヶヽヾヨリ",
+    "normalized": "ヴヵヶヽヾヨリ ゙ ゚゛゜",
     "types": [
       "katakana",
       "katakana",
@@ -14,7 +14,11 @@ normalize   'NormalizerNFKC100("unify_to_katakana", true,                      "
       "katakana",
       "katakana",
       "katakana",
-      "katakana"
+      "katakana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana"
     ],
     "checks": [
       3,
@@ -38,6 +42,18 @@ normalize   'NormalizerNFKC100("unify_to_katakana", true,                      "
       -1,
       0,
       0
+      3,
+      0,
+      0,
+      3,
+      0,
+      0,
+      3,
+      0,
+      0,
+      3,
+      0,
+      0
     ],
     "offsets": [
       0,
@@ -46,7 +62,11 @@ normalize   'NormalizerNFKC100("unify_to_katakana", true,                      "
       9,
       12,
       15,
-      15
+      15,
+      18,
+      21,
+      24,
+      27
     ]
   }
 ]
