@@ -1,4 +1,5 @@
 # Copyright(C) 2013-2018 Brazil
+# Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -21,6 +22,7 @@ if(GRN_WITH_MRUBY)
     "${MRUBY_SOURCE_DIR}/src"
     "${MRUBY_SOURCE_DIR}/mrbgems/mruby-compiler/core"
     "${MRUBY_SOURCE_DIR}/mrbgems/mruby-io/include"
+    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-time/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/../onigmo-source"
   )
 
