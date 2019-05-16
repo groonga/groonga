@@ -9,13 +9,17 @@ column_create Terms data_value_index COLUMN_INDEX|WITH_POSITION Data value
 load --table Data
 [
 {"value": "Hello World"},
-{"value": "Hello Groonga"}
+{"value": "Hello Groonga"},
+{"value": "Hello World World"},
+{"value": "Hello Groonga Groonga"}
 ]
 
 truncate Terms.data_value_index
 
 load --table Data
 [
+{"value": "Good-by World"},
+{"value": "Good-by Groonga"},
 {"value": "Good-by World"},
 {"value": "Good-by Groonga"}
 ]

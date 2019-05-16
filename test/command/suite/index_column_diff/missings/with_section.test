@@ -14,13 +14,21 @@ load --table Data
 {"value1": "Hello World",
  "value2": "Good-by World"},
 {"value1": "Hello Groonga",
- "value2": "Good-by Groonga"}
+ "value2": "Good-by Groonga"},
+{"value1": "Hello World World",
+ "value2": "Good-by World World"},
+{"value1": "Hello Groonga Groonga",
+ "value2": "Good-by Groonga Groonga"}
 ]
 
 truncate Terms.data_values_index
 
 load --table Data
 [
+{"value1": "Morning World",
+ "value2": "Good night World"},
+{"value1": "Morning Groonga",
+ "value2": "Good night Groonga"},
 {"value1": "Morning World",
  "value2": "Good night World"},
 {"value1": "Morning Groonga",

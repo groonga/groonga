@@ -13,9 +13,13 @@ load --table Data
 {"value1": "Hello World",
  "value2": "Good-by World"},
 {"value1": "Hello Groonga",
- "value2": "Good-by Groonga"}
+ "value2": "Good-by Groonga"},
+{"value1": "Hello World World",
+ "value2": "Good-by World World"},
+{"value1": "Hello Groonga Groonga",
+ "value2": "Good-by Groonga Groonga"}
 ]
-[[0,0.0,0.0],2]
+[[0,0.0,0.0],4]
 truncate Terms.data_values_index
 [[0,0.0,0.0],true]
 load --table Data
@@ -23,9 +27,13 @@ load --table Data
 {"value1": "Morning World",
  "value2": "Good night World"},
 {"value1": "Morning Groonga",
+ "value2": "Good night Groonga"},
+{"value1": "Morning World",
+ "value2": "Good night World"},
+{"value1": "Morning Groonga",
  "value2": "Good night Groonga"}
 ]
-[[0,0.0,0.0],2]
+[[0,0.0,0.0],4]
 index_column_diff Terms data_values_index
 [
   [
@@ -52,6 +60,16 @@ index_column_diff Terms data_values_index
           "record_id": 2,
           "section_id": 1,
           "position": 0
+        },
+        {
+          "record_id": 3,
+          "section_id": 1,
+          "position": 0
+        },
+        {
+          "record_id": 4,
+          "section_id": 1,
+          "position": 0
         }
       ]
     },
@@ -73,6 +91,26 @@ index_column_diff Terms data_values_index
           "record_id": 1,
           "section_id": 2,
           "position": 3
+        },
+        {
+          "record_id": 3,
+          "section_id": 1,
+          "position": 1
+        },
+        {
+          "record_id": 3,
+          "section_id": 1,
+          "position": 2
+        },
+        {
+          "record_id": 3,
+          "section_id": 2,
+          "position": 3
+        },
+        {
+          "record_id": 3,
+          "section_id": 2,
+          "position": 4
         }
       ]
     },
@@ -92,6 +130,16 @@ index_column_diff Terms data_values_index
         },
         {
           "record_id": 2,
+          "section_id": 2,
+          "position": 0
+        },
+        {
+          "record_id": 3,
+          "section_id": 2,
+          "position": 0
+        },
+        {
+          "record_id": 4,
           "section_id": 2,
           "position": 0
         }
@@ -115,6 +163,16 @@ index_column_diff Terms data_values_index
           "record_id": 2,
           "section_id": 2,
           "position": 1
+        },
+        {
+          "record_id": 3,
+          "section_id": 2,
+          "position": 1
+        },
+        {
+          "record_id": 4,
+          "section_id": 2,
+          "position": 1
         }
       ]
     },
@@ -134,6 +192,16 @@ index_column_diff Terms data_values_index
         },
         {
           "record_id": 2,
+          "section_id": 2,
+          "position": 2
+        },
+        {
+          "record_id": 3,
+          "section_id": 2,
+          "position": 2
+        },
+        {
+          "record_id": 4,
           "section_id": 2,
           "position": 2
         }
@@ -157,6 +225,26 @@ index_column_diff Terms data_values_index
           "record_id": 2,
           "section_id": 2,
           "position": 3
+        },
+        {
+          "record_id": 4,
+          "section_id": 1,
+          "position": 1
+        },
+        {
+          "record_id": 4,
+          "section_id": 1,
+          "position": 2
+        },
+        {
+          "record_id": 4,
+          "section_id": 2,
+          "position": 3
+        },
+        {
+          "record_id": 4,
+          "section_id": 2,
+          "position": 4
         }
       ]
     }

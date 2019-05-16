@@ -9,17 +9,21 @@ column_create Terms data_value_index COLUMN_INDEX|WITH_POSITION Data value
 load --table Data
 [
 {"value": "Hello World"},
-{"value": "Hello Groonga"}
+{"value": "Hello Groonga"},
+{"value": "Hello World World"},
+{"value": "Hello Groonga Groonga"}
 ]
-[[0,0.0,0.0],2]
+[[0,0.0,0.0],4]
 truncate Terms.data_value_index
 [[0,0.0,0.0],true]
 load --table Data
 [
 {"value": "Good-by World"},
+{"value": "Good-by Groonga"},
+{"value": "Good-by World"},
 {"value": "Good-by Groonga"}
 ]
-[[0,0.0,0.0],2]
+[[0,0.0,0.0],4]
 index_column_diff Terms data_value_index
 [
   [
@@ -44,6 +48,14 @@ index_column_diff Terms data_value_index
         {
           "record_id": 2,
           "position": 0
+        },
+        {
+          "record_id": 3,
+          "position": 0
+        },
+        {
+          "record_id": 4,
+          "position": 0
         }
       ]
     },
@@ -59,6 +71,14 @@ index_column_diff Terms data_value_index
         {
           "record_id": 1,
           "position": 1
+        },
+        {
+          "record_id": 3,
+          "position": 1
+        },
+        {
+          "record_id": 3,
+          "position": 2
         }
       ]
     },
@@ -74,6 +94,14 @@ index_column_diff Terms data_value_index
         {
           "record_id": 2,
           "position": 1
+        },
+        {
+          "record_id": 4,
+          "position": 1
+        },
+        {
+          "record_id": 4,
+          "position": 2
         }
       ]
     }

@@ -244,15 +244,42 @@ grn_index_column_rebuild(grn_ctx *ctx, grn_obj *index_column)
   GRN_API_RETURN(ctx->rc);
 }
 
+typedef enum {
+  GRN_INDEX_COLUMN_DIFF_TYPE_REMAINS,
+  GRN_INDEX_COLUMN_DIFF_TYPE_MISSINGS,
+  GRN_INDEX_COLUMN_DIFF_TYPE_LOOK_AHEAD,
+} grn_index_column_diff_type;
+/* Except LOOK_AHEAD */
+#define N_GRN_INDEX_COLUMN_DIFF_PERSISTENT_TYPES 2
+
+static const char *
+grn_index_column_diff_type_to_string(grn_index_column_diff_type type)
+{
+  switch (type) {
+  case GRN_INDEX_COLUMN_DIFF_TYPE_REMAINS :
+    return "remains";
+  case GRN_INDEX_COLUMN_DIFF_TYPE_MISSINGS :
+    return "missings";
+  case GRN_INDEX_COLUMN_DIFF_TYPE_LOOK_AHEAD :
+    return "look-ahead";
+  default :
+    return "unknown";
+  }
+}
+
 static const char *remains_column_name = "remains";
 static const char *missings_column_name = "missings";
 
 typedef struct {
   grn_id token_id;
-  grn_ii_cursor *cursor;
-  bool need_cursor_next;
+  grn_obj remains;
+  grn_obj missings;
   grn_obj look_ahead;
   size_t look_ahead_offset;
+  grn_ii_cursor *cursor;
+  bool need_cursor_next;
+  size_t n_postings[N_GRN_INDEX_COLUMN_DIFF_PERSISTENT_TYPES];
+  size_t thresholds[N_GRN_INDEX_COLUMN_DIFF_PERSISTENT_TYPES];
 } grn_index_column_diff_posting_list;
 
 typedef struct {
@@ -436,112 +463,71 @@ grn_index_column_diff_progress(grn_ctx *ctx,
   }
 }
 
-static void
-grn_index_column_diff_append_postings(grn_ctx *ctx,
-                                      grn_index_column_diff_data *data,
-                                      grn_id token_id,
-                                      grn_obj *column,
-                                      grn_obj *postings)
-{
-  if (GRN_BULK_VSIZE(postings) == 0) {
-    return;
-  }
+typedef enum {
+  GRN_INDEX_COLUMN_DIFF_COMPARED_EQUAL,
+  GRN_INDEX_COLUMN_DIFF_COMPARED_LESS,
+  GRN_INDEX_COLUMN_DIFF_COMPARED_GREATER,
+} grn_index_column_diff_compared;
 
-  const grn_id diff_id = grn_table_add(ctx,
-                                       data->diff,
-                                       &token_id, sizeof(grn_id),
-                                       NULL);
-  if (diff_id == GRN_ID_NIL) {
-    return;
+static char
+grn_index_column_diff_compared_to_char(grn_index_column_diff_compared compared)
+{
+  switch (compared) {
+  case GRN_INDEX_COLUMN_DIFF_COMPARED_EQUAL :
+    return '=';
+  case GRN_INDEX_COLUMN_DIFF_COMPARED_GREATER :
+    return '>';
+  case GRN_INDEX_COLUMN_DIFF_COMPARED_LESS :
+    return '<';
+  default :
+    return '?';
   }
-  grn_obj_set_value(ctx,
-                    column,
-                    diff_id,
-                    postings,
-                    GRN_OBJ_APPEND);
 }
 
-static void
-grn_index_column_diff_append_posting(grn_ctx *ctx,
-                                     grn_index_column_diff_data *data,
-                                     grn_id token_id,
-                                     grn_obj *column,
-                                     grn_posting *posting)
-{
-  grn_obj *postings = &(data->buffers.postings);
-  GRN_BULK_REWIND(postings);
-  GRN_UINT32_PUT(ctx, postings, posting->rid);
-  if (data->index.with_section) {
-    GRN_UINT32_PUT(ctx, postings, posting->sid);
-  }
-  if (data->index.with_position) {
-    GRN_UINT32_PUT(ctx, postings, posting->pos);
-  }
-  grn_index_column_diff_append_postings(ctx, data, token_id, column, postings);
-}
-
-static void
-grn_index_column_diff_append_missing(grn_ctx *ctx,
-                                     grn_index_column_diff_data *data,
-                                     grn_posting *posting)
-{
-  grn_index_column_diff_append_posting(ctx,
-                                       data,
-                                       data->current.token_id,
-                                       data->missings,
-                                       posting);
-}
-
-static void
-grn_index_column_diff_append_remain(grn_ctx *ctx,
-                                    grn_index_column_diff_data *data,
-                                    grn_posting *posting)
-{
-  grn_index_column_diff_append_posting(ctx,
-                                       data,
-                                       data->current.token_id,
-                                       data->remains,
-                                       posting);
-}
-
-static int
+static grn_index_column_diff_compared
 grn_index_column_diff_compare_posting(grn_ctx *ctx,
                                       grn_index_column_diff_data *data,
-                                      const uint32_t *posting)
+                                      const grn_posting *posting)
 {
   const grn_bool with_section = data->index.with_section;
   const grn_bool with_position = data->index.with_position;
   const grn_posting *current_posting = &(data->current.posting);
 
-  size_t i = 0;
-  const grn_id record_id = posting[i];
-  if (record_id < current_posting->rid) {
-    return -1;
-  } else if (record_id > current_posting->rid) {
-    return 1;
+  if (posting->rid < current_posting->rid) {
+    return GRN_INDEX_COLUMN_DIFF_COMPARED_LESS;
+  } else if (posting->rid > current_posting->rid) {
+    return GRN_INDEX_COLUMN_DIFF_COMPARED_GREATER;
   }
 
   if (with_section) {
-    i++;
-    const uint32_t section_id = posting[i];
-    if (section_id < current_posting->sid) {
-      return -1;
-    } else if (section_id > current_posting->sid) {
-      return 1;
+    if (posting->sid < current_posting->sid) {
+      return GRN_INDEX_COLUMN_DIFF_COMPARED_LESS;
+    } else if (posting->sid > current_posting->sid) {
+      return GRN_INDEX_COLUMN_DIFF_COMPARED_GREATER;
     }
   }
 
   if (with_position) {
-    i++;
-    const uint32_t position = posting[i];
-    if (position < current_posting->pos) {
-      return -1;
-    } else if (position > current_posting->pos) {
-      return 1;
+    if (posting->pos < current_posting->pos) {
+      return GRN_INDEX_COLUMN_DIFF_COMPARED_LESS;
+    } else if (posting->pos > current_posting->pos) {
+      return GRN_INDEX_COLUMN_DIFF_COMPARED_GREATER;
     }
   }
 
-  return 0;
+  return GRN_INDEX_COLUMN_DIFF_COMPARED_EQUAL;
+}
+
+static int
+grn_index_column_diff_token_id_width(grn_ctx *ctx,
+                                     grn_index_column_diff_data *data)
+{
+  unsigned int n_tokens = grn_table_size(ctx, data->lexicon);
+  if (n_tokens == 0) {
+    return 0;
+  } else {
+    return floor(log10(n_tokens)) + 1;
+  }
 }
 
 static void
@@ -550,6 +536,11 @@ grn_index_column_diff_posting_list_init(grn_ctx *ctx,
                                         grn_index_column_diff_posting_list *posting_list)
 {
   posting_list->token_id = data->current.token_id;
+  GRN_UINT32_INIT(&(posting_list->remains), GRN_OBJ_VECTOR);
+  GRN_UINT32_INIT(&(posting_list->missings), GRN_OBJ_VECTOR);
+  GRN_UINT32_INIT(&(posting_list->look_ahead), GRN_OBJ_VECTOR);
+  posting_list->look_ahead_offset = 0;
+
   const unsigned int ii_cursor_flags = 0;
   posting_list->cursor = grn_ii_cursor_open(ctx,
                                             data->ii,
@@ -558,13 +549,11 @@ grn_index_column_diff_posting_list_init(grn_ctx *ctx,
                                             GRN_ID_MAX,
                                             data->index.n_elements,
                                             ii_cursor_flags);
-  if (!posting_list->cursor) {
-    posting_list->token_id = GRN_ID_NIL;
-    return;
-  }
   posting_list->need_cursor_next = true;
-  GRN_UINT32_INIT(&(posting_list->look_ahead), GRN_OBJ_VECTOR);
-  posting_list->look_ahead_offset = 0;
+  for (size_t i = 0; i < N_GRN_INDEX_COLUMN_DIFF_PERSISTENT_TYPES; i++) {
+    posting_list->n_postings[i] = 0;
+    posting_list->thresholds[i] = 4096;
+  }
 }
 
 static void
@@ -572,26 +561,16 @@ grn_index_column_diff_posting_list_fin(grn_ctx *ctx,
                                        grn_index_column_diff_data *data,
                                        grn_index_column_diff_posting_list *posting_list)
 {
-  if (posting_list->token_id == GRN_ID_NIL) {
-    return;
-  }
-
-  const grn_id token_id = posting_list->token_id;
-  posting_list->token_id = GRN_ID_NIL;
-
-  grn_obj *look_ahead = &(posting_list->look_ahead);
-  grn_obj *remains;
-  if (posting_list->look_ahead_offset == 0) {
-    remains = look_ahead;
-  } else {
+  grn_obj *remains = &(posting_list->remains);
+  grn_obj *missings = &(posting_list->missings);
+  {
+    grn_obj *look_ahead = &(posting_list->look_ahead);
     const size_t offset = posting_list->look_ahead_offset * sizeof(uint32_t);
-    grn_obj *postings = &(data->buffers.postings);
-    GRN_BULK_REWIND(postings);
     grn_bulk_write(ctx,
-                   postings,
+                   remains,
                    GRN_BULK_HEAD(look_ahead) + offset,
                    GRN_BULK_VSIZE(look_ahead) - offset);
-    remains = postings;
+    GRN_OBJ_FIN(ctx, look_ahead);
   }
 
   grn_ii_cursor *cursor = posting_list->cursor;
@@ -625,13 +604,115 @@ grn_index_column_diff_posting_list_fin(grn_ctx *ctx,
     posting_list->cursor = NULL;
   }
 
-  grn_index_column_diff_append_postings(ctx,
-                                        data,
-                                        token_id,
-                                        data->remains,
-                                        remains);
+  if (GRN_BULK_VSIZE(remains) > 0 || GRN_BULK_VSIZE(missings) > 0) {
+    const grn_id diff_id = grn_table_add(ctx,
+                                         data->diff,
+                                         &(posting_list->token_id),
+                                         sizeof(grn_id),
+                                         NULL);
+    if (diff_id != GRN_ID_NIL) {
+      if (GRN_BULK_VSIZE(remains) > 0) {
+        grn_obj_set_value(ctx,
+                          data->remains,
+                          diff_id,
+                          remains,
+                          GRN_OBJ_APPEND);
+      }
+      if (GRN_BULK_VSIZE(missings) > 0) {
+        grn_obj_set_value(ctx,
+                          data->missings,
+                          diff_id,
+                          missings,
+                          GRN_OBJ_APPEND);
+      }
+    }
+  }
+  GRN_OBJ_FIN(ctx, remains);
+  GRN_OBJ_FIN(ctx, missings);
+}
 
-  GRN_OBJ_FIN(ctx, look_ahead);
+static void
+grn_index_column_diff_posting_list_put(grn_ctx *ctx,
+                                       grn_index_column_diff_data *data,
+                                       grn_index_column_diff_posting_list *posting_list,
+                                       grn_index_column_diff_type type,
+                                       const grn_posting *posting)
+{
+  grn_obj *column;
+  grn_obj *postings;
+  switch (type) {
+  case GRN_INDEX_COLUMN_DIFF_TYPE_REMAINS :
+    column = data->remains;
+    postings = &(posting_list->remains);
+    break;
+  case GRN_INDEX_COLUMN_DIFF_TYPE_MISSINGS :
+    column = data->missings;
+    postings = &(posting_list->missings);
+    break;
+  default :
+    column = NULL;
+    postings = &(posting_list->look_ahead);
+    break;
+  }
+
+  GRN_UINT32_PUT(ctx, postings, posting->rid);
+  if (data->index.with_section) {
+    GRN_UINT32_PUT(ctx, postings, posting->sid);
+  }
+  if (data->index.with_position) {
+    GRN_UINT32_PUT(ctx, postings, posting->pos);
+  }
+
+  if (!column) {
+    return;
+  }
+
+  posting_list->n_postings[type]++;
+  const size_t current_n_postings =
+    GRN_UINT32_VECTOR_SIZE(postings) / data->n_posting_elements;
+  if (current_n_postings < posting_list->thresholds[type]) {
+    return;
+  }
+
+  const grn_id diff_id = grn_table_add(ctx,
+                                       data->diff,
+                                       &(posting_list->token_id),
+                                       sizeof(grn_id),
+                                       NULL);
+  if (diff_id == GRN_ID_NIL) {
+    return;
+  }
+  grn_obj_set_value(ctx, column, diff_id, postings, GRN_OBJ_APPEND);
+  if (ctx->rc == GRN_SUCCESS) {
+    GRN_BULK_REWIND(postings);
+  }
+  posting_list->thresholds[type] *= 2;
+  GRN_LOG(ctx,
+          GRN_LOG_DUMP,
+          "[index-column][diff][append][%.*s][%u][%*s] "
+          "%" GRN_FMT_SIZE "(+%" GRN_FMT_SIZE ")",
+          data->index.name_size,
+          data->index.name,
+          grn_index_column_diff_token_id_width(ctx, data),
+          data->current.token_id,
+          grn_index_column_diff_type_to_string(type),
+          posting_list->n_postings[type],
+          current_n_postings);
+}
+
+static void
+grn_index_column_diff_posting_list_consume_look_ahead(
+  grn_ctx *ctx,
+  grn_index_column_diff_data *data,
+  grn_index_column_diff_posting_list *posting_list)
+{
+  grn_obj *look_ahead = &(posting_list->look_ahead);
+  posting_list->look_ahead_offset++;
+  if (posting_list->look_ahead_offset ==
+      (GRN_UINT32_VECTOR_SIZE(look_ahead) / data->n_posting_elements)) {
+    GRN_BULK_REWIND(look_ahead);
+    posting_list->look_ahead_offset = 0;
+  }
 }
 
 static void
@@ -666,11 +747,6 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
     grn_index_column_diff_posting_list_init(ctx, data, posting_list);
   }
 
-  if (posting_list->token_id == GRN_ID_NIL) {
-    grn_index_column_diff_append_missing(ctx, data, &(data->current.posting));
-    return;
-  }
-
   const grn_bool with_section = data->index.with_section;
   const grn_bool with_position = data->index.with_position;
 
@@ -681,99 +757,182 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
   const size_t n_postings =
     GRN_UINT32_VECTOR_SIZE(look_ahead) /
     n_posting_elements;
+  const uint32_t *raw_postings = (const uint32_t *)GRN_BULK_HEAD(look_ahead);
   for (size_t i = look_ahead_offset; i < n_postings; i++) {
     const size_t offset = i * data->n_posting_elements;
-    const uint32_t *raw_posting =
-      ((const uint32_t *)GRN_BULK_HEAD(look_ahead)) + offset;
-    const int compared =
-      grn_index_column_diff_compare_posting(ctx, data, raw_posting);
-    if (compared == 0) {
-      posting_list->look_ahead_offset += n_posting_elements;
-      if (posting_list->look_ahead_offset ==
-          GRN_UINT32_VECTOR_SIZE(look_ahead)) {
-        GRN_BULK_REWIND(look_ahead);
-        posting_list->look_ahead_offset = 0;
-      }
+    const uint32_t *raw_posting = raw_postings + offset;
+    grn_posting posting;
+    size_t i = 0;
+    posting.rid = raw_posting[i++];
+    if (with_section) {
+      posting.sid = raw_posting[i++];
+    }
+    if (with_position) {
+      posting.pos = raw_posting[i++];
+    }
+    const grn_index_column_diff_compared compared =
+      grn_index_column_diff_compare_posting(ctx, data, &posting);
+    GRN_LOG(ctx,
+            GRN_LOG_DUMP,
+            "[index-column][diff][process][%.*s][%*u] "
+            "look-ahead[%u:%u:%u] %c current[%u:%u:%u]",
+            data->index.name_size,
+            data->index.name,
+            grn_index_column_diff_token_id_width(ctx, data),
+            data->current.token_id,
+            posting.rid,
+            posting.sid,
+            posting.pos,
+            grn_index_column_diff_compared_to_char(compared),
+            data->current.posting.rid,
+            data->current.posting.sid,
+            data->current.posting.pos);
+    switch (compared) {
+    case GRN_INDEX_COLUMN_DIFF_COMPARED_EQUAL :
+      grn_index_column_diff_posting_list_consume_look_ahead(ctx,
+                                                            data,
+                                                            posting_list);
       return;
-    } else if (compared > 0) {
-      grn_index_column_diff_append_missing(ctx, data, &(data->current.posting));
+    case GRN_INDEX_COLUMN_DIFF_COMPARED_GREATER :
+      grn_index_column_diff_posting_list_put(ctx,
+                                             data,
+                                             posting_list,
+                                             GRN_INDEX_COLUMN_DIFF_TYPE_MISSINGS,
+                                             &(data->current.posting));
       return;
-    } else {
-      grn_posting posting;
-      size_t j = 0;
-      posting.rid = raw_posting[j];
-      if (data->index.with_section) {
-        j++;
-        posting.sid = raw_posting[j];
-      }
-      if (data->index.with_position) {
-        j++;
-        posting.pos = raw_posting[j];
-      }
-      grn_index_column_diff_append_remain(ctx, data, &posting);
+    default :
+      grn_index_column_diff_posting_list_put(ctx,
+                                             data,
+                                             posting_list,
+                                             GRN_INDEX_COLUMN_DIFF_TYPE_REMAINS,
+                                             &posting);
+      grn_index_column_diff_posting_list_consume_look_ahead(ctx,
+                                                            data,
+                                                            posting_list);
+      break;
     }
   }
 
   grn_ii_cursor *cursor = posting_list->cursor;
-  if (with_position) {
-    while (!posting_list->need_cursor_next ||
-           grn_ii_cursor_next(ctx, cursor)) {
-      grn_posting *posting;
-      while ((posting = grn_ii_cursor_next_pos(ctx, cursor))) {
-        posting_list->need_cursor_next = false;
-
-        uint32_t raw_posting[3];
-        size_t i = 0;
-        raw_posting[i] = posting->rid;
-        if (with_section) {
-          i++;
-          raw_posting[i] = posting->sid;
-        }
-        i++;
-        raw_posting[i] = posting->pos;
-        const int compared =
-          grn_index_column_diff_compare_posting(ctx, data, raw_posting);
-        if (compared == 0) {
-          return;
-        } else if (compared > 0) {
-          for (size_t j = 0; j <= i; j++) {
-            GRN_UINT32_PUT(ctx, look_ahead, raw_posting[j]);
+  if (cursor) {
+    if (with_position) {
+      while (!posting_list->need_cursor_next ||
+             grn_ii_cursor_next(ctx, cursor)) {
+        grn_posting *posting;
+        while ((posting = grn_ii_cursor_next_pos(ctx, cursor))) {
+          posting_list->need_cursor_next = false;
+          const grn_index_column_diff_compared compared =
+            grn_index_column_diff_compare_posting(ctx, data, posting);
+          GRN_LOG(ctx,
+                  GRN_LOG_DUMP,
+                  "[index-column][diff][process][%.*s][%*u] "
+                  "      read[%u:%u:%u] %c current[%u:%u:%u]",
+                  data->index.name_size,
+                  data->index.name,
+                  grn_index_column_diff_token_id_width(ctx, data),
+                  data->current.token_id,
+                  posting->rid,
+                  posting->sid,
+                  posting->pos,
+                  grn_index_column_diff_compared_to_char(compared),
+                  data->current.posting.rid,
+                  data->current.posting.sid,
+                  data->current.posting.pos);
+          switch (compared) {
+          case GRN_INDEX_COLUMN_DIFF_COMPARED_EQUAL :
+            return;
+          case GRN_INDEX_COLUMN_DIFF_COMPARED_GREATER :
+            grn_index_column_diff_posting_list_put(
+              ctx,
+              data,
+              posting_list,
+              GRN_INDEX_COLUMN_DIFF_TYPE_LOOK_AHEAD,
+              posting);
+            grn_index_column_diff_posting_list_put(
+              ctx,
+              data,
+              posting_list,
+              GRN_INDEX_COLUMN_DIFF_TYPE_MISSINGS,
+              &(data->current.posting));
+            return;
+          default :
+            grn_index_column_diff_posting_list_put(
+              ctx,
+              data,
+              posting_list,
+              GRN_INDEX_COLUMN_DIFF_TYPE_REMAINS,
+              posting);
+            break;
           }
-          grn_index_column_diff_append_missing(ctx, data, &(data->current.posting));
+        }
+        posting_list->need_cursor_next = true;
+      }
+    } else {
+      grn_posting *posting;
+      while ((posting = grn_ii_cursor_next(ctx, cursor))) {
+        const grn_index_column_diff_compared compared =
+          grn_index_column_diff_compare_posting(ctx, data, posting);
+        GRN_LOG(ctx,
+                GRN_LOG_DUMP,
+                "[index-column][diff][process][%.*s][%*u] "
+                "      read[%u:%u:%u] %c current[%u:%u:%u]",
+                data->index.name_size,
+                data->index.name,
+                grn_index_column_diff_token_id_width(ctx, data),
+                data->current.token_id,
+                posting->rid,
+                posting->sid,
+                posting->pos,
+                grn_index_column_diff_compared_to_char(compared),
+                data->current.posting.rid,
+                data->current.posting.sid,
+                data->current.posting.pos);
+        switch (compared) {
+        case GRN_INDEX_COLUMN_DIFF_COMPARED_EQUAL :
           return;
-        } else {
-          grn_index_column_diff_append_remain(ctx, data, posting);
+        case GRN_INDEX_COLUMN_DIFF_COMPARED_GREATER :
+          grn_index_column_diff_posting_list_put(
+            ctx,
+            data,
+            posting_list,
+            GRN_INDEX_COLUMN_DIFF_TYPE_LOOK_AHEAD,
+            posting);
+          grn_index_column_diff_posting_list_put(
+            ctx,
+            data,
+            posting_list,
+            GRN_INDEX_COLUMN_DIFF_TYPE_MISSINGS,
+            &(data->current.posting));
+          return;
+        default :
+          grn_index_column_diff_posting_list_put(
+            ctx,
+            data,
+            posting_list,
+            GRN_INDEX_COLUMN_DIFF_TYPE_REMAINS,
+            posting);
+          break;
         }
-      }
-      posting_list->need_cursor_next = true;
-    }
-  } else {
-    grn_posting *posting;
-    while ((posting = grn_ii_cursor_next(ctx, cursor))) {
-      uint32_t raw_posting[2];
-      size_t i = 0;
-      raw_posting[i] = posting->rid;
-      if (with_section) {
-        i++;
-        raw_posting[i] = posting->sid;
-      }
-      const int compared =
-        grn_index_column_diff_compare_posting(ctx, data, raw_posting);
-      if (compared == 0) {
-        return;
-      } else if (compared > 0) {
-        for (size_t j = 0; j <= i; j++) {
-          GRN_UINT32_PUT(ctx, look_ahead, raw_posting[j]);
-        }
-        grn_index_column_diff_append_missing(ctx, data, &(data->current.posting));
-        return;
-      } else {
-        grn_index_column_diff_append_remain(ctx, data, posting);
       }
     }
   }
-  grn_index_column_diff_append_missing(ctx, data, &(data->current.posting));
-  grn_index_column_diff_posting_list_fin(ctx, data, posting_list);
+
+  GRN_LOG(ctx,
+          GRN_LOG_DUMP,
+          "[index-column][diff][process][%.*s][%*u] "
+          " no posting list:    current[%u:%u:%u]",
+          data->index.name_size,
+          data->index.name,
+          grn_index_column_diff_token_id_width(ctx, data),
+          data->current.token_id,
+          data->current.posting.rid,
+          data->current.posting.sid,
+          data->current.posting.pos);
+  grn_index_column_diff_posting_list_put(ctx,
+                                         data,
+                                         posting_list,
+                                         GRN_INDEX_COLUMN_DIFF_TYPE_MISSINGS,
+                                         &(data->current.posting));
 }
 
 static void

@@ -35,4 +35,10 @@ load --table Patterns
 {"_key": "Groonga"}
 ]
 
+load --table Data
+[
+{"value": "Hello Groonga"},
+{"value": "Hello World"}
+]
+
 index_column_diff Terms data_value_index
