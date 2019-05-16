@@ -11,7 +11,8 @@ DEFAULT_INCLUDES =						\
 	-I$(srcdir)/../mruby-source/include			\
 	-I$(srcdir)/../mruby-source/src				\
 	-I$(srcdir)/../mruby-source/mrbgems/mruby-compiler/core	\
-	-I$(srcdir)/../mruby-source/mrbgems/mruby-io/include
+	-I$(srcdir)/../mruby-source/mrbgems/mruby-io/include	\
+	-I$(srcdir)/../mruby-source/mrbgems/mruby-time/include
 
 CFLAGS +=					\
 	$(NO_FLOAT_EQUAL_CFLAGS)		\

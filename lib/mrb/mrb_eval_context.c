@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2016 Brazil
+  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -70,13 +71,6 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
   }
 
   proc = mrb_generate_code(mrb, parser);
-  {
-    mrb_code *iseq = proc->body.irep->iseq;
-    while (GET_OPCODE(*iseq) != OP_STOP) {
-      iseq++;
-    }
-    *iseq = MKOP_AB(OP_RETURN, 1, OP_R_NORMAL);
-  }
   mrb_parser_free(parser);
   mrbc_context_free(mrb, compile_ctx);
   return mrb_obj_value(proc);

@@ -123,7 +123,7 @@ update-files:
 	cd data/html && $(MAKE) update-files
 
 update-mruby:
-	cd $(top_srcdir)/vendor/mruby && make update
+	cd vendor/mruby && make update
 
 update-nginx:
 	@if test -z "$(NEW_NGINX_VERSION)"; then	\

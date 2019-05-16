@@ -31,33 +31,35 @@ libmruby_la_SOURCES = \
 	../mruby-source/src/variable.c \
 	../mruby-source/src/version.c \
 	../mruby-source/src/vm.c \
+	../mruby-source/mrbgems/mruby-array-ext/src/array.c \
 	../mruby-source/mrbgems/mruby-compiler/core/codegen.c \
 	../mruby-source/mrbgems/mruby-compiler/core/node.h \
-	../mruby-source/mrbgems/mruby-sprintf/src/kernel.c \
-	../mruby-source/mrbgems/mruby-sprintf/src/sprintf.c \
-	../mruby-source/mrbgems/mruby-print/src/print.c \
-	../mruby-source/mrbgems/mruby-math/src/math.c \
-	../mruby-source/mrbgems/mruby-time/src/time.c \
-	../mruby-source/mrbgems/mruby-struct/src/struct.c \
-	../mruby-source/mrbgems/mruby-string-ext/src/string.c \
-	../mruby-source/mrbgems/mruby-numeric-ext/src/numeric_ext.c \
-	../mruby-source/mrbgems/mruby-array-ext/src/array.c \
-	../mruby-source/mrbgems/mruby-hash-ext/src/hash-ext.c \
-	../mruby-source/mrbgems/mruby-range-ext/src/range.c \
-	../mruby-source/mrbgems/mruby-proc-ext/src/proc.c \
-	../mruby-source/mrbgems/mruby-proc-ext/test/proc.c \
-	../mruby-source/mrbgems/mruby-symbol-ext/src/symbol.c \
-	../mruby-source/mrbgems/mruby-random/src/mt19937ar.c \
-	../mruby-source/mrbgems/mruby-random/src/mt19937ar.h \
-	../mruby-source/mrbgems/mruby-random/src/random.c \
-	../mruby-source/mrbgems/mruby-random/src/random.h \
-	../mruby-source/mrbgems/mruby-object-ext/src/object.c \
-	../mruby-source/mrbgems/mruby-objectspace/src/mruby_objectspace.c \
 	../mruby-source/mrbgems/mruby-fiber/src/fiber.c \
-	../mruby-source/mrbgems/mruby-kernel-ext/src/kernel.c \
+	../mruby-source/mrbgems/mruby-hash-ext/src/hash-ext.c \
 	../mruby-source/mrbgems/mruby-io/include/mruby/ext/io.h \
 	../mruby-source/mrbgems/mruby-io/src/file.c \
 	../mruby-source/mrbgems/mruby-io/src/file_test.c \
 	../mruby-source/mrbgems/mruby-io/src/io.c \
 	../mruby-source/mrbgems/mruby-io/src/mruby_io_gem.c \
-	../mruby-source/mrbgems/mruby-io/test/mruby_io_test.c
+	../mruby-source/mrbgems/mruby-io/test/mruby_io_test.c \
+	../mruby-source/mrbgems/mruby-kernel-ext/src/kernel.c \
+	../mruby-source/mrbgems/mruby-math/src/math.c \
+	../mruby-source/mrbgems/mruby-metaprog/src/metaprog.c \
+	../mruby-source/mrbgems/mruby-numeric-ext/src/numeric_ext.c \
+	../mruby-source/mrbgems/mruby-object-ext/src/object.c \
+	../mruby-source/mrbgems/mruby-objectspace/src/mruby_objectspace.c \
+	../mruby-source/mrbgems/mruby-print/src/print.c \
+	../mruby-source/mrbgems/mruby-proc-ext/src/proc.c \
+	../mruby-source/mrbgems/mruby-proc-ext/test/proc.c \
+	../mruby-source/mrbgems/mruby-random/src/mt19937ar.c \
+	../mruby-source/mrbgems/mruby-random/src/mt19937ar.h \
+	../mruby-source/mrbgems/mruby-random/src/random.c \
+	../mruby-source/mrbgems/mruby-random/src/random.h \
+	../mruby-source/mrbgems/mruby-range-ext/src/range.c \
+	../mruby-source/mrbgems/mruby-sprintf/src/kernel.c \
+	../mruby-source/mrbgems/mruby-sprintf/src/sprintf.c \
+	../mruby-source/mrbgems/mruby-string-ext/src/string.c \
+	../mruby-source/mrbgems/mruby-struct/src/struct.c \
+	../mruby-source/mrbgems/mruby-symbol-ext/src/symbol.c \
+	../mruby-source/mrbgems/mruby-time/include/mruby/time.h \
+	../mruby-source/mrbgems/mruby-time/src/time.c
