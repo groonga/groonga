@@ -12,7 +12,7 @@ load --table Documents
 ["Groonga", "Groonga can be used with MySQL."]
 ]
 [[0,0.0,0.0],1]
-select Documents   --match_columns content --query 'MySQL'   --output_columns '_key, snippet_html(_key)'
+select Documents   --match_columns content --query 'MySQL'   --output_columns '_key, snippet_html(_key, {"default": {"number": 29, "string": "meat"}})'
 [
   [
     0,
@@ -36,9 +36,10 @@ select Documents   --match_columns content --query 'MySQL'   --output_columns '_
       ],
       [
         "Groonga",
-        [
-
-        ]
+        {
+          "number": 29,
+          "string": "meat"
+        }
       ]
     ]
   ]

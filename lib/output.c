@@ -1897,6 +1897,34 @@ grn_output_result_set(grn_ctx *ctx,
   grn_output_result_set_close(ctx, outbuf, output_type, result_set, format);
 }
 
+static void
+grn_output_table_hash_key(grn_ctx *ctx,
+                          grn_obj *outbuf,
+                          grn_content_type output_type,
+                          grn_obj *obj,
+                          grn_obj_format *format)
+{
+  const unsigned int n_elements = grn_table_size(ctx, obj);
+  grn_obj key;
+  GRN_OBJ_INIT(&key, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, obj->header.domain);
+  grn_output_map_open(ctx, outbuf, output_type, "object", n_elements);
+  GRN_TABLE_EACH_BEGIN(ctx, obj, cursor, id) {
+    void *raw_key;
+    const int key_size = grn_table_cursor_get_key(ctx, cursor, &raw_key);
+    GRN_TEXT_SET(ctx, &key, raw_key, key_size);
+    grn_output_obj(ctx, outbuf, output_type, &key, format);
+    void *raw_value;
+    const int value_size = grn_table_cursor_get_value(ctx, cursor, &raw_value);
+    if (value_size == 0) {
+      grn_output_null(ctx, outbuf, output_type);
+    } else {
+      grn_obj *value = raw_value;
+      grn_output_obj(ctx, outbuf, output_type, value, format);
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  grn_output_map_close(ctx, outbuf, output_type);
+}
+
 void
 grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                grn_obj *obj, grn_obj_format *format)
@@ -1920,6 +1948,13 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     grn_output_pvector(ctx, outbuf, output_type, obj, format);
     break;
   case GRN_TABLE_HASH_KEY :
+    if (obj->header.flags & GRN_HASH_TINY) {
+      grn_output_table_hash_key(ctx, outbuf, output_type, obj, format);
+    } else {
+      /* Deprecated. Use grn_output_result_set() directly. */
+      grn_output_result_set(ctx, outbuf, output_type, obj, format);
+    }
+    break;
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_DAT_KEY :
   case GRN_TABLE_NO_KEY :

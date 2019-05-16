@@ -27,6 +27,7 @@
 
 static grn_obj *
 snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *text,
+             grn_obj *default_return_value,
              grn_user_data *user_data,
              const char *prefix, int prefix_length,
              const char *suffix, int suffix_length)
@@ -47,13 +48,17 @@ snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *text,
     return NULL;
   }
 
+  if (n_results == 0) {
+    if (default_return_value) {
+      return default_return_value;
+    } else {
+      return grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
+    }
+  }
+
   snippets = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_SHORT_TEXT, GRN_OBJ_VECTOR);
   if (!snippets) {
     return NULL;
-  }
-
-  if (n_results == 0) {
-    return snippets;
   }
 
   GRN_TEXT_INIT(&snippet_buffer, 0);
@@ -112,6 +117,7 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     const char *default_close_tag = NULL;
     int default_close_tag_length = 0;
     int n_args_without_option = nargs;
+    grn_obj *default_return_value = NULL;
 
     if (end_arg->header.type == GRN_TABLE_HASH_KEY) {
       grn_obj *options = end_arg;
@@ -160,6 +166,12 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         } else if (key_size == 17 && !memcmp(key, "default_close_tag", 17)) {
           default_close_tag = GRN_TEXT_VALUE(value);
           default_close_tag_length = GRN_TEXT_LEN(value);
+        } else if (key_size == 7 && !memcmp(key, "default", 7)) {
+          if (value->header.type == GRN_PTR) {
+            default_return_value = GRN_PTR_VALUE(value);
+          } else {
+            default_return_value = value;
+          }
         } else {
           GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                            "invalid option name: <%.*s>",
@@ -221,7 +233,9 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                  NULL, 0);
         }
       }
-      snippets = snippet_exec(ctx, snip, text, user_data,
+      snippets = snippet_exec(ctx, snip, text,
+                              default_return_value,
+                              user_data,
                               prefix, prefix_length,
                               suffix, suffix_length);
     }
@@ -250,19 +264,51 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
 {
   grn_obj *snippets = NULL;
 
-  /* TODO: support parameters */
-  if (nargs == 1) {
+  if (nargs > 0) {
     grn_obj *text = args[0];
     grn_obj *expression = NULL;
     grn_obj *condition_ptr = NULL;
     grn_obj *condition = NULL;
     grn_obj *snip = NULL;
+    grn_obj *default_return_value = NULL;
     int flags = GRN_SNIP_SKIP_LEADING_SPACES;
     unsigned int width = 200;
     unsigned int max_n_results = 3;
     const char *open_tag = "<span class=\"keyword\">";
     const char *close_tag = "</span>";
     grn_snip_mapping *mapping = GRN_SNIP_MAPPING_HTML_ESCAPE;
+
+    if (nargs > 1 && args[1]->header.type == GRN_TABLE_HASH_KEY) {
+      grn_obj *options = args[1];
+      void *key;
+      uint32_t key_size;
+      grn_obj *value;
+
+      GRN_HASH_EACH_BEGIN(ctx, (grn_hash *)options, cursor, id) {
+        grn_raw_string option_name;
+
+        grn_hash_cursor_get_key_value(ctx, cursor,
+                                      &key, &key_size,
+                                      (void **)&value);
+        option_name.value = key;
+        option_name.length = key_size;
+        if (GRN_RAW_STRING_EQUAL_CSTRING(option_name, "default")) {
+          if (value->header.type == GRN_PTR) {
+            default_return_value = GRN_PTR_VALUE(value);
+          } else {
+            default_return_value = value;
+          }
+        } else {
+          GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                           "snippet_html(): invalid option name: <%.*s>",
+                           key_size, (char *)key);
+          break;
+        }
+      } GRN_HASH_EACH_END(ctx, cursor);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+    }
 
     grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
     condition_ptr = grn_expr_get_var(ctx, expression,
@@ -301,10 +347,13 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
     }
 
     if (snip) {
-      snippets = snippet_exec(ctx, snip, text, user_data, NULL, 0, NULL, 0);
+      snippets = snippet_exec(ctx, snip, text,
+                              default_return_value,
+                              user_data, NULL, 0, NULL, 0);
     }
   }
 
+exit :
   if (!snippets) {
     snippets = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
   }

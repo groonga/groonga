@@ -524,8 +524,13 @@ property_name_and_value ::= property_name COLON assignment_expression. {
                      GRN_TEXT_VALUE(property), GRN_TEXT_LEN(property),
                      (void **)&buf, &added)) {
       if (added) {
-        GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
-        GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+        if (value->header.type == GRN_TABLE_HASH_KEY) {
+          GRN_OBJ_INIT(buf, GRN_PTR, 0, GRN_ID_NIL);
+          GRN_PTR_SET(ctx, buf, value);
+        } else {
+          GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
+          GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+        }
         grn_expr_dfi_pop(e);
         e->codes_curr -= 3;
       } else {
