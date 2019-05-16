@@ -1131,7 +1131,7 @@ grn_nfkc_normalize_unify_to_katakana(const unsigned char *utf8_char,
                utf8_char[2] >= 0x80 && utf8_char[2] <= 0x9f) {
       /* U+3041 HIRAGANA LETTER MU ..
        * U+305F HIRAGANA LETTER YORI */
-      if ( utf8_char[2] >= 0x97 && utf8_char[2] <= 0x9c ) {
+      if (utf8_char[2] >= 0x97 && utf8_char[2] <= 0x9c) {
         /* This character code isn't assigned character */
         return utf8_char;
       } else if (utf8_char[2] == 0x9f) {
