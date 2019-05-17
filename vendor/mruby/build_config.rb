@@ -37,8 +37,8 @@ MRuby::Build.new do |conf|
   conf.gem :core => "mruby-time"
   conf.gem :core => "mruby-toplevel-ext"
 
-  conf.gem :github => "mattn/mruby-onig-regexp",
-           :checksum_hash => "ae787b162474db633bff870d78bb247eafd3aa20"
+  conf.gem :github => "kou/mruby-onig-regexp",
+           :checksum_hash => "a51ca6b5c3575441fe340992b6397e1308470742"
   conf.gem :github => "iij/mruby-env",
            :checksum_hash => "056ae324451ef16a50c7887e117f0ea30921b71b"
   conf.gem :github => "kou/mruby-pp",
