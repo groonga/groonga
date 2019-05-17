@@ -2,4 +2,4 @@
 plugin_register ruby/eval
 #@on-error default
 
-ruby_eval 'Groonga::Converter.convert("2039/1/1 00:00:00", Time).to_s'
+ruby_eval 'Groonga::Converter.convert("2039/1/1 00:00:00", Time).to_s.gsub(/ [+a-zA-Z].*\\z/, "")'

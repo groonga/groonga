@@ -1,4 +1,4 @@
 plugin_register ruby/eval
 [[0,0.0,0.0],true]
-ruby_eval 'Groonga::Converter.convert("2039/1/1 00:00:00", Time).to_s'
-[[0,0.0,0.0],{"value":"2039-01-01 00:00:00 +0900"}]
+ruby_eval 'Groonga::Converter.convert("2039/1/1 00:00:00", Time).to_s.gsub(/ [+a-zA-Z].*\\z/, "")'
+[[0,0.0,0.0],{"value":"2039-01-01 00:00:00"}]
