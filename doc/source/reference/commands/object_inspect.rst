@@ -356,6 +356,8 @@ Index column returns the following information::
         "total_chunk_size": INDEX_COLUMN_VALUE_STATISTICS_TOTAL_CHUNK_SIZE,
         "max_in_use_chunk_id": INDEX_COLUMN_VALUE_STATISTICS_MAX_IN_USE_CHUNK_ID,
         "n_garbage_chunks": INDEX_COLUMN_VALUE_STATISTICS_N_GARBAGE_CHUNKS
+        "next_physical_segment_id": INDEX_COLUMN_VALUE_STATISTICS_NEXT_PHYSICAL_SEGMENT_ID
+        "max_n_physical_segments": INDEX_COLUMN_VALUE_STATISTICS_N_PHYSICAL_SEGMENTS
       }
     },
     "sources": [
@@ -590,21 +592,9 @@ The number of garbage segments in the inspected index column.
 Index column reuses segment (internal allocated space) that is no
 longer used. It's called "garbage segment".
 
-The max value is the max number of segments. It depends on index size:
-
-.. list-table::
-   :header-rows: 1
-
-   * - Index column size
-     - The max number of segments
-   * - ``INDEX_SMALL``
-     - ``2**9`` (512)
-   * - ``INDEX_MEDIUM``
-     - ``2**16`` (65536)
-   * - ``INDEX_LARGE``
-     - ``2**17 * 2`` (262144)
-   * - Default
-     - ``2**17`` (131072)
+The max value is the max number of segments. See
+:ref:`object-inspect-return-value-index-column-value-statistics-n-physical-segments`
+for the max number of segments.
 
 .. _object-inspect-return-value-index-column-value-statistics-max-array-segment-id:
 
@@ -616,7 +606,7 @@ The max ID of segment used for "array" in the inspected index column.
 "array" is used for managing "buffer".
 
 The max value is the max number of segments. See
-:ref:`object-inspect-return-value-index-column-value-statistics-n-garbage-segments`
+:ref:`object-inspect-return-value-index-column-value-statistics-n-physical-segments`
 for the max number of segments.
 
 .. _object-inspect-return-value-index-column-value-statistics-n-array-segments:
@@ -630,7 +620,7 @@ The number of segments used for "array" in the inspected index column.
 
 The max value is ``the max number of segments - the number of segments
 used for "buffer"``. See
-:ref:`object-inspect-return-value-index-column-value-statistics-n-garbage-segments`
+:ref:`object-inspect-return-value-index-column-value-statistics-n-physical-segments`
 for the max number of segments.
 
 .. _object-inspect-return-value-index-column-value-statistics-max-buffer-segment-id:
@@ -643,7 +633,7 @@ The max ID of segment used for "buffer" in the inspected index column.
 "buffer" is used for storing posting lists.
 
 The max value is the max number of segments. See
-:ref:`object-inspect-return-value-index-column-value-statistics-n-garbage-segments`
+:ref:`object-inspect-return-value-index-column-value-statistics-n-physical-segments`
 for the max number of segments.
 
 .. _object-inspect-return-value-index-column-value-statistics-n-buffer-segments:
@@ -657,7 +647,7 @@ The number of segments used for "buffer" in the inspected index column.
 
 The max value is ``the max number of segments - the number of segments
 used for "array"``. See
-:ref:`object-inspect-return-value-index-column-value-statistics-n-garbage-segments`
+:ref:`object-inspect-return-value-index-column-value-statistics-n-physical-segments`
 for the max number of segments.
 
 .. _object-inspect-return-value-index-column-value-statistics-max-in-use-physical-segment-id:
@@ -669,7 +659,7 @@ The max segment ID in use as "garbage", "array" or "buffer" in the
 inspected index column.
 
 The max value is the max number of segments. See
-:ref:`object-inspect-return-value-index-column-value-statistics-n-garbage-segments`
+:ref:`object-inspect-return-value-index-column-value-statistics-n-physical-segments`
 for the max number of segments.
 
 .. _object-inspect-return-value-index-column-value-statistics-n-unmanaged-segments:
@@ -746,6 +736,43 @@ number of garbage "chunks" as an array like the following::
 The max value of each space is the max number of chunks. See
 :ref:`object-inspect-return-value-index-column-value-statistics-total-chunk-size`
 for the max number of chunks.
+
+.. _object-inspect-return-value-index-column-value-statistics-next-physical-segment-id:
+
+``INDEX_COLUMN_VALUE_STATISTICS_NEXT_PHYSICAL_SEGMENT_ID``
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 9.0.2
+
+This value is the ID of the segment. The inspected index column use it as the next segment ID.
+The max value is the max number of segments. See
+:ref:`object-inspect-return-value-index-column-value-statistics-n-physical-segments`
+for the max number of segments.
+
+.. _object-inspect-return-value-index-column-value-statistics-n-physical-segments:
+
+``INDEX_COLUMN_VALUE_STATISTICS_N_PHYSICAL_SEGMENTS``
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 9.0.2
+
+This value the max number of segments. It depends on index size:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Index column size
+     - The max number of segments
+   * - ``INDEX_SMALL``
+     - ``2**9`` (512)
+   * - ``INDEX_MEDIUM``
+     - ``2**16`` (65536)
+   * - ``INDEX_LARGE``
+     - ``2**17 * 2`` (262144)
+   * - Default
+     - ``2**17`` (131072)
+
+If the number of segments tend to exceeds near the future, you need to consider to adopt ``INDEX_XXX`` flags.
 
 .. _object-inspect-return-value-index-column-source-id:
 
