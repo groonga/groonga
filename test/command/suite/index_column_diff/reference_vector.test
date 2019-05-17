@@ -16,7 +16,8 @@ truncate Values.data_index
 load --table Data
 [
 {"values": ["Morning World", "Afternoon World"]},
-{"values": ["Morning Groonga", "Afternoon World"]}
+{"values": ["Morning Groonga", "Afternoon World"]},
+{"values": ["Duplicated", "Duplicated"]}
 ]
 
 index_column_diff Values data_index

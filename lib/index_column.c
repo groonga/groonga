@@ -276,6 +276,7 @@ typedef struct {
   grn_obj missings;
   grn_obj look_ahead;
   size_t look_ahead_offset;
+  grn_posting last_posting;
   grn_ii_cursor *cursor;
   bool need_cursor_next;
   size_t n_postings[N_GRN_INDEX_COLUMN_DIFF_PERSISTENT_TYPES];
@@ -540,6 +541,7 @@ grn_index_column_diff_posting_list_init(grn_ctx *ctx,
   GRN_UINT32_INIT(&(posting_list->missings), GRN_OBJ_VECTOR);
   GRN_UINT32_INIT(&(posting_list->look_ahead), GRN_OBJ_VECTOR);
   posting_list->look_ahead_offset = 0;
+  posting_list->last_posting.tf = 0;
 
   const unsigned int ii_cursor_flags = 0;
   posting_list->cursor = grn_ii_cursor_open(ctx,
@@ -750,6 +752,35 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
   const grn_bool with_section = data->index.with_section;
   const grn_bool with_position = data->index.with_position;
 
+  if (posting_list->last_posting.tf > 0) {
+    const grn_index_column_diff_compared compared =
+      grn_index_column_diff_compare_posting(ctx,
+                                            data,
+                                            &(posting_list->last_posting));
+    GRN_LOG(ctx,
+            GRN_LOG_DUMP,
+            "[index-column][diff][process][%.*s][%*u] "
+            "    last[%u:%u:%u:%u] %c current[%u:%u:%u]",
+            data->index.name_size,
+            data->index.name,
+            grn_index_column_diff_token_id_width(ctx, data),
+            data->current.token_id,
+            posting_list->last_posting.rid,
+            posting_list->last_posting.sid,
+            posting_list->last_posting.pos,
+            posting_list->last_posting.tf,
+            grn_index_column_diff_compared_to_char(compared),
+            data->current.posting.rid,
+            data->current.posting.sid,
+            data->current.posting.pos);
+    if (compared == GRN_INDEX_COLUMN_DIFF_COMPARED_EQUAL) {
+      posting_list->last_posting.tf--;
+      return;
+    } else {
+      posting_list->last_posting.tf = 0;
+    }
+  }
+
   grn_obj *look_ahead = &(posting_list->look_ahead);
   const size_t look_ahead_offset = posting_list->look_ahead_offset;
 
@@ -875,7 +906,7 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
         GRN_LOG(ctx,
                 GRN_LOG_DUMP,
                 "[index-column][diff][process][%.*s][%*u] "
-                "      read[%u:%u:%u] %c current[%u:%u:%u]",
+                "    read[%u:%u:%u:%u] %c current[%u:%u:%u]",
                 data->index.name_size,
                 data->index.name,
                 grn_index_column_diff_token_id_width(ctx, data),
@@ -883,12 +914,17 @@ grn_index_column_diff_process_token_id(grn_ctx *ctx,
                 posting->rid,
                 posting->sid,
                 posting->pos,
+                posting->tf,
                 grn_index_column_diff_compared_to_char(compared),
                 data->current.posting.rid,
                 data->current.posting.sid,
                 data->current.posting.pos);
         switch (compared) {
         case GRN_INDEX_COLUMN_DIFF_COMPARED_EQUAL :
+          if (!with_position && posting->tf > 0) {
+            posting_list->last_posting = *posting;
+            posting_list->last_posting.tf--;
+          }
           return;
         case GRN_INDEX_COLUMN_DIFF_COMPARED_GREATER :
           grn_index_column_diff_posting_list_put(
