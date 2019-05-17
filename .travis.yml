@@ -60,6 +60,7 @@ matrix:
     - name: "Autotools: macOS"
       os: osx
       compiler: clang
+      osx_image: xcode10.2
       env:
         - BUILD_TOOL=autotools
         - ENABLE_MRUBY=yes
