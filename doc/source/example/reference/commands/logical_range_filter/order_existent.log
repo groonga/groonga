@@ -1,0 +1,69 @@
+Execution example::
+
+  logical_range_filter --logical_table Entries --shard_key created_at --order "descending"
+  # [
+  #   [
+  #     0,
+  #     1557403984.311448,
+  #     0.0003597736358642578
+  #   ],
+  #   [
+  #     [
+  #       [
+  #         "_key",
+  #         "ShortText"
+  #       ],
+  #       [
+  #         "content",
+  #         "Text"
+  #       ],
+  #       [
+  #         "created_at",
+  #         "Time"
+  #       ],
+  #       [
+  #         "n_likes",
+  #         "UInt32"
+  #       ],
+  #       [
+  #         "tag",
+  #         "ShortText"
+  #       ]
+  #     ],
+  #     [
+  #       "Good-bye Tritonn",
+  #       "I also migrated all Tritonn system!",
+  #       1436371200,
+  #       3,
+  #       "Senna"
+  #     ],
+  #     [
+  #       "Good-bye Senna",
+  #       "I migrated all Senna system!",
+  #       1436367600,
+  #       3,
+  #       "Senna"
+  #     ],
+  #     [
+  #       "Mroonga",
+  #       "I also started to use Mroonga. It's also very fast! Really fast!",
+  #       1436288400,
+  #       15,
+  #       "Groonga"
+  #     ],
+  #     [
+  #       "Groonga",
+  #       "I started to use Groonga. It's very fast!",
+  #       1436284800,
+  #       10,
+  #       "Groonga"
+  #     ],
+  #     [
+  #       "The first post!",
+  #       "Welcome! This is my first post!",
+  #       1436281200,
+  #       5,
+  #       "Hello"
+  #     ]
+  #   ]
+  # ]
