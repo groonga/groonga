@@ -102,15 +102,17 @@ CMD \
   BUILD_DIR=test/command \
     ../source/test/command/run-test.sh \
     test/command/suite \
-    --reporter mark && \
+    --reporter mark \
+    --read-timeout 30 && \
   BUILD_DIR=test/command \
     ../source/test/command/run-test.sh \
     test/command/suite \
     --reporter mark \
+    --read-timeout 30 \
     --interface http && \
   BUILD_DIR=test/command \
     ../source/test/command/run-test.sh \
     test/command/suite \
     --reporter mark \
-    --testee groonga-httpd \
-    --n-workers 2
+    --read-timeout 30 \
+    --testee groonga-httpd
