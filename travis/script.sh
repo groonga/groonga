@@ -28,7 +28,7 @@ fi
 
 prefix=/tmp/local
 
-command_test_options="--reporter=mark --timeout=60"
+command_test_options="--reporter=mark --timeout=60 --read-timeout=30"
 
 set -x
 
