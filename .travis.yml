@@ -9,6 +9,9 @@ dist: xenial
 services:
   - docker
 
+cache:
+  - ccache
+
 matrix:
   include:
     - name: "Autotools"
