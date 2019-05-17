@@ -1032,6 +1032,9 @@ grn_index_column_diff_compute(grn_ctx *ctx,
           for (size_t j = 0; j < n_elements; j++) {
             const grn_id element =
               grn_uvector_get_element(ctx, value, j, NULL);
+            if (element == GRN_ID_NIL) {
+              continue;
+            }
             data->current.token_id = element;
             data->current.posting.pos = 0;
             grn_index_column_diff_process_token_id(ctx, data);
@@ -1061,8 +1064,10 @@ grn_index_column_diff_compute(grn_ctx *ctx,
         if (GRN_BULK_VSIZE(value) > 0) {
           if (is_reference) {
             data->current.token_id = GRN_RECORD_VALUE(value);
-            data->current.posting.pos = 0;
-            grn_index_column_diff_process_token_id(ctx, data);
+            if (data->current.token_id != GRN_ID_NIL) {
+              data->current.posting.pos = 0;
+              grn_index_column_diff_process_token_id(ctx, data);
+            }
           } else {
             grn_index_column_diff_process_token(ctx,
                                                 data,

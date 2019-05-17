@@ -17,9 +17,10 @@ truncate Values.data_index
 load --table Data
 [
 {"value": "Good-by World"},
-{"value": "Good-by Groonga"}
+{"value": "Good-by Groonga"},
+{}
 ]
-[[0,0.0,0.0],2]
+[[0,0.0,0.0],3]
 index_column_diff Values data_index
 [
   [
