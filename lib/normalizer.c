@@ -2255,6 +2255,68 @@ nfkc100_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   return NULL;
 }
+
+static void *
+nfkc121_open_options(grn_ctx *ctx,
+                     grn_obj *normalizer,
+                     grn_obj *raw_options,
+                     void *user_data)
+{
+  grn_nfkc_normalize_options *options;
+
+  options = GRN_MALLOC(sizeof(grn_nfkc_normalize_options));
+  if (!options) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[normalizer][nfkc121] "
+        "failed to allocate memory for options");
+    return NULL;
+  }
+
+  grn_nfkc121_normalize_options_init(ctx, options);
+
+  grn_nfkc_normalize_options_apply(ctx, options, raw_options);
+
+  return options;
+}
+
+static void
+nfkc121_close_options(grn_ctx *ctx, void *data)
+{
+  grn_nfkc_normalize_options *options = data;
+  grn_nfkc_normalize_options_fin(ctx, options);
+  GRN_FREE(options);
+}
+
+static grn_obj *
+nfkc121_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *string = args[0];
+  grn_obj *table;
+  grn_nfkc_normalize_options *options;
+  grn_nfkc_normalize_options options_raw;
+
+  table = grn_string_get_table(ctx, string);
+  if (table) {
+    options = grn_table_cache_normalizer_options(ctx,
+                                                 table,
+                                                 string,
+                                                 nfkc121_open_options,
+                                                 nfkc121_close_options,
+                                                 NULL);
+    if (ctx->rc != GRN_SUCCESS) {
+      return NULL;
+    }
+  } else {
+    grn_nfkc121_normalize_options_init(ctx, &options_raw);
+    options = &options_raw;
+  }
+
+  grn_nfkc_normalize(ctx, string, options);
+  if (!table) {
+    grn_nfkc_normalize_options_fin(ctx, options);
+  }
+  return NULL;
+}
 #endif /* GRN_WITH_NFKC */
 
 grn_rc
@@ -2276,6 +2338,7 @@ grn_db_init_builtin_normalizers(grn_ctx *ctx)
 {
   const char *normalizer_nfkc51_name = "NormalizerNFKC51";
   const char *normalizer_nfkc100_name = "NormalizerNFKC100";
+  const char *normalizer_nfkc121_name = "NormalizerNFKC121";
 
   grn_normalizer_register(ctx, GRN_NORMALIZER_AUTO_NAME, -1,
                           NULL, auto_next, NULL);
@@ -2285,6 +2348,8 @@ grn_db_init_builtin_normalizers(grn_ctx *ctx)
                           NULL, nfkc51_next, NULL);
   grn_normalizer_register(ctx, normalizer_nfkc100_name, -1,
                           NULL, nfkc100_next, NULL);
+  grn_normalizer_register(ctx, normalizer_nfkc121_name, -1,
+                          NULL, nfkc121_next, NULL);
 #else /* GRN_WITH_NFKC */
   grn_normalizer_register(ctx, normalizer_nfkc51_name, -1,
                           NULL, NULL, NULL);

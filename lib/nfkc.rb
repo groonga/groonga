@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
-# -*- coding: utf-8 -*-
 #
 # Copyright(C) 2010-2018 Brazil
+# Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+require "English"
 
 CUSTOM_RULE_PATH = 'nfkc-custom-rules.txt'
 
@@ -832,8 +834,11 @@ end
 ######## main #######
 
 generator_class = TableGenerator
-ARGV.each{|arg|
+source_directory = "."
+ARGV.each do |arg|
   case arg
+  when /\A--source-directory=/
+    source_directory = $POSTMATCH
   when /-*c/i
     $case_sensitive = true
   when /-*s/i
@@ -843,7 +848,7 @@ ARGV.each{|arg|
   when "--impl=table"
     generator_class = TableGenerator
   end
-}
+end
 
 icu_home = ENV["ICU_HOME"] || "/tmp/local"
 STDERR.puts("compiling icudump on #{icu_home}")
@@ -854,7 +859,7 @@ system("cc",
        "-o", "icudump",
        "-I#{icu_home}/include",
        "-L#{icu_home}/lib",
-       "icudump.c",
+       File.join(source_directory, "icudump.c"),
        "-licuuc",
        "-licui18n",
        "-licudata") or exit(false)
@@ -873,7 +878,8 @@ decompose_map = create_decompose_map()
 STDERR.puts('creating compose map..')
 compose_map = create_compose_map(decompose_map)
 
-File.open("nfkc#{unicode_version}.c", "w") do |output|
+output_path = File.join(source_directory, "nfkc#{unicode_version}.c")
+File.open(output_path, "w") do |output|
   output.puts(<<-HEADER)
 /* -*- c-basic-offset: 2 -*- */
 /*

@@ -78,6 +78,17 @@ grn_nfkc100_normalize_options_init(grn_ctx *ctx,
                                   grn_nfkc100_compose);
 }
 
+void
+grn_nfkc121_normalize_options_init(grn_ctx *ctx,
+                                   grn_nfkc_normalize_options *options)
+{
+  grn_nfkc_normalize_options_init(ctx,
+                                  options,
+                                  grn_nfkc121_char_type,
+                                  grn_nfkc121_decompose,
+                                  grn_nfkc121_compose);
+}
+
 grn_rc
 grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                  grn_nfkc_normalize_options *options,

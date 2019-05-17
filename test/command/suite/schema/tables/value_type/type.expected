@@ -210,6 +210,10 @@ schema
         "id": 83,
         "name": "NormalizerNFKC100"
       },
+      "NormalizerNFKC121": {
+        "id": 84,
+        "name": "NormalizerNFKC121"
+      },
       "NormalizerNFKC51": {
         "id": 82,
         "name": "NormalizerNFKC51"
@@ -219,6 +223,10 @@ schema
       "TokenFilterNFKC100": {
         "id": 215,
         "name": "TokenFilterNFKC100"
+      },
+      "TokenFilterNFKC121": {
+        "id": 216,
+        "name": "TokenFilterNFKC121"
       }
     },
     "tables": {

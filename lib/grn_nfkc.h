@@ -49,6 +49,9 @@ typedef struct {
   grn_bool remove_blank;
 } grn_nfkc_normalize_options;
 
+typedef void (*grn_nfkc_normalize_options_init_func)(grn_ctx *ctx,
+                                                     grn_nfkc_normalize_options *options);
+
 const char *grn_nfkc_decompose(const unsigned char *utf8);
 const char *grn_nfkc_compose(const unsigned char *prefix_utf8,
                              const unsigned char *suffix_utf8);
@@ -63,12 +66,19 @@ const char *grn_nfkc100_decompose(const unsigned char *utf8);
 const char *grn_nfkc100_compose(const unsigned char *prefix_utf8,
                                const unsigned char *suffix_utf8);
 
+GRN_API grn_char_type grn_nfkc121_char_type(const unsigned char *utf8);
+const char *grn_nfkc121_decompose(const unsigned char *utf8);
+const char *grn_nfkc121_compose(const unsigned char *prefix_utf8,
+                               const unsigned char *suffix_utf8);
+
 void grn_nfkc_normalize_options_init(grn_ctx *ctx,
                                      grn_nfkc_normalize_options *options,
                                      grn_nfkc_char_type_func char_type_func,
                                      grn_nfkc_decompose_func decompose_func,
                                      grn_nfkc_compose_func compose_func);
 void grn_nfkc100_normalize_options_init(grn_ctx *ctx,
+                                        grn_nfkc_normalize_options *options);
+void grn_nfkc121_normalize_options_init(grn_ctx *ctx,
                                         grn_nfkc_normalize_options *options);
 grn_rc grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                         grn_nfkc_normalize_options *options,

@@ -139,4 +139,5 @@ tmp/icu-$(ICU_VERSION)/local/: icu4c-$(ICU_VERSION)-src.tgz
 
 update-nfkc: tmp/icu-$(ICU_VERSION)/local/
 	ICU_HOME=$$PWD/tmp/icu-$(ICU_VERSION)/local \
-	  $(RUBY) nfkc.rb
+	  $(RUBY) $(srcdir)/nfkc.rb \
+	    --source-directory=$(srcdir)
