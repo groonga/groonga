@@ -117,8 +117,9 @@ test_script:
      --groonga %FULL_GROONGA_INSTALL_FOLDER%\bin\groonga.exe
      --base-directory test\command
      --reporter mark
-     --n-workers 1
+     --n-workers 2
      --timeout 60
+     --read-timeout 30
      --n-retries 2
      test\command\suite
   # On Appveyor, インストール directory is recognized unicode escape sequence.
