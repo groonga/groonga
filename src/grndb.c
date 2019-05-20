@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2014-2018 Brazil
+  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -167,8 +168,8 @@ main(int argc, char **argv)
                          strlen(log_level_prefix "=")) == 0) {
         log_level_name = arg + strlen(log_level_prefix "=");
       }
-#undef log_path_equal_prefix
-#undef log_level_equal_prefix
+#undef log_path_prefix
+#undef log_level_prefix
     }
   }
 
