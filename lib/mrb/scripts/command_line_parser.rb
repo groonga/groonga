@@ -97,6 +97,10 @@ module Groonga
       options.string("--log-level",
                      "Change log level (#{default_log_level.name})",
                      default: default_log_level)
+      default_log_flags = Logger.default_flags
+      options.string("--log-flags",
+                     "Change log flags (#{default_log_flags.to_s})",
+                     default: default_log_flags)
     end
 
     def find_command(name)

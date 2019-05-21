@@ -58,6 +58,17 @@ logger_s_get_default_level(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+logger_s_get_default_flags(mrb_state *mrb, mrb_value self)
+{
+  mrb_value mrb_flags_class;
+  mrb_value mrb_flags;
+
+  mrb_flags_class = mrb_const_get(mrb, self, mrb_intern_lit(mrb, "Flags"));
+  mrb_flags = mrb_fixnum_value(grn_default_logger_get_flags());
+  return mrb_funcall(mrb, mrb_flags_class, "new", 1, mrb_flags);
+}
+
+static mrb_value
 logger_need_log_p(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -122,6 +133,8 @@ grn_mrb_logger_init(grn_ctx *ctx)
                               logger_s_get_default_path, MRB_ARGS_NONE());
   mrb_define_singleton_method(mrb, (struct RObject *)klass, "default_level",
                               logger_s_get_default_level, MRB_ARGS_NONE());
+  mrb_define_singleton_method(mrb, (struct RObject *)klass, "default_flags",
+                              logger_s_get_default_flags, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "need_log?", logger_need_log_p, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "need_location_in_message?",
@@ -129,6 +142,7 @@ grn_mrb_logger_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "log_raw", logger_log_raw, MRB_ARGS_REQ(5));
 
   grn_mrb_load(ctx, "logger/level.rb");
+  grn_mrb_load(ctx, "logger/flags.rb");
   grn_mrb_load(ctx, "logger.rb");
 }
 #endif
