@@ -96,6 +96,7 @@ module CommandRunner
     command_line = [
       grndb_path,
       command,
+      "--log-path", @log_path.to_s,
       @database_path.to_s,
     ]
     command_line.concat(arguments)
