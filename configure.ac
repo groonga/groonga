@@ -922,6 +922,8 @@ if test "x$with_luajit" != "xno"; then
 else
   GRN_WITH_LUAJIT=no
 fi
+AC_SUBST(LUAJIT_CFLAGS)
+AC_SUBST(LUAJIT_LIBS)
 
 # Zstandard
 AC_ARG_WITH(zstd,
