@@ -146,14 +146,14 @@ module CommandRunner
 
   def normalize_init_line(line)
     line.chomp.gsub(/\A
-                         (\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}\.\d+)?
-                         \|\
-                         ([a-zA-Z])
-                         \|\
-                         ([^: ]+)?
-                         ([|:]\ )?
-                         (.+)
-                      \z/x) do
+                       (\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}\.\d+)?
+                       \|\
+                       ([a-zA-Z])
+                       \|\
+                       ([^: ]+)?
+                       ([|:]\ )?
+                       (.+)
+                    \z/x) do
       timestamp = $1
       level = $2
       id_section = $3
