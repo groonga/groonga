@@ -916,7 +916,7 @@ if test "x$with_luajit" != "xno"; then
               [Support LuaJIT.])
   else
     if test "x$with_luajit" != "xauto"; then
-      AC_MSG_ERROR("No libluajit found")
+      AC_MSG_ERROR("No LuaJIT found")
     fi
   fi
 else
