@@ -69,8 +69,7 @@ Specify multiple options::
 
   TokenNgram("loose_symbol", true, "loose_blank", true)
 
-``TokenNgram`` also specify multiple options as above.
-We can also specify mingle multiple options except the above example.
+``TokenNgram`` We can also specify multiple options at the same time except the above examples.
 
 Usage
 -----
