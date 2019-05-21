@@ -13,7 +13,7 @@
 Summary
 -------
 
-``TokenNgram`` can define its behavior dynamically via its options.
+``TokenNgram`` can change define its behavior dynamically via its options.
 For example, we can use it as unigram, bigram, trigram on with changing ``n`` option value as below.
 
 Uni-gram:
@@ -28,7 +28,7 @@ Bi-gram:
 .. include:: ../../example/reference/tokenizers/token-ngram-bi-gram.log
 .. tokenize --tokenizer 'TokenNgram("n", 2)' --string "Hello World"
 
-tri-gram:
+Tri-gram:
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-ngram-tri-gram.log
