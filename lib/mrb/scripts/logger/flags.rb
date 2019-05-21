@@ -12,17 +12,7 @@ module Groonga
 
       attr_reader :value
       def initialize(value)
-        case value
-        when String, Symbol
-          @value = VALUES[value.to_sym]
-          if @value.nil?
-            available_names = VALUES.keys.inspect
-            message = "unknown flag name: #{value.inspect}: #{available_names}"
-            raise ArgumentError, message
-          end
-        else
-          @value = value
-        end
+        @value = resolve_value(value)
       end
 
       def to_i
@@ -39,12 +29,32 @@ module Groonga
 
       def |(other)
         other = self.class.new(other) unless other.is_a?(self.class)
-        new(@value | other.to_i)
+        self.class.new(@value | other.to_i)
       end
 
       def &(other)
         other = self.class.new(other) unless other.is_a?(self.class)
-        new(@value & other.to_i)
+        self.class.new(@value & other.to_i)
+      end
+
+      private
+      def resolve_value(value)
+        case value
+        when String, Symbol
+          resolved_value = VALUES[value.to_sym]
+          if resolved_value.nil?
+            available_names = VALUES.keys.inspect
+            message = "unknown flag name: #{value.inspect}: #{available_names}"
+            raise ArgumentError, message
+          end
+          resolved_value
+        when ::Array
+          value.inject(0) do |resolved_value, v|
+            resolved_value | resolve_value(v)
+          end
+        else
+          value
+        end
       end
 
       NONE = new(0)

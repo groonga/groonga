@@ -1,0 +1,4 @@
+plugin_register ruby/eval
+[[0,0.0,0.0],true]
+ruby_eval "(Groonga::Logger::Flags.new([:time, :thread_id]) & [:location, :time]).to_s"
+[[0,0.0,0.0],{"value":"time"}]
