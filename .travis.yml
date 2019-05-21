@@ -12,11 +12,37 @@ services:
 cache:
   - ccache
 
+addons_linux_build: &addons_linux_build
+  apt:
+    packages:
+      - autotools-dev
+      - autotools-dev
+      - autoconf-archive
+      - zlib1g-dev
+      - libmsgpack-dev
+      - libevent-dev
+      - libmecab-dev
+      - mecab-naist-jdic
+      - cmake
+      - gdb
+
+addons_macos_build: &addons_macos_build
+  homebrew:
+    brewfile: true
+
+addons_linux_docker: &addons_linux_docker
+  apt:
+    packages:
+      - autotools-dev
+      - autoconf-archive
+
 matrix:
   include:
     - name: "Autotools"
       os: linux
       compiler: gcc
+      addons:
+        <<: *addons_linux_build
       env:
         - BUILD_TOOL=autotools
         - CFLAGS=-funsigned-char
@@ -24,12 +50,16 @@ matrix:
     - name: "Autotools: mruby"
       os: linux
       compiler: gcc
+      addons:
+        <<: *addons_linux_build
       env:
         - BUILD_TOOL=autotools
         - ENABLE_MRUBY=yes
     - name: "Autotools: mruby: optimize"
       os: linux
       compiler: gcc
+      addons:
+        <<: *addons_linux_build
       env:
         - BUILD_TOOL=autotools
         - ENABLE_MRUBY=yes
@@ -37,23 +67,31 @@ matrix:
     - name: "Autotools: clang"
       os: linux
       compiler: clang
+      addons:
+        <<: *addons_linux_build
       env:
         - BUILD_TOOL=autotools
         - ENABLE_MRUBY=yes
     - name: "CMake"
       os: linux
       compiler: gcc
+      addons:
+        <<: *addons_linux_build
       env:
         - BUILD_TOOL=cmake
     - name: "CMake: mruby"
       os: linux
       compiler: gcc
+      addons:
+        <<: *addons_linux_build
       env:
         - BUILD_TOOL=cmake
         - ENABLE_MRUBY=yes
     - name: "CMake: clang"
       os: linux
       compiler: clang
+      addons:
+        <<: *addons_linux_build
       env:
         - BUILD_TOOL=cmake
         - ENABLE_MRUBY=yes
@@ -61,36 +99,45 @@ matrix:
       os: osx
       compiler: clang
       osx_image: xcode10.2
+      addons:
+        <<: *addons_macos_build
       env:
         - BUILD_TOOL=autotools
         - ENABLE_MRUBY=yes
     - name: "CMake: macOS"
       os: osx
       compiler: clang
+      addons:
+        <<: *addons_macos_build
       env:
         - BUILD_TOOL=cmake
         - ENABLE_MRUBY=yes
     - name: "Ubuntu 16.04"
       os: linux
+      addons:
+        <<: *addons_linux_docker
       env:
         - DOCKER=ubuntu-16.04
     - name: "Ubuntu 18.04"
       os: linux
+      addons:
+        <<: *addons_linux_docker
       env:
         - DOCKER=ubuntu-18.04
     - name: "MinGW32"
       os: linux
+      addons:
+        <<: *addons_linux_build
       env:
         - TARGET=windows
         - ARCHITECTURES=x86
     - name: "MinGW64"
       os: linux
+      addons:
+        <<: *addons_linux_build
       env:
         - TARGET=windows
         - ARCHITECTURES=x64
-
-before_install:
-  - gem update bundler
 
 install:
   - travis/install.sh
