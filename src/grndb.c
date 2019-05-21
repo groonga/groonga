@@ -133,6 +133,7 @@ main(int argc, char **argv)
   int exit_code = EXIT_SUCCESS;
   const char *log_path = GRN_LOG_PATH;
   const char *log_level_name = NULL;
+  const char *log_flags_name = NULL;
 
   {
     int i;
@@ -149,6 +150,7 @@ main(int argc, char **argv)
 
 #define log_path_prefix "--log-path"
 #define log_level_prefix "--log-level"
+#define log_flags_prefix "--log-flags"
       if (strcmp(arg, log_path_prefix) == 0) {
         if (i + 1 < argc) {
           log_path = argv[i + 1];
@@ -167,9 +169,19 @@ main(int argc, char **argv)
                          log_level_prefix "=",
                          strlen(log_level_prefix "=")) == 0) {
         log_level_name = arg + strlen(log_level_prefix "=");
+      } else if (strcmp(arg, log_flags_prefix) == 0) {
+        if (i + 1 < argc) {
+          log_flags_name = argv[i + 1];
+          i++;
+        }
+      } else if (strncmp(arg,
+                         log_flags_prefix "=",
+                         strlen(log_flags_prefix "=")) == 0) {
+        log_flags_name = arg + strlen(log_flags_prefix "=");
       }
 #undef log_path_prefix
 #undef log_level_prefix
+#undef log_flags_prefix
     }
   }
 
@@ -182,6 +194,16 @@ main(int argc, char **argv)
       return EXIT_FAILURE;
     }
     grn_default_logger_set_max_level(log_level);
+  }
+
+  if (log_flags_name) {
+    int log_flags;
+    if (!grn_log_flags_parse(log_flags_name, -1, &log_flags)) {
+      fprintf(stderr, "%s: failed to parse log flags: <%s>\n",
+              argv[0], log_flags_name);
+      return EXIT_FAILURE;
+    }
+    grn_default_logger_set_flags(log_flags);
   }
 
   if (grn_init() != GRN_SUCCESS) {
