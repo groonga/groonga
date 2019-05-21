@@ -909,8 +909,8 @@ if test "x$with_luajit" != "xno"; then
                       [luajit],
                       [GRN_WITH_LUAJIT=yes],
                       [GRN_WITH_LUAJIT=no])
-  ],
-  [GRN_WITH_LUAJIT=no])
+    ],
+    [GRN_WITH_LUAJIT=no])
   if test "$GRN_WITH_LUAJIT" = "yes"; then
     AC_DEFINE(GRN_WITH_LUAJIT, [1],
               [Support LuaJIT.])
