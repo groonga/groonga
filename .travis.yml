@@ -16,7 +16,6 @@ addons_linux_build: &addons_linux_build
   apt:
     packages:
       - autotools-dev
-      - autotools-dev
       - autoconf-archive
       - zlib1g-dev
       - libmsgpack-dev
