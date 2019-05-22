@@ -30,7 +30,6 @@ AM_CXXFLAGS =					\
 BUNDLED_LIBRARIES_CFLAGS =			\
 	$(MRUBY_CFLAGS)				\
 	$(ONIGMO_CFLAGS)                        \
-	$(LUAJIT_CFLAGS)
 
 DEFAULT_INCLUDES =				\
 	-I$(top_builddir)			\
@@ -59,7 +58,8 @@ libgroonga_la_LIBADD =				\
 	mrb/libgrnmrb.la			\
 	proc/libgrnproc.la			\
 	ts/libgrnts.la				\
-	$(MESSAGE_PACK_LIBS)
+	$(MESSAGE_PACK_LIBS)                    \
+	$(LUAJIT_CFLAGS)
 
 if WITH_MRUBY
 libgroonga_la_LIBADD +=				\
