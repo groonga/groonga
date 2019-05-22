@@ -29,7 +29,7 @@ AM_CXXFLAGS =					\
 
 BUNDLED_LIBRARIES_CFLAGS =			\
 	$(MRUBY_CFLAGS)				\
-	$(ONIGMO_CFLAGS)                        \
+	$(ONIGMO_CFLAGS)
 
 DEFAULT_INCLUDES =				\
 	-I$(top_builddir)			\
