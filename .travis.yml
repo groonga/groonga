@@ -17,6 +17,7 @@ addons_linux_build: &addons_linux_build
     packages:
       - autotools-dev
       - autoconf-archive
+      - automake1.11
       - zlib1g-dev
       - libmsgpack-dev
       - libevent-dev
