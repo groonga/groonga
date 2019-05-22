@@ -33,6 +33,7 @@
 #include "grn_normalizer.h"
 #include "grn_mrb.h"
 #include "grn_ctx_impl_mrb.h"
+#include "grn_ctx_impl_lua.h"
 #include "grn_logger.h"
 #include "grn_cache.h"
 #include "grn_expr.h"
@@ -315,6 +316,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->n_same_error_messages = 0;
 
   grn_ctx_impl_mrb_init(ctx);
+  grn_ctx_impl_lua_init(ctx);
 
   GRN_TEXT_INIT(&(ctx->impl->temporary_open_spaces.stack), 0);
   ctx->impl->temporary_open_spaces.current = NULL;
