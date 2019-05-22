@@ -19,7 +19,8 @@ AM_CFLAGS =					\
 	$(GRN_CFLAGS)				\
 	$(MESSAGE_PACK_CFLAGS)			\
 	$(LIBLZ4_CFLAGS)			\
-	$(LIBZSTD_CFLAGS)
+	$(LIBZSTD_CFLAGS)                       \
+	$(LUAJIT_CFLAGS)
 
 AM_CXXFLAGS =					\
 	$(NO_STRICT_ALIASING_CFLAGS)		\
@@ -58,8 +59,7 @@ libgroonga_la_LIBADD =				\
 	mrb/libgrnmrb.la			\
 	proc/libgrnproc.la			\
 	ts/libgrnts.la				\
-	$(MESSAGE_PACK_LIBS)                    \
-	$(LUAJIT_CFLAGS)
+	$(MESSAGE_PACK_LIBS) 
 
 if WITH_MRUBY
 libgroonga_la_LIBADD +=				\
