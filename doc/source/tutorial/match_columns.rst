@@ -15,6 +15,8 @@ Groonga supports full-text search against multiple columns. Let's consider blog 
 
 In such a case, there are two ways to create indexes. One way is creating column index against each column. The other way is creating one column index against multiple columns. Either way, Groonga supports similar full-text search syntax.
 
+.. _creating-column-index-against-each-column:
+
 Creating column index against each column
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -290,6 +292,20 @@ On the other hand, the second one matches one article only because of ``Replies2
 Indexes with Weight
 -------------------
 
-TODO
+If index columns are created for data columns, you can search by indexes with weight.
+For example, let's try to search blog entries by indexes with weight which contains ``Groonga`` as important keyword in ``Blog1`` table.
+Generally speaking, an important keyword tend to be included in blog title, so if ``title`` column contains ``Groonga``, its score ( ``_score`` ) must be raised in contrast to ``message`` column. The indexes with weight is used for such a purpose.
 
-.. TODO: match_columnsの重み指定機能についても触れる。
+Here is the example which search blog entries with ``Groonga`` as important keyword in ``title`` or ``message`` columns.
+
+The sample schema and data is same as :ref:`creating-column-index-against-each-column`.
+
+.. groonga-command
+.. include:: ../example/tutorial/match_columns-indexes-with-weight.log
+.. select --table Blog1 --match_columns 'IndexBlog1.index_title * 10 || IndexBlog1.index_message' --query 'Groonga' --output_columns "_id, _score, *"
+
+In above query, ``'IndexBlog1.index_title * 10 || IndexBlog1.index_message'`` is specified for ``--match_columns``.
+It means that if ``title`` column (search ``title`` column using ``IndexBlog1.index_title`` index) matches to ``Groonga``, its weight is multiplied to 10 and if ``message`` column (search ``message`` column using ``IndexBlog1.index_message`` index) matches to ``Groonga``,
+its weight is 1 (default). If ``Groonga`` matches to ``title`` and ``message``, its weight is 11 (10 + 1) in this case.
+
+As a result, ``Groonga test`` blog entry is listed in first.
