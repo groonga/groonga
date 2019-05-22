@@ -59,7 +59,7 @@ libgroonga_la_LIBADD =				\
 	mrb/libgrnmrb.la			\
 	proc/libgrnproc.la			\
 	ts/libgrnts.la				\
-	$(MESSAGE_PACK_LIBS) 
+	$(MESSAGE_PACK_LIBS)
 
 if WITH_MRUBY
 libgroonga_la_LIBADD +=				\
