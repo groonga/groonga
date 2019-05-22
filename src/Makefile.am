@@ -19,7 +19,8 @@ AM_CFLAGS =					\
 	$(COVERAGE_CFLAGS)			\
 	$(GRN_CFLAGS)				\
 	$(MESSAGE_PACK_CFLAGS)			\
-	$(MRUBY_CFLAGS)
+	$(MRUBY_CFLAGS)                         \
+	$(LUAJIT_CFLAGS)
 
 AM_CPPFLAGS =					\
 	$(MRUBY_CPPFLAGS)
