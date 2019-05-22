@@ -99,7 +99,7 @@ Advanced usage
 
 We can specify multiple options for ``TokenNgram``.
 
-For example, we can deal with orthographic variantsas of phone number by using ``loose_symbol`` and ``loose_blank`` as below.
+For example, we can deal with variantsas as phone number by using ``loose_symbol`` and ``loose_blank`` as below.
 
 We can search ``0123(45)6789``, ``0123-45-6789`` and, ``0123 45 6789`` by using ``0123456789`` as below example.
 
