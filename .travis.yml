@@ -22,6 +22,7 @@ addons_linux_build: &addons_linux_build
       - libmsgpack-dev
       - libevent-dev
       - libmecab-dev
+      - libluajit-5.1-dev
       - mecab-naist-jdic
       - cmake
       - gdb

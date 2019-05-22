@@ -9,7 +9,8 @@ AM_CFLAGS =					\
 	$(COVERAGE_CFLAGS)			\
 	$(GRN_CFLAGS)				\
 	$(MESSAGE_PACK_CFLAGS)			\
-	$(MRUBY_CFLAGS)
+	$(MRUBY_CFLAGS)                         \
+	$(LUAJIT_CFLAGS)
 
 noinst_LTLIBRARIES = libgrnproc.la
 

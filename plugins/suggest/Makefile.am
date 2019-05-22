@@ -3,7 +3,8 @@ EXTRA_DIST =					\
 
 AM_CFLAGS =					\
 	$(MESSAGE_PACK_CFLAGS)			\
-	$(MRUBY_CFLAGS)
+	$(MRUBY_CFLAGS)                         \
+	$(LUAJIT_CFLAGS)
 
 AM_CPPFLAGS =					\
 	-I$(top_builddir)			\

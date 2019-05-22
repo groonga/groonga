@@ -19,7 +19,8 @@ AM_CFLAGS =					\
 	$(GRN_CFLAGS)				\
 	$(MESSAGE_PACK_CFLAGS)			\
 	$(LIBLZ4_CFLAGS)			\
-	$(LIBZSTD_CFLAGS)
+	$(LIBZSTD_CFLAGS)                       \
+	$(LUAJIT_CFLAGS)
 
 AM_CXXFLAGS =					\
 	$(NO_STRICT_ALIASING_CFLAGS)		\

@@ -897,6 +897,34 @@ else
   GRN_WITH_LZ4=no
 fi
 
+# LuaJIT
+AC_ARG_WITH(luajit,
+  [AS_HELP_STRING([--with-luajit],
+    [Support LuaJIT. [default=auto]])],
+  [with_luajit="$withval"],
+  [with_luajit="auto"])
+if test "x$with_luajit" != "xno"; then
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([LUAJIT],
+                      [luajit],
+                      [GRN_WITH_LUAJIT=yes],
+                      [GRN_WITH_LUAJIT=no])
+    ],
+    [GRN_WITH_LUAJIT=no])
+  if test "$GRN_WITH_LUAJIT" = "yes"; then
+    AC_DEFINE(GRN_WITH_LUAJIT, [1],
+              [Support LuaJIT.])
+  else
+    if test "x$with_luajit" != "xauto"; then
+      AC_MSG_ERROR("No LuaJIT found")
+    fi
+  fi
+else
+  GRN_WITH_LUAJIT=no
+fi
+AC_SUBST(LUAJIT_CFLAGS)
+AC_SUBST(LUAJIT_LIBS)
+
 # Zstandard
 AC_ARG_WITH(zstd,
   [AS_HELP_STRING([--with-zstd],
@@ -1783,6 +1811,11 @@ echo "  LZ4:                   $GRN_WITH_LZ4"
 if test "x$GRN_WITH_LZ4" = "xyes"; then
   echo "    CFLAGS:              ${LIBLZ4_CFLAGS}"
   echo "    LIBS:                ${LIBLZ4_LIBS}"
+fi
+echo "  LuaJIT:                $GRN_WITH_LUAJIT"
+if test "x$GRN_WITH_LUAJIT" = "xyes"; then
+  echo "    CFLAGS:              ${LUAJIT_CFLAGS}"
+  echo "    LIBS:                ${LUAJIT_LIBS}"
 fi
 echo "  Zstandard:             $GRN_WITH_ZSTD"
 if test "x$GRN_WITH_ZSTD" = "xyes"; then
