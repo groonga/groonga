@@ -16,10 +16,27 @@ ensure-rsync-path:
 	  false;							\
 	fi
 
+ensure-latest-archive:
+	cd files &&                                                     		\
+	for architecture in $(ARCHITECTURES); do					\
+	  zip_base=$(PACKAGE)-$(VERSION)-$${architecture};				\
+	  latest_base=$(PACKAGE)-latest-$${architecture};				\
+	  ln -sf $${zip_base}.zip $${latest_base}.zip;					\
+	  ln -sf $${zip_base}.exe $${latest_base}.exe;					\
+	  zip_vs2017=$${zip_base}-vs2017.zip;						\
+	  if [ -f $${zip_vs2017} ]; then						\
+	    ln -sf $${zip_vs2017} $${latest_base}-vs2017.zip;				\
+	  fi;										\
+	  zip_vs2017runtime=$${zip_base}-vs2017-with-vcruntime.zip;			\
+	  if [ -f $${zip_vs2017runtime} ]; then						\
+	    ln -sf $${zip_vs2017runtime} $${latest_base}-vs2017-with-vcruntime.zip;	\
+	  fi;										\
+	done
+
 download: ensure-rsync-path
 	rsync -avz --progress --delete $(RSYNC_PATH)/windows/groonga/ files
 
-upload: ensure-rsync-path
+upload: ensure-rsync-path ensure-latest-archive
 	rsync -avz --progress --delete files/ $(RSYNC_PATH)/windows/groonga
 	rsync -avz --progress --delete source/				\
 	  $(RSYNC_PATH)/windows/groonga/$(PACKAGE)-$(VERSION)$(SUFFIX)
