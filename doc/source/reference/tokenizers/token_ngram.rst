@@ -170,8 +170,7 @@ This option is its to reduce the shift of the position of the highlight.
 ``unify_alphabet``
 """"""""""""""""""
 
-If we set false, ``TokenNgram`` uses bigram tokenize method for ASCII
-character.
+If we set false, ``TokenNgram`` uses bigram tokenize method for ASCII character.
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-ngram-unify-alphabet.log
