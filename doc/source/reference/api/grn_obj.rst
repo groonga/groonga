@@ -310,6 +310,16 @@ Reference
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is a table. ``GRN_FALSE`` otherwise. TODO:
 
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Users", strlen("Users"));
+      printf("table?: %s\n", grn_obj_is_table(ctx, obj) ? "true" : "false");
+
+   If ``Users`` is table object, it prints like the following::
+
+     table?: true
+
 .. c:function:: grn_bool grn_obj_is_text_family_bulk(grn_ctx *ctx, grn_obj *obj)
 
    Check whether target object is a bulk object which belongs to text family.
