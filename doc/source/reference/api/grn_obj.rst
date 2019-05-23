@@ -400,7 +400,7 @@ Reference
 
       grn_obj *obj;
       obj = grn_ctx_get(ctx, "Users.names", strlen("Users.names"));
-      printf("scalar column?: %s\n", grn_obj_is_vector_column(ctx, obj) ? "true" : "false");
+      printf("vector column?: %s\n", grn_obj_is_vector_column(ctx, obj) ? "true" : "false");
 
    If ``Users.names`` is vector column, it prints like the following::
 
