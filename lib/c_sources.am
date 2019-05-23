@@ -16,6 +16,8 @@ libgroonga_c_sources =				\
 	grn_ctx_impl.h				\
 	ctx_impl_mrb.c				\
 	grn_ctx_impl_mrb.h			\
+	ctx_impl_lua.c				\
+	grn_ctx_impl_lua.h			\
 	grn_dat.h				\
 	db.c					\
 	grn_db.h				\
