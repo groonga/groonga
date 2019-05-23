@@ -72,7 +72,8 @@ libgroonga_la_LIBADD +=				\
 	$(LIBZSTD_LIBS)				\
 	$(ATOMIC_LIBS)				\
 	$(ARROW_LIBS)				\
-	$(WINDOWS_LIBS)
+	$(WINDOWS_LIBS)				\
+	$(LUAJIT_LIBS)
 
 nfkc_dump_SOURCES =				\
 	nfkc_dump.c
