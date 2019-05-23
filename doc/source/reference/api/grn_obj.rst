@@ -412,7 +412,18 @@ Reference
 
    :param ctx: The context object.
    :param obj: The target object.
-   :return: ``GRN_TRUE`` for if the target object is a weight vector column. ``GRN_FALSE`` otherwise. Even if the target object isn't column, return ``GRN_FALSE``.
+   :return: ``GRN_TRUE`` for if the target object is a weight vector column. ``GRN_FALSE`` otherwise.
+            Even if the target object isn't column, return ``GRN_FALSE``. The weight vector column is created with ``WITH_WEIGHT`` flags.
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Users.tags", strlen("Users.tags"));
+      printf("weight vector column?: %s\n", grn_obj_is_weight_vector_column(ctx, obj) ? "true" : "false");
+
+   If ``Users.tags`` is weight vector column, it prints like the following::
+
+     weight vector column?: true
 
 .. c:function:: grn_bool grn_obj_is_window_function_proc(grn_ctx *ctx, grn_obj *obj)
 
