@@ -28,6 +28,11 @@
 # include <mruby.h>
 #endif
 
+#ifdef GRN_WITH_LUAJIT
+# include <lauxlib.h>
+# include <lualib.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -137,6 +142,14 @@ struct _grn_mrb_data {
 #endif
 };
 
+typedef struct _grn_lua_data grn_lua_data;
+struct _grn_lua_data {
+  grn_bool initialized;
+#ifdef GRN_WITH_LUAJIT
+  lua_State *state;
+#endif
+};
+
 struct _grn_ctx_impl {
   grn_encoding encoding;
 
@@ -219,6 +232,7 @@ struct _grn_ctx_impl {
   unsigned int n_same_error_messages;
 
   grn_mrb_data mrb;
+  grn_lua_data lua;
 
   struct {
     grn_obj stack;

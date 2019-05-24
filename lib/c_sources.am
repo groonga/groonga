@@ -1,138 +1,140 @@
 libgroonga_c_sources =				\
 	accessor.c				\
 	alloc.c					\
-	grn_alloc.h				\
 	cache.c					\
-	grn_cache.h				\
 	column.c				\
-	grn_column.h				\
 	com.c					\
-	grn_com.h				\
 	command.c				\
 	config.c				\
-	grn_config.h				\
 	ctx.c					\
-	grn_ctx.h				\
-	grn_ctx_impl.h				\
+	ctx_impl_lua.c				\
 	ctx_impl_mrb.c				\
-	grn_ctx_impl_mrb.h			\
-	grn_dat.h				\
 	db.c					\
-	grn_db.h				\
 	dump.c					\
 	encoding.c				\
-	grn_encoding.h				\
-	ts.c					\
-	grn_ts.h				\
-	type.c					\
 	error.c					\
-	grn_error.h				\
 	expr.c					\
-	grn_expr.h				\
 	expr_code.c				\
-	grn_expr_code.h				\
 	expr_executor.c				\
-	grn_expr_executor.h			\
 	file_lock.c				\
-	grn_file_lock.h				\
+	file_reader.c				\
 	geo.c					\
-	grn_geo.h				\
 	grn.h					\
-	hash.c					\
+	grn_alloc.h				\
+	grn_cache.h				\
+	grn_column.h				\
+	grn_com.h				\
+	grn_config.h				\
+	grn_ctx.h				\
+	grn_ctx_impl.h				\
+	grn_ctx_impl_lua.h			\
+	grn_ctx_impl_mrb.h			\
+	grn_dat.h				\
+	grn_db.h				\
+	grn_encoding.h				\
+	grn_error.h				\
+	grn_expr.h				\
+	grn_expr_code.h				\
+	grn_expr_executor.h			\
+	grn_file_lock.h				\
+	grn_geo.h				\
 	grn_hash.h				\
+	grn_ii.h				\
+	grn_index_column.h			\
+	grn_io.h				\
+	grn_load.h				\
+	grn_logger.h				\
+	grn_mrb.h				\
+	grn_msgpack.h				\
+	grn_nfkc.h				\
+	grn_normalizer.h			\
+	grn_obj.h				\
+	grn_onigmo.h				\
+	grn_options.h				\
+	grn_output.h				\
+	grn_output_columns.h			\
+	grn_pat.h				\
+	grn_plugin.h				\
+	grn_proc.h				\
+	grn_report.h				\
+	grn_request_canceler.h			\
+	grn_request_timer.h			\
+	grn_romaji.h				\
+	grn_rset.h				\
+	grn_scanner.h				\
+	grn_scorer.h				\
+	grn_scorers.h				\
+	grn_snip.h				\
+	grn_store.h				\
+	grn_str.h				\
+	grn_string.h				\
+	grn_table.h				\
+	grn_time.h				\
+	grn_token.h				\
+	grn_token_cursor.h			\
+	grn_token_filters.h			\
+	grn_token_metadata.h			\
+	grn_tokenizer.h				\
+	grn_tokenizers.h			\
+	grn_ts.h				\
+	grn_util.h				\
+	grn_window_function.h			\
+	grn_window_function_executor.h		\
+	grn_window_functions.h			\
+	grn_windows.h				\
+	hash.c					\
 	highlighter.c				\
 	id.c					\
 	ii.c					\
-	grn_ii.h				\
 	index_column.c				\
-	grn_index_column.h			\
 	io.c					\
-	grn_io.h				\
 	load.c					\
-	grn_load.h				\
 	logger.c				\
-	grn_logger.h				\
 	memory.c				\
 	mrb.c					\
-	grn_mrb.h				\
 	msgpack.c				\
-	grn_msgpack.h				\
 	nfkc.c					\
-	grn_nfkc.h				\
-	nfkc50.c				\
 	nfkc100.c				\
 	nfkc121.c				\
+	nfkc50.c				\
 	normalizer.c				\
-	grn_normalizer.h			\
 	obj.c					\
-	grn_obj.h				\
 	onigmo.c				\
-	grn_onigmo.h				\
 	operator.c				\
 	options.c				\
-	grn_options.h				\
 	output.c				\
-	grn_output.h				\
 	output_columns.c			\
-	grn_output_columns.h			\
 	pat.c					\
-	grn_pat.h				\
 	plugin.c				\
-	grn_plugin.h				\
 	proc.c					\
-	grn_proc.h				\
 	raw_string.c				\
 	report.c				\
-	grn_report.h				\
 	request_canceler.c			\
-	grn_request_canceler.h			\
 	request_timer.c				\
-	grn_request_timer.h			\
 	romaji.c				\
-	grn_romaji.h				\
 	rset.c					\
-	grn_rset.h				\
 	scanner.c				\
-	grn_scanner.h				\
 	scorer.c				\
-	grn_scorer.h				\
 	scorers.c				\
-	grn_scorers.h				\
 	snip.c					\
-	grn_snip.h				\
 	store.c					\
-	grn_store.h				\
 	str.c					\
-	grn_str.h				\
 	string.c				\
-	grn_string.h				\
 	table.c					\
-	grn_table.h				\
 	thread.c				\
 	time.c					\
-	grn_time.h				\
 	token.c					\
-	grn_token.h				\
 	token_cursor.c				\
-	grn_token_cursor.h			\
-	token_metadata.c			\
-	grn_token_metadata.h			\
-	tokenizer.c				\
-	grn_tokenizer.h				\
-	tokenizers.c				\
-	grn_tokenizers.h			\
 	token_filter.c				\
 	token_filters.c				\
-	grn_token_filters.h			\
+	token_metadata.c			\
+	tokenizer.c				\
+	tokenizers.c				\
+	ts.c					\
+	type.c					\
 	util.c					\
-	grn_util.h				\
-	windows.c				\
-	grn_windows.h				\
-	windows_event_logger.c			\
-	file_reader.c				\
 	window_function.c			\
-	grn_window_function.h			\
 	window_function_executor.c		\
-	grn_window_function_executor.h		\
 	window_functions.c			\
-	grn_window_functions.h
+	windows.c				\
+	windows_event_logger.c
