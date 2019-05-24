@@ -148,7 +148,6 @@ struct _grn_lua_data {
   grn_bool initialized;
 #ifdef GRN_WITH_LUAJIT
   lua_State *state;
-  char base_directory[PATH_MAX];
 #endif
 };
 
