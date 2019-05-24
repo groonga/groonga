@@ -43,6 +43,12 @@ grn_windows_base_dir(void)
 
         absolute_dll_filename[absolute_dll_filename_size] = L'\0';
 
+        if (wcsncmp(absolute_dll_filename, L"\\\\?\\", 4) == 0) {
+          wmemmove(absolute_dll_filename, &absolute_dll_filename[4], absolute_dll_filename_size - 4);
+          absolute_dll_filename[absolute_dll_filename_size - 4] = L'\0';
+          absolute_dll_filename_size -= 4;
+        }
+
         for (i = 0; i < absolute_dll_filename_size; i++) {
           if (absolute_dll_filename[i] == L'\\') {
             absolute_dll_filename[i] = L'/';
