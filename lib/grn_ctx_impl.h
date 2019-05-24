@@ -31,7 +31,6 @@
 #ifdef GRN_WITH_LUAJIT
 # include <lauxlib.h>
 # include <lualib.h>
-# include <lua.h>
 #endif
 
 #ifdef __cplusplus
