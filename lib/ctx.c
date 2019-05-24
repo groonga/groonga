@@ -423,8 +423,8 @@ grn_ctx_impl_fin(grn_ctx *ctx)
     }
     GRN_OBJ_FIN(ctx, stack);
   }
-  grn_ctx_impl_mrb_fin(ctx);
   grn_ctx_impl_lua_fin(ctx);
+  grn_ctx_impl_mrb_fin(ctx);
   grn_ctx_loader_clear(ctx);
   if (ctx->impl->parser) {
     grn_expr_parser_close(ctx);
