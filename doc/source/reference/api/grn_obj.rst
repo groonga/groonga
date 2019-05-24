@@ -62,6 +62,16 @@ Reference
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is bulk, ``GRN_FALSE`` otherwise.
 
+   .. code-block:: c
+
+      grn_obj obj;
+      GRN_INT32_INIT(&obj, 0);
+      printf("bulk?: %s\n", grn_obj_is_bulk(ctx, obj) ? "true" : "false");
+
+   As ``obj`` is bulk object, it prints like the following::
+
+     bulk?: true
+
 .. c:function:: grn_bool grn_obj_is_column(grn_ctx *ctx, grn_obj *obj)
 
    .. versionadded:: 6.0.0
@@ -212,6 +222,16 @@ Reference
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is a number bulk object. ``GRN_FALSE`` otherwise. TODO:
 
+   .. code-block:: c
+
+      grn_obj obj;
+      GRN_INT32_INIT(&obj, 0);
+      printf("number family bulk?: %s\n", grn_obj_is_number_family_bulk(ctx, obj) ? "true" : "false");
+
+   As ``obj`` is number family object, it prints like the following::
+
+     number family bulk?: true
+
 .. c:function:: grn_bool grn_obj_is_normalizer_proc(grn_ctx *ctx, grn_obj *obj)
 
    .. versionadded: 5.0.9
@@ -328,6 +348,16 @@ Reference
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is a bulk object which belongs to text family. ``GRN_FALSE`` otherwise. TODO:
 
+   .. code-block:: c
+
+      grn_obj obj;
+      GRN_TEXT_INIT(&obj, 0);
+      printf("text family bulk?: %s\n", grn_obj_is_text_family_bulk(ctx, obj) ? "true" : "false");
+
+   As ``obj`` is text family object, it prints like the following::
+
+     text family bulk?: true
+
 .. c:function:: grn_bool grn_obj_is_text_family_type(grn_ctx *ctx, grn_obj *obj)
 
    .. versionadded:: 6.0.1
@@ -375,6 +405,16 @@ Reference
    :param ctx: The context object.
    :param obj: The target object.
    :return: ``GRN_TRUE`` for if the target object is type object. ``GRN_FALSE`` otherwise. TODO:
+
+   .. code-block:: c
+
+      grn_obj *obj;
+      obj = grn_ctx_get(ctx, "Object", strlen("Object"));
+      printf("type?: %s\n", grn_obj_is_type(ctx, obj) ? "true" : "false");
+
+   As ``Object`` is type object, it prints like the following::
+
+     type?: true
 
 .. c:function:: grn_bool grn_obj_is_vector(grn_ctx *ctx, grn_obj *obj)
 
