@@ -568,7 +568,7 @@ grn_ja_ref_raw(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
         } else {
           EINFO_DEC(ei, jag, vpos, vsize);
         }
-        grn_io_win_map(ja->io, ctx, iw, jag, vpos, vsize, grn_io_rdonly);
+        grn_io_win_map(ja->io, ctx, iw, jag, vpos, vsize, GRN_IO_RDONLY);
       }
       if (!iw->addr) { GRN_IO_SEG_UNREF(ja->io, pseg); }
     }
@@ -758,7 +758,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
       } else {
         if (i == j + n) {
           j++;
-          addr = grn_io_win_map(ja->io, ctx, iw, j, 0, element_size, grn_io_wronly);
+          addr = grn_io_win_map(ja->io, ctx, iw, j, 0, element_size, GRN_IO_WRONLY);
           if (!addr) {
             ERR(GRN_NO_MEMORY_AVAILABLE,
                 "[ja][alloc] failed to map new window: <%u>:<%u>",

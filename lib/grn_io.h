@@ -32,9 +32,9 @@ extern "C" {
 #endif /* WIN32 */
 
 typedef enum {
-  grn_io_rdonly,
-  grn_io_wronly,
-  grn_io_rdwr
+  GRN_IO_RDONLY,
+  GRN_IO_WRONLY,
+  GRN_IO_RDWR
 } grn_io_rw_mode;
 
 typedef enum {

@@ -1137,8 +1137,8 @@ grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
     if (!(iw->addr = GRN_MALLOC(size))) { return NULL; }
     iw->cached = 0;
     switch (mode) {
-    case grn_io_rdonly:
-    case grn_io_rdwr:
+    case GRN_IO_RDONLY:
+    case GRN_IO_RDWR:
       {
         byte *p, *q = NULL;
         uint32_t s, r;
@@ -1154,7 +1154,7 @@ grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
         }
       }
       break;
-    case grn_io_wronly:
+    case GRN_IO_WRONLY:
       break;
     default :
       return NULL;
@@ -1175,12 +1175,12 @@ grn_io_win_unmap(grn_io_win *iw)
     grn_io *io = iw->io;
     grn_ctx *ctx = iw->ctx;
     switch (iw->mode) {
-    case grn_io_rdonly:
+    case GRN_IO_RDONLY:
       if (!iw->addr) { return GRN_INVALID_ARGUMENT; }
       GRN_FREE(iw->addr);
       return GRN_SUCCESS;
-    case grn_io_rdwr:
-    case grn_io_wronly:
+    case GRN_IO_RDWR:
+    case GRN_IO_WRONLY:
       {
         byte *p, *q = NULL;
         uint32_t segment_size = io->header->segment_size;
