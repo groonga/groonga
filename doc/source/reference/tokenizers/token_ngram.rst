@@ -187,7 +187,7 @@ If we set false, ``TokenNgram`` uses bigram tokenize method for symbols.
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-ngram-unify-symbol.log
 .. tokenize --tokenizer 'TokenNgram("unify_symbol", false)' --string "___---" --normalizer NormalizerAuto
-   
+
 .. _token-ngram-unify-digit:
 
 ``unify_digit``
