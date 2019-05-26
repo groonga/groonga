@@ -195,6 +195,10 @@ If we set false, ``TokenNgram`` uses bigram tokenize method for symbols.
 
 If we set false, ``TokenNgram`` uses bigram tokenize method for digits.
 
+.. groonga-command
+.. include:: ../../example/reference/tokenizers/token-ngram-unify-digit.log
+.. tokenize --tokenizer 'TokenNgram("unify_digit", false)' --string "012345 6789" --normalizer NormalizerAuto
+
 See also
 ----------
 
