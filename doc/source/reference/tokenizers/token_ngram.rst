@@ -184,6 +184,10 @@ If we set false, ``TokenNgram`` uses bigram tokenize method for ASCII character.
 If we set false, ``TokenNgram`` uses bigram tokenize method for symbols.
 ``TokenNgram("unify_symbol", false)`` is same behavior of ``TokenBigramSplitSymbol``.
 
+.. groonga-command
+.. include:: ../../example/reference/tokenizers/token-ngram-unify-symbol.log
+.. tokenize --tokenizer 'TokenNgram("unify_symbol", false)' --string "___---" --normalizer NormalizerAuto
+   
 .. _token-ngram-unify-digit:
 
 ``unify_digit``
