@@ -160,10 +160,36 @@ This option tells us a location of token of highlight target when we highlight t
 We only use this option when we want to highlight token by ``highlight_html``.
 
 When Groonga tokenize texts that target highlight, always used ``NormalizerAuto`` to normalizer until now.
-Therefore, if we use ``NormalizerNFKC100`` to normalizer, sometimes the position of the highlight shift.
+Therefore, if we use ``NormalizerNFKC100`` to normalizer, sometimes it
+can't find the position of the highlight as below.
+
+.. groonga-command
+.. include:: ../../example/reference/tokenizers/token-ngram-no-report-source-location.log
+.. table_create Entries TABLE_NO_KEY
+.. column_create Entries body COLUMN_SCALAR ShortText
+.. table_create Terms TABLE_PAT_KEY ShortText --normalizer 'NormalizerNFKC100'
+.. column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+.. load --table Entries
+.. [
+.. {"body": "ア㌕Ａz"}
+.. ]
+.. select Entries   --match_columns body   --query 'グラム'   --output_columns 'highlight_html(body, Terms)'
+
 Because we use different normalizer to normalize token.
 
 This option is its to reduce the shift of the position of the highlight.
+
+.. groonga-command
+.. include:: ../../example/reference/tokenizers/token-ngram-report-source-location.log
+.. table_create Entries TABLE_NO_KEY
+.. column_create Entries body COLUMN_SCALAR ShortText
+.. table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("report_source_location", true)'   --normalizer 'NormalizerNFKC100'
+.. column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+.. load --table Entries
+.. [
+.. {"body": "ア㌕Ａz"}
+.. ]
+.. select Entries   --match_columns body   --query 'グラム'   --output_columns 'highlight_html(body, Terms)'
 
 .. _token-ngram-unify-alphabet:
 
