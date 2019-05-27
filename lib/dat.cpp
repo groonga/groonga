@@ -360,7 +360,7 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
   grn_dat_init(ctx, dat);
 
   dat->io = grn_io_create(ctx, path, sizeof(struct grn_dat_header),
-                          4096, 0, grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
+                          4096, 0, GRN_IO_AUTO, GRN_IO_EXPIRE_SEGMENT);
   if (!dat->io) {
     GRN_FREE(dat);
     return NULL;
@@ -412,7 +412,7 @@ grn_dat_open(grn_ctx *ctx, const char *path)
   }
 
   grn_dat_init(ctx, dat);
-  dat->io = grn_io_open(ctx, path, grn_io_auto);
+  dat->io = grn_io_open(ctx, path, GRN_IO_AUTO);
   if (!dat->io) {
     GRN_FREE(dat);
     return NULL;
