@@ -8949,7 +8949,7 @@ msgstr ""
 "むことができます。他は :ref:`logical-select-filter` と同じです。"
 
 msgid "``load_table``"
-msgstr "````"
+msgstr ""
 
 msgid ""
 "You can store specified a table a result of ``logical_select`` with ``--"
