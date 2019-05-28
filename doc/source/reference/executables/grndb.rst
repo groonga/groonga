@@ -121,7 +121,7 @@ Here is an example that specifies ``--log-path`` option::
 ``--log-flags``
 """""""""""""""
 
-.. versionadded:: 9.0.2
+.. versionadded:: 9.0.3
 
 It specifies a logged content in ``grndb`` log by flags.
 The default value of ``--log-flags`` is ``time|message``. It means that timestamp and log messages are logged into ``grndb`` log.
