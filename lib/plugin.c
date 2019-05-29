@@ -440,7 +440,7 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
   } else {
     const char *label;
     label = grn_dl_open_error_label();
-    SERR("%s: <%.*s>", label, filename_size, filename);
+    SERR("%s: <%.*s>", label, (int)filename_size, filename);
   }
 
 exit:
