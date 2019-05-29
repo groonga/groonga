@@ -82,11 +82,16 @@ Fixes
 
 * Fixed a vulnerability of "CVE: 2019-11675". [Reported by Wolfgang Hotwagner]
 
+* Removed extended path prefix ``\\?\`` at Windows version of Groonga. [GitHub#958] [Reported by yagisumi]
+
+  * This extended prefix causes a bug that plugin can't be found correctly.
+
 Thanks
 ^^^^^^
 
 * Tomohiro KATO
 * Wolfgang Hotwagner
+* yagisumi
 
 .. _release-9-0-2:
 

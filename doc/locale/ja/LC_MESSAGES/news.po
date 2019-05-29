@@ -193,6 +193,18 @@ msgid ""
 msgstr ""
 "\"CVE: 2019-11675\"の脆弱性を修正しました。[Wolfgang Hotwagnerさんが報告]"
 
+msgid ""
+"Removed extended path prefix ``\\\\?\\`` at Windows version of Groonga. "
+"[GitHub#958] [Reported by yagisumi]"
+msgstr ""
+"Windows版のGroongaにて、拡張パスプレフィックス ``\\\\?\\`` を削除しました。"
+"[GitHub#958] [yagisumiさんが報告]"
+
+msgid "This extended prefix causes a bug that plugin can't be found correctly."
+msgstr ""
+"この拡張プレフィックスは、プラグインを正確に見つけられないというバグを引き起"
+"こします。"
+
 msgid "Thanks"
 msgstr "感謝"
 
@@ -201,6 +213,9 @@ msgstr "Tomohiro KATOさん"
 
 msgid "Wolfgang Hotwagner"
 msgstr "Wolfgang Hotwagnerさん"
+
+msgid "yagisumi"
+msgstr "yagisumiさん"
 
 msgid "Release 9.0.2 - 2019-04-29"
 msgstr "9.0.2リリース - 2019-04-29"
