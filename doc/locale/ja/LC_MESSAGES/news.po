@@ -33,6 +33,175 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
+msgid "Release 9.0.3 - 2019-05-29"
+msgstr "9.0.3リリース - 2019-05-29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[:doc:`reference/commands/select`] Added more query logs."
+msgstr ""
+"[:doc:`reference/commands/select`] より多くのクエリーログを追加しました。"
+
+msgid "``select`` command comes to output a log for below timing."
+msgstr ""
+"``select`` コマンドが、以下のタイミングでログを出力するようになります。"
+
+msgid "After sorting by drilldown."
+msgstr "ドリルダウンによるソート後"
+
+msgid "After filter by drilldown."
+msgstr "ドリルダウンによるフィルター後"
+
+msgid "We can see how much has been finished this command by this feature."
+msgstr ""
+"この機能によって、このコマンドがどこまで完了したかを見ることができます。"
+
+msgid "[:doc:`reference/commands/logical_select`] Added more query logs."
+msgstr ""
+"[:doc:`reference/commands/logical_select`] より多くのクエリーログを追加しまし"
+"た。"
+
+msgid "``logical_select`` command comes to output a log for below timing."
+msgstr ""
+"``logical_select`` コマンドが、以下のタイミングでログを出力するようになりま"
+"す。"
+
+msgid "After making dynamic columns."
+msgstr "動的カラム作成後"
+
+msgid "After grouping by drilldown."
+msgstr "ドリルダウンによるグループ化後"
+
+msgid "After sorting by ``logical_select``."
+msgstr "``logical_select`` によるソート後"
+
+msgid ""
+"[:doc:`reference/commands/logical_select`] Improved performance of sort a "
+"little when we use ``limit`` option."
+msgstr ""
+"[:doc:`reference/commands/logical_select`] ``limit`` オプションを使用したとき"
+"のソートのパフォーマンスを少し改善しました。"
+
+msgid "[index_column_diff] Improved performance."
+msgstr "[index_column_diff] パフォーマンスを改善しました。"
+
+msgid "We have greatly shortened the execution speed of this command."
+msgstr "このコマンドの実行速度を大幅に短くしました。"
+
+msgid "[index_column_diff] Improved ignore invalid reference."
+msgstr "[index_column_diff] 無効な参照を無視するように改良しました。"
+
+msgid "[index_column_diff] Added support for duplicated vector element case."
+msgstr "[index_column_diff] ベクター要素の重複に対応しました。"
+
+msgid ""
+"[Normalizers] Added a new Normalizer ``NormalizerNFKC121`` based on Unicode "
+"NFKC (Normalization Form Compatibility Composition) for Unicode 12.1."
+msgstr ""
+"[Normalizers] Unicode 12.1 の NFKC（Normalization Form Compatibility "
+"Composition）をベースにしたノーマライザー ``NormalizerNFKC121`` を追加しまし"
+"た。"
+
+msgid ""
+"[TokenFilters] Added a new TokenFilter ``TokenFilterNFKC121`` based on "
+"Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 12.1."
+msgstr ""
+"[TokenFilters] Unicode 12.1 の NFKC（Normalization Form Compatibility "
+"Composition）をベースにしたトークンフィルター ``NormalizerNFKC121`` を追加し"
+"ました。"
+
+msgid "[:doc:`reference/executables/grndb`] Added a new option ``--log-flags``"
+msgstr ""
+"[:doc:`reference/executables/grndb`] 新しいオプション ``--log-flags`` を追加"
+"しました。"
+
+msgid "We can specify output items of a log as with groonga executable file."
+msgstr "groonga実行ファイルと同様、ログに出力する項目を指定できます。"
+
+msgid ""
+"See [:doc:`reference/executables/groonga`] to know about supported log flags."
+msgstr ""
+"サポートされているログフラグについては、[:doc:`reference/executables/"
+"groonga`] を参照してください。"
+
+msgid ""
+"[:doc:`reference/functions/snippet_html`] Added a new option for changing a "
+"return value when no match by search."
+msgstr ""
+"[:doc:`reference/functions/snippet_html`] 検索にマッチしない時の戻り値を変更"
+"する新しいオプションを追加しました。"
+
+msgid ""
+"[:doc:`reference/commands/plugin_unregister`] Added support full path of "
+"Windows."
+msgstr ""
+"[:doc:`reference/commands/plugin_unregister`] Windowsのフルパスをサポートしま"
+"した。"
+
+msgid "Added support for multiline log message."
+msgstr "複数行のログメッセージをサポートしました。"
+
+msgid "The multiline log message is easy to read by this feature."
+msgstr "この機能によって、複数行に渡るログメッセージが見やすくなります。"
+
+msgid "Output key in Groonga's log when we search by index."
+msgstr ""
+"インデックスを使って検索した際、キーをGroongaのログに出力するようにしました。"
+
+msgid ""
+"[:doc:`tutorial/match_columns`] Added a document for indexes with weight."
+msgstr ""
+"[:doc:`tutorial/match_columns`] インデックスの重みのドキュメントを追加しまし"
+"た。"
+
+msgid ""
+"[:doc:`reference/commands/logical_range_filter`] Added a explanation for "
+"``order`` parameter."
+msgstr ""
+"[:doc:`reference/commands/logical_range_filter`] ``order`` パラメータの説明を"
+"追加しました。"
+
+msgid ""
+"[:doc:`reference/commands/object_inspect`] Added an explanation for new "
+"statistics ``INDEX_COLUMN_VALUE_STATISTICS_NEXT_PHYSICAL_SEGMENT_ID`` and "
+"``INDEX_COLUMN_VALUE_STATISTICS_N_PHYSICAL_SEGMENTS``."
+msgstr ""
+"[:doc:`reference/commands/object_inspect`] 新しい統計 "
+"``INDEX_COLUMN_VALUE_STATISTICS_NEXT_PHYSICAL_SEGMENT_ID`` と "
+"``INDEX_COLUMN_VALUE_STATISTICS_N_PHYSICAL_SEGMENTS`` の説明を追加しました。"
+
+msgid "Dropped Ubuntu 14.04 support."
+msgstr "Ubuntu 14.04 のサポートをやめました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[index_column_diff] Fixed a bug that too much ``remains`` are reported."
+msgstr "[index_column_diff] ``remains`` を多く報告するバグを修正しました。"
+
+msgid ""
+"Fixed a build error when we use ``--without-onigmo`` option. [GitHub#951] "
+"[Reported by Tomohiro KATO]"
+msgstr ""
+"``--without-onigmo`` オプションを使った際にビルドエラーになるバグを修正しまし"
+"た。[GitHub#951] [Tomohiro KATOさんが報告]"
+
+msgid ""
+"Fixed a vulnerability of \"CVE: 2019-11675\". [Reported by Wolfgang "
+"Hotwagner]"
+msgstr ""
+"\"CVE: 2019-11675\"の脆弱性を修正しました。[Wolfgang Hotwagnerさんが報告]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Tomohiro KATO"
+msgstr "Tomohiro KATOさん"
+
+msgid "Wolfgang Hotwagner"
+msgstr "Wolfgang Hotwagnerさん"
+
 msgid "Release 9.0.2 - 2019-04-29"
 msgstr "9.0.2リリース - 2019-04-29"
 
@@ -46,9 +215,6 @@ msgid ""
 msgstr ""
 "今までどおり、MinGWで作成したWindows版パッケージも提供しますが、近いうちに"
 "MinGWで作ったパッケージの代わりにVC++で作ったパッケージを提供する予定です。"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid ""
 "[:doc:`/reference/commands/column_create`] Added a new flag ``INDEX_LARGE`` "
@@ -138,9 +304,6 @@ msgstr ""
 "ル、インデックスが張られているカラムがある場合、対応するインデックスカラムと"
 "そのインデックスカラムのテーブルを書き出し対象オブジェクトにできます。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "Fixed \"unknown type name 'bool'\" compilation error in some environments."
 msgstr ""
@@ -155,9 +318,6 @@ msgstr ""
 "mrubyを経由して実行するコマンド(例えば、 ``logical_select``、 "
 "``logical_range_filter``、 ``logical_count`` 等)で、Int32を超える数を正しく出"
 "力できない問題を修正しました。[GitHub#936] [HashidaTKSさんがパッチ提供]"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "HashidaTKS"
 msgstr "HashidaTKSさん"
@@ -13369,6 +13529,3 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
-
-#~ msgid "Used an Appveyor's artifact for Windows package."
-#~ msgstr "Windows版パッケージにAppVeyorの成果物を使うようにしました。"

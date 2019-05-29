@@ -7,6 +7,87 @@
 News
 ====
 
+.. _release-9-0-3:
+
+Release 9.0.3 - 2019-05-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/select`] Added more query logs.
+
+  * ``select`` command comes to output a log for below timing.
+
+    * After sorting by drilldown.
+    * After filter by drilldown.
+
+  * We can see how much has been finished this command by this feature.
+
+* [:doc:`reference/commands/logical_select`] Added more query logs.
+
+  * ``logical_select`` command comes to output a log for below timing.
+
+    * After making dynamic columns.
+    * After grouping by drilldown.
+    * After sorting by drilldown.
+    * After filter by drilldown.
+    * After sorting by ``logical_select``.
+
+  * We can see how much has been finished this command by this feature.
+
+* [:doc:`reference/commands/logical_select`] Improved performance of sort a little when we use ``limit`` option.
+
+* [index_column_diff] Improved performance.
+
+  * We have greatly shortened the execution speed of this command.
+
+* [index_column_diff] Improved ignore invalid reference.
+
+* [index_column_diff] Added support for duplicated vector element case.
+
+* [Normalizers] Added a new Normalizer ``NormalizerNFKC121`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 12.1.
+
+* [TokenFilters] Added a new TokenFilter ``TokenFilterNFKC121`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 12.1.
+
+* [:doc:`reference/executables/grndb`] Added a new option ``--log-flags``
+
+  * We can specify output items of a log as with groonga executable file.
+  * See [:doc:`reference/executables/groonga`] to know about supported log flags.
+
+* [:doc:`reference/functions/snippet_html`] Added a new option for changing a return value when no match by search.
+
+* [:doc:`reference/commands/plugin_unregister`] Added support full path of Windows.
+
+* Added support for multiline log message.
+
+  * The multiline log message is easy to read by this feature.
+
+* Output key in Groonga's log when we search by index.
+
+* [:doc:`tutorial/match_columns`] Added a document for indexes with weight.
+
+* [:doc:`reference/commands/logical_range_filter`] Added a explanation for ``order`` parameter.
+
+* [:doc:`reference/commands/object_inspect`] Added an explanation for new statistics ``INDEX_COLUMN_VALUE_STATISTICS_NEXT_PHYSICAL_SEGMENT_ID`` and ``INDEX_COLUMN_VALUE_STATISTICS_N_PHYSICAL_SEGMENTS``.
+
+* Dropped Ubuntu 14.04 support.
+
+Fixes
+^^^^^
+
+* [index_column_diff] Fixed a bug that too much ``remains`` are reported.
+
+* Fixed a build error when we use ``--without-onigmo`` option. [GitHub#951] [Reported by Tomohiro KATO]
+
+* Fixed a vulnerability of "CVE: 2019-11675". [Reported by Wolfgang Hotwagner]
+
+Thanks
+^^^^^^
+
+* Tomohiro KATO
+* Wolfgang Hotwagner
+
 .. _release-9-0-2:
 
 Release 9.0.2 - 2019-04-29
