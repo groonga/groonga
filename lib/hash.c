@@ -426,7 +426,7 @@ grn_array_create_io_array(grn_ctx *ctx, const char *path, uint32_t value_size)
   array_spec[GRN_ARRAY_BITMAP_SEGMENT].w_of_element = 0;
   array_spec[GRN_ARRAY_BITMAP_SEGMENT].max_n_segments = 1U << (30 - (22 + 3));
   return grn_io_create_with_array(ctx, path, sizeof(struct grn_array_header),
-                                  GRN_ARRAY_SEGMENT_SIZE, grn_io_auto,
+                                  GRN_ARRAY_SEGMENT_SIZE, GRN_IO_AUTO,
                                   2, array_spec);
 }
 
@@ -496,7 +496,7 @@ grn_array *
 grn_array_open(grn_ctx *ctx, const char *path)
 {
   if (ctx) {
-    grn_io * const io = grn_io_open(ctx, path, grn_io_auto);
+    grn_io * const io = grn_io_open(ctx, path, GRN_IO_AUTO);
     if (io) {
       struct grn_array_header * const header = grn_io_header(io);
       uint32_t io_type = grn_io_get_type(io);
@@ -1653,7 +1653,7 @@ grn_io_hash_create_io(grn_ctx *ctx, const char *path,
   array_spec[GRN_HASH_BITMAP_SEGMENT].max_n_segments = 1U << (30 - (22 + 3));
   return grn_io_create_with_array(ctx, path, header_size,
                                   GRN_HASH_SEGMENT_SIZE,
-                                  grn_io_auto, 4, array_spec);
+                                  GRN_IO_AUTO, 4, array_spec);
 }
 
 static grn_rc
@@ -1837,7 +1837,7 @@ grn_hash *
 grn_hash_open(grn_ctx *ctx, const char *path)
 {
   if (ctx) {
-    grn_io * const io = grn_io_open(ctx, path, grn_io_auto);
+    grn_io * const io = grn_io_open(ctx, path, GRN_IO_AUTO);
     if (io) {
       grn_hash_header_common * const header = grn_io_header(io);
       uint32_t io_type = grn_io_get_type(io);

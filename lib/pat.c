@@ -483,7 +483,7 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
     array_spec[segment_sis].w_of_element = w_of_element;
     array_spec[segment_sis].max_n_segments = 1 << (30 - (22 - w_of_element));
     io = grn_io_create_with_array(ctx, path, sizeof(struct grn_pat_header),
-                                  GRN_PAT_SEGMENT_SIZE, grn_io_auto, 3, array_spec);
+                                  GRN_PAT_SEGMENT_SIZE, GRN_IO_AUTO, 3, array_spec);
   }
   if (!io) { return NULL; }
   if (encoding == GRN_ENC_DEFAULT) { encoding = grn_gctx.encoding; }
@@ -599,7 +599,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   pat_node *node0;
   struct grn_pat_header *header;
   uint32_t io_type;
-  io = grn_io_open(ctx, path, grn_io_auto);
+  io = grn_io_open(ctx, path, GRN_IO_AUTO);
   if (!io) { return NULL; }
   header = grn_io_header(io);
   io_type = grn_io_get_type(io);

@@ -38,8 +38,8 @@ typedef enum {
 } grn_io_rw_mode;
 
 typedef enum {
-  grn_io_auto,
-  grn_io_manual
+  GRN_IO_AUTO,
+  GRN_IO_MANUAL
 } grn_io_mode;
 
 /**** grn_io ****/

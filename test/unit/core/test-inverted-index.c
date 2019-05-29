@@ -271,7 +271,7 @@ test_open_invalid_segment_file(void)
   const gchar *expected_error_message = "system call error";
 
   io = grn_io_create(context, path, 10, 10, 10,
-                     grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
+                     GRN_IO_AUTO, GRN_IO_EXPIRE_SEGMENT);
   cut_assert_not_null(io);
   id_string = grn_io_header(io);
   strcpy(id_string, "WRONG-ID");
@@ -294,14 +294,14 @@ test_open_invalid_chunk_file(void)
   const gchar *expected_error_message =
     cut_take_printf("[column][index] file type must be 0x48: <%#04x>", 0);
 
-  io = grn_io_create(context, path, 10, 10, 10, grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
+  io = grn_io_create(context, path, 10, 10, 10, GRN_IO_AUTO, GRN_IO_EXPIRE_SEGMENT);
   cut_assert_not_null(io);
   id_string = grn_io_header(io);
   strcpy(id_string, "WRONG-ID");
   grn_io_close(context, io);
 
   io = grn_io_create(context, cut_take_printf("%s.c", path),
-                     10, 10, 10, grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
+                     10, 10, 10, GRN_IO_AUTO, GRN_IO_EXPIRE_SEGMENT);
   cut_assert_not_null(io);
   grn_io_close(context, io);
 

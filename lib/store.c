@@ -42,7 +42,7 @@ _grn_ra_create(grn_ctx *ctx, grn_ra *ra, const char *path, unsigned int element_
   for (actual_size = 1; actual_size < element_size; actual_size *= 2) ;
   max_segments = ((GRN_ID_MAX + 1) / GRN_RA_SEGMENT_SIZE) * actual_size;
   io = grn_io_create(ctx, path, sizeof(struct grn_ra_header),
-                     GRN_RA_SEGMENT_SIZE, max_segments, grn_io_auto,
+                     GRN_RA_SEGMENT_SIZE, max_segments, GRN_IO_AUTO,
                      GRN_IO_EXPIRE_SEGMENT);
   if (!io) { return NULL; }
   header = grn_io_header(io);
@@ -80,7 +80,7 @@ grn_ra_open(grn_ctx *ctx, const char *path)
   grn_ra *ra = NULL;
   struct grn_ra_header *header;
   uint32_t io_type;
-  io = grn_io_open(ctx, path, grn_io_auto);
+  io = grn_io_open(ctx, path, GRN_IO_AUTO);
   if (!io) { return NULL; }
   header = grn_io_header(io);
   io_type = grn_io_get_type(io);
@@ -355,7 +355,7 @@ _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
   struct grn_ja_header *header;
   struct grn_ja_header_v2 *header_v2;
   io = grn_io_create(ctx, path, sizeof(struct grn_ja_header_v2),
-                     JA_SEGMENT_SIZE, JA_N_DSEGMENTS, grn_io_auto,
+                     JA_SEGMENT_SIZE, JA_N_DSEGMENTS, GRN_IO_AUTO,
                      GRN_IO_EXPIRE_SEGMENT);
   if (!io) { return NULL; }
   grn_io_set_type(io, GRN_COLUMN_VAR_SIZE);
@@ -417,7 +417,7 @@ grn_ja_open(grn_ctx *ctx, const char *path)
   struct grn_ja_header *header;
   struct grn_ja_header_v2 *header_v2;
   uint32_t io_type;
-  io = grn_io_open(ctx, path, grn_io_auto);
+  io = grn_io_open(ctx, path, GRN_IO_AUTO);
   if (!io) { return NULL; }
   header_v2 = grn_io_header(io);
   io_type = grn_io_get_type(io);
