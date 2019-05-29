@@ -19,6 +19,7 @@
 #pragma once
 
 #include "grn.h"
+#include "wchar.h"
 
 #ifdef __cplusplus
 extern "C" {
