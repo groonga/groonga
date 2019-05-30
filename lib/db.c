@@ -7855,7 +7855,7 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
   } else {
     switch (value->header.type) {
     case GRN_BULK :
-      if (!GRN_BULK_VSIZE(value)) {
+      if (GRN_BULK_VSIZE(value) == 0) {
         rc = grn_ja_put(ctx, (grn_ja *)obj, id, NULL, 0, flags, NULL);
       } else {
         grn_obj v;
