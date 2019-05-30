@@ -897,6 +897,32 @@ else
   GRN_WITH_LZ4=no
 fi
 
+# Zstandard
+AC_ARG_WITH(zstd,
+  [AS_HELP_STRING([--with-zstd],
+    [Support data compression by Zstandard. [default=auto]])],
+  [with_zstd="$withval"],
+  [with_zstd="auto"])
+if test "x$with_zstd" != "xno"; then
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([LIBZSTD],
+                      [libzstd],
+                      [GRN_WITH_ZSTD=yes],
+                      [GRN_WITH_ZSTD=no])
+  ],
+  [GRN_WITH_ZSTD=no])
+  if test "$GRN_WITH_ZSTD" = "yes"; then
+    AC_DEFINE(GRN_WITH_ZSTD, [1],
+              [Support data compression by Zstandard.])
+  else
+    if test "x$with_zstd" != "xauto"; then
+      AC_MSG_ERROR("No libzstd found")
+    fi
+  fi
+else
+  GRN_WITH_ZSTD=no
+fi
+
 # LuaJIT
 AC_ARG_WITH(luajit,
   [AS_HELP_STRING([--with-luajit],
@@ -924,32 +950,6 @@ else
 fi
 AC_SUBST(LUAJIT_CFLAGS)
 AC_SUBST(LUAJIT_LIBS)
-
-# Zstandard
-AC_ARG_WITH(zstd,
-  [AS_HELP_STRING([--with-zstd],
-    [Support data compression by Zstandard. [default=auto]])],
-  [with_zstd="$withval"],
-  [with_zstd="auto"])
-if test "x$with_zstd" != "xno"; then
-  m4_ifdef([PKG_CHECK_MODULES], [
-    PKG_CHECK_MODULES([LIBZSTD],
-                      [libzstd],
-                      [GRN_WITH_ZSTD=yes],
-                      [GRN_WITH_ZSTD=no])
-  ],
-  [GRN_WITH_ZSTD=no])
-  if test "$GRN_WITH_ZSTD" = "yes"; then
-    AC_DEFINE(GRN_WITH_ZSTD, [1],
-              [Support data compression by Zstandard.])
-  else
-    if test "x$with_zstd" != "xauto"; then
-      AC_MSG_ERROR("No libzstd found")
-    fi
-  fi
-else
-  GRN_WITH_ZSTD=no
-fi
 
 # jemalloc
 AC_ARG_WITH(jemalloc,
@@ -1812,15 +1812,15 @@ if test "x$GRN_WITH_LZ4" = "xyes"; then
   echo "    CFLAGS:              ${LIBLZ4_CFLAGS}"
   echo "    LIBS:                ${LIBLZ4_LIBS}"
 fi
-echo "  LuaJIT:                $GRN_WITH_LUAJIT"
-if test "x$GRN_WITH_LUAJIT" = "xyes"; then
-  echo "    CFLAGS:              ${LUAJIT_CFLAGS}"
-  echo "    LIBS:                ${LUAJIT_LIBS}"
-fi
 echo "  Zstandard:             $GRN_WITH_ZSTD"
 if test "x$GRN_WITH_ZSTD" = "xyes"; then
   echo "    CFLAGS:              ${LIBZSTD_CFLAGS}"
   echo "    LIBS:                ${LIBZSTD_LIBS}"
+fi
+echo "  LuaJIT:                $GRN_WITH_LUAJIT"
+if test "x$GRN_WITH_LUAJIT" = "xyes"; then
+  echo "    CFLAGS:              ${LUAJIT_CFLAGS}"
+  echo "    LIBS:                ${LUAJIT_LIBS}"
 fi
 echo "  mruby:                 $enable_mruby"
 echo "  jemalloc:              $jemalloc_available"
