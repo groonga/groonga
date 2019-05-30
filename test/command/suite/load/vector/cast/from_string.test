@@ -1,0 +1,11 @@
+table_create Data TABLE_NO_KEY
+column_create Data numbers COLUMN_VECTOR Int32
+
+load --table Data
+[
+{"numbers": "[1, -2]"}
+]
+
+dump \
+  --dump_plugins no \
+  --dump_schema no

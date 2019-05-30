@@ -44,6 +44,7 @@
 #include "grn_cache.h"
 #include "grn_window_functions.h"
 #include "grn_expr.h"
+#include "grn_cast.h"
 #include <string.h>
 #include <math.h>
 
@@ -6579,10 +6580,10 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
   GRN_FLOAT_SET(ctx, dest, value);
 
 static grn_rc
-grn_obj_cast_text(grn_ctx *ctx,
-                  grn_obj *src,
-                  grn_obj *dest,
-                  grn_bool add_record_if_not_exist)
+grn_obj_cast_text_to_bulk(grn_ctx *ctx,
+                          grn_obj *src,
+                          grn_obj *dest,
+                          bool add_record_if_not_exist)
 {
   grn_rc rc = GRN_SUCCESS;
   switch (dest->header.domain) {
@@ -6608,32 +6609,32 @@ grn_obj_cast_text(grn_ctx *ctx,
     TEXT2DEST(uint32_t, grn_atoui, GRN_UINT32_SET);
     break;
   case GRN_DB_TIME :
-  {
-    grn_timeval v;
-    int len = GRN_TEXT_LEN(src);
-    char *str = GRN_TEXT_VALUE(src);
-    if (grn_str2timeval(str, len, &v)) {
-      double d;
-      char *end;
-      grn_obj buf;
-      GRN_TEXT_INIT(&buf, 0);
-      GRN_TEXT_PUT(ctx, &buf, str, len);
-      GRN_TEXT_PUTC(ctx, &buf, '\0');
-      errno = 0;
-      d = strtod(GRN_TEXT_VALUE(&buf), &end);
-      if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
-        v.tv_sec = d;
-        v.tv_nsec = ((d - v.tv_sec) * GRN_TIME_NSEC_PER_SEC);
-      } else {
-        rc = GRN_INVALID_ARGUMENT;
+    {
+      grn_timeval v;
+      int len = GRN_TEXT_LEN(src);
+      char *str = GRN_TEXT_VALUE(src);
+      if (grn_str2timeval(str, len, &v)) {
+        double d;
+        char *end;
+        grn_obj buf;
+        GRN_TEXT_INIT(&buf, 0);
+        GRN_TEXT_PUT(ctx, &buf, str, len);
+        GRN_TEXT_PUTC(ctx, &buf, '\0');
+        errno = 0;
+        d = strtod(GRN_TEXT_VALUE(&buf), &end);
+        if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
+          v.tv_sec = d;
+          v.tv_nsec = ((d - v.tv_sec) * GRN_TIME_NSEC_PER_SEC);
+        } else {
+          rc = GRN_INVALID_ARGUMENT;
+        }
+        GRN_OBJ_FIN(ctx, &buf);
       }
-      GRN_OBJ_FIN(ctx, &buf);
+      GRN_TIME_SET(ctx, dest,
+                   GRN_TIME_PACK((int64_t)v.tv_sec,
+                                 GRN_TIME_NSEC_TO_USEC(v.tv_nsec)));
     }
-    GRN_TIME_SET(ctx, dest,
-                 GRN_TIME_PACK((int64_t)v.tv_sec,
-                               GRN_TIME_NSEC_TO_USEC(v.tv_nsec)));
-  }
-  break;
+    break;
   case GRN_DB_INT64 :
     TEXT2DEST(int64_t, grn_atoll, GRN_INT64_SET);
     break;
@@ -6641,23 +6642,23 @@ grn_obj_cast_text(grn_ctx *ctx,
     TEXT2DEST(int64_t, grn_atoll, GRN_UINT64_SET);
     break;
   case GRN_DB_FLOAT :
-  {
-    double d;
-    char *end;
-    grn_obj buf;
-    GRN_TEXT_INIT(&buf, 0);
-    GRN_TEXT_PUT(ctx, &buf, GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
-    GRN_TEXT_PUTC(ctx, &buf, '\0');
-    errno = 0;
-    d = strtod(GRN_TEXT_VALUE(&buf), &end);
-    if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
-      GRN_FLOAT_SET(ctx, dest, d);
-    } else {
-      rc = GRN_INVALID_ARGUMENT;
+    {
+      double d;
+      char *end;
+      grn_obj buf;
+      GRN_TEXT_INIT(&buf, 0);
+      GRN_TEXT_PUT(ctx, &buf, GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
+      GRN_TEXT_PUTC(ctx, &buf, '\0');
+      errno = 0;
+      d = strtod(GRN_TEXT_VALUE(&buf), &end);
+      if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
+        GRN_FLOAT_SET(ctx, dest, d);
+      } else {
+        rc = GRN_INVALID_ARGUMENT;
+      }
+      GRN_OBJ_FIN(ctx, &buf);
     }
-    GRN_OBJ_FIN(ctx, &buf);
-  }
-  break;
+    break;
   case GRN_DB_SHORT_TEXT :
   case GRN_DB_TEXT :
   case GRN_DB_LONG_TEXT :
@@ -6665,71 +6666,92 @@ grn_obj_cast_text(grn_ctx *ctx,
     break;
   case GRN_DB_TOKYO_GEO_POINT :
   case GRN_DB_WGS84_GEO_POINT :
-  {
-    int latitude, longitude;
-    double degree;
-    const char *cur, *str = GRN_TEXT_VALUE(src);
-    const char *str_end = GRN_BULK_CURR(src);
-    if (str == str_end) {
-      GRN_GEO_POINT_SET(ctx, dest, 0, 0);
-    } else {
-      char *end;
-      grn_obj buf, *buf_p = NULL;
-      latitude = grn_atoi(str, str_end, &cur);
-      if (cur < str_end && cur[0] == '.') {
-        GRN_TEXT_INIT(&buf, 0);
-        GRN_TEXT_PUT(ctx, &buf, str, GRN_TEXT_LEN(src));
-        GRN_TEXT_PUTC(ctx, &buf, '\0');
-        buf_p = &buf;
-        errno = 0;
-        degree = strtod(GRN_TEXT_VALUE(buf_p), &end);
-        if (errno) {
-          rc = GRN_INVALID_ARGUMENT;
-        } else {
-          latitude = GRN_GEO_DEGREE2MSEC(degree);
-          cur = str + (end - GRN_TEXT_VALUE(buf_p));
-        }
-      }
-      if (!rc && (cur[0] == 'x' || cur[0] == ',') && cur + 1 < str_end) {
-        const char *c = cur + 1;
-        longitude = grn_atoi(c, str_end, &cur);
+    {
+      int latitude, longitude;
+      double degree;
+      const char *cur, *str = GRN_TEXT_VALUE(src);
+      const char *str_end = GRN_BULK_CURR(src);
+      if (str == str_end) {
+        GRN_GEO_POINT_SET(ctx, dest, 0, 0);
+      } else {
+        char *end;
+        grn_obj buf, *buf_p = NULL;
+        latitude = grn_atoi(str, str_end, &cur);
         if (cur < str_end && cur[0] == '.') {
-          if (!buf_p) {
-            GRN_TEXT_INIT(&buf, 0);
-            GRN_TEXT_PUT(ctx, &buf, str, GRN_TEXT_LEN(src));
-            GRN_TEXT_PUTC(ctx, &buf, '\0');
-            buf_p = &buf;
-          }
+          GRN_TEXT_INIT(&buf, 0);
+          GRN_TEXT_PUT(ctx, &buf, str, GRN_TEXT_LEN(src));
+          GRN_TEXT_PUTC(ctx, &buf, '\0');
+          buf_p = &buf;
           errno = 0;
-          degree = strtod(GRN_TEXT_VALUE(buf_p) + (c - str), &end);
+          degree = strtod(GRN_TEXT_VALUE(buf_p), &end);
           if (errno) {
             rc = GRN_INVALID_ARGUMENT;
           } else {
-            longitude = GRN_GEO_DEGREE2MSEC(degree);
+            latitude = GRN_GEO_DEGREE2MSEC(degree);
             cur = str + (end - GRN_TEXT_VALUE(buf_p));
           }
         }
-        if (!rc && cur == str_end) {
-          if ((GRN_GEO_MIN_LATITUDE <= latitude &&
-               latitude <= GRN_GEO_MAX_LATITUDE) &&
-              (GRN_GEO_MIN_LONGITUDE <= longitude &&
-               longitude <= GRN_GEO_MAX_LONGITUDE)) {
-            GRN_GEO_POINT_SET(ctx, dest, latitude, longitude);
+        if (!rc && (cur[0] == 'x' || cur[0] == ',') && cur + 1 < str_end) {
+          const char *c = cur + 1;
+          longitude = grn_atoi(c, str_end, &cur);
+          if (cur < str_end && cur[0] == '.') {
+            if (!buf_p) {
+              GRN_TEXT_INIT(&buf, 0);
+              GRN_TEXT_PUT(ctx, &buf, str, GRN_TEXT_LEN(src));
+              GRN_TEXT_PUTC(ctx, &buf, '\0');
+              buf_p = &buf;
+            }
+            errno = 0;
+            degree = strtod(GRN_TEXT_VALUE(buf_p) + (c - str), &end);
+            if (errno) {
+              rc = GRN_INVALID_ARGUMENT;
+            } else {
+              longitude = GRN_GEO_DEGREE2MSEC(degree);
+              cur = str + (end - GRN_TEXT_VALUE(buf_p));
+            }
+          }
+          if (!rc && cur == str_end) {
+            if ((GRN_GEO_MIN_LATITUDE <= latitude &&
+                 latitude <= GRN_GEO_MAX_LATITUDE) &&
+                (GRN_GEO_MIN_LONGITUDE <= longitude &&
+                 longitude <= GRN_GEO_MAX_LONGITUDE)) {
+              GRN_GEO_POINT_SET(ctx, dest, latitude, longitude);
+            } else {
+              rc = GRN_INVALID_ARGUMENT;
+            }
           } else {
             rc = GRN_INVALID_ARGUMENT;
           }
         } else {
           rc = GRN_INVALID_ARGUMENT;
         }
-      } else {
-        rc = GRN_INVALID_ARGUMENT;
+        if (buf_p) { GRN_OBJ_FIN(ctx, buf_p); }
       }
-      if (buf_p) { GRN_OBJ_FIN(ctx, buf_p); }
     }
-  }
-  break;
+    break;
   default :
     SRC2RECORD();
+    break;
+  }
+  return rc;
+}
+
+static grn_rc
+grn_obj_cast_text(grn_ctx *ctx,
+                  grn_obj *src,
+                  grn_obj *dest,
+                  bool add_record_if_not_exist)
+{
+  grn_rc rc = GRN_SUCCESS;
+  switch (dest->header.type) {
+  case GRN_BULK :
+    rc = grn_obj_cast_text_to_bulk(ctx, src, dest, add_record_if_not_exist);
+    break;
+  case GRN_UVECTOR :
+    rc = grn_obj_cast_text_to_uvector(ctx, src, dest, add_record_if_not_exist);
+    break;
+  default :
+    rc = GRN_INVALID_ARGUMENT;
     break;
   }
   return rc;
@@ -7869,12 +7891,30 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
       if (GRN_BULK_VSIZE(value) == 0) {
         rc = grn_ja_put(ctx, (grn_ja *)obj, id, NULL, 0, flags, NULL);
       } else {
-        grn_obj v;
-        GRN_OBJ_INIT(&v, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
-        v.u.v.body = value;
-        grn_vector_delimit(ctx, &v, 0, GRN_ID_NIL);
-        rc = grn_ja_putv(ctx, (grn_ja *)obj, id, &v, 0);
-        grn_obj_close(ctx, &v);
+        bool need_fallback = true;
+        grn_id range = DB_OBJ(obj)->range;
+        if (grn_type_id_is_number_family(ctx, range)) {
+          grn_obj v;
+          GRN_VALUE_FIX_SIZE_INIT(&v, GRN_OBJ_VECTOR, range);
+          grn_rc rc = grn_obj_cast(ctx, value, &v, GRN_TRUE);
+          if (rc == GRN_SUCCESS) {
+            rc = grn_obj_set_value_column_var_size_vector_uvector(ctx,
+                                                                  obj,
+                                                                  id,
+                                                                  &v,
+                                                                  flags);
+            need_fallback = false;
+          }
+          grn_obj_close(ctx, &v);
+        }
+        if (need_fallback) {
+          grn_obj v;
+          GRN_OBJ_INIT(&v, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
+          v.u.v.body = value;
+          grn_vector_delimit(ctx, &v, 0, GRN_ID_NIL);
+          rc = grn_ja_putv(ctx, (grn_ja *)obj, id, &v, 0);
+          grn_obj_close(ctx, &v);
+        }
       }
       break;
     case GRN_VECTOR :

@@ -991,6 +991,33 @@ if test "x$enable_arrow" != "xno"; then
 fi
 AM_CONDITIONAL([GRN_WITH_ARROW], [test "$arrow_available" = "yes"])
 
+# RapidJSON
+AC_ARG_WITH(rapidjson,
+  [AS_HELP_STRING([--with-rapidjson],
+    [Use RapidJSON. [default=auto]])],
+  [with_rapidjson="$withval"],
+  [with_rapidjson="auto"])
+if test "x$with_rapidjson" != "xno"; then
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([RAPIDJSON],
+                      [RapidJSON],
+                      [GRN_WITH_RAPIDJSON=yes],
+                      [GRN_WITH_RAPIDJSON=no])
+    ],
+    [GRN_WITH_RAPIDJSON=no])
+  if test "$GRN_WITH_RAPIDJSON" = "yes"; then
+    AC_DEFINE(GRN_WITH_RAPIDJSON, [1],
+              [Support RapidJSON.])
+  else
+    if test "x$with_rapidjson" != "xauto"; then
+      AC_MSG_ERROR("No RapidJSON found")
+    fi
+  fi
+else
+  GRN_WITH_RAPIDJSON=no
+fi
+AC_SUBST(RAPIDJSON_CFLAGS)
+
 # MeCab
 # NOTE: MUST be checked last
 
@@ -1821,6 +1848,10 @@ echo "  LuaJIT:                $GRN_WITH_LUAJIT"
 if test "x$GRN_WITH_LUAJIT" = "xyes"; then
   echo "    CFLAGS:              ${LUAJIT_CFLAGS}"
   echo "    LIBS:                ${LUAJIT_LIBS}"
+fi
+echo "  RapidJSON:             $GRN_WITH_RAPIDJSON"
+if test "x$GRN_WITH_RAPIDJSON" = "xyes"; then
+  echo "    CFLAGS:              ${RAPIDJSON_CFLAGS}"
 fi
 echo "  mruby:                 $enable_mruby"
 echo "  jemalloc:              $jemalloc_available"
