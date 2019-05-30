@@ -314,11 +314,11 @@ grn_rc grn_hash_clear_lock(grn_ctx *ctx, grn_hash *hash);
 
 /* private */
 typedef enum {
-  grn_rec_document = 0,
-  grn_rec_section,
-  grn_rec_position,
-  grn_rec_userdef,
-  grn_rec_none
+  GRN_REC_DOCUMENT = 0,
+  GRN_REC_SECTION,
+  GRN_REC_POSITION,
+  GRN_REC_USERDEF,
+  GRN_REC_NONE
 } grn_rec_unit;
 
 GRN_API grn_rc grn_hash_truncate(grn_ctx *ctx, grn_hash *hash);

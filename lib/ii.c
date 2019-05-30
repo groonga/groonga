@@ -9092,7 +9092,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     }
     grn_hash_sort(ctx, h, limit, sorted, &arg);
     /* todo support subrec
-    rep = (s->record_unit == grn_rec_position || s->subrec_unit == grn_rec_position);
+    rep = (s->record_unit == GRN_REC_POSITION || s->subrec_unit == GRN_REC_POSITION);
     */
     rep = 0;
     if (optarg->func) {
@@ -9172,9 +9172,9 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   }
   /* todo support subrec
   if (policy == TERM_EXTRACT_EACH_POST) {
-    if ((rc = grn_records_reopen(s, grn_rec_section, grn_rec_none, 0))) { goto exit; }
+    if ((rc = grn_records_reopen(s, GRN_REC_SECTION, GRN_REC_NONE, 0))) { goto exit; }
   }
-  rep = (s->record_unit == grn_rec_position || s->subrec_unit == grn_rec_position);
+  rep = (s->record_unit == GRN_REC_POSITION || s->subrec_unit == GRN_REC_POSITION);
   */
   rep = 0;
   grn_string_get_normalized(ctx, nstr, &normalized, &normalized_length_in_bytes,
@@ -10292,8 +10292,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
     return grn_ii_quorum_match(ctx, ii, &data);
   }
   /* todo : support subrec
-  rep = (s->record_unit == grn_rec_position || s->subrec_unit == grn_rec_position);
-  orp = (s->record_unit == grn_rec_position || op == GRN_OP_OR);
+  rep = (s->record_unit == GRN_REC_POSITION || s->subrec_unit == GRN_REC_POSITION);
+  orp = (s->record_unit == GRN_REC_POSITION || op == GRN_OP_OR);
   */
   rep = 0;
   orp = op == GRN_OP_OR;
@@ -10355,7 +10355,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
   /* todo : array as result
   if (n == 1 && (*tis)->cursors->n_entries == 1 && op == GRN_OP_OR
       && !GRN_HASH_SIZE(s) && !s->garbages
-      && s->record_unit == grn_rec_document && !s->max_n_subrecs
+      && s->record_unit == GRN_REC_DOCUMENT && !s->max_n_subrecs
       && grn_ii_max_section(ii) == 1) {
     grn_ii_cursor *c = (*tis)->cursors->bins[0];
     if ((rc = grn_hash_array_init(s, (*tis)->size + 32768))) { goto exit; }
@@ -10761,7 +10761,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
       arg.match_info = &(optarg->match_info);
     }
     /* todo : support subrec
-    grn_rset_init(ctx, s, grn_rec_document, 0, grn_rec_none, 0, 0);
+    grn_rset_init(ctx, s, GRN_REC_DOCUMENT, 0, GRN_REC_NONE, 0, 0);
     */
     if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
       GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_select on grn_ii_sel(1) failed !");
