@@ -3455,7 +3455,7 @@ grn_rhash_init(grn_ctx *ctx, grn_hash *hash, grn_rec_unit record_unit, int recor
   grn_rc rc;
   record_size = grn_rec_unit_size(record_unit, record_size);
   subrec_size = grn_rec_unit_size(subrec_unit, subrec_size);
-  if (record_unit != grn_rec_userdef && subrec_unit != grn_rec_userdef) {
+  if (record_unit != GRN_REC_USERDEF && subrec_unit != GRN_REC_USERDEF) {
     subrec_size -= record_size;
   }
   if (!hash) { return GRN_INVALID_ARGUMENT; }
@@ -3575,12 +3575,12 @@ grn_rhash_group(grn_hash *s, int limit, grn_group_optarg *optarg)
   unsigned int rsize;
   if (!s || !s->index) { return NULL; }
   if (optarg) {
-    unit = grn_rec_userdef;
+    unit = GRN_REC_USERDEF;
     rsize = optarg->key_size;
     funcp = optarg->func ? 1 : 0;
     dir = (optarg->mode == grn_sort_ascending) ? -1 : 1;
   } else {
-    unit = grn_rec_document;
+    unit = GRN_REC_DOCUMENT;
     rsize = grn_rec_unit_size(unit, sizeof(grn_id));
     funcp = 0;
     dir = 1;
@@ -3654,30 +3654,30 @@ grn_rhash_subrec_info(grn_ctx *ctx, grn_hash *s, grn_id rh, int index,
   if (score) { *score = p[0]; }
   if (subrec) { *subrec = &p[1]; }
   switch (s->record_unit) {
-  case grn_rec_document :
+  case GRN_REC_DOCUMENT :
     if (rid) { *rid = pi->rid; }
-    if (section) { *section = (s->subrec_unit != grn_rec_userdef) ? p[1] : 0; }
-    if (pos) { *pos = (s->subrec_unit == grn_rec_position) ? p[2] : 0; }
+    if (section) { *section = (s->subrec_unit != GRN_REC_USERDEF) ? p[1] : 0; }
+    if (pos) { *pos = (s->subrec_unit == GRN_REC_POSITION) ? p[2] : 0; }
     break;
-  case grn_rec_section :
+  case GRN_REC_SECTION :
     if (rid) { *rid = pi->rid; }
     if (section) { *section = pi->sid; }
-    if (pos) { *pos = (s->subrec_unit == grn_rec_position) ? p[1] : 0; }
+    if (pos) { *pos = (s->subrec_unit == GRN_REC_POSITION) ? p[1] : 0; }
     break;
   default :
     pi = (grn_rset_posinfo *)&p[1];
     switch (s->subrec_unit) {
-    case grn_rec_document :
+    case GRN_REC_DOCUMENT :
       if (rid) { *rid = pi->rid; }
       if (section) { *section = 0; }
       if (pos) { *pos = 0; }
       break;
-    case grn_rec_section :
+    case GRN_REC_SECTION :
       if (rid) { *rid = pi->rid; }
       if (section) { *section = pi->sid; }
       if (pos) { *pos = 0; }
       break;
-    case grn_rec_position :
+    case GRN_REC_POSITION :
       if (rid) { *rid = pi->rid; }
       if (section) { *section = pi->sid; }
       if (pos) { *pos = pi->pos; }
