@@ -99,11 +99,11 @@ typedef void grn_com_callback(grn_ctx *ctx, grn_com_event *, grn_com *);
 typedef void grn_msg_handler(grn_ctx *ctx, grn_obj *msg);
 
 enum {
-  grn_com_ok = 0,
-  grn_com_emem,
-  grn_com_erecv_head,
-  grn_com_erecv_body,
-  grn_com_eproto,
+  GRN_COM_OK = 0,
+  GRN_COM_EMEM,
+  GRN_COM_ERECV_HEAD,
+  GRN_COM_ERECV_BODY,
+  GRN_COM_EPROTO,
 };
 
 struct _grn_com_addr {
