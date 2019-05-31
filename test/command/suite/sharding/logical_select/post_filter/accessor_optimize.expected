@@ -1,0 +1,83 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Users TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+table_create Logs_20170315 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170315 User COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+table_create Logs_20170316 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170316 User COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "User": "Suzuki"},
+{"timestamp": "2017/03/15 01:00:00", "User": "Yamada"},
+{"timestamp": "2017/03/15 02:00:00", "User": "Sato"}
+]
+[[0,0.0,0.0],3]
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "User":  "Yamada"},
+{"timestamp": "2017/03/16 11:00:00", "User":  "Yamada"},
+{"timestamp": "2017/03/16 12:00:00", "User":  "Yamamoto"}
+]
+[[0,0.0,0.0],3]
+column_create Users logs_20170315_index COLUMN_INDEX|WITH_POSITION Logs_20170315 User
+[[0,0.0,0.0],true]
+column_create Users logs_20170316_index COLUMN_INDEX|WITH_POSITION Logs_20170316 User
+[[0,0.0,0.0],true]
+logical_select Logs   --shard_key timestamp   --post_filter 'User._key @ "Yama"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "User",
+          "Users"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ],
+      [
+        2,
+        "yamada",
+        1489507200.0
+      ],
+      [
+        1,
+        "yamada",
+        1489626000.0
+      ],
+      [
+        2,
+        "yamada",
+        1489629600.0
+      ],
+      [
+        3,
+        "yamamoto",
+        1489633200.0
+      ]
+    ]
+  ]
+]

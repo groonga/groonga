@@ -1,0 +1,35 @@
+#$GRN_EXPR_OPTIMIZE=yes
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Users TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 User COLUMN_SCALAR Users
+
+table_create Logs_20170316 TABLE_NO_KEY
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+column_create Logs_20170316 User COLUMN_SCALAR Users
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "User": "Suzuki"},
+{"timestamp": "2017/03/15 01:00:00", "User": "Yamada"},
+{"timestamp": "2017/03/15 02:00:00", "User": "Sato"}
+]
+
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "User":  "Yamada"},
+{"timestamp": "2017/03/16 11:00:00", "User":  "Yamada"},
+{"timestamp": "2017/03/16 12:00:00", "User":  "Yamamoto"}
+]
+
+column_create Users logs_20170315_index COLUMN_INDEX|WITH_POSITION Logs_20170315 User
+column_create Users logs_20170316_index COLUMN_INDEX|WITH_POSITION Logs_20170316 User
+
+logical_select Logs   --shard_key timestamp   --post_filter 'User._key @ "Yama"'
