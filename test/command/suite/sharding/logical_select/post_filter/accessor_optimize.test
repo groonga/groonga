@@ -1,35 +1,48 @@
+#TODO: Implement this
+
 #$GRN_EXPR_OPTIMIZE=yes
 #@on-error omit
 plugin_register sharding
 #@on-error default
 
-table_create Users TABLE_PAT_KEY ShortText \
+table_create Terms TABLE_PAT_KEY ShortText \
   --default_tokenizer TokenBigram \
   --normalizer NormalizerAuto
 
+table_create Users TABLE_PAT_KEY ShortText
+
 table_create Logs_20170315 TABLE_NO_KEY
 column_create Logs_20170315 timestamp COLUMN_SCALAR Time
-column_create Logs_20170315 User COLUMN_SCALAR Users
+column_create Logs_20170315 user COLUMN_SCALAR Users
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+column_create Logs_20170315 n_purchases COLUMN_SCALAR UInt32
 
 table_create Logs_20170316 TABLE_NO_KEY
 column_create Logs_20170316 timestamp COLUMN_SCALAR Time
-column_create Logs_20170316 User COLUMN_SCALAR Users
+column_create Logs_20170316 user COLUMN_SCALAR Users
+column_create Logs_20170316 price COLUMN_SCALAR UInt32
+column_create Logs_20170316 n_purchases COLUMN_SCALAR UInt32
 
 load --table Logs_20170315
 [
-{"timestamp": "2017/03/15 00:00:00", "User": "Suzuki"},
-{"timestamp": "2017/03/15 01:00:00", "User": "Yamada"},
-{"timestamp": "2017/03/15 02:00:00", "User": "Sato"}
+{"timestamp": "2017/03/15 00:00:00", "user": "Suzuki", "price": 100, "n_purchases": 3},
+{"timestamp": "2017/03/15 01:00:00", "user": "Yamada", "price": 300, "n_purchases": 3},
+{"timestamp": "2017/03/15 02:00:00", "user": "Sato", "price": 200, "n_purchases": 1}
 ]
 
 load --table Logs_20170316
 [
-{"timestamp": "2017/03/16 10:00:00", "User":  "Yamada"},
-{"timestamp": "2017/03/16 11:00:00", "User":  "Yamada"},
-{"timestamp": "2017/03/16 12:00:00", "User":  "Yamamoto"}
+{"timestamp": "2017/03/16 10:00:00", "user":  "Yamada", "price": 500, "n_purchases": 6},
+{"timestamp": "2017/03/16 11:00:00", "user":  "Yamada", "price": 600, "n_purchases": 6},
+{"timestamp": "2017/03/16 12:00:00", "user":  "Yamamoto", "price": 1000, "n_purchases": 3}
 ]
 
-column_create Users logs_20170315_index COLUMN_INDEX|WITH_POSITION Logs_20170315 User
-column_create Users logs_20170316_index COLUMN_INDEX|WITH_POSITION Logs_20170316 User
+column_create Users logs_20170315_index COLUMN_INDEX Logs_20170315 user
+column_create Users logs_20170316_index COLUMN_INDEX Logs_20170316 user
 
-logical_select Logs   --shard_key timestamp   --post_filter 'User._key @ "Yama"'
+column_create Terms users_key COLUMN_INDEX|WITH_POSITION Users _key
+
+logical_select Logs \
+  --shard_key timestamp \
+  --filter "n_purchases>2" \
+  --post_filter 'price>400 && (user._key @ "Yamamo")'
