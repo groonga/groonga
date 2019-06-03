@@ -198,6 +198,9 @@ module Groonga
           end
         when Groonga::IndexColumn
           indexes << column
+        when Groonga::Accessor
+          # TODO Implement this
+          return table.size
         else
           index_info = column.find_index(@operator)
           return table.size if index_info.nil?
