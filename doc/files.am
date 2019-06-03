@@ -633,7 +633,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-ngram-report-source-location.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-ngram-tri-gram.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-ngram-uni-gram.log \
-	$(top_srcdir)/doc/source/example/reference/tokenizers/token-ngram-unify-alpahbet.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-ngram-unify-alphabet.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-ngram-unify-digit.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-ngram-unify-symbol.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-regexp-add.log \
@@ -1717,7 +1717,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/tokenizers/token-ngram-report-source-location.log \
 	source/example/reference/tokenizers/token-ngram-tri-gram.log \
 	source/example/reference/tokenizers/token-ngram-uni-gram.log \
-	source/example/reference/tokenizers/token-ngram-unify-alpahbet.log \
+	source/example/reference/tokenizers/token-ngram-unify-alphabet.log \
 	source/example/reference/tokenizers/token-ngram-unify-digit.log \
 	source/example/reference/tokenizers/token-ngram-unify-symbol.log \
 	source/example/reference/tokenizers/token-regexp-add.log \
