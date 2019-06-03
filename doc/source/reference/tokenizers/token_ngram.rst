@@ -177,7 +177,7 @@ can't find the position of the highlight as below.
 
 Because we use different normalizer to normalize token.
 
-This option is its to reduce the shift of the position of the highlight.
+This option is its to reduce the shift of the position of the highlight as below.
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-ngram-report-source-location.log
@@ -198,6 +198,8 @@ This option is its to reduce the shift of the position of the highlight.
 
 If we set false, ``TokenNgram`` uses bigram tokenize method for ASCII character.
 
+Default value of this option is true.
+
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-ngram-unify-alphabet.log
 .. tokenize --tokenizer 'TokenNgram("unify_alphabet", false)' --string "Hello World" --normalizer NormalizerAuto
@@ -210,6 +212,8 @@ If we set false, ``TokenNgram`` uses bigram tokenize method for ASCII character.
 If we set false, ``TokenNgram`` uses bigram tokenize method for symbols.
 ``TokenNgram("unify_symbol", false)`` is same behavior of ``TokenBigramSplitSymbol``.
 
+Default value of this option is true.
+
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-ngram-unify-symbol.log
 .. tokenize --tokenizer 'TokenNgram("unify_symbol", false)' --string "___---" --normalizer NormalizerAuto
@@ -220,6 +224,8 @@ If we set false, ``TokenNgram`` uses bigram tokenize method for symbols.
 """""""""""""""
 
 If we set false, ``TokenNgram`` uses bigram tokenize method for digits.
+
+Default value of this option is true.
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-ngram-unify-digit.log
