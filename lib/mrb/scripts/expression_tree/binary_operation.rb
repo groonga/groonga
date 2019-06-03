@@ -113,10 +113,6 @@ module Groonga
         end
       end
 
-      def estimate_size_query_accessor(table)
-        return table.size
-      end
-
       def estimate_size_range(table)
         return table.size unless @left.is_a?(Variable)
         return table.size unless @right.is_a?(Constant)
