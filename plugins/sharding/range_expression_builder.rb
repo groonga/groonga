@@ -79,7 +79,7 @@ module Groonga
         if @query
           is_empty = expression.empty?
           if @match_columns
-            table = Context.instance[expression[0].domain]
+            table = Context.instance[expression[0].domain_id]
             @match_columns_expression = Expression.create(table)
             @match_columns_expression.parse(@match_columns)
           end

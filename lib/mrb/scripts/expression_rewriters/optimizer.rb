@@ -9,7 +9,7 @@ module Groonga
         return @expression if root_node.nil?
 
         variable = @expression[0]
-        table = context[variable.domain]
+        table = context[variable.domain_id]
         optimized_root_node = optimize_node(table, root_node)
 
         rewritten = Expression.create(table)

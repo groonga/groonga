@@ -85,7 +85,7 @@ module Groonga
 
         lexicon = index_column.lexicon
         term = value.value
-        if value.domain == lexicon.id
+        if value.domain_id == lexicon.id
           term_id = term.id
         else
           term_id = lexicon[term]

@@ -8,7 +8,7 @@ module Groonga
       @operator = operator
       @record_exist = record_exist
       @variable = @expression[0]
-      @table = Context.instance[@variable.domain]
+      @table = Context.instance[@variable.domain_id]
     end
 
     RELATION_OPERATORS = [

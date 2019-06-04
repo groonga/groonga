@@ -343,15 +343,6 @@ mrb_grn_bulk_initialize(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_grn_bulk_get_domain(mrb_state *mrb, mrb_value self)
-{
-  grn_obj *bulk;
-
-  bulk = DATA_PTR(self);
-  return mrb_fixnum_value(bulk->header.domain);
-}
-
-static mrb_value
 mrb_grn_bulk_get_value(mrb_state *mrb, mrb_value self)
 {
   return grn_mrb_value_from_bulk(mrb, DATA_PTR(self));
@@ -387,8 +378,8 @@ grn_mrb_bulk_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_bulk_initialize, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, klass, "domain",
-                    mrb_grn_bulk_get_domain, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "domain_id",
+                    grn_mrb_object_get_domain_id, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "value",
                     mrb_grn_bulk_get_value, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "true?",

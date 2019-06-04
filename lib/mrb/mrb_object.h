@@ -27,6 +27,7 @@ extern "C" {
 
 void grn_mrb_object_init(grn_ctx *ctx);
 
+mrb_value grn_mrb_object_get_domain_id(mrb_state *mrb, mrb_value self);
 mrb_value grn_mrb_object_inspect(mrb_state *mrb, mrb_value self);
 mrb_value grn_mrb_object_close(mrb_state *mrb, mrb_value self);
 mrb_value grn_mrb_object_is_closed(mrb_state *mrb, mrb_value self);

@@ -302,8 +302,8 @@ module Groonga
         rest_n_codes = n_codes - i
         if rest_n_codes >= 2 and
           codes[i + 1].value.is_a?(Bulk) and
-          (codes[i + 1].value.domain == ID::UINT32 or
-           codes[i + 1].value.domain == ID::INT32) and
+          (codes[i + 1].value.domain_id == ID::UINT32 or
+           codes[i + 1].value.domain_id == ID::INT32) and
           codes[i + 2].op == Operator::GET_MEMBER
           section_id = codes[i + 1].value.value + 1
           offset += 2
