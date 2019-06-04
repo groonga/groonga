@@ -473,6 +473,47 @@ exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       GRN_OBJ_FIN(ctx, &x_element);
       GRN_OBJ_FIN(ctx, &y_element);
       return is_equal;
+    } else if (y->header.type == GRN_VECTOR) {
+      grn_bool is_equal = GRN_TRUE;
+      unsigned int x_size = grn_vector_size(ctx, x);
+      unsigned int y_size = grn_vector_size(ctx, y);
+      unsigned int i;
+      grn_obj x_element;
+      grn_obj y_element;
+      unsigned int x_element_size = grn_uvector_element_size(ctx, x);
+      if (x_size != y_size) {
+        return GRN_FALSE;
+      }
+      GRN_OBJ_INIT(&x_element,
+                   GRN_BULK,
+                   GRN_OBJ_DO_SHALLOW_COPY,
+                   x->header.domain);
+      GRN_OBJ_INIT(&y_element,
+                   GRN_BULK,
+                   GRN_OBJ_DO_SHALLOW_COPY,
+                   y->header.domain);
+      for (i = 0; i < x_size; i++) {
+        const char *x_value;
+        const char *y_value;
+        unsigned int y_value_size;
+
+        x_value = GRN_BULK_HEAD(x) + (x_element_size * i);
+        y_value_size = grn_vector_get_element(ctx,
+                                              y,
+                                              i,
+                                              &y_value,
+                                              NULL,
+                                              &(y_element.header.domain));
+        GRN_TEXT_SET(ctx, &x_element, x_value, x_element_size);
+        GRN_TEXT_SET(ctx, &y_element, y_value, y_value_size);
+        DO_EQ((&x_element), (&y_element), is_equal);
+        if (!is_equal) {
+          break;
+        }
+      }
+      GRN_OBJ_FIN(ctx, &x_element);
+      GRN_OBJ_FIN(ctx, &y_element);
+      return is_equal;
     } else {
       return GRN_FALSE;
     }

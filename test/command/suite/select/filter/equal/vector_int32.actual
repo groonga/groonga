@@ -10,4 +10,4 @@ load --table Values
 ]
 [[0,0.0,0.0],3]
 select Values   --filter 'numbers == [2, 3, 4]'   --output_columns 'numbers'
-# error: timeout (5s)
+[[0,0.0,0.0],[[[1],[["numbers","Int32"]],[[2,3,4]]]]]
