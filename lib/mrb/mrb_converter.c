@@ -213,6 +213,9 @@ grn_mrb_class_from_grn_obj(mrb_state *mrb, grn_obj *object)
   case GRN_VECTOR :
     klass = mrb_class_get_under(mrb, data->module, "Vector");
     break;
+  case GRN_UVECTOR :
+    klass = mrb_class_get_under(mrb, data->module, "UVector");
+    break;
   case GRN_ACCESSOR :
     klass = mrb_class_get_under(mrb, data->module, "Accessor");
     break;
