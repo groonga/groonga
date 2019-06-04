@@ -3703,6 +3703,11 @@ grn_table_select_index_equal(grn_ctx *ctx,
   grn_obj *res = data->res;
   grn_bool processed = GRN_FALSE;
 
+  if (si->query->header.type != GRN_BULK) {
+    /* We can't use index for non bulk value such as vector. */
+    return GRN_FALSE;
+  }
+
   if (GRN_BULK_VSIZE(si->query) == 0) {
     /* We can't use index for empty value. */
     return GRN_FALSE;
