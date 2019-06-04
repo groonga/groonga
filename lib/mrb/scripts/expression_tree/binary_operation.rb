@@ -83,6 +83,11 @@ module Groonga
         end
         return table.size unless index_column.respond_to?(:lexicon)
 
+        case value
+        when Groonga::Vector, Groonga::UVector
+          return table.size
+        end
+
         lexicon = index_column.lexicon
         term = value.value
         if value.domain_id == lexicon.id
