@@ -449,18 +449,22 @@ exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       if (x_size != y_size) {
         return GRN_FALSE;
       }
-      GRN_OBJ_INIT(&x_element, GRN_BULK, 0, x->header.domain);
-      GRN_OBJ_INIT(&y_element, GRN_BULK, 0, y->header.domain);
+      GRN_OBJ_INIT(&x_element,
+                   GRN_BULK,
+                   GRN_OBJ_DO_SHALLOW_COPY,
+                   x->header.domain);
+      GRN_OBJ_INIT(&y_element,
+                   GRN_BULK,
+                   GRN_OBJ_DO_SHALLOW_COPY,
+                   y->header.domain);
       for (i = 0; i < x_size; i++) {
         const char *x_value;
         const char *y_value;
 
         x_value = GRN_BULK_HEAD(x) + (x_element_size * i);
         y_value = GRN_BULK_HEAD(y) + (y_element_size * i);
-        GRN_BULK_REWIND(&x_element);
-        GRN_BULK_REWIND(&y_element);
-        grn_bulk_write(ctx, &x_element, x_value, x_element_size);
-        grn_bulk_write(ctx, &y_element, y_value, y_element_size);
+        GRN_TEXT_SET(ctx, &x_element, x_value, x_element_size);
+        GRN_TEXT_SET(ctx, &y_element, y_value, y_element_size);
         DO_EQ((&x_element), (&y_element), is_equal);
         if (!is_equal) {
           break;
