@@ -42,4 +42,8 @@ load --table Logs_20150205
 }
 ]
 
+
+#@collect-query-log true
 logical_range_filter Logs timestamp --filter 'message == "Shutdown"'
+#@collect-query-log false
+

@@ -51,6 +51,9 @@ load --table Logs_20150205
 }
 ]
 
+#@collect-query-log true
 logical_range_filter Logs timestamp \
   --use_range_index yes \
   --filter 'sub_filter(action.errors_action, "level == \\"critical\\"")'
+#@collect-query-log false
+

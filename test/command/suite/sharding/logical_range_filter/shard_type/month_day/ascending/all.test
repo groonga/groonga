@@ -1,4 +1,6 @@
 #@include fixture/sharding/logical_range_filter/shard_type/month_day.grn
 
+#@collect-query-log true
 logical_range_filter Logs timestamp \
   --limit -1
+#@collect-query-log false

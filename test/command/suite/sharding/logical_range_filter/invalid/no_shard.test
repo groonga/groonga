@@ -4,4 +4,6 @@ plugin_register sharding
 #@on-error default
 #@enable-logging
 
+#@collect-query-log true
 logical_range_filter Logs timestamp
+#@collect-query-log false

@@ -40,6 +40,7 @@ load --table Logs_20170317
 {"timestamp": "2017/03/17 23:00:00", "price":  300}
 ]
 
+#@collect-query-log true
 logical_range_filter Logs \
   --shard_key timestamp \
   --max '2017/03/17 10:00:00.000' \
@@ -55,3 +56,4 @@ logical_range_filter Logs \
   --columns[price_per_day].value 'window_sum(price)' \
   --columns[price_per_day].window.group_keys 'day' \
   --output_columns _id,day,price_per_day
+#@collect-query-log false

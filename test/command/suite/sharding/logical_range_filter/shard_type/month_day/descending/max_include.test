@@ -1,7 +1,9 @@
 #@include fixture/sharding/logical_range_filter/shard_type/month_day.grn
 
+#@collect-query-log true
 logical_range_filter Logs timestamp \
   --order descending \
   --max "2015-03-01 00:00:00" \
   --max_border "include" \
   --limit -1
+#@collect-query-log false

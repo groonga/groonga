@@ -30,6 +30,7 @@ column_create Times logs_201703 COLUMN_INDEX Logs_201703 timestamp
 
 #@add-important-log-levels debug
 log_level --level debug
+#@collect-query-log true
 logical_range_filter Logs \
   --shard_key timestamp \
   --min '2017/03/15 01:00:00' \
@@ -48,5 +49,6 @@ logical_range_filter Logs \
   --offset 1 \
   --limit 3 \
   --output_columns _id,n_records_per_day,price
+#@collect-query-log false
 log_level --level notice
 #@remove-important-log-levels debug
