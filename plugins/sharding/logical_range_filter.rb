@@ -1127,7 +1127,7 @@ module Groonga
                            ":",
                            "sort(#{sorted_result_set.size})" +
                            "[#{@shard.table_name}]: " +
-                           unparsed_sort_keys.join(", "))
+                           unparsed_sort_keys.join(","))
         end
 
         def detect_window
