@@ -98,6 +98,8 @@ logical_range_filter Logs   --min '2017/03/15 07:01:00.001'   --min_border inclu
 #:000000000000000 columns[five_minute](6)
 #:000000000000000 columns[n_records_per_five_minute](6)
 #:000000000000000 filter(4): 2147483652.n_records_per_five_minute greater_equal 3
+#:000000000000000 post_filter(4): Logs_20170315.n_records_per_five_minute >= 3
+#:000000000000000 sort(1): Logs_20170315.timestamp
 #:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_20170315)>, "2017/03/15 08:00:00", "include", "2017/03/15 09:00:00", "exclude")
 #:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_20170315)>, "2017/03/15 09:00:00", "include", "2017/03/15 10:00:00", "exclude")
 #:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_20170315)>, "2017/03/15 10:00:00", "include", "2017/03/15 11:00:00", "exclude")
@@ -154,6 +156,9 @@ logical_range_filter Logs   --min '2017/03/15 07:01:00.001'   --min_border inclu
 #:000000000000000 columns[five_minute](3)
 #:000000000000000 columns[n_records_per_five_minute](3)
 #:000000000000000 filter(3): 2147483649.n_records_per_five_minute greater_equal 3
+#:000000000000000 post_filter(3): Logs_20170316.n_records_per_five_minute >= 3
+#:000000000000000 sort(3): Logs_20170316.timestamp
+#:000000000000000 output(4)
 #<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

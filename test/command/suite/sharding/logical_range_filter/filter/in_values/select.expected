@@ -84,6 +84,8 @@ logical_range_filter Logs timestamp   --limit 4   --filter 'in_values(action, "R
 #|d| [logical_range_filter][select] <Logs_20150205>: the number of required records (4) >= the number of records in shard (4)
 #>logical_range_filter --filter "in_values(action, \"Running\", \"Start\")" --limit "4" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(3): in_values(Logs_20150205.action, "Running", "Start")
+#:000000000000000 sort(3): Logs_20150205.timestamp
+#:000000000000000 output(3)
 #<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

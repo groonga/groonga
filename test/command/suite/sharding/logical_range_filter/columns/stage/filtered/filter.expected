@@ -93,8 +93,11 @@ logical_range_filter Logs   --shard_key timestamp   --columns[filtered_id].stage
 #>logical_range_filter --columns[filtered_id].flags "COLUMN_SCALAR" --columns[filtered_id].stage "filtered" --columns[filtered_id].type "UInt32" --columns[filtered_id].value "_id" --filter "price <= 900" --limit "3" --logical_table "Logs" --offset "1" --output_columns "_id,filtered_id,price" --shard_key "timestamp"
 #:000000000000000 filter(2): Logs_20170315.price less_equal 900
 #:000000000000000 columns[filtered_id](2)
+#:000000000000000 sort(1): Logs_20170315.timestamp
 #:000000000000000 filter(3): Logs_20170316.price less_equal 900
 #:000000000000000 columns[filtered_id](3)
+#:000000000000000 sort(2): Logs_20170316.timestamp
+#:000000000000000 output(3)
 #<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

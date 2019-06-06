@@ -1,4 +1,5 @@
 logical_range_filter Logs timestamp
 [[0,0.0,0.0],[[["memo","ShortText"],["message","Text"],["timestamp","Time"]]]]
 #>logical_range_filter --logical_table "Logs" --shard_key "timestamp"
+#:000000000000000 output(0)
 #<000000000000000 rc=0

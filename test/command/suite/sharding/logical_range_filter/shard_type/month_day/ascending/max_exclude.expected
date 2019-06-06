@@ -83,4 +83,9 @@ logical_range_filter Logs timestamp   --max "2015-03-01 00:00:00"   --max_border
   ]
 ]
 #>logical_range_filter --limit "-1" --logical_table "Logs" --max "2015-03-01 00:00:00" --max_border "exclude" --shard_key "timestamp"
+#:000000000000000 sort(2): Logs_201501.timestamp
+#:000000000000000 sort(4): Logs_201502.timestamp
+#:000000000000000 sort(4): Logs_20150203.timestamp
+#:000000000000000 sort(2): Logs_20150228.timestamp
+#:000000000000000 output(12)
 #<000000000000000 rc=0

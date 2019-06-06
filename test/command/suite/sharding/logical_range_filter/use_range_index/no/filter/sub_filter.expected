@@ -88,6 +88,9 @@ logical_range_filter Logs timestamp   --use_range_index no   --filter 'sub_filte
 #:000000000000000 filter(0): sub_filter(#<accessor action(Logs_20150203).errors_action(Actions)>, "level == \"critical\"")
 #:000000000000000 filter(1): Errors.level equal "critical"
 #:000000000000000 filter(1): sub_filter(#<accessor action(Logs_20150204).errors_action(Actions)>, "level == \"critical\"")
+#:000000000000000 sort(1): Logs_20150204.timestamp
 #:000000000000000 filter(1): Errors.level equal "critical"
 #:000000000000000 filter(1): sub_filter(#<accessor action(Logs_20150205).errors_action(Actions)>, "level == \"critical\"")
+#:000000000000000 sort(1): Logs_20150205.timestamp
+#:000000000000000 output(2)
 #<000000000000000 rc=0
