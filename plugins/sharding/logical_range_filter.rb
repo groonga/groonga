@@ -973,13 +973,13 @@ module Groonga
                   end
                 end
                 query_logger.log(:size, ":",
-                                 "filter(#{n_matched_records}): #{@shard.table_name}.#{@filter}")
+                                 "filter(#{n_matched_records})[#{@shard.table_name}]: #{@filter}")
               else
                 IndexCursor.open(table_cursor, range_index) do |index_cursor|
                   n_matched_records = index_cursor.select(result_set, options)
                 end
                 query_logger.log(:size, ":",
-                                 "filter(#{n_matched_records}): #{@shard.table_name}")
+                                 "filter(#{n_matched_records})[#{@shard.table_name}]")
               end
               if n_matched_records == -1
                 result_set.close
