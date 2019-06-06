@@ -1118,7 +1118,7 @@ module Groonga
           if @context.current_limit > 0
             @context.current_limit -= sorted_result_set.size
           end
-          unparsed_sort_keys = sort_keys.each do |sort_key|
+          unparsed_sort_keys = sort_keys.collect do |sort_key|
             key = sort_key[:key]
             key = "-#{key}" if sort_key[:order] == :descending
             key
