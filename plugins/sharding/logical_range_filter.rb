@@ -53,6 +53,7 @@ module Groonga
               break if limit <= 0
             end
           end
+          query_logger.log(:size, ":", "output(#{n_elements - 1})")
         ensure
           context.close
         end
@@ -498,6 +499,7 @@ module Groonga
 
       class ShardExecutor
         include Loggable
+        include QueryLoggable
 
         attr_reader :shard
         attr_writer :previous_executor
@@ -970,10 +972,14 @@ module Groonga
                     n_matched_records = index_cursor.select(result_set, options)
                   end
                 end
+                query_logger.log(:size, ":",
+                                 "filter(#{n_matched_records}): #{@shard.table_name}.#{@filter}")
               else
                 IndexCursor.open(table_cursor, range_index) do |index_cursor|
                   n_matched_records = index_cursor.select(result_set, options)
                 end
+                query_logger.log(:size, ":",
+                                 "filter(#{n_matched_records}): #{@shard.table_name}")
               end
               if n_matched_records == -1
                 result_set.close
@@ -1057,7 +1063,11 @@ module Groonga
         def apply_post_filter(table)
           create_expression(table) do |expression|
             expression.parse(@post_filter)
-            table.select(expression)
+            filtered_result = table.select(expression)
+            query_logger.log(:size,
+                           ":",
+                           "post_filter(#{filtered_result.size}): #{@shard.table_name}.#{@post_filter}")
+            filtered_result
           end
         end
 
@@ -1112,6 +1122,12 @@ module Groonga
           if @context.current_limit > 0
             @context.current_limit -= sorted_result_set.size
           end
+          keys =  sort_keys.collect do |key_order_pair|
+            key_order_pair[:key]
+          end
+          query_logger.log(:size,
+                           ":",
+                           "sort(#{sorted_result_set.size}): #{@shard.table_name}.#{keys.join(',')}")
         end
 
         def detect_window
