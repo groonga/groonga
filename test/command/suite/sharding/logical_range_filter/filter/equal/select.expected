@@ -79,7 +79,7 @@ logical_range_filter Logs timestamp   --limit -1   --filter 'user_id == 2'
 #|d| [logical_range_filter][select] <Logs_20150205>: limit is negative: <-1>
 #>logical_range_filter --filter "user_id == 2" --limit "-1" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(2): Logs_20150205.user_id equal #<record:pat:UserIDs id:2 key:2>
-#:000000000000000 sort(2): Logs_20150205.timestamp
+#:000000000000000 sort(2)[Logs_20150205]: key: timestamp order: ascending
 #:000000000000000 output(2)
 #<000000000000000 rc=0
 log_level --level notice

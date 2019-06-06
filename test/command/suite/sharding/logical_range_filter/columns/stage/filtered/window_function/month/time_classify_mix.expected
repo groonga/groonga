@@ -103,8 +103,7 @@ logical_range_filter Logs   --shard_key timestamp   --columns[day].stage filtere
 #:000000000000000 columns[n_records_per_five_minute](3)
 #:000000000000000 filter(0): 2147483651.n_records_per_day greater_equal 4
 #:000000000000000 filter(3): 2147483651.n_records_per_five_minute greater_equal 3
-#:000000000000000 post_filter(3): Logs_201703.n_records_per_day >= 4 || n_records_per_five_minute >= 3
-#:000000000000000 sort(2): Logs_201703.timestamp
+#:000000000000000 sort(2)[Logs_201703]: key: timestamp order: ascending
 #:000000000000000 filter(4): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/16 00:00:00", "include", "2017/03/17 00:00:00", "exclude")
 #:000000000000000 columns[day](4)
 #:000000000000000 columns[five_minute](4)
@@ -112,8 +111,7 @@ logical_range_filter Logs   --shard_key timestamp   --columns[day].stage filtere
 #:000000000000000 columns[n_records_per_five_minute](4)
 #:000000000000000 filter(4): 2147483656.n_records_per_day greater_equal 4
 #:000000000000000 filter(4): 2147483656.n_records_per_five_minute greater_equal 3
-#:000000000000000 post_filter(4): Logs_201703.n_records_per_day >= 4 || n_records_per_five_minute >= 3
-#:000000000000000 sort(1): Logs_201703.timestamp
+#:000000000000000 sort(1)[Logs_201703]: key: timestamp order: ascending
 #:000000000000000 output(3)
 #<000000000000000 rc=0
 log_level --level notice

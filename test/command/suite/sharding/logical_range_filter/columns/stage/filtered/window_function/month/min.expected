@@ -80,13 +80,11 @@ logical_range_filter Logs   --shard_key timestamp   --min '2017/03/15 01:00:00' 
 #:000000000000000 columns[day](2)
 #:000000000000000 columns[n_records_per_day](2)
 #:000000000000000 filter(0): 2147483651.n_records_per_day greater_equal 3
-#:000000000000000 post_filter(0): Logs_201703.n_records_per_day >= 3
 #:000000000000000 filter(4): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/16 00:00:00", "include", "2017/03/17 00:00:00", "exclude")
 #:000000000000000 columns[day](4)
 #:000000000000000 columns[n_records_per_day](4)
 #:000000000000000 filter(4): 2147483654.n_records_per_day greater_equal 3
-#:000000000000000 post_filter(4): Logs_201703.n_records_per_day >= 3
-#:000000000000000 sort(3): Logs_201703.timestamp
+#:000000000000000 sort(3)[Logs_201703]: key: timestamp order: ascending
 #:000000000000000 output(3)
 #<000000000000000 rc=0
 log_level --level notice

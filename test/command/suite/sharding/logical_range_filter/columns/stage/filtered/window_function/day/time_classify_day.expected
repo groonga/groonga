@@ -101,14 +101,12 @@ logical_range_filter Logs   --shard_key timestamp   --columns[day].stage filtere
 #:000000000000000 columns[day](3)
 #:000000000000000 columns[n_records_per_day](3)
 #:000000000000000 filter(3): 2147483651.n_records_per_day greater_equal 3
-#:000000000000000 post_filter(3): Logs_20170315.n_records_per_day >= 3
-#:000000000000000 sort(2): Logs_20170315.timestamp
+#:000000000000000 sort(2)[Logs_20170315]: key: timestamp order: ascending
 #:000000000000000 filter(4): Logs_20170316.price greater_equal 300
 #:000000000000000 columns[day](4)
 #:000000000000000 columns[n_records_per_day](4)
 #:000000000000000 filter(4): 2147483655.n_records_per_day greater_equal 3
-#:000000000000000 post_filter(4): Logs_20170316.n_records_per_day >= 3
-#:000000000000000 sort(1): Logs_20170316.timestamp
+#:000000000000000 sort(1)[Logs_20170316]: key: timestamp order: ascending
 #:000000000000000 output(3)
 #<000000000000000 rc=0
 log_level --level notice

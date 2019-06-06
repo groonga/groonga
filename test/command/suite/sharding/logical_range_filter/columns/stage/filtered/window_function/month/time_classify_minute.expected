@@ -421,8 +421,7 @@ logical_range_filter Logs   --shard_key timestamp   --columns[five_minute].stage
 #:000000000000000 columns[five_minute](7)
 #:000000000000000 columns[n_records_per_five_minute](7)
 #:000000000000000 filter(7): 2147483649.n_records_per_five_minute greater_equal 3
-#:000000000000000 post_filter(7): Logs_201703.n_records_per_five_minute >= 3
-#:000000000000000 sort(3): Logs_201703.timestamp
+#:000000000000000 sort(3)[Logs_201703]: key: timestamp order: ascending
 #:000000000000000 output(3)
 #<000000000000000 rc=0
 log_level --level notice

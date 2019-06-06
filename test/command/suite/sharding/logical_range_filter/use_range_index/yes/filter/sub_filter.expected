@@ -61,5 +61,3 @@ logical_range_filter Logs timestamp   --use_range_index yes   --filter 'sub_filt
   ]
 ]
 #|e| selector only proc can't be called: <sub_filter>
-#>logical_range_filter --filter "sub_filter(action.errors_action, \"level == \\\"critical\\\"\")" --logical_table "Logs" --shard_key "timestamp" --use_range_index "yes"
-#<000000000000000 rc=-38
