@@ -1123,7 +1123,7 @@ module Groonga
           end
           query_logger.log(:size,
                            ":",
-                           "sort(#{sorted_result_set.size}): #{@shard.table_name}.#{keys.join(',')}")
+                           "sort(#{sorted_result_set.size})[#{@shard.table_name}]: #{keys.join(',')}")
         end
 
         def detect_window
