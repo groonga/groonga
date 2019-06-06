@@ -74,5 +74,35 @@ logical_range_filter Logs   --shard_key timestamp   --max '2017/03/17 22:00:00' 
 #|d| [logical_range_filter][window] <Logs_201703>: [2017/03/15 00:00:00,2017/03/16 00:00:00)
 #|d| [logical_range_filter][window] <Logs_201703>: [2017/03/16 00:00:00,2017/03/17 00:00:00)
 #|d| [logical_range_filter][window] <Logs_201703>: [2017/03/17 00:00:00,2017/03/17 22:00:00]
+#>logical_range_filter --columns[day].flags "COLUMN_SCALAR" --columns[day].stage "filtered" --columns[day].type "Time" --columns[day].value "time_classify_day(timestamp)" --columns[n_records_per_day].flags "COLUMN_SCALAR" --columns[n_records_per_day].stage "filtered" --columns[n_records_per_day].type "UInt32" --columns[n_records_per_day].value "window_count()" --columns[n_records_per_day].window.group_keys "day" --filter "price >= 300" --limit "3" --logical_table "Logs" --max "2017/03/17 22:00:00" --max_border "include" --offset "6" --output_columns "_id,n_records_per_day,price" --post_filter "n_records_per_day >= 3" --shard_key "timestamp"
+#:000000000000000 filter(12): Logs_201703.timestamp less_equal 1489755600.0
+#:000000000000000 filter(10): Logs_201703.price greater_equal 300
+#:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/01 00:00:00", "include", "2017/03/02 00:00:00", "exclude")
+#:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/02 00:00:00", "include", "2017/03/03 00:00:00", "exclude")
+#:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/03 00:00:00", "include", "2017/03/04 00:00:00", "exclude")
+#:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/04 00:00:00", "include", "2017/03/05 00:00:00", "exclude")
+#:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/05 00:00:00", "include", "2017/03/06 00:00:00", "exclude")
+#:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/06 00:00:00", "include", "2017/03/07 00:00:00", "exclude")
+#:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/07 00:00:00", "include", "2017/03/08 00:00:00", "exclude")
+#:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/08 00:00:00", "include", "2017/03/09 00:00:00", "exclude")
+#:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/09 00:00:00", "include", "2017/03/10 00:00:00", "exclude")
+#:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/10 00:00:00", "include", "2017/03/11 00:00:00", "exclude")
+#:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/11 00:00:00", "include", "2017/03/12 00:00:00", "exclude")
+#:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/12 00:00:00", "include", "2017/03/13 00:00:00", "exclude")
+#:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/13 00:00:00", "include", "2017/03/14 00:00:00", "exclude")
+#:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/14 00:00:00", "include", "2017/03/15 00:00:00", "exclude")
+#:000000000000000 filter(3): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/15 00:00:00", "include", "2017/03/16 00:00:00", "exclude")
+#:000000000000000 columns[day](3)
+#:000000000000000 columns[n_records_per_day](3)
+#:000000000000000 filter(3): 2147483651.n_records_per_day greater_equal 3
+#:000000000000000 filter(4): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/16 00:00:00", "include", "2017/03/17 00:00:00", "exclude")
+#:000000000000000 columns[day](4)
+#:000000000000000 columns[n_records_per_day](4)
+#:000000000000000 filter(4): 2147483654.n_records_per_day greater_equal 3
+#:000000000000000 filter(3): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/17 00:00:00", "include", "2017/03/17 22:00:00", "include")
+#:000000000000000 columns[day](3)
+#:000000000000000 columns[n_records_per_day](3)
+#:000000000000000 filter(3): 2147483658.n_records_per_day greater_equal 3
+#<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

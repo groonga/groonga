@@ -77,3 +77,6 @@ logical_range_filter Logs timestamp   --min "2015-01-31 23:59:59"   --min_border
     ]
   ]
 ]
+#>logical_range_filter --limit "-1" --logical_table "Logs" --max "2015-03-01 00:00:00" --max_border "exclude" --min "2015-01-31 23:59:59" --min_border "include" --shard_key "timestamp"
+#:000000000000000 filter(1): Logs_201501.timestamp greater_equal 1422716399.0
+#<000000000000000 rc=0

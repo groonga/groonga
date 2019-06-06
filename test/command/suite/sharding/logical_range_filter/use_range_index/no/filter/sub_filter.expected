@@ -83,3 +83,11 @@ logical_range_filter Logs timestamp   --use_range_index no   --filter 'sub_filte
     ]
   ]
 ]
+#>logical_range_filter --filter "sub_filter(action.errors_action, \"level == \\\"critical\\\"\")" --logical_table "Logs" --shard_key "timestamp" --use_range_index "no"
+#:000000000000000 filter(1): Errors.level equal "critical"
+#:000000000000000 filter(0): sub_filter(#<accessor action(Logs_20150203).errors_action(Actions)>, "level == \"critical\"")
+#:000000000000000 filter(1): Errors.level equal "critical"
+#:000000000000000 filter(1): sub_filter(#<accessor action(Logs_20150204).errors_action(Actions)>, "level == \"critical\"")
+#:000000000000000 filter(1): Errors.level equal "critical"
+#:000000000000000 filter(1): sub_filter(#<accessor action(Logs_20150205).errors_action(Actions)>, "level == \"critical\"")
+#<000000000000000 rc=0

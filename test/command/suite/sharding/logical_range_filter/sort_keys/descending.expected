@@ -108,5 +108,7 @@ logical_range_filter Logs   --shard_key timestamp   --sort_keys '-price'   --out
 #|d| [logical_range_filter][select] <Logs_20170315>: sort_keys is used
 #|d| [logical_range_filter][select] <Logs_20170316>: sort_keys is used
 #|d| [logical_range_filter][select] <Logs_20170317>: sort_keys is used
+#>logical_range_filter --logical_table "Logs" --output_columns "_id,price" --shard_key "timestamp" --sort_keys "-price"
+#<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

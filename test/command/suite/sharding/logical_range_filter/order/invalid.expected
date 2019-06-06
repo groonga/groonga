@@ -9,3 +9,5 @@ logical_range_filter Logs timestamp --order invalid
     "[logical_range_filter] order must be \"ascending\" or \"descending\": <invalid>"
   ]
 ]
+#>logical_range_filter --logical_table "Logs" --order "invalid" --shard_key "timestamp"
+#<000000000000000 rc=-22

@@ -92,3 +92,5 @@ logical_range_filter Logs timestamp   --order descending   --limit -1
     ]
   ]
 ]
+#>logical_range_filter --limit "-1" --logical_table "Logs" --order "descending" --shard_key "timestamp"
+#<000000000000000 rc=0

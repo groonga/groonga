@@ -82,5 +82,11 @@ logical_range_filter Logs timestamp   --limit 1   --filter 'sub_filter(action.er
 ]
 #|d| [logical_range_filter][select] <Logs_20150203>: the number of required records (1) >= the number of records in shard (1)
 #|d| [logical_range_filter][select] <Logs_20150204>: selector only procedure can't be used: <sub_filter>
+#>logical_range_filter --filter "sub_filter(action.errors_action, \"level == \\\"critical\\\"\")" --limit "1" --logical_table "Logs" --shard_key "timestamp"
+#:000000000000000 filter(1): Errors.level equal "critical"
+#:000000000000000 filter(0): sub_filter(#<accessor action(Logs_20150203).errors_action(Actions)>, "level == \"critical\"")
+#:000000000000000 filter(1): Errors.level equal "critical"
+#:000000000000000 filter(1): sub_filter(#<accessor action(Logs_20150204).errors_action(Actions)>, "level == \"critical\"")
+#<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

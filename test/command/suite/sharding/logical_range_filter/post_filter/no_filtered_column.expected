@@ -53,5 +53,11 @@ logical_range_filter Logs   --shard_key timestamp   --filter 'price <= 900'   --
 [[0,0.0,0.0],[[["_id","UInt32"],["price","UInt32"]],[3,300],[2,520],[3,110]]]
 #|d| [logical_range_filter][select] <Logs_20170315>: post_filter is used
 #|d| [logical_range_filter][select] <Logs_20170316>: post_filter is used
+#>logical_range_filter --filter "price <= 900" --limit "3" --logical_table "Logs" --offset "1" --output_columns "_id,price" --post_filter "_id > 1" --shard_key "timestamp"
+#:000000000000000 filter(2): Logs_20170315.price less_equal 900
+#:000000000000000 filter(2): #<accessor _key(anonymous)._id(Logs_20170315)> greater 1
+#:000000000000000 filter(3): Logs_20170316.price less_equal 900
+#:000000000000000 filter(2): #<accessor _key(anonymous)._id(Logs_20170316)> greater 1
+#<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

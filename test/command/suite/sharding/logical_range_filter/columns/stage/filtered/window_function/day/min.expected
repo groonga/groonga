@@ -84,5 +84,13 @@ logical_range_filter Logs   --min '2017/03/15 07:01:00'   --min_border include  
 ]
 #|d| [logical_range_filter][select] <Logs_20170315>: dynamic columns are used
 #|d| [logical_range_filter][window] <Logs_20170315>: [2017/03/15 07:01:00,2017/03/15 08:00:00)
+#>logical_range_filter --columns[five_minute].flags "COLUMN_SCALAR" --columns[five_minute].stage "filtered" --columns[five_minute].type "Time" --columns[five_minute].value "time_classify_minute(timestamp, 5)" --columns[n_records_per_five_minute].flags "COLUMN_SCALAR" --columns[n_records_per_five_minute].stage "filtered" --columns[n_records_per_five_minute].type "UInt32" --columns[n_records_per_five_minute].value "window_count()" --columns[n_records_per_five_minute].window.group_keys "five_minute" --filter "price >= 300" --limit "3" --logical_table "Logs" --min "2017/03/15 07:01:00" --min_border "include" --offset "1" --output_columns "_id,n_records_per_five_minute,price" --post_filter "n_records_per_five_minute >= 3" --shard_key "timestamp"
+#:000000000000000 filter(8): Logs_20170315.timestamp greater_equal 1489528860.0
+#:000000000000000 filter(6): Logs_20170315.price greater_equal 300
+#:000000000000000 filter(6): between(#<accessor _key(anonymous).timestamp(Logs_20170315)>, "2017/03/15 07:01:00", "include", "2017/03/15 08:00:00", "exclude")
+#:000000000000000 columns[five_minute](6)
+#:000000000000000 columns[n_records_per_five_minute](6)
+#:000000000000000 filter(4): 2147483652.n_records_per_five_minute greater_equal 3
+#<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

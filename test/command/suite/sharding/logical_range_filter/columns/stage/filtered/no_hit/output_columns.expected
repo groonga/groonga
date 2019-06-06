@@ -21,5 +21,8 @@ log_level --level debug
 [[0,0.0,0.0],true]
 logical_range_filter Logs   --shard_key timestamp   --columns[price_with_tax].stage filtered   --columns[price_with_tax].type UInt32   --columns[price_with_tax].flags COLUMN_SCALAR   --columns[price_with_tax].value 'price * 1.08'   --min "2017/04/01 00:00:00"   --offset 1   --limit 3   --output_columns price,price_with_tax
 [[0,0.0,0.0],[[["price","UInt32"],["price_with_tax","UInt32"]]]]
+#>logical_range_filter --columns[price_with_tax].flags "COLUMN_SCALAR" --columns[price_with_tax].stage "filtered" --columns[price_with_tax].type "UInt32" --columns[price_with_tax].value "price * 1.08" --limit "3" --logical_table "Logs" --min "2017/04/01 00:00:00" --offset "1" --output_columns "price,price_with_tax" --shard_key "timestamp"
+#:000000000000000 columns[price_with_tax](0)
+#<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]
