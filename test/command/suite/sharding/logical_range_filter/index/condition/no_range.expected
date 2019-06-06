@@ -77,8 +77,8 @@ logical_range_filter Logs timestamp --filter 'message == "Shutdown"'
 #>logical_range_filter --filter "message == \"Shutdown\"" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(0): Logs_20150203.message equal "Shutdown"
 #:000000000000000 filter(1): Logs_20150204.message equal "Shutdown"
-#:000000000000000 sort(1)[Logs_20150204]: key: timestamp order: ascending
+#:000000000000000 sort(1)[Logs_20150204]: timestamp
 #:000000000000000 filter(1): Logs_20150205.message equal "Shutdown"
-#:000000000000000 sort(1)[Logs_20150205]: key: timestamp order: ascending
+#:000000000000000 sort(1)[Logs_20150205]: timestamp
 #:000000000000000 output(2)
 #<000000000000000 rc=0

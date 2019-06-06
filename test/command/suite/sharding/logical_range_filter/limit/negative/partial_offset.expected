@@ -62,9 +62,9 @@ logical_range_filter Logs timestamp   --filter 'message == "Shutdown"'   --min "
 #:000000000000000 filter(2): Logs_20150203.timestamp greater_equal 1422975599.0
 #:000000000000000 filter(1): Logs_20150203.message equal "Shutdown"
 #:000000000000000 filter(3): Logs_20150204.message equal "Shutdown"
-#:000000000000000 sort(3)[Logs_20150204]: key: timestamp order: ascending
+#:000000000000000 sort(3)[Logs_20150204]: timestamp
 #:000000000000000 filter(2): Logs_20150205.timestamp less_equal 1423062000.0
 #:000000000000000 filter(1): Logs_20150205.message equal "Shutdown"
-#:000000000000000 sort(1)[Logs_20150205]: key: timestamp order: ascending
+#:000000000000000 sort(1)[Logs_20150205]: timestamp
 #:000000000000000 output(4)
 #<000000000000000 rc=0

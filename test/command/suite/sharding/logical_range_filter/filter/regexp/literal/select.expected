@@ -79,7 +79,7 @@ logical_range_filter Logs timestamp   --limit 4   --filter 'comment @~ "nn"'
 #|d| [logical_range_filter][select] <Logs_20150205>: the number of required records (4) >= the number of records in shard (4)
 #>logical_range_filter --filter "comment @~ \"nn\"" --limit "4" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(2): Logs_20150205.comment "nn" regexp
-#:000000000000000 sort(2)[Logs_20150205]: key: timestamp order: ascending
+#:000000000000000 sort(2)[Logs_20150205]: timestamp
 #:000000000000000 output(2)
 #<000000000000000 rc=0
 log_level --level notice

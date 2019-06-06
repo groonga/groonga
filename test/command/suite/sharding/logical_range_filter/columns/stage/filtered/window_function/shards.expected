@@ -115,13 +115,13 @@ logical_range_filter Logs   --shard_key timestamp   --max '2017/03/17 10:00:00.0
 #:000000000000000 filter(4): Logs_20170316.price greater_equal 300
 #:000000000000000 columns[day](4)
 #:000000000000000 columns[price_per_day](3)
-#:000000000000000 sort(3)[Logs_20170315]: key: timestamp order: ascending
+#:000000000000000 sort(3)[Logs_20170315]: timestamp
 #:000000000000000 filter(1): Logs_20170317.timestamp less 1489712400.0
 #:000000000000000 filter(1): Logs_20170317.price greater_equal 300
 #:000000000000000 columns[day](1)
 #:000000000000000 columns[price_per_day](4)
-#:000000000000000 sort(4)[Logs_20170316]: key: timestamp order: ascending
+#:000000000000000 sort(4)[Logs_20170316]: timestamp
 #:000000000000000 columns[price_per_day](1)
-#:000000000000000 sort(1)[Logs_20170317]: key: timestamp order: ascending
+#:000000000000000 sort(1)[Logs_20170317]: timestamp
 #:000000000000000 output(8)
 #<000000000000000 rc=0

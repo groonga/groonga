@@ -130,10 +130,10 @@ logical_range_filter Logs timestamp --filter 'numbers @ 9'
 ]
 #>logical_range_filter --filter "numbers @ 9" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(1): Logs_20150203.numbers match 9
-#:000000000000000 sort(1)[Logs_20150203]: key: timestamp order: ascending
+#:000000000000000 sort(1)[Logs_20150203]: timestamp
 #:000000000000000 filter(1): Logs_20150204.numbers match 9
-#:000000000000000 sort(1)[Logs_20150204]: key: timestamp order: ascending
+#:000000000000000 sort(1)[Logs_20150204]: timestamp
 #:000000000000000 filter(1): Logs_20150205.numbers match 9
-#:000000000000000 sort(1)[Logs_20150205]: key: timestamp order: ascending
+#:000000000000000 sort(1)[Logs_20150205]: timestamp
 #:000000000000000 output(3)
 #<000000000000000 rc=0
