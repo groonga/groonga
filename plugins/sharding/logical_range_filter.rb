@@ -1063,11 +1063,7 @@ module Groonga
         def apply_post_filter(table)
           create_expression(table) do |expression|
             expression.parse(@post_filter)
-            filtered_result = table.select(expression)
-            query_logger.log(:size,
-                           ":",
-                           "post_filter(#{filtered_result.size}): #{@shard.table_name}.#{@post_filter}")
-            filtered_result
+            table.select(expression)
           end
         end
 
