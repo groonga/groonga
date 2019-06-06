@@ -44,6 +44,7 @@ column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
 
 #@add-important-log-levels debug
 log_level --level debug
+#@collect-query-log true
 logical_range_filter Logs \
   --shard_key timestamp \
   --columns[hour2].stage initial \
@@ -52,5 +53,6 @@ logical_range_filter Logs \
   --columns[hour2].value 'time_classify_hour(timestamp, 2)' \
   --sort_keys 'hour2,-price' \
   --output_columns _id,hour2,price
+#@collect-query-log false
 log_level --level notice
 #@remove-important-log-levels debug

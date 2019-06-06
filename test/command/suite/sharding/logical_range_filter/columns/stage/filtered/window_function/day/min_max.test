@@ -39,6 +39,7 @@ column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
 
 #@add-important-log-levels debug
 log_level --level debug
+#@collect-query-log true
 logical_range_filter Logs \
   --min '2017/03/15 07:01:00' \
   --min_border include \
@@ -59,5 +60,6 @@ logical_range_filter Logs \
   --offset 3 \
   --limit 4 \
   --output_columns _id,n_records_per_five_minute,price
+#@collect-query-log false
 log_level --level notice
 #@remove-important-log-levels debug

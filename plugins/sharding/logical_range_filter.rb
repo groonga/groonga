@@ -53,6 +53,7 @@ module Groonga
               break if limit <= 0
             end
           end
+          query_logger.log(:size, ":", "output(#{n_elements - 1})")
         ensure
           context.close
         end
@@ -498,6 +499,7 @@ module Groonga
 
       class ShardExecutor
         include Loggable
+        include QueryLoggable
 
         attr_reader :shard
         attr_writer :previous_executor
@@ -962,6 +964,8 @@ module Groonga
                 compute_max_n_unmatched_records(data_table.size,
                                                 options[:limit])
               options[:max_n_unmatched_records] = max_n_unmatched_records
+              query_log_prefix =
+                "filter(#{n_matched_records})[#{@shard.table_name}]"
               if @filter
                 create_expression(data_table) do |expression|
                   expression.parse(@filter)
@@ -970,10 +974,12 @@ module Groonga
                     n_matched_records = index_cursor.select(result_set, options)
                   end
                 end
+                query_logger.log(:size, ":", "#{query_log_prefix}: #{@filter}")
               else
                 IndexCursor.open(table_cursor, range_index) do |index_cursor|
                   n_matched_records = index_cursor.select(result_set, options)
                 end
+                query_logger.log(:size, ":", query_log_prefix)
               end
               if n_matched_records == -1
                 result_set.close
@@ -1112,6 +1118,16 @@ module Groonga
           if @context.current_limit > 0
             @context.current_limit -= sorted_result_set.size
           end
+          unparsed_sort_keys = sort_keys.each do |sort_key|
+            key = sort_key[:key]
+            key = "-#{key}" if sort_key[:order] == :descending
+            key
+          end
+          query_logger.log(:size,
+                           ":",
+                           "sort(#{sorted_result_set.size})" +
+                           "[#{@shard.table_name}]: " +
+                           unparsed_sort_keys.join(","))
         end
 
         def detect_window

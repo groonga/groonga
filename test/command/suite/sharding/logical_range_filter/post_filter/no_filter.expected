@@ -54,5 +54,12 @@ logical_range_filter Logs   --shard_key timestamp   --post_filter '_id < 3'   --
 #|d| [logical_range_filter][select] <Logs_20170315>: post_filter is used
 #|d| [logical_range_filter][select] <Logs_20170316>: post_filter is used
 #|d| [logical_range_filter][select] <Logs_20170317>: post_filter is used
+#>logical_range_filter --limit "1" --logical_table "Logs" --offset "4" --output_columns "_id,price" --post_filter "_id < 3" --shard_key "timestamp"
+#:000000000000000 filter(2): #<accessor _id(Logs_20170315)> less 3
+#:000000000000000 filter(2): #<accessor _id(Logs_20170316)> less 3
+#:000000000000000 filter(2): #<accessor _id(Logs_20170317)> less 3
+#:000000000000000 sort(1)[Logs_20170317]: timestamp
+#:000000000000000 output(1)
+#<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

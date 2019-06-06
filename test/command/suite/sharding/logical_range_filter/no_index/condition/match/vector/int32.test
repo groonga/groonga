@@ -59,4 +59,6 @@ load --table Logs_20150205
 }
 ]
 
+#@collect-query-log true
 logical_range_filter Logs timestamp --filter 'numbers @ 9'
+#@collect-query-log false

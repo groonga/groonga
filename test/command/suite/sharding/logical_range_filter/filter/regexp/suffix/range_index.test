@@ -43,8 +43,10 @@ load --table Logs_20150205
 
 #@add-important-log-levels debug
 log_level --level debug
+#@collect-query-log true
 logical_range_filter Logs timestamp \
   --limit 1 \
   --filter 'comment @~ "ca\\\\z"'
+#@collect-query-log false
 log_level --level notice
 #@remove-important-log-levels debug

@@ -18,4 +18,6 @@ load --table Logs_20150205
 {"timestamp": "2015-02-05 13:51:00", "memo": "2015-02-05 13:51:00"}
 ]
 
+#@collect-query-log true
 logical_range_filter Logs timestamp
+#@collect-query-log false

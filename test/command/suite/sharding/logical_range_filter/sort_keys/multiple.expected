@@ -123,5 +123,17 @@ logical_range_filter Logs   --shard_key timestamp   --columns[hour2].stage initi
 #|d| [logical_range_filter][select] <Logs_20170315>: dynamic columns are used
 #|d| [logical_range_filter][select] <Logs_20170316>: dynamic columns are used
 #|d| [logical_range_filter][select] <Logs_20170317>: dynamic columns are used
+#>logical_range_filter --columns[hour2].flags "COLUMN_SCALAR" --columns[hour2].stage "initial" --columns[hour2].type "Time" --columns[hour2].value "time_classify_hour(timestamp, 2)" --logical_table "Logs" --output_columns "_id,hour2,price" --shard_key "timestamp" --sort_keys "hour2,-price"
+#:000000000000000 filter(3): true
+#:000000000000000 columns[hour2](3)
+#:000000000000000 sort(3)[Logs_20170315]: hour2,-price
+#:000000000000000 filter(3): true
+#:000000000000000 columns[hour2](3)
+#:000000000000000 sort(3)[Logs_20170316]: hour2,-price
+#:000000000000000 filter(3): true
+#:000000000000000 columns[hour2](3)
+#:000000000000000 sort(3)[Logs_20170317]: hour2,-price
+#:000000000000000 output(9)
+#<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

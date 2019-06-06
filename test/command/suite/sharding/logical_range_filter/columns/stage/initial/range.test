@@ -45,6 +45,7 @@ column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
 
 #@add-important-log-levels debug
 log_level --level debug
+#@collect-query-log true
 logical_range_filter Logs \
   --shard_key timestamp \
   --min "2017/03/15 01:00:00" \
@@ -57,5 +58,6 @@ logical_range_filter Logs \
   --columns[price_sum_per_category].value 'window_sum(price)' \
   --columns[price_sum_per_category].window.group_keys 'category' \
   --output_columns _id,price,price_sum_per_category
+#@collect-query-log false
 log_level --level notice
 #@remove-important-log-levels debug

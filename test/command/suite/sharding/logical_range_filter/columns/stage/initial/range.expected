@@ -112,5 +112,17 @@ logical_range_filter Logs   --shard_key timestamp   --min "2017/03/15 01:00:00" 
 #|d| [logical_range_filter][select] <Logs_20170315>: dynamic columns are used
 #|d| [logical_range_filter][select] <Logs_20170316>: dynamic columns are used
 #|d| [logical_range_filter][select] <Logs_20170317>: dynamic columns are used
+#>logical_range_filter --columns[price_sum_per_category].flags "COLUMN_SCALAR" --columns[price_sum_per_category].stage "initial" --columns[price_sum_per_category].type "UInt32" --columns[price_sum_per_category].value "window_sum(price)" --columns[price_sum_per_category].window.group_keys "category" --logical_table "Logs" --max "2017/03/17 21:00:00" --max_border "exclude" --min "2017/03/15 01:00:00" --min_border "include" --output_columns "_id,price,price_sum_per_category" --shard_key "timestamp"
+#:000000000000000 filter(2): Logs_20170315.timestamp greater_equal 1489507200.0
+#:000000000000000 filter(3): true
+#:000000000000000 columns[price_sum_per_category](2)
+#:000000000000000 filter(1): Logs_20170317.timestamp less 1489752000.0
+#:000000000000000 columns[price_sum_per_category](3)
+#:000000000000000 sort(2)[Logs_20170315]: timestamp
+#:000000000000000 columns[price_sum_per_category](1)
+#:000000000000000 sort(3)[Logs_20170316]: timestamp
+#:000000000000000 sort(1)[Logs_20170317]: timestamp
+#:000000000000000 output(6)
+#<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

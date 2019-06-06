@@ -32,8 +32,10 @@ load --table Logs_20150205
 
 #@add-important-log-levels debug
 log_level --level debug
+#@collect-query-log true
 logical_range_filter Logs timestamp \
   --limit 1 \
   --filter 'between(timestamp, "2015-02-05 13:50:00", "include", "2015-02-05 13:52:00", "exclude")'
+#@collect-query-log false
 log_level --level notice
 #@remove-important-log-levels debug

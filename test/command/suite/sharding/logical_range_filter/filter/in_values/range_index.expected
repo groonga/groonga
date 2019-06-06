@@ -77,5 +77,9 @@ logical_range_filter Logs timestamp   --limit 2   --filter 'in_values(action, "R
   ]
 ]
 #|d| [logical_range_filter][range-index] <Logs_20150205>: hit ratio (1.0=4/4) >= threshold (0.2)
+#>logical_range_filter --filter "in_values(action, \"Running\", \"Start\")" --limit "2" --logical_table "Logs" --shard_key "timestamp"
+#:000000000000000 filter(2)[Logs_20150205]: in_values(action, "Running", "Start")
+#:000000000000000 output(2)
+#<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

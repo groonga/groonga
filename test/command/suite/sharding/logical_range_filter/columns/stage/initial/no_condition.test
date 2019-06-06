@@ -42,6 +42,7 @@ column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
 
 #@add-important-log-levels debug
 log_level --level debug
+#@collect-query-log true
 logical_range_filter Logs \
   --shard_key timestamp \
   --columns[price_with_tax].stage initial \
@@ -51,5 +52,6 @@ logical_range_filter Logs \
   --offset 1 \
   --limit 3 \
   --output_columns price,price_with_tax
+#@collect-query-log false
 log_level --level notice
 #@remove-important-log-levels debug
