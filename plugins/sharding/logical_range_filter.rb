@@ -1118,12 +1118,13 @@ module Groonga
           if @context.current_limit > 0
             @context.current_limit -= sorted_result_set.size
           end
-          keys =  sort_keys.collect do |key_order_pair|
-            key_order_pair[:key]
+          key_order_pairs = ""
+          sort_keys.each do |pair|
+            key_order_pairs << "key: #{pair[:key]} order: #{pair[:order]}"
           end
           query_logger.log(:size,
                            ":",
-                           "sort(#{sorted_result_set.size})[#{@shard.table_name}]: #{keys.join(',')}")
+                           "sort(#{sorted_result_set.size})[#{@shard.table_name}]: #{key_order_pairs}")
         end
 
         def detect_window
