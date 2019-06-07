@@ -1,0 +1,31 @@
+Execution example::
+
+  select Pies --match_columns name --query 'Raspberry'
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "name", 
+  #           "Text"
+  #         ]
+  #       ], 
+  #       [
+  #         3, 
+  #         "Raspberry Pie"
+  #       ]
+  #     ]
+  #   ]
+  # ]
