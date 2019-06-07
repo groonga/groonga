@@ -622,6 +622,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab-target-class-option.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab-use-reading-option.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-mecab.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-pattern-schema.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-pattern-search-apple.log \
+	$(top_srcdir)/doc/source/example/reference/tokenizers/token-pattern-search-raspberry.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-regexp-add.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-trigram-non-ascii.log \
 	$(top_srcdir)/doc/source/example/reference/tokenizers/token-trigram.log \
@@ -1012,6 +1015,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_delimit.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_delimit_null.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_mecab.rst \
+	$(top_srcdir)/doc/source/reference/tokenizers/token_pattern.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_regexp.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_trigram.rst \
 	$(top_srcdir)/doc/source/reference/tokenizers/token_unigram.rst \
@@ -1686,6 +1690,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/tokenizers/token-mecab-target-class-option.log \
 	source/example/reference/tokenizers/token-mecab-use-reading-option.log \
 	source/example/reference/tokenizers/token-mecab.log \
+	source/example/reference/tokenizers/token-pattern-schema.log \
+	source/example/reference/tokenizers/token-pattern-search-apple.log \
+	source/example/reference/tokenizers/token-pattern-search-raspberry.log \
 	source/example/reference/tokenizers/token-regexp-add.log \
 	source/example/reference/tokenizers/token-trigram-non-ascii.log \
 	source/example/reference/tokenizers/token-trigram.log \
@@ -2076,6 +2083,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/tokenizers/token_delimit.rst \
 	source/reference/tokenizers/token_delimit_null.rst \
 	source/reference/tokenizers/token_mecab.rst \
+	source/reference/tokenizers/token_pattern.rst \
 	source/reference/tokenizers/token_regexp.rst \
 	source/reference/tokenizers/token_trigram.rst \
 	source/reference/tokenizers/token_unigram.rst \
@@ -2498,6 +2506,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/tokenizers/token_delimit.html \
 	html/reference/tokenizers/token_delimit_null.html \
 	html/reference/tokenizers/token_mecab.html \
+	html/reference/tokenizers/token_pattern.html \
 	html/reference/tokenizers/token_regexp.html \
 	html/reference/tokenizers/token_trigram.html \
 	html/reference/tokenizers/token_unigram.html \
