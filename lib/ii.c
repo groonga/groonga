@@ -8966,10 +8966,10 @@ bt_pop(btr *bt)
 #endif /* USE_BHEAP */
 
 typedef enum {
-  grn_wv_none = 0,
-  grn_wv_static,
-  grn_wv_dynamic,
-  grn_wv_constant
+  GRN_WV_NONE = 0,
+  GRN_WV_STATIC,
+  GRN_WV_DYNAMIC,
+  GRN_WV_CONSTANT
 } grn_wv_mode;
 
 static double
@@ -8977,11 +8977,11 @@ get_weight(grn_ctx *ctx, grn_hash *s, grn_id rid, int sid,
            grn_wv_mode wvm, grn_select_optarg *optarg)
 {
   switch (wvm) {
-  case grn_wv_none :
+  case GRN_WV_NONE :
     return 1;
-  case grn_wv_static :
+  case GRN_WV_STATIC :
     return sid <= optarg->vector_size ? optarg->weight_vector[sid - 1] : 0;
-  case grn_wv_dynamic :
+  case GRN_WV_DYNAMIC :
     /* todo : support hash with keys
     if (s->keys) {
       uint32_t key_size;
@@ -8993,7 +8993,7 @@ get_weight(grn_ctx *ctx, grn_hash *s, grn_id rid, int sid,
     /* todo : cast */
     return optarg->func(ctx, (void *)s, (void *)(intptr_t)rid, sid,
                         optarg->func_arg);
-  case grn_wv_constant :
+  case GRN_WV_CONSTANT :
     return optarg->vector_size;
   default :
     return 1;
@@ -9075,7 +9075,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     int w2, rep;
     grn_ii_cursor *c;
     grn_posting *pos;
-    grn_wv_mode wvm = grn_wv_none;
+    grn_wv_mode wvm = GRN_WV_NONE;
     grn_table_sort_optarg arg = {
       GRN_TABLE_SORT_DESC|GRN_TABLE_SORT_BY_VALUE|GRN_TABLE_SORT_AS_NUMBER,
       NULL,
@@ -9096,9 +9096,9 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     */
     rep = 0;
     if (optarg->func) {
-      wvm = grn_wv_dynamic;
+      wvm = GRN_WV_DYNAMIC;
     } else if (optarg->vector_size > 0) {
-      wvm = optarg->weight_vector ? grn_wv_static : grn_wv_constant;
+      wvm = optarg->weight_vector ? GRN_WV_STATIC : GRN_WV_CONSTANT;
     }
     for (j = 1; j <= limit; j++) {
       grn_array_get_value(ctx, sorted, j, &id);
@@ -9157,7 +9157,7 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   grn_posting *pos;
   int skip, rep, policy;
   grn_rc rc = GRN_SUCCESS;
-  grn_wv_mode wvm = grn_wv_none;
+  grn_wv_mode wvm = GRN_WV_NONE;
   if (!ii || !string || !string_len || !s || !optarg) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -9166,9 +9166,9 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   }
   policy = optarg->max_interval;
   if (optarg->func) {
-    wvm = grn_wv_dynamic;
+    wvm = GRN_WV_DYNAMIC;
   } else if (optarg->vector_size) {
-    wvm = optarg->weight_vector ? grn_wv_static : grn_wv_constant;
+    wvm = optarg->weight_vector ? GRN_WV_STATIC : GRN_WV_CONSTANT;
   }
   /* todo support subrec
   if (policy == TERM_EXTRACT_EACH_POST) {
@@ -9249,7 +9249,7 @@ grn_ii_select_data_init(grn_ctx *ctx,
 {
   data->optarg = optarg;
   data->mode = GRN_OP_EXACT;
-  data->wv_mode = grn_wv_none;
+  data->wv_mode = GRN_WV_NONE;
   data->score_func = NULL;
   data->previous_min = GRN_ID_NIL;
   data->current_min = GRN_ID_NIL;
@@ -9263,12 +9263,12 @@ grn_ii_select_data_init(grn_ctx *ctx,
   data->mode = optarg->mode;
 
   if (optarg->func) {
-    data->wv_mode = grn_wv_dynamic;
+    data->wv_mode = GRN_WV_DYNAMIC;
   } else if (optarg->vector_size != 0) {
     if (optarg->weight_vector) {
-      data->wv_mode = grn_wv_static;
+      data->wv_mode = GRN_WV_STATIC;
     } else {
-      data->wv_mode = grn_wv_constant;
+      data->wv_mode = GRN_WV_CONSTANT;
     }
   }
 
