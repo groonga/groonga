@@ -101,7 +101,6 @@ build_script:
   - 7z x groonga-admin.tar
   - cd groonga-admin-*
   - move html %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\html\admin
-  - cd ..
   # Install groonga-admin license files
   - mkdir %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\groonga-admin
   - for %%i in ( LICENSE README.md ) do ( copy %%i %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\groonga-admin\ )
