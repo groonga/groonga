@@ -37,4 +37,4 @@ column_create Terms users_key COLUMN_INDEX|WITH_POSITION Users _key
 
 logical_select Logs \
   --shard_key timestamp \
-  --filter 'price>400 && user._key=="Yamamoto"'
+  --filter 'price > 400 && user._key == "Yamamoto"'

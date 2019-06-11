@@ -40,7 +40,7 @@ column_create Users logs_20170316_index COLUMN_INDEX Logs_20170316 user
 [[0,0.0,0.0],true]
 column_create Terms users_key COLUMN_INDEX|WITH_POSITION Users _key
 [[0,0.0,0.0],true]
-logical_select Logs   --shard_key timestamp   --filter 'price>400 && user._key=="Yamamoto"'
+logical_select Logs   --shard_key timestamp   --filter 'price > 400 && user._key == "Yamamoto"'
 [
   [
     0,
