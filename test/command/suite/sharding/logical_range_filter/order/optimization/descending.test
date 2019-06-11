@@ -1,4 +1,4 @@
-#$GRN_EXPR_OPTIMIZE=no
+#$GRN_EXPR_OPTIMIZE=yes
 #@include fixture/sharding/logical_range_filter/index/schema.grn
 
 load --table Logs_20150203
@@ -31,5 +31,8 @@ load --table Logs_20150205
 logical_range_filter Logs timestamp \
   --filter 'message == "Shutdown"' \
   --min "2015-02-04 00:00:00" \
-  --min_border "exclude"
+  --min_border "exclude" \
+  --max "2015-02-05 00:00:00" \
+  --max_border "include" \
+  --order "descending"
 #@collect-query-log false

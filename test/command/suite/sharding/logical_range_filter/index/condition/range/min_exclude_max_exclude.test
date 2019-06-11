@@ -1,3 +1,4 @@
+#$GRN_EXPR_OPTIMIZE=no
 #@include fixture/sharding/logical_range_filter/index/schema.grn
 
 load --table Logs_20150203

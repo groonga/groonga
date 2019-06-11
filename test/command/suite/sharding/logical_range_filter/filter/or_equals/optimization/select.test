@@ -1,4 +1,4 @@
-#$GRN_EXPR_OPTIMIZE=no
+#$GRN_EXPR_OPTIMIZE=yes
 #@on-error omit
 plugin_register sharding
 #@on-error default
