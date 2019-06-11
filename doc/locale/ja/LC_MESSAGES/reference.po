@@ -29221,7 +29221,6 @@ msgid "If we set false, ``TokenNgram`` uses bigram tokenize method for digits."
 msgstr ""
 "falseを設定すると、 ``TokenNgram`` は数字にトークナイズ方法としてバイグラムを"
 "使います。"
->>>>>>> doc tokenizers: add a document for TokenNgram
 
 msgid "``TokenRegexp``"
 msgstr ""
