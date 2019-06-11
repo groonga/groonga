@@ -177,7 +177,7 @@ can't find the position of the highlight as below.
 
 Because we use different normalizer to normalize token.
 
-This option is its to reduce the shift of the position of the highlight as below.
+This option is used to reduce the shift of the position of the highlight as below.
 
 .. groonga-command
 .. include:: ../../example/reference/tokenizers/token-ngram-report-source-location.log
