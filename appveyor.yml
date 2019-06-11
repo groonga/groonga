@@ -151,12 +151,16 @@ on_success:
           $Env:VCREDIST_VCRUNTIME = "$Env:VCREDIST_DIR\Microsoft.VC141.CRT\vcruntime140.dll"
           $Env:VCREDIST_MSVCP = "$Env:VCREDIST_DIR\Microsoft.VC141.CRT\msvcp140.dll"
           $Env:LICENSE_FILE = $Env:APPVEYOR_BUILD_FOLDER + "\packages\windows\vcruntime\vs2017\readme.txt"
+          $Env:UCRT_REDIST_DIR = "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\$Env:ARCH"
+          $Env:UCRT_LICENSE_FILE = $Env:APPVEYOR_BUILD_FOLDER + "\packages\windows\vcruntime\ucrt-readme.txt"
         }
         "14" {
           $Env:VCREDIST_DIR = "C:\Program Files (x86)\Microsoft Visual Studio $Env:VS_VERSION.0\VC\redist\$Env:ARCH"
           $Env:VCREDIST_VCRUNTIME = "$Env:VCREDIST_DIR\Microsoft.VC140.CRT\vcruntime140.dll"
           $Env:VCREDIST_MSVCP = "$Env:VCREDIST_DIR\Microsoft.VC140.CRT\msvcp140.dll"
           $Env:LICENSE_FILE = $Env:APPVEYOR_BUILD_FOLDER + "\packages\windows\vcruntime\vs2015\readme.txt"
+          $Env:UCRT_REDIST_DIR = "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\$Env:ARCH"
+          $Env:UCRT_LICENSE_FILE = $Env:APPVEYOR_BUILD_FOLDER + "\packages\windows\vcruntime\ucrt-readme.txt"
         }
         "12" {
           $Env:VCREDIST_DIR = "C:\Program Files (x86)\Microsoft Visual Studio $Env:VS_VERSION.0\VC\redist\$Env:ARCH"
@@ -168,6 +172,11 @@ on_success:
   - copy "%VCREDIST_VCRUNTIME%" "%FULL_GROONGA_INSTALL_FOLDER%\bin"
   - copy "%VCREDIST_MSVCP%" "%FULL_GROONGA_INSTALL_FOLDER%\bin"
   - copy "%LICENSE_FILE%" "%FULL_GROONGA_INSTALL_FOLDER%\share\groonga\vcruntime"
+  - ps: |
+      if ($Env:UCRT_REDIST_DIR -ne "") {
+        Copy-Item $Env:UCRT_REDIST_DIR\*.dll -Destination $Env:FULL_GROONGA_INSTALL_FOLDER\bin\
+        Copy-Item $Env:UCRT_LICENSE_FILE -Destination $Env:FULL_GROONGA_INSTALL_FOLDER\share\groonga\vcruntime\
+      }
   - set ARTIFACT=%GROONGA_INSTALL_FOLDER%-with-vcruntime.zip
   - 7z a %ARTIFACT% %FULL_GROONGA_INSTALL_FOLDER%
   - ps: Push-AppveyorArtifact $Env:ARTIFACT
