@@ -103,15 +103,28 @@ module Groonga
       end
 
       def estimate_size_equal_accessor(table, accessor, value)
-        if accessor.id?
-          if table.id?(value.value)
-            return 1
+        last_accessor = accessor
+        while last_accessor.have_next?
+          last_accessor = last_accessor.next
+        end
+
+        if last_accessor.id?
+          if last_accessor.object.id?(value.value)
+            if last_accessor == accessor
+              return 1
+            else
+              return table.size
+            end
           else
             return 0
           end
         else
-          if table[value]
-            return 1
+          if last_accessor.object[value]
+            if last_accessor == accessor
+              return 1
+            else
+              return table.size
+            end
           else
             return 0
           end
