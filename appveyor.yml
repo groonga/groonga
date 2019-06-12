@@ -107,9 +107,6 @@ build_script:
   # Install msgpack license files
   - cd %APPVEYOR_BUILD_FOLDER%\vendor\msgpack-*
   - copy NOTICE %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\msgpack\
-  # Install mruby license files
-  - cd %APPVEYOR_BUILD_FOLDER%\vendor\mruby-source
-  - for %%i in ( AUTHORS LICENSE README.md ) do ( copy %%i %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\mruby\ )
   - cd %APPVEYOR_BUILD_FOLDER%
 
 before_test:
