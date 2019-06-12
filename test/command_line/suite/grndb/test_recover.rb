@@ -547,4 +547,144 @@ invalid format: <[table][array] file type must be 0x33: <0000>>(-54)
                    normalized_groonga_log_content,
                  ])
   end
+
+  sub_test_case("--target-timestamp") do
+    def setup
+      @time = Time.now - 1
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+      groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
+
+      groonga("table_create", "Ages", "TABLE_PAT_KEY", "UInt8")
+      groonga("column_create", "Ages", "users_age", "COLUMN_INDEX", "Users", "age")
+
+      _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][2]
+      @users_table_path = path
+      _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+      @ages_table_path = path
+      _id, _name, path, *_ = JSON.parse(groonga("column_list Users").output)[1][2]
+      @users_age_column_path = path
+      _id, _name, path, *_ = JSON.parse(groonga("column_list Ages").output)[1][2]
+      @ages_index_column_path = path
+    end
+
+    def test_invalid_timestamp
+      error = assert_raise(CommandRunner::Error) do
+        grndb("recover", "--target-timestamp", "YYYY-MM-DD")
+      end
+      error_message = <<-MESSAGE
+Invalid --target-timestamp: <YYYY-MM-DD>
+Failed to parse: <YYYY-MM-DD>
+      MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                   ],
+                   [
+                     error.output,
+                     error.error_output
+                   ])
+    end
+
+    def test_skip_database
+      FileUtils.touch(@database_path, :mtime => Time.parse("2019-06-12T11:59:59+09:00"))
+      remove_groonga_log
+      result = grndb("recover",
+                     "--target-timestamp", @time.to_s,
+                     "--log-level", "info")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Recovering database: <#{@database_path}>
+|i| Skipped to recover: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content
+                   ])
+    end
+
+    def test_skip_table
+      FileUtils.touch(@users_table_path, :mtime => Time.parse("2019-06-12T11:59:59+09:00"))
+      remove_groonga_log
+      result = grndb("recover",
+                     "--target-timestamp", @time.to_s,
+                     "--log-level", "info")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Recovering database: <#{@database_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{@users_table_path}>" : ""}
+|i| [db][recover] skipped to recover table: <Users> <#{@users_table_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{@users_age_column_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@ages_table_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@ages_index_column_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@ages_index_column_path}.c>" : ""}
+|i| Recovered database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content
+                   ])
+    end
+
+    def test_skip_data_column
+      FileUtils.touch(@users_age_column_path, :mtime => Time.parse("2019-06-12T11:59:59+09:00"))
+      remove_groonga_log
+      result = grndb("recover",
+                     "--target-timestamp", @time.to_s,
+                     "--log-level", "info")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Recovering database: <#{@database_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{@users_table_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@users_age_column_path}>" : ""}
+|i| [db][recover] skipped to recover data column: <Users.age> <#{@users_age_column_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{@ages_table_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@ages_index_column_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@ages_index_column_path}.c>" : ""}
+|i| Recovered database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content
+                   ])
+    end
+
+    def test_skip_index_column
+      FileUtils.touch(@ages_index_column_path, :mtime => Time.parse("2019-06-12T11:59:59+09:00"))
+      remove_groonga_log
+      result = grndb("recover",
+                     "--target-timestamp", @time.to_s,
+                     "--log-level", "info")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Recovering database: <#{@database_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{@users_table_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@users_age_column_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@ages_table_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@ages_index_column_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@ages_index_column_path}.c>" : ""}
+|i| [db][recover] skipped to recover index column: <Ages.users_age> <#{@ages_index_column_path}>
+|i| Recovered database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content
+                   ])
+    end
+  end
 end

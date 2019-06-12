@@ -2,6 +2,7 @@ require "fileutils"
 require "json"
 require "shellwords"
 require "tempfile"
+require "time"
 
 require "test-unit"
 

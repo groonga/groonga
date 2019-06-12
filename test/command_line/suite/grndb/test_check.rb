@@ -822,4 +822,117 @@ Empty file exists: <#{empty_file_path_no_object}>
                    ])
     end
   end
+
+  sub_test_case "--target-timestamp" do
+    def setup
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+      groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
+
+      _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+      @table_path = path
+      _id, _name, path, *_ = JSON.parse(groonga("column_list Users").output)[1][2]
+      @column_path = path
+    end
+
+    def test_invalid_timestamp
+      error = assert_raise(CommandRunner::Error) do
+        grndb("check", "--target-timestamp", "YYYY-MM-DD")
+      end
+      assert_equal(<<-MESSAGE, error.error_output)
+Invalid --target-timestamp: <YYYY-MM-DD>
+Failed to parse: <YYYY-MM-DD>
+      MESSAGE
+    end
+
+    def test_skip_database
+      FileUtils.touch(@database_path, :mtime => Time.parse("2019-06-12T11:59:59+09:00"))
+      remove_groonga_log
+      result = grndb("check", "--log-level", "info", "--target-timestamp", "2019-06-12T12:00:00+09:00")
+      error_message = <<-MESSAGE
+Skipped because database is older than specified timestamp: <2019-06-12 12:00:00 +0900> <#{@database_path}>
+      MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Checking database: <#{@database_path}>
+|i| Skipped because database is older than specified timestamp: <2019-06-12 12:00:00 +0900> <#{@database_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@column_path}>" : ""}
+|i| [Users] Table is not locked
+|i| [Users] Table is not corrupted
+|i| [Users.age] Column is not locked
+|i| [Users.age] Column is not corrupted
+|i| Checked database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content
+                   ])
+    end
+
+    def test_skip_table
+      FileUtils.touch(@table_path, :mtime => Time.parse("2019-06-12T11:59:59+09:00"))
+      remove_groonga_log
+      result = grndb("check", "--log-level", "info", "--target-timestamp", "2019-06-12T12:00:00+09:00")
+      error_message = <<-MESSAGE
+Skipped because <Users> is older than specified timestamp: <2019-06-12 12:00:00 +0900> <#{@table_path}>
+      MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Checking database: <#{@database_path}>
+|i| Database doesn't have orphan 'inspect' object: <#{@database_path}>
+|i| Database is not locked: <#{@database_path}>
+|i| Database is not corrupted: <#{@database_path}>
+|i| Database is not dirty: <#{@database_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@column_path}>" : ""}
+|i| Skipped because <Users> is older than specified timestamp: <2019-06-12 12:00:00 +0900> <#{@table_path}>
+|i| [Users.age] Column is not locked
+|i| [Users.age] Column is not corrupted
+|i| Checked database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content
+                   ])
+    end
+
+    def test_skip_column
+      FileUtils.touch(@column_path, :mtime => Time.parse("2019-06-12T11:59:59+09:00"))
+      remove_groonga_log
+      result = grndb("check", "--log-level", "info", "--target-timestamp", "2019-06-12T12:00:00+09:00")
+      error_message = <<-MESSAGE
+Skipped because <Users.age> is older than specified timestamp: <2019-06-12 12:00:00 +0900> <#{@column_path}>
+      MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Checking database: <#{@database_path}>
+|i| Database doesn't have orphan 'inspect' object: <#{@database_path}>
+|i| Database is not locked: <#{@database_path}>
+|i| Database is not corrupted: <#{@database_path}>
+|i| Database is not dirty: <#{@database_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@column_path}>" : ""}
+|i| [Users] Table is not locked
+|i| [Users] Table is not corrupted
+|i| Skipped because <Users.age> is older than specified timestamp: <2019-06-12 12:00:00 +0900> <#{@column_path}>
+|i| Checked database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content
+                   ])
+    end
+  end
 end
