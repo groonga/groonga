@@ -51,4 +51,6 @@ MRuby::Build.new do |conf|
            :checksum_hash => "6d7f5a56ac7a90847f84186ce1dbc780e41928dc"
   conf.gem :github => "iij/mruby-dir",
            :checksum_hash => "14bc5c3e51eac16ebc9075b7b62132a0cf5ae724"
+  conf.gem :github => "kenhys/mruby-time-parse",
+           :checksum_hash => "3177d656b1b05aa4a6976831a5ec4a267a3598df"
 end
