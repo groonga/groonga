@@ -1,6 +1,6 @@
 Execution example::
 
-  normalize --normalizer NormalizerAuto --string "㌖" --flags WITH_CHECKS --output_pretty yes
+  normalize --normalizer NormalizerNFKC100 --string "㌖" --flags WITH_CHECKS
   # [
   #   [
   #     0,
