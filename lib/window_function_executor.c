@@ -528,8 +528,8 @@ grn_window_function_executor_execute(grn_ctx *ctx,
     }
     if (executor->context.sorted) {
       grn_obj_close(ctx, executor->context.sorted);
-      executor->context.sorted = sorted;
     }
+    executor->context.sorted = sorted;
     grn_table_sort(ctx,
                    table,
                    0, -1,

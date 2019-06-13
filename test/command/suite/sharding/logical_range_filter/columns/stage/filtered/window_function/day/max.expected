@@ -834,7 +834,7 @@ logical_range_filter Logs   --max '2017/03/16 08:22:00'   --max_border include  
 #:000000000000000 filter(3): between(#<accessor _key(anonymous).timestamp(Logs_20170316)>, "2017/03/16 08:00:00", "include", "2017/03/16 08:22:00", "include")
 #:000000000000000 columns[five_minute](3)
 #:000000000000000 columns[n_records_per_five_minute](3)
-#:000000000000000 filter(3): 2147483655.n_records_per_five_minute greater_equal 3
+#:000000000000000 filter(3): 2147483654.n_records_per_five_minute greater_equal 3
 #:000000000000000 sort(2)[Logs_20170316]: timestamp
 #:000000000000000 output(3)
 #<000000000000000 rc=0
