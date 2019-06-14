@@ -103,7 +103,7 @@ Here are available flags.
    * - ``NONE``
      - Just ignored.
    * - ``REMOVE_BLANK``
-     - Output remove blanks from characters of beforing normalize.
+     - Output normalized characters (blanks are removed before normaliizing)
    * - ``WITH_TYPES``
      - Output kind of character after normalize.
    * - ``WITH_CHECKS``
