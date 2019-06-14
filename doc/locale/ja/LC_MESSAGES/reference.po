@@ -17394,14 +17394,14 @@ msgstr ":doc:`/reference/commands/dump` ですべての設定項目を確認で�
 msgid "Commands"
 msgstr "コマンド一覧"
 
-msgid ":doc:commands/config_delete"
-msgstr ""
+msgid ":doc:`reference/commands/config_delete`"
+msgstr ":doc:`/reference/commands/config_delete`"
 
-msgid ":doc:commands/config_get"
-msgstr ""
+msgid ":doc:`reference/commands/config_get`"
+msgstr ":doc:`/reference/commands/config_get`"
 
-msgid ":doc:commands/config_set"
-msgstr ""
+msgid ":doc:`reference/commands/config_set`"
+msgstr ":doc:`/reference/commands/config_set`"
 
 msgid "Executables"
 msgstr "実行ファイル"
