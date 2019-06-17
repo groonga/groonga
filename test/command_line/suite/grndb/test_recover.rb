@@ -189,20 +189,6 @@ object corrupt: <[db][recover] column may be broken: <Users.age>: please truncat
     assert_equal([1], n_hits)
   end
 
-  def test_empty_file
-    groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
-    _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
-    FileUtils.rm(path)
-    FileUtils.touch(path)
-    error = assert_raise(CommandRunner::Error) do
-      grndb("recover")
-    end
-    assert_equal(<<-MESSAGE, error.error_output)
-Failed to recover database: <#{@database_path}>
-incompatible file format: <[io][open] file size is too small: <0>(required: >= 64): <#{path[0..68]}>(-65)
-    MESSAGE
-  end
-
   def test_broken_id
     groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
     _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
