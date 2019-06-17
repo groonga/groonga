@@ -173,6 +173,7 @@ module Groonga
           check_database_locked
           check_database_corrupt
           check_database_dirty
+          check_database_empty_files
         end
 
         def check_one(target_name)
@@ -275,6 +276,20 @@ module Groonga
             "It may be broken. " +
             "Re-create the database."
           failed(message)
+        end
+
+        def check_database_empty_files
+          dirname = File.dirname(@database.path)
+          basename = File.basename(@database.path)
+
+          Dir.entries(dirname).sort.each do |path|
+            next unless path.start_with?(basename)
+
+            full_path = "#{dirname}/#{path}"
+            if File.stat(full_path).size.zero?
+              failed("Empty file exists: <#{full_path}>")
+            end
+          end
         end
 
         def check_object(object)
@@ -472,6 +487,7 @@ module Groonga
           if @force_lock_clear
             clear_locks
           end
+          remove_empty_files
           @database.recover
         end
 
@@ -500,7 +516,7 @@ module Groonga
           @output.puts(message)
           logger.log(:info, message)
 
-          Dir.foreach(object_dirname) do |path|
+          Dir.entries(object_dirname).sort.each do |path|
             next unless path.start_with?("#{object_basename}.")
 
             full_path = "#{object_dirname}/#{path}"
@@ -515,7 +531,8 @@ module Groonga
                 "[#{name}] Failed to remove broken object related file: " +
                 "<#{full_path}>: #{error.class}: #{error.message}"
               @output.puts(message)
-              logger.log_error(message)
+              logger.log(:error, message)
+              logger.log_error(error)
             end
           end
         end
@@ -531,6 +548,87 @@ module Groonga
             when Column, Table
               next unless object.locked?
               object.clear_lock
+            end
+          end
+        end
+
+        def remove_empty_files
+          dirname = File.dirname(@database.path)
+          basename = File.basename(@database.path)
+
+          broken_ids = {}
+          Dir.entries(dirname).sort.each do |path|
+            next unless path.start_with?(basename)
+
+            full_path = "#{dirname}/#{path}"
+            next unless File.stat(full_path).size.zero?
+
+            match_data =
+              /\A#{Regexp.escape(basename)}\.([\da-fA-F]{7})/.match(path)
+            if match_data
+              id = Integer(match_data[1], 16)
+              name = @database[id]
+              if name
+                broken_ids[id] = true
+                next
+              end
+            end
+
+            begin
+              File.unlink(full_path)
+              message = "Removed empty file: <#{full_path}>"
+              @output.puts(message)
+              logger.log(:info, message)
+            rescue Error => error
+              message =
+                "Failed to remove empty file: <#{full_path}>: " +
+                "#{error.class}: #{error.message}"
+              logger.log(:error, message)
+              logger.log_error(error)
+            end
+          end
+
+          broken_ids.each_key do |id|
+            name = @database[id]
+            broken_basename = "%s.%07x" % [basename, id]
+
+            begin
+              Object.remove_force(name)
+              message =
+                "[#{name}] Remove a broken object that has empty file: " +
+                "<#{dirname}/#{broken_basename}>"
+              @output.puts(message)
+              logger.log(:info, message)
+            rescue Error => error
+              message =
+                "[#{name}] Failed to remove a broken object " +
+                "that has empty file: <#{dirname}/#{broken_basename}>: " +
+                "#{error.class}: #{error.message}"
+              logger.log(:error, message)
+              logger.log_error(error)
+              next
+            end
+
+            Dir.entries(dirname).sort.each do |path|
+              next unless path.start_with?(broken_basename)
+
+              full_path = "#{dirname}/#{path}"
+
+              begin
+                File.unlink(full_path)
+                message =
+                  "[#{name}] Removed a file for broken object " +
+                  "that has empty file: <#{full_path}>"
+                @output.puts(message)
+                logger.log(:info, message)
+              rescue Error => error
+                message =
+                  "[#{name}] Failed to removed a file for broken object " +
+                  "that has empty file: <#{full_path}>: " +
+                  "#{error.class}: #{error.message}"
+                logger.log(:error, message)
+                logger.log_error(error)
+              end
             end
           end
         end

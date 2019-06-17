@@ -233,6 +233,23 @@ load --table Users
     MESSAGE
   end
 
+  def test_empty_files
+    groonga("table_create", "Data", "TABLE_NO_KEY")
+    empty_file_path_object = "#{@database_path}.0000100"
+    FileUtils.rm(empty_file_path_object)
+    FileUtils.touch(empty_file_path_object)
+    empty_file_path_no_object = "#{@database_path}.0000210"
+    FileUtils.touch(empty_file_path_no_object)
+    error = assert_raise(CommandRunner::Error) do
+      grndb("check")
+    end
+    assert_equal(<<-MESSAGE, error.error_output)
+Empty file exists: <#{empty_file_path_object}>
+Empty file exists: <#{empty_file_path_no_object}>
+[Data] Can't open object. It's broken. Re-create the object or the database.
+    MESSAGE
+  end
+
   sub_test_case "--target" do
     def test_nonexistent_table
       groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")

@@ -23,6 +23,27 @@ object corrupt: <[db][recover] database may be broken. Please re-create the data
     MESSAGE
   end
 
+  def test_empty_files
+    groonga("table_create", "Data", "TABLE_NO_KEY")
+    empty_file_path_object = "#{@database_path}.0000100"
+    FileUtils.rm(empty_file_path_object)
+    FileUtils.touch(empty_file_path_object)
+    empty_file_path_object_addtional = "#{empty_file_path_object}.001"
+    FileUtils.touch(empty_file_path_object_addtional)
+    empty_file_path_no_object = "#{@database_path}.0000210"
+    FileUtils.touch(empty_file_path_no_object)
+    result = grndb("recover")
+    error_output = <<-MESSAGE
+Removed empty file: <#{empty_file_path_no_object}>
+[Data] Remove a broken object that has empty file: <#{empty_file_path_object}>
+    MESSAGE
+    assert_equal(["", error_output],
+                 [result.output, result.error_output])
+    result = grndb("check")
+    assert_equal(["", ""],
+                 [result.output, result.error_output])
+  end
+
   sub_test_case("locked table") do
     def setup
       groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
