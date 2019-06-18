@@ -109,6 +109,7 @@ matrix:
     - name: "CMake: macOS"
       os: osx
       compiler: clang
+      osx_image: xcode10.2
       addons:
         <<: *addons_macos_build
       env:
