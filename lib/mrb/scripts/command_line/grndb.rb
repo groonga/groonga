@@ -592,7 +592,9 @@ module Groonga
             when Column, Table
               next unless object.locked?
               object.clear_lock
-              logger.log(:info, "[#{object.name}] Clear locked object: <#{object.path}>")
+              logger.log(:info,
+                         "[#{object.name}] Clear locked object: " +
+                         "<#{object.path}>")
             end
           end
         end
