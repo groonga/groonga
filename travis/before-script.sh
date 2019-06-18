@@ -31,6 +31,8 @@ fi
 
 prefix=/tmp/local
 
+set -x
+
 case "${BUILD_TOOL}" in
   autotools)
     ./autogen.sh
