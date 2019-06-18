@@ -245,7 +245,9 @@ module Groonga
             end
           end
           unless found
-            logger.log(:info, "Database doesn't have orphan 'inspect' object in <#{@database_path}>")
+            logger.log(:info,
+                       "Database doesn't have orphan 'inspect' object: " +
+                       "<#{@database_path}>")
           end
         end
 

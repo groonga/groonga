@@ -41,7 +41,7 @@ class TestGrnDBCheck < GroongaTestCase
                    "",
                    expected_groonga_log("info", <<-MESSAGES),
 |i| Checking database: <#{@database_path}>
-|i| Database doesn't have orphan 'inspect' object in <#{@database_path}>
+|i| Database doesn't have orphan 'inspect' object: <#{@database_path}>
 |i| Database is not locked: <#{@database_path}>
 |i| Database is not corrupted: <#{@database_path}>
 |i| Database is not dirty: <#{@database_path}>
