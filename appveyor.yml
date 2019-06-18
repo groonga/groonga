@@ -134,7 +134,7 @@ test_script:
   - ruby test\command_line\run-test.rb
      --groonga-install-prefix=%APPVEYOR_BUILD_FOLDER%\\%GROONGA_INSTALL_SUB_FOLDER_ESCAPED%\\%GROONGA_INSTALL_FOLDER%
 
-on_success:
+on_finish:
   - cd %GROONGA_INSTALL_SUB_FOLDER%
   - set ARTIFACT=%GROONGA_INSTALL_FOLDER%.zip
   - 7z a %ARTIFACT% %FULL_GROONGA_INSTALL_FOLDER%
