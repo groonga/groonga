@@ -63,45 +63,66 @@ module GroongaLog
                        ([|:]\ )?
                        (.+)
                     \z/x) do
-      timestamp = $1
-      level = $2
-      id_section = $3
-      separator = $4
-      message = $5
-      timestamp = "1970-01-01 00:00:00.000000" if timestamp
-      case id_section
-      when nil
-      when /\|/
-        id_section = "PROCESS_ID|THREAD_ID"
-      when /[a-zA-Z]/
-        id_section = "THREAD_ID"
-      when /\A\d{8,}\z/
-        id_section = "THREAD_ID"
-      else
-        id_section = "PROCESS_ID"
-      end
-      timestamp.to_s +
-        "|" +
-        level +
-        "|" +
-        id_section.to_s +
-        separator.to_s +
-        normalize_groonga_log_message(message) +
-        "\n"
     end
   end
 
   def normalize_groonga_log(content)
     normalized = ""
     content.each_line do |line|
-      next if stack_trace_line?(line)
-      normalized << normalize_groonga_log_line(line)
+      case line.chomp
+      when /\A
+              (\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}\.\d+)?
+              \|\
+              ([a-zA-Z])
+              \|\
+              ([^: ]+)?
+              ([|:]\ )?
+              (.+)
+            \z/x
+        timestamp = $1
+        level = $2
+        id_section = $3
+        separator = $4
+        message = $5
+        next if stack_trace_groonga_log_message?(message)
+
+        timestamp = "1970-01-01 00:00:00.000000" if timestamp
+        case id_section
+        when nil
+        when /\|/
+          id_section = "PROCESS_ID|THREAD_ID"
+        when /[a-zA-Z]/
+          id_section = "THREAD_ID"
+        when /\A\d{8,}\z/
+          id_section = "THREAD_ID"
+        else
+          id_section = "PROCESS_ID"
+        end
+        message = normalize_groonga_log_message(message)
+        normalized <<
+          "#{timestamp}|#{level}|#{id_section}#{separator}#{message}\n"
+      else
+        normalized << line
+      end
     end
     normalized
   end
 
   private
-  def stack_trace_line?(line)
-    /\|e\| (.+?)\((.+?)\) \[(0x.+?)\]$/.match?(line)
+  def stack_trace_groonga_log_message?(message)
+    case message.strip
+    when /\A\//
+      true
+    when /\A[a-zA-Z]:[\/\\]/
+      true
+    when /\Agroonga\(\) \[0x[\da-f]+\]\z/
+      true
+    when /\A\d+\s+(?:lib\S+\.dylib|\S+\.so|groonga|nginx|\?\?\?)\s+
+             0x[\da-f]+\s
+             \S+\s\+\s\d+\z/x
+      true
+    else
+      false
+    end
   end
 end
