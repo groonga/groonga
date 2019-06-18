@@ -144,6 +144,31 @@ module CommandRunner
     find_program("grndb", :prefer_libtool => true)
   end
 
+  def expected_groonga_log(level, messages)
+    log_file = Tempfile.new("groonga-log")
+    log_file.close
+    groonga("status",
+            command_line: [
+              "--log-path", log_file.path,
+              "--log-level", level,
+            ])
+    standard_log_lines = normalize_groonga_log(File.read(log_file.path)).lines
+    log = standard_log_lines[0..-2].join("")
+    unless messages.empty?
+      messages.each_line do |message|
+        log << "1970-01-01 00:00:00.000000#{message}"
+      end
+    end
+    log << standard_log_lines[-1] # grn_fin
+    log
+  end
+
+  def prepend_tag(tag, messages)
+    messages.each_line.inject("") do |result, line|
+      result + "#{tag}#{line}"
+    end
+  end
+
   def normalize_init_line(line)
     line.chomp.gsub(/\A
                        (\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}\.\d+)?
