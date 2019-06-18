@@ -94,6 +94,86 @@ mrb_grn_accessor_key_p(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_accessor_value_p(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *accessor;
+
+  accessor = DATA_PTR(self);
+  return mrb_bool_value(grn_obj_is_value_accessor(ctx, accessor));
+}
+
+static mrb_value
+mrb_grn_accessor_score_p(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *accessor;
+
+  accessor = DATA_PTR(self);
+  return mrb_bool_value(grn_obj_is_score_accessor(ctx, accessor));
+}
+
+static mrb_value
+mrb_grn_accessor_nsubrecs_p(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *accessor;
+
+  accessor = DATA_PTR(self);
+  return mrb_bool_value(grn_obj_is_nsubrecs_accessor(ctx, accessor));
+}
+
+static mrb_value
+mrb_grn_accessor_max_p(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *accessor;
+
+  accessor = DATA_PTR(self);
+  return mrb_bool_value(grn_obj_is_max_accessor(ctx, accessor));
+}
+
+static mrb_value
+mrb_grn_accessor_min_p(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *accessor;
+
+  accessor = DATA_PTR(self);
+  return mrb_bool_value(grn_obj_is_min_accessor(ctx, accessor));
+}
+
+static mrb_value
+mrb_grn_accessor_sum_p(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *accessor;
+
+  accessor = DATA_PTR(self);
+  return mrb_bool_value(grn_obj_is_sum_accessor(ctx, accessor));
+}
+
+static mrb_value
+mrb_grn_accessor_avg_p(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *accessor;
+
+  accessor = DATA_PTR(self);
+  return mrb_bool_value(grn_obj_is_avg_accessor(ctx, accessor));
+}
+
+static mrb_value
+mrb_grn_accessor_column_value_p(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *accessor;
+
+  accessor = DATA_PTR(self);
+  return mrb_bool_value(grn_obj_is_column_value_accessor(ctx, accessor));
+}
+
+static mrb_value
 mrb_grn_accessor_name(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -139,6 +219,22 @@ grn_mrb_accessor_init(grn_ctx *ctx)
                     mrb_grn_accessor_id_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "key?",
                     mrb_grn_accessor_key_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "value?",
+                    mrb_grn_accessor_value_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "score?",
+                    mrb_grn_accessor_score_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "nsubrecs?",
+                    mrb_grn_accessor_nsubrecs_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "max?",
+                    mrb_grn_accessor_max_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "min?",
+                    mrb_grn_accessor_min_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "sum?",
+                    mrb_grn_accessor_sum_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "avg?",
+                    mrb_grn_accessor_avg_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "column_value?",
+                    mrb_grn_accessor_column_value_p, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "name",
                     mrb_grn_accessor_name, MRB_ARGS_NONE());

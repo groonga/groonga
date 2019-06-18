@@ -309,6 +309,142 @@ grn_obj_is_key_accessor(grn_ctx *ctx, grn_obj *obj)
   return accessor->action == GRN_ACCESSOR_GET_KEY;
 }
 
+bool
+grn_obj_is_value_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  accessor = (grn_accessor *)obj;
+  if (accessor->next) {
+    return GRN_FALSE;
+  }
+
+  return accessor->action == GRN_ACCESSOR_GET_VALUE;
+}
+
+bool
+grn_obj_is_score_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  accessor = (grn_accessor *)obj;
+  if (accessor->next) {
+    return GRN_FALSE;
+  }
+
+  return accessor->action == GRN_ACCESSOR_GET_SCORE;
+}
+
+bool
+grn_obj_is_nsubrecs_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  accessor = (grn_accessor *)obj;
+  if (accessor->next) {
+    return GRN_FALSE;
+  }
+
+  return accessor->action == GRN_ACCESSOR_GET_NSUBRECS;
+}
+
+bool
+grn_obj_is_max_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  accessor = (grn_accessor *)obj;
+  if (accessor->next) {
+    return GRN_FALSE;
+  }
+
+  return accessor->action == GRN_ACCESSOR_GET_MAX;
+}
+
+bool
+grn_obj_is_min_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  accessor = (grn_accessor *)obj;
+  if (accessor->next) {
+    return GRN_FALSE;
+  }
+
+  return accessor->action == GRN_ACCESSOR_GET_MIN;
+}
+
+bool
+grn_obj_is_sum_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  accessor = (grn_accessor *)obj;
+  if (accessor->next) {
+    return GRN_FALSE;
+  }
+
+  return accessor->action == GRN_ACCESSOR_GET_SUM;
+}
+
+bool
+grn_obj_is_avg_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  accessor = (grn_accessor *)obj;
+  if (accessor->next) {
+    return GRN_FALSE;
+  }
+
+  return accessor->action == GRN_ACCESSOR_GET_AVG;
+}
+
+bool
+grn_obj_is_column_value_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return GRN_FALSE;
+  }
+
+  accessor = (grn_accessor *)obj;
+  if (accessor->next) {
+    return GRN_FALSE;
+  }
+
+  return accessor->action == GRN_ACCESSOR_GET_COLUMN_VALUE;
+}
+
 grn_bool
 grn_obj_is_type(grn_ctx *ctx, grn_obj *obj)
 {
