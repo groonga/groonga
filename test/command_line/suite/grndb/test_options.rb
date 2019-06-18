@@ -19,8 +19,7 @@ class TestGrnDBOptions < GroongaTestCase
     test("default") do
       groonga("status")
       grndb("check")
-      assert_equal("1970-01-01 00:00:00.000000|n| " +
-                   "grn_fin (0)",
+      assert_equal("1970-01-01 00:00:00.000000|n| grn_fin (0)\n",
                    normalize_groonga_log(File.readlines(@log_path).last))
     end
 
@@ -28,8 +27,7 @@ class TestGrnDBOptions < GroongaTestCase
       flags = "+pid"
       groonga("status")
       grndb("check", "--log-flags", flags)
-      assert_equal("1970-01-01 00:00:00.000000|n|PROCESS_ID: " +
-                   "grn_fin (0)",
+      assert_equal("1970-01-01 00:00:00.000000|n|PROCESS_ID: grn_fin (0)\n",
                    normalize_groonga_log(File.readlines(@log_path).last))
     end
 
@@ -38,7 +36,7 @@ class TestGrnDBOptions < GroongaTestCase
       groonga("status")
       grndb("check", "--log-flags", flags)
       assert_equal("1970-01-01 00:00:00.000000|n|PROCESS_ID|THREAD_ID: " +
-                   "grn_fin (0)",
+                   "grn_fin (0)\n",
                    normalize_groonga_log(File.readlines(@log_path).last))
     end
 
@@ -46,7 +44,7 @@ class TestGrnDBOptions < GroongaTestCase
       flags = "-time"
       groonga("status")
       grndb("check", "--log-flags", flags)
-      assert_equal("|n| grn_fin (0)",
+      assert_equal("|n| grn_fin (0)\n",
                    normalize_groonga_log(File.readlines(@log_path).last))
     end
 
@@ -54,7 +52,7 @@ class TestGrnDBOptions < GroongaTestCase
       flags = "+pid|-time|-process_id"
       groonga("status")
       grndb("check", "--log-flags", flags)
-      assert_equal("|n| grn_fin (0)",
+      assert_equal("|n| grn_fin (0)\n",
                    normalize_groonga_log(File.readlines(@log_path).last))
     end
 
@@ -62,8 +60,7 @@ class TestGrnDBOptions < GroongaTestCase
       flags = "+process_id|default|+thread_id"
       groonga("status")
       grndb("check", "--log-flags", flags)
-      assert_equal("1970-01-01 00:00:00.000000|n|THREAD_ID: " +
-                   "grn_fin (0)",
+      assert_equal("1970-01-01 00:00:00.000000|n|THREAD_ID: grn_fin (0)\n",
                    normalize_groonga_log(File.readlines(@log_path).last))
     end
 
