@@ -1,4 +1,5 @@
 # Copyright(C) 2017 Brazil
+# Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -21,7 +22,8 @@ SUBDIRS =					\
 	mecab					\
 	message_pack				\
 	mruby					\
-	groonga-log
+	groonga-log				\
+	rapidjson
 
 EXTRA_DIST =					\
 	$(NGINX_DIR)				\
@@ -29,7 +31,8 @@ EXTRA_DIST =					\
 	plugins/CMakeLists.txt			\
 	download_lz4.rb				\
 	download_message_pack.rb		\
-	download_mecab.rb
+	download_mecab.rb			\
+	download_rapidjson.rb
 
 dist-hook:
 	rm -rf $(distdir)/$(NGINX_DIR)/objs/

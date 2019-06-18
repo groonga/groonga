@@ -15,17 +15,18 @@ cache:
 addons_linux_build: &addons_linux_build
   apt:
     packages:
-      - autotools-dev
       - autoconf-archive
       - automake1.11
-      - zlib1g-dev
-      - libmsgpack-dev
-      - libevent-dev
-      - libmecab-dev
-      - libluajit-5.1-dev
-      - mecab-naist-jdic
+      - autotools-dev
       - cmake
       - gdb
+      - libevent-dev
+      - libluajit-5.1-dev
+      - libmecab-dev
+      - libmsgpack-dev
+      - mecab-naist-jdic
+      - rapidjson-dev
+      - zlib1g-dev
 
 addons_macos_build: &addons_macos_build
   homebrew:

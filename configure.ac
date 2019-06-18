@@ -319,6 +319,7 @@ AC_CONFIG_FILES([
   vendor/message_pack/Makefile
   vendor/mruby/Makefile
   vendor/groonga-log/Makefile
+  vendor/rapidjson/Makefile
 ])
 
 if test "$GCC" = "yes"; then

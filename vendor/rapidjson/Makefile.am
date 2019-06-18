@@ -1,4 +1,3 @@
-# Copyright(C) 2013-2016 Brazil
 # Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
@@ -14,12 +13,5 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-add_subdirectory(lz4)
-add_subdirectory(onigmo)
-add_subdirectory(mruby)
-add_subdirectory(mecab)
-add_subdirectory(message_pack)
-add_subdirectory(rapidjson)
-if(GRN_WITH_MRUBY)
-  add_subdirectory(groonga-log)
-endif()
+EXTRA_DIST =					\
+	CMakeLists.txt

@@ -1,5 +1,5 @@
 # Copyright(C) 2012-2018 Brazil
-# Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+# Copyright(C) 2018-2019 Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -437,6 +437,41 @@ if(NOT ${GRN_WITH_LZ4} STREQUAL "no")
   endif()
 else()
   set(GRN_WITH_LZ4 FALSE)
+endif()
+
+
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_rapidjson_version"
+  GRN_BUNDLED_RAPIDJSON_VERSION)
+string(STRIP
+  "${GRN_BUNDLED_RAPIDJSON_VERSION}"
+  GRN_BUNDLED_RAPIDJSON_VERSION)
+
+set(GRN_WITH_BUNDLED_RAPIDJSON FALSE)
+set(GRN_WITH_RAPIDJSON "auto"
+  CACHE STRING "Support data compression by RapidJSON.")
+if(NOT ${GRN_WITH_RAPIDJSON} STREQUAL "no")
+  find_package(RapidJSON)
+  if(RapidJSON_FOUND)
+    set(GRN_WITH_RAPIDJSON TRUE)
+    message(STATUS "RapidJSON: ${RAPIDJSON_INCLUDE_DIRS}")
+  else()
+    set(GRN_BUNDLED_RAPIDJSON_DIR
+      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/rapidjson-${GRN_BUNDLED_RAPIDJSON_VERSION}")
+    if(EXISTS ${GRN_BUNDLED_RAPIDJSON_DIR})
+      set(RAPIDJSON_INCLUDE_DIRS "${GRN_BUNDLED_RAPIDJSON_DIR}/include")
+      set(GRN_WITH_BUNDLED_RAPIDJSON TRUE)
+      set(GRN_WITH_RAPIDJSON TRUE)
+      message(STATUS "RapidJSON: ${RAPIDJSON_INCLUDE_DIRS} (bundled)")
+    else()
+      if(${GRN_WITH_RAPIDJSON} STREQUAL "yes")
+	message(FATAL_ERROR "No RapidJSON found")
+      endif()
+      set(GRN_WITH_RAPIDJSON FALSE)
+      message(STATUS "No RapidJSON")
+    endif()
+  endif()
+else()
+  set(GRN_WITH_RAPIDJSON FALSE)
 endif()
 
 

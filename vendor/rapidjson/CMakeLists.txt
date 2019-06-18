@@ -1,4 +1,3 @@
-# Copyright(C) 2013-2016 Brazil
 # Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
@@ -14,12 +13,14 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-add_subdirectory(lz4)
-add_subdirectory(onigmo)
-add_subdirectory(mruby)
-add_subdirectory(mecab)
-add_subdirectory(message_pack)
-add_subdirectory(rapidjson)
-if(GRN_WITH_MRUBY)
-  add_subdirectory(groonga-log)
+set(RAPIDJSON_VERSION ${GRN_BUNDLED_RAPIDJSON_VERSION})
+
+set(RAPIDJSON_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../rapidjson-${RAPIDJSON_VERSION}")
+set(RAPIDJSON_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/../rapidjson-${RAPIDJSON_VERSION}")
+
+if(GRN_WITH_BUNDLED_RAPIDJSON)
+  install(FILES
+    "${RAPIDJSON_SOURCE_DIR}/license.txt"
+    "${RAPIDJSON_SOURCE_DIR}/readme.md"
+    DESTINATION "${GRN_DATA_DIR}/rapidjson")
 endif()

@@ -59,6 +59,7 @@ cmake_install.cmake
 /vendor/mecab/mecab-dict-index
 /vendor/mecab/mecabrc
 /vendor/msgpack-*
+/vendor/rapidjson-*
 /vendor/lz4-*
 /vendor/plugins/*/
 /groonga.spec

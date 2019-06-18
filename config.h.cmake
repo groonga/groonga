@@ -83,6 +83,7 @@
 #cmakedefine GRN_WITH_KYTEA
 #cmakedefine GRN_WITH_LZ4
 #cmakedefine GRN_WITH_ZSTD
+#cmakedefine GRN_WITH_RAPIDJSON
 #cmakedefine GRN_WITH_MECAB
 #cmakedefine GRN_WITH_MESSAGE_PACK
 #cmakedefine GRN_WITH_MRUBY
