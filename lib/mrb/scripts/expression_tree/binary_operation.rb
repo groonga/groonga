@@ -118,7 +118,7 @@ module Groonga
           else
             return 0
           end
-        else
+        elsif last_accessor.key?
           if last_accessor.object[value]
             if last_accessor == accessor
               return 1
@@ -128,6 +128,8 @@ module Groonga
           else
             return 0
           end
+        else
+          return table.size
         end
       end
 

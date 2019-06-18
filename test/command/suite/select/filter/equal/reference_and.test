@@ -1,0 +1,24 @@
+#$GRN_EXPR_OPTIMIZE=yes
+
+table_create Tags TABLE_HASH_KEY ShortText --normalizer NormalizerNFKC121
+column_create Tags label COLUMN_SCALAR ShortText
+column_create Tags weight COLUMN_SCALAR Int32
+
+table_create Values TABLE_NO_KEY
+column_create Values tag COLUMN_SCALAR Tags
+
+load --table Tags
+[
+{"_key": "groonga", "label": "Groonga", "weight": 10},
+{"_key": "mroonga", "label": "Mroonga", "weight": 5}
+]
+
+load --table Values
+[
+{"tag": "groonga"},
+{"tag": "mroonga"}
+]
+
+select Values \
+  --filter 'tag.label == "Groonga" && tag.weight >= 10' \
+  --output_columns 'tag'
