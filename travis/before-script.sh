@@ -83,5 +83,5 @@ esac
 if [ -n "${TARGET}" ]; then
   make dist > /dev/null
 else
-  make -j${n_processors} > /dev/null
+  make -j${n_processors}
 fi
