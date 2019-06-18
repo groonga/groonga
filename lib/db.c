@@ -3431,8 +3431,6 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
     grn_obj_flags column_value_flags = 0;
     grn_obj column_value;
     grn_posting add_posting;
-    grn_id *tid;
-    grn_rset_recinfo *recinfo;
 
     if (column->header.type == GRN_COLUMN_VAR_SIZE) {
       column_value_flags |= GRN_OBJ_VECTOR;
@@ -3445,17 +3443,21 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
     add_posting.pos = 0;
     add_posting.weight = 0;
 
-    GRN_HASH_EACH(ctx, (grn_hash *)current_res, id, &tid, NULL, &recinfo, {
-      int i;
-      int n_elements;
+    GRN_HASH_EACH_BEGIN(ctx, (grn_hash *)current_res, cursor, id) {
+      void *key;
+      void *value;
+      grn_hash_cursor_get_key_value(ctx, cursor, &key, NULL, &value);
+
+      grn_id *tid = key;
+      grn_rset_recinfo *recinfo = value;
 
       add_posting.weight = recinfo->score - 1;
 
       GRN_BULK_REWIND(&column_value);
       grn_obj_get_value(ctx, column, *tid, &column_value);
 
-      n_elements = GRN_BULK_VSIZE(&column_value) / sizeof(grn_id);
-      for (i = 0; i < n_elements; i++) {
+      int n_elements = GRN_BULK_VSIZE(&column_value) / sizeof(grn_id);
+      for (int i = 0; i < n_elements; i++) {
         add_posting.rid = GRN_RECORD_VALUE_AT(&column_value, i);
         rc = grn_ii_posting_add(ctx,
                                 &add_posting,
@@ -3468,7 +3470,7 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
       if (rc != GRN_SUCCESS) {
         break;
       }
-    });
+    } GRN_HASH_EACH_END(ctx, cursor);
 
     GRN_OBJ_FIN(ctx, &column_value);
   }
