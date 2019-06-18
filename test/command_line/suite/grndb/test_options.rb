@@ -21,7 +21,7 @@ class TestGrnDBOptions < GroongaTestCase
       grndb("check")
       assert_equal("1970-01-01 00:00:00.000000|n| " +
                    "grn_fin (0)",
-                   normalize_init_line(File.readlines(@log_path).last))
+                   normalize_groonga_log(File.readlines(@log_path).last))
     end
 
     test("add: one") do
@@ -30,7 +30,7 @@ class TestGrnDBOptions < GroongaTestCase
       grndb("check", "--log-flags", flags)
       assert_equal("1970-01-01 00:00:00.000000|n|PROCESS_ID: " +
                    "grn_fin (0)",
-                   normalize_init_line(File.readlines(@log_path).last))
+                   normalize_groonga_log(File.readlines(@log_path).last))
     end
 
     test("add: multiple") do
@@ -39,7 +39,7 @@ class TestGrnDBOptions < GroongaTestCase
       grndb("check", "--log-flags", flags)
       assert_equal("1970-01-01 00:00:00.000000|n|PROCESS_ID|THREAD_ID: " +
                    "grn_fin (0)",
-                   normalize_init_line(File.readlines(@log_path).last))
+                   normalize_groonga_log(File.readlines(@log_path).last))
     end
 
     test("remove: one") do
@@ -47,7 +47,7 @@ class TestGrnDBOptions < GroongaTestCase
       groonga("status")
       grndb("check", "--log-flags", flags)
       assert_equal("|n| grn_fin (0)",
-                   normalize_init_line(File.readlines(@log_path).last))
+                   normalize_groonga_log(File.readlines(@log_path).last))
     end
 
     test("remove: multiple") do
@@ -55,7 +55,7 @@ class TestGrnDBOptions < GroongaTestCase
       groonga("status")
       grndb("check", "--log-flags", flags)
       assert_equal("|n| grn_fin (0)",
-                   normalize_init_line(File.readlines(@log_path).last))
+                   normalize_groonga_log(File.readlines(@log_path).last))
     end
 
     test("replace") do
@@ -64,7 +64,7 @@ class TestGrnDBOptions < GroongaTestCase
       grndb("check", "--log-flags", flags)
       assert_equal("1970-01-01 00:00:00.000000|n|THREAD_ID: " +
                    "grn_fin (0)",
-                   normalize_init_line(File.readlines(@log_path).last))
+                   normalize_groonga_log(File.readlines(@log_path).last))
     end
 
     test("unknown") do
