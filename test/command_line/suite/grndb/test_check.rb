@@ -451,7 +451,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                    expected_groonga_log("notice", <<-MESSAGES),
 |e| Empty file exists: <#{empty_file_path_object}>
 |e| Empty file exists: <#{empty_file_path_no_object}>
-|e| [io][open] file size is too small: <0>(required: >= 64): </tmp/groonga/test/command_line/tmp/groonga-command-line/test_empty_files-TestGrnDBCheck-.db.0000100>
+|e| [io][open] file size is too small: <0>(required: >= 64): <#{empty_file_path_object}>
 |e| grn_ctx_at: failed to open object: <256>(<Data>):<51>(<table:no_key>)
 |e| [Data] Can't open object. It's broken. Re-create the object or the database.
 |e| grn_ctx_at: failed to open object: <256>(<Data>):<51>(<table:no_key>)
