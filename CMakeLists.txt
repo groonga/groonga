@@ -453,6 +453,7 @@ set(GRN_WITH_RAPIDJSON "auto"
 if(NOT ${GRN_WITH_RAPIDJSON} STREQUAL "no")
   find_package(RapidJSON)
   if(NOT RapidJSON_FOUND)
+    unset(RapidJSON_FOUND)
     check_include_file_cxx(rapidjson/rapidjson.h RapidJSON_FOUND)
   endif()
   if(RapidJSON_FOUND)
