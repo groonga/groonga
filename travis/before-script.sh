@@ -56,7 +56,7 @@ case "${BUILD_TOOL}" in
       configure_args="${configure_args} --enable-maintainer-mode"
     fi
 
-    cd vendor/onigmo-source && autoreconf --force --install
+    (cd vendor/onigmo-source && autoreconf --force --install)
     ./configure --prefix=${prefix} ${configure_args}
     ;;
   cmake)
