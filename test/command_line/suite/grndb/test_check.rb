@@ -73,7 +73,7 @@ Database has orphan 'inspect' object. Remove it by '#{real_grndb_path} recover #
                    "",
                    error_message,
                    expected_groonga_log("notice", <<-MESSAGES),
-|e| system call error: No such file or directory: failed to open path: <#{@database_path}.0000100>
+|e| system call error: DETAIL: failed to open path: <#{@database_path}.0000100>
 |e| grn_ctx_at: failed to open object: <256>(<inspect>):<51>(<table:no_key>)
 |e| #{error_message.chomp}
 |e| grn_ctx_at: failed to open object: <256>(<inspect>):<51>(<table:no_key>)
@@ -222,7 +222,7 @@ load --table Users
                    "",
                    error_message,
                    expected_groonga_log("notice", <<-MESSAGES),
-|e| system call error: No such file or directory: failed to open path: <#{@database_path}.0000100>
+|e| system call error: DETAIL: failed to open path: <#{@database_path}.0000100>
 |e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
 |e| #{error_message.chomp}
 |e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
@@ -345,7 +345,7 @@ load --table Users
                    "",
                    error_message,
                    expected_groonga_log("notice", <<-MESSAGES),
-|e| system call error: No such file or directory: [io][corrupt] used path doesn't exist: <#{removed_path}>
+|e| system call error: DETAIL: [io][corrupt] used path doesn't exist: <#{removed_path}>
 |e| #{error_message.chomp}
                    MESSAGES
                  ],
@@ -378,7 +378,7 @@ load --table Users
                    "",
                    error_message,
                    expected_groonga_log("notice", <<-MESSAGES),
-|e| system call error: No such file or directory: [dat][corrupt] used path doesn't exist: <#{removed_path}>
+|e| system call error: DETAIL: [dat][corrupt] used path doesn't exist: <#{removed_path}>
 |e| #{error_message.chomp}
                    MESSAGES
                  ],
@@ -418,7 +418,7 @@ load --table Users
                    "",
                    error_message,
                    expected_groonga_log("notice", <<-MESSAGES),
-|e| system call error: No such file or directory: [io][corrupt] used path doesn't exist: <#{removed_path}>
+|e| system call error: DETAIL: [io][corrupt] used path doesn't exist: <#{removed_path}>
 |e| #{error_message.chomp}
                    MESSAGES
                  ],
@@ -482,7 +482,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                      "",
                      error_message,
                      expected_groonga_log("notice", <<-MESSAGES),
-|e| system call error: No such file or directory: failed to open path: <#{path}>
+|e| system call error: DETAIL: failed to open path: <#{path}>
 |e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
 |e| #{error_message.chomp}
                      MESSAGES
@@ -583,7 +583,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                      "",
                      error_message,
                      expected_groonga_log("notice", <<-MESSAGES)
-|e| system call error: No such file or directory: failed to open path: <#{removed_path}>
+|e| system call error: DETAIL: failed to open path: <#{removed_path}>
 |e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
 |e| #{error_message.chomp}
                      MESSAGES
