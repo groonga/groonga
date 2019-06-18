@@ -21,6 +21,7 @@ RUN \
     make \
     mecab-naist-jdic \
     pkg-config \
+    rapidjson-dev \
     rsync \
     ruby \
     ruby-dev \
