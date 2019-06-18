@@ -992,6 +992,7 @@ if test "x$enable_arrow" != "xno"; then
 fi
 AM_CONDITIONAL([GRN_WITH_ARROW], [test "$arrow_available" = "yes"])
 
+RAPIDJSON_CFLAGS=
 # RapidJSON
 AC_ARG_WITH(rapidjson,
   [AS_HELP_STRING([--with-rapidjson],
@@ -1006,6 +1007,13 @@ if test "x$with_rapidjson" != "xno"; then
                       [GRN_WITH_RAPIDJSON=no])
     ],
     [GRN_WITH_RAPIDJSON=no])
+  if test "$GRN_WITH_RAPIDJSON" = "no"; then
+    AC_LANG_PUSH([C++])
+    AC_CHECK_HEADER(rapidjson/rapidjson.h,
+                    [GRN_WITH_RAPIDJSON=yes],
+                    [GRN_WITH_RAPIDJSON=no])
+    AC_LANG_POP([C++])
+  fi
   if test "$GRN_WITH_RAPIDJSON" = "yes"; then
     AC_DEFINE(GRN_WITH_RAPIDJSON, [1],
               [Support RapidJSON.])
