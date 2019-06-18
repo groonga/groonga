@@ -48,6 +48,7 @@
 #ifdef WIN32
 # include <share.h>
 # include <dbghelp.h>
+# pragma comment(lib, dbghelp.lib))
 #else /* WIN32 */
 # include <netinet/in.h>
 #endif /* WIN32 */
@@ -1842,17 +1843,23 @@ segv_handler(int signal_number, siginfo_t *info, void *context)
 # ifdef HAVE_BACKTRACE
 #  define N_TRACE_LEVEL 1024
   {
-    static void *trace[N_TRACE_LEVEL];
-    int n = backtrace(trace, N_TRACE_LEVEL);
-    char **symbols = backtrace_symbols(trace, n);
-    int i;
+    HANDLE process = GetCurrentProcess();
+    SymInitialize(process, NULL, TRUE);
 
-    if (symbols) {
-      for (i = 0; i < n; i++) {
-        GRN_LOG(ctx, GRN_LOG_CRIT, "%s", symbols[i]);
-      }
-      free(symbols);
+    static void *trace[N_TRACE_LEVEL];
+    int n = CaptureStackBackTrace(0, N_TRACE_LEVEL, trace, NULL);
+
+    int i;
+    SYSTEM_INFO symbols;
+    &symbols = (SYSTEM_INFO *)malloc(sizeof(SYSTEM_INFO) + 256 * sizeof(char));
+    symbols.MaxNameLen = 255;
+    symbols.SizeOfStruct = sizeof(SYSTEM_INFO);
+
+    for (i = 0; i < n; i++) {
+      SymFromAddr(process, (DWORD64)trace[i], 0, &symbol);
+      GRN_LOG(ctx, GRN_LOG_CRIT, "%s", symbol.Name);
     }
+    free(symbols);
   }
 # else /* HAVE_BACKTRACE */
   GRN_LOG(ctx, GRN_LOG_CRIT, "backtrace() isn't available.");
