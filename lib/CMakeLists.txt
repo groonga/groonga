@@ -92,6 +92,9 @@ endif()
 if(NOT MSVC)
   set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
 endif()
+if(GRN_WITH_RAPIDJSON)
+  set_target_properties(libgroonga PROPERTIES CXX_STANDARD 11)
+endif()
 
 set(GRN_ALL_LIBRARIES
     ${EXECINFO_LIBS}
