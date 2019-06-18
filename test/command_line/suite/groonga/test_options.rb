@@ -19,38 +19,38 @@ class TestGroongaOptions < GroongaTestCase
       groonga("status",
               command_line: ["--log-flags", "+pid"])
       assert_equal("1970-01-01 00:00:00.000000|n|PROCESS_ID: " +
-                   "grn_init: <VERSION>",
-                   normalize_init_line(File.readlines(@log_path).first))
+                   "grn_init: <VERSION>\n",
+                   normalize_groonga_log(File.readlines(@log_path).first))
     end
 
     test("add: multiple") do
       groonga("status",
               command_line: ["--log-flags", "+process_id|+thread_id"])
       assert_equal("1970-01-01 00:00:00.000000|n|PROCESS_ID|THREAD_ID: " +
-                   "grn_init: <VERSION>",
-                   normalize_init_line(File.readlines(@log_path).first))
+                   "grn_init: <VERSION>\n",
+                   normalize_groonga_log(File.readlines(@log_path).first))
     end
 
     test("remove: one") do
       groonga("status",
               command_line: ["--log-flags", "-time"])
-      assert_equal("|n| grn_init: <VERSION>",
-                   normalize_init_line(File.readlines(@log_path).first))
+      assert_equal("|n| grn_init: <VERSION>\n",
+                   normalize_groonga_log(File.readlines(@log_path).first))
     end
 
     test("remove: multiple") do
       groonga("status",
               command_line: ["--log-flags", "+pid|-time|-process_id"])
-      assert_equal("|n| grn_init: <VERSION>",
-                   normalize_init_line(File.readlines(@log_path).first))
+      assert_equal("|n| grn_init: <VERSION>\n",
+                   normalize_groonga_log(File.readlines(@log_path).first))
     end
 
     test("replace") do
       groonga("status",
               command_line: ["--log-flags", "+process_id|default|+thread_id"])
       assert_equal("1970-01-01 00:00:00.000000|n|THREAD_ID: " +
-                   "grn_init: <VERSION>",
-                   normalize_init_line(File.readlines(@log_path).first))
+                   "grn_init: <VERSION>\n",
+                   normalize_groonga_log(File.readlines(@log_path).first))
     end
   end
 end

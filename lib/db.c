@@ -15219,6 +15219,9 @@ grn_db_recover_database_remove_orphan_inspect(grn_ctx *ctx, grn_obj *db)
       if (!grn_ctx_at(ctx, id)) {
         ERRCLR(ctx);
         grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
+        GRN_LOG(ctx, GRN_LOG_INFO,
+                "[db][recover] removed orphan 'inspect' object: <%u>",
+                id);
       }
       break;
     }

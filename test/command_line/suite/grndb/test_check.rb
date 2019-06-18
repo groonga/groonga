@@ -18,7 +18,6 @@ class TestGrnDBCheck < GroongaTestCase
 
     def test_normal
       omit("This feature isn't implemented yet.")
-      groonga("status")
       log_file = Tempfile.new(["grndb-check-log-path", ".log"])
       log_file.puts(<<-GROONGA_LOG)
 2017-11-13 15:58:27.712199|n| grn_init: <7.0.8-14-g16082c4>
@@ -32,26 +31,83 @@ class TestGrnDBCheck < GroongaTestCase
     end
   end
 
+  def test_normal
+    groonga("table_create", "Data", "TABLE_NO_KEY")
+
+    FileUtils.rm(@log_path)
+    result = grndb("check", "--log-level", "info")
+    assert_equal([
+                   "",
+                   "",
+                   expected_groonga_log("info", <<-MESSAGES),
+|i| Checking database: <#{@database_path}>
+|i| Database doesn't have orphan 'inspect' object: <#{@database_path}>
+|i| Database is not locked: <#{@database_path}>
+|i| Database is not corrupted: <#{@database_path}>
+|i| Database is not dirty: <#{@database_path}>
+|i| [Data] Table is not locked
+|i| [Data] Table is not corrupted
+|i| Checked database: <#{@database_path}>
+                   MESSAGES
+                 ],
+                 [
+                   result.output,
+                   result.error_output,
+                   normalize_groonga_log(File.read(@log_path)),
+                 ])
+  end
+
   def test_orphan_inspect
     groonga("table_create", "inspect", "TABLE_NO_KEY")
     _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
     FileUtils.rm(path)
+
+    FileUtils.rm(@log_path)
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
-    assert_equal(<<-MESSAGE, error.error_output)
+    error_message = <<-MESSAGE
 Database has orphan 'inspect' object. Remove it by '#{real_grndb_path} recover #{@database_path}'.
     MESSAGE
+    assert_equal([
+                   "",
+                   error_message,
+                   expected_groonga_log("notice", <<-MESSAGES),
+|e| system call error: DETAIL: failed to open path: <#{@database_path}.0000100>
+|e| grn_ctx_at: failed to open object: <256>(<inspect>):<51>(<table:no_key>)
+|e| #{error_message.chomp}
+|e| grn_ctx_at: failed to open object: <256>(<inspect>):<51>(<table:no_key>)
+|n| (1 same messages are truncated)
+                   MESSAGES
+                 ],
+                 [
+                   error.output,
+                   error.error_output,
+                   normalize_groonga_log(File.read(@log_path)),
+                 ])
   end
 
   def test_locked_database
     groonga("lock_acquire")
+
+    FileUtils.rm(@log_path)
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
-    assert_equal(<<-MESSAGE, error.error_output)
+    error_message = <<-MESSAGE
 Database is locked. It may be broken. Re-create the database.
     MESSAGE
+    assert_equal([
+                   "",
+                   error_message,
+                   expected_groonga_log("notice",
+                                        prepend_tag("|e| ", error_message)),
+                 ],
+                 [
+                   error.output,
+                   error.error_output,
+                   normalize_groonga_log(File.read(@log_path)),
+                 ])
   end
 
   sub_test_case "dirty database" do
@@ -66,12 +122,25 @@ load --table Users
         COMMAND
         Process.kill(:KILL, process.pid)
       end
+
+      FileUtils.rm(@log_path)
       error = assert_raise(CommandRunner::Error) do
         grndb("check")
       end
-      assert_equal(<<-MESSAGE, error.error_output)
+      error_message = <<-MESSAGE
 Database wasn't closed successfully. It may be broken. Re-create the database.
       MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("notice",
+                                          prepend_tag("|e| ", error_message)),
+                   ],
+                   [
+                     error.output,
+                     error.error_output,
+                     normalize_groonga_log(File.read(@log_path)),
+                   ])
     end
 
     def test_have_plugin
@@ -88,12 +157,25 @@ load --table Users
         COMMAND
         Process.kill(:KILL, process.pid)
       end
+
+      FileUtils.rm(@log_path)
       error = assert_raise(CommandRunner::Error) do
         grndb("check")
       end
-      assert_equal(<<-MESSAGE, error.error_output)
+      error_message = <<-MESSAGE
 Database wasn't closed successfully. It may be broken. Re-create the database.
       MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("notice",
+                                          prepend_tag("|e| ", error_message)),
+                   ],
+                   [
+                     error.output,
+                     error.error_output,
+                     normalize_groonga_log(File.read(@log_path)),
+                   ])
     end
   end
 
@@ -109,44 +191,98 @@ load --table Users
       process.run_command("io_flush Users")
       Process.kill(:KILL, process.pid)
     end
+
+    FileUtils.rm(@log_path)
     result = grndb("check")
-    assert_equal(["", ""],
-                 [result.output, result.error_output])
+    assert_equal([
+                   "",
+                   "",
+                   expected_groonga_log("notice", ""),
+                 ],
+                 [
+                   result.output,
+                   result.error_output,
+                   normalize_groonga_log(File.read(@log_path)),
+                 ])
   end
 
   def test_nonexistent_table
     groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
     _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
     FileUtils.rm(path)
+
+    FileUtils.rm(@log_path)
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
-    assert_equal(<<-MESSAGE, error.error_output)
+    error_message = <<-MESSAGE
 [Users] Can't open object. It's broken. Re-create the object or the database.
     MESSAGE
+    assert_equal([
+                   "",
+                   error_message,
+                   expected_groonga_log("notice", <<-MESSAGES),
+|e| system call error: DETAIL: failed to open path: <#{@database_path}.0000100>
+|e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
+|e| #{error_message.chomp}
+|e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
+|n| (1 same messages are truncated)
+                   MESSAGES
+                 ],
+                 [
+                   error.output,
+                   error.error_output,
+                   normalize_groonga_log(File.read(@log_path)),
+                 ])
   end
 
   def test_locked_table
     groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
     groonga("lock_acquire", "Users")
+
+    FileUtils.rm(@log_path)
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
-    assert_equal(<<-MESSAGE, error.error_output)
+    error_message = <<-MESSAGE
 [Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
     MESSAGE
+    assert_equal([
+                   "",
+                   error_message,
+                   expected_groonga_log("notice",
+                                        prepend_tag("|e| ", error_message)),
+                 ],
+                 [
+                   error.output,
+                   error.error_output,
+                   normalize_groonga_log(File.read(@log_path)),
+                 ])
   end
 
   def test_locked_data_column
     groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
     groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
     groonga("lock_acquire", "Users.age")
+
+    FileUtils.rm(@log_path)
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
-    assert_equal(<<-MESSAGE, error.error_output)
+    error_message = <<-MESSAGE
 [Users.age] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.age) or clear lock of the column (lock_clear Users.age) and (2) load data again.
     MESSAGE
+    assert_equal([
+                   "",
+                   error_message,
+                   expected_groonga_log("notice",
+                                        prepend_tag("|e| ", error_message)),
+                 ],
+                 [
+                   error.output,
+                   error.error_output,
+                   normalize_groonga_log(File.read(@log_path)),
+                 ])
   end
 
   sub_test_case "locked index column" do
@@ -160,12 +296,24 @@ load --table Users
 
       groonga("lock_acquire", "Ages.users_age")
 
+      FileUtils.rm(@log_path)
       error = assert_raise(CommandRunner::Error) do
         grndb("check")
       end
-      assert_equal(<<-MESSAGE, error.error_output)
+      error_message = <<-MESSAGE
 [Ages.users_age] Index column is locked. It may be broken. Re-create index by '#{real_grndb_path} recover #{@database_path}'.
       MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("notice",
+                                          prepend_tag("|e| ", error_message)),
+                   ],
+                   [
+                     error.output,
+                     error.error_output,
+                     normalize_groonga_log(File.read(@log_path)),
+                   ])
     end
   end
 
@@ -183,13 +331,29 @@ load --table Users
       external_process.input.puts("{\"_key\": \"x\"}")
       external_process.input.puts("]")
     end
-    FileUtils.rm("#{@database_path}.0000100.001")
+    removed_path = "#{@database_path}.0000100.001"
+    FileUtils.rm(removed_path)
+
+    FileUtils.rm(@log_path)
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
-    assert_equal(<<-MESSAGE, error.error_output)
+    error_message = <<-MESSAGE
 [Users] Table is corrupt. (1) Truncate the table (truncate Users or '#{real_grndb_path} recover --force-truncate #{@database_path}') and (2) load data again.
     MESSAGE
+    assert_equal([
+                   "",
+                   error_message,
+                   expected_groonga_log("notice", <<-MESSAGES),
+|e| system call error: DETAIL: [io][corrupt] used path doesn't exist: <#{removed_path}>
+|e| #{error_message.chomp}
+                   MESSAGES
+                 ],
+                 [
+                   error.output,
+                   error.error_output,
+                   normalize_groonga_log(File.read(@log_path)),
+                 ])
   end
 
   def test_corrupt_double_array_table
@@ -200,13 +364,29 @@ load --table Users
       external_process.input.puts("{\"_key\": \"x\"}")
       external_process.input.puts("]")
     end
-    FileUtils.rm("#{@database_path}.0000100.001")
+    removed_path = "#{@database_path}.0000100.001"
+    FileUtils.rm(removed_path)
+
+    FileUtils.rm(@log_path)
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
-    assert_equal(<<-MESSAGE, error.error_output)
+    error_message = <<-MESSAGE
 [Users] Table is corrupt. (1) Truncate the table (truncate Users or '#{real_grndb_path} recover --force-truncate #{@database_path}') and (2) load data again.
     MESSAGE
+    assert_equal([
+                   "",
+                   error_message,
+                   expected_groonga_log("notice", <<-MESSAGES),
+|e| system call error: DETAIL: [dat][corrupt] used path doesn't exist: <#{removed_path}>
+|e| #{error_message.chomp}
+                   MESSAGES
+                 ],
+                 [
+                   error.output,
+                   error.error_output,
+                   normalize_groonga_log(File.read(@log_path)),
+                 ])
   end
 
   def test_corrupt_data_column
@@ -224,13 +404,29 @@ load --table Users
       external_process.input.puts("{\"text\": \"x\"}")
       external_process.input.puts("]")
     end
-    FileUtils.rm("#{@database_path}.0000101.001")
+    removed_path = "#{@database_path}.0000101.001"
+    FileUtils.rm(removed_path)
+
+    FileUtils.rm(@log_path)
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
-    assert_equal(<<-MESSAGE, error.error_output)
+    error_message = <<-MESSAGE
 [Data.text] Data column is corrupt. (1) Truncate the column (truncate Data.text or '#{real_grndb_path} recover --force-truncate #{@database_path}') and (2) load data again.
     MESSAGE
+    assert_equal([
+                   "",
+                   error_message,
+                   expected_groonga_log("notice", <<-MESSAGES),
+|e| system call error: DETAIL: [io][corrupt] used path doesn't exist: <#{removed_path}>
+|e| #{error_message.chomp}
+                   MESSAGES
+                 ],
+                 [
+                   error.output,
+                   error.error_output,
+                   normalize_groonga_log(File.read(@log_path)),
+                 ])
   end
 
   def test_empty_files
@@ -240,14 +436,33 @@ load --table Users
     FileUtils.touch(empty_file_path_object)
     empty_file_path_no_object = "#{@database_path}.0000210"
     FileUtils.touch(empty_file_path_no_object)
+
+    FileUtils.rm(@log_path)
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
-    assert_equal(<<-MESSAGE, error.error_output)
+    assert_equal([
+                   "",
+                   <<-MESSAGES,
 Empty file exists: <#{empty_file_path_object}>
 Empty file exists: <#{empty_file_path_no_object}>
 [Data] Can't open object. It's broken. Re-create the object or the database.
-    MESSAGE
+                   MESSAGES
+                   expected_groonga_log("notice", <<-MESSAGES),
+|e| Empty file exists: <#{empty_file_path_object}>
+|e| Empty file exists: <#{empty_file_path_no_object}>
+|e| [io][open] file size is too small: <0>(required: >= 64): <#{empty_file_path_object}>
+|e| grn_ctx_at: failed to open object: <256>(<Data>):<51>(<table:no_key>)
+|e| [Data] Can't open object. It's broken. Re-create the object or the database.
+|e| grn_ctx_at: failed to open object: <256>(<Data>):<51>(<table:no_key>)
+|n| (1 same messages are truncated)
+                   MESSAGES
+                 ],
+                 [
+                   error.output,
+                   error.error_output,
+                   normalize_groonga_log(File.read(@log_path)),
+                 ])
   end
 
   sub_test_case "--target" do
@@ -255,12 +470,28 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
       _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
       FileUtils.rm(path)
+
+      FileUtils.rm(@log_path)
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Users")
       end
-      assert_equal(<<-MESSAGE, error.error_output)
+      error_message = <<-MESSAGE
 [Users] Can't open object. It's broken. Re-create the object or the database.
       MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("notice", <<-MESSAGES),
+|e| system call error: DETAIL: failed to open path: <#{path}>
+|e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
+|e| #{error_message.chomp}
+                     MESSAGES
+                   ],
+                   [
+                     error.output,
+                     error.error_output,
+                     normalize_groonga_log(File.read(@log_path)),
+                   ])
     end
 
     def test_locked_table
@@ -276,13 +507,25 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "Users")
       groonga("lock_acquire", "Users.age")
 
+      FileUtils.rm(@log_path)
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Users")
       end
-      assert_equal(<<-MESSAGE, error.error_output)
+      error_message = <<-MESSAGE
 [Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
 [Users.age] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.age) or clear lock of the column (lock_clear Users.age) and (2) load data again.
       MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("notice",
+                                          prepend_tag("|e| ", error_message)),
+                   ],
+                   [
+                     error.output,
+                     error.error_output,
+                     normalize_groonga_log(File.read(@log_path)),
+                   ])
     end
 
     def test_locked_data_column
@@ -292,12 +535,24 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "Users")
       groonga("lock_acquire", "Users.age")
 
+      FileUtils.rm(@log_path)
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Users.age")
       end
-      assert_equal(<<-MESSAGE, error.error_output)
+      error_message = <<-MESSAGE
 [Users.age] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.age) or clear lock of the column (lock_clear Users.age) and (2) load data again.
       MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("notice",
+                                          prepend_tag("|e| ", error_message)),
+                   ],
+                   [
+                     error.output,
+                     error.error_output,
+                     normalize_groonga_log(File.read(@log_path)),
+                   ])
     end
 
     def test_nonexistent_referenced_table
@@ -307,16 +562,37 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("table_create", "Bookmarks", "TABLE_HASH_KEY", "ShortText")
       groonga("column_create", "Bookmarks", "user", "COLUMN_SCALAR", "Users")
 
+      removed_path = nil
       JSON.parse(groonga("table_list").output)[1].each do |table|
         _id, name, path, *_ = table
-        FileUtils.rm(path) if name == "Users"
+        if name == "Users"
+          removed_path = path
+          FileUtils.rm(path)
+          break
+        end
       end
+
+      FileUtils.rm(@log_path)
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Bookmarks")
       end
-      assert_equal(<<-MESSAGE, error.error_output)
+      error_message = <<-MESSAGE
 [Users] Can't open object. It's broken. Re-create the object or the database.
       MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("notice", <<-MESSAGES)
+|e| system call error: DETAIL: failed to open path: <#{removed_path}>
+|e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
+|e| #{error_message.chomp}
+                     MESSAGES
+                   ],
+                   [
+                     error.output,
+                     error.error_output,
+                     normalize_groonga_log(File.read(@log_path)),
+                   ])
     end
 
     def test_referenced_table_by_table
@@ -329,14 +605,26 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "Users.age")
       groonga("lock_acquire", "Admins")
 
+      FileUtils.rm(@log_path)
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Admins")
       end
-      assert_equal(<<-MESSAGE, error.error_output)
+      error_message = <<-MESSAGE
 [Admins] Table is locked. It may be broken. (1) Truncate the table (truncate Admins) or clear lock of the table (lock_clear Admins) and (2) load data again.
 [Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
 [Users.age] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.age) or clear lock of the column (lock_clear Users.age) and (2) load data again.
       MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("notice",
+                                          prepend_tag("|e| ", error_message)),
+                   ],
+                   [
+                     error.output,
+                     error.error_output,
+                     normalize_groonga_log(File.read(@log_path)),
+                   ])
     end
 
     def test_referenced_table_by_column
@@ -351,14 +639,26 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "Bookmarks")
       groonga("lock_acquire", "Bookmarks.user")
 
+      FileUtils.rm(@log_path)
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Bookmarks.user")
       end
-      assert_equal(<<-MESSAGE, error.error_output)
+      error_message = <<-MESSAGE
 [Bookmarks.user] Data column is locked. It may be broken. (1) Truncate the column (truncate Bookmarks.user) or clear lock of the column (lock_clear Bookmarks.user) and (2) load data again.
 [Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
 [Users.age] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.age) or clear lock of the column (lock_clear Users.age) and (2) load data again.
       MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("notice",
+                                          prepend_tag("|e| ", error_message)),
+                   ],
+                   [
+                     error.output,
+                     error.error_output,
+                     normalize_groonga_log(File.read(@log_path)),
+                   ])
     end
 
     def test_locked_index_column
@@ -376,15 +676,27 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "Ages")
       groonga("lock_acquire", "Ages.users_age")
 
+      FileUtils.rm(@log_path)
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Ages")
       end
-      assert_equal(<<-MESSAGE, error.error_output)
+      error_message = <<-MESSAGE
 [Ages] Table is locked. It may be broken. (1) Truncate the table (truncate Ages) or clear lock of the table (lock_clear Ages) and (2) load data again.
 [Ages.users_age] Index column is locked. It may be broken. Re-create index by '#{real_grndb_path} recover #{@database_path}'.
 [Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
 [Users.age] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.age) or clear lock of the column (lock_clear Users.age) and (2) load data again.
       MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("notice",
+                                          prepend_tag("|e| ", error_message)),
+                   ],
+                   [
+                     error.output,
+                     error.error_output,
+                     normalize_groonga_log(File.read(@log_path)),
+                   ])
     end
 
     def test_indexed_table
@@ -402,15 +714,27 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "Names")
       groonga("lock_acquire", "Names.users_names")
 
+      FileUtils.rm(@log_path)
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Names")
       end
-      assert_equal(<<-MESSAGE, error.error_output)
+      error_message = <<-MESSAGE
 [Names] Table is locked. It may be broken. (1) Truncate the table (truncate Names) or clear lock of the table (lock_clear Names) and (2) load data again.
 [Names.users_names] Index column is locked. It may be broken. Re-create index by '#{real_grndb_path} recover #{@database_path}'.
 [Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
 [Users.name] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.name) or clear lock of the column (lock_clear Users.name) and (2) load data again.
       MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("notice",
+                                          prepend_tag("|e| ", error_message)),
+                   ],
+                   [
+                     error.output,
+                     error.error_output,
+                     normalize_groonga_log(File.read(@log_path)),
+                   ])
     end
 
     def test_indexed_data_column
@@ -435,16 +759,28 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "NormalizedNames")
       groonga("lock_acquire", "NormalizedNames.users_name")
 
+      FileUtils.rm(@log_path)
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Users.name")
       end
-      assert_equal(<<-MESSAGE, error.error_output)
+      error_message = <<-MESSAGE
 [Users.name] Data column is locked. It may be broken. (1) Truncate the column (truncate Users.name) or clear lock of the column (lock_clear Users.name) and (2) load data again.
 [NormalizedNames.users_name] Index column is locked. It may be broken. Re-create index by '#{real_grndb_path} recover #{@database_path}'.
 [Names.users_name] Index column is locked. It may be broken. Re-create index by '#{real_grndb_path} recover #{@database_path}'.
 [NormalizedNames] Table is locked. It may be broken. (1) Truncate the table (truncate NormalizedNames) or clear lock of the table (lock_clear NormalizedNames) and (2) load data again.
 [Names] Table is locked. It may be broken. (1) Truncate the table (truncate Names) or clear lock of the table (lock_clear Names) and (2) load data again.
       MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("notice",
+                                          prepend_tag("|e| ", error_message)),
+                   ],
+                   [
+                     error.output,
+                     error.error_output,
+                     normalize_groonga_log(File.read(@log_path)),
+                   ])
     end
 
     def test_cycle_reference
@@ -461,15 +797,27 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "Users")
       groonga("lock_acquire", "Users.logs_user")
 
+      FileUtils.rm(@log_path)
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Users")
       end
-      assert_equal(<<-MESSAGE, error.error_output)
+      error_message = <<-MESSAGE
 [Users] Table is locked. It may be broken. (1) Truncate the table (truncate Users) or clear lock of the table (lock_clear Users) and (2) load data again.
 [Users.logs_user] Index column is locked. It may be broken. Re-create index by '#{real_grndb_path} recover #{@database_path}'.
 [Logs] Table is locked. It may be broken. (1) Truncate the table (truncate Logs) or clear lock of the table (lock_clear Logs) and (2) load data again.
 [Logs.user] Data column is locked. It may be broken. (1) Truncate the column (truncate Logs.user) or clear lock of the column (lock_clear Logs.user) and (2) load data again.
       MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("notice",
+                                          prepend_tag("|e| ", error_message)),
+                   ],
+                   [
+                     error.output,
+                     error.error_output,
+                     normalize_groonga_log(File.read(@log_path)),
+                   ])
     end
   end
 end

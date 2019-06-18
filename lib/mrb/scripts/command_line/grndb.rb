@@ -3,6 +3,8 @@ require "groonga-log"
 module Groonga
   module CommandLine
     class Grndb
+      include Loggable
+
       def initialize(argv)
         @program_path, *@arguments = argv
         @output = LocaleOutput.new($stderr)
@@ -97,6 +99,7 @@ module Groonga
       def failed(*messages)
         messages.each do |message|
           @output.puts(message)
+          logger.log(:error, message)
         end
         @succeeded = false
       end
@@ -115,6 +118,7 @@ module Groonga
       end
 
       def check(database, options, arguments)
+        logger.log(:info, "Checking database: <#{@database_path}>")
         checker = Checker.new(@output)
         checker.program_path = @program_path
         checker.database_path = @database_path
@@ -134,9 +138,12 @@ module Groonga
         else
           checker.check_all
         end
+        logger.log(:info, "Checked database: <#{@database_path}>")
       end
 
       class Checker
+        include Loggable
+
         attr_writer :program_path
         attr_writer :database_path
         attr_writer :database
@@ -177,6 +184,7 @@ module Groonga
         end
 
         def check_one(target_name)
+          logger.log(:info, "Checking object: <#{target_name}>")
           target = @context[target_name]
           if target.nil?
             exist_p = open_database_cursor do |cursor|
@@ -194,6 +202,7 @@ module Groonga
           end
 
           check_object_recursive(target)
+          logger.log(:info, "Checked object: <#{target_name}>")
         end
 
         def check_all
@@ -222,21 +231,31 @@ module Groonga
         end
 
         def check_database_orphan_inspect
+          found = false
           open_database_cursor do |cursor|
             cursor.each do |id|
               if cursor.key == "inspect" and @context[id].nil?
                 message =
                   "Database has orphan 'inspect' object. " +
                   "Remove it by '#{@program_path} recover #{@database_path}'."
+                found = true
                 failed(message)
                 break
               end
             end
           end
+          unless found
+            logger.log(:info,
+                       "Database doesn't have orphan 'inspect' object: " +
+                       "<#{@database_path}>")
+          end
         end
 
         def check_database_locked
-          return unless @database.locked?
+          unless @database.locked?
+            logger.log(:info, "Database is not locked: <#{@database_path}>")
+            return
+          end
 
           message =
             "Database is locked. " +
@@ -246,7 +265,10 @@ module Groonga
         end
 
         def check_database_corrupt
-          return unless @database.corrupt?
+          unless @database.corrupt?
+            logger.log(:info, "Database is not corrupted: <#{@database_path}>")
+            return
+          end
 
           message =
             "Database is corrupt. " +
@@ -255,7 +277,10 @@ module Groonga
         end
 
         def check_database_dirty
-          return unless @database.dirty?
+          unless @database.dirty?
+            logger.log(:info, "Database is not dirty: <#{@database_path}>")
+            return
+          end
 
           last_modified = @database.last_modified
           if File.stat(@database.path).mtime > last_modified
@@ -303,14 +328,20 @@ module Groonga
         def check_object_locked(object)
           case object
           when IndexColumn
-            return unless object.locked?
+            unless object.locked?
+              logger.log(:info, "[#{object.name}] Index column is not locked")
+              return
+            end
             message =
               "[#{object.name}] Index column is locked. " +
               "It may be broken. " +
               "Re-create index by '#{@program_path} recover #{@database_path}'."
             failed(message)
           when Column
-            return unless object.locked?
+            unless object.locked?
+              logger.log(:info, "[#{object.name}] Column is not locked")
+              return
+            end
             name = object.name
             message =
               "[#{name}] Data column is locked. " +
@@ -320,7 +351,10 @@ module Groonga
               "and (2) load data again."
             failed(message)
           when Table
-            return unless object.locked?
+            unless object.locked?
+              logger.log(:info, "[#{object.name}] Table is not locked")
+              return
+            end
             name = object.name
             message =
               "[#{name}] Table is locked. " +
@@ -335,13 +369,19 @@ module Groonga
         def check_object_corrupt(object)
           case object
           when IndexColumn
-            return unless object.corrupt?
+            unless object.corrupt?
+              logger.log(:info, "[#{object.name}] Index column is not corrupted")
+              return
+            end
             message =
               "[#{object.name}] Index column is corrupt. " +
               "Re-create index by '#{@program_path} recover #{@database_path}'."
             failed(message)
           when Column
-            return unless object.corrupt?
+            unless object.corrupt?
+              logger.log(:info, "[#{object.name}] Column is not corrupted")
+              return
+            end
             name = object.name
             message =
               "[#{name}] Data column is corrupt. " +
@@ -350,7 +390,10 @@ module Groonga
               "and (2) load data again."
             failed(message)
           when Table
-            return unless object.corrupt?
+            unless object.corrupt?
+              logger.log(:info, "[#{object.name}] Table is not corrupted")
+              return
+            end
             name = object.name
             message =
               "[#{name}] Table is corrupt. " +
@@ -478,6 +521,7 @@ module Groonga
         end
 
         def recover
+          logger.log(:info, "Recovering database: <#{@database.path}>")
           if @force_truncate
             @database.each do |object|
               next unless truncate_target?(object)
@@ -489,6 +533,7 @@ module Groonga
           end
           remove_empty_files
           @database.recover
+          logger.log(:info, "Recovered database: <#{@database.path}>")
         end
 
         private
@@ -540,6 +585,7 @@ module Groonga
         def clear_locks
           if @database.locked?
             @database.clear_lock
+            logger.log(:info, "Clear locked database: <#{@database.path}>")
           end
           @database.each do |object|
             case object
@@ -548,6 +594,9 @@ module Groonga
             when Column, Table
               next unless object.locked?
               object.clear_lock
+              logger.log(:info,
+                         "[#{object.name}] Clear locked object: " +
+                         "<#{object.path}>")
             end
           end
         end
