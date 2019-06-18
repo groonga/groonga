@@ -20,6 +20,7 @@
 
 #ifdef GRN_WITH_RAPIDJSON
 #include <rapidjson/document.h>
+#include <rapidjson/memorystream.h>
 
 namespace grn {
   struct Int32Handler : public rapidjson::BaseReaderHandler<>
@@ -60,7 +61,8 @@ namespace grn {
                        bool add_record_if_not_exist)
   {
     rapidjson::Document document;
-    document.Parse(GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
+    rapidjson::MemoryStream stream(GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
+    document.ParseStream(stream);
     if (document.HasParseError()) {
       return GRN_INVALID_ARGUMENT;
     }
