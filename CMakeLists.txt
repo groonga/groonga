@@ -75,6 +75,7 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/include/groonga/version.h)
 
 include(CheckIncludeFile)
+include(CheckIncludeFileCXX)
 include(CheckFunctionExists)
 include(CheckLibraryExists)
 include(CheckSymbolExists)
@@ -451,6 +452,9 @@ set(GRN_WITH_RAPIDJSON "auto"
   CACHE STRING "Support data compression by RapidJSON.")
 if(NOT ${GRN_WITH_RAPIDJSON} STREQUAL "no")
   find_package(RapidJSON)
+  if(NOT RapidJSON_FOUND)
+    check_include_file_cxx(rapidjson/rapidjson.h RapidJSON_FOUND)
+  endif()
   if(RapidJSON_FOUND)
     set(GRN_WITH_RAPIDJSON TRUE)
     message(STATUS "RapidJSON: ${RAPIDJSON_INCLUDE_DIRS}")
