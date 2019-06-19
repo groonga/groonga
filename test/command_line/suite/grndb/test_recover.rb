@@ -434,11 +434,13 @@ object corrupt: <#{recover_error_message}>(-55)
 #{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000100>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000101>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000102>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{path}.c>" : ""}
 |i| [io][remove] removed path: <#{path}>
 |i| [io][remove] removed path: <#{path}.c>
-|i| [ii][builder][fin] removed path: <#{path}XXXXXX>
 #{windows? ? "|i| [io][open] create new file: <#{path}>" : ""}
 #{windows? ? "|i| [io][open] create new file: <#{path}.c>" : ""}
+|i| [ii][builder][fin] removed path: <#{path}XXXXXX>
 |i| Recovered database: <#{@database_path}>
                    MESSAGES
                  ],
