@@ -99,7 +99,6 @@ matrix:
         - ENABLE_MRUBY=yes
     - name: "Autotools: macOS"
       os: osx
-      compiler: clang
       osx_image: xcode10.2
       addons:
         <<: *addons_macos_build
@@ -108,7 +107,6 @@ matrix:
         - ENABLE_MRUBY=yes
     - name: "CMake: macOS"
       os: osx
-      compiler: clang
       osx_image: xcode10.2
       addons:
         <<: *addons_macos_build
