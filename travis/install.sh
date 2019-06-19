@@ -37,6 +37,10 @@ case "${TRAVIS_OS_NAME}" in
     fi
     ;;
   osx)
+    sudo \
+      installer \
+      -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg \
+      -target /
     if [ "${ENABLE_DOCUMENT}" = "yes" ]; then
       pip3 install Sphinx
     fi
