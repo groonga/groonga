@@ -3114,6 +3114,12 @@ show_version(void)
 #ifdef USE_POLL
   printf(",poll");
 #endif
+#ifdef GRN_WITH_RAPIDJSON
+  printf(",rapidjson");
+#endif
+#ifdef GRN_WITH_ARROW
+  printf(",arrow");
+#endif
   printf("]\n");
 
 #ifdef CONFIGURE_OPTIONS
