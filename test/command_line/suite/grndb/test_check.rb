@@ -33,6 +33,7 @@ class TestGrnDBCheck < GroongaTestCase
 
   def test_normal
     groonga("table_create", "Data", "TABLE_NO_KEY")
+    _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
 
     remove_groonga_log
     result = grndb("check", "--log-level", "info")
@@ -45,6 +46,7 @@ class TestGrnDBCheck < GroongaTestCase
 |i| Database is not locked: <#{@database_path}>
 |i| Database is not corrupted: <#{@database_path}>
 |i| Database is not dirty: <#{@database_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| [Data] Table is not locked
 |i| [Data] Table is not corrupted
 |i| Checked database: <#{@database_path}>

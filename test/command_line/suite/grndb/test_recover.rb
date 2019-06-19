@@ -4,6 +4,7 @@ class TestGrnDBRecover < GroongaTestCase
 
   def test_normal
     groonga("table_create", "info", "TABLE_NO_KEY")
+    _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
 
     remove_groonga_log
     result = grndb("recover", "--log-level", "info")
@@ -12,6 +13,7 @@ class TestGrnDBRecover < GroongaTestCase
                    "",
                    expected_groonga_log("info", <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| Recovered database: <#{@database_path}>
                    MESSAGES
                  ],
@@ -187,7 +189,9 @@ object corrupt: <#{recover_error_message}>(-55)
                      message,
                      expected_groonga_log("info", <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
 |i| [io][remove] removed path: <#{@table_path}>
+#{windows? ? "|i| [io][open] create new file: <#{@table_path}>" : ""}
 #{prepend_tag("|i| ", message).chomp}
 |i| Recovered database: <#{@database_path}>
                      MESSAGES
@@ -207,6 +211,8 @@ object corrupt: <#{recover_error_message}>(-55)
       groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
       groonga("lock_acquire", "Users.age")
 
+      _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+      @table_path = path
       users_column_list = JSON.parse(groonga("column_list", "Users").output)
       _id, _name, path, *_ = users_column_list[1][2]
       @column_path = path
@@ -255,7 +261,10 @@ object corrupt: <#{recover_error_message}>(-55)
                      message,
                      expected_groonga_log("info", <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@column_path}>" : ""}
 |i| [io][remove] removed path: <#{@column_path}>
+#{windows? ? "|i| [io][open] create new file: <#{@column_path}>" : ""}
 #{prepend_tag("|i| ", message).chomp}
 |i| Recovered database: <#{@database_path}>
                      MESSAGES
@@ -358,6 +367,7 @@ object corrupt: <#{recover_error_message}>(-55)
                    "",
                    expected_groonga_log("info", <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| [Users] Clear locked object: <#{path}>
 |i| Recovered database: <#{@database_path}>
                    MESSAGES
@@ -373,6 +383,7 @@ object corrupt: <#{recover_error_message}>(-55)
     groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
     groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
     groonga("lock_acquire", "Users.age")
+    _id, _name, table_path, *_ = JSON.parse(groonga("table_list").output)[1][1]
     _id, _name, path, *_ = JSON.parse(groonga("column_list Users").output)[1][2]
 
     remove_groonga_log
@@ -382,6 +393,8 @@ object corrupt: <#{recover_error_message}>(-55)
                    "",
                    expected_groonga_log("info", <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{table_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| [Users.age] Clear locked object: <#{path}>
 |i| Recovered database: <#{@database_path}>
                    MESSAGES
@@ -418,9 +431,14 @@ object corrupt: <#{recover_error_message}>(-55)
                    "",
                    expected_groonga_log("info", <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000100>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000101>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000102>" : ""}
 |i| [io][remove] removed path: <#{path}>
 |i| [io][remove] removed path: <#{path}.c>
 |i| [ii][builder][fin] removed path: <#{path}XXXXXX>
+#{windows? ? "|i| [io][open] create new file: <#{path}>" : ""}
+#{windows? ? "|i| [io][open] create new file: <#{path}.c>" : ""}
 |i| Recovered database: <#{@database_path}>
                    MESSAGES
                  ],

@@ -26,6 +26,7 @@ module GroongaLog
     log = standard_log_lines[0..-2].join("")
     unless messages.empty?
       messages.each_line do |message|
+        next if message.chomp.empty?
         log << "1970-01-01 00:00:00.000000#{message}"
       end
     end
