@@ -5,7 +5,7 @@ class TestGrnDBRecover < GroongaTestCase
   def test_normal
     groonga("table_create", "info", "TABLE_NO_KEY")
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     result = grndb("recover", "--log-level", "info")
     assert_equal([
                    "",
@@ -18,7 +18,7 @@ class TestGrnDBRecover < GroongaTestCase
                  [
                    result.output,
                    result.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -27,7 +27,7 @@ class TestGrnDBRecover < GroongaTestCase
     _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
     FileUtils.rm(path)
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     result = grndb("recover", "--log-level", "info")
     assert_equal([
                    "",
@@ -43,10 +43,10 @@ class TestGrnDBRecover < GroongaTestCase
                  [
                    result.output,
                    result.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     result = grndb("check")
     assert_equal([
                    "",
@@ -56,14 +56,14 @@ class TestGrnDBRecover < GroongaTestCase
                  [
                    result.output,
                    result.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
   def test_locked_database
     groonga("lock_acquire")
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     error = assert_raise(CommandRunner::Error) do
       grndb("recover")
     end
@@ -82,7 +82,7 @@ object corrupt: <[db][recover] database may be broken. Please re-create the data
                  [
                    error.output,
                    error.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -96,7 +96,7 @@ object corrupt: <[db][recover] database may be broken. Please re-create the data
     empty_file_path_no_object = "#{@database_path}.0000210"
     FileUtils.touch(empty_file_path_no_object)
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     result = grndb("recover", "--log-level", "info")
     message = <<-MESSAGE
 Removed empty file: <#{empty_file_path_no_object}>
@@ -117,10 +117,10 @@ Removed empty file: <#{empty_file_path_no_object}>
                  [
                    result.output,
                    result.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     result = grndb("check")
     assert_equal([
                    "",
@@ -130,7 +130,7 @@ Removed empty file: <#{empty_file_path_no_object}>
                  [
                    result.output,
                    result.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -143,7 +143,7 @@ Removed empty file: <#{empty_file_path_no_object}>
       _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
       @table_path = path
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
     end
 
     def test_default
@@ -168,7 +168,7 @@ object corrupt: <#{recover_error_message}>(-55)
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
 
@@ -195,7 +195,7 @@ object corrupt: <#{recover_error_message}>(-55)
                    [
                      result.output,
                      result.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
   end
@@ -211,7 +211,7 @@ object corrupt: <#{recover_error_message}>(-55)
       _id, _name, path, *_ = users_column_list[1][2]
       @column_path = path
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
     end
 
     def test_default
@@ -236,7 +236,7 @@ object corrupt: <#{recover_error_message}>(-55)
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
 
@@ -263,7 +263,7 @@ object corrupt: <#{recover_error_message}>(-55)
                    [
                      result.output,
                      result.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
   end
@@ -285,7 +285,7 @@ object corrupt: <#{recover_error_message}>(-55)
       groonga("truncate", "Ages")
       groonga("lock_acquire", "Ages.users_age")
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
     end
 
     def test_default
@@ -298,7 +298,7 @@ object corrupt: <#{recover_error_message}>(-55)
                    [
                      result.output,
                      result.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
 
       select_result = groonga_select("Users", "--query", "age:29")
@@ -316,7 +316,7 @@ object corrupt: <#{recover_error_message}>(-55)
                    [
                      result.output,
                      result.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
 
       select_result = groonga_select("Users", "--query", "age:29")
@@ -328,7 +328,7 @@ object corrupt: <#{recover_error_message}>(-55)
   def test_force_clear_locked_database
     groonga("lock_acquire")
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     result = grndb("recover", "--force-lock-clear", "--log-level", "info")
     assert_equal([
                    "",
@@ -342,7 +342,7 @@ object corrupt: <#{recover_error_message}>(-55)
                  [
                    result.output,
                    result.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -351,7 +351,7 @@ object corrupt: <#{recover_error_message}>(-55)
     groonga("lock_acquire", "Users")
     _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     result = grndb("recover", "--force-lock-clear", "--log-level", "info")
     assert_equal([
                    "",
@@ -365,7 +365,7 @@ object corrupt: <#{recover_error_message}>(-55)
                  [
                    result.output,
                    result.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -375,7 +375,7 @@ object corrupt: <#{recover_error_message}>(-55)
     groonga("lock_acquire", "Users.age")
     _id, _name, path, *_ = JSON.parse(groonga("column_list Users").output)[1][2]
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     result = grndb("recover", "--force-lock-clear", "--log-level", "info")
     assert_equal([
                    "",
@@ -389,7 +389,7 @@ object corrupt: <#{recover_error_message}>(-55)
                  [
                    result.output,
                    result.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -411,7 +411,7 @@ object corrupt: <#{recover_error_message}>(-55)
     n_hits, _columns, *_records = select_result[0]
     assert_equal([0], n_hits)
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     result = grndb("recover", "--force-lock-clear", "--log-level", "info")
     assert_equal([
                    "",
@@ -427,7 +427,7 @@ object corrupt: <#{recover_error_message}>(-55)
                  [
                    result.output,
                    result.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
 
     select_result = groonga_select("Users", "--query", "age:29")
@@ -442,7 +442,7 @@ object corrupt: <#{recover_error_message}>(-55)
     data[0] = "X"
     File.binwrite(path, data)
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     error = assert_raise(CommandRunner::Error) do
       grndb("recover")
     end
@@ -462,7 +462,7 @@ incompatible file format: <failed to open: format ID is different: <#{path[0..85
                  [
                    error.output,
                    error.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -473,7 +473,7 @@ incompatible file format: <failed to open: format ID is different: <#{path[0..85
     data[16] = "\0"
     File.binwrite(path, data)
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     error = assert_raise(CommandRunner::Error) do
       grndb("recover")
     end
@@ -493,7 +493,7 @@ invalid format: <[table][hash] file type must be 0x30: <0000>>(-54)
                  [
                    error.output,
                    error.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -504,7 +504,7 @@ invalid format: <[table][hash] file type must be 0x30: <0000>>(-54)
     data[16] = "\0"
     File.binwrite(path, data)
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     error = assert_raise(CommandRunner::Error) do
       grndb("recover")
     end
@@ -524,7 +524,7 @@ invalid format: <[table][array] file type must be 0x33: <0000>>(-54)
                  [
                    error.output,
                    error.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 end

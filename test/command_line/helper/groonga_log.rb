@@ -114,6 +114,18 @@ module GroongaLog
     normalized
   end
 
+  def remove_groonga_log
+    FileUtils.rm(@log_path)
+  end
+
+  def groonga_log_content
+    File.read(@log_path, encoding: "UTF-8")
+  end
+
+  def normalized_groonga_log_content
+    normalize_groonga_log(groonga_log_content).encode("locale")
+  end
+
   private
   def stack_trace_groonga_log_message?(message)
     case message.strip

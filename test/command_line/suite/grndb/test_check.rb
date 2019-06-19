@@ -34,7 +34,7 @@ class TestGrnDBCheck < GroongaTestCase
   def test_normal
     groonga("table_create", "Data", "TABLE_NO_KEY")
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     result = grndb("check", "--log-level", "info")
     assert_equal([
                    "",
@@ -53,7 +53,7 @@ class TestGrnDBCheck < GroongaTestCase
                  [
                    result.output,
                    result.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -62,7 +62,7 @@ class TestGrnDBCheck < GroongaTestCase
     _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
     FileUtils.rm(path)
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
@@ -83,14 +83,14 @@ Database has orphan 'inspect' object. Remove it by '#{real_grndb_path} recover #
                  [
                    error.output,
                    error.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
   def test_locked_database
     groonga("lock_acquire")
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
@@ -106,7 +106,7 @@ Database is locked. It may be broken. Re-create the database.
                  [
                    error.output,
                    error.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -123,7 +123,7 @@ load --table Users
         Process.kill(:KILL, process.pid)
       end
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
       error = assert_raise(CommandRunner::Error) do
         grndb("check")
       end
@@ -139,7 +139,7 @@ Database wasn't closed successfully. It may be broken. Re-create the database.
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
 
@@ -158,7 +158,7 @@ load --table Users
         Process.kill(:KILL, process.pid)
       end
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
       error = assert_raise(CommandRunner::Error) do
         grndb("check")
       end
@@ -174,7 +174,7 @@ Database wasn't closed successfully. It may be broken. Re-create the database.
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
   end
@@ -192,7 +192,7 @@ load --table Users
       Process.kill(:KILL, process.pid)
     end
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     result = grndb("check")
     assert_equal([
                    "",
@@ -202,7 +202,7 @@ load --table Users
                  [
                    result.output,
                    result.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -211,7 +211,7 @@ load --table Users
     _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
     FileUtils.rm(path)
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
@@ -232,7 +232,7 @@ load --table Users
                  [
                    error.output,
                    error.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -240,7 +240,7 @@ load --table Users
     groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
     groonga("lock_acquire", "Users")
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
@@ -256,7 +256,7 @@ load --table Users
                  [
                    error.output,
                    error.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -265,7 +265,7 @@ load --table Users
     groonga("column_create", "Users", "age", "COLUMN_SCALAR", "UInt8")
     groonga("lock_acquire", "Users.age")
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
@@ -281,7 +281,7 @@ load --table Users
                  [
                    error.output,
                    error.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -296,7 +296,7 @@ load --table Users
 
       groonga("lock_acquire", "Ages.users_age")
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
       error = assert_raise(CommandRunner::Error) do
         grndb("check")
       end
@@ -312,7 +312,7 @@ load --table Users
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
   end
@@ -334,7 +334,7 @@ load --table Users
     removed_path = "#{@database_path}.0000100.001"
     FileUtils.rm(removed_path)
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
@@ -352,7 +352,7 @@ load --table Users
                  [
                    error.output,
                    error.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -367,7 +367,7 @@ load --table Users
     removed_path = "#{@database_path}.0000100.001"
     FileUtils.rm(removed_path)
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
@@ -385,7 +385,7 @@ load --table Users
                  [
                    error.output,
                    error.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -407,7 +407,7 @@ load --table Users
     removed_path = "#{@database_path}.0000101.001"
     FileUtils.rm(removed_path)
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
@@ -425,7 +425,7 @@ load --table Users
                  [
                    error.output,
                    error.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -437,7 +437,7 @@ load --table Users
     empty_file_path_no_object = "#{@database_path}.0000210"
     FileUtils.touch(empty_file_path_no_object)
 
-    FileUtils.rm(@log_path)
+    remove_groonga_log
     error = assert_raise(CommandRunner::Error) do
       grndb("check")
     end
@@ -461,7 +461,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                  [
                    error.output,
                    error.error_output,
-                   normalize_groonga_log(File.read(@log_path)),
+                   normalized_groonga_log_content,
                  ])
   end
 
@@ -471,7 +471,7 @@ Empty file exists: <#{empty_file_path_no_object}>
       _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
       FileUtils.rm(path)
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Users")
       end
@@ -490,7 +490,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
 
@@ -507,7 +507,7 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "Users")
       groonga("lock_acquire", "Users.age")
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Users")
       end
@@ -524,7 +524,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
 
@@ -535,7 +535,7 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "Users")
       groonga("lock_acquire", "Users.age")
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Users.age")
       end
@@ -551,7 +551,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
 
@@ -572,7 +572,7 @@ Empty file exists: <#{empty_file_path_no_object}>
         end
       end
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Bookmarks")
       end
@@ -591,7 +591,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
 
@@ -605,7 +605,7 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "Users.age")
       groonga("lock_acquire", "Admins")
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Admins")
       end
@@ -623,7 +623,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
 
@@ -639,7 +639,7 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "Bookmarks")
       groonga("lock_acquire", "Bookmarks.user")
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Bookmarks.user")
       end
@@ -657,7 +657,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
 
@@ -676,7 +676,7 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "Ages")
       groonga("lock_acquire", "Ages.users_age")
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Ages")
       end
@@ -695,7 +695,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
 
@@ -714,7 +714,7 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "Names")
       groonga("lock_acquire", "Names.users_names")
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Names")
       end
@@ -733,7 +733,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
 
@@ -759,7 +759,7 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "NormalizedNames")
       groonga("lock_acquire", "NormalizedNames.users_name")
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Users.name")
       end
@@ -779,7 +779,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
 
@@ -797,7 +797,7 @@ Empty file exists: <#{empty_file_path_no_object}>
       groonga("lock_acquire", "Users")
       groonga("lock_acquire", "Users.logs_user")
 
-      FileUtils.rm(@log_path)
+      remove_groonga_log
       error = assert_raise(CommandRunner::Error) do
         grndb("check", "--target", "Users")
       end
@@ -816,7 +816,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                    [
                      error.output,
                      error.error_output,
-                     normalize_groonga_log(File.read(@log_path)),
+                     normalized_groonga_log_content,
                    ])
     end
   end
