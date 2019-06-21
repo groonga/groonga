@@ -110,6 +110,17 @@ module Groonga
         recoverer.force_truncate = options[:force_truncate]
         recoverer.force_lock_clear = options[:force_lock_clear]
         begin
+          if options[:target_timestamp]
+            recoverer.target_timestamp = Time.parse(options[:target_timestamp])
+          else
+            recoverer.target_timestamp = Time.at(0)
+          end
+        rescue ArgumentError => error
+          failed("Invalid --target-timestamp: <#{options[:target_timestamp]}>",
+                 error.message)
+          return
+        end
+        begin
           recoverer.recover
         rescue Error => error
           failed("Failed to recover database: <#{@database_path}>",
@@ -126,6 +137,17 @@ module Groonga
         checker.log_paths = options[:groonga_log_path]
         checker.on_failure = lambda do |message|
           failed(message)
+        end
+        begin
+          if options[:target_timestamp]
+            checker.target_timestamp = Time.parse(options[:target_timestamp])
+          else
+            checker.target_timestamp = Time.at(0)
+          end
+        rescue ArgumentError => error
+          failed("Invalid --target-timestamp: <#{options[:target_timestamp]}>",
+                 error.message)
+          return
         end
 
         checker.check_log_paths
@@ -149,6 +171,7 @@ module Groonga
         attr_writer :database
         attr_writer :log_paths
         attr_writer :on_failure
+        attr_writer :target_timestamp
 
         def initialize(output)
           @output = output
@@ -176,6 +199,12 @@ module Groonga
         end
 
         def check_database
+          if skip_target?(@database_path)
+            message = "Skipped because database is older than specified timestamp: <#{@target_timestamp}> <#{@database_path}>"
+            @output.puts(message)
+            logger.log(:info, message)
+            return
+          end
           check_database_orphan_inspect
           check_database_locked
           check_database_corrupt
@@ -320,6 +349,13 @@ module Groonga
         def check_object(object)
           return if @checked.key?(object.id)
           @checked[object.id] = true
+
+          if skip_target?(object.path)
+            message = "Skipped because <#{object.name}> is older than specified timestamp: <#{@target_timestamp}> <#{object.path}>"
+            @output.puts(message)
+            logger.log(:info, message)
+            return
+          end
 
           check_object_locked(object)
           check_object_corrupt(object)
@@ -506,6 +542,14 @@ module Groonga
             "Re-create the object or the database."
           failed(message)
         end
+
+        def skip_target?(path)
+          if path and File.exist?(path)
+            File.stat(path).mtime <= @target_timestamp
+          else
+            false
+          end
+        end
       end
 
       class Recoverer
@@ -514,6 +558,7 @@ module Groonga
         attr_writer :database
         attr_writer :force_truncate
         attr_writer :force_lock_clear
+        attr_writer :target_timestamp
 
         def initialize(output)
           @output = output
@@ -525,18 +570,32 @@ module Groonga
           if @force_truncate
             @database.each do |object|
               next unless truncate_target?(object)
-              truncate_broken_object(object)
+              unless skip_target?(object.path)
+                truncate_broken_object(object)
+              end
             end
           end
           if @force_lock_clear
             clear_locks
           end
-          remove_empty_files
-          @database.recover
-          logger.log(:info, "Recovered database: <#{@database.path}>")
+          unless skip_target?(@database.path)
+            remove_empty_files
+            @database.recover({:timestamp => @target_timestamp})
+            logger.log(:info, "Recovered database: <#{@database.path}>")
+          else
+            logger.log(:info, "Skipped to recover: <#{@database.path}>")
+          end
         end
 
         private
+        def skip_target?(path)
+          if path and File.exist?(path)
+            File.stat(path).mtime <= @target_timestamp
+          else
+            false
+          end
+        end
+
         def truncate_target?(object)
           return true if object.corrupt?
 

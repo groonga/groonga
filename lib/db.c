@@ -47,6 +47,7 @@
 #include "grn_cast.h"
 #include <string.h>
 #include <math.h>
+#include <sys/stat.h>
 
 typedef struct {
   grn_id id;
@@ -125,6 +126,18 @@ gen_pathname(const char *path, char *buffer, int fno)
     buffer[len + 8] = '\0';
   } else {
     buffer[len] = '\0';
+  }
+}
+
+grn_inline static grn_bool
+grn_db_recover_skip_target(grn_ctx *ctx, grn_obj *obj, uint32_t target_last_modified)
+{
+  struct stat stat_buf;
+  stat(grn_obj_get_io(ctx, obj)->path, &stat_buf);
+  if (stat_buf.st_mtime < target_last_modified) {
+    return GRN_TRUE;
+  } else {
+    return GRN_FALSE;
   }
 }
 
@@ -15322,17 +15335,37 @@ grn_db_recover_is_builtin(grn_ctx *ctx, grn_id id, grn_table_cursor *cursor)
 }
 
 grn_rc
-grn_db_recover(grn_ctx *ctx, grn_obj *db)
+grn_db_recover(grn_ctx *ctx, grn_obj *db, grn_obj *options)
 {
   grn_table_cursor *cursor;
   grn_id id;
   grn_bool is_close_opened_object_mode;
+  uint32_t target_last_modified = 0;
 
   GRN_API_ENTER;
 
   is_close_opened_object_mode = (grn_thread_get_limit() == 1);
 
-  grn_db_recover_database(ctx, db);
+  if (options) {
+    grn_id record_id = grn_table_get(ctx, options, "timestamp", strlen("timestamp"));
+    if (record_id != GRN_ID_NIL) {
+      grn_obj timestamp;
+      GRN_UINT32_INIT(&timestamp, 0);
+      grn_obj_get_value(ctx, options, record_id, &timestamp);
+      target_last_modified = GRN_UINT32_VALUE(&timestamp);
+      GRN_OBJ_FIN(ctx, &timestamp);
+      GRN_LOG(ctx, GRN_LOG_DEBUG, "[db][recover] timestamp option: <%u> <%u>",
+              record_id, target_last_modified);
+    }
+  }
+
+  if (grn_db_recover_skip_target(ctx, db, target_last_modified)) {
+    grn_io *io = grn_obj_get_io(ctx, db);
+    GRN_LOG(ctx, GRN_LOG_INFO, "[db][recover] skipped to recover database: <%s>",
+            io ? io->path : "(empty)");
+  } else {
+    grn_db_recover_database(ctx, db);
+  }
   if (ctx->rc != GRN_SUCCESS) {
     GRN_API_RETURN(ctx->rc);
   }
@@ -15358,14 +15391,44 @@ grn_db_recover(grn_ctx *ctx, grn_obj *db)
       case GRN_TABLE_HASH_KEY :
       case GRN_TABLE_PAT_KEY :
       case GRN_TABLE_DAT_KEY :
-        grn_db_recover_table(ctx, object);
+        if (grn_db_recover_skip_target(ctx, object, target_last_modified)) {
+          char name[GRN_TABLE_MAX_KEY_SIZE];
+          unsigned int name_size;
+          name_size = grn_obj_name(ctx, object, name, GRN_TABLE_MAX_KEY_SIZE);
+          grn_io *io = grn_obj_get_io(ctx, object);
+          GRN_LOG(ctx, GRN_LOG_INFO,
+                  "[db][recover] skipped to recover table: <%.*s> <%s>",
+                  (int)name_size, name, io ? io->path : "(empty)");
+        } else {
+          grn_db_recover_table(ctx, object);
+        }
         break;
       case GRN_COLUMN_FIX_SIZE :
       case GRN_COLUMN_VAR_SIZE :
-        grn_db_recover_data_column(ctx, object);
+        if (grn_db_recover_skip_target(ctx, object, target_last_modified)) {
+          char name[GRN_TABLE_MAX_KEY_SIZE];
+          unsigned int name_size;
+          name_size = grn_obj_name(ctx, object, name, GRN_TABLE_MAX_KEY_SIZE);
+          grn_io *io = grn_obj_get_io(ctx, object);
+          GRN_LOG(ctx, GRN_LOG_INFO,
+                  "[db][recover] skipped to recover data column: <%.*s> <%s>",
+                  (int)name_size, name, io ? io->path : "(empty)");
+        } else {
+          grn_db_recover_data_column(ctx, object);
+        }
         break;
       case GRN_COLUMN_INDEX :
-        grn_db_recover_index_column(ctx, object);
+        if (grn_db_recover_skip_target(ctx, object, target_last_modified)) {
+          char name[GRN_TABLE_MAX_KEY_SIZE];
+          unsigned int name_size;
+          name_size = grn_obj_name(ctx, object, name, GRN_TABLE_MAX_KEY_SIZE);
+          grn_io *io = grn_obj_get_io(ctx, object);
+          GRN_LOG(ctx, GRN_LOG_INFO,
+                  "[db][recover] skipped to recover index column: <%.*s> <%s>",
+                  (int)name_size, name, io ? io->path : "(empty)");
+        } else {
+          grn_db_recover_index_column(ctx, object);
+        }
         break;
       default:
         break;

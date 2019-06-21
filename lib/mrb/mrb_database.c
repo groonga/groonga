@@ -26,6 +26,7 @@
 #include "mrb_ctx.h"
 #include "mrb_database.h"
 #include "mrb_converter.h"
+#include "mrb_options.h"
 
 #include "../grn_encoding.h"
 
@@ -85,9 +86,36 @@ static mrb_value
 mrb_grn_database_recover(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  struct RClass *time_class;
+  mrb_value mrb_options;
+  mrb_get_args(mrb, "|H", &mrb_options);
+  uint32_t last_modified = 0;
+  if (!mrb_nil_p(mrb_options)) {
+    time_class = mrb_class_get(mrb, "Time");
+    mrb_value mrb_time;
+    mrb_time = grn_mrb_options_get_lit(mrb, mrb_options, "timestamp");
+    mrb_value mrb_timestamp = mrb_funcall(mrb,
+                                          mrb_time,
+                                          "to_i",
+                                          0);
+    last_modified = mrb_fixnum(mrb_timestamp);
+  }
 
-  grn_db_recover(ctx, DATA_PTR(self));
+  grn_obj *key_type = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT);
+  grn_obj *value_type = grn_ctx_at(ctx, GRN_DB_UINT32);
+  grn_obj *table = grn_table_create(ctx,
+                                    NULL, 0,
+                                    NULL, GRN_OBJ_TEMPORARY | GRN_OBJ_TABLE_HASH_KEY,
+                                    key_type, value_type);
+  grn_id id = grn_table_add(ctx, table, "timestamp", strlen("timestamp"), NULL);
+  grn_obj uint32_buf;
+  GRN_UINT32_INIT(&uint32_buf, 0);
+  GRN_UINT32_SET(ctx, &uint32_buf, last_modified);
+  grn_obj_set_value(ctx, table, id, &uint32_buf, GRN_OBJ_SET);
+  grn_db_recover(ctx, DATA_PTR(self), table);
   grn_mrb_ctx_check(mrb);
+
+  grn_obj_unlink(ctx, table);
 
   return mrb_nil_value();
 }
@@ -212,7 +240,7 @@ grn_mrb_database_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "initialize",
                     mrb_grn_database_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "recover",
-                    mrb_grn_database_recover, MRB_ARGS_NONE());
+                    mrb_grn_database_recover, MRB_ARGS_ANY());
   mrb_define_method(mrb, klass, "locked?",
                     mrb_grn_database_is_locked, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "clear_lock",

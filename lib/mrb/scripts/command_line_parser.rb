@@ -101,6 +101,8 @@ module Groonga
       options.string("--log-flags",
                      "Change log flags (#{default_log_flags.to_s})",
                      default: default_log_flags)
+      options.string("--target-timestamp", "Check only newer than specified timestamp.(e.g. YYYY-MM-DDTHH:MM:SS+HH:MM)",
+                     default: "1970-01-01 09:00:00 +09:00")
     end
 
     def find_command(name)
