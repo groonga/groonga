@@ -939,7 +939,7 @@ grn_proc_get_value_mode(grn_ctx *ctx,
                      (int)GRN_TEXT_LEN(&inspected),
                      GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
-    return GRN_OP_NOP;
+    return default_mode;
   }
 
   if (GRN_TEXT_LEN(value) == 0) {
@@ -994,10 +994,70 @@ grn_proc_get_value_mode(grn_ctx *ctx,
                      context,
                      (int)GRN_TEXT_LEN(value),
                      GRN_TEXT_VALUE(value));
-    return GRN_OP_NOP;
+    return default_mode;
   }
 
 #undef EQUAL_MODE
+}
+
+grn_operator
+grn_proc_get_value_operator(grn_ctx *ctx,
+                            grn_obj *value,
+                            grn_operator default_operator,
+                            const char *context)
+{
+  if (!value) {
+    return default_operator;
+  }
+
+  if (value->header.domain != GRN_DB_TEXT) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, value);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s: operator must be text: <%.*s>",
+                     context,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return default_operator;
+  }
+
+  if (GRN_TEXT_LEN(value) == 0) {
+    return default_operator;
+  }
+
+  grn_raw_string operator_string;
+  GRN_RAW_STRING_SET(operator_string, value);
+
+  if (GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "&&") ||
+      GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "+") ||
+      GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "AND")) {
+    return GRN_OP_AND;
+  } else if (GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "||") ||
+             GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "OR")) {
+    return GRN_OP_OR;
+  } else if (GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "!") ||
+             GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "-") ||
+             GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "NOT")) {
+    return GRN_OP_NOT;
+  } else if (GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "&!") ||
+             GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "AND_NOT")) {
+    return GRN_OP_AND_NOT;
+  } else {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s: operator must be one of them: "
+                     "["
+                     "\"&&\", \"+\", \"AND\", "
+                     "\"||\", \"OR\", "
+                     "\"!\", \"-\", \"NOT\", "
+                     "\"&!\", \"AND_NOT\""
+                     "]: <%.*s>",
+                     context,
+                     (int)operator_string.length,
+                     operator_string.value);
+    return default_operator;
+  }
 }
 
 
@@ -1950,6 +2010,7 @@ run_query(grn_ctx *ctx, grn_obj *table,
   grn_obj *query;
   grn_obj *query_expander_name = NULL;
   grn_operator default_mode = GRN_OP_MATCH;
+  grn_operator default_operator = GRN_OP_AND;
   grn_expr_flags flags = GRN_EXPR_SYNTAX_QUERY;
   grn_bool flags_specified = GRN_FALSE;
   grn_obj *match_columns = NULL;
@@ -1998,8 +2059,18 @@ run_query(grn_ctx *ctx, grn_obj *table,
           } else if (KEY_EQUAL("default_mode")) {
             default_mode = grn_proc_get_value_mode(ctx,
                                                    value,
-                                                   GRN_OP_MATCH,
+                                                   default_mode,
                                                    "query()");
+            if (ctx->rc != GRN_SUCCESS) {
+              grn_hash_cursor_close(ctx, cursor);
+              rc = ctx->rc;
+              goto exit;
+            }
+          } else if (KEY_EQUAL("default_operator")) {
+            default_operator = grn_proc_get_value_operator(ctx,
+                                                           value,
+                                                           default_operator,
+                                                           "query()");
             if (ctx->rc != GRN_SUCCESS) {
               grn_hash_cursor_close(ctx, cursor);
               rc = ctx->rc;
@@ -2103,10 +2174,14 @@ run_query(grn_ctx *ctx, grn_obj *table,
       query_string = GRN_TEXT_VALUE(&expanded_query);
       query_string_len = GRN_TEXT_LEN(&expanded_query);
     }
-    grn_expr_parse(ctx, condition,
+    grn_expr_parse(ctx,
+                   condition,
                    query_string,
                    query_string_len,
-                   match_columns, default_mode, GRN_OP_AND, flags);
+                   match_columns,
+                   default_mode,
+                   default_operator,
+                   flags);
     rc = ctx->rc;
     GRN_OBJ_FIN(ctx, &expanded_query);
     if (rc != GRN_SUCCESS) {

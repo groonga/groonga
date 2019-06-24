@@ -1,0 +1,17 @@
+table_create Products TABLE_NO_KEY
+column_create Products name COLUMN_SCALAR ShortText
+
+load --table Products
+[
+["name"],
+["Groonga"],
+["Mroonga"],
+["Rroonga"],
+["PGroonga"],
+["Ruby"],
+["PostgreSQL"]
+]
+
+select \
+  --table Products \
+  --filter 'query("name", "Groonga Mroonga", {"default_operator": 29})'

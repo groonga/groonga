@@ -1,0 +1,52 @@
+table_create Products TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Products name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Products
+[
+["name"],
+["Groonga"],
+["Mroonga"],
+["Rroonga"],
+["PGroonga"],
+["Ruby"],
+["PostgreSQL"]
+]
+[[0,0.0,0.0],6]
+select   --table Products   --filter 'query("name", "Groonga Mroonga", {"default_operator": "OR"})'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Groonga"
+      ],
+      [
+        4,
+        "PGroonga"
+      ],
+      [
+        2,
+        "Mroonga"
+      ]
+    ]
+  ]
+]
