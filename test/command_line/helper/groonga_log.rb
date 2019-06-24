@@ -57,7 +57,21 @@ module GroongaLog
                             >/x) do
       "<#{$1}XXXXXX>"
     end
+    message = message.gsub(/<(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}):(\d{2})\.\d{6}>/) do
+      "<%s:%02d.000000>" % [$1, Integer($2, 10).floor(-1)]
+    end
     message
+  end
+
+  def format_since(since)
+    "%04d-%02d-%02dT%02d:%02d:%02d.000000" % [
+      since.year,
+      since.mon,
+      since.day,
+      since.hour,
+      since.min,
+      since.sec.floor(-1),
+    ]
   end
 
   def normalize_groonga_log_line(line)

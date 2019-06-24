@@ -822,4 +822,292 @@ Empty file exists: <#{empty_file_path_no_object}>
                    ])
     end
   end
+
+  sub_test_case "--since" do
+    def setup
+      super
+      groonga("table_create", "Users", "TABLE_HASH_KEY", "ShortText")
+      @seconds_per_day = 60 * 60 * 24
+      touch_database(Time.now - (8 * @seconds_per_day))
+      _id, _name, @table_path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+    end
+
+    def touch_database(time)
+      Dir.glob("#{@database_path}*") do |path|
+        FileUtils.touch(path, mtime: time)
+      end
+    end
+
+    def adjust_start_time
+      while (Time.now.sec % 10) >= 5
+        sleep(1)
+      end
+    end
+
+    def compute_since(relative_seconds)
+      Time.now + relative_seconds
+    end
+
+    def test_database_keys
+      remove_groonga_log
+      FileUtils.touch(@database_path,
+                      mtime: Time.now - (6 * @seconds_per_day))
+      adjust_start_time
+      since = compute_since(-7 * @seconds_per_day)
+      result = grndb("check",
+                     "--log-level", "info",
+                     "--since=-7d")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Checking database: <#{@database_path}>: <#{format_since(since)}>
+|i| Database doesn't have orphan 'inspect' object: <#{@database_path}>
+|i| Database is not locked: <#{@database_path}>
+|i| Database is not corrupted: <#{@database_path}>
+|i| Database is not dirty: <#{@database_path}>
+|i| Checked database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content,
+                   ])
+    end
+
+    def test_database_specs
+      remove_groonga_log
+      FileUtils.touch("#{@database_path}.001",
+                      mtime: Time.now - (6 * @seconds_per_day))
+      adjust_start_time
+      since = compute_since(-7 * @seconds_per_day)
+      result = grndb("check",
+                     "--log-level", "info",
+                     "--since=-7d")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Checking database: <#{@database_path}>: <#{format_since(since)}>
+|i| Database doesn't have orphan 'inspect' object: <#{@database_path}>
+|i| Database is not locked: <#{@database_path}>
+|i| Database is not corrupted: <#{@database_path}>
+|i| Database is not dirty: <#{@database_path}>
+|i| Checked database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content,
+                   ])
+    end
+
+    def test_database_config
+      remove_groonga_log
+      FileUtils.touch("#{@database_path}.conf",
+                      mtime: Time.now - (6 * @seconds_per_day))
+      adjust_start_time
+      since = compute_since(-7 * @seconds_per_day)
+      result = grndb("check",
+                     "--log-level", "info",
+                     "--since=-7d")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Checking database: <#{@database_path}>: <#{format_since(since)}>
+|i| Database doesn't have orphan 'inspect' object: <#{@database_path}>
+|i| Database is not locked: <#{@database_path}>
+|i| Database is not corrupted: <#{@database_path}>
+|i| Database is not dirty: <#{@database_path}>
+|i| Checked database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content,
+                   ])
+    end
+
+    def test_database_options
+      remove_groonga_log
+      FileUtils.touch("#{@database_path}.options",
+                      mtime: Time.now - (6 * @seconds_per_day))
+      adjust_start_time
+      since = compute_since(-7 * @seconds_per_day)
+      result = grndb("check",
+                     "--log-level", "info",
+                     "--since=-1w")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Checking database: <#{@database_path}>: <#{format_since(since)}>
+|i| Database doesn't have orphan 'inspect' object: <#{@database_path}>
+|i| Database is not locked: <#{@database_path}>
+|i| Database is not corrupted: <#{@database_path}>
+|i| Database is not dirty: <#{@database_path}>
+|i| Checked database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content,
+                   ])
+    end
+
+    def test_object
+      remove_groonga_log
+      FileUtils.touch(@table_path,
+                      mtime: Time.now - (6 * @seconds_per_day))
+      adjust_start_time
+      since = compute_since(-7 * @seconds_per_day)
+      result = grndb("check",
+                     "--log-level", "info",
+                     "--since=-1weeks")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Checking database: <#{@database_path}>: <#{format_since(since)}>
+|i| [Users] Table is not locked
+|i| [Users] Table is not corrupted
+|i| Checked database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content,
+                   ])
+    end
+
+    def test_target
+      remove_groonga_log
+      adjust_start_time
+      since = compute_since(-7 * @seconds_per_day)
+      result = grndb("check",
+                     "--log-level", "info",
+                     "--target", "Users",
+                     "--since=-1weeks")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Checking database: <#{@database_path}>: <#{format_since(since)}>
+|i| Checking object: <Users>
+|i| Checked object: <Users>
+|i| Checked database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content,
+                   ])
+    end
+
+    data("s"       => ["-30s",       -30])
+    data("sec"     => ["-30sec",     -30])
+    data("secs"    => ["-30secs",    -30])
+    data("second"  => ["-30second",  -30])
+    data("seconds" => ["-30seconds", -30])
+    data("m"       => ["-30m",       -30 * 60])
+    data("min"     => ["-30min",     -30 * 60])
+    data("mins"    => ["-30mins",    -30 * 60])
+    data("minute"  => ["-30minute",  -30 * 60])
+    data("minutes" => ["-30minutes", -30 * 60])
+    data("h"       => ["-30h"  ,     -30 * 60 * 60])
+    data("hour"    => ["-30h",       -30 * 60 * 60])
+    data("hours"   => ["-30h",       -30 * 60 * 60])
+    data("d"       => ["-3d",        -3 * 60 * 60 * 24])
+    data("day"     => ["-3day",      -3 * 60 * 60 * 24])
+    data("days"    => ["-3days",     -3 * 60 * 60 * 24])
+    data("w"       => ["-0.3w",      -0.3 * 60 * 60 * 24 * 7])
+    data("week"    => ["-0.3week",   -0.3 * 60 * 60 * 24 * 7])
+    data("weeks"   => ["-0.3weeks",  -0.3 * 60 * 60 * 24 * 7])
+    data("month"   => ["-0.1month",  -0.1 * 60 * 60 * 24 * 30])
+    data("months"  => ["-0.1months", -0.1 * 60 * 60 * 24 * 30])
+    data("y"       => ["-0.01y",     -0.01 * 60 * 60 * 24 * 365])
+    data("year"    => ["-0.01year",  -0.01 * 60 * 60 * 24 * 365])
+    data("years"   => ["-0.01years", -0.01 * 60 * 60 * 24 * 365])
+    def test_relative_time(data)
+      argument, relative_time = data
+      remove_groonga_log
+      adjust_start_time
+      since = compute_since(relative_time)
+      result = grndb("check",
+                     "--log-level", "info",
+                     "--since=#{argument}")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Checking database: <#{@database_path}>: <#{format_since(since)}>
+|i| Checked database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content,
+                   ])
+    end
+
+    now = Time.now
+    data("YYYY" => [
+           "%04d" % [now.year],
+           Time.local(now.year, 1, 1, 0, 0, 0, 0),
+         ])
+    data("YYYY-MM" => [
+           "%04d-%02d" % [now.year, now.month],
+           Time.local(now.year, now.month, 1, 0, 0, 0, 0),
+         ])
+    data("YYYY-MM-DD" => [
+           "%04d-%02d-%02d" % [now.year, now.month, now.day],
+           Time.local(now.year, now.month, now.day, 0, 0, 0, 0),
+         ])
+    data("YYYY-MM-DDThh" => [
+           "%04d-%02d-%02dT02" % [now.year, now.month, now.day],
+           Time.local(now.year, now.month, now.day, 2, 0, 0, 0),
+         ])
+    data("YYYY-MM-DDThh:mm" => [
+           "%04d-%02d-%02dT02:09" % [now.year, now.month, now.day],
+           Time.local(now.year, now.month, now.day, 2, 9, 0, 0),
+         ])
+    data("YYYY-MM-DDThh:mm:ss" => [
+           "%04d-%02d-%02dT02:09:30" % [now.year, now.month, now.day],
+           Time.local(now.year, now.month, now.day, 2, 9, 30, 0),
+         ])
+    data("YYYY-MM-DDThh:mm:ss.uuuuuu" => [
+           "%04d-%02d-%02dT02:09:30.292929" % [now.year, now.month, now.day],
+           Time.local(now.year, now.month, now.day, 2, 9, 30, 292929),
+         ])
+    def test_absolute_time(data)
+      argument, since = data
+      touch_database(since - 1)
+      remove_groonga_log
+      adjust_start_time
+      result = grndb("check",
+                     "--log-level", "info",
+                     "--since=#{argument}")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("info", <<-MESSAGES),
+|i| Checking database: <#{@database_path}>: <#{format_since(since)}>
+|i| Checked database: <#{@database_path}>
+                     MESSAGES
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content,
+                   ])
+    end
+  end
 end

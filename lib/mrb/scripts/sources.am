@@ -37,5 +37,6 @@ RUBY_SCRIPT_FILES =				\
 	scan_info_search_index.rb		\
 	table.rb				\
 	table_cursor.rb				\
+	time.rb					\
 	variable_size_column.rb			\
 	writer.rb

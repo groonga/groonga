@@ -38,8 +38,15 @@ module Groonga
           options.banner += " DB_PATH"
           options.string("--target", "Check only the target object.")
           options.array("--groonga-log-path",
-                        "Path to Groonga log file to be checked.",
-                        "You can specify multiple times to specify multiple log files.")
+                        "Path to Groonga log file to be checked. " +
+                        "You can specify multiple times to " +
+                        "specify multiple log files.")
+          options.time("--since",
+                       "Check only objects that are modified " +
+                       "since the specified time. " +
+                       "You can use ISO 8601 format or " +
+                       "-${N}${UNIT} format such as " +
+                       "-3days and -2.5weeks.")
 
           command.add_action do |options|
             open_database(command, options) do |database, rest_arguments|
@@ -118,10 +125,14 @@ module Groonga
       end
 
       def check(database, options, arguments)
-        logger.log(:info, "Checking database: <#{@database_path}>")
+        message = "Checking database: <#{@database_path}>"
+        since = options[:since]
+        message << ": <#{since.iso8601}>" if since
+        logger.log(:info, message)
         checker = Checker.new(@output)
         checker.program_path = @program_path
         checker.database_path = @database_path
+        checker.since = since
         checker.database = database
         checker.log_paths = options[:groonga_log_path]
         checker.on_failure = lambda do |message|
@@ -146,6 +157,7 @@ module Groonga
 
         attr_writer :program_path
         attr_writer :database_path
+        attr_writer :since
         attr_writer :database
         attr_writer :log_paths
         attr_writer :on_failure
@@ -176,6 +188,8 @@ module Groonga
         end
 
         def check_database
+          return unless target_database?
+
           check_database_orphan_inspect
           check_database_locked
           check_database_corrupt
@@ -210,6 +224,7 @@ module Groonga
             cursor.each do |id|
               next if ID.builtin?(id)
               next if builtin_object_name?(cursor.key)
+              next unless target_id?(id)
               next if @context[id]
               failed_to_open(cursor.key)
             end
@@ -290,7 +305,7 @@ module Groonga
           open_database_cursor do |cursor|
             cursor.each do |id|
               next if ID.builtin?(id)
-              path = "%s.%07x" % [@database.path, id]
+              path = object_path(id)
               next unless File.exist?(path)
               return if File.stat(path).mtime > last_modified
             end
@@ -318,8 +333,11 @@ module Groonga
         end
 
         def check_object(object)
+          return if ID.builtin?(object.id)
           return if @checked.key?(object.id)
           @checked[object.id] = true
+
+          return unless target_id?(object.id)
 
           check_object_locked(object)
           check_object_corrupt(object)
@@ -493,6 +511,45 @@ module Groonga
           else
             false
           end
+        end
+
+        def target_database?
+          return true if @since.nil?
+
+          suffixes = [
+            "",
+            ".001",
+            ".conf",
+            ".options",
+          ]
+          suffixes.each do |suffix|
+            path = "#{@database.path}#{suffix}"
+            next unless File.exist?(path)
+            return true if File.stat(path).mtime >= @since
+          end
+          false
+        end
+
+        def object_path(id)
+          "%s.%07X" % [@database.path, id]
+        end
+
+        def target_id?(id)
+          return true if @since.nil?
+
+          target_path = object_path(id)
+          return false unless File.exist?(target_path)
+          return true if File.stat(target_path).mtime >= @since
+
+          dir_path = File.dirname(@database.path)
+          Dir.open(dir_path) do |dir|
+            dir.each do |path|
+              full_path = File.join(dir_path, path)
+              next unless full_path.start_with?(target_path)
+              return true if File.stat(full_path).mtime >= @since
+            end
+          end
+          false
         end
 
         def failed(message)
