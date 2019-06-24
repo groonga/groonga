@@ -145,7 +145,9 @@ module Groonga
 
         target_name = options[:target]
         if target_name
+          logger.log(:info, "Checking object: <#{target_name}>")
           checker.check_one(target_name)
+          logger.log(:info, "Checked object: <#{target_name}>")
         else
           checker.check_all
         end
@@ -198,25 +200,9 @@ module Groonga
         end
 
         def check_one(target_name)
-          logger.log(:info, "Checking object: <#{target_name}>")
-          target = @context[target_name]
-          if target.nil?
-            exist_p = open_database_cursor do |cursor|
-              cursor.any? do
-                cursor.key == target_name
-              end
-            end
-            if exist_p
-              failed_to_open(target_name)
-            else
-              message = "[#{target_name}] Not exist."
-              failed(message)
-            end
-            return
+          open_object(target_name) do |target|
+            check_object_recursive(target)
           end
-
-          check_object_recursive(target)
-          logger.log(:info, "Checked object: <#{target_name}>")
         end
 
         def check_all
@@ -224,14 +210,10 @@ module Groonga
             cursor.each do |id|
               next if ID.builtin?(id)
               next if builtin_object_name?(cursor.key)
-              next unless target_id?(id)
-              next if @context[id]
-              failed_to_open(cursor.key)
+              open_object(id) do |object|
+                check_object(object)
+              end
             end
-          end
-
-          @database.each do |object|
-            check_object(object)
           end
         end
 
@@ -333,11 +315,8 @@ module Groonga
         end
 
         def check_object(object)
-          return if ID.builtin?(object.id)
           return if @checked.key?(object.id)
           @checked[object.id] = true
-
-          return unless target_id?(object.id)
 
           check_object_locked(object)
           check_object_corrupt(object)
@@ -429,67 +408,47 @@ module Groonga
           case target
           when Table
             unless target.is_a?(Groonga::Array)
-              domain_id = target.domain_id
-              domain = @context[domain_id]
-              if domain.nil?
-                record = Record.new(@database, domain_id)
-                failed_to_open(record.key)
-              elsif domain.is_a?(Table)
-                check_object_recursive(domain)
+              open_object(target.domain_id) do |domain|
+                if domain.is_a?(Table)
+                  check_object_recursive(domain)
+                end
               end
             end
 
             target.column_ids.each do |column_id|
-              column = @context[column_id]
-              if column.nil?
-                record = Record.new(@database, column_id)
-                failed_to_open(record.key)
-              else
+              open_object(column_id) do |column|
                 check_object_recursive(column)
               end
             end
           when FixedSizeColumn, VariableSizeColumn
-            range_id = target.range_id
-            range = @context[range_id]
-            if range.nil?
-              record = Record.new(@database, range_id)
-              failed_to_open(record.key)
-            elsif range.is_a?(Table)
-              check_object_recursive(range)
+            open_object(target.range_id) do |range|
+              if range.is_a?(Table)
+                check_object_recursive(range)
+              end
             end
 
             lexicon_ids = []
             target.indexes.each do |index_info|
               index = index_info.index
               lexicon_ids << index.domain_id
+              next if target_id?(index.id)
               check_object(index)
             end
             lexicon_ids.uniq.each do |lexicon_id|
-              lexicon = @context[lexicon_id]
-              if lexicon.nil?
-                record = Record.new(@database, lexicon_id)
-                failed_to_open(record.key)
-              else
+              open_object(lexicon_id) do |lexicon|
                 check_object(lexicon)
               end
             end
           when IndexColumn
-            range_id = target.range_id
-            range = @context[range_id]
-            if range.nil?
-              record = Record.new(@database, range_id)
-              failed_to_open(record.key)
-              return
-            end
-            check_object(range)
+            open_object(target.range_id) do |range|
+              check_object(range)
 
-            target.source_ids.each do |source_id|
-              source = @context[source_id]
-              if source.nil?
-                record = Record.new(database, source_id)
-                failed_to_open(record.key)
-              elsif source.is_a?(Column)
-                check_object_recursive(source)
+              target.source_ids.each do |source_id|
+                open_object(source_id) do |source|
+                  if source.is_a?(Column)
+                    check_object_recursive(source)
+                  end
+                end
               end
             end
           end
@@ -550,6 +509,32 @@ module Groonga
             end
           end
           false
+        end
+
+        def open_object(name_or_id)
+          if name_or_id.is_a?(Integer)
+            id = name_or_id
+            return if id.nil?
+            name = @database[id]
+          else
+            name = name_or_id
+            id = @database[name_or_id]
+          end
+
+          if id.nil?
+            failed("[#{name}] Not exist.")
+            return
+          end
+
+          return unless target_id?(id)
+
+          object = @context[name]
+          if object.nil?
+            failed_to_open(name)
+            return
+          end
+
+          yield(object)
         end
 
         def failed(message)
