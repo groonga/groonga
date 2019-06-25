@@ -15,6 +15,6 @@
 
 module Platform
   def windows?
-    /mingw/.match?(RUBY_PLATFORM)
+    /mingw/ === RUBY_PLATFORM
   end
 end
