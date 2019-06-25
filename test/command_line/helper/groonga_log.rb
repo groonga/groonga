@@ -58,7 +58,7 @@ module GroongaLog
       "<#{$1}XXXXXX>"
     end
     message = message.gsub(/<(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}):(\d{2})\.\d{6}>/) do
-      "<%s:%02d.000000>" % [$1, Integer($2, 10).floor(-1)]
+      "<%s:%02d.000000>" % [$1, Integer($2, 10) / 10 * 10]
     end
     message
   end
