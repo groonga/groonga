@@ -70,7 +70,7 @@ module GroongaLog
       since.day,
       since.hour,
       since.min,
-      since.sec.floor(-1),
+      since.sec / 10 * 10,
     ]
   end
 
