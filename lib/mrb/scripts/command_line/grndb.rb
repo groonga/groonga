@@ -431,7 +431,7 @@ module Groonga
             target.indexes.each do |index_info|
               index = index_info.index
               lexicon_ids << index.domain_id
-              next if target_id?(index.id)
+              next unless target_id?(index.id)
               check_object(index)
             end
             lexicon_ids.uniq.each do |lexicon_id|
