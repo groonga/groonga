@@ -132,6 +132,48 @@ Here is an example that specifies ``--log-flags`` option::
 
 See :doc:`groonga` to know about supported log flags.
 
+``--since``
+"""""""""""
+
+.. versionadded:: 9.0.4
+
+It specifies the object's modified time which should be checked. If object's modified time is newer than the specified time, these objects are checked by ``grndb``.
+You can specify the modified time as ISO 8601 format or ``-NUNIT`` format such as -3days or -2.5weeks format.
+
+Here is an example that specifies ``--since`` option in ISO 8601 format::
+
+  % grmdb check --since=2019-06-24T18:16:22 /var/lib/groonga/db/db
+
+In above example, the objects which are modified after ``2019-06-24T18:16:22`` are checked.
+
+Here is an example that specifies ``--since`` option in ``-NUNIT`` format::
+
+  % grmdb check --since=-7d /var/lib/groonga/db/db
+
+In above example, the objects which are modified in recent 7 days are checked.
+
+``-NUNIT`` accepts the following suffix as a unit.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Supported suffix
+     - Description
+   * - ``s``, ``sec``, ``secs``, ``second``, ``seconds``
+     - Specify recent N seconds. For example, ``--since=-100s`` means within recent 100 seconds should be checked.
+   * - ``m``, ``min``, ``mins``, ``minute``, ``minutes``
+     - Specify recent N minutes. For example, ``--since=-10m`` means within recent 10 minutes should be checked.
+   * - ``h``, ``hour``, ``hours``
+     - Specify recent N hours. For example, ``--since=-10h`` means within recent 10 hours should be checked.
+   * - ``d``, ``day``, ``days``
+     - Specify recent N days. For example, ``--since=-10d`` means within recent 10 days should be checked.
+   * - ``w``, ``week``, ``weeks``
+     - Specify recent N weeks. For example, ``--since=-10w`` means within recent 10 weeks should be checked.
+   * - ``month``, ``months``
+     - Specify recent N months. For example, ``--since=-10month`` means within recent 10 months should be checked.
+   * - ``year``, ``years``
+     - Specify recent N years. For example, ``--since=-1year`` means within recent 1 year should be checked.
+
 ``recover``
 ^^^^^^^^^^^
 
