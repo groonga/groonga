@@ -968,6 +968,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                      "",
                      expected_groonga_log("info", <<-MESSAGES),
 |i| Checking database: <#{@database_path}>: <#{format_since(since)}>
+#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
 |i| [Users] Table is not locked
 |i| [Users] Table is not corrupted
 |i| Checked database: <#{@database_path}>
