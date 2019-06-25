@@ -78,8 +78,6 @@ Database has orphan 'inspect' object. Remove it by '#{real_grndb_path} recover #
 |e| system call error: DETAIL: failed to open path: <#{@database_path}.0000100>
 |e| grn_ctx_at: failed to open object: <256>(<inspect>):<51>(<table:no_key>)
 |e| #{error_message.chomp}
-|e| grn_ctx_at: failed to open object: <256>(<inspect>):<51>(<table:no_key>)
-|n| (1 same messages are truncated)
                    MESSAGES
                  ],
                  [
@@ -227,8 +225,6 @@ load --table Users
 |e| system call error: DETAIL: failed to open path: <#{@database_path}.0000100>
 |e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
 |e| #{error_message.chomp}
-|e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
-|n| (1 same messages are truncated)
                    MESSAGES
                  ],
                  [
@@ -456,8 +452,6 @@ Empty file exists: <#{empty_file_path_no_object}>
 |e| [io][open] file size is too small: <0>(required: >= 64): <#{empty_file_path_object}>
 |e| grn_ctx_at: failed to open object: <256>(<Data>):<51>(<table:no_key>)
 |e| [Data] Can't open object. It's broken. Re-create the object or the database.
-|e| grn_ctx_at: failed to open object: <256>(<Data>):<51>(<table:no_key>)
-|n| (1 same messages are truncated)
                    MESSAGES
                  ],
                  [
