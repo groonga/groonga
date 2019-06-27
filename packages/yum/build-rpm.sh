@@ -35,6 +35,16 @@ esac
 
 run sudo yum install -y epel-release
 run sudo yum groupinstall -y "Development Tools"
+
+have_rapidjson=yes
+if ! yum info rapidjson-devel > /dev/null 2>&1; then
+  have_rapidjson=no
+fi
+
+if [ "${have_rapidjson}" = "no" ]; then
+  DEPENDED_PACKAGES="$(echo ${DEPENDED_PACKAGES} | sed -e 's/rapidjson-devel//')"
+fi
+
 run sudo yum install -y rpm-build rpmdevtools tar ${DEPENDED_PACKAGES}
 
 if [ -x /usr/bin/rpmdev-setuptree ]; then

@@ -7,6 +7,7 @@
 %define _use_msgpack  %{?use_msgpack:%{use_msgpack}}%{!?use_msgpack:%{_centos_ver} >= 7}
 %define _use_libstemmer %{?use_libstemmer:%{use_libstemmer}}%{!?use_libstemmer:%{_centos_ver} >= 7}
 %define _use_systemd  %{?use_systemd:%{use_systemd}}%{!?use_systemd:%{_centos_ver} >= 7}
+%define _use_rapidjson %{?use_rapidjson:%{use_rapidjson}}%{!?use_rapidjson:%{_centos_ver} >= 7}
 
 %define _additional_configure_options %{?additional_configure_options:%{additional_configure_options}}
 
@@ -41,6 +42,9 @@ BuildRequires:	msgpack-devel
 %endif
 %if %{_use_libstemmer}
 BuildRequires:	libstemmer-devel
+%endif
+%if %{_use_rapidjson}
+BuildRequires:	rapidjson-devel
 %endif
 BuildRequires:	pcre-devel
 BuildRequires:	pkgconfig
@@ -238,6 +242,9 @@ Munin plugins for Groonga
 %endif
 %if ! %{_use_libstemmer}
   --without-libstemmer \
+%endif
+%if ! %{_use_rapidjson}
+  --without-rapidjson \
 %endif
   --with-munin-plugins \
   --enable-mruby \
