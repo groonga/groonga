@@ -3,6 +3,7 @@
 
 .. groonga-command
 .. database: tokenizers
+
 ``TokenTable``
 ==============
 
