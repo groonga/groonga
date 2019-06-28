@@ -19,11 +19,14 @@ Improvements
 
 * Added support equivalence operation of a vector.
 
-* [:doc:`reference/commands/logical_range_filter`] Added more query logs.
+* [:doc:`reference/commands/logical_range_filter`] Increase outputting logs into query log.
 
   * ``logical_range_filter`` command comes to output a log for below timing.
+
     * After filtering by ``logical_range_filter``.
     * After sorting by ``logical_range_filter``.
+    * After applying dynamic column.
+    * After output results.
 
   * We can see how much has been finished this command by this feature.
 
@@ -33,11 +36,16 @@ Improvements
 
 * [:doc:`/reference/tokenizers`] Added document for ``TokenNgram`` description.
 
-* [:doc:`reference/executables/grndb`] Added support for empty files.
+* [:doc:`reference/executables/grndb`] Added output operation log into groonga.log
+
+  * ``grndb`` command comes to output execution result and execution process.
+
+* [:doc:`reference/executables/grndb`] Added support for checking empty files.
 
   * We can check if the empty files exist by this feature.
 
 * [:doc:`reference/executables/grndb`] Added support new option ``--since``
+
   * We can specify a scope of an inspection.
 
 * [:doc:`reference/executables/grndb`] Added document about new option ``--since``    
@@ -51,11 +59,7 @@ Improvements
 
   * This feature requires RapidJSON.
 
-* Added support for multiline log message.
-
-  * The multiline log message is easy to read by this feature.
-
-* [:doc:`reference/functions/query`] Added default_operator for query.
+* [:doc:`reference/functions/query`] Added ``default_operator``.
 
   * We can customize operator when "keyword1 keyword2".
   * "keyword1 Keyword2" is AND operation in default.
@@ -64,14 +68,14 @@ Improvements
 Fixes
 ^^^^^
 
-* [optimizer] Fix a bug that execution error when specified multiple
-  filter conditions and like ``xxx.yyy=="keyword"``.
+* [optimizer] Fix a bug that execution error when specified multiple filter conditions and like ``xxx.yyy=="keyword"``.
 
-* Added missing LICENSE files in Groonga package for Windows (only VC++ version).
+* Added missing LICENSE files in Groonga package for Windows(VC++ version).
 
-* Added UCRT runtime into Groonga package for Windows (only VC++ version).
+* Added UCRT runtime into Groonga package for Windows(VC++ version).
 
-* Fix a memory leak.
+* [:doc:`/reference/window_functions`] Fix a memory leak.
+
   * This occurs when multiple windows with sort keys are used. [Patched by Takashi Hashida]
 
 Thanks
