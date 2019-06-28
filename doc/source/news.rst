@@ -7,6 +7,78 @@
 News
 ====
 
+.. _release-9-0-4:
+
+Release 9.0.4 - 2019-06-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added support for array literal with multiple elements.
+
+* Added support equivalence operation of a vector.
+
+* [:doc:`reference/commands/logical_range_filter`] Added more query logs.
+
+  * ``logical_range_filter`` command comes to output a log for below timing.
+    * After filtering by ``logical_range_filter``.
+    * After sorting by ``logical_range_filter``.
+
+  * We can see how much has been finished this command by this feature.
+
+* [:doc:`/reference/tokenizers`] Added document for ``TokenPattern`` description.
+
+* [:doc:`/reference/tokenizers`] Added document for ``TokenTable`` description.
+
+* [:doc:`/reference/tokenizers`] Added document for ``TokenNgram`` description.
+
+* [:doc:`reference/executables/grndb`] Added support for empty files.
+
+  * We can check if the empty files exist by this feature.
+
+* [:doc:`reference/executables/grndb`] Added support new option ``--since``
+  * We can specify a scope of an inspection.
+
+* [:doc:`reference/executables/grndb`] Added document about new option ``--since``    
+
+* Bundle RapidJSON
+
+  * We can use RapidJson as Groonga's JSON parser.
+  * We can more exactly parse JSON by using this.
+
+* Added support for casting to int32 vector from JSON string.
+
+  * This feature requires RapidJSON.
+
+* Added support for multiline log message.
+
+  * The multiline log message is easy to read by this feature.
+
+* [:doc:`reference/functions/query`] Added default_operator for query.
+
+  * We can customize operator when "keyword1 keyword2".
+  * "keyword1 Keyword2" is AND operation in default.
+  * We can change "keyword1 keyword2"'s operator except AND.
+
+Fixes
+^^^^^
+
+* [optimizer] Fix a bug that execution error when specified multiple
+  filter conditions and like ``xxx.yyy=="keyword"``.
+
+* Added missing LICENSE files in Groonga package for Windows (only VC++ version).
+
+* Added UCRT runtime into Groonga package for Windows (only VC++ version).
+
+* Fix a memory leak.
+  * This occurs when multiple windows with sort keys are used. [Patched by Takashi Hashida]
+
+Thanks
+^^^^^^
+
+* Takashi Hashida
+
 .. _release-9-0-3:
 
 Release 9.0.3 - 2019-05-29
