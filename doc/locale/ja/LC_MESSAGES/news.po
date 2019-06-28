@@ -33,11 +33,167 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 9.0.3 - 2019-05-29"
-msgstr "9.0.3リリース - 2019-05-29"
+msgid "Release 9.0.4 - 2019-06-29"
+msgstr "9.0.4リリース - 2019-06-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "Added support for array literal with multiple elements."
+msgstr "配列リテラルの複数要素をサポートしました。"
+
+msgid "Added support equivalence operation of a vector."
+msgstr "ベクターの等価演算をサポートしました。"
+
+msgid ""
+"[:doc:`reference/commands/logical_range_filter`] Increase outputting logs "
+"into query log."
+msgstr ""
+"[:doc:`reference/commands/logical_range_filter`] 出力するクエリーログを追加し"
+"ました。"
+
+msgid ""
+"``logical_range_filter`` command comes to output a log for below timing."
+msgstr ""
+"``logical_range_filter`` コマンドが、以下のタイミングでログを出力するようにな"
+"ります。"
+
+msgid "After filtering by ``logical_range_filter``."
+msgstr "``logical_range_filter`` によるフィルター後"
+
+msgid "After sorting by ``logical_range_filter``."
+msgstr "``logical_range_filter`` によるソート後"
+
+msgid "After applying dynamic column."
+msgstr "動的カラム適用後"
+
+msgid "After output results."
+msgstr "結果出力後"
+
+msgid "We can see how much has been finished this command by this feature."
+msgstr ""
+"この機能によって、このコマンドがどこまで完了したかを見ることができます。"
+
+msgid ""
+"[:doc:`/reference/tokenizers`] Added document for ``TokenPattern`` "
+"description."
+msgstr ""
+"[:doc:`/reference/tokenizers`] ``TokenPattern`` の説明をドキュメントに追加し"
+"ました。"
+
+msgid ""
+"[:doc:`/reference/tokenizers`] Added document for ``TokenTable`` description."
+msgstr ""
+"[:doc:`/reference/tokenizers`] ``TokenTable`` の説明をドキュメントに追加しま"
+"した。"
+
+msgid ""
+"[:doc:`/reference/tokenizers`] Added document for ``TokenNgram`` description."
+msgstr ""
+"[:doc:`/reference/tokenizers`] ``TokenNgram`` の説明をドキュメントに追加しま"
+"した。 "
+
+msgid ""
+"[:doc:`reference/executables/grndb`] Added output operation log into groonga."
+"log"
+msgstr ""
+"[:doc:`reference/executables/grndb`] groonga.logへの操作ログの出力を追加しま"
+"した。"
+
+msgid ""
+"``grndb`` command comes to output execution result and execution process."
+msgstr "``grndb`` コマンドが実行結果と実行過程を出力するようになります。"
+
+msgid ""
+"[:doc:`reference/executables/grndb`] Added support for checking empty files."
+msgstr ""
+"[:doc:`/reference/executables/grndb`] 空のファイルのチェックをサポートしまし"
+"た。"
+
+msgid "We can check if the empty files exist by this feature."
+msgstr "この機能によって、空のファイルが存在するかどうかをチェックできます。"
+
+msgid ""
+"[:doc:`reference/executables/grndb`] Added support new option ``--since``"
+msgstr ""
+"[:doc:`reference/executables/grndb`] 新しいオプション ``--since`` を追加しま"
+"した。"
+
+msgid "We can specify a scope of an inspection."
+msgstr "検査の範囲を指定できます。"
+
+msgid ""
+"[:doc:`reference/executables/grndb`] Added document about new option ``--"
+"since``"
+msgstr ""
+"[:doc:`reference/executables/grndb`] 新しいオプション ``--since`` についての"
+"ドキュメントを追加しました。"
+
+msgid "Bundle RapidJSON"
+msgstr "RapidJSONをバンドルしました。"
+
+msgid "We can use RapidJson as Groonga's JSON parser."
+msgstr "GroongaのJSONパーサーとしてRapidJSONを使うことができます。"
+
+msgid "We can more exactly parse JSON by using this."
+msgstr "これを使うことでより厳格なJSONのパースができます。"
+
+msgid "Added support for casting to int32 vector from JSON string."
+msgstr "JSON文字列からint32のベクターへのキャストをサポートしました。"
+
+msgid "This feature requires RapidJSON."
+msgstr "この機能は、RapidJSONが必要です。"
+
+msgid "[:doc:`reference/functions/query`] Added ``default_operator``."
+msgstr ""
+"[:doc:`/reference/functions/query`] ``default_operator`` を追加しました。"
+
+msgid "We can customize operator when \"keyword1 keyword2\"."
+msgstr "\"keyword1 keyword2\"時の演算子をカスタマイズできます。"
+
+msgid "\"keyword1 Keyword2\" is AND operation in default."
+msgstr "デフォルトでは、\"keyword1 keyword2\"はAND演算です。"
+
+msgid "We can change \"keyword1 keyword2\"'s operator except AND."
+msgstr "\"keyword1 keyword2\"の演算子をAND以外に変更できます。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"[optimizer] Fix a bug that execution error when specified multiple filter "
+"conditions and like ``xxx.yyy==\"keyword\"``."
+msgstr ""
+"[optimizer] 複数のfilter条件と ``xxx.yyy==\"keyword\"`` のような条件を指定し"
+"た際にエラーが発生するバグを修正しました。"
+
+msgid ""
+"Added missing LICENSE files in Groonga package for Windows(VC++ version)."
+msgstr ""
+"GroongaのWindows用のパッケージ(VC++版)に不足していたライセンスファイルを追加"
+"しました。"
+
+msgid "Added UCRT runtime into Groonga package for Windows(VC++ version)."
+msgstr "GroongaのWindows用のパッケージ(VC++版)UCRTランタイムを追加しました。"
+
+msgid "[:doc:`/reference/window_functions`] Fix a memory leak."
+msgstr "[:doc:`/reference/window_function`] メモリリークを修正しました。"
+
+msgid ""
+"This occurs when multiple windows with sort keys are used. [Patched by "
+"Takashi Hashida]"
+msgstr ""
+"これは、複数のウインドウに対してソートキーを適用した際に発生します。 "
+"[Takashi Hashidaさんがパッチ提供]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Takashi Hashida"
+msgstr "Takashi Hashidaさん"
+
+msgid "Release 9.0.3 - 2019-05-29"
+msgstr "9.0.3リリース - 2019-05-29"
 
 msgid "[:doc:`reference/commands/select`] Added more query logs."
 msgstr ""
@@ -52,10 +208,6 @@ msgstr "ドリルダウンによるソート後"
 
 msgid "After filter by drilldown."
 msgstr "ドリルダウンによるフィルター後"
-
-msgid "We can see how much has been finished this command by this feature."
-msgstr ""
-"この機能によって、このコマンドがどこまで完了したかを見ることができます。"
 
 msgid "[:doc:`reference/commands/logical_select`] Added more query logs."
 msgstr ""
@@ -174,9 +326,6 @@ msgstr ""
 msgid "Dropped Ubuntu 14.04 support."
 msgstr "Ubuntu 14.04 のサポートをやめました。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid "[index_column_diff] Fixed a bug that too much ``remains`` are reported."
 msgstr "[index_column_diff] ``remains`` を多く報告するバグを修正しました。"
 
@@ -204,9 +353,6 @@ msgid "This extended prefix causes a bug that plugin can't be found correctly."
 msgstr ""
 "この拡張プレフィックスは、プラグインを正確に見つけられないというバグを引き起"
 "こします。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Tomohiro KATO"
 msgstr "Tomohiro KATOさん"
@@ -13544,3 +13690,19 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
+
+#~ msgid ""
+#~ "``logical_range_filter`` command comes to output a log for below timing. "
+#~ "* After filtering by ``logical_range_filter``. * After sorting by "
+#~ "``logical_range_filter``."
+#~ msgstr ""
+#~ "``logical_range_filter`` コマンドが以下のタイミングでログを出力するように"
+#~ "なります。 * After filtering by ``logical_range_filter``. * After sorting "
+#~ "by ``logical_range_filter``."
+
+#~ msgid ""
+#~ "[:doc:`reference/executables/grndb`] Added support new option ``--since`` "
+#~ "* We can specify a scope of an inspection."
+#~ msgstr ""
+#~ "[:doc:`reference/executables/grndb`] 新しいオプション ``--since`` をサポー"
+#~ "トしました。"
