@@ -17,7 +17,8 @@ Build-Depends:
   libstemmer-dev,
   libjemalloc-dev,
   libzstd-dev,
-  libssl-dev
+  libssl-dev,
+  rapidjson-dev
 Standards-Version: 3.9.8
 Homepage: http://groonga.org/
 
