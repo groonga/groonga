@@ -52,7 +52,7 @@ Improvements
 
 * Bundle RapidJSON
 
-  * We can use RapidJson as Groonga's JSON parser.
+  * We can use RapidJson as Groonga's JSON parser partly. (This feature is partly yet)
   * We can more exactly parse JSON by using this.
 
 * Added support for casting to int32 vector from JSON string.
