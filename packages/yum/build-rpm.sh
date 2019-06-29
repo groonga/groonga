@@ -45,15 +45,6 @@ if [ "${have_rapidjson}" = "no" ]; then
   DEPENDED_PACKAGES="$(echo ${DEPENDED_PACKAGES} | sed -e 's/rapidjson-devel//')"
 fi
 
-have_autoconf_archive=yes
-if ! yum info autoconf-archive > /dev/null 2>&1; then
-  have_autoconf_archive=no
-fi
-
-if [ "${have_autoconf_archive}" = "no" ]; then
-  DEPENDED_PACKAGES="$(echo ${DEPENDED_PACKAGES} | sed -e 's/autoconf-archive//')"
-fi
-
 run sudo yum install -y rpm-build rpmdevtools tar ${DEPENDED_PACKAGES}
 
 if [ -x /usr/bin/rpmdev-setuptree ]; then
