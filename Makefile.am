@@ -27,6 +27,7 @@ EXTRA_DIST =					\
 	bundled_lz4_version			\
 	bundled_mecab_naist_jdic_version	\
 	bundled_mecab_version			\
+	bundled_rapidjson_version		\
 	config.h.cmake				\
 	gpg_uid					\
 	nginx_version				\
