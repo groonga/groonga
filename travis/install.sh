@@ -33,6 +33,7 @@ case "${TRAVIS_OS_NAME}" in
     if [ "${ENABLE_DOCUMENT}" = "yes" ]; then
       sudo apt-get install -qq -y \
            python3-pip
+      sudo pip3 install setuptools
       sudo pip3 install Sphinx
     fi
     ;;
