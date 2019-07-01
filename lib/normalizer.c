@@ -1188,6 +1188,17 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
       }
     }
 
+    if (data->options->unify_to_katakana &&
+        GRN_CHAR_TYPE(char_type) == GRN_CHAR_HIRAGANA &&
+        unified_char_length == 3) {
+      unifying = grn_nfkc_normalize_unify_to_katakana(unifying,
+                                                      unified_katakana,
+                                                      unified_char_length);
+      if (unifying == unified_katakana) {
+        char_type = GRN_CHAR_KATAKANA | (char_type & GRN_CHAR_BLANK);
+      }
+    }
+
     if (data->options->unify_kana_case) {
       switch (GRN_CHAR_TYPE(char_type)) {
       case GRN_CHAR_HIRAGANA :
@@ -1259,17 +1270,6 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
         unifying = unified_middle_dot;
         unified_char_length = sizeof(unified_middle_dot);
         char_type = GRN_CHAR_SYMBOL | (char_type & GRN_CHAR_BLANK);
-      }
-    }
-
-    if (data->options->unify_to_katakana &&
-        GRN_CHAR_TYPE(char_type) == GRN_CHAR_HIRAGANA &&
-        unified_char_length == 3) {
-      unifying = grn_nfkc_normalize_unify_to_katakana(unifying,
-                                                      unified_katakana,
-                                                      unified_char_length);
-      if (unifying == unified_katakana) {
-        char_type = GRN_CHAR_KATAKANA | (char_type & GRN_CHAR_BLANK);
       }
     }
 
