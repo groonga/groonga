@@ -1110,16 +1110,14 @@ grn_nfkc_normalize_unify_to_katakana(const unsigned char *utf8_char,
                                      size_t length)
 {
   if (utf8_char[0] == 0xe3) {
-    if (utf8_char[1] == 0x81 && utf8_char[2] == 0x80) {
-      /* This character code isn't assigned character */
-      return utf8_char;
-    } else if (utf8_char[1] == 0x81 &&
-               utf8_char[2] >= 0x81 && utf8_char[2] <= 0x9f) {
+    if (utf8_char[1] == 0x81 &&
+        utf8_char[2] >= 0x81 && utf8_char[2] <= 0x9f) {
       /* U+3041 HIRAGANA LETTER SMALL A ..
        * U+305F HIRAGANA LETTER TA */
       unified[0] = utf8_char[0];
       unified[1] = utf8_char[1] + 0x01;
       unified[2] = utf8_char[2] + 0x20;
+      return unified;
     } else if (utf8_char[1] == 0x81 &&
                utf8_char[2] >= 0xa0 && utf8_char[2] <= 0xbf) {
       /* U+3060 HIRAGANA LETTER DA ..
@@ -1127,24 +1125,22 @@ grn_nfkc_normalize_unify_to_katakana(const unsigned char *utf8_char,
       unified[0] = utf8_char[0];
       unified[1] = utf8_char[1] + 0x02;
       unified[2] = utf8_char[2] - 0x20;
-    } else if (utf8_char[1] == 0x82 &&
-               utf8_char[2] >= 0x80 && utf8_char[2] <= 0x9f) {
-      /* U+3041 HIRAGANA LETTER MU ..
-       * U+305F HIRAGANA LETTER YORI */
-      if (utf8_char[2] >= 0x97 && utf8_char[2] <= 0x9c) {
-        /* This character code isn't assigned character */
-        return utf8_char;
-      } else if (utf8_char[2] == 0x9f) {
-        /* This character code has not been inputted into this function.
-         * Because this character already decomposes in grn_nfkc100_decompose */
-        return utf8_char;
+      return unified;
+    } else if (utf8_char[1] == 0x82) {
+      if ((utf8_char[2] >= 0x80 && utf8_char[2] <= 0x96)
+          || (utf8_char[2] >= 0x9d && utf8_char[2] <= 0x9e)) {
+        /* U+3041 HIRAGANA LETTER MU ..
+         * U+3096 HIRAGANA LETTER KE
+         * U+309D HIRAGANA ITERATION MARK
+         * U+309E HIRAGANA VOICED ITERATION MARK */
+        unified[0] = utf8_char[0];
+        unified[1] = utf8_char[1] + 0x01;
+        unified[2] = utf8_char[2] + 0x20;
+        return unified;
       }
-      unified[0] = utf8_char[0];
-      unified[1] = utf8_char[1] + 0x01;
-      unified[2] = utf8_char[2] + 0x20;
     }
   }
-  return unified;
+  return utf8_char;
 }
 
 static void
