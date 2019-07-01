@@ -1272,7 +1272,9 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
       unifying = grn_nfkc_normalize_unify_to_katakana(unifying,
                                                       unified_katakana,
                                                       unified_char_length);
-      char_type = GRN_CHAR_KATAKANA | (char_type & GRN_CHAR_BLANK);
+      if (unifying == unified_katakana) {
+        char_type = GRN_CHAR_KATAKANA | (char_type & GRN_CHAR_BLANK);
+      }
     }
 
     if (unify->d + unified_char_length >= unify->dest_end) {
