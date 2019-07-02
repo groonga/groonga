@@ -707,7 +707,7 @@ module Groonga
 
           required_n_records = @context.current_offset + current_limit
           max_n_records = @shard.table.size
-          is_large_shard = (max_n_records >= @context.large_shard_threshold)
+          is_large_shard = (max_n_records > @context.large_shard_threshold)
           if is_large_shard and max_n_records <= required_n_records
             reason = "the number of required records (#{required_n_records}) "
             reason << ">= "
