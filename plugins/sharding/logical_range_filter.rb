@@ -99,6 +99,7 @@ module Groonga
         attr_reader :result_sets
         attr_reader :temporary_tables
         attr_reader :threshold
+        attr_reader :large_shard_threshold
         attr_reader :time_classify_types
         def initialize(input)
           @input = input
@@ -121,6 +122,7 @@ module Groonga
           @temporary_tables = []
 
           @threshold = compute_threshold
+          @large_shard_threshold = compute_large_shard_threshold
 
           @time_classify_types = detect_time_classify_types
         end
@@ -170,6 +172,12 @@ module Groonga
           threshold_env = ENV["GRN_LOGICAL_RANGE_FILTER_THRESHOLD"]
           default_threshold = 0.2
           (threshold_env || default_threshold).to_f
+        end
+
+        def compute_large_shard_threshold
+          threshold_env = ENV["GRN_LOGICAL_RANGE_FILTER_LARGE_SHARD_THRESHOLD"]
+          default_threshold = "10_000"
+          (threshold_env || default_threshold).to_i(10)
         end
 
         def detect_time_classify_types
@@ -699,7 +707,8 @@ module Groonga
 
           required_n_records = @context.current_offset + current_limit
           max_n_records = @shard.table.size
-          if max_n_records <= required_n_records
+          is_large_shard = (max_n_records >= @context.large_shard_threshold)
+          if is_large_shard and max_n_records <= required_n_records
             reason = "the number of required records (#{required_n_records}) "
             reason << ">= "
             reason << "the number of records in shard (#{max_n_records})"
@@ -764,7 +773,7 @@ module Groonga
             end
           end
 
-          if estimated_n_records <= required_n_records
+          if is_large_shard and estimated_n_records <= required_n_records
             reason = "the number of required records (#{required_n_records}) "
             reason << ">= "
             reason << "the number of estimated records (#{estimated_n_records})"

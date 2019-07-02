@@ -1,3 +1,5 @@
+#$GRN_LOGICAL_RANGE_FILTER_LARGE_SHARD_THRESHOLD=1
+
 #@include fixture/sharding/logical_range_filter/use_range_index/schema.grn
 
 load --table Errors

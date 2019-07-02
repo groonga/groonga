@@ -1,3 +1,5 @@
+#$GRN_LOGICAL_RANGE_FILTER_LARGE_SHARD_THRESHOLD=1
+
 #@on-error omit
 plugin_register sharding
 #@on-error default
