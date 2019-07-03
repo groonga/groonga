@@ -230,6 +230,16 @@ grn_mrb_load(grn_ctx *ctx, const char *path)
       struct RProc *proc;
       int arena_index;
       proc = mrb_generate_code(mrb, parser);
+      if (!proc) {
+        mrb_value exception;
+
+        SERR("mrb_generate_code: failed to generate code");
+        exception = mrb_exc_new(mrb, E_LOAD_ERROR,
+                                ctx->errbuf, strlen(ctx->errbuf));
+        mrb->exc = mrb_obj_ptr(exception);
+        mrb_parser_free(parser);
+        return mrb_nil_value();
+      }
       MRB_PROC_SET_TARGET_CLASS(proc, mrb->object_class);
       arena_index = mrb_gc_arena_save(mrb);
       result = mrb_yield_with_class(mrb,
