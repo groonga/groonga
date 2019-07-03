@@ -1104,6 +1104,45 @@ grn_nfkc_normalize_is_middle_dot_family(const unsigned char *utf8_char,
   return GRN_FALSE;
 }
 
+grn_inline static const unsigned char *
+grn_nfkc_normalize_unify_to_katakana(const unsigned char *utf8_char,
+                                     unsigned char *unified,
+                                     size_t length)
+{
+  if (utf8_char[0] == 0xe3) {
+    if (utf8_char[1] == 0x81 &&
+        utf8_char[2] >= 0x81 && utf8_char[2] <= 0x9f) {
+      /* U+3041 HIRAGANA LETTER SMALL A ..
+       * U+305F HIRAGANA LETTER TA */
+      unified[0] = utf8_char[0];
+      unified[1] = utf8_char[1] + 0x01;
+      unified[2] = utf8_char[2] + 0x20;
+      return unified;
+    } else if (utf8_char[1] == 0x81 &&
+               utf8_char[2] >= 0xa0 && utf8_char[2] <= 0xbf) {
+      /* U+3060 HIRAGANA LETTER DA ..
+       * U+305F HIRAGANA LETTER MI */
+      unified[0] = utf8_char[0];
+      unified[1] = utf8_char[1] + 0x02;
+      unified[2] = utf8_char[2] - 0x20;
+      return unified;
+    } else if (utf8_char[1] == 0x82) {
+      if ((utf8_char[2] >= 0x80 && utf8_char[2] <= 0x96)
+          || (utf8_char[2] >= 0x9d && utf8_char[2] <= 0x9e)) {
+        /* U+3041 HIRAGANA LETTER MU ..
+         * U+3096 HIRAGANA LETTER KE
+         * U+309D HIRAGANA ITERATION MARK
+         * U+309E HIRAGANA VOICED ITERATION MARK */
+        unified[0] = utf8_char[0];
+        unified[1] = utf8_char[1] + 0x01;
+        unified[2] = utf8_char[2] + 0x20;
+        return unified;
+      }
+    }
+  }
+  return utf8_char;
+}
+
 static void
 grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
                                    grn_nfkc_normalize_data *data,
@@ -1125,6 +1164,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
     unsigned char unified_prolonged_sound_mark[] = {0xe3, 0x83, 0xbc};
     /* U+00B7 MIDDLE DOT */
     unsigned char unified_middle_dot[] = {0xc2, 0xb7};
+    unsigned char unified_katakana[3];
     const unsigned char *unifying = current;
     size_t char_length;
     size_t unified_char_length;
@@ -1145,6 +1185,17 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
       unifying = grn_nfkc_normalize_unify_kana(unifying, unified_kana);
       if (unifying == unified_kana) {
         char_type = GRN_CHAR_HIRAGANA | (char_type & GRN_CHAR_BLANK);
+      }
+    }
+
+    if (data->options->unify_to_katakana &&
+        GRN_CHAR_TYPE(char_type) == GRN_CHAR_HIRAGANA &&
+        unified_char_length == 3) {
+      unifying = grn_nfkc_normalize_unify_to_katakana(unifying,
+                                                      unified_katakana,
+                                                      unified_char_length);
+      if (unifying == unified_katakana) {
+        char_type = GRN_CHAR_KATAKANA | (char_type & GRN_CHAR_BLANK);
       }
     }
 
@@ -1533,7 +1584,8 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
         data->options->unify_middle_dot ||
         data->options->unify_katakana_v_sounds ||
         data->options->unify_katakana_bu_sound ||
-        data->options->unify_to_romaji)) {
+        data->options->unify_to_romaji ||
+        data->options->unify_to_katakana)) {
     return;
   }
 
@@ -1555,7 +1607,8 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       data->options->unify_hyphen ||
       data->options->unify_prolonged_sound_mark ||
       data->options->unify_hyphen_and_prolonged_sound_mark ||
-      data->options->unify_middle_dot) {
+      data->options->unify_middle_dot ||
+      data->options->unify_to_katakana) {
     grn_nfkc_normalize_unify_stateless(ctx, data, &unify);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
