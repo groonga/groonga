@@ -7465,7 +7465,7 @@ grn_obj_size(grn_ctx *ctx, grn_obj *obj)
   }
 }
 
-grn_inline static int
+grn_inline static bool
 call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
 {
   grn_hook *hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET];
@@ -7484,7 +7484,7 @@ call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
           !(obj->header.type == GRN_COLUMN_FIX_SIZE &&
             grn_bulk_is_zero(ctx, value))) {
         grn_obj_close(ctx, oldvalue);
-        return 0;
+        return true;
       }
     }
     if (hooks) {
@@ -7510,7 +7510,7 @@ call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
         }
         if (ctx->rc) {
           grn_obj_close(ctx, oldvalue);
-          return 1;
+          return false;
         }
         hooks = hooks->next;
         pctx.offset++;
@@ -7520,7 +7520,7 @@ call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
     }
     grn_obj_close(ctx, oldvalue);
   }
-  return 0;
+  return true;
 }
 
 static grn_rc
@@ -7532,7 +7532,7 @@ grn_obj_set_value_table_pat_key(grn_ctx *ctx, grn_obj *obj, grn_id id,
   void *v = GRN_BULK_HEAD(value);
   grn_obj buf;
 
-  if (call_hook(ctx, obj, id, value, flags)) {
+  if (!call_hook(ctx, obj, id, value, flags)) {
     if (ctx->rc) {
       rc = ctx->rc;
     }
@@ -7562,7 +7562,7 @@ grn_obj_set_value_table_hash_key(grn_ctx *ctx, grn_obj *obj, grn_id id,
   void *v = GRN_BULK_HEAD(value);
   grn_obj buf;
 
-  if (call_hook(ctx, obj, id, value, flags)) {
+  if (!call_hook(ctx, obj, id, value, flags)) {
     if (ctx->rc) {
       rc = ctx->rc;
     }
@@ -7592,7 +7592,7 @@ grn_obj_set_value_table_no_key(grn_ctx *ctx, grn_obj *obj, grn_id id,
   void *v = GRN_BULK_HEAD(value);
   grn_obj buf;
 
-  if (call_hook(ctx, obj, id, value, flags)) {
+  if (!call_hook(ctx, obj, id, value, flags)) {
     if (ctx->rc) {
       rc = ctx->rc;
     }
@@ -7624,7 +7624,7 @@ grn_obj_set_value_column_var_size_scalar(grn_ctx *ctx, grn_obj *obj, grn_id id,
   grn_obj buf;
   grn_id buf_domain = GRN_DB_VOID;
 
-  if (call_hook(ctx, obj, id, value, flags)) {
+  if (!call_hook(ctx, obj, id, value, flags)) {
     if (ctx->rc) {
       rc = ctx->rc;
     }
@@ -7793,7 +7793,7 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
   unsigned int s = grn_obj_size(ctx, value);
   grn_obj *lexicon = grn_ctx_at(ctx, range);
 
-  if (call_hook(ctx, obj, id, value, flags)) {
+  if (!call_hook(ctx, obj, id, value, flags)) {
     if (ctx->rc) {
       rc = ctx->rc;
     }
@@ -7971,7 +7971,7 @@ grn_obj_set_value_column_fix_size(grn_ctx *ctx, grn_obj *obj, grn_id id,
     }
     switch (flags & GRN_OBJ_SET_MASK) {
     case GRN_OBJ_SET :
-      if (call_hook(ctx, obj, id, value_, flags)) {
+      if (!call_hook(ctx, obj, id, value_, flags)) {
         if (ctx->rc) {
           rc = ctx->rc;
         }
