@@ -7793,14 +7793,13 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
   unsigned int s = grn_obj_size(ctx, value);
   grn_obj *lexicon = grn_ctx_at(ctx, range);
 
-  if (!call_hook(ctx, obj, id, value, flags)) {
-    if (ctx->rc) {
-      rc = ctx->rc;
-    }
-    return rc;
-  }
-
   if (value->header.type == GRN_UVECTOR) {
+    if (!call_hook(ctx, obj, id, value, flags)) {
+      if (ctx->rc) {
+        rc = ctx->rc;
+      }
+      return rc;
+    }
     rc = grn_obj_set_value_column_var_size_vector_uvector(ctx, obj,
                                                           id, value,
                                                           flags);
@@ -7827,9 +7826,15 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
           }
           grn_token_cursor_close(ctx, token_cursor);
         }
-        rc = grn_ja_put(ctx, (grn_ja *)obj, id,
-                        GRN_BULK_HEAD(&uvector), GRN_BULK_VSIZE(&uvector),
-                        flags, NULL);
+        if (call_hook(ctx, obj, id, &uvector, flags)) {
+          rc = grn_ja_put(ctx, (grn_ja *)obj, id,
+                          GRN_BULK_HEAD(&uvector), GRN_BULK_VSIZE(&uvector),
+                          flags, NULL);
+        } else {
+          if (ctx->rc) {
+            rc = ctx->rc;
+          }
+        }
       }
       break;
     case GRN_VECTOR :
@@ -7878,9 +7883,15 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
           GRN_OBJ_FIN(ctx, &cast_buf);
         }
       }
-      rc = grn_ja_put(ctx, (grn_ja *)obj, id,
-                      GRN_BULK_HEAD(&uvector), GRN_BULK_VSIZE(&uvector),
-                      flags, NULL);
+      if (call_hook(ctx, obj, id, &uvector, flags)) {
+        rc = grn_ja_put(ctx, (grn_ja *)obj, id,
+                        GRN_BULK_HEAD(&uvector), GRN_BULK_VSIZE(&uvector),
+                        flags, NULL);
+      } else {
+        if (ctx->rc) {
+          rc = ctx->rc;
+        }
+      }
       break;
     default :
       ERR(GRN_INVALID_ARGUMENT, "vector, uvector or bulk required");
@@ -7891,7 +7902,13 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
     switch (value->header.type) {
     case GRN_BULK :
       if (GRN_BULK_VSIZE(value) == 0) {
-        rc = grn_ja_put(ctx, (grn_ja *)obj, id, NULL, 0, flags, NULL);
+        if (call_hook(ctx, obj, id, value, flags)) {
+          rc = grn_ja_put(ctx, (grn_ja *)obj, id, NULL, 0, flags, NULL);
+        } else {
+          if (ctx->rc) {
+            rc = ctx->rc;
+          }
+        }
       } else {
         bool need_fallback = true;
         grn_id range = DB_OBJ(obj)->range;
@@ -7900,11 +7917,17 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
           GRN_VALUE_FIX_SIZE_INIT(&v, GRN_OBJ_VECTOR, range);
           grn_rc rc = grn_obj_cast(ctx, value, &v, GRN_TRUE);
           if (rc == GRN_SUCCESS) {
-            rc = grn_obj_set_value_column_var_size_vector_uvector(ctx,
-                                                                  obj,
-                                                                  id,
-                                                                  &v,
-                                                                  flags);
+            if (call_hook(ctx, obj, id, &v, flags)) {
+              rc = grn_obj_set_value_column_var_size_vector_uvector(ctx,
+                                                                    obj,
+                                                                    id,
+                                                                    &v,
+                                                                    flags);
+            } else {
+              if (ctx->rc) {
+                rc = ctx->rc;
+              }
+            }
             need_fallback = false;
           }
           grn_obj_close(ctx, &v);
@@ -7914,16 +7937,34 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
           GRN_OBJ_INIT(&v, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
           v.u.v.body = value;
           grn_vector_delimit(ctx, &v, 0, GRN_ID_NIL);
-          rc = grn_ja_putv(ctx, (grn_ja *)obj, id, &v, 0);
+          if (call_hook(ctx, obj, id, &v, flags)) {
+            rc = grn_ja_putv(ctx, (grn_ja *)obj, id, &v, 0);
+          } else {
+            if (ctx->rc) {
+              rc = ctx->rc;
+            }
+          }
           grn_obj_close(ctx, &v);
         }
       }
       break;
     case GRN_VECTOR :
-      rc = grn_ja_putv(ctx, (grn_ja *)obj, id, value, 0);
+      if (call_hook(ctx, obj, id, value, flags)) {
+        rc = grn_ja_putv(ctx, (grn_ja *)obj, id, value, 0);
+      } else {
+        if (ctx->rc) {
+          rc = ctx->rc;
+        }
+      }
       break;
     case GRN_VOID :
-      rc = grn_ja_put(ctx, (grn_ja *)obj, id, NULL, 0, flags, NULL);
+      if (call_hook(ctx, obj, id, value, flags)) {
+        rc = grn_ja_put(ctx, (grn_ja *)obj, id, NULL, 0, flags, NULL);
+      } else {
+        if (ctx->rc) {
+          rc = ctx->rc;
+        }
+      }
       break;
     default :
       ERR(GRN_INVALID_ARGUMENT, "vector or bulk required");
