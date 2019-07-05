@@ -4,7 +4,7 @@ column_create Memos content COLUMN_SCALAR Text
 [[0,0.0,0.0],true]
 column_create Memos timestamp COLUMN_SCALAR Time
 [[0,0.0,0.0],true]
-table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --default_normalizer NormalizerNFKC100
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerNFKC100
 [[0,0.0,0.0],true]
 column_create Terms memos_key_index COLUMN_INDEX|WITH_POSITION Memos _key
 [[0,0.0,0.0],true]

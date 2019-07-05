@@ -7,12 +7,12 @@ column_create Memos tag COLUMN_SCALAR Tags
 column_create Tags memos_tag COLUMN_INDEX Memos tag
 
 table_create UserTerms TABLE_PAT_KEY ShortText \
-  --normalize NormalizerAuto \
+  --normalizer NormalizerAuto \
   --default_tokenizer TokenBigram
 column_create UserTerms memos_user COLUMN_INDEX|WITH_POSITION Memos user
 
 table_create TagTerms TABLE_PAT_KEY ShortText \
-  --normalize NormalizerAuto \
+  --normalizer NormalizerAuto \
   --default_tokenizer TokenBigram
 column_create TagTerms tags_key COLUMN_INDEX|WITH_POSITION Tags _key
 
