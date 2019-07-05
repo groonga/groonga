@@ -6,7 +6,7 @@ column_create Memos tag COLUMN_SCALAR Tags
 column_create Memos content COLUMN_SCALAR Text
 
 table_create Terms TABLE_PAT_KEY ShortText \
-  --normalize NormalizerNFKC100 \
+  --normalizer NormalizerNFKC100 \
   --default_tokenizer TokenBigram
 column_create Terms tags_label COLUMN_INDEX|WITH_POSITION Tags label
 column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content

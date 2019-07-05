@@ -2,7 +2,7 @@ table_create Menus TABLE_NO_KEY
 column_create Menus name COLUMN_SCALAR Text
 
 table_create Terms TABLE_PAT_KEY ShortText \
-  --normalize NormalizerNFKC100 \
+  --normalizer NormalizerNFKC100 \
   --default_tokenizer 'TokenMecab("use_reading", true)'
 column_create Terms index COLUMN_INDEX|WITH_POSITION Menus name
 
