@@ -3139,15 +3139,17 @@ grn_select_output_drilldown_label_v3(grn_ctx *ctx,
     int name_len;
 
     key = drilldown->parsed_keys[0].key;
-    switch (key->header.type) {
-    case GRN_COLUMN_FIX_SIZE :
-    case GRN_COLUMN_VAR_SIZE :
-    case GRN_COLUMN_INDEX :
+    if (grn_obj_is_accessor(ctx, key)) {
+      grn_accessor *a = (grn_accessor *)key;
+      while (a->next) {
+        a = a->next;
+      }
+      key = a->obj;
+    }
+    if (grn_obj_is_column(ctx, key)) {
       name_len = grn_column_name(ctx, key, name, GRN_TABLE_MAX_KEY_SIZE);
-      break;
-    default :
+    } else {
       name_len = grn_obj_name(ctx, key, name, GRN_TABLE_MAX_KEY_SIZE);
-      break;
     }
     GRN_OUTPUT_STR(name, name_len);
   }
