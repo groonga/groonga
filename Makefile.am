@@ -18,7 +18,6 @@ SUBDIRS =					\
 	data					\
 	tools					\
 	doc
-#dist_data_DATA =
 EXTRA_DIST =					\
 	CMakeLists.txt				\
 	README.md				\
@@ -32,6 +31,7 @@ EXTRA_DIST =					\
 	gpg_uid					\
 	nginx_version				\
 	version-gen.sh
+pkgdata_DATA = COPYING
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = groonga.pc
