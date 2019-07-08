@@ -41,6 +41,22 @@ Groonga release files
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
 
+%post
+if [ -e "/etc/system-release" ]; then
+  distribution=$(</etc/system-release)
+  if ["`echo $distribution | grep 'Amazon Linux release 2'`"]; then
+    run cat <<EOR > %{_sysconfdir}/yum.repos.d/groonga.repo
+[$PACKAGE]
+name=Groonga for Amazon Linux 2 - \$basearch
+baseurl=https://packages.groonga.org/centos/7/\$basearch/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga
+       file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
+EOR
+  fi
+fi
+
 %changelog
 * Mon Jan 29 2018 Kentaro Hayashi <hayashi@clear-code.com> - 1.4.0-1
 - Add new signing key for transition from weak key (1024bit)
