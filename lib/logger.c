@@ -524,25 +524,22 @@ grn_logger_putv(grn_ctx *ctx,
     } else {
       mbuf[0] = '\0';
     }
-    if (current_logger.flags & GRN_LOG_LOCATION) {
-      grn_snprintf(lbuf, LBUFSIZE, LBUFSIZE,
-                   "%d %s:%d %s()", grn_getpid(), file, line, func);
-    } else {
+    {
       char *lbuf_current = lbuf;
       size_t lbuf_rest_size = LBUFSIZE;
       lbuf[0] = '\0';
       lbuf_current = lbuf;
-      if (current_logger.flags & GRN_LOG_PID) {
-        size_t lbuf_size;
+      if ((current_logger.flags & GRN_LOG_PID) ||
+          /* For backward compatibility. GRN_LOG_LOCATION implies GRN_LOG_PID. */
+          (current_logger.flags & GRN_LOG_LOCATION)) {
         grn_snprintf(lbuf_current, lbuf_rest_size, lbuf_rest_size,
                      "%d", grn_getpid());
-        lbuf_size = strlen(lbuf_current);
+        const size_t lbuf_size = strlen(lbuf_current);
         lbuf_current += lbuf_size;
         lbuf_rest_size -= lbuf_size;
       }
       if (current_logger.flags & GRN_LOG_THREAD_ID) {
         const char *prefix = "";
-        size_t lbuf_size;
         if (lbuf_current != lbuf) {
           prefix = "|";
         }
@@ -553,7 +550,18 @@ grn_logger_putv(grn_ctx *ctx,
         grn_snprintf(lbuf_current, lbuf_rest_size, lbuf_rest_size,
                      "%s%08ld", prefix, GetCurrentThreadId());
 #endif /* HAVE_PTHREAD_H */
-        lbuf_size = strlen(lbuf_current);
+        const size_t lbuf_size = strlen(lbuf_current);
+        lbuf_current += lbuf_size;
+        lbuf_rest_size -= lbuf_size;
+      }
+      if (current_logger.flags & GRN_LOG_LOCATION) {
+        const char *prefix = "";
+        if (lbuf_current != lbuf) {
+          prefix = " ";
+        }
+        grn_snprintf(lbuf_current, lbuf_rest_size, lbuf_rest_size,
+                     "%s%s:%d %s()", prefix, file, line, func);
+        const size_t lbuf_size = strlen(lbuf_current);
         lbuf_current += lbuf_size;
         lbuf_rest_size -= lbuf_size;
       }
