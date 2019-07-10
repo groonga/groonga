@@ -8,6 +8,7 @@ EXTRA_DIST =					\
 	mruby-dir/src/Win/dirent.c
 
 DEFAULT_INCLUDES =						\
+	-I$(builddir)/mruby-file-stat/src			\
 	-I$(srcdir)/../mruby-source/include			\
 	-I$(srcdir)/../mruby-source/src				\
 	-I$(srcdir)/../mruby-source/mrbgems/mruby-compiler/core	\
