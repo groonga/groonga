@@ -8,6 +8,9 @@ clone_depth: 10
 environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      MINGW_CHOST: mingw-w64-x86_64
+      MINGW_PREFIX: /mingw64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VS_VERSION: 15
       ARCH: amd64
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
@@ -179,3 +182,40 @@ on_finish:
   - 7z a %ARTIFACT% %FULL_GROONGA_INSTALL_FOLDER%
   - ps: Push-AppveyorArtifact $Env:ARTIFACT
   - cd ..
+
+# MinGW specific build
+for:
+-
+  matrix:
+    only:
+      - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+        MINGW_CHOST: mingw-w64-x86_64
+        MINGW_PREFIX: /mingw64
+  install:
+    - set PATH=C:\msys64\mingw64\bin;c:\msys64\usr\bin;%PATH%
+    - choco install -y 7zip.commandline
+    - pacman -Syu --noconfirm
+    - pacman -S --noconfirm --needed
+        autoconf-archive
+        mingw-w64-x86_64-gettext
+        mingw-w64-x86_64-python3-colorama
+        mingw-w64-x86_64-python3-sphinx
+        mingw-w64-x86_64-ruby
+    - ps: |
+        $Env:GROONGA_VERSION = (Get-Content base_version)
+  build_script:
+    - bash -c "./autogen.sh"
+    - bash -c "./configure --host=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --enable-document --with-ruby=ruby --enable-mruby"
+    - bash -c "make dist"
+    - cd %APPVEYOR_BUILD_FOLDER%\..
+    - mkdir build
+    - cd build
+    - cp %APPVEYOR_BUILD_FOLDER%\appveyor\PKGBUILD .
+    - cp %APPVEYOR_BUILD_FOLDER%\groonga-%GROONGA_VERSION%.tar.gz .
+    - bash -c "GROONGA_VERSION=%GROONGA_VERSION% MINGW_INSTALLS=mingw64 makepkg-mingw -sLf --noconfirm --needed"
+  before_test:
+    - echo skip build_script
+  test_script:
+    - echo skip test_script
+  on_finish:
+    - echo skip on_finish

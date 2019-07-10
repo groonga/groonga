@@ -1,0 +1,61 @@
+_realname=groonga
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver="${GROONGA_VERSION}"
+pkgrel=1
+pkgdesc="An opensource fulltext search engine (mingw-w64)"
+arch=('any')
+url="http://groonga.org/"
+license=('LGPL2')
+options=('strip' 'staticlibs')
+depends=("${MINGW_PACKAGE_PREFIX}-arrow"
+         "${MINGW_PACKAGE_PREFIX}-lz4"
+         "${MINGW_PACKAGE_PREFIX}-msgpack-c"
+         "${MINGW_PACKAGE_PREFIX}-onigmo"
+         "${MINGW_PACKAGE_PREFIX}-openssl"
+         "${MINGW_PACKAGE_PREFIX}-pcre"
+         "${MINGW_PACKAGE_PREFIX}-rapidjson"
+         "${MINGW_PACKAGE_PREFIX}-ruby"
+         "${MINGW_PACKAGE_PREFIX}-zeromq"
+         "${MINGW_PACKAGE_PREFIX}-zlib"
+         "${MINGW_PACKAGE_PREFIX}-zstd")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
+source=("${_realname}-${pkgver}.tar.gz")
+md5sums=('SKIP')
+
+build() {
+  cd ${srcdir}/${_realname}-${pkgver}
+
+  [[ -d ${srcdir}/build-${CARCH} ]] && rm -rf ${srcdir}/build-${CARCH}
+  mkdir -p ${srcdir}/build-${CARCH} && cd ${srcdir}/build-${CARCH}
+
+  ../${_realname}-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --disable-libedit \
+    --with-onigmo=system \
+    --without-mecab \
+    --without-kytea \
+    --without-cutter \
+    --without-libevent \
+    --disable-benchmark \
+    --disable-groonga-httpd \
+    --with-ruby=ruby \
+    --enable-mruby
+
+  make
+}
+
+package() {
+  cd ${srcdir}/build-${CARCH}
+  make DESTDIR="${pkgdir}" install
+
+  local PREFIX_DEPS=$(cygpath -am ${MINGW_PREFIX})
+  pushd "${pkgdir}${MINGW_PREFIX}/lib/pkgconfig"
+  for pc in *.pc; do
+    sed -s "s|${PREFIX_DEPS}|${MINGW_PREFIX}|g" -i ${pc}
+  done
+  popd
+}
