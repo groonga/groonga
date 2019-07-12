@@ -25,7 +25,27 @@ Groonga release files
 %{__install} -Dp -m0644 RPM-GPG-KEY-groonga %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga
 %{__install} -Dp -m0644 RPM-GPG-KEY-groonga-RSA4096 %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
 
-%{__install} -Dp -m0644 groonga.repo %{buildroot}%{_sysconfdir}/yum.repos.d/groonga.repo
+if [ grep -q 'Amazon Linux release 2' /etc/system-release 2>/dev/null ]; then
+  cat <<EOR > %{buildroot}%{_sysconfdir}/yum.repos.d/groonga.repo
+[groonga]
+name=Groonga for Amazon Linux 2 - \$basearch
+baseurl=https://packages.groonga.org/centos/7/\$basearch/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga
+       file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
+EOR
+else
+  cat <<EOR > %{buildroot}%{_sysconfdir}/yum.repos.d/groonga.repo
+[groonga]
+name=Groonga for CentOS \$releasever - \$basearch
+baseurl=https://packages.groonga.org/centos/\$releasever/\$basearch/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga
+       file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
+EOR
+fi
 
 %clean
 %{__rm} -rf %{buildroot}
@@ -42,20 +62,6 @@ Groonga release files
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
 
 %post
-if [ -e "/etc/system-release" ]; then
-  distribution=$(</etc/system-release)
-  if [ "`echo $distribution | grep 'Amazon Linux release 2'`" ]; then
-[$PACKAGE]
-    cat <<EOR > %{_sysconfdir}/yum.repos.d/groonga.repo
-name=Groonga for Amazon Linux 2 - \$basearch
-baseurl=https://packages.groonga.org/centos/7/\$basearch/
-gpgcheck=1
-enabled=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga
-       file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
-EOR
-  fi
-fi
 
 %changelog
 * Fri Jul 12 2019 Horimoto Yasuhiro <horimoto@clear-code.com> - 1.5.0-1
