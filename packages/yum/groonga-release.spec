@@ -1,6 +1,6 @@
 Summary: Groonga release files
 Name: groonga-release
-Version: 1.4.0
+Version: 1.5.0
 Release: 1
 License: LGPLv2
 URL: https://packages.groonga.org/
@@ -58,6 +58,9 @@ EOR
 fi
 
 %changelog
+* Fri Jul 12 2019 Horimoto Yasuhiro <horimoto@clear-code.com> - 1.5.0-1
+- Add new signing key for transition from weak key (1024bit)
+
 * Mon Jan 29 2018 Kentaro Hayashi <hayashi@clear-code.com> - 1.4.0-1
 - Add new signing key for transition from weak key (1024bit)
 
