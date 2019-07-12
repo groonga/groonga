@@ -45,8 +45,8 @@ Groonga release files
 if [ -e "/etc/system-release" ]; then
   distribution=$(</etc/system-release)
   if [ "`echo $distribution | grep 'Amazon Linux release 2'`" ]; then
-    run cat <<EOR > %{_sysconfdir}/yum.repos.d/groonga.repo
 [$PACKAGE]
+    cat <<EOR > %{_sysconfdir}/yum.repos.d/groonga.repo
 name=Groonga for Amazon Linux 2 - \$basearch
 baseurl=https://packages.groonga.org/centos/7/\$basearch/
 gpgcheck=1
