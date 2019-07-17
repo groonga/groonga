@@ -1,0 +1,12 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries body COLUMN_SCALAR ShortText
+column_create Entries tag_ids COLUMN_VECTOR UInt32
+
+load --table Entries
+[
+{"body": "1 2 3", "tag_ids": [1, 2, 3]}
+]
+
+select Entries \
+  --filter "tag_ids @ 2 && body @ '3'" \
+  --output_columns "highlight_html(body)"

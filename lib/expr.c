@@ -7332,7 +7332,7 @@ grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords)
         }
       } else {
         if (butp == (si->logical_op == GRN_OP_AND_NOT) &&
-            si->query) {
+            grn_obj_is_text_family_bulk(ctx, si->query)) {
           switch (si->op) {
           case GRN_OP_MATCH :
             if (keywords->header.type == GRN_PVECTOR) {
