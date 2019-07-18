@@ -2,16 +2,16 @@
 
 script_base_dir=`dirname $0`
 
-if [ $# != 6 ]; then
-  echo "Usage: $0 PACKAGE PACKAGE_LABEL BASE_URL_PREFIX DESTINATION DISTRIBUTIONS HAVE_DEVELOPMENT_BRANCH"
-  echo " e.g.: $0 milter-manager 'milter manager' http://downloads.sourceforge.net/milter-manager' repositories/ 'fedora centos' yes"
+if [ $# != 4 ]; then
+  echo "Usage: $0 PACKAGE DESTINATION DISTRIBUTIONS HAVE_DEVELOPMENT_BRANCH"
+  echo " e.g.: $0 milter-manager repositories/ 'fedora centos' yes"
   exit 1
 fi
 
 PACKAGE=$1
-DESTINATION=$4
-DISTRIBUTIONS=$5
-HAVE_DEVELOPMENT_BRANCH=$6
+DESTINATION=$2
+DISTRIBUTIONS=$3
+HAVE_DEVELOPMENT_BRANCH=$4
 
 run()
 {

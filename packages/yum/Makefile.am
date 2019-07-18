@@ -58,8 +58,6 @@ build-in-vm: source specs env.sh
 build-release-rpm: RPM-GPG-KEY-$(PACKAGE) RPM-GPG-KEY-$(PACKAGE)-RSA4096
 	./build-release-rpm.sh			\
 	  $(PACKAGE)				\
-	  '$(PACKAGE_LABEL)'			\
-	  $(BASE_URL_PREFIX)			\
 	  $(REPOSITORIES_PATH)/			\
 	  '$(DISTRIBUTIONS)'			\
 	  $(HAVE_DEVELOPMENT_BRANCH)
