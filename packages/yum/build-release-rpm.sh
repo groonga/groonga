@@ -46,7 +46,6 @@ for distribution in ${DISTRIBUTIONS}; do
       distribution_versions="6 7"
       ;;
   esac
-  repo=${PACKAGE}.repo
   run tar cfz $rpm_base_dir/SOURCES/${PACKAGE}-release.tar.gz \
       -C ${script_base_dir} RPM-GPG-KEY-${PACKAGE} RPM-GPG-KEY-${PACKAGE}-RSA4096
   run cp ${script_base_dir}/${PACKAGE}-release.spec $rpm_base_dir/SPECS/
