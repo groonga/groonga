@@ -1,6 +1,6 @@
 Summary: Groonga release files
 Name: groonga-release
-Version: 1.4.0
+Version: 1.5.0
 Release: 1
 License: LGPLv2
 URL: https://packages.groonga.org/
@@ -24,8 +24,7 @@ Groonga release files
 
 %{__install} -Dp -m0644 RPM-GPG-KEY-groonga %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga
 %{__install} -Dp -m0644 RPM-GPG-KEY-groonga-RSA4096 %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
-
-%{__install} -Dp -m0644 groonga.repo %{buildroot}%{_sysconfdir}/yum.repos.d/groonga.repo
+%{__install} -d %{buildroot}%{_sysconfdir}/yum.repos.d/
 
 %clean
 %{__rm} -rf %{buildroot}
@@ -36,12 +35,38 @@ Groonga release files
 %pubkey RPM-GPG-KEY-groonga
 %pubkey RPM-GPG-KEY-groonga-RSA4096
 %dir %{_sysconfdir}/yum.repos.d/
-%config(noreplace) %{_sysconfdir}/yum.repos.d/groonga.repo
 %dir %{_sysconfdir}/pki/rpm-gpg/
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
 
+%post
+if grep -q 'Amazon Linux release 2' /etc/system-release 2>/dev/null; then
+  cat <<EOR > %{_sysconfdir}/yum.repos.d/groonga.repo
+[groonga]
+name=Groonga for Amazon Linux 2 - \$basearch
+baseurl=https://packages.groonga.org/centos/7/\$basearch/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga
+       file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
+EOR
+else
+  cat <<EOR > %{_sysconfdir}/yum.repos.d/groonga.repo
+[groonga]
+name=Groonga for CentOS \$releasever - \$basearch
+baseurl=https://packages.groonga.org/centos/\$releasever/\$basearch/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga
+       file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
+EOR
+fi
+
+
 %changelog
+* Fri Jul 12 2019 Horimoto Yasuhiro <horimoto@clear-code.com> - 1.5.0-1
+- Add support for Amazon Linux 2
+
 * Mon Jan 29 2018 Kentaro Hayashi <hayashi@clear-code.com> - 1.4.0-1
 - Add new signing key for transition from weak key (1024bit)
 

@@ -1,8 +1,6 @@
 REPOSITORIES_PATH = repositories
 DISTRIBUTIONS = centos
 ARCHITECTURES = i386 x86_64
-BASE_URL_PREFIX = https://packages.groonga.org
-HAVE_DEVELOPMENT_BRANCH = no
 CENTOS_VERSIONS = 6 7
 SPEC_DIR = $(builddir)/../rpm/centos
 
@@ -58,11 +56,8 @@ build-in-vm: source specs env.sh
 build-release-rpm: RPM-GPG-KEY-$(PACKAGE) RPM-GPG-KEY-$(PACKAGE)-RSA4096
 	./build-release-rpm.sh			\
 	  $(PACKAGE)				\
-	  '$(PACKAGE_LABEL)'			\
-	  $(BASE_URL_PREFIX)			\
 	  $(REPOSITORIES_PATH)/			\
-	  '$(DISTRIBUTIONS)'			\
-	  $(HAVE_DEVELOPMENT_BRANCH)
+	  '$(DISTRIBUTIONS)'
 
 ensure-public-key:
 	gpg --list-keys '$(GPG_UID)' > /dev/null ||			\
