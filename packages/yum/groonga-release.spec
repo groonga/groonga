@@ -52,8 +52,8 @@ enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga
        file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
 EOR
-elif
-  cat <<EOR > %{buildroot}%{_sysconfdir}/yum.repos.d/groonga.repo
+else
+  cat <<EOR > %{_sysconfdir}/yum.repos.d/groonga.repo
 [groonga]
 name=Groonga for CentOS \$releasever - \$basearch
 baseurl=https://packages.groonga.org/centos/\$releasever/\$basearch/
