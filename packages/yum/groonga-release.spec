@@ -24,7 +24,7 @@ Groonga release files
 
 %{__install} -Dp -m0644 RPM-GPG-KEY-groonga %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga
 %{__install} -Dp -m0644 RPM-GPG-KEY-groonga-RSA4096 %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
-%{__mkdir_p} %{buildroot}%{_sysconfdir}/yum.repos.d/
+%{__install} -d %{buildroot}%{_sysconfdir}/yum.repos.d/
 
 %clean
 %{__rm} -rf %{buildroot}
