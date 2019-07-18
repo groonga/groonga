@@ -44,10 +44,6 @@ for distribution in ${DISTRIBUTIONS}; do
       distribution_label=Fedora
       distribution_versions="20"
       ;;
-    centos)
-      distribution_label=CentOS
-      distribution_versions="6 7"
-      ;;
   esac
   repo=${PACKAGE}.repo
   if test "$HAVE_DEVELOPMENT_BRANCH" = "yes"; then
