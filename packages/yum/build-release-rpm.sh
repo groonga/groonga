@@ -9,8 +9,6 @@ if [ $# != 6 ]; then
 fi
 
 PACKAGE=$1
-PACKAGE_LABEL=$2
-BASE_URL_PREFIX=$3
 DESTINATION=$4
 DISTRIBUTIONS=$5
 HAVE_DEVELOPMENT_BRANCH=$6
@@ -44,37 +42,14 @@ for distribution in ${DISTRIBUTIONS}; do
       distribution_label=Fedora
       distribution_versions="20"
       ;;
+    centos)
+      distribution_label=CentOS
+      distribution_versions="6 7"
+      ;;
   esac
   repo=${PACKAGE}.repo
-  if test "$HAVE_DEVELOPMENT_BRANCH" = "yes"; then
-    run cat <<EOR > $repo
-[$PACKAGE]
-name=$PACKAGE_LABEL for $distribution_label \$releasever - \$basearch
-baseurl=$BASE_URL_PREFIX/$distribution/\$releasever/stable/\$basearch/
-gpgcheck=1
-enabled=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-$PACKAGE
-
-[$PACKAGE-development]
-name=$PACKAGE_LABEL for $distribution_label \$releasever - development - \$basearch
-baseurl=$BASE_URL_PREFIX/$distribution/\$releasever/development/\$basearch/
-gpgcheck=1
-enabled=0
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-$PACKAGE
-EOR
-  else
-    run cat <<EOR > $repo
-[$PACKAGE]
-name=$PACKAGE_LABEL for $distribution_label \$releasever - \$basearch
-baseurl=$BASE_URL_PREFIX/$distribution/\$releasever/\$basearch/
-gpgcheck=1
-enabled=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-$PACKAGE
-       file:///etc/pki/rpm-gpg/RPM-GPG-KEY-$PACKAGE-RSA4096
-EOR
-  fi
   run tar cfz $rpm_base_dir/SOURCES/${PACKAGE}-release.tar.gz \
-      -C ${script_base_dir} ${repo} RPM-GPG-KEY-${PACKAGE} RPM-GPG-KEY-${PACKAGE}-RSA4096
+      -C ${script_base_dir} RPM-GPG-KEY-${PACKAGE} RPM-GPG-KEY-${PACKAGE}-RSA4096
   run cp ${script_base_dir}/${PACKAGE}-release.spec $rpm_base_dir/SPECS/
 
   run rpmbuild -ba $rpm_base_dir/SPECS/${PACKAGE}-release.spec
