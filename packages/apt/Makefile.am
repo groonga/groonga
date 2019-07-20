@@ -34,7 +34,7 @@ sign-packages:
 	./sign-packages.sh '$(GPG_UID)' '$(REPOSITORIES_PATH)/' '$(CODE_NAMES)'
 
 update-repository:
-	./update-repository.sh '$(PACKAGE_NAME)' '$(REPOSITORIES_PATH)/' \
+	./update-repository.sh '$(PACKAGE_LABEL)' '$(REPOSITORIES_PATH)/' \
 	  '$(ARCHITECTURES)' '$(CODE_NAMES)'
 
 sign-repository:

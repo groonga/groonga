@@ -3,12 +3,12 @@
 script_base_dir=`dirname $0`
 
 if [ $# != 4 ]; then
-    echo "Usage: $0 PROJECT_NAME DESTINATION ARCHITECTURES CODES"
-    echo " e.g.: $0 mroonga repositories/ 'i386 amd64' 'lenny unstable hardy karmic'"
+    echo "Usage: $0 PROJECT_LABEL DESTINATION ARCHITECTURES CODES"
+    echo " e.g.: $0 Mroonga repositories/ 'i386 amd64' 'lenny unstable hardy karmic'"
     exit 1
 fi
 
-PROJECT_NAME=$1
+PROJECT_LABEL=$1
 DESTINATION=$2
 ARCHITECTURES=$3
 CODES=$4
@@ -40,24 +40,24 @@ EOF
     cat <<EOF > dists/${code_name}/${component}/binary-i386/Release
 Archive: ${code_name}
 Component: ${component}
-Origin: The ${PROJECT_NAME} project
-Label: The ${PROJECT_NAME} project
+Origin: The ${PROJECT_LABEL} project
+Label: The ${PROJECT_LABEL} project
 Architecture: i386
 EOF
 
     cat <<EOF > dists/${code_name}/${component}/binary-amd64/Release
 Archive: ${code_name}
 Component: ${component}
-Origin: The ${PROJECT_NAME} project
-Label: The ${PROJECT_NAME} project
+Origin: The ${PROJECT_LABEL} project
+Label: The ${PROJECT_LABEL} project
 Architecture: amd64
 EOF
 
     cat <<EOF > dists/${code_name}/${component}/source/Release
 Archive: ${code_name}
 Component: ${component}
-Origin: The ${PROJECT_NAME} project
-Label: The ${PROJECT_NAME} project
+Origin: The ${PROJECT_LABEL} project
+Label: The ${PROJECT_LABEL} project
 Architecture: source
 EOF
 
@@ -94,8 +94,8 @@ EOF
     rm -f dists/${code_name}/Release*
     rm -f *.db
     cat <<EOF > release-${code_name}.conf
-APT::FTPArchive::Release::Origin "The ${PROJECT_NAME} project";
-APT::FTPArchive::Release::Label "The ${PROJECT_NAME} project";
+APT::FTPArchive::Release::Origin "The ${PROJECT_LABEL} project";
+APT::FTPArchive::Release::Label "The ${PROJECT_LABEL} project";
 APT::FTPArchive::Release::Architectures "i386 amd64";
 APT::FTPArchive::Release::Codename "${code_name}";
 APT::FTPArchive::Release::Suite "${code_name}";
