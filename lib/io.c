@@ -310,6 +310,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size,
 {
   grn_io *io;
   fileinfo *fis;
+  size_t path_length;
   uint32_t b, max_nfiles;
   uint32_t bs;
   struct _grn_io_header *header;
@@ -320,7 +321,8 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size,
     return grn_io_create_tmp(ctx, header_size, segment_size, max_segment,
                              mode, flags);
   }
-  if (!*path || (strlen(path) > PATH_MAX - 4)) { return NULL; }
+  path_length = strlen(path);
+  if (path_length == 0 || (path_length > PATH_MAX - 4)) { return NULL; }
   b = grn_io_compute_base(header_size);
   bs = grn_io_compute_base_segment(b, segment_size);
   file_size = grn_io_compute_file_size(version);
@@ -344,7 +346,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size,
         if ((io = GRN_MALLOCN(grn_io, 1))) {
           grn_io_mapinfo *maps = NULL;
           if ((maps = GRN_CALLOC(sizeof(grn_io_mapinfo) * max_segment))) {
-            grn_strncpy(io->path, PATH_MAX, path, PATH_MAX);
+            grn_strncpy(io->path, PATH_MAX, path, path_length + 1);
             io->header = header;
             io->user_header = (((byte *) header) + IO_HEADER_SIZE);
             io->maps = maps;
@@ -563,6 +565,7 @@ grn_io *
 grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
 {
   size_t max_path_len = PATH_MAX - 4;
+  size_t path_length;
   grn_io *io;
   struct stat s;
   fileinfo fi;
@@ -573,12 +576,13 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     ERR(GRN_INVALID_ARGUMENT, "[io][open] path is missing");
     return NULL;
   }
-  if ((strlen(path) > max_path_len)) {
+  path_length = strlen(path);
+  if (path_length > max_path_len) {
     int truncate_length = 10;
     ERR(GRN_INVALID_ARGUMENT,
         "[io][open] path is too long: "
         "<%" GRN_FMT_SIZE ">(max: %" GRN_FMT_SIZE "): <%.*s...>",
-        strlen(path),
+        path_length,
         max_path_len,
         truncate_length,
         path);
@@ -663,7 +667,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
       if ((io = GRN_MALLOC(sizeof(grn_io)))) {
         grn_io_mapinfo *maps = NULL;
         if ((maps = GRN_CALLOC(sizeof(grn_io_mapinfo) * max_segment))) {
-          grn_strncpy(io->path, PATH_MAX, path, PATH_MAX);
+          grn_strncpy(io->path, PATH_MAX, path, path_length + 1);
           io->header = header;
           io->user_header = (((byte *) header) + IO_HEADER_SIZE);
           {
