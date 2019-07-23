@@ -698,7 +698,7 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     unsigned int size;
     grn_rc rc;
     size = grn_table_size(ctx, table);
-    rc = grn_normalize_offset_and_limit(ctx, size, &offset, &limit);
+    rc = grn_output_range_normalize(ctx, size, &offset, &limit);
     if (rc != GRN_SUCCESS) {
       ERR(rc,
           "[sort][geo] failed to normalize offset and limit: "

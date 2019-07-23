@@ -3577,7 +3577,7 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
     grn_rc rc;
     int original_offset = real_offset;
     int original_limit = real_limit;
-    rc = grn_normalize_offset_and_limit(ctx, grn_table_size(ctx, table),
+    rc = grn_output_range_normalize(ctx, grn_table_size(ctx, table),
                                         &real_offset, &real_limit);
     switch (rc) {
     case GRN_TOO_SMALL_OFFSET :

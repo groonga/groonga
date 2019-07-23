@@ -35,52 +35,6 @@
 # include <share.h>
 #endif /* WIN32 */
 
-grn_rc
-grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *p_offset, int *p_limit)
-{
-  int end;
-  int offset = *p_offset;
-  int limit = *p_limit;
-
-  if (limit < 0) {
-    limit += size + 1;
-    if (limit < 0) {
-      *p_offset = 0;
-      *p_limit = 0;
-      return GRN_TOO_SMALL_LIMIT;
-    }
-  } else if (limit > size) {
-    limit = size;
-  }
-
-  if (offset < 0) {
-    offset += size;
-    if (offset < 0) {
-      if (limit + offset >= 0) {
-        limit += offset;
-        offset = 0;
-      } else {
-        *p_offset = 0;
-        *p_limit = 0;
-        return GRN_TOO_SMALL_OFFSET;
-      }
-    }
-  } else if (offset != 0 && offset >= size) {
-    *p_offset = 0;
-    *p_limit = 0;
-    return GRN_TOO_LARGE_OFFSET;
-  }
-
-  /* At this point, offset and limit must be zero or positive. */
-  end = offset + limit;
-  if (end > size) {
-    limit -= end - size;
-  }
-  *p_offset = offset;
-  *p_limit = limit;
-  return GRN_SUCCESS;
-}
-
 grn_obj *
 grn_inspect_name(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {

@@ -2237,7 +2237,7 @@ grn_select_output_slices(grn_ctx *ctx,
 
     offset = slice->offset;
     limit = slice->limit;
-    grn_normalize_offset_and_limit(ctx, n_hits, &offset, &limit);
+    grn_output_range_normalize(ctx, n_hits, &offset, &limit);
 
     if (slice->sort_keys.length > 0) {
       grn_table_sort_key *sort_keys;
@@ -2878,7 +2878,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
 
     offset = drilldown->offset;
     limit = drilldown->limit;
-    grn_normalize_offset_and_limit(ctx, n_hits, &offset, &limit);
+    grn_output_range_normalize(ctx, n_hits, &offset, &limit);
 
     if (drilldown->sort_keys.length > 0) {
       grn_table_sort_key *sort_keys;
@@ -3444,7 +3444,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         goto exit;
       }
 
-      grn_normalize_offset_and_limit(ctx, nhits,
+      grn_output_range_normalize(ctx, nhits,
                                      &(data->offset), &(data->limit));
 
       if (!grn_select_sort(ctx, data)) {

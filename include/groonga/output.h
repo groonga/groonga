@@ -46,6 +46,11 @@ struct _grn_obj_format {
   grn_obj *expression;
 };
 
+GRN_API grn_rc grn_output_range_normalize(grn_ctx *ctx,
+                                          int size,
+                                          int *offset,
+                                          int *limit);
+
 #define GRN_OBJ_FORMAT_INIT(format,format_nhits,format_offset,format_limit,format_hits_offset) do { \
   GRN_PTR_INIT(&(format)->columns, GRN_OBJ_VECTOR, GRN_ID_NIL);\
   (format)->nhits = (format_nhits);\

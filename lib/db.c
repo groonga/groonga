@@ -2735,9 +2735,9 @@ grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
       }
     }
   } else {
-    rc = grn_normalize_offset_and_limit(ctx, table_size, &offset, &limit);
+    rc = grn_output_range_normalize(ctx, table_size, &offset, &limit);
     if (rc) {
-      ERR(rc, "grn_normalize_offset_and_limit failed");
+      ERR(rc, "grn_output_range_normalize failed");
     }
   }
   if (!ctx->rc) {
@@ -13777,8 +13777,8 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     goto exit;
   }
   n = grn_table_size(ctx, table);
-  if ((rc = grn_normalize_offset_and_limit(ctx, n, &offset, &limit))) {
-    ERR(rc, "grn_normalize_offset_and_limit failed");
+  if ((rc = grn_output_range_normalize(ctx, n, &offset, &limit))) {
+    ERR(rc, "grn_output_range_normalize failed");
     goto exit;
   } else {
     e = offset + limit;

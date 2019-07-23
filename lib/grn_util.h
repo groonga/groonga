@@ -25,8 +25,6 @@
 extern "C" {
 #endif
 
-GRN_API grn_rc grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *offset, int *limit);
-
 GRN_API char *grn_path_separator_to_system(char *dest, char *groonga_path);
 
 void grn_p_record(grn_ctx *ctx, grn_obj *table, grn_id id);
