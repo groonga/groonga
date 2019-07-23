@@ -1,5 +1,7 @@
 /* -*- c-basic-offset: 2; indent-tabs-mode: nil -*- */
-/* Copyright(C) 2010-2014 Brazil
+/*
+  Copyright(C) 2010-2014 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -249,6 +251,8 @@ output(grn_ctx *ctx, grn_obj *table, grn_obj *res, grn_id tid,
       oc_len = sizeof(DEFAULT_OUTPUT_COLUMNS) - 1;
     }
     if ((keys = grn_table_sort_key_from_str(ctx, sortby_val, sortby_len, res, &nkeys))) {
+      const unsigned int n_hits = grn_table_size(ctx, res);
+      grn_output_range_normalize(ctx, n_hits, &offset, &limit);
       grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
       GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                     ":", "sort(%d)", limit);
