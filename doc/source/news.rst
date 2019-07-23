@@ -7,6 +7,46 @@
 News
 ====
 
+.. _release-9-0-5:
+
+Release 9.0.5 - 2019-07-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/logical_range_filter`] Stop an optimization by the number of required records.
+
+  * This feature is used only when the target shard is large enough.
+  * Large enough threshold is 10000 by default.
+
+* [:doc:`/reference/normalizers`] Added new option ``unify_to_katakana`` for ``NormalizerNFKC100``.
+
+  * This option normalize hiragana to katakana.
+  * For example, ``ゔぁゔぃゔゔぇゔぉ`` normalize to ``ヴァヴィヴヴェヴォ``.
+
+* Supported Amazon Linux 2.
+
+Fixes
+^^^^^
+
+* Fixed a bug that vector values as JSON are not indexed.
+
+* Fixed wrong parameter name in ``table_create`` tests. [GitHub#1000][Patch by yagisumi]
+
+* Fixed a bug that drilldown label is empty when a drilldown command is executed by ``command_version=3``. [GitHub#1001][Reported by yagisumi]
+
+* Fixed build error for Windows package on MinGW.
+
+* Fixed install missing COPYING for Windows package on MinGW.
+
+* Fixed a bug that don't higlight when specifing non-test query as highlight target keyword.
+
+Thanks
+^^^^^^
+
+* yagisumi
+
 .. _release-9-0-4:
 
 Release 9.0.4 - 2019-06-29
