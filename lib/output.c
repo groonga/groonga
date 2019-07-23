@@ -2218,7 +2218,7 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
                   limit = DEFAULT_LIMIT;
 #undef DEFAULT_LIMIT
                 }
-                grn_normalize_offset_and_limit(ctx, nhits, &offset, &limit);
+                grn_output_range_normalize(ctx, nhits, &offset, &limit);
                 record_n = offset + 1;
                 GRN_TEXT_PUTS(ctx, transformed,
                               "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
