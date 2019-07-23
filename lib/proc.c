@@ -285,11 +285,12 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_timeval now;
   grn_cache *cache;
   grn_cache_statistics statistics;
+  const int n_elements = 10;
 
   grn_timeval_now(ctx, &now);
   cache = grn_cache_current_get(ctx);
   grn_cache_get_statistics(ctx, cache, &statistics);
-  GRN_OUTPUT_MAP_OPEN("RESULT", 10);
+  GRN_OUTPUT_MAP_OPEN("RESULT", n_elements);
   GRN_OUTPUT_CSTR("alloc_count");
   GRN_OUTPUT_INT32(grn_alloc_count());
   GRN_OUTPUT_CSTR("starttime");
