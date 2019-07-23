@@ -35,6 +35,52 @@
 #define DECR_DEPTH (DEPTH ? grn_bulk_truncate(ctx, LEVELS, GRN_BULK_VSIZE(LEVELS) - sizeof(uint32_t)) : 0)
 #define INCR_LENGTH (DEPTH ? (GRN_UINT32_VALUE_AT(LEVELS, (DEPTH - 1)) += 2) : 0)
 
+grn_rc
+grn_output_range_normalize(grn_ctx *ctx, int size, int *offset, int *limit)
+{
+  int end;
+  int normalized_offset = *offset;
+  int normalized_limit = *limit;
+
+  if (normalized_limit < 0) {
+    normalized_limit += size + 1;
+    if (limit < 0) {
+      *offset = 0;
+      *limit = 0;
+      return GRN_TOO_SMALL_LIMIT;
+    }
+  } else if (normalized_limit > size) {
+    normalized_limit = size;
+  }
+
+  if (normalized_offset < 0) {
+    normalized_offset += size;
+    if (normalized_offset < 0) {
+      if (normalized_limit + normalized_offset >= 0) {
+        normalized_limit += normalized_offset;
+        normalized_offset = 0;
+      } else {
+        *offset = 0;
+        *limit = 0;
+        return GRN_TOO_SMALL_OFFSET;
+      }
+    }
+  } else if (normalized_offset != 0 && normalized_offset >= size) {
+    *offset = 0;
+    *limit = 0;
+    return GRN_TOO_LARGE_OFFSET;
+  }
+
+  /* At this point, offset and limit must be zero or positive. */
+  end = normalized_offset + normalized_limit;
+  if (end > size) {
+    normalized_limit -= end - size;
+  }
+  *offset = normalized_offset;
+  *limit = normalized_limit;
+  return GRN_SUCCESS;
+}
+
 static void
 indent(grn_ctx *ctx, grn_obj *outbuf, size_t level)
 {
