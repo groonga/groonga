@@ -42,7 +42,7 @@ index_column_diff_output_postings(grn_ctx *ctx,
     n_elements++;
   }
   size_t n = GRN_UINT32_VECTOR_SIZE(postings);
-  grn_ctx_output_array_open(ctx, name, n);
+  grn_ctx_output_array_open(ctx, name, n / n_elements);
   for (i = 0; i < n; i += n_elements) {
     grn_ctx_output_map_open(ctx, "posting", n_elements);
     {
