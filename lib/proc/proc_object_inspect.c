@@ -335,7 +335,7 @@ command_object_inspect_column_index_value_statistics(grn_ctx *ctx,
       grn_ctx_output_cstr(ctx, "n_garbage_chunks");
       grn_ctx_output_array_open(ctx,
                                 "n_garbage_chunks",
-                                GRN_II_N_CHUNK_VARIATION);
+                                GRN_II_N_CHUNK_VARIATION + 1);
       {
         uint32_t i;
         for (i = 0; i <= GRN_II_N_CHUNK_VARIATION; i++) {
