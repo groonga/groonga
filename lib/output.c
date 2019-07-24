@@ -44,7 +44,7 @@ grn_output_range_normalize(grn_ctx *ctx, int size, int *offset, int *limit)
 
   if (normalized_limit < 0) {
     normalized_limit += size + 1;
-    if (limit < 0) {
+    if (normalized_limit < 0) {
       *offset = 0;
       *limit = 0;
       return GRN_TOO_SMALL_LIMIT;
