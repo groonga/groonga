@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2398,15 +2398,24 @@ push(grn_pat_cursor *c, grn_id id, uint16_t check)
   if (c->size <= c->sp) {
     if (c->ss) {
       uint32_t size = c->size * 4;
-      grn_pat_cursor_entry *ss = GRN_REALLOC(c->ss, size);
+      grn_pat_cursor_entry *ss =
+        GRN_REALLOC(c->ss, sizeof(grn_pat_cursor_entry) * size);
+      GRN_LOG(ctx, GRN_LOG_DEBUG,
+              "[pat][cursor][push][realloc] "
+              "%p: %p -> %p: <%" GRN_FMT_INT32U ">",
+              c,
+              c->ss,
+              ss,
+              size);
       if (!ss) { return; /* give up */ }
       c->ss = ss;
       c->size = size;
     } else {
-      if (!(c->ss = GRN_MALLOC(sizeof(grn_pat_cursor_entry) * INITIAL_SIZE))) {
+      uint32_t size = INITIAL_SIZE;
+      if (!(c->ss = GRN_MALLOC(sizeof(grn_pat_cursor_entry) * size))) {
         return; /* give up */
       }
-      c->size = INITIAL_SIZE;
+      c->size = size;
     }
   }
   se = &c->ss[c->sp++];
