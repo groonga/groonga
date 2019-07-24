@@ -25,7 +25,7 @@ Improvements
   * This option normalize hiragana to katakana.
   * For example, ``ゔぁゔぃゔゔぇゔぉ`` normalize to ``ヴァヴィヴヴェヴォ``.
 
-* Supported Amazon Linux 2.
+* Added support for Amazon Linux 2.
 
 Fixes
 ^^^^^
