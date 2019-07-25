@@ -42,6 +42,14 @@ Fixes
 
 * Fixed a bug that don't higlight when specifing non-test query as highlight target keyword.
 
+* Fixed a bug that broken output of MessagePack format of [:doc:`/reference/commands/object_inspect`]. [GitHub#1009][Reported by yagisumi]
+
+* Fixed a bug that broken output of MessagePack format of ``index_column_diff``. [GitHub#1010][Reported by yagisumi]
+
+* Fixed a bug that broken output of MessagePack format of [:doc:`reference/commands/suggest`]. [GitHub#1011][Reported by yagisumi]
+
+* Fixed a bug that allocate size by realloc isn't enough when a search for a table of patricia trie and so on.
+
 Thanks
 ^^^^^^
 
