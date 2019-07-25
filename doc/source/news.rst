@@ -48,12 +48,14 @@ Fixes
 
 * Fixed a bug that broken output of MessagePack format of [:doc:`reference/commands/suggest`]. [GitHub#1011][Reported by yagisumi]
 
-* Fixed a bug that allocate size by realloc isn't enough when a search for a table of patricia trie and so on.
+* Fixed a bug that allocate size by realloc isn't enough when a search for a table of patricia trie and so on. [Reported by Shimadzu Corporation]
 
 Thanks
 ^^^^^^
 
 * yagisumi
+
+* Shimadzu Corporation
 
 .. _release-9-0-4:
 
