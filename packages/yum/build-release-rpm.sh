@@ -46,8 +46,27 @@ for distribution in ${DISTRIBUTIONS}; do
       distribution_versions="6 7"
       ;;
   esac
+  run cat <<EOR > groonga-centos.repo
+[$PACKAGE-centos]
+name=Groonga for CentOS \$releasever - \$basearch
+baseurl=https://packages.groonga.org/$distribution/\$releasever/\$basearch/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-$PACKAGE
+       file:///etc/pki/rpm-gpg/RPM-GPG-KEY-$PACKAGE-RSA4096
+EOR
+  run cat <<EOR > groonga-amazon-linux.repo
+[$PACKAGE-amazon-linux]
+name=Groonga for Amazon Linux 2 - \$basearch
+baseurl=https://packages.groonga.org/centos/7/\$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga
+       file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
+EOR
   run tar cfz $rpm_base_dir/SOURCES/${PACKAGE}-release.tar.gz \
-      -C ${script_base_dir} RPM-GPG-KEY-${PACKAGE} RPM-GPG-KEY-${PACKAGE}-RSA4096
+      -C ${script_base_dir} RPM-GPG-KEY-${PACKAGE} RPM-GPG-KEY-${PACKAGE}-RSA4096 \
+         groonga-centos.repo groonga-amazon-linux.repo
   run cp ${script_base_dir}/${PACKAGE}-release.spec $rpm_base_dir/SPECS/
 
   run rpmbuild -ba $rpm_base_dir/SPECS/${PACKAGE}-release.spec

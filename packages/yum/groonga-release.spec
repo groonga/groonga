@@ -1,6 +1,6 @@
 Summary: Groonga release files
 Name: groonga-release
-Version: 1.5.0
+Version: 1.5.1
 Release: 1
 License: LGPLv2
 URL: https://packages.groonga.org/
@@ -9,6 +9,7 @@ Group: System Environment/Base
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildArchitectures: noarch
 Requires: epel-release
+Requires: yum-utils
 Obsoletes: groonga-repository <= 1.0.1-0
 
 %description
@@ -25,6 +26,8 @@ Groonga release files
 %{__install} -Dp -m0644 RPM-GPG-KEY-groonga %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga
 %{__install} -Dp -m0644 RPM-GPG-KEY-groonga-RSA4096 %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
 %{__install} -d %{buildroot}%{_sysconfdir}/yum.repos.d/
+%{__install} -Dp -m0644 groonga-centos.repo %{buildroot}%{_sysconfdir}/yum.repos.d/groonga-centos.repo
+%{__install} -Dp -m0644 groonga-amazon-linux.repo %{buildroot}%{_sysconfdir}/yum.repos.d/groonga-amazon-linux.repo
 
 %clean
 %{__rm} -rf %{buildroot}
@@ -38,32 +41,23 @@ Groonga release files
 %dir %{_sysconfdir}/pki/rpm-gpg/
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
+%config(noreplace) %{_sysconfdir}/yum.repos.d/groonga-centos.repo
+%config(noreplace) %{_sysconfdir}/yum.repos.d/groonga-amazon-linux.repo
 
 %post
 if grep -q 'Amazon Linux release 2' /etc/system-release 2>/dev/null; then
-  cat <<EOR > %{_sysconfdir}/yum.repos.d/groonga.repo
-[groonga]
-name=Groonga for Amazon Linux 2 - \$basearch
-baseurl=https://packages.groonga.org/centos/7/\$basearch/
-gpgcheck=1
-enabled=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga
-       file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
-EOR
+  yum-config-manager --disable groonga-centos
+  yum-config-manager --enable groonga-amazon-linux
 else
-  cat <<EOR > %{_sysconfdir}/yum.repos.d/groonga.repo
-[groonga]
-name=Groonga for CentOS \$releasever - \$basearch
-baseurl=https://packages.groonga.org/centos/\$releasever/\$basearch/
-gpgcheck=1
-enabled=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga
-       file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga-RSA4096
-EOR
+  yum-config-manager --disable groonga-amazon-linux
+  yum-config-manager --enable groonga-centos
 fi
 
 
 %changelog
+* Thu Jul 25 2019 Kentaro Hayashi <hayashi@clear-code.com> - 1.5.1-1
+- Fix a bug that .repo file was removed during upgrade process.
+
 * Fri Jul 12 2019 Horimoto Yasuhiro <horimoto@clear-code.com> - 1.5.0-1
 - Add support for Amazon Linux 2
 
