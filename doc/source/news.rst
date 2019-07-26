@@ -59,6 +59,8 @@ Thanks
 
 * Shimadzu Corporation
 
+* Josep Sanz
+
 .. _release-9-0-4:
 
 Release 9.0.4 - 2019-06-29
