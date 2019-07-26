@@ -1,0 +1,133 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "tag": "Rroonga"}
+]
+[[0,0.0,0.0],4]
+select Memos   --slices[no_rroonga].filter '_id < 4'   --slices[no_rroonga].drilldowns[tag].keys tag
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tag",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast!",
+        "Groonga"
+      ],
+      [
+        2,
+        "Mroonga is fast!",
+        "Mroonga"
+      ],
+      [
+        3,
+        "Groonga sticker!",
+        "Groonga"
+      ],
+      [
+        4,
+        "Rroonga is fast!",
+        "Rroonga"
+      ]
+    ],
+    {
+      "no_rroonga": [
+        [
+          3
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "tag",
+            "Tags"
+          ]
+        ],
+        [
+          1,
+          "Groonga is fast!",
+          "Groonga"
+        ],
+        [
+          2,
+          "Mroonga is fast!",
+          "Mroonga"
+        ],
+        [
+          3,
+          "Groonga sticker!",
+          "Groonga"
+        ],
+        {
+          "tag": [
+            [
+              2
+            ],
+            [
+              [
+                "_key",
+                "ShortText"
+              ],
+              [
+                "_nsubrecs",
+                "Int32"
+              ]
+            ],
+            [
+              "Groonga",
+              2
+            ],
+            [
+              "Mroonga",
+              1
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+]
+#>select --slices[no_rroonga].drilldowns[tag].keys "tag" --slices[no_rroonga].filter "_id < 4" --table "Memos"
+#:000000000000000 select(4)
+#:000000000000000 slices[no_rroonga].filter(3): #<accessor _id(Memos)> less 4
+#:000000000000000 slices[no_rroonga](3)
+#:000000000000000 slices[no_rroonga].drilldowns[tag](2)
+#:000000000000000 output(4)
+#:000000000000000 slices[no_rroonga].output.drilldowns[tag](2)
+#:000000000000000 slices[no_rroonga].output(3)
+#<000000000000000 rc=0
