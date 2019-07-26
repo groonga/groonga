@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2017 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -77,18 +78,18 @@ namespace grnarrow {
   public:
     ColumnLoadVisitor(grn_ctx *ctx,
                       grn_obj *grn_table,
-                      std::shared_ptr<arrow::Column> &arrow_column,
+                      const std::shared_ptr<arrow::Field>& arrow_field,
                       const grn_id *ids)
       : ctx_(ctx),
         grn_table_(grn_table),
         ids_(ids),
         time_unit_(arrow::TimeUnit::SECOND) {
-      auto column_name = arrow_column->name();
+      const auto& column_name = arrow_field->name();
       grn_column_ = grn_obj_column(ctx_, grn_table_,
                                    column_name.data(),
                                    column_name.size());
 
-      auto arrow_type = arrow_column->type();
+      const auto& arrow_type = arrow_field->type();
       grn_id type_id;
       switch (arrow_type->id()) {
       case arrow::Type::BOOL :
@@ -363,16 +364,22 @@ namespace grnarrow {
           auto id = grn_table_add(ctx_, grn_table_, NULL, 0, NULL);
           GRN_RECORD_PUT(ctx_, &ids, id);
         }
+        const auto& arrow_schema = arrow_table->schema();
         for (int i = 0; i < n_columns; ++i) {
           int64_t offset = 0;
-          auto arrow_column = arrow_table->column(i);
-          auto arrow_chunked_data = arrow_column->data();
-          for (auto arrow_array : arrow_chunked_data->chunks()) {
+          const auto& arrow_field = arrow_schema->field(i);
+#if ARROW_VERSION_MAJOR == 0 && ARROW_VERSION_MINOR <= 14
+          const auto& arrow_column = arrow_table->column(i);
+          const auto& arrow_chunked_array = arrow_column->data();
+#else
+          const auto& arrow_chunked_array = arrow_table->column(i);
+#endif
+          for (const auto& arrow_array : arrow_chunked_array->chunks()) {
             grn_id *sub_ids =
               reinterpret_cast<grn_id *>(GRN_BULK_HEAD(&ids)) + offset;
             ColumnLoadVisitor visitor(ctx_,
                                       grn_table_,
-                                      arrow_column,
+                                      arrow_field,
                                       sub_ids);
             arrow_array->Accept(&visitor);
             offset += arrow_array->length();
