@@ -50,6 +50,8 @@ Fixes
 
 * Fixed a bug that allocate size by realloc isn't enough when a search for a table of patricia trie and so on. [Reported by Shimadzu Corporation]
 
+* Fix a bug that ``groonga.repo`` is removed when updating 1.5.0 from ``groonga-release`` version before 1.5.0. [groonga-talk:429][Reported by Josep Sanz]
+
 Thanks
 ^^^^^^
 
