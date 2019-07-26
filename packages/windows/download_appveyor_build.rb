@@ -6,8 +6,7 @@ require "veyor"
 require "octokit"
 
 def download(url, local_file)
-  ssl_verify_mode = nil
-  open(url, :ssl_verify_mode => ssl_verify_mode) do |remote_zip|
+  open(url) do |remote_zip|
     File.open(local_file, "wb") do |local_zip|
       local_zip.print(remote_zip.read)
     end
