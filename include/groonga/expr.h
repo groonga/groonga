@@ -1,5 +1,6 @@
 /*
   Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -122,6 +123,14 @@ GRN_API grn_rc grn_expr_snip_add_conditions(grn_ctx *ctx,
                                             unsigned int *closetag_lens);
 
 GRN_API unsigned int grn_expr_estimate_size(grn_ctx *ctx, grn_obj *expr);
+
+GRN_API void
+grn_expr_set_query_log_tag_prefix(grn_ctx *ctx,
+                                  grn_obj *expr,
+                                  const char *prefix,
+                                  int prefix_len);
+GRN_API const char *
+grn_expr_get_query_log_tag_prefix(grn_ctx *ctx, grn_obj *expr);
 
 #ifdef __cplusplus
 }
