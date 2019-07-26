@@ -5,10 +5,10 @@ require "open-uri"
 require "veyor"
 require "octokit"
 
-def download(url, local_file)
-  open(url) do |remote_zip|
-    File.open(local_file, "wb") do |local_zip|
-      local_zip.print(remote_zip.read)
+def download(url, local_path)
+  open(url) do |remote_file|
+    File.open(local_path, "wb") do |local_file|
+      local_file.print(remote_file.read)
     end
   end
 end
