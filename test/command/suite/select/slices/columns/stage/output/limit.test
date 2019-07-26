@@ -1,0 +1,25 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+
+load --table Memos
+[
+{"content": "Groonga is fast."},
+{"content": "Mroonga is fast and easy to use."},
+{"content": "PGroonga is fast and easy to use."}
+]
+
+log_level --level debug
+#@add-important-log-levels debug
+#@collect-query-log true
+select Memos \
+  --slices[fast].query 'content:@fast' \
+  --slices[fast].sort_keys '-_id' \
+  --slices[fast].limit 2 \
+  --slices[fast].columns[highlighted_content].stage output \
+  --slices[fast].columns[highlighted_content].type Text \
+  --slices[fast].columns[highlighted_content].flags COLUMN_SCALAR \
+  --slices[fast].columns[highlighted_content].value 'highlight_html(content)' \
+  --slices[fast].output_columns _id,highlighted_content
+#@collect-query-log false
+#@remove-important-log-levels debug
+log_level --level notice

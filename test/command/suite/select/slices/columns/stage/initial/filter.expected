@@ -1,0 +1,128 @@
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "Book",  "price": 1000},
+{"_key": "Note",  "price": 1000},
+{"_key": "Box",   "price":  520},
+{"_key": "Pen",   "price":  510},
+{"_key": "Food",  "price":  500},
+{"_key": "Drink", "price":  300}
+]
+[[0,0.0,0.0],6]
+log_level --level debug
+[[0,0.0,0.0],true]
+select Items   --slices[expensive].columns[price_with_tax].stage initial   --slices[expensive].columns[price_with_tax].type UInt32   --slices[expensive].columns[price_with_tax].flags COLUMN_SCALAR   --slices[expensive].columns[price_with_tax].value 'price * 1.08'   --slices[expensive].filter 'price_with_tax > 550'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "price",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        "Book",
+        1000
+      ],
+      [
+        2,
+        "Note",
+        1000
+      ],
+      [
+        3,
+        "Box",
+        520
+      ],
+      [
+        4,
+        "Pen",
+        510
+      ],
+      [
+        5,
+        "Food",
+        500
+      ],
+      [
+        6,
+        "Drink",
+        300
+      ]
+    ],
+    {
+      "expensive": [
+        [
+          3
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "price_with_tax",
+            "UInt32"
+          ],
+          [
+            "price",
+            "UInt32"
+          ]
+        ],
+        [
+          1,
+          "Book",
+          1080,
+          1000
+        ],
+        [
+          2,
+          "Note",
+          1080,
+          1000
+        ],
+        [
+          3,
+          "Box",
+          561,
+          520
+        ]
+      ]
+    }
+  ]
+]
+#>select --slices[expensive].columns[price_with_tax].flags "COLUMN_SCALAR" --slices[expensive].columns[price_with_tax].stage "initial" --slices[expensive].columns[price_with_tax].type "UInt32" --slices[expensive].columns[price_with_tax].value "price * 1.08" --slices[expensive].filter "price_with_tax > 550" --table "Items"
+#:000000000000000 select(6)
+#:000000000000000 slices[expensive].columns[price_with_tax](6)
+#:000000000000000 slices[expensive].filter(3): 2147483649.price_with_tax greater 550
+#:000000000000000 slices[expensive](3)
+#:000000000000000 output(6)
+#:000000000000000 slices[expensive].output(3)
+#<000000000000000 rc=0
+log_level --level notice
+[[0,0.0,0.0],true]

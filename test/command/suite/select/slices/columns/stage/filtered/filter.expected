@@ -1,0 +1,104 @@
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "Book",  "price": 1498},
+{"_key": "Food",  "price": 1198},
+{"_key": "Drink", "price": 600}
+]
+[[0,0.0,0.0],3]
+log_level --level debug
+[[0,0.0,0.0],true]
+select Items   --slices[cheep].filter 'price < 1200'   --slices[cheep].output_columns _id,_key,price,filtered   --slices[cheep].columns[filtered].stage filtered   --slices[cheep].columns[filtered].type UInt32   --slices[cheep].columns[filtered].flags COLUMN_SCALAR   --slices[cheep].columns[filtered].value '_id'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "price",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        "Book",
+        1498
+      ],
+      [
+        2,
+        "Food",
+        1198
+      ],
+      [
+        3,
+        "Drink",
+        600
+      ]
+    ],
+    {
+      "cheep": [
+        [
+          2
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "price",
+            "UInt32"
+          ],
+          [
+            "filtered",
+            "UInt32"
+          ]
+        ],
+        [
+          2,
+          "Food",
+          1198,
+          2
+        ],
+        [
+          3,
+          "Drink",
+          600,
+          3
+        ]
+      ]
+    }
+  ]
+]
+#>select --slices[cheep].columns[filtered].flags "COLUMN_SCALAR" --slices[cheep].columns[filtered].stage "filtered" --slices[cheep].columns[filtered].type "UInt32" --slices[cheep].columns[filtered].value "_id" --slices[cheep].filter "price < 1200" --slices[cheep].output_columns "_id,_key,price,filtered" --table "Items"
+#:000000000000000 select(3)
+#:000000000000000 slices[cheep].filter(2): Items.price less 1200
+#:000000000000000 slices[cheep](2)
+#:000000000000000 slices[cheep].columns[filtered](2)
+#:000000000000000 output(3)
+#:000000000000000 slices[cheep].output(2)
+#<000000000000000 rc=0
+log_level --level notice
+[[0,0.0,0.0],true]

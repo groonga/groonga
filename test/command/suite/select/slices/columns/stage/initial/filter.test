@@ -1,0 +1,25 @@
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items price COLUMN_SCALAR UInt32
+
+load --table Items
+[
+{"_key": "Book",  "price": 1000},
+{"_key": "Note",  "price": 1000},
+{"_key": "Box",   "price":  520},
+{"_key": "Pen",   "price":  510},
+{"_key": "Food",  "price":  500},
+{"_key": "Drink", "price":  300}
+]
+
+log_level --level debug
+#@add-important-log-levels debug
+#@collect-query-log true
+select Items \
+  --slices[expensive].columns[price_with_tax].stage initial \
+  --slices[expensive].columns[price_with_tax].type UInt32 \
+  --slices[expensive].columns[price_with_tax].flags COLUMN_SCALAR \
+  --slices[expensive].columns[price_with_tax].value 'price * 1.08' \
+  --slices[expensive].filter 'price_with_tax > 550'
+#@collect-query-log false
+#@remove-important-log-levels debug
+log_level --level notice

@@ -1,0 +1,23 @@
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items price COLUMN_SCALAR UInt32
+
+load --table Items
+[
+{"_key": "Book",  "price": 1498},
+{"_key": "Food",  "price": 1198},
+{"_key": "Drink", "price": 600}
+]
+
+log_level --level debug
+#@add-important-log-levels debug
+#@collect-query-log true
+select Items \
+  --slices[cheep].filter 'price < 1200' \
+  --slices[cheep].output_columns _id,_key,price,filtered \
+  --slices[cheep].columns[filtered].stage filtered \
+  --slices[cheep].columns[filtered].type UInt32 \
+  --slices[cheep].columns[filtered].flags COLUMN_SCALAR \
+  --slices[cheep].columns[filtered].value '_id'
+#@collect-query-log false
+#@remove-important-log-levels debug
+log_level --level notice

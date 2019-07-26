@@ -11,10 +11,12 @@ load --table Memos
 {"_key": "Rroonga is fast!", "tag": "Rroonga"}
 ]
 
+log_level --level debug
+#@add-important-log-levels debug
 #@collect-query-log true
-#@add-important-log-levels notice
 select Memos \
   --slices[no_rroonga].filter '_id < 4' \
   --slices[no_rroonga].drilldowns[tag].keys tag
-#@remove-important-log-levels notice
 #@collect-query-log false
+#@remove-important-log-levels debug
+log_level --level notice

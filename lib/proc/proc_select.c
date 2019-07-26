@@ -78,8 +78,15 @@ typedef struct {
   grn_raw_string output_columns;
   int offset;
   int limit;
-  grn_obj *table;
+  struct {
+    grn_obj *target;
+    grn_obj *initial;
+    grn_obj *result;
+    grn_obj *sorted;
+    grn_obj *output;
+  } tables;
   grn_hash *drilldowns;
+  grn_columns columns;
 } grn_slice_data;
 
 typedef struct {
@@ -1025,17 +1032,38 @@ grn_slice_data_init(grn_ctx *ctx,
   GRN_RAW_STRING_INIT(slice->output_columns);
   slice->offset = 0;
   slice->limit = GRN_SELECT_DEFAULT_LIMIT;
-  slice->table = NULL;
+  slice->tables.target = NULL;
+  slice->tables.initial = NULL;
+  slice->tables.result = NULL;
+  slice->tables.sorted = NULL;
+  slice->tables.output = NULL;
   slice->drilldowns = NULL;
+  grn_columns_init(ctx, &(slice->columns));
 }
 
 static void
 grn_slice_data_fin(grn_ctx *ctx, grn_slice_data *slice)
 {
+  if (slice->tables.sorted) {
+    grn_obj_unlink(ctx, slice->tables.sorted);
+  }
+  if (slice->tables.result == slice->filter.filtered) {
+    slice->tables.result = NULL;
+  }
+  if (slice->tables.result &&
+      slice->tables.result != slice->tables.initial &&
+      slice->tables.result != slice->tables.target) {
+    grn_obj_unlink(ctx, slice->tables.result);
+  }
+  if (slice->tables.initial &&
+      slice->tables.initial != slice->tables.target) {
+    grn_obj_unlink(ctx, slice->tables.initial);
+  }
   grn_filter_data_fin(ctx, &(slice->filter));
   if (slice->drilldowns) {
     grn_drilldowns_fin(ctx, slice->drilldowns);
   }
+  grn_columns_fin(ctx, &(slice->columns));
 }
 
 static void
@@ -1399,6 +1427,7 @@ grn_select_apply_columns(grn_ctx *ctx,
                          grn_select_data *data,
                          grn_obj *table,
                          grn_hash *columns,
+                         grn_obj *condition,
                          const char *log_tag_prefix,
                          const char *query_log_tag_prefix)
 {
@@ -1475,9 +1504,7 @@ grn_select_apply_columns(grn_ctx *ctx,
                        ctx->errbuf);
       break;
     }
-    grn_select_expression_set_condition(ctx,
-                                        expression,
-                                        data->filter.condition.expression);
+    grn_select_expression_set_condition(ctx, expression, condition);
 
     if (column_data->window.sort_keys.length > 0 ||
         column_data->window.group_keys.length > 0) {
@@ -1614,6 +1641,7 @@ grn_select_apply_initial_columns(grn_ctx *ctx,
                            data,
                            data->tables.initial,
                            data->columns.initial,
+                           data->filter.condition.expression,
                            "[select]",
                            NULL);
 
@@ -1669,6 +1697,7 @@ grn_select_apply_filtered_columns(grn_ctx *ctx,
                            data,
                            data->tables.result,
                            data->columns.filtered,
+                           data->filter.condition.expression,
                            "[select]",
                            NULL);
 
@@ -2092,6 +2121,7 @@ grn_select_apply_output_columns(grn_ctx *ctx,
                            data,
                            data->tables.sorted,
                            data->columns.output,
+                           data->filter.condition.expression,
                            "[select]",
                            NULL);
 
@@ -2168,6 +2198,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
                              grn_hash *drilldowns,
                              grn_obj *table,
                              grn_hash *slices,
+                             grn_obj *condition,
                              grn_id id,
                              const bool is_labeled,
                              const char *log_tag_context,
@@ -2241,7 +2272,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
                                                   slices,
                                                   dependent_id,
                                                   NULL);
-          target_table = slice->table;
+          target_table = slice->tables.result;
         }
       }
       if (dependent_id == GRN_ID_NIL) {
@@ -2327,6 +2358,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
                              data,
                              result->table,
                              drilldown->columns.initial,
+                             condition,
                              GRN_TEXT_VALUE(&log_tag_prefix),
                              GRN_TEXT_VALUE(&full_query_log_tag_prefix));
   }
@@ -2539,6 +2571,7 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
                               grn_hash *drilldowns,
                               grn_obj *table,
                               grn_hash *slices,
+                              grn_obj *condition,
                               const bool is_labeled,
                               const char *log_tag_context,
                               const char *query_log_tag_prefix)
@@ -2564,6 +2597,7 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
                                       drilldowns,
                                       table,
                                       slices,
+                                      condition,
                                       id,
                                       is_labeled,
                                       log_tag_context,
@@ -2684,6 +2718,7 @@ grn_select_prepare_drilldowns(grn_ctx *ctx,
                                        data->drilldowns,
                                        data->tables.result,
                                        data->slices,
+                                       data->filter.condition.expression,
                                        is_labeled,
                                        "",
                                        "")) {
@@ -2886,27 +2921,62 @@ grn_select_slice_execute(grn_ctx *ctx,
                "slices[%.*s].",
                (int)(slice->label.length),
                slice->label.value);
+
+  slice->tables.target = table;
+  if (slice->columns.initial) {
+    slice->tables.initial =
+      grn_select_create_all_selected_result_table(ctx, slice->tables.target);
+    if (!slice->tables.initial) {
+      return false;
+    }
+    grn_select_apply_columns(ctx,
+                             data,
+                             slice->tables.initial,
+                             slice->columns.initial,
+                             slice->filter.condition.expression,
+                             log_tag,
+                             query_log_tag_prefix);
+    if (ctx->rc != GRN_SUCCESS) {
+      return false;
+    }
+    slice->tables.target = slice->tables.initial;
+  }
+
   if (!grn_filter_data_execute(ctx,
                                filter,
-                               table,
+                               slice->tables.target,
                                log_tag,
                                query_log_tag_prefix)) {
     return false;
   }
 
-  slice->table = filter->filtered;
+  slice->tables.result = filter->filtered;
   GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                 ":", "%.*s(%d)",
                 (int)(strlen(query_log_tag_prefix) - 1),
                 query_log_tag_prefix,
-                grn_table_size(ctx, slice->table));
+                grn_table_size(ctx, slice->tables.result));
+
+  if (slice->columns.filtered) {
+    grn_select_apply_columns(ctx,
+                             data,
+                             slice->tables.result,
+                             slice->columns.filtered,
+                             slice->filter.condition.expression,
+                             log_tag,
+                             query_log_tag_prefix);
+    if (ctx->rc != GRN_SUCCESS) {
+      return false;
+    }
+  }
 
   if (slice->drilldowns) {
     if (!grn_select_drilldowns_execute(ctx,
                                        data,
                                        slice->drilldowns,
-                                       slice->table,
+                                       slice->tables.result,
                                        NULL,
+                                       slice->filter.condition.expression,
                                        true,
                                        log_tag,
                                        query_log_tag_prefix)) {
@@ -2972,7 +3042,7 @@ grn_select_output_slices(grn_ctx *ctx,
     grn_slice_data *slice;
 
     grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
-    if (slice->table) {
+    if (slice->tables.result) {
       n_available_results++;
     }
   } GRN_HASH_EACH_END(ctx, cursor);
@@ -2986,11 +3056,11 @@ grn_select_output_slices(grn_ctx *ctx,
     int limit;
 
     grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
-    if (!slice->table) {
+    if (!slice->tables.result) {
       continue;
     }
 
-    n_hits = grn_table_size(ctx, slice->table);
+    n_hits = grn_table_size(ctx, slice->tables.result);
 
     offset = slice->offset;
     limit = slice->limit;
@@ -3004,95 +3074,100 @@ grn_select_output_slices(grn_ctx *ctx,
                  (int)(slice->label.length),
                  slice->label.value);
 
-    if (slice->sort_keys.length > 0) {
+    if (slice->sort_keys.length == 0) {
+      slice->tables.output = slice->tables.result;
+    } else {
       grn_table_sort_key *sort_keys;
       uint32_t n_sort_keys;
       sort_keys = grn_table_sort_key_from_str(ctx,
                                               slice->sort_keys.value,
                                               slice->sort_keys.length,
-                                              slice->table, &n_sort_keys);
+                                              slice->tables.result,
+                                              &n_sort_keys);
       if (sort_keys) {
-        grn_obj *sorted;
-        sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
-                                  NULL, slice->table);
-        if (sorted) {
-          grn_table_sort(ctx, slice->table, offset, limit,
-                         sorted, sort_keys, n_sort_keys);
-          data->output.formatter->slice_label(ctx, data, slice);
-          grn_obj_format format;
-          uint32_t n_additional_elements = 0;
-          if (slice->drilldowns) {
-            n_additional_elements++;
-          }
-          succeeded =
-            grn_select_output_columns_open(ctx,
-                                           data,
-                                           &format,
-                                           sorted,
-                                           n_hits,
-                                           0,
-                                           limit,
-                                           slice->output_columns.value,
-                                           slice->output_columns.length,
-                                           slice->filter.condition.expression,
-                                           n_additional_elements);
-          grn_obj_unlink(ctx, sorted);
-          if (succeeded) {
-            succeeded =
-              grn_select_output_drilldowns(ctx,
-                                           data,
-                                           slice->drilldowns,
-                                           true,
-                                           slice->filter.condition.expression,
-                                           query_log_tag_prefix);
-          }
-          if (succeeded) {
-            succeeded =
-              grn_proc_select_output_columns_close(ctx,
-                                                   &format,
-                                                   slice->table);
-          }
+        slice->tables.sorted =
+          grn_table_create(ctx,
+                           NULL, 0,
+                           NULL,
+                           GRN_OBJ_TABLE_NO_KEY,
+                           NULL,
+                           slice->tables.result);
+        if (slice->tables.sorted) {
+          grn_table_sort(ctx,
+                         slice->tables.result,
+                         offset,
+                         limit,
+                         slice->tables.sorted,
+                         sort_keys, n_sort_keys);
+          slice->tables.output = slice->tables.sorted;
+        } else {
+          succeeded = false;
         }
         grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
       } else {
         succeeded = false;
       }
-    } else {
-      data->output.formatter->slice_label(ctx, data, slice);
-      grn_obj_format format;
-      uint32_t n_additional_elements = 0;
-      if (slice->drilldowns) {
-        n_additional_elements++;
-      }
-      succeeded =
-        grn_select_output_columns_open(ctx,
-                                       data,
-                                       &format,
-                                       slice->table,
-                                       n_hits,
-                                       offset,
-                                       limit,
-                                       slice->output_columns.value,
-                                       slice->output_columns.length,
-                                       slice->filter.condition.expression,
-                                       n_additional_elements);
-      if (succeeded) {
-        succeeded =
-          grn_select_output_drilldowns(ctx,
-                                       data,
-                                       slice->drilldowns,
-                                       true,
-                                       slice->filter.condition.expression,
-                                       query_log_tag_prefix);
-      }
-      if (succeeded) {
-        succeeded =
-          grn_proc_select_output_columns_close(ctx,
-                                               &format,
-                                               slice->table);
+
+      if (!succeeded) {
+        break;
       }
     }
 
+    if (slice->columns.output) {
+      char log_tag_prefix[GRN_TABLE_MAX_KEY_SIZE];
+      grn_snprintf(log_tag_prefix,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   "[select][slices][%.*s]",
+                   (int)(slice->label.length),
+                   slice->label.value);
+      grn_select_apply_columns(ctx,
+                               data,
+                               slice->tables.output,
+                               slice->columns.output,
+                               slice->filter.condition.expression,
+                               log_tag_prefix,
+                               query_log_tag_prefix);
+      if (ctx->rc != GRN_SUCCESS) {
+        succeeded = false;
+        break;
+      }
+    }
+
+    data->output.formatter->slice_label(ctx, data, slice);
+    grn_obj_format format;
+    uint32_t n_additional_elements = 0;
+    if (slice->drilldowns) {
+      n_additional_elements++;
+    }
+    succeeded =
+      grn_select_output_columns_open(ctx,
+                                     data,
+                                     &format,
+                                     slice->tables.output,
+                                     n_hits,
+                                     offset,
+                                     limit,
+                                     slice->output_columns.value,
+                                     slice->output_columns.length,
+                                     slice->filter.condition.expression,
+                                     n_additional_elements);
+    if (!succeeded) {
+      break;
+    }
+    succeeded = grn_select_output_drilldowns(ctx,
+                                             data,
+                                             slice->drilldowns,
+                                             true,
+                                             slice->filter.condition.expression,
+                                             query_log_tag_prefix);
+    if (!succeeded) {
+      break;
+    }
+
+    succeeded = grn_proc_select_output_columns_close(ctx,
+                                                     &format,
+                                                     slice->tables.output);
     if (!succeeded) {
       break;
     }
@@ -3101,7 +3176,7 @@ grn_select_output_slices(grn_ctx *ctx,
                   ":", "slices[%.*s].output(%d)",
                   (int)(slice->label.length),
                   slice->label.value,
-                  n_hits);
+                  limit);
   } GRN_HASH_EACH_END(ctx, cursor);
 
   data->output.formatter->slices_close(ctx, data);
@@ -4077,6 +4152,15 @@ grn_select_data_fill_slices(grn_ctx *ctx,
                                          slice_prefix,
                                          false,
                                          log_tag);
+    if (!success) {
+      break;
+    }
+
+    success = grn_columns_fill(ctx,
+                               user_data,
+                               &(slice->columns),
+                               slice_prefix,
+                               strlen(slice_prefix));
     if (!success) {
       break;
     }

@@ -12,6 +12,8 @@ load --table Memos
 {"_key": "Rroonga is fast!", "tag": "Rroonga"}
 ]
 [[0,0.0,0.0],4]
+log_level --level debug
+[[0,0.0,0.0],true]
 select Memos   --slices[no_rroonga].filter '_id < 4'   --slices[no_rroonga].drilldowns[tag].keys tag
 [
   [
@@ -131,3 +133,5 @@ select Memos   --slices[no_rroonga].filter '_id < 4'   --slices[no_rroonga].dril
 #:000000000000000 slices[no_rroonga].output.drilldowns[tag](2)
 #:000000000000000 slices[no_rroonga].output(3)
 #<000000000000000 rc=0
+log_level --level notice
+[[0,0.0,0.0],true]
