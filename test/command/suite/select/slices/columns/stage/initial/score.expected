@@ -1,0 +1,82 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos date COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+column_create Tags memos COLUMN_INDEX Memos tag
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "date": "2016-05-19 12:00:00", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "date": "2016-05-19 12:00:01", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "date": "2016-05-19 12:00:02", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "date": "2016-05-19 12:00:03", "tag": "Rroonga"}
+]
+[[0,0.0,0.0],4]
+select Memos   --match_columns "tag * 7"   --query Groonga   --output_columns _key,_score   --slices[groonga].query tag:Groonga   --slices[groonga].columns[score].stage initial   --slices[groonga].columns[score].type Float   --slices[groonga].columns[score].value _score   --slices[groonga].output_columns _key,_score,score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "Groonga is fast!",
+        7
+      ],
+      [
+        "Groonga sticker!",
+        7
+      ]
+    ],
+    {
+      "groonga": [
+        [
+          2
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "_score",
+            "Int32"
+          ],
+          [
+            "score",
+            "Float"
+          ]
+        ],
+        [
+          "Groonga is fast!",
+          1,
+          7.0
+        ],
+        [
+          "Groonga sticker!",
+          1,
+          7.0
+        ]
+      ]
+    }
+  ]
+]

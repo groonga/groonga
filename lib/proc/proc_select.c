@@ -1375,13 +1375,27 @@ grn_select_create_all_selected_result_table(grn_ctx *ctx,
   }
 
   memset(&posting, 0, sizeof(grn_posting));
-  GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
-    posting.rid = id;
-    grn_ii_posting_add(ctx,
-                       &posting,
-                       (grn_hash *)(result),
-                       GRN_OP_OR);
-  } GRN_TABLE_EACH_END(ctx, cursor);
+  if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
+    GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
+      posting.rid = id;
+      void *value_raw;
+      grn_table_cursor_get_value(ctx, cursor, &value_raw);
+      grn_rset_recinfo *value = value_raw;
+      posting.weight = value->score - 1.0;
+      grn_ii_posting_add(ctx,
+                         &posting,
+                         (grn_hash *)(result),
+                         GRN_OP_OR);
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  } else {
+    GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
+      posting.rid = id;
+      grn_ii_posting_add(ctx,
+                         &posting,
+                         (grn_hash *)(result),
+                         GRN_OP_OR);
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  }
 
   return result;
 }
