@@ -1,3 +1,5 @@
+plugin_register functions/time
+
 table_create Tags TABLE_PAT_KEY ShortText
 
 table_create Memos TABLE_HASH_KEY ShortText
@@ -8,12 +10,16 @@ load --table Memos
 [
 {"_key": "Groonga is fast!", "date": "2016-05-19 12:00:00", "tag": "Groonga"},
 {"_key": "Mroonga is fast!", "date": "2016-05-19 12:00:01", "tag": "Mroonga"},
-{"_key": "Groonga sticker!", "date": "2016-05-19 12:00:02", "tag": "Groonga"},
-{"_key": "Rroonga is fast!", "date": "2016-05-19 12:00:03", "tag": "Rroonga"}
+{"_key": "Groonga sticker!", "date": "2016-05-20 12:00:02", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "date": "2016-05-21 12:00:03", "tag": "Rroonga"}
 ]
 
 select Memos \
   --slices[groonga].filter 'tag == "Groonga"' \
   --slices[groonga].sort_keys 'date' \
   --slices[groonga].output_columns '_key, date' \
+  --slices[groonga].columns[date_day].stage filtered \
+  --slices[groonga].columns[date_day].type Time \
+  --slices[groonga].columns[date_day].value 'time_classify_day(date)' \
+  --slices[groonga].drilldowns[day].keys 'date_day' \
   --command_version 3

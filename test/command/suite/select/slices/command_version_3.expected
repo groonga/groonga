@@ -1,3 +1,5 @@
+plugin_register functions/time
+[[0,0.0,0.0],true]
 table_create Tags TABLE_PAT_KEY ShortText
 [[0,0.0,0.0],true]
 table_create Memos TABLE_HASH_KEY ShortText
@@ -10,11 +12,11 @@ load --table Memos
 [
 {"_key": "Groonga is fast!", "date": "2016-05-19 12:00:00", "tag": "Groonga"},
 {"_key": "Mroonga is fast!", "date": "2016-05-19 12:00:01", "tag": "Mroonga"},
-{"_key": "Groonga sticker!", "date": "2016-05-19 12:00:02", "tag": "Groonga"},
-{"_key": "Rroonga is fast!", "date": "2016-05-19 12:00:03", "tag": "Rroonga"}
+{"_key": "Groonga sticker!", "date": "2016-05-20 12:00:02", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "date": "2016-05-21 12:00:03", "tag": "Rroonga"}
 ]
 [[0,0.0,0.0],4]
-select Memos   --slices[groonga].filter 'tag == "Groonga"'   --slices[groonga].sort_keys 'date'   --slices[groonga].output_columns '_key, date'   --command_version 3
+select Memos   --slices[groonga].filter 'tag == "Groonga"'   --slices[groonga].sort_keys 'date'   --slices[groonga].output_columns '_key, date'   --slices[groonga].columns[date_day].stage filtered   --slices[groonga].columns[date_day].type Time   --slices[groonga].columns[date_day].value 'time_classify_day(date)'   --slices[groonga].drilldowns[day].keys 'date_day'   --command_version 3
 {
   "header": {
     "return_code": 0,
@@ -57,13 +59,13 @@ select Memos   --slices[groonga].filter 'tag == "Groonga"'   --slices[groonga].s
       [
         3,
         "Groonga sticker!",
-        1463626802.0,
+        1463713202.0,
         "Groonga"
       ],
       [
         4,
         "Rroonga is fast!",
-        1463626803.0,
+        1463799603.0,
         "Rroonga"
       ]
     ],
@@ -87,9 +89,34 @@ select Memos   --slices[groonga].filter 'tag == "Groonga"'   --slices[groonga].s
           ],
           [
             "Groonga sticker!",
-            1463626802.0
+            1463713202.0
           ]
-        ]
+        ],
+        "drilldowns": {
+          "day": {
+            "n_hits": 2,
+            "columns": [
+              {
+                "name": "_key",
+                "type": "Time"
+              },
+              {
+                "name": "_nsubrecs",
+                "type": "Int32"
+              }
+            ],
+            "records": [
+              [
+                1463583600.0,
+                1
+              ],
+              [
+                1463670000.0,
+                1
+              ]
+            ]
+          }
+        }
       }
     }
   }
