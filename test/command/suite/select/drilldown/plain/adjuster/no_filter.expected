@@ -73,12 +73,12 @@ select Memos   --limit 0   --output_columns _id   --drilldown tags   --drilldown
       [
         "groonga",
         2,
-        203
+        202
       ],
       [
         "mroonga",
         1,
-        265
+        263
       ],
       [
         "ruby",

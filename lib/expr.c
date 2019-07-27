@@ -3708,7 +3708,7 @@ grn_table_select_index_resolve_key(grn_ctx *ctx,
   }
 }
 
-static grn_inline grn_bool
+static grn_inline bool
 grn_table_select_index_equal(grn_ctx *ctx,
                              grn_obj *table,
                              grn_obj *index,
@@ -3716,60 +3716,34 @@ grn_table_select_index_equal(grn_ctx *ctx,
 {
   scan_info *si = data->scan_info;
   grn_obj *res = data->res;
-  grn_bool processed = GRN_FALSE;
+  bool processed = false;
 
   if (si->query->header.type != GRN_BULK) {
     /* We can't use index for non bulk value such as vector. */
-    return GRN_FALSE;
+    return false;
   }
 
   if (GRN_BULK_VSIZE(si->query) == 0) {
     /* We can't use index for empty value. */
-    return GRN_FALSE;
+    return false;
   }
 
   if (si->flags & SCAN_ACCESSOR) {
-    if (index->header.type == GRN_ACCESSOR && !((grn_accessor *)index)->next) {
-      grn_obj dest;
-      grn_accessor *a = (grn_accessor *)index;
-      grn_posting posting;
-      posting.sid = 1;
-      posting.pos = 0;
-      posting.weight = 0;
-      switch (a->action) {
-      case GRN_ACCESSOR_GET_ID :
-        grn_table_select_index_report(ctx, "[equal][accessor][id]", table);
-        GRN_UINT32_INIT(&dest, 0);
-        if (!grn_obj_cast(ctx, si->query, &dest, GRN_FALSE)) {
-          posting.rid = GRN_UINT32_VALUE(&dest);
-          if (posting.rid) {
-            if (posting.rid == grn_table_at(ctx, table, posting.rid)) {
-              grn_ii_posting_add(ctx, &posting, (grn_hash *)res,
-                                 si->logical_op);
-            }
-          }
-          processed = GRN_TRUE;
-        }
-        grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
-        GRN_OBJ_FIN(ctx, &dest);
-        break;
-      case GRN_ACCESSOR_GET_KEY :
-        grn_table_select_index_report(ctx, "[equal][accessor][key]", table);
-        GRN_OBJ_INIT(&dest, GRN_BULK, 0, table->header.domain);
-        if (!grn_obj_cast(ctx, si->query, &dest, GRN_FALSE)) {
-          if ((posting.rid = grn_table_get(ctx, table,
-                                           GRN_BULK_HEAD(&dest),
-                                           GRN_BULK_VSIZE(&dest)))) {
-            grn_ii_posting_add(ctx, &posting, (grn_hash *)res,
-                               si->logical_op);
-          }
-          processed = GRN_TRUE;
-        }
-        grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
-        GRN_OBJ_FIN(ctx, &dest);
-        break;
-      }
+    if (!grn_obj_is_accessor(ctx, index)) {
+      return false;
     }
+
+    grn_search_optarg optarg;
+    memset(&optarg, 0, sizeof(grn_search_optarg));
+    optarg.mode = GRN_OP_EQUAL;
+    optarg.vector_size = 1;
+    grn_rc rc = grn_obj_search(ctx,
+                               index,
+                               si->query,
+                               res,
+                               si->logical_op,
+                               &optarg);
+    processed = (rc == GRN_SUCCESS);
   } else {
     const char *tag = "[equal]";
     grn_obj *domain = grn_ctx_at(ctx, index->header.domain);
@@ -3843,7 +3817,7 @@ grn_table_select_index_equal(grn_ctx *ctx,
           grn_ii_cursor_close(ctx, ii_cursor);
         }
       }
-      processed = GRN_TRUE;
+      processed = true;
     }
     if (processed) {
       grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);

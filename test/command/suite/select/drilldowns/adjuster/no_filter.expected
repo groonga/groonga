@@ -74,12 +74,12 @@ select Memos   --limit 0   --output_columns _id   --drilldowns[tags].keys tags  
         [
           "groonga",
           2,
-          203
+          202
         ],
         [
           "mroonga",
           1,
-          265
+          263
         ],
         [
           "ruby",

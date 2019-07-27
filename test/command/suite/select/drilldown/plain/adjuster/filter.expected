@@ -73,7 +73,7 @@ select Memos   --limit 0   --output_columns _id   --drilldown tags   --drilldown
       [
         "groonga",
         2,
-        204
+        203
       ]
     ]
   ]

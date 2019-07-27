@@ -74,7 +74,7 @@ select Memos   --limit 0   --output_columns _id   --drilldowns[groonga_tag].keys
         [
           "groonga",
           2,
-          204
+          203
         ]
       ]
     }

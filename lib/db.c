@@ -3793,7 +3793,9 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
     if (optarg && optarg->mode != GRN_OP_EXACT) {
       index_op = optarg->mode;
     }
-    if (grn_column_index(ctx, last_obj, index_op, &index, 1, NULL) == 0) {
+    if (index_op == GRN_OP_EQUAL && grn_obj_is_table(ctx, last_obj)) {
+      index = last_obj;
+    } else if (grn_column_index(ctx, last_obj, index_op, &index, 1, NULL) == 0) {
       rc = GRN_INVALID_ARGUMENT;
       goto exit;
     }
@@ -3802,13 +3804,17 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       rc = grn_obj_search(ctx, index, query, res, op, optarg);
     } else {
       grn_obj *base_res;
-      grn_obj *range = grn_ctx_at(ctx, DB_OBJ(index)->range);
+      grn_obj *range;
+      if (grn_obj_is_table(ctx, index)) {
+        range = index;
+      } else {
+        range = grn_ctx_at(ctx, DB_OBJ(index)->range);
+      }
       base_res = grn_table_create(ctx, NULL, 0, NULL,
                                   GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                   range,
                                   NULL);
       rc = ctx->rc;
-      grn_obj_unlink(ctx, range);
       if (!base_res) {
         goto exit;
       }
@@ -3879,6 +3885,9 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx, grn_obj *obj,
       const char *tag;
       if (optarg) {
         switch (optarg->mode) {
+        case GRN_OP_EQUAL :
+          tag = "[key][equal]";
+          break;
         case GRN_OP_MATCH :
           tag = "[key][match]";
           break;
@@ -3912,9 +3921,28 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx, grn_obj *obj,
       }
       grn_obj_search_index_report(ctx, tag, obj);
     }
-    rc = grn_ii_sel(ctx, (grn_ii *)obj, key, key_len,
-                    (grn_hash *)res, op, optarg);
+    if (optarg && optarg->mode == GRN_OP_EQUAL) {
+      grn_obj *lexicon = grn_ctx_at(ctx, obj->header.domain);
+      if (!lexicon) {
+        rc = GRN_INVALID_ARGUMENT;
+        goto exit;
+      }
+      grn_posting posting;
+      posting.sid = 1;
+      posting.pos = 0;
+      posting.weight = 1;
+      posting.rid = grn_table_get(ctx, lexicon, key, key_len);
+      if (posting.rid != GRN_ID_NIL) {
+        grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
+      }
+      grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
+    } else {
+      rc = grn_ii_sel(ctx, (grn_ii *)obj, key, key_len,
+                      (grn_hash *)res, op, optarg);
+    }
   }
+
+exit :
   if (need_cast) {
     GRN_OBJ_FIN(ctx, &casted_query);
   }
@@ -3970,40 +3998,54 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         if (key && key_size) {
           if (grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
             const char *tag;
-            if (optarg) {
-              switch (optarg->mode) {
-              case GRN_OP_EXACT :
-                tag = "[table][exact]";
-                break;
-              case GRN_OP_LCP :
-                tag = "[table][lcp]";
-                break;
-              case GRN_OP_SUFFIX :
-                tag = "[table][suffix]";
-                break;
-              case GRN_OP_PREFIX :
-                tag = "[table][prefix]";
-                break;
-              case GRN_OP_TERM_EXTRACT :
-                tag = "[table][term-extract]";
-                break;
-              case GRN_OP_FUZZY :
-                tag = "[table][fuzzy]";
-                break;
-              default :
-                tag = "[table][unknown]";
-                break;
-              }
-            } else {
+            switch (mode) {
+            case GRN_OP_EQUAL :
+              tag = "[table][equal]";
+              break;
+            case GRN_OP_EXACT :
               tag = "[table][exact]";
+              break;
+            case GRN_OP_LCP :
+              tag = "[table][lcp]";
+              break;
+            case GRN_OP_SUFFIX :
+              tag = "[table][suffix]";
+              break;
+            case GRN_OP_PREFIX :
+              tag = "[table][prefix]";
+              break;
+            case GRN_OP_TERM_EXTRACT :
+              tag = "[table][term-extract]";
+              break;
+            case GRN_OP_FUZZY :
+              tag = "[table][fuzzy]";
+              break;
+            default :
+              tag = "[table][unknown]";
+              break;
             }
             grn_obj_search_index_report(ctx, tag, obj);
           }
-          if (optarg && optarg->mode == GRN_OP_FUZZY) {
+          switch (mode) {
+          case GRN_OP_EQUAL :
+            {
+              grn_posting posting;
+              memset(&posting, 0, sizeof(posting));
+              posting.rid = grn_table_get(ctx, obj, key, key_size);
+              posting.weight = 1;
+              rc = grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
+              if (rc == GRN_SUCCESS) {
+                grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
+              }
+            }
+            break;
+          case GRN_OP_FUZZY :
             rc = grn_table_fuzzy_search(ctx, obj, key, key_size,
                                         &(optarg->fuzzy), res, op);
-          } else {
+            break;
+          default :
             rc = grn_table_search(ctx, obj, key, key_size, mode, res, op);
+            break;
           }
         }
       }

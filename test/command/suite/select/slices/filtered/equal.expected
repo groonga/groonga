@@ -2,9 +2,9 @@ table_create Users TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Users name COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
-table_create Lexicon TABLE_HASH_KEY ShortText   --default_tokenizer TokenBigramSplitSymbolAlphaDigit   --normalizer NormalizerAuto
+table_create Names TABLE_HASH_KEY ShortText --normalizer NormalizerAuto
 [[0,0.0,0.0],true]
-column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
+column_create Names users_name COLUMN_INDEX Users name
 [[0,0.0,0.0],true]
 load --table Users
 [
@@ -15,7 +15,7 @@ load --table Users
 [[0,0.0,0.0],3]
 log_level --level info
 [[0,0.0,0.0],true]
-select Users   --filter '_id > 1'   --slices[name].filter 'query("name * 10", "ali")'   --slices[name].output_columns _id,name,_score
+select Users   --filter '_id > 1'   --slices[name].filter 'name == "bob"'   --slices[name].output_columns _id,name,_score
 [
   [
     0,
@@ -66,18 +66,15 @@ select Users   --filter '_id > 1'   --slices[name].filter 'query("name * 10", "a
           ]
         ],
         [
-          2,
-          "Alisa",
-          10
+          3,
+          "Bob",
+          1
         ]
       ]
     }
   ]
 ]
-#|i| [table][select][index][selector][no-index][query] <>
-#|i| [object][search][index][key][exact] <Lexicon.users_name>
-#|i| grn_ii_sel > (ali)
-#|i| n=2 (ali)
-#|i| exact: 2
-#|i| hits=2
+#|i| [object][search][index][key][equal] <Names.users_name>
 #|i| [accessor][resolve][table] (temporary) -> <Users>
+log_level --level notice
+[[0,0.0,0.0],true]
