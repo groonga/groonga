@@ -3481,7 +3481,7 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
       grn_id *tid = key;
       grn_rset_recinfo *recinfo = value;
 
-      add_posting.weight = recinfo->score - 1;
+      add_posting.weight = recinfo->score;
 
       GRN_BULK_REWIND(&column_value);
       grn_obj_get_value(ctx, column, *tid, &column_value);
@@ -3665,7 +3665,7 @@ grn_accessor_resolve_one_data_column(grn_ctx *ctx, grn_accessor *accessor,
         }
 
         add_posting = *posting;
-        add_posting.weight += recinfo->score - 1;
+        add_posting.weight += recinfo->score;
         rc = grn_ii_posting_add(ctx,
                                 &add_posting,
                                 (grn_hash *)*next_res,
@@ -3744,7 +3744,7 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
       posting.rid = *record_id;
       posting.sid = 1;
       posting.pos = 0;
-      posting.weight = recinfo->score - 1;
+      posting.weight = recinfo->score;
       grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
     });
     grn_obj_unlink(ctx, current_res);

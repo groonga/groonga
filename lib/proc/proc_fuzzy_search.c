@@ -285,7 +285,7 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
         posting.rid = heap->nodes[i].id;
         posting.sid = 1;
         posting.pos = 0;
-        posting.weight = max_distance - heap->nodes[i].score;
+        posting.weight = max_distance - heap->nodes[i].score + 1;
         grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
       }
     }

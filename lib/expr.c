@@ -3835,6 +3835,7 @@ grn_table_select_index_equal(grn_ctx *ctx,
             }
 
             new_posting = *posting;
+            new_posting.weight += 1;
             new_posting.weight *= weight;
             grn_ii_posting_add(ctx, &new_posting, (grn_hash *)res,
                                si->logical_op);
@@ -3978,7 +3979,7 @@ grn_table_select_index_prefix(grn_ctx *ctx,
       grn_posting posting;
       posting.sid = 1;
       posting.pos = 0;
-      posting.weight = 0;
+      posting.weight = 1;
       switch (a->action) {
       case GRN_ACCESSOR_GET_ID :
         /* todo */
@@ -4375,7 +4376,7 @@ grn_table_select_index_range_key(grn_ctx *ctx,
       if (sid == 0) {
         grn_posting posting = {0};
 
-        posting.weight = weight - 1;
+        posting.weight = weight;
         while ((posting.rid = grn_table_cursor_next(ctx, cursor))) {
           grn_ii_posting_add(ctx, &posting, (grn_hash *)res, logical_op);
         }
@@ -4490,6 +4491,7 @@ grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
             }
 
             new_posting = *posting;
+            new_posting.weight += 1;
             new_posting.weight *= weight;
             grn_ii_posting_add(ctx, &new_posting, (grn_hash *)res, logical_op);
           }
@@ -7521,7 +7523,7 @@ grn_column_filter(grn_ctx *ctx, grn_obj *column,
   uint32_t value_ = grn_atoui(GRN_TEXT_VALUE(value), GRN_BULK_CURR(value), NULL);
   posting.sid = 1;
   posting.pos = 0;
-  posting.weight = 0;
+  posting.weight = 1;
   GRN_COLUMN_EACH(ctx, column, id, vp, {
     if (*vp < value_) {
       posting.rid = id;

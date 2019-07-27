@@ -2015,7 +2015,9 @@ grn_geo_select_in_rectangle_callback(grn_ctx *ctx, grn_posting *posting,
                                      void *user_data)
 {
   grn_geo_select_in_rectangle_data *data = user_data;
-  grn_ii_posting_add(ctx, posting, data->res, data->op);
+  grn_posting add_posting = *posting;
+  add_posting.weight += 1;
+  grn_ii_posting_add(ctx, &add_posting, data->res, data->op);
   return GRN_TRUE;
 }
 
