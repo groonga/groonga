@@ -107,6 +107,7 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   if (tokenizer) {
     grn_proc *tokenizer_proc = (grn_proc *)tokenizer;
     if (tokenizer_proc->callbacks.tokenizer.init) {
+      token_cursor->tokenizer.user_data = NULL;
       grn_tokenizer_query *query = &(token_cursor->tokenizer.query);
       grn_tokenizer_query_set_raw_string(ctx, query, str, str_len);
       if (ctx->rc != GRN_SUCCESS) {
@@ -448,7 +449,9 @@ grn_token_cursor_close(grn_ctx *ctx, grn_token_cursor *token_cursor)
     grn_proc *tokenizer_proc = (grn_proc *)(token_cursor->tokenizer.object);
     if (tokenizer_proc->callbacks.tokenizer.fin) {
       void *user_data = token_cursor->tokenizer.user_data;
-      tokenizer_proc->callbacks.tokenizer.fin(ctx, user_data);
+      if (user_data) {
+        tokenizer_proc->callbacks.tokenizer.fin(ctx, user_data);
+      }
     } else if (tokenizer_proc->funcs[PROC_FIN]) {
       tokenizer_proc->funcs[PROC_FIN](ctx,
                                       1,
