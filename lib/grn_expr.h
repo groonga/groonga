@@ -59,6 +59,7 @@ struct _grn_expr {
   } cache;
 
   grn_obj query_log_tag_prefix;
+  grn_obj *parent;
 };
 
 #define SCAN_ACCESSOR                  (0x01)

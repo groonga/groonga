@@ -2949,6 +2949,9 @@ grn_select_slice_execute(grn_ctx *ctx,
                                query_log_tag_prefix)) {
     return false;
   }
+  grn_expr_set_parent(ctx,
+                      filter->condition.expression,
+                      data->filter.condition.expression);
 
   slice->tables.result = filter->filtered;
   GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,

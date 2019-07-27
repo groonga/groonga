@@ -1,0 +1,100 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC121
+[[0,0.0,0.0],true]
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "Groonga is fast."},
+{"content": "Mroonga is fast and easy to use."},
+{"content": "PGroonga is fast and easy to use."}
+]
+[[0,0.0,0.0],3]
+log_level --level debug
+[[0,0.0,0.0],true]
+select Memos   --query 'content:@is'   --slices[fast].query 'content:@fast'   --slices[fast].sort_keys '-_id'   --slices[fast].columns[snippets].stage output   --slices[fast].columns[snippets].type Text   --slices[fast].columns[snippets].flags COLUMN_VECTOR   --slices[fast].columns[snippets].value 'snippet_html(content)'   --slices[fast].output_columns _id,snippets
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast."
+      ],
+      [
+        2,
+        "Mroonga is fast and easy to use."
+      ],
+      [
+        3,
+        "PGroonga is fast and easy to use."
+      ]
+    ],
+    {
+      "fast": [
+        [
+          3
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "snippets",
+            "Text"
+          ]
+        ],
+        [
+          3,
+          [
+            "PGroonga <span class=\"keyword\">is</span> <span class=\"keyword\">fast</span> and easy to use."
+          ]
+        ],
+        [
+          2,
+          [
+            "Mroonga <span class=\"keyword\">is</span> <span class=\"keyword\">fast</span> and easy to use."
+          ]
+        ],
+        [
+          1,
+          [
+            "Groonga <span class=\"keyword\">is</span> <span class=\"keyword\">fast</span>."
+          ]
+        ]
+      ]
+    }
+  ]
+]
+#>select --query "content:@is" --slices[fast].columns[snippets].flags "COLUMN_VECTOR" --slices[fast].columns[snippets].stage "output" --slices[fast].columns[snippets].type "Text" --slices[fast].columns[snippets].value "snippet_html(content)" --slices[fast].output_columns "_id,snippets" --slices[fast].query "content:@fast" --slices[fast].sort_keys "-_id" --table "Memos"
+#:000000000000000 filter(3): Memos.content match "is"
+#:000000000000000 select(3)
+#:000000000000000 slices[fast].filter(3): #<accessor _key(anonymous).content(Memos)> match "fast"
+#:000000000000000 slices[fast](3)
+#:000000000000000 output(3)
+#:000000000000000 slices[fast].columns[snippets](3)
+#:000000000000000 slices[fast].output(3)
+#<000000000000000 rc=0
+log_level --level notice
+[[0,0.0,0.0],true]

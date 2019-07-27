@@ -410,7 +410,7 @@ func_highlight_html_create_highlighter(grn_ctx *ctx, grn_obj *expression)
     condition = GRN_PTR_VALUE(condition_ptr);
   }
 
-  if (condition) {
+  for (; condition; condition = grn_expr_get_parent(ctx, condition)) {
     size_t i, n_keywords;
     grn_obj current_keywords;
     GRN_TEXT_INIT(&current_keywords, GRN_OBJ_VECTOR);

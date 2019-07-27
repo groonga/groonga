@@ -339,8 +339,10 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
                              mapping);
         if (snip) {
           grn_snip_set_normalizer(ctx, snip, GRN_NORMALIZER_AUTO);
-          grn_expr_snip_add_conditions(ctx, condition, snip,
-                                       0, NULL, NULL, NULL, NULL);
+          for (; condition; condition = grn_expr_get_parent(ctx, condition)) {
+            grn_expr_snip_add_conditions(ctx, condition, snip,
+                                         0, NULL, NULL, NULL, NULL);
+          }
           GRN_PTR_SET(ctx, snip_ptr, snip);
         }
       }

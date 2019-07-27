@@ -124,13 +124,20 @@ GRN_API grn_rc grn_expr_snip_add_conditions(grn_ctx *ctx,
 
 GRN_API unsigned int grn_expr_estimate_size(grn_ctx *ctx, grn_obj *expr);
 
-GRN_API void
+GRN_API grn_rc
 grn_expr_set_query_log_tag_prefix(grn_ctx *ctx,
                                   grn_obj *expr,
                                   const char *prefix,
                                   int prefix_len);
 GRN_API const char *
 grn_expr_get_query_log_tag_prefix(grn_ctx *ctx, grn_obj *expr);
+
+GRN_API grn_rc
+grn_expr_set_parent(grn_ctx *ctx,
+                    grn_obj *expr,
+                    grn_obj *parent);
+GRN_API grn_obj *
+grn_expr_get_parent(grn_ctx *ctx, grn_obj *expr);
 
 #ifdef __cplusplus
 }

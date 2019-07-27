@@ -1,0 +1,30 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC121
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"content": "Groonga is fast."},
+{"content": "Mroonga is fast and easy to use."},
+{"content": "PGroonga is fast and easy to use."}
+]
+
+log_level --level debug
+#@add-important-log-levels debug
+#@collect-query-log true
+select Memos \
+  --query 'content:@is' \
+  --slices[fast].query 'content:@fast' \
+  --slices[fast].sort_keys '-_id' \
+  --slices[fast].columns[snippets].stage output \
+  --slices[fast].columns[snippets].type Text \
+  --slices[fast].columns[snippets].flags COLUMN_VECTOR \
+  --slices[fast].columns[snippets].value 'snippet_html(content)' \
+  --slices[fast].output_columns _id,snippets
+#@collect-query-log false
+#@remove-important-log-levels debug
+log_level --level notice
