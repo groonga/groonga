@@ -3243,7 +3243,10 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
           break;
         default :
           rc = GRN_INVALID_ARGUMENT;
-          ERR(rc, "invalid mode %d", mode);
+          ERR(rc,
+              "[table][search][pat] invalid mode: %s",
+              grn_operator_to_string(mode));
+          break;
         }
       });
     }
@@ -3296,7 +3299,10 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
           break;
         default :
           rc = GRN_INVALID_ARGUMENT;
-          ERR(rc, "invalid mode %d", mode);
+          ERR(rc,
+              "[table][search][dat] invalid mode: %s",
+              grn_operator_to_string(mode));
+          break;
         }
       });
     }
@@ -3304,11 +3310,35 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
   case GRN_TABLE_HASH_KEY :
     {
       grn_hash *hash = (grn_hash *)table;
-      grn_id id = GRN_ID_NIL;
       WITH_NORMALIZE(hash, key, key_size, {
-        id = grn_hash_get(ctx, hash, key, key_size, NULL);
+        switch (mode) {
+        case GRN_OP_EXACT :
+          {
+            grn_id id = grn_hash_get(ctx, hash, key, key_size, NULL);
+            if (id) { grn_table_add(ctx, res, &id, sizeof(grn_id), NULL); }
+          }
+          break;
+        default :
+          rc = GRN_INVALID_ARGUMENT;
+          ERR(rc,
+              "[table][search][hash] invalid mode: %s",
+              grn_operator_to_string(mode));
+          break;
+        }
       });
-      if (id) { grn_table_add(ctx, res, &id, sizeof(grn_id), NULL); }
+    }
+    break;
+  default:
+    rc = GRN_INVALID_ARGUMENT;
+    {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect_type(ctx, &inspected, table->header.type);
+      ERR(rc,
+          "[table][search] invalid type: %.*s",
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
     }
     break;
   }
