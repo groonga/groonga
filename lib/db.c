@@ -13961,6 +13961,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     grn_bool have_sub_record_accessor = GRN_FALSE;
     grn_bool have_encoded_pat_key_accessor = GRN_FALSE;
     grn_bool have_index_value_get = GRN_FALSE;
+    grn_bool have_score = GRN_FALSE;
     grn_table_sort_key *kp;
     for (kp = keys, j = n_keys; j; kp++, j--) {
       if (is_compressed_column(ctx, kp->key)) {
@@ -13971,6 +13972,9 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
       }
       if (is_encoded_pat_key_accessor(ctx, kp->key)) {
         have_encoded_pat_key_accessor = GRN_TRUE;
+      }
+      if (grn_obj_is_score_accessor(ctx, kp->key)) {
+        have_score = GRN_TRUE;
       }
       if (range_is_idp(kp->key)) {
         kp->offset = KEY_ID;
@@ -14063,7 +14067,8 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     if (have_compressed_column ||
         have_sub_record_accessor ||
         have_encoded_pat_key_accessor ||
-        have_index_value_get) {
+        have_index_value_get ||
+        have_score) {
       i = grn_table_sort_value(ctx, table, offset, limit, result,
                                keys, n_keys);
     } else {

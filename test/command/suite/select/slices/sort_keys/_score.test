@@ -1,0 +1,26 @@
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos date COLUMN_SCALAR Time
+column_create Memos tag COLUMN_SCALAR Tags
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC121
+column_create Terms memos_key COLUMN_INDEX|WITH_POSITION Memos _key
+
+load --table Memos
+[
+{"_key": "Groonga is fast!", "date": "2016-05-19 12:00:00", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "date": "2016-05-19 12:00:01", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "date": "2016-05-19 12:00:02", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "date": "2016-05-19 12:00:03", "tag": "Rroonga"}
+]
+
+select Memos \
+  --match_columns '_key * 10' \
+  --query 'groonga OR fast' \
+  --output_columns '_key, _score' \
+  --slices[groonga].filter 'tag == "Groonga"' \
+  --slices[groonga].sort_keys '_score' \
+  --slices[groonga].output_columns '_key, _score'

@@ -1,0 +1,86 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos date COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC121
+[[0,0.0,0.0],true]
+column_create Terms memos_key COLUMN_INDEX|WITH_POSITION Memos _key
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "date": "2016-05-19 12:00:00", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "date": "2016-05-19 12:00:01", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "date": "2016-05-19 12:00:02", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "date": "2016-05-19 12:00:03", "tag": "Rroonga"}
+]
+[[0,0.0,0.0],4]
+select Memos   --match_columns '_key * 10'   --query 'groonga OR fast'   --output_columns '_key, _score'   --slices[groonga].filter 'tag == "Groonga"'   --slices[groonga].sort_keys '_score'   --slices[groonga].output_columns '_key, _score'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "Groonga is fast!",
+        20
+      ],
+      [
+        "Groonga sticker!",
+        10
+      ],
+      [
+        "Mroonga is fast!",
+        10
+      ],
+      [
+        "Rroonga is fast!",
+        10
+      ]
+    ],
+    {
+      "groonga": [
+        [
+          2
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "_score",
+            "Int32"
+          ]
+        ],
+        [
+          "Groonga sticker!",
+          11
+        ],
+        [
+          "Groonga is fast!",
+          21
+        ]
+      ]
+    }
+  ]
+]
