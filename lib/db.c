@@ -3835,6 +3835,15 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
     }
     if (index_op == GRN_OP_EQUAL && grn_obj_is_table(ctx, last_obj)) {
       index = last_obj;
+      switch (last_action) {
+      case GRN_ACCESSOR_GET_ID :
+      case GRN_ACCESSOR_GET_KEY :
+        break;
+      default :
+        rc = GRN_INVALID_ARGUMENT;
+        goto exit;
+        break;
+      }
     } else if (grn_column_index(ctx, last_obj, index_op, &index, 1, NULL) == 0) {
       rc = GRN_INVALID_ARGUMENT;
       goto exit;
