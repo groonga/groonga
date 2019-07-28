@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
   Copyright(C) 2009-2010 Brazil
-  Copyright(C) 2011 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2011-2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,6 @@ void test_vector_int32(void);
 void test_vector_text(void);
 void test_vector_reference_id(void);
 void test_vector_int32_reference_key(void);
-void test_nonexistent_id(void);
 void test_tautology(void);
 void test_contradiction(void);
 void test_filter_null(void);
@@ -256,25 +255,6 @@ test_vector_int32_reference_key(void)
                             "[\"text\",\"ShortText\"]],"
                            "[1,\"groonga\",[1000,1001],\"it is fast\"]]]",
                           send_command("select Comments"));
-}
-
-void
-test_nonexistent_id(void)
-{
-  assert_send_commands("table_create Sites TABLE_PAT_KEY ShortText\n"
-                       "column_create Sites link COLUMN_SCALAR Sites\n"
-                       "load --table Sites\n"
-                       "[\n"
-                       "[\"_key\"],\n"
-                       "[\"groonga.org\"],\n"
-                       "[\"razil.jp\"]\n"
-                       "]");
-  cut_assert_equal_string("[[[0],"
-                          "[[\"_id\",\"UInt32\"],"
-                           "[\"_key\",\"ShortText\"]]]]",
-                          send_command("select Sites "
-                                       "--output_columns '_id _key' "
-                                       "--filter '_id == 100'"));
 }
 
 void

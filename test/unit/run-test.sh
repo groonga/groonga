@@ -75,7 +75,10 @@ tmpfs_candidates="/dev/shm /run/shm"
 for tmpfs in $tmpfs_candidates; do
   if test -d $tmpfs -a -w $tmpfs; then
     rm -rf "$build_dir/tmp"
-    ln -s $tmpfs "$build_dir/tmp"
+    groonga_tmp_dir="${tmpfs}/groonga"
+    rm -rf "${groonga_tmp_dir}"
+    mkdir -p "${groonga_tmp_dir}"
+    ln -s "${groonga_tmp_dir}" "$build_dir/tmp"
   fi
 done
 
