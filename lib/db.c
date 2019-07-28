@@ -4085,7 +4085,11 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
               memset(&posting, 0, sizeof(posting));
               posting.rid = grn_table_get(ctx, obj, key, key_size);
               posting.weight = 1;
-              rc = grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
+              if (posting.rid == GRN_ID_NIL) {
+                rc = GRN_SUCCESS;
+              } else {
+                rc = grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
+              }
               if (rc == GRN_SUCCESS) {
                 grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
               }
