@@ -11,7 +11,7 @@ load --table Items
 [[0,0.0,0.0],3]
 log_level --level debug
 [[0,0.0,0.0],true]
-select Items   --slices[cheep].filter 'price < 1200'   --slices[cheep].output_columns _id,_key,price,filtered   --slices[cheep].columns[filtered].stage filtered   --slices[cheep].columns[filtered].type UInt32   --slices[cheep].columns[filtered].flags COLUMN_SCALAR   --slices[cheep].columns[filtered].value '_id'
+select Items   --filter true   --slices[cheep].filter 'price < 1200'   --slices[cheep].output_columns _id,_key,_score,price,filtered   --slices[cheep].columns[filtered].stage filtered   --slices[cheep].columns[filtered].type UInt32   --slices[cheep].columns[filtered].flags COLUMN_SCALAR   --slices[cheep].columns[filtered].value '_id'
 [
   [
     0,
@@ -68,6 +68,10 @@ select Items   --slices[cheep].filter 'price < 1200'   --slices[cheep].output_co
             "ShortText"
           ],
           [
+            "_score",
+            "Int32"
+          ],
+          [
             "price",
             "UInt32"
           ],
@@ -79,12 +83,14 @@ select Items   --slices[cheep].filter 'price < 1200'   --slices[cheep].output_co
         [
           2,
           "Food",
+          2,
           1198,
           2
         ],
         [
           3,
           "Drink",
+          2,
           600,
           3
         ]
@@ -92,9 +98,10 @@ select Items   --slices[cheep].filter 'price < 1200'   --slices[cheep].output_co
     }
   ]
 ]
-#>select --slices[cheep].columns[filtered].flags "COLUMN_SCALAR" --slices[cheep].columns[filtered].stage "filtered" --slices[cheep].columns[filtered].type "UInt32" --slices[cheep].columns[filtered].value "_id" --slices[cheep].filter "price < 1200" --slices[cheep].output_columns "_id,_key,price,filtered" --table "Items"
+#>select --filter "true" --slices[cheep].columns[filtered].flags "COLUMN_SCALAR" --slices[cheep].columns[filtered].stage "filtered" --slices[cheep].columns[filtered].type "UInt32" --slices[cheep].columns[filtered].value "_id" --slices[cheep].filter "price < 1200" --slices[cheep].output_columns "_id,_key,_score,price,filtered" --table "Items"
+#:000000000000000 filter(3): true
 #:000000000000000 select(3)
-#:000000000000000 slices[cheep].filter(2): Items.price less 1200
+#:000000000000000 slices[cheep].filter(2): #<accessor _key(anonymous).price(Items)> less 1200
 #:000000000000000 slices[cheep](2)
 #:000000000000000 slices[cheep].columns[filtered](2)
 #:000000000000000 output(3)

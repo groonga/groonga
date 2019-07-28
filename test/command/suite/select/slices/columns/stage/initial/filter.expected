@@ -14,7 +14,7 @@ load --table Items
 [[0,0.0,0.0],6]
 log_level --level debug
 [[0,0.0,0.0],true]
-select Items   --slices[expensive].columns[price_with_tax].stage initial   --slices[expensive].columns[price_with_tax].type UInt32   --slices[expensive].columns[price_with_tax].flags COLUMN_SCALAR   --slices[expensive].columns[price_with_tax].value 'price * 1.08'   --slices[expensive].filter 'price_with_tax > 550'
+select Items   --filter true   --slices[expensive].columns[price_with_tax].stage initial   --slices[expensive].columns[price_with_tax].type UInt32   --slices[expensive].columns[price_with_tax].flags COLUMN_SCALAR   --slices[expensive].columns[price_with_tax].value 'price * 1.08'   --slices[expensive].filter 'price_with_tax > 550'   --slices[expensive].output_columns '_id,_key,_score,price,price_with_tax'
 [
   [
     0,
@@ -86,40 +86,48 @@ select Items   --slices[expensive].columns[price_with_tax].stage initial   --sli
             "ShortText"
           ],
           [
-            "price_with_tax",
-            "UInt32"
+            "_score",
+            "Int32"
           ],
           [
             "price",
+            "UInt32"
+          ],
+          [
+            "price_with_tax",
             "UInt32"
           ]
         ],
         [
           1,
           "Book",
-          1080,
-          1000
+          2,
+          1000,
+          1080
         ],
         [
           2,
           "Note",
-          1080,
-          1000
+          2,
+          1000,
+          1080
         ],
         [
           3,
           "Box",
-          561,
-          520
+          2,
+          520,
+          561
         ]
       ]
     }
   ]
 ]
-#>select --slices[expensive].columns[price_with_tax].flags "COLUMN_SCALAR" --slices[expensive].columns[price_with_tax].stage "initial" --slices[expensive].columns[price_with_tax].type "UInt32" --slices[expensive].columns[price_with_tax].value "price * 1.08" --slices[expensive].filter "price_with_tax > 550" --table "Items"
+#>select --filter "true" --slices[expensive].columns[price_with_tax].flags "COLUMN_SCALAR" --slices[expensive].columns[price_with_tax].stage "initial" --slices[expensive].columns[price_with_tax].type "UInt32" --slices[expensive].columns[price_with_tax].value "price * 1.08" --slices[expensive].filter "price_with_tax > 550" --slices[expensive].output_columns "_id,_key,_score,price,price_with_tax" --table "Items"
+#:000000000000000 filter(6): true
 #:000000000000000 select(6)
 #:000000000000000 slices[expensive].columns[price_with_tax](6)
-#:000000000000000 slices[expensive].filter(3): 2147483649.price_with_tax greater 550
+#:000000000000000 slices[expensive].filter(3): 2147483651.price_with_tax greater 550
 #:000000000000000 slices[expensive](3)
 #:000000000000000 output(6)
 #:000000000000000 slices[expensive].output(3)

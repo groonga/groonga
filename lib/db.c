@@ -7156,11 +7156,9 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
       vs = GRN_BULK_VSIZE(value) - size0;
       break;
     case GRN_ACCESSOR_GET_SCORE :
-      if (id) {
-        grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-        GRN_FLOAT_PUT(ctx, value, ri->score);
-      } else {
-        GRN_FLOAT_PUT(ctx, value, 0.0);
+      {
+        double score = grn_table_get_score(ctx, a->obj, id);
+        GRN_FLOAT_PUT(ctx, value, score);
       }
       value->header.domain = GRN_DB_FLOAT;
       break;

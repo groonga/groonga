@@ -15,11 +15,13 @@ log_level --level debug
 #@add-important-log-levels debug
 #@collect-query-log true
 select Items \
+  --filter true \
   --slices[expensive].columns[price_with_tax].stage initial \
   --slices[expensive].columns[price_with_tax].type UInt32 \
   --slices[expensive].columns[price_with_tax].flags COLUMN_SCALAR \
   --slices[expensive].columns[price_with_tax].value 'price * 1.08' \
-  --slices[expensive].filter 'price_with_tax > 550'
+  --slices[expensive].filter 'price_with_tax > 550' \
+  --slices[expensive].output_columns '_id,_key,_score,price,price_with_tax'
 #@collect-query-log false
 #@remove-important-log-levels debug
 log_level --level notice

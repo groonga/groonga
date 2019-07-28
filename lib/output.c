@@ -769,15 +769,13 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         break;
       case GRN_ACCESSOR_GET_SCORE :
         {
-          grn_rset_recinfo *ri =
-            (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
+          double score = grn_table_get_score(ctx, a->obj, id);
           if (grn_ctx_get_command_version(ctx) == GRN_COMMAND_VERSION_1) {
-            int32_t int32_score = ri->score;
+            int32_t int32_score = score;
             GRN_INT32_PUT(ctx, &buf, int32_score);
             buf.header.domain = GRN_DB_INT32;
           } else {
-            double float_score = ri->score;
-            GRN_FLOAT_PUT(ctx, &buf, float_score);
+            GRN_FLOAT_PUT(ctx, &buf, score);
             buf.header.domain = GRN_DB_FLOAT;
           }
         }

@@ -2706,8 +2706,8 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_id id)
         break;
       case GRN_ACCESSOR_GET_SCORE :
         {
-          grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-          int32_t int32_score = ri->score;
+          double score = grn_table_get_score(ctx, a->obj, id);
+          int32_t int32_score = score;
           GRN_INT32_PUT(ctx, &buf, int32_score);
         }
         buf.header.domain = GRN_DB_INT32;

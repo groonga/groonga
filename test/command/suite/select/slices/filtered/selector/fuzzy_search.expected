@@ -73,12 +73,12 @@ select Users   --filter '_id > 1'   --slices[name].filter 'fuzzy_search(name, "T
         [
           2,
           "Tomy",
-          1
+          2
         ],
         [
           4,
           "Tom",
-          2
+          3
         ]
       ]
     }

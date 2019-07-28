@@ -68,7 +68,7 @@ select Users   --filter '_id > 1'   --slices[name].filter 'name == "bob"'   --sl
         [
           3,
           "Bob",
-          1
+          2
         ]
       ]
     }

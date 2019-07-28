@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2018 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -45,6 +46,10 @@ void grn_table_module_set_options(grn_ctx *ctx,
                                   grn_close_func close_func);
 void grn_table_module_fin(grn_ctx *ctx,
                           grn_table_module *module);
+
+double grn_table_get_score(grn_ctx *ctx,
+                           grn_obj *table,
+                           grn_id id);
 
 #define GRN_TABLE_LOCK_BEGIN(ctx, table) do {                           \
   grn_io *io_ = grn_obj_get_io(ctx, table);                             \

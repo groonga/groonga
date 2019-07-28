@@ -907,3 +907,55 @@ grn_table_copy(grn_ctx *ctx, grn_obj *from, grn_obj *to)
 exit :
   GRN_API_RETURN(ctx->rc);
 }
+
+double
+grn_table_get_score(grn_ctx *ctx, grn_obj *table, grn_id id)
+{
+  if (id == GRN_ID_NIL) {
+    return 0.0;
+  }
+
+  uint32_t value_size;
+  grn_rset_recinfo *ri =
+    (grn_rset_recinfo *)grn_obj_get_value_(ctx, table, id, &value_size);
+  double score = ri->score;
+  grn_obj *parent;
+  grn_id parent_record_id;
+  if (grn_table_get_key(ctx,
+                        table,
+                        id,
+                        (void *)&parent_record_id,
+                        sizeof(grn_id)) == 0) {
+    parent_record_id = GRN_ID_NIL;
+  }
+  if (parent_record_id == GRN_ID_NIL) {
+    return score;
+  }
+
+  for (parent = grn_ctx_at(ctx, table->header.domain);
+       parent && (parent->header.flags & GRN_OBJ_WITH_SUBREC);
+       parent = grn_ctx_at(ctx, parent->header.domain)) {
+    uint32_t parent_value_size;
+    grn_rset_recinfo *parent_ri =
+      (grn_rset_recinfo *)grn_obj_get_value_(ctx,
+                                             parent,
+                                             parent_record_id,
+                                             &parent_value_size);
+    if (parent_value_size == 0) {
+      break;
+    }
+    score += parent_ri->score;
+    if (grn_table_get_key(ctx,
+                          parent,
+                          parent_record_id,
+                          (void *)&parent_record_id,
+                          sizeof(grn_id)) == 0) {
+      break;
+    }
+    if (parent_record_id == GRN_ID_NIL) {
+      break;
+    }
+  }
+
+  return score;
+}

@@ -68,7 +68,7 @@ select Users   --filter '_id > 1'   --slices[name].filter 'query("name * 10", "a
         [
           2,
           "Alisa",
-          10
+          11
         ]
       ]
     }

@@ -12,8 +12,9 @@ log_level --level debug
 #@add-important-log-levels debug
 #@collect-query-log true
 select Items \
+  --filter true \
   --slices[cheep].filter 'price < 1200' \
-  --slices[cheep].output_columns _id,_key,price,filtered \
+  --slices[cheep].output_columns _id,_key,_score,price,filtered \
   --slices[cheep].columns[filtered].stage filtered \
   --slices[cheep].columns[filtered].type UInt32 \
   --slices[cheep].columns[filtered].flags COLUMN_SCALAR \
