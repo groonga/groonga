@@ -16,5 +16,5 @@ load --table Memos
 select Memos \
   --match_columns content \
   --query 'Groonga ~Ruby' \
-  --output_columns 'content, _score' \
+  --output_columns 'content, _score, _id' \
   --sort_keys -_score,_id

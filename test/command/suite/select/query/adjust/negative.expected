@@ -13,7 +13,7 @@ load --table Memos
 {"content": "Mroonga is a MySQL storage engine based of Groonga."}
 ]
 [[0,0.0,0.0],3]
-select Memos   --match_columns content   --query 'Groonga ~Ruby'   --output_columns 'content, _score'   --sort_keys -_score,_id
+select Memos   --match_columns content   --query 'Groonga ~Ruby'   --output_columns 'content, _score, _id'   --sort_keys -_score,_id
 [
   [
     0,
@@ -33,19 +33,26 @@ select Memos   --match_columns content   --query 'Groonga ~Ruby'   --output_colu
         [
           "_score",
           "Int32"
+        ],
+        [
+          "_id",
+          "UInt32"
         ]
       ],
       [
         "Groonga is a full text search engine.",
+        1,
         1
       ],
       [
         "Mroonga is a MySQL storage engine based of Groonga.",
-        1
+        1,
+        3
       ],
       [
         "Rroonga is the Ruby bindings of Groonga.",
-        -3
+        -3,
+        2
       ]
     ]
   ]
