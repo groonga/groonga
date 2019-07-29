@@ -33,11 +33,165 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 9.0.4 - 2019-06-29"
-msgstr "9.0.4リリース - 2019-06-29"
+msgid "Release 9.0.5 - 2019-07-29"
+msgstr "9.0.5リリース - 2019-07-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[:doc:`reference/commands/logical_range_filter`] Stop an optimization by the "
+"number of required records."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] レコード数によって、最適化"
+"をしないようにしました。"
+
+msgid "This feature is used only when the target shard is large enough."
+msgstr "この機能は対象のシャードが十分に大きいときにのみ使われます。"
+
+msgid "Large enough threshold is 10000 by default."
+msgstr "十分に大きいのしきい値はデフォルトで10000です。"
+
+msgid ""
+"[:doc:`/reference/normalizers`] Added new option ``unify_to_katakana`` for "
+"``NormalizerNFKC100``."
+msgstr ""
+"[:doc:`/reference/normalizers`] ``NormalizerNFKC100`` に新しいオプション "
+"``unify_to_katakana`` を追加しました。"
+
+msgid "This option normalize hiragana to katakana."
+msgstr "このオプションは、平仮名を片仮名にノーマライズします。"
+
+msgid ""
+"For example, ``ゔぁゔぃゔゔぇゔぉ`` normalize to ``ヴァヴィヴヴェヴォ``."
+msgstr ""
+"例えば、 ``ゔぁゔぃゔゔぇゔぉ`` を ``ヴァヴィヴヴェヴォ`` にノーマライズしま"
+"す。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added support drilldowns for a slice "
+"parameter."
+msgstr ""
+"[:doc:`/reference/commands/select`] sliceパラメータでdrilldownsをサポートしま"
+"した。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added support columns for a slice "
+"parameter."
+msgstr ""
+"[:doc:`/reference/commands/select`] sliceパラメータでcolumnsをサポートしまし"
+"た。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added support for accessing ``_score`` in "
+"initial stage for slice parameter."
+msgstr ""
+"[:doc:`/reference/commands/select`] sliceパラメータで、initialステージ内で "
+"``_score`` へのアクセスをサポートしました。"
+
+msgid ""
+"[:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/"
+"snippet_html`] Improve that extract a keyword from an expression of before "
+"executing a slice when we specify the slice parameter."
+msgstr ""
+"[:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/"
+"snippet_html`] sliceパラメータ指定時に、slice実行前の式からキーワードを抽出す"
+"るように改良しました。"
+
+msgid ""
+"Added support for index search for nested equal like XXX.YYY.ZZZ == AAA."
+msgstr ""
+"XXX.YYY.ZZZ == AAA のようなネストされた等価演算のインデックス検索をサポートし"
+"ました。"
+
+msgid "Added support for Amazon Linux 2."
+msgstr "Amazon Linux 2 をサポートしました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a bug that vector values as JSON are not indexed."
+msgstr "JSONのベクター値がインデックスされないバグを修正しました。"
+
+msgid ""
+"Fixed wrong parameter name in ``table_create`` tests. [GitHub#1000][Patch by "
+"yagisumi]"
+msgstr ""
+"``table_create`` のテストのパラメーター名が誤っていたバグを修正しました。"
+"[GitHub#1000][yagisumiさんがパッチ提供]"
+
+msgid ""
+"Fixed a bug that drilldown label is empty when a drilldown command is "
+"executed by ``command_version=3``. [GitHub#1001][Reported by yagisumi]"
+msgstr ""
+"``command_version=3`` でdrilldownコマンドが実行された際に、ドリルダウンのラベ"
+"ルが空になるバグを修正しました。[GitHub#1001][yagisumiさんの報告]"
+
+msgid "Fixed build error for Windows package on MinGW."
+msgstr "MinGWでWindows版のパッケージのビルドが失敗するバグを修正しました。"
+
+msgid "Fixed install missing COPYING for Windows package on MinGW."
+msgstr ""
+"MinGWのWindows版パッケージにCOPYINGがインストールされないバグを修正しました。"
+
+msgid ""
+"Fixed a bug that don't higlight when specifing non-test query as highlight "
+"target keyword."
+msgstr ""
+"ハイライト対象として、テキスト以外を指定した際に、キーワードがハイライトされ"
+"ないバグを修正しました。"
+
+msgid ""
+"Fixed a bug that broken output of MessagePack format of [:doc:`/reference/"
+"commands/object_inspect`]. [GitHub#1009][Reported by yagisumi]"
+msgstr ""
+"[:doc:`/reference/commands/object_inspect`] のMessagePack形式の出力が壊れるバ"
+"グを修正しました。[GitHub#1009][yagisumiさんの報告]"
+
+msgid ""
+"Fixed a bug that broken output of MessagePack format of "
+"``index_column_diff``. [GitHub#1010][Reported by yagisumi]"
+msgstr ""
+"``index_column_diff`` のMessagePack形式の出力が壊れるバグを修正しました。"
+"[GitHub#1009][yagisumiさんの報告]"
+
+msgid ""
+"Fixed a bug that broken output of MessagePack format of [:doc:`reference/"
+"commands/suggest`]. [GitHub#1011][Reported by yagisumi]"
+msgstr ""
+"[:doc:`reference/commands/suggest`] のMessagePack形式の出力が壊れるバグを修正"
+"しました。[GitHub#1011][yagisumiさんの報告]"
+
+msgid ""
+"Fixed a bug that allocate size by realloc isn't enough when a search for a "
+"table of patricia trie and so on. [Reported by Shimadzu Corporation]"
+msgstr ""
+"パトリシアトライのテーブルの検索時などにreallocのサイズが十分に確保されないバ"
+"グを修正しました。[島津製作所さんの報告]"
+
+msgid ""
+"Fix a bug that ``groonga.repo`` is removed when updating 1.5.0 from "
+"``groonga-release`` version before 1.5.0. [groonga-talk:429][Reported by "
+"Josep Sanz]"
+msgstr ""
+"``groonga-release`` version 1.5.0より前から1.5.0へアップデータした際に "
+"``groonga.repo`` が削除されるバグを修正しました。[groonga-talk:429][Josep "
+"Sanzさんの報告]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "yagisumi"
+msgstr "yagisumiさん"
+
+msgid "Shimadzu Corporation"
+msgstr "島津製作所さん"
+
+msgid "Josep Sanz"
+msgstr "Josep Sanzさん"
+
+msgid "Release 9.0.4 - 2019-06-29"
+msgstr "9.0.4リリース - 2019-06-29"
 
 msgid "Added support for array literal with multiple elements."
 msgstr "配列リテラルの複数要素をサポートしました。"
@@ -161,9 +315,6 @@ msgstr "デフォルトでは、\"keyword1 keyword2\"はAND演算です。"
 msgid "We can change \"keyword1 keyword2\"'s operator except AND."
 msgstr "\"keyword1 keyword2\"の演算子をAND以外に変更できます。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "[optimizer] Fix a bug that execution error when specified multiple filter "
 "conditions and like ``xxx.yyy==\"keyword\"``."
@@ -189,9 +340,6 @@ msgid ""
 msgstr ""
 "これは、複数のウインドウに対してソートキーを適用した際に発生します。 "
 "[Takashi Hashidaさんがパッチ提供]"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Takashi Hashida"
 msgstr "Takashi Hashidaさん"
@@ -363,9 +511,6 @@ msgstr "Tomohiro KATOさん"
 
 msgid "Wolfgang Hotwagner"
 msgstr "Wolfgang Hotwagnerさん"
-
-msgid "yagisumi"
-msgstr "yagisumiさん"
 
 msgid "Release 9.0.2 - 2019-04-29"
 msgstr "9.0.2リリース - 2019-04-29"
