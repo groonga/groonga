@@ -13364,7 +13364,7 @@ compare_reference(grn_ctx *ctx,
     type = keys->offset;
     switch (type) {
     case KEY_ID :
-      CMPNUM(grn_id);
+      if (ap != bp) { return ap > bp; }
       break;
     case KEY_BULK :
       for (;; ap++, bp++, as--, bs--) {
