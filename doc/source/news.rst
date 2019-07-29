@@ -25,6 +25,16 @@ Improvements
   * This option normalize hiragana to katakana.
   * For example, ``ゔぁゔぃゔゔぇゔぉ`` normalize to ``ヴァヴィヴヴェヴォ``.
 
+* [:doc:`reference/commands/select`] Added support drilldowns for a slice parameter.
+
+* [:doc:`reference/commands/select`] Added support columns for a slice parameter.
+
+* [:doc:`reference/commands/select`] Added support for accessing ``_score`` in initial stage for slice parameter.
+
+* [:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/snippet_html`] Improve that extract a keyword from an expression of before executing a slice when we specify the slice parameter.
+
+* Added support for index search for nested equal like XXX.YYY.ZZZ == AAA.
+
 * Added support for Amazon Linux 2.
 
 Fixes
