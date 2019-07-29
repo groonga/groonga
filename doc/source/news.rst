@@ -23,15 +23,15 @@ Improvements
 * [:doc:`/reference/normalizers`] Added new option ``unify_to_katakana`` for ``NormalizerNFKC100``.
 
   * This option normalize hiragana to katakana.
-  * For example, ``ゔぁゔぃゔゔぇゔぉ`` normalize to ``ヴァヴィヴヴェヴォ``.
+  * For example, ``ゔぁゔぃゔゔぇゔぉ`` is normalized to ``ヴァヴィヴヴェヴォ``.
 
-* [:doc:`reference/commands/select`] Added support drilldowns for a slice parameter.
+* [:doc:`reference/commands/select`] Added drilldowns support as a slices parameter.
 
-* [:doc:`reference/commands/select`] Added support columns for a slice parameter.
+* [:doc:`reference/commands/select`] Added columns support as a slices parameter.
 
-* [:doc:`reference/commands/select`] Added support for accessing ``_score`` in initial stage for slice parameter.
+* [:doc:`reference/commands/select`] Added support for accessing ``_score`` in initial stage for slices parameter.
 
-* [:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/snippet_html`] Improve that extract a keyword from an expression of before executing a slice when we specify the slice parameter.
+* [:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/snippet_html`] Improve that extract a keyword from an expression of before executing a slice when we specify the slices parameter.
 
 * Added support for index search for nested equal like XXX.YYY.ZZZ == AAA.
 
