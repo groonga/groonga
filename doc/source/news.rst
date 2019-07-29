@@ -9,7 +9,7 @@ News
 
 .. _release-9-0-5:
 
-Release 9.0.5 - 2019-07-29
+Release 9.0.5 - 2019-07-30
 --------------------------
 
 Improvements
