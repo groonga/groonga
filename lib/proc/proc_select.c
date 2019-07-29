@@ -3101,6 +3101,12 @@ grn_select_output_slices(grn_ctx *ctx,
                          limit,
                          slice->tables.sorted,
                          sort_keys, n_sort_keys);
+          GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                        ":", "%ssort(%d): %.*s",
+                        query_log_tag_prefix,
+                        limit,
+                        (int)(slice->sort_keys.length),
+                        slice->sort_keys.value);
           slice->tables.output = slice->tables.sorted;
         } else {
           succeeded = false;

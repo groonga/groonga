@@ -87,6 +87,7 @@ select Memos   --query 'content:@is'   --slices[fast].query 'content:@fast'   --
 #:000000000000000 slices[fast].filter(3): #<accessor _key(anonymous).content(Memos)> match "fast"
 #:000000000000000 slices[fast](3)
 #:000000000000000 output(3)
+#:000000000000000 slices[fast].sort(3): -_id
 #:000000000000000 slices[fast].columns[highlighted_content](3)
 #:000000000000000 slices[fast].output(3)
 #<000000000000000 rc=0
