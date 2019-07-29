@@ -13317,6 +13317,20 @@ enum {
   }\
 } while (0)
 
+#define CMPFLOAT(type) do {\
+  if (as) {\
+    if (bs) {\
+      type va = *((type *)(ap));\
+      type vb = *((type *)(bp));\
+      if (va < vb || va > vb) { return va > vb; }\
+    } else {\
+      return 1;\
+    }\
+  } else {\
+    if (bs) { return 0; }\
+  }\
+} while (0)
+
 grn_inline static int
 compare_reference(grn_ctx *ctx,
                   sort_reference_entry *a, sort_reference_entry *b,
@@ -13350,7 +13364,7 @@ compare_reference(grn_ctx *ctx,
     type = keys->offset;
     switch (type) {
     case KEY_ID :
-      if (ap != bp) { return ap > bp; }
+      CMPNUM(grn_id);
       break;
     case KEY_BULK :
       for (;; ap++, bp++, as--, bs--) {
@@ -13385,30 +13399,10 @@ compare_reference(grn_ctx *ctx,
       CMPNUM(uint64_t);
       break;
     case KEY_FLOAT32 :
-      if (as) {
-        if (bs) {
-          float va = *((float *)(ap));
-          float vb = *((float *)(bp));
-          if (va < vb || va > vb) { return va > vb; }
-        } else {
-          return 1;
-        }
-      } else {
-        if (bs) { return 0; }
-      }
+      CMPFLOAT(float);
       break;
     case KEY_FLOAT64 :
-      if (as) {
-        if (bs) {
-          double va = *((double *)(ap));
-          double vb = *((double *)(bp));
-          if (va < vb || va > vb) { return va > vb; }
-        } else {
-          return 1;
-        }
-      } else {
-        if (bs) { return 0; }
-      }
+      CMPFLOAT(double);
       break;
     }
   }
@@ -13621,30 +13615,10 @@ compare_value(grn_ctx *ctx,
       CMPNUM(uint64_t);
       break;
     case KEY_FLOAT32 :
-      if (as) {
-        if (bs) {
-          float va = *((float *)(ap));
-          float vb = *((float *)(bp));
-          if (va < vb || va > vb) { return va > vb; }
-        } else {
-          return 1;
-        }
-      } else {
-        if (bs) { return 0; }
-      }
+      CMPFLOAT(float);
       break;
     case KEY_FLOAT64 :
-      if (as) {
-        if (bs) {
-          double va = *((double *)(ap));
-          double vb = *((double *)(bp));
-          if (va < vb || va > vb) { return va > vb; }
-        } else {
-          return 1;
-        }
-      } else {
-        if (bs) { return 0; }
-      }
+      CMPFLOAT(double);
       break;
     }
   }
