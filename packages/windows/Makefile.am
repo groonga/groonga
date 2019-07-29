@@ -61,6 +61,7 @@ prepare-build:
 	) > tmp/env.sh
 	cp $(top_srcdir)/bundled_lz4_version tmp/
 	cp $(top_srcdir)/bundled_message_pack_version tmp/
+	cp $(top_srcdir)/bundled_rapidjson_version tmp/
 	docker build					\
 	  --tag groonga/windows-build			\
 	  --force-rm					\

@@ -338,6 +338,43 @@ namespace :build do
     end
   end
 
+  desc "Build RapidJSON and install it into #{dist_dir}."
+  task :rapidjson => :env do
+    tmp_dir = base_tmp_dir + "rapidjson"
+    rm_rf(tmp_dir)
+    mkdir_p(tmp_dir)
+    rapidjson_version_path = base_dir + "tmp" + "bundled_rapidjson_version"
+    rapidjson_version = rapidjson_version_path.read.strip
+    rapidjson_base = "rapidjson-#{rapidjson_version}"
+    rapidjson_tar_gz_url_base =
+      "https://github.com/Tencent/rapidjson/archive"
+    rapidjson_tar_gz_url =
+      "#{rapidjson_tar_gz_url_base}/v#{rapidjson_version}.tar.gz"
+    rapidjson_tar_gz = download(rapidjson_tar_gz_url, download_dir)
+    cp(rapidjson_tar_gz, source_dir)
+    Dir.chdir(tmp_dir) do
+      sh("tar", "xzf", rapidjson_tar_gz.to_s) or exit(false)
+    end
+    Dir.chdir(tmp_dir + rapidjson_base) do
+      cmake_parameters = [
+        "-DCMAKE_INSTALL_PREFIX=#{binary_dir}",
+        "-DCMAKE_SYSTEM_NAME=Windows",
+        "-DCMAKE_SYSTEM_PROCESSOR=#{architecture}",
+        "-DCMAKE_C_COMPILER=#{host}-gcc",
+        "-DCMAKE_CXX_COMPILER=#{host}-g++",
+        "-DRAPIDJSON_BUILD_DOC=OFF",
+        "-DRAPIDJSON_BUILD_EXAMPLES=OFF",
+        "-DRAPIDJSON_BUILD_TESTS=OFF"
+      ]
+      sh("cmake", *cmake_parameters) or exit(false)
+      sh("make", "install") or exit(false)
+      rapidjson_license_dir = license_dir + "rapidjson"
+      mkdir_p(rapidjson_license_dir)
+      files = ["license.txt"]
+      cp(files, rapidjson_license_dir)
+    end
+  end
+
   desc "Build Groonga and install it into #{dist_dir}/."
   task :groonga => :env do
     tmp_dir = base_tmp_dir + "groonga"
@@ -549,6 +586,7 @@ build_dependencies = [
   "build:mecab",
   "build:mecab_dict",
   "build:pcre",
+  "build:rapidjson",
   "build:groonga",
   "build:groonga_normalizer_mysql",
   "build:groonga_admin",
