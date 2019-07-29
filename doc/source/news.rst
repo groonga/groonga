@@ -33,7 +33,7 @@ Improvements
 
 * [:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/snippet_html`] Improve that extract a keyword from an expression of before executing a slice when we specify the slices parameter.
 
-* Added support for index search for nested equal like XXX.YYY.ZZZ == AAA.
+* Added support for index search for nested equal like ``XXX.YYY.ZZZ == AAA``.
 
 * Added support for Amazon Linux 2.
 
