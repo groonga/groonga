@@ -40,24 +40,24 @@ EOF
     cat <<EOF > dists/${code_name}/${component}/binary-i386/Release
 Archive: ${code_name}
 Component: ${component}
-Origin: The ${PROJECT_LABEL} project
-Label: The ${PROJECT_LABEL} project
+Origin: The ${PROJECT_LABEL} Project
+Label: The ${PROJECT_LABEL} Project
 Architecture: i386
 EOF
 
     cat <<EOF > dists/${code_name}/${component}/binary-amd64/Release
 Archive: ${code_name}
 Component: ${component}
-Origin: The ${PROJECT_LABEL} project
-Label: The ${PROJECT_LABEL} project
+Origin: The ${PROJECT_LABEL} Project
+Label: The ${PROJECT_LABEL} Project
 Architecture: amd64
 EOF
 
     cat <<EOF > dists/${code_name}/${component}/source/Release
 Archive: ${code_name}
 Component: ${component}
-Origin: The ${PROJECT_LABEL} project
-Label: The ${PROJECT_LABEL} project
+Origin: The ${PROJECT_LABEL} Project
+Label: The ${PROJECT_LABEL} Project
 Architecture: source
 EOF
 
@@ -94,8 +94,8 @@ EOF
     rm -f dists/${code_name}/Release*
     rm -f *.db
     cat <<EOF > release-${code_name}.conf
-APT::FTPArchive::Release::Origin "The ${PROJECT_LABEL} project";
-APT::FTPArchive::Release::Label "The ${PROJECT_LABEL} project";
+APT::FTPArchive::Release::Origin "The ${PROJECT_LABEL} Project";
+APT::FTPArchive::Release::Label "The ${PROJECT_LABEL} Project";
 APT::FTPArchive::Release::Architectures "i386 amd64";
 APT::FTPArchive::Release::Codename "${code_name}";
 APT::FTPArchive::Release::Suite "${code_name}";
