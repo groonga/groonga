@@ -29,7 +29,7 @@ Improvements
 
 * [:doc:`reference/commands/select`] Added columns support as a slices parameter.
 
-* [:doc:`reference/commands/select`] Improved that we can reference ``_score`` in the initial stage for slices parameter.
+* [:doc:`reference/commands/select`] Improved that we can refer ``_score`` in the initial stage for slices parameter.
 
 * [:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/snippet_html`] Improved that extract a keyword also from an expression of before executing a slices when we specify the slices parameter.
 
