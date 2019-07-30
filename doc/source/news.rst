@@ -33,7 +33,26 @@ Improvements
 
 * [:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/snippet_html`] Improved that extract a keyword also from an expression of before executing a slices when we specify the slices parameter.
 
+* Improveed that collect scores also from an expression of before executing a slices when we specify the slices parameter.
+
+* Stopped add 1 in score automatically when add posting to posting list.
+
+  * ``grn_ii_posting_add`` is backward incompatible changed by this change.
+    * Caller must set score to posting->weight.
+
 * Added support for index search for nested equal like ``XXX.YYY.ZZZ == AAA``.
+
+* Reduce rehash interval when we use hash table.
+
+  * This feature improve performance for output result.
+
+* Improved to we can add tag prefix in the query log.
+
+  * We become easy to understand that it is filtered which the condition.
+
+* Added support for Apache Arrow 1.0.0.
+
+  * However, It's not released this version yet.
 
 * Added support for Amazon Linux 2.
 
