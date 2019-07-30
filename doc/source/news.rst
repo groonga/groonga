@@ -50,7 +50,7 @@ Fixes
 
 * Fixed install missing COPYING for Windows package on MinGW.
 
-* Fixed a bug that don't highlight when specifing non-test query as highlight target keyword.
+* Fixed a bug that don't highlight when specifing non-text query as highlight target keyword.
 
 * Fixed a bug that broken output of MessagePack format of [:doc:`/reference/commands/object_inspect`]. [GitHub#1009][Reported by yagisumi]
 
