@@ -38,7 +38,7 @@ Improvements
 * Stopped add 1 in score automatically when add posting to posting list.
 
   * ``grn_ii_posting_add`` is backward incompatible changed by this change.
-    * Caller must set score to posting->weight.
+    * Caller must increase the score to maintain compatibility.
 
 * Added support for index search for nested equal like ``XXX.YYY.ZZZ == AAA``.
 
