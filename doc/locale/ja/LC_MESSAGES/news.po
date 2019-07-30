@@ -33,11 +33,214 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 9.0.4 - 2019-06-29"
-msgstr "9.0.4リリース - 2019-06-29"
+msgid "Release 9.0.5 - 2019-07-30"
+msgstr "9.0.5リリース - 2019-07-30"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[:doc:`reference/commands/logical_range_filter`] Improved that only apply an "
+"optimization when the search target shard is large enough."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] 検索対象のシャードが十分に"
+"大きい時にのみ最適化を適用するように改良しました。"
+
+msgid ""
+"This feature reduces that duplicate search result between offset when we use "
+"same sort key."
+msgstr ""
+"この機能は、ソートキーが同じ時にオフセット間で検索結果が重複するのを減らしま"
+"す。"
+
+msgid "Large enough threshold is 10000 records by default."
+msgstr "十分に大きいのしきい値はデフォルトで10000レコードです。"
+
+msgid ""
+"[:doc:`/reference/normalizers`] Added new option ``unify_to_katakana`` for "
+"``NormalizerNFKC100``."
+msgstr ""
+"[:doc:`/reference/normalizers`] ``NormalizerNFKC100`` に新しいオプション "
+"``unify_to_katakana`` を追加しました。"
+
+msgid "This option normalize hiragana to katakana."
+msgstr "このオプションは、平仮名を片仮名にノーマライズします。"
+
+msgid ""
+"For example, ``ゔぁゔぃゔゔぇゔぉ`` is normalized to ``ヴァヴィヴヴェヴォ``."
+msgstr ""
+"例えば、 ``ゔぁゔぃゔゔぇゔぉ`` を ``ヴァヴィヴヴェヴォ`` にノーマライズしま"
+"す。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added drilldowns support as a slices "
+"parameter."
+msgstr ""
+"[:doc:`/reference/commands/select`] slicesパラメーターでdrilldownsをサポート"
+"しました。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added columns support as a slices "
+"parameter."
+msgstr ""
+"[:doc:`/reference/commands/select`] slicesパラメーターでcolumnsをサポートしま"
+"した。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Improved that we can refer ``_score`` in "
+"the initial stage for slices parameter."
+msgstr ""
+"[:doc:`/reference/commands/select`] initialステージ内でslicesパラメーターが "
+"``_score`` を参照できるよう改良しました。"
+
+msgid ""
+"[:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/"
+"snippet_html`] Improved that extract a keyword also from an expression of "
+"before executing a slices when we specify the slices parameter."
+msgstr ""
+"[:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/"
+"snippet_html`] slicesパラメータ指定時に、slices実行前の式からもキーワードを抽"
+"出するように改良しました。"
+
+msgid ""
+"Improveed that collect scores also from an expression of before executing a "
+"slices when we specify the slices parameter."
+msgstr ""
+"[:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/"
+"snippet_html`] slicesパラメータ指定時に、slices実行前の式からもスコアーを収集"
+"するように改良しました。"
+
+msgid "Stopped add 1 in score automatically when add posting to posting list."
+msgstr ""
+"ポスティングリストにポスティングを追加する際に自動的にスコアーを1増やすのをや"
+"めました。"
+
+msgid ""
+"``grn_ii_posting_add`` is backward incompatible changed by this change. * "
+"Caller must increase the score to maintain compatibility."
+msgstr ""
+"``grn_ii_posting_add`` は、この変更によって後方互換性がなくなりました。互換性"
+"を保つには、呼び出し側でスコアーを増やす必要があります。"
+
+msgid ""
+"Added support for index search for nested equal like ``XXX.YYY.ZZZ == AAA``."
+msgstr ""
+"``XXX.YYY.ZZZ == AAA`` のようなネストされた等価演算のインデックス検索をサポー"
+"トしました。"
+
+msgid "Reduce rehash interval when we use hash table."
+msgstr "ハッシュテーブル使用時にハッシュの再構築の間隔を少なくしました。"
+
+msgid "This feature improve performance for output result."
+msgstr "この昨日によって、結果出力のパフォーマンスが改善します。"
+
+msgid "Improved to we can add tag prefix in the query log."
+msgstr "クエリーログにプレフィックスを追加できるようになりました。"
+
+msgid "We become easy to understand that it is filtered which the condition."
+msgstr "どの条件のフィルターなのかわかりやすくなります。"
+
+msgid "Added support for Apache Arrow 1.0.0."
+msgstr "Apache Arrow 1.0.0 をサポートしました。"
+
+msgid "However, It's not released this version yet."
+msgstr "ただし、このバージョンはまだ、リリースされていません。"
+
+msgid "Added support for Amazon Linux 2."
+msgstr "Amazon Linux 2 をサポートしました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"Fixed a bug that vector values of JSON like ``\"[1, 2, 3]\"`` are not "
+"indexed."
+msgstr ""
+"``\"[1, 2, 3]\"`` のようなJSONのベクター値がインデックスされないバグを修正し"
+"ました。"
+
+msgid ""
+"Fixed wrong parameter name in ``table_create`` tests. [GitHub#1000][Patch by "
+"yagisumi]"
+msgstr ""
+"``table_create`` のテストのパラメーター名が誤っていたバグを修正しました。"
+"[GitHub#1000][yagisumiさんがパッチ提供]"
+
+msgid ""
+"Fixed a bug that drilldown label is empty when a drilldown command is "
+"executed by ``command_version=3``. [GitHub#1001][Reported by yagisumi]"
+msgstr ""
+"``command_version=3`` でdrilldownコマンドが実行された際に、ドリルダウンのラベ"
+"ルが空になるバグを修正しました。[GitHub#1001][yagisumiさんの報告]"
+
+msgid "Fixed build error for Windows package on MinGW."
+msgstr "MinGWでWindows版のパッケージのビルドが失敗するバグを修正しました。"
+
+msgid "Fixed install missing COPYING for Windows package on MinGW."
+msgstr ""
+"MinGWのWindows版パッケージにCOPYINGがインストールされないバグを修正しました。"
+
+msgid ""
+"Fixed a bug that don't highlight when specifing non-text query as highlight "
+"target keyword."
+msgstr ""
+"ハイライト対象として、クエリーにテキスト以外を指定した際に、キーワードがハイ"
+"ライトされないバグを修正しました。"
+
+msgid ""
+"Fixed a bug that broken output of MessagePack format of [:doc:`/reference/"
+"commands/object_inspect`]. [GitHub#1009][Reported by yagisumi]"
+msgstr ""
+"[:doc:`/reference/commands/object_inspect`] のMessagePack形式の出力が壊れるバ"
+"グを修正しました。[GitHub#1009][yagisumiさんの報告]"
+
+msgid ""
+"Fixed a bug that broken output of MessagePack format of "
+"``index_column_diff``. [GitHub#1010][Reported by yagisumi]"
+msgstr ""
+"``index_column_diff`` のMessagePack形式の出力が壊れるバグを修正しました。"
+"[GitHub#1009][yagisumiさんの報告]"
+
+msgid ""
+"Fixed a bug that broken output of MessagePack format of [:doc:`reference/"
+"commands/suggest`]. [GitHub#1011][Reported by yagisumi]"
+msgstr ""
+"[:doc:`reference/commands/suggest`] のMessagePack形式の出力が壊れるバグを修正"
+"しました。[GitHub#1011][yagisumiさんの報告]"
+
+msgid ""
+"Fixed a bug that allocate size by realloc isn't enough when a search for a "
+"table of patricia trie and so on. [Reported by Shimadzu Corporation]"
+msgstr ""
+"パトリシアトライのテーブルの検索時などにreallocのサイズが十分に確保されないバ"
+"グを修正しました。[島津製作所さんの報告]"
+
+msgid "Groonga may be crashed by this bug."
+msgstr "Groongaはこのバグでクラッシュする可能性があります。"
+
+msgid ""
+"Fix a bug that ``groonga.repo`` is removed when updating 1.5.0 from "
+"``groonga-release`` version before 1.5.0-1. [groonga-talk:429][Reported by "
+"Josep Sanz]"
+msgstr ""
+"``groonga-release`` version 1.5.0より前から1.5.0-1へアップデートした際に "
+"``groonga.repo`` が削除されるバグを修正しました。[groonga-talk:429][Josep "
+"Sanzさんの報告]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "yagisumi"
+msgstr "yagisumiさん"
+
+msgid "Shimadzu Corporation"
+msgstr "島津製作所さん"
+
+msgid "Josep Sanz"
+msgstr "Josep Sanzさん"
+
+msgid "Release 9.0.4 - 2019-06-29"
+msgstr "9.0.4リリース - 2019-06-29"
 
 msgid "Added support for array literal with multiple elements."
 msgstr "配列リテラルの複数要素をサポートしました。"
@@ -161,9 +364,6 @@ msgstr "デフォルトでは、\"keyword1 keyword2\"はAND演算です。"
 msgid "We can change \"keyword1 keyword2\"'s operator except AND."
 msgstr "\"keyword1 keyword2\"の演算子をAND以外に変更できます。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "[optimizer] Fix a bug that execution error when specified multiple filter "
 "conditions and like ``xxx.yyy==\"keyword\"``."
@@ -189,9 +389,6 @@ msgid ""
 msgstr ""
 "これは、複数のウインドウに対してソートキーを適用した際に発生します。 "
 "[Takashi Hashidaさんがパッチ提供]"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Takashi Hashida"
 msgstr "Takashi Hashidaさん"
@@ -363,9 +560,6 @@ msgstr "Tomohiro KATOさん"
 
 msgid "Wolfgang Hotwagner"
 msgstr "Wolfgang Hotwagnerさん"
-
-msgid "yagisumi"
-msgstr "yagisumiさん"
 
 msgid "Release 9.0.2 - 2019-04-29"
 msgstr "9.0.2リリース - 2019-04-29"
@@ -13694,3 +13888,6 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
+
+#~ msgid "This feature is used only when the target shard is large enough."
+#~ msgstr "この機能は対象のシャードが十分に大きいときにのみ使われます。"

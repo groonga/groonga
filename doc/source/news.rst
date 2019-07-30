@@ -7,6 +7,91 @@
 News
 ====
 
+.. _release-9-0-5:
+
+Release 9.0.5 - 2019-07-30
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/logical_range_filter`] Improved that only apply an optimization when the search target shard is large enough.
+
+  * This feature reduces that duplicate search result between offset when we use same sort key.
+  * Large enough threshold is 10000 records by default.
+
+* [:doc:`/reference/normalizers`] Added new option ``unify_to_katakana`` for ``NormalizerNFKC100``.
+
+  * This option normalize hiragana to katakana.
+  * For example, ``ゔぁゔぃゔゔぇゔぉ`` is normalized to ``ヴァヴィヴヴェヴォ``.
+
+* [:doc:`reference/commands/select`] Added drilldowns support as a slices parameter.
+
+* [:doc:`reference/commands/select`] Added columns support as a slices parameter.
+
+* [:doc:`reference/commands/select`] Improved that we can refer ``_score`` in the initial stage for slices parameter.
+
+* [:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/snippet_html`] Improved that extract a keyword also from an expression of before executing a slices when we specify the slices parameter.
+
+* Improveed that collect scores also from an expression of before executing a slices when we specify the slices parameter.
+
+* Stopped add 1 in score automatically when add posting to posting list.
+
+  * ``grn_ii_posting_add`` is backward incompatible changed by this change.
+    * Caller must increase the score to maintain compatibility.
+
+* Added support for index search for nested equal like ``XXX.YYY.ZZZ == AAA``.
+
+* Reduce rehash interval when we use hash table.
+
+  * This feature improve performance for output result.
+
+* Improved to we can add tag prefix in the query log.
+
+  * We become easy to understand that it is filtered which the condition.
+
+* Added support for Apache Arrow 1.0.0.
+
+  * However, It's not released this version yet.
+
+* Added support for Amazon Linux 2.
+
+Fixes
+^^^^^
+
+* Fixed a bug that vector values of JSON like ``"[1, 2, 3]"`` are not indexed.
+
+* Fixed wrong parameter name in ``table_create`` tests. [GitHub#1000][Patch by yagisumi]
+
+* Fixed a bug that drilldown label is empty when a drilldown command is executed by ``command_version=3``. [GitHub#1001][Reported by yagisumi]
+
+* Fixed build error for Windows package on MinGW.
+
+* Fixed install missing COPYING for Windows package on MinGW.
+
+* Fixed a bug that don't highlight when specifing non-text query as highlight target keyword.
+
+* Fixed a bug that broken output of MessagePack format of [:doc:`/reference/commands/object_inspect`]. [GitHub#1009][Reported by yagisumi]
+
+* Fixed a bug that broken output of MessagePack format of ``index_column_diff``. [GitHub#1010][Reported by yagisumi]
+
+* Fixed a bug that broken output of MessagePack format of [:doc:`reference/commands/suggest`]. [GitHub#1011][Reported by yagisumi]
+
+* Fixed a bug that allocate size by realloc isn't enough when a search for a table of patricia trie and so on. [Reported by Shimadzu Corporation]
+
+  * Groonga may be crashed by this bug.
+
+* Fix a bug that ``groonga.repo`` is removed when updating 1.5.0 from ``groonga-release`` version before 1.5.0-1. [groonga-talk:429][Reported by Josep Sanz]
+
+Thanks
+^^^^^^
+
+* yagisumi
+
+* Shimadzu Corporation
+
+* Josep Sanz
+
 .. _release-9-0-4:
 
 Release 9.0.4 - 2019-06-29
