@@ -15,10 +15,10 @@ Release 9.0.5 - 2019-07-30
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`reference/commands/logical_range_filter`] Stop an optimization by the number of required records.
+* [:doc:`reference/commands/logical_range_filter`] Improved that only apply an optimization when the search target shard is large enough.
 
-  * This feature is used only when the target shard is large enough.
-  * Large enough threshold is 10000 by default.
+  * This feature reduces that duplicate search result between offset when we use same sort key.
+  * Large enough threshold is 10000 records by default.
 
 * [:doc:`/reference/normalizers`] Added new option ``unify_to_katakana`` for ``NormalizerNFKC100``.
 
@@ -29,9 +29,9 @@ Improvements
 
 * [:doc:`reference/commands/select`] Added columns support as a slices parameter.
 
-* [:doc:`reference/commands/select`] Added support for accessing ``_score`` in initial stage for slices parameter.
+* [:doc:`reference/commands/select`] Improved that we can reference ``_score`` in the initial stage for slices parameter.
 
-* [:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/snippet_html`] Improve that extract a keyword from an expression of before executing a slice when we specify the slices parameter.
+* [:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/snippet_html`] Improved that extract a keyword also from an expression of before executing a slices when we specify the slices parameter.
 
 * Added support for index search for nested equal like ``XXX.YYY.ZZZ == AAA``.
 
@@ -40,7 +40,7 @@ Improvements
 Fixes
 ^^^^^
 
-* Fixed a bug that vector values as JSON are not indexed.
+* Fixed a bug that vector values of JSON like ``"[1, 2, 3]"`` are not indexed.
 
 * Fixed wrong parameter name in ``table_create`` tests. [GitHub#1000][Patch by yagisumi]
 
@@ -60,7 +60,9 @@ Fixes
 
 * Fixed a bug that allocate size by realloc isn't enough when a search for a table of patricia trie and so on. [Reported by Shimadzu Corporation]
 
-* Fix a bug that ``groonga.repo`` is removed when updating 1.5.0 from ``groonga-release`` version before 1.5.0. [groonga-talk:429][Reported by Josep Sanz]
+  * Groonga may be crashed by this bug.
+
+* Fix a bug that ``groonga.repo`` is removed when updating 1.5.0 from ``groonga-release`` version before 1.5.0-1. [groonga-talk:429][Reported by Josep Sanz]
 
 Thanks
 ^^^^^^
