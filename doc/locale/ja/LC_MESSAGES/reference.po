@@ -29097,10 +29097,9 @@ msgstr ""
 "オプションを使わない場合、 ``TokenNgram`` は ``TokenBigram`` と同じ動作になり"
 "ます。"
 
-#, fuzzy
 msgid ""
-"``TokenNgram`` We can also specify multiple options at the same time except "
-"the above examples."
+"We can also specify multiple options at the same time except the above "
+"examples."
 msgstr "上記の例以外にも複数のオプションを組み合わせて指定できます。"
 
 msgid "Here is an example of ``TokenNgram``."
