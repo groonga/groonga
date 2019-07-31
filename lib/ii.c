@@ -8108,8 +8108,12 @@ token_info_expand_both(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
   grn_hash_cursor *c;
   grn_id *tp, *tq;
   if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
+    grn_operator mode = GRN_OP_PREFIX;
+    if (lexicon->header.type == GRN_TABLE_HASH_KEY) {
+      mode = GRN_OP_EXACT;
+    }
     grn_table_search(ctx, lexicon, key, key_size,
-                     GRN_OP_PREFIX, (grn_obj *)h, GRN_OP_OR);
+                     mode, (grn_obj *)h, GRN_OP_OR);
     if (GRN_HASH_SIZE(h)) {
       if ((ti->cursors = cursor_heap_open(ctx, GRN_HASH_SIZE(h) + 256))) {
         if ((c = grn_hash_cursor_open(ctx, h, NULL, 0, NULL, 0, 0, -1, 0))) {
