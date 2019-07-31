@@ -1143,7 +1143,7 @@ grn_record_inspect_common(grn_ctx *ctx,
             grn_obj column_value;
 
             GRN_VOID_INIT(&column_value);
-            GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
+            GRN_HASH_EACH_BEGIN(ctx, columns, cursor, _id) {
               void *key;
               grn_id column_id;
               grn_obj *column;
