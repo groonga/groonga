@@ -3737,16 +3737,22 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
   }
 
   if (rc == GRN_SUCCESS && current_res != base_res) {
-    grn_id *record_id;
-    grn_rset_recinfo *recinfo;
-    GRN_HASH_EACH(ctx, (grn_hash *)current_res, id, &record_id, NULL, &recinfo, {
+    GRN_HASH_EACH_BEGIN(ctx, (grn_hash *)current_res, cursor, id) {
+      void *key;
+      void *value;
+      grn_id *record_id;
+      grn_rset_recinfo *recinfo;
       grn_posting posting;
+
+      grn_hash_cursor_get_key_value(ctx, cursor, &key, NULL, &value);
+      record_id = key;
+      recinfo = value;
       posting.rid = *record_id;
       posting.sid = 1;
       posting.pos = 0;
       posting.weight = recinfo->score;
       grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
-    });
+    } GRN_HASH_EACH_END(ctx, cursor);
     grn_obj_unlink(ctx, current_res);
     grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
   } else {
