@@ -3989,12 +3989,9 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx, grn_obj *obj,
         rc = GRN_INVALID_ARGUMENT;
         goto exit;
       }
-      grn_posting posting = {0};
-      posting.sid = 1;
-      posting.weight = 1;
-      posting.rid = grn_table_get(ctx, lexicon, key, key_len);
-      if (posting.rid != GRN_ID_NIL) {
-        grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
+      grn_id token_id = grn_table_get(ctx, lexicon, key, key_len);
+      if (token_id != GRN_ID_NIL) {
+        grn_ii_at(ctx, (grn_ii *)obj, token_id, (grn_hash *)res, op);
       }
       grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
     } else {

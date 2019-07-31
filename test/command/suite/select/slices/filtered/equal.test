@@ -8,6 +8,7 @@ load --table Users
 [
 {"name": "Alice"},
 {"name": "Alisa"},
+{"name": "Alisa"},
 {"name": "Bob"}
 ]
 

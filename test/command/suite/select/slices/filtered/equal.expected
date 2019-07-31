@@ -10,9 +10,10 @@ load --table Users
 [
 {"name": "Alice"},
 {"name": "Alisa"},
+{"name": "Alisa"},
 {"name": "Bob"}
 ]
-[[0,0.0,0.0],3]
+[[0,0.0,0.0],4]
 log_level --level info
 [[0,0.0,0.0],true]
 select Users   --filter '_id > 1'   --slices[name].filter 'name == "bob"'   --slices[name].output_columns _id,name,_score
@@ -25,7 +26,7 @@ select Users   --filter '_id > 1'   --slices[name].filter 'name == "bob"'   --sl
   [
     [
       [
-        2
+        3
       ],
       [
         [
@@ -43,6 +44,10 @@ select Users   --filter '_id > 1'   --slices[name].filter 'name == "bob"'   --sl
       ],
       [
         3,
+        "Alisa"
+      ],
+      [
+        4,
         "Bob"
       ]
     ],
@@ -66,7 +71,7 @@ select Users   --filter '_id > 1'   --slices[name].filter 'name == "bob"'   --sl
           ]
         ],
         [
-          3,
+          4,
           "Bob",
           2
         ]
