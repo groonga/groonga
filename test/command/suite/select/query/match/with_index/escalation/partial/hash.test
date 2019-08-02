@@ -1,0 +1,10 @@
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
+table_create Terms TABLE_HASH_KEY ShortText --default_tokenizer TokenDelimit
+column_create Terms index COLUMN_INDEX Users name
+load --table Users
+[
+{"name": "Alice"},
+{"name": "Bob"}
+]
+select Users --filter 'name @ "Alice "'
