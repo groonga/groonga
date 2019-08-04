@@ -66,12 +66,8 @@ Here are a schema definition of ``Cities`` table and sample data to show usage.
   column_create Cities location COLUMN_SCALAR WGS84GeoPoint
   load --table Cities
   [
-    {
-      "_key", "location"
-    },
-    {
-      "New York City", "146566000x-266422000",
-    },
+  ["_key", "location"],
+  ["New York City", "146566000x-266422000"]
   ]
 
 .. groonga-command
@@ -80,12 +76,8 @@ Here are a schema definition of ``Cities`` table and sample data to show usage.
 .. column_create Cities location COLUMN_SCALAR WGS84GeoPoint
 .. load --table Cities
 .. [
-..   {
-..      "_key", "location"
-..   },
-..   {
-..      "New York City", "146566000x-266422000",
-..   },
+.. ["_key", "location"],
+.. ["New York City", "146566000x-266422000"]
 .. ]
 
 
