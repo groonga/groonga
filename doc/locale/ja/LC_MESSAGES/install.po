@@ -163,6 +163,9 @@ msgstr "groonga-server-gtqp向け:"
 msgid "% sudo systemctl enable groonga-server-gqtp"
 msgstr ""
 
+msgid "buster"
+msgstr ""
+
 msgid "Install required packages to build Groonga for Debian jessie::"
 msgstr ""
 "Debian jessieでGroongaをビルドするために必要なパッケージをインストールしま"
