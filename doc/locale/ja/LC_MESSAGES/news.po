@@ -13935,9 +13935,3 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
-
-#~ msgid "Dropped Debian 8 (jessie) support."
-#~ msgstr "Debian 8 (jessie)のサポートをやめました。"
-
-#~ msgid "This feature is used only when the target shard is large enough."
-#~ msgstr "この機能は対象のシャードが十分に大きいときにのみ使われます。"
