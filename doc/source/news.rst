@@ -9,7 +9,7 @@ News
 
 .. _release-9-0-6:
 
-Release 9.0.6 - 2019-08-06
+Release 9.0.6 - 2019-08-05
 --------------------------
 
 Improvements
@@ -26,9 +26,9 @@ Fixes
 
 * [:doc:`reference/commands/select`] Fixed a bug that may return wrong search results when we use nested equal condition.
 
-* [:doc:`functions/geo_distance_location_rectangle`] Fixed an example that has wrong ``load`` format. [GitHub#1023][Patched by yagisumi]
+* [geo_distance_location_rectangle] Fixed an example that has wrong ``load`` format. [GitHub#1023][Patched by yagisumi]
 
-* [:doc:`tutorial/micro_blog_favorite`] Fixed an example that has wrong search results. [GutHub#1024 Patched by yagisumi]
+* [:doc:`tutorial/micro_blog`] Fixed an example that has wrong search results. [GutHub#1024][Patched by yagisumi]
 
 Thanks
 ^^^^^^
