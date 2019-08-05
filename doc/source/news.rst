@@ -7,6 +7,34 @@
 News
 ====
 
+.. _release-9-0-6:
+
+Release 9.0.6 - 2019-08-06
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added support Debian 10 (buster)
+
+* Dropped Debian 8 (jessie) support.
+
+Fixes
+^^^^^
+
+* [:doc:`reference/commands/select`] Fixed a bug that search is an error when occurring search escalation.
+
+* [:doc:`reference/commands/select`] Fixed a bug that may return wrong search results when we use nested equal condition.
+
+* [:doc:`functions/geo_distance_location_rectangle`] Fixed an example that has wrong ``load`` format. [GitHub#1023][Patched by yagisumi]
+
+* [:doc:`tutorial/micro_blog_favorite`] Fixed an example that has wrong search results. [GutHub#1024 Patched by yagisumi]
+
+Thanks
+^^^^^^
+
+* yagisumi
+
 .. _release-9-0-5:
 
 Release 9.0.5 - 2019-07-30
