@@ -2757,9 +2757,9 @@ usage(void)
 }
 
 enum {
-  mode_default = 0,
-  mode_list,
-  mode_usage,
+  COMMAND_LINE_MODE_DEFAULT = 0,
+  COMMAND_LINE_MODE_LIST,
+  COMMAND_LINE_MODE_USAGE,
 };
 
 #define MODE_MASK      0x007f
@@ -2931,9 +2931,9 @@ main(int argc, char **argv)
     {'p', "port", NULL, 0, GETOPT_OP_NONE},
     {'\0', "log-output-dir", NULL, 0, GETOPT_OP_NONE},
     {'\0', "output-type", NULL, 0, GETOPT_OP_NONE},
-    {'\0', "dir", NULL, mode_list, GETOPT_OP_UPDATE},
+    {'\0', "dir", NULL, COMMAND_LINE_MODE_LIST, GETOPT_OP_UPDATE},
     {'\0', "ftp", NULL, MODE_FTP, GETOPT_OP_ON},
-    {'h', "help", NULL, mode_usage, GETOPT_OP_UPDATE},
+    {'h', "help", NULL, COMMAND_LINE_MODE_USAGE, GETOPT_OP_UPDATE},
     {'\0', "localonly", NULL, MODE_LOCALONLY, GETOPT_OP_ON},
     {'\0', "onmemory", NULL, MODE_ONMEMORY, GETOPT_OP_ON},
     {'\0', "owndb", NULL, MODE_OWNDB, GETOPT_OP_ON},
@@ -2959,12 +2959,12 @@ main(int argc, char **argv)
   }
 
   switch (mode & MODE_MASK) {
-  case mode_list :
+  case COMMAND_LINE_MODE_LIST :
     ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, "*.scr", 1, "data",
              NULL);
     return 0;
     break;
-  case mode_usage :
+  case COMMAND_LINE_MODE_USAGE :
     usage();
     break;
   default :
