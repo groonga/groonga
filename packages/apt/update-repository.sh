@@ -109,7 +109,7 @@ EOF
 
 for code_name in ${CODES}; do
     case ${code_name} in
-	jessie|stretch|buster|unstable)
+	stretch|buster|unstable)
 	    distribution=debian
 	    component=main
 	    ;;
