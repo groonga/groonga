@@ -33,6 +33,52 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
+msgid "Release 9.0.6 - 2019-08-05"
+msgstr "9.0.6リリース - 2019-08-05"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "Added support for Debian 10 (buster)."
+msgstr "Debian 10 (buster)をサポートしました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"[:doc:`reference/commands/select`] Fixed a bug that search is an error when "
+"occurring search escalation."
+msgstr ""
+"[:doc:`/reference/commands/select`] 検索エスカレーションが起こった際に検索が"
+"エラーになるバグを修正しました。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Fixed a bug that may return wrong search "
+"results when we use nested equal condition."
+msgstr ""
+"[:doc:`/reference/commands/select`] ネストされた等価演算を使った際に、誤った"
+"検索結果を返すことがあるバグを修正しました。"
+
+msgid ""
+"[geo_distance_location_rectangle] Fixed an example that has wrong ``load`` "
+"format. [GitHub#1023][Patched by yagisumi]"
+msgstr ""
+"[geo_distance_location_rectangle] ``load`` のフォーマットが誤っている例を修正"
+"しました。 [GitHub#1023] [yagisumiさんがパッチ提供]"
+
+msgid ""
+"[:doc:`tutorial/micro_blog`] Fixed an example that has wrong search results. "
+"[GutHub#1024][Patched by yagisumi]"
+msgstr ""
+"[:doc:`tutorial/micro_blog`] 検索結果が誤っている例を修正しました。"
+"[GitHub#1024][yagisumiさんがパッチ提供] "
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "yagisumi"
+msgstr "yagisumiさん"
+
 msgid "Release 9.0.5 - 2019-07-30"
 msgstr "9.0.5リリース - 2019-07-30"
 
@@ -48,9 +94,6 @@ msgstr ""
 "Groonga 9.0.5は使わず、後日リリースされる9.0.6を使ってください。問題の詳細に"
 "ついては http://groonga.org/ja/blog/2019/07/30/groonga-9.0.5.html で解説して"
 "います。"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid ""
 "[:doc:`reference/commands/logical_range_filter`] Improved that only apply an "
@@ -162,9 +205,6 @@ msgstr "ただし、このバージョンはまだ、リリースされていま
 msgid "Added support for Amazon Linux 2."
 msgstr "Amazon Linux 2 をサポートしました。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "Fixed a bug that vector values of JSON like ``\"[1, 2, 3]\"`` are not "
 "indexed."
@@ -239,12 +279,6 @@ msgstr ""
 "``groonga-release`` version 1.5.0より前から1.5.0-1へアップデートした際に "
 "``groonga.repo`` が削除されるバグを修正しました。[groonga-talk:429][Josep "
 "Sanzさんの報告]"
-
-msgid "Thanks"
-msgstr "感謝"
-
-msgid "yagisumi"
-msgstr "yagisumiさん"
 
 msgid "Shimadzu Corporation"
 msgstr "島津製作所さん"
@@ -13901,6 +13935,9 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
+
+#~ msgid "Dropped Debian 8 (jessie) support."
+#~ msgstr "Debian 8 (jessie)のサポートをやめました。"
 
 #~ msgid "This feature is used only when the target shard is large enough."
 #~ msgstr "この機能は対象のシャードが十分に大きいときにのみ使われます。"
