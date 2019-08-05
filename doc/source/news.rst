@@ -15,9 +15,7 @@ Release 9.0.6 - 2019-08-05
 Improvements
 ^^^^^^^^^^^^
 
-* Added support Debian 10 (buster)
-
-* Dropped Debian 8 (jessie) support.
+* Added support Debian 10 (buster).
 
 Fixes
 ^^^^^
