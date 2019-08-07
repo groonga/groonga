@@ -145,6 +145,10 @@ test_script:
   - ruby test\command_line\run-test.rb
      --groonga-install-prefix=%APPVEYOR_BUILD_FOLDER%\\%GROONGA_INSTALL_SUB_FOLDER_ESCAPED%\\%GROONGA_INSTALL_FOLDER%
 
+# Enable this to debug on AppVeyor
+# on_failure:
+#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
 on_finish:
   - cd %GROONGA_INSTALL_SUB_FOLDER%
   - set ARTIFACT=%GROONGA_INSTALL_FOLDER%.zip
