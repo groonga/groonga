@@ -8,9 +8,9 @@ if which dpkg > /dev/null 2>&1; then
     echo "ERROR: autoconf-archive package is not installed yet."
     exit 1
   fi
-elif which rpm > /dev/null 2>&1 && \
-       yum info autoconf-archive > /dev/null 2>&1; then
-  if ! rpm -q autoconf-archive > /dev/null; then
+elif which rpm > /dev/null 2>&1; then
+  if yum info autoconf-archive > /dev/null 2>&1 && \
+       ! rpm -q autoconf-archive > /dev/null; then
     echo "ERROR: autoconf-archive package is not installed yet."
     exit 1
   fi
