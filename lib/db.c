@@ -14322,7 +14322,7 @@ grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
     if (!target) {
       report_hook_has_dangling_reference_error(ctx, obj, data->target,
                                                "[column][index]"
-                                               "[column][equal]");
+                                               "[column][match]");
       continue;
     }
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
