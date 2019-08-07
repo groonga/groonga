@@ -2,6 +2,30 @@
 
 ./version-gen.sh
 
+# AX_CXX_COMPILE_STDCXX macro is required to check compiler option correctly
+if which dpkg > /dev/null 2>&1; then
+  if ! dpkg -s autoconf-archive > /dev/null; then
+    echo "ERROR: autoconf-archive package is not installed yet."
+    exit 1
+  fi
+elif which rpm > /dev/null 2>&1 && \
+       yum info autoconf-archive > /dev/null 2>&1; then
+  if ! rpm -q autoconf-archive > /dev/null; then
+    echo "ERROR: autoconf-archive package is not installed yet."
+    exit 1
+  fi
+elif which brew > /dev/null 2>&1; then
+  if ! brew list autoconf-archive > /dev/null 2>&1; then
+    echo "ERROR: autoconf-archive formula is not installed yet."
+    exit 1
+  fi
+elif [ -x /usr/local/sbin/pkg ]; then
+  if ! /usr/local/sbin/pkg info autoconf-archive > /dev/null 2>&1; then
+    echo "ERROR: autoconf-archive package is not installed yet."
+    exit 1
+  fi
+fi
+
 case $(uname -s) in
   Darwin)
     homebrew_aclocal=/usr/local/share/aclocal
@@ -29,22 +53,5 @@ fi
 git submodule update --init
 
 mkdir -p m4
-
-# ax_cxx_compile_stdcxx macro is required to check compiler option correctly
-if [ -x /usr/bin/dpkg -o -x /bin/dpkg ]; then
-  if ! dpkg -s autoconf-archive > /dev/null; then
-    echo "ERROR: autoconf-archive package is not installed yet."
-    exit 1
-  fi
-elif [ -x /usr/bin/rpm -o -x /bin/rpm ]; then
-  if ! rpm -q autoconf-archive > /dev/null; then
-    echo "ERROR: autoconf-archive package is not installed yet."
-    exit 1
-  fi
-elif [ ! -f /usr/share/aclocal/ax_cxx_compile_stdcxx_11.m4 -a \
-       ! -f /usr/local/share/aclocal/ax_cxx_compile_stdcxx_11.m4 ]; then
-  echo "ERROR: autoconf-archive is not installed yet."
-  exit 1
-fi
 
 ${AUTORECONF:-autoreconf} --force --install "$@"
