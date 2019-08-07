@@ -1,0 +1,58 @@
+table_create   --name NamesFullTextSearchIndex   --flags TABLE_PAT_KEY   --key_type ShortText   --default_tokenizer TokenBigramSplitSymbolAlphaDigit   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+table_create   --name NamesIndex   --flags TABLE_PAT_KEY   --key_type ShortText
+[[0,0.0,0.0],true]
+table_create   --name Users   --flags TABLE_HASH_KEY   --key_type UInt32
+[[0,0.0,0.0],true]
+column_create   --table Users   --name name   --flags COLUMN_SCALAR   --type ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+["_key", "name"],
+[1, "Alice"],
+[2, "Bob"]
+]
+[[0,0.0,0.0],2]
+column_create   --table NamesFullTextSearchIndex   --name index   --flags COLUMN_INDEX|WITH_POSITION   --type Users   --source name
+[[0,0.0,0.0],true]
+column_create   --table NamesIndex   --name index   --flags COLUMN_INDEX   --type Users   --source name
+[[0,0.0,0.0],true]
+log_level --level info
+[[0,0.0,0.0],true]
+select --table Users --query 'name:^"Ali"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "UInt32"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        1,
+        "Alice"
+      ]
+    ]
+  ]
+]
+#|i| [table][select][index][prefix] <NamesIndex.index>
+log_level --level notice
+[[0,0.0,0.0],true]
