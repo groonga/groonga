@@ -14283,8 +14283,17 @@ grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
     break;
   }
 
-  if (op != GRN_OP_REGEXP && !grn_column_is_vector(ctx, obj)) {
+  switch (op) {
+  case GRN_OP_MATCH :
+    prefer_full_text_search_index = !grn_column_is_vector(ctx, obj);
+    break;
+  case GRN_OP_NEAR :
+  case GRN_OP_NEAR2 :
+  case GRN_OP_SIMILAR :
     prefer_full_text_search_index = GRN_TRUE;
+    break;
+  default:
+    break;
   }
 
   if (prefer_full_text_search_index) {
