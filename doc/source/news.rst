@@ -19,10 +19,12 @@ Improvements
 Fixes
 ^^^^^
 
+* Fix a bug that doesn't use a suitable index when prefix search and suffix search. [GitHub#1007, PGroonga#GitHub#96][Reported by oknj]
 
 Thanks
 ^^^^^^
 
+* oknj
 
 .. _release-9-0-6:
 
