@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2013-2018  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2013-2019  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ set -e
 if [ "$GROONGA_MASTER" = "yes" ]; then
   sudo apt-get update -qq
   sudo apt-get install -qq -y -V \
+       autoconf-archive \
        autotools-dev \
        libevent-dev \
        libmecab-dev \
