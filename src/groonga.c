@@ -341,7 +341,7 @@ s_output_typed(grn_ctx *ctx, int flags, FILE *stream)
     grn_obj body;
     grn_obj *command;
 
-    GRN_TEXT_INIT(&body, 0);
+    GRN_TEXT_INIT(&body, GRN_OBJ_DO_SHALLOW_COPY);
     grn_ctx_recv(ctx, &chunk, &chunk_size, &recv_flags);
     GRN_TEXT_SET(ctx, &body, chunk, chunk_size);
 
@@ -1304,7 +1304,7 @@ h_output_typed(grn_ctx *ctx, int flags, ht_context *hc)
 
   GRN_TEXT_INIT(&header, 0);
   GRN_TEXT_INIT(&head, 0);
-  GRN_TEXT_INIT(&body, 0);
+  GRN_TEXT_INIT(&body, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_TEXT_INIT(&foot, 0);
 
   grn_ctx_recv(ctx, &chunk, &chunk_size, &recv_flags);
