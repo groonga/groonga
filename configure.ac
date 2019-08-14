@@ -821,33 +821,41 @@ AC_SUBST(LEMON)
 AM_CONDITIONAL([WITH_LEMON], [test "$lemon_available" = "yes"])
 
 # libedit
-AC_ARG_ENABLE(libedit,
-  [AS_HELP_STRING([--disable-libedit],
-    [use libedit for console. [default=auto-detect]])],
-  [enable_libedit="$enableval"],
-  [enable_libedit="auto"])
-if test "x$enable_libedit" != "xno"; then
-  m4_ifdef([PKG_CHECK_MODULES], [
-    PKG_CHECK_MODULES([LIBEDIT], [libedit >= 3.0],
-      [LIBS_SAVE="$LIBS"
-       LDFLAGS_SAVE="$LDFLAGS"
-       LDFLAGS="$LIBEDIT_LIBS $LDFLAGS"
-       AC_SEARCH_LIBS(el_wline, edit,
-                      [libedit_available=yes],
-                      [libedit_available=no])
-       LIBS="$LIBS_SAVE"
-       LDFLAGS="$LDFLAGS_SAVE"],
-      [libedit_available=no])
-    ],
-    [libedit_available=no])
-  if test "x$libedit_available" = "xyes"; then
-    AC_DEFINE(GRN_WITH_LIBEDIT, [1], [Use libedit with multibyte support.])
+libedit_available="no"
+AC_ARG_WITH([libedit],
+            AS_HELP_STRING([--with-libedit=PATH],
+                           [libedit path (default: auto)]),
+            [LIBEDIT="$withval"],
+            [: ${LIBEDIT:=auto}])
+
+if test "$LIBEDIT" = "no"; then
+  LIBEDIT=
+  AC_MSG_WARN([libedit is disabled. CLI does not support line editing.])
+else
+  if test "$LIBEDIT" = "auto"; then
+    AC_CHECK_LIB(edit, el_init,
+                 [LIBEDIT="yes"],
+                 [LIBEDIT="none"])
+    if test "$LIBEDIT" != "none"; then
+      libedit_available="yes"
+      LIBEDIT_LIBS="-ledit"
+    fi
   else
-    if test "x$enable_editline" = "xyes"; then
+    AC_CHECK_LIB(edit, el_init,
+                 [LIBEDIT="yes"],
+                 [LIBEDIT="none"])
+    if test "$LIBEDIT" = "none"; then
       AC_MSG_ERROR("No libedit found")
+    else
+      libedit_available="yes"
+      LIBEDIT_LIBS="-ledit"
     fi
   fi
 fi
+if test "$libedit_available" = "yes"; then
+  AC_DEFINE(GRN_WITH_LIBEDIT, 1, [Define to 1 if libedit works])
+fi
+AC_SUBST(LIBEDIT_LIBS)
 
 # zlib
 AC_ARG_WITH(zlib,
@@ -1842,6 +1850,11 @@ echo "  MessagePack:           $message_pack_available"
 if test "x$message_pack_available" = "xyes"; then
   echo "    CFLAGS:              ${MESSAGE_PACK_CFLAGS}"
   echo "    LIBS:                ${MESSAGE_PACK_LIBS}"
+fi
+echo "  libedit:               $libedit_available"
+if test "x$libedit_available" = "xyes"; then
+  echo "    CFLAGS:              ${LIBEDIT_CFLAGS}"
+  echo "    LIBS:                ${LIBEDIT_LIBS}"
 fi
 echo "  LZ4:                   $GRN_WITH_LZ4"
 if test "x$GRN_WITH_LZ4" = "xyes"; then
