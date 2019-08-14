@@ -14388,7 +14388,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx, grn_ii_builder *builder,
     if (!value) {
       break;
     }
-    if (builder->chunk.offset == builder->chunk.size) {
+    if (chunk->offset == chunk->size) {
       rc = grn_ii_builder_chunk_extend_bufs(ctx, chunk, ii_flags);
       if (rc != GRN_SUCCESS) {
         return rc;
