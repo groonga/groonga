@@ -12890,7 +12890,8 @@ static grn_rc
 grn_ii_builder_chunk_extend_bufs(grn_ctx *ctx, grn_ii_builder_chunk *chunk,
                                  uint32_t ii_flags)
 {
-  uint32_t *buf, size = chunk->size ? chunk->size * 2 : 1;
+  uint32_t *buf;
+  uint32_t size = chunk->size ? chunk->size * 2 : 1;
   size_t n_bytes = size * sizeof(uint32_t);
 
   buf = (uint32_t *)GRN_REALLOC(chunk->rid_buf, n_bytes);
