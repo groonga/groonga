@@ -43,6 +43,13 @@ msgid "Fixes"
 msgstr "修正"
 
 msgid ""
+"Fixed a bug that search result is empty when the result of ``select`` "
+"command is huge. [groonga-dev,04770][Reported by Yutaro Shimamura]"
+msgstr ""
+"``select`` コマンドの結果が巨大な時、検索結果が空になる問題を修正しました。"
+"[groonga-dev,04770][Yutaro Shimamuraさんの報告]"
+
+msgid ""
 "Fix a bug that doesn't use a suitable index when prefix search and suffix "
 "search. [GitHub#1007, PGroonga#GitHub#96][Reported by oknj]"
 msgstr ""
@@ -54,6 +61,9 @@ msgstr "感謝"
 
 msgid "oknj"
 msgstr "oknjさん"
+
+msgid "Yutaro Shimamura"
+msgstr "Yutaro Shimamuraさん"
 
 msgid "Release 9.0.6 - 2019-08-05"
 msgstr "9.0.6リリース - 2019-08-05"
@@ -1548,9 +1558,6 @@ msgstr "quitを使わずにクライアントプロセスを中断した時に�
 
 msgid "Masatoshi SEKI"
 msgstr "Masatoshi SEKIさん"
-
-msgid "Yutaro Shimamura"
-msgstr "Yutaro Shimamuraさん"
 
 msgid "Release 8.0.7 - 2018-09-29"
 msgstr "8.0.7リリース - 2018-09-29"

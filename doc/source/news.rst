@@ -19,12 +19,16 @@ Improvements
 Fixes
 ^^^^^
 
+* Fixed a bug that search result is empty when the result of ``select`` command is huge. [groonga-dev,04770][Reported by Yutaro Shimamura]
+
 * Fix a bug that doesn't use a suitable index when prefix search and suffix search. [GitHub#1007, PGroonga#GitHub#96][Reported by oknj]
 
 Thanks
 ^^^^^^
 
 * oknj
+
+* Yutaro Shimamura
 
 .. _release-9-0-6:
 
