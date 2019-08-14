@@ -1927,45 +1927,60 @@ exit:
 int grn_bulk_margin_size = 0;
 
 grn_rc
-grn_bulk_resize(grn_ctx *ctx, grn_obj *buf, unsigned int newsize)
+grn_bulk_resize(grn_ctx *ctx, grn_obj *buf, size_t new_size)
 {
-  char *head;
-  unsigned int rounded_newsize;
-  newsize += grn_bulk_margin_size + 1;
+  new_size += grn_bulk_margin_size + 1;
+  if (!GRN_BULK_OUTP(buf) && new_size <= GRN_BULK_BUFSIZE) {
+    return GRN_SUCCESS;
+  }
+
+  {
+    size_t rounded_new_size;
+    rounded_new_size = (new_size + (UNIT_MASK)) & ~UNIT_MASK;
+    if (rounded_new_size < new_size) {
+      size_t current_size = GRN_BULK_VSIZE(buf);
+      grn_rc rc = GRN_NOT_ENOUGH_SPACE;
+      ERR(rc,
+          "[bulk][resize] too large size: "
+          "<%" GRN_FMT_SIZE "> -> <%" GRN_FMT_SIZE ">(<%" GRN_FMT_SIZE ">)",
+          current_size,
+          new_size,
+          rounded_new_size);
+      return rc;
+    }
+    new_size = rounded_new_size;
+  }
+
   if (GRN_BULK_OUTP(buf)) {
-    rounded_newsize = (newsize + (UNIT_MASK)) & ~UNIT_MASK;
-    if (rounded_newsize < newsize) { return GRN_NOT_ENOUGH_SPACE; }
-    newsize = rounded_newsize;
-    head = buf->u.b.head - (buf->u.b.head ? grn_bulk_margin_size : 0);
-    if (!(head = GRN_REALLOC(head, newsize))) { return GRN_NO_MEMORY_AVAILABLE; }
+    char *head = buf->u.b.head - (buf->u.b.head ? grn_bulk_margin_size : 0);
+    if (!(head = GRN_REALLOC(head, new_size))) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
     buf->u.b.curr = head + grn_bulk_margin_size + GRN_BULK_VSIZE(buf);
     buf->u.b.head = head + grn_bulk_margin_size;
-    buf->u.b.tail = head + newsize;
+    buf->u.b.tail = head + new_size;
   } else {
-    if (newsize > GRN_BULK_BUFSIZE) {
-      rounded_newsize = (newsize + (UNIT_MASK)) & ~UNIT_MASK;
-      if (rounded_newsize < newsize) { return GRN_NOT_ENOUGH_SPACE; }
-      newsize = rounded_newsize;
-      if (!(head = GRN_MALLOC(newsize))) { return GRN_NO_MEMORY_AVAILABLE; }
-      grn_memcpy(head, GRN_BULK_HEAD(buf), GRN_BULK_VSIZE(buf));
-      buf->u.b.curr = head + grn_bulk_margin_size + GRN_BULK_VSIZE(buf);
-      buf->u.b.head = head + grn_bulk_margin_size;
-      buf->u.b.tail = head + newsize;
-      buf->header.impl_flags |= GRN_OBJ_OUTPLACE;
-    }
+    char *head;
+    if (!(head = GRN_MALLOC(new_size))) { return GRN_NO_MEMORY_AVAILABLE; }
+    grn_memcpy(head, GRN_BULK_HEAD(buf), GRN_BULK_VSIZE(buf));
+    buf->u.b.curr = head + grn_bulk_margin_size + GRN_BULK_VSIZE(buf);
+    buf->u.b.head = head + grn_bulk_margin_size;
+    buf->u.b.tail = head + new_size;
+    buf->header.impl_flags |= GRN_OBJ_OUTPLACE;
   }
+
   return GRN_SUCCESS;
 }
 
 grn_rc
-grn_bulk_reinit(grn_ctx *ctx, grn_obj *buf, unsigned int size)
+grn_bulk_reinit(grn_ctx *ctx, grn_obj *buf, size_t size)
 {
   GRN_BULK_REWIND(buf);
   return grn_bulk_resize(ctx, buf, size);
 }
 
-static unsigned int
-grn_bulk_compute_new_size(grn_ctx *ctx, grn_obj *buf, unsigned int new_size)
+static size_t
+grn_bulk_compute_new_size(grn_ctx *ctx, grn_obj *buf, size_t new_size)
 {
   if ((GRN_BULK_OUTP(buf) ||
        (new_size + grn_bulk_margin_size + 1) > GRN_BULK_BUFSIZE) &&
@@ -1976,12 +1991,12 @@ grn_bulk_compute_new_size(grn_ctx *ctx, grn_obj *buf, unsigned int new_size)
 }
 
 grn_rc
-grn_bulk_write(grn_ctx *ctx, grn_obj *buf, const char *str, unsigned int len)
+grn_bulk_write(grn_ctx *ctx, grn_obj *buf, const char *str, size_t len)
 {
   grn_rc rc = GRN_SUCCESS;
   char *curr;
   if (GRN_BULK_REST(buf) < len) {
-    unsigned int new_size;
+    size_t new_size;
     new_size = grn_bulk_compute_new_size(ctx, buf, GRN_BULK_VSIZE(buf) + len);
     if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
   }
@@ -1993,7 +2008,7 @@ grn_bulk_write(grn_ctx *ctx, grn_obj *buf, const char *str, unsigned int len)
 
 grn_rc
 grn_bulk_write_from(grn_ctx *ctx, grn_obj *bulk,
-                    const char *str, unsigned int from, unsigned int len)
+                    const char *str, size_t from, size_t len)
 {
   grn_rc rc = grn_bulk_truncate(ctx, bulk, from);
   if (!rc) { rc = grn_bulk_write(ctx, bulk, str, len); }
@@ -2001,11 +2016,11 @@ grn_bulk_write_from(grn_ctx *ctx, grn_obj *bulk,
 }
 
 grn_rc
-grn_bulk_reserve(grn_ctx *ctx, grn_obj *buf, unsigned int len)
+grn_bulk_reserve(grn_ctx *ctx, grn_obj *buf, size_t len)
 {
   grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < len) {
-    unsigned int new_size;
+    size_t new_size;
     new_size = grn_bulk_compute_new_size(ctx, buf, GRN_BULK_VSIZE(buf) + len);
     if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
   }
@@ -2013,7 +2028,7 @@ grn_bulk_reserve(grn_ctx *ctx, grn_obj *buf, unsigned int len)
 }
 
 grn_rc
-grn_bulk_space(grn_ctx *ctx, grn_obj *buf, unsigned int len)
+grn_bulk_space(grn_ctx *ctx, grn_obj *buf, size_t len)
 {
   grn_rc rc = grn_bulk_reserve(ctx, buf, len);
   if (!rc) {
@@ -2023,7 +2038,7 @@ grn_bulk_space(grn_ctx *ctx, grn_obj *buf, unsigned int len)
 }
 
 static grn_rc
-grn_bulk_space_clear(grn_ctx *ctx, grn_obj *buf, unsigned int len)
+grn_bulk_space_clear(grn_ctx *ctx, grn_obj *buf, size_t len)
 {
   grn_rc rc = grn_bulk_reserve(ctx, buf, len);
   if (!rc) {
@@ -2034,7 +2049,7 @@ grn_bulk_space_clear(grn_ctx *ctx, grn_obj *buf, unsigned int len)
 }
 
 grn_rc
-grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, unsigned int len)
+grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, size_t len)
 {
   if (GRN_BULK_OUTP(bulk)) {
     if ((bulk->u.b.tail - bulk->u.b.head) < len) {
@@ -2075,7 +2090,7 @@ grn_text_itoa(grn_ctx *ctx, grn_obj *buf, int i)
 }
 
 grn_rc
-grn_text_itoa_padded(grn_ctx *ctx, grn_obj *buf, int i, char ch, unsigned int len)
+grn_text_itoa_padded(grn_ctx *ctx, grn_obj *buf, int i, char ch, size_t len)
 {
   grn_rc rc = GRN_SUCCESS;
   char *curr;
@@ -2198,11 +2213,11 @@ grn_text_ftoa(grn_ctx *ctx, grn_obj *buf, double d)
 }
 
 grn_rc
-grn_text_itoh(grn_ctx *ctx, grn_obj *buf, unsigned int i, unsigned int len)
+grn_text_itoh(grn_ctx *ctx, grn_obj *buf, unsigned int i, size_t len)
 {
   grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < len) {
-    unsigned int new_size;
+    size_t new_size;
     new_size = grn_bulk_compute_new_size(ctx,
                                          buf,
                                          GRN_BULK_VSIZE(buf) + len);
@@ -2248,7 +2263,7 @@ grn_text_lltob32h(grn_ctx *ctx, grn_obj *buf, long long int i)
 }
 
 grn_rc
-grn_text_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
+grn_text_esc(grn_ctx *ctx, grn_obj *buf, const char *s, size_t len)
 {
   const char *e;
   unsigned int l;
@@ -2332,7 +2347,7 @@ grn_text_esc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
 }
 
 grn_rc
-grn_text_escape_xml(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
+grn_text_escape_xml(grn_ctx *ctx, grn_obj *buf, const char *s, size_t len)
 {
   const char *e;
   unsigned int l;
@@ -2482,9 +2497,9 @@ grn_text_benc(grn_ctx *ctx, grn_obj *buf, unsigned int v)
 {
   grn_rc rc = GRN_SUCCESS;
   uint8_t *p;
-  unsigned int required_size = 5;
+  size_t required_size = 5;
   if (GRN_BULK_REST(buf) < required_size) {
-    unsigned int new_size;
+    size_t new_size;
     new_size = grn_bulk_compute_new_size(ctx,
                                          buf,
                                          GRN_BULK_VSIZE(buf) + required_size);
@@ -2509,7 +2524,7 @@ static const int_least8_t urlenc_tbl[] = {
 };
 
 grn_rc
-grn_text_urlenc(grn_ctx *ctx, grn_obj *buf, const char *s, unsigned int len)
+grn_text_urlenc(grn_ctx *ctx, grn_obj *buf, const char *s, size_t len)
 {
   const char *e, c = '%';
   for (e = s + len; s < e; s++) {

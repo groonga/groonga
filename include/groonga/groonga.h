@@ -1235,34 +1235,35 @@ GRN_API off_t grn_default_query_logger_get_rotate_threshold_size(void);
    ? ((bulk)->u.b.tail)\
    : (char *)&((bulk)[1]))
 
-GRN_API grn_rc grn_bulk_reinit(grn_ctx *ctx, grn_obj *bulk, unsigned int size);
-GRN_API grn_rc grn_bulk_resize(grn_ctx *ctx, grn_obj *bulk, unsigned int newsize);
+GRN_API grn_rc grn_bulk_reinit(grn_ctx *ctx, grn_obj *bulk, size_t size);
+GRN_API grn_rc grn_bulk_resize(grn_ctx *ctx, grn_obj *bulk, size_t new_size);
 GRN_API grn_rc grn_bulk_write(grn_ctx *ctx, grn_obj *bulk,
-                              const char *str, unsigned int len);
+                              const char *str, size_t len);
 GRN_API grn_rc grn_bulk_write_from(grn_ctx *ctx, grn_obj *bulk,
-                                   const char *str, unsigned int from, unsigned int len);
-GRN_API grn_rc grn_bulk_reserve(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
-GRN_API grn_rc grn_bulk_space(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
-GRN_API grn_rc grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, unsigned int len);
+                                   const char *str, size_t from,
+                                   size_t len);
+GRN_API grn_rc grn_bulk_reserve(grn_ctx *ctx, grn_obj *bulk, size_t len);
+GRN_API grn_rc grn_bulk_space(grn_ctx *ctx, grn_obj *bulk, size_t len);
+GRN_API grn_rc grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, size_t len);
 GRN_API grn_rc grn_bulk_fin(grn_ctx *ctx, grn_obj *bulk);
 
 /* grn_text */
 
 GRN_API grn_rc grn_text_itoa(grn_ctx *ctx, grn_obj *bulk, int i);
-GRN_API grn_rc grn_text_itoa_padded(grn_ctx *ctx, grn_obj *bulk, int i, char ch, unsigned int len);
+GRN_API grn_rc grn_text_itoa_padded(grn_ctx *ctx, grn_obj *bulk, int i, char ch, size_t len);
 GRN_API grn_rc grn_text_lltoa(grn_ctx *ctx, grn_obj *bulk, long long int i);
 GRN_API grn_rc grn_text_ftoa(grn_ctx *ctx, grn_obj *bulk, double d);
-GRN_API grn_rc grn_text_itoh(grn_ctx *ctx, grn_obj *bulk, unsigned int i, unsigned int len);
+GRN_API grn_rc grn_text_itoh(grn_ctx *ctx, grn_obj *bulk, unsigned int i, size_t len);
 GRN_API grn_rc grn_text_itob(grn_ctx *ctx, grn_obj *bulk, grn_id id);
 GRN_API grn_rc grn_text_lltob32h(grn_ctx *ctx, grn_obj *bulk, long long int i);
 GRN_API grn_rc grn_text_benc(grn_ctx *ctx, grn_obj *bulk, unsigned int v);
-GRN_API grn_rc grn_text_esc(grn_ctx *ctx, grn_obj *bulk, const char *s, unsigned int len);
+GRN_API grn_rc grn_text_esc(grn_ctx *ctx, grn_obj *bulk, const char *s, size_t len);
 GRN_API grn_rc grn_text_urlenc(grn_ctx *ctx, grn_obj *buf,
-                               const char *str, unsigned int len);
+                               const char *str, size_t len);
 GRN_API const char *grn_text_urldec(grn_ctx *ctx, grn_obj *buf,
                                     const char *s, const char *e, char d);
 GRN_API grn_rc grn_text_escape_xml(grn_ctx *ctx, grn_obj *buf,
-                                   const char *s, unsigned int len);
+                                   const char *s, size_t len);
 GRN_API grn_rc grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec);
 GRN_API grn_rc grn_text_printf(grn_ctx *ctx, grn_obj *bulk,
                                const char *format, ...) GRN_ATTRIBUTE_PRINTF(3);
