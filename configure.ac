@@ -823,8 +823,8 @@ AM_CONDITIONAL([WITH_LEMON], [test "$lemon_available" = "yes"])
 # libedit
 libedit_available="no"
 AC_ARG_WITH([libedit],
-            AS_HELP_STRING([--with-libedit=PATH],
-                           [libedit path (default: auto)]),
+            AS_HELP_STRING([--with-libedit],
+                           [Support line editing (default: auto)]),
             [LIBEDIT="$withval"],
             [: ${LIBEDIT:=auto}])
 
