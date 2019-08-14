@@ -2109,14 +2109,15 @@ grn_text_lltoa(grn_ctx *ctx, grn_obj *buf, long long int i)
   for (;;) {
     char *curr = GRN_BULK_CURR(buf);
     char *tail = GRN_BULK_TAIL(buf);
-    if (grn_lltoa(i, curr, tail, &curr)) {
+    char *end;
+    if (grn_lltoa(i, curr, tail, &end)) {
       size_t new_size;
       new_size = grn_bulk_compute_new_size(ctx,
                                            buf,
                                            GRN_BULK_WSIZE(buf) + UNIT_SIZE);
       if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
     } else {
-      GRN_BULK_SET_CURR(buf, curr);
+      GRN_BULK_SET_CURR(buf, end);
       break;
     }
   }
@@ -2130,14 +2131,15 @@ grn_text_ulltoa(grn_ctx *ctx, grn_obj *buf, unsigned long long int i)
   for (;;) {
     char *curr = GRN_BULK_CURR(buf);
     char *tail = GRN_BULK_TAIL(buf);
-    if (grn_ulltoa(i, curr, tail, &curr)) {
+    char *end;
+    if (grn_ulltoa(i, curr, tail, &end)) {
       unsigned int new_size;
       new_size = grn_bulk_compute_new_size(ctx,
                                            buf,
                                            GRN_BULK_WSIZE(buf) + UNIT_SIZE);
       if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
     } else {
-      GRN_BULK_SET_CURR(buf, curr);
+      GRN_BULK_SET_CURR(buf, end);
       break;
     }
   }
