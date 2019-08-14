@@ -2795,6 +2795,9 @@ grn_output_envelope(grn_ctx *ctx,
         grn_obj transformed;
         GRN_TEXT_INIT(&transformed, 0);
         transform_xml(ctx, body, &transformed);
+        if (body->header.impl_flags & GRN_OBJ_REFER) {
+          body->header.impl_flags &= ~GRN_OBJ_DO_SHALLOW_COPY;
+        }
         GRN_TEXT_SET(ctx, body,
                      GRN_TEXT_VALUE(&transformed), GRN_TEXT_LEN(&transformed));
         GRN_OBJ_FIN(ctx, &transformed);
