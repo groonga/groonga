@@ -825,44 +825,53 @@ libedit_available="no"
 AC_ARG_WITH([libedit],
             AS_HELP_STRING([--with-libedit],
                            [Support line editing (default: auto)]),
-            [LIBEDIT="$withval"],
-            [: ${LIBEDIT:=auto}])
+            [with_libedit="$withval"],
+            [: ${with_libedit:=auto}])
 
-if test "$LIBEDIT" = "no"; then
-  LIBEDIT=
+if test "${with_libedit}" = "no"; then
+  LIBEDIT_CFLAGS=
+  LIBEDIT_LIBS=
 else
-  m4_ifdef([PKG_CHECK_MODULES], [
-    PKG_CHECK_MODULES([LIBEDIT],
-                      [libedit],
-                      [libedit_available=yes],
-                      [])
-  ],
-  [])
-  if test "$libedit_available" != "yes"; then
-    LIBEDIT_CFLAGS=""
-    LIBEDIT_LDFLAGS=""
-    if test "$LIBEDIT" != "auto" -a "$LIBEDIT" != "yes"; then
-      LIBEDIT_CFLAGS="-I${LIBEDIT}/include"
-      LIBEDIT_LDFLAGS="-L${LIBEDIT}/lib"
-      CFLAGS="${CFLAGS} ${LIBEDIT_CFLAGS}"
-      LDFLAGS="${LDFLAGS} ${LIBEDIT_LDFLAGS}"
-    fi
-    AC_CHECK_LIB(edit, el_init,[
-      AC_CHECK_HEADER("histedit.h",
-        [libedit_available="yes"; LIBEDIT_LIBS="-ledit ${LIBEDIT_LDFLAGS}"],
-        [])
-    ],[])
-    if test "$libedit_available" != "yes" -a "$LIBEDIT" != "auto"; then
+  if test "${with_libedit}" = "yes" -o "${with_libedit}" = "auto"; then
+    LIBEDIT_CFLAGS=
+    LIBEDIT_LIBS=
+    m4_ifdef([PKG_CHECK_MODULES], [
+      PKG_CHECK_MODULES([LIBEDIT],
+			[libedit >= 3.0],
+			[],
+			[LIBEDIT_LIBS="-ledit"])
+    ])
+  else
+    LIBEDIT_CFLAGS="-I${with_libedit}/include"
+    LIBEDIT_LIBS="-L${with_libedit}/lib -ledit"
+  fi
+  CFLAGS_SAVE="${CFLAGS}"
+  LDFLAGS_SAVE="${LDFLAGS}"
+  CFLAGS="${LIBEDIT_CFLAGS} ${CFLAGS}"
+  LDFLAGS="${LIBEDIT_LIBS} ${LDFLAGS}"
+  AC_SEARCH_LIBS(el_wline,
+                 ,
+                 [libedit_available="yes"],
+                 [libedit_available="no"])
+  if test "${libedit_available}" = "yes"; then
+    AC_CHECK_HEADERS(histedit.h,
+                     [],
+                     [libedit_available="no"])
+  fi
+  CFLAGS="${CFLAGS_SAVE}"
+  LDFLAGS="${LDFLAGS_SAVE}"
+  if test "${libedit_available}" = "yes"; then
+    AC_DEFINE(GRN_WITH_LIBEDIT, 1, [Define to 1 if libedit works])
+  else
+    LIBEDIT_CFLAGS=
+    LIBEDIT_LIBS=
+    if test "${with_libedit}" != "auto"; then
       AC_MSG_ERROR("No libedit found")
     fi
   fi
-  if test "$libedit_available" = "yes"; then
-    AC_DEFINE(GRN_WITH_LIBEDIT, 1, [Define to 1 if libedit works])
-    AC_SUBST(LIBEDIT_CFLAGS)
-    AC_SUBST(LIBEDIT_LIBS)
-  fi
 fi
-
+AC_SUBST(LIBEDIT_CFLAGS)
+AC_SUBST(LIBEDIT_LIBS)
 
 # zlib
 AC_ARG_WITH(zlib,
