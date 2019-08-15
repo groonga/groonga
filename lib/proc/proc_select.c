@@ -3107,6 +3107,7 @@ grn_select_output_slices(grn_ctx *ctx,
                         limit,
                         (int)(slice->sort_keys.length),
                         slice->sort_keys.value);
+          offset = 0;
           slice->tables.output = slice->tables.sorted;
         } else {
           succeeded = false;

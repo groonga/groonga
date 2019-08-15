@@ -1,0 +1,86 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos date COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "date": "2016-05-19 12:00:00", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "date": "2016-05-19 12:00:01", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "date": "2016-05-19 12:00:02", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "date": "2016-05-19 12:00:03", "tag": "Rroonga"}
+]
+[[0,0.0,0.0],4]
+select Memos   --limit 0   --slices[all].filter 'true'   --slices[all].offset 1   --slices[all].limit 2   --slices[all].sort_keys _id
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "date",
+          "Time"
+        ],
+        [
+          "tag",
+          "Tags"
+        ]
+      ]
+    ],
+    {
+      "all": [
+        [
+          4
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "date",
+            "Time"
+          ],
+          [
+            "tag",
+            "Tags"
+          ]
+        ],
+        [
+          2,
+          "Mroonga is fast!",
+          1463626801.0,
+          "Mroonga"
+        ],
+        [
+          3,
+          "Groonga sticker!",
+          1463626802.0,
+          "Groonga"
+        ]
+      ]
+    }
+  ]
+]
