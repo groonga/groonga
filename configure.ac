@@ -830,32 +830,39 @@ AC_ARG_WITH([libedit],
 
 if test "$LIBEDIT" = "no"; then
   LIBEDIT=
-  AC_MSG_WARN([libedit is disabled. CLI does not support line editing.])
 else
-  if test "$LIBEDIT" = "auto"; then
-    AC_CHECK_LIB(edit, el_init,
-                 [LIBEDIT="yes"],
-                 [LIBEDIT="none"])
-    if test "$LIBEDIT" != "none"; then
-      libedit_available="yes"
-      LIBEDIT_LIBS="-ledit"
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([LIBEDIT],
+                      [libedit],
+                      [libedit_available=yes],
+                      [])
+  ],
+  [])
+  if test "$libedit_available" != "yes"; then
+    LIBEDIT_CFLAGS=""
+    LIBEDIT_LDFLAGS=""
+    if test "$LIBEDIT" != "auto" -a "$LIBEDIT" != "yes"; then
+      LIBEDIT_CFLAGS="-I${LIBEDIT}/include"
+      LIBEDIT_LDFLAGS="-L${LIBEDIT}/lib"
+      CFLAGS="${CFLAGS} ${LIBEDIT_CFLAGS}"
+      LDFLAGS="${LDFLAGS} ${LIBEDIT_LDFLAGS}"
     fi
-  else
-    AC_CHECK_LIB(edit, el_init,
-                 [LIBEDIT="yes"],
-                 [LIBEDIT="none"])
-    if test "$LIBEDIT" = "none"; then
+    AC_CHECK_LIB(edit, el_init,[
+      AC_CHECK_HEADER("histedit.h",
+        [libedit_available="yes"; LIBEDIT_LIBS="-ledit ${LIBEDIT_LDFLAGS}"],
+        [])
+    ],[])
+    if test "$libedit_available" != "yes" -a "$LIBEDIT" != "auto"; then
       AC_MSG_ERROR("No libedit found")
-    else
-      libedit_available="yes"
-      LIBEDIT_LIBS="-ledit"
     fi
   fi
+  if test "$libedit_available" = "yes"; then
+    AC_DEFINE(GRN_WITH_LIBEDIT, 1, [Define to 1 if libedit works])
+    AC_SUBST(LIBEDIT_CFLAGS)
+    AC_SUBST(LIBEDIT_LIBS)
+  fi
 fi
-if test "$libedit_available" = "yes"; then
-  AC_DEFINE(GRN_WITH_LIBEDIT, 1, [Define to 1 if libedit works])
-fi
-AC_SUBST(LIBEDIT_LIBS)
+
 
 # zlib
 AC_ARG_WITH(zlib,
