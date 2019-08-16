@@ -19,6 +19,11 @@ Improvements
 Fixes
 ^^^^^
 
+* Fixed a bug that the configure phase didn't detect libedit despite installing it. [GitHub#1030][Patched by yu]
+
+* Fixed a bug that ``--offset`` and ``--limit`` options didn't work
+  with ``--sort_keys`` and ``--slices`` options. [clear-code/redmine_full_text_search#70][Reported by a9zawa]
+
 * Fixed a bug that search result is empty when the result of ``select`` command is huge. [groonga-dev,04770][Reported by Yutaro Shimamura]
 
 * Fixed a bug that doesn't use a suitable index when prefix search and suffix search. [GitHub#1007, PGroonga#GitHub#96][Reported by oknj]
@@ -29,6 +34,8 @@ Thanks
 * oknj
 
 * Yutaro Shimamura
+
+* yu
 
 .. _release-9-0-6:
 
