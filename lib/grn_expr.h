@@ -140,6 +140,13 @@ grn_rc grn_expr_module_list_get_arguments(grn_ctx *ctx,
                                           unsigned int i,
                                           grn_obj *arguments);
 
+grn_rc
+grn_table_select_sequential(grn_ctx *ctx,
+                            grn_obj *table,
+                            grn_obj *expr,
+                            grn_obj *res,
+                            grn_operator op);
+
 #ifdef __cplusplus
 }
 #endif

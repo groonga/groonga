@@ -1,0 +1,28 @@
+table_create Items TABLE_NO_KEY
+column_create Items name COLUMN_SCALAR ShortText
+column_create Items price COLUMN_SCALAR UInt32
+
+load --table Items
+[
+{"name": "Book",       "price": 1000},
+{"name": "Note",       "price": 1000},
+{"name": "Box",        "price":  520},
+{"name": "Pen",        "price":  510},
+{"name": "Small Book", "price":  500},
+{"name": "Drink",      "price":  300}
+]
+
+log_level --level info
+#@add-important-log-levels info
+#@collect-query-log true
+select Items \
+  --columns[content].stage initial \
+  --columns[content].type ShortText \
+  --columns[content].flags COLUMN_SCALAR \
+  --columns[content].value 'highlight_html(name)' \
+  --match_columns name \
+  --output_columns content \
+  --query "Book"
+#@collect-query-log false
+#@remove-important-log-levels info
+log_level --level notice

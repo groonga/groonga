@@ -3834,13 +3834,13 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
   }
 
   {
-    grn_obj *index;
+    grn_obj *search_target;
     grn_operator index_op = GRN_OP_MATCH;
     if (optarg && optarg->mode != GRN_OP_EXACT) {
       index_op = optarg->mode;
     }
     if (index_op == GRN_OP_EQUAL && grn_obj_is_table(ctx, last_obj)) {
-      index = last_obj;
+      search_target = last_obj;
       switch (last_action) {
       case GRN_ACCESSOR_GET_ID :
       case GRN_ACCESSOR_GET_KEY :
@@ -3850,24 +3850,30 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         goto exit;
         break;
       }
-    } else if (grn_column_index(ctx, last_obj, index_op, &index, 1, NULL) == 0) {
-      rc = GRN_INVALID_ARGUMENT;
-      goto exit;
+    } else if (grn_column_index(ctx,
+                                last_obj,
+                                index_op,
+                                &search_target,
+                                1,
+                                NULL) == 0) {
+      search_target = last_obj;
     }
 
     if (n_accessors == 1) {
       if (last_action == GRN_ACCESSOR_GET_ID) {
-        rc = grn_obj_search_table_id(ctx, index, query, res, op, optarg);
+        rc = grn_obj_search_table_id(ctx, search_target, query, res, op, optarg);
       } else {
-        rc = grn_obj_search(ctx, index, query, res, op, optarg);
+        rc = grn_obj_search(ctx, search_target, query, res, op, optarg);
       }
     } else {
       grn_obj *base_res;
       grn_obj *range;
-      if (grn_obj_is_table(ctx, index)) {
-        range = index;
+      if (grn_obj_is_table(ctx, search_target)) {
+        range = search_target;
+      } else if (grn_obj_is_index_column(ctx, search_target)) {
+        range = grn_ctx_at(ctx, DB_OBJ(search_target)->range);
       } else {
-        range = grn_ctx_at(ctx, DB_OBJ(index)->range);
+        range = grn_ctx_at(ctx, search_target->header.domain);
       }
       base_res = grn_table_create(ctx, NULL, 0, NULL,
                                   GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
@@ -3882,13 +3888,18 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       }
       if (last_action == GRN_ACCESSOR_GET_ID) {
         rc = grn_obj_search_table_id(ctx,
-                                     index,
+                                     search_target,
                                      query,
                                      base_res,
                                      GRN_OP_OR,
                                      optarg);
       } else {
-        rc = grn_obj_search(ctx, index, query, base_res, GRN_OP_OR, optarg);
+        rc = grn_obj_search(ctx,
+                            search_target,
+                            query,
+                            base_res,
+                            GRN_OP_OR,
+                            optarg);
       }
       if (rc != GRN_SUCCESS) {
         grn_obj_unlink(ctx, base_res);
@@ -4042,6 +4053,41 @@ grn_obj_search_column_index(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
   return rc;
 }
 
+static grn_rc
+grn_obj_search_column_data(grn_ctx *ctx,
+                           grn_obj *obj,
+                           grn_obj *query,
+                           grn_obj *res,
+                           grn_operator op,
+                           grn_search_optarg *optarg)
+{
+  grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
+  grn_obj *expr = NULL;
+  grn_obj *variable;
+  GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expr, variable);
+  if (!expr) {
+    goto exit;
+  }
+  grn_expr_append_obj(ctx, expr, obj, GRN_OP_GET_VALUE, 1);
+  grn_expr_append_const(ctx, expr, query, GRN_OP_PUSH, 1);
+  {
+    grn_operator search_op = GRN_OP_MATCH;
+    if (optarg && optarg->mode != GRN_OP_EXACT) {
+      search_op = optarg->mode;
+    }
+    grn_expr_append_op(ctx, expr, search_op, 2);
+  }
+
+  grn_table_select_sequential(ctx, table, expr, res, op);
+
+exit :
+  if (expr) {
+    grn_obj_close(ctx, expr);
+  }
+
+  return ctx->rc;
+}
+
 grn_rc
 grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
                grn_obj *res, grn_operator op, grn_search_optarg *optarg)
@@ -4120,6 +4166,10 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       break;
     case GRN_COLUMN_INDEX :
       rc = grn_obj_search_column_index(ctx, obj, query, res, op, optarg);
+      break;
+    case GRN_COLUMN_FIX_SIZE :
+    case GRN_COLUMN_VAR_SIZE :
+      rc = grn_obj_search_column_data(ctx, obj, query, res, op, optarg);
       break;
     }
   }

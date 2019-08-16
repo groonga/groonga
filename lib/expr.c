@@ -3517,9 +3517,12 @@ typedef struct {
   grn_bool is_first_unskipped_scan_info;
 } grn_table_select_data;
 
-static void
-grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
-                            grn_obj *v, grn_obj *res, grn_operator op)
+grn_rc
+grn_table_select_sequential(grn_ctx *ctx,
+                            grn_obj *table,
+                            grn_obj *expr,
+                            grn_obj *res,
+                            grn_operator op)
 {
   grn_obj *result;
   grn_obj score_buffer;
@@ -3532,7 +3535,7 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
 
   grn_expr_executor_init(ctx, &executor, expr);
   if (ctx->rc != GRN_SUCCESS) {
-    return;
+    return ctx->rc;
   }
   GRN_INT32_INIT(&score_buffer, 0);
   switch (op) {
@@ -3613,6 +3616,8 @@ grn_table_select_sequential(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   }
   GRN_OBJ_FIN(ctx, &score_buffer);
   grn_expr_executor_fin(ctx, &executor);
+
+  return ctx->rc;
 }
 
 static grn_inline void
@@ -5013,8 +5018,11 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
             if (ctx->rc) { break; }
             e->codes = codes + si->start;
             e->codes_curr = si->end - si->start + 1;
-            grn_table_select_sequential(ctx, table, (grn_obj *)e, v,
-                                        data.res, si->logical_op);
+            grn_table_select_sequential(ctx,
+                                        table,
+                                        (grn_obj *)e,
+                                        data.res,
+                                        si->logical_op);
             e->codes = codes;
             e->codes_curr = codes_curr;
             data.min_id = GRN_ID_NIL;
@@ -5058,7 +5066,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       grn_scanner_close(ctx, scanner);
     } else {
       if (!ctx->rc) {
-        grn_table_select_sequential(ctx, table, expr, v, res, op);
+        grn_table_select_sequential(ctx, table, expr, res, op);
         if (ctx->rc) {
           if (res_created) {
             grn_obj_close(ctx, res);

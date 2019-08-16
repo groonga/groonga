@@ -1,0 +1,50 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Logs_20170315 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170315 item COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Logs_20170316 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170316 item COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20170316 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "item": "Book", "price": 1000},
+{"timestamp": "2017/03/15 01:00:00", "item": "Pencil", "price": 100}
+]
+[[0,0.0,0.0],2]
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "item": "Note", "price": 520},
+{"timestamp": "2017/03/16 11:00:00", "item": "Pen", "price": 510},
+{"timestamp": "2017/03/16 11:00:00", "item": "Small Book", "price": 500}
+]
+[[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
+logical_select Logs   --shard_key timestamp   --columns[content].stage initial   --columns[content].type ShortText   --columns[content].flags COLUMN_SCALAR   --columns[content].value 'highlight_html(item)'   --match_columns item   --output_columns content   --query "Book"
+[[0,0.0,0.0],[[[2],[["content","ShortText"]],["Book"],["Small Book"]]]]
+#|i| [accessor][resolve][table] (temporary) -> <Logs_20170315>
+#|i| [accessor][resolve][table] (temporary) -> <Logs_20170316>
+#>logical_select --columns[content].flags "COLUMN_SCALAR" --columns[content].stage "initial" --columns[content].type "ShortText" --columns[content].value "highlight_html(item)" --logical_table "Logs" --match_columns "item" --output_columns "content" --query "Book" --shard_key "timestamp"
+#:000000000000000 filter(2): true
+#:000000000000000 filter(3): true
+#:000000000000000 columns[content](2)
+#:000000000000000 columns[content](3)
+#:000000000000000 filter(1): (match columns) match "Book"
+#:000000000000000 select(1)[Logs_20170315]
+#:000000000000000 filter(1): (match columns) match "Book"
+#:000000000000000 select(1)[Logs_20170316]
+#:000000000000000 output(2)
+#<000000000000000 rc=0
+log_level --level notice
+[[0,0.0,0.0],true]
