@@ -284,7 +284,7 @@ prompt(grn_ctx *ctx, grn_obj *buf)
   grn_rc rc = GRN_SUCCESS;
   grn_bool need_next_line = GRN_TRUE;
   GRN_BULK_REWIND(buf);
-  while (need_next_line) {
+  while (need_next_line && ctx->rc == GRN_SUCCESS) {
     rc = read_next_line(ctx, buf);
     if (rc == GRN_SUCCESS &&
         GRN_TEXT_LEN(buf) > 0 &&
@@ -294,6 +294,9 @@ prompt(grn_ctx *ctx, grn_obj *buf)
     } else {
       need_next_line = GRN_FALSE;
     }
+  }
+  if (rc == GRN_SUCCESS && ctx->rc != GRN_SUCCESS) {
+    rc = ctx->rc;
   }
   return rc;
 }
@@ -399,7 +402,7 @@ do_alone(int argc, char **argv)
     if (!argc) {
       grn_obj text;
       GRN_TEXT_INIT(&text, 0);
-      while (prompt(ctx, &text) != GRN_END_OF_DATA) {
+      while (prompt(ctx, &text) == GRN_SUCCESS) {
         GRN_TEXT_PUT(ctx, &command, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text));
         grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text), 0);
         if (ctx->stat == GRN_CTX_QUIT) { break; }
@@ -470,7 +473,7 @@ g_client(int argc, char **argv)
     if (!argc) {
       grn_obj text;
       GRN_TEXT_INIT(&text, 0);
-      while (prompt(ctx, &text) != GRN_END_OF_DATA) {
+      while (prompt(ctx, &text) == GRN_SUCCESS) {
         grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text), 0);
         exit_code = grn_rc_to_exit_code(ctx->rc);
         if (ctx->rc != GRN_SUCCESS) { break; }
