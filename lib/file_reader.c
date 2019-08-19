@@ -102,8 +102,9 @@ grn_file_reader_read_line(grn_ctx *ctx,
     size_t len;
 
 #define BUFFER_SIZE 4096
-    rc = grn_bulk_reserve(ctx, buffer, BUFFER_SIZE);
-    if (rc != GRN_SUCCESS) {
+    grn_rc reserve_rc = grn_bulk_reserve(ctx, buffer, BUFFER_SIZE);
+    if (reserve_rc != GRN_SUCCESS) {
+      rc = reserve_rc;
       break;
     }
     if (!fgets(GRN_BULK_CURR(buffer), BUFFER_SIZE, reader->file)) {
