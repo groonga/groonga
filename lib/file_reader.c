@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2015 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -58,6 +59,14 @@ grn_file_reader_open(grn_ctx *ctx, const char *path)
   }
 
   reader = GRN_MALLOC(sizeof(grn_file_reader));
+  if (!reader) {
+    if (file_need_close) {
+      fclose(file);
+    }
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[file-reader][open] failed to allocate reader: <%s>", path);
+    GRN_API_RETURN(NULL);
+  }
   reader->file = file;
   reader->file_need_close = file_need_close;
 
