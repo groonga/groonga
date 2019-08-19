@@ -19,6 +19,8 @@ Improvements
 Fixes
 ^^^^^
 
+* Fixed a bug that returns an empty result when we specify ``initial`` into a stage of a dynamic column and search for using index. [GitHub#683]
+
 * Fixed a bug that the configure phase didn't detect libedit despite installing it. [GitHub#1030][Patched by yu]
 
 * Fixed a bug that ``--offset`` and ``--limit`` options didn't work

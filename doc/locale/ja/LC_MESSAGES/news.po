@@ -43,6 +43,13 @@ msgid "Fixes"
 msgstr "修正"
 
 msgid ""
+"Fixed a bug that returns an empty result when we specify ``initial`` into a "
+"stage of a dynamic column and search for using index. [GitHub#683]"
+msgstr ""
+"動的カラムのステージに ``initial`` を指定し、インデックスを使用した検索をする"
+"と空の結果を返す問題を修正しました。 [GitHub#683]"
+
+msgid ""
 "Fixed a bug that the configure phase didn't detect libedit despite "
 "installing it. [GitHub#1030][Patched by yu]"
 msgstr ""
