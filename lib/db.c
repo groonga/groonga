@@ -285,6 +285,9 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   }
   grn_ctx_use(ctx, (grn_obj *)s);
   grn_db_init_builtin_types(ctx);
+  if (ctx->rc != GRN_SUCCESS) {
+    goto exit;
+  }
   if (path) {
     grn_obj_flush(ctx, (grn_obj *)s);
   }
