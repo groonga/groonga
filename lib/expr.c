@@ -752,7 +752,9 @@ grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned int nam
   } else {
     if (!e->vars) {
       if (!(e->vars = GRN_MALLOCN(grn_expr_var, GRN_STACK_SIZE))) {
-        ERR(GRN_NO_MEMORY_AVAILABLE, "malloc failed");
+        ERR(GRN_NO_MEMORY_AVAILABLE,
+            "[expr][variable][add] failed to allocate: <%d>",
+            GRN_STACK_SIZE);
       }
     }
     if (e->vars && e->nvars < GRN_STACK_SIZE) {
