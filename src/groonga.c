@@ -282,21 +282,16 @@ grn_inline static grn_rc
 prompt(grn_ctx *ctx, grn_obj *buf)
 {
   grn_rc rc = GRN_SUCCESS;
-  grn_bool need_next_line = GRN_TRUE;
   GRN_BULK_REWIND(buf);
-  while (need_next_line && ctx->rc == GRN_SUCCESS) {
+  while (rc == GRN_SUCCESS) {
     rc = read_next_line(ctx, buf);
     if (rc == GRN_SUCCESS &&
         GRN_TEXT_LEN(buf) > 0 &&
         GRN_TEXT_VALUE(buf)[GRN_TEXT_LEN(buf) - 1] == '\\') {
-      grn_bulk_truncate(ctx, buf, GRN_TEXT_LEN(buf) - 1);
-      need_next_line = GRN_TRUE;
+      rc = grn_bulk_truncate(ctx, buf, GRN_TEXT_LEN(buf) - 1);
     } else {
-      need_next_line = GRN_FALSE;
+      break;
     }
-  }
-  if (rc == GRN_SUCCESS && ctx->rc != GRN_SUCCESS) {
-    rc = ctx->rc;
   }
   return rc;
 }
