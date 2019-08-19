@@ -290,6 +290,9 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   }
   if (path) {
     grn_obj_flush(ctx, (grn_obj *)s);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
   }
   GRN_API_RETURN((grn_obj *)s);
 
