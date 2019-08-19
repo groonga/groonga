@@ -1083,6 +1083,10 @@ grn_proc_create(grn_ctx *ctx, const char *name, int name_size, grn_proc_type typ
     }
     while (nvars--) {
       grn_obj *v = grn_expr_add_var(ctx, (grn_obj *)res, vars->name, vars->name_size);
+      if (!v) {
+        grn_obj_close(ctx, (grn_obj *)res);
+        GRN_API_RETURN(NULL);
+      }
       GRN_OBJ_INIT(v, vars->value.header.type, 0, vars->value.header.domain);
       GRN_TEXT_PUT(ctx, v, GRN_TEXT_VALUE(&vars->value), GRN_TEXT_LEN(&vars->value));
       vars++;
