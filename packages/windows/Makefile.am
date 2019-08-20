@@ -1,14 +1,16 @@
 SUBDIRS =					\
 	patches					\
 	language-files
-EXTRA_DIST = Rakefile
+EXTRA_DIST =					\
+	Gemfile					\
+	Rakefile
 LICENSE_DIR = dist-x64/share/license
 ARCHITECTURES = x86 x64
 SUFFIX =
 
 all:
 
-release: download build package installer upload
+release: download download-windows-binary build package installer upload
 
 ensure-rsync-path:
 	@if test -z "$(RSYNC_PATH)"; then				\
@@ -35,6 +37,12 @@ ensure-latest-archive:
 
 download: ensure-rsync-path
 	rsync -avz --progress --delete $(RSYNC_PATH)/windows/groonga/ files
+
+download-windows-binary:
+	$(RUBY) $(srcdir)/download_appveyor_build.rb \
+	  v$(PACKAGE_VERSION) \
+	  files \
+	  all
 
 upload: ensure-rsync-path ensure-latest-archive
 	rsync -avz --progress --delete files/ $(RSYNC_PATH)/windows/groonga

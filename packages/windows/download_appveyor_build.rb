@@ -5,6 +5,14 @@ require "open-uri"
 require "veyor"
 require "octokit"
 
+if ARGV.size != 3
+  $stderr.puts("Usage: #{$0} TAG OUTPUT_DIRECTORY TYPE")
+  $stderr.puts(" e.g.: #{$0} v9.0.6 files all")
+  exit(false)
+end
+
+tag, output_directory, target_type = ARGV
+
 def download(url, local_path)
   open(url) do |remote_file|
     File.open(local_path, "wb") do |local_file|
@@ -17,14 +25,9 @@ client = Octokit::Client.new
 
 groonga_repository = "groonga/groonga"
 
-base_dir = Pathname.new(__FILE__).expand_path.dirname
-top_dir = base_dir.parent.parent
-base_version = (top_dir + "base_version").read.strip
-tag_name = "v#{base_version}"
-
 appveyor_url = "https://ci.appveyor.com/"
 appveyor_info = nil
-client.statuses(groonga_repository, tag_name).each do |status|
+client.statuses(groonga_repository, tag).each do |status|
   next unless status.target_url.start_with?(appveyor_url)
   case status.state
   when "pending"
@@ -57,7 +60,11 @@ project["build"]["jobs"].each do |job|
   artifacts = Veyor.build_artifacts(job_id: job_id)
   artifacts.each do |artifact|
     file_name = artifact["fileName"]
+    unless target_type == "all"
+      type = file_name.gsub(/\.zip/, "").split("-")[3..-1].join("-")
+      next unless type == target_type
+    end
     url = "#{appveyor_url}api/buildjobs/#{job_id}/artifacts/#{file_name}"
-    download(url, "files/#{file_name}")
+    download(url, "#{output_directory}/#{file_name}")
   end
 end
