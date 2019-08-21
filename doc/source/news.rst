@@ -191,7 +191,7 @@ Fixes
 
 * Added UCRT runtime into Groonga package for Windows(VC++ version).
 
-* [:doc:`/reference/window_functions`] Fix a memory leak.
+* [:doc:`/reference/window_function`] Fix a memory leak.
 
   * This occurs when multiple windows with sort keys are used. [Patched by Takashi Hashida]
 
