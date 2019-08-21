@@ -65,7 +65,7 @@ Improvements
 
 * [:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/snippet_html`] Improved that extract a keyword also from an expression of before executing a slices when we specify the slices parameter.
 
-* Improveed that collect scores also from an expression of before executing a slices when we specify the slices parameter.
+* Improved that collect scores also from an expression of before executing a slices when we specify the slices parameter.
 
 * Stopped add 1 in score automatically when add posting to posting list.
 
@@ -191,7 +191,7 @@ Fixes
 
 * Added UCRT runtime into Groonga package for Windows(VC++ version).
 
-* [:doc:`/reference/window_functions`] Fix a memory leak.
+* [:doc:`/reference/window_function`] Fix a memory leak.
 
   * This occurs when multiple windows with sort keys are used. [Patched by Takashi Hashida]
 

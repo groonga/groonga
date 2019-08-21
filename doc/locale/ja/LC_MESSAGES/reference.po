@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-06-25 14:43+0900\n"
+"PO-Revision-Date: 2019-08-21 22:46+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -17394,14 +17394,11 @@ msgstr ":doc:`/reference/commands/dump` ですべての設定項目を確認で�
 msgid "Commands"
 msgstr "コマンド一覧"
 
-msgid ":doc:`reference/commands/config_delete`"
+msgid ":doc:`/reference/commands/config_delete`"
 msgstr ":doc:`/reference/commands/config_delete`"
 
-msgid ":doc:`reference/commands/config_get`"
+msgid ":doc:`/reference/commands/config_get`"
 msgstr ":doc:`/reference/commands/config_get`"
-
-msgid ":doc:`reference/commands/config_set`"
-msgstr ":doc:`/reference/commands/config_set`"
 
 msgid "Executables"
 msgstr "実行ファイル"
