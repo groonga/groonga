@@ -427,7 +427,7 @@ msgstr ""
 msgid "Added UCRT runtime into Groonga package for Windows(VC++ version)."
 msgstr "GroongaのWindows用のパッケージ(VC++版)UCRTランタイムを追加しました。"
 
-msgid "[:doc:`/reference/window_functions`] Fix a memory leak."
+msgid "[:doc:`/reference/window_function`] Fix a memory leak."
 msgstr "[:doc:`/reference/window_function`] メモリリークを修正しました。"
 
 msgid ""
