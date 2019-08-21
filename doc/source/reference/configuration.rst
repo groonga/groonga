@@ -43,6 +43,6 @@ You can confirm all configuration items by
 Commands
 --------
 
-  * :doc:`reference/commands/config_delete`
-  * :doc:`reference/commands/config_get`
-  * :doc:`reference/commands/config_set`
+  * :doc:`/reference/commands/config_delete`
+  * :doc:`/reference/commands/config_get`
+  * :doc:`/reference/commands/config_set`
