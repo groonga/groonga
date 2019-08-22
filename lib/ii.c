@@ -14524,7 +14524,7 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn_ii_builder *builder)
   }
   buf_term = &builder->buf.buf->terms[buf_tid];
   buf_term->tid = builder->chunk.tid;
-  if (builder->n_cinfos) {
+  if (builder->n_cinfos > 0) {
     buf_term->tid |= CHUNK_SPLIT;
   }
   buf_term->size_in_buffer = 0;
@@ -14600,11 +14600,11 @@ grn_ii_builder_commit(grn_ctx *ctx, grn_ii_builder *builder)
         }
       }
     }
-    if (!builder->chunk.n) {
+    if (builder->chunk.n == 0) {
       /* This term does not appear. */
       continue;
     }
-    if (!builder->n_cinfos) {
+    if (builder->n_cinfos == 0) {
       grn_bool packed;
       rc = grn_ii_builder_pack_chunk(ctx, builder, &packed);
       if (rc != GRN_SUCCESS) {
