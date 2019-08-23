@@ -132,6 +132,10 @@ before_test:
 test_script:
   - set GRN_EXPR_OPTIMIZE=yes
   - git status
+  - curl -O https://packages.groonga.org/tmp/base-executor.rb
+  - curl -O https://packages.groonga.org/tmp/error.rb
+  - copy /Y error.rb test\command\grntest\lib\grntest\error.rb
+  - copy /Y base-executor.rb test\command\grntest\lib\grntest\executors\base-executor.rb
   - ruby test\command\bin\grntest
      --groonga %FULL_GROONGA_INSTALL_FOLDER%\bin\groonga.exe
      --base-directory test\command
