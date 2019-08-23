@@ -144,7 +144,7 @@ test_script:
      --timeout 60
      --read-timeout 30
      --n-retries 2
-     test\command\suite
+     %CD%\test\command\suite
   - git status
   # On AppVeyor, インストール directory is recognized unicode escape sequence.
   - set GROONGA_INSTALL_SUB_FOLDER_ESCAPED=\u7E67\uFF64\u7E5D\uFF73\u7E67\uFF79\u7E5D\u533B\u30FB\u7E5D\uFF6B
