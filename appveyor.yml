@@ -87,9 +87,9 @@ install:
 build_script:
   - git submodule update --init
   - cd vendor
+  - ruby download_lz4.rb
   - ruby download_mecab.rb
   - ruby download_message_pack.rb
-  - ruby download_lz4.rb
   - ruby download_rapidjson.rb
   - cd ..
   - set CMAKE_GENERATOR_NAME=Visual Studio %VS_VERSION%
