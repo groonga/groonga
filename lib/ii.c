@@ -12721,7 +12721,9 @@ grn_ii_builder_buffer_assign(grn_ctx *ctx, grn_ii_builder_buffer *buf,
   rc = buffer_segment_new(ctx, buf->ii, &buf->buf_id);
   if (rc != GRN_SUCCESS) {
     if (ctx->rc != GRN_SUCCESS) {
-      ERR(rc, "failed to allocate segment for buffer");
+      ERR(rc,
+          "[ii][builder][buffer][assign] "
+          "failed to allocate segment for buffer");
     }
     return rc;
   }
@@ -12730,7 +12732,8 @@ grn_ii_builder_buffer_assign(grn_ctx *ctx, grn_ii_builder_buffer *buf,
   if (!seg) {
     if (ctx->rc == GRN_SUCCESS) {
       ERR(GRN_UNKNOWN_ERROR,
-          "failed access buffer segment: buf_id = %u, seg_id = %u",
+          "[ii][builder][buffer][assign] "
+          "failed to access buffer segment: buffer_id=<%u> segment_id=<%u>",
           buf->buf_id, buf->buf_seg_id);
     }
     return ctx->rc;
@@ -12746,19 +12749,39 @@ grn_ii_builder_buffer_assign(grn_ctx *ctx, grn_ii_builder_buffer *buf,
   if (rc != GRN_SUCCESS) {
     return rc;
   }
+
+  const size_t seg_offset =
+    (buf->chunk_id & ((1 << GRN_II_N_CHUNK_VARIATION) - 1)) <<
+    GRN_II_W_LEAST_CHUNK;
+  const uint32_t chunk_capacity =
+    buf->ii->chunk->header->segment_size - seg_offset;
+  if (chunk_capacity < chunk_size) {
+    ERR(GRN_NOT_ENOUGH_SPACE,
+        "[ii][builder][buffer][assign] "
+        "too large chunk size: "
+        "chunk_size=<%" GRN_FMT_SIZE "> "
+        "chunk_capacity=<%u> "
+        "chunk_id=<%u> "
+        "segment_id=<%u>",
+        chunk_size,
+        chunk_capacity,
+        buf->chunk_id,
+        buf->chunk_seg_id);
+    return ctx->rc;
+  }
+
   buf->chunk_seg_id = buf->chunk_id >> GRN_II_N_CHUNK_VARIATION;
   GRN_IO_SEG_REF(buf->ii->chunk, buf->chunk_seg_id, seg);
   if (!seg) {
     if (ctx->rc == GRN_SUCCESS) {
       ERR(GRN_UNKNOWN_ERROR,
-          "failed access chunk segment: chunk_id = %u, seg_id = %u",
+          "[ii][builder][buffer][assign] "
+          "failed to access chunk segment: chunk_id=<%u> segment_id=<%u>",
           buf->chunk_id, buf->chunk_seg_id);
     }
     return ctx->rc;
   }
-  buf->chunk = (uint8_t *)seg;
-  buf->chunk += (buf->chunk_id & ((1 << GRN_II_N_CHUNK_VARIATION) - 1)) <<
-                GRN_II_W_LEAST_CHUNK;
+  buf->chunk = ((uint8_t *)seg) + seg_offset;
   buf->chunk_offset = 0;
   buf->chunk_size = chunk_size;
 
@@ -12780,8 +12803,11 @@ grn_ii_builder_buffer_flush(grn_ctx *ctx, grn_ii_builder_buffer *buf)
   buf->buf->header.buffer_free = S_SEGMENT - sizeof(buffer_header) -
                                  buf->buf->header.nterms * sizeof(buffer_term);
   GRN_LOG(ctx, GRN_LOG_DEBUG,
-          "n_terms = %u, chunk_offset = %u, chunk_size = %u, total = %"
-          GRN_FMT_INT64U "KB",
+          "[ii][builder][buffer][flush] "
+          "n_terms=<%u> "
+          "chunk_offset=<%u> "
+          "chunk_size=<%u> "
+          "total=<%" GRN_FMT_INT64U "KB>",
           buf->buf->header.nterms,
           buf->chunk_offset,
           buf->buf->header.chunk_size,
