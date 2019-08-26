@@ -112,11 +112,10 @@ allow_unsigned_uploads = 0
 
   def upload(ubuntu_code_name, ubuntu_version)
     in_temporary_directory do
-      archive_basename, archive_suffix = @source_archive.to_s.split(".tar.", 2)
+      directory_name, archive_suffix = File.basename(@source_archive.to_s).split(".tar.", 2)
       FileUtils.cp(@source_archive.to_s,
                    "#{@package}_#{@version}.orig.tar.#{archive_suffix}")
       run_command("tar", "xf", @source_archive.to_s)
-      directory_name = File.basename(archive_basename)
       Dir.chdir(directory_name) do
         FileUtils.cp_r(@debian_directory.to_s, "debian")
         if ubuntu_version
