@@ -33,6 +33,73 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
+msgid "Release 9.0.7 - 2019-08-29"
+msgstr "9.0.7リリース - 2019-08-29"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a bug that Groonga crash when posting lists were huge."
+msgstr ""
+"ポスティングリストが巨大になった時にGroongaがクラッシュする問題を修正しまし"
+"た。"
+
+msgid ""
+"However, this bug almost doesn't occur by general data. Because posting "
+"lists don't grow bigger so much by them."
+msgstr ""
+"ただし、このバグは、一般的なデータでは殆ど発生しません。ポスティングリスト"
+"は、一般的なデータでは、そこまで大きくならないためです。"
+
+msgid ""
+"Fixed a bug that returns an empty result when we specify ``initial`` into a "
+"stage of a dynamic column and search for using index. [GitHub#683]"
+msgstr ""
+"動的カラムのステージに ``initial`` を指定し、インデックスを使用した検索をする"
+"と空の結果を返す問題を修正しました。 [GitHub#683]"
+
+msgid ""
+"Fixed a bug that the configure phase didn't detect libedit despite "
+"installing it. [GitHub#1030][Patched by yu]"
+msgstr ""
+"configure時にlibeditがインストールされているにもかかわらず、検知しない問題を"
+"修正しました。 [GitHub#1030][yuさんがパッチ提供]"
+
+msgid ""
+"Fixed a bug that ``--offset`` and ``--limit`` options didn't work with ``--"
+"sort_keys`` and ``--slices`` options. [clear-code/"
+"redmine_full_text_search#70][Reported by a9zawa]"
+msgstr ""
+"``--slices`` と ``--sort_keys`` オプション使用時に ``--offset`` と ``--"
+"limit`` オプションが動作しない問題を修正しました。 [clear-code/"
+"redmine_full_text_search#70][a9zawaさんの報告]"
+
+msgid ""
+"Fixed a bug that search result is empty when the result of ``select`` "
+"command is huge. [groonga-dev,04770][Reported by Yutaro Shimamura]"
+msgstr ""
+"``select`` コマンドの結果が巨大な時、検索結果が空になる問題を修正しました。"
+"[groonga-dev,04770][Yutaro Shimamuraさんの報告]"
+
+msgid ""
+"Fixed a bug that doesn't use a suitable index when prefix search and suffix "
+"search. [GitHub#1007, PGroonga#GitHub#96][Reported by oknj]"
+msgstr ""
+"前方一致検索や後方一致検索時に適切なインデックスを使わない問題を修正しまし"
+"た。[GitHub#1007, PGroonga#GitHub#96][oknjさんの報告]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "oknj"
+msgstr "oknjさん"
+
+msgid "Yutaro Shimamura"
+msgstr "Yutaro Shimamuraさん"
+
+msgid "yu"
+msgstr "yuさん"
+
 msgid "Release 9.0.6 - 2019-08-05"
 msgstr "9.0.6リリース - 2019-08-05"
 
@@ -41,9 +108,6 @@ msgstr "改良"
 
 msgid "Added support for Debian 10 (buster)."
 msgstr "Debian 10 (buster)をサポートしました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid ""
 "[:doc:`reference/commands/select`] Fixed a bug that search is an error when "
@@ -72,9 +136,6 @@ msgid ""
 msgstr ""
 "[:doc:`tutorial/micro_blog`] 検索結果が誤っている例を修正しました。"
 "[GitHub#1024][yagisumiさんがパッチ提供] "
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "yagisumi"
 msgstr "yagisumiさん"
@@ -1535,9 +1596,6 @@ msgstr "quitを使わずにクライアントプロセスを中断した時に�
 
 msgid "Masatoshi SEKI"
 msgstr "Masatoshi SEKIさん"
-
-msgid "Yutaro Shimamura"
-msgstr "Yutaro Shimamuraさん"
 
 msgid "Release 8.0.7 - 2018-09-29"
 msgstr "8.0.7リリース - 2018-09-29"

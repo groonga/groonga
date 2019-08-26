@@ -7,6 +7,38 @@
 News
 ====
 
+.. _release-9-0-7:
+
+Release 9.0.7 - 2019-08-29
+--------------------------
+
+Fixes
+^^^^^
+
+* Fixed a bug that Groonga crash when posting lists were huge.
+
+  * However, this bug almost doesn't occur by general data. Because posting lists don't grow bigger so much by them.
+
+* Fixed a bug that returns an empty result when we specify ``initial`` into a stage of a dynamic column and search for using index. [GitHub#683]
+
+* Fixed a bug that the configure phase didn't detect libedit despite installing it. [GitHub#1030][Patched by yu]
+
+* Fixed a bug that ``--offset`` and ``--limit`` options didn't work
+  with ``--sort_keys`` and ``--slices`` options. [clear-code/redmine_full_text_search#70][Reported by a9zawa]
+
+* Fixed a bug that search result is empty when the result of ``select`` command is huge. [groonga-dev,04770][Reported by Yutaro Shimamura]
+
+* Fixed a bug that doesn't use a suitable index when prefix search and suffix search. [GitHub#1007, PGroonga#GitHub#96][Reported by oknj]
+
+Thanks
+^^^^^^
+
+* oknj
+
+* Yutaro Shimamura
+
+* yu
+
 .. _release-9-0-6:
 
 Release 9.0.6 - 2019-08-05
