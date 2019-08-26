@@ -13097,7 +13097,7 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx, grn_ii_builder_chunk *chunk,
 
   /* Encode a header. */
   p = chunk->enc_buf;
-  if (n_cinfos) {
+  if (n_cinfos > 0) {
     uint32_t i;
     GRN_B_ENC(n_cinfos, p);
     for (i = 0; i < n_cinfos; i++) {
