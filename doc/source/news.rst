@@ -12,12 +12,12 @@ News
 Release 9.0.7 - 2019-08-29
 --------------------------
 
-Improvements
-^^^^^^^^^^^^
-
-
 Fixes
 ^^^^^
+
+* Fixed a bug that Groonga crash when posting lists were huge.
+
+  * However, this bug almost doesn't occur by general data. Because posting lists don't grow bigger so much by them.
 
 * Fixed a bug that returns an empty result when we specify ``initial`` into a stage of a dynamic column and search for using index. [GitHub#683]
 
