@@ -14558,6 +14558,29 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn_ii_builder *builder)
   buf_term->size_in_chunk = builder->chunk.enc_offset;
   buf_term->pos_in_chunk = builder->buf.chunk_offset;
 
+  if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+    grn_obj token;
+    DEFINE_NAME(builder->ii);
+    GRN_TEXT_INIT(&token, 0);
+    grn_ii_get_term(ctx, builder->ii, builder->chunk.tid, &token);
+    GRN_LOG(ctx, GRN_LOG_DEBUG,
+            "[ii][builder][register][chunks] "
+            "<%.*s>: "
+            "<%.*s>(%u): "
+            "n_chunks=<%u> "
+            "chunk=<%u>/<%u>(%u)/(%u) "
+            "encoded_chunk_size=<%" GRN_FMT_SIZE ">",
+            name_size, name,
+            (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+            builder->chunk.tid,
+            builder->n_cinfos,
+            builder->buf.chunk_offset,
+            builder->buf.chunk_size,
+            builder->buf.chunk_size - builder->buf.chunk_offset,
+            builder->buf.ii->chunk->header->segment_size,
+            builder->chunk.enc_offset);
+    GRN_OBJ_FIN(ctx, &token);
+  }
   grn_memcpy(builder->buf.chunk + builder->buf.chunk_offset,
              builder->chunk.enc_buf, builder->chunk.enc_offset);
   builder->buf.chunk_offset += builder->chunk.enc_offset;
@@ -14568,7 +14591,7 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn_ii_builder *builder)
     DEFINE_NAME(builder->ii);
     GRN_TEXT_INIT(&token, 0);
     grn_ii_get_term(ctx, builder->ii, builder->chunk.tid, &token);
-    MERR("[ii][builder][chunk][register] "
+    MERR("[ii][builder][register][chunks] "
          "failed to allocate an array in segment: "
          "<%.*s>: "
          "<%.*s>(%u): "
