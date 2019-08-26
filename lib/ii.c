@@ -16,12 +16,15 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "grn.h"
-#include <stdio.h>
+
 #include <fcntl.h>
+#include <float.h>
+#include <math.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <float.h>
 
 #ifdef WIN32
 # include <io.h>
@@ -14425,9 +14428,34 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx, grn_ii_builder *builder,
     gap = value >> builder->sid_bits; /* In-block gap */
     if (gap) {
       if (chunk->n >= builder->options.chunk_threshold) {
-        rc = grn_ii_builder_flush_chunk(ctx, builder);
-        if (rc != GRN_SUCCESS) {
-          return rc;
+        const double threshold_scale = 1 + log(builder->df + 1);
+        const double threshold =
+          builder->options.chunk_threshold * threshold_scale;
+        if (chunk->n >= threshold) {
+          if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+            grn_obj token;
+            DEFINE_NAME(builder->ii);
+            GRN_TEXT_INIT(&token, 0);
+            grn_ii_get_term(ctx, builder->ii, chunk->tid, &token);
+            GRN_LOG(ctx, GRN_LOG_DEBUG,
+                    "[ii][builder][read-to-chunk] flush"
+                    "<%.*s>: "
+                    "<%.*s>(%u): "
+                    "n=<%u> "
+                    "df=<%u> "
+                    "threshold=<%.1f>",
+                    name_size, name,
+                    (int)GRN_TEXT_LEN(&token), GRN_TEXT_VALUE(&token),
+                    chunk->tid,
+                    chunk->n,
+                    builder->df,
+                    threshold);
+            GRN_OBJ_FIN(ctx, &token);
+          }
+          rc = grn_ii_builder_flush_chunk(ctx, builder);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
         }
       }
       last_sid = 0;
