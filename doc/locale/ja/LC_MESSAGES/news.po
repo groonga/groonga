@@ -36,6 +36,18 @@ msgstr "お知らせ"
 msgid "Release 9.0.7 - 2019-08-29"
 msgstr "9.0.7リリース - 2019-08-29"
 
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[httpd] Updated bundled nginx to 1.17.3."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.17.3に更新しました。"
+
+msgid ""
+"Contains security fix for CVE-2019-9511, CVE-2019-9513, and CVE-2019-9516."
+msgstr ""
+"CVE-2019-9511、CVE-2019-9513、CVE-2019-9516のセキュリティの修正が含まれていま"
+"す。"
+
 msgid "Fixes"
 msgstr "修正"
 
@@ -102,9 +114,6 @@ msgstr "yuさん"
 
 msgid "Release 9.0.6 - 2019-08-05"
 msgstr "9.0.6リリース - 2019-08-05"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "Added support for Debian 10 (buster)."
 msgstr "Debian 10 (buster)をサポートしました。"

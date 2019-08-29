@@ -12,6 +12,13 @@ News
 Release 9.0.7 - 2019-08-29
 --------------------------
 
+Improvements
+^^^^^^^^^^^^
+
+* [httpd] Updated bundled nginx to 1.17.3.
+
+  * Contains security fix for CVE-2019-9511, CVE-2019-9513, and CVE-2019-9516.
+
 Fixes
 ^^^^^
 
