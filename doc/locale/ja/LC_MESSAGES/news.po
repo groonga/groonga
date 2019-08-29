@@ -112,6 +112,9 @@ msgstr "Yutaro Shimamuraさん"
 msgid "yu"
 msgstr "yuさん"
 
+msgid "a9zawa"
+msgstr "a9zawaさん"
+
 msgid "Release 9.0.6 - 2019-08-05"
 msgstr "9.0.6リリース - 2019-08-05"
 

@@ -46,6 +46,8 @@ Thanks
 
 * yu
 
+* a9zawa
+
 .. _release-9-0-6:
 
 Release 9.0.6 - 2019-08-05
