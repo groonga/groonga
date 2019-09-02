@@ -51,6 +51,8 @@ struct _grn_ii {
   } header;
 };
 
+#define GRN_II_INDEX_BUILDING (0x01<<31)
+
 /* BGQ is buffer garbage queue? */
 #define GRN_II_BGQSIZE 16
 /* L is for logical? */
@@ -218,6 +220,9 @@ typedef struct grn_ii_builder_options grn_ii_builder_options;
 
 grn_rc grn_ii_build2(grn_ctx *ctx, grn_ii *ii,
                      const grn_ii_builder_options *options);
+
+void grn_ii_set_index_building(grn_ii *ii, grn_bool status);
+grn_bool grn_ii_get_index_building(grn_ii *ii);
 
 #ifdef __cplusplus
 }

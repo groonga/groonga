@@ -14725,4 +14725,21 @@ grn_ii_build2(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
   return rc;
 }
 
+void
+grn_ii_set_index_building(grn_ii *ii, grn_bool status)
+{
+  if (status) {
+    ii->header.common->flags |= GRN_II_INDEX_BUILDING;
+  } else {
+    ii->header.common->flags &= ~GRN_II_INDEX_BUILDING;
+  }
+}
 
+grn_bool
+gnr_ii_get_index_building(grn_ii *ii)
+{
+  if (ii->header.common->flags & GRN_II_INDEX_BUILDING) {
+    return GRN_TRUE;
+  }
+  return GRN_FALSE;
+}
