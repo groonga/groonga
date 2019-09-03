@@ -2419,11 +2419,11 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
   case GRN_COLUMN_INDEX :
     break;
   default :
-   /* TODO: put inspected the 1st argument to message */
-   ERR(GRN_INVALID_ARGUMENT,
-       "sub_filter(): the 1st argument must be column or accessor");
-   rc = ctx->rc;
-   goto exit;
+    /* TODO: put inspected the 1st argument to message */
+    ERR(GRN_INVALID_ARGUMENT,
+        "sub_filter(): the 1st argument must be column or accessor");
+    rc = ctx->rc;
+    goto exit;
     break;
   }
 
