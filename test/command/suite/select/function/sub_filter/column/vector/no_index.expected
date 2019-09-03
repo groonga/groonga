@@ -1,0 +1,119 @@
+table_create Users TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users birthday COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Files TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Files authors COLUMN_VECTOR Users
+[[0,0.0,0.0],true]
+table_create Packages TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Packages files COLUMN_VECTOR Files
+[[0,0.0,0.0],true]
+column_create Files packages_files_index COLUMN_INDEX Packages files
+[[0,0.0,0.0],true]
+table_create Birthdays TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Birthdays users_birthday COLUMN_INDEX Users birthday
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "Alice",   "birthday" : "1992-02-09 00:00:00"},
+{"_key": "Bob",     "birthday" : "1988-01-04 00:00:00"},
+{"_key": "Carlos",  "birthday" : "1982-12-29 00:00:00"},
+{"_key": "Charlie", "birthday" : "1983-11-29 00:00:00"},
+{"_key": "Ellen",   "birthday" : "1984-06-29 00:00:00"},
+{"_key": "Frank",   "birthday" : "1985-09-29 00:00:00"},
+{"_key": "Dave",    "birthday" : "1986-10-29 00:00:00"},
+{"_key": "Eve",     "birthday" : "1987-12-29 00:00:00"},
+{"_key": "Isaac",   "birthday" : "1987-11-29 00:00:00"}
+]
+[[0,0.0,0.0],9]
+load --table Files
+[
+{"_key": "include/groonga.h", "authors": ["Alice", "Charlie"]},
+{"_key": "src/groonga.c",     "authors": ["Bob", "Ellen", "Frank"]},
+{"_key": "lib/groonga.rb",    "authors": ["Carlos", "Dave"]},
+{"_key": "README.textile",    "authors": ["Alice", "Eve", "Isaac"]},
+{"_key": "ha_mroonga.cc",     "authors": ["Bob"]},
+{"_key": "ha_mroonga.hpp",    "authors": ["Carlos"]}
+]
+[[0,0.0,0.0],6]
+load --table Packages
+[
+{"_key": "groonga", "files": ["include/groonga.h", "src/groonga.c"]},
+{"_key": "rroonga", "files": ["lib/groonga.rb", "README.textile"]},
+{"_key": "mroonga", "files": ["ha_mroonga.cc", "ha_mroonga.hpp"]}
+]
+[[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
+select Packages   --filter 'sub_filter(files.authors, "birthday >= \\"1988-01-04 00:00:00\\" && birthday < \\"1992-02-09 00:00:00\\"")'   --output_columns '_key, files, files.authors.birthday'   --sort_keys _key
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "files",
+          "Files"
+        ],
+        [
+          "files.authors.birthday",
+          "Time"
+        ]
+      ],
+      [
+        "groonga",
+        [
+          "include/groonga.h",
+          "src/groonga.c"
+        ],
+        [
+          [
+            697561200.0,
+            438879600.0
+          ],
+          [
+            568220400.0,
+            457282800.0,
+            496767600.0
+          ]
+        ]
+      ],
+      [
+        "mroonga",
+        [
+          "ha_mroonga.cc",
+          "ha_mroonga.hpp"
+        ],
+        [
+          [
+            568220400.0
+          ],
+          [
+            409935600.0
+          ]
+        ]
+      ]
+    ]
+  ]
+]
+#|i| [table][select][index][selector][no-index][sub_filter] <Packages>
+#|i| [table][select][index][range] <Birthdays.users_birthday>
+#|i| [table][select][index][range] <Birthdays.users_birthday>
+#|i| [accessor][resolve][data-column][column] <Files.authors> -> <Users>
+#|i| [accessor][resolve][data-column][index] <Files.packages_files_index>
+log_level --level notice
+[[0,0.0,0.0],true]

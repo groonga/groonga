@@ -3617,6 +3617,23 @@ grn_accessor_resolve_one_data_column_sequential(grn_ctx *ctx,
                                current_res,
                                GRN_BULK_HEAD(&value),
                                GRN_BULK_VSIZE(&value)) != GRN_ID_NIL);
+
+        break;
+      case GRN_UVECTOR :
+        {
+          size_t i, n_elements;
+          n_elements = GRN_BULK_VSIZE(&value) / sizeof(grn_id);
+          for (i = 0; i < n_elements; i++) {
+            grn_id id = GRN_RECORD_VALUE_AT(&value, i);
+            found = (grn_table_get(ctx,
+                                   current_res,
+                                   &id,
+                                   sizeof(grn_id)) != GRN_ID_NIL);
+            if (found) {
+              break;
+            }
+          }
+        }
         break;
       default :
         break;
