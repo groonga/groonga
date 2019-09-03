@@ -3628,6 +3628,9 @@ grn_accessor_resolve_one_data_column_sequential(grn_ctx *ctx,
                                    current_res,
                                    GRN_BULK_HEAD(&value),
                                    GRN_BULK_VSIZE(&value)) != GRN_ID_NIL);
+            if (found) {
+              break;
+            }
           }
         }
         break;
