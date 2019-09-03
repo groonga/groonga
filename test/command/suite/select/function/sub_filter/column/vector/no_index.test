@@ -1,0 +1,54 @@
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users birthday COLUMN_SCALAR Time
+
+table_create Files TABLE_PAT_KEY ShortText
+column_create Files authors COLUMN_VECTOR Users
+
+table_create Packages TABLE_PAT_KEY ShortText
+column_create Packages files COLUMN_VECTOR Files
+
+# column_create Users files_authors_index COLUMN_INDEX Files authors
+column_create Files packages_files_index COLUMN_INDEX Packages files
+
+table_create Birthdays TABLE_PAT_KEY Time
+column_create Birthdays users_birthday COLUMN_INDEX Users birthday
+
+load --table Users
+[
+{"_key": "Alice",   "birthday" : "1992-02-09 00:00:00"},
+{"_key": "Bob",     "birthday" : "1988-01-04 00:00:00"},
+{"_key": "Carlos",  "birthday" : "1982-12-29 00:00:00"},
+{"_key": "Charlie", "birthday" : "1983-11-29 00:00:00"},
+{"_key": "Ellen",   "birthday" : "1984-06-29 00:00:00"},
+{"_key": "Frank",   "birthday" : "1985-09-29 00:00:00"},
+{"_key": "Dave",    "birthday" : "1986-10-29 00:00:00"},
+{"_key": "Eve",     "birthday" : "1987-12-29 00:00:00"},
+{"_key": "Isaac",   "birthday" : "1987-11-29 00:00:00"}
+]
+
+
+load --table Files
+[
+{"_key": "include/groonga.h", "authors": ["Alice", "Charlie"]},
+{"_key": "src/groonga.c",     "authors": ["Bob", "Ellen", "Frank"]},
+{"_key": "lib/groonga.rb",    "authors": ["Carlos", "Dave"]},
+{"_key": "README.textile",    "authors": ["Alice", "Eve", "Isaac"]},
+{"_key": "ha_mroonga.cc",     "authors": ["Bob"]},
+{"_key": "ha_mroonga.hpp",    "authors": ["Carlos"]}
+]
+
+load --table Packages
+[
+{"_key": "groonga", "files": ["include/groonga.h", "src/groonga.c"]},
+{"_key": "rroonga", "files": ["lib/groonga.rb", "README.textile"]},
+{"_key": "mroonga", "files": ["ha_mroonga.cc", "ha_mroonga.hpp"]}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Packages \
+  --filter 'sub_filter(files.authors, "birthday >= \\"1988-01-04 00:00:00\\" && birthday < \\"1992-02-09 00:00:00\\"")' \
+  --output_columns '_key, files, files.authors.birthday' \
+  --sort_keys _key
+#@remove-important-log-levels info
+log_level --level notice
