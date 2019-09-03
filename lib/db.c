@@ -3617,14 +3617,34 @@ grn_accessor_resolve_one_data_column_sequential(grn_ctx *ctx,
                                current_res,
                                GRN_BULK_HEAD(&value),
                                GRN_BULK_VSIZE(&value)) != GRN_ID_NIL);
+        if (found) {
+          grn_posting posting = {0};
+          posting.rid = id;
+          grn_ii_posting_add(ctx, &posting, (grn_hash *)*next_res, GRN_OP_OR);
+        }
+        break;
+      case GRN_UVECTOR :
+        {
+          int i, n_elements;
+          n_elements = GRN_BULK_VSIZE(&value) / sizeof(grn_id);
+          for (i = 0; i < n_elements; i++) {
+            found = (grn_table_get(ctx,
+                                   current_res,
+                                   GRN_BULK_HEAD(&value),
+                                   GRN_BULK_VSIZE(&value)) != GRN_ID_NIL);
+            if (found) {
+              grn_posting posting = {0};
+              posting.rid = id;
+              grn_ii_posting_add(ctx,
+                                 &posting,
+                                 (grn_hash *)*next_res,
+                                 GRN_OP_OR);
+            }
+          }
+        }
         break;
       default :
         break;
-      }
-      if (found) {
-        grn_posting posting = {0};
-        posting.rid = id;
-        grn_ii_posting_add(ctx, &posting, (grn_hash *)*next_res, GRN_OP_OR);
       }
     } GRN_TABLE_EACH_END(ctx, cursor);
     GRN_OBJ_FIN(ctx, &value);
