@@ -1,3 +1,5 @@
+#$GRN_EXPR_OPTIMIZE=no
+
 table_create Users TABLE_PAT_KEY ShortText
 column_create Users birthday COLUMN_SCALAR Time
 
