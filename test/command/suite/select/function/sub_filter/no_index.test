@@ -37,6 +37,11 @@ load --table Packages
 {"_key": "mroonga", "files": ["ha_mroonga.cc", "ha_mroonga.hpp"]}
 ]
 
+log_level --level info
+#@add-important-log-levels info
 select Packages \
   --filter 'sub_filter(files.author, "birthday >= \\"1988-01-04 00:00:00\\" && birthday < \\"1992-02-09 00:00:00\\"")' \
-  --output_columns '_key, files, files.author.birthday'
+  --output_columns '_key, files, files.author.birthday' \
+  --sort_keys _key
+#@remove-important-log-levels info
+log_level --level notice

@@ -2419,11 +2419,11 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
   case GRN_COLUMN_INDEX :
     break;
   default :
-//    /* TODO: put inspected the 1st argument to message */
-//    ERR(GRN_INVALID_ARGUMENT,
-//        "sub_filter(): the 1st argument must be column or accessor");
-//    rc = ctx->rc;
-//    goto exit;
+   /* TODO: put inspected the 1st argument to message */
+   ERR(GRN_INVALID_ARGUMENT,
+       "sub_filter(): the 1st argument must be column or accessor");
+   rc = ctx->rc;
+   goto exit;
     break;
   }
 
@@ -2502,22 +2502,6 @@ exit :
   }
 
   return rc;
-}
-static grn_obj *
-func_sub_filter(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{
-  selector_to_function_data data;
-
-  if (selector_to_function_data_init(ctx, &data, user_data)) {
-    grn_rc rc;
-    rc = run_sub_filter(ctx, data.table, nargs, args, data.records, GRN_OP_AND);
-    if (rc == GRN_SUCCESS) {
-      selector_to_function_data_selected(ctx, &data);
-    }
-  }
-  selector_to_function_data_fin(ctx, &data);
-
-  return data.found;
 }
 
 static grn_rc
@@ -4338,7 +4322,7 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
     grn_obj *selector_proc;
 
     selector_proc = grn_proc_create(ctx, "sub_filter", -1, GRN_PROC_FUNCTION,
-                                    func_sub_filter, NULL, NULL, 0, NULL);
+                                    NULL, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_sub_filter);
     grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_NOP);
   }

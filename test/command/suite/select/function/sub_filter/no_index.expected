@@ -40,7 +40,9 @@ load --table Packages
 {"_key": "mroonga", "files": ["ha_mroonga.cc", "ha_mroonga.hpp"]}
 ]
 [[0,0.0,0.0],3]
-select Packages   --filter 'sub_filter(files.author, "birthday >= \\"1988-01-04 00:00:00\\" && birthday < \\"1992-02-09 00:00:00\\"")'   --output_columns '_key, files, files.author.birthday'
+log_level --level info
+[[0,0.0,0.0],true]
+select Packages   --filter 'sub_filter(files.author, "birthday >= \\"1988-01-04 00:00:00\\" && birthday < \\"1992-02-09 00:00:00\\"")'   --output_columns '_key, files, files.author.birthday'   --sort_keys _key
 [
   [
     0,
@@ -61,12 +63,20 @@ select Packages   --filter 'sub_filter(files.author, "birthday >= \\"1988-01-04 
           "files",
           "Files"
         ],
+        [
+          "files.author.birthday",
+          "Time"
+        ]
       ],
       [
         "groonga",
         [
           "include/groonga.h",
           "src/groonga.c"
+        ],
+        [
+          697561200.0,
+          568220400.0
         ]
       ],
       [
@@ -74,8 +84,19 @@ select Packages   --filter 'sub_filter(files.author, "birthday >= \\"1988-01-04 
         [
           "ha_mroonga.cc",
           "ha_mroonga.hpp"
+        ],
+        [
+          568220400.0,
+          409935600.0
         ]
       ]
     ]
   ]
 ]
+#|i| [table][select][index][selector][no-index][sub_filter] <Packages>
+#|i| [table][select][index][range] <Birthdays.users_birthday>
+#|i| [table][select][index][range] <Birthdays.users_birthday>
+#|i| [accessor][resolve][data-column][column] <Files.author> -> <Users>
+#|i| [accessor][resolve][data-column][index] <Files.packages_files_index>
+log_level --level notice
+[[0,0.0,0.0],true]
