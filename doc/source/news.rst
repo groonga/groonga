@@ -7,6 +7,36 @@
 News
 ====
 
+.. _release-9-0-8:
+
+Release 9.0.8 - 2019-09-27
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/log_reopen`] Added a supplementary explanation when we use ``groonga-httpd`` with 2 or more workers.
+
+* Improved that Groonga ignores the index being built.
+
+  * We can get correct search results even if the index is under construction.
+
+  * However, the search is slow because of Groonga out of use the index to search in this case.
+
+* [:doc:`reference/functions/sub_filter`] Added a feature that ``sub_filter`` executes a sequential search when Groonga is building indexes for the target column or the target column hasn't indexed.
+
+  * ``sub_filter`` was an error if the above situation in before
+    version.
+  * From this version, ``sub_filter`` returns search results if the above situation.
+  * However if the above situation, ``sub_filter`` is slow. Because it is executed as a sequential search.
+
+* [:doc:`/install/centos`] Dropped 32-bit package support on CentOS 6.
+
+Fixes
+^^^^^
+
+* [:doc:`reference/commands/logical_range_filter`] Fixed a bug that exception about closing the same object twice occurs when we have enough records and the number of records that unmatch filter search criteria is more than the estimated value of it.
+
 .. _release-9-0-7:
 
 Release 9.0.7 - 2019-08-29
