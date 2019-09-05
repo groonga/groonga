@@ -14737,7 +14737,7 @@ grn_ii_set_index_building_status(grn_ii *ii, grn_bool status)
 }
 
 grn_bool
-grn_ii_get_index_building_status(grn_ii *ii)
+grn_ii_is_index_building(grn_ii *ii)
 {
   if (ii->header.common->flags & GRN_II_INDEX_BUILDING) {
     return GRN_TRUE;
