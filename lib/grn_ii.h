@@ -2,6 +2,7 @@
 /*
   Copyright(C) 2009-2018 Brazil
   Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2019 Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -51,6 +52,9 @@ struct _grn_ii {
   } header;
 };
 
+#define GRN_II_INDEX_BUILDING      (0x01<<31)
+#define GRN_II_INDEX_BUILD_START   GRN_TRUE
+#define GRN_II_INDEX_BUILD_FINISH  GRN_FALSE
 /* BGQ is buffer garbage queue? */
 #define GRN_II_BGQSIZE 16
 /* L is for logical? */
@@ -218,6 +222,9 @@ typedef struct grn_ii_builder_options grn_ii_builder_options;
 
 grn_rc grn_ii_build2(grn_ctx *ctx, grn_ii *ii,
                      const grn_ii_builder_options *options);
+
+void grn_ii_set_index_building_status(grn_ii *ii, grn_bool status);
+grn_bool grn_ii_get_index_building_status(grn_ii *ii);
 
 #ifdef __cplusplus
 }
