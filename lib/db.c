@@ -2,6 +2,7 @@
 /*
   Copyright(C) 2009-2018 Brazil
   Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2019 Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3728,6 +3729,7 @@ grn_accessor_resolve_one_data_column_index(grn_ctx *ctx,
         continue;
       }
 
+      grn_ii_set_index_building_status(ii, GRN_II_INDEX_BUILD_START);
       while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
         grn_posting add_posting;
 
@@ -3745,6 +3747,7 @@ grn_accessor_resolve_one_data_column_index(grn_ctx *ctx,
           break;
         }
       }
+      grn_ii_set_index_building_status(ii, GRN_II_INDEX_BUILD_FINISH);
       grn_ii_cursor_close(ctx, ii_cursor);
 
       if (rc != GRN_SUCCESS) {
