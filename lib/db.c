@@ -14379,6 +14379,10 @@ grn_column_find_index_data_column_equal(grn_ctx *ctx, grn_obj *obj,
                                                "[column][equal]");
       continue;
     }
+    if (grn_ii_is_index_building((grn_ii *)index_data->index)) {
+      grn_report_index(ctx, "[find][index]", "[ignore]", index_data->index);
+      continue;
+    }
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
     if (obj->header.type != GRN_COLUMN_FIX_SIZE) {
       if (is_full_text_searchable_index(ctx, target)) { continue; }
@@ -14457,6 +14461,10 @@ grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
                                                  "[column][index]"
                                                  "[column][match]"
                                                  "[prefer-full-text-search]");
+        continue;
+      }
+      if (grn_ii_is_index_building((grn_ii *)index_data->index)) {
+        grn_report_index(ctx, "[find][index]", "[ignore]", index_data->index);
         continue;
       }
       if (target->header.type != GRN_COLUMN_INDEX) { continue; }
@@ -14542,6 +14550,10 @@ grn_column_find_index_data_column_range(grn_ctx *ctx, grn_obj *obj,
       report_hook_has_dangling_reference_error(ctx, obj, data->target,
                                                "[column][index]"
                                                "[column][range]");
+      continue;
+    }
+    if (grn_ii_is_index_building((grn_ii *)index_data->index)) {
+      grn_report_index(ctx, "[find][index]", "[ignore]", index_data->index);
       continue;
     }
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
@@ -14668,6 +14680,10 @@ grn_column_find_index_data_accessor_index_column(grn_ctx *ctx, grn_accessor *a,
   if (!is_valid_index(ctx, index_column, op)) {
     return 0;
   }
+  if (grn_ii_is_index_building((grn_ii *)index_data->index)) {
+    grn_report_index(ctx, "[find][index]", "[ignore]", index_data->index);
+    return 0;
+  }
 
   if (a->next) {
     int specified_section;
@@ -14789,6 +14805,10 @@ grn_column_find_index_data_accessor_match(grn_ctx *ctx, grn_obj *obj,
         report_hook_has_dangling_reference_error(ctx, obj, data->target,
                                                  "[column][index]"
                                                  "[accessor][match]");
+        continue;
+      }
+      if (grn_ii_is_index_building((grn_ii *)index_data->index)) {
+        grn_report_index(ctx, "[find][index]", "[ignore]", index_data->index);
         continue;
       }
       if (target->header.type != GRN_COLUMN_INDEX) { continue; }
