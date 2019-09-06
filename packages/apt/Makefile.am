@@ -2,14 +2,10 @@ REPOSITORIES_PATH = repositories
 DISTRIBUTIONS = debian
 ARCHITECTURES = i386 amd64
 CODE_NAMES = stretch buster
-KEYRING_PACKAGE = groonga-keyring
-KEYRING_VERSION = 2018.01.29
-KEYRING_BASE_NAME = $(KEYRING_PACKAGE)-$(KEYRING_VERSION)
-KEYRING_FILE = groonga-archive-keyring.gpg
 
 all:
 
-release: download build sign-packages update-repository sign-repository upload
+release: download build upload
 
 remove-existing-packages:
 	for distribution in $(DISTRIBUTIONS); do		\
@@ -30,26 +26,12 @@ download: ensure-rsync-path
 	    ${REPOSITORIES_PATH}/;			\
 	done
 
-sign-packages:
-	./sign-packages.sh '$(GPG_UID)' '$(REPOSITORIES_PATH)/' '$(CODE_NAMES)'
-
-update-repository:
-	./update-repository.sh '$(PACKAGE_LABEL)' '$(REPOSITORIES_PATH)/' \
-	  '$(ARCHITECTURES)' '$(CODE_NAMES)'
-
-sign-repository:
-	./sign-repository.sh '$(GPG_UID)' '$(REPOSITORIES_PATH)/' '$(CODE_NAMES)'
-
 upload: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\
 	  (cd $(REPOSITORIES_PATH)/$${distribution};		\
 	   rsync -avz --progress --delete			\
 	     dists pool $(RSYNC_PATH)/$${distribution});	\
 	done
-
-upload-archive-keyring: archive-keyring
-	rsync -avz --progress $(KEYRING_FILE) $(RSYNC_PATH)/debian/
-	rsync -avz --progress tmp/$(KEYRING_BASE_NAME).tar.gz $(RSYNC_PATH)/source/groonga-keyring/
 
 build: build-package-deb
 
@@ -76,32 +58,3 @@ source: tmp/$(PACKAGE)-$(VERSION).tar.gz
 tmp/$(PACKAGE)-$(VERSION).tar.gz: $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz
 	mkdir -p tmp/
 	cp $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz $@
-
-
-keyring-source: tmp/$(KEYRING_BASE_NAME).tar.gz
-
-ensure-public-key:
-	gpg --list-keys '$(GPG_UID)' > /dev/null ||			\
-	  gpg --keyserver keyserver.ubuntu.com --recv-key '$(GPG_UID)'
-	gpg --list-keys '$(GPG_UID_RSA4096)' > /dev/null ||			\
-	  gpg --keyserver keyserver.ubuntu.com --recv-key '$(GPG_UID_RSA4096)'
-
-tmp/$(KEYRING_BASE_NAME).tar.gz: ensure-public-key
-	rm -rf $(KEYRING_BASE_NAME)
-	mkdir -p $(KEYRING_BASE_NAME)
-	gpg --armor --export '$(GPG_UID)' > \
-	  $(KEYRING_BASE_NAME)/groonga-keyring.gpg
-	gpg --armor --export '$(GPG_UID_RSA4096)' > \
-	  $(KEYRING_BASE_NAME)/groonga-keyring-rsa4096.gpg
-	mkdir -p tmp/
-	tar cvzf tmp/$(KEYRING_BASE_NAME).tar.gz $(KEYRING_BASE_NAME)
-
-archive-keyring: keyring-source
-	rm -f $(KEYRING_FILE)
-	touch $(KEYRING_FILE)
-	gpg --no-default-keyring \
-	  --keyring ./$(KEYRING_FILE) \
-	  --import $(KEYRING_BASE_NAME)/groonga-keyring.gpg
-	gpg --no-default-keyring \
-	  --keyring ./$(KEYRING_FILE) \
-	  --import $(KEYRING_BASE_NAME)/groonga-keyring-rsa4096.gpg
