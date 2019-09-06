@@ -918,7 +918,7 @@ module Groonga
               @context.current_offset -= table.size
               return
             end
-            if @range_index
+            if range_index
               filter_by_range(range_index,
                               nil, nil,
                               nil, nil)
@@ -926,7 +926,7 @@ module Groonga
               add_filtered_result_set(table)
             end
           else
-            if @range_index
+            if range_index
               filter_by_range(range_index,
                               nil, nil,
                               nil, nil)
@@ -954,66 +954,60 @@ module Groonga
 
           result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
                                         :key_type => data_table)
+          @temporary_tables << result_set
           n_matched_records = 0
-          begin
-            TableCursor.open(lexicon,
-                             :min => min,
-                             :max => max,
-                             :flags => flags) do |table_cursor|
-              options = {
-                :offset => @context.current_offset,
-              }
-              current_limit = @context.current_limit
-              if current_limit < 0
-                options[:limit] = data_table.size
-              else
-                options[:limit] = current_limit
-              end
-              max_n_unmatched_records =
-                compute_max_n_unmatched_records(data_table.size,
-                                                options[:limit])
-              options[:max_n_unmatched_records] = max_n_unmatched_records
-              if @filter
-                create_expression(data_table) do |expression|
-                  expression.parse(@filter)
-                  options[:expression] = expression
-                  IndexCursor.open(table_cursor, range_index) do |index_cursor|
-                    n_matched_records = index_cursor.select(result_set, options)
-                  end
-                end
-                # TODO: Add range information
-                query_logger.log(:size, ":",
-                                 "filter(#{n_matched_records})" +
-                                 "[#{@shard.table_name}]: #{@filter}")
-              else
+          TableCursor.open(lexicon,
+                           :min => min,
+                           :max => max,
+                           :flags => flags) do |table_cursor|
+            options = {
+              :offset => @context.current_offset,
+            }
+            current_limit = @context.current_limit
+            if current_limit < 0
+              options[:limit] = data_table.size
+            else
+              options[:limit] = current_limit
+            end
+            max_n_unmatched_records =
+              compute_max_n_unmatched_records(data_table.size,
+                                              options[:limit])
+            options[:max_n_unmatched_records] = max_n_unmatched_records
+            if @filter
+              create_expression(data_table) do |expression|
+                expression.parse(@filter)
+                options[:expression] = expression
                 IndexCursor.open(table_cursor, range_index) do |index_cursor|
                   n_matched_records = index_cursor.select(result_set, options)
                 end
-                # TODO: Add range information
-                query_logger.log(:size, ":",
-                                 "filter(#{n_matched_records})" +
-                                 "[#{@shard.table_name}]")
               end
-              if n_matched_records == -1
-                result_set.close
-                fallback_message =
-                  "fallback because there are too much unmatched records: "
-                fallback_message << "<#{max_n_unmatched_records}>"
-                decide_use_range_index(false,
-                                       fallback_message,
-                                       __LINE__, __method__)
-                execute_filter(nil)
-                return
+              # TODO: Add range information
+              query_logger.log(:size, ":",
+                               "filter(#{n_matched_records})" +
+                               "[#{@shard.table_name}]: #{@filter}")
+            else
+              IndexCursor.open(table_cursor, range_index) do |index_cursor|
+                n_matched_records = index_cursor.select(result_set, options)
               end
+              # TODO: Add range information
+              query_logger.log(:size, ":",
+                               "filter(#{n_matched_records})" +
+                               "[#{@shard.table_name}]")
             end
-          rescue => error
-            result_set.close
-            raise error
+            if n_matched_records == -1
+              fallback_message =
+                "fallback because there are too much unmatched records: "
+              fallback_message << "<#{max_n_unmatched_records}>"
+              decide_use_range_index(false,
+                                     fallback_message,
+                                     __LINE__, __method__)
+              execute_filter(nil)
+              return
+            end
           end
 
           if n_matched_records <= @context.current_offset
             @context.current_offset -= n_matched_records
-            @temporary_tables << result_set
             return
           end
 
@@ -1023,7 +1017,6 @@ module Groonga
           if @context.current_limit > 0
             @context.current_limit -= result_set.size
           end
-          @temporary_tables << result_set
           @result_sets << result_set
         end
 

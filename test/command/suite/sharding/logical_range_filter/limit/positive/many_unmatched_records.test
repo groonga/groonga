@@ -1,0 +1,18 @@
+#@include fixture/sharding/logical_range_filter/index/schema.grn
+
+#@disable-logging
+#@generate-series 0 10000 Logs_20150203 '{"timestamp": "2015-02-03 23:59:59", "memo": "2015-02-03 23:59:59", "message": "Start"}'
+#@enable-logging
+
+load --table Logs_20150204
+[
+{"timestamp": "2015-02-04 00:00:00", "memo": "2015-02-04 00:00:00", "message": "Shutdown"}
+]
+
+logical_range_filter Logs timestamp \
+  --filter 'message == "Shutdown"' \
+  --min "2015-02-03 00:00:00" \
+  --min_border "include" \
+  --max "2015-02-04 00:00:00" \
+  --max_border "exclude" \
+  --limit 10000
