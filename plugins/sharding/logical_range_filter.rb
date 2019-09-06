@@ -918,16 +918,16 @@ module Groonga
               @context.current_offset -= table.size
               return
             end
-            if @range_index
-              filter_by_range(range_index ? range_index : @range_index,
+            if range_index
+              filter_by_range(range_index,
                               nil, nil,
                               nil, nil)
             else
               add_filtered_result_set(table)
             end
           else
-            if @range_index
-              filter_by_range(range_index ? range_index : @range_index,
+            if range_index
+              filter_by_range(range_index,
                               nil, nil,
                               nil, nil)
             else
@@ -1002,9 +1002,7 @@ module Groonga
                 decide_use_range_index(false,
                                        fallback_message,
                                        __LINE__, __method__)
-                @disable_estimate_unmatched_records = true
                 execute_filter(nil)
-                @disable_estimate_unmatched_records = false
                 return
               end
             end
@@ -1053,9 +1051,6 @@ module Groonga
         end
 
         def compute_max_n_unmatched_records(data_table_size, limit)
-          if @disable_estimate_unmatched_records
-            return data_table_size
-          end
           max_n_unmatched_records = limit * 100
           max_n_sample_records = data_table_size
           if max_n_sample_records > 10000
