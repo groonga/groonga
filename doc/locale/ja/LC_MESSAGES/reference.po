@@ -4975,6 +4975,11 @@ msgstr ""
 "カラムは自動で更新されます。1つのインデックスカラムに複数のインデックス対象の"
 "カラムを指定することもできます。"
 
+msgid "If you make a new index, it is invalid until finishing of index build."
+msgstr ""
+"新規にインデックスを作成する場合、インデックスの構築が完了するまで、そのイン"
+"デックスは無効となります。"
+
 msgid ""
 "If Groonga has an index column for the ``age`` column of the ``People`` "
 "table, Groonga can do fast equal search, fast comparison search and fast "
