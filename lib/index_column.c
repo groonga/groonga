@@ -158,7 +158,7 @@ grn_index_column_build_column(grn_ctx *ctx,
 grn_rc
 grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
 {
-  grn_obj *src, **cp, **col, *target;
+  grn_obj *src, *target;
   grn_id *s = DB_OBJ(index_column)->source;
 
   if (!(DB_OBJ(index_column)->source_size) || !s) { return ctx->rc; }
@@ -175,7 +175,6 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
     return ctx->rc;
   }
 
-  int i, ncol = DB_OBJ(index_column)->source_size / sizeof(grn_id);
   grn_table_flags lexicon_flags;
   grn_ii *ii = (grn_ii *)index_column;
   grn_bool use_grn_ii_build;
@@ -207,32 +206,41 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
      * index against UInt32 vector column. */
     use_grn_ii_build = GRN_FALSE;
   }
-  if ((col = GRN_MALLOC(ncol * sizeof(grn_obj *)))) {
-    for (cp = col, i = ncol; i; s++, cp++, i--) {
-      if (!(*cp = grn_ctx_at(ctx, *s))) {
-        ERR(GRN_INVALID_ARGUMENT, "source invalid, n=%d",i);
-        GRN_FREE(col);
-        return ctx->rc;
-      }
-      if (GRN_OBJ_TABLEP(grn_ctx_at(ctx, DB_OBJ(*cp)->range))) {
-        use_grn_ii_build = GRN_FALSE;
-      }
-    }
-    if (use_grn_ii_build) {
-      if (grn_index_chunk_split_enable) {
-        grn_ii_build2(ctx, ii, NULL);
-      } else {
-        grn_ii_build(ctx, ii, grn_index_sparsity);
-      }
-    } else {
-      for (i = 0; i < ncol; i++) {
-        grn_obj *column = col[i];
-        grn_index_column_build_column(ctx, index_column, target, column);
-      }
-    }
-    GRN_FREE(col);
-    grn_obj_touch(ctx, index_column, NULL);
+
+  int n_columns = DB_OBJ(index_column)->source_size / sizeof(grn_id);
+  grn_obj **columns = GRN_MALLOC(n_columns * sizeof(grn_obj *));
+  if (!columns) {
+    return ctx->rc;
   }
+
+  grn_obj **cp;
+  int i;
+  for (cp = columns, i = n_columns;
+       i > 0;
+       s++, cp++, i--) {
+    if (!(*cp = grn_ctx_at(ctx, *s))) {
+      ERR(GRN_INVALID_ARGUMENT, "source invalid, n=%d", i);
+      GRN_FREE(columns);
+      return ctx->rc;
+    }
+    if (GRN_OBJ_TABLEP(grn_ctx_at(ctx, DB_OBJ(*cp)->range))) {
+      use_grn_ii_build = GRN_FALSE;
+    }
+  }
+  if (use_grn_ii_build) {
+    if (grn_index_chunk_split_enable) {
+      grn_ii_build2(ctx, ii, NULL);
+    } else {
+      grn_ii_build(ctx, ii, grn_index_sparsity);
+    }
+  } else {
+    for (int i = 0; i < n_columns; i++) {
+      grn_obj *column = columns[i];
+      grn_index_column_build_column(ctx, index_column, target, column);
+    }
+  }
+  GRN_FREE(columns);
+  grn_obj_touch(ctx, index_column, NULL);
 
   return ctx->rc;
 }
