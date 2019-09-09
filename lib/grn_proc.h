@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -63,6 +64,7 @@ void grn_proc_init_object_exist(grn_ctx *ctx);
 void grn_proc_init_object_inspect(grn_ctx *ctx);
 void grn_proc_init_object_list(grn_ctx *ctx);
 void grn_proc_init_object_remove(grn_ctx *ctx);
+void grn_proc_init_object_set_visibility(grn_ctx *ctx);
 void grn_proc_init_query_expand(grn_ctx *ctx);
 void grn_proc_init_query_log_flags_get(grn_ctx *ctx);
 void grn_proc_init_query_log_flags_set(grn_ctx *ctx);

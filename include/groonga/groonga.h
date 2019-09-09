@@ -363,6 +363,12 @@ typedef uint32_t grn_column_flags;
 #define GRN_OBJ_INDEX_MEDIUM           (0x01<<17)
 #define GRN_OBJ_INDEX_LARGE            (0x01<<18)
 
+/* flags only for grn_table_flags and grn_column_flags */
+
+/* GRN_COLUMN_INDEX only uses this for now */
+#define GRN_OBJ_VISIBLE                ((uint32_t)(0x00<<31))
+#define GRN_OBJ_INVISIBLE              ((uint32_t)(0x01<<31))
+
 /* obj types */
 
 #define GRN_VOID                       (0x00)

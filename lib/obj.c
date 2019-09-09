@@ -19,10 +19,11 @@
 
 #include "grn.h"
 #include "grn_ctx_impl.h"
+#include "grn_dat.h"
+#include "grn_hash.h"
+#include "grn_ii.h"
 #include "grn_index_column.h"
 #include "grn_pat.h"
-#include "grn_dat.h"
-#include "grn_ii.h"
 
 grn_bool
 grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
@@ -587,6 +588,80 @@ grn_obj_is_expr(grn_ctx *ctx, grn_obj *obj)
   }
 
   return obj->header.type == GRN_EXPR;
+}
+
+bool
+grn_obj_is_visible(grn_ctx *ctx,
+                   grn_obj *obj)
+{
+  if (!obj) {
+    return false;
+  }
+
+  uint32_t flags = 0;
+  switch (obj->header.type) {
+  case GRN_TABLE_HASH_KEY :
+    flags = ((grn_hash *)obj)->header.common->flags;
+    break;
+  case GRN_TABLE_PAT_KEY :
+    flags = ((grn_pat *)obj)->header->flags;
+    break;
+  case GRN_TABLE_DAT_KEY :
+    flags = ((grn_dat *)obj)->header->flags;
+    break;
+  case GRN_TABLE_NO_KEY :
+    flags = grn_array_get_flags(ctx, ((grn_array *)obj));
+    break;
+  case GRN_COLUMN_FIX_SIZE :
+    flags = ((grn_ra *)obj)->header->flags;
+    break;
+  case GRN_COLUMN_VAR_SIZE :
+    flags = grn_ja_get_flags(ctx, (grn_ja *)obj);
+    break;
+  case GRN_COLUMN_INDEX :
+    flags = ((grn_ii *)obj)->header.common->flags;
+    break;
+  default :
+    return false;
+    break;
+  }
+
+  return !(flags & GRN_OBJ_INVISIBLE);
+}
+
+grn_rc
+grn_obj_set_visibility(grn_ctx *ctx,
+                       grn_obj *obj,
+                       bool is_visible)
+{
+  GRN_API_ENTER;
+
+  if (!obj) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[obj][set-visibility] must not be NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  if (!grn_obj_is_index_column(ctx, obj)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect_limited(ctx, &inspected, obj);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[obj][set-visibility] must be index column: <%.*s>",
+        (int)(GRN_TEXT_LEN(&inspected)),
+        GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  grn_ii *ii = (grn_ii *)obj;
+  if (is_visible) {
+    ii->header.common->flags &= ~GRN_OBJ_INVISIBLE;
+  } else {
+    ii->header.common->flags |= GRN_OBJ_INVISIBLE;
+  }
+
+  GRN_API_RETURN(GRN_SUCCESS);
 }
 
 static void

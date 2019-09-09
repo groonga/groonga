@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -42,7 +43,8 @@ struct _grn_ra {
 struct grn_ra_header {
   uint32_t element_size;
   uint32_t nrecords; /* nrecords is not maintained by default */
-  uint32_t reserved[10];
+  grn_column_flags flags;
+  uint32_t reserved[9];
 };
 
 grn_ra *grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size);

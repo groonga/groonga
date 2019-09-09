@@ -1,0 +1,13 @@
+table_create Data TABLE_HASH_KEY ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC100
+column_create Terms data_index COLUMN_INDEX|WITH_POSITION Data _key
+
+object_set_visibility \
+  --name Terms.data_index \
+  --visible no
+object_set_visibility \
+  --name Terms.data_index \
+  --visible yes
