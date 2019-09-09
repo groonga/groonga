@@ -27,6 +27,94 @@
 static const char *remains_column_name = "remains";
 static const char *missings_column_name = "missings";
 
+typedef struct {
+  const char *tag;
+  int n_args;
+  grn_obj **args;
+  grn_user_data *user_data;
+  grn_raw_string table_name;
+  grn_obj *table;
+  grn_raw_string column_name;
+  grn_obj *column;
+} index_column_data;
+
+static bool
+index_column_data_init(grn_ctx *ctx, index_column_data *data)
+{
+  data->table_name.value =
+    grn_plugin_proc_get_var_string(ctx,
+                                   data->user_data,
+                                   "table", -1,
+                                   &(data->table_name.length));
+  data->column_name.value =
+    grn_plugin_proc_get_var_string(ctx,
+                                   data->user_data,
+                                   "name", -1,
+                                   &(data->column_name.length));
+
+  data->table = grn_ctx_get(ctx,
+                            data->table_name.value,
+                            data->table_name.length);
+  if (!data->table) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[index-column]%s table doesn't exist: <%.*s>",
+                     data->tag,
+                     (int)(data->table_name.length),
+                     data->table_name.value);
+    return false;
+  }
+  if (!grn_obj_is_lexicon(ctx, data->table)) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[index-column]%s table must be lexicon: <%.*s>: %s",
+                     data->tag,
+                     (int)(data->table_name.length),
+                     data->table_name.value,
+                     grn_obj_type_to_string(data->table->header.type));
+    return false;
+  }
+
+  data->column = grn_obj_column(ctx,
+                                data->table,
+                                data->column_name.value,
+                                data->column_name.length);
+  if (!data->column) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[index-column]%s column doesn't exist: <%.*s>: <%.*s>",
+                     data->tag,
+                     (int)(data->table_name.length),
+                     data->table_name.value,
+                     (int)(data->column_name.length),
+                     data->column_name.value);
+    return false;
+  }
+  if (!grn_obj_is_index_column(ctx, data->column)) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[index-column]%s column must be index column: "
+                     "<%.*s>: <%.*s>: %s",
+                     data->tag,
+                     (int)(data->table_name.length),
+                     data->table_name.value,
+                     (int)(data->column_name.length),
+                     data->column_name.value,
+                     grn_obj_type_to_string(data->column->header.type));
+    return false;
+  }
+
+  return true;
+}
+
+static void
+index_column_data_fin(grn_ctx *ctx, index_column_data *data)
+{
+  if (grn_obj_is_accessor(ctx, data->column)) {
+    grn_obj_close(ctx, data->column);
+  }
+}
+
 static void
 index_column_diff_output_postings(grn_ctx *ctx,
                                   grn_column_flags index_column_flags,
@@ -147,87 +235,41 @@ command_index_column_diff(grn_ctx *ctx,
                           grn_obj **args,
                           grn_user_data *user_data)
 {
-  grn_raw_string table_name;
-  grn_raw_string column_name;
-  grn_obj *table = NULL;
-  grn_obj *column = NULL;
+  index_column_data data;
   grn_obj *diff = NULL;
 
-  table_name.value =
-    grn_plugin_proc_get_var_string(ctx, user_data,
-                                   "table", -1,
-                                   &(table_name.length));
-  column_name.value =
-    grn_plugin_proc_get_var_string(ctx, user_data,
-                                   "name", -1,
-                                   &(column_name.length));
-
-  table = grn_ctx_get(ctx, table_name.value, table_name.length);
-  if (!table) {
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "[index-column][diff] table doesn't exist: <%.*s>",
-                     (int)(table_name.length),
-                     table_name.value);
-    goto exit;
-  }
-  if (!grn_obj_is_lexicon(ctx, table)) {
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "[index-column][diff] table must be lexicon: <%.*s>: %s",
-                     (int)(table_name.length),
-                     table_name.value,
-                     grn_obj_type_to_string(table->header.type));
+  data.tag = "[diff]";
+  data.n_args = n_args;
+  data.args = args;
+  data.user_data = user_data;
+  data.table = NULL;
+  data.column = NULL;
+  if (!index_column_data_init(ctx, &data)) {
     goto exit;
   }
 
-  column = grn_obj_column(ctx, table, column_name.value, column_name.length);
-  if (!column) {
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "[index-column][diff] column doesn't exist: <%.*s>: <%.*s>",
-                     (int)(table_name.length),
-                     table_name.value,
-                     (int)(column_name.length),
-                     column_name.value);
-    goto exit;
-  }
-  if (!grn_obj_is_index_column(ctx, column)) {
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "[index-column][diff] column must be index column: "
-                     "<%.*s>: <%.*s>: %s",
-                     (int)(table_name.length),
-                     table_name.value,
-                     (int)(column_name.length),
-                     column_name.value,
-                     grn_obj_type_to_string(column->header.type));
-    goto exit;
-  }
-
-  grn_index_column_diff(ctx, column, &diff);
+  grn_index_column_diff(ctx, data.column, &diff);
   if (ctx->rc != GRN_SUCCESS) {
     GRN_PLUGIN_ERROR(ctx,
                      ctx->rc,
-                     "[index-column][diff] failed to diff: "
+                     "[index-column]%s failed to diff: "
                      "<%.*s>: <%.*s>: %s",
-                     (int)(table_name.length),
-                     table_name.value,
-                     (int)(column_name.length),
-                     column_name.value,
+                     data.tag,
+                     (int)(data.table_name.length),
+                     data.table_name.value,
+                     (int)(data.column_name.length),
+                     data.column_name.value,
                      ctx->errbuf);
     goto exit;
   }
 
   index_column_diff_output(ctx,
                            diff,
-                           table,
-                           grn_column_get_flags(ctx, column));
+                           data.table,
+                           grn_column_get_flags(ctx, data.column));
 
 exit :
-  if (grn_obj_is_accessor(ctx, column)) {
-    grn_obj_close(ctx, column);
-  }
+  index_column_data_fin(ctx, &data);
 
   if (diff) {
     grn_obj_close(ctx, diff);
