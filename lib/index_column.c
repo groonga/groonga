@@ -227,6 +227,7 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
       use_grn_ii_build = GRN_FALSE;
     }
   }
+  grn_obj_set_visibility(ctx, index_column, false);
   if (use_grn_ii_build) {
     if (grn_index_chunk_split_enable) {
       grn_ii_build2(ctx, ii, NULL);
@@ -239,6 +240,7 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
       grn_index_column_build_column(ctx, index_column, target, column);
     }
   }
+  grn_obj_set_visibility(ctx, index_column, true);
   GRN_FREE(columns);
   grn_obj_touch(ctx, index_column, NULL);
 
