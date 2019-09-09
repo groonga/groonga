@@ -14303,30 +14303,6 @@ grn_db_init_builtin_types(grn_ctx *ctx)
 
 #define MULTI_COLUMN_INDEXP(i) (DB_OBJ(i)->source_size > sizeof(grn_id))
 
-static grn_obj *
-grn_index_column_get_tokenizer(grn_ctx *ctx, grn_obj *index_column)
-{
-  grn_obj *tokenizer;
-  grn_obj *lexicon;
-
-  lexicon = grn_ctx_at(ctx, index_column->header.domain);
-  if (!lexicon) {
-    return NULL;
-  }
-
-  grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
-  return tokenizer;
-}
-
-static grn_bool
-is_full_text_searchable_index(grn_ctx *ctx, grn_obj *index_column)
-{
-  grn_obj *tokenizer;
-
-  tokenizer = grn_index_column_get_tokenizer(ctx, index_column);
-  return tokenizer != NULL;
-}
-
 static void
 report_hook_has_dangling_reference_error(grn_ctx *ctx,
                                          grn_obj *target,
@@ -14354,6 +14330,111 @@ report_hook_has_dangling_reference_error(grn_ctx *ctx,
       reference_name_length, reference_name);
 }
 
+static grn_obj *
+grn_index_column_get_tokenizer(grn_ctx *ctx, grn_obj *index_column)
+{
+  grn_obj *tokenizer;
+  grn_obj *lexicon;
+
+  lexicon = grn_ctx_at(ctx, index_column->header.domain);
+  if (!lexicon) {
+    return NULL;
+  }
+
+  grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
+  return tokenizer;
+}
+
+static grn_bool
+is_full_text_searchable_index(grn_ctx *ctx, grn_obj *index_column)
+{
+  grn_obj *tokenizer;
+
+  tokenizer = grn_index_column_get_tokenizer(ctx, index_column);
+  return tokenizer != NULL;
+}
+
+static bool
+is_valid_equal_index(grn_ctx *ctx, grn_obj *index_column)
+{
+  return true;
+}
+
+static bool
+is_valid_match_index(grn_ctx *ctx, grn_obj *index_column)
+{
+  return true;
+}
+
+static bool
+is_valid_range_index(grn_ctx *ctx, grn_obj *index_column)
+{
+  grn_obj *tokenizer;
+  grn_obj *lexicon;
+
+  lexicon = grn_ctx_at(ctx, index_column->header.domain);
+  if (!lexicon) { return false; }
+  /* FIXME: GRN_TABLE_DAT_KEY should be supported */
+  if (lexicon->header.type != GRN_TABLE_PAT_KEY) {
+    grn_obj_unlink(ctx, lexicon);
+    return false;
+  }
+
+  grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
+  grn_obj_unlink(ctx, lexicon);
+  if (tokenizer) { return false; }
+
+  return true;
+}
+
+static bool
+is_valid_regexp_index(grn_ctx *ctx, grn_obj *index_column)
+{
+  grn_obj *tokenizer;
+
+  tokenizer = grn_index_column_get_tokenizer(ctx, index_column);
+  /* TODO: Restrict to TokenRegexp? */
+  return tokenizer != NULL;
+}
+
+static bool
+is_valid_index(grn_ctx *ctx, grn_obj *index_column, grn_operator op)
+{
+  if (!grn_obj_is_visible(ctx, index_column)) {
+    return false;
+  }
+
+  switch (op) {
+  case GRN_OP_EQUAL :
+  case GRN_OP_NOT_EQUAL :
+    return is_valid_equal_index(ctx, index_column);
+    break;
+  case GRN_OP_MATCH :
+  case GRN_OP_NEAR :
+  case GRN_OP_NEAR2 :
+  case GRN_OP_SIMILAR :
+  case GRN_OP_PREFIX :
+  case GRN_OP_SUFFIX :
+  case GRN_OP_FUZZY :
+  case GRN_OP_QUORUM :
+    return is_valid_match_index(ctx, index_column);
+    break;
+  case GRN_OP_LESS :
+  case GRN_OP_GREATER :
+  case GRN_OP_LESS_EQUAL :
+  case GRN_OP_GREATER_EQUAL :
+  case GRN_OP_CALL :
+    return is_valid_range_index(ctx, index_column);
+    break;
+  case GRN_OP_REGEXP :
+    return is_valid_regexp_index(ctx, index_column);
+    break;
+  default :
+    return false;
+    break;
+  }
+}
+
 static int
 grn_column_find_index_data_column_equal(grn_ctx *ctx, grn_obj *obj,
                                         grn_operator op,
@@ -14377,6 +14458,7 @@ grn_column_find_index_data_column_equal(grn_ctx *ctx, grn_obj *obj,
       continue;
     }
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+    if (!is_valid_index(ctx, target, op)) { continue; }
     if (obj->header.type != GRN_COLUMN_FIX_SIZE) {
       if (is_full_text_searchable_index(ctx, target)) { continue; }
     }
@@ -14393,16 +14475,6 @@ grn_column_find_index_data_column_equal(grn_ctx *ctx, grn_obj *obj,
   }
 
   return n;
-}
-
-static grn_bool
-is_valid_regexp_index(grn_ctx *ctx, grn_obj *index_column)
-{
-  grn_obj *tokenizer;
-
-  tokenizer = grn_index_column_get_tokenizer(ctx, index_column);
-  /* TODO: Restrict to TokenRegexp? */
-  return tokenizer != NULL;
 }
 
 static int
@@ -14457,6 +14529,7 @@ grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
         continue;
       }
       if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+      if (!is_valid_index(ctx, target, op)) { continue; }
       if (!is_full_text_searchable_index(ctx, target)) { continue; }
       section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
       if (section_buf) { *section_buf = section; }
@@ -14483,10 +14556,7 @@ grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
       continue;
     }
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
-    if (op == GRN_OP_REGEXP && !is_valid_regexp_index(ctx, target)) {
-      continue;
-    }
-
+    if (!is_valid_index(ctx, target, op)) { continue; }
     if (prefer_full_text_search_index) {
       if (is_full_text_searchable_index(ctx, target)) { continue; }
     }
@@ -14542,6 +14612,7 @@ grn_column_find_index_data_column_range(grn_ctx *ctx, grn_obj *obj,
       continue;
     }
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+    if (!is_valid_index(ctx, target, op)) { continue; }
     section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
     if (section_buf) { *section_buf = section; }
     {
@@ -14571,60 +14642,6 @@ grn_column_find_index_data_column_range(grn_ctx *ctx, grn_obj *obj,
   }
 
   return n;
-}
-
-static grn_bool
-is_valid_match_index(grn_ctx *ctx, grn_obj *index_column)
-{
-  return GRN_TRUE;
-}
-
-static grn_bool
-is_valid_range_index(grn_ctx *ctx, grn_obj *index_column)
-{
-  grn_obj *tokenizer;
-  grn_obj *lexicon;
-
-  lexicon = grn_ctx_at(ctx, index_column->header.domain);
-  if (!lexicon) { return GRN_FALSE; }
-  /* FIXME: GRN_TABLE_DAT_KEY should be supported */
-  if (lexicon->header.type != GRN_TABLE_PAT_KEY) {
-    grn_obj_unlink(ctx, lexicon);
-    return GRN_FALSE;
-  }
-
-  grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
-  grn_obj_unlink(ctx, lexicon);
-  if (tokenizer) { return GRN_FALSE; }
-
-  return GRN_TRUE;
-}
-
-static grn_bool
-is_valid_index(grn_ctx *ctx, grn_obj *index_column, grn_operator op)
-{
-  switch (op) {
-  case GRN_OP_MATCH :
-  case GRN_OP_NEAR :
-  case GRN_OP_NEAR2 :
-  case GRN_OP_SIMILAR :
-  case GRN_OP_QUORUM :
-    return is_valid_match_index(ctx, index_column);
-    break;
-  case GRN_OP_LESS :
-  case GRN_OP_GREATER :
-  case GRN_OP_LESS_EQUAL :
-  case GRN_OP_GREATER_EQUAL :
-  case GRN_OP_CALL :
-    return is_valid_range_index(ctx, index_column);
-    break;
-  case GRN_OP_REGEXP :
-    return is_valid_regexp_index(ctx, index_column);
-    break;
-  default :
-    return GRN_FALSE;
-    break;
-  }
 }
 
 static int
@@ -14789,6 +14806,9 @@ grn_column_find_index_data_accessor_match(grn_ctx *ctx, grn_obj *obj,
         continue;
       }
       if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+      if (a->next) {
+        if (!is_valid_index(ctx, target, GRN_OP_EQUAL)) { continue; }
+      }
 
       found = GRN_TRUE;
       if (!a->next) {
@@ -15087,6 +15107,9 @@ grn_column_get_all_index_data_column(grn_ctx *ctx,
     if (target->header.type != GRN_COLUMN_INDEX) {
       continue;
     }
+    if (!grn_obj_is_visible(ctx, target)) {
+      continue;
+    }
     if (MULTI_COLUMN_INDEXP(target)) {
       section = data->section;
     }
@@ -15178,6 +15201,9 @@ grn_column_get_all_index_data_accessor(grn_ctx *ctx,
         continue;
       }
       if (target->header.type != GRN_COLUMN_INDEX) {
+        continue;
+      }
+      if (!grn_obj_is_visible(ctx, target)) {
         continue;
       }
 

@@ -1,0 +1,21 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs message COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms logs_message COLUMN_INDEX|WITH_SECTION Logs message
+
+load --table Logs
+[
+{"message": "Shutdown"}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Logs --filter 'message @ "Shutdown"' --cache no
+object_set_visibility --name Terms.logs_message --visible no
+select Logs --filter 'message @ "Shutdown"' --cache no
+#@remove-important-log-levels info
+log_level --level notice
+
