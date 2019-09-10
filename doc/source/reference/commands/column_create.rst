@@ -230,7 +230,7 @@ updated automatically when you store data into a data column (scalar
 column or vector column) that is marked as index target column. You
 can set multiple columns as index target columns to one index column.
 
-If you make a new index, it is invalid until finishing of index build.
+If you make a new index, it is invisible until finishing of index build.
 
 If Groonga has an index column for the ``age`` column of the
 ``People`` table, Groonga can do fast equal search, fast comparison
