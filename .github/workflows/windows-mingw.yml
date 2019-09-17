@@ -8,8 +8,15 @@ jobs:
     runs-on: windows-2019
     steps:
       - uses: actions/checkout@master
+      - name: Install MSYS2
+        run: |
+          git clone ^
+            --depth 1 ^
+            https://github.com/msys2/msys2-ci-base.git ^
+            %CD:~0,2%\msys64
       - name: Install dependencies
         run: |
+          set PATH=%CD:~0,2%\msys64\usr\bin;%PATH%
           pacman --sync --noconfirm ^
             autoconf-archive ^
             autoconf ^
@@ -17,13 +24,16 @@ jobs:
             libtool
       - name: Configure
         run: |
+          set PATH=%CD:~0,2%\msys64\usr\bin;%PATH%
           bash autogen.sh
           bash configure ^
             --with-ruby ^
             --enable-mruby
       - name: Build
         run: |
+          set PATH=%CD:~0,2%\msys64\usr\bin;%PATH%
           make -j8
       - name: Install
         run: |
+          set PATH=%CD:~0,2%\msys64\usr\bin;%PATH%
           make install
