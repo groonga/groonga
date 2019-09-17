@@ -19,10 +19,13 @@ jobs:
           set PATH=%CD:~0,2%\msys64\usr\bin;%PATH%
           pacman --sync --noconfirm ^
             ruby
-      - name: Configure
+      - name: Generate configure
         run: |
           set PATH=%CD:~0,2%\msys64\usr\bin;%PATH%
           bash autogen.sh
+      - name: Run configure
+        run: |
+          set PATH=%CD:~0,2%\msys64\usr\bin;%PATH%
           bash configure ^
             --with-ruby ^
             --enable-mruby
