@@ -8,11 +8,18 @@ jobs:
     runs-on: windows-2019
     steps:
       - uses: actions/checkout@master
+      - name: Install dependencies
+        run: |
+          pacman --sync --noconfirm ^
+            autoconf-archive ^
+            autoconf ^
+            autmake-wrapper ^
+            libtool
       - name: Configure
         run: |
           bash autogen.sh
-          bash configure \
-            --with-ruby \
+          bash configure ^
+            --with-ruby ^
             --enable-mruby
       - name: Build
         run: |
