@@ -18,10 +18,7 @@ jobs:
         run: |
           set PATH=%CD:~0,2%\msys64\usr\bin;%PATH%
           pacman --sync --noconfirm ^
-            autoconf-archive ^
-            autoconf ^
-            autmake-wrapper ^
-            libtool
+            ruby
       - name: Configure
         run: |
           set PATH=%CD:~0,2%\msys64\usr\bin;%PATH%
