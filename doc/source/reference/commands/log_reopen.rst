@@ -8,19 +8,23 @@
 Summary
 -------
 
-log_reopen - ログファイルの再読み込み
+``log_reopen`` is a command that reloads log files.
 
-Groonga組込コマンドの一つであるlog_reopenについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+It is used to reload log files such as groonga log or query log which
+are specified by ``--log-path`` or ``--query-log-path`` options.
 
-log_reopenは、ログファイルを再読み込みします。
+.. note::
 
-現在、デフォルトのログ関数を用いている場合のみに対応しています。
+    This command only works when the number of worker processes is equal to 1.
+    Thus, it means that if you use ``groonga-httpd`` with 2 or more workers, you must use
+    ``groonga-httpd -s reopen`` instead.
 
 Syntax
 ------
-::
 
- log_reopen
+This command takes no parameters::
+
+  log_reopen
 
 Usage
 -----
@@ -30,30 +34,30 @@ Usage
 
  [true]
 
-log_reopenを用いたログのローテーション
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Lotate log files with `log_reopen`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. ログファイルをmvなどで移動する。
-   ログはmvで移動された先のファイルに書き込まれる。
-2. log_reopenコマンドを実行する。
-3. 既存のログファイル名と同じファイル名で、新たなログファイルが作成される。
-   今後のログは新たなログファイルに書き込まれる。
+1. Rename target log files such as mv command.
+   (Log content is still written into moved log files)
+2. Execute ``log_reopen`` command.
+3. New log file is created as same as existing log file name.
+   newer log content is written to new log file.
 
 Parameters
 ----------
 
-ありません。
+There is no required parameter.
 
 Return value
 ------------
 
-::
+The command returns ``true`` as body if the command succeeds such as::
 
- [成功かどうかのフラグ]
+  [HEADER, true]
 
-``成功かどうかのフラグ``
+The command returns ``false`` otherwise such as::
 
-  エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。
+  [HEADER, false]
 
 See also
 --------
