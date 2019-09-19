@@ -1,4 +1,5 @@
-FROM debian:stretch
+ARG FROM=debian:stretch
+FROM ${FROM}
 
 ENV DEBIAN_FRONTEND noninteractive
 

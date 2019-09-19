@@ -1,4 +1,5 @@
-FROM debian:buster
+ARG FROM=debian:buster
+FROM ${FROM}
 
 ENV DEBIAN_FRONTEND noninteractive
 
