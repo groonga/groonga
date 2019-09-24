@@ -10,6 +10,8 @@ RUN \
   yum install -y ${quiet} epel-release && \
   yum groupinstall -y ${quiet} "Development Tools" && \
   yum install -y ${quiet} \
+    centos-release-scl \
+    devtoolset-6 \
     gcc-c++ \
     intltool \
     libedit-devel \
@@ -24,6 +26,7 @@ RUN \
     pkgconfig \
     python2-devel \
     ruby \
+    scl-utils \
     tar \
     zeromq3-devel \
     zlib-devel && \
