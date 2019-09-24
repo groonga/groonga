@@ -1,4 +1,5 @@
-FROM centos:7
+ARG FROM=centos:7
+FROM ${FROM}
 
 ARG DEBUG
 
