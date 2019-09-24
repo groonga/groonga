@@ -4,8 +4,8 @@ if apache_arrow_repository.nil?
 end
 require "#{apache_arrow_repository}/dev/tasks/linux-packages/package-task"
 
-ENV["APT_TARGETS"] ||= "debian-buster"
-ENV["CENTOS_VERSIONS"] ||= "7"
+ENV["APT_TARGETS"] ||= "debian-stretch,debian-stretch-i386,debian-buster,debian-buster-i386"
+ENV["YUM_TARGETS"] ||= "centos-6,centos-7"
 
 class GroongaPackageTask < PackageTask
   def initialize(apache_arrow_repository)
