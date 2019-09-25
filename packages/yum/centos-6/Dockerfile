@@ -7,11 +7,10 @@ RUN \
   quiet=$([ "${DEBUG}" = "yes" ] || echo "--quiet") && \
   yum install -y https://packages.groonga.org/centos/groonga-release-latest.noarch.rpm && \
   yum update -y ${quiet} && \
-  yum install -y ${quiet} epel-release && \
+  yum install -y ${quiet} epel-release centos-release-scl && \
   yum groupinstall -y ${quiet} "Development Tools" && \
   yum install -y ${quiet} \
-    centos-release-scl \
-    devtoolset-6 \
+    devtoolset-6-gcc-c++ \
     gcc-c++ \
     intltool \
     libedit-devel \
