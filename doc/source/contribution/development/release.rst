@@ -20,7 +20,8 @@
 * GROONGA_ORG_PATH=$HOME/work/groonga/groonga.org
 * CUTTER_DIR=$HOME/work/cutter
 * CUTTER_SOURCE_PATH=$HOME/work/cutter/cutter
-
+* APACHE_ARROW_REPOSITORY=$HOME/work/apache/arrow
+* PACKAGES_GROONGA_ORG_REPOSITORY=$HOME/work/groonga/packages.groonga.org
 
 最初の1回だけ行う手順
 **********************
@@ -369,70 +370,70 @@ packages/source/filesディレクトリ以下へとダウンロードされま�
 Debian系パッケージのビルド
 --------------------------
 
-Groongaのpackages/aptサブディレクトリに移動して、以下のコマンドを実行します。::
+Groongaのpackagesサブディレクトリに移動して、以下のコマンドを実行します。::
 
-    % cd packages/apt
-    % make build PARALLEL=yes
+    % cd packages
+    % rake apt:build
 
-make build PARALLEL=yesコマンドを実行すると、ディストリビューションのリリースとアーキテクチャの組み合わせでビルドを平行して行うことができます。ホストマシンの性能に複数台のVMを動作させるだけの余裕がない場合は、PARALLEL=yesは指定しないで下さい。その場合、各アーキテクチャ向けのビルドが順番に行われます。
+環境変数 ``APACHE_ARROW_REPOSITORY`` にapache/arrowのリポジトリをcloneしたパスを指定します。
 
 現在サポートされているのは以下の通りです。
 
 * Debian GNU/Linux
 
-  * jessie i386/amd64
+  * stretch i386/amd64
+  * buster i386/amd64
 
 正常にビルドが終了すると$GROONGA_CLONE_DIR/packages/apt/repositories配下に.debパッケージが生成されます。
 
-make build ではまとめてビルドできないこともあります。
+rake apt:build ではまとめてビルドできないこともあります。
 その場合にはディストリビューションごとやアーキテクチャごとなど、個別にビルドすることで問題が発生している箇所を切り分ける必要があります。
 
-生成したパッケージへの署名を行うには以下のコマンドを実行します。::
+正常にビルドができたら、packages/aptサブディレクトリに移動して以下のコマンドを実行します。
 
-    % make sign-packages
+    % make upload
 
-リリース対象のファイルをリポジトリに反映するには以下のコマンドを実行します。::
+次に、 $PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
 
-    % make update-repository
+    % rake apt:download
 
-リポジトリにGnuPGで署名を行うために以下のコマンドを実行します。::
+パッケージのダウンロードが終わったら、以下のコマンドを実行し、パッケージへの署名からリポジトリの更新、アップロードを実行します。::
 
-    % make sign-repository
-
+    % rake apt:sign
+    % rake apt:repository:update
+    % rake apt:upload
 
 Red Hat系パッケージのビルド
 ---------------------------
 
 Groongaのpackages/yumサブディレクトリに移動して、以下のコマンドを実行します。::
 
-    % cd packages/yum
-    % make build PARALLEL=yes
-
-make build PARALLEL=yesコマンドを実行すると、ディストリビューションのリリースとアーキテクチャの組み合わせでビルドを平行して行うことができます。
+    % cd packages
+    % rake yum:build
 
 現在サポートされているのは以下の通りです。
 
-* centos-5 i386/x86_64
-* centos-6 i386/x86_64
-* centos-7 i386/x86_64
+* centos-6 x86_64
+* centos-7 x86_64
 
 ビルドが正常終了すると$GROONGA_CLONE_DIR/packages/yum/repositories配下にRPMパッケージが生成されます。
 
-* repositories/yum/centos/5/i386/Packages
-* repositories/yum/centos/5/x86_64/Packages
-* repositories/yum/centos/6/i386/Packages
 * repositories/yum/centos/6/x86_64/Packages
-* repositories/yum/centos/7/i386/Packages
 * repositories/yum/centos/7/x86_64/Packages
 
-リリース対象のRPMに署名を行うには以下のコマンドを実行します。::
+正常にビルドができたら、packages/yumサブディレクトリに移動して以下のコマンドを実行します。
 
-    % make sign-packages
+    % make upload
 
-リリース対象のファイルをリポジトリに反映するには以下のコマンドを実行します。::
+次に、 $PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
 
-    % make update-repository
+    % rake yum:download
 
+パッケージのダウンロードが終わったら、以下のコマンドを実行し、パッケージへの署名からリポジトリの更新、アップロードを実行します。::
+
+    % rake yum:sign
+    % rake yum:update
+    % rake yum:upload
 
 Windows用パッケージのビルド
 ---------------------------
