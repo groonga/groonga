@@ -745,6 +745,12 @@ msgstr ""
 msgid "CUTTER_SOURCE_PATH=$HOME/work/cutter/cutter"
 msgstr ""
 
+msgid "APACHE_ARROW_REPOSITORY=$HOME/work/apache/arrow"
+msgstr ""
+
+msgid "PACKAGES_GROONGA_ORG_REPOSITORY=$HOME/work/groonga/packages.groonga.org"
+msgstr ""
+
 msgid "最初の1回だけ行う手順"
 msgstr ""
 
@@ -1170,15 +1176,12 @@ msgid "Debian系パッケージのビルド"
 msgstr ""
 
 msgid ""
-"Groongaのpackages/aptサブディレクトリに移動して、以下のコマンドを実行しま"
-"す。::"
+"Groongaのpackagesサブディレクトリに移動して、以下のコマンドを実行します。::"
 msgstr ""
 
 msgid ""
-"make build PARALLEL=yesコマンドを実行すると、ディストリビューションのリリース"
-"とアーキテクチャの組み合わせでビルドを平行して行うことができます。ホストマシ"
-"ンの性能に複数台のVMを動作させるだけの余裕がない場合は、PARALLEL=yesは指定し"
-"ないで下さい。その場合、各アーキテクチャ向けのビルドが順番に行われます。"
+"環境変数 ``APACHE_ARROW_REPOSITORY`` にapache/arrowのリポジトリをcloneしたパ"
+"スを指定します。"
 msgstr ""
 
 msgid "現在サポートされているのは以下の通りです。"
@@ -1187,7 +1190,10 @@ msgstr ""
 msgid "Debian GNU/Linux"
 msgstr ""
 
-msgid "jessie i386/amd64"
+msgid "stretch i386/amd64"
+msgstr ""
+
+msgid "buster i386/amd64"
 msgstr ""
 
 msgid ""
@@ -1196,20 +1202,27 @@ msgid ""
 msgstr ""
 
 msgid ""
-"make build ではまとめてビルドできないこともあります。 その場合にはディストリ"
-"ビューションごとやアーキテクチャごとなど、個別にビルドすることで問題が発生し"
-"ている箇所を切り分ける必要があります。"
-msgstr ""
-
-msgid "生成したパッケージへの署名を行うには以下のコマンドを実行します。::"
+"rake apt:build ではまとめてビルドできないこともあります。 その場合にはディス"
+"トリビューションごとやアーキテクチャごとなど、個別にビルドすることで問題が発"
+"生している箇所を切り分ける必要があります。"
 msgstr ""
 
 msgid ""
-"リリース対象のファイルをリポジトリに反映するには以下のコマンドを実行しま"
+"正常にビルドができたら、packages/aptサブディレクトリに移動して以下のコマンド"
+"を実行します。"
+msgstr ""
+
+msgid "% make upload"
+msgstr ""
+
+msgid ""
+"次に、 $PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行しま"
 "す。::"
 msgstr ""
 
-msgid "リポジトリにGnuPGで署名を行うために以下のコマンドを実行します。::"
+msgid ""
+"パッケージのダウンロードが終わったら、以下のコマンドを実行し、パッケージへの"
+"署名からリポジトリの更新、アップロードを実行します。::"
 msgstr ""
 
 msgid "Red Hat系パッケージのビルド"
@@ -1220,18 +1233,10 @@ msgid ""
 "す。::"
 msgstr ""
 
-msgid ""
-"make build PARALLEL=yesコマンドを実行すると、ディストリビューションのリリース"
-"とアーキテクチャの組み合わせでビルドを平行して行うことができます。"
+msgid "centos-6 x86_64"
 msgstr ""
 
-msgid "centos-5 i386/x86_64"
-msgstr ""
-
-msgid "centos-6 i386/x86_64"
-msgstr ""
-
-msgid "centos-7 i386/x86_64"
+msgid "centos-7 x86_64"
 msgstr ""
 
 msgid ""
@@ -1239,25 +1244,15 @@ msgid ""
 "パッケージが生成されます。"
 msgstr ""
 
-msgid "repositories/yum/centos/5/i386/Packages"
-msgstr ""
-
-msgid "repositories/yum/centos/5/x86_64/Packages"
-msgstr ""
-
-msgid "repositories/yum/centos/6/i386/Packages"
-msgstr ""
-
 msgid "repositories/yum/centos/6/x86_64/Packages"
-msgstr ""
-
-msgid "repositories/yum/centos/7/i386/Packages"
 msgstr ""
 
 msgid "repositories/yum/centos/7/x86_64/Packages"
 msgstr ""
 
-msgid "リリース対象のRPMに署名を行うには以下のコマンドを実行します。::"
+msgid ""
+"正常にビルドができたら、packages/yumサブディレクトリに移動して以下のコマンド"
+"を実行します。"
 msgstr ""
 
 msgid "Windows用パッケージのビルド"
