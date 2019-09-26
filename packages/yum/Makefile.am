@@ -1,6 +1,6 @@
 REPOSITORIES_PATH = repositories
 DISTRIBUTIONS = centos
-ARCHITECTURES = i386 x86_64
+ARCHITECTURES = x86_64
 CENTOS_VERSIONS = 6 7
 SPEC_DIR = $(builddir)/../rpm/centos
 
