@@ -617,9 +617,9 @@ Ubuntu向けのパッケージのアップロードには以下のコマンド�
 
 現在サポートされているのは以下の通りです。
 
-* precise i386/amd64
-* trusty i386/amd64
-* vivid i386/amd64
+* Xenial i386/amd64
+* Bionic i386/amd64
+* Disco  i386/amd64
 
 アップロードが正常終了すると、launchpad.net上でビルドが実行され、ビルド結果がメールで通知されます。ビルドに成功すると、リリース対象のパッケージがlaunchpad.netのGroongaチームのPPAへと反映されます。公開されているパッケージは以下のURLで確認できます。
 

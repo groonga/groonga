@@ -1487,13 +1487,13 @@ msgstr ""
 msgid "Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::"
 msgstr ""
 
-msgid "precise i386/amd64"
+msgid "Xenial i386/amd64"
 msgstr ""
 
-msgid "trusty i386/amd64"
+msgid "Bionic i386/amd64"
 msgstr ""
 
-msgid "vivid i386/amd64"
+msgid "Disco  i386/amd64"
 msgstr ""
 
 msgid ""
