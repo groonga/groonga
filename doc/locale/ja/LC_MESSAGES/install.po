@@ -772,16 +772,13 @@ msgstr ""
 msgid "Here are supported Ubuntu versions:"
 msgstr "サポートしているUbuntuのバージョンは次の通りです。"
 
-msgid "14.04 LTS Trusty Tahr"
-msgstr ""
-
 msgid "16.04 LTS Xenial Xerus"
 msgstr ""
 
-msgid "18.04 Bionic Beaver"
+msgid "18.04 LTS Bionic Beaver"
 msgstr ""
 
-msgid "18.10 Cosmic Cuttlefish"
+msgid "19.04 Disco Dingo"
 msgstr ""
 
 msgid "Enable the universe repository to install Groonga::"
