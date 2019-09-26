@@ -1001,10 +1001,12 @@ The max interval is ``10`` by default. The unit of the max interval is
 the number of characters in N-gram family tokenizers and the number of
 words in morphological analysis family tokenizers.
 
-(TODO: Add a description about ``TokenBigram`` doesn't split ASCII
-only word into tokens. So the unit for ASCII words with
-``TokenBigram`` is the number of words even if ``TokenBigram`` is a
-N-gram family tokenizer.)
+However, ``TokenBigram`` doesn't split ASCII only word into tokens.
+Because ``TokenBigram`` uses white-space-separate like tokenize method
+for ASCII characters in this case.
+
+So the unit for ASCII words with ``TokenBigram`` is the number of
+words even if ``TokenBigram`` is a N-gram family tokenizer.
 
 Note that an index column for full text search must be defined for
 ``column``.
