@@ -10,15 +10,18 @@ export DEB_BUILD_HARDENING = 1
 DPKG_EXPORT_BUILDFLAGS = 1
 include /usr/share/dpkg/buildflags.mk
 DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+PATH := $(HOME)/.rbenv/bin:$(HOME)/.rbenv/shims:$(PATH)
+export PATH
 
 %:
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure -- --with-munin-plugins --enable-mruby
+	dh_auto_configure -- --with-munin-plugins --with-ruby=$(shell rbenv which ruby) --enable-mruby
 
-# disable 'make check'.
 override_dh_auto_test:
+	bash -x ./test/unit/run-test.sh
+	bash -x ./test/command/run-test.sh --reporter=mark --timeout=60 --read-timeout=30
 
 override_dh_install:
 	find $(CURDIR)/debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/ -name *.la -delete
