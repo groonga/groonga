@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2015-2016 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -28,6 +29,7 @@ extern "C" {
 void grn_index_column_init_from_env(void);
 grn_rc grn_index_column_build(grn_ctx *ctx, grn_obj *index_column);
 grn_rc grn_index_column_rebuild(grn_ctx *ctx, grn_obj *index_column);
+grn_obj *grn_index_column_get_tokenizer(grn_ctx *ctx, grn_obj *index_column);
 
 #ifdef __cplusplus
 }

@@ -13884,21 +13884,6 @@ report_hook_has_dangling_reference_error(grn_ctx *ctx,
       reference_name_length, reference_name);
 }
 
-static grn_obj *
-grn_index_column_get_tokenizer(grn_ctx *ctx, grn_obj *index_column)
-{
-  grn_obj *tokenizer;
-  grn_obj *lexicon;
-
-  lexicon = grn_ctx_at(ctx, index_column->header.domain);
-  if (!lexicon) {
-    return NULL;
-  }
-
-  grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
-  return tokenizer;
-}
-
 static grn_bool
 is_full_text_searchable_index(grn_ctx *ctx, grn_obj *index_column)
 {
