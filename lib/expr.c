@@ -3237,6 +3237,11 @@ grn_scan_info_build_simple_operation(grn_ctx *ctx,
       weight = GRN_INT32_VALUE(operator->value);
     }
     scan_info_build_match(ctx, si, weight);
+    if (ctx->rc != GRN_SUCCESS) {
+      SI_FREE(sis[0]);
+      GRN_FREE(sis);
+      return NULL;
+    }
   }
   return sis;
 }
