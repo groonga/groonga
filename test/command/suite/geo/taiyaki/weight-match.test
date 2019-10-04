@@ -1,0 +1,12 @@
+#@include fixture/geo/taiyaki/init.grn
+
+select Shops \
+  --sort_keys '-_score, +name' \
+  --output_columns 'name, _score' \
+  --match_columns 'name * 1000 || tags * 10000' \
+  --query たいやき \
+  --filter 'geo_in_circle(location, "128429532x503148672", 10000)' \
+  --scorer '_score -= geo_distance(location, "128429532x503148672")' \
+  --drilldown_output_columns '_key, _nsubrecs' \
+  --drilldown_sort_keys '-_nsubrecs' \
+  --drilldown 'tags'

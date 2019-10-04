@@ -28,7 +28,6 @@ void test_in_circle_and_tag(void);
 void test_but_white(void);
 void test_drilldown(void);
 void test_drilldown_with_broken_reference(void);
-void test_weight_match(void);
 void test_query_expansion(void);
 
 static gchar *tmp_directory;
@@ -343,53 +342,6 @@ test_drilldown_with_broken_reference(void)
         "--drilldown 'area' "
         "--drilldown_output_columns '_key, name, _nsubrecs' "
         "--drilldown_sort_keys '_key'",
-        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
-        distance,
-        grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
-}
-
-void
-test_weight_match(void)
-{
-  gdouble yurakucho_latitude = 35.67487;
-  gdouble yurakucho_longitude = 139.76352;
-  gint distance = 10 * 1000;
-
-  cut_assert_equal_string(
-    "[[[23],"
-    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"]],"
-    "[\"たいやき神田達磨 八重洲店\",10030],"
-    "[\"たい焼き鉄次 大丸東京店\",9190],"
-    "[\"にしみや 甘味処\",8944],"
-    "[\"築地 さのきや\",8814],"
-    "[\"しげ田\",8470],"
-    "[\"柳屋 たい焼き\",7821],"
-    "[\"根津のたいやき\",5964],"
-    "[\"たいやきひいらぎ\",5427],"
-    "[\"尾長屋 錦糸町店\",4993],"
-    "[\"横浜 くりこ庵 浅草店\",4902]],"
-    "[[7],"
-    "[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],"
-    "[\"たいやき\",23],"
-    "[\"天然\",4],"
-    "[\"カレー\",1],"
-    "[\"白\",1],"
-    "[\"マグロ\",1],"
-    "[\"和菓子\",1],"
-    "[\"おでん\",1]"
-    "]]",
-    send_command(
-      cut_take_printf(
-        "select Shops "
-        "--sort_keys '-_score, +name' "
-        "--output_columns 'name, _score' "
-        "--match_columns 'name * 1000 || tags * 10000' "
-        "--query たいやき "
-        "--filter 'geo_in_circle(location, \"%s\", %d)' "
-        "--scorer '_score -= geo_distance(location, \"%s\")' "
-        "--drilldown_output_columns '_key, _nsubrecs' "
-        "--drilldown_sort_keys '-_nsubrecs' "
-        "--drilldown 'tags' ",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
