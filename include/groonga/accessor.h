@@ -1,5 +1,6 @@
 /*
   Copyright(C) 2012-2018 Brazil
+  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,7 +25,7 @@ extern "C" {
 
 GRN_API grn_rc grn_accessor_resolve(grn_ctx *ctx,
                                     grn_obj *accessor,
-                                    int deep,
+                                    int depth,
                                     grn_obj *base_res,
                                     grn_obj *res,
                                     grn_operator op);
