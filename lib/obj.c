@@ -136,6 +136,7 @@ grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_DAT_KEY :
     is_table = GRN_TRUE;
+    break;
   default :
     break;
   }
