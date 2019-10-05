@@ -24,6 +24,10 @@ jobs:
           set PATH=%CD:~0,2%\msys64\usr\bin;%PATH%
           set MSYSTEM=MINGW64
           bash --login -c pwd
+          cygpath %CD% | bash --login -c cat
+          cygpath %CD% | ^
+            bash --login ^
+              -c cat
           cygpath %CD% | ^
             bash --login ^
               -c 'read wd; cd $wd; ./autogen.sh'
