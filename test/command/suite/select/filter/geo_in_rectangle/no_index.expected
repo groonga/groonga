@@ -49,4 +49,3 @@ select Shops --sortby '+_score, +name'   --output_columns 'name, _score, locatio
     ]
   ]
 ]
-#|e| geo_in_rectangle(): index column is missing

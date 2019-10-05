@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,9 +17,10 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "../grn_db.h"
+#include "../grn_ii.h"
 #include "../grn_proc.h"
 #include "../grn_rset.h"
-#include "../grn_ii.h"
 
 #include <groonga/plugin.h>
 
@@ -296,21 +298,114 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
   return GRN_SUCCESS;
 }
 
+typedef struct {
+  grn_obj *target;
+  grn_obj *query;
+  uint32_t max_distance;
+  uint32_t prefix_length;
+  uint32_t prefix_match_size;
+  uint32_t max_expansion;
+  int flags;
+} fuzzy_search_data;
+
+static grn_rc
+selector_fuzzy_search_execute(grn_ctx *ctx,
+                              grn_obj *index,
+                              grn_operator op,
+                              grn_obj *res,
+                              grn_operator logical_op,
+                              void *user_data)
+{
+  grn_rc rc = GRN_SUCCESS;
+  fuzzy_search_data *data = user_data;
+  grn_obj *target = index;
+  bool use_sequential_search = false;
+
+  if (grn_obj_is_accessor(ctx, target)) {
+    if (grn_obj_is_key_accessor(ctx, target) &&
+        ((grn_accessor *)target)->obj->header.type == GRN_TABLE_PAT_KEY) {
+      target = ((grn_accessor *)target)->obj;
+      use_sequential_search = false;
+    } else {
+      use_sequential_search = true;
+    }
+  } else if (target) {
+    use_sequential_search = true;
+    if (target->header.type == GRN_TABLE_PAT_KEY) {
+      use_sequential_search = false;
+    } else {
+      grn_obj *lexicon;
+      lexicon = grn_ctx_at(ctx, target->header.domain);
+      if (lexicon && lexicon->header.type == GRN_TABLE_PAT_KEY) {
+        use_sequential_search = false;
+      }
+    }
+  } else {
+    use_sequential_search = true;
+  }
+
+  if (data->prefix_length) {
+    const char *s = GRN_TEXT_VALUE(data->query);
+    const char *e = GRN_BULK_CURR(data->query);
+    const char *p;
+    unsigned int cl = 0;
+    unsigned int length = 0;
+    for (p = s; p < e && (cl = grn_charlen(ctx, p, e)); p += cl) {
+      length++;
+      if (length > data->prefix_length) {
+        break;
+      }
+    }
+    data->prefix_match_size = p - s;
+  }
+
+  if (use_sequential_search) {
+    grn_obj *table;
+    table = grn_ctx_at(ctx, res->header.domain);
+    rc = sequential_fuzzy_search(ctx,
+                                 table,
+                                 data->target,
+                                 data->query,
+                                 data->max_distance,
+                                 data->prefix_match_size,
+                                 data->max_expansion,
+                                 data->flags,
+                                 res,
+                                 logical_op);
+    goto exit;
+  }
+
+  if (!target) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, target);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "fuzzy_search(): "
+                     "column must be COLUMN_INDEX or TABLE_PAT_KEY: <%.*s>",
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    rc = ctx->rc;
+    GRN_OBJ_FIN(ctx, &inspected);
+  } else {
+    grn_search_optarg options = {0};
+    options.mode = GRN_OP_FUZZY;
+    options.fuzzy.prefix_match_size = data->prefix_match_size;
+    options.fuzzy.max_distance = data->max_distance;
+    options.fuzzy.max_expansion = data->max_expansion;
+    options.fuzzy.flags = data->flags;
+    grn_obj_search(ctx, target, data->query, res, logical_op, &options);
+  }
+
+exit :
+  return rc;
+}
+
 static grn_rc
 selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                       int nargs, grn_obj **args,
                       grn_obj *res, grn_operator op)
 {
   grn_rc rc = GRN_SUCCESS;
-  grn_obj *target = NULL;
-  grn_obj *obj;
-  grn_obj *query;
-  uint32_t max_distance = 1;
-  uint32_t prefix_length = 0;
-  uint32_t prefix_match_size = 0;
-  uint32_t max_expansion = 0;
-  int flags = 0;
-  grn_bool use_sequential_search = GRN_FALSE;
 
   if ((nargs - 1) < 2) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
@@ -319,15 +414,22 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     rc = ctx->rc;
     goto exit;
   }
-  obj = args[1];
-  query = args[2];
+
+  fuzzy_search_data data;
+  data.target = args[1];
+  data.query = args[2];
+  data.max_distance = 1;
+  data.prefix_length = 0;
+  data.prefix_match_size = 0;
+  data.max_expansion = 0;
+  data.flags = 0;
 
   if (nargs == 4) {
     grn_obj *options = args[3];
 
     switch (options->header.type) {
     case GRN_BULK :
-      max_distance = GRN_UINT32_VALUE(options);
+      data.max_distance = GRN_UINT32_VALUE(options);
       break;
     case GRN_TABLE_HASH_KEY :
       {
@@ -348,14 +450,14 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                         (void **)&value);
 
           if (key_size == 12 && !memcmp(key, "max_distance", 12)) {
-            max_distance = GRN_UINT32_VALUE(value);
+            data.max_distance = GRN_UINT32_VALUE(value);
           } else if (key_size == 13 && !memcmp(key, "prefix_length", 13)) {
-            prefix_length = GRN_UINT32_VALUE(value);
+            data.prefix_length = GRN_UINT32_VALUE(value);
           } else if (key_size == 13 && !memcmp(key, "max_expansion", 13)) {
-            max_expansion = GRN_UINT32_VALUE(value);
+            data.max_expansion = GRN_UINT32_VALUE(value);
           } else if (key_size == 18 && !memcmp(key, "with_transposition", 18)) {
             if (GRN_BOOL_VALUE(value)) {
-              flags |= GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION;
+              data.flags |= GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION;
             }
           } else {
             GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
@@ -378,76 +480,36 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     }
   }
 
-  if (index) {
-    target = index;
+  if (grn_obj_is_accessor(ctx, data.target)) {
+    rc = grn_accessor_execute(ctx,
+                              data.target,
+                              selector_fuzzy_search_execute,
+                              &data,
+                              GRN_OP_FUZZY,
+                              res,
+                              op);
   } else {
-    if (obj->header.type == GRN_COLUMN_INDEX) {
-      target = obj;
+    grn_index_datum index_datum;
+    unsigned int n_index_datum;
+    if (grn_obj_is_index_column(ctx, data.target)) {
+      index_datum.index = data.target;
+      n_index_datum = 1;
     } else {
-      grn_column_index(ctx, obj, GRN_OP_FUZZY, &target, 1, NULL);
+      n_index_datum = grn_column_find_index_data(ctx,
+                                                 data.target,
+                                                 GRN_OP_FUZZY,
+                                                 &index_datum,
+                                                 1);
     }
-  }
-
-  if (target) {
-    grn_obj *lexicon;
-    use_sequential_search = GRN_TRUE;
-    lexicon = grn_ctx_at(ctx, target->header.domain);
-    if (lexicon) {
-      if (lexicon->header.type == GRN_TABLE_PAT_KEY) {
-        use_sequential_search = GRN_FALSE;
-      }
-      grn_obj_unlink(ctx, lexicon);
+    if (n_index_datum == 0) {
+      index_datum.index = NULL;
     }
-  } else {
-    if (grn_obj_is_key_accessor(ctx, obj) &&
-        table->header.type == GRN_TABLE_PAT_KEY) {
-      target = table;
-    } else {
-      use_sequential_search = GRN_TRUE;
-    }
-  }
-
-  if (prefix_length) {
-    const char *s = GRN_TEXT_VALUE(query);
-    const char *e = GRN_BULK_CURR(query);
-    const char *p;
-    unsigned int cl = 0;
-    unsigned int length = 0;
-    for (p = s; p < e && (cl = grn_charlen(ctx, p, e)); p += cl) {
-      length++;
-      if (length > prefix_length) {
-        break;
-      }
-    }
-    prefix_match_size = p - s;
-  }
-
-  if (use_sequential_search) {
-    rc = sequential_fuzzy_search(ctx, table, obj, query,
-                                 max_distance, prefix_match_size,
-                                 max_expansion, flags, res, op);
-    goto exit;
-  }
-
-  if (!target) {
-    grn_obj inspected;
-    GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect(ctx, &inspected, target);
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "fuzzy_search(): "
-                     "column must be COLUMN_INDEX or TABLE_PAT_KEY: <%.*s>",
-                     (int)GRN_TEXT_LEN(&inspected),
-                     GRN_TEXT_VALUE(&inspected));
-    rc = ctx->rc;
-    GRN_OBJ_FIN(ctx, &inspected);
-  } else {
-    grn_search_optarg options = {0};
-    options.mode = GRN_OP_FUZZY;
-    options.fuzzy.prefix_match_size = prefix_match_size;
-    options.fuzzy.max_distance = max_distance;
-    options.fuzzy.max_expansion = max_expansion;
-    options.fuzzy.flags = flags;
-    grn_obj_search(ctx, target, query, res, op, &options);
+    rc = selector_fuzzy_search_execute(ctx,
+                                       index_datum.index,
+                                       GRN_OP_FUZZY,
+                                       res,
+                                       op,
+                                       &data);
   }
 
 exit :
@@ -463,5 +525,5 @@ grn_proc_init_fuzzy_search(grn_ctx *ctx)
                                   GRN_PROC_FUNCTION,
                                   NULL, NULL, NULL, 0, NULL);
   grn_proc_set_selector(ctx, selector_proc, selector_fuzzy_search);
-  grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_FUZZY);
+  grn_proc_set_selector_operator(ctx, selector_proc, GRN_OP_NOP);
 }

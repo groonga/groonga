@@ -3971,25 +3971,11 @@ proc_reindex(grn_ctx *ctx, int nargs, grn_obj **args,
 static grn_rc
 selector_prefix_rk_search_key(grn_ctx *ctx,
                               grn_obj *table,
-                              grn_obj *column,
                               grn_obj *query,
                               grn_obj *res,
                               grn_operator op)
 {
   grn_rc rc = GRN_SUCCESS;
-
-  if (!grn_obj_is_key_accessor(ctx, column)) {
-    grn_obj inspected_column;
-    GRN_TEXT_INIT(&inspected_column, 0);
-    grn_inspect(ctx, &inspected_column, column);
-    ERR(GRN_INVALID_ARGUMENT,
-        "prefix_rk_serach(): column must be _key: %.*s",
-        (int)GRN_TEXT_LEN(&inspected_column),
-        GRN_TEXT_VALUE(&inspected_column));
-    rc = ctx->rc;
-    GRN_OBJ_FIN(ctx, &inspected_column);
-    goto exit;
-  }
 
   if (table->header.type != GRN_TABLE_PAT_KEY) {
     grn_obj inspected_table;
@@ -4072,77 +4058,10 @@ selector_prefix_rk_search(grn_ctx *ctx,
   column = args[1];
   query = args[2];
 
-  if (index) {
-    rc = selector_prefix_rk_search_index(ctx, index, query, res, op);
-  } else if (grn_obj_is_accessor(ctx, column) &&
-             ((grn_accessor *)column)->next) {
-    grn_obj *accessor = column;
-    unsigned int accessor_deep = 0;
-    grn_obj *base_table = NULL;
-    grn_obj *base_column = NULL;
-    grn_obj *base_index = NULL;
-    grn_obj *base_res = NULL;
-    grn_accessor *a;
-
-    for (a = (grn_accessor *)accessor; a; a = a->next) {
-      if (a->next) {
-        accessor_deep++;
-      } else {
-        if (grn_obj_is_data_column(ctx, a->obj)) {
-          grn_operator selector_op;
-          grn_index_datum index_data;
-          unsigned int n_index_datum;
-
-          selector_op = grn_proc_get_selector_operator(ctx, args[0]);
-          base_column = a->obj;
-          base_table = grn_column_table(ctx, a->obj);
-          n_index_datum = grn_column_find_index_data(ctx,
-                                                     base_column,
-                                                     selector_op,
-                                                     &index_data,
-                                                     1);
-          if (n_index_datum > 0) {
-            base_index = index_data.index;
-          }
-        } else {
-          base_column = (grn_obj *)a;
-          base_table = a->obj;
-        }
-        base_res = grn_table_create(ctx, NULL, 0, NULL,
-                                    GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                                    base_table, NULL);
-      }
-    }
-    if (base_index) {
-      rc = selector_prefix_rk_search_index(ctx,
-                                           base_index,
-                                           query,
-                                           base_res,
-                                           GRN_OP_OR);
-    } else {
-      rc = selector_prefix_rk_search_key(ctx,
-                                         base_table,
-                                         base_column,
-                                         query,
-                                         base_res,
-                                         GRN_OP_OR);
-    }
-    if (rc == GRN_SUCCESS) {
-      grn_accessor_resolve(ctx,
-                           accessor,
-                           accessor_deep,
-                           base_res,
-                           res,
-                           op);
-    }
-    grn_obj_close(ctx, base_res);
+  if (grn_obj_is_table(ctx, index)) {
+    rc = selector_prefix_rk_search_key(ctx, index, query, res, op);
   } else {
-    rc = selector_prefix_rk_search_key(ctx,
-                                       table,
-                                       column,
-                                       query,
-                                       res,
-                                       op);
+    rc = selector_prefix_rk_search_index(ctx, index, query, res, op);
   }
   return rc;
 }

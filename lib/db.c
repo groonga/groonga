@@ -13962,6 +13962,42 @@ grn_column_find_index_data_column_match(grn_ctx *ctx, grn_obj *obj,
   }
 
   switch (op) {
+  case GRN_OP_PREFIX :
+    switch (obj->header.type) {
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_DAT_KEY :
+      if (section_buf) {
+        *section_buf = 0;
+      }
+      if (n < buf_size) {
+        *ip++ = obj;
+      }
+      if (n < n_index_data) {
+        index_data[n].index = obj;
+        index_data[n].section = 0;
+      }
+      n++;
+      break;
+    default :
+      break;
+    }
+    break;
+  case GRN_OP_SUFFIX :
+    if (obj->header.type == GRN_TABLE_PAT_KEY &&
+        obj->header.flags & GRN_OBJ_KEY_WITH_SIS) {
+      if (section_buf) {
+        *section_buf = 0;
+      }
+      if (n < buf_size) {
+        *ip++ = obj;
+      }
+      if (n < n_index_data) {
+        index_data[n].index = obj;
+        index_data[n].section = 0;
+      }
+      n++;
+    }
+    break;
   case GRN_OP_MATCH :
     prefer_full_text_search_index = !grn_column_is_vector(ctx, obj);
     break;
@@ -14190,6 +14226,7 @@ grn_column_find_index_data_accessor_is_key_search(grn_ctx *ctx,
   case GRN_OP_GREATER :
   case GRN_OP_LESS_EQUAL :
   case GRN_OP_GREATER_EQUAL :
+  case GRN_OP_PREFIX :
     switch (accessor->obj->header.type) {
     case GRN_TABLE_PAT_KEY :
     case GRN_TABLE_DAT_KEY :
@@ -14197,7 +14234,11 @@ grn_column_find_index_data_accessor_is_key_search(grn_ctx *ctx,
     default :
       return GRN_FALSE;
     }
+  case GRN_OP_SUFFIX :
+    return (accessor->obj->header.type == GRN_TABLE_PAT_KEY &&
+            (accessor->obj->header.flags & GRN_OBJ_KEY_WITH_SIS));
   case GRN_OP_EQUAL :
+  case GRN_OP_NOT_EQUAL :
     switch (accessor->obj->header.type) {
     case GRN_TABLE_HASH_KEY :
     case GRN_TABLE_PAT_KEY :
@@ -14206,24 +14247,41 @@ grn_column_find_index_data_accessor_is_key_search(grn_ctx *ctx,
     default :
       return GRN_FALSE;
     }
+  case GRN_OP_FUZZY :
+    return (accessor->obj->header.type == GRN_TABLE_PAT_KEY);
+  case GRN_OP_TERM_EXTRACT :
+    switch (accessor->obj->header.type) {
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_DAT_KEY :
+      return true;
+    default :
+      return false;
+    }
   default :
     return GRN_FALSE;
   }
 }
 
 static int
-grn_column_find_index_data_accessor_match(grn_ctx *ctx, grn_obj *obj,
-                                          grn_operator op,
-                                          grn_index_datum *index_data,
-                                          unsigned n_index_data,
-                                          grn_obj **index_buf, int buf_size,
-                                          int *section_buf)
+grn_column_find_index_data_accessor(grn_ctx *ctx,
+                                    grn_obj *obj,
+                                    grn_operator op,
+                                    grn_index_datum *index_data,
+                                    unsigned n_index_data,
+                                    grn_obj **index_buf,
+                                    int buf_size,
+                                    int *section_buf)
 {
   int n = 0;
   grn_obj **ip = index_buf;
-  grn_accessor *a = (grn_accessor *)obj;
 
-  while (a) {
+  if (section_buf) {
+    *section_buf = 0;
+  }
+
+  grn_accessor *a;
+  int depth = 0;
+  for (a = (grn_accessor *)obj; a; a = a->next, depth++) {
     grn_hook *hooks;
     grn_bool found = GRN_FALSE;
     grn_hook_entry entry = (grn_hook_entry)-1;
@@ -14270,21 +14328,25 @@ grn_column_find_index_data_accessor_match(grn_ctx *ctx, grn_obj *obj,
 
       found = GRN_TRUE;
       if (!a->next) {
-        int section;
-
         if (!grn_index_column_is_usable(ctx, target, op)) {
           continue;
         }
 
-        section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
+        int section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
         if (section_buf) {
           *section_buf = section;
         }
+        grn_obj *index;
+        if (depth == 0) {
+          index = target;
+        } else {
+          index = obj;
+        }
         if (n < buf_size) {
-          *ip++ = target;
+          *ip++ = index;
         }
         if (n < n_index_data) {
-          index_data[n].index = target;
+          index_data[n].index = index;
           index_data[n].section = section;
         }
         n++;
@@ -14293,24 +14355,17 @@ grn_column_find_index_data_accessor_match(grn_ctx *ctx, grn_obj *obj,
 
     if (!found &&
         grn_column_find_index_data_accessor_is_key_search(ctx, a, op)) {
-      grn_obj *index;
       int section = 0;
-
-      if ((grn_obj *)a == obj) {
-        index = a->obj;
-      } else {
-        index = (grn_obj *)a;
-      }
 
       found = GRN_TRUE;
       if (section_buf) {
         *section_buf = section;
       }
       if (n < buf_size) {
-        *ip++ = index;
+        *ip++ = obj;
       }
       if (n < n_index_data) {
-        index_data[n].index = index;
+        index_data[n].index = obj;
         index_data[n].section = section;
       }
       n++;
@@ -14318,115 +14373,13 @@ grn_column_find_index_data_accessor_match(grn_ctx *ctx, grn_obj *obj,
 
     if (!found &&
         a->next &&
-        grn_obj_is_table(ctx, a->obj) &&
-        a->obj->header.domain == a->next->obj->header.domain) {
-      grn_obj *index = (grn_obj *)a;
-      int section = 0;
-
-      found = GRN_TRUE;
-      if (section_buf) {
-        *section_buf = section;
-      }
-      if (n < buf_size) {
-        *ip++ = index;
-      }
-      if (n < n_index_data) {
-        index_data[n].index = index;
-        index_data[n].section = section;
-      }
-      n++;
+        grn_obj_is_table(ctx, a->obj)) {
+      found = true;
     }
 
     if (!found) {
       break;
     }
-    a = a->next;
-  }
-
-  return n;
-}
-
-static int
-grn_column_find_index_data_accessor(grn_ctx *ctx, grn_obj *obj,
-                                    grn_operator op,
-                                    grn_index_datum *index_data,
-                                    unsigned n_index_data,
-                                    grn_obj **index_buf, int buf_size,
-                                    int *section_buf)
-{
-  int n = 0;
-
-  if (section_buf) {
-    *section_buf = 0;
-  }
-  switch (op) {
-  case GRN_OP_EQUAL :
-  case GRN_OP_NOT_EQUAL :
-  case GRN_OP_TERM_EXTRACT :
-    if (buf_size > 0) {
-      index_buf[n] = obj;
-    }
-    if (n_index_data > 0) {
-      index_data[n].index   = obj;
-      index_data[n].section = 0;
-    }
-    n++;
-    break;
-  case GRN_OP_PREFIX :
-    {
-      grn_accessor *a = (grn_accessor *)obj;
-      if (a->action == GRN_ACCESSOR_GET_KEY) {
-        if (a->obj->header.type == GRN_TABLE_PAT_KEY) {
-          if (buf_size > 0) {
-            index_buf[n] = obj;
-          }
-          if (n_index_data > 0) {
-            index_data[n].index   = obj;
-            index_data[n].section = 0;
-          }
-          n++;
-        }
-        /* FIXME: GRN_TABLE_DAT_KEY should be supported */
-      }
-    }
-    break;
-  case GRN_OP_SUFFIX :
-    {
-      grn_accessor *a = (grn_accessor *)obj;
-      if (a->action == GRN_ACCESSOR_GET_KEY) {
-        if (a->obj->header.type == GRN_TABLE_PAT_KEY &&
-            a->obj->header.flags & GRN_OBJ_KEY_WITH_SIS) {
-          if (buf_size > 0) {
-            index_buf[n]         = obj;
-          }
-          if (n_index_data > 0) {
-            index_data[n].index   = obj;
-            index_data[n].section = 0;
-          }
-          n++;
-        }
-      }
-    }
-    break;
-  case GRN_OP_MATCH :
-  case GRN_OP_NEAR :
-  case GRN_OP_NEAR2 :
-  case GRN_OP_SIMILAR :
-  case GRN_OP_LESS :
-  case GRN_OP_GREATER :
-  case GRN_OP_LESS_EQUAL :
-  case GRN_OP_GREATER_EQUAL :
-  case GRN_OP_CALL :
-  case GRN_OP_REGEXP :
-  case GRN_OP_FUZZY :
-  case GRN_OP_QUORUM :
-    n = grn_column_find_index_data_accessor_match(ctx, obj, op,
-                                                  index_data, n_index_data,
-                                                  index_buf, buf_size,
-                                                  section_buf);
-    break;
-  default :
-    break;
   }
 
   return n;

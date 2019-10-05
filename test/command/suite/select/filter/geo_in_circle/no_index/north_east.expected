@@ -948,4 +948,3 @@ select LandMarks --sortby '_id' --output_columns 'point' --limit -1   --filter '
     ]
   ]
 ]
-#|e| geo_in_circle(): index for <LandMarks.point> is missing

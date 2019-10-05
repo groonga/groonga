@@ -823,19 +823,6 @@ grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     return ctx->rc;
   }
 
-  if (!index) {
-    grn_obj *point_column;
-    char column_name[GRN_TABLE_MAX_KEY_SIZE];
-    int column_name_size;
-    point_column = args[1];
-    column_name_size = grn_obj_name(ctx, point_column,
-                                    column_name, GRN_TABLE_MAX_KEY_SIZE);
-    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-        "geo_in_circle(): index for <%.*s> is missing",
-        column_name_size, column_name);
-    return ctx->rc;
-  }
-
   if (nargs == 5) {
     if (grn_geo_resolve_approximate_type(ctx, args[4], &type) != GRN_SUCCESS) {
       return ctx->rc;
@@ -1327,12 +1314,6 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
                           const char *process_name,
                           in_rectangle_data *data)
 {
-  if (!index) {
-    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-        "%s: index column is missing", process_name);
-    goto exit;
-  }
-
   in_rectangle_data_fill(ctx, index, top_left_point, bottom_right_point,
                          process_name, data);
   if (ctx->rc != GRN_SUCCESS) {

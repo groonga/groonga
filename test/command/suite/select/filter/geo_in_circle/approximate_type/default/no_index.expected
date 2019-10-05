@@ -64,4 +64,3 @@ select Shops --sortby '+_score, +name'   --output_columns 'name, _score, locatio
     ]
   ]
 ]
-#|e| geo_in_circle(): index for <Shops.location> is missing
