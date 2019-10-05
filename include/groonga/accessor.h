@@ -30,6 +30,21 @@ GRN_API grn_rc grn_accessor_resolve(grn_ctx *ctx,
                                     grn_obj *res,
                                     grn_operator op);
 
+typedef grn_rc (*grn_accessor_execute_func)(grn_ctx *ctx,
+                                            grn_obj *index,
+                                            grn_operator op,
+                                            grn_obj *res,
+                                            grn_operator logical_op,
+                                            void *user_data);
+
+GRN_API grn_rc grn_accessor_execute(grn_ctx *ctx,
+                                    grn_obj *accessor,
+                                    grn_accessor_execute_func execute,
+                                    void *execute_data,
+                                    grn_operator execute_op,
+                                    grn_obj *res,
+                                    grn_operator logical_op);
+
 GRN_API grn_rc grn_accessor_name(grn_ctx *ctx,
                                  grn_obj *accessor,
                                  grn_obj *name);

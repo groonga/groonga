@@ -469,6 +469,89 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int depth,
 }
 
 grn_rc
+grn_accessor_execute(grn_ctx *ctx,
+                     grn_obj *accessor,
+                     grn_accessor_execute_func execute,
+                     void *execute_data,
+                     grn_operator execute_op,
+                     grn_obj *res,
+                     grn_operator logical_op)
+{
+  GRN_API_ENTER;
+
+  if (!grn_obj_is_accessor(ctx, accessor)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, accessor);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[accessor][execute] must be accessor: %.*s",
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  int depth = 0;
+  grn_accessor *a;
+  for (a = (grn_accessor *)accessor; a->next; a = a->next) {
+    depth++;
+  }
+
+  grn_index_datum index_data;
+  unsigned int n_index_datum;
+  grn_obj *index;
+  n_index_datum = grn_column_find_index_data(ctx,
+                                             a->obj,
+                                             execute_op,
+                                             &index_data,
+                                             1);
+  if (n_index_datum == 0) {
+    index = (grn_obj *)a;
+  } else {
+    index = index_data.index;
+  }
+
+  grn_rc rc;
+  if (depth == 0) {
+    rc = execute(ctx,
+                 index,
+                 execute_op,
+                 res,
+                 logical_op,
+                 execute_data);
+  } else {
+    grn_obj *base_table = NULL;
+    if (grn_obj_is_table(ctx, a->obj)) {
+      base_table = a->obj;
+    } else {
+      base_table = grn_ctx_at(ctx, a->obj->header.domain);
+    }
+
+    grn_obj *base_res =
+      grn_table_create(ctx, NULL, 0, NULL,
+                       GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                       base_table, NULL);
+    rc = execute(ctx,
+                 index,
+                 execute_op,
+                 base_res,
+                 GRN_OP_OR,
+                 execute_data);
+    if (rc == GRN_SUCCESS) {
+      rc = grn_accessor_resolve(ctx,
+                                accessor,
+                                depth,
+                                base_res,
+                                res,
+                                logical_op);
+    }
+    grn_obj_close(ctx, base_res);
+  }
+
+  GRN_API_RETURN(rc);
+}
+
+grn_rc
 grn_accessor_name(grn_ctx *ctx, grn_obj *accessor, grn_obj *name)
 {
   grn_accessor *accessor_;
@@ -477,8 +560,9 @@ grn_accessor_name(grn_ctx *ctx, grn_obj *accessor, grn_obj *name)
   if (!grn_obj_is_accessor(ctx, accessor)) {
     grn_obj inspected;
     GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, accessor);
     ERR(GRN_INVALID_ARGUMENT,
-        "[accessor][name] not accessor: %.*s",
+        "[accessor][name] must be accessor: %.*s",
         (int)GRN_TEXT_LEN(&inspected),
         GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
