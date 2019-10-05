@@ -27,6 +27,7 @@ jobs:
         run: |
           call environment.bat
           pacman --sync --noconfirm ^
+            git ^
             mingw-w64-x86_64-gcc ^
             mingw-w64-x86_64-zlib ^
             ruby
