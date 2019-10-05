@@ -23,32 +23,27 @@ jobs:
         run: |
           set PATH=%CD:~0,2%\msys64\usr\bin;%PATH%
           set MSYSTEM=MINGW64
-          bash --login -c pwd
-          cygpath %CD% | bash --login -c cat
-          cygpath %CD% | ^
-            bash --login ^
-              -c cat
-          cygpath %CD% | ^
-            bash --login ^
-              -c 'read wd; cd $wd; ./autogen.sh'
+          cygpath %CD% ^
+            | bash --login ^
+                -c 'read wd; cd $wd; ./autogen.sh'
       - name: Run configure
         run: |
           set PATH=%CD:~0,2%\msys64\usr\bin;%PATH%
           set MSYSTEM=MINGW64
-          cygpath %CD% | ^
-            bash --login ^
-              -c 'read wd; cd $wd; ./configure --with-ruby --enable-mruby'
+          cygpath %CD% ^
+             | bash --login ^
+                 -c 'read wd; cd $wd; ./configure --with-ruby --enable-mruby'
       - name: Build
         run: |
           set PATH=%CD:~0,2%\msys64\usr\bin;%PATH%
           set MSYSTEM=MINGW64
-          cygpath %CD% | ^
-            bash --login ^
-              -c 'read wd; cd $wd; make -j%NUMBER_OF_PROCESSORS%'
+          cygpath %CD% ^
+             | bash --login ^
+                 -c 'read wd; cd $wd; make -j%NUMBER_OF_PROCESSORS%'
       - name: Install
         run: |
           set PATH=%CD:~0,2%\msys64\usr\bin;%PATH%
           set MSYSTEM=MINGW64
-          cygpath %CD% | ^
-            bash --login ^
-              -c 'read wd; cd $wd; make install'
+          cygpath %CD% ^
+             | bash --login ^
+                 -c 'read wd; cd $wd; make install'
