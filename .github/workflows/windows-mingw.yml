@@ -8,7 +8,6 @@ jobs:
     runs-on: windows-2019
     steps:
       - uses: actions/checkout@master
-      - uses: actions/setup-ruby@master
       - name: Install MSYS2
         run: |
           git clone ^
@@ -30,6 +29,7 @@ jobs:
           pacman --sync --noconfirm ^
             git ^
             mingw-w64-x86_64-gcc ^
+            mingw-w64-x86_64-ruby ^
             mingw-w64-x86_64-zlib
       - name: Generate configure
         run: |
@@ -43,7 +43,6 @@ jobs:
       - name: Run configure
         run: |
           call environment.bat
-          ruby -e "puts RbConfig::CONFIG['bindir']" > ruby_path.txt
           cygpath %CD% ^
             | bash --login ^
                 -c 'read wd; ^
@@ -52,7 +51,7 @@ jobs:
                       --disable-groonga-httpd ^
                       --enable-shared-onigmo ^
                       --enable-mruby ^
-                      --with-ruby=$(cygpath $(cat ruby_path.txt)/ruby.exe)'
+                      --with-ruby'
       - name: Build
         run: |
           call environment.bat
