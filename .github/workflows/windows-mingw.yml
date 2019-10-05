@@ -34,11 +34,6 @@ jobs:
       - name: Generate configure
         run: |
           call environment.bat
-          cygpath %CD% ^
-            | bash --login ^
-                -c 'read wd; ^
-                    cd $wd; ^
-                    ./autogen.h'
           bash autogen.sh
       - name: Run configure
         run: |
