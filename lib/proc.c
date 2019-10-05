@@ -3465,6 +3465,7 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     return ctx->rc;
   }
 
+  int original_flags = ctx->flags;
   ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
   for (i = 0; i < n_values; i++) {
     grn_obj *value = values[i];
@@ -3479,7 +3480,7 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     search_options.max_size = 0;
     search_options.scorer = NULL;
     if (i == n_values - 1) {
-      ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
+      ctx->flags = original_flags;
     }
     rc = grn_obj_search(ctx, index, value, res, op, &search_options);
     if (rc != GRN_SUCCESS) {
