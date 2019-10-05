@@ -48,9 +48,7 @@ jobs:
                 -c 'read wd; ^
                     cd $wd; ^
                     ./configure ^
-                      --with-ruby ^
-                      --disable-groonga-httpd ^
-                      --enable-mruby'
+                      --disable-groonga-httpd'
       - name: Build
         run: |
           call environment.bat
