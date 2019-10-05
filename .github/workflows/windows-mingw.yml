@@ -27,6 +27,7 @@ jobs:
         run: |
           call environment.bat
           pacman --sync --noconfirm ^
+            mingw-w64-x86_64-gcc ^
             mingw-w64-x86_64-zlib ^
             ruby
       - name: Generate configure
@@ -45,6 +46,8 @@ jobs:
             | bash --login ^
                 -c 'read wd; ^
                     cd $wd; ^
+                    env; ^
+                    which gcc; ^
                     ./configure ^
                       --with-ruby ^
                       --enable-mruby'
