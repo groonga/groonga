@@ -3642,25 +3642,21 @@ grn_table_select_index_not_used_report(grn_ctx *ctx,
   grn_report_index_not_used(ctx, "[table][select]", tag, index, reason);
 }
 
-static grn_inline grn_bool
+static grn_inline bool
 grn_table_select_index_use_sequential_search(grn_ctx *ctx,
-                                             grn_obj *table,
                                              grn_obj *res,
                                              grn_operator logical_op,
                                              const char *tag,
                                              grn_obj *index)
 {
-  int n_records;
-  int n_filtered_records;
-  double filtered_ratio;
-  grn_obj reason;
-
   if (logical_op != GRN_OP_AND) {
-    return GRN_FALSE;
+    return false;
   }
 
-  n_records = grn_table_size(ctx, table);
-  n_filtered_records = grn_table_size(ctx, res);
+  grn_obj *table = grn_ctx_at(ctx, res->header.domain);
+  int n_records = grn_table_size(ctx, table);
+  int n_filtered_records = grn_table_size(ctx, res);
+  double filtered_ratio;
   if (n_records == 0) {
     filtered_ratio = 1.0;
   } else {
@@ -3668,13 +3664,14 @@ grn_table_select_index_use_sequential_search(grn_ctx *ctx,
   }
 
   if (filtered_ratio >= grn_table_select_enough_filtered_ratio) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (n_filtered_records > grn_table_select_max_n_enough_filtered_records) {
-    return GRN_FALSE;
+    return false;
   }
 
+  grn_obj reason;
   GRN_TEXT_INIT(&reason, 0);
   grn_text_printf(ctx, &reason,
                   "enough filtered: %.2f%%(%d/%d) < %.2f%% && %d <= %d",
@@ -3690,7 +3687,7 @@ grn_table_select_index_use_sequential_search(grn_ctx *ctx,
                                          index,
                                          GRN_TEXT_VALUE(&reason));
   GRN_OBJ_FIN(ctx, &reason);
-  return GRN_TRUE;
+  return true;
 }
 
 static grn_inline grn_id
@@ -3774,7 +3771,6 @@ grn_table_select_index_equal(grn_ctx *ctx,
       }
       if (optimizable &&
           grn_table_select_index_use_sequential_search(ctx,
-                                                       table,
                                                        res,
                                                        si->logical_op,
                                                        tag,
@@ -4306,7 +4302,6 @@ grn_table_select_index_range_key(grn_ctx *ctx,
   grn_obj key;
 
   if (grn_table_select_index_use_sequential_search(ctx,
-                                                   table,
                                                    res,
                                                    logical_op,
                                                    tag,
@@ -4395,7 +4390,6 @@ grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
   }
 
   if (grn_table_select_index_use_sequential_search(ctx,
-                                                   table,
                                                    res,
                                                    logical_op,
                                                    tag,
