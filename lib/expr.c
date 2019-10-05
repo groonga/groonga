@@ -4149,6 +4149,93 @@ grn_table_select_index_call(grn_ctx *ctx,
 }
 
 static grn_inline grn_rc
+grn_table_select_index_range_id(grn_ctx *ctx,
+                                grn_obj *table,
+                                grn_operator op,
+                                grn_obj *res,
+                                grn_operator logical_op,
+                                grn_table_select_data *data)
+{
+  const char *tag = "[range][id]";
+
+  if (grn_table_select_index_use_sequential_search(ctx,
+                                                   res,
+                                                   logical_op,
+                                                   tag,
+                                                   table)) {
+    return GRN_FUNCTION_NOT_IMPLEMENTED;
+  }
+
+  grn_rc rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+  scan_info *si = data->scan_info;
+  grn_obj id;
+  GRN_UINT32_INIT(&id, 0);
+  if (grn_obj_cast(ctx, si->query, &id, GRN_FALSE) == GRN_SUCCESS) {
+    grn_table_cursor *cursor;
+    grn_id min = GRN_ID_NIL;
+    grn_id max = GRN_ID_MAX;
+    int offset = 0;
+    int limit = -1;
+    int flags = GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING;
+
+    grn_table_select_index_report(ctx, tag, table);
+
+    switch (op) {
+    case GRN_OP_LESS :
+      max = GRN_UINT32_VALUE(&id);
+      if (max > GRN_ID_NIL) {
+        max--;
+      }
+      break;
+    case GRN_OP_GREATER :
+      min = GRN_UINT32_VALUE(&id) + 1;
+      break;
+    case GRN_OP_LESS_EQUAL :
+      max = GRN_UINT32_VALUE(&id);
+      break;
+    case GRN_OP_GREATER_EQUAL :
+      min = GRN_UINT32_VALUE(&id);
+      break;
+    default :
+      break;
+    }
+    cursor = grn_table_cursor_open(ctx, table,
+                                   NULL, 0,
+                                   NULL, 0,
+                                   offset, limit, flags);
+    if (cursor) {
+      uint32_t sid;
+      int32_t weight;
+
+      sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
+      weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
+
+      if (sid == 0) {
+        grn_posting posting = {0};
+
+        posting.weight = weight;
+        while ((posting.rid = grn_table_cursor_next(ctx, cursor))) {
+          if (posting.rid < min) {
+            continue;
+          }
+          if (posting.rid > max) {
+            break;
+          }
+          grn_ii_posting_add(ctx, &posting, (grn_hash *)res, logical_op);
+        }
+      }
+      rc = GRN_SUCCESS;
+      grn_table_cursor_close(ctx, cursor);
+    }
+
+    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, logical_op);
+  }
+  GRN_OBJ_FIN(ctx, &id);
+
+  return rc;
+}
+
+static grn_inline grn_rc
 grn_table_select_index_range_key(grn_ctx *ctx,
                                  grn_obj *table,
                                  grn_operator op,
@@ -4358,23 +4445,33 @@ grn_table_select_index_range(grn_ctx *ctx,
                              grn_operator logical_op,
                              grn_table_select_data *data)
 {
+  grn_obj *target = index;
+
   if (grn_obj_is_accessor(ctx, index)) {
-    index = ((grn_accessor *)index)->obj;
+    target = ((grn_accessor *)index)->obj;
+    if (grn_obj_is_id_accessor(ctx, index)) {
+      return grn_table_select_index_range_id(ctx,
+                                             target,
+                                             op,
+                                             res,
+                                             logical_op,
+                                             data);
+    }
   }
 
-  switch (index->header.type) {
+  switch (target->header.type) {
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_DAT_KEY :
-    /* table == index */
+    /* target == table */
     return grn_table_select_index_range_key(ctx,
-                                            index,
+                                            target,
                                             op,
                                             res,
                                             logical_op,
                                             data);
   default :
     return grn_table_select_index_range_column(ctx,
-                                               index,
+                                               target,
                                                op,
                                                res,
                                                logical_op,

@@ -74,6 +74,7 @@ select Users   --filter '_id > 1'   --slices[name].filter 'query("name * 10", "a
     }
   ]
 ]
+#|i| [table][select][index][range][id] <Users>
 #|i| [table][select][index][selector][no-index][query] <>
 #|i| [object][search][index][key][exact] <Lexicon.users_name>
 #|i| grn_ii_sel > (ali)

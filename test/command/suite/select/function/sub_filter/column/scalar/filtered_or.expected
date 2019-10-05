@@ -37,6 +37,8 @@ select Packages   --filter '_key == "rroonga" &&             sub_filter(file, "(
 #|i| [table][select][index][range] <Revisions.files_revision>
 #|i| [table][select][index][range] <Revisions.files_revision>
 #|i| [table][select][push][initial] <1>
+#|i| [table][select][index][range][id] <Files>
+#|i| [table][select][index][range][id] <Files>
 #|i| [accessor][resolve][data-column][index] <Files.packages_files_index>
 log_level --level notice
 [[0,0.0,0.0],true]
