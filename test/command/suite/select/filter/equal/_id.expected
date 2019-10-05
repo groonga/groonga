@@ -7,5 +7,15 @@ load --table IDs
 {}
 ]
 [[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
 select IDs   --filter '_id == 2'   --output_columns '_id'
 [[0,0.0,0.0],[[[1],[["_id","UInt32"]],[2]]]]
+#|i| [object][search][accessor][id] _id(IDs) -> <UInt32>
+#>select --filter "_id == 2" --output_columns "_id" --table "IDs"
+#:000000000000000 filter(1): #<accessor _id(IDs)> equal 2
+#:000000000000000 select(1)
+#:000000000000000 output(1)
+#<000000000000000 rc=0
+log_level --level notice
+[[0,0.0,0.0],true]

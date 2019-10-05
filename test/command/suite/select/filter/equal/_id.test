@@ -7,6 +7,12 @@ load --table IDs
 {}
 ]
 
+log_level --level info
+#@add-important-log-levels info
+#@collect-query-log true
 select IDs \
   --filter '_id == 2' \
   --output_columns '_id'
+#@collect-query-log false
+#@remove-important-log-levels info
+log_level --level notice

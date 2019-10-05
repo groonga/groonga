@@ -3423,6 +3423,12 @@ grn_obj_search_index_report(grn_ctx *ctx, const char *tag, grn_obj *index)
   grn_report_index(ctx, "[object][search]", tag, index);
 }
 
+static grn_inline void
+grn_obj_search_accessor_report(grn_ctx *ctx, const char *tag, grn_obj *accessor)
+{
+  grn_report_accessor(ctx, "[object][search]", tag, accessor);
+}
+
 static grn_inline grn_rc
 grn_obj_search_table_id(grn_ctx *ctx,
                         grn_obj *table,
@@ -3513,6 +3519,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
 
     if (n_accessors == 1) {
       if (last_action == GRN_ACCESSOR_GET_ID) {
+        grn_obj_search_accessor_report(ctx, "[id]", obj);
         rc = grn_obj_search_table_id(ctx, search_target, query, res, op, optarg);
       } else {
         rc = grn_obj_search(ctx, search_target, query, res, op, optarg);
@@ -3539,6 +3546,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         optarg->match_info.min = GRN_ID_NIL;
       }
       if (last_action == GRN_ACCESSOR_GET_ID) {
+        grn_obj_search_accessor_report(ctx, "[id]", obj);
         rc = grn_obj_search_table_id(ctx,
                                      search_target,
                                      query,
@@ -14297,6 +14305,25 @@ grn_column_find_index_data_accessor(grn_ctx *ctx,
     }
 
     switch (a->action) {
+    case GRN_ACCESSOR_GET_ID :
+      if (!a->next) {
+        found = true;
+
+        int section = 0;
+        if (section_buf) {
+          *section_buf = section;
+        }
+        grn_obj *index = obj;
+        if (n < buf_size) {
+          *ip++ = index;
+        }
+        if (n < n_index_data) {
+          index_data[n].index = index;
+          index_data[n].section = section;
+        }
+        n++;
+      }
+      break;
     case GRN_ACCESSOR_GET_KEY :
       entry = GRN_HOOK_INSERT;
       break;
