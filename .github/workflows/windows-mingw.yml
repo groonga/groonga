@@ -46,10 +46,9 @@ jobs:
             | bash --login ^
                 -c 'read wd; ^
                     cd $wd; ^
-                    env; ^
-                    which gcc; ^
                     ./configure ^
                       --with-ruby ^
+                      --disable-groonga-httpd ^
                       --enable-mruby'
       - name: Build
         run: |
