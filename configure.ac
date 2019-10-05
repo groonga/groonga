@@ -228,13 +228,51 @@ fi
 
 AC_CONFIG_FILES([
   Makefile
+  benchmark/Makefile
+  benchmark/fixtures/Makefile
+  benchmark/fixtures/geo-select/Makefile
+  benchmark/lib/Makefile
   build/Makefile
   build/cmake_modules/Makefile
-  src/Makefile
-  src/suggest/Makefile
-  src/httpd/Makefile
+  config.sh
+  data/Makefile
+  data/groonga-httpd.conf
+  data/html/Makefile
+  data/init.d/Makefile
+  data/init.d/centos/Makefile
+  data/init.d/centos/sysconfig/Makefile
+  data/logrotate.d/Makefile
+  data/logrotate.d/centos/Makefile
+  data/logrotate.d/centos/groonga-httpd
+  data/munin/Makefile
+  data/scripts/Makefile
+  data/scripts/groonga-httpd-restart
+  data/systemd/Makefile
+  data/systemd/centos/Makefile
+  data/systemd/centos/groonga-httpd.service
+  data/systemd/centos/sysconfig/Makefile
+  data/tmpfiles.d/Makefile
+  doc/Makefile
+  doc/locale/Makefile
+  doc/locale/en/LC_MESSAGES/Makefile
+  doc/locale/en/Makefile
+  doc/locale/ja/LC_MESSAGES/Makefile
+  doc/locale/ja/Makefile
+  examples/Makefile
+  examples/dictionary/Makefile
+  examples/dictionary/edict/Makefile
+  examples/dictionary/eijiro/Makefile
+  examples/dictionary/gene95/Makefile
+  examples/dictionary/jmdict/Makefile
+  groonga-arrow.pc
+  groonga-httpd-conf.sh
+  groonga.pc
+  include/Makefile
+  include/groonga/Makefile
+  include/groonga/version.h
   lib/Makefile
   lib/dat/Makefile
+  lib/metadata.rc
   lib/mrb/Makefile
   lib/mrb/scripts/Makefile
   lib/mrb/scripts/command_line/Makefile
@@ -246,79 +284,55 @@ AC_CONFIG_FILES([
   lib/mrb/scripts/query_logger/Makefile
   lib/proc/Makefile
   lib/ts/Makefile
-  include/Makefile
-  include/groonga/Makefile
-  plugins/Makefile
-  plugins/tokenizers/Makefile
-  plugins/suggest/Makefile
-  plugins/query_expanders/Makefile
-  plugins/ruby/Makefile
-  plugins/token_filters/Makefile
-  plugins/sharding/Makefile
-  plugins/functions/Makefile
-  examples/Makefile
-  examples/dictionary/Makefile
-  examples/dictionary/edict/Makefile
-  examples/dictionary/eijiro/Makefile
-  examples/dictionary/gene95/Makefile
-  examples/dictionary/jmdict/Makefile
   packages/Makefile
   packages/apt/Makefile
-  packages/ubuntu/Makefile
+  packages/apt/debian/groonga-keyring.postrm
+  packages/apt/env.sh
   packages/rpm/Makefile
   packages/rpm/centos/Makefile
-  packages/yum/Makefile
+  packages/rpm/centos/groonga.spec
   packages/source/Makefile
+  packages/ubuntu/Makefile
   packages/windows/Makefile
-  packages/windows/patches/Makefile
   packages/windows/language-files/Makefile
+  packages/windows/patches/Makefile
   packages/windows/setup-x64.nsi
-  data/Makefile
-  data/html/Makefile
-  data/munin/Makefile
-  data/init.d/Makefile
-  data/init.d/centos/Makefile
-  data/init.d/centos/sysconfig/Makefile
-  data/logrotate.d/Makefile
-  data/logrotate.d/centos/Makefile
-  data/systemd/Makefile
-  data/systemd/centos/Makefile
-  data/systemd/centos/sysconfig/Makefile
-  data/scripts/Makefile
-  data/tmpfiles.d/Makefile
-  tools/Makefile
-  doc/Makefile
-  doc/locale/Makefile
-  doc/locale/en/Makefile
-  doc/locale/en/LC_MESSAGES/Makefile
-  doc/locale/ja/Makefile
-  doc/locale/ja/LC_MESSAGES/Makefile
+  packages/yum/Makefile
+  packages/yum/env.sh
+  plugins/Makefile
+  plugins/functions/Makefile
+  plugins/query_expanders/Makefile
+  plugins/ruby/Makefile
+  plugins/sharding/Makefile
+  plugins/suggest/Makefile
+  plugins/token_filters/Makefile
+  plugins/tokenizers/Makefile
+  src/Makefile
+  src/httpd/Makefile
+  src/suggest/Makefile
   test/Makefile
+  test/command/Makefile
   test/unit/Makefile
-  test/unit/lib/Makefile
-  test/unit/fixtures/Makefile
-  test/unit/fixtures/inverted-index/Makefile
-  test/unit/fixtures/stress/Makefile
-  test/unit/fixtures/plugins/Makefile
-  test/unit/fixtures/geo/Makefile
-  test/unit/fixtures/story/Makefile
-  test/unit/fixtures/story/taiyaki/Makefile
-  test/unit/util/Makefile
   test/unit/core/Makefile
   test/unit/core/dat/Makefile
+  test/unit/fixtures/Makefile
+  test/unit/fixtures/geo/Makefile
+  test/unit/fixtures/inverted-index/Makefile
+  test/unit/fixtures/plugins/Makefile
+  test/unit/fixtures/story/Makefile
+  test/unit/fixtures/story/taiyaki/Makefile
+  test/unit/fixtures/stress/Makefile
+  test/unit/lib/Makefile
   test/unit/story/Makefile
-  test/command/Makefile
-  benchmark/Makefile
-  benchmark/fixtures/Makefile
-  benchmark/fixtures/geo-select/Makefile
-  benchmark/lib/Makefile
+  test/unit/util/Makefile
+  tools/Makefile
   vendor/Makefile
+  vendor/groonga-log/Makefile
   vendor/lz4/Makefile
-  vendor/onigmo/Makefile
   vendor/mecab/Makefile
   vendor/message_pack/Makefile
   vendor/mruby/Makefile
-  vendor/groonga-log/Makefile
+  vendor/onigmo/Makefile
   vendor/rapidjson/Makefile
 ])
 
@@ -1794,22 +1808,7 @@ GROONGA_HTTPD_DEFAULT_DATABASE_PATH="`
 `"
 AC_SUBST(GROONGA_HTTPD_DEFAULT_DATABASE_PATH)
 
-AC_OUTPUT([
-  include/groonga/version.h
-  lib/metadata.rc
-  packages/rpm/centos/groonga.spec
-  packages/apt/debian/groonga-keyring.postrm
-  packages/apt/env.sh
-  packages/yum/env.sh
-  groonga.pc
-  groonga-arrow.pc
-  config.sh
-  groonga-httpd-conf.sh
-  data/groonga-httpd.conf
-  data/logrotate.d/centos/groonga-httpd
-  data/scripts/groonga-httpd-restart
-  data/systemd/centos/groonga-httpd.service
-  ])
+AC_OUTPUT
 
 echo "$PACKAGE_NAME $PACKAGE_VERSION configuration:"
 echo "-----------------------"
