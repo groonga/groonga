@@ -17,9 +17,10 @@ jobs:
       - name: Prepare environment
         run: |
           echo set MSYS_ROOT=%CD:~0,2%\msys64 >> env.bat
-          echo set PATH=%MSYS_ROOT%\mingw64\bin;%PATH% >> env.bat
-          echo set PATH=%MSYS_ROOT%\usr\bin;%PATH% >> env.bat
+          echo set PATH=%%MSYS_ROOT%%\mingw64\bin;%%PATH%% >> env.bat
+          echo set PATH=%%MSYS_ROOT%%\usr\bin;%%PATH%% >> env.bat
           echo set MSYSTEM=MINGW64 >> env.bat
+          type env.bat
       - name: Install dependencies
         run: |
           call env.bat
