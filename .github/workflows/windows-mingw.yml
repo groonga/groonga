@@ -21,6 +21,8 @@ jobs:
           echo set PATH=%%MSYS_ROOT%%\usr\bin;%%PATH%% >> env.bat
           echo set MSYSTEM=MINGW64 >> env.bat
           type env.bat
+          call env.bat
+          env
       - name: Install dependencies
         run: |
           call env.bat
