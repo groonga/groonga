@@ -24,7 +24,6 @@ jobs:
           type environment.bat
           call environment.bat
           set
-          ruby -ve "pp RbConfig::CONFIG"
       - name: Install dependencies
         run: |
           call environment.bat
@@ -44,12 +43,14 @@ jobs:
       - name: Run configure
         run: |
           call environment.bat
+          ruby -e "puts RbConfig::CONFIG['bindir']" > ruby_path.txt
           cygpath %CD% ^
             | bash --login ^
                 -c 'read wd; ^
                     cd $wd; ^
+                    cat ruby_path.txt ^
                     ./configure ^
-                      --with-ruby ^
+                      --with-ruby=$(cat ruby_path.txt) ^
                       --disable-groonga-httpd ^
                       --enable-mruby'
       - name: Build
