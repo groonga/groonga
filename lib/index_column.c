@@ -1321,3 +1321,108 @@ grn_index_column_get_tokenizer(grn_ctx *ctx, grn_obj *index_column)
   grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
   return tokenizer;
 }
+
+static bool
+grn_index_column_is_usable_equal(grn_ctx *ctx,
+                                 grn_obj *index_column,
+                                 grn_operator op)
+{
+  grn_obj *tokenizer;
+  tokenizer = grn_index_column_get_tokenizer(ctx, index_column);
+  return tokenizer == NULL;
+}
+
+static bool
+grn_index_column_is_usable_match(grn_ctx *ctx,
+                                 grn_obj *index_column,
+                                 grn_operator op)
+{
+  return true;
+}
+
+static bool
+grn_index_column_is_usable_range(grn_ctx *ctx,
+                                 grn_obj *index_column,
+                                 grn_operator op)
+{
+  grn_obj *tokenizer;
+  grn_obj *lexicon;
+
+  lexicon = grn_ctx_at(ctx, index_column->header.domain);
+  if (!lexicon) {
+    return false;
+  }
+
+  switch (lexicon->header.type) {
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+    break;
+  default :
+    return false;
+    break;
+  }
+
+  grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
+  return tokenizer == NULL;
+}
+
+static bool
+grn_index_column_is_usable_regexp(grn_ctx *ctx,
+                                  grn_obj *index_column,
+                                  grn_operator op)
+{
+  grn_obj *tokenizer;
+  tokenizer = grn_index_column_get_tokenizer(ctx, index_column);
+  if (!tokenizer) {
+    return false;
+  }
+  return tokenizer == grn_ctx_get(ctx, "TokenRegexp", -1);
+}
+
+bool
+grn_index_column_is_usable(grn_ctx *ctx,
+                           grn_obj *index_column,
+                           grn_operator op)
+{
+  GRN_API_ENTER;
+
+  if (!grn_obj_is_index_column(ctx, index_column)) {
+    GRN_API_RETURN(false);
+  }
+
+  if (!grn_obj_is_visible(ctx, index_column)) {
+    GRN_API_RETURN(false);
+  }
+
+  bool usable = false;
+  switch (op) {
+  case GRN_OP_EQUAL :
+  case GRN_OP_NOT_EQUAL :
+    usable = grn_index_column_is_usable_equal(ctx, index_column, op);
+    break;
+  case GRN_OP_MATCH :
+  case GRN_OP_NEAR :
+  case GRN_OP_NEAR2 :
+  case GRN_OP_SIMILAR :
+  case GRN_OP_PREFIX :
+  case GRN_OP_SUFFIX :
+  case GRN_OP_FUZZY :
+  case GRN_OP_QUORUM :
+    usable = grn_index_column_is_usable_match(ctx, index_column, op);
+    break;
+  case GRN_OP_LESS :
+  case GRN_OP_GREATER :
+  case GRN_OP_LESS_EQUAL :
+  case GRN_OP_GREATER_EQUAL :
+  case GRN_OP_CALL :
+    usable = grn_index_column_is_usable_range(ctx, index_column, op);
+    break;
+  case GRN_OP_REGEXP :
+    usable = grn_index_column_is_usable_regexp(ctx, index_column, op);
+    break;
+  default :
+    break;
+  }
+
+  GRN_API_RETURN(usable);
+}

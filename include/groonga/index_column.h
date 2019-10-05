@@ -1,5 +1,6 @@
 /*
   Copyright(C) 2019 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,6 +26,9 @@ extern "C" {
 GRN_API grn_rc grn_index_column_diff(grn_ctx *ctx,
                                      grn_obj *index_column,
                                      grn_obj **diff);
+GRN_API bool grn_index_column_is_usable(grn_ctx *ctx,
+                                        grn_obj *index_column,
+                                        grn_operator op);
 
 #ifdef __cplusplus
 }
