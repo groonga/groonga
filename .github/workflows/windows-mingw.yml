@@ -46,16 +46,8 @@ jobs:
       - name: Build
         run: |
           call environment.bat
-          cygpath %CD% ^
-            | bash --login ^
-                -c 'read wd; ^
-                    cd $wd; ^
-                    make -j%NUMBER_OF_PROCESSORS%'
+          make -j%NUMBER_OF_PROCESSORS%
       - name: Install
         run: |
           call environment.bat
-          cygpath %CD% ^
-            | bash --login ^
-                -c 'read wd; ^
-                    cd $wd; ^
-                    make install'
+          make install
