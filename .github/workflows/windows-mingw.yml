@@ -37,7 +37,7 @@ jobs:
         run: |
           call environment.bat
           bash autogen.sh
-      - name: Run configure for archive
+      - name: Configure for archive
         run: |
           call environment.bat
           bash configure ^
@@ -48,7 +48,7 @@ jobs:
         run: |
           call environment.bat
           make dist
-      - name: Run configure
+      - name: Configure
         run: |
           call environment.bat
           mkdir ../groonga.build
