@@ -44,7 +44,8 @@ jobs:
           bash configure ^
             --enable-document ^
             --enable-mruby ^
-            --with-ruby
+            --with-ruby ^
+            --without-zlib
       - name: Build archive
         run: |
           call environment.bat

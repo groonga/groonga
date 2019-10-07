@@ -86,9 +86,7 @@ else
   configure_args="${configure_args} --without-http_rewrite_module"
   GROONGA_HTTPD_WITH_HTTP_REWRITE="no"
 fi
-if [ "${GROONGA_HTTPD_WITH_ZLIB}" = "yes" ]; then
-  configure_args="${configure_args} --with-zlib=${GROONGA_HTTPD_ZLIB_LIB_DIR}"
-else
+if [ "${GROONGA_HTTPD_WITH_ZLIB}" != "yes" ]; then
   configure_args="${configure_args} --without-http_gzip_module"
 fi
 if [ "${GROONGA_HTTPD_WITH_SSL}" = "yes" ]; then
