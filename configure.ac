@@ -784,20 +784,56 @@ AC_ARG_WITH(zlib,
   [with_zlib="$withval"],
   [with_zlib="auto"])
 GRN_WITH_ZLIB=no
-if test "x$with_zlib" != "xno"; then
-  # TODO: Support custom zlib include and lib directory by --with-zlib.
-  AC_SEARCH_LIBS(compress, z,
-                 [
-                   GRN_WITH_ZLIB=yes
-                   AC_DEFINE(GRN_WITH_ZLIB, [1],
-                             [Support data compression by zlib.])
-                 ],
-                 [
-                   if test "x$with_zlib" != "xauto"; then
-                     AC_MSG_ERROR("No libz found")
-                   fi
-                 ])
+if test "x$with_zlib" = "xno"; then
+  ZLIB_CFLAGS=
+  ZLIB_LIBS=
+  ZLIB_LIB_DIR=
+else
+  if test "${with_zlib}" = "yes" -o "${with_zlib}" = "auto"; then
+    ZLIB_CFLAGS=
+    ZLIB_LIBS=
+    m4_ifdef([PKG_CHECK_MODULES], [
+      PKG_CHECK_MODULES([ZLIB],
+			[zlib],
+			[GRN_WITH_ZLIB=yes],
+			[GRN_WITH_ZLIB=no])
+      if test "${GRN_WITH_ZLIB}" = "yes"; then
+        _PKG_CONFIG(ZLIB_LIB_DIR, [variable=libdir], [zlib])
+        ZLIB_LIB_DIR="${pkg_cv_ZLIB_LIB_DIR}"
+      fi
+    ],
+    [
+      CFLAGS_SAVE="${CFLAGS}"
+      LDFLAGS_SAVE="${LDFLAGS}"
+      AC_SEARCH_LIBS(compress, z,
+                     [
+                       GRN_WITH_ZLIB=yes
+                       ZLIB_LIBS=-lz
+		       # TODO
+                       ZLIB_LIB_DIR=/usr/lib
+                     ],
+                     [GRN_WITH_ZLIB=no])
+      CFLAGS="${CFLAGS_SAVE}"
+      LDFLAGS="${LDFLAGS_SAVE}"
+    ])
+  else
+    GRN_WITH_ZLIB=yes
+    ZLIB_CFLAGS="-I${with_zlib}/include"
+    ZLIB_LIB_DIR="${with_zlib}/lib"
+    ZLIB_LIBS="-L${ZLIB_LIB_DIR} -lz"
+  fi
+  if test "${GRN_WITH_ZLIB}" = "yes"; then
+    AC_DEFINE(GRN_WITH_ZLIB, [1],
+              [Support data compression by zlib.])
+  else
+    if test "${with_zlib}" = "yes"; then
+      AC_MSG_ERROR("No zlib found")
+    fi
+  fi
 fi
+AC_SUBST(ZLIB_CFLAGS)
+AC_SUBST(ZLIB_LIBS)
+AC_SUBST(ZLIB_LIB_DIR)
 AC_SUBST(GRN_WITH_ZLIB)
 
 # LZ4
@@ -1870,6 +1906,12 @@ echo "  libedit:               $libedit_available"
 if test "x$libedit_available" = "xyes"; then
   echo "    CFLAGS:              ${LIBEDIT_CFLAGS}"
   echo "    LIBS:                ${LIBEDIT_LIBS}"
+fi
+echo "  zlib:                  $GRN_WITH_ZLIB"
+if test "x$GRN_WITH_ZLIB" = "xyes"; then
+  echo "    CFLAGS:              ${ZLIB_CFLAGS}"
+  echo "    LIBS:                ${ZLIB_LIBS}"
+  echo "    LIB_DIR:             ${ZLIB_LIB_DIR}"
 fi
 echo "  LZ4:                   $GRN_WITH_LZ4"
 if test "x$GRN_WITH_LZ4" = "xyes"; then

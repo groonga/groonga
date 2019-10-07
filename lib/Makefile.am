@@ -18,6 +18,7 @@ AM_CFLAGS =					\
 	$(COVERAGE_CFLAGS)			\
 	$(GRN_CFLAGS)				\
 	$(MESSAGE_PACK_CFLAGS)			\
+	$(ZLIB_CFLAGS)				\
 	$(LIBLZ4_CFLAGS)			\
 	$(LIBZSTD_CFLAGS)                       \
 	$(LUAJIT_CFLAGS)
@@ -69,6 +70,7 @@ endif
 
 libgroonga_la_LIBADD +=				\
 	$(ONIGMO_LIBS)				\
+	$(ZLIB_LIBS)				\
 	$(LIBLZ4_LIBS)				\
 	$(LIBZSTD_LIBS)				\
 	$(ATOMIC_LIBS)				\

@@ -39,7 +39,6 @@ jobs:
         run: |
           call environment.bat
           bash configure ^
-            --disable-groonga-httpd ^
             --enable-shared-onigmo ^
             --enable-mruby ^
             --with-ruby
