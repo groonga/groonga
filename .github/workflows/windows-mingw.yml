@@ -14,7 +14,6 @@ jobs:
             --depth 1 ^
             https://github.com/msys2/msys2-ci-base.git ^
             %CD:~0,2%\msys64
-          pacman --sync -yy --noconfirm --sysupgrade
       - name: Prepare environment
         run: |
           echo set MSYS_ROOT=%CD:~0,2%\msys64>> environment.bat
@@ -27,6 +26,7 @@ jobs:
       - name: Install dependencies
         run: |
           call environment.bat
+          pacman --sync -yy --noconfirm --sysupgrade
           pacman --sync --refresh --noconfirm --needed ^
             git ^
             mingw-w64-x86_64-gcc ^
