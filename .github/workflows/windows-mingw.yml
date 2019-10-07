@@ -26,13 +26,14 @@ jobs:
       - name: Install dependencies
         run: |
           call environment.bat
-          pacman --sync --refresh --noconfirm --sysupgrade
-          pacman --sync --refresh --noconfirm --needed ^
+          pacman --sync --yy --noconfirm --sysupgrade
+          pacman --sync --noconfirm --needed ^
             git ^
             mingw-w64-x86_64-gcc ^
-            mingw-w64-x86_64-python3-sphinx ^
+            mingw-w64-x86_64-python3-pip ^
             mingw-w64-x86_64-ruby ^
             mingw-w64-x86_64-zlib
+            pip3 install -U Sphinx
       - name: Generate configure
         run: |
           call environment.bat
