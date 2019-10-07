@@ -29,24 +29,41 @@ jobs:
           pacman --sync --noconfirm ^
             git ^
             mingw-w64-x86_64-gcc ^
+            mingw-w64-x86_64-python3-sphinx ^
             mingw-w64-x86_64-ruby ^
             mingw-w64-x86_64-zlib
       - name: Generate configure
         run: |
           call environment.bat
           bash autogen.sh
-      - name: Run configure
+      - name: Run configure for archive
         run: |
           call environment.bat
           bash configure ^
-            --enable-shared-onigmo ^
+            --enable-document ^
             --enable-mruby ^
+            --with-ruby
+      - name: Build archive
+        run: |
+          call environment.bat
+          make dist
+      - name: Run configure
+        run: |
+          call environment.bat
+          mkdir ../groonga.build
+          cd ../groonba.build
+          bash ../groonga/configure ^
+            --disable-groonga-httpd ^
+            --enable-mruby ^
+            --enable-shared-onigmo ^
             --with-ruby
       - name: Build
         run: |
           call environment.bat
+          cd ../groonba.build
           make -j%NUMBER_OF_PROCESSORS%
       - name: Install
         run: |
           call environment.bat
+          cd ../groonba.build
           make install
