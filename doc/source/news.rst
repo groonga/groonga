@@ -7,6 +7,24 @@
 News
 ====
 
+.. _release-9-0-9:
+
+Release 9.0.9 - 2019-10-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+Fixes
+^^^^^
+
+* Fix a bug that Groonga crash when we specify the value as the first argument of between.[GitHub#1045][Reported by yagisumi]
+
+Thanks
+^^^^^^
+
+* yagisumi
+
 .. _release-9-0-8:
 
 Release 9.0.8 - 2019-09-27
