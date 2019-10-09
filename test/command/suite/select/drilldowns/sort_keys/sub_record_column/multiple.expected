@@ -126,4 +126,5 @@ select Memos   --filter true   --drilldowns[tag].keys tag,date   --drilldowns[ta
 #:000000000000000 output(5)
 #:000000000000000 drilldowns[tag].sort(4): _value.tag._key,_value.date
 #:000000000000000 output.drilldowns[tag](4)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

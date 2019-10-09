@@ -72,6 +72,7 @@ logical_select   --logical_table Logs   --shard_key timestamp   --filter true   
 #:000000000000000 load(1)[Logs_20150204]: [Logs][3]
 #:000000000000000 load(3): [Logs][3]
 #:000000000000000 output(0)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 select --table Logs
 [

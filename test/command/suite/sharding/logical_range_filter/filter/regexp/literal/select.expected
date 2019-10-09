@@ -81,6 +81,7 @@ logical_range_filter Logs timestamp   --limit 4   --filter 'comment @~ "nn"'
 #:000000000000000 filter(2): Logs_20150205.comment "nn" regexp
 #:000000000000000 sort(2)[Logs_20150205]: timestamp
 #:000000000000000 output(2)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

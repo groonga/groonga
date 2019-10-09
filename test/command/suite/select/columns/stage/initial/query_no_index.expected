@@ -23,6 +23,7 @@ select Items   --columns[content].stage initial   --columns[content].type ShortT
 #:000000000000000 filter(2): (match columns) match "Book"
 #:000000000000000 select(2)
 #:000000000000000 output(2)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

@@ -169,6 +169,7 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
 #:000000000000000 output.drilldowns[action](1)
 #:000000000000000 output.drilldowns[restart](1)
 #:000000000000000 output.drilldowns[start](2)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id   --drilldowns[action].table start   --drilldowns[action].keys _key   --drilldowns[restart].stage initial   --drilldowns[restart].keys 'action'   --drilldowns[restart].filter "_key @ 'Restart'"   --drilldowns[restart].output_columns _key   --drilldowns[start].stage initial   --drilldowns[start].keys 'action'   --drilldowns[start].filter "_key @ 'Start'"   --drilldowns[start].output_columns _key
 [
@@ -262,4 +263,5 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
 #:000000000000000 output.drilldowns[action](2)
 #:000000000000000 output.drilldowns[restart](1)
 #:000000000000000 output.drilldowns[start](2)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

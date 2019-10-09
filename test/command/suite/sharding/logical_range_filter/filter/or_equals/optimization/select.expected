@@ -86,6 +86,7 @@ logical_range_filter Logs timestamp   --limit 4   --filter 'action == "Running" 
 #:000000000000000 filter(3): in_values(Logs_20150205.action, #<record:pat:Actions id:2 key:"Running">, #<record:pat:Actions id:1 key:"Start">)
 #:000000000000000 sort(3)[Logs_20150205]: timestamp
 #:000000000000000 output(3)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

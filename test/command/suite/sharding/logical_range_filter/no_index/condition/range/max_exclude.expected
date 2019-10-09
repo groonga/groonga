@@ -79,4 +79,5 @@ logical_range_filter Logs timestamp   --filter 'message == "Shutdown"'   --max "
 #:000000000000000 filter(3): Logs_20150204.message equal "Shutdown"
 #:000000000000000 sort(3)[Logs_20150204]: timestamp
 #:000000000000000 output(5)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

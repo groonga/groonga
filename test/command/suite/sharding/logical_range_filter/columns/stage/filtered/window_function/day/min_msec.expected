@@ -93,6 +93,7 @@ logical_range_filter Logs   --min '2017/03/15 07:01:00.001'   --min_border inclu
 #:000000000000000 filter(4): 2147483652.n_records_per_five_minute greater_equal 3
 #:000000000000000 sort(3)[Logs_20170315]: timestamp
 #:000000000000000 output(3)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

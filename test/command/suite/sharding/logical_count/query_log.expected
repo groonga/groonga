@@ -20,4 +20,5 @@ logical_count Logs   --shard_key timestamp   --columns[price_with_tax].stage ini
 #:000000000000000 columns[price_with_tax](3)
 #:000000000000000 filter(2): 2147483650.price_with_tax greater 550
 #:000000000000000 count(2)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

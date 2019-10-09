@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1431,6 +1432,8 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
     } else {
       grn_command_version command_version;
       grn_obj *expr = NULL;
+      bool is_comment = false;
+      bool processed = false;
 
       command_version = grn_ctx_get_command_version(ctx);
       if (ctx->impl->command.keep.command) {
@@ -1443,8 +1446,9 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
           GRN_TEXT_PUT(ctx, val, str, str_len);
         }
         grn_expr_exec(ctx, expr, 0);
+      } else if (comment_command_p(str, str_len)) {
+        is_comment = true;
       } else {
-        if (comment_command_p(str, str_len)) { goto output; };
         GRN_BULK_REWIND(ctx->impl->output.buf);
         ctx->impl->output.type = GRN_CONTENT_JSON;
         ctx->impl->output.mime_type = "application/json";
@@ -1459,28 +1463,32 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
         }
       }
       if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
-      if (ctx->impl->command.keep.command) {
-        ERRCLR(ctx);
-      } else {
-        if (ctx->impl->current_request_timer_id) {
-          void *timer_id = ctx->impl->current_request_timer_id;
-          ctx->impl->current_request_timer_id = NULL;
-          grn_request_timer_unregister(timer_id);
+      if (!is_comment) {
+        if (ctx->impl->command.keep.command) {
+          ERRCLR(ctx);
+        } else {
+          if (ctx->impl->current_request_timer_id) {
+            void *timer_id = ctx->impl->current_request_timer_id;
+            ctx->impl->current_request_timer_id = NULL;
+            grn_request_timer_unregister(timer_id);
+          }
+          if (GRN_TEXT_LEN(&ctx->impl->current_request_id) > 0) {
+            grn_obj *request_id = &ctx->impl->current_request_id;
+            grn_request_canceler_unregister(ctx,
+                                            GRN_TEXT_VALUE(request_id),
+                                            GRN_TEXT_LEN(request_id));
+            GRN_BULK_REWIND(&ctx->impl->current_request_id);
+          }
+          processed = true;
         }
-        if (GRN_TEXT_LEN(&ctx->impl->current_request_id) > 0) {
-          grn_obj *request_id = &ctx->impl->current_request_id;
-          grn_request_canceler_unregister(ctx,
-                                          GRN_TEXT_VALUE(request_id),
-                                          GRN_TEXT_LEN(request_id));
-          GRN_BULK_REWIND(&ctx->impl->current_request_id);
-        }
-        GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_RESULT_CODE,
-                      "<", "rc=%d", ctx->rc);
       }
-    output :
       if (!(ctx->impl->command.flags & GRN_CTX_QUIET) &&
           ctx->impl->output.func) {
         ctx->impl->output.func(ctx, GRN_CTX_TAIL, ctx->impl->output.data.ptr);
+      }
+      if (processed) {
+        GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_RESULT_CODE,
+                      "<", "rc=%d", ctx->rc);
       }
       if (expr) { grn_expr_clear_vars(ctx, expr); }
       grn_ctx_set_command_version(ctx, command_version);

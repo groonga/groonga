@@ -86,4 +86,5 @@ select Memos   --limit 0   --output_columns _id   --drilldown tags   --drilldown
 #:000000000000000 drilldown.adjust(1)
 #:000000000000000 output(0)
 #:000000000000000 output.drilldown(1)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

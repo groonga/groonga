@@ -91,6 +91,7 @@ logical_range_filter Logs   --shard_key timestamp   --columns[price_with_tax].st
 #:000000000000000 columns[price_with_tax](3)
 #:000000000000000 sort(1)[Logs_20170316]: timestamp
 #:000000000000000 output(3)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

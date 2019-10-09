@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2012-2017 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -39,6 +39,12 @@
 #ifdef NGX_GRN_SUPPORT_STOP_BY_COMMAND
 # include <sys/types.h>
 # include <unistd.h>
+#endif
+
+#ifdef WIN32
+# define GRN_FMT_SIZE "Iu"
+#else
+# define GRN_FMT_SIZE "zu"
 #endif
 
 #define GRN_NO_FLAGS 0
@@ -489,6 +495,10 @@ ngx_http_groonga_context_receive_handler_raw(grn_ctx *context,
                             &(data->raw.busy_chain),
                             &chain,
                             (ngx_buf_tag_t)&ngx_http_groonga_module);
+    GRN_QUERY_LOG(context, GRN_QUERY_LOG_SIZE,
+                  ":",
+                  "send(%u)",
+                  chunk_size);
   }
 }
 
@@ -548,6 +558,12 @@ ngx_http_groonga_context_receive_handler_typed(grn_ctx *context,
                         &(data->typed.foot),
                         NULL,
                         0);
+    GRN_QUERY_LOG(context, GRN_QUERY_LOG_SIZE,
+                  ":",
+                  "send(%" GRN_FMT_SIZE ")",
+                  GRN_TEXT_LEN(&(data->typed.head)) +
+                  GRN_TEXT_LEN(&(data->typed.body)) +
+                  GRN_TEXT_LEN(&(data->typed.foot)));
   }
 }
 

@@ -11,4 +11,5 @@ delete --table Users --id 2
 [[0,0.0,0.0],true]
 #>delete --id "2" --table "Users"
 #:000000000000000 delete(1): [0][2]
+#:000000000000000 send(0)
 #<000000000000000 rc=0

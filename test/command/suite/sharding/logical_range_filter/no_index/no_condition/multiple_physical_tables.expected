@@ -75,4 +75,5 @@ logical_range_filter Logs timestamp
 #:000000000000000 sort(2)[Logs_20150204]: timestamp
 #:000000000000000 sort(3)[Logs_20150205]: timestamp
 #:000000000000000 output(6)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

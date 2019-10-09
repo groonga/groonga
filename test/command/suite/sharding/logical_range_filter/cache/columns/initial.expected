@@ -50,6 +50,7 @@ logical_range_filter Logs   --shard_key timestamp   --columns[price_with_tax].st
 #:000000000000000 columns[price_with_tax](3)
 #:000000000000000 sort(3)[Logs_20170315]: timestamp
 #:000000000000000 output(3)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 logical_range_filter Logs   --shard_key timestamp   --columns[price_with_tax].stage initial   --columns[price_with_tax].type UInt32   --columns[price_with_tax].flags COLUMN_SCALAR   --columns[price_with_tax].value 'price * 1.08'   --output_columns price,price_with_tax
 [
@@ -85,4 +86,5 @@ logical_range_filter Logs   --shard_key timestamp   --columns[price_with_tax].st
 ]
 #>logical_range_filter --columns[price_with_tax].flags "COLUMN_SCALAR" --columns[price_with_tax].stage "initial" --columns[price_with_tax].type "UInt32" --columns[price_with_tax].value "price * 1.08" --logical_table "Logs" --output_columns "price,price_with_tax" --shard_key "timestamp"
 #:000000000000000 cache(0)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

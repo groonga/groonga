@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -777,6 +777,10 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
             cs->fd, (long long int)ret, (unsigned long long int)whole_size);
     rc = ctx->rc;
   }
+  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                ":",
+                "send(%" GRN_FMT_SIZE "): %" GRN_FMT_SIZE "/%" GRN_FMT_SIZE,
+                whole_size, ret, whole_size);
   return rc;
 }
 

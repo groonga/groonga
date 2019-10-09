@@ -93,4 +93,5 @@ select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].filter '_key != "G
 #:000000000000000 drilldowns[tag].filter(2)
 #:000000000000000 output(4)
 #:000000000000000 output.drilldowns[tag](2)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

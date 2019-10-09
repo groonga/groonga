@@ -134,6 +134,7 @@ logical_range_filter Logs   --shard_key timestamp   --columns[hour2].stage initi
 #:000000000000000 columns[hour2](3)
 #:000000000000000 sort(3)[Logs_20170317]: hour2,-price
 #:000000000000000 output(9)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

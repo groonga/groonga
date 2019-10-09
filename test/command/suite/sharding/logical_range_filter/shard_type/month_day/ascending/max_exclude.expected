@@ -88,4 +88,5 @@ logical_range_filter Logs timestamp   --max "2015-03-01 00:00:00"   --max_border
 #:000000000000000 sort(4)[Logs_20150203]: timestamp
 #:000000000000000 sort(2)[Logs_20150228]: timestamp
 #:000000000000000 output(12)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

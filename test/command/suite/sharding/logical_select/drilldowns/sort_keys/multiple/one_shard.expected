@@ -181,4 +181,5 @@ logical_select Logs timestamp   --min "2015-02-05 00:00:00"   --min_border "incl
 #:000000000000000 output(0)
 #:000000000000000 drilldowns[action_date].sort(3): -_nsubrecs,_value.date,_value.action
 #:000000000000000 output.drilldowns[action_date](3)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

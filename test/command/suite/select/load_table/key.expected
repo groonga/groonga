@@ -57,6 +57,7 @@ select   Logs   --load_table LoadedLogs   --load_columns "_key, original_id, tim
 #:000000000000000 select(3)
 #:000000000000000 load(3): [LoadedLogs][3]
 #:000000000000000 output(0)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 select --table LoadedLogs
 [

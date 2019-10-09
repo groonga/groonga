@@ -98,4 +98,5 @@ select Terms --filter true --sort_keys -index
 #:000000000000000 select(11)
 #:000000000000000 sort(10): -index
 #:000000000000000 output(10)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

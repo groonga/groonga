@@ -166,4 +166,5 @@ logical_select Memos   --shard_key created_at   --limit 0   --drilldowns[tag].ke
 #:000000000000000 drilldowns[tag](4)
 #:000000000000000 output(0)
 #:000000000000000 output.drilldowns[tag](4)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

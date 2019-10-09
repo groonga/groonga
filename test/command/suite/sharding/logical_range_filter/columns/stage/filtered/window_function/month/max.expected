@@ -106,6 +106,7 @@ logical_range_filter Logs   --shard_key timestamp   --max '2017/03/17 22:00:00' 
 #:000000000000000 filter(3): 2147483656.n_records_per_day greater_equal 3
 #:000000000000000 sort(2)[Logs_201703]: timestamp
 #:000000000000000 output(3)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

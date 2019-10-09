@@ -106,6 +106,7 @@ select Items   --filter true   --slices[cheep].filter 'price < 1200'   --slices[
 #:000000000000000 slices[cheep].columns[filtered](2)
 #:000000000000000 output(3)
 #:000000000000000 slices[cheep].output(2)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

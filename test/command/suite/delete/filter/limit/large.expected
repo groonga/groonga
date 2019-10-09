@@ -13,6 +13,7 @@ delete --table Users --filter '_key @^ "b"' --limit 4
 #>delete --filter "_key @^ \"b\"" --limit "4" --table "Users"
 #:000000000000000 filter(3): #<accessor _key(Users)> "b" prefix
 #:000000000000000 delete(3): [0][1]
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 select Users
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"alice"]]]]

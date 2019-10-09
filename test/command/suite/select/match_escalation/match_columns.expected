@@ -68,4 +68,5 @@ select Memos   --match_columns content,title   --query 'fas'   --filter '(true |
 #:000000000000000 filter(3): (match columns) match "fas"
 #:000000000000000 select(3)
 #:000000000000000 output(3)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

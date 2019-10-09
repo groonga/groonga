@@ -144,4 +144,5 @@ logical_select Logs timestamp   --limit 0   --drilldowns[action].keys action   -
 #:000000000000000 drilldowns[action].filter(1)
 #:000000000000000 output(0)
 #:000000000000000 output.drilldowns[action](1)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

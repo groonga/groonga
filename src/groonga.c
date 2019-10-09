@@ -308,10 +308,12 @@ s_output_raw(grn_ctx *ctx, int flags, FILE *stream)
   char *chunk = NULL;
   unsigned int chunk_size = 0;
   int recv_flags;
+  size_t written = 0;
 
   grn_ctx_recv(ctx, &chunk, &chunk_size, &recv_flags);
   if (chunk_size > 0) {
     fwrite(chunk, 1, chunk_size, stream);
+    written += chunk_size;
   }
 
   if (flags & GRN_CTX_TAIL) {
@@ -321,12 +323,18 @@ s_output_raw(grn_ctx *ctx, int flags, FILE *stream)
         chunk_size > 0 &&
         chunk[chunk_size - 1] != '\n') {
       fwrite("\n", 1, 1, stream);
+      written += 1;
     }
     fflush(stream);
 
     command = GRN_CTX_USER_DATA(ctx)->ptr;
     GRN_BULK_REWIND(command);
   }
+
+  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                ":",
+                "send(%" GRN_FMT_SIZE ")",
+                written);
 }
 
 static void
@@ -353,6 +361,13 @@ s_output_typed(grn_ctx *ctx, int flags, FILE *stream)
       fwrite(GRN_TEXT_VALUE(&foot), 1, GRN_TEXT_LEN(&foot), stream);
       fputc('\n', stream);
       fflush(stream);
+      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                    ":",
+                    "send(%" GRN_FMT_SIZE ")",
+                    GRN_TEXT_LEN(&head) +
+                    GRN_TEXT_LEN(&body) +
+                    GRN_TEXT_LEN(&foot) +
+                    1 /* for '\n' */);
       GRN_OBJ_FIN(ctx, &head);
       GRN_OBJ_FIN(ctx, &foot);
     }
@@ -1209,6 +1224,10 @@ h_output_send(grn_ctx *ctx, grn_sock fd,
             "couldn't send all data (%" GRN_FMT_LLD "/%" GRN_FMT_LLD ")",
             (long long int)ret, (long long int)len);
   }
+  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                ":",
+                "send(%" GRN_FMT_SIZE "): %" GRN_FMT_SIZE "/%" GRN_FMT_SIZE,
+                len, ret, len);
 }
 
 static void

@@ -68,4 +68,5 @@ select Shops --sortby '+_score, +name'   --output_columns 'name, _score, locatio
 #:000000000000000 score(7)
 #:000000000000000 sort(7): +_score, +name
 #:000000000000000 output(7)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

@@ -64,4 +64,5 @@ select Memos   --output_columns _key,tag   --filter 'all_records() && (tag == "g
 #:000000000000000 select(4)
 #:000000000000000 sort(4): _id
 #:000000000000000 output(4)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

@@ -88,4 +88,5 @@ logical_range_filter Logs timestamp   --order descending   --max "2015-03-01 00:
 #:000000000000000 sort(4)[Logs_201502]: -timestamp
 #:000000000000000 sort(2)[Logs_201501]: -timestamp
 #:000000000000000 output(12)
+#:000000000000000 send(0)
 #<000000000000000 rc=0

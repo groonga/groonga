@@ -80,6 +80,7 @@ logical_range_filter Logs timestamp   --limit 2   --filter 'action == "Running" 
 #>logical_range_filter --filter "action == \"Running\" || action == \"Start\"" --limit "2" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(2)[Logs_20150205]: action == "Running" || action == "Start"
 #:000000000000000 output(2)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

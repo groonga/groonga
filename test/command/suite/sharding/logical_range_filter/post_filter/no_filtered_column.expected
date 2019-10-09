@@ -61,6 +61,7 @@ logical_range_filter Logs   --shard_key timestamp   --filter 'price <= 900'   --
 #:000000000000000 filter(2): #<accessor _key(anonymous)._id(Logs_20170316)> greater 1
 #:000000000000000 sort(2)[Logs_20170316]: timestamp
 #:000000000000000 output(3)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]

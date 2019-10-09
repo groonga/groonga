@@ -81,6 +81,7 @@ logical_range_filter Logs timestamp   --limit -1   --filter 'user_id == 2'
 #:000000000000000 filter(2): Logs_20150205.user_id equal #<record:pat:UserIDs id:2 key:2>
 #:000000000000000 sort(2)[Logs_20150205]: timestamp
 #:000000000000000 output(2)
+#:000000000000000 send(0)
 #<000000000000000 rc=0
 log_level --level notice
 [[0,0.0,0.0],true]
