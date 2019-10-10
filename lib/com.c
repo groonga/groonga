@@ -105,7 +105,7 @@ grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q)
   CRITICAL_SECTION_ENTER(q->cs);
   if (q->next) {
     e = q->next;
-    if (!(q->next = e->next)) { q->tail = &q->next; }
+    if (q->next != e->next) { q->tail = &q->next; }
   }
   CRITICAL_SECTION_LEAVE(q->cs);
 
