@@ -1209,6 +1209,9 @@ h_output_send(grn_ctx *ctx, grn_sock fd,
             "couldn't send all data (%" GRN_FMT_LLD "/%" GRN_FMT_LLD ")",
             (long long int)ret, (long long int)len);
   }
+  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                ":", "sendmsg(%zd)",
+                len);
 }
 
 static void
