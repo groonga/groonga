@@ -303,6 +303,8 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   GRN_OUTPUT_CSTR(grn_get_version());
   GRN_OUTPUT_CSTR("n_queries");
   GRN_OUTPUT_INT64(statistics.nfetches);
+  GRN_OUTPUT_CSTR("n_wait_jobs");
+  GRN_OUTPUT_INT64(grn_queue_count());
   GRN_OUTPUT_CSTR("cache_hit_rate");
   if (statistics.nfetches == 0) {
     GRN_OUTPUT_FLOAT(0.0);

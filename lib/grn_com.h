@@ -63,6 +63,7 @@ struct _grn_com_queue {
 
 GRN_API grn_rc grn_com_queue_enque(grn_ctx *ctx, grn_com_queue *q, grn_com_queue_entry *e);
 GRN_API grn_com_queue_entry *grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q);
+int64_t grn_queue_count(void);
 
 /******* grn_com ********/
 

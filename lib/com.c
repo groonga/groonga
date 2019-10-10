@@ -66,7 +66,18 @@
 #  endif
 #  define MSG_NOSIGNAL 0
 #endif /* USE_MSG_NOSIGNAL */
+
+static int64_t queue_count = 0;
+# define GRN_ADD_QUEUE_COUNT(count) do { \
+  queue_count += count; \
+} while (0)
+
 /******* grn_com_queue ********/
+int64_t
+grn_queue_count(void)
+{
+  return queue_count;
+}
 
 grn_rc
 grn_com_queue_enque(grn_ctx *ctx, grn_com_queue *q, grn_com_queue_entry *e)
@@ -75,6 +86,7 @@ grn_com_queue_enque(grn_ctx *ctx, grn_com_queue *q, grn_com_queue_entry *e)
   e->next = NULL;
   *q->tail = e;
   q->tail = &e->next;
+  GRN_ADD_QUEUE_COUNT(1);
   CRITICAL_SECTION_LEAVE(q->cs);
   /*
   uint8_t i = q->last + 1;
@@ -106,6 +118,7 @@ grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q)
   if (q->next) {
     e = q->next;
     if (!(q->next = e->next)) { q->tail = &q->next; }
+    GRN_ADD_QUEUE_COUNT(-1);
   }
   CRITICAL_SECTION_LEAVE(q->cs);
 
