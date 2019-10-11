@@ -1106,8 +1106,7 @@ grn_nfkc_normalize_is_middle_dot_family(const unsigned char *utf8_char,
 
 grn_inline static const unsigned char *
 grn_nfkc_normalize_unify_to_katakana(const unsigned char *utf8_char,
-                                     unsigned char *unified,
-                                     size_t length)
+                                     unsigned char *unified)
 {
   if (utf8_char[0] == 0xe3) {
     if (utf8_char[1] == 0x81 &&
@@ -1192,8 +1191,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
         GRN_CHAR_TYPE(char_type) == GRN_CHAR_HIRAGANA &&
         unified_char_length == 3) {
       unifying = grn_nfkc_normalize_unify_to_katakana(unifying,
-                                                      unified_katakana,
-                                                      unified_char_length);
+                                                      unified_katakana);
       if (unifying == unified_katakana) {
         char_type = GRN_CHAR_KATAKANA | (char_type & GRN_CHAR_BLANK);
       }
