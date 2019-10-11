@@ -63,7 +63,7 @@ GRN_API grn_rc grn_com_queue_enque(grn_ctx *ctx, grn_com_queue *q, grn_com_queue
 GRN_API grn_com_queue_entry *grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q);
 uint64_t grn_com_queue_size(grn_ctx *ctx, grn_com_queue *q);
 
-void grn_job_queue_current_set(grn_ctx *ctx, grn_com_queue *queue);
+GRN_API void grn_job_queue_current_set(grn_ctx *ctx, grn_com_queue *queue);
 grn_com_queue *grn_job_queue_current_get(grn_ctx *ctx);
 
 /******* grn_com ********/
