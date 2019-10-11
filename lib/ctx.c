@@ -305,8 +305,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   msgpack_packer_init(&ctx->impl->output.msgpacker,
                       ctx, grn_msgpack_buffer_write);
 #endif
-  ctx->impl->tv.tv_sec = 0;
-  ctx->impl->tv.tv_nsec = 0;
+  grn_timeval_now(ctx, &ctx->impl->tv);
   ctx->impl->edge = NULL;
   grn_loader_init(&ctx->impl->loader);
   ctx->impl->plugin_path = NULL;
