@@ -285,7 +285,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_timeval now;
   grn_cache *cache;
   grn_cache_statistics statistics;
-  const int n_elements = 10;
+  const int n_elements = 11;
 
   grn_timeval_now(ctx, &now);
   cache = grn_cache_current_get(ctx);
@@ -317,6 +317,16 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   GRN_OUTPUT_INT32(grn_get_default_command_version());
   GRN_OUTPUT_CSTR("max_command_version");
   GRN_OUTPUT_INT32(GRN_COMMAND_VERSION_MAX);
+  {
+    grn_com_queue *job_queue;
+    job_queue = grn_job_queue_current_get(ctx);
+    GRN_OUTPUT_CSTR("n_jobs");
+    if (job_queue) {
+      GRN_OUTPUT_UINT64(grn_com_queue_size(ctx, job_queue));
+    } else {
+      GRN_OUTPUT_UINT64(0);
+    }
+  }
   GRN_OUTPUT_MAP_CLOSE();
 
 #ifdef USE_MEMORY_DEBUG

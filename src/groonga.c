@@ -1018,6 +1018,7 @@ run_server(grn_ctx *ctx, grn_obj *db, grn_com_event *ev,
   } else {
     ev->opaque = db;
     grn_edges_init(ctx, dispatcher);
+    grn_job_queue_current_set(ctx, &ctx_new);
     if (!grn_com_sopen(ctx, ev, bind_address, port, handler, he)) {
       send_ready_notify();
       run_server_loop(ctx, ev);
@@ -1027,6 +1028,7 @@ run_server(grn_ctx *ctx, grn_obj *db, grn_com_event *ev,
       fprintf(stderr, "grn_com_sopen failed (%s:%d): %s\n",
               bind_address, port, ctx->errbuf);
     }
+    grn_job_queue_current_set(ctx, NULL);
     grn_edges_fin(ctx);
   }
   return exit_code;

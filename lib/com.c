@@ -75,25 +75,8 @@ grn_com_queue_enque(grn_ctx *ctx, grn_com_queue *q, grn_com_queue_entry *e)
   e->next = NULL;
   *q->tail = e;
   q->tail = &e->next;
+  q->size++;
   CRITICAL_SECTION_LEAVE(q->cs);
-  /*
-  uint8_t i = q->last + 1;
-  e->next = NULL;
-  if (q->first == i || q->next) {
-    CRITICAL_SECTION_ENTER(q->cs);
-    if (q->first == i || q->next) {
-      *q->tail = e;
-      q->tail = &e->next;
-    } else {
-      q->bins[q->last] = e;
-      q->last = i;
-    }
-    CRITICAL_SECTION_LEAVE(q->cs);
-  } else {
-    q->bins[q->last] = e;
-    q->last = i;
-  }
-  */
   return GRN_SUCCESS;
 }
 
@@ -106,22 +89,31 @@ grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q)
   if (q->next) {
     e = q->next;
     if (!(q->next = e->next)) { q->tail = &q->next; }
+    q->size--;
   }
   CRITICAL_SECTION_LEAVE(q->cs);
 
-  /*
-  if (q->first == q->last) {
-    if (q->next) {
-      CRITICAL_SECTION_ENTER(q->cs);
-      e = q->next;
-      if (!(q->next = e->next)) { q->tail = &q->next; }
-      CRITICAL_SECTION_LEAVE(q->cs);
-    }
-  } else {
-    e = q->bins[q->first++];
-  }
-  */
   return e;
+}
+
+uint64_t
+grn_com_queue_size(grn_ctx *ctx, grn_com_queue *q)
+{
+  return q->size;
+}
+
+static grn_com_queue *grn_job_queue_current = NULL;
+
+void
+grn_job_queue_current_set(grn_ctx *ctx, grn_com_queue *queue)
+{
+  grn_job_queue_current = queue;
+}
+
+grn_com_queue *
+grn_job_queue_current_get(grn_ctx *ctx)
+{
+  return grn_job_queue_current;
 }
 
 /******* grn_msg ********/

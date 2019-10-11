@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -43,26 +44,27 @@ struct _grn_com_queue_entry {
 };
 
 struct _grn_com_queue {
-  grn_com_queue_entry *bins[GRN_COM_QUEUE_BINSIZE];
   grn_com_queue_entry *next;
   grn_com_queue_entry **tail;
-  uint8_t first;
-  uint8_t last;
+  uint64_t size;
   grn_critical_section cs;
 };
 
 #define GRN_COM_QUEUE_INIT(q) do {\
   (q)->next = NULL;\
   (q)->tail = &(q)->next;\
-  (q)->first = 0;\
-  (q)->last = 0;\
+  (q)->size = 0;\
   CRITICAL_SECTION_INIT((q)->cs);\
 } while (0)
 
-#define GRN_COM_QUEUE_EMPTYP(q) (((q)->first == (q)->last) && !(q)->next)
+#define GRN_COM_QUEUE_EMPTYP(q) ((q)->size == 0)
 
 GRN_API grn_rc grn_com_queue_enque(grn_ctx *ctx, grn_com_queue *q, grn_com_queue_entry *e);
 GRN_API grn_com_queue_entry *grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q);
+uint64_t grn_com_queue_size(grn_ctx *ctx, grn_com_queue *q);
+
+void grn_job_queue_current_set(grn_ctx *ctx, grn_com_queue *queue);
+grn_com_queue *grn_job_queue_current_get(grn_ctx *ctx);
 
 /******* grn_com ********/
 
