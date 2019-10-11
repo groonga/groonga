@@ -1,0 +1,55 @@
+name: "Debian"
+
+# WIP
+on:
+  - push
+  - pull_request
+
+#on:
+#  schedule:
+#    - cron:  '0 0 * * *'
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - name: Install dependency packages
+        run: |
+          sudo apt install autoconf-archive devscripts bison ruby python3-pip
+      - name: Install Sphinx
+        run: |
+          sudo pip3 install -v sphinx==2.2.0
+      - name: Prepare task
+        run: |
+          (cd ../ &&
+          git clone --depth 1 https://github.com/apache/arrow.git &&
+          git clone --depth 1 https://github.com/groonga/groonga.org.git)
+      - name: Generate configure
+        run: |
+          ./autogen.sh
+      - name: Setup debian/changelog
+        run: |
+          (cd packages &&
+            dch --newversion $(cat ../base_version)-1 "New upstream version" &&
+            head debian/changelog)
+      - name: Configure for archive
+        run: |
+          ./configure \
+            --with-groonga-org-path=../groonga.org \
+            --enable-document \
+            --with-ruby \
+            --enable-mruby \
+      - name: Build documents
+        run: |
+          make update-document DOCUMENT_VERSION_FULL=$(cat ./base_version)
+      - name: Build archive
+        run: |
+          make dist
+      - name: Build with docker
+        run: |
+          (cd packages &&
+            rake apt:build APACHE_ARROW_REPOSITORY=../../arrow APT_TARGETS=debian-buster)
