@@ -63,7 +63,10 @@ class GroongaPackageTask < PackageTask
     end
     yum_spec_in_file = File.join(__dir__, "groonga.spec.in")
     original_spec_in_file = File.join(__dir__, "rpm", "centos", "groonga.spec.in")
-    cp(yum_spec_in_file, yum_spec_in_file)
+    file yum_spec_in_file => original_spec_in_file do |task|
+      cp(original_spec_in_file,
+         task.name)
+    end
     namespace :yum do
       task :build => yum_build_sh
     end

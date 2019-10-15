@@ -223,8 +223,6 @@ Munin plugins for Groonga
 
 
 %build
-export PATH="$HOME/.rbenv/bin:$PATH"
-export PATH="$HOME/.rbenv/shims:$PATH"
 %configure \
   --disable-static \
   --with-package-platform=centos%{?centos_ver} \
@@ -249,7 +247,6 @@ export PATH="$HOME/.rbenv/shims:$PATH"
   --without-rapidjson \
 %endif
   --with-munin-plugins \
-  --with-ruby=$(rbenv which ruby) \
   --enable-mruby \
   %{_additional_configure_options:%{additional_configure_options}}
 
@@ -298,15 +295,6 @@ cat <<EOC > $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/groonga
   env.gqtp_pid_path %{_localstatedir}/run/groonga/groonga-gqtp.pid
   env.gqtp_query_log_path %{_localstatedir}/log/groonga/query-gqtp.log
 EOC
-
-%check
-export PATH="$HOME/.rbenv/bin:$PATH"
-export PATH="$HOME/.rbenv/shims:$PATH"
-export RUBY=$(rbenv which ruby)
-bash -x ./test/unit/run-test.sh
-%if %{_centos_ver} >= 7
-bash -x ./test/command/run-test.sh --reporter=mark --timeout=120 --read-timeout=120
-%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
