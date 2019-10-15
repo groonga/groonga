@@ -22,7 +22,7 @@ Improvements
 Fixes
 ^^^^^
 
-* Fix a bug that Groonga crash when we specify the value as the first argument of between.[GitHub#1045][Reported by yagisumi]
+* Fixed a bug that Groonga crash when we specify the value as the first argument of between.[GitHub#1045][Reported by yagisumi]
 
 Thanks
 ^^^^^^
