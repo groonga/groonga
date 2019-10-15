@@ -15,6 +15,10 @@ Release 9.0.9 - 2019-10-29
 Improvements
 ^^^^^^^^^^^^
 
+* [:doc:`reference/log`] Improved that output the sending time of response into query-log.
+
+* [:doc:`reference/commands/status`] Added that the number of current jobs in the ``status`` command response.
+
 Fixes
 ^^^^^
 

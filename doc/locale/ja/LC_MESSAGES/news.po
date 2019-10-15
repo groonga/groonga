@@ -39,6 +39,20 @@ msgstr "9.0.9リリース - 2019-10-29"
 msgid "Improvements"
 msgstr "改良"
 
+msgid ""
+"[:doc:`reference/log`] Improved that output the sending time of response "
+"into query-log."
+msgstr ""
+"[:doc:`/reference/log`] 応答の送信時間をクエリーログに出力するように改良しま"
+"した。"
+
+msgid ""
+"[:doc:`reference/commands/status`] Added that the number of current jobs in "
+"the ``status`` command response."
+msgstr ""
+"[:doc:`/reference/commands/status`] ``status`` コマンドの応答に現在のジョブ数"
+"を追加しました。"
+
 msgid "Fixes"
 msgstr "修正"
 
