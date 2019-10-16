@@ -4581,12 +4581,6 @@ grn_table_select_index(grn_ctx *ctx,
   grn_rc rc = GRN_FUNCTION_NOT_IMPLEMENTED;
   size_t n_indexes = GRN_PTR_VECTOR_SIZE(&(si->index));
   if (n_indexes > 0) {
-    grn_obj *first_index = GRN_PTR_VALUE_AT(&si->index, 0);
-    if (grn_obj_is_accessor(ctx, first_index) && n_indexes > 1) {
-      /* TODO: How to support? */
-      return false;
-    }
-
     unsigned int previous_n_hits = grn_table_size(ctx, data->res);
 
     grn_id minimum_min_id = GRN_ID_NIL;
@@ -4643,7 +4637,7 @@ grn_table_select_index(grn_ctx *ctx,
       } else {
         options->match_info.min = GRN_ID_NIL;
       }
-      if (grn_obj_is_accessor(ctx, index)) {
+      if (n_indexes == 1 && grn_obj_is_accessor(ctx, index)) {
         rc = grn_accessor_execute(ctx,
                                   index,
                                   grn_table_select_index_dispatch,

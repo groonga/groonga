@@ -1,0 +1,38 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerNFKC121
+[[0,0.0,0.0],true]
+column_create Lexicon memo_title COLUMN_INDEX|WITH_POSITION Memos title
+[[0,0.0,0.0],true]
+column_create Lexicon memo_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "groonga", "title": "Groonga", "content": "Start Groonga!"},
+{"_key": "mroonga", "title": "Mroonga", "content": "Start Mroonga!"},
+{"_key": "rroonga", "title": "Rroonga", "content": "Start Rroonga!"},
+{"_key": "ruby", "title": "Ruby", "content": "Start Ruby!"},
+{"_key": "learn", "title": "Learn", "content": "Learning Ruby and Groonga..."}
+]
+[[0,0.0,0.0],5]
+table_create Notes TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Notes memo COLUMN_SCALAR Memos
+[[0,0.0,0.0],true]
+column_create Memos notes COLUMN_INDEX Notes memo
+[[0,0.0,0.0],true]
+load --table Notes
+[
+{"_key": "Groonga", "memo": "groonga"},
+{"_key": "Mroonga", "memo": "mroonga"},
+{"_key": "Rroonga", "memo": "rroonga"},
+{"_key": "Ruby", "memo": "ruby"},
+{"_key": "Learn", "memo": "learn"}
+]
+[[0,0.0,0.0],5]
+select Notes   --match_columns "memo.title || memo.content"   --query rroonga   --output_columns _key,_score
+[[0,0.0,0.0],[[[1],[["_key","ShortText"],["_score","Int32"]],["Rroonga",2]]]]
