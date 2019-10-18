@@ -1327,9 +1327,17 @@ grn_index_column_is_usable_equal(grn_ctx *ctx,
                                  grn_obj *index_column,
                                  grn_operator op)
 {
-  /* XXX: Or should we restrict to only TokenDelimit?
+  grn_obj *tokenizer;
+  tokenizer = grn_index_column_get_tokenizer(ctx, index_column);
+  if (!tokenizer) {
+    return true;
+  }
+  /* TODO: Improve this. Which tokenizer can be used with equal operation?
      Do we need metadata in tokenizer? */
-  return true;
+  if (DB_OBJ(tokenizer)->id == GRN_DB_DELIMIT) {
+    return true;
+  }
+  return false;
 }
 
 static bool
