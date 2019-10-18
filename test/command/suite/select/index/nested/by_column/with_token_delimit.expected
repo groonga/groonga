@@ -1,0 +1,93 @@
+table_create Users TABLE_HASH_KEY ShortText --default_tokenizer TokenDelimit
+[[0,0.0,0.0],true]
+column_create Users hobby COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Files TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Files owners COLUMN_VECTOR Users
+[[0,0.0,0.0],true]
+column_create Users files_owners COLUMN_INDEX Files owners
+[[0,0.0,0.0],true]
+table_create Hobbies TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Hobbies users_hobby COLUMN_INDEX Users hobby
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice",  "hobby": "programming"},
+{"_key": "bob",    "hobby": "programming"},
+{"_key": "carlos", "hobby": "running"}
+]
+[[0,0.0,0.0],3]
+load --table Files
+[
+{"_key": "/home/alice/.zshrc",                  "owners": "alice bob"},
+{"_key": "/home/bob/.bashrc",                   "owners": "bob"},
+{"_key": "/home/calros/public_html/index.html", "owners": "carlos"}
+]
+[[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
+select Files   --filter 'owners.hobby @ "programming"'   --output_columns '_key, owners, owners.hobby, _score'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "owners",
+          "Users"
+        ],
+        [
+          "owners.hobby",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "/home/alice/.zshrc",
+        [
+          "alice",
+          "bob"
+        ],
+        [
+          "programming",
+          "programming"
+        ],
+        2
+      ],
+      [
+        "/home/bob/.bashrc",
+        [
+          "bob"
+        ],
+        [
+          "programming"
+        ],
+        1
+      ]
+    ]
+  ]
+]
+#|i| [object][search][index][key][exact] <Hobbies.users_hobby>
+#|i| grn_ii_sel > (programming)
+#|i| n=1 (programming)
+#|i| exact: 2
+#|i| hits=2
+#|i| [accessor][resolve][data-column][index] <Users.files_owners>
+log_level --level notice
+[[0,0.0,0.0],true]

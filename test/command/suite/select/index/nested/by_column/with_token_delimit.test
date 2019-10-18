@@ -1,0 +1,32 @@
+table_create Users TABLE_HASH_KEY ShortText --default_tokenizer TokenDelimit
+column_create Users hobby COLUMN_SCALAR ShortText
+
+table_create Files TABLE_PAT_KEY ShortText
+column_create Files owners COLUMN_VECTOR Users
+
+column_create Users files_owners COLUMN_INDEX Files owners
+
+table_create Hobbies TABLE_HASH_KEY ShortText
+column_create Hobbies users_hobby COLUMN_INDEX Users hobby
+
+load --table Users
+[
+{"_key": "alice",  "hobby": "programming"},
+{"_key": "bob",    "hobby": "programming"},
+{"_key": "carlos", "hobby": "running"}
+]
+
+load --table Files
+[
+{"_key": "/home/alice/.zshrc",                  "owners": "alice bob"},
+{"_key": "/home/bob/.bashrc",                   "owners": "bob"},
+{"_key": "/home/calros/public_html/index.html", "owners": "carlos"}
+]
+
+log_level --level info
+#@add-important-log-levels info
+select Files \
+  --filter 'owners.hobby @ "programming"' \
+  --output_columns '_key, owners, owners.hobby, _score'
+#@remove-important-log-levels info
+log_level --level notice

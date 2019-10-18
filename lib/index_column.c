@@ -1327,9 +1327,9 @@ grn_index_column_is_usable_equal(grn_ctx *ctx,
                                  grn_obj *index_column,
                                  grn_operator op)
 {
-  grn_obj *tokenizer;
-  tokenizer = grn_index_column_get_tokenizer(ctx, index_column);
-  return tokenizer == NULL;
+  /* XXX: Or should we restrict to only TokenDelimit?
+     Do we need metadata in tokenizer? */
+  return true;
 }
 
 static bool
