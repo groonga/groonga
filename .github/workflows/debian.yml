@@ -40,9 +40,9 @@ jobs:
       - name: Configure for archive
         run: |
           ./configure \
-            --cutter-source-path=../cutter \
             --enable-document \
             --enable-mruby \
+            --with-cutter-source-path=../cutter \
             --with-groonga-org-path=../groonga.org \
             --with-ruby
       - name: Build archive
