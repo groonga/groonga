@@ -53,7 +53,7 @@ jobs:
           OLD_RELEASE_DATE_FULL="$(grep '^ -- ' packages/debian/changelog | \
                                      head -n1 | ^
                                      sed -E -e 's/ -- .+<[^>]+>  //')"
-          OLD_RELEASE_DATE=$(date --date="${OLD_RELEASE_DATE}" +%Y-%m-%d)
+          OLD_RELEASE_DATE=$(date --date="${OLD_RELEASE_DATE_FULL}" +%Y-%m-%d)
           make update-latest-release \
             OLD_RELEASE=${OLD_RELEASE} \
             OLD_RELEASE_DATE=${OLD_RELEASE_DATE} \
