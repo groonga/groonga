@@ -1581,7 +1581,9 @@ grn_ctx_stream_out_func(grn_ctx *ctx, int flags, void *stream)
 }
 
 void
-grn_ctx_recv_handler_set(grn_ctx *ctx, void (*func)(grn_ctx *, int, void *), void *func_arg)
+grn_ctx_recv_handler_set(grn_ctx *ctx,
+                         grn_recv_handler_func func,
+                         void *func_arg)
 {
   if (ctx && ctx->impl) {
     ctx->impl->output.func = func;

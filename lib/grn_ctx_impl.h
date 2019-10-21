@@ -185,7 +185,7 @@ struct _grn_ctx_impl {
   /* output portion */
   struct {
     grn_obj *buf;
-    void (*func)(grn_ctx *, int, void *);
+    grn_recv_handler_func func;
     union {
       void *ptr;
       int fd;

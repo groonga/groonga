@@ -1276,9 +1276,11 @@ GRN_API grn_rc grn_text_printf(grn_ctx *ctx, grn_obj *bulk,
 GRN_API grn_rc grn_text_vprintf(grn_ctx *ctx, grn_obj *bulk,
                                 const char *format, va_list args);
 
+typedef void (*grn_recv_handler_func)(grn_ctx *ctx, int flags, void *user_data);
+
 GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
-                                      void (*func)(grn_ctx *, int, void *),
-                                      void *func_arg);
+                                      grn_recv_handler_func func,
+                                      void *user_data);
 
 /* various values exchanged via grn_obj */
 
