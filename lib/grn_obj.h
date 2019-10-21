@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -26,6 +27,7 @@ extern "C" {
 #endif
 
 grn_io *grn_obj_get_io(grn_ctx *ctx, grn_obj *obj);
+size_t grn_obj_size(grn_ctx *ctx, grn_obj *obj);
 
 #ifdef __cplusplus
 }

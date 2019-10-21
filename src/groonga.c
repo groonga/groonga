@@ -1087,9 +1087,19 @@ start_service(grn_ctx *ctx, const char *db_path,
 }
 
 typedef struct {
+  grn_raw_string method;
+  grn_raw_string path;
+  int64_t content_length;
+  bool have_100_continue;
+  bool is_keep_alive;
+  const char *body_start;
+} h_request;
+
+typedef struct {
   grn_msg *msg;
-  grn_bool in_body;
-  grn_bool is_chunked;
+  h_request request;
+  bool in_body;
+  bool is_chunked;
 } ht_context;
 
 static void
@@ -1143,333 +1153,180 @@ h_output_set_header(grn_ctx *ctx,
 }
 
 static void
-h_output_send(grn_ctx *ctx, grn_sock fd,
-              grn_obj *header, grn_obj *head, grn_obj *body, grn_obj *foot)
-{
-  ssize_t ret;
-  ssize_t len = 0;
-#ifdef WIN32
-  int n_buffers = 0;
-  WSABUF wsabufs[4];
-  if (header) {
-    wsabufs[n_buffers].buf = GRN_TEXT_VALUE(header);
-    wsabufs[n_buffers].len = GRN_TEXT_LEN(header);
-    len += GRN_TEXT_LEN(header);
-    n_buffers++;
-  }
-  if (head) {
-    wsabufs[n_buffers].buf = GRN_TEXT_VALUE(head);
-    wsabufs[n_buffers].len = GRN_TEXT_LEN(head);
-    len += GRN_TEXT_LEN(head);
-    n_buffers++;
-  }
-  if (body) {
-    wsabufs[n_buffers].buf = GRN_TEXT_VALUE(body);
-    wsabufs[n_buffers].len = GRN_TEXT_LEN(body);
-    len += GRN_TEXT_LEN(body);
-    n_buffers++;
-  }
-  if (foot) {
-    wsabufs[n_buffers].buf = GRN_TEXT_VALUE(foot);
-    wsabufs[n_buffers].len = GRN_TEXT_LEN(foot);
-    len += GRN_TEXT_LEN(foot);
-    n_buffers++;
-  }
-  {
-    DWORD sent = 0;
-    if (WSASend(fd, wsabufs, n_buffers, &sent, 0, NULL, NULL) == SOCKET_ERROR) {
-      SOERR("WSASend");
-    }
-    ret = sent;
-  }
-#else /* WIN32 */
-  struct iovec msg_iov[4];
-  struct msghdr msg;
-  msg.msg_name = NULL;
-  msg.msg_namelen = 0;
-  msg.msg_iov = msg_iov;
-  msg.msg_iovlen = 0;
-  msg.msg_control = NULL;
-  msg.msg_controllen = 0;
-  msg.msg_flags = 0;
-
-  if (header) {
-    msg_iov[msg.msg_iovlen].iov_base = GRN_TEXT_VALUE(header);
-    msg_iov[msg.msg_iovlen].iov_len = GRN_TEXT_LEN(header);
-    len += GRN_TEXT_LEN(header);
-    msg.msg_iovlen++;
-  }
-  if (head) {
-    msg_iov[msg.msg_iovlen].iov_base = GRN_TEXT_VALUE(head);
-    msg_iov[msg.msg_iovlen].iov_len = GRN_TEXT_LEN(head);
-    len += GRN_TEXT_LEN(head);
-    msg.msg_iovlen++;
-  }
-  if (body) {
-    msg_iov[msg.msg_iovlen].iov_base = GRN_TEXT_VALUE(body);
-    msg_iov[msg.msg_iovlen].iov_len = GRN_TEXT_LEN(body);
-    len += GRN_TEXT_LEN(body);
-    msg.msg_iovlen++;
-  }
-  if (foot) {
-    msg_iov[msg.msg_iovlen].iov_base = GRN_TEXT_VALUE(foot);
-    msg_iov[msg.msg_iovlen].iov_len = GRN_TEXT_LEN(foot);
-    len += GRN_TEXT_LEN(foot);
-    msg.msg_iovlen++;
-  }
-  if ((ret = sendmsg(fd, &msg, MSG_NOSIGNAL)) == -1) {
-    SOERR("sendmsg");
-  }
-#endif /* WIN32 */
-  if (ret != len) {
-    GRN_LOG(&grn_gctx, GRN_LOG_NOTICE,
-            "couldn't send all data (%" GRN_FMT_LLD "/%" GRN_FMT_LLD ")",
-            (long long int)ret, (long long int)len);
-  }
-  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                ":",
-                "send(%" GRN_FMT_SIZE "): %" GRN_FMT_SIZE "/%" GRN_FMT_SIZE,
-                len, ret, len);
-}
-
-static void
-h_output_raw(grn_ctx *ctx, int flags, ht_context *hc)
+h_output_raw(grn_ctx *ctx, int flags, grn_edge *edge)
 {
   grn_rc expr_rc = ctx->rc;
-  grn_sock fd = hc->msg->u.fd;
-  grn_obj header_;
-  grn_obj head_;
-  grn_obj body_;
-  grn_obj foot_;
-  grn_obj *header = NULL;
-  grn_obj *head = NULL;
-  grn_obj *body = NULL;
-  grn_obj *foot = NULL;
-  char *chunk = NULL;
-  unsigned int chunk_size = 0;
-  int recv_flags;
+  ht_context *hc = edge->user_data;
+  grn_msg *msg = (grn_msg *)(ctx->impl->output.buf);
   grn_bool is_last_message = (flags & GRN_CTX_TAIL);
-
-  GRN_TEXT_INIT(&header_, 0);
-  GRN_TEXT_INIT(&head_, 0);
-  GRN_TEXT_INIT(&body_, GRN_OBJ_DO_SHALLOW_COPY);
-  GRN_TEXT_INIT(&foot_, 0);
-
-  grn_ctx_recv(ctx, &chunk, &chunk_size, &recv_flags);
-  GRN_TEXT_SET(ctx, &body_, chunk, chunk_size);
 
   if (!hc->in_body) {
     if (is_last_message) {
-      h_output_set_header(ctx, &header_, expr_rc, GRN_TEXT_LEN(&body_), NULL);
-      hc->is_chunked = GRN_FALSE;
+      h_output_set_header(ctx,
+                          &(msg->pre_data),
+                          expr_rc,
+                          GRN_TEXT_LEN((grn_obj *)msg),
+                          NULL);
+      hc->is_chunked = false;
     } else {
-      h_output_set_header(ctx, &header_, expr_rc, -1, NULL);
-      hc->is_chunked = GRN_TRUE;
+      h_output_set_header(ctx,
+                          &(msg->pre_data),
+                          expr_rc,
+                          -1,
+                          NULL);
+      hc->is_chunked = true;
     }
-    header = &header_;
-    hc->in_body = GRN_TRUE;
+    hc->in_body = true;
   }
 
-  if (GRN_TEXT_LEN(&body_) > 0) {
+  if (GRN_TEXT_LEN((grn_obj *)msg) > 0) {
     if (hc->is_chunked) {
-      grn_text_printf(ctx, &head_,
-                      "%x\r\n", (unsigned int)GRN_TEXT_LEN(&body_));
-      head = &head_;
-      GRN_TEXT_PUTS(ctx, &foot_, "\r\n");
-      foot = &foot_;
+      grn_text_printf(ctx,
+                      &(msg->pre_data),
+                      "%x\r\n", (unsigned int)GRN_TEXT_LEN((grn_obj *)msg));
+      GRN_TEXT_PUTS(ctx, &(msg->post_data), "\r\n");
     }
-    body = &body_;
   }
 
   if (is_last_message) {
     if (hc->is_chunked) {
-      GRN_TEXT_PUTS(ctx, &foot_, "0\r\n");
-      GRN_TEXT_PUTS(ctx, &foot_, "Connection: close\r\n");
-      GRN_TEXT_PUTS(ctx, &foot_, "\r\n");
-      foot = &foot_;
+      GRN_TEXT_PUTS(ctx, &(msg->post_data), "0\r\n");
+      if (!hc->request.is_keep_alive) {
+        GRN_TEXT_PUTS(ctx, &(msg->post_data), "Connection: close\r\n");
+      }
+      GRN_TEXT_PUTS(ctx, &(msg->post_data), "\r\n");
     }
   }
 
-  h_output_send(ctx, fd, header, head, body, foot);
-
-  GRN_OBJ_FIN(ctx, &foot_);
-  GRN_OBJ_FIN(ctx, &body_);
-  GRN_OBJ_FIN(ctx, &head_);
-  GRN_OBJ_FIN(ctx, &header_);
+  grn_msg_send(ctx, (grn_obj *)msg, flags);
+  ctx->impl->output.buf = grn_msg_open(ctx, edge->com, &edge->send_old);
 }
 
 static void
-h_output_typed(grn_ctx *ctx, int flags, ht_context *hc)
+h_output_typed(grn_ctx *ctx, int flags, grn_edge *edge)
 {
   grn_rc expr_rc = ctx->rc;
-  grn_sock fd = hc->msg->u.fd;
-  grn_obj header, head, body, foot;
-  char *chunk = NULL;
-  unsigned int chunk_size = 0;
-  int recv_flags;
-  grn_bool should_return_body;
+  ht_context *hc = edge->user_data;
+  grn_msg *msg = (grn_msg *)(ctx->impl->output.buf);
+  bool should_return_body;
 
   if (!(flags & GRN_CTX_TAIL)) { return; }
 
   switch (hc->msg->header.qtype) {
   case 'G' :
   case 'P' :
-    should_return_body = GRN_TRUE;
+    should_return_body = true;
     break;
   default :
-    should_return_body = GRN_FALSE;
+    should_return_body = false;
     break;
   }
 
-  GRN_TEXT_INIT(&header, 0);
-  GRN_TEXT_INIT(&head, 0);
-  GRN_TEXT_INIT(&body, GRN_OBJ_DO_SHALLOW_COPY);
-  GRN_TEXT_INIT(&foot, 0);
-
-  grn_ctx_recv(ctx, &chunk, &chunk_size, &recv_flags);
-  GRN_TEXT_SET(ctx, &body, chunk, chunk_size);
-
-  output_envelope(ctx, expr_rc, &head, &body, &foot);
-  h_output_set_header(ctx, &header, expr_rc,
-                      GRN_TEXT_LEN(&head) +
-                      GRN_TEXT_LEN(&body) +
-                      GRN_TEXT_LEN(&foot),
-                      &foot);
-  if (should_return_body) {
-    h_output_send(ctx, fd, &header, &head, &body, &foot);
-  } else {
-    h_output_send(ctx, fd, &header, NULL, NULL, NULL);
+  {
+    grn_obj head;
+    GRN_TEXT_INIT(&head, 0);
+    output_envelope(ctx, expr_rc, &head, (grn_obj *)msg, &(msg->post_data));
+    h_output_set_header(ctx,
+                        &(msg->pre_data),
+                        expr_rc,
+                        GRN_TEXT_LEN(&head) +
+                        GRN_TEXT_LEN((grn_obj *)msg) +
+                        GRN_TEXT_LEN(&(msg->post_data)),
+                        &(msg->post_data));
+    GRN_TEXT_PUT(ctx,
+                 &(msg->pre_data),
+                 GRN_TEXT_VALUE(&head),
+                 GRN_TEXT_LEN(&head));
+    GRN_OBJ_FIN(ctx, &head);
   }
-  GRN_OBJ_FIN(ctx, &foot);
-  GRN_OBJ_FIN(ctx, &body);
-  GRN_OBJ_FIN(ctx, &head);
-  GRN_OBJ_FIN(ctx, &header);
+  if (!should_return_body) {
+    GRN_BULK_REWIND(&(msg->pre_data));
+    GRN_BULK_REWIND(&(msg->post_data));
+  }
+  grn_msg_send(ctx, (grn_obj *)msg, flags);
+  ctx->impl->output.buf = grn_msg_open(ctx, edge->com, &edge->send_old);
 }
 
 static void
-h_output(grn_ctx *ctx, int flags, void *arg)
+h_output(grn_ctx *ctx, int flags, void *user_data)
 {
-  ht_context *hc = (ht_context *)arg;
+  grn_edge *edge = user_data;
+  grn_msg *req = edge->msg;
+  grn_msg *msg = (grn_msg *)(ctx->impl->output.buf);
+
+  msg->header.proto = req->header.proto;
 
   switch (grn_ctx_get_output_type(ctx)) {
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
   case GRN_CONTENT_NONE :
-    h_output_raw(ctx, flags, hc);
+    h_output_raw(ctx, flags, edge);
     break;
   default :
-    h_output_typed(ctx, flags, hc);
+    h_output_typed(ctx, flags, edge);
     break;
   }
 }
 
-static void
-do_htreq_get(grn_ctx *ctx, ht_context *hc)
-{
-  grn_msg *msg = hc->msg;
-  char *path = NULL;
-  char *pathe = GRN_BULK_HEAD((grn_obj *)msg);
-  char *e = GRN_BULK_CURR((grn_obj *)msg);
-  for (;; pathe++) {
-    if (e <= pathe + 6) {
-      /* invalid request */
-      return;
-    }
-    if (*pathe == ' ') {
-      if (!path) {
-        path = pathe + 1;
-      } else {
-        if (!memcmp(pathe + 1, "HTTP/1", 6)) {
-          break;
-        }
-      }
-    }
-  }
-  grn_ctx_send(ctx, path, pathe - path, GRN_CTX_TAIL);
-}
-
-typedef struct {
-  const char *path_start;
-  int path_length;
-  long long int content_length;
-  grn_bool have_100_continue;
-  const char *body_start;
-} h_post_header;
-
-#define STRING_EQUAL(string, string_length, constant_string)\
-  (string_length == strlen(constant_string) &&\
-   strncmp(string, constant_string, string_length) == 0)
-
-#define STRING_EQUAL_CI(string, string_length, constant_string)\
-  (string_length == strlen(constant_string) &&\
-   grn_strncasecmp(string, constant_string, string_length) == 0)
-
 static const char *
-do_htreq_post_parse_header_request_line(grn_ctx *ctx,
-                                        const char *start,
-                                        const char *end,
-                                        h_post_header *header)
+do_htreq_parse_request_line(grn_ctx *ctx,
+                            const char *start,
+                            const char *end,
+                            h_request *request)
 {
-  const char *current;
+  const char *current = start;
 
-  {
-    const char *method = start;
-    int method_length = -1;
-
-    for (current = method; current < end; current++) {
-      if (current[0] == '\n') {
-        return NULL;
-      }
-      if (current[0] == ' ') {
-        method_length = current - method;
-        current++;
-        break;
-      }
-    }
-    if (method_length == -1) {
+  request->method.value = start;
+  request->method.length = 0;
+  for (; current < end; current++) {
+    if (current[0] == '\n') {
       return NULL;
     }
-    if (!STRING_EQUAL_CI(method, method_length, "POST")) {
+    if (current[0] == ' ') {
+      request->method.length = current - request->method.value;
+      current++;
+      break;
+    }
+  }
+  if (request->method.length == 0) {
+    return NULL;
+  }
+
+  request->path.value = current;
+  request->path.length = 0;
+  for (; current < end; current++) {
+    if (current[0] == '\n') {
       return NULL;
     }
+    if (current[0] == ' ') {
+      request->path.length = current -request->path.value;
+      current++;
+      break;
+    }
+  }
+  if (request->path.length == 0) {
+    return NULL;
   }
 
   {
-    header->path_start = current;
-    header->path_length = -1;
+    grn_raw_string http_version;
+    http_version.value = current;
+    http_version.length = 0;
     for (; current < end; current++) {
       if (current[0] == '\n') {
-        return NULL;
-      }
-      if (current[0] == ' ') {
-        header->path_length = current - header->path_start;
-        current++;
-        break;
-      }
-    }
-    if (header->path_length == -1) {
-      return NULL;
-    }
-  }
-
-  {
-    const char *http_version_start = current;
-    int http_version_length = -1;
-    for (; current < end; current++) {
-      if (current[0] == '\n') {
-        http_version_length = current - http_version_start;
-        if (http_version_length > 0 &&
-            http_version_start[http_version_length - 1] == '\r') {
-          http_version_length--;
+        http_version.length = current - http_version.value;
+        if (http_version.length > 0 &&
+            http_version.value[http_version.length - 1] == '\r') {
+          http_version.length--;
         }
         current++;
         break;
       }
     }
-    if (http_version_length == -1) {
+    if (http_version.length == 0) {
       return NULL;
     }
-    if (!(STRING_EQUAL_CI(http_version_start, http_version_length, "HTTP/1.0") ||
-          STRING_EQUAL_CI(http_version_start, http_version_length, "HTTP/1.1"))) {
+    if (!(GRN_RAW_STRING_EQUAL_CI_CSTRING(http_version, "HTTP/1.0") ||
+          GRN_RAW_STRING_EQUAL_CI_CSTRING(http_version, "HTTP/1.1"))) {
       return NULL;
     }
   }
@@ -1478,57 +1335,65 @@ do_htreq_post_parse_header_request_line(grn_ctx *ctx,
 }
 
 static const char *
-do_htreq_post_parse_header_values(grn_ctx *ctx,
-                                  const char *start,
-                                  const char *end,
-                                  h_post_header *header)
+do_htreq_parse_headers(grn_ctx *ctx,
+                       const char *start,
+                       const char *end,
+                       h_request *request)
 {
   const char *current;
-  const char *name = start;
-  int name_length = -1;
-  const char *value = NULL;
-  int value_length = -1;
+  grn_raw_string name;
+  grn_raw_string value;
+  name.value = start;
+  name.length = 0;
+  value.value = NULL;
+  value.length = 0;
 
   for (current = start; current < end; current++) {
     switch (current[0]) {
     case '\n' :
-      if (name_length == -1) {
-        if (current - name == 1 && current[-1] == '\r') {
+      if (name.length == 0) {
+        if (current - name.value == 1 && current[-1] == '\r') {
           return current + 1;
         } else {
           /* No ":" header line. TODO: report error. */
           return NULL;
         }
       } else {
-        while (value < current && value[0] == ' ') {
-          value++;
+        while (value.value < current && value.value[0] == ' ') {
+          value.value++;
         }
-        value_length = current - value;
-        if (value_length > 0 && value[value_length - 1] == '\r') {
-          value_length--;
+        value.length = current - value.value;
+        if (value.length > 0 && value.value[value.length - 1] == '\r') {
+          value.length--;
         }
-        if (STRING_EQUAL_CI(name, name_length, "Content-Length")) {
+        if (GRN_RAW_STRING_EQUAL_CI_CSTRING(name, "Content-Length")) {
           const char *rest;
-          header->content_length = grn_atoll(value, value + value_length, &rest);
-          if (rest != value + value_length) {
+          request->content_length = grn_atoll(value.value,
+                                              value.value + value.length,
+                                              &rest);
+          if (rest != value.value + value.length) {
             /* Invalid Content-Length value. TODO: report error. */
-            header->content_length = -1;
+            request->content_length = -1;
           }
-        } else if (STRING_EQUAL_CI(name, name_length, "Expect")) {
-          if (STRING_EQUAL(value, value_length, "100-continue")) {
-            header->have_100_continue = GRN_TRUE;
+        } else if (GRN_RAW_STRING_EQUAL_CI_CSTRING(name, "Expect")) {
+          if (GRN_RAW_STRING_EQUAL_CSTRING(value, "100-continue")) {
+            request->have_100_continue = true;
+          }
+        } else if (GRN_RAW_STRING_EQUAL_CI_CSTRING(name, "Connection")) {
+          if (GRN_RAW_STRING_EQUAL_CI_CSTRING(value, "keep-alive")) {
+            request->is_keep_alive = true;
           }
         }
       }
-      name = current + 1;
-      name_length = -1;
-      value = NULL;
-      value_length = -1;
+      name.value = current + 1;
+      name.length = 0;
+      value.value = NULL;
+      value.length = 0;
       break;
     case ':' :
-      if (name_length == -1) {
-        name_length = current - name;
-        value = current + 1;
+      if (name.length == 0) {
+        name.length = current - name.value;
+        value.value = current + 1;
       }
       break;
     default :
@@ -1539,65 +1404,88 @@ do_htreq_post_parse_header_values(grn_ctx *ctx,
   return NULL;
 }
 
-static grn_bool
-do_htreq_post_parse_header(grn_ctx *ctx,
-                           const char *start,
-                           const char *end,
-                           h_post_header *header)
+static bool
+do_htreq_parse_request(grn_ctx *ctx,
+                       const char *start,
+                       const char *end,
+                       h_request *request)
 {
-  const char *current;
+  GRN_RAW_STRING_INIT(request->method);
+  GRN_RAW_STRING_INIT(request->path);
+  request->content_length = -1;
+  request->have_100_continue = false;
+  request->is_keep_alive = false;
+  request->body_start = NULL;
 
-  current = do_htreq_post_parse_header_request_line(ctx, start, end, header);
+  const char *current;
+  current = do_htreq_parse_request_line(ctx, start, end, request);
   if (!current) {
-    return GRN_FALSE;
+    return false;
   }
-  current = do_htreq_post_parse_header_values(ctx, current, end, header);
+  current = do_htreq_parse_headers(ctx, current, end, request);
   if (!current) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (current == end) {
-    header->body_start = NULL;
+    request->body_start = NULL;
   } else {
-    header->body_start = current;
+    request->body_start = current;
   }
 
-  return GRN_TRUE;
+  return true;
+}
+
+static void
+do_htreq_get(grn_ctx *ctx, ht_context *hc)
+{
+  grn_msg *msg = hc->msg;
+  const char *end = GRN_BULK_CURR((grn_obj *)msg);
+
+  if (!do_htreq_parse_request(ctx,
+                              GRN_BULK_HEAD((grn_obj *)msg),
+                              end,
+                              &(hc->request))) {
+    return;
+  }
+  grn_ctx_send(ctx,
+               hc->request.path.value,
+               hc->request.path.length,
+               GRN_CTX_TAIL);
 }
 
 static void
 do_htreq_post(grn_ctx *ctx, ht_context *hc)
 {
   grn_msg *msg = hc->msg;
+  const char *end = GRN_BULK_CURR((grn_obj *)msg);
   grn_sock fd = msg->u.fd;
-  const char *end;
-  h_post_header header;
 
-  header.path_start = NULL;
-  header.path_length = -1;
-  header.content_length = -1;
-  header.body_start = NULL;
-  header.have_100_continue = GRN_FALSE;
-
-  end = GRN_BULK_CURR((grn_obj *)msg);
-  if (!do_htreq_post_parse_header(ctx,
-                                  GRN_BULK_HEAD((grn_obj *)msg),
-                                  end,
-                                  &header)) {
+  if (!do_htreq_parse_request(ctx,
+                              GRN_BULK_HEAD((grn_obj *)msg),
+                              end,
+                              &(hc->request))) {
+    return;
+  }
+  if (!GRN_RAW_STRING_EQUAL_CI_CSTRING(hc->request.method, "POST")) {
     return;
   }
 
-  grn_ctx_send(ctx, header.path_start, header.path_length, GRN_CTX_MORE);
+  grn_ctx_send(ctx,
+               hc->request.path.value,
+               hc->request.path.length,
+               GRN_CTX_MORE);
   if (ctx->rc != GRN_SUCCESS) {
     ht_context context;
     context.msg = msg;
-    context.in_body = GRN_FALSE;
-    context.is_chunked = GRN_FALSE;
+    context.request = hc->request;
+    context.in_body = false;
+    context.is_chunked = false;
     h_output(ctx, GRN_CTX_TAIL, &context);
     return;
   }
 
-  if (header.have_100_continue) {
+  if (hc->request.have_100_continue) {
     const char *continue_message = "HTTP/1.1 100 Continue\r\n";
     ssize_t send_size;
     int send_flags = MSG_NOSIGNAL;
@@ -1614,15 +1502,15 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
     long long int read_content_length = 0;
 
     GRN_TEXT_INIT(&chunk_buffer, 0);
-    while (read_content_length < header.content_length) {
+    while (read_content_length < hc->request.content_length) {
 #define POST_BUFFER_SIZE 8192
       char buffer[POST_BUFFER_SIZE];
       const char *buffer_start, *buffer_current, *buffer_end;
 
-      if (header.body_start) {
-        buffer_start = header.body_start;
+      if (hc->request.body_start) {
+        buffer_start = hc->request.body_start;
         buffer_end = end;
-        header.body_start = NULL;
+        hc->request.body_start = NULL;
       } else {
         ssize_t recv_length;
         int recv_flags = 0;
@@ -1661,7 +1549,7 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
                      buffer_current + 1 - buffer_start);
         {
           int flags = 0;
-          if (!(read_content_length == header.content_length &&
+          if (!(read_content_length == hc->request.content_length &&
                 buffer_current + 1 == buffer_end)) {
             flags |= GRN_CTX_MORE;
           } else {
@@ -1702,8 +1590,9 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
 }
 
 static void
-do_htreq(grn_ctx *ctx, ht_context *hc)
+do_htreq(grn_ctx *ctx, grn_edge *edge)
 {
+  ht_context *hc = edge->user_data;
   grn_msg *msg = hc->msg;
   grn_com_header *header = &msg->header;
   switch (header->qtype) {
@@ -1715,11 +1604,6 @@ do_htreq(grn_ctx *ctx, ht_context *hc)
     do_htreq_post(ctx, hc);
     break;
   }
-  /* if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {...} */
-  grn_msg_close(ctx, (grn_obj *)msg);
-  /* if not keep alive connection */
-  grn_sock_close(msg->u.fd);
-  grn_com_event_start_accept(ctx, msg->acceptor->ev);
 }
 
 enum {
@@ -2428,127 +2312,84 @@ enum {
 };
 
 static void
-check_rlimit_nofile(grn_ctx *ctx)
+generic_dispatcher(grn_ctx *ctx,
+                   grn_edge *edge,
+                   grn_thread_func thread_func)
 {
-#ifndef WIN32
-  struct rlimit limit;
-  limit.rlim_cur = 0;
-  limit.rlim_max = 0;
-  getrlimit(RLIMIT_NOFILE, &limit);
-  if (limit.rlim_cur < RLIMIT_NOFILE_MINIMUM) {
-    limit.rlim_cur = RLIMIT_NOFILE_MINIMUM;
-    limit.rlim_max = RLIMIT_NOFILE_MINIMUM;
-    setrlimit(RLIMIT_NOFILE, &limit);
-    limit.rlim_cur = 0;
-    limit.rlim_max = 0;
-    getrlimit(RLIMIT_NOFILE, &limit);
-  }
-  GRN_LOG(ctx, GRN_LOG_NOTICE,
-          "RLIMIT_NOFILE(%" GRN_FMT_LLD ",%" GRN_FMT_LLD ")",
-          (long long int)limit.rlim_cur, (long long int)limit.rlim_max);
-#endif /* WIN32 */
-}
-
-static grn_thread_func_result CALLBACK
-h_worker(void *arg)
-{
-  ht_context hc;
-  grn_ctx ctx_, *ctx = &ctx_;
-  grn_ctx_init(ctx, 0);
-  grn_ctx_use(ctx, (grn_obj *)arg);
-  grn_ctx_recv_handler_set(ctx, h_output, &hc);
   CRITICAL_SECTION_ENTER(q_critical_section);
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "thread start (%u/%u)",
-          n_floating_threads, n_running_threads);
-  while (n_running_threads <= max_n_floating_threads &&
-         grn_gctx.stat != GRN_CTX_QUIT) {
-    grn_obj *msg;
-    if (ctx->rc == GRN_CANCEL) {
-      ctx->rc = GRN_SUCCESS;
-    }
-    n_floating_threads++;
-    while (!(msg = (grn_obj *)grn_com_queue_deque(&grn_gctx, &ctx_new))) {
-      COND_WAIT(q_cond, q_critical_section);
-      if (grn_gctx.stat == GRN_CTX_QUIT) {
-        n_floating_threads--;
-        goto exit;
-      }
-      if (n_running_threads > max_n_floating_threads) {
-        n_floating_threads--;
-        goto exit;
-      }
-    }
-    n_floating_threads--;
-    CRITICAL_SECTION_LEAVE(q_critical_section);
-    hc.msg = (grn_msg *)msg;
-    hc.in_body = GRN_FALSE;
-    hc.is_chunked = GRN_FALSE;
-    do_htreq(ctx, &hc);
-    CRITICAL_SECTION_ENTER(q_critical_section);
-  }
-exit :
-  n_running_threads--;
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "thread end (%u/%u)",
-          n_floating_threads, n_running_threads);
-  if (grn_gctx.stat == GRN_CTX_QUIT && running_event_loop) {
-    break_accept_event_loop(ctx);
-  }
-  grn_ctx_fin(ctx);
-  CRITICAL_SECTION_LEAVE(q_critical_section);
-  return GRN_THREAD_FUNC_RETURN_VALUE;
-}
-
-static void
-h_handler(grn_ctx *ctx, grn_obj *msg)
-{
-  grn_com *com = ((grn_msg *)msg)->u.peer;
-  if (ctx->rc) {
-    grn_com_close(ctx, com);
-    grn_msg_close(ctx, msg);
-  } else {
-    grn_sock fd = com->fd;
-    void *arg = com->ev->opaque;
-    /* if not keep alive connection */
-    grn_com_event_del(ctx, com->ev, fd);
-    ((grn_msg *)msg)->u.fd = fd;
-    CRITICAL_SECTION_ENTER(q_critical_section);
-    grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)msg);
+  if (edge->stat == EDGE_IDLE) {
+    grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)edge);
+    edge->stat = EDGE_WAIT;
     if (n_floating_threads == 0 && n_running_threads < max_n_floating_threads) {
       grn_thread thread;
       n_running_threads++;
-      if (THREAD_CREATE(thread, h_worker, arg)) {
+      if (THREAD_CREATE(thread, thread_func, NULL)) {
         n_running_threads--;
         SERR("pthread_create");
       }
     }
     COND_SIGNAL(q_cond);
-    CRITICAL_SECTION_LEAVE(q_critical_section);
+  }
+  CRITICAL_SECTION_LEAVE(q_critical_section);
+}
+
+static void
+generic_handler(grn_ctx *ctx,
+                grn_obj *msg,
+                grn_edge_dispatcher_func dispatcher,
+                grn_recv_handler_func recv_handler)
+{
+  grn_com *com = ((grn_msg *)msg)->u.peer;
+
+  if (ctx->rc != GRN_SUCCESS) {
+    if (com->has_sid) {
+      grn_edge *edge = com->opaque;
+      if (edge) {
+        CRITICAL_SECTION_ENTER(q_critical_section);
+        if (edge->stat == EDGE_IDLE) {
+          grn_com_queue_enque(ctx, &ctx_old, (grn_com_queue_entry *)edge);
+        }
+        edge->stat = EDGE_ABORT;
+        CRITICAL_SECTION_LEAVE(q_critical_section);
+      } else {
+        grn_com_close(ctx, com);
+      }
+    }
+    grn_msg_close(ctx, msg);
+    return;
+  }
+
+  {
+    int added;
+    grn_edge *edge = grn_edges_add(ctx, &((grn_msg *)msg)->edge_id, &added);
+    if (added) {
+      grn_ctx_init(&edge->ctx, 0);
+      GRN_COM_QUEUE_INIT(&edge->recv_new);
+      GRN_COM_QUEUE_INIT(&edge->send_old);
+      grn_ctx_use(&edge->ctx, (grn_obj *)com->ev->opaque);
+      grn_ctx_recv_handler_set(&edge->ctx, recv_handler, edge);
+      com->opaque = edge;
+      grn_obj_close(&edge->ctx, edge->ctx.impl->output.buf);
+      edge->ctx.impl->output.buf =
+        grn_msg_open(&edge->ctx, com, &edge->send_old);
+      edge->com = com;
+      edge->stat = EDGE_IDLE;
+      edge->flags = GRN_EDGE_WORKER;
+      edge->user_data = NULL;
+    }
+    if (edge->ctx.stat == GRN_CTX_QUIT || edge->stat == EDGE_ABORT) {
+      grn_msg_close(ctx, msg);
+    } else {
+      grn_com_queue_enque(ctx, &edge->recv_new, (grn_com_queue_entry *)msg);
+      dispatcher(ctx, edge);
+    }
   }
 }
 
-static int
-h_server(char *path)
-{
-  int exit_code = EXIT_FAILURE;
-  grn_ctx ctx_, *ctx = &ctx_;
-  grn_ctx_init(ctx, 0);
-  GRN_COM_QUEUE_INIT(&ctx_new);
-  GRN_COM_QUEUE_INIT(&ctx_old);
-  check_rlimit_nofile(ctx);
-  GRN_TEXT_INIT(&http_response_server_line, 0);
-  grn_text_printf(ctx,
-                  &http_response_server_line,
-                  "Server: %s/%s\r\n",
-                  grn_get_package_label(),
-                  grn_get_version());
-  exit_code = start_service(ctx, path, NULL, h_handler);
-  GRN_OBJ_FIN(ctx, &http_response_server_line);
-  grn_ctx_fin(ctx);
-  return exit_code;
-}
+typedef void (*grn_worker_func)(grn_ctx *ctx, grn_edge *edge, void *user_data);
 
-static grn_thread_func_result CALLBACK
-g_worker(void *arg)
+static grn_thread_func_result
+generic_worker(grn_worker_func func, void *user_data)
 {
   CRITICAL_SECTION_ENTER(q_critical_section);
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread start (%u/%u)",
@@ -2580,23 +2421,8 @@ g_worker(void *arg)
         /* if (edge->flags == GRN_EDGE_WORKER) */
         while (ctx->stat != GRN_CTX_QUIT &&
                (edge->msg = (grn_msg *)grn_com_queue_deque(ctx, &edge->recv_new))) {
-          grn_com_header *header = &edge->msg->header;
           msg = (grn_obj *)edge->msg;
-          switch (header->proto) {
-          case GRN_COM_PROTO_MBREQ :
-            do_mbreq(ctx, edge);
-            break;
-          case GRN_COM_PROTO_GQTP :
-            grn_ctx_send(ctx, GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg), header->flags);
-            ERRCLR(ctx);
-            if (ctx->rc == GRN_CANCEL) {
-              ctx->rc = GRN_SUCCESS;
-            }
-            break;
-          default :
-            ctx->stat = GRN_CTX_QUIT;
-            break;
-          }
+          func(ctx, edge, user_data);
           grn_msg_close(ctx, msg);
         }
         while ((msg = (grn_obj *)grn_com_queue_deque(ctx, &edge->send_old))) {
@@ -2617,28 +2443,127 @@ exit :
   n_running_threads--;
   GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "thread end (%u/%u)",
           n_floating_threads, n_running_threads);
+  if (grn_gctx.stat == GRN_CTX_QUIT && running_event_loop) {
+    break_accept_event_loop(&grn_gctx);
+  }
   CRITICAL_SECTION_LEAVE(q_critical_section);
   return GRN_THREAD_FUNC_RETURN_VALUE;
 }
 
 static void
+check_rlimit_nofile(grn_ctx *ctx)
+{
+#ifndef WIN32
+  struct rlimit limit;
+  limit.rlim_cur = 0;
+  limit.rlim_max = 0;
+  getrlimit(RLIMIT_NOFILE, &limit);
+  if (limit.rlim_cur < RLIMIT_NOFILE_MINIMUM) {
+    limit.rlim_cur = RLIMIT_NOFILE_MINIMUM;
+    limit.rlim_max = RLIMIT_NOFILE_MINIMUM;
+    setrlimit(RLIMIT_NOFILE, &limit);
+    limit.rlim_cur = 0;
+    limit.rlim_max = 0;
+    getrlimit(RLIMIT_NOFILE, &limit);
+  }
+  GRN_LOG(ctx, GRN_LOG_NOTICE,
+          "RLIMIT_NOFILE(%" GRN_FMT_LLD ",%" GRN_FMT_LLD ")",
+          (long long int)limit.rlim_cur, (long long int)limit.rlim_max);
+#endif /* WIN32 */
+}
+
+static void
+h_worker(grn_ctx *ctx, grn_edge *edge, void *user_data)
+{
+  ht_context *hc = edge->user_data;
+  if (!hc) {
+    hc = GRN_MALLOC(sizeof(ht_context));
+    hc->msg = edge->msg;
+    hc->in_body = false;
+    hc->is_chunked = false;
+    edge->user_data = hc;
+  }
+  do_htreq(ctx, edge);
+}
+
+static grn_thread_func_result CALLBACK
+h_thread(void *arg)
+{
+  return generic_worker(h_worker, NULL);
+}
+
+static void h_dispatcher(grn_ctx *ctx, grn_edge *edge);
+static void h_handler(grn_ctx *ctx, grn_obj *msg);
+
+static void
+h_dispatcher(grn_ctx *ctx, grn_edge *edge)
+{
+  generic_dispatcher(ctx, edge, h_thread);
+}
+
+static void
+h_handler(grn_ctx *ctx, grn_obj *msg)
+{
+  generic_handler(ctx, msg, h_dispatcher, h_output);
+}
+
+static int
+h_server(char *path)
+{
+  int exit_code = EXIT_FAILURE;
+  grn_ctx ctx_, *ctx = &ctx_;
+  grn_ctx_init(ctx, 0);
+  GRN_COM_QUEUE_INIT(&ctx_new);
+  GRN_COM_QUEUE_INIT(&ctx_old);
+  check_rlimit_nofile(ctx);
+  GRN_TEXT_INIT(&http_response_server_line, 0);
+  grn_text_printf(ctx,
+                  &http_response_server_line,
+                  "Server: %s/%s\r\n",
+                  grn_get_package_label(),
+                  grn_get_version());
+  exit_code = start_service(ctx, path, h_dispatcher, h_handler);
+  GRN_OBJ_FIN(ctx, &http_response_server_line);
+  grn_ctx_fin(ctx);
+  return exit_code;
+}
+
+static void
+g_worker(grn_ctx *ctx, grn_edge *edge, void *user_data)
+{
+  grn_msg *msg = edge->msg;
+  grn_obj *input = (grn_obj *)msg;
+  grn_com_header *header = &(msg->header);
+  switch (header->proto) {
+  case GRN_COM_PROTO_MBREQ :
+    do_mbreq(ctx, edge);
+    break;
+  case GRN_COM_PROTO_GQTP :
+    grn_ctx_send(ctx,
+                 GRN_BULK_HEAD(input),
+                 GRN_BULK_VSIZE(input),
+                 header->flags);
+    ERRCLR(ctx);
+    if (ctx->rc == GRN_CANCEL) {
+      ctx->rc = GRN_SUCCESS;
+    }
+    break;
+  default :
+    ctx->stat = GRN_CTX_QUIT;
+    break;
+  }
+}
+
+static grn_thread_func_result CALLBACK
+g_thread(void *arg)
+{
+  return generic_worker(g_worker, NULL);
+}
+
+static void
 g_dispatcher(grn_ctx *ctx, grn_edge *edge)
 {
-  CRITICAL_SECTION_ENTER(q_critical_section);
-  if (edge->stat == EDGE_IDLE) {
-    grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)edge);
-    edge->stat = EDGE_WAIT;
-    if (n_floating_threads == 0 && n_running_threads < max_n_floating_threads) {
-      grn_thread thread;
-      n_running_threads++;
-      if (THREAD_CREATE(thread, g_worker, NULL)) {
-        n_running_threads--;
-        SERR("pthread_create");
-      }
-    }
-    COND_SIGNAL(q_cond);
-  }
-  CRITICAL_SECTION_LEAVE(q_critical_section);
+  generic_dispatcher(ctx, edge, g_thread);
 }
 
 static void
@@ -2663,46 +2588,7 @@ g_output(grn_ctx *ctx, int flags, void *arg)
 static void
 g_handler(grn_ctx *ctx, grn_obj *msg)
 {
-  grn_edge *edge;
-  grn_com *com = ((grn_msg *)msg)->u.peer;
-  if (ctx->rc) {
-    if (com->has_sid) {
-      if ((edge = com->opaque)) {
-        CRITICAL_SECTION_ENTER(q_critical_section);
-        if (edge->stat == EDGE_IDLE) {
-          grn_com_queue_enque(ctx, &ctx_old, (grn_com_queue_entry *)edge);
-        }
-        edge->stat = EDGE_ABORT;
-        CRITICAL_SECTION_LEAVE(q_critical_section);
-      } else {
-        grn_com_close(ctx, com);
-      }
-    }
-    grn_msg_close(ctx, msg);
-  } else {
-    int added;
-    edge = grn_edges_add(ctx, &((grn_msg *)msg)->edge_id, &added);
-    if (added) {
-      grn_ctx_init(&edge->ctx, 0);
-      GRN_COM_QUEUE_INIT(&edge->recv_new);
-      GRN_COM_QUEUE_INIT(&edge->send_old);
-      grn_ctx_use(&edge->ctx, (grn_obj *)com->ev->opaque);
-      grn_ctx_recv_handler_set(&edge->ctx, g_output, edge);
-      com->opaque = edge;
-      grn_obj_close(&edge->ctx, edge->ctx.impl->output.buf);
-      edge->ctx.impl->output.buf =
-        grn_msg_open(&edge->ctx, com, &edge->send_old);
-      edge->com = com;
-      edge->stat = EDGE_IDLE;
-      edge->flags = GRN_EDGE_WORKER;
-    }
-    if (edge->ctx.stat == GRN_CTX_QUIT || edge->stat == EDGE_ABORT) {
-      grn_msg_close(ctx, msg);
-    } else {
-      grn_com_queue_enque(ctx, &edge->recv_new, (grn_com_queue_entry *)msg);
-      g_dispatcher(ctx, edge);
-    }
-  }
+  generic_handler(ctx, msg, g_dispatcher, g_output);
 }
 
 static int

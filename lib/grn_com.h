@@ -196,9 +196,15 @@ GRN_API grn_rc grn_com_send(grn_ctx *ctx, grn_com *cs,
 grn_rc grn_com_recv(grn_ctx *ctx, grn_com *cs, grn_com_header *header, grn_obj *buf);
 GRN_API grn_rc grn_com_send_http(grn_ctx *ctx, grn_com *cs, const char *path, uint32_t path_len, int flags);
 
-/******* grn_msg ********/
-
 typedef struct _grn_msg grn_msg;
+GRN_API grn_rc
+grn_com_send_msg(grn_ctx *ctx,
+                 grn_com *cs,
+                 grn_com_header *header,
+                 grn_msg *msg,
+                 int flags);
+
+/******* grn_msg ********/
 
 struct _grn_msg {
   grn_com_queue_entry qe;
@@ -211,6 +217,8 @@ struct _grn_msg {
   grn_com_header header;
   grn_com_addr edge_id;
   grn_com *acceptor;
+  grn_obj pre_data;
+  grn_obj post_data;
 };
 
 GRN_API grn_rc grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags);
@@ -236,6 +244,7 @@ typedef struct {
   uint8_t stat;
   uint8_t flags;
   grn_id id;
+  void *user_data;
 } grn_edge;
 
 GRN_VAR grn_hash *grn_edges;

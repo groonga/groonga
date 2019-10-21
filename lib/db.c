@@ -7294,7 +7294,7 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
     break;\
   }
 
-uint32_t
+size_t
 grn_obj_size(grn_ctx *ctx, grn_obj *obj)
 {
   if (!obj) { return 0; }
@@ -7304,8 +7304,15 @@ grn_obj_size(grn_ctx *ctx, grn_obj *obj)
   case GRN_PTR :
   case GRN_UVECTOR :
   case GRN_PVECTOR :
-  case GRN_MSG :
     return GRN_BULK_VSIZE(obj);
+  case GRN_MSG :
+    {
+      grn_msg *msg = (grn_msg *)obj;
+      return
+        GRN_TEXT_LEN(&(msg->pre_data)) +
+        GRN_BULK_VSIZE(obj) +
+        GRN_TEXT_LEN(&(msg->post_data));
+    }
   case GRN_VECTOR :
     return obj->u.v.body ? GRN_BULK_VSIZE(obj->u.v.body) : 0;
   default :
@@ -11563,10 +11570,16 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) { GRN_FREE(obj); }
       rc = GRN_SUCCESS;
       break;
+    case GRN_MSG :
+      {
+        grn_msg *msg = (grn_msg *)obj;
+        GRN_OBJ_FIN(ctx, &(msg->pre_data));
+        GRN_OBJ_FIN(ctx, &(msg->post_data));
+      }
+      /* fallthru */
     case GRN_VOID :
     case GRN_BULK :
     case GRN_UVECTOR :
-    case GRN_MSG :
       obj->header.type = GRN_VOID;
       rc = grn_bulk_fin(ctx, obj);
       if (obj->header.impl_flags & GRN_OBJ_ALLOCATED) { GRN_FREE(obj); }

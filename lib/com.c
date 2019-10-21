@@ -39,6 +39,7 @@
 
 #include "grn_ctx.h"
 #include "grn_com.h"
+#include "grn_obj.h"
 
 #ifndef PF_INET
 #define PF_INET AF_INET
@@ -137,6 +138,8 @@ grn_msg_open(grn_ctx *ctx, grn_com *com, grn_com_queue *old)
   msg->u.peer = com;
   msg->old = old;
   memset(&msg->header, 0, sizeof(grn_com_header));
+  GRN_TEXT_INIT(&(msg->pre_data), 0);
+  GRN_TEXT_INIT(&(msg->post_data), 0);
   return (grn_obj *)msg;
 }
 
@@ -182,12 +185,10 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
     switch (header->proto) {
     case GRN_COM_PROTO_HTTP :
       {
-        ssize_t ret;
-        ret = send(peer->fd, GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg), MSG_NOSIGNAL);
-        if (ret == -1) { SOERR("send"); }
-        if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {
+        grn_rc rc = grn_com_send_msg(ctx, peer, NULL, m, MSG_NOSIGNAL);
+        if (rc != GRN_OPERATION_WOULD_BLOCK) {
           grn_com_queue_enque(ctx, m->old, (grn_com_queue_entry *)msg);
-          return ctx->rc;
+          return rc;
         }
       }
       break;
@@ -203,8 +204,7 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
         header->opaque = 0;
         header->cas = 0;
         //todo : MSG_DONTWAIT
-        rc = grn_com_send(ctx, peer, header,
-                          GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg), 0);
+        rc = grn_com_send_msg(ctx, peer, header, m, 0);
         if (rc != GRN_OPERATION_WOULD_BLOCK) {
           grn_com_queue_enque(ctx, m->old, (grn_com_queue_entry *)msg);
           return rc;
@@ -214,9 +214,11 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
     case GRN_COM_PROTO_MBREQ :
       return GRN_FUNCTION_NOT_IMPLEMENTED;
     case GRN_COM_PROTO_MBRES :
-      rc = grn_com_send(ctx, peer, header,
-                        GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg),
-                        (flags & GRN_CTX_MORE) ? MSG_MORE :0);
+      rc = grn_com_send_msg(ctx,
+                            peer,
+                            header,
+                            m,
+                            (flags & GRN_CTX_MORE) ? MSG_MORE : 0);
       if (rc != GRN_OPERATION_WOULD_BLOCK) {
         grn_com_queue_enque(ctx, m->old, (grn_com_queue_entry *)msg);
         return rc;
@@ -772,6 +774,115 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
   GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                 ":",
                 "send(%" GRN_FMT_SIZE "): %" GRN_FMT_SIZE "/%" GRN_FMT_SIZE,
+                whole_size, ret, whole_size);
+  return rc;
+}
+
+grn_rc
+grn_com_send_msg(grn_ctx *ctx,
+                 grn_com *cs,
+                 grn_com_header *header,
+                 grn_msg *msg,
+                 int flags)
+{
+  grn_rc rc = GRN_SUCCESS;
+  size_t msg_size = grn_obj_size(ctx, (grn_obj *)msg);
+  size_t whole_size = msg_size;
+  ssize_t ret;
+
+  if (header) {
+    whole_size += sizeof(grn_com_header);
+    header->size = htonl(msg_size);
+  }
+
+  if (whole_size == 0) {
+    return GRN_SUCCESS;
+  }
+
+  if (msg_size > 0) {
+#ifdef WIN32
+    WSABUF wsabufs[4];
+    DWORD n_sent;
+    int n_buffers = 0;
+    if (header) {
+      wsabufs[n_buffers].buf = (char *)header;
+      wsabufs[n_buffers].len = sizeof(grn_com_header);
+      n_buffers++;
+    }
+    if (GRN_TEXT_LEN(&(msg->pre_data)) > 0) {
+      wsabufs[n_buffers].buf = GRN_TEXT_VALUE(&(msg->pre_data));
+      wsabufs[n_buffers].len = GRN_TEXT_LEN(&(msg->pre_data));
+      n_buffers++;
+    }
+    if (GRN_TEXT_LEN((grn_obj *)msg) > 0) {
+      wsabufs[n_buffers].buf = GRN_TEXT_VALUE(msg);
+      wsabufs[n_buffers].len = GRN_TEXT_LEN(msg);
+      n_buffers++;
+    }
+    if (GRN_TEXT_LEN(&(msg->post_data)) > 0) {
+      wsabufs[n_buffers].buf = GRN_TEXT_VALUE(&(msg->post_data));
+      wsabufs[n_buffers].len = GRN_TEXT_LEN(&(msg->post_data));
+      n_buffers++;
+    }
+    if (WSASend(cs->fd,
+                wsabufs,
+                n_buffers,
+                &n_sent,
+                0,
+                NULL,
+                NULL) == SOCKET_ERROR) {
+      SOERR("WSASend");
+    }
+    ret = n_sent;
+#else /* WIN32 */
+    struct iovec msg_iov[4];
+    struct msghdr msg_header;
+    int n_buffers = 0;
+    if (header) {
+      msg_iov[n_buffers].iov_base = header;
+      msg_iov[n_buffers].iov_len = sizeof(grn_com_header);
+      n_buffers++;
+    }
+    if (GRN_TEXT_LEN(&(msg->pre_data)) > 0) {
+      msg_iov[n_buffers].iov_base = GRN_TEXT_VALUE(&(msg->pre_data));
+      msg_iov[n_buffers].iov_len = GRN_TEXT_LEN(&(msg->pre_data));
+      n_buffers++;
+    }
+    if (GRN_TEXT_LEN((grn_obj *)msg) > 0) {
+      msg_iov[n_buffers].iov_base = GRN_TEXT_VALUE((grn_obj *)msg);
+      msg_iov[n_buffers].iov_len = GRN_TEXT_LEN((grn_obj *)msg);
+      n_buffers++;
+    }
+    if (GRN_TEXT_LEN(&(msg->post_data)) > 0) {
+      msg_iov[n_buffers].iov_base = GRN_TEXT_VALUE(&(msg->post_data));
+      msg_iov[n_buffers].iov_len = GRN_TEXT_LEN(&(msg->post_data));
+      n_buffers++;
+    }
+    memset(&msg_header, 0, sizeof(struct msghdr));
+    msg_header.msg_name = NULL;
+    msg_header.msg_namelen = 0;
+    msg_header.msg_iov = msg_iov;
+    msg_header.msg_iovlen = n_buffers;
+    if ((ret = sendmsg(cs->fd, &msg_header, MSG_NOSIGNAL|flags)) == -1) {
+      SOERR("sendmsg");
+      rc = ctx->rc;
+    }
+#endif /* WIN32 */
+  } else {
+    if ((ret = send(cs->fd, (const void *)header, whole_size, MSG_NOSIGNAL|flags)) == -1) {
+      SOERR("send");
+      rc = ctx->rc;
+    }
+  }
+  if (ret != whole_size) {
+    GRN_LOG(ctx, GRN_LOG_ERROR,
+            "sendmsg(%" GRN_FMT_SOCKET "): %" GRN_FMT_SSIZE " < %" GRN_FMT_SIZE,
+            cs->fd, ret, whole_size);
+    rc = ctx->rc;
+  }
+  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                ":",
+                "send(%" GRN_FMT_SIZE "): %" GRN_FMT_SSIZE "/%" GRN_FMT_SIZE,
                 whole_size, ret, whole_size);
   return rc;
 }

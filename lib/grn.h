@@ -337,6 +337,8 @@ typedef int grn_cond;
 
 #endif /* HAVE_PTHREAD_H */
 
+typedef grn_thread_func_result (*grn_thread_func)(void *user_data);
+
 #define MUTEX_LOCK_ENSURE(ctx_, mutex) do {     \
   grn_ctx *ctx__ = (ctx_);                      \
   do {                                          \
