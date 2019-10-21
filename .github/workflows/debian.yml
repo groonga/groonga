@@ -12,6 +12,13 @@ on:
 jobs:
   build:
     name: Build
+    strategy:
+      matrix:
+        target:
+          - debian-stretch
+          - debian-stretch-i386
+          - debian-buster
+          - debian-buster-i386
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -66,4 +73,4 @@ jobs:
           rake apt:build
         env:
           APACHE_ARROW_REPOSITORY: ../../arrow
-          APT_TARGETS: debian-buster
+          APT_TARGETS: ${{ matrix.target }}
