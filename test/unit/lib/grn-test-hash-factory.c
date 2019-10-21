@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2019  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,8 @@
 #include "grn-test-hash-factory.h"
 
 #define GRN_TEST_HASH_FACTORY_GET_PRIVATE(obj)                          \
-  (G_TYPE_INSTANCE_GET_PRIVATE((obj), GRN_TYPE_TEST_HASH_FACTORY,       \
-                               GrnTestHashFactoryPrivate))
+  ((GrnTestHashFactoryPrivate *)                                        \
+   grn_test_hash_factory_get_instance_private(GRN_TEST_HASH_FACTORY(obj)))
 
 typedef struct _GrnTestHashFactoryPrivate	GrnTestHashFactoryPrivate;
 struct _GrnTestHashFactoryPrivate
@@ -43,7 +43,9 @@ struct _GrnTestHashFactoryPrivate
 };
 
 
-G_DEFINE_TYPE(GrnTestHashFactory, grn_test_hash_factory, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_PRIVATE(GrnTestHashFactory,
+                           grn_test_hash_factory,
+                           G_TYPE_OBJECT)
 
 static void dispose         (GObject               *object);
 
@@ -55,8 +57,6 @@ grn_test_hash_factory_class_init(GrnTestHashFactoryClass *klass)
   gobject_class = G_OBJECT_CLASS(klass);
 
   gobject_class->dispose = dispose;
-
-  g_type_class_add_private(gobject_class, sizeof(GrnTestHashFactoryPrivate));
 }
 
 static void

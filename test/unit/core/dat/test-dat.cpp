@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
   Copyright (C) 2011-2012  Brazil
+  Copyright (C) 2019  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -187,7 +188,7 @@ namespace test_dat
     cut_assert_not_exist_path(dat_path);
     char trie_path[PATH_MAX];
     for (uint32_t i = 1; i <= last_file_id; ++i) {
-      std::sprintf(trie_path, "%s.%03d", dat_path, i);
+      grn_snprintf(trie_path, PATH_MAX, PATH_MAX, "%s.%03d", dat_path, i);
       cut_assert_not_exist_path(trie_path);
     }
     grn_test_assert_equal_rc(GRN_SUCCESS, ctx.rc);

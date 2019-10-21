@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2016  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2019  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -741,7 +741,10 @@ construct_object(gconstpointer data, grn_builtin_type type, grn_obj *object)
     break;
   case GRN_DB_BOOL:
     GRN_BOOL_INIT(object, 0);
-    GRN_BOOL_SET(&context, object, gcut_data_get_boolean(data, "value"));
+    {
+      bool value = gcut_data_get_boolean(data, "value");
+      GRN_BOOL_SET(&context, object, value);
+    }
     break;
   case GRN_DB_INT8:
     GRN_INT8_INIT(object, 0);

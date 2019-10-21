@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2009  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2019  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,16 +18,16 @@
 
 #include <errno.h>
 
+#include <gcutter.h>
+
 #include "grn-test-server.h"
 #include "grn-test-utils.h"
 
-#include <gcutter.h>
-
 #define GRN_TEST_SERVER_DEFAULT_PORT 5454
 
-#define GRN_TEST_SERVER_GET_PRIVATE(obj)                          \
-  (G_TYPE_INSTANCE_GET_PRIVATE((obj), GRN_TYPE_TEST_SERVER,       \
-                               GrnTestServerPrivate))
+#define GRN_TEST_SERVER_GET_PRIVATE(obj)                        \
+  ((GrnTestServerPrivate *)                                     \
+   grn_test_server_get_instance_private(GRN_TEST_SERVER(obj)))
 
 typedef struct _GrnTestServerPrivate	GrnTestServerPrivate;
 struct _GrnTestServerPrivate
@@ -44,7 +44,9 @@ struct _GrnTestServerPrivate
 };
 
 
-G_DEFINE_TYPE(GrnTestServer, grn_test_server, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_PRIVATE(GrnTestServer,
+                           grn_test_server,
+                           G_TYPE_OBJECT)
 
 static void dispose         (GObject               *object);
 
@@ -56,8 +58,6 @@ grn_test_server_class_init(GrnTestServerClass *klass)
   gobject_class = G_OBJECT_CLASS(klass);
 
   gobject_class->dispose = dispose;
-
-  g_type_class_add_private(gobject_class, sizeof(GrnTestServerPrivate));
 }
 
 static void
