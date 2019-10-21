@@ -33,12 +33,14 @@ jobs:
           cd ..
           git clone --depth 1 https://github.com/apache/arrow.git
           git clone --depth 1 https://github.com/groonga/groonga.org.git
+          git clone --depth 1 https://github.com/clear-code/cutter.git
       - name: Generate configure
         run: |
           ./autogen.sh
       - name: Configure for archive
         run: |
           ./configure \
+            --cutter-source-path=../cutter \
             --enable-document \
             --enable-mruby \
             --with-groonga-org-path=../groonga.org \
