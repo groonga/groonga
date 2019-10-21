@@ -1,4 +1,4 @@
-name: "Debian"
+name: Debian
 
 # WIP
 on:
@@ -17,39 +17,43 @@ jobs:
       - uses: actions/checkout@master
         with:
           fetch-depth: 1
-      - name: Install dependency packages
+      - name: Install dependencies
         run: |
-          sudo apt install autoconf-archive devscripts bison ruby python3-pip
+          sudo apt -V install \
+            autoconf-archive \
+            bison \
+            devscripts \
+            python3-pip \
+            ruby
       - name: Install Sphinx
         run: |
-          sudo pip3 install -v sphinx==2.2.0
-      - name: Prepare task
+          sudo pip3 install -v sphinx
+      - name: Clone dependencies
         run: |
-          (cd ../ &&
-          git clone --depth 1 https://github.com/apache/arrow.git &&
-          git clone --depth 1 https://github.com/groonga/groonga.org.git)
+          cd ..
+          git clone --depth 1 https://github.com/apache/arrow.git
+          git clone --depth 1 https://github.com/groonga/groonga.org.git
       - name: Generate configure
         run: |
           ./autogen.sh
-      - name: Setup debian/changelog
-        run: |
-          (cd packages &&
-            dch --newversion $(cat ../base_version)-1 "New upstream version" &&
-            head debian/changelog)
       - name: Configure for archive
         run: |
           ./configure \
-            --with-groonga-org-path=../groonga.org \
             --enable-document \
-            --with-ruby \
             --enable-mruby \
-      - name: Build documents
-        run: |
-          make update-document DOCUMENT_VERSION_FULL=$(cat ./base_version)
+            --with-groonga-org-path=../groonga.org \
+            --with-ruby
       - name: Build archive
         run: |
           make dist
+      - name: Setup debian/changelog
+        run: |
+          cd packages
+          dch --newversion $(cat ../base_version)-1 "New upstream version"
       - name: Build with docker
         run: |
-          (cd packages &&
-            rake apt:build APACHE_ARROW_REPOSITORY=../../arrow APT_TARGETS=debian-buster)
+          cd packages
+          rake apt:build
+        env:
+          APACHE_ARROW_REPOSITORY: ../../arrow
+          APT_TARGETS: debian-buster
