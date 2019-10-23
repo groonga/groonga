@@ -543,6 +543,41 @@ configuration, run the following command to remove cache files::
 If you use Groonga's query cache feature, you don't need to expire
 cache by hand. It is done automatically.
 
+Nginx log related directives
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``access_log``
+""""""""""""""
+
+We can output Nginx's log by the ``access_log`` directive.
+The following example is default Nginx's log settings::
+
+  http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  access.log  main;
+  }
+
+We can specify log format by ``log_format`` directive.
+For the detailes of available items of the log,
+see http://nginx.org/en/docs/http/ngx_http_log_module.html.
+
+Nginx's access log is outputted when processing ends.
+If we want to output the request processing time,
+we need to set configuration as below::
+
+  http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for" '
+                      '"$request_time" ';
+
+    access_log  access.log  main;
+  }
+
+
 Available nginx modules
 -----------------------
 
