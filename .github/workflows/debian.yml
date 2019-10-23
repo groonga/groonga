@@ -20,6 +20,21 @@ jobs:
           - debian-stretch-i386
           - debian-buster
           - debian-buster-i386
+          - centos-6
+          - centos-7
+        include:
+          - target: debian-stretch
+            task: apt:build
+          - target: debian-stretch-i386
+            task: apt:build
+          - target: debian-buster
+            task: apt:build
+          - target: debian-buster-i386
+            task: apt:build
+          - target: centos-6
+            task: yum:build
+          - target: centos-7
+            task: yum:build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -71,7 +86,8 @@ jobs:
       - name: Build with docker
         run: |
           cd packages
-          rake apt:build
+          rake ${{ matrix.task }}
         env:
           APACHE_ARROW_REPOSITORY: ../../arrow
           APT_TARGETS: ${{ matrix.target }}
+          YUM_TARGETS: ${{ matrix.target }}
