@@ -18786,7 +18786,7 @@ msgstr ""
 "は、デフォルトのNginxのログ設定です。::"
 
 msgid ""
-"We can specify log format by ``log_format`` directive. For the detailes of "
+"We can specify log format by ``log_format`` directive. For the details of "
 "available items of the log, see http://nginx.org/en/docs/http/"
 "ngx_http_log_module.html."
 msgstr ""

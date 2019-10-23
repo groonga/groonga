@@ -561,7 +561,7 @@ The following example is default Nginx's log settings::
   }
 
 We can specify log format by ``log_format`` directive.
-For the detailes of available items of the log,
+For the details of available items of the log,
 see http://nginx.org/en/docs/http/ngx_http_log_module.html.
 
 Nginx's access log is outputted when processing ends.
