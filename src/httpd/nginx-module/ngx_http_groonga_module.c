@@ -1073,6 +1073,8 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
     break;
   }
 
+  ngx_time_update();
+
   return rc;
 }
 
