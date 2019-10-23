@@ -18772,6 +18772,35 @@ msgstr ""
 "Groongaのクエリーキャッシュ機能を使うと、手動でキャッシュを失効する必要はあり"
 "ません。自動で失効します。"
 
+msgid "Nginx log related directives"
+msgstr "Nginxログ関連のディレクティブ"
+
+msgid "``access_log``"
+msgstr ""
+
+msgid ""
+"We can output Nginx's log by the ``access_log`` directive. The following "
+"example is default Nginx's log settings::"
+msgstr ""
+"Nginxのログを ``access_log`` ディレクティブを使うことで出力できます。以下の例"
+"は、デフォルトのNginxのログ設定です。::"
+
+msgid ""
+"We can specify log format by ``log_format`` directive. For the detailes of "
+"available items of the log, see http://nginx.org/en/docs/http/"
+"ngx_http_log_module.html."
+msgstr ""
+"``log_format`` ディレクティブを使って、ログのフォーマットを指定できます。利用"
+"できるログの項目の詳細は、 http://nginx.org/en/docs/http/ngx_http_log_module."
+"html を参照してください。"
+
+msgid ""
+"Nginx's access log is outputted when processing ends. If we want to output "
+"the request processing time, we need to set configuration as below::"
+msgstr ""
+"Nginxのアクセスログは、処理終了時に出力されます。リクエスト処理時間を出力した"
+"い場合は、以下のように設定する必要があります。::"
+
 msgid "Available nginx modules"
 msgstr "利用可能なnginxモジュール"
 
