@@ -61,6 +61,9 @@ jobs:
             OLD_RELEASE=${OLD_RELEASE} \
             OLD_RELEASE_DATE=${OLD_RELEASE_DATE} \
             NEW_RELEASE_DATE=$(date +%Y-%m-%d)
+      - name: Ensure to copy spec file
+        run: |
+          cp packages/rpm/centos/groonga.spec.in packages/yum/groonga.spec.in
       - name: Build with docker
         run: |
           cd packages
