@@ -65,7 +65,7 @@ class GroongaPackageTask < PackageTask
          task.name)
     end
     namespace :yum do
-      task :build => [yum_build_sh]
+      task :build => yum_build_sh
     end
   end
 end
