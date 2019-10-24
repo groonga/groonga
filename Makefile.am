@@ -78,8 +78,8 @@ update-latest-release: misc
 	  misc/update-latest-release.rb				\
 	  $(PACKAGE) $(OLD_RELEASE) $(OLD_RELEASE_DATE)		\
 	  $(VERSION) $(NEW_RELEASE_DATE)			\
-	  packages/rpm/centos/groonga.spec.in			\
 	  packages/debian/changelog				\
+	  packages/yum/groonga.spec.in				\
 	  doc/source/install.rst				\
 	  doc/source/install/*.rst				\
 	  doc/locale/*/LC_MESSAGES/install.po			\

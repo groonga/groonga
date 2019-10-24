@@ -1,4 +1,4 @@
-name: Debian
+name: Package
 
 # WIP
 on:
@@ -15,11 +15,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target:
-          - debian-stretch
-          - debian-stretch-i386
-          - debian-buster
-          - debian-buster-i386
+        label:
+          - Debian GNU/Linux stretch amd64
+          - Debian GNU/Linux stretch i386
+          - Debian GNU/Linux buster amd64
+          - Debian GNU/Linux buster i386
+          - CentOS 6
+          - CentOS 7
+        include:
+          - label: Debian GNU/Linux stretch amd64
+            rake_arguments: apt:build APT_TARGETS=debian-stretch
+          - label: Debian GNU/Linux stretch i386
+            rake_arguments: apt:build APT_TARGETS=debian-stretch-i386
+          - label: Debian GNU/Linux buster amd64
+            rake_arguments: apt:build APT_TARGETS=debian-buster
+          - label: Debian GNU/Linux buster i386
+            rake_arguments: apt:build APT_TARGETS=debian-buster-i386
+          - label: CentOS 6
+            rake_arguments: yum:build YUM_TARGETS=centos-6
+          - label: CentOS 7
+            rake_arguments: yum:build YUM_TARGETS=centos-7
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -71,7 +86,6 @@ jobs:
       - name: Build with docker
         run: |
           cd packages
-          rake apt:build
+          rake ${{ matrix.rake_arguments }}
         env:
           APACHE_ARROW_REPOSITORY: ../../arrow
-          APT_TARGETS: ${{ matrix.target }}

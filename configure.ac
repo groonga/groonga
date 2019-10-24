@@ -1796,9 +1796,6 @@ AC_CONFIG_FILES([
   packages/apt/Makefile
   packages/apt/debian/groonga-keyring.postrm
   packages/apt/env.sh
-  packages/rpm/Makefile
-  packages/rpm/centos/Makefile
-  packages/rpm/centos/groonga.spec
   packages/source/Makefile
   packages/ubuntu/Makefile
   packages/windows/Makefile
