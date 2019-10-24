@@ -15,26 +15,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target:
-          - debian-stretch
-          - debian-stretch-i386
-          - debian-buster
-          - debian-buster-i386
-          - centos-6
-          - centos-7
+        label:
+          - Debian GNU/Linux stretch amd64
+          - Debian GNU/Linux stretch i386
+          - Debian GNU/Linux buster amd64
+          - Debian GNU/Linux buster i386
+          - CentOS 6
+          - CentOS 7
         include:
-          - target: debian-stretch
-            task: apt:build
-          - target: debian-stretch-i386
-            task: apt:build
-          - target: debian-buster
-            task: apt:build
-          - target: debian-buster-i386
-            task: apt:build
-          - target: centos-6
-            task: yum:build
-          - target: centos-7
-            task: yum:build
+          - label: Debian GNU/Linux stretch amd64
+            rake_arguments: apt:build APT_TARGETS=debian-stretch
+          - label: Debian GNU/Linux stretch i386
+            rake_arguments: apt:build APT_TARGETS=debian-stretch-i386
+          - label: Debian GNU/Linux buster amd64
+            rake_arguments: apt:build APT_TARGETS=debian-buster
+          - label: Debian GNU/Linux buster i386
+            rake_arguments: apt:build APT_TARGETS=debian-buster-i386
+          - label: CentOS 6
+            rake_arguments: yum:build YUM_TARGETS=centos-6
+          - label: CentOS 7
+            rake_arguments: yum:build YUM_TARGETS=centos-7
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -86,8 +86,6 @@ jobs:
       - name: Build with docker
         run: |
           cd packages
-          rake ${{ matrix.task }}
+          rake ${{ matrix.rake_arguments }}
         env:
           APACHE_ARROW_REPOSITORY: ../../arrow
-          APT_TARGETS: ${{ matrix.target }}
-          YUM_TARGETS: ${{ matrix.target }}
