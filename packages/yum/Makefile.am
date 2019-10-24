@@ -2,7 +2,9 @@ REPOSITORIES_PATH = repositories
 DISTRIBUTIONS = centos
 ARCHITECTURES = x86_64
 CENTOS_VERSIONS = 6 7
-SPEC_DIR = $(builddir)/../rpm/centos
+
+EXTRA_DIST =					\
+	groonga.spec.in
 
 release: download build sign-packages update-repository upload
 
@@ -38,20 +40,7 @@ download: ensure-rsync-path
 	     $(REPOSITORIES_PATH)/$${distribution};	\
 	done
 
-build: build-in-vm build-release-rpm
-
-build-in-vm: source specs env.sh
-	vagrant destroy --force
-	for architecture in $(ARCHITECTURES); do		\
-	  for version in $(CENTOS_VERSIONS); do			\
-	    if [ $$version = 7 -a $$architecture = i386 ]; then	\
-	      continue;						\
-	    fi;							\
-	    id=centos-$$version-$$architecture;			\
-	    vagrant up $$id;					\
-	    vagrant destroy --force $$id;			\
-	  done;							\
-	done
+build: build-release-rpm
 
 build-release-rpm: RPM-GPG-KEY-$(PACKAGE) RPM-GPG-KEY-$(PACKAGE)-RSA4096
 	./build-release-rpm.sh			\
@@ -81,10 +70,3 @@ tmp/$(PACKAGE)-$(VERSION).tar.gz: $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.
 
 $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz:
 	cd $(abs_top_builddir) && $(MAKE) dist
-
-specs: tmp/centos/$(PACKAGE).spec
-
-tmp/centos/$(PACKAGE).spec: $(SPEC_DIR)/$(PACKAGE).spec.in
-	mkdir -p tmp/centos
-	cd $(SPEC_DIR) && $(MAKE)
-	cp $(SPEC_DIR)/$(PACKAGE).spec tmp/centos/

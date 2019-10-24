@@ -62,7 +62,6 @@ cmake_install.cmake
 /vendor/rapidjson-*
 /vendor/lz4-*
 /vendor/plugins/*/
-/groonga.spec
 /stamp-h1
 /CMakeCache.txt
 /install_manifest.txt
@@ -116,6 +115,7 @@ CMakeFiles
 /benchmark/bench-nfkc
 /benchmark/bench-cache
 /packages/*/*.log
+/packages/apt/build.sh
 /packages/apt/env.sh
 /packages/apt/debian/groonga-keyring.postrm
 /packages/apt/repositories/debian/pool/*/*/*/*/*.diff.gz
@@ -146,7 +146,7 @@ CMakeFiles
 /packages/ubuntu/tmp/
 /packages/ubuntu/*.tar.gz
 /configure.lineno
-/packages/rpm/*/*.spec
+/packages/yum/build.sh
 /packages/yum/groonga.repo
 /packages/yum/RPM-GPG-KEY-groonga
 /packages/yum/RPM-GPG-KEY-groonga-RSA4096
