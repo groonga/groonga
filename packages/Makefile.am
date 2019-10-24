@@ -1,5 +1,4 @@
 SUBDIRS =					\
-	apt					\
 	ubuntu					\
 	yum					\
 	source					\
