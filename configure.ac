@@ -1793,7 +1793,6 @@ AC_CONFIG_FILES([
   lib/proc/Makefile
   lib/ts/Makefile
   packages/Makefile
-  packages/apt/Makefile
   packages/apt/debian/groonga-keyring.postrm
   packages/apt/env.sh
   packages/source/Makefile

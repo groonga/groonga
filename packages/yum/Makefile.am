@@ -6,40 +6,6 @@ CENTOS_VERSIONS = 6 7
 EXTRA_DIST =					\
 	groonga.spec.in
 
-release: download build sign-packages update-repository upload
-
-ensure-rsync-path:
-	@if test -z "$(RSYNC_PATH)"; then				\
-	  echo "--with-rsync-path configure option must be specified.";	\
-	  false;							\
-	fi
-
-sign-packages:
-	./sign-rpm.sh '$(GPG_UID)' '$(REPOSITORIES_PATH)/' \
-	  '$(DISTRIBUTIONS)'
-
-update-repository:
-	./update-repository.sh \
-	  '$(GPG_UID)' \
-	  '$(PACKAGE)' \
-	  '$(REPOSITORIES_PATH)/' \
-	  '$(DISTRIBUTIONS)'
-
-upload: ensure-rsync-path
-	for distribution in $(DISTRIBUTIONS); do		\
-	  rsync -avz --progress --delete --exclude .gitignore	\
-	    $(REPOSITORIES_PATH)/$${distribution}/		\
-	      $(RSYNC_PATH)/$${distribution};			\
-	done
-
-download: ensure-rsync-path
-	mkdir -p $(REPOSITORIES_PATH)
-	for distribution in $(DISTRIBUTIONS); do	\
-	   rsync -avz --progress --delete		\
-	     $(RSYNC_PATH)/$${distribution}/		\
-	     $(REPOSITORIES_PATH)/$${distribution};	\
-	done
-
 build: build-release-rpm
 
 build-release-rpm: RPM-GPG-KEY-$(PACKAGE) RPM-GPG-KEY-$(PACKAGE)-RSA4096
