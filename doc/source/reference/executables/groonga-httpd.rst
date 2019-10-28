@@ -572,7 +572,7 @@ we need to set configuration as below::
     log_format  combined  '$remote_addr - $remote_user [$time_local] "$request" '
                       '$status $body_bytes_sent "$http_referer" '
                       '"$http_user_agent" "$http_x_forwarded_for" '
-                      '"$request_time" ';
+                      '"$request_time"';
 
     access_log  access.log  combined;
   }
