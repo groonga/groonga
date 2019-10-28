@@ -9,12 +9,14 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Install MSYS2
+        shell: cmd
         run: |
           git clone ^
             --depth 1 ^
             https://github.com/msys2/msys2-ci-base.git ^
             %CD:~0,2%\msys64
       - name: Prepare environment
+        shell: cmd
         run: |
           echo set MSYS_ROOT=%CD:~0,2%\msys64>> environment.bat
           echo set PATH=%%MSYS_ROOT%%\usr\bin;%%PATH%%>> environment.bat
@@ -24,6 +26,7 @@ jobs:
           call environment.bat
           set
       - name: Install dependencies
+        shell: cmd
         run: |
           call environment.bat
           pacman --sync --yy --noconfirm --sysupgrade
@@ -35,10 +38,12 @@ jobs:
             mingw-w64-x86_64-zlib
             pip3 install -U Sphinx
       - name: Generate configure
+        shell: cmd
         run: |
           call environment.bat
           bash autogen.sh
       - name: Configure for archive
+        shell: cmd
         run: |
           call environment.bat
           bash configure ^
@@ -47,10 +52,12 @@ jobs:
             --with-ruby ^
             --without-zlib
       - name: Build archive
+        shell: cmd
         run: |
           call environment.bat
           make dist
       - name: Configure
+        shell: cmd
         run: |
           call environment.bat
           mkdir ../groonga.build
@@ -61,11 +68,13 @@ jobs:
             --enable-shared-onigmo ^
             --with-ruby
       - name: Build
+        shell: cmd
         run: |
           call environment.bat
           cd ../groonba.build
           make -j%NUMBER_OF_PROCESSORS%
       - name: Install
+        shell: cmd
         run: |
           call environment.bat
           cd ../groonba.build
