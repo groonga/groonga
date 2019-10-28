@@ -562,7 +562,7 @@ The following example is the default nginx's log settings::
 
 We can specify log format by ``log_format`` directive.
 For the details of available items of the log,
-see http://nginx.org/en/docs/http/ngx_http_log_module.html.
+see `Module ngx_http_log_module <http://nginx.org/en/docs/http/ngx_http_log_module.html>`_.
 
 nginx's access log is outputted when processing ends.
 If we want to output the request processing time,
@@ -584,4 +584,4 @@ Available nginx modules
 All standard HTTP modules are available. HttpRewriteModule is
 disabled when you don't have PCRE (Perl Compatible Regular
 Expressions). For the list of standard HTTP modules, see
-http://wiki.nginx.org/Modules.
+`nginx documentation <http://wiki.nginx.org/Modules>`_.
