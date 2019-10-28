@@ -553,11 +553,11 @@ We can output nginx's log by the ``access_log`` directive.
 The following example is default nginx's log settings::
 
   http {
-    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    log_format  combined  '$remote_addr - $remote_user [$time_local] "$request" '
                       '$status $body_bytes_sent "$http_referer" '
                       '"$http_user_agent" "$http_x_forwarded_for"';
 
-    access_log  access.log  main;
+    access_log  access.log  combined;
   }
 
 We can specify log format by ``log_format`` directive.
@@ -569,12 +569,12 @@ If we want to output the request processing time,
 we need to set configuration as below::
 
   http {
-    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    log_format  combined  '$remote_addr - $remote_user [$time_local] "$request" '
                       '$status $body_bytes_sent "$http_referer" '
                       '"$http_user_agent" "$http_x_forwarded_for" '
                       '"$request_time" ';
 
-    access_log  access.log  main;
+    access_log  access.log  combined;
   }
 
 
