@@ -2,7 +2,7 @@
 
 if [ $# -ne 3 ]; then
   echo "Usage: $0 database_dump groonga_path database_path"
-  echo "Example: $0 dump.grn /usr/local/groonga/bin/groonga ~/database/db"
+  echo " e.g.: $0 dump.grn /usr/local/groonga/bin/groonga ~/database/db"
   exit 1
 fi
 
