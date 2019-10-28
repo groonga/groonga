@@ -584,4 +584,4 @@ Available nginx modules
 All standard HTTP modules are available. HttpRewriteModule is
 disabled when you don't have PCRE (Perl Compatible Regular
 Expressions). For the list of standard HTTP modules, see
-`nginx documentation <http://wiki.nginx.org/Modules>`_.
+`nginx documentation <http://nginx.org/en/docs/>`_.
