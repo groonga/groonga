@@ -1,25 +1,25 @@
 #!/bin/bash
 
-if [ $# -ne 3 ]; then
-  echo "Usage: $0 database_dump groonga_path database_path"
-  echo " e.g.: $0 dump.grn /usr/local/groonga/bin/groonga ~/database/db"
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 DATABASE_PATH"
+  echo " e.g.: $0 ~/database/db"
   exit 1
 fi
 
-readonly DUMP_FILE=$1
-readonly GROONGA_PATH=$2
-readonly DATABASE_PATH=$3
+readonly DATABASE_PATH="$1"
 
-grep -w COLUMN_INDEX $DUMP_FILE | \
-  awk '{ print "index_column_diff --table "$2" --name "$3 }' \
-  > index_column_diff.query
-
-$GROONGA_PATH \
-  --log-path groonga.log \
-  --log-level debug \
-  --query-log-path query.log \
-  $DATABASE_PATH \
-  < index_column_diff.query \
-  > index_column_diff_result.log
-
-rm index_column_diff.query
+groonga "${DATABASE_PATH}" \
+        dump \
+        --dump_plugins no \
+        --dump_schema no \
+        --dump_records no \
+        --dump_configs no | \
+  awk '{ print "index_column_diff", $2, $3, "--output_pretty yes" }' | \
+  while read line; do \
+    echo "// ${line}"
+    echo "${line}" | \
+      groonga \
+        --log-path groonga.log \
+        --log-level debug \
+        "${DATABASE_PATH}"
+  done
