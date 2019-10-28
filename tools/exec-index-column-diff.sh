@@ -6,15 +6,19 @@ if [ $# -ne 3 ]; then
   exit 1
 fi
 
-grep -w COLUMN_INDEX $1 | \
+readonly DUMP_FILE=$1
+readonly GROONGA_PATH=$2
+readonly DATABASE_PATH=$3
+
+grep -w COLUMN_INDEX $DUMP_FILE | \
   awk '{ print "index_column_diff --table "$2" --name "$3 }' \
   > index_column_diff.query
 
-$2 \
+$GROONGA_PATH \
   --log-path groonga.log \
   --log-level debug \
   --query-log-path query.log \
-  $3 \
+  $DATABASE_PATH \
   < index_column_diff.query \
   > index_column_diff_result.log
 
