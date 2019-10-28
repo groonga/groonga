@@ -564,7 +564,7 @@ We can specify log format by ``log_format`` directive.
 For the details of available items of the log,
 see `Module ngx_http_log_module <http://nginx.org/en/docs/http/ngx_http_log_module.html>`_.
 
-nginx's access log is outputted when processing ends.
+nginx's access log is outputted when a requests is processed.
 If we want to output the request processing time,
 we need to set configuration as below::
 
