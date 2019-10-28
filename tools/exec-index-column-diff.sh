@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if [ $# -ne 3 ]; then
+  echo \
+    "Usage: ./exec-index-column-diff.sh database_dump groonga_path database_path"
+  echo \
+    "Example: ./exec-index-column-diff.sh dump.grn /usr/local/groonga/bin/groonga ~/database/db"
+  exit 1
+fi
+
 grep -w COLUMN_INDEX $1 | \
   awk '{ print "index_column_diff --table "$2" --name "$3 }' \
   > index_column_diff.query
