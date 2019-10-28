@@ -550,7 +550,7 @@ nginx log related directives
 """"""""""""""
 
 We can output nginx's log by the ``access_log`` directive.
-The following example is default nginx's log settings::
+The following example is the default nginx's log settings::
 
   http {
     log_format  combined  '$remote_addr - $remote_user [$time_local] "$request" '
