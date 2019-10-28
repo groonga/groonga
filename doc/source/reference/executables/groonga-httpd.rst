@@ -543,10 +543,45 @@ configuration, run the following command to remove cache files::
 If you use Groonga's query cache feature, you don't need to expire
 cache by hand. It is done automatically.
 
+nginx log related directives
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``access_log``
+""""""""""""""
+
+We can output nginx's log by the ``access_log`` directive.
+The following example is the default nginx's log settings::
+
+  http {
+    log_format  combined  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  access.log  combined;
+  }
+
+We can specify log format by ``log_format`` directive.
+For the details of available items of the log,
+see `Module ngx_http_log_module <http://nginx.org/en/docs/http/ngx_http_log_module.html>`_.
+
+nginx's access log is outputted when a requests is processed.
+If we want to output the request processing time,
+we need to set configuration as below::
+
+  http {
+    log_format  combined  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for" '
+                      '"$request_time"';
+
+    access_log  access.log  combined;
+  }
+
+
 Available nginx modules
 -----------------------
 
 All standard HTTP modules are available. HttpRewriteModule is
 disabled when you don't have PCRE (Perl Compatible Regular
 Expressions). For the list of standard HTTP modules, see
-http://wiki.nginx.org/Modules.
+`nginx documentation <http://nginx.org/en/docs/>`_.
