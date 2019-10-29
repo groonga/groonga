@@ -5,11 +5,11 @@ ARG DEBUG
 
 RUN \
   quiet=$([ "${DEBUG}" = "yes" ] || echo "--quiet") && \
-  yum update -y ${quiet} && \
-  yum install -y ${quiet} epel-release yum-utils && \
-  yum config-manager --set-enabled PowerTools && \
-  yum groupinstall -y ${quiet} "Development Tools" && \
-  yum install -y ${quiet} \
+  dnf update -y ${quiet} && \
+  dnf install -y ${quiet} epel-release 'dnf-command(config-manager)' && \
+  dnf config-manager --set-enabled PowerTools && \
+  dnf groupinstall -y ${quiet} "Development Tools" && \
+  dnf install -y ${quiet} \
     gcc-c++ \
     intltool \
     libedit-devel \
@@ -25,4 +25,4 @@ RUN \
     ruby \
     tar \
     zlib-devel && \
-  yum clean ${quiet} all
+  dnf clean ${quiet} all
