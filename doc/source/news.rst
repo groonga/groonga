@@ -35,7 +35,7 @@ Improvements
 
 * Supported CentOS 8 (experimental)
 
-  * The package for CentOS 8 can't use a part of features(e.g. we can't ``TokenMecab`` and can't cast to int32 vector from JSON string) for lacking some packages for development.
+  * The package for CentOS 8 can't use a part of features(e.g. we can't use ``TokenMecab`` and can't cast to int32 vector from JSON string) for lacking some packages for development.
 
 * [tools] Added a script for executeing the ``index_column_diff`` command simply.
 
