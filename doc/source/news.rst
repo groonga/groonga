@@ -12,6 +12,11 @@ News
 Release 9.0.9 - 2019-10-29
 --------------------------
 
+.. note::
+
+    Maybe performance decreases from this version.
+    Therefore, If performance decreases than before, please we'd like to ask you to report how to reproduce.    
+
 Improvements
 ^^^^^^^^^^^^
 
@@ -27,6 +32,10 @@ Improvements
 * [:doc:`reference/executables/groonga-httpd`] Added how to set the ``$request_time`` in the document.
 
 * Supported Ubuntu 19.10 (Eoan Ermine)
+
+* Supported CentOS 8 (experimental)
+
+  * The package for CentOS 8 can't use a part of features(e.g. we can't ``TokenMecab`` and can't cast to int32 vector from JSON string) for lacking some packages for development.
 
 * [tools] Added a script for executeing the ``index_column_diff`` command simply.
 

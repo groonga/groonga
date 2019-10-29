@@ -36,6 +36,14 @@ msgstr "お知らせ"
 msgid "Release 9.0.9 - 2019-10-29"
 msgstr "9.0.9リリース - 2019-10-29"
 
+msgid ""
+"Maybe performance decreases from this version. Therefore, If performance "
+"decreases than before, please we'd like to ask you to report how to "
+"reproduce."
+msgstr ""
+"今回のバージョンからパフォーマンスが低下しているかもしれません。もし、以前よ"
+"りパフォーマンスが低下していたら、是非、再現方法を報告してほしいです。"
+
 msgid "Improvements"
 msgstr "改良"
 
@@ -83,6 +91,18 @@ msgstr ""
 
 msgid "Supported Ubuntu 19.10 (Eoan Ermine)"
 msgstr "Ubuntu 19.10(Eoan Ermine)をサポートしました。"
+
+msgid "Supported CentOS 8 (experimental)"
+msgstr "CentOS 8をサポートしました。(実験的)"
+
+msgid ""
+"The package for CentOS 8 can't use a part of features(e.g. we can't "
+"``TokenMecab`` and can't cast to int32 vector from JSON string) for lacking "
+"some packages for development."
+msgstr ""
+"CentOS 8向けのパッケージは開発用のパッケージが不足しているため、一部の機能が"
+"使えません。(例えば、 ``TokenMecab`` が使えなかったり、JSON文字列からint32の"
+"ベクターへのキャストが出来なかったりします。)"
 
 msgid ""
 "[tools] Added a script for executeing the ``index_column_diff`` command "
