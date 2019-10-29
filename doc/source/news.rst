@@ -15,7 +15,7 @@ Release 9.0.9 - 2019-10-29
 .. note::
 
     Maybe performance decreases from this version.
-    Therefore, If performance decreases than before, please we'd like to ask you to report how to reproduce.    
+    Therefore, If performance decreases than before, please report us with reproducible steps.
 
 Improvements
 ^^^^^^^^^^^^
