@@ -5,7 +5,6 @@ ARG DEBUG
 
 RUN \
   quiet=$([ "${DEBUG}" = "yes" ] || echo "--quiet") && \
-  yum install -y https://packages.groonga.org/centos/groonga-release-latest.noarch.rpm && \
   yum update -y ${quiet} && \
   yum install -y ${quiet} epel-release yum-utils && \
   yum config-manager --set-enabled PowerTools && \
