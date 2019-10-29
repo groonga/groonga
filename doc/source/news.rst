@@ -19,6 +19,20 @@ Improvements
 
 * [:doc:`reference/commands/status`] Added that the number of current jobs in the ``status`` command response.
 
+* [:doc:`reference/executables/groonga-httpd`] Added support for ``$request_time`` in log.
+
+  * In the previous version, even if we specified the ``$request_time`` in the ``log_format`` directive, it was always 0.00.
+  * If we specify the ``$request_time``, groonga-httpd output the correct time form this version.
+
+* [:doc:`reference/executables/groonga-httpd`] Added how to set the ``$request_time`` in the document.
+
+* Supported Ubuntu 19.10 (Eoan Ermine)
+
+* [tools] Added a script for executeing the ``index_column_diff`` command simply.
+
+  * This script name is index-column-diff-all.sh.
+  * This script extracts index columns form Groonga's database and execute the ``index_column_diff`` command to them.
+
 Fixes
 ^^^^^
 
