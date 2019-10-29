@@ -33,11 +33,111 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 9.0.8 - 2019-09-27"
-msgstr "9.0.8リリース - 2019-09-27"
+msgid "Release 9.0.9 - 2019-10-29"
+msgstr "9.0.9リリース - 2019-10-29"
+
+msgid ""
+"Maybe performance decreases from this version. Therefore, If performance "
+"decreases than before, please report us with reproducible steps."
+msgstr ""
+"今回のバージョンからパフォーマンスが低下しているかもしれません。もし、以前よ"
+"りパフォーマンスが低下していたら、是非、再現手順を報告してほしいです。"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[:doc:`reference/log`] Improved that output the sending time of response "
+"into query-log."
+msgstr ""
+"[:doc:`/reference/log`] 応答の送信時間をクエリーログに出力するように改良しま"
+"した。"
+
+msgid ""
+"[:doc:`reference/commands/status`] Added that the number of current jobs in "
+"the ``status`` command response."
+msgstr ""
+"[:doc:`/reference/commands/status`] ``status`` コマンドの応答に現在のジョブ数"
+"を追加しました。"
+
+msgid ""
+"[:doc:`reference/executables/groonga-httpd`] Added support for ``"
+"$request_time`` in log."
+msgstr ""
+"[:doc:`/reference/executables/groonga-httpd`] ``$request_time`` をサポートし"
+"ました。"
+
+msgid ""
+"In the previous version, even if we specified the ``$request_time`` in the "
+"``log_format`` directive, it was always 0.00."
+msgstr ""
+"以前のバージョンでは、 ``log_format`` ディレクティブに ``$request_time`` を指"
+"定しても、``$request_time`` の値は常に0でした。"
+
+msgid ""
+"If we specify the ``$request_time``, groonga-httpd output the correct time "
+"form this version."
+msgstr ""
+"今回のバージョンから、 ``$request_time`` を指定した場合、 groonga-httpd は正"
+"しい時間を出力します。"
+
+msgid ""
+"[:doc:`reference/executables/groonga-httpd`] Added how to set the ``"
+"$request_time`` in the document."
+msgstr ""
+"[:doc:`/reference/executables/groonga-httpd`] ``$request_time`` の設定方法を"
+"ドキュメントに追加しました。"
+
+msgid "Supported Ubuntu 19.10 (Eoan Ermine)"
+msgstr "Ubuntu 19.10(Eoan Ermine)をサポートしました。"
+
+msgid "Supported CentOS 8 (experimental)"
+msgstr "CentOS 8をサポートしました。(実験的)"
+
+msgid ""
+"The package for CentOS 8 can't use a part of features(e.g. we can't use "
+"``TokenMecab`` and can't cast to int32 vector from JSON string) for lacking "
+"some packages for development."
+msgstr ""
+"CentOS 8向けのパッケージは開発用のパッケージが不足しているため、一部の機能が"
+"使えません。(例えば、 ``TokenMecab`` が使えなかったり、JSON文字列からint32の"
+"ベクターへのキャストが出来なかったりします。)"
+
+msgid ""
+"[tools] Added a script for executeing the ``index_column_diff`` command "
+"simply."
+msgstr ""
+"[tools] ``index_column_diff`` コマンドを簡単に実行するスクリプトを追加しまし"
+"た。"
+
+msgid "This script name is index-column-diff-all.sh."
+msgstr "このスクリプトの名前は、index-column-diff-all.shです。"
+
+msgid ""
+"This script extracts index columns form Groonga's database and execute the "
+"``index_column_diff`` command to them."
+msgstr ""
+"このスクリプトは、Groongaのデータベースからインデックスカラムを抽出し、抽出し"
+"たインデックスカラムに対して ``index_column_diff`` を実行します。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"Fixed a bug that Groonga crash when we specify the value as the first "
+"argument of between.[GitHub#1045][Reported by yagisumi]"
+msgstr ""
+"between の最初の引数として値を指定すると、Groongaがクラッシュする問題を修正し"
+"ました。[GitHub#1045][yagisumiさんの報告]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "yagisumi"
+msgstr "yagisumiさん"
+
+msgid "Release 9.0.8 - 2019-09-27"
+msgstr "9.0.8リリース - 2019-09-27"
 
 msgid ""
 "[:doc:`reference/commands/log_reopen`] Added a supplementary explanation "
@@ -90,9 +190,6 @@ msgstr ""
 msgid "[:doc:`/install/centos`] Dropped 32-bit package support on CentOS 6."
 msgstr ""
 "[:doc:`/install/centos`] CentOS 6の32-bitパッケージのサポートをやめました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid ""
 "[:doc:`reference/commands/logical_range_filter`] Fixed a bug that exception "
@@ -165,9 +262,6 @@ msgstr ""
 "前方一致検索や後方一致検索時に適切なインデックスを使わない問題を修正しまし"
 "た。[GitHub#1007, PGroonga#GitHub#96][oknjさんの報告]"
 
-msgid "Thanks"
-msgstr "感謝"
-
 msgid "oknj"
 msgstr "oknjさん"
 
@@ -213,9 +307,6 @@ msgid ""
 msgstr ""
 "[:doc:`tutorial/micro_blog`] 検索結果が誤っている例を修正しました。"
 "[GitHub#1024][yagisumiさんがパッチ提供] "
-
-msgid "yagisumi"
-msgstr "yagisumiさん"
 
 msgid "Release 9.0.5 - 2019-07-30"
 msgstr "9.0.5リリース - 2019-07-30"

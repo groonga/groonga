@@ -7,6 +7,51 @@
 News
 ====
 
+.. _release-9-0-9:
+
+Release 9.0.9 - 2019-10-29
+--------------------------
+
+.. note::
+
+    Maybe performance decreases from this version.
+    Therefore, If performance decreases than before, please report us with reproducible steps.
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/log`] Improved that output the sending time of response into query-log.
+
+* [:doc:`reference/commands/status`] Added that the number of current jobs in the ``status`` command response.
+
+* [:doc:`reference/executables/groonga-httpd`] Added support for ``$request_time`` in log.
+
+  * In the previous version, even if we specified the ``$request_time`` in the ``log_format`` directive, it was always 0.00.
+  * If we specify the ``$request_time``, groonga-httpd output the correct time form this version.
+
+* [:doc:`reference/executables/groonga-httpd`] Added how to set the ``$request_time`` in the document.
+
+* Supported Ubuntu 19.10 (Eoan Ermine)
+
+* Supported CentOS 8 (experimental)
+
+  * The package for CentOS 8 can't use a part of features(e.g. we can't use ``TokenMecab`` and can't cast to int32 vector from JSON string) for lacking some packages for development.
+
+* [tools] Added a script for executeing the ``index_column_diff`` command simply.
+
+  * This script name is index-column-diff-all.sh.
+  * This script extracts index columns form Groonga's database and execute the ``index_column_diff`` command to them.
+
+Fixes
+^^^^^
+
+* Fixed a bug that Groonga crash when we specify the value as the first argument of between.[GitHub#1045][Reported by yagisumi]
+
+Thanks
+^^^^^^
+
+* yagisumi
+
 .. _release-9-0-8:
 
 Release 9.0.8 - 2019-09-27
