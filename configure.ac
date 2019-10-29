@@ -1416,6 +1416,7 @@ AM_CONDITIONAL([CENTOS_INIT_PLATFORM],
                 test "${package_platform}" = "centos6"])
 AM_CONDITIONAL([CENTOS_SYSTEMD_PLATFORM],
                [test "${package_platform}" = "centos7" ||
+                test "${package_platform}" = "centos8" ||
                 test "${package_platform}" = "fedora"])
 
 # plugins check
