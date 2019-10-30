@@ -103,7 +103,6 @@ msgstr ""
 "使えません。(例えば、 ``TokenMecab`` が使えなかったり、JSON文字列からint32の"
 "ベクターへのキャストが出来なかったりします。)"
 
-#, fuzzy
 msgid ""
 "[tools] Added a script for executing the ``index_column_diff`` command "
 "simply."
@@ -120,6 +119,15 @@ msgid ""
 msgstr ""
 "このスクリプトは、Groongaのデータベースからインデックスカラムを抽出し、抽出し"
 "たインデックスカラムに対して ``index_column_diff`` を実行します。"
+
+msgid ""
+"[tools] Added a script for executing ``object_inspect`` against all objects."
+msgstr ""
+"[tools] ``object_inspect`` コマンドを全てのオブジェクトに対して実行するスクリ"
+"プトを追加しました。"
+
+msgid "This script name is object-inspect-all.sh."
+msgstr "このスクリプトの名前は、object-inspect-all.shです。"
 
 msgid "Fixes"
 msgstr "修正"

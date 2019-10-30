@@ -42,6 +42,11 @@ Improvements
   * This script name is index-column-diff-all.sh.
   * This script extracts index columns form Groonga's database and execute the ``index_column_diff`` command to them.
 
+* [tools] Added a script for executing ``object_inspect`` against
+  all objects.
+
+  * This script name is object-inspect-all.sh.
+
 Fixes
 ^^^^^
 
