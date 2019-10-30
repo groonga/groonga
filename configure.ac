@@ -1402,7 +1402,7 @@ AC_MSG_CHECKING([whether package platform])
 AC_ARG_WITH(package-platform,
   [AS_HELP_STRING([--with-package-platform=PLATFORM],
     [install package platform related files. [default=no]
-     (supported package platforms: centos, centos5, centos6, centos7, fedora)])],
+     (supported package platforms: centos, centos6, centos7, fedora)])],
   [package_platform="$withval"],
   [package_platform="no"])
 if test "$package_platform" = "centos"; then
@@ -1417,12 +1417,27 @@ if test "$package_platform" = "centos"; then
 fi
 AC_MSG_RESULT($package_platform)
 
+centos_platform=no
+centos_init_platform=no
+centos_systemd_platform=no
+case "${package_platform}" in
+  no)
+    ;;
+  centos6)
+    centos_platform=yes
+    centos_init_platform=yes
+    ;;
+  *)
+    centos_platform=yes
+    centos_systemd_platform=yes
+    ;;
+esac
 AM_CONDITIONAL([CENTOS_PLATFORM],
-               [test "${package_platform}" != "no"])
+               [test "${centos_platform}" = "yes"])
 AM_CONDITIONAL([CENTOS_INIT_PLATFORM],
-               [test "${package_platform}" = "centos6"])
+               [test "${centos_init_platform}" = "yes"])
 AM_CONDITIONAL([CENTOS_SYSTEMD_PLATFORM],
-               [test "${package_platform}" != "centos6"])
+               [test "${centos_systemd_platform}" = "yes"])
 
 # plugins check
 relative_pluginsdir_base="\$(PACKAGE)/plugins"
