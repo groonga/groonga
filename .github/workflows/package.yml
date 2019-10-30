@@ -99,7 +99,7 @@ jobs:
           rake ${{ matrix.rake_arguments }}
         env:
           APACHE_ARROW_REPOSITORY: ../../arrow
-      - name: actions/download-artifact@master
+      - uses: actions/download-artifact@master
         with:
           name: Packages
           path: ${{ matrix.repositories_path }}
