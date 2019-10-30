@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 NGINX_DIR = nginx-$(NGINX_VERSION)
+RAPIDJSON_DIR = rapidjson-$(BUNDLED_RAPIDJSON_VERSION)
 
 SUBDIRS =					\
 	lz4					\
@@ -27,6 +28,7 @@ SUBDIRS =					\
 
 EXTRA_DIST =					\
 	$(NGINX_DIR)				\
+	$(RAPIDJSON_DIR)			\
 	CMakeLists.txt				\
 	plugins/CMakeLists.txt			\
 	download_lz4.rb				\
@@ -49,3 +51,4 @@ dist-hook:
 	$(MKDIR_P) $(distdir)/groonga-log-source
 	GIT_DIR=$(srcdir)/groonga-log-source/.git git archive --format=tar HEAD | \
 	  tar xf - -C $(distdir)/groonga-log-source
+	$(RUBY) download_rapidjson.rb
