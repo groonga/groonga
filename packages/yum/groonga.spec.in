@@ -550,6 +550,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Wed Oct 30 2019 Kentaro Hayashi <hayashi@clear-code.com> - 9.0.9-1
+- new upstream release.
+
 * Sun Sep 29 2019 Kentaro Hayashi <hayashi@clear-code.com> - 9.0.8-1
 - new upstream release.
 
