@@ -1,14 +1,14 @@
 name: Package
-
-# WIP
 on:
-  - push
-  - pull_request
-
-#on:
-#  schedule:
-#    - cron:  '0 0 * * *'
-
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+  schedule:
+    - cron: |
+        0 0 * * *
 jobs:
   build:
     name: Build
