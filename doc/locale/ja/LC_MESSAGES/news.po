@@ -103,8 +103,9 @@ msgstr ""
 "使えません。(例えば、 ``TokenMecab`` が使えなかったり、JSON文字列からint32の"
 "ベクターへのキャストが出来なかったりします。)"
 
+#, fuzzy
 msgid ""
-"[tools] Added a script for executeing the ``index_column_diff`` command "
+"[tools] Added a script for executing the ``index_column_diff`` command "
 "simply."
 msgstr ""
 "[tools] ``index_column_diff`` コマンドを簡単に実行するスクリプトを追加しまし"
