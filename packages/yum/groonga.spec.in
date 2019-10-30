@@ -8,6 +8,7 @@
 %define _use_libstemmer %{?use_libstemmer:%{use_libstemmer}}%{!?use_libstemmer:%{_centos_ver} >= 7}
 %define _use_systemd  %{?use_systemd:%{use_systemd}}%{!?use_systemd:%{_centos_ver} >= 7}
 %define _use_rapidjson %{?use_rapidjson:%{use_rapidjson}}%{!?use_rapidjson:%{_centos_ver} == 7}
+%define _use_bundled_rapidjson %{?use_bundled_rapidjson:%{use_bundled_rapidjson}}%{!?use_bundled_rapidjson:%{_centos_ver} >= 8}
 
 %define _additional_configure_options %{?additional_configure_options:%{additional_configure_options}}
 
@@ -243,8 +244,12 @@ Munin plugins for Groonga
 %if ! %{_use_libstemmer}
   --without-libstemmer \
 %endif
-%if ! %{_use_rapidjson}
-  --without-rapidjson \
+%if %{_use_bundled_rapidjson}
+  --with-rapidjson=bundled \
+%else
+  %if ! %{_use_rapidjson}
+    --without-rapidjson \
+  %endif
 %endif
   --with-munin-plugins \
   --enable-mruby \
