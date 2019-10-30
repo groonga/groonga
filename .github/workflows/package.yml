@@ -22,6 +22,7 @@ jobs:
           - Debian GNU/Linux buster i386
           - CentOS 6
           - CentOS 7
+          - CentOS 8
         include:
           - label: Debian GNU/Linux stretch amd64
             rake_arguments: apt:build APT_TARGETS=debian-stretch
@@ -35,6 +36,8 @@ jobs:
             rake_arguments: yum:build YUM_TARGETS=centos-6
           - label: CentOS 7
             rake_arguments: yum:build YUM_TARGETS=centos-7
+          - label: CentOS 8
+            rake_arguments: yum:build YUM_TARGETS=centos-8
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
