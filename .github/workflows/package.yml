@@ -26,18 +26,25 @@ jobs:
         include:
           - label: Debian GNU/Linux stretch amd64
             rake_arguments: apt:build APT_TARGETS=debian-stretch
+            repositories_path: packages/apt/repositories/
           - label: Debian GNU/Linux stretch i386
             rake_arguments: apt:build APT_TARGETS=debian-stretch-i386
+            repositories_path: packages/apt/repositories/
           - label: Debian GNU/Linux buster amd64
             rake_arguments: apt:build APT_TARGETS=debian-buster
+            repositories_path: packages/apt/repositories/
           - label: Debian GNU/Linux buster i386
             rake_arguments: apt:build APT_TARGETS=debian-buster-i386
+            repositories_path: packages/apt/repositories/
           - label: CentOS 6
             rake_arguments: yum:build YUM_TARGETS=centos-6
+            repositories_path: packages/yum/repositories/
           - label: CentOS 7
             rake_arguments: yum:build YUM_TARGETS=centos-7
+            repositories_path: packages/yum/repositories/
           - label: CentOS 8
             rake_arguments: yum:build YUM_TARGETS=centos-8
+            repositories_path: packages/yum/repositories/
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -92,3 +99,7 @@ jobs:
           rake ${{ matrix.rake_arguments }}
         env:
           APACHE_ARROW_REPOSITORY: ../../arrow
+      - name: actions/download-artifact@master
+        with:
+          name: Packages
+          path: ${{ matrix.repositories_path }}
