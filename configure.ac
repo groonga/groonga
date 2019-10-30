@@ -956,27 +956,35 @@ if test "x$enable_arrow" != "xno"; then
 fi
 AM_CONDITIONAL([GRN_WITH_ARROW], [test "$arrow_available" = "yes"])
 
-RAPIDJSON_CFLAGS=
 # RapidJSON
+BUNDLED_RAPIDJSON_VERSION=m4_include([bundled_rapidjson_version])
+AC_SUBST(BUNDLED_RAPIDJSON_VERSION)
+
+RAPIDJSON_CFLAGS=
 AC_ARG_WITH(rapidjson,
   [AS_HELP_STRING([--with-rapidjson],
     [Use RapidJSON. [default=auto]])],
   [with_rapidjson="$withval"],
   [with_rapidjson="auto"])
 if test "x$with_rapidjson" != "xno"; then
-  m4_ifdef([PKG_CHECK_MODULES], [
-    PKG_CHECK_MODULES([RAPIDJSON],
-                      [RapidJSON],
-                      [GRN_WITH_RAPIDJSON=yes],
-                      [GRN_WITH_RAPIDJSON=no])
-    ],
-    [GRN_WITH_RAPIDJSON=no])
-  if test "$GRN_WITH_RAPIDJSON" = "no"; then
-    AC_LANG_PUSH([C++])
-    AC_CHECK_HEADER(rapidjson/rapidjson.h,
-                    [GRN_WITH_RAPIDJSON=yes],
-                    [GRN_WITH_RAPIDJSON=no])
-    AC_LANG_POP([C++])
+  if test "x$with_rapidjson" == "xbundled"; then
+    RAPIDJSON_CFLAGS="-I\$(top_srcdir)/vendor/rapidjson-${BUNDLED_RAPIDJSON_VERSION}/include"
+    GRN_WITH_RAPIDJSON=yes
+  else
+    m4_ifdef([PKG_CHECK_MODULES], [
+      PKG_CHECK_MODULES([RAPIDJSON],
+			[RapidJSON],
+			[GRN_WITH_RAPIDJSON=yes],
+			[GRN_WITH_RAPIDJSON=no])
+      ],
+      [GRN_WITH_RAPIDJSON=no])
+    if test "$GRN_WITH_RAPIDJSON" = "no"; then
+      AC_LANG_PUSH([C++])
+      AC_CHECK_HEADER(rapidjson/rapidjson.h,
+		      [GRN_WITH_RAPIDJSON=yes],
+		      [GRN_WITH_RAPIDJSON=no])
+      AC_LANG_POP([C++])
+    fi
   fi
   if test "$GRN_WITH_RAPIDJSON" = "yes"; then
     AC_DEFINE(GRN_WITH_RAPIDJSON, [1],
