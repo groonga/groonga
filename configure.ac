@@ -967,7 +967,7 @@ AC_ARG_WITH(rapidjson,
   [with_rapidjson="$withval"],
   [with_rapidjson="auto"])
 if test "x$with_rapidjson" != "xno"; then
-  if test "x$with_rapidjson" == "xbundled"; then
+  if test "x$with_rapidjson" = "xbundled"; then
     RAPIDJSON_CFLAGS="-I\$(top_srcdir)/vendor/rapidjson-${BUNDLED_RAPIDJSON_VERSION}/include"
     GRN_WITH_RAPIDJSON=yes
   else
