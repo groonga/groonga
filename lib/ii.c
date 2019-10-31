@@ -8090,7 +8090,7 @@ typedef struct {
   cursor_heap *cursors;
   int offset;
   int pos;
-  int size;
+  uint32_t size;
   int ntoken;
   grn_posting *p;
 } token_info;
@@ -8172,7 +8172,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
                 const char *key, unsigned int key_size, uint32_t offset,
                 int mode, grn_fuzzy_search_optarg *args, grn_id min)
 {
-  int s = 0;
+  uint32_t s = 0;
   grn_hash *h;
   token_info *ti;
   grn_id tid;
