@@ -33,6 +33,88 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
+msgid "Release 9.1.0 - 2019-11-29"
+msgstr "9.1.0リリース - 2019-11-29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "Improved the performance of the sort by value."
+msgstr "値によるソートのパフォーマンスを改善しました。"
+
+msgid "Improved the performance of the \"&&\" operation."
+msgstr "\"&&\"演算のパフォーマンスを改善しました。"
+
+msgid ""
+"For example, the performance of condition expression such as the following "
+"is increased."
+msgstr "例えば、以下のような条件式のパフォーマンスが向上します。"
+
+msgid "( A || B ) && ( C || D ) && ( E || F) ..."
+msgstr ""
+
+msgid ""
+"[:doc:`/reference/tokenizers/token_mecab`] Added a new option "
+"``use_base_form``"
+msgstr ""
+"[:doc:`/reference/tokenizers/token_mecab`] ``TokenMecab`` に "
+"``use_base_form`` オプションを追加しました。"
+
+msgid "We can search using the base form of a token by this option."
+msgstr "このオプションによってトークンの原型を使って検索できます。"
+
+msgid ""
+"For example, if we search \"支えた\" using this option, \"支える\" is hit "
+"also."
+msgstr ""
+"例えば、このオプションを使って\"支えた\"を検索した場合、\"支える\"もヒットし"
+"ます。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fix a bug that when the accessor is index, performance decreases."
+msgstr ""
+"インデックスがアクセサーの際にパフォーマンスが低下する問題を修正しました。"
+
+msgid "For example, it occurs with the query include the following conditions."
+msgstr "例えば、以下のような条件を含むクエリーで起こります。"
+
+msgid "``sccessor @ query``"
+msgstr ""
+
+msgid "``accessor == query``"
+msgstr ""
+
+msgid ""
+"Fixed a bug the estimated size of a search result was overflow when the "
+"buffer is big enough. [PGroonga#GitHub#115][Reported by Albert Song]"
+msgstr ""
+"バッファーが十分に大きい時に、検索結果の推定サイズがオーバーフローする問題を"
+"修正しました。 [PGroonga#GitHub#115][Albert Songさんの報告]"
+
+msgid "Improved a test(1) portability. [GitHub#1065][Patched by OBATA Akio]"
+msgstr "test(1)のポータビリティを改善しました。（おばたさんがパッチ提供）"
+
+msgid "Added missing tools."
+msgstr "不足しているツールを追加"
+
+msgid ""
+"Because ``index-column-diff-all.sh`` and ``object-inspect-all.sh`` had not "
+"bundled in before version."
+msgstr ""
+"前のバージョンに ``index-column-diff-all.sh`` と ``object-inspect-all.sh`` が"
+"バンドルされていなかったためです。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Albert Song"
+msgstr "Albert Songさん"
+
+msgid "OBATA Akio"
+msgstr "おばたさん"
+
 msgid "Release 9.0.9 - 2019-10-30"
 msgstr "9.0.9リリース - 2019-10-30"
 
@@ -42,9 +124,6 @@ msgid ""
 msgstr ""
 "今回のバージョンからパフォーマンスが低下しているかもしれません。もし、以前よ"
 "りパフォーマンスが低下していたら、是非、再現手順を報告してほしいです。"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid ""
 "[:doc:`reference/log`] Improved that output the sending time of response "
@@ -129,18 +208,12 @@ msgstr ""
 msgid "This script name is object-inspect-all.sh."
 msgstr "このスクリプトの名前は、object-inspect-all.shです。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "Fixed a bug that Groonga crash when we specify the value as the first "
 "argument of between.[GitHub#1045][Reported by yagisumi]"
 msgstr ""
 "between の最初の引数として値を指定すると、Groongaがクラッシュする問題を修正し"
 "ました。[GitHub#1045][yagisumiさんの報告]"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "yagisumi"
 msgstr "yagisumiさん"
@@ -5437,9 +5510,6 @@ msgid ""
 msgstr ""
 "レコード削除時に他のレコードのデータを削除してしまう可能性があるという問題を"
 "修正。"
-
-msgid "OBATA Akio"
-msgstr "おばたさん"
 
 msgid "Daiki Ueno"
 msgstr "うえのさん"
