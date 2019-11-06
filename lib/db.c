@@ -10136,7 +10136,7 @@ remove_reference_tables(grn_ctx *ctx, grn_obj *table, grn_obj *db)
     grn_id id;
     while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
       grn_obj *object;
-      grn_bool is_removed = GRN_FALSE;
+      bool is_removed = false;
 
       if (is_close_opened_object_mode) {
         grn_ctx_push_temporary_open_space(ctx);
@@ -10182,12 +10182,12 @@ remove_reference_tables(grn_ctx *ctx, grn_obj *table, grn_obj *db)
         break;
       }
 
-      if (!is_removed) {
-        grn_obj_unlink(ctx, object);
-      }
-
       if (is_close_opened_object_mode) {
         grn_ctx_pop_temporary_open_space(ctx);
+      } else {
+        if (!is_removed) {
+          grn_obj_unlink(ctx, object);
+        }
       }
 
       if (rc != GRN_SUCCESS) {
