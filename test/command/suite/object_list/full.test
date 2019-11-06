@@ -1,3 +1,5 @@
+#$GRN_ENABLE_REFERENCE_COUNT=no
+
 plugin_register functions/vector
 
 table_create Users TABLE_DAT_KEY ShortText
