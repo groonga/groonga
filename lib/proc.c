@@ -2859,7 +2859,6 @@ func_between(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
 
   grn_obj_unlink(ctx, between_expr);
-  grn_obj_unlink(ctx, table);
 
 exit :
   between_data_fin(ctx, &data);
