@@ -17,8 +17,12 @@ class TestEstimateSize < QueryOptimizerTestCase
   class TestFullTextSearch < self
     def setup
       Groonga::Schema.define do |schema|
+        schema.create_table("Hosts", key_type: :short_text) do |table|
+        end
+
         schema.create_table("Logs") do |table|
           table.text("message")
+          table.reference("host", "Hosts")
         end
 
         schema.create_table("Terms",
@@ -26,6 +30,11 @@ class TestEstimateSize < QueryOptimizerTestCase
                             :default_tokenizer => "TokenBigramSplitSymbolAlpha",
                             :normalizer => "NormalizerAuto") do |table|
           table.index("Logs", "message")
+          table.index("Hosts", "_key")
+        end
+
+        schema.change_table("Hosts") do |table|
+          table.index("Logs", "host")
         end
       end
       super
@@ -40,6 +49,14 @@ class TestEstimateSize < QueryOptimizerTestCase
       @logs.add(:message => "Rroonga is fast")
       @logs.add(:message => "Mroonga is fast")
       assert_equal(3, estimate_size("message @ 'roonga'"))
+    end
+
+    def test_accessor
+      @logs.add(:host => "www")
+      @logs.add(:host => "mail")
+      @logs.add(:host => "db1")
+      @logs.add(:host => "db2")
+      assert_equal(2, estimate_size("host._key @ 'w'"))
     end
   end
 

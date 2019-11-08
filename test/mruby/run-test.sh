@@ -32,4 +32,4 @@ if test -z "$RUBY"; then
   exit 1
 fi
 
-"$RUBY" "${SOURCE_DIR}/run-test.rb" "$@"
+$GDB "$RUBY" "${SOURCE_DIR}/run-test.rb" "$@"
