@@ -83,9 +83,11 @@ grn_mrb_value_to_bulk(mrb_state *mrb, mrb_value mrb_value_, grn_obj *bulk)
     {
       grn_mrb_data *data = &(ctx->impl->mrb);
       struct RClass *klass;
+      struct RClass *mrb_bulk_class;
       struct RClass *mrb_record_class;
 
       klass = mrb_class(mrb, mrb_value_);
+      mrb_bulk_class = mrb_class_get_under(mrb, data->module, "Bulk");
       mrb_record_class = mrb_class_get_under(mrb, data->module, "Record");
       if (klass == ctx->impl->mrb.builtin.time_class) {
         mrb_value mrb_sec;
@@ -96,6 +98,17 @@ grn_mrb_value_to_bulk(mrb_state *mrb, mrb_value mrb_value_, grn_obj *bulk)
         grn_obj_reinit(ctx, bulk, GRN_DB_TIME, 0);
         GRN_TIME_SET(ctx, bulk,
                      GRN_TIME_PACK(mrb_fixnum(mrb_sec), mrb_fixnum(mrb_usec)));
+      } else if (klass == mrb_bulk_class) {
+        grn_obj *source_bulk = DATA_PTR(mrb_value_);
+
+        grn_obj_reinit(ctx,
+                       bulk,
+                       source_bulk->header.domain,
+                       GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_TEXT_SET(ctx,
+                     bulk,
+                     GRN_BULK_HEAD(source_bulk),
+                     GRN_BULK_VSIZE(source_bulk));
       } else if (klass == mrb_record_class) {
         mrb_value mrb_table;
         grn_obj *table;
