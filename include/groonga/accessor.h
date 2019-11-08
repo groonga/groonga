@@ -30,6 +30,12 @@ GRN_API grn_rc grn_accessor_resolve(grn_ctx *ctx,
                                     grn_obj *res,
                                     grn_operator op);
 
+GRN_API uint32_t
+grn_accessor_estimate_size_for_query(grn_ctx *ctx,
+                                     grn_obj *accessor,
+                                     grn_obj *query,
+                                     grn_search_optarg *optarg);
+
 typedef grn_rc (*grn_accessor_execute_func)(grn_ctx *ctx,
                                             grn_obj *index,
                                             grn_operator op,

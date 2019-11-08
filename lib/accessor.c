@@ -551,6 +551,203 @@ grn_accessor_execute(grn_ctx *ctx,
   GRN_API_RETURN(rc);
 }
 
+typedef struct {
+  grn_obj *accessor;
+  grn_obj *query;
+  grn_search_optarg *optarg;
+  grn_obj *index;
+  grn_obj query_casted;
+  const char *query_raw;
+  uint32_t query_raw_len;
+  uint32_t n_base_records;
+  uint32_t n_target_records;
+  uint32_t depth;
+} grn_accessor_estimate_size_for_query_data;
+
+static void
+grn_accessor_estimate_size_for_query_data_fin(
+  grn_ctx *ctx,
+  grn_accessor_estimate_size_for_query_data *data)
+{
+  GRN_OBJ_FIN(ctx, &(data->query_casted));
+}
+
+static void
+grn_accessor_estimate_size_for_query_cast_failed(
+  grn_ctx *ctx,
+  grn_accessor_estimate_size_for_query_data *data)
+{
+  grn_obj detail;
+  GRN_TEXT_INIT(&detail, 0);
+  GRN_TEXT_PUTS(ctx, &detail, "<");
+  grn_inspect(ctx, &detail, data->query);
+  GRN_TEXT_PUTS(ctx, &detail, "> -> ");
+  grn_obj *domain = grn_ctx_at(ctx, data->query_casted.header.domain);
+  grn_inspect(ctx, &detail, domain);
+  grn_obj_unlink(ctx, domain);
+  GRN_TEXT_PUTS(ctx, &detail, ": ");
+  grn_inspect(ctx, &detail, data->accessor);
+  ERR(GRN_INVALID_ARGUMENT,
+      "[accessor][estimate-size][query][cast] "
+      "failed: %.*s",
+      (int)GRN_TEXT_LEN(&detail),
+      GRN_TEXT_VALUE(&detail));
+  GRN_OBJ_FIN(ctx, &detail);
+}
+
+static bool
+grn_accessor_estimate_size_for_query_prepare(
+  grn_ctx *ctx,
+  grn_accessor_estimate_size_for_query_data *data)
+{
+  grn_accessor *a = (grn_accessor *)(data->accessor);
+  if (grn_obj_is_table(ctx, a->obj)) {
+    data->n_target_records = grn_table_size(ctx, a->obj);
+  } else {
+    grn_obj *target_table = grn_ctx_at(ctx, a->obj->header.domain);
+    data->n_target_records = grn_table_size(ctx, target_table);
+    grn_obj_unlink(ctx, target_table);
+  }
+
+  if (data->n_target_records == 0) {
+    return false;
+  }
+
+  for (; a->next; a = a->next) {
+    data->depth++;
+  }
+
+  if (grn_obj_is_table(ctx, a->obj)) {
+    data->n_base_records = grn_table_size(ctx, a->obj);
+  } else {
+    grn_obj *base_table = grn_ctx_at(ctx, a->obj->header.domain);
+    data->n_base_records = grn_table_size(ctx, base_table);
+    grn_obj_unlink(ctx, base_table);
+  }
+
+  grn_operator op = GRN_OP_MATCH;
+  if (data->optarg) {
+    if (data->optarg->mode == GRN_OP_EXACT) {
+      op = GRN_OP_MATCH;
+    } else {
+      op = data->optarg->mode;
+    }
+  }
+  grn_index_datum index_data;
+  unsigned int n_index_datum;
+  n_index_datum = grn_column_find_index_data(ctx,
+                                             a->obj,
+                                             op,
+                                             &index_data,
+                                             1);
+  if (n_index_datum == 0) {
+    data->index = a->obj;
+  } else {
+    data->index = index_data.index;
+  }
+
+  grn_obj *lexicon;
+  bool lexicon_need_unlink = false;
+  if (grn_obj_is_table(ctx, data->index)) {
+    lexicon = data->index;
+  } else {
+    lexicon = grn_ctx_at(ctx, data->index->header.domain);
+    lexicon_need_unlink = true;
+  }
+
+  if (data->query->header.domain == lexicon->header.domain) {
+    data->query_raw = GRN_BULK_HEAD(data->query);
+    data->query_raw_len = GRN_BULK_VSIZE(data->query);
+  } else {
+    grn_obj_reinit_for(ctx, &(data->query_casted), lexicon);
+    grn_rc rc = grn_obj_cast(ctx, data->query, &(data->query_casted), false);
+    if (rc == GRN_SUCCESS) {
+      data->query_raw = GRN_BULK_HEAD(&(data->query_casted));
+      data->query_raw_len = GRN_BULK_VSIZE(&(data->query_casted));
+    } else {
+      grn_accessor_estimate_size_for_query_cast_failed(ctx, data);
+    }
+  }
+
+  if (lexicon_need_unlink) {
+    grn_obj_unlink(ctx, lexicon);
+  }
+
+  return ctx->rc == GRN_SUCCESS;
+}
+
+uint32_t
+grn_accessor_estimate_size_for_query(grn_ctx *ctx,
+                                     grn_obj *accessor,
+                                     grn_obj *query,
+                                     grn_search_optarg *optarg)
+{
+  GRN_API_ENTER;
+
+  if (!grn_obj_is_accessor(ctx, accessor)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, accessor);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[accessor][estimate-size][query] must be accessor: %.*s",
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    GRN_API_RETURN(0);
+  }
+
+  if (!query) {
+    GRN_API_RETURN(0);
+  }
+
+  grn_accessor_estimate_size_for_query_data data;
+  data.accessor = accessor;
+  data.query = query;
+  data.optarg = optarg;
+  data.index = NULL;
+  GRN_VOID_INIT(&(data.query_casted));
+  data.query_raw = NULL;
+  data.query_raw_len = 0;
+  data.n_target_records = 0;
+  data.depth = 0;
+
+  if (!grn_accessor_estimate_size_for_query_prepare(ctx, &data)) {
+    grn_accessor_estimate_size_for_query_data_fin(ctx, &data);
+    GRN_API_RETURN(0);
+  }
+
+  uint32_t estimated_size = 0;
+  if (data.depth == 0) {
+    estimated_size = grn_ii_estimate_size_for_query(ctx,
+                                                    (grn_ii *)(data.index),
+                                                    data.query_raw,
+                                                    data.query_raw_len,
+                                                    optarg);
+  } else {
+    if (data.n_base_records == 0) {
+      estimated_size = 0;
+    } else {
+      uint32_t base_estimated_size =
+        grn_ii_estimate_size_for_query(ctx,
+                                       (grn_ii *)(data.index),
+                                       data.query_raw,
+                                       data.query_raw_len,
+                                       optarg);
+      if (base_estimated_size >= data.n_base_records) {
+        estimated_size = data.n_target_records;
+      } else {
+        estimated_size =
+          data.n_target_records *
+          (base_estimated_size / (double)(data.n_base_records));
+      }
+    }
+  }
+
+  grn_accessor_estimate_size_for_query_data_fin(ctx, &data);
+
+  GRN_API_RETURN(estimated_size);
+}
+
 grn_rc
 grn_accessor_name(grn_ctx *ctx, grn_obj *accessor, grn_obj *name)
 {
