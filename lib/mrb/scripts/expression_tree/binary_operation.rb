@@ -73,7 +73,10 @@ module Groonga
         value = @right.value
         case column
         when Groonga::Accessor
-          return estimate_size_equal_accessor(table, column, value)
+          accessor = column
+          term = value.value
+          return column.estimate_size(query: term,
+                                      mode: Operator::EQUAL)
         when Groonga::IndexColumn
           index_column = column
         else
@@ -99,37 +102,6 @@ module Groonga
           0
         else
           index_column.estimate_size(term_id: term_id)
-        end
-      end
-
-      def estimate_size_equal_accessor(table, accessor, value)
-        last_accessor = accessor
-        while last_accessor.have_next?
-          last_accessor = last_accessor.next
-        end
-
-        if last_accessor.id?
-          if last_accessor.object.id?(value.value)
-            if last_accessor == accessor
-              return 1
-            else
-              return table.size
-            end
-          else
-            return 0
-          end
-        elsif last_accessor.key?
-          if last_accessor.object[value]
-            if last_accessor == accessor
-              return 1
-            else
-              return table.size
-            end
-          else
-            return 0
-          end
-        else
-          return table.size
         end
       end
 

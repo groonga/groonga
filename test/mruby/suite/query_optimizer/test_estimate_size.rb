@@ -63,14 +63,22 @@ class TestEstimateSize < QueryOptimizerTestCase
   class TestEqualSearch < self
     def setup
       Groonga::Schema.define do |schema|
+        schema.create_table("Hosts", key_type: :short_text) do |table|
+        end
+
         schema.create_table("Logs") do |table|
           table.time("timestamp")
+          table.reference("host", "Hosts")
         end
 
         schema.create_table("Times",
                             :type => :patricia_trie,
                             :key_type => :time) do |table|
           table.index("Logs", "timestamp")
+        end
+
+        schema.change_table("Hosts") do |table|
+          table.index("Logs", "host")
         end
       end
       super
@@ -88,6 +96,14 @@ class TestEstimateSize < QueryOptimizerTestCase
       @logs.add(:timestamp => "2015-02-19 02:19:00")
       @logs.add(:timestamp => "2015-02-19 02:19:00")
       assert_equal(4, estimate_size("timestamp == '2015-02-19 02:18:00'"))
+    end
+
+    def test_accessor
+      @logs.add(:host => "www")
+      @logs.add(:host => "mail")
+      @logs.add(:host => "db1")
+      @logs.add(:host => "db2")
+      assert_equal(1, estimate_size("host._key == 'mail'"))
     end
   end
 

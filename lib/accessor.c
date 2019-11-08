@@ -556,6 +556,7 @@ typedef struct {
   grn_obj *query;
   grn_search_optarg *optarg;
   grn_obj *index;
+  grn_operator operator;
   grn_obj query_casted;
   const char *query_raw;
   uint32_t query_raw_len;
@@ -625,19 +626,18 @@ grn_accessor_estimate_size_for_query_prepare(
     grn_obj_unlink(ctx, base_table);
   }
 
-  grn_operator op = GRN_OP_MATCH;
   if (data->optarg) {
     if (data->optarg->mode == GRN_OP_EXACT) {
-      op = GRN_OP_MATCH;
+      data->operator = GRN_OP_MATCH;
     } else {
-      op = data->optarg->mode;
+      data->operator = data->optarg->mode;
     }
   }
   grn_index_datum index_data;
   unsigned int n_index_datum;
   n_index_datum = grn_column_find_index_data(ctx,
                                              a->obj,
-                                             op,
+                                             data->operator,
                                              &index_data,
                                              1);
   if (n_index_datum == 0) {
@@ -705,6 +705,7 @@ grn_accessor_estimate_size_for_query(grn_ctx *ctx,
   data.query = query;
   data.optarg = optarg;
   data.index = NULL;
+  data.operator = GRN_OP_MATCH;
   GRN_VOID_INIT(&(data.query_casted));
   data.query_raw = NULL;
   data.query_raw_len = 0;
@@ -717,29 +718,38 @@ grn_accessor_estimate_size_for_query(grn_ctx *ctx,
   }
 
   uint32_t estimated_size = 0;
-  if (data.depth == 0) {
-    estimated_size = grn_ii_estimate_size_for_query(ctx,
-                                                    (grn_ii *)(data.index),
-                                                    data.query_raw,
-                                                    data.query_raw_len,
-                                                    optarg);
+  if (data.n_base_records == 0) {
+    estimated_size = 0;
   } else {
-    if (data.n_base_records == 0) {
-      estimated_size = 0;
+    uint32_t base_estimated_size;
+    if (grn_obj_is_table(ctx, data.index)) {
+      if (data.operator == GRN_OP_EQUAL) {
+        if (grn_table_get(ctx,
+                          data.index,
+                          data.query_raw,
+                          data.query_raw_len)) {
+          base_estimated_size = 1;
+        } else {
+          base_estimated_size = 0;
+        }
+      } else {
+        /* TODO */
+        base_estimated_size = data.n_base_records;
+      }
     } else {
-      uint32_t base_estimated_size =
+      base_estimated_size =
         grn_ii_estimate_size_for_query(ctx,
                                        (grn_ii *)(data.index),
                                        data.query_raw,
                                        data.query_raw_len,
                                        optarg);
-      if (base_estimated_size >= data.n_base_records) {
-        estimated_size = data.n_target_records;
-      } else {
-        estimated_size =
-          data.n_target_records *
-          (base_estimated_size / (double)(data.n_base_records));
-      }
+    }
+    if (base_estimated_size >= data.n_base_records) {
+      estimated_size = data.n_target_records;
+    } else {
+      estimated_size =
+        data.n_target_records *
+        (base_estimated_size / (double)(data.n_base_records));
     }
   }
 
