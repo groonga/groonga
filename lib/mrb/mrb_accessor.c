@@ -26,9 +26,12 @@
 #include <mruby/data.h>
 
 #include "../grn_db.h"
-#include "mrb_ctx.h"
 #include "mrb_accessor.h"
+#include "mrb_bulk.h"
 #include "mrb_converter.h"
+#include "mrb_ctx.h"
+#include "mrb_operator.h"
+#include "mrb_options.h"
 
 static struct mrb_data_type mrb_grn_accessor_type = {
   "Groonga::Accessor",
@@ -197,6 +200,46 @@ mrb_grn_accessor_name(mrb_state *mrb, mrb_value self)
   return mrb_name;
 }
 
+static mrb_value
+mrb_grn_accessor_estimate_size_for_query(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *accessor;
+  mrb_value mrb_query;
+  grn_obj query;
+  mrb_value mrb_options = mrb_nil_value();
+  grn_search_optarg optarg;
+  uint32_t size;
+
+  accessor = DATA_PTR(self);
+  mrb_get_args(mrb, "o|H", &mrb_query, &mrb_options);
+
+  GRN_VOID_INIT(&query);
+  grn_mrb_value_to_bulk(mrb, mrb_query, &query);
+
+  memset(&optarg, 0, sizeof(grn_search_optarg));
+  optarg.mode = GRN_OP_EXACT;
+
+  if (!mrb_nil_p(mrb_options)) {
+    mrb_value mrb_mode;
+
+    mrb_mode = grn_mrb_options_get_lit(mrb, mrb_options, "mode");
+    if (!mrb_nil_p(mrb_mode)) {
+      optarg.mode = grn_mrb_value_to_operator(mrb, mrb_mode);
+    }
+  }
+
+  size = grn_accessor_estimate_size_for_query(ctx,
+                                              accessor,
+                                              &query,
+                                              &optarg);
+  GRN_OBJ_FIN(ctx, &query);
+
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_fixnum_value(size);
+}
+
 void
 grn_mrb_accessor_init(grn_ctx *ctx)
 {
@@ -238,5 +281,9 @@ grn_mrb_accessor_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "name",
                     mrb_grn_accessor_name, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "estimate_size_for_query",
+                    mrb_grn_accessor_estimate_size_for_query,
+                    MRB_ARGS_ARG(1, 1));
 }
 #endif
