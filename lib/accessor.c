@@ -641,6 +641,9 @@ grn_accessor_estimate_size_for_query_prepare(
                                              &index_data,
                                              1);
   if (n_index_datum == 0) {
+    if (!grn_obj_is_table(ctx, a->obj)) {
+      return false;
+    }
     data->index = a->obj;
   } else {
     data->index = index_data.index;
