@@ -27,21 +27,22 @@ groonga_repository = "groonga/groonga"
 
 appveyor_url = "https://ci.appveyor.com/"
 appveyor_info = nil
+last_appveyor_info = nil
 client.statuses(groonga_repository, tag).each do |status|
   next unless status.target_url.start_with?(appveyor_url)
-  case status.state
-  when "pending"
-    # Ignore
-  else
-    match_data = /\/([^\/]+?)\/([^\/]+?)\/builds\/(\d+)\z/.match(status.target_url)
-    appveyor_info = {
-      account: match_data[1],
-      project: match_data[2],
-      build_id: match_data[3],
-    }
+
+  match_data = /\/([^\/]+?)\/([^\/]+?)\/builds\/(\d+)\z/.match(status.target_url)
+  last_appveyor_info = {
+    account: match_data[1],
+    project: match_data[2],
+    build_id: match_data[3],
+  }
+  unless status.state == "pending"
+    appveyor_info = last_appveyor_info
     break
   end
 end
+appveyor_info ||= last_appveyor_info
 if appveyor_info.nil?
   raise "No AppVeyor build"
 end
