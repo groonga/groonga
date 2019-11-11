@@ -170,7 +170,7 @@ module Groonga
 
         def compute_threshold
           threshold_env = ENV["GRN_LOGICAL_RANGE_FILTER_THRESHOLD"]
-          default_threshold = 0.2
+          default_threshold = 0.3
           (threshold_env || default_threshold).to_f
         end
 
