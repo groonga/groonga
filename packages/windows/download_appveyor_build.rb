@@ -14,7 +14,7 @@ end
 tag, output_directory, target_type = ARGV
 
 def download(url, local_path)
-  open(url) do |remote_file|
+  URI(url).open do |remote_file|
     File.open(local_path, "wb") do |local_file|
       local_file.print(remote_file.read)
     end
