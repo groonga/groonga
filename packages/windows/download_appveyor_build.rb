@@ -56,6 +56,7 @@ build_version = build_history["builds"][0]["buildNumber"]
 project = Veyor.project(account: appveyor_info[:account],
                         project: appveyor_info[:project],
                         version: build_version)
+downloaded = false
 project["build"]["jobs"].each do |job|
   job_id = job["jobId"]
   artifacts = Veyor.build_artifacts(job_id: job_id)
@@ -67,5 +68,12 @@ project["build"]["jobs"].each do |job|
     end
     url = "#{appveyor_url}api/buildjobs/#{job_id}/artifacts/#{file_name}"
     download(url, "#{output_directory}/#{file_name}")
+    downloaded = true
   end
+end
+
+unless downloaded
+  build_id = project["build"]["buildId"]
+  url = "#{appveyor_url}project/#{groonga_repository}/builds/#{build_id}"
+  raise "No artifacts on AppVeyor: #{url}"
 end
