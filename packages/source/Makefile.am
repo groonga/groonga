@@ -21,7 +21,7 @@ ensure-rsync-path:
 ensure-signed-archive: $(FILES)
 	for file in $(notdir $(FILES)); do				\
 	  (cd files &&							\
-	    gpg2 --local-user $(GPG_UID) --armor --detach-sign $$file);	\
+	    gpg2 --local-user $(GPG_UID_RSA4096) --armor --detach-sign $$file);	\
 	done
 
 ensure-latest-archive: $(FILES)
