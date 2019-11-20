@@ -978,7 +978,10 @@ mecab_next_default_format(grn_ctx *ctx,
     data.ignore_asterisk_value = GRN_TRUE;
     mecab_next_default_format_add_feature(ctx, &data, "inflected_type", 4);
     mecab_next_default_format_add_feature(ctx, &data, "inflected_form", 5);
-    mecab_next_default_format_add_feature(ctx, &data, "base_form", 6);
+    mecab_next_default_format_add_feature(ctx,
+                                          &data,
+                                          "base_form",
+                                          GRN_MECAB_FEATURE_LOCATION_BASE);
   }
   {
     grn_tokenizer_status status;
