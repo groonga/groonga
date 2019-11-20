@@ -50,7 +50,7 @@ static const size_t GRN_MECAB_FEATURE_LOCATION_CLASS = 0;
 static const size_t GRN_MECAB_FEATURE_LOCATION_SUBCLASS0 = 1;
 static const size_t GRN_MECAB_FEATURE_LOCATION_SUBCLASS1 = 2;
 static const size_t GRN_MECAB_FEATURE_LOCATION_SUBCLASS2 = 3;
-static const size_t GRN_MECAB_FEATURE_LOCATION_BASE = 6;
+static const size_t GRN_MECAB_FEATURE_LOCATION_BASE_FORM = 6;
 static const size_t GRN_MECAB_FEATURE_LOCATION_READING = 7;
 
 typedef struct {
@@ -938,7 +938,7 @@ mecab_next_default_format(grn_ctx *ctx,
     size_t base_form_length;
     base_form_length = mecab_get_feature(ctx,
                                          feature_locations,
-                                         GRN_MECAB_FEATURE_LOCATION_BASE,
+                                         GRN_MECAB_FEATURE_LOCATION_BASE_FORM,
                                          &base_form);
     if (base_form_length > 0) {
       grn_token_set_data(ctx, token, base_form, base_form_length);
@@ -981,7 +981,7 @@ mecab_next_default_format(grn_ctx *ctx,
     mecab_next_default_format_add_feature(ctx,
                                           &data,
                                           "base_form",
-                                          GRN_MECAB_FEATURE_LOCATION_BASE);
+                                          GRN_MECAB_FEATURE_LOCATION_BASE_FORM);
   }
   {
     grn_tokenizer_status status;
