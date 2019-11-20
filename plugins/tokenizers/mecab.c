@@ -929,10 +929,7 @@ mecab_next_default_format(grn_ctx *ctx,
     } else {
       grn_token_set_data(ctx, token, surface, surface_length);
     }
-  } else {
-    grn_token_set_data(ctx, token, surface, surface_length);
-  }
-  if (tokenizer->options->use_base_form) {
+  } else if (tokenizer->options->use_base_form) {
     grn_obj *feature_locations = &(tokenizer->feature_locations);
     const char *base_form = NULL;
     size_t base_form_length;
@@ -942,7 +939,11 @@ mecab_next_default_format(grn_ctx *ctx,
                                          &base_form);
     if (base_form_length > 0) {
       grn_token_set_data(ctx, token, base_form, base_form_length);
+    } else {
+      grn_token_set_data(ctx, token, surface, surface_length);
     }
+  } else {
+    grn_token_set_data(ctx, token, surface, surface_length);
   }
   if (tokenizer->options->include_class) {
     add_feature_data data;
