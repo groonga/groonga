@@ -14,7 +14,7 @@ just only for tests or development. You will encounter an out of
 memory error with a 32-bit package even if you just process medium
 size data.
 
-.. note:: Since Groonga 9.0.9, we dropped 32-bit package support on CentOS 6.
+.. note:: Since Groonga 9.0.8, we dropped 32-bit package support on CentOS 6.
 
 CentOS 6
 --------
