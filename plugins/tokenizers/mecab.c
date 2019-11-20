@@ -50,6 +50,7 @@ static const size_t GRN_MECAB_FEATURE_LOCATION_CLASS = 0;
 static const size_t GRN_MECAB_FEATURE_LOCATION_SUBCLASS0 = 1;
 static const size_t GRN_MECAB_FEATURE_LOCATION_SUBCLASS1 = 2;
 static const size_t GRN_MECAB_FEATURE_LOCATION_SUBCLASS2 = 3;
+static const size_t GRN_MECAB_FEATURE_LOCATION_BASE = 6;
 static const size_t GRN_MECAB_FEATURE_LOCATION_READING = 7;
 
 typedef struct {
@@ -59,6 +60,7 @@ typedef struct {
   grn_bool include_reading;
   grn_bool include_form;
   grn_bool use_reading;
+  grn_bool use_base_form;
   grn_obj target_classes;
 } grn_mecab_tokenizer_options;
 
@@ -156,6 +158,7 @@ mecab_tokenizer_options_init(grn_mecab_tokenizer_options *options)
   options->include_reading = GRN_FALSE;
   options->include_form = GRN_FALSE;
   options->use_reading = GRN_FALSE;
+  options->use_base_form = GRN_FALSE;
   GRN_TEXT_INIT(&(options->target_classes), GRN_OBJ_VECTOR);
 }
 
@@ -180,6 +183,10 @@ mecab_tokenizer_options_need_default_output(grn_ctx *ctx,
   }
 
   if (options->use_reading) {
+    return GRN_TRUE;
+  }
+
+  if (options->use_base_form) {
     return GRN_TRUE;
   }
 
@@ -250,6 +257,12 @@ mecab_tokenizer_options_open(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->use_reading);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "use_base_form")) {
+      options->use_base_form =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->use_base_form);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "target_class")) {
       const char *target_class = NULL;
       unsigned int target_class_length;
@@ -918,6 +931,18 @@ mecab_next_default_format(grn_ctx *ctx,
     }
   } else {
     grn_token_set_data(ctx, token, surface, surface_length);
+  }
+  if (tokenizer->options->use_base_form) {
+    grn_obj *feature_locations = &(tokenizer->feature_locations);
+    const char *base_form = NULL;
+    size_t base_form_length;
+    base_form_length = mecab_get_feature(ctx,
+                                         feature_locations,
+                                         GRN_MECAB_FEATURE_LOCATION_BASE,
+                                         &base_form);
+    if (base_form_length > 0) {
+      grn_token_set_data(ctx, token, base_form, base_form_length);
+    }
   }
   if (tokenizer->options->include_class) {
     add_feature_data data;
