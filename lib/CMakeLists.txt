@@ -38,9 +38,6 @@ string(REGEX REPLACE "([^;]+)" "mrb/\\1"
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/proc/sources.am LIBGRNPROC_SOURCES)
 string(REGEX REPLACE "([^;]+)" "proc/\\1"
   LIBGRNPROC_SOURCES "${LIBGRNPROC_SOURCES}")
-read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/ts/sources.am LIBGRNTS_SOURCES)
-string(REGEX REPLACE "([^;]+)" "ts/\\1"
-  LIBGRNTS_SOURCES "${LIBGRNTS_SOURCES}")
 
 if(WIN32)
   configure_file(
@@ -57,7 +54,6 @@ set_source_files_properties(
   ${LIBGROONGA_C_SOURCES}
   ${LIBGRNMRB_SOURCES}
   ${LIBGRNPROC_SOURCES}
-  ${LIBGRNTS_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 set_source_files_properties(
@@ -78,7 +74,6 @@ set(GRN_ALL_SOURCES
   ${LIBGRNDAT_SOURCES}
   ${LIBGRNMRB_SOURCES}
   ${LIBGRNPROC_SOURCES}
-  ${LIBGRNTS_SOURCES}
   ${LIBGROONGA_METADATA_SOURCES})
 if(GRN_EMBED)
   add_library(libgroonga STATIC ${GRN_ALL_SOURCES})

@@ -1,8 +1,7 @@
 SUBDIRS =					\
 	dat					\
 	mrb					\
-	proc					\
-	ts
+	proc
 
 NONEXISTENT_CXX_SOURCE = nonexistent.cpp
 
@@ -60,7 +59,6 @@ libgroonga_la_LIBADD =				\
 	dat/libgrndat.la			\
 	mrb/libgrnmrb.la			\
 	proc/libgrnproc.la			\
-	ts/libgrnts.la				\
 	$(MESSAGE_PACK_LIBS)
 
 if WITH_MRUBY

@@ -25,8 +25,6 @@
 #include "../grn_cache.h"
 #include "../grn_ii.h"
 
-#include "../grn_ts.h"
-
 #include <groonga/plugin.h>
 
 #define GRN_SELECT_INTERNAL_VAR_MATCH_COLUMNS "$match_columns"
@@ -3630,32 +3628,6 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
   }
 
   {
-    if (data->filter.filter.length > 0 &&
-        (data->filter.filter.value[0] == '?') &&
-        (ctx->impl->output.type == GRN_CONTENT_JSON)) {
-      ctx->rc = grn_ts_select(ctx, data->tables.target,
-                              data->filter.filter.value + 1,
-                              data->filter.filter.length - 1,
-                              data->scorer.value,
-                              data->scorer.length,
-                              data->sort_keys.value,
-                              data->sort_keys.length,
-                              data->output_columns.value,
-                              data->output_columns.length,
-                              data->offset,
-                              data->limit);
-      if (!ctx->rc &&
-          data->cacheable > 0 &&
-          cache_key_size <= GRN_CACHE_MAX_KEY_SIZE &&
-          (!data->cache.value ||
-           data->cache.length != 2 ||
-           data->cache.value[0] != 'n' ||
-           data->cache.value[1] != 'o')) {
-        grn_cache_update(ctx, cache_obj, cache_key, cache_key_size, outbuf);
-      }
-      goto exit;
-    }
-
     data->tables.initial = data->tables.target;
     if (!grn_select_apply_initial_columns(ctx, data)) {
       goto exit;
