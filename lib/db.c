@@ -2095,20 +2095,24 @@ call_delete_hook(grn_ctx *ctx, grn_obj *table, grn_id rid, const void *key, unsi
 static void
 clear_column_values(grn_ctx *ctx, grn_obj *table, grn_id rid)
 {
-  if (rid) {
-    grn_hash *cols;
-    if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                                GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
-      if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
-        grn_id *key;
-        GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
-          grn_obj *col = grn_ctx_at(ctx, *key);
-          if (col) { grn_obj_clear_value(ctx, col, rid); }
-        });
-      }
-      grn_hash_close(ctx, cols);
-    }
+  if (rid == GRN_ID_NIL) {
+    return;
   }
+
+  grn_hash *cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                   GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+  if (!cols) {
+    return;
+  }
+
+  if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
+    grn_id *key;
+    GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
+      grn_obj *col = grn_ctx_at(ctx, *key);
+      if (col) { grn_obj_clear_value(ctx, col, rid); }
+    });
+  }
+  grn_hash_close(ctx, cols);
 }
 
 static void
@@ -2239,6 +2243,8 @@ delete_reference_records(grn_ctx *ctx, grn_obj *table, grn_id id)
 {
   grn_hash *cols;
   grn_id *key;
+
+  return GRN_SUCCESS;
 
   cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                          GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
