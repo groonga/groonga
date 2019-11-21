@@ -242,6 +242,7 @@ struct _grn_ctx_impl {
   } temporary_open_spaces;
 };
 
+void grn_ctx_impl_columns_cache_delete(grn_ctx *ctx, grn_id table_id);
 void grn_ctx_impl_columns_cache_clear(grn_ctx *ctx);
 
 #ifdef __cplusplus

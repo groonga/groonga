@@ -428,6 +428,25 @@ grn_ctx_impl_columns_cache_clear(grn_ctx *ctx)
   CRITICAL_SECTION_LEAVE(ctx->impl->columns_cache_lock);
 }
 
+void
+grn_ctx_impl_columns_cache_delete(grn_ctx *ctx, grn_id table_id)
+{
+  CRITICAL_SECTION_ENTER(ctx->impl->columns_cache_lock);
+  grn_id cache_id;
+  void *value;
+  cache_id = grn_hash_get(ctx,
+                          ctx->impl->columns_cache,
+                          &table_id,
+                          sizeof(grn_id),
+                          &value);
+  if (cache_id != GRN_ID_NIL) {
+    grn_hash *columns = *((grn_hash **)value);
+    grn_hash_close(ctx, columns);
+    grn_hash_delete_by_id(ctx, ctx->impl->columns_cache, cache_id, NULL);
+  }
+  CRITICAL_SECTION_LEAVE(ctx->impl->columns_cache_lock);
+}
+
 static grn_rc
 grn_ctx_impl_fin(grn_ctx *ctx)
 {
