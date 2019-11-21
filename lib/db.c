@@ -2244,8 +2244,6 @@ delete_reference_records(grn_ctx *ctx, grn_obj *table, grn_id id)
   grn_hash *cols;
   grn_id *key;
 
-  return GRN_SUCCESS;
-
   cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                          GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
   if (!cols) {
