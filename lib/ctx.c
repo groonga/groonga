@@ -233,11 +233,13 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->values = NULL;
   ctx->impl->temporary_columns = NULL;
   ctx->impl->temporary_options = NULL;
+  ctx->impl->columns_cache = NULL;
   ctx->impl->ios = NULL;
   ctx->impl->expr_vars = NULL;
   ctx->impl->stack = NULL;
 
   CRITICAL_SECTION_INIT(ctx->impl->lock);
+  CRITICAL_SECTION_INIT(ctx->impl->columns_cache_lock);
   if (!(ctx->impl->values = grn_array_create(ctx, NULL, sizeof(grn_db_obj *),
                                              GRN_ARRAY_TINY))) {
     goto exit;
@@ -251,6 +253,14 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->temporary_options =
     grn_options_create(ctx, NULL, "[ctx][impl][create]");
   if (!ctx->impl->temporary_options) {
+    goto exit;
+  }
+  if (!(ctx->impl->columns_cache = grn_hash_create(ctx,
+                                                   NULL,
+                                                   sizeof(grn_id),
+                                                   sizeof(grn_hash *),
+                                                   GRN_OBJ_TABLE_HASH_KEY|
+                                                   GRN_HASH_TINY))) {
     goto exit;
   }
   if (!(ctx->impl->ios = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
@@ -338,6 +348,9 @@ exit :
     if (ctx->impl->ios) {
       grn_hash_close(ctx, ctx->impl->ios);
     }
+    if (ctx->impl->columns_cache) {
+      grn_hash_close(ctx, ctx->impl->columns_cache);
+    }
     if (ctx->impl->temporary_options) {
       grn_options_close(ctx, ctx->impl->temporary_options);
     }
@@ -347,6 +360,7 @@ exit :
     if (ctx->impl->values) {
       grn_array_close(ctx, ctx->impl->values);
     }
+    CRITICAL_SECTION_FIN(ctx->impl->columns_cache_lock);
     CRITICAL_SECTION_FIN(ctx->impl->lock);
     grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
     ctx->impl = NULL;
@@ -400,6 +414,20 @@ grn_ctx_impl_set_current_error_message(grn_ctx *ctx)
   grn_strcpy(ctx->impl->previous_errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
 }
 
+void
+grn_ctx_impl_columns_cache_clear(grn_ctx *ctx)
+{
+  CRITICAL_SECTION_ENTER(ctx->impl->columns_cache_lock);
+  GRN_HASH_EACH_BEGIN(ctx, ctx->impl->columns_cache, cursor, id) {
+    void *value;
+    grn_hash_cursor_get_value(ctx, cursor, &value);
+    grn_hash *columns = *((grn_hash **)value);
+    grn_hash_close(ctx, columns);
+    grn_hash_cursor_delete(ctx, cursor, NULL);
+  } GRN_HASH_EACH_END(ctx, cursor);
+  CRITICAL_SECTION_LEAVE(ctx->impl->columns_cache_lock);
+}
+
 static grn_rc
 grn_ctx_impl_fin(grn_ctx *ctx)
 {
@@ -451,6 +479,10 @@ grn_ctx_impl_fin(grn_ctx *ctx)
   if (ctx->impl->temporary_options) {
     grn_options_close(ctx, ctx->impl->temporary_options);
   }
+  if (ctx->impl->columns_cache) {
+    grn_ctx_impl_columns_cache_clear(ctx);
+    grn_hash_close(ctx, ctx->impl->columns_cache);
+  }
   if (ctx->impl->ios) {
     grn_hash_close(ctx, ctx->impl->ios);
   }
@@ -493,6 +525,7 @@ grn_ctx_impl_fin(grn_ctx *ctx)
   grn_alloc_fin_ctx_impl(ctx);
   grn_alloc_info_dump(ctx);
   grn_alloc_info_free(ctx);
+  CRITICAL_SECTION_FIN(ctx->impl->columns_cache_lock);
   CRITICAL_SECTION_FIN(ctx->impl->lock);
   {
     grn_io_mapinfo mi;

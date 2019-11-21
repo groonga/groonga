@@ -222,6 +222,8 @@ struct _grn_ctx_impl {
   grn_array *values;        /* temporary objects */
   grn_pat *temporary_columns;
   grn_options *temporary_options;
+  grn_critical_section columns_cache_lock;
+  grn_hash *columns_cache;
   grn_hash *ios;        /* IOs */
   grn_com *com;
   unsigned int com_status;
@@ -239,6 +241,8 @@ struct _grn_ctx_impl {
     grn_obj *current;
   } temporary_open_spaces;
 };
+
+void grn_ctx_impl_columns_cache_clear(grn_ctx *ctx);
 
 #ifdef __cplusplus
 }
