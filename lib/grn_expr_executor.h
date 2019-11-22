@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2017-2018 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -40,6 +41,15 @@ typedef union {
     grn_obj value_buffer;
     grn_obj *normalizer;
   } simple_regexp;
+  struct {
+    grn_obj result_buffer;
+    grn_obj *normalizer;
+    void *regex;
+    grn_obj *normalized_sub_text;
+    const char *normalized_sub_text_raw;
+    unsigned int normalized_sub_text_raw_length_in_bytes;
+    grn_obj value_buffer;
+  } simple_match;
   struct {
     grn_proc_ctx proc_ctx;
     int n_args;

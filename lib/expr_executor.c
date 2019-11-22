@@ -2567,7 +2567,7 @@ grn_expr_executor_init_simple_regexp(grn_ctx *ctx,
                    GRN_TEXT_LEN(pattern),
                    GRN_ONIGMO_OPTION_DEFAULT,
                    GRN_ONIGMO_SYNTAX_DEFAULT,
-                   "[expr-executor]");
+                   "[expr-executor][regexp]");
   if (!executor->data.simple_regexp.regex) {
     return;
   }
@@ -2723,6 +2723,228 @@ grn_expr_executor_fin_simple_regexp(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &(executor->data.simple_regexp.value_buffer));
 }
 #endif /* GRN_SUPPORT_REGEXP */
+
+static void
+grn_expr_executor_init_simple_match(grn_ctx *ctx,
+                                    grn_expr_executor *executor)
+{
+  grn_expr *e = (grn_expr *)(executor->expr);
+  grn_obj *result_buffer = &(executor->data.simple_match.result_buffer);
+  grn_obj *sub_text;
+
+  GRN_BOOL_INIT(result_buffer, 0);
+  GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+
+  executor->data.simple_match.normalizer =
+    grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+
+  sub_text = e->codes[1].value;
+  executor->data.simple_match.normalized_sub_text =
+    grn_string_open(ctx,
+                    GRN_TEXT_VALUE(sub_text),
+                    GRN_TEXT_LEN(sub_text),
+                    executor->data.simple_match.normalizer,
+                    0);
+  grn_string_get_normalized(
+    ctx,
+    executor->data.simple_match.normalized_sub_text,
+    &(executor->data.simple_match.normalized_sub_text_raw),
+    &(executor->data.simple_match.normalized_sub_text_raw_length_in_bytes),
+    NULL);
+#ifdef GRN_SUPPORT_REGEXP
+  executor->data.simple_match.regex =
+    grn_onigmo_new(
+      ctx,
+      executor->data.simple_match.normalized_sub_text_raw,
+      executor->data.simple_match.normalized_sub_text_raw_length_in_bytes,
+      GRN_ONIGMO_OPTION_DEFAULT,
+      ONIG_SYNTAX_ASIS,
+      "[expr-executor][match]");
+#endif
+
+  GRN_VOID_INIT(&(executor->data.simple_match.value_buffer));
+}
+
+static grn_bool
+grn_expr_executor_is_simple_match(grn_ctx *ctx,
+                                  grn_expr_executor *executor)
+{
+  grn_expr *e = (grn_expr *)(executor->expr);
+  grn_expr_code *target;
+  grn_expr_code *sub_text;
+  grn_expr_code *operator;
+
+  if (e->codes_curr != 3) {
+    return GRN_FALSE;
+  }
+
+  target = &(e->codes[0]);
+  sub_text = &(e->codes[1]);
+  operator = &(e->codes[2]);
+
+  if (operator->op != GRN_OP_MATCH) {
+    return GRN_FALSE;
+  }
+  if (operator->nargs != 2) {
+    return GRN_FALSE;
+  }
+
+  if (target->op != GRN_OP_GET_VALUE) {
+    return GRN_FALSE;
+  }
+  if (target->nargs != 1) {
+    return GRN_FALSE;
+  }
+  if (!target->value) {
+    return GRN_FALSE;
+  }
+  if (target->value->header.type != GRN_COLUMN_VAR_SIZE) {
+    return GRN_FALSE;
+  }
+  if ((target->value->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) !=
+      GRN_OBJ_COLUMN_SCALAR) {
+    return GRN_FALSE;
+  }
+  switch (grn_obj_get_range(ctx, target->value)) {
+  case GRN_DB_SHORT_TEXT :
+  case GRN_DB_TEXT :
+  case GRN_DB_LONG_TEXT :
+    break;
+  default :
+    return GRN_FALSE;
+  }
+
+  if (sub_text->op != GRN_OP_PUSH) {
+    return GRN_FALSE;
+  }
+  if (sub_text->nargs != 1) {
+    return GRN_FALSE;
+  }
+  if (!sub_text->value) {
+    return GRN_FALSE;
+  }
+  if (sub_text->value->header.type != GRN_BULK) {
+    return GRN_FALSE;
+  }
+  switch (sub_text->value->header.domain) {
+  case GRN_DB_SHORT_TEXT :
+  case GRN_DB_TEXT :
+  case GRN_DB_LONG_TEXT :
+    break;
+  default :
+    return GRN_FALSE;
+  }
+
+  if (!grn_onigmo_is_valid_encoding(ctx)) {
+    return GRN_FALSE;
+  }
+
+  grn_expr_executor_init_simple_match(ctx, executor);
+
+  return GRN_TRUE;
+}
+
+static bool
+grn_expr_executor_exec_simple_match_have_sub_text(grn_ctx *ctx,
+                                                  grn_expr_executor *executor,
+                                                  const char *text,
+                                                  unsigned int text_len)
+{
+  unsigned int sub_text_len =
+    executor->data.simple_match.normalized_sub_text_raw_length_in_bytes;
+
+  if (sub_text_len > text_len) {
+    return false;
+  }
+
+#ifdef GRN_SUPPORT_REGEXP
+  {
+    OnigRegex regex = executor->data.simple_match.regex;
+    OnigPosition position;
+    position = onig_search(regex,
+                           text,
+                           text + text_len,
+                           text,
+                           text + text_len,
+                           NULL,
+                           ONIG_OPTION_NONE);
+    return (position != ONIG_MISMATCH);
+  }
+#else /* GRN_SUPPORT_REGEXP */
+  {
+    grn_raw_string string;
+    string.value = text;
+    string.length = text_len;
+    grn_raw_string sub_string;
+    sub_string.value = executor->data.simple_match.normalized_sub_text_raw;
+    sub_string.length = sub_text_len;
+    return grn_raw_string_have_sub_string(ctx, &string, &sub_string);
+  }
+#endif /* GRN_SUPPORT_REGEXP */
+}
+
+static grn_obj *
+grn_expr_executor_exec_simple_match(grn_ctx *ctx,
+                                    grn_expr_executor *executor,
+                                    grn_id id)
+{
+  grn_expr *e = (grn_expr *)(executor->expr);
+  grn_obj *value_buffer = &(executor->data.simple_match.value_buffer);
+  grn_obj *result_buffer = &(executor->data.simple_match.result_buffer);
+
+  if (ctx->rc != GRN_SUCCESS) {
+    GRN_BOOL_SET(ctx, result_buffer, GRN_FALSE);
+    return result_buffer;
+  }
+
+  if (executor->data.simple_match.normalized_sub_text_raw_length_in_bytes == 0) {
+    return result_buffer;
+  }
+
+  grn_obj_reinit_for(ctx, value_buffer, e->codes[0].value);
+  grn_obj_get_value(ctx, e->codes[0].value, id, value_buffer);
+  {
+    grn_obj *norm_target;
+    norm_target = grn_string_open(ctx,
+                                  GRN_TEXT_VALUE(value_buffer),
+                                  GRN_TEXT_LEN(value_buffer),
+                                  executor->data.simple_match.normalizer,
+                                  0);
+    const char *norm_target_raw;
+    unsigned int norm_target_raw_length_in_bytes;
+    grn_string_get_normalized(ctx,
+                              norm_target,
+                              &norm_target_raw,
+                              &norm_target_raw_length_in_bytes,
+                              NULL);
+    bool have_sub_text =
+      grn_expr_executor_exec_simple_match_have_sub_text(
+        ctx,
+        executor,
+        norm_target_raw,
+        norm_target_raw_length_in_bytes);
+    GRN_BOOL_SET(ctx, result_buffer, have_sub_text);
+    grn_obj_close(ctx, norm_target);
+  }
+
+  return result_buffer;
+}
+
+static void
+grn_expr_executor_fin_simple_match(grn_ctx *ctx,
+                                   grn_expr_executor *executor)
+{
+  GRN_OBJ_FIN(ctx, &(executor->data.simple_match.result_buffer));
+
+#ifdef GRN_SUPPORT_REGEXP
+  if (executor->data.simple_match.regex) {
+    onig_free(executor->data.simple_match.regex);
+  }
+#endif /* GRN_SUPPORT_REGEXP */
+
+  grn_obj_close(ctx, executor->data.simple_match.normalized_sub_text);
+  GRN_OBJ_FIN(ctx, &(executor->data.simple_match.value_buffer));
+}
 
 static void
 grn_expr_executor_init_proc(grn_ctx *ctx,
@@ -3394,6 +3616,9 @@ grn_expr_executor_init(grn_ctx *ctx,
     executor->exec = grn_expr_executor_exec_simple_regexp;
     executor->fin = grn_expr_executor_fin_simple_regexp;
 #endif /* GRN_SUPPORT_REGEXP */
+  } else if (grn_expr_executor_is_simple_match(ctx, executor)) {
+    executor->exec = grn_expr_executor_exec_simple_match;
+    executor->fin = grn_expr_executor_fin_simple_match;
   } else if (grn_expr_executor_is_proc(ctx, executor)) {
     executor->exec = grn_expr_executor_exec_proc;
     executor->fin = grn_expr_executor_fin_proc;
