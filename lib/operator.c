@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2014-2017 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1120,7 +1120,7 @@ exec_text_operator_raw_text_raw_text(grn_ctx *ctx,
     norm_query_raw = query;
     norm_query_raw_length_in_bytes = query_len;
   } else {
-    norm_query = grn_string_open(ctx, query,  query_len,  normalizer, 0);
+    norm_query = grn_string_open(ctx, query, query_len, normalizer, 0);
     grn_string_get_normalized(ctx, norm_query,
                               &norm_query_raw,
                               &norm_query_raw_length_in_bytes,
