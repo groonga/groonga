@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2010-2018 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3281,6 +3282,8 @@ grn_expr_executor_is_simple_condition(grn_ctx *ctx,
   case GRN_OP_GREATER :
   case GRN_OP_LESS_EQUAL :
   case GRN_OP_GREATER_EQUAL :
+  case GRN_OP_MATCH :
+  case GRN_OP_PREFIX :
     break;
   default :
     return GRN_FALSE;
