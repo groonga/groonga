@@ -42,7 +42,7 @@ grn_raw_string_have_sub_string(grn_ctx *ctx,
                                grn_raw_string *string,
                                grn_raw_string *sub_string)
 {
-  if (sub_string->length) {
+  if (sub_string->length == 0) {
     return false;
   }
 
