@@ -944,80 +944,13 @@ string_have_sub_text(grn_ctx *ctx,
                      const char *text, unsigned int text_len,
                      const char *sub_text, unsigned int sub_text_len)
 {
-  if (sub_text_len == 0) {
-    return GRN_FALSE;
-  }
-
-  if (sub_text_len > text_len) {
-    return GRN_FALSE;
-  }
-
-#ifdef GRN_SUPPORT_REGEXP
-  if (grn_onigmo_is_valid_encoding(ctx)) {
-    OnigRegex regex;
-    grn_bool matched;
-
-    regex = grn_onigmo_new(ctx,
-                           sub_text,
-                           sub_text_len,
-                           GRN_ONIGMO_OPTION_DEFAULT,
-                           ONIG_SYNTAX_ASIS,
-                           "[operator]");
-    if (!regex) {
-      return GRN_FALSE;
-    }
-
-    matched = regexp_is_match(ctx, regex, text, text_len);
-    onig_free(regex);
-    return matched;
-  }
-#endif /* GRN_SUPPORT_REGEXP */
-  {
-    const char *text_current = text;
-    const char *text_end = text + text_len;
-    const char *sub_text_current = sub_text;
-    const char *sub_text_end = sub_text + sub_text_len;
-    int sub_text_start_char_len;
-    int sub_text_char_len;
-
-    sub_text_start_char_len = grn_charlen(ctx, sub_text, sub_text_end);
-    if (sub_text_start_char_len == 0) {
-      return GRN_FALSE;
-    }
-    sub_text_char_len = sub_text_start_char_len;
-
-    while (text_current < text_end) {
-      int text_char_len;
-
-      text_char_len = grn_charlen(ctx, text_current, text_end);
-      if (text_char_len == 0) {
-        return GRN_FALSE;
-      }
-
-      if (text_char_len == sub_text_char_len &&
-          memcmp(text_current, sub_text_current, text_char_len) == 0) {
-        sub_text_current += sub_text_char_len;
-        if (sub_text_current == sub_text_end) {
-          return GRN_TRUE;
-        }
-
-        sub_text_char_len = grn_charlen(ctx, sub_text_current, sub_text_end);
-        if (sub_text_char_len == 0) {
-          return GRN_FALSE;
-        }
-      } else {
-        if (sub_text_current != sub_text) {
-          sub_text_current = sub_text;
-          sub_text_char_len = sub_text_start_char_len;
-          continue;
-        }
-      }
-
-      text_current += text_char_len;
-    }
-
-    return GRN_FALSE;
-  }
+  grn_raw_string string;
+  string.value = text;
+  string.length = text_len;
+  grn_raw_string sub_string;
+  sub_string.value = sub_text;
+  sub_string.length = sub_text_len;
+  return grn_raw_string_have_sub_string(ctx, &string, &sub_string);
 }
 
 static grn_bool
