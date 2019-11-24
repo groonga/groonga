@@ -4,9 +4,6 @@ if apache_arrow_repository.nil?
 end
 require "#{apache_arrow_repository}/dev/tasks/linux-packages/package-task"
 
-ENV["APT_TARGETS"] ||= "debian-stretch,debian-stretch-i386,debian-buster,debian-buster-i386"
-ENV["YUM_TARGETS"] ||= "centos-6,centos-7"
-
 class GroongaPackageTask < PackageTask
   def initialize(apache_arrow_repository)
     @apache_arrow_repository = apache_arrow_repository
@@ -19,12 +16,6 @@ class GroongaPackageTask < PackageTask
     @original_archive_name = @archive_name
   end
 
-  def define
-    super
-    define_apt_build_sh_task
-    define_yum_build_sh_task
-  end
-
   private
   def define_archive_task
     file @original_archive_name do
@@ -33,40 +24,21 @@ class GroongaPackageTask < PackageTask
     end
   end
 
-  def define_apt_build_sh_task
-    apache_arrow_apt_build_sh =
-      File.join(@apache_arrow_repository,
-                "dev",
-                "tasks",
-                "linux-packages",
-                "apt",
-                "build.sh")
-    apt_build_sh = File.join(__dir__, "apt", "build.sh")
-    file apt_build_sh => apache_arrow_apt_build_sh do |task|
-      cp(apache_arrow_apt_build_sh,
-         task.name)
-    end
-    namespace :apt do
-      task :build => apt_build_sh
-    end
+  def apt_targets_default
+    [
+      "debian-stretch",
+      "debian-stretch-i386",
+      "debian-buster",
+      "debian-buster-i386",
+    ]
   end
 
-  def define_yum_build_sh_task
-    apache_arrow_yum_build_sh =
-      File.join(@apache_arrow_repository,
-                "dev",
-                "tasks",
-                "linux-packages",
-                "yum",
-                "build.sh")
-    yum_build_sh = File.join(__dir__, "yum", "build.sh")
-    file yum_build_sh => apache_arrow_yum_build_sh do |task|
-      cp(apache_arrow_yum_build_sh,
-         task.name)
-    end
-    namespace :yum do
-      task :build => yum_build_sh
-    end
+  def yum_targets_default
+    [
+      "centos-6",
+      "centos-7",
+      "centos-8",
+    ]
   end
 end
 
