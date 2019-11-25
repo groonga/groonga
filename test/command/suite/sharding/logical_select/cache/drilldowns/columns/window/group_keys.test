@@ -25,7 +25,7 @@ load --table Logs_20170415
 [
 {"timestamp": "2017/04/15 00:00:00", "item": "item1", "category": "Book"},
 {"timestamp": "2017/04/15 01:00:00", "item": "item2", "category": "Pen"},
-{"timestamp": "2017/04/15 02:00:00", "item": "item1", "cateogry": "Pen"}
+{"timestamp": "2017/04/15 02:00:00", "item": "item1", "category": "Pen"}
 ]
 
 load --table Logs_20170416

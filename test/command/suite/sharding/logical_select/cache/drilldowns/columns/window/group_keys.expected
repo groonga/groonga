@@ -30,10 +30,9 @@ load --table Logs_20170415
 [
 {"timestamp": "2017/04/15 00:00:00", "item": "item1", "category": "Book"},
 {"timestamp": "2017/04/15 01:00:00", "item": "item2", "category": "Pen"},
-{"timestamp": "2017/04/15 02:00:00", "item": "item1", "cateogry": "Pen"}
+{"timestamp": "2017/04/15 02:00:00", "item": "item1", "category": "Pen"}
 ]
 [[0,0.0,0.0],3]
-#|e| [load] nonexistent column: <Logs_20170415.cateogry>
 load --table Logs_20170416
 [
 {"timestamp": "2017/04/16 10:00:00", "item": "item2", "category": "Pen"},
@@ -63,7 +62,7 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
     {
       "group": [
         [
-          4
+          3
         ],
         [
           [
@@ -81,15 +80,11 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
         ],
         [
           "item2",
-          2
-        ],
-        [
-          "item1",
-          2
-        ],
-        [
-          "item1",
           1
+        ],
+        [
+          "item1",
+          2
         ]
       ]
     }
@@ -117,7 +112,7 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
     {
       "group": [
         [
-          4
+          3
         ],
         [
           [
@@ -136,10 +131,6 @@ logical_select Logs   --shard_key timestamp   --limit 0   --output_columns _id  
         [
           "item2",
           2
-        ],
-        [
-          "item1",
-          1
         ],
         [
           "item1",
