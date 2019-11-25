@@ -8219,7 +8219,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
           if (GRN_OBJ_TABLEP(domain)) {
             grn_id subrec_id;
             if (grn_table_get_subrecs(ctx, obj, id, &subrec_id, NULL, 1) == 1) {
-              GRN_RECORD_SET(ctx, value, subrec_id);
+              GRN_RECORD_PUT(ctx, value, subrec_id);
               processed = GRN_TRUE;
             }
           }
