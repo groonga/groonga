@@ -1,6 +1,6 @@
 require_relative "packages-groonga-org-package-task"
 
-class GroongaPackageTask < PackageGroongaOrgPackageTask
+class GroongaPackageTask < PackagesGroongaOrgPackageTask
   def initialize(apache_arrow_repository)
     @apache_arrow_repository = apache_arrow_repository
     base_version_file = File.join(__dir__,
