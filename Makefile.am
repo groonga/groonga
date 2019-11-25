@@ -78,12 +78,12 @@ update-latest-release: misc
 	  misc/update-latest-release.rb				\
 	  $(PACKAGE) $(OLD_RELEASE) $(OLD_RELEASE_DATE)		\
 	  $(VERSION) $(NEW_RELEASE_DATE)			\
-	  packages/debian/changelog				\
-	  packages/yum/groonga.spec.in				\
 	  doc/source/install.rst				\
 	  doc/source/install/*.rst				\
 	  doc/locale/*/LC_MESSAGES/install.po			\
 	  $(GROONGA_ORG_PATH)/_config.yml
+	cd $(top_srcdir)/packages &&		\
+	  $(RUBY) -S rake version:update
 
 update-po:
 	@for lang in $(LOCALES); do						\
