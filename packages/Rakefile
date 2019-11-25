@@ -1,10 +1,6 @@
-apache_arrow_repository = ENV["APACHE_ARROW_REPOSITORY"]
-if apache_arrow_repository.nil?
-  raise "Specify APACHE_ARROW_REPOSITORY environment variable"
-end
-require "#{apache_arrow_repository}/dev/tasks/linux-packages/package-task"
+require_relative "packages-groonga-org-package-task"
 
-class GroongaPackageTask < PackageTask
+class GroongaPackageTask < PackageGroongaOrgPackageTask
   def initialize(apache_arrow_repository)
     @apache_arrow_repository = apache_arrow_repository
     base_version_file = File.join(__dir__,

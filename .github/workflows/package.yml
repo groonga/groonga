@@ -58,6 +58,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
         with:
+          submodules: true
           fetch-depth: 1
       - name: Install dependencies
         run: |
@@ -73,7 +74,6 @@ jobs:
       - name: Clone dependencies
         run: |
           cd ..
-          git clone --depth 1 https://github.com/apache/arrow.git
           git clone --depth 1 https://github.com/groonga/groonga.org.git
           git clone --depth 1 https://github.com/clear-code/cutter.git
       - name: Generate configure
