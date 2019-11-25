@@ -83,7 +83,8 @@ update-latest-release: misc
 	  doc/locale/*/LC_MESSAGES/install.po			\
 	  $(GROONGA_ORG_PATH)/_config.yml
 	cd $(top_srcdir)/packages &&		\
-	  $(RUBY) -S rake version:update
+	  $(RUBY) -S rake version:update	\
+	    RELEASE_DATE=$(NEW_RELEASE_DATE)
 
 update-po:
 	@for lang in $(LOCALES); do						\

@@ -6,7 +6,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
                                   "..",
                                   "base_version")
     version = File.read(base_version_file).chomp
-    super("groonga", version, nil)
+    super("groonga", version, detect_release_time)
     @archive_name = "groonga-#{version}.tar.gz"
     @original_archive_name = @archive_name
   end

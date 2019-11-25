@@ -7,6 +7,15 @@ class PackagesGroongaOrgPackageTask < PackageTask
   end
 
   private
+  def detect_release_time
+    release_time_env = ENV["RELEASE_TIME"]
+    if release_time_env
+      Time.parse(release_time_env).utc
+    else
+      Time.now.utc
+    end
+  end
+
   def release(target_namespace)
     base_dir = __send__("#{target_namespace}_dir")
     repositories_dir = "#{base_dir}/repositories"
