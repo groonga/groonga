@@ -7,6 +7,54 @@
 News
 ====
 
+.. _release-9-1-0:
+
+Release 9.1.0 - 2019-11-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Improved the performance of the sort by value.
+
+* Improved the performance of the "&&" operation.
+
+  * For example, the performance of condition expression such as the following is increased.
+
+  * ( A || B ) && ( C || D ) && ( E || F) ...
+
+* [:doc:`/reference/tokenizers/token_mecab`] Added a new option ``use_base_form``
+
+  * We can search using the base form of a token by this option.
+
+  * For example, if we search "支えた" using this option, "支える" is hit also.
+
+Fixes
+^^^^^
+
+* Fix a bug that when the accessor is index, performance decreases.
+
+  * For example, it occurs with the query include the following conditions.
+
+    * ``sccessor @ query``
+
+    * ``accessor == query``
+
+* Fixed a bug the estimated size of a search result was overflow when the buffer is big enough. [PGroonga#GitHub#115][Reported by Albert Song]
+
+* Improved a test(1) portability. [GitHub#1065][Patched by OBATA Akio]
+
+* Added missing tools.
+
+  * Because ``index-column-diff-all.sh`` and ``object-inspect-all.sh`` had not bundled in before version.
+
+Thanks
+^^^^^^
+
+* Albert Song
+
+* OBATA Akio
+
 .. _release-9-0-9:
 
 Release 9.0.9 - 2019-10-30
