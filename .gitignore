@@ -141,10 +141,7 @@ CMakeFiles
 /packages/apt/groonga-keyring-*.tar.gz
 /packages/apt/.vagrant/
 /packages/apt/tmp/
-/packages/ubuntu/precise/
-/packages/ubuntu/trusty/
-/packages/ubuntu/tmp/
-/packages/ubuntu/*.tar.gz
+/packages/ubuntu/
 /configure.lineno
 /packages/yum/build.sh
 /packages/yum/groonga.repo
