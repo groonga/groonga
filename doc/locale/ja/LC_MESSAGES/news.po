@@ -39,9 +39,6 @@ msgstr "9.1.0リリース - 2019-11-29"
 msgid "Improvements"
 msgstr "改良"
 
-msgid "Improved the performance of the sort by value."
-msgstr "値によるソートのパフォーマンスを改善しました。"
-
 msgid "Improved the performance of the \"&&\" operation."
 msgstr "\"&&\"演算のパフォーマンスを改善しました。"
 

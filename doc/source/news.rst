@@ -15,8 +15,6 @@ Release 9.1.0 - 2019-11-29
 Improvements
 ^^^^^^^^^^^^
 
-* Improved the performance of the sort by value.
-
 * Improved the performance of the "&&" operation.
 
   * For example, the performance of condition expression such as the following is increased.
