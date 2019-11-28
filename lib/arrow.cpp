@@ -1132,9 +1132,11 @@ grn_arrow_dump_columns(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
+#ifdef GRN_WITH_APACHE_ARROW
 struct _grn_arrow_stream_loader {
   grnarrow::StreamLoader *loader;
 };
+#endif
 
 grn_arrow_stream_loader *
 grn_arrow_stream_loader_open(grn_ctx *ctx,
