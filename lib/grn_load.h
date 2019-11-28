@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2017 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -42,6 +42,61 @@ typedef struct grn_load_input_ {
 } grn_load_input;
 
 void grn_load_internal(grn_ctx *ctx, grn_load_input *input);
+
+typedef enum {
+  GRN_LOADER_BEGIN = 0,
+  GRN_LOADER_TOKEN,
+  GRN_LOADER_STRING,
+  GRN_LOADER_SYMBOL,
+  GRN_LOADER_NUMBER,
+  GRN_LOADER_STRING_ESC,
+  GRN_LOADER_UNICODE0,
+  GRN_LOADER_UNICODE1,
+  GRN_LOADER_UNICODE2,
+  GRN_LOADER_UNICODE3,
+  GRN_LOADER_END
+} grn_loader_stat;
+
+/*
+ * Status of target columns used in Format 1.
+ * Target columns are specified via --columns or the first array in a Format 1
+ * JSON object.
+ */
+typedef enum {
+  GRN_LOADER_COLUMNS_UNSET = 0, /* Columns are not available. */
+  GRN_LOADER_COLUMNS_SET,       /* Columns are available. */
+  GRN_LOADER_COLUMNS_BROKEN     /* Columns are specified but broken. */
+} grn_loader_columns_status;
+
+typedef struct {
+  grn_obj values;
+  grn_obj level;
+  grn_obj columns;
+  grn_obj ids;
+  grn_obj return_codes;
+  grn_obj error_messages;
+  uint32_t emit_level;
+  int32_t id_offset;  /* Position of _id in values or -1 if _id is N/A. */
+  int32_t key_offset; /* Position of _key in values or -1 if _key is N/A. */
+  grn_obj *last;
+  grn_obj *table;
+  grn_obj *ifexists;
+  grn_obj *each;
+  uint32_t unichar;
+  uint32_t unichar_hi;
+  uint32_t values_size;
+  uint32_t n_records;
+  uint32_t n_record_errors;
+  uint32_t n_column_errors;
+  grn_loader_stat stat;
+  grn_content_type input_type;
+  grn_loader_columns_status columns_status;
+  grn_rc rc;
+  char errbuf[GRN_CTX_MSGSIZE];
+  grn_bool output_ids;
+  grn_bool output_errors;
+  grn_bool lock_table;
+} grn_loader;
 
 #ifdef __cplusplus
 }

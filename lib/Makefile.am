@@ -10,6 +10,7 @@ lib_LTLIBRARIES = libgroonga.la
 include $(top_srcdir)/version.sh
 
 AM_CPPFLAGS =					\
+	$(LUAJIT_CFLAGS)			\
 	$(MRUBY_CPPFLAGS)
 
 AM_CFLAGS =					\

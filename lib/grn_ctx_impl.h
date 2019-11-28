@@ -23,6 +23,8 @@
 #include "grn_com.h"
 #include "grn_options.h"
 #include "grn_msgpack.h"
+#include "grn_load.h"
+#include "grn_arrow.h"
 
 #ifdef GRN_WITH_MRUBY
 # include <mruby.h>
@@ -45,61 +47,6 @@ extern "C" {
 
 #define GRN_CTX_INITED    0x00
 #define GRN_CTX_QUITTING  0x0f
-
-typedef enum {
-  GRN_LOADER_BEGIN = 0,
-  GRN_LOADER_TOKEN,
-  GRN_LOADER_STRING,
-  GRN_LOADER_SYMBOL,
-  GRN_LOADER_NUMBER,
-  GRN_LOADER_STRING_ESC,
-  GRN_LOADER_UNICODE0,
-  GRN_LOADER_UNICODE1,
-  GRN_LOADER_UNICODE2,
-  GRN_LOADER_UNICODE3,
-  GRN_LOADER_END
-} grn_loader_stat;
-
-/*
- * Status of target columns used in Format 1.
- * Target columns are specified via --columns or the first array in a Format 1
- * JSON object.
- */
-typedef enum {
-  GRN_LOADER_COLUMNS_UNSET = 0, /* Columns are not available. */
-  GRN_LOADER_COLUMNS_SET,       /* Columns are available. */
-  GRN_LOADER_COLUMNS_BROKEN     /* Columns are specified but broken. */
-} grn_loader_columns_status;
-
-typedef struct {
-  grn_obj values;
-  grn_obj level;
-  grn_obj columns;
-  grn_obj ids;
-  grn_obj return_codes;
-  grn_obj error_messages;
-  uint32_t emit_level;
-  int32_t id_offset;  /* Position of _id in values or -1 if _id is N/A. */
-  int32_t key_offset; /* Position of _key in values or -1 if _key is N/A. */
-  grn_obj *table;
-  grn_obj *last;
-  grn_obj *ifexists;
-  grn_obj *each;
-  uint32_t unichar;
-  uint32_t unichar_hi;
-  uint32_t values_size;
-  uint32_t n_records;
-  uint32_t n_record_errors;
-  uint32_t n_column_errors;
-  grn_loader_stat stat;
-  grn_content_type input_type;
-  grn_loader_columns_status columns_status;
-  grn_rc rc;
-  char errbuf[GRN_CTX_MSGSIZE];
-  grn_bool output_ids;
-  grn_bool output_errors;
-  grn_bool lock_table;
-} grn_loader;
 
 #define GRN_CTX_N_SEGMENTS 512
 
@@ -178,6 +125,7 @@ struct _grn_ctx_impl {
   /* loader portion */
   grn_edge *edge;
   grn_loader loader;
+  grn_arrow_stream_loader *arrow_stream_loader;
 
   /* plugin portion */
   const char *plugin_path;

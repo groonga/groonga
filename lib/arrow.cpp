@@ -19,6 +19,7 @@
 
 #include "grn.h"
 #include "grn_db.h"
+#include "grn_arrow.h"
 
 #ifdef GRN_WITH_APACHE_ARROW
 #include <groonga/arrow.hpp>
@@ -30,7 +31,7 @@
 #include <sstream>
 
 namespace grnarrow {
-  grn_rc status_to_rc(arrow::Status &status) {
+  grn_rc status_to_rc(const arrow::Status &status) {
     switch (status.code()) {
     case arrow::StatusCode::OK:
       return GRN_SUCCESS;
@@ -74,15 +75,119 @@ namespace grnarrow {
                         static_cast<std::stringstream &>(output).str().c_str());
   }
 
+  class RecordAddVisitor : public arrow::ArrayVisitor {
+  public:
+    RecordAddVisitor(grn_ctx *ctx,
+                     grn_obj *grn_table,
+                     std::vector<grn_id> *record_ids)
+      : ctx_(ctx),
+        grn_table_(grn_table),
+        record_ids_(record_ids) {
+    }
+
+    ~RecordAddVisitor() {
+    }
+
+    arrow::Status Visit(const arrow::BooleanArray &array) {
+      return add_records(array, sizeof(bool));
+    }
+
+    arrow::Status Visit(const arrow::Int8Array &array) {
+      return add_records(array, sizeof(int8_t));
+    }
+
+    arrow::Status Visit(const arrow::UInt8Array &array) {
+      return add_records(array, sizeof(uint8_t));
+    }
+
+    arrow::Status Visit(const arrow::Int16Array &array) {
+      return add_records(array, sizeof(int16_t));
+    }
+
+    arrow::Status Visit(const arrow::UInt16Array &array) {
+      return add_records(array, sizeof(uint16_t));
+    }
+
+    arrow::Status Visit(const arrow::Int32Array &array) {
+      return add_records(array, sizeof(int32_t));
+    }
+
+    arrow::Status Visit(const arrow::UInt32Array &array) {
+      return add_records(array, sizeof(uint32_t));
+    }
+
+    arrow::Status Visit(const arrow::Int64Array &array) {
+      return add_records(array, sizeof(int64_t));
+    }
+
+    arrow::Status Visit(const arrow::UInt64Array &array) {
+      return add_records(array, sizeof(uint64_t));
+    }
+
+    arrow::Status Visit(const arrow::HalfFloatArray &array) {
+      return add_records(array, sizeof(uint16_t));
+    }
+
+    arrow::Status Visit(const arrow::FloatArray &array) {
+      return add_records(array, sizeof(float));
+    }
+
+    arrow::Status Visit(const arrow::DoubleArray &array) {
+      return add_records(array, sizeof(double));
+    }
+
+    arrow::Status Visit(const arrow::StringArray &array) {
+      const auto n_rows = array.length();
+      for (int64_t i = 0; i < n_rows; ++i) {
+        const auto &key = array.GetView(i);
+        const auto record_id = grn_table_add(ctx_,
+                                             grn_table_,
+                                             key.data(),
+                                             key.size(),
+                                             NULL);
+        record_ids_->push_back(record_id);
+      }
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::Date64Array &array) {
+      return add_records(array, sizeof(int64_t));
+    }
+
+    arrow::Status Visit(const arrow::TimestampArray &array) {
+      return add_records(array, sizeof(int64_t));
+    }
+
+  private:
+    grn_ctx *ctx_;
+    grn_obj *grn_table_;
+    std::vector<grn_id> *record_ids_;
+
+    template <typename T>
+    arrow::Status add_records(const T &array, size_t key_size) {
+      const auto n_rows = array.length();
+      for (int64_t i = 0; i < n_rows; ++i) {
+        const auto &key = array.Value(i);
+        const auto record_id = grn_table_add(ctx_,
+                                             grn_table_,
+                                             &key,
+                                             key_size,
+                                             NULL);
+        record_ids_->push_back(record_id);
+      }
+      return arrow::Status::OK();
+    }
+  };
+
   class ColumnLoadVisitor : public arrow::ArrayVisitor {
   public:
     ColumnLoadVisitor(grn_ctx *ctx,
                       grn_obj *grn_table,
-                      const std::shared_ptr<arrow::Field>& arrow_field,
-                      const grn_id *ids)
+                      const std::shared_ptr<arrow::Field> &arrow_field,
+                      const grn_id *record_ids)
       : ctx_(ctx),
         grn_table_(grn_table),
-        ids_(ids),
+        record_ids_(record_ids),
         time_unit_(arrow::TimeUnit::SECOND) {
       const auto& column_name = arrow_field->name();
       grn_column_ = grn_obj_column(ctx_, grn_table_,
@@ -234,7 +339,7 @@ namespace grnarrow {
   private:
     grn_ctx *ctx_;
     grn_obj *grn_table_;
-    const grn_id *ids_;
+    const grn_id *record_ids_;
     arrow::TimeUnit::type time_unit_;
     grn_obj *grn_column_;
     grn_obj buffer_;
@@ -243,10 +348,10 @@ namespace grnarrow {
     arrow::Status set_values(const T &array) {
       int64_t n_rows = array.length();
       for (int i = 0; i < n_rows; ++i) {
-        auto id = ids_[i];
+        const auto record_id = record_ids_[i];
         GRN_BULK_REWIND(&buffer_);
         get_value(array, i);
-        grn_obj_set_value(ctx_, grn_column_, id, &buffer_, GRN_OBJ_SET);
+        grn_obj_set_value(ctx_, grn_column_, record_id, &buffer_, GRN_OBJ_SET);
       }
       return arrow::Status::OK();
     }
@@ -735,6 +840,176 @@ namespace grnarrow {
       return builder.Finish(array);
     }
   };
+
+  class BufferInputStream : public arrow::io::InputStream,
+                            public arrow::io::Seekable {
+  public:
+    BufferInputStream()
+      : buffer_(),
+        offset_(0),
+        closed_(false) {
+    }
+
+    ~BufferInputStream() {
+    }
+
+    void feed(const char *data, size_t data_size) {
+      if (offset_ == 0) {
+        buffer_.append(data, data_size);
+      } else {
+        buffer_.erase(0, offset_);
+        buffer_.append(data, data_size);
+        offset_ = 0;
+      }
+    }
+
+    arrow::Status Close() override {
+      closed_ = true;
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Abort() override {
+      closed_ = true;
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Tell(int64_t* position) const override {
+      *position = offset_;
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Seek(int64_t position) override {
+      offset_ = position;
+      return arrow::Status::OK();
+    }
+
+    bool closed() const override {
+      return closed_;
+    }
+
+    arrow::Status Peek(int64_t nbytes, arrow::util::string_view* out) override {
+      const int64_t bytes_available =
+        std::min(nbytes,
+                 static_cast<int64_t>(buffer_.size() - offset_));
+      *out = arrow::util::string_view(buffer_.data() + offset_,
+                                      static_cast<size_t>(bytes_available));
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Read(int64_t nbytes, int64_t* bytes_read, void* out) override {
+      const int64_t bytes_available =
+        std::min(nbytes,
+                 static_cast<int64_t>(buffer_.size() - offset_));
+      if (bytes_available > 0) {
+        *bytes_read = bytes_available;
+        memcpy(out, buffer_.data() + offset_, bytes_available);
+        offset_ += bytes_available;
+      } else {
+        *bytes_read = 0;
+      }
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Read(int64_t nbytes,
+                       std::shared_ptr<arrow::Buffer>* out) override {
+      const int64_t bytes_available =
+        std::min(nbytes,
+                 static_cast<int64_t>(buffer_.size() - offset_));
+      *out = std::make_shared<arrow::Buffer>(
+        reinterpret_cast<const uint8_t *>(buffer_.data() + offset_),
+        bytes_available);
+      offset_ += bytes_available;
+      return arrow::Status::OK();
+    }
+
+    bool supports_zero_copy() const override {
+      return false;
+    }
+
+  private:
+    std::string buffer_;
+    int64_t offset_;
+    bool closed_;
+  };
+
+  class StreamLoader {
+  public:
+    StreamLoader(grn_ctx *ctx, grn_loader *loader)
+      : ctx_(ctx),
+        grn_loader_(loader),
+        input_(),
+        reader_(nullptr) {
+    }
+
+    ~StreamLoader() {
+    }
+
+    grn_rc feed(const char *data, size_t data_size) {
+      if (data_size == 0) {
+        return GRN_SUCCESS;
+      }
+
+      input_.feed(data, data_size);
+      if (!reader_) {
+        const auto status = arrow::ipc::RecordBatchStreamReader::Open(&input_,
+                                                                      &reader_);
+        if (!status.ok()) {
+          return status_to_rc(status);
+        }
+      }
+
+      int64_t position;
+      input_.Tell(&position);
+      const auto &stream_reader =
+        std::static_pointer_cast<arrow::ipc::RecordBatchStreamReader>(reader_);
+      std::shared_ptr<arrow::RecordBatch> record_batch;
+      {
+        const auto status = stream_reader->ReadNext(&record_batch);
+        if (!status.ok()) {
+          input_.Seek(position);
+          return ctx_->rc;
+        }
+      }
+
+      auto grn_table = grn_loader_->table;
+      const auto &key_column = record_batch->GetColumnByName("_key");
+      const auto n_records = record_batch->num_rows();
+      std::vector<grn_id> record_ids;
+      if (key_column) {
+        RecordAddVisitor visitor(ctx_,
+                                 grn_table,
+                                 &record_ids);
+        key_column->Accept(&visitor);
+      } else {
+        for (int64_t i = 0; i < n_records; ++i) {
+          const auto record_id = grn_table_add(ctx_, grn_table, NULL, 0, NULL);
+          record_ids.push_back(record_id);
+        }
+      }
+      grn_loader_->n_records += record_ids.size();
+
+      const auto &schema = record_batch->schema();
+      const auto n_columns = record_batch->num_columns();
+      for (int i = 0; i < n_columns; ++i) {
+        const auto &column = record_batch->column(i);
+        if (column == key_column) {
+          continue;
+        }
+        ColumnLoadVisitor visitor(ctx_,
+                                  grn_table,
+                                  schema->field(i),
+                                  record_ids.data());
+        column->Accept(&visitor);
+      }
+      return ctx_->rc;
+    };
+
+  private:
+    grn_ctx *ctx_;
+    grn_loader *grn_loader_;
+    BufferInputStream input_;
+    std::shared_ptr<arrow::ipc::RecordBatchReader> reader_;
+  };
 }
 #endif /* GRN_WITH_APACHE_ARROW */
 
@@ -854,6 +1129,62 @@ grn_arrow_dump_columns(grn_ctx *ctx,
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][dump] Apache Arrow support isn't enabled");
 #endif /* GRN_WITH_APACHE_ARROW */
+  GRN_API_RETURN(ctx->rc);
+}
+
+struct _grn_arrow_stream_loader {
+  grnarrow::StreamLoader *loader;
+};
+
+grn_arrow_stream_loader *
+grn_arrow_stream_loader_open(grn_ctx *ctx,
+                             grn_loader *loader)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  grn_arrow_stream_loader *arrow_stream_loader;
+  arrow_stream_loader = GRN_MALLOCN(grn_arrow_stream_loader, 1);
+  arrow_stream_loader->loader = new grnarrow::StreamLoader(ctx, loader);
+  GRN_API_RETURN(arrow_stream_loader);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-loader][open] Apache Arrow support isn't enabled");
+  GRN_API_RETURN(NULL);
+#endif
+}
+
+grn_rc
+grn_arrow_stream_loader_close(grn_ctx *ctx,
+                              grn_arrow_stream_loader *loader)
+{
+  if (!loader) {
+    return ctx->rc;
+  }
+
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  delete loader->loader;
+  GRN_FREE(loader);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-loader][close] Apache Arrow support isn't enabled");
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_arrow_stream_loader_feed(grn_ctx *ctx,
+                             grn_arrow_stream_loader *loader,
+                             const char *data,
+                             size_t data_size)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  loader->loader->feed(data, data_size);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-loader][feed] Apache Arrow support isn't enabled");
+#endif
   GRN_API_RETURN(ctx->rc);
 }
 }

@@ -8404,7 +8404,7 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
   case GRN_INFO_SUPPORT_APACHE_ARROW :
     if (!valuebuf && !(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_BOOL))) {
       ERR(GRN_INVALID_ARGUMENT,
-          "failed to open value buffer for GRN_INFO_ARROW_SUPPORT");
+          "failed to open value buffer for GRN_INFO_APACHE_ARROW_SUPPORT");
       goto exit;
     }
 #ifdef GRN_WITH_APACHE_ARROW

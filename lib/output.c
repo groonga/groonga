@@ -209,6 +209,8 @@ put_delimiter(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
     break;
+  case GRN_CONTENT_APACHE_ARROW :
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -247,6 +249,8 @@ grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_typ
 #endif
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    break;
+  case GRN_CONTENT_APACHE_ARROW :
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -288,6 +292,8 @@ grn_output_array_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_ty
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
     break;
+  case GRN_CONTENT_APACHE_ARROW :
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -327,6 +333,8 @@ grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
 #endif
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    break;
+  case GRN_CONTENT_APACHE_ARROW :
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -368,6 +376,8 @@ grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
     break;
+  case GRN_CONTENT_APACHE_ARROW :
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -398,6 +408,8 @@ grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
     grn_text_itoa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_APACHE_ARROW :
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -432,6 +444,8 @@ grn_output_uint32(grn_ctx *ctx,
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
     grn_text_ulltoa(ctx, outbuf, value);
     break;
+  case GRN_CONTENT_APACHE_ARROW :
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -461,6 +475,8 @@ grn_output_int64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
     grn_text_lltoa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_APACHE_ARROW :
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -492,6 +508,8 @@ grn_output_uint64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, u
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
     grn_text_ulltoa(ctx, outbuf, value);
     break;
+  case GRN_CONTENT_APACHE_ARROW :
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -521,6 +539,8 @@ grn_output_float(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, do
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
     grn_text_ftoa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_APACHE_ARROW :
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -553,6 +573,8 @@ grn_output_str(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
     GRN_TEXT_PUT(ctx, outbuf, value, value_len);
+    break;
+  case GRN_CONTENT_APACHE_ARROW :
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -595,6 +617,8 @@ grn_output_bool(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, grn
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
     GRN_TEXT_PUTS(ctx, outbuf, value ? "true" : "false");
     break;
+  case GRN_CONTENT_APACHE_ARROW :
+    break;
   case GRN_CONTENT_NONE:
     break;
   }
@@ -620,6 +644,8 @@ grn_output_null(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
 #endif
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    break;
+  case GRN_CONTENT_APACHE_ARROW :
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -663,6 +689,8 @@ grn_output_time(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
     grn_text_ftoa(ctx, outbuf, dv);
+    break;
+  case GRN_CONTENT_APACHE_ARROW :
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -735,6 +763,8 @@ grn_output_geo_point(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
     } else {
       GRN_TEXT_PUTS(ctx, outbuf, "\"\"");
     }
+    break;
+  case GRN_CONTENT_APACHE_ARROW :
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -2844,6 +2874,8 @@ grn_output_envelope(grn_ctx *ctx,
 #endif /* GRN_WITH_MESSAGE_PACK */
     break;
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    break;
+  case GRN_CONTENT_APACHE_ARROW :
     break;
   case GRN_CONTENT_NONE:
     break;

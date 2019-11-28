@@ -198,7 +198,8 @@ typedef enum {
   GRN_CONTENT_JSON,
   GRN_CONTENT_XML,
   GRN_CONTENT_MSGPACK,
-  GRN_CONTENT_GROONGA_COMMAND_LIST
+  GRN_CONTENT_GROONGA_COMMAND_LIST,
+  GRN_CONTENT_APACHE_ARROW
 } grn_content_type;
 
 typedef struct _grn_obj grn_obj;

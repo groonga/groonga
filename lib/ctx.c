@@ -170,8 +170,8 @@ grn_loader_init(grn_loader *loader)
   GRN_TEXT_INIT(&loader->error_messages, GRN_OBJ_VECTOR);
   loader->id_offset = -1;
   loader->key_offset = -1;
-  loader->table = NULL;
   loader->last = NULL;
+  loader->table = NULL;
   loader->ifexists = NULL;
   loader->each = NULL;
   loader->values_size = 0;
@@ -204,6 +204,10 @@ grn_ctx_loader_clear(grn_ctx *ctx)
   GRN_OBJ_FIN(ctx, &loader->ids);
   GRN_OBJ_FIN(ctx, &loader->return_codes);
   GRN_OBJ_FIN(ctx, &loader->error_messages);
+  if (ctx->impl->arrow_stream_loader) {
+    grn_arrow_stream_loader_close(ctx, ctx->impl->arrow_stream_loader);
+    ctx->impl->arrow_stream_loader = NULL;
+  }
   grn_loader_init(loader);
 }
 
@@ -317,6 +321,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
 #endif
   grn_timeval_now(ctx, &ctx->impl->tv);
   ctx->impl->edge = NULL;
+  ctx->impl->arrow_stream_loader = NULL;
   grn_loader_init(&ctx->impl->loader);
   ctx->impl->plugin_path = NULL;
 
@@ -973,6 +978,9 @@ grn_ctx_set_output_type(grn_ctx *ctx, grn_content_type type)
     case GRN_CONTENT_GROONGA_COMMAND_LIST :
       ctx->impl->output.mime_type = "text/x-groonga-command-list";
       break;
+    case GRN_CONTENT_APACHE_ARROW :
+      ctx->impl->output.mime_type = "application/x-apache-arrow-stream";
+      break;
     }
   } else {
     rc = GRN_INVALID_ARGUMENT;
@@ -1043,20 +1051,17 @@ grn_content_type_parse(grn_ctx *ctx,
   grn_content_type ct = default_value;
   if (var->header.domain == GRN_DB_INT32) {
     ct = GRN_INT32_VALUE(var);
-  } else if (GRN_TEXT_LEN(var)) {
-    switch (*(GRN_TEXT_VALUE(var))) {
-    case 't' :
-    case 'T' :
+  } else {
+    grn_raw_string input;
+    GRN_RAW_STRING_SET(input, var);
+    if (GRN_RAW_STRING_EQUAL_CSTRING_CI(input, "tsv")) {
       ct = GRN_CONTENT_TSV;
-      break;
-    case 'j' :
-    case 'J' :
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING_CI(input, "json")) {
       ct = GRN_CONTENT_JSON;
-      break;
-    case 'x' :
-    case 'X' :
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING_CI(input, "xml")) {
       ct = GRN_CONTENT_XML;
-      break;
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING_CI(input, "apache-arrow")) {
+      ct = GRN_CONTENT_APACHE_ARROW;
     }
   }
   return ct;

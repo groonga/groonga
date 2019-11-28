@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2017 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1276,6 +1276,22 @@ grn_load_internal(grn_ctx *ctx, grn_load_input *input)
   switch (loader->input_type) {
   case GRN_CONTENT_JSON :
     json_read(ctx, loader, input->values.value, input->values.length);
+    break;
+  case GRN_CONTENT_APACHE_ARROW :
+#ifdef GRN_WITH_APACHE_ARROW
+    if (!ctx->impl->arrow_stream_loader) {
+      ctx->impl->arrow_stream_loader =
+        grn_arrow_stream_loader_open(ctx, &(ctx->impl->loader));
+    }
+    grn_arrow_stream_loader_feed(ctx,
+                                 ctx->impl->arrow_stream_loader,
+                                 input->values.value,
+                                 input->values.length);
+#else
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[load][arrow] Apache Arrow support isn't enabled");
+    loader->stat = GRN_LOADER_END;
+#endif
     break;
   case GRN_CONTENT_NONE :
   case GRN_CONTENT_TSV :

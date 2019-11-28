@@ -45,5 +45,7 @@ grn_mrb_content_type_init(grn_ctx *ctx)
                    mrb_fixnum_value(GRN_CONTENT_MSGPACK));
   mrb_define_const(mrb, module, "GROONGA_COMMAND_LIST",
                    mrb_fixnum_value(GRN_CONTENT_GROONGA_COMMAND_LIST));
+  mrb_define_const(mrb, module, "APACHE_ARROW",
+                   mrb_fixnum_value(GRN_CONTENT_APACHE_ARROW));
 }
 #endif
