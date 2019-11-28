@@ -55,6 +55,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
   def define_release_tasks
     [:apt, :yum].each do |target_namespace|
       namespace target_namespace do
+        desc "Release #{target_namespace} packages"
         task :release do
           release(target_namespace) if __send__("enable_#{target_namespace}?")
         end
