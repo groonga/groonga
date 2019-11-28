@@ -543,7 +543,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
     bracket_close_set_values(ctx, loader, id, key, value, nvalues);
     grn_loader_apply_each(ctx, loader, id);
   }
-  loader->nrecords++;
+  loader->n_records++;
 exit:
   if (is_record_load) {
     if (ctx->rc != GRN_SUCCESS) {
@@ -743,7 +743,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
     brace_close_set_values(ctx, loader, id, key, value_begin, value_end);
     grn_loader_apply_each(ctx, loader, id);
   }
-  loader->nrecords++;
+  loader->n_records++;
 exit:
   if (ctx->rc != GRN_SUCCESS) {
     loader->n_record_errors++;

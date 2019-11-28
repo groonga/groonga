@@ -175,7 +175,7 @@ grn_loader_init(grn_loader *loader)
   loader->ifexists = NULL;
   loader->each = NULL;
   loader->values_size = 0;
-  loader->nrecords = 0;
+  loader->n_records = 0;
   loader->n_record_errors = 0;
   loader->n_column_errors = 0;
   loader->stat = GRN_LOADER_BEGIN;

@@ -207,7 +207,7 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       }
       GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                     ":", "load(%d): [%d][%d][%d]",
-                    ctx->impl->loader.nrecords,
+                    ctx->impl->loader.n_records,
                     ctx->impl->loader.n_record_errors,
                     ctx->impl->loader.n_column_errors,
                     n_records);
@@ -222,7 +222,7 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       }
       GRN_OUTPUT_MAP_OPEN("result", n_elements);
       GRN_OUTPUT_CSTR("n_loaded_records");
-      GRN_OUTPUT_INT64(ctx->impl->loader.nrecords);
+      GRN_OUTPUT_INT64(ctx->impl->loader.n_records);
       if (ctx->impl->loader.output_ids) {
         grn_obj *ids = &(ctx->impl->loader.ids);
         int i, n_ids;
@@ -269,7 +269,7 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       }
       GRN_OUTPUT_MAP_CLOSE();
     } else {
-      GRN_OUTPUT_INT64(ctx->impl->loader.nrecords);
+      GRN_OUTPUT_INT64(ctx->impl->loader.n_records);
     }
     if (ctx->impl->loader.table) {
       grn_db_touch(ctx, DB_OBJ(ctx->impl->loader.table)->db);
