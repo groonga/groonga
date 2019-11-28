@@ -4,7 +4,7 @@ notifications:
 
 language: cpp
 
-dist: xenial
+dist: bionic
 
 services:
   - docker
@@ -15,17 +15,21 @@ cache:
 addons_linux_build: &addons_linux_build
   apt:
     packages:
+      - apt-transport-https
       - autoconf-archive
       - automake1.11
       - autotools-dev
       - cmake
       - gdb
+      - gnupg
       - libevent-dev
       - libluajit-5.1-dev
       - libmecab-dev
       - libmsgpack-dev
+      - lsb-release
       - mecab-naist-jdic
       - rapidjson-dev
+      - wget
       - zlib1g-dev
 
 addons_macos_build: &addons_macos_build
