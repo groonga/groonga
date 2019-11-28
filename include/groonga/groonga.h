@@ -711,7 +711,9 @@ typedef enum {
   GRN_INFO_NORMALIZER,
   GRN_INFO_TOKEN_FILTERS,
   GRN_INFO_SUPPORT_ZSTD,
-  GRN_INFO_SUPPORT_ARROW
+/* Just for backward compatibility. */
+#define GRN_INFO_SUPPORT_ARROW GRN_INFO_SUPPORT_APACHE_ARROW
+  GRN_INFO_SUPPORT_APACHE_ARROW
 } grn_info_type;
 
 GRN_API grn_obj *grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valuebuf);

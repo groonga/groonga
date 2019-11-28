@@ -26,7 +26,7 @@ AM_CXXFLAGS =					\
 	$(NO_STRICT_ALIASING_CFLAGS)		\
 	$(COVERAGE_CFLAGS)			\
 	$(GRN_CXXFLAGS)				\
-	$(ARROW_CFLAGS)				\
+	$(APACHE_ARROW_CFLAGS)			\
 	$(RAPIDJSON_CFLAGS)
 
 BUNDLED_LIBRARIES_CFLAGS =			\
@@ -72,7 +72,7 @@ libgroonga_la_LIBADD +=				\
 	$(LIBLZ4_LIBS)				\
 	$(LIBZSTD_LIBS)				\
 	$(ATOMIC_LIBS)				\
-	$(ARROW_LIBS)				\
+	$(APACHE_ARROW_LIBS)			\
 	$(WINDOWS_LIBS)				\
 	$(LUAJIT_LIBS)
 

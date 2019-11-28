@@ -933,28 +933,28 @@ if test "x$with_jemalloc" != "xno"; then
 fi
 
 # Apache Arrow
-AC_ARG_ENABLE(arrow,
-  [AS_HELP_STRING([--disable-arrow],
+AC_ARG_ENABLE(apache-arrow,
+  [AS_HELP_STRING([--disable-apache-arrow],
     [enable Apache Arrow support. [default=auto-detect]])],
-  [enable_arrow="$enableval"],
-  [enable_arrow="auto"])
-if test "x$enable_arrow" != "xno"; then
+  [enable_apache_arrow="$enableval"],
+  [enable_apache_arrow="auto"])
+if test "x$enable_apache_arrow" != "xno"; then
   m4_ifdef([PKG_CHECK_MODULES], [
-    PKG_CHECK_MODULES([ARROW],
+    PKG_CHECK_MODULES([APACHE_ARROW],
                       [arrow >= 0.8.0],
-                      [arrow_available=yes],
-                      [arrow_available=no])
+                      [apache_arrow_available=yes],
+                      [apache_arrow_available=no])
   ],
-  [arrow_available=no])
-  if test "x$arrow_available" = "xyes"; then
-    AC_DEFINE(GRN_WITH_ARROW, [1], [Enable Apache Arrow support.])
+  [apache_arrow_available=no])
+  if test "x$apache_arrow_available" = "xyes"; then
+    AC_DEFINE(GRN_WITH_APACHE_ARROW, [1], [Enable Apache Arrow support.])
   else
-    if test "x$enable_arrow" = "xyes"; then
+    if test "x$enable_apache_arrow" = "xyes"; then
       AC_MSG_ERROR("No Apache Arrow found")
     fi
   fi
 fi
-AM_CONDITIONAL([GRN_WITH_ARROW], [test "$arrow_available" = "yes"])
+AM_CONDITIONAL([GRN_WITH_APACHE_ARROW], [test "$apache_arrow_available" = "yes"])
 
 # RapidJSON
 BUNDLED_RAPIDJSON_VERSION=m4_include([bundled_rapidjson_version])

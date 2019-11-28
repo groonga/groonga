@@ -8401,17 +8401,17 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
     GRN_BOOL_PUT(ctx, valuebuf, GRN_FALSE);
 #endif /* GRN_WITH_ZSTD */
     break;
-  case GRN_INFO_SUPPORT_ARROW :
+  case GRN_INFO_SUPPORT_APACHE_ARROW :
     if (!valuebuf && !(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_BOOL))) {
       ERR(GRN_INVALID_ARGUMENT,
           "failed to open value buffer for GRN_INFO_ARROW_SUPPORT");
       goto exit;
     }
-#ifdef GRN_WITH_ARROW
+#ifdef GRN_WITH_APACHE_ARROW
     GRN_BOOL_PUT(ctx, valuebuf, GRN_TRUE);
-#else /* GRN_WITH_ARROW */
+#else /* GRN_WITH_APACHE_ARROW */
     GRN_BOOL_PUT(ctx, valuebuf, GRN_FALSE);
-#endif /* GRN_WITH_ARROW */
+#endif /* GRN_WITH_APACHE_ARROW */
     break;
   default :
     if (!obj) {

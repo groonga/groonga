@@ -35,7 +35,7 @@ pkgdata_DATA = COPYING
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = groonga.pc
-if GRN_WITH_ARROW
+if GRN_WITH_APACHE_ARROW
 pkgconfig_DATA += groonga-arrow.pc
 endif
 

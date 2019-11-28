@@ -20,7 +20,7 @@
 #include "grn.h"
 #include "grn_db.h"
 
-#ifdef GRN_WITH_ARROW
+#ifdef GRN_WITH_APACHE_ARROW
 #include <groonga/arrow.hpp>
 
 #include <arrow/api.h>
@@ -736,7 +736,7 @@ namespace grnarrow {
     }
   };
 }
-#endif /* GRN_WITH_ARROW */
+#endif /* GRN_WITH_APACHE_ARROW */
 
 extern "C" {
 grn_rc
@@ -745,7 +745,7 @@ grn_arrow_load(grn_ctx *ctx,
                const char *path)
 {
   GRN_API_ENTER;
-#ifdef GRN_WITH_ARROW
+#ifdef GRN_WITH_APACHE_ARROW
   std::shared_ptr<arrow::io::MemoryMappedFile> input;
   auto status =
     arrow::io::MemoryMappedFile::Open(path, arrow::io::FileMode::READ, &input);
@@ -784,10 +784,10 @@ grn_arrow_load(grn_ctx *ctx,
       break;
     }
   }
-#else /* GRN_WITH_ARROW */
+#else /* GRN_WITH_APACHE_ARROW */
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][load] Apache Arrow support isn't enabled");
-#endif /* GRN_WITH_ARROW */
+#endif /* GRN_WITH_APACHE_ARROW */
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -797,7 +797,7 @@ grn_arrow_dump(grn_ctx *ctx,
                const char *path)
 {
   GRN_API_ENTER;
-#ifdef GRN_WITH_ARROW
+#ifdef GRN_WITH_APACHE_ARROW
   auto all_columns =
     grn_hash_create(ctx,
                     NULL,
@@ -822,10 +822,10 @@ grn_arrow_dump(grn_ctx *ctx,
 
   grn_arrow_dump_columns(ctx, table, &columns, path);
   GRN_OBJ_FIN(ctx, &columns);
-#else /* GRN_WITH_ARROW */
+#else /* GRN_WITH_APACHE_ARROW */
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][dump] Apache Arrow support isn't enabled");
-#endif /* GRN_WITH_ARROW */
+#endif /* GRN_WITH_APACHE_ARROW */
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -836,7 +836,7 @@ grn_arrow_dump_columns(grn_ctx *ctx,
                        const char *path)
 {
   GRN_API_ENTER;
-#ifdef GRN_WITH_ARROW
+#ifdef GRN_WITH_APACHE_ARROW
   std::shared_ptr<arrow::io::FileOutputStream> output;
   auto status = arrow::io::FileOutputStream::Open(path, &output);
   std::stringstream context;
@@ -850,10 +850,10 @@ grn_arrow_dump_columns(grn_ctx *ctx,
 
   grnarrow::FileDumper dumper(ctx, table, columns);
   dumper.dump(output.get());
-#else /* GRN_WITH_ARROW */
+#else /* GRN_WITH_APACHE_ARROW */
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][dump] Apache Arrow support isn't enabled");
-#endif /* GRN_WITH_ARROW */
+#endif /* GRN_WITH_APACHE_ARROW */
   GRN_API_RETURN(ctx->rc);
 }
 }
