@@ -1,2 +1,2 @@
-LangString FinishUninstallSuccessfully ${LANG_JAPANESE} "$(^Name)‚ðŠ®‘S‚Éíœ‚µ‚Ü‚µ‚½B"
-LangString ConfirmUninstall ${LANG_JAPANESE} "–{“–‚É$(^Name)‚ðƒAƒ“ƒCƒ“ƒXƒg[ƒ‹‚µ‚Ä‚¢‚¢‚Å‚·‚©H"
+LangString FinishUninstallSuccessfully ${LANG_JAPANESE} "$(^Name)ã‚’å®Œå…¨ã«å‰Šé™¤ã—ã¾ã—ãŸã€‚"
+LangString ConfirmUninstall ${LANG_JAPANESE} "æœ¬å½“ã«$(^Name)ã‚’ã‚¢ãƒ³ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã¦ã„ã„ã§ã™ã‹ï¼Ÿ"
