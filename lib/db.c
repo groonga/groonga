@@ -11877,11 +11877,9 @@ grn_obj_ensure_vector(grn_ctx *ctx, grn_obj *obj)
 void
 grn_obj_ensure_bulk(grn_ctx *ctx, grn_obj *obj)
 {
-  if (obj->header.type == GRN_VECTOR) {
-    VECTOR_CLEAR(ctx, obj);
-    obj->header.flags &= ~GRN_OBJ_WITH_WEIGHT;
-  }
+  if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
   obj->header.type = GRN_BULK;
+  obj->header.flags &= ~GRN_OBJ_WITH_WEIGHT;
 }
 
 grn_rc
