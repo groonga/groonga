@@ -61,6 +61,7 @@ jobs:
           submodules: true
       - name: Install dependencies
         run: |
+          sudo apt update
           sudo apt -V install \
             autoconf-archive \
             bison \
