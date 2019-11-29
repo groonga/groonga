@@ -204,10 +204,12 @@ grn_ctx_loader_clear(grn_ctx *ctx)
   GRN_OBJ_FIN(ctx, &loader->ids);
   GRN_OBJ_FIN(ctx, &loader->return_codes);
   GRN_OBJ_FIN(ctx, &loader->error_messages);
+#ifdef GRN_WITH_APACHE_ARROW
   if (ctx->impl->arrow_stream_loader) {
     grn_arrow_stream_loader_close(ctx, ctx->impl->arrow_stream_loader);
     ctx->impl->arrow_stream_loader = NULL;
   }
+#endif
   grn_loader_init(loader);
 }
 
@@ -321,7 +323,9 @@ grn_ctx_impl_init(grn_ctx *ctx)
 #endif
   grn_timeval_now(ctx, &ctx->impl->tv);
   ctx->impl->edge = NULL;
+#ifdef GRN_WITH_APACHE_ARROW
   ctx->impl->arrow_stream_loader = NULL;
+#endif
   grn_loader_init(&ctx->impl->loader);
   ctx->impl->plugin_path = NULL;
 

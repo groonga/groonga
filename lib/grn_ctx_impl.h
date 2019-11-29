@@ -24,7 +24,10 @@
 #include "grn_options.h"
 #include "grn_msgpack.h"
 #include "grn_load.h"
-#include "grn_arrow.h"
+
+#ifdef GRN_WITH_APACHE_ARROW
+# include "grn_arrow.h"
+#endif
 
 #ifdef GRN_WITH_MRUBY
 # include <mruby.h>
@@ -125,7 +128,9 @@ struct _grn_ctx_impl {
   /* loader portion */
   grn_edge *edge;
   grn_loader loader;
+#ifdef GRN_WITH_APACHE_ARROW
   grn_arrow_stream_loader *arrow_stream_loader;
+#endif
 
   /* plugin portion */
   const char *plugin_path;
