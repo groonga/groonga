@@ -399,6 +399,7 @@ namespace :build do
         "--disable-libedit",
         "--with-zlib",
         "--with-lz4",
+        "--without-apache-arrow",
         "--without-libstemmer",
         "--without-kytea",
         "--without-cutter",
