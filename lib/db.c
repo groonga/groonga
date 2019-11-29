@@ -13377,8 +13377,8 @@ grn_table_sort_reference(grn_ctx *ctx, grn_obj *table,
 
 typedef struct {
   grn_id id;
-  grn_obj value;
-  grn_obj sizes;
+  grn_obj *value;
+  grn_obj *sizes;
 } sort_value_entry;
 
 grn_inline static int
@@ -13394,18 +13394,18 @@ compare_value(grn_ctx *ctx,
   const unsigned char *ap, *bp;
   for (i = 0; i < n_keys; i++, keys++) {
     if (keys->flags & GRN_TABLE_SORT_DESC) {
-      ap = (const unsigned char *)GRN_BULK_HEAD(&(b->value)) + b_offset;
-      as = GRN_UINT32_VALUE_AT(&(b->sizes), i);
+      ap = (const unsigned char *)GRN_BULK_HEAD(b->value) + b_offset;
+      as = GRN_UINT32_VALUE_AT(b->sizes, i);
       b_offset += as;
-      bp = (const unsigned char *)GRN_BULK_HEAD(&(a->value)) + a_offset;
-      bs = GRN_UINT32_VALUE_AT(&(a->sizes), i);
+      bp = (const unsigned char *)GRN_BULK_HEAD(a->value) + a_offset;
+      bs = GRN_UINT32_VALUE_AT(a->sizes, i);
       a_offset += bs;
     } else {
-      ap = (const unsigned char *)GRN_BULK_HEAD(&(a->value)) + a_offset;
-      as = GRN_UINT32_VALUE_AT(&(a->sizes), i);
+      ap = (const unsigned char *)GRN_BULK_HEAD(a->value) + a_offset;
+      as = GRN_UINT32_VALUE_AT(a->sizes, i);
       a_offset += as;
-      bp = (const unsigned char *)GRN_BULK_HEAD(&(b->value)) + b_offset;
-      bs = GRN_UINT32_VALUE_AT(&(b->sizes), i);
+      bp = (const unsigned char *)GRN_BULK_HEAD(b->value) + b_offset;
+      bs = GRN_UINT32_VALUE_AT(b->sizes, i);
       b_offset += bs;
     }
     type = keys->offset;
@@ -13537,9 +13537,9 @@ pack_value(grn_ctx *ctx, grn_obj *table,
     size_t i;
     for (i = 0; i < n_ids; i++) {
       array[i].id = GRN_RECORD_VALUE_AT(&ids, i);
-      GRN_TEXT_INIT(&(array[i].value), 0);
+      GRN_TEXT_INIT(array[i].value, 0);
       /* TODO: We can reduce this size when no variable size key */
-      GRN_UINT32_INIT(&(array[i].sizes), GRN_OBJ_VECTOR);
+      GRN_UINT32_INIT(array[i].sizes, GRN_OBJ_VECTOR);
     }
   }
   GRN_OBJ_FIN(ctx, &ids);
@@ -13559,19 +13559,19 @@ pack_value(grn_ctx *ctx, grn_obj *table,
                                        column_cache,
                                        entry->id,
                                        &value_size);
-          GRN_TEXT_PUT(ctx, &(entry->value), value, value_size);
-          GRN_UINT32_PUT(ctx, &(entry->sizes), value_size);
+          GRN_TEXT_PUT(ctx, entry->value, value, value_size);
+          GRN_UINT32_PUT(ctx, entry->sizes, value_size);
         }
         grn_column_cache_close(ctx, column_cache);
       } else {
         size_t i_id;
         for (i_id = 0; i_id < n_ids; i_id++) {
           sort_value_entry *entry = array + i_id;
-          size_t value_size_before = GRN_BULK_VSIZE(&(entry->value));
-          grn_obj_get_value(ctx, key, entry->id, &(entry->value));
+          size_t value_size_before = GRN_BULK_VSIZE(entry->value);
+          grn_obj_get_value(ctx, key, entry->id, entry->value);
           size_t value_size =
-            GRN_BULK_VSIZE(&(entry->value)) - value_size_before;
-          GRN_UINT32_PUT(ctx, &(entry->sizes), value_size);
+            GRN_BULK_VSIZE(entry->value) - value_size_before;
+          GRN_UINT32_PUT(ctx, entry->sizes, value_size);
         }
       }
     }
@@ -13638,11 +13638,23 @@ grn_table_sort_value(grn_ctx *ctx, grn_obj *table,
                      grn_table_sort_key *keys, int n_keys)
 {
   int e, n;
+  grn_obj *bulks;
   sort_value_entry *array, *ep;
   e = offset + limit;
   n = grn_table_size(ctx, table);
-  if (!(array = GRN_MALLOC(sizeof(sort_value_entry) * n))) {
+  if (!(bulks = GRN_MALLOC(sizeof(grn_obj) * 2 * n))) {
     return 0;
+  }
+  if (!(array = GRN_MALLOC(sizeof(sort_value_entry) * n))) {
+    GRN_FREE(bulks);
+    return 0;
+  }
+  {
+    int i;
+    for (i = 0; i < n; i++) {
+      array[i].value = &(bulks[2 * i]);
+      array[i].sizes = &(bulks[2 * i + 1]);
+    }
   }
   {
     if ((ep = pack_value(ctx, table, array, array + n - 1, keys, n_keys))) {
@@ -13663,10 +13675,11 @@ grn_table_sort_value(grn_ctx *ctx, grn_obj *table,
       *v = ep->id;
     }
     for (i = 0; i < n; i++) {
-      GRN_OBJ_FIN(ctx, &(array[i].value));
-      GRN_OBJ_FIN(ctx, &(array[i].sizes));
+      GRN_OBJ_FIN(ctx, array[i].value);
+      GRN_OBJ_FIN(ctx, array[i].sizes);
     }
     GRN_FREE(array);
+    GRN_FREE(bulks);
     return i;
   }
 }
