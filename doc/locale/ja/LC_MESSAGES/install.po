@@ -98,6 +98,9 @@ msgstr "groonga-normalizer-mysqlパッケージのインストール::"
 msgid "CentOS 7"
 msgstr ""
 
+msgid "CentOS 8"
+msgstr ""
+
 msgid "Build from source"
 msgstr "ソースからビルド"
 
