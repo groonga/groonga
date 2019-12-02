@@ -179,6 +179,132 @@ namespace grnarrow {
     }
   };
 
+  class ValueLoadVisitor : public arrow::ArrayVisitor {
+  public:
+    ValueLoadVisitor(grn_ctx *ctx, grn_obj *buffer, int64_t index)
+      : ctx_(ctx),
+        buffer_(buffer),
+        index_(index) {
+    }
+
+    arrow::Status Visit(const arrow::BooleanArray &array) override {
+      GRN_BOOL_PUT(ctx_, buffer_, array.Value(index_));
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::Int8Array &array) override {
+      GRN_INT8_PUT(ctx_, buffer_, array.Value(index_));
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::UInt8Array &array) override {
+      GRN_UINT8_PUT(ctx_, buffer_, array.Value(index_));
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::Int16Array &array) override {
+      GRN_INT16_PUT(ctx_, buffer_, array.Value(index_));
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::UInt16Array &array) override {
+      GRN_UINT16_PUT(ctx_, buffer_, array.Value(index_));
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::Int32Array &array) override {
+      GRN_INT32_PUT(ctx_, buffer_, array.Value(index_));
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::UInt32Array &array) override {
+      GRN_UINT32_PUT(ctx_, buffer_, array.Value(index_));
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::Int64Array &array) override {
+      GRN_INT64_PUT(ctx_, buffer_, array.Value(index_));
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::UInt64Array &array) override {
+      GRN_UINT64_PUT(ctx_, buffer_, array.Value(index_));
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::HalfFloatArray &array) override {
+      GRN_FLOAT_PUT(ctx_, buffer_, array.Value(index_));
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::FloatArray &array) override {
+      GRN_FLOAT_PUT(ctx_, buffer_, array.Value(index_));
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::DoubleArray &array) override {
+      GRN_FLOAT_PUT(ctx_, buffer_, array.Value(index_));
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::StringArray &array) override {
+      int32_t size;
+      const auto data = array.GetValue(index_, &size);
+      if (buffer_->header.type == GRN_VECTOR) {
+        unsigned int weight = 0;
+        grn_id domain = GRN_DB_SHORT_TEXT;
+        grn_vector_add_element(ctx_,
+                               buffer_,
+                               reinterpret_cast<const char *>(data),
+                               size,
+                               weight,
+                               domain);
+      } else {
+        GRN_TEXT_SET(ctx_, buffer_, data, size);
+      }
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::Date64Array &array) override {
+      GRN_TIME_PUT(ctx_, buffer_, array.Value(index_));
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::TimestampArray &array) override {
+      const auto &arrow_timestamp_type =
+        std::static_pointer_cast<arrow::TimestampType>(array.type());
+      switch (arrow_timestamp_type->unit()) {
+      case arrow::TimeUnit::SECOND :
+        GRN_TIME_PUT(ctx_, buffer_, GRN_TIME_PACK(array.Value(index_), 0));
+        break;
+      case arrow::TimeUnit::MILLI :
+        GRN_TIME_PUT(ctx_, buffer_, array.Value(index_) * 1000);
+        break;
+      case arrow::TimeUnit::MICRO :
+        GRN_TIME_PUT(ctx_, buffer_, array.Value(index_));
+        break;
+      case arrow::TimeUnit::NANO :
+        GRN_TIME_PUT(ctx_, buffer_, array.Value(index_) / 1000);
+        break;
+      }
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::ListArray &array) override {
+      const auto &value_array = array.value_slice(index_);
+      for (int64_t i = 0; i < value_array->length(); ++i) {
+        ValueLoadVisitor sub_visitor(ctx_, buffer_, i);
+        ARROW_RETURN_NOT_OK(value_array->Accept(&sub_visitor));
+      }
+      return arrow::Status::OK();
+    }
+
+  private:
+    grn_ctx *ctx_;
+    grn_obj *buffer_;
+    int64_t index_;
+  };
+
   class ColumnLoadVisitor : public arrow::ArrayVisitor {
   public:
     ColumnLoadVisitor(grn_ctx *ctx,
@@ -187,67 +313,16 @@ namespace grnarrow {
                       const grn_id *record_ids)
       : ctx_(ctx),
         grn_table_(grn_table),
-        record_ids_(record_ids),
-        time_unit_(arrow::TimeUnit::SECOND) {
-      const auto& column_name = arrow_field->name();
+        record_ids_(record_ids) {
+      const auto &column_name = arrow_field->name();
       grn_column_ = grn_obj_column(ctx_, grn_table_,
                                    column_name.data(),
                                    column_name.size());
 
-      const auto& arrow_type = arrow_field->type();
-      grn_id type_id;
-      switch (arrow_type->id()) {
-      case arrow::Type::BOOL :
-        type_id = GRN_DB_BOOL;
-        break;
-      case arrow::Type::UINT8 :
-        type_id = GRN_DB_UINT8;
-        break;
-      case arrow::Type::INT8 :
-        type_id = GRN_DB_INT8;
-        break;
-      case arrow::Type::UINT16 :
-        type_id = GRN_DB_UINT16;
-        break;
-      case arrow::Type::INT16 :
-        type_id = GRN_DB_INT16;
-        break;
-      case arrow::Type::UINT32 :
-        type_id = GRN_DB_UINT32;
-        break;
-      case arrow::Type::INT32 :
-        type_id = GRN_DB_INT32;
-        break;
-      case arrow::Type::UINT64 :
-        type_id = GRN_DB_UINT64;
-        break;
-      case arrow::Type::INT64 :
-        type_id = GRN_DB_INT64;
-        break;
-      case arrow::Type::HALF_FLOAT :
-      case arrow::Type::FLOAT :
-      case arrow::Type::DOUBLE :
-        type_id = GRN_DB_FLOAT;
-        break;
-      case arrow::Type::STRING :
-        type_id = GRN_DB_TEXT;
-        break;
-      case arrow::Type::DATE64 :
-        type_id = GRN_DB_TIME;
-        break;
-      case arrow::Type::TIMESTAMP :
-        type_id = GRN_DB_TIME;
-        {
-          auto arrow_timestamp_type =
-            std::static_pointer_cast<arrow::TimestampType>(arrow_type);
-          time_unit_ = arrow_timestamp_type->unit();
-        }
-        break;
-      default :
-        type_id = GRN_DB_VOID;
-        break;
-      }
-
+      const auto &arrow_type = arrow_field->type();
+      grn_id type_id = GRN_DB_VOID;
+      grn_obj_flags flags = 0;
+      detect_type(arrow_type, &type_id, &flags);
       if (type_id == GRN_DB_VOID) {
         // TODO
         return;
@@ -263,9 +338,9 @@ namespace grnarrow {
                                         grn_ctx_at(ctx_, type_id));
       }
       if (type_id == GRN_DB_TEXT) {
-        GRN_TEXT_INIT(&buffer_, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_TEXT_INIT(&buffer_, flags);
       } else {
-        GRN_VALUE_FIX_SIZE_INIT(&buffer_, 0, type_id);
+        GRN_VALUE_FIX_SIZE_INIT(&buffer_, flags, type_id);
       }
     }
 
@@ -276,63 +351,67 @@ namespace grnarrow {
       GRN_OBJ_FIN(ctx_, &buffer_);
     }
 
-    arrow::Status Visit(const arrow::BooleanArray &array) {
+    arrow::Status Visit(const arrow::BooleanArray &array) override {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::Int8Array &array) {
+    arrow::Status Visit(const arrow::Int8Array &array) override {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::UInt8Array &array) {
+    arrow::Status Visit(const arrow::UInt8Array &array) override {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::Int16Array &array) {
+    arrow::Status Visit(const arrow::Int16Array &array) override {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::UInt16Array &array) {
+    arrow::Status Visit(const arrow::UInt16Array &array) override {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::Int32Array &array) {
+    arrow::Status Visit(const arrow::Int32Array &array) override {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::UInt32Array &array) {
+    arrow::Status Visit(const arrow::UInt32Array &array) override {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::Int64Array &array) {
+    arrow::Status Visit(const arrow::Int64Array &array) override {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::UInt64Array &array) {
+    arrow::Status Visit(const arrow::UInt64Array &array) override {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::HalfFloatArray &array) {
+    arrow::Status Visit(const arrow::HalfFloatArray &array) override {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::FloatArray &array) {
+    arrow::Status Visit(const arrow::FloatArray &array) override {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::DoubleArray &array) {
+    arrow::Status Visit(const arrow::DoubleArray &array) override {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::StringArray &array) {
+    arrow::Status Visit(const arrow::StringArray &array) override {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::Date64Array &array) {
+    arrow::Status Visit(const arrow::Date64Array &array) override {
       return set_values(array);
     }
 
-    arrow::Status Visit(const arrow::TimestampArray &array) {
+    arrow::Status Visit(const arrow::TimestampArray &array) override {
+      return set_values(array);
+    }
+
+    arrow::Status Visit(const arrow::ListArray &array) override {
       return set_values(array);
     }
 
@@ -340,9 +419,69 @@ namespace grnarrow {
     grn_ctx *ctx_;
     grn_obj *grn_table_;
     const grn_id *record_ids_;
-    arrow::TimeUnit::type time_unit_;
     grn_obj *grn_column_;
     grn_obj buffer_;
+
+    void detect_type(const std::shared_ptr<arrow::DataType> &arrow_type,
+                     grn_id *type_id,
+                     grn_obj_flags *flags) {
+      switch (arrow_type->id()) {
+      case arrow::Type::BOOL :
+        *type_id = GRN_DB_BOOL;
+        break;
+      case arrow::Type::UINT8 :
+        *type_id = GRN_DB_UINT8;
+        break;
+      case arrow::Type::INT8 :
+        *type_id = GRN_DB_INT8;
+        break;
+      case arrow::Type::UINT16 :
+        *type_id = GRN_DB_UINT16;
+        break;
+      case arrow::Type::INT16 :
+        *type_id = GRN_DB_INT16;
+        break;
+      case arrow::Type::UINT32 :
+        *type_id = GRN_DB_UINT32;
+        break;
+      case arrow::Type::INT32 :
+        *type_id = GRN_DB_INT32;
+        break;
+      case arrow::Type::UINT64 :
+        *type_id = GRN_DB_UINT64;
+        break;
+      case arrow::Type::INT64 :
+        *type_id = GRN_DB_INT64;
+        break;
+      case arrow::Type::HALF_FLOAT :
+      case arrow::Type::FLOAT :
+      case arrow::Type::DOUBLE :
+        *type_id = GRN_DB_FLOAT;
+        break;
+      case arrow::Type::STRING :
+        *type_id = GRN_DB_TEXT;
+        *flags |= GRN_OBJ_DO_SHALLOW_COPY;
+        break;
+      case arrow::Type::DATE64 :
+        *type_id = GRN_DB_TIME;
+        break;
+      case arrow::Type::TIMESTAMP :
+        *type_id = GRN_DB_TIME;
+        break;
+      case arrow::Type::LIST :
+        *flags |= GRN_OBJ_VECTOR;
+        {
+          grn_obj_flags sub_flags = 0;
+          const auto &arrow_list_type =
+            std::static_pointer_cast<arrow::ListType>(arrow_type);
+          detect_type(arrow_list_type->value_type(), type_id, &sub_flags);
+        }
+        break;
+      default :
+        *type_id = GRN_DB_VOID;
+        break;
+      }
+    }
 
     template <typename T>
     arrow::Status set_values(const T &array) {
@@ -350,100 +489,11 @@ namespace grnarrow {
       for (int i = 0; i < n_rows; ++i) {
         const auto record_id = record_ids_[i];
         GRN_BULK_REWIND(&buffer_);
-        get_value(array, i);
+        ValueLoadVisitor visitor(ctx_, &buffer_, i);
+        ARROW_RETURN_NOT_OK(array.Accept(&visitor));
         grn_obj_set_value(ctx_, grn_column_, record_id, &buffer_, GRN_OBJ_SET);
       }
       return arrow::Status::OK();
-    }
-
-    void
-    get_value(const arrow::BooleanArray &array, int i) {
-      GRN_BOOL_SET(ctx_, &buffer_, array.Value(i));
-    }
-
-    void
-    get_value(const arrow::UInt8Array &array, int i) {
-      GRN_UINT8_SET(ctx_, &buffer_, array.Value(i));
-    }
-
-    void
-    get_value(const arrow::Int8Array &array, int i) {
-      GRN_INT8_SET(ctx_, &buffer_, array.Value(i));
-    }
-
-    void
-    get_value(const arrow::UInt16Array &array, int i) {
-      GRN_UINT16_SET(ctx_, &buffer_, array.Value(i));
-    }
-
-    void
-    get_value(const arrow::Int16Array &array, int i) {
-      GRN_INT16_SET(ctx_, &buffer_, array.Value(i));
-    }
-
-    void
-    get_value(const arrow::UInt32Array &array, int i) {
-      GRN_UINT32_SET(ctx_, &buffer_, array.Value(i));
-    }
-
-    void
-    get_value(const arrow::Int32Array &array, int i) {
-      GRN_INT32_SET(ctx_, &buffer_, array.Value(i));
-    }
-
-    void
-    get_value(const arrow::UInt64Array &array, int i) {
-      GRN_UINT64_SET(ctx_, &buffer_, array.Value(i));
-    }
-
-    void
-    get_value(const arrow::Int64Array &array, int i) {
-      GRN_INT64_SET(ctx_, &buffer_, array.Value(i));
-    }
-
-    void
-    get_value(const arrow::HalfFloatArray &array, int i) {
-      GRN_FLOAT_SET(ctx_, &buffer_, array.Value(i));
-    }
-
-    void
-    get_value(const arrow::FloatArray &array, int i) {
-      GRN_FLOAT_SET(ctx_, &buffer_, array.Value(i));
-    }
-
-    void
-    get_value(const arrow::DoubleArray &array, int i) {
-      GRN_FLOAT_SET(ctx_, &buffer_, array.Value(i));
-    }
-
-    void
-    get_value(const arrow::StringArray &array, int i) {
-      int32_t size;
-      const auto data = array.GetValue(i, &size);
-      GRN_TEXT_SET(ctx_, &buffer_, data, size);
-    }
-
-    void
-    get_value(const arrow::Date64Array &array, int i) {
-      GRN_TIME_SET(ctx_, &buffer_, array.Value(i));
-    }
-
-    void
-    get_value(const arrow::TimestampArray &array, int i) {
-      switch (time_unit_) {
-      case arrow::TimeUnit::SECOND :
-        GRN_TIME_SET(ctx_, &buffer_, GRN_TIME_PACK(array.Value(i), 0));
-        break;
-      case arrow::TimeUnit::MILLI :
-        GRN_TIME_SET(ctx_, &buffer_, array.Value(i) * 1000);
-        break;
-      case arrow::TimeUnit::MICRO :
-        GRN_TIME_SET(ctx_, &buffer_, array.Value(i));
-        break;
-      case arrow::TimeUnit::NANO :
-        GRN_TIME_SET(ctx_, &buffer_, array.Value(i) / 1000);
-        break;
-      }
     }
   };
 
