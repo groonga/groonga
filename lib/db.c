@@ -5654,6 +5654,8 @@ grn_uvector_element_size(grn_ctx *ctx, grn_obj *uvector)
   GRN_API_RETURN(element_size);
 }
 
+/* For reference uvector. We can't use this for integer family uvector
+   such as Int64 uvector. */
 grn_rc
 grn_uvector_add_element(grn_ctx *ctx, grn_obj *uvector,
                         grn_id id, unsigned int weight)
@@ -5677,6 +5679,8 @@ exit :
   GRN_API_RETURN(ctx->rc);
 }
 
+/* For reference uvector. We can't use this for integer family uvector
+   such as Int64 uvector. */
 grn_id
 grn_uvector_get_element(grn_ctx *ctx, grn_obj *uvector,
                         unsigned int offset, unsigned int *weight)
@@ -7617,18 +7621,17 @@ grn_obj_set_value_column_var_size_vector_uvector(grn_ctx *ctx, grn_obj *column,
       const char *raw_value;
       unsigned int element_size;
       grn_obj element;
-      grn_obj casted_record;
+      grn_obj casted_element;
 
       raw_value = GRN_BULK_HEAD(value);
       element_size = grn_uvector_element_size(ctx, value);
       GRN_VALUE_FIX_SIZE_INIT(&element, 0, value->header.domain);
-      GRN_VALUE_FIX_SIZE_INIT(&casted_record, 0, column_range_id);
+      GRN_VALUE_FIX_SIZE_INIT(&casted_element, 0, column_range_id);
       for (i = 0; i < n; i++) {
-        grn_id casted_id;
         unsigned int weight = 0;
 
         GRN_BULK_REWIND(&element);
-        GRN_BULK_REWIND(&casted_record);
+        GRN_BULK_REWIND(&casted_element);
 
         if (IS_WEIGHT_UVECTOR(value)) {
           grn_id raw_element;
@@ -7640,7 +7643,7 @@ grn_obj_set_value_column_var_size_vector_uvector(grn_ctx *ctx, grn_obj *column,
                          raw_value + (element_size * i),
                          element_size);
         }
-        rc = grn_obj_cast(ctx, &element, &casted_record, GRN_TRUE);
+        rc = grn_obj_cast(ctx, &element, &casted_element, GRN_TRUE);
         if (rc != GRN_SUCCESS) {
           char column_name[GRN_TABLE_MAX_KEY_SIZE];
           int column_name_size;
@@ -7660,12 +7663,19 @@ grn_obj_set_value_column_var_size_vector_uvector(grn_ctx *ctx, grn_obj *column,
           GRN_OBJ_FIN(ctx, &inspected);
           break;
         }
-        casted_id = GRN_RECORD_VALUE(&casted_record);
-        grn_uvector_add_element(ctx, &uvector, casted_id, weight);
+        if (grn_type_id_is_number_family(ctx, uvector.header.domain)) {
+          grn_bulk_write(ctx,
+                         &uvector,
+                         GRN_BULK_HEAD(&casted_element),
+                         GRN_BULK_VSIZE(&casted_element));
+        } else {
+          grn_id casted_id = GRN_RECORD_VALUE(&casted_element);
+          grn_uvector_add_element(ctx, &uvector, casted_id, weight);
+        }
       }
 
       GRN_OBJ_FIN(ctx, &element);
-      GRN_OBJ_FIN(ctx, &casted_record);
+      GRN_OBJ_FIN(ctx, &casted_element);
     } else {
       for (i = 0; i < n; i++) {
         grn_id id;
