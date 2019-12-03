@@ -1,0 +1,47 @@
+name: Linux
+on:
+  - push
+  - pull_request
+jobs:
+  configure:
+    name: configure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Install dependencies
+        run: |
+          apt update
+          apt install -y -V \
+            apt-transport-https \
+            autoconf-archive \
+            automake1.11 \
+            autotools-dev \
+            cmake \
+            gnupg \
+            libevent-dev \
+            libluajit-5.1-dev \
+            libmecab-dev \
+            libmsgpack-dev \
+            lsb-release \
+            mecab-naist-jdic \
+            rapidjson-dev \
+            wget \
+            zlib1g-dev
+      - name: Generate configure
+        run: |
+          ./autogen.sh
+      - name: Configure
+        run: |
+          ./configure \
+            --enable-document ^
+            --enable-mruby ^
+            --with-ruby
+      - name: Build
+        run: |
+          make -j$(nproc)
+      - name: Test
+        run: |
+          test/command/run-test.sh
+      - name: Install
+        run: |
+          make install
