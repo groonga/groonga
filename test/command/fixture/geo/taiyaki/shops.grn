@@ -277,7 +277,7 @@ load --table Shops
  "latitude_in_degree":35.665920,
  "longitude_in_degree":139.770721,
  "tags":["たいやき","マグロ"],
- "categories":"",
+ "categories":null,
  "area":"area0002"},
 {"_key":"shigeta",
  "name":"しげ田",
