@@ -75,6 +75,26 @@ namespace grnarrow {
                         static_cast<std::stringstream &>(output).str().c_str());
   }
 
+  void set_time_value(grn_ctx *ctx,
+                      grn_obj *bulk,
+                      int64_t time_value,
+                      arrow::TimeUnit::type time_unit) {
+    switch (time_unit) {
+    case arrow::TimeUnit::SECOND :
+      GRN_TIME_PUT(ctx, bulk, GRN_TIME_PACK(time_value, 0));
+      break;
+    case arrow::TimeUnit::MILLI :
+      GRN_TIME_PUT(ctx, bulk, GRN_TIME_MSEC_TO_USEC(time_value));
+      break;
+    case arrow::TimeUnit::MICRO :
+      GRN_TIME_PUT(ctx, bulk, time_value);
+      break;
+    case arrow::TimeUnit::NANO :
+      GRN_TIME_PUT(ctx, bulk, GRN_TIME_NSEC_TO_USEC(time_value));
+      break;
+    }
+  }
+
   class RecordAddVisitor : public arrow::ArrayVisitor {
   public:
     RecordAddVisitor(grn_ctx *ctx,
@@ -84,7 +104,7 @@ namespace grnarrow {
         grn_loader_(grn_loader),
         record_ids_(record_ids),
         key_bulk_() {
-      GRN_TEXT_INIT(&key_bulk_, GRN_OBJ_DO_SHALLOW_COPY);
+      GRN_VOID_INIT(&key_bulk_);
     }
 
     ~RecordAddVisitor() {
@@ -92,76 +112,148 @@ namespace grnarrow {
     }
 
     arrow::Status Visit(const arrow::BooleanArray &array) {
-      return add_records(array, sizeof(bool));
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_BOOL, 0);
+      return add_records(array,
+                         [&](int64_t i) {
+                           const auto &key = array.Value(i);
+                           GRN_BOOL_SET(ctx_, &key_bulk_, key);
+                         });
     }
 
     arrow::Status Visit(const arrow::Int8Array &array) {
-      return add_records(array, sizeof(int8_t));
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_INT8, 0);
+      return add_records(array,
+                         [&](int64_t i) {
+                           const auto &key = array.Value(i);
+                           GRN_INT8_SET(ctx_, &key_bulk_, key);
+                         });
     }
 
     arrow::Status Visit(const arrow::UInt8Array &array) {
-      return add_records(array, sizeof(uint8_t));
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_UINT8, 0);
+      return add_records(array,
+                         [&](int64_t i) {
+                           const auto &key = array.Value(i);
+                           GRN_UINT8_SET(ctx_, &key_bulk_, key);
+                         });
     }
 
     arrow::Status Visit(const arrow::Int16Array &array) {
-      return add_records(array, sizeof(int16_t));
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_INT16, 0);
+      return add_records(array,
+                         [&](int64_t i) {
+                           const auto &key = array.Value(i);
+                           GRN_INT16_SET(ctx_, &key_bulk_, key);
+                         });
     }
 
     arrow::Status Visit(const arrow::UInt16Array &array) {
-      return add_records(array, sizeof(uint16_t));
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_UINT16, 0);
+      return add_records(array,
+                         [&](int64_t i) {
+                           const auto &key = array.Value(i);
+                           GRN_UINT16_SET(ctx_, &key_bulk_, key);
+                         });
     }
 
     arrow::Status Visit(const arrow::Int32Array &array) {
-      return add_records(array, sizeof(int32_t));
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_INT32, 0);
+      return add_records(array,
+                         [&](int64_t i) {
+                           const auto &key = array.Value(i);
+                           GRN_INT32_SET(ctx_, &key_bulk_, key);
+                         });
     }
 
     arrow::Status Visit(const arrow::UInt32Array &array) {
-      return add_records(array, sizeof(uint32_t));
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_UINT32, 0);
+      return add_records(array,
+                         [&](int64_t i) {
+                           const auto &key = array.Value(i);
+                           GRN_UINT32_SET(ctx_, &key_bulk_, key);
+                         });
     }
 
     arrow::Status Visit(const arrow::Int64Array &array) {
-      return add_records(array, sizeof(int64_t));
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_INT64, 0);
+      return add_records(array,
+                         [&](int64_t i) {
+                           const auto &key = array.Value(i);
+                           GRN_INT64_SET(ctx_, &key_bulk_, key);
+                         });
     }
 
     arrow::Status Visit(const arrow::UInt64Array &array) {
-      return add_records(array, sizeof(uint64_t));
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_UINT64, 0);
+      return add_records(array,
+                         [&](int64_t i) {
+                           const auto &key = array.Value(i);
+                           GRN_UINT64_SET(ctx_, &key_bulk_, key);
+                         });
     }
 
     arrow::Status Visit(const arrow::HalfFloatArray &array) {
-      return add_records(array, sizeof(uint16_t));
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_FLOAT, 0);
+      return add_records(array,
+                         [&](int64_t i) {
+                           const auto &key = array.Value(i);
+                           GRN_FLOAT_SET(ctx_, &key_bulk_, key);
+                         });
     }
 
     arrow::Status Visit(const arrow::FloatArray &array) {
-      return add_records(array, sizeof(float));
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_FLOAT, 0);
+      return add_records(array,
+                         [&](int64_t i) {
+                           const auto &key = array.Value(i);
+                           GRN_FLOAT_SET(ctx_, &key_bulk_, key);
+                         });
     }
 
     arrow::Status Visit(const arrow::DoubleArray &array) {
-      return add_records(array, sizeof(double));
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_FLOAT, 0);
+      return add_records(array,
+                         [&](int64_t i) {
+                           const auto &key = array.Value(i);
+                           GRN_FLOAT_SET(ctx_, &key_bulk_, key);
+                         });
     }
 
     arrow::Status Visit(const arrow::StringArray &array) {
-      const auto n_rows = array.length();
-      for (int64_t i = 0; i < n_rows; ++i) {
-        const auto &key = array.GetView(i);
-        GRN_TEXT_SET(ctx_, &key_bulk_, key.data(), key.size());
-        const auto record_id = grn_table_add_by_key(ctx_,
-                                                    grn_loader_->table,
-                                                    &key_bulk_,
-                                                    NULL);
-        if (record_id == GRN_ID_NIL) {
-          grn_loader_save_error(ctx_, grn_loader_);
-        }
-        record_ids_->push_back(record_id);
-      }
-      return arrow::Status::OK();
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_TEXT, GRN_OBJ_DO_SHALLOW_COPY);
+      return add_records(array,
+                         [&](int64_t i) {
+                           const auto &key = array.GetView(i);
+                           GRN_TEXT_SET(ctx_,
+                                        &key_bulk_,
+                                        key.data(),
+                                        key.size());
+                         });
     }
 
     arrow::Status Visit(const arrow::Date64Array &array) {
-      return add_records(array, sizeof(int64_t));
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_TIME, 0);
+      return add_records(array,
+                         [&](int64_t i) {
+                           const auto &key = array.Value(i);
+                           GRN_TIME_SET(ctx_,
+                                        &key_bulk_,
+                                        key * GRN_TIME_USEC_PER_MSEC);
+                         });
     }
 
     arrow::Status Visit(const arrow::TimestampArray &array) {
-      return add_records(array, sizeof(int64_t));
+      grn_obj_reinit(ctx_, &key_bulk_, GRN_DB_TIME, 0);
+      const auto &arrow_timestamp_type =
+        std::static_pointer_cast<arrow::TimestampType>(array.type());
+      const auto time_unit = arrow_timestamp_type->unit();
+      return add_records(array,
+                         [&](int64_t i) {
+                           set_time_value(ctx_,
+                                          &key_bulk_,
+                                          array.Value(i),
+                                          time_unit);
+                         });
     }
 
   private:
@@ -170,12 +262,11 @@ namespace grnarrow {
     std::vector<grn_id> *record_ids_;
     grn_obj key_bulk_;
 
-    template <typename T>
-    arrow::Status add_records(const T &array, size_t key_size) {
+    template <typename Array, typename SetKeyBulk>
+    arrow::Status add_records(const Array &array, SetKeyBulk set_key_bulk) {
       const auto n_rows = array.length();
       for (int64_t i = 0; i < n_rows; ++i) {
-        const auto &key = array.Value(i);
-        GRN_TEXT_SET(ctx_, &key_bulk_, &key, key_size);
+        set_key_bulk(i);
         const auto record_id = grn_table_add_by_key(ctx_,
                                                     grn_loader_->table,
                                                     &key_bulk_,
@@ -283,20 +374,10 @@ namespace grnarrow {
     arrow::Status Visit(const arrow::TimestampArray &array) override {
       const auto &arrow_timestamp_type =
         std::static_pointer_cast<arrow::TimestampType>(array.type());
-      switch (arrow_timestamp_type->unit()) {
-      case arrow::TimeUnit::SECOND :
-        GRN_TIME_PUT(ctx_, buffer_, GRN_TIME_PACK(array.Value(index_), 0));
-        break;
-      case arrow::TimeUnit::MILLI :
-        GRN_TIME_PUT(ctx_, buffer_, array.Value(index_) * 1000);
-        break;
-      case arrow::TimeUnit::MICRO :
-        GRN_TIME_PUT(ctx_, buffer_, array.Value(index_));
-        break;
-      case arrow::TimeUnit::NANO :
-        GRN_TIME_PUT(ctx_, buffer_, array.Value(index_) / 1000);
-        break;
-      }
+      set_time_value(ctx_,
+                     buffer_,
+                     array.Value(index_),
+                     arrow_timestamp_type->unit());
       return arrow::Status::OK();
     }
 
