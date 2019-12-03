@@ -7632,23 +7632,75 @@ grn_uvector2updspecs_data(grn_ctx *ctx, grn_ii *ii, grn_id rid,
                           unsigned int section, grn_obj *in, grn_obj *out,
                           grn_tokenize_mode mode, grn_obj *posting)
 {
-  int i, n;
+  grn_rc rc = GRN_SUCCESS;
   grn_hash *h = (grn_hash *)out;
   grn_obj *lexicon = ii->lexicon;
+  grn_obj *tokenizer;
+  bool need_cast;
+  grn_obj element_buffer;
+  grn_obj casted_element_buffer;
+  int i, n;
   unsigned int element_size;
+
+  tokenizer = grn_obj_get_info(ctx, lexicon, GRN_INFO_DEFAULT_TOKENIZER,
+                               NULL);
+  need_cast = (!tokenizer && lexicon->header.domain != in->header.domain);
+  if (need_cast) {
+    GRN_VALUE_FIX_SIZE_INIT(&element_buffer,
+                            0,
+                            in->header.domain);
+    GRN_VALUE_FIX_SIZE_INIT(&casted_element_buffer,
+                            GRN_OBJ_VECTOR,
+                            lexicon->header.domain);
+  } else {
+    GRN_VOID_INIT(&element_buffer);
+    GRN_VOID_INIT(&casted_element_buffer);
+  }
 
   n = grn_uvector_size(ctx, in);
   element_size = grn_uvector_element_size(ctx, in);
   for (i = 0; i < n; i++) {
-    grn_obj *tokenizer;
     grn_token_cursor *token_cursor;
     unsigned int token_flags = 0;
     const char *element;
 
-    tokenizer = grn_obj_get_info(ctx, lexicon, GRN_INFO_DEFAULT_TOKENIZER,
-                                 NULL);
-
     element = GRN_BULK_HEAD(in) + (element_size * i);
+    if (need_cast) {
+      GRN_BULK_REWIND(&element_buffer);
+      GRN_BULK_REWIND(&casted_element_buffer);
+      grn_bulk_write(ctx, &element_buffer, element, element_size);
+      grn_rc cast_rc = grn_obj_cast(ctx,
+                                    &element_buffer,
+                                    &casted_element_buffer,
+                                    true);
+      if (cast_rc != GRN_SUCCESS) {
+        DEFINE_NAME(ii);
+        {
+          grn_obj *domain = grn_ctx_at(ctx,
+                                       casted_element_buffer.header.domain);
+          char domain_name[GRN_TABLE_MAX_KEY_SIZE];
+          int domain_name_size;
+          domain_name_size = grn_obj_name(ctx,
+                                          domain,
+                                          domain_name,
+                                          GRN_TABLE_MAX_KEY_SIZE);
+          grn_obj inspected_element;
+          GRN_TEXT_INIT(&inspected_element, 0);
+          grn_inspect(ctx, &inspected_element, &element_buffer);
+          GRN_LOG(ctx,
+                  GRN_LOG_WARNING,
+                  "[ii][updspec][uvector][data] <%*.s>: "
+                  "failed to cast to <%.*s>: <%.*s>",
+                  name_size, name,
+                  domain_name_size, domain_name,
+                  (int)GRN_TEXT_LEN(&inspected_element),
+                  GRN_TEXT_VALUE(&inspected_element));
+          GRN_OBJ_FIN(ctx, &inspected_element);
+        }
+      }
+      element = GRN_BULK_HEAD(&casted_element_buffer);
+      element_size = GRN_BULK_VSIZE(&casted_element_buffer);
+    }
     token_cursor = grn_token_cursor_open(ctx, lexicon,
                                          element, element_size,
                                          mode, token_flags);
@@ -7671,7 +7723,8 @@ grn_uvector2updspecs_data(grn_ctx *ctx, grn_ii *ii, grn_id rid,
             GRN_LOG(ctx, GRN_LOG_ALERT,
                     "grn_ii_updspec_open on grn_uvector2updspecs_data failed!");
             grn_token_cursor_close(ctx, token_cursor);
-            return GRN_NO_MEMORY_AVAILABLE;
+            rc = GRN_NO_MEMORY_AVAILABLE;
+            goto exit;
           }
         }
         if (tokenizer) {
@@ -7683,7 +7736,8 @@ grn_uvector2updspecs_data(grn_ctx *ctx, grn_ii *ii, grn_id rid,
           GRN_LOG(ctx, GRN_LOG_ALERT,
                   "grn_ii_updspec_add on grn_uvector2updspecs failed!");
           grn_token_cursor_close(ctx, token_cursor);
-          return GRN_NO_MEMORY_AVAILABLE;
+          rc = GRN_NO_MEMORY_AVAILABLE;
+          goto exit;
         }
       }
     }
@@ -7691,7 +7745,11 @@ grn_uvector2updspecs_data(grn_ctx *ctx, grn_ii *ii, grn_id rid,
     grn_token_cursor_close(ctx, token_cursor);
   }
 
-  return GRN_SUCCESS;
+exit :
+  GRN_OBJ_FIN(ctx, &element_buffer);
+  GRN_OBJ_FIN(ctx, &casted_element_buffer);
+
+  return rc;
 }
 
 static grn_rc
