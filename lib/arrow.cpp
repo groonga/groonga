@@ -299,6 +299,28 @@ namespace grnarrow {
       return arrow::Status::OK();
     }
 
+    arrow::Status Visit(const arrow::StructArray &array) override {
+      if (array.length() > 0) {
+        const auto &value = array.GetFieldByName("value");
+        const auto &weight = array.GetFieldByName("weight");
+        if (value && value->type_id() == arrow::Type::STRING &&
+            weight && weight->type_id() == arrow::Type::INT32) {
+          const auto &raw_value =
+            std::static_pointer_cast<arrow::StringArray>(value)->GetString(0);
+          const auto &raw_weight =
+            std::static_pointer_cast<arrow::Int32Array>(weight)->Value(0);
+          const grn_id domain = GRN_DB_SHORT_TEXT;
+          grn_vector_add_element(ctx_,
+                                 buffer_,
+                                 raw_value.data(),
+                                 raw_value.size(),
+                                 raw_weight,
+                                 domain);
+        }
+      }
+      return arrow::Status::OK();
+    }
+
   private:
     grn_ctx *ctx_;
     grn_obj *buffer_;
@@ -477,6 +499,12 @@ namespace grnarrow {
           detect_type(arrow_list_type->value_type(), type_id, &sub_flags);
         }
         break;
+      case arrow::Type::STRUCT :
+        // Must be weight vector: {"value": string, "weight": int32}
+        *type_id = GRN_DB_TEXT;
+        break;
+      case arrow::Type::MAP :
+        // TODO: Support as weight vector
       default :
         *type_id = GRN_DB_VOID;
         break;
