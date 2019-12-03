@@ -249,7 +249,7 @@ namespace grnarrow {
       const auto time_unit = arrow_timestamp_type->unit();
       return add_records(array,
                          [&](int64_t i) {
-                           GRN_OBJ_REWIND(&key_bulk_);
+                           GRN_BULK_REWIND(&key_bulk_);
                            put_time_value(ctx_,
                                           &key_bulk_,
                                           array.Value(i),
