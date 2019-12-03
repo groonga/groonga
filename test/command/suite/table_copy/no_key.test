@@ -1,10 +1,11 @@
 table_create Logs TABLE_NO_KEY
+column_create Logs message COLUMN_SCALAR ShortText
 
 load --table Logs
 [
-{},
-{},
-{}
+{"message": "start"},
+{"message": "running"},
+{"message": "shutdown"}
 ]
 
 table_create ApplicationLogs TABLE_HASH_KEY ShortText
