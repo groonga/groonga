@@ -238,7 +238,7 @@ namespace grnarrow {
                            const auto &key = array.Value(i);
                            GRN_TIME_SET(ctx_,
                                         &key_bulk_,
-                                        key * GRN_TIME_USEC_PER_MSEC);
+                                        GRN_TIME_MSEC_TO_USEC(key));
                          });
     }
 
@@ -283,111 +283,175 @@ namespace grnarrow {
 
   class ValueLoadVisitor : public arrow::ArrayVisitor {
   public:
-    ValueLoadVisitor(grn_ctx *ctx, grn_obj *buffer, int64_t index)
+    ValueLoadVisitor(grn_ctx *ctx,
+                     grn_obj *grn_column,
+                     grn_obj *bulk,
+                     int64_t index)
       : ctx_(ctx),
-        buffer_(buffer),
-        index_(index) {
+        grn_column_(grn_column),
+        bulk_(bulk),
+        index_(index),
+        buffer_() {
+      GRN_VOID_INIT(&buffer_);
+    }
+
+    ~ValueLoadVisitor() {
+      GRN_OBJ_FIN(ctx_, &buffer_);
     }
 
     arrow::Status Visit(const arrow::BooleanArray &array) override {
-      GRN_BOOL_PUT(ctx_, buffer_, array.Value(index_));
-      return arrow::Status::OK();
+      return load_value([&]() {
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_BOOL, 0);
+                          GRN_BOOL_SET(ctx_, &buffer_, array.Value(index_));
+                        });
     }
 
     arrow::Status Visit(const arrow::Int8Array &array) override {
-      GRN_INT8_PUT(ctx_, buffer_, array.Value(index_));
-      return arrow::Status::OK();
+      return load_value([&]() {
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_INT8, 0);
+                          GRN_INT8_SET(ctx_, &buffer_, array.Value(index_));
+                        });
     }
 
     arrow::Status Visit(const arrow::UInt8Array &array) override {
-      GRN_UINT8_PUT(ctx_, buffer_, array.Value(index_));
-      return arrow::Status::OK();
+      return load_value([&]() {
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_UINT8, 0);
+                          GRN_UINT8_SET(ctx_, &buffer_, array.Value(index_));
+                        });
     }
 
     arrow::Status Visit(const arrow::Int16Array &array) override {
-      GRN_INT16_PUT(ctx_, buffer_, array.Value(index_));
-      return arrow::Status::OK();
+      return load_value([&]() {
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_INT16, 0);
+                          GRN_INT16_SET(ctx_, &buffer_, array.Value(index_));
+                        });
     }
 
     arrow::Status Visit(const arrow::UInt16Array &array) override {
-      GRN_UINT16_PUT(ctx_, buffer_, array.Value(index_));
-      return arrow::Status::OK();
+      return load_value([&]() {
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_UINT16, 0);
+                          GRN_UINT16_SET(ctx_, &buffer_, array.Value(index_));
+                        });
     }
 
     arrow::Status Visit(const arrow::Int32Array &array) override {
-      GRN_INT32_PUT(ctx_, buffer_, array.Value(index_));
-      return arrow::Status::OK();
+      return load_value([&]() {
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_INT32, 0);
+                          GRN_INT32_SET(ctx_, &buffer_, array.Value(index_));
+                        });
     }
 
     arrow::Status Visit(const arrow::UInt32Array &array) override {
-      GRN_UINT32_PUT(ctx_, buffer_, array.Value(index_));
-      return arrow::Status::OK();
+      return load_value([&]() {
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_UINT32, 0);
+                          GRN_UINT32_SET(ctx_, &buffer_, array.Value(index_));
+                        });
     }
 
     arrow::Status Visit(const arrow::Int64Array &array) override {
-      GRN_INT64_PUT(ctx_, buffer_, array.Value(index_));
-      return arrow::Status::OK();
+      return load_value([&]() {
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_INT64, 0);
+                          GRN_INT64_SET(ctx_, &buffer_, array.Value(index_));
+                        });
     }
 
     arrow::Status Visit(const arrow::UInt64Array &array) override {
-      GRN_UINT64_PUT(ctx_, buffer_, array.Value(index_));
-      return arrow::Status::OK();
+      return load_value([&]() {
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_UINT64, 0);
+                          GRN_UINT64_SET(ctx_, &buffer_, array.Value(index_));
+                        });
     }
 
     arrow::Status Visit(const arrow::HalfFloatArray &array) override {
-      GRN_FLOAT_PUT(ctx_, buffer_, array.Value(index_));
-      return arrow::Status::OK();
+      return load_value([&]() {
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_FLOAT, 0);
+                          GRN_FLOAT_SET(ctx_, &buffer_, array.Value(index_));
+                        });
     }
 
     arrow::Status Visit(const arrow::FloatArray &array) override {
-      GRN_FLOAT_PUT(ctx_, buffer_, array.Value(index_));
-      return arrow::Status::OK();
+      return load_value([&]() {
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_FLOAT, 0);
+                          GRN_FLOAT_SET(ctx_, &buffer_, array.Value(index_));
+                        });
     }
 
     arrow::Status Visit(const arrow::DoubleArray &array) override {
-      GRN_FLOAT_PUT(ctx_, buffer_, array.Value(index_));
-      return arrow::Status::OK();
+      return load_value([&]() {
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_FLOAT, 0);
+                          GRN_FLOAT_SET(ctx_, &buffer_, array.Value(index_));
+                        });
     }
 
     arrow::Status Visit(const arrow::StringArray &array) override {
-      int32_t size;
-      const auto data = array.GetValue(index_, &size);
-      if (buffer_->header.type == GRN_VECTOR) {
-        unsigned int weight = 0;
-        grn_id domain = GRN_DB_SHORT_TEXT;
-        grn_vector_add_element(ctx_,
-                               buffer_,
-                               reinterpret_cast<const char *>(data),
-                               size,
-                               weight,
-                               domain);
-      } else {
-        GRN_TEXT_SET(ctx_, buffer_, data, size);
-      }
-      return arrow::Status::OK();
+      return load_value([&]() {
+                          const auto value = array.GetView(index_);
+                          grn_obj_reinit(ctx_,
+                                         &buffer_,
+                                         GRN_DB_TEXT,
+                                         GRN_OBJ_DO_SHALLOW_COPY);
+                          GRN_TEXT_SET(ctx_,
+                                       &buffer_,
+                                       value.data(),
+                                       value.size());
+                        });
     }
 
     arrow::Status Visit(const arrow::Date64Array &array) override {
-      GRN_TIME_PUT(ctx_, buffer_, array.Value(index_));
-      return arrow::Status::OK();
+      return load_value([&]() {
+                          const auto value = array.Value(index_);
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_TIME, 0);
+                          GRN_TIME_SET(ctx_,
+                                       &buffer_,
+                                       GRN_TIME_MSEC_TO_USEC(value));
+                        });
     }
 
     arrow::Status Visit(const arrow::TimestampArray &array) override {
       const auto &arrow_timestamp_type =
         std::static_pointer_cast<arrow::TimestampType>(array.type());
-      put_time_value(ctx_,
-                     buffer_,
-                     array.Value(index_),
-                     arrow_timestamp_type->unit());
+      return load_value([&]() {
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_TIME, 0);
+                          put_time_value(ctx_,
+                                         &buffer_,
+                                         array.Value(index_),
+                                         arrow_timestamp_type->unit());
+                        });
       return arrow::Status::OK();
     }
 
     arrow::Status Visit(const arrow::ListArray &array) override {
       const auto &value_array = array.value_slice(index_);
-      for (int64_t i = 0; i < value_array->length(); ++i) {
-        ValueLoadVisitor sub_visitor(ctx_, buffer_, i);
-        ARROW_RETURN_NOT_OK(value_array->Accept(&sub_visitor));
+      grn_obj sub_buffer;
+      if (grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
+        GRN_TEXT_INIT(&sub_buffer, 0);
+      } else {
+        GRN_VALUE_FIX_SIZE_INIT(&sub_buffer, 0, bulk_->header.domain);
       }
+      for (int64_t i = 0; i < value_array->length(); ++i) {
+        GRN_BULK_REWIND(&sub_buffer);
+        ValueLoadVisitor sub_visitor(ctx_, grn_column_, &sub_buffer, i);
+        ARROW_RETURN_NOT_OK(value_array->Accept(&sub_visitor));
+        if (ctx_->rc != GRN_SUCCESS) {
+          continue;
+        }
+        if (grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
+          unsigned int weight = 0;
+          grn_id domain = GRN_DB_SHORT_TEXT;
+          grn_vector_add_element(ctx_,
+                                 bulk_,
+                                 GRN_TEXT_VALUE(&sub_buffer),
+                                 GRN_TEXT_LEN(&sub_buffer),
+                                 weight,
+                                 domain);
+        } else {
+          grn_bulk_write(ctx_,
+                         bulk_,
+                         GRN_BULK_HEAD(&sub_buffer),
+                         GRN_BULK_VSIZE(&sub_buffer));
+        }
+      }
+      GRN_OBJ_FIN(ctx_, &sub_buffer);
       return arrow::Status::OK();
     }
 
@@ -403,7 +467,7 @@ namespace grnarrow {
             std::static_pointer_cast<arrow::Int32Array>(weight)->Value(0);
           const grn_id domain = GRN_DB_SHORT_TEXT;
           grn_vector_add_element(ctx_,
-                                 buffer_,
+                                 bulk_,
                                  raw_value.data(),
                                  raw_value.size(),
                                  raw_weight,
@@ -415,8 +479,23 @@ namespace grnarrow {
 
   private:
     grn_ctx *ctx_;
-    grn_obj *buffer_;
+    grn_obj *grn_column_;
+    grn_obj *bulk_;
     int64_t index_;
+    grn_obj buffer_;
+
+    template <typename LoadBulk>
+    arrow::Status
+    load_value(LoadBulk load_bulk) {
+      load_bulk();
+      if (grn_obj_cast(ctx_, &buffer_, bulk_, true) != GRN_SUCCESS) {
+        grn_ctx *ctx = ctx_;
+        grn_obj *range = grn_ctx_at(ctx_, buffer_.header.domain);
+        ERR_CAST(grn_column_, range, &buffer_);
+        grn_obj_unlink(ctx, range);
+      }
+      return arrow::Status::OK();
+    }
   };
 
   class ColumnLoadVisitor : public arrow::ArrayVisitor {
@@ -434,10 +513,10 @@ namespace grnarrow {
                                    column_name.size());
 
       const auto &arrow_type = arrow_field->type();
-      grn_id type_id = GRN_DB_VOID;
+      grn_id arrow_type_id = GRN_DB_VOID;
       grn_obj_flags flags = 0;
-      detect_type(arrow_type, &type_id, &flags);
-      if (type_id == GRN_DB_VOID) {
+      detect_type(arrow_type, &arrow_type_id, &flags);
+      if (arrow_type_id == GRN_DB_VOID) {
         // TODO
         return;
       }
@@ -449,12 +528,13 @@ namespace grnarrow {
                                         column_name.size(),
                                         NULL,
                                         GRN_OBJ_COLUMN_SCALAR,
-                                        grn_ctx_at(ctx_, type_id));
+                                        grn_ctx_at(ctx_, arrow_type_id));
       }
-      if (type_id == GRN_DB_TEXT) {
+      grn_id range_id = grn_obj_get_range(ctx, grn_column_);
+      if (range_id == GRN_DB_TEXT) {
         GRN_TEXT_INIT(&buffer_, flags);
       } else {
-        GRN_VALUE_FIX_SIZE_INIT(&buffer_, flags, type_id);
+        GRN_VALUE_FIX_SIZE_INIT(&buffer_, flags, range_id);
       }
     }
 
@@ -609,7 +689,7 @@ namespace grnarrow {
       for (int i = 0; i < n_rows; ++i) {
         const auto record_id = record_ids_[i];
         GRN_BULK_REWIND(&buffer_);
-        ValueLoadVisitor visitor(ctx_, &buffer_, i);
+        ValueLoadVisitor visitor(ctx_, grn_column_, &buffer_, i);
         ARROW_RETURN_NOT_OK(array.Accept(&visitor));
         grn_obj_set_value(ctx_, grn_column_, record_id, &buffer_, GRN_OBJ_SET);
       }
