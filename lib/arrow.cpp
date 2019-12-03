@@ -75,7 +75,7 @@ namespace grnarrow {
                         static_cast<std::stringstream &>(output).str().c_str());
   }
 
-  void set_time_value(grn_ctx *ctx,
+  void put_time_value(grn_ctx *ctx,
                       grn_obj *bulk,
                       int64_t time_value,
                       arrow::TimeUnit::type time_unit) {
@@ -249,7 +249,8 @@ namespace grnarrow {
       const auto time_unit = arrow_timestamp_type->unit();
       return add_records(array,
                          [&](int64_t i) {
-                           set_time_value(ctx_,
+                           GRN_OBJ_REWIND(&key_bulk_);
+                           put_time_value(ctx_,
                                           &key_bulk_,
                                           array.Value(i),
                                           time_unit);
@@ -374,7 +375,7 @@ namespace grnarrow {
     arrow::Status Visit(const arrow::TimestampArray &array) override {
       const auto &arrow_timestamp_type =
         std::static_pointer_cast<arrow::TimestampType>(array.type());
-      set_time_value(ctx_,
+      put_time_value(ctx_,
                      buffer_,
                      array.Value(index_),
                      arrow_timestamp_type->unit());
