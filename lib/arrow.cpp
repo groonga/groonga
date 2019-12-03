@@ -306,7 +306,7 @@ namespace grnarrow {
         if (value && value->type_id() == arrow::Type::STRING &&
             weight && weight->type_id() == arrow::Type::INT32) {
           const auto &raw_value =
-            std::static_pointer_cast<arrow::StringArray>(value)->GetString(0);
+            std::static_pointer_cast<arrow::StringArray>(value)->GetView(0);
           const auto &raw_weight =
             std::static_pointer_cast<arrow::Int32Array>(weight)->Value(0);
           const grn_id domain = GRN_DB_SHORT_TEXT;
