@@ -1,10 +1,11 @@
 table_create IDs TABLE_NO_KEY
+column_create IDs value COLUMN_SCALAR Int8
 
 load --table IDs
 [
-{},
-{},
-{}
+{"value": 1},
+{"value": 2},
+{"value": 3}
 ]
 
 log_level --level info
