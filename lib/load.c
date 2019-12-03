@@ -23,7 +23,7 @@
 #include "grn_obj.h"
 #include "grn_util.h"
 
-static void
+void
 grn_loader_save_error(grn_ctx *ctx, grn_loader *loader)
 {
   loader->rc = ctx->rc;

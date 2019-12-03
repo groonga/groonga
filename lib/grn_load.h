@@ -98,6 +98,9 @@ typedef struct {
   grn_bool lock_table;
 } grn_loader;
 
+void
+grn_loader_save_error(grn_ctx *ctx, grn_loader *loader);
+
 #ifdef __cplusplus
 }
 #endif

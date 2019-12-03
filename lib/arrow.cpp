@@ -78,14 +78,17 @@ namespace grnarrow {
   class RecordAddVisitor : public arrow::ArrayVisitor {
   public:
     RecordAddVisitor(grn_ctx *ctx,
-                     grn_obj *grn_table,
+                     grn_loader *grn_loader,
                      std::vector<grn_id> *record_ids)
       : ctx_(ctx),
-        grn_table_(grn_table),
-        record_ids_(record_ids) {
+        grn_loader_(grn_loader),
+        record_ids_(record_ids),
+        key_bulk_() {
+      GRN_TEXT_INIT(&key_bulk_, GRN_OBJ_DO_SHALLOW_COPY);
     }
 
     ~RecordAddVisitor() {
+      GRN_OBJ_FIN(ctx_, &key_bulk_);
     }
 
     arrow::Status Visit(const arrow::BooleanArray &array) {
@@ -140,11 +143,14 @@ namespace grnarrow {
       const auto n_rows = array.length();
       for (int64_t i = 0; i < n_rows; ++i) {
         const auto &key = array.GetView(i);
-        const auto record_id = grn_table_add(ctx_,
-                                             grn_table_,
-                                             key.data(),
-                                             key.size(),
-                                             NULL);
+        GRN_TEXT_SET(ctx_, &key_bulk_, key.data(), key.size());
+        const auto record_id = grn_table_add_by_key(ctx_,
+                                                    grn_loader_->table,
+                                                    &key_bulk_,
+                                                    NULL);
+        if (record_id == GRN_ID_NIL) {
+          grn_loader_save_error(ctx_, grn_loader_);
+        }
         record_ids_->push_back(record_id);
       }
       return arrow::Status::OK();
@@ -160,19 +166,23 @@ namespace grnarrow {
 
   private:
     grn_ctx *ctx_;
-    grn_obj *grn_table_;
+    grn_loader *grn_loader_;
     std::vector<grn_id> *record_ids_;
+    grn_obj key_bulk_;
 
     template <typename T>
     arrow::Status add_records(const T &array, size_t key_size) {
       const auto n_rows = array.length();
       for (int64_t i = 0; i < n_rows; ++i) {
         const auto &key = array.Value(i);
-        const auto record_id = grn_table_add(ctx_,
-                                             grn_table_,
-                                             &key,
-                                             key_size,
-                                             NULL);
+        GRN_TEXT_SET(ctx_, &key_bulk_, &key, key_size);
+        const auto record_id = grn_table_add_by_key(ctx_,
+                                                    grn_loader_->table,
+                                                    &key_bulk_,
+                                                    NULL);
+        if (record_id == GRN_ID_NIL) {
+          grn_loader_save_error(ctx_, grn_loader_);
+        }
         record_ids_->push_back(record_id);
       }
       return arrow::Status::OK();
@@ -1055,7 +1065,7 @@ namespace grnarrow {
       std::vector<grn_id> record_ids;
       if (key_column) {
         RecordAddVisitor visitor(ctx_,
-                                 grn_table,
+                                 grn_loader_,
                                  &record_ids);
         key_column->Accept(&visitor);
       } else {
