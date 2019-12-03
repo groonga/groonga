@@ -506,7 +506,9 @@ namespace grnarrow {
                       const grn_id *record_ids)
       : ctx_(ctx),
         grn_table_(grn_table),
-        record_ids_(record_ids) {
+        record_ids_(record_ids),
+        grn_column_(nullptr),
+        buffer_() {
       const auto &column_name = arrow_field->name();
       grn_column_ = grn_obj_column(ctx_, grn_table_,
                                    column_name.data(),
@@ -518,6 +520,7 @@ namespace grnarrow {
       detect_type(arrow_type, &arrow_type_id, &flags);
       if (arrow_type_id == GRN_DB_VOID) {
         // TODO
+        GRN_VOID_INIT(&buffer_);
         return;
       }
 
@@ -531,8 +534,8 @@ namespace grnarrow {
                                         grn_ctx_at(ctx_, arrow_type_id));
       }
       grn_id range_id = grn_obj_get_range(ctx, grn_column_);
-      if (range_id == GRN_DB_TEXT) {
-        GRN_TEXT_INIT(&buffer_, flags);
+      if (grn_type_id_is_text_family(ctx_, range_id)) {
+        GRN_VALUE_VAR_SIZE_INIT(&buffer_, flags, range_id);
       } else {
         GRN_VALUE_FIX_SIZE_INIT(&buffer_, flags, range_id);
       }
@@ -654,7 +657,6 @@ namespace grnarrow {
         break;
       case arrow::Type::STRING :
         *type_id = GRN_DB_TEXT;
-        *flags |= GRN_OBJ_DO_SHALLOW_COPY;
         break;
       case arrow::Type::DATE64 :
         *type_id = GRN_DB_TIME;
