@@ -10,8 +10,8 @@ jobs:
       - uses: actions/checkout@master
       - name: Install dependencies
         run: |
-          apt update
-          apt install -y -V \
+          sudo apt update
+          sudo apt install -y -V \
             apt-transport-https \
             autoconf-archive \
             automake1.11 \
