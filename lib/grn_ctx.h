@@ -153,8 +153,16 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
   int range_name_size;\
   GRN_TEXT_INIT(&inspected, 0);\
   grn_inspect(ctx, &inspected, element);\
-  column_name_size = grn_obj_name(ctx, column, column_name,\
-                                  GRN_TABLE_MAX_KEY_SIZE);\
+  if (grn_obj_is_id_accessor(ctx, column)) {\
+    grn_strncpy(column_name,\
+                GRN_TABLE_MAX_KEY_SIZE,\
+                GRN_COLUMN_NAME_ID,\
+                GRN_COLUMN_NAME_ID_LEN + 1);\
+    column_name_size = GRN_COLUMN_NAME_ID_LEN;\
+  } else {\
+    column_name_size = grn_obj_name(ctx, column, column_name,\
+                                    GRN_TABLE_MAX_KEY_SIZE);\
+  }\
   range_name_size = grn_obj_name(ctx, range, range_name,\
                                  GRN_TABLE_MAX_KEY_SIZE);\
   ERR(GRN_INVALID_ARGUMENT, "<%.*s>: failed to cast to <%.*s>: <%.*s>",\
