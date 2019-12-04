@@ -101,6 +101,17 @@ typedef struct {
 void
 grn_loader_save_error(grn_ctx *ctx, grn_loader *loader);
 void
+grn_loader_on_record_added(grn_ctx *ctx,
+                           grn_loader *loader,
+                           grn_id id);
+void
+grn_loader_on_column_set(grn_ctx *ctx,
+                         grn_loader *loader,
+                         grn_obj *column,
+                         grn_id id,
+                         grn_obj *key,
+                         grn_obj *value);
+void
 grn_loader_apply_each(grn_ctx *ctx,
                       grn_loader *loader,
                       grn_id id);

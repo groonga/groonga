@@ -11,7 +11,7 @@ load --table Memos
 [
 {"_id": "invalid", "content": "Mroonga is fast"}
 ]
-[[0,0.0,0.0],0]
+[[[-22,0.0,0.0],"<_id>: failed to cast to <UInt32>: <\"invalid\">"],0]
 #|e| <_id>: failed to cast to <UInt32>: <"invalid">
 select Memos
 [

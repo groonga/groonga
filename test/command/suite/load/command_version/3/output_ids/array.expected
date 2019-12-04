@@ -9,9 +9,15 @@ load --table Users --command_version 3 --output_ids yes
 ]
 {
   "header": {
-    "return_code": 0,
+    "return_code": -22,
     "start_time": 0.0,
-    "elapsed_time": 0.0
+    "elapsed_time": 0.0,
+    "error": {
+      "message": "[table][add][hash] failed to add: #<key (nil) table:#<hash Users key:ShortText>>",
+      "function": "grn_table_add",
+      "file": "db.c",
+      "line": 0
+    }
   },
   "body": {
     "n_loaded_records": 2,
