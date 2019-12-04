@@ -7742,7 +7742,11 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
     }
     switch (value->header.type) {
     case GRN_BULK :
-      {
+      if (value->header.domain == range) {
+        if (GRN_BULK_VSIZE(value) > 0) {
+          grn_uvector_add_element(ctx, &uvector, GRN_RECORD_VALUE(value), 0);
+        }
+      } else {
         unsigned int token_flags = 0;
         grn_token_cursor *token_cursor;
         if (v && s &&
@@ -7754,14 +7758,14 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
           }
           grn_token_cursor_close(ctx, token_cursor);
         }
-        if (call_hook(ctx, obj, id, &uvector, flags)) {
-          rc = grn_ja_put(ctx, (grn_ja *)obj, id,
-                          GRN_BULK_HEAD(&uvector), GRN_BULK_VSIZE(&uvector),
-                          flags, NULL);
-        } else {
-          if (ctx->rc) {
-            rc = ctx->rc;
-          }
+      }
+      if (call_hook(ctx, obj, id, &uvector, flags)) {
+        rc = grn_ja_put(ctx, (grn_ja *)obj, id,
+                        GRN_BULK_HEAD(&uvector), GRN_BULK_VSIZE(&uvector),
+                        flags, NULL);
+      } else {
+        if (ctx->rc) {
+          rc = ctx->rc;
         }
       }
       break;
