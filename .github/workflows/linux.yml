@@ -62,7 +62,10 @@ jobs:
           make -j$(nproc)
       - name: Test
         run: |
-          test/command/run-test.sh
+          test/command/run-test.sh \
+            --input-type=apache-arrow \
+            --interface=http \
+            --n-workers=1
       - name: Install
         run: |
           make install
