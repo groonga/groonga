@@ -72,15 +72,21 @@ grn_loader_on_column_set(grn_ctx *ctx,
 
   grn_obj key_inspected;
   grn_obj value_inspected;
-  char column_name[GRN_TABLE_MAX_KEY_SIZE];
-  unsigned int column_name_size;
+  grn_obj column_name;
   GRN_TEXT_INIT(&key_inspected, 0);
   GRN_TEXT_INIT(&value_inspected, 0);
+  GRN_TEXT_INIT(&column_name, 0);
   if (key) {
     grn_inspect_limited(ctx, &key_inspected, key);
   } else {
-    grn_obj *table = grn_ctx_at(ctx, column->header.domain);
-    if (table->header.type != GRN_TABLE_NO_KEY) {
+    grn_obj *table;
+    if (grn_obj_is_id_accessor(ctx, column) ||
+        grn_obj_is_key_accessor(ctx, column)) {
+      table = ((grn_accessor *)column)->obj;
+    } else {
+      table = grn_ctx_at(ctx, column->header.domain);
+    }
+    if (grn_obj_is_lexicon(ctx, table)) {
       grn_obj key_value;
       GRN_OBJ_INIT(&key_value, GRN_BULK, 0, table->header.domain);
       grn_table_get_key2(ctx, table, id, &key_value);
@@ -89,10 +95,17 @@ grn_loader_on_column_set(grn_ctx *ctx,
     }
   }
   grn_inspect_limited(ctx, &value_inspected, value);
-  column_name_size = grn_obj_name(ctx,
-                                  column,
-                                  column_name,
-                                  GRN_TABLE_MAX_KEY_SIZE);
+  if (grn_obj_is_accessor(ctx, column)) {
+    grn_accessor_name(ctx, column, &column_name);
+  } else {
+    char raw_column_name[GRN_TABLE_MAX_KEY_SIZE];
+    unsigned int raw_column_name_size;
+    raw_column_name_size = grn_obj_name(ctx,
+                                        column,
+                                        raw_column_name,
+                                        GRN_TABLE_MAX_KEY_SIZE);
+    GRN_TEXT_SET(ctx, &column_name, raw_column_name, raw_column_name_size);
+  }
   if (GRN_TEXT_LEN(&key_inspected) > 0) {
     GRN_LOG(ctx, GRN_LOG_ERROR,
             "[table][load] failed to set column value: %s: "
@@ -100,8 +113,8 @@ grn_loader_on_column_set(grn_ctx *ctx,
             ctx->errbuf,
             (int)GRN_TEXT_LEN(&key_inspected),
             GRN_TEXT_VALUE(&key_inspected),
-            column_name_size,
-            column_name,
+            (int)GRN_TEXT_LEN(&column_name),
+            GRN_TEXT_VALUE(&column_name),
             (int)GRN_TEXT_LEN(&value_inspected),
             GRN_TEXT_VALUE(&value_inspected));
   } else {
@@ -110,13 +123,14 @@ grn_loader_on_column_set(grn_ctx *ctx,
             "id: <%u>: column: <%.*s>, value: <%.*s>",
             ctx->errbuf,
             id,
-            column_name_size,
-            column_name,
+            (int)GRN_TEXT_LEN(&column_name),
+            GRN_TEXT_VALUE(&column_name),
             (int)GRN_TEXT_LEN(&value_inspected),
             GRN_TEXT_VALUE(&value_inspected));
   }
   GRN_OBJ_FIN(ctx, &key_inspected);
   GRN_OBJ_FIN(ctx, &value_inspected);
+  GRN_OBJ_FIN(ctx, &column_name);
 
   loader->n_column_errors++;
   ERRCLR(ctx);
