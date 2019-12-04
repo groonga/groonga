@@ -645,10 +645,10 @@ namespace grnarrow {
                                         GRN_OBJ_COLUMN_SCALAR,
                                         grn_ctx_at(ctx_, arrow_type_id));
       }
-      grn_id range_id = grn_obj_get_range(ctx, grn_column_);
-      if (grn_type_id_is_text_family(ctx_, range_id)) {
-        GRN_VALUE_VAR_SIZE_INIT(&buffer_, flags, range_id);
+      if (grn_type_id_is_text_family(ctx_, arrow_type_id)) {
+        GRN_VALUE_VAR_SIZE_INIT(&buffer_, flags, arrow_type_id);
       } else {
+        grn_id range_id = grn_obj_get_range(ctx, grn_column_);
         GRN_VALUE_FIX_SIZE_INIT(&buffer_, flags, range_id);
         if (flags & GRN_OBJ_WITH_WEIGHT) {
           buffer_.header.flags |= GRN_OBJ_WITH_WEIGHT;

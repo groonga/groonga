@@ -1,5 +1,3 @@
-#@require-input-type json
-
 table_create Tags TABLE_HASH_KEY ShortText --default_tokenizer TokenDelimit
 
 table_create Users TABLE_HASH_KEY ShortText
