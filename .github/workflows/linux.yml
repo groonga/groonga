@@ -26,6 +26,7 @@ jobs:
             mecab-naist-jdic \
             python3-pip \
             rapidjson-dev \
+            ruby \
             wget \
             zlib1g-dev
       - name: Install Sphinx
