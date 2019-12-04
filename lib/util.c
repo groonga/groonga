@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2010-2018 Brazil
+  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1005,6 +1006,11 @@ static grn_rc
 grn_geo_point_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   int latitude, longitude;
+
+  if (GRN_BULK_VSIZE(obj) == 0) {
+    GRN_TEXT_PUTS(ctx, buf, "(no value)");
+    return GRN_SUCCESS;
+  }
 
   GRN_GEO_POINT_VALUE(obj, latitude, longitude);
 
