@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Install dependencies
+      - name: Install packages
         run: |
           sudo apt update
           sudo apt install -y -V \
@@ -24,9 +24,13 @@ jobs:
             libmsgpack-dev \
             lsb-release \
             mecab-naist-jdic \
+            python3-pip \
             rapidjson-dev \
             wget \
             zlib1g-dev
+      - name: Install Sphinx
+        run: |
+          sudo pip3 install Sphinx
       - name: Generate configure
         run: |
           ./autogen.sh
