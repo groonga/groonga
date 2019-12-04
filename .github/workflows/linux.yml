@@ -8,31 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Install packages
+      - name: Enable Apache Arrow repository
         run: |
           sudo apt update
           sudo apt install -y -V \
             apt-transport-https \
-            autoconf-archive \
-            automake1.11 \
-            autotools-dev \
-            bison \
-            cmake \
-            gettext \
-            gnupg \
-            libevent-dev \
-            libluajit-5.1-dev \
-            libmecab-dev \
-            libmsgpack-dev \
             lsb-release \
-            mecab-naist-jdic \
-            python3-pip \
-            rapidjson-dev \
-            ruby-dev \
-            wget \
-            zlib1g-dev
-      - name: Enable Apache Arrow repository
-        run: |
+            gnupg \
+            wget
           keyring=/usr/share/keyrings/apache-arrow-keyring.gpg
           distribution=$(lsb_release --id --short | tr 'A-Z' 'a-z')
           code_name=$(lsb_release --codename --short)
@@ -41,7 +24,26 @@ jobs:
             https://apache.bintray.com/arrow/${distribution}/apache-arrow-keyring.gpg
           echo "deb [arch=amd64 signed-by=${keyring}] https://apache.bintray.com/arrow/${distribution}/ ${code_name} main" | \
             sudo tee /etc/apt/sources.list.d/apache-arrow.list
+      - name: Install packages
+        run: |
           sudo apt update
+          sudo apt install -y -V \
+            autoconf-archive \
+            automake1.11 \
+            autotools-dev \
+            bison \
+            cmake \
+            gettext \
+            libarrow-dev \
+            libevent-dev \
+            libluajit-5.1-dev \
+            libmecab-dev \
+            libmsgpack-dev \
+            mecab-naist-jdic \
+            python3-pip \
+            rapidjson-dev \
+            ruby-dev \
+            zlib1g-dev
       - name: Install Sphinx
         run: |
           sudo pip3 install Sphinx
