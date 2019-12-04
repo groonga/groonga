@@ -309,7 +309,7 @@ parse_id_value(grn_ctx *ctx, grn_obj *value)
   }
 }
 
-static void
+void
 grn_loader_apply_each(grn_ctx *ctx,
                       grn_loader *loader,
                       grn_id id)

@@ -100,6 +100,10 @@ typedef struct {
 
 void
 grn_loader_save_error(grn_ctx *ctx, grn_loader *loader);
+void
+grn_loader_apply_each(grn_ctx *ctx,
+                      grn_loader *loader,
+                      grn_id id);
 
 #ifdef __cplusplus
 }

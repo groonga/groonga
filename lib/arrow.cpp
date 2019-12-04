@@ -748,6 +748,9 @@ namespace grnarrow {
       int64_t n_rows = array.length();
       for (int i = 0; i < n_rows; ++i) {
         const auto record_id = record_ids_[i];
+        if (record_id == GRN_ID_NIL) {
+          continue;
+        }
         GRN_BULK_REWIND(&buffer_);
         ValueLoadVisitor visitor(ctx_, grn_column_, &buffer_, i);
         ARROW_RETURN_NOT_OK(array.Accept(&visitor));
@@ -1311,6 +1314,13 @@ namespace grnarrow {
                                   record_ids.data());
         column->Accept(&visitor);
       }
+      for (const auto record_id : record_ids) {
+        if (record_id == GRN_ID_NIL) {
+          continue;
+        }
+        grn_loader_apply_each(ctx_, grn_loader_, record_id);
+      }
+
       return ctx_->rc;
     };
 
