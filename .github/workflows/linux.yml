@@ -39,8 +39,8 @@ jobs:
           sudo wget \
             -O ${keyring} \
             https://apache.bintray.com/arrow/${distribution}/apache-arrow-keyring.gpg
-          sudo echo "deb [arch=amd64 signed-by=${keyring}] https://apache.bintray.com/apache/arrow/${distribution}/ ${code_name} main" > \
-            /etc/apt/sources.list.d/apache-arrow.list
+          echo "deb [arch=amd64 signed-by=${keyring}] https://apache.bintray.com/apache/arrow/${distribution}/ ${code_name} main" | \
+            sudo tee /etc/apt/sources.list.d/apache-arrow.list
           sudo apt update
       - name: Install Sphinx
         run: |
