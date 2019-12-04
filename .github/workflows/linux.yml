@@ -18,6 +18,7 @@ jobs:
             autotools-dev \
             bison \
             cmake \
+            gettext \
             gnupg \
             libevent-dev \
             libluajit-5.1-dev \
