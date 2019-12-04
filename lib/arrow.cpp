@@ -422,58 +422,109 @@ namespace grnarrow {
 
     arrow::Status Visit(const arrow::ListArray &array) override {
       const auto &value_array = array.value_slice(index_);
-      grn_obj sub_buffer;
-      if (grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
-        GRN_TEXT_INIT(&sub_buffer, 0);
+      if (value_array->type_id() == arrow::Type::STRUCT) {
+        for (int64_t i = 0; i < value_array->length(); ++i) {
+          ValueLoadVisitor sub_visitor(ctx_, grn_column_, bulk_, i);
+          ARROW_RETURN_NOT_OK(value_array->Accept(&sub_visitor));
+        }
       } else {
-        GRN_VALUE_FIX_SIZE_INIT(&sub_buffer, 0, bulk_->header.domain);
-      }
-      for (int64_t i = 0; i < value_array->length(); ++i) {
-        GRN_BULK_REWIND(&sub_buffer);
-        ValueLoadVisitor sub_visitor(ctx_, grn_column_, &sub_buffer, i);
-        ARROW_RETURN_NOT_OK(value_array->Accept(&sub_visitor));
-        if (ctx_->rc != GRN_SUCCESS) {
-          continue;
-        }
+        grn_obj sub_buffer;
         if (grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
-          unsigned int weight = 0;
-          grn_id domain = GRN_DB_SHORT_TEXT;
-          grn_vector_add_element(ctx_,
-                                 bulk_,
-                                 GRN_TEXT_VALUE(&sub_buffer),
-                                 GRN_TEXT_LEN(&sub_buffer),
-                                 weight,
-                                 domain);
+          GRN_TEXT_INIT(&sub_buffer, 0);
         } else {
-          grn_bulk_write(ctx_,
-                         bulk_,
-                         GRN_BULK_HEAD(&sub_buffer),
-                         GRN_BULK_VSIZE(&sub_buffer));
+          GRN_VALUE_FIX_SIZE_INIT(&sub_buffer, 0, bulk_->header.domain);
         }
+        for (int64_t i = 0; i < value_array->length(); ++i) {
+          GRN_BULK_REWIND(&sub_buffer);
+          ValueLoadVisitor sub_visitor(ctx_, grn_column_, &sub_buffer, i);
+          ARROW_RETURN_NOT_OK(value_array->Accept(&sub_visitor));
+          if (ctx_->rc != GRN_SUCCESS) {
+            continue;
+          }
+          if (grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
+            unsigned int weight = 0;
+            grn_id domain = GRN_DB_SHORT_TEXT;
+            grn_vector_add_element(ctx_,
+                                   bulk_,
+                                   GRN_TEXT_VALUE(&sub_buffer),
+                                   GRN_TEXT_LEN(&sub_buffer),
+                                   weight,
+                                   domain);
+          } else {
+            grn_bulk_write(ctx_,
+                           bulk_,
+                           GRN_BULK_HEAD(&sub_buffer),
+                           GRN_BULK_VSIZE(&sub_buffer));
+          }
+        }
+        GRN_OBJ_FIN(ctx_, &sub_buffer);
       }
-      GRN_OBJ_FIN(ctx_, &sub_buffer);
       return arrow::Status::OK();
     }
 
     arrow::Status Visit(const arrow::StructArray &array) override {
-      if (array.length() > 0) {
-        const auto &value = array.GetFieldByName("value");
-        const auto &weight = array.GetFieldByName("weight");
-        if (value && value->type_id() == arrow::Type::STRING &&
-            weight && weight->type_id() == arrow::Type::INT32) {
-          const auto &raw_value =
-            std::static_pointer_cast<arrow::StringArray>(value)->GetView(0);
-          const auto &raw_weight =
-            std::static_pointer_cast<arrow::Int32Array>(weight)->Value(0);
-          const grn_id domain = GRN_DB_SHORT_TEXT;
-          grn_vector_add_element(ctx_,
-                                 bulk_,
-                                 raw_value.data(),
-                                 raw_value.size(),
-                                 raw_weight,
-                                 domain);
+      if (array.length() == 0) {
+        return arrow::Status::OK();
+      }
+
+      const auto &value_column = array.GetFieldByName("value");
+      if (!value_column) {
+        return arrow::Status::OK();
+      }
+      if (value_column->type_id() != arrow::Type::STRING) {
+        return arrow::Status::OK();
+      }
+      const auto &weight_column = array.GetFieldByName("weight");
+      if (!weight_column) {
+        return arrow::Status::OK();
+      }
+      if (weight_column->type_id() != arrow::Type::INT32) {
+        return arrow::Status::OK();
+      }
+
+      const auto &value =
+        std::static_pointer_cast<arrow::StringArray>(value_column)->GetView(0);
+      const auto &weight =
+        std::static_pointer_cast<arrow::Int32Array>(weight_column)->Value(0);
+      const grn_id domain = bulk_->header.domain;
+      const auto raw_value = value.data();
+      const auto raw_value_size = value.size();
+      grn_obj value_buffer;
+      if (grn_type_id_is_text_family(ctx_, domain)) {
+        GRN_TEXT_INIT(&value_buffer, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_TEXT_SET(ctx_, &value_buffer, raw_value, raw_value_size);
+      } else {
+        grn_obj raw_value_buffer;
+        GRN_TEXT_INIT(&raw_value_buffer, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_TEXT_SET(ctx_, &raw_value_buffer, raw_value, raw_value_size);
+        GRN_VALUE_FIX_SIZE_INIT(&value_buffer, 0, domain);
+        if (grn_obj_cast(ctx_,
+                         &raw_value_buffer,
+                         &value_buffer,
+                         true) != GRN_SUCCESS) {
+          grn_ctx *ctx = ctx_;
+          grn_obj *domain_object = grn_ctx_at(ctx_, domain);
+          ERR_CAST(grn_column_, domain_object, &raw_value_buffer);
+          grn_obj_unlink(ctx, domain_object);
         }
       }
+      if (GRN_BULK_VSIZE(&value_buffer) > 0) {
+        if (grn_type_id_is_text_family(ctx_, domain)) {
+          grn_vector_add_element(ctx_,
+                                 bulk_,
+                                 GRN_BULK_HEAD(&value_buffer),
+                                 GRN_BULK_VSIZE(&value_buffer),
+                                 weight,
+                                 domain);
+        } else {
+          // TODO: Support weight vector for number such as Int64
+          grn_uvector_add_element(ctx_,
+                                  bulk_,
+                                  GRN_RECORD_VALUE(&value_buffer),
+                                  weight);
+        }
+      }
+      GRN_OBJ_FIN(ctx_, &value_buffer);
       return arrow::Status::OK();
     }
 
@@ -490,7 +541,7 @@ namespace grnarrow {
       load_bulk();
       if (grn_obj_cast(ctx_, &buffer_, bulk_, true) != GRN_SUCCESS) {
         grn_ctx *ctx = ctx_;
-        grn_obj *range = grn_ctx_at(ctx_, buffer_.header.domain);
+        grn_obj *range = grn_ctx_at(ctx_, bulk_->header.domain);
         ERR_CAST(grn_column_, range, &buffer_);
         grn_obj_unlink(ctx, range);
       }
@@ -538,6 +589,9 @@ namespace grnarrow {
         GRN_VALUE_VAR_SIZE_INIT(&buffer_, flags, range_id);
       } else {
         GRN_VALUE_FIX_SIZE_INIT(&buffer_, flags, range_id);
+        if (flags & GRN_OBJ_WITH_WEIGHT) {
+          buffer_.header.flags |= GRN_OBJ_WITH_WEIGHT;
+        }
       }
     }
 
@@ -671,14 +725,18 @@ namespace grnarrow {
           const auto &arrow_list_type =
             std::static_pointer_cast<arrow::ListType>(arrow_type);
           detect_type(arrow_list_type->value_type(), type_id, &sub_flags);
+          *flags |= (sub_flags & GRN_OBJ_WITH_WEIGHT);
         }
         break;
       case arrow::Type::STRUCT :
         // Must be weight vector: {"value": string, "weight": int32}
         *type_id = GRN_DB_TEXT;
+        *flags |= GRN_OBJ_WITH_WEIGHT;
         break;
       case arrow::Type::MAP :
         // TODO: Support as weight vector
+        // *type_id = GRN_DB_TEXT;
+        // *flags |= GRN_OBJ_VECTOR | GRN_OBJ_WITH_WEIGHT;
       default :
         *type_id = GRN_DB_VOID;
         break;
