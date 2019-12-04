@@ -1,0 +1,15 @@
+#@require-input-type json
+
+table_create Numbers TABLE_PAT_KEY Int32
+column_create Numbers value1 COLUMN_SCALAR Int32
+column_create Numbers value2 COLUMN_SCALAR Int32
+
+#@collect-query-log true
+load --table Numbers
+[
+{"_key": 1, "value1": 1, "value2": 2},
+{"_key": "string"},
+{"_key": 2, "value1": "string1", "value2": "string2"},
+{"_key": 3}
+]
+#@collect-query-log false

@@ -272,9 +272,7 @@ namespace grnarrow {
                                                     grn_loader_->table,
                                                     &key_bulk_,
                                                     NULL);
-        if (record_id == GRN_ID_NIL) {
-          grn_loader_save_error(ctx_, grn_loader_);
-        }
+        grn_loader_on_record_added(ctx_, grn_loader_, record_id);
         record_ids_->push_back(record_id);
       }
       return arrow::Status::OK();
@@ -528,6 +526,10 @@ namespace grnarrow {
       return arrow::Status::OK();
     }
 
+    grn_obj *original_value() {
+      return &buffer_;
+    }
+
   private:
     grn_ctx *ctx_;
     grn_obj *grn_column_;
@@ -552,16 +554,19 @@ namespace grnarrow {
   class ColumnLoadVisitor : public arrow::ArrayVisitor {
   public:
     ColumnLoadVisitor(grn_ctx *ctx,
+                      grn_loader *grn_loader,
                       grn_obj *grn_table,
                       const std::shared_ptr<arrow::Field> &arrow_field,
                       const grn_id *record_ids)
       : ctx_(ctx),
+        grn_loader_(grn_loader),
         grn_table_(grn_table),
         record_ids_(record_ids),
         grn_column_(nullptr),
         buffer_() {
       const auto &column_name = arrow_field->name();
-      grn_column_ = grn_obj_column(ctx_, grn_table_,
+      grn_column_ = grn_obj_column(ctx_,
+                                   grn_table_,
                                    column_name.data(),
                                    column_name.size());
 
@@ -668,6 +673,7 @@ namespace grnarrow {
 
   private:
     grn_ctx *ctx_;
+    grn_loader *grn_loader_;
     grn_obj *grn_table_;
     const grn_id *record_ids_;
     grn_obj *grn_column_;
@@ -754,7 +760,26 @@ namespace grnarrow {
         GRN_BULK_REWIND(&buffer_);
         ValueLoadVisitor visitor(ctx_, grn_column_, &buffer_, i);
         ARROW_RETURN_NOT_OK(array.Accept(&visitor));
-        grn_obj_set_value(ctx_, grn_column_, record_id, &buffer_, GRN_OBJ_SET);
+        if (ctx_->rc == GRN_SUCCESS) {
+          grn_obj_set_value(ctx_, grn_column_, record_id, &buffer_, GRN_OBJ_SET);
+          if (grn_loader_) {
+            grn_loader_on_column_set(ctx_,
+                                     grn_loader_,
+                                     grn_column_,
+                                     record_id,
+                                     nullptr,
+                                     &buffer_);
+          }
+        } else {
+          if (grn_loader_) {
+            grn_loader_on_column_set(ctx_,
+                                     grn_loader_,
+                                     grn_column_,
+                                     record_id,
+                                     nullptr,
+                                     visitor.original_value());
+          }
+        }
       }
       return arrow::Status::OK();
     }
@@ -796,6 +821,7 @@ namespace grnarrow {
             grn_id *sub_ids =
               reinterpret_cast<grn_id *>(GRN_BULK_HEAD(&ids)) + offset;
             ColumnLoadVisitor visitor(ctx_,
+                                      nullptr,
                                       grn_table_,
                                       arrow_field,
                                       sub_ids);
@@ -1296,10 +1322,10 @@ namespace grnarrow {
       } else {
         for (int64_t i = 0; i < n_records; ++i) {
           const auto record_id = grn_table_add(ctx_, grn_table, NULL, 0, NULL);
+          grn_loader_on_record_added(ctx_, grn_loader_, record_id);
           record_ids.push_back(record_id);
         }
       }
-      grn_loader_->n_records += record_ids.size();
 
       const auto &schema = record_batch->schema();
       const auto n_columns = record_batch->num_columns();
@@ -1309,6 +1335,7 @@ namespace grnarrow {
           continue;
         }
         ColumnLoadVisitor visitor(ctx_,
+                                  grn_loader_,
                                   grn_table,
                                   schema->field(i),
                                   record_ids.data());
