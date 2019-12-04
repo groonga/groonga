@@ -39,6 +39,7 @@ jobs:
       - name: Configure
         run: |
           ./configure \
+            --enable-debug \
             --enable-document \
             --enable-mruby \
             --with-ruby
