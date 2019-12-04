@@ -57,8 +57,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-        with:
-          submodules: true
       - name: Install dependencies
         run: |
           sudo apt update
