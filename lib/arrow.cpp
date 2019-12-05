@@ -482,51 +482,63 @@ namespace grnarrow {
 
     arrow::Status Visit(const arrow::ListArray &array) override {
       const auto &value_array = array.value_slice(index_);
-      if (value_array->type_id() == arrow::Type::STRUCT) {
+      switch (value_array->type_id()) {
+      case arrow::Type::STRUCT :
         for (int64_t i = 0; i < value_array->length(); ++i) {
           ValueLoadVisitor sub_visitor(ctx_, grn_column_, bulk_, i);
           ARROW_RETURN_NOT_OK(value_array->Accept(&sub_visitor));
         }
-      } else {
-        grn_obj sub_buffer;
-        if (grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
-          GRN_TEXT_INIT(&sub_buffer, 0);
-        } else {
-          GRN_VALUE_FIX_SIZE_INIT(&sub_buffer, 0, bulk_->header.domain);
-        }
+        break;
+      case arrow::Type::LIST :
         for (int64_t i = 0; i < value_array->length(); ++i) {
-          GRN_BULK_REWIND(&sub_buffer);
-          ValueLoadVisitor sub_visitor(ctx_, grn_column_, &sub_buffer, i);
-          ARROW_RETURN_NOT_OK(value_array->Accept(&sub_visitor));
-          if (ctx_->rc != GRN_SUCCESS) {
-            continue;
-          }
-          if (grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
-            unsigned int weight = 0;
-            grn_id domain = GRN_DB_SHORT_TEXT;
-            grn_vector_add_element(ctx_,
-                                   bulk_,
-                                   GRN_TEXT_VALUE(&sub_buffer),
-                                   GRN_TEXT_LEN(&sub_buffer),
-                                   weight,
-                                   domain);
-          } else {
-            grn_bulk_write(ctx_,
-                           bulk_,
-                           GRN_BULK_HEAD(&sub_buffer),
-                           GRN_BULK_VSIZE(&sub_buffer));
+          const auto &sub_list_array =
+            std::static_pointer_cast<arrow::ListArray>(value_array);
+          const auto &sub_value_array = sub_list_array->value_slice(i);
+          for (int64_t j = 0; j < sub_value_array->length(); ++j) {
+            ValueLoadVisitor sub_visitor(ctx_, grn_column_, bulk_, j);
+            ARROW_RETURN_NOT_OK(sub_value_array->Accept(&sub_visitor));
           }
         }
-        GRN_OBJ_FIN(ctx_, &sub_buffer);
+        break;
+      default :
+        {
+          grn_obj sub_buffer;
+          if (grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
+            GRN_TEXT_INIT(&sub_buffer, 0);
+          } else {
+            GRN_VALUE_FIX_SIZE_INIT(&sub_buffer, 0, bulk_->header.domain);
+          }
+          for (int64_t i = 0; i < value_array->length(); ++i) {
+            GRN_BULK_REWIND(&sub_buffer);
+            ValueLoadVisitor sub_visitor(ctx_, grn_column_, &sub_buffer, i);
+            ARROW_RETURN_NOT_OK(value_array->Accept(&sub_visitor));
+            if (ctx_->rc != GRN_SUCCESS) {
+              continue;
+            }
+            if (grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
+              unsigned int weight = 0;
+              grn_id domain = GRN_DB_SHORT_TEXT;
+              grn_vector_add_element(ctx_,
+                                     bulk_,
+                                     GRN_TEXT_VALUE(&sub_buffer),
+                                     GRN_TEXT_LEN(&sub_buffer),
+                                     weight,
+                                     domain);
+            } else {
+              grn_bulk_write(ctx_,
+                             bulk_,
+                             GRN_BULK_HEAD(&sub_buffer),
+                             GRN_BULK_VSIZE(&sub_buffer));
+            }
+          }
+          GRN_OBJ_FIN(ctx_, &sub_buffer);
+        }
+        break;
       }
       return arrow::Status::OK();
     }
 
     arrow::Status Visit(const arrow::StructArray &array) override {
-      if (array.length() == 0) {
-        return arrow::Status::OK();
-      }
-
       const auto &value_column = array.GetFieldByName("value");
       if (!value_column) {
         return arrow::Status::OK();
