@@ -1,8 +1,9 @@
 table_create Values TABLE_NO_KEY
+column_create Values data COLUMN_SCALAR Int8
 
 load --table Values
 [
-{}
+{"data": 1}
 ]
 
 select Values \
