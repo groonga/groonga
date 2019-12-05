@@ -1,7 +1,7 @@
 plugin_register functions/math
 
 table_create Values TABLE_NO_KEY
-column_create Values data COLUMN_SCALR Int8
+column_create Values data COLUMN_SCALAR Int8
 
 load --table Values
 [
