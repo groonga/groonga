@@ -537,9 +537,9 @@ namespace grnarrow {
       }
 
       const auto &value =
-        std::static_pointer_cast<arrow::StringArray>(value_column)->GetView(0);
+        std::static_pointer_cast<arrow::StringArray>(value_column)->GetView(index_);
       const auto &weight =
-        std::static_pointer_cast<arrow::Int32Array>(weight_column)->Value(0);
+        std::static_pointer_cast<arrow::Int32Array>(weight_column)->Value(index_);
       const grn_id domain = bulk_->header.domain;
       const auto raw_value = value.data();
       const auto raw_value_size = value.size();
