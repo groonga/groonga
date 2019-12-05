@@ -1,3 +1,5 @@
+#@require-input-type json
+
 table_create Numbers TABLE_PAT_KEY Int32
 column_create Numbers value1 COLUMN_SCALAR Int32
 column_create Numbers value2 COLUMN_SCALAR Int32
