@@ -8,9 +8,15 @@ load --table Users --command_version 3 --output_ids yes
 ]
 {
   "header": {
-    "return_code": 0,
+    "return_code": -22,
     "start_time": 0.0,
-    "elapsed_time": 0.0
+    "elapsed_time": 0.0,
+    "error": {
+      "message": "[table][load][Users] neither _key nor _id is assigned",
+      "function": "brace_close",
+      "file": "load.c",
+      "line": 0
+    }
   },
   "body": {
     "n_loaded_records": 2,
@@ -21,4 +27,4 @@ load --table Users --command_version 3 --output_ids yes
     ]
   }
 }
-#|e| neither _key nor _id is assigned
+#|e| [table][load][Users] neither _key nor _id is assigned

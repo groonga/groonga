@@ -748,7 +748,15 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
   case GRN_TABLE_DAT_KEY :
     /* The target table requires _id or _key. */
     if (!id_bulk && !key) {
-      GRN_LOG(ctx, GRN_LOG_ERROR, "neither _key nor _id is assigned");
+      char table_name[GRN_TABLE_MAX_KEY_SIZE];
+      unsigned int table_name_size;
+      table_name_size = grn_obj_name(ctx,
+                                     loader->table,
+                                     table_name,
+                                     GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[table][load][%.*s] neither _key nor _id is assigned",
+          table_name_size, table_name);
       goto exit;
     }
     break;
