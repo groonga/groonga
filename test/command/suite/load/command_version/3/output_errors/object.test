@@ -4,5 +4,5 @@ load --table Numbers --command_version 3 --output_ids yes --output_errors yes
 [
 {"_key": 1},
 {"_key": "String"},
-{"_key": -1}
+{"_key": 29}
 ]
