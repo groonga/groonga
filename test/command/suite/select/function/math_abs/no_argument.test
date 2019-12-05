@@ -1,10 +1,11 @@
 plugin_register functions/math
 
 table_create Values TABLE_NO_KEY
+column_create Values data COLUMN_SCALR Int8
 
 load --table Values
 [
-{}
+{"data": 1}
 ]
 
 select Values \

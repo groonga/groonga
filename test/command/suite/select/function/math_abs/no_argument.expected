@@ -2,9 +2,12 @@ plugin_register functions/math
 [[0,0.0,0.0],true]
 table_create Values TABLE_NO_KEY
 [[0,0.0,0.0],true]
+column_create Values data COLUMN_SCALR Int8
+[[[-22,0.0,0.0],"[column][create][flags] unknown flag: <COLUMN_SCALR>"],false]
+#|e| [column][create][flags] unknown flag: <COLUMN_SCALR>
 load --table Values
 [
-{}
+{"data": 1}
 ]
 [[0,0.0,0.0],1]
 select Values   --filter true   --output_columns '_id,_score'   --scorer '_score = math_abs()'
