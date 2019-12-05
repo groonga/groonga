@@ -7895,7 +7895,11 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
             if (rc) {
               continue;
             }
-            tid = grn_table_add(ctx, lexicon, element, element_length, NULL);
+            if (element_length == 0) {
+              tid = GRN_ID_NIL;
+            } else {
+              tid = grn_table_add(ctx, lexicon, element, element_length, NULL);
+            }
             grn_uvector_add_element(ctx, &uvector, tid, weight);
           }
           GRN_OBJ_FIN(ctx, &value_buf);
