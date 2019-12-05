@@ -1,9 +1,11 @@
 table_create Items TABLE_NO_KEY
 [[0,0.0,0.0],true]
+column_create Items data COLUMN_SCALAR Int8
+[[0,0.0,0.0],true]
 load --table Items
 [
-{},
-{}
+{"data": 1},
+{"data": 2}
 ]
 [[0,0.0,0.0],2]
 select Items   --columns[invalid].stage initial   --columns[invalid].type UInt32   --columns[invalid].flags COLUMN_SCALAR   --columns[invalid].value '"0garbage"'   --sort_keys _id

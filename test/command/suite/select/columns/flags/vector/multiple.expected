@@ -2,11 +2,13 @@ plugin_register functions/vector
 [[0,0.0,0.0],true]
 table_create Items TABLE_NO_KEY
 [[0,0.0,0.0],true]
+column_create Items data COLUMN_SCALAR Int8
+[[0,0.0,0.0],true]
 load --table Items
 [
-{},
-{},
-{}
+{"data": 1},
+{"data": 2},
+{"data": 3}
 ]
 [[0,0.0,0.0],3]
 select Items   --columns[vector].stage initial   --columns[vector].flags COLUMN_VECTOR   --columns[vector].type UInt32   --columns[vector].value 'vector_new(1, 2, 3)'
@@ -29,6 +31,10 @@ select Items   --columns[vector].stage initial   --columns[vector].flags COLUMN_
         [
           "vector",
           "UInt32"
+        ],
+        [
+          "data",
+          "Int8"
         ]
       ],
       [
@@ -37,7 +43,8 @@ select Items   --columns[vector].stage initial   --columns[vector].flags COLUMN_
           1,
           2,
           3
-        ]
+        ],
+        1
       ],
       [
         2,
@@ -45,7 +52,8 @@ select Items   --columns[vector].stage initial   --columns[vector].flags COLUMN_
           1,
           2,
           3
-        ]
+        ],
+        2
       ],
       [
         3,
@@ -53,7 +61,8 @@ select Items   --columns[vector].stage initial   --columns[vector].flags COLUMN_
           1,
           2,
           3
-        ]
+        ],
+        3
       ]
     ]
   ]

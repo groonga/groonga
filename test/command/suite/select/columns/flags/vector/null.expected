@@ -2,9 +2,11 @@ plugin_register functions/vector
 [[0,0.0,0.0],true]
 table_create Data TABLE_NO_KEY
 [[0,0.0,0.0],true]
+column_create Data value COLUMN_SCALAR Int8
+[[0,0.0,0.0],true]
 load --table Data
 [
-{}
+{"value": 1}
 ]
 [[0,0.0,0.0],1]
 select Data   --columns[vector].stage output   --columns[vector].type ShortText   --columns[vector].flags COLUMN_VECTOR   --columns[vector].value "null"   --output_columns vector

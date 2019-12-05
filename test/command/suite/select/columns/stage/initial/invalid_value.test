@@ -1,9 +1,10 @@
 table_create Items TABLE_NO_KEY
+column_create Items data COLUMN_SCALAR Int8
 
 load --table Items
 [
-{},
-{}
+{"data": 1},
+{"data": 2}
 ]
 
 select Items \
