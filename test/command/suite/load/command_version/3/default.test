@@ -1,7 +1,8 @@
 table_create Memos TABLE_NO_KEY
+column_create Memos data COLUMN_SCALAR Int8
 
 load --table Memos --command_version 3
 [
-{},
-{}
+{"value": 1},
+{"value": 2}
 ]
