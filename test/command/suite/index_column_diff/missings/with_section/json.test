@@ -1,3 +1,5 @@
+#@require-input-type json
+
 table_create Data TABLE_NO_KEY
 column_create Data value1 COLUMN_SCALAR ShortText
 column_create Data value2 COLUMN_SCALAR ShortText
