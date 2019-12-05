@@ -1,9 +1,11 @@
 table_create Points TABLE_NO_KEY --value_type WGS84GeoPoint
 [[0,0.0,0.0],true]
+column_create Points data COLUMN_SCALAR Int8
+[[0,0.0,0.0],true]
 load --table Points
 [
-{},
-{}
+{"data": 1},
+{"data": 2}
 ]
 [[0,0.0,0.0],2]
 object_inspect Points
