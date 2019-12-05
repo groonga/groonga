@@ -1367,7 +1367,8 @@ namespace grnarrow {
         const auto status = arrow::ipc::RecordBatchStreamReader::Open(&input_,
                                                                       &reader_);
         if (!status.ok()) {
-          return status_to_rc(status);
+          input_.Seek(0);
+          return GRN_SUCCESS;
         }
       }
 
