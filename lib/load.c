@@ -136,6 +136,21 @@ grn_loader_on_column_set(grn_ctx *ctx,
   ERRCLR(ctx);
 }
 
+void
+grn_loader_on_no_identifier_error(grn_ctx *ctx, grn_loader *loader)
+{
+  char table_name[GRN_TABLE_MAX_KEY_SIZE];
+  unsigned int table_name_size;
+  table_name_size = grn_obj_name(ctx,
+                                 loader->table,
+                                 table_name,
+                                 GRN_TABLE_MAX_KEY_SIZE);
+  ERR(GRN_INVALID_ARGUMENT,
+      "[table][load][%.*s] neither _key nor _id is assigned",
+      table_name_size, table_name);
+}
+
+
 static grn_obj *
 values_add(grn_ctx *ctx, grn_loader *loader)
 {
@@ -748,15 +763,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
   case GRN_TABLE_DAT_KEY :
     /* The target table requires _id or _key. */
     if (!id_bulk && !key) {
-      char table_name[GRN_TABLE_MAX_KEY_SIZE];
-      unsigned int table_name_size;
-      table_name_size = grn_obj_name(ctx,
-                                     loader->table,
-                                     table_name,
-                                     GRN_TABLE_MAX_KEY_SIZE);
-      ERR(GRN_INVALID_ARGUMENT,
-          "[table][load][%.*s] neither _key nor _id is assigned",
-          table_name_size, table_name);
+      grn_loader_on_no_identifier_error(ctx, loader);
       goto exit;
     }
     break;

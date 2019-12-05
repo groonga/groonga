@@ -270,8 +270,14 @@ namespace grnarrow {
     arrow::Status add_records(const Array &array, SetBulk set_bulk) {
       const auto n_rows = array.length();
       for (int64_t i = 0; i < n_rows; ++i) {
-        set_bulk(i);
-        const auto record_id = add_record();
+        grn_id record_id;
+        if (array.IsNull(i)) {
+          record_id = GRN_ID_NIL;
+          grn_loader_on_no_identifier_error(ctx_, grn_loader_);
+        } else {
+          set_bulk(i);
+          record_id = add_record();
+        }
         grn_loader_on_record_added(ctx_, grn_loader_, record_id);
         record_ids_->push_back(record_id);
       }

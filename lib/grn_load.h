@@ -112,6 +112,9 @@ grn_loader_on_column_set(grn_ctx *ctx,
                          grn_obj *key,
                          grn_obj *value);
 void
+grn_loader_on_no_identifier_error(grn_ctx *ctx,
+                                  grn_loader *loader);
+void
 grn_loader_apply_each(grn_ctx *ctx,
                       grn_loader *loader,
                       grn_id id);
