@@ -37,7 +37,6 @@ grn_loader_on_record_added(grn_ctx *ctx,
 {
   if (id == GRN_ID_NIL) {
     grn_loader_save_error(ctx, loader);
-    ERRCLR(ctx);
     loader->n_record_errors++;
   } else {
     loader->n_records++;
@@ -54,6 +53,7 @@ grn_loader_on_record_added(grn_ctx *ctx,
                            0,
                            GRN_DB_TEXT);
   }
+  ERRCLR(ctx);
 }
 
 void
