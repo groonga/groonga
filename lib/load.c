@@ -578,11 +578,23 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
 
   /* Target columns and _id or _key are already specified. */
   if (!nvalues) {
-    /*
-     * Accept empty arrays because a dump command may output a load command
-     * which contains empty arrays for a table with deleted records.
-     */
-    id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
+    switch (loader->table->header.type) {
+    case GRN_TABLE_HASH_KEY :
+    case GRN_TABLE_PAT_KEY :
+    case GRN_TABLE_DAT_KEY :
+      grn_loader_on_no_identifier_error(ctx, loader);
+      goto exit;
+      break;
+    case GRN_TABLE_NO_KEY :
+      /*
+       * Accept empty arrays because a dump command may output a load command
+       * which contains empty arrays for a table with deleted records.
+       */
+      id = grn_table_add(ctx, loader->table, NULL, 0, NULL);
+      break;
+    default :
+      break;
+    }
   } else {
     uint32_t expected_nvalues =
       GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);

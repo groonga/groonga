@@ -13,9 +13,9 @@ load --table Users --command_version 3 --output_ids yes
     "start_time": 0.0,
     "elapsed_time": 0.0,
     "error": {
-      "message": "[table][add][hash] failed to add: #<key (nil) table:#<hash Users key:ShortText>>",
-      "function": "grn_table_add",
-      "file": "db.c",
+      "message": "[table][load][Users] neither _key nor _id is assigned",
+      "function": "grn_loader_on_no_identifier_error",
+      "file": "load.c",
       "line": 0
     }
   },
@@ -28,5 +28,4 @@ load --table Users --command_version 3 --output_ids yes
     ]
   }
 }
-#|e| [hash][add] key must not NULL: <Users>
-#|e| [table][add][hash] failed to add: #<key (nil) table:#<hash Users key:ShortText>>
+#|e| [table][load][Users] neither _key nor _id is assigned
