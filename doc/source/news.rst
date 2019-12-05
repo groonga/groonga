@@ -7,6 +7,28 @@
 News
 ====
 
+.. _release-9-1-1:
+
+Release 9.1.1 - 2019-12-27
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/load`] Added support Apache Arrow format date.
+
+  * For example, if we use Apache Arrow format data, we can reduce parse cost. Therefore, data is loading faster than other formats.
+
+  * Groonga can also directly input data for Apache Arrow format from other data analysis systems by this improve.
+
+Fixes
+^^^^^
+
+
+Thanks
+^^^^^^
+
+
 .. _release-9-1-0:
 
 Release 9.1.0 - 2019-11-29
