@@ -708,6 +708,12 @@ else()
   set(GRN_WITH_MESSAGE_PACK FALSE)
 endif()
 
+set(GRN_WITH_APACHE_ARROW FALSE
+  CACHE BOOL "Support Apache Arrow")
+if(GRN_WITH_APACHE_ARROW)
+  find_package(Arrow REQUIRED)
+endif()
+
 find_program(RUBY NAMES
   "ruby2.6" "ruby26"
   "ruby2.5" "ruby25"

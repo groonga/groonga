@@ -87,7 +87,7 @@ endif()
 if(NOT MSVC)
   set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
 endif()
-if(GRN_WITH_RAPIDJSON)
+if(GRN_WITH_RAPIDJSON OR GRN_WITH_APACHE_ARROW)
   set_target_properties(libgroonga PROPERTIES CXX_STANDARD 11)
 endif()
 
@@ -106,6 +106,9 @@ set(GRN_ALL_LIBRARIES
     ${PSAPI_LIBS}
     ${MRUBY_LIBS}
     ${ONIGMO_LIBS})
+if(GRN_WITH_APACHE_ARROW)
+  list(APPEND GRN_ALL_LIBRARIES arrow_shared)
+endif()
 if(GRN_EMBED)
   set(GRN_EMBEDDED_PLUGIN_LIBRARIES "")
   if(GRN_WITH_MECAB)

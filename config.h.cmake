@@ -78,6 +78,7 @@
 #cmakedefine WORDS_BIGENDIAN
 
 /* packages */
+#cmakedefine GRN_WITH_APACHE_ARROW
 #cmakedefine GRN_WITH_BENCHMARK
 #cmakedefine GRN_WITH_CUTTER
 #cmakedefine GRN_WITH_KYTEA
