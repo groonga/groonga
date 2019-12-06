@@ -138,6 +138,13 @@ If you specify ``apache-arrow`` as ``input_type``, you must use
 `Apache Arrow IPC Streaming Format`_. You can't use `Apache Arrow IPC
 File Format`_.
 
+You must choose suitable record batch size. Groonga loads data per
+record batch. If you choose very large record batch size, Groonga
+can't start loading until whole data of a record batch are received.
+If you choose very small record batch size, Groonga can load data
+incrementally but overhead will be large. Suitable record batch size
+depends on your system but 1024 or so will be suitable.
+
 If ``values`` isn't specified any values, they are read from the
 standard input in command line style or body in HTTP style.
 
