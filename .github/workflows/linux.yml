@@ -68,6 +68,7 @@ jobs:
           test/command/run-test.sh \
             --input-type=apache-arrow \
             --interface=http \
+            --n-retries=3 \
             --reporter=mark
       - name: Install
         run: |
