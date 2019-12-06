@@ -30,18 +30,18 @@ jobs:
       - name: Generate env.ps1
         run: |
           echo "`$Env:CMAKE_BUILD_PARALLEL_LEVEL = ${Env:NUMBER_OF_PROCESSORS}" >> env.ps1
-          echo "CMAKE_GENERATOR = `"Visual Studio 16 2019`"" >> env.ps1
-          GROONGA_VERSION = (Get-Content base_version)
+          echo "$CMAKE_GENERATOR = `"Visual Studio 16 2019`"" >> env.ps1
+          $GROONGA_VERSION = (Get-Content base_version)
           if (!("${Env:GITHUB_REF}".StartsWith("refs/tags/"))) {
-            GROONGA_VERSION += "-$(${Env:GITHUB_SHA}.Substring(0, 7))"
+            $GROONGA_VERSION += "-$(${Env:GITHUB_SHA}.Substring(0, 7))"
           }
           "GRN_VERSION=${GROONGA_VERSION}" | Set-Content version.sh
-          INSTALL_FOLDER = "groonga-${GROONGA_VERSION}-x64-vs2019"
-          INSTALL_PARENT_FOLDER = "インストール\install"
-          FULL_INSTALL_FOLDER = `
+          $INSTALL_FOLDER = "groonga-${GROONGA_VERSION}-x64-vs2019"
+          $INSTALL_PARENT_FOLDER = "インストール\install"
+          $FULL_INSTALL_FOLDER = `
             "${Env:GITHUB_WORKSPACE}\${INSTALL_PARENT_FOLDER}\${INSTALL_FOLDER}"
-          echo "INSTALL_FOLDER = `"${INSTALL_FOLDER}`"" >> env.ps1
-          echo "FULL_INSTALL_FOLDER = `"${FULL_INSTALL_FOLDER}`"" >> env.ps1
+          echo "$INSTALL_FOLDER = `"${INSTALL_FOLDER}`"" >> env.ps1
+          echo "$FULL_INSTALL_FOLDER = `"${FULL_INSTALL_FOLDER}`"" >> env.ps1
       - name: Install Apache Arrow
         run: |
           . .\env.ps1
