@@ -7,6 +7,35 @@
 News
 ====
 
+.. _release-9-1-1:
+
+Release 9.1.1 - 2020-01-07
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/load`] Added support for Apache Arrow format data.
+
+  * If we use Apache Arrow format data, we may reduce parse cost. Therefore, data might be loading faster than other formats.
+  * Groonga can also directly input data for Apache Arrow format from other data analysis systems by this improvement.
+  * However, Apache Arrow format can use in the HTTP interface only. We can't use it in the command line interface.
+
+* [:doc:`/reference/commands/load`] Added how to load Apache Arrow format data in the document.
+
+* [:doc:`/reference/commands/load`] Improve error message.
+
+  * Response of ``load`` command includes error message also.
+  * If we faile data load, Groonga output error detail of ``load`` command by this Improvement.
+
+* [httpd] Updated bundled nginx to 1.17.6.
+
+* [:doc:`reference/executables/groonga-httpd`] Added support for sending command parameters by body of HTTP request.
+
+  * We must set ``application/x-www-form-urlencoded`` to ``Content-Type`` for this case.
+
+* [:doc:`reference/executables/groonga-httpd`] Added how to use HTTP POST in the document.
+
 .. _release-9-1-0:
 
 Release 9.1.0 - 2019-11-29
