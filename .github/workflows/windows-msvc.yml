@@ -55,7 +55,7 @@ jobs:
       - name: Install Apache Arrow
         run: |
           . .\env.ps1
-          Net-Item ..\apache-arrow-build -ItemType Directory
+          New-Item ..\apache-arrow-build -ItemType Directory
           cmake `
             -S vendor\apache-arrow-source\cpp `
             -B ..\apache-arrow-build `
@@ -68,7 +68,7 @@ jobs:
       - name: Install Groonga
         run: |
           . .\env.ps1
-          Net-Item ..\groonga-build -ItemType Directory
+          New-Item ..\groonga-build -ItemType Directory
           cmake `
             -S . `
             -B ..\groonga-build `
@@ -82,7 +82,7 @@ jobs:
       - name: Prepare artifacts
         run: |
           . .\env.ps1
-          Net-Item packages -ItemType Directory
+          New-Item packages -ItemType Directory
           pushd "${FULL_INSTALL_FOLDER}\.."
           Compress-Archive `
             -Path ${INSTALL_FOLDER} `
