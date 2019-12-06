@@ -29,9 +29,10 @@ EXTRA_DIST =					\
 	$(NGINX_DIR)				\
 	CMakeLists.txt				\
 	plugins/CMakeLists.txt			\
+	download_groonga_normalizer_mysql.rb	\
 	download_lz4.rb				\
-	download_message_pack.rb		\
 	download_mecab.rb			\
+	download_message_pack.rb		\
 	download_rapidjson.rb
 
 dist-hook:
