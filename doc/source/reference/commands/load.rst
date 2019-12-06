@@ -189,7 +189,7 @@ Here are available types:
    * - ``json``
      - Use JSON for ``values`` format.
 
-       This is the default value.
+       This is the default.
    * - ``apache-arrow``
      - .. versionadded:: 9.1.1
 

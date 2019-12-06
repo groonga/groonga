@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-09-19 12:27+0900\n"
+"PO-Revision-Date: 2019-12-06 16:21+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -7254,6 +7254,14 @@ msgstr ""
 "``_key`` （主キーを示す疑似カラム名）にしなければいけません。"
 
 msgid ""
+"If you specify ``apache-arrow`` as ``input_type``, you must use `Apache "
+"Arrow IPC Streaming Format`_. You can't use `Apache Arrow IPC File Format`_."
+msgstr ""
+"``input_type`` に ``apache-arrow`` を指定して場合は `Apache Arrow IPC "
+"Streaming Format`_ を使わなければいけません。 `Apache Arrow IPC File "
+"Format`_ は使えません。"
+
+msgid ""
 "If ``values`` isn't specified any values, they are read from the standard "
 "input in command line style or body in HTTP style."
 msgstr ""
@@ -7294,15 +7302,29 @@ msgstr ""
 msgid "``input_type``"
 msgstr ""
 
-msgid ""
-"Specifies an input format for ``values``. It supports only ``json`` for now. "
-"It means format of ``values`` is JSON."
-msgstr ""
-"``values`` の入力フォーマットを指定します。現在のところ ``json`` のみサポート"
-"しています。つまり、 ``values`` のフォーマットはJSONでなければいけません。"
+msgid "Specifies an input format for ``values``."
+msgstr "``values`` のフォーマットを指定します。"
 
-msgid "The default value is ``json``."
-msgstr "デフォルト値は ``json`` です。"
+msgid "Here are available types:"
+msgstr "指定できる種類は以下の通りです。"
+
+msgid "Type"
+msgstr "型"
+
+msgid "``json``"
+msgstr ""
+
+msgid "Use JSON for ``values`` format."
+msgstr "JSONフォーマットで ``values`` を指定するときに使います。"
+
+msgid "This is the default."
+msgstr "これがデフォルトです。"
+
+msgid "``apache-arrow``"
+msgstr ""
+
+msgid "Use Apache Arrow for ``values`` format."
+msgstr "Apache Arrowフォーマットで ``values`` を指定するときに使います。"
 
 msgid "``each``"
 msgstr ""
@@ -10943,9 +10965,6 @@ msgstr ""
 "カラム名だけが必要な場合は代わりに :ref:`object-inspect-return-value-index-"
 "column-source-name` を使ってください。"
 
-msgid "Type"
-msgstr "型"
-
 msgid "Type inspection returns the following information::"
 msgstr "型を調査すると次の情報を返します。"
 
@@ -13433,9 +13452,6 @@ msgstr ""
 "Groongaは :ref:`select-match-escalation-threshold` を使って検索方法をエスカ"
 "レーションするかどうかを決めます。"
 
-msgid "This is the default."
-msgstr "これがデフォルトです。"
-
 msgid "Groonga always uses match escalation."
 msgstr "Groongaは常に検索方法のエスカレーションします。"
 
@@ -15859,9 +15875,6 @@ msgstr "以下は補完・補正・提案を混ぜた例です。"
 
 msgid "Specifies what types are returned by the suggest command."
 msgstr "suggestコマンドでどの種類の候補を返すかを指定します。"
-
-msgid "Here are available types:"
-msgstr "指定できる種類は以下の通りです。"
 
 msgid "The suggest command does completion."
 msgstr "補完を実行します。"
