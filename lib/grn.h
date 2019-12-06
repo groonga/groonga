@@ -102,6 +102,7 @@
 #endif /* WIN32 */
 
 #ifdef WIN32
+# define NOMINMAX
 # include <basetsd.h>
 # include <process.h>
 # include <winsock2.h>
