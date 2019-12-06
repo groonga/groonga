@@ -660,14 +660,27 @@ namespace grnarrow {
       }
 
       if (!grn_column_) {
-        grn_column_ =
-          grn_column_create(ctx_,
-                            grn_table_,
-                            column_name.data(),
-                            static_cast<unsigned int>(column_name.size()),
-                            NULL,
-                            GRN_OBJ_COLUMN_SCALAR,
-                            grn_ctx_at(ctx_, arrow_type_id));
+        if (grn_loader_) {
+          char table_name[GRN_TABLE_MAX_KEY_SIZE];
+          auto table_name_size = grn_obj_name(ctx_,
+                                              grn_table_,
+                                              table_name,
+                                              GRN_TABLE_MAX_KEY_SIZE);
+          ERR(GRN_INVALID_ARGUMENT,
+              "[table][load][%.*s] nonexistent column: <%s>",
+              table_name_size, table_name,
+              column_name.data());
+          return;
+        } else {
+          grn_column_ =
+            grn_column_create(ctx_,
+                              grn_table_,
+                              column_name.data(),
+                              static_cast<unsigned int>(column_name.size()),
+                              NULL,
+                              GRN_OBJ_COLUMN_SCALAR,
+                              grn_ctx_at(ctx_, arrow_type_id));
+        }
       }
       if (grn_type_id_is_text_family(ctx_, arrow_type_id)) {
         GRN_VALUE_VAR_SIZE_INIT(&buffer_, flags, arrow_type_id);
