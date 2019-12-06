@@ -54,26 +54,42 @@ namespace grnarrow {
     }
   }
 
-  grn_bool check_status(grn_ctx *ctx,
-                        arrow::Status &status,
-                        const char *context) {
+  bool check(grn_ctx *ctx,
+             const arrow::Status &status,
+             const char *context) {
     if (status.ok()) {
-      return GRN_TRUE;
+      return true;
     } else {
       auto rc = status_to_rc(status);
       auto message = status.ToString();
       ERR(rc, "%s: %s", context, message.c_str());
-      return GRN_FALSE;
+      return false;
     }
   }
 
-  grn_bool check_status(grn_ctx *ctx,
-                        arrow::Status &status,
-                        std::ostream &output) {
-    return check_status(ctx,
-                        status,
-                        static_cast<std::stringstream &>(output).str().c_str());
+  bool check(grn_ctx *ctx,
+             const arrow::Status &status,
+             std::ostream &output) {
+    return check(ctx,
+                 status,
+                 static_cast<std::stringstream &>(output).str().c_str());
   }
+
+# if ARROW_VERSION_MAJOR >= 1
+  template <typename TYPE>
+  bool check(grn_ctx *ctx,
+             arrow::Result<TYPE> &result,
+             const char *context) {
+    return check(ctx, result.status(), context);
+  }
+
+  template <typename TYPE>
+  bool check(grn_ctx *ctx,
+             arrow::Result<TYPE> &result,
+             std::ostream &output) {
+    return check(ctx, result.status(), output);
+  }
+# endif
 
   void put_time_value(grn_ctx *ctx,
                       grn_obj *bulk,
@@ -904,12 +920,12 @@ namespace grnarrow {
         for (int i = 0; i < n_columns; ++i) {
           int64_t offset = 0;
           const auto& arrow_field = arrow_schema->field(i);
-#if ARROW_VERSION_MAJOR == 0 && ARROW_VERSION_MINOR <= 14
+# if ARROW_VERSION_MAJOR == 0 && ARROW_VERSION_MINOR <= 14
           const auto& arrow_column = arrow_table->column(i);
           const auto& arrow_chunked_array = arrow_column->data();
-#else
+# else
           const auto& arrow_chunked_array = arrow_table->column(i);
-#endif
+# endif
           for (const auto& arrow_array : arrow_chunked_array->chunks()) {
             grn_id *sub_ids =
               reinterpret_cast<grn_id *>(GRN_BULK_HEAD(&ids)) + offset;
@@ -925,7 +941,7 @@ namespace grnarrow {
         GRN_OBJ_FIN(ctx_, &ids);
       } else {
         auto status = arrow::Status::NotImplemented("_key isn't supported yet");
-        check_status(ctx_, status, "[arrow][load]");
+        check(ctx_, status, "[arrow][load]");
       }
       return ctx_->rc;
     };
@@ -936,10 +952,10 @@ namespace grnarrow {
       arrow_record_batches[0] = arrow_record_batch;
       auto status =
         arrow::Table::FromRecordBatches(arrow_record_batches, &arrow_table);
-      if (!check_status(ctx_,
-                        status,
-                        "[arrow][load] "
-                        "failed to convert record batch to table")) {
+      if (!check(ctx_,
+                 status,
+                 "[arrow][load] "
+                 "failed to convert record batch to table")) {
         return ctx_->rc;
       }
       return load_table(arrow_table);
@@ -1032,9 +1048,9 @@ namespace grnarrow {
       std::shared_ptr<arrow::ipc::RecordBatchWriter> writer;
       auto status =
         arrow::ipc::RecordBatchFileWriter::Open(output, schema, &writer);
-      if (!check_status(ctx_,
-                        status,
-                        "[arrow][dump] failed to create file format writer")) {
+      if (!check(ctx_,
+                 status,
+                 "[arrow][dump] failed to create file format writer")) {
         return ctx_->rc;
       }
 
@@ -1305,10 +1321,20 @@ namespace grnarrow {
       return arrow::Status::OK();
     }
 
+    int64_t tell() const {
+      return offset_;
+    }
+
+# if ARROW_VERSION_MAJOR >= 1
+    arrow::Result<int64_t> Tell() const override {
+      return tell();
+    }
+# else
     arrow::Status Tell(int64_t* position) const override {
-      *position = offset_;
+      *position = tell();
       return arrow::Status::OK();
     }
+# endif
 
     arrow::Status Seek(int64_t position) override {
       offset_ = position;
@@ -1319,40 +1345,70 @@ namespace grnarrow {
       return closed_;
     }
 
-    arrow::Status Peek(int64_t nbytes, arrow::util::string_view* out) override {
+    arrow::util::string_view peek(int64_t nbytes) {
       const int64_t bytes_available =
         std::min(nbytes,
                  static_cast<int64_t>(buffer_.size() - offset_));
-      *out = arrow::util::string_view(buffer_.data() + offset_,
+      return arrow::util::string_view(buffer_.data() + offset_,
                                       static_cast<size_t>(bytes_available));
-      return arrow::Status::OK();
     }
 
-    arrow::Status Read(int64_t nbytes, int64_t* bytes_read, void* out) override {
+# if ARROW_VERSION_MAJOR >= 1
+    arrow::Result<arrow::util::string_view> Peek(int64_t nbytes) override {
+      return peek(nbytes);
+    }
+# else
+    arrow::Status Peek(int64_t nbytes, arrow::util::string_view* out) override {
+      *out = peek(nbytes);
+      return arrow::Status::OK();
+    }
+# endif
+
+    int64_t read(int64_t nbytes, void* out) {
       const int64_t bytes_available =
         std::min(nbytes,
                  static_cast<int64_t>(buffer_.size() - offset_));
       if (bytes_available > 0) {
-        *bytes_read = bytes_available;
         memcpy(out, buffer_.data() + offset_, bytes_available);
         offset_ += bytes_available;
+        return bytes_available;
       } else {
-        *bytes_read = 0;
+        return 0;
       }
-      return arrow::Status::OK();
     }
 
-    arrow::Status Read(int64_t nbytes,
-                       std::shared_ptr<arrow::Buffer>* out) override {
+# if ARROW_VERSION_MAJOR >= 1
+    arrow::Result<int64_t> Read(int64_t nbytes, void* out) override {
+      return read(nbytes, out);
+    }
+# else
+    arrow::Status Read(int64_t nbytes, int64_t* bytes_read, void* out) override {
+      *bytes_read = read(nbytes, out);
+      return arrow::Status::OK();
+    }
+# endif
+
+    std::shared_ptr<arrow::Buffer> read(int64_t nbytes) {
       const int64_t bytes_available =
         std::min(nbytes,
                  static_cast<int64_t>(buffer_.size() - offset_));
-      *out = std::make_shared<arrow::Buffer>(
+      offset_ += bytes_available;
+      return std::make_shared<arrow::Buffer>(
         reinterpret_cast<const uint8_t *>(buffer_.data() + offset_),
         bytes_available);
-      offset_ += bytes_available;
+    }
+
+# if ARROW_VERSION_MAJOR >= 1
+    arrow::Result<std::shared_ptr<arrow::Buffer>> Read(int64_t nbytes) override {
+      return read(nbytes);
+    }
+# else
+    arrow::Status Read(int64_t nbytes,
+                       std::shared_ptr<arrow::Buffer>* out) override {
+      *out = read(nbytes);
       return arrow::Status::OK();
     }
+# endif
 
     bool supports_zero_copy() const override {
       return false;
@@ -1391,8 +1447,7 @@ namespace grnarrow {
         }
       }
 
-      int64_t position;
-      input_.Tell(&position);
+      auto position = input_.tell();
       const auto &stream_reader =
         std::static_pointer_cast<arrow::ipc::RecordBatchStreamReader>(reader_);
       std::shared_ptr<arrow::RecordBatch> record_batch;
@@ -1470,23 +1525,37 @@ grn_arrow_load(grn_ctx *ctx,
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
+# if ARROW_VERSION_MAJOR >= 1
+  auto input_result =
+    arrow::io::MemoryMappedFile::Open(path, arrow::io::FileMode::READ);
+  std::ostringstream context;
+  if (!grnarrow::check(ctx,
+                       input_result,
+                       context <<
+                       "[arrow][load] failed to open path: " <<
+                       "<" << path << ">")) {
+    GRN_API_RETURN(ctx->rc);
+  }
+  auto input = *input_result;
+# else
   std::shared_ptr<arrow::io::MemoryMappedFile> input;
   auto status =
     arrow::io::MemoryMappedFile::Open(path, arrow::io::FileMode::READ, &input);
   std::ostringstream context;
-  if (!grnarrow::check_status(ctx,
-                              status,
-                              context <<
-                              "[arrow][load] failed to open path: " <<
-                              "<" << path << ">")) {
+  if (!grnarrow::check(ctx,
+                       status,
+                       context <<
+                       "[arrow][load] failed to open path: " <<
+                       "<" << path << ">")) {
     GRN_API_RETURN(ctx->rc);
   }
+# endif
   std::shared_ptr<arrow::ipc::RecordBatchFileReader> reader;
-  status = arrow::ipc::RecordBatchFileReader::Open(input, &reader);
-  if (!grnarrow::check_status(ctx,
-                              status,
-                              "[arrow][load] "
-                              "failed to create file format reader")) {
+  auto status = arrow::ipc::RecordBatchFileReader::Open(input, &reader);
+  if (!grnarrow::check(ctx,
+                       status,
+                       "[arrow][load] "
+                       "failed to create file format reader")) {
     GRN_API_RETURN(ctx->rc);
   }
 
@@ -1496,11 +1565,11 @@ grn_arrow_load(grn_ctx *ctx,
     std::shared_ptr<arrow::RecordBatch> record_batch;
     status = reader->ReadRecordBatch(i, &record_batch);
     std::ostringstream context;
-    if (!grnarrow::check_status(ctx,
-                                status,
-                                context <<
-                                "[arrow][load] failed to get " <<
-                                "the " << i << "-th " << "record")) {
+    if (!grnarrow::check(ctx,
+                         status,
+                         context <<
+                         "[arrow][load] failed to get " <<
+                         "the " << i << "-th " << "record")) {
       break;
     }
     loader.load_record_batch(record_batch);
@@ -1561,16 +1630,29 @@ grn_arrow_dump_columns(grn_ctx *ctx,
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
+# if ARROW_VERSION_MAJOR >= 1
+  auto output_result = arrow::io::FileOutputStream::Open(path);
+  std::stringstream context;
+  if (!grnarrow::check(ctx,
+                       output_result,
+                       context <<
+                       "[arrow][dump] failed to open path: " <<
+                       "<" << path << ">")) {
+    GRN_API_RETURN(ctx->rc);
+  }
+  auto output = *output_result;
+# else
   std::shared_ptr<arrow::io::FileOutputStream> output;
   auto status = arrow::io::FileOutputStream::Open(path, &output);
   std::stringstream context;
-  if (!grnarrow::check_status(ctx,
-                              status,
-                              context <<
-                              "[arrow][dump] failed to open path: " <<
-                              "<" << path << ">")) {
+  if (!grnarrow::check(ctx,
+                       status,
+                       context <<
+                       "[arrow][dump] failed to open path: " <<
+                       "<" << path << ">")) {
     GRN_API_RETURN(ctx->rc);
   }
+# endif
 
   grnarrow::FileDumper dumper(ctx, table, columns);
   dumper.dump(output.get());
