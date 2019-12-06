@@ -61,7 +61,8 @@ jobs:
             -B ..\apache-arrow-build `
             -A ${{ matrix.architecture }} `
             -G "${{ matrix.cmake_generator }}" `
-            -DARROW_USE_STATIC_CRT=ON `
+            -DARROW_VERBOSE_THIRDPARTY_BUILD=ON `
+            -DBOOST_SOURCE=BUNDLED `
             -DCMAKE_BUILD_TYPE=Release `
             "-DCMAKE_INSTALL_PREFIX=${FULL_INSTALL_FOLDER}"
           cmake --build ..\apache-arrow-build --config Release
