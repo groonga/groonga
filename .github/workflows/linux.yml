@@ -72,4 +72,4 @@ jobs:
             --reporter=mark
       - name: Install
         run: |
-          make install
+          sudo make install
