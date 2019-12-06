@@ -11391,10 +11391,12 @@ grn_db_value_unlock(grn_ctx *ctx, grn_id id, db_value *vp)
   return current_lock;
 }
 
-static inline void
+static inline bool
 grn_db_value_wait(grn_ctx *ctx, grn_id id, db_value *vp)
 {
   uint32_t n_trials;
+  bool wait_success = true;
+
   grn_log_reference_count("wait: start: %u: %u\n", id, vp->lock);
   for (n_trials = 0; !vp->ptr; n_trials++) {
     if (n_trials >= 3000) {
@@ -11409,11 +11411,14 @@ grn_db_value_wait(grn_ctx *ctx, grn_id id, db_value *vp)
               id,
               vp->lock,
               vp->ptr);
+      wait_success = false;
       break;
     }
     GRN_FUTEX_WAIT(&vp->ptr);
   }
   grn_log_reference_count("wait: done: %u: %u\n", id, vp->lock);
+
+  return wait_success;
 }
 
 grn_obj *
@@ -11601,7 +11606,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
           vp->done = 1;
           GRN_FUTEX_WAKE(&vp->ptr);
         } else {
-          grn_db_value_wait(ctx, id, vp);
+          if(!grn_db_value_wait(ctx, id, vp)) { goto exit; }
         }
         if (vp->ptr) {
           switch (vp->ptr->header.type) {
