@@ -11395,9 +11395,9 @@ static inline void
 grn_db_value_wait(grn_ctx *ctx, grn_id id, db_value *vp)
 {
   uint32_t n_trials;
-   grn_log_reference_count("wait: start: %u: %u\n", id, vp->lock);
+  grn_log_reference_count("wait: start: %u: %u\n", id, vp->lock);
   for (n_trials = 0; !vp->ptr; n_trials++) {
-    if (n_trials >= 1000) {
+    if (n_trials >= 3000) {
       GRN_LOG(ctx,
               GRN_LOG_NOTICE,
               "[db][value][wait] failed to wait: "
