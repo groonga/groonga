@@ -61,9 +61,9 @@ jobs:
             -B ..\apache-arrow-build `
             -A ${{ matrix.architecture }} `
             -G "${{ matrix.cmake_generator }}" `
-            "-DCMAKE_INSTALL_PREFIX=${FULL_INSTALL_FOLDER}" `
+            -DARROW_USE_STATIC_CRT=ON `
             -DCMAKE_BUILD_TYPE=Release `
-            -DBOOST_SOURCE=BUNDLED
+            "-DCMAKE_INSTALL_PREFIX=${FULL_INSTALL_FOLDER}"
           cmake --build ..\apache-arrow-build --config Release
           cmake --build ..\apache-arrow-build --config Release --target Install
       - name: Install Groonga
