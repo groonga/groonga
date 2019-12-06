@@ -32,7 +32,7 @@ jobs:
           echo "`$Env:CMAKE_BUILD_PARALLEL_LEVEL = ${Env:NUMBER_OF_PROCESSORS}" >> env.ps1
           echo "CMAKE_GENERATOR = `"Visual Studio 16 2019`"" >> env.ps1
           GROONGA_VERSION = (Get-Content base_version)
-          if (!("${Env:GITHUB_REF}".StartsWith("refs/tags/")) {
+          if (!("${Env:GITHUB_REF}".StartsWith("refs/tags/"))) {
             GROONGA_VERSION += "-$(${Env:GITHUB_SHA}.Substring(0, 7))"
           }
           "GRN_VERSION=${GROONGA_VERSION}" | Set-Content version.sh
