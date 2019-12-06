@@ -983,7 +983,7 @@ grn_ctx_set_output_type(grn_ctx *ctx, grn_content_type type)
       ctx->impl->output.mime_type = "text/x-groonga-command-list";
       break;
     case GRN_CONTENT_APACHE_ARROW :
-      ctx->impl->output.mime_type = "application/x-apache-arrow-stream";
+      ctx->impl->output.mime_type = "application/x-apache-arrow-streaming";
       break;
     }
   } else {
