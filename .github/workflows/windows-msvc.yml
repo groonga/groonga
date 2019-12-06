@@ -82,13 +82,13 @@ jobs:
       - name: Prepare artifacts
         run: |
           . .\env.ps1
-          New-Item packages -ItemType Directory
+          New-Item ..\packages -ItemType Directory
           pushd "${FULL_INSTALL_FOLDER}\.."
           Compress-Archive `
             -Path ${INSTALL_FOLDER} `
-            -DestinationPath "${Env:GITHUB_WORKSPACE}\packages\${INSTALL_FOLDER}.zip"
+            -DestinationPath "${Env:GITHUB_WORKSPACE}\..\packages\${INSTALL_FOLDER}.zip"
           popd
       - uses: actions/upload-artifact@master
         with:
           name: ${{ matrix.artifact_name }}
-          path: packages
+          path: ..\packages
