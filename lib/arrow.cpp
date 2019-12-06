@@ -301,7 +301,7 @@ namespace grnarrow {
         requested_record_id = GRN_INT32_VALUE(&bulk_);
         break;
       case GRN_DB_INT64 :
-        requested_record_id = GRN_INT64_VALUE(&bulk_);
+        requested_record_id = static_cast<grn_id>(GRN_INT64_VALUE(&bulk_));
         break;
       default :
         {
@@ -518,10 +518,12 @@ namespace grnarrow {
             if (grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
               unsigned int weight = 0;
               grn_id domain = GRN_DB_SHORT_TEXT;
+              const auto sub_buffer_size =
+                static_cast<unsigned int>(GRN_TEXT_LEN(&sub_buffer));
               grn_vector_add_element(ctx_,
                                      bulk_,
                                      GRN_TEXT_VALUE(&sub_buffer),
-                                     GRN_TEXT_LEN(&sub_buffer),
+                                     sub_buffer_size,
                                      weight,
                                      domain);
             } else {
@@ -582,10 +584,12 @@ namespace grnarrow {
       }
       if (GRN_BULK_VSIZE(&value_buffer) > 0) {
         if (grn_type_id_is_text_family(ctx_, domain)) {
+          const auto value_buffer_size =
+            static_cast<unsigned int>(GRN_BULK_VSIZE(&value_buffer));
           grn_vector_add_element(ctx_,
                                  bulk_,
                                  GRN_BULK_HEAD(&value_buffer),
-                                 GRN_BULK_VSIZE(&value_buffer),
+                                 value_buffer_size,
                                  weight,
                                  domain);
         } else {
@@ -639,10 +643,11 @@ namespace grnarrow {
         grn_column_(nullptr),
         buffer_() {
       const auto &column_name = arrow_field->name();
-      grn_column_ = grn_obj_column(ctx_,
-                                   grn_table_,
-                                   column_name.data(),
-                                   column_name.size());
+      grn_column_ =
+        grn_obj_column(ctx_,
+                       grn_table_,
+                       column_name.data(),
+                       static_cast<unsigned int>(column_name.size()));
 
       const auto &arrow_type = arrow_field->type();
       grn_id arrow_type_id = GRN_DB_VOID;
@@ -655,13 +660,14 @@ namespace grnarrow {
       }
 
       if (!grn_column_) {
-        grn_column_ = grn_column_create(ctx_,
-                                        grn_table_,
-                                        column_name.data(),
-                                        column_name.size(),
-                                        NULL,
-                                        GRN_OBJ_COLUMN_SCALAR,
-                                        grn_ctx_at(ctx_, arrow_type_id));
+        grn_column_ =
+          grn_column_create(ctx_,
+                            grn_table_,
+                            column_name.data(),
+                            static_cast<unsigned int>(column_name.size()),
+                            NULL,
+                            GRN_OBJ_COLUMN_SCALAR,
+                            grn_ctx_at(ctx_, arrow_type_id));
       }
       if (grn_type_id_is_text_family(ctx_, arrow_type_id)) {
         GRN_VALUE_VAR_SIZE_INIT(&buffer_, flags, arrow_type_id);
