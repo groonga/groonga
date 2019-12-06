@@ -134,6 +134,10 @@ When a target table contains primary key, you must specify ``_key``
 column (pseudo column associated primary key) as the one of
 ``COLUMN_NAME``.
 
+If you specify ``apache-arrow`` as ``input_type``, you must use
+`Apache Arrow IPC Streaming Format`_. You can't use `Apache Arrow IPC
+File Format`_.
+
 If ``values`` isn't specified any values, they are read from the
 standard input in command line style or body in HTTP style.
 
@@ -173,10 +177,23 @@ in other (all columns excluding ``_key`` column) columns is updated.
 ``input_type``
 """"""""""""""
 
-Specifies an input format for ``values``. It supports only ``json``
-for now. It means format of ``values`` is JSON.
+Specifies an input format for ``values``.
 
-The default value is ``json``.
+Here are available types:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Type
+     - Description
+   * - ``json``
+     - Use JSON for ``values`` format.
+
+       This is the default value.
+   * - ``apache-arrow``
+     - .. versionadded:: 9.1.1
+
+       Use Apache Arrow for ``values`` format.
 
 .. _load-each:
 
@@ -267,3 +284,7 @@ See also
 --------
 
   * :doc:`/reference/grn_expr/script_syntax`
+
+.. _Apache Arrow IPC Streaming Format: https://arrow.apache.org/docs/format/Columnar.html#ipc-streaming-format
+
+.. _Apache Arrow IPC File Format: https://arrow.apache.org/docs/format/Columnar.html#ipc-file-format
