@@ -5,6 +5,16 @@ on:
 jobs:
   build:
     name: Build
+    strategy:
+      fail-fast: false
+      matrix:
+        label:
+          - Visual Studio 2019 x64
+        include:
+          - label: Visual Studio 2019 x64
+            architecture: x64
+            artifact_name: vs-2019-x64
+            cmake_generator: Visual Studio 16 2019
     runs-on: windows-latest
     steps:
       - name: Disable crash dialog
@@ -30,14 +40,13 @@ jobs:
       - name: Generate env.ps1
         run: |
           echo "`$Env:CMAKE_BUILD_PARALLEL_LEVEL = ${Env:NUMBER_OF_PROCESSORS}" >> env.ps1
-          echo "`$CMAKE_GENERATOR = `"Visual Studio 16 2019`"" >> env.ps1
           $GROONGA_VERSION = (Get-Content base_version)
           if (!("${Env:GITHUB_REF}".StartsWith("refs/tags/"))) {
             $GROONGA_VERSION += "-$(${Env:GITHUB_SHA}.Substring(0, 7))"
           }
           "GRN_VERSION=${GROONGA_VERSION}" | Set-Content version.sh
           $INSTALL_FOLDER = "groonga-${GROONGA_VERSION}-x64-vs2019"
-          $INSTALL_PARENT_FOLDER = "インストール\install"
+          $INSTALL_PARENT_FOLDER = "インストール"
           $FULL_INSTALL_FOLDER = `
             "${Env:GITHUB_WORKSPACE}\${INSTALL_PARENT_FOLDER}\${INSTALL_FOLDER}"
           echo "`$INSTALL_FOLDER = `"${INSTALL_FOLDER}`"" >> env.ps1
@@ -46,12 +55,12 @@ jobs:
       - name: Install Apache Arrow
         run: |
           . .\env.ps1
-          mkdir ..\apache-arrow-build
+          Net-Item ..\apache-arrow-build -ItemType Directory
           cmake `
             -S vendor\apache-arrow-source\cpp `
             -B ..\apache-arrow-build `
-            -A x64 `
-            -G "${CMAKE_GENERATOR}" `
+            -A ${{ matrix.architecture }} `
+            -G "${{ matrix.cmake_generator }}" `
             "-DCMAKE_INSTALL_PREFIX=${FULL_INSTALL_FOLDER}" `
             -DCMAKE_BUILD_TYPE=Release
           cmake --build ..\apache-arrow-build --config Release
@@ -59,18 +68,27 @@ jobs:
       - name: Install Groonga
         run: |
           . .\env.ps1
-          mkdir ..\groonga-build
+          Net-Item ..\groonga-build -ItemType Directory
           cmake `
             -S . `
             -B ..\groonga-build `
-            -A x64 `
-            -G "${CMAKE_GENERATOR}" `
+            -A ${{ matrix.architecture }} `
+            -G "${{ matrix.cmake_generator }}" `
             "-DCMAKE_INSTALL_PREFIX=${FULL_INSTALL_FOLDER}" `
             -DCMAKE_BUILD_TYPE=ReWithDebInfo `
             -DGRN_WITH_APACHE_ARROW=yes
           cmake --build ..\groonga-build --config RelWithDebInfo
           cmake --build ..\groonga-build --config RelWithDebInfo --target Install
+      - name: Prepare artifacts
+        run: |
+          . .\env.ps1
+          Net-Item packages -ItemType Directory
+          pushd "${FULL_INSTALL_FOLDER}\.."
+          Compress-Archive `
+            -Path ${INSTALL_FOLDER} `
+            -DestinationPath "${Env:GITHUB_WORKSPACE}\packages\${INSTALL_FOLDER}.zip"
+          popd
       - uses: actions/upload-artifact@master
         with:
-          name: groonga
-          path: install
+          name: ${{ matrix.artifact_name }}
+          path: packages
