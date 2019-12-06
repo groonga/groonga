@@ -1,0 +1,73 @@
+name: "Windows MSVC"
+on:
+  - push
+  - pull_request
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    steps:
+      - name: Disable crash dialog
+        run: |
+          reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" `
+            /v DontShowUI `
+            /t REG_DWORD `
+            /d 1 `
+            /f
+      - uses: actions/setup-ruby@master
+      - uses: actions/checkout@master
+      - name: Update submodules
+        run: |
+          git submodule update --init --recursive
+      - name: Download bundled packages
+        run: |
+          cd vendor
+          ruby download_groonga_normalizer_mysql.rb
+          ruby download_lz4.rb
+          ruby download_mecab.rb
+          ruby download_message_pack.rb
+          ruby download_rapidjson.rb
+      - name: Generate env.ps1
+        run: |
+          echo "`$Env:CMAKE_BUILD_PARALLEL_LEVEL = ${Env:NUMBER_OF_PROCESSORS}" >> env.ps1
+          echo "CMAKE_GENERATOR = `"Visual Studio 16 2019`"" >> env.ps1
+          GROONGA_VERSION = (Get-Content base_version)
+          if (!("${Env:GITHUB_REF}".StartsWith("refs/tags/")) {
+            GROONGA_VERSION += "-$(${Env:GITHUB_SHA}.Substring(0, 7))"
+          }
+          "GRN_VERSION=${GROONGA_VERSION}" | Set-Content version.sh
+          INSTALL_FOLDER = "groonga-${GROONGA_VERSION}-x64-vs2019"
+          INSTALL_PARENT_FOLDER = "インストール\install"
+          FULL_INSTALL_FOLDER = `
+            "${Env:GITHUB_WORKSPACE}\${INSTALL_PARENT_FOLDER}\${INSTALL_FOLDER}
+          echo "INSTALL_FOLDER = `"${INSTALL_FOLDER}`"" >> env.ps1
+          echo "FULL_INSTALL_FOLDER = `"${FULL_INSTALL_FOLDER}`"" >> env.ps1
+      - name: Install Apache Arrow
+        run: |
+          . .\env.ps1
+          cmake `
+            -S vendor/apache-arrow-source `
+            -B vendor/apache-arrow-build `
+            -A x64 `
+            -G "${CMAKE_GENERATOR}" `
+            "-DCMAKE_INSTALL_PREFIX=${FULL_INSTALL_FOLDER}" `
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build vendor/apache-arrow-build --config Release
+          cmake --build vendor/apache-arrow-build --config Release --target Install
+      - name: Install Groonga
+        run: |
+          . .\env.ps1
+          cmake `
+            -S . `
+            -B build `
+            -A x64 `
+            -G "${CMAKE_GENERATOR}" `
+            "-DCMAKE_INSTALL_PREFIX=${FULL_INSTALL_FOLDER}" `
+            -DCMAKE_BUILD_TYPE=ReWithDebInfo `
+            -DGRN_WITH_APACHE_ARROW=yes
+          cmake --build build --config RelWithDebInfo
+          cmake --build build --config RelWithDebInfo --target Install
+      - uses: actions/upload-artifact@master
+        with:
+          name: groonga
+          path: install
