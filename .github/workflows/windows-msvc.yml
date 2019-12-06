@@ -39,7 +39,7 @@ jobs:
           INSTALL_FOLDER = "groonga-${GROONGA_VERSION}-x64-vs2019"
           INSTALL_PARENT_FOLDER = "インストール\install"
           FULL_INSTALL_FOLDER = `
-            "${Env:GITHUB_WORKSPACE}\${INSTALL_PARENT_FOLDER}\${INSTALL_FOLDER}
+            "${Env:GITHUB_WORKSPACE}\${INSTALL_PARENT_FOLDER}\${INSTALL_FOLDER}"
           echo "INSTALL_FOLDER = `"${INSTALL_FOLDER}`"" >> env.ps1
           echo "FULL_INSTALL_FOLDER = `"${FULL_INSTALL_FOLDER}`"" >> env.ps1
       - name: Install Apache Arrow
