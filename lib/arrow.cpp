@@ -1539,31 +1539,35 @@ grn_arrow_load(grn_ctx *ctx,
   auto input = *input_result;
 # else
   std::shared_ptr<arrow::io::MemoryMappedFile> input;
-  auto status =
-    arrow::io::MemoryMappedFile::Open(path, arrow::io::FileMode::READ, &input);
-  std::ostringstream context;
-  if (!grnarrow::check(ctx,
-                       status,
-                       context <<
-                       "[arrow][load] failed to open path: " <<
-                       "<" << path << ">")) {
-    GRN_API_RETURN(ctx->rc);
+  {
+    auto status =
+      arrow::io::MemoryMappedFile::Open(path, arrow::io::FileMode::READ, &input);
+    std::ostringstream context;
+    if (!grnarrow::check(ctx,
+                         status,
+                         context <<
+                         "[arrow][load] failed to open path: " <<
+                         "<" << path << ">")) {
+      GRN_API_RETURN(ctx->rc);
+    }
   }
 # endif
   std::shared_ptr<arrow::ipc::RecordBatchFileReader> reader;
-  auto status = arrow::ipc::RecordBatchFileReader::Open(input, &reader);
-  if (!grnarrow::check(ctx,
-                       status,
-                       "[arrow][load] "
-                       "failed to create file format reader")) {
-    GRN_API_RETURN(ctx->rc);
+  {
+    auto status = arrow::ipc::RecordBatchFileReader::Open(input, &reader);
+    if (!grnarrow::check(ctx,
+                         status,
+                         "[arrow][load] "
+                         "failed to create file format reader")) {
+      GRN_API_RETURN(ctx->rc);
+    }
   }
 
   grnarrow::FileLoader loader(ctx, table);
   int n_record_batches = reader->num_record_batches();
   for (int i = 0; i < n_record_batches; ++i) {
     std::shared_ptr<arrow::RecordBatch> record_batch;
-    status = reader->ReadRecordBatch(i, &record_batch);
+    auto status = reader->ReadRecordBatch(i, &record_batch);
     std::ostringstream context;
     if (!grnarrow::check(ctx,
                          status,
