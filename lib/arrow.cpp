@@ -1392,10 +1392,11 @@ namespace grnarrow {
       const int64_t bytes_available =
         std::min(nbytes,
                  static_cast<int64_t>(buffer_.size() - offset_));
-      offset_ += bytes_available;
-      return std::make_shared<arrow::Buffer>(
+      auto output = std::make_shared<arrow::Buffer>(
         reinterpret_cast<const uint8_t *>(buffer_.data() + offset_),
         bytes_available);
+      offset_ += bytes_available;
+      return output;
     }
 
 # if ARROW_VERSION_MAJOR >= 1
