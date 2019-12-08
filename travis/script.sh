@@ -28,7 +28,11 @@ fi
 
 prefix=/tmp/local
 
-command_test_options="--reporter=mark --timeout=60 --read-timeout=30"
+command_test_options=""
+command_test_options="${command_test_options} --reporter=mark"
+command_test_options="${command_test_options} --timeout=60"
+command_test_options="${command_test_options} --read-timeout=30"
+command_test_options="${command_test_options} --n-retries=3"
 
 set -x
 
@@ -65,19 +69,21 @@ fi
 case "${BUILD_TOOL}" in
   autotools)
     if [ "${TRAVIS_OS_NAME}" != "osx" ]; then
-      test/unit/run-test.sh -v v
+      test/unit/run-test.sh
     fi
     test/command/run-test.sh ${command_test_options}
     if [ "${TRAVIS_OS_NAME}" != "osx" -a "${ENABLE_MRUBY}" = "yes" ]; then
       test/mruby/run-test.rb
       test/command_line/run-test.rb
     fi
-    retry test/command/run-test.sh ${command_test_options} \
-          --interface http
+    test/command/run-test.sh \
+      ${command_test_options} \
+      --interface http
     if [ "${TRAVIS_OS_NAME}" != "osx" ]; then
       mkdir -p ${prefix}/var/log/groonga/httpd
-      retry test/command/run-test.sh ${command_test_options} \
-            --testee groonga-httpd
+      test/command/run-test.sh \
+        ${command_test_options} \
+        --testee groonga-httpd
     fi
     ;;
   cmake)
