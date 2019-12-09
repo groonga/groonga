@@ -99,7 +99,7 @@ jobs:
           . .\env.ps1
           git clone --depth 1 `
             https://github.com/groonga/grntest.git `
-            ..\grntest `
+            ..\grntest
           cd ..\grntest
           bundle install --binstubs=bin
           ruby bin\grntest `
