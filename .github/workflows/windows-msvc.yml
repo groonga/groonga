@@ -96,7 +96,7 @@ jobs:
           path: ..\packages
       - name: Update MSYS2
         run: |
-          ridk exec pacman -Syu --noconfirm
+          ridk exec pacman -Syyu --noconfirm
       - name: Install grntest
         run: |
           git clone --depth 1 `
