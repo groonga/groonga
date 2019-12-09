@@ -94,3 +94,22 @@ jobs:
         with:
           name: ${{ matrix.artifact_name }}
           path: ..\packages
+      - name: Test Groonga
+        run: |
+          . .\env.ps1
+          git clone --depth 1 `
+            https://github.com/groonga/grntest.git `
+            ..\grntest `
+          cd ..\grntest
+          bundle install --binstubs=bin
+          ruby bin\grntest `
+           --base-directory ..\test\command `
+           --groonga "${Env:FULL_GROONGA_INSTALL_FOLDER}\bin\groonga.exe" `
+           --input-type apache-arrow `
+           --interface http `
+           --n-retries 2 `
+           --n-workers ${Env:NUMBER_OF_PROCESSORS} `
+           --read-timeout 30 `
+           --reporter mark `
+           --timeout 60 `
+           ..\test\command\suite
