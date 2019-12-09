@@ -87,12 +87,12 @@ install:
 
 build_script:
   - git submodule update --init
-  - pushd vendor
+  - cd vendor
   - ruby download_lz4.rb
   - ruby download_mecab.rb
   - ruby download_message_pack.rb
   - ruby download_rapidjson.rb
-  - popd
+  - cd ..
   - set CMAKE_GENERATOR_NAME=Visual Studio %VS_VERSION%
   - if "%VS_VERSION%" == "12"
       set CMAKE_GENERATOR_NAME=%CMAKE_GENERATOR_NAME% 2013
