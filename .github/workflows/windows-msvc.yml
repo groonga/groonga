@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@master
       - name: Update submodules
         run: |
-          git submodule update --init --recursive
+          git submodule update --init --recursive --depth 1
       - name: Download bundled packages
         run: |
           cd vendor
