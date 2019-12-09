@@ -110,7 +110,8 @@ jobs:
       - name: Test Groonga
         run: |
           . .\env.ps1
-          ruby ..\grntest\bin\grntest `
+          dir ..\grntest\bin
+          ..\grntest\bin\grntest.bat `
            --base-directory test\command `
            --groonga "${Env:FULL_GROONGA_INSTALL_FOLDER}\bin\groonga.exe" `
            --input-type apache-arrow `
