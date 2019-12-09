@@ -86,7 +86,7 @@ install:
   - move groonga-normalizer-mysql* vendor\plugins\groonga-normalizer-mysql
 
 build_script:
-  - git submodule update --init
+  - git submodule update --init --recursive
   - cd vendor
   - ruby download_lz4.rb
   - ruby download_mecab.rb

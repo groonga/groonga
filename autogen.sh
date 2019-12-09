@@ -50,7 +50,7 @@ esac
 if [ ! -e vendor/mruby-source/.git ]; then
   rm -rf vendor/mruby-source
 fi
-git submodule update --init --recursive --depth 1
+git submodule update --init --recursive
 
 mkdir -p m4
 

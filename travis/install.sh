@@ -6,7 +6,7 @@ set -u
 : ${DOCKER:=}
 : ${TARGET:=}
 
-git submodule update --init --recursive --depth 1
+git submodule update --init --recursive
 
 if [ -n "${DOCKER}" ]; then
   curl \
