@@ -103,22 +103,31 @@ build_script:
   - if "%ARCH%" == "amd64"
       set CMAKE_GENERATOR_NAME=%CMAKE_GENERATOR_NAME% Win64
   - set CMAKE_BUILD_PARALLEL_LEVEL=4
-  - mkdir ..\apache-arrow-build
-  - cmake
-      -S vendor\apache-arrow-source\cpp
-      -B ..\apache-arrow-build
-      -G "%CMAKE_GENERATOR_NAME%"
-      -DARROW_VERBOSE_THIRDPARTY_BUILD=ON
-      -DBOOST_SOURCE=BUNDLED
-      -DCMAKE_BUILD_TYPE=Release
-      -DCMAKE_INSTALL_PREFIX=%FULL_GROONGA_INSTALL_FOLDER%
-  - cmake --build ..\apache-arrow-build --config Release
-  - cmake --build ..\apache-arrow-build --config Release --target Install
+  - set GRN_WITH_APACHE_ARROW=ON
+  - if "%VS_VERSION%" == "12"
+      set GRN_WITH_APACHE_ARROW=OFF
+  - if "%ARCH%" == "x86"
+      set GRN_WITH_APACHE_ARROW=OFF
+  - if "%GRN_WITH_APACHE_ARROW%" == "ON"
+      mkdir ..\apache-arrow-build
+  - if "%GRN_WITH_APACHE_ARROW%" == "ON"
+      cmake
+        -S vendor\apache-arrow-source\cpp
+        -B ..\apache-arrow-build
+        -G "%CMAKE_GENERATOR_NAME%"
+        -DARROW_VERBOSE_THIRDPARTY_BUILD=ON
+        -DBOOST_SOURCE=BUNDLED
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_INSTALL_PREFIX=%FULL_GROONGA_INSTALL_FOLDER%
+  - if "%GRN_WITH_APACHE_ARROW%" == "ON"
+      cmake --build ..\apache-arrow-build --config Release
+  - if "%GRN_WITH_APACHE_ARROW%" == "ON"
+      cmake --build ..\apache-arrow-build --config Release --target Install
   - cmake .
       -G "%CMAKE_GENERATOR_NAME%"
       -DCMAKE_INSTALL_PREFIX=%FULL_GROONGA_INSTALL_FOLDER%
-      -DGRN_WITH_APACHE_ARROW=yes
-      -DGRN_WITH_MRUBY=yes
+      -DGRN_WITH_APACHE_ARROW=%GRN_WITH_APACHE_ARROW%
+      -DGRN_WITH_MRUBY=ON
   - cmake --build . --config RelWithDebInfo
   - cmake --build . --config RelWithDebInfo --target Install
   - move
