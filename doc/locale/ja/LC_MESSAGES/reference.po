@@ -7257,7 +7257,7 @@ msgid ""
 "If you specify ``apache-arrow`` as ``input_type``, you must use `Apache "
 "Arrow IPC Streaming Format`_. You can't use `Apache Arrow IPC File Format`_."
 msgstr ""
-"``input_type`` に ``apache-arrow`` を指定して場合は `Apache Arrow IPC "
+"``input_type`` に ``apache-arrow`` を指定した場合は `Apache Arrow IPC "
 "Streaming Format`_ を使わなければいけません。 `Apache Arrow IPC File "
 "Format`_ は使えません。"
 
