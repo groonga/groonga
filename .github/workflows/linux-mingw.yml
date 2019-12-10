@@ -3,8 +3,14 @@ on:
   - push
   - pull_request
 jobs:
-  configure:
-    name: configure
+  package:
+    name: Package
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture:
+          - x86
+          - x64
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -48,20 +54,24 @@ jobs:
         run: |
           make \
             -C packages/windows \
-            ARCHITECTURES=x64 \
+            ARCHITECTURES=${{ matrix.architecture }} \
             build
       - name: Build zip archive
         run: |
           make \
             -C packages/windows \
-            ARCHITECTURES=x64 \
+            ARCHITECTURES=${{ matrix.architecture }} \
             package
       - name: Build installer
         run: |
           make \
             -C packages/windows \
-            installer-x64
+            installer-${{ matrix.architecture }}
+      - name: Prepare artifacts
+        run: |
+          mkdir -p windows-mingw-${{ matrix.architecture }}
+          mv packages/windows/files/* windows-mingw-${{ matrix.architecture }}/
       - uses: actions/upload-artifact@master
         with:
-          name: mingw-x64
-          path: files
+          name: windows-mingw-${{ matrix.architecture }}
+          path: windows-mingw-${{ matrix.architecture }}
