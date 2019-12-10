@@ -1,0 +1,57 @@
+name: Linux MinGW
+on:
+  - push
+  - pull_request
+jobs:
+  configure:
+    name: configure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Install packages
+        run: |
+          sudo apt update
+          sudo apt install -y -V \
+            autoconf-archive \
+            automake1.11 \
+            autotools-dev \
+            bison \
+            cmake \
+            gettext \
+            libevent-dev \
+            libluajit-5.1-dev \
+            libmecab-dev \
+            libmsgpack-dev \
+            mecab-naist-jdic \
+            python3-pip \
+            rapidjson-dev \
+            ruby-dev \
+            zlib1g-dev
+      - name: Install Sphinx
+        run: |
+          sudo pip3 install Sphinx
+      - name: Generate configure
+        run: |
+          ./autogen.sh
+      - name: Configure
+        run: |
+          ./configure \
+            --enable-debug \
+            --enable-document \
+            --enable-mruby \
+            --with-ruby
+      - name: Build archive
+        run: |
+          make dist
+      - name: Build
+        run: |
+          make \
+            -C packages/windows \
+            ARCHITECTURES=x64 \
+            build \
+            package \
+            installer
+      - uses: actions/upload-artifact@master
+        with:
+          name: mingw-x64
+          path: files
