@@ -106,13 +106,12 @@ jobs:
             https://github.com/groonga/grntest.git `
             ..\grntest
           cd ..\grntest
-          bundle install --binstubs=bin
+          rake build
+          gem install pkg\*.gem
       - name: Test Groonga
         run: |
           . .\env.ps1
-          dir ..\grntest\bin
-          type ..\grntest\bin\grntest
-          ruby ..\grntest\bin\grntest `
+          grntest `
            --base-directory test\command `
            --groonga "${Env:FULL_GROONGA_INSTALL_FOLDER}\bin\groonga.exe" `
            --input-type apache-arrow `
