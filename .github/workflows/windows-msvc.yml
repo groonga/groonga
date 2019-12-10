@@ -106,7 +106,8 @@ jobs:
             https://github.com/groonga/grntest.git `
             ..\grntest
           cd ..\grntest
-          rake build
+          bundle install --path vendor\bundle
+          bundle exec rake build
           gem install pkg\*.gem
       - name: Test Groonga
         run: |
