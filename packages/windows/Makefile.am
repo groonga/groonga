@@ -109,11 +109,6 @@ LICENSE:
 	@(echo "Groonga";				\
 	 echo "=======";				\
 	 echo;						\
-	 echo "AUTHORS";				\
-	 echo "-------";				\
-	 echo;						\
-	 cat $(LICENSE_DIR)/groonga/AUTHORS;		\
-	 echo;						\
 	 echo "COPYING";				\
 	 echo "-------";				\
 	 echo;						\
