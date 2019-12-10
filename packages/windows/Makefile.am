@@ -4,7 +4,6 @@ SUBDIRS =					\
 EXTRA_DIST =					\
 	Gemfile					\
 	Rakefile
-LICENSE_DIR = dist-x64/share/license
 ARCHITECTURES = x86 x64
 SUFFIX =
 
@@ -131,7 +130,7 @@ LICENSE:
 	 echo "BSD";					\
 	 echo "---";					\
 	 echo;						\
-	 echo; cat $(LICENSE_DIR)/mecab/BSD;		\
+	 cat $(LICENSE_DIR)/mecab/BSD;			\
 	 echo;						\
 	 echo "GPL";					\
 	 echo "---";					\
@@ -175,10 +174,12 @@ setup-x86.nsi: setup-x64.nsi
 	  -e 's/PROGRAMFILES86/PROGRAMFILES32/g'	\
 	  setup-x64.nsi > setup-x86.nsi
 
-installer-x86: LICENSE setup-x86.nsi
+installer-x86: setup-x86.nsi
+	$(MAKE) LICENSE_DIR=dist-x86/share/license LICENSE
 	makensis setup-x86.nsi
 
-installer-x64: LICENSE setup-x64.nsi
+installer-x64: setup-x64.nsi
+	$(MAKE) LICENSE_DIR=dist-x64/share/license LICENSE
 	makensis setup-x64.nsi
 
 package:
