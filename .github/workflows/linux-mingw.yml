@@ -23,6 +23,7 @@ jobs:
             libmecab-dev \
             libmsgpack-dev \
             mecab-naist-jdic \
+            nsis \
             python3-pip \
             rapidjson-dev \
             ruby-dev \
@@ -48,8 +49,18 @@ jobs:
           make \
             -C packages/windows \
             ARCHITECTURES=x64 \
-            build \
-            package \
+            build
+      - name: Build zip archive
+        run: |
+          make \
+            -C packages/windows \
+            ARCHITECTURES=x64 \
+            package
+      - name: Build installer
+        run: |
+          make \
+            -C packages/windows \
+            ARCHITECTURES=x64 \
             installer
       - uses: actions/upload-artifact@master
         with:
