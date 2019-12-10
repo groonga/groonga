@@ -60,8 +60,7 @@ jobs:
         run: |
           make \
             -C packages/windows \
-            ARCHITECTURES=x64 \
-            installer
+            installer-x64
       - uses: actions/upload-artifact@master
         with:
           name: mingw-x64
