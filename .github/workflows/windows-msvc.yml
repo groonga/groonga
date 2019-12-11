@@ -115,7 +115,7 @@ jobs:
           . .\env.ps1
           grntest `
            --base-directory test\command `
-           --groonga "${Env:FULL_INSTALL_FOLDER}\bin\groonga.exe" `
+           --groonga "${FULL_INSTALL_FOLDER}\bin\groonga.exe" `
            --input-type apache-arrow `
            --interface http `
            --n-retries 2 `
