@@ -107,8 +107,7 @@ jobs:
             ..\grntest
           cd ..\grntest
           bundle install --path vendor\bundle
-          bundle exec rake build
-          gem install pkg\*.gem
+          bundle exec rake install
       - name: Test Groonga
         run: |
           . .\env.ps1
