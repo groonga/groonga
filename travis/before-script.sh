@@ -4,7 +4,6 @@ set -e
 set -u
 
 : ${DOCKER:=}
-: ${TARGET:=}
 
 touch lib/grn_ecmascript.c
 
@@ -16,13 +15,6 @@ if [ -n "${DOCKER}" ]; then
          -f dockerfiles/${DOCKER}.dockerfile \
          .
   exit $?
-fi
-
-if [ -n "${TARGET}" ]; then
-  BUILD_TOOL=autotools
-  ENABLE_MRUBY=yes
-  ENABLE_DOCUMENT=yes
-  ENABLE_MAINTAINER_MODE=yes
 fi
 
 : ${ENABLE_MRUBY:=no}
@@ -83,8 +75,4 @@ case "$(uname)" in
     ;;
 esac
 
-if [ -n "${TARGET}" ]; then
-  make dist > /dev/null
-else
-  make -j${n_processors}
-fi
+make -j${n_processors}

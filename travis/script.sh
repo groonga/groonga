@@ -4,22 +4,12 @@ set -e
 set -u
 
 : ${DOCKER:=}
-: ${TARGET:=}
 
 if [ -n "${DOCKER}" ]; then
   docker run \
          --interactive \
          --tty \
           groonga/groonga-${DOCKER}
-  exit $?
-fi
-
-if [ -n "${TARGET}" ]; then
-  make \
-    -C packages/${TARGET} \
-    build \
-    DEBUG_BUILD=yes \
-    ARCHITECTURES=${ARCHITECTURES}
   exit $?
 fi
 

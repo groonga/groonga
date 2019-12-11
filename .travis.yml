@@ -129,20 +129,6 @@ matrix:
         <<: *addons_linux_docker
       env:
         - DOCKER=ubuntu-18.04
-    - name: "MinGW32"
-      os: linux
-      addons:
-        <<: *addons_linux_build
-      env:
-        - TARGET=windows
-        - ARCHITECTURES=x86
-    - name: "MinGW64"
-      os: linux
-      addons:
-        <<: *addons_linux_build
-      env:
-        - TARGET=windows
-        - ARCHITECTURES=x64
 
 install:
   - travis/install.sh

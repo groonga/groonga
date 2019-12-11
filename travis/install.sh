@@ -4,7 +4,6 @@ set -e
 set -u
 
 : ${DOCKER:=}
-: ${TARGET:=}
 
 git submodule update --init --recursive
 
@@ -14,11 +13,6 @@ if [ -n "${DOCKER}" ]; then
     --location \
     https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
   exit $?
-fi
-
-if [ -n "${TARGET}" ]; then
-  ENABLE_MRUBY=yes
-  ENABLE_DOCUMENT=yes
 fi
 
 : ${ENABLE_MRUBY:=no}
