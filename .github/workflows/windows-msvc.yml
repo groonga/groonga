@@ -25,6 +25,8 @@ jobs:
             /d 1 `
             /f
       - uses: actions/setup-ruby@master
+        with:
+          ruby-version: 2.6
       - uses: actions/checkout@master
       - name: Update submodules
         run: |
