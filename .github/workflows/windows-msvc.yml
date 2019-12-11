@@ -109,7 +109,7 @@ jobs:
             ..\grntest
           cd ..\grntest
           bundle install
-          bundle exec ruby -rdevkit rake install
+          bundle exec ruby -rdevkit -S rake install
       - name: Test Groonga
         run: |
           . .\env.ps1
