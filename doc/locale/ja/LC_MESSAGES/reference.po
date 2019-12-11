@@ -28123,6 +28123,15 @@ msgstr ""
 msgid "``TokenFilterStem`` stems tokenized token."
 msgstr "``TokenFilterStem`` は、トークナイズされたトークンをステミングします。"
 
+msgid ""
+"You need to install an additional package to using ``TokenFilterStem``. For "
+"more detail of how to installing an additional package, see `how to install "
+"each OS <http://groonga.org/docs/install.html>`_ ."
+msgstr ""
+"``TokenFilterStem`` を使うには、追加のパッケージをインストールする必要があり"
+"ます。追加のパッケージをインストールする方法の詳細については、`各OSのインス"
+"トール方法 <http://groonga.org/ja/docs/install.html>`_ を参照して下さい。"
+
 msgid "``TokenFilterStem`` has optional parameter::"
 msgstr "``TokenFilterStem`` は、省略可能な引数があります。"
 
