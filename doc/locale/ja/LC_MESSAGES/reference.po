@@ -28123,8 +28123,8 @@ msgstr ""
 msgid "``TokenFilterStem`` stems tokenized token."
 msgstr "``TokenFilterStem`` は、トークナイズされたトークンをステミングします。"
 
-msgid "``TokenFilterStopWord`` has optional parameter::"
-msgstr "``TokenFilterStopWord`` は、省略可能な引数があります。"
+msgid "``TokenFilterStem`` has optional parameter::"
+msgstr "``TokenFilterStem`` は、省略可能な引数があります。"
 
 msgid "Here is an example that uses ``TokenFilterStem`` token filter:"
 msgstr "以下は ``TokenFilterStem`` トークンフィルターを使う例です。"
@@ -28195,6 +28195,9 @@ msgid ""
 msgstr ""
 "``column`` オプションを指定しない場合、ストップワードは、語彙表の "
 "``is_stop_word`` カラムで指定されます。"
+
+msgid "``TokenFilterStopWord`` has optional parameter::"
+msgstr "``TokenFilterStopWord`` は、省略可能な引数があります。"
 
 msgid "Here is an example that uses ``TokenFilterStopWord`` token filter:"
 msgstr "以下は ``TokenFilterStopWord`` トークンフィルターを使う例です。"

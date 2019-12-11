@@ -18,9 +18,9 @@ Summary
 Syntax
 ------
 
-``TokenFilterStopWord`` has optional parameter::
+``TokenFilterStem`` has optional parameter::
 
-  TokenFilterStopStem
+  TokenFilterStem
 
   TokenFilterStem("algorithm", "steming_algorithm")
 
