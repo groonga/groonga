@@ -106,11 +106,13 @@ jobs:
             https://github.com/groonga/grntest.git `
             ..\grntest
           cd ..\grntest
-          bundle install --path vendor\bundle
-          bundle exec rake install
+          bundle install
+          bundle exec ruby -rdevkit rake install
       - name: Test Groonga
         run: |
           . .\env.ps1
+          dir C:/hostedtoolcache/windows/Ruby/2.6.3/x64/bin
+          ruby -r grntest/version -e "puts `$LOADED_FEATURES"
           grntest `
            --base-directory test\command `
            --groonga "${Env:FULL_GROONGA_INSTALL_FOLDER}\bin\groonga.exe" `
