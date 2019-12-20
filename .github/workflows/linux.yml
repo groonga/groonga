@@ -61,11 +61,11 @@ jobs:
             ruby-dev \
             zlib1g-dev
           if [ "${{ matrix.use_arrow }}" = "true" ]; then
-            apt install -y -V \
+            sudo apt install -y -V \
               libarrow-dev
           fi
           if [ "${{ matrix.use_sphinx }}" = "true" ]; then
-            apt install -y -V \
+            sudo apt install -y -V \
               python3-pip
           fi
       - name: Install Sphinx
