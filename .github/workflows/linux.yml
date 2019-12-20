@@ -13,12 +13,12 @@ jobs:
           - "HTTP: command: POST"
         include:
           - label: "HTTP: load: Apache Arrow"
-            use_arrow: true
-            grntest_options: >-
+            use-arrow: true
+            grntest-options: >-
               --input-type=apache-arrow
               --interface=http
           - label: "HTTP: command: POST"
-            grntest_options: >-
+            grntest-options: >-
               --interface=http
               --use-http-post
     runs-on: ubuntu-latest
@@ -58,17 +58,17 @@ jobs:
             rapidjson-dev \
             ruby-dev \
             zlib1g-dev
-          if [ "${{ matrix.use_arrow }}" = "true" ]; then
+          if [ "${{ matrix.use-arrow }}" = "true" ]; then
             sudo apt install -y -V \
               libarrow-dev
           fi
-          if [ "${{ matrix.use_sphinx }}" = "true" ]; then
+          if [ "${{ matrix.use-sphinx }}" = "true" ]; then
             sudo apt install -y -V \
               python3-pip
           fi
       - name: Install Sphinx
         if: |
-          matrix.use_sphinx
+          matrix.use-sphinx
         run: |
           sudo pip3 install Sphinx
       - name: Install Bundler
@@ -83,7 +83,7 @@ jobs:
             --enable-debug \
             --enable-mruby \
             --with-ruby \
-            ${{ matrix.configure_options }}
+            ${{ matrix.configure-options }}
       - name: Build
         run: |
           make -j$(nproc)
@@ -93,7 +93,7 @@ jobs:
           test/command/run-test.sh \
             --n-retries=3 \
             --reporter=mark \
-            ${{ matrix.grntest_options }}
+            ${{ matrix.grntest-options }}
       - name: Install
         run: |
           sudo make install
