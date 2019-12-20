@@ -25,8 +25,6 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Enable Apache Arrow repository
-        if: |
-          matrix.use_arrow
         run: |
           sudo apt update
           sudo apt install -y -V \
