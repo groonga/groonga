@@ -26,7 +26,7 @@ jobs:
       - uses: actions/checkout@master
       - name: Enable Apache Arrow repository
         if: |
-          "${{ matrix.use_arrow }}" == "yes"
+          matrix.use_arrow == "yes"
         run: |
           sudo apt update
           sudo apt install -y -V \
@@ -70,7 +70,7 @@ jobs:
           fi
       - name: Install Sphinx
         if: |
-          "${{ matrix.use_sphinx }}" == "yes"
+          matrix.use_sphinx == "yes"
         run: |
           sudo pip3 install Sphinx
       - name: Install Bundler
