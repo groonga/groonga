@@ -189,18 +189,24 @@ in other (all columns excluding ``_key`` column) columns is updated.
 
 Specifies an input format for ``values``.
 
-Here are available types:
+Note that you must also specify suitable HTTP ``Content-Type`` header
+value when you use ``input_type`` with HTTP interface.
+
+Here are available types and ``Content-Type`` values:
 
 .. list-table::
    :header-rows: 1
 
    * - Type
+     - ``Content-Type``
      - Description
    * - ``json``
+     - ``application/json``
      - Use JSON for ``values`` format.
 
        This is the default.
    * - ``apache-arrow``
+     - ``application/x-apache-arrow-streaming``
      - .. versionadded:: 9.1.1
 
        Use Apache Arrow for ``values`` format.

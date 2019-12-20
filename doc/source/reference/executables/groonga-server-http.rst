@@ -5,18 +5,6 @@
 Groonga HTTP server
 ===================
 
-Name
-----
-
-Groonga HTTP server
-
-Synopsis
---------
-
-::
-
- groonga -d --protocol http DB_PATH
-
 Summary
 -------
 
@@ -24,34 +12,95 @@ You can communicate by HTTP if you specify ``http`` to ``--protocol`` option. An
 
 Groonga has an Web-based administration tool implemented with HTML and JavaScript. If you don't specify ``--document-root``, regarded as administration tool installed path is specified, so you can use administration tool to access ``http://HOSTNAME:PORT/`` in Web browser.
 
-Command
--------
+Syntax
+------
 
-You can use the same commands of Groonga that starts of the other mode to Groonga server that starts to specify ``http``.
+You must specify ``--protocol http``::
 
-A command takes the arguments. An argument has a name. And there are special arguments ``output_type`` and ``command_version``.
+  groonga --protocol http -d [options...] DB_PATH
 
-In standalone mode or client mode, a command is specified by the following format.
+Usage
+-----
 
- Format 1: COMMAND_NAME VALUE1 VALUE2,..
+You can use HTTP GET or HTTP POST to send a request. One request runs
+only one command. You can't run multiple commands by one request.
 
- Format 2: COMMAND_NAME --PARAMETER_NAME1 VALUE1 --PARAMETER_NAME2 VALUE2,..
+You must use ``/d/${COMMAND_NAME}`` path for request.
 
-Format 1 and Format 2 are possible to mix. Output type is specified by ``output_type`` in the formats.
+Here is an example URL to run :doc:`/reference/commands/status`::
 
-In HTTP server mode, the following formats to specify command::
+  http://127.0.0.1:10041/d/status
 
- Format: /d/COMMAND_NAME.OUTPUT_TYPE?ARGUMENT_NAME1=VALUE1&ARGUMENT_NAME2=VALUE2&...
+If you use HTTP GET, you must specify parameters as URL "query".
 
-But, they need URL encode for command names, arguments names and values.
+Here is an example URL to specify ``3`` as ``command_version``::
 
-You can use GET method only.
+  http://127.0.0.1:10041/d/status?command_version=3
 
-You can specify JSON, TSV and XML to output type.
+You can also specify multiple parameters::
 
-``command_version`` is specified for command specification compatibility. See :doc:`/reference/command/command_version` for details.
+  http://127.0.0.1:10041/d/status?command_version=3&output_pretty=yes
 
-Return value
-------------
+If you use HTTP POST, you can specify parameters by URL "query" and
+HTTP request body. If you use HTTP request body, you must specify
+``application/x-www-form-urlencoded`` as ``Content-Type`` header
+value.
 
-The execution result is output that follows output type specification by the command.
+Here is an example HTTP POST request to specify multiple parameters by
+HTTP request body::
+
+  POST /d/status HTTP/1.1
+  Host: 127.0.0.1:10041
+  Content-Length: 35
+  Content-Type: application/x-www-form-urlencoded
+
+  command_version=3&output_pretty=yes
+
+You can mix URL "query" and HTTP request body::
+
+  POST /d/status?command_version=3 HTTP/1.1
+  Host: 127.0.0.1:10041
+  Content-Length: 17
+  Content-Type: application/x-www-form-urlencoded
+
+  output_pretty=yes
+
+You can also use HTTP POST to specify data for
+:doc:`/reference/commands/load`. If you send data by HTTP POST, you
+can't specify parameters as HTTP body. You must specify parameters by
+URL "path".
+
+You must specify suitable HTTP ``Content-Type`` header value and
+:doc:`/reference/commands/load` ``input_type`` parameter value for
+your data. Here are available values:
+
+.. list-table::
+   :header-rows: 1
+
+   * - ``Content-Type``
+     - ``input_type``
+     - Description
+   * - ``application/json``
+     - ``json``
+     - Send JSON data.
+   * - ``application/x-apache-arrow-streaming``
+     - ``apache-arrow``
+     - Send Apache Arrow data.
+
+You can specify :doc:`/reference/command/output_format` as URL
+"path" extension.
+
+Here is an example HTTP request to get response as JSON::
+
+  http://127.0.0.1:10041/d/status.json
+
+Here is an example HTTP request to get response as XML::
+
+  http://127.0.0.1:10041/d/status.xml
+
+See also
+--------
+
+  * :doc:`groonga-httpd`
+
+  * :doc:`/reference/commands/load`
