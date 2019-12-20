@@ -13,7 +13,7 @@ jobs:
           - "HTTP: command: POST"
         include:
           - label: "HTTP: load: Apache Arrow"
-            use_arrow: "yes"
+            use_arrow: true
             grntest_options: >-
               --input-type=apache-arrow
               --interface=http
@@ -26,7 +26,7 @@ jobs:
       - uses: actions/checkout@master
       - name: Enable Apache Arrow repository
         if: |
-          matrix.use_arrow == "yes"
+          matrix.use_arrow
         run: |
           sudo apt update
           sudo apt install -y -V \
@@ -60,17 +60,17 @@ jobs:
             rapidjson-dev \
             ruby-dev \
             zlib1g-dev
-          if [ "${{ matrix.use_arrow }}" = "yes" ]; then
+          if [ "${{ matrix.use_arrow }}" = "true" ]; then
             apt install -y -V \
               libarrow-dev
           fi
-          if [ "${{ matrix.use_sphinx }}" = "yes" ]; then
+          if [ "${{ matrix.use_sphinx }}" = "true" ]; then
             apt install -y -V \
               python3-pip
           fi
       - name: Install Sphinx
         if: |
-          matrix.use_sphinx == "yes"
+          matrix.use_sphinx
         run: |
           sudo pip3 install Sphinx
       - name: Install Bundler
