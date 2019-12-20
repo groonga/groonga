@@ -114,6 +114,9 @@ jobs:
           bundle install
           bundle exec ruby -rdevkit -S rake install
       - name: Test Groonga
+        # TODO: Fix broken arrow package.
+        if: |
+          false
         run: |
           . .\env.ps1
           grntest `
