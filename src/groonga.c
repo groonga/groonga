@@ -1387,12 +1387,23 @@ do_htreq_get(grn_ctx *ctx, ht_context *hc)
   grn_ctx_send(ctx, path, pathe - path, GRN_CTX_TAIL);
 }
 
+typedef enum {
+  HTTP_CONTENT_TYPE_UNKNOWN,
+  HTTP_CONTENT_TYPE_WWW_FORM_URLENCODED,
+  HTTP_CONTENT_TYPE_JSON,
+  HTTP_CONTENT_TYPE_APACHE_ARROW_STREAMING,
+} http_content_type;
+
 typedef struct {
   const char *path_start;
   int path_length;
+  http_content_type content_type;
+  const char *content_type_raw;
+  long long int content_type_raw_length;
   long long int content_length;
   grn_bool have_100_continue;
   const char *body_start;
+  const char *body_end;
 } h_post_header;
 
 #define STRING_EQUAL(string, string_length, constant_string)\
@@ -1507,7 +1518,34 @@ do_htreq_post_parse_header_values(grn_ctx *ctx,
         if (value_length > 0 && value[value_length - 1] == '\r') {
           value_length--;
         }
-        if (STRING_EQUAL_CI(name, name_length, "Content-Length")) {
+        if (STRING_EQUAL_CI(name, name_length, "Content-Type")) {
+          header->content_type_raw = value;
+          header->content_type_raw_length = value_length;
+          const char *content_type = value;
+          int content_type_length = value_length;
+          int i;
+          for (i = 0; i < content_type_length; i++) {
+            if (content_type[i] == ';') {
+              content_type_length = i;
+              break;
+            }
+          }
+          if (STRING_EQUAL_CI(content_type,
+                              content_type_length,
+                              "application/x-www-form-urlencoded")) {
+            header->content_type = HTTP_CONTENT_TYPE_WWW_FORM_URLENCODED;
+          } else if (STRING_EQUAL_CI(content_type,
+                                     content_type_length,
+                                     "application/json")) {
+            header->content_type = HTTP_CONTENT_TYPE_JSON;
+          } else if (STRING_EQUAL_CI(content_type,
+                                     content_type_length,
+                                     "application/x-apache-arrow-streaming")) {
+            header->content_type = HTTP_CONTENT_TYPE_APACHE_ARROW_STREAMING;
+          } else {
+            header->content_type = HTTP_CONTENT_TYPE_UNKNOWN;
+          }
+        } else if (STRING_EQUAL_CI(name, name_length, "Content-Length")) {
           const char *rest;
           header->content_length = grn_atoll(value, value + value_length, &rest);
           if (rest != value + value_length) {
@@ -1566,33 +1604,266 @@ do_htreq_post_parse_header(grn_ctx *ctx,
 }
 
 static void
+do_htreq_post_process_body_www_form_urlencoded(grn_ctx *ctx,
+                                               h_post_header *header,
+                                               grn_sock fd)
+{
+  grn_obj command;
+  GRN_TEXT_INIT(&command, 0);
+  GRN_TEXT_PUT(ctx, &command, header->path_start, header->path_length);
+  bool have_question = false;
+  {
+    int i;
+    for (i = 0; i < header->path_length; i++) {
+      if (header->path_start[i] == '?') {
+        have_question = true;
+        break;
+      }
+    }
+  }
+  long long int read_content_length = 0;
+  if (header->body_start) {
+    size_t read_body_length = header->body_end - header->body_start;
+    read_content_length += read_body_length;
+    if (have_question) {
+      GRN_TEXT_PUTC(ctx, &command, '&');
+    } else {
+      GRN_TEXT_PUTC(ctx, &command, '?');
+    }
+    GRN_TEXT_PUT(ctx, &command, header->body_start, read_body_length);
+  }
+  while (read_content_length < header->content_length) {
+#define POST_BUFFER_SIZE 8192
+    char buffer[POST_BUFFER_SIZE];
+    int recv_flags = 0;
+    ssize_t recv_length = recv(fd, buffer, POST_BUFFER_SIZE, recv_flags);
+    if (recv_length == 0) {
+      break;
+    }
+    if (recv_length == -1) {
+      SOERR("recv");
+      break;
+    }
+    if (read_content_length == 0) {
+      if (have_question) {
+        GRN_TEXT_PUTC(ctx, &command, '&');
+      } else {
+        GRN_TEXT_PUTC(ctx, &command, '?');
+      }
+    }
+    GRN_TEXT_PUT(ctx, &command, buffer, recv_length);
+    read_content_length += recv_length;
+  }
+  grn_ctx_send(ctx,
+               GRN_TEXT_VALUE(&command),
+               GRN_TEXT_LEN(&command),
+               GRN_CTX_TAIL);
+  GRN_OBJ_FIN(ctx, &command);
+#undef POST_BUFFER_SIZE
+}
+
+static void
+do_htreq_post_process_body_load_json(grn_ctx *ctx,
+                                     h_post_header *header,
+                                     grn_sock fd)
+{
+  bool is_tail_sent = false;
+  grn_obj chunk_buffer;
+  long long int read_content_length = 0;
+
+  GRN_TEXT_INIT(&chunk_buffer, 0);
+  while (read_content_length < header->content_length) {
+#define POST_BUFFER_SIZE 8192
+    char buffer[POST_BUFFER_SIZE];
+    const char *buffer_start, *buffer_current, *buffer_end;
+
+    if (header->body_start) {
+      buffer_start = header->body_start;
+      buffer_end = header->body_end;
+      header->body_start = NULL;
+    } else {
+      ssize_t recv_length;
+      int recv_flags = 0;
+      recv_length = recv(fd, buffer, POST_BUFFER_SIZE, recv_flags);
+      if (recv_length == 0) {
+        break;
+      }
+      if (recv_length == -1) {
+        SOERR("recv");
+        break;
+      }
+      buffer_start = buffer;
+      buffer_end = buffer_start + recv_length;
+    }
+    read_content_length += buffer_end - buffer_start;
+
+    buffer_current = buffer_end - 1;
+    for (; buffer_current > buffer_start; buffer_current--) {
+      grn_bool is_separator;
+      switch (buffer_current[0]) {
+      case '\n' :
+      case ',' :
+        is_separator = GRN_TRUE;
+        break;
+      default :
+        is_separator = GRN_FALSE;
+        break;
+      }
+      if (!is_separator) {
+        continue;
+      }
+
+      GRN_TEXT_PUT(ctx,
+                   &chunk_buffer,
+                   buffer_start,
+                   buffer_current + 1 - buffer_start);
+      {
+        int flags = 0;
+        if (!(read_content_length == header->content_length &&
+              buffer_current + 1 == buffer_end)) {
+          flags |= GRN_CTX_MORE;
+        } else {
+          flags |= GRN_CTX_TAIL;
+          is_tail_sent = true;
+        }
+        grn_ctx_send(ctx,
+                     GRN_TEXT_VALUE(&chunk_buffer),
+                     GRN_TEXT_LEN(&chunk_buffer),
+                     flags);
+      }
+      buffer_start = buffer_current + 1;
+      GRN_BULK_REWIND(&chunk_buffer);
+      break;
+    }
+    if (buffer_end > buffer_start) {
+      GRN_TEXT_PUT(ctx, &chunk_buffer,
+                   buffer_start, buffer_end - buffer_start);
+    }
+#undef POST_BUFFER_SIZE
+
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+  }
+
+  if (ctx->rc == GRN_SUCCESS && GRN_TEXT_LEN(&chunk_buffer) > 0) {
+    grn_ctx_send(ctx,
+                 GRN_TEXT_VALUE(&chunk_buffer),
+                 GRN_TEXT_LEN(&chunk_buffer),
+                 GRN_CTX_TAIL);
+  } else if (!is_tail_sent) {
+    grn_ctx_send(ctx, NULL, 0, GRN_CTX_TAIL);
+  }
+
+  GRN_OBJ_FIN(ctx, &chunk_buffer);
+}
+
+static void
+do_htreq_post_process_body_load_generic(grn_ctx *ctx,
+                                        h_post_header *header,
+                                        grn_sock fd)
+{
+  bool is_tail_sent = false;
+  long long int read_content_length = 0;
+
+  if (header->body_start) {
+    int flags = 0;
+    size_t read_body_length = header->body_end - header->body_start;
+    read_content_length += read_body_length;
+    if (read_content_length < header->content_length) {
+      flags |= GRN_CTX_MORE;
+    } else {
+      flags |= GRN_CTX_TAIL;
+      is_tail_sent = true;
+    }
+    grn_ctx_send(ctx,
+                 header->body_start,
+                 read_body_length,
+                 flags);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+  }
+
+  while (read_content_length < header->content_length) {
+#define POST_BUFFER_SIZE 8192
+    char buffer[POST_BUFFER_SIZE];
+    ssize_t recv_length;
+    int recv_flags = 0;
+    recv_length = recv(fd, buffer, POST_BUFFER_SIZE, recv_flags);
+    if (recv_length == 0) {
+      goto exit;
+    }
+    if (recv_length == -1) {
+      SOERR("recv");
+      goto exit;
+    }
+    read_content_length += recv_length;
+
+    int flags = 0;
+    if (read_content_length < header->content_length) {
+      flags |= GRN_CTX_MORE;
+    } else {
+      flags |= GRN_CTX_TAIL;
+      is_tail_sent = true;
+    }
+    grn_ctx_send(ctx, buffer, recv_length, flags);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+#undef POST_BUFFER_SIZE
+  }
+
+exit :
+  if (!is_tail_sent) {
+    grn_ctx_send(ctx, NULL, 0, GRN_CTX_TAIL);
+  }
+}
+
+static void
 do_htreq_post(grn_ctx *ctx, ht_context *hc)
 {
   grn_msg *msg = hc->msg;
   grn_sock fd = msg->u.fd;
-  const char *end;
   h_post_header header;
 
   header.path_start = NULL;
   header.path_length = -1;
+  header.content_type = HTTP_CONTENT_TYPE_UNKNOWN;
+  header.content_type_raw = NULL;
+  header.content_type_raw_length = -1;
   header.content_length = -1;
   header.body_start = NULL;
+  header.body_end = GRN_BULK_CURR((grn_obj *)msg);
   header.have_100_continue = GRN_FALSE;
 
-  end = GRN_BULK_CURR((grn_obj *)msg);
   if (!do_htreq_post_parse_header(ctx,
                                   GRN_BULK_HEAD((grn_obj *)msg),
-                                  end,
+                                  header.body_end,
                                   &header)) {
     return;
   }
 
-  grn_ctx_send(ctx, header.path_start, header.path_length, GRN_CTX_MORE);
-  if (ctx->rc != GRN_SUCCESS) {
+  if (header.content_type == HTTP_CONTENT_TYPE_UNKNOWN) {
+    const char *specified_content_type = header.content_type_raw;
+    int specified_content_type_length = header.content_type_raw_length;
+    if (!specified_content_type) {
+      specified_content_type = "";
+      specified_content_type_length = 0;
+    }
+    ERR(GRN_INVALID_ARGUMENT,
+        "[http][post] Content-Type must be one of "
+        "application/x-www-form-urlencoded, "
+        "application/json or "
+        "application/x-apache-arrow-streaming: "
+        "<%.*s>",
+        specified_content_type_length,
+        specified_content_type);
     ht_context context;
     context.msg = msg;
     context.in_body = GRN_FALSE;
     context.is_chunked = GRN_FALSE;
+    grn_ctx_set_output_type(ctx, GRN_CONTENT_JSON);
     h_output(ctx, GRN_CTX_TAIL, &context);
     return;
   }
@@ -1608,96 +1879,24 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
     }
   }
 
-  {
-    grn_bool is_tail_sent = GRN_FALSE;
-    grn_obj chunk_buffer;
-    long long int read_content_length = 0;
-
-    GRN_TEXT_INIT(&chunk_buffer, 0);
-    while (read_content_length < header.content_length) {
-#define POST_BUFFER_SIZE 8192
-      char buffer[POST_BUFFER_SIZE];
-      const char *buffer_start, *buffer_current, *buffer_end;
-
-      if (header.body_start) {
-        buffer_start = header.body_start;
-        buffer_end = end;
-        header.body_start = NULL;
-      } else {
-        ssize_t recv_length;
-        int recv_flags = 0;
-        recv_length = recv(fd, buffer, POST_BUFFER_SIZE, recv_flags);
-        if (recv_length == 0) {
-          break;
-        }
-        if (recv_length == -1) {
-          SOERR("recv");
-          break;
-        }
-        buffer_start = buffer;
-        buffer_end = buffer_start + recv_length;
-      }
-      read_content_length += buffer_end - buffer_start;
-
-      buffer_current = buffer_end - 1;
-      for (; buffer_current > buffer_start; buffer_current--) {
-        grn_bool is_separator;
-        switch (buffer_current[0]) {
-        case '\n' :
-        case ',' :
-          is_separator = GRN_TRUE;
-          break;
-        default :
-          is_separator = GRN_FALSE;
-          break;
-        }
-        if (!is_separator) {
-          continue;
-        }
-
-        GRN_TEXT_PUT(ctx,
-                     &chunk_buffer,
-                     buffer_start,
-                     buffer_current + 1 - buffer_start);
-        {
-          int flags = 0;
-          if (!(read_content_length == header.content_length &&
-                buffer_current + 1 == buffer_end)) {
-            flags |= GRN_CTX_MORE;
-          } else {
-            flags |= GRN_CTX_TAIL;
-            is_tail_sent = GRN_TRUE;
-          }
-          grn_ctx_send(ctx,
-                       GRN_TEXT_VALUE(&chunk_buffer),
-                       GRN_TEXT_LEN(&chunk_buffer),
-                       flags);
-        }
-        buffer_start = buffer_current + 1;
-        GRN_BULK_REWIND(&chunk_buffer);
-        break;
-      }
-      if (buffer_end > buffer_start) {
-        GRN_TEXT_PUT(ctx, &chunk_buffer,
-                     buffer_start, buffer_end - buffer_start);
-      }
-#undef POST_BUFFER_SIZE
-
-      if (ctx->rc != GRN_SUCCESS) {
-        break;
-      }
+  if (header.content_type == HTTP_CONTENT_TYPE_WWW_FORM_URLENCODED) {
+    do_htreq_post_process_body_www_form_urlencoded(ctx, &header, fd);
+  } else {
+    grn_ctx_send(ctx, header.path_start, header.path_length, GRN_CTX_MORE);
+    if (ctx->rc != GRN_SUCCESS) {
+      ht_context context;
+      context.msg = msg;
+      context.in_body = GRN_FALSE;
+      context.is_chunked = GRN_FALSE;
+      h_output(ctx, GRN_CTX_TAIL, &context);
+      return;
     }
 
-    if (ctx->rc == GRN_SUCCESS && GRN_TEXT_LEN(&chunk_buffer) > 0) {
-      grn_ctx_send(ctx,
-                   GRN_TEXT_VALUE(&chunk_buffer),
-                   GRN_TEXT_LEN(&chunk_buffer),
-                   GRN_CTX_TAIL);
-    } else if (!is_tail_sent) {
-      grn_ctx_send(ctx, NULL, 0, GRN_CTX_TAIL);
+    if (header.content_type == HTTP_CONTENT_TYPE_JSON) {
+      do_htreq_post_process_body_load_json(ctx, &header, fd);
+    } else {
+      do_htreq_post_process_body_load_generic(ctx, &header, fd);
     }
-
-    GRN_OBJ_FIN(ctx, &chunk_buffer);
   }
 }
 

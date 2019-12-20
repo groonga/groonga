@@ -5,10 +5,28 @@ on:
 jobs:
   configure:
     name: configure
+    strategy:
+      fail-fast: false
+      matrix:
+        label:
+          - "HTTP: load: Apache Arrow"
+          - "HTTP: command: POST"
+        include:
+          - label: "HTTP: load: Apache Arrow"
+            use_arrow: "yes"
+            grntest_options: >-
+              --input-type=apache-arrow
+              --interface=http
+          - label: "HTTP: command: POST"
+            grntest_options: >-
+              --interface=http
+              --use-http-post
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - name: Enable Apache Arrow repository
+        if: |
+          "${{ matrix.use_arrow }}" == "yes"
         run: |
           sudo apt update
           sudo apt install -y -V \
@@ -34,17 +52,25 @@ jobs:
             bison \
             cmake \
             gettext \
-            libarrow-dev \
             libevent-dev \
             libluajit-5.1-dev \
             libmecab-dev \
             libmsgpack-dev \
             mecab-naist-jdic \
-            python3-pip \
             rapidjson-dev \
             ruby-dev \
             zlib1g-dev
+          if [ "${{ matrix.use_arrow }}" = "yes" ]; then
+            apt install -y -V \
+              libarrow-dev
+          fi
+          if [ "${{ matrix.use_sphinx }}" = "yes" ]; then
+            apt install -y -V \
+              python3-pip
+          fi
       - name: Install Sphinx
+        if: |
+          "${{ matrix.use_sphinx }}" == "yes"
         run: |
           sudo pip3 install Sphinx
       - name: Install Bundler
@@ -58,7 +84,8 @@ jobs:
           ./configure \
             --enable-debug \
             --enable-mruby \
-            --with-ruby
+            --with-ruby \
+            ${{ matrix.configure_options }}
       - name: Build
         run: |
           make -j$(nproc)
@@ -66,10 +93,9 @@ jobs:
         run: |
           export COLUMNS=79
           test/command/run-test.sh \
-            --input-type=apache-arrow \
-            --interface=http \
             --n-retries=3 \
-            --reporter=mark
+            --reporter=mark \
+            ${{ matrix.grntest_options }}
       - name: Install
         run: |
           sudo make install
