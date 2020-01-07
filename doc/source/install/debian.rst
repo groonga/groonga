@@ -82,7 +82,7 @@ Install groonga-normalizer-mysql package::
 buster
 ------
 
-.. versionadded:: 9.1.0
+.. versionadded:: 9.1.1
 
 Add the Groonga apt repository.
 
@@ -157,9 +157,9 @@ Install required packages to build Groonga for Debian stretch::
 
 Download source::
 
-  % wget https://packages.groonga.org/source/groonga/groonga-9.1.0.tar.gz
-  % tar xvzf groonga-9.1.0.tar.gz
-  % cd groonga-9.1.0
+  % wget https://packages.groonga.org/source/groonga/groonga-9.1.1.tar.gz
+  % tar xvzf groonga-9.1.1.tar.gz
+  % cd groonga-9.1.1
 
 Configure (see :ref:`source-configure` about ``configure`` options)::
 
