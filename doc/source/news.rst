@@ -30,11 +30,11 @@ Improvements
 
 * [httpd] Updated bundled nginx to 1.17.6.
 
-* [:doc:`reference/executables/groonga-httpd`] Added support for sending command parameters by body of HTTP request.
+* [:doc:`reference/executables/groonga-server-http`] Added support for sending command parameters by body of HTTP request.
 
   * We must set ``application/x-www-form-urlencoded`` to ``Content-Type`` for this case.
 
-* [:doc:`reference/executables/groonga-httpd`] Added how to use HTTP POST in the document.
+* [:doc:`reference/executables/groonga-server-http`] Added how to use HTTP POST in the document.
 
 .. _release-9-1-0:
 
