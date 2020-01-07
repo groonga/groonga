@@ -86,8 +86,8 @@ msgstr ""
 "この変更によって、データのロードに失敗した場合、 ``load`` コマンドのエラーの"
 "詳細を出力します。"
 
-msgid "[httpd] Updated bundled nginx to 1.17.6."
-msgstr "[httpd] バンドルしているnginxのバージョンを1.17.6に更新しました。"
+msgid "[httpd] Updated bundled nginx to 1.17.7."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.17.7に更新しました。"
 
 msgid ""
 "[:doc:`reference/executables/groonga-server-http`] Added support for sending "

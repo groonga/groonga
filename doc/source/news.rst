@@ -28,7 +28,7 @@ Improvements
   * Response of ``load`` command includes error message also.
   * If we faile data load, Groonga output error detail of ``load`` command by this Improvement.
 
-* [httpd] Updated bundled nginx to 1.17.6.
+* [httpd] Updated bundled nginx to 1.17.7.
 
 * [:doc:`reference/executables/groonga-server-http`] Added support for sending command parameters by body of HTTP request.
 
