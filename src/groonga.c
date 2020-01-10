@@ -2710,18 +2710,29 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
     /* if not keep alive connection */
     grn_com_event_del(ctx, com->ev, fd);
     ((grn_msg *)msg)->u.fd = fd;
-    CRITICAL_SECTION_ENTER(q_critical_section);
-    grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)msg);
-    if (n_floating_threads == 0 && n_running_threads < max_n_floating_threads) {
-      grn_thread thread;
-      n_running_threads++;
-      if (THREAD_CREATE(thread, h_worker, arg)) {
-        n_running_threads--;
-        SERR("pthread_create");
+    const char *command = ((grn_msg *)msg)->qe.obj.u.b.head;
+    if ((n_floating_threads == 0 && n_running_threads == max_n_floating_threads)
+        && strstr(command, "/d/shutdown\?mode=immediate")) {
+      grn_request_canceler_cancel_all();
+      if (ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
+        ctx->rc = GRN_SUCCESS;
+        grn_gctx.stat = GRN_CTX_QUIT;
+        ctx->stat = GRN_CTX_QUITTING;
       }
+    } else {
+      CRITICAL_SECTION_ENTER(q_critical_section);
+      grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)msg);
+      if (n_floating_threads == 0 && n_running_threads < max_n_floating_threads) {
+        grn_thread thread;
+        n_running_threads++;
+        if (THREAD_CREATE(thread, h_worker, arg)) {
+          n_running_threads--;
+          SERR("pthread_create");
+        }
+      }
+      COND_SIGNAL(q_cond);
+      CRITICAL_SECTION_LEAVE(q_critical_section);
     }
-    COND_SIGNAL(q_cond);
-    CRITICAL_SECTION_LEAVE(q_critical_section);
   }
 }
 
