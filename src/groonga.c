@@ -3335,8 +3335,8 @@ show_version(void)
 #ifdef GRN_WITH_RAPIDJSON
   printf(",rapidjson");
 #endif
-#ifdef GRN_WITH_ARROW
-  printf(",arrow");
+#ifdef GRN_WITH_APACHE_ARROW
+  printf(",apache-arrow");
 #endif
   printf("]\n");
 
