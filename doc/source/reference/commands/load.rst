@@ -141,6 +141,9 @@ File Format`_.
 You must use HTTP interface to use Apache Arrow. You can't use Apache
 Arrow in command line interface.
 
+You must set ``application/x-apache-arrow-streaming`` to
+``Content-Type`` HTTP request header.
+
 You must choose suitable record batch size. Groonga loads data per
 record batch. If you choose very large record batch size, Groonga
 can't start loading until whole data of a record batch are received.
