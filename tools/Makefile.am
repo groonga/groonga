@@ -1,5 +1,5 @@
 toolsdir = $(pkgdatadir)/tools
-tools_DATA =					\
+dist_tools_DATA =				\
 	copy-related-files.rb			\
 	check-index-merge-source-dump.rb	\
 	check-small-index-limit.rb		\
