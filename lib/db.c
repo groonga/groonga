@@ -9043,7 +9043,7 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   grn_obj *lexicon = NULL;
   grn_id lexicon_domain_id;
   grn_obj *lexicon_domain = NULL;
-  grn_bool lexicon_domain_is_table;
+  grn_bool lexicon_domain_is_table = false;
   grn_bool lexicon_have_tokenizer;
   grn_bool is_full_text_search_index;
   grn_id *source_ids;
@@ -9169,12 +9169,21 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
         }
       }
     }
+    grn_obj_unlink(ctx, source_type);
+    grn_obj_unlink(ctx, source);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
   }
 
 exit:
+  if (lexicon_domain && lexicon_domain_is_table) {
+    grn_obj_unlink(ctx, lexicon_domain);
+  }
+  if (lexicon) {
+    grn_obj_unlink(ctx, lexicon);
+  }
+
   return ctx->rc;
 }
 
