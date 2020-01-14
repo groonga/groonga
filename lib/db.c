@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -11416,6 +11416,32 @@ grn_db_value_wait(grn_ctx *ctx, grn_id id, db_value *vp)
   grn_log_reference_count("wait: done: %u: %u\n", id, vp->lock);
 }
 
+static inline bool
+grn_obj_type_is_open_close_log_target(grn_ctx *ctx, uint8_t type)
+{
+  switch (type) {
+  case GRN_TYPE :
+  case GRN_PROC :
+    return false;
+  default :
+    return true;
+  }
+}
+
+#define GRN_LOG_REFERENCE_COUNT GRN_LOG_DEBUG
+
+static inline bool
+grn_reference_count_should_log(grn_ctx *ctx, uint8_t type)
+{
+  if (!grn_enable_reference_count) {
+    return false;
+  }
+  if (!grn_obj_type_is_open_close_log_target(ctx, type)) {
+    return false;
+  }
+  return grn_logger_pass(ctx, GRN_LOG_REFERENCE_COUNT);
+}
+
 grn_obj *
 grn_ctx_at(grn_ctx *ctx, grn_id id)
 {
@@ -11575,7 +11601,19 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 }
                 break;
               }
-              if (!vp->ptr) {
+              if (vp->ptr) {
+                if (grn_reference_count_should_log(ctx, spec->header.type)) {
+                  const char *name;
+                  uint32_t name_size = 0;
+                  name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
+                  GRN_LOG(ctx, GRN_LOG_REFERENCE_COUNT,
+                          "[obj][open] <%u>(<%.*s>):<%u>(<%s>)",
+                          id,
+                          name_size, name,
+                          spec->header.type,
+                          grn_obj_type_to_string(spec->header.type));
+                }
+              } else {
                 const char *name;
                 uint32_t name_size = 0;
                 name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
@@ -11761,6 +11799,20 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     if (GRN_DB_OBJP(obj)) {
       grn_id id = DB_OBJ(obj)->id;
       grn_hook_entry entry;
+
+      if (id != GRN_ID_NIL &&
+          !(id & GRN_OBJ_TMP_OBJECT) &&
+          grn_reference_count_should_log(ctx, obj->header.type)) {
+        const char *name;
+        uint32_t name_size = 0;
+        name = _grn_table_key(ctx, DB_OBJ(obj)->db, id, &name_size);
+        GRN_LOG(ctx, GRN_LOG_REFERENCE_COUNT,
+                "[obj][close] <%u>(<%.*s>):<%u>(<%s>)",
+                id,
+                name_size, name,
+                obj->header.type,
+                grn_obj_type_to_string(obj->header.type));
+      }
 
       if (grn_obj_is_table(ctx, obj) && (id & GRN_OBJ_TMP_OBJECT)) {
         grn_table_close_columns(ctx, obj);
