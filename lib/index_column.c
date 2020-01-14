@@ -223,9 +223,12 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
       GRN_FREE(columns);
       return ctx->rc;
     }
-    if (GRN_OBJ_TABLEP(grn_ctx_at(ctx, DB_OBJ(*cp)->range))) {
+    grn_obj *range = grn_ctx_at(ctx, DB_OBJ(*cp)->range);
+    if (GRN_OBJ_TABLEP(range)) {
       use_grn_ii_build = GRN_FALSE;
     }
+    grn_obj_unlink(ctx, range);
+    grn_obj_unlink(ctx, *cp);
   }
   grn_obj_set_visibility(ctx, index_column, false);
   if (use_grn_ii_build) {
@@ -243,6 +246,9 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
   grn_obj_set_visibility(ctx, index_column, true);
   GRN_FREE(columns);
   grn_obj_touch(ctx, index_column, NULL);
+
+  grn_obj_unlink(ctx, target);
+  grn_obj_unlink(ctx, src);
 
   return ctx->rc;
 }
