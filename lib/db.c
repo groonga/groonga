@@ -11428,7 +11428,7 @@ grn_obj_type_is_open_close_log_target(grn_ctx *ctx, uint8_t type)
   }
 }
 
-#define GRN_LOG_REFERENCE_COUNT GRN_LOG_DEBUG
+#define GRN_LOG_REFERENCE_COUNT GRN_LOG_DUMP
 
 static inline bool
 grn_reference_count_should_log(grn_ctx *ctx, uint8_t type)
