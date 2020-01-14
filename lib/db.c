@@ -1630,6 +1630,7 @@ grn_obj_default_set_value_hook(grn_ctx *ctx, int nargs, grn_obj **args, grn_user
                              GRN_UINT32_VALUE(id),
                              section, oldvalue, newvalue, NULL);
       }
+      grn_obj_unlink(ctx, target);
     }
   }
   return NULL;
