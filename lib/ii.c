@@ -5520,7 +5520,7 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
   header->flags = flags;
   ii->seg = seg;
   ii->chunk = chunk;
-  ii->lexicon = lexicon;
+  ii->lexicon = grn_ctx_at(ctx, DB_OBJ(lexicon)->id);
   ii->lflags = lflags;
   ii->encoding = encoding;
   ii->header.common = header;
@@ -5594,7 +5594,9 @@ grn_ii_truncate(grn_ctx *ctx, grn_ii *ii)
   if (chunkpath && (rc = grn_io_remove(ctx, chunkpath))) { goto exit; }
   if (!_grn_ii_create(ctx, ii, segpath, lexicon, flags)) {
     rc = GRN_UNKNOWN_ERROR;
+    goto exit;
   }
+  grn_obj_unlink(ctx, lexicon);
 exit:
   if (segpath) { GRN_FREE(segpath); }
   if (chunkpath) { GRN_FREE(chunkpath); }
@@ -5644,7 +5646,7 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   GRN_DB_OBJ_SET_TYPE(ii, GRN_COLUMN_INDEX);
   ii->seg = seg;
   ii->chunk = chunk;
-  ii->lexicon = lexicon;
+  ii->lexicon = grn_ctx_at(ctx, DB_OBJ(lexicon)->id);
   ii->lflags = lflags;
   ii->encoding = encoding;
   ii->header.common = header;
@@ -5658,10 +5660,21 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
 grn_rc
 grn_ii_close(grn_ctx *ctx, grn_ii *ii)
 {
-  grn_rc rc;
+  grn_rc rc = GRN_SUCCESS;
   if (!ii) { return GRN_INVALID_ARGUMENT; }
-  if ((rc = grn_io_close(ctx, ii->seg))) { return rc; }
-  if ((rc = grn_io_close(ctx, ii->chunk))) { return rc; }
+  {
+    grn_rc sub_rc = grn_io_close(ctx, ii->seg);
+    if (rc == GRN_SUCCESS) {
+      rc = sub_rc;
+    }
+  }
+  {
+    grn_rc sub_rc = grn_io_close(ctx, ii->chunk);
+    if (rc == GRN_SUCCESS) {
+      rc = sub_rc;
+    }
+  }
+  grn_obj_unlink(ctx, ii->lexicon);
   GRN_FREE(ii);
   /*
   {
