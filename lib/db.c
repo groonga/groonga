@@ -8672,6 +8672,7 @@ update_source_hook(grn_ctx *ctx, grn_obj *obj)
         /* invalid target */
         break;
       }
+      grn_obj_unlink(ctx, source);
     }
   }
   grn_obj_close(ctx, &data);
