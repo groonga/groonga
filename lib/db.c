@@ -520,29 +520,33 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
     }
   }
 
-  {
-    grn_obj plugins;
-    GRN_PTR_INIT(&plugins, GRN_OBJ_VECTOR, GRN_ID_NIL);
-    GRN_TINY_ARRAY_EACH_BEGIN(&s->values, 1, grn_db_curr_id(ctx, db), value) {
-      db_value *vp = value;
-      if (vp->ptr) {
-        if (grn_obj_is_proc(ctx, vp->ptr)) {
-          GRN_PTR_PUT(ctx, &plugins, vp->ptr);
-        } else {
-          grn_obj_close(ctx, vp->ptr);
-        }
-      }
-    } GRN_TINY_ARRAY_EACH_END();
-    {
-      size_t i, n_plugins;
-      n_plugins = GRN_BULK_VSIZE(&plugins) / sizeof(grn_obj *);
-      for (i = 0; i < n_plugins; i++) {
-        grn_obj *plugin = GRN_PTR_VALUE_AT(&plugins, i);
-        grn_obj_close(ctx, plugin);
+  GRN_TINY_ARRAY_EACH_BEGIN(&s->values, 1, grn_db_curr_id(ctx, db), value) {
+    db_value *vp = value;
+    if (vp->ptr) {
+      if (grn_obj_is_proc(ctx, vp->ptr) ||
+          grn_obj_is_table(ctx, vp->ptr)) {
+        /* Defer */
+      } else {
+        grn_obj_close(ctx, vp->ptr);
       }
     }
-    GRN_OBJ_FIN(ctx, &plugins);
-  }
+  } GRN_TINY_ARRAY_EACH_END();
+  GRN_TINY_ARRAY_EACH_BEGIN(&s->values, 1, grn_db_curr_id(ctx, db), value) {
+    db_value *vp = value;
+    if (vp->ptr) {
+      if (grn_obj_is_proc(ctx, vp->ptr)) {
+        /* Defer */
+      } else {
+        grn_obj_close(ctx, vp->ptr);
+      }
+    }
+  } GRN_TINY_ARRAY_EACH_END();
+  GRN_TINY_ARRAY_EACH_BEGIN(&s->values, 1, grn_db_curr_id(ctx, db), value) {
+    db_value *vp = value;
+    if (vp->ptr) {
+      grn_obj_close(ctx, vp->ptr);
+    }
+  } GRN_TINY_ARRAY_EACH_END();
 
 /* grn_tiny_array_fin should be refined.. */
 #ifdef WIN32
