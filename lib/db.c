@@ -15664,6 +15664,10 @@ grn_ctx_push_temporary_open_space(grn_ctx *ctx)
   grn_obj *space;
   grn_obj buffer;
 
+  if (grn_enable_reference_count) {
+    return ctx->rc;
+  }
+
   GRN_API_ENTER;
 
   stack = &(ctx->impl->temporary_open_spaces.stack);
@@ -15682,6 +15686,10 @@ grn_ctx_pop_temporary_open_space(grn_ctx *ctx)
 {
   grn_obj *stack;
   grn_obj *space;
+
+  if (grn_enable_reference_count) {
+    return ctx->rc;
+  }
 
   GRN_API_ENTER;
 
@@ -15712,6 +15720,10 @@ grn_ctx_merge_temporary_open_space(grn_ctx *ctx)
   grn_obj *stack;
   grn_obj *space;
   grn_obj *next_space;
+
+  if (grn_enable_reference_count) {
+    return ctx->rc;
+  }
 
   GRN_API_ENTER;
 
