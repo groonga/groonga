@@ -2516,6 +2516,7 @@ grn_table_truncate_reference_objects(grn_ctx *ctx, grn_obj *table)
         grn_table_truncate(ctx, object);
       }
     }
+    grn_obj_unlink(ctx, object);
 
     if (is_close_opened_object_mode) {
       grn_ctx_pop_temporary_open_space(ctx);
