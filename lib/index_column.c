@@ -228,7 +228,6 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
       use_grn_ii_build = GRN_FALSE;
     }
     grn_obj_unlink(ctx, range);
-    grn_obj_unlink(ctx, *cp);
   }
   grn_obj_set_visibility(ctx, index_column, false);
   if (use_grn_ii_build) {
@@ -244,10 +243,15 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
     }
   }
   grn_obj_set_visibility(ctx, index_column, true);
+  for (int i = 0; i < n_columns; i++) {
+    grn_obj_unlink(ctx, columns[i]);
+  }
   GRN_FREE(columns);
   grn_obj_touch(ctx, index_column, NULL);
 
-  grn_obj_unlink(ctx, target);
+  if (target != src) {
+    grn_obj_unlink(ctx, target);
+  }
   grn_obj_unlink(ctx, src);
 
   return ctx->rc;
