@@ -2713,12 +2713,10 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
     const char *command = ((grn_msg *)msg)->qe.obj.u.b.head;
     if ((n_floating_threads == 0 && n_running_threads == max_n_floating_threads)
         && strstr(command, "/d/shutdown\?mode=immediate")) {
-      grn_request_canceler_cancel_all();
-      if (ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
-        ctx->rc = GRN_SUCCESS;
-        grn_gctx.stat = GRN_CTX_QUIT;
-        ctx->stat = GRN_CTX_QUITTING;
-      }
+      grn_obj *shutdown = grn_ctx_get(ctx, "shutdown", strlen("shutdown"));
+      grn_obj *mode = grn_expr_get_var(ctx, shutdown, "mode", strlen("mode"));
+      GRN_TEXT_PUTS(ctx, mode, "immediate");
+      grn_expr_exec(ctx, shutdown, 0);
     } else {
       CRITICAL_SECTION_ENTER(q_critical_section);
       grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)msg);
