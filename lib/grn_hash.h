@@ -100,6 +100,32 @@ struct _grn_tiny_array {
   } \
 } while (0)
 
+#define GRN_TINY_ARRAY_EACH_BEGIN(array, head, tail, value) do { \
+  int _block_id; \
+  const grn_id _head = (head); \
+  const grn_id _tail = (tail); \
+  grn_id _current = _head; \
+  for (_block_id = 0; \
+       _block_id < GRN_TINY_ARRAY_NUM_BLOCKS && _current <= _tail; \
+       _block_id++) { \
+    int _n_elements = GRN_TINY_ARRAY_GET_BLOCK_SIZE(_block_id); \
+    uint8_t *_block = (array)->blocks[_block_id]; \
+    if (_block) { \
+      int _i; \
+      for (_i = 0; \
+           _i < _n_elements && _current <= _tail; \
+           _i++, _current++) { \
+        void *value = _block + (array)->element_size * _i; \
+
+#define GRN_TINY_ARRAY_EACH_END() \
+      } \
+    } else { \
+      _current += _n_elements; \
+    } \
+  } \
+} while (0)
+
+
 GRN_API void grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *array,
                                  uint16_t element_size, uint16_t flags);
 GRN_API void grn_tiny_array_fin(grn_tiny_array *array);

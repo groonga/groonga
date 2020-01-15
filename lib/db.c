@@ -497,8 +497,6 @@ grn_db_curr_id(grn_ctx *ctx, grn_obj *db)
 grn_rc
 grn_db_close(grn_ctx *ctx, grn_obj *db)
 {
-  grn_id id;
-  db_value *vp;
   grn_db *s = (grn_db *)db;
   grn_bool ctx_used_db;
   if (!s) { return GRN_INVALID_ARGUMENT; }
@@ -525,7 +523,8 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   {
     grn_obj plugins;
     GRN_PTR_INIT(&plugins, GRN_OBJ_VECTOR, GRN_ID_NIL);
-    GRN_TINY_ARRAY_EACH(&s->values, 1, grn_db_curr_id(ctx, db), id, vp, {
+    GRN_TINY_ARRAY_EACH_BEGIN(&s->values, 1, grn_db_curr_id(ctx, db), value) {
+      db_value *vp = value;
       if (vp->ptr) {
         if (grn_obj_is_proc(ctx, vp->ptr)) {
           GRN_PTR_PUT(ctx, &plugins, vp->ptr);
@@ -533,7 +532,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
           grn_obj_close(ctx, vp->ptr);
         }
       }
-    });
+    } GRN_TINY_ARRAY_EACH_END();
     {
       size_t i, n_plugins;
       n_plugins = GRN_BULK_VSIZE(&plugins) / sizeof(grn_obj *);
