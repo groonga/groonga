@@ -9097,7 +9097,9 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
       grn_obj *source;
 
       source = grn_ctx_at(ctx, source_ids[i]);
-      if (!grn_obj_is_vector_column(ctx, source)) {
+      bool source_is_vector_column = grn_obj_is_vector_column(ctx, source);
+      grn_obj_unlink(ctx, source);
+      if (!source_is_vector_column) {
         continue;
       }
 
