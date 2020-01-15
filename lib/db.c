@@ -11592,6 +11592,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 {
                   grn_obj *table = grn_ctx_at(ctx, spec->header.domain);
                   vp->ptr = (grn_obj *)grn_ii_open(ctx, buffer, table);
+                  grn_obj_unlink(ctx, table);
                 }
                 UNPACK_INFO(spec, &decoded_spec);
                 break;
