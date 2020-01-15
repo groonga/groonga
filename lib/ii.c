@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -13348,7 +13348,14 @@ grn_ii_builder_fin(grn_ctx *ctx, grn_ii_builder *builder)
     grn_obj_close(ctx, builder->lexicon);
   }
   if (builder->srcs) {
+    int i;
+    for (i = 0; i < builder->n_srcs; i++) {
+      grn_obj_unlink(ctx, builder->srcs[i]);
+    }
     GRN_FREE(builder->srcs);
+  }
+  if (builder->src_table) {
+    grn_obj_unlink(ctx, builder->src_table);
   }
   return GRN_SUCCESS;
 }
@@ -14782,5 +14789,3 @@ grn_ii_build2(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
   }
   return rc;
 }
-
-
