@@ -2734,7 +2734,7 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
     if ((n_floating_threads == 0 && n_running_threads == max_n_floating_threads)
         && strncmp(path,
                    "/d/shutdown?mode=immediate",
-                   strlen("/d/shutdown?mode=immediate"))) {
+                   strlen("/d/shutdown?mode=immediate")) == 0) {
       grn_ctx_send(ctx, path, header - path, GRN_CTX_TAIL);
     } else {
       grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)msg);
