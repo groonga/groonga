@@ -2710,15 +2710,33 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
     /* if not keep alive connection */
     grn_com_event_del(ctx, com->ev, fd);
     ((grn_msg *)msg)->u.fd = fd;
-    const char *command = ((grn_msg *)msg)->qe.obj.u.b.head;
+
+    char *path = NULL;
+    char *header = GRN_BULK_HEAD(msg);
+    char *e = GRN_BULK_CURR(msg);
+    for (;; header++) {
+      if (e <= header + 6) {
+        /* invalid request */
+        return;
+      }
+      if (*header == ' ') {
+        if (!path) {
+          path = header + 1;
+        } else {
+          if (!memcmp(header + 1, "HTTP/1", 6)) {
+            break;
+          }
+        }
+      }
+    }
+
+    CRITICAL_SECTION_ENTER(q_critical_section);
     if ((n_floating_threads == 0 && n_running_threads == max_n_floating_threads)
-        && strstr(command, "/d/shutdown\?mode=immediate")) {
-      grn_obj *shutdown = grn_ctx_get(ctx, "shutdown", strlen("shutdown"));
-      grn_obj *mode = grn_expr_get_var(ctx, shutdown, "mode", strlen("mode"));
-      GRN_TEXT_PUTS(ctx, mode, "immediate");
-      grn_expr_exec(ctx, shutdown, 0);
+        && strncmp(path,
+                   "/d/shutdown?mode=immediate",
+                   strlen("/d/shutdown?mode=immediate"))) {
+      grn_ctx_send(ctx, path, header - path, GRN_CTX_TAIL);
     } else {
-      CRITICAL_SECTION_ENTER(q_critical_section);
       grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)msg);
       if (n_floating_threads == 0 && n_running_threads < max_n_floating_threads) {
         grn_thread thread;
@@ -2729,8 +2747,8 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
         }
       }
       COND_SIGNAL(q_cond);
-      CRITICAL_SECTION_LEAVE(q_critical_section);
     }
+  CRITICAL_SECTION_LEAVE(q_critical_section);
   }
 }
 
