@@ -1362,31 +1362,6 @@ h_output(grn_ctx *ctx, int flags, void *arg)
   }
 }
 
-static void
-do_htreq_get(grn_ctx *ctx, ht_context *hc)
-{
-  grn_msg *msg = hc->msg;
-  char *path = NULL;
-  char *pathe = GRN_BULK_HEAD((grn_obj *)msg);
-  char *e = GRN_BULK_CURR((grn_obj *)msg);
-  for (;; pathe++) {
-    if (e <= pathe + 6) {
-      /* invalid request */
-      return;
-    }
-    if (*pathe == ' ') {
-      if (!path) {
-        path = pathe + 1;
-      } else {
-        if (!memcmp(pathe + 1, "HTTP/1", 6)) {
-          break;
-        }
-      }
-    }
-  }
-  grn_ctx_send(ctx, path, pathe - path, GRN_CTX_TAIL);
-}
-
 typedef enum {
   HTTP_CONTENT_TYPE_UNKNOWN,
   HTTP_CONTENT_TYPE_WWW_FORM_URLENCODED,
@@ -1395,6 +1370,8 @@ typedef enum {
 } http_content_type;
 
 typedef struct {
+  const char *method_start;
+  int method_length;
   const char *path_start;
   int path_length;
   http_content_type content_type;
@@ -1404,7 +1381,7 @@ typedef struct {
   grn_bool have_100_continue;
   const char *body_start;
   const char *body_end;
-} h_post_header;
+} h_header;
 
 #define STRING_EQUAL(string, string_length, constant_string)\
   (string_length == strlen(constant_string) &&\
@@ -1415,31 +1392,26 @@ typedef struct {
    grn_strncasecmp(string, constant_string, string_length) == 0)
 
 static const char *
-do_htreq_post_parse_header_request_line(grn_ctx *ctx,
-                                        const char *start,
-                                        const char *end,
-                                        h_post_header *header)
+h_parse_header_request_line(grn_ctx *ctx,
+                            const char *start,
+                            const char *end,
+                            h_header *header)
 {
   const char *current;
 
   {
-    const char *method = start;
-    int method_length = -1;
-
-    for (current = method; current < end; current++) {
+    header->method_start = start;
+    for (current = header->method_start; current < end; current++) {
       if (current[0] == '\n') {
         return NULL;
       }
       if (current[0] == ' ') {
-        method_length = current - method;
+        header->method_length = current - header->method_start;
         current++;
         break;
       }
     }
-    if (method_length == -1) {
-      return NULL;
-    }
-    if (!STRING_EQUAL_CI(method, method_length, "POST")) {
+    if (header->method_length == -1) {
       return NULL;
     }
   }
@@ -1489,10 +1461,10 @@ do_htreq_post_parse_header_request_line(grn_ctx *ctx,
 }
 
 static const char *
-do_htreq_post_parse_header_values(grn_ctx *ctx,
-                                  const char *start,
-                                  const char *end,
-                                  h_post_header *header)
+h_parse_header_values(grn_ctx *ctx,
+                      const char *start,
+                      const char *end,
+                      h_header *header)
 {
   const char *current;
   const char *name = start;
@@ -1578,18 +1550,18 @@ do_htreq_post_parse_header_values(grn_ctx *ctx,
 }
 
 static grn_bool
-do_htreq_post_parse_header(grn_ctx *ctx,
-                           const char *start,
-                           const char *end,
-                           h_post_header *header)
+h_parse_header(grn_ctx *ctx,
+               const char *start,
+               const char *end,
+               h_header *header)
 {
   const char *current;
 
-  current = do_htreq_post_parse_header_request_line(ctx, start, end, header);
+  current = h_parse_header_request_line(ctx, start, end, header);
   if (!current) {
     return GRN_FALSE;
   }
-  current = do_htreq_post_parse_header_values(ctx, current, end, header);
+  current = h_parse_header_values(ctx, current, end, header);
   if (!current) {
     return GRN_FALSE;
   }
@@ -1604,8 +1576,29 @@ do_htreq_post_parse_header(grn_ctx *ctx,
 }
 
 static void
+do_htreq_get(grn_ctx *ctx, ht_context *hc)
+{
+  grn_msg *msg = hc->msg;
+  h_header header;
+  header.method_start = NULL;
+  header.method_length = -1;
+  header.path_start = NULL;
+  header.path_length = -1;
+  if (!h_parse_header_request_line(ctx,
+                                   GRN_BULK_HEAD((grn_obj *)msg),
+                                   GRN_BULK_CURR((grn_obj *)msg),
+                                   &header)) {
+    return;
+  }
+  grn_ctx_send(ctx,
+               header.path_start,
+               header.path_length,
+               GRN_CTX_TAIL);
+}
+
+static void
 do_htreq_post_process_body_www_form_urlencoded(grn_ctx *ctx,
-                                               h_post_header *header,
+                                               h_header *header,
                                                grn_sock fd)
 {
   grn_obj command;
@@ -1664,7 +1657,7 @@ do_htreq_post_process_body_www_form_urlencoded(grn_ctx *ctx,
 
 static void
 do_htreq_post_process_body_load_json(grn_ctx *ctx,
-                                     h_post_header *header,
+                                     h_header *header,
                                      grn_sock fd)
 {
   bool is_tail_sent = false;
@@ -1760,7 +1753,7 @@ do_htreq_post_process_body_load_json(grn_ctx *ctx,
 
 static void
 do_htreq_post_process_body_load_generic(grn_ctx *ctx,
-                                        h_post_header *header,
+                                        h_header *header,
                                         grn_sock fd)
 {
   bool is_tail_sent = false;
@@ -1825,8 +1818,10 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
 {
   grn_msg *msg = hc->msg;
   grn_sock fd = msg->u.fd;
-  h_post_header header;
+  h_header header;
 
+  header.method_start = NULL;
+  header.method_length = -1;
   header.path_start = NULL;
   header.path_length = -1;
   header.content_type = HTTP_CONTENT_TYPE_UNKNOWN;
@@ -1837,10 +1832,13 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
   header.body_end = GRN_BULK_CURR((grn_obj *)msg);
   header.have_100_continue = GRN_FALSE;
 
-  if (!do_htreq_post_parse_header(ctx,
-                                  GRN_BULK_HEAD((grn_obj *)msg),
-                                  header.body_end,
-                                  &header)) {
+  if (!h_parse_header(ctx,
+                      GRN_BULK_HEAD((grn_obj *)msg),
+                      header.body_end,
+                      &header)) {
+    return;
+  }
+  if (!STRING_EQUAL(header.method_start, header.method_length, "POST")) {
     return;
   }
 
@@ -2711,17 +2709,52 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
     grn_com_event_del(ctx, com->ev, fd);
     ((grn_msg *)msg)->u.fd = fd;
     CRITICAL_SECTION_ENTER(q_critical_section);
-    grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)msg);
-    if (n_floating_threads == 0 && n_running_threads < max_n_floating_threads) {
-      grn_thread thread;
-      n_running_threads++;
-      if (THREAD_CREATE(thread, h_worker, arg)) {
-        n_running_threads--;
-        SERR("pthread_create");
+    const char *immediate_path = NULL;
+    int immediate_path_length = -1;
+    if (n_floating_threads == 0 && n_running_threads == max_n_floating_threads) {
+      h_header header;
+      header.method_start = NULL;
+      header.method_length = -1;
+      header.path_start = NULL;
+      header.path_length = -1;
+      if (h_parse_header_request_line(ctx,
+                                      GRN_BULK_HEAD((grn_obj *)msg),
+                                      GRN_BULK_CURR((grn_obj *)msg),
+                                      &header) &&
+          STRING_EQUAL(header.path_start,
+                       header.path_length,
+                       "/d/shutdown?mode=immediate")) {
+        immediate_path = header.path_start;
+        immediate_path_length = header.path_length;
       }
     }
-    COND_SIGNAL(q_cond);
-    CRITICAL_SECTION_LEAVE(q_critical_section);
+    if (immediate_path) {
+      ht_context hc;
+      grn_ctx ctx_shutdown;
+      grn_ctx_init(&ctx_shutdown, 0);
+      grn_ctx_use(&ctx_shutdown, (grn_obj *)arg);
+      grn_ctx_recv_handler_set(&ctx_shutdown, h_output, &hc);
+      hc.msg = (grn_msg *)msg;
+      hc.in_body = GRN_FALSE;
+      hc.is_chunked = GRN_FALSE;
+      grn_ctx_send(&ctx_shutdown,
+                   immediate_path,
+                   immediate_path_length,
+                   GRN_CTX_TAIL);
+      grn_ctx_fin(&ctx_shutdown);
+    } else {
+      grn_com_queue_enque(ctx, &ctx_new, (grn_com_queue_entry *)msg);
+      if (n_floating_threads == 0 && n_running_threads < max_n_floating_threads) {
+        grn_thread thread;
+        n_running_threads++;
+        if (THREAD_CREATE(thread, h_worker, arg)) {
+          n_running_threads--;
+          SERR("pthread_create");
+        }
+      }
+      COND_SIGNAL(q_cond);
+    }
+  CRITICAL_SECTION_LEAVE(q_critical_section);
   }
 }
 
