@@ -335,6 +335,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
     }
   }
   grn_obj_set_value(ctx, column, id, &buf, GRN_OBJ_SET);
+  grn_obj_unlink(ctx, range);
   GRN_OBJ_FIN(ctx, &buf);
 }
 
