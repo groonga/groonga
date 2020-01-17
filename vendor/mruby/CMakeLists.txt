@@ -42,8 +42,15 @@ if(GRN_WITH_MRUBY)
     set(mruby_build_timestamp
       "${CMAKE_CURRENT_BINARY_DIR}/mruby_build.timestamp")
     if(NOT EXISTS "${mruby_build_timestamp}")
-      execute_process(
-	COMMAND
+      set(MRUBY_BUILD_COMMAND)
+      if(MSVC)
+	list(APPEND MRUBY_BUILD_COMMAND
+	  ${CMAKE_COMMAND}
+	  -E
+	  env
+	  "MRUBY_VC=yes")
+      endif()
+      list(APPEND MRUBY_BUILD_COMMAND
 	"${RUBY}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/mruby_build.rb"
 	"${CMAKE_CURRENT_SOURCE_DIR}/build_config.rb"
@@ -52,8 +59,8 @@ if(GRN_WITH_MRUBY)
 	"${CMAKE_CURRENT_SOURCE_DIR}/../onigmo-source"
 	"${mruby_build_timestamp}"
 	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-	RESULT_VARIABLE MRUBY_BUILD_RESULT
-	)
+	RESULT_VARIABLE MRUBY_BUILD_RESULT)
+      execute_process(COMMAND ${MRUBY_BUILD_COMMAND})
       if(NOT MRUBY_BUILD_RESULT EQUAL "0")
 	message(FATAL_ERROR "Failed to build mruby files")
       endif()

@@ -1,5 +1,5 @@
 MRuby::Build.new do |conf|
-  if ENV['VisualStudioVersion'] || ENV['VSINSTALLDIR']
+  if ENV["MRUBY_VC"] || ENV["VisualStudioVersion"] || ENV["VSINSTALLDIR"]
     toolchain :visualcpp
   else
     toolchain :gcc
