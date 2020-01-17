@@ -7820,7 +7820,6 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
   grn_id range = DB_OBJ(obj)->range;
   void *v = GRN_BULK_HEAD(value);
   unsigned int s = grn_obj_size(ctx, value);
-  grn_obj *lexicon = grn_ctx_at(ctx, range);
 
   if (value->header.type == GRN_UVECTOR) {
     rc = grn_obj_set_value_column_var_size_vector_uvector(ctx, obj,
@@ -7829,6 +7828,7 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
     return rc;
   }
 
+  grn_obj *lexicon = grn_ctx_at(ctx, range);
   if (GRN_OBJ_TABLEP(lexicon)) {
     grn_obj uvector;
     GRN_RECORD_INIT(&uvector, GRN_OBJ_VECTOR, range);
@@ -8000,6 +8000,8 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
       break;
     }
   }
+  grn_obj_unlink(ctx, lexicon);
+
   return rc;
 }
 
