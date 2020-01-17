@@ -14917,7 +14917,8 @@ static uint32_t
 grn_column_get_all_index_data_column(grn_ctx *ctx,
                                      grn_obj *obj,
                                      grn_index_datum *index_data,
-                                     uint32_t n_index_data)
+                                     uint32_t n_index_data,
+                                     grn_obj *index_columns)
 {
   uint32_t n = 0;
   grn_hook_entry hook_entry;
@@ -14958,6 +14959,9 @@ grn_column_get_all_index_data_column(grn_ctx *ctx,
       index_data[n].section = section;
     }
     n++;
+    if (index_columns) {
+      GRN_PTR_PUT(ctx, index_columns, target);
+    }
   }
 
   return n;
@@ -14967,7 +14971,8 @@ static uint32_t
 grn_column_get_all_index_data_accessor_index_column(grn_ctx *ctx,
                                                     grn_accessor *a,
                                                     grn_index_datum *index_data,
-                                                    uint32_t n_index_data)
+                                                    uint32_t n_index_data,
+                                                    grn_obj *index_columns)
 {
   grn_obj *index_column = a->obj;
   int section = 0;
@@ -14989,6 +14994,9 @@ grn_column_get_all_index_data_accessor_index_column(grn_ctx *ctx,
     index_data[0].index = index_column;
     index_data[0].section = section;
   }
+  if (index_columns) {
+    GRN_PTR_PUT(ctx, index_columns, index_column);
+  }
 
   return 1;
 }
@@ -14997,7 +15005,8 @@ static uint32_t
 grn_column_get_all_index_data_accessor(grn_ctx *ctx,
                                        grn_obj *obj,
                                        grn_index_datum *index_data,
-                                       uint32_t n_index_data)
+                                       uint32_t n_index_data,
+                                       grn_obj *index_columns)
 {
   uint32_t n = 0;
   grn_accessor *a = (grn_accessor *)obj;
@@ -15012,7 +15021,8 @@ grn_column_get_all_index_data_accessor(grn_ctx *ctx,
       return grn_column_get_all_index_data_accessor_index_column(ctx,
                                                                  a,
                                                                  index_data,
-                                                                 n_index_data);
+                                                                 n_index_data,
+                                                                 index_columns);
     }
 
     switch (a->action) {
@@ -15059,6 +15069,9 @@ grn_column_get_all_index_data_accessor(grn_ctx *ctx,
           index_data[n].section = section;
         }
         n++;
+        if (index_columns) {
+          GRN_PTR_PUT(ctx, index_columns, target);
+        }
       }
     }
 
@@ -15081,12 +15094,32 @@ grn_column_get_all_index_data(grn_ctx *ctx,
   GRN_API_ENTER;
   if (GRN_DB_OBJP(obj)) {
     n = grn_column_get_all_index_data_column(ctx, obj,
-                                             index_data, n_index_data);
+                                             index_data, n_index_data,
+                                             NULL);
   } else if (GRN_ACCESSORP(obj)) {
     n = grn_column_get_all_index_data_accessor(ctx, obj,
-                                               index_data, n_index_data);
+                                               index_data, n_index_data,
+                                               NULL);
   }
   GRN_API_RETURN(n);
+}
+
+grn_rc
+grn_column_get_all_index_columns(grn_ctx *ctx,
+                                 grn_obj *obj,
+                                 grn_obj *index_columns)
+{
+  GRN_API_ENTER;
+  if (GRN_DB_OBJP(obj)) {
+    grn_column_get_all_index_data_column(ctx, obj,
+                                         NULL, 0,
+                                         index_columns);
+  } else if (GRN_ACCESSORP(obj)) {
+    grn_column_get_all_index_data_accessor(ctx, obj,
+                                           NULL, 0,
+                                           index_columns);
+  }
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc
