@@ -8243,11 +8243,21 @@ static grn_obj *
 grn_obj_get_value_column_vector(grn_ctx *ctx, grn_obj *obj,
                                 grn_id id, grn_obj *value)
 {
-  grn_obj *lexicon;
+  bool is_var_size_element = false;
 
-  lexicon = grn_ctx_at(ctx, DB_OBJ(obj)->range);
-  if (lexicon && !GRN_OBJ_TABLEP(lexicon) &&
-      (lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
+  {
+    grn_obj *lexicon;
+    lexicon = grn_ctx_at(ctx, DB_OBJ(obj)->range);
+    if (lexicon) {
+      if (!GRN_OBJ_TABLEP(lexicon) &&
+          (lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
+        is_var_size_element = true;
+      }
+      grn_obj_unlink(ctx, lexicon);
+    }
+  }
+
+  if (is_var_size_element) {
     grn_obj_ensure_vector(ctx, value);
     if (id) {
       grn_obj v_;
