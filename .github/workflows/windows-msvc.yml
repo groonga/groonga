@@ -72,10 +72,11 @@ jobs:
           cmake --build ..\apache-arrow-build --config Release --target Install
       - name: Install dependencies
         run: |
-          choco install winflexbison3
+          choco install -y winflexbison3
       - name: Install Groonga
         run: |
           . .\env.ps1
+          $Env:YACC = "win_bison.exe"
           New-Item ..\groonga-build -ItemType Directory
           cmake `
             -S . `
