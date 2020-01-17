@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -164,7 +164,9 @@ grn_loader_init(grn_loader *loader)
 {
   GRN_TEXT_INIT(&loader->values, 0);
   GRN_UINT32_INIT(&loader->level, GRN_OBJ_VECTOR);
-  GRN_PTR_INIT(&loader->columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  loader->columns = NULL;
+  GRN_PTR_INIT(&loader->ranges, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_PTR_INIT(&loader->indexes, GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_UINT32_INIT(&loader->ids, GRN_OBJ_VECTOR);
   GRN_INT32_INIT(&loader->return_codes, GRN_OBJ_VECTOR);
   GRN_TEXT_INIT(&loader->error_messages, GRN_OBJ_VECTOR);
@@ -192,15 +194,40 @@ grn_ctx_loader_clear(grn_ctx *ctx)
   grn_loader *loader = &ctx->impl->loader;
   grn_obj *v = (grn_obj *)(GRN_BULK_HEAD(&loader->values));
   grn_obj *ve = (grn_obj *)(GRN_BULK_CURR(&loader->values));
-  grn_obj **p = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
-  uint32_t i = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
-  if (ctx->impl->db) { while (i--) { grn_obj_unlink(ctx, *p++); } }
+  if (ctx->impl->db) {
+    size_t i;
+    size_t n_ranges = GRN_PTR_VECTOR_SIZE(&(loader->ranges));
+    for (i = 0; i < n_ranges; i++) {
+      grn_obj_unlink(ctx, GRN_PTR_VALUE_AT(&(loader->ranges), i));
+    }
+    size_t n_indexes = GRN_PTR_VECTOR_SIZE(&(loader->indexes));
+    for (i = 0; i < n_indexes; i++) {
+      grn_obj_unlink(ctx, GRN_PTR_VALUE_AT(&(loader->indexes), i));
+    }
+    if (loader->columns) {
+      GRN_HASH_EACH_BEGIN(ctx, loader->columns, cursor, id) {
+        void *value;
+        grn_hash_cursor_get_value(ctx, cursor, &value);
+        if (value) {
+          grn_obj *column = *((grn_obj **)value);
+          grn_obj_unlink(ctx, column);
+        }
+      } GRN_HASH_EACH_END(ctx, cursor);
+    }
+    if (loader->table) {
+      grn_obj_unlink(ctx, loader->table);
+    }
+  }
   if (loader->ifexists) { grn_obj_unlink(ctx, loader->ifexists); }
   if (loader->each) { grn_obj_unlink(ctx, loader->each); }
   while (v < ve) { GRN_OBJ_FIN(ctx, v++); }
   GRN_OBJ_FIN(ctx, &loader->values);
   GRN_OBJ_FIN(ctx, &loader->level);
-  GRN_OBJ_FIN(ctx, &loader->columns);
+  if (loader->columns) {
+    grn_hash_close(ctx, loader->columns);
+  }
+  GRN_OBJ_FIN(ctx, &loader->ranges);
+  GRN_OBJ_FIN(ctx, &loader->indexes);
   GRN_OBJ_FIN(ctx, &loader->ids);
   GRN_OBJ_FIN(ctx, &loader->return_codes);
   GRN_OBJ_FIN(ctx, &loader->error_messages);

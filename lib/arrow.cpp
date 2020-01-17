@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2017 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -659,11 +659,10 @@ namespace grnarrow {
         grn_column_(nullptr),
         buffer_() {
       const auto &column_name = arrow_field->name();
-      grn_column_ =
-        grn_obj_column(ctx_,
-                       grn_table_,
-                       column_name.data(),
-                       static_cast<unsigned int>(column_name.size()));
+      grn_column_ = grn_loader_get_column(ctx_,
+                                          grn_loader,
+                                          column_name.data(),
+                                          column_name.size());
 
       const auto &arrow_type = arrow_field->type();
       grn_id arrow_type_id = GRN_DB_VOID;

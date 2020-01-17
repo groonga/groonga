@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2017 Brazil
-  Copyright(C) 2018-2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -71,7 +71,9 @@ typedef enum {
 typedef struct {
   grn_obj values;
   grn_obj level;
-  grn_obj columns;
+  grn_hash *columns;
+  grn_obj ranges;
+  grn_obj indexes;
   grn_obj ids;
   grn_obj return_codes;
   grn_obj error_messages;
@@ -114,6 +116,11 @@ grn_loader_on_column_set(grn_ctx *ctx,
 void
 grn_loader_on_no_identifier_error(grn_ctx *ctx,
                                   grn_loader *loader);
+grn_obj *
+grn_loader_get_column(grn_ctx *ctx,
+                      grn_loader *loader,
+                      const char *name,
+                      size_t name_length);
 void
 grn_loader_apply_each(grn_ctx *ctx,
                       grn_loader *loader,

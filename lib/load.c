@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2017 Brazil
-  Copyright(C) 2018-2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -150,6 +150,43 @@ grn_loader_on_no_identifier_error(grn_ctx *ctx, grn_loader *loader)
       table_name_size, table_name);
 }
 
+grn_obj *
+grn_loader_get_column(grn_ctx *ctx,
+                      grn_loader *loader,
+                      const char *name,
+                      size_t name_length)
+{
+  if (!loader->columns) {
+    loader->columns = grn_hash_create(ctx,
+                                      NULL,
+                                      GRN_TABLE_MAX_KEY_SIZE,
+                                      sizeof(grn_obj *),
+                                      GRN_OBJ_TABLE_HASH_KEY |
+                                      GRN_OBJ_KEY_VAR_SIZE |
+                                      GRN_HASH_TINY);
+  }
+
+  void *value;
+  grn_id id = grn_hash_get(ctx, loader->columns, name, name_length, &value);
+  if (id != GRN_ID_NIL) {
+    return *((grn_obj **)value);
+  }
+
+  grn_obj *column = grn_obj_column(ctx, loader->table, name, name_length);
+  if (!column) {
+    return NULL;
+  }
+
+  id = grn_hash_add(ctx, loader->columns, name, name_length, &value, NULL);
+  memcpy(value, &column, sizeof(grn_obj *));
+  grn_obj *range = grn_ctx_at(ctx, DB_OBJ(column)->range);
+  if (grn_obj_is_table(ctx, range)) {
+    GRN_PTR_PUT(ctx, &(loader->ranges), range);
+  }
+  grn_column_get_all_index_columns(ctx, column, &(loader->indexes));
+
+  return column;
+}
 
 static grn_obj *
 values_add(grn_ctx *ctx, grn_loader *loader)
@@ -427,21 +464,24 @@ bracket_close_set_values(grn_ctx *ctx,
                          grn_obj *values,
                          uint32_t n_values)
 {
-  uint32_t i;
-  grn_obj *value;
-  grn_obj **columns; /* Columns except _id and _key. */
+  uint32_t i = 0;
+  grn_obj *value = values;
 
-  columns = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
-  for (i = 0, value = values;
-       i < n_values;
-       i++, value = values_next(ctx, value)) {
-    grn_obj *column;
+  GRN_HASH_EACH_BEGIN(ctx, loader->columns, cursor, cursor_id) {
+    if (i == n_values) {
+      break;
+    }
 
     if (i == loader->id_offset || i == loader->key_offset) {
-      /* Skip _id and _key, because it's already used to get id. */
-       continue;
+      i++;
+      value = values_next(ctx, value);
+      continue;
     }
-    column = *columns;
+
+    void *cursor_value;
+    grn_hash_cursor_get_value(ctx, cursor, &cursor_value);
+    grn_obj *column = *((grn_obj **)cursor_value);
+
     if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
       set_vector(ctx, column, id, value);
     } else if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
@@ -450,8 +490,10 @@ bracket_close_set_values(grn_ctx *ctx,
       grn_obj_set_value(ctx, column, id, value, GRN_OBJ_SET);
     }
     grn_loader_on_column_set(ctx, loader, column, id, key, value);
-    columns++;
-  }
+
+    i++;
+    value = values_next(ctx, value);
+  } GRN_HASH_EACH_END(ctx, cursor);
 }
 
 static void
@@ -506,16 +548,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
       }
       col_name = GRN_TEXT_VALUE(value);
       col_name_size = GRN_TEXT_LEN(value);
-      col = grn_obj_column(ctx, loader->table, col_name, col_name_size);
-      if (!col) {
-        ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s>",
-            col_name_size, col_name);
-        grn_loader_save_error(ctx, loader);
-        loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
-        goto exit;
-      }
       if (name_equal(col_name, col_name_size, GRN_COLUMN_NAME_ID)) {
-        grn_obj_unlink(ctx, col);
         if (loader->id_offset != -1 || loader->key_offset != -1) {
           /* _id and _key must not appear more than once. */
           if (loader->id_offset != -1) {
@@ -535,7 +568,6 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
         }
         loader->id_offset = i;
       } else if (name_equal(col_name, col_name_size, GRN_COLUMN_NAME_KEY)) {
-        grn_obj_unlink(ctx, col);
         if (loader->id_offset != -1 || loader->key_offset != -1) {
           /* _id and _key must not appear more than once. */
           if (loader->id_offset != -1) {
@@ -554,8 +586,14 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
           goto exit;
         }
         loader->key_offset = i;
-      } else {
-        GRN_PTR_PUT(ctx, &loader->columns, col);
+      }
+      col = grn_loader_get_column(ctx, loader, col_name, col_name_size);
+      if (!col) {
+        ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s>",
+            col_name_size, col_name);
+        grn_loader_save_error(ctx, loader);
+        loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
+        goto exit;
       }
       value++;
     }
@@ -597,11 +635,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
       break;
     }
   } else {
-    uint32_t expected_nvalues =
-      GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
-    if (loader->id_offset != -1 || loader->key_offset != -1) {
-      expected_nvalues++;
-    }
+    uint32_t expected_nvalues = grn_hash_size(ctx, loader->columns);
     if (nvalues != expected_nvalues) {
       ERR(GRN_INVALID_ARGUMENT,
           "unexpected #values: expected:%u, actual:%u",
@@ -1192,14 +1226,7 @@ grn_loader_parse_columns(grn_ctx *ctx, grn_loader *loader,
       while (ptr < token_end && (' ' == *ptr || ',' == *ptr)) {
         ptr++;
       }
-      column = grn_obj_column(ctx, loader->table, ptr, token_end - ptr);
-      if (!column) {
-        ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s>",
-            (int)(token_end - ptr), ptr);
-        return ctx->rc;
-      }
       if (name_equal(ptr, token_end - ptr, GRN_COLUMN_NAME_ID)) {
-        grn_obj_unlink(ctx, column);
         if (loader->id_offset != -1 || loader->key_offset != -1) {
           /* _id and _key must not appear more than once. */
           if (loader->id_offset != -1) {
@@ -1217,7 +1244,6 @@ grn_loader_parse_columns(grn_ctx *ctx, grn_loader *loader,
         }
         loader->id_offset = i;
       } else if (name_equal(ptr, token_end - ptr, GRN_COLUMN_NAME_KEY)) {
-        grn_obj_unlink(ctx, column);
         if (loader->id_offset != -1 || loader->key_offset != -1) {
           /* _id and _key must not appear more than once. */
           if (loader->id_offset != -1) {
@@ -1234,8 +1260,12 @@ grn_loader_parse_columns(grn_ctx *ctx, grn_loader *loader,
           return ctx->rc;
         }
         loader->key_offset = i;
-      } else {
-        GRN_PTR_PUT(ctx, &loader->columns, column);
+      }
+      column = grn_loader_get_column(ctx, loader, ptr, token_end - ptr);
+      if (!column) {
+        ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s>",
+            (int)(token_end - ptr), ptr);
+        return ctx->rc;
       }
       ptr = token_end;
     }
