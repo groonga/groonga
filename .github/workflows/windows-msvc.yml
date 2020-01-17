@@ -34,7 +34,7 @@ jobs:
           git submodule update --init --recursive
       - name: Install dependencies
         run: |
-          choco install bison
+          choco install winflexbison3
       - name: Download bundled packages
         run: |
           cd vendor
