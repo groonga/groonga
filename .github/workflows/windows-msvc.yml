@@ -83,7 +83,8 @@ jobs:
             -G "${{ matrix.cmake_generator }}" `
             "-DCMAKE_INSTALL_PREFIX=${FULL_INSTALL_FOLDER}" `
             -DCMAKE_BUILD_TYPE=ReWithDebInfo `
-            -DGRN_WITH_APACHE_ARROW=yes
+            -DGRN_WITH_APACHE_ARROW=yes `
+            -DGRN_WITH_MRUBY=yes
           cmake --build ..\groonga-build --config RelWithDebInfo
           cmake --build ..\groonga-build --config RelWithDebInfo --target Install
       - name: Prepare artifacts
