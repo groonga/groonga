@@ -1,5 +1,5 @@
 # Copyright(C) 2012-2018 Brazil
-# Copyright(C) 2018-2019 Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -718,6 +718,7 @@ if(GRN_WITH_APACHE_ARROW)
 endif()
 
 find_program(RUBY NAMES
+  "ruby2.7" "ruby27"
   "ruby2.6" "ruby26"
   "ruby2.5" "ruby25"
   "ruby2.4" "ruby24"
