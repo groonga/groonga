@@ -44,13 +44,15 @@ if(GRN_WITH_MRUBY)
     if(NOT EXISTS "${mruby_build_timestamp}")
       set(MRUBY_BUILD_COMMAND)
       if(MSVC)
+	get_filename_component(C_COMPILER_DIRECTORY
+	  ${CMAKE_C_COMPILER}
+	  DIRECTORY)
 	list(APPEND MRUBY_BUILD_COMMAND
 	  ${CMAKE_COMMAND}
 	  -E
 	  env
 	  "MRUBY_VC=yes"
-	  "CC=\"${CMAKE_C_COMPILER}\""
-	  "CXX=\"${CMAKE_CXX_COMPILER}\"")
+	  "PATH=${C_COMPILER_DIRECTORY};$ENV{PATH}")
       endif()
       list(APPEND MRUBY_BUILD_COMMAND
 	"${RUBY}"
