@@ -40,9 +40,10 @@ jobs:
           ruby download_mecab.rb
           ruby download_message_pack.rb
           ruby download_rapidjson.rb
-      - name: Generate env.ps1
+      - name: Generate env.ps1 and env.bat
         run: |
           echo "`$Env:CMAKE_BUILD_PARALLEL_LEVEL = ${Env:NUMBER_OF_PROCESSORS}" >> env.ps1
+          echo "set CMAKE_BUILD_PARALLEL_LEVEL=${Env:NUMBER_OF_PROCESSORS}" >> env.bat
           $GROONGA_VERSION = (Get-Content base_version)
           if (!("${Env:GITHUB_REF}".StartsWith("refs/tags/"))) {
             $GROONGA_VERSION += "-$(${Env:GITHUB_SHA}.Substring(0, 7))"
@@ -53,8 +54,11 @@ jobs:
           $FULL_INSTALL_FOLDER = `
             "${Env:GITHUB_WORKSPACE}\${INSTALL_PARENT_FOLDER}\${INSTALL_FOLDER}"
           echo "`$INSTALL_FOLDER = `"${INSTALL_FOLDER}`"" >> env.ps1
+          echo "set INSTALL_FOLDER=${INSTALL_FOLDER}" >> env.bat
           echo "`$FULL_INSTALL_FOLDER = `"${FULL_INSTALL_FOLDER}`"" >> env.ps1
+          echo "set FULL_INSTALL_FOLDER=${FULL_INSTALL_FOLDER}" >> env.bat
           Get-Content env.ps1
+          Get-Content env.bat
       - name: Install Apache Arrow
         run: |
           . .\env.ps1
@@ -74,21 +78,22 @@ jobs:
         run: |
           choco install -y winflexbison3
       - name: Install Groonga
+        shell: cmd
         run: |
-          . .\env.ps1
-          $Env:YACC = "win_bison.exe"
-          $Env:PATH = "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.24.28314/bin/Hostx64/x64;${Env:PATH}"
-          New-Item ..\groonga-build -ItemType Directory
-          cmake `
-            -S . `
+          . .\env.bat
+          set YACC="win_bison.exe"
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          mkdir ..\groonga-build
+          cmake ^
+            -S . ^
             -B ..\groonga-build `
-            -A ${{ matrix.architecture }} `
-            -G "${{ matrix.cmake_generator }}" `
-            "-DCMAKE_INSTALL_PREFIX=${FULL_INSTALL_FOLDER}" `
-            -DCMAKE_BUILD_TYPE=ReWithDebInfo `
-            -DGRN_WITH_APACHE_ARROW=yes `
+            -A ${{ matrix.architecture }} ^
+            -G "${{ matrix.cmake_generator }}" ^
+            "-DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%" ^
+            -DCMAKE_BUILD_TYPE=ReWithDebInfo ^
+            -DGRN_WITH_APACHE_ARROW=yes ^
             -DGRN_WITH_MRUBY=yes
-          cl.exe /c /nologo /W3 /we4013 /Zi /MD /O2 /D_CRT_SECURE_NO_WARNINGS /DMRB_STACK_EXTEND_DOUBLING /DMRB_DEBUG /DMRBGEM_MRUBY_BIN_MRBC_VERSION=0.0.0 /ID:\a\groonga\groonga\vendor\mruby-source\include /ID:\a\groonga\groonga\vendor\onigmo-source /FoD:\a\groonga\groonga-build\vendor\mruby-build\host\mrbgems\mruby-bin-mrbc\tools\mrbc\mrbc.obj D:\a\groonga\groonga\vendor\mruby-source\mrbgems\mruby-bin-mrbc\tools\mrbc\mrbc.c
+          type ..\groonga-build\CMakeFiles\CMakeError.log
           cmake --build ..\groonga-build --config RelWithDebInfo
           cmake --build ..\groonga-build --config RelWithDebInfo --target Install
       - name: Prepare artifacts
