@@ -77,6 +77,7 @@ jobs:
         run: |
           . .\env.ps1
           $Env:YACC = "win_bison.exe"
+          $Env:PATH = "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.24.28314/bin/Hostx64/x64;${Env:PATH}"
           New-Item ..\groonga-build -ItemType Directory
           cmake `
             -S . `
