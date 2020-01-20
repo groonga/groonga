@@ -78,7 +78,6 @@ jobs:
           . .\env.ps1
           $Env:YACC = "win_bison.exe"
           $Env:PATH = "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.24.28314/bin/Hostx64/x64;${Env:PATH}"
-          cl.exe /?
           New-Item ..\groonga-build -ItemType Directory
           cmake `
             -S . `
@@ -89,6 +88,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=ReWithDebInfo `
             -DGRN_WITH_APACHE_ARROW=yes `
             -DGRN_WITH_MRUBY=yes
+          cl.exe /c /nologo /W3 /we4013 /Zi /MD /O2 /D_CRT_SECURE_NO_WARNINGS /DMRB_STACK_EXTEND_DOUBLING /DMRB_DEBUG /DMRBGEM_MRUBY_BIN_MRBC_VERSION=0.0.0 /ID:\a\groonga\groonga\vendor\mruby-source\include /ID:\a\groonga\groonga\vendor\onigmo-source /FoD:\a\groonga\groonga-build\vendor\mruby-build\host\mrbgems\mruby-bin-mrbc\tools\mrbc\mrbc.obj D:\a\groonga\groonga\vendor\mruby-source\mrbgems\mruby-bin-mrbc\tools\mrbc\mrbc.c
           cmake --build ..\groonga-build --config RelWithDebInfo
           cmake --build ..\groonga-build --config RelWithDebInfo --target Install
       - name: Prepare artifacts
