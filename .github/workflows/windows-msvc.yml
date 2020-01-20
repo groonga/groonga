@@ -80,13 +80,13 @@ jobs:
       - name: Install Groonga
         shell: cmd
         run: |
-          . .\env.bat
+          call env.bat
           set YACC="win_bison.exe"
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
           mkdir ..\groonga-build
           cmake ^
             -S . ^
-            -B ..\groonga-build `
+            -B ..\groonga-build ^
             -A ${{ matrix.architecture }} ^
             -G "${{ matrix.cmake_generator }}" ^
             "-DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%" ^
