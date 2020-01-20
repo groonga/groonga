@@ -51,8 +51,8 @@ if(GRN_WITH_MRUBY)
 	  ${CMAKE_COMMAND}
 	  -E
 	  env
-	  "MRUBY_VC=yes"
-	  "PATH=${C_COMPILER_DIRECTORY};$ENV{PATH}")
+	  "MRUBY_VC=yes")
+	set(ENV{PATH} "${C_COMPILER_DIRECTORY};$ENV{PATH}")
       endif()
       list(APPEND MRUBY_BUILD_COMMAND
 	"${RUBY}"
