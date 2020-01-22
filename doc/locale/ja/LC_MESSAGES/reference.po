@@ -15654,6 +15654,16 @@ msgstr ""
 "immediate shutdownを使うにはすべてのリクエストに :doc:`/reference/command/"
 "request_id` を設定する必要があります。"
 
+msgid ""
+"The Groonga HTTP server accepts immediate shutdown immediately even when all "
+"threads are used."
+msgstr ""
+"Groonga HTTPサーバーは全てのスレッドが使用中であってもimmediate shutdownを受"
+"け付けます。"
+
+msgid "This feature can only use on the Groonga HTTP server."
+msgstr "この機能はGroonga HTTPサーバでのみ使えます。"
+
 msgid "``shutdown`` use graceful shutdown by default:"
 msgstr "``shutdown`` はデフォルトではgraceful shutdownを使います。"
 

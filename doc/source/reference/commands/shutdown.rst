@@ -29,6 +29,13 @@ commands are finished. New command requests aren't processed after
       You need to set :doc:`/reference/command/request_id` to all
       requests to use immediate shutdown.
 
+.. versionadded:: 9.1.2
+
+   The Groonga HTTP server accepts immediate shutdown immediately even when all threads are used.
+
+   .. note::
+
+     This feature can only use on the Groonga HTTP server.
 
 Syntax
 ------
