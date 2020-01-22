@@ -1,13 +1,7 @@
 name: Package
 on:
   push:
-    branches:
-      - "*"
-    tags:
-      - "*"
   pull_request:
-    branches:
-      - "*"
   schedule:
     - cron: |
         0 0 * * *
