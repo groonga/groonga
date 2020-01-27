@@ -30,6 +30,10 @@
 
 #include <sstream>
 
+#if (ARROW_VERSION_MAJOR >= 1) || (ARROW_VERION_MAJOR == 0 && ARROW_VERSION_MINOR >= 16)
+# define GRN_ARROW_IO_RESULT
+#endif
+
 namespace grnarrow {
   grn_rc status_to_rc(const arrow::Status &status) {
     switch (status.code()) {
@@ -75,7 +79,7 @@ namespace grnarrow {
                  static_cast<std::stringstream &>(output).str().c_str());
   }
 
-# if ARROW_VERSION_MAJOR >= 1
+# ifdef GRN_ARROW_IO_RESULT
   template <typename TYPE>
   bool check(grn_ctx *ctx,
              arrow::Result<TYPE> &result,
@@ -1324,7 +1328,7 @@ namespace grnarrow {
       return offset_;
     }
 
-# if ARROW_VERSION_MAJOR >= 1
+# ifdef GRN_ARROW_IO_RESULT
     arrow::Result<int64_t> Tell() const override {
       return tell();
     }
@@ -1352,7 +1356,7 @@ namespace grnarrow {
                                       static_cast<size_t>(bytes_available));
     }
 
-# if ARROW_VERSION_MAJOR >= 1
+# ifdef GRN_ARROW_IO_RESULT
     arrow::Result<arrow::util::string_view> Peek(int64_t nbytes) override {
       return peek(nbytes);
     }
@@ -1376,7 +1380,7 @@ namespace grnarrow {
       }
     }
 
-# if ARROW_VERSION_MAJOR >= 1
+# ifdef GRN_ARROW_IO_RESULT
     arrow::Result<int64_t> Read(int64_t nbytes, void* out) override {
       return read(nbytes, out);
     }
@@ -1398,7 +1402,7 @@ namespace grnarrow {
       return output;
     }
 
-# if ARROW_VERSION_MAJOR >= 1
+# ifdef GRN_ARROW_IO_RESULT
     arrow::Result<std::shared_ptr<arrow::Buffer>> Read(int64_t nbytes) override {
       return read(nbytes);
     }
@@ -1525,7 +1529,7 @@ grn_arrow_load(grn_ctx *ctx,
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
-# if ARROW_VERSION_MAJOR >= 1
+# ifdef GRN_ARROW_IO_RESULT
   auto input_result =
     arrow::io::MemoryMappedFile::Open(path, arrow::io::FileMode::READ);
   std::ostringstream context;
@@ -1634,7 +1638,7 @@ grn_arrow_dump_columns(grn_ctx *ctx,
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
-# if ARROW_VERSION_MAJOR >= 1
+# ifdef GRN_ARROW_IO_RESULT
   auto output_result = arrow::io::FileOutputStream::Open(path);
   std::stringstream context;
   if (!grnarrow::check(ctx,
