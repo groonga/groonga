@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2015-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -68,6 +68,28 @@ grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
     return  GRN_FALSE;
     break;
   }
+}
+
+bool
+grn_obj_is_temporary(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!obj) {
+    return false;
+  }
+
+  if (!GRN_DB_OBJP(obj)) {
+    return false;
+  }
+
+  if (DB_OBJ(obj)->id & GRN_OBJ_TMP_OBJECT) {
+    return true;
+  }
+
+  if (DB_OBJ(obj)->id == GRN_ID_NIL) {
+    return true;
+  }
+
+  return false;
 }
 
 grn_bool

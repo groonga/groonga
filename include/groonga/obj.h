@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2015-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -32,6 +32,8 @@ extern "C" {
 } while (0)
 
 GRN_API grn_bool grn_obj_is_true(grn_ctx *ctx, grn_obj *obj);
+
+GRN_API bool grn_obj_is_temporary(grn_ctx *ctx, grn_obj *obj);
 
 GRN_API grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_bulk(grn_ctx *ctx, grn_obj *obj);
