@@ -8691,7 +8691,9 @@ update_source_hook(grn_ctx *ctx, grn_obj *obj)
         /* invalid target */
         break;
       }
-      grn_obj_unlink(ctx, source);
+      if (!grn_obj_is_temporary(ctx, source)) {
+        grn_obj_unlink(ctx, source);
+      }
     }
   }
   grn_obj_close(ctx, &data);
@@ -9116,7 +9118,9 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
 
       source = grn_ctx_at(ctx, source_ids[i]);
       bool source_is_vector_column = grn_obj_is_vector_column(ctx, source);
-      grn_obj_unlink(ctx, source);
+      if (!grn_obj_is_temporary(ctx, source)) {
+        grn_obj_unlink(ctx, source);
+      }
       if (!source_is_vector_column) {
         continue;
       }
@@ -9191,8 +9195,12 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
         }
       }
     }
-    grn_obj_unlink(ctx, source_type);
-    grn_obj_unlink(ctx, source);
+    if (!grn_obj_is_temporary(ctx, source_type)) {
+      grn_obj_unlink(ctx, source_type);
+    }
+    if (!grn_obj_is_temporary(ctx, source)) {
+      grn_obj_unlink(ctx, source);
+    }
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }

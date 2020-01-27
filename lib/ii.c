@@ -13365,11 +13365,14 @@ grn_ii_builder_fin(grn_ctx *ctx, grn_ii_builder *builder)
   if (builder->srcs) {
     int i;
     for (i = 0; i < builder->n_srcs; i++) {
-      grn_obj_unlink(ctx, builder->srcs[i]);
+      if (!grn_obj_is_temporary(ctx, builder->srcs[i])) {
+        grn_obj_unlink(ctx, builder->srcs[i]);
+      }
     }
     GRN_FREE(builder->srcs);
   }
-  if (builder->src_table) {
+  if (builder->src_table &&
+      !grn_obj_is_temporary(ctx, builder->src_table)) {
     grn_obj_unlink(ctx, builder->src_table);
   }
   return GRN_SUCCESS;
