@@ -9199,10 +9199,12 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   }
 
 exit:
-  if (lexicon_domain && lexicon_domain_is_table) {
+  if (lexicon_domain &&
+      lexicon_domain_is_table &&
+      !grn_obj_is_temporary(ctx, lexicon_domain)) {
     grn_obj_unlink(ctx, lexicon_domain);
   }
-  if (lexicon) {
+  if (lexicon && !grn_obj_is_temporary(ctx, lexicon)) {
     grn_obj_unlink(ctx, lexicon);
   }
 
