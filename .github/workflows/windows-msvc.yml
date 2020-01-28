@@ -10,24 +10,11 @@ jobs:
       matrix:
         label:
           - Visual Studio 2019 x64
-          - Visual Studio 2019 x86
-          - Visual Studio 2017 x64
         include:
           - label: Visual Studio 2019 x64
-            toolset: v142
             architecture: x64
             artifact_name: vs-2019-x64
             cmake_generator: Visual Studio 16 2019
-          - label: Visual Studio 2019 x86
-            toolset: v142
-            architecture: Win32
-            artifact_name: vs-2019-x86
-            cmake_generator: Visual Studio 16 2019
-          - label: Visual Studio 2017 x64
-            toolset: v141
-            architecture: x64
-            artifact_name: vs-2017-x64
-            cmake_generator: Visual Studio 15 2017
     runs-on: windows-latest
     steps:
       - name: Disable crash dialog
@@ -84,7 +71,6 @@ jobs:
             -DARROW_VERBOSE_THIRDPARTY_BUILD=ON `
             -DBOOST_SOURCE=BUNDLED `
             -DCMAKE_BUILD_TYPE=Release `
-            -DCMAKE_GENERATOR_TOOLSET=${{ matrix.toolset }} `
             "-DCMAKE_INSTALL_PREFIX=${FULL_INSTALL_FOLDER}"
           cmake --build ..\apache-arrow-build --config Release
           cmake --build ..\apache-arrow-build --config Release --target Install
@@ -105,7 +91,6 @@ jobs:
             -G "${{ matrix.cmake_generator }}" ^
             "-DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%" ^
             -DCMAKE_BUILD_TYPE=ReWithDebInfo ^
-            -DCMAKE_GENERATOR_TOOLSET=${{ matrix.toolset }} ^
             -DGRN_WITH_APACHE_ARROW=yes ^
             -DGRN_WITH_MRUBY=yes
           type ..\groonga-build\CMakeFiles\CMakeError.log
