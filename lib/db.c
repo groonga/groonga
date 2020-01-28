@@ -8257,7 +8257,9 @@ grn_obj_get_value_column_vector(grn_ctx *ctx, grn_obj *obj,
           (lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
         is_var_size_element = true;
       }
-      grn_obj_unlink(ctx, lexicon);
+      if (!grn_obj_is_temporary(ctx, lexicon)) {
+        grn_obj_unlink(ctx, lexicon);
+      }
     }
   }
 
