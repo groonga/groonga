@@ -33,6 +33,7 @@ jobs:
             python3-pip \
             rapidjson-dev \
             ruby-dev \
+            zip \
             zlib1g-dev
       - name: Install Sphinx
         run: |
@@ -67,6 +68,8 @@ jobs:
           make \
             -C packages/windows \
             installer-${{ matrix.architecture }}
+
+      # Artifact
       - name: Prepare artifacts
         run: |
           mkdir -p windows-mingw-${{ matrix.architecture }}
@@ -75,3 +78,51 @@ jobs:
         with:
           name: windows-mingw-${{ matrix.architecture }}
           path: windows-mingw-${{ matrix.architecture }}
+
+      # Release
+      - name: Asset
+        if: |
+          startsWith("refs/tags/", github.ref)
+        id: asset
+        run: |
+          version=$(echo ${{ github.ref }} | sed -e 's,^refs/tags/v,,')
+          echo ::set-output name=version::${version}
+          base_name=groonga-${version}-${{ matrix.architecture }}
+          echo ::set-output name=base_name::${base_name}
+      - name: Create assets
+        if: |
+          startsWith("refs/tags/", github.ref)
+        run: |
+          base_name=${{ steps.asset.outputs.base_name }}
+          cp -a \
+            windows-mingw-${{ matrix.architecture }} \
+            ${base_name}
+          zip -r \
+            ${base_name}.zip
+            ${base_name}
+      - name: Ensure creating release
+        if: |
+          startsWith("refs/tags/", github.ref)
+        id: create-release
+        uses: actions/github-script@0.4.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor
+            const fs = require("fs");
+            const path = ".github/workflows/ensure-creating-release.js";
+            const script = fs.readFileSync(path).toString();
+            const func = new AsyncFunction("require", "github", "context", script);
+            return await func(require, github, context);
+      - name: Upload to release
+        uses: actions/upload-release-asset@v1.0.1
+        if: |
+          startsWith("refs/tags/", github.ref)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.result }}
+          asset_path: ${{ steps.asset.outputs.base_name }}.zip
+          asset_name: ${{ steps.asset.outputs.base_name }}.zip
+          asset_content_type: application/zip

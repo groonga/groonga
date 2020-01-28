@@ -96,6 +96,8 @@ jobs:
           type ..\groonga-build\CMakeFiles\CMakeError.log
           cmake --build ..\groonga-build --config RelWithDebInfo
           cmake --build ..\groonga-build --config RelWithDebInfo --target Install
+
+      # Artifact
       - name: Prepare artifacts
         run: |
           . .\env.ps1
@@ -109,6 +111,43 @@ jobs:
         with:
           name: ${{ matrix.artifact_name }}
           path: ..\packages
+
+      # Release
+      - name: Asset
+        if: |
+          startsWith("refs/tags/", github.ref)
+        id: asset
+        run: |
+          . .\env.ps1
+          Write-Output "::set-output name=base_name::${INSTALL_FOLDER}"
+      - name: Ensure creating release
+        if: |
+          startsWith("refs/tags/", github.ref)
+        id: create-release
+        uses: actions/github-script@0.4.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor
+            const fs = require("fs");
+            const path = ".github/workflows/ensure-creating-release.js";
+            const script = fs.readFileSync(path).toString();
+            const func = new AsyncFunction("require", "github", "context", script);
+            return await func(require, github, context);
+      - name: Upload to release
+        uses: actions/upload-release-asset@v1.0.1
+        if: |
+          startsWith("refs/tags/", github.ref)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.result }}
+          asset_path: ../packages/${{ steps.asset.outputs.base_name }}.zip
+          asset_name: ${{ steps.asset.outputs.base_name }}.zip
+          asset_content_type: application/zip
+
+      # Test
       - name: Update MSYS2
         run: |
           ridk exec pacman --sync --refresh --sysupgrade --noconfirm
