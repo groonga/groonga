@@ -12189,7 +12189,9 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
           obj->header.domain = domain;
           GRN_BULK_REWIND(obj);
         }
-        grn_obj_unlink(ctx, d);
+        if (!grn_obj_is_temporary(ctx, d)) {
+          grn_obj_unlink(ctx, d);
+        }
       }
       break;
     }
