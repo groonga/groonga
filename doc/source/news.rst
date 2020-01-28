@@ -7,6 +7,25 @@
 News
 ====
 
+.. _release-9-1-2:
+
+Release 9.1.2 - 2020-01-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [tools] Added a script for copying only files of specify tables or columns.
+
+  * This script name is copy-related-files.rb.
+  * This script is useful if we want to extract specifying tables or columns from a huge database.
+  * Related files of specific tables or columns may need for reproducing fault.
+  * If we difficult to offer a database whole, we can extract related files of target tables or columns by this tool. 
+
+* [:doc:`reference/commands/shutdown`] Accept ``/d/shutdown?mode=immediate`` immediately even when all threads are used.
+
+  * This feature can only use on the Groonga HTTP server.
+
 .. _release-9-1-1:
 
 Release 9.1.1 - 2020-01-07

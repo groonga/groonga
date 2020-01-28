@@ -33,11 +33,53 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 9.1.1 - 2020-01-07"
-msgstr "9.1.1リリース - 2019-01-07"
+msgid "Release 9.1.2 - 2020-01-29"
+msgstr "9.1.2リリース - 2019-01-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[tools] Added a script for copying only files of specify tables or columns."
+msgstr ""
+"[tools] 指定したテーブルまたはカラムのファイルのみをコピーするスクリプトを追"
+"加しました。"
+
+msgid "This script name is copy-related-files.rb."
+msgstr "このスクリプトの名前は、copy-related-files.rbです。"
+
+msgid ""
+"This script is useful if we want to extract specifying tables or columns "
+"from a huge database."
+msgstr ""
+"このスクリプトは非常に大きいデータベースから指定したテーブルまたはカラムを抽"
+"出したい場合に便利です。"
+
+msgid ""
+"Related files of specific tables or columns may need for reproducing fault."
+msgstr ""
+"特定のテーブルまたはカラムに関連するファイルは、障害の再現に必要なことがあり"
+"ます。"
+
+msgid ""
+"If we difficult to offer a database whole, we can extract related files of "
+"target tables or columns by this tool."
+msgstr ""
+"データベースをまるごと提供するのが難しい場合は、このツールを使って対象のテー"
+"ブルまたはカラムに関連するファイルを抽出できます。"
+
+msgid ""
+"[:doc:`reference/commands/shutdown`] Accept ``/d/shutdown?mode=immediate`` "
+"immediately even when all threads are used."
+msgstr ""
+"[:doc:`reference/commands/shutdown`] 全てのスレッドが使われている場合でも、 "
+"``/d/shutdown?mode=immediate`` を即時受け付けるようにしました。"
+
+msgid "This feature can only use on the Groonga HTTP server."
+msgstr "この機能はGroonga HTTPサーバでのみ使えます。"
+
+msgid "Release 9.1.1 - 2020-01-07"
+msgstr "9.1.1リリース - 2019-01-07"
 
 msgid ""
 "[:doc:`/reference/commands/load`] Added support for Apache Arrow format data."
