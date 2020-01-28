@@ -8004,7 +8004,9 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
       break;
     }
   }
-  grn_obj_unlink(ctx, lexicon);
+  if (!grn_obj_is_temporary(ctx, lexicon)) {
+    grn_obj_unlink(ctx, lexicon);
+  }
 
   return rc;
 }
