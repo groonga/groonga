@@ -6355,7 +6355,9 @@ grn_obj_cast_to_record(grn_ctx *ctx,
     }
   }
 
-  grn_obj_unlink(ctx, table);
+  if (!grn_obj_is_temporary(ctx, table)) {
+    grn_obj_unlink(ctx, table);
+  }
 
   return rc;
 }
