@@ -112,7 +112,7 @@ jobs:
         if: |
           startsWith('refs/tags/', github.ref)
         run: |
-          tar czf ${{ matrix.id }}.tar.gz ${{ repositories_path }}
+          tar czf ${{ matrix.id }}.tar.gz ${{ matrix.repositories_path }}
       - name: Ensure creating release
         if: |
           startsWith('refs/tags/', github.ref)
