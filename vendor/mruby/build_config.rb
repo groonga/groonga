@@ -1,3 +1,5 @@
+MRuby::Lockfile.disable
+
 MRuby::Build.new do |conf|
   if ENV["MRUBY_VC"] || ENV["VisualStudioVersion"] || ENV["VSINSTALLDIR"]
     toolchain :visualcpp
