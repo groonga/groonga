@@ -115,14 +115,14 @@ jobs:
       # Release
       - name: Asset
         if: |
-          startsWith("refs/tags/", github.ref)
+          startsWith('refs/tags/', github.ref)
         id: asset
         run: |
           . .\env.ps1
           Write-Output "::set-output name=base_name::${INSTALL_FOLDER}"
       - name: Ensure creating release
         if: |
-          startsWith("refs/tags/", github.ref)
+          startsWith('refs/tags/', github.ref)
         id: create-release
         uses: actions/github-script@0.4.0
         with:
@@ -138,7 +138,7 @@ jobs:
       - name: Upload to release
         uses: actions/upload-release-asset@v1.0.1
         if: |
-          startsWith("refs/tags/", github.ref)
+          startsWith('refs/tags/', github.ref)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
