@@ -1,4 +1,4 @@
-# Copyright(C) 2014-2019  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2014-2020  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,8 +15,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 require "pathname"
-
-require_relative "../vendor/apache-arrow-source/dev/tasks/linux-packages/package-task"
 
 module LaunchpadHelper
   private

@@ -1,4 +1,4 @@
-# Copyright(C) 2014-2019  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2014-2020  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,9 +16,11 @@
 
 require_relative "../vendor/apache-arrow-source/dev/tasks/linux-packages/package-task"
 require_relative "launchpad-helper"
+require_relative "repository-helper"
 
 class PackagesGroongaOrgPackageTask < PackageTask
   include LaunchpadHelper
+  include RepositoryHelper
 
   def define
     super
@@ -51,7 +53,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
     sh("rsync",
        "-av",
        "#{repositories_dir}/",
-       "packages@packages.groonga.org:public/")
+       "#{repository_rsync_base_path}/")
   end
 
   def define_release_tasks
