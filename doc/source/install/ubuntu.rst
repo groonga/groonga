@@ -25,6 +25,7 @@ Here are supported Ubuntu versions:
   * 16.04 LTS Xenial Xerus
   * 18.04 LTS Bionic Beaver
   * 19.04 Disco Dingo
+  * 19.10 Eoan Ermine
 
 Enable the universe repository to install Groonga::
 
