@@ -31,6 +31,16 @@ Improvements
   * This feature is experimental. Performance degrade by this feature.
   * If we load to span many tables, we can expect to keep in the usage of memory by this feature.
 
+* [:doc:`/install/centos`] We prepare ``groonga-release`` by version.
+
+  * Note that the little modification how to install.
+
+* [:doc:`/install/debian`] We use ``groonga-archive-keyring`` for adding the Groonga apt repository.
+
+  * We can easy to add the Groonga apt repository to our system by this improvement.
+  * ``groonga-archive-keyring`` includes all information for using the Groonga apt repository. Thus, we need not be conscious of changing of repository information or PGP key by installing this package.
+  * ``groonga-archive-keyring`` is deb package. Thus, we can easy to update by ``apt update``.
+
 .. _release-9-1-1:
 
 Release 9.1.1 - 2020-01-07
