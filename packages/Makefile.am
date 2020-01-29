@@ -1,5 +1,4 @@
 SUBDIRS =					\
-	yum					\
 	source					\
 	windows
 

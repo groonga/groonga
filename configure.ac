@@ -1820,8 +1820,6 @@ AC_CONFIG_FILES([
   packages/windows/language-files/Makefile
   packages/windows/patches/Makefile
   packages/windows/setup-x64.nsi
-  packages/yum/Makefile
-  packages/yum/env.sh
   plugins/Makefile
   plugins/functions/Makefile
   plugins/query_expanders/Makefile
