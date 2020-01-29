@@ -31,8 +31,6 @@ Improvements
   * This feature is experimental. Performance degrade by this feature.
   * If we load to span many tables, we can expect to keep in the usage of memory by this feature.
 
-* [mruby] Updated mruby from ``d2a2af2481908d208965ecc77a8f11065c50be49`` to ``59464f35285e65598bca94ad9e77be6848a8e8be``.
-
 .. _release-9-1-1:
 
 Release 9.1.1 - 2020-01-07
