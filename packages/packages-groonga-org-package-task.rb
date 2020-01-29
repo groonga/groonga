@@ -41,15 +41,6 @@ class PackagesGroongaOrgPackageTask < PackageTask
   def release(target_namespace)
     base_dir = __send__("#{target_namespace}_dir")
     repositories_dir = "#{base_dir}/repositories"
-    if File.exist?(repositories_dir)
-      sh("sudo", "-H",
-         "chown",
-         "-R",
-         "#{Process.uid}:#{Process.gid}",
-         repositories_dir)
-      rm_rf(repositories_dir)
-    end
-    Rake::Task["#{target_namespace}:build"].invoke
     sh("rsync",
        "-av",
        "#{repositories_dir}/",
