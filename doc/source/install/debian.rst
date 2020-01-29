@@ -19,17 +19,16 @@ stretch
 
 .. versionadded:: 7.0.5
 
-Add the Groonga apt repository.
+Install ``groonga-archive-keyring``::
 
-/etc/apt/sources.list.d/groonga.list::
-
-  deb [signed-by=/usr/share/keyrings/groonga-archive-keyring.gpg] https://packages.groonga.org/debian/ stretch main
-  deb-src [signed-by=/usr/share/keyrings/groonga-archive-keyring.gpg] https://packages.groonga.org/debian/ stretch main
+  % sudo apt update
+  % sudo apt install -y -V wget
+  % wget https://packages.groonga.org/debian/groonga-archive-keyring-latest-stretch.deb
+  % sudo apt install -y -V ./groonga-archive-keyring-latest-stretch.deb
+  % sudo apt update
 
 Install::
 
-  % sudo wget -O /usr/share/keyrings/groonga-archive-keyring.gpg https://packages.groonga.org/debian/groonga-archive-keyring.gpg
-  % sudo apt update
   % sudo apt install -y -V groonga
 
 .. include:: server-use.inc
@@ -84,17 +83,16 @@ buster
 
 .. versionadded:: 9.1.1
 
-Add the Groonga apt repository.
+Install ``groonga-archive-keyring``::
 
-/etc/apt/sources.list.d/groonga.list::
-
-  deb [signed-by=/usr/share/keyrings/groonga-archive-keyring.gpg] https://packages.groonga.org/debian/ buster main
-  deb-src [signed-by=/usr/share/keyrings/groonga-archive-keyring.gpg] https://packages.groonga.org/debian/ buster main
+  % sudo apt update
+  % sudo apt install -y -V wget
+  % wget https://packages.groonga.org/debian/groonga-archive-keyring-latest-buster.deb
+  % sudo apt install -y -V ./groonga-archive-keyring-latest-buster.deb
+  % sudo apt update
 
 Install::
 
-  % sudo wget -O /usr/share/keyrings/groonga-archive-keyring.gpg https://packages.groonga.org/debian/groonga-archive-keyring.gpg
-  % sudo apt update
   % sudo apt install -y -V groonga
 
 .. include:: server-use.inc
