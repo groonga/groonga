@@ -131,11 +131,8 @@ msgstr ""
 msgid "stretch"
 msgstr ""
 
-msgid "Add the Groonga apt repository."
-msgstr "Groongaのaptリポジトリを追加します。"
-
-msgid "/etc/apt/sources.list.d/groonga.list::"
-msgstr ""
+msgid "Install ``groonga-archive-keyring``::"
+msgstr "``groonga-archive-keyring`` パッケージのインストール::"
 
 msgid ""
 "If you want to use ``TokenFilterStem`` as a token filter, install groonga-"
@@ -782,6 +779,9 @@ msgid "18.04 LTS Bionic Beaver"
 msgstr ""
 
 msgid "19.04 Disco Dingo"
+msgstr ""
+
+msgid "19.10 Eoan Ermine"
 msgstr ""
 
 msgid "Enable the universe repository to install Groonga::"
