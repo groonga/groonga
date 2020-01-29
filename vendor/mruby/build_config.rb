@@ -1,4 +1,4 @@
-MRuby::Lockfile.disable
+MRuby::Lockfile.disable if MRuby.const_defined?(:Lockfile)
 
 MRuby::Build.new do |conf|
   if ENV["MRUBY_VC"] || ENV["VisualStudioVersion"] || ENV["VSINSTALLDIR"]
