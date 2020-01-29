@@ -51,10 +51,7 @@ libmruby_la_SOURCES = \
 	../mruby-source/mrbgems/mruby-print/src/print.c \
 	../mruby-source/mrbgems/mruby-proc-ext/src/proc.c \
 	../mruby-source/mrbgems/mruby-proc-ext/test/proc.c \
-	../mruby-source/mrbgems/mruby-random/src/mt19937ar.c \
-	../mruby-source/mrbgems/mruby-random/src/mt19937ar.h \
 	../mruby-source/mrbgems/mruby-random/src/random.c \
-	../mruby-source/mrbgems/mruby-random/src/random.h \
 	../mruby-source/mrbgems/mruby-range-ext/src/range.c \
 	../mruby-source/mrbgems/mruby-sprintf/src/kernel.c \
 	../mruby-source/mrbgems/mruby-sprintf/src/sprintf.c \
