@@ -105,7 +105,8 @@ allow_unsigned_uploads = 0
          "#{@package}_#{@deb_upstream_version}.orig.tar.gz")
       cd(deb_archive_base_name) do
         cp_r(absolute_debian_dir, "debian")
-        version_suffix = "ubuntu#{version}.1"
+        minor_version = ENV["UBUNTU_MINOR_VERSION"] || "1"
+        version_suffix = "ubuntu#{version}.#{minor_version}"
         deb_version = "#{detect_current_deb_version}.#{version_suffix}"
         sh("dch",
            "--distribution", code_name,
