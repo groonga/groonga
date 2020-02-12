@@ -18,7 +18,6 @@
 /* Groonga related constants */
 #define GRN_CONFIG_PATH      "${GRN_CONFIG_PATH}"
 #define GRN_LOG_PATH         "${GRN_LOG_PATH}"
-#define GRN_VERSION          "${GRN_VERSION}"
 
 #define GRN_DEFAULT_DB_KEY   "${GRN_DEFAULT_DB_KEY}"
 #define GRN_DEFAULT_ENCODING "${GRN_DEFAULT_ENCODING}"
