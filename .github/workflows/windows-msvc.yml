@@ -155,9 +155,6 @@ jobs:
         run: |
           ridk exec pacman --sync --noconfirm mingw-w64-x86_64-gcc
       - name: Install grntest
-        # TODO: Waiting for Bundler 2.2.0
-        if: |
-          false
         run: |
           git clone --depth 1 `
             https://github.com/groonga/grntest.git `
@@ -166,9 +163,6 @@ jobs:
           bundle install
           bundle exec ruby -rdevkit -S rake install
       - name: Test Groonga
-        # TODO: Fix broken arrow package.
-        if: |
-          false
         run: |
           . .\env.ps1
           grntest `
