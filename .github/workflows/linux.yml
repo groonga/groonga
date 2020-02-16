@@ -28,18 +28,10 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y -V \
-            apt-transport-https \
             lsb-release \
-            gnupg \
             wget
-          keyring=/usr/share/keyrings/apache-arrow-keyring.gpg
-          distribution=$(lsb_release --id --short | tr 'A-Z' 'a-z')
-          code_name=$(lsb_release --codename --short)
-          sudo wget \
-            -O ${keyring} \
-            https://apache.bintray.com/arrow/${distribution}/apache-arrow-keyring.gpg
-          echo "deb [arch=amd64 signed-by=${keyring}] https://apache.bintray.com/arrow/${distribution}/ ${code_name} main" | \
-            sudo tee /etc/apt/sources.list.d/apache-arrow.list
+          wget https://apache.bintray.com/arrow/${distribution}(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-archive-keyring-latest-$(lsb_release --codename --short).deb
+          sudo apt install -y -V ./apache-arrow-archive-keyring-latest-$(lsb_release --codename --short).deb
       - name: Install packages
         run: |
           sudo apt update
