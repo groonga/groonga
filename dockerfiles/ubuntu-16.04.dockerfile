@@ -39,7 +39,7 @@ RUN \
   apt install -qq -y \
     lsb-release \
     wget && \
-  wget https://apache.bintray.com/arrow/${distribution}(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-archive-keyring-latest-$(lsb_release --codename --short).deb \
+  wget https://apache.bintray.com/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-archive-keyring-latest-$(lsb_release --codename --short).deb \
   apt install -y -V ./apache-arrow-archive-keyring-latest-$(lsb_release --codename --short).deb && \
   apt update -qq && \
   apt install -qq -y libarrow-dev
