@@ -663,10 +663,17 @@ namespace grnarrow {
         grn_column_(nullptr),
         buffer_() {
       const auto &column_name = arrow_field->name();
-      grn_column_ = grn_loader_get_column(ctx_,
-                                          grn_loader,
-                                          column_name.data(),
-                                          column_name.size());
+      if (grn_loader_) {
+        grn_column_ = grn_loader_get_column(ctx_,
+                                            grn_loader_,
+                                            column_name.data(),
+                                            column_name.size());
+      } else {
+        grn_column_ = grn_obj_column(ctx_,
+                                     grn_table,
+                                     column_name.data(),
+                                     column_name.size());
+      }
 
       const auto &arrow_type = arrow_field->type();
       grn_id arrow_type_id = GRN_DB_VOID;
