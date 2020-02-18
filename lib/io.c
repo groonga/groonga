@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1989,6 +1989,18 @@ grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
     fi->fmo = NULL;
   }
   if (fi->fh != INVALID_HANDLE_VALUE) {
+    if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+      TCHAR path[MAX_PATH];
+      DWORD path_length_including_null =
+        GetFinalPathNameByHandleA(fi->fh,
+                                  &path,
+                                  MAX_PATH,
+                                  0);
+      if (path_length_including_null != 0 &&
+          path_length_including_null <= MAX_PATH) {
+        GRN_LOG(ctx, GRN_LOG_DEBUG, "[io][close] <%s>", path);
+      }
+    }
     CloseHandle(fi->fh);
     CRITICAL_SECTION_FIN(fi->cs);
     fi->fh = INVALID_HANDLE_VALUE;
