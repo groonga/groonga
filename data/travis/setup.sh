@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2013-2019  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2013-2020  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,16 @@ set -e
 
 if [ "$GROONGA_MASTER" = "yes" ]; then
   sudo apt-get update -qq
+  sudo apt install -qq -y -V \
+       lsb-release \
+       wget
+  wget https://apache.bintray.com/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-archive-keyring-latest-$(lsb_release --codename --short).deb
+  sudo apt install -qq -y -V ./apache-arrow-archive-keyring-latest-$(lsb_release --codename --short).deb
+  sudo apt-get update -qq
   sudo apt-get install -qq -y -V \
        autoconf-archive \
        autotools-dev \
+       libarrow-dev \
        libevent-dev \
        libmecab-dev \
        libmsgpack-dev \
