@@ -35,6 +35,7 @@ addons_linux_build: &addons_linux_build
 addons_macos_build: &addons_macos_build
   homebrew:
     brewfile: true
+    update: true
 
 addons_linux_docker: &addons_linux_docker
   apt:
