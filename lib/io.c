@@ -2128,6 +2128,7 @@ grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
   }
   fi->dev = st.st_dev;
   fi->inode = st.st_ino;
+  GRN_LOG(ctx, GRN_LOG_DEBUG, "[io][open] <%s>", path);
   return GRN_SUCCESS;
 }
 
@@ -2147,11 +2148,27 @@ grn_inline static grn_rc
 grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
 {
   if (fi->fd != -1) {
+    char path[PATH_MAX];
+    path[0] = '\0';
+    if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+      /* TODO: This works only on Linux. We need to use more portable way. */
+      char proc_path[PATH_MAX];
+      grn_snprintf(proc_path, PATH_MAX, PATH_MAX, "/proc/self/fd/%d", fi->fd);
+      ssize_t path_size = readlink(proc_path, path, PATH_MAX);
+      if (path_size == -1) {
+        errno = 0;
+      } else {
+        path[path_size] = '\0';
+      }
+    }
     if (grn_close(fi->fd) == -1) {
       SERR("close");
       return ctx->rc;
     }
     fi->fd = -1;
+    if (path[0]) {
+      GRN_LOG(ctx, GRN_LOG_DEBUG, "[io][close] <%s>", path);
+    }
   }
   return GRN_SUCCESS;
 }
