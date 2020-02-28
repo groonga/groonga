@@ -1,0 +1,17 @@
+version: "3.5"
+
+services:
+  ubuntu-16.04:
+    image: groonga/groonga-ubuntu-16.04
+    build:
+      context: .
+      dockerfile: dockerfiles/ubuntu-16.04.dockerfile
+    volumes:
+      - .:/source:delegated
+  ubuntu-18.04:
+    image: groonga/groonga-ubuntu-18.04
+    build:
+      context: .
+      dockerfile: dockerfiles/ubuntu-18.04.dockerfile
+    volumes:
+      - .:/source:delegated
