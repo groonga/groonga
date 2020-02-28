@@ -182,6 +182,7 @@ grn_loader_get_column(grn_ctx *ctx,
   grn_obj *range = grn_ctx_at(ctx, DB_OBJ(column)->range);
   if (grn_obj_is_table(ctx, range)) {
     GRN_PTR_PUT(ctx, &(loader->ranges), range);
+    grn_column_get_all_index_columns(ctx, range, &(loader->indexes));
   }
   grn_column_get_all_index_columns(ctx, column, &(loader->indexes));
 
