@@ -123,8 +123,11 @@ build_script:
       cmake --build ..\apache-arrow-build --config Release
   - if "%GRN_WITH_APACHE_ARROW%" == "ON"
       cmake --build ..\apache-arrow-build --config Release --target Install
+  - if "%ARCH%" == "x86" set CMAKE_GENERATOR_PLATFORM=Win32
+  - if "%ARCH%" == "amd64" set CMAKE_GENERATOR_PLATFORM=x64
   - cmake .
       -G "%CMAKE_GENERATOR_NAME%"
+      -A "%CMAKE_GENERATOR_PLATFORM%"
       -DCMAKE_INSTALL_PREFIX=%FULL_GROONGA_INSTALL_FOLDER%
       -DGRN_WITH_APACHE_ARROW=%GRN_WITH_APACHE_ARROW%
       -DGRN_WITH_MRUBY=ON
