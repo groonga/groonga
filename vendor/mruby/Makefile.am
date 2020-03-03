@@ -35,6 +35,10 @@ if PLATFORM_WIN32
 AM_CPPFLAGS +=					\
 	-DMRB_BUILD_AS_DLL			\
 	-DMRB_CORE
+if OS_32BIT
+AM_CPPFLAGS +=					\
+	-DMRB_METHOD_T_STRUCT
+endif
 endif
 
 include sources.am
