@@ -159,21 +159,19 @@ before_test:
   - del test\command\suite\select\filter\equal\vector_element_float.test
 test_script:
   - set GRN_EXPR_OPTIMIZE=yes
-  - if "%ARCH%" == "amd64"
-      ruby test\command\bin\grntest
-        --groonga %FULL_GROONGA_INSTALL_FOLDER%\bin\groonga.exe
-        --base-directory test\command
-        --reporter mark
-        --n-workers 2
-        --timeout 60
-        --read-timeout 30
-        --n-retries 2
-        %CD%\test\command\suite
+  - ruby test\command\bin\grntest
+      --groonga %FULL_GROONGA_INSTALL_FOLDER%\bin\groonga.exe
+      --base-directory test\command
+      --reporter mark
+      --n-workers 2
+      --timeout 60
+      --read-timeout 30
+      --n-retries 2
+      %CD%\test\command\suite
   # On AppVeyor, インストール directory is recognized unicode escape sequence.
   - set GROONGA_INSTALL_SUB_FOLDER_ESCAPED=\u7E67\uFF64\u7E5D\uFF73\u7E67\uFF79\u7E5D\u533B\u30FB\u7E5D\uFF6B
-  - if "%ARCH%" == "amd64"
-      ruby test\command_line\run-test.rb
-        --groonga-install-prefix=%APPVEYOR_BUILD_FOLDER%\\%GROONGA_INSTALL_SUB_FOLDER_ESCAPED%\\%GROONGA_INSTALL_FOLDER%
+  - ruby test\command_line\run-test.rb
+      --groonga-install-prefix=%APPVEYOR_BUILD_FOLDER%\\%GROONGA_INSTALL_SUB_FOLDER_ESCAPED%\\%GROONGA_INSTALL_FOLDER%
 
 # Enable this to debug on AppVeyor
 # on_failure:
