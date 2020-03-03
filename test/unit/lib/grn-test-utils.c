@@ -352,7 +352,7 @@ grn_collect_logger_new(void)
   grn_logger_info *logger;
 
   logger = g_new(grn_logger_info, 1);
-  logger->max_level = GRN_LOG_DUMP;
+  logger->max_level = GRN_LOG_DEBUG;
   logger->flags = GRN_LOG_TIME | GRN_LOG_MESSAGE | GRN_LOG_LOCATION;
   logger->func = grn_collect_logger_log_func;
   logger->func_arg = grn_logger_context_new(logger);
