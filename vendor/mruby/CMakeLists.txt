@@ -98,9 +98,6 @@ if(GRN_WITH_MRUBY)
   endif()
   if(WIN32)
     list(APPEND MRUBY_DEFINITIONS "MRB_BUILD_AS_DLL" "MRB_CORE")
-    if(CMAKE_GENERATOR_PLATFORM STREQUAL "Win32")
-      list(APPEND MRUBY_DEFINITIONS "MRB_METHOD_T_STRUCT")
-    endif()
   endif()
   set_source_files_properties(${MRUBY_ALL_SOURCES}
     PROPERTIES
