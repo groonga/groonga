@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2015 Brazil
+  Copyright(C) 2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -75,6 +76,15 @@ writer_write(mrb_state *mrb, mrb_value self)
     break;
   }
 
+  return mrb_nil_value();
+}
+
+static mrb_value
+writer_flush(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  int flags = 0;
+  grn_ctx_output_flush(ctx, flags);
   return mrb_nil_value();
 }
 
@@ -233,6 +243,7 @@ grn_mrb_writer_init(grn_ctx *ctx)
   klass = mrb_define_class_under(mrb, module, "Writer", mrb->object_class);
 
   mrb_define_method(mrb, klass, "write", writer_write, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "flush", writer_flush, MRB_ARGS_REQ(0));
   mrb_define_method(mrb, klass, "open_array",
                     writer_open_array, MRB_ARGS_REQ(2));
   mrb_define_method(mrb, klass, "close_array",
