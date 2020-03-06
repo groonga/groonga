@@ -25,6 +25,8 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Enable Apache Arrow repository
+        if:
+          matrix.use-arrow
         run: |
           sudo apt update
           sudo apt install -y -V \
@@ -82,6 +84,9 @@ jobs:
       - name: Test
         run: |
           export COLUMNS=79
+          if [ "${{ matrix.use-arrow }}" = "true" ]; then
+            sudo gem install red-arrow
+          fi
           test/command/run-test.sh \
             --n-retries=3 \
             --reporter=mark \
