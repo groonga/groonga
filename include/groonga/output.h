@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -80,6 +80,12 @@ GRN_API void grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type outp
 GRN_API void grn_output_envelope(grn_ctx *ctx, grn_rc rc,
                                  grn_obj *head, grn_obj *body, grn_obj *foot,
                                  const char *file, int line);
+GRN_API void grn_output_envelope_open(grn_ctx *ctx, grn_obj *output);
+GRN_API void grn_output_envelope_close(grn_ctx *ctx,
+                                       grn_obj *output,
+                                       grn_rc rc,
+                                       const char *file,
+                                       int line);
 
 GRN_API void grn_output_array_open(grn_ctx *ctx,
                                    grn_obj *outbuf,

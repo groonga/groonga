@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1096,7 +1096,7 @@ static void
 h_output_set_header(grn_ctx *ctx,
                     grn_obj *header,
                     grn_rc rc,
-                    long long int content_length,
+                    int64_t content_length,
                     grn_obj *foot)
 {
   switch (rc) {
@@ -1303,13 +1303,19 @@ h_output_typed(grn_ctx *ctx, int flags, ht_context *hc)
 {
   grn_rc expr_rc = ctx->rc;
   grn_sock fd = hc->msg->u.fd;
-  grn_obj header, head, body, foot;
+  grn_obj header_;
+  grn_obj head_;
+  grn_obj body_;
+  grn_obj foot_;
+  grn_obj *header = NULL;
+  grn_obj *head = NULL;
+  grn_obj *body = NULL;
+  grn_obj *foot = NULL;
   char *chunk = NULL;
   unsigned int chunk_size = 0;
   int recv_flags;
   grn_bool should_return_body;
-
-  if (!(flags & GRN_CTX_TAIL)) { return; }
+  grn_bool is_last_message = (flags & GRN_CTX_TAIL);
 
   switch (hc->msg->header.qtype) {
   case 'G' :
@@ -1321,29 +1327,90 @@ h_output_typed(grn_ctx *ctx, int flags, ht_context *hc)
     break;
   }
 
-  GRN_TEXT_INIT(&header, 0);
-  GRN_TEXT_INIT(&head, 0);
-  GRN_TEXT_INIT(&body, GRN_OBJ_DO_SHALLOW_COPY);
-  GRN_TEXT_INIT(&foot, 0);
+  GRN_TEXT_INIT(&header_, 0);
+  GRN_TEXT_INIT(&head_, 0);
+  GRN_TEXT_INIT(&body_, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_TEXT_INIT(&foot_, 0);
 
   grn_ctx_recv(ctx, &chunk, &chunk_size, &recv_flags);
-  GRN_TEXT_SET(ctx, &body, chunk, chunk_size);
+  GRN_TEXT_SET(ctx, &body_, chunk, chunk_size);
 
-  output_envelope(ctx, expr_rc, &head, &body, &foot);
-  h_output_set_header(ctx, &header, expr_rc,
-                      GRN_TEXT_LEN(&head) +
-                      GRN_TEXT_LEN(&body) +
-                      GRN_TEXT_LEN(&foot),
-                      &foot);
-  if (should_return_body) {
-    h_output_send(ctx, fd, &header, &head, &body, &foot);
-  } else {
-    h_output_send(ctx, fd, &header, NULL, NULL, NULL);
+  if (!hc->in_body) {
+    if (is_last_message) {
+      output_envelope(ctx, expr_rc, &head_, &body_, &foot_);
+      h_output_set_header(ctx, &header_, expr_rc,
+                          GRN_TEXT_LEN(&head_) +
+                          GRN_TEXT_LEN(&body_) +
+                          GRN_TEXT_LEN(&foot_),
+                          &foot_);
+      head = &head_;
+      body = &body_;
+      foot = &foot_;
+      hc->is_chunked = false;
+    } else {
+      grn_obj first_output;
+      GRN_TEXT_INIT(&first_output, 0);
+      grn_output_envelope_open(ctx, &first_output);
+      size_t first_output_length = GRN_TEXT_LEN(&first_output);
+      grn_text_printf(ctx, &head_, "%x\r\n", (unsigned int)first_output_length);
+      GRN_TEXT_PUT(ctx, &head_,
+                   GRN_TEXT_VALUE(&first_output),
+                   first_output_length);
+      GRN_TEXT_PUTS(ctx, &head_, "\r\n");
+      GRN_OBJ_FIN(ctx, &first_output);
+      head = &head_;
+
+      h_output_set_header(ctx, &header_, expr_rc, -1, NULL);
+      hc->is_chunked = true;
+    }
+    header = &header_;
+    hc->in_body = true;
   }
-  GRN_OBJ_FIN(ctx, &foot);
-  GRN_OBJ_FIN(ctx, &body);
-  GRN_OBJ_FIN(ctx, &head);
-  GRN_OBJ_FIN(ctx, &header);
+
+  if (GRN_TEXT_LEN(&body_) > 0) {
+    if (hc->is_chunked) {
+      grn_text_printf(ctx, &head_,
+                      "%x\r\n", (unsigned int)GRN_TEXT_LEN(&body_));
+      head = &head_;
+      GRN_TEXT_PUTS(ctx, &foot_, "\r\n");
+      foot = &foot_;
+    }
+    body = &body_;
+  }
+
+  if (is_last_message) {
+    if (hc->is_chunked) {
+      grn_obj last_output;
+      GRN_TEXT_INIT(&last_output, 0);
+      grn_output_envelope_close(ctx,
+                                &last_output,
+                                expr_rc,
+                                input_path,
+                                number_of_lines);
+      size_t last_output_length = GRN_TEXT_LEN(&last_output);
+      grn_text_printf(ctx, &foot_, "%x\r\n", (unsigned int)last_output_length);
+      GRN_TEXT_PUT(ctx, &foot_,
+                   GRN_TEXT_VALUE(&last_output), last_output_length);
+      GRN_TEXT_PUTS(ctx, &foot_, "\r\n");
+      GRN_OBJ_FIN(ctx, &last_output);
+
+      GRN_TEXT_PUTS(ctx, &foot_, "0\r\n");
+      GRN_TEXT_PUTS(ctx, &foot_, "Connection: close\r\n");
+      GRN_TEXT_PUTS(ctx, &foot_, "\r\n");
+      foot = &foot_;
+    }
+  }
+
+  if (should_return_body) {
+    h_output_send(ctx, fd, header, head, body, foot);
+  } else {
+    h_output_send(ctx, fd, header, NULL, NULL, NULL);
+  }
+
+  GRN_OBJ_FIN(ctx, &foot_);
+  GRN_OBJ_FIN(ctx, &body_);
+  GRN_OBJ_FIN(ctx, &head_);
+  GRN_OBJ_FIN(ctx, &header_);
 }
 
 static void

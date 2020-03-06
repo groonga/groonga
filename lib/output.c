@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2330,20 +2330,38 @@ msgpack_buffer_writer(void* data, const char* buf, msgpack_size_t len)
 #define JSON_CALLBACK_PARAM "callback"
 
 static void
-grn_output_envelope_json_v1(grn_ctx *ctx,
-                            grn_rc rc,
-                            grn_obj *head,
-                            grn_obj *body,
-                            grn_obj *foot,
-                            double started,
-                            double elapsed,
-                            const char *file,
-                            int line)
+grn_output_envelope_open_json_v1(grn_ctx *ctx,
+                                 grn_obj *head,
+                                 bool is_stream_mode,
+                                 bool have_body)
 {
   size_t indent_level = 0;
 
   json_array_open(ctx, head, &indent_level);
+}
+
+static void
+grn_output_envelope_close_json_v1(grn_ctx *ctx,
+                                  grn_obj *head,
+                                  grn_obj *foot,
+                                  bool is_stream_mode,
+                                  bool have_body,
+                                  grn_rc rc,
+                                  double started,
+                                  double elapsed,
+                                  const char *file,
+                                  int line)
+{
+  size_t indent_level = 0;
+  if (ctx->impl->output.is_pretty) {
+    indent_level++;
+  }
+
   {
+    if (is_stream_mode && have_body) {
+      json_element_end(ctx, head, indent_level);
+    }
+
     json_array_open(ctx, head, &indent_level);
     {
       grn_text_itoa(ctx, head, rc);
@@ -2399,7 +2417,7 @@ grn_output_envelope_json_v1(grn_ctx *ctx,
     json_array_close(ctx, head, &indent_level);
   }
 
-  if (GRN_TEXT_LEN(body)) {
+  if (!is_stream_mode && have_body) {
     json_element_end(ctx, head, indent_level);
   }
 
@@ -2407,20 +2425,72 @@ grn_output_envelope_json_v1(grn_ctx *ctx,
 }
 
 static void
-grn_output_envelope_json(grn_ctx *ctx,
-                         grn_rc rc,
-                         grn_obj *head,
-                         grn_obj *body,
-                         grn_obj *foot,
-                         double started,
-                         double elapsed,
-                         const char *file,
-                         int line)
+grn_output_envelope_json_v1(grn_ctx *ctx,
+                            grn_obj *head,
+                            grn_obj *body,
+                            grn_obj *foot,
+                            grn_rc rc,
+                            double started,
+                            double elapsed,
+                            const char *file,
+                            int line)
+{
+  bool is_stream_mode = false;
+  bool have_body = GRN_TEXT_LEN(body) > 0;
+  grn_output_envelope_open_json_v1(ctx,
+                                   head,
+                                   is_stream_mode,
+                                   have_body);
+  grn_output_envelope_close_json_v1(ctx,
+                                    head,
+                                    foot,
+                                    is_stream_mode,
+                                    have_body,
+                                    rc,
+                                    started,
+                                    elapsed,
+                                    file,
+                                    line);
+}
+
+static void
+grn_output_envelope_open_json(grn_ctx *ctx,
+                              grn_obj *head,
+                              bool is_stream_mode,
+                              bool have_body)
 {
   size_t indent_level = 0;
 
   json_map_open(ctx, head, &indent_level);
   {
+    if (is_stream_mode && have_body) {
+      json_key(ctx, head, "body");
+    }
+  }
+}
+
+static void
+grn_output_envelope_close_json(grn_ctx *ctx,
+                               grn_obj *head,
+                               grn_obj *foot,
+                               bool is_stream_mode,
+                               bool have_body,
+                               grn_rc rc,
+                               double started,
+                               double elapsed,
+                               const char *file,
+                               int line)
+{
+  size_t indent_level = 0;
+  if (ctx->impl->output.is_pretty) {
+    indent_level++;
+  }
+
+  {
+    if (is_stream_mode && have_body) {
+      json_value_end(ctx, head, indent_level);
+    }
+
     json_key(ctx, head, "header");
     json_map_open(ctx, head, &indent_level);
     {
@@ -2487,13 +2557,41 @@ grn_output_envelope_json(grn_ctx *ctx,
     }
     json_map_close(ctx, head, &indent_level);
 
-    if (GRN_TEXT_LEN(body)) {
+    if (!is_stream_mode && have_body) {
       json_value_end(ctx, head, indent_level);
       json_key(ctx, head, "body");
     }
-
-    json_map_close(ctx, foot, &indent_level);
   }
+  json_map_close(ctx, foot, &indent_level);
+}
+
+static void
+grn_output_envelope_json(grn_ctx *ctx,
+                         grn_obj *head,
+                         grn_obj *body,
+                         grn_obj *foot,
+                         grn_rc rc,
+                         double started,
+                         double elapsed,
+                         const char *file,
+                         int line)
+{
+  bool is_stream_mode = false;
+  bool have_body = GRN_TEXT_LEN(body) > 0;
+  grn_output_envelope_open_json(ctx,
+                                head,
+                                is_stream_mode,
+                                have_body);
+  grn_output_envelope_close_json(ctx,
+                                    head,
+                                    foot,
+                                    is_stream_mode,
+                                    have_body,
+                                    rc,
+                                    started,
+                                    elapsed,
+                                    file,
+                                    line);
 }
 
 #ifdef GRN_WITH_MESSAGE_PACK
@@ -2757,38 +2855,44 @@ grn_output_envelope(grn_ctx *ctx,
 
   switch (ctx->impl->output.type) {
   case GRN_CONTENT_JSON:
-    {
-      grn_obj *expr;
-      grn_obj *jsonp_func = NULL;
+  {
+    grn_obj *expr;
+    grn_obj *jsonp_func = NULL;
 
-      expr = ctx->impl->curr_expr;
-      if (expr) {
-        jsonp_func = grn_expr_get_var(ctx, expr, JSON_CALLBACK_PARAM,
-                                      strlen(JSON_CALLBACK_PARAM));
-      }
-      if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
-        GRN_TEXT_PUT(ctx, head,
-                     GRN_TEXT_VALUE(jsonp_func), GRN_TEXT_LEN(jsonp_func));
-        GRN_TEXT_PUTC(ctx, head, '(');
-      }
-
-      if (grn_ctx_get_command_version(ctx) <= GRN_COMMAND_VERSION_2) {
-        grn_output_envelope_json_v1(ctx, rc,
-                                    head, body, foot,
-                                    started, elapsed,
-                                    file, line);
-      } else {
-        grn_output_envelope_json(ctx, rc,
-                                 head, body, foot,
-                                 started, elapsed,
-                                 file, line);
-      }
-
-      if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
-        GRN_TEXT_PUTS(ctx, foot, ");");
-      }
+    expr = ctx->impl->curr_expr;
+    if (expr) {
+      jsonp_func = grn_expr_get_var(ctx, expr, JSON_CALLBACK_PARAM,
+                                    strlen(JSON_CALLBACK_PARAM));
     }
-    break;
+    if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
+      GRN_TEXT_PUT(ctx, head,
+                   GRN_TEXT_VALUE(jsonp_func), GRN_TEXT_LEN(jsonp_func));
+      GRN_TEXT_PUTC(ctx, head, '(');
+    }
+
+    if (grn_ctx_get_command_version(ctx) <= GRN_COMMAND_VERSION_2) {
+      grn_output_envelope_json_v1(ctx,
+                                  head, body, foot,
+                                  rc,
+                                  started,
+                                  elapsed,
+                                  file,
+                                  line);
+    } else {
+      grn_output_envelope_json(ctx,
+                               head, body, foot,
+                               rc,
+                               started,
+                               elapsed,
+                               file,
+                               line);
+    }
+
+    if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
+      GRN_TEXT_PUTS(ctx, foot, ");");
+    }
+  }
+  break;
   case GRN_CONTENT_TSV:
     grn_text_itoa(ctx, head, rc);
     GRN_TEXT_PUTC(ctx, head, '\t');
@@ -2812,52 +2916,52 @@ grn_output_envelope(grn_ctx *ctx,
     GRN_TEXT_PUTS(ctx, foot, "\nEND");
     break;
   case GRN_CONTENT_XML:
-    {
-      char buf[GRN_TABLE_MAX_KEY_SIZE];
-      int is_select = 0;
-      if (!rc && ctx->impl->curr_expr) {
-        int len = grn_obj_name(ctx, ctx->impl->curr_expr,
-                               buf, GRN_TABLE_MAX_KEY_SIZE);
-        buf[len] = '\0';
-        is_select = strcmp(buf, "select") == 0;
-      }
-      if (is_select) {
-        grn_obj transformed;
-        GRN_TEXT_INIT(&transformed, 0);
-        transform_xml(ctx, body, &transformed);
-        if (body->header.impl_flags & GRN_OBJ_REFER) {
-          body->header.impl_flags &= ~GRN_OBJ_DO_SHALLOW_COPY;
-        }
-        GRN_TEXT_SET(ctx, body,
-                     GRN_TEXT_VALUE(&transformed), GRN_TEXT_LEN(&transformed));
-        GRN_OBJ_FIN(ctx, &transformed);
-      } else {
-        GRN_TEXT_PUTS(ctx, head, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<RESULT CODE=\"");
-        grn_text_itoa(ctx, head, rc);
-        GRN_TEXT_PUTS(ctx, head, "\" UP=\"");
-        grn_text_ftoa(ctx, head, started);
-        GRN_TEXT_PUTS(ctx, head, "\" ELAPSED=\"");
-        grn_text_ftoa(ctx, head, elapsed);
-        GRN_TEXT_PUTS(ctx, head, "\">\n");
-        if (rc != GRN_SUCCESS) {
-          GRN_TEXT_PUTS(ctx, head, "<ERROR>");
-          grn_text_escape_xml(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
-          if (ctx->errfunc && ctx->errfile) {
-            /* TODO: output backtrace */
-            GRN_TEXT_PUTS(ctx, head, "<INFO FUNC=\"");
-            grn_text_escape_xml(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
-            GRN_TEXT_PUTS(ctx, head, "\" FILE=\"");
-            grn_text_escape_xml(ctx, head, ctx->errfile, strlen(ctx->errfile));
-            GRN_TEXT_PUTS(ctx, head, "\" LINE=\"");
-            grn_text_itoa(ctx, head, ctx->errline);
-            GRN_TEXT_PUTS(ctx, head, "\"/>");
-          }
-          GRN_TEXT_PUTS(ctx, head, "</ERROR>");
-        }
-        GRN_TEXT_PUTS(ctx, foot, "\n</RESULT>");
-      }
+  {
+    char buf[GRN_TABLE_MAX_KEY_SIZE];
+    int is_select = 0;
+    if (!rc && ctx->impl->curr_expr) {
+      int len = grn_obj_name(ctx, ctx->impl->curr_expr,
+                             buf, GRN_TABLE_MAX_KEY_SIZE);
+      buf[len] = '\0';
+      is_select = strcmp(buf, "select") == 0;
     }
-    break;
+    if (is_select) {
+      grn_obj transformed;
+      GRN_TEXT_INIT(&transformed, 0);
+      transform_xml(ctx, body, &transformed);
+      if (body->header.impl_flags & GRN_OBJ_REFER) {
+        body->header.impl_flags &= ~GRN_OBJ_DO_SHALLOW_COPY;
+      }
+      GRN_TEXT_SET(ctx, body,
+                   GRN_TEXT_VALUE(&transformed), GRN_TEXT_LEN(&transformed));
+      GRN_OBJ_FIN(ctx, &transformed);
+    } else {
+      GRN_TEXT_PUTS(ctx, head, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<RESULT CODE=\"");
+      grn_text_itoa(ctx, head, rc);
+      GRN_TEXT_PUTS(ctx, head, "\" UP=\"");
+      grn_text_ftoa(ctx, head, started);
+      GRN_TEXT_PUTS(ctx, head, "\" ELAPSED=\"");
+      grn_text_ftoa(ctx, head, elapsed);
+      GRN_TEXT_PUTS(ctx, head, "\">\n");
+      if (rc != GRN_SUCCESS) {
+        GRN_TEXT_PUTS(ctx, head, "<ERROR>");
+        grn_text_escape_xml(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
+        if (ctx->errfunc && ctx->errfile) {
+          /* TODO: output backtrace */
+          GRN_TEXT_PUTS(ctx, head, "<INFO FUNC=\"");
+          grn_text_escape_xml(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
+          GRN_TEXT_PUTS(ctx, head, "\" FILE=\"");
+          grn_text_escape_xml(ctx, head, ctx->errfile, strlen(ctx->errfile));
+          GRN_TEXT_PUTS(ctx, head, "\" LINE=\"");
+          grn_text_itoa(ctx, head, ctx->errline);
+          GRN_TEXT_PUTS(ctx, head, "\"/>");
+        }
+        GRN_TEXT_PUTS(ctx, head, "</ERROR>");
+      }
+      GRN_TEXT_PUTS(ctx, foot, "\n</RESULT>");
+    }
+  }
+  break;
   case GRN_CONTENT_MSGPACK:
 #ifdef GRN_WITH_MESSAGE_PACK
     if (grn_ctx_get_command_version(ctx) <= GRN_COMMAND_VERSION_2) {
@@ -2877,6 +2981,123 @@ grn_output_envelope(grn_ctx *ctx,
     break;
   case GRN_CONTENT_APACHE_ARROW :
     break;
+  case GRN_CONTENT_NONE:
+    break;
+  }
+}
+
+void
+grn_output_envelope_open(grn_ctx *ctx, grn_obj *output)
+{
+  switch (ctx->impl->output.type) {
+  case GRN_CONTENT_JSON:
+    {
+      grn_obj *expr;
+      grn_obj *jsonp_func = NULL;
+
+      expr = ctx->impl->curr_expr;
+      if (expr) {
+        jsonp_func = grn_expr_get_var(ctx,
+                                      expr,
+                                      JSON_CALLBACK_PARAM,
+                                      strlen(JSON_CALLBACK_PARAM));
+      }
+      if (jsonp_func && GRN_TEXT_LEN(jsonp_func) > 0) {
+        GRN_TEXT_PUT(ctx, output,
+                     GRN_TEXT_VALUE(jsonp_func), GRN_TEXT_LEN(jsonp_func));
+        GRN_TEXT_PUTC(ctx, output, '(');
+      }
+
+      bool is_stream_mode = true;
+      bool have_body = true;
+      if (grn_ctx_get_command_version(ctx) <= GRN_COMMAND_VERSION_2) {
+        grn_output_envelope_open_json_v1(ctx,
+                                         output,
+                                         is_stream_mode,
+                                         have_body);
+      } else {
+        grn_output_envelope_open_json(ctx,
+                                      output,
+                                      is_stream_mode,
+                                      have_body);
+      }
+    }
+    break;
+  case GRN_CONTENT_TSV:
+  case GRN_CONTENT_XML:
+  case GRN_CONTENT_MSGPACK:
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+  case GRN_CONTENT_APACHE_ARROW :
+  case GRN_CONTENT_NONE:
+    break;
+  }
+}
+
+void
+grn_output_envelope_close(grn_ctx *ctx,
+                          grn_obj *output,
+                          grn_rc rc,
+                          const char *file,
+                          int line)
+{
+  double started, finished, elapsed;
+
+  grn_timeval tv_now;
+  grn_timeval_now(ctx, &tv_now);
+  started = ctx->impl->tv.tv_sec;
+  started += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
+  finished = tv_now.tv_sec;
+  finished += tv_now.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
+  elapsed = finished - started;
+
+  switch (ctx->impl->output.type) {
+  case GRN_CONTENT_JSON:
+    {
+      grn_obj *expr;
+      grn_obj *jsonp_func = NULL;
+
+      expr = ctx->impl->curr_expr;
+      if (expr) {
+        jsonp_func = grn_expr_get_var(ctx, expr, JSON_CALLBACK_PARAM,
+                                      strlen(JSON_CALLBACK_PARAM));
+      }
+
+      bool is_stream_mode = true;
+      bool have_body = true;
+      if (grn_ctx_get_command_version(ctx) <= GRN_COMMAND_VERSION_2) {
+        grn_output_envelope_close_json_v1(ctx,
+                                          output,
+                                          output,
+                                          is_stream_mode,
+                                          have_body,
+                                          rc,
+                                          started,
+                                          elapsed,
+                                          file,
+                                          line);
+      } else {
+        grn_output_envelope_close_json(ctx,
+                                       output,
+                                       output,
+                                       is_stream_mode,
+                                       have_body,
+                                       rc,
+                                       started,
+                                       elapsed,
+                                       file,
+                                       line);
+      }
+
+      if (jsonp_func && GRN_TEXT_LEN(jsonp_func) > 0) {
+        GRN_TEXT_PUTS(ctx, output, ");");
+      }
+    }
+    break;
+  case GRN_CONTENT_TSV:
+  case GRN_CONTENT_XML:
+  case GRN_CONTENT_MSGPACK:
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+  case GRN_CONTENT_APACHE_ARROW :
   case GRN_CONTENT_NONE:
     break;
   }
