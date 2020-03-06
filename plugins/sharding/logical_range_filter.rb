@@ -21,39 +21,40 @@ module Groonga
 
       def run_body(input)
         output_columns = input[:output_columns] || "_key, *"
+        is_command_version3_or_later = (context.command_version >= 3)
 
         context = ExecuteContext.new(input)
         begin
-          executor = Executor.new(context)
-          executor.execute
-
-          result_sets = context.result_sets
-          n_elements = 1 # for columns
-          result_sets.each do |result_set|
-            n_elements += result_set.size
+          limit = context.limit
+          if limit < 0 and limit != -1
+            message =
+              "[logical_range_filter] negative limit must be -1: #{limit}"
+            raise InvalidArgument, message
           end
 
-          writer.array("RESULTSET", n_elements) do
-            first_result_set = result_sets.first
-            if first_result_set
-              writer.write_table_columns(first_result_set, output_columns)
-            end
-            limit = context.limit
-            if limit < 0
-              n_records = result_sets.inject(0) do |n, result_set|
-                n + result_set.size
+          n_elements = 0
+          writer.array("RESULTSET", -1) do
+            is_first = true
+            executor = Executor.new(context)
+            executor.execute do |result_set|
+              n_elements += result_set.size
+
+              if is_first
+                writer.write_table_columns(result_set, output_columns)
+                is_first = false
               end
-              limit = n_records + limit + 1
-            end
-            options = {}
-            result_sets.each do |result_set|
+
+              options = {}
               options[:limit] = limit
               writer.write_table_records(result_set, output_columns, options)
-              limit -= result_set.size
-              break if limit <= 0
+              writer.flush if is_command_version3_or_later
+              if limit != -1
+                limit -= result_set.size
+                break if limit <= 0
+              end
             end
           end
-          query_logger.log(:size, ":", "output(#{n_elements - 1})")
+          query_logger.log(:size, ":", "output(#{n_elements})")
         ensure
           context.close
         end
@@ -127,10 +128,16 @@ module Groonga
           @time_classify_types = detect_time_classify_types
         end
 
+        def clear
+          close
+          @result_sets.clear
+        end
+
         def close
           @temporary_tables.each do |table|
             table.close
           end
+          @temporary_tables.clear
         end
 
         def need_look_ahead?
@@ -215,9 +222,15 @@ module Groonga
 
         def execute
           first_shard = nil
+          have_result_set = false
           each_shard_executor do |shard_executor|
             first_shard ||= shard_executor.shard
             shard_executor.execute
+            @context.result_sets.each do |result_set|
+              have_result_set = true
+              yield(result_set)
+            end
+            @context.clear
             break if @context.current_limit.zero?
           end
           if first_shard.nil?
@@ -228,7 +241,7 @@ module Groonga
               "shard_key: <#{enumerator.shard_key_name}>"
             raise InvalidArgument, message
           end
-          if @context.result_sets.empty?
+          unless have_result_set
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
                                           :key_type => first_shard.table)
             @context.temporary_tables << result_set
@@ -236,6 +249,7 @@ module Groonga
             @context.dynamic_columns.apply_initial(targets)
             @context.dynamic_columns.apply_filtered(targets)
             @context.result_sets << result_set
+            yield(result_set)
           end
         end
 
