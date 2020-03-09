@@ -17,8 +17,10 @@ timestamp_file = File.expand_path(ARGV.shift)
 FileUtils.rm_rf(mruby_build_dir)
 
 unless system(RbConfig.ruby,
-              "#{mruby_source_dir}/minirake",
+              "-S",
+              "rake",
               "-f", "#{mruby_source_dir}/Rakefile",
+              "--verbose",
               "MRUBY_CONFIG=#{build_config_rb}",
               "MRUBY_BUILD_DIR=#{mruby_build_dir}",
               "INSTALL_DIR=#{mruby_build_dir}/bin",
