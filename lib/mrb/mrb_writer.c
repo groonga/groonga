@@ -169,7 +169,20 @@ writer_write_table_columns(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-writer_write_table_records(mrb_state *mrb, mrb_value self)
+writer_open_table_records(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_int mrb_n_records;
+  mrb_get_args(mrb, "i", &mrb_n_records);
+  grn_ctx_output_table_records_open(ctx, mrb_n_records);
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+writer_write_table_records_content_internal(mrb_state *mrb,
+                                           mrb_value self,
+                                           bool only_content)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   mrb_value mrb_table;
@@ -213,10 +226,34 @@ writer_write_table_records(mrb_state *mrb, mrb_value self)
       grn_mrb_ctx_check(mrb);
     }
   }
-  GRN_OUTPUT_TABLE_RECORDS(table, &format);
+  if (only_content) {
+    grn_ctx_output_table_records_content(ctx, table, &format);
+  } else {
+    grn_ctx_output_table_records(ctx, table, &format);
+  }
   GRN_OBJ_FORMAT_FIN(ctx, &format);
 
   return mrb_nil_value();
+}
+
+static mrb_value
+writer_write_table_records_content(mrb_state *mrb, mrb_value self)
+{
+  return writer_write_table_records_content_internal(mrb, self, true);
+}
+
+static mrb_value
+writer_close_table_records(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_ctx_output_table_records_close(ctx);
+  return mrb_nil_value();
+}
+
+static mrb_value
+writer_write_table_records(mrb_state *mrb, mrb_value self)
+{
+  return writer_write_table_records_content_internal(mrb, self, false);
 }
 
 static mrb_value
@@ -255,6 +292,12 @@ grn_mrb_writer_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "write_table_columns",
                     writer_write_table_columns, MRB_ARGS_REQ(2));
+  mrb_define_method(mrb, klass, "open_table_records",
+                    writer_open_table_records, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "write_table_records_content",
+                    writer_write_table_records_content, MRB_ARGS_ARG(2, 1));
+  mrb_define_method(mrb, klass, "close_table_records",
+                    writer_close_table_records, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "write_table_records",
                     writer_write_table_records, MRB_ARGS_ARG(2, 1));
 
