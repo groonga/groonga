@@ -1751,7 +1751,7 @@ grn_output_table_records_by_columns(grn_ctx *ctx, grn_obj *outbuf,
   }
 }
 
-static grn_inline void
+void
 grn_output_table_records_open(grn_ctx *ctx,
                               grn_obj *outbuf,
                               grn_content_type output_type,
@@ -1763,7 +1763,7 @@ grn_output_table_records_open(grn_ctx *ctx,
   }
 }
 
-static grn_inline void
+void
 grn_output_table_records_close(grn_ctx *ctx,
                                grn_obj *outbuf,
                                grn_content_type output_type)
@@ -1774,13 +1774,14 @@ grn_output_table_records_close(grn_ctx *ctx,
 }
 
 void
-grn_output_table_records(grn_ctx *ctx, grn_obj *outbuf,
-                         grn_content_type output_type,
-                         grn_obj *table, grn_obj_format *format)
+grn_output_table_records_content(grn_ctx *ctx,
+                                 grn_obj *outbuf,
+                                 grn_content_type output_type,
+                                 grn_obj *table,
+                                 grn_obj_format *format)
 {
   grn_table_cursor *tc;
 
-  grn_output_table_records_open(ctx, outbuf, output_type, format->limit);
   tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0,
                              format->offset, format->limit,
                              GRN_CURSOR_ASCENDING);
@@ -1796,6 +1797,17 @@ grn_output_table_records(grn_ctx *ctx, grn_obj *outbuf,
   } else {
     ERRCLR(ctx);
   }
+}
+
+void
+grn_output_table_records(grn_ctx *ctx,
+                         grn_obj *outbuf,
+                         grn_content_type output_type,
+                         grn_obj *table,
+                         grn_obj_format *format)
+{
+  grn_output_table_records_open(ctx, outbuf, output_type, format->limit);
+  grn_output_table_records_content(ctx, outbuf, output_type, table, format);
   grn_output_table_records_close(ctx, outbuf, output_type);
 }
 

@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2010-2018 Brazil
+  Copyright(C) 2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -48,6 +49,18 @@ GRN_API void grn_output_table_columns(grn_ctx *ctx,
                                       grn_content_type output_type,
                                       grn_obj *table,
                                       grn_obj_format *format);
+GRN_API void grn_output_table_records_open(grn_ctx *ctx,
+                                           grn_obj *outbuf,
+                                           grn_content_type output_type,
+                                           int n_records);
+GRN_API void grn_output_table_records_content(grn_ctx *ctx,
+                                              grn_obj *outbuf,
+                                              grn_content_type output_type,
+                                              grn_obj *table,
+                                              grn_obj_format *format);
+GRN_API void grn_output_table_records_close(grn_ctx *ctx,
+                                            grn_obj *outbuf,
+                                            grn_content_type output_type);
 GRN_API void grn_output_table_records(grn_ctx *ctx,
                                       grn_obj *outbuf,
                                       grn_content_type output_type,

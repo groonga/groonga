@@ -172,6 +172,12 @@ GRN_API void grn_ctx_output_result_set(grn_ctx *ctx,
 GRN_API void grn_ctx_output_table_columns(grn_ctx *ctx,
                                           grn_obj *table,
                                           grn_obj_format *format);
+GRN_API void grn_ctx_output_table_records_open(grn_ctx *ctx,
+                                               int n_records);
+GRN_API void grn_ctx_output_table_records_content(grn_ctx *ctx,
+                                                  grn_obj *table,
+                                                  grn_obj_format *format);
+GRN_API void grn_ctx_output_table_records_close(grn_ctx *ctx);
 GRN_API void grn_ctx_output_table_records(grn_ctx *ctx,
                                           grn_obj *table,
                                           grn_obj_format *format);

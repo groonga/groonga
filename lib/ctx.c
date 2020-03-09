@@ -2224,7 +2224,37 @@ grn_ctx_output_table_columns(grn_ctx *ctx, grn_obj *table,
 }
 
 void
-grn_ctx_output_table_records(grn_ctx *ctx, grn_obj *table,
+grn_ctx_output_table_records_open(grn_ctx *ctx, int n_records)
+{
+  grn_output_table_records_open(ctx,
+                                ctx->impl->output.buf,
+                                ctx->impl->output.type,
+                                n_records);
+}
+
+void
+grn_ctx_output_table_records_close(grn_ctx *ctx)
+{
+  grn_output_table_records_close(ctx,
+                                 ctx->impl->output.buf,
+                                 ctx->impl->output.type);
+}
+
+void
+grn_ctx_output_table_records_content(grn_ctx *ctx,
+                                     grn_obj *table,
+                                     grn_obj_format *format)
+{
+  grn_output_table_records_content(ctx,
+                                   ctx->impl->output.buf,
+                                   ctx->impl->output.type,
+                                   table,
+                                   format);
+}
+
+void
+grn_ctx_output_table_records(grn_ctx *ctx,
+                             grn_obj *table,
                              grn_obj_format *format)
 {
   grn_output_table_records(ctx,
