@@ -25,47 +25,7 @@ load --table Logs_20150205
 ]
 [[0,0.0,0.0],4]
 logical_range_filter Logs timestamp   --filter 'message == "Shutdown"'   --min "2015-02-03 23:59:59"   --min_border "include"   --max "2015-02-05 00:00:00"   --max_border "include"   --offset 1   --limit -3
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        "memo",
-        "ShortText"
-      ],
-      [
-        "message",
-        "Text"
-      ],
-      [
-        "timestamp",
-        "Time"
-      ]
-    ],
-    [
-      "2015-02-04 00:00:00",
-      "Shutdown",
-      1422975600.0
-    ],
-    [
-      "2015-02-04 00:00:01",
-      "Shutdown",
-      1422975601.0
-    ]
-  ]
-]
+[[[-22,0.0,0.0],"[logical_range_filter] negative limit must be -1: -3"]]
 #>logical_range_filter --filter "message == \"Shutdown\"" --limit "-3" --logical_table "Logs" --max "2015-02-05 00:00:00" --max_border "include" --min "2015-02-03 23:59:59" --min_border "include" --offset "1" --shard_key "timestamp"
-#:000000000000000 filter(2): Logs_20150203.timestamp greater_equal 1422975599.0
-#:000000000000000 filter(1): Logs_20150203.message equal "Shutdown"
-#:000000000000000 filter(3): Logs_20150204.message equal "Shutdown"
-#:000000000000000 sort(3)[Logs_20150204]: timestamp
-#:000000000000000 filter(2): Logs_20150205.timestamp less_equal 1423062000.0
-#:000000000000000 filter(1): Logs_20150205.message equal "Shutdown"
-#:000000000000000 sort(1)[Logs_20150205]: timestamp
-#:000000000000000 output(4)
 #:000000000000000 send(0)
-#<000000000000000 rc=0
+#<000000000000000 rc=-22

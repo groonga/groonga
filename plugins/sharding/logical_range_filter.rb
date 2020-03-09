@@ -33,27 +33,27 @@ module Groonga
           end
 
           n_elements = 0
-          writer.array("RESULTSET", -1) do
-            is_first = true
-            executor = Executor.new(context)
-            executor.execute do |result_set|
-              n_elements += result_set.size
+          is_first = true
+          executor = Executor.new(context)
+          executor.execute do |result_set|
+            n_elements += result_set.size
 
-              if is_first
-                writer.write_table_columns(result_set, output_columns)
-                is_first = false
-              end
+            if is_first
+              writer.open_array("RESULTSET", -1)
+              writer.write_table_columns(result_set, output_columns)
+              is_first = false
+            end
 
-              options = {}
-              options[:limit] = limit
-              writer.write_table_records(result_set, output_columns, options)
-              writer.flush if is_command_version3_or_later
-              if limit != -1
-                limit -= result_set.size
-                break if limit <= 0
-              end
+            options = {}
+            options[:limit] = limit
+            writer.write_table_records(result_set, output_columns, options)
+            writer.flush if is_command_version3_or_later
+            if limit != -1
+              limit -= result_set.size
+              break if limit <= 0
             end
           end
+          writer.close_array unless is_first
           query_logger.log(:size, ":", "output(#{n_elements})")
         ensure
           context.close
@@ -97,11 +97,10 @@ module Groonga
         attr_reader :dynamic_columns
         attr_accessor :current_offset
         attr_accessor :current_limit
-        attr_reader :result_sets
-        attr_reader :temporary_tables
         attr_reader :threshold
         attr_reader :large_shard_threshold
         attr_reader :time_classify_types
+        attr_reader :result_sets
         def initialize(input)
           @input = input
           @use_range_index = parse_use_range_index(@input[:use_range_index])
@@ -120,7 +119,7 @@ module Groonga
           @current_limit = @limit
 
           @result_sets = []
-          @temporary_tables = []
+          @temporary_tables_stack = []
 
           @threshold = compute_threshold
           @large_shard_threshold = compute_large_shard_threshold
@@ -128,16 +127,33 @@ module Groonga
           @time_classify_types = detect_time_classify_types
         end
 
-        def clear
-          close
-          @result_sets.clear
+        def temporary_tables
+          @temporary_tables_stack.last
+        end
+
+        def push
+          @temporary_tables_stack << []
+        end
+
+        def shift
+          temporary_tables = @temporary_tables_stack.shift
+          temporary_tables.each do |table|
+            table.close
+          end
+          temporary_tables.clear
         end
 
         def close
-          @temporary_tables.each do |table|
-            table.close
+          until @temporary_tables_stack.empty?
+            shift
           end
-          @temporary_tables.clear
+          @result_sets.clear
+        end
+
+        def consume_result_sets
+          while (result_set = @result_sets.shift)
+            yield(result_set)
+          end
         end
 
         def need_look_ahead?
@@ -226,11 +242,10 @@ module Groonga
           each_shard_executor do |shard_executor|
             first_shard ||= shard_executor.shard
             shard_executor.execute
-            @context.result_sets.each do |result_set|
+            @context.consume_result_sets do |result_set|
               have_result_set = true
               yield(result_set)
             end
-            @context.clear
             break if @context.current_limit.zero?
           end
           if first_shard.nil?
@@ -244,12 +259,13 @@ module Groonga
           unless have_result_set
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
                                           :key_type => first_shard.table)
+            @context.push
             @context.temporary_tables << result_set
             targets = [[result_set]]
             @context.dynamic_columns.apply_initial(targets)
             @context.dynamic_columns.apply_filtered(targets)
-            @context.result_sets << result_set
             yield(result_set)
+            @context.shift
           end
         end
 
@@ -266,6 +282,7 @@ module Groonga
             executors = []
             previous_executor = nil
             enumerator.send(each_method) do |shard, shard_range|
+              @context.push
               current_executor = ShardExecutor.new(@context, shard, shard_range)
               if previous_executor
                 previous_executor.next_executor = current_executor
@@ -275,10 +292,18 @@ module Groonga
               previous_executor = current_executor
             end
             executors << previous_executor if previous_executor
-            executors.each(&block)
+            return if executors.empty?
+            executors.each_with_index do |executor, i|
+              yield(executor)
+              # Keep the previous data for window function
+              @context.shift if i > 0
+            end
+            @context.shift
           else
             enumerator.send(each_method) do |shard, shard_range|
+              @context.push
               yield(ShardExecutor.new(@context, shard, shard_range))
+              @context.shift
             end
           end
         end
