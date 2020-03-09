@@ -302,9 +302,17 @@ output_envelope(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj *
   grn_output_envelope(ctx, rc, head, body, foot, input_path, number_of_lines);
 }
 
+typedef struct {
+  FILE *output;
+  grn_bool is_outputting;
+} standalone_output_context;
+
 static void
-s_output_raw(grn_ctx *ctx, int flags, FILE *stream)
+s_output_raw(grn_ctx *ctx,
+             int flags,
+             standalone_output_context *output_context)
 {
+  FILE *stream = output_context->output;
   char *chunk = NULL;
   unsigned int chunk_size = 0;
   int recv_flags;
@@ -316,7 +324,8 @@ s_output_raw(grn_ctx *ctx, int flags, FILE *stream)
     written += chunk_size;
   }
 
-  if (flags & GRN_CTX_TAIL) {
+  grn_bool is_last_message = (flags & GRN_CTX_TAIL);
+  if (is_last_message) {
     grn_obj *command;
 
     if (grn_ctx_get_output_type(ctx) == GRN_CONTENT_GROONGA_COMMAND_LIST &&
@@ -338,58 +347,98 @@ s_output_raw(grn_ctx *ctx, int flags, FILE *stream)
 }
 
 static void
-s_output_typed(grn_ctx *ctx, int flags, FILE *stream)
+s_output_typed(grn_ctx *ctx,
+               int flags,
+               standalone_output_context *output_context)
 {
-  if (ctx && ctx->impl && (flags & GRN_CTX_TAIL)) {
-    char *chunk = NULL;
-    unsigned int chunk_size = 0;
-    int recv_flags;
-    grn_obj body;
-    grn_obj *command;
+  if (!ctx) {
+    return;
+  }
 
-    GRN_TEXT_INIT(&body, GRN_OBJ_DO_SHALLOW_COPY);
-    grn_ctx_recv(ctx, &chunk, &chunk_size, &recv_flags);
-    GRN_TEXT_SET(ctx, &body, chunk, chunk_size);
+  if (!ctx->impl) {
+    return;
+  }
 
-    if (GRN_TEXT_LEN(&body) || ctx->rc) {
-      grn_obj head, foot;
-      GRN_TEXT_INIT(&head, 0);
-      GRN_TEXT_INIT(&foot, 0);
-      output_envelope(ctx, ctx->rc, &head, &body, &foot);
-      fwrite(GRN_TEXT_VALUE(&head), 1, GRN_TEXT_LEN(&head), stream);
-      fwrite(GRN_TEXT_VALUE(&body), 1, GRN_TEXT_LEN(&body), stream);
-      fwrite(GRN_TEXT_VALUE(&foot), 1, GRN_TEXT_LEN(&foot), stream);
-      fputc('\n', stream);
-      fflush(stream);
-      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                    ":",
-                    "send(%" GRN_FMT_SIZE ")",
-                    GRN_TEXT_LEN(&head) +
-                    GRN_TEXT_LEN(&body) +
-                    GRN_TEXT_LEN(&foot) +
-                    1 /* for '\n' */);
-      GRN_OBJ_FIN(ctx, &head);
-      GRN_OBJ_FIN(ctx, &foot);
-    }
+  FILE *stream = output_context->output;
+  char *chunk = NULL;
+  unsigned int chunk_size = 0;
+  int recv_flags;
+  grn_obj body;
+  grn_obj *command;
+  bool is_last_message = (flags & GRN_CTX_TAIL);
+
+  GRN_TEXT_INIT(&body, GRN_OBJ_DO_SHALLOW_COPY);
+  grn_ctx_recv(ctx, &chunk, &chunk_size, &recv_flags);
+  GRN_TEXT_SET(ctx, &body, chunk, chunk_size);
+
+  if (GRN_TEXT_LEN(&body) == 0 && ctx->rc == GRN_SUCCESS) {
     GRN_OBJ_FIN(ctx, &body);
+    return;
+  }
 
+  grn_obj head, foot;
+  GRN_TEXT_INIT(&head, 0);
+  GRN_TEXT_INIT(&foot, 0);
+  if (!output_context->is_outputting) {
+    if (is_last_message) {
+      output_envelope(ctx, ctx->rc, &head, &body, &foot);
+    } else {
+      grn_output_envelope_open(ctx, &head);
+    }
+    output_context->is_outputting = true;
+  } else {
+    if (is_last_message) {
+      grn_output_envelope_close(ctx,
+                                &foot,
+                                ctx->rc,
+                                input_path,
+                                number_of_lines);
+    }
+  }
+
+  fwrite(GRN_TEXT_VALUE(&head), 1, GRN_TEXT_LEN(&head), stream);
+  fwrite(GRN_TEXT_VALUE(&body), 1, GRN_TEXT_LEN(&body), stream);
+  fwrite(GRN_TEXT_VALUE(&foot), 1, GRN_TEXT_LEN(&foot), stream);
+  size_t content_size =
+    GRN_TEXT_LEN(&head) +
+    GRN_TEXT_LEN(&body) +
+    GRN_TEXT_LEN(&foot);
+  if (is_last_message && content_size > 0) {
+    fputc('\n', stream);
+    content_size++;
+  }
+  fflush(stream);
+  if (content_size > 0) {
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                  ":",
+                  "send(%" GRN_FMT_SIZE ")",
+                  content_size);
+  }
+  GRN_OBJ_FIN(ctx, &head);
+  GRN_OBJ_FIN(ctx, &foot);
+
+  if (is_last_message) {
     command = GRN_CTX_USER_DATA(ctx)->ptr;
     GRN_BULK_REWIND(command);
+
+    output_context->is_outputting = false;
   }
+
+  GRN_OBJ_FIN(ctx, &body);
 }
 
 static void
 s_output(grn_ctx *ctx, int flags, void *arg)
 {
-  FILE *stream = (FILE *)arg;
+  standalone_output_context *output_context = arg;
 
   switch (grn_ctx_get_output_type(ctx)) {
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
   case GRN_CONTENT_NONE :
-    s_output_raw(ctx, flags, stream);
+    s_output_raw(ctx, flags, output_context);
     break;
   default :
-    s_output_typed(ctx, flags, stream);
+    s_output_typed(ctx, flags, output_context);
     break;
   }
 }
@@ -408,7 +457,10 @@ do_alone(int argc, char **argv)
     grn_obj command;
     GRN_TEXT_INIT(&command, 0);
     GRN_CTX_USER_DATA(ctx)->ptr = &command;
-    grn_ctx_recv_handler_set(ctx, s_output, output);
+    standalone_output_context output_context;
+    output_context.output = output;
+    output_context.is_outputting = false;
+    grn_ctx_recv_handler_set(ctx, s_output, &output_context);
     if (!argc) {
       grn_obj text;
       GRN_TEXT_INIT(&text, 0);
