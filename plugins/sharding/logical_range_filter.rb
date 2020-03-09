@@ -39,21 +39,35 @@ module Groonga
             n_elements += result_set.size
 
             if is_first
-              writer.open_array("RESULTSET", -1)
+              if is_command_version3_or_later
+                writer.open_map("RESULTSET", -1)
+              else
+                writer.open_array("RESULTSET", -1)
+              end
               writer.write_table_columns(result_set, output_columns)
+              writer.open_table_records(-1)
               is_first = false
             end
 
             options = {}
             options[:limit] = limit
-            writer.write_table_records(result_set, output_columns, options)
+            writer.write_table_records_content(result_set,
+                                               output_columns,
+                                               options)
             writer.flush if is_command_version3_or_later
             if limit != -1
               limit -= result_set.size
               break if limit <= 0
             end
           end
-          writer.close_array unless is_first
+          unless is_first
+            writer.close_table_records
+            if is_command_version3_or_later
+              writer.close_map
+            else
+              writer.close_array
+            end
+          end
           query_logger.log(:size, ":", "output(#{n_elements})")
         ensure
           context.close
