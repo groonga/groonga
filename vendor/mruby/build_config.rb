@@ -1,3 +1,5 @@
+$trace = true
+
 MRuby::Lockfile.disable if MRuby.const_defined?(:Lockfile)
 
 MRuby::Build.new do |conf|
