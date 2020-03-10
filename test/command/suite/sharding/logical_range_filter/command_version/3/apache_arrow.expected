@@ -39,7 +39,7 @@ return_code: int32
 start_time: timestamp[ns]
 elapsed_time: double
 	return_code	               start_time	elapsed_time
-0	          0	2020-03-10T17:56:31+09:00	    0.009892
+0	          0	1970-01-01T09:00:00+09:00	    0.000000
 #>logical_range_filter --command_version "3" --filter "message == \"Shutdown\"" --logical_table "Logs" --max "2015-02-05 00:00:00" --max_border "include" --min "2015-02-03 23:59:59" --min_border "include" --output_type "apache-arrow" --shard_key "timestamp"
 #:000000000000000 filter(1)[Logs_20150203]: message == "Shutdown"
 #:000000000000000 send(0)
