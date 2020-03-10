@@ -28,6 +28,9 @@ extern "C" {
   (((timeval)->tv_sec * GRN_TIME_MSEC_PER_SEC) +        \
    ((timeval)->tv_nsec / GRN_TIME_NSEC_PER_MSEC))
 
+#define GRN_TIMEVAL_TO_NSEC(timeval)                    \
+  (((timeval)->tv_sec * GRN_TIME_NSEC_PER_SEC) + (timeval)->tv_nsec)
+
 #define GRN_TIME_NSEC_PER_SEC 1000000000
 #define GRN_TIME_NSEC_PER_SEC_F 1000000000.0
 #define GRN_TIME_NSEC_PER_MSEC 1000000
@@ -40,6 +43,7 @@ extern "C" {
 #define GRN_TIME_USEC_PER_SEC 1000000
 #define GRN_TIME_USEC_PER_SEC_F 1000000.0
 #define GRN_TIME_USEC_PER_MSEC 1000
+#define GRN_TIME_USEC_TO_SEC(usec) ((usec) / GRN_TIME_USEC_PER_SEC)
 
 #define GRN_TIME_MSEC_TO_USEC(msec) ((msec) * GRN_TIME_USEC_PER_MSEC)
 
