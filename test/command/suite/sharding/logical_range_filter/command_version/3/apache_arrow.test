@@ -1,0 +1,41 @@
+#@require-interface http
+#@require-testee groonga
+
+#@include fixture/sharding/logical_range_filter/index/schema.grn
+
+load --table Logs_20150203
+[
+{"timestamp": "2015-02-03 23:59:58", "memo": "2015-02-03 23:59:58", "message": "Start"},
+{"timestamp": "2015-02-03 23:59:58", "memo": "2015-02-03 23:59:58", "message": "Shutdown"},
+{"timestamp": "2015-02-03 23:59:59", "memo": "2015-02-03 23:59:59", "message": "Start"},
+{"timestamp": "2015-02-03 23:59:59", "memo": "2015-02-03 23:59:59", "message": "Shutdown"}
+]
+
+load --table Logs_20150204
+[
+{"timestamp": "2015-02-04 00:00:00", "memo": "2015-02-04 00:00:00", "message": "Start"},
+{"timestamp": "2015-02-04 00:00:00", "memo": "2015-02-04 00:00:00", "message": "Shutdown"},
+{"timestamp": "2015-02-04 00:00:01", "memo": "2015-02-04 00:00:01", "message": "Start"},
+{"timestamp": "2015-02-04 00:00:01", "memo": "2015-02-04 00:00:01", "message": "Shutdown"},
+{"timestamp": "2015-02-04 23:59:59", "memo": "2015-02-04 23:59:59", "message": "Start"},
+{"timestamp": "2015-02-04 23:59:59", "memo": "2015-02-04 23:59:59", "message": "Shutdown"}
+]
+
+load --table Logs_20150205
+[
+{"timestamp": "2015-02-05 00:00:00", "memo": "2015-02-05 00:00:00", "message": "Start"},
+{"timestamp": "2015-02-05 00:00:00", "memo": "2015-02-05 00:00:00", "message": "Shutdown"},
+{"timestamp": "2015-02-05 00:00:01", "memo": "2015-02-05 00:00:01", "message": "Start"},
+{"timestamp": "2015-02-05 00:00:01", "memo": "2015-02-05 00:00:01", "message": "Shutdown"}
+]
+
+#@collect-query-log true
+logical_range_filter Logs timestamp \
+  --filter 'message == "Shutdown"' \
+  --min "2015-02-03 23:59:59" \
+  --min_border "include" \
+  --max "2015-02-05 00:00:00" \
+  --max_border "include" \
+  --command_version 3 \
+  --output_type apache-arrow
+#@collect-query-log false

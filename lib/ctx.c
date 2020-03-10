@@ -348,6 +348,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   msgpack_packer_init(&ctx->impl->output.msgpacker,
                       ctx, grn_msgpack_buffer_write);
 #endif
+  ctx->impl->output.arrow_stream_writer = NULL;
   grn_timeval_now(ctx, &ctx->impl->tv);
   ctx->impl->edge = NULL;
 #ifdef GRN_WITH_APACHE_ARROW
@@ -553,6 +554,9 @@ grn_ctx_impl_fin(grn_ctx *ctx)
     rc = grn_com_close(ctx, ctx->impl->com);
   }
   GRN_OBJ_FIN(ctx, &ctx->impl->query_log_buf);
+  if (ctx->impl->output.arrow_stream_writer) {
+    grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
+  }
   GRN_OBJ_FIN(ctx, &ctx->impl->output.names);
   GRN_OBJ_FIN(ctx, &ctx->impl->output.levels);
   rc = grn_obj_close(ctx, ctx->impl->output.buf);
@@ -1104,70 +1108,84 @@ get_content_mime_type(grn_ctx *ctx, const char *p, const char *pe)
   ctx->impl->output.type = GRN_CONTENT_NONE;
   ctx->impl->output.mime_type = "application/octet-stream";
 
-  if (p + 2 <= pe) {
-    switch (*p) {
-    case 'c' :
-      if (p + 3 == pe && !memcmp(p, "css", 3)) {
-        ctx->impl->output.type = GRN_CONTENT_NONE;
-        ctx->impl->output.mime_type = "text/css";
-      }
-      break;
-    case 'g' :
-      if (p + 3 == pe && !memcmp(p, "gif", 3)) {
-        ctx->impl->output.type = GRN_CONTENT_NONE;
-        ctx->impl->output.mime_type = "image/gif";
-      }
-      break;
-    case 'h' :
-      if (p + 4 == pe && !memcmp(p, "html", 4)) {
-        ctx->impl->output.type = GRN_CONTENT_NONE;
-        ctx->impl->output.mime_type = "text/html";
-      }
-      break;
-    case 'j' :
-      if (!memcmp(p, "js", 2)) {
-        if (p + 2 == pe) {
-          ctx->impl->output.type = GRN_CONTENT_NONE;
-          ctx->impl->output.mime_type = "text/javascript";
-        } else if (p + 4 == pe && !memcmp(p + 2, "on", 2)) {
-          ctx->impl->output.type = GRN_CONTENT_JSON;
-          ctx->impl->output.mime_type = "application/json";
-        }
-      } else if (p + 3 == pe && !memcmp(p, "jpg", 3)) {
-        ctx->impl->output.type = GRN_CONTENT_NONE;
-        ctx->impl->output.mime_type = "image/jpeg";
-      }
-      break;
-#ifdef GRN_WITH_MESSAGE_PACK
-    case 'm' :
-      if (p + 7 == pe && !memcmp(p, "msgpack", 7)) {
-        ctx->impl->output.type = GRN_CONTENT_MSGPACK;
-        ctx->impl->output.mime_type = "application/x-msgpack";
-      }
-      break;
-#endif
-    case 'p' :
-      if (p + 3 == pe && !memcmp(p, "png", 3)) {
-        ctx->impl->output.type = GRN_CONTENT_NONE;
-        ctx->impl->output.mime_type = "image/png";
-      }
-      break;
-    case 't' :
-      if (p + 3 == pe && !memcmp(p, "txt", 3)) {
-        ctx->impl->output.type = GRN_CONTENT_NONE;
-        ctx->impl->output.mime_type = "text/plain";
-      } else if (p + 3 == pe && !memcmp(p, "tsv", 3)) {
-        ctx->impl->output.type = GRN_CONTENT_TSV;
-        ctx->impl->output.mime_type = "text/tab-separated-values";
-      }
-      break;
-    case 'x':
-      if (p + 3 == pe && !memcmp(p, "xml", 3)) {
-        ctx->impl->output.type = GRN_CONTENT_XML;
-        ctx->impl->output.mime_type = "text/xml";
-      }
-      break;
+  grn_raw_string type;
+  type.value = p;
+  type.length = pe - p;
+
+  if (type.length < 2) {
+    return;
+  }
+
+  switch (type.value[0]) {
+  case 'c' :
+    if (GRN_RAW_STRING_EQUAL_CSTRING(type, "css")) {
+      ctx->impl->output.type = GRN_CONTENT_NONE;
+      ctx->impl->output.mime_type = "text/css";
     }
+    break;
+  case 'g' :
+    if (GRN_RAW_STRING_EQUAL_CSTRING(type, "gif")) {
+      ctx->impl->output.type = GRN_CONTENT_NONE;
+      ctx->impl->output.mime_type = "image/gif";
+    }
+    break;
+  case 'h' :
+    if (GRN_RAW_STRING_EQUAL_CSTRING(type, "html")) {
+      ctx->impl->output.type = GRN_CONTENT_NONE;
+      ctx->impl->output.mime_type = "text/html";
+    }
+    break;
+  case 'j' :
+    if (GRN_RAW_STRING_EQUAL_CSTRING(type, "js")) {
+      ctx->impl->output.type = GRN_CONTENT_NONE;
+      ctx->impl->output.mime_type = "text/javascript";
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(type, "json")) {
+      ctx->impl->output.type = GRN_CONTENT_JSON;
+      ctx->impl->output.mime_type = "application/json";
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(type, "jpg") ||
+               GRN_RAW_STRING_EQUAL_CSTRING(type, "jpeg")) {
+      ctx->impl->output.type = GRN_CONTENT_NONE;
+      ctx->impl->output.mime_type = "image/jpeg";
+    }
+    break;
+#ifdef GRN_WITH_MESSAGE_PACK
+  case 'm' :
+    if (GRN_RAW_STRING_EQUAL_CSTRING(type, "msgpack")) {
+      ctx->impl->output.type = GRN_CONTENT_MSGPACK;
+      ctx->impl->output.mime_type = "application/x-msgpack";
+    }
+    break;
+#endif
+#ifdef GRN_WITH_APACHE_ARROW
+  case 'a' :
+    if (GRN_RAW_STRING_EQUAL_CSTRING(type, "arrow") ||
+        GRN_RAW_STRING_EQUAL_CSTRING(type, "apache-arrow")) {
+      ctx->impl->output.type = GRN_CONTENT_APACHE_ARROW;
+      ctx->impl->output.mime_type = "application/x-apache-arrow-streaming";
+    }
+    break;
+#endif
+  case 'p' :
+    if (GRN_RAW_STRING_EQUAL_CSTRING(type, "png")) {
+      ctx->impl->output.type = GRN_CONTENT_NONE;
+      ctx->impl->output.mime_type = "image/png";
+    }
+    break;
+  case 't' :
+    if (GRN_RAW_STRING_EQUAL_CSTRING(type, "txt")) {
+      ctx->impl->output.type = GRN_CONTENT_NONE;
+      ctx->impl->output.mime_type = "text/plain";
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(type, "tsv")) {
+      ctx->impl->output.type = GRN_CONTENT_TSV;
+      ctx->impl->output.mime_type = "text/tab-separated-values";
+    }
+    break;
+  case 'x':
+    if (GRN_RAW_STRING_EQUAL_CSTRING(type, "xml")) {
+      ctx->impl->output.type = GRN_CONTENT_XML;
+      ctx->impl->output.mime_type = "text/xml";
+    }
+    break;
   }
 }
 

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -38,6 +38,54 @@ grn_arrow_stream_loader_feed(grn_ctx *ctx,
                              grn_arrow_stream_loader *loader,
                              const char *data,
                              size_t data_size);
+
+
+typedef struct _grn_arrow_stream_writer grn_arrow_stream_writer;
+grn_arrow_stream_writer *
+grn_arrow_stream_writer_open(grn_ctx *ctx,
+                             grn_obj *output_buffer);
+grn_rc
+grn_arrow_stream_writer_close(grn_ctx *ctx,
+                              grn_arrow_stream_writer *writer);
+grn_rc
+grn_arrow_stream_writer_add_field(grn_ctx *ctx,
+                                  grn_arrow_stream_writer *writer,
+                                  const char *name,
+                                  grn_obj *range);
+grn_rc
+grn_arrow_stream_writer_add_metadata(grn_ctx *ctx,
+                                     grn_arrow_stream_writer *writer,
+                                     const char *name,
+                                     const char *value);
+grn_rc
+grn_arrow_stream_writer_write_schema(grn_ctx *ctx,
+                                     grn_arrow_stream_writer *writer);
+grn_rc
+grn_arrow_stream_writer_open_record(grn_ctx *ctx,
+                                    grn_arrow_stream_writer *writer);
+grn_rc
+grn_arrow_stream_writer_close_record(grn_ctx *ctx,
+                                     grn_arrow_stream_writer *writer);
+grn_rc
+grn_arrow_stream_writer_add_column_string(grn_ctx *ctx,
+                                          grn_arrow_stream_writer *writer,
+                                          const char *value,
+                                          size_t value_length);
+grn_rc
+grn_arrow_stream_writer_add_column_int32(grn_ctx *ctx,
+                                         grn_arrow_stream_writer *writer,
+                                         int32_t value);
+grn_rc
+grn_arrow_stream_writer_add_column_timestamp(grn_ctx *ctx,
+                                             grn_arrow_stream_writer *writer,
+                                             grn_timeval value);
+grn_rc
+grn_arrow_stream_writer_add_column_double(grn_ctx *ctx,
+                                          grn_arrow_stream_writer *writer,
+                                          double value);
+grn_rc
+grn_arrow_stream_writer_flush(grn_ctx *ctx,
+                              grn_arrow_stream_writer *writer);
 
 #ifdef __cplusplus
 }

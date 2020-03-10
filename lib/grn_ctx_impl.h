@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,10 +24,7 @@
 #include "grn_options.h"
 #include "grn_msgpack.h"
 #include "grn_load.h"
-
-#ifdef GRN_WITH_APACHE_ARROW
-# include "grn_arrow.h"
-#endif
+#include "grn_arrow.h"
 
 #ifdef GRN_WITH_MRUBY
 # include <mruby.h>
@@ -128,9 +125,7 @@ struct _grn_ctx_impl {
   /* loader portion */
   grn_edge *edge;
   grn_loader loader;
-#ifdef GRN_WITH_APACHE_ARROW
   grn_arrow_stream_loader *arrow_stream_loader;
-#endif
 
   /* plugin portion */
   const char *plugin_path;
@@ -153,6 +148,7 @@ struct _grn_ctx_impl {
 #ifdef GRN_WITH_MESSAGE_PACK
     msgpack_packer msgpacker;
 #endif
+    grn_arrow_stream_writer *arrow_stream_writer;
   } output;
 
   struct {

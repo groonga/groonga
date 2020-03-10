@@ -575,6 +575,11 @@ grn_output_str(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     GRN_TEXT_PUT(ctx, outbuf, value, value_len);
     break;
   case GRN_CONTENT_APACHE_ARROW :
+    grn_arrow_stream_writer_add_column_string(
+      ctx,
+      ctx->impl->output.arrow_stream_writer,
+      value,
+      value_len);
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -668,7 +673,7 @@ void
 grn_output_time(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int64_t value)
 {
   double dv = value;
-  dv /= 1000000.0;
+  dv /= GRN_TIME_USEC_PER_SEC_F;
   put_delimiter(ctx, outbuf, output_type);
   switch (output_type) {
   case GRN_CONTENT_JSON:
@@ -691,6 +696,15 @@ grn_output_time(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int
     grn_text_ftoa(ctx, outbuf, dv);
     break;
   case GRN_CONTENT_APACHE_ARROW :
+    {
+      grn_timeval timeval;
+      timeval.tv_sec = GRN_TIME_USEC_TO_SEC(value);
+      timeval.tv_nsec = GRN_TIME_USEC_TO_NSEC(value % GRN_TIME_USEC_PER_SEC);
+      grn_arrow_stream_writer_add_column_timestamp(
+        ctx,
+        ctx->impl->output.arrow_stream_writer,
+        timeval);
+    }
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -1378,8 +1392,17 @@ grn_output_table_column_info(grn_ctx *ctx,
                              grn_obj *outbuf,
                              grn_content_type output_type,
                              const char *name,
-                             const char *type)
+                             const char *type,
+                             grn_obj *range)
 {
+  if (output_type == GRN_CONTENT_APACHE_ARROW) {
+    grn_arrow_stream_writer_add_field(ctx,
+                                      ctx->impl->output.arrow_stream_writer,
+                                      name,
+                                      range);
+    return;
+  }
+
   if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
     grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
     if (name) {
@@ -1433,7 +1456,7 @@ grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
   grn_id range_id = GRN_ID_NIL;
 
   if (!column) {
-    grn_output_table_column_info(ctx, outbuf, output_type, NULL, NULL);
+    grn_output_table_column_info(ctx, outbuf, output_type, NULL, NULL, NULL);
     return;
   }
 
@@ -1458,6 +1481,7 @@ grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
                                  outbuf,
                                  output_type,
                                  GRN_TEXT_VALUE(buf),
+                                 NULL,
                                  NULL);
   } else {
     grn_obj *range_obj;
@@ -1474,7 +1498,8 @@ grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
                                  outbuf,
                                  output_type,
                                  GRN_TEXT_VALUE(buf),
-                                 type_name);
+                                 type_name,
+                                 range_obj);
   }
 }
 
@@ -1489,6 +1514,7 @@ grn_output_table_column_by_expression(grn_ctx *ctx, grn_obj *outbuf,
     grn_output_table_column_info(ctx,
                                  outbuf,
                                  output_type,
+                                 NULL,
                                  NULL,
                                  NULL);
     return;
@@ -1508,6 +1534,7 @@ grn_output_table_column_by_expression(grn_ctx *ctx, grn_obj *outbuf,
                                    outbuf,
                                    output_type,
                                    GRN_TEXT_VALUE(buf),
+                                   NULL,
                                    NULL);
     } else {
       grn_output_table_column(ctx, outbuf, output_type, code->value, buf);
@@ -1525,6 +1552,15 @@ grn_output_table_columns_open(grn_ctx *ctx,
                               grn_content_type output_type,
                               int n_columns)
 {
+  if (output_type == GRN_CONTENT_APACHE_ARROW) {
+    if (ctx->impl->output.arrow_stream_writer) {
+      grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
+    }
+    ctx->impl->output.arrow_stream_writer =
+      grn_arrow_stream_writer_open(ctx, outbuf);
+    return;
+  }
+
   if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
     grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", n_columns);
   } else {
@@ -1538,6 +1574,12 @@ grn_output_table_columns_close(grn_ctx *ctx,
                                grn_obj *outbuf,
                                grn_content_type output_type)
 {
+  if (output_type == GRN_CONTENT_APACHE_ARROW) {
+    grn_arrow_stream_writer_write_schema(ctx,
+                                         ctx->impl->output.arrow_stream_writer);
+    return;
+  }
+
   if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
     grn_output_array_close(ctx, outbuf, output_type);
   } else {
@@ -1617,10 +1659,16 @@ grn_output_table_columns(grn_ctx *ctx, grn_obj *outbuf,
 
 static grn_inline void
 grn_output_table_record_open(grn_ctx *ctx,
-                              grn_obj *outbuf,
-                              grn_content_type output_type,
-                              int n_columns)
+                             grn_obj *outbuf,
+                             grn_content_type output_type,
+                             int n_columns)
 {
+  if (output_type == GRN_CONTENT_APACHE_ARROW) {
+    grn_arrow_stream_writer_open_record(ctx,
+                                        ctx->impl->output.arrow_stream_writer);
+    return;
+  }
+
   if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
     grn_output_array_open(ctx, outbuf, output_type, "HIT", n_columns);
   } else {
@@ -1633,6 +1681,12 @@ grn_output_table_record_close(grn_ctx *ctx,
                                grn_obj *outbuf,
                                grn_content_type output_type)
 {
+  if (output_type == GRN_CONTENT_APACHE_ARROW) {
+    grn_arrow_stream_writer_close_record(ctx,
+                                         ctx->impl->output.arrow_stream_writer);
+    return;
+  }
+
   if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
     grn_output_array_close(ctx, outbuf, output_type);
   } else {
@@ -1757,6 +1811,10 @@ grn_output_table_records_open(grn_ctx *ctx,
                               grn_content_type output_type,
                               int n_records)
 {
+  if (output_type == GRN_CONTENT_APACHE_ARROW) {
+    return;
+  }
+
   if (grn_ctx_get_command_version(ctx) >= GRN_COMMAND_VERSION_3) {
     grn_output_cstr(ctx, outbuf, output_type, "records");
     grn_output_array_open(ctx, outbuf, output_type, "records", n_records);
@@ -1768,6 +1826,12 @@ grn_output_table_records_close(grn_ctx *ctx,
                                grn_obj *outbuf,
                                grn_content_type output_type)
 {
+  if (output_type == GRN_CONTENT_APACHE_ARROW) {
+    grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
+    ctx->impl->output.arrow_stream_writer = NULL;
+    return;
+  }
+
   if (grn_ctx_get_command_version(ctx) >= GRN_COMMAND_VERSION_3) {
     grn_output_array_close(ctx, outbuf, output_type);
   }
@@ -2846,6 +2910,63 @@ grn_output_envelope_msgpack(grn_ctx    *ctx,
 }
 #endif /* GRN_WITH_MESSAGE_PACK */
 
+static void
+grn_output_envelope_close_apache_arrow(grn_ctx *ctx,
+                                       grn_obj *output,
+                                       grn_rc rc,
+                                       double started,
+                                       double elapsed,
+                                       const char *file,
+                                       int line)
+{
+  if (ctx->impl->output.arrow_stream_writer) {
+    grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
+    if (ctx->rc != GRN_SUCCESS) {
+      return;
+    }
+  }
+
+  ctx->impl->output.arrow_stream_writer =
+    grn_arrow_stream_writer_open(ctx, output);
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+  grn_arrow_stream_writer *writer = ctx->impl->output.arrow_stream_writer;
+
+  grn_arrow_stream_writer_add_metadata(ctx,
+                                       writer,
+                                       "groonga:data_type",
+                                       "metadata");
+  grn_arrow_stream_writer_add_field(ctx,
+                                    writer,
+                                    "return_code",
+                                    grn_ctx_at(ctx, GRN_DB_INT32));
+  grn_arrow_stream_writer_add_field(ctx,
+                                    writer,
+                                    "start_time",
+                                    grn_ctx_at(ctx, GRN_DB_TIME));
+  grn_arrow_stream_writer_add_field(ctx,
+                                    writer,
+                                    "elapsed_time",
+                                    grn_ctx_at(ctx, GRN_DB_FLOAT));
+  if (rc != GRN_SUCCESS) {
+    /* TODO */
+  }
+  grn_arrow_stream_writer_write_schema(ctx, writer);
+
+  grn_arrow_stream_writer_open_record(ctx, writer);
+  grn_arrow_stream_writer_add_column_int32(ctx, writer, rc);
+  grn_arrow_stream_writer_add_column_timestamp(
+    ctx,
+    writer,
+    grn_timeval_from_double(ctx, started));
+  grn_arrow_stream_writer_add_column_double(ctx, writer, elapsed);
+  grn_arrow_stream_writer_close_record(ctx, writer);
+
+  grn_arrow_stream_writer_close(ctx, writer);
+  ctx->impl->output.arrow_stream_writer = NULL;
+}
+
 void
 grn_output_envelope(grn_ctx *ctx,
                     grn_rc rc,
@@ -3110,6 +3231,13 @@ grn_output_envelope_close(grn_ctx *ctx,
   case GRN_CONTENT_MSGPACK:
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
   case GRN_CONTENT_APACHE_ARROW :
+    grn_output_envelope_close_apache_arrow(ctx,
+                                           output,
+                                           rc,
+                                           started,
+                                           elapsed,
+                                           file,
+                                           line);
   case GRN_CONTENT_NONE:
     break;
   }
