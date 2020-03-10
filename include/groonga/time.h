@@ -50,6 +50,7 @@ extern "C" {
 } while (0)
 
 GRN_API grn_rc grn_timeval_now(grn_ctx *ctx, grn_timeval *tv);
+GRN_API grn_timeval grn_timeval_from_double(grn_ctx *ctx, double value);
 
 GRN_API void grn_time_now(grn_ctx *ctx, grn_obj *obj);
 

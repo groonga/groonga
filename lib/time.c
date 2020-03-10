@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,6 +21,7 @@
 #include "grn_ctx.h"
 #include "grn_str.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <time.h>
 
@@ -65,6 +67,17 @@ grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
   return ctx->rc;
 # endif /* HAVE_CLOCK_GETTIME */
 #endif /* WIN32 */
+}
+
+grn_timeval
+grn_timeval_from_double(grn_ctx *ctx, double value)
+{
+  grn_timeval timeval;
+  timeval.tv_sec = trunc(value);
+  timeval.tv_nsec =
+    (int64_t)((value - timeval.tv_sec) * GRN_TIME_NSEC_PER_SEC) %
+    GRN_TIME_NSEC_PER_SEC;
+  return timeval;
 }
 
 void
