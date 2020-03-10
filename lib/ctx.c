@@ -2066,6 +2066,9 @@ grn_ctx_output_flush(grn_ctx *ctx, int flags)
   if (!ctx->impl->output.func) {
     return;
   }
+  if (ctx->impl->output.arrow_stream_writer) {
+    grn_arrow_stream_writer_flush(ctx, ctx->impl->output.arrow_stream_writer);
+  }
   ctx->impl->output.func(ctx, 0, ctx->impl->output.data.ptr);
 }
 
