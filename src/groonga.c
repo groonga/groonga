@@ -1404,13 +1404,18 @@ h_output_typed(grn_ctx *ctx, int flags, ht_context *hc)
       GRN_TEXT_INIT(&first_output, 0);
       grn_output_envelope_open(ctx, &first_output);
       size_t first_output_length = GRN_TEXT_LEN(&first_output);
-      grn_text_printf(ctx, &head_, "%x\r\n", (unsigned int)first_output_length);
-      GRN_TEXT_PUT(ctx, &head_,
-                   GRN_TEXT_VALUE(&first_output),
-                   first_output_length);
-      GRN_TEXT_PUTS(ctx, &head_, "\r\n");
+      if (first_output_length > 0) {
+        grn_text_printf(ctx,
+                        &head_,
+                        "%x\r\n",
+                        (unsigned int)first_output_length);
+        GRN_TEXT_PUT(ctx, &head_,
+                     GRN_TEXT_VALUE(&first_output),
+                     first_output_length);
+        GRN_TEXT_PUTS(ctx, &head_, "\r\n");
+        head = &head_;
+      }
       GRN_OBJ_FIN(ctx, &first_output);
-      head = &head_;
 
       h_output_set_header(ctx, &header_, expr_rc, -1, NULL);
       hc->is_chunked = true;
