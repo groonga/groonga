@@ -1592,6 +1592,7 @@ namespace grnarrow {
   public:
     StreamWriter(grn_ctx *ctx, grn_obj *bulk)
       : ctx_(ctx),
+        bulk_(bulk),
         output_(
           std::static_pointer_cast<arrow::ResizableBuffer>(
             std::make_shared<BulkBuffer>(ctx, bulk))),
