@@ -51,7 +51,7 @@ grn_rc
 grn_arrow_stream_writer_add_field(grn_ctx *ctx,
                                   grn_arrow_stream_writer *writer,
                                   const char *name,
-                                  grn_obj *range);
+                                  grn_obj *column);
 grn_rc
 grn_arrow_stream_writer_add_metadata(grn_ctx *ctx,
                                      grn_arrow_stream_writer *writer,
@@ -80,6 +80,10 @@ grn_arrow_stream_writer_add_column_uint32(grn_ctx *ctx,
                                           grn_arrow_stream_writer *writer,
                                           uint32_t value);
 grn_rc
+grn_arrow_stream_writer_add_column_int64(grn_ctx *ctx,
+                                         grn_arrow_stream_writer *writer,
+                                         int64_t value);
+grn_rc
 grn_arrow_stream_writer_add_column_timestamp(grn_ctx *ctx,
                                              grn_arrow_stream_writer *writer,
                                              grn_timeval value);
@@ -87,6 +91,14 @@ grn_rc
 grn_arrow_stream_writer_add_column_double(grn_ctx *ctx,
                                           grn_arrow_stream_writer *writer,
                                           double value);
+grn_rc
+grn_arrow_stream_writer_add_column_record(grn_ctx *ctx,
+                                          grn_arrow_stream_writer *writer,
+                                          grn_obj *record);
+grn_rc
+grn_arrow_stream_writer_add_column_uvector(grn_ctx *ctx,
+                                           grn_arrow_stream_writer *writer,
+                                           grn_obj *uvector);
 grn_rc
 grn_arrow_stream_writer_flush(grn_ctx *ctx,
                               grn_arrow_stream_writer *writer);

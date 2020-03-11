@@ -100,10 +100,6 @@ grn_table_cursor_next_inline(grn_ctx *ctx, grn_table_cursor *tc);
 grn_inline static int
 grn_table_cursor_get_value_inline(grn_ctx *ctx, grn_table_cursor *tc, void **value);
 
-grn_inline static void
-grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
-                       grn_id *range_id, grn_obj_flags *range_flags);
-
 /* #define GRN_REFERENCE_COUNT_DEBUG */
 #ifdef GRN_REFERENCE_COUNT_DEBUG
 # define grn_log_reference_count(...) printf(__VA_ARGS__)
@@ -6203,7 +6199,7 @@ grn_column_is_index(grn_ctx *ctx, grn_obj *column)
   return type == GRN_OBJ_COLUMN_INDEX;
 }
 
-grn_inline static void
+void
 grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
                        grn_id *range_id, grn_obj_flags *range_flags)
 {

@@ -1,52 +1,103 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create  Logs_20150203 TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20150203 int32 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Logs_20150203 int32_vector COLUMN_VECTOR Int32
+[[0,0.0,0.0],true]
+column_create Logs_20150203 int64 COLUMN_SCALAR Int64
+[[0,0.0,0.0],true]
+column_create Logs_20150203 time COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150203 uint32 COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create  Logs_20150204 TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20150204 int32 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Logs_20150204 int32_vector COLUMN_VECTOR Int32
+[[0,0.0,0.0],true]
+column_create Logs_20150204 int64 COLUMN_SCALAR Int64
+[[0,0.0,0.0],true]
+column_create Logs_20150204 time COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150204 uint32 COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create  Logs_20150205 TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Logs_20150205 int32 COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Logs_20150205 int32_vector COLUMN_VECTOR Int32
+[[0,0.0,0.0],true]
+column_create Logs_20150205 int64 COLUMN_SCALAR Int64
+[[0,0.0,0.0],true]
+column_create Logs_20150205 time COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150205 uint32 COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
 load --table Logs_20150203
 [
-{"timestamp": "2015-02-03 23:59:58", "memo": "2015-02-03 23:59:58", "message": "Start"},
-{"timestamp": "2015-02-03 23:59:58", "memo": "2015-02-03 23:59:58", "message": "Shutdown"},
-{"timestamp": "2015-02-03 23:59:59", "memo": "2015-02-03 23:59:59", "message": "Start"},
-{"timestamp": "2015-02-03 23:59:59", "memo": "2015-02-03 23:59:59", "message": "Shutdown"}
+{
+  "_key": "2015-02-03 23:59:58",
+  "int32": -29,
+  "int32_vector": [1, -2, 3],
+  "int64": 4294967296,
+  "time": "2015-02-03 23:59:58",
+  "uint32": 29
+}
 ]
-[[0,0.0,0.0],4]
+[[0,0.0,0.0],1]
 load --table Logs_20150204
 [
-{"timestamp": "2015-02-04 00:00:00", "memo": "2015-02-04 00:00:00", "message": "Start"},
-{"timestamp": "2015-02-04 00:00:00", "memo": "2015-02-04 00:00:00", "message": "Shutdown"},
-{"timestamp": "2015-02-04 00:00:01", "memo": "2015-02-04 00:00:01", "message": "Start"},
-{"timestamp": "2015-02-04 00:00:01", "memo": "2015-02-04 00:00:01", "message": "Shutdown"},
-{"timestamp": "2015-02-04 23:59:59", "memo": "2015-02-04 23:59:59", "message": "Start"},
-{"timestamp": "2015-02-04 23:59:59", "memo": "2015-02-04 23:59:59", "message": "Shutdown"}
+{
+  "_key": "2015-02-04 00:00:00",
+  "int32": -290,
+  "int32_vector": [10, -20, 30],
+  "int64": 4294967297,
+  "time": "2015-02-04 00:00:00",
+  "uint32": 290
+}
 ]
-[[0,0.0,0.0],6]
+[[0,0.0,0.0],1]
 load --table Logs_20150205
 [
-{"timestamp": "2015-02-05 00:00:00", "memo": "2015-02-05 00:00:00", "message": "Start"},
-{"timestamp": "2015-02-05 00:00:00", "memo": "2015-02-05 00:00:00", "message": "Shutdown"},
-{"timestamp": "2015-02-05 00:00:01", "memo": "2015-02-05 00:00:01", "message": "Start"},
-{"timestamp": "2015-02-05 00:00:01", "memo": "2015-02-05 00:00:01", "message": "Shutdown"}
+{
+  "_key": "2015-02-05 00:00:00",
+  "int32": -2900,
+  "int32_vector": [100, -200, 300],
+  "int64": 4294967298,
+  "time": "2015-02-05 00:00:00",
+  "uint32": 2900
+}
 ]
-[[0,0.0,0.0],4]
-logical_range_filter Logs timestamp   --filter 'message == "Shutdown"'   --min "2015-02-03 23:59:59"   --min_border "include"   --max "2015-02-05 00:00:00"   --max_border "include"   --command_version 3   --output_type apache-arrow
-memo: string
-message: string
-timestamp: timestamp[ns]
-	memo	message	                timestamp
-0	2015-02-03 23:59:59	Shutdown	2015-02-03T23:59:59+09:00
-1	2015-02-04 00:00:00	Shutdown	2015-02-04T00:00:00+09:00
-2	2015-02-04 00:00:01	Shutdown	2015-02-04T00:00:01+09:00
-3	2015-02-04 23:59:59	Shutdown	2015-02-04T23:59:59+09:00
-4	2015-02-05 00:00:00	Shutdown	2015-02-05T00:00:00+09:00
+[[0,0.0,0.0],1]
+logical_range_filter Logs time   --command_version 3   --output_type apache-arrow
+_key: string
+int32: int32
+int32_vector: list<item: int32>
+int64: int64
+time: timestamp[ns]
+uint32: uint32
+	_key	int32	int32_vector	int64	                     time	uint32
+0	2015-02-03 23:59:58	  -29	[
+  1,
+  -2,
+  3
+]	4294967296	2015-02-03T23:59:58+09:00	    29
+1	2015-02-04 00:00:00	 -290	[
+  10,
+  -20,
+  30
+]	4294967297	2015-02-04T00:00:00+09:00	   290
+2	2015-02-05 00:00:00	-2900	[
+  100,
+  -200,
+  300
+]	4294967298	2015-02-05T00:00:00+09:00	  2900
 ========================================
 return_code: int32
 start_time: timestamp[ns]
 elapsed_time: double
 	return_code	               start_time	elapsed_time
 0	          0	1970-01-01T09:00:00+09:00	    0.000000
-#>logical_range_filter --command_version "3" --filter "message == \"Shutdown\"" --logical_table "Logs" --max "2015-02-05 00:00:00" --max_border "include" --min "2015-02-03 23:59:59" --min_border "include" --output_type "apache-arrow" --shard_key "timestamp"
-#:000000000000000 filter(1)[Logs_20150203]: message == "Shutdown"
-#:000000000000000 send(0)
-#:000000000000000 filter(3)[Logs_20150204]: message == "Shutdown"
-#:000000000000000 send(0)
-#:000000000000000 filter(1)[Logs_20150205]: message == "Shutdown"
-#:000000000000000 send(0)
-#:000000000000000 output(5)
-#:000000000000000 send(0)
-#<000000000000000 rc=0

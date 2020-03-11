@@ -529,6 +529,12 @@ grn_output_int64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
     grn_text_lltoa(ctx, outbuf, value);
     break;
   case GRN_CONTENT_APACHE_ARROW :
+    if (ctx->impl->output.arrow_stream_writer) {
+      grn_arrow_stream_writer_add_column_int64(
+        ctx,
+        ctx->impl->output.arrow_stream_writer,
+        value);
+    }
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -841,6 +847,44 @@ grn_output_geo_point(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
 }
 
 static void
+grn_output_record(grn_ctx *ctx,
+                  grn_obj *outbuf,
+                  grn_content_type output_type,
+                  grn_obj *record)
+{
+  if (output_type == GRN_CONTENT_APACHE_ARROW) {
+    if (ctx->impl->output.arrow_stream_writer) {
+      grn_arrow_stream_writer_add_column_record(
+        ctx,
+        ctx->impl->output.arrow_stream_writer,
+        record);
+    }
+  } else {
+    grn_obj *table = grn_ctx_at(ctx, record->header.domain);
+    grn_id id = GRN_RECORD_VALUE(record);
+    if (table && table->header.type != GRN_TABLE_NO_KEY) {
+      grn_obj buf;
+      grn_obj *accessor = grn_obj_column(ctx, table,
+                                         GRN_COLUMN_NAME_KEY,
+                                         GRN_COLUMN_NAME_KEY_LEN);
+      GRN_VOID_INIT(&buf);
+      if (accessor) {
+        if (id == GRN_ID_NIL) {
+          grn_obj_reinit_for(ctx, &buf, accessor);
+        } else {
+          grn_obj_get_value(ctx, accessor, id, &buf);
+        }
+        grn_obj_unlink(ctx, accessor);
+      }
+      grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
+      GRN_OBJ_FIN(ctx, &buf);
+    } else {
+      grn_output_int64(ctx, outbuf, output_type, id);
+    }
+  }
+}
+
+static void
 grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
               grn_obj *obj, grn_id id)
 {
@@ -1113,24 +1157,7 @@ grn_output_bulk(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       }
       grn_output_array_close(ctx, outbuf, output_type);
     } else {
-      grn_obj *table = grn_ctx_at(ctx, bulk->header.domain);
-      grn_id id = GRN_RECORD_VALUE(bulk);
-      if (table && table->header.type != GRN_TABLE_NO_KEY) {
-        grn_obj *accessor = grn_obj_column(ctx, table,
-                                           GRN_COLUMN_NAME_KEY,
-                                           GRN_COLUMN_NAME_KEY_LEN);
-        if (accessor) {
-          if (id == GRN_ID_NIL) {
-            grn_obj_reinit_for(ctx, &buf, accessor);
-          } else {
-            grn_obj_get_value(ctx, accessor, id, &buf);
-          }
-          grn_obj_unlink(ctx, accessor);
-        }
-        grn_output_obj(ctx, outbuf, output_type, &buf, format);
-      } else {
-        grn_output_int64(ctx, outbuf, output_type, id);
-      }
+      grn_output_record(ctx, outbuf, output_type, bulk);
     }
     break;
   }
@@ -1225,6 +1252,21 @@ grn_output_uvector_result_set(grn_ctx *ctx,
 }
 
 static grn_inline void
+grn_output_uvector_apache_arrow(grn_ctx *ctx,
+                                grn_obj *outbuf,
+                                grn_obj *uvector)
+{
+  if (!ctx->impl->output.arrow_stream_writer) {
+    return;
+  }
+
+  grn_arrow_stream_writer_add_column_uvector(
+    ctx,
+    ctx->impl->output.arrow_stream_writer,
+    uvector);
+}
+
+static grn_inline void
 grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                    grn_obj *uvector, grn_obj_format *format)
 {
@@ -1244,6 +1286,11 @@ grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
 
   if (output_result_set) {
     grn_output_uvector_result_set(ctx, outbuf, output_type, uvector, format);
+    return;
+  }
+
+  if (output_type == GRN_CONTENT_APACHE_ARROW) {
+    grn_output_uvector_apache_arrow(ctx, outbuf, uvector);
     return;
   }
 
@@ -1447,13 +1494,13 @@ grn_output_table_column_info(grn_ctx *ctx,
                              grn_content_type output_type,
                              const char *name,
                              const char *type,
-                             grn_obj *range)
+                             grn_obj *column)
 {
   if (output_type == GRN_CONTENT_APACHE_ARROW) {
     grn_arrow_stream_writer_add_field(ctx,
                                       ctx->impl->output.arrow_stream_writer,
                                       name,
-                                      range);
+                                      column);
     return;
   }
 
@@ -1536,7 +1583,7 @@ grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
                                  output_type,
                                  GRN_TEXT_VALUE(buf),
                                  NULL,
-                                 NULL);
+                                 column);
   } else {
     grn_obj *range_obj;
     char type_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -1553,7 +1600,7 @@ grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
                                  output_type,
                                  GRN_TEXT_VALUE(buf),
                                  type_name,
-                                 range_obj);
+                                 column);
   }
 }
 
@@ -1589,7 +1636,7 @@ grn_output_table_column_by_expression(grn_ctx *ctx, grn_obj *outbuf,
                                    output_type,
                                    GRN_TEXT_VALUE(buf),
                                    NULL,
-                                   NULL);
+                                   code[0].value);
     } else {
       grn_output_table_column(ctx, outbuf, output_type, code->value, buf);
     }
@@ -2988,7 +3035,7 @@ grn_output_envelope_close_apache_arrow(grn_ctx *ctx,
 
   grn_arrow_stream_writer_add_metadata(ctx,
                                        writer,
-                                       "groonga:data_type",
+                                       "GROONGA:data_type",
                                        "metadata");
   grn_arrow_stream_writer_add_field(ctx,
                                     writer,

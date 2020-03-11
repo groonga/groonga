@@ -127,40 +127,72 @@ namespace grnarrow {
     }
   }
 
-  std::shared_ptr<arrow::DataType> range_to_type(grn_ctx *ctx,
-                                                 grn_obj *range) {
-    if (grn_obj_is_type(ctx, range)) {
-      grn_id range_id = grn_obj_id(ctx, range);
-      switch (range_id) {
-      case GRN_DB_BOOL :
-        return arrow::boolean();
-      case GRN_DB_UINT8 :
-        return arrow::uint8();
-      case GRN_DB_INT8 :
-        return arrow::int8();
-      case GRN_DB_UINT16 :
-        return arrow::uint16();
-      case GRN_DB_INT16 :
-        return arrow::int16();
-      case GRN_DB_UINT32 :
-        return arrow::uint32();
-      case GRN_DB_INT32 :
-        return arrow::int32();
-      case GRN_DB_UINT64 :
-        return arrow::uint64();
-      case GRN_DB_INT64 :
-        return arrow::int64();
-      case GRN_DB_FLOAT :
-        return arrow::float64();
-      case GRN_DB_TIME :
-        return arrow::timestamp(arrow::TimeUnit::NANO);
-      case GRN_DB_SHORT_TEXT :
-      case GRN_DB_TEXT :
-      case GRN_DB_LONG_TEXT :
-        return arrow::utf8();
-      default :
-        break;
+  std::shared_ptr<arrow::DataType> grn_type_id_to_arrow_type(grn_ctx *ctx,
+                                                             grn_id type_id) {
+    switch (type_id) {
+    case GRN_DB_BOOL :
+      return arrow::boolean();
+    case GRN_DB_UINT8 :
+      return arrow::uint8();
+    case GRN_DB_INT8 :
+      return arrow::int8();
+    case GRN_DB_UINT16 :
+      return arrow::uint16();
+    case GRN_DB_INT16 :
+      return arrow::int16();
+    case GRN_DB_UINT32 :
+      return arrow::uint32();
+    case GRN_DB_INT32 :
+      return arrow::int32();
+    case GRN_DB_UINT64 :
+      return arrow::uint64();
+    case GRN_DB_INT64 :
+      return arrow::int64();
+    case GRN_DB_FLOAT :
+      return arrow::float64();
+    case GRN_DB_TIME :
+      return arrow::timestamp(arrow::TimeUnit::NANO);
+    case GRN_DB_SHORT_TEXT :
+    case GRN_DB_TEXT :
+    case GRN_DB_LONG_TEXT :
+      return arrow::utf8();
+    default :
+      return nullptr;
+    }
+  }
+
+  std::shared_ptr<arrow::DataType> grn_column_to_arrow_type(grn_ctx *ctx,
+                                                            grn_obj *column) {
+    switch (column->header.type) {
+    case GRN_TYPE :
+      return grn_type_id_to_arrow_type(ctx, grn_obj_id(ctx, column));
+    case GRN_ACCESSOR :
+    case GRN_COLUMN_FIX_SIZE :
+    case GRN_COLUMN_VAR_SIZE :
+      {
+        grn_id range_id = GRN_ID_NIL;
+        grn_obj_flags range_flags = 0;
+        grn_obj_get_range_info(ctx, column, &range_id, &range_flags);
+        auto arrow_type = grn_type_id_to_arrow_type(ctx, range_id);
+        if (!arrow_type) {
+          auto range = grn_ctx_at(ctx, range_id);
+          if (grn_obj_is_lexicon(ctx, range)) {
+            auto domain = grn_ctx_at(ctx, range->header.domain);
+            auto dictionary_type = grn_column_to_arrow_type(ctx, domain);
+            arrow_type = arrow::dictionary(arrow::int32(), dictionary_type);
+          }
+        }
+        if (range_flags & GRN_OBJ_VECTOR) {
+          return arrow::list(arrow_type);
+        } else {
+          return arrow_type;
+        }
       }
+      break;
+    case GRN_COLUMN_INDEX :
+      return arrow::uint32();
+    default :
+      return nullptr;
     }
     return nullptr;
   }
@@ -1051,7 +1083,7 @@ namespace grnarrow {
         std::string field_name(column_name, column_name_size);
         auto range_id = grn_obj_get_range(ctx_, column);
         auto range = grn_ctx_at(ctx_, range_id);
-        auto field_type = range_to_type(ctx_, range);
+        auto field_type = grn_column_to_arrow_type(ctx_, range);
         if (!field_type) {
           continue;
         }
@@ -1634,16 +1666,16 @@ namespace grnarrow {
       }
     }
 
-    void add_field(const char *name, grn_obj *range) {
-      auto type = range_to_type(ctx_, range);
+    void add_field(const char *name, grn_obj *column) {
+      auto type = grn_column_to_arrow_type(ctx_, column);
       if (!type) {
         auto ctx = ctx_;
         grn_obj inspected;
         GRN_TEXT_INIT(&inspected, 0);
-        grn_inspect(ctx_, &inspected, range);
+        grn_inspect(ctx_, &inspected, column);
         ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
             "[arrow][stream-writer][add-field] "
-            "unsupported range: <%.*s>",
+            "unsupported column: <%.*s>",
             (int)GRN_TEXT_LEN(&inspected),
             GRN_TEXT_VALUE(&inspected));
         GRN_OBJ_FIN(ctx_, &inspected);
@@ -1756,6 +1788,22 @@ namespace grnarrow {
             "failed to add a column value: <" << value << ">");
     }
 
+    void add_column_int64(int64_t value) {
+      auto column_builder =
+        record_batch_builder_->GetFieldAs<arrow::Int64Builder>(
+          current_column_index_++);
+      auto status = column_builder->Append(value);
+      if (!status.ok()) {
+        return;
+      }
+      std::stringstream context;
+      check(ctx_,
+            status,
+            context <<
+            "[arrow][stream-writer][add-column][int64] " <<
+            "failed to add a column value: <" << value << ">");
+    }
+
     void add_column_timestamp(grn_timeval value) {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::TimestampBuilder>(
@@ -1790,6 +1838,76 @@ namespace grnarrow {
             "failed to add a column value: <" <<
             value <<
             ">");
+    }
+
+    void add_column_record(grn_obj *record) {
+      auto column_builder =
+        record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
+          current_column_index_++);
+      auto table = grn_ctx_at(ctx_, record->header.domain);
+      char key[GRN_TABLE_MAX_KEY_SIZE];
+      auto key_size = grn_table_get_key(ctx_,
+                                        table,
+                                        GRN_RECORD_VALUE(record),
+                                        key,
+                                        sizeof(key));
+      auto status =
+        column_builder->Append(arrow::util::string_view(key, key_size));
+      if (status.ok()) {
+        return;
+      }
+      std::stringstream context;
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx_, &inspected, record);
+      check(ctx_,
+            status,
+            context <<
+            "[arrow][stream-writer][add-column][record] " <<
+            "failed to add a column value: <" <<
+            arrow::util::string_view(GRN_TEXT_VALUE(&inspected),
+                                     GRN_TEXT_LEN(&inspected)) <<
+            ">");
+      GRN_OBJ_FIN(ctx_, &inspected);
+    }
+
+    void add_column_uvector(grn_obj *uvector) {
+      auto column_builder =
+        record_batch_builder_->GetFieldAs<arrow::ListBuilder>(
+          current_column_index_++);
+      auto status = column_builder->Append();
+      if (status.ok()) {
+        auto raw_elements = GRN_BULK_HEAD(uvector);
+        auto element_size = grn_uvector_element_size(ctx_, uvector);
+        auto n = GRN_BULK_VSIZE(uvector) / element_size;
+        auto value_builder = column_builder->value_builder();
+        for (long i = 0; i < n; ++i) {
+          // TODO: check type
+          auto element =
+            *reinterpret_cast<int32_t *>(raw_elements + (element_size * i));
+          status =
+            static_cast<arrow::Int32Builder *>(value_builder)->Append(element);
+          if (!status.ok()) {
+            break;
+          }
+        }
+      }
+      if (status.ok()) {
+        return;
+      }
+      std::stringstream context;
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx_, &inspected, uvector);
+      check(ctx_,
+            status,
+            context <<
+            "[arrow][stream-writer][add-column][uvector] " <<
+            "failed to add a column value: <" <<
+            arrow::util::string_view(GRN_TEXT_VALUE(&inspected),
+                                     GRN_TEXT_LEN(&inspected)) <<
+            ">");
+      GRN_OBJ_FIN(ctx_, &inspected);
     }
 
     void flush() {
@@ -2075,11 +2193,11 @@ grn_rc
 grn_arrow_stream_writer_add_field(grn_ctx *ctx,
                                   grn_arrow_stream_writer *writer,
                                   const char *name,
-                                  grn_obj *range)
+                                  grn_obj *column)
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
-  writer->writer->add_field(name, range);
+  writer->writer->add_field(name, column);
 #else
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][stream-writer][add-field] Apache Arrow support isn't enabled");
@@ -2195,6 +2313,22 @@ grn_arrow_stream_writer_add_column_uint32(grn_ctx *ctx,
 }
 
 grn_rc
+grn_arrow_stream_writer_add_column_int64(grn_ctx *ctx,
+                                         grn_arrow_stream_writer *writer,
+                                         int64_t value)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  writer->writer->add_column_int64(value);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-column][int64] "
+      "Apache Arrow support isn't enabled");
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
 grn_arrow_stream_writer_add_column_timestamp(grn_ctx *ctx,
                                              grn_arrow_stream_writer *writer,
                                              grn_timeval value)
@@ -2221,6 +2355,38 @@ grn_arrow_stream_writer_add_column_double(grn_ctx *ctx,
 #else
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][stream-writer][add-column][double] "
+      "Apache Arrow support isn't enabled");
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_arrow_stream_writer_add_column_record(grn_ctx *ctx,
+                                          grn_arrow_stream_writer *writer,
+                                          grn_obj *record)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  writer->writer->add_column_record(record);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-column][record] "
+      "Apache Arrow support isn't enabled");
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_arrow_stream_writer_add_column_uvector(grn_ctx *ctx,
+                                           grn_arrow_stream_writer *writer,
+                                           grn_obj *uvector)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  writer->writer->add_column_uvector(uvector);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-column][uvector] "
       "Apache Arrow support isn't enabled");
 #endif
   GRN_API_RETURN(ctx->rc);

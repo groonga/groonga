@@ -1,41 +1,68 @@
 #@require-interface http
 #@require-testee groonga
 
-#@include fixture/sharding/logical_range_filter/index/schema.grn
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create  Logs_20150203 TABLE_HASH_KEY ShortText
+column_create Logs_20150203 int32 COLUMN_SCALAR Int32
+column_create Logs_20150203 int32_vector COLUMN_VECTOR Int32
+column_create Logs_20150203 int64 COLUMN_SCALAR Int64
+column_create Logs_20150203 time COLUMN_SCALAR Time
+column_create Logs_20150203 uint32 COLUMN_SCALAR UInt32
+
+table_create  Logs_20150204 TABLE_HASH_KEY ShortText
+column_create Logs_20150204 int32 COLUMN_SCALAR Int32
+column_create Logs_20150204 int32_vector COLUMN_VECTOR Int32
+column_create Logs_20150204 int64 COLUMN_SCALAR Int64
+column_create Logs_20150204 time COLUMN_SCALAR Time
+column_create Logs_20150204 uint32 COLUMN_SCALAR UInt32
+
+table_create  Logs_20150205 TABLE_HASH_KEY ShortText
+column_create Logs_20150205 int32 COLUMN_SCALAR Int32
+column_create Logs_20150205 int32_vector COLUMN_VECTOR Int32
+column_create Logs_20150205 int64 COLUMN_SCALAR Int64
+column_create Logs_20150205 time COLUMN_SCALAR Time
+column_create Logs_20150205 uint32 COLUMN_SCALAR UInt32
+
 
 load --table Logs_20150203
 [
-{"timestamp": "2015-02-03 23:59:58", "memo": "2015-02-03 23:59:58", "message": "Start"},
-{"timestamp": "2015-02-03 23:59:58", "memo": "2015-02-03 23:59:58", "message": "Shutdown"},
-{"timestamp": "2015-02-03 23:59:59", "memo": "2015-02-03 23:59:59", "message": "Start"},
-{"timestamp": "2015-02-03 23:59:59", "memo": "2015-02-03 23:59:59", "message": "Shutdown"}
+{
+  "_key": "2015-02-03 23:59:58",
+  "int32": -29,
+  "int32_vector": [1, -2, 3],
+  "int64": 4294967296,
+  "time": "2015-02-03 23:59:58",
+  "uint32": 29
+}
 ]
 
 load --table Logs_20150204
 [
-{"timestamp": "2015-02-04 00:00:00", "memo": "2015-02-04 00:00:00", "message": "Start"},
-{"timestamp": "2015-02-04 00:00:00", "memo": "2015-02-04 00:00:00", "message": "Shutdown"},
-{"timestamp": "2015-02-04 00:00:01", "memo": "2015-02-04 00:00:01", "message": "Start"},
-{"timestamp": "2015-02-04 00:00:01", "memo": "2015-02-04 00:00:01", "message": "Shutdown"},
-{"timestamp": "2015-02-04 23:59:59", "memo": "2015-02-04 23:59:59", "message": "Start"},
-{"timestamp": "2015-02-04 23:59:59", "memo": "2015-02-04 23:59:59", "message": "Shutdown"}
+{
+  "_key": "2015-02-04 00:00:00",
+  "int32": -290,
+  "int32_vector": [10, -20, 30],
+  "int64": 4294967297,
+  "time": "2015-02-04 00:00:00",
+  "uint32": 290
+}
 ]
 
 load --table Logs_20150205
 [
-{"timestamp": "2015-02-05 00:00:00", "memo": "2015-02-05 00:00:00", "message": "Start"},
-{"timestamp": "2015-02-05 00:00:00", "memo": "2015-02-05 00:00:00", "message": "Shutdown"},
-{"timestamp": "2015-02-05 00:00:01", "memo": "2015-02-05 00:00:01", "message": "Start"},
-{"timestamp": "2015-02-05 00:00:01", "memo": "2015-02-05 00:00:01", "message": "Shutdown"}
+{
+  "_key": "2015-02-05 00:00:00",
+  "int32": -2900,
+  "int32_vector": [100, -200, 300],
+  "int64": 4294967298,
+  "time": "2015-02-05 00:00:00",
+  "uint32": 2900
+}
 ]
 
-#@collect-query-log true
-logical_range_filter Logs timestamp \
-  --filter 'message == "Shutdown"' \
-  --min "2015-02-03 23:59:59" \
-  --min_border "include" \
-  --max "2015-02-05 00:00:00" \
-  --max_border "include" \
+logical_range_filter Logs time \
   --command_version 3 \
   --output_type apache-arrow
-#@collect-query-log false
