@@ -2729,8 +2729,7 @@ grn_output_envelope_msgpack_v1(grn_ctx *ctx,
       grn_obj *command = GRN_CTX_USER_DATA(ctx)->ptr;
       int      error_detail_size;
 
-      /* ERROR DETAIL :    = [[errfunc, errfile, errline,
-         (file, line, command)]] */
+      /* ERROR DETAIL := [[errfunc, errfile, errline, (file, line, command)]] */
       /* TODO: output backtrace */
       msgpack_pack_array(&header_packer, 1);
       error_detail_size    = 3;
