@@ -1535,57 +1535,63 @@ namespace grnarrow {
     std::shared_ptr<arrow::ipc::RecordBatchReader> reader_;
   };
 
-  class BulkBuffer : public arrow::ResizableBuffer {
+  class BulkOutputStream : public arrow::io::OutputStream {
   public:
-    BulkBuffer(grn_ctx *ctx, grn_obj *bulk)
-      : arrow::ResizableBuffer(reinterpret_cast<uint8_t *>(GRN_BULK_CURR(bulk)),
-                               GRN_BULK_REST(bulk)),
+    BulkOutputStream(grn_ctx *ctx, grn_obj *bulk)
+      : arrow::io::OutputStream(),
         ctx_(ctx),
         bulk_(bulk),
-        offset_(GRN_BULK_VSIZE(bulk)) {
-      ZeroPadding();
+        position_(0),
+        is_open_(true) {
     }
 
-    ~BulkBuffer() {
-    }
-
-    arrow::Status Resize(const int64_t new_size,
-                         bool shrink_to_fit = true) override {
-      ARROW_RETURN_NOT_OK(Reserve(new_size));
-      GRN_BULK_SET_CURR(bulk_, data_ + new_size);
-      size_ = new_size;
-      return arrow::Status::OK();
-    }
-
-    arrow::Status Reserve(const int64_t new_capacity) override {
-      if (new_capacity <= capacity_) {
-        return arrow::Status::OK();
-      }
-
-      auto current_size = GRN_BULK_VSIZE(bulk_);
-      GRN_BULK_SET_CURR(bulk_, data_ + GRN_BULK_REST(bulk_));
-      ARROW_RETURN_NOT_OK(check(ctx_,
-                                grn_bulk_resize(ctx_, bulk_, new_capacity),
-                                "[arrow][buffer][reserve] "
-                                "failed to reserve memory"));
-      GRN_BULK_SET_CURR(bulk_, GRN_BULK_HEAD(bulk_) + current_size);
-
-      mutable_data_ =
-        reinterpret_cast<uint8_t *>(GRN_BULK_HEAD(bulk_)) + offset_;
-      data_ = mutable_data_;
-      capacity_ = new_capacity;
-
-      return arrow::Status::OK();
+    ~BulkOutputStream() override {
     }
 
     grn_obj *bulk() const {
       return bulk_;
     }
 
+    arrow::Status Close() override {
+      is_open_ = true;
+      return arrow::Status::OK();
+    }
+
+    bool closed() const override {
+      return !is_open_;
+    }
+
+    arrow::Result<int64_t> Tell() const override {
+      return position_;
+    }
+
+    arrow::Status Write(const void *data, int64_t n_bytes) override {
+      if (ARROW_PREDICT_FALSE(!is_open_)) {
+        return arrow::Status::IOError("BulkOutputStream is closed");
+      }
+      if (ARROW_PREDICT_TRUE(n_bytes > 0)) {
+        auto rc = grn_bulk_write(ctx_,
+                                 bulk_,
+                                 static_cast<const char *>(data),
+                                 n_bytes);
+        if (ARROW_PREDICT_TRUE(rc == GRN_SUCCESS)) {
+          position_ += n_bytes;
+          return arrow::Status::OK();
+        } else {
+          return check(ctx_, rc, "[arrow][bulk-output-stream][write]");
+        }
+      } else {
+        return arrow::Status::OK();
+      }
+    }
+
+    using arrow::io::OutputStream::Write;
+
   private:
     grn_ctx *ctx_;
     grn_obj *bulk_;
-    size_t offset_;
+    int64_t position_;
+    bool is_open_;
   };
 
   class StreamWriter {
@@ -1593,9 +1599,7 @@ namespace grnarrow {
     StreamWriter(grn_ctx *ctx, grn_obj *bulk)
       : ctx_(ctx),
         bulk_(bulk),
-        output_(
-          std::static_pointer_cast<arrow::ResizableBuffer>(
-            std::make_shared<BulkBuffer>(ctx, bulk))),
+        output_(ctx, bulk),
         schema_builder_(),
         schema_(),
         writer_(),
@@ -1790,7 +1794,7 @@ namespace grnarrow {
   private:
     grn_ctx *ctx_;
     grn_obj *bulk_;
-    arrow::io::BufferOutputStream output_;
+    BulkOutputStream output_;
     arrow::SchemaBuilder schema_builder_;
     std::shared_ptr<arrow::Schema> schema_;
     std::shared_ptr<arrow::ipc::RecordBatchWriter> writer_;
