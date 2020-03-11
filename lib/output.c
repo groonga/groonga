@@ -385,6 +385,46 @@ grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
   INCR_LENGTH;
 }
 
+static void
+grn_output_int8(grn_ctx *ctx,
+                grn_obj *outbuf,
+                grn_content_type output_type,
+                int8_t value)
+{
+  /* TODO */
+  grn_output_int32(ctx, outbuf, output_type, value);
+}
+
+static void
+grn_output_uint8(grn_ctx *ctx,
+                 grn_obj *outbuf,
+                 grn_content_type output_type,
+                 uint8_t value)
+{
+  /* TODO */
+  grn_output_uint32(ctx, outbuf, output_type, value);
+}
+
+static void
+grn_output_int16(grn_ctx *ctx,
+                 grn_obj *outbuf,
+                 grn_content_type output_type,
+                 int16_t value)
+{
+  /* TODO */
+  grn_output_int32(ctx, outbuf, output_type, value);
+}
+
+static void
+grn_output_uint16(grn_ctx *ctx,
+                  grn_obj *outbuf,
+                  grn_content_type output_type,
+                  uint16_t value)
+{
+  /* TODO */
+  grn_output_uint32(ctx, outbuf, output_type, value);
+}
+
 void
 grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int32_t value)
 {
@@ -410,6 +450,12 @@ grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
     grn_text_itoa(ctx, outbuf, value);
     break;
   case GRN_CONTENT_APACHE_ARROW :
+    if (ctx->impl->output.arrow_stream_writer) {
+      grn_arrow_stream_writer_add_column_int32(
+        ctx,
+        ctx->impl->output.arrow_stream_writer,
+        value);
+    }
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -445,6 +491,12 @@ grn_output_uint32(grn_ctx *ctx,
     grn_text_ulltoa(ctx, outbuf, value);
     break;
   case GRN_CONTENT_APACHE_ARROW :
+    if (ctx->impl->output.arrow_stream_writer) {
+      grn_arrow_stream_writer_add_column_uint32(
+        ctx,
+        ctx->impl->output.arrow_stream_writer,
+        value);
+    }
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -977,28 +1029,28 @@ grn_output_bulk(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                     GRN_BULK_VSIZE(bulk) ? GRN_UINT8_VALUE(bulk) : 0);
     break;
   case GRN_DB_INT8 :
-    grn_output_int32(ctx, outbuf, output_type,
-                     GRN_BULK_VSIZE(bulk) ? GRN_INT8_VALUE(bulk) : 0);
+    grn_output_int8(ctx, outbuf, output_type,
+                    GRN_BULK_VSIZE(bulk) ? GRN_INT8_VALUE(bulk) : 0);
     break;
   case GRN_DB_UINT8 :
-    grn_output_int32(ctx, outbuf, output_type,
+    grn_output_uint8(ctx, outbuf, output_type,
                      GRN_BULK_VSIZE(bulk) ? GRN_UINT8_VALUE(bulk) : 0);
     break;
   case GRN_DB_INT16 :
-    grn_output_int32(ctx, outbuf, output_type,
+    grn_output_int16(ctx, outbuf, output_type,
                      GRN_BULK_VSIZE(bulk) ? GRN_INT16_VALUE(bulk) : 0);
     break;
   case GRN_DB_UINT16 :
-    grn_output_int32(ctx, outbuf, output_type,
-                     GRN_BULK_VSIZE(bulk) ? GRN_UINT16_VALUE(bulk) : 0);
+    grn_output_uint16(ctx, outbuf, output_type,
+                      GRN_BULK_VSIZE(bulk) ? GRN_UINT16_VALUE(bulk) : 0);
     break;
   case GRN_DB_INT32 :
     grn_output_int32(ctx, outbuf, output_type,
                      GRN_BULK_VSIZE(bulk) ? GRN_INT32_VALUE(bulk) : 0);
     break;
   case GRN_DB_UINT32 :
-    grn_output_int64(ctx, outbuf, output_type,
-                     GRN_BULK_VSIZE(bulk) ? GRN_UINT32_VALUE(bulk) : 0);
+    grn_output_uint32(ctx, outbuf, output_type,
+                      GRN_BULK_VSIZE(bulk) ? GRN_UINT32_VALUE(bulk) : 0);
     break;
   case GRN_DB_INT64 :
     grn_output_int64(ctx, outbuf, output_type,
@@ -2968,6 +3020,26 @@ grn_output_envelope_close_apache_arrow(grn_ctx *ctx,
   ctx->impl->output.arrow_stream_writer = NULL;
 }
 
+static void
+grn_output_envelope_apache_arrow(grn_ctx *ctx,
+                                 grn_obj *head,
+                                 grn_obj *body,
+                                 grn_obj *foot,
+                                 grn_rc rc,
+                                 double started,
+                                 double elapsed,
+                                 const char *file,
+                                 int line)
+{
+  grn_output_envelope_close_apache_arrow(ctx,
+                                         head,
+                                         rc,
+                                         started,
+                                         elapsed,
+                                         file,
+                                         line);
+}
+
 void
 grn_output_envelope(grn_ctx *ctx,
                     grn_rc rc,
@@ -3114,6 +3186,15 @@ grn_output_envelope(grn_ctx *ctx,
   case GRN_CONTENT_GROONGA_COMMAND_LIST :
     break;
   case GRN_CONTENT_APACHE_ARROW :
+    grn_output_envelope_apache_arrow(ctx,
+                                     head,
+                                     body,
+                                     foot,
+                                     rc,
+                                     started,
+                                     elapsed,
+                                     file,
+                                     line);
     break;
   case GRN_CONTENT_NONE:
     break;

@@ -76,6 +76,10 @@ grn_arrow_stream_writer_add_column_int32(grn_ctx *ctx,
                                          grn_arrow_stream_writer *writer,
                                          int32_t value);
 grn_rc
+grn_arrow_stream_writer_add_column_uint32(grn_ctx *ctx,
+                                          grn_arrow_stream_writer *writer,
+                                          uint32_t value);
+grn_rc
 grn_arrow_stream_writer_add_column_timestamp(grn_ctx *ctx,
                                              grn_arrow_stream_writer *writer,
                                              grn_timeval value);
