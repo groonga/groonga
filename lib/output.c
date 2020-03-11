@@ -575,11 +575,13 @@ grn_output_str(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     GRN_TEXT_PUT(ctx, outbuf, value, value_len);
     break;
   case GRN_CONTENT_APACHE_ARROW :
-    grn_arrow_stream_writer_add_column_string(
-      ctx,
-      ctx->impl->output.arrow_stream_writer,
-      value,
-      value_len);
+    if (ctx->impl->output.arrow_stream_writer) {
+      grn_arrow_stream_writer_add_column_string(
+        ctx,
+        ctx->impl->output.arrow_stream_writer,
+        value,
+        value_len);
+    }
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -696,7 +698,7 @@ grn_output_time(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int
     grn_text_ftoa(ctx, outbuf, dv);
     break;
   case GRN_CONTENT_APACHE_ARROW :
-    {
+    if (ctx->impl->output.arrow_stream_writer) {
       grn_timeval timeval;
       timeval.tv_sec = GRN_TIME_USEC_TO_SEC(value);
       timeval.tv_nsec = GRN_TIME_USEC_TO_NSEC(value % GRN_TIME_USEC_PER_SEC);
