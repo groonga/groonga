@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2013-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -269,6 +269,26 @@ ctx_set_output(mrb_state *mrb, mrb_value self)
                RSTRING_LEN(mrb_value_));
 
   return mrb_value_;
+}
+
+static mrb_value
+ctx_get_output_type(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  return mrb_fixnum_value(grn_ctx_get_output_type(ctx));
+}
+
+static mrb_value
+ctx_set_output_type(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_int output_type;
+
+  mrb_get_args(mrb, "i", &output_type);
+  grn_ctx_set_output_type(ctx, output_type);
+
+  return mrb_fixnum_value(output_type);
 }
 
 static mrb_value
@@ -867,6 +887,11 @@ grn_mrb_ctx_init(grn_ctx *ctx)
                     ctx_get_output, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "output=",
                     ctx_set_output, MRB_ARGS_REQ(1));
+
+  mrb_define_method(mrb, klass, "output_type",
+                    ctx_get_output_type, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "output_type=",
+                    ctx_set_output_type, MRB_ARGS_REQ(1));
 
   mrb_define_method(mrb, klass, "database", ctx_get_database,
                     MRB_ARGS_NONE());
