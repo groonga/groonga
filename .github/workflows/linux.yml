@@ -19,22 +19,17 @@ jobs:
               CFLAGS=-funsigned-char
               CXXFLAGS=-funsigned-char
           - label: "GCC: mruby"
-            configure-options: >-
-              --enable-mruby
-              --with-ruby
+            use-mruby: true
           - label: "GCC: mruby: optimize"
-            configure-options: >-
-              --enable-mruby
-              --with-ruby
+            use-mruby: true
             optimize: true
           - label: "Clang: mruby"
+            use-mruby: true
             packages: >-
               clang
             configure-options: >-
               CC=clang
               CC=clang++
-              --enable-mruby
-              --with-ruby
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -90,15 +85,25 @@ jobs:
           ./autogen.sh
       - name: Configure
         run: |
+          configure_args=()
+          if [ "${{ matrix.use-mruby }}" = "true" ]; then
+            configure_args+=(--enable-mruby)
+            configure_args+=(--with-ruby)
+          fi
           ./configure \
             --enable-debug \
+            "${configure_args[@]}" \
             ${{ matrix.configure-options }}
       - name: Build
         run: |
           make -j$(nproc)
       - name: Install test dependencies
         run: |
-          sudo gem install red-arrow
+          sudo gem install \
+            groonga-client \
+            json \
+            pkg-config \
+            red-arrow
       - name: Set environment variables
         run: |
           echo "::set-env name=COLUMNS::79"
@@ -109,8 +114,10 @@ jobs:
         run: |
           test/unit/run-test.sh
       - name: "Test: mruby"
+        if: |
+          matrix.use-mruby
         run: |
-          test/mruby/run-test.sh
+          bash -x test/mruby/run-test.sh
       - name: "Test: command line"
         run: |
           test/command_line/run-test.rb
