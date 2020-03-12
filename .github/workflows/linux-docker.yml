@@ -41,5 +41,4 @@ jobs:
         run: |
           docker run \
             --interactive \
-            --tty \
             groonga/groonga-${{ matrix.image }}
