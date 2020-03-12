@@ -1891,18 +1891,40 @@ namespace grnarrow {
           current_column_index_++);
       auto status = column_builder->Append();
       if (status.ok()) {
+        auto domain = grn_ctx_at(ctx_, uvector->header.domain);
         auto raw_elements = GRN_BULK_HEAD(uvector);
         auto element_size = grn_uvector_element_size(ctx_, uvector);
         auto n = GRN_BULK_VSIZE(uvector) / element_size;
-        auto value_builder = column_builder->value_builder();
-        for (long i = 0; i < n; ++i) {
-          // TODO: check type
-          auto element =
-            *reinterpret_cast<int32_t *>(raw_elements + (element_size * i));
-          status =
-            static_cast<arrow::Int32Builder *>(value_builder)->Append(element);
-          if (!status.ok()) {
-            break;
+        auto raw_value_builder = column_builder->value_builder();
+        if (grn_obj_is_lexicon(ctx_, domain)) {
+          auto value_builder =
+            static_cast<arrow::StringBuilder *>(raw_value_builder);
+          for (long i = 0; i < n; ++i) {
+            auto record_id =
+              *reinterpret_cast<grn_id *>(raw_elements + (element_size * i));
+            char key[GRN_TABLE_MAX_KEY_SIZE];
+            auto key_size = grn_table_get_key(ctx_,
+                                              domain,
+                                              record_id,
+                                              key,
+                                              sizeof(key));
+            status =
+              value_builder->Append(arrow::util::string_view(key, key_size));
+            if (!status.ok()) {
+              break;
+            }
+          }
+        } else {
+          auto value_builder =
+            static_cast<arrow::Int32Builder *>(raw_value_builder);
+          for (long i = 0; i < n; ++i) {
+            // TODO: check type
+            auto element =
+              *reinterpret_cast<int32_t *>(raw_elements + (element_size * i));
+            status = value_builder->Append(element);
+            if (!status.ok()) {
+              break;
+            }
           }
         }
       }

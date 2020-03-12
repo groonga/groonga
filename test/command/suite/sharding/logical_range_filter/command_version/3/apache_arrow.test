@@ -12,6 +12,8 @@ column_create Logs_20150203 int32 COLUMN_SCALAR Int32
 column_create Logs_20150203 int32_vector COLUMN_VECTOR Int32
 column_create Logs_20150203 int64 COLUMN_SCALAR Int64
 column_create Logs_20150203 reference_short_text COLUMN_SCALAR ShortTextTable
+column_create Logs_20150203 reference_short_text_vector \
+  COLUMN_VECTOR ShortTextTable
 column_create Logs_20150203 time COLUMN_SCALAR Time
 column_create Logs_20150203 uint32 COLUMN_SCALAR UInt32
 
@@ -20,6 +22,8 @@ column_create Logs_20150204 int32 COLUMN_SCALAR Int32
 column_create Logs_20150204 int32_vector COLUMN_VECTOR Int32
 column_create Logs_20150204 int64 COLUMN_SCALAR Int64
 column_create Logs_20150204 reference_short_text COLUMN_SCALAR ShortTextTable
+column_create Logs_20150204 reference_short_text_vector \
+  COLUMN_VECTOR ShortTextTable
 column_create Logs_20150204 time COLUMN_SCALAR Time
 column_create Logs_20150204 uint32 COLUMN_SCALAR UInt32
 
@@ -28,6 +32,8 @@ column_create Logs_20150205 int32 COLUMN_SCALAR Int32
 column_create Logs_20150205 int32_vector COLUMN_VECTOR Int32
 column_create Logs_20150205 int64 COLUMN_SCALAR Int64
 column_create Logs_20150205 reference_short_text COLUMN_SCALAR ShortTextTable
+column_create Logs_20150205 reference_short_text_vector \
+  COLUMN_VECTOR ShortTextTable
 column_create Logs_20150205 time COLUMN_SCALAR Time
 column_create Logs_20150205 uint32 COLUMN_SCALAR UInt32
 
@@ -40,6 +46,7 @@ load --table Logs_20150203
   "int32_vector": [1, -2, 3],
   "int64": 4294967296,
   "reference_short_text": "Hello 2015-02-03",
+  "reference_short_text_vector": ["2015-02-03 1", "2015-02-03 2"],
   "time": "2015-02-03 23:59:58",
   "uint32": 29
 }
@@ -53,6 +60,7 @@ load --table Logs_20150204
   "int32_vector": [10, -20, 30],
   "int64": 4294967297,
   "reference_short_text": "Hello 2015-02-04",
+  "reference_short_text_vector": ["2015-02-04 1", "2015-02-04 2", "2015-02-04 3"],
   "time": "2015-02-04 00:00:00",
   "uint32": 290
 }
@@ -66,6 +74,7 @@ load --table Logs_20150205
   "int32_vector": [100, -200, 300],
   "int64": 4294967298,
   "reference_short_text": "Hello 2015-02-05",
+  "reference_short_text_vector": [],
   "time": "2015-02-05 00:00:00",
   "uint32": 2900
 }
