@@ -92,6 +92,7 @@ jobs:
           fi
           ./configure \
             --enable-debug \
+            --prefix=/tmp/local \
             "${configure_args[@]}" \
             ${{ matrix.configure-options }}
       - name: Build
@@ -150,4 +151,4 @@ jobs:
             --testee groonga-httpd
       - name: Install
         run: |
-          sudo make install
+          make install
