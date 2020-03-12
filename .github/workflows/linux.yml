@@ -105,35 +105,35 @@ jobs:
           if [ "${{ matrix.optimize }}" = "true" ]; then
             echo "::set-env name=GRN_EXPR_OPTIMIZE::yes"
           fi
-      - name: Test: API
+      - name: "Test: API"
         run: |
           test/unit/run-test.sh
-      - name: Test: mruby
+      - name: "Test: mruby"
         run: |
           test/mruby/run-test.sh
-      - name: Test: command line
+      - name: "Test: command line"
         run: |
           test/command_line/run-test.rb
-      - name: Test: stdio
+      - name: "Test: stdio"
         run: |
           test/command/run-test.sh \
             --n-retries=3 \
             --reporter=mark \
-      - name: Test: HTTP: load: Apache Arrow
+      - name: "Test: HTTP: load: Apache Arrow"
         run: |
           test/command/run-test.sh \
             --n-retries=3 \
             --reporter=mark \
             --input-type=apache-arrow \
             --interface=http
-      - name: Test: HTTP: command: POST
+      - name: "Test: HTTP: command: POST"
         run: |
           test/command/run-test.sh \
             --n-retries=3 \
             --reporter=mark \
             --interface=http \
             --use-http-post
-      - name: Test: HTTP: groonga-httpd
+      - name: "Test: HTTP: groonga-httpd"
         run: |
           test/command/run-test.sh \
             --n-retries=3 \
