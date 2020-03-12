@@ -21,7 +21,7 @@ module Groonga
 
       def run_body(input)
         output_columns = input[:output_columns] || "_key, *"
-        is_command_version3_or_later = (context.command_version >= 3)
+        is_stream_output = stream_output?(input)
 
         context = ExecuteContext.new(input)
         begin
@@ -39,7 +39,7 @@ module Groonga
             n_elements += result_set.size
 
             if is_first
-              if is_command_version3_or_later
+              if is_stream_output
                 writer.open_map("RESULTSET", -1)
               else
                 writer.open_array("RESULTSET", -1)
@@ -54,7 +54,7 @@ module Groonga
             writer.write_table_records_content(result_set,
                                                output_columns,
                                                options)
-            writer.flush if is_command_version3_or_later
+            writer.flush if is_stream_output
             if limit != -1
               limit -= result_set.size
               break if limit <= 0
@@ -62,7 +62,7 @@ module Groonga
           end
           unless is_first
             writer.close_table_records
-            if is_command_version3_or_later
+            if is_stream_output
               writer.close_map
             else
               writer.close_array
@@ -75,7 +75,13 @@ module Groonga
       end
 
       private
+      def stream_output?(input)
+        context.command_version >= 3
+      end
+
       def cache_key(input)
+        return nil if stream_output?(input)
+
         key = "logical_range_filter\0"
         key << "#{input[:logical_table]}\0"
         key << "#{input[:shard_key]}\0"

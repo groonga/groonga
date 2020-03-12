@@ -28,12 +28,11 @@ load --table Logs_20150205
 {"timestamp": "2015-02-05 00:00:01", "memo": "2015-02-05 00:00:01", "message": "Shutdown"}
 ]
 
+#@sleep 1
+
 #@collect-query-log true
 logical_range_filter Logs timestamp \
-  --filter 'message == "Shutdown"' \
-  --min "2015-02-03 23:59:59" \
-  --min_border "include" \
-  --max "2015-02-05 00:00:00" \
-  --max_border "include" \
+  --command_version 3
+logical_range_filter Logs timestamp \
   --command_version 3
 #@collect-query-log false

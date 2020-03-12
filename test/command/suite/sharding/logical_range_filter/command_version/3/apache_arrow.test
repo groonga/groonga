@@ -81,6 +81,13 @@ load --table Logs_20150205
 }
 ]
 
+#@sleep 1
+
+#@collect-query-log true
 logical_range_filter Logs time \
   --command_version 3 \
   --output_type apache-arrow
+logical_range_filter Logs time \
+  --command_version 3 \
+  --output_type apache-arrow
+#@collect-query-log false
