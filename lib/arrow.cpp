@@ -177,9 +177,15 @@ namespace grnarrow {
         if (!arrow_type) {
           auto range = grn_ctx_at(ctx, range_id);
           if (grn_obj_is_lexicon(ctx, range)) {
+            // TODO: We can't return reference value as dictionary
+            // because arrow::ipc::RecordBatchWriter doesn't support
+            // dictionary delta for now.
+            //
+            // auto domain = grn_ctx_at(ctx, range->header.domain);
+            // auto dictionary_type = grn_column_to_arrow_type(ctx, domain);
+            // arrow_type = arrow::dictionary(arrow::int32(), dictionary_type);
             auto domain = grn_ctx_at(ctx, range->header.domain);
-            auto dictionary_type = grn_column_to_arrow_type(ctx, domain);
-            arrow_type = arrow::dictionary(arrow::int32(), dictionary_type);
+            arrow_type = grn_column_to_arrow_type(ctx, domain);
           }
         }
         if (range_flags & GRN_OBJ_VECTOR) {
@@ -1841,8 +1847,16 @@ namespace grnarrow {
     }
 
     void add_column_record(grn_obj *record) {
+      // TODO: We can't return reference value as dictionary
+      // because arrow::ipc::RecordBatchWriter doesn't support
+      // dictionary delta for now.
+      //
+      // auto column_builder =
+      //   record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
+      //     current_column_index_++);
+
       auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
+        record_batch_builder_->GetFieldAs<arrow::StringBuilder>(
           current_column_index_++);
       auto table = grn_ctx_at(ctx_, record->header.domain);
       char key[GRN_TABLE_MAX_KEY_SIZE];
