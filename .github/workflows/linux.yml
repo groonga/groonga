@@ -119,6 +119,8 @@ jobs:
         run: |
           bash -x test/mruby/run-test.sh
       - name: "Test: command line"
+        if: |
+          matrix.use-mruby
         run: |
           test/command_line/run-test.rb
       - name: "Test: stdio"
