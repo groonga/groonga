@@ -1,6 +1,12 @@
 FROM ubuntu:18.04
 
-ENV DEBIAN_FRONTEND=noninteractive
+RUN \
+  echo "debconf debconf/frontend select Noninteractive" | \
+    debconf-set-selections
+
+RUN \
+  echo 'APT::Install-Recommends "false";' > \
+    /etc/apt/apt.conf.d/disable-install-recommends
 
 RUN \
   apt update -qq && \
@@ -51,6 +57,7 @@ RUN \
     bundler \
     groonga-client \
     pkg-config \
+    red-arrow \
     test-unit
 
 RUN \
@@ -60,57 +67,12 @@ RUN \
   echo "groonga ALL=(ALL:ALL) NOPASSWD:ALL" | \
     EDITOR=tee visudo -f /etc/sudoers.d/groonga
 
-COPY . /home/groonga/source
-
 USER groonga
 
-WORKDIR /home/groonga
-RUN mkdir -p build
+RUN mkdir -p /home/groonga/build
 WORKDIR /home/groonga/build
 
-RUN ../source/configure \
-  --prefix=/tmp/local \
-  --enable-debug \
-  --with-ruby \
-  --enable-mruby
+COPY run.sh /home/groonga/build/
+RUN sudo chown groonga: run.sh
 
-RUN make -j$(nproc) > /dev/null
-
-RUN \
-  mkdir -p /tmp/local/var/log/groonga/httpd/
-
-RUN \
-  rsync -a --include "*.rb" --include "*/" --exclude "*" \
-    ../source/plugins/ \
-    plugins/
-
-RUN \
-  mkdir -p test/command && \
-  rsync -a --delete \
-    ../source/test/command/suite/ \
-    test/command/suite/
-
-CMD \
-  # BUILD_DIR=test/unit \
-  #   ../source/test/unit/run-test.sh && \
-  BUILD_DIR=test/mruby \
-    ../source/test/mruby/run-test.rb && \
-  BUILD_DIR=test/command_line \
-    ../source/test/command_line/run-test.rb && \
-  BUILD_DIR=test/command \
-    ../source/test/command/run-test.sh \
-    test/command/suite \
-    --reporter mark \
-    --read-timeout 30 && \
-  BUILD_DIR=test/command \
-    ../source/test/command/run-test.sh \
-    test/command/suite \
-    --reporter mark \
-    --read-timeout 30 \
-    --interface http && \
-  BUILD_DIR=test/command \
-    ../source/test/command/run-test.sh \
-    test/command/suite \
-    --reporter mark \
-    --read-timeout 30 \
-    --testee groonga-httpd
+CMD ./run.sh

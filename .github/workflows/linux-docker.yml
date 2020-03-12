@@ -33,12 +33,7 @@ jobs:
           ./autogen.sh
       - name: Build Docker image
         run: |
-          docker build \
-            -t groonga/groonga-${{ matrix.image }} \
-            -f dockerfiles/${{ matrix.image }}.dockerfile \
-            .
+          docker-compose build ${{ matrix.image }}
       - name: Run Docker image
         run: |
-          docker run \
-            --interactive \
-            groonga/groonga-${{ matrix.image }}
+          docker-compose run ${{ matrix.image }}
