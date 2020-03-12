@@ -3,30 +3,42 @@ on:
   - push
   - pull_request
 jobs:
-  configure:
-    name: configure
+  autotools:
+    name: Autotools
     strategy:
       fail-fast: false
       matrix:
         label:
-          - "HTTP: load: Apache Arrow"
-          - "HTTP: command: POST"
+          - "GCC"
+          - "GCC: mruby"
+          - "GCC: mruby: optimize"
+          - "Clang: mruby"
         include:
-          - label: "HTTP: load: Apache Arrow"
-            use-arrow: true
-            grntest-options: >-
-              --input-type=apache-arrow
-              --interface=http
-          - label: "HTTP: command: POST"
-            grntest-options: >-
-              --interface=http
-              --use-http-post
+          - label: "GCC"
+            configure-options: >-
+              CFLAGS=-funsigned-char
+              CXXFLAGS=-funsigned-char
+          - label: "GCC: mruby"
+            configure-options: >-
+              --enable-mruby
+              --with-ruby
+          - label: "GCC: mruby: optimize"
+            configure-options: >-
+              --enable-mruby
+              --with-ruby
+            optimize: true
+          - label: "Clang: mruby"
+            packages: >-
+              clang
+            configure-options: >-
+              CC=clang
+              CC=clang++
+              --enable-mruby
+              --with-ruby
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - name: Enable Apache Arrow repository
-        if:
-          matrix.use-arrow
         run: |
           sudo apt update
           sudo apt install -y -V \
@@ -43,7 +55,9 @@ jobs:
             autotools-dev \
             bison \
             cmake \
+            gdb \
             gettext \
+            libarrow-dev \
             libevent-dev \
             libluajit-5.1-dev \
             libmecab-dev \
@@ -51,15 +65,18 @@ jobs:
             mecab-naist-jdic \
             rapidjson-dev \
             ruby-dev \
-            zlib1g-dev
-          if [ "${{ matrix.use-arrow }}" = "true" ]; then
-            sudo apt install -y -V \
-              libarrow-dev
-          fi
+            zlib1g-dev \
+            ${{ matrix.packages }}
           if [ "${{ matrix.use-sphinx }}" = "true" ]; then
             sudo apt install -y -V \
               python3-pip
           fi
+      - name: Install Cutter
+        run: |
+          curl \
+            --silent \
+            --location \
+            https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
       - name: Install Sphinx
         if: |
           matrix.use-sphinx
@@ -75,22 +92,53 @@ jobs:
         run: |
           ./configure \
             --enable-debug \
-            --enable-mruby \
-            --with-ruby \
             ${{ matrix.configure-options }}
       - name: Build
         run: |
           make -j$(nproc)
-      - name: Test
+      - name: Install test dependencies
         run: |
-          export COLUMNS=79
-          if [ "${{ matrix.use-arrow }}" = "true" ]; then
-            sudo gem install red-arrow
+          sudo gem install red-arrow
+      - name: Set environment variables
+        run: |
+          echo "::set-env name=COLUMNS::79"
+          if [ "${{ matrix.optimize }}" = "true" ]; then
+            echo "::set-env name=GRN_EXPR_OPTIMIZE::yes"
           fi
+      - name: Test: API
+        run: |
+          test/unit/run-test.sh
+      - name: Test: mruby
+        run: |
+          test/mruby/run-test.sh
+      - name: Test: command line
+        run: |
+          test/command_line/run-test.rb
+      - name: Test: stdio
+        run: |
           test/command/run-test.sh \
             --n-retries=3 \
             --reporter=mark \
-            ${{ matrix.grntest-options }}
+      - name: Test: HTTP: load: Apache Arrow
+        run: |
+          test/command/run-test.sh \
+            --n-retries=3 \
+            --reporter=mark \
+            --input-type=apache-arrow \
+            --interface=http
+      - name: Test: HTTP: command: POST
+        run: |
+          test/command/run-test.sh \
+            --n-retries=3 \
+            --reporter=mark \
+            --interface=http \
+            --use-http-post
+      - name: Test: HTTP: groonga-httpd
+        run: |
+          test/command/run-test.sh \
+            --n-retries=3 \
+            --reporter=mark \
+            --testee groonga-httpd
       - name: Install
         run: |
           sudo make install

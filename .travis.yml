@@ -45,40 +45,6 @@ addons_linux_docker: &addons_linux_docker
 
 matrix:
   include:
-    - name: "Autotools"
-      os: linux
-      compiler: gcc
-      addons:
-        <<: *addons_linux_build
-      env:
-        - BUILD_TOOL=autotools
-        - CFLAGS=-funsigned-char
-        - CXXFLAGS=-funsigned-char
-    - name: "Autotools: mruby"
-      os: linux
-      compiler: gcc
-      addons:
-        <<: *addons_linux_build
-      env:
-        - BUILD_TOOL=autotools
-        - ENABLE_MRUBY=yes
-    - name: "Autotools: mruby: optimize"
-      os: linux
-      compiler: gcc
-      addons:
-        <<: *addons_linux_build
-      env:
-        - BUILD_TOOL=autotools
-        - ENABLE_MRUBY=yes
-        - GRN_EXPR_OPTIMIZE=yes
-    - name: "Autotools: clang"
-      os: linux
-      compiler: clang
-      addons:
-        <<: *addons_linux_build
-      env:
-        - BUILD_TOOL=autotools
-        - ENABLE_MRUBY=yes
     - name: "CMake"
       os: linux
       compiler: gcc
