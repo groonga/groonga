@@ -112,7 +112,7 @@ jobs:
           fi
       - name: "Test: API"
         run: |
-          test/unit/run-test.sh
+          bash -x test/unit/run-test.sh
       - name: "Test: mruby"
         if: |
           matrix.use-mruby
@@ -122,29 +122,29 @@ jobs:
         if: |
           matrix.use-mruby
         run: |
-          test/command_line/run-test.rb
+          bash -x test/command_line/run-test.rb
       - name: "Test: stdio"
         run: |
-          test/command/run-test.sh \
+          bash -x test/command/run-test.sh \
             --n-retries=3 \
             --reporter=mark \
       - name: "Test: HTTP: load: Apache Arrow"
         run: |
-          test/command/run-test.sh \
+          bash -x test/command/run-test.sh \
             --n-retries=3 \
             --reporter=mark \
             --input-type=apache-arrow \
             --interface=http
       - name: "Test: HTTP: command: POST"
         run: |
-          test/command/run-test.sh \
+          bash -x test/command/run-test.sh \
             --n-retries=3 \
             --reporter=mark \
             --interface=http \
             --use-http-post
       - name: "Test: HTTP: groonga-httpd"
         run: |
-          test/command/run-test.sh \
+          bash -x test/command/run-test.sh \
             --n-retries=3 \
             --reporter=mark \
             --testee groonga-httpd
