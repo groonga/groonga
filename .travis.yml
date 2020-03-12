@@ -6,9 +6,6 @@ language: cpp
 
 dist: bionic
 
-services:
-  - docker
-
 cache:
   - ccache
 
@@ -36,12 +33,6 @@ addons_macos_build: &addons_macos_build
   homebrew:
     brewfile: true
     update: true
-
-addons_linux_docker: &addons_linux_docker
-  apt:
-    packages:
-      - autotools-dev
-      - autoconf-archive
 
 matrix:
   include:
@@ -84,18 +75,6 @@ matrix:
       env:
         - BUILD_TOOL=cmake
         - ENABLE_MRUBY=yes
-    - name: "Ubuntu 16.04"
-      os: linux
-      addons:
-        <<: *addons_linux_docker
-      env:
-        - DOCKER=ubuntu-16.04
-    - name: "Ubuntu 18.04"
-      os: linux
-      addons:
-        <<: *addons_linux_docker
-      env:
-        - DOCKER=ubuntu-18.04
 
 install:
   - travis/install.sh
