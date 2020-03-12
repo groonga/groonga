@@ -91,6 +91,8 @@ module Groonga
         key << "#{input[:use_range_index]}\0"
         key << "#{input[:post_filter]}\0"
         key << "#{input[:sort_keys]}\0"
+        key << "#{context.command_version}\0"
+        key << "#{context.output_type}\0"
         dynamic_columns = DynamicColumns.parse("[logical_range_filter]",
                                                input)
         key << dynamic_columns.cache_key
