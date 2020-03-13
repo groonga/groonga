@@ -2179,7 +2179,7 @@ do_htreq_post_process_body_load_generic(grn_ctx *ctx,
                              header,
                              fd,
                              do_htreq_post_process_body_load_chunks_generic,
-                             NULL);
+                             &data);
   http_post_load_data_fin(ctx, &data);
 }
 
