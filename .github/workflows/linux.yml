@@ -88,11 +88,11 @@ jobs:
           configure_args=()
           if [ "${{ matrix.use-mruby }}" = "true" ]; then
             configure_args+=(--enable-mruby)
-            configure_args+=(--with-ruby)
           fi
           ./configure \
             --enable-debug \
             --prefix=/tmp/local \
+            --with-ruby \
             "${configure_args[@]}" \
             ${{ matrix.configure-options }}
       - name: Build
