@@ -189,93 +189,101 @@ proc_load(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     ctx->impl->loader.stat = GRN_LOADER_END;
     ctx->impl->loader.rc = GRN_SUCCESS;
   }
-  if (ctx->impl->loader.stat != GRN_LOADER_END &&
-      !(ctx->impl->command.flags & GRN_CTX_TAIL)) {
+  bool accept_more_data = true;
+  if (ctx->impl->loader.stat == GRN_LOADER_END) {
+    accept_more_data = false;
+  }
+  if (ctx->impl->command.flags & GRN_CTX_TAIL) {
+    accept_more_data = false;
+  }
+  if (accept_more_data) {
     grn_obj *command = grn_proc_get_info(ctx, user_data, NULL, NULL, NULL);
     grn_ctx_set_keep_command(ctx, command);
-  } else {
-    if (ctx->impl->loader.rc != GRN_SUCCESS) {
-      ctx->rc = ctx->impl->loader.rc;
-      grn_strcpy(ctx->errbuf, GRN_CTX_MSGSIZE, ctx->impl->loader.errbuf);
-    }
-    {
-      unsigned int n_records;
-      if (ctx->impl->loader.table) {
-        n_records = grn_table_size(ctx, ctx->impl->loader.table);
-      } else {
-        n_records = 0;
-      }
-      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                    ":", "load(%d): [%d][%d][%d]",
-                    ctx->impl->loader.n_records,
-                    ctx->impl->loader.n_record_errors,
-                    ctx->impl->loader.n_column_errors,
-                    n_records);
-    }
-    if (grn_ctx_get_command_version(ctx) >= GRN_COMMAND_VERSION_3) {
-      int n_elements = 1;
-      if (ctx->impl->loader.output_ids) {
-        n_elements++;
-      }
-      if (ctx->impl->loader.output_errors) {
-        n_elements++;
-      }
-      GRN_OUTPUT_MAP_OPEN("result", n_elements);
-      GRN_OUTPUT_CSTR("n_loaded_records");
-      GRN_OUTPUT_INT64(ctx->impl->loader.n_records);
-      if (ctx->impl->loader.output_ids) {
-        grn_obj *ids = &(ctx->impl->loader.ids);
-        int i, n_ids;
-
-        GRN_OUTPUT_CSTR("loaded_ids");
-        n_ids = GRN_BULK_VSIZE(ids) / sizeof(uint32_t);
-        GRN_OUTPUT_ARRAY_OPEN("loaded_ids", n_ids);
-        for (i = 0; i < n_ids; i++) {
-          GRN_OUTPUT_UINT64(GRN_UINT32_VALUE_AT(ids, i));
-        }
-        GRN_OUTPUT_ARRAY_CLOSE();
-      }
-      if (ctx->impl->loader.output_errors) {
-        grn_obj *return_codes = &(ctx->impl->loader.return_codes);
-        grn_obj *error_messages = &(ctx->impl->loader.error_messages);
-        int i, n;
-
-        GRN_OUTPUT_CSTR("errors");
-        n = GRN_BULK_VSIZE(return_codes) / sizeof(int32_t);
-        GRN_OUTPUT_ARRAY_OPEN("errors", n);
-        for (i = 0; i < n; i++) {
-          const char *message;
-          unsigned int message_size;
-
-          message_size = grn_vector_get_element(ctx,
-                                                error_messages,
-                                                i,
-                                                &message,
-                                                NULL,
-                                                NULL);
-
-          GRN_OUTPUT_MAP_OPEN("error", 2);
-          GRN_OUTPUT_CSTR("return_code");
-          GRN_OUTPUT_INT64(GRN_INT32_VALUE_AT(return_codes, i));
-          GRN_OUTPUT_CSTR("message");
-          if (message_size == 0) {
-            GRN_OUTPUT_NULL();
-          } else {
-            GRN_OUTPUT_STR(message, message_size);
-          }
-          GRN_OUTPUT_MAP_CLOSE();
-        }
-        GRN_OUTPUT_ARRAY_CLOSE();
-      }
-      GRN_OUTPUT_MAP_CLOSE();
-    } else {
-      GRN_OUTPUT_INT64(ctx->impl->loader.n_records);
-    }
-    if (ctx->impl->loader.table) {
-      grn_db_touch(ctx, DB_OBJ(ctx->impl->loader.table)->db);
-    }
-    grn_ctx_loader_clear(ctx);
+    return NULL;
   }
+
+  if (ctx->impl->loader.rc != GRN_SUCCESS) {
+    ctx->rc = ctx->impl->loader.rc;
+    grn_strcpy(ctx->errbuf, GRN_CTX_MSGSIZE, ctx->impl->loader.errbuf);
+  }
+  {
+    unsigned int n_records;
+    if (ctx->impl->loader.table) {
+      n_records = grn_table_size(ctx, ctx->impl->loader.table);
+    } else {
+      n_records = 0;
+    }
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                  ":", "load(%d): [%d][%d][%d]",
+                  ctx->impl->loader.n_records,
+                  ctx->impl->loader.n_record_errors,
+                  ctx->impl->loader.n_column_errors,
+                  n_records);
+  }
+  if (grn_ctx_get_command_version(ctx) >= GRN_COMMAND_VERSION_3) {
+    int n_elements = 1;
+    if (ctx->impl->loader.output_ids) {
+      n_elements++;
+    }
+    if (ctx->impl->loader.output_errors) {
+      n_elements++;
+    }
+    GRN_OUTPUT_MAP_OPEN("result", n_elements);
+    GRN_OUTPUT_CSTR("n_loaded_records");
+    GRN_OUTPUT_INT64(ctx->impl->loader.n_records);
+    if (ctx->impl->loader.output_ids) {
+      grn_obj *ids = &(ctx->impl->loader.ids);
+      int i, n_ids;
+
+      GRN_OUTPUT_CSTR("loaded_ids");
+      n_ids = GRN_BULK_VSIZE(ids) / sizeof(uint32_t);
+      GRN_OUTPUT_ARRAY_OPEN("loaded_ids", n_ids);
+      for (i = 0; i < n_ids; i++) {
+        GRN_OUTPUT_UINT64(GRN_UINT32_VALUE_AT(ids, i));
+      }
+      GRN_OUTPUT_ARRAY_CLOSE();
+    }
+    if (ctx->impl->loader.output_errors) {
+      grn_obj *return_codes = &(ctx->impl->loader.return_codes);
+      grn_obj *error_messages = &(ctx->impl->loader.error_messages);
+      int i, n;
+
+      GRN_OUTPUT_CSTR("errors");
+      n = GRN_BULK_VSIZE(return_codes) / sizeof(int32_t);
+      GRN_OUTPUT_ARRAY_OPEN("errors", n);
+      for (i = 0; i < n; i++) {
+        const char *message;
+        unsigned int message_size;
+
+        message_size = grn_vector_get_element(ctx,
+                                              error_messages,
+                                              i,
+                                              &message,
+                                              NULL,
+                                              NULL);
+
+        GRN_OUTPUT_MAP_OPEN("error", 2);
+        GRN_OUTPUT_CSTR("return_code");
+        GRN_OUTPUT_INT64(GRN_INT32_VALUE_AT(return_codes, i));
+        GRN_OUTPUT_CSTR("message");
+        if (message_size == 0) {
+          GRN_OUTPUT_NULL();
+        } else {
+          GRN_OUTPUT_STR(message, message_size);
+        }
+        GRN_OUTPUT_MAP_CLOSE();
+      }
+      GRN_OUTPUT_ARRAY_CLOSE();
+    }
+    GRN_OUTPUT_MAP_CLOSE();
+  } else {
+    GRN_OUTPUT_INT64(ctx->impl->loader.n_records);
+  }
+  if (ctx->impl->loader.table) {
+    grn_db_touch(ctx, DB_OBJ(ctx->impl->loader.table)->db);
+  }
+  grn_ctx_loader_clear(ctx);
+
   return NULL;
 }
 
