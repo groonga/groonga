@@ -1502,7 +1502,8 @@ typedef struct {
   const char *content_type_raw;
   long long int content_type_raw_length;
   long long int content_length;
-  grn_bool have_100_continue;
+  bool have_100_continue;
+  bool is_chunked_request;
   const char *body_start;
   const char *body_end;
 } h_header;
@@ -1650,7 +1651,11 @@ h_parse_header_values(grn_ctx *ctx,
           }
         } else if (STRING_EQUAL_CI(name, name_length, "Expect")) {
           if (STRING_EQUAL(value, value_length, "100-continue")) {
-            header->have_100_continue = GRN_TRUE;
+            header->have_100_continue = true;
+          }
+        } else if (STRING_EQUAL_CI(name, name_length, "Transfer-Encoding")) {
+          if (STRING_EQUAL(value, value_length, "chunked")) {
+            header->is_chunked_request = true;
           }
         }
       }
@@ -1720,88 +1725,91 @@ do_htreq_get(grn_ctx *ctx, ht_context *hc)
                GRN_CTX_TAIL);
 }
 
-static void
-do_htreq_post_process_body_www_form_urlencoded(grn_ctx *ctx,
-                                               h_header *header,
-                                               grn_sock fd)
+typedef void (*grn_htreq_post_process_body_chunk_func)(grn_ctx *ctx,
+                                                       const char *chunk,
+                                                       size_t chunk_size,
+                                                       void *user_data);
+
+static const char *
+do_htreq_post_process_body_chunked_read_chunk_size(grn_ctx *ctx,
+                                                   const char *data,
+                                                   size_t data_size,
+                                                   size_t *chunk_size)
 {
-  grn_obj command;
-  GRN_TEXT_INIT(&command, 0);
-  GRN_TEXT_PUT(ctx, &command, header->path_start, header->path_length);
-  bool have_question = false;
-  {
-    int i;
-    for (i = 0; i < header->path_length; i++) {
-      if (header->path_start[i] == '?') {
-        have_question = true;
-        break;
-      }
-    }
-  }
-  long long int read_content_length = 0;
-  if (header->body_start) {
-    size_t read_body_length = header->body_end - header->body_start;
-    read_content_length += read_body_length;
-    if (have_question) {
-      GRN_TEXT_PUTC(ctx, &command, '&');
-    } else {
-      GRN_TEXT_PUTC(ctx, &command, '?');
-    }
-    GRN_TEXT_PUT(ctx, &command, header->body_start, read_body_length);
-  }
-  while (read_content_length < header->content_length) {
-#define POST_BUFFER_SIZE 8192
-    char buffer[POST_BUFFER_SIZE];
-    int recv_flags = 0;
-    ssize_t recv_length = recv(fd, buffer, POST_BUFFER_SIZE, recv_flags);
-    if (recv_length == 0) {
+  const char *current = data;
+  const char *data_end = data + data_size;
+  while (data_end - current >= 2) {
+    switch (current[0]) {
+    case '0' : case '1' : case '2' : case '3' : case '4' :
+    case '5' : case '6' : case '7' : case '8' : case '9' :
+    case 'a' : case 'b' : case 'c' : case 'd' : case 'e' : case 'f' :
+    case 'A' : case 'B' : case 'C' : case 'D' : case 'E' : case 'F' :
+      /* OK */
       break;
-    }
-    if (recv_length == -1) {
-      SOERR("recv");
-      break;
-    }
-    if (read_content_length == 0) {
-      if (have_question) {
-        GRN_TEXT_PUTC(ctx, &command, '&');
+    case '\r' :
+      if (current[1] == '\n') {
+        if (data == current) {
+          ERR(GRN_INVALID_ARGUMENT,
+              "[http][post] chunked request size line doesn't have content");
+          return NULL;
+        }
+        *chunk_size = grn_htoui(data, current, NULL);
+        return current + 2;
       } else {
-        GRN_TEXT_PUTC(ctx, &command, '?');
+        ERR(GRN_INVALID_ARGUMENT,
+            "[http][post] chunked request size line isn't ended by CRLF: "
+            "<%.*s>",
+            (int)((current + 2) - data),
+            data);
+        return NULL;
       }
+      break;
+    default :
+      ERR(GRN_INVALID_ARGUMENT,
+          "[http][post] chunked request size line has garbage: "
+          "<%.*s>",
+          (int)((current + 1) - data),
+          data);
+      return NULL;
     }
-    GRN_TEXT_PUT(ctx, &command, buffer, recv_length);
-    read_content_length += recv_length;
+    current++;
   }
-  grn_ctx_send(ctx,
-               GRN_TEXT_VALUE(&command),
-               GRN_TEXT_LEN(&command),
-               GRN_CTX_TAIL);
-  GRN_OBJ_FIN(ctx, &command);
-#undef POST_BUFFER_SIZE
+  return NULL;
 }
 
 static void
-do_htreq_post_process_body_load_json(grn_ctx *ctx,
-                                     h_header *header,
-                                     grn_sock fd)
+do_htreq_post_process_body_chunked(grn_ctx *ctx,
+                                   h_header *header,
+                                   grn_sock fd,
+                                   grn_htreq_post_process_body_chunk_func func,
+                                   void *user_data)
 {
-  bool is_tail_sent = false;
-  grn_obj chunk_buffer;
-  long long int read_content_length = 0;
+  grn_obj buffer;
+  GRN_TEXT_INIT(&buffer, 0);
+  const char *data = NULL;
+  size_t data_size = 0;
+  bool need_chunk_size = true;
+  bool need_chunk_end_cr = false;
+  bool need_chunk_end_lf = false;
+  size_t chunk_size = 0;
 
-  GRN_TEXT_INIT(&chunk_buffer, 0);
-  while (read_content_length < header->content_length) {
-#define POST_BUFFER_SIZE 8192
-    char buffer[POST_BUFFER_SIZE];
-    const char *buffer_start, *buffer_current, *buffer_end;
+  if (header->body_start) {
+    data = header->body_start;
+    data_size = header->body_end - header->body_start;
+    printf("body start: %zu\n", data_size);
+  }
 
-    if (header->body_start) {
-      buffer_start = header->body_start;
-      buffer_end = header->body_end;
-      header->body_start = NULL;
-    } else {
-      ssize_t recv_length;
+  while (true) {
+    if (!data) {
+      const size_t buffer_size = 8192;
+      if (GRN_BULK_REST(&buffer) < buffer_size) {
+        grn_bulk_reserve(ctx, &buffer, buffer_size);
+      }
       int recv_flags = 0;
-      recv_length = recv(fd, buffer, POST_BUFFER_SIZE, recv_flags);
+      ssize_t recv_length = recv(fd,
+                                 GRN_BULK_CURR(&buffer),
+                                 GRN_BULK_REST(&buffer),
+                                 recv_flags);
       if (recv_length == 0) {
         break;
       }
@@ -1809,130 +1817,357 @@ do_htreq_post_process_body_load_json(grn_ctx *ctx,
         SOERR("recv");
         break;
       }
-      buffer_start = buffer;
-      buffer_end = buffer_start + recv_length;
+      GRN_BULK_INCR_LEN(&buffer, recv_length);
+      data = GRN_BULK_HEAD(&buffer);
+      data_size = GRN_BULK_VSIZE(&buffer);
     }
-    read_content_length += buffer_end - buffer_start;
 
-    buffer_current = buffer_end - 1;
-    for (; buffer_current > buffer_start; buffer_current--) {
-      grn_bool is_separator;
-      switch (buffer_current[0]) {
-      case '\n' :
-      case ',' :
-        is_separator = GRN_TRUE;
-        break;
-      default :
-        is_separator = GRN_FALSE;
+    if (need_chunk_end_cr) {
+      if (data[0] != '\r') {
+        ERR(GRN_INVALID_ARGUMENT,
+            "[http][post] chunk end CR doesn't exit: <%c>", data[0]);
         break;
       }
-      if (!is_separator) {
+      need_chunk_end_cr = false;
+      if (data_size == 1) {
+        data = NULL;
+        data_size = 0;
+        GRN_BULK_REWIND(&buffer);
         continue;
       }
+      data++;
+      data_size--;
+    }
 
-      GRN_TEXT_PUT(ctx,
-                   &chunk_buffer,
-                   buffer_start,
-                   buffer_current + 1 - buffer_start);
-      {
-        int flags = 0;
-        if (!(read_content_length == header->content_length &&
-              buffer_current + 1 == buffer_end)) {
-          flags |= GRN_CTX_MORE;
-        } else {
-          flags |= GRN_CTX_TAIL;
-          is_tail_sent = true;
-        }
-        grn_ctx_send(ctx,
-                     GRN_TEXT_VALUE(&chunk_buffer),
-                     GRN_TEXT_LEN(&chunk_buffer),
-                     flags);
+    if (need_chunk_end_lf) {
+      if (data[0] != '\n') {
+        ERR(GRN_INVALID_ARGUMENT,
+            "[http][post] chunk end LF doesn't exit: <%c>", data[0]);
+        break;
       }
-      buffer_start = buffer_current + 1;
-      GRN_BULK_REWIND(&chunk_buffer);
-      break;
+      need_chunk_end_lf = false;
+      if (data_size == 1) {
+        data = NULL;
+        data_size = 0;
+        GRN_BULK_REWIND(&buffer);
+        continue;
+      }
+      data++;
+      data_size--;
     }
-    if (buffer_end > buffer_start) {
-      GRN_TEXT_PUT(ctx, &chunk_buffer,
-                   buffer_start, buffer_end - buffer_start);
-    }
-#undef POST_BUFFER_SIZE
 
-    if (ctx->rc != GRN_SUCCESS) {
-      break;
+    if (need_chunk_size) {
+      const char *chunk_start =
+        do_htreq_post_process_body_chunked_read_chunk_size(ctx,
+                                                           data,
+                                                           data_size,
+                                                           &chunk_size);
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+      if (chunk_size == 0) {
+        break;
+      }
+      if (!chunk_start) {
+        if (data != GRN_BULK_HEAD(&buffer)) {
+          GRN_TEXT_PUT(ctx, &buffer, data, data_size);
+        }
+        continue;
+      }
+      size_t read_chunk_size = (data + data_size) - chunk_start;
+      data = chunk_start;
+      data_size = read_chunk_size;
+    }
+
+    if (data_size >= chunk_size) {
+      func(ctx, data, chunk_size, user_data);
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+      if (data_size == chunk_size) {
+        data = NULL;
+        data_size = 0;
+        GRN_BULK_REWIND(&buffer);
+      } else {
+        data += chunk_size;
+        data_size -= chunk_size;
+      }
+      need_chunk_end_cr = true;
+      need_chunk_end_lf = true;
+      need_chunk_size = true;
+    } else {
+      func(ctx, data, data_size, user_data);
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+      chunk_size -= data_size;
+      data = NULL;
+      data_size = 0;
+      GRN_BULK_REWIND(&buffer);
+      need_chunk_size = false;
     }
   }
-
-  if (ctx->rc == GRN_SUCCESS && GRN_TEXT_LEN(&chunk_buffer) > 0) {
-    grn_ctx_send(ctx,
-                 GRN_TEXT_VALUE(&chunk_buffer),
-                 GRN_TEXT_LEN(&chunk_buffer),
-                 GRN_CTX_TAIL);
-  } else if (!is_tail_sent) {
-    grn_ctx_send(ctx, NULL, 0, GRN_CTX_TAIL);
-  }
-
-  GRN_OBJ_FIN(ctx, &chunk_buffer);
 }
 
 static void
-do_htreq_post_process_body_load_generic(grn_ctx *ctx,
-                                        h_header *header,
-                                        grn_sock fd)
+do_htreq_post_process_body_raw(grn_ctx *ctx,
+                               h_header *header,
+                               grn_sock fd,
+                               grn_htreq_post_process_body_chunk_func func,
+                               void *user_data)
 {
-  bool is_tail_sent = false;
   long long int read_content_length = 0;
-
   if (header->body_start) {
-    int flags = 0;
     size_t read_body_length = header->body_end - header->body_start;
     read_content_length += read_body_length;
-    if (read_content_length < header->content_length) {
-      flags |= GRN_CTX_MORE;
-    } else {
-      flags |= GRN_CTX_TAIL;
-      is_tail_sent = true;
-    }
-    grn_ctx_send(ctx,
-                 header->body_start,
-                 read_body_length,
-                 flags);
+    func(ctx,
+         header->body_start,
+         read_body_length,
+         user_data);
     if (ctx->rc != GRN_SUCCESS) {
-      goto exit;
+      return;
     }
   }
 
   while (read_content_length < header->content_length) {
 #define POST_BUFFER_SIZE 8192
     char buffer[POST_BUFFER_SIZE];
-    ssize_t recv_length;
     int recv_flags = 0;
-    recv_length = recv(fd, buffer, POST_BUFFER_SIZE, recv_flags);
+    ssize_t recv_length = recv(fd, buffer, POST_BUFFER_SIZE, recv_flags);
+#undef POST_BUFFER_SIZE
     if (recv_length == 0) {
-      goto exit;
+      break;
     }
     if (recv_length == -1) {
       SOERR("recv");
-      goto exit;
+      break;
+    }
+    func(ctx, buffer, recv_length, user_data);
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
     }
     read_content_length += recv_length;
+  }
+}
 
-    int flags = 0;
-    if (read_content_length < header->content_length) {
-      flags |= GRN_CTX_MORE;
+static void
+do_htreq_post_process_body(grn_ctx *ctx,
+                           h_header *header,
+                           grn_sock fd,
+                           grn_htreq_post_process_body_chunk_func func,
+                           void *user_data)
+{
+  if (header->is_chunked_request) {
+    do_htreq_post_process_body_chunked(ctx,
+                                       header,
+                                       fd,
+                                       func,
+                                       user_data);
+  } else {
+    do_htreq_post_process_body_raw(ctx,
+                                   header,
+                                   fd,
+                                   func,
+                                   user_data);
+  }
+}
+
+typedef struct {
+  grn_obj command;
+  bool have_question;
+  bool is_first_chunk;
+} http_post_www_form_urlencoded_data;
+
+static void
+do_htreq_post_process_body_chunks_www_form_urlencoded(grn_ctx *ctx,
+                                                      const char *chunk,
+                                                      size_t chunk_size,
+                                                      void *user_data)
+{
+  http_post_www_form_urlencoded_data *data = user_data;
+
+  if (data->is_first_chunk) {
+    if (data->have_question) {
+      GRN_TEXT_PUTC(ctx, &(data->command), '&');
     } else {
-      flags |= GRN_CTX_TAIL;
-      is_tail_sent = true;
+      GRN_TEXT_PUTC(ctx, &(data->command), '?');
     }
-    grn_ctx_send(ctx, buffer, recv_length, flags);
-    if (ctx->rc != GRN_SUCCESS) {
-      goto exit;
+  }
+  GRN_TEXT_PUT(ctx, &(data->command), chunk, chunk_size);
+}
+
+static void
+do_htreq_post_process_body_www_form_urlencoded(grn_ctx *ctx,
+                                               h_header *header,
+                                               grn_sock fd)
+{
+  http_post_www_form_urlencoded_data data;
+  GRN_TEXT_INIT(&(data.command), 0);
+  GRN_TEXT_PUT(ctx, &(data.command), header->path_start, header->path_length);
+  data.have_question = false;
+  {
+    int i;
+    for (i = 0; i < header->path_length; i++) {
+      if (header->path_start[i] == '?') {
+        data.have_question = true;
+        break;
+      }
     }
-#undef POST_BUFFER_SIZE
+  }
+  data.is_first_chunk = true;
+
+  do_htreq_post_process_body(
+    ctx,
+    header,
+    fd,
+    do_htreq_post_process_body_chunks_www_form_urlencoded,
+    &data);
+  if (ctx->rc == GRN_SUCCESS) {
+    grn_ctx_send(ctx,
+                 GRN_TEXT_VALUE(&(data.command)),
+                 GRN_TEXT_LEN(&(data.command)),
+                 GRN_CTX_TAIL);
+  }
+  GRN_OBJ_FIN(ctx, &(data.command));
+}
+
+typedef struct {
+  grn_obj chunk_buffer1;
+  grn_obj chunk_buffer2;
+  grn_obj *chunk_buffer_old;
+  grn_obj *chunk_buffer_current;
+} http_post_json_data;
+
+static void
+http_post_json_data_flush(grn_ctx *ctx,
+                          http_post_json_data *data)
+{
+  if (GRN_TEXT_LEN(data->chunk_buffer_old) > 0) {
+    grn_ctx_send(ctx,
+                 GRN_TEXT_VALUE(data->chunk_buffer_old),
+                 GRN_TEXT_LEN(data->chunk_buffer_old),
+                 GRN_CTX_MORE);
+    GRN_BULK_REWIND(data->chunk_buffer_old);
   }
 
-exit :
-  if (!is_tail_sent) {
+  grn_obj *tmp = data->chunk_buffer_current;
+  data->chunk_buffer_current = data->chunk_buffer_old;
+  data->chunk_buffer_old = tmp;
+}
+
+static void
+do_htreq_post_process_body_load_chunks_json(grn_ctx *ctx,
+                                            const char *chunk,
+                                            size_t chunk_size,
+                                            void *user_data)
+{
+  http_post_json_data *data = user_data;
+
+  const char *chunk_start = chunk;
+  const char *chunk_end = chunk + chunk_size;
+  const char *chunk_current = chunk_end;
+  for (; chunk_current > chunk_start; chunk_current--) {
+    bool is_separator;
+    switch (chunk_current[0]) {
+    case '\n' :
+    case ',' :
+      is_separator = true;
+      break;
+    default :
+      is_separator = false;
+      break;
+    }
+    if (!is_separator) {
+      continue;
+    }
+
+    GRN_TEXT_PUT(ctx,
+                 data->chunk_buffer_current,
+                 chunk_start,
+                 chunk_current + 1 - chunk_start);
+    http_post_json_data_flush(ctx, data);
+    chunk_start = chunk_current + 1;
+    break;
+  }
+
+  if (chunk_end > chunk_start) {
+    GRN_TEXT_PUT(ctx,
+                 data->chunk_buffer_current,
+                 chunk_start, chunk_end - chunk_start);
+  }
+}
+
+static void
+do_htreq_post_process_body_load_json(grn_ctx *ctx,
+                                     h_header *header,
+                                     grn_sock fd)
+{
+  http_post_json_data data;
+
+  GRN_TEXT_INIT(&(data.chunk_buffer1), 0);
+  GRN_TEXT_INIT(&(data.chunk_buffer2), 0);
+  data.chunk_buffer_old = &(data.chunk_buffer1);
+  data.chunk_buffer_current = &(data.chunk_buffer2);
+
+  do_htreq_post_process_body(ctx,
+                             header,
+                             fd,
+                             do_htreq_post_process_body_load_chunks_json,
+                             &data);
+  if (ctx->rc == GRN_SUCCESS &&
+      (GRN_TEXT_LEN(data.chunk_buffer_old) > 0 ||
+       GRN_TEXT_LEN(data.chunk_buffer_current) > 0)) {
+    if (GRN_TEXT_LEN(data.chunk_buffer_old) > 0) {
+      int flags;
+      if (GRN_TEXT_LEN(data.chunk_buffer_current) > 0) {
+        flags = GRN_CTX_MORE;
+      } else {
+        flags = GRN_CTX_TAIL;
+      }
+      grn_ctx_send(ctx,
+                   GRN_TEXT_VALUE(data.chunk_buffer_old),
+                   GRN_TEXT_LEN(data.chunk_buffer_old),
+                   flags);
+    }
+    if (GRN_TEXT_LEN(data.chunk_buffer_current) > 0) {
+      grn_ctx_send(ctx,
+                   GRN_TEXT_VALUE(data.chunk_buffer_current),
+                   GRN_TEXT_LEN(data.chunk_buffer_current),
+                   GRN_CTX_TAIL);
+    }
+  } else {
+    grn_ctx_send(ctx, NULL, 0, GRN_CTX_TAIL);
+  }
+
+  GRN_OBJ_FIN(ctx, &(data.chunk_buffer1));
+  GRN_OBJ_FIN(ctx, &(data.chunk_buffer2));
+}
+
+static void
+do_htreq_post_process_body_load_chunks_generic(grn_ctx *ctx,
+                                               const char *chunk,
+                                               size_t chunk_size,
+                                               void *user_data)
+{
+  int flags = GRN_CTX_MORE;
+  grn_ctx_send(ctx,
+               chunk,
+               chunk_size,
+               flags);
+}
+
+
+static void
+do_htreq_post_process_body_load_generic(grn_ctx *ctx,
+                                        h_header *header,
+                                        grn_sock fd)
+{
+  do_htreq_post_process_body(ctx,
+                             header,
+                             fd,
+                             do_htreq_post_process_body_load_chunks_generic,
+                             NULL);
+  if (ctx->impl->command.keep.command) {
     grn_ctx_send(ctx, NULL, 0, GRN_CTX_TAIL);
   }
 }
@@ -1954,7 +2189,8 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
   header.content_length = -1;
   header.body_start = NULL;
   header.body_end = GRN_BULK_CURR((grn_obj *)msg);
-  header.have_100_continue = GRN_FALSE;
+  header.have_100_continue = false;
+  header.is_chunked_request = false;
 
   if (!h_parse_header(ctx,
                       GRN_BULK_HEAD((grn_obj *)msg),
