@@ -1796,7 +1796,6 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
   if (header->body_start) {
     data = header->body_start;
     data_size = header->body_end - header->body_start;
-    printf("body start: %zu\n", data_size);
   }
 
   while (true) {
