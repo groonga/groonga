@@ -1991,7 +1991,7 @@ do_htreq_post(grn_ctx *ctx, ht_context *hc)
   }
 
   if (header.have_100_continue) {
-    const char *continue_message = "HTTP/1.1 100 Continue\r\n";
+    const char *continue_message = "HTTP/1.1 100 Continue\r\n\r\n";
     ssize_t send_size;
     int send_flags = MSG_NOSIGNAL;
     send_size = send(fd, continue_message, strlen(continue_message), send_flags);
