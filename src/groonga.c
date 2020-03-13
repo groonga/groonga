@@ -1805,6 +1805,7 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
 {
   grn_obj buffer;
   GRN_TEXT_INIT(&buffer, 0);
+  size_t buffer_offset = 0;
   const char *data = NULL;
   size_t data_size = 0;
   bool need_chunk_size = true;
@@ -1839,8 +1840,8 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
         break;
       }
       GRN_BULK_INCR_LEN(&buffer, recv_length);
-      data = GRN_BULK_HEAD(&buffer);
-      data_size = GRN_BULK_VSIZE(&buffer);
+      data = GRN_BULK_HEAD(&buffer) + buffer_offset;
+      data_size = GRN_BULK_VSIZE(&buffer) - buffer_offset;
     }
 
     if (need_chunk_end_cr) {
@@ -1880,6 +1881,7 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
         data = NULL;
         data_size = 0;
         GRN_BULK_REWIND(&buffer);
+        buffer_offset = 0;
         continue;
       }
       data++;
@@ -1907,15 +1909,20 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
         break;
       }
       if (!chunk_start) {
+        /* TODO: Test this */
         grn_http_post_p("[http][post][%" GRN_FMT_SIZE "] "
                         "no chunk start: %p:%p:%p\n",
                         total_body_size,
                         data,
                         GRN_BULK_HEAD(&buffer),
                         GRN_BULK_CURR(&buffer));
-        if (data != GRN_BULK_HEAD(&buffer)) {
+        if (GRN_BULK_HEAD(&buffer) <= data && data < GRN_BULK_CURR(&buffer)) {
+          buffer_offset = data - GRN_BULK_HEAD(&buffer);
+        } else {
           GRN_TEXT_PUT(ctx, &buffer, data, data_size);
         }
+        data = NULL;
+        data_size = 0;
         continue;
       }
       size_t read_chunk_size = (data + data_size) - chunk_start;
@@ -1938,6 +1945,7 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
         data = NULL;
         data_size = 0;
         GRN_BULK_REWIND(&buffer);
+        buffer_offset = 0;
       } else {
         data += chunk_size;
         data_size -= chunk_size;
@@ -1955,6 +1963,7 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
       data = NULL;
       data_size = 0;
       GRN_BULK_REWIND(&buffer);
+      buffer_offset = 0;
       need_chunk_size = false;
     }
   }
