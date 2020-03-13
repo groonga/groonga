@@ -2127,7 +2127,7 @@ do_htreq_post_process_body_load_chunks_json(grn_ctx *ctx,
                  data->chunk_buffer_current,
                  chunk_start,
                  chunk_current + 1 - chunk_start);
-    http_post_json_data_flush(ctx, data);
+    http_post_load_data_flush(ctx, data);
     chunk_start = chunk_current + 1;
     break;
   }
@@ -2165,7 +2165,7 @@ do_htreq_post_process_body_load_chunks_generic(grn_ctx *ctx,
                data->chunk_buffer_current,
                chunk,
                chunk_size);
-  http_post_json_data_flush(ctx, data);
+  http_post_load_data_flush(ctx, data);
 }
 
 static void
