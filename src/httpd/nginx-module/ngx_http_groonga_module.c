@@ -128,6 +128,18 @@ ngx_str_equal_c_string(ngx_str_t *string, const char *c_string)
 }
 
 static grn_bool
+ngx_str_start_with_c_string(ngx_str_t *string, const char *c_string)
+{
+  const size_t c_string_len = strlen(c_string);
+
+  if (string->len < c_string_len) {
+    return GRN_FALSE;
+  }
+
+  return memcmp(c_string, string->data, c_string_len) == 0;
+}
+
+static grn_bool
 ngx_str_is_custom_path(ngx_str_t *string)
 {
   if (string->len == 0) {
@@ -711,6 +723,9 @@ ngx_http_groonga_handler_validate_post_command(ngx_http_request_t *r,
     command.len = command_path->len - r->args.len - strlen("?");
   }
   if (ngx_str_equal_c_string(&command, "load")) {
+    return GRN_TRUE;
+  }
+  if (ngx_str_start_with_c_string(&command, "load.")) {
     return GRN_TRUE;
   }
 
