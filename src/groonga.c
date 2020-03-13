@@ -1730,11 +1730,19 @@ typedef void (*grn_htreq_post_process_body_chunk_func)(grn_ctx *ctx,
                                                        size_t chunk_size,
                                                        void *user_data);
 
+/* #define GRN_HTTP_POST_DEBUG */
+#ifdef GRN_HTTP_POST_DEBUG
+# define grn_http_post_p(...) printf(__VA_ARGS__)
+#else
+# define grn_http_post_p(...)
+#endif
+
 static const char *
 do_htreq_post_process_body_chunked_read_chunk_size(grn_ctx *ctx,
                                                    const char *data,
                                                    size_t data_size,
-                                                   size_t *chunk_size)
+                                                   size_t *chunk_size,
+                                                   size_t total_body_size)
 {
   const char *current = data;
   const char *data_end = data + data_size;
@@ -1750,15 +1758,24 @@ do_htreq_post_process_body_chunked_read_chunk_size(grn_ctx *ctx,
       if (current[1] == '\n') {
         if (data == current) {
           ERR(GRN_INVALID_ARGUMENT,
-              "[http][post] chunked request size line doesn't have content");
+              "[http][post][%" GRN_FMT_SIZE "] "
+              "chunked request size line doesn't have content",
+              total_body_size);
           return NULL;
         }
         *chunk_size = grn_htoui(data, current, NULL);
+        grn_http_post_p("[http][post][%" GRN_FMT_SIZE "] "
+                        "read chunk size: %" GRN_FMT_SIZE ": <%.*s>\n",
+                        total_body_size,
+                        *chunk_size,
+                        (int)(current - data), data);
         return current + 2;
       } else {
         ERR(GRN_INVALID_ARGUMENT,
-            "[http][post] chunked request size line isn't ended by CRLF: "
+            "[http][post][%" GRN_FMT_SIZE "] "
+            "chunked request size line isn't ended by CRLF: "
             "<%.*s>",
+            total_body_size,
             (int)((current + 2) - data),
             data);
         return NULL;
@@ -1766,8 +1783,10 @@ do_htreq_post_process_body_chunked_read_chunk_size(grn_ctx *ctx,
       break;
     default :
       ERR(GRN_INVALID_ARGUMENT,
-          "[http][post] chunked request size line has garbage: "
+          "[http][post][%" GRN_FMT_SIZE "] "
+          "chunked request size line has garbage: "
           "<%.*s>",
+          total_body_size,
           (int)((current + 1) - data),
           data);
       return NULL;
@@ -1792,6 +1811,7 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
   bool need_chunk_end_cr = false;
   bool need_chunk_end_lf = false;
   size_t chunk_size = 0;
+  size_t total_body_size = 0;
 
   if (header->body_start) {
     data = header->body_start;
@@ -1810,6 +1830,8 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
                                  GRN_BULK_REST(&buffer),
                                  recv_flags);
       if (recv_length == 0) {
+        grn_http_post_p("[http][post][%" GRN_FMT_SIZE "] no data\n",
+                        total_body_size);
         break;
       }
       if (recv_length == -1) {
@@ -1822,9 +1844,14 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
     }
 
     if (need_chunk_end_cr) {
+      grn_http_post_p("[http][post][%" GRN_FMT_SIZE "] need chunk end CR\n",
+                      total_body_size);
       if (data[0] != '\r') {
         ERR(GRN_INVALID_ARGUMENT,
-            "[http][post] chunk end CR doesn't exit: <%c>", data[0]);
+            "[http][post][%" GRN_FMT_SIZE "] "
+            "chunk end CR doesn't exit: <%c>",
+            total_body_size,
+            data[0]);
         break;
       }
       need_chunk_end_cr = false;
@@ -1839,9 +1866,13 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
     }
 
     if (need_chunk_end_lf) {
+      grn_http_post_p("[http][post][%" GRN_FMT_SIZE "] need chunk end LF\n",
+                      total_body_size);
       if (data[0] != '\n') {
         ERR(GRN_INVALID_ARGUMENT,
-            "[http][post] chunk end LF doesn't exit: <%c>", data[0]);
+            "[http][post][%" GRN_FMT_SIZE "] chunk end LF doesn't exit: <%c>",
+            total_body_size,
+            data[0]);
         break;
       }
       need_chunk_end_lf = false;
@@ -1856,18 +1887,32 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
     }
 
     if (need_chunk_size) {
+      grn_http_post_p("[http][post][%" GRN_FMT_SIZE "] need chunk size\n",
+                      total_body_size);
       const char *chunk_start =
         do_htreq_post_process_body_chunked_read_chunk_size(ctx,
                                                            data,
                                                            data_size,
-                                                           &chunk_size);
+                                                           &chunk_size,
+                                                           total_body_size);
       if (ctx->rc != GRN_SUCCESS) {
         break;
       }
       if (chunk_size == 0) {
+        grn_http_post_p("[http][post][%" GRN_FMT_SIZE "] "
+                        "zero chunk_size: <%.*s>\n",
+                        total_body_size,
+                        (int)((data + data_size) - chunk_start),
+                        chunk_start);
         break;
       }
       if (!chunk_start) {
+        grn_http_post_p("[http][post][%" GRN_FMT_SIZE "] "
+                        "no chunk start: %p:%p:%p\n",
+                        total_body_size,
+                        data,
+                        GRN_BULK_HEAD(&buffer),
+                        GRN_BULK_CURR(&buffer));
         if (data != GRN_BULK_HEAD(&buffer)) {
           GRN_TEXT_PUT(ctx, &buffer, data, data_size);
         }
@@ -1878,11 +1923,17 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
       data_size = read_chunk_size;
     }
 
+    grn_http_post_p("[http][post][%" GRN_FMT_SIZE "] "
+                    "data: %" GRN_FMT_SIZE ":%" GRN_FMT_SIZE "\n",
+                    total_body_size,
+                    data_size,
+                    chunk_size);
     if (data_size >= chunk_size) {
       func(ctx, data, chunk_size, user_data);
       if (ctx->rc != GRN_SUCCESS) {
         break;
       }
+      total_body_size += chunk_size;
       if (data_size == chunk_size) {
         data = NULL;
         data_size = 0;
@@ -1899,6 +1950,7 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
       if (ctx->rc != GRN_SUCCESS) {
         break;
       }
+      total_body_size += data_size;
       chunk_size -= data_size;
       data = NULL;
       data_size = 0;
