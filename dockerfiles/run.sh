@@ -30,7 +30,7 @@ BUILD_DIR=test/mruby \
 BUILD_DIR=test/command_line \
   /source/test/command_line/run-test.rb
 
-if [ $(ruby -e 'print(RUBY_VERSION >= "2.3")') = "false" ]; then
+if [ $(ruby -e 'print(RUBY_VERSION >= "2.4")') = "false" ]; then
   # Disable test/command/ test suites for now because Red Arrow 0.16.0
   # doesn't support Ruby 2.3.
   exit 0
