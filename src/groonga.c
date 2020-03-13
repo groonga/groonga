@@ -2036,11 +2036,53 @@ typedef struct {
   grn_obj chunk_buffer2;
   grn_obj *chunk_buffer_old;
   grn_obj *chunk_buffer_current;
-} http_post_json_data;
+} http_post_load_data;
 
 static void
-http_post_json_data_flush(grn_ctx *ctx,
-                          http_post_json_data *data)
+http_post_load_data_init(grn_ctx *ctx,
+                         http_post_load_data *data)
+{
+  GRN_TEXT_INIT(&(data->chunk_buffer1), 0);
+  GRN_TEXT_INIT(&(data->chunk_buffer2), 0);
+  data->chunk_buffer_old = &(data->chunk_buffer1);
+  data->chunk_buffer_current = &(data->chunk_buffer2);
+}
+
+static void
+http_post_load_data_fin(grn_ctx *ctx,
+                        http_post_load_data *data)
+{
+  if (ctx->rc == GRN_SUCCESS &&
+      (GRN_TEXT_LEN(data->chunk_buffer_old) > 0 ||
+       GRN_TEXT_LEN(data->chunk_buffer_current) > 0)) {
+    if (GRN_TEXT_LEN(data->chunk_buffer_old) > 0) {
+      int flags;
+      if (GRN_TEXT_LEN(data->chunk_buffer_current) > 0) {
+        flags = GRN_CTX_MORE;
+      } else {
+        flags = GRN_CTX_TAIL;
+      }
+      grn_ctx_send(ctx,
+                   GRN_TEXT_VALUE(data->chunk_buffer_old),
+                   GRN_TEXT_LEN(data->chunk_buffer_old),
+                   flags);
+    }
+    if (GRN_TEXT_LEN(data->chunk_buffer_current) > 0) {
+      grn_ctx_send(ctx,
+                   GRN_TEXT_VALUE(data->chunk_buffer_current),
+                   GRN_TEXT_LEN(data->chunk_buffer_current),
+                   GRN_CTX_TAIL);
+    }
+  } else {
+    grn_ctx_send(ctx, NULL, 0, GRN_CTX_TAIL);
+  }
+  GRN_OBJ_FIN(ctx, &(data->chunk_buffer1));
+  GRN_OBJ_FIN(ctx, &(data->chunk_buffer2));
+}
+
+static void
+http_post_load_data_flush(grn_ctx *ctx,
+                          http_post_load_data *data)
 {
   if (GRN_TEXT_LEN(data->chunk_buffer_old) > 0) {
     grn_ctx_send(ctx,
@@ -2061,7 +2103,7 @@ do_htreq_post_process_body_load_chunks_json(grn_ctx *ctx,
                                             size_t chunk_size,
                                             void *user_data)
 {
-  http_post_json_data *data = user_data;
+  http_post_load_data *data = user_data;
 
   const char *chunk_start = chunk;
   const char *chunk_end = chunk + chunk_size;
@@ -2102,45 +2144,14 @@ do_htreq_post_process_body_load_json(grn_ctx *ctx,
                                      h_header *header,
                                      grn_sock fd)
 {
-  http_post_json_data data;
-
-  GRN_TEXT_INIT(&(data.chunk_buffer1), 0);
-  GRN_TEXT_INIT(&(data.chunk_buffer2), 0);
-  data.chunk_buffer_old = &(data.chunk_buffer1);
-  data.chunk_buffer_current = &(data.chunk_buffer2);
-
+  http_post_load_data data;
+  http_post_load_data_init(ctx, &data);
   do_htreq_post_process_body(ctx,
                              header,
                              fd,
                              do_htreq_post_process_body_load_chunks_json,
                              &data);
-  if (ctx->rc == GRN_SUCCESS &&
-      (GRN_TEXT_LEN(data.chunk_buffer_old) > 0 ||
-       GRN_TEXT_LEN(data.chunk_buffer_current) > 0)) {
-    if (GRN_TEXT_LEN(data.chunk_buffer_old) > 0) {
-      int flags;
-      if (GRN_TEXT_LEN(data.chunk_buffer_current) > 0) {
-        flags = GRN_CTX_MORE;
-      } else {
-        flags = GRN_CTX_TAIL;
-      }
-      grn_ctx_send(ctx,
-                   GRN_TEXT_VALUE(data.chunk_buffer_old),
-                   GRN_TEXT_LEN(data.chunk_buffer_old),
-                   flags);
-    }
-    if (GRN_TEXT_LEN(data.chunk_buffer_current) > 0) {
-      grn_ctx_send(ctx,
-                   GRN_TEXT_VALUE(data.chunk_buffer_current),
-                   GRN_TEXT_LEN(data.chunk_buffer_current),
-                   GRN_CTX_TAIL);
-    }
-  } else {
-    grn_ctx_send(ctx, NULL, 0, GRN_CTX_TAIL);
-  }
-
-  GRN_OBJ_FIN(ctx, &(data.chunk_buffer1));
-  GRN_OBJ_FIN(ctx, &(data.chunk_buffer2));
+  http_post_load_data_fin(ctx, &data);
 }
 
 static void
@@ -2149,27 +2160,27 @@ do_htreq_post_process_body_load_chunks_generic(grn_ctx *ctx,
                                                size_t chunk_size,
                                                void *user_data)
 {
-  int flags = GRN_CTX_MORE;
-  grn_ctx_send(ctx,
+  http_post_load_data *data = user_data;
+  GRN_TEXT_PUT(ctx,
+               data->chunk_buffer_current,
                chunk,
-               chunk_size,
-               flags);
+               chunk_size);
+  http_post_json_data_flush(ctx, data);
 }
-
 
 static void
 do_htreq_post_process_body_load_generic(grn_ctx *ctx,
                                         h_header *header,
                                         grn_sock fd)
 {
+  http_post_load_data data;
+  http_post_load_data_init(ctx, &data);
   do_htreq_post_process_body(ctx,
                              header,
                              fd,
                              do_htreq_post_process_body_load_chunks_generic,
                              NULL);
-  if (ctx->impl->command.keep.command) {
-    grn_ctx_send(ctx, NULL, 0, GRN_CTX_TAIL);
-  }
+  http_post_load_data_fin(ctx, &data);
 }
 
 static void
