@@ -58,7 +58,7 @@ RUN \
     grntest \
     groonga-client \
     pkg-config \
-    rake \
+    rake
 #    red-arrow
 
 RUN \
