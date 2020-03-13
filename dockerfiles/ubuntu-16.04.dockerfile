@@ -59,7 +59,7 @@ RUN \
     groonga-client \
     pkg-config \
     rake \
-    red-arrow
+#    red-arrow
 
 RUN \
   useradd --user-group --create-home groonga
