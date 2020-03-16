@@ -101,7 +101,7 @@ jobs:
         run: |
           call env.bat
           set YACC="win_bison.exe"
-          call "${VC_PREFIX}\Auxiliary\Build\vcvars64.bat"
+          call "%VC_PREFIX%\Auxiliary\Build\vcvars64.bat"
           mkdir ..\groonga-build
           cmake ^
             -S . ^
