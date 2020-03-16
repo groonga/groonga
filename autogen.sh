@@ -28,11 +28,11 @@ fi
 
 case $(uname -s) in
   Darwin)
-    homebrew_aclocal=/usr/local/share/aclocal
+    homebrew_aclocal=$(brew --prefix)/share/aclocal
     if [ -d $homebrew_aclocal ]; then
       ACLOCAL_PATH="$ACLOCAL_PATH $homebrew_aclocal"
     fi
-    gettext_prefix=/usr/local/Cellar/gettext
+    gettext_prefix=$(brew --cellar)/gettext
     if [ -d $gettext_prefix ]; then
       gettext_aclocal=$(ls $gettext_prefix/*/share/aclocal | \
                           gsort --version-sort | \
