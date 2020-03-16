@@ -132,6 +132,8 @@ jobs:
           path: ..\packages
       - name: Prepare artifacts with VC++ runtime
         run: |
+          Set-PSDebug -Trace 2
+
           . .\env.ps1
           New-Item ..\packages-without-vcruntime -ItemType Directory
           pushd "${FULL_INSTALL_FOLDER}\.."
