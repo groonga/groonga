@@ -128,11 +128,13 @@ jobs:
         run: |
           bash -x test/command/run-test.sh \
             --n-retries=3 \
-            --reporter=mark \
+            --read-timeout 30 \
+            --reporter=mark
       - name: "Test: HTTP: load: Apache Arrow"
         run: |
           bash -x test/command/run-test.sh \
             --n-retries=3 \
+            --read-timeout 30 \
             --reporter=mark \
             --input-type=apache-arrow \
             --interface=http
@@ -140,6 +142,7 @@ jobs:
         run: |
           bash -x test/command/run-test.sh \
             --n-retries=3 \
+            --read-timeout 30 \
             --reporter=mark \
             --interface=http \
             --use-http-post
@@ -147,6 +150,7 @@ jobs:
         run: |
           bash -x test/command/run-test.sh \
             --n-retries=3 \
+            --read-timeout 30 \
             --reporter=mark \
             --testee groonga-httpd
       - name: Install
