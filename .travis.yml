@@ -59,14 +59,6 @@ matrix:
       env:
         - BUILD_TOOL=cmake
         - ENABLE_MRUBY=yes
-    - name: "Autotools: macOS"
-      os: osx
-      osx_image: xcode10.2
-      addons:
-        <<: *addons_macos_build
-      env:
-        - BUILD_TOOL=autotools
-        - ENABLE_MRUBY=yes
     - name: "CMake: macOS"
       os: osx
       osx_image: xcode10.2
