@@ -2200,7 +2200,6 @@ do_htreq_post_process_body_load_chunks_json(grn_ctx *ctx,
                  data->chunk_buffer_current,
                  chunk_start,
                  chunk_end - chunk_start);
-    http_post_load_data_flush(ctx, data);
   }
 }
 
