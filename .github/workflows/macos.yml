@@ -59,6 +59,14 @@ jobs:
             --reporter=mark \
             --interface=http \
             --use-http-post
+      - name: "Test: HTTP: command: chunked"
+        run: |
+          bash -x test/command/run-test.sh \
+            --n-retries=3 \
+            --read-timeout 30 \
+            --reporter=mark \
+            --interface=http \
+            --use-http-chunked
       - name: Install
         run: |
           make install
