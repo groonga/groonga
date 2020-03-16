@@ -1,5 +1,6 @@
 brew "apache-arrow"
 brew "autoconf-archive"
+brew "automake"
 brew "coreutils"
 # brew "cutter"
 brew "libevent"
