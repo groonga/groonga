@@ -1321,14 +1321,14 @@ namespace grnarrow {
                                         grn_obj *grn_column,
                                         std::shared_ptr<arrow::Array> *array) {
       auto timestamp_ns_data_type =
-        std::make_shared<arrow::TimestampType>(arrow::TimeUnit::MICRO);
+        std::make_shared<arrow::TimestampType>(arrow::TimeUnit::NANO);
       arrow::TimestampBuilder builder(timestamp_ns_data_type,
                                       arrow::default_memory_pool());
       for (auto id : ids) {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
-        auto timestamp_ns = *(reinterpret_cast<const int64_t *>(data));
-        builder.Append(timestamp_ns);
+        auto timestamp_micro = *(reinterpret_cast<const int64_t *>(data));
+        builder.Append(GRN_TIME_USEC_TO_NSEC(timestamp_micro));
       }
       return builder.Finish(array);
     }
