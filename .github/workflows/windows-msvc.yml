@@ -44,21 +44,36 @@ jobs:
         run: |
           echo "`$Env:CMAKE_BUILD_PARALLEL_LEVEL = ${Env:NUMBER_OF_PROCESSORS}" >> env.ps1
           echo "set CMAKE_BUILD_PARALLEL_LEVEL=${Env:NUMBER_OF_PROCESSORS}" >> env.bat
+
           $GROONGA_VERSION = (Get-Content base_version)
           if (!("${Env:GITHUB_REF}".StartsWith("refs/tags/"))) {
             $GROONGA_VERSION += "-$(${Env:GITHUB_SHA}.Substring(0, 7))"
           }
-          "GRN_VERSION=${GROONGA_VERSION}" | Set-Content version.sh
+          echo "`$GROONGA_VERSION = `"${GROONGA_VERSION}`"" >> env.ps1
+          echo "set GROONGA_VERSION=${GROONGA_VERSION}" >> env.bat
+
           $INSTALL_FOLDER = "groonga-${GROONGA_VERSION}-x64-vs2019"
+          $INSTALL_FOLDER_WITH_VCRUNTIME = "${INSTALL_FOLDER}-with-vcruntime"
           $INSTALL_PARENT_FOLDER = "インストール"
           $FULL_INSTALL_FOLDER = `
             "${Env:GITHUB_WORKSPACE}\${INSTALL_PARENT_FOLDER}\${INSTALL_FOLDER}"
           echo "`$INSTALL_FOLDER = `"${INSTALL_FOLDER}`"" >> env.ps1
           echo "set INSTALL_FOLDER=${INSTALL_FOLDER}" >> env.bat
+          echo "`$INSTALL_FOLDER_WITH_VCRUNTIME = `"${INSTALL_FOLDER_WITH_VCRUNTIME}`"" >> env.ps1
+          echo "set INSTALL_FOLDER_WITH_VCRUNTIME=${INSTALL_FOLDER_WITH_VCRUNTIME}" >> env.bat
           echo "`$FULL_INSTALL_FOLDER = `"${FULL_INSTALL_FOLDER}`"" >> env.ps1
           echo "set FULL_INSTALL_FOLDER=${FULL_INSTALL_FOLDER}" >> env.bat
+
+          VC_PREFIX = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC"
+          echo "`$VC_PREFIX = `"${VC_PREFIX}`"" >> env.ps1
+          echo "set VC_PREFIX=${VC_PREFIX}" >> env.bat
+
           Get-Content env.ps1
           Get-Content env.bat
+      - name: Set version
+        run: |
+          . .\env.ps1
+          "GRN_VERSION=${GROONGA_VERSION}" | Set-Content version.sh
       - name: Install Apache Arrow
         run: |
           . .\env.ps1
@@ -82,7 +97,7 @@ jobs:
         run: |
           call env.bat
           set YACC="win_bison.exe"
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          call "${VC_PREFIX}\Auxiliary\Build\vcvars64.bat"
           mkdir ..\groonga-build
           cmake ^
             -S . ^
@@ -98,19 +113,64 @@ jobs:
           cmake --build ..\groonga-build --config RelWithDebInfo --target Install
 
       # Artifact
-      - name: Prepare artifacts
+      - name: Prepare artifacts without VC++ runtime
         run: |
           . .\env.ps1
           New-Item ..\packages -ItemType Directory
           pushd "${FULL_INSTALL_FOLDER}\.."
           Compress-Archive `
-            -Path ${INSTALL_FOLDER} `
+            -Path "${INSTALL_FOLDER}" `
             -DestinationPath "${Env:GITHUB_WORKSPACE}\..\packages\${INSTALL_FOLDER}.zip"
           popd
       - uses: actions/upload-artifact@master
         with:
           name: ${{ matrix.artifact_name }}
           path: ..\packages
+      - name: Prepare artifacts with VC++ runtime
+        run: |
+          . .\env.ps1
+          New-Item ..\packages-without-vcruntime -ItemType Directory
+          pushd "${FULL_INSTALL_FOLDER}\.."
+
+          Copy-Item -Recurse `
+             "${INSTALL_FOLDER}" `
+             "${INSTALL_FOLDER_WITH_VCRUNTIME}"
+          $GROONGA_VC_REDIST_LICENSE_DIR = `
+            "${INSTALL_FOLDER_WITH_VCRUNTIME}\share\groonga\vcruntime"
+          New-Item `
+            -Path "${GROONGA_VC_REDIST_LICENSE_DIR}" `
+            -ItemType Directory
+
+          $VC_REDIST_VERSION = (Get-Content "${VC_PREFIX}\Auxiliary\Build\Microsoft.VCRedistVersion.default.txt")
+          $VC_REDIST_DIR = "${VC_PREFIX}\Redist\MSVC\${VC_REDIST_VERSION}\${{ matrix.architecture }}"
+          $VC_REDIST_VCRUNTIME = "${VC_REDIST_DIR}\Microsoft.VC142.CRT\vcruntime140.dll"
+          $VC_REDIST_MSVCP = "${VC_REDIST_DIR}\Microsoft.VC142.CRT\msvcp140.dll"
+          Copy-Item `
+            "${VC_REDIST_VCRUNTIME}" `
+            "${INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
+          Copy-Item `
+            "${VC_REDIST_MSVCP}" `
+            "${INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
+          Copy-Item `
+            "${Env:GITHUB_WORKSPACE}\packages\windows\vs2019\readme.txt" `
+            "${GROONGA_VC_REDIST_LICENSE_DIR}"
+
+          $UCRT_REDIST_DIR = "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\${{ matrix.architecture }}"
+          Copy-Item `
+            "${UCRT_REDIST_DIR}\*.dll" `
+            "${INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
+          Copy-Item `
+            "${Env:GITHUB_WORKSPACE}\packages\windows\ucrt-readme.txt" `
+            "${GROONGA_VC_REDIST_LICENSE_DIR}"
+
+          Compress-Archive `
+            -Path ${INSTALL_FOLDER_WITH_VCRUNTIME} `
+            -DestinationPath "${Env:GITHUB_WORKSPACE}\..\packages-with-vcruntime\${INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
+          popd
+      - uses: actions/upload-artifact@master
+        with:
+          name: ${{ matrix.artifact_name }}-with-vcruntime
+          path: ..\packages-with-vcruntime
 
       # Release
       - name: Asset
@@ -135,7 +195,7 @@ jobs:
             const script = fs.readFileSync(path).toString();
             const func = new AsyncFunction("require", "github", "context", script);
             return await func(require, github, context);
-      - name: Upload to release
+      - name: Upload the artifact without VC++ runtime to release
         uses: actions/upload-release-asset@v1.0.1
         if: |
           startsWith(github.ref, 'refs/tags/')
@@ -145,6 +205,17 @@ jobs:
           upload_url: ${{ steps.create-release.outputs.result }}
           asset_path: ../packages/${{ steps.asset.outputs.base_name }}.zip
           asset_name: ${{ steps.asset.outputs.base_name }}.zip
+          asset_content_type: application/zip
+      - name: Upload the artifact with VC++ runtime to release
+        uses: actions/upload-release-asset@v1.0.1
+        if: |
+          startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.result }}
+          asset_path: ../packages-with-vcruntime/${{ steps.asset.outputs.base_name }}-with-vcruntime.zip
+          asset_name: ${{ steps.asset.outputs.base_name }}-with-vcruntime.zip
           asset_content_type: application/zip
 
       # Test
