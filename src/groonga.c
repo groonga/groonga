@@ -2168,8 +2168,10 @@ do_htreq_post_process_body_load_chunks_json(grn_ctx *ctx,
 
   const char *chunk_start = chunk;
   const char *chunk_end = chunk + chunk_size;
-  const char *chunk_current = chunk_end;
-  for (; chunk_current > chunk_start; chunk_current--) {
+  const char *chunk_current;;
+  for (chunk_current = chunk_end - 1;
+       chunk_current > chunk;
+       chunk_current--) {
     bool is_separator;
     switch (chunk_current[0]) {
     case '\n' :
@@ -2186,8 +2188,8 @@ do_htreq_post_process_body_load_chunks_json(grn_ctx *ctx,
 
     GRN_TEXT_PUT(ctx,
                  data->chunk_buffer_current,
-                 chunk_start,
-                 chunk_current + 1 - chunk_start);
+                 chunk,
+                 chunk_current + 1 - chunk);
     http_post_load_data_flush(ctx, data);
     chunk_start = chunk_current + 1;
     break;
@@ -2196,7 +2198,9 @@ do_htreq_post_process_body_load_chunks_json(grn_ctx *ctx,
   if (chunk_end > chunk_start) {
     GRN_TEXT_PUT(ctx,
                  data->chunk_buffer_current,
-                 chunk_start, chunk_end - chunk_start);
+                 chunk_start,
+                 chunk_end - chunk_start);
+    http_post_load_data_flush(ctx, data);
   }
 }
 
