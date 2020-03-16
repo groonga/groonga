@@ -1967,6 +1967,8 @@ do_htreq_post_process_body_chunked(grn_ctx *ctx,
       need_chunk_size = false;
     }
   }
+
+  GRN_OBJ_FIN(ctx, &buffer);
 }
 
 static void
