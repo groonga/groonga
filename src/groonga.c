@@ -2052,6 +2052,7 @@ do_htreq_post_process_body_chunks_www_form_urlencoded(grn_ctx *ctx,
     } else {
       GRN_TEXT_PUTC(ctx, &(data->command), '?');
     }
+    data->is_first_chunk = false;
   }
   GRN_TEXT_PUT(ctx, &(data->command), chunk, chunk_size);
 }
