@@ -66,7 +66,7 @@ jobs:
           echo "`$FULL_INSTALL_FOLDER = `"${FULL_INSTALL_FOLDER}`"" >> env.ps1
           echo "set FULL_INSTALL_FOLDER=${FULL_INSTALL_FOLDER}" >> env.bat
 
-          VC_PREFIX = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC"
+          $VC_PREFIX = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC"
           echo "`$VC_PREFIX = `"${VC_PREFIX}`"" >> env.ps1
           echo "set VC_PREFIX=${VC_PREFIX}" >> env.bat
 
