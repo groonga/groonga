@@ -42,8 +42,6 @@ jobs:
           ruby download_rapidjson.rb
       - name: Generate env.ps1 and env.bat
         run: |
-          Set-PSDebug -Trace 2
-
           echo "`$Env:CMAKE_BUILD_PARALLEL_LEVEL = ${Env:NUMBER_OF_PROCESSORS}" >> env.ps1
           echo "set CMAKE_BUILD_PARALLEL_LEVEL=${Env:NUMBER_OF_PROCESSORS}" >> env.bat
 
@@ -56,7 +54,11 @@ jobs:
 
           $INSTALL_FOLDER = "groonga-${GROONGA_VERSION}-x64-vs2019"
           $INSTALL_FOLDER_WITH_VCRUNTIME = "${INSTALL_FOLDER}-with-vcruntime"
-          $INSTALL_PARENT_FOLDER = "インストール"
+          # TODO: We need to change system locale to ja-JP to test installing
+          # to multibyte path works well but we can't change system locale
+          # to ja-JP on GitHub Actions...
+          # $INSTALL_PARENT_FOLDER = "インストール"
+          $INSTALL_PARENT_FOLDER = "install"
           $FULL_INSTALL_FOLDER = `
             "${Env:GITHUB_WORKSPACE}\${INSTALL_PARENT_FOLDER}\${INSTALL_FOLDER}"
           echo "`$INSTALL_FOLDER = `"${INSTALL_FOLDER}`"" >> env.ps1
@@ -235,21 +237,23 @@ jobs:
           cd ..\grntest
           bundle install
           bundle exec ruby -rdevkit -S rake install
-      - name: Test Groonga
-        # TODO: We need to change system locale to ja-JP but can't do
-        # on GitHub Actions... Should we use ASCII for install folder?
-        if: |
-          false
+      - name: "Test: command line"
+        run: |
+          . .\env.ps1
+          ruby test\command_line\run-test.rb `
+            --groonga-install-prefix "${FULL_INSTALL_FOLDER}"
+      - name: "Test: HTTP: Apache Arrow: chunked"
         run: |
           . .\env.ps1
           grntest `
-           --base-directory test\command `
-           --groonga "${FULL_INSTALL_FOLDER}\bin\groonga.exe" `
-           --input-type apache-arrow `
-           --interface http `
-           --n-retries 2 `
-           --n-workers ${Env:NUMBER_OF_PROCESSORS} `
-           --read-timeout 30 `
-           --reporter mark `
-           --timeout 60 `
-           test\command\suite
+            --base-directory test\command `
+            --groonga "${FULL_INSTALL_FOLDER}\bin\groonga.exe" `
+            --input-type apache-arrow `
+            --interface http `
+            --n-retries 2 `
+            --n-workers ${Env:NUMBER_OF_PROCESSORS} `
+            --read-timeout 30 `
+            --reporter mark `
+            --timeout 60 `
+            --use-http-chunked `
+            test\command\suite
