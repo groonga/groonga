@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -479,6 +480,7 @@ typedef struct {
     grn_table_group_flags group;
   } flags;
   //  grn_obj_flags flags;
+  uint32_t reference_count;
 } grn_db_obj;
 
 #define GRN_DB_OBJ_SET_TYPE(db_obj,obj_type) do {\
@@ -496,6 +498,7 @@ typedef struct {
   (db_obj)->obj.hooks[4] = NULL;\
   (db_obj)->obj.source = NULL;\
   (db_obj)->obj.source_size = 0;\
+  (db_obj)->obj.reference_count = 1;\
 } while (0)
 
 /**** receive handler ****/
