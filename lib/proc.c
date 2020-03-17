@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3887,6 +3887,10 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_rc flush_rc = grn_obj_flush(ctx, db);
   if (rc == GRN_SUCCESS) {
     rc = flush_rc;
+  }
+
+  if (target->header.domain != GRN_DB) {
+    grn_obj_unlink(ctx, target);
   }
 
   GRN_OUTPUT_BOOL(rc == GRN_SUCCESS);

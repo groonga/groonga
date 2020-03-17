@@ -12950,6 +12950,7 @@ grn_obj_flush_recursive_dependent_internal_table(grn_ctx *ctx,
         grn_obj *column = grn_ctx_at(ctx, *column_id);
         if (column) {
           grn_obj_flush_recursive_dependent_internal(ctx, column, data);
+          grn_obj_unlink(ctx, column);
         }
         if (data->is_close_opened_object_mode) {
           grn_ctx_pop_temporary_open_space(ctx);
