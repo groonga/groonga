@@ -67,9 +67,7 @@ GRN_API grn_rc grn_output_range_normalize(grn_ctx *ctx,
   while (ncolumns--) {\
     grn_obj *column = *columns;\
     columns++;\
-    if (grn_obj_is_accessor((ctx), column)) {\
-      grn_obj_close((ctx), column);\
-    }\
+    grn_obj_unlink((ctx), column);\
   }\
   GRN_OBJ_FIN((ctx), &(format)->columns);\
   if ((format)->expression) { GRN_OBJ_FIN((ctx), (format)->expression); } \
