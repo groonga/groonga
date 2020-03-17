@@ -15264,6 +15264,7 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                 grn_obj_unlink(ctx, ai);
               }
             }
+            grn_obj_unlink(ctx, type);
           }
         } else if ((col = grn_obj_column(ctx, table, p, r - p))) {
           GRN_PTR_PUT(ctx, res, col);
