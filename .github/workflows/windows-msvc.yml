@@ -158,7 +158,7 @@ jobs:
             "${VC_REDIST_MSVCP}" `
             "${INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
           Copy-Item `
-            "${Env:GITHUB_WORKSPACE}\packages\windows\vs2019\readme.txt" `
+            "${Env:GITHUB_WORKSPACE}\packages\windows\vcruntime\vs2019\readme.txt" `
             "${GROONGA_VC_REDIST_LICENSE_DIR}"
 
           $UCRT_REDIST_DIR = "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\${{ matrix.architecture }}"
@@ -166,7 +166,7 @@ jobs:
             "${UCRT_REDIST_DIR}\*.dll" `
             "${INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
           Copy-Item `
-            "${Env:GITHUB_WORKSPACE}\packages\windows\ucrt-readme.txt" `
+            "${Env:GITHUB_WORKSPACE}\packages\windows\vcruntime\ucrt-readme.txt" `
             "${GROONGA_VC_REDIST_LICENSE_DIR}"
 
           Compress-Archive `
