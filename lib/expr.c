@@ -6735,6 +6735,9 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     if (efsi.array_literal) {
       GRN_OBJ_FIN(ctx, efsi.array_literal);
     }
+    if (!grn_obj_is_temporary(ctx, efsi.table)) {
+      grn_obj_unlink(ctx, efsi.table);
+    }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "variable is not defined correctly");
   }

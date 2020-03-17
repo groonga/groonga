@@ -2559,6 +2559,9 @@ static YYACTIONTYPE yy_reduce(
       }
     }
 
+    if (!grn_obj_is_temporary(ctx, table)) {
+      grn_obj_unlink(ctx, table);
+    }
     GRN_OBJ_FIN(ctx, &columns_buffer);
 
     yymsp[0].minor.yy0 = n_columns;
@@ -2567,21 +2570,21 @@ static YYACTIONTYPE yy_reduce(
     yymsp[0].minor.yy0 = 0;
   }
 }
-#line 2571 "../../groonga/lib/grn_ecmascript.c"
+#line 2574 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 86: /* output_column ::= NONEXISTENT_COLUMN */
-#line 645 "../../groonga/lib/grn_ecmascript.lemon"
+#line 648 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 0;
 }
-#line 2578 "../../groonga/lib/grn_ecmascript.c"
+#line 2581 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 87: /* output_column ::= assignment_expression */
-#line 648 "../../groonga/lib/grn_ecmascript.lemon"
+#line 651 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 1;
 }
-#line 2585 "../../groonga/lib/grn_ecmascript.c"
+#line 2588 "../../groonga/lib/grn_ecmascript.c"
         break;
       default:
       /* (91) input ::= query */ yytestcase(yyruleno==91);
@@ -2713,7 +2716,7 @@ static void yy_syntax_error(
     }
     GRN_OBJ_FIN(ctx, &message);
   }
-#line 2717 "../../groonga/lib/grn_ecmascript.c"
+#line 2720 "../../groonga/lib/grn_ecmascript.c"
 /************ End %syntax_error code ******************************************/
   grn_expr_parserARG_STORE /* Suppress warning about unused %extra_argument variable */
   grn_expr_parserCTX_STORE
