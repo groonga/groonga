@@ -135,7 +135,7 @@ jobs:
           Set-PSDebug -Trace 2
 
           . .\env.ps1
-          New-Item ..\packages-without-vcruntime -ItemType Directory
+          New-Item ..\packages-with-vcruntime -ItemType Directory
           pushd "${FULL_INSTALL_FOLDER}\.."
 
           Copy-Item -Recurse `
