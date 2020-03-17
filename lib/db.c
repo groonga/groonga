@@ -11942,7 +11942,9 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       {
         grn_accessor *p, *n;
         for (p = (grn_accessor *)obj; p; p = n) {
-          grn_obj_unlink(ctx, p->obj);
+          if (grn_enable_reference_count) {
+            grn_obj_unlink(ctx, p->obj);
+          }
           n = p->next;
           GRN_FREE(p);
         }
