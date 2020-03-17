@@ -243,7 +243,7 @@ jobs:
         run: |
           . .\env.ps1
           ruby test\command_line\run-test.rb `
-            --groonga-install-prefix "${FULL_INSTALL_FOLDER}"
+            --groonga-install-prefix="${FULL_INSTALL_FOLDER}"
       - name: "Test: HTTP: Apache Arrow: chunked"
         run: |
           . .\env.ps1
