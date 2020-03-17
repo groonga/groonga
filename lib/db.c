@@ -12895,6 +12895,7 @@ grn_obj_flush_recursive_dependent_internal_table(grn_ctx *ctx,
         grn_obj *index = grn_ctx_at(ctx, hook_data->target);
         if (index) {
           grn_obj_flush_recursive_dependent_internal(ctx, index, data);
+          grn_obj_unlink(ctx, index);
         }
         if (data->is_close_opened_object_mode) {
           grn_ctx_pop_temporary_open_space(ctx);
@@ -13011,6 +13012,7 @@ grn_obj_flush_recursive_dependent_internal_column_data(grn_ctx *ctx,
     grn_obj *range = grn_ctx_at(ctx, range_id);
     if (grn_obj_is_table(ctx, range)) {
       grn_obj_flush_recursive_dependent_internal(ctx, range, data);
+      grn_obj_unlink(ctx, range);
     }
     if (data->is_close_opened_object_mode) {
       grn_ctx_pop_temporary_open_space(ctx);
@@ -13034,6 +13036,7 @@ grn_obj_flush_recursive_dependent_internal_column_data(grn_ctx *ctx,
       grn_obj *index = grn_ctx_at(ctx, hook_data->target);
       if (index) {
         grn_obj_flush_recursive_dependent_internal(ctx, index, data);
+        grn_obj_unlink(ctx, index);
       }
       if (data->is_close_opened_object_mode) {
         grn_ctx_pop_temporary_open_space(ctx);
@@ -13062,6 +13065,7 @@ grn_obj_flush_recursive_dependent_internal_column_index(grn_ctx *ctx,
     grn_obj *lexicon = grn_ctx_at(ctx, lexicon_id);
     if (lexicon) {
       grn_obj_flush_recursive_dependent_internal(ctx, lexicon, data);
+      grn_obj_unlink(ctx, lexicon);
     }
     if (data->is_close_opened_object_mode) {
       grn_ctx_pop_temporary_open_space(ctx);
