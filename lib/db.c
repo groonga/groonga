@@ -5836,6 +5836,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
 {
   grn_accessor *res = NULL, **rp = NULL, **rp0 = NULL;
   grn_bool is_chained = GRN_FALSE;
+  bool obj_is_referred = false;
   if (!obj) { return NULL; }
   GRN_API_ENTER;
   if (obj->header.type == GRN_ACCESSOR) {
@@ -5846,6 +5847,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
     switch (res->action) {
     case GRN_ACCESSOR_GET_KEY :
       obj = grn_ctx_at(ctx, res->obj->header.domain);
+      obj_is_referred = true;
       break;
     case GRN_ACCESSOR_GET_VALUE :
     case GRN_ACCESSOR_GET_SCORE :
@@ -5855,9 +5857,11 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
     case GRN_ACCESSOR_GET_SUM :
     case GRN_ACCESSOR_GET_AVG :
       obj = grn_ctx_at(ctx, DB_OBJ(res->obj)->range);
+      obj_is_referred = true;
       break;
     case GRN_ACCESSOR_GET_COLUMN_VALUE :
       obj = grn_ctx_at(ctx, DB_OBJ(res->obj)->range);
+      obj_is_referred = true;
       break;
     case GRN_ACCESSOR_LOOKUP :
       /* todo */
@@ -5890,6 +5894,10 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         }
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
+          if (!obj_is_referred) {
+            obj = grn_ctx_at(ctx, DB_OBJ(obj)->id);
+            obj_is_referred = true;
+          }
           (*rp)->obj = obj;
           if (GRN_TABLE_IS_MULTI_KEYS_GROUPED(obj)) {
             (*rp)->action = GRN_ACCESSOR_GET_KEY;
@@ -5940,6 +5948,10 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         }
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
+          if (!obj_is_referred) {
+            obj = grn_ctx_at(ctx, DB_OBJ(obj)->id);
+            obj_is_referred = true;
+          }
           (*rp)->obj = obj;
           if (!obj->header.domain) {
             (*rp)->action = GRN_ACCESSOR_GET_ID;
@@ -5978,6 +5990,10 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         }
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
+          if (!obj_is_referred) {
+            obj = grn_ctx_at(ctx, DB_OBJ(obj)->id);
+            obj_is_referred = true;
+          }
           (*rp)->obj = obj;
           if (!obj->header.domain) {
             if (DB_OBJ((*rp)->obj)->range) {
@@ -6122,6 +6138,10 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
             goto exit;
           }
           *rp = accessor_new(ctx);
+          if (!obj_is_referred) {
+            obj = grn_ctx_at(ctx, DB_OBJ(obj)->id);
+            obj_is_referred = true;
+          }
           (*rp)->obj = obj;
           obj = grn_ctx_at(ctx, next_obj_id);
           if (!obj) {
@@ -11918,6 +11938,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       {
         grn_accessor *p, *n;
         for (p = (grn_accessor *)obj; p; p = n) {
+          grn_obj_unlink(ctx, p->obj);
           n = p->next;
           GRN_FREE(p);
         }
