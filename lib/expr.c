@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2010-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -705,24 +705,30 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
   for (;;) {
     grn_obj *obj;
     GRN_PTR_POP(&e->objs, obj);
-    if (obj) {
+    if (!obj) {
+      break;
+    }
+
 #ifdef USE_MEMORY_DEBUG
-      grn_obj_unlink(ctx, obj);
+    grn_obj_unlink(ctx, obj);
 #else
-      if (obj->header.type) {
-        if (obj->header.type == GRN_TABLE_HASH_KEY &&
-            ((grn_hash *)obj)->value_size == sizeof(grn_obj)) {
-          grn_obj *value;
-          GRN_HASH_EACH(ctx, (grn_hash *)obj, id, NULL, NULL, (void **)&value, {
-            GRN_OBJ_FIN(ctx, value);
-          });
-        }
-        grn_obj_unlink(ctx, obj);
-      } else {
-        GRN_LOG(ctx, GRN_LOG_WARNING, "GRN_VOID object is tried to be unlinked");
-      }
+    if (obj->header.type == GRN_VOID) {
+      GRN_LOG(ctx, GRN_LOG_WARNING, "GRN_VOID object is tried to be unlinked");
+      continue;
+    }
+
+    if (obj->header.type == GRN_TABLE_HASH_KEY &&
+        grn_obj_is_temporary(ctx, obj) &&
+        ((grn_hash *)obj)->value_size == sizeof(grn_obj)) {
+      GRN_HASH_EACH_BEGIN(ctx, (grn_hash *)obj, cursor, id) {
+        void *value;
+        grn_hash_cursor_get_value(ctx, cursor, &value);
+        grn_obj *v = value;
+        GRN_OBJ_FIN(ctx, v);
+      } GRN_HASH_EACH_END(ctx, cursor);
+    }
+    grn_obj_unlink(ctx, obj);
 #endif
-    } else { break; }
   }
   GRN_OBJ_FIN(ctx, &e->objs);
   for (i = 0; i < e->nvars; i++) {
