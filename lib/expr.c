@@ -6064,7 +6064,9 @@ done :
       goto exit;
     }
     if ((obj = grn_obj_column(ctx, q->table, name, name_size))) {
-      grn_expr_take_obj(ctx, q->e, obj);
+      if (grn_enable_reference_count || obj->header.type == GRN_ACCESSOR) {
+        grn_expr_take_obj(ctx, q->e, obj);
+      }
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_GET_VALUE, 1);
       goto exit;

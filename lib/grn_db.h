@@ -40,6 +40,8 @@ extern "C" {
 
 #define GRN_N_RESERVED_TYPES 256
 
+extern bool grn_enable_reference_count;
+
 typedef struct _grn_db grn_db;
 typedef struct _grn_proc grn_proc;
 

@@ -107,8 +107,9 @@ grn_table_cursor_get_value_inline(grn_ctx *ctx, grn_table_cursor *tc, void **val
 # define grn_log_reference_count(...)
 #endif
 
+bool grn_enable_reference_count = false;
+
 static char grn_db_key[GRN_ENV_BUFFER_SIZE];
-static bool grn_enable_reference_count = false;
 
 void
 grn_db_init_from_env(void)
