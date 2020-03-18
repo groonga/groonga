@@ -247,6 +247,7 @@ jobs:
       - name: "Test: HTTP: Apache Arrow: chunked"
         run: |
           . .\env.ps1
+          gem install red-arrow
           grntest `
             --base-directory test\command `
             --groonga "${FULL_INSTALL_FOLDER}\bin\groonga.exe" `
