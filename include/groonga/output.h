@@ -61,17 +61,9 @@ GRN_API grn_rc grn_output_range_normalize(grn_ctx *ctx,
   (format)->expression = NULL;\
 } while (0)
 
-#define GRN_OBJ_FORMAT_FIN(ctx,format) do {\
-  int ncolumns = GRN_BULK_VSIZE(&(format)->columns) / sizeof(grn_obj *);\
-  grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&(format)->columns);\
-  while (ncolumns--) {\
-    grn_obj *column = *columns;\
-    columns++;\
-    grn_obj_unlink((ctx), column);\
-  }\
-  GRN_OBJ_FIN((ctx), &(format)->columns);\
-  if ((format)->expression) { GRN_OBJ_FIN((ctx), (format)->expression); } \
-} while (0)
+#define GRN_OBJ_FORMAT_FIN(ctx,format) grn_obj_format_fin((ctx), (format))
+
+GRN_API grn_rc grn_obj_format_fin(grn_ctx *ctx, grn_obj_format *format);
 
 GRN_API void grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                             grn_obj *obj, grn_obj_format *format);

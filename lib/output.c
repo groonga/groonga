@@ -3429,6 +3429,27 @@ is_output_columns_format_v1(grn_ctx *ctx,
 }
 
 grn_rc
+grn_obj_format_fin(grn_ctx *ctx, grn_obj_format *format)
+{
+  GRN_API_ENTER;
+
+  size_t n_columns = GRN_PTR_VECTOR_SIZE(&(format->columns));
+  size_t i;
+  for (i = 0; i < n_columns; i++) {
+    grn_obj *column = GRN_PTR_VALUE_AT(&(format->columns), i);
+    if (grn_enable_reference_count || column->header.type == GRN_ACCESSOR) {
+      grn_obj_unlink(ctx, column);
+    }
+  }
+  GRN_OBJ_FIN(ctx, &(format->columns));
+  if (format->expression) {
+    GRN_OBJ_FIN(ctx, format->expression);
+  }
+
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
 grn_output_format_set_columns(grn_ctx *ctx, grn_obj_format *format,
                               grn_obj *table,
                               const char *columns, int columns_len)
