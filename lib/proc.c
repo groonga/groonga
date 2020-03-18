@@ -3889,7 +3889,7 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     rc = flush_rc;
   }
 
-  if (target->header.domain != GRN_DB) {
+  if (target->header.type != GRN_DB) {
     grn_obj_unlink(ctx, target);
   }
 
