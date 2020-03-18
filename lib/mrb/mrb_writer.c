@@ -158,12 +158,12 @@ writer_write_table_columns(mrb_state *mrb, mrb_value self)
     rc = grn_obj_format_set_columns(ctx, &format,
                                     table, columns, columns_size);
     if (rc != GRN_SUCCESS) {
-      GRN_OBJ_FORMAT_FIN(ctx, &format);
+      grn_obj_format_fin(ctx, &format);
       grn_mrb_ctx_check(mrb);
     }
   }
   GRN_OUTPUT_TABLE_COLUMNS(table, &format);
-  GRN_OBJ_FORMAT_FIN(ctx, &format);
+  grn_obj_format_fin(ctx, &format);
 
   return mrb_nil_value();
 }
@@ -222,7 +222,7 @@ writer_write_table_records_content_internal(mrb_state *mrb,
     rc = grn_obj_format_set_columns(ctx, &format,
                                     table, columns, columns_size);
     if (rc != GRN_SUCCESS) {
-      GRN_OBJ_FORMAT_FIN(ctx, &format);
+      grn_obj_format_fin(ctx, &format);
       grn_mrb_ctx_check(mrb);
     }
   }
@@ -231,7 +231,7 @@ writer_write_table_records_content_internal(mrb_state *mrb,
   } else {
     grn_ctx_output_table_records(ctx, table, &format);
   }
-  GRN_OBJ_FORMAT_FIN(ctx, &format);
+  grn_obj_format_fin(ctx, &format);
 
   return mrb_nil_value();
 }

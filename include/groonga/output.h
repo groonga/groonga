@@ -61,8 +61,8 @@ GRN_API grn_rc grn_output_range_normalize(grn_ctx *ctx,
   (format)->expression = NULL;\
 } while (0)
 
+/* Deprecated since 10.0.0. Use grn_obj_format_fin() instead. */
 #define GRN_OBJ_FORMAT_FIN(ctx,format) grn_obj_format_fin((ctx), (format))
-
 GRN_API grn_rc grn_obj_format_fin(grn_ctx *ctx, grn_obj_format *format);
 
 GRN_API void grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,

@@ -1200,7 +1200,7 @@ grn_proc_select_format_init(grn_ctx *ctx,
                                   columns,
                                   columns_len);
   if (rc != GRN_SUCCESS) {
-    GRN_OBJ_FORMAT_FIN(ctx, format);
+    grn_obj_format_fin(ctx, format);
     return GRN_FALSE;
   }
 
@@ -1212,7 +1212,7 @@ grn_proc_select_format_init(grn_ctx *ctx,
 grn_bool
 grn_proc_select_format_fin(grn_ctx *ctx, grn_obj_format *format)
 {
-  GRN_OBJ_FORMAT_FIN(ctx, format);
+  grn_obj_format_fin(ctx, format);
 
   return ctx->rc == GRN_SUCCESS;
 }

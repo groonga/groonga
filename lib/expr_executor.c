@@ -1773,7 +1773,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         grn_obj_columns(ctx, table,
                         GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str), &format.columns);
         grn_text_otoj(ctx, res, table, &format);
-        GRN_OBJ_FORMAT_FIN(ctx, &format);
+        grn_obj_format_fin(ctx, &format);
       }
       code++;
       break;
