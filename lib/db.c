@@ -6126,7 +6126,9 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
           */
           (*rp)->action = GRN_ACCESSOR_GET_COLUMN_VALUE;
           if (obj_is_referred) {
-            grn_obj_unlink(ctx, obj);
+            if (grn_enable_reference_count) {
+              grn_obj_unlink(ctx, obj);
+            }
             obj_is_referred = false;
           }
           break;
