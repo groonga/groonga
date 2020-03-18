@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1194,11 +1194,11 @@ grn_proc_select_format_init(grn_ctx *ctx,
   format->flags =
     GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
     GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
-  rc = grn_output_format_set_columns(ctx,
-                                     format,
-                                     result_set,
-                                     columns,
-                                     columns_len);
+  rc = grn_obj_format_set_columns(ctx,
+                                  format,
+                                  result_set,
+                                  columns,
+                                  columns_len);
   if (rc != GRN_SUCCESS) {
     GRN_OBJ_FORMAT_FIN(ctx, format);
     return GRN_FALSE;

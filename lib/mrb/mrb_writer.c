@@ -155,8 +155,8 @@ writer_write_table_columns(mrb_state *mrb, mrb_value self)
   format.flags |= GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
   {
     grn_rc rc;
-    rc = grn_output_format_set_columns(ctx, &format,
-                                       table, columns, columns_size);
+    rc = grn_obj_format_set_columns(ctx, &format,
+                                    table, columns, columns_size);
     if (rc != GRN_SUCCESS) {
       GRN_OBJ_FORMAT_FIN(ctx, &format);
       grn_mrb_ctx_check(mrb);
@@ -219,8 +219,8 @@ writer_write_table_records_content_internal(mrb_state *mrb,
   GRN_OBJ_FORMAT_INIT(&format, n_hits, offset, limit, hits_offset);
   {
     grn_rc rc;
-    rc = grn_output_format_set_columns(ctx, &format,
-                                       table, columns, columns_size);
+    rc = grn_obj_format_set_columns(ctx, &format,
+                                    table, columns, columns_size);
     if (rc != GRN_SUCCESS) {
       GRN_OBJ_FORMAT_FIN(ctx, &format);
       grn_mrb_ctx_check(mrb);

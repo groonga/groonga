@@ -3450,9 +3450,11 @@ grn_obj_format_fin(grn_ctx *ctx, grn_obj_format *format)
 }
 
 grn_rc
-grn_output_format_set_columns(grn_ctx *ctx, grn_obj_format *format,
-                              grn_obj *table,
-                              const char *columns, int columns_len)
+grn_obj_format_set_columns(grn_ctx *ctx,
+                           grn_obj_format *format,
+                           grn_obj *table,
+                           const char *columns,
+                           int columns_len)
 {
   grn_rc rc;
 
