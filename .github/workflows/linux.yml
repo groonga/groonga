@@ -156,6 +156,7 @@ jobs:
             --use-http-chunked
       - name: "Test: HTTP: groonga-httpd"
         run: |
+          mkdir -p /tmp/local/var/log/groonga/httpd/
           bash -x test/command/run-test.sh \
             --n-retries=3 \
             --read-timeout 30 \
