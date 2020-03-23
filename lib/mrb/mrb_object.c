@@ -33,6 +33,7 @@
 #include "mrb_options.h"
 #include "mrb_converter.h"
 
+#include "../grn_db.h"
 #include "../grn_encoding.h"
 
 static mrb_value
@@ -82,8 +83,10 @@ static mrb_value
 object_unlink(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  grn_obj_unlink(ctx, DATA_PTR(self));
-  grn_mrb_ctx_check(mrb);
+  if (grn_enable_reference_count) {
+    grn_obj_unlink(ctx, DATA_PTR(self));
+    grn_mrb_ctx_check(mrb);
+  }
   return mrb_nil_value();
 }
 
