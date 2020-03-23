@@ -1678,17 +1678,29 @@ struct _grn_scan_info {
   int32_t max_nargs;
 };
 
-#define SI_FREE(si) do {\
-  GRN_OBJ_FIN(ctx, &(si)->wv);\
-  GRN_OBJ_FIN(ctx, &(si)->index);\
-  GRN_OBJ_FIN(ctx, &(si)->scorers);\
-  GRN_OBJ_FIN(ctx, &(si)->scorer_args_exprs);\
-  GRN_OBJ_FIN(ctx, &(si)->scorer_args_expr_offsets);\
-  if ((si)->args != (si)->initial_args) {\
-    GRN_FREE((si)->args);\
-  }\
-  GRN_FREE(si);\
-} while (0)
+static grn_inline void
+grn_scan_info_free(grn_ctx *ctx,
+                   scan_info *si)
+{
+  GRN_OBJ_FIN(ctx, &(si->wv));
+  if (grn_enable_reference_count) {
+    size_t i;
+    size_t n_indexes = GRN_PTR_VECTOR_SIZE(&(si->index));
+    for (i = 0; i < n_indexes; i++) {
+      grn_obj_unlink(ctx, GRN_PTR_VALUE_AT(&(si->index), i));
+    }
+  }
+  GRN_OBJ_FIN(ctx, &(si->index));
+  GRN_OBJ_FIN(ctx, &(si->scorers));
+  GRN_OBJ_FIN(ctx, &(si->scorer_args_exprs));
+  GRN_OBJ_FIN(ctx, &(si->scorer_args_expr_offsets));
+  if (si->args != si->initial_args) {
+    GRN_FREE(si->args);
+  }
+  GRN_FREE(si);
+}
+
+#define SI_FREE(si) grn_scan_info_free((ctx), (si))
 
 #define SI_ALLOC_RAW(si, st) do {\
   if (((si) = GRN_MALLOCN(scan_info, 1))) {\
