@@ -3204,6 +3204,10 @@ selector_between(grn_ctx *ctx,
 exit :
   between_data_fin(ctx, &data);
 
+  if (grn_enable_reference_count && index_table) {
+    grn_obj_unlink(ctx, index_table);
+  }
+
   return rc;
 }
 
