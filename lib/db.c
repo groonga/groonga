@@ -14288,6 +14288,9 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
           }
           kp->offset = KEY_UINT32;
         }
+        if (grn_enable_reference_count) {
+          grn_obj_unlink(ctx, range);
+        }
       }
     }
     if (have_compressed_column ||
