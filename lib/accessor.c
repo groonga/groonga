@@ -884,6 +884,9 @@ grn_accessor_name(grn_ctx *ctx, grn_obj *accessor, grn_obj *name)
         GRN_TEXT_PUT(ctx, name, target_name, target_name_size);
       }
       GRN_TEXT_PUTS(ctx, name, ")");
+      if (show_obj_domain_name && target && grn_enable_reference_count) {
+        grn_obj_unlink(ctx, target);
+      }
     }
   }
 
