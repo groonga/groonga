@@ -3792,6 +3792,9 @@ grn_table_select_index_equal(grn_ctx *ctx,
                                                        logical_op,
                                                        tag,
                                                        index)) {
+        if (grn_enable_reference_count) {
+          grn_obj_unlink(ctx, domain);
+        }
         domain = NULL;
       }
     }
@@ -3845,6 +3848,10 @@ grn_table_select_index_equal(grn_ctx *ctx,
         }
       }
       rc = GRN_SUCCESS;
+
+      if (grn_enable_reference_count) {
+        grn_obj_unlink(ctx, domain);
+      }
     }
   }
 
