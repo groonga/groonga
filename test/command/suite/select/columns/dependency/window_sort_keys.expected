@@ -1,10 +1,10 @@
-table_create Logs TABLE_NO_KEY
+table_create Logs TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 load --table Logs
 [
-{},
-{},
-{}
+{"_key": "log-1"},
+{"_key": "log-2"},
+{"_key": "log-3"}
 ]
 [[0,0.0,0.0],3]
 select Logs   --columns[a].flags "COLUMN_SCALAR"   --columns[a].stage "initial"   --columns[a].type "UInt32"   --columns[a].value "window_record_number()"   --columns[a].window.sort_keys "b"   --columns[b].flags "COLUMN_SCALAR"   --columns[b].stage "initial"   --columns[b].type "UInt32"   --columns[b].value "_id"
@@ -25,6 +25,10 @@ select Logs   --columns[a].flags "COLUMN_SCALAR"   --columns[a].stage "initial" 
           "UInt32"
         ],
         [
+          "_key",
+          "ShortText"
+        ],
+        [
           "a",
           "UInt32"
         ],
@@ -35,16 +39,19 @@ select Logs   --columns[a].flags "COLUMN_SCALAR"   --columns[a].stage "initial" 
       ],
       [
         1,
+        "log-1",
         1,
         1
       ],
       [
         2,
+        "log-2",
         2,
         2
       ],
       [
         3,
+        "log-3",
         3,
         3
       ]

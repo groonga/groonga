@@ -1,10 +1,10 @@
-table_create Logs TABLE_NO_KEY
+table_create Logs TABLE_HASH_KEY ShortText
 
 load --table Logs
 [
-{},
-{},
-{}
+{"_key": "log-1"},
+{"_key": "log-2"},
+{"_key": "log-3"}
 ]
 
 select Logs \
