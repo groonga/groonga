@@ -251,10 +251,10 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
   GRN_FREE(columns);
   grn_obj_touch(ctx, index_column, NULL);
 
-  if (target != src && !grn_obj_is_temporary(ctx, target)) {
+  if (target != src && grn_enable_reference_count) {
     grn_obj_unlink(ctx, target);
   }
-  if (!grn_obj_is_temporary(ctx, src)) {
+  if (grn_enable_reference_count) {
     grn_obj_unlink(ctx, src);
   }
 

@@ -8723,7 +8723,7 @@ update_source_hook(grn_ctx *ctx, grn_obj *obj)
         /* invalid target */
         break;
       }
-      if (!grn_obj_is_temporary(ctx, source)) {
+      if (grn_enable_reference_count) {
         grn_obj_unlink(ctx, source);
       }
     }
@@ -9227,10 +9227,8 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
         }
       }
     }
-    if (!grn_obj_is_temporary(ctx, source_type)) {
+    if (grn_enable_reference_count) {
       grn_obj_unlink(ctx, source_type);
-    }
-    if (!grn_obj_is_temporary(ctx, source)) {
       grn_obj_unlink(ctx, source);
     }
     if (ctx->rc != GRN_SUCCESS) {
