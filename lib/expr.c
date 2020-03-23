@@ -6075,7 +6075,7 @@ done :
       goto exit;
     }
     if ((obj = resolve_top_level_name(ctx, name, name_size))) {
-      if (obj->header.type == GRN_ACCESSOR) {
+      if (grn_enable_reference_count || obj->header.type == GRN_ACCESSOR) {
         grn_expr_take_obj(ctx, q->e, obj);
       }
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
