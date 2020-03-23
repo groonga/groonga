@@ -4814,6 +4814,7 @@ grn_obj_column_(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int nam
                 &value);
     if (value) {
       column = *((grn_obj **)value);
+      DB_OBJ(column)->reference_count++;
     }
   } else {
     char buf[GRN_TABLE_MAX_KEY_SIZE];
