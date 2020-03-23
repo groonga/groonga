@@ -401,6 +401,15 @@ grn_column_data_init(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
+static void
+grn_column_data_fin(grn_ctx *ctx,
+                    grn_column_data *column)
+{
+  if (grn_enable_reference_count) {
+    grn_obj_unlink(ctx, column->type);
+  }
+}
+
 static grn_bool
 grn_column_data_fill(grn_ctx *ctx,
                      grn_column_data *column,
@@ -550,18 +559,27 @@ grn_columns_init(grn_ctx *ctx, grn_columns *columns)
 }
 
 static void
+grn_columns_stage_fin(grn_ctx *ctx, grn_hash *columns_stage)
+{
+  GRN_HASH_EACH_BEGIN(ctx, columns_stage, cursor, id) {
+    grn_column_data *column_data;
+    grn_hash_cursor_get_value(ctx, cursor, (void **)&column_data);
+    grn_column_data_fin(ctx, column_data);
+  } GRN_HASH_EACH_END(ctx, cursor);
+  grn_hash_close(ctx, columns_stage);
+}
+
+static void
 grn_columns_fin(grn_ctx *ctx, grn_columns *columns)
 {
   if (columns->initial) {
-    grn_hash_close(ctx, columns->initial);
+    grn_columns_stage_fin(ctx, columns->initial);
   }
-
   if (columns->filtered) {
-    grn_hash_close(ctx, columns->filtered);
+    grn_columns_stage_fin(ctx, columns->filtered);
   }
-
   if (columns->output) {
-    grn_hash_close(ctx, columns->output);
+    grn_columns_stage_fin(ctx, columns->output);
   }
 }
 
