@@ -487,15 +487,7 @@ grn_column_data_collect(grn_ctx *ctx,
                         const char *prefix_label,
                         size_t prefix_label_len)
 {
-  grn_hash_cursor *cursor = NULL;
-
-  cursor = grn_hash_cursor_open(ctx, columns,
-                                NULL, 0, NULL, 0, 0, -1, 0);
-  if (!cursor) {
-    return GRN_FALSE;
-  }
-
-  while (grn_hash_cursor_next(ctx, cursor)) {
+  GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
     grn_column_data *column;
     char key_name[GRN_TABLE_MAX_KEY_SIZE];
     grn_obj *type = NULL;
@@ -545,9 +537,9 @@ grn_column_data_collect(grn_ctx *ctx,
                          type, flags, value,
                          window.sort_keys,
                          window.group_keys);
-  }
-  grn_hash_cursor_close(ctx, cursor);
-  return GRN_TRUE;
+  } GRN_HASH_EACH_END(ctx, cursor);
+
+  return true;
 }
 
 static void
