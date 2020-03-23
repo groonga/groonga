@@ -1524,7 +1524,6 @@ columns_tsort_visit(grn_ctx *ctx,
       size_t i;
       size_t n_dependencies =
         grn_vector_size(ctx, &(column->dependency_column_names));
-      grn_p(ctx, &(column->dependency_column_names));
       for (i = 0; i < n_dependencies; i++) {
         const char *name;
         unsigned int name_length =
