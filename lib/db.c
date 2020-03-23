@@ -15282,6 +15282,9 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                           if (a->action != GRN_ACCESSOR_GET_ID) {
                             ac->action = a->action;
                             ac->obj = a->obj;
+                            if (grn_enable_reference_count && ac->obj) {
+                              ac->obj = grn_ctx_at(ctx, DB_OBJ(ac->obj)->id);
+                            }
                             ac->next = accessor_new(ctx);
                             if (!(ac = ac->next)) { break; }
                           } else {
