@@ -48,6 +48,7 @@ typedef struct {
     grn_raw_string sort_keys;
     grn_raw_string group_keys;
   } window;
+  grn_obj dependency_column_names;
 } grn_column_data;
 
 typedef struct {
@@ -397,6 +398,7 @@ grn_column_data_init(grn_ctx *ctx,
   GRN_RAW_STRING_INIT(column->value);
   GRN_RAW_STRING_INIT(column->window.sort_keys);
   GRN_RAW_STRING_INIT(column->window.group_keys);
+  GRN_TEXT_INIT(&(column->dependency_column_names), GRN_OBJ_VECTOR);
 
   return GRN_TRUE;
 }
@@ -408,6 +410,54 @@ grn_column_data_fin(grn_ctx *ctx,
   if (grn_enable_reference_count) {
     grn_obj_unlink(ctx, column->type);
   }
+
+  GRN_OBJ_FIN(ctx, &(column->dependency_column_names));
+}
+
+static bool
+grn_column_data_extract_dependency_column_names(grn_ctx *ctx,
+                                                grn_column_data *column,
+                                                grn_raw_string *keys)
+{
+  if (keys->length == 0) {
+    return true;
+  }
+
+  // TODO: Improve this logic.
+  size_t start = 0;
+  size_t current;
+  for (current = 0; current < keys->length; current++) {
+    char c = keys->value[current];
+    if (('0' <= c && c <= '9') ||
+        ('A' <= c && c <= 'Z') ||
+        ('a' <= c && c <= 'z') ||
+        (c == '_') ||
+        (c == '.')) {
+      continue;
+    }
+    if (start == current) {
+      start++;
+    } else {
+      grn_vector_add_element(ctx,
+                             &(column->dependency_column_names),
+                             keys->value + start,
+                             current - start,
+                             0,
+                             GRN_DB_SHORT_TEXT);
+      start = current + 1;
+    }
+  }
+
+  if (start != current) {
+    grn_vector_add_element(ctx,
+                           &(column->dependency_column_names),
+                           keys->value + start,
+                           current - start,
+                           0,
+                           GRN_DB_SHORT_TEXT);
+  }
+
+  return true;
 }
 
 static grn_bool
@@ -476,6 +526,16 @@ grn_column_data_fill(grn_ctx *ctx,
   GRN_RAW_STRING_FILL(column->value, value);
   GRN_RAW_STRING_FILL(column->window.sort_keys, window_sort_keys);
   GRN_RAW_STRING_FILL(column->window.group_keys, window_group_keys);
+
+  GRN_BULK_REWIND(&(column->dependency_column_names));
+  if (!grn_column_data_extract_dependency_column_names(
+        ctx, column, &(column->window.sort_keys))) {
+    return false;
+  }
+  if (!grn_column_data_extract_dependency_column_names(
+        ctx, column, &(column->window.group_keys))) {
+    return false;
+  }
 
   return GRN_TRUE;
 }
@@ -1428,6 +1488,136 @@ grn_select_create_no_sort_keys_sorted_table(grn_ctx *ctx,
   return sorted;
 }
 
+typedef enum {
+  TSORT_STATUS_NOT_VISITED,
+  TSORT_STATUS_VISITING,
+  TSORT_STATUS_VISITED
+} tsort_status;
+
+static bool
+columns_tsort_visit(grn_ctx *ctx,
+                    grn_hash *columns,
+                    tsort_status *statuses,
+                    grn_obj *ids,
+                    grn_id id,
+                    const char *log_tag_prefix)
+{
+  bool cycled = true;
+  uint32_t index = id - 1;
+
+  switch (statuses[index]) {
+  case TSORT_STATUS_VISITING :
+    cycled = true;
+    break;
+  case TSORT_STATUS_VISITED :
+    cycled = false;
+    break;
+  case TSORT_STATUS_NOT_VISITED :
+    cycled = false;
+    statuses[index] = TSORT_STATUS_VISITING;
+    {
+      grn_column_data *column =
+        (grn_column_data *)grn_hash_get_value_(ctx, columns, id, NULL);
+      size_t i;
+      size_t n_dependencies =
+        grn_vector_size(ctx, &(column->dependency_column_names));
+      grn_p(ctx, &(column->dependency_column_names));
+      for (i = 0; i < n_dependencies; i++) {
+        const char *name;
+        unsigned int name_length =
+          grn_vector_get_element(ctx,
+                                 &(column->dependency_column_names),
+                                 i,
+                                 &name,
+                                 NULL,
+                                 NULL);
+        grn_id dependent_id;
+        dependent_id = grn_hash_get(ctx,
+                                    columns,
+                                    name,
+                                    name_length,
+                                    NULL);
+        if (dependent_id != GRN_ID_NIL) {
+          cycled = columns_tsort_visit(ctx,
+                                       columns,
+                                       statuses,
+                                       ids,
+                                       dependent_id,
+                                       log_tag_prefix);
+          if (cycled) {
+            GRN_PLUGIN_ERROR(ctx,
+                             GRN_INVALID_ARGUMENT,
+                             "%s[column][%.*s] cycled dependency: <%.*s>",
+                             log_tag_prefix,
+                             (int)(column->label.length),
+                             column->label.value,
+                             (int)name_length,
+                             name);
+          }
+        }
+      }
+    }
+    if (!cycled) {
+      statuses[index] = TSORT_STATUS_VISITED;
+      GRN_RECORD_PUT(ctx, ids, id);
+    }
+    break;
+  }
+
+  return cycled;
+}
+
+static bool
+columns_tsort_body(grn_ctx *ctx,
+                   grn_hash *columns,
+                   tsort_status *statuses,
+                   grn_obj *ids,
+                   const char *log_tag_prefix)
+{
+  grn_bool succeeded = GRN_TRUE;
+
+  GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
+    if (columns_tsort_visit(ctx, columns, statuses, ids, id, log_tag_prefix)) {
+      succeeded = true;
+      break;
+    }
+  } GRN_HASH_EACH_END(ctx, cursor);
+
+  return succeeded;
+}
+
+static void
+columns_tsort_init(grn_ctx *ctx,
+                   tsort_status *statuses,
+                   size_t n_statuses)
+{
+  size_t i;
+  for (i = 0; i < n_statuses; i++) {
+    statuses[i] = TSORT_STATUS_NOT_VISITED;
+  }
+}
+
+static bool
+columns_tsort(grn_ctx *ctx,
+              grn_hash *columns,
+              grn_obj *ids,
+              const char *log_tag_prefix)
+{
+  size_t n_statuses = grn_hash_size(ctx, columns);
+  tsort_status *statuses = GRN_PLUGIN_MALLOCN(ctx, tsort_status, n_statuses);
+  if (!statuses) {
+    return false;
+  }
+
+  columns_tsort_init(ctx, statuses, n_statuses);
+  bool succeeded = columns_tsort_body(ctx,
+                                      columns,
+                                      statuses,
+                                      ids,
+                                      log_tag_prefix);
+  GRN_PLUGIN_FREE(ctx, statuses);
+  return succeeded;
+}
 
 static void
 grn_select_apply_columns(grn_ctx *ctx,
@@ -1438,29 +1628,26 @@ grn_select_apply_columns(grn_ctx *ctx,
                          const char *log_tag_prefix,
                          const char *query_log_tag_prefix)
 {
-  grn_hash_cursor *columns_cursor;
-
-  columns_cursor = grn_hash_cursor_open(ctx, columns,
-                                        NULL, 0, NULL, 0, 0, -1, 0);
-  if (!columns_cursor) {
+  grn_obj tsorted_ids;
+  GRN_RECORD_INIT(&tsorted_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  if (!columns_tsort(ctx, columns, &tsorted_ids, log_tag_prefix)) {
+    GRN_OBJ_FIN(ctx, &tsorted_ids);
     return;
   }
 
-  while (grn_hash_cursor_next(ctx, columns_cursor) != GRN_ID_NIL) {
-    grn_column_data *column_data;
-    grn_obj *column;
-    grn_obj *expression;
-    grn_obj *record;
-
-    grn_hash_cursor_get_value(ctx, columns_cursor, (void **)&column_data);
-
-    column = grn_column_create(ctx,
-                               table,
-                               column_data->label.value,
-                               column_data->label.length,
-                               NULL,
-                               column_data->flags,
-                               column_data->type);
+  size_t i;
+  size_t n_columns = GRN_RECORD_VECTOR_SIZE(&tsorted_ids);
+  for (i = 0; i < n_columns; i++) {
+    grn_id id = GRN_RECORD_VALUE_AT(&tsorted_ids, i);
+    grn_column_data *column_data =
+      (grn_column_data *)grn_hash_get_value_(ctx, columns, id, NULL);
+    grn_obj *column = grn_column_create(ctx,
+                                        table,
+                                        column_data->label.value,
+                                        column_data->label.length,
+                                        NULL,
+                                        column_data->flags,
+                                        column_data->type);
     if (!column) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
@@ -1473,6 +1660,8 @@ grn_select_apply_columns(grn_ctx *ctx,
       break;
     }
 
+    grn_obj *expression;
+    grn_obj *record;
     GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expression, record);
     if (!expression) {
       grn_obj_close(ctx, column);
@@ -1627,7 +1816,7 @@ grn_select_apply_columns(grn_ctx *ctx,
                   grn_table_size(ctx, table));
   }
 
-  grn_hash_cursor_close(ctx, columns_cursor);
+  GRN_OBJ_FIN(ctx, &tsorted_ids);
 }
 
 static grn_bool
@@ -2457,13 +2646,6 @@ exit :
 
   return success;
 }
-
-typedef enum {
-  TSORT_STATUS_NOT_VISITED,
-  TSORT_STATUS_VISITING,
-  TSORT_STATUS_VISITED
-} tsort_status;
-
 static grn_bool
 drilldown_tsort_visit(grn_ctx *ctx,
                       grn_hash *drilldowns,

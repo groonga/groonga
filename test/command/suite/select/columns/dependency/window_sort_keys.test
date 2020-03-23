@@ -1,0 +1,19 @@
+table_create Logs TABLE_NO_KEY
+
+load --table Logs
+[
+{},
+{},
+{}
+]
+
+select Logs \
+  --columns[a].flags "COLUMN_SCALAR" \
+  --columns[a].stage "initial" \
+  --columns[a].type "UInt32" \
+  --columns[a].value "window_record_number()" \
+  --columns[a].window.sort_keys "b" \
+  --columns[b].flags "COLUMN_SCALAR" \
+  --columns[b].stage "initial" \
+  --columns[b].type "UInt32" \
+  --columns[b].value "_id"
