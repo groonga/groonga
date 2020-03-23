@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2013-2018 Brazil
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2019-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -76,6 +76,15 @@ grn_mrb_object_inspect(mrb_state *mrb, mrb_value self)
   mrb_str_cat_lit(mrb, inspected, ">");
 
   return inspected;
+}
+
+static mrb_value
+object_unlink(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj_unlink(ctx, DATA_PTR(self));
+  grn_mrb_ctx_check(mrb);
+  return mrb_nil_value();
 }
 
 static mrb_value
@@ -324,6 +333,8 @@ grn_mrb_object_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "inspect",
                     grn_mrb_object_inspect, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "unlink", object_unlink, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "id", object_get_id, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "name", object_get_name, MRB_ARGS_NONE());

@@ -11,6 +11,10 @@ module Groonga
       @table = Context.instance[@variable.domain_id]
     end
 
+    def close
+      @table.unlink
+    end
+
     RELATION_OPERATORS = [
       Operator::MATCH,
       Operator::NEAR,
