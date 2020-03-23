@@ -500,6 +500,9 @@ grn_column_data_fill(grn_ctx *ctx,
       grn_obj_unlink(ctx, type);
       return GRN_FALSE;
     }
+    if (column->type && grn_enable_reference_count) {
+      grn_obj_unlink(ctx, column->type);
+    }
     column->type = type;
   }
 
