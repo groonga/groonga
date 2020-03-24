@@ -617,7 +617,9 @@ output_column(N_STACKED_COLUMNS) ::= STAR. {
     } else if (n_columns == 1) {
       grn_obj *column = columns[0];
       grn_expr_append_const(ctx, expr, column, GRN_OP_GET_VALUE, 1);
-      grn_expr_take_obj(ctx, expr, column);
+      if (grn_enable_reference_count || grn_obj_is_accessor(ctx, column)) {
+        grn_expr_take_obj(ctx, expr, column);
+      }
     } else {
       grn_expr *e = (grn_expr *)expr;
       grn_bool have_column;
@@ -630,7 +632,9 @@ output_column(N_STACKED_COLUMNS) ::= STAR. {
         if (have_column || i > 0) {
           grn_expr_append_op(ctx, expr, GRN_OP_COMMA, 2);
         }
-        grn_expr_take_obj(ctx, expr, column);
+        if (grn_enable_reference_count || grn_obj_is_accessor(ctx, column)) {
+          grn_expr_take_obj(ctx, expr, column);
+        }
       }
     }
 

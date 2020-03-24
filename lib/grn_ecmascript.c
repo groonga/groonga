@@ -2542,7 +2542,9 @@ static YYACTIONTYPE yy_reduce(
     } else if (n_columns == 1) {
       grn_obj *column = columns[0];
       grn_expr_append_const(ctx, expr, column, GRN_OP_GET_VALUE, 1);
-      grn_expr_take_obj(ctx, expr, column);
+      if (grn_enable_reference_count || grn_obj_is_accessor(ctx, column)) {
+        grn_expr_take_obj(ctx, expr, column);
+      }
     } else {
       grn_expr *e = (grn_expr *)expr;
       grn_bool have_column;
@@ -2555,7 +2557,9 @@ static YYACTIONTYPE yy_reduce(
         if (have_column || i > 0) {
           grn_expr_append_op(ctx, expr, GRN_OP_COMMA, 2);
         }
-        grn_expr_take_obj(ctx, expr, column);
+        if (grn_enable_reference_count || grn_obj_is_accessor(ctx, column)) {
+          grn_expr_take_obj(ctx, expr, column);
+        }
       }
     }
 
@@ -2570,21 +2574,21 @@ static YYACTIONTYPE yy_reduce(
     yymsp[0].minor.yy0 = 0;
   }
 }
-#line 2574 "../../groonga/lib/grn_ecmascript.c"
+#line 2578 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 86: /* output_column ::= NONEXISTENT_COLUMN */
-#line 648 "../../groonga/lib/grn_ecmascript.lemon"
+#line 652 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 0;
 }
-#line 2581 "../../groonga/lib/grn_ecmascript.c"
+#line 2585 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 87: /* output_column ::= assignment_expression */
-#line 651 "../../groonga/lib/grn_ecmascript.lemon"
+#line 655 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 1;
 }
-#line 2588 "../../groonga/lib/grn_ecmascript.c"
+#line 2592 "../../groonga/lib/grn_ecmascript.c"
         break;
       default:
       /* (91) input ::= query */ yytestcase(yyruleno==91);
@@ -2716,7 +2720,7 @@ static void yy_syntax_error(
     }
     GRN_OBJ_FIN(ctx, &message);
   }
-#line 2720 "../../groonga/lib/grn_ecmascript.c"
+#line 2724 "../../groonga/lib/grn_ecmascript.c"
 /************ End %syntax_error code ******************************************/
   grn_expr_parserARG_STORE /* Suppress warning about unused %extra_argument variable */
   grn_expr_parserCTX_STORE
