@@ -90,7 +90,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
   s0 = s1;\
   sp--;\
   if (sp < s_) { ERR(GRN_INVALID_ARGUMENT, "stack underflow"); goto exit; }\
-  s1 = (sp > s_ - 1) ? sp[-2] : NULL;\
+  s1 = (sp > s_ + 1) ? sp[-2] : NULL;\
 } while (0)
 
 #define ALLOC1(value) do {\
