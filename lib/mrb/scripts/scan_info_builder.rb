@@ -9,10 +9,7 @@ module Groonga
       @record_exist = record_exist
       @variable = @expression[0]
       @table = Context.instance[@variable.domain_id]
-    end
-
-    def close
-      @table.unlink
+      @expression.take_object(@table)
     end
 
     RELATION_OPERATORS = [
