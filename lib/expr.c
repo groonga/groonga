@@ -548,10 +548,33 @@ exit :
   return (grn_obj *)expr;
 }
 
+static grn_inline bool
+grn_expr_is_takable_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj)
+{
+  if (grn_enable_reference_count) {
+    return true;
+  }
+
+  if (grn_obj_is_table(ctx, obj)) {
+    /* efsi->object_literal */
+    return grn_obj_id(ctx, obj) == GRN_ID_NIL;
+  }
+
+  if (grn_obj_is_column(ctx, obj)) {
+    return false;
+  }
+
+  return true;
+}
+
 /* Pass ownership of `obj` to `expr`. */
 void
 grn_expr_take_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj)
 {
+  if (!grn_expr_is_takable_obj(ctx, expr, obj)) {
+    return;
+  }
+
   grn_expr *e = (grn_expr *)expr;
   GRN_PTR_PUT(ctx, &(e->objs), obj);
 }
@@ -1294,9 +1317,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
                 dfi0->code->value = col;
                 type = col->header.type;
                 domain = grn_obj_get_range(ctx, col);
-                if (col->header.type == GRN_ACCESSOR) {
-                  grn_expr_take_obj(ctx, expr, col);
-                }
+                grn_expr_take_obj(ctx, expr, col);
               }
             } else {
               domain = grn_obj_get_range(ctx, obj);
@@ -6072,9 +6093,7 @@ done :
     unsigned int name_size = s - q->cur;
     if (name_resolve_context) {
       if ((obj = grn_obj_column(ctx, name_resolve_context, name, name_size))) {
-        if (obj->header.type == GRN_ACCESSOR) {
-          grn_expr_take_obj(ctx, q->e, obj);
-        }
+        grn_expr_take_obj(ctx, q->e, obj);
         PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
         grn_expr_append_obj(ctx, q->e, obj, GRN_OP_GET_VALUE, 2);
         goto exit;
@@ -6086,17 +6105,13 @@ done :
       goto exit;
     }
     if ((obj = grn_obj_column(ctx, q->table, name, name_size))) {
-      if (grn_enable_reference_count || obj->header.type == GRN_ACCESSOR) {
-        grn_expr_take_obj(ctx, q->e, obj);
-      }
+      grn_expr_take_obj(ctx, q->e, obj);
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_GET_VALUE, 1);
       goto exit;
     }
     if ((obj = resolve_top_level_name(ctx, name, name_size))) {
-      if (grn_enable_reference_count || obj->header.type == GRN_ACCESSOR) {
-        grn_expr_take_obj(ctx, q->e, obj);
-      }
+      grn_expr_take_obj(ctx, q->e, obj);
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
       goto exit;
