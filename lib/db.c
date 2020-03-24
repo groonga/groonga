@@ -3670,6 +3670,9 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx, grn_obj *obj,
   if (table) {
     key_type = table->header.domain;
     need_cast = (query->header.domain != key_type);
+    if (grn_enable_reference_count) {
+      grn_obj_unlink(ctx, table);
+    }
   }
   if (need_cast) {
     GRN_OBJ_INIT(&casted_query, GRN_BULK, 0, key_type);
