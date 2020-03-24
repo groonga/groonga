@@ -881,6 +881,9 @@ grn_output_record(grn_ctx *ctx,
     } else {
       grn_output_int64(ctx, outbuf, output_type, id);
     }
+    if (grn_enable_reference_count && table) {
+      grn_obj_unlink(ctx, table);
+    }
   }
 }
 
