@@ -2563,7 +2563,7 @@ static YYACTIONTYPE yy_reduce(
       }
     }
 
-    if (!grn_obj_is_temporary(ctx, table)) {
+    if (grn_enable_reference_count) {
       grn_obj_unlink(ctx, table);
     }
     GRN_OBJ_FIN(ctx, &columns_buffer);
