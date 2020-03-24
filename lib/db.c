@@ -8426,6 +8426,9 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
               processed = GRN_TRUE;
             }
           }
+          if (grn_enable_reference_count) {
+            grn_obj_unlink(ctx, domain);
+          }
         }
         if (!processed) {
           grn_hash *hash = (grn_hash *)obj;
