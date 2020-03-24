@@ -6369,7 +6369,9 @@ grn_obj_cast_to_record(grn_ctx *ctx,
 
   grn_obj *table = grn_ctx_at(ctx, dest->header.domain);
   if (!GRN_OBJ_TABLEP(table)) {
-    grn_obj_unlink(ctx, table);
+    if (grn_enable_reference_count) {
+      grn_obj_unlink(ctx, table);
+    }
     return GRN_FUNCTION_NOT_IMPLEMENTED;
   }
 
@@ -6413,7 +6415,7 @@ grn_obj_cast_to_record(grn_ctx *ctx,
     }
   }
 
-  if (!grn_obj_is_temporary(ctx, table)) {
+  if (grn_enable_reference_count) {
     grn_obj_unlink(ctx, table);
   }
 
