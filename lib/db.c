@@ -14497,7 +14497,7 @@ grn_column_find_index_data_column_equal(grn_ctx *ctx, grn_obj *obj,
       index_data[n].section = section;
     }
     n++;
-  loop_continue:
+  loop_continue :
     if (!target_is_referred && grn_enable_reference_count) {
       grn_obj_unlink(ctx, target);
     }
@@ -14721,7 +14721,7 @@ grn_column_find_index_data_column_range(grn_ctx *ctx, grn_obj *obj,
       index_data[n].section = section;
     }
     n++;
-  loop_continue:
+  loop_continue :
     if (!target_is_referred && grn_enable_reference_count) {
       grn_obj_unlink(ctx, target);
     }
@@ -14925,6 +14925,7 @@ grn_column_find_index_data_accessor(grn_ctx *ctx,
     for (hooks = DB_OBJ(a->obj)->hooks[entry]; hooks; hooks = hooks->next) {
       grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
       grn_obj *target = grn_ctx_at(ctx, data->target);
+      bool target_is_referred = false;
 
       if (!target) {
         report_hook_has_dangling_reference_error(ctx, obj, data->target,
@@ -14932,15 +14933,19 @@ grn_column_find_index_data_accessor(grn_ctx *ctx,
                                                  "[accessor][match]");
         continue;
       }
-      if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+      if (target->header.type != GRN_COLUMN_INDEX) {
+        goto loop_continue;
+      }
       if (a->next) {
-        if (!grn_index_column_is_usable(ctx, target, GRN_OP_EQUAL)) { continue; }
+        if (!grn_index_column_is_usable(ctx, target, GRN_OP_EQUAL)) {
+          goto loop_continue;
+        }
       }
 
       found = GRN_TRUE;
       if (!a->next) {
         if (!grn_index_column_is_usable(ctx, target, op)) {
-          continue;
+          goto loop_continue;
         }
 
         int section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
@@ -14954,13 +14959,23 @@ grn_column_find_index_data_accessor(grn_ctx *ctx,
           index = obj;
         }
         if (n < buf_size) {
+          if (index == target) {
+            target_is_referred = true;
+          }
           *ip++ = index;
         }
         if (n < n_index_data) {
+          if (index == target) {
+            target_is_referred = true;
+          }
           index_data[n].index = index;
           index_data[n].section = section;
         }
         n++;
+      }
+    loop_continue :
+      if (!target_is_referred && grn_enable_reference_count) {
+        grn_obj_unlink(ctx, target);
       }
     }
 
