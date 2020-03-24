@@ -2283,6 +2283,9 @@ scan_info_build_match_expr_codes_find_index(grn_ctx *ctx, scan_info *si,
       uint32_t n_rest_codes;
 
       *index = ec->value;
+      if (grn_enable_reference_count) {
+        *index = grn_ctx_at(ctx, grn_obj_id(ctx, *index));
+      }
 
       n_rest_codes = expr->codes_curr - i;
       if (n_rest_codes >= 2 &&
