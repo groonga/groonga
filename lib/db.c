@@ -5754,6 +5754,12 @@ accessor_new(grn_ctx *ctx)
   return res;
 }
 
+grn_inline static void
+grn_accessor_refer(grn_ctx *ctx, grn_obj *accessor)
+{
+  ((grn_accessor *)accessor)->reference_count++;
+}
+
 grn_inline static grn_bool
 grn_obj_get_accessor_rset_value(grn_ctx *ctx,
                                 grn_obj *obj,
@@ -14897,13 +14903,18 @@ grn_column_find_index_data_accessor(grn_ctx *ctx,
         if (section_buf) {
           *section_buf = section;
         }
-        grn_obj *index = obj;
+        bool obj_is_referred = false;
         if (n < buf_size) {
-          *ip++ = index;
+          obj_is_referred = true;
+          *ip++ = obj;
         }
         if (n < n_index_data) {
-          index_data[n].index = index;
+          obj_is_referred = true;
+          index_data[n].index = obj;
           index_data[n].section = section;
+        }
+        if (obj_is_referred) {
+          grn_accessor_refer(ctx, obj);
         }
         n++;
       }
@@ -14953,6 +14964,7 @@ grn_column_find_index_data_accessor(grn_ctx *ctx,
           *section_buf = section;
         }
         grn_obj *index;
+        bool obj_is_referred = false;
         if (depth == 0) {
           index = target;
         } else {
@@ -14961,15 +14973,22 @@ grn_column_find_index_data_accessor(grn_ctx *ctx,
         if (n < buf_size) {
           if (index == target) {
             target_is_referred = true;
+          } else {
+            obj_is_referred = true;
           }
           *ip++ = index;
         }
         if (n < n_index_data) {
           if (index == target) {
             target_is_referred = true;
+          } else {
+            obj_is_referred = true;
           }
           index_data[n].index = index;
           index_data[n].section = section;
+        }
+        if (obj_is_referred) {
+          grn_accessor_refer(ctx, obj);
         }
         n++;
       }
@@ -14987,12 +15006,18 @@ grn_column_find_index_data_accessor(grn_ctx *ctx,
       if (section_buf) {
         *section_buf = section;
       }
+      bool obj_is_referred = false;
       if (n < buf_size) {
+        obj_is_referred = true;
         *ip++ = obj;
       }
       if (n < n_index_data) {
+        obj_is_referred = true;
         index_data[n].index = obj;
         index_data[n].section = section;
+      }
+      if (obj_is_referred) {
+        grn_accessor_refer(ctx, obj);
       }
       n++;
     }
