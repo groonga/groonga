@@ -1,3 +1,5 @@
+#$GRN_ENABLE_REFERENCE_COUNT=no
+
 table_create Users TABLE_HASH_KEY ShortText
 column_create Users name COLUMN_SCALAR ShortText
 
