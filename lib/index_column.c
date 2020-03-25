@@ -243,8 +243,8 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
     }
   }
   grn_obj_set_visibility(ctx, index_column, true);
-  for (int i = 0; i < n_columns; i++) {
-    if (!grn_obj_is_temporary(ctx, columns[i])) {
+  if (grn_enable_reference_count) {
+    for (int i = 0; i < n_columns; i++) {
       grn_obj_unlink(ctx, columns[i]);
     }
   }
