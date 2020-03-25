@@ -11,6 +11,15 @@ module Groonga
       data_list = builder.build
       return @table_size if data_list.nil?
 
+      begin
+        estimate_data_list(data_list)
+      ensure
+        data_list.each(&:unlink)
+      end
+    end
+
+    private
+    def estimate_data_list(data_list)
       current_size = 0
       sizes = []
       data_list.each do |data|

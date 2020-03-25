@@ -53,6 +53,10 @@ module Groonga
       end
     end
 
+    def unlink
+      @search_indexes.each(&:unlink)
+    end
+
     private
     def near_search?
       (@op == Operator::NEAR or @op == Operator::NEAR2) and @args.size == 3
@@ -354,6 +358,7 @@ module Groonga
       return if index_info.nil?
       if accessor.next
         put_search_index(accessor, index_info.section_id, 1)
+        accessor.unlink
       else
         put_search_index(index_info.index, index_info.section_id, 1)
       end

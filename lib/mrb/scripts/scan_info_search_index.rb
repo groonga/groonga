@@ -5,5 +5,8 @@ module Groonga
                                          :scorer,
                                          :scorer_args_expr,
                                          :scorer_args_expr_offset)
+    def unlink
+      index_column.unlink if index_column
+    end
   end
 end
