@@ -37,6 +37,7 @@ module LaunchpadHelper
       ["bionic", "18.04"],
       ["disco", "19.04"],
       ["eoan", "19.10"],
+      ["focal", "20.04"],
     ]
   end
 
