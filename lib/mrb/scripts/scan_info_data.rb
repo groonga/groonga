@@ -308,6 +308,7 @@ module Groonga
           section_id = codes[i + 1].value.value + 1
           offset += 2
         end
+        index = Context.instance[index.id]
         index_info = IndexInfo.new(index, section_id)
       end
 
