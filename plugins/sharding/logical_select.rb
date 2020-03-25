@@ -583,12 +583,12 @@ module Groonga
         end
 
         def close
-          @temporary_tables.each do |table|
-            table.close
-          end
-
           @expressions.each do |expression|
             expression.close
+          end
+
+          @temporary_tables.each do |table|
+            table.close
           end
         end
 
