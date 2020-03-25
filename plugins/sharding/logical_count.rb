@@ -124,8 +124,8 @@ module Groonga
         end
 
         def close
-          @temporary_tables.each(&:close)
           @temporary_expressions.each(&:close)
+          @temporary_tables.each(&:close)
         end
 
         private
