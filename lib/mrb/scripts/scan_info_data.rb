@@ -338,6 +338,7 @@ module Groonga
     end
 
     def match_resolve_index_index_column(index)
+      index = Context.instance[index.id]
       put_search_index(index, 0, 1)
     end
 
