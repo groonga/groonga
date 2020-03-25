@@ -1,3 +1,5 @@
+#$GRN_ENABLE_REFERENCE_COUNT=no
+
 table_create Sources TABLE_NO_KEY
 column_create Sources value COLUMN_SCALAR Int32
 
