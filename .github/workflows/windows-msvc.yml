@@ -239,15 +239,29 @@ jobs:
           cd ..\grntest
           bundle install
           bundle exec ruby -rdevkit -S rake install
+          gem install red-arrow
       - name: "Test: command line"
         run: |
           . .\env.ps1
           ruby test\command_line\run-test.rb `
             --groonga-install-prefix="${FULL_INSTALL_FOLDER}"
+      - name: "Test: HTTP: reference count"
+        run: |
+          . .\env.ps1
+          $Env:GRN_ENABLE_REFERENCE_COUNT = "yes"
+          grntest `
+            --base-directory test\command `
+            --groonga "${FULL_INSTALL_FOLDER}\bin\groonga.exe" `
+            --interface http `
+            --n-retries 2 `
+            --n-workers ${Env:NUMBER_OF_PROCESSORS} `
+            --read-timeout 30 `
+            --reporter mark `
+            --timeout 60 `
+            test\command\suite
       - name: "Test: HTTP: Apache Arrow: chunked"
         run: |
           . .\env.ps1
-          gem install red-arrow
           grntest `
             --base-directory test\command `
             --groonga "${FULL_INSTALL_FOLDER}\bin\groonga.exe" `

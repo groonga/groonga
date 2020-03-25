@@ -162,6 +162,13 @@ jobs:
             --read-timeout 30 \
             --reporter=mark \
             --testee groonga-httpd
+      - name: "Test: HTTP: reference count"
+        run: |
+          export GRN_ENABLE_REFERENCE_COUNT=yes
+          bash -x test/command/run-test.sh \
+            --n-retries=3 \
+            --read-timeout 30 \
+            --reporter=mark
       - name: Install
         run: |
           make install
