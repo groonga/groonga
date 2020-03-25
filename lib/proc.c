@@ -3389,7 +3389,6 @@ selector_in_values_sequential_search(grn_ctx *ctx,
       local_source_name_length = grn_column_name(ctx, source,
                                                  local_source_name,
                                                  GRN_TABLE_MAX_KEY_SIZE);
-      grn_obj_unlink(ctx, source);
       accessor = grn_obj_column(ctx, res,
                                 local_source_name,
                                 local_source_name_length);
