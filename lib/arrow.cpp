@@ -1036,7 +1036,7 @@ namespace grnarrow {
                                       grn_table_,
                                       arrow_field,
                                       sub_ids);
-            arrow_array->Accept(&visitor);
+            auto status = arrow_array->Accept(&visitor);
             offset += arrow_array->length();
           }
         }
@@ -1121,7 +1121,6 @@ namespace grnarrow {
           arrow::ipc::RecordBatchFileWriter::Open(output, schema, &writer);
         if (!check(ctx_,
                    status,
-                   writer_result,
                    "[arrow][dump] failed to create file format writer")) {
           return ctx_->rc;
         }
@@ -1140,7 +1139,12 @@ namespace grnarrow {
       if (!ids.empty()) {
         write_record_batch(ids, schema, writer);
       }
-      writer->Close();
+      auto status = writer->Close();
+      if (!check(ctx_,
+                 status,
+                 "[arrow][dump] failed to close writer file format writer")) {
+        return ctx_->rc;
+      }
 
       return ctx_->rc;
     }
@@ -1222,7 +1226,8 @@ namespace grnarrow {
       for (auto id : ids) {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
-        builder.Append(*(reinterpret_cast<const grn_bool *>(data)));
+        ARROW_RETURN_NOT_OK(
+          builder.Append(*(reinterpret_cast<const grn_bool *>(data))));
       }
       return builder.Finish(array);
     }
@@ -1234,7 +1239,8 @@ namespace grnarrow {
       for (auto id : ids) {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
-        builder.Append(*(reinterpret_cast<const uint8_t *>(data)));
+        ARROW_RETURN_NOT_OK(
+          builder.Append(*(reinterpret_cast<const uint8_t *>(data))));
       }
       return builder.Finish(array);
     }
@@ -1246,7 +1252,8 @@ namespace grnarrow {
       for (auto id : ids) {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
-        builder.Append(*(reinterpret_cast<const int8_t *>(data)));
+        ARROW_RETURN_NOT_OK(
+          builder.Append(*(reinterpret_cast<const int8_t *>(data))));
       }
       return builder.Finish(array);
     }
@@ -1258,7 +1265,8 @@ namespace grnarrow {
       for (auto id : ids) {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
-        builder.Append(*(reinterpret_cast<const uint16_t *>(data)));
+        ARROW_RETURN_NOT_OK(
+          builder.Append(*(reinterpret_cast<const uint16_t *>(data))));
       }
       return builder.Finish(array);
     }
@@ -1270,7 +1278,8 @@ namespace grnarrow {
       for (auto id : ids) {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
-        builder.Append(*(reinterpret_cast<const int16_t *>(data)));
+        ARROW_RETURN_NOT_OK(
+          builder.Append(*(reinterpret_cast<const int16_t *>(data))));
       }
       return builder.Finish(array);
     }
@@ -1282,7 +1291,8 @@ namespace grnarrow {
       for (auto id : ids) {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
-        builder.Append(*(reinterpret_cast<const uint32_t *>(data)));
+        ARROW_RETURN_NOT_OK(
+          builder.Append(*(reinterpret_cast<const uint32_t *>(data))));
       }
       return builder.Finish(array);
     }
@@ -1294,7 +1304,8 @@ namespace grnarrow {
       for (auto id : ids) {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
-        builder.Append(*(reinterpret_cast<const int32_t *>(data)));
+        ARROW_RETURN_NOT_OK(
+          builder.Append(*(reinterpret_cast<const int32_t *>(data))));
       }
       return builder.Finish(array);
     }
@@ -1305,7 +1316,8 @@ namespace grnarrow {
       for (auto id : ids) {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
-        builder.Append(*(reinterpret_cast<const uint64_t *>(data)));
+        ARROW_RETURN_NOT_OK(
+          builder.Append(*(reinterpret_cast<const uint64_t *>(data))));
       }
       return builder.Finish(array);
     }
@@ -1317,7 +1329,8 @@ namespace grnarrow {
       for (auto id : ids) {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
-        builder.Append(*(reinterpret_cast<const int64_t *>(data)));
+        ARROW_RETURN_NOT_OK(
+          builder.Append(*(reinterpret_cast<const int64_t *>(data))));
       }
       return builder.Finish(array);
     }
@@ -1329,7 +1342,8 @@ namespace grnarrow {
       for (auto id : ids) {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
-        builder.Append(*(reinterpret_cast<const double *>(data)));
+        ARROW_RETURN_NOT_OK(
+          builder.Append(*(reinterpret_cast<const double *>(data))));
       }
       return builder.Finish(array);
     }
@@ -1345,7 +1359,8 @@ namespace grnarrow {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
         auto timestamp_micro = *(reinterpret_cast<const int64_t *>(data));
-        builder.Append(GRN_TIME_USEC_TO_NSEC(timestamp_micro));
+        ARROW_RETURN_NOT_OK(
+          builder.Append(GRN_TIME_USEC_TO_NSEC(timestamp_micro)));
       }
       return builder.Finish(array);
     }
@@ -1357,7 +1372,7 @@ namespace grnarrow {
       for (auto id : ids) {
         uint32_t size;
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
-        builder.Append(data, size);
+        ARROW_RETURN_NOT_OK(builder.Append(data, size));
       }
       return builder.Finish(array);
     }
@@ -1662,7 +1677,6 @@ namespace grnarrow {
   public:
     StreamWriter(grn_ctx *ctx, grn_obj *bulk)
       : ctx_(ctx),
-        bulk_(bulk),
         output_(ctx, bulk),
         schema_builder_(),
         schema_(),
@@ -1741,7 +1755,7 @@ namespace grnarrow {
 # ifdef GRN_ARROW_IPC_RESULT
       auto writer = arrow::ipc::NewStreamWriter(&output_, schema_);
 # else
-      auto writer = arrow::ipc::RecordBatchStreamWriter(&output_, schema_);
+      auto writer = arrow::ipc::RecordBatchStreamWriter::Open(&output_, schema_);
 # endif
       if (!check(ctx_,
                  writer,
@@ -1986,14 +2000,17 @@ namespace grnarrow {
       if (check(ctx_,
                 status,
                 "[arrow][stream-writer][flush] failed to flush record batch")) {
-        writer_->WriteRecordBatch(*record_batch);
+        status = writer_->WriteRecordBatch(*record_batch);
+        check(ctx_,
+              status,
+              "[arrow][stream-writer][flush] "
+              "failed to write flushed record batch");
       }
       n_records_ = 0;
     }
 
   private:
     grn_ctx *ctx_;
-    grn_obj *bulk_;
     BulkOutputStream output_;
     arrow::SchemaBuilder schema_builder_;
     std::shared_ptr<arrow::Schema> schema_;
