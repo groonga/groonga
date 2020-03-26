@@ -13,6 +13,7 @@ load --table Items
 
 log_level --level debug
 #@add-important-log-levels debug
+#@add-ignore-log-pattern /\A\[io\]/
 #@collect-query-log true
 select Items \
   --filter true \
@@ -23,5 +24,6 @@ select Items \
   --slices[expensive].filter 'price_with_tax > 550' \
   --slices[expensive].output_columns '_id,_key,_score,price,price_with_tax'
 #@collect-query-log false
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels debug
 log_level --level notice
