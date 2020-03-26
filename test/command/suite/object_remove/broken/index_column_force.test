@@ -8,7 +8,7 @@ column_create Terms index COLUMN_INDEX|WITH_POSITION Users _key
 thread_limit 1
 #@enable-logging
 database_unmap
-#@copy-path fixture/object_remove/too_small #{db_path}.0000102
+#@copy-path fixture/object_remove/too_small.data #{db_path}.0000102
 
 object_remove Terms.index --force yes
 column_create Terms index COLUMN_INDEX|WITH_POSITION Users _key

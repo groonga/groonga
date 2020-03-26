@@ -10,7 +10,7 @@ column_create Terms index COLUMN_INDEX|WITH_POSITION Users name
 thread_limit 1
 #@enable-logging
 database_unmap
-#@copy-path fixture/object_remove/too_small #{db_path}.0000103
+#@copy-path fixture/object_remove/too_small.data #{db_path}.0000103
 
 object_remove Users.name
 object_exist Users.name

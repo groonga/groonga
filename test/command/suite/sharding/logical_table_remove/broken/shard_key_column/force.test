@@ -50,7 +50,7 @@ thread_limit 1
 database_unmap
 #@enable-logging
 
-#@copy-path fixture/sharding/logical_table_remove/broken #{db_path}.0000111
+#@copy-path fixture/sharding/logical_table_remove/broken.data #{db_path}.0000111
 
 logical_table_remove Logs timestamp \
   --min "2015-02-04 00:00:00" \

@@ -4,7 +4,7 @@ table_create Users TABLE_HASH_KEY ShortText
 thread_limit 1
 #@enable-logging
 database_unmap
-#@copy-path fixture/object_remove/wrong_type #{db_path}.0000100
+#@copy-path fixture/object_remove/wrong_type.data #{db_path}.0000100
 
 object_remove Users
 object_exist Users
