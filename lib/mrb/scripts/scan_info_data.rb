@@ -295,6 +295,8 @@ module Groonga
         index_info = accessor.find_index(@op)
         if index_info
           if accessor.have_next? and index_info.index != accessor.object
+            accessor.refer
+            index_info.index.unlink
             index_info = IndexInfo.new(accessor, index_info.section_id)
           end
         end
@@ -312,7 +314,7 @@ module Groonga
           section_id = codes[i + 1].value.value + 1
           offset += 2
         end
-        index = Context.instance[index.id]
+        index.refer
         index_info = IndexInfo.new(index, section_id)
       end
 
@@ -328,6 +330,8 @@ module Groonga
       section_id = index_info.section_id
       weight = expr_code.weight
       if accessor.next
+        index_info.index.unlink
+        accessor.refer
         put_search_index(accessor, section_id, weight)
       else
         put_search_index(index_info.index, section_id, weight)
@@ -342,7 +346,7 @@ module Groonga
     end
 
     def match_resolve_index_index_column(index)
-      index = Context.instance[index.id]
+      index.refer
       put_search_index(index, 0, 1)
     end
 
@@ -357,8 +361,8 @@ module Groonga
       index_info = accessor.find_index(op)
       return if index_info.nil?
       if accessor.next
+        accessor.refer
         put_search_index(accessor, index_info.section_id, 1)
-        accessor.unlink
       else
         put_search_index(index_info.index, index_info.section_id, 1)
       end
