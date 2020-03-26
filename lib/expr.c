@@ -2566,7 +2566,8 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, int32_t weight)
     if ((*p)->header.type == GRN_EXPR) {
       scan_info_build_match_expr(ctx, si, (grn_expr *)(*p), weight);
     } else if ((*p)->header.type == GRN_COLUMN_INDEX) {
-      scan_info_put_index(ctx, si, *p, 0, 1 + weight, NULL, NULL, 0);
+      grn_obj *index = grn_ctx_at(ctx, grn_obj_id(ctx, (*p)));
+      scan_info_put_index(ctx, si, index, 0, 1 + weight, NULL, NULL, 0);
     } else if (grn_obj_is_proc(ctx, *p)) {
       break;
     } else if (GRN_DB_OBJP(*p)) {
