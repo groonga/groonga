@@ -15,6 +15,7 @@ load --table Items
 ]
 
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 log_level --level info
 select Items \
   --column[price_with_tax].stage initial \
@@ -24,4 +25,5 @@ select Items \
   --filter 'price >= 510' \
   --sort_keys _id
 log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels info

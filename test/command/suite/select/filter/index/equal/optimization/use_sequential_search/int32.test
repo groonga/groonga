@@ -113,6 +113,8 @@ load --table Users
 
 log_level --level info
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 select Users --filter '_key @^ "user0" && age == 5'
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels info
 log_level --level notice

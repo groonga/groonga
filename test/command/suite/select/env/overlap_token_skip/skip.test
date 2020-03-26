@@ -1,4 +1,5 @@
 #$GRN_II_OVERLAP_TOKEN_SKIP_ENABLE=yes
+
 plugin_register token_filters/stop_word
 
 table_create Entries TABLE_NO_KEY
@@ -27,6 +28,8 @@ table_tokenize Terms "This is a pen" --index_column index
 
 log_level --level debug
 #@add-important-log-levels debug
+#@add-ignore-log-pattern /\A\[io\]/
 select Entries --filter 'body @ "This is a pen"'
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels debug
 log_level --level notice

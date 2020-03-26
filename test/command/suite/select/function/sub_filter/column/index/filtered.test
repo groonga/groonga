@@ -31,10 +31,12 @@ load --table Comments
 ]
 
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 log_level --level info
 select Articles \
   --filter '_key == "article1" && \
             sub_filter(comment_index, "content @ \\"Mroonga\\"")' \
   --output_columns "_key, content"
 log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels info

@@ -16,6 +16,8 @@ load --table Texts
 
 log_level --level info
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 select Texts --filter '(_key @ "Rroonga") || !(_key @ "Groonga")'
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels info
 log_level --level notice

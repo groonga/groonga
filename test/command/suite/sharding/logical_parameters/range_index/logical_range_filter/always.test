@@ -46,9 +46,11 @@ thread_limit 1
 logical_parameters --range_index always
 
 #@add-important-log-levels debug
+#@add-ignore-log-pattern /\A\[io\]/
 log_level --level debug
 logical_range_filter Logs timestamp \
   --limit -1 \
   --filter 'user_id == 2'
 log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels debug

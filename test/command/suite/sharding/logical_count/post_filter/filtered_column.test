@@ -41,6 +41,7 @@ column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
 column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
 
 #@add-important-log-levels debug
+#@add-ignore-log-pattern /\A\[io\]/
 log_level --level debug
 logical_count Logs \
   --shard_key timestamp \
@@ -51,4 +52,5 @@ logical_count Logs \
   --filter 'price >= 200' \
   --post_filter 'filtered_id > 1'
 log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels debug

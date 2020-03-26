@@ -39,6 +39,7 @@ load --table Logs
 
 log_level --level info
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 select Logs \
   --filter 'in_records(Reports, \
                        user, "==", "user", \

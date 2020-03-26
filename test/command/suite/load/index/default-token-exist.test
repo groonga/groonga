@@ -16,4 +16,5 @@ load --table Users
 
 log_level --level info
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 select Users --filter 'age >= 10'

@@ -14,6 +14,7 @@ load --table Items
 
 log_level --level info
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 #@collect-query-log true
 select Items \
   --columns[content].stage initial \
@@ -24,5 +25,6 @@ select Items \
   --output_columns content \
   --query "Book"
 #@collect-query-log false
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels info
 log_level --level notice

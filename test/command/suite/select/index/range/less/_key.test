@@ -11,4 +11,5 @@ load --table Ages
 
 log_level --level info
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 select Ages --filter '_key < 29' --output_columns '_key, _score'

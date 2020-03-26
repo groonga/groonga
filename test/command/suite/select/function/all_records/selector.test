@@ -9,7 +9,9 @@ load --table Softwares
 ]
 
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 log_level --level info
 select Softwares --filter 'all_records()'
 log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels info

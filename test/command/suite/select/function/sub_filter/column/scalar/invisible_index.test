@@ -42,9 +42,11 @@ load --table Packages
 
 log_level --level info
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 select Packages \
   --filter 'sub_filter(files.author, "birthday >= \\"1988-01-04 00:00:00\\" && birthday < \\"1992-02-09 00:00:00\\"")' \
   --output_columns '_key, files, files.author.birthday' \
   --sort_keys _key
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels info
 log_level --level notice

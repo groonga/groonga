@@ -2,6 +2,7 @@
 
 log_level --level info
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 select LandMarks \
   --limit 0 \
   --filter '_id > 1' \

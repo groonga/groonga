@@ -29,10 +29,12 @@ load --table Packages
 ]
 
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 log_level --level info
 select Packages \
   --filter '_key == "rroonga" && \
             sub_filter(files, "revision >= 10 && revision < 40")' \
   --output_columns '_key, files, files.revision'
 log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels info

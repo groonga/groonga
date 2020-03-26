@@ -15,6 +15,7 @@ load --table Users
 
 log_level --level info
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 select Users \
   --filter '_id > 1' \
   --slices[name].filter 'query("name * 10", "ali")' \

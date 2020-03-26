@@ -16,6 +16,7 @@ load --table Memos
 
 log_level --level info
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 select Memos \
   --filter 'tag @ "Groonga"' \
   --slices[groonga].filter 'date < 20160522' \

@@ -29,6 +29,7 @@ table_create Times TABLE_PAT_KEY Time
 column_create Times logs_201703 COLUMN_INDEX Logs_201703 timestamp
 
 #@add-important-log-levels debug
+#@add-ignore-log-pattern /\A\[io\]/
 log_level --level debug
 #@collect-query-log true
 logical_range_filter Logs \
@@ -49,4 +50,5 @@ logical_range_filter Logs \
   --output_columns _id,n_records_per_day,price
 #@collect-query-log false
 log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels debug

@@ -13,9 +13,10 @@ load --table Logs
 
 log_level --level info
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 select Logs --filter 'message @ "Shutdown"' --cache no
 object_set_visibility --name Terms.logs_message --visible no
 select Logs --filter 'message @ "Shutdown"' --cache no
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels info
 log_level --level notice
-

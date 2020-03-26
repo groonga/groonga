@@ -1,3 +1,5 @@
+#$GRN_ENABLE_REFERENCE_COUNT=no
+
 table_create Values TABLE_NO_KEY
 column_create Values number COLUMN_SCALAR Int32
 

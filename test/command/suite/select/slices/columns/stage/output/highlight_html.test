@@ -15,6 +15,7 @@ load --table Memos
 
 log_level --level debug
 #@add-important-log-levels debug
+#@add-ignore-log-pattern /\A\[io\]/
 #@collect-query-log true
 select Memos \
   --query 'content:@is' \
@@ -26,5 +27,6 @@ select Memos \
   --slices[fast].columns[highlighted_content].value 'highlight_html(content)' \
   --slices[fast].output_columns _id,highlighted_content
 #@collect-query-log false
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels debug
 log_level --level notice

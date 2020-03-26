@@ -41,6 +41,7 @@ column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
 column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
 
 #@add-important-log-levels debug
+#@add-ignore-log-pattern /\A\[io\]/
 log_level --level debug
 logical_select Logs \
   --shard_key timestamp \
@@ -50,4 +51,5 @@ logical_select Logs \
   --limit 3 \
   --output_columns _id,price
 log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels debug

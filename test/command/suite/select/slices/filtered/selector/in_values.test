@@ -14,6 +14,7 @@ load --table Memos
 
 log_level --level info
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 select Memos \
   --filter '_id > 1' \
   --slices[groonga].filter 'in_values(date, \
