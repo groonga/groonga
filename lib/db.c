@@ -12196,6 +12196,30 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
   GRN_API_RETURN();
 }
 
+grn_rc
+grn_obj_refer(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_enable_reference_count) {
+    return ctx->rc;
+  }
+
+  if (!obj) {
+    return ctx->rc;
+  }
+
+  if (grn_obj_is_accessor(ctx, obj)) {
+    grn_accessor_refer(ctx, obj);
+    return ctx->rc;
+  }
+
+  if (GRN_DB_OBJP(obj)) {
+    grn_ctx_at(ctx, grn_obj_id(ctx, obj));
+    return ctx->rc;
+  }
+
+  return ctx->rc;
+}
+
 #define VECTOR_CLEAR(ctx,obj) do {\
   if ((obj)->u.v.body && !((obj)->header.impl_flags & GRN_OBJ_REFER)) {\
     grn_obj_close((ctx), (obj)->u.v.body);\
