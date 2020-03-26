@@ -67,6 +67,14 @@ jobs:
             --reporter=mark \
             --interface=http \
             --use-http-chunked
+      - name: "Test: HTTP: reference count"
+        run: |
+          export GRN_ENABLE_REFERENCE_COUNT=yes
+          bash -x test/command/run-test.sh \
+            --n-retries=3 \
+            --read-timeout 30 \
+            --reporter=mark \
+            --interface=http
       - name: Install
         run: |
           make install
