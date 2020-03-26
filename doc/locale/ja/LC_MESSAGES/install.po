@@ -778,10 +778,10 @@ msgstr ""
 msgid "18.04 LTS Bionic Beaver"
 msgstr ""
 
-msgid "19.04 Disco Dingo"
+msgid "19.10 Eoan Ermine"
 msgstr ""
 
-msgid "19.10 Eoan Ermine"
+msgid "20.04 Focal Fossa"
 msgstr ""
 
 msgid "Enable the universe repository to install Groonga::"
