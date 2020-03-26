@@ -44,6 +44,8 @@ jobs:
             --read-timeout 30 \
             --reporter=mark
       - name: "Test: HTTP: load: Apache Arrow"
+        if: |
+          false
         run: |
           bash -x test/command/run-test.sh \
             --n-retries=3 \

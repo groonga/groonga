@@ -260,6 +260,8 @@ jobs:
             --timeout 60 `
             test\command\suite
       - name: "Test: HTTP: Apache Arrow: chunked"
+        if: |
+          false
         run: |
           . .\env.ps1
           grntest `
