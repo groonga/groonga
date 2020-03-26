@@ -4074,7 +4074,6 @@ grn_table_select_index_fix(grn_ctx *ctx,
                          GRN_BULK_HEAD(si->query),
                          GRN_BULK_VSIZE(si->query),
                          op, (grn_obj *)keys, GRN_OP_OR);
-        grn_obj_unlink(ctx, lexicon);
         GRN_HASH_EACH(ctx, keys, id, &key, NULL, NULL, {
           grn_ii_at(ctx, (grn_ii *)index, *key, (grn_hash *)res, logical_op);
         });
