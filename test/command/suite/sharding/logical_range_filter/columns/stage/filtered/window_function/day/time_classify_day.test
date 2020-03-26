@@ -46,6 +46,7 @@ column_create Times logs_20170315 COLUMN_INDEX Logs_20170315 timestamp
 column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
 column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
 
+#@timeout 30
 #@add-important-log-levels debug
 #@add-ignore-log-pattern /\A\[io\]/
 log_level --level debug

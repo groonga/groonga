@@ -28,6 +28,7 @@ load --table Logs_201703
 table_create Times TABLE_PAT_KEY Time
 column_create Times logs_201703 COLUMN_INDEX Logs_201703 timestamp
 
+#@timeout 30
 #@add-important-log-levels debug
 #@add-ignore-log-pattern /\A\[io\]/
 log_level --level debug
