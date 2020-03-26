@@ -168,7 +168,8 @@ jobs:
           bash -x test/command/run-test.sh \
             --n-retries=3 \
             --read-timeout 30 \
-            --reporter=mark
+            --reporter=mark \
+            --interface=http
       - name: Install
         run: |
           make install
