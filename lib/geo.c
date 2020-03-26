@@ -1540,7 +1540,9 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
   }
 
   cursor->pat = data.pat;
+  grn_obj_refer(ctx, cursor->pat);
   cursor->index = index;
+  grn_obj_refer(ctx, cursor->index);
   grn_memcpy(&(cursor->top_left), data.top_left, sizeof(grn_geo_point));
   grn_memcpy(&(cursor->bottom_right), data.bottom_right, sizeof(grn_geo_point));
   cursor->pat_cursor = NULL;
