@@ -471,6 +471,7 @@ grn_rc grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj);
   ((obj) && (((grn_obj *)(obj))->header.type == GRN_ACCESSOR))
 
 grn_rc grn_obj_refer(grn_ctx *ctx, grn_obj *obj);
+uint32_t grn_obj_reference_count(grn_ctx *ctx, grn_obj *obj);
 
 grn_id grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned int name_size);
 int grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj);
