@@ -1,5 +1,6 @@
 #@include fixture/sharding/logical_range_filter/index/schema.grn
 
+#@timeout 60
 #@disable-logging
 #@generate-series 0 10000 Logs_20150203 '{"timestamp": "2015-02-03 23:59:59", "memo": "2015-02-03 23:59:59", "message": "Start"}'
 #@enable-logging
