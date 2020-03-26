@@ -80,6 +80,17 @@ grn_mrb_object_inspect(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+object_refer(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  if (grn_enable_reference_count) {
+    grn_obj_refer(ctx, DATA_PTR(self));
+    grn_mrb_ctx_check(mrb);
+  }
+  return mrb_nil_value();
+}
+
+static mrb_value
 object_unlink(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -337,6 +348,7 @@ grn_mrb_object_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "inspect",
                     grn_mrb_object_inspect, MRB_ARGS_NONE());
 
+  mrb_define_method(mrb, klass, "refer", object_refer, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "unlink", object_unlink, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "id", object_get_id, MRB_ARGS_NONE());
