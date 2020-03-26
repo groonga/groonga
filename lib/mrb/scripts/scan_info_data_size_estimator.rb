@@ -23,14 +23,21 @@ module Groonga
         node = ExpressionTree::BinaryOperation.new(@data.op, left, right)
         size = node.estimate_size(@table)
       end
+      index_column.unlink
       size || @table_size
     end
 
     private
     def resolve_index_column(index_column)
+      index_column.refer
+
       while index_column.is_a?(Accessor)
         index_info = index_column.find_index(@data.op)
-        return nil if index_info.nil?
+        if index_info.nil?
+          index_column.unlink
+          return nil
+        end
+        index_column.unlink
         break if index_info.index == index_column
         index_column = index_info.index
       end

@@ -330,8 +330,8 @@ module Groonga
       section_id = index_info.section_id
       weight = expr_code.weight
       if accessor.next
-        index_info.index.unlink
         accessor.refer
+        index_info.index.unlink
         put_search_index(accessor, section_id, weight)
       else
         put_search_index(index_info.index, section_id, weight)
@@ -362,6 +362,7 @@ module Groonga
       return if index_info.nil?
       if accessor.next
         accessor.refer
+        index_info.index.unlink
         put_search_index(accessor, index_info.section_id, 1)
       else
         put_search_index(index_info.index, index_info.section_id, 1)
