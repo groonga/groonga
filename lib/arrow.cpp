@@ -34,6 +34,10 @@
 # define GRN_ARROW_IO_RESULT
 #endif
 
+#if (ARROW_VERSION_MAJOR >= 1) || (ARROW_VERION_MAJOR == 0 && ARROW_VERSION_MINOR >= 17)
+# define GRN_ARROW_IPC_RESULT
+#endif
+
 namespace grnarrow {
   grn_rc status_to_rc(const arrow::Status &status) {
     switch (status.code()) {
@@ -1102,14 +1106,27 @@ namespace grnarrow {
 
       auto schema = std::make_shared<arrow::Schema>(fields);
 
-      std::shared_ptr<arrow::ipc::RecordBatchWriter> writer;
-      auto status =
-        arrow::ipc::RecordBatchFileWriter::Open(output, schema, &writer);
+# ifdef GRN_ARROW_IPC_RESULT
+      auto writer_result = arrow::ipc::NewFileWriter(output, schema);
       if (!check(ctx_,
-                 status,
+                 writer_result,
                  "[arrow][dump] failed to create file format writer")) {
         return ctx_->rc;
       }
+      auto writer = *writer_result;
+# else
+      std::shared_ptr<arrow::ipc::RecordBatchWriter> writer;
+      {
+        auto status =
+          arrow::ipc::RecordBatchFileWriter::Open(output, schema, &writer);
+        if (!check(ctx_,
+                   status,
+                   writer_result,
+                   "[arrow][dump] failed to create file format writer")) {
+          return ctx_->rc;
+        }
+      }
+# endif
 
       std::vector<grn_id> ids;
       size_t n_records_per_batch = 1000;
@@ -1497,12 +1514,21 @@ namespace grnarrow {
 
       input_.feed(data, data_size);
       if (!reader_) {
+# ifdef GRN_ARROW_IPC_RESULT
+        auto reader_result = arrow::ipc::RecordBatchStreamReader::Open(&input_);
+        if (!reader_result.ok()) {
+          input_.Seek(0);
+          return GRN_SUCCESS;
+        }
+        reader_ = *reader_result;
+# else
         const auto status = arrow::ipc::RecordBatchStreamReader::Open(&input_,
                                                                       &reader_);
         if (!status.ok()) {
           input_.Seek(0);
           return GRN_SUCCESS;
         }
+# endif
       }
 
       auto position = input_.tell();
@@ -1712,7 +1738,11 @@ namespace grnarrow {
       schema_builder_.Reset();
       schema_ = *schema;
 
-      auto writer = arrow::ipc::RecordBatchStreamWriter::Open(&output_, schema_);
+# ifdef GRN_ARROW_IPC_RESULT
+      auto writer = arrow::ipc::NewStreamWriter(&output_, schema_);
+# else
+      auto writer = arrow::ipc::RecordBatchStreamWriter(&output_, schema_);
+# endif
       if (!check(ctx_,
                  writer,
                  "[arrow][stream-writer][write-schema] "
@@ -2010,6 +2040,16 @@ grn_arrow_load(grn_ctx *ctx,
     }
   }
 # endif
+# ifdef GRN_ARROW_IPC_RESULT
+  auto reader_result = arrow::ipc::RecordBatchFileReader::Open(input);
+  if (!grnarrow::check(ctx,
+                       reader_result,
+                       "[arrow][load] "
+                       "failed to create file format reader")) {
+    GRN_API_RETURN(ctx->rc);
+  }
+  auto reader = *reader_result;
+# else
   std::shared_ptr<arrow::ipc::RecordBatchFileReader> reader;
   {
     auto status = arrow::ipc::RecordBatchFileReader::Open(input, &reader);
@@ -2020,6 +2060,7 @@ grn_arrow_load(grn_ctx *ctx,
       GRN_API_RETURN(ctx->rc);
     }
   }
+#endif
 
   grnarrow::FileLoader loader(ctx, table);
   int n_record_batches = reader->num_record_batches();
