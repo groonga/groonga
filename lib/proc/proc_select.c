@@ -1018,7 +1018,7 @@ grn_drilldown_data_fin(grn_ctx *ctx, grn_drilldown_data *drilldown)
       grn_obj_unlink(ctx, result->calc_target);
     }
     if (result->table) {
-      grn_obj_close(ctx, result->table);
+      grn_obj_unlink(ctx, result->table);
     }
   }
 }
