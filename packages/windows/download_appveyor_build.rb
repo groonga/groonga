@@ -63,8 +63,7 @@ project["build"]["jobs"].each do |job|
   artifacts.each do |artifact|
     file_name = artifact["fileName"]
     unless target_type == "all"
-      type = file_name.gsub(/\.zip/, "").split("-")[3..-1].join("-")
-      next unless type == target_type
+      next unless File.basename(file_name, ".zip").end_with?(target_type)
     end
     url = "#{appveyor_url}api/buildjobs/#{job_id}/artifacts/#{file_name}"
     download(url, "#{output_directory}/#{file_name}")
