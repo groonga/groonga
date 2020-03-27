@@ -10,14 +10,16 @@ News
 .. _release-10-0-0:
 
 Release 10.0.0 - 2020-03-29
---------------------------
+---------------------------
 
 Improvements
 ^^^^^^^^^^^^
 
 * [httpd] Updated bundled nginx to 1.17.9.
 
-* [httpd] Added support for load with extension as load.json.
+* [httpd] Added support for specifying output type as an extension.
+
+  * For example, we can write ``load.json`` instead of ``load?output_type=json``.
 
 * [:doc:`reference/log`] Outputted a path of opened or closed file into a log of dump level on Linux.
 
@@ -25,62 +27,85 @@ Improvements
 
 * Added following API and macros
 
-  * `grn_timeval_from_double(grn_ctx, double)`
+  * ``grn_timeval_from_double(grn_ctx, double)``
 
-    * This API converts `double` type to `grn_timeval` type.
-    * It returns value of `grn_timeval` type.
+    * This API converts ``double`` type to ``grn_timeval`` type.
+    * It returns value of ``grn_timeval`` type.
 
-  * `GRN_TIMEVAL_TO_NSEC(timeval)`
+  * ``GRN_TIMEVAL_TO_NSEC(timeval)``
 
-    * This macro converts value of `grn_timeval` type to nanosecond as the value of `uint64_t` type.
+    * This macro converts value of ``grn_timeval`` type to nanosecond as the value of ``uint64_t`` type.
 
-  * `GRN_TIME_USEC_TO_SEC(usec)`
+  * ``GRN_TIME_USEC_TO_SEC(usec)``
 
     * This macro converts microsecond to second.
 
 * Deprecated the following macro.
 
-  * `GRN_OBJ_FORMAT_FIN(grn_ctx, grn_obj_format)`
+  * ``GRN_OBJ_FORMAT_FIN(grn_ctx, grn_obj_format)``
 
-    * We use `grn_obj_format_fin(grn_ctx, grn_obj_format)` use instead since 10.0.0.
+    * We use ``grn_obj_format_fin(grn_ctx, grn_obj_format)`` use instead since 10.0.0.
 
 * [:doc:`reference/commands/logical_range_filter`] Added support for stream output.
 
-  * This feature requires command_version 3 or later. Because the header content is outputted after the body content.
-  * `logical_range_filter` always returns the output as a stream on command_version 3 or later.
+  * This feature requires command_version 3 or later. The header content is outputted after the body content.
+  * Currently, this feature support only ``dump`` and ``logical_range_filter``.
+  * ``logical_range_filter`` always returns the output as a stream on command_version 3 or later.
   * This feature has the following limitations.
 
     * -1 is only allowed for negative limit
     * MessagePack output isn't supported
 
-* Disable cache on command_version 3.
+  * We a little changed the response contents of JSON by this modify.
 
-  * Because of the command_version 3 returns stream since 10.0.0, Groonga can not cache the whole response.
+    * The key order differs from before versions as below.
+
+      * The key order in before versions.
+
+        .. code-block::
+
+          {
+            "header": {...},
+            "body": {...}
+          }
+
+      * The key order in this version(10.0.0).
+
+        .. code-block::
+
+          {
+            "body": {...},
+            "header": {...}
+          }
+
+* Disabled caches of ``dump`` and ``logical_range_filter`` when they execute on command_version 3.
+
+  * Because of ``dump`` and ``logical_range_filter`` on command_version 3 returns stream since 10.0.0, Groonga can not cache the whole response.
 
 * [:doc:`reference/commands/logical_range_filter`] Added support for outputting response as Apache Arrow format.
 
   * Supported data type as below.
 
-    * `Bool`
-    * `UInt8`
-    * `Int8`
-    * `UInt16`
-    * `Int16`
-    * `UInt32`
-    * `Int32`
-    * `UInt64`
-    * `Int64`
-    * `Float`
-    * `Time`
-    * `ShortText`
-    * `Text`
-    * `LongText`
-    * `Vector` of `Int32`
-    * `Reference vector`
+    * ``UInt8``
+    * ``Int8``
+    * ``UInt16``
+    * ``Int16``
+    * ``UInt32``
+    * ``Int32``
+    * ``UInt64``
+    * ``Int64``
+    * ``Time``
+    * ``ShortText``
+    * ``Text``
+    * ``LongText``
+    * ``Vector`` of ``Int32``
+    * ``Reference vector``
 
 * Supported Ubuntu 20.04 (Focal Fossa).
 
 * Dropped Ubuntu 19.04 (Disco Dingo).
+
+  * Because this version has been EOL.
 
 .. _release-9-1-2:
 
