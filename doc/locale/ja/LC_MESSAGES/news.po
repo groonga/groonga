@@ -33,11 +33,202 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 9.1.2 - 2020-01-29"
-msgstr "9.1.2リリース - 2019-01-29"
+msgid "Release 10.0.0 - 2020-03-29"
+msgstr "10.0.0リリース - 2020-03-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "[httpd] Updated bundled nginx to 1.17.9."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.17.9に更新しました。"
+
+msgid "[httpd] Added support for specifying output type as an extension."
+msgstr "[httpd] 出力形式を拡張子として指定できるようにしました。"
+
+msgid ""
+"For example, we can write ``load.json`` instead of ``load?output_type=json``."
+msgstr ""
+"例えば、 ``load?output_type=json`` の代わりに ``load.json`` と書けます。"
+
+msgid ""
+"[:doc:`reference/log`] Outputted a path of opened or closed file into a log "
+"of dump level on Linux."
+msgstr ""
+"[:doc:`reference/log`] Linuxのdumpレベルのログにオープンしたファイルとクロー"
+"ズしたファイルのパスを出力するようにしました。"
+
+msgid ""
+"[:doc:`reference/log`] Outputted a path of closed file into a log of debug "
+"level on Windows."
+msgstr ""
+"[:doc:`reference/log`] Windowsのdebugレベルのログにオープンしたファイルとク"
+"ローズしたファイルのパスを出力するようにしました。"
+
+msgid "Added following API and macros"
+msgstr "以下のAPIとマクロを追加しました。"
+
+msgid "``grn_timeval_from_double(grn_ctx, double)``"
+msgstr ""
+
+msgid "This API converts ``double`` type to ``grn_timeval`` type."
+msgstr "このAPIは、 ``double`` 型を ``grn_timeval`` 型に変換します。"
+
+msgid "It returns value of ``grn_timeval`` type."
+msgstr "``grn_timeval`` 型の値を返します。"
+
+msgid "``GRN_TIMEVAL_TO_NSEC(timeval)``"
+msgstr ""
+
+msgid ""
+"This macro converts value of ``grn_timeval`` type to nanosecond as the value "
+"of ``uint64_t`` type."
+msgstr ""
+"このマクロは、 ``grn_timeval`` 型の値を ``uint64_t`` 型の値としてナノ秒に変換"
+"します。"
+
+msgid "``GRN_TIME_USEC_TO_SEC(usec)``"
+msgstr ""
+
+msgid "This macro converts microsecond to second."
+msgstr "このマクロは、ミリ秒を秒に変換します。"
+
+msgid "Deprecated the following macro."
+msgstr "以下のマクロを非推奨にしました。"
+
+msgid "``GRN_OBJ_FORMAT_FIN(grn_ctx, grn_obj_format)``"
+msgstr ""
+
+msgid ""
+"We ``grn_obj_format_fin(grn_ctx, grn_obj_format)`` use instead since 10.0.0."
+msgstr ""
+"10.0.0から代わりに ``grn_obj_format_fin(grn_ctx, grn_obj_format)`` を使ってく"
+"ださい。"
+
+msgid ""
+"[:doc:`reference/commands/logical_range_filter`],[:doc:`reference/commands/"
+"dump`] Added support for stream output."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`],[:doc:`reference/commands/"
+"dump`]  ストリーム出力に対応しました。"
+
+msgid ""
+"This feature requires ``command_version 3`` or later. The header content is "
+"outputted after the body content."
+msgstr ""
+"この機能は ``command_version 3`` 以降で使えます。headerがbodyの後に出力されま"
+"す。"
+
+msgid ""
+"Currently, this feature support only ``dump`` and ``logical_range_filter``."
+msgstr ""
+"現在、この機能をサポートしているのは、 ``dump`` と ``logical_range_filter`` "
+"のみです。"
+
+msgid ""
+"``logical_range_filter`` always returns the output as a stream on "
+"``command_version 3`` or later."
+msgstr ""
+"``logical_range_filter`` は、 ``command_version 3`` 以降では、常に出力が"
+"streamとして返ります。"
+
+msgid "This feature has the following limitations."
+msgstr "この機能は以下の制限があります。"
+
+msgid "-1 is only allowed for negative ``limit``"
+msgstr "``limit`` に指定できる負の値は -1 のみです。"
+
+msgid "MessagePack output isn't supported"
+msgstr "MessagePack形式の出力はサポートしていません。"
+
+msgid "We a little changed the response contents of JSON by this modify."
+msgstr "この変更で、JSONの応答内容を少し変更しています。"
+
+msgid "The key order differs from before versions as below."
+msgstr "以下のように以前のバージョンとは、キーの順序が異なっています。"
+
+msgid "The key order in before versions."
+msgstr "以前のバージョンのキーの順序"
+
+msgid "The key order in this version(10.0.0)."
+msgstr "本バージョン(10.0.0)のキーの順序"
+
+msgid ""
+"Disabled caches of ``dump`` and ``logical_range_filter`` when they execute "
+"on ``command_version 3``."
+msgstr ""
+"``dump`` と ``logical_range_filter`` を ``command_version 3`` で実行した時は"
+"キャッシュが効きません。"
+
+msgid ""
+"Because of ``dump`` and ``logical_range_filter`` on ``command_version 3`` "
+"returns stream since 10.0.0, Groonga can not cache the whole response."
+msgstr ""
+"10.0.0から ``dump`` と ``logical_range_filter`` は ``command_version 3`` の時"
+"にストリームで応答を返すので、応答全体をキャッシュできないためです。"
+
+msgid ""
+"[:doc:`reference/commands/logical_range_filter`] Added support for "
+"outputting response as Apache Arrow format."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] Apache Arrow形式での応答を"
+"サポートしました。"
+
+msgid "Supported data type as below."
+msgstr "以下のデータ型をサポートしています。"
+
+msgid "``UInt8``"
+msgstr ""
+
+msgid "``Int8``"
+msgstr ""
+
+msgid "``UInt16``"
+msgstr ""
+
+msgid "``Int16``"
+msgstr ""
+
+msgid "``UInt32``"
+msgstr ""
+
+msgid "``Int32``"
+msgstr ""
+
+msgid "``UInt64``"
+msgstr ""
+
+msgid "``Int64``"
+msgstr ""
+
+msgid "``Time``"
+msgstr ""
+
+msgid "``ShortText``"
+msgstr ""
+
+msgid "``Text``"
+msgstr ""
+
+msgid "``LongText``"
+msgstr ""
+
+msgid "``Vector`` of ``Int32``"
+msgstr ""
+
+msgid "``Reference vector``"
+msgstr ""
+
+msgid "Supported Ubuntu 20.04 (Focal Fossa)."
+msgstr "Ubuntu 20.04 (Focal Fossa)をサポートしました。"
+
+msgid "Dropped Ubuntu 19.04 (Disco Dingo)."
+msgstr "Ubuntu 19.04 (Disco Dingo)のサポートをやめました。"
+
+msgid "Because this version has been EOL."
+msgstr "このバージョンはEOLになっているためです。"
+
+msgid "Release 9.1.2 - 2020-01-29"
+msgstr "9.1.2リリース - 2019-01-29"
 
 msgid ""
 "[tools] Added a script for copying only files of specify tables or columns."
