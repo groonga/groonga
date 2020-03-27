@@ -44,16 +44,16 @@ Improvements
 
   * ``GRN_OBJ_FORMAT_FIN(grn_ctx, grn_obj_format)``
 
-    * We use ``grn_obj_format_fin(grn_ctx, grn_obj_format)`` use instead since 10.0.0.
+    * We ``grn_obj_format_fin(grn_ctx, grn_obj_format)`` use instead since 10.0.0.
 
-* [:doc:`reference/commands/logical_range_filter`] Added support for stream output.
+* [:doc:`reference/commands/logical_range_filter`],[:doc:`reference/commands/dump`] Added support for stream output.
 
-  * This feature requires command_version 3 or later. The header content is outputted after the body content.
+  * This feature requires ``command_version 3`` or later. The header content is outputted after the body content.
   * Currently, this feature support only ``dump`` and ``logical_range_filter``.
-  * ``logical_range_filter`` always returns the output as a stream on command_version 3 or later.
+  * ``logical_range_filter`` always returns the output as a stream on ``command_version 3`` or later.
   * This feature has the following limitations.
 
-    * -1 is only allowed for negative limit
+    * -1 is only allowed for negative ``limit``
     * MessagePack output isn't supported
 
   * We a little changed the response contents of JSON by this modify.
@@ -78,9 +78,9 @@ Improvements
             "header": {...}
           }
 
-* Disabled caches of ``dump`` and ``logical_range_filter`` when they execute on command_version 3.
+  * Disabled caches of ``dump`` and ``logical_range_filter`` when they execute on ``command_version 3``.
 
-  * Because of ``dump`` and ``logical_range_filter`` on command_version 3 returns stream since 10.0.0, Groonga can not cache the whole response.
+    * Because of ``dump`` and ``logical_range_filter`` on ``command_version 3`` returns stream since 10.0.0, Groonga can not cache the whole response.
 
 * [:doc:`reference/commands/logical_range_filter`] Added support for outputting response as Apache Arrow format.
 
