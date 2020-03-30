@@ -98,7 +98,7 @@ jobs:
             windows-mingw-${{ matrix.architecture }} \
             ${base_name}
           zip -r \
-            ${base_name}.zip
+            ${base_name}.zip \
             ${base_name}
       - name: Ensure creating release
         if: |
