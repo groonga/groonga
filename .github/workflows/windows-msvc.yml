@@ -150,9 +150,13 @@ jobs:
           $VC_REDIST_VERSION = (Get-Content "${VC_PREFIX}\Auxiliary\Build\Microsoft.VCRedistVersion.default.txt")
           $VC_REDIST_DIR = "${VC_PREFIX}\Redist\MSVC\${VC_REDIST_VERSION}\${{ matrix.architecture }}"
           $VC_REDIST_VCRUNTIME = "${VC_REDIST_DIR}\Microsoft.VC142.CRT\vcruntime140.dll"
+          $VC_REDIST_VCRUNTIME_1 = "${VC_REDIST_DIR}\Microsoft.VC142.CRT\vcruntime140_1.dll"
           $VC_REDIST_MSVCP = "${VC_REDIST_DIR}\Microsoft.VC142.CRT\msvcp140.dll"
           Copy-Item `
             "${VC_REDIST_VCRUNTIME}" `
+            "${INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
+          Copy-Item `
+            "${VC_REDIST_VCRUNTIME_1}" `
             "${INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
           Copy-Item `
             "${VC_REDIST_MSVCP}" `
