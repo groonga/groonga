@@ -7,6 +7,21 @@
 News
 ====
 
+.. _release-10-0-1:
+
+Release 10.0.1 - 2020-03-30
+---------------------------
+
+We have been released Groonga 10.0.1.
+Because Ubuntu and Windows(VC++ version) package in Groonga 10.0.0 were mistaken.
+
+If we have already used Groonga 10.0.0 for CentOS, Debian, Windows(MinGW version), no problem with continued use it.
+
+Fixes
+^^^^^
+
+* Added a missing runtime(vcruntime140_1.dll) in package for Windows VC++ version.
+
 .. _release-10-0-0:
 
 Release 10.0.0 - 2020-03-29

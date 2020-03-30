@@ -33,6 +33,33 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
+msgid "Release 10.0.1 - 2020-03-30"
+msgstr "10.0.1リリース - 2020-03-30"
+
+msgid ""
+"We have been released Groonga 10.0.1. Because Ubuntu and Windows(VC++ "
+"version) package in Groonga 10.0.0 were mistaken."
+msgstr ""
+"Groonga 10.0.0 のUbuntuとWindows(VC++版)のパッケージに誤りがあったため "
+"Groonga 10.0.1 をリリースしました。"
+
+msgid ""
+"If we have already used Groonga 10.0.0 for CentOS, Debian, Windows(MinGW "
+"version), no problem with continued use it."
+msgstr ""
+"既にCentOS、Debian、Windows(MinGW版)のGroonga 10.0.0を使用している方は、その"
+"まま使っていただいて問題ありません。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"Added a missing runtime(vcruntime140_1.dll) in package for Windows VC++ "
+"version."
+msgstr ""
+"Windows(VC++版)のパッケージに不足していたランタイム(vcruntime140_1.dll)を追加"
+"しました。"
+
 msgid "Release 10.0.0 - 2020-03-29"
 msgstr "10.0.0リリース - 2020-03-29"
 
@@ -425,9 +452,6 @@ msgid ""
 msgstr ""
 "例えば、このオプションを使って\"支えた\"を検索した場合、\"支える\"もヒットし"
 "ます。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "Fix a bug that when the accessor is index, performance decreases."
 msgstr ""
