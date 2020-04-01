@@ -2302,7 +2302,7 @@ delete_reference_records(grn_ctx *ctx, grn_obj *table, grn_id id)
     if (!column) {
       continue;
     }
-    if (!grn_obj_is_column(ctx, column)) {
+    if (!grn_obj_is_index_column(ctx, column)) {
       continue;
     }
     delete_reference_records_in_index(ctx, table, id, column);
