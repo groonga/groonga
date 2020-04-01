@@ -2152,7 +2152,7 @@ clear_column_values(grn_ctx *ctx, grn_obj *table, grn_id rid)
     return;
   }
 
-  GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
+  GRN_HASH_EACH_BEGIN(ctx, columns, cursor, column_entry_id) {
     void *key;
     grn_hash_cursor_get_key(ctx, cursor, &key);
     grn_id column_id = *((grn_id *)key);
