@@ -8,7 +8,15 @@ column_create URLs bookmarks_index COLUMN_INDEX Users bookmarks
 
 load --table Users
 [
-{"_key": "mori", "bookmarks": ["http://mroonga.org/", "http://groonga.org/", "http://ranguba.org/"]}
+{
+  "_key": "mori",
+  "bookmarks": [
+    "http://mroonga.org/",
+    "https://pgroonga.github.io",
+    "http://groonga.org/",
+    "http://ranguba.org/"
+  ]
+}
 ]
 
 load --table URLs
