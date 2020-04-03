@@ -1373,10 +1373,10 @@ grn_load_internal(grn_ctx *ctx, grn_load_input *input)
       ctx->impl->arrow_stream_loader =
         grn_arrow_stream_loader_open(ctx, &(ctx->impl->loader));
     }
-    grn_arrow_stream_loader_feed(ctx,
-                                 ctx->impl->arrow_stream_loader,
-                                 input->values.value,
-                                 input->values.length);
+    grn_arrow_stream_loader_consume(ctx,
+                                    ctx->impl->arrow_stream_loader,
+                                    input->values.value,
+                                    input->values.length);
 #else
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
         "[load][arrow] Apache Arrow support isn't enabled");

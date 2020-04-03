@@ -34,10 +34,10 @@ grn_rc
 grn_arrow_stream_loader_close(grn_ctx *ctx,
                               grn_arrow_stream_loader *loader);
 grn_rc
-grn_arrow_stream_loader_feed(grn_ctx *ctx,
-                             grn_arrow_stream_loader *loader,
-                             const char *data,
-                             size_t data_size);
+grn_arrow_stream_loader_consume(grn_ctx *ctx,
+                                grn_arrow_stream_loader *loader,
+                                const char *data,
+                                size_t data_size);
 
 
 typedef struct _grn_arrow_stream_writer grn_arrow_stream_writer;

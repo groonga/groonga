@@ -36,6 +36,7 @@
 
 #if (ARROW_VERSION_MAJOR >= 1) || (ARROW_VERION_MAJOR == 0 && ARROW_VERSION_MINOR >= 17)
 # define GRN_ARROW_IPC_RESULT
+# define GRN_ARROW_EMITTER
 #endif
 
 namespace grnarrow {
@@ -1510,54 +1511,45 @@ namespace grnarrow {
     bool closed_;
   };
 
-  class StreamLoader {
+  class StreamLoader : public arrow::Receiver {
   public:
     StreamLoader(grn_ctx *ctx, grn_loader *loader)
       : ctx_(ctx),
         grn_loader_(loader),
-        input_(),
-        reader_(nullptr) {
+        emitter_(this),
+        chunks_() {
     }
 
-    ~StreamLoader() {
-    }
-
-    grn_rc feed(const char *data, size_t data_size) {
+    grn_rc consume(const char *data, size_t data_size) {
       if (data_size == 0) {
         return GRN_SUCCESS;
       }
 
-      input_.feed(data, data_size);
-      if (!reader_) {
-# ifdef GRN_ARROW_IPC_RESULT
-        auto reader_result = arrow::ipc::RecordBatchStreamReader::Open(&input_);
-        if (!reader_result.ok()) {
-          input_.Seek(0);
-          return GRN_SUCCESS;
-        }
-        reader_ = *reader_result;
-# else
-        const auto status = arrow::ipc::RecordBatchStreamReader::Open(&input_,
-                                                                      &reader_);
-        if (!status.ok()) {
-          input_.Seek(0);
-          return GRN_SUCCESS;
-        }
-# endif
+      std::shared_ptr<arrow::Buffer> chunk;
+      if (!check(ctx_,
+                 arrow::Buffer(reinterpret_cast<const uint8_t *>(data),
+                               data_size).Copy(0, data_size, &chunk),
+                 "[arrow][stream-loader][consume] failed to copy data")) {
+        return ctx_->rc;
       }
-
-      auto position = input_.tell();
-      const auto &stream_reader =
-        std::static_pointer_cast<arrow::ipc::RecordBatchStreamReader>(reader_);
-      std::shared_ptr<arrow::RecordBatch> record_batch;
-      {
-        const auto status = stream_reader->ReadNext(&record_batch);
-        if (!status.ok()) {
-          input_.Seek(position);
-          return ctx_->rc;
-        }
+      if (!check(ctx_,
+                 emitter_.Consume(chunk),
+                 "[arrow][stream-loader][consume] failed to consume")) {
+        return ctx_->rc;
       }
+      while (!chunks_.empty()) {
+        if (chunks_[0].use_count() > 1) {
+          break;
+        }
+        chunks_.erase(chunks_.begin());
+      }
+      if (chunk.use_count() > 1) {
+        chunks_.push_back(std::move(chunk));
+      }
+      return ctx_->rc;
+    }
 
+    arrow::Status RecordBatchReceived(std::shared_ptr<arrow::RecordBatch> record_batch) override {
       auto grn_table = grn_loader_->table;
       const auto &key_column = record_batch->GetColumnByName("_key");
       const auto &id_column = record_batch->GetColumnByName("_id");
@@ -1604,14 +1596,14 @@ namespace grnarrow {
         grn_loader_apply_each(ctx_, grn_loader_, record_id);
       }
 
-      return ctx_->rc;
+      return check(ctx_, ctx_->rc, "[arrow][stream-loader][consume][receive]");
     }
 
   private:
     grn_ctx *ctx_;
     grn_loader *grn_loader_;
-    BufferInputStream input_;
-    std::shared_ptr<arrow::ipc::RecordBatchReader> reader_;
+    arrow::ipc::RecordBatchStreamEmitter emitter_;
+    std::vector<std::shared_ptr<arrow::Buffer>> chunks_;
   };
 
   class BulkOutputStream : public arrow::io::OutputStream {
@@ -2226,17 +2218,17 @@ grn_arrow_stream_loader_close(grn_ctx *ctx,
 }
 
 grn_rc
-grn_arrow_stream_loader_feed(grn_ctx *ctx,
-                             grn_arrow_stream_loader *loader,
-                             const char *data,
-                             size_t data_size)
+grn_arrow_stream_loader_consume(grn_ctx *ctx,
+                                grn_arrow_stream_loader *loader,
+                                const char *data,
+                                size_t data_size)
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
-  loader->loader->feed(data, data_size);
+  loader->loader->consume(data, data_size);
 #else
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-      "[arrow][stream-loader][feed] Apache Arrow support isn't enabled");
+      "[arrow][stream-loader][consume] Apache Arrow support isn't enabled");
 #endif
   GRN_API_RETURN(ctx->rc);
 }
