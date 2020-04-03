@@ -1511,14 +1511,24 @@ namespace grnarrow {
     bool closed_;
   };
 
+# ifdef GRN_ARROW_EMITTER
   class StreamLoader : public arrow::Receiver {
+# else
+  class StreamLoader {
+# endif
   public:
     StreamLoader(grn_ctx *ctx, grn_loader *loader)
       : ctx_(ctx),
         grn_loader_(loader),
+# ifdef GRN_ARROW_EMITTER
         emitter_(this),
         buffer_(nullptr),
-        consumed_chunks_() {
+        consumed_chunks_()
+# else
+        input_(),
+        reader_(nullptr)
+# endif
+    {
     }
 
     grn_rc consume(const char *data, size_t data_size) {
@@ -1526,6 +1536,23 @@ namespace grnarrow {
         return GRN_SUCCESS;
       }
 
+# ifdef GRN_ARROW_EMITTER
+      return consume_emitter(data, data_size);
+# else
+      return consume_reader(data, data_size);
+# endif
+    }
+
+# ifdef GRN_ARROW_EMITTER
+    arrow::Status RecordBatchReceived(std::shared_ptr<arrow::RecordBatch> record_batch) override {
+      process_record_batch(std::move(record_batch));
+      return check(ctx_, ctx_->rc, "[arrow][stream-loader][consume][receive]");
+    }
+#endif
+
+  private:
+# ifdef GRN_ARROW_EMITTER
+    grn_rc consume_emitter(const char *data, size_t data_size) {
       if (!buffer_) {
         if (!check(ctx_,
                    AllocateResizableBuffer(0, &buffer_),
@@ -1566,8 +1593,38 @@ namespace grnarrow {
       }
       return ctx_->rc;
     }
+# else
+    grn_rc consume_reader(const char *data, size_t data_size) {
+      input_.feed(data, data_size);
+      if (!reader_) {
+        const auto status = arrow::ipc::RecordBatchStreamReader::Open(&input_,
+                                                                      &reader_);
+        if (!status.ok()) {
+          input_.Seek(0);
+          return GRN_SUCCESS;
+        }
+      }
 
-    arrow::Status RecordBatchReceived(std::shared_ptr<arrow::RecordBatch> record_batch) override {
+      const auto &stream_reader =
+        std::static_pointer_cast<arrow::ipc::RecordBatchStreamReader>(reader_);
+      while (true) {
+        auto position = input_.tell();
+        std::shared_ptr<arrow::RecordBatch> record_batch;
+        const auto status = stream_reader->ReadNext(&record_batch);
+        if (!status.ok()) {
+          input_.Seek(position);
+          return ctx_->rc;
+        }
+        if (!record_batch.get()) {
+          break;
+        }
+        process_record_batch(std::move(record_batch));
+      }
+      return ctx_->rc;
+    }
+# endif
+
+    void process_record_batch(std::shared_ptr<arrow::RecordBatch> record_batch) {
       auto grn_table = grn_loader_->table;
       const auto &key_column = record_batch->GetColumnByName("_key");
       const auto &id_column = record_batch->GetColumnByName("_id");
@@ -1613,16 +1670,18 @@ namespace grnarrow {
         }
         grn_loader_apply_each(ctx_, grn_loader_, record_id);
       }
-
-      return check(ctx_, ctx_->rc, "[arrow][stream-loader][consume][receive]");
     }
 
-  private:
     grn_ctx *ctx_;
     grn_loader *grn_loader_;
+# ifdef GRN_ARROW_EMITTER
     arrow::ipc::RecordBatchStreamEmitter emitter_;
     std::unique_ptr<arrow::ResizableBuffer> buffer_;
     std::vector<std::shared_ptr<arrow::Buffer>> consumed_chunks_;
+# else
+    BufferInputStream input_;
+    std::shared_ptr<arrow::ipc::RecordBatchReader> reader_;
+# endif
   };
 
   class BulkOutputStream : public arrow::io::OutputStream {
