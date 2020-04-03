@@ -1,0 +1,66 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create NormalizedTags TABLE_HASH_KEY ShortText --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "Apple",   "tag": "Fruit"},
+{"_key": "Banana",  "tag": "fruit"},
+{"_key": "Groonga", "tag": "Software"}
+]
+[[0,0.0,0.0],3]
+select Items   --columns[normalized_tag].stage filtered   --columns[normalized_tag].type NormalizedTags   --columns[normalized_tag].flags COLUMN_SCALAR   --columns[normalized_tag].value 'tag'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "normalized_tag",
+          "NormalizedTags"
+        ],
+        [
+          "tag",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        "Apple",
+        "fruit",
+        "Fruit"
+      ],
+      [
+        2,
+        "Banana",
+        "fruit",
+        "fruit"
+      ],
+      [
+        3,
+        "Groonga",
+        "software",
+        "Software"
+      ]
+    ]
+  ]
+]

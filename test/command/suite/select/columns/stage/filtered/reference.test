@@ -1,0 +1,18 @@
+table_create Tags TABLE_PAT_KEY ShortText
+table_create NormalizedTags TABLE_HASH_KEY ShortText --normalizer NormalizerAuto
+
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items tag COLUMN_SCALAR Tags
+
+load --table Items
+[
+{"_key": "Apple",   "tag": "Fruit"},
+{"_key": "Banana",  "tag": "fruit"},
+{"_key": "Groonga", "tag": "Software"}
+]
+
+select Items \
+  --columns[normalized_tag].stage filtered \
+  --columns[normalized_tag].type NormalizedTags \
+  --columns[normalized_tag].flags COLUMN_SCALAR \
+  --columns[normalized_tag].value 'tag'
