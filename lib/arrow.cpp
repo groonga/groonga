@@ -1517,7 +1517,8 @@ namespace grnarrow {
       : ctx_(ctx),
         grn_loader_(loader),
         emitter_(this),
-        chunks_() {
+        buffer_(nullptr),
+        consumed_chunks_() {
     }
 
     grn_rc consume(const char *data, size_t data_size) {
@@ -1525,26 +1526,43 @@ namespace grnarrow {
         return GRN_SUCCESS;
       }
 
-      std::shared_ptr<arrow::Buffer> chunk;
+      if (!buffer_) {
+        if (!check(ctx_,
+                   AllocateResizableBuffer(0, &buffer_),
+                   "[arrow][stream-loader][consume] "
+                   "failed to allocate buffer")) {
+          return ctx_->rc;
+        }
+      }
+
+      auto current_buffer_size = buffer_->size();
       if (!check(ctx_,
-                 arrow::Buffer(reinterpret_cast<const uint8_t *>(data),
-                               data_size).Copy(0, data_size, &chunk),
-                 "[arrow][stream-loader][consume] failed to copy data")) {
+                 buffer_->Resize(current_buffer_size + data_size),
+                 "[arrow][stream-loader][consume] failed to resize buffer")) {
         return ctx_->rc;
       }
+      memcpy(buffer_->mutable_data() + current_buffer_size,
+             data,
+             data_size);
+
+      if (buffer_->size() < emitter_.next_required_size()) {
+        return ctx_->rc;
+      }
+
+      std::shared_ptr<arrow::Buffer> chunk(buffer_.release());
       if (!check(ctx_,
                  emitter_.Consume(chunk),
                  "[arrow][stream-loader][consume] failed to consume")) {
         return ctx_->rc;
       }
-      while (!chunks_.empty()) {
-        if (chunks_[0].use_count() > 1) {
+      while (!consumed_chunks_.empty()) {
+        if (consumed_chunks_[0].use_count() > 1) {
           break;
         }
-        chunks_.erase(chunks_.begin());
+        consumed_chunks_.erase(consumed_chunks_.begin());
       }
       if (chunk.use_count() > 1) {
-        chunks_.push_back(std::move(chunk));
+        consumed_chunks_.push_back(std::move(chunk));
       }
       return ctx_->rc;
     }
@@ -1603,7 +1621,8 @@ namespace grnarrow {
     grn_ctx *ctx_;
     grn_loader *grn_loader_;
     arrow::ipc::RecordBatchStreamEmitter emitter_;
-    std::vector<std::shared_ptr<arrow::Buffer>> chunks_;
+    std::unique_ptr<arrow::ResizableBuffer> buffer_;
+    std::vector<std::shared_ptr<arrow::Buffer>> consumed_chunks_;
   };
 
   class BulkOutputStream : public arrow::io::OutputStream {
