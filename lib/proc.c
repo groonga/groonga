@@ -2018,6 +2018,9 @@ selector_to_function_data_fin(grn_ctx *ctx,
   if (data->records) {
     grn_obj_unlink(ctx, data->records);
   }
+  if (data->table) {
+    grn_obj_unref(ctx, data->table);
+  }
 }
 
 static grn_rc
