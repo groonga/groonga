@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2017-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -919,7 +919,7 @@ grn_table_get_score(grn_ctx *ctx, grn_obj *table, grn_id id)
   grn_rset_recinfo *ri =
     (grn_rset_recinfo *)grn_obj_get_value_(ctx, table, id, &value_size);
   double score = ri->score;
-  grn_obj *parent;
+  grn_obj *parent = NULL;
   grn_id parent_record_id;
   if (grn_table_get_key(ctx,
                         table,
@@ -932,9 +932,8 @@ grn_table_get_score(grn_ctx *ctx, grn_obj *table, grn_id id)
     return score;
   }
 
-  for (parent = grn_ctx_at(ctx, table->header.domain);
-       parent && (parent->header.flags & GRN_OBJ_WITH_SUBREC);
-       parent = grn_ctx_at(ctx, parent->header.domain)) {
+  parent = grn_ctx_at(ctx, table->header.domain);
+  while (parent && (parent->header.flags & GRN_OBJ_WITH_SUBREC)) {
     uint32_t parent_value_size;
     grn_rset_recinfo *parent_ri =
       (grn_rset_recinfo *)grn_obj_get_value_(ctx,
@@ -955,6 +954,16 @@ grn_table_get_score(grn_ctx *ctx, grn_obj *table, grn_id id)
     if (parent_record_id == GRN_ID_NIL) {
       break;
     }
+
+    grn_id next_parent_domain = parent->header.domain;
+    if (grn_enable_reference_count) {
+      grn_obj_unlink(ctx, parent);
+    }
+    parent = grn_ctx_at(ctx, next_parent_domain);
+  }
+  if (parent && grn_enable_reference_count) {
+    grn_obj_unlink(ctx, parent);
+    parent = NULL;
   }
 
   return score;
