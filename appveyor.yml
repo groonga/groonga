@@ -146,9 +146,6 @@ build_script:
   - copy NOTICE %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\msgpack\
   - cd %APPVEYOR_BUILD_FOLDER%
 
-# TODO: Enable test again when libarrow-glib.dll problem is solved.
-test: off
-
 before_test:
   - git clone --depth 1
       https://github.com/groonga/grntest.git
@@ -163,7 +160,7 @@ test_script:
       --groonga %FULL_GROONGA_INSTALL_FOLDER%\bin\groonga.exe
       --base-directory test\command
       --reporter mark
-      --n-workers 2
+      --n-workers %NUMBER_OF_PROCESSORS%
       --timeout 60
       --read-timeout 30
       --n-retries 2

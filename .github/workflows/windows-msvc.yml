@@ -264,8 +264,6 @@ jobs:
             --timeout 60 `
             test\command\suite
       - name: "Test: HTTP: Apache Arrow: chunked"
-        if: |
-          false
         run: |
           . .\env.ps1
           grntest `
@@ -277,6 +275,6 @@ jobs:
             --n-workers ${Env:NUMBER_OF_PROCESSORS} `
             --read-timeout 30 `
             --reporter mark `
-            --timeout 60 `
+            --timeout 360 `
             --use-http-chunked `
             test\command\suite
