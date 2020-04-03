@@ -95,13 +95,13 @@ static grn_obj *
 func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *snippets = NULL;
+  grn_obj *snip = NULL;
 
 #define N_REQUIRED_ARGS 1
 #define KEYWORD_SET_SIZE 3
   if (nargs > N_REQUIRED_ARGS) {
     grn_obj *text = args[0];
     grn_obj *end_arg = args[nargs - 1];
-    grn_obj *snip = NULL;
     unsigned int width = 200;
     unsigned int max_n_results = 3;
     grn_snip_mapping *mapping = NULL;
@@ -244,6 +244,9 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 #undef N_REQUIRED_ARGS
 
 exit :
+  if (snip) {
+    grn_obj_close(ctx, snip);
+  }
   if (!snippets) {
     snippets = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
   }
