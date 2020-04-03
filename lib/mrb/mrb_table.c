@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2014-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -392,6 +392,7 @@ mrb_grn_table_delete(mrb_state *mrb, mrb_value self)
       }
       grn_table_cursor_close(ctx, cursor);
     }
+    grn_obj_unlink(ctx, selected_records);
     grn_mrb_ctx_check(mrb);
 
     return mrb_nil_value();
