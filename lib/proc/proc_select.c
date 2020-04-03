@@ -1118,16 +1118,7 @@ grn_slice_data_fin(grn_ctx *ctx, grn_slice_data *slice)
   if (slice->tables.sorted) {
     grn_obj_unlink(ctx, slice->tables.sorted);
   }
-  if (slice->tables.result == slice->filter.filtered) {
-    slice->tables.result = NULL;
-  }
-  if (slice->tables.result &&
-      slice->tables.result != slice->tables.initial &&
-      slice->tables.result != slice->tables.target) {
-    grn_obj_unlink(ctx, slice->tables.result);
-  }
-  if (slice->tables.initial &&
-      slice->tables.initial != slice->tables.target) {
+  if (slice->tables.initial) {
     grn_obj_unlink(ctx, slice->tables.initial);
   }
   grn_filter_data_fin(ctx, &(slice->filter));
