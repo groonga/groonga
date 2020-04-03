@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2017 Brazil
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2019-2020 Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -112,13 +112,29 @@ typedef struct {
   grn_obj *index_column;
 } caller_index_info;
 
-static grn_rc
-get_caller_index_info(grn_ctx *ctx,
-                      grn_obj *index_column_name,
-                      grn_user_data *user_data,
-                      caller_index_info *caller_index_info,
-                      const char *error_message_label)
+static void
+caller_index_info_fin(grn_ctx *ctx,
+                      caller_index_info *caller_index_info)
 {
+  if (caller_index_info->index_column) {
+    grn_obj_unref(ctx, caller_index_info->index_column);
+  }
+  if (caller_index_info->term_table) {
+    grn_obj_unref(ctx, caller_index_info->term_table);
+  }
+}
+
+static grn_rc
+caller_index_info_init(grn_ctx *ctx,
+                       caller_index_info *caller_index_info,
+                       grn_obj *index_column_name,
+                       grn_user_data *user_data,
+                       const char *error_message_label)
+{
+  caller_index_info->term_id = GRN_ID_NIL;
+  caller_index_info->term_table = NULL;
+  caller_index_info->index_column = NULL;
+
   {
     grn_obj *expr;
     grn_obj *variable;
@@ -149,6 +165,7 @@ get_caller_index_info(grn_ctx *ctx,
 
       key_type = grn_ctx_at(ctx, caller_index_info->term_table->header.domain);
       if (!grn_obj_is_table(ctx, key_type)) {
+        grn_obj_unref(ctx, key_type);
         break;
       }
 
@@ -157,6 +174,7 @@ get_caller_index_info(grn_ctx *ctx,
                         caller_index_info->term_id,
                         &(caller_index_info->term_id),
                         sizeof(grn_id));
+      grn_obj_unref(ctx, caller_index_info->term_table);
       caller_index_info->term_table = key_type;
     }
   }
@@ -173,6 +191,7 @@ get_caller_index_info(grn_ctx *ctx,
                      (int)GRN_TEXT_LEN(&inspected),
                      GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
+    caller_index_info_fin(ctx, caller_index_info);
     return ctx->rc;
   }
 
@@ -188,12 +207,12 @@ get_caller_index_info(grn_ctx *ctx,
                      error_message_label,
                      (int)GRN_TEXT_LEN(index_column_name),
                      GRN_TEXT_VALUE(index_column_name));
+    caller_index_info_fin(ctx, caller_index_info);
     return ctx->rc;
   }
 
   return GRN_SUCCESS;
 }
-
 
 static grn_obj *
 func_index_column_df_ratio(grn_ctx *ctx,
@@ -212,13 +231,11 @@ func_index_column_df_ratio(grn_ctx *ctx,
     return NULL;
   }
 
-  memset(&caller_index_info, 0, sizeof(caller_index_info));
-
-  if (get_caller_index_info(ctx,
-                            args[0],
-                            user_data,
-                            &caller_index_info,
-                            "index_column_df_ratio()") != GRN_SUCCESS) {
+  if (caller_index_info_init(ctx,
+                             &caller_index_info,
+                             args[0],
+                             user_data,
+                             "index_column_df_ratio()") != GRN_SUCCESS) {
     return NULL;
   }
 
@@ -238,12 +255,13 @@ func_index_column_df_ratio(grn_ctx *ctx,
       n_match_documents = n_documents;
     }
     df_ratio = (double)n_match_documents / (double)n_documents;
+    grn_obj_unref(ctx, source_table);
 
     df_ratio_value = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_FLOAT, 0);
-    if (!df_ratio_value) {
-      return NULL;
+    if (df_ratio_value) {
+      GRN_FLOAT_SET(ctx, df_ratio_value, df_ratio);
     }
-    GRN_FLOAT_SET(ctx, df_ratio_value, df_ratio);
+    caller_index_info_fin(ctx, &caller_index_info);
     return df_ratio_value;
   }
 }
@@ -266,13 +284,11 @@ func_index_column_source_records(grn_ctx *ctx,
     return NULL;
   }
 
-  memset(&caller_index_info, 0, sizeof(caller_index_info));
-
-  if (get_caller_index_info(ctx,
-                            args[0],
-                            user_data,
-                            &caller_index_info,
-                            "index_column_source_records()") != GRN_SUCCESS) {
+  if (caller_index_info_init(ctx,
+                             &caller_index_info,
+                             args[0],
+                             user_data,
+                             "index_column_source_records()") != GRN_SUCCESS) {
     return NULL;
   }
 
@@ -291,6 +307,7 @@ func_index_column_source_records(grn_ctx *ctx,
         if (!cursor) {
           GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
                            "index_column_source_records(): failed to open cursor for options");
+          caller_index_info_fin(ctx, &caller_index_info);
           return NULL;
         }
         while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
@@ -309,6 +326,7 @@ func_index_column_source_records(grn_ctx *ctx,
                                                     "index_column_source_records()");
             if (ctx->rc != GRN_SUCCESS) {
               grn_hash_cursor_close(ctx, cursor);
+              caller_index_info_fin(ctx, &caller_index_info);
               return NULL;
             }
           } else {
@@ -316,6 +334,7 @@ func_index_column_source_records(grn_ctx *ctx,
                              "index_column_source_records(): unknown option name: <%.*s>",
                              key_size, (char *)key);
             grn_hash_cursor_close(ctx, cursor);
+            caller_index_info_fin(ctx, &caller_index_info);
             return NULL;
           }
 #undef KEY_EQUAL
@@ -334,6 +353,7 @@ func_index_column_source_records(grn_ctx *ctx,
                          (int)GRN_TEXT_LEN(&inspected),
                          GRN_TEXT_VALUE(&inspected));
         GRN_OBJ_FIN(ctx, &inspected);
+        caller_index_info_fin(ctx, &caller_index_info);
         return NULL;
       }
     }
@@ -348,6 +368,7 @@ func_index_column_source_records(grn_ctx *ctx,
                                     grn_obj_get_range(ctx, caller_index_info.index_column),
                                     GRN_OBJ_VECTOR);
     if (!records) {
+      caller_index_info_fin(ctx, &caller_index_info);
       return NULL;
     }
 
@@ -369,6 +390,7 @@ func_index_column_source_records(grn_ctx *ctx,
         grn_ii_cursor_close(ctx, ii_cursor);
       }
     }
+    caller_index_info_fin(ctx, &caller_index_info);
     return records;
   }
 }
