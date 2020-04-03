@@ -12196,6 +12196,14 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
   GRN_API_RETURN();
 }
 
+void
+grn_obj_unref(grn_ctx *ctx, grn_obj *obj)
+{
+  if (grn_enable_reference_count) {
+    grn_obj_unlink(ctx, obj);
+  }
+}
+
 grn_rc
 grn_obj_refer(grn_ctx *ctx, grn_obj *obj)
 {
