@@ -3120,7 +3120,7 @@ grn_select_slice_execute(grn_ctx *ctx,
                              data,
                              slice->tables.initial,
                              slice->columns.initial,
-                             slice->filter.condition.expression,
+                             filter->condition.expression,
                              log_tag,
                              query_log_tag_prefix);
     if (ctx->rc != GRN_SUCCESS) {
