@@ -1322,6 +1322,7 @@ grn_proc_select_output_columns_open(grn_ctx *ctx,
   succeeded = (ctx->rc == GRN_SUCCESS);
   if (!succeeded) {
     GRN_OUTPUT_RESULT_SET_CLOSE(res, format);
+    grn_proc_select_format_fin(ctx, format);
   }
 
   return succeeded;
