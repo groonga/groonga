@@ -122,7 +122,7 @@ Groongaのソースコード取得
 Groongaのウェブサイトの取得
 ---------------------------
 
-GroongaのウェブサイトのソースはGroonga同様にgithubにリポジトリを置いています。
+GroongaのウェブサイトのソースはGroonga同様にGitHubにリポジトリを置いています。
 
 リリース作業では後述するコマンド(make update-latest-release)にてトップページのバージョンを置き換えることができるようになっています。
 
