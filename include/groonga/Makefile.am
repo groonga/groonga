@@ -54,3 +54,6 @@ groonga_include_HEADERS =			\
 	windows.h				\
 	windows_event_logger.h			\
 	vector.h
+
+nodist_groonga_include_HEADERS =		\
+	version.h
