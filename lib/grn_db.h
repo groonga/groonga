@@ -40,6 +40,13 @@ extern "C" {
 
 #define GRN_N_RESERVED_TYPES 256
 
+/* #define GRN_REFERENCE_COUNT_DEBUG */
+#ifdef GRN_REFERENCE_COUNT_DEBUG
+# define grn_log_reference_count(...) printf(__VA_ARGS__)
+#else
+# define grn_log_reference_count(...)
+#endif
+
 extern bool grn_enable_reference_count;
 
 typedef struct _grn_db grn_db;

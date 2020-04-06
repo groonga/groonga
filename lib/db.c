@@ -100,13 +100,6 @@ grn_table_cursor_next_inline(grn_ctx *ctx, grn_table_cursor *tc);
 grn_inline static int
 grn_table_cursor_get_value_inline(grn_ctx *ctx, grn_table_cursor *tc, void **value);
 
-/* #define GRN_REFERENCE_COUNT_DEBUG */
-#ifdef GRN_REFERENCE_COUNT_DEBUG
-# define grn_log_reference_count(...) printf(__VA_ARGS__)
-#else
-# define grn_log_reference_count(...)
-#endif
-
 bool grn_enable_reference_count = false;
 
 static char grn_db_key[GRN_ENV_BUFFER_SIZE];
@@ -5739,18 +5732,21 @@ static grn_accessor *
 accessor_new(grn_ctx *ctx)
 {
   grn_accessor *res = GRN_MALLOCN(grn_accessor, 1);
-  if (res) {
-    res->header.type = GRN_ACCESSOR;
-    res->header.impl_flags = GRN_OBJ_ALLOCATED;
-    res->header.flags = 0;
-    res->header.domain = GRN_ID_NIL;
-    res->range = GRN_ID_NIL;
-    res->action = GRN_ACCESSOR_VOID;
-    res->offset = 0;
-    res->obj = NULL;
-    res->next = NULL;
-    res->reference_count = 1;
+  if (!res) {
+    return NULL;
   }
+
+  res->header.type = GRN_ACCESSOR;
+  res->header.impl_flags = GRN_OBJ_ALLOCATED;
+  res->header.flags = 0;
+  res->header.domain = GRN_ID_NIL;
+  res->range = GRN_ID_NIL;
+  res->action = GRN_ACCESSOR_VOID;
+  res->offset = 0;
+  res->obj = NULL;
+  res->next = NULL;
+  res->reference_count = 1;
+  grn_log_reference_count("accessor: %p: %u\n", res, res->reference_count);
   return res;
 }
 
@@ -11596,6 +11592,8 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
     }
     if (res) {
       DB_OBJ(res)->reference_count++;
+      grn_log_reference_count("at: %u: %u\n",
+                              DB_OBJ(res)->id, DB_OBJ(res)->reference_count);
     }
   } else {
     grn_db *s = (grn_db *)ctx->impl->db;
@@ -11922,6 +11920,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
   if (obj) {
+    grn_log_reference_count("close: %p\n", obj);
     if (GRN_DB_OBJP(obj)) {
       grn_id id = DB_OBJ(obj)->id;
       grn_hook_entry entry;

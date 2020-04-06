@@ -571,6 +571,7 @@ grn_expr_is_takable_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj)
 void
 grn_expr_take_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj)
 {
+  grn_log_reference_count("expr_take_obj: %p\n", obj);
   if (!grn_expr_is_takable_obj(ctx, expr, obj)) {
     return;
   }
@@ -731,6 +732,8 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
     if (!obj) {
       break;
     }
+
+    grn_log_reference_count("expr_close: obj: %p\n", obj);
 
 #ifdef USE_MEMORY_DEBUG
     grn_obj_unlink(ctx, obj);
