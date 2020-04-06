@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,36 +23,127 @@
 #include <rapidjson/memorystream.h>
 
 namespace grn {
-  struct Int32Handler : public rapidjson::BaseReaderHandler<>
-  {
-    grn_ctx *ctx_;
-    grn_obj *uvector_;
+  namespace {
+    struct Int32Handler : public rapidjson::BaseReaderHandler<>
+    {
+      grn_ctx *ctx_;
+      grn_obj *uvector_;
 
-    Int32Handler(grn_ctx *ctx,
-                 grn_obj *uvector)
-      : ctx_(ctx),
-        uvector_(uvector) {
+      Int32Handler(grn_ctx *ctx,
+                   grn_obj *uvector,
+                   bool add_record_if_not_exist)
+        : ctx_(ctx),
+          uvector_(uvector) {
+      }
+
+      bool Default() {return false;}
+
+      bool Int(int value) {
+        GRN_INT32_PUT(ctx_, uvector_, value);
+        return true;
+      }
+
+      bool Uint(unsigned int value) {
+        return Int(value);
+      }
+
+      bool Int64(int64_t value) {
+        return Int(value);
+      }
+
+      bool Uint64(uint64_t value) {
+        return Int(value);
+      }
+    };
+
+    struct TableHandler : public rapidjson::BaseReaderHandler<>
+    {
+      grn_ctx *ctx_;
+      grn_obj *uvector_;
+      bool add_record_if_not_exist_;
+      grn_obj *table_;
+      uint32_t weight_;
+
+      TableHandler(grn_ctx *ctx,
+                   grn_obj *uvector,
+                   bool add_record_if_not_exist)
+        : ctx_(ctx),
+          uvector_(uvector),
+          add_record_if_not_exist_(add_record_if_not_exist),
+          table_(grn_ctx_at(ctx, uvector->header.domain)),
+          weight_(0) {
+      }
+
+      ~TableHandler() {
+        grn_obj_unref(ctx_, table_);
+      }
+
+      bool Default() {return false;}
+
+      bool String(const char *data, size_t size, bool copy) {
+        grn_id id;
+        if (add_record_if_not_exist_) {
+          id = grn_table_add(ctx_, table_, data, size, NULL);
+        } else {
+          id = grn_table_get(ctx_, table_, data, size);
+        }
+        if (id == GRN_ID_NIL) {
+          return false;
+        }
+        auto rc = grn_uvector_add_element(ctx_, uvector_, id, weight_);
+        return rc == GRN_SUCCESS;
+      }
+
+      bool Int(int value) {
+        weight_ = value;
+        return true;
+      }
+
+      bool Uint(unsigned int value) {
+        weight_ = value;
+        return true;
+      }
+    };
+
+    template <typename Handler>
+    grn_rc
+    json_to_uvector(grn_ctx *ctx,
+                    rapidjson::Document *document,
+                    grn_obj *dest,
+                    bool add_record_if_not_exist) {
+      Handler handler(ctx, dest, add_record_if_not_exist);
+      if (document->IsArray()) {
+        auto n = document->Size();
+        for (size_t i = 0; i < n; ++i) {
+          const auto &element = (*document)[i];
+          if (!element.Accept(handler)) {
+            return GRN_INVALID_ARGUMENT;
+          }
+        }
+        return GRN_SUCCESS;
+      } else if (document->IsObject()) {
+        for (auto member = document->MemberBegin();
+             member != document->MemberEnd();
+             ++member) {
+          if (!member->name.IsString()) {
+            return GRN_INVALID_ARGUMENT;
+          }
+          if (!member->value.IsNumber()) {
+            return GRN_INVALID_ARGUMENT;
+          }
+          if (!member->value.Accept(handler)) {
+            return GRN_INVALID_ARGUMENT;
+          }
+          if (!member->name.Accept(handler)) {
+            return GRN_INVALID_ARGUMENT;
+          }
+        }
+        return GRN_SUCCESS;
+      } else {
+        return GRN_INVALID_ARGUMENT;
+      }
     }
-
-    bool Default() {return false;}
-
-    bool Int(int value) {
-      GRN_INT32_PUT(ctx_, uvector_, value);
-      return true;
-    }
-
-    bool Uint(unsigned int value) {
-      return Int(value);
-    }
-
-    bool Int64(int64_t value) {
-      return Int(value);
-    }
-
-    bool Uint64(uint64_t value) {
-      return Int(value);
-    }
-  };
+  }
 
   grn_rc
   cast_text_to_uvector(grn_ctx *ctx,
@@ -66,21 +157,26 @@ namespace grn {
     if (document.HasParseError()) {
       return GRN_INVALID_ARGUMENT;
     }
-    if (!document.IsArray()) {
-      return GRN_INVALID_ARGUMENT;
-    }
-    if (dest->header.domain != GRN_DB_INT32) {
-      return GRN_INVALID_ARGUMENT;
-    }
-    auto n = document.Size();
-    Int32Handler handler(ctx, dest);
-    for (size_t i = 0; i < n; ++i) {
-      const auto &element = document[i];
-      if (!element.Accept(handler)) {
-        return GRN_INVALID_ARGUMENT;
+    switch (dest->header.domain) {
+    case GRN_DB_INT32 :
+      return json_to_uvector<Int32Handler>(ctx,
+                                           &document,
+                                           dest,
+                                           add_record_if_not_exist);
+    default :
+      {
+        grn_rc rc = GRN_INVALID_ARGUMENT;
+        grn_obj *domain = grn_ctx_at(ctx, dest->header.domain);
+        if (grn_obj_is_lexicon(ctx, domain)) {
+          rc = json_to_uvector<TableHandler>(ctx,
+                                             &document,
+                                             dest,
+                                             add_record_if_not_exist);
+        }
+        grn_obj_unref(ctx, domain);
+        return rc;
       }
     }
-    return GRN_SUCCESS;
   }
 }
 #endif

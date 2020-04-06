@@ -7906,24 +7906,35 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
     }
     switch (value->header.type) {
     case GRN_BULK :
-      if (value->header.domain == range) {
-        if (GRN_BULK_VSIZE(value) > 0) {
+      if (GRN_BULK_VSIZE(value) > 0) {
+        if (value->header.domain == range) {
           grn_uvector_add_element(ctx, &uvector, GRN_RECORD_VALUE(value), 0);
-        }
-      } else {
-        unsigned int token_flags = 0;
-        grn_token_cursor *token_cursor;
-        if (v && s &&
-            (token_cursor = grn_token_cursor_open(ctx, lexicon, v, s,
-                                                  GRN_TOKEN_ADD, token_flags))) {
-          while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
-            grn_id tid = grn_token_cursor_next(ctx, token_cursor);
-            grn_uvector_add_element(ctx, &uvector, tid, 0);
+        } else {
+          grn_obj *tokenizer;
+          grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
+          if (tokenizer) {
+            grn_obj_unref(ctx, tokenizer);
+            unsigned int token_flags = 0;
+            grn_token_cursor *token_cursor;
+            token_cursor = grn_token_cursor_open(ctx,
+                                                 lexicon,
+                                                 v,
+                                                 s,
+                                                 GRN_TOKEN_ADD,
+                                                 token_flags);
+            if (token_cursor) {
+              while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
+                grn_id tid = grn_token_cursor_next(ctx, token_cursor);
+                grn_uvector_add_element(ctx, &uvector, tid, 0);
+              }
+              grn_token_cursor_close(ctx, token_cursor);
+            }
+          } else {
+            grn_obj_cast(ctx, value, &uvector, GRN_TRUE);
           }
-          grn_token_cursor_close(ctx, token_cursor);
         }
       }
-      if (call_hook(ctx, obj, id, &uvector, flags)) {
+      if (ctx->rc == GRN_SUCCESS && call_hook(ctx, obj, id, &uvector, flags)) {
         rc = grn_ja_put(ctx, (grn_ja *)obj, id,
                         GRN_BULK_HEAD(&uvector), GRN_BULK_VSIZE(&uvector),
                         flags, NULL);

@@ -1,0 +1,61 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data tags COLUMN_VECTOR|WITH_WEIGHT Tags
+[[0,0.0,0.0],true]
+column_create Tags data_tags COLUMN_INDEX|WITH_WEIGHT Data tags
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"tags": "{\"fruit\": 10, \"apple\": 100}"},
+{"tags": "{\"fruit\": 200}"}
+]
+[[0,0.0,0.0],2]
+dump   --dump_plugins no   --dump_schema no
+load --table Data
+[
+["_id","tags"],
+[1,{"fruit":10,"apple":100}],
+[2,{"fruit":200}]
+]
+
+column_create Tags data_tags COLUMN_INDEX|WITH_WEIGHT Data tags
+select Data   --filter 'tags @ "fruit"'   --output_columns "tags,_score"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "tags",
+          "Tags"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        {
+          "fruit": 10,
+          "apple": 100
+        },
+        11
+      ],
+      [
+        {
+          "fruit": 200
+        },
+        201
+      ]
+    ]
+  ]
+]

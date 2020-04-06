@@ -1,0 +1,20 @@
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Data TABLE_NO_KEY
+column_create Data tags COLUMN_VECTOR|WITH_WEIGHT Tags
+
+column_create Tags data_tags COLUMN_INDEX|WITH_WEIGHT Data tags
+
+load --table Data
+[
+{"tags": "{\"fruit\": 10, \"apple\": 100}"},
+{"tags": "{\"fruit\": 200}"}
+]
+
+dump \
+  --dump_plugins no \
+  --dump_schema no
+
+select Data \
+  --filter 'tags @ "fruit"' \
+  --output_columns "tags,_score"
