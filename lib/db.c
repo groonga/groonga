@@ -7930,7 +7930,13 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
               grn_token_cursor_close(ctx, token_cursor);
             }
           } else {
-            grn_obj_cast(ctx, value, &uvector, GRN_TRUE);
+            if (grn_obj_cast(ctx, value, &uvector, true) != GRN_SUCCESS) {
+              GRN_BULK_REWIND(&uvector);
+              grn_id id = grn_table_add(ctx, lexicon, v, s, NULL);
+              if (id != GRN_ID_NIL) {
+                grn_uvector_add_element(ctx, &uvector, id, 0);
+              }
+            }
           }
         }
       }
