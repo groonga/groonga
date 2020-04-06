@@ -1115,17 +1115,17 @@ grn_slice_data_init(grn_ctx *ctx,
 static void
 grn_slice_data_fin(grn_ctx *ctx, grn_slice_data *slice)
 {
+  grn_filter_data_fin(ctx, &(slice->filter));
+  if (slice->drilldowns) {
+    grn_drilldowns_fin(ctx, slice->drilldowns);
+  }
+  grn_columns_fin(ctx, &(slice->columns));
   if (slice->tables.sorted) {
     grn_obj_unlink(ctx, slice->tables.sorted);
   }
   if (slice->tables.initial) {
     grn_obj_unlink(ctx, slice->tables.initial);
   }
-  grn_filter_data_fin(ctx, &(slice->filter));
-  if (slice->drilldowns) {
-    grn_drilldowns_fin(ctx, slice->drilldowns);
-  }
-  grn_columns_fin(ctx, &(slice->columns));
 }
 
 static void
