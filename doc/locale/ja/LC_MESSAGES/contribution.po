@@ -773,19 +773,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Debian系（.deb）やRed Hat系（.rpm）パッケージのビルドには `Vagrant <https://"
-"www.vagrantup.com/>`_ を使用します。apt-getでインストールできるのは古いバー"
-"ジョンなので、Webサイトから最新版をダウンロードしてインストールすることをおす"
-"すめします。"
-msgstr ""
-
-msgid ""
-"Vagrantで使用する仮想化ソフトウェア（VirtualBox、VMwareなど）がない場合、合わ"
-"せてインストールしてください。なお、VirtualBoxはsources.listにcontribセクショ"
-"ンを追加すればapt-getでインストールできます。::"
-msgstr ""
-
-msgid "また、rubyのrakeパッケージを以下のコマンドによりインストールします。::"
+"Debian系（.deb）やRed Hat系（.rpm）パッケージのビルドには `Docker <https://"
+"www.docker.com/>`_ を使用するので、Dockerの公式ドキュメントの記載にしたがって"
+"インストールしてください。 また、rubyのrakeパッケージを以下のコマンドによりイ"
+"ンストールします。::"
 msgstr ""
 
 msgid "パッケージ署名用秘密鍵のインポート"
@@ -874,7 +865,7 @@ msgid "Groongaのウェブサイトの取得"
 msgstr ""
 
 msgid ""
-"GroongaのウェブサイトのソースはGroonga同様にgithubにリポジトリを置いていま"
+"GroongaのウェブサイトのソースはGroonga同様にGitHubにリポジトリを置いていま"
 "す。"
 msgstr ""
 
@@ -903,39 +894,6 @@ msgid ""
 msgstr ""
 
 msgid "これで、$CUTTER_SOURCE_PATHディレクトリにcutterのソースを取得できます。"
-msgstr ""
-
-msgid "変更点のまとめ"
-msgstr ""
-
-msgid ""
-"前回リリース時からの変更点を$GROONGA_CLONE_DIR/doc/source/news.rst（英語）に"
-"まとめます。 ここでまとめた内容についてはリリースアナウンスにも使用します。"
-msgstr ""
-
-msgid "前回リリースからの変更履歴を参照するには以下のコマンドを実行します。::"
-msgstr ""
-
-msgid ""
-"ログを^commitで検索しながら、以下の基準を目安として変更点を追記していきます。"
-msgstr ""
-
-msgid "含めるもの"
-msgstr ""
-
-msgid "ユーザへ影響するような変更"
-msgstr ""
-
-msgid "互換性がなくなるような変更"
-msgstr ""
-
-msgid "含めないもの"
-msgstr ""
-
-msgid "内部的な変更(変数名の変更やらリファクタリング)"
-msgstr ""
-
-msgid "具体的な変更点の記述方法は後述します。"
 msgstr ""
 
 msgid "configureスクリプトの生成"
@@ -995,6 +953,42 @@ msgstr ""
 msgid ""
 "新任のリリース担当者は必ず、この方法でPPAのリポジトリにパッケージをアップロー"
 "ドできる事を確認しておいてください。"
+msgstr ""
+
+msgid ""
+"PPAのリポジトリは、同名のパッケージを上書いてアップロードできないので、不安定"
+"版のリポジトリでビルドできることを確認してから、安定版のリポジトリへアップ"
+"ロードするようにしてください。"
+msgstr ""
+
+msgid "変更点のまとめ"
+msgstr ""
+
+msgid ""
+"前回リリース時からの変更点を$GROONGA_CLONE_DIR/doc/source/news.rst（英語）に"
+"まとめます。 ここでまとめた内容についてはリリースアナウンスにも使用します。"
+msgstr ""
+
+msgid "前回リリースからの変更履歴を参照するには以下のコマンドを実行します。::"
+msgstr ""
+
+msgid ""
+"ログを^commitで検索しながら、以下の基準を目安として変更点を追記していきます。"
+msgstr ""
+
+msgid "含めるもの"
+msgstr ""
+
+msgid "ユーザへ影響するような変更"
+msgstr ""
+
+msgid "互換性がなくなるような変更"
+msgstr ""
+
+msgid "含めないもの"
+msgstr ""
+
+msgid "内部的な変更(変数名の変更やらリファクタリング)"
 msgstr ""
 
 msgid "make update-latest-releaseの実行"
@@ -1077,6 +1071,32 @@ msgstr ""
 msgid "確認が完了したら、翻訳済みpoファイルをコミットします。"
 msgstr ""
 
+msgid "各種テストの確認"
+msgstr ""
+
+msgid ""
+"リリース用のタグを設定する前に、以下のテストが全てパスしているかを確認しま"
+"す。 タグを設定してから問題が発覚すると、再度リリースすることになってしまうの"
+"で、タグを設定する前に問題がないか確認します。"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"`GitHub Actions <https://github.com/groonga/groonga/actions?query=workflow"
+"%3APackage>`_"
+msgstr ""
+"Groongaプロジェクトは `Github issue tracker <https://github.com/groonga/"
+"groonga/issues>`_ を使っています。"
+
+msgid "`TravisCI <https://travis-ci.org/github/groonga/groonga>`_"
+msgstr ""
+
+msgid "`AppVeyor <https://ci.appveyor.com/project/groonga/groonga>`_"
+msgstr ""
+
+msgid "テストやパッケージの作成に失敗していたら、原因を特定して修正します。"
+msgstr ""
+
 msgid "リリースタグの設定"
 msgstr ""
 
@@ -1107,6 +1127,38 @@ msgid ""
 "確認するのが望ましいです。"
 msgstr ""
 
+msgid "リリース用アーカイブファイルのアップロード"
+msgstr ""
+
+msgid ""
+"Groongaのリリース用アーカイブファイルは、MroongaやPGroonga、Rroonga等関連プロ"
+"ダクトのリリースにも使用します。 生成でき次第アップロードしておくと、関連プロ"
+"ダクトのリリース作業がしやすくなります。"
+msgstr ""
+
+msgid "リリース用のアーカイブファイルは以下の手順でアップロードします。"
+msgstr ""
+
+msgid ""
+"アップロードはrsyncコマンドで行います。 以下のコマンドを実行して、現在のリポ"
+"ジトリーと同期します。::"
+msgstr ""
+
+msgid ""
+"これにより過去にリリースしたソースアーカイブ(.tar.gz)が packages/source/files"
+"ディレクトリ以下へとダウンロードされます。"
+msgstr ""
+
+msgid ""
+"その後、以下のコマンドを実行してリリース用ソースアーカイブをアップロードしま"
+"す。::"
+msgstr ""
+
+msgid ""
+"アップロードが正常終了すると、リリース用ソースアーカイブがpackages.groonga."
+"orgへと反映されます。"
+msgstr ""
+
 msgid "パッケージのビルド"
 msgstr ""
 
@@ -1129,54 +1181,7 @@ msgstr ""
 msgid "パッケージのビルドではいくつかのサブタスクから構成されています。"
 msgstr ""
 
-msgid "ビルド用パッケージのダウンロード"
-msgstr ""
-
-msgid ""
-"debパッケージのビルドに必要なパッケージをダウンロードするには以下のコマンドを"
-"実行します。::"
-msgstr ""
-
-msgid ""
-"これにより、lucid以降の関連する.debパッケージやソースアーカイブなどがカレント"
-"ディレクトリ以下へとダウンロードされます。"
-msgstr ""
-
-msgid ""
-"rpmパッケージのビルドに必要なパッケージをダウンロードするには以下のコマンドを"
-"実行します。::"
-msgstr ""
-
-msgid ""
-"これにより、GroongaやMySQLのRPM/SRPMパッケージなどがカレントディレクトリ以下"
-"へとダウンロードされます。"
-msgstr ""
-
-msgid ""
-"Windowsパッケージのビルドに必要なパッケージをダウンロードするには以下のコマン"
-"ドを実行します。::"
-msgstr ""
-
-msgid ""
-"これにより、Groongaのインストーラやzipアーカイブがカレントディレクトリ以下へ"
-"とダウンロードされます。"
-msgstr ""
-
-msgid ""
-"sourceパッケージに必要なものをダウンロードするには以下のコマンドを実行しま"
-"す。::"
-msgstr ""
-
-msgid ""
-"これにより過去にリリースしたソースアーカイブ(.tar.gz)が packages/source/files"
-"ディレクトリ以下へとダウンロードされます。"
-msgstr ""
-
-msgid "Debian系パッケージのビルド"
-msgstr ""
-
-msgid ""
-"Groongaのpackagesサブディレクトリに移動して、以下のコマンドを実行します。::"
+msgid "Debian系パッケージのビルドとアップロード"
 msgstr ""
 
 msgid ""
@@ -1184,7 +1189,7 @@ msgid ""
 "スを指定します。"
 msgstr ""
 
-msgid "現在サポートされているのは以下の通りです。"
+msgid "現在サポートしているOSのバージョンは以下の通りです。"
 msgstr ""
 
 msgid "Debian GNU/Linux"
@@ -1201,42 +1206,82 @@ msgid ""
 "debパッケージが生成されます。"
 msgstr ""
 
-msgid ""
-"rake apt:build ではまとめてビルドできないこともあります。 その場合にはディス"
-"トリビューションごとやアーキテクチャごとなど、個別にビルドすることで問題が発"
-"生している箇所を切り分ける必要があります。"
+msgid "debパッケージをビルドするには以下のコマンドを実行します。::"
 msgstr ""
 
 msgid ""
-"正常にビルドができたら、packages/aptサブディレクトリに移動して以下のコマンド"
-"を実行します。"
-msgstr ""
-
-msgid "% make upload"
+"パッケージのビルドが完了したら、以下のコマンドを実行してビルドしたパッケージ"
+"をpackages.groonga.orgへアップロードします。::"
 msgstr ""
 
 msgid ""
-"次に、 $PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行しま"
-"す。::"
+"この段階では、ビルドしたパッケージはまだ未署名なの"
+"で、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::"
 msgstr ""
 
 msgid ""
-"パッケージのダウンロードが終わったら、以下のコマンドを実行し、パッケージへの"
-"署名からリポジトリの更新、アップロードを実行します。::"
+"上記のコマンドを実行することで、リポジトリーの同期、パッケージの署名、リポジ"
+"トリーの更新、アップロードまで実行できます。"
 msgstr ""
 
-msgid "Red Hat系パッケージのビルド"
+msgid "Ubuntu用パッケージのアップロード"
 msgstr ""
 
 msgid ""
-"Groongaのpackages/yumサブディレクトリに移動して、以下のコマンドを実行しま"
-"す。::"
+"Ubuntu向けパッケージの作成には、作業マシン上にGroongaのビルドに必要な依存ソフ"
+"トウェア一式がインストールされている必要があります。以下のようにしてインス"
+"トールしておいて下さい。::"
+msgstr ""
+
+msgid "Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::"
+msgstr ""
+
+msgid "現在サポートされているのは以下の通りです。"
+msgstr ""
+
+msgid "Xenial i386/amd64"
+msgstr ""
+
+msgid "Bionic i386/amd64"
+msgstr ""
+
+msgid "Disco  i386/amd64"
+msgstr ""
+
+msgid "Focal  amd64"
+msgstr ""
+
+msgid ""
+"アップロードが正常終了すると、launchpad.net上でビルドが実行され、ビルド結果が"
+"メールで通知されます。ビルドに成功すると、リリース対象のパッケージが"
+"launchpad.netのGroongaチームのPPAへと反映されます。公開されているパッケージは"
+"以下のURLで確認できます。"
+msgstr ""
+
+msgid "https://launchpad.net/~groonga/+archive/ubuntu/ppa"
+msgstr ""
+
+msgid "Ubuntu用パッケージの公開の取り消し"
+msgstr ""
+
+msgid ""
+"LaunchpadのGroongaチームのページで対象のPPAを選択し、バージョン一覧の上にある"
+"「View package details」リンクの先で「Delete packages」リンクを辿ると、アップ"
+"ロード済みパッケージを削除できます。 例；[不安定版リポジトリのパッケージの削"
+"除用のページ](https://launchpad.net/~groonga/+archive/ubuntu/nightly/+delete-"
+"packages)。"
+msgstr ""
+
+msgid "Red Hat系パッケージのビルドとアップロード"
 msgstr ""
 
 msgid "centos-6 x86_64"
 msgstr ""
 
 msgid "centos-7 x86_64"
+msgstr ""
+
+msgid "centos-8 x86_64"
 msgstr ""
 
 msgid ""
@@ -1250,21 +1295,26 @@ msgstr ""
 msgid "repositories/yum/centos/7/x86_64/Packages"
 msgstr ""
 
-msgid ""
-"正常にビルドができたら、packages/yumサブディレクトリに移動して以下のコマンド"
-"を実行します。"
+msgid "repositories/yum/centos/8/x86_64/Packages"
 msgstr ""
 
-msgid "Windows用パッケージのビルド"
+msgid "rpmパッケージをビルドするには以下のコマンドを実行します。::"
 msgstr ""
 
-msgid ""
-"packages/windowsサブディレクトリに移動して、以下のコマンドを実行します。::"
+msgid "Windows用パッケージのビルドとアップロード"
 msgstr ""
 
 msgid ""
-"make releaseを実行することでbuildからuploadまで一気に実行することができます"
-"が、途中で失敗することもあるので順に実行することをおすすめします。"
+"Windowsパッケージのビルドに必要なファイルを以下のコマンドを実行してダウンロー"
+"ドします。::"
+msgstr ""
+
+msgid ""
+"これにより、Groongaのインストーラやzipアーカイブが packages/windows以下へとダ"
+"ウンロードされます。"
+msgstr ""
+
+msgid "次に、以下のコマンドを実行してWindowsパッケージをビルドします。::"
 msgstr ""
 
 msgid ""
@@ -1283,6 +1333,11 @@ msgid ""
 msgstr ""
 
 msgid "パッケージの動作確認"
+msgstr ""
+
+msgid ""
+"パッケージの動作確認はGitHub Actions上で自動で実施できるように改良中で、以下"
+"の手順は今後削除する予定です。"
 msgstr ""
 
 msgid "ビルドしたパッケージに対しリリース前の動作確認を行います。"
@@ -1448,73 +1503,6 @@ msgstr ""
 msgid ""
 "後述しますが、Twitter等でのリリースアナウンスの際はここで用意したアナウンス文"
 "の要約を使用します。"
-msgstr ""
-
-msgid "パッケージのアップロード"
-msgstr ""
-
-msgid ""
-"動作確認が完了し、Debian系、Red Hat系、Windows向け、ソースコードそれぞれにお"
-"いてパッケージやアーカイブのアップロードを行います。"
-msgstr ""
-
-msgid "Debian系のパッケージのアップロードには以下のコマンドを実行します。::"
-msgstr ""
-
-msgid "Red Hat系のパッケージのアップロードには以下のコマンドを実行します。::"
-msgstr ""
-
-msgid "Windows向けのパッケージのアップロードには以下のコマンドを実行します。::"
-msgstr ""
-
-msgid "ソースアーカイブのアップロードには以下のコマンドを実行します。::"
-msgstr ""
-
-msgid ""
-"アップロードが正常終了すると、リリース対象のリポジトリデータやパッケージ、"
-"アーカイブ等がpackages.groonga.orgへと反映されます。"
-msgstr ""
-
-msgid "Ubuntu用パッケージのアップロード"
-msgstr ""
-
-msgid ""
-"Ubuntu向けパッケージの作成には、作業マシン上にGroongaのビルドに必要な依存ソフ"
-"トウェア一式がインストールされている必要があります。以下のようにしてインス"
-"トールしておいて下さい。::"
-msgstr ""
-
-msgid "Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::"
-msgstr ""
-
-msgid "Xenial i386/amd64"
-msgstr ""
-
-msgid "Bionic i386/amd64"
-msgstr ""
-
-msgid "Disco  i386/amd64"
-msgstr ""
-
-msgid ""
-"アップロードが正常終了すると、launchpad.net上でビルドが実行され、ビルド結果が"
-"メールで通知されます。ビルドに成功すると、リリース対象のパッケージが"
-"launchpad.netのGroongaチームのPPAへと反映されます。公開されているパッケージは"
-"以下のURLで確認できます。"
-msgstr ""
-
-msgid "https://launchpad.net/~groonga/+archive/ubuntu/ppa"
-msgstr ""
-
-msgid "Ubuntu用パッケージの公開の取り消し"
-msgstr ""
-
-msgid ""
-"LaunchpadのGroongaチームのページで対象のPPAを選択し、バージョン一覧の上にある"
-"「View package details」リンクの先で「Delete packages」リンクを辿ると、アップ"
-"ロード済みパッケージを削除できる。 例；[不安定版リポジトリのパッケージの削除"
-"用のページ](https://launchpad.net/~groonga/+archive/ubuntu/nightly/+delete-"
-"packages)。"
 msgstr ""
 
 msgid "blogroonga(ブログ)の更新"
@@ -1690,50 +1678,6 @@ msgid ""
 msgstr ""
 
 msgid "base_versionはtar.gzなどのリリース用のファイル名で使用します。"
-msgstr ""
-
-msgid "ビルド時のTIPS"
-msgstr ""
-
-msgid "ビルドを並列化したい"
-msgstr ""
-
-msgid ""
-"make build PARALLEL=yesを指定するとchroot環境で並列にビルドを 実行できます。"
-msgstr ""
-
-msgid "特定の環境向けのみビルドしたい"
-msgstr ""
-
-msgid ""
-"Debian系の場合、CODES,ARCHITECTURESオプションを明示的に指定することで、特定の"
-"リリース、アーキテクチャのみビルドすることができます。"
-msgstr ""
-
-msgid "squeezeのi386のみビルドしたい場合には以下のコマンドを実行します。::"
-msgstr ""
-
-msgid ""
-"buildコマンド以外でも build-package-deb build-repository-debなどのサブタスク"
-"でもARCHITECTURES,CODES指定は有効です。"
-msgstr ""
-
-msgid ""
-"Red Hat系の場合、ARCHITECTURES,DISTRIBUTIONSオプションを明示的に指定すること"
-"で、特定のリリース、アーキテクチャのみビルドすることができます。"
-msgstr ""
-
-msgid "fedoraのi386のみビルドしたい場合には以下のコマンドを実行します。::"
-msgstr ""
-
-msgid ""
-"buildコマンド以外でも build-in-chroot build-repository-rpmなどのサブタスクで"
-"もARCHITECTURES,DISTRIBUTIONSの指定は有効です。"
-msgstr ""
-
-msgid ""
-"centosの場合、CENTOS_VERSIONSを指定することで特定のバージョンのみビルドするこ"
-"とができます。"
 msgstr ""
 
 msgid "パッケージの署名用のパスフレーズを知りたい"
