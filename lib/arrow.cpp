@@ -813,7 +813,7 @@ namespace grnarrow {
     }
 
     ~ColumnLoadVisitor() {
-      if (grn_obj_is_accessor(ctx_, grn_column_)) {
+      if (!grn_loader_ && grn_obj_is_accessor(ctx_, grn_column_)) {
         grn_obj_unlink(ctx_, grn_column_);
       }
       GRN_OBJ_FIN(ctx_, &buffer_);
