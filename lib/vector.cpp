@@ -32,14 +32,14 @@ namespace grn {
     template <>
     bool
     cast_value<bool, float>(const char *raw_value) {
-      auto value = *reinterpret_cast<const float *>(raw_value);
+      float value = *reinterpret_cast<const float *>(raw_value);
       return grn_float32_is_zero(value);
     }
 
     template <>
     bool
     cast_value<bool, double>(const char *raw_value) {
-      auto value = *reinterpret_cast<const double *>(raw_value);
+      double value = *reinterpret_cast<const double *>(raw_value);
       return grn_float_is_zero(value);
     }
   }
