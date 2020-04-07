@@ -41,16 +41,7 @@
 
     % pip install --upgrade sphinx
 
-Debian系（.deb）やRed Hat系（.rpm）パッケージのビルドには `Vagrant <https://www.vagrantup.com/>`_ を使用します。apt-getでインストールできるのは古いバージョンなので、Webサイトから最新版をダウンロードしてインストールすることをおすすめします。
-
-Vagrantで使用する仮想化ソフトウェア（VirtualBox、VMwareなど）がない場合、合わせてインストールしてください。なお、VirtualBoxはsources.listにcontribセクションを追加すればapt-getでインストールできます。::
-
-    % cat /etc/apt/sources.list
-    deb http://ftp.jp.debian.org/debian/ sid main contrib
-    deb-src http://ftp.jp.debian.org/debian/ sid main contrib
-    % sudo apt-get update
-    % sudo apt-get install virtualbox
-
+Debian系（.deb）やRed Hat系（.rpm）パッケージのビルドには `Docker <https://www.docker.com/>`_ を使用するので、Dockerの公式ドキュメントの記載にしたがってインストールしてください。
 また、rubyのrakeパッケージを以下のコマンドによりインストールします。::
 
     % sudo gem install rake
@@ -107,8 +98,6 @@ Groongaのリリース作業ではリリース専用の環境下(コンパイル
 そのため、以降の説明では$GROONGA_DIR以下のディレクトリにリリース用の作業ディレクトリ(groonga.clean)としてソースコードをcloneしたものとして説明します。
 
 
-
-
 毎回のリリースで行う手順
 ************************
 
@@ -124,7 +113,7 @@ Groongaのソースコード取得
 Groongaのウェブサイトの取得
 ---------------------------
 
-GroongaのウェブサイトのソースはGroonga同様にgithubにリポジトリを置いています。
+GroongaのウェブサイトのソースはGroonga同様にGitHubにリポジトリを置いています。
 
 リリース作業では後述するコマンド(make update-latest-release)にてトップページのバージョンを置き換えることができるようになっています。
 
@@ -144,29 +133,6 @@ Groongaのリリース作業では、cutterに含まれるスクリプトを使�
     % git clone git@github.com:clear-code/cutter.git
 
 これで、$CUTTER_SOURCE_PATHディレクトリにcutterのソースを取得できます。
-
-変更点のまとめ
---------------
-
-前回リリース時からの変更点を$GROONGA_CLONE_DIR/doc/source/news.rst（英語）にまとめます。
-ここでまとめた内容についてはリリースアナウンスにも使用します。
-
-前回リリースからの変更履歴を参照するには以下のコマンドを実行します。::
-
-   % git log -p --reverse $(git tag | tail -1)..
-
-ログを^commitで検索しながら、以下の基準を目安として変更点を追記していきます。
-
-含めるもの
-
-* ユーザへ影響するような変更
-* 互換性がなくなるような変更
-
-含めないもの
-
-* 内部的な変更(変数名の変更やらリファクタリング)
-
-具体的な変更点の記述方法は後述します。
 
 configureスクリプトの生成
 -------------------------
@@ -230,6 +196,28 @@ configureオプションである--with-cutter-source-pathにはcutterのソー�
 
 新任のリリース担当者は必ず、この方法でPPAのリポジトリにパッケージをアップロードできる事を確認しておいてください。
 
+PPAのリポジトリは、同名のパッケージを上書いてアップロードできないので、不安定版のリポジトリでビルドできることを確認してから、安定版のリポジトリへアップロードするようにしてください。
+
+変更点のまとめ
+--------------
+
+前回リリース時からの変更点を$GROONGA_CLONE_DIR/doc/source/news.rst（英語）にまとめます。
+ここでまとめた内容についてはリリースアナウンスにも使用します。
+
+前回リリースからの変更履歴を参照するには以下のコマンドを実行します。::
+
+   % git log -p --reverse $(git tag | tail -1)..
+
+ログを^commitで検索しながら、以下の基準を目安として変更点を追記していきます。
+
+含めるもの
+
+* ユーザへ影響するような変更
+* 互換性がなくなるような変更
+
+含めないもの
+
+* 内部的な変更(変数名の変更やらリファクタリング)
 
 make update-latest-releaseの実行
 --------------------------------
@@ -296,6 +284,17 @@ make update-poコマンドの実行により更新した各種.poファイルを
 
 確認が完了したら、翻訳済みpoファイルをコミットします。
 
+各種テストの確認
+----------------
+
+リリース用のタグを設定する前に、以下のテストが全てパスしているかを確認します。
+タグを設定してから問題が発覚すると、再度リリースすることになってしまうので、タグを設定する前に問題がないか確認します。
+
+* `GitHub Actions <https://github.com/groonga/groonga/actions?query=workflow%3APackage>`_
+* `TravisCI <https://travis-ci.org/github/groonga/groonga>`_
+* `AppVeyor <https://ci.appveyor.com/project/groonga/groonga>`_
+
+テストやパッケージの作成に失敗していたら、原因を特定して修正します。
 
 リリースタグの設定
 ------------------
@@ -303,6 +302,7 @@ make update-poコマンドの実行により更新した各種.poファイルを
 リリース用のタグを打つには以下のコマンドを実行します。::
 
     % make tag
+    % git push --tags origin
 
 .. note::
    タグを打った後にconfigureを実行することで、ドキュメント生成時のバージョン番号に反映されます。
@@ -321,6 +321,30 @@ make update-poコマンドの実行により更新した各種.poファイルを
    するとgroonga --versionで表示されるバージョン表記が更新されないので注意が必要です。
    make distで生成したtar.gzのversionおよびversion.shがタグと一致することを確認するのが望ましいです。
 
+リリース用アーカイブファイルのアップロード
+------------------------------------------
+
+Groongaのリリース用アーカイブファイルは、MroongaやPGroonga、Rroonga等関連プロダクトのリリースにも使用します。
+生成でき次第アップロードしておくと、関連プロダクトのリリース作業がしやすくなります。
+
+リリース用のアーカイブファイルは以下の手順でアップロードします。
+
+アップロードはrsyncコマンドで行います。
+以下のコマンドを実行して、現在のリポジトリーと同期します。::
+
+    % cd packages/source
+    % make download
+
+これにより過去にリリースしたソースアーカイブ(.tar.gz)が
+packages/source/filesディレクトリ以下へとダウンロードされます。
+
+その後、以下のコマンドを実行してリリース用ソースアーカイブをアップロードします。::
+
+    % cd packages/source
+    % make upload
+
+アップロードが正常終了すると、リリース用ソースアーカイブがpackages.groonga.orgへと反映されます。
+
 パッケージのビルド
 ------------------
 
@@ -334,50 +358,12 @@ make update-poコマンドの実行により更新した各種.poファイルを
 
 パッケージのビルドではいくつかのサブタスクから構成されています。
 
-ビルド用パッケージのダウンロード
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-debパッケージのビルドに必要なパッケージをダウンロードするには以下のコマンドを実行します。::
-
-    % cd packages/apt
-    % make download
-
-これにより、lucid以降の関連する.debパッケージやソースアーカイブなどがカレントディレクトリ以下へとダウンロードされます。
-
-rpmパッケージのビルドに必要なパッケージをダウンロードするには以下のコマンドを実行します。::
-
-    % cd packages/yum
-    % make download
-
-これにより、GroongaやMySQLのRPM/SRPMパッケージなどがカレントディレクトリ以下へとダウンロードされます。
-
-Windowsパッケージのビルドに必要なパッケージをダウンロードするには以下のコマンドを実行します。::
-
-    % cd packages/windows
-    % make download
-
-これにより、Groongaのインストーラやzipアーカイブがカレントディレクトリ以下へとダウンロードされます。
-
-sourceパッケージに必要なものをダウンロードするには以下のコマンドを実行します。::
-
-    % cd packages/source
-    % make download
-
-これにより過去にリリースしたソースアーカイブ(.tar.gz)が
-packages/source/filesディレクトリ以下へとダウンロードされます。
-
-
-Debian系パッケージのビルド
---------------------------
-
-Groongaのpackagesサブディレクトリに移動して、以下のコマンドを実行します。::
-
-    % cd packages
-    % rake apt:build
+Debian系パッケージのビルドとアップロード
+----------------------------------------
 
 環境変数 ``APACHE_ARROW_REPOSITORY`` にapache/arrowのリポジトリをcloneしたパスを指定します。
 
-現在サポートされているのは以下の通りです。
+現在サポートしているOSのバージョンは以下の通りです。
 
 * Debian GNU/Linux
 
@@ -386,66 +372,97 @@ Groongaのpackagesサブディレクトリに移動して、以下のコマン�
 
 正常にビルドが終了すると$GROONGA_CLONE_DIR/packages/apt/repositories配下に.debパッケージが生成されます。
 
-rake apt:build ではまとめてビルドできないこともあります。
-その場合にはディストリビューションごとやアーキテクチャごとなど、個別にビルドすることで問題が発生している箇所を切り分ける必要があります。
-
-正常にビルドができたら、packages/aptサブディレクトリに移動して以下のコマンドを実行します。
-
-    % make upload
-
-次に、 $PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
-
-    % rake apt:download
-
-パッケージのダウンロードが終わったら、以下のコマンドを実行し、パッケージへの署名からリポジトリの更新、アップロードを実行します。::
-
-    % rake apt:sign
-    % rake apt:repository:update
-    % rake apt:upload
-
-Red Hat系パッケージのビルド
----------------------------
-
-Groongaのpackages/yumサブディレクトリに移動して、以下のコマンドを実行します。::
+debパッケージをビルドするには以下のコマンドを実行します。::
 
     % cd packages
-    % rake yum:build
+    % rake apt
+
+パッケージのビルドが完了したら、以下のコマンドを実行してビルドしたパッケージをpackages.groonga.orgへアップロードします。::
+
+    % rake apt:release
+
+この段階では、ビルドしたパッケージはまだ未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
+
+    % rake apt
+
+上記のコマンドを実行することで、リポジトリーの同期、パッケージの署名、リポジトリーの更新、アップロードまで実行できます。
+
+Ubuntu用パッケージのアップロード
+--------------------------------
+
+Ubuntu向けパッケージの作成には、作業マシン上にGroongaのビルドに必要な依存ソフトウェア一式がインストールされている必要があります。以下のようにしてインストールしておいて下さい。::
+
+    % sudo apt build-dep groonga
+
+Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::
+
+    % cd packages
+    % rake ubuntu
 
 現在サポートされているのは以下の通りです。
 
+* Xenial i386/amd64
+* Bionic i386/amd64
+* Disco  i386/amd64
+* Focal  amd64
+
+アップロードが正常終了すると、launchpad.net上でビルドが実行され、ビルド結果がメールで通知されます。ビルドに成功すると、リリース対象のパッケージがlaunchpad.netのGroongaチームのPPAへと反映されます。公開されているパッケージは以下のURLで確認できます。
+
+  https://launchpad.net/~groonga/+archive/ubuntu/ppa
+
+Ubuntu用パッケージの公開の取り消し
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+LaunchpadのGroongaチームのページで対象のPPAを選択し、バージョン一覧の上にある「View package details」リンクの先で「Delete packages」リンクを辿ると、アップロード済みパッケージを削除できます。
+例；[不安定版リポジトリのパッケージの削除用のページ](https://launchpad.net/~groonga/+archive/ubuntu/nightly/+delete-packages)。
+
+
+Red Hat系パッケージのビルドとアップロード
+-----------------------------------------
+
+現在サポートしているOSのバージョンは以下の通りです。
+
 * centos-6 x86_64
 * centos-7 x86_64
+* centos-8 x86_64
 
 ビルドが正常終了すると$GROONGA_CLONE_DIR/packages/yum/repositories配下にRPMパッケージが生成されます。
 
 * repositories/yum/centos/6/x86_64/Packages
 * repositories/yum/centos/7/x86_64/Packages
+* repositories/yum/centos/8/x86_64/Packages
 
-正常にビルドができたら、packages/yumサブディレクトリに移動して以下のコマンドを実行します。
+rpmパッケージをビルドするには以下のコマンドを実行します。::
 
-    % make upload
+    % cd packages
+    % rake yum
 
-次に、 $PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
+パッケージのビルドが完了したら、以下のコマンドを実行してビルドしたパッケージをpackages.groonga.orgへアップロードします。::
 
-    % rake yum:download
+    % rake yum:release
 
-パッケージのダウンロードが終わったら、以下のコマンドを実行し、パッケージへの署名からリポジトリの更新、アップロードを実行します。::
+この段階では、ビルドしたパッケージはまだ未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
 
-    % rake yum:sign
-    % rake yum:update
-    % rake yum:upload
+    % rake yum
 
-Windows用パッケージのビルド
----------------------------
+上記のコマンドを実行することで、リポジトリーの同期、パッケージの署名、リポジトリーの更新、アップロードまで実行できます。
 
-packages/windowsサブディレクトリに移動して、以下のコマンドを実行します。::
+Windows用パッケージのビルドとアップロード
+-----------------------------------------
+
+Windowsパッケージのビルドに必要なファイルを以下のコマンドを実行してダウンロードします。::
+
+    % cd packages/windows
+    % make download
+
+これにより、Groongaのインストーラやzipアーカイブが packages/windows以下へとダウンロードされます。
+
+次に、以下のコマンドを実行してWindowsパッケージをビルドします。::
 
     % cd packages/windows
     % make build
     % make package
     % make installer
-
-make releaseを実行することでbuildからuploadまで一気に実行することができますが、途中で失敗することもあるので順に実行することをおすすめします。
 
 make buildでクロスコンパイルを行います。
 正常に終了するとdist-x64/dist-x86ディレクトリ以下にx64/x86バイナリを作成します。
@@ -454,8 +471,16 @@ make packageが正常に終了するとzipアーカイブをfilesディレクト
 
 make installerが正常に終了するとWindowsインストーラをfilesディレクトリ以下に作成します。
 
+パッケージのビルドが完了したら、以下のコマンドを実行してビルドしたパッケージをpackages.groonga.orgへアップロードします。::
+
+    % cd packages/windows
+    % make upload
+
 パッケージの動作確認
 --------------------
+
+.. note::
+   パッケージの動作確認はGitHub Actions上で自動で実施できるように改良中で、以下の手順は今後削除する予定です。
 
 ビルドしたパッケージに対しリリース前の動作確認を行います。
 
@@ -574,62 +599,6 @@ news.rstに変更点をまとめましたが、それを元にリリースアナ
     * http://osdn.jp/projects/groonga/lists/archive/dev/2012-April/000794.html
 
 後述しますが、Twitter等でのリリースアナウンスの際はここで用意したアナウンス文の要約を使用します。
-
-
-パッケージのアップロード
-------------------------
-
-動作確認が完了し、Debian系、Red Hat系、Windows向け、ソースコードそれぞれにおいてパッケージやアーカイブのアップロードを行います。
-
-Debian系のパッケージのアップロードには以下のコマンドを実行します。::
-
-    % cd packages/apt
-    % make upload
-
-Red Hat系のパッケージのアップロードには以下のコマンドを実行します。::
-
-    % cd packages/yum
-    % make upload
-
-Windows向けのパッケージのアップロードには以下のコマンドを実行します。::
-
-    % cd packages/windows
-    % make upload
-
-ソースアーカイブのアップロードには以下のコマンドを実行します。::
-
-    % cd packages/source
-    % make upload
-
-アップロードが正常終了すると、リリース対象のリポジトリデータやパッケージ、アーカイブ等がpackages.groonga.orgへと反映されます。
-
-Ubuntu用パッケージのアップロード
---------------------------------
-
-Ubuntu向けパッケージの作成には、作業マシン上にGroongaのビルドに必要な依存ソフトウェア一式がインストールされている必要があります。以下のようにしてインストールしておいて下さい。::
-
-    % sudo apt build-dep groonga
-
-Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::
-
-    % cd packages/ubuntu
-    % make upload
-
-現在サポートされているのは以下の通りです。
-
-* Xenial i386/amd64
-* Bionic i386/amd64
-* Disco  i386/amd64
-
-アップロードが正常終了すると、launchpad.net上でビルドが実行され、ビルド結果がメールで通知されます。ビルドに成功すると、リリース対象のパッケージがlaunchpad.netのGroongaチームのPPAへと反映されます。公開されているパッケージは以下のURLで確認できます。
-
-  https://launchpad.net/~groonga/+archive/ubuntu/ppa
-
-Ubuntu用パッケージの公開の取り消し
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-LaunchpadのGroongaチームのページで対象のPPAを選択し、バージョン一覧の上にある「View package details」リンクの先で「Delete packages」リンクを辿ると、アップロード済みパッケージを削除できる。
-例；[不安定版リポジトリのパッケージの削除用のページ](https://launchpad.net/~groonga/+archive/ubuntu/nightly/+delete-packages)。
 
 
 blogroonga(ブログ)の更新
@@ -753,39 +722,6 @@ $GROONGA_CLONE_DIRにて以下のコマンドを実行します。::
 
 .. note::
    base_versionはtar.gzなどのリリース用のファイル名で使用します。
-
-
-ビルド時のTIPS
---------------
-
-ビルドを並列化したい
-~~~~~~~~~~~~~~~~~~~~
-
-make build PARALLEL=yesを指定するとchroot環境で並列にビルドを
-実行できます。
-
-
-特定の環境向けのみビルドしたい
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Debian系の場合、CODES,ARCHITECTURESオプションを明示的に指定することで、特定のリリース、アーキテクチャのみビルドすることができます。
-
-squeezeのi386のみビルドしたい場合には以下のコマンドを実行します。::
-
-    % make build ARCHITECTURES=i386 CODES=squeeze
-
-buildコマンド以外でも build-package-deb build-repository-debなどのサブタスクでもARCHITECTURES,CODES指定は有効です。
-
-Red Hat系の場合、ARCHITECTURES,DISTRIBUTIONSオプションを明示的に指定することで、特定のリリース、アーキテクチャのみビルドすることができます。
-
-fedoraのi386のみビルドしたい場合には以下のコマンドを実行します。::
-
-    % make build ARCHITECTURES=i386 DISTRIBUTIONS=fedora
-
-buildコマンド以外でも build-in-chroot build-repository-rpmなどのサブタスクでもARCHITECTURES,DISTRIBUTIONSの指定は有効です。
-
-centosの場合、CENTOS_VERSIONSを指定することで特定のバージョンのみビルドすることができます。
-
 
 パッケージの署名用のパスフレーズを知りたい
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
