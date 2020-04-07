@@ -1080,13 +1080,10 @@ msgid ""
 "で、タグを設定する前に問題がないか確認します。"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "`GitHub Actions <https://github.com/groonga/groonga/actions?query=workflow"
 "%3APackage>`_"
 msgstr ""
-"Groongaプロジェクトは `Github issue tracker <https://github.com/groonga/"
-"groonga/issues>`_ を使っています。"
 
 msgid "`TravisCI <https://travis-ci.org/github/groonga/groonga>`_"
 msgstr ""
