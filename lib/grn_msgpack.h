@@ -48,7 +48,7 @@ typedef unsigned int msgpack_size_t;
 #  define MSGPACK_OBJECT_STR_SIZE(object) (object)->via.raw.size
 
 #  define MSGPACK_OBJECT_FLOAT32_VALUE(object) (object)->via.dec
-#  define MSGPACK_OBJECT_FLOAT32_VALUE(object) (object)->via.dec
+#  define MSGPACK_OBJECT_FLOAT64_VALUE(object) (object)->via.dec
 
 #  define MSGPACK_UNPACKER_NEXT(unpacker, unpacked)     \
   msgpack_unpacker_next((unpacker), (unpacked))
