@@ -20,6 +20,7 @@
 #include "grn.h"
 #include "grn_ctx_impl.h"
 #include "grn_dat.h"
+#include "grn_float.h"
 #include "grn_hash.h"
 #include "grn_ii.h"
 #include "grn_index_column.h"
@@ -44,11 +45,16 @@ grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
     case GRN_DB_UINT32 :
       return GRN_UINT32_VALUE(obj) != 0;
       break;
+    case GRN_DB_FLOAT32 : {
+      float float_value;
+      float_value = GRN_FLOAT32_VALUE(obj);
+      return grn_float32_is_zero(float_value);
+      break;
+    }
     case GRN_DB_FLOAT : {
       double float_value;
       float_value = GRN_FLOAT_VALUE(obj);
-      return (float_value < -DBL_EPSILON ||
-              DBL_EPSILON < float_value);
+      return grn_float_is_zero(float_value);
       break;
     }
     case GRN_DB_SHORT_TEXT :

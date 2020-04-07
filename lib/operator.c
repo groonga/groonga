@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2017 Brazil
-  Copyright(C) 2018-2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2014-2017  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,13 +19,12 @@
 
 #include "grn.h"
 #include "grn_db.h"
+#include "grn_float.h"
 #include "grn_str.h"
 #include "grn_normalizer.h"
 #include "grn_onigmo.h"
 
 #include <string.h>
-#include <math.h>
-#include <float.h>
 
 static const char *operator_names[] = {
   "push",
@@ -191,8 +190,11 @@ grn_operator_to_exec_func(grn_operator op)
   case GRN_DB_UINT64 :\
     r = (x_ == GRN_UINT64_VALUE(y));\
     break;\
+  case GRN_DB_FLOAT32 :\
+    r = grn_float32_is_zero(x_ - GRN_FLOAT32_VALUE(y));\
+    break;\
   case GRN_DB_FLOAT :\
-    r = (fabs(x_ - GRN_FLOAT_VALUE(y)) < DBL_EPSILON);\
+    r = grn_float_is_zero(x_ - GRN_FLOAT_VALUE(y));\
     break;\
   case GRN_DB_SHORT_TEXT :\
   case GRN_DB_TEXT :\
@@ -273,6 +275,9 @@ grn_operator_to_exec_func(grn_operator op)
       case GRN_DB_UINT64 :\
         r = (x_ == GRN_UINT64_VALUE(y));\
         break;\
+      case GRN_DB_FLOAT32 :\
+        r = (x_ == GRN_TIME_PACK(GRN_FLOAT32_VALUE(y), 0));\
+        break;\
       case GRN_DB_FLOAT :\
         r = (x_ == GRN_TIME_PACK(GRN_FLOAT_VALUE(y), 0));\
         break;\
@@ -302,6 +307,44 @@ grn_operator_to_exec_func(grn_operator op)
       DO_EQ_SUB(y, r);\
     }\
     break;\
+  case GRN_DB_FLOAT32 :\
+    {\
+      float x_ = GRN_FLOAT32_VALUE(x);\
+      switch (y->header.domain) {\
+      case GRN_DB_INT32 :\
+        r = ((x_ <= GRN_INT32_VALUE(y)) && (x_ >= GRN_INT32_VALUE(y)));\
+        break;\
+      case GRN_DB_UINT32 :\
+        r = ((x_ <= GRN_UINT32_VALUE(y)) && (x_ >= GRN_UINT32_VALUE(y)));\
+        break;\
+      case GRN_DB_INT64 :\
+      case GRN_DB_TIME :\
+        r = ((x_ <= GRN_INT64_VALUE(y)) && (x_ >= GRN_INT64_VALUE(y)));\
+        break;\
+      case GRN_DB_UINT64 :\
+        r = ((x_ <= GRN_UINT64_VALUE(y)) && (x_ >= GRN_UINT64_VALUE(y)));\
+        break;\
+      case GRN_DB_FLOAT32 :\
+        r = ((x_ <= GRN_FLOAT32_VALUE(y)) && (x_ >= GRN_FLOAT32_VALUE(y)));\
+        break;\
+      case GRN_DB_FLOAT :\
+        r = ((x_ <= GRN_FLOAT_VALUE(y)) && (x_ >= GRN_FLOAT_VALUE(y)));\
+        break;\
+      case GRN_DB_SHORT_TEXT :\
+      case GRN_DB_TEXT :\
+      case GRN_DB_LONG_TEXT :\
+        {\
+          const char *p_ = GRN_TEXT_VALUE(y);\
+          int i_ = grn_atoi(p_, p_ + GRN_TEXT_LEN(y), NULL);\
+          r = (x_ <= i_ && x_ >= i_);\
+        }\
+        break;\
+      default :\
+        r = GRN_FALSE;\
+        break;\
+      }\
+    }\
+    break;\
   case GRN_DB_FLOAT :\
     {\
       double x_ = GRN_FLOAT_VALUE(x);\
@@ -318,6 +361,9 @@ grn_operator_to_exec_func(grn_operator op)
         break;\
       case GRN_DB_UINT64 :\
         r = ((x_ <= GRN_UINT64_VALUE(y)) && (x_ >= GRN_UINT64_VALUE(y)));\
+        break;\
+      case GRN_DB_FLOAT32 :\
+        r = ((x_ <= GRN_FLOAT32_VALUE(y)) && (x_ >= GRN_FLOAT32_VALUE(y)));\
         break;\
       case GRN_DB_FLOAT :\
         r = ((x_ <= GRN_FLOAT_VALUE(y)) && (x_ >= GRN_FLOAT_VALUE(y)));\
@@ -573,6 +619,9 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
   case GRN_DB_UINT64 :\
     r = (x_ op GRN_UINT64_VALUE(y));\
     break;\
+  case GRN_DB_FLOAT32 :\
+    r = (x_ op GRN_FLOAT32_VALUE(y));\
+    break;\
   case GRN_DB_FLOAT :\
     r = (x_ op GRN_FLOAT_VALUE(y));\
     break;\
@@ -699,6 +748,9 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       case GRN_DB_UINT64 :\
         r = (x_ op GRN_UINT64_VALUE(y));\
         break;\
+      case GRN_DB_FLOAT32 :\
+        r = (x_ op GRN_TIME_PACK(GRN_FLOAT32_VALUE(y), 0));\
+        break;\
       case GRN_DB_FLOAT :\
         r = (x_ op GRN_TIME_PACK(GRN_FLOAT_VALUE(y), 0));\
         break;\
@@ -731,6 +783,12 @@ grn_operator_exec_not_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
   case GRN_DB_UINT64 :\
     {\
       uint64_t x_ = GRN_UINT64_VALUE(x);\
+      DO_COMPARE_SCALAR_SUB(op);\
+    }\
+    break;\
+  case GRN_DB_FLOAT32 :\
+    {\
+      float x_ = GRN_FLOAT32_VALUE(x);\
       DO_COMPARE_SCALAR_SUB(op);\
     }\
     break;\

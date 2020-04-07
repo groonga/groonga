@@ -1,5 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2015 Brazil
+/*
+  Copyright(C) 2010-2015  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -446,7 +448,7 @@ msgpack2json(msgpack_object *o, grn_ctx *ctx, grn_obj *buf)
     GRN_TEXT_PUTC(ctx, buf, ']');
     break;
   case MSGPACK_OBJECT_FLOAT:
-    grn_text_ftoa(ctx, buf, MSGPACK_OBJECT_FLOAT_VALUE(o));
+    grn_text_ftoa(ctx, buf, MSGPACK_OBJECT_FLOAT64_VALUE(o));
     break;
   default:
     print_error("cannot handle this msgpack type.");

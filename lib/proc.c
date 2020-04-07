@@ -1414,6 +1414,13 @@ larger_number_type(grn_id type1, grn_id type2)
   }
 
   switch (type1) {
+  case GRN_DB_FLOAT32 :
+    if (type2 == GRN_DB_FLOAT ||
+        type2 == GRN_DB_TIME) {
+      return type2;
+    } else {
+      return type1;
+    }
   case GRN_DB_FLOAT :
     return type1;
   case GRN_DB_TIME :
@@ -1439,13 +1446,20 @@ smaller_number_type(grn_id type1, grn_id type2)
   }
 
   switch (type1) {
+  case GRN_DB_FLOAT32 :
+    if (type2 == GRN_DB_FLOAT ||
+        type2 == GRN_DB_TIME) {
+      return type1;
+    } else {
+      return type2;
+    }
   case GRN_DB_FLOAT :
     return type1;
   case GRN_DB_TIME :
     if (type2 == GRN_DB_FLOAT) {
-      return type2;
-    } else {
       return type1;
+    } else {
+      return type2;
     }
   default :
     {
@@ -1485,6 +1499,8 @@ is_negative_value(grn_obj *number)
     return GRN_INT64_VALUE(number) < 0;
   case GRN_DB_TIME :
     return GRN_TIME_VALUE(number) < 0;
+  case GRN_DB_FLOAT32 :
+    return GRN_FLOAT32_VALUE(number) < 0;
   case GRN_DB_FLOAT :
     return GRN_FLOAT_VALUE(number) < 0;
   default :
@@ -1579,6 +1595,10 @@ compare_number(grn_ctx *ctx, grn_obj *number1, grn_obj *number2, grn_id type)
     COMPARE_AND_RETURN(uint64_t,
                        GRN_UINT64_VALUE(number1),
                        GRN_UINT64_VALUE(number2));
+  case GRN_DB_FLOAT32 :
+    COMPARE_AND_RETURN(float,
+                       GRN_FLOAT32_VALUE(number1),
+                       GRN_FLOAT32_VALUE(number2));
   case GRN_DB_FLOAT :
     COMPARE_AND_RETURN(double,
                        GRN_FLOAT_VALUE(number1),
@@ -1630,6 +1650,9 @@ get_number_in_grn_uvector(grn_ctx *ctx, grn_obj *uvector, unsigned int offset,
     break;
   case GRN_DB_UINT64 :
     GET_UVECTOR_ELEMENT_AS(UINT64);
+    break;
+  case GRN_DB_FLOAT32 :
+    GET_UVECTOR_ELEMENT_AS(FLOAT32);
     break;
   case GRN_DB_FLOAT :
     GET_UVECTOR_ELEMENT_AS(FLOAT);

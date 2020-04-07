@@ -296,6 +296,22 @@ object_list
       "path": null,
       "size": 8
     },
+    "Float32": {
+      "id": 19,
+      "name": "Float32",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16,
+        "names": "KEY_FLOAT"
+      },
+      "path": null,
+      "size": 4
+    },
     "TokenMecab": {
       "id": 64,
       "name": "TokenMecab",

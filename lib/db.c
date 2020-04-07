@@ -5331,6 +5331,9 @@ grn_uvector_element_size_internal(grn_ctx *ctx, grn_obj *uvector)
     case GRN_DB_UINT64 :
       element_size = sizeof(uint64_t);
       break;
+    case GRN_DB_FLOAT32 :
+      element_size = sizeof(float);
+      break;
     case GRN_DB_FLOAT :
       element_size = sizeof(double);
       break;
@@ -6461,6 +6464,9 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
   case GRN_DB_UINT64 :
     GRN_UINT64_SET(ctx, dest, GRN_BOOL_VALUE(src));
     break;
+  case GRN_DB_FLOAT32 :
+    GRN_FLOAT32_SET(ctx, dest, GRN_BOOL_VALUE(src));
+    break;
   case GRN_DB_FLOAT :
     GRN_FLOAT_SET(ctx, dest, GRN_BOOL_VALUE(src));
     break;
@@ -6487,7 +6493,7 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
   return rc;
 }
 
-#define NUM2DEST(getvalue,totext,tobool,totime,tofloat)\
+#define NUM2DEST(getvalue,totext,tobool,totime,tofloat32,tofloat)\
   switch (dest->header.domain) {\
   case GRN_DB_BOOL :\
     tobool(ctx, dest, getvalue(src));\
@@ -6518,6 +6524,9 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
     break;\
   case GRN_DB_UINT64 :\
     GRN_UINT64_SET(ctx, dest, getvalue(src));\
+    break;\
+  case GRN_DB_FLOAT32 :\
+    tofloat32(ctx, dest, getvalue(src));\
     break;\
   case GRN_DB_FLOAT :\
     tofloat(ctx, dest, getvalue(src));\
@@ -6561,6 +6570,10 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
 } while (0)
 
 #define NUM2BOOL(ctx, dest, value) GRN_BOOL_SET(ctx, dest, value != 0)
+#define FLOAT322BOOL(ctx, dest, value) do {\
+  float value_ = value;\
+  GRN_BOOL_SET(ctx, dest, value_ < -FLT_EPSILON || FLT_EPSILON < value_);\
+} while (0)
 #define FLOAT2BOOL(ctx, dest, value) do {\
   double value_ = value;\
   GRN_BOOL_SET(ctx, dest, value_ < -DBL_EPSILON || DBL_EPSILON < value_);\
@@ -6570,6 +6583,10 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
   GRN_TIME_SET(ctx, dest, (long long int)(value) * GRN_TIME_USEC_PER_SEC);
 #define TIME2TIME(ctx, dest, value)\
   GRN_TIME_SET(ctx, dest, value);
+#define FLOAT322TIME(ctx, dest, value) do {\
+  int64_t usec = llroundf(value * GRN_TIME_USEC_PER_SEC);\
+  GRN_TIME_SET(ctx, dest, usec);\
+} while (0)
 #define FLOAT2TIME(ctx, dest, value) do {\
   int64_t usec = llround(value * GRN_TIME_USEC_PER_SEC);\
   GRN_TIME_SET(ctx, dest, usec);\
@@ -6579,8 +6596,19 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
   GRN_FLOAT_SET(ctx, dest, value);
 #define TIME2FLOAT(ctx, dest, value)\
   GRN_FLOAT_SET(ctx, dest, (double)(value) / GRN_TIME_USEC_PER_SEC);
+#define FLOAT322FLOAT(ctx, dest, value)\
+  GRN_FLOAT_SET(ctx, dest, value);
 #define FLOAT2FLOAT(ctx, dest, value)\
   GRN_FLOAT_SET(ctx, dest, value);
+
+#define NUM2FLOAT32(ctx, dest, value)\
+  GRN_FLOAT32_SET(ctx, dest, value);
+#define TIME2FLOAT32(ctx, dest, value)\
+  GRN_FLOAT32_SET(ctx, dest, (float)(value) / GRN_TIME_USEC_PER_SEC);
+#define FLOAT322FLOAT32(ctx, dest, value)\
+  GRN_FLOAT32_SET(ctx, dest, value);
+#define FLOAT2FLOAT32(ctx, dest, value)\
+  GRN_FLOAT32_SET(ctx, dest, value);
 
 static grn_rc
 grn_obj_cast_text_to_bulk(grn_ctx *ctx,
@@ -6644,20 +6672,31 @@ grn_obj_cast_text_to_bulk(grn_ctx *ctx,
   case GRN_DB_UINT64 :
     TEXT2DEST(int64_t, grn_atoll, GRN_UINT64_SET);
     break;
+  case GRN_DB_FLOAT32 :
   case GRN_DB_FLOAT :
     {
-      double d;
       char *end;
       grn_obj buf;
       GRN_TEXT_INIT(&buf, 0);
       GRN_TEXT_PUT(ctx, &buf, GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
       GRN_TEXT_PUTC(ctx, &buf, '\0');
       errno = 0;
-      d = strtod(GRN_TEXT_VALUE(&buf), &end);
-      if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
-        GRN_FLOAT_SET(ctx, dest, d);
+      if (dest->header.domain == GRN_DB_FLOAT32) {
+        float value;
+        value = strtof(GRN_TEXT_VALUE(&buf), &end);
+        if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
+          GRN_FLOAT32_SET(ctx, dest, value);
+        } else {
+          rc = GRN_INVALID_ARGUMENT;
+        }
       } else {
-        rc = GRN_INVALID_ARGUMENT;
+        double value;
+        value = strtod(GRN_TEXT_VALUE(&buf), &end);
+        if (!errno && end + 1 == GRN_BULK_CURR(&buf)) {
+          GRN_FLOAT_SET(ctx, dest, value);
+        } else {
+          rc = GRN_INVALID_ARGUMENT;
+        }
       }
       GRN_OBJ_FIN(ctx, &buf);
     }
@@ -6823,34 +6862,91 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
     rc = grn_obj_cast_bool(ctx, src, dest, add_record_if_not_exist);
     break;
   case GRN_DB_INT8 :
-    NUM2DEST(GRN_INT8_VALUE, grn_text_itoa, NUM2BOOL, NUM2TIME, NUM2FLOAT);
+    NUM2DEST(GRN_INT8_VALUE,
+             grn_text_itoa,
+             NUM2BOOL,
+             NUM2TIME,
+             NUM2FLOAT32,
+             NUM2FLOAT);
     break;
   case GRN_DB_UINT8 :
-    NUM2DEST(GRN_UINT8_VALUE, grn_text_lltoa, NUM2BOOL, NUM2TIME, NUM2FLOAT);
+    NUM2DEST(GRN_UINT8_VALUE,
+             grn_text_lltoa,
+             NUM2BOOL,
+             NUM2TIME,
+             NUM2FLOAT32,
+             NUM2FLOAT);
     break;
   case GRN_DB_INT16 :
-    NUM2DEST(GRN_INT16_VALUE, grn_text_itoa, NUM2BOOL, NUM2TIME, NUM2FLOAT);
+    NUM2DEST(GRN_INT16_VALUE,
+             grn_text_itoa,
+             NUM2BOOL,
+             NUM2TIME,
+             NUM2FLOAT32,
+             NUM2FLOAT);
     break;
   case GRN_DB_UINT16 :
-    NUM2DEST(GRN_UINT16_VALUE, grn_text_lltoa, NUM2BOOL, NUM2TIME, NUM2FLOAT);
+    NUM2DEST(GRN_UINT16_VALUE,
+             grn_text_lltoa,
+             NUM2BOOL,
+             NUM2TIME,
+             NUM2FLOAT32,
+             NUM2FLOAT);
     break;
   case GRN_DB_INT32 :
-    NUM2DEST(GRN_INT32_VALUE, grn_text_itoa, NUM2BOOL, NUM2TIME, NUM2FLOAT);
+    NUM2DEST(GRN_INT32_VALUE,
+             grn_text_itoa,
+             NUM2BOOL,
+             NUM2TIME,
+             NUM2FLOAT32,
+             NUM2FLOAT);
     break;
   case GRN_DB_UINT32 :
-    NUM2DEST(GRN_UINT32_VALUE, grn_text_lltoa, NUM2BOOL, NUM2TIME, NUM2FLOAT);
+    NUM2DEST(GRN_UINT32_VALUE,
+             grn_text_lltoa,
+             NUM2BOOL,
+             NUM2TIME,
+             NUM2FLOAT32,
+             NUM2FLOAT);
     break;
   case GRN_DB_INT64 :
-    NUM2DEST(GRN_INT64_VALUE, grn_text_lltoa, NUM2BOOL, NUM2TIME, NUM2FLOAT);
+    NUM2DEST(GRN_INT64_VALUE,
+             grn_text_lltoa,
+             NUM2BOOL,
+             NUM2TIME,
+             NUM2FLOAT32,
+             NUM2FLOAT);
     break;
   case GRN_DB_TIME :
-    NUM2DEST(GRN_TIME_VALUE, grn_text_lltoa, NUM2BOOL, TIME2TIME, TIME2FLOAT);
+    NUM2DEST(GRN_TIME_VALUE,
+             grn_text_lltoa,
+             NUM2BOOL,
+             TIME2TIME,
+             TIME2FLOAT32,
+             TIME2FLOAT);
     break;
   case GRN_DB_UINT64 :
-    NUM2DEST(GRN_UINT64_VALUE, grn_text_lltoa, NUM2BOOL, NUM2TIME, NUM2FLOAT);
+    NUM2DEST(GRN_UINT64_VALUE,
+             grn_text_lltoa,
+             NUM2BOOL,
+             NUM2TIME,
+             NUM2FLOAT32,
+             NUM2FLOAT);
+    break;
+  case GRN_DB_FLOAT32 :
+    NUM2DEST(GRN_FLOAT32_VALUE,
+             grn_text_f32toa,
+             FLOAT322BOOL,
+             FLOAT322TIME,
+             FLOAT322FLOAT32,
+             FLOAT322FLOAT);
     break;
   case GRN_DB_FLOAT :
-    NUM2DEST(GRN_FLOAT_VALUE, grn_text_ftoa, FLOAT2BOOL, FLOAT2TIME,
+    NUM2DEST(GRN_FLOAT_VALUE,
+             grn_text_ftoa,
+             FLOAT2BOOL,
+             FLOAT2TIME,
+             FLOAT2FLOAT32,
              FLOAT2FLOAT);
     break;
   case GRN_DB_SHORT_TEXT :
@@ -7426,6 +7522,15 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
     if (s == sizeof(int64_t)) {\
       int64_t *vp = (int64_t *)p;\
       *vp op *(int64_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_FLOAT32 :\
+    if (s == sizeof(float)) {\
+      float *vp = (float *)p;\
+      *vp op *(float *)v;\
       rc = GRN_SUCCESS;\
     } else {\
       rc = GRN_INVALID_ARGUMENT;\
@@ -12353,6 +12458,7 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
     case GRN_DB_UINT32 :
     case GRN_DB_INT64 :
     case GRN_DB_UINT64 :
+    case GRN_DB_FLOAT32 :
     case GRN_DB_FLOAT :
     case GRN_DB_TIME :
     case GRN_DB_TOKYO_GEO_POINT :
@@ -14473,6 +14579,9 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   obj = deftype(ctx, "WGS84GeoPoint",
                 GRN_OBJ_KEY_GEO_POINT, sizeof(grn_geo_point));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_WGS84_GEO_POINT) { return GRN_FILE_CORRUPT; }
+  obj = deftype(ctx, "Float32",
+                GRN_OBJ_KEY_FLOAT, sizeof(float));
+  if (!obj || DB_OBJ(obj)->id != GRN_DB_FLOAT32) { return GRN_FILE_CORRUPT; }
   for (id = grn_db_curr_id(ctx, db) + 1; id < GRN_DB_MECAB; id++) {
     grn_itoh(id, buf + 3, 2);
     grn_obj_register(ctx, db, buf, 5);

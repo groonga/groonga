@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -40,12 +41,14 @@ typedef unsigned int msgpack_size_t;
   msgpack_pack_raw_body(packer, value, size)
 
 #  define MSGPACK_OBJECT_STR MSGPACK_OBJECT_RAW
-#  define MSGPACK_OBJECT_FLOAT MSGPACK_OBJECT_DOUBLE
+#  define MSGPACK_OBJECT_FLOAT32 MSGPACK_OBJECT_DOUBLE
+#  define MSGPACK_OBJECT_FLOAT64 MSGPACK_OBJECT_DOUBLE
 
 #  define MSGPACK_OBJECT_STR_PTR(object)  (object)->via.raw.ptr
 #  define MSGPACK_OBJECT_STR_SIZE(object) (object)->via.raw.size
 
-#  define MSGPACK_OBJECT_FLOAT_VALUE(object) (object)->via.dec
+#  define MSGPACK_OBJECT_FLOAT32_VALUE(object) (object)->via.dec
+#  define MSGPACK_OBJECT_FLOAT32_VALUE(object) (object)->via.dec
 
 #  define MSGPACK_UNPACKER_NEXT(unpacker, unpacked)     \
   msgpack_unpacker_next((unpacker), (unpacked))
@@ -55,7 +58,8 @@ typedef size_t msgpack_size_t;
 #  define MSGPACK_OBJECT_STR_PTR(object)  (object)->via.str.ptr
 #  define MSGPACK_OBJECT_STR_SIZE(object) (object)->via.str.size
 
-#  define MSGPACK_OBJECT_FLOAT_VALUE(object) (object)->via.f64
+#  define MSGPACK_OBJECT_FLOAT32_VALUE(object) (object)->via.f64
+#  define MSGPACK_OBJECT_FLOAT64_VALUE(object) (object)->via.f64
 
 #  define MSGPACK_UNPACKER_NEXT(unpacker, unpacked)                     \
   msgpack_unpacker_next((unpacker), (unpacked)) == MSGPACK_UNPACK_SUCCESS

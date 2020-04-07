@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2018 Brazil
+  Copyright(C) 2010-2018  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -308,6 +309,15 @@ grn_expr_executor_init_general(grn_ctx *ctx,
       set(ctx, res, integer_operation(x_, y_));                         \
     }                                                                   \
     break;                                                              \
+  case GRN_DB_FLOAT32 :                                                 \
+    {                                                                   \
+      float y_;                                                         \
+      y_ = GRN_FLOAT32_VALUE(y);                                        \
+      right_expression_check(y_);                                       \
+      grn_obj_reinit(ctx, res, GRN_DB_FLOAT32, 0);                      \
+      GRN_FLOAT32_SET(ctx, res, float_operation(x_, y_));               \
+    }                                                                   \
+    break;                                                              \
   case GRN_DB_FLOAT :                                                   \
     {                                                                   \
       double y_;                                                        \
@@ -487,6 +497,20 @@ grn_expr_executor_init_general(grn_ctx *ctx,
                                             invalid_type_error);        \
     }                                                                   \
     break;                                                              \
+  case GRN_DB_FLOAT32 :                                                 \
+    {                                                                   \
+      float x_;                                                         \
+      x_ = GRN_FLOAT32_VALUE(x);                                        \
+      left_expression_check(x_);                                        \
+      NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_FLOAT32_SET,            \
+                                            GRN_FLOAT32_VALUE,          \
+                                            x_, y, res, GRN_DB_FLOAT32, \
+                                            float_operation,            \
+                                            float_operation,            \
+                                            right_expression_check,     \
+                                            invalid_type_error);        \
+    }                                                                   \
+    break;                                                              \
   case GRN_DB_FLOAT :                                                   \
     {                                                                   \
       double x_;                                                        \
@@ -641,6 +665,15 @@ grn_expr_executor_init_general(grn_ctx *ctx,
       set(ctx, res, unsigned_integer_operation(x_, y_));                \
     }                                                                   \
     break;                                                              \
+  case GRN_DB_FLOAT32 :                                                 \
+    {                                                                   \
+      float y_;                                                         \
+      y_ = GRN_FLOAT32_VALUE(y);                                        \
+      ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                     \
+      res->header.domain = GRN_DB_FLOAT32;                              \
+      GRN_FLOAT32_SET(ctx, res, float_operation(x_, y_));               \
+    }                                                                   \
+    break;                                                              \
   case GRN_DB_FLOAT :                                                   \
     {                                                                   \
       double y_;                                                        \
@@ -780,6 +813,18 @@ grn_expr_executor_init_general(grn_ctx *ctx,
                                         x_, y, res,                     \
                                         unsigned_integer_operation,     \
                                         unsigned_integer_operation,     \
+                                        float_operation);               \
+    }                                                                   \
+    break;                                                              \
+  case GRN_DB_FLOAT32 :                                                 \
+    {                                                                   \
+      float x_;                                                         \
+      x_ = GRN_FLOAT32_VALUE(x);                                        \
+      DIVISION_OPERATION_DISPATCH_RIGHT(GRN_FLOAT32_SET,                \
+                                        GRN_FLOAT32_VALUE,              \
+                                        x_, y, res,                     \
+                                        float_operation,                \
+                                        float_operation,                \
                                         float_operation);               \
     }                                                                   \
     break;                                                              \
@@ -927,6 +972,15 @@ grn_expr_executor_init_general(grn_ctx *ctx,
       }                                                                 \
     }                                                                   \
     break;                                                              \
+  case GRN_DB_FLOAT32 :                                                 \
+    {                                                                   \
+      float x_;                                                         \
+      x_ = GRN_FLOAT32_VALUE(x);                                        \
+      left_expression_check(x_);                                        \
+      grn_obj_reinit(ctx, res, GRN_DB_FLOAT32, 0);                      \
+      GRN_FLOAT32_SET(ctx, res, float_operation(x_));                   \
+    }                                                                   \
+    break;                                                              \
   case GRN_DB_FLOAT :                                                   \
     {                                                                   \
       double x_;                                                        \
@@ -997,6 +1051,10 @@ grn_expr_executor_init_general(grn_ctx *ctx,
   case GRN_DB_UINT64 :                                                  \
     GRN_UINT64_INIT(&value, 0);                                         \
     GRN_UINT64_SET(ctx, &value, delta);                                 \
+    break;                                                              \
+  case GRN_DB_FLOAT32 :                                                 \
+    GRN_FLOAT32_INIT(&value, 0);                                        \
+    GRN_FLOAT32_SET(ctx, &value, delta);                                \
     break;                                                              \
   case GRN_DB_FLOAT :                                                   \
     GRN_FLOAT_INIT(&value, 0);                                          \
@@ -1146,6 +1204,9 @@ grn_expr_exec_get_member_vector(grn_ctx *ctx,
         break;
       case GRN_DB_UINT64 :
         GET_UVECTOR_ELEMENT_AS(UINT64);
+        break;
+      case GRN_DB_FLOAT32 :
+        GET_UVECTOR_ELEMENT_AS(FLOAT32);
         break;
       case GRN_DB_FLOAT :
         GET_UVECTOR_ELEMENT_AS(FLOAT);

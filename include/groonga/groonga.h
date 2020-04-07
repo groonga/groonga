@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -484,7 +484,8 @@ typedef enum {
   GRN_DB_TEXT,
   GRN_DB_LONG_TEXT,
   GRN_DB_TOKYO_GEO_POINT,
-  GRN_DB_WGS84_GEO_POINT
+  GRN_DB_WGS84_GEO_POINT,
+  GRN_DB_FLOAT32
 } grn_builtin_type;
 
 typedef enum {
@@ -1301,6 +1302,7 @@ GRN_API grn_rc grn_bulk_fin(grn_ctx *ctx, grn_obj *bulk);
 GRN_API grn_rc grn_text_itoa(grn_ctx *ctx, grn_obj *bulk, int i);
 GRN_API grn_rc grn_text_itoa_padded(grn_ctx *ctx, grn_obj *bulk, int i, char ch, size_t len);
 GRN_API grn_rc grn_text_lltoa(grn_ctx *ctx, grn_obj *bulk, long long int i);
+GRN_API grn_rc grn_text_f32toa(grn_ctx *ctx, grn_obj *bulk, float f);
 GRN_API grn_rc grn_text_ftoa(grn_ctx *ctx, grn_obj *bulk, double d);
 GRN_API grn_rc grn_text_itoh(grn_ctx *ctx, grn_obj *bulk, unsigned int i, size_t len);
 GRN_API grn_rc grn_text_itob(grn_ctx *ctx, grn_obj *bulk, grn_id id);
@@ -1390,6 +1392,8 @@ GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_INT64)
 #define GRN_UINT64_INIT(obj,flags) \
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_UINT64)
+#define GRN_FLOAT32_INIT(obj,flags) \
+  GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_FLOAT32)
 #define GRN_FLOAT_INIT(obj,flags) \
   GRN_VALUE_FIX_SIZE_INIT(obj, flags, GRN_DB_FLOAT)
 #define GRN_TIME_INIT(obj,flags) \
@@ -1439,6 +1443,10 @@ GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_UINT64_SET(ctx,obj,val) do {\
   uint64_t _val = (uint64_t)(val);\
   grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(uint64_t));\
+} while (0)
+#define GRN_FLOAT32_SET(ctx,obj,val) do {\
+  float _val = (float)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(float));\
 } while (0)
 #define GRN_FLOAT_SET(ctx,obj,val) do {\
   double _val = (double)(val);\
@@ -1512,6 +1520,11 @@ GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
                       (offset) * sizeof(uint64_t),\
                       sizeof(uint64_t));\
 } while (0)
+#define GRN_FLOAT32_SET_AT(ctx,obj,offset,val) do {\
+  float _val = (float)(val);\
+  grn_bulk_write_from((ctx), (obj), (char *)&_val,\
+                      (offset) * sizeof(float), sizeof(float));\
+} while (0)
 #define GRN_FLOAT_SET_AT(ctx,obj,offset,val) do {\
   double _val = (double)(val);\
   grn_bulk_write_from((ctx), (obj), (char *)&_val,\
@@ -1538,6 +1551,7 @@ GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_UINT32_VALUE(obj) (*((uint32_t *)GRN_BULK_HEAD(obj)))
 #define GRN_INT64_VALUE(obj) (*((int64_t *)GRN_BULK_HEAD(obj)))
 #define GRN_UINT64_VALUE(obj) (*((uint64_t *)GRN_BULK_HEAD(obj)))
+#define GRN_FLOAT32_VALUE(obj) (*((float *)GRN_BULK_HEAD(obj)))
 #define GRN_FLOAT_VALUE(obj) (*((double *)GRN_BULK_HEAD(obj)))
 #define GRN_TIME_VALUE GRN_INT64_VALUE
 #define GRN_RECORD_VALUE(obj) (*((grn_id *)GRN_BULK_HEAD(obj)))
@@ -1557,6 +1571,7 @@ GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_UINT32_VALUE_AT(obj,offset) (((uint32_t *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_INT64_VALUE_AT(obj,offset) (((int64_t *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_UINT64_VALUE_AT(obj,offset) (((uint64_t *)GRN_BULK_HEAD(obj))[offset])
+#define GRN_FLOAT32_VALUE_AT(obj,offset) (((float *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_FLOAT_VALUE_AT(obj,offset) (((double *)GRN_BULK_HEAD(obj))[offset])
 #define GRN_TIME_VALUE_AT GRN_INT64_VALUE_AT
 #define GRN_RECORD_VALUE_AT(obj,offset) (((grn_id *)GRN_BULK_HEAD(obj))[offset])
@@ -1595,6 +1610,9 @@ GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
   uint64_t _val = (uint64_t)(val);\
   grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(uint64_t));\
 } while (0)
+#define GRN_FLOAT32_PUT(ctx,obj,val) do {\
+  float _val = (float)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(float));\
+} while (0)
 #define GRN_FLOAT_PUT(ctx,obj,val) do {\
   double _val = (double)(val); grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(double));\
 } while (0)
@@ -1624,6 +1642,7 @@ GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_UINT32_POP(obj, value) GRN_BULK_POP(obj, value, uint32_t, 0)
 #define GRN_INT64_POP(obj, value) GRN_BULK_POP(obj, value, int64_t, 0)
 #define GRN_UINT64_POP(obj, value) GRN_BULK_POP(obj, value, uint64_t, 0)
+#define GRN_FLOAT32_POP(obj, value) GRN_BULK_POP(obj, value, float, 0.0)
 #define GRN_FLOAT_POP(obj, value) GRN_BULK_POP(obj, value, double, 0.0)
 #define GRN_TIME_POP GRN_INT64_POP
 #define GRN_RECORD_POP(obj, value) GRN_BULK_POP(obj, value, grn_id, GRN_ID_NIL)
@@ -1639,6 +1658,7 @@ GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
 #define GRN_UINT32_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, uint32_t)
 #define GRN_INT64_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, int64_t)
 #define GRN_UINT64_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, uint64_t)
+#define GRN_FLOAT32_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, float)
 #define GRN_FLOAT_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, double)
 #define GRN_TIME_VECTOR_SIZE GRN_INT64_VECTOR_SIZE
 #define GRN_RECORD_VECTOR_SIZE(obj) GRN_BULK_VECTOR_SIZE(obj, grn_id)

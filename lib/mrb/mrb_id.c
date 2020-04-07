@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014 Brazil
+  Copyright(C) 2014  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -75,5 +76,7 @@ grn_mrb_id_init(grn_ctx *ctx)
                    mrb_fixnum_value(GRN_DB_TOKYO_GEO_POINT));
   mrb_define_const(mrb, id_module, "WGS84_GEO_POINT",
                    mrb_fixnum_value(GRN_DB_WGS84_GEO_POINT));
+  mrb_define_const(mrb, id_module, "FLOAT32",
+                   mrb_fixnum_value(GRN_DB_FLOAT32));
 }
 #endif

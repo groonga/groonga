@@ -1,0 +1,44 @@
+table_create Numbers TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Numbers number COLUMN_SCALAR Float32
+[[0,0.0,0.0],true]
+load --table Numbers
+[
+{"number": 101.0001},
+{"number": -10.1},
+{"number": 100.9}
+]
+[[0,0.0,0.0],3]
+select --table Numbers --filter 'number < 101'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "number",
+          "Float32"
+        ]
+      ],
+      [
+        2,
+        -10.10000038146973
+      ],
+      [
+        3,
+        100.9000015258789
+      ]
+    ]
+  ]
+]

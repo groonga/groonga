@@ -153,6 +153,8 @@ namespace grnarrow {
       return arrow::uint64();
     case GRN_DB_INT64 :
       return arrow::int64();
+    case GRN_DB_FLOAT32 :
+      return arrow::float32();
     case GRN_DB_FLOAT :
       return arrow::float64();
     case GRN_DB_TIME :
@@ -308,20 +310,20 @@ namespace grnarrow {
     }
 
     arrow::Status Visit(const arrow::HalfFloatArray &array) {
-      grn_obj_reinit(ctx_, &bulk_, GRN_DB_FLOAT, 0);
+      grn_obj_reinit(ctx_, &bulk_, GRN_DB_FLOAT32, 0);
       return add_records(array,
                          [&](int64_t i) {
                            const auto &value = array.Value(i);
-                           GRN_FLOAT_SET(ctx_, &bulk_, value);
+                           GRN_FLOAT32_SET(ctx_, &bulk_, value);
                          });
     }
 
     arrow::Status Visit(const arrow::FloatArray &array) {
-      grn_obj_reinit(ctx_, &bulk_, GRN_DB_FLOAT, 0);
+      grn_obj_reinit(ctx_, &bulk_, GRN_DB_FLOAT32, 0);
       return add_records(array,
                          [&](int64_t i) {
                            const auto &value = array.Value(i);
-                           GRN_FLOAT_SET(ctx_, &bulk_, value);
+                           GRN_FLOAT32_SET(ctx_, &bulk_, value);
                          });
     }
 
@@ -537,15 +539,15 @@ namespace grnarrow {
 
     arrow::Status Visit(const arrow::HalfFloatArray &array) override {
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_FLOAT, 0);
-                          GRN_FLOAT_SET(ctx_, &buffer_, array.Value(index_));
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_FLOAT32, 0);
+                          GRN_FLOAT32_SET(ctx_, &buffer_, array.Value(index_));
                         });
     }
 
     arrow::Status Visit(const arrow::FloatArray &array) override {
       return load_value([&]() {
-                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_FLOAT, 0);
-                          GRN_FLOAT_SET(ctx_, &buffer_, array.Value(index_));
+                          grn_obj_reinit(ctx_, &buffer_, GRN_DB_FLOAT32, 0);
+                          GRN_FLOAT32_SET(ctx_, &buffer_, array.Value(index_));
                         });
     }
 
@@ -924,6 +926,8 @@ namespace grnarrow {
         break;
       case arrow::Type::HALF_FLOAT :
       case arrow::Type::FLOAT :
+        *type_id = GRN_DB_FLOAT32;
+        break;
       case arrow::Type::DOUBLE :
         *type_id = GRN_DB_FLOAT;
         break;
@@ -1194,6 +1198,9 @@ namespace grnarrow {
         case GRN_DB_INT64 :
           status = build_int64_array(ids, grn_column, &column);
           break;
+        case GRN_DB_FLOAT32 :
+          status = build_float_array(ids, grn_column, &column);
+          break;
         case GRN_DB_FLOAT :
           status = build_double_array(ids, grn_column, &column);
           break;
@@ -1332,6 +1339,19 @@ namespace grnarrow {
         auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
         ARROW_RETURN_NOT_OK(
           builder.Append(*(reinterpret_cast<const int64_t *>(data))));
+      }
+      return builder.Finish(array);
+    }
+
+    arrow::Status build_float_array(std::vector<grn_id> &ids,
+                                    grn_obj *grn_column,
+                                    std::shared_ptr<arrow::Array> *array) {
+      arrow::FloatBuilder builder(arrow::default_memory_pool());
+      for (auto id : ids) {
+        uint32_t size;
+        auto data = grn_obj_get_value_(ctx_, grn_column, id, &size);
+        ARROW_RETURN_NOT_OK(
+          builder.Append(*(reinterpret_cast<const float *>(data))));
       }
       return builder.Finish(array);
     }

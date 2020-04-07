@@ -575,6 +575,38 @@ grn_output_uint64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, u
 }
 
 void
+grn_output_float32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, float value)
+{
+  put_delimiter(ctx, outbuf, output_type);
+  switch (output_type) {
+  case GRN_CONTENT_JSON:
+    grn_text_f32toa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_TSV:
+    grn_text_f32toa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_XML:
+    GRN_TEXT_PUTS(ctx, outbuf, "<FLOAT32>");
+    grn_text_f32toa(ctx, outbuf, value);
+    GRN_TEXT_PUTS(ctx, outbuf, "</FLOAT32>");
+    break;
+  case GRN_CONTENT_MSGPACK :
+#ifdef GRN_WITH_MESSAGE_PACK
+    msgpack_pack_float(&ctx->impl->output.msgpacker, value);
+#endif
+    break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    grn_text_f32toa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_APACHE_ARROW :
+    break;
+  case GRN_CONTENT_NONE:
+    break;
+  }
+  INCR_LENGTH;
+}
+
+void
 grn_output_float(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, double value)
 {
   put_delimiter(ctx, outbuf, output_type);
@@ -1106,6 +1138,10 @@ grn_output_bulk(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   case GRN_DB_UINT64 :
     grn_output_uint64(ctx, outbuf, output_type,
                       GRN_BULK_VSIZE(bulk) ? GRN_UINT64_VALUE(bulk) : 0);
+    break;
+  case GRN_DB_FLOAT32 :
+    grn_output_float32(ctx, outbuf, output_type,
+                       GRN_BULK_VSIZE(bulk) ? GRN_FLOAT32_VALUE(bulk) : 0);
     break;
   case GRN_DB_FLOAT :
     grn_output_float(ctx, outbuf, output_type,

@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2014-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -217,6 +217,13 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
       } else {
         mrb_value_ = mrb_float_value(mrb, value);
       }
+    }
+    break;
+  case GRN_DB_FLOAT32 :
+    {
+      float value;
+      value = GRN_FLOAT32_VALUE(bulk);
+      mrb_value_ = mrb_float_value(mrb, value);
     }
     break;
   case GRN_DB_FLOAT :

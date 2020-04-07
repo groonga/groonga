@@ -18,6 +18,7 @@ libgroonga_c_sources =				\
 	expr_executor.c				\
 	file_lock.c				\
 	file_reader.c				\
+	float.c					\
 	geo.c					\
 	grn.h					\
 	grn_alloc.h				\
@@ -37,6 +38,7 @@ libgroonga_c_sources =				\
 	grn_expr_code.h				\
 	grn_expr_executor.h			\
 	grn_file_lock.h				\
+	grn_float.h				\
 	grn_geo.h				\
 	grn_hash.h				\
 	grn_ii.h				\

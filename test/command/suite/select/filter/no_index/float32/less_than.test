@@ -1,0 +1,11 @@
+table_create Numbers TABLE_NO_KEY
+column_create Numbers number COLUMN_SCALAR Float32
+
+load --table Numbers
+[
+{"number": 101.0001},
+{"number": -10.1},
+{"number": 100.9}
+]
+
+select --table Numbers --filter 'number < 101'

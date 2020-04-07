@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -33,10 +34,10 @@ GRN_API grn_rc grn_vector_add_element(grn_ctx *ctx, grn_obj *vector,
 GRN_API unsigned int grn_vector_get_element(grn_ctx *ctx, grn_obj *vector,
                                             unsigned int offset, const char **str,
                                             unsigned int *weight, grn_id *domain);
-GRN_API grn_bool grn_vector_get_element_bool(grn_ctx *ctx,
-                                             grn_obj *vector,
-                                             unsigned int offset,
-                                             grn_bool default_value);
+GRN_API bool grn_vector_get_element_bool(grn_ctx *ctx,
+                                         grn_obj *vector,
+                                         unsigned int offset,
+                                         bool default_value);
 GRN_API int8_t grn_vector_get_element_int8(grn_ctx *ctx,
                                            grn_obj *vector,
                                            unsigned int offset,

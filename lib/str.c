@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2017  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2146,72 +2146,55 @@ grn_text_ulltoa(grn_ctx *ctx, grn_obj *buf, unsigned long long int i)
   return rc;
 }
 
-grn_inline static void
-ftoa_(grn_ctx *ctx, grn_obj *buf, double d)
+static grn_inline grn_rc
+grn_text_ftoa_adjust(grn_ctx *ctx, grn_obj *buf, size_t before_size)
 {
-  char *start;
-  size_t before_size;
-  size_t len;
-#define DIGIT_NUMBER 16
-#define FIRST_BUFFER_SIZE (DIGIT_NUMBER + 4)
-  before_size = GRN_BULK_VSIZE(buf);
-  grn_bulk_reserve(ctx, buf, FIRST_BUFFER_SIZE);
-  grn_text_printf(ctx, buf, "%#.*g", DIGIT_NUMBER, d);
-  len = GRN_BULK_VSIZE(buf) - before_size;
-  start = GRN_BULK_CURR(buf) - len;
-#undef FIRST_BUFFER_SIZE
-#undef DIGIT_NUMBER
-  if (start[len - 1] == '.') {
+  size_t length = GRN_TEXT_LEN(buf) - before_size;
+  char *start = GRN_BULK_CURR(buf) - length;
+  if (start[length - 1] == '.') {
     GRN_TEXT_PUTC(ctx, buf, '0');
+    return GRN_SUCCESS;
   } else {
     char *p, *q;
-    start[len] = '\0';
+    start[length] = '\0';
     if ((p = strchr(start, 'e'))) {
-      for (q = p; *(q - 2) != '.' && *(q - 1) == '0'; q--) { len--; }
-      grn_memmove(q, p, start + len - q);
+      for (q = p; *(q - 2) != '.' && *(q - 1) == '0'; q--) {
+        length--;
+      }
+      grn_memmove(q, p, start + length - q);
     } else {
-      for (q = start + len; *(q - 2) != '.' && *(q - 1) == '0'; q--) { len--; }
+      for (q = start + length; *(q - 2) != '.' && *(q - 1) == '0'; q--) {
+        length--;
+      }
     }
-    grn_bulk_truncate(ctx, buf, before_size + len);
+    return grn_bulk_truncate(ctx, buf, before_size + length);
   }
+}
+
+grn_rc
+grn_text_f32toa(grn_ctx *ctx, grn_obj *buf, float f)
+{
+#define DIGIT_NUMBER 16
+  size_t before_size = GRN_TEXT_LEN(buf);
+  grn_rc rc = grn_text_printf(ctx, buf, "%#.*g", DIGIT_NUMBER, f);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  return grn_text_ftoa_adjust(ctx, buf, before_size);
+#undef DIGIT_NUMBER
 }
 
 grn_rc
 grn_text_ftoa(grn_ctx *ctx, grn_obj *buf, double d)
 {
-  grn_rc rc = GRN_SUCCESS;
-  unsigned int required_size = 32;
-  if (GRN_BULK_REST(buf) < required_size) {
-    unsigned int new_size;
-    new_size = grn_bulk_compute_new_size(ctx,
-                                         buf,
-                                         GRN_BULK_VSIZE(buf) + required_size);
-    if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
+#define DIGIT_NUMBER 16
+  size_t before_size = GRN_TEXT_LEN(buf);
+  grn_rc rc = grn_text_printf(ctx, buf, "%#.*g", DIGIT_NUMBER, d);
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
-#ifdef HAVE_FPCLASSIFY
-  switch (fpclassify(d)) {
-  case FP_NAN :
-    GRN_TEXT_PUTS(ctx, buf, "NaN");
-    break;
-  case FP_INFINITE :
-    GRN_TEXT_PUTS(ctx, buf, d > 0 ? "Infinity" : "-Infinity");
-    break;
-  default :
-    ftoa_(ctx, buf, d);
-    break;
-  }
-#else /* HAVE_FPCLASSIFY */
-  if (d == d) {
-    if (d != 0 && ((d / 2.0) == d)) {
-      GRN_TEXT_PUTS(ctx, buf, d > 0 ? "Infinity" : "-Infinity");
-    } else {
-      ftoa_(ctx, buf, d);
-    }
-  } else {
-    GRN_TEXT_PUTS(ctx, buf, "NaN");
-  }
-#endif /* HAVE_FPCLASSIFY */
-  return rc;
+  return grn_text_ftoa_adjust(ctx, buf, before_size);
+#undef DIGIT_NUMBER
 }
 
 grn_rc
@@ -2594,10 +2577,10 @@ grn_text_printf(grn_ctx *ctx, grn_obj *bulk, const char *format, ...)
   va_list args;
 
   va_start(args, format);
-  grn_text_vprintf(ctx, bulk, format, args);
+  grn_rc rc = grn_text_vprintf(ctx, bulk, format, args);
   va_end(args);
 
-  return GRN_SUCCESS;
+  return rc;
 }
 
 grn_rc
@@ -2848,6 +2831,9 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       break;
     case GRN_DB_UINT64 :
       grn_text_ulltoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_UINT64_VALUE(obj) : 0);
+      break;
+    case GRN_DB_FLOAT32 :
+      grn_text_f32toa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_FLOAT32_VALUE(obj) : 0);
       break;
     case GRN_DB_FLOAT :
       grn_text_ftoa(ctx, bulk, GRN_BULK_VSIZE(obj) ? GRN_FLOAT_VALUE(obj) : 0);

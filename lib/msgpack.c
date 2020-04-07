@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2018 Brazil
+  Copyright(C) 2018  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -70,6 +71,9 @@ grn_msgpack_pack_raw_internal(grn_ctx *ctx,
     break;
   case GRN_DB_UINT64 :
     msgpack_pack_uint64(packer, *((uint64_t *)(value)));
+    break;
+  case GRN_DB_FLOAT32 :
+    msgpack_pack_float(packer, *((float *)(value)));
     break;
   case GRN_DB_FLOAT :
     msgpack_pack_double(packer, *((double *)(value)));
@@ -173,10 +177,18 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
                              0,
                              GRN_DB_UINT64);
       break;
-    case MSGPACK_OBJECT_FLOAT :
+    case MSGPACK_OBJECT_FLOAT32 :
       grn_vector_add_element(ctx,
                              vector,
-                             (const char *)&(MSGPACK_OBJECT_FLOAT_VALUE(element)),
+                             (const char *)&(MSGPACK_OBJECT_FLOAT32_VALUE(element)),
+                             sizeof(float),
+                             0,
+                             GRN_DB_FLOAT32);
+      break;
+    case MSGPACK_OBJECT_FLOAT64 :
+      grn_vector_add_element(ctx,
+                             vector,
+                             (const char *)&(MSGPACK_OBJECT_FLOAT64_VALUE(element)),
                              sizeof(double),
                              0,
                              GRN_DB_FLOAT);

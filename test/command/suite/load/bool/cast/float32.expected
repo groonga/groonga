@@ -1,0 +1,49 @@
+table_create  Entries       TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Entries score COLUMN_SCALAR  Float32
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"_key": "Special news!",  "score": true},
+{"_key": "Surprise news!", "score": false}
+]
+[[0,0.0,0.0],2]
+select Entries
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "score",
+          "Float32"
+        ]
+      ],
+      [
+        1,
+        "Special news!",
+        1.0
+      ],
+      [
+        2,
+        "Surprise news!",
+        0.0
+      ]
+    ]
+  ]
+]

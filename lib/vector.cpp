@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2018 Brazil
+  Copyright(C) 2018  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,31 @@
 
 #include "grn.h"
 #include "grn_ctx.h"
+#include "grn_float.h"
 
 namespace grn {
+  namespace {
+    template <typename NUMERIC, typename FLOAT>
+    NUMERIC
+    cast_value(const char *raw_value) {
+      return *reinterpret_cast<const FLOAT *>(raw_value);
+    }
+
+    template <>
+    bool
+    cast_value<bool, float>(const char *raw_value) {
+      auto value = *reinterpret_cast<const float *>(raw_value);
+      return grn_float32_is_zero(value);
+    }
+
+    template <>
+    bool
+    cast_value<bool, double>(const char *raw_value) {
+      auto value = *reinterpret_cast<const double *>(raw_value);
+      return grn_float_is_zero(value);
+    }
+  }
+
   template <typename NUMERIC>
   NUMERIC
   vector_get_element(grn_ctx *ctx,
@@ -69,8 +93,11 @@ namespace grn {
       case GRN_DB_UINT64 :
         value = *reinterpret_cast<const uint64_t *>(raw_value);
         break;
+      case GRN_DB_FLOAT32 :
+        value = cast_value<NUMERIC, float>(raw_value);
+        break;
       case GRN_DB_FLOAT :
-        value = *reinterpret_cast<const double *>(raw_value);
+        value = cast_value<NUMERIC, double>(raw_value);
         break;
       default :
         break;
@@ -82,13 +109,13 @@ namespace grn {
 }
 
 extern "C" {
-  grn_bool
+  bool
   grn_vector_get_element_bool(grn_ctx *ctx,
                               grn_obj *vector,
                               unsigned int offset,
-                              grn_bool default_value)
+                              bool default_value)
   {
-    return grn::vector_get_element<grn_bool>(ctx, vector, offset, default_value);
+    return grn::vector_get_element<bool>(ctx, vector, offset, default_value);
   }
 
   int8_t

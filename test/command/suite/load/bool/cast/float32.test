@@ -1,0 +1,10 @@
+table_create  Entries       TABLE_HASH_KEY ShortText
+column_create Entries score COLUMN_SCALAR  Float32
+
+load --table Entries
+[
+{"_key": "Special news!",  "score": true},
+{"_key": "Surprise news!", "score": false}
+]
+
+select Entries

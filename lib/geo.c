@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2017  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -957,6 +958,11 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
     break;
   case GRN_DB_UINT64 :
     d = GRN_UINT64_VALUE(distance);
+    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
+    on_circle.longitude = center->longitude;
+    break;
+  case GRN_DB_FLOAT32 :
+    d = GRN_FLOAT32_VALUE(distance);
     on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
     on_circle.longitude = center->longitude;
     break;
@@ -2190,6 +2196,9 @@ grn_geo_in_circle(grn_ctx *ctx, grn_obj *point, grn_obj *center,
       break;
     case GRN_DB_UINT64 :
       r = d <= GRN_UINT64_VALUE(radius_or_point);
+      break;
+    case GRN_DB_FLOAT32 :
+      r = d <= GRN_FLOAT32_VALUE(radius_or_point);
       break;
     case GRN_DB_FLOAT :
       r = d <= GRN_FLOAT_VALUE(radius_or_point);

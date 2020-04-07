@@ -2151,6 +2151,15 @@ grn_ctx_output_uint64(grn_ctx *ctx, uint64_t value)
 }
 
 void
+grn_ctx_output_float32(grn_ctx *ctx, float value)
+{
+  grn_output_float32(ctx,
+                     ctx->impl->output.buf,
+                     ctx->impl->output.type,
+                     value);
+}
+
+void
 grn_ctx_output_float(grn_ctx *ctx, double value)
 {
   grn_output_float(ctx,

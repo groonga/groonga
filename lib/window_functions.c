@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2016-2018 Brazil
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2016-2018  Brazil
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -88,6 +88,7 @@ window_sum(grn_ctx *ctx,
   case GRN_DB_UINT16 :
   case GRN_DB_UINT32 :
   case GRN_DB_UINT64 :
+  case GRN_DB_FLOAT32 :
   case GRN_DB_FLOAT :
     break;
   default :
@@ -122,6 +123,9 @@ window_sum(grn_ctx *ctx,
   case GRN_DB_UINT32 :
   case GRN_DB_UINT64 :
     GRN_UINT64_INIT(&sum, 0);
+    break;
+  case GRN_DB_FLOAT32 :
+    GRN_FLOAT32_INIT(&sum, 0);
     break;
   case GRN_DB_FLOAT :
     GRN_FLOAT_INIT(&sum, 0);
@@ -193,6 +197,11 @@ window_sum(grn_ctx *ctx,
                        &sum,
                        GRN_UINT64_VALUE(&sum) + GRN_UINT64_VALUE(&value));
         break;
+      case GRN_DB_FLOAT32 :
+        GRN_FLOAT32_SET(ctx,
+                        &sum,
+                        GRN_FLOAT32_VALUE(&sum) + GRN_FLOAT32_VALUE(&value));
+        break;
       case GRN_DB_FLOAT :
         GRN_FLOAT_SET(ctx,
                       &sum,
@@ -209,6 +218,7 @@ window_sum(grn_ctx *ctx,
   } else {
     int64_t sum_raw_int64 = 0;
     uint64_t sum_raw_uint64 = 0;
+    float sum_raw_float = 0.0;
     double sum_raw_double = 0.0;
 
     grn_id id;
@@ -241,6 +251,9 @@ window_sum(grn_ctx *ctx,
       case GRN_DB_UINT64 :
         sum_raw_uint64 += GRN_UINT64_VALUE(&value);
         break;
+      case GRN_DB_FLOAT32 :
+        sum_raw_float += GRN_FLOAT32_VALUE(&value);
+        break;
       case GRN_DB_FLOAT :
         sum_raw_double += GRN_FLOAT_VALUE(&value);
         break;
@@ -261,6 +274,9 @@ window_sum(grn_ctx *ctx,
     case GRN_DB_UINT32 :
     case GRN_DB_UINT64 :
       GRN_UINT64_SET(ctx, &sum, sum_raw_uint64);
+      break;
+    case GRN_DB_FLOAT32 :
+      GRN_FLOAT32_SET(ctx, &sum, sum_raw_float);
       break;
     case GRN_DB_FLOAT :
       GRN_FLOAT_SET(ctx, &sum, sum_raw_double);
@@ -313,6 +329,9 @@ window_count(grn_ctx *ctx,
   case GRN_DB_UINT64 :
     GRN_UINT64_INIT(&n_records, 0);
     break;
+  case GRN_DB_FLOAT32 :
+    GRN_FLOAT32_INIT(&n_records, 0);
+    break;
   case GRN_DB_FLOAT :
     GRN_FLOAT_INIT(&n_records, 0);
     break;
@@ -351,6 +370,9 @@ window_count(grn_ctx *ctx,
       case GRN_DB_UINT64 :
         GRN_UINT64_SET(ctx, &n_records, n_records_raw);
         break;
+      case GRN_DB_FLOAT32 :
+        GRN_FLOAT32_SET(ctx, &n_records, n_records_raw);
+        break;
       case GRN_DB_FLOAT :
         GRN_FLOAT_SET(ctx, &n_records, n_records_raw);
         break;
@@ -381,6 +403,9 @@ window_count(grn_ctx *ctx,
     case GRN_DB_UINT32 :
     case GRN_DB_UINT64 :
       GRN_UINT64_SET(ctx, &n_records, n_records_raw);
+      break;
+    case GRN_DB_FLOAT32 :
+      GRN_FLOAT32_SET(ctx, &n_records, n_records_raw);
       break;
     case GRN_DB_FLOAT :
       GRN_FLOAT_SET(ctx, &n_records, n_records_raw);

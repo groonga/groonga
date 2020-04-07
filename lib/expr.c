@@ -907,6 +907,9 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
     case GRN_DB_INT64:                                          \
       GRN_INT64_SET(ctx, x, -GRN_INT64_VALUE(x));               \
       break;                                                    \
+    case GRN_DB_FLOAT32:                                        \
+      GRN_FLOAT32_SET(ctx, x, -GRN_FLOAT32_VALUE(x));           \
+      break;                                                    \
     case GRN_DB_FLOAT:                                          \
       GRN_FLOAT_SET(ctx, x, -GRN_FLOAT_VALUE(x));               \
       break;                                                    \
