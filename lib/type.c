@@ -19,6 +19,7 @@
 
 #include "grn_ctx_impl.h"
 #include "grn_db.h"
+#include "grn_type.h"
 
 grn_bool
 grn_type_id_is_builtin(grn_ctx *ctx, grn_id id)
@@ -42,11 +43,9 @@ grn_obj *
 grn_type_create(grn_ctx *ctx, const char *name, unsigned int name_size,
                 grn_obj_flags flags, unsigned int size)
 {
-  grn_id id;
-  struct _grn_type *res = NULL;
   grn_obj *db;
   if (!ctx || !ctx->impl || !(db = ctx->impl->db)) {
-    ERR(GRN_INVALID_ARGUMENT, "db not initialized");
+    ERR(GRN_INVALID_ARGUMENT, "[type][create] DB is not initialized");
     return NULL;
   }
   GRN_API_ENTER;
@@ -54,23 +53,41 @@ grn_type_create(grn_ctx *ctx, const char *name, unsigned int name_size,
     GRN_DB_CHECK_NAME_ERR("[type][create]", name, name_size);
     GRN_API_RETURN(NULL);
   }
-  if (!GRN_DB_P(db)) {
-    ERR(GRN_INVALID_ARGUMENT, "invalid db assigned");
+  grn_id id = grn_obj_register(ctx, db, name, name_size);
+  if (id == GRN_ID_NIL) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[type][create] failed to register type: <%.*s>",
+        (int)name_size,
+        name);
     GRN_API_RETURN(NULL);
   }
-  id = grn_obj_register(ctx, db, name, name_size);
-  if (id && (res = GRN_MALLOC(sizeof(grn_db_obj)))) {
-    GRN_DB_OBJ_SET_TYPE(res, GRN_TYPE);
-    res->obj.header.flags = flags;
-    res->obj.header.domain = GRN_ID_NIL;
-    GRN_TYPE_SIZE(&res->obj) = size;
-    if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
-      // grn_obj_delete(ctx, db, id);
-      GRN_FREE(res);
-      GRN_API_RETURN(NULL);
-    }
+  grn_obj *type = grn_type_create_internal(ctx, id, flags, size);
+  GRN_API_RETURN(type);
+}
+
+grn_obj *
+grn_type_create_internal(grn_ctx *ctx,
+                         grn_id id,
+                         grn_obj_flags flags,
+                         unsigned int size)
+{
+  GRN_API_ENTER;
+  struct _grn_type *type = GRN_MALLOC(sizeof(grn_db_obj));
+  if (!type) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[type][init] failed to allocate type: <%u>",
+        id);
+    GRN_API_RETURN(NULL);
   }
-  GRN_API_RETURN((grn_obj *)res);
+  GRN_DB_OBJ_SET_TYPE(type, GRN_TYPE);
+  type->obj.header.flags = flags;
+  type->obj.header.domain = GRN_ID_NIL;
+  GRN_TYPE_SIZE(&(type->obj)) = size;
+  if (grn_db_obj_init(ctx, ctx->impl->db, id, DB_OBJ(type))) {
+    GRN_FREE(type);
+    GRN_API_RETURN(NULL);
+  }
+  GRN_API_RETURN((grn_obj *)type);
 }
 
 uint32_t

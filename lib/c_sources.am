@@ -78,6 +78,7 @@ libgroonga_c_sources =				\
 	grn_token_metadata.h			\
 	grn_tokenizer.h				\
 	grn_tokenizers.h			\
+	grn_type.h				\
 	grn_util.h				\
 	grn_window_function.h			\
 	grn_window_function_executor.h		\

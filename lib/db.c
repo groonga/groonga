@@ -45,6 +45,7 @@
 #include "grn_window_functions.h"
 #include "grn_expr.h"
 #include "grn_cast.h"
+#include "grn_type.h"
 #include <string.h>
 #include <math.h>
 
@@ -340,6 +341,40 @@ exit:
   GRN_API_RETURN(NULL);
 }
 
+#define GRN_TYPE_FLOAT32_NAME "Float32"
+#define GRN_TYPE_FLOAT32_NAME_LEN (sizeof(GRN_TYPE_FLOAT32_NAME) - 1)
+#define GRN_TYPE_FLOAT32_FLAGS GRN_OBJ_KEY_FLOAT
+#define GRN_TYPE_FLOAT32_SIZE sizeof(float)
+
+static bool
+grn_db_open_ensure_float32(grn_ctx *ctx, grn_db *db)
+{
+  if (grn_table_get(ctx,
+                    db->keys,
+                    GRN_TYPE_FLOAT32_NAME,
+                    GRN_TYPE_FLOAT32_NAME_LEN) == GRN_DB_FLOAT32) {
+    return false;
+  }
+
+  if (db->keys->header.type != GRN_TABLE_DAT_KEY) {
+    return false;
+  }
+
+  if (grn_table_update_by_id(ctx,
+                             db->keys,
+                             GRN_DB_FLOAT32,
+                             GRN_TYPE_FLOAT32_NAME,
+                             GRN_TYPE_FLOAT32_NAME_LEN) != GRN_SUCCESS) {
+    return false;
+  }
+
+  grn_obj *float32 = grn_type_create_internal(ctx,
+                                              GRN_DB_FLOAT32,
+                                              GRN_TYPE_FLOAT32_FLAGS,
+                                              GRN_TYPE_FLOAT32_SIZE);
+  return float32 != NULL;
+}
+
 grn_obj *
 grn_db_open(grn_ctx *ctx, const char *path)
 {
@@ -422,9 +457,11 @@ grn_db_open(grn_ctx *ctx, const char *path)
   DB_OBJ(&s->obj)->range = GRN_ID_NIL;
   grn_ctx_use(ctx, (grn_obj *)s);
   {
+    bool need_flush = false;
     unsigned int n_records;
 
     n_records = grn_table_size(ctx, (grn_obj *)s);
+    need_flush = grn_db_open_ensure_float32(ctx, s);
 #ifdef GRN_WITH_MECAB
     if (grn_db_init_mecab_tokenizer(ctx)) {
       ERRCLR(ctx);
@@ -438,6 +475,9 @@ grn_db_open(grn_ctx *ctx, const char *path)
     grn_db_init_builtin_token_filters(ctx);
 
     if (grn_table_size(ctx, (grn_obj *)s) > n_records) {
+      need_flush = true;
+    }
+    if (need_flush) {
       grn_obj_flush(ctx, (grn_obj *)s);
     }
   }
@@ -14579,8 +14619,10 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   obj = deftype(ctx, "WGS84GeoPoint",
                 GRN_OBJ_KEY_GEO_POINT, sizeof(grn_geo_point));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_WGS84_GEO_POINT) { return GRN_FILE_CORRUPT; }
-  obj = deftype(ctx, "Float32",
-                GRN_OBJ_KEY_FLOAT, sizeof(float));
+  obj = deftype(ctx,
+                GRN_TYPE_FLOAT32_NAME,
+                GRN_TYPE_FLOAT32_FLAGS,
+                GRN_TYPE_FLOAT32_SIZE);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_FLOAT32) { return GRN_FILE_CORRUPT; }
   for (id = grn_db_curr_id(ctx, db) + 1; id < GRN_DB_MECAB; id++) {
     grn_itoh(id, buf + 3, 2);
