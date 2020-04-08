@@ -1,0 +1,13 @@
+table_create Numbers TABLE_NO_KEY
+column_create Numbers data COLUMN_VECTOR Float32
+
+load --table Numbers
+[
+{"data": [0.1, -0.1, 0.0]},
+{"data": []},
+{"data": [2.2]}
+]
+
+dump \
+  --dump_plugins no \
+  --dump_schema no
