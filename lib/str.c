@@ -2174,7 +2174,7 @@ grn_text_ftoa_adjust(grn_ctx *ctx, grn_obj *buf, size_t before_size)
 grn_rc
 grn_text_f32toa(grn_ctx *ctx, grn_obj *buf, float f)
 {
-#define DIGIT_NUMBER 16
+#define DIGIT_NUMBER 8
   size_t before_size = GRN_TEXT_LEN(buf);
   grn_rc rc = grn_text_printf(ctx, buf, "%#.*g", DIGIT_NUMBER, f);
   if (rc != GRN_SUCCESS) {
