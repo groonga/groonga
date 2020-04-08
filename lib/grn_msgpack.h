@@ -56,7 +56,7 @@ typedef unsigned int msgpack_size_t;
 typedef size_t msgpack_size_t;
 
 #  if (MSGPACK_VERSION_MAJOR == 1) ||                           \
-  (MSGPACK_VERSION_MAJOR == 2 && MSGPAVK_VERSION_MINOR < 1)
+  (MSGPACK_VERSION_MAJOR == 2 && MSGPACK_VERSION_MINOR < 1)
 #   define MSGPACK_OBJECT_FLOAT32 MSGPACK_OBJECT_DOUBLE
 #   define MSGPACK_OBJECT_FLOAT64 MSGPACK_OBJECT_DOUBLE
 #  endif
