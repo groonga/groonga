@@ -1542,8 +1542,7 @@ namespace grnarrow {
         grn_loader_(loader),
 # ifdef GRN_ARROW_EMITTER
         emitter_(this),
-        buffer_(nullptr),
-        consumed_chunks_()
+        buffer_(nullptr)
 # else
         input_(),
         reader_(nullptr)
@@ -1601,15 +1600,6 @@ namespace grnarrow {
                  emitter_.Consume(chunk),
                  "[arrow][stream-loader][consume] failed to consume")) {
         return ctx_->rc;
-      }
-      while (!consumed_chunks_.empty()) {
-        if (consumed_chunks_[0].use_count() > 1) {
-          break;
-        }
-        consumed_chunks_.erase(consumed_chunks_.begin());
-      }
-      if (chunk.use_count() > 1) {
-        consumed_chunks_.push_back(std::move(chunk));
       }
       return ctx_->rc;
     }
@@ -1697,7 +1687,6 @@ namespace grnarrow {
 # ifdef GRN_ARROW_EMITTER
     arrow::ipc::RecordBatchStreamEmitter emitter_;
     std::unique_ptr<arrow::ResizableBuffer> buffer_;
-    std::vector<std::shared_ptr<arrow::Buffer>> consumed_chunks_;
 # else
     BufferInputStream input_;
     std::shared_ptr<arrow::ipc::RecordBatchReader> reader_;
