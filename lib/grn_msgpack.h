@@ -41,13 +41,11 @@ typedef unsigned int msgpack_size_t;
   msgpack_pack_raw_body(packer, value, size)
 
 #  define MSGPACK_OBJECT_STR MSGPACK_OBJECT_RAW
-#  define MSGPACK_OBJECT_FLOAT32 MSGPACK_OBJECT_DOUBLE
 #  define MSGPACK_OBJECT_FLOAT64 MSGPACK_OBJECT_DOUBLE
 
 #  define MSGPACK_OBJECT_STR_PTR(object)  (object)->via.raw.ptr
 #  define MSGPACK_OBJECT_STR_SIZE(object) (object)->via.raw.size
 
-#  define MSGPACK_OBJECT_FLOAT32_VALUE(object) (object)->via.dec
 #  define MSGPACK_OBJECT_FLOAT64_VALUE(object) (object)->via.dec
 
 #  define MSGPACK_UNPACKER_NEXT(unpacker, unpacked)     \
@@ -56,11 +54,11 @@ typedef unsigned int msgpack_size_t;
 typedef size_t msgpack_size_t;
 
 #  if MSGPACK_VERSION_MAJOR == 1
-#   define MSGPACK_OBJECT_FLOAT32 MSGPACK_OBJECT_FLOAT
 #   define MSGPACK_OBJECT_FLOAT64 MSGPACK_OBJECT_FLOAT
 #  elif MSGPACK_VERSION_MAJOR == 2 && MSGPACK_VERSION_MINOR < 1
-#   define MSGPACK_OBJECT_FLOAT32 MSGPACK_OBJECT_DOUBLE
 #   define MSGPACK_OBJECT_FLOAT64 MSGPACK_OBJECT_DOUBLE
+#  else
+#   define MSGPACK_HAVE_FLOAT32
 #  endif
 
 #  define MSGPACK_OBJECT_STR_PTR(object)  (object)->via.str.ptr

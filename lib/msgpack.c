@@ -177,6 +177,7 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
                              0,
                              GRN_DB_UINT64);
       break;
+#ifdef MSGPACK_HAVE_FLOAT32
     case MSGPACK_OBJECT_FLOAT32 :
       grn_vector_add_element(ctx,
                              vector,
@@ -185,6 +186,7 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
                              0,
                              GRN_DB_FLOAT32);
       break;
+#endif
     case MSGPACK_OBJECT_FLOAT64 :
       grn_vector_add_element(ctx,
                              vector,
