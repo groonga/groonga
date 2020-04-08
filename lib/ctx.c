@@ -1771,6 +1771,24 @@ grn_get_version(void)
   return GRN_VERSION;
 }
 
+uint32_t
+grn_get_version_major(void)
+{
+  return GRN_VERSION_MAJOR;
+}
+
+uint32_t
+grn_get_version_minor(void)
+{
+  return GRN_VERSION_MINOR;
+}
+
+uint32_t
+grn_get_version_micro(void)
+{
+  return GRN_VERSION_MICRO;
+}
+
 const char *
 grn_get_package(void)
 {

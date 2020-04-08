@@ -266,6 +266,9 @@ GRN_API grn_rc grn_set_default_encoding(grn_encoding encoding);
   ((ctx)->encoding = (enc == GRN_ENC_DEFAULT) ? grn_get_default_encoding() : enc)
 
 GRN_API const char *grn_get_version(void);
+GRN_API uint32_t grn_get_version_major(void);
+GRN_API uint32_t grn_get_version_minor(void);
+GRN_API uint32_t grn_get_version_micro(void);
 GRN_API const char *grn_get_package(void);
 GRN_API const char *grn_get_package_label(void);
 
