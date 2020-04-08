@@ -1,0 +1,48 @@
+table_create Numbers TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Numbers value COLUMN_SCALAR Float32
+[[0,0.0,0.0],true]
+load --table Numbers
+[
+{"value": 0.1},
+{"value": 1.1},
+{"value": -1.1}
+]
+[[0,0.0,0.0],3]
+select Numbers --sort_keys value
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "value",
+          "Float32"
+        ]
+      ],
+      [
+        3,
+        -1.1
+      ],
+      [
+        1,
+        0.1
+      ],
+      [
+        2,
+        1.1
+      ]
+    ]
+  ]
+]

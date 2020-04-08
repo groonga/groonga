@@ -1,0 +1,11 @@
+table_create Numbers TABLE_NO_KEY
+column_create Numbers value COLUMN_SCALAR Float32
+
+load --table Numbers
+[
+{"value": 0.1},
+{"value": 1.1},
+{"value": -1.1}
+]
+
+select Numbers --sort_keys value
