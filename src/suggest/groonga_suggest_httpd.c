@@ -447,7 +447,7 @@ msgpack2json(msgpack_object *o, grn_ctx *ctx, grn_obj *buf)
     }
     GRN_TEXT_PUTC(ctx, buf, ']');
     break;
-  case MSGPACK_OBJECT_FLOAT:
+  case MSGPACK_OBJECT_FLOAT64:
     grn_text_ftoa(ctx, buf, MSGPACK_OBJECT_FLOAT64_VALUE(o));
     break;
   default:
