@@ -1028,12 +1028,7 @@ namespace grnarrow {
         for (int i = 0; i < n_columns; ++i) {
           int64_t offset = 0;
           const auto& arrow_field = arrow_schema->field(i);
-# if ARROW_VERSION_MAJOR == 0 && ARROW_VERSION_MINOR <= 14
-          const auto& arrow_column = arrow_table->column(i);
-          const auto& arrow_chunked_array = arrow_column->data();
-# else
           const auto& arrow_chunked_array = arrow_table->column(i);
-# endif
           for (const auto& arrow_array : arrow_chunked_array->chunks()) {
             grn_id *sub_ids =
               reinterpret_cast<grn_id *>(GRN_BULK_HEAD(&ids)) + offset;
