@@ -36,7 +36,8 @@
 
 #if (ARROW_VERSION_MAJOR >= 1) || (ARROW_VERION_MAJOR == 0 && ARROW_VERSION_MINOR >= 17)
 # define GRN_ARROW_IPC_RESULT
-# define GRN_ARROW_EMITTER
+# define GRN_ARROW_TABLE_RESULT
+# define GRN_ARROW_DECODER
 #endif
 
 namespace grnarrow {
@@ -1054,9 +1055,19 @@ namespace grnarrow {
     };
 
     grn_rc load_record_batch(const std::shared_ptr<arrow::RecordBatch> &arrow_record_batch) {
+      std::vector<std::shared_ptr<arrow::RecordBatch>> arrow_record_batches =
+        {arrow_record_batch};
+# ifdef GRN_ARROW_TABLE_RESULT
+      auto arrow_table = arrow::Table::FromRecordBatches(arrow_record_batches);
+      if (!check(ctx_,
+                 arrow_table,
+                 "[arrow][load] "
+                 "failed to convert record batch to table")) {
+        return ctx_->rc;
+      }
+      return load_table(*arrow_table);
+# else
       std::shared_ptr<arrow::Table> arrow_table;
-      std::vector<std::shared_ptr<arrow::RecordBatch>> arrow_record_batches(1);
-      arrow_record_batches[0] = arrow_record_batch;
       auto status =
         arrow::Table::FromRecordBatches(arrow_record_batches, &arrow_table);
       if (!check(ctx_,
@@ -1066,6 +1077,7 @@ namespace grnarrow {
         return ctx_->rc;
       }
       return load_table(arrow_table);
+# endif
     };
 
   private:
@@ -1531,8 +1543,8 @@ namespace grnarrow {
     bool closed_;
   };
 
-# ifdef GRN_ARROW_EMITTER
-  class StreamLoader : public arrow::Receiver {
+# ifdef GRN_ARROW_DECODER
+  class StreamLoader : public arrow::ipc::Listener {
 # else
   class StreamLoader {
 # endif
@@ -1540,8 +1552,8 @@ namespace grnarrow {
     StreamLoader(grn_ctx *ctx, grn_loader *loader)
       : ctx_(ctx),
         grn_loader_(loader),
-# ifdef GRN_ARROW_EMITTER
-        emitter_(this),
+# ifdef GRN_ARROW_DECODER
+        decoder_(std::shared_ptr<StreamLoader>(this, [](void*) {})),
         buffer_(nullptr)
 # else
         input_(),
@@ -1555,30 +1567,34 @@ namespace grnarrow {
         return GRN_SUCCESS;
       }
 
-# ifdef GRN_ARROW_EMITTER
-      return consume_emitter(data, data_size);
+# ifdef GRN_ARROW_DECODER
+      return consume_decoder(data, data_size);
 # else
       return consume_reader(data, data_size);
 # endif
     }
 
-# ifdef GRN_ARROW_EMITTER
-    arrow::Status RecordBatchReceived(std::shared_ptr<arrow::RecordBatch> record_batch) override {
+# ifdef GRN_ARROW_DECODER
+    arrow::Status OnRecordBatchDecoded(std::shared_ptr<arrow::RecordBatch> record_batch) override {
       process_record_batch(std::move(record_batch));
-      return check(ctx_, ctx_->rc, "[arrow][stream-loader][consume][receive]");
+      return check(ctx_,
+                   ctx_->rc,
+                   "[arrow][stream-loader][consume][record-batch-decoded]");
     }
 #endif
 
   private:
-# ifdef GRN_ARROW_EMITTER
-    grn_rc consume_emitter(const char *data, size_t data_size) {
+# ifdef GRN_ARROW_DECODER
+    grn_rc consume_decoder(const char *data, size_t data_size) {
       if (!buffer_) {
+        auto buffer = arrow::AllocateResizableBuffer(0);
         if (!check(ctx_,
-                   AllocateResizableBuffer(0, &buffer_),
+                   buffer,
                    "[arrow][stream-loader][consume] "
                    "failed to allocate buffer")) {
           return ctx_->rc;
         }
+        buffer_ = std::move(*buffer);
       }
 
       auto current_buffer_size = buffer_->size();
@@ -1591,13 +1607,13 @@ namespace grnarrow {
              data,
              data_size);
 
-      if (buffer_->size() < emitter_.next_required_size()) {
+      if (buffer_->size() < decoder_.next_required_size()) {
         return ctx_->rc;
       }
 
       std::shared_ptr<arrow::Buffer> chunk(buffer_.release());
       if (!check(ctx_,
-                 emitter_.Consume(chunk),
+                 decoder_.Consume(chunk),
                  "[arrow][stream-loader][consume] failed to consume")) {
         return ctx_->rc;
       }
@@ -1684,8 +1700,8 @@ namespace grnarrow {
 
     grn_ctx *ctx_;
     grn_loader *grn_loader_;
-# ifdef GRN_ARROW_EMITTER
-    arrow::ipc::RecordBatchStreamEmitter emitter_;
+# ifdef GRN_ARROW_DECODER
+    arrow::ipc::StreamDecoder decoder_;
     std::unique_ptr<arrow::ResizableBuffer> buffer_;
 # else
     BufferInputStream input_;
@@ -2156,11 +2172,23 @@ grn_arrow_load(grn_ctx *ctx,
       GRN_API_RETURN(ctx->rc);
     }
   }
-#endif
+# endif
 
   grnarrow::FileLoader loader(ctx, table);
   int n_record_batches = reader->num_record_batches();
   for (int i = 0; i < n_record_batches; ++i) {
+# ifdef GRN_ARROW_IPC_RESULT
+    auto record_batch_result = reader->ReadRecordBatch(i);
+    std::ostringstream context;
+    if (!grnarrow::check(ctx,
+                         record_batch_result,
+                         context <<
+                         "[arrow][load] failed to get " <<
+                         "the " << i << "-th " << "record")) {
+      break;
+    }
+    auto record_batch = *record_batch_result;
+# else
     std::shared_ptr<arrow::RecordBatch> record_batch;
     auto status = reader->ReadRecordBatch(i, &record_batch);
     std::ostringstream context;
@@ -2171,6 +2199,7 @@ grn_arrow_load(grn_ctx *ctx,
                          "the " << i << "-th " << "record")) {
       break;
     }
+# endif
     loader.load_record_batch(record_batch);
     if (ctx->rc != GRN_SUCCESS) {
       break;
