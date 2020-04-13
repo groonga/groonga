@@ -15532,7 +15532,6 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                                            GRN_COLUMN_NAME_ID_LEN);
               if (ai) {
                 if (ai->header.type == GRN_ACCESSOR) {
-                  grn_id *key;
                   grn_accessor *id_accessor;
                   for (id_accessor = ((grn_accessor *)ai)->next;
                        id_accessor;
@@ -15544,32 +15543,39 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                     if (!cols) {
                       continue;
                     }
+
                     grn_table_columns(ctx, target_table,
                                       p, r - p - 1, (grn_obj *)cols);
-                    GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
-                      if ((col = grn_ctx_at(ctx, *key))) {
-                        grn_accessor *a;
-                        grn_accessor *ac;
-                        ac = accessor_new(ctx);
-                        GRN_PTR_PUT(ctx, res, (grn_obj *)ac);
-                        for (a = (grn_accessor *)ai; a; a = a->next) {
-                          if (a->action != GRN_ACCESSOR_GET_ID) {
-                            ac->action = a->action;
-                            ac->obj = a->obj;
-                            if (grn_enable_reference_count && ac->obj) {
-                              ac->obj = grn_ctx_at(ctx, DB_OBJ(ac->obj)->id);
-                            }
-                            ac->next = accessor_new(ctx);
-                            if (!(ac = ac->next)) { break; }
-                          } else {
-                            ac->action = GRN_ACCESSOR_GET_COLUMN_VALUE;
-                            ac->obj = col;
-                            ac->next = NULL;
-                            break;
+                    GRN_HASH_EACH_BEGIN(ctx, cols, cursor, id) {
+                      void *key;
+                      grn_hash_cursor_get_key(ctx, cursor, &key);
+                      grn_id column_id = *((grn_id *)key);
+                      col = grn_ctx_at(ctx, column_id);
+                      if (!col) {
+                        continue;
+                      }
+
+                      grn_accessor *a;
+                      grn_accessor *ac;
+                      ac = accessor_new(ctx);
+                      GRN_PTR_PUT(ctx, res, (grn_obj *)ac);
+                      for (a = (grn_accessor *)ai; a; a = a->next) {
+                        if (a->action != GRN_ACCESSOR_GET_ID) {
+                          ac->action = a->action;
+                          ac->obj = a->obj;
+                          if (grn_enable_reference_count && ac->obj) {
+                            ac->obj = grn_ctx_at(ctx, DB_OBJ(ac->obj)->id);
                           }
+                          ac->next = accessor_new(ctx);
+                          if (!(ac = ac->next)) { break; }
+                        } else {
+                          ac->action = GRN_ACCESSOR_GET_COLUMN_VALUE;
+                          ac->obj = col;
+                          ac->next = NULL;
+                          break;
                         }
                       }
-                    });
+                    } GRN_HASH_EACH_END(ctx, cursor);
                     grn_hash_close(ctx, cols);
                   }
                 }
