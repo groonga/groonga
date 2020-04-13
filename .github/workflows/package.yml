@@ -139,3 +139,55 @@ jobs:
           asset_path: ${{ matrix.id }}.tar.gz
           asset_name: ${{ matrix.id }}.tar.gz
           asset_content_type: application/gzip
+
+  tests:
+    name: Tests for packages
+    strategy:
+      fail-fast: false
+      matrix:
+        label:
+          - Debian GNU/Linux stretch amd64
+          - Debian GNU/Linux stretch i386
+          - Debian GNU/Linux buster amd64
+          - Debian GNU/Linux buster i386
+          - CentOS 6
+          - CentOS 7
+          - CentOS 8
+        include:
+          - label: Debian GNU/Linux stretch amd64
+            id: debian-stretch-amd64
+            rake_arguments: apt:build APT_TARGETS=debian-stretch
+            repositories_path: packages/apt/repositories/
+          - label: Debian GNU/Linux stretch i386
+            id: debian-stretch-i386
+            rake_arguments: apt:build APT_TARGETS=debian-stretch-i386
+            repositories_path: packages/apt/repositories/
+          - label: Debian GNU/Linux buster amd64
+            id: debian-buster-amd64
+            rake_arguments: apt:build APT_TARGETS=debian-buster
+            repositories_path: packages/apt/repositories/
+          - label: Debian GNU/Linux buster i386
+            id: debian-buster-i386
+            rake_arguments: apt:build APT_TARGETS=debian-buster-i386
+            repositories_path: packages/apt/repositories/
+          - label: CentOS 6
+            id: centos-6
+            rake_arguments: yum:build YUM_TARGETS=centos-6
+            repositories_path: packages/yum/repositories/
+          - label: CentOS 7
+            id: centos-7
+            rake_arguments: yum:build YUM_TARGETS=centos-7
+            repositories_path: packages/yum/repositories/
+          - label: CentOS 8
+            id: centos-8
+            rake_arguments: yum:build YUM_TARGETS=centos-8
+            repositories_path: packages/yum/repositories/
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Download a package
+        uses: actions/download-artifact@v1
+        with:
+          name: ${{ matrix.id }}.tar.gz
+        run: |
+          ls -al
