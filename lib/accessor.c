@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2018 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018  Brazil
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -466,6 +466,51 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int depth,
 
   GRN_OBJ_FIN(ctx, &accessor_stack);
   return rc;
+}
+
+grn_id
+grn_accessor_resolve_id(grn_ctx *ctx, grn_obj *accessor, grn_id id)
+{
+  GRN_API_ENTER;
+
+  grn_accessor *a;
+  for (a = (grn_accessor *)accessor;
+       a->next;
+       a = a->next) {
+    switch (a->action) {
+    case GRN_ACCESSOR_GET_KEY :
+      {
+        grn_id next_id;
+        int key_size = grn_table_get_key(ctx,
+                                         a->obj,
+                                         id,
+                                         &next_id,
+                                         sizeof(grn_id));
+        if (key_size != sizeof(grn_id)) {
+          GRN_API_RETURN(id);
+        }
+        id = next_id;
+      }
+      break;
+    case GRN_ACCESSOR_GET_VALUE :
+      {
+        grn_obj value;
+        GRN_VOID_INIT(&value);
+        grn_obj_get_value(ctx, a->obj, id, &value);
+        if (GRN_BULK_VSIZE(&value) < sizeof(grn_id)) {
+          GRN_OBJ_FIN(ctx, &value);
+          GRN_API_RETURN(id);
+        }
+        id = GRN_RECORD_VALUE(&value);
+        GRN_OBJ_FIN(ctx, &value);
+      }
+      break;
+    default :
+      GRN_API_RETURN(id);
+    }
+  }
+
+  GRN_API_RETURN(id);
 }
 
 grn_rc

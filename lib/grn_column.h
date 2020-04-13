@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2017 Brazil
+  Copyright(C) 2017  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -28,6 +29,7 @@ extern "C" {
 struct _grn_column_cache {
   grn_ra *ra;
   grn_ra_cache ra_cache;
+  grn_obj *accessor;
 };
 
 #ifdef __cplusplus

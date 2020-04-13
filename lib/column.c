@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2017  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 
 #include "grn.h"
 #include "grn_column.h"
+#include "grn_db.h"
 #include "grn_ii.h"
 
 grn_column_flags
@@ -60,7 +61,67 @@ grn_column_cache_open(grn_ctx *ctx, grn_obj *column)
     GRN_API_RETURN(NULL);
   }
 
-  if (column->header.type != GRN_COLUMN_FIX_SIZE) {
+  grn_ra *ra = NULL;
+  grn_obj *accessor = NULL;
+  switch (column->header.type) {
+  case GRN_ACCESSOR :
+    {
+      grn_accessor *a;
+      for (a = (grn_accessor *)column; a->next; a = a->next) {
+        switch (a->action) {
+        case GRN_ACCESSOR_GET_KEY :
+        case GRN_ACCESSOR_GET_VALUE :
+          break;
+        case GRN_ACCESSOR_GET_COLUMN_VALUE :
+          if (a->next) {
+            GRN_API_RETURN(NULL);
+          }
+          break;
+        default :
+          GRN_API_RETURN(NULL);
+        }
+      }
+      grn_accessor *last_accessor = a;
+      if (last_accessor->action != GRN_ACCESSOR_GET_COLUMN_VALUE) {
+        GRN_API_RETURN(NULL);
+      }
+      if (last_accessor->obj->header.type != GRN_COLUMN_FIX_SIZE) {
+        GRN_API_RETURN(NULL);
+      }
+      for (a = (grn_accessor *)column; a->next; a = a->next) {
+        switch (a->action) {
+        case GRN_ACCESSOR_GET_KEY :
+          {
+            grn_obj *domain = grn_ctx_at(ctx, a->obj->header.domain);
+            bool is_table = grn_obj_is_table(ctx, domain);
+            grn_obj_unref(ctx, domain);
+            if (!is_table) {
+              GRN_API_RETURN(NULL);
+            }
+          }
+          break;
+        case GRN_ACCESSOR_GET_VALUE :
+          {
+            grn_obj *range = grn_ctx_at(ctx, DB_OBJ(a->obj)->range);
+            bool is_table = grn_obj_is_table(ctx, range);
+            grn_obj_unref(ctx, range);
+            if (!is_table) {
+              GRN_API_RETURN(NULL);
+            }
+          }
+          break;
+        default :
+          break;
+        }
+      }
+      ra = (grn_ra *)(last_accessor->obj);
+      accessor = column;
+    }
+    break;
+  case GRN_COLUMN_FIX_SIZE :
+    ra = (grn_ra *)column;
+    break;
+  default :
     GRN_API_RETURN(NULL);
   }
 
@@ -71,7 +132,8 @@ grn_column_cache_open(grn_ctx *ctx, grn_obj *column)
     GRN_API_RETURN(NULL);
   }
 
-  cache->ra = (grn_ra *)column;
+  cache->ra = ra;
+  cache->accessor = accessor;
   GRN_RA_CACHE_INIT(column, &(cache->ra_cache));
 
   GRN_API_RETURN(cache);
@@ -103,7 +165,16 @@ grn_column_cache_ref(grn_ctx *ctx,
   GRN_API_ENTER;
 
   if (!cache) {
+    *value_size = 0;
     GRN_API_RETURN(NULL);
+  }
+
+  if (cache->accessor) {
+    id = grn_accessor_resolve_id(ctx, cache->accessor, id);
+    if (id == GRN_ID_NIL) {
+      *value_size = 0;
+      GRN_API_RETURN(NULL);
+    }
   }
 
   value = grn_ra_ref_cache(ctx, cache->ra, id, &(cache->ra_cache));
