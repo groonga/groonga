@@ -188,10 +188,11 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/download-artifact@v1
         with:
-          name: packages
+          name: packages-${{ matrix.id }}
       - name: Decompress a package
         run: |
+          ls -al
+          ls -al /home/runner/work/groonga/groonga
+          sudo apt install tree
           pwd
-          ls -al
-          cd packages
-          ls -al
+          tree
