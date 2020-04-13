@@ -359,7 +359,7 @@ struct _grn_accessor {
   uint32_t reference_count;
 };
 
-enum {
+typedef enum {
   GRN_ACCESSOR_VOID = 0,
   GRN_ACCESSOR_GET_ID,
   GRN_ACCESSOR_GET_KEY,
@@ -374,7 +374,7 @@ enum {
   GRN_ACCESSOR_GET_DB_OBJ,
   GRN_ACCESSOR_LOOKUP,
   GRN_ACCESSOR_FUNCALL
-};
+} grn_accessor_action;
 
 #define DB_OBJ(obj) ((grn_db_obj *)obj)
 
