@@ -189,5 +189,9 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: ${{ matrix.id }}.tar.gz
+      - name: Decompress a package
         run: |
           ls -al
+          tar -zxf ${{ matrix.id }}.tar.gz
+          ls -al
+          pwd
