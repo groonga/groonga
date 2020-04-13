@@ -188,10 +188,10 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/download-artifact@v1
         with:
-          name: packages-${{ matrix.id }}.tar.gz
+          name: packages-${{ matrix.id }}
       - name: Decompress a package
         run: |
           ls -al
-          tar -zxf ${{ matrix.id }}.tar.gz
+          unzip ${{ matrix.id }}.zip
           ls -al
           pwd
