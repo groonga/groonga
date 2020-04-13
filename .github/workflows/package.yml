@@ -185,8 +185,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Download a package
-        uses: actions/download-artifact@v1
+      - uses: actions/download-artifact@v1
         with:
           name: ${{ matrix.id }}.tar.gz
       - name: Decompress a package
