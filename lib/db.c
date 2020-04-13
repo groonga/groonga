@@ -13701,6 +13701,47 @@ grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold)
 
 /**** sort ****/
 
+static int
+grn_table_sort_index(grn_ctx *ctx,
+                     grn_obj *table,
+                     grn_obj *index,
+                     int offset,
+                     int limit,
+                     grn_obj *result,
+                     grn_table_sort_key *keys,
+                     int n_keys)
+{
+  int i = 0;
+  int e = offset + limit;
+  grn_id tid;
+  grn_pat *lexicon = (grn_pat *)grn_ctx_at(ctx, index->header.domain);
+  grn_pat_cursor *pc = grn_pat_cursor_open(ctx, lexicon, NULL, 0, NULL, 0,
+                                           0 /* offset : can be used in unique index */,
+                                           -1 /* limit : can be used in unique index */,
+                                           (keys->flags & GRN_TABLE_SORT_DESC)
+                                           ? GRN_CURSOR_DESCENDING
+                                           : GRN_CURSOR_ASCENDING);
+  if (pc) {
+    while (i < e && (tid = grn_pat_cursor_next(ctx, pc))) {
+      grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
+      if (ic) {
+        grn_posting *posting;
+        while (i < e && (posting = grn_ii_cursor_next(ctx, ic))) {
+          if (offset <= i) {
+            grn_id *v;
+            if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) { break; }
+            *v = posting->rid;
+          }
+          i++;
+        }
+        grn_ii_cursor_close(ctx, ic);
+      }
+    }
+    grn_pat_cursor_close(ctx, pc);
+  }
+  return i;
+}
+
 typedef struct {
   grn_id id;
   uint32_t size;
@@ -14366,7 +14407,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
 {
   grn_rc rc;
   grn_obj *index;
-  int n, e, i = 0;
+  int n, i = 0;
   GRN_API_ENTER;
   if (!n_keys || !keys) {
     WARN(GRN_INVALID_ARGUMENT, "keys is null");
@@ -14384,8 +14425,6 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
   if ((rc = grn_output_range_normalize(ctx, n, &offset, &limit))) {
     ERR(rc, "grn_output_range_normalize failed");
     goto exit;
-  } else {
-    e = offset + limit;
   }
   if (keys->flags & GRN_TABLE_SORT_GEO) {
     if (n_keys == 2) {
@@ -14398,32 +14437,15 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
   }
   if (n_keys == 1 && !GRN_ACCESSORP(keys->key) &&
       grn_column_index(ctx, keys->key, GRN_OP_LESS, &index, 1, NULL)) {
-    grn_id tid;
-    grn_pat *lexicon = (grn_pat *)grn_ctx_at(ctx, index->header.domain);
-    grn_pat_cursor *pc = grn_pat_cursor_open(ctx, lexicon, NULL, 0, NULL, 0,
-                                             0 /* offset : can be used in unique index */,
-                                             -1 /* limit : can be used in unique index */,
-                                             (keys->flags & GRN_TABLE_SORT_DESC)
-                                             ? GRN_CURSOR_DESCENDING
-                                             : GRN_CURSOR_ASCENDING);
-    if (pc) {
-      while (i < e && (tid = grn_pat_cursor_next(ctx, pc))) {
-        grn_ii_cursor *ic = grn_ii_cursor_open(ctx, (grn_ii *)index, tid, 0, 0, 1, 0);
-        if (ic) {
-          grn_posting *posting;
-          while (i < e && (posting = grn_ii_cursor_next(ctx, ic))) {
-            if (offset <= i) {
-              grn_id *v;
-              if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) { break; }
-              *v = posting->rid;
-            }
-            i++;
-          }
-          grn_ii_cursor_close(ctx, ic);
-        }
-      }
-      grn_pat_cursor_close(ctx, pc);
-    }
+    i = grn_table_sort_index(ctx,
+                             table,
+                             index,
+                             offset,
+                             limit,
+                             result,
+                             keys,
+                             n_keys);
+    goto exit;
   } else {
     int j;
     grn_bool have_compressed_column = GRN_FALSE;
