@@ -191,8 +191,9 @@ jobs:
           name: packages-${{ matrix.id }}
       - name: Decompress a package
         run: |
+          mv -f packages-${{ matrix.id }}/* packages/
           ls -al
-          ls -al /home/runner/work/groonga/groonga
           sudo apt install tree
-          pwd
           tree
+          rm -rf packages-${{ matrix.id }}
+          ls -al
