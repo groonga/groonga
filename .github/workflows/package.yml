@@ -187,7 +187,7 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/download-artifact@v1
         with:
-          name: ${{ matrix.id }}.tar.gz
+          name: packages-${{ matrix.id }}.tar.gz
       - name: Decompress a package
         run: |
           ls -al
