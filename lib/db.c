@@ -13806,6 +13806,7 @@ sort_value_compare(grn_ctx *ctx,
                    int n_keys)
 {
   int i;
+  int i_sizes = 0;
   uint8_t type;
   uint32_t a_offset = 0;
   uint32_t b_offset = 0;
@@ -13819,11 +13820,12 @@ sort_value_compare(grn_ctx *ctx,
       bp = (const unsigned char *)bp_raw;
     } else {
       ap = (const unsigned char *)GRN_BULK_HEAD(a->value) + a_offset;
-      as = GRN_UINT32_VALUE_AT(a->sizes, i);
+      as = GRN_UINT32_VALUE_AT(a->sizes, i_sizes);
       a_offset += as;
       bp = (const unsigned char *)GRN_BULK_HEAD(b->value) + b_offset;
-      bs = GRN_UINT32_VALUE_AT(b->sizes, i);
+      bs = GRN_UINT32_VALUE_AT(b->sizes, i_sizes);
       b_offset += bs;
+      i_sizes++;
     }
     if (keys->flags & GRN_TABLE_SORT_DESC) {
       const unsigned char *tp = ap;

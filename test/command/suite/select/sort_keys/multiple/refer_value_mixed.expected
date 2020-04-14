@@ -1,0 +1,63 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data number COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+column_create Data compressed COLUMN_SCALAR|COMPRESS_ZLIB ShortText
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"number": 1, "compressed": "xyz"},
+{"number": 1, "compressed": "abc"},
+{"number": 1, "compressed": "abd"},
+{"number": 2, "compressed": "value"}
+]
+[[0,0.0,0.0],4]
+select Data --sort_keys number,compressed
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "compressed",
+          "ShortText"
+        ],
+        [
+          "number",
+          "UInt32"
+        ]
+      ],
+      [
+        2,
+        "abc",
+        1
+      ],
+      [
+        3,
+        "abd",
+        1
+      ],
+      [
+        1,
+        "xyz",
+        1
+      ],
+      [
+        4,
+        "value",
+        2
+      ]
+    ]
+  ]
+]
