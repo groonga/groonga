@@ -460,7 +460,7 @@ msgstr ""
 msgid "For example, it occurs with the query include the following conditions."
 msgstr "例えば、以下のような条件を含むクエリーで起こります。"
 
-msgid "``sccessor @ query``"
+msgid "``accessor @ query``"
 msgstr ""
 
 msgid "``accessor == query``"

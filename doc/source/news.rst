@@ -212,7 +212,7 @@ Fixes
 
   * For example, it occurs with the query include the following conditions.
 
-    * ``sccessor @ query``
+    * ``accessor @ query``
 
     * ``accessor == query``
 
