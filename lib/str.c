@@ -2936,7 +2936,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         GRN_TEXT_PUTS(ctx, bulk, "{");
         for (i = 0; i < n; i++) {
           grn_id id;
-          unsigned int weight;
+          uint32_t weight;
 
           if (i > 0) {
             GRN_TEXT_PUTC(ctx, bulk, ',');
@@ -3091,7 +3091,8 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       }
       for (i = 0; i < n; i++) {
         const char *_value;
-        unsigned int _weight, length;
+        uint32_t _weight;
+        unsigned int length;
         grn_id domain;
         if (i) { GRN_TEXT_PUTC(ctx, bulk, ','); }
 

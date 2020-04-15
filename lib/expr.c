@@ -1437,7 +1437,7 @@ grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
         for (unsigned int i = 0; i < n; i++) {
           const char *content;
           unsigned int content_length;
-          unsigned int weight;
+          uint32_t weight;
           grn_id domain;
           content_length = grn_vector_get_element(ctx,
                                                   obj,

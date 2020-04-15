@@ -632,7 +632,7 @@ namespace grnarrow {
               continue;
             }
             if (grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
-              unsigned int weight = 0;
+              uint32_t weight = 0;
               grn_id domain = GRN_DB_SHORT_TEXT;
               const auto sub_buffer_size =
                 static_cast<unsigned int>(GRN_TEXT_LEN(&sub_buffer));

@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2018 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2010-2018  Brazil
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1215,7 +1215,7 @@ grn_uvector_record_inspect_common(grn_ctx *ctx,
   n = grn_vector_size(ctx, obj);
   for (i = 0; i < n; i++) {
     grn_id id;
-    unsigned int weight;
+    uint32_t weight;
 
     if (i > 0) {
       GRN_TEXT_PUTS(ctx, buf, ", ");

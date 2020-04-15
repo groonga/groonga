@@ -7778,7 +7778,7 @@ grn_uvector2updspecs_id(grn_ctx *ctx, grn_ii *ii, grn_id rid,
   n = grn_vector_size(ctx, in);
   for (i = 0; i < n; i++) {
     grn_id id;
-    unsigned int weight;
+    uint32_t weight;
 
     id = grn_uvector_get_element(ctx, in, i, &weight);
     if (!grn_hash_add(ctx, h, &id, sizeof(grn_id), (void **)&u, NULL)) {
@@ -7956,7 +7956,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                                GRN_TOKEN_ADD, post);
         } else {
           grn_obj uvector;
-          unsigned int weight = 0;
+          uint32_t weight = 0;
           GRN_VALUE_FIX_SIZE_INIT(&uvector, GRN_OBJ_VECTOR,
                                   new_->header.domain);
           if (new_->header.impl_flags & GRN_OBJ_WITH_WEIGHT) {
@@ -8073,7 +8073,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                                GRN_TOKEN_DEL, NULL);
         } else {
           grn_obj uvector;
-          unsigned int weight = 0;
+          uint32_t weight = 0;
           GRN_VALUE_FIX_SIZE_INIT(&uvector, GRN_OBJ_VECTOR,
                                   old_->header.domain);
           if (old_->header.impl_flags & GRN_OBJ_WITH_WEIGHT) {
@@ -11044,7 +11044,7 @@ const uint32_t II_BUFFER_BLOCK_READ_UNIT_SIZE = 0x200000;
 
 typedef struct {
   unsigned int sid;    /* Section ID */
-  unsigned int weight; /* Weight */
+  uint32_t weight; /* Weight */
   const char *p;       /* Value address */
   uint32_t len;        /* Value length */
   char *buf;           /* Buffer address */
@@ -11272,7 +11272,7 @@ encode_postings(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
 {
   grn_id rid = 0;
   unsigned int sid = 1;
-  unsigned int weight = 0;
+  uint32_t weight = 0;
   uint32_t pos = 0;
   uint32_t rest;
   grn_id *bp = ii_buffer->block_buf;
@@ -12059,7 +12059,7 @@ ii_buffer_value_fin(grn_ctx *ctx, ii_buffer_value *value)
  */
 static void
 ii_buffer_values_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
-                        unsigned int sid, unsigned weight,
+                        unsigned int sid, uint32_t weight,
                         const char *p, uint32_t len, grn_bool need_copy)
 {
   if (ii_buffer->nvalues == ii_buffer->max_nvalues) {

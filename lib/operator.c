@@ -453,11 +453,11 @@ exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y)
       for (i = 0; i < x_size; i++) {
         const char *x_value;
         unsigned int x_size;
-        unsigned int x_weight;
+        uint32_t x_weight;
         grn_id x_domain;
         const char *y_value;
         unsigned int y_size;
-        unsigned int y_weight;
+        uint32_t y_weight;
         grn_id y_domain;
 
         x_size = grn_vector_get_element(ctx, x, i, &x_value, &x_weight, &x_domain);

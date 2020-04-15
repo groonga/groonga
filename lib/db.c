@@ -51,7 +51,7 @@
 
 typedef struct {
   grn_id id;
-  unsigned int weight;
+  uint32_t weight;
 } weight_uvector_entry;
 
 static const uint32_t GRN_TABLE_PAT_KEY_CACHE_SIZE = 1 << 15;
@@ -2277,7 +2277,7 @@ delete_reference_records_in_index(grn_ctx *ctx, grn_obj *table, grn_id id,
             for (i = 0; i < n_elements; i++) {
               const char *content;
               unsigned int content_length;
-              unsigned int weight;
+              uint32_t weight;
               grn_id domain;
               content_length =
                 grn_vector_get_element(ctx, &value, i,
@@ -5456,7 +5456,7 @@ grn_vector_body(grn_ctx *ctx, grn_obj *v)
 unsigned int
 grn_vector_get_element(grn_ctx *ctx, grn_obj *vector,
                        unsigned int offset, const char **str,
-                       unsigned int *weight, grn_id *domain)
+                       uint32_t *weight, grn_id *domain)
 {
   unsigned int length = 0;
   GRN_API_ENTER;
@@ -5482,7 +5482,7 @@ exit :
 
 unsigned int
 grn_vector_pop_element(grn_ctx *ctx, grn_obj *vector,
-                       const char **str, unsigned int *weight, grn_id *domain)
+                       const char **str, uint32_t *weight, grn_id *domain)
 {
   unsigned int offset, length = 0;
   GRN_API_ENTER;
@@ -5513,7 +5513,7 @@ exit :
 #define M_SECTIONS_UNIT (S_SECTIONS_UNIT - 1)
 
 grn_rc
-grn_vector_delimit(grn_ctx *ctx, grn_obj *v, unsigned int weight, grn_id domain)
+grn_vector_delimit(grn_ctx *ctx, grn_obj *v, uint32_t weight, grn_id domain)
 {
   if (v->header.type != GRN_VECTOR) { return GRN_INVALID_ARGUMENT; }
   if (!(v->u.v.n_sections & M_SECTIONS_UNIT)) {
@@ -5580,7 +5580,7 @@ grn_vector_decode(grn_ctx *ctx, grn_obj *v, const char *data, uint32_t data_size
 grn_rc
 grn_vector_add_element(grn_ctx *ctx, grn_obj *vector,
                        const char *str, unsigned int str_len,
-                       unsigned int weight, grn_id domain)
+                       uint32_t weight, grn_id domain)
 {
   grn_obj *body;
   GRN_API_ENTER;
@@ -5652,7 +5652,7 @@ grn_uvector_element_size(grn_ctx *ctx, grn_obj *uvector)
    such as Int64 uvector. */
 grn_rc
 grn_uvector_add_element(grn_ctx *ctx, grn_obj *uvector,
-                        grn_id id, unsigned int weight)
+                        grn_id id, uint32_t weight)
 {
   GRN_API_ENTER;
   if (!uvector) {
@@ -5677,7 +5677,7 @@ exit :
    such as Int64 uvector. */
 grn_id
 grn_uvector_get_element(grn_ctx *ctx, grn_obj *uvector,
-                        unsigned int offset, unsigned int *weight)
+                        unsigned int offset, uint32_t *weight)
 {
   grn_id id = GRN_ID_NIL;
 
@@ -7809,7 +7809,7 @@ grn_obj_set_value_column_var_size_vector_uvector(grn_ctx *ctx, grn_obj *column,
       GRN_VALUE_FIX_SIZE_INIT(&element, 0, value->header.domain);
       GRN_VALUE_FIX_SIZE_INIT(&casted_element, 0, column_range_id);
       for (i = 0; i < n; i++) {
-        unsigned int weight = 0;
+        uint32_t weight = 0;
 
         GRN_BULK_REWIND(&element);
         GRN_BULK_REWIND(&casted_element);
@@ -7860,7 +7860,7 @@ grn_obj_set_value_column_var_size_vector_uvector(grn_ctx *ctx, grn_obj *column,
     } else {
       for (i = 0; i < n; i++) {
         grn_id id;
-        unsigned int weight = 0;
+        uint32_t weight = 0;
         id = grn_uvector_get_element(ctx, value, i, NULL);
         grn_uvector_add_element(ctx, &uvector, id, weight);
       }
@@ -7921,7 +7921,7 @@ grn_obj_set_value_column_var_size_vector_vector_data(grn_ctx *ctx,
   for (i = 0; i < n_elements; i++) {
     const char *content;
     unsigned int content_length;
-    unsigned int weight;
+    uint32_t weight;
     grn_id domain;
     content_length = grn_vector_get_element(ctx,
                                             value,
@@ -8058,7 +8058,7 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
             grn_id tid;
             const char *element;
             unsigned int element_length;
-            unsigned int weight;
+            uint32_t weight;
             grn_id element_domain;
 
             element_length = grn_vector_get_element(ctx, value, i,
@@ -9043,8 +9043,8 @@ grn_obj_encoded_spec_equal(grn_ctx *ctx,
     const char *content2;
     unsigned int content_size1;
     unsigned int content_size2;
-    unsigned int weight1;
-    unsigned int weight2;
+    uint32_t weight1;
+    uint32_t weight2;
     grn_id domain1;
     grn_id domain2;
 

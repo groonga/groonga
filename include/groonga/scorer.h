@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015-2016 Brazil
+  Copyright(C) 2015-2016  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -41,7 +42,7 @@ GRN_API grn_obj *
 GRN_API grn_obj *
   grn_scorer_matched_record_get_term_weights(grn_ctx *ctx,
                                              grn_scorer_matched_record *record);
-GRN_API unsigned int
+GRN_API uint32_t
   grn_scorer_matched_record_get_total_term_weights(grn_ctx *ctx,
                                                    grn_scorer_matched_record *record);
 GRN_API long long unsigned int

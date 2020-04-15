@@ -29,11 +29,11 @@ GRN_API unsigned int grn_vector_size(grn_ctx *ctx, grn_obj *vector);
 
 GRN_API grn_rc grn_vector_add_element(grn_ctx *ctx, grn_obj *vector,
                                       const char *str, unsigned int str_len,
-                                      unsigned int weight, grn_id domain);
+                                      uint32_t weight, grn_id domain);
 
 GRN_API unsigned int grn_vector_get_element(grn_ctx *ctx, grn_obj *vector,
                                             unsigned int offset, const char **str,
-                                            unsigned int *weight, grn_id *domain);
+                                            uint32_t *weight, grn_id *domain);
 GRN_API bool grn_vector_get_element_bool(grn_ctx *ctx,
                                          grn_obj *vector,
                                          unsigned int offset,
@@ -73,7 +73,7 @@ GRN_API uint64_t grn_vector_get_element_uint64(grn_ctx *ctx,
 
 GRN_API unsigned int grn_vector_pop_element(grn_ctx *ctx, grn_obj *vector,
                                             const char **str,
-                                            unsigned int *weight,
+                                            uint32_t *weight,
                                             grn_id *domain);
 
 #ifdef __cplusplus

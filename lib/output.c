@@ -1372,7 +1372,7 @@ grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
 
     for (i = 0; i < n; i++) {
       grn_id id;
-      unsigned int weight;
+      uint32_t weight;
 
       id = grn_uvector_get_element(ctx, uvector, i, &weight);
       if (range->header.type == GRN_TABLE_NO_KEY) {
@@ -1422,7 +1422,8 @@ grn_output_vector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     grn_output_map_open(ctx, outbuf, output_type, "WEIGHT_VECTOR", n);
     for (i = 0; i < n; i++) {
       const char *_value;
-      unsigned int weight, length;
+      uint32_t weight;
+      unsigned int length;
       grn_id domain;
 
       length = grn_vector_get_element(ctx, vector, i,
@@ -1446,7 +1447,8 @@ grn_output_vector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     grn_output_array_open(ctx, outbuf, output_type, "VECTOR", n);
     for (i = 0; i < n; i++) {
       const char *_value;
-      unsigned int weight, length;
+      uint32_t weight;
+      unsigned int length;
       grn_id domain;
 
       length = grn_vector_get_element(ctx, vector, i,

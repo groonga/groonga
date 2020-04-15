@@ -400,7 +400,7 @@ int grn_vector_delimit(grn_ctx *ctx, grn_obj *vector);
 int grn_vector_size(grn_ctx *ctx, grn_obj *vector);
 */
 
-grn_rc grn_vector_delimit(grn_ctx *ctx, grn_obj *v, unsigned int weight, grn_id domain);
+grn_rc grn_vector_delimit(grn_ctx *ctx, grn_obj *v, uint32_t weight, grn_id domain);
 grn_rc grn_vector_decode(grn_ctx *ctx, grn_obj *v, const char *data, uint32_t data_size);
 
 

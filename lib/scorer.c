@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015-2018 Brazil
+  Copyright(C) 2015-2018  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -59,7 +60,7 @@ grn_scorer_matched_record_get_term_weights(grn_ctx *ctx,
   return &(record->term_weights);
 }
 
-unsigned int
+uint32_t
 grn_scorer_matched_record_get_total_term_weights(grn_ctx *ctx,
                                                  grn_scorer_matched_record *record)
 {
