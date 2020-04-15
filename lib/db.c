@@ -5596,56 +5596,6 @@ exit :
   GRN_API_RETURN(ctx->rc);
 }
 
-/*
-grn_obj *
-grn_sections_to_vector(grn_ctx *ctx, grn_obj *sections)
-{
-  grn_obj *vector = grn_vector_open(ctx, 0);
-  if (vector) {
-    grn_section *vp;
-    int i;
-    for (i = sections->u.v.n_sections, vp = sections->u.v.sections; i; i--, vp++) {
-      grn_text_benc(ctx, vector, vp->weight);
-      grn_text_benc(ctx, vector, vp->domain);
-      grn_bulk_write(ctx, vector, vp->str, vp->str_len);
-      grn_vector_delimit(ctx, vector);
-    }
-  }
-  return vector;
-}
-
-grn_obj *
-grn_vector_to_sections(grn_ctx *ctx, grn_obj *vector, grn_obj *sections)
-{
-  if (!sections) {
-    sections = grn_obj_open(ctx, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, 0);
-  }
-  if (sections) {
-    int i, n = grn_vector_size(ctx, vector);
-    sections->u.v.src = vector;
-    for (i = 0; i < n; i++) {
-      unsigned int size;
-      const uint8_t *pe, *p = (uint8_t *)grn_vector_fetch(ctx, vector, i, &size);
-      if (p) {
-        grn_id domain;
-        unsigned int weight;
-        pe = p + size;
-        if (p < pe) {
-          GRN_B_DEC(weight, p);
-          if (p < pe) {
-            GRN_B_DEC(domain, p);
-            if (p <= pe) {
-              grn_vector_add(ctx, sections, (char *)p, pe - p, weight, domain);
-            }
-          }
-        }
-      }
-    }
-  }
-  return sections;
-}
-*/
-
 /**** uvector ****/
 
 unsigned int
