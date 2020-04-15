@@ -38,7 +38,6 @@ install:
   - set PATH=C:\Ruby25-x64\bin;%PATH%
   - set PATH=C:\msys64\usr\bin;%PATH%
   - pacman --sync --refresh --sysupgrade --noconfirm
-  - choco install -y curl 7zip.commandline
   - if "%VS_VERSION%" == "15" if "%ARCH%" == "x86" set VS2017_X86=TRUE
   - if "%VS_VERSION%" == "15" if "%ARCH%" == "amd64" set VS2017_AMD64=TRUE
   - if "%VS2017_X86%" == "TRUE"
@@ -80,8 +79,12 @@ install:
       }
       "GRN_VERSION=" + $Env:GROONGA_VERSION | Set-Content version.sh
       $Env:FULL_GROONGA_INSTALL_FOLDER = $Env:APPVEYOR_BUILD_FOLDER + "\" + $Env:GROONGA_INSTALL_SUB_FOLDER + "\" + $Env:GROONGA_INSTALL_FOLDER
-  - curl -O http://packages.groonga.org/source/groonga-normalizer-mysql/groonga-normalizer-mysql-latest.zip
-  - 7z x groonga-normalizer-mysql-latest.zip
+  - ps: |
+      Invoke-WebRequest `
+        -Uri https://packages.groonga.org/source/groonga-normalizer-mysql/groonga-normalizer-mysql-latest.zip `
+       -OutFile groonga-normalizer-mysql-latest.zip
+  - ps: |
+      Expand-Archive -Path groonga-normalizer-mysql-latest.zip
   - del groonga-normalizer-mysql-latest.zip
   - move groonga-normalizer-mysql* vendor\plugins\groonga-normalizer-mysql
 
@@ -133,9 +136,11 @@ build_script:
   - move
       %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\html\admin
       %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\html\admin.old
-  - curl -O http://packages.groonga.org/source/groonga-admin/groonga-admin.tar.gz
-  - 7z x groonga-admin.tar.gz
-  - 7z x groonga-admin.tar
+  - ps: |
+      Invoke-WebRequest `
+        -Uri https://packages.groonga.org/source/groonga-admin/groonga-admin.tar.gz `
+        -OutFile groonga-admin.tar.gz
+  - tar xzf groonga-admin.tar.gz
   - cd groonga-admin-*
   - move html %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\html\admin
   # Install groonga-admin license files
@@ -177,7 +182,10 @@ test_script:
 on_finish:
   - cd %GROONGA_INSTALL_SUB_FOLDER%
   - set ARTIFACT=%GROONGA_INSTALL_FOLDER%.zip
-  - 7z a %ARTIFACT% %FULL_GROONGA_INSTALL_FOLDER%
+  - ps: |
+      Compress-Archive `
+        -Path $Env:FULL_GROONGA_INSTALL_FOLDER `
+        -DestinationPath $Env:ARTIFACT
   - ps: Push-AppveyorArtifact $Env:ARTIFACT
   - mkdir %FULL_GROONGA_INSTALL_FOLDER%\share\groonga\vcruntime
   - if "%ARCH%" == "amd64" set ARCH=x64
@@ -216,6 +224,9 @@ on_finish:
         Copy-Item $Env:UCRT_LICENSE_FILE -Destination $Env:FULL_GROONGA_INSTALL_FOLDER\share\groonga\vcruntime\
       }
   - set ARTIFACT=%GROONGA_INSTALL_FOLDER%-with-vcruntime.zip
-  - 7z a %ARTIFACT% %FULL_GROONGA_INSTALL_FOLDER%
+  - ps: |
+      Compress-Archive `
+        -Path $Env:FULL_GROONGA_INSTALL_FOLDER `
+        -DestinationPath $Env:ARTIFACT
   - ps: Push-AppveyorArtifact $Env:ARTIFACT
   - cd ..
