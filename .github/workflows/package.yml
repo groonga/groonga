@@ -191,12 +191,12 @@ jobs:
           name: packages-${{ matrix.id }}
       - name: Decompress a package
         run: |
-          cp -rf packages-${{ matrix.id }}/ packages/
-          ls -al
+          rm -rf packages/apt/repositories/
+          mkdir -p packages/apt/repositories/
+          cp -rf packages-debian-stretch-amd64/* packages/apt/repositories/
           sudo apt install tree
           tree
-          rm -rf packages-${{ matrix.id }}
-          ls -al
+          rm -rf packages-debian-stretch-amd64
       - name: Make docker images
         run: |
           cd packages/apt/
