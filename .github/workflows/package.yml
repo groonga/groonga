@@ -26,7 +26,7 @@ jobs:
             repositories_path: packages/apt/repositories/
           - label: Debian GNU/Linux stretch i386
             id: debian-stretch-i386
-            rake_arguments: apt:build APT_TARGETS=debian-stretch-i386
+n            rake_arguments: apt:build APT_TARGETS=debian-stretch-i386
             repositories_path: packages/apt/repositories/
           - label: Debian GNU/Linux buster amd64
             id: debian-buster-amd64
@@ -191,7 +191,7 @@ jobs:
           name: packages-${{ matrix.id }}
       - name: Decompress a package
         run: |
-          mv -f packages-${{ matrix.id }}/* packages/
+          cp -rf packages-${{ matrix.id }}/ packages/
           ls -al
           sudo apt install tree
           tree
