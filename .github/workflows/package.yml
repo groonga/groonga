@@ -197,3 +197,16 @@ jobs:
           tree
           rm -rf packages-${{ matrix.id }}
           ls -al
+      - name: Make docker images
+        run: |
+          cd packages/apt/
+          docker build \
+            --tag groonga-debian-stretch \
+            --build-arg DEBUG=yes debian-stretch
+          docker run \
+            --rm \
+            --tty \
+            --volume /home/runner/work/groonga/groonga/packages/apt:/host:rw \
+            --volume /home/runner/work/groonga/groonga/packages/apt/repositories:/repositories:r \
+            --env DEBUG=yes \
+            groonga-debian-stretch /host/test.sh
