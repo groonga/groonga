@@ -21,13 +21,19 @@ RUN \
     libmecab-dev \
     libmsgpack-dev \
     libjemalloc-dev \
+    libjs-underscore \
+    libjs-jquery \
     libpcre3-dev \
     libssl-dev \
     libstemmer-dev \
     libzmq3-dev \
     libzstd-dev \
+    mecab-jumandic-utf8 \
+    mecab-naist-jdic \
+    munin-node \
     pkg-config \
     rapidjson-dev \
+    ruby \
     zlib1g-dev && \
   apt clean && \
   rm -rf /var/lib/apt/lists/*
