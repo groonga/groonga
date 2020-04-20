@@ -61,8 +61,7 @@ classify_time_value_raw(grn_ctx *ctx, grn_obj *time,
   int64_t time_raw;
   struct tm tm;
 
-  if (!(time->header.type == GRN_BULK &&
-        time->header.domain == GRN_DB_TIME)) {
+  if (time->header.domain != GRN_DB_TIME) {
     grn_obj inspected;
 
     GRN_TEXT_INIT(&inspected, 0);
@@ -247,29 +246,109 @@ func_time_classify_raw(grn_ctx *ctx,
     }
   }
 
-  {
-    int64_t classed_time_raw;
-    grn_bool is_classified;
-    is_classified = classify_time_value_raw(ctx,
-                                            time,
-                                            unit,
-                                            interval_raw,
-                                            &classed_time_raw,
-                                            function_name);
-    if (!is_classified) {
-      return NULL;
-    }
-    classed_time = grn_plugin_proc_alloc(ctx,
-                                         user_data,
-                                         time->header.domain,
-                                         0);
-    if (!classed_time) {
-      return NULL;
-    }
-    GRN_TIME_SET(ctx, classed_time, classed_time_raw);
+  switch (time->header.type) {
+  case GRN_BULK :
+    {
+      int64_t classed_time_raw;
+      grn_bool is_classified;
+      is_classified = classify_time_value_raw(ctx,
+                                              time,
+                                              unit,
+                                              interval_raw,
+                                              &classed_time_raw,
+                                              function_name);
+      if (!is_classified) {
+        return NULL;
+      }
+      classed_time = grn_plugin_proc_alloc(ctx,
+                                           user_data,
+                                           time->header.domain,
+                                           0);
+      if (!classed_time) {
+        return NULL;
+      }
+      GRN_TIME_SET(ctx, classed_time, classed_time_raw);
 
-    return classed_time;
+      return classed_time;
+    }
+    break;
+  case GRN_VECTOR :
+    {
+      grn_obj inspected;
+
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, time);
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "%s(): "
+                       "the first argument must be a time: "
+                       "<%.*s>",
+                       function_name,
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return NULL;
+    }
+    break;
+  case GRN_UVECTOR :
+    {
+      if (time->header.domain != GRN_DB_TIME) {
+        grn_obj inspected;
+
+        GRN_TEXT_INIT(&inspected, 0);
+        grn_inspect(ctx, &inspected, time);
+        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                         "%s(): "
+                         "the first argument must be a time: "
+                         "<%.*s>",
+                         function_name,
+                         (int)GRN_TEXT_LEN(&inspected),
+                         GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+        return NULL;
+      } else {
+        classed_time = grn_plugin_proc_alloc(ctx,
+                                             user_data,
+                                             time->header.domain,
+                                             GRN_OBJ_VECTOR);
+        if (!classed_time) {
+          return NULL;
+        }
+
+        {
+          unsigned int i, n_elements;
+          grn_obj buf;
+
+          n_elements = grn_uvector_size(ctx, time);
+          GRN_TIME_INIT(&buf, 0);
+          for (i = 0; i < n_elements; i++) {
+            int64_t classed_time_raw;
+            grn_bool is_classified;
+
+            GRN_BULK_REWIND(&buf);
+            GRN_TIME_SET(ctx, &buf, GRN_TIME_VALUE_AT(time, i));
+
+            is_classified = classify_time_value_raw(ctx,
+                                                    &buf,
+                                                    unit,
+                                                    interval_raw,
+                                                    &classed_time_raw,
+                                                    function_name);
+            if (!is_classified) {
+              GRN_OBJ_FIN(ctx, &buf);
+              return NULL;
+            }
+
+            GRN_TIME_PUT(ctx, classed_time, classed_time_raw);
+          }
+          GRN_OBJ_FIN(ctx, &buf);
+
+          return classed_time;
+        }
+      }
+    }
+    break;
   }
+  return NULL;
 }
 
 static grn_obj *

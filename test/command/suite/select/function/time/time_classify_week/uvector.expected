@@ -1,0 +1,89 @@
+plugin_register functions/time
+[[0,0.0,0.0],true]
+table_create Records TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Records timestamps COLUMN_VECTOR Time
+[[0,0.0,0.0],true]
+load --table Records
+[
+{"timestamps": ["2016-04-30 23:59:59.999999"]},
+{"timestamps": ["2016-05-01 00:00:00.000000"]},
+{"timestamps": ["2016-05-01 00:00:00.000001"]},
+{"timestamps": ["2016-05-07 23:59:59.999999"]},
+{"timestamps": ["2016-05-08 00:00:00.000000"]},
+{"timestamps": ["2016-05-08 00:00:00.000001"]}
+]
+[[0,0.0,0.0],6]
+select Records   --sortby _id   --limit -1   --output_columns 'timestamps, time_classify_week(timestamps)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "timestamps",
+          "Time"
+        ],
+        [
+          "time_classify_week",
+          null
+        ]
+      ],
+      [
+        [
+          1462028399.999999
+        ],
+        [
+          1461423600.0
+        ]
+      ],
+      [
+        [
+          1462028400.0
+        ],
+        [
+          1462028400.0
+        ]
+      ],
+      [
+        [
+          1462028400.000001
+        ],
+        [
+          1462028400.0
+        ]
+      ],
+      [
+        [
+          1462633199.999999
+        ],
+        [
+          1462028400.0
+        ]
+      ],
+      [
+        [
+          1462633200.0
+        ],
+        [
+          1462633200.0
+        ]
+      ],
+      [
+        [
+          1462633200.000001
+        ],
+        [
+          1462633200.0
+        ]
+      ]
+    ]
+  ]
+]

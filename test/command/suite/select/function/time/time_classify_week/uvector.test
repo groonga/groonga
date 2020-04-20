@@ -1,0 +1,19 @@
+plugin_register functions/time
+
+table_create Records TABLE_NO_KEY
+column_create Records timestamps COLUMN_VECTOR Time
+
+load --table Records
+[
+{"timestamps": ["2016-04-30 23:59:59.999999"]},
+{"timestamps": ["2016-05-01 00:00:00.000000"]},
+{"timestamps": ["2016-05-01 00:00:00.000001"]},
+{"timestamps": ["2016-05-07 23:59:59.999999"]},
+{"timestamps": ["2016-05-08 00:00:00.000000"]},
+{"timestamps": ["2016-05-08 00:00:00.000001"]}
+]
+
+select Records \
+  --sortby _id \
+  --limit -1 \
+  --output_columns 'timestamps, time_classify_week(timestamps)'
