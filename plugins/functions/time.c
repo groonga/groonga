@@ -191,7 +191,6 @@ func_time_classify_raw(grn_ctx *ctx,
 {
   grn_obj *time;
   uint32_t interval_raw = 1;
-  grn_obj *classed_time;
   bool accept_interval = GRN_TRUE;
 
   switch (unit) {
@@ -293,10 +292,10 @@ func_time_classify_raw(grn_ctx *ctx,
       if (!is_classified) {
         return NULL;
       }
-      classed_time = grn_plugin_proc_alloc(ctx,
-                                           user_data,
-                                           time->header.domain,
-                                           0);
+      grn_obj *classed_time = grn_plugin_proc_alloc(ctx,
+                                                    user_data,
+                                                    time->header.domain,
+                                                    0);
       if (!classed_time) {
         return NULL;
       }
@@ -308,11 +307,11 @@ func_time_classify_raw(grn_ctx *ctx,
   case GRN_UVECTOR :
     {
       if (time->header.domain == GRN_DB_TIME) {
-        classed_time = grn_plugin_proc_alloc(ctx,
-                                             user_data,
-                                             time->header.domain,
-                                             GRN_OBJ_VECTOR);
-        if (!classed_time) {
+        grn_obj *classed_times = grn_plugin_proc_alloc(ctx,
+                                                       user_data,
+                                                       time->header.domain,
+                                                       GRN_OBJ_VECTOR);
+        if (!classed_times) {
           return NULL;
         }
 
@@ -340,11 +339,11 @@ func_time_classify_raw(grn_ctx *ctx,
               return NULL;
             }
 
-            GRN_TIME_PUT(ctx, classed_time, classed_time_raw);
+            GRN_TIME_PUT(ctx, classed_times, classed_time_raw);
           }
           GRN_OBJ_FIN(ctx, &buf);
 
-          return classed_time;
+          return classed_times;
         }
       }
     }
