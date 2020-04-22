@@ -152,6 +152,35 @@ classify_time_value_raw(grn_ctx *ctx,
   return true;
 }
 
+static bool
+func_time_classify_raw_validate_arg0(grn_ctx *ctx,
+                                     grn_obj *time,
+                                     const char *function_name)
+{
+  if (time->header.domain == GRN_DB_TIME) {
+    switch (time->header.type) {
+    case GRN_BULK :
+    case GRN_UVECTOR :
+      return true;
+    default :
+      break;
+    }
+  }
+
+  grn_obj inspected;
+  GRN_TEXT_INIT(&inspected, 0);
+  grn_inspect(ctx, &inspected, time);
+  GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                   "%s(): "
+                   "the first argument must be a time or a time vector: "
+                   "<%.*s>",
+                   function_name,
+                   (int)GRN_TEXT_LEN(&inspected),
+                   GRN_TEXT_VALUE(&inspected));
+  GRN_OBJ_FIN(ctx, &inspected);
+  return false;
+}
+
 static grn_obj *
 func_time_classify_raw(grn_ctx *ctx,
                        int n_args,
@@ -202,6 +231,9 @@ func_time_classify_raw(grn_ctx *ctx,
   }
 
   time = args[0];
+  if (!func_time_classify_raw_validate_arg0(ctx, time, function_name)) {
+    return NULL;
+  }
 
   if (n_args == 2) {
     grn_obj *interval;
@@ -273,40 +305,9 @@ func_time_classify_raw(grn_ctx *ctx,
       return classed_time;
     }
     break;
-  case GRN_VECTOR :
-    {
-      grn_obj inspected;
-
-      GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, time);
-      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                       "%s(): "
-                       "the first argument must be a time: "
-                       "<%.*s>",
-                       function_name,
-                       (int)GRN_TEXT_LEN(&inspected),
-                       GRN_TEXT_VALUE(&inspected));
-      GRN_OBJ_FIN(ctx, &inspected);
-      return NULL;
-    }
-    break;
   case GRN_UVECTOR :
     {
-      if (time->header.domain != GRN_DB_TIME) {
-        grn_obj inspected;
-
-        GRN_TEXT_INIT(&inspected, 0);
-        grn_inspect(ctx, &inspected, time);
-        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                         "%s(): "
-                         "the first argument must be a time: "
-                         "<%.*s>",
-                         function_name,
-                         (int)GRN_TEXT_LEN(&inspected),
-                         GRN_TEXT_VALUE(&inspected));
-        GRN_OBJ_FIN(ctx, &inspected);
-        return NULL;
-      } else {
+      if (time->header.domain == GRN_DB_TIME) {
         classed_time = grn_plugin_proc_alloc(ctx,
                                              user_data,
                                              time->header.domain,
@@ -349,6 +350,7 @@ func_time_classify_raw(grn_ctx *ctx,
     }
     break;
   }
+
   return NULL;
 }
 
