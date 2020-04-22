@@ -14,7 +14,7 @@ load --table Records
 {"timestamps": ["2016-05-08 00:00:00.000001"]}
 ]
 [[0,0.0,0.0],6]
-select Records   --sortby _id   --limit -1   --output_columns 'timestamps, time_classify_week(timestamps)'
+select Records   --sort_keys _id   --limit -1   --output_columns 'timestamps, time_classify_week(timestamps)'
 [
   [
     0,
