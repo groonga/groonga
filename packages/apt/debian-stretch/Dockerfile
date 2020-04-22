@@ -21,6 +21,7 @@ RUN \
     devscripts \
     gettext \
     git \
+    g++ \
     lsb-release \
     libevent-dev \
     liblz4-dev \
@@ -43,6 +44,7 @@ RUN \
     rapidjson-dev \
     rake \
     ruby \
+    ruby-dev \
     wget \
     zlib1g-dev && \
   apt clean && \
