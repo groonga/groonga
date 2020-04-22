@@ -51,8 +51,9 @@ typedef enum {
   GRN_TIME_CLASSIFY_UNIT_YEAR
 } grn_time_classify_unit;
 
-static grn_bool
-classify_time_value_raw(grn_ctx *ctx, grn_obj *time,
+static bool
+classify_time_value_raw(grn_ctx *ctx,
+                        grn_obj *time,
                         grn_time_classify_unit unit,
                         uint32_t interval_raw,
                         int64_t *classed_time_raw,
@@ -74,12 +75,12 @@ classify_time_value_raw(grn_ctx *ctx, grn_obj *time,
                      (int)GRN_TEXT_LEN(&inspected),
                      GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
-    return GRN_FALSE;
+    return false;
   }
 
   time_raw = GRN_TIME_VALUE(time);
   if (!grn_time_to_tm(ctx, time_raw, &tm)) {
-    return GRN_FALSE;
+    return false;
   }
 
   switch (unit) {
@@ -146,9 +147,9 @@ classify_time_value_raw(grn_ctx *ctx, grn_obj *time,
   }
 
   if (!grn_time_from_tm(ctx, classed_time_raw, &tm)) {
-    return GRN_FALSE;
+    return false;
   }
-  return GRN_TRUE;
+  return true;
 }
 
 static grn_obj *
@@ -162,7 +163,7 @@ func_time_classify_raw(grn_ctx *ctx,
   grn_obj *time;
   uint32_t interval_raw = 1;
   grn_obj *classed_time;
-  grn_bool accept_interval = GRN_TRUE;
+  bool accept_interval = GRN_TRUE;
 
   switch (unit) {
   case GRN_TIME_CLASSIFY_UNIT_SECOND :
@@ -250,7 +251,7 @@ func_time_classify_raw(grn_ctx *ctx,
   case GRN_BULK :
     {
       int64_t classed_time_raw;
-      grn_bool is_classified;
+      bool is_classified;
       is_classified = classify_time_value_raw(ctx,
                                               time,
                                               unit,
@@ -322,7 +323,7 @@ func_time_classify_raw(grn_ctx *ctx,
           GRN_TIME_INIT(&buf, 0);
           for (i = 0; i < n_elements; i++) {
             int64_t classed_time_raw;
-            grn_bool is_classified;
+            bool is_classified;
 
             GRN_BULK_REWIND(&buf);
             GRN_TIME_SET(ctx, &buf, GRN_TIME_VALUE_AT(time, i));
