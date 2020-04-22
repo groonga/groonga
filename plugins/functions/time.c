@@ -51,6 +51,136 @@ typedef enum {
   GRN_TIME_CLASSIFY_UNIT_YEAR
 } grn_time_classify_unit;
 
+static bool
+func_time_classify_raw_compute(grn_ctx *ctx,
+                               grn_obj *time,
+                               grn_time_classify_unit unit,
+                               uint32_t interval_raw,
+                               int64_t *classed_time_raw,
+                               const char *function_name)
+{
+  int64_t time_raw;
+  struct tm tm;
+
+  if (time->header.domain != GRN_DB_TIME) {
+    grn_obj inspected;
+
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, time);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s(): "
+                     "the first argument must be a time: "
+                     "<%.*s>",
+                     function_name,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return false;
+  }
+
+  time_raw = GRN_TIME_VALUE(time);
+  if (!grn_time_to_tm(ctx, time_raw, &tm)) {
+    return false;
+  }
+
+  switch (unit) {
+  case GRN_TIME_CLASSIFY_UNIT_SECOND :
+    tm.tm_sec = (tm.tm_sec / interval_raw) * interval_raw;
+    break;
+  case GRN_TIME_CLASSIFY_UNIT_MINUTE :
+    tm.tm_min = (tm.tm_min / interval_raw) * interval_raw;
+    tm.tm_sec = 0;
+    break;
+  case GRN_TIME_CLASSIFY_UNIT_HOUR :
+    tm.tm_hour = (tm.tm_hour / interval_raw) * interval_raw;
+    tm.tm_min = 0;
+    tm.tm_sec = 0;
+    break;
+  case GRN_TIME_CLASSIFY_UNIT_DAY :
+    tm.tm_hour = 0;
+    tm.tm_min = 0;
+    tm.tm_sec = 0;
+    break;
+  case GRN_TIME_CLASSIFY_UNIT_WEEK :
+    if ((tm.tm_mday - tm.tm_wday) >= 0) {
+      tm.tm_mday -= tm.tm_wday;
+    } else {
+      int n_underflowed_mday = -(tm.tm_mday - tm.tm_wday);
+      int mday;
+      int max_mday = 31;
+
+      if (tm.tm_mon == 0) {
+        tm.tm_year--;
+        tm.tm_mon = 11;
+      } else {
+        tm.tm_mon--;
+      }
+
+      for (mday = max_mday; mday > n_underflowed_mday; mday--) {
+        int64_t unused;
+        tm.tm_mday = mday;
+        if (grn_time_from_tm(ctx, &unused, &tm)) {
+          break;
+        }
+      }
+      tm.tm_mday -= n_underflowed_mday;
+    }
+    tm.tm_hour = 0;
+    tm.tm_min = 0;
+    tm.tm_sec = 0;
+    break;
+  case GRN_TIME_CLASSIFY_UNIT_MONTH :
+    tm.tm_mon = (tm.tm_mon / interval_raw) * interval_raw;
+    tm.tm_mday = 1;
+    tm.tm_hour = 0;
+    tm.tm_min = 0;
+    tm.tm_sec = 0;
+    break;
+  case GRN_TIME_CLASSIFY_UNIT_YEAR :
+    tm.tm_year = (((1900 + tm.tm_year) / interval_raw) * interval_raw) - 1900;
+    tm.tm_mon = 0;
+    tm.tm_mday = 1;
+    tm.tm_hour = 0;
+    tm.tm_min = 0;
+    tm.tm_sec = 0;
+    break;
+  }
+
+  if (!grn_time_from_tm(ctx, classed_time_raw, &tm)) {
+    return false;
+  }
+  return true;
+}
+
+static bool
+func_time_classify_raw_validate_arg0(grn_ctx *ctx,
+                                     grn_obj *arg0,
+                                     const char *function_name)
+{
+  if (arg0->header.domain == GRN_DB_TIME) {
+    switch (arg0->header.type) {
+    case GRN_BULK :
+    case GRN_UVECTOR :
+      return true;
+    default :
+      break;
+    }
+  }
+
+  grn_obj inspected;
+  GRN_TEXT_INIT(&inspected, 0);
+  grn_inspect(ctx, &inspected, arg0);
+  GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                   "%s(): "
+                   "the first argument must be a time or a time vector: "
+                   "<%.*s>",
+                   function_name,
+                   (int)GRN_TEXT_LEN(&inspected),
+                   GRN_TEXT_VALUE(&inspected));
+  GRN_OBJ_FIN(ctx, &inspected);
+  return false;
+}
+
 static grn_obj *
 func_time_classify_raw(grn_ctx *ctx,
                        int n_args,
@@ -59,10 +189,8 @@ func_time_classify_raw(grn_ctx *ctx,
                        const char *function_name,
                        grn_time_classify_unit unit)
 {
-  grn_obj *time;
   uint32_t interval_raw = 1;
-  grn_obj *classed_time;
-  grn_bool accept_interval = GRN_TRUE;
+  bool accept_interval = GRN_TRUE;
 
   switch (unit) {
   case GRN_TIME_CLASSIFY_UNIT_SECOND :
@@ -100,21 +228,8 @@ func_time_classify_raw(grn_ctx *ctx,
     }
   }
 
-  time = args[0];
-  if (!(time->header.type == GRN_BULK &&
-        time->header.domain == GRN_DB_TIME)) {
-    grn_obj inspected;
-
-    GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect(ctx, &inspected, time);
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "%s(): "
-                     "the first argument must be a time: "
-                     "<%.*s>",
-                     function_name,
-                     (int)GRN_TEXT_LEN(&inspected),
-                     GRN_TEXT_VALUE(&inspected));
-    GRN_OBJ_FIN(ctx, &inspected);
+  grn_obj *arg0 = args[0];
+  if (!func_time_classify_raw_validate_arg0(ctx, arg0, function_name)) {
     return NULL;
   }
 
@@ -162,94 +277,75 @@ func_time_classify_raw(grn_ctx *ctx,
     }
   }
 
-  {
-    int64_t time_raw;
-    struct tm tm;
-    int64_t classed_time_raw;
-
-    time_raw = GRN_TIME_VALUE(time);
-    if (!grn_time_to_tm(ctx, time_raw, &tm)) {
-      return NULL;
-    }
-
-    switch (unit) {
-    case GRN_TIME_CLASSIFY_UNIT_SECOND :
-      tm.tm_sec = (tm.tm_sec / interval_raw) * interval_raw;
-      break;
-    case GRN_TIME_CLASSIFY_UNIT_MINUTE :
-      tm.tm_min = (tm.tm_min / interval_raw) * interval_raw;
-      tm.tm_sec = 0;
-      break;
-    case GRN_TIME_CLASSIFY_UNIT_HOUR :
-      tm.tm_hour = (tm.tm_hour / interval_raw) * interval_raw;
-      tm.tm_min = 0;
-      tm.tm_sec = 0;
-      break;
-    case GRN_TIME_CLASSIFY_UNIT_DAY :
-      tm.tm_hour = 0;
-      tm.tm_min = 0;
-      tm.tm_sec = 0;
-      break;
-    case GRN_TIME_CLASSIFY_UNIT_WEEK :
-      if ((tm.tm_mday - tm.tm_wday) >= 0) {
-        tm.tm_mday -= tm.tm_wday;
-      } else {
-        int n_underflowed_mday = -(tm.tm_mday - tm.tm_wday);
-        int mday;
-        int max_mday = 31;
-
-        if (tm.tm_mon == 0) {
-          tm.tm_year--;
-          tm.tm_mon = 11;
-        } else {
-          tm.tm_mon--;
-        }
-
-        for (mday = max_mday; mday > n_underflowed_mday; mday--) {
-          int64_t unused;
-          tm.tm_mday = mday;
-          if (grn_time_from_tm(ctx, &unused, &tm)) {
-            break;
-          }
-        }
-        tm.tm_mday -= n_underflowed_mday;
+  switch (arg0->header.type) {
+  case GRN_BULK :
+    {
+      grn_obj *time = arg0;
+      int64_t classed_time_raw;
+      bool success = func_time_classify_raw_compute(ctx,
+                                                    time,
+                                                    unit,
+                                                    interval_raw,
+                                                    &classed_time_raw,
+                                                    function_name);
+      if (!success) {
+        return NULL;
       }
-      tm.tm_hour = 0;
-      tm.tm_min = 0;
-      tm.tm_sec = 0;
-      break;
-    case GRN_TIME_CLASSIFY_UNIT_MONTH :
-      tm.tm_mon = (tm.tm_mon / interval_raw) * interval_raw;
-      tm.tm_mday = 1;
-      tm.tm_hour = 0;
-      tm.tm_min = 0;
-      tm.tm_sec = 0;
-      break;
-    case GRN_TIME_CLASSIFY_UNIT_YEAR :
-      tm.tm_year = (((1900 + tm.tm_year) / interval_raw) * interval_raw) - 1900;
-      tm.tm_mon = 0;
-      tm.tm_mday = 1;
-      tm.tm_hour = 0;
-      tm.tm_min = 0;
-      tm.tm_sec = 0;
-      break;
-    }
+      grn_obj *classed_time = grn_plugin_proc_alloc(ctx,
+                                                    user_data,
+                                                    time->header.domain,
+                                                    0);
+      if (!classed_time) {
+        return NULL;
+      }
+      GRN_TIME_SET(ctx, classed_time, classed_time_raw);
 
-    if (!grn_time_from_tm(ctx, &classed_time_raw, &tm)) {
-      return NULL;
+      return classed_time;
     }
+    break;
+  case GRN_UVECTOR :
+    if (arg0->header.domain == GRN_DB_TIME) {
+      grn_obj *times = arg0;
+      grn_obj *classed_times = grn_plugin_proc_alloc(ctx,
+                                                     user_data,
+                                                     times->header.domain,
+                                                     GRN_OBJ_VECTOR);
+      if (!classed_times) {
+        return NULL;
+      }
 
-    classed_time = grn_plugin_proc_alloc(ctx,
-                                         user_data,
-                                         time->header.domain,
-                                         0);
-    if (!classed_time) {
-      return NULL;
+      {
+        size_t i;
+        size_t n_elements = GRN_TIME_VECTOR_SIZE(times);
+        grn_obj time;
+        GRN_TIME_INIT(&time, 0);
+        for (i = 0; i < n_elements; i++) {
+          GRN_BULK_REWIND(&time);
+          GRN_TIME_SET(ctx, &time, GRN_TIME_VALUE_AT(times, i));
+
+          int64_t classed_time_raw;
+          bool success = func_time_classify_raw_compute(ctx,
+                                                        &time,
+                                                        unit,
+                                                        interval_raw,
+                                                        &classed_time_raw,
+                                                        function_name);
+          if (!success) {
+            GRN_OBJ_FIN(ctx, &time);
+            return NULL;
+          }
+
+          GRN_TIME_PUT(ctx, classed_times, classed_time_raw);
+        }
+        GRN_OBJ_FIN(ctx, &time);
+
+        return classed_times;
+      }
     }
-    GRN_TIME_SET(ctx, classed_time, classed_time_raw);
-
-    return classed_time;
+    break;
   }
+
+  return NULL;
 }
 
 static grn_obj *
