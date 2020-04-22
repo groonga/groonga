@@ -154,11 +154,11 @@ func_time_classify_raw_compute(grn_ctx *ctx,
 
 static bool
 func_time_classify_raw_validate_arg0(grn_ctx *ctx,
-                                     grn_obj *time,
+                                     grn_obj *arg0,
                                      const char *function_name)
 {
-  if (time->header.domain == GRN_DB_TIME) {
-    switch (time->header.type) {
+  if (arg0->header.domain == GRN_DB_TIME) {
+    switch (arg0->header.type) {
     case GRN_BULK :
     case GRN_UVECTOR :
       return true;
@@ -169,7 +169,7 @@ func_time_classify_raw_validate_arg0(grn_ctx *ctx,
 
   grn_obj inspected;
   GRN_TEXT_INIT(&inspected, 0);
-  grn_inspect(ctx, &inspected, time);
+  grn_inspect(ctx, &inspected, arg0);
   GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                    "%s(): "
                    "the first argument must be a time or a time vector: "
@@ -189,7 +189,6 @@ func_time_classify_raw(grn_ctx *ctx,
                        const char *function_name,
                        grn_time_classify_unit unit)
 {
-  grn_obj *time;
   uint32_t interval_raw = 1;
   bool accept_interval = GRN_TRUE;
 
@@ -229,8 +228,8 @@ func_time_classify_raw(grn_ctx *ctx,
     }
   }
 
-  time = args[0];
-  if (!func_time_classify_raw_validate_arg0(ctx, time, function_name)) {
+  grn_obj *arg0 = args[0];
+  if (!func_time_classify_raw_validate_arg0(ctx, arg0, function_name)) {
     return NULL;
   }
 
@@ -278,9 +277,10 @@ func_time_classify_raw(grn_ctx *ctx,
     }
   }
 
-  switch (time->header.type) {
+  switch (arg0->header.type) {
   case GRN_BULK :
     {
+      grn_obj *time = arg0;
       int64_t classed_time_raw;
       bool success = func_time_classify_raw_compute(ctx,
                                                     time,
@@ -305,40 +305,40 @@ func_time_classify_raw(grn_ctx *ctx,
     break;
   case GRN_UVECTOR :
     {
-      if (time->header.domain == GRN_DB_TIME) {
+      if (arg0->header.domain == GRN_DB_TIME) {
+        grn_obj *times = arg0;
         grn_obj *classed_times = grn_plugin_proc_alloc(ctx,
                                                        user_data,
-                                                       time->header.domain,
+                                                       times->header.domain,
                                                        GRN_OBJ_VECTOR);
         if (!classed_times) {
           return NULL;
         }
 
         {
-          unsigned int i, n_elements;
-          grn_obj buf;
-
-          n_elements = grn_uvector_size(ctx, time);
-          GRN_TIME_INIT(&buf, 0);
+          size_t i;
+          size_t n_elements = GRN_TIME_VECTOR_SIZE(times);
+          grn_obj time;
+          GRN_TIME_INIT(&time, 0);
           for (i = 0; i < n_elements; i++) {
-            GRN_BULK_REWIND(&buf);
-            GRN_TIME_SET(ctx, &buf, GRN_TIME_VALUE_AT(time, i));
+            GRN_BULK_REWIND(&time);
+            GRN_TIME_SET(ctx, &time, GRN_TIME_VALUE_AT(times, i));
 
             int64_t classed_time_raw;
             bool success = func_time_classify_raw_compute(ctx,
-                                                          &buf,
+                                                          &time,
                                                           unit,
                                                           interval_raw,
                                                           &classed_time_raw,
                                                           function_name);
             if (!success) {
-              GRN_OBJ_FIN(ctx, &buf);
+              GRN_OBJ_FIN(ctx, &time);
               return NULL;
             }
 
             GRN_TIME_PUT(ctx, classed_times, classed_time_raw);
           }
-          GRN_OBJ_FIN(ctx, &buf);
+          GRN_OBJ_FIN(ctx, &time);
 
           return classed_times;
         }
