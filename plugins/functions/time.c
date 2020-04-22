@@ -282,14 +282,13 @@ func_time_classify_raw(grn_ctx *ctx,
   case GRN_BULK :
     {
       int64_t classed_time_raw;
-      bool is_classified;
-      is_classified = classify_time_value_raw(ctx,
-                                              time,
-                                              unit,
-                                              interval_raw,
-                                              &classed_time_raw,
-                                              function_name);
-      if (!is_classified) {
+      bool success = classify_time_value_raw(ctx,
+                                             time,
+                                             unit,
+                                             interval_raw,
+                                             &classed_time_raw,
+                                             function_name);
+      if (!success) {
         return NULL;
       }
       grn_obj *classed_time = grn_plugin_proc_alloc(ctx,
@@ -322,19 +321,17 @@ func_time_classify_raw(grn_ctx *ctx,
           n_elements = grn_uvector_size(ctx, time);
           GRN_TIME_INIT(&buf, 0);
           for (i = 0; i < n_elements; i++) {
-            int64_t classed_time_raw;
-            bool is_classified;
-
             GRN_BULK_REWIND(&buf);
             GRN_TIME_SET(ctx, &buf, GRN_TIME_VALUE_AT(time, i));
 
-            is_classified = classify_time_value_raw(ctx,
-                                                    &buf,
-                                                    unit,
-                                                    interval_raw,
-                                                    &classed_time_raw,
-                                                    function_name);
-            if (!is_classified) {
+            int64_t classed_time_raw;
+            bool success = classify_time_value_raw(ctx,
+                                                   &buf,
+                                                   unit,
+                                                   interval_raw,
+                                                   &classed_time_raw,
+                                                   function_name);
+            if (!success) {
               GRN_OBJ_FIN(ctx, &buf);
               return NULL;
             }
