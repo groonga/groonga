@@ -7,6 +7,43 @@
 News
 ====
 
+.. _release-10-0-2:
+
+Release 10.0.2 - 2020-04-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added following API
+
+  * ``grn_obj_unref(grn_ctx *ctx, grn_obj *obj)``
+
+    * 
+
+Fixes
+^^^^^
+
+* Fixed a bug that unrelated column value may be cleared. [GtiHub#1087][Reported by sutamin]
+
+* Fixed a memory leak when we dumped records with ``dump`` command.
+
+* Fixed a memory leak when we specified invalid value into ``output_columns``.
+
+* Fixed a memory leak when we executed ``snippet`` function.
+
+* Fixed a memory leak when we filled the below conditions.
+
+  * If we used dynamic columns on the ``initial`` stage.
+  * If we used ``slices`` argument with ``select`` command.
+
+* Fixed a memory leak when we deleted tables with ``logical_table_remove``.
+
+* Fixed a memory leak when we use the reference count mode.
+
+  * The reference count mode is a ``GRN_ENABLE_REFERENCE_COUNT=yes`` state.
+  * This mode is experimental. Performance may degrade by this mode.
+
 .. _release-10-0-1:
 
 Release 10.0.1 - 2020-03-30
