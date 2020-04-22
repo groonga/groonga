@@ -52,12 +52,12 @@ typedef enum {
 } grn_time_classify_unit;
 
 static bool
-classify_time_value_raw(grn_ctx *ctx,
-                        grn_obj *time,
-                        grn_time_classify_unit unit,
-                        uint32_t interval_raw,
-                        int64_t *classed_time_raw,
-                        const char *function_name)
+func_time_classify_raw_compute(grn_ctx *ctx,
+                               grn_obj *time,
+                               grn_time_classify_unit unit,
+                               uint32_t interval_raw,
+                               int64_t *classed_time_raw,
+                               const char *function_name)
 {
   int64_t time_raw;
   struct tm tm;
@@ -282,12 +282,12 @@ func_time_classify_raw(grn_ctx *ctx,
   case GRN_BULK :
     {
       int64_t classed_time_raw;
-      bool success = classify_time_value_raw(ctx,
-                                             time,
-                                             unit,
-                                             interval_raw,
-                                             &classed_time_raw,
-                                             function_name);
+      bool success = func_time_classify_raw_compute(ctx,
+                                                    time,
+                                                    unit,
+                                                    interval_raw,
+                                                    &classed_time_raw,
+                                                    function_name);
       if (!success) {
         return NULL;
       }
@@ -325,12 +325,12 @@ func_time_classify_raw(grn_ctx *ctx,
             GRN_TIME_SET(ctx, &buf, GRN_TIME_VALUE_AT(time, i));
 
             int64_t classed_time_raw;
-            bool success = classify_time_value_raw(ctx,
-                                                   &buf,
-                                                   unit,
-                                                   interval_raw,
-                                                   &classed_time_raw,
-                                                   function_name);
+            bool success = func_time_classify_raw_compute(ctx,
+                                                          &buf,
+                                                          unit,
+                                                          interval_raw,
+                                                          &classed_time_raw,
+                                                          function_name);
             if (!success) {
               GRN_OBJ_FIN(ctx, &buf);
               return NULL;
