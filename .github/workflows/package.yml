@@ -22,35 +22,49 @@ jobs:
         include:
           - label: Debian GNU/Linux stretch amd64
             id: debian-stretch-amd64
-            rake_arguments: apt:build APT_TARGETS=debian-stretch
-            repositories_path: packages/apt/repositories/
+            rake-arguments: apt:build APT_TARGETS=debian-stretch
+            repositories-path: packages/apt/repositories/
+            test-docker-image: debian:stretch
+            test-script: packages/apt/test.sh
           - label: Debian GNU/Linux stretch i386
             id: debian-stretch-i386
-            rake_arguments: apt:build APT_TARGETS=debian-stretch-i386
-            repositories_path: packages/apt/repositories/
+            rake-arguments: apt:build APT_TARGETS=debian-stretch-i386
+            repositories-path: packages/apt/repositories/
+            test-docker-image: i386/debian:stretch
+            test-script: packages/apt/test.sh
           - label: Debian GNU/Linux buster amd64
             id: debian-buster-amd64
-            rake_arguments: apt:build APT_TARGETS=debian-buster
-            repositories_path: packages/apt/repositories/
+            rake-arguments: apt:build APT_TARGETS=debian-buster
+            repositories-path: packages/apt/repositories/
+            test-docker-image: debian:buster
+            test-script: packages/apt/test.sh
           - label: Debian GNU/Linux buster i386
             id: debian-buster-i386
-            rake_arguments: apt:build APT_TARGETS=debian-buster-i386
-            repositories_path: packages/apt/repositories/
+            rake-arguments: apt:build APT_TARGETS=debian-buster-i386
+            repositories-path: packages/apt/repositories/
+            test-docker-image: i386/debian:buster
+            test-script: packages/apt/test.sh
           - label: CentOS 6
             id: centos-6
-            rake_arguments: yum:build YUM_TARGETS=centos-6
-            repositories_path: packages/yum/repositories/
+            rake-arguments: yum:build YUM_TARGETS=centos-6
+            repositories-path: packages/yum/repositories/
+            test-docker-image: centos:6
+            test-script: packages/yum/test.sh
           - label: CentOS 7
             id: centos-7
-            rake_arguments: yum:build YUM_TARGETS=centos-7
-            repositories_path: packages/yum/repositories/
+            rake-arguments: yum:build YUM_TARGETS=centos-7
+            repositories-path: packages/yum/repositories/
+            test-docker-image: centos:7
+            test-script: packages/yum/test.sh
           - label: CentOS 8
             id: centos-8
-            rake_arguments: yum:build YUM_TARGETS=centos-8
-            repositories_path: packages/yum/repositories/
+            rake-arguments: yum:build YUM_TARGETS=centos-8
+            repositories-path: packages/yum/repositories/
+            test-docker-image: centos:8
+            test-script: packages/yum/test.sh
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
       - name: Install dependencies
         run: |
           sudo apt update
@@ -97,7 +111,7 @@ jobs:
       - name: Build with docker
         run: |
           cd packages
-          rake ${{ matrix.rake_arguments }}
+          rake ${{ matrix.rake-arguments }}
         env:
           APACHE_ARROW_REPOSITORY: ../../arrow
 
@@ -105,14 +119,14 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: packages-${{ matrix.id }}
-          path: ${{ matrix.repositories_path }}
+          path: ${{ matrix.repositories-path }}
 
       # Release
       - name: Create assets
         if: |
           startsWith(github.ref, 'refs/tags/')
         run: |
-          tar czf ${{ matrix.id }}.tar.gz ${{ matrix.repositories_path }}
+          tar czf ${{ matrix.id }}.tar.gz ${{ matrix.repositories-path }}
       - name: Ensure creating release
         if: |
           startsWith(github.ref, 'refs/tags/')
@@ -139,3 +153,13 @@ jobs:
           asset_path: ${{ matrix.id }}.tar.gz
           asset_name: ${{ matrix.id }}.tar.gz
           asset_content_type: application/gzip
+
+      # Test
+      - name: Test
+        run: |
+          docker run \
+            --rm \
+            --tty \
+            --volume .:/groonga:ro \
+            ${{ matrix.test-docker-image }} \
+            /groonga/${{ matrix.test-script }}
