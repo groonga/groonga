@@ -15,11 +15,72 @@ Release 10.0.2 - 2020-04-29
 Improvements
 ^^^^^^^^^^^^
 
-* Added following API
+* Improve sort performance on value which can't be referable is a mixed case.
+
+  * Some sort key (e.g. _score) values can't be referred.
+  * If there is at least one sort key that can't be referable is included, all sort keys are copied before.
+  * With this change, we just copy sort keys that can't be referable. Referable sort keys are just referred.
+  * However, this change may have performance regression when all sort keys are referable.
+  
+* Added support for loading weight vector as a JSON string.
+
+  * We can load weight vector as a JSON string as below example.
+
+    .. code-block::
+
+       table_create Tags TABLE_PAT_KEY ShortText
+       table_create Data TABLE_NO_KEY
+       column_create Data tags COLUMN_VECTOR|WITH_WEIGHT Tags
+       column_create Tags data_tags COLUMN_INDEX|WITH_WEIGHT Data tags
+       load --table Data
+       [
+         {"tags": "{\"fruit\": 10, \"apple\": 100}"},
+         {"tags": "{\"fruit\": 200}"}
+       ]
+
+* Added support for Float32 type.
+
+  * Groonga already has a Float type. However, it is double precision floating point number.
+  * Therefore if we only use single precision floating point number, it is not efficient.
+  * We can select more suitable type by adding a Float32 type.
+
+* Added following APIs
 
   * ``grn_obj_unref(grn_ctx *ctx, grn_obj *obj)``
 
-    * 
+    * This API is only used on the reference count mode (The reference count mode is a state of ``GRN_ENABLE_REFERENCE_COUNT=yes``.).
+
+      * It calls ``grn_obj_unlink()`` only on the reference count mode.
+      * It doesn't do anything except when the reference count mode.
+      * We useful it when we need only call ``grn_obj_unlink()`` on the referece count mode.
+        * Because as the following example, we don't write condition that whether the reference count mode or not.
+
+        * The example if we don't use ``grn_obj_unref()``.
+
+          .. code-block::
+
+             if (grn_enable_reference_count) {
+              grn_obj_unlink(ctx, obj);
+             }
+
+        * The example if we use ``grn_obj_unref()``.
+
+          .. code-block::
+
+             grn_obj_ubref(ctx, obj);
+
+
+  * ``grn_get_version_major(void)``
+
+    * It returns Groonga's major version number as a ``uint32_t``.
+
+  * ``grn_get_version_minor(void)``
+
+    * It returns Groonga's minor version number as a ``uint32_t``.
+
+  * ``grn_get_version_nicro(void)``
+
+    * It returns Groonga's micor version number as a ``uint32_t``.
 
 Fixes
 ^^^^^
@@ -43,6 +104,13 @@ Fixes
 
   * The reference count mode is a ``GRN_ENABLE_REFERENCE_COUNT=yes`` state.
   * This mode is experimental. Performance may degrade by this mode.
+
+* Fixed a bug that Groonga too much unlink ``_key`` accessor when we load data for apache arrow format.
+
+Thanks
+^^^^^^
+
+* sutamin
 
 .. _release-10-0-1:
 
