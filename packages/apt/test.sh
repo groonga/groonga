@@ -16,6 +16,10 @@ groonga --version
 mkdir -p /test
 cd /test
 cp -a /groonga/test/command ./
+if [ "${architecture}" = "i386" ]; then
+  rm suite/ruby/eval/convert/string_to_time/over_int32.test
+fi
+
 apt install -V -y \
   gcc \
   make \
