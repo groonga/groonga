@@ -1,3 +1,4 @@
+#@require-apache-arrow
 #@require-interface http
 #@require-testee groonga
 
