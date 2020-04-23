@@ -13,6 +13,9 @@ apt install -V -y \
 
 groonga --version
 
+mkdir -p /test
+cd /test
+cp -a /groonga/test/command ./
 apt install -V -y \
   gcc \
   make \
@@ -22,16 +25,11 @@ gem install grntest
 export TZ=Asia/Tokyo
 
 grntest_options=()
-grntest_options+=(--base-directory=/groonga/test/command)
+grntest_options+=(--base-directory=command)
 grntest_options+=(--n-retries=3)
 grntest_options+=(--n-workers=$(nproc))
 grntest_options+=(--reporter=mark)
-grntest_options+=(/groonga/test/command/suite)
-
+grntest_options+=(command/suite)
 grntest "${grntest_options[@]}"
-
-# TODO: Require Apache Arrow for testing HTTP interface
-exit 0
-
 grntest "${grntest_options[@]}" --interface http
 grntest "${grntest_options[@]}" --interface http --testee groonga-httpd
