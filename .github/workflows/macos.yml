@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@master
       - name: Install packages
         run: |
+          brew update
           brew bundle
       - name: Generate configure
         run: |
