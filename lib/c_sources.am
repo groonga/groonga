@@ -108,6 +108,7 @@ libgroonga_c_sources =				\
 	output_columns.c			\
 	pat.c					\
 	plugin.c				\
+	posting.c				\
 	proc.c					\
 	raw_string.c				\
 	report.c				\

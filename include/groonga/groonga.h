@@ -538,15 +538,6 @@ GRN_API grn_proc_type grn_proc_get_type(grn_ctx *ctx, grn_obj *proc);
 
 typedef grn_obj grn_table_cursor;
 
-typedef struct {
-  grn_id rid;
-  uint32_t sid;
-  uint32_t pos;
-  uint32_t tf;
-  uint32_t weight;
-  uint32_t rest;
-} grn_posting;
-
 typedef enum {
   GRN_OP_PUSH = 0,
   GRN_OP_POP,

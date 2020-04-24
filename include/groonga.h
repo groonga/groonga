@@ -23,6 +23,7 @@
 
 #include "groonga/portability.h"
 #include "groonga/groonga.h"
+#include "groonga/posting.h"
 
 #include "groonga/accessor.h"
 #include "groonga/array.h"
