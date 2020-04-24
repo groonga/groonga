@@ -407,22 +407,19 @@ typedef uint32_t grn_column_flags;
 #define GRN_COLUMN_VAR_SIZE            (0x41)
 #define GRN_COLUMN_INDEX               (0x48)
 
-typedef struct _grn_section grn_section;
-typedef struct _grn_obj_header grn_obj_header;
-
-struct _grn_section {
+typedef struct _grn_section {
   unsigned int offset;
   unsigned int length;
   uint32_t weight;
   grn_id domain;
-};
+} grn_section;
 
-struct _grn_obj_header {
+typedef struct _grn_obj_header {
   unsigned char type;
   unsigned char impl_flags;
   grn_obj_flags flags;
   grn_id domain;
-};
+} grn_obj_header;
 
 struct _grn_obj {
   grn_obj_header header;
