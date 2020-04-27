@@ -15,13 +15,15 @@ Release 10.0.2 - 2020-04-29
 Improvements
 ^^^^^^^^^^^^
 
+* Added support for uvector for time_classify_* functions. [GitHub#1089][Patched by naoa]
+
 * Improve sort performance on value which can't be referable is a mixed case.
 
   * Some sort key (e.g. _score) values can't be referred.
   * If there is at least one sort key that can't be referable is included, all sort keys are copied before.
   * With this change, we just copy sort keys that can't be referable. Referable sort keys are just referred.
   * However, this change may have performance regression when all sort keys are referable.
-  
+
 * Added support for loading weight vector as a JSON string.
 
   * We can load weight vector as a JSON string as below example.
@@ -82,8 +84,46 @@ Improvements
 
     * It returns Groonga's micor version number as a ``uint32_t``.
 
+  * ``grn_posting_get_record_id(grn_ctx *ctx, grn_posting *posting)``
+
+    * It returns record id of posting list as a ``uint32_t``.
+
+  * ``grn_posting_get_section_id(grn_ctx *ctx, grn_posting *posting)``
+
+    * It returns section id of posting list as a ``uint32_t``.
+    * Section id is the internal representation of the column name.
+
+      * If column name store in posting list as a string, it is a large amount of information and it use waste capacity.
+      * Therefore, column name store in posting list as a number called section id.
+
+  * ``grn_posting_get_position(grn_ctx *ctx, grn_posting *posting)``
+
+    * It returns position of token as a ``uint32_t``.
+
+  * ``grn_posting_get_tf(grn_ctx *ctx, grn_posting *posting)``
+
+    * It returns Term Frequency score as a ``uint32_t``.
+
+  * ``grn_posting_get_weight(grn_ctx *ctx, grn_posting *posting)``
+
+    * It returns weight of token as a ``uint32_t``.
+
+  * ``grn_posting_get_weight_float(grn_ctx *ctx, grn_posting *posting)``
+
+    * It returns weight of token as a ``float``.
+    * We suggest using this function instead of ``grn_posting_get_weight`` when we get a weight of token after this.
+      * Because we modify the internal representation of the weight from ``uint32_t`` to ``float`` in the near future.
+
+  * ``grn_posting_get_rest(grn_ctx *ctx, grn_posting *posting)``
+
+    * It returns the number of rest posting information for term id as a ``uint32_t``.
+
 Fixes
 ^^^^^
+
+* Fixed a bug that Groonga for 32bit on GNU/Linux may crash.
+
+* Fixed a bug that result records may not be sorted if a referable sort key and a sort key that can't refer are mixed.
 
 * Fixed a bug that unrelated column value may be cleared. [GtiHub#1087][Reported by sutamin]
 
@@ -111,6 +151,8 @@ Thanks
 ^^^^^^
 
 * sutamin
+
+* naoa
 
 .. _release-10-0-1:
 
