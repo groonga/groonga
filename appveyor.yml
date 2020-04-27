@@ -2,6 +2,21 @@ notifications:
   - provider: Webhook
     url: https://webhook.commit-email.info/
 
+skip_commits:
+  files:
+    - "**/Makefile.am"
+    - ".github/"
+    - ".travis.yml"
+    - "benchmark/"
+    - "configure.ac"
+    - "doc/"
+    - "docker-compose.yml"
+    - "dockerfiles/"
+    - "examples/"
+    - "packages/"
+    - "tools/"
+    - "travis/"
+
 version: "{build}"
 clone_depth: 10
 
