@@ -1962,10 +1962,10 @@ selector_all_records(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   posting.weight_float = 1;
   GRN_TABLE_EACH(ctx, table, 0, 0, id, NULL, NULL, NULL, {
     posting.rid = id;
-    grn_ii_posting_add(ctx,
-                       (grn_posting *)(&posting),
-                       (grn_hash *)res,
-                       op);
+    grn_ii_posting_add_float(ctx,
+                             (grn_posting *)(&posting),
+                             (grn_hash *)res,
+                             op);
   });
 
   return ctx->rc;
@@ -2296,10 +2296,10 @@ sub_filter_pre_filter_accessor(grn_ctx *ctx,
         grn_posting_internal posting = {0};
         posting.rid = GRN_RECORD_VALUE(&value);
         posting.weight_float = 1;
-        grn_ii_posting_add(ctx,
-                           (grn_posting *)(&posting),
-                           (grn_hash *)base_res,
-                           GRN_OP_OR);
+        grn_ii_posting_add_float(ctx,
+                                 (grn_posting *)(&posting),
+                                 (grn_hash *)base_res,
+                                 GRN_OP_OR);
       }
     }
     GRN_OBJ_FIN(ctx, &value);
@@ -2323,10 +2323,10 @@ sub_filter_pre_filter_accessor(grn_ctx *ctx,
                                        posting.rid,
                                        base_res);
       } else {
-        grn_ii_posting_add(ctx,
-                           (grn_posting *)(&posting),
-                           (grn_hash *)base_res,
-                           GRN_OP_OR);
+        grn_ii_posting_add_float(ctx,
+                                 (grn_posting *)(&posting),
+                                 (grn_hash *)base_res,
+                                 GRN_OP_OR);
       }
     }
     GRN_OBJ_FIN(ctx, &values);
@@ -2367,10 +2367,10 @@ sub_filter_pre_filter(grn_ctx *ctx,
       grn_obj_get_value(ctx, scope, *matched_id, &value);
       if (GRN_BULK_VSIZE(&value) > 0) {
         posting.rid = GRN_RECORD_VALUE(&value);
-        grn_ii_posting_add(ctx,
-                           (grn_posting *)(&posting),
-                           (grn_hash *)base_res,
-                           GRN_OP_OR);
+        grn_ii_posting_add_float(ctx,
+                                 (grn_posting *)(&posting),
+                                 (grn_hash *)base_res,
+                                 GRN_OP_OR);
       }
     } GRN_TABLE_EACH_END(ctx, cursor);
     GRN_OBJ_FIN(ctx, &value);
@@ -2399,10 +2399,10 @@ sub_filter_pre_filter(grn_ctx *ctx,
                                               &values,
                                               i,
                                               &(posting.weight));
-        grn_ii_posting_add(ctx,
-                           (grn_posting *)(&posting),
-                           (grn_hash *)base_res,
-                           GRN_OP_OR);
+        grn_ii_posting_add_float(ctx,
+                                 (grn_posting *)(&posting),
+                                 (grn_hash *)base_res,
+                                 GRN_OP_OR);
       }
     } GRN_TABLE_EACH_END(ctx, cursor);
     GRN_OBJ_FIN(ctx, &values);
@@ -3121,10 +3121,10 @@ selector_between_sequential_search(grn_ctx *ctx,
         posting.sid = 1;
         posting.pos = 0;
         posting.weight_float = 1;
-        grn_ii_posting_add(ctx,
-                           (grn_posting *)(&posting),
-                           (grn_hash *)res,
-                           op);
+        grn_ii_posting_add_float(ctx,
+                                 (grn_posting *)(&posting),
+                                 (grn_hash *)res,
+                                 op);
       }
     }
 
@@ -3236,10 +3236,10 @@ selector_between(grn_ctx *ctx,
     posting.weight_float = 1;
     while ((id = grn_table_cursor_next(ctx, cursor))) {
       posting.rid = id;
-      grn_ii_posting_add(ctx,
-                         (grn_posting *)(&posting),
-                         (grn_hash *)res,
-                         op);
+      grn_ii_posting_add_float(ctx,
+                               (grn_posting *)(&posting),
+                               (grn_hash *)res,
+                               op);
     }
   }
   grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
@@ -3460,10 +3460,10 @@ selector_in_values_sequential_search(grn_ctx *ctx,
                 posting.sid = 1;
                 posting.pos = 0;
                 posting.weight_float = 1;
-                grn_ii_posting_add(ctx,
-                                   (grn_posting *)(&posting),
-                                   (grn_hash *)res,
-                                   op);
+                grn_ii_posting_add_float(ctx,
+                                         (grn_posting *)(&posting),
+                                         (grn_hash *)res,
+                                         op);
               }
               break;
             case GRN_UVECTOR :
@@ -3477,10 +3477,10 @@ selector_in_values_sequential_search(grn_ctx *ctx,
                     posting.sid = 1;
                     posting.pos = 0;
                     posting.weight_float = 1;
-                    grn_ii_posting_add(ctx,
-                                       (grn_posting *)(&posting),
-                                       (grn_hash *)res,
-                                       op);
+                    grn_ii_posting_add_float(ctx,
+                                             (grn_posting *)(&posting),
+                                             (grn_hash *)res,
+                                             op);
                   }
                 }
               }
@@ -3763,10 +3763,10 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
               grn_posting_internal add_posting =
                 *((grn_posting_internal *)posting);
               add_posting.weight_float += 1;
-              grn_ii_posting_add(ctx,
-                                 (grn_posting *)(&add_posting),
-                                 (grn_hash *)res,
-                                 op);
+              grn_ii_posting_add_float(ctx,
+                                       (grn_posting *)(&add_posting),
+                                       (grn_hash *)res,
+                                       op);
             }
             n_records++;
             if (n_records == real_limit) {
@@ -4080,10 +4080,10 @@ selector_prefix_rk_search_key(grn_ctx *ctx,
     posting.sid = 1;
     posting.pos = 0;
     posting.weight_float = 1;
-    grn_ii_posting_add(ctx,
-                       (grn_posting *)(&posting),
-                       (grn_hash *)res,
-                       op);
+    grn_ii_posting_add_float(ctx,
+                             (grn_posting *)(&posting),
+                             (grn_hash *)res,
+                             op);
   } GRN_TABLE_EACH_END(ctx, cursor);
   grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
 
