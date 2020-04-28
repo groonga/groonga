@@ -15,13 +15,16 @@ Release 10.0.2 - 2020-04-29
 Improvements
 ^^^^^^^^^^^^
 
-* Added support for uvector for time_classify_* functions. [GitHub#1089][Patched by naoa]
+* Added support for ``uvector`` for ``time_classify_*`` functions. [GitHub#1089][Patched by naoa]
 
-* Improve sort performance on value which can't be referable is a mixed case.
+  * ``uvector`` is a vector that size of elements for vector are fixed.
+  * For example, a vector that has values of Time type as elements is a ``uvector``.
 
-  * Some sort key (e.g. _score) values can't be referred.
+* Improve sort performance if a value that can't be referable with zero-copy is mixed.
+
+  * Some sort key (e.g. ``_score``) values can't be referred with zero-copy.
   * If there is at least one sort key that can't be referable is included, all sort keys are copied before.
-  * With this change, we just copy sort keys that can't be referable. Referable sort keys are just referred.
+  * With this change, we just copy sort keys that can't be referred. Referable sort keys are just referred without a copy.
   * However, this change may have performance regression when all sort keys are referable.
 
 * Added support for loading weight vector as a JSON string.
@@ -40,11 +43,10 @@ Improvements
          {"tags": "{\"fruit\": 200}"}
        ]
 
-* Added support for Float32 type.
+* Added support for ``Float32`` type.
 
-  * Groonga already has a Float type. However, it is double precision floating point number.
-  * Therefore if we only use single precision floating point number, it is not efficient.
-  * We can select more suitable type by adding a Float32 type.
+  * Groonga already has a ``Float`` type. However, it is double precision floating point number. Therefore if we only use single precision floating point number, it is not efficient.
+  * We can select more suitable type by adding a ``Float32`` type.
 
 * Added following APIs
 
@@ -52,10 +54,9 @@ Improvements
 
     * This API is only used on the reference count mode (The reference count mode is a state of ``GRN_ENABLE_REFERENCE_COUNT=yes``.).
 
-      * It calls ``grn_obj_unlink()`` only on the reference count mode.
-      * It doesn't do anything except when the reference count mode.
+      * It calls ``grn_obj_unlink()`` only on the reference count mode. It doesn't do anything except when the reference count mode.
       * We useful it when we need only call ``grn_obj_unlink()`` on the referece count mode.
-        * Because as the following example, we don't write condition that whether the reference count mode or not.
+      * Because as the following example, we don't write condition that whether the reference count mode or not.
 
         * The example if we don't use ``grn_obj_unref()``.
 
@@ -72,58 +73,46 @@ Improvements
              grn_obj_ubref(ctx, obj);
 
 
-  * ``grn_get_version_major(void)``
+  * ``grn_get_version_*``
 
-    * It returns Groonga's major version number as a ``uint32_t``.
+    * They return Groonga's major, minor, and micor version numbers as a ``uint32_t``.
 
-  * ``grn_get_version_minor(void)``
+      * ``grn_get_version_major(void)``
+      * ``grn_get_version_minor(void)``
+      * ``grn_get_version_micro(void)``
 
-    * It returns Groonga's minor version number as a ``uint32_t``.
+  * ``grn_posting_get_*``
 
-  * ``grn_get_version_nicro(void)``
+    * They return information on the posting list.
+    * These APIs return value as a ``uint32_t`` except ``grn_posting_get_weight_float``.
+    * ``grn_posting_get_weight_float`` returns value as a ``float``.
 
-    * It returns Groonga's micor version number as a ``uint32_t``.
+      * ``grn_posting_get_record_id(grn_ctx *ctx, grn_posting *posting)``
+      * ``grn_posting_get_section_id(grn_ctx *ctx, grn_posting *posting)``
 
-  * ``grn_posting_get_record_id(grn_ctx *ctx, grn_posting *posting)``
+        * Section id is the internal representation of the column name.
+        * If column name store in posting list as a string, it is a large amount of information and it use waste capacity.
+        * Therefore, Groonga compresses the amount of information and use storage capacity is small by storing column name in the posting list as a number called section id.
 
-    * It returns record id of posting list as a ``uint32_t``.
+    * ``grn_posting_get_position(grn_ctx *ctx, grn_posting *posting)``
+    * ``grn_posting_get_tf(grn_ctx *ctx, grn_posting *posting)``
 
-  * ``grn_posting_get_section_id(grn_ctx *ctx, grn_posting *posting)``
+      * ``tf`` of ``grn_posting_get_tf`` is Term Frequency score.
 
-    * It returns section id of posting list as a ``uint32_t``.
-    * Section id is the internal representation of the column name.
+    * ``grn_posting_get_weight(grn_ctx *ctx, grn_posting *posting)``
+    * ``grn_posting_get_weight_float(grn_ctx *ctx, grn_posting *posting)``
 
-      * If column name store in posting list as a string, it is a large amount of information and it use waste capacity.
-      * Therefore, column name store in posting list as a number called section id.
+      * It returns weight of token as a ``float``.
+      * We suggest using this function instead of ``grn_posting_get_weight`` when we get a weight of token after this.
 
-  * ``grn_posting_get_position(grn_ctx *ctx, grn_posting *posting)``
+        * Because we modify the internal representation of the weight from ``uint32_t`` to ``float`` in the near future.
 
-    * It returns position of token as a ``uint32_t``.
-
-  * ``grn_posting_get_tf(grn_ctx *ctx, grn_posting *posting)``
-
-    * It returns Term Frequency score as a ``uint32_t``.
-
-  * ``grn_posting_get_weight(grn_ctx *ctx, grn_posting *posting)``
-
-    * It returns weight of token as a ``uint32_t``.
-
-  * ``grn_posting_get_weight_float(grn_ctx *ctx, grn_posting *posting)``
-
-    * It returns weight of token as a ``float``.
-    * We suggest using this function instead of ``grn_posting_get_weight`` when we get a weight of token after this.
-      * Because we modify the internal representation of the weight from ``uint32_t`` to ``float`` in the near future.
-
-  * ``grn_posting_get_rest(grn_ctx *ctx, grn_posting *posting)``
-
-    * It returns the number of rest posting information for term id as a ``uint32_t``.
+    * ``grn_posting_get_rest(grn_ctx *ctx, grn_posting *posting)``
 
 Fixes
 ^^^^^
 
 * Fixed a bug that Groonga for 32bit on GNU/Linux may crash.
-
-* Fixed a bug that result records may not be sorted if a referable sort key and a sort key that can't refer are mixed.
 
 * Fixed a bug that unrelated column value may be cleared. [GtiHub#1087][Reported by sutamin]
 
