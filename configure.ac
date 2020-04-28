@@ -206,6 +206,9 @@ if test "$GCC" = "yes"; then
   CHECK_BUILD_FLAG([-Wwrite-strings])
 #  CHECK_BUILD_FLAG([-Winline])
   CHECK_BUILD_FLAG([-Wmissing-field-initializers])
+  if test "x$check_cflag" = "xyes"; then
+    NO_MISSING_FIELD_INITIALIZES_CFLAGS="-Wno-missing-field-initializers"
+  fi
 
   CHECK_CXXFLAG([-fexceptions])
   CHECK_CXXFLAG([-fimplicit-templates])
