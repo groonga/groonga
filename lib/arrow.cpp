@@ -30,16 +30,6 @@
 
 #include <sstream>
 
-#if (ARROW_VERSION_MAJOR >= 1) || (ARROW_VERION_MAJOR == 0 && ARROW_VERSION_MINOR >= 16)
-# define GRN_ARROW_IO_RESULT
-#endif
-
-#if (ARROW_VERSION_MAJOR >= 1) || (ARROW_VERION_MAJOR == 0 && ARROW_VERSION_MINOR >= 17)
-# define GRN_ARROW_IPC_RESULT
-# define GRN_ARROW_TABLE_RESULT
-# define GRN_ARROW_DECODER
-#endif
-
 namespace grnarrow {
   grn_rc status_to_rc(const arrow::Status &status) {
     switch (status.code()) {
@@ -97,7 +87,6 @@ namespace grnarrow {
                  static_cast<std::stringstream &>(output).str().c_str());
   }
 
-# ifdef GRN_ARROW_IO_RESULT
   template <typename TYPE>
   bool check(grn_ctx *ctx,
              arrow::Result<TYPE> &result,
@@ -111,7 +100,6 @@ namespace grnarrow {
              std::ostream &output) {
     return check(ctx, result.status(), output);
   }
-# endif
 
   void put_time_value(grn_ctx *ctx,
                       grn_obj *bulk,
@@ -1052,7 +1040,6 @@ namespace grnarrow {
     grn_rc load_record_batch(const std::shared_ptr<arrow::RecordBatch> &arrow_record_batch) {
       std::vector<std::shared_ptr<arrow::RecordBatch>> arrow_record_batches =
         {arrow_record_batch};
-# ifdef GRN_ARROW_TABLE_RESULT
       auto arrow_table = arrow::Table::FromRecordBatches(arrow_record_batches);
       if (!check(ctx_,
                  arrow_table,
@@ -1061,18 +1048,6 @@ namespace grnarrow {
         return ctx_->rc;
       }
       return load_table(*arrow_table);
-# else
-      std::shared_ptr<arrow::Table> arrow_table;
-      auto status =
-        arrow::Table::FromRecordBatches(arrow_record_batches, &arrow_table);
-      if (!check(ctx_,
-                 status,
-                 "[arrow][load] "
-                 "failed to convert record batch to table")) {
-        return ctx_->rc;
-      }
-      return load_table(arrow_table);
-# endif
     };
 
   private:
@@ -1118,7 +1093,6 @@ namespace grnarrow {
 
       auto schema = std::make_shared<arrow::Schema>(fields);
 
-# ifdef GRN_ARROW_IPC_RESULT
       auto writer_result = arrow::ipc::NewFileWriter(output, schema);
       if (!check(ctx_,
                  writer_result,
@@ -1126,18 +1100,6 @@ namespace grnarrow {
         return ctx_->rc;
       }
       auto writer = *writer_result;
-# else
-      std::shared_ptr<arrow::ipc::RecordBatchWriter> writer;
-      {
-        auto status =
-          arrow::ipc::RecordBatchFileWriter::Open(output, schema, &writer);
-        if (!check(ctx_,
-                   status,
-                   "[arrow][dump] failed to create file format writer")) {
-          return ctx_->rc;
-        }
-      }
-# endif
 
       std::vector<grn_id> ids;
       size_t n_records_per_batch = 1000;
@@ -1442,16 +1404,9 @@ namespace grnarrow {
       return offset_;
     }
 
-# ifdef GRN_ARROW_IO_RESULT
     arrow::Result<int64_t> Tell() const override {
       return tell();
     }
-# else
-    arrow::Status Tell(int64_t* position) const override {
-      *position = tell();
-      return arrow::Status::OK();
-    }
-# endif
 
     arrow::Status Seek(int64_t position) override {
       offset_ = position;
@@ -1470,16 +1425,9 @@ namespace grnarrow {
                                       static_cast<size_t>(bytes_available));
     }
 
-# ifdef GRN_ARROW_IO_RESULT
     arrow::Result<arrow::util::string_view> Peek(int64_t nbytes) override {
       return peek(nbytes);
     }
-# else
-    arrow::Status Peek(int64_t nbytes, arrow::util::string_view* out) override {
-      *out = peek(nbytes);
-      return arrow::Status::OK();
-    }
-# endif
 
     int64_t read(int64_t nbytes, void* out) {
       const int64_t bytes_available =
@@ -1494,16 +1442,9 @@ namespace grnarrow {
       }
     }
 
-# ifdef GRN_ARROW_IO_RESULT
     arrow::Result<int64_t> Read(int64_t nbytes, void* out) override {
       return read(nbytes, out);
     }
-# else
-    arrow::Status Read(int64_t nbytes, int64_t* bytes_read, void* out) override {
-      *bytes_read = read(nbytes, out);
-      return arrow::Status::OK();
-    }
-# endif
 
     std::shared_ptr<arrow::Buffer> read(int64_t nbytes) {
       const int64_t bytes_available =
@@ -1516,17 +1457,9 @@ namespace grnarrow {
       return output;
     }
 
-# ifdef GRN_ARROW_IO_RESULT
     arrow::Result<std::shared_ptr<arrow::Buffer>> Read(int64_t nbytes) override {
       return read(nbytes);
     }
-# else
-    arrow::Status Read(int64_t nbytes,
-                       std::shared_ptr<arrow::Buffer>* out) override {
-      *out = read(nbytes);
-      return arrow::Status::OK();
-    }
-# endif
 
     bool supports_zero_copy() const override {
       return false;
@@ -1538,22 +1471,13 @@ namespace grnarrow {
     bool closed_;
   };
 
-# ifdef GRN_ARROW_DECODER
   class StreamLoader : public arrow::ipc::Listener {
-# else
-  class StreamLoader {
-# endif
   public:
     StreamLoader(grn_ctx *ctx, grn_loader *loader)
       : ctx_(ctx),
         grn_loader_(loader),
-# ifdef GRN_ARROW_DECODER
         decoder_(std::shared_ptr<StreamLoader>(this, [](void*) {})),
         buffer_(nullptr)
-# else
-        input_(),
-        reader_(nullptr)
-# endif
     {
     }
 
@@ -1562,24 +1486,17 @@ namespace grnarrow {
         return GRN_SUCCESS;
       }
 
-# ifdef GRN_ARROW_DECODER
       return consume_decoder(data, data_size);
-# else
-      return consume_reader(data, data_size);
-# endif
     }
 
-# ifdef GRN_ARROW_DECODER
     arrow::Status OnRecordBatchDecoded(std::shared_ptr<arrow::RecordBatch> record_batch) override {
       process_record_batch(std::move(record_batch));
       return check(ctx_,
                    ctx_->rc,
                    "[arrow][stream-loader][consume][record-batch-decoded]");
     }
-#endif
 
   private:
-# ifdef GRN_ARROW_DECODER
     grn_rc consume_decoder(const char *data, size_t data_size) {
       if (!buffer_) {
         auto buffer = arrow::AllocateResizableBuffer(0);
@@ -1614,36 +1531,6 @@ namespace grnarrow {
       }
       return ctx_->rc;
     }
-# else
-    grn_rc consume_reader(const char *data, size_t data_size) {
-      input_.feed(data, data_size);
-      if (!reader_) {
-        const auto status = arrow::ipc::RecordBatchStreamReader::Open(&input_,
-                                                                      &reader_);
-        if (!status.ok()) {
-          input_.Seek(0);
-          return GRN_SUCCESS;
-        }
-      }
-
-      const auto &stream_reader =
-        std::static_pointer_cast<arrow::ipc::RecordBatchStreamReader>(reader_);
-      while (true) {
-        auto position = input_.tell();
-        std::shared_ptr<arrow::RecordBatch> record_batch;
-        const auto status = stream_reader->ReadNext(&record_batch);
-        if (!status.ok()) {
-          input_.Seek(position);
-          return ctx_->rc;
-        }
-        if (!record_batch.get()) {
-          break;
-        }
-        process_record_batch(std::move(record_batch));
-      }
-      return ctx_->rc;
-    }
-# endif
 
     void process_record_batch(std::shared_ptr<arrow::RecordBatch> record_batch) {
       auto grn_table = grn_loader_->table;
@@ -1695,13 +1582,8 @@ namespace grnarrow {
 
     grn_ctx *ctx_;
     grn_loader *grn_loader_;
-# ifdef GRN_ARROW_DECODER
     arrow::ipc::StreamDecoder decoder_;
     std::unique_ptr<arrow::ResizableBuffer> buffer_;
-# else
-    BufferInputStream input_;
-    std::shared_ptr<arrow::ipc::RecordBatchReader> reader_;
-# endif
   };
 
   class BulkOutputStream : public arrow::io::OutputStream {
@@ -1842,11 +1724,7 @@ namespace grnarrow {
       schema_builder_.Reset();
       schema_ = *schema;
 
-# ifdef GRN_ARROW_IPC_RESULT
       auto writer = arrow::ipc::NewStreamWriter(&output_, schema_);
-# else
-      auto writer = arrow::ipc::RecordBatchStreamWriter::Open(&output_, schema_);
-# endif
       if (!check(ctx_,
                  writer,
                  "[arrow][stream-writer][write-schema] "
@@ -2120,7 +1998,6 @@ grn_arrow_load(grn_ctx *ctx,
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
-# ifdef GRN_ARROW_IO_RESULT
   auto input_result =
     arrow::io::MemoryMappedFile::Open(path, arrow::io::FileMode::READ);
   std::ostringstream context;
@@ -2132,22 +2009,6 @@ grn_arrow_load(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
   auto input = *input_result;
-# else
-  std::shared_ptr<arrow::io::MemoryMappedFile> input;
-  {
-    auto status =
-      arrow::io::MemoryMappedFile::Open(path, arrow::io::FileMode::READ, &input);
-    std::ostringstream context;
-    if (!grnarrow::check(ctx,
-                         status,
-                         context <<
-                         "[arrow][load] failed to open path: " <<
-                         "<" << path << ">")) {
-      GRN_API_RETURN(ctx->rc);
-    }
-  }
-# endif
-# ifdef GRN_ARROW_IPC_RESULT
   auto reader_result = arrow::ipc::RecordBatchFileReader::Open(input);
   if (!grnarrow::check(ctx,
                        reader_result,
@@ -2156,23 +2017,10 @@ grn_arrow_load(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
   auto reader = *reader_result;
-# else
-  std::shared_ptr<arrow::ipc::RecordBatchFileReader> reader;
-  {
-    auto status = arrow::ipc::RecordBatchFileReader::Open(input, &reader);
-    if (!grnarrow::check(ctx,
-                         status,
-                         "[arrow][load] "
-                         "failed to create file format reader")) {
-      GRN_API_RETURN(ctx->rc);
-    }
-  }
-# endif
 
   grnarrow::FileLoader loader(ctx, table);
   int n_record_batches = reader->num_record_batches();
   for (int i = 0; i < n_record_batches; ++i) {
-# ifdef GRN_ARROW_IPC_RESULT
     auto record_batch_result = reader->ReadRecordBatch(i);
     std::ostringstream context;
     if (!grnarrow::check(ctx,
@@ -2183,18 +2031,6 @@ grn_arrow_load(grn_ctx *ctx,
       break;
     }
     auto record_batch = *record_batch_result;
-# else
-    std::shared_ptr<arrow::RecordBatch> record_batch;
-    auto status = reader->ReadRecordBatch(i, &record_batch);
-    std::ostringstream context;
-    if (!grnarrow::check(ctx,
-                         status,
-                         context <<
-                         "[arrow][load] failed to get " <<
-                         "the " << i << "-th " << "record")) {
-      break;
-    }
-# endif
     loader.load_record_batch(record_batch);
     if (ctx->rc != GRN_SUCCESS) {
       break;
@@ -2253,7 +2089,6 @@ grn_arrow_dump_columns(grn_ctx *ctx,
 {
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
-# ifdef GRN_ARROW_IO_RESULT
   auto output_result = arrow::io::FileOutputStream::Open(path);
   std::stringstream context;
   if (!grnarrow::check(ctx,
@@ -2264,18 +2099,6 @@ grn_arrow_dump_columns(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
   auto output = *output_result;
-# else
-  std::shared_ptr<arrow::io::FileOutputStream> output;
-  auto status = arrow::io::FileOutputStream::Open(path, &output);
-  std::stringstream context;
-  if (!grnarrow::check(ctx,
-                       status,
-                       context <<
-                       "[arrow][dump] failed to open path: " <<
-                       "<" << path << ">")) {
-    GRN_API_RETURN(ctx->rc);
-  }
-# endif
 
   grnarrow::FileDumper dumper(ctx, table, columns);
   dumper.dump(output.get());

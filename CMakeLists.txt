@@ -714,7 +714,7 @@ endif()
 set(GRN_WITH_APACHE_ARROW FALSE
   CACHE BOOL "Support Apache Arrow")
 if(GRN_WITH_APACHE_ARROW)
-  find_package(Arrow REQUIRED)
+  find_package(Arrow "0.17.0" REQUIRED)
 endif()
 
 find_program(RUBY NAMES
