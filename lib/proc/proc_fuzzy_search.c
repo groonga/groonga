@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2016  Brazil
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@
 #include "../grn_ii.h"
 #include "../grn_proc.h"
 #include "../grn_rset.h"
+#include "../grn_posting.h"
 
 #include <groonga/plugin.h>
 
@@ -283,12 +284,15 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
         break;
       }
       {
-        grn_posting posting;
+        grn_posting_internal posting = {0};
         posting.rid = heap->nodes[i].id;
         posting.sid = 1;
         posting.pos = 0;
-        posting.weight = max_distance - heap->nodes[i].score + 1;
-        grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
+        posting.weight_float = max_distance - heap->nodes[i].score + 1;
+        grn_ii_posting_add_float(ctx,
+                                 (grn_posting *)(&posting),
+                                 (grn_hash *)res,
+                                 op);
       }
     }
     grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);

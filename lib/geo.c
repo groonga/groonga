@@ -20,6 +20,7 @@
 #include "grn_geo.h"
 #include "grn_pat.h"
 #include "grn_util.h"
+#include "grn_posting.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -1974,7 +1975,7 @@ grn_geo_cursor_next(grn_ctx *ctx, grn_obj *geo_cursor)
 {
   grn_posting *posting = NULL;
   grn_geo_cursor_each(ctx, geo_cursor, grn_geo_cursor_next_callback, &posting);
-  return (grn_posting *)posting;
+  return posting;
 }
 
 grn_rc
@@ -2000,13 +2001,17 @@ typedef struct {
 } grn_geo_select_in_rectangle_data;
 
 static grn_bool
-grn_geo_select_in_rectangle_callback(grn_ctx *ctx, grn_posting *posting,
+grn_geo_select_in_rectangle_callback(grn_ctx *ctx,
+                                     grn_posting *posting,
                                      void *user_data)
 {
   grn_geo_select_in_rectangle_data *data = user_data;
-  grn_posting add_posting = *posting;
-  add_posting.weight += 1;
-  grn_ii_posting_add(ctx, &add_posting, data->res, data->op);
+  grn_posting_internal add_posting = *((grn_posting_internal *)posting);
+  add_posting.weight_float += 1.0;
+  grn_ii_posting_add_float(ctx,
+                           (grn_posting *)(&add_posting),
+                           data->res,
+                           data->op);
   return GRN_TRUE;
 }
 

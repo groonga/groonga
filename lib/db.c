@@ -46,6 +46,7 @@
 #include "grn_expr.h"
 #include "grn_cast.h"
 #include "grn_type.h"
+#include "grn_posting.h"
 #include <string.h>
 #include <math.h>
 
@@ -3553,11 +3554,14 @@ grn_obj_search_table_id(grn_ctx *ctx,
   }
   if (id != GRN_ID_NIL) {
     if (grn_table_at(ctx, table, id) == id) {
-      grn_posting posting = {0};
+      grn_posting_internal posting = {0};
       posting.sid = 1;
-      posting.weight = 1;
+      posting.weight_float = 1.0;
       posting.rid = id;
-      grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
+      grn_ii_posting_add_float(ctx,
+                               (grn_posting *)(&posting),
+                               (grn_hash *)res,
+                               op);
     }
   }
   grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
@@ -3899,14 +3903,16 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
           switch (mode) {
           case GRN_OP_EQUAL :
             {
-              grn_posting posting;
-              memset(&posting, 0, sizeof(posting));
+              grn_posting_internal posting = {0};
               posting.rid = grn_table_get(ctx, obj, key, key_size);
-              posting.weight = 1;
+              posting.weight_float = 1.0;
               if (posting.rid == GRN_ID_NIL) {
                 rc = GRN_SUCCESS;
               } else {
-                rc = grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
+                rc = grn_ii_posting_add_float(ctx,
+                                              (grn_posting *)(&posting),
+                                              (grn_hash *)res,
+                                              op);
               }
               if (rc == GRN_SUCCESS) {
                 grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);

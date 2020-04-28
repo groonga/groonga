@@ -39,6 +39,7 @@
 #include "grn_output.h"
 #include "grn_scorer.h"
 #include "grn_util.h"
+#include "grn_posting.h"
 
 #ifdef GRN_SUPPORT_REGEXP
 # define GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH
@@ -6323,8 +6324,8 @@ struct _grn_ii_cursor {
 
   grn_id min; /* Minimum record ID */
   grn_id max;
-  grn_posting pc;
-  grn_posting pb;
+  grn_posting_internal pc;
+  grn_posting_internal pb;
 
   uint32_t cdf;  /* Document frequency */
   uint32_t *cdp;
@@ -6442,6 +6443,7 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
       }
       c->pb.tf = 1;
       c->pb.weight = 0;
+      c->pb.weight_float = c->pb.weight;
       c->pb.pos = a[1];
     } else {
       uint32_t chunk;
@@ -6596,6 +6598,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
             } else {
               c->pc.weight = 0;
             }
+            c->pc.weight_float = c->pc.weight;
             c->pc.pos = 0;
             /*
             {
@@ -6820,6 +6823,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
             } else {
               c->pb.weight = 0;
             }
+            c->pb.weight_float = c->pb.weight;
             c->pb.rest = c->pb.tf;
             c->pb.pos = 0;
           } else {
@@ -6833,14 +6837,14 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
           if (c->pc.rid < c->pb.rid) {
             c->stat = CHUNK_USED;
             if (include_garbage || (c->pc.tf && c->pc.sid)) {
-              c->post = &c->pc;
+              c->post = (grn_posting *)(&c->pc);
               break;
             }
           } else {
             if (c->pb.rid < c->pc.rid) {
               c->stat = BUFFER_USED;
               if (include_garbage || (c->pb.tf && c->pb.sid)) {
-                c->post = &c->pb;
+                c->post = (grn_posting *)(&c->pb);
                 break;
               }
             } else {
@@ -6848,14 +6852,14 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                 if (c->pc.sid < c->pb.sid) {
                   c->stat = CHUNK_USED;
                   if (include_garbage || (c->pc.tf && c->pc.sid)) {
-                    c->post = &c->pc;
+                    c->post = (grn_posting *)(&c->pc);
                     break;
                   }
                 } else {
                   c->stat = BUFFER_USED;
                   if (c->pb.sid == c->pc.sid) { c->stat |= CHUNK_USED; }
                   if (include_garbage || (c->pb.tf)) {
-                    c->post = &c->pb;
+                    c->post = (grn_posting *)(&c->pb);
                     break;
                   }
                 }
@@ -6867,7 +6871,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
         } else {
           c->stat = BUFFER_USED;
           if (include_garbage || (c->pb.tf && c->pb.sid)) {
-            c->post = &c->pb;
+            c->post = (grn_posting *)(&c->pb);
             break;
           }
         }
@@ -6875,7 +6879,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
         if (c->pc.rid) {
           c->stat = CHUNK_USED;
           if (include_garbage || (c->pc.tf && c->pc.sid)) {
-            c->post = &c->pc;
+            c->post = (grn_posting *)(&c->pc);
             break;
           }
         } else {
@@ -6889,7 +6893,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
       c->post = NULL;
       return NULL;
     } else {
-      c->post = &c->pb;
+      c->post = (grn_posting *)(&c->pb);
       c->stat |= SOLE_DOC_USED;
       if (c->post->rid < c->min) {
         c->post = NULL;
@@ -6916,14 +6920,14 @@ grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c)
   if ((c->ii->header.common->flags & GRN_OBJ_WITH_POSITION)) {
     if (c->nelements == c->ii->n_elements) {
       if (c->buf) {
-        if (c->post == &c->pc) {
+        if (c->post == (grn_posting *)(&c->pc)) {
           if (c->pc.rest) {
             c->pc.rest--;
             c->pc.pos += *c->cpp++;
           } else {
             return NULL;
           }
-        } else if (c->post == &c->pb) {
+        } else if (c->post == (grn_posting *)(&c->pb)) {
           if (buffer_is_reused(ctx, c->ii, c)) {
             GRN_LOG(ctx, GRN_LOG_WARNING,
                     "[ii][cursor][next][pos][buffer] "
@@ -8944,7 +8948,25 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, double score,
 grn_rc
 grn_ii_posting_add(grn_ctx *ctx, grn_posting *pos, grn_hash *s, grn_operator op)
 {
-  res_add(ctx, s, (grn_rset_posinfo *)(pos), pos->weight, op);
+  res_add(ctx,
+          s,
+          (grn_rset_posinfo *)(pos),
+          pos->weight,
+          op);
+  return ctx->rc;
+}
+
+grn_rc
+grn_ii_posting_add_float(grn_ctx *ctx,
+                         grn_posting *pos,
+                         grn_hash *s,
+                         grn_operator op)
+{
+  res_add(ctx,
+          s,
+          (grn_rset_posinfo *)(pos),
+          ((grn_posting_internal *)pos)->weight_float,
+          op);
   return ctx->rc;
 }
 
@@ -9203,8 +9225,12 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
           pos = c->post;
           if ((w2 = get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg)) > 0) {
             while (grn_ii_cursor_next_pos(ctx, c)) {
-              res_add(ctx, s, (grn_rset_posinfo *) pos,
-                      *w1 * w2 * (1 + pos->weight), op);
+              float pos_weight = grn_posting_get_weight_float(ctx, pos);
+              res_add(ctx,
+                      s,
+                      (grn_rset_posinfo *)pos,
+                      *w1 * w2 * (1 + pos_weight),
+                      op);
             }
           }
         }
@@ -9212,8 +9238,12 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
         while (grn_ii_cursor_next(ctx, c)) {
           pos = c->post;
           if ((w2 = get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg)) > 0) {
-            res_add(ctx, s, (grn_rset_posinfo *) pos,
-                    *w1 * w2 * (pos->tf + pos->weight), op);
+            float pos_weight = grn_posting_get_weight_float(ctx, pos);
+            res_add(ctx,
+                    s,
+                    (grn_rset_posinfo *)pos,
+                    *w1 * w2 * (pos->tf + pos_weight),
+                    op);
           }
         }
       }
@@ -10919,7 +10949,11 @@ grn_ii_at(grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *s, grn_operator op)
   if ((c = grn_ii_cursor_open(ctx, ii, id, GRN_ID_NIL, GRN_ID_MAX,
                               rep ? ii->n_elements : ii->n_elements - 1, 0))) {
     while ((pos = grn_ii_cursor_next(ctx, c))) {
-      res_add(ctx, s, (grn_rset_posinfo *) pos, (1 + pos->weight), op);
+      res_add(ctx,
+              s,
+              (grn_rset_posinfo *)pos,
+              (1 + grn_posting_get_weight_float(ctx, pos)),
+              op);
     }
     grn_ii_cursor_close(ctx, c);
   }
@@ -10990,7 +11024,7 @@ grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf)
     GRN_TEXT_PUTS(ctx, buf, ", tf:");
     grn_text_lltoa(ctx, buf, pos->tf);
     GRN_TEXT_PUTS(ctx, buf, ", weight:");
-    grn_text_lltoa(ctx, buf, pos->weight);
+    grn_text_f32toa(ctx, buf, grn_posting_get_weight_float(ctx, pos));
     GRN_TEXT_PUTS(ctx, buf, ", rest:");
     grn_text_lltoa(ctx, buf, pos->rest);
     GRN_TEXT_PUTS(ctx, buf, "}");

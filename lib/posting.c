@@ -16,7 +16,29 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "grn.h"
+#include "grn_ctx.h"
+#include "grn_posting.h"
+
+grn_posting *
+grn_posting_open(grn_ctx *ctx)
+{
+  GRN_API_ENTER;
+  grn_posting *posting = GRN_MALLOC(sizeof(grn_posting));
+  if (posting) {
+    memset(posting, 0, sizeof(grn_posting));
+  } else {
+    ERR(GRN_NO_MEMORY_AVAILABLE, "[posting][open] failed to allocate");
+  }
+  GRN_API_RETURN(posting);
+}
+
+void
+grn_posting_close(grn_ctx *ctx, grn_posting *posting)
+{
+  GRN_API_ENTER;
+  GRN_FREE(posting);
+  GRN_API_RETURN();
+}
 
 grn_id
 grn_posting_get_record_id(grn_ctx *ctx, grn_posting *posting)
@@ -51,7 +73,7 @@ grn_posting_get_weight(grn_ctx *ctx, grn_posting *posting)
 float
 grn_posting_get_weight_float(grn_ctx *ctx, grn_posting *posting)
 {
-  return posting->weight;
+  return ((grn_posting_internal *)posting)->weight_float;
 }
 
 uint32_t
@@ -60,3 +82,16 @@ grn_posting_get_rest(grn_ctx *ctx, grn_posting *posting)
   return posting->rest;
 }
 
+void
+grn_posting_set_weight(grn_ctx *ctx, grn_posting *posting, uint32_t weight)
+{
+  posting->weight = weight;
+  ((grn_posting_internal *)posting)->weight_float = weight;
+}
+
+void
+grn_posting_set_weight_float(grn_ctx *ctx, grn_posting *posting, float weight)
+{
+  posting->weight = weight;
+  ((grn_posting_internal *)posting)->weight_float = weight;
+}

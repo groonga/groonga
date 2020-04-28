@@ -21,6 +21,7 @@
 #include "grn_db.h"
 #include "grn_ii.h"
 #include "grn_report.h"
+#include "grn_posting.h"
 
 static grn_rc
 grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
@@ -75,7 +76,7 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
   {
     grn_obj_flags column_value_flags = 0;
     grn_obj column_value;
-    grn_posting add_posting;
+    grn_posting_internal add_posting = {0};
 
     if (column->header.type == GRN_COLUMN_VAR_SIZE) {
       column_value_flags |= GRN_OBJ_VECTOR;
@@ -86,7 +87,7 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
 
     add_posting.sid = 0;
     add_posting.pos = 0;
-    add_posting.weight = 0;
+    add_posting.weight_float = 0;
 
     GRN_HASH_EACH_BEGIN(ctx, (grn_hash *)current_res, cursor, id) {
       void *key;
@@ -96,7 +97,7 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
       grn_id *tid = key;
       grn_rset_recinfo *recinfo = value;
 
-      add_posting.weight = recinfo->score;
+      add_posting.weight_float = recinfo->score;
 
       GRN_BULK_REWIND(&column_value);
       grn_obj_get_value(ctx, column, *tid, &column_value);
@@ -104,10 +105,10 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
       int n_elements = GRN_BULK_VSIZE(&column_value) / sizeof(grn_id);
       for (int i = 0; i < n_elements; i++) {
         add_posting.rid = GRN_RECORD_VALUE_AT(&column_value, i);
-        rc = grn_ii_posting_add(ctx,
-                                &add_posting,
-                                (grn_hash *)*next_res,
-                                GRN_OP_OR);
+        rc = grn_ii_posting_add_float(ctx,
+                                      (grn_posting *)(&add_posting),
+                                      (grn_hash *)*next_res,
+                                      GRN_OP_OR);
         if (rc != GRN_SUCCESS) {
           break;
         }
@@ -148,9 +149,8 @@ grn_accessor_resolve_one_table(grn_ctx *ctx, grn_accessor *accessor,
                    table);
 
   {
-    grn_posting posting;
+    grn_posting_internal posting = {0};
 
-    memset(&posting, 0, sizeof(posting));
     GRN_HASH_EACH_BEGIN(ctx, (grn_hash *)current_res, cursor, id) {
       void *key;
       void *value;
@@ -170,11 +170,11 @@ grn_accessor_resolve_one_table(grn_ctx *ctx, grn_accessor *accessor,
       }
 
       posting.rid = next_record_id;
-      posting.weight = recinfo->score;
-      rc = grn_ii_posting_add(ctx,
-                              &posting,
-                              (grn_hash *)*next_res,
-                              GRN_OP_OR);
+      posting.weight_float = recinfo->score;
+      rc = grn_ii_posting_add_float(ctx,
+                                    (grn_posting *)(&posting),
+                                    (grn_hash *)*next_res,
+                                    GRN_OP_OR);
       if (rc != GRN_SUCCESS) {
         break;
       }
@@ -244,9 +244,12 @@ grn_accessor_resolve_one_data_column_sequential(grn_ctx *ctx,
         break;
       }
       if (found) {
-        grn_posting posting = {0};
+        grn_posting_internal posting = {0};
         posting.rid = id;
-        grn_ii_posting_add(ctx, &posting, (grn_hash *)*next_res, GRN_OP_OR);
+        grn_ii_posting_add_float(ctx,
+                                 (grn_posting *)(&posting),
+                                 (grn_hash *)*next_res,
+                                 GRN_OP_OR);
       }
     } GRN_TABLE_EACH_END(ctx, cursor);
     GRN_OBJ_FIN(ctx, &value);
@@ -334,18 +337,18 @@ grn_accessor_resolve_one_data_column_index(grn_ctx *ctx,
       }
 
       while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
-        grn_posting add_posting;
+        grn_posting_internal add_posting;
 
         if (index_datum->section > 0 && posting->sid != index_datum->section) {
           continue;
         }
 
-        add_posting = *posting;
-        add_posting.weight += recinfo->score;
-        rc = grn_ii_posting_add(ctx,
-                                &add_posting,
-                                (grn_hash *)*next_res,
-                                GRN_OP_OR);
+        add_posting = *((grn_posting_internal *)posting);
+        add_posting.weight_float += recinfo->score;
+        rc = grn_ii_posting_add_float(ctx,
+                                      (grn_posting *)(&add_posting),
+                                      (grn_hash *)*next_res,
+                                      GRN_OP_OR);
         if (rc != GRN_SUCCESS) {
           break;
         }
@@ -445,7 +448,7 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int depth,
       void *value;
       grn_id *record_id;
       grn_rset_recinfo *recinfo;
-      grn_posting posting;
+      grn_posting_internal posting = {0};
 
       grn_hash_cursor_get_key_value(ctx, cursor, &key, NULL, &value);
       record_id = key;
@@ -453,8 +456,11 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int depth,
       posting.rid = *record_id;
       posting.sid = 1;
       posting.pos = 0;
-      posting.weight = recinfo->score;
-      grn_ii_posting_add(ctx, &posting, (grn_hash *)res, op);
+      posting.weight_float = recinfo->score;
+      grn_ii_posting_add_float(ctx,
+                               (grn_posting *)(&posting),
+                               (grn_hash *)res,
+                               op);
     } GRN_HASH_EACH_END(ctx, cursor);
     grn_obj_unlink(ctx, current_res);
     grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);

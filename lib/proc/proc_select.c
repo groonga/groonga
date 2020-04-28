@@ -24,6 +24,7 @@
 #include "../grn_util.h"
 #include "../grn_cache.h"
 #include "../grn_ii.h"
+#include "../grn_posting.h"
 
 #include <groonga/plugin.h>
 
@@ -1436,13 +1437,13 @@ grn_select_create_all_selected_result_table(grn_ctx *ctx,
     return NULL;
   }
 
-  grn_posting posting = {0};
+  grn_posting_internal posting = {0};
   GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
     posting.rid = id;
-    grn_ii_posting_add(ctx,
-                       &posting,
-                       (grn_hash *)(result),
-                       GRN_OP_OR);
+    grn_ii_posting_add_float(ctx,
+                             (grn_posting *)(&posting),
+                             (grn_hash *)(result),
+                             GRN_OP_OR);
   } GRN_TABLE_EACH_END(ctx, cursor);
 
   return result;

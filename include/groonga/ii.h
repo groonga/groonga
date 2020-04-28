@@ -55,6 +55,10 @@ GRN_API grn_rc grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer);
 
 GRN_API grn_rc grn_ii_posting_add(grn_ctx *ctx, grn_posting *pos,
                                   grn_hash *s, grn_operator op);
+GRN_API grn_rc grn_ii_posting_add_float(grn_ctx *ctx,
+                                        grn_posting *pos,
+                                        grn_hash *s,
+                                        grn_operator op);
 GRN_API void grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_operator op);
 
 

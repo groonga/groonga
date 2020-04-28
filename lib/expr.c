@@ -33,6 +33,7 @@
 #include "grn_util.h"
 #include "grn_report.h"
 #include "grn_token_cursor.h"
+#include "grn_posting.h"
 #include "grn_mrb.h"
 #include "mrb/mrb_expr.h"
 
@@ -3851,7 +3852,7 @@ grn_table_select_index_equal(grn_ctx *ctx,
         if (ii_cursor) {
           grn_posting *posting;
           while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
-            grn_posting new_posting;
+            grn_posting_internal new_posting;
 
             if (!(sid == 0 || posting->sid == sid)) {
               continue;
@@ -3868,13 +3869,13 @@ grn_table_select_index_equal(grn_ctx *ctx,
               }
             }
 
-            new_posting = *posting;
-            new_posting.weight += 1;
-            new_posting.weight *= weight;
-            grn_ii_posting_add(ctx,
-                               &new_posting,
-                               (grn_hash *)res,
-                               logical_op);
+            new_posting = *((grn_posting_internal *)posting);
+            new_posting.weight_float += 1;
+            new_posting.weight_float *= weight;
+            grn_ii_posting_add_float(ctx,
+                                     (grn_posting *)(&new_posting),
+                                     (grn_hash *)res,
+                                     logical_op);
           }
           grn_ii_cursor_close(ctx, ii_cursor);
         }
@@ -4051,13 +4052,16 @@ grn_table_select_index_fix(grn_ctx *ctx,
                          (grn_obj *)pres,
                          GRN_OP_OR);
         grn_id *key;
-        grn_posting posting;
+        grn_posting_internal posting = {0};
         posting.sid = 1;
         posting.pos = 0;
-        posting.weight = 1;
+        posting.weight_float = 1;
         GRN_HASH_EACH(ctx, pres, id, &key, NULL, NULL, {
           posting.rid = *key;
-          grn_ii_posting_add(ctx, &posting, (grn_hash *)res, logical_op);
+          grn_ii_posting_add_float(ctx,
+                                   (grn_posting *)(&posting),
+                                   (grn_hash *)res,
+                                   logical_op);
         });
         grn_hash_close(ctx, pres);
       }
@@ -4270,9 +4274,9 @@ grn_table_select_index_range_id(grn_ctx *ctx,
       weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
 
       if (sid == 0) {
-        grn_posting posting = {0};
+        grn_posting_internal posting = {0};
 
-        posting.weight = weight;
+        posting.weight_float = weight;
         while ((posting.rid = grn_table_cursor_next(ctx, cursor))) {
           if (posting.rid < min) {
             continue;
@@ -4280,7 +4284,10 @@ grn_table_select_index_range_id(grn_ctx *ctx,
           if (posting.rid > max) {
             break;
           }
-          grn_ii_posting_add(ctx, &posting, (grn_hash *)res, logical_op);
+          grn_ii_posting_add_float(ctx,
+                                   (grn_posting *)(&posting),
+                                   (grn_hash *)res,
+                                   logical_op);
         }
       }
       rc = GRN_SUCCESS;
@@ -4361,11 +4368,14 @@ grn_table_select_index_range_key(grn_ctx *ctx,
       weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
 
       if (sid == 0) {
-        grn_posting posting = {0};
+        grn_posting_internal posting = {0};
 
-        posting.weight = weight;
+        posting.weight_float = weight;
         while ((posting.rid = grn_table_cursor_next(ctx, cursor))) {
-          grn_ii_posting_add(ctx, &posting, (grn_hash *)res, logical_op);
+          grn_ii_posting_add_float(ctx,
+                                   (grn_posting *)(&posting),
+                                   (grn_hash *)res,
+                                   logical_op);
         }
       }
       rc = GRN_SUCCESS;
@@ -4460,7 +4470,7 @@ grn_table_select_index_range_column(grn_ctx *ctx,
         if (ii_cursor) {
           grn_posting *posting;
           while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
-            grn_posting new_posting;
+            grn_posting_internal new_posting;
 
             if (!(sid == 0 || posting->sid == sid)) {
               continue;
@@ -4477,10 +4487,13 @@ grn_table_select_index_range_column(grn_ctx *ctx,
               }
             }
 
-            new_posting = *posting;
-            new_posting.weight += 1;
-            new_posting.weight *= weight;
-            grn_ii_posting_add(ctx, &new_posting, (grn_hash *)res, logical_op);
+            new_posting = *((grn_posting_internal *)posting);
+            new_posting.weight_float += 1;
+            new_posting.weight_float *= weight;
+            grn_ii_posting_add_float(ctx,
+                                     (grn_posting *)(&new_posting),
+                                     (grn_hash *)res,
+                                     logical_op);
           }
         }
         grn_ii_cursor_close(ctx, ii_cursor);
@@ -7593,15 +7606,18 @@ grn_column_filter(grn_ctx *ctx, grn_obj *column,
                   grn_operator set_operation)
 {
   uint32_t *vp;
-  grn_posting posting;
+  grn_posting_internal posting = {0};
   uint32_t value_ = grn_atoui(GRN_TEXT_VALUE(value), GRN_BULK_CURR(value), NULL);
   posting.sid = 1;
   posting.pos = 0;
-  posting.weight = 1;
+  posting.weight_float = 1;
   GRN_COLUMN_EACH(ctx, column, id, vp, {
     if (*vp < value_) {
       posting.rid = id;
-      grn_ii_posting_add(ctx, &posting, (grn_hash *)result_set, set_operation);
+      grn_ii_posting_add_float(ctx,
+                               (grn_posting *)(&posting),
+                               (grn_hash *)result_set,
+                               set_operation);
     }
   });
   grn_ii_resolve_sel_and(ctx, (grn_hash *)result_set, set_operation);

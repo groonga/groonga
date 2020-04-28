@@ -57,6 +57,7 @@ libgroonga_c_sources =				\
 	grn_output_columns.h			\
 	grn_pat.h				\
 	grn_plugin.h				\
+	grn_posting.h				\
 	grn_proc.h				\
 	grn_report.h				\
 	grn_request_canceler.h			\

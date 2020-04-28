@@ -32,6 +32,9 @@ typedef struct {
   uint32_t rest;
 } grn_posting;
 
+GRN_API grn_posting *grn_posting_open(grn_ctx *ctx);
+GRN_API void grn_posting_close(grn_ctx *ctx, grn_posting *posting);
+
 GRN_API grn_id grn_posting_get_record_id(grn_ctx *ctx, grn_posting *posting);
 GRN_API uint32_t grn_posting_get_section_id(grn_ctx *ctx, grn_posting *posting);
 GRN_API uint32_t grn_posting_get_position(grn_ctx *ctx, grn_posting *posting);
@@ -39,6 +42,15 @@ GRN_API uint32_t grn_posting_get_tf(grn_ctx *ctx, grn_posting *posting);
 GRN_API uint32_t grn_posting_get_weight(grn_ctx *ctx, grn_posting *posting);
 GRN_API float grn_posting_get_weight_float(grn_ctx *ctx, grn_posting *posting);
 GRN_API uint32_t grn_posting_get_rest(grn_ctx *ctx, grn_posting *posting);
+
+GRN_API void
+grn_posting_set_weight(grn_ctx *ctx,
+                       grn_posting *posting,
+                       uint32_t weight);
+GRN_API void
+grn_posting_set_weight_float(grn_ctx *ctx,
+                             grn_posting *posting,
+                             float weight);
 
 #ifdef __cplusplus
 }

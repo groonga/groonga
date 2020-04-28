@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,6 +21,7 @@
 #include "../grn_ii.h"
 #include "../grn_db.h"
 #include "../grn_expr_executor.h"
+#include "../grn_posting.h"
 
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
@@ -213,9 +215,12 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
       offset--;
       continue;
     }
-    grn_posting add_posting = *posting;
-    add_posting.weight += 1;
-    grn_ii_posting_add(ctx, &add_posting, result_set, op);
+    grn_posting_internal add_posting = *((grn_posting_internal *)posting);
+    add_posting.weight_float += 1;
+    grn_ii_posting_add_float(ctx,
+                             (grn_posting *)(&add_posting),
+                             result_set,
+                             op);
     limit--;
     if (limit == 0) {
       break;
