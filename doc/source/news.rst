@@ -20,7 +20,7 @@ Improvements
   * ``uvector`` is a vector that size of elements for vector are fixed.
   * For example, a vector that has values of Time type as elements is a ``uvector``.
 
-* Improve sort performance if a value that can't be referable with zero-copy is mixed.
+* Improve sort performance if sort key that can't refer value with zero-copy is mixed.
 
   * Some sort key (e.g. ``_score``) values can't be referred with zero-copy.
   * If there is at least one sort key that can't be referable is included, all sort keys are copied before.
@@ -72,42 +72,40 @@ Improvements
 
              grn_obj_ubref(ctx, obj);
 
-
-  * ``grn_get_version_*``
+  * ``grn_get_version_major(void)``
+  * ``grn_get_version_minor(void)``
+  * ``grn_get_version_micro(void)``
 
     * They return Groonga's major, minor, and micor version numbers as a ``uint32_t``.
 
-      * ``grn_get_version_major(void)``
-      * ``grn_get_version_minor(void)``
-      * ``grn_get_version_micro(void)``
-
-  * ``grn_posting_get_*``
+  * ``grn_posting_get_record_id(grn_ctx *ctx, grn_posting *posting)``
+  * ``grn_posting_get_section_id(grn_ctx *ctx, grn_posting *posting)``
+  * ``grn_posting_get_position(grn_ctx *ctx, grn_posting *posting)``
+  * ``grn_posting_get_tf(grn_ctx *ctx, grn_posting *posting)``
+  * ``grn_posting_get_weight(grn_ctx *ctx, grn_posting *posting)``
+  * ``grn_posting_get_weight_float(grn_ctx *ctx, grn_posting *posting)``
+  * ``grn_posting_get_rest(grn_ctx *ctx, grn_posting *posting)``
 
     * They return information on the posting list.
     * These APIs return value as a ``uint32_t`` except ``grn_posting_get_weight_float``.
     * ``grn_posting_get_weight_float`` returns value as a ``float``.
 
-      * ``grn_posting_get_record_id(grn_ctx *ctx, grn_posting *posting)``
-      * ``grn_posting_get_section_id(grn_ctx *ctx, grn_posting *posting)``
+    * ``grn_posting_get_section_id(grn_ctx *ctx, grn_posting *posting)``
 
-        * Section id is the internal representation of the column name.
-        * If column name store in posting list as a string, it is a large amount of information and it use waste capacity.
-        * Therefore, Groonga compresses the amount of information and use storage capacity is small by storing column name in the posting list as a number called section id.
+      * Section id is the internal representation of the column name.
+      * If column name store in posting list as a string, it is a large amount of information and it use waste capacity.
+      * Therefore, Groonga compresses the amount of information and use storage capacity is small by storing column name in the posting list as a number called section id.
 
-    * ``grn_posting_get_position(grn_ctx *ctx, grn_posting *posting)``
     * ``grn_posting_get_tf(grn_ctx *ctx, grn_posting *posting)``
 
       * ``tf`` of ``grn_posting_get_tf`` is Term Frequency score.
 
-    * ``grn_posting_get_weight(grn_ctx *ctx, grn_posting *posting)``
     * ``grn_posting_get_weight_float(grn_ctx *ctx, grn_posting *posting)``
 
       * It returns weight of token as a ``float``.
-      * We suggest using this function instead of ``grn_posting_get_weight`` when we get a weight of token after this.
+      * We suggest using this API when we get a weight of token after this.
 
         * Because we modify the internal representation of the weight from ``uint32_t`` to ``float`` in the near future.
-
-    * ``grn_posting_get_rest(grn_ctx *ctx, grn_posting *posting)``
 
 Fixes
 ^^^^^
