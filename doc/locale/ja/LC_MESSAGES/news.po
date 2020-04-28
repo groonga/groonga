@@ -33,6 +33,276 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
+msgid "Release 10.0.2 - 2020-04-29"
+msgstr "10.0.2リリース - 2020-04-29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid ""
+"Added support for ``uvector`` for ``time_classify_*`` functions. "
+"[GitHub#1089][Patched by naoa]"
+msgstr ""
+"``time_classify_*`` 関数が ``uvector`` に対応しました。 [GitHub#1089][naoaさ"
+"んがパッチ提供]"
+
+msgid "``uvector`` is a vector that size of elements for vector are fixed."
+msgstr "``uvector`` とは、要素のサイズが固定のベクターです。"
+
+msgid ""
+"For example, a vector that has values of Time type as elements is a "
+"``uvector``."
+msgstr "例えば、Time型の要素を格納しているベクターは ``uvector`` です。"
+
+msgid ""
+"Improve sort performance if sort key that can't refer value with zero-copy "
+"is mixed."
+msgstr ""
+"ゼロコピーで値を参照できないソートキーが混在しているケースでソートのパフォー"
+"マンスを改善しました。"
+
+msgid ""
+"Some sort key (e.g. ``_score``) values can't be referred with zero-copy."
+msgstr ""
+"いくつかのソートキー(例えば、 ``_score`` 等)の値はゼロコピーで値を参照できま"
+"せん。"
+
+msgid ""
+"If there is at least one sort key that can't be referable is included, all "
+"sort keys are copied before."
+msgstr ""
+"これらの値が一つでも含まれる場合、以前は全てのソートキーの値をコピーしていま"
+"した。"
+
+msgid ""
+"With this change, we just copy sort keys that can't be referred. Referable "
+"sort keys are just referred without a copy."
+msgstr ""
+"今回の変更から、参照できないソートキーの値だけコピーし、参照可能なソートキー"
+"の値はコピーせずに参照するようにしました。"
+
+msgid ""
+"However, this change may have performance regression when all sort keys are "
+"referable."
+msgstr ""
+"ただ、この変更で全てのソートキーの値が参照可能なケースでパフォーマンスが落ち"
+"る可能性があります。"
+
+msgid "Added support for loading weight vector as a JSON string."
+msgstr "重み付きベクターをJSON文字列としてロードできるようにしました。"
+
+msgid "We can load weight vector as a JSON string as below example."
+msgstr "以下の例のように、重み付きベクターをJSON文字列としてロードできます。"
+
+msgid "Added support for ``Float32`` type."
+msgstr "``Float32`` 型をサポートしました。"
+
+msgid ""
+"Groonga already has a ``Float`` type. However, it is double precision "
+"floating point number. Therefore if we only use single precision floating "
+"point number, it is not efficient."
+msgstr ""
+"Groongaは既に ``Float`` 型を持っていますが、これは、倍精度浮動小数点数です。"
+"したがって、単精度浮動小数点数のみを使う場合は、効率が悪いです。"
+
+msgid "We can select more suitable type by adding a ``Float32`` type."
+msgstr ""
+"``Float32`` 型を追加することで、より適切な型を選択できるようになりました。"
+
+msgid "Added following APIs"
+msgstr "以下のAPIを公開しました。"
+
+msgid "``grn_obj_unref(grn_ctx *ctx, grn_obj *obj)``"
+msgstr ""
+
+msgid ""
+"This API is only used on the reference count mode (The reference count mode "
+"is a state of ``GRN_ENABLE_REFERENCE_COUNT=yes``.)."
+msgstr ""
+"このAPIは参照カウントモードのときのみ使用します。(参照カウントモードとは、 "
+"``GRN_ENABLE_REFERENCE_COUNT=yes`` の状態のことです。)"
+
+msgid ""
+"It calls ``grn_obj_unlink()`` only on the reference count mode. It doesn't "
+"do anything except when the reference count mode."
+msgstr ""
+"このAPIは、参照カウントモードの時のみ ``grn_obj_unlink()`` を呼び出します。参"
+"照カウントモード以外の時は、何もしません。"
+
+msgid ""
+"We useful it when we need only call ``grn_obj_unlink()`` on the referece "
+"count mode."
+msgstr ""
+"参照カウントモードの時のみ ``grn_obj_unlink()`` を呼び出す必要がある時に便利"
+"です。"
+
+msgid ""
+"Because as the following example, we don't write condition that whether the "
+"reference count mode or not."
+msgstr ""
+"以下の例のように、参照カウントモードかどうかの条件を書かなくて良くなるためで"
+"す。"
+
+msgid "The example if we don't use ``grn_obj_unref()``."
+msgstr "``grn_obj_unref()`` を使用しない場合の例です。"
+
+msgid "The example if we use ``grn_obj_unref()``."
+msgstr "``grn_obj_ubref()`` を使用する場合の例です。"
+
+msgid "``grn_get_version_major(void)``"
+msgstr ""
+
+msgid "``grn_get_version_minor(void)``"
+msgstr ""
+
+msgid "``grn_get_version_micro(void)``"
+msgstr " ``grn_get_version_micro(void)`` "
+
+msgid ""
+"They return Groonga's major, minor, and micor version numbers as a "
+"``uint32_t``."
+msgstr ""
+"``uint32_t`` としてGroongaのメジャー、マイナー、マイクロバージョンを返しま"
+"す。"
+
+msgid "``grn_posting_get_record_id(grn_ctx *ctx, grn_posting *posting)``"
+msgstr ""
+
+msgid "``grn_posting_get_section_id(grn_ctx *ctx, grn_posting *posting)``"
+msgstr ""
+
+msgid "``grn_posting_get_position(grn_ctx *ctx, grn_posting *posting)``"
+msgstr ""
+
+msgid "``grn_posting_get_tf(grn_ctx *ctx, grn_posting *posting)``"
+msgstr ""
+
+msgid "``grn_posting_get_weight(grn_ctx *ctx, grn_posting *posting)``"
+msgstr ""
+
+msgid "``grn_posting_get_weight_float(grn_ctx *ctx, grn_posting *posting)``"
+msgstr ""
+
+msgid "``grn_posting_get_rest(grn_ctx *ctx, grn_posting *posting)``"
+msgstr ""
+
+msgid "They return information on the posting list."
+msgstr "これらは、ポスティングリストの情報を返します。"
+
+msgid ""
+"These APIs return value as a ``uint32_t`` except "
+"``grn_posting_get_weight_float``."
+msgstr ""
+"これらのAPIは、 ``grn_posting_get_weight_float`` 以外は、 ``uint32_t`` として"
+"値を返します。"
+
+msgid "``grn_posting_get_weight_float`` returns value as a ``float``."
+msgstr "``grn_posting_get_weight_float`` は ``float`` として値を返します。"
+
+msgid "Section id is the internal representation of the column name."
+msgstr "セクションIDとはカラム名の内部表現です。"
+
+msgid ""
+"If column name store in posting list as a string, it is a large amount of "
+"information and it use waste capacity."
+msgstr ""
+"カラム名を文字列としてポスティングリストに格納すると、情報量が多くなり無駄な"
+"容量を使います。"
+
+msgid ""
+"Therefore, Groonga compresses the amount of information and use storage "
+"capacity is small by storing column name in the posting list as a number "
+"called section id."
+msgstr ""
+"したがって、カラム名をセクションIDという数値としてポスティングリストに格納す"
+"ることで、情報量を圧縮し使用する容量を少なくしています。"
+
+msgid "``tf`` of ``grn_posting_get_tf`` is Term Frequency score."
+msgstr "``grn_posting_get_tf`` の ``tf`` とは、単語の出現頻度です。"
+
+msgid "It returns weight of token as a ``float``."
+msgstr "トークンの重みを ``float`` として返します。"
+
+msgid "We suggest using this API when we get a weight of token after this."
+msgstr ""
+"今後はトークンの重みを取得する際はこのAPIを使用することをおすすめします。"
+
+msgid ""
+"Because we modify the internal representation of the weight from "
+"``uint32_t`` to ``float`` in the near future."
+msgstr ""
+"近い将来、重みは内部的に ``uint32_t`` から ``float`` に変更するためです。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a bug that Groonga for 32bit on GNU/Linux may crash."
+msgstr ""
+"32bit GUN/Linux等でGroongaがクラッシュすることがある問題を修正しました。"
+
+msgid ""
+"Fixed a bug that unrelated column value may be cleared. [GtiHub#1087]"
+"[Reported by sutamin]"
+msgstr ""
+"関係のないカラムの値をクリアーしてしまう問題を修正しました。 [GitHub#1087]"
+"[sutaminさんの報告]"
+
+msgid "Fixed a memory leak when we dumped records with ``dump`` command."
+msgstr ""
+"``dump`` コマンドでレコードをダンプした時にメモリリークする問題を修正しまし"
+"た。"
+
+msgid ""
+"Fixed a memory leak when we specified invalid value into ``output_columns``."
+msgstr ""
+"``output_columns`` に無効な値を指定した時にメモリリークする問題を修正しまし"
+"た。"
+
+msgid "Fixed a memory leak when we executed ``snippet`` function."
+msgstr "``snippet`` 関数を実行する時にメモリリークする問題を修正しました。"
+
+msgid "Fixed a memory leak when we filled the below conditions."
+msgstr "以下の条件を満たした時にメモリリークする問題を修正しました。"
+
+msgid "If we used dynamic columns on the ``initial`` stage."
+msgstr "``initial`` ステージで動的カラムを使用した場合。"
+
+msgid "If we used ``slices`` argument with ``select`` command."
+msgstr "``select`` コマンドの引数 ``slices`` を使用した場合。"
+
+msgid ""
+"Fixed a memory leak when we deleted tables with ``logical_table_remove``."
+msgstr ""
+"``logical_table_remove`` でテーブルを削除した際にメモリリークする問題を修正し"
+"ました。"
+
+msgid "Fixed a memory leak when we use the reference count mode."
+msgstr "参照カウントモードを使用した時にメモリリークする問題を修正しました。"
+
+msgid "The reference count mode is a ``GRN_ENABLE_REFERENCE_COUNT=yes`` state."
+msgstr ""
+"参照カウントモードとは、 ``GRN_ENABLE_REFERENCE_COUNT=yes`` の状態のことで"
+"す。"
+
+msgid "This mode is experimental. Performance may degrade by this mode."
+msgstr "この機能は実験的です。パフォーマンスが低下することがあります。"
+
+msgid ""
+"Fixed a bug that Groonga too much unlink ``_key`` accessor when we load data "
+"for apache arrow format."
+msgstr ""
+"Apache Arrow形式でデータをロードした際に ``_key`` アクセサーを解放しすぎる問"
+"題を修正しました。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "sutamin"
+msgstr "sutaminさん"
+
+msgid "naoa"
+msgstr "naoaさん"
+
 msgid "Release 10.0.1 - 2020-03-30"
 msgstr "10.0.1リリース - 2020-03-30"
 
@@ -50,9 +320,6 @@ msgstr ""
 "既にCentOS、Debian、Windows(MinGW版)のGroonga 10.0.0を使用している方は、その"
 "まま使っていただいて問題ありません。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "Added a missing runtime(vcruntime140_1.dll) in package for Windows VC++ "
 "version."
@@ -62,9 +329,6 @@ msgstr ""
 
 msgid "Release 10.0.0 - 2020-03-29"
 msgstr "10.0.0リリース - 2020-03-29"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "[httpd] Updated bundled nginx to 1.17.9."
 msgstr "[httpd] バンドルしているnginxのバージョンを1.17.9に更新しました。"
@@ -485,9 +749,6 @@ msgid ""
 msgstr ""
 "前のバージョンに ``index-column-diff-all.sh`` と ``object-inspect-all.sh`` が"
 "バンドルされていなかったためです。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "Albert Song"
 msgstr "Albert Songさん"
@@ -14626,3 +14887,43 @@ msgstr ""
 #~ msgstr ""
 #~ "[mruby] mrubyを ``d2a2af2481908d208965ecc77a8f11065c50be49`` から "
 #~ "``59464f35285e65598bca94ad9e77be6848a8e8be`` へアップデートしました。"
+
+#~ msgid ""
+#~ "It returns the number of rest posting information for term id as a "
+#~ "``uint32_t``."
+#~ msgstr "``uitn32_t`` として残りのポスティングリストの数を返します。"
+
+#~ msgid "It returns weight of token as a ``uint32_t``."
+#~ msgstr "``uint32_t`` としてトークンの重みを返します。"
+
+#~ msgid "It returns Term Frequency score as a ``uint32_t``."
+#~ msgstr "``uint32_t`` として、単語の出現頻度のスコアを返します。"
+
+#~ msgid "It returns position of token as a ``uint32_t``."
+#~ msgstr "``uint32_t`` としてポスティングリストのトークンを返します。"
+
+#~ msgid "It returns section id of posting list as a ``uint32_t``."
+#~ msgstr "``uint32_t`` としてポスティングリストが持つセクションIDを返します。"
+
+#~ msgid "It returns record id of posting list as a ``uint32_t``."
+#~ msgstr "``uint32_t`` としてポスティングリストが持つレコードIDを返します。"
+
+#~ msgid "It returns Groonga's micor version number as a ``uint32_t``."
+#~ msgstr "``unit32_t`` としてGroongaのマイクロバージョン番号を返します。"
+
+#~ msgid "It returns Groonga's minor version number as a ``uint32_t``."
+#~ msgstr "``uint32_t`` として、Groongaのマイナーバージョン番号を返します。"
+
+#~ msgid "It doesn't do anything except when the reference count mode."
+#~ msgstr "参照カウントモード以外の時は、何もしません。"
+
+#~ msgid ""
+#~ "Therefore if we only use single precision floating point number, it is "
+#~ "not efficient."
+#~ msgstr "したがって、単精度浮動小数点数のみを使う場合は、効率が悪いです。"
+
+#~ msgid "``grn_posting_get_*``"
+#~ msgstr "``grn_posting_get_*``"
+
+#~ msgid "``grn_get_version_*``"
+#~ msgstr " ``grn_get_version_*`` "
