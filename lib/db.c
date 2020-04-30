@@ -57,8 +57,6 @@ typedef struct {
 
 static const uint32_t GRN_TABLE_PAT_KEY_CACHE_SIZE = 1 << 15;
 
-#define IS_WEIGHT_UVECTOR(obj) ((obj)->header.flags & GRN_OBJ_WITH_WEIGHT)
-
 #define GRN_TABLE_GROUPED (0x01<<0)
 #define GRN_TABLE_IS_GROUPED(table)\
   ((table)->header.impl_flags & GRN_TABLE_GROUPED)
@@ -5279,7 +5277,7 @@ grn_uvector_element_size_internal(grn_ctx *ctx, grn_obj *uvector)
 {
   unsigned int element_size;
 
-  if (IS_WEIGHT_UVECTOR(uvector)) {
+  if (grn_obj_is_weight_uvector(ctx, uvector)) {
     element_size = sizeof(weight_uvector_entry);
   } else {
     switch (uvector->header.domain) {
@@ -5598,7 +5596,7 @@ grn_uvector_add_element(grn_ctx *ctx, grn_obj *uvector,
     ERR(GRN_INVALID_ARGUMENT, "uvector is null");
     goto exit;
   }
-  if (IS_WEIGHT_UVECTOR(uvector)) {
+  if (grn_obj_is_weight_uvector(ctx, uvector)) {
     weight_uvector_entry entry;
     entry.id = id;
     entry.weight = weight;
@@ -5626,7 +5624,7 @@ grn_uvector_get_element(grn_ctx *ctx, grn_obj *uvector,
     goto exit;
   }
 
-  if (IS_WEIGHT_UVECTOR(uvector)) {
+  if (grn_obj_is_weight_uvector(ctx, uvector)) {
     const weight_uvector_entry *entry;
     const weight_uvector_entry *entries_start;
     const weight_uvector_entry *entries_end;
@@ -7716,11 +7714,11 @@ grn_obj_set_value_column_var_size_vector_uvector(grn_ctx *ctx, grn_obj *column,
   unsigned int size;
 
   if (column->header.flags & GRN_OBJ_WITH_WEIGHT) {
-    if (!IS_WEIGHT_UVECTOR(value)) {
+    if (!grn_obj_is_weight_uvector(ctx, value)) {
       need_convert = GRN_TRUE;
     }
   } else {
-    if (IS_WEIGHT_UVECTOR(value)) {
+    if (grn_obj_is_weight_uvector(ctx, value)) {
       need_convert = GRN_TRUE;
       uvector_flags = GRN_OBJ_WITH_WEIGHT;
     }
@@ -7753,7 +7751,7 @@ grn_obj_set_value_column_var_size_vector_uvector(grn_ctx *ctx, grn_obj *column,
         GRN_BULK_REWIND(&element);
         GRN_BULK_REWIND(&casted_element);
 
-        if (IS_WEIGHT_UVECTOR(value)) {
+        if (grn_obj_is_weight_uvector(ctx, value)) {
           grn_id raw_element;
           raw_element = grn_uvector_get_element(ctx, value, i, NULL);
           GRN_RECORD_SET(ctx, &element, raw_element);
