@@ -139,14 +139,44 @@ grn_obj_is_number_family_bulk(grn_ctx *ctx, grn_obj *obj)
   return grn_type_id_is_number_family(ctx, obj->header.domain);
 }
 
-grn_bool
+bool
 grn_obj_is_vector(grn_ctx *ctx, grn_obj *obj)
 {
   if (!obj) {
-    return GRN_FALSE;
+    return false;
   }
 
   return obj->header.type == GRN_VECTOR;
+}
+
+bool
+grn_obj_is_weight_vector(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_vector(ctx, obj)) {
+    return false;
+  }
+
+  return obj->header.flags & GRN_OBJ_WITH_WEIGHT;
+}
+
+bool
+grn_obj_is_uvector(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!obj) {
+    return false;
+  }
+
+  return obj->header.type == GRN_UVECTOR;
+}
+
+bool
+grn_obj_is_weight_uvector(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_uvector(ctx, obj)) {
+    return false;
+  }
+
+  return obj->header.flags & GRN_OBJ_WITH_WEIGHT;
 }
 
 grn_bool
