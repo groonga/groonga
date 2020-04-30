@@ -116,7 +116,7 @@ jobs:
           APACHE_ARROW_REPOSITORY: ../../arrow
 
       # Artifact
-      - uses: actions/upload-artifact@master
+      - uses: actions/upload-artifact@v2
         with:
           name: packages-${{ matrix.id }}
           path: ${{ matrix.repositories-path }}

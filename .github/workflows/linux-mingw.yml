@@ -74,7 +74,7 @@ jobs:
         run: |
           mkdir -p windows-mingw-${{ matrix.architecture }}
           mv packages/windows/files/* windows-mingw-${{ matrix.architecture }}/
-      - uses: actions/upload-artifact@master
+      - uses: actions/upload-artifact@v2
         with:
           name: windows-mingw-${{ matrix.architecture }}
           path: windows-mingw-${{ matrix.architecture }}

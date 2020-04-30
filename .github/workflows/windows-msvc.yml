@@ -120,22 +120,22 @@ jobs:
       - name: Prepare artifacts without VC++ runtime
         run: |
           . .\env.ps1
-          New-Item ..\packages -ItemType Directory
+          New-Item artifacts -ItemType Directory
           pushd "${FULL_INSTALL_FOLDER}\.."
           Compress-Archive `
             -Path "${INSTALL_FOLDER}" `
-            -DestinationPath "${Env:GITHUB_WORKSPACE}\..\packages\${INSTALL_FOLDER}.zip"
+            -DestinationPath "${Env:GITHUB_WORKSPACE}\artifacts\${INSTALL_FOLDER}.zip"
           popd
-      - uses: actions/upload-artifact@master
+      - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.artifact_name }}
-          path: ..\packages
+          path: artifacts
       - name: Prepare artifacts with VC++ runtime
         run: |
           Set-PSDebug -Trace 2
 
           . .\env.ps1
-          New-Item ..\packages-with-vcruntime -ItemType Directory
+          New-Item artifacts-with-vcruntime -ItemType Directory
           pushd "${FULL_INSTALL_FOLDER}\.."
 
           Copy-Item -Recurse `
@@ -175,12 +175,12 @@ jobs:
 
           Compress-Archive `
             -Path ${INSTALL_FOLDER_WITH_VCRUNTIME} `
-            -DestinationPath "${Env:GITHUB_WORKSPACE}\..\packages-with-vcruntime\${INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
+            -DestinationPath "${Env:GITHUB_WORKSPACE}\artifacts-with-vcruntime\${INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
           popd
-      - uses: actions/upload-artifact@master
+      - uses: actions/upload-artifact@v1
         with:
           name: ${{ matrix.artifact_name }}-with-vcruntime
-          path: ..\packages-with-vcruntime
+          path: artifacts-with-vcruntime
 
       # Release
       - name: Asset
@@ -213,7 +213,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.result }}
-          asset_path: ../packages/${{ steps.asset.outputs.base_name }}.zip
+          asset_path: artifacts/${{ steps.asset.outputs.base_name }}.zip
           asset_name: ${{ steps.asset.outputs.base_name }}.zip
           asset_content_type: application/zip
       - name: Upload the artifact with VC++ runtime to release
@@ -224,7 +224,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.result }}
-          asset_path: ../packages-with-vcruntime/${{ steps.asset.outputs.base_name }}-with-vcruntime.zip
+          asset_path: artifacts-with-vcruntime/${{ steps.asset.outputs.base_name }}-with-vcruntime.zip
           asset_name: ${{ steps.asset.outputs.base_name }}-with-vcruntime.zip
           asset_content_type: application/zip
 
