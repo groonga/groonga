@@ -432,7 +432,7 @@ struct _grn_obj {
     struct {
       grn_obj *body;
       grn_section *sections;
-      int n_sections;
+      uint32_t n_sections;
     } v;
   } u;
 };
@@ -875,20 +875,6 @@ GRN_API grn_rc grn_proc_set_is_stable(grn_ctx *ctx,
                                       grn_obj *proc,
                                       grn_bool is_stable);
 GRN_API grn_bool grn_proc_is_stable(grn_ctx *ctx, grn_obj *proc);
-
-/*-------------------------------------------------------------
- * grn_uvector
-*/
-
-GRN_API unsigned int grn_uvector_size(grn_ctx *ctx, grn_obj *uvector);
-GRN_API unsigned int grn_uvector_element_size(grn_ctx *ctx, grn_obj *uvector);
-
-GRN_API grn_rc grn_uvector_add_element(grn_ctx *ctx, grn_obj *vector,
-                                       grn_id id, uint32_t weight);
-
-GRN_API grn_id grn_uvector_get_element(grn_ctx *ctx, grn_obj *uvector,
-                                       unsigned int offset,
-                                       uint32_t *weight);
 
 /*-------------------------------------------------------------
  * API for hook
