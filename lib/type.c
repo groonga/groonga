@@ -39,6 +39,52 @@ grn_type_id_is_text_family(grn_ctx *ctx, grn_id id)
   return GRN_DB_SHORT_TEXT <= id && id <= GRN_DB_LONG_TEXT;
 }
 
+size_t
+grn_type_id_size(grn_ctx *ctx, grn_id id)
+{
+  switch (id) {
+  case GRN_DB_BOOL :
+    return sizeof(bool);
+  case GRN_DB_INT8 :
+    return sizeof(int8_t);
+  case GRN_DB_UINT8 :
+    return sizeof(uint8_t);
+  case GRN_DB_INT16 :
+    return sizeof(int16_t);
+  case GRN_DB_UINT16 :
+    return sizeof(uint16_t);
+  case GRN_DB_INT32 :
+    return sizeof(int32_t);
+  case GRN_DB_UINT32 :
+    return sizeof(uint32_t);
+  case GRN_DB_INT64 :
+    return sizeof(int64_t);
+  case GRN_DB_UINT64 :
+    return sizeof(uint64_t);
+  case GRN_DB_FLOAT32 :
+    return sizeof(float);
+  case GRN_DB_FLOAT :
+    return sizeof(double);
+  case GRN_DB_TIME :
+    return sizeof(int64_t);
+  case GRN_DB_TOKYO_GEO_POINT :
+  case GRN_DB_WGS84_GEO_POINT :
+    return sizeof(grn_geo_point);
+  default :
+    {
+      GRN_API_ENTER;
+      grn_obj *obj = grn_ctx_at(ctx, id);
+      bool is_table = grn_obj_is_table(ctx, obj);
+      grn_obj_unref(ctx, obj);
+      size_t size = 0;
+      if (is_table) {
+        size = sizeof(grn_id);
+      }
+      GRN_API_RETURN(size);
+    }
+  }
+}
+
 grn_obj *
 grn_type_create(grn_ctx *ctx, const char *name, unsigned int name_size,
                 grn_obj_flags flags, unsigned int size)
