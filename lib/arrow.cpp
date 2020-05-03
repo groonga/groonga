@@ -656,14 +656,20 @@ namespace grnarrow {
       if (!weight_column) {
         return arrow::Status::OK();
       }
-      if (weight_column->type_id() != arrow::Type::INT32) {
+      float weight;
+      switch (weight_column->type_id()) {
+      case arrow::Type::INT32 :
+        weight = std::static_pointer_cast<arrow::Int32Array>(weight_column)->Value(index_);
+        break;
+      case arrow::Type::FLOAT :
+        weight = std::static_pointer_cast<arrow::FloatArray>(weight_column)->Value(index_);
+        break;
+      default :
         return arrow::Status::OK();
       }
 
       const auto &value =
         std::static_pointer_cast<arrow::StringArray>(value_column)->GetView(index_);
-      const auto &weight =
-        std::static_pointer_cast<arrow::Int32Array>(weight_column)->Value(index_);
       const grn_id domain = bulk_->header.domain;
       const auto raw_value = value.data();
       const auto raw_value_size = value.size();
@@ -690,18 +696,18 @@ namespace grnarrow {
         if (grn_type_id_is_text_family(ctx_, domain)) {
           const auto value_buffer_size =
             static_cast<unsigned int>(GRN_BULK_VSIZE(&value_buffer));
-          grn_vector_add_element(ctx_,
-                                 bulk_,
-                                 GRN_BULK_HEAD(&value_buffer),
-                                 value_buffer_size,
-                                 weight,
-                                 domain);
+          grn_vector_add_element_float(ctx_,
+                                       bulk_,
+                                       GRN_BULK_HEAD(&value_buffer),
+                                       value_buffer_size,
+                                       weight,
+                                       domain);
         } else {
           // TODO: Support weight vector for number such as Int64
-          grn_uvector_add_element(ctx_,
-                                  bulk_,
-                                  GRN_RECORD_VALUE(&value_buffer),
-                                  weight);
+          grn_uvector_add_element_record(ctx_,
+                                         bulk_,
+                                         GRN_RECORD_VALUE(&value_buffer),
+                                         weight);
         }
       }
       GRN_OBJ_FIN(ctx_, &value_buffer);
