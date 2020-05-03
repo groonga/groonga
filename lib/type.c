@@ -73,11 +73,25 @@ grn_type_id_size(grn_ctx *ctx, grn_id id)
   default :
     {
       GRN_API_ENTER;
-      grn_obj *obj = grn_ctx_at(ctx, id);
-      bool is_table = grn_obj_is_table(ctx, obj);
-      grn_obj_unref(ctx, obj);
       size_t size = 0;
-      if (is_table) {
+      if (grn_type_id_is_builtin(ctx, id)) {
+        grn_obj *obj = grn_ctx_at(ctx, id);
+        if (grn_obj_is_type(ctx, obj)) {
+          size = grn_type_size(ctx, obj);
+        }
+      } else {
+        /*
+          We need to check the ID is a ID for table:
+
+            grn_obj *obj = grn_ctx_at(ctx, id);
+            if (grn_obj_is_table(ctx, obj)) {
+              size = sizeof(grn_id);
+            }
+            grn_obj_unref(ctx, obj);
+
+          But we want to reduce grn_ctx_at() call for performance.
+          So we assume the ID is a ID for table here.
+        */
         size = sizeof(grn_id);
       }
       GRN_API_RETURN(size);

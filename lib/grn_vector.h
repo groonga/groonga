@@ -24,6 +24,21 @@
 extern "C" {
 #endif
 
+grn_rc grn_vector_delimit(grn_ctx *ctx,
+                          grn_obj *vector,
+                          float weight,
+                          grn_id domain);
+grn_obj *grn_vector_pack(grn_ctx *ctx,
+                         grn_obj *vector,
+                         uint32_t offset,
+                         uint32_t n,
+                         grn_obj *header,
+                         grn_obj *footer);
+grn_rc grn_vector_unpack(grn_ctx *ctx,
+                         grn_obj *vector,
+                         const char *data,
+                         uint32_t data_size);
+
 grn_obj *grn_vector_body(grn_ctx *ctx, grn_obj *vector);
 
 #ifdef __cplusplus

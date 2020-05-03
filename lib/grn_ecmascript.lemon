@@ -35,12 +35,12 @@
         }
       }
       if (efsi->array_literal) {
-        grn_vector_add_element(ctx,
-                               efsi->array_literal,
-                               GRN_TEXT_VALUE(element),
-                               GRN_TEXT_LEN(element),
-                               0,
-                               element->header.domain);
+        grn_vector_add_element_float(ctx,
+                                     efsi->array_literal,
+                                     GRN_TEXT_VALUE(element),
+                                     GRN_TEXT_LEN(element),
+                                     0,
+                                     element->header.domain);
         if (ctx->rc == GRN_SUCCESS) {
           grn_expr_dfi_pop(e);
           e->codes_curr -= 1;

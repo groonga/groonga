@@ -269,6 +269,7 @@ schema
             "compress": "zstd",
             "section": false,
             "weight": false,
+            "weight_float32": false,
             "position": false,
             "sources": [
 

@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2016-2017 Brazil
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2016-2017  Brazil
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -386,20 +386,33 @@ static void
 command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
 {
   int n_elements = 1;
-  grn_bool is_index = (column->header.type == GRN_COLUMN_INDEX);
+  grn_column_flags column_flags = grn_column_get_flags(ctx, column);
+  bool is_index = false;
+  bool is_vector = false;
+  switch (column_flags & GRN_OBJ_COLUMN_TYPE_MASK) {
+  case GRN_OBJ_COLUMN_VECTOR :
+    is_vector = true;
+    break;
+  case GRN_OBJ_COLUMN_INDEX :
+    is_index = true;
+    break;
+  default :
+    break;
+  }
 
   if (is_index) {
     n_elements += 5;
   } else {
     n_elements += 1;
+    if (is_vector) {
+      n_elements += 2;
+    }
   }
   grn_ctx_output_map_open(ctx, "value", n_elements);
   {
     grn_id range_id;
-    grn_column_flags column_flags;
 
     range_id = grn_obj_get_range(ctx, column);
-    column_flags = grn_column_get_flags(ctx, column);
 
     grn_ctx_output_cstr(ctx, "type");
     command_object_inspect_type(ctx, grn_ctx_at(ctx, range_id));
@@ -426,6 +439,12 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
     } else {
       grn_ctx_output_cstr(ctx, "compress");
       command_object_inspect_column_data_value_compress(ctx, column);
+      if (is_vector) {
+        grn_ctx_output_cstr(ctx, "weight");
+        grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WITH_WEIGHT) != 0);
+        grn_ctx_output_cstr(ctx, "weight_float32");
+        grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WEIGHT_FLOAT32) != 0);
+      }
     }
   }
   grn_ctx_output_map_close(ctx);

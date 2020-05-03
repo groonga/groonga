@@ -40,6 +40,7 @@
 #include "grn_scorer.h"
 #include "grn_util.h"
 #include "grn_posting.h"
+#include "grn_vector.h"
 
 #ifdef GRN_SUPPORT_REGEXP
 # define GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH
@@ -7618,7 +7619,7 @@ grn_vector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                 DEFINE_NAME(ii);
                 MERR("[ii][update][spec] failed to create an update spec: "
                      "<%.*s>: "
-                     "record:<%u>:<%u>, token:<%u>:<%d>:<%u>",
+                     "record:<%u>:<%u>, token:<%u>:<%d>:<%f>",
                      name_size, name,
                      rid, section,
                      tid, token_cursor->pos, v->weight);
@@ -7630,7 +7631,7 @@ grn_vector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
               DEFINE_NAME(ii);
               MERR("[ii][update][spec] failed to add to update spec: "
                    "<%.*s>: "
-                   "record:<%u>:<%u>, token:<%u>:<%d>:<%u>",
+                   "record:<%u>:<%u>, token:<%u>:<%d>:<%f>",
                    name_size, name,
                    rid, section,
                    tid, token_cursor->pos, v->weight);
@@ -7809,7 +7810,7 @@ grn_uvector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid,
                      unsigned int section, grn_obj *in, grn_obj *out,
                      grn_tokenize_mode mode, grn_obj *posting)
 {
-  if (in->header.domain < GRN_N_RESERVED_TYPES) {
+  if (grn_type_id_is_builtin(ctx, in->header.domain)) {
     return grn_uvector2updspecs_data(ctx, ii, rid, section, in, out,
                                      mode, posting);
   } else {

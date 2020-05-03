@@ -1,0 +1,54 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{
+  "_key": "Groonga is fast",
+  "tags": {
+    "groonga": 2.8,
+    "full text search": 1.2
+  }
+}
+]
+[[0,0.0,0.0],1]
+select Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast",
+        {
+          "groonga": 2.8,
+          "full text search": 1.2
+        }
+      ]
+    ]
+  ]
+]

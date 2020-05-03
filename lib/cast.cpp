@@ -58,12 +58,6 @@ namespace grn {
 
     struct TableHandler : public rapidjson::BaseReaderHandler<>
     {
-      grn_ctx *ctx_;
-      grn_obj *uvector_;
-      bool add_record_if_not_exist_;
-      grn_obj *table_;
-      uint32_t weight_;
-
       TableHandler(grn_ctx *ctx,
                    grn_obj *uvector,
                    bool add_record_if_not_exist)
@@ -71,7 +65,7 @@ namespace grn {
           uvector_(uvector),
           add_record_if_not_exist_(add_record_if_not_exist),
           table_(grn_ctx_at(ctx, uvector->header.domain)),
-          weight_(0) {
+          weight_(0.0) {
       }
 
       ~TableHandler() {
@@ -90,7 +84,7 @@ namespace grn {
         if (id == GRN_ID_NIL) {
           return false;
         }
-        auto rc = grn_uvector_add_element(ctx_, uvector_, id, weight_);
+        auto rc = grn_uvector_add_element_record(ctx_, uvector_, id, weight_);
         return rc == GRN_SUCCESS;
       }
 
@@ -103,6 +97,18 @@ namespace grn {
         weight_ = value;
         return true;
       }
+
+      bool Double(double value) {
+        weight_ = value;
+        return true;
+      }
+
+    private:
+      grn_ctx *ctx_;
+      grn_obj *uvector_;
+      bool add_record_if_not_exist_;
+      grn_obj *table_;
+      float weight_;
     };
 
     template <typename Handler>

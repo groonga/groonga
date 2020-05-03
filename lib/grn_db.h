@@ -384,25 +384,6 @@ void grn_obj_get_range_info(grn_ctx *ctx,
                             grn_id *range_id,
                             grn_obj_flags *range_flags);
 
-/* vector */
-
-/*
-typedef struct _grn_vector grn_vector;
-
-struct _grn_vector {
-  grn_obj str;
-  uint32_t *offsets;
-  int n_entries;
-};
-
-const char *grn_vector_fetch(grn_ctx *ctx, grn_obj *vector, int i, unsigned int *size);
-int grn_vector_delimit(grn_ctx *ctx, grn_obj *vector);
-int grn_vector_size(grn_ctx *ctx, grn_obj *vector);
-*/
-
-grn_rc grn_vector_delimit(grn_ctx *ctx, grn_obj *v, uint32_t weight, grn_id domain);
-grn_rc grn_vector_decode(grn_ctx *ctx, grn_obj *v, const char *data, uint32_t data_size);
-
 
 grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 

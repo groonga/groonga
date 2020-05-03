@@ -2936,12 +2936,12 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         GRN_TEXT_PUTS(ctx, bulk, "{");
         for (i = 0; i < n; i++) {
           grn_id id;
-          uint32_t weight;
+          float weight;
 
           if (i > 0) {
             GRN_TEXT_PUTC(ctx, bulk, ',');
           }
-          id = grn_uvector_get_element(ctx, obj, i, &weight);
+          id = grn_uvector_get_element_record(ctx, obj, i, &weight);
           if (domain) {
             if (domain->header.type == GRN_TABLE_NO_KEY) {
               GRN_TEXT_PUTC(ctx, bulk, '"');
@@ -2958,7 +2958,11 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
             GRN_TEXT_PUTC(ctx, bulk, '"');
           }
           GRN_TEXT_PUTC(ctx, bulk, ':');
-          grn_text_ulltoa(ctx, bulk, weight);
+          if (format->flags & GRN_OBJ_FORMAT_WEIGHT_FLOAT32) {
+            grn_text_f32toa(ctx, bulk, weight);
+          } else {
+            grn_text_ulltoa(ctx, bulk, weight);
+          }
         }
         GRN_TEXT_PUTS(ctx, bulk, "}");
       } else {
@@ -3078,11 +3082,19 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       unsigned int i, n;
       grn_obj value;
       grn_obj weight;
-      grn_bool with_weight;
+      bool with_weight = false;
+      bool is_weight_float32 = false;
 
       GRN_VOID_INIT(&value);
-      GRN_UINT32_INIT(&weight, 0);
-      with_weight = (format && format->flags & GRN_OBJ_FORMAT_WITH_WEIGHT);
+      if (format) {
+        with_weight = (format->flags & GRN_OBJ_FORMAT_WITH_WEIGHT);
+        is_weight_float32 = (format->flags & GRN_OBJ_FORMAT_WEIGHT_FLOAT32);
+      }
+      if (is_weight_float32) {
+        GRN_FLOAT32_INIT(&weight, 0);
+      } else {
+        GRN_UINT32_INIT(&weight, 0);
+      }
       n = grn_vector_size(ctx, obj);
       if (with_weight) {
         GRN_TEXT_PUTC(ctx, bulk, '{');
@@ -3090,24 +3102,32 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         GRN_TEXT_PUTC(ctx, bulk, '[');
       }
       for (i = 0; i < n; i++) {
-        const char *_value;
-        uint32_t _weight;
+        const char *value_raw;
+        float weight_raw;
         unsigned int length;
         grn_id domain;
         if (i) { GRN_TEXT_PUTC(ctx, bulk, ','); }
 
-        length = grn_vector_get_element(ctx, obj, i,
-                                        &_value, &_weight, &domain);
+        length = grn_vector_get_element_float(ctx,
+                                              obj,
+                                              i,
+                                              &value_raw,
+                                              &weight_raw,
+                                              &domain);
         if (domain != GRN_DB_VOID) {
           grn_obj_reinit(ctx, &value, domain, 0);
         } else {
           grn_obj_reinit(ctx, &value, obj->header.domain, 0);
         }
-        grn_bulk_write(ctx, &value, _value, length);
+        grn_bulk_write(ctx, &value, value_raw, length);
         grn_text_otoj(ctx, bulk, &value, NULL);
         if (with_weight) {
           GRN_TEXT_PUTC(ctx, bulk, ':');
-          GRN_UINT32_SET(ctx, &weight, _weight);
+          if (is_weight_float32) {
+            GRN_FLOAT32_SET(ctx, &weight, weight_raw);
+          } else {
+            GRN_UINT32_SET(ctx, &weight, weight_raw);
+          }
           grn_text_otoj(ctx, bulk, &weight, NULL);
         }
       }

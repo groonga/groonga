@@ -1,0 +1,6 @@
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos TABLE_NO_KEY
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 Tags
+
+object_inspect Memos.tags

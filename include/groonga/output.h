@@ -31,6 +31,9 @@ typedef struct _grn_obj_format grn_obj_format;
    Use GRN_OBJ_FORMAT_AS_ARRAY instead.*/
 #define GRN_OBJ_FORMAT_ASARRAY             GRN_OBJ_FORMAT_AS_ARRAY
 #define GRN_OBJ_FORMAT_WITH_WEIGHT         (0x01<<4)
+/* Format weight as float32.
+   Since 10.0.3 */
+#define GRN_OBJ_FORMAT_WEIGHT_FLOAT32      (0x01<<5)
 
 struct _grn_obj_format {
   grn_obj columns;

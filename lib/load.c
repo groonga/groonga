@@ -257,7 +257,7 @@ add_weight_vector(grn_ctx *ctx,
   grn_obj weight_buffer;
 
   n = GRN_UINT32_VALUE(value);
-  GRN_UINT32_INIT(&weight_buffer, 0);
+  GRN_FLOAT32_INIT(&weight_buffer, 0);
   for (i = 0; i < n; i += 2) {
     grn_rc rc;
     grn_obj *key, *weight;
@@ -274,12 +274,12 @@ add_weight_vector(grn_ctx *ctx,
       grn_obj_unlink(ctx, range);
       break;
     }
-    grn_vector_add_element(ctx,
-                           vector,
-                           GRN_BULK_HEAD(key),
-                           GRN_BULK_VSIZE(key),
-                           GRN_UINT32_VALUE(&weight_buffer),
-                           key->header.domain);
+    grn_vector_add_element_float(ctx,
+                                 vector,
+                                 GRN_BULK_HEAD(key),
+                                 GRN_BULK_VSIZE(key),
+                                 GRN_FLOAT32_VALUE(&weight_buffer),
+                                 key->header.domain);
   }
   GRN_OBJ_FIN(ctx, &weight_buffer);
 }

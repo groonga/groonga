@@ -1051,20 +1051,26 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       GRN_VALUE_FIX_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
       break;
     case GRN_COLUMN_VAR_SIZE :
-      if ((obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
-        grn_obj *range = grn_ctx_at(ctx, DB_OBJ(obj)->range);
-        if (GRN_OBJ_TABLEP(range) ||
-            (range->header.flags & GRN_OBJ_KEY_VAR_SIZE) == 0) {
-          GRN_VALUE_FIX_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
+      {
+        grn_column_flags flags = grn_column_get_flags(ctx, obj);
+        if ((flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
+          grn_obj *range = grn_ctx_at(ctx, DB_OBJ(obj)->range);
+          if (GRN_OBJ_TABLEP(range) ||
+              (range->header.flags & GRN_OBJ_KEY_VAR_SIZE) == 0) {
+            GRN_VALUE_FIX_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
+          } else {
+            GRN_VALUE_VAR_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
+          }
+          if (flags & GRN_OBJ_WITH_WEIGHT) {
+            format.flags |= GRN_OBJ_FORMAT_WITH_WEIGHT;
+            if (flags & GRN_OBJ_WEIGHT_FLOAT32) {
+              format.flags |= GRN_OBJ_FORMAT_WEIGHT_FLOAT32;
+            }
+            format_argument = &format;
+          }
         } else {
-          GRN_VALUE_VAR_SIZE_INIT(&buf, GRN_OBJ_VECTOR, DB_OBJ(obj)->range);
+          GRN_VALUE_VAR_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
         }
-        if (obj->header.flags & GRN_OBJ_WITH_WEIGHT) {
-          format.flags |= GRN_OBJ_FORMAT_WITH_WEIGHT;
-          format_argument = &format;
-        }
-      } else {
-        GRN_VALUE_VAR_SIZE_INIT(&buf, 0, DB_OBJ(obj)->range);
       }
       break;
     case GRN_COLUMN_INDEX :
@@ -1309,17 +1315,21 @@ static grn_inline void
 grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                    grn_obj *uvector, grn_obj_format *format)
 {
-  grn_bool output_result_set = GRN_FALSE;
-  grn_bool with_weight = GRN_FALSE;
+  bool output_result_set = false;
+  bool with_weight = false;
+  bool is_weight_float32 = false;
   grn_obj *range;
   grn_bool range_is_type;
 
   if (format) {
     if (GRN_BULK_VSIZE(&(format->columns)) > 0) {
-      output_result_set = GRN_TRUE;
+      output_result_set = true;
     }
     if (format->flags & GRN_OBJ_FORMAT_WITH_WEIGHT) {
-      with_weight = GRN_TRUE;
+      with_weight = true;
+    }
+    if (format->flags & GRN_OBJ_FORMAT_WEIGHT_FLOAT32) {
+      is_weight_float32 = true;
     }
   }
 
@@ -1372,9 +1382,9 @@ grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
 
     for (i = 0; i < n; i++) {
       grn_id id;
-      uint32_t weight;
+      float weight;
 
-      id = grn_uvector_get_element(ctx, uvector, i, &weight);
+      id = grn_uvector_get_element_record(ctx, uvector, i, &weight);
       if (range->header.type == GRN_TABLE_NO_KEY) {
         GRN_UINT32_SET(ctx, &id_value, id);
         grn_output_obj(ctx, outbuf, output_type, &id_value, NULL);
@@ -1385,7 +1395,11 @@ grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       }
 
       if (with_weight) {
-        grn_output_uint64(ctx, outbuf, output_type, weight);
+        if (is_weight_float32) {
+          grn_output_float32(ctx, outbuf, output_type, weight);
+        } else {
+          grn_output_uint64(ctx, outbuf, output_type, weight);
+        }
       }
     }
 

@@ -27,13 +27,31 @@ extern "C" {
 
 GRN_API uint32_t grn_vector_size(grn_ctx *ctx, grn_obj *vector);
 
-GRN_API grn_rc grn_vector_add_element(grn_ctx *ctx, grn_obj *vector,
-                                      const char *str, unsigned int str_len,
-                                      uint32_t weight, grn_id domain);
+GRN_API grn_rc grn_vector_add_element(grn_ctx *ctx,
+                                      grn_obj *vector,
+                                      const char *str,
+                                      uint32_t str_len,
+                                      uint32_t weight,
+                                      grn_id domain);
+GRN_API grn_rc grn_vector_add_element_float(grn_ctx *ctx,
+                                            grn_obj *vector,
+                                            const char *str,
+                                            uint32_t str_len,
+                                            float weight,
+                                            grn_id domain);
 
-GRN_API unsigned int grn_vector_get_element(grn_ctx *ctx, grn_obj *vector,
-                                            uint32_t offset, const char **str,
-                                            uint32_t *weight, grn_id *domain);
+GRN_API uint32_t grn_vector_get_element(grn_ctx *ctx,
+                                        grn_obj *vector,
+                                        uint32_t offset,
+                                        const char **str,
+                                        uint32_t *weight,
+                                        grn_id *domain);
+GRN_API uint32_t grn_vector_get_element_float(grn_ctx *ctx,
+                                              grn_obj *vector,
+                                              uint32_t offset,
+                                              const char **str,
+                                              float *weight,
+                                              grn_id *domain);
 GRN_API bool grn_vector_get_element_bool(grn_ctx *ctx,
                                          grn_obj *vector,
                                          unsigned int offset,
@@ -76,6 +94,11 @@ GRN_API uint32_t grn_vector_pop_element(grn_ctx *ctx,
                                         const char **str,
                                         uint32_t *weight,
                                         grn_id *domain);
+GRN_API uint32_t grn_vector_pop_element_float(grn_ctx *ctx,
+                                              grn_obj *vector,
+                                              const char **str,
+                                              float *weight,
+                                              grn_id *domain);
 
 GRN_API uint32_t grn_uvector_size(grn_ctx *ctx, grn_obj *uvector);
 GRN_API uint32_t grn_uvector_element_size(grn_ctx *ctx, grn_obj *uvector);

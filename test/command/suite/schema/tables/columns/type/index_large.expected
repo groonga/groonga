@@ -286,6 +286,7 @@ schema
             "compress": null,
             "section": false,
             "weight": false,
+            "weight_float32": false,
             "position": false,
             "sources": [
 
@@ -324,6 +325,7 @@ schema
             "compress": null,
             "section": false,
             "weight": false,
+            "weight_float32": false,
             "position": false,
             "sources": [
 
@@ -402,6 +404,7 @@ schema
             "compress": null,
             "section": true,
             "weight": true,
+            "weight_float32": false,
             "position": true,
             "sources": [
               {

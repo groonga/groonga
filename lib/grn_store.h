@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2016  Brazil
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -91,6 +91,15 @@ GRN_API grn_rc grn_ja_close(grn_ctx *ctx, grn_ja *ja);
 grn_rc grn_ja_remove(grn_ctx *ctx, const char *path);
 grn_rc grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id,
                   void *value, uint32_t value_len, int flags, uint64_t *cas);
+grn_obj *grn_ja_cast_value(grn_ctx *ctx,
+                           grn_ja *ja,
+                           grn_obj *value,
+                           grn_obj *buffer,
+                           int set_flags);
+grn_rc grn_ja_pack_value(grn_ctx *ctx,
+                         grn_ja *ja,
+                         grn_obj *value,
+                         int set_flags);
 int grn_ja_at(grn_ctx *ctx, grn_ja *ja, grn_id id, void *valbuf, int buf_size);
 
 GRN_API void *grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw,

@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2016 Brazil
+  Copyright(C) 2016  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,6 +19,7 @@
 
 #include "../grn_proc.h"
 #include "../grn_db.h"
+#include "../grn_vector.h"
 
 #include <groonga/plugin.h>
 
@@ -125,7 +127,7 @@ command_object_list(grn_ctx *ctx,
     grn_ctx_output_str(ctx, name, name_size);
 
     GRN_BULK_REWIND(&vector);
-    if (grn_vector_decode(ctx, &vector, value, value_len) != GRN_SUCCESS) {
+    if (grn_vector_unpack(ctx, &vector, value, value_len) != GRN_SUCCESS) {
       grn_ctx_output_map_open(ctx, "object", 4);
       {
         grn_ctx_output_cstr(ctx, "id");

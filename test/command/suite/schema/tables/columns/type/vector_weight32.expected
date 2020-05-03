@@ -2,7 +2,7 @@ table_create Tags TABLE_DAT_KEY ShortText --normalizer NormalizerAuto
 [[0,0.0,0.0],true]
 table_create Posts TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
-column_create Posts tags COLUMN_VECTOR Tags
+column_create Posts tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 Tags
 [[0,0.0,0.0],true]
 schema
 [
@@ -275,8 +275,8 @@ schema
             },
             "compress": null,
             "section": false,
-            "weight": false,
-            "weight_float32": false,
+            "weight": true,
+            "weight_float32": true,
             "position": false,
             "sources": [
 
@@ -289,10 +289,10 @@ schema
               "arguments": {
                 "table": "Posts",
                 "name": "tags",
-                "flags": "COLUMN_VECTOR",
+                "flags": "COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32",
                 "type": "Tags"
               },
-              "command_line": "column_create --table Posts --name tags --flags COLUMN_VECTOR --type Tags"
+              "command_line": "column_create --table Posts --name tags --flags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 --type Tags"
             }
           }
         }

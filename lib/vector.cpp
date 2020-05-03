@@ -193,66 +193,13 @@ extern "C" {
     return grn::vector_get_element<uint64_t>(ctx, vector, offset, default_value);
   }
 
-  typedef struct {
-    grn_id id;
-    uint32_t weight;
-  } weight_uvector_entry;
-
   static uint32_t
   grn_uvector_element_size_internal(grn_ctx *ctx, grn_obj *uvector)
   {
-    unsigned int element_size;
-
+    uint32_t element_size = grn_type_id_size(ctx, uvector->header.domain);
     if (grn_obj_is_weight_uvector(ctx, uvector)) {
-      element_size = sizeof(weight_uvector_entry);
-    } else {
-      switch (uvector->header.domain) {
-      case GRN_DB_BOOL :
-        element_size = sizeof(grn_bool);
-        break;
-      case GRN_DB_INT8 :
-        element_size = sizeof(int8_t);
-        break;
-      case GRN_DB_UINT8 :
-        element_size = sizeof(uint8_t);
-        break;
-      case GRN_DB_INT16 :
-        element_size = sizeof(int16_t);
-        break;
-      case GRN_DB_UINT16 :
-        element_size = sizeof(uint16_t);
-        break;
-      case GRN_DB_INT32 :
-        element_size = sizeof(int32_t);
-        break;
-      case GRN_DB_UINT32 :
-        element_size = sizeof(uint32_t);
-        break;
-      case GRN_DB_INT64 :
-        element_size = sizeof(int64_t);
-        break;
-      case GRN_DB_UINT64 :
-        element_size = sizeof(uint64_t);
-        break;
-      case GRN_DB_FLOAT32 :
-        element_size = sizeof(float);
-        break;
-      case GRN_DB_FLOAT :
-        element_size = sizeof(double);
-        break;
-      case GRN_DB_TIME :
-        element_size = sizeof(int64_t);
-        break;
-      case GRN_DB_TOKYO_GEO_POINT :
-      case GRN_DB_WGS84_GEO_POINT :
-        element_size = sizeof(grn_geo_point);
-        break;
-      default :
-        element_size = sizeof(grn_id);
-        break;
-      }
+      element_size += sizeof(float);
     }
-
     return element_size;
   }
 
@@ -268,7 +215,7 @@ extern "C" {
   {
     uint32_t size;
     if (!vector) {
-      ERR(GRN_INVALID_ARGUMENT, "vector is null");
+      ERR(GRN_INVALID_ARGUMENT, "[vector][size] vector is null");
       return 0;
     }
     GRN_API_ENTER;
@@ -286,7 +233,7 @@ extern "C" {
       size = vector->u.v.n_sections;
       break;
     default :
-      ERR(GRN_INVALID_ARGUMENT, "not vector");
+      ERR(GRN_INVALID_ARGUMENT, "[vector][size] not vector");
       size = 0;
       break;
     }
@@ -322,7 +269,28 @@ extern "C" {
                          uint32_t *weight,
                          grn_id *domain)
   {
-    unsigned int length = 0;
+    float weight_float;
+    uint32_t length = grn_vector_get_element_float(ctx,
+                                                   vector,
+                                                   offset,
+                                                   str,
+                                                   &weight_float,
+                                                   domain);
+    if (weight) {
+      *weight = weight_float;
+    }
+    return length;
+  }
+
+  uint32_t
+  grn_vector_get_element_float(grn_ctx *ctx,
+                               grn_obj *vector,
+                               uint32_t offset,
+                               const char **str,
+                               float *weight,
+                               grn_id *domain)
+  {
+    uint32_t length = 0;
     GRN_API_ENTER;
     if (!vector || vector->header.type != GRN_VECTOR) {
       ERR(GRN_INVALID_ARGUMENT, "invalid vector");
@@ -345,8 +313,30 @@ extern "C" {
   }
 
   uint32_t
-  grn_vector_pop_element(grn_ctx *ctx, grn_obj *vector,
-                         const char **str, uint32_t *weight, grn_id *domain)
+  grn_vector_pop_element(grn_ctx *ctx,
+                         grn_obj *vector,
+                         const char **str,
+                         uint32_t *weight,
+                         grn_id *domain)
+  {
+    float weight_float;
+    uint32_t length = grn_vector_pop_element_float(ctx,
+                                                   vector,
+                                                   str,
+                                                   &weight_float,
+                                                   domain);
+    if (weight) {
+      *weight = weight_float;
+    }
+    return length;
+  }
+
+  uint32_t
+  grn_vector_pop_element_float(grn_ctx *ctx,
+                               grn_obj *vector,
+                               const char **str,
+                               float *weight,
+                               grn_id *domain)
   {
     uint32_t offset, length = 0;
     GRN_API_ENTER;
@@ -377,7 +367,10 @@ extern "C" {
   #define M_SECTIONS_UNIT (S_SECTIONS_UNIT - 1)
 
   grn_rc
-  grn_vector_delimit(grn_ctx *ctx, grn_obj *v, uint32_t weight, grn_id domain)
+  grn_vector_delimit(grn_ctx *ctx,
+                     grn_obj *v,
+                     float weight,
+                     grn_id domain)
   {
     if (v->header.type != GRN_VECTOR) { return GRN_INVALID_ARGUMENT; }
     if (!(v->u.v.n_sections & M_SECTIONS_UNIT)) {
@@ -399,55 +392,108 @@ extern "C" {
     return GRN_SUCCESS;
   }
 
+  grn_obj *
+  grn_vector_pack(grn_ctx *ctx,
+                  grn_obj *vector,
+                  uint32_t offset,
+                  uint32_t n,
+                  grn_obj *header,
+                  grn_obj *footer)
+  {
+    bool need_footer = false;
+    grn_text_benc(ctx, header, n);
+    for (uint32_t i = 0; i < n; ++i) {
+      grn_section *section = &(vector->u.v.sections[i + offset]);
+      grn_text_benc(ctx, header, section->length);
+      if (section->weight > 0 || section->domain != GRN_ID_NIL) {
+        need_footer = true;
+      }
+    }
+    if (need_footer) {
+      for (uint32_t i = 0; i < n; ++i) {
+        grn_section *section = &(vector->u.v.sections[i + offset]);
+        GRN_FLOAT32_PUT(ctx, footer, section->weight);
+        grn_text_benc(ctx, footer, section->domain);
+      }
+    }
+    return grn_vector_body(ctx, vector);
+  }
+
   grn_rc
-  grn_vector_decode(grn_ctx *ctx, grn_obj *v, const char *data, uint32_t data_size)
+  grn_vector_unpack(grn_ctx *ctx,
+                    grn_obj *vector,
+                    const char *data,
+                    uint32_t data_size)
   {
     uint8_t *p = (uint8_t *)data;
     uint8_t *pe = p + data_size;
-    uint32_t n, n0 = v->u.v.n_sections;
+    uint32_t n0 = vector->u.v.n_sections;
+    uint32_t n;
     GRN_B_DEC(n, p);
     if (((n0 + M_SECTIONS_UNIT) >> W_SECTIONS_UNIT) !=
         ((n0 + n + M_SECTIONS_UNIT) >> W_SECTIONS_UNIT)) {
       size_t size = sizeof(grn_section) *
         ((n0 + n + M_SECTIONS_UNIT) & ~M_SECTIONS_UNIT);
-      grn_section *vp =
-        static_cast<grn_section *>(GRN_REALLOC(v->u.v.sections, size));
-      if (!vp) { return GRN_NO_MEMORY_AVAILABLE; }
-      v->u.v.sections = vp;
+      grn_section *sections =
+        static_cast<grn_section *>(GRN_REALLOC(vector->u.v.sections, size));
+      if (!sections) { return GRN_NO_MEMORY_AVAILABLE; }
+      vector->u.v.sections = sections;
     }
     {
-      grn_section *vp;
-      grn_obj *body = grn_vector_body(ctx, v);
+      grn_obj *body = grn_vector_body(ctx, vector);
       uint32_t offset = GRN_BULK_VSIZE(body);
-      uint32_t o = 0, l, i;
-      for (i = n, vp = v->u.v.sections + n0; i; i--, vp++) {
+      uint32_t o = 0;
+      for (uint32_t i = 0; i < n; ++i) {
+        grn_section *section = vector->u.v.sections + n0 + i;
         if (pe <= p) { return GRN_INVALID_ARGUMENT; }
-        GRN_B_DEC(l, p);
-        vp->length = l;
-        vp->offset = offset + o;
-        vp->weight = 0;
-        vp->domain = 0;
-        o += l;
+        uint32_t length;
+        GRN_B_DEC(length, p);
+        section->length = length;
+        section->offset = offset + o;
+        section->weight = 0;
+        section->domain = 0;
+        o += length;
       }
       if (pe < p + o) { return GRN_INVALID_ARGUMENT; }
       grn_bulk_write(ctx, body, (char *)p, o);
       p += o;
       if (p < pe) {
-        for (i = n, vp = v->u.v.sections + n0; i; i--, vp++) {
+        for (uint32_t i = 0; i < n; ++i) {
+          grn_section *section = vector->u.v.sections + n0 + i;
           if (pe <= p) { return GRN_INVALID_ARGUMENT; }
-          GRN_B_DEC(vp->weight, p);
-          GRN_B_DEC(vp->domain, p);
+          memcpy(&(section->weight), p, sizeof(float));
+          p += sizeof(float);
+          GRN_B_DEC(section->domain, p);
         }
       }
     }
-    v->u.v.n_sections += n;
+    vector->u.v.n_sections += n;
     return GRN_SUCCESS;
   }
 
   grn_rc
-  grn_vector_add_element(grn_ctx *ctx, grn_obj *vector,
-                         const char *str, unsigned int str_len,
-                         uint32_t weight, grn_id domain)
+  grn_vector_add_element(grn_ctx *ctx,
+                         grn_obj *vector,
+                         const char *str,
+                         uint32_t str_len,
+                         uint32_t weight,
+                         grn_id domain)
+  {
+    return grn_vector_add_element_float(ctx,
+                                        vector,
+                                        str,
+                                        str_len,
+                                        weight,
+                                        domain);
+  }
+
+  grn_rc
+  grn_vector_add_element_float(grn_ctx *ctx,
+                               grn_obj *vector,
+                               const char *str,
+                               uint32_t str_len,
+                               float weight,
+                               grn_id domain)
   {
     grn_obj *body;
     GRN_API_ENTER;
@@ -512,23 +558,29 @@ extern "C" {
   /* For reference uvector. We can't use this for integer family uvector
      such as Int64 uvector. */
   grn_rc
-  grn_uvector_add_element(grn_ctx *ctx, grn_obj *uvector,
-                          grn_id id, uint32_t weight)
+  grn_uvector_add_element(grn_ctx *ctx,
+                          grn_obj *uvector,
+                          grn_id id,
+                          uint32_t weight)
+  {
+    return grn_uvector_add_element_record(ctx, uvector, id, weight);
+  }
+
+  grn_rc
+  grn_uvector_add_element_record(grn_ctx *ctx,
+                                 grn_obj *uvector,
+                                 grn_id id,
+                                 float weight)
   {
     GRN_API_ENTER;
     if (!uvector) {
-      ERR(GRN_INVALID_ARGUMENT, "uvector is null");
+      ERR(GRN_INVALID_ARGUMENT,
+          "[uvector][add-element][record] uvector is null");
       goto exit;
     }
+    GRN_RECORD_PUT(ctx, uvector, id);
     if (grn_obj_is_weight_uvector(ctx, uvector)) {
-      weight_uvector_entry entry;
-      entry.id = id;
-      entry.weight = weight;
-      grn_bulk_write(ctx, uvector,
-                     (const char *)&entry, sizeof(weight_uvector_entry));
-    } else {
-      grn_bulk_write(ctx, uvector,
-                     (const char *)&id, sizeof(grn_id));
+      GRN_FLOAT32_PUT(ctx, uvector, weight);
     }
   exit :
     GRN_API_RETURN(ctx->rc);
@@ -537,44 +589,70 @@ extern "C" {
   /* For reference uvector. We can't use this for integer family uvector
      such as Int64 uvector. */
   grn_id
-  grn_uvector_get_element(grn_ctx *ctx, grn_obj *uvector,
-                          uint32_t offset, uint32_t *weight)
+  grn_uvector_get_element(grn_ctx *ctx,
+                          grn_obj *uvector,
+                          uint32_t offset,
+                          uint32_t *weight)
+  {
+    float weight_float;
+    grn_id id = grn_uvector_get_element_record(ctx,
+                                               uvector,
+                                               offset,
+                                               &weight_float);
+    if (weight) {
+      *weight = weight_float;
+    }
+    return id;
+  }
+
+  grn_id
+  grn_uvector_get_element_record(grn_ctx *ctx,
+                                 grn_obj *uvector,
+                                 uint32_t offset,
+                                 float *weight)
   {
     grn_id id = GRN_ID_NIL;
 
     GRN_API_ENTER;
-    if (!uvector || uvector->header.type != GRN_UVECTOR) {
-      ERR(GRN_INVALID_ARGUMENT, "invalid uvector");
+    if (!uvector) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[uvector][get-element][record] uvector is null");
+      goto exit;
+    }
+    if (uvector->header.type != GRN_UVECTOR) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[uvector][get-element][record] invalid uvector");
       goto exit;
     }
 
-    if (grn_obj_is_weight_uvector(ctx, uvector)) {
-      const weight_uvector_entry *entry;
-      const weight_uvector_entry *entries_start;
-      const weight_uvector_entry *entries_end;
-
-      entries_start = (const weight_uvector_entry *)GRN_BULK_HEAD(uvector);
-      entries_end = (const weight_uvector_entry *)GRN_BULK_CURR(uvector);
-      if (offset > entries_end - entries_start) {
-        ERR(GRN_RANGE_ERROR, "offset out of range");
+    {
+      size_t element_value_size = sizeof(grn_id);
+      size_t element_size = element_value_size;
+      if (grn_obj_is_weight_uvector(ctx, uvector)) {
+        element_size += sizeof(float);
+      }
+      const char *elements_start = GRN_BULK_HEAD(uvector);
+      const char *elements_end = GRN_BULK_CURR(uvector);
+      if (offset > elements_end - elements_start) {
+        ERR(GRN_RANGE_ERROR,
+            "[uvector][get-element][record] "
+            "offset out of range: <%u>/<%" GRN_FMT_SIZE ">",
+            offset,
+            elements_end - elements_start);
         goto exit;
       }
 
-      entry = entries_start + offset;
-      id = entry->id;
-      if (weight) { *weight = entry->weight; }
-    } else {
-      const grn_id *ids_start;
-      const grn_id *ids_end;
-
-      ids_start = (const grn_id *)GRN_BULK_HEAD(uvector);
-      ids_end = (const grn_id *)GRN_BULK_CURR(uvector);
-      if (offset > ids_end - ids_start) {
-        ERR(GRN_RANGE_ERROR, "offset out of range");
-        goto exit;
+      id = *((grn_id *)(elements_start + (element_size * offset)));
+      if (weight) {
+        if (grn_obj_is_weight_uvector(ctx, uvector)) {
+          *weight =
+            *((float *)(elements_start +
+                        (element_size * offset) +
+                        element_value_size));
+        } else {
+          *weight = 0.0;
+        }
       }
-      id = ids_start[offset];
-      if (weight) { *weight = 0; }
     }
   exit :
     GRN_API_RETURN(id);

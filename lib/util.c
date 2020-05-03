@@ -446,7 +446,7 @@ grn_vector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *vector)
       GRN_OBJ_FIN(ctx, &value_object);
     }
     GRN_TEXT_PUTS(ctx, buffer, ", \"weight\":");
-    grn_text_itoa(ctx, buffer, section->weight);
+    grn_text_f32toa(ctx, buffer, section->weight);
     GRN_TEXT_PUTS(ctx, buffer, "}");
   }
   GRN_TEXT_PUTS(ctx, buffer, "]");
@@ -530,8 +530,11 @@ static grn_rc
 grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   grn_column_inspect_common(ctx, buf, obj);
+
+  grn_column_flags flags = grn_column_get_flags(ctx, obj);
+
   GRN_TEXT_PUTS(ctx, buf, " type:");
-  switch (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
+  switch (flags & GRN_OBJ_COLUMN_TYPE_MASK) {
   case GRN_OBJ_COLUMN_VECTOR :
     GRN_TEXT_PUTS(ctx, buf, "vector");
     break;
@@ -543,7 +546,7 @@ grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   }
 
   GRN_TEXT_PUTS(ctx, buf, " compress:");
-  switch (obj->header.flags & GRN_OBJ_COMPRESS_MASK) {
+  switch (flags & GRN_OBJ_COMPRESS_MASK) {
   case GRN_OBJ_COMPRESS_NONE :
     GRN_TEXT_PUTS(ctx, buf, "none");
     break;
@@ -560,7 +563,15 @@ grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     break;
   }
 
-  if (obj->header.flags & GRN_OBJ_RING_BUFFER) {
+  if (flags & GRN_OBJ_WITH_WEIGHT) {
+    if (flags & GRN_OBJ_WEIGHT_FLOAT32) {
+      GRN_TEXT_PUTS(ctx, buf, " weight:float32");
+    } else {
+      GRN_TEXT_PUTS(ctx, buf, " weight:uint32");
+    }
+  }
+
+  if (flags & GRN_OBJ_RING_BUFFER) {
     GRN_TEXT_PUTS(ctx, buf, " ring_buffer:true");
   }
 
@@ -619,18 +630,24 @@ grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   GRN_OBJ_FIN(ctx, &sources);
 
   GRN_TEXT_PUTS(ctx, buf, " flags:");
-  if (obj->header.flags & GRN_OBJ_WITH_SECTION) {
+  grn_column_flags flags = grn_column_get_flags(ctx, obj);
+  if (flags & GRN_OBJ_WITH_SECTION) {
     GRN_TEXT_PUTS(ctx, buf, "SECTION");
     have_flags = 1;
   }
-  if (obj->header.flags & GRN_OBJ_WITH_WEIGHT) {
+  if (flags & GRN_OBJ_WITH_WEIGHT) {
     if (have_flags) { GRN_TEXT_PUTS(ctx, buf, "|"); }
     GRN_TEXT_PUTS(ctx, buf, "WEIGHT");
     have_flags = 1;
   }
-  if (obj->header.flags & GRN_OBJ_WITH_POSITION) {
+  if (flags & GRN_OBJ_WITH_POSITION) {
     if (have_flags) { GRN_TEXT_PUTS(ctx, buf, "|"); }
     GRN_TEXT_PUTS(ctx, buf, "POSITION");
+    have_flags = 1;
+  }
+  if (flags & GRN_OBJ_WEIGHT_FLOAT32) {
+    if (have_flags) { GRN_TEXT_PUTS(ctx, buf, "|"); }
+    GRN_TEXT_PUTS(ctx, buf, "WEIGHT_FLOAT32");
     have_flags = 1;
   }
   if (!have_flags) {
@@ -1215,17 +1232,17 @@ grn_uvector_record_inspect_common(grn_ctx *ctx,
   n = grn_vector_size(ctx, obj);
   for (i = 0; i < n; i++) {
     grn_id id;
-    uint32_t weight;
+    float weight;
 
     if (i > 0) {
       GRN_TEXT_PUTS(ctx, buf, ", ");
     }
 
-    id = grn_uvector_get_element(ctx, obj, i, &weight);
+    id = grn_uvector_get_element_record(ctx, obj, i, &weight);
     GRN_TEXT_PUTS(ctx, buf, "#<element record:");
     GRN_RECORD_SET(ctx, &record, id);
     grn_record_inspect_common(ctx, buf, &record, with_columns);
-    grn_text_printf(ctx, buf, ", weight:%u>", weight);
+    grn_text_printf(ctx, buf, ", weight:%f>", weight);
   }
   GRN_TEXT_PUTS(ctx, buf, "]");
   GRN_OBJ_FIN(ctx, &record);

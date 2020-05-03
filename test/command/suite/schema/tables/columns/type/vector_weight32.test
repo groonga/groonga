@@ -1,0 +1,6 @@
+table_create Tags TABLE_DAT_KEY ShortText --normalizer NormalizerAuto
+
+table_create Posts TABLE_HASH_KEY ShortText
+column_create Posts tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 Tags
+
+schema

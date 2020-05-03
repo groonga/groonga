@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2015-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1087,7 +1087,7 @@ command_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   command_schema_output_column_name(ctx, column);
 
-  grn_ctx_output_map_open(ctx, "column", 13);
+  grn_ctx_output_map_open(ctx, "column", 14);
 
   grn_ctx_output_cstr(ctx, "id");
   command_schema_output_id(ctx, column);
@@ -1110,14 +1110,18 @@ command_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
   grn_ctx_output_cstr(ctx, "compress");
   command_schema_column_output_compress(ctx, column);
 
+  grn_column_flags flags = grn_column_get_flags(ctx, column);
   grn_ctx_output_cstr(ctx, "section");
-  grn_ctx_output_bool(ctx, (column->header.flags & GRN_OBJ_WITH_SECTION) != 0);
+  grn_ctx_output_bool(ctx, (flags & GRN_OBJ_WITH_SECTION) != 0);
 
   grn_ctx_output_cstr(ctx, "weight");
-  grn_ctx_output_bool(ctx, (column->header.flags & GRN_OBJ_WITH_WEIGHT) != 0);
+  grn_ctx_output_bool(ctx, (flags & GRN_OBJ_WITH_WEIGHT) != 0);
+
+  grn_ctx_output_cstr(ctx, "weight_float32");
+  grn_ctx_output_bool(ctx, (flags & GRN_OBJ_WEIGHT_FLOAT32) != 0);
 
   grn_ctx_output_cstr(ctx, "position");
-  grn_ctx_output_bool(ctx, (column->header.flags & GRN_OBJ_WITH_POSITION) != 0);
+  grn_ctx_output_bool(ctx, (flags & GRN_OBJ_WITH_POSITION) != 0);
 
   grn_ctx_output_cstr(ctx, "sources");
   command_schema_column_output_sources(ctx, column);
