@@ -155,7 +155,20 @@ namespace grn {
     rapidjson::MemoryStream stream(GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
     document.ParseStream(stream);
     if (document.HasParseError()) {
-      return GRN_INVALID_ARGUMENT;
+      auto domain = grn_ctx_at(ctx, dest->header.domain);
+      grn_rc rc = GRN_INVALID_ARGUMENT;
+      if (grn_obj_is_lexicon(ctx, domain)) {
+        grn_obj dest_record;
+        GRN_RECORD_INIT(&dest_record, GRN_BULK, dest->header.domain);
+        rc = grn_obj_cast(ctx, src, &dest_record, add_record_if_not_exist);
+        if (rc == GRN_SUCCESS && GRN_BULK_VSIZE(&dest_record) > 0) {
+          auto id = GRN_RECORD_VALUE(&dest_record);
+          GRN_RECORD_PUT(ctx, dest, id);
+        }
+        GRN_OBJ_FIN(ctx, &dest_record);
+      }
+      grn_obj_unref(ctx, domain);
+      return rc;
     }
     switch (dest->header.domain) {
     case GRN_DB_INT32 :
@@ -166,7 +179,7 @@ namespace grn {
     default :
       {
         grn_rc rc = GRN_INVALID_ARGUMENT;
-        grn_obj *domain = grn_ctx_at(ctx, dest->header.domain);
+        auto domain = grn_ctx_at(ctx, dest->header.domain);
         if (grn_obj_is_lexicon(ctx, domain)) {
           rc = json_to_uvector<TableHandler>(ctx,
                                              &document,
