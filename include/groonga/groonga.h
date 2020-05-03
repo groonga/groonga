@@ -408,15 +408,15 @@ typedef uint32_t grn_column_flags;
 #define GRN_COLUMN_INDEX               (0x48)
 
 typedef struct _grn_section {
-  unsigned int offset;
-  unsigned int length;
+  uint32_t offset;
+  uint32_t length;
   uint32_t weight;
   grn_id domain;
 } grn_section;
 
 typedef struct _grn_obj_header {
-  unsigned char type;
-  unsigned char impl_flags;
+  uint8_t type;
+  uint8_t impl_flags;
   grn_obj_flags flags;
   grn_id domain;
 } grn_obj_header;
