@@ -42,7 +42,7 @@ struct _grn_obj_format {
   int offset;
   int limit;
   int hits_offset;
-  int flags;
+  uint32_t flags;
   grn_obj *expression;
 };
 
