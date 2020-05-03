@@ -611,8 +611,8 @@ test_uvector_with_records(void)
   inspected = grn_inspect(context, NULL, uvector);
   cut_assert_equal_string(
     "["
-    "#<element record:#<record:pat:Sites id:1 key:\"groonga.org\">, weight:0>, "
-    "#<element record:#<record:pat:Sites id:2 key:\"razil.jp\">, weight:0>"
+    "#<element record:#<record:pat:Sites id:1 key:\"groonga.org\">, weight:0.000000>, "
+    "#<element record:#<record:pat:Sites id:2 key:\"razil.jp\">, weight:0.000000>"
     "]",
     inspected_string());
 }
