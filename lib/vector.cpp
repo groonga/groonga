@@ -198,7 +198,7 @@ extern "C" {
     uint32_t weight;
   } weight_uvector_entry;
 
-  static unsigned int
+  static uint32_t
   grn_uvector_element_size_internal(grn_ctx *ctx, grn_obj *uvector)
   {
     unsigned int element_size;
@@ -256,19 +256,17 @@ extern "C" {
     return element_size;
   }
 
-  static unsigned int
+  static uint32_t
   grn_uvector_size_internal(grn_ctx *ctx, grn_obj *uvector)
   {
-    unsigned int element_size;
-
-    element_size = grn_uvector_element_size_internal(ctx, uvector);
+    uint32_t element_size = grn_uvector_element_size_internal(ctx, uvector);
     return GRN_BULK_VSIZE(uvector) / element_size;
   }
 
-  unsigned int
+  uint32_t
   grn_vector_size(grn_ctx *ctx, grn_obj *vector)
   {
-    unsigned int size;
+    uint32_t size;
     if (!vector) {
       ERR(GRN_INVALID_ARGUMENT, "vector is null");
       return 0;
@@ -316,7 +314,7 @@ extern "C" {
     }
   }
 
-  unsigned int
+  uint32_t
   grn_vector_get_element(grn_ctx *ctx,
                          grn_obj *vector,
                          uint32_t offset,
@@ -346,7 +344,7 @@ extern "C" {
     GRN_API_RETURN(length);
   }
 
-  unsigned int
+  uint32_t
   grn_vector_pop_element(grn_ctx *ctx, grn_obj *vector,
                          const char **str, uint32_t *weight, grn_id *domain)
   {
@@ -465,11 +463,9 @@ extern "C" {
     GRN_API_RETURN(ctx->rc);
   }
 
-  unsigned int
+  uint32_t
   grn_uvector_size(grn_ctx *ctx, grn_obj *uvector)
   {
-    unsigned int size;
-
     if (!uvector) {
       ERR(GRN_INVALID_ARGUMENT, "uvector must not be NULL");
       return 0;
@@ -486,15 +482,13 @@ extern "C" {
     }
 
     GRN_API_ENTER;
-    size = grn_uvector_size_internal(ctx, uvector);
+    size_t size = grn_uvector_size_internal(ctx, uvector);
     GRN_API_RETURN(size);
   }
 
-  unsigned int
+  uint32_t
   grn_uvector_element_size(grn_ctx *ctx, grn_obj *uvector)
   {
-    unsigned int element_size;
-
     if (!uvector) {
       ERR(GRN_INVALID_ARGUMENT, "uvector must not be NULL");
       return 0;
@@ -511,7 +505,7 @@ extern "C" {
     }
 
     GRN_API_ENTER;
-    element_size = grn_uvector_element_size_internal(ctx, uvector);
+    uint32_t element_size = grn_uvector_element_size_internal(ctx, uvector);
     GRN_API_RETURN(element_size);
   }
 

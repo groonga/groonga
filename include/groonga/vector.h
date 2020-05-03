@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-GRN_API unsigned int grn_vector_size(grn_ctx *ctx, grn_obj *vector);
+GRN_API uint32_t grn_vector_size(grn_ctx *ctx, grn_obj *vector);
 
 GRN_API grn_rc grn_vector_add_element(grn_ctx *ctx, grn_obj *vector,
                                       const char *str, unsigned int str_len,
@@ -71,20 +71,33 @@ GRN_API uint64_t grn_vector_get_element_uint64(grn_ctx *ctx,
                                                unsigned int offset,
                                                uint64_t default_value);
 
-GRN_API unsigned int grn_vector_pop_element(grn_ctx *ctx, grn_obj *vector,
-                                            const char **str,
-                                            uint32_t *weight,
-                                            grn_id *domain);
+GRN_API uint32_t grn_vector_pop_element(grn_ctx *ctx,
+                                        grn_obj *vector,
+                                        const char **str,
+                                        uint32_t *weight,
+                                        grn_id *domain);
 
-GRN_API unsigned int grn_uvector_size(grn_ctx *ctx, grn_obj *uvector);
-GRN_API unsigned int grn_uvector_element_size(grn_ctx *ctx, grn_obj *uvector);
+GRN_API uint32_t grn_uvector_size(grn_ctx *ctx, grn_obj *uvector);
+GRN_API uint32_t grn_uvector_element_size(grn_ctx *ctx, grn_obj *uvector);
 
-GRN_API grn_rc grn_uvector_add_element(grn_ctx *ctx, grn_obj *vector,
-                                       grn_id id, uint32_t weight);
+GRN_API grn_rc grn_uvector_add_element(grn_ctx *ctx,
+                                       grn_obj *uvector,
+                                       grn_id id,
+                                       uint32_t weight);
 
-GRN_API grn_id grn_uvector_get_element(grn_ctx *ctx, grn_obj *uvector,
+GRN_API grn_id grn_uvector_get_element(grn_ctx *ctx,
+                                       grn_obj *uvector,
                                        uint32_t offset,
                                        uint32_t *weight);
+
+GRN_API grn_rc grn_uvector_add_element_record(grn_ctx *ctx,
+                                              grn_obj *uvector,
+                                              grn_id id,
+                                              float weight);
+GRN_API grn_id grn_uvector_get_element_record(grn_ctx *ctx,
+                                              grn_obj *uvector,
+                                              uint32_t offset,
+                                              float *weight);
 
 #ifdef __cplusplus
 }
