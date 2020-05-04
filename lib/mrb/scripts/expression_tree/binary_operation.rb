@@ -43,6 +43,7 @@ module Groonga
         Operator::MATCH,
         Operator::NEAR,
         Operator::NEAR2,
+        Operator::NEAR_PHRASE,
         Operator::SIMILAR,
         Operator::EXACT,
         Operator::REGEXP,

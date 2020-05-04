@@ -106,10 +106,11 @@ static const char *operator_names[] = {
   "get_member",
   "regexp",
   "fuzzy",
-  "quorum"
+  "quorum",
+  "near_phrase",
 };
 
-#define GRN_OP_LAST GRN_OP_QUORUM
+#define GRN_OP_LAST GRN_OP_NEAR_PHRASE
 
 const char *
 grn_operator_to_string(grn_operator op)

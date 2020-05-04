@@ -59,7 +59,10 @@ module Groonga
 
     private
     def near_search?
-      (@op == Operator::NEAR or @op == Operator::NEAR2) and @args.size == 3
+      (@op == Operator::NEAR or
+       @op == Operator::NEAR2 or
+       @op == Operator::NEAR_PHRASE) and
+        @args.size == 3
     end
 
     def match_near_resolve_index
@@ -73,7 +76,8 @@ module Groonga
         match_resolve_index_indexable(arg)
       else
         message =
-          "The first argument of NEAR/NEAR2 must be Expression, Accessor or Indexable: #{arg.class}"
+          "The first argument of NEAR/NEAR2/NEAR_PHRASE must be " +
+          "Expression, Accessor or Indexable: #{arg.class}"
         raise ErrorMessage, message
       end
 

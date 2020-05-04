@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2015 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2015  Brazil
+  Copyright(C) 2018-2020  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1434,6 +1434,7 @@ grn_index_column_is_usable(grn_ctx *ctx,
   case GRN_OP_MATCH :
   case GRN_OP_NEAR :
   case GRN_OP_NEAR2 :
+  case GRN_OP_NEAR_PHRASE :
   case GRN_OP_SIMILAR :
   case GRN_OP_PREFIX :
   case GRN_OP_SUFFIX :

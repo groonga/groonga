@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2018 Brazil
+  Copyright(C) 2014-2018  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -150,6 +151,7 @@ grn_mrb_operator_init(grn_ctx *ctx)
   DEFINE_OPERATOR(REGEXP);
   DEFINE_OPERATOR(FUZZY);
   DEFINE_OPERATOR(QUORUM);
+  DEFINE_OPERATOR(NEAR_PHRASE);
 
 #undef DEFINE_OPERATOR
 }

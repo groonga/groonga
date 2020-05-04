@@ -1,0 +1,21 @@
+#@on-error omit
+tokenize TokenMecab '京都府 東京都'
+#@on-error default
+
+table_create Entries TABLE_NO_KEY
+column_create Entries content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenMecab \
+  --normalizer NormalizerNFKC121
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+load --table Entries
+[
+{"content": "京都府東京都"},
+{"content": "京都は府で東京は都"},
+{"content": "京都府の東は東京都"},
+{"content": "東京都京都府"}
+]
+
+select Entries --filter 'content *NP "京都府 東京都"' --output_columns '_score, content'

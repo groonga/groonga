@@ -621,7 +621,8 @@ typedef enum {
   GRN_OP_GET_MEMBER,
   GRN_OP_REGEXP,
   GRN_OP_FUZZY,
-  GRN_OP_QUORUM
+  GRN_OP_QUORUM,
+  GRN_OP_NEAR_PHRASE,
 } grn_operator;
 
 GRN_API grn_obj *grn_obj_column(grn_ctx *ctx, grn_obj *table,

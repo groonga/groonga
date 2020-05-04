@@ -60,4 +60,4 @@ select Memos   --output_columns 'tags, vector_find(tags, "Gr", "invalid")'
     ]
   ]
 ]
-#|e| vector_find(): mode must be one of them: ["==", "EQUAL", "!=", "NOT_EQUAL", "<", "LESS", ">", "GREATER", "<=", "LESS_EQUAL", ">=", "GREATER_EQUAL", "@", "MATCH", "*N", "NEAR", "*S", "SIMILAR", "^", "@^", "PREFIX", "$", "@$", "SUFFIX", "~", "@~", "REGEXP"]: <invalid>
+#|e| vector_find(): mode must be one of them: ["==", "EQUAL", "!=", "NOT_EQUAL", "<", "LESS", ">", "GREATER", "<=", "LESS_EQUAL", ">=", "GREATER_EQUAL", "@", "MATCH", "*N", "NEAR", "*NP", "NEAR_PHRASE", "*S", "SIMILAR", "^", "@^", "PREFIX", "$", "@$", "SUFFIX", "~", "@~", "REGEXP"]: <invalid>

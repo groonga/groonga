@@ -1151,6 +1151,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_MATCH :
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
+    case GRN_OP_NEAR_PHRASE :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -1910,7 +1911,8 @@ static const char *opstrs[] = {
   "GET_MEMBER",
   "REGEXP",
   "FUZZY",
-  "QUORUM"
+  "QUORUM",
+  "NEAR_PHRASE",
 };
 
 static void
@@ -2609,6 +2611,7 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, int32_t weight)
       switch (si->op) {
       case GRN_OP_NEAR :
       case GRN_OP_NEAR2 :
+      case GRN_OP_NEAR_PHRASE :
         if (si->nargs == 3 &&
             *p == si->args[2] &&
             (*p)->header.domain == GRN_DB_INT32) {
@@ -2763,6 +2766,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_MATCH :
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
+    case GRN_OP_NEAR_PHRASE :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -2917,6 +2921,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_MATCH :
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
+    case GRN_OP_NEAR_PHRASE :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -3254,6 +3259,7 @@ grn_scan_info_build_simple_operation(grn_ctx *ctx,
   switch (operator->op) {
   case GRN_OP_MATCH :
   case GRN_OP_NEAR :
+  case GRN_OP_NEAR_PHRASE :
   case GRN_OP_SIMILAR :
   case GRN_OP_PREFIX :
   case GRN_OP_SUFFIX :
@@ -3341,6 +3347,7 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
     switch (operator->op) {
     case GRN_OP_MATCH :
     case GRN_OP_NEAR :
+    case GRN_OP_NEAR_PHRASE :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -4582,6 +4589,7 @@ grn_table_select_index_dispatch(grn_ctx *ctx,
   case GRN_OP_MATCH :
   case GRN_OP_NEAR :
   case GRN_OP_NEAR2 :
+  case GRN_OP_NEAR_PHRASE :
   case GRN_OP_SIMILAR :
   case GRN_OP_REGEXP :
   case GRN_OP_QUORUM :
@@ -5287,6 +5295,10 @@ parse_query_op(efs_info *q, efs_op *op, grn_operator *mode, int *option)
   case 'N' :
     *mode = GRN_OP_NEAR;
     start = ++end;
+    if (start < q->str_end && start[0] == 'P') {
+      *mode = GRN_OP_NEAR_PHRASE;
+      start++;
+    }
     *option = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) { *option = DEFAULT_MAX_INTERVAL; }
     q->cur = end;
@@ -5482,6 +5494,7 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
     break;
   case GRN_OP_NEAR :
   case GRN_OP_NEAR2 :
+  case GRN_OP_NEAR_PHRASE :
     {
       int max_interval;
       max_interval = grn_int32_value_at(&efsi->max_interval_stack, -1);
@@ -5827,6 +5840,7 @@ parse_query(grn_ctx *ctx, efs_info *q)
         switch (mode) {
         case GRN_OP_NEAR :
         case GRN_OP_NEAR2 :
+        case GRN_OP_NEAR_PHRASE :
           GRN_INT32_PUT(ctx, &q->max_interval_stack, option);
           break;
         case GRN_OP_SIMILAR :
@@ -6308,6 +6322,11 @@ parse_script(grn_ctx *ctx, efs_info *q)
           const char *next_start = q->cur + 2;
           const char *end;
           int max_interval;
+          int token = GRN_EXPR_TOKEN_NEAR;
+          if (next_start < q->str_end && next_start[0] == 'P') {
+            token = GRN_EXPR_TOKEN_NEAR_PHRASE;
+            next_start++;
+          }
           max_interval = grn_atoi(next_start, q->str_end, &end);
           if (end == next_start) {
             max_interval = DEFAULT_MAX_INTERVAL;
@@ -6315,7 +6334,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
             next_start = end;
           }
           GRN_INT32_PUT(ctx, &q->max_interval_stack, max_interval);
-          PARSE(GRN_EXPR_TOKEN_NEAR);
+          PARSE(token);
           q->cur = next_start;
         }
         break;

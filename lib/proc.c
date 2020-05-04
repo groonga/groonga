@@ -986,6 +986,8 @@ grn_proc_get_value_mode(grn_ctx *ctx,
     return GRN_OP_MATCH;
   } else if (EQUAL_MODE("*N") || EQUAL_MODE("NEAR")) {
     return GRN_OP_NEAR;
+  } else if (EQUAL_MODE("*NP") || EQUAL_MODE("NEAR_PHRASE")) {
+    return GRN_OP_NEAR_PHRASE;
   } else if (EQUAL_MODE("*S") || EQUAL_MODE("SIMILAR")) {
     return GRN_OP_SIMILAR;
   } else if (EQUAL_MODE("^") || EQUAL_MODE("@^") || EQUAL_MODE("PREFIX")) {
@@ -1006,6 +1008,7 @@ grn_proc_get_value_mode(grn_ctx *ctx,
                      "\">=\", \"GREATER_EQUAL\", "
                      "\"@\", \"MATCH\", "
                      "\"*N\", \"NEAR\", "
+                     "\"*NP\", \"NEAR_PHRASE\", "
                      "\"*S\", \"SIMILAR\", "
                      "\"^\", \"@^\", \"PREFIX\", "
                      "\"$\", \"@$\", \"SUFFIX\", "

@@ -8171,6 +8171,7 @@ typedef struct {
   uint32_t size;
   int ntoken;
   grn_posting *p;
+  uint32_t phrase_id;
 } token_info;
 
 #define EX_NONE   0
@@ -8729,24 +8730,39 @@ exit :
 }
 
 grn_inline static grn_rc
-token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string, unsigned int string_len,
-                 token_info **tis, uint32_t *n, grn_bool *only_skip_token, grn_id min,
-                 grn_operator mode)
+token_info_build_phrase(grn_ctx *ctx,
+                        grn_obj *lexicon,
+                        grn_ii *ii,
+                        const char *phrase,
+                        unsigned int phrase_len,
+                        token_info **tis,
+                        uint32_t *n,
+                        bool *only_skip_token,
+                        grn_id min,
+                        grn_operator mode)
 {
   token_info *ti;
+  grn_rc rc = GRN_END_OF_DATA;
   const char *key;
   uint32_t size;
-  grn_rc rc = GRN_END_OF_DATA;
   unsigned int token_flags = GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER;
-  grn_token_cursor *token_cursor = grn_token_cursor_open(ctx, lexicon,
-                                                         string, string_len,
+  grn_token_cursor *token_cursor = grn_token_cursor_open(ctx,
+                                                         lexicon,
+                                                         phrase,
+                                                         phrase_len,
                                                          GRN_TOKEN_GET,
                                                          token_flags);
-  *only_skip_token = GRN_FALSE;
   if (!token_cursor) { return GRN_NO_MEMORY_AVAILABLE; }
   if (mode == GRN_OP_UNSPLIT) {
-    if ((ti = token_info_open(ctx, lexicon, ii, (char *)token_cursor->orig,
-                              token_cursor->orig_blen, 0, EX_BOTH, NULL, min))) {
+    if ((ti = token_info_open(ctx,
+                              lexicon,
+                              ii,
+                              (char *)token_cursor->orig,
+                              token_cursor->orig_blen,
+                              0,
+                              EX_BOTH,
+                              NULL,
+                              min))) {
       tis[(*n)++] = ti;
       rc = GRN_SUCCESS;
     }
@@ -8786,7 +8802,7 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
                            token_cursor->orig_blen, 0, ef, NULL, min);
       break;
     case GRN_TOKEN_CURSOR_DONE_SKIP :
-      *only_skip_token = GRN_TRUE;
+      *only_skip_token = true;
       goto exit;
     default :
       goto exit;
@@ -8835,6 +8851,87 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
 exit :
   grn_token_cursor_close(ctx, token_cursor);
   return rc;
+}
+
+grn_inline static grn_rc
+token_info_build(grn_ctx *ctx,
+                 grn_obj *lexicon,
+                 grn_ii *ii,
+                 const char *string,
+                 uint32_t string_len,
+                 token_info **tis,
+                 uint32_t *n,
+                 bool *only_skip_token,
+                 grn_id min,
+                 grn_operator mode)
+{
+  *only_skip_token = false;
+  const char *phrase = string;
+  const char *current = string;
+  const char *string_end = string + string_len;
+  uint32_t phrase_id = 0;
+  if (mode == GRN_OP_NEAR_PHRASE) {
+    while (current < string_end) {
+      int space_char_len = grn_isspace(current, ctx->encoding);
+      if (space_char_len > 0) {
+        if (current != phrase) {
+          uint32_t n_before = *n;
+          grn_rc rc = token_info_build_phrase(ctx,
+                                              lexicon,
+                                              ii,
+                                              phrase,
+                                              current - phrase,
+                                              tis,
+                                              n,
+                                              only_skip_token,
+                                              min,
+                                              mode);
+          if (rc != GRN_SUCCESS) {
+            return rc;
+          }
+          uint32_t i;
+          for (i = n_before; i < *n; i++) {
+            tis[i]->phrase_id = phrase_id;
+          }
+          phrase_id++;
+        }
+        current += space_char_len;
+        phrase = current;
+        continue;
+      }
+      int char_len = grn_charlen(ctx, current, string_end);
+      if (char_len == 0) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "[ii][token-info][build] invalid character: <%0x>: <%.*s>",
+            current[0],
+            (int)string_len,
+            string);
+        return ctx->rc;
+      }
+      current += char_len;
+    }
+  }
+  if (phrase != string_end) {
+    uint32_t n_before = *n;
+    grn_rc rc = token_info_build_phrase(ctx,
+                                        lexicon,
+                                        ii,
+                                        phrase,
+                                        string_end - phrase,
+                                        tis,
+                                        n,
+                                        only_skip_token,
+                                        min,
+                                        mode);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+    uint32_t i;
+    for (i = n_before; i < *n; i++) {
+      tis[i]->phrase_id = phrase_id;
+    }
+  }
+  return GRN_SUCCESS;
 }
 
 grn_inline static grn_rc
@@ -8980,15 +9077,18 @@ grn_ii_posting_add_float(grn_ctx *ctx,
 struct _btr_node {
   struct _btr_node *car;
   struct _btr_node *cdr;
-  token_info *ti;
+  uint32_t start;
+  uint32_t n_tokens;
 };
 
 typedef struct _btr_node btr_node;
 
 typedef struct {
-  int n;
-  token_info *min;
-  token_info *max;
+  uint32_t n;
+  uint32_t min_start;
+  uint32_t min_n_tokens;
+  uint32_t max_start;
+  uint32_t max_n_tokens;
   btr_node *root;
   btr_node *nodes;
 } btr;
@@ -8997,8 +9097,10 @@ grn_inline static void
 bt_zap(btr *bt)
 {
   bt->n = 0;
-  bt->min = NULL;
-  bt->max = NULL;
+  bt->min_start = 0;
+  bt->min_n_tokens = 0;
+  bt->max_start = 0;
+  bt->max_n_tokens = 0;
   bt->root = NULL;
 }
 
@@ -9025,51 +9127,67 @@ bt_close(grn_ctx *ctx, btr *bt)
 }
 
 grn_inline static void
-bt_push(btr *bt, token_info *ti)
+bt_push(btr *bt, uint32_t start, uint32_t n_tokens)
 {
-  int pos = ti->pos, minp = 1, maxp = 1;
+  bool min_p = true;
+  bool max_p = true;
   btr_node *node, *new, **last;
   new = bt->nodes + bt->n++;
-  new->ti = ti;
+  new->start = start;
+  new->n_tokens = n_tokens;
   new->car = NULL;
   new->cdr = NULL;
   for (last = &bt->root; (node = *last);) {
-    if (pos < node->ti->pos) {
+    if (start < node->start) {
       last = &node->car;
-      maxp = 0;
+      max_p = false;
     } else {
       last = &node->cdr;
-      minp = 0;
+      min_p = false;
     }
   }
   *last = new;
-  if (minp) { bt->min = ti; }
-  if (maxp) { bt->max = ti; }
+  if (min_p) {
+    bt->min_start = start;
+    bt->min_n_tokens = n_tokens;
+  }
+  if (max_p) {
+    bt->max_start = start;
+    bt->max_n_tokens = n_tokens;
+  }
 }
 
 grn_inline static void
 bt_pop(btr *bt)
 {
-  btr_node *node, *min, *newmin, **last;
+  btr_node *node, *min, **last;
   for (last = &bt->root; (min = *last) && min->car; last = &min->car) ;
   if (min) {
-    int pos = min->ti->pos, minp = 1, maxp = 1;
+    uint32_t start = min->start;
+    uint32_t n_tokens = min->n_tokens;
+    bool min_p = true;
+    bool max_p = true;
     *last = min->cdr;
     min->cdr = NULL;
     for (last = &bt->root; (node = *last);) {
-      if (pos < node->ti->pos) {
+      if (start < node->start) {
         last = &node->car;
-        maxp = 0;
+        max_p = false;
       } else {
         last = &node->cdr;
-        minp = 0;
+        min_p = false;
       }
     }
     *last = min;
-    if (maxp) { bt->max = min->ti; }
-    if (!minp) {
-      for (newmin = bt->root; newmin->car; newmin = newmin->car) ;
-      bt->min = newmin->ti;
+    if (max_p) {
+      bt->max_start = start;
+      bt->max_n_tokens = n_tokens;
+    }
+    if (!min_p) {
+      btr_node *new_min;
+      for (new_min = bt->root; new_min->car; new_min = new_min->car) ;
+      bt->min_start = new_min->start;
+      bt->min_n_tokens = new_min->n_tokens;
     }
   }
 }
@@ -9554,7 +9672,7 @@ grn_ii_select_cursor_open(grn_ctx *ctx,
       return NULL;
     }
   } else {
-    grn_bool only_skip_token = GRN_FALSE;
+    bool only_skip_token = false;
     grn_id previous_min = GRN_ID_NIL;
     if (token_info_build(ctx, ii->lexicon, ii, string, string_len,
                          cursor->tis, &(cursor->n_tis),
@@ -9686,51 +9804,47 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
         RETURN_POSTING();
       } else if (mode == GRN_OP_NEAR) {
         bt_zap(bt);
-        for (tip = tis; tip < tie; tip++) {
+        for (tip = tis; ; tip++) {
+          if (tip == tie) { tip = tis; }
           token_info *ti = *tip;
           SKIP_OR_BREAK(pos);
-          bt_push(bt, ti);
+          bt_push(bt, ti->pos, 1);
+          pos = ti->pos;
         }
-        if (tip == tie) {
-          for (;;) {
-            token_info *ti;
-            int min;
-            int max;
-
-            ti = bt->min;
-            min = ti->pos;
-            max = bt->max->pos;
-            if (min > max) {
-              char ii_name[GRN_TABLE_MAX_KEY_SIZE];
-              int ii_name_size;
-              ii_name_size = grn_obj_name(ctx,
+        if (bt->n >= n_tis) {
+          if (bt->n == 1) {
+            RETURN_POSTING();
+          } else {
+            int i;
+            for (i = 1; i < bt->n; i++) {
+              uint32_t min_start = bt->min_start;
+              uint32_t min_n_tokens = bt->min_n_tokens;
+              uint32_t max_start = bt->max_start;
+              if (min_start > max_start) {
+                char ii_name[GRN_TABLE_MAX_KEY_SIZE];
+                int ii_name_size;
+                ii_name_size = grn_obj_name(ctx,
                                           (grn_obj *)(cursor->ii),
-                                          ii_name,
-                                          GRN_TABLE_MAX_KEY_SIZE);
-              ERR(GRN_FILE_CORRUPT,
-                  "[ii][select][cursor][near] "
-                  "max position must be larger than min position: "
-                  "min:<%d> max:<%d> ii:<%.*s> string:<%.*s>",
-                  min, max,
-                  ii_name_size, ii_name,
-                  cursor->string_len,
-                  cursor->string);
-              return NULL;
-            }
-            if ((max_interval < 0) || (max - min <= max_interval)) {
-              /* TODO: Set start_pos, pos, end_pos, tf and tscore */
-              RETURN_POSTING();
-              if (ti->pos == max + 1) {
-                break;
+                                            ii_name,
+                                            GRN_TABLE_MAX_KEY_SIZE);
+                ERR(GRN_FILE_CORRUPT,
+                    "[ii][select][cursor][near] "
+                    "max position must be larger than min position: "
+                    "min:<%d> max:<%d> ii:<%.*s> string:<%.*s>",
+                    min_start, max_start,
+                    ii_name_size, ii_name,
+                    cursor->string_len,
+                    cursor->string);
+                return NULL;
               }
-              SKIP_OR_BREAK(max + 1);
-            } else {
-              if (ti->pos == max - max_interval) {
-                break;
+              uint32_t interval = max_start - (min_start + min_n_tokens - 1);
+              if ((max_interval < 0) || (interval <= max_interval)) {
+                /* TODO: Set start_pos, pos, end_pos, tf and tscore */
+                /* TODO: May return multiple postings */
+                RETURN_POSTING();
               }
-              SKIP_OR_BREAK(max - max_interval);
+              bt_pop(bt);
             }
-            bt_pop(bt);
           }
         }
       } else {
@@ -10445,6 +10559,10 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
     if (!(bt = bt_open(ctx, n))) { rc = GRN_NO_MEMORY_AVAILABLE; goto exit; }
     max_interval = optarg->max_interval;
     break;
+  case GRN_OP_NEAR_PHRASE :
+    if (!(bt = bt_open(ctx, n))) { rc = GRN_NO_MEMORY_AVAILABLE; goto exit; }
+    max_interval = optarg->max_interval;
+    break;
   default :
     break;
   }
@@ -10513,7 +10631,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
     if (tip == tie && weight != 0) {
       grn_rset_posinfo pi = {rid, sid, 0};
       if (orp || grn_hash_get(ctx, s, &pi, s->key_size, NULL)) {
-        int count = 0, noccur = 0, pos = 0, score = 0, tscore = 0, min, max;
+        int count = 0, noccur = 0, pos = 0, score = 0, tscore = 0;
 
         if (data.score_func) {
           GRN_BULK_REWIND(&(data.record.terms));
@@ -10541,45 +10659,115 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
             data.record.n_candidates = (*tis)->size;
             data.record.n_tokens = (*tis)->ntoken;
           }
-        } else if (data.mode == GRN_OP_NEAR) {
+        } else if (data.mode == GRN_OP_NEAR ||
+                   data.mode == GRN_OP_NEAR_PHRASE) {
           bt_zap(bt);
-          for (tip = tis; tip < tie; tip++) {
-            ti = *tip;
-            SKIP_OR_BREAK(pos);
-            bt_push(bt, ti);
-          }
-          if (tip == tie) {
-            for (;;) {
-              ti = bt->min; min = ti->pos; max = bt->max->pos;
-              if (min > max) {
-                char ii_name[GRN_TABLE_MAX_KEY_SIZE];
-                int ii_name_size;
-                ii_name_size = grn_obj_name(ctx, (grn_obj *)ii, ii_name,
-                                            GRN_TABLE_MAX_KEY_SIZE);
-                ERR(GRN_FILE_CORRUPT,
-                    "[ii][select][near] "
-                    "max position must be larger than min position: "
-                    "min:<%d> max:<%d> ii:<%.*s> string:<%.*s>",
-                    min, max,
-                    ii_name_size, ii_name,
-                    string_len, string);
-                rc = ctx->rc;
-                goto exit;
-              }
-              if ((max_interval < 0) || (max - min <= max_interval)) {
-                if (rep) { pi.pos = min; res_add(ctx, s, &pi, weight, op); }
-                noccur++;
-                if (ti->pos == max + 1) {
-                  break;
-                }
-                SKIP_OR_BREAK(max + 1);
+          bool need_check = false;
+          if (data.mode == GRN_OP_NEAR_PHRASE) {
+            token_info *last_ti = NULL;
+            token_info *last_phrase_start_ti = NULL;
+            uint32_t count = 0;
+            uint32_t phrase_count = 0;
+            for (tip = tis; ; tip++) {
+              if (tip == tie) { tip = tis; }
+              if (tip == tis) {
+                last_ti = tie[-1];
               } else {
-                if (ti->pos == max - max_interval) {
-                  break;
-                }
-                SKIP_OR_BREAK(max - max_interval);
+                last_ti = tip[-1];
               }
-              bt_pop(bt);
+              ti = *tip;
+              SKIP_OR_BREAK(pos);
+              if (!last_phrase_start_ti) {
+                last_phrase_start_ti = ti;
+              }
+              if (ti->pos == pos) {
+                count++;
+                phrase_count++;
+              } else if (last_phrase_start_ti &&
+                         ti->phrase_id > last_phrase_start_ti->phrase_id) {
+                count++;
+                phrase_count = 1;
+                pos = ti->pos;
+                uint32_t n_tokens = 1;
+                if (last_ti) {
+                  n_tokens += last_ti->offset;
+                }
+                bt_push(bt,
+                        last_phrase_start_ti->pos,
+                        n_tokens);
+                last_phrase_start_ti = ti;
+              } else {
+                pos = ti->pos;
+                count -= phrase_count;
+                phrase_count = 0;
+                for (tip = tis; tip < tie; tip++) {
+                  if (tip[0] == last_phrase_start_ti) {
+                    tip--;
+                    break;
+                  }
+                }
+                continue;
+              }
+              if (count == n) {
+                need_check = true;
+                bt_push(bt,
+                        last_phrase_start_ti->pos,
+                        ti->offset + 1);
+                count = 0;
+                phrase_count = 0;
+                last_phrase_start_ti = ti;
+                pos++;
+              }
+            }
+          } else {
+            for (tip = tis; ; tip++) {
+              if (tip == tie) { tip = tis; }
+              ti = *tip;
+              SKIP_OR_BREAK(pos);
+              bt_push(bt, ti->pos, 1);
+              pos = ti->pos;
+            }
+            need_check = (bt->n >= n);
+          }
+          if (need_check) {
+            if (bt->n == 1) {
+              uint32_t min_start = bt->min_start;
+              if (rep) {
+                pi.pos = min_start;
+                res_add(ctx, s, &pi, weight, op);
+              }
+              noccur++;
+            } else {
+              int i;
+              for (i = 1; i < bt->n; i++) {
+                uint32_t min_start = bt->min_start;
+                uint32_t min_n_tokens = bt->min_n_tokens;
+                uint32_t max_start = bt->max_start;
+                if (min_start > max_start) {
+                  char ii_name[GRN_TABLE_MAX_KEY_SIZE];
+                  int ii_name_size;
+                  ii_name_size = grn_obj_name(ctx, (grn_obj *)ii, ii_name,
+                                              GRN_TABLE_MAX_KEY_SIZE);
+                  ERR(GRN_FILE_CORRUPT,
+                      "[ii][select][near] "
+                      "max position must be larger than min position: "
+                      "min:<%d> max:<%d> ii:<%.*s> string:<%.*s>",
+                      min_start, max_start,
+                      ii_name_size, ii_name,
+                      string_len, string);
+                  rc = ctx->rc;
+                  goto exit;
+                }
+                uint32_t interval = max_start - (min_start + min_n_tokens - 1);
+                if ((max_interval < 0) || (interval <= max_interval)) {
+                  if (rep) {
+                    pi.pos = min_start;
+                    res_add(ctx, s, &pi, weight, op);
+                  }
+                  noccur++;
+                }
+                bt_pop(bt);
+              }
             }
           }
         } else {
@@ -10714,7 +10902,7 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
   token_info **tis = NULL;
   uint32_t i;
   uint32_t n_tis = 0;
-  grn_bool only_skip_token = GRN_FALSE;
+  bool only_skip_token = false;
   grn_operator mode = GRN_OP_EXACT;
   double estimated_size = 0;
   double normalized_ratio = 1.0;
@@ -10728,6 +10916,7 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
     switch (optarg->mode) {
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
+    case GRN_OP_NEAR_PHRASE :
       mode = optarg->mode;
       break;
     case GRN_OP_SIMILAR :
@@ -10849,6 +11038,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
       switch (optarg->mode) {
       case GRN_OP_NEAR :
       case GRN_OP_NEAR2 :
+      case GRN_OP_NEAR_PHRASE :
         arg.mode = optarg->mode;
         arg.max_interval = optarg->max_interval;
         break;

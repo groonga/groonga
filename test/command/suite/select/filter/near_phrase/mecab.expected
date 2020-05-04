@@ -1,0 +1,83 @@
+tokenize TokenMecab '京都府 東京都'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "京都",
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "府",
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "東京",
+      "position": 2,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "都",
+      "position": 3,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenMecab   --normalizer NormalizerNFKC121
+[[0,0.0,0.0],true]
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "京都府東京都"},
+{"content": "京都は府で東京は都"},
+{"content": "京都府の東は東京都"},
+{"content": "東京都京都府"}
+]
+[[0,0.0,0.0],4]
+select Entries --filter 'content *NP "京都府 東京都"' --output_columns '_score, content'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "京都府東京都"
+      ],
+      [
+        1,
+        "京都府の東は東京都"
+      ]
+    ]
+  ]
+]

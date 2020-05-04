@@ -1,0 +1,61 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("unify_alphabet", false,                                   "unify_digit", false)'   --normalizer NormalizerNFKC121
+[[0,0.0,0.0],true]
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "abcXYZdef"},
+{"content": "abebcdXYZdef"},
+{"content": "abcdef"},
+{"content": "defXYZabc"},
+{"content": "XYZabc"},
+{"content": "abc123456789def"},
+{"content": "abc12345678def"},
+{"content": "abc1de2def"}
+]
+[[0,0.0,0.0],8]
+select Entries --filter 'content *NP "abc def"' --output_columns '_score, content'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "abcXYZdef"
+      ],
+      [
+        1,
+        "abcdef"
+      ],
+      [
+        1,
+        "abc12345678def"
+      ],
+      [
+        1,
+        "abc1de2def"
+      ]
+    ]
+  ]
+]
