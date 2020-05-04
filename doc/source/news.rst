@@ -7,6 +7,426 @@
 News
 ====
 
+.. _release-10-0-3:
+
+Release 10.0.3 - 2020-05-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* We came to be able to construct an inverted index from data that are tokenized in advance.
+
+  * The construct of an index is speeded up from this.
+  * We need to prepare token column to use this improvement.
+  * token column is an auto generated value column like an index column.
+  * token column value is generated from source column value by tokenizing the source column value.
+
+  * We can create a token column by setting the source column as below.
+
+    .. code-block::
+
+      table_create Terms TABLE_PAT_KEY ShortText \
+        --normalizer NormalizerNFKC121 \
+        --default_tokenizer TokenNgram
+
+      table_create Notes TABLE_NO_KEY
+      column_create Notes title COLUMN_SCALAR Text
+
+      # The last "title" is the source column.
+      column_create Notes title_terms COLUMN_VECTOR Terms title
+
+* [:doc:`reference/commands/select`] We came to be able to specify a ``vector`` for the argument of a function.
+
+  * For example, ``flags`` options of ``query`` can describe by a ``vector`` as below.
+
+    .. code-block::
+
+      select \
+        --table Memos \
+        --filter 'query("content", "-content:@mroonga", \
+                        { \
+                          "expander": "QueryExpanderTSV", \
+                          "flags": ["ALLOW_LEADING_NOT", "ALLOW_COLUMN"] \
+                        })'
+
+* [:doc:`reference/commands/select`] Added a new stage ``result_set`` for dynamic columns.
+
+  * This stage generates a column into a result set table. Therefore, it is not generated if ``query`` or ``filter`` doesn't exist
+
+    * Because if ``query`` or ``filter`` doesn't exist, Groonga doesn't make a result set table.
+
+  * We can't use ``_value`` for the stage. The ``result_set`` stage is for storing value by ``score_column``.
+
+* [vector_slice] Added support for weight vector that has weight of ``Float32`` type. [GitHub#1106 patched by naoa]
+
+* [:doc:`reference/commands/select`] Added support for ``filtered`` stage and ``output`` stage of dynamic columns on drilldowns. [GitHub#1101 patched by naoa][GitHub#1100 patched by naoa]
+
+  * We can use ``filtered`` and ``output`` stage of dynamic columns on drilldowns as with ``drilldowns[Label].stage filtered`` and ``drilldowns[Label].stage output``.
+
+* [:doc:`reference/commands/select`] Added support for ``Float`` type value in aggregating on drilldown.
+
+  * We can aggregate max value, min value, and sum value for ``Float`` type value using ``MAX``, ``MIN``, and ``SUM``.
+
+* [:doc:`reference/functions/query`] [:doc:`reference/functions/geo_in_rectangle`] [:doc:`reference/functions/geo_in_circle`] Added a new option ``score_column`` for ``query()``, ``geo_in_rectangle()``, and ``geo_in_circle()``.
+
+  * We can store a score value by condition using ``score_column``.
+  * Normally, Groonga calculate a score by adding scores of all conditions. However, we sometimes want to get a score value by condition.
+  * For example, if we want to only use how near central coordinate as score as below, we use ``score_column``.
+
+  .. code-block::
+
+     table_create LandMarks TABLE_NO_KEY
+     column_create LandMarks name COLUMN_SCALAR ShortText
+     column_create LandMarks category COLUMN_SCALAR ShortText
+     column_create LandMarks point COLUMN_SCALAR WGS84GeoPoint
+
+     table_create Points TABLE_PAT_KEY WGS84GeoPoint
+     column_create Points land_mark_index COLUMN_INDEX LandMarks point
+
+     load --table LandMarks
+     [
+       {"name": "Aries"      , "category": "Tower"     , "point": "11x11"},
+       {"name": "Taurus"     , "category": "Lighthouse", "point": "9x10" },
+       {"name": "Gemini"     , "category": "Lighthouse", "point": "8x8"  },
+       {"name": "Cancer"     , "category": "Tower"     , "point": "12x12"},
+       {"name": "Leo"        , "category": "Tower"     , "point": "11x13"},
+       {"name": "Virgo"      , "category": "Temple"    , "point": "22x10"},
+       {"name": "Libra"      , "category": "Tower"     , "point": "14x14"},
+       {"name": "Scorpio"    , "category": "Temple"    , "point": "21x9" },
+       {"name": "Sagittarius", "category": "Temple"    , "point": "43x12"},
+       {"name": "Capricorn"  , "category": "Tower"     , "point": "33x12"},
+       {"name": "Aquarius"   , "category": "mountain"  , "point": "55x11"},
+       {"name": "Pisces"     , "category": "Tower"     , "point": "9x9"  },
+       {"name": "Ophiuchus"  , "category": "mountain"  , "point": "21x21"}
+     ]
+
+     select LandMarks \
+       --sort_keys 'distance' \
+       --columns[distance].stage initial \
+       --columns[distance].type Float \
+       --columns[distance].flags COLUMN_SCALAR \
+       --columns[distance].value 0.0 \
+       --output_columns 'name, category, point, distance, _score' \
+       --limit -1 \
+       --filter 'geo_in_circle(point, "11x11", "11x1", {"score_column": distance}) && category == "Tower"'
+     [
+       [
+         0,
+         1590647445.406149,
+         0.0002503395080566406
+       ],
+       [
+         [
+           [
+             5
+           ],
+           [
+             [
+               "name",
+               "ShortText"
+             ],
+             [
+               "category","ShortText"
+             ],
+             [
+               "point",
+               "WGS84GeoPoint"
+             ],
+             [
+               "distance",
+               "Float"
+             ],
+             [
+               "_score",
+               "Int32"
+             ]
+           ],
+           [
+             "Aries",
+             "Tower",
+             "11x11",
+             0.0,
+             1
+           ],
+           [
+             "Cancer",
+             "Tower",
+             "12x12",
+             0.0435875803232193,
+             1
+           ],
+           [
+             "Leo",
+             "Tower",
+             "11x13",
+             0.06164214760065079,
+             1
+           ],
+           [
+             "Pisces",
+             "Tower",
+             "9x9",
+             0.0871751606464386,
+             1
+           ],
+           [
+             "Libra",
+             "Tower",
+             "14x14",
+             0.1307627409696579,
+             1
+           ]
+         ]
+       ]
+     ]
+
+  * The sort by ``_score`` is meaningless in the above example. Because the value of ``_score`` is all ``1`` by ``category == "Tower"``.
+    However, we can sort distance from central coordinate using ``score_column``.
+
+* [Windows] Groonga came to be able to output backtrace when it occurs error even if it doesn't crash.
+
+* [Windows] Dropped support for old Windows.
+
+  * Groonga for Windows come to require Windows 8 (Windows Server 2012) or later from 10.0.3.
+
+* [:doc:`reference/commands/select`] Improved sort performance when sort keys were mixed referable sort keys and the other sort keys.
+
+  * We improved sort performance if mixed referable sort keys and the other and there are referable keys two or more.
+
+    * Referable sort keys are sort keys that except below them.
+
+      * Compressed columns
+      * ``_value`` against the result of drilldown that is specified multiple values to the key of drilldown.
+      * ``_key`` against patricia trie table that has not the key of ``ShortText`` type.
+      * ``_score``
+
+  * The more sort keys that except string, a decrease in the usage of memory for sort.
+
+* [:doc:`reference/commands/select`] Improved sort performance when sort keys are all referable keys case.
+
+* [:doc:`reference/commands/select`] Improve scorer performance as a ``_socre = column1*X + column2*Y + ...`` case.
+
+  * This optimization effective when there are many ``+`` or ``*`` in ``_score``.
+  * At the moment, it has only effective against ``+`` and ``*``.
+
+* [:doc:`reference/commands/select`] Added support for phrase near search.
+
+  * We can search phrase by phrase by a near search.
+
+    * Query syntax for near phrase search is ``*NP"Phrase1 phrase2 ..."``.
+    * Script syntax for near phrase search is ``column *NP "phrase1 phrase2 ..."``.
+
+    * If the search target phrase includes space, we can search for it by surrounding it with ``"`` as below.
+
+      .. code-block::
+
+         table_create Entries TABLE_NO_KEY
+         column_create Entries content COLUMN_SCALAR Text
+
+         table_create Terms TABLE_PAT_KEY ShortText \
+           --default_tokenizer 'TokenNgram("unify_alphabet", false, \
+                                           "unify_digit", false)' \
+           --normalizer NormalizerNFKC121
+         column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+         load --table Entries
+         [
+         {"content": "I started to use Groonga. It's very fast!"},
+         {"content": "I also started to use Groonga. It's also very fast! Really fast!"}
+         ]
+
+         select Entries --filter 'content *NP "\\"I started\\" \\"use Groonga\\""' --output_columns 'content'
+         [
+           [
+             0,
+             1590469700.715882,
+             0.03997230529785156
+           ],
+           [
+             [
+               [
+                 1
+               ],
+               [
+                 [
+                   "content",
+                   "Text"
+                 ]
+               ],
+               [
+                 "I started to use Groonga. It's very fast!"
+               ]
+             ]
+           ]
+         ]
+
+* [:doc:`reference/columns/vector`] Added support for ``float32`` weight vector.
+
+  * We can store weight as ``float32`` instead of ``uint32``.
+  * We need to add ``WEIGHT_FLOAT32`` flag when execute ``column_create`` to use this feature.
+
+    .. code-block::
+
+       column_create Records tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 Tags
+
+  * However, ``WEIGHT_FLOAT32`` flag isn't available with ``COLUMN_INDEX`` flag for now.
+
+* Added following APIs
+
+  * Added ``grn_obj_is_xxx`` functions. For more information as below.
+
+    * ``grn_obj_is_weight_vector(grn_ctx *ctx, grn_obj *obj)``
+
+      * It returns as a ``bool`` whether the object is a weight vector.
+
+    * ``grn_obj_is_uvector(grn_ctx *ctx, grn_obj *obj)``
+
+      * It returns as a ``bool`` whether the object is a ``uvector``.
+
+        * ``uvector`` is a ``vector`` that size of elements for ``vector`` are fixed.
+
+    * ``grn_obj_is_weight_uvector(grn_ctx *ctx, grn_obj *obj)``
+
+      * It returns as a ``bool`` whether the object is a weight uvector.
+
+  * Added ``grn_type_id_size(grn_ctx *ctx, grn_id id)``.
+
+    * It returns the size of Groonga data type as a ``size_t``.
+
+  * Added ``grn_selector_data_get_xxx`` functions. For more information as below.
+
+    * These functions return selector related data.
+
+      * These functions are supposed to call in selector. If they are called except in selector, they return ``NULL``.
+
+        * ``grn_selector_data_get(grn_ctx *ctx)``
+
+          * It returns all information that relating calling selector as ``grn_selector_data *`` structure.
+
+        * ``grn_selector_data_get_selector(grn_ctx *ctx, grn_selector_data *data)``
+
+          * It returns selector itself as ``grn_obj *``.
+
+        * ``grn_selector_data_get_expr(grn_ctx *ctx, grn_selector_data *data)``
+
+          * It returns selector is used ``--filter`` condition and ``--query`` condition as ``grn_obj *``.
+
+        * ``grn_selector_data_get_table(grn_ctx *ctx, grn_selector_data *data)``
+
+          * It returns target table as ``grn_obj *``
+
+        * ``grn_selector_data_get_index(grn_ctx *ctx, grn_selector_data *data)``
+
+          * It returns index is used by selector as ``grn_obj *``.
+
+        * ``grn_selector_data_get_args(grn_ctx *ctx, grn_selector_data *data, size_t *n_args)``
+
+          * It returns arguments of function that called selector as ``grn_obj **``.
+
+        * ``grn_selector_data_get_result_set(grn_ctx *ctx, grn_selector_data *data)``
+
+          * It returns result table as ``grn_obj *``.
+
+        * ``grn_selector_data_get_op(grn_ctx *ctx, grn_selector_data *data)``
+
+          * It returns how to perform the set operation on existing result set as ``grn_operator``.
+
+  * Added ``grn_plugin_proc_xxx`` functions. For more information as below.
+
+    * ``grn_plugin_proc_get_value_operator(grn_ctx *ctx, grn_obj *value, grn_operator default_operator, const char *context)``
+
+      * It returns the operator of a query as a ``grn_operator``.
+
+        * For example, ``&&`` is returned as a ``GRN_OP_AND``.
+
+
+    * ``grn_plugin_proc_get_value_bool(grn_ctx *ctx, grn_obj *value, bool default_value, const char *tag)``
+
+      * It returns the value that is specified ``true`` or ``false`` like ``with_transposition`` argument of the below function as a ``bool`` (``bool`` is the data type of C language).
+
+        .. code-block::
+
+           fuzzy_search(column, query, {"max_distance": 1, "prefix_length": 0, "max_expansion": 0, "with_transposition": true})
+
+  * Added ``grn_proc_options_xxx`` functions. For more information as below.
+
+    * ``query()`` only uses them for now.
+
+      * ``grn_proc_options_parsev(grn_ctx *ctx, grn_obj *options, const char *tag, const char *name, va_list args)``
+
+        * This function execute parse options.
+        * We had to implement parsing to options ourselves until now, however, we can parse them by just call this function from this version.
+
+      * ``grn_proc_options_parse(grn_ctx *ctx, grn_obj *options, const char *tag, const char *name, ...)``
+
+        * It calls ``grn_proc_options_parsev()``. Therefore, features of this function same ``grn_proc_options_parsev()``.
+        * It only differs in the interface compare with ``grn_proc_options_parsev()``.
+
+  * Added ``grn_text_printfv(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)``
+
+    * ``grn_text_vprintf`` is deprecated from 10.0.3. We use ``grn_text_printfv`` instead.
+
+  * Added ``grn_type_id_is_float_family(grn_ctx *ctx, grn_id id)``.
+
+    * It returns whether ``grn_type_id`` is ``GRN_DB_FLOAT32`` or ``GRN_DB_FLOAT`` or not as a ``bool``.
+
+  * Added ``grn_dat_cursor_get_max_n_records(grn_ctx *ctx, grn_dat_cursor *c)``.
+
+    * It returns the number of max records the cursor can have as a ``size_t``. (This API is for the DAT table)
+
+  * Added ``grn_table_cursor_get_max_n_records(grn_ctx *ctx, grn_table_cursor *cursor)``.
+
+    * It returns the number of max records the cursor can have as a ``size_t``.
+    * It can use against all table type (``TABLE_NO_KEY``, ``TABLE_HASH_KEY``, ``TABLE_DAT_KEY``, and ``TABLE_PAT_KEY``).
+
+  * Added ``grn_result_set_add_xxx`` functions. For more information as below.
+
+    * ``grn_result_set_add_record(grn_ctx *ctx, grn_hash *result_set, grn_posting *posting, grn_operator op)``
+
+      * It adds a record into the table of result sets.
+      * ``grn_ii_posting_add_float`` is deprecated from 10.0.3. We use ``grn_rset_add_records()`` instead.
+
+    * ``grn_result_set_add_table(grn_ctx *ctx, grn_hash *result_set, grn_obj *table, double score, grn_operator op)``
+
+      * It adds a table into the result sets.
+
+    * ``grn_result_set_add_table_cursor(grn_ctx *ctx, grn_hash *result_set, grn_table_cursor *cursor, double score, grn_operator op)``
+
+      * It adds records that a table cursor has into the result sets.
+
+  * Added ``grn_vector_copy(grn_ctx *ctx, grn_obj *src, grn_obj *dest)``.
+
+    * It copies a ``vector`` object. It returns whether success copy a ``vector`` object.
+
+  * Added ``grn_obj_have_source(grn_ctx *ctx, grn_obj *obj)``.
+
+    * It returns whether the column has a source column as a ``bool``.
+
+  * Added ``grn_obj_is_token_column(grn_ctx *ctx, grn_obj *obj)``.
+
+    * It returns whether the column is a token column as a ``bool``.
+
+  * Added ``grn_hash_add_table_cursor(grn_ctx *ctx, grn_hash *hash, grn_table_cursor *cursor, double score)``.
+
+    * It's for bulk result set insert. It's faster than inserting records by ``grn_ii_posting_add()``.
+
+Fixes
+^^^^^
+
+* Fixed a crash bug if the modules (tokenizers, normalizers, and token filters) are used at the same time from multiple threads.
+
+* Fixed precision of ``Float32`` value when it outputted.
+
+  * The precision of it changes to  8-digit to 7-digit from 10.0.3.
+
+* Fixed a bug that Groonga used the wrong cache when the query that just the parameters of dynamic column different was executed. [GitHub#1102 patched by naoa]
+
+Thanks
+^^^^^^
+
+* naoa
+
 .. _release-10-0-2:
 
 Release 10.0.2 - 2020-04-29
