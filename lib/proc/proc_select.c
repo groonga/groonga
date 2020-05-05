@@ -2126,7 +2126,10 @@ grn_select_apply_scorer(grn_ctx *ctx,
   grn_obj_unlink(ctx, scorer);
 
   GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                ":", "score(%d)", grn_table_size(ctx, data->tables.result));
+                ":", "score(%d): %.*s",
+                grn_table_size(ctx, data->tables.result),
+                (int)(data->scorer.length),
+                data->scorer.value);
 
   return rc == GRN_SUCCESS;
 }

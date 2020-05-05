@@ -65,7 +65,7 @@ select Shops --sortby '+_score, +name'   --output_columns 'name, _score, locatio
 #>select --filter "geo_in_circle(location, \"128429532x503148672\", 3000, \"rect\") > 0" --output_columns "name, _score, location" --scorer "_score = geo_distance(location, \"128429532x503148672\", \"rect\") * 1000" --sortby "+_score, +name" --table "Shops"
 #:000000000000000 filter(7): greater(geo_in_circle(Shops.location, "128429532x503148672", 3000, "rect"), 0)
 #:000000000000000 select(7)
-#:000000000000000 score(7)
+#:000000000000000 score(7): _score = geo_distance(location, "128429532x503148672", "rect") * 1000
 #:000000000000000 sort(7): +_score, +name
 #:000000000000000 output(7)
 #:000000000000000 send(0)
