@@ -1037,6 +1037,74 @@ the record that its content is ``I also st arted to use mroonga. It's
 also very fast! Really fast!`` is matched. The number of words between
 ``also`` and ``Really`` is 10.
 
+.. _script-syntax-near-phrase-search-operator:
+
+Near phrase search operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is one of them::
+
+  column *NP "phrase1 phrase2 ..."
+  column *NP${MAX_INTERVAL} "phrase1 phrase2 ..."
+
+Here are the examples of the second form::
+
+  column *NP29 "phrase1 phrase2 ..."
+  column *NP-1 "phrase1 phrase2 ..."
+
+The first example means that ``29`` is used for the max interval.
+
+The second example means that ``-1`` is used for the max interval.
+``-1`` max interval means no limit.
+
+The operator does near phrase search with phrases ``phrase1 phrase2
+...``. Near phrase search searches records that contain the phrases
+and the phrases are appeared in the specified order and the max
+interval.
+
+The max interval is ``10`` by default. The unit of the max interval is
+the number of characters in N-gram family tokenizers and the number of
+words in morphological analysis family tokenizers.
+
+However, ``TokenBigram`` doesn't split ASCII only word into tokens.
+Because ``TokenBigram`` uses white-space-separate like tokenize method
+for ASCII characters in this case.
+
+So the unit for ASCII words with ``TokenBigram`` is the number of
+words even if ``TokenBigram`` is a N-gram family tokenizer.
+
+Note that an index column for full text search must be defined for
+``column``.
+
+TODO: Use index that has ``TokenNgram("unify_alphabet", false)``
+tokenizer to show difference with near search with English text.
+
+Here is a simple example.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_near_phrase_search_operator.log
+.. select Entries --filter 'content *NP "I fast"'      --output_columns content
+.. select Entries --filter 'content *NP "I Really"'    --output_columns content
+.. select Entries --filter 'content *NP "also Really"' --output_columns content
+
+The first expression matches records that contain ``I`` and ``fast``
+and the max interval of those words are in 10 words. So the record
+that its content is ``I also started to use mroonga. It's also very
+fast! ...`` is matched. The number of words between ``I`` and ``fast``
+is just 10.
+
+The second expression matches records that contain ``I`` and
+``Really`` and the max interval of those words are in 10 words. So the
+record that its content is ``I also started to use mroonga. It's also
+very fast! Really fast!`` is not matched. The number of words between
+``I`` and ``Really`` is 11.
+
+The third expression matches records that contain ``also`` and
+``Really`` and the max interval of those words are in 10 words. So
+the record that its content is ``I also st arted to use mroonga. It's
+also very fast! Really fast!`` is matched. The number of words between
+``also`` and ``Really`` is 10.
+
 .. _script-syntax-similar-search-operator:
 
 Similar search

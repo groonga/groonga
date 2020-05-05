@@ -347,7 +347,14 @@ with the expression.
 Near search condition
 ^^^^^^^^^^^^^^^^^^^^^
 
-TODO
+TODO: ``*N"word1 word2 ..."``
+
+.. _query-syntax-near-phrase-search-condition:
+
+Near phrase search condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+TODO: ``*NP"phrase1 phrase2 ..."``
 
 .. _query-syntax-similar-search-condition:
 
