@@ -2103,21 +2103,26 @@ grn_select_apply_scorer(grn_ctx *ctx,
 
   data->cacheable *= ((grn_expr *)scorer)->cacheable;
   data->taintable += ((grn_expr *)scorer)->taintable;
-  GRN_TABLE_EACH_BEGIN(ctx, data->tables.result, cursor, id) {
-    GRN_RECORD_SET(ctx, record, id);
-    grn_expr_exec(ctx, scorer, 0);
-    if (ctx->rc) {
-      rc = ctx->rc;
-      GRN_PLUGIN_ERROR(ctx,
-                       rc,
-                       "[select][scorer] "
-                       "failed to execute: <%.*s>: %s",
-                       (int)(data->scorer.length),
-                       data->scorer.value,
-                       ctx->errbuf);
-      break;
-    }
-  } GRN_TABLE_EACH_END(ctx, cursor);
+
+  grn_expr_executor executor;
+  rc = grn_expr_executor_init(ctx, &executor, scorer);
+  if (rc == GRN_SUCCESS) {
+    GRN_TABLE_EACH_BEGIN(ctx, data->tables.result, cursor, id) {
+      grn_expr_executor_exec(ctx, &executor, id);
+      if (ctx->rc) {
+        rc = ctx->rc;
+        GRN_PLUGIN_ERROR(ctx,
+                         rc,
+                         "[select][scorer] "
+                         "failed to execute: <%.*s>: %s",
+                         (int)(data->scorer.length),
+                         data->scorer.value,
+                         ctx->errbuf);
+        break;
+      }
+    } GRN_TABLE_EACH_END(ctx, cursor);
+    grn_expr_executor_fin(ctx, &executor);
+  }
   grn_obj_unlink(ctx, scorer);
 
   GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,

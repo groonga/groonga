@@ -3641,6 +3641,256 @@ grn_expr_executor_fin_simple_condition(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &(executor->data.simple_condition.constant_buffer));
 }
 
+static double
+grn_expr_executor_scorer_get_value(grn_ctx *ctx,
+                                   grn_expr_executor *executor,
+                                   grn_id id,
+                                   grn_obj *args,
+                                   grn_expr_executor_scorer_data *data)
+{
+  grn_obj *source_buffer = &(data->source_buffer);
+  grn_obj *score_buffer = &(executor->data.scorer.score_buffer);
+  if (data->cache) {
+    size_t size;
+    void *value = grn_column_cache_ref(ctx, data->cache, id, &size);
+    if (size == 0) {
+      return 0.0;
+    }
+    if (source_buffer->header.domain == GRN_DB_FLOAT) {
+      return *((double *)value);
+    }
+    GRN_TEXT_SET(ctx, source_buffer, value, size);
+  } else {
+    GRN_BULK_REWIND(source_buffer);
+    grn_obj_get_value(ctx, data->source, id, source_buffer);
+    if (GRN_BULK_VSIZE(source_buffer) == 0) {
+      return 0.0;
+    }
+    if (source_buffer->header.domain == GRN_DB_FLOAT) {
+      return GRN_FLOAT_VALUE(source_buffer);
+    }
+  }
+  GRN_BULK_REWIND(score_buffer);
+  grn_rc rc = grn_obj_cast(ctx, source_buffer, score_buffer, true);
+  if (rc == GRN_SUCCESS) {
+    return GRN_FLOAT_VALUE(score_buffer);
+  } else {
+    return 0.0;
+  }
+}
+
+static double
+grn_expr_executor_scorer_push(grn_ctx *ctx,
+                              grn_expr_executor *executor,
+                              grn_id id,
+                              grn_obj *args,
+                              grn_expr_executor_scorer_data *data)
+{
+  grn_obj *source = data->source;
+  grn_obj *score_buffer = &(executor->data.scorer.score_buffer);
+  if (GRN_BULK_VSIZE(source) == 0) {
+    return 0.0;
+  }
+  if (source->header.domain == GRN_DB_FLOAT) {
+    return GRN_FLOAT_VALUE(source);
+  }
+  GRN_BULK_REWIND(score_buffer);
+  grn_rc rc = grn_obj_cast(ctx, source, score_buffer, true);
+  if (rc == GRN_SUCCESS) {
+    return GRN_FLOAT_VALUE(score_buffer);
+  } else {
+    return 0.0;
+  }
+}
+
+static double
+grn_expr_executor_scorer_star(grn_ctx *ctx,
+                              grn_expr_executor *executor,
+                              grn_id id,
+                              grn_obj *args,
+                              grn_expr_executor_scorer_data *data)
+{
+  double right;
+  GRN_FLOAT_POP(args, right);
+  double left;
+  GRN_FLOAT_POP(args, left);
+  return left * right;
+}
+
+static double
+grn_expr_executor_scorer_plus(grn_ctx *ctx,
+                              grn_expr_executor *executor,
+                              grn_id id,
+                              grn_obj *args,
+                              grn_expr_executor_scorer_data *data)
+{
+  double right;
+  GRN_FLOAT_POP(args, right);
+  double left;
+  GRN_FLOAT_POP(args, left);
+  return left + right;
+}
+
+static bool
+grn_expr_executor_init_scorer(grn_ctx *ctx,
+                              grn_expr_executor *executor)
+{
+  grn_expr *e = (grn_expr *)(executor->expr);
+
+  GRN_FLOAT_INIT(&(executor->data.scorer.args), GRN_OBJ_VECTOR);
+  GRN_FLOAT_INIT(&(executor->data.scorer.score_buffer), 0);
+
+  executor->data.scorer.n_funcs = 0;
+  /* The first GRN_OP_GET_REF and the last GRN_OP_ASSIGN are needless. */
+  size_t n_allocated_funcs = e->codes_curr - 2;
+  executor->data.scorer.funcs = GRN_MALLOCN(grn_expr_executor_scorer_func,
+                                            n_allocated_funcs);
+  if (!executor->data.scorer.funcs) {
+    return false;
+  }
+  executor->data.scorer.datas = GRN_MALLOCN(grn_expr_executor_scorer_data,
+                                            n_allocated_funcs);
+  if (!executor->data.scorer.datas) {
+    GRN_FREE(executor->data.scorer.funcs);
+    return false;
+  }
+  executor->data.scorer.n_allocated_funcs = n_allocated_funcs;
+  {
+    size_t i;
+    for (i = 0; i < executor->data.scorer.n_allocated_funcs; i++) {
+      executor->data.scorer.funcs[i] = NULL;
+      GRN_VOID_INIT(&(executor->data.scorer.datas[i].source_buffer));
+      executor->data.scorer.datas[i].source = NULL;
+      executor->data.scorer.datas[i].cache = NULL;
+      executor->data.scorer.datas[i].n_required_args = 0;
+    }
+  }
+
+  {
+    uint32_t i;
+    for (i = 1; i < (e->codes_curr - 1); i++) {
+      grn_expr_code *code = &(e->codes[i]);
+      size_t nth_func = executor->data.scorer.n_funcs;
+      grn_expr_executor_scorer_data *data =
+        &(executor->data.scorer.datas[nth_func]);
+      switch (code->op) {
+      case GRN_OP_GET_VALUE :
+        data->source = code->value;
+        data->cache = grn_column_cache_open(ctx, data->source);
+        grn_id range = grn_obj_get_range(ctx, data->source);
+        grn_obj_reinit(ctx, &(data->source_buffer), range, 0);
+        if (data->cache) {
+          data->source_buffer.header.impl_flags = GRN_OBJ_DO_SHALLOW_COPY;
+        }
+        executor->data.scorer.funcs[nth_func] =
+          grn_expr_executor_scorer_get_value;
+        break;
+      case GRN_OP_PUSH :
+        data->source = code->value;
+        executor->data.scorer.funcs[nth_func] =
+          grn_expr_executor_scorer_push;
+        break;
+      case GRN_OP_STAR :
+        data->n_required_args = 2;
+        executor->data.scorer.funcs[nth_func] =
+          grn_expr_executor_scorer_star;
+        break;
+      case GRN_OP_PLUS :
+        data->n_required_args = 2;
+        executor->data.scorer.funcs[nth_func] =
+          grn_expr_executor_scorer_plus;
+        break;
+      default :
+        return false;
+      }
+      executor->data.scorer.n_funcs++;
+    }
+  }
+
+  return true;
+}
+
+static void
+grn_expr_executor_fin_scorer(grn_ctx *ctx,
+                             grn_expr_executor *executor)
+{
+  GRN_OBJ_FIN(ctx, &(executor->data.scorer.args));
+  GRN_OBJ_FIN(ctx, &(executor->data.scorer.score_buffer));
+
+  size_t n_allocated_funcs = executor->data.scorer.n_allocated_funcs;
+  if (n_allocated_funcs == 0) {
+    return;
+  }
+
+  size_t i;
+  for (i = 0; i < n_allocated_funcs; i++) {
+    grn_expr_executor_scorer_data *data = &(executor->data.scorer.datas[i]);
+    GRN_OBJ_FIN(ctx, &(data->source_buffer));
+    if (data->cache) {
+      grn_column_cache_close(ctx, data->cache);
+    }
+  }
+  GRN_FREE(executor->data.scorer.funcs);
+  GRN_FREE(executor->data.scorer.datas);
+}
+
+static bool
+grn_expr_executor_is_scorer(grn_ctx *ctx,
+                            grn_expr_executor *executor)
+{
+  grn_expr *e = (grn_expr *)(executor->expr);
+
+  if (e->codes_curr < 2) {
+    return false;
+  }
+
+  grn_expr_code *score = &(e->codes[0]);
+  if (score->op != GRN_OP_GET_REF) {
+    return false;
+  }
+  if (!grn_obj_is_score_accessor(ctx, score->value)) {
+    return false;
+  }
+  executor->data.scorer.score_column = score->value;
+
+  grn_expr_code *operation = &(e->codes[score->modify]);
+  if (operation->op != GRN_OP_ASSIGN) {
+    return false;
+  }
+
+  if (!grn_expr_executor_init_scorer(ctx, executor)) {
+    grn_expr_executor_fin_scorer(ctx, executor);
+    return false;
+  }
+
+  return true;
+}
+
+static grn_obj *
+grn_expr_executor_exec_scorer(grn_ctx *ctx,
+                              grn_expr_executor *executor,
+                              grn_id id)
+{
+  double score = 0.0;
+  grn_obj *args = &(executor->data.scorer.args);
+  GRN_BULK_REWIND(args);
+  size_t n_funcs = executor->data.scorer.n_funcs;
+  size_t i;
+  for (i = 0; i < n_funcs; i++) {
+    grn_expr_executor_scorer_func func = executor->data.scorer.funcs[i];
+    grn_expr_executor_scorer_data *data = &(executor->data.scorer.datas[i]);
+    double value = func(ctx, executor, id, args, data);
+    GRN_FLOAT_PUT(ctx, args, value);
+    score = value;
+  }
+  grn_obj *score_column = executor->data.scorer.score_column;
+  grn_obj *score_buffer = &(executor->data.scorer.score_buffer);
+  GRN_FLOAT_SET(ctx, score_buffer, score);
+  grn_obj_set_value(ctx, score_column, id, score_buffer, GRN_OBJ_SET);
+
+  return score_buffer;
+}
+
 grn_rc
 grn_expr_executor_init(grn_ctx *ctx,
                        grn_expr_executor *executor,
@@ -3692,6 +3942,9 @@ grn_expr_executor_init(grn_ctx *ctx,
   } else if (grn_expr_executor_is_simple_condition(ctx, executor)) {
     executor->exec = grn_expr_executor_exec_simple_condition;
     executor->fin = grn_expr_executor_fin_simple_condition;
+  } else if (grn_expr_executor_is_scorer(ctx, executor)) {
+    executor->exec = grn_expr_executor_exec_scorer;
+    executor->fin = grn_expr_executor_fin_scorer;
   } else {
     grn_expr_executor_init_general(ctx, executor);
     executor->exec = grn_expr_executor_exec_general;

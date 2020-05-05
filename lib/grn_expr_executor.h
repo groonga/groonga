@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2017-2018 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2017-2018  Brazil
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,20 @@
 extern "C" {
 #endif
 
+typedef struct {
+  grn_obj source_buffer;
+  grn_obj *source;
+  grn_column_cache *cache;
+  size_t n_required_args;
+} grn_expr_executor_scorer_data;
+
 typedef struct _grn_expr_executor grn_expr_executor;
+
+typedef double (*grn_expr_executor_scorer_func)(grn_ctx *ctx,
+                                                grn_expr_executor *executor,
+                                                grn_id id,
+                                                grn_obj *args,
+                                                grn_expr_executor_scorer_data *data);
 
 typedef union {
   struct {
@@ -67,12 +80,21 @@ typedef union {
     grn_operator_exec_func *exec;
   } simple_condition_ra;
   struct {
-    grn_bool need_exec;
+    bool need_exec;
     grn_obj result_buffer;
     grn_obj value_buffer;
     grn_obj constant_buffer;
     grn_operator_exec_func *exec;
   } simple_condition;
+  struct {
+    grn_obj *score_column;
+    grn_obj args;
+    grn_obj score_buffer;
+    grn_expr_executor_scorer_func *funcs;
+    grn_expr_executor_scorer_data *datas;
+    size_t n_funcs;
+    size_t n_allocated_funcs;
+  } scorer;
 } grn_expr_executor_data;
 
 typedef grn_obj *(*grn_expr_executor_exec_func)(grn_ctx *ctx,
@@ -108,6 +130,11 @@ grn_obj *
 grn_expr_executor_exec(grn_ctx *ctx,
                        grn_expr_executor *executor,
                        grn_id id);
+
+grn_rc
+grn_expr_executor_exec_batch(grn_ctx *ctx,
+                             grn_expr_executor *executor,
+                             grn_table_cursor *cursor);
 
 #ifdef __cplusplus
 }
