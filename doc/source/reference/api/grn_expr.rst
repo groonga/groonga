@@ -30,23 +30,23 @@ TODO...
 Reference
 ---------
 
-.. c:function:: GRN_API grn_obj *grn_expr_create(grn_ctx *ctx, const char *name, unsigned int name_size)
+.. c:function:: grn_obj *grn_expr_create(grn_ctx *ctx, const char *name, unsigned int name_size)
 
-.. c:function:: GRN_API grn_rc grn_expr_close(grn_ctx *ctx, grn_obj *expr)
+.. c:function:: grn_rc grn_expr_close(grn_ctx *ctx, grn_obj *expr)
 
-.. c:function:: GRN_API grn_obj *grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned int name_size)
+.. c:function:: grn_obj *grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned int name_size)
 
-.. c:function:: GRN_API grn_obj *grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
+.. c:function:: grn_obj *grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
 
-.. c:function:: GRN_API grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, int nargs);
+.. c:function:: grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, int nargs);
 
-.. c:function:: GRN_API grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, int nargs)
+.. c:function:: grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, int nargs)
 
-.. c:function:: GRN_API grn_obj *grn_expr_append_const_str(grn_ctx *ctx, grn_obj *expr, const char *str, unsigned int str_size, grn_operator op, int nargs)
+.. c:function:: grn_obj *grn_expr_append_const_str(grn_ctx *ctx, grn_obj *expr, const char *str, unsigned int str_size, grn_operator op, int nargs)
 
-.. c:function:: GRN_API grn_obj *grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i, grn_operator op, int nargs)
+.. c:function:: grn_obj *grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i, grn_operator op, int nargs)
 
-.. c:function:: GRN_API grn_rc grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs)
+.. c:function:: grn_rc grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs)
 
 .. c:function:: grn_rc grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords)
 
@@ -129,8 +129,8 @@ Reference
                          text typed bulk.
    :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
 
-.. c:function:: GRN_API grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
+.. c:function:: grn_rc grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
 
-.. c:function:: GRN_API grn_obj *grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
+.. c:function:: grn_obj *grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
 
-.. c:function:: GRN_API grn_obj *grn_expr_alloc(grn_ctx *ctx, grn_obj *expr, grn_id domain, grn_obj_flags flags)
+.. c:function:: grn_obj *grn_expr_alloc(grn_ctx *ctx, grn_obj *expr, grn_id domain, grn_obj_flags flags)
