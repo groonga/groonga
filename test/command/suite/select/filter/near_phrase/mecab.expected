@@ -58,7 +58,7 @@ select Entries --filter 'content *NP "京都府 東京都"' --output_columns '_s
   [
     [
       [
-        2
+        3
       ],
       [
         [
@@ -77,6 +77,10 @@ select Entries --filter 'content *NP "京都府 東京都"' --output_columns '_s
       [
         1,
         "京都府の東は東京都"
+      ],
+      [
+        1,
+        "東京都京都府"
       ]
     ]
   ]

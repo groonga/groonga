@@ -28,7 +28,7 @@ select Entries   --match_columns content   --query '*NP"abc def"'   --output_col
   [
     [
       [
-        4
+        5
       ],
       [
         [
@@ -47,6 +47,10 @@ select Entries   --match_columns content   --query '*NP"abc def"'   --output_col
       [
         1,
         "abcdef"
+      ],
+      [
+        1,
+        "defXYZabc"
       ],
       [
         1,

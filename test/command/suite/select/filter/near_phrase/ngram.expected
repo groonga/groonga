@@ -28,7 +28,7 @@ select Entries --filter 'content *NP "abc def"' --output_columns '_score, conten
   [
     [
       [
-        4
+        5
       ],
       [
         [
@@ -47,6 +47,10 @@ select Entries --filter 'content *NP "abc def"' --output_columns '_score, conten
       [
         1,
         "abcdef"
+      ],
+      [
+        1,
+        "defXYZabc"
       ],
       [
         1,

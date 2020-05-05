@@ -1,0 +1,40 @@
+table_create Entries TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"_key":    "Near and not near",
+ "content": "I also started to use Mroonga. It's also very fast! Really fast!"},
+{"_key":    "Only not near",
+ "content": "I also started to use Mroonga. It's very fast! Really fast!"}
+]
+[[0,0.0,0.0],2]
+select Entries --filter 'content *N "also Really"' --output_columns content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        "I also started to use Mroonga. It's also very fast! Really fast!"
+      ]
+    ]
+  ]
+]
