@@ -1321,8 +1321,6 @@ grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   bool output_result_set = false;
   bool with_weight = false;
   bool is_weight_float32 = false;
-  grn_obj *range;
-  grn_bool range_is_type;
 
   if (format) {
     if (GRN_BULK_VSIZE(&(format->columns)) > 0) {
@@ -1346,16 +1344,14 @@ grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     return;
   }
 
-  range = grn_ctx_at(ctx, uvector->header.domain);
-  range_is_type = (range->header.type == GRN_TYPE);
-  if (range_is_type) {
+  if (grn_type_id_is_builtin(ctx, uvector->header.domain)) {
     unsigned int i, n;
     char *raw_elements;
     unsigned int element_size;
     grn_obj element;
 
     raw_elements = GRN_BULK_HEAD(uvector);
-    element_size = GRN_TYPE_SIZE(DB_OBJ(range));
+    element_size = grn_type_id_size(ctx, uvector->header.domain);
     n = GRN_BULK_VSIZE(uvector) / element_size;
 
     grn_output_array_open(ctx, outbuf, output_type, "VECTOR", n);
@@ -1369,6 +1365,8 @@ grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     GRN_OBJ_FIN(ctx, &element);
     grn_output_array_close(ctx, outbuf, output_type);
   } else {
+    grn_obj *range = grn_ctx_at(ctx, uvector->header.domain);
+
     unsigned int i, n;
     grn_obj id_value;
     grn_obj key_value;
@@ -1414,8 +1412,9 @@ grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
 
     GRN_OBJ_FIN(ctx, &id_value);
     GRN_OBJ_FIN(ctx, &key_value);
+
+    grn_obj_unref(ctx, range);
   }
-  grn_obj_unref(ctx, range);
 }
 
 static grn_inline void
