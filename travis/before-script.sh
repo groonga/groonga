@@ -34,8 +34,6 @@ case "${BUILD_TOOL}" in
     if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
       pkg_config_path="$(brew --prefix openssl)/lib/pkgconfig"
       configure_args="${configure_args} PKG_CONFIG_PATH=${pkg_config_path}"
-      echo 'export PATH="/usr/local/opt/bison/bin:$PATH"' >> ~/.bash_profile
-      source ~/.bash_profile
     fi
     #if [ "$CC" = "clang" ]; then
       configure_args="${configure_args} --enable-debug"
@@ -54,6 +52,10 @@ case "${BUILD_TOOL}" in
     ./configure --prefix=${prefix} ${configure_args}
     ;;
   cmake)
+    if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+      echo 'export PATH="/usr/local/opt/bison/bin:$PATH"' >> ~/.bash_profile
+      source ~/.bash_profile
+    fi
     cmake_args=""
     cmake_args="${cmake_args} -DRUBY=$(which ruby)"
     cmake_args="${cmake_args} -DGRN_WITH_DEBUG=yes"
