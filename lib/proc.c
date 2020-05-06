@@ -153,14 +153,14 @@ grn_proc_options_parse(grn_ctx *ctx,
   va_list args;
 
   va_start(args, name);
-  grn_rc rc = grn_proc_options_vparse(ctx, options, tag, name, args);
+  grn_rc rc = grn_proc_options_parsev(ctx, options, tag, name, args);
   va_end(args);
 
   return rc;
 }
 
 grn_rc
-grn_proc_options_vparse(grn_ctx *ctx,
+grn_proc_options_parsev(grn_ctx *ctx,
                         grn_obj *options,
                         const char *tag,
                         const char *name,

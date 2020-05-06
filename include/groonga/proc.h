@@ -62,7 +62,7 @@ grn_proc_options_parse(grn_ctx *ctx,
                        ...);
 
 GRN_API grn_rc
-grn_proc_options_vparse(grn_ctx *ctx,
+grn_proc_options_parsev(grn_ctx *ctx,
                         grn_obj *options,
                         const char *tag,
                         const char *name,

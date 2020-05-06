@@ -1234,8 +1234,15 @@ GRN_API grn_rc grn_text_escape_xml(grn_ctx *ctx, grn_obj *buf,
 GRN_API grn_rc grn_text_time2rfc1123(grn_ctx *ctx, grn_obj *bulk, int sec);
 GRN_API grn_rc grn_text_printf(grn_ctx *ctx, grn_obj *bulk,
                                const char *format, ...) GRN_ATTRIBUTE_PRINTF(3);
-GRN_API grn_rc grn_text_vprintf(grn_ctx *ctx, grn_obj *bulk,
-                                const char *format, va_list args);
+GRN_API grn_rc grn_text_printfv(grn_ctx *ctx,
+                                grn_obj *bulk,
+                                const char *format,
+                                va_list args);
+/* Deprecated since 10.0.3. Use grn_text_printfv() instead. */
+GRN_API grn_rc grn_text_vprintf(grn_ctx *ctx,
+                                grn_obj *bulk,
+                                const char *format,
+                                va_list args);
 
 typedef void (*grn_recv_handler_func)(grn_ctx *ctx, int flags, void *user_data);
 

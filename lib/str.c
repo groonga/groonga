@@ -2577,14 +2577,14 @@ grn_text_printf(grn_ctx *ctx, grn_obj *bulk, const char *format, ...)
   va_list args;
 
   va_start(args, format);
-  grn_rc rc = grn_text_vprintf(ctx, bulk, format, args);
+  grn_rc rc = grn_text_printfv(ctx, bulk, format, args);
   va_end(args);
 
   return rc;
 }
 
 grn_rc
-grn_text_vprintf(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
+grn_text_printfv(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
 {
   int written_size = -1;
   const int rest_size = GRN_BULK_REST(bulk);
@@ -2644,6 +2644,12 @@ grn_text_vprintf(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
 
   GRN_BULK_INCR_LEN(bulk, written_size);
   return GRN_SUCCESS;
+}
+
+grn_rc
+grn_text_vprintf(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
+{
+  return grn_text_printfv(ctx, bulk, format, args);
 }
 
 grn_rc
