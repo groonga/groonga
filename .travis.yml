@@ -31,6 +31,8 @@ addons_linux_build: &addons_linux_build
 
 addons_macos_build: &addons_macos_build
   homebrew:
+    packages:
+      - bison
     brewfile: true
     update: true
 
