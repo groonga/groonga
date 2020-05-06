@@ -34,6 +34,7 @@
 #include "grn_report.h"
 #include "grn_token_cursor.h"
 #include "grn_posting.h"
+#include "grn_selector.h"
 #include "grn_mrb.h"
 #include "mrb/mrb_expr.h"
 
