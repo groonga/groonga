@@ -3701,9 +3701,7 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx, grn_obj *obj,
   if (table) {
     key_type = table->header.domain;
     need_cast = (query->header.domain != key_type);
-    if (grn_enable_reference_count) {
-      grn_obj_unlink(ctx, table);
-    }
+    grn_obj_unref(ctx, table);
   }
   if (need_cast) {
     GRN_OBJ_INIT(&casted_query, GRN_BULK, 0, key_type);
@@ -5448,7 +5446,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           if (!obj_is_referred) {
-            obj = grn_ctx_at(ctx, DB_OBJ(obj)->id);
+            grn_obj_refer(ctx, obj);
             obj_is_referred = true;
           }
           (*rp)->obj = obj;
@@ -5502,7 +5500,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           if (!obj_is_referred) {
-            obj = grn_ctx_at(ctx, DB_OBJ(obj)->id);
+            grn_obj_refer(ctx, obj);
             obj_is_referred = true;
           }
           (*rp)->obj = obj;
@@ -5544,7 +5542,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           if (!obj_is_referred) {
-            obj = grn_ctx_at(ctx, DB_OBJ(obj)->id);
+            grn_obj_refer(ctx, obj);
             obj_is_referred = true;
           }
           (*rp)->obj = obj;
@@ -5592,8 +5590,8 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         }
         break;
       case 's' : /* score, sum */
-        if (!obj_is_referred && grn_enable_reference_count) {
-          obj = grn_ctx_at(ctx, DB_OBJ(obj)->id);
+        if (!obj_is_referred) {
+          grn_obj_refer(ctx, obj);
           obj_is_referred = true;
         }
         if (len == GRN_COLUMN_NAME_SCORE_LEN &&
@@ -5615,8 +5613,8 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
             goto exit;
           }
         } else {
-          if (!obj_is_referred && grn_enable_reference_count) {
-            grn_obj_unlink(ctx, obj);
+          if (!obj_is_referred) {
+            grn_obj_unref(ctx, obj);
           }
           goto exit;
         }
@@ -5628,8 +5626,8 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
                    GRN_COLUMN_NAME_NSUBRECS_LEN)) {
           goto exit;
         }
-        if (!obj_is_referred && grn_enable_reference_count) {
-          obj = grn_ctx_at(ctx, DB_OBJ(obj)->id);
+        if (!obj_is_referred) {
+          grn_obj_refer(ctx, obj);
           obj_is_referred = true;
         }
         if (!grn_obj_get_accessor_rset_value(ctx,
@@ -5640,8 +5638,8 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         }
         break;
       case 'm' : /* max, min */
-        if (!obj_is_referred && grn_enable_reference_count) {
-          obj = grn_ctx_at(ctx, DB_OBJ(obj)->id);
+        if (!obj_is_referred) {
+          grn_obj_refer(ctx, obj);
           obj_is_referred = true;
         }
         if (len == GRN_COLUMN_NAME_MAX_LEN &&
@@ -5661,15 +5659,15 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
             goto exit;
           }
         } else {
-          if (!obj_is_referred && grn_enable_reference_count) {
-            grn_obj_unlink(ctx, obj);
+          if (!obj_is_referred) {
+            grn_obj_unref(ctx, obj);
           }
           goto exit;
         }
         break;
       case 'a' : /* avg */
-        if (!obj_is_referred && grn_enable_reference_count) {
-          obj = grn_ctx_at(ctx, DB_OBJ(obj)->id);
+        if (!obj_is_referred) {
+          grn_obj_refer(ctx, obj);
           obj_is_referred = true;
         }
         if (len == GRN_COLUMN_NAME_AVG_LEN &&
@@ -5681,8 +5679,8 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
             goto exit;
           }
         } else {
-          if (!obj_is_referred && grn_enable_reference_count) {
-            grn_obj_unlink(ctx, obj);
+          if (!obj_is_referred) {
+            grn_obj_unref(ctx, obj);
           }
           goto exit;
         }
@@ -5710,9 +5708,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
           */
           (*rp)->action = GRN_ACCESSOR_GET_COLUMN_VALUE;
           if (obj_is_referred) {
-            if (grn_enable_reference_count) {
-              grn_obj_unlink(ctx, obj);
-            }
+            grn_obj_unref(ctx, obj);
             obj_is_referred = false;
           }
           break;
@@ -5729,7 +5725,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
           }
           *rp = accessor_new(ctx);
           if (!obj_is_referred) {
-            obj = grn_ctx_at(ctx, DB_OBJ(obj)->id);
+            grn_obj_refer(ctx, obj);
             obj_is_referred = true;
           }
           (*rp)->obj = obj;
@@ -5918,9 +5914,7 @@ grn_obj_cast_to_record(grn_ctx *ctx,
 
   grn_obj *table = grn_ctx_at(ctx, dest->header.domain);
   if (!GRN_OBJ_TABLEP(table)) {
-    if (grn_enable_reference_count) {
-      grn_obj_unlink(ctx, table);
-    }
+    grn_obj_unref(ctx, table);
     return GRN_FUNCTION_NOT_IMPLEMENTED;
   }
 
@@ -11225,9 +11219,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       {
         grn_accessor *p, *n;
         for (p = (grn_accessor *)obj; p; p = n) {
-          if (grn_enable_reference_count) {
-            grn_obj_unlink(ctx, p->obj);
-          }
+          grn_obj_unref(ctx, p->obj);
           n = p->next;
           GRN_FREE(p);
         }
