@@ -11596,7 +11596,9 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
       {
         grn_obj *d = grn_ctx_at(ctx, domain);
         if (!d) {
-          ERR(GRN_INVALID_ARGUMENT, "invalid domain assigned");
+          ERR(GRN_INVALID_ARGUMENT,
+              "[obj][reinit] invalid domain assigned: <%u>",
+              domain);
         } else {
           if (d->header.type == GRN_TYPE && (d->header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
             if (flags & GRN_OBJ_VECTOR) {
