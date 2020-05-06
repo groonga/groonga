@@ -1551,3 +1551,21 @@ grn_plugin_proc_get_value_mode(grn_ctx *ctx,
 {
   return grn_proc_get_value_mode(ctx, value, default_mode, context);
 }
+
+grn_operator
+grn_plugin_proc_get_value_mode(grn_ctx *ctx,
+                               grn_obj *value,
+                               grn_operator default_mode,
+                               const char *context)
+{
+  return grn_proc_get_value_mode(ctx, value, default_mode, context);
+}
+
+grn_operator
+grn_plugin_proc_get_value_operator(grn_ctx *ctx,
+                                   grn_obj *value,
+                                   grn_operator default_operator,
+                                   const char *context)
+{
+  return grn_proc_get_value_operator(ctx, value, default_operator, context);
+}

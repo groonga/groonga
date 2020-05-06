@@ -102,6 +102,10 @@ grn_operator grn_proc_get_value_mode(grn_ctx *ctx,
                                      grn_obj *value,
                                      grn_operator default_mode,
                                      const char *context);
+grn_operator grn_proc_get_value_operator(grn_ctx *ctx,
+                                         grn_obj *value,
+                                         grn_operator default_operator,
+                                         const char *context);
 
 void grn_proc_output_object_name(grn_ctx *ctx, grn_obj *obj);
 void grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);
