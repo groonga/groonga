@@ -4210,9 +4210,7 @@ grn_table_select_index_call(grn_ctx *ctx,
                                            si->args,
                                            res,
                                            logical_op);
-    if (grn_enable_reference_count) {
-      grn_obj_unlink(ctx, table);
-    }
+    grn_obj_unref(ctx, table);
   }
 
   return rc;
