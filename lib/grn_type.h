@@ -24,6 +24,10 @@
 extern "C" {
 #endif
 
+#define GRN_TYPE_SHORT_TEXT_SIZE GRN_TABLE_MAX_KEY_SIZE
+#define GRN_TYPE_TEXT_SIZE (1 << 16)
+#define GRN_TYPE_LONG_TEXT_SIZE (1 << 31)
+
 grn_obj *
 grn_type_create_internal(grn_ctx *ctx,
                          grn_id id,

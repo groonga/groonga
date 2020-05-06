@@ -67,6 +67,12 @@ grn_type_id_size(grn_ctx *ctx, grn_id id)
     return sizeof(double);
   case GRN_DB_TIME :
     return sizeof(int64_t);
+  case GRN_DB_SHORT_TEXT :
+    return GRN_TYPE_SHORT_TEXT_SIZE;
+  case GRN_DB_TEXT :
+    return GRN_TYPE_TEXT_SIZE;
+  case GRN_DB_LONG_TEXT :
+    return GRN_TYPE_LONG_TEXT_SIZE;
   case GRN_DB_TOKYO_GEO_POINT :
   case GRN_DB_WGS84_GEO_POINT :
     return sizeof(grn_geo_point);
@@ -79,6 +85,7 @@ grn_type_id_size(grn_ctx *ctx, grn_id id)
         if (grn_obj_is_type(ctx, obj)) {
           size = grn_type_size(ctx, obj);
         }
+        grn_obj_unref(ctx, obj);
       } else {
         /*
           We need to check the ID is a ID for table:

@@ -13669,13 +13669,13 @@ grn_db_init_builtin_types(grn_ctx *ctx)
                 GRN_OBJ_KEY_INT, sizeof(int64_t));
   if (!obj || DB_OBJ(obj)->id != GRN_DB_TIME) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "ShortText",
-                GRN_OBJ_KEY_VAR_SIZE, GRN_TABLE_MAX_KEY_SIZE);
+                GRN_OBJ_KEY_VAR_SIZE, GRN_TYPE_SHORT_TEXT_SIZE);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_SHORT_TEXT) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "Text",
-                GRN_OBJ_KEY_VAR_SIZE, 1 << 16);
+                GRN_OBJ_KEY_VAR_SIZE, GRN_TYPE_TEXT_SIZE);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_TEXT) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "LongText",
-                GRN_OBJ_KEY_VAR_SIZE, 1 << 31);
+                GRN_OBJ_KEY_VAR_SIZE, GRN_TYPE_LONG_TEXT_SIZE);
   if (!obj || DB_OBJ(obj)->id != GRN_DB_LONG_TEXT) { return GRN_FILE_CORRUPT; }
   obj = deftype(ctx, "TokyoGeoPoint",
                 GRN_OBJ_KEY_GEO_POINT, sizeof(grn_geo_point));
