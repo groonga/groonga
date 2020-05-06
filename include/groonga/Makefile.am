@@ -35,6 +35,7 @@ groonga_include_HEADERS =			\
 	raw_string.h				\
 	request_canceler.h			\
 	request_timer.h				\
+	selector.h				\
 	scorer.h				\
 	string.h				\
 	table.h					\

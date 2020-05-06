@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2014-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2014-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -53,6 +53,7 @@
 #include "groonga/raw_string.h"
 #include "groonga/request_canceler.h"
 #include "groonga/request_timer.h"
+#include "groonga/selector.h"
 #include "groonga/string.h"
 #include "groonga/table.h"
 #include "groonga/thread.h"
