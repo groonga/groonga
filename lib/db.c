@@ -10688,7 +10688,7 @@ grn_db_value_lock(grn_ctx *ctx, grn_id id, db_value *vp)
   for (;; n_trials++) {
     GRN_ATOMIC_ADD_EX(lock_pointer, 1, current_lock);
     if (current_lock < GRN_IO_MAX_REF) { break; }
-    if (n_trials >= 10) {
+    if (n_trials >= 1000) {
       GRN_LOG(ctx,
               GRN_LOG_NOTICE,
               "[db][value][lock] failed to lock: "
