@@ -62,18 +62,6 @@ AC_MSG_RESULT([$platform_win32])
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
 AM_CONDITIONAL(PLATFORM_WIN32, test "$platform_win32" = "yes")
 
-AC_MSG_CHECKING([for 32bit OS])
-case "$host_cpu" in
-  *86)
-    os_32bit=yes
-    ;;
-  *)
-    os_32bit=no
-    ;;
-esac
-AC_MSG_RESULT([$os_32bit])
-AM_CONDITIONAL(OS_32BIT, test "$os_32bit" = "yes")
-
 AC_MSG_CHECKING([for NetBSD.])
 case "$host_os" in
   netbsd*)

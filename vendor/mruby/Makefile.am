@@ -38,11 +38,6 @@ AM_CPPFLAGS +=					\
 	-DMRB_CORE
 endif
 
-if OS_32BIT
-AM_CPPFLAGS +=					\
-	-DMRB_METHOD_T_STRUCT
-endif
-
 include sources.am
 include built_sources.am
 BUILT_SOURCES =					\
