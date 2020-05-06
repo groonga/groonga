@@ -423,7 +423,8 @@ extern "C" {
   grn_vector_unpack(grn_ctx *ctx,
                     grn_obj *vector,
                     const char *data,
-                    uint32_t data_size)
+                    uint32_t data_size,
+                    bool is_weight_float32)
   {
     uint8_t *p = (uint8_t *)data;
     uint8_t *pe = p + data_size;
@@ -461,8 +462,12 @@ extern "C" {
         for (uint32_t i = 0; i < n; ++i) {
           grn_section *section = vector->u.v.sections + n0 + i;
           if (pe <= p) { return GRN_INVALID_ARGUMENT; }
-          memcpy(&(section->weight), p, sizeof(float));
-          p += sizeof(float);
+          if (is_weight_float32) {
+            memcpy(&(section->weight), p, sizeof(float));
+            p += sizeof(float);
+          } else {
+            GRN_B_DEC(section->weight, p);
+          }
           GRN_B_DEC(section->domain, p);
         }
       }

@@ -6698,7 +6698,8 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
           grn_table_get_key2(ctx, a->obj, id, &raw_vector);
           grn_vector_unpack(ctx, value,
                             GRN_BULK_HEAD(&raw_vector),
-                            GRN_BULK_VSIZE(&raw_vector));
+                            GRN_BULK_VSIZE(&raw_vector),
+                            false);
           GRN_OBJ_FIN(ctx, &raw_vector);
         }
         vp = NULL;
@@ -8238,7 +8239,8 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
       rc = grn_vector_unpack(ctx,
                              &current_spec,
                              current_spec_raw,
-                             current_spec_raw_len);
+                             current_spec_raw_len,
+                             false);
       if (rc == GRN_SUCCESS) {
         need_update = !grn_obj_encoded_spec_equal(ctx, &v, &current_spec);
       }
@@ -10639,7 +10641,8 @@ grn_db_spec_unpack(grn_ctx *ctx,
   rc = grn_vector_unpack(ctx,
                          decoded_spec,
                          encoded_spec,
-                         encoded_spec_size);
+                         encoded_spec_size,
+                         false);
   if (rc != GRN_SUCCESS) {
     const char *name;
     uint32_t name_size;

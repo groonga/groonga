@@ -1696,6 +1696,7 @@ grn_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *value)
   if (with_weight) {
     value->header.flags |= GRN_OBJ_WITH_WEIGHT;
   }
+  bool is_weight_float32 = ((flags & GRN_OBJ_WEIGHT_FLOAT32) != 0);
 
   void *v;
   uint32_t len;
@@ -1704,7 +1705,7 @@ grn_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *value)
     if ((flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
       bool is_var_size_element = grn_type_id_is_text_family(ctx, ja->obj.range);
       if (is_var_size_element) {
-        grn_vector_unpack(ctx, value, v, len);
+        grn_vector_unpack(ctx, value, v, len, is_weight_float32);
       } else {
         size_t offset = GRN_BULK_VSIZE(value);
         grn_bulk_write(ctx, value, v, len);

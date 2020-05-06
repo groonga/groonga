@@ -127,7 +127,8 @@ command_object_list(grn_ctx *ctx,
     grn_ctx_output_str(ctx, name, name_size);
 
     GRN_BULK_REWIND(&vector);
-    if (grn_vector_unpack(ctx, &vector, value, value_len) != GRN_SUCCESS) {
+    grn_rc rc = grn_vector_unpack(ctx, &vector, value, value_len, false);
+    if (rc != GRN_SUCCESS) {
       grn_ctx_output_map_open(ctx, "object", 4);
       {
         grn_ctx_output_cstr(ctx, "id");
