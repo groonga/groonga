@@ -94,6 +94,10 @@ const char *grn_proc_option_value_string(grn_ctx *ctx,
 grn_content_type grn_proc_option_value_content_type(grn_ctx *ctx,
                                                     grn_obj *option,
                                                     grn_content_type default_value);
+bool grn_proc_get_value_bool(grn_ctx *ctx,
+                             grn_obj *value,
+                             bool default_value,
+                             const char *context);
 int64_t grn_proc_get_value_int64(grn_ctx *ctx,
                                  grn_obj *value,
                                  int64_t default_value_raw,

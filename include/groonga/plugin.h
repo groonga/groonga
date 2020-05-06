@@ -212,10 +212,16 @@ GRN_API grn_obj *grn_plugin_command_create(grn_ctx *ctx,
                                            grn_expr_var *vars);
 
 
-GRN_API int64_t grn_plugin_proc_get_value_int64(grn_ctx *ctx,
-                                                grn_obj *value,
-                                                int64_t default_value_raw,
-                                                const char *tag);
+GRN_API bool
+grn_plugin_proc_get_value_bool(grn_ctx *ctx,
+                               grn_obj *value,
+                               bool default_value,
+                               const char *tag);
+GRN_API int64_t
+grn_plugin_proc_get_value_int64(grn_ctx *ctx,
+                                grn_obj *value,
+                                int64_t default_value_raw,
+                                const char *tag);
 GRN_API grn_operator
 grn_plugin_proc_get_value_mode(grn_ctx *ctx,
                                grn_obj *value,

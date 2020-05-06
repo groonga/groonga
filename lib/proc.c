@@ -1060,6 +1060,36 @@ grn_proc_option_value_content_type(grn_ctx *ctx,
   return grn_content_type_parse(ctx, option, default_value);
 }
 
+bool
+grn_proc_get_value_bool(grn_ctx *ctx,
+                        grn_obj *value,
+                        bool default_value,
+                        const char *tag)
+{
+  if (!value) {
+    return default_value;
+  }
+
+  if (value->header.domain == GRN_DB_BOOL) {
+    return GRN_BOOL_VALUE(value);
+  }
+
+  if (grn_type_id_is_text_family(ctx, value->header.domain)) {
+    return grn_proc_option_value_bool(ctx, value, default_value);
+  }
+
+  grn_obj inspected;
+  GRN_TEXT_INIT(&inspected, 0);
+  grn_inspect(ctx, &inspected, value);
+  GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                   "%s value must be a bool or string: <%.*s>",
+                   tag,
+                   (int)GRN_TEXT_LEN(&inspected),
+                   GRN_TEXT_VALUE(&inspected));
+  GRN_OBJ_FIN(ctx, &inspected);
+  return default_value;
+}
+
 int64_t
 grn_proc_get_value_int64(grn_ctx *ctx,
                          grn_obj *value,

@@ -1534,6 +1534,15 @@ grn_plugin_command_create(grn_ctx *ctx,
 }
 
 
+bool
+grn_plugin_proc_get_value_bool(grn_ctx *ctx,
+                               grn_obj *value,
+                               bool default_value,
+                               const char *tag)
+{
+  return grn_proc_get_value_bool(ctx, value, default_value, tag);
+}
+
 int64_t
 grn_plugin_proc_get_value_int64(grn_ctx *ctx,
                                 grn_obj *value,
