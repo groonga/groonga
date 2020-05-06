@@ -10679,9 +10679,13 @@ grn_db_spec_unpack(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
-static inline uint32_t
-grn_db_value_lock(grn_ctx *ctx, grn_id id, db_value *vp)
+static inline bool
+grn_db_value_lock(grn_ctx *ctx,
+                  grn_id id,
+                  db_value *vp,
+                  uint32_t *current_lock_output)
 {
+  bool is_locked = true;
   uint32_t current_lock = 0;
   uint32_t *lock_pointer = &(vp->lock);
   uint32_t n_trials = 0;
@@ -10700,13 +10704,15 @@ grn_db_value_lock(grn_ctx *ctx, grn_id id, db_value *vp)
               id,
               vp->lock,
               vp->ptr);
+      is_locked = false;
       break;
     }
     GRN_ATOMIC_ADD_EX(lock_pointer, -1, current_lock);
     GRN_FUTEX_WAIT(lock_pointer);
   }
   grn_log_reference_count("lock: %u: %u\n", id, current_lock);
-  return current_lock;
+  *current_lock_output = current_lock;
+  return is_locked;
 }
 
 static inline uint32_t
@@ -10809,16 +10815,35 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
     grn_db *s = (grn_db *)ctx->impl->db;
     if (s) {
       db_value *vp;
-      uint32_t l = 0;
+      uint32_t lock = 0;
       if (!(vp = grn_tiny_array_at(&s->values, id))) { goto exit; }
       if (grn_enable_reference_count) {
-        l = grn_db_value_lock(ctx, id, vp);
+        if (!grn_db_value_lock(ctx, id, vp, &lock)) {
+          const char *name;
+          uint32_t name_size = 0;
+          name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
+          ERR(GRN_NO_LOCKS_AVAILABLE,
+              "[at] failed to lock: <%u>(<%.*s>)",
+              id,
+              name_size, name);
+          goto exit;
+        }
       }
       if (s->specs && !vp->ptr /* && !vp->done */) {
         if (!grn_enable_reference_count) {
-          l = grn_db_value_lock(ctx, id, vp);
+          if (!grn_db_value_lock(ctx, id, vp, &lock)) {
+            const char *name;
+            uint32_t name_size = 0;
+            name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
+            ERR(GRN_NO_LOCKS_AVAILABLE,
+                "[at] failed to lock: "
+                "<%u>(<%.*s>)",
+                id,
+                name_size, name);
+            goto exit;
+          }
         }
-        if (l == 0) {
+        if (lock == 0) {
           grn_io_win iw;
           uint32_t encoded_spec_size;
           void *encoded_spec;
