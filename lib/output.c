@@ -1415,7 +1415,7 @@ grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     GRN_OBJ_FIN(ctx, &id_value);
     GRN_OBJ_FIN(ctx, &key_value);
   }
-  grn_obj_unlink(ctx, range);
+  grn_obj_unref(ctx, range);
 }
 
 static grn_inline void
