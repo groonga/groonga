@@ -53,8 +53,7 @@ case "${BUILD_TOOL}" in
     ;;
   cmake)
     if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      echo 'export PATH="/usr/local/opt/bison/bin:$PATH"' >> ~/.bash_profile
-      source ~/.bash_profile
+      PATH="$(brew --prefix bison)/bin:$PATH"
     fi
     cmake_args=""
     cmake_args="${cmake_args} -DRUBY=$(which ruby)"
