@@ -2423,6 +2423,8 @@ grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
 grn_rc
 grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
 {
+  const grn_column_flags column_flags = ja->header->flags;
+  bool is_weight_float32 = ((column_flags & GRN_OBJ_WEIGHT_FLOAT32) != 0);
   grn_obj header, footer;
   grn_rc rc = GRN_SUCCESS;
   GRN_TEXT_INIT(&header, 0);
@@ -2431,9 +2433,10 @@ grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
                                   vector,
                                   0,
                                   grn_vector_size(ctx, vector),
+                                  is_weight_float32,
                                   &header,
                                   &footer);
-  switch (ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
+  switch (column_flags & GRN_OBJ_COMPRESS_MASK) {
 #ifdef GRN_WITH_ZLIB
   case GRN_OBJ_COMPRESS_ZLIB :
     rc = grn_ja_putv_zlib(ctx, ja, id, &header, body, &footer, flags);

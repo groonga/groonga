@@ -397,6 +397,7 @@ extern "C" {
                   grn_obj *vector,
                   uint32_t offset,
                   uint32_t n,
+                  bool is_weight_float32,
                   grn_obj *header,
                   grn_obj *footer)
   {
@@ -412,7 +413,11 @@ extern "C" {
     if (need_footer) {
       for (uint32_t i = 0; i < n; ++i) {
         grn_section *section = &(vector->u.v.sections[i + offset]);
-        GRN_FLOAT32_PUT(ctx, footer, section->weight);
+        if (is_weight_float32) {
+          GRN_FLOAT32_PUT(ctx, footer, section->weight);
+        } else {
+          grn_text_benc(ctx, footer, section->weight);
+        }
         grn_text_benc(ctx, footer, section->domain);
       }
     }

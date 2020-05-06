@@ -4353,6 +4353,7 @@ grn_table_group_multi_keys_add_record(grn_ctx *ctx,
                                     vector,
                                     rp->key_begin,
                                     end - rp->key_begin,
+                                    false,
                                     &header,
                                     &footer);
     GRN_BULK_REWIND(bulk);

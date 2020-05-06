@@ -32,6 +32,7 @@ grn_obj *grn_vector_pack(grn_ctx *ctx,
                          grn_obj *vector,
                          uint32_t offset,
                          uint32_t n,
+                         bool is_weight_float32,
                          grn_obj *header,
                          grn_obj *footer);
 grn_rc grn_vector_unpack(grn_ctx *ctx,
