@@ -4807,13 +4807,15 @@ grn_table_select_index(grn_ctx *ctx,
                        "[selector][no-index][%s]", proc_name);
           grn_table_select_index_report(ctx, tag, table);
         }
-        rc = proc->callbacks.function.selector(ctx,
-                                               table,
-                                               NULL,
-                                               si->nargs,
-                                               si->args,
-                                               data->res,
-                                               si->logical_op);
+        rc = grn_selector_run(ctx,
+                              selector,
+                              data->expr,
+                              table,
+                              NULL,
+                              si->nargs,
+                              si->args,
+                              data->res,
+                              si->logical_op);
       }
     }
   }
