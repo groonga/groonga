@@ -14,5 +14,14 @@ load --table Products
 ]
 [[0,0.0,0.0],6]
 select   --table Products   --filter 'query("name", "r", {"unknown": "^"})'
-[[[-22,0.0,0.0],"query(): unknown option name: <unknown>"]]
-#|e| query(): unknown option name: <unknown>
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[query][options][parse] unknown option names: <unknown>: #<table:hash (nil) key:(nil) value:(nil) size:1 columns:[] default_tok"
+  ]
+]
+#|e| [query][options][parse] unknown option names: <unknown>: #<table:hash (nil) key:(nil) value:(nil) size:1 columns:[] default_tokenizer:(nil) normalizer:(nil) keys:["unknown"] subrec:none>

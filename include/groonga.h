@@ -50,6 +50,7 @@
 #include "groonga/output.h"
 #include "groonga/output_columns.h"
 #include "groonga/pat.h"
+#include "groonga/proc.h"
 #include "groonga/raw_string.h"
 #include "groonga/request_canceler.h"
 #include "groonga/request_timer.h"

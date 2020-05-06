@@ -14,5 +14,5 @@ load --table Products
 ]
 [[0,0.0,0.0],6]
 select   --table Products   --filter 'query("name", "Groonga Mroonga", {"default_operator": 29})'
-[[[-22,0.0,0.0],"query(): operator must be text: <29>"]]
-#|e| query(): operator must be text: <29>
+[[[-22,0.0,0.0],"[query][options][parse] operator must be text: <29>"]]
+#|e| [query][options][parse] operator must be text: <29>

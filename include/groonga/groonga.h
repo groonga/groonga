@@ -517,26 +517,6 @@ typedef struct {
 
 typedef grn_rc (*grn_plugin_func)(grn_ctx *ctx);
 
-typedef enum {
-  GRN_PROC_INVALID = 0,
-  GRN_PROC_TOKENIZER,
-  GRN_PROC_COMMAND,
-  GRN_PROC_FUNCTION,
-  GRN_PROC_HOOK,
-  GRN_PROC_NORMALIZER,
-  GRN_PROC_TOKEN_FILTER,
-  GRN_PROC_SCORER,
-  GRN_PROC_WINDOW_FUNCTION
-} grn_proc_type;
-
-GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
-                                 const char *name, int name_size, grn_proc_type type,
-                                 grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin,
-                                 unsigned int nvars, grn_expr_var *vars);
-GRN_API grn_obj *grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
-                                   grn_expr_var **vars, unsigned int *nvars, grn_obj **caller);
-GRN_API grn_proc_type grn_proc_get_type(grn_ctx *ctx, grn_obj *proc);
-
 typedef grn_obj grn_table_cursor;
 
 typedef enum {

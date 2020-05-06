@@ -1538,25 +1538,25 @@ int64_t
 grn_plugin_proc_get_value_int64(grn_ctx *ctx,
                                 grn_obj *value,
                                 int64_t default_value_raw,
-                                const char *context)
+                                const char *tag)
 {
-  return grn_proc_get_value_int64(ctx, value, default_value_raw, context);
+  return grn_proc_get_value_int64(ctx, value, default_value_raw, tag);
 }
 
 grn_operator
 grn_plugin_proc_get_value_mode(grn_ctx *ctx,
                                grn_obj *value,
                                grn_operator default_mode,
-                               const char *context)
+                               const char *tag)
 {
-  return grn_proc_get_value_mode(ctx, value, default_mode, context);
+  return grn_proc_get_value_mode(ctx, value, default_mode, tag);
 }
 
 grn_operator
 grn_plugin_proc_get_value_operator(grn_ctx *ctx,
                                    grn_obj *value,
                                    grn_operator default_operator,
-                                   const char *context)
+                                   const char *tag)
 {
-  return grn_proc_get_value_operator(ctx, value, default_operator, context);
+  return grn_proc_get_value_operator(ctx, value, default_operator, tag);
 }

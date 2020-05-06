@@ -143,6 +143,187 @@ exit :
 #  undef stat
 #endif /* stat */
 
+grn_rc
+grn_proc_options_parse(grn_ctx *ctx,
+                       grn_obj *options,
+                       const char *tag,
+                       const char *name,
+                       ...)
+{
+  va_list args;
+
+  va_start(args, name);
+  grn_rc rc = grn_proc_options_vparse(ctx, options, tag, name, args);
+  va_end(args);
+
+  return rc;
+}
+
+grn_rc
+grn_proc_options_vparse(grn_ctx *ctx,
+                        grn_obj *options,
+                        const char *tag,
+                        const char *name,
+                        va_list args)
+{
+  GRN_API_ENTER;
+
+  grn_obj func_tag_buffer;
+  GRN_TEXT_INIT(&func_tag_buffer, 0);
+  grn_text_printf(ctx, &func_tag_buffer, "%s[options][parse]", tag);
+  GRN_TEXT_PUTC(ctx, &func_tag_buffer, '\0');
+  const char *func_tag = GRN_TEXT_VALUE(&func_tag_buffer);
+
+  grn_obj used_ids;
+  GRN_RECORD_INIT(&used_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+
+  if (options->header.type != GRN_TABLE_HASH_KEY) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, options);
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s options must be a hash table: %.*s",
+                     func_tag,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    goto exit;
+  }
+
+  const size_t n_specified_options = grn_table_size(ctx, options);
+  while (name &&
+         GRN_RECORD_VECTOR_SIZE(&used_ids) < n_specified_options) {
+    grn_proc_option_value_type type = va_arg(args, grn_proc_option_value_type);
+    void *value_raw;
+    grn_id id = grn_hash_get(ctx,
+                             (grn_hash *)options,
+                             name, strlen(name),
+                             &value_raw);
+    grn_obj *value = value_raw;
+    switch (type) {
+    case GRN_PROC_OPTION_VALUE_RAW :
+      {
+        grn_obj **raw = va_arg(args, grn_obj **);
+        if (id == GRN_ID_NIL) {
+          *raw = NULL;
+        } else {
+          GRN_RECORD_PUT(ctx, &used_ids, id);
+          *raw = value;
+        }
+      }
+      break;
+    case GRN_PROC_OPTION_VALUE_MODE :
+      {
+        grn_operator *mode = va_arg(args, grn_operator *);
+        grn_operator default_mode = va_arg(args, grn_operator);
+        if (id == GRN_ID_NIL) {
+          *mode = default_mode;
+        } else {
+          GRN_RECORD_PUT(ctx, &used_ids, id);
+          *mode = grn_proc_get_value_mode(ctx, value, default_mode, func_tag);
+          if (ctx->rc != GRN_SUCCESS) {
+            goto exit;
+          }
+        }
+      }
+      break;
+    case GRN_PROC_OPTION_VALUE_OPERATOR :
+      {
+        grn_operator *operator = va_arg(args, grn_operator *);
+        grn_operator default_operator = va_arg(args, grn_operator);
+        if (id == GRN_ID_NIL) {
+          *operator = default_operator;
+        } else {
+          GRN_RECORD_PUT(ctx, &used_ids, id);
+          *operator = grn_proc_get_value_operator(ctx,
+                                                  value,
+                                                  default_operator,
+                                                  func_tag);
+          if (ctx->rc != GRN_SUCCESS) {
+            goto exit;
+          }
+        }
+      }
+      break;
+    case GRN_PROC_OPTION_VALUE_EXPR_FLAGS :
+      {
+        grn_expr_flags *flags = va_arg(args, grn_expr_flags *);
+        if (id == GRN_ID_NIL) {
+          *flags = 0;
+        } else {
+          GRN_RECORD_PUT(ctx, &used_ids, id);
+          *flags = grn_proc_expr_query_flags_parse(ctx,
+                                                   GRN_TEXT_VALUE(value),
+                                                   GRN_TEXT_LEN(value),
+                                                   func_tag);
+          if (ctx->rc != GRN_SUCCESS) {
+            goto exit;
+          }
+        }
+      }
+      break;
+    default :
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "%s[%s] invalid option value type: %d",
+                       func_tag,
+                       name,
+                       type);
+      goto exit;
+    }
+    name = va_arg(args, const char *);
+  }
+
+  const size_t n_used_options = GRN_RECORD_VECTOR_SIZE(&used_ids);
+  if (n_used_options == n_specified_options) {
+    goto exit;
+  }
+
+  {
+    grn_obj message;
+    GRN_TEXT_INIT(&message, 0);
+    GRN_HASH_EACH_BEGIN(ctx, (grn_hash *)options, cursor, id) {
+      bool is_used_option = false;
+      size_t i;
+      for (i = 0; n_used_options; i++) {
+        if (GRN_RECORD_VALUE_AT(&used_ids, i) == id) {
+          is_used_option = true;
+          break;
+        }
+      }
+      if (is_used_option) {
+        continue;
+      }
+
+      void *key;
+      int key_size = grn_hash_cursor_get_key(ctx, cursor, &key);
+      if (GRN_TEXT_LEN(&message) > 0) {
+        GRN_TEXT_PUTS(ctx, &message, ", ");
+      }
+      grn_text_printf(ctx, &message, "<%.*s>", key_size, (char *)key);
+    } GRN_HASH_EACH_END(ctx, cursor);
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, options);
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s unknown option names: %.*s: %.*s",
+                     func_tag,
+                     (int)GRN_TEXT_LEN(&message),
+                     GRN_TEXT_VALUE(&message),
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &message);
+    GRN_OBJ_FIN(ctx, &inspected);
+  }
+
+exit :
+  GRN_OBJ_FIN(ctx, &used_ids);
+  GRN_OBJ_FIN(ctx, &func_tag_buffer);
+  GRN_API_RETURN(ctx->rc);
+}
+
 /**** procs ****/
 
 static grn_obj *
@@ -883,7 +1064,7 @@ int64_t
 grn_proc_get_value_int64(grn_ctx *ctx,
                          grn_obj *value,
                          int64_t default_value_raw,
-                         const char *context)
+                         const char *tag)
 {
   int64_t value_raw;
 
@@ -897,8 +1078,8 @@ grn_proc_get_value_int64(grn_ctx *ctx,
     GRN_TEXT_INIT(&inspected, 0);
     grn_inspect(ctx, &inspected, value);
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "%s: value must be a number: <%.*s>",
-                     context,
+                     "%s value must be a number: <%.*s>",
+                     tag,
                      (int)GRN_TEXT_LEN(&inspected),
                      GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
@@ -926,9 +1107,9 @@ grn_proc_get_value_int64(grn_ctx *ctx,
       GRN_TEXT_INIT(&inspected, 0);
       grn_inspect(ctx, &inspected, value);
       GRN_PLUGIN_ERROR(ctx, rc,
-                       "%s: "
+                       "%s "
                        "failed to cast value to number: <%.*s>",
-                       context,
+                       tag,
                        (int)GRN_TEXT_LEN(&inspected),
                        GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
@@ -943,7 +1124,7 @@ grn_operator
 grn_proc_get_value_mode(grn_ctx *ctx,
                         grn_obj *value,
                         grn_operator default_mode,
-                        const char *context)
+                        const char *tag)
 {
   if (!value) {
     return default_mode;
@@ -954,8 +1135,8 @@ grn_proc_get_value_mode(grn_ctx *ctx,
     GRN_TEXT_INIT(&inspected, 0);
     grn_inspect(ctx, &inspected, value);
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "%s: mode must be text: <%.*s>",
-                     context,
+                     "%s mode must be text: <%.*s>",
+                     tag,
                      (int)GRN_TEXT_LEN(&inspected),
                      GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
@@ -998,7 +1179,7 @@ grn_proc_get_value_mode(grn_ctx *ctx,
     return GRN_OP_REGEXP;
   } else {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "%s: mode must be one of them: "
+                     "%s mode must be one of them: "
                      "["
                      "\"==\", \"EQUAL\", "
                      "\"!=\", \"NOT_EQUAL\", "
@@ -1014,7 +1195,7 @@ grn_proc_get_value_mode(grn_ctx *ctx,
                      "\"$\", \"@$\", \"SUFFIX\", "
                      "\"~\", \"@~\", \"REGEXP\""
                      "]: <%.*s>",
-                     context,
+                     tag,
                      (int)GRN_TEXT_LEN(value),
                      GRN_TEXT_VALUE(value));
     return default_mode;
@@ -1027,7 +1208,7 @@ grn_operator
 grn_proc_get_value_operator(grn_ctx *ctx,
                             grn_obj *value,
                             grn_operator default_operator,
-                            const char *context)
+                            const char *tag)
 {
   if (!value) {
     return default_operator;
@@ -1038,8 +1219,8 @@ grn_proc_get_value_operator(grn_ctx *ctx,
     GRN_TEXT_INIT(&inspected, 0);
     grn_inspect(ctx, &inspected, value);
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "%s: operator must be text: <%.*s>",
-                     context,
+                     "%s operator must be text: <%.*s>",
+                     tag,
                      (int)GRN_TEXT_LEN(&inspected),
                      GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
@@ -1069,14 +1250,14 @@ grn_proc_get_value_operator(grn_ctx *ctx,
     return GRN_OP_AND_NOT;
   } else {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "%s: operator must be one of them: "
+                     "%s operator must be one of them: "
                      "["
                      "\"&&\", \"+\", \"AND\", "
                      "\"||\", \"OR\", "
                      "\"!\", \"-\", \"NOT\", "
                      "\"&!\", \"AND_NOT\""
                      "]: <%.*s>",
-                     context,
+                     tag,
                      (int)operator_string.length,
                      operator_string.value);
     return default_operator;
@@ -2064,7 +2245,7 @@ run_query(grn_ctx *ctx, grn_obj *table,
   grn_operator default_mode = GRN_OP_MATCH;
   grn_operator default_operator = GRN_OP_AND;
   grn_expr_flags flags = GRN_EXPR_SYNTAX_QUERY;
-  grn_bool flags_specified = GRN_FALSE;
+  grn_expr_flags flags_specified = -1;
   grn_obj *match_columns = NULL;
   grn_obj *condition = NULL;
   grn_obj *dummy_variable;
@@ -2086,70 +2267,26 @@ run_query(grn_ctx *ctx, grn_obj *table,
       query_expander_name = options;
       break;
     case GRN_TABLE_HASH_KEY :
-      {
-        grn_hash_cursor *cursor;
-        void *key;
-        grn_obj *value;
-        int key_size;
-        cursor = grn_hash_cursor_open(ctx, (grn_hash *)options,
-                                      NULL, 0, NULL, 0,
-                                      0, -1, 0);
-        if (!cursor) {
-          GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                           "query(): failed to open cursor for options");
-          rc = ctx->rc;
-          goto exit;
-        }
-        while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
-          grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size,
-                                        (void **)&value);
-
-#define KEY_EQUAL(name)                                                 \
-          (key_size == strlen(name) && memcmp(key, name, strlen(name)) == 0)
-          if (KEY_EQUAL("expander")) {
-            query_expander_name = value;
-          } else if (KEY_EQUAL("default_mode")) {
-            default_mode = grn_proc_get_value_mode(ctx,
-                                                   value,
-                                                   default_mode,
-                                                   "query()");
-            if (ctx->rc != GRN_SUCCESS) {
-              grn_hash_cursor_close(ctx, cursor);
-              rc = ctx->rc;
-              goto exit;
-            }
-          } else if (KEY_EQUAL("default_operator")) {
-            default_operator = grn_proc_get_value_operator(ctx,
-                                                           value,
-                                                           default_operator,
-                                                           "query()");
-            if (ctx->rc != GRN_SUCCESS) {
-              grn_hash_cursor_close(ctx, cursor);
-              rc = ctx->rc;
-              goto exit;
-            }
-          } else if (KEY_EQUAL("flags")) {
-            flags_specified = GRN_TRUE;
-            flags |= grn_proc_expr_query_flags_parse(ctx,
-                                                     GRN_TEXT_VALUE(value),
-                                                     GRN_TEXT_LEN(value),
-                                                     "query()");
-            if (ctx->rc != GRN_SUCCESS) {
-              grn_hash_cursor_close(ctx, cursor);
-              rc = ctx->rc;
-              goto exit;
-            }
-          } else {
-            GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                             "query(): unknown option name: <%.*s>",
-                             key_size, (char *)key);
-            grn_hash_cursor_close(ctx, cursor);
-            rc = ctx->rc;
-            goto exit;
-          }
-#undef KEY_EQUAL
-        }
-        grn_hash_cursor_close(ctx, cursor);
+      rc = grn_proc_options_parse(ctx,
+                                  options,
+                                  "[query]",
+                                  "expander",
+                                  GRN_PROC_OPTION_VALUE_RAW,
+                                  &query_expander_name,
+                                  "default_mode",
+                                  GRN_PROC_OPTION_VALUE_MODE,
+                                  &default_mode,
+                                  default_mode,
+                                  "default_operator",
+                                  GRN_PROC_OPTION_VALUE_OPERATOR,
+                                  &default_operator,
+                                  default_operator,
+                                  "flags",
+                                  GRN_PROC_OPTION_VALUE_EXPR_FLAGS,
+                                  &flags_specified,
+                                  NULL);
+      if (rc != GRN_SUCCESS) {
+        goto exit;
       }
       break;
     default :
@@ -2169,8 +2306,10 @@ run_query(grn_ctx *ctx, grn_obj *table,
     }
   }
 
-  if (!flags_specified) {
+  if (flags_specified == -1) {
     flags |= GRN_EXPR_ALLOW_PRAGMA | GRN_EXPR_ALLOW_COLUMN;
+  } else {
+    flags |= flags_specified;
   }
 
   if (match_columns_string->header.domain == GRN_DB_TEXT &&

@@ -14,5 +14,5 @@ load --table Products
 ]
 [[0,0.0,0.0],6]
 select   --table Products   --filter 'query("name", "r", {"default_mode": 29})'
-[[[-22,0.0,0.0],"query(): mode must be text: <29>"]]
-#|e| query(): mode must be text: <29>
+[[[-22,0.0,0.0],"[query][options][parse] mode must be text: <29>"]]
+#|e| [query][options][parse] mode must be text: <29>
