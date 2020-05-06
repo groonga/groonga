@@ -4206,7 +4206,7 @@ grn_table_select_index_call(grn_ctx *ctx,
     grn_obj *table = grn_ctx_at(ctx, range);
     rc = grn_selector_run(ctx,
                           selector,
-                          table,
+                          data->expr,
                           table,
                           index_datum.index,
                           si->nargs,
