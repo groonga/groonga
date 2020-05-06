@@ -270,6 +270,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->ios = NULL;
   ctx->impl->expr_vars = NULL;
   ctx->impl->stack = NULL;
+  ctx->impl->current_selector_data = NULL;
 
   CRITICAL_SECTION_INIT(ctx->impl->lock);
   CRITICAL_SECTION_INIT(ctx->impl->columns_cache_lock);

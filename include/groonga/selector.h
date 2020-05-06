@@ -37,6 +37,33 @@ GRN_API grn_rc grn_proc_set_selector_operator(grn_ctx *ctx,
 GRN_API grn_operator grn_proc_get_selector_operator(grn_ctx *ctx,
                                                     grn_obj *proc);
 
+typedef struct _grn_selector_data grn_selector_data;
+
+GRN_API grn_selector_data *
+grn_selector_data_get(grn_ctx *ctx);
+GRN_API grn_obj *
+grn_selector_data_get_selector(grn_ctx *ctx,
+                               grn_selector_data *data);
+GRN_API grn_obj *
+grn_selector_data_get_expr(grn_ctx *ctx,
+                           grn_selector_data *data);
+GRN_API grn_obj *
+grn_selector_data_get_table(grn_ctx *ctx,
+                            grn_selector_data *data);
+GRN_API grn_obj *
+grn_selector_data_get_index(grn_ctx *ctx,
+                            grn_selector_data *data);
+GRN_API grn_obj **
+grn_selector_data_get_args(grn_ctx *ctx,
+                           grn_selector_data *data,
+                           size_t *n_args);
+GRN_API grn_obj *
+grn_selector_data_get_res(grn_ctx *ctx,
+                          grn_selector_data *data);
+GRN_API grn_operator
+grn_selector_data_get_op(grn_ctx *ctx,
+                         grn_selector_data *data);
+
 
 #ifdef __cplusplus
 }

@@ -3572,6 +3572,7 @@ exec_result_to_score(grn_ctx *ctx, grn_obj *result, grn_obj *score_buffer)
 }
 
 typedef struct {
+  grn_obj *expr;
   grn_obj *variable;
   grn_scanner *scanner;
   int nth_scan_info;
@@ -4166,7 +4167,6 @@ grn_table_select_index_call(grn_ctx *ctx,
     return GRN_FUNCTION_NOT_IMPLEMENTED;
   }
 
-  grn_proc *proc = (grn_proc *)selector;
   grn_rc rc = GRN_FUNCTION_NOT_IMPLEMENTED;
 
   grn_operator selector_op = grn_proc_get_selector_operator(ctx, selector);
@@ -4203,13 +4203,15 @@ grn_table_select_index_call(grn_ctx *ctx,
 
     grn_id range = grn_obj_get_range(ctx, index_datum.index);
     grn_obj *table = grn_ctx_at(ctx, range);
-    rc = proc->callbacks.function.selector(ctx,
-                                           table,
-                                           index_datum.index,
-                                           si->nargs,
-                                           si->args,
-                                           res,
-                                           logical_op);
+    rc = grn_selector_run(ctx,
+                          selector,
+                          table,
+                          table,
+                          index_datum.index,
+                          si->nargs,
+                          si->args,
+                          res,
+                          logical_op);
     grn_obj_unref(ctx, table);
   }
 
@@ -5044,6 +5046,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       GRN_PTR_INIT(&res_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
       GRN_TEXT_INIT(&condition_inspect_buffer, 0);
 
+      data.expr = scanner->expr;
       data.variable = grn_expr_get_var_by_offset(ctx, (grn_obj *)e, 0);
       data.scanner = scanner;
       data.res = res;

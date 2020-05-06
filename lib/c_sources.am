@@ -67,6 +67,7 @@ libgroonga_c_sources =				\
 	grn_scanner.h				\
 	grn_scorer.h				\
 	grn_scorers.h				\
+	grn_selector.h				\
 	grn_snip.h				\
 	grn_store.h				\
 	grn_str.h				\
@@ -121,6 +122,7 @@ libgroonga_c_sources =				\
 	scanner.c				\
 	scorer.c				\
 	scorers.c				\
+	selector.c				\
 	snip.c					\
 	store.c					\
 	str.c					\

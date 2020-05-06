@@ -121,6 +121,7 @@ struct _grn_ctx_impl {
   void *current_request_timer_id;
   void *parser;
   grn_timeval tv;
+  grn_selector_data *current_selector_data;
 
   /* loader portion */
   grn_edge *edge;
