@@ -195,7 +195,7 @@ grn_proc_options_vparse(grn_ctx *ctx,
   while (name &&
          GRN_RECORD_VECTOR_SIZE(&used_ids) < n_specified_options) {
     grn_proc_option_value_type type = va_arg(args, grn_proc_option_value_type);
-    void *value_raw;
+    void *value_raw = NULL;
     grn_id id = grn_hash_get(ctx,
                              (grn_hash *)options,
                              name, strlen(name),
@@ -205,9 +205,7 @@ grn_proc_options_vparse(grn_ctx *ctx,
     case GRN_PROC_OPTION_VALUE_RAW :
       {
         grn_obj **raw = va_arg(args, grn_obj **);
-        if (id == GRN_ID_NIL) {
-          *raw = NULL;
-        } else {
+        if (id != GRN_ID_NIL) {
           GRN_RECORD_PUT(ctx, &used_ids, id);
           *raw = value;
         }
@@ -216,12 +214,9 @@ grn_proc_options_vparse(grn_ctx *ctx,
     case GRN_PROC_OPTION_VALUE_MODE :
       {
         grn_operator *mode = va_arg(args, grn_operator *);
-        grn_operator default_mode = va_arg(args, grn_operator);
-        if (id == GRN_ID_NIL) {
-          *mode = default_mode;
-        } else {
+        if (id != GRN_ID_NIL) {
           GRN_RECORD_PUT(ctx, &used_ids, id);
-          *mode = grn_proc_get_value_mode(ctx, value, default_mode, func_tag);
+          *mode = grn_proc_get_value_mode(ctx, value, *mode, func_tag);
           if (ctx->rc != GRN_SUCCESS) {
             goto exit;
           }
@@ -231,14 +226,11 @@ grn_proc_options_vparse(grn_ctx *ctx,
     case GRN_PROC_OPTION_VALUE_OPERATOR :
       {
         grn_operator *operator = va_arg(args, grn_operator *);
-        grn_operator default_operator = va_arg(args, grn_operator);
-        if (id == GRN_ID_NIL) {
-          *operator = default_operator;
-        } else {
+        if (id != GRN_ID_NIL) {
           GRN_RECORD_PUT(ctx, &used_ids, id);
           *operator = grn_proc_get_value_operator(ctx,
                                                   value,
-                                                  default_operator,
+                                                  *operator,
                                                   func_tag);
           if (ctx->rc != GRN_SUCCESS) {
             goto exit;
@@ -249,14 +241,42 @@ grn_proc_options_vparse(grn_ctx *ctx,
     case GRN_PROC_OPTION_VALUE_EXPR_FLAGS :
       {
         grn_expr_flags *flags = va_arg(args, grn_expr_flags *);
-        if (id == GRN_ID_NIL) {
-          *flags = 0;
-        } else {
+        if (id != GRN_ID_NIL) {
           GRN_RECORD_PUT(ctx, &used_ids, id);
           *flags = grn_proc_expr_query_flags_parse(ctx,
                                                    GRN_TEXT_VALUE(value),
                                                    GRN_TEXT_LEN(value),
                                                    func_tag);
+          if (ctx->rc != GRN_SUCCESS) {
+            goto exit;
+          }
+        }
+      }
+      break;
+    case GRN_PROC_OPTION_VALUE_INT64 :
+      {
+        int64_t *number = va_arg(args, int64_t *);
+        if (id != GRN_ID_NIL) {
+          GRN_RECORD_PUT(ctx, &used_ids, id);
+          *number = grn_proc_get_value_int64(ctx,
+                                             value,
+                                             *number,
+                                             func_tag);
+          if (ctx->rc != GRN_SUCCESS) {
+            goto exit;
+          }
+        }
+      }
+      break;
+    case GRN_PROC_OPTION_VALUE_BOOL :
+      {
+        bool *b = va_arg(args, bool *);
+        if (id != GRN_ID_NIL) {
+          GRN_RECORD_PUT(ctx, &used_ids, id);
+          *b = grn_proc_get_value_bool(ctx,
+                                       value,
+                                       *b,
+                                       func_tag);
           if (ctx->rc != GRN_SUCCESS) {
             goto exit;
           }
@@ -1113,7 +1133,7 @@ grn_proc_get_value_int64(grn_ctx *ctx,
                      (int)GRN_TEXT_LEN(&inspected),
                      GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
-    return 0;
+    return default_value_raw;
   }
 
   if (value->header.domain == GRN_DB_INT32) {
@@ -2306,11 +2326,9 @@ run_query(grn_ctx *ctx, grn_obj *table,
                                   "default_mode",
                                   GRN_PROC_OPTION_VALUE_MODE,
                                   &default_mode,
-                                  default_mode,
                                   "default_operator",
                                   GRN_PROC_OPTION_VALUE_OPERATOR,
                                   &default_operator,
-                                  default_operator,
                                   "flags",
                                   GRN_PROC_OPTION_VALUE_EXPR_FLAGS,
                                   &flags_specified,
