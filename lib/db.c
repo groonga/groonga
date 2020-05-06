@@ -11593,30 +11593,20 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
       GRN_BULK_REWIND(obj);
       break;
     default :
-      {
-        grn_obj *d = grn_ctx_at(ctx, domain);
-        if (!d) {
-          ERR(GRN_INVALID_ARGUMENT,
-              "[obj][reinit] invalid domain assigned: <%u>",
-              domain);
+      if (grn_type_id_is_text_family(ctx, domain)) {
+        if (flags & GRN_OBJ_VECTOR) {
+          if (obj->header.type != GRN_VECTOR) { grn_bulk_fin(ctx, obj); }
+          obj->header.type = GRN_VECTOR;
         } else {
-          if (d->header.type == GRN_TYPE && (d->header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
-            if (flags & GRN_OBJ_VECTOR) {
-              if (obj->header.type != GRN_VECTOR) { grn_bulk_fin(ctx, obj); }
-              obj->header.type = GRN_VECTOR;
-            } else {
-              if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
-              obj->header.type = GRN_BULK;
-            }
-          } else {
-            if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
-            obj->header.type = (flags & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK;
-          }
-          obj->header.domain = domain;
-          GRN_BULK_REWIND(obj);
-          grn_obj_unref(ctx, d);
+          if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
+          obj->header.type = GRN_BULK;
         }
+      } else {
+        if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
+        obj->header.type = (flags & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK;
       }
+      obj->header.domain = domain;
+      GRN_BULK_REWIND(obj);
       break;
     }
   }
