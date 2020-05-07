@@ -3,8 +3,18 @@ table_create Users TABLE_HASH_KEY ShortText
 database_unmap
 [[0,0.0,0.0],true]
 object_remove Users --force yes
-[[[-65,0.0,0.0],"failed to open: segment size is 0"],false]
-#|e| failed to open: segment size is 0
+[
+  [
+    [
+      -65,
+      0.0,
+      0.0
+    ],
+    "[io][open] failed to open: segment size is 0: <db/db.0000100>"
+  ],
+  false
+]
+#|e| [io][open] failed to open: segment size is 0: <db/db.0000100>
 #|e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
 object_exist Users
 [[0,0.0,0.0],false]

@@ -566,7 +566,6 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
 {
   size_t max_path_len = PATH_MAX - 4;
   size_t path_length;
-  grn_io *io;
   struct stat s;
   fileinfo fi;
   uint32_t flags = 0;
@@ -594,7 +593,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     ssize_t read_bytes;
     grn_open(fd, path, O_RDWR | GRN_OPEN_FLAG_BINARY);
     if (fd == -1) {
-      ERRNO_ERR("failed to open path: <%s>",
+      ERRNO_ERR("[io][open] failed to open path: <%s>",
                 path);
       return NULL;
     }
@@ -626,7 +625,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     }
     if (memcmp(h.idstr, GRN_IO_IDSTR, GRN_IO_IDSTR_LEN) != 0) {
       ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
-          "failed to open: format ID is different: <%s>: <%.*s>",
+          "[io][open] failed to open: format ID is different: <%s>: <%.*s>",
           path,
           (int)GRN_IO_IDSTR_LEN, GRN_IO_IDSTR);
       grn_close(fd);
@@ -638,65 +637,102 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     flags = h.flags;
     grn_close(fd);
     if (segment_size == 0) {
-      ERR(GRN_INCOMPATIBLE_FILE_FORMAT, "failed to open: segment size is 0");
+      ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
+          "[io][open] failed to open: segment size is 0: <%s>",
+          path);
       return NULL;
     }
   }
   b = grn_io_compute_base(header_size);
   bs = grn_io_compute_base_segment(b, segment_size);
   grn_fileinfo_init(&fi, 1);
-  if (!grn_fileinfo_open(ctx, &fi, path, O_RDWR)) {
-    struct _grn_io_header *header;
-    header = GRN_MMAP(ctx, &grn_gctx, NULL, &(fi.fmo), &fi, 0, b);
-    if (header) {
-      unsigned long file_size;
-      unsigned int max_nfiles;
-      fileinfo *fis;
-
-      file_size = grn_io_compute_file_size(header->version);
-      max_nfiles = grn_io_compute_max_n_files(segment_size, max_segment,
-                                              bs, file_size);
-      fis = GRN_MALLOCN(fileinfo, max_nfiles);
-      if (!fis) {
-        GRN_MUNMAP(ctx, &grn_gctx, NULL, &(fi.fmo), &fi, header, b);
-        grn_fileinfo_close(ctx, &fi);
-        return NULL;
-      }
-      grn_fileinfo_init(fis, max_nfiles);
-      grn_memcpy(fis, &fi, sizeof(fileinfo));
-      if ((io = GRN_MALLOC(sizeof(grn_io)))) {
-        grn_io_mapinfo *maps = NULL;
-        if ((maps = GRN_CALLOC(sizeof(grn_io_mapinfo) * max_segment))) {
-          grn_strncpy(io->path, PATH_MAX, path, path_length + 1);
-          io->header = header;
-          io->user_header = (((byte *) header) + IO_HEADER_SIZE);
-          {
-            io->maps = maps;
-            io->base = b;
-            io->base_seg = bs;
-            io->mode = mode;
-            io->fis = fis;
-            io->ainfo = NULL;
-            io->max_map_seg = 0;
-            io->nmaps = 0;
-            io->count = 0;
-            io->flags = header->flags;
-            io->lock = &header->lock;
-            if (!array_init(ctx, io, io->header->n_arrays)) {
-              grn_io_register(ctx, io);
-              return io;
-            }
-          }
-          if (io->maps) { GRN_FREE(io->maps); }
-        }
-        GRN_FREE(io);
-      }
-      GRN_FREE(fis);
-      GRN_MUNMAP(ctx, &grn_gctx, NULL, &(fi.fmo), &fi, header, b);
-    }
-    grn_fileinfo_close(ctx, &fi);
+  grn_rc rc = grn_fileinfo_open(ctx, &fi, path, O_RDWR);
+  if (rc != GRN_SUCCESS) {
+    ERR(rc,
+        "[io][open] failed to open fileinfo: <%s>",
+        path);
+    return NULL;
   }
-  return NULL;
+
+  struct _grn_io_header *header;
+  header = GRN_MMAP(ctx, &grn_gctx, NULL, &(fi.fmo), &fi, 0, b);
+  if (!header) {
+    grn_fileinfo_close(ctx, &fi);
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[io][open] failed to map: <%s>",
+        path);
+    return NULL;
+  }
+
+  unsigned long file_size = grn_io_compute_file_size(header->version);
+  unsigned int max_nfiles = grn_io_compute_max_n_files(segment_size,
+                                                       max_segment,
+                                                       bs,
+                                                       file_size);
+  fileinfo *fis = GRN_MALLOCN(fileinfo, max_nfiles);
+  if (!fis) {
+    GRN_MUNMAP(ctx, &grn_gctx, NULL, &(fi.fmo), &fi, header, b);
+    grn_fileinfo_close(ctx, &fi);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[io][open] failed to allocate fileinfo: <%s>",
+        path);
+    return NULL;
+  }
+
+  grn_fileinfo_init(fis, max_nfiles);
+  grn_memcpy(fis, &fi, sizeof(fileinfo));
+  grn_io *io = GRN_MALLOC(sizeof(grn_io));
+  if (!io) {
+    GRN_FREE(fis);
+    GRN_MUNMAP(ctx, &grn_gctx, NULL, &(fi.fmo), &fi, header, b);
+    grn_fileinfo_close(ctx, &fi);
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[io][open] failed to allocate grn_io: <%s>",
+        path);
+    return NULL;
+  }
+
+  grn_io_mapinfo *maps = GRN_CALLOC(sizeof(grn_io_mapinfo) * max_segment);
+  if (!maps) {
+    GRN_FREE(io);
+    GRN_FREE(fis);
+    GRN_MUNMAP(ctx, &grn_gctx, NULL, &(fi.fmo), &fi, header, b);
+    grn_fileinfo_close(ctx, &fi);
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[io][open] failed to allocate grn_io_mapinfo: <%s>",
+        path);
+    return NULL;
+  }
+
+  grn_strncpy(io->path, PATH_MAX, path, path_length + 1);
+  io->header = header;
+  io->user_header = (((byte *) header) + IO_HEADER_SIZE);
+  io->maps = maps;
+  io->base = b;
+  io->base_seg = bs;
+  io->mode = mode;
+  io->fis = fis;
+  io->ainfo = NULL;
+  io->max_map_seg = 0;
+  io->nmaps = 0;
+  io->count = 0;
+  io->flags = header->flags;
+  io->lock = &header->lock;
+  rc = array_init(ctx, io, io->header->n_arrays);
+  if (rc != GRN_SUCCESS) {
+    GRN_FREE(io->maps);
+    GRN_FREE(io);
+    GRN_FREE(fis);
+    GRN_MUNMAP(ctx, &grn_gctx, NULL, &(fi.fmo), &fi, header, b);
+    grn_fileinfo_close(ctx, &fi);
+    ERR(rc,
+        "[io][open] failed to initialize array: <%s>",
+        path);
+    return NULL;
+  }
+
+  grn_io_register(ctx, io);
+  return io;
 }
 
 grn_rc
