@@ -606,7 +606,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
       rc = GRN_UNKNOWN_ERROR;
     }
     ERR(rc,
-        "[table][pat][open] failed to open grn_io: <%s>",
+        "[pat][open] failed to open grn_io: <%s>",
         path ? path : "(temporary)");
     return NULL;
   }
@@ -614,7 +614,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   io_type = grn_io_get_type(io);
   if (io_type != GRN_TABLE_PAT_KEY) {
     ERR(GRN_INVALID_FORMAT,
-        "[table][pat] file type must be %#04x: <%#04x>: <%s>",
+        "[pat] file type must be %#04x: <%#04x>: <%s>",
         GRN_TABLE_PAT_KEY, io_type,
         path ? path : "(temporary)");
     grn_io_close(ctx, io);
@@ -622,7 +622,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   }
   if (!(pat = GRN_MALLOC(sizeof(grn_pat)))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[table][pat][open] failed to allocate memory: <%s>",
+        "[pat][open] failed to allocate memory: <%s>",
         path ? path : "(temporary)");
     grn_io_close(ctx, io);
     return NULL;
@@ -647,7 +647,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   PAT_AT(pat, 0, node0);
   if (!node0) {
     ERR(GRN_INVALID_FORMAT,
-        "[table][pat][open] failed to get the root node: <%s>",
+        "[pat][open] failed to get the root node: <%s>",
         path ? path : "(temporary)");
     grn_io_close(ctx, io);
     GRN_FREE(pat);
