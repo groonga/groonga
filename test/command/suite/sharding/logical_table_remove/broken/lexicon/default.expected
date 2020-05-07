@@ -59,6 +59,7 @@ logical_table_remove Logs timestamp   --min "2015-02-04 00:00:00"   --min_border
   ]
 ]
 #|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000113>
+#|e| [table][pat][open] failed to open grn_io: <db/db.0000113>
 #|e| grn_ctx_at: failed to open object: <275>(<Times_20150204>):<49>(<table:pat_key>)
 #|e| grn_ctx_at: failed to open object: <276>(<Times_20150204.timestamp_index>):<72>(<column:index>)
 #|e| [column][remove][index] hook has a dangling reference: <Logs_20150204.timestamp> -> <Times_20150204.timestamp_index>
@@ -119,9 +120,20 @@ column_create PathTerms_20150203 index COLUMN_INDEX|WITH_POSITION Paths_20150203
 column_create PathTerms_20150204 index COLUMN_INDEX|WITH_POSITION Paths_20150204 _key
 column_create Times_20150203 timestamp_index COLUMN_INDEX Logs_20150203 timestamp
 #|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000113>
+#|e| [table][pat][open] failed to open grn_io: <db/db.0000113>
 #|e| grn_ctx_at: failed to open object: <275>(<Times_20150204>):<49>(<table:pat_key>)
+#|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000113>
+#|e| [table][pat][open] failed to open grn_io: <db/db.0000113>
 #|e| grn_ctx_at: failed to open object: <275>(<Times_20150204>):<49>(<table:pat_key>)
+#|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000113>
+#|e| [table][pat][open] failed to open grn_io: <db/db.0000113>
 #|e| grn_ctx_at: failed to open object: <275>(<Times_20150204>):<49>(<table:pat_key>)
+#|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000113>
+#|e| [table][pat][open] failed to open grn_io: <db/db.0000113>
 #|e| grn_ctx_at: failed to open object: <275>(<Times_20150204>):<49>(<table:pat_key>)
+#|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000113>
+#|e| [table][pat][open] failed to open grn_io: <db/db.0000113>
 #|e| grn_ctx_at: failed to open object: <275>(<Times_20150204>):<49>(<table:pat_key>)
+#|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000113>
+#|e| [table][pat][open] failed to open grn_io: <db/db.0000113>
 #|e| grn_ctx_at: failed to open object: <275>(<Times_20150204>):<49>(<table:pat_key>)
