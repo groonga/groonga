@@ -29,12 +29,7 @@
 #  define __MINGW_MSVC_COMPAT_WARNINGS
 # endif /* __GNUC__ */
 
-# ifdef __GNUC__
-#  include <w32api.h>
-#  define GRN_MINIMUM_WINDOWS_VERSION WindowsVista
-# else /* __GNUC__ */
-#  define GRN_MINIMUM_WINDOWS_VERSION 0x0600 /* Vista */
-# endif /* __GNUC__ */
+# define GRN_MINIMUM_WINDOWS_VERSION _WIN32_WINNT_WIN8
 
 # ifdef WINVER
 #  undef WINVER
