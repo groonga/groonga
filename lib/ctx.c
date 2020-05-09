@@ -1793,6 +1793,8 @@ grn_ctx_log_back_trace_windows(grn_ctx *ctx, grn_log_level level)
     void *address = back_trace[i];
     grn_windows_log_trace(ctx, level, process, (DWORD64)address);
   }
+
+  grn_windows_symbol_cleanup(process);
 }
 #else
 # ifdef HAVE_BACKTRACE
