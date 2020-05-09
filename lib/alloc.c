@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2016  Brazil
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,10 @@
 #include "grn.h"
 #include "grn_alloc.h"
 #include "grn_ctx_impl.h"
+
+#ifdef HAVE_EXECINFO_H
+# include <execinfo.h>
+#endif
 
 static int alloc_count = 0;
 
