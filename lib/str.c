@@ -2662,9 +2662,7 @@ grn_bulk_fin(grn_ctx *ctx, grn_obj *buf)
   }
   buf->header.flags = 0;
   buf->header.impl_flags &= ~GRN_OBJ_DO_SHALLOW_COPY;
-  buf->u.b.head = NULL;
-  buf->u.b.curr = NULL;
-  buf->u.b.tail = NULL;
+  memset(&(buf->u), 0, sizeof(buf->u));
   return GRN_SUCCESS;
 }
 

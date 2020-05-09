@@ -11497,9 +11497,7 @@ grn_obj_reference_count(grn_ctx *ctx, grn_obj *obj)
   }\
   if ((obj)->u.v.sections) { GRN_FREE((obj)->u.v.sections); }\
   (obj)->header.impl_flags &= ~GRN_OBJ_DO_SHALLOW_COPY;\
-  (obj)->u.b.head = NULL;\
-  (obj)->u.b.curr = NULL;\
-  (obj)->u.b.tail = NULL;\
+  memset(&((obj)->u), 0, sizeof((obj)->u));\
 } while (0)
 
 void
