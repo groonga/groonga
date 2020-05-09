@@ -18,6 +18,7 @@
 */
 
 #include "grn.h"
+#include "grn_encoding.h"
 #include "grn_windows.h"
 
 #ifdef WIN32
