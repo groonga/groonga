@@ -468,7 +468,7 @@ extern "C" {
           grn_section *section = vector->u.v.sections + n0 + i;
           if (pe <= p) { return GRN_INVALID_ARGUMENT; }
           if (is_weight_float32) {
-            memcpy(&(section->weight), p, sizeof(float));
+            grn_memcpy(&(section->weight), p, sizeof(float));
             p += sizeof(float);
           } else {
             GRN_B_DEC(section->weight, p);

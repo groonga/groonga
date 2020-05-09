@@ -1440,7 +1440,7 @@ namespace grnarrow {
         std::min(nbytes,
                  static_cast<int64_t>(buffer_.size() - offset_));
       if (bytes_available > 0) {
-        memcpy(out, buffer_.data() + offset_, bytes_available);
+        grn_memcpy(out, buffer_.data() + offset_, bytes_available);
         offset_ += bytes_available;
         return bytes_available;
       } else {
@@ -1521,9 +1521,9 @@ namespace grnarrow {
                  "[arrow][stream-loader][consume] failed to resize buffer")) {
         return ctx_->rc;
       }
-      memcpy(buffer_->mutable_data() + current_buffer_size,
-             data,
-             data_size);
+      grn_memcpy(buffer_->mutable_data() + current_buffer_size,
+                 data,
+                 data_size);
 
       if (buffer_->size() < decoder_.next_required_size()) {
         return ctx_->rc;
