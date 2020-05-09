@@ -540,7 +540,13 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   GRN_OUTPUT_MAP_CLOSE();
 
 #ifdef USE_MEMORY_DEBUG
-  grn_alloc_info_dump(&grn_gctx);
+  if (grn_plugin_proc_get_var_bool(ctx,
+                                   user_data,
+                                   "dump_alloc_info",
+                                   -1,
+                                   false)) {
+    grn_alloc_info_dump(&grn_gctx);
+  }
 #endif /* USE_MEMORY_DEBUG */
 
   return NULL;
