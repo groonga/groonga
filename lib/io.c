@@ -2029,7 +2029,7 @@ grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
       TCHAR path[MAX_PATH];
       DWORD path_length_including_null =
         GetFinalPathNameByHandleA(fi->fh,
-                                  &path,
+                                  path,
                                   MAX_PATH,
                                   0);
       if (path_length_including_null != 0 &&
