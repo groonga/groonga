@@ -32,7 +32,7 @@ grn_memory_get_usage(grn_ctx *ctx)
 #ifdef WIN32
   PROCESS_MEMORY_COUNTERS_EX counters;
   if (!GetProcessMemoryInfo(GetCurrentProcess(),
-                            &counters,
+                            (PPROCESS_MEMORY_COUNTERS)&counters,
                             sizeof(counters))) {
     SERR("GetProcessMemoryInfo");
     return 0;
