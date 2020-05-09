@@ -410,7 +410,7 @@ extern grn_timeval grn_starttime;
 
 GRN_API void grn_ctx_log(grn_ctx *ctx, const char *fmt, ...) GRN_ATTRIBUTE_PRINTF(2);
 GRN_API void grn_ctx_logv(grn_ctx *ctx, const char *fmt, va_list ap);
-void grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
+GRN_API void grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
 void grn_ctx_loader_clear(grn_ctx *ctx);
 void grn_log_reopen(grn_ctx *ctx);
 
