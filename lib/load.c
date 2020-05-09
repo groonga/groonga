@@ -178,7 +178,7 @@ grn_loader_get_column(grn_ctx *ctx,
   }
 
   id = grn_hash_add(ctx, loader->columns, name, name_length, &value, NULL);
-  memcpy(value, &column, sizeof(grn_obj *));
+  grn_memcpy(value, &column, sizeof(grn_obj *));
   grn_obj *range = grn_ctx_at(ctx, DB_OBJ(column)->range);
   if (grn_obj_is_table(ctx, range)) {
     GRN_PTR_PUT(ctx, &(loader->ranges), range);
