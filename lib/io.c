@@ -1792,9 +1792,11 @@ grn_munmap_v0(grn_ctx *ctx, grn_ctx *owner_ctx, fileinfo *fi, void *start,
   }
 }
 
-grn_inline static grn_rc
+grn_inline static bool
 grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
+  bool success = true;
+
   /* may be wrong if flags is just only O_RDWR */
   if ((flags & O_CREAT)) {
     grn_bool exist = GRN_FALSE;
@@ -1822,6 +1824,7 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
     if (fi->fh == INVALID_HANDLE_VALUE) {
       SERR("CreateFile(<%s>, <%s>) failed",
            path, flags_description);
+      success = false;
       if (!exist) {
         struct stat stat_buffer;
         if (stat(path, &stat_buffer) == 0) {
@@ -1887,6 +1890,7 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
     if (fi->fh == INVALID_HANDLE_VALUE) {
       SERR("CreateFile(<%s>, <O_RDWR|O_TRUNC>) failed",
            path);
+      success = false;
       goto exit;
     }
     GRN_LOG(ctx, GRN_LOG_INFO,
@@ -1901,30 +1905,29 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
   if (fi->fh == INVALID_HANDLE_VALUE) {
     SERR("CreateFile(<%s>, <O_RDWR>) failed",
          path);
+    success = false;
     goto exit;
   }
   GRN_LOG(ctx, GRN_LOG_INFO,
           "[io][open] open existing file: <%s>", path);
 
 exit :
-  return ctx->rc;
+  return success;
 }
 
 grn_inline static grn_rc
 grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
-  grn_rc rc;
   struct _grn_io_header io_header;
   LARGE_INTEGER file_size;
   int version = grn_io_version_default;
 
-  rc = grn_fileinfo_open_common(ctx, fi, path, flags);
-  if (rc != GRN_SUCCESS) {
-    if (fi->fh) {
+  if (!grn_fileinfo_open_common(ctx, fi, path, flags)) {
+    if (fi->fh != INVALID_HANDLE_VALUE) {
       CloseHandle(fi->fh);
       fi->fh = INVALID_HANDLE_VALUE;
     }
-    return rc;
+    return ctx->rc;
   }
 
   if (GetFileSizeEx(fi->fh, &file_size) && file_size.QuadPart > 0) {
