@@ -36,7 +36,7 @@ class TestGrnDBRecover < GroongaTestCase
                    "",
                    expected_groonga_log("info", <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
-|e| system call error: DETAIL: failed to open path: <#{path}>
+|e| system call error: DETAIL: [io][open] failed to open path: <#{path}>
 |e| grn_ctx_at: failed to open object: <256>(<inspect>):<51>(<table:no_key>)
 |i| [db][recover] removed orphan 'inspect' object: <256>
 |i| Recovered database: <#{@database_path}>
@@ -468,13 +468,13 @@ object corrupt: <#{recover_error_message}>(-55)
     end
     error_message = <<-MESSAGE
 Failed to recover database: <#{@database_path}>
-incompatible file format: <failed to open: format ID is different: <#{path[0..85]}>(-65)
+incompatible file format: <[io][open] failed to open: format ID is different: <#{path[0..74]}>(-65)
     MESSAGE
     assert_equal([
                    "",
                    error_message,
                    expected_groonga_log("notice", <<-MESSAGES)
-|e| failed to open: format ID is different: <#{path}>: <GROONGA:IO:00001>
+|e| [io][open] failed to open: format ID is different: <#{path}>: <GROONGA:IO:00001>
 |e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
 #{prepend_tag("|e| ", error_message).chomp}
                    MESSAGES
