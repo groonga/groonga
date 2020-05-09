@@ -1007,7 +1007,7 @@ grn_text_atoj(grn_ctx *ctx,
         if ((a->obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
           if (a->next) {
             grn_obj sub_ids;
-            GRN_RECORD_INIT(&sub_ids, DB_OBJ(a->obj)->range, GRN_OBJ_VECTOR);
+            GRN_RECORD_INIT(&sub_ids, GRN_OBJ_VECTOR, DB_OBJ(a->obj)->range);
             grn_obj_get_value(ctx, a->obj, id, &sub_ids);
             size_t n = GRN_RECORD_VECTOR_SIZE(&sub_ids);
             grn_output_array_open(ctx, outbuf, output_type, "VECTOR", n);
