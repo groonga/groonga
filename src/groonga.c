@@ -1424,46 +1424,76 @@ h_output_typed(grn_ctx *ctx, int flags, ht_context *hc)
     hc->in_body = true;
   }
 
-  if (GRN_TEXT_LEN(&body_) > 0) {
-    if (hc->is_chunked) {
-      grn_text_printf(ctx, &head_,
-                      "%x\r\n", (unsigned int)GRN_TEXT_LEN(&body_));
-      head = &head_;
-      GRN_TEXT_PUTS(ctx, &foot_, "\r\n");
-      foot = &foot_;
-    }
-    body = &body_;
-  }
-
-  if (is_last_message) {
-    if (hc->is_chunked) {
-      grn_obj last_output;
-      GRN_TEXT_INIT(&last_output, 0);
-      grn_output_envelope_close(ctx,
-                                &last_output,
-                                expr_rc,
-                                input_path,
-                                number_of_lines);
-      size_t last_output_length = GRN_TEXT_LEN(&last_output);
-      grn_text_printf(ctx, &foot_, "%x\r\n", (unsigned int)last_output_length);
-      GRN_TEXT_PUT(ctx, &foot_,
-                   GRN_TEXT_VALUE(&last_output), last_output_length);
-      GRN_TEXT_PUTS(ctx, &foot_, "\r\n");
-      GRN_OBJ_FIN(ctx, &last_output);
-
-      GRN_TEXT_PUTS(ctx, &foot_, "0\r\n");
-      GRN_TEXT_PUTS(ctx, &foot_, "Connection: close\r\n");
-      GRN_TEXT_PUTS(ctx, &foot_, "\r\n");
-      foot = &foot_;
-    }
-  }
-
-  if (should_return_body) {
-    h_output_send(ctx, fd, header, head, body, foot);
-  } else {
+  if (!should_return_body) {
     h_output_send(ctx, fd, header, NULL, NULL, NULL);
+    goto exit;
   }
 
+  if (!hc->is_chunked) {
+    if (GRN_TEXT_LEN(&body_) > 0) {
+      body = &body_;
+    }
+    h_output_send(ctx, fd, header, head, body, foot);
+    goto exit;
+  }
+
+  grn_obj chunk_;
+  GRN_TEXT_INIT(&chunk_, GRN_OBJ_DO_SHALLOW_COPY);
+  const size_t max_chunk_size = 64 * 1024 * 1024;
+  size_t offset = 0;
+  for (offset = 0;
+       GRN_TEXT_LEN(&body_) - offset > max_chunk_size;
+       offset += max_chunk_size) {
+    GRN_TEXT_SET(ctx,
+                 &chunk_,
+                 GRN_TEXT_VALUE(&body_) + offset,
+                 max_chunk_size);
+    grn_text_printf(ctx, &head_,
+                    "%x\r\n", (unsigned int)GRN_TEXT_LEN(&chunk_));
+    GRN_TEXT_PUTS(ctx, &foot_, "\r\n");
+    h_output_send(ctx, fd, header, &head_, &chunk_, &foot_);
+    GRN_BULK_REWIND(&head_);
+    GRN_BULK_REWIND(&foot_);
+    header = NULL;
+    head = NULL;
+    foot = NULL;
+  }
+  if (GRN_TEXT_LEN(&body_) - offset > 0) {
+    GRN_TEXT_SET(ctx,
+                 &chunk_,
+                 GRN_TEXT_VALUE(&body_) + offset,
+                 GRN_TEXT_LEN(&body_) - offset);
+    grn_text_printf(ctx, &head_,
+                    "%x\r\n", (unsigned int)GRN_TEXT_LEN(&chunk_));
+    head = &head_;
+    GRN_TEXT_PUTS(ctx, &foot_, "\r\n");
+    foot = &foot_;
+    body = &chunk_;
+  }
+  if (is_last_message) {
+    grn_obj last_output;
+    GRN_TEXT_INIT(&last_output, 0);
+    grn_output_envelope_close(ctx,
+                              &last_output,
+                              expr_rc,
+                              input_path,
+                              number_of_lines);
+    size_t last_output_length = GRN_TEXT_LEN(&last_output);
+    grn_text_printf(ctx, &foot_, "%x\r\n", (unsigned int)last_output_length);
+    GRN_TEXT_PUT(ctx, &foot_,
+                 GRN_TEXT_VALUE(&last_output), last_output_length);
+    GRN_TEXT_PUTS(ctx, &foot_, "\r\n");
+    GRN_OBJ_FIN(ctx, &last_output);
+
+    GRN_TEXT_PUTS(ctx, &foot_, "0\r\n");
+    GRN_TEXT_PUTS(ctx, &foot_, "Connection: close\r\n");
+    GRN_TEXT_PUTS(ctx, &foot_, "\r\n");
+    foot = &foot_;
+  }
+  h_output_send(ctx, fd, header, head, body, foot);
+  GRN_OBJ_FIN(ctx, &chunk_);
+
+exit :
   GRN_OBJ_FIN(ctx, &foot_);
   GRN_OBJ_FIN(ctx, &body_);
   GRN_OBJ_FIN(ctx, &head_);
