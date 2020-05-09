@@ -1888,7 +1888,6 @@ grn_exception_filter(EXCEPTION_POINTERS *info)
   CONTEXT *context;
   STACKFRAME64 frame;
   DWORD machine_type;
-  DWORD previous_address;
 
   GRN_LOG(ctx, GRN_LOG_CRIT, "%s", log_start_mark);
 
@@ -1927,7 +1926,7 @@ grn_exception_filter(EXCEPTION_POINTERS *info)
 #  error "Intel x86, Intel Itanium and x64 are only supported architectures"
 # endif /* _M_IX86 */
 
-  previous_address = 0;
+  DWORD64 previous_address = 0;
   while (GRN_TRUE) {
     if (!StackWalk64(machine_type,
                      process,
