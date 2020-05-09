@@ -27,6 +27,12 @@ extern "C" {
 
 #ifdef WIN32
 GRN_API UINT grn_windows_encoding_to_code_page(grn_encoding encoding);
+bool grn_windows_symbol_initialize(HANDLE process);
+bool grn_windows_symbol_cleanup(HANDLE process);
+void grn_windows_log_trace(grn_ctx *ctx,
+                           grn_log_level level,
+                           HANDLE process,
+                           DWORD64 address);
 #endif /* WIN32 */
 
 #ifdef __cplusplus

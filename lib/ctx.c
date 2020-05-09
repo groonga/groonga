@@ -38,6 +38,7 @@
 #include "grn_logger.h"
 #include "grn_cache.h"
 #include "grn_expr.h"
+#include "grn_windows.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
@@ -49,8 +50,14 @@
 #ifdef WIN32
 # include <share.h>
 # include <dbghelp.h>
+# ifndef MAXUSHORT
+#  define MAXUSHORT 0xffff
+# endif
 #else /* WIN32 */
 # include <netinet/in.h>
+# ifdef HAVE_EXECINFO_H
+#  include <execinfo.h>
+# endif /* HAVE_EXECINFO_H */
 #endif /* WIN32 */
 
 #define GRN_CTX_INITIALIZER(enc)                \
@@ -1758,6 +1765,71 @@ grn_ctx_logv(grn_ctx *ctx, const char *fmt, va_list ap)
   grn_strcpy(ctx->errbuf, GRN_CTX_MSGSIZE, buffer);
 }
 
+#ifdef WIN32
+static void
+grn_ctx_log_back_trace_windows(grn_ctx *ctx, grn_log_level level)
+{
+  ULONG frames_to_skip = 0;
+  ULONG frames_to_capture = MAXUSHORT;
+  void *back_trace[MAXUSHORT];
+  USHORT n_frames = CaptureStackBackTrace(frames_to_skip,
+                                          frames_to_capture,
+                                          back_trace,
+                                          NULL);
+  if (n_frames == 0) {
+    return;
+  }
+
+  HANDLE process = GetCurrentProcess();
+  if (!grn_windows_symbol_initialize(process)) {
+    GRN_LOG(ctx,
+            level,
+            "[log][back-trace] failed to initialize symbol handler");
+    return;
+  }
+
+  USHORT i;
+  for (i = 0; i < n_frames; i++) {
+    void *address = back_trace[i];
+    grn_windows_log_trace(ctx, level, process, (DWORD64)address);
+  }
+}
+#else
+# ifdef HAVE_BACKTRACE
+static void
+grn_ctx_log_back_trace_backtrace(grn_ctx *ctx, grn_log_level level)
+{
+#  define MAX_N_TRACES 16
+  void *traces[MAX_N_TRACES];
+  int n_traces = backtrace(traces, MAX_N_TRACES);
+#  undef MAX_N_TRACES
+  char **symbols;
+  symbols = backtrace_symbols(traces, n_traces);
+  if (symbols) {
+    int i;
+    for (i = 0; i < n_traces; i++) {
+      GRN_LOG(ctx, level, "%s", symbols[i]);
+    }
+    free(symbols);
+  } else {
+    GRN_LOG(ctx, level, "[log][back-trace] backtrace_symbols() is failed");
+  }
+}
+# endif
+#endif
+
+void
+grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level)
+{
+#ifdef WIN32
+  grn_ctx_log_back_trace_windows(ctx, level);
+#else
+# ifdef HAVE_BACKTRACE
+  grn_ctx_log_back_trace_backtrace(ctx, level);
+# endif
+#endif
+}
+
 void
 grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* func)
 {
@@ -1804,9 +1876,11 @@ grn_get_package_label(void)
 
 #ifdef WIN32
 static LONG WINAPI
-exception_filter(EXCEPTION_POINTERS *info)
+grn_exception_filter(EXCEPTION_POINTERS *info)
 {
   grn_ctx *ctx = &grn_gctx;
+  const char *log_start_mark = "-- CRASHED!!! --";
+  const char *log_end_mark =   "----------------";
   HANDLE process;
   HANDLE thread;
   CONTEXT *context;
@@ -1814,52 +1888,16 @@ exception_filter(EXCEPTION_POINTERS *info)
   DWORD machine_type;
   DWORD previous_address;
 
-  GRN_LOG(ctx, GRN_LOG_CRIT, "-- CRASHED!!! --");
+  GRN_LOG(ctx, GRN_LOG_CRIT, "%s", log_start_mark);
 
   process = GetCurrentProcess();
   thread = GetCurrentThread();
   context = info->ContextRecord;
 
-  SymSetOptions(SYMOPT_ALLOW_ABSOLUTE_SYMBOLS |
-                SYMOPT_ALLOW_ZERO_ADDRESS |
-                SYMOPT_AUTO_PUBLICS |
-                SYMOPT_DEBUG |
-                SYMOPT_DEFERRED_LOADS |
-                SYMOPT_LOAD_LINES |
-                SYMOPT_NO_PROMPTS);
-  SymInitialize(process, NULL, TRUE);
-  {
-    char search_path[MAX_PATH * 2];
-    const char *base_dir;
-
-    if (SymGetSearchPath(process, search_path, sizeof(search_path))) {
-      grn_strcat(search_path, sizeof(search_path), ";");
-    } else {
-      search_path[0] = '\0';
-    }
-
-    base_dir = grn_windows_base_dir();
-    {
-      char *current, *end;
-      /* TODO: Add more directories for plugins and so on. */
-      const char *bin_dir = "\\bin";
-      current = search_path + strlen(search_path);
-      end = current + sizeof(search_path) - 1;
-      for (; *base_dir && current < end; base_dir++, current++) {
-        if (*base_dir == '/') {
-          *current = '\\';
-        } else {
-          *current = *base_dir;
-        }
-      }
-      if (current == end) {
-        current--;
-      }
-      *current = '\0';
-      grn_strcat(search_path, sizeof(search_path), bin_dir);
-    }
-
-    SymSetSearchPath(process, search_path);
+  if (!grn_windows_symbol_initialize(process)) {
+    GRN_LOG(ctx, GRN_LOG_CRIT, "failed to initialize symbol handler");
+    GRN_LOG(ctx, GRN_LOG_CRIT, "%s", log_end_mark);
+    return EXCEPTION_CONTINUE_SEARCH;
   }
 
   memset(&frame, 0, sizeof(STACKFRAME64));
@@ -1889,16 +1927,6 @@ exception_filter(EXCEPTION_POINTERS *info)
 
   previous_address = 0;
   while (GRN_TRUE) {
-    DWORD64 address;
-    IMAGEHLP_MODULE64 module;
-    char *buffer[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)];
-    SYMBOL_INFO *symbol = (SYMBOL_INFO *)buffer;
-    DWORD line_displacement = 0;
-    IMAGEHLP_LINE64 line;
-    grn_bool have_module_name = GRN_FALSE;
-    grn_bool have_symbol_name = GRN_FALSE;
-    grn_bool have_location = GRN_FALSE;
-
     if (!StackWalk64(machine_type,
                      process,
                      thread,
@@ -1911,58 +1939,24 @@ exception_filter(EXCEPTION_POINTERS *info)
       break;
     }
 
-    address = frame.AddrPC.Offset;
+    DWORD64 address = frame.AddrPC.Offset;
     if (previous_address != 0 && address == previous_address) {
       break;
     }
 
-    module.SizeOfStruct = sizeof(IMAGEHLP_MODULE64);
-    if (SymGetModuleInfo64(process, address, &module)) {
-      have_module_name = GRN_TRUE;
-    }
-
-    symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-    symbol->MaxNameLen = MAX_SYM_NAME;
-    if (SymFromAddr(process, address, NULL, symbol)) {
-      have_symbol_name = GRN_TRUE;
-    }
-
-    line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
-    if (SymGetLineFromAddr64(process, address, &line_displacement, &line)) {
-      have_location = GRN_TRUE;
-    }
-
-    {
-      const char *unknown = "(unknown)";
-      const char *grn_encoding_image_name = unknown;
-      if (have_module_name) {
-        grn_encoding_image_name =
-          grn_encoding_convert_from_locale(ctx, module.ImageName, -1, NULL);
-      }
-      GRN_LOG(ctx, GRN_LOG_CRIT,
-              "%s:%lu:%lu: %.*s(): <%s>: <%s>",
-              (have_location ? line.FileName : unknown),
-              (have_location ? line.LineNumber : -1),
-              (have_location ? line_displacement : -1),
-              (int)(have_symbol_name ? symbol->NameLen : strlen(unknown)),
-              (have_symbol_name ? symbol->Name : unknown),
-              (have_module_name ? module.ModuleName : unknown),
-              grn_encoding_image_name);
-      if (have_module_name) {
-        grn_encoding_converted_free(ctx, grn_encoding_image_name);
-      }
-    }
-
+    grn_windows_log_trace(ctx, GRN_LOG_CRIT, process, address);
     previous_address = address;
   }
-  GRN_LOG(ctx, GRN_LOG_CRIT, "----------------");
+  GRN_LOG(ctx, GRN_LOG_CRIT, "%s", log_end_mark);
+
+  grn_windows_symbol_cleanup(process);
 
   return EXCEPTION_CONTINUE_SEARCH;
 }
 #elif defined(HAVE_SIGNAL_H) /* WIN32 */
 static int segv_received = 0;
 static void
-segv_handler(int signal_number, siginfo_t *info, void *context)
+grn_segv_handler(int signal_number, siginfo_t *info, void *context)
 {
   grn_ctx *ctx = &grn_gctx;
 
@@ -2001,13 +1995,13 @@ grn_set_segv_handler(void)
 {
   grn_rc rc = GRN_SUCCESS;
 #ifdef WIN32
-  SetUnhandledExceptionFilter(exception_filter);
+  SetUnhandledExceptionFilter(grn_exception_filter);
 #elif defined(HAVE_SIGNAL_H) /* WIN32 */
   grn_ctx *ctx = &grn_gctx;
   struct sigaction action;
 
   sigemptyset(&action.sa_mask);
-  action.sa_sigaction = segv_handler;
+  action.sa_sigaction = grn_segv_handler;
   action.sa_flags = SA_SIGINFO | SA_ONSTACK;
 
   if (sigaction(SIGSEGV, &action, NULL)) {

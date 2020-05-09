@@ -22,6 +22,8 @@
 #include "grn_windows.h"
 
 #ifdef WIN32
+# include <dbghelp.h>
+
 static char *windows_base_dir = NULL;
 const char *
 grn_windows_base_dir(void)
@@ -125,5 +127,116 @@ grn_windows_encoding_to_code_page(grn_encoding encoding)
   }
 
   return code_page;
+}
+
+bool
+grn_windows_symbol_initialize(HANDLE process)
+{
+  SymSetOptions(SYMOPT_ALLOW_ABSOLUTE_SYMBOLS |
+                SYMOPT_ALLOW_ZERO_ADDRESS |
+                SYMOPT_AUTO_PUBLICS |
+                SYMOPT_DEBUG |
+                SYMOPT_DEFERRED_LOADS |
+                SYMOPT_LOAD_LINES |
+                SYMOPT_NO_PROMPTS);
+  if (!SymInitialize(process, NULL, TRUE)) {
+    return false;
+  }
+
+  char search_path[MAX_PATH * 2];
+  const char *base_dir;
+
+  if (SymGetSearchPath(process, search_path, sizeof(search_path))) {
+    grn_strcat(search_path, sizeof(search_path), ";");
+  } else {
+    search_path[0] = '\0';
+  }
+
+  base_dir = grn_windows_base_dir();
+  {
+    char *current, *end;
+    /* TODO: Add more directories for plugins and so on. */
+    const char *bin_dir = "\\bin";
+    current = search_path + strlen(search_path);
+    end = current + sizeof(search_path) - 1;
+    for (; *base_dir && current < end; base_dir++, current++) {
+      if (*base_dir == '/') {
+        *current = '\\';
+      } else {
+        *current = *base_dir;
+      }
+    }
+    if (current == end) {
+      current--;
+    }
+    *current = '\0';
+    grn_strcat(search_path, sizeof(search_path), bin_dir);
+  }
+
+  if (!SymSetSearchPath(process, search_path)) {
+    SymCleanup(process);
+    return false;
+  }
+
+  return true;
+}
+
+bool
+grn_windows_symbol_cleanup(HANDLE process)
+{
+  return SymCleanup(process);
+}
+
+void
+grn_windows_log_trace(grn_ctx *ctx,
+                      grn_log_level level,
+                      HANDLE process,
+                      DWORD64 address)
+{
+  IMAGEHLP_MODULE64 module;
+  char *buffer[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)];
+  SYMBOL_INFO *symbol = (SYMBOL_INFO *)buffer;
+  DWORD line_displacement = 0;
+  IMAGEHLP_LINE64 line;
+  bool have_module_name = false;
+  bool have_symbol_name = false;
+  bool have_location = false;
+
+  module.SizeOfStruct = sizeof(IMAGEHLP_MODULE64);
+  if (SymGetModuleInfo64(process, address, &module)) {
+    have_module_name = true;
+  }
+
+  symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+  symbol->MaxNameLen = MAX_SYM_NAME;
+  if (SymFromAddr(process, address, NULL, symbol)) {
+    have_symbol_name = true;
+  }
+
+  line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
+  if (SymGetLineFromAddr64(process, address, &line_displacement, &line)) {
+    have_location = true;
+  }
+
+  {
+    const char *unknown = "(unknown)";
+    const char *grn_encoding_image_name = unknown;
+    if (have_module_name) {
+      grn_encoding_image_name =
+        grn_encoding_convert_from_locale(ctx, module.ImageName, -1, NULL);
+    }
+    GRN_LOG(ctx, level,
+            "%s:%lu:%lu: %.*s(): <%s>: <%s>",
+            (have_location ? line.FileName : unknown),
+            (have_location ? line.LineNumber : -1),
+            (have_location ? line_displacement : -1),
+            (int)(have_symbol_name ? symbol->NameLen : strlen(unknown)),
+            (have_symbol_name ? symbol->Name : unknown),
+            (have_module_name ? module.ModuleName : unknown),
+            grn_encoding_image_name);
+    if (have_module_name) {
+      grn_encoding_converted_free(ctx, grn_encoding_image_name);
+    }
+  }
 }
 #endif /* WIN32 */

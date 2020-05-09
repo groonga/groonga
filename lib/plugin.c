@@ -1284,16 +1284,12 @@ grn_plugin_clear_error(grn_ctx *ctx)
 void
 grn_plugin_backtrace(grn_ctx *ctx)
 {
-  BACKTRACE(ctx);
 }
 
 void
 grn_plugin_logtrace(grn_ctx *ctx, grn_log_level level)
 {
-  if (level <= GRN_LOG_ERROR) {
-    grn_plugin_backtrace(ctx);
-    LOGTRACE(ctx, level);
-  }
+  grn_ctx_log_back_trace(ctx, level);
 }
 
 struct _grn_plugin_mutex {

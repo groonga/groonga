@@ -29,10 +29,6 @@
 #define GRN_BREAK_POINT raise(SIGTRAP)
 #endif /* HAVE_SIGNAL_H */
 
-#ifdef HAVE_EXECINFO_H
-#include <execinfo.h>
-#endif /* HAVE_EXECINFO_H */
-
 #include "grn_io.h"
 #include "grn_alloc.h"
 #include "grn_time.h"
@@ -89,33 +85,8 @@ extern "C" {
   grn_gctx.rc = GRN_SUCCESS;\
 } while (0)
 
-#ifdef HAVE_BACKTRACE
-#define BACKTRACE(ctx) ((ctx)->ntrace = (unsigned char)backtrace((ctx)->trace, 16))
-#else /* HAVE_BACKTRACE */
-#define BACKTRACE(ctx)
-#endif /* HAVE_BACKTRACE */
-
 GRN_API grn_bool grn_ctx_impl_should_log(grn_ctx *ctx);
 GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
-
-#ifdef HAVE_BACKTRACE
-#define LOGTRACE(ctx,lvl) do {\
-  int i;\
-  char **p;\
-  BACKTRACE(ctx);\
-  p = backtrace_symbols((ctx)->trace, (ctx)->ntrace);\
-  if (!p) {\
-    GRN_LOG((ctx), lvl, "backtrace_symbols failed");\
-  } else {\
-    for (i = 0; i < (ctx)->ntrace; i++) {\
-      GRN_LOG((ctx), lvl, "%s", p[i]);\
-    }\
-    free(p);\
-  }\
-} while (0)
-#else  /* HAVE_BACKTRACE */
-#define LOGTRACE(ctx,msg)
-#endif /* HAVE_BACKTRACE */
 
 #define ERRSET(ctx,lvl,r,...) do {\
   grn_ctx *ctx_ = (grn_ctx *)ctx;\
@@ -130,7 +101,7 @@ GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
   if (grn_ctx_impl_should_log(ctx)) {\
     grn_ctx_impl_set_current_error_message(ctx);\
     GRN_LOG(ctx, lvl, __VA_ARGS__);\
-    if (lvl <= GRN_LOG_ERROR) { LOGTRACE(ctx, lvl); }\
+    if (lvl <= GRN_LOG_ERROR) { grn_ctx_log_back_trace(ctx, lvl); } \
   }\
 } while (0)
 
@@ -439,6 +410,7 @@ extern grn_timeval grn_starttime;
 
 GRN_API void grn_ctx_log(grn_ctx *ctx, const char *fmt, ...) GRN_ATTRIBUTE_PRINTF(2);
 GRN_API void grn_ctx_logv(grn_ctx *ctx, const char *fmt, va_list ap);
+void grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
 void grn_ctx_loader_clear(grn_ctx *ctx);
 void grn_log_reopen(grn_ctx *ctx);
 
