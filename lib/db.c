@@ -11491,14 +11491,18 @@ grn_obj_reference_count(grn_ctx *ctx, grn_obj *obj)
   }
 }
 
-#define VECTOR_CLEAR(ctx,obj) do {\
-  if ((obj)->u.v.body && !((obj)->header.impl_flags & GRN_OBJ_REFER)) {\
-    grn_obj_close((ctx), (obj)->u.v.body);\
-  }\
-  if ((obj)->u.v.sections) { GRN_FREE((obj)->u.v.sections); }\
-  (obj)->header.impl_flags &= ~GRN_OBJ_DO_SHALLOW_COPY;\
-  memset(&((obj)->u), 0, sizeof((obj)->u));\
-} while (0)
+grn_inline static void
+grn_vector_clear(grn_ctx *ctx, grn_obj *obj)
+{
+  if (obj->u.v.body && !(obj->header.impl_flags & GRN_OBJ_REFER)) {
+    grn_obj_close(ctx, obj->u.v.body);
+  }
+  if (obj->u.v.sections) {
+    GRN_FREE(obj->u.v.sections);
+  }
+  obj->header.impl_flags &= ~GRN_OBJ_DO_SHALLOW_COPY;
+  memset(&(obj->u), 0, sizeof(obj->u));
+}
 
 void
 grn_obj_ensure_vector(grn_ctx *ctx, grn_obj *obj)
@@ -11511,7 +11515,7 @@ grn_obj_ensure_vector(grn_ctx *ctx, grn_obj *obj)
 void
 grn_obj_ensure_bulk(grn_ctx *ctx, grn_obj *obj)
 {
-  if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
+  if (obj->header.type == GRN_VECTOR) { grn_vector_clear(ctx, obj); }
   obj->header.type = GRN_BULK;
   obj->header.flags &= ~GRN_OBJ_WITH_WEIGHT;
 }
@@ -11548,7 +11552,9 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
 
     switch (domain) {
     case GRN_DB_VOID :
-      if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
+      if (obj->header.type == GRN_VECTOR) {
+        grn_vector_clear(ctx, obj);
+      }
       obj->header.type = GRN_VOID;
       obj->header.domain = domain;
       GRN_BULK_REWIND(obj);
@@ -11568,7 +11574,9 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
     case GRN_DB_TIME :
     case GRN_DB_TOKYO_GEO_POINT :
     case GRN_DB_WGS84_GEO_POINT :
-      if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
+      if (obj->header.type == GRN_VECTOR) {
+        grn_vector_clear(ctx, obj);
+      }
       obj->header.type = (flags & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK;
       obj->header.domain = domain;
       GRN_BULK_REWIND(obj);
@@ -11584,7 +11592,9 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
         }
         obj->u.v.n_sections = 0;
       } else {
-        if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
+        if (obj->header.type == GRN_VECTOR) {
+          grn_vector_clear(ctx, obj);
+        }
         obj->header.type = GRN_BULK;
       }
       obj->header.domain = domain;
@@ -11596,11 +11606,15 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
           if (obj->header.type != GRN_VECTOR) { grn_bulk_fin(ctx, obj); }
           obj->header.type = GRN_VECTOR;
         } else {
-          if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
+          if (obj->header.type == GRN_VECTOR) {
+            grn_vector_clear(ctx, obj);
+          }
           obj->header.type = GRN_BULK;
         }
       } else {
-        if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
+        if (obj->header.type == GRN_VECTOR) {
+          grn_vector_clear(ctx, obj);
+        }
         obj->header.type = (flags & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK;
       }
       obj->header.domain = domain;
