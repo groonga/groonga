@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2017 Brazil
+  Copyright(C) 2010-2017  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -44,7 +45,10 @@ grn_windows_base_dir(void)
         absolute_dll_filename[absolute_dll_filename_size] = L'\0';
 
         if (wcsncmp(absolute_dll_filename, L"\\\\?\\", 4) == 0) {
-          wmemmove(absolute_dll_filename, &absolute_dll_filename[4], absolute_dll_filename_size - 4);
+          wmemmove_s(absolute_dll_filename,
+                     MAX_PATH,
+                     &absolute_dll_filename[4],
+                     absolute_dll_filename_size - 4);
           absolute_dll_filename[absolute_dll_filename_size - 4] = L'\0';
           absolute_dll_filename_size -= 4;
         }
