@@ -54,6 +54,7 @@ typedef struct {
   grn_obj bottom_right_point_buffer;
   grn_geo_point *top_left;
   grn_geo_point *bottom_right;
+  grn_geo_point center;
 } in_rectangle_data;
 
 typedef struct {
@@ -1089,18 +1090,47 @@ grn_selector_geo_in_rectangle(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                               int nargs, grn_obj **args,
                               grn_obj *res, grn_operator op)
 {
-  if (nargs == 4) {
-    grn_obj *top_left_point, *bottom_right_point;
-    top_left_point = args[2];
-    bottom_right_point = args[3];
-    grn_geo_select_in_rectangle(ctx, index,
-                                top_left_point, bottom_right_point,
-                                res, op);
-  } else {
+  const char *tag = "[geo-in-rectangle]";
+  grn_selector_data *data = grn_selector_data_get(ctx);
+
+  if (!(nargs == 4 || nargs == 5)) {
     ERR(GRN_INVALID_ARGUMENT,
-        "geo_in_rectangle(): requires 3 arguments but was <%d> arguments",
+        "%s requires 3 or 4 arguments but was <%d> arguments",
+        tag,
         nargs - 1);
+    return ctx->rc;
   }
+
+  if (nargs == 5) {
+    if (args[4]->header.type != GRN_TABLE_HASH_KEY) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, args[4]);
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s the 4th argument must be options: %.*s",
+          tag,
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return ctx->rc;
+    }
+    grn_obj *options = args[4];
+    grn_rc rc = grn_selector_data_parse_options(ctx,
+                                                data,
+                                                options,
+                                                tag,
+                                                NULL);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+
+  grn_obj *top_left_point, *bottom_right_point;
+  top_left_point = args[2];
+  bottom_right_point = args[3];
+  grn_geo_select_in_rectangle(ctx, index,
+                              top_left_point, bottom_right_point,
+                              res, op);
   return ctx->rc;
 }
 
@@ -1193,6 +1223,13 @@ in_rectangle_data_fill(grn_ctx *ctx, grn_obj *index,
     bottom_right_point = &(data->bottom_right_point_buffer);
   }
   data->bottom_right = GRN_GEO_POINT_VALUE_RAW(bottom_right_point);
+
+  data->center.latitude =
+    data->top_left->latitude -
+    (abs(data->top_left->latitude - data->bottom_right->latitude) / 2);
+  data->center.longitude =
+    data->bottom_right->longitude -
+    (abs(data->bottom_right->longitude - data->top_left->longitude) / 2);
 }
 
 static void
@@ -1585,8 +1622,10 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
   grn_obj_refer(ctx, cursor->pat);
   cursor->index = index;
   grn_obj_refer(ctx, cursor->index);
-  grn_memcpy(&(cursor->top_left), data.top_left, sizeof(grn_geo_point));
-  grn_memcpy(&(cursor->bottom_right), data.bottom_right, sizeof(grn_geo_point));
+  cursor->top_left = *(data.top_left);
+  cursor->bottom_right = *(data.bottom_right);
+  cursor->center = data.center;
+  cursor->need_distance = false;
   cursor->pat_cursor = NULL;
   cursor->ii_cursor = NULL;
   cursor->offset = offset;
@@ -1632,6 +1671,16 @@ exit :
   grn_obj_unlink(ctx, &(data.top_left_point_buffer));
   grn_obj_unlink(ctx, &(data.bottom_right_point_buffer));
   GRN_API_RETURN((grn_obj *)cursor);
+}
+
+static void
+grn_geo_cursor_in_rectangle_set_need_distance(grn_ctx *ctx,
+                                              grn_obj *cursor,
+                                              bool need_distance)
+{
+  grn_geo_cursor_in_rectangle *cursor_in_rectangle =
+    (grn_geo_cursor_in_rectangle *)cursor;
+  cursor_in_rectangle->need_distance = need_distance;
 }
 
 static grn_inline grn_bool
@@ -1899,11 +1948,16 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
-typedef grn_bool (*grn_geo_cursor_callback)(grn_ctx *ctx, grn_posting *posting, void *user_data);
+typedef grn_bool (*grn_geo_cursor_callback)(grn_ctx *ctx,
+                                            grn_posting *posting,
+                                            double distance,
+                                            void *user_data);
 
 static void
-grn_geo_cursor_each(grn_ctx *ctx, grn_obj *geo_cursor,
-                    grn_geo_cursor_callback callback, void *user_data)
+grn_geo_cursor_each(grn_ctx *ctx,
+                    grn_obj *geo_cursor,
+                    grn_geo_cursor_callback callback,
+                    void *user_data)
 {
   grn_geo_cursor_in_rectangle *cursor;
   grn_obj *pat;
@@ -1975,7 +2029,13 @@ grn_geo_cursor_each(grn_ctx *ctx, grn_obj *geo_cursor,
       while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
         if (cursor->offset == 0) {
           grn_bool keep_each;
-          keep_each = callback(ctx, posting, user_data);
+          double distance = 0.0;
+          if (cursor->need_distance) {
+            distance = grn_geo_distance_rectangle_raw(ctx,
+                                                      &(cursor->center),
+                                                      &(cursor->current));
+          }
+          keep_each = callback(ctx, posting, distance, user_data);
           if (cursor->rest > 0) {
             if (--(cursor->rest) == 0) {
               keep_each = GRN_FALSE;
@@ -1997,7 +2057,9 @@ grn_geo_cursor_each(grn_ctx *ctx, grn_obj *geo_cursor,
 }
 
 static grn_bool
-grn_geo_cursor_next_callback(grn_ctx *ctx, grn_posting *posting,
+grn_geo_cursor_next_callback(grn_ctx *ctx,
+                             grn_posting *posting,
+                             double distance,
                              void *user_data)
 {
   grn_posting **return_posting = user_data;
@@ -2031,6 +2093,8 @@ grn_geo_cursor_close(grn_ctx *ctx, grn_obj *geo_cursor)
 }
 
 typedef struct {
+  grn_selector_data *selector_data;
+  bool use_distance;
   grn_hash *res;
   grn_operator op;
 } grn_geo_select_in_rectangle_data;
@@ -2038,16 +2102,27 @@ typedef struct {
 static grn_bool
 grn_geo_select_in_rectangle_callback(grn_ctx *ctx,
                                      grn_posting *posting,
+                                     double distance,
                                      void *user_data)
 {
   grn_geo_select_in_rectangle_data *data = user_data;
   grn_posting_internal add_posting = *((grn_posting_internal *)posting);
-  add_posting.weight_float += 1.0;
-  grn_ii_posting_add_float(ctx,
-                           (grn_posting *)(&add_posting),
-                           data->res,
-                           data->op);
-  return GRN_TRUE;
+  if (data->use_distance) {
+    add_posting.weight_float = (add_posting.weight_float + 1.0) * distance;
+  } else {
+    add_posting.weight_float += 1.0;
+  }
+  if (data->selector_data) {
+    grn_selector_data_on_record_found(ctx,
+                                      data->selector_data,
+                                      (grn_posting *)(&add_posting));
+  } else {
+    grn_ii_posting_add_float(ctx,
+                             (grn_posting *)(&add_posting),
+                             data->res,
+                             data->op);
+  }
+  return ctx->rc == GRN_SUCCESS;
 }
 
 grn_rc
@@ -2058,14 +2133,23 @@ grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
 {
   grn_obj *cursor;
 
+  grn_geo_select_in_rectangle_data data;
+  data.selector_data = grn_selector_data_get(ctx);
+  data.use_distance =
+    (data.selector_data &&
+     grn_selector_data_have_score_column(ctx, data.selector_data));
+  data.res = (grn_hash *)res;
+  data.op = op;
   cursor = grn_geo_cursor_open_in_rectangle(ctx, index,
                                             top_left_point, bottom_right_point,
                                             0, -1);
   if (cursor) {
-    grn_geo_select_in_rectangle_data data;
-    data.res = (grn_hash *)res;
-    data.op = op;
-    grn_geo_cursor_each(ctx, cursor, grn_geo_select_in_rectangle_callback,
+    grn_geo_cursor_in_rectangle_set_need_distance(ctx,
+                                                  cursor,
+                                                  data.use_distance);
+    grn_geo_cursor_each(ctx,
+                        cursor,
+                        grn_geo_select_in_rectangle_callback,
                         &data);
     grn_obj_unlink(ctx, cursor);
     grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);

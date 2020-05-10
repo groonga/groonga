@@ -110,7 +110,9 @@ typedef struct {
   grn_obj *index;
   grn_geo_point top_left;
   grn_geo_point bottom_right;
+  grn_geo_point center;
   grn_geo_point current;
+  bool need_distance;
   grn_table_cursor *pat_cursor;
   grn_ii_cursor *ii_cursor;
   int offset;
