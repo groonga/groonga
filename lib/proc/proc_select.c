@@ -2658,6 +2658,16 @@ grn_select_drilldown_execute(grn_ctx *ctx,
                   grn_table_size(ctx, drilldown->filtered_result));
   }
 
+  if (drilldown->columns.filtered) {
+    grn_select_apply_columns(ctx,
+                             data,
+                             drilldown->filtered_result,
+                             drilldown->columns.filtered,
+                             condition,
+                             GRN_TEXT_VALUE(&log_tag_prefix),
+                             GRN_TEXT_VALUE(&full_query_log_tag_prefix));
+  }
+
   {
     grn_obj *adjuster_result_table;
     if (drilldown->filtered_result) {
