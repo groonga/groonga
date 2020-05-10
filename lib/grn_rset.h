@@ -65,7 +65,6 @@ typedef union {
 
 uint32_t grn_rset_recinfo_calc_values_size(grn_ctx *ctx,
                                            grn_table_group_flags flags);
-grn_id grn_rset_aggregated_value_get_type_id(grn_ctx *ctx, grn_obj *table);
 
 void grn_rset_recinfo_update_calc_values(grn_ctx *ctx,
                                          grn_rset_recinfo *ri,

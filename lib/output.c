@@ -1034,7 +1034,7 @@ grn_output_table_column_value(grn_ctx *ctx,
         bulk->header.domain = GRN_DB_INT32;
         break;
       case GRN_ACCESSOR_GET_MAX :
-        bulk->header.domain = grn_rset_aggregated_value_get_type_id(ctx, a->obj);
+        bulk->header.domain = DB_OBJ(a->obj)->group.aggregated_value_type_id;
         {
           grn_rset_recinfo *ri =
             (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
@@ -1048,7 +1048,7 @@ grn_output_table_column_value(grn_ctx *ctx,
         }
         break;
       case GRN_ACCESSOR_GET_MIN :
-        bulk->header.domain = grn_rset_aggregated_value_get_type_id(ctx, a->obj);
+        bulk->header.domain = DB_OBJ(a->obj)->group.aggregated_value_type_id;
         {
           grn_rset_recinfo *ri =
             (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
@@ -1062,7 +1062,7 @@ grn_output_table_column_value(grn_ctx *ctx,
         }
         break;
       case GRN_ACCESSOR_GET_SUM :
-        bulk->header.domain = grn_rset_aggregated_value_get_type_id(ctx, a->obj);
+        bulk->header.domain = DB_OBJ(a->obj)->group.aggregated_value_type_id;
         {
           grn_rset_recinfo *ri =
             (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);

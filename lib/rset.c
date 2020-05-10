@@ -37,21 +37,6 @@ grn_rset_recinfo_calc_values_size(grn_ctx *ctx, grn_table_group_flags flags)
   return size;
 }
 
-grn_id
-grn_rset_aggregated_value_get_type_id(grn_ctx *ctx, grn_obj *table)
-{
-  grn_obj *calc_target = DB_OBJ(table)->group.calc_target;
-  if (!calc_target) {
-    return GRN_DB_INT64;
-  }
-
-  if (grn_type_id_is_float_family(ctx, DB_OBJ(calc_target)->range)) {
-    return GRN_DB_FLOAT;
-  } else {
-    return GRN_DB_INT64;
-  }
-}
-
 typedef struct {
   grn_rset_recinfo *ri;
   byte *values;
@@ -190,7 +175,7 @@ grn_rset_recinfo_update_calc_values(grn_ctx *ctx,
                                        DB_OBJ(table)->max_n_subrecs));
   data.flags = DB_OBJ(table)->group.flags;
   data.is_float_source =
-    (grn_rset_aggregated_value_get_type_id(ctx, table) == GRN_DB_FLOAT);
+    (DB_OBJ(table)->group.aggregated_value_type_id == GRN_DB_FLOAT);
   GRN_INT64_INIT(&(data.value_int64), 0);
   GRN_FLOAT_INIT(&(data.value_float), 0);
 

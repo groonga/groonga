@@ -1453,6 +1453,7 @@ grn_table_create_with_max_n_subrecs(grn_ctx *ctx, const char *name,
     DB_OBJ(res)->subrec_offset = subrec_offset;
     DB_OBJ(res)->group.flags = 0;
     DB_OBJ(res)->group.calc_target = NULL;
+    DB_OBJ(res)->group.aggregated_value_type_id = GRN_DB_INT64;
     if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
       _grn_obj_remove(ctx, res, GRN_FALSE);
       res = NULL;
@@ -4616,8 +4617,13 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
         if (!rp->table) {
           goto exit;
         }
-        DB_OBJ(rp->table)->group.flags = rp->flags;
-        DB_OBJ(rp->table)->group.calc_target = rp->calc_target;
+      }
+      DB_OBJ(rp->table)->group.flags = rp->flags;
+      DB_OBJ(rp->table)->group.calc_target = rp->calc_target;
+      if (DB_OBJ(rp->table)->group.aggregated_value_type_id == GRN_DB_INT64 &&
+          rp->calc_target &&
+          grn_type_id_is_float_family(ctx, DB_OBJ(rp->calc_target)->range)) {
+        DB_OBJ(rp->table)->group.aggregated_value_type_id = GRN_DB_FLOAT;
       }
     }
     if (group_by_all_records) {
@@ -4649,6 +4655,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     }
     for (r = 0, rp = results; r < n_results; r++, rp++) {
       GRN_TABLE_GROUPED_ON(rp->table);
+      DB_OBJ(rp->table)->group.calc_target = NULL;
     }
   }
 exit :
@@ -5832,7 +5839,7 @@ grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
       case GRN_ACCESSOR_GET_MAX :
       case GRN_ACCESSOR_GET_MIN :
       case GRN_ACCESSOR_GET_SUM :
-        *range_id = grn_rset_aggregated_value_get_type_id(ctx, a->obj);
+        *range_id = DB_OBJ(a->obj)->group.aggregated_value_type_id;
         break;
       case GRN_ACCESSOR_GET_AVG :
         *range_id = GRN_DB_FLOAT;
@@ -6724,7 +6731,7 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
       value->header.domain = GRN_DB_INT32;
       break;
     case GRN_ACCESSOR_GET_MAX :
-      value->header.domain = grn_rset_aggregated_value_get_type_id(ctx, a->obj);
+      value->header.domain = DB_OBJ(a->obj)->group.aggregated_value_type_id;
       {
         grn_rset_aggregated_value max = {0};
         if (id != GRN_ID_NIL) {
@@ -6740,7 +6747,7 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
       }
       break;
     case GRN_ACCESSOR_GET_MIN :
-      value->header.domain = grn_rset_aggregated_value_get_type_id(ctx, a->obj);
+      value->header.domain = DB_OBJ(a->obj)->group.aggregated_value_type_id;
       {
         grn_rset_aggregated_value min = {0};
         if (id != GRN_ID_NIL) {
@@ -6756,7 +6763,7 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
       }
       break;
     case GRN_ACCESSOR_GET_SUM :
-      value->header.domain = grn_rset_aggregated_value_get_type_id(ctx, a->obj);
+      value->header.domain = DB_OBJ(a->obj)->group.aggregated_value_type_id;
       {
         grn_rset_aggregated_value sum = {0};
         if (id != GRN_ID_NIL) {
@@ -6858,7 +6865,7 @@ grn_accessor_set_value_get_rset_aggregated_value(grn_ctx *ctx,
                                                  grn_obj *value)
 {
   grn_rset_aggregated_value aggregated_value = {0};
-  grn_id type_id = grn_rset_aggregated_value_get_type_id(ctx, table);
+  grn_id type_id = DB_OBJ(table)->group.aggregated_value_type_id;
   if (type_id == GRN_DB_INT64) {
     if (value->header.type == GRN_DB_INT64) {
       aggregated_value.value_int64 = GRN_INT64_VALUE(value);
