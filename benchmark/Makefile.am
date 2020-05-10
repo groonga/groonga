@@ -147,7 +147,7 @@ run-bench-result-set-raw: bench-result-set-raw
 	(echo "table_create Sources TABLE_NO_KEY";			\
 	 echo "load --table Sources";					\
 	 echo "[";							\
-	 seq 1 5000000 | (while read line; do echo "[],"; done);	\
+	 seq 1 10000000 | (while read line; do echo "[],"; done);	\
 	 echo "[]";							\
 	 echo "]") |							\
 	  env								\
