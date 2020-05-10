@@ -3690,6 +3690,34 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         sizeof(int) * 2;
     } GRN_HASH_EACH_END(ctx, cursor);
   }
+#define ADD_COLUMNS_CACHE_SIZE(columns) do {                     \
+    GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {              \
+      grn_column_data *column;                                   \
+      grn_hash_cursor_get_value(ctx, cursor, (void **)&column);  \
+      cache_key_size +=                                          \
+        column->label.length + 1;                                \
+      cache_key_size +=                                          \
+        column->value.length + 1;                                \
+      cache_key_size +=                                          \
+        column->window.sort_keys.length + 1;                     \
+      cache_key_size +=                                          \
+        column->window.group_keys.length + 1;                    \
+      cache_key_size += sizeof(grn_id);                          \
+      cache_key_size += sizeof(grn_column_flags);                \
+      cache_key_size += sizeof(grn_column_stage);                \
+    } GRN_HASH_EACH_END(ctx, cursor);                            \
+  } while (false)
+  if (data->columns.initial) {
+    ADD_COLUMNS_CACHE_SIZE(data->columns.initial);
+  }
+  if (data->columns.filtered) {
+    ADD_COLUMNS_CACHE_SIZE(data->columns.filtered);
+  }
+  if (data->columns.output) {
+    ADD_COLUMNS_CACHE_SIZE(data->columns.output);
+  }
+#undef ADD_COLUMNS_CACHE_SIZE
+
 #define DRILLDOWN_CACHE_SIZE(drilldown)         \
   drilldown->keys.length + 1 +                  \
   drilldown->sort_keys.length + 1 +             \
@@ -3771,6 +3799,32 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         }
       } GRN_HASH_EACH_END(ctx, cursor);
     }
+#define PUT_CACHE_KEY_COLUMNS(columns) do {                          \
+      GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {                \
+        grn_column_data *column;                                     \
+        grn_hash_cursor_get_value(ctx, cursor, (void **)&column);    \
+        PUT_CACHE_KEY(column->label);                                \
+        PUT_CACHE_KEY(column->value);                                \
+        PUT_CACHE_KEY(column->window.sort_keys);                     \
+        PUT_CACHE_KEY(column->window.group_keys);                    \
+        grn_memcpy(cp, &(DB_OBJ(column->type)->id), sizeof(grn_id)); \
+        cp += sizeof(grn_id);                                        \
+        grn_memcpy(cp, &(column->flags), sizeof(grn_column_flags));  \
+        cp += sizeof(grn_column_flags);                              \
+        grn_memcpy(cp, &(column->stage), sizeof(grn_column_stage));  \
+        cp += sizeof(grn_column_stage);                              \
+      } GRN_HASH_EACH_END(ctx, cursor);                              \
+    } while (false)
+    if (data->columns.initial) {
+      PUT_CACHE_KEY_COLUMNS(data->columns.initial);
+    }
+    if (data->columns.filtered) {
+      PUT_CACHE_KEY_COLUMNS(data->columns.filtered);
+    }
+    if (data->columns.output) {
+      PUT_CACHE_KEY_COLUMNS(data->columns.output);
+    }
+#undef PUT_CACHE_KEY_COLUMNS
     if (data->drilldown.keys.length > 0) {
       grn_drilldown_data *drilldown = &(data->drilldown);
       PUT_CACHE_KEY_DRILLDOWN(drilldown);
