@@ -1,0 +1,12 @@
+select LandMarks   --sort_keys '_id'   --output_columns 'point'   --limit -1   --filter 'geo_in_circle(point, "11x11", "11x1", {"score_column": 29})'
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[geo-in-circle][options][parse][score_column] must be a fixed size column: 29"
+  ]
+]
+#|e| [geo-in-circle][options][parse][score_column] must be a fixed size column: 29

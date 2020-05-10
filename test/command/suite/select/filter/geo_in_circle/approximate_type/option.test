@@ -1,0 +1,6 @@
+#@include fixture/geo/taiyaki/init.grn
+
+select Shops --sortby '+_score, +name' \
+  --output_columns 'name, _score, location' \
+  --filter 'geo_in_circle(location, "128429532x503148672", 3000, {"type": "ellipsoid"})' \
+  --scorer '_score = geo_distance(location, "128429532x503148672", "ellipsoid") * 1000'

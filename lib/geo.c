@@ -816,18 +816,41 @@ grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                            int nargs, grn_obj **args,
                            grn_obj *res, grn_operator op)
 {
+  const char *tag = "[geo-in-circle]";
+  grn_selector_data *data = grn_selector_data_get(ctx);
   grn_geo_approximate_type type = GRN_GEO_APPROXIMATE_RECTANGLE;
 
   if (!(nargs == 4 || nargs == 5)) {
     ERR(GRN_INVALID_ARGUMENT,
-        "geo_in_circle(): requires 3 or 4 arguments but was <%d> arguments",
+        "%s requires 3 or 4 arguments but was <%d> arguments",
+        tag,
         nargs - 1);
     return ctx->rc;
   }
 
   if (nargs == 5) {
-    if (grn_geo_resolve_approximate_type(ctx, args[4], &type) != GRN_SUCCESS) {
-      return ctx->rc;
+    grn_obj *type_name = NULL;
+    if (args[4]->header.type == GRN_TABLE_HASH_KEY) {
+      grn_obj *options = args[4];
+      grn_rc rc = grn_selector_data_parse_options(ctx,
+                                                  data,
+                                                  options,
+                                                  tag,
+                                                  "type",
+                                                  GRN_PROC_OPTION_VALUE_RAW,
+                                                  &type_name,
+                                                  NULL);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+    } else {
+      type_name = args[4];
+    }
+    if (type_name) {
+      grn_rc rc = grn_geo_resolve_approximate_type(ctx, type_name, &type);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
     }
   }
 
@@ -842,9 +865,9 @@ grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 }
 
 static grn_geo_distance_raw_func
-grn_geo_resolve_distance_raw_func (grn_ctx *ctx,
-                                   grn_geo_approximate_type approximate_type,
-                                   grn_id domain)
+grn_geo_resolve_distance_raw_func(grn_ctx *ctx,
+                                  grn_geo_approximate_type approximate_type,
+                                  grn_id domain)
 {
   grn_geo_distance_raw_func distance_raw_func = NULL;
 
@@ -996,6 +1019,10 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
     goto exit;
   }
   {
+    grn_selector_data *data = grn_selector_data_get(ctx);
+    const bool use_selector_data =
+      (data && grn_selector_data_have_score_column(ctx, data));
+
     int n_meshes, diff_bit;
     double d_far;
     mesh_entry meshes[87];
@@ -1037,7 +1064,15 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
           point_distance = distance_raw_func(ctx, &point, center);
           if (point_distance <= d) {
             inspect_tid(ctx, tid, &point, point_distance);
-            grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res, op);
+            if (use_selector_data) {
+              grn_selector_data_on_token_found(ctx,
+                                               data,
+                                               index,
+                                               tid,
+                                               point_distance);
+            } else {
+              grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res, op);
+            }
           }
         }
         grn_table_cursor_close(ctx, tc);
