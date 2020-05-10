@@ -45,6 +45,12 @@ GRN_API grn_obj *grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
                                    grn_expr_var **vars, unsigned int *nvars, grn_obj **caller);
 GRN_API grn_proc_type grn_proc_get_type(grn_ctx *ctx, grn_obj *proc);
 
+typedef grn_rc (*grn_proc_option_value_parse_func)(grn_ctx *ctx,
+                                                   const char *name,
+                                                   grn_obj *value,
+                                                   const char *tag,
+                                                   void *user_data);
+
 typedef enum {
   GRN_PROC_OPTION_VALUE_RAW,
   GRN_PROC_OPTION_VALUE_MODE,
@@ -52,6 +58,7 @@ typedef enum {
   GRN_PROC_OPTION_VALUE_EXPR_FLAGS,
   GRN_PROC_OPTION_VALUE_INT64,
   GRN_PROC_OPTION_VALUE_BOOL,
+  GRN_PROC_OPTION_VALUE_FUNC,
 } grn_proc_option_value_type;
 
 GRN_API grn_rc

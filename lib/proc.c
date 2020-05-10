@@ -283,6 +283,33 @@ grn_proc_options_parsev(grn_ctx *ctx,
         }
       }
       break;
+    case GRN_PROC_OPTION_VALUE_FUNC :
+      {
+        grn_proc_option_value_parse_func func =
+          va_arg(args, grn_proc_option_value_parse_func);
+        void *user_data = va_arg(args, void *);
+        if (id != GRN_ID_NIL) {
+          GRN_RECORD_PUT(ctx, &used_ids, id);
+          grn_rc rc = func(ctx, name, value, func_tag, user_data);
+          if (rc != GRN_SUCCESS) {
+            if (ctx->rc == GRN_SUCCESS) {
+              grn_obj inspected;
+              GRN_TEXT_INIT(&inspected, 0);
+              grn_inspect(ctx, &inspected, value);
+              GRN_PLUGIN_ERROR(ctx,
+                               rc,
+                               "%s[%s] failed to parse: <%.*s>",
+                               func_tag,
+                               name,
+                               (int)GRN_TEXT_LEN(&inspected),
+                               GRN_TEXT_VALUE(&inspected));
+              GRN_OBJ_FIN(ctx, &inspected);
+            }
+            goto exit;
+          }
+        }
+      }
+      break;
     default :
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
