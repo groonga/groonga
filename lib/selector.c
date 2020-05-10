@@ -18,6 +18,8 @@
 
 #include "grn_ctx_impl.h"
 #include "grn_db.h"
+#include "grn_ii.h"
+#include "grn_posting.h"
 #include "grn_selector.h"
 
 struct _grn_selector_data {
@@ -29,6 +31,9 @@ struct _grn_selector_data {
   grn_obj **args;
   grn_obj *res;
   grn_operator op;
+  grn_obj *score_table;
+  grn_obj *score_column;
+  grn_obj score;
 };
 
 grn_selector_data *
@@ -57,6 +62,9 @@ grn_selector_run(grn_ctx *ctx,
   data.args = args;
   data.res = res;
   data.op = op;
+  data.score_table = NULL;
+  data.score_column = NULL;
+  GRN_FLOAT_INIT(&(data.score), 0);
 
   grn_selector_data *previous_data = ctx->impl->current_selector_data;
   ctx->impl->current_selector_data = &data;
@@ -69,6 +77,13 @@ grn_selector_run(grn_ctx *ctx,
                                                 res,
                                                 op);
   ctx->impl->current_selector_data = previous_data;
+
+  GRN_OBJ_FIN(ctx, &(data.score));
+  if (data.score_table) {
+    grn_obj_unref(ctx, data.score_table);
+    data.score_table = NULL;
+  }
+
   return rc;
 }
 
@@ -123,4 +138,140 @@ grn_selector_data_get_op(grn_ctx *ctx,
                          grn_selector_data *data)
 {
   return data->op;
+}
+
+grn_rc
+grn_selector_data_parse_score_column_option_value(grn_ctx *ctx,
+                                                  const char *name,
+                                                  grn_obj *value,
+                                                  const char *tag,
+                                                  void *user_data)
+{
+  grn_selector_data *data = user_data;
+  if (value->header.type == GRN_PTR) {
+    value = GRN_PTR_VALUE(value);
+  }
+  switch (value->header.type) {
+  case GRN_COLUMN_FIX_SIZE :
+    {
+      data->score_table = grn_ctx_at(ctx, value->header.domain);
+      if (data->score_table->header.domain == DB_OBJ(data->table)->id) {
+        data->score_column = value;
+      } else {
+        grn_obj inspected;
+        GRN_TEXT_INIT(&inspected, 0);
+        grn_inspect(ctx, &inspected, value);
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[%s] unrelated score column: %.*s",
+            tag,
+            name,
+            (int)GRN_TEXT_LEN(&inspected),
+            GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+      }
+    }
+    break;
+  default :
+    {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, value);
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[%s] must be a fixed size column: %.*s",
+          tag,
+          name,
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+    }
+    break;
+  }
+  return ctx->rc;
+}
+
+bool
+grn_selector_data_have_score_column(grn_ctx *ctx,
+                                    grn_selector_data *data)
+{
+  return data->score_column != NULL;
+}
+
+static inline grn_rc
+grn_selector_data_on_record_found_inline(grn_ctx *ctx,
+                                         grn_selector_data *data,
+                                         grn_posting *posting)
+{
+  grn_ii_posting_add(ctx,
+                     posting,
+                     (grn_hash *)(data->res),
+                     data->op);
+  if (ctx->rc != GRN_SUCCESS) {
+    return ctx->rc;
+  }
+
+  if (data->score_column) {
+    grn_id record_id = grn_posting_get_record_id(ctx, posting);
+    grn_id score_id = grn_table_get(ctx,
+                                    data->score_table,
+                                    &record_id,
+                                    sizeof(grn_id));
+    if (score_id != GRN_ID_NIL) {
+      GRN_FLOAT_SET(ctx,
+                    &(data->score),
+                    grn_posting_get_weight_float(ctx, posting));
+      grn_obj_set_value(ctx,
+                        data->score_column,
+                        score_id,
+                        &(data->score),
+                        GRN_OBJ_INCR);
+    }
+  }
+
+  return ctx->rc;
+}
+
+grn_rc
+grn_selector_data_on_record_found(grn_ctx *ctx,
+                                  grn_selector_data *data,
+                                  grn_posting *posting)
+{
+  GRN_API_ENTER;
+  grn_selector_data_on_record_found_inline(ctx,
+                                           data,
+                                           posting);
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_selector_data_on_token_found(grn_ctx *ctx,
+                                 grn_selector_data *data,
+                                 grn_obj *index,
+                                 grn_id token_id,
+                                 double score)
+{
+  GRN_API_ENTER;
+  grn_ii *ii = (grn_ii *)index;
+  grn_ii_cursor *cursor = grn_ii_cursor_open(ctx,
+                                             ii,
+                                             token_id,
+                                             GRN_ID_NIL,
+                                             GRN_ID_MAX,
+                                             ii->n_elements - 1,
+                                             0);
+  if (!cursor) {
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  grn_posting *posting;
+  while ((posting = grn_ii_cursor_next(ctx, cursor))) {
+    grn_posting_internal new_posting = *((grn_posting_internal *)posting);
+    new_posting.weight = (new_posting.weight + 1) * score;
+    new_posting.weight_float = (new_posting.weight_float + 1) * score;
+    grn_selector_data_on_record_found_inline(ctx,
+                                             data,
+                                             (grn_posting *)&new_posting);
+  }
+  grn_ii_cursor_close(ctx, cursor);
+
+  GRN_API_RETURN(ctx->rc);
 }

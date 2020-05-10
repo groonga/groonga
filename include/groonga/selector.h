@@ -65,6 +65,43 @@ grn_selector_data_get_op(grn_ctx *ctx,
                          grn_selector_data *data);
 
 
+GRN_API grn_rc
+grn_selector_data_parse_score_column_option_value(grn_ctx *ctx,
+                                                  const char *name,
+                                                  grn_obj *value,
+                                                  const char *tag,
+                                                  void *data);
+
+#define grn_selector_data_parse_options(ctx,                            \
+                                        data,                           \
+                                        options,                        \
+                                        tag,                            \
+                                        ...)                            \
+  grn_proc_options_parse((ctx),                                         \
+                         (options),                                     \
+                         (tag),                                         \
+                         "score_column",                                \
+                         GRN_PROC_OPTION_VALUE_FUNC,                    \
+                         grn_selector_data_parse_score_column_option_value, \
+                         (data),                                        \
+                         __VA_ARGS__)
+
+GRN_API bool
+grn_selector_data_have_score_column(grn_ctx *ctx,
+                                    grn_selector_data *data);
+
+GRN_API grn_rc
+grn_selector_data_on_record_found(grn_ctx *ctx,
+                                  grn_selector_data *data,
+                                  grn_posting *posting);
+
+GRN_API grn_rc
+grn_selector_data_on_token_found(grn_ctx *ctx,
+                                 grn_selector_data *data,
+                                 grn_obj *index,
+                                 grn_id token_id,
+                                 double score);
+
 #ifdef __cplusplus
 }
 #endif
