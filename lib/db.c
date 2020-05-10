@@ -4621,9 +4621,18 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
       DB_OBJ(rp->table)->group.flags = rp->flags;
       DB_OBJ(rp->table)->group.calc_target = rp->calc_target;
       if (DB_OBJ(rp->table)->group.aggregated_value_type_id == GRN_DB_INT64 &&
-          rp->calc_target &&
-          grn_type_id_is_float_family(ctx, DB_OBJ(rp->calc_target)->range)) {
-        DB_OBJ(rp->table)->group.aggregated_value_type_id = GRN_DB_FLOAT;
+          rp->calc_target) {
+        grn_obj *target_obj = rp->calc_target;
+        if (target_obj->header.type == GRN_ACCESSOR) {
+          grn_accessor *a = (grn_accessor *)target_obj;
+          while (a->next) {
+            a = a->next;
+          }
+          target_obj = a->obj;
+        }
+        if (grn_type_id_is_float_family(ctx, DB_OBJ(target_obj)->range)) {
+          DB_OBJ(rp->table)->group.aggregated_value_type_id = GRN_DB_FLOAT;
+        }
       }
     }
     if (group_by_all_records) {
