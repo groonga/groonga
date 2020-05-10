@@ -33,6 +33,18 @@ grn_type_id_is_number_family(grn_ctx *ctx, grn_id id)
   return (GRN_DB_INT8 <= id && id <= GRN_DB_FLOAT) || (id == GRN_DB_FLOAT32);
 }
 
+bool
+grn_type_id_is_float_family(grn_ctx *ctx, grn_id id)
+{
+  switch (id) {
+  case GRN_DB_FLOAT32 :
+  case GRN_DB_FLOAT :
+    return true;
+  default :
+    return false;
+  }
+}
+
 grn_bool
 grn_type_id_is_text_family(grn_ctx *ctx, grn_id id)
 {
