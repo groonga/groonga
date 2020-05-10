@@ -4567,6 +4567,32 @@ grn_table_group_multi_keys_vector_records(grn_ctx *ctx,
   grn_table_cursor_close(ctx, tc);
 }
 
+static void
+grn_table_group_update_aggregated_value_type_id(grn_ctx *ctx,
+                                                grn_obj *table)
+{
+  if (DB_OBJ(table)->group.aggregated_value_type_id == GRN_DB_FLOAT) {
+    return;
+  }
+
+  grn_obj *calc_target = DB_OBJ(table)->group.calc_target;
+  if (!calc_target) {
+    return;
+  }
+
+  if (calc_target->header.type == GRN_ACCESSOR) {
+    grn_accessor *a = (grn_accessor *)calc_target;
+    while (a->next) {
+      a = a->next;
+    }
+    calc_target = a->obj;
+  }
+  if (grn_type_id_is_float_family(ctx, DB_OBJ(calc_target)->range)) {
+    DB_OBJ(table)->group.aggregated_value_type_id = GRN_DB_FLOAT;
+  }
+}
+
+
 grn_rc
 grn_table_group(grn_ctx *ctx, grn_obj *table,
                 grn_table_sort_key *keys, int n_keys,
@@ -4620,20 +4646,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
       }
       DB_OBJ(rp->table)->group.flags = rp->flags;
       DB_OBJ(rp->table)->group.calc_target = rp->calc_target;
-      if (DB_OBJ(rp->table)->group.aggregated_value_type_id == GRN_DB_INT64 &&
-          rp->calc_target) {
-        grn_obj *target_obj = rp->calc_target;
-        if (target_obj->header.type == GRN_ACCESSOR) {
-          grn_accessor *a = (grn_accessor *)target_obj;
-          while (a->next) {
-            a = a->next;
-          }
-          target_obj = a->obj;
-        }
-        if (grn_type_id_is_float_family(ctx, DB_OBJ(target_obj)->range)) {
-          DB_OBJ(rp->table)->group.aggregated_value_type_id = GRN_DB_FLOAT;
-        }
-      }
+      grn_table_group_update_aggregated_value_type_id(ctx, rp->table);
     }
     if (group_by_all_records) {
       grn_table_group_all_records(ctx, table, results);
