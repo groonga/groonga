@@ -43,7 +43,7 @@ typedef struct {
   grn_raw_string label;
   grn_column_stage stage;
   grn_obj *type;
-  grn_obj_flags flags;
+  grn_column_flags flags;
   grn_raw_string value;
   struct {
     grn_raw_string sort_keys;
