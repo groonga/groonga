@@ -41,6 +41,7 @@
 #include "grn_util.h"
 #include "grn_posting.h"
 #include "grn_vector.h"
+#include "grn_selector.h"
 
 #ifdef GRN_SUPPORT_REGEXP
 # define GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH
