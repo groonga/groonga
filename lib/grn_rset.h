@@ -38,10 +38,15 @@ typedef struct {
 
 #define GRN_RSET_UTIL_BIT (0x80000000)
 
+typedef union {
+  int64_t value_int64;
+  double value_double;
+} grn_rset_aggregated_value;
+
 #define GRN_RSET_N_SUBRECS_SIZE (sizeof(int))
-#define GRN_RSET_MAX_SIZE       (sizeof(int64_t))
-#define GRN_RSET_MIN_SIZE       (sizeof(int64_t))
-#define GRN_RSET_SUM_SIZE       (sizeof(int64_t))
+#define GRN_RSET_MAX_SIZE       (sizeof(grn_rset_aggregated_value))
+#define GRN_RSET_MIN_SIZE       (sizeof(grn_rset_aggregated_value))
+#define GRN_RSET_SUM_SIZE       (sizeof(grn_rset_aggregated_value))
 #define GRN_RSET_AVG_SIZE       (sizeof(double) + sizeof(uint64_t))
 
 #define GRN_RSET_SCORE_SIZE (sizeof(double))
@@ -60,43 +65,54 @@ typedef struct {
 
 uint32_t grn_rset_recinfo_calc_values_size(grn_ctx *ctx,
                                            grn_table_group_flags flags);
+grn_id grn_rset_aggregated_value_get_type_id(grn_ctx *ctx, grn_obj *table);
+
 void grn_rset_recinfo_update_calc_values(grn_ctx *ctx,
                                          grn_rset_recinfo *ri,
                                          grn_obj *table,
                                          grn_obj *value);
 
-int64_t *grn_rset_recinfo_get_max_(grn_ctx *ctx,
-                                   grn_rset_recinfo *ri,
-                                   grn_obj *table);
-int64_t grn_rset_recinfo_get_max(grn_ctx *ctx,
-                                 grn_rset_recinfo *ri,
-                                 grn_obj *table);
-void grn_rset_recinfo_set_max(grn_ctx *ctx,
-                              grn_rset_recinfo *ri,
-                              grn_obj *table,
-                              int64_t max);
+grn_rset_aggregated_value *
+grn_rset_recinfo_get_max_(grn_ctx *ctx,
+                          grn_rset_recinfo *ri,
+                          grn_obj *table);
+grn_rset_aggregated_value
+grn_rset_recinfo_get_max(grn_ctx *ctx,
+                         grn_rset_recinfo *ri,
+                         grn_obj *table);
+void
+grn_rset_recinfo_set_max(grn_ctx *ctx,
+                         grn_rset_recinfo *ri,
+                         grn_obj *table,
+                         grn_rset_aggregated_value max);
 
-int64_t *grn_rset_recinfo_get_min_(grn_ctx *ctx,
-                                   grn_rset_recinfo *ri,
-                                   grn_obj *table);
-int64_t grn_rset_recinfo_get_min(grn_ctx *ctx,
-                                 grn_rset_recinfo *ri,
-                                 grn_obj *table);
-void grn_rset_recinfo_set_min(grn_ctx *ctx,
-                              grn_rset_recinfo *ri,
-                              grn_obj *table,
-                              int64_t min);
+grn_rset_aggregated_value *
+grn_rset_recinfo_get_min_(grn_ctx *ctx,
+                          grn_rset_recinfo *ri,
+                          grn_obj *table);
+grn_rset_aggregated_value
+grn_rset_recinfo_get_min(grn_ctx *ctx,
+                         grn_rset_recinfo *ri,
+                         grn_obj *table);
+void
+grn_rset_recinfo_set_min(grn_ctx *ctx,
+                         grn_rset_recinfo *ri,
+                         grn_obj *table,
+                         grn_rset_aggregated_value min);
 
-int64_t *grn_rset_recinfo_get_sum_(grn_ctx *ctx,
-                                   grn_rset_recinfo *ri,
-                                   grn_obj *table);
-int64_t grn_rset_recinfo_get_sum(grn_ctx *ctx,
-                                 grn_rset_recinfo *ri,
-                                 grn_obj *table);
-void grn_rset_recinfo_set_sum(grn_ctx *ctx,
-                              grn_rset_recinfo *ri,
-                              grn_obj *table,
-                              int64_t sum);
+grn_rset_aggregated_value *
+grn_rset_recinfo_get_sum_(grn_ctx *ctx,
+                          grn_rset_recinfo *ri,
+                          grn_obj *table);
+grn_rset_aggregated_value
+grn_rset_recinfo_get_sum(grn_ctx *ctx,
+                         grn_rset_recinfo *ri,
+                         grn_obj *table);
+void
+grn_rset_recinfo_set_sum(grn_ctx *ctx,
+                         grn_rset_recinfo *ri,
+                         grn_obj *table,
+                         grn_rset_aggregated_value sum);
 
 double *grn_rset_recinfo_get_avg_(grn_ctx *ctx,
                                   grn_rset_recinfo *ri,

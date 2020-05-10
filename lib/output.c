@@ -1027,37 +1027,53 @@ grn_output_table_column_value(grn_ctx *ctx,
         break;
       case GRN_ACCESSOR_GET_NSUBRECS :
         {
-          grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
+          grn_rset_recinfo *ri =
+            (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
           GRN_INT32_PUT(ctx, bulk, ri->n_subrecs);
         }
         bulk->header.domain = GRN_DB_INT32;
         break;
       case GRN_ACCESSOR_GET_MAX :
+        bulk->header.domain = grn_rset_aggregated_value_get_type_id(ctx, a->obj);
         {
-          grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-          int64_t max;
-          max = grn_rset_recinfo_get_max(ctx, ri, a->obj);
-          GRN_INT64_PUT(ctx, bulk, max);
+          grn_rset_recinfo *ri =
+            (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
+          grn_rset_aggregated_value max =
+            grn_rset_recinfo_get_max(ctx, ri, a->obj);
+          if (bulk->header.domain == GRN_DB_INT64) {
+            GRN_INT64_PUT(ctx, bulk, max.value_int64);
+          } else {
+            GRN_FLOAT_PUT(ctx, bulk, max.value_double);
+          }
         }
-        bulk->header.domain = GRN_DB_INT64;
         break;
       case GRN_ACCESSOR_GET_MIN :
+        bulk->header.domain = grn_rset_aggregated_value_get_type_id(ctx, a->obj);
         {
-          grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-          int64_t min;
-          min = grn_rset_recinfo_get_min(ctx, ri, a->obj);
-          GRN_INT64_PUT(ctx, bulk, min);
+          grn_rset_recinfo *ri =
+            (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
+          grn_rset_aggregated_value min =
+            grn_rset_recinfo_get_min(ctx, ri, a->obj);
+          if (bulk->header.domain == GRN_DB_INT64) {
+            GRN_INT64_PUT(ctx, bulk, min.value_int64);
+          } else {
+            GRN_FLOAT_PUT(ctx, bulk, min.value_double);
+          }
         }
-        bulk->header.domain = GRN_DB_INT64;
         break;
       case GRN_ACCESSOR_GET_SUM :
+        bulk->header.domain = grn_rset_aggregated_value_get_type_id(ctx, a->obj);
         {
-          grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-          int64_t sum;
-          sum = grn_rset_recinfo_get_sum(ctx, ri, a->obj);
-          GRN_INT64_PUT(ctx, bulk, sum);
+          grn_rset_recinfo *ri =
+            (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
+          grn_rset_aggregated_value sum =
+            grn_rset_recinfo_get_sum(ctx, ri, a->obj);
+          if (bulk->header.domain == GRN_DB_INT64) {
+            GRN_INT64_PUT(ctx, bulk, sum.value_int64);
+          } else {
+            GRN_FLOAT_PUT(ctx, bulk, sum.value_double);
+          }
         }
-        bulk->header.domain = GRN_DB_INT64;
         break;
       case GRN_ACCESSOR_GET_AVG :
         {

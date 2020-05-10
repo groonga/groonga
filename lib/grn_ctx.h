@@ -448,10 +448,10 @@ typedef struct {
   uint8_t subrec_offset;
   uint8_t record_unit;
   uint8_t subrec_unit;
-  union {
-    grn_table_group_flags group;
-  } flags;
-  //  grn_obj_flags flags;
+  struct {
+    grn_table_group_flags flags;
+    grn_obj *calc_target;
+  } group;
   uint32_t reference_count;
 } grn_db_obj;
 
