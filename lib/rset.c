@@ -46,34 +46,74 @@ grn_rset_recinfo_update_calc_values_bulk(grn_ctx *ctx,
                                          grn_obj *value_int64,
                                          grn_obj *value_float)
 {
+  bool is_float = false;
+  if (value->header.domain == GRN_DB_FLOAT ||
+      value->header.domain == GRN_DB_FLOAT32) {
+    is_float = true;
+  }
+
   if (flags & (GRN_TABLE_GROUP_CALC_MAX |
                GRN_TABLE_GROUP_CALC_MIN |
                GRN_TABLE_GROUP_CALC_SUM)) {
-    grn_obj_cast(ctx, value, value_int64, GRN_FALSE);
+    if (is_float) {
+      grn_obj_cast(ctx, value, value_float, GRN_FALSE);
+    } else {
+      grn_obj_cast(ctx, value, value_int64, GRN_FALSE);
+    }
   }
   if (flags & GRN_TABLE_GROUP_CALC_AVG) {
     grn_obj_cast(ctx, value, value_float, GRN_FALSE);
   }
 
   if (flags & GRN_TABLE_GROUP_CALC_MAX) {
-    int64_t current_max = *((int64_t *)values);
-    int64_t value_raw = GRN_INT64_VALUE(value_int64);
-    if (is_first_value || value_raw > current_max) {
-      *((int64_t *)values) = value_raw;
+    bool *is_float_ = (bool *)(((double *)values) + 1);
+    *is_float_ = is_float;
+
+    if (is_float) {
+      double current_max = *((double *)values);
+      double value_raw = GRN_FLOAT_VALUE(value_float);
+      if (is_first_value || value_raw > current_max) {
+        *((double *)values) = value_raw;
+      }
+    } else {
+      int64_t current_max = *((int64_t *)values);
+      int64_t value_raw = GRN_INT64_VALUE(value_int64);
+      if (is_first_value || value_raw > current_max) {
+        *((int64_t *)values) = value_raw;
+      }
     }
     values += GRN_RSET_MAX_SIZE;
   }
   if (flags & GRN_TABLE_GROUP_CALC_MIN) {
-    int64_t current_min = *((int64_t *)values);
-    int64_t value_raw = GRN_INT64_VALUE(value_int64);
-    if (is_first_value || value_raw < current_min) {
-      *((int64_t *)values) = value_raw;
+    bool *is_float_ = (bool *)(((double *)values) + 1);
+    *is_float_ = is_float;
+
+    if (is_float) {
+      double current_min = *((double *)values);
+      double value_raw = GRN_FLOAT_VALUE(value_float);
+      if (is_first_value || value_raw < current_min) {
+        *((double *)values) = value_raw;
+      }
+    } else {
+      int64_t current_min = *((int64_t *)values);
+      int64_t value_raw = GRN_INT64_VALUE(value_int64);
+      if (is_first_value || value_raw < current_min) {
+        *((int64_t *)values) = value_raw;
+      }
     }
     values += GRN_RSET_MIN_SIZE;
   }
   if (flags & GRN_TABLE_GROUP_CALC_SUM) {
-    int64_t value_raw = GRN_INT64_VALUE(value_int64);
-    *((int64_t *)values) += value_raw;
+    bool *is_float_ = (bool *)(((double *)values) + 1);
+    *is_float_ = is_float;
+
+    if (is_float) {
+      double value_raw = GRN_FLOAT_VALUE(value_float);
+      *((double *)values) += value_raw;
+    } else {
+      int64_t value_raw = GRN_INT64_VALUE(value_int64);
+      *((int64_t *)values) += value_raw;
+    }
     values += GRN_RSET_SUM_SIZE;
   }
   if (flags & GRN_TABLE_GROUP_CALC_AVG) {
@@ -170,7 +210,7 @@ grn_rset_recinfo_update_calc_values(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &value_int64);
 }
 
-int64_t *
+byte *
 grn_rset_recinfo_get_max_(grn_ctx *ctx,
                           grn_rset_recinfo *ri,
                           grn_obj *table)
@@ -187,7 +227,7 @@ grn_rset_recinfo_get_max_(grn_ctx *ctx,
             GRN_RSET_SUBRECS_SIZE(DB_OBJ(table)->subrec_size,
                                   DB_OBJ(table)->max_n_subrecs));
 
-  return (int64_t *)values;
+  return values;
 }
 
 int64_t
@@ -197,7 +237,22 @@ grn_rset_recinfo_get_max(grn_ctx *ctx,
 {
   int64_t *max_address;
 
-  max_address = grn_rset_recinfo_get_max_(ctx, ri, table);
+  max_address = (int64_t *)grn_rset_recinfo_get_max_(ctx, ri, table);
+  if (max_address) {
+    return *max_address;
+  } else {
+    return 0;
+  }
+}
+
+double
+grn_rset_recinfo_get_max_float(grn_ctx *ctx,
+                               grn_rset_recinfo *ri,
+                               grn_obj *table)
+{
+  double *max_address;
+
+  max_address = (double *)grn_rset_recinfo_get_max_(ctx, ri, table);
   if (max_address) {
     return *max_address;
   } else {
@@ -213,7 +268,7 @@ grn_rset_recinfo_set_max(grn_ctx *ctx,
 {
   int64_t *max_address;
 
-  max_address = grn_rset_recinfo_get_max_(ctx, ri, table);
+  max_address = (int64_t *)grn_rset_recinfo_get_max_(ctx, ri, table);
   if (!max_address) {
     return;
   }
@@ -221,7 +276,39 @@ grn_rset_recinfo_set_max(grn_ctx *ctx,
   *max_address = max;
 }
 
-int64_t *
+void
+grn_rset_recinfo_set_max_float(grn_ctx *ctx,
+                               grn_rset_recinfo *ri,
+                               grn_obj *table,
+                               double max)
+{
+  double *max_address;
+
+  max_address = (double *)grn_rset_recinfo_get_max_(ctx, ri, table);
+  if (!max_address) {
+    return;
+  }
+
+  *max_address = max;
+}
+
+bool
+grn_rset_recinfo_is_max_float(grn_ctx *ctx,
+                              grn_rset_recinfo *ri,
+                              grn_obj *table)
+{
+  int64_t *max_address;
+
+  max_address = (int64_t *)grn_rset_recinfo_get_max_(ctx, ri, table);
+  if (max_address) {
+    bool *is_float = (bool *)(((int64_t *)max_address) + 1);
+    return *is_float;
+  } else {
+    return false;
+  }
+}
+
+byte *
 grn_rset_recinfo_get_min_(grn_ctx *ctx,
                           grn_rset_recinfo *ri,
                           grn_obj *table)
@@ -242,7 +329,7 @@ grn_rset_recinfo_get_min_(grn_ctx *ctx,
     values += GRN_RSET_MAX_SIZE;
   }
 
-  return (int64_t *)values;
+  return values;
 }
 
 int64_t
@@ -252,7 +339,22 @@ grn_rset_recinfo_get_min(grn_ctx *ctx,
 {
   int64_t *min_address;
 
-  min_address = grn_rset_recinfo_get_min_(ctx, ri, table);
+  min_address = (int64_t *)grn_rset_recinfo_get_min_(ctx, ri, table);
+  if (min_address) {
+    return *min_address;
+  } else {
+    return 0;
+  }
+}
+
+double
+grn_rset_recinfo_get_min_float(grn_ctx *ctx,
+                               grn_rset_recinfo *ri,
+                               grn_obj *table)
+{
+  double *min_address;
+
+  min_address = (double *)grn_rset_recinfo_get_min_(ctx, ri, table);
   if (min_address) {
     return *min_address;
   } else {
@@ -268,7 +370,7 @@ grn_rset_recinfo_set_min(grn_ctx *ctx,
 {
   int64_t *min_address;
 
-  min_address = grn_rset_recinfo_get_min_(ctx, ri, table);
+  min_address = (int64_t *)grn_rset_recinfo_get_min_(ctx, ri, table);
   if (!min_address) {
     return;
   }
@@ -276,7 +378,39 @@ grn_rset_recinfo_set_min(grn_ctx *ctx,
   *min_address = min;
 }
 
-int64_t *
+void
+grn_rset_recinfo_set_min_float(grn_ctx *ctx,
+                               grn_rset_recinfo *ri,
+                               grn_obj *table,
+                               double min)
+{
+  double *min_address;
+
+  min_address = (double *)grn_rset_recinfo_get_min_(ctx, ri, table);
+  if (!min_address) {
+    return;
+  }
+
+  *min_address = min;
+}
+
+bool
+grn_rset_recinfo_is_min_float(grn_ctx *ctx,
+                              grn_rset_recinfo *ri,
+                              grn_obj *table)
+{
+  int64_t *min_address;
+
+  min_address = (int64_t *)grn_rset_recinfo_get_min_(ctx, ri, table);
+  if (min_address) {
+    bool *is_float = (bool *)(((int64_t *)min_address) + 1);
+    return *is_float;
+  } else {
+    return false;
+  }
+}
+
+byte *
 grn_rset_recinfo_get_sum_(grn_ctx *ctx,
                           grn_rset_recinfo *ri,
                           grn_obj *table)
@@ -300,7 +434,7 @@ grn_rset_recinfo_get_sum_(grn_ctx *ctx,
     values += GRN_RSET_MIN_SIZE;
   }
 
-  return (int64_t *)values;
+  return values;
 }
 
 int64_t
@@ -310,7 +444,22 @@ grn_rset_recinfo_get_sum(grn_ctx *ctx,
 {
   int64_t *sum_address;
 
-  sum_address = grn_rset_recinfo_get_sum_(ctx, ri, table);
+  sum_address = (int64_t *)grn_rset_recinfo_get_sum_(ctx, ri, table);
+  if (sum_address) {
+    return *sum_address;
+  } else {
+    return 0;
+  }
+}
+
+double
+grn_rset_recinfo_get_sum_float(grn_ctx *ctx,
+                               grn_rset_recinfo *ri,
+                               grn_obj *table)
+{
+  double *sum_address;
+
+  sum_address = (double *)grn_rset_recinfo_get_sum_(ctx, ri, table);
   if (sum_address) {
     return *sum_address;
   } else {
@@ -326,12 +475,44 @@ grn_rset_recinfo_set_sum(grn_ctx *ctx,
 {
   int64_t *sum_address;
 
-  sum_address = grn_rset_recinfo_get_sum_(ctx, ri, table);
+  sum_address = (int64_t *)grn_rset_recinfo_get_sum_(ctx, ri, table);
   if (!sum_address) {
     return;
   }
 
   *sum_address = sum;
+}
+
+void
+grn_rset_recinfo_set_sum_float(grn_ctx *ctx,
+                               grn_rset_recinfo *ri,
+                               grn_obj *table,
+                               double sum)
+{
+  double *sum_address;
+
+  sum_address = (double *)grn_rset_recinfo_get_sum_(ctx, ri, table);
+  if (!sum_address) {
+    return;
+  }
+
+  *sum_address = sum;
+}
+
+bool
+grn_rset_recinfo_is_sum_float(grn_ctx *ctx,
+                              grn_rset_recinfo *ri,
+                              grn_obj *table)
+{
+  int64_t *sum_address;
+
+  sum_address = (int64_t *)grn_rset_recinfo_get_sum_(ctx, ri, table);
+  if (sum_address) {
+    bool *is_float = (bool *)(((int64_t *)sum_address) + 1);
+    return *is_float;
+  } else {
+    return false;
+  }
 }
 
 double *

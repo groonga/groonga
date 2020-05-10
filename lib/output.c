@@ -1035,29 +1035,50 @@ grn_output_table_column_value(grn_ctx *ctx,
       case GRN_ACCESSOR_GET_MAX :
         {
           grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-          int64_t max;
-          max = grn_rset_recinfo_get_max(ctx, ri, a->obj);
-          GRN_INT64_PUT(ctx, bulk, max);
+          if (grn_rset_recinfo_is_max_float(ctx, ri, a->obj)) {
+            double max;
+            max = grn_rset_recinfo_get_max_float(ctx, ri, a->obj);
+            GRN_FLOAT_PUT(ctx, bulk, max);
+            bulk->header.domain = GRN_DB_FLOAT;
+          } else {
+            int64_t max;
+            max = grn_rset_recinfo_get_max(ctx, ri, a->obj);
+            GRN_INT64_PUT(ctx, bulk, max);
+            bulk->header.domain = GRN_DB_INT64;
+          }
         }
-        bulk->header.domain = GRN_DB_INT64;
         break;
       case GRN_ACCESSOR_GET_MIN :
         {
           grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-          int64_t min;
-          min = grn_rset_recinfo_get_min(ctx, ri, a->obj);
-          GRN_INT64_PUT(ctx, bulk, min);
+          if (grn_rset_recinfo_is_min_float(ctx, ri, a->obj)) {
+            double min;
+            min = grn_rset_recinfo_get_min_float(ctx, ri, a->obj);
+            GRN_FLOAT_PUT(ctx, bulk, min);
+            bulk->header.domain = GRN_DB_FLOAT;
+          } else {
+            int64_t min;
+            min = grn_rset_recinfo_get_min(ctx, ri, a->obj);
+            GRN_INT64_PUT(ctx, bulk, min);
+            bulk->header.domain = GRN_DB_INT64;
+          }
         }
-        bulk->header.domain = GRN_DB_INT64;
         break;
       case GRN_ACCESSOR_GET_SUM :
         {
           grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-          int64_t sum;
-          sum = grn_rset_recinfo_get_sum(ctx, ri, a->obj);
-          GRN_INT64_PUT(ctx, bulk, sum);
+          if (grn_rset_recinfo_is_sum_float(ctx, ri, a->obj)) {
+            double sum;
+            sum = grn_rset_recinfo_get_sum_float(ctx, ri, a->obj);
+            GRN_FLOAT_PUT(ctx, bulk, sum);
+            bulk->header.domain = GRN_DB_FLOAT;
+          } else {
+            int64_t sum;
+            sum = grn_rset_recinfo_get_sum(ctx, ri, a->obj);
+            GRN_INT64_PUT(ctx, bulk, sum);
+            bulk->header.domain = GRN_DB_INT64;
+          }
         }
-        bulk->header.domain = GRN_DB_INT64;
         break;
       case GRN_ACCESSOR_GET_AVG :
         {

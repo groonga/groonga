@@ -1,0 +1,25 @@
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tag COLUMN_SCALAR Tags
+column_create Memos priority COLUMN_SCALAR Float
+
+load --table Memos
+[
+{"_key": "Groonga1", "tag": "Groonga", "priority": 10},
+{"_key": "Groonga2", "tag": "Groonga", "priority": 20},
+{"_key": "Groonga3", "tag": "Groonga", "priority": 40.1},
+{"_key": "Mroonga1", "tag": "Mroonga", "priority": 50.01},
+{"_key": "Mroonga2", "tag": "Mroonga", "priority": 25},
+{"_key": "Mroonga3", "tag": "Mroonga", "priority": 10},
+{"_key": "Rroonga1", "tag": "Rroonga", "priority": 25.001},
+{"_key": "Rroonga2", "tag": "Rroonga", "priority": -25},
+{"_key": "Rroonga3", "tag": "Rroonga", "priority": 0}
+]
+
+select Memos \
+  --limit 0 \
+  --drilldowns[tag].keys tag \
+  --drilldowns[tag].calc_types MAX \
+  --drilldowns[tag].calc_target priority \
+  --drilldowns[tag].output_columns _key,_max

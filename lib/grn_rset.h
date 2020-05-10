@@ -39,9 +39,9 @@ typedef struct {
 #define GRN_RSET_UTIL_BIT (0x80000000)
 
 #define GRN_RSET_N_SUBRECS_SIZE (sizeof(int))
-#define GRN_RSET_MAX_SIZE       (sizeof(int64_t))
-#define GRN_RSET_MIN_SIZE       (sizeof(int64_t))
-#define GRN_RSET_SUM_SIZE       (sizeof(int64_t))
+#define GRN_RSET_MAX_SIZE       (sizeof(int64_t) + sizeof(bool))
+#define GRN_RSET_MIN_SIZE       (sizeof(int64_t) + sizeof(bool))
+#define GRN_RSET_SUM_SIZE       (sizeof(int64_t) + sizeof(bool))
 #define GRN_RSET_AVG_SIZE       (sizeof(double) + sizeof(uint64_t))
 
 #define GRN_RSET_SCORE_SIZE (sizeof(double))
@@ -65,38 +65,69 @@ void grn_rset_recinfo_update_calc_values(grn_ctx *ctx,
                                          grn_obj *table,
                                          grn_obj *value);
 
-int64_t *grn_rset_recinfo_get_max_(grn_ctx *ctx,
-                                   grn_rset_recinfo *ri,
-                                   grn_obj *table);
+byte *grn_rset_recinfo_get_max_(grn_ctx *ctx,
+                                grn_rset_recinfo *ri,
+                                grn_obj *table);
 int64_t grn_rset_recinfo_get_max(grn_ctx *ctx,
                                  grn_rset_recinfo *ri,
                                  grn_obj *table);
+double grn_rset_recinfo_get_max_float(grn_ctx *ctx,
+                                      grn_rset_recinfo *ri,
+                                      grn_obj *table);
 void grn_rset_recinfo_set_max(grn_ctx *ctx,
                               grn_rset_recinfo *ri,
                               grn_obj *table,
                               int64_t max);
-
-int64_t *grn_rset_recinfo_get_min_(grn_ctx *ctx,
+void grn_rset_recinfo_set_max_float(grn_ctx *ctx,
+                                    grn_rset_recinfo *ri,
+                                    grn_obj *table,
+                                    double max);
+bool grn_rset_recinfo_is_max_float(grn_ctx *ctx,
                                    grn_rset_recinfo *ri,
                                    grn_obj *table);
+
+
+byte *grn_rset_recinfo_get_min_(grn_ctx *ctx,
+                                grn_rset_recinfo *ri,
+                                grn_obj *table);
 int64_t grn_rset_recinfo_get_min(grn_ctx *ctx,
                                  grn_rset_recinfo *ri,
                                  grn_obj *table);
+double grn_rset_recinfo_get_min_float(grn_ctx *ctx,
+                                      grn_rset_recinfo *ri,
+                                      grn_obj *table);
 void grn_rset_recinfo_set_min(grn_ctx *ctx,
                               grn_rset_recinfo *ri,
                               grn_obj *table,
                               int64_t min);
-
-int64_t *grn_rset_recinfo_get_sum_(grn_ctx *ctx,
+void grn_rset_recinfo_set_min_float(grn_ctx *ctx,
+                                    grn_rset_recinfo *ri,
+                                    grn_obj *table,
+                                    double min);
+bool grn_rset_recinfo_is_min_float(grn_ctx *ctx,
                                    grn_rset_recinfo *ri,
                                    grn_obj *table);
+
+byte *grn_rset_recinfo_get_sum_(grn_ctx *ctx,
+                                grn_rset_recinfo *ri,
+                                grn_obj *table);
 int64_t grn_rset_recinfo_get_sum(grn_ctx *ctx,
                                  grn_rset_recinfo *ri,
                                  grn_obj *table);
+double grn_rset_recinfo_get_sum_float(grn_ctx *ctx,
+                                      grn_rset_recinfo *ri,
+                                      grn_obj *table);
 void grn_rset_recinfo_set_sum(grn_ctx *ctx,
                               grn_rset_recinfo *ri,
                               grn_obj *table,
                               int64_t sum);
+void grn_rset_recinfo_set_sum_float(grn_ctx *ctx,
+                                    grn_rset_recinfo *ri,
+                                    grn_obj *table,
+                                    double sum);
+bool grn_rset_recinfo_is_sum_float(grn_ctx *ctx,
+                                   grn_rset_recinfo *ri,
+                                   grn_obj *table);
 
 double *grn_rset_recinfo_get_avg_(grn_ctx *ctx,
                                   grn_rset_recinfo *ri,
