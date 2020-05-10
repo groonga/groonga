@@ -1,0 +1,25 @@
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items price COLUMN_SCALAR UInt32
+
+load --table Items
+[
+{"_key": "Book",  "price": 1000},
+{"_key": "Note",  "price": 1000},
+{"_key": "Box",   "price": 500},
+{"_key": "Pen",   "price": 500},
+{"_key": "Food",  "price": 500},
+{"_key": "Drink", "price": 300}
+]
+
+select Items \
+  --drilldowns[label].keys price \
+  --drilldowns[label].output_columns _key,_nsubrecs,nth_record \
+  --drilldowns[label].filter '_key >= 500' \
+  --drilldowns[label].limit 1 \
+  --drilldowns[label].offset 1 \
+  --drilldowns[label].sort_keys '_key' \
+  --drilldowns[label].columns[nth_record].stage output \
+  --drilldowns[label].columns[nth_record].type UInt32 \
+  --drilldowns[label].columns[nth_record].flags COLUMN_SCALAR \
+  --drilldowns[label].columns[nth_record].value 'window_record_number()' \
+  --drilldowns[label].columns[nth_record].window.sort_keys _key
