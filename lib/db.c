@@ -4443,18 +4443,20 @@ grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
     case GRN_UVECTOR :
       {
         unsigned int n_vector_elements;
+        unsigned int element_size;
         grn_id domain;
-        grn_id *ids;
-        unsigned int i, n_ids;
+        uint8_t *elements;
+        unsigned int i, n_elements;
 
         n_vector_elements = grn_vector_size(ctx, vector);
         domain = key_buffer->header.domain;
-        ids = (grn_id *)GRN_BULK_HEAD(key_buffer);
-        n_ids = GRN_BULK_VSIZE(key_buffer) / sizeof(grn_id);
-        for (i = 0; i < n_ids; i++) {
-          grn_id element_id = ids[i];
+        elements = GRN_BULK_HEAD(key_buffer);
+        element_size = grn_uvector_element_size(ctx, key_buffer);
+        n_elements = GRN_BULK_VSIZE(key_buffer) / element_size;
+        for (i = 0; i < n_elements; i++) {
+          const char *element_id = elements + (element_size * i);
           grn_vector_add_element(ctx, vector,
-                                 (const char *)(&element_id), sizeof(grn_id),
+                                 element_id, sizeof(grn_id),
                                  0,
                                  domain);
           grn_table_group_multi_keys_vector_record(ctx,
