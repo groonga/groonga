@@ -144,10 +144,15 @@ run-bench-result-set-raw: bench-result-set-raw
 	@echo $@:
 	rm -rf db
 	mkdir -p db
-	env							\
-	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
-	  ../src/groonga -n db/db				\
-	  table_create Sources TABLE_NO_KEY
+	(echo "table_create Sources TABLE_NO_KEY";			\
+	 echo "load --table Sources";					\
+	 echo "[";							\
+	 seq 1 5000000 | (while read line; do echo "[],"; done);	\
+	 echo "[]";							\
+	 echo "]") |							\
+	  env								\
+	    GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
+	    ../src/groonga -n db/db
 	env							\
 	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
 	  ./bench-result-set-raw
