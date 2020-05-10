@@ -154,20 +154,24 @@ grn_selector_data_parse_score_column_option_value(grn_ctx *ctx,
   switch (value->header.type) {
   case GRN_COLUMN_FIX_SIZE :
     {
-      data->score_table = grn_ctx_at(ctx, value->header.domain);
-      if (data->score_table->header.domain == DB_OBJ(data->table)->id) {
+      if (value->header.domain == data->res->header.domain) {
         data->score_column = value;
       } else {
-        grn_obj inspected;
-        GRN_TEXT_INIT(&inspected, 0);
-        grn_inspect(ctx, &inspected, value);
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s[%s] unrelated score column: %.*s",
-            tag,
-            name,
-            (int)GRN_TEXT_LEN(&inspected),
-            GRN_TEXT_VALUE(&inspected));
-        GRN_OBJ_FIN(ctx, &inspected);
+        data->score_table = grn_ctx_at(ctx, value->header.domain);
+        if (data->score_table->header.domain == DB_OBJ(data->table)->id) {
+          data->score_column = value;
+        } else {
+          grn_obj inspected;
+          GRN_TEXT_INIT(&inspected, 0);
+          grn_inspect(ctx, &inspected, value);
+          ERR(GRN_INVALID_ARGUMENT,
+              "%s[%s] unrelated score column: %.*s",
+              tag,
+              name,
+              (int)GRN_TEXT_LEN(&inspected),
+              GRN_TEXT_VALUE(&inspected));
+          GRN_OBJ_FIN(ctx, &inspected);
+        }
       }
     }
     break;
@@ -196,50 +200,45 @@ grn_selector_data_have_score_column(grn_ctx *ctx,
   return data->score_column != NULL;
 }
 
-static inline grn_rc
-grn_selector_data_on_record_found_inline(grn_ctx *ctx,
-                                         grn_selector_data *data,
-                                         grn_posting *posting)
+grn_rc
+grn_selector_data_current_add_score(grn_ctx *ctx,
+                                    grn_obj *res,
+                                    grn_id id,
+                                    double score)
 {
-  grn_ii_posting_add(ctx,
-                     posting,
-                     (grn_hash *)(data->res),
-                     data->op);
-  if (ctx->rc != GRN_SUCCESS) {
+  grn_selector_data *data = ctx->impl->current_selector_data;
+  if (!data) {
     return ctx->rc;
   }
 
-  if (data->score_column) {
-    grn_id record_id = grn_posting_get_record_id(ctx, posting);
-    grn_id score_id = grn_table_get(ctx,
-                                    data->score_table,
-                                    &record_id,
-                                    sizeof(grn_id));
-    if (score_id != GRN_ID_NIL) {
-      GRN_FLOAT_SET(ctx,
-                    &(data->score),
-                    grn_posting_get_weight_float(ctx, posting));
-      grn_obj_set_value(ctx,
-                        data->score_column,
-                        score_id,
-                        &(data->score),
-                        GRN_OBJ_INCR);
-    }
+  if (data->res != res) {
+    return ctx->rc;
   }
 
-  return ctx->rc;
-}
+  if (!data->score_column) {
+    return ctx->rc;
+  }
 
-grn_rc
-grn_selector_data_on_record_found(grn_ctx *ctx,
-                                  grn_selector_data *data,
-                                  grn_posting *posting)
-{
-  GRN_API_ENTER;
-  grn_selector_data_on_record_found_inline(ctx,
-                                           data,
-                                           posting);
-  GRN_API_RETURN(ctx->rc);
+  grn_id score_id;
+  if (data->score_table) {
+    score_id = grn_table_get(ctx,
+                             data->score_table,
+                             &id,
+                             sizeof(grn_id));
+    if (score_id == GRN_ID_NIL) {
+      return ctx->rc;
+    }
+  } else {
+    score_id = id;
+  }
+
+  GRN_FLOAT_SET(ctx, &(data->score), score);
+  grn_obj_set_value(ctx,
+                    data->score_column,
+                    score_id,
+                    &(data->score),
+                    GRN_OBJ_INCR);
+  return ctx->rc;
 }
 
 grn_rc
@@ -264,12 +263,12 @@ grn_selector_data_on_token_found(grn_ctx *ctx,
 
   grn_posting *posting;
   while ((posting = grn_ii_cursor_next(ctx, cursor))) {
-    grn_posting_internal new_posting = *((grn_posting_internal *)posting);
-    new_posting.weight = (new_posting.weight + 1) * score;
-    new_posting.weight_float = (new_posting.weight_float + 1) * score;
-    grn_selector_data_on_record_found_inline(ctx,
-                                             data,
-                                             (grn_posting *)&new_posting);
+    grn_posting_internal add_posting = *((grn_posting_internal *)posting);
+    add_posting.weight_float = (add_posting.weight_float + 1) * score;
+    grn_ii_posting_add_float(ctx,
+                             (grn_posting *)&add_posting,
+                             (grn_hash *)(data->res),
+                             data->op);
   }
   grn_ii_cursor_close(ctx, cursor);
 

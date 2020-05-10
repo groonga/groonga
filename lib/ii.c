@@ -9010,7 +9010,10 @@ token_info_clear_offset(token_info **tis, uint32_t n)
 /* select */
 
 grn_inline static void
-res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, double score,
+res_add(grn_ctx *ctx,
+        grn_hash *s,
+        grn_rset_posinfo *pi,
+        double score,
         grn_operator op)
 {
   grn_rset_recinfo *ri;
@@ -9019,6 +9022,7 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, double score,
     if (grn_hash_add(ctx, s, pi, s->key_size, (void **)&ri, NULL)) {
       if (s->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
         grn_table_add_subrec((grn_obj *)s, ri, score, pi, 1);
+        grn_selector_data_current_add_score(ctx, (grn_obj *)s, pi->rid, score);
       }
     }
     break;
@@ -9027,6 +9031,7 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, double score,
       if (s->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
         ri->n_subrecs |= GRN_RSET_UTIL_BIT;
         grn_table_add_subrec((grn_obj *)s, ri, score, pi, 1);
+        grn_selector_data_current_add_score(ctx, (grn_obj *)s, pi->rid, score);
       }
     }
     break;
@@ -9042,6 +9047,7 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, double score,
     if (grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri)) {
       if (s->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
         ri->score += score;
+        grn_selector_data_current_add_score(ctx, (grn_obj *)s, pi->rid, score);
       }
     }
     break;

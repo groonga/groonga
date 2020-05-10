@@ -2112,16 +2112,10 @@ grn_geo_select_in_rectangle_callback(grn_ctx *ctx,
   } else {
     add_posting.weight_float += 1.0;
   }
-  if (data->selector_data) {
-    grn_selector_data_on_record_found(ctx,
-                                      data->selector_data,
-                                      (grn_posting *)(&add_posting));
-  } else {
-    grn_ii_posting_add_float(ctx,
-                             (grn_posting *)(&add_posting),
-                             data->res,
-                             data->op);
-  }
+  grn_ii_posting_add_float(ctx,
+                           (grn_posting *)(&add_posting),
+                           data->res,
+                           data->op);
   return ctx->rc == GRN_SUCCESS;
 }
 

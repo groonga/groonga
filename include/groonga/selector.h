@@ -91,11 +91,6 @@ grn_selector_data_have_score_column(grn_ctx *ctx,
                                     grn_selector_data *data);
 
 GRN_API grn_rc
-grn_selector_data_on_record_found(grn_ctx *ctx,
-                                  grn_selector_data *data,
-                                  grn_posting *posting);
-
-GRN_API grn_rc
 grn_selector_data_on_token_found(grn_ctx *ctx,
                                  grn_selector_data *data,
                                  grn_obj *index,

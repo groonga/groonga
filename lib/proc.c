@@ -2317,11 +2317,16 @@ selector_to_function_data_fin(grn_ctx *ctx,
 }
 
 static grn_rc
-run_query(grn_ctx *ctx, grn_obj *table,
-          int nargs, grn_obj **args,
-          grn_obj *res, grn_operator op)
+run_query(grn_ctx *ctx,
+          grn_obj *table,
+          int nargs,
+          grn_obj **args,
+          grn_obj *res,
+          grn_operator op,
+          grn_selector_data *selector_data)
 {
   grn_rc rc = GRN_SUCCESS;
+  const char *tag = "[query]";
   grn_obj *match_columns_string;
   grn_obj *query;
   grn_obj *query_expander_name = NULL;
@@ -2335,7 +2340,9 @@ run_query(grn_ctx *ctx, grn_obj *table,
 
   if (!(2 <= nargs && nargs <= 3)) {
     ERR(GRN_INVALID_ARGUMENT,
-        "query(): wrong number of arguments (%d for 2..3)", nargs);
+        "%s wrong number of arguments (%d for 2..3)",
+        tag,
+        nargs);
     rc = ctx->rc;
     goto exit;
   }
@@ -2350,22 +2357,34 @@ run_query(grn_ctx *ctx, grn_obj *table,
       query_expander_name = options;
       break;
     case GRN_TABLE_HASH_KEY :
-      rc = grn_proc_options_parse(ctx,
-                                  options,
-                                  "[query]",
-                                  "expander",
-                                  GRN_PROC_OPTION_VALUE_RAW,
-                                  &query_expander_name,
-                                  "default_mode",
-                                  GRN_PROC_OPTION_VALUE_MODE,
-                                  &default_mode,
-                                  "default_operator",
-                                  GRN_PROC_OPTION_VALUE_OPERATOR,
-                                  &default_operator,
-                                  "flags",
-                                  GRN_PROC_OPTION_VALUE_EXPR_FLAGS,
-                                  &flags_specified,
-                                  NULL);
+#define OPTIONS                                                         \
+      "expander",                                                       \
+        GRN_PROC_OPTION_VALUE_RAW,                                      \
+        &query_expander_name,                                           \
+        "default_mode",                                                 \
+        GRN_PROC_OPTION_VALUE_MODE,                                     \
+        &default_mode,                                                  \
+        "default_operator",                                             \
+        GRN_PROC_OPTION_VALUE_OPERATOR,                                 \
+        &default_operator,                                              \
+        "flags",                                                        \
+        GRN_PROC_OPTION_VALUE_EXPR_FLAGS,                               \
+        &flags_specified
+      if (selector_data) {
+        rc = grn_selector_data_parse_options(ctx,
+                                             selector_data,
+                                             options,
+                                             tag,
+                                             OPTIONS,
+                                             NULL);
+      } else {
+        rc = grn_proc_options_parse(ctx,
+                                    options,
+                                    tag,
+                                    OPTIONS,
+                                    NULL);
+      }
+#undef OPTIONS
       if (rc != GRN_SUCCESS) {
         goto exit;
       }
@@ -2481,7 +2500,7 @@ func_query(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   if (selector_to_function_data_init(ctx, &data, user_data)) {
     grn_rc rc;
-    rc = run_query(ctx, data.table, nargs, args, data.records, GRN_OP_AND);
+    rc = run_query(ctx, data.table, nargs, args, data.records, GRN_OP_AND, NULL);
     if (rc == GRN_SUCCESS) {
       selector_to_function_data_selected(ctx, &data);
     }
@@ -2496,7 +2515,13 @@ selector_query(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                int nargs, grn_obj **args,
                grn_obj *res, grn_operator op)
 {
-  return run_query(ctx, table, nargs - 1, args + 1, res, op);
+  return run_query(ctx,
+                   table,
+                   nargs - 1,
+                   args + 1,
+                   res,
+                   op,
+                   grn_selector_data_get(ctx));
 }
 
 static void

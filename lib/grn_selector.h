@@ -35,6 +35,12 @@ grn_selector_run(grn_ctx *ctx,
                  grn_obj *res,
                  grn_operator op);
 
+grn_rc
+grn_selector_data_current_add_score(grn_ctx *ctx,
+                                    grn_obj *res,
+                                    grn_id id,
+                                    double score);
+
 #ifdef __cplusplus
 }
 #endif
