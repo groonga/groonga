@@ -13,6 +13,7 @@ noinst_PROGRAMS =				\
 	bench-query-optimizer			\
 	bench-range-select			\
 	bench-result-set			\
+	bench-result-set-raw			\
 	bench-between-sequential		\
 	bench-nfkc				\
 	bench-cache
@@ -60,6 +61,9 @@ nodist_EXTRA_bench_range_select_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 bench_result_set_SOURCES = bench-result-set.c
 nodist_EXTRA_bench_result_set_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 
+bench_result_set_raw_SOURCES = bench-result-set-raw.c
+nodist_EXTRA_bench_result_set_raw_SOURCES = $(NONEXISTENT_CXX_SOURCE)
+
 bench_between_sequential_SOURCES = bench-between-sequential.c
 nodist_EXTRA_bench_between_sequential_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 
@@ -77,6 +81,7 @@ benchmarks =					\
 	run-bench-query-optimizer		\
 	run-bench-range-select			\
 	run-bench-result-set			\
+	run-bench-result-set-raw		\
 	run-bench-between-sequential		\
 	run-bench-nfkc				\
 	run-bench-cache
@@ -134,6 +139,18 @@ run-bench-result-set: bench-result-set
 	env							\
 	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
 	  ./bench-result-set
+
+run-bench-result-set-raw: bench-result-set-raw
+	@echo $@:
+	rm -rf db
+	mkdir -p db
+	env							\
+	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
+	  ../src/groonga -n db/db				\
+	  table_create Sources TABLE_NO_KEY
+	env							\
+	  GRN_RUBY_SCRIPTS_DIR="$(top_srcdir)/lib/mrb/scripts"	\
+	  ./bench-result-set-raw
 
 run-bench-between-sequential: bench-between-sequential
 	@echo $@:
