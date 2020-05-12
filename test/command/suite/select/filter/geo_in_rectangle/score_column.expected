@@ -31,22 +31,22 @@ select LandMarks   --sort_keys 'distance,_id'   --columns[distance].stage initia
       ],
       [
         "2x3",
-        0.030821074,
+        0.03082107,
         36
       ],
       [
         "3x2",
-        0.030821074,
+        0.03082107,
         51
       ],
       [
         "3x4",
-        0.030821074,
+        0.03082107,
         53
       ],
       [
         "4x3",
-        0.030821074,
+        0.03082107,
         68
       ],
       [
@@ -71,12 +71,12 @@ select LandMarks   --sort_keys 'distance,_id'   --columns[distance].stage initia
       ],
       [
         "1x3",
-        0.061642148,
+        0.06164215,
         20
       ],
       [
         "3x1",
-        0.061642148,
+        0.06164215,
         50
       ],
       [
@@ -101,7 +101,7 @@ select LandMarks   --sort_keys 'distance,_id'   --columns[distance].stage initia
       ],
       [
         "1x1",
-        0.087175161,
+        0.08717516,
         18
       ]
     ]
