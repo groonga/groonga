@@ -97,9 +97,9 @@ install:
   - ps: |
       Invoke-WebRequest `
         -Uri https://packages.groonga.org/source/groonga-normalizer-mysql/groonga-normalizer-mysql-latest.zip `
-       -OutFile groonga-normalizer-mysql-latest.zip
+        -OutFile groonga-normalizer-mysql-latest.zip
   - ps: |
-      Expand-Archive -Path groonga-normalizer-mysql-latest.zip
+      Expand-Archive -Path groonga-normalizer-mysql-latest.zip -DestinationPath .
   - del groonga-normalizer-mysql-latest.zip
   - move groonga-normalizer-mysql* vendor\plugins\groonga-normalizer-mysql
 
