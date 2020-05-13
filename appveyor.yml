@@ -94,18 +94,11 @@ install:
       }
       "GRN_VERSION=" + $Env:GROONGA_VERSION | Set-Content version.sh
       $Env:FULL_GROONGA_INSTALL_FOLDER = $Env:APPVEYOR_BUILD_FOLDER + "\" + $Env:GROONGA_INSTALL_SUB_FOLDER + "\" + $Env:GROONGA_INSTALL_FOLDER
-  - ps: |
-      Invoke-WebRequest `
-        -Uri https://packages.groonga.org/source/groonga-normalizer-mysql/groonga-normalizer-mysql-latest.zip `
-        -OutFile groonga-normalizer-mysql-latest.zip
-  - ps: |
-      Expand-Archive -Path groonga-normalizer-mysql-latest.zip -DestinationPath .
-  - del groonga-normalizer-mysql-latest.zip
-  - move groonga-normalizer-mysql* vendor\plugins\groonga-normalizer-mysql
 
 build_script:
   - git submodule update --init --recursive
   - cd vendor
+  - ruby download_groonga_normalizer_mysql.rb
   - ruby download_lz4.rb
   - ruby download_mecab.rb
   - ruby download_message_pack.rb
