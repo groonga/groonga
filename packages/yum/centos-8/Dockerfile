@@ -15,7 +15,7 @@ RUN \
     libedit-devel \
     libevent-devel \
     libstemmer-devel \
-    libzstd-devel \
+    # libzstd-devel \
     lz4-devel \
     openssl-devel \
     pcre-devel \

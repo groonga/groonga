@@ -1,7 +1,7 @@
 %define _centos_ver   %{?centos_ver:%{centos_ver}}%{!?centos_ver:5}
 
 %define _use_lz4      %{?use_lz4:%{use_lz4}}%{!?use_lz4:%{_centos_ver} >= 6}
-%define _use_zstd     %{?use_zstd:%{use_zstd}}%{!?use_zstd:%{_centos_ver} >= 6}
+%define _use_zstd     %{?use_zstd:%{use_zstd}}%{!?use_zstd:%{_centos_ver} < 8}
 %define _use_mecab    %{?use_mecab:%{use_mecab}}%{!?use_mecab:%{_centos_ver} <= 7}
 %define _use_jemalloc %{?use_jemalloc:%{use_jemalloc}}%{!?use_jemalloc:0}
 %define _use_msgpack  %{?use_msgpack:%{use_msgpack}}%{!?use_msgpack:%{_centos_ver} == 7}
