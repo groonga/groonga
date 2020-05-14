@@ -4580,14 +4580,7 @@ grn_table_group_update_aggregated_value_type_id(grn_ctx *ctx,
     return;
   }
 
-  if (calc_target->header.type == GRN_ACCESSOR) {
-    grn_accessor *a = (grn_accessor *)calc_target;
-    while (a->next) {
-      a = a->next;
-    }
-    calc_target = a->obj;
-  }
-  if (grn_type_id_is_float_family(ctx, DB_OBJ(calc_target)->range)) {
+  if (grn_type_id_is_float_family(ctx, grn_obj_get_range(ctx, calc_target))) {
     DB_OBJ(table)->group.aggregated_value_type_id = GRN_DB_FLOAT;
   }
 }
