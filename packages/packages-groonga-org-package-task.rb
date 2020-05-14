@@ -77,6 +77,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
           release(target_namespace) if __send__("enable_#{target_namespace}?")
         end
       end
+      task target_namespace => ["#{target_namespace}:release"]
     end
   end
 
