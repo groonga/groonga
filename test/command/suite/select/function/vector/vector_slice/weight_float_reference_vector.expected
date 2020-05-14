@@ -1,0 +1,67 @@
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga", "tags": {"Groonga": 100.1, "Full text search": 92.3}},
+{"_key": "Rroonga", "tags": {"Groonga": 100.2, "Full text search": 94.5, "Ruby": 56.7, "Library": 30.12}},
+{"_key": "Nothing"}
+]
+[[0,0.0,0.0],3]
+select Memos   --columns[slice].stage output   --columns[slice].type Tags   --columns[slice].flags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32   --columns[slice].value 'vector_slice(tags, 1, 2)'   --output_columns 'tags, slice'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "tags",
+          "Tags"
+        ],
+        [
+          "slice",
+          "Tags"
+        ]
+      ],
+      [
+        {
+          "Groonga": 100.1,
+          "Full text search": 92.3
+        },
+        {
+          "Full text search": 92.3
+        }
+      ],
+      [
+        {
+          "Groonga": 100.2,
+          "Full text search": 94.5,
+          "Ruby": 56.7,
+          "Library": 30.12
+        },
+        {
+          "Full text search": 94.5,
+          "Ruby": 56.7
+        }
+      ],
+      [
+        {
+        },
+        {
+        }
+      ]
+    ]
+  ]
+]

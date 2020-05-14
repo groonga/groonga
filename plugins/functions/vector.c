@@ -240,12 +240,12 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
       for (i = from; i < to; i++) {
         const char *content;
         unsigned int content_length;
-        unsigned int weight;
+        float weight;
         grn_id domain;
-        content_length = grn_vector_get_element(ctx, target, i,
-                                                &content, &weight, &domain);
-        grn_vector_add_element(ctx, slice,
-                               content, content_length, weight, domain);
+        content_length = grn_vector_get_element_float(ctx, target, i,
+                                                      &content, &weight, &domain);
+        grn_vector_add_element_float(ctx, slice,
+                                     content, content_length, weight, domain);
       }
     }
     break;
@@ -267,9 +267,9 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
         unsigned int i;
         for (i = from; i < to; i++) {
           grn_id id;
-          unsigned int weight;
-          id = grn_uvector_get_element(ctx, target, i, &weight);
-          grn_uvector_add_element(ctx, slice, id, weight);
+          float weight;
+          id = grn_uvector_get_element_record(ctx, target, i, &weight);
+          grn_uvector_add_element_record(ctx, slice, id, weight);
         }
       } else {
 #define PUT_SLICE_VALUES(type) do {                                     \
