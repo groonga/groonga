@@ -170,8 +170,8 @@ before_test:
   - if "%VS_VERSION%" == "12"
       del test\command\suite\select\filter\geo_in_circle\score_column\column.test
   - ps: |
-      Copy-Item -R
-        vendor\plugins\groonga-normalizer-mysql\test\suite
+      Copy-Item -R `
+        vendor\plugins\groonga-normalizer-mysql\test\suite `
         test\command\suite\groonga-normalizer-mysql
 
 test_script:
