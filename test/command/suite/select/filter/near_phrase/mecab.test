@@ -18,4 +18,4 @@ load --table Entries
 {"content": "東京都京都府"}
 ]
 
-select Entries --filter 'content *NP "京都府 東京都"' --output_columns '_score, content'
+select Entries --filter 'content *NP "\\"京都府\\" \\"東京都\\""' --output_columns '_score, content'

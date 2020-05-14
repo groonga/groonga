@@ -8886,10 +8886,18 @@ token_info_build(grn_ctx *ctx,
   const char *current = string;
   const char *string_end = string + string_len;
   uint32_t phrase_id = 0;
+  bool is_first_double_quote = true;
   if (mode == GRN_OP_NEAR_PHRASE) {
     while (current < string_end) {
-      int space_char_len = grn_isspace(current, ctx->encoding);
-      if (space_char_len > 0) {
+      if (current[0] == GRN_QUERY_QUOTER) {
+        if (is_first_double_quote) {
+          is_first_double_quote = false;
+          current++;
+          phrase = current;
+          continue;
+        } else {
+          is_first_double_quote = true;
+        }
         if (current != phrase) {
           uint32_t n_before = *n;
           grn_rc rc = token_info_build_phrase(ctx,
@@ -8912,7 +8920,7 @@ token_info_build(grn_ctx *ctx,
           }
           phrase_id++;
         }
-        current += space_char_len;
+        current++;
         phrase = current;
         continue;
       }
