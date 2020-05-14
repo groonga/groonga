@@ -38,6 +38,28 @@ class PackagesGroongaOrgPackageTask < PackageTask
     end
   end
 
+  def define_apt_task
+    namespace :apt do
+      desc "Clean APT repositories"
+      task :clean do
+        rm_rf("#{apt_dir}/repositories")
+      end
+    end
+    task apt: ["apt:clean"]
+    super
+  end
+
+  def define_yum_task
+    namespace :yum do
+      desc "Clean Yum repositories"
+      task :clean do
+        rm_rf("#{yum_dir}/repositories")
+      end
+    end
+    task yum: ["yum:clean"]
+    super
+  end
+
   def release(target_namespace)
     base_dir = __send__("#{target_namespace}_dir")
     repositories_dir = "#{base_dir}/repositories"
