@@ -24,7 +24,7 @@ License:	LGPLv2
 URL:		http://groonga.org/
 Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 %if %{_use_mecab}
 BuildRequires:	mecab-devel
 %endif
@@ -181,7 +181,7 @@ Libraries and header files for Groonga
 Summary:	MeCab tokenizer for Groonga
 Group:		Applications/Text
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:       mecab-dic
+Requires:	mecab-dic
 
 %description tokenizer-mecab
 MeCab tokenizer for Groonga
