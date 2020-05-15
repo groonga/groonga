@@ -29,7 +29,7 @@ struct _grn_selector_data {
   grn_obj *index;
   size_t n_args;
   grn_obj **args;
-  grn_obj *res;
+  grn_obj *result_set;
   grn_operator op;
   grn_obj *score_table;
   grn_obj *score_column;
@@ -50,7 +50,7 @@ grn_selector_run(grn_ctx *ctx,
                  grn_obj *index,
                  size_t n_args,
                  grn_obj **args,
-                 grn_obj *res,
+                 grn_obj *result_set,
                  grn_operator op)
 {
   grn_selector_data data;
@@ -60,7 +60,7 @@ grn_selector_run(grn_ctx *ctx,
   data.index = index;
   data.n_args = n_args;
   data.args = args;
-  data.res = res;
+  data.result_set = result_set;
   data.op = op;
   data.score_table = NULL;
   data.score_column = NULL;
@@ -74,7 +74,7 @@ grn_selector_run(grn_ctx *ctx,
                                                 index,
                                                 n_args,
                                                 args,
-                                                res,
+                                                result_set,
                                                 op);
   ctx->impl->current_selector_data = previous_data;
 
@@ -127,10 +127,10 @@ grn_selector_data_get_args(grn_ctx *ctx,
 }
 
 grn_obj *
-grn_selector_data_get_res(grn_ctx *ctx,
-                          grn_selector_data *data)
+grn_selector_data_get_result_set(grn_ctx *ctx,
+                                 grn_selector_data *data)
 {
-  return data->res;
+  return data->result_set;
 }
 
 grn_operator
@@ -154,7 +154,7 @@ grn_selector_data_parse_score_column_option_value(grn_ctx *ctx,
   switch (value->header.type) {
   case GRN_COLUMN_FIX_SIZE :
     {
-      if (value->header.domain == data->res->header.domain) {
+      if (value->header.domain == data->result_set->header.domain) {
         data->score_column = value;
       } else {
         data->score_table = grn_ctx_at(ctx, value->header.domain);
@@ -202,7 +202,7 @@ grn_selector_data_have_score_column(grn_ctx *ctx,
 
 grn_rc
 grn_selector_data_current_add_score(grn_ctx *ctx,
-                                    grn_obj *res,
+                                    grn_obj *result_set,
                                     grn_id id,
                                     double score)
 {
@@ -211,7 +211,7 @@ grn_selector_data_current_add_score(grn_ctx *ctx,
     return ctx->rc;
   }
 
-  if (data->res != res) {
+  if (data->result_set != result_set) {
     return ctx->rc;
   }
 
@@ -267,7 +267,7 @@ grn_selector_data_on_token_found(grn_ctx *ctx,
     add_posting.weight_float = (add_posting.weight_float + 1) * score;
     grn_ii_posting_add_float(ctx,
                              (grn_posting *)&add_posting,
-                             (grn_hash *)(data->res),
+                             (grn_hash *)(data->result_set),
                              data->op);
   }
   grn_ii_cursor_close(ctx, cursor);

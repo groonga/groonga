@@ -58,8 +58,8 @@ grn_selector_data_get_args(grn_ctx *ctx,
                            grn_selector_data *data,
                            size_t *n_args);
 GRN_API grn_obj *
-grn_selector_data_get_res(grn_ctx *ctx,
-                          grn_selector_data *data);
+grn_selector_data_get_result_set(grn_ctx *ctx,
+                                 grn_selector_data *data);
 GRN_API grn_operator
 grn_selector_data_get_op(grn_ctx *ctx,
                          grn_selector_data *data);
