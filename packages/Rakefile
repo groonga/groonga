@@ -2,16 +2,22 @@ require_relative "packages-groonga-org-package-task"
 
 class GroongaPackageTask < PackagesGroongaOrgPackageTask
   def initialize
-    base_version_file = File.join(__dir__,
-                                  "..",
-                                  "base_version")
-    version = File.read(base_version_file).chomp
-    super("groonga", version, detect_release_time)
-    @archive_name = "groonga-#{version}.tar.gz"
+    super("groonga", detect_version, detect_release_time)
+    @archive_name = "groonga-#{@version}.tar.gz"
     @original_archive_name = @archive_name
   end
 
   private
+  def detect_version
+    version_env = ENV["VERSION"]
+    return version_env if version_env
+
+    base_version_file = File.join(__dir__,
+                                  "..",
+                                  "base_version")
+    version = File.read(base_version_file).chomp
+  end
+
   def define_archive_task
     file @original_archive_name do
       File.symlink("../#{@original_archive_name}",
