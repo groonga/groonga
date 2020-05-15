@@ -16,7 +16,7 @@
 
 Name:		groonga
 Version:	@VERSION@
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	An Embeddable Fulltext Search Engine
 
 Group:		Applications/Text
@@ -555,6 +555,11 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Sat May 16 2020 Sutou Kouhei <kou@clear-code.com> - 10.0.2-2
+- Stop using Zstandard on CentOS 8.1 because there are no available
+  Zstandard packages on CentOS 8.1 and EPEL. CentOS 8.2 will ship Zstandard
+  packages.
+
 * Mon Apr 27 2020 Horimoto Yasuhiro <horimoto@clear-code.com> - 10.0.2-1
 - New upstream release.
 
