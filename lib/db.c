@@ -10756,9 +10756,10 @@ grn_db_value_unlock(grn_ctx *ctx, grn_id id, db_value *vp)
   return current_lock;
 }
 
-static inline void
+static inline bool
 grn_db_value_wait(grn_ctx *ctx, grn_id id, db_value *vp)
 {
+  bool succeeded = true;
   uint32_t n_trials;
   grn_log_reference_count("wait: start: %u: %u\n", id, vp->lock);
   for (n_trials = 0; !vp->ptr; n_trials++) {
@@ -10774,11 +10775,13 @@ grn_db_value_wait(grn_ctx *ctx, grn_id id, db_value *vp)
               id,
               vp->lock,
               vp->ptr);
+      succeeded = false;
       break;
     }
     GRN_FUTEX_WAIT(&vp->ptr);
   }
   grn_log_reference_count("wait: done: %u: %u\n", id, vp->lock);
+  return succeeded;
 }
 
 static inline bool
@@ -11029,7 +11032,17 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
           vp->done = 1;
           GRN_FUTEX_WAKE(&vp->ptr);
         } else {
-          grn_db_value_wait(ctx, id, vp);
+          if (!grn_db_value_wait(ctx, id, vp)) {
+            const char *name;
+            uint32_t name_size = 0;
+            name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
+            ERR(GRN_NO_LOCKS_AVAILABLE,
+                "[at] failed to wait: "
+                "<%u>(<%.*s>)",
+                id,
+                name_size, name);
+            goto exit;
+          }
         }
         if (vp->ptr) {
           switch (vp->ptr->header.type) {
