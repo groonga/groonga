@@ -1,15 +1,4 @@
 plugin_register ruby/eval
 [[0,0.0,0.0],true]
 ruby_eval "="
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  {
-    "exception": {
-      "message": "line 1:1: syntax error, unexpected '='"
-    }
-  }
-]
+[[0,0.0,0.0],{"exception":{"message":"line 1:1: syntax error"}}]
