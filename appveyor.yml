@@ -168,7 +168,7 @@ before_test:
   - cd ..\..\..
   - del test\command\suite\select\filter\equal\vector_element_float.test
   - if "%VS_VERSION%" == "12"
-      del test\command\suite\select\filter\geo_in_circle\score_column\column.test
+      del test\command\suite\select\filter\geo_in_circle\score_column\column_*.test
   - ps: |
       Copy-Item -Recurse `
         vendor\plugins\groonga-normalizer-mysql\test\suite `
