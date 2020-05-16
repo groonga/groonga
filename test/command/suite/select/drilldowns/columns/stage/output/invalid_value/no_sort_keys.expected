@@ -20,7 +20,7 @@ select Items   --drilldowns[label].keys price   --drilldowns[label].output_colum
       0.0,
       0.0
     ],
-    "[select][drilldowns][label][column][output][nth_record] failed to parse value: <window_record_number(garbage)>: Syntax error: <"
+    "[select][drilldowns][label][columns][output][nth_record] failed to parse value: <window_record_number(garbage)>: Syntax error: "
   ],
   [
     [
@@ -78,4 +78,4 @@ select Items   --drilldowns[label].keys price   --drilldowns[label].output_colum
 ]
 #|e| [expr][parse] unknown identifier: <garbage>
 #|e| Syntax error: <window_record_number(garbage|)|>: [expr][parse] unknown identifier: <garbage>
-#|e| [select][drilldowns][label][column][output][nth_record] failed to parse value: <window_record_number(garbage)>: Syntax error: <window_record_number(garbage|)|>: [expr][parse] unknown identifier: <garbage>
+#|e| [select][drilldowns][label][columns][output][nth_record] failed to parse value: <window_record_number(garbage)>: Syntax error: <window_record_number(garbage|)|>: [expr][parse] unknown identifier: <garbage>

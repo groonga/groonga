@@ -16,8 +16,8 @@ select Items   --columns[invalid].stage initial   --columns[invalid].type UInt32
       0.0,
       0.0
     ],
-    "[select][column][initial][invalid] failed to apply expression to generate column values: <2147483649.invalid>: failed to cast t"
+    "[select][columns][initial][invalid] failed to apply expression to generate column values: <2147483649.invalid>: failed to cast "
   ]
 ]
 #|e| <2147483649.invalid>: failed to cast to <UInt32>: <"0garbage">
-#|e| [select][column][initial][invalid] failed to apply expression to generate column values: <2147483649.invalid>: failed to cast to <UInt32>: <"0garbage">
+#|e| [select][columns][initial][invalid] failed to apply expression to generate column values: <2147483649.invalid>: failed to cast to <UInt32>: <"0garbage">

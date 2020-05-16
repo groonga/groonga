@@ -1634,7 +1634,7 @@ grn_select_apply_column(grn_ctx *ctx,
   if (!column) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
-                     "%s[column][%s][%.*s] failed to create column: %s",
+                     "%s[columns][%s][%.*s] failed to create column: %s",
                      log_tag_prefix,
                      grn_column_stage_name(column_data->stage),
                      (int)(column_data->label.length),
@@ -1654,7 +1654,7 @@ grn_select_apply_column(grn_ctx *ctx,
     grn_obj_close(ctx, column);
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
-                     "%s[column][%s][%.*s] "
+                     "%s[columns][%s][%.*s] "
                      "failed to create expression to compute value: %s",
                      log_tag_prefix,
                      grn_column_stage_name(column_data->stage),
@@ -1676,7 +1676,7 @@ grn_select_apply_column(grn_ctx *ctx,
     grn_obj_close(ctx, column);
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
-                     "%s[column][%s][%.*s] "
+                     "%s[columns][%s][%.*s] "
                      "failed to parse value: <%.*s>: %s",
                      log_tag_prefix,
                      grn_column_stage_name(column_data->stage),
@@ -1707,7 +1707,7 @@ grn_select_apply_column(grn_ctx *ctx,
         grn_obj_close(ctx, column);
         GRN_PLUGIN_ERROR(ctx,
                          GRN_INVALID_ARGUMENT,
-                         "%s[column][%s][%.*s] "
+                         "%s[columns][%s][%.*s] "
                          "failed to parse sort keys: %s",
                          log_tag_prefix,
                          grn_column_stage_name(column_data->stage),
@@ -1739,7 +1739,7 @@ grn_select_apply_column(grn_ctx *ctx,
         }
         GRN_PLUGIN_ERROR(ctx,
                          GRN_INVALID_ARGUMENT,
-                         "%s[column][%s][%.*s] "
+                         "%s[columns][%s][%.*s] "
                          "failed to parse group keys: %s",
                          log_tag_prefix,
                          grn_column_stage_name(column_data->stage),
@@ -1781,7 +1781,7 @@ grn_select_apply_column(grn_ctx *ctx,
       grn_obj_close(ctx, column);
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
-                       "%s[column][%s][%.*s] "
+                       "%s[columns][%s][%.*s] "
                        "failed to apply expression to generate column values: "
                        "%s",
                        log_tag_prefix,
