@@ -2288,22 +2288,22 @@ grn_select_sort(grn_ctx *ctx,
   return ctx->rc == GRN_SUCCESS;
 }
 
-static grn_bool
+static bool
 grn_select_load(grn_ctx *ctx,
                 grn_select_data *data)
 {
-  grn_obj *table;
+  grn_obj *table = NULL;
   grn_obj columns;
   grn_obj *output_columns = NULL;
 
   if (data->load.table.length == 0) {
-    return GRN_TRUE;
+    return true;
   }
   if (data->load.columns.length == 0) {
-    return GRN_TRUE;
+    return true;
   }
   if (data->load.values.length == 0) {
-    return GRN_TRUE;
+    return true;
   }
 
   table = grn_ctx_get(ctx,
@@ -2316,7 +2316,7 @@ grn_select_load(grn_ctx *ctx,
                      "nonexistent load table: <%.*s>",
                      (int)(data->load.table.length),
                      data->load.table.value);
-    return GRN_FALSE;
+    return false;
   }
 
   GRN_PTR_INIT(&columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
@@ -2376,14 +2376,19 @@ exit :
   }
   {
     size_t i;
-    size_t n_columns = GRN_BULK_VSIZE(&columns) / sizeof(grn_obj *);
+    size_t n_columns = GRN_PTR_VECTOR_SIZE(&columns);
     for (i = 0; i < n_columns; i++) {
       grn_obj *column = GRN_PTR_VALUE_AT(&columns, i);
       if (grn_obj_is_accessor(ctx, column)) {
         grn_obj_close(ctx, column);
+      } else {
+        grn_obj_unref(ctx, column);
       }
     }
     GRN_OBJ_FIN(ctx, &columns);
+  }
+  if (table) {
+    grn_obj_unref(ctx, table);
   }
 
   return ctx->rc == GRN_SUCCESS;
