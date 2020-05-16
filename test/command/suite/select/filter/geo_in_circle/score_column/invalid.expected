@@ -6,7 +6,7 @@ select LandMarks   --sort_keys '_id'   --output_columns 'point'   --limit -1   -
       0.0,
       0.0
     ],
-    "[geo-in-circle][options][parse][score_column] must be a fixed size column: 29"
+    "[geo-in-circle][options][parse][score_column] must be a fixed size column or column name in result set: 29"
   ]
 ]
-#|e| [geo-in-circle][options][parse][score_column] must be a fixed size column: 29
+#|e| [geo-in-circle][options][parse][score_column] must be a fixed size column or column name in result set: 29

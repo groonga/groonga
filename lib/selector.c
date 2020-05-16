@@ -80,7 +80,9 @@ grn_selector_run(grn_ctx *ctx,
 
   GRN_OBJ_FIN(ctx, &(data.score));
   if (data.score_table) {
-    grn_obj_unref(ctx, data.score_table);
+    if (data.score_table != data.result_set) {
+      grn_obj_unref(ctx, data.score_table);
+    }
     data.score_table = NULL;
   }
 
@@ -176,12 +178,19 @@ grn_selector_data_parse_score_column_option_value(grn_ctx *ctx,
     }
     break;
   default :
-    {
+    if (grn_obj_is_text_family_bulk(ctx, value)) {
+      data->score_column = grn_obj_column(ctx,
+                                          data->result_set,
+                                          GRN_TEXT_VALUE(value),
+                                          GRN_TEXT_LEN(value));
+      data->score_table = data->result_set;
+    } else {
       grn_obj inspected;
       GRN_TEXT_INIT(&inspected, 0);
       grn_inspect(ctx, &inspected, value);
       ERR(GRN_INVALID_ARGUMENT,
-          "%s[%s] must be a fixed size column: %.*s",
+          "%s[%s] must be a fixed size column or "
+          "column name in result set: %.*s",
           tag,
           name,
           (int)GRN_TEXT_LEN(&inspected),
@@ -203,7 +212,8 @@ grn_selector_data_have_score_column(grn_ctx *ctx,
 grn_rc
 grn_selector_data_current_add_score(grn_ctx *ctx,
                                     grn_obj *result_set,
-                                    grn_id id,
+                                    grn_id result_set_record_id,
+                                    grn_id record_id,
                                     double score)
 {
   grn_selector_data *data = ctx->impl->current_selector_data;
@@ -221,15 +231,19 @@ grn_selector_data_current_add_score(grn_ctx *ctx,
 
   grn_id score_id;
   if (data->score_table) {
-    score_id = grn_table_get(ctx,
-                             data->score_table,
-                             &id,
-                             sizeof(grn_id));
-    if (score_id == GRN_ID_NIL) {
-      return ctx->rc;
+    if (data->score_table == data->result_set) {
+      score_id = result_set_record_id;
+    } else {
+      score_id = grn_table_get(ctx,
+                               data->score_table,
+                               &record_id,
+                               sizeof(grn_id));
+      if (score_id == GRN_ID_NIL) {
+        return ctx->rc;
+      }
     }
   } else {
-    score_id = id;
+    score_id = record_id;
   }
 
   GRN_FLOAT_SET(ctx, &(data->score), score);

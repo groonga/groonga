@@ -37,8 +37,9 @@ grn_selector_run(grn_ctx *ctx,
 
 grn_rc
 grn_selector_data_current_add_score(grn_ctx *ctx,
-                                    grn_obj *res,
-                                    grn_id id,
+                                    grn_obj *result_set,
+                                    grn_id result_set_record_id,
+                                    grn_id record_id,
                                     double score);
 
 #ifdef __cplusplus

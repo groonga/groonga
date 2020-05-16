@@ -36,8 +36,9 @@
 
 typedef enum {
   GRN_COLUMN_STAGE_INITIAL,
+  GRN_COLUMN_STAGE_RESULT_SET,
   GRN_COLUMN_STAGE_FILTERED,
-  GRN_COLUMN_STAGE_OUTPUT
+  GRN_COLUMN_STAGE_OUTPUT,
 } grn_column_stage;
 
 typedef struct {
@@ -55,6 +56,7 @@ typedef struct {
 
 typedef struct {
   grn_hash *initial;
+  grn_hash *result_set;
   grn_hash *filtered;
   grn_hash *output;
 } grn_columns;
@@ -348,6 +350,8 @@ grn_column_stage_name(grn_column_stage stage)
   switch (stage) {
   case GRN_COLUMN_STAGE_INITIAL :
     return "initial";
+  case GRN_COLUMN_STAGE_RESULT_SET :
+    return "result_set";
   case GRN_COLUMN_STAGE_FILTERED :
     return "filtered";
   case GRN_COLUMN_STAGE_OUTPUT :
@@ -611,6 +615,7 @@ static void
 grn_columns_init(grn_ctx *ctx, grn_columns *columns)
 {
   columns->initial = NULL;
+  columns->result_set = NULL;
   columns->filtered = NULL;
   columns->output = NULL;
 }
@@ -631,6 +636,9 @@ grn_columns_fin(grn_ctx *ctx, grn_columns *columns)
 {
   if (columns->initial) {
     grn_columns_stage_fin(ctx, columns->initial);
+  }
+  if (columns->result_set) {
+    grn_columns_stage_fin(ctx, columns->result_set);
   }
   if (columns->filtered) {
     grn_columns_stage_fin(ctx, columns->filtered);
@@ -700,6 +708,9 @@ grn_columns_collect(grn_ctx *ctx,
     if (GRN_TEXT_EQUAL_CSTRING(value, "initial")) {
       stage = GRN_COLUMN_STAGE_INITIAL;
       target_columns = &(columns->initial);
+    } else if (GRN_TEXT_EQUAL_CSTRING(value, "result_set")) {
+      stage = GRN_COLUMN_STAGE_RESULT_SET;
+      target_columns = &(columns->result_set);
     } else if (GRN_TEXT_EQUAL_CSTRING(value, "filtered")) {
       stage = GRN_COLUMN_STAGE_FILTERED;
       target_columns = &(columns->filtered);
@@ -755,6 +766,16 @@ grn_columns_fill(grn_ctx *ctx,
     }
   }
 
+  if (columns->result_set) {
+    if (!grn_column_data_collect(ctx,
+                                 user_data,
+                                 columns->result_set,
+                                 prefix,
+                                 prefix_length)) {
+      return GRN_FALSE;
+    }
+  }
+
   if (columns->filtered) {
     if (!grn_column_data_collect(ctx,
                                  user_data,
@@ -776,6 +797,444 @@ grn_columns_fill(grn_ctx *ctx,
   }
 
   return GRN_TRUE;
+}
+
+static void
+grn_select_expression_set_condition(grn_ctx *ctx,
+                                    grn_obj *expression,
+                                    grn_obj *condition)
+{
+  grn_obj *condition_ptr;
+
+  if (!expression) {
+    return;
+  }
+
+  condition_ptr =
+    grn_expr_get_or_add_var(ctx, expression,
+                            GRN_SELECT_INTERNAL_VAR_CONDITION,
+                            GRN_SELECT_INTERNAL_VAR_CONDITION_LEN);
+  GRN_PTR_INIT(condition_ptr, 0, GRN_DB_OBJECT);
+  GRN_PTR_SET(ctx, condition_ptr, condition);
+}
+
+static grn_obj *
+grn_select_create_all_selected_result_table(grn_ctx *ctx,
+                                            grn_obj *table)
+{
+  grn_obj *result;
+
+  result = grn_table_create(ctx, NULL, 0, NULL,
+                            GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                            table, NULL);
+  if (!result) {
+    return NULL;
+  }
+
+  grn_posting_internal posting = {0};
+  GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
+    posting.rid = id;
+    grn_ii_posting_add_float(ctx,
+                             (grn_posting *)(&posting),
+                             (grn_hash *)(result),
+                             GRN_OP_OR);
+  } GRN_TABLE_EACH_END(ctx, cursor);
+
+  return result;
+}
+
+static grn_obj *
+grn_select_create_no_sort_keys_sorted_table(grn_ctx *ctx,
+                                            grn_select_data *data,
+                                            grn_obj *table)
+{
+  grn_obj *sorted;
+  grn_table_cursor *cursor;
+
+  sorted = grn_table_create(ctx, NULL, 0, NULL,
+                            GRN_OBJ_TABLE_NO_KEY,
+                            NULL,
+                            table);
+
+  if (!sorted) {
+    return NULL;
+  }
+
+  cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0,
+                                 data->offset,
+                                 data->limit,
+                                 GRN_CURSOR_ASCENDING);
+  if (cursor) {
+    grn_id id;
+    while ((id = grn_table_cursor_next(ctx, cursor))) {
+      grn_id *value;
+      if (grn_array_add(ctx, (grn_array *)sorted, (void **)&value)) {
+        *value = id;
+      }
+    }
+    grn_table_cursor_close(ctx, cursor);
+  }
+
+  return sorted;
+}
+
+typedef enum {
+  TSORT_STATUS_NOT_VISITED,
+  TSORT_STATUS_VISITING,
+  TSORT_STATUS_VISITED
+} tsort_status;
+
+static bool
+columns_tsort_visit(grn_ctx *ctx,
+                    grn_hash *columns,
+                    tsort_status *statuses,
+                    grn_obj *ids,
+                    grn_id id,
+                    const char *log_tag_prefix)
+{
+  bool cycled = true;
+  uint32_t index = id - 1;
+
+  switch (statuses[index]) {
+  case TSORT_STATUS_VISITING :
+    cycled = true;
+    break;
+  case TSORT_STATUS_VISITED :
+    cycled = false;
+    break;
+  case TSORT_STATUS_NOT_VISITED :
+    cycled = false;
+    statuses[index] = TSORT_STATUS_VISITING;
+    {
+      grn_column_data *column =
+        (grn_column_data *)grn_hash_get_value_(ctx, columns, id, NULL);
+      size_t i;
+      size_t n_dependencies =
+        grn_vector_size(ctx, &(column->dependency_column_names));
+      for (i = 0; i < n_dependencies; i++) {
+        const char *name;
+        unsigned int name_length =
+          grn_vector_get_element(ctx,
+                                 &(column->dependency_column_names),
+                                 i,
+                                 &name,
+                                 NULL,
+                                 NULL);
+        grn_id dependent_id;
+        dependent_id = grn_hash_get(ctx,
+                                    columns,
+                                    name,
+                                    name_length,
+                                    NULL);
+        if (dependent_id != GRN_ID_NIL) {
+          cycled = columns_tsort_visit(ctx,
+                                       columns,
+                                       statuses,
+                                       ids,
+                                       dependent_id,
+                                       log_tag_prefix);
+          if (cycled) {
+            GRN_PLUGIN_ERROR(ctx,
+                             GRN_INVALID_ARGUMENT,
+                             "%s[column][%.*s] cycled dependency: <%.*s>",
+                             log_tag_prefix,
+                             (int)(column->label.length),
+                             column->label.value,
+                             (int)name_length,
+                             name);
+          }
+        }
+      }
+    }
+    if (!cycled) {
+      statuses[index] = TSORT_STATUS_VISITED;
+      GRN_RECORD_PUT(ctx, ids, id);
+    }
+    break;
+  }
+
+  return cycled;
+}
+
+static bool
+columns_tsort_body(grn_ctx *ctx,
+                   grn_hash *columns,
+                   tsort_status *statuses,
+                   grn_obj *ids,
+                   const char *log_tag_prefix)
+{
+  grn_bool succeeded = GRN_TRUE;
+
+  GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
+    if (columns_tsort_visit(ctx, columns, statuses, ids, id, log_tag_prefix)) {
+      succeeded = true;
+      break;
+    }
+  } GRN_HASH_EACH_END(ctx, cursor);
+
+  return succeeded;
+}
+
+static void
+columns_tsort_init(grn_ctx *ctx,
+                   tsort_status *statuses,
+                   size_t n_statuses)
+{
+  size_t i;
+  for (i = 0; i < n_statuses; i++) {
+    statuses[i] = TSORT_STATUS_NOT_VISITED;
+  }
+}
+
+static bool
+columns_tsort(grn_ctx *ctx,
+              grn_hash *columns,
+              grn_obj *ids,
+              const char *log_tag_prefix)
+{
+  size_t n_statuses = grn_hash_size(ctx, columns);
+  tsort_status *statuses = GRN_PLUGIN_MALLOCN(ctx, tsort_status, n_statuses);
+  if (!statuses) {
+    return false;
+  }
+
+  columns_tsort_init(ctx, statuses, n_statuses);
+  bool succeeded = columns_tsort_body(ctx,
+                                      columns,
+                                      statuses,
+                                      ids,
+                                      log_tag_prefix);
+  GRN_PLUGIN_FREE(ctx, statuses);
+  return succeeded;
+}
+
+static bool
+grn_select_apply_column(grn_ctx *ctx,
+                        grn_select_data *data,
+                        grn_obj *table,
+                        grn_column_stage stage,
+                        grn_column_data *column_data,
+                        grn_obj *condition,
+                        const char *log_tag_prefix,
+                        const char *query_log_tag_prefix)
+{
+  grn_obj *column = grn_column_create(ctx,
+                                      table,
+                                      column_data->label.value,
+                                      column_data->label.length,
+                                      NULL,
+                                      column_data->flags,
+                                      column_data->type);
+  if (!column) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s[columns][%s][%.*s] failed to create column: %s",
+                     log_tag_prefix,
+                     grn_column_stage_name(column_data->stage),
+                     (int)(column_data->label.length),
+                     column_data->label.value,
+                     ctx->errbuf);
+    return false;
+  }
+
+  if (stage == GRN_COLUMN_STAGE_RESULT_SET) {
+    return true;
+  }
+
+  grn_obj *expression;
+  grn_obj *record;
+  GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expression, record);
+  if (!expression) {
+    grn_obj_close(ctx, column);
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s[columns][%s][%.*s] "
+                     "failed to create expression to compute value: %s",
+                     log_tag_prefix,
+                     grn_column_stage_name(column_data->stage),
+                     (int)(column_data->label.length),
+                     column_data->label.value,
+                     ctx->errbuf);
+    return false;
+  }
+  grn_expr_parse(ctx,
+                 expression,
+                 column_data->value.value,
+                 column_data->value.length,
+                 NULL,
+                 GRN_OP_MATCH,
+                 GRN_OP_AND,
+                 GRN_EXPR_SYNTAX_SCRIPT);
+  if (ctx->rc != GRN_SUCCESS) {
+    grn_obj_close(ctx, expression);
+    grn_obj_close(ctx, column);
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "%s[columns][%s][%.*s] "
+                     "failed to parse value: <%.*s>: %s",
+                     log_tag_prefix,
+                     grn_column_stage_name(column_data->stage),
+                     (int)(column_data->label.length),
+                     column_data->label.value,
+                     (int)(column_data->value.length),
+                     column_data->value.value,
+                     ctx->errbuf);
+    return false;
+  }
+  grn_select_expression_set_condition(ctx, expression, condition);
+
+  if (column_data->window.sort_keys.length > 0 ||
+      column_data->window.group_keys.length > 0) {
+    grn_window_definition definition;
+    grn_rc rc;
+
+    if (column_data->window.sort_keys.length > 0) {
+      int n_sort_keys;
+      definition.sort_keys =
+        grn_table_sort_key_from_str(ctx,
+                                    column_data->window.sort_keys.value,
+                                    column_data->window.sort_keys.length,
+                                    table, &n_sort_keys);
+      definition.n_sort_keys = n_sort_keys;
+      if (!definition.sort_keys) {
+        grn_obj_close(ctx, expression);
+        grn_obj_close(ctx, column);
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
+                         "%s[columns][%s][%.*s] "
+                         "failed to parse sort keys: %s",
+                         log_tag_prefix,
+                         grn_column_stage_name(column_data->stage),
+                         (int)(column_data->label.length),
+                         column_data->label.value,
+                         ctx->errbuf);
+        return false;
+      }
+    } else {
+      definition.sort_keys = NULL;
+      definition.n_sort_keys = 0;
+    }
+
+    if (column_data->window.group_keys.length > 0) {
+      int n_group_keys;
+      definition.group_keys =
+        grn_table_sort_key_from_str(ctx,
+                                    column_data->window.group_keys.value,
+                                    column_data->window.group_keys.length,
+                                    table, &n_group_keys);
+      definition.n_group_keys = n_group_keys;
+      if (!definition.group_keys) {
+        grn_obj_close(ctx, expression);
+        grn_obj_close(ctx, column);
+        if (definition.sort_keys) {
+          grn_table_sort_key_close(ctx,
+                                   definition.sort_keys,
+                                   definition.n_sort_keys);
+        }
+        GRN_PLUGIN_ERROR(ctx,
+                         GRN_INVALID_ARGUMENT,
+                         "%s[columns][%s][%.*s] "
+                         "failed to parse group keys: %s",
+                         log_tag_prefix,
+                         grn_column_stage_name(column_data->stage),
+                         (int)(column_data->label.length),
+                         column_data->label.value,
+                         ctx->errbuf);
+        return false;
+      }
+    } else {
+      definition.group_keys = NULL;
+      definition.n_group_keys = 0;
+    }
+
+    rc = grn_table_apply_window_function(ctx,
+                                         table,
+                                         column,
+                                         &definition,
+                                         expression);
+    if (definition.sort_keys) {
+      grn_table_sort_key_close(ctx,
+                               definition.sort_keys,
+                               definition.n_sort_keys);
+    }
+    if (definition.group_keys) {
+      grn_table_sort_key_close(ctx,
+                               definition.group_keys,
+                               definition.n_group_keys);
+    }
+    if (rc != GRN_SUCCESS) {
+      grn_obj_close(ctx, expression);
+      grn_obj_close(ctx, column);
+      return false;
+    }
+  } else {
+    grn_rc rc;
+    rc = grn_table_apply_expr(ctx, table, column, expression);
+    if (rc != GRN_SUCCESS) {
+      grn_obj_close(ctx, expression);
+      grn_obj_close(ctx, column);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "%s[columns][%s][%.*s] "
+                       "failed to apply expression to generate column values: "
+                       "%s",
+                       log_tag_prefix,
+                       grn_column_stage_name(column_data->stage),
+                       (int)(column_data->label.length),
+                       column_data->label.value,
+                       ctx->errbuf);
+      return false;
+    }
+  }
+
+  grn_obj_close(ctx, expression);
+
+  return true;
+}
+
+static void
+grn_select_apply_columns(grn_ctx *ctx,
+                         grn_select_data *data,
+                         grn_obj *table,
+                         grn_column_stage stage,
+                         grn_hash *columns,
+                         grn_obj *condition,
+                         const char *log_tag_prefix,
+                         const char *query_log_tag_prefix)
+{
+  grn_obj tsorted_ids;
+  GRN_RECORD_INIT(&tsorted_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  if (!columns_tsort(ctx, columns, &tsorted_ids, log_tag_prefix)) {
+    GRN_OBJ_FIN(ctx, &tsorted_ids);
+    return;
+  }
+
+  size_t i;
+  size_t n_columns = GRN_RECORD_VECTOR_SIZE(&tsorted_ids);
+  for (i = 0; i < n_columns; i++) {
+    grn_id id = GRN_RECORD_VALUE_AT(&tsorted_ids, i);
+    grn_column_data *column_data =
+      (grn_column_data *)grn_hash_get_value_(ctx, columns, id, NULL);
+    if (!grn_select_apply_column(ctx,
+                                 data,
+                                 table,
+                                 stage,
+                                 column_data,
+                                 condition,
+                                 log_tag_prefix,
+                                 query_log_tag_prefix)) {
+      break;
+    }
+
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                  ":", "%scolumns[%.*s](%d)",
+                  query_log_tag_prefix ? query_log_tag_prefix : "",
+                  (int)(column_data->label.length),
+                  column_data->label.value,
+                  grn_table_size(ctx, table));
+  }
+
+  GRN_OBJ_FIN(ctx, &tsorted_ids);
 }
 
 static void
@@ -821,24 +1280,26 @@ grn_filter_data_fill(grn_ctx *ctx,
   GRN_RAW_STRING_FILL(data->filter, filter);
 }
 
-static grn_bool
+static bool
 grn_filter_data_execute(grn_ctx *ctx,
-                        grn_filter_data *data,
+                        grn_select_data *data,
+                        grn_filter_data *filter_data,
                         grn_obj *table,
-                        const char *log_tag,
+                        grn_columns *columns,
+                        const char *log_tag_prefix,
                         const char *query_log_tag_prefix)
 {
   grn_obj *variable;
 
-  if (data->query.length == 0 && data->filter.length == 0) {
-    return GRN_TRUE;
+  if (filter_data->query.length == 0 && filter_data->filter.length == 0) {
+    return true;
   }
 
   GRN_EXPR_CREATE_FOR_QUERY(ctx,
                             table,
-                            data->condition.expression,
+                            filter_data->condition.expression,
                             variable);
-  if (!data->condition.expression) {
+  if (!filter_data->condition.expression) {
     grn_rc rc = ctx->rc;
     if (rc == GRN_SUCCESS) {
       rc = GRN_NO_MEMORY_AVAILABLE;
@@ -847,18 +1308,18 @@ grn_filter_data_execute(grn_ctx *ctx,
                      rc,
                      "%s[condition] "
                      "failed to create expression for condition: %s",
-                     log_tag,
+                     log_tag_prefix,
                      ctx->errbuf);
-    return GRN_FALSE;
+    return false;
   }
 
-  if (data->query.length > 0) {
-    if (data->match_columns.length > 0) {
+  if (filter_data->query.length > 0) {
+    if (filter_data->match_columns.length > 0) {
       GRN_EXPR_CREATE_FOR_QUERY(ctx,
                                 table,
-                                data->condition.match_columns,
+                                filter_data->condition.match_columns,
                                 variable);
-      if (!data->condition.match_columns) {
+      if (!filter_data->condition.match_columns) {
         grn_rc rc = ctx->rc;
         if (rc == GRN_SUCCESS) {
           rc = GRN_NO_MEMORY_AVAILABLE;
@@ -868,112 +1329,142 @@ grn_filter_data_execute(grn_ctx *ctx,
                          "%s[match_columns] "
                          "failed to create expression for match columns: "
                          "<%.*s>: %s",
-                         log_tag,
-                         (int)(data->match_columns.length),
-                         data->match_columns.value,
+                         log_tag_prefix,
+                         (int)(filter_data->match_columns.length),
+                         filter_data->match_columns.value,
                          ctx->errbuf);
-        return GRN_FALSE;
+        return false;
       }
 
       grn_expr_parse(ctx,
-                     data->condition.match_columns,
-                     data->match_columns.value,
-                     data->match_columns.length,
+                     filter_data->condition.match_columns,
+                     filter_data->match_columns.value,
+                     filter_data->match_columns.length,
                      NULL, GRN_OP_MATCH, GRN_OP_AND,
                      GRN_EXPR_SYNTAX_SCRIPT);
       if (ctx->rc != GRN_SUCCESS) {
-        return GRN_FALSE;
+        return false;
       }
     }
 
     {
       grn_expr_flags flags;
       grn_obj query_expander_buf;
-      const char *query = data->query.value;
-      unsigned int query_len = data->query.length;
+      const char *query = filter_data->query.value;
+      unsigned int query_len = filter_data->query.length;
 
       flags = GRN_EXPR_SYNTAX_QUERY;
-      if (data->query_flags.length) {
+      if (filter_data->query_flags.length) {
         flags |= grn_proc_expr_query_flags_parse(ctx,
-                                                 data->query_flags.value,
-                                                 data->query_flags.length,
-                                                 log_tag);
+                                                 filter_data->query_flags.value,
+                                                 filter_data->query_flags.length,
+                                                 log_tag_prefix);
         if (ctx->rc != GRN_SUCCESS) {
-          return GRN_FALSE;
+          return false;
         }
       } else {
         flags |= GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN;
       }
 
       GRN_TEXT_INIT(&query_expander_buf, 0);
-      if (data->query_expander.length > 0) {
+      if (filter_data->query_expander.length > 0) {
         grn_rc rc;
         rc = grn_proc_syntax_expand_query(ctx,
-                                          data->query.value,
-                                          data->query.length,
+                                          filter_data->query.value,
+                                          filter_data->query.length,
                                           flags,
-                                          data->query_expander.value,
-                                          data->query_expander.length,
+                                          filter_data->query_expander.value,
+                                          filter_data->query_expander.length,
                                           NULL, 0,
                                           NULL, 0,
                                           &query_expander_buf,
-                                          log_tag);
+                                          log_tag_prefix);
         if (rc == GRN_SUCCESS) {
           query = GRN_TEXT_VALUE(&query_expander_buf);
           query_len = GRN_TEXT_LEN(&query_expander_buf);
         } else {
           GRN_OBJ_FIN(ctx, &query_expander_buf);
-          return GRN_FALSE;
+          return false;
         }
       }
 
       grn_expr_parse(ctx,
-                     data->condition.expression,
+                     filter_data->condition.expression,
                      query,
                      query_len,
-                     data->condition.match_columns,
+                     filter_data->condition.match_columns,
                      GRN_OP_MATCH,
                      GRN_OP_AND,
                      flags);
       GRN_OBJ_FIN(ctx, &query_expander_buf);
 
       if (ctx->rc != GRN_SUCCESS) {
-        return GRN_FALSE;
+        return false;
       }
     }
   }
 
-  if (data->filter.length > 0) {
+  if (filter_data->filter.length > 0) {
     grn_expr_parse(ctx,
-                   data->condition.expression,
-                   data->filter.value,
-                   data->filter.length,
-                   data->condition.match_columns,
+                   filter_data->condition.expression,
+                   filter_data->filter.value,
+                   filter_data->filter.length,
+                   filter_data->condition.match_columns,
                    GRN_OP_MATCH,
                    GRN_OP_AND,
                    GRN_EXPR_SYNTAX_SCRIPT);
     if (ctx->rc != GRN_SUCCESS) {
-      return GRN_FALSE;
+      return false;
     }
 
-    if (data->query.length > 0) {
-      grn_expr_append_op(ctx, data->condition.expression, GRN_OP_AND, 2);
+    if (filter_data->query.length > 0) {
+      grn_expr_append_op(ctx, filter_data->condition.expression, GRN_OP_AND, 2);
     }
 
     if (ctx->rc != GRN_SUCCESS) {
-      return GRN_FALSE;
+      return false;
     }
   }
 
   grn_expr_set_query_log_tag_prefix(ctx,
-                                    data->condition.expression,
+                                    filter_data->condition.expression,
                                     query_log_tag_prefix,
                                     -1);
-  data->filtered = grn_table_select(ctx,
-                                    table,
-                                    data->condition.expression,
-                                    NULL,
-                                    GRN_OP_OR);
+  filter_data->filtered =
+    grn_table_create(ctx,
+                     NULL, 0,
+                     NULL,
+                     GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_WITH_SUBREC,
+                     table,
+                     NULL);
+  if (!filter_data->filtered) {
+    GRN_PLUGIN_ERROR(ctx,
+                     ctx->rc,
+                     "%s[filter] failed to create result set table: %s",
+                     log_tag_prefix,
+                     ctx->errbuf);
+    return false;
+  }
+
+  if (columns->result_set) {
+    grn_select_apply_columns(ctx,
+                             data,
+                             filter_data->filtered,
+                             GRN_COLUMN_STAGE_RESULT_SET,
+                             columns->result_set,
+                             filter_data->condition.expression,
+                             log_tag_prefix,
+                             query_log_tag_prefix);
+    if (ctx->rc != GRN_SUCCESS) {
+      return false;
+    }
+  }
+
+  grn_table_select(ctx,
+                   table,
+                   filter_data->condition.expression,
+                   filter_data->filtered,
+                   GRN_OP_OR);
 
   return ctx->rc == GRN_SUCCESS;
 }
@@ -1224,25 +1715,6 @@ grn_proc_expr_query_flags_parse(grn_ctx *ctx,
   return flags;
 }
 
-static void
-grn_select_expression_set_condition(grn_ctx *ctx,
-                                    grn_obj *expression,
-                                    grn_obj *condition)
-{
-  grn_obj *condition_ptr;
-
-  if (!expression) {
-    return;
-  }
-
-  condition_ptr =
-    grn_expr_get_or_add_var(ctx, expression,
-                            GRN_SELECT_INTERNAL_VAR_CONDITION,
-                            GRN_SELECT_INTERNAL_VAR_CONDITION_LEN);
-  GRN_PTR_INIT(condition_ptr, 0, GRN_DB_OBJECT);
-  GRN_PTR_SET(ctx, condition_ptr, condition);
-}
-
 grn_bool
 grn_proc_select_format_init(grn_ctx *ctx,
                             grn_obj_format *format,
@@ -1425,422 +1897,6 @@ grn_select_output_columns(grn_ctx *ctx,
   return grn_proc_select_output_columns_close(ctx, &format, res);
 }
 
-static grn_obj *
-grn_select_create_all_selected_result_table(grn_ctx *ctx,
-                                            grn_obj *table)
-{
-  grn_obj *result;
-
-  result = grn_table_create(ctx, NULL, 0, NULL,
-                            GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                            table, NULL);
-  if (!result) {
-    return NULL;
-  }
-
-  grn_posting_internal posting = {0};
-  GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
-    posting.rid = id;
-    grn_ii_posting_add_float(ctx,
-                             (grn_posting *)(&posting),
-                             (grn_hash *)(result),
-                             GRN_OP_OR);
-  } GRN_TABLE_EACH_END(ctx, cursor);
-
-  return result;
-}
-
-static grn_obj *
-grn_select_create_no_sort_keys_sorted_table(grn_ctx *ctx,
-                                            grn_select_data *data,
-                                            grn_obj *table)
-{
-  grn_obj *sorted;
-  grn_table_cursor *cursor;
-
-  sorted = grn_table_create(ctx, NULL, 0, NULL,
-                            GRN_OBJ_TABLE_NO_KEY,
-                            NULL,
-                            table);
-
-  if (!sorted) {
-    return NULL;
-  }
-
-  cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0,
-                                 data->offset,
-                                 data->limit,
-                                 GRN_CURSOR_ASCENDING);
-  if (cursor) {
-    grn_id id;
-    while ((id = grn_table_cursor_next(ctx, cursor))) {
-      grn_id *value;
-      if (grn_array_add(ctx, (grn_array *)sorted, (void **)&value)) {
-        *value = id;
-      }
-    }
-    grn_table_cursor_close(ctx, cursor);
-  }
-
-  return sorted;
-}
-
-typedef enum {
-  TSORT_STATUS_NOT_VISITED,
-  TSORT_STATUS_VISITING,
-  TSORT_STATUS_VISITED
-} tsort_status;
-
-static bool
-columns_tsort_visit(grn_ctx *ctx,
-                    grn_hash *columns,
-                    tsort_status *statuses,
-                    grn_obj *ids,
-                    grn_id id,
-                    const char *log_tag_prefix)
-{
-  bool cycled = true;
-  uint32_t index = id - 1;
-
-  switch (statuses[index]) {
-  case TSORT_STATUS_VISITING :
-    cycled = true;
-    break;
-  case TSORT_STATUS_VISITED :
-    cycled = false;
-    break;
-  case TSORT_STATUS_NOT_VISITED :
-    cycled = false;
-    statuses[index] = TSORT_STATUS_VISITING;
-    {
-      grn_column_data *column =
-        (grn_column_data *)grn_hash_get_value_(ctx, columns, id, NULL);
-      size_t i;
-      size_t n_dependencies =
-        grn_vector_size(ctx, &(column->dependency_column_names));
-      for (i = 0; i < n_dependencies; i++) {
-        const char *name;
-        unsigned int name_length =
-          grn_vector_get_element(ctx,
-                                 &(column->dependency_column_names),
-                                 i,
-                                 &name,
-                                 NULL,
-                                 NULL);
-        grn_id dependent_id;
-        dependent_id = grn_hash_get(ctx,
-                                    columns,
-                                    name,
-                                    name_length,
-                                    NULL);
-        if (dependent_id != GRN_ID_NIL) {
-          cycled = columns_tsort_visit(ctx,
-                                       columns,
-                                       statuses,
-                                       ids,
-                                       dependent_id,
-                                       log_tag_prefix);
-          if (cycled) {
-            GRN_PLUGIN_ERROR(ctx,
-                             GRN_INVALID_ARGUMENT,
-                             "%s[column][%.*s] cycled dependency: <%.*s>",
-                             log_tag_prefix,
-                             (int)(column->label.length),
-                             column->label.value,
-                             (int)name_length,
-                             name);
-          }
-        }
-      }
-    }
-    if (!cycled) {
-      statuses[index] = TSORT_STATUS_VISITED;
-      GRN_RECORD_PUT(ctx, ids, id);
-    }
-    break;
-  }
-
-  return cycled;
-}
-
-static bool
-columns_tsort_body(grn_ctx *ctx,
-                   grn_hash *columns,
-                   tsort_status *statuses,
-                   grn_obj *ids,
-                   const char *log_tag_prefix)
-{
-  grn_bool succeeded = GRN_TRUE;
-
-  GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
-    if (columns_tsort_visit(ctx, columns, statuses, ids, id, log_tag_prefix)) {
-      succeeded = true;
-      break;
-    }
-  } GRN_HASH_EACH_END(ctx, cursor);
-
-  return succeeded;
-}
-
-static void
-columns_tsort_init(grn_ctx *ctx,
-                   tsort_status *statuses,
-                   size_t n_statuses)
-{
-  size_t i;
-  for (i = 0; i < n_statuses; i++) {
-    statuses[i] = TSORT_STATUS_NOT_VISITED;
-  }
-}
-
-static bool
-columns_tsort(grn_ctx *ctx,
-              grn_hash *columns,
-              grn_obj *ids,
-              const char *log_tag_prefix)
-{
-  size_t n_statuses = grn_hash_size(ctx, columns);
-  tsort_status *statuses = GRN_PLUGIN_MALLOCN(ctx, tsort_status, n_statuses);
-  if (!statuses) {
-    return false;
-  }
-
-  columns_tsort_init(ctx, statuses, n_statuses);
-  bool succeeded = columns_tsort_body(ctx,
-                                      columns,
-                                      statuses,
-                                      ids,
-                                      log_tag_prefix);
-  GRN_PLUGIN_FREE(ctx, statuses);
-  return succeeded;
-}
-
-static bool
-grn_select_apply_column(grn_ctx *ctx,
-                        grn_select_data *data,
-                        grn_obj *table,
-                        grn_column_data *column_data,
-                        grn_obj *condition,
-                        const char *log_tag_prefix,
-                        const char *query_log_tag_prefix)
-{
-  grn_obj *column = grn_column_create(ctx,
-                                      table,
-                                      column_data->label.value,
-                                      column_data->label.length,
-                                      NULL,
-                                      column_data->flags,
-                                      column_data->type);
-  if (!column) {
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "%s[columns][%s][%.*s] failed to create column: %s",
-                     log_tag_prefix,
-                     grn_column_stage_name(column_data->stage),
-                     (int)(column_data->label.length),
-                     column_data->label.value,
-                     ctx->errbuf);
-    return false;
-  }
-
-  if (column_data->value.length == 0) {
-    return true;
-  }
-
-  grn_obj *expression;
-  grn_obj *record;
-  GRN_EXPR_CREATE_FOR_QUERY(ctx, table, expression, record);
-  if (!expression) {
-    grn_obj_close(ctx, column);
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "%s[columns][%s][%.*s] "
-                     "failed to create expression to compute value: %s",
-                     log_tag_prefix,
-                     grn_column_stage_name(column_data->stage),
-                     (int)(column_data->label.length),
-                     column_data->label.value,
-                     ctx->errbuf);
-    return false;
-  }
-  grn_expr_parse(ctx,
-                 expression,
-                 column_data->value.value,
-                 column_data->value.length,
-                 NULL,
-                 GRN_OP_MATCH,
-                 GRN_OP_AND,
-                 GRN_EXPR_SYNTAX_SCRIPT);
-  if (ctx->rc != GRN_SUCCESS) {
-    grn_obj_close(ctx, expression);
-    grn_obj_close(ctx, column);
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "%s[columns][%s][%.*s] "
-                     "failed to parse value: <%.*s>: %s",
-                     log_tag_prefix,
-                     grn_column_stage_name(column_data->stage),
-                     (int)(column_data->label.length),
-                     column_data->label.value,
-                     (int)(column_data->value.length),
-                     column_data->value.value,
-                     ctx->errbuf);
-    return false;
-  }
-  grn_select_expression_set_condition(ctx, expression, condition);
-
-  if (column_data->window.sort_keys.length > 0 ||
-      column_data->window.group_keys.length > 0) {
-    grn_window_definition definition;
-    grn_rc rc;
-
-    if (column_data->window.sort_keys.length > 0) {
-      int n_sort_keys;
-      definition.sort_keys =
-        grn_table_sort_key_from_str(ctx,
-                                    column_data->window.sort_keys.value,
-                                    column_data->window.sort_keys.length,
-                                    table, &n_sort_keys);
-      definition.n_sort_keys = n_sort_keys;
-      if (!definition.sort_keys) {
-        grn_obj_close(ctx, expression);
-        grn_obj_close(ctx, column);
-        GRN_PLUGIN_ERROR(ctx,
-                         GRN_INVALID_ARGUMENT,
-                         "%s[columns][%s][%.*s] "
-                         "failed to parse sort keys: %s",
-                         log_tag_prefix,
-                         grn_column_stage_name(column_data->stage),
-                         (int)(column_data->label.length),
-                         column_data->label.value,
-                         ctx->errbuf);
-        return false;
-      }
-    } else {
-      definition.sort_keys = NULL;
-      definition.n_sort_keys = 0;
-    }
-
-    if (column_data->window.group_keys.length > 0) {
-      int n_group_keys;
-      definition.group_keys =
-        grn_table_sort_key_from_str(ctx,
-                                    column_data->window.group_keys.value,
-                                    column_data->window.group_keys.length,
-                                    table, &n_group_keys);
-      definition.n_group_keys = n_group_keys;
-      if (!definition.group_keys) {
-        grn_obj_close(ctx, expression);
-        grn_obj_close(ctx, column);
-        if (definition.sort_keys) {
-          grn_table_sort_key_close(ctx,
-                                   definition.sort_keys,
-                                   definition.n_sort_keys);
-        }
-        GRN_PLUGIN_ERROR(ctx,
-                         GRN_INVALID_ARGUMENT,
-                         "%s[columns][%s][%.*s] "
-                         "failed to parse group keys: %s",
-                         log_tag_prefix,
-                         grn_column_stage_name(column_data->stage),
-                         (int)(column_data->label.length),
-                         column_data->label.value,
-                         ctx->errbuf);
-        return false;
-      }
-    } else {
-      definition.group_keys = NULL;
-      definition.n_group_keys = 0;
-    }
-
-    rc = grn_table_apply_window_function(ctx,
-                                         table,
-                                         column,
-                                         &definition,
-                                         expression);
-    if (definition.sort_keys) {
-      grn_table_sort_key_close(ctx,
-                               definition.sort_keys,
-                               definition.n_sort_keys);
-    }
-    if (definition.group_keys) {
-      grn_table_sort_key_close(ctx,
-                               definition.group_keys,
-                               definition.n_group_keys);
-    }
-    if (rc != GRN_SUCCESS) {
-      grn_obj_close(ctx, expression);
-      grn_obj_close(ctx, column);
-      return false;
-    }
-  } else {
-    grn_rc rc;
-    rc = grn_table_apply_expr(ctx, table, column, expression);
-    if (rc != GRN_SUCCESS) {
-      grn_obj_close(ctx, expression);
-      grn_obj_close(ctx, column);
-      GRN_PLUGIN_ERROR(ctx,
-                       GRN_INVALID_ARGUMENT,
-                       "%s[columns][%s][%.*s] "
-                       "failed to apply expression to generate column values: "
-                       "%s",
-                       log_tag_prefix,
-                       grn_column_stage_name(column_data->stage),
-                       (int)(column_data->label.length),
-                       column_data->label.value,
-                       ctx->errbuf);
-      return false;
-    }
-  }
-
-  grn_obj_close(ctx, expression);
-
-  return true;
-}
-
-static void
-grn_select_apply_columns(grn_ctx *ctx,
-                         grn_select_data *data,
-                         grn_obj *table,
-                         grn_hash *columns,
-                         grn_obj *condition,
-                         const char *log_tag_prefix,
-                         const char *query_log_tag_prefix)
-{
-  grn_obj tsorted_ids;
-  GRN_RECORD_INIT(&tsorted_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
-  if (!columns_tsort(ctx, columns, &tsorted_ids, log_tag_prefix)) {
-    GRN_OBJ_FIN(ctx, &tsorted_ids);
-    return;
-  }
-
-  size_t i;
-  size_t n_columns = GRN_RECORD_VECTOR_SIZE(&tsorted_ids);
-  for (i = 0; i < n_columns; i++) {
-    grn_id id = GRN_RECORD_VALUE_AT(&tsorted_ids, i);
-    grn_column_data *column_data =
-      (grn_column_data *)grn_hash_get_value_(ctx, columns, id, NULL);
-    if (!grn_select_apply_column(ctx,
-                                 data,
-                                 table,
-                                 column_data,
-                                 condition,
-                                 log_tag_prefix,
-                                 query_log_tag_prefix)) {
-      break;
-    }
-
-    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                  ":", "%scolumns[%.*s](%d)",
-                  query_log_tag_prefix ? query_log_tag_prefix : "",
-                  (int)(column_data->label.length),
-                  column_data->label.value,
-                  grn_table_size(ctx, table));
-  }
-
-  GRN_OBJ_FIN(ctx, &tsorted_ids);
-}
-
 static grn_bool
 grn_select_apply_initial_columns(grn_ctx *ctx,
                                  grn_select_data *data)
@@ -1858,6 +1914,7 @@ grn_select_apply_initial_columns(grn_ctx *ctx,
   grn_select_apply_columns(ctx,
                            data,
                            data->tables.initial,
+                           GRN_COLUMN_STAGE_INITIAL,
                            data->columns.initial,
                            data->filter.condition.expression,
                            "[select]",
@@ -1871,8 +1928,10 @@ grn_select_filter(grn_ctx *ctx,
                   grn_select_data *data)
 {
   if (!grn_filter_data_execute(ctx,
+                               data,
                                &(data->filter),
                                data->tables.initial,
+                               &(data->columns),
                                "[select]",
                                "")) {
     return GRN_FALSE;
@@ -1914,6 +1973,7 @@ grn_select_apply_filtered_columns(grn_ctx *ctx,
   grn_select_apply_columns(ctx,
                            data,
                            data->tables.result,
+                           GRN_COLUMN_STAGE_FILTERED,
                            data->columns.filtered,
                            data->filter.condition.expression,
                            "[select]",
@@ -2350,6 +2410,7 @@ grn_select_apply_output_columns(grn_ctx *ctx,
   grn_select_apply_columns(ctx,
                            data,
                            data->tables.sorted,
+                           GRN_COLUMN_STAGE_OUTPUT,
                            data->columns.output,
                            data->filter.condition.expression,
                            "[select]",
@@ -2587,6 +2648,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
     grn_select_apply_columns(ctx,
                              data,
                              result->table,
+                             GRN_COLUMN_STAGE_INITIAL,
                              drilldown->columns.initial,
                              condition,
                              GRN_TEXT_VALUE(&log_tag_prefix),
@@ -2662,6 +2724,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
     grn_select_apply_columns(ctx,
                              data,
                              drilldown->filtered_result,
+                             GRN_COLUMN_STAGE_FILTERED,
                              drilldown->columns.filtered,
                              condition,
                              GRN_TEXT_VALUE(&log_tag_prefix),
@@ -3114,6 +3177,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
             grn_select_apply_columns(ctx,
                                      data,
                                      sorted,
+                                     GRN_COLUMN_STAGE_OUTPUT,
                                      drilldown->columns.output,
                                      condition,
                                      drilldown_log_tag_prefix,
@@ -3153,6 +3217,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
           grn_select_apply_columns(ctx,
                                    data,
                                    sorted,
+                                   GRN_COLUMN_STAGE_OUTPUT,
                                    drilldown->columns.output,
                                    condition,
                                    drilldown_log_tag_prefix,
@@ -3234,6 +3299,7 @@ grn_select_slice_execute(grn_ctx *ctx,
     grn_select_apply_columns(ctx,
                              data,
                              slice->tables.initial,
+                             GRN_COLUMN_STAGE_INITIAL,
                              slice->columns.initial,
                              filter->condition.expression,
                              log_tag,
@@ -3245,8 +3311,10 @@ grn_select_slice_execute(grn_ctx *ctx,
   }
 
   if (!grn_filter_data_execute(ctx,
+                               data,
                                filter,
                                slice->tables.target,
+                               &(slice->columns),
                                log_tag,
                                query_log_tag_prefix)) {
     return false;
@@ -3266,6 +3334,7 @@ grn_select_slice_execute(grn_ctx *ctx,
     grn_select_apply_columns(ctx,
                              data,
                              slice->tables.result,
+                             GRN_COLUMN_STAGE_FILTERED,
                              slice->columns.filtered,
                              slice->filter.condition.expression,
                              log_tag,
@@ -3436,6 +3505,7 @@ grn_select_output_slices(grn_ctx *ctx,
       grn_select_apply_columns(ctx,
                                data,
                                slice->tables.output,
+                               GRN_COLUMN_STAGE_OUTPUT,
                                slice->columns.output,
                                slice->filter.condition.expression,
                                log_tag_prefix,

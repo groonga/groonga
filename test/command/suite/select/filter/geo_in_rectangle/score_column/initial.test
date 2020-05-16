@@ -1,0 +1,11 @@
+#@include fixture/geo/in_rectangle/north_east.grn
+
+select LandMarks \
+  --sort_keys 'distance,_id' \
+  --columns[distance].stage initial \
+  --columns[distance].type Float32 \
+  --columns[distance].flags COLUMN_SCALAR \
+  --columns[distance].value 0.0 \
+  --output_columns 'point,distance,_id' \
+  --limit -1 \
+  --filter 'geo_in_rectangle(point, "4x1", "1x4", {"score_column": distance})'

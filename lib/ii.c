@@ -9017,38 +9017,52 @@ res_add(grn_ctx *ctx,
         double score,
         grn_operator op)
 {
+  grn_id res_id;
   grn_rset_recinfo *ri;
   switch (op) {
   case GRN_OP_OR :
-    if (grn_hash_add(ctx, s, pi, s->key_size, (void **)&ri, NULL)) {
+    res_id = grn_hash_add(ctx, s, pi, s->key_size, (void **)&ri, NULL);
+    if (res_id != GRN_ID_NIL) {
       if (s->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
         grn_table_add_subrec((grn_obj *)s, ri, score, pi, 1);
-        grn_selector_data_current_add_score(ctx, (grn_obj *)s, pi->rid, score);
+        grn_selector_data_current_add_score(ctx,
+                                            (grn_obj *)s,
+                                            res_id,
+                                            pi->rid,
+                                            score);
       }
     }
     break;
   case GRN_OP_AND :
-    if (grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri)) {
+    res_id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri);
+    if (res_id != GRN_ID_NIL) {
       if (s->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
         ri->n_subrecs |= GRN_RSET_UTIL_BIT;
         grn_table_add_subrec((grn_obj *)s, ri, score, pi, 1);
-        grn_selector_data_current_add_score(ctx, (grn_obj *)s, pi->rid, score);
+        grn_selector_data_current_add_score(ctx,
+                                            (grn_obj *)s,
+                                            res_id,
+                                            pi->rid,
+                                            score);
       }
     }
     break;
   case GRN_OP_AND_NOT :
-    {
-      grn_id id;
-      if ((id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri))) {
-        grn_hash_delete_by_id(ctx, s, id, NULL);
-      }
+    res_id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri);
+    if (res_id != GRN_ID_NIL) {
+      grn_hash_delete_by_id(ctx, s, res_id, NULL);
     }
     break;
   case GRN_OP_ADJUST :
-    if (grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri)) {
+    res_id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri);
+    if (res_id != GRN_ID_NIL) {
       if (s->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
         ri->score += score;
-        grn_selector_data_current_add_score(ctx, (grn_obj *)s, pi->rid, score);
+        grn_selector_data_current_add_score(ctx,
+                                            (grn_obj *)s,
+                                            res_id,
+                                            pi->rid,
+                                            score);
       }
     }
     break;

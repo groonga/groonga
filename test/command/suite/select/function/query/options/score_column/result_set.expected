@@ -1,0 +1,28 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_HASH_KEY ShortText   --default_tokenizer TokenBigramSplitSymbolAlphaDigit   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"name": "Alice"},
+{"name": "Alisa"},
+{"name": "Bob"}
+]
+[[0,0.0,0.0],3]
+select Users   --columns[ali_score].stage result_set   --columns[ali_score].type Float   --columns[ali_score].flags COLUMN_SCALAR   --output_columns name,_score,ali_score   --filter 'query("name * 10", "ali", {"score_column": ali_score}) &&             query("name * 2", "li")'
+[
+  [
+    [
+      -63,
+      0.0,
+      0.0
+    ],
+    "Syntax error: <query(\"name * 10\", \"ali\", {\"score_column\": ali_score|}|) &&             query(\"name * 2\", \"li\")>: [expr][parse] "
+  ]
+]
+#|e| [expr][parse] unknown identifier: <ali_score>
+#|e| Syntax error: <query("name * 10", "ali", {"score_column": ali_score|}|) &&             query("name * 2", "li")>: [expr][parse] unknown identifier: <ali_score>

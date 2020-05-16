@@ -14,7 +14,7 @@ load --table Users
 ]
 
 select Users \
-  --columns[ali_score].stage initial \
+  --columns[ali_score].stage result_set \
   --columns[ali_score].type Float \
   --columns[ali_score].flags COLUMN_SCALAR \
   --output_columns name,_score,ali_score \

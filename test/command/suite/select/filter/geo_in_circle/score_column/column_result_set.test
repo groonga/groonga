@@ -2,9 +2,9 @@
 
 select LandMarks \
   --sort_keys 'distance,_id' \
-  --columns[distance].stage initial \
+  --columns[distance].stage result_set \
   --columns[distance].type Float \
   --columns[distance].flags COLUMN_SCALAR \
   --output_columns 'point,distance,_id' \
   --limit -1 \
-  --filter 'geo_in_circle(point, "11x11", "11x1", {"score_column": distance})'
+  --filter 'geo_in_circle(point, "11x11", "11x1", {"score_column": "distance"})'
