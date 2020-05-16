@@ -3719,6 +3719,7 @@ grn_table_select_index_use_sequential_search(grn_ctx *ctx,
   grn_obj *table = grn_ctx_at(ctx, res->header.domain);
   int n_records = grn_table_size(ctx, table);
   int n_filtered_records = grn_table_size(ctx, res);
+  grn_obj_unref(ctx, table);
   double filtered_ratio;
   if (n_records == 0) {
     filtered_ratio = 1.0;
