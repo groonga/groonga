@@ -264,35 +264,31 @@ grn_accessor_resolve_one_data_column_index(grn_ctx *ctx,
                                            grn_obj *current_res,
                                            grn_obj **next_res)
 {
-  {
-    grn_obj *lexicon;
-    lexicon = grn_ctx_at(ctx, index_datum->index->header.domain);
-    if (grn_obj_id(ctx, lexicon) != current_res->header.domain) {
-      char index_name[GRN_TABLE_MAX_KEY_SIZE];
-      int index_name_size;
-      grn_obj *expected;
-      char expected_name[GRN_TABLE_MAX_KEY_SIZE];
-      int expected_name_size;
+  if (index_datum->index->header.domain != current_res->header.domain) {
+    char index_name[GRN_TABLE_MAX_KEY_SIZE];
+    int index_name_size;
+    grn_obj *expected;
+    char expected_name[GRN_TABLE_MAX_KEY_SIZE];
+    int expected_name_size;
 
-      index_name_size = grn_obj_name(ctx,
-                                     index_datum->index,
-                                     index_name,
-                                     GRN_TABLE_MAX_KEY_SIZE);
-      expected = grn_ctx_at(ctx, current_res->header.domain);
-      expected_name_size = grn_obj_name(ctx,
-                                        expected,
-                                        expected_name,
-                                        GRN_TABLE_MAX_KEY_SIZE);
-      ERR(GRN_INVALID_ARGUMENT,
-          "[accessor][resolve][data-column] lexicon mismatch index: "
-          "<%.*s> "
-          "expected:<%.*s>",
-          index_name_size,
-          index_name,
-          expected_name_size,
-          expected_name);
-      return ctx->rc;
-    }
+    index_name_size = grn_obj_name(ctx,
+                                   index_datum->index,
+                                   index_name,
+                                   GRN_TABLE_MAX_KEY_SIZE);
+    expected = grn_ctx_at(ctx, current_res->header.domain);
+    expected_name_size = grn_obj_name(ctx,
+                                      expected,
+                                      expected_name,
+                                      GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[accessor][resolve][data-column] lexicon mismatch index: "
+        "<%.*s> "
+        "expected:<%.*s>",
+        index_name_size,
+        index_name,
+        expected_name_size,
+        expected_name);
+    return ctx->rc;
   }
 
   grn_report_index(ctx,
