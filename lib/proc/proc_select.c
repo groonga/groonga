@@ -2666,6 +2666,9 @@ grn_select_drilldown_execute(grn_ctx *ctx,
                              condition,
                              GRN_TEXT_VALUE(&log_tag_prefix),
                              GRN_TEXT_VALUE(&full_query_log_tag_prefix));
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
   }
 
   {
