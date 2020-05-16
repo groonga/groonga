@@ -144,13 +144,16 @@ grn_output_columns_apply_detect_target_table(grn_ctx *ctx,
 
     if (grn_obj_is_accessor(ctx, column)) {
       table = ((grn_accessor *)column)->obj;
+      grn_obj_refer(ctx, table);
     } else {
       grn_id table_id;
       table_id = column->header.domain;
       table = grn_ctx_at(ctx, table_id);
     }
     if (target_table) {
-      if (table != target_table) {
+      const bool valid_table = (table == target_table);
+      grn_obj_unref(ctx, table);
+      if (!valid_table) {
         char column_name[GRN_TABLE_MAX_KEY_SIZE];
         int column_name_size;
         char target_table_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -169,6 +172,7 @@ grn_output_columns_apply_detect_target_table(grn_ctx *ctx,
             "all columns must belong to the same table: <%.*s>: <%.*s>",
             column_name_size, column_name,
             target_table_name_size, target_table_name);
+        grn_obj_unref(ctx, table);
         return NULL;
       }
     } else {
@@ -345,6 +349,7 @@ grn_output_columns_apply_add_records(grn_ctx *ctx,
                                              target_table,
                                              ids);
   }
+  grn_obj_unref(ctx, target_table);
 }
 
 static void
