@@ -34,6 +34,10 @@ typedef struct _grn_obj_format grn_obj_format;
 /* Format weight as float32.
    Since 10.0.3 */
 #define GRN_OBJ_FORMAT_WEIGHT_FLOAT32      (0x01<<5)
+/* Call grn_ctx_output_flush() internally for each 1024 records in a table.
+   The "1024" value may be changed.
+   Since 10.0.3 */
+#define GRN_OBJ_FORMAT_AUTO_FLUSH          (0x01<<6)
 
 struct _grn_obj_format {
   grn_obj columns;

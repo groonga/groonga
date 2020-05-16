@@ -181,8 +181,8 @@ writer_open_table_records(mrb_state *mrb, mrb_value self)
 
 static mrb_value
 writer_write_table_records_content_internal(mrb_state *mrb,
-                                           mrb_value self,
-                                           bool only_content)
+                                            mrb_value self,
+                                            bool only_content)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   mrb_value mrb_table;
@@ -195,28 +195,35 @@ writer_write_table_records_content_internal(mrb_state *mrb,
   int offset = 0;
   int limit = -1;
   int hits_offset = 0;
+  bool auto_flush = false;
 
   mrb_get_args(mrb, "os|H", &mrb_table, &columns, &columns_size, &mrb_options);
 
   table = DATA_PTR(mrb_table);
   if (!mrb_nil_p(mrb_options)) {
-    mrb_value mrb_offset;
-    mrb_value mrb_limit;
-
-    mrb_offset = grn_mrb_options_get_lit(mrb, mrb_options, "offset");
+    mrb_value mrb_offset = grn_mrb_options_get_lit(mrb, mrb_options, "offset");
     if (!mrb_nil_p(mrb_offset)) {
       offset = mrb_fixnum(mrb_offset);
     }
 
-    mrb_limit = grn_mrb_options_get_lit(mrb, mrb_options, "limit");
+    mrb_value mrb_limit = grn_mrb_options_get_lit(mrb, mrb_options, "limit");
     if (!mrb_nil_p(mrb_limit)) {
       limit = mrb_fixnum(mrb_limit);
+    }
+
+    mrb_value mrb_auto_flush =
+      grn_mrb_options_get_lit(mrb, mrb_options, "auto_flush");
+    if (!mrb_nil_p(mrb_auto_flush)) {
+      auto_flush = mrb_bool(mrb_auto_flush);
     }
   }
   if (limit < 0) {
     limit = grn_table_size(ctx, table) + limit + 1;
   }
   GRN_OBJ_FORMAT_INIT(&format, n_hits, offset, limit, hits_offset);
+  if (auto_flush) {
+    format.flags |= GRN_OBJ_FORMAT_AUTO_FLUSH;
+  }
   {
     grn_rc rc;
     rc = grn_obj_format_set_columns(ctx, &format,

@@ -20,13 +20,12 @@
 #pragma once
 
 #include "grn.h"
-#include "grn_ctx.h"
-#include "grn_store.h"
-#include "grn_ctx_impl.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define GRN_OUTPUT_AUTO_FLUSH_INTERVAL 1024
 
 GRN_API void grn_output_result_set_open(grn_ctx *ctx,
                                         grn_obj *outbuf,

@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
-  Copyright(C) 2010-2014 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2010-2014  Brazil
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,12 +23,14 @@
 
 #include <string.h>
 
-#include "grn_ctx.h"
-#include "grn_token_cursor.h"
+#include "../../lib/grn_ctx.h"
+#include "../../lib/grn_token_cursor.h"
 
-#include "grn_db.h"
-#include "grn_ii.h"
-#include "grn_output.h"
+#include "../../lib/grn_db.h"
+#include "../../lib/grn_ii.h"
+#include "../../lib/grn_output.h"
+#include "../../lib/grn_str.h"
+
 #include <groonga/plugin.h>
 
 #define VAR GRN_PROC_GET_VAR_BY_OFFSET

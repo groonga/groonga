@@ -51,6 +51,7 @@ module Groonga
 
             options = {}
             options[:limit] = limit
+            options[:auto_flush] = true if is_stream_output
             writer.write_table_records_content(result_set,
                                                output_columns,
                                                options)

@@ -20,6 +20,7 @@
 #include "grn.h"
 #include "grn_db.h"
 #include "grn_arrow.h"
+#include "grn_output.h"
 
 #ifdef GRN_WITH_APACHE_ARROW
 #include <groonga/arrow.hpp>
@@ -1757,7 +1758,7 @@ namespace grnarrow {
 
     void close_record() {
       n_records_++;
-      if (n_records_ == 1024) {
+      if (n_records_ == GRN_OUTPUT_AUTO_FLUSH_INTERVAL) {
         flush();
       }
     }

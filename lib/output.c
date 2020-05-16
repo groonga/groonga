@@ -21,6 +21,7 @@
 
 #include <string.h>
 
+#include "grn_ctx_impl.h"
 #include "grn_db.h"
 #include "grn_expr.h"
 #include "grn_output.h"
@@ -924,16 +925,21 @@ typedef struct {
   grn_obj vector;
   grn_obj sub_ids_stack;
   size_t next_sub_ids;
+  size_t n_processed_records;
+  bool auto_flush;
 } grn_output_table_data;
 
 static void
 grn_output_table_data_init(grn_ctx *ctx,
-                           grn_output_table_data *data)
+                           grn_output_table_data *data,
+                           grn_obj_format *format)
 {
   GRN_TEXT_INIT(&(data->bulk), 0);
   GRN_TEXT_INIT(&(data->vector), GRN_OBJ_VECTOR);
   GRN_TEXT_INIT(&(data->sub_ids_stack), 0);
   data->next_sub_ids = 0;
+  data->n_processed_records = 0;
+  data->auto_flush = (format && (format->flags & GRN_OBJ_FORMAT_AUTO_FLUSH));
 }
 
 static grn_obj *
@@ -964,6 +970,30 @@ grn_output_table_data_pop_sub_ids(grn_ctx *ctx,
                                   grn_output_table_data *data)
 {
   data->next_sub_ids--;
+}
+
+static void
+grn_output_table_data_open_record(grn_ctx *ctx,
+                                  grn_output_table_data *data)
+{
+  if (!data->auto_flush) {
+    return;
+  }
+  if (data->n_processed_records == 0) {
+    return;
+  }
+
+  if ((data->n_processed_records % GRN_OUTPUT_AUTO_FLUSH_INTERVAL) == 0) {
+    const int flags = 0;
+    grn_ctx_output_flush(ctx, flags);
+  }
+}
+
+static void
+grn_output_table_data_close_record(grn_ctx *ctx,
+                                   grn_output_table_data *data)
+{
+  data->n_processed_records++;
 }
 
 static void
@@ -1300,7 +1330,7 @@ grn_output_bulk(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       grn_output_array_open(ctx, outbuf, output_type, "HIT", ncolumns);
       {
         grn_output_table_data data;
-        grn_output_table_data_init(ctx, &data);
+        grn_output_table_data_init(ctx, &data, format);
         for (j = 0; j < ncolumns; j++) {
           grn_output_table_column_value(ctx,
                                         outbuf,
@@ -2036,10 +2066,10 @@ grn_output_table_records_by_expression(grn_ctx *ctx,
   n = GRN_BULK_VSIZE(&offsets) / sizeof(uint32_t) / 2;
   record = grn_expr_get_var_by_offset(ctx, format->expression, 0);
   while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
-    size_t i;
-
+    grn_output_table_data_open_record(ctx, data);
     GRN_RECORD_SET(ctx, record, id);
     grn_output_table_record_open(ctx, outbuf, output_type, n);
+    size_t i;
     for (i = 0; i < n; i++) {
       uint32_t code_start_offset;
       uint32_t code_end_offset;
@@ -2055,8 +2085,8 @@ grn_output_table_records_by_expression(grn_ctx *ctx,
                                             record,
                                             data);
     }
-
     grn_output_table_record_close(ctx, outbuf, output_type);
+    grn_output_table_data_close_record(ctx, data);
   }
 
   GRN_OBJ_FIN(ctx, &offsets);
@@ -2074,6 +2104,7 @@ grn_output_table_records_by_columns(grn_ctx *ctx, grn_obj *outbuf,
   int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
   grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
   while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
+    grn_output_table_data_open_record(ctx, data);
     grn_output_table_record_open(ctx, outbuf, output_type, ncolumns);
     for (i = 0; i < ncolumns; i++) {
       grn_output_table_record_by_column(ctx,
@@ -2084,6 +2115,7 @@ grn_output_table_records_by_columns(grn_ctx *ctx, grn_obj *outbuf,
                                         data);
     }
     grn_output_table_record_close(ctx, outbuf, output_type);
+    grn_output_table_data_close_record(ctx, data);
   }
 }
 
@@ -2133,7 +2165,7 @@ grn_output_table_records_content(grn_ctx *ctx,
                              GRN_CURSOR_ASCENDING);
   if (tc) {
     grn_output_table_data data;
-    grn_output_table_data_init(ctx, &data);
+    grn_output_table_data_init(ctx, &data, format);
     if (format->expression) {
       grn_output_table_records_by_expression(ctx,
                                              outbuf,

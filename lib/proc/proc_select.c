@@ -17,14 +17,15 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "../grn_proc.h"
-#include "../grn_expr.h"
-#include "../grn_str.h"
-#include "../grn_output.h"
-#include "../grn_util.h"
 #include "../grn_cache.h"
+#include "../grn_ctx_impl.h"
+#include "../grn_expr.h"
 #include "../grn_ii.h"
+#include "../grn_output.h"
 #include "../grn_posting.h"
+#include "../grn_proc.h"
+#include "../grn_str.h"
+#include "../grn_util.h"
 
 #include <groonga/plugin.h>
 
