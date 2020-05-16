@@ -2994,6 +2994,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
                              grn_hash *drilldowns,
                              const bool is_labeled,
                              grn_obj *condition,
+                             const char *log_tag_prefix,
                              const char *query_log_tag_prefix)
 {
   bool succeeded = true;
@@ -3025,7 +3026,6 @@ grn_select_output_drilldowns(grn_ctx *ctx,
     uint32_t n_hits;
     int offset;
     int limit;
-    char log_tag_prefix[GRN_TABLE_MAX_KEY_SIZE];
 
     grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
     result = &(drilldown->result);
@@ -3046,14 +3046,48 @@ grn_select_output_drilldowns(grn_ctx *ctx,
     limit = drilldown->limit;
     grn_output_range_normalize(ctx, n_hits, &offset, &limit);
 
-    grn_snprintf(log_tag_prefix,
-                 GRN_TABLE_MAX_KEY_SIZE,
-                 GRN_TABLE_MAX_KEY_SIZE,
-                 "[select][drilldowns]%s%.*s%s",
-                 drilldown->label.length > 0 ? "[" : "",
-                 (int)(drilldown->label.length),
-                 drilldown->label.value,
-                 drilldown->label.length > 0 ? "]" : "");
+    char drilldown_log_tag_prefix[GRN_TABLE_MAX_KEY_SIZE];
+    char drilldown_query_log_tag_prefix[GRN_TABLE_MAX_KEY_SIZE];
+    char drilldown_output_query_log_tag_prefix[GRN_TABLE_MAX_KEY_SIZE];
+    if (is_labeled) {
+      grn_snprintf(drilldown_log_tag_prefix,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   "%s[drilldowns][%.*s]",
+                   log_tag_prefix,
+                   (int)(drilldown->label.length),
+                   drilldown->label.value);
+      grn_snprintf(drilldown_query_log_tag_prefix,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   "%sdrilldowns[%.*s].",
+                   query_log_tag_prefix,
+                   (int)(drilldown->label.length),
+                   drilldown->label.value);
+      grn_snprintf(drilldown_output_query_log_tag_prefix,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   "%soutput.drilldowns[%.*s]",
+                   query_log_tag_prefix,
+                   (int)(drilldown->label.length),
+                   drilldown->label.value);
+    } else {
+      grn_snprintf(drilldown_log_tag_prefix,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   "%s[drilldown]",
+                   log_tag_prefix);
+      grn_snprintf(drilldown_query_log_tag_prefix,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   "%sdrilldown.",
+                   query_log_tag_prefix);
+      grn_snprintf(drilldown_output_query_log_tag_prefix,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   GRN_TABLE_MAX_KEY_SIZE,
+                   "%soutput.drilldown",
+                   query_log_tag_prefix);
+    }
 
     if (drilldown->sort_keys.length > 0) {
       grn_table_sort_key *sort_keys;
@@ -3069,21 +3103,12 @@ grn_select_output_drilldowns(grn_ctx *ctx,
         if (sorted) {
           grn_table_sort(ctx, target_table, offset, limit,
                          sorted, sort_keys, n_sort_keys);
-          if (is_labeled) {
-            GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                          ":", "drilldowns[%.*s].sort(%d): %.*s",
-                          (int)(drilldown->label.length),
-                          drilldown->label.value,
-                          limit,
-                          (int)(drilldown->sort_keys.length),
-                          drilldown->sort_keys.value);
-          } else {
-            GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                          ":", "drilldown.sort(%d): %.*s",
-                          limit,
-                          (int)(drilldown->sort_keys.length),
-                          drilldown->sort_keys.value);
-          }
+          GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                        ":", "%ssort(%d): %.*s",
+                        drilldown_query_log_tag_prefix,
+                        limit,
+                        (int)(drilldown->sort_keys.length),
+                        drilldown->sort_keys.value);
 
           if (drilldown->columns.output) {
             grn_select_apply_columns(ctx,
@@ -3091,21 +3116,24 @@ grn_select_output_drilldowns(grn_ctx *ctx,
                                      sorted,
                                      drilldown->columns.output,
                                      condition,
-                                     log_tag_prefix,
-                                     query_log_tag_prefix);
+                                     drilldown_log_tag_prefix,
+                                     drilldown_query_log_tag_prefix);
+            succeeded = (ctx->rc == GRN_SUCCESS);
           }
 
-          data->output.formatter->drilldown_label(ctx, data, drilldown);
-          succeeded =
-            grn_select_output_columns(ctx,
-                                      data,
-                                      sorted,
-                                      n_hits,
-                                      0,
-                                      limit,
-                                      drilldown->output_columns.value,
-                                      drilldown->output_columns.length,
-                                      condition);
+          if (succeeded) {
+            data->output.formatter->drilldown_label(ctx, data, drilldown);
+            succeeded =
+              grn_select_output_columns(ctx,
+                                        data,
+                                        sorted,
+                                        n_hits,
+                                        0,
+                                        limit,
+                                        drilldown->output_columns.value,
+                                        drilldown->output_columns.length,
+                                        condition);
+          }
           grn_obj_unlink(ctx, sorted);
         }
         grn_table_sort_key_close(ctx, sort_keys, n_sort_keys);
@@ -3127,23 +3155,25 @@ grn_select_output_drilldowns(grn_ctx *ctx,
                                    sorted,
                                    drilldown->columns.output,
                                    condition,
-                                   log_tag_prefix,
-                                   query_log_tag_prefix);
-
+                                   drilldown_log_tag_prefix,
+                                   drilldown_query_log_tag_prefix);
+          succeeded = (ctx->rc == GRN_SUCCESS);
         }
         target_table = sorted;
       }
 
-      data->output.formatter->drilldown_label(ctx, data, drilldown);
-      succeeded = grn_select_output_columns(ctx,
-                                            data,
-                                            target_table,
-                                            n_hits,
-                                            offset,
-                                            limit,
-                                            drilldown->output_columns.value,
-                                            drilldown->output_columns.length,
-                                            condition);
+      if (succeeded) {
+        data->output.formatter->drilldown_label(ctx, data, drilldown);
+        succeeded = grn_select_output_columns(ctx,
+                                              data,
+                                              target_table,
+                                              n_hits,
+                                              offset,
+                                              limit,
+                                              drilldown->output_columns.value,
+                                              drilldown->output_columns.length,
+                                              condition);
+      }
       if (sorted) {
         grn_obj_unlink(ctx, sorted);
       }
@@ -3153,19 +3183,10 @@ grn_select_output_drilldowns(grn_ctx *ctx,
       break;
     }
 
-    if (is_labeled) {
-      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                    ":", "%soutput.drilldowns[%.*s](%d)",
-                    query_log_tag_prefix,
-                    (int)(drilldown->label.length),
-                    drilldown->label.value,
-                    n_hits);
-    } else {
-      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                    ":", "%soutput.drilldown(%d)",
-                    query_log_tag_prefix,
-                    n_hits);
-    }
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                  ":", "%s(%d)",
+                  drilldown_output_query_log_tag_prefix,
+                  n_hits);
   } GRN_HASH_EACH_END(ctx, cursor);
 
   data->output.formatter->drilldowns_close(ctx, data);
@@ -3350,6 +3371,13 @@ grn_select_output_slices(grn_ctx *ctx,
     limit = slice->limit;
     grn_output_range_normalize(ctx, n_hits, &offset, &limit);
 
+    char log_tag_prefix[GRN_TABLE_MAX_KEY_SIZE];
+    grn_snprintf(log_tag_prefix,
+                 GRN_TABLE_MAX_KEY_SIZE,
+                 GRN_TABLE_MAX_KEY_SIZE,
+                 "[select][slices][%.*s]",
+                 (int)(slice->label.length),
+                 slice->label.value);
     char query_log_tag_prefix[GRN_TABLE_MAX_KEY_SIZE];
     grn_snprintf(query_log_tag_prefix,
                  GRN_TABLE_MAX_KEY_SIZE,
@@ -3405,13 +3433,6 @@ grn_select_output_slices(grn_ctx *ctx,
     }
 
     if (slice->columns.output) {
-      char log_tag_prefix[GRN_TABLE_MAX_KEY_SIZE];
-      grn_snprintf(log_tag_prefix,
-                   GRN_TABLE_MAX_KEY_SIZE,
-                   GRN_TABLE_MAX_KEY_SIZE,
-                   "[select][slices][%.*s]",
-                   (int)(slice->label.length),
-                   slice->label.value);
       grn_select_apply_columns(ctx,
                                data,
                                slice->tables.output,
@@ -3451,6 +3472,7 @@ grn_select_output_slices(grn_ctx *ctx,
                                              slice->drilldowns,
                                              true,
                                              slice->filter.condition.expression,
+                                             log_tag_prefix,
                                              query_log_tag_prefix);
     if (!succeeded) {
       break;
@@ -3484,6 +3506,7 @@ grn_select_data_output_drilldowns(grn_ctx *ctx,
                                       data->drilldowns,
                                       (data->drilldown.keys.length == 0),
                                       data->filter.condition.expression,
+                                      "[select]",
                                       "");
 }
 

@@ -11,6 +11,7 @@ load --table Items
 {"_key": "Drink", "price": 300}
 ]
 
+#@collect-query-log true
 select Items \
   --drilldowns[label].keys price \
   --drilldowns[label].output_columns _key,_nsubrecs,nth_record \
@@ -20,3 +21,4 @@ select Items \
   --drilldowns[label].columns[nth_record].flags COLUMN_SCALAR \
   --drilldowns[label].columns[nth_record].value 'window_record_number()' \
   --drilldowns[label].columns[nth_record].window.sort_keys _key
+#@collect-query-log false
