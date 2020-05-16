@@ -6,7 +6,7 @@ load --table Records
 {"value": 1}
 ]
 
-# For use cache
+# To use cache
 #@sleep 1
 
 #@collect-query-log true

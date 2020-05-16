@@ -7,7 +7,7 @@ load --table Memos
 {"_key": "Hello Rroonga!", "tag": "Rroonga"}
 ]
 
-# For use cache
+# To use cache
 #@sleep 1
 
 select Memos

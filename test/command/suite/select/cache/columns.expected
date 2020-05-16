@@ -1,0 +1,237 @@
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "Book",  "price": 1000},
+{"_key": "Note",  "price": 1000},
+{"_key": "Box",   "price":  520},
+{"_key": "Pen",   "price":  510},
+{"_key": "Food",  "price":  500},
+{"_key": "Drink", "price":  300}
+]
+[[0,0.0,0.0],6]
+select Items   --columns[price_with_tax].stage initial   --columns[price_with_tax].type UInt32   --columns[price_with_tax].flags COLUMN_SCALAR   --columns[price_with_tax].value 'price * 1.08'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "price_with_tax",
+          "UInt32"
+        ],
+        [
+          "price",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        "Book",
+        1080,
+        1000
+      ],
+      [
+        2,
+        "Note",
+        1080,
+        1000
+      ],
+      [
+        3,
+        "Box",
+        561,
+        520
+      ],
+      [
+        4,
+        "Pen",
+        550,
+        510
+      ],
+      [
+        5,
+        "Food",
+        540,
+        500
+      ],
+      [
+        6,
+        "Drink",
+        324,
+        300
+      ]
+    ]
+  ]
+]
+#>select --columns[price_with_tax].flags "COLUMN_SCALAR" --columns[price_with_tax].stage "initial" --columns[price_with_tax].type "UInt32" --columns[price_with_tax].value "price * 1.08" --table "Items"
+#:000000000000000 columns[price_with_tax](6)
+#:000000000000000 select(6)
+#:000000000000000 output(6)
+#:000000000000000 send(0)
+#<000000000000000 rc=0
+select Items   --columns[price_with_tax].stage initial   --columns[price_with_tax].type UInt32   --columns[price_with_tax].flags COLUMN_SCALAR   --columns[price_with_tax].value 'price * 1.08'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "price_with_tax",
+          "UInt32"
+        ],
+        [
+          "price",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        "Book",
+        1080,
+        1000
+      ],
+      [
+        2,
+        "Note",
+        1080,
+        1000
+      ],
+      [
+        3,
+        "Box",
+        561,
+        520
+      ],
+      [
+        4,
+        "Pen",
+        550,
+        510
+      ],
+      [
+        5,
+        "Food",
+        540,
+        500
+      ],
+      [
+        6,
+        "Drink",
+        324,
+        300
+      ]
+    ]
+  ]
+]
+#>select --columns[price_with_tax].flags "COLUMN_SCALAR" --columns[price_with_tax].stage "initial" --columns[price_with_tax].type "UInt32" --columns[price_with_tax].value "price * 1.08" --table "Items"
+#:000000000000000 cache(0)
+#:000000000000000 send(0)
+#<000000000000000 rc=0
+select Items   --columns[price_with_tax].stage initial   --columns[price_with_tax].type UInt32   --columns[price_with_tax].flags COLUMN_SCALAR   --columns[price_with_tax].value 'price  *  1.08'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "price_with_tax",
+          "UInt32"
+        ],
+        [
+          "price",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        "Book",
+        1080,
+        1000
+      ],
+      [
+        2,
+        "Note",
+        1080,
+        1000
+      ],
+      [
+        3,
+        "Box",
+        561,
+        520
+      ],
+      [
+        4,
+        "Pen",
+        550,
+        510
+      ],
+      [
+        5,
+        "Food",
+        540,
+        500
+      ],
+      [
+        6,
+        "Drink",
+        324,
+        300
+      ]
+    ]
+  ]
+]
+#>select --columns[price_with_tax].flags "COLUMN_SCALAR" --columns[price_with_tax].stage "initial" --columns[price_with_tax].type "UInt32" --columns[price_with_tax].value "price  *  1.08" --table "Items"
+#:000000000000000 columns[price_with_tax](6)
+#:000000000000000 select(6)
+#:000000000000000 output(6)
+#:000000000000000 send(0)
+#<000000000000000 rc=0
