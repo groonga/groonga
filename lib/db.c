@@ -12478,6 +12478,7 @@ grn_obj_flush_recursive_dependent_internal_column_index(grn_ctx *ctx,
     grn_obj *source = grn_ctx_at(ctx, source_id);
     if (source) {
       grn_obj_flush_recursive_dependent_internal(ctx, source, data);
+      grn_obj_unref(ctx, source);
     }
     if (data->is_close_opened_object_mode) {
       grn_ctx_pop_temporary_open_space(ctx);
