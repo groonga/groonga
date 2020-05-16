@@ -14441,21 +14441,29 @@ grn_column_get_all_index_data_column(grn_ctx *ctx,
       continue;
     }
     if (target->header.type != GRN_COLUMN_INDEX) {
+      grn_obj_unref(ctx, target);
       continue;
     }
     if (!grn_obj_is_visible(ctx, target)) {
+      grn_obj_unref(ctx, target);
       continue;
     }
     if (MULTI_COLUMN_INDEXP(target)) {
       section = data->section;
     }
+    bool returned = false;
     if (n < n_index_data) {
       index_data[n].index = target;
       index_data[n].section = section;
+      returned = true;
     }
     n++;
     if (index_columns) {
       GRN_PTR_PUT(ctx, index_columns, target);
+      returned = true;
+    }
+    if (!returned) {
+      grn_obj_unref(ctx, target);
     }
   }
 

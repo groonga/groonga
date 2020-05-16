@@ -390,6 +390,7 @@ grn_accessor_resolve_one_data_column(grn_ctx *ctx, grn_accessor *accessor,
                                                     &index_datum,
                                                     current_res,
                                                     next_res);
+    grn_obj_unref(ctx, index_datum.index);
   }
 
   return rc;
