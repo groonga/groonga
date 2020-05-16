@@ -276,7 +276,7 @@ grn_obj_is_weight_vector_column(grn_ctx *ctx, grn_obj *obj)
   return (obj->header.flags & GRN_OBJ_WITH_WEIGHT) == GRN_OBJ_WITH_WEIGHT;
 }
 
-grn_bool
+bool
 grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj)
 {
   if (!grn_obj_is_column(ctx, obj)) {
@@ -293,14 +293,17 @@ grn_obj_is_reference_column(grn_ctx *ctx, grn_obj *obj)
     return GRN_FALSE;
   }
 
-  switch (range->header.type) {
+  uint8_t range_type = range->header.type;
+  grn_obj_unref(ctx, range);
+
+  switch (range_type) {
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
   case GRN_TABLE_DAT_KEY:
   case GRN_TABLE_NO_KEY:
-    return GRN_TRUE;
+    return true;
   default:
-    return GRN_FALSE;
+    return false;
   }
 }
 
