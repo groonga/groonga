@@ -245,10 +245,7 @@ grn_proc_options_parsev(grn_ctx *ctx,
         grn_expr_flags *flags = va_arg(args, grn_expr_flags *);
         if (id != GRN_ID_NIL) {
           GRN_RECORD_PUT(ctx, &used_ids, id);
-          *flags = grn_proc_expr_query_flags_parse(ctx,
-                                                   GRN_TEXT_VALUE(value),
-                                                   GRN_TEXT_LEN(value),
-                                                   func_tag);
+          *flags = grn_proc_expr_query_flags_parse(ctx, value, func_tag);
           if (ctx->rc != GRN_SUCCESS) {
             goto exit;
           }

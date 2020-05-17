@@ -159,8 +159,7 @@ grn_rc grn_proc_syntax_expand_query(grn_ctx *ctx,
                                     const char *error_message_tag);
 
 grn_expr_flags grn_proc_expr_query_flags_parse(grn_ctx *ctx,
-                                               const char *query_flags,
-                                               size_t query_flags_size,
+                                               grn_obj *query_flags,
                                                const char *error_message_tag);
 
 grn_obj *grn_proc_lexicon_open(grn_ctx *ctx,

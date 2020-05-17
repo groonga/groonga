@@ -552,6 +552,10 @@ property_name_and_value ::= property_name COLON assignment_expression. {
           GRN_OBJ_INIT(buf, GRN_PTR, 0, GRN_ID_NIL);
           GRN_PTR_SET(ctx, buf, value);
           break;
+        case GRN_VECTOR :
+          GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
+          grn_vector_copy(ctx, value, buf);
+          break;
         default :
           GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
           GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));

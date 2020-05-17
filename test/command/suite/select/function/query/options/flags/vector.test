@@ -1,0 +1,29 @@
+#$GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=#{db_directory}/synonyms.tsv
+#@copy-path fixture/query_expander/tsv/expand.tsv #{db_directory}/synonyms.tsv
+plugin_register "query_expanders/tsv"
+
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Lexicon TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerAuto \
+  --default_tokenizer TokenBigram
+column_create Lexicon memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+["content"],
+["Start Groonga!"],
+["Start Mroonga!"],
+["Start Rroonga!"],
+["Start Ruby!"],
+["Learning Ruby and Groonga..."]
+]
+
+select \
+  --table Memos \
+  --filter 'query("content", "-content:@mroonga", \
+                  { \
+                    "expander": "QueryExpanderTSV", \
+                    "flags": ["ALLOW_LEADING_NOT", "ALLOW_COLUMN"] \
+                  })'

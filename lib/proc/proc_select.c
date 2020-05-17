@@ -1351,10 +1351,16 @@ grn_filter_data_execute(grn_ctx *ctx,
 
       flags = GRN_EXPR_SYNTAX_QUERY;
       if (filter_data->query_flags.length) {
+        grn_obj query_flags;
+        GRN_TEXT_INIT(&query_flags, GRN_OBJ_DO_SHALLOW_COPY);
+        GRN_TEXT_SET(ctx,
+                     &query_flags,
+                     filter_data->query_flags.value,
+                     filter_data->query_flags.length);
         flags |= grn_proc_expr_query_flags_parse(ctx,
-                                                 filter_data->query_flags.value,
-                                                 filter_data->query_flags.length,
+                                                 &query_flags,
                                                  log_tag_prefix);
+        GRN_OBJ_FIN(ctx, &query_flags);
         if (ctx->rc != GRN_SUCCESS) {
           return false;
         }
@@ -1665,47 +1671,113 @@ grn_slice_data_fill(grn_ctx *ctx,
 
 grn_expr_flags
 grn_proc_expr_query_flags_parse(grn_ctx *ctx,
-                                const char *query_flags,
-                                size_t query_flags_size,
+                                grn_obj *query_flags,
                                 const char *error_message_tag)
 {
   grn_expr_flags flags = 0;
-  const char *query_flags_end = query_flags + query_flags_size;
+  if (grn_obj_is_text_family_bulk(ctx, query_flags)) {
+    const char *current = GRN_TEXT_VALUE(query_flags);
+    const char *end = current + GRN_TEXT_LEN(query_flags);
 
-  while (query_flags < query_flags_end) {
-    if (*query_flags == '|' || *query_flags == ' ') {
-      query_flags += 1;
-      continue;
-    }
+    while (current < end) {
+      if (*current == '|' || *current == ' ') {
+        current += 1;
+        continue;
+      }
 
 #define CHECK_EXPR_FLAG(name)                                           \
-    if (((query_flags_end - query_flags) >= (sizeof(#name) - 1)) &&     \
-        (memcmp(query_flags, #name, sizeof(#name) - 1) == 0) &&         \
-        (((query_flags_end - query_flags) == (sizeof(#name) - 1)) ||    \
-         (query_flags[sizeof(#name) - 1] == '|') ||                     \
-         (query_flags[sizeof(#name) - 1] == ' '))) {                    \
-      flags |= GRN_EXPR_ ## name;                                       \
-      query_flags += sizeof(#name) - 1;                                 \
-      continue;                                                         \
-    }
+      if (((end - current) >= (sizeof(#name) - 1)) &&                   \
+          (memcmp(current, #name, sizeof(#name) - 1) == 0) &&           \
+          (((end - current) == (sizeof(#name) - 1)) ||                  \
+           (current[sizeof(#name) - 1] == '|') ||                       \
+           (current[sizeof(#name) - 1] == ' '))) {                      \
+        flags |= GRN_EXPR_ ## name;                                     \
+        current += sizeof(#name) - 1;                                   \
+        continue;                                                       \
+      }
 
-    CHECK_EXPR_FLAG(ALLOW_PRAGMA);
-    CHECK_EXPR_FLAG(ALLOW_COLUMN);
-    CHECK_EXPR_FLAG(ALLOW_UPDATE);
-    CHECK_EXPR_FLAG(ALLOW_LEADING_NOT);
-    CHECK_EXPR_FLAG(QUERY_NO_SYNTAX_ERROR);
+      CHECK_EXPR_FLAG(ALLOW_PRAGMA);
+      CHECK_EXPR_FLAG(ALLOW_COLUMN);
+      CHECK_EXPR_FLAG(ALLOW_UPDATE);
+      CHECK_EXPR_FLAG(ALLOW_LEADING_NOT);
+      CHECK_EXPR_FLAG(QUERY_NO_SYNTAX_ERROR);
 
 #define GRN_EXPR_NONE 0
-    CHECK_EXPR_FLAG(NONE);
+      CHECK_EXPR_FLAG(NONE);
 #undef GNR_EXPR_NONE
 
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "%s invalid query flag: <%.*s>",
-                     error_message_tag,
-                     (int)(query_flags_end - query_flags),
-                     query_flags);
-    return 0;
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "%s invalid query flag: <%.*s>",
+                       error_message_tag,
+                       (int)(end - current),
+                       current);
+      return 0;
 #undef CHECK_EXPR_FLAG
+    }
+  } else if (grn_obj_is_vector(ctx, query_flags)) {
+    uint32_t n_elements = grn_vector_size(ctx, query_flags);
+    uint32_t i;
+    for (i = 0; i < n_elements; i++) {
+      const char *flag;
+      grn_id domain;
+      uint32_t flag_size = grn_vector_get_element_float(ctx,
+                                                        query_flags,
+                                                        i,
+                                                        &flag,
+                                                        NULL,
+                                                        &domain);
+      if (!grn_type_id_is_text_family(ctx, domain)) {
+        grn_obj value;
+        GRN_VALUE_FIX_SIZE_INIT(&value, 0, domain);
+        GRN_TEXT_SET(ctx, &value, flag, flag_size);
+        grn_obj inspected;
+        GRN_TEXT_INIT(&inspected, 0);
+        grn_inspect(ctx, &inspected, &value);
+        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                         "%s query flag must be string: %.*s",
+                         error_message_tag,
+                         (int)GRN_TEXT_LEN(&inspected),
+                         GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+        GRN_OBJ_FIN(ctx, &value);
+        return 0;
+      }
+
+#define CHECK_EXPR_FLAG(name)                                           \
+      if ((flag_size == (sizeof(#name) - 1)) &&                         \
+          (memcmp(flag, #name, sizeof(#name) - 1) == 0)) {              \
+        flags |= GRN_EXPR_ ## name;                                     \
+        continue;                                                       \
+      }
+
+      CHECK_EXPR_FLAG(ALLOW_PRAGMA);
+      CHECK_EXPR_FLAG(ALLOW_COLUMN);
+      CHECK_EXPR_FLAG(ALLOW_UPDATE);
+      CHECK_EXPR_FLAG(ALLOW_LEADING_NOT);
+      CHECK_EXPR_FLAG(QUERY_NO_SYNTAX_ERROR);
+
+#define GRN_EXPR_NONE 0
+      CHECK_EXPR_FLAG(NONE);
+#undef GNR_EXPR_NONE
+
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "%s invalid query flag: <%.*s>",
+                       error_message_tag,
+                       (int)flag_size,
+                       flag);
+      return 0;
+#undef CHECK_EXPR_FLAG
+    }
+  } else {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, query_flags);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s must be string or string vector: %.*s",
+                     error_message_tag,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
   }
 
   return flags;

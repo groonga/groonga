@@ -2454,6 +2454,10 @@ static YYACTIONTYPE yy_reduce(
           GRN_OBJ_INIT(buf, GRN_PTR, 0, GRN_ID_NIL);
           GRN_PTR_SET(ctx, buf, value);
           break;
+        case GRN_VECTOR :
+          GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
+          grn_vector_copy(ctx, value, buf);
+          break;
         default :
           GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
           GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
@@ -2475,61 +2479,61 @@ static YYACTIONTYPE yy_reduce(
     }
   }
 }
-#line 2479 "../../groonga/lib/grn_ecmascript.c"
+#line 2483 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 77: /* member_expression_part ::= BRACKETL expression BRACKETR */
-#line 579 "../../groonga/lib/grn_ecmascript.lemon"
+#line 583 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GET_MEMBER, 2);
 }
-#line 2486 "../../groonga/lib/grn_ecmascript.c"
+#line 2490 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 78: /* arguments ::= PARENL argument_list PARENR */
-#line 584 "../../groonga/lib/grn_ecmascript.lemon"
+#line 588 "../../groonga/lib/grn_ecmascript.lemon"
 { yymsp[-2].minor.yy0 = yymsp[-1].minor.yy0; }
-#line 2491 "../../groonga/lib/grn_ecmascript.c"
+#line 2495 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 79: /* argument_list ::= */
-#line 585 "../../groonga/lib/grn_ecmascript.lemon"
+#line 589 "../../groonga/lib/grn_ecmascript.lemon"
 { yymsp[1].minor.yy0 = 0; }
-#line 2496 "../../groonga/lib/grn_ecmascript.c"
+#line 2500 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 80: /* argument_list ::= assignment_expression */
-#line 586 "../../groonga/lib/grn_ecmascript.lemon"
+#line 590 "../../groonga/lib/grn_ecmascript.lemon"
 { yymsp[0].minor.yy0 = 1; }
-#line 2501 "../../groonga/lib/grn_ecmascript.c"
+#line 2505 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 81: /* argument_list ::= argument_list COMMA assignment_expression */
-#line 587 "../../groonga/lib/grn_ecmascript.lemon"
+#line 591 "../../groonga/lib/grn_ecmascript.lemon"
 { yylhsminor.yy0 = yymsp[-2].minor.yy0 + 1; }
-#line 2506 "../../groonga/lib/grn_ecmascript.c"
+#line 2510 "../../groonga/lib/grn_ecmascript.c"
   yymsp[-2].minor.yy0 = yylhsminor.yy0;
         break;
       case 82: /* output_columns ::= */
-#line 589 "../../groonga/lib/grn_ecmascript.lemon"
+#line 593 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[1].minor.yy0 = 0;
 }
-#line 2514 "../../groonga/lib/grn_ecmascript.c"
+#line 2518 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 83: /* output_columns ::= output_column */
-#line 592 "../../groonga/lib/grn_ecmascript.lemon"
+#line 596 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yylhsminor.yy0 = yymsp[0].minor.yy0;
 }
-#line 2521 "../../groonga/lib/grn_ecmascript.c"
+#line 2525 "../../groonga/lib/grn_ecmascript.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 84: /* output_columns ::= output_columns COMMA */
-#line 597 "../../groonga/lib/grn_ecmascript.lemon"
+#line 601 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yylhsminor.yy0 = yymsp[-1].minor.yy0;
 }
-#line 2529 "../../groonga/lib/grn_ecmascript.c"
+#line 2533 "../../groonga/lib/grn_ecmascript.c"
   yymsp[-1].minor.yy0 = yylhsminor.yy0;
         break;
       case 85: /* output_columns ::= output_columns COMMA output_column */
-#line 602 "../../groonga/lib/grn_ecmascript.lemon"
+#line 606 "../../groonga/lib/grn_ecmascript.lemon"
 {
   if (yymsp[-2].minor.yy0 == 0) {
     yylhsminor.yy0 = yymsp[0].minor.yy0;
@@ -2542,11 +2546,11 @@ static YYACTIONTYPE yy_reduce(
     yylhsminor.yy0 = 1;
   }
 }
-#line 2546 "../../groonga/lib/grn_ecmascript.c"
+#line 2550 "../../groonga/lib/grn_ecmascript.c"
   yymsp[-2].minor.yy0 = yylhsminor.yy0;
         break;
       case 86: /* output_column ::= STAR */
-#line 615 "../../groonga/lib/grn_ecmascript.lemon"
+#line 619 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_obj *expr = efsi->e;
@@ -2596,21 +2600,21 @@ static YYACTIONTYPE yy_reduce(
     yymsp[0].minor.yy0 = 0;
   }
 }
-#line 2600 "../../groonga/lib/grn_ecmascript.c"
+#line 2604 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 87: /* output_column ::= NONEXISTENT_COLUMN */
-#line 664 "../../groonga/lib/grn_ecmascript.lemon"
+#line 668 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 0;
 }
-#line 2607 "../../groonga/lib/grn_ecmascript.c"
+#line 2611 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 88: /* output_column ::= assignment_expression */
-#line 667 "../../groonga/lib/grn_ecmascript.lemon"
+#line 671 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 1;
 }
-#line 2614 "../../groonga/lib/grn_ecmascript.c"
+#line 2618 "../../groonga/lib/grn_ecmascript.c"
         break;
       default:
       /* (92) input ::= query */ yytestcase(yyruleno==92);
@@ -2742,7 +2746,7 @@ static void yy_syntax_error(
     }
     GRN_OBJ_FIN(ctx, &message);
   }
-#line 2746 "../../groonga/lib/grn_ecmascript.c"
+#line 2750 "../../groonga/lib/grn_ecmascript.c"
 /************ End %syntax_error code ******************************************/
   grn_expr_parserARG_STORE /* Suppress warning about unused %extra_argument variable */
   grn_expr_parserCTX_STORE
