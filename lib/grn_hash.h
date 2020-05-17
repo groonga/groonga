@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -352,6 +352,12 @@ GRN_API grn_rc grn_hash_truncate(grn_ctx *ctx, grn_hash *hash);
 int grn_rec_unit_size(grn_rec_unit unit, int rec_size);
 
 const char * _grn_hash_key(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *key_size);
+
+grn_rc
+grn_hash_add_table_cursor(grn_ctx *ctx,
+                          grn_hash *hash,
+                          grn_table_cursor *cursor,
+                          double score);
 
 int grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
                            void *keybuf, int bufsize, void *valuebuf);

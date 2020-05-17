@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,13 +16,15 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "grn_hash.h"
+#include "grn_normalizer.h"
 #include "grn_output.h"
+#include "grn_selector.h"
+#include "grn_store.h"
+
 #include <string.h>
 #include <limits.h>
-
-#include "grn_store.h"
-#include "grn_normalizer.h"
 
 /* grn_tiny_array */
 
@@ -2501,6 +2503,137 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
     }
     return id;
   }
+}
+
+grn_rc
+grn_hash_add_table_cursor(grn_ctx *ctx,
+                          grn_hash *hash,
+                          grn_table_cursor *cursor,
+                          double score)
+{
+  const uint32_t key_size = sizeof(grn_id);
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return ctx->rc;
+  }
+  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[hash][add-records] must not be variable key size: <%.*s>",
+        name_size, name);
+    return ctx->rc;
+  } else {
+    if (key_size != hash->key_size) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT, "[hash][add-records] key size unmatch: <%.*s>",
+          name_size, name);
+      return ctx->rc;
+    }
+  }
+
+  /* lock */
+  {
+    const size_t max_n_new_records =
+      grn_table_cursor_get_max_n_records(ctx, cursor);
+    if ((*hash->n_entries + *hash->n_garbages + max_n_new_records) >
+        *hash->max_offset) {
+      if (*hash->max_offset > (1 << 29)) {
+        char name[GRN_TABLE_MAX_KEY_SIZE];
+        int name_size;
+        name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+        ERR(GRN_TOO_LARGE_OFFSET,
+            "[hash][add-records] hash table size limit: <%.*s>",
+            name_size, name);
+        return GRN_ID_NIL;
+      }
+      {
+        grn_rc rc;
+        rc = grn_hash_reset(ctx, hash, 0);
+        if (rc != GRN_SUCCESS) {
+          char name[GRN_TABLE_MAX_KEY_SIZE];
+          int name_size;
+          name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+          ERR(rc,
+              "[hash][add-records] failed to reset hash: <%.*s>",
+              name_size, name);
+          return GRN_ID_NIL;
+        }
+      }
+    }
+  }
+
+  grn_id key;
+  while ((key = grn_table_cursor_next(ctx, cursor))) {
+    const uint32_t hash_value = key;
+    grn_id *garbage_index = NULL;
+    grn_id *index = grn_hash_idx_at(ctx, hash, hash_value);
+    if (!index) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[hash][add-records] failed to detect index: <%.*s>: <%u>",
+          name_size, name, hash_value);
+      return ctx->rc;
+    }
+    grn_id id = *index;
+    if (id == GARBAGE) {
+      garbage_index = index;
+      id = GRN_ID_NIL;
+    }
+    void *value = NULL;
+    if (id == GRN_ID_NIL) {
+      if (grn_hash_is_io_hash(hash)) {
+        id = grn_io_hash_add(ctx, hash, hash_value, &key, key_size, &value);
+      } else {
+        id = grn_tiny_hash_add(ctx, hash, hash_value, &key, key_size, &value);
+      }
+      if (id == GRN_ID_NIL) {
+        char name[GRN_TABLE_MAX_KEY_SIZE];
+        int name_size;
+        name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+        ERR(GRN_INVALID_ARGUMENT,
+            "[hash][add-records] failed to add: <%.*s>: <%u>",
+            name_size, name, key);
+        return ctx->rc;
+      }
+      if (garbage_index) {
+        (*hash->n_garbages)--;
+        index = garbage_index;
+      }
+      *index = id;
+      (*hash->n_entries)++;
+    } else {
+      grn_hash_entry *entry = grn_hash_entry_at(ctx, hash, id, GRN_TABLE_ADD);
+      if (!entry) {
+        char name[GRN_TABLE_MAX_KEY_SIZE];
+        int name_size;
+        name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+        ERR(GRN_INVALID_ARGUMENT,
+            "[hash][add-records] failed to find an entry: <%.*s>: <%u>",
+            name_size, name, id);
+        return GRN_ID_NIL;
+      }
+      value = grn_hash_entry_get_value(ctx, hash, entry);
+    }
+    if (hash->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
+      grn_rset_recinfo *recinfo = value;
+      grn_rset_posinfo posinfo = {0};
+      posinfo.rid = key;
+      grn_table_add_subrec((grn_obj *)hash, recinfo, score, &posinfo, 1);
+      grn_selector_data_current_add_score(ctx,
+                                          (grn_obj *)hash,
+                                          id,
+                                          posinfo.rid,
+                                          score);
+    }
+  }
+  /* unlock */
+
+  return ctx->rc;
 }
 
 grn_id
