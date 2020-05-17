@@ -100,6 +100,10 @@ GRN_API uint32_t grn_vector_pop_element_float(grn_ctx *ctx,
                                               float *weight,
                                               grn_id *domain);
 
+GRN_API grn_rc grn_vector_copy(grn_ctx *ctx,
+                               grn_obj *src,
+                               grn_obj *dest);
+
 GRN_API uint32_t grn_uvector_size(grn_ctx *ctx, grn_obj *uvector);
 GRN_API uint32_t grn_uvector_element_size(grn_ctx *ctx, grn_obj *uvector);
 

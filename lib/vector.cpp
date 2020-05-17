@@ -519,6 +519,34 @@ extern "C" {
     GRN_API_RETURN(ctx->rc);
   }
 
+  grn_rc
+  grn_vector_copy(grn_ctx *ctx,
+                  grn_obj *src,
+                  grn_obj *dest)
+  {
+    GRN_API_ENTER;
+    uint32_t n_elements = grn_vector_size(ctx, src);
+    uint32_t i;
+    for (i = 0; i < n_elements; i++) {
+      const char *content;
+      float weight;
+      grn_id domain;
+      uint32_t content_size = grn_vector_get_element_float(ctx,
+                                                           src,
+                                                           i,
+                                                           &content,
+                                                           &weight,
+                                                           &domain);
+      grn_vector_add_element_float(ctx,
+                                   dest,
+                                   content,
+                                   content_size,
+                                   weight,
+                                   domain);
+    }
+    GRN_API_RETURN(ctx->rc);
+  }
+
   uint32_t
   grn_uvector_size(grn_ctx *ctx, grn_obj *uvector)
   {
