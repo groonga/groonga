@@ -3221,6 +3221,46 @@ grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc)
   GRN_API_RETURN(obj);
 }
 
+size_t
+grn_table_cursor_get_max_n_records(grn_ctx *ctx, grn_table_cursor *cursor)
+{
+  const char *tag = "[table][cursor][get-max-n-records]";
+  size_t max_n_records = 0;
+  GRN_API_ENTER;
+  if (!cursor) {
+    ERR(GRN_INVALID_ARGUMENT, "%s invalid cursor", tag);
+  } else {
+    switch (cursor->header.type) {
+    case GRN_CURSOR_TABLE_PAT_KEY :
+      max_n_records = ((grn_pat_cursor *)cursor)->rest;
+      if (max_n_records == GRN_ID_MAX) {
+        max_n_records = grn_pat_size(ctx, ((grn_pat_cursor *)cursor)->pat);
+      }
+      break;
+    case GRN_CURSOR_TABLE_DAT_KEY :
+      max_n_records =
+        grn_dat_cursor_get_max_n_records(ctx, (grn_dat_cursor *)cursor);
+      break;
+    case GRN_CURSOR_TABLE_HASH_KEY :
+      max_n_records = ((grn_hash_cursor *)cursor)->rest;
+      if (max_n_records == GRN_ID_MAX) {
+        max_n_records = grn_hash_size(ctx, ((grn_hash_cursor *)cursor)->hash);
+      }
+      break;
+    case GRN_CURSOR_TABLE_NO_KEY :
+      max_n_records = ((grn_array_cursor *)cursor)->rest;
+      if (max_n_records == GRN_ID_MAX) {
+        max_n_records = grn_array_size(ctx, ((grn_array_cursor *)cursor)->array);
+      }
+      break;
+    default :
+      ERR(GRN_INVALID_ARGUMENT, "%s invalid type %d", tag, cursor->header.type);
+      break;
+    }
+  }
+  GRN_API_RETURN(max_n_records);
+}
+
 typedef struct {
   grn_db_obj obj;
   grn_obj *index;
