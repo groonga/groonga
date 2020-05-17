@@ -21,4 +21,5 @@ load --table Entries
 select Entries \
   --output_columns '_key,content,_score' \
   --match_columns content --query '-fast' \
-  --query_flags ALLOW_LEADING_NOT
+  --query_flags ALLOW_LEADING_NOT \
+  --sort_keys _key

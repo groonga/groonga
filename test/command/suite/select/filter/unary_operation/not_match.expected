@@ -13,7 +13,7 @@ load --table Texts
 [[0,0.0,0.0],3]
 log_level --level info
 [[0,0.0,0.0],true]
-select Texts --filter '!(_key @ "Groonga")'
+select Texts --filter '!(_key @ "Groonga")' --sort_keys _key
 [
   [
     0,

@@ -20,7 +20,7 @@ load --table Entries
  "content": "I also migrated all Tritonn system!"}
 ]
 [[0,0.0,0.0],5]
-select Entries   --output_columns '_key,content,_score'   --match_columns content --query '-fast'   --query_flags ALLOW_LEADING_NOT
+select Entries   --output_columns '_key,content,_score'   --match_columns content --query '-fast'   --query_flags ALLOW_LEADING_NOT   --sort_keys _key
 [
   [
     0,
