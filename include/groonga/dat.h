@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2016  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -73,6 +74,8 @@ GRN_API void grn_dat_cursor_close(grn_ctx *ctx, grn_dat_cursor *c);
 GRN_API int grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, const void **key);
 GRN_API grn_rc grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
                                      grn_table_delete_optarg *optarg);
+GRN_API size_t grn_dat_cursor_get_max_n_records(grn_ctx *ctx, grn_dat_cursor *c);
+
 
 #define GRN_DAT_EACH(ctx,dat,id,key,key_size,block) do {\
   grn_dat_cursor *_sc = grn_dat_cursor_open(ctx, dat, NULL, 0, NULL, 0, 0, -1, 0);\

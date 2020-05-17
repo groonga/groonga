@@ -1072,6 +1072,21 @@ grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
   return GRN_INVALID_ARGUMENT;
 }
 
+size_t
+grn_dat_cursor_get_max_n_records(grn_ctx *ctx, grn_dat_cursor *c)
+{
+  if (!c || !c->cursor) {
+    return 0;
+  }
+  grn::dat::Cursor * const cursor = static_cast<grn::dat::Cursor *>(c->cursor);
+  size_t max_n_records = cursor->limit();
+  if (max_n_records == grn::dat::MAX_UINT32) {
+    return grn_dat_size(ctx, c->dat);
+  } else {
+    return max_n_records;
+  }
+}
+
 grn_id
 grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat)
 {
