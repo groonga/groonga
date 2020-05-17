@@ -24,6 +24,8 @@
 extern "C" {
 #endif
 
+/* rset is result set */
+
 typedef struct {
   double score;
   int n_subrecs;

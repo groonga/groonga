@@ -9011,57 +9011,66 @@ token_info_clear_offset(token_info **tis, uint32_t n)
 /* select */
 
 grn_inline static void
-res_add(grn_ctx *ctx,
-        grn_hash *s,
-        grn_rset_posinfo *pi,
-        double score,
-        grn_operator op)
+grn_rset_add_record_internal(grn_ctx *ctx,
+                             grn_hash *rset,
+                             grn_rset_posinfo *posinfo,
+                             double score,
+                             grn_operator op)
 {
-  grn_id res_id;
-  grn_rset_recinfo *ri;
+  grn_id id;
+  grn_rset_recinfo *recinfo;
   switch (op) {
   case GRN_OP_OR :
-    res_id = grn_hash_add(ctx, s, pi, s->key_size, (void **)&ri, NULL);
-    if (res_id != GRN_ID_NIL) {
-      if (s->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
-        grn_table_add_subrec((grn_obj *)s, ri, score, pi, 1);
+    id = grn_hash_add(ctx,
+                      rset,
+                      posinfo,
+                      rset->key_size,
+                      (void **)&recinfo,
+                      NULL);
+    if (id != GRN_ID_NIL) {
+      if (rset->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
+        grn_table_add_subrec((grn_obj *)rset, recinfo, score, posinfo, 1);
         grn_selector_data_current_add_score(ctx,
-                                            (grn_obj *)s,
-                                            res_id,
-                                            pi->rid,
+                                            (grn_obj *)rset,
+                                            id,
+                                            posinfo->rid,
                                             score);
       }
     }
     break;
   case GRN_OP_AND :
-    res_id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri);
-    if (res_id != GRN_ID_NIL) {
-      if (s->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
-        ri->n_subrecs |= GRN_RSET_UTIL_BIT;
-        grn_table_add_subrec((grn_obj *)s, ri, score, pi, 1);
+    id = grn_hash_get(ctx,
+                      rset,
+                      posinfo,
+                      rset->key_size,
+                      (void **)&recinfo);
+    if (id != GRN_ID_NIL) {
+      if (rset->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
+        recinfo->n_subrecs |= GRN_RSET_UTIL_BIT;
+        grn_table_add_subrec((grn_obj *)rset, recinfo, score, posinfo, 1);
         grn_selector_data_current_add_score(ctx,
-                                            (grn_obj *)s,
-                                            res_id,
-                                            pi->rid,
+                                            (grn_obj *)rset,
+                                            id,
+                                            posinfo->rid,
                                             score);
       }
     }
     break;
   case GRN_OP_AND_NOT :
-    res_id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri);
-    if (res_id != GRN_ID_NIL) {
-      grn_hash_delete_by_id(ctx, s, res_id, NULL);
+    id = grn_hash_get(ctx, rset, posinfo, rset->key_size, (void **)&recinfo);
+    if (id != GRN_ID_NIL) {
+      grn_hash_delete_by_id(ctx, rset, id, NULL);
     }
     break;
   case GRN_OP_ADJUST :
-    res_id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri);
-    if (res_id != GRN_ID_NIL) {
-      if (s->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
-        ri->score += score;
+    id = grn_hash_get(ctx, rset, posinfo, rset->key_size, (void **)&recinfo);
+    if (id != GRN_ID_NIL) {
+      if (rset->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
+        recinfo->score += score;
         grn_selector_data_current_add_score(ctx,
-                                            (grn_obj *)s,
-                                            res_id,
-                                            pi->rid,
+                                            (grn_obj *)rset,
+                                            id,
+                                            posinfo->rid,
                                             score);
       }
     }
@@ -9071,14 +9080,24 @@ res_add(grn_ctx *ctx,
   }
 }
 
+grn_inline static void
+res_add(grn_ctx *ctx,
+        grn_hash *s,
+        grn_rset_posinfo *pi,
+        double score,
+        grn_operator op)
+{
+  grn_rset_add_record_internal(ctx, s, pi, score, op);
+}
+
 grn_rc
 grn_ii_posting_add(grn_ctx *ctx, grn_posting *pos, grn_hash *s, grn_operator op)
 {
-  res_add(ctx,
-          s,
-          (grn_rset_posinfo *)(pos),
-          pos->weight,
-          op);
+  grn_rset_add_record_internal(ctx,
+                               s,
+                               (grn_rset_posinfo *)(pos),
+                               pos->weight,
+                               op);
   return ctx->rc;
 }
 
@@ -9088,12 +9107,7 @@ grn_ii_posting_add_float(grn_ctx *ctx,
                          grn_hash *s,
                          grn_operator op)
 {
-  res_add(ctx,
-          s,
-          (grn_rset_posinfo *)(pos),
-          ((grn_posting_internal *)pos)->weight_float,
-          op);
-  return ctx->rc;
+  return grn_rset_add_record(ctx, s, pos, op);
 }
 
 #ifdef USE_BHEAP
