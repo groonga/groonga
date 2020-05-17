@@ -2226,22 +2226,12 @@ selector_all_records(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                      int nargs, grn_obj **args,
                      grn_obj *res, grn_operator op)
 {
-  grn_posting_internal posting = {0};
-
-  posting.weight_float = 1;
-  GRN_TABLE_EACH_BEGIN_FLAGS(ctx,
-                             table,
-                             cursor,
-                             id,
-                             GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING) {
-    posting.rid = id;
-    grn_ii_posting_add_float(ctx,
-                             (grn_posting *)(&posting),
-                             (grn_hash *)res,
-                             op);
-  } GRN_TABLE_EACH_END(ctx, cursor);
-
-  return ctx->rc;
+  const double score = 1.0;
+  return grn_result_set_add_table(ctx,
+                                  (grn_hash *)res,
+                                  table,
+                                  score,
+                                  op);
 }
 
 typedef struct {
