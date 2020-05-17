@@ -179,6 +179,20 @@ grn_table_module_set_proc(grn_ctx *ctx,
   CRITICAL_SECTION_LEAVE(module->lock);
 }
 
+static void
+grn_table_module_set_options_without_lock(grn_ctx *ctx,
+                                          grn_table_module *module,
+                                          void *options,
+                                          grn_option_revision revision,
+                                          grn_close_func close_func)
+{
+  grn_table_module_fin_options(ctx, module);
+
+  module->options = options;
+  module->options_revision = revision;
+  module->options_close_func = close_func;
+}
+
 void
 grn_table_module_set_options(grn_ctx *ctx,
                              grn_table_module *module,
@@ -187,11 +201,11 @@ grn_table_module_set_options(grn_ctx *ctx,
                              grn_close_func close_func)
 {
   CRITICAL_SECTION_ENTER(module->lock);
-  grn_table_module_fin_options(ctx, module);
-
-  module->options = options;
-  module->options_revision = revision;
-  module->options_close_func = close_func;
+  grn_table_module_set_options_without_lock(ctx,
+                                            module,
+                                            options,
+                                            revision,
+                                            close_func);
   CRITICAL_SECTION_LEAVE(module->lock);
 }
 
@@ -359,28 +373,32 @@ grn_table_cache_module_options(grn_ctx *ctx,
   }
 
   GRN_TEXT_INIT(&raw_options, GRN_OBJ_VECTOR);
+  CRITICAL_SECTION_ENTER(module->lock);
   revision = grn_obj_get_option_values(ctx,
                                        table,
                                        data->module_name,
                                        -1,
                                        module->options_revision,
                                        &raw_options);
-  if ((revision == GRN_OPTION_REVISION_UNCHANGED) ||
-      (revision == GRN_OPTION_REVISION_NONE && module->options)) {
-    goto exit;
+  bool need_update = true;
+  if (revision == GRN_OPTION_REVISION_UNCHANGED) {
+    need_update = false;
   }
-
-  options = data->open_options_func(ctx,
-                                    module->proc,
-                                    &raw_options,
-                                    data->user_data);
-  grn_table_module_set_options(ctx,
-                               module,
-                               options,
-                               revision,
-                               data->close_options_func);
-
-exit :
+  if (revision == GRN_OPTION_REVISION_NONE && module->options) {
+    need_update = false;
+  }
+  if (need_update) {
+    options = data->open_options_func(ctx,
+                                      module->proc,
+                                      &raw_options,
+                                      data->user_data);
+    grn_table_module_set_options_without_lock(ctx,
+                                              module,
+                                              options,
+                                              revision,
+                                              data->close_options_func);
+  }
+  CRITICAL_SECTION_LEAVE(module->lock);
   GRN_OBJ_FIN(ctx, &raw_options);
 
   GRN_API_RETURN(module->options);
