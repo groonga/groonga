@@ -831,15 +831,11 @@ grn_select_create_all_selected_result_table(grn_ctx *ctx,
     return NULL;
   }
 
-  grn_posting_internal posting = {0};
-  GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
-    posting.rid = id;
-    grn_ii_posting_add_float(ctx,
-                             (grn_posting *)(&posting),
-                             (grn_hash *)(result),
-                             GRN_OP_OR);
-  } GRN_TABLE_EACH_END(ctx, cursor);
-
+  grn_result_set_add_table(ctx,
+                           (grn_hash *)result,
+                           table,
+                           0.0,
+                           GRN_OP_OR);
   return result;
 }
 
