@@ -9011,11 +9011,11 @@ token_info_clear_offset(token_info **tis, uint32_t n)
 /* select */
 
 grn_inline static void
-grn_rset_add_record_internal(grn_ctx *ctx,
-                             grn_hash *rset,
-                             grn_rset_posinfo *posinfo,
-                             double score,
-                             grn_operator op)
+grn_rset_add_record(grn_ctx *ctx,
+                    grn_hash *rset,
+                    grn_rset_posinfo *posinfo,
+                    double score,
+                    grn_operator op)
 {
   grn_id id;
   grn_rset_recinfo *recinfo;
@@ -9080,6 +9080,82 @@ grn_rset_add_record_internal(grn_ctx *ctx,
   }
 }
 
+grn_rc
+grn_result_set_add_record(grn_ctx *ctx,
+                          grn_hash *result_set,
+                          grn_posting *posting,
+                          grn_operator op)
+{
+  grn_rset_add_record(ctx,
+                      result_set,
+                      (grn_rset_posinfo *)posting,
+                      ((grn_posting_internal *)posting)->weight_float,
+                      op);
+  return ctx->rc;
+}
+
+grn_rc
+grn_result_set_add_table(grn_ctx *ctx,
+                         grn_hash *result_set,
+                         grn_obj *table,
+                         double score,
+                         grn_operator op)
+{
+  const int flags = GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING;
+  grn_table_cursor *cursor = grn_table_cursor_open(ctx,
+                                                   table,
+                                                   NULL, 0,
+                                                   NULL, 0,
+                                                   0, -1,
+                                                   flags);
+  if (cursor) {
+    grn_result_set_add_table_cursor(ctx, result_set, cursor, score, op);
+    grn_table_cursor_close(ctx, cursor);
+  }
+  return ctx->rc;
+}
+
+grn_rc
+grn_result_set_add_table_cursor(grn_ctx *ctx,
+                                grn_hash *result_set,
+                                grn_table_cursor *cursor,
+                                double score,
+                                grn_operator op)
+{
+  grn_obj *table = grn_table_cursor_table(ctx, cursor);
+  if (result_set->obj.header.domain != DB_OBJ(table)->id) {
+    grn_obj result_set_inspected;
+    grn_obj table_inspected;
+    GRN_TEXT_INIT(&result_set_inspected, 0);
+    GRN_TEXT_INIT(&table_inspected, 0);
+    grn_inspect_limited(ctx, &result_set_inspected, (grn_obj *)result_set);
+    grn_inspect_limited(ctx, &table_inspected, table);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[result-set][add-table-cursor] "
+        "table must be the domain of the result set: %.*s: %.*s",
+        (int)GRN_TEXT_LEN(&result_set_inspected),
+        GRN_TEXT_VALUE(&result_set_inspected),
+        (int)GRN_TEXT_LEN(&table_inspected),
+        GRN_TEXT_VALUE(&table_inspected));
+    GRN_OBJ_FIN(ctx, &result_set_inspected);
+    GRN_OBJ_FIN(ctx, &table_inspected);
+    return ctx->rc;
+  }
+
+  if (op == GRN_OP_OR) {
+    return grn_hash_add_table_cursor(ctx, result_set, cursor, score);
+  } else {
+    grn_rset_posinfo posinfo = {0};
+    while ((posinfo.rid = grn_table_cursor_next(ctx, cursor))) {
+      grn_rset_add_record(ctx, result_set, &posinfo, score, op);
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+    }
+    return ctx->rc;
+  }
+}
+
 grn_inline static void
 res_add(grn_ctx *ctx,
         grn_hash *s,
@@ -9087,17 +9163,17 @@ res_add(grn_ctx *ctx,
         double score,
         grn_operator op)
 {
-  grn_rset_add_record_internal(ctx, s, pi, score, op);
+  grn_rset_add_record(ctx, s, pi, score, op);
 }
 
 grn_rc
 grn_ii_posting_add(grn_ctx *ctx, grn_posting *pos, grn_hash *s, grn_operator op)
 {
-  grn_rset_add_record_internal(ctx,
-                               s,
-                               (grn_rset_posinfo *)(pos),
-                               pos->weight,
-                               op);
+  grn_rset_add_record(ctx,
+                      s,
+                      (grn_rset_posinfo *)(pos),
+                      pos->weight,
+                      op);
   return ctx->rc;
 }
 
@@ -9107,7 +9183,7 @@ grn_ii_posting_add_float(grn_ctx *ctx,
                          grn_hash *s,
                          grn_operator op)
 {
-  return grn_rset_add_record(ctx, s, pos, op);
+  return grn_result_set_add_record(ctx, s, pos, op);
 }
 
 #ifdef USE_BHEAP

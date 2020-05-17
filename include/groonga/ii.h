@@ -55,6 +55,7 @@ GRN_API grn_rc grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer);
 
 GRN_API grn_rc grn_ii_posting_add(grn_ctx *ctx, grn_posting *pos,
                                   grn_hash *s, grn_operator op);
+/* Deprecated since 10.0.3. Use grn_rset_add_records() instead. */
 GRN_API grn_rc grn_ii_posting_add_float(grn_ctx *ctx,
                                         grn_posting *pos,
                                         grn_hash *s,
