@@ -52,6 +52,9 @@ case "${BUILD_TOOL}" in
     ./configure --prefix=${prefix} ${configure_args}
     ;;
   cmake)
+    if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+      PATH="$(brew --prefix bison)/bin:$PATH"
+    fi
     cmake_args=""
     cmake_args="${cmake_args} -DRUBY=$(which ruby)"
     cmake_args="${cmake_args} -DGRN_WITH_DEBUG=yes"
