@@ -233,7 +233,16 @@ extern "C" {
       size = vector->u.v.n_sections;
       break;
     default :
-      ERR(GRN_INVALID_ARGUMENT, "[vector][size] not vector");
+      {
+        grn_obj inspected;
+        GRN_TEXT_INIT(&inspected, 0);
+        grn_inspect(ctx, &inspected, vector);
+        ERR(GRN_INVALID_ARGUMENT,
+            "[vector][size] not vector: %.*s",
+            (int)GRN_TEXT_LEN(&inspected),
+            GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+      }
       size = 0;
       break;
     }
