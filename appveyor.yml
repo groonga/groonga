@@ -50,8 +50,9 @@ init:
   - ps: Restart-Computer
 
 install:
-  - set PATH=C:\Ruby25-x64\bin;%PATH%
+  - set PATH=C:\Ruby27-x64\bin;%PATH%
   - set PATH=C:\msys64\usr\bin;%PATH%
+  - pacman --sync --refresh --noconfirm zstd
   - pacman --sync --refresh --noconfirm pacman
   - pacman --sync --refresh --sysupgrade --noconfirm
   - if "%VS_VERSION%" == "15" if "%ARCH%" == "x86" set VS2017_X86=TRUE
