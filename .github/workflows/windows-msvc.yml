@@ -231,7 +231,7 @@ jobs:
       # Test
       - name: Update MSYS2
         run: |
-          ridk exec pacman --sync --refresh --noconfirm zstd
+          ridk exec pacman --sync --refresh --noconfirm msys2-runtime
           ridk exec pacman --sync --refresh --noconfirm pacman
           ridk exec pacman --sync --refresh --sysupgrade --noconfirm
       - name: Update GCC
