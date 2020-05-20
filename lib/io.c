@@ -673,7 +673,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   if (!fis) {
     GRN_MUNMAP(ctx, &grn_gctx, NULL, &(fi.fmo), &fi, header, b);
     grn_fileinfo_close(ctx, &fi);
-    ERR(GRN_INVALID_ARGUMENT,
+    ERR(GRN_NO_MEMORY_AVAILABLE,
         "[io][open] failed to allocate fileinfo: <%s>",
         path);
     return NULL;
