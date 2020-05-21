@@ -52,8 +52,15 @@ init:
 install:
   - set PATH=C:\Ruby27-x64\bin;%PATH%
   - set PATH=C:\msys64\usr\bin;%PATH%
+
+  # Update pacman explicitly
+  # See also: https://github.com/msys2/MSYS2-packages/issues/1960
   - pacman --sync --refresh --noconfirm zstd
-  - pacman --sync --refresh --noconfirm pacman
+  - wget -q http://repo.msys2.org/msys/x86_64/pacman-5.2.1-7-x86_64.pkg.tar.zst
+  - zstd -d pacman-5.2.1-7-x86_64.pkg.tar.zst
+  - gzip pacman-5.2.1-7-x86_64.pkg.tar
+  - pacman --upgrade --noconfirm ./pacman-5.2.1-7-x86_64.pkg.tar.gz
+
   - pacman --sync --refresh --sysupgrade --noconfirm
   - if "%VS_VERSION%" == "15" if "%ARCH%" == "x86" set VS2017_X86=TRUE
   - if "%VS_VERSION%" == "15" if "%ARCH%" == "amd64" set VS2017_AMD64=TRUE
