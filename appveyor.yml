@@ -50,7 +50,7 @@ init:
   - ps: Restart-Computer
 
 install:
-  - set PATH=C:\Ruby27-x64\bin;%PATH%
+  - set PATH=C:\Ruby25-x64\bin;%PATH%
   - set PATH=C:\msys64\usr\bin;%PATH%
 
   # Update pacman explicitly
