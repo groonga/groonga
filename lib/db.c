@@ -12960,6 +12960,11 @@ grn_sort_key_set_size(uint8_t *size_raw,
 typedef struct {
   const void *value;
   uint32_t size;
+} sort_entry_value_data;
+
+typedef struct {
+  const void *value;
+  uint32_t size;
   bool cached;
 } sort_entry_value_refer;
 
@@ -12970,9 +12975,23 @@ typedef struct {
 
 typedef struct {
   grn_id id;
-  sort_entry_value_refer *refers;
-  sort_entry_value_copy copy;
+  union {
+    sort_entry_value_data data;
+    struct {
+      sort_entry_value_refer *refers;
+      sort_entry_value_copy copy;
+    } buffer;
+  } cache;
 } sort_entry;
+
+typedef struct {
+  int offset;
+  int limit;
+  grn_obj *result;
+  sort_key *keys;
+  size_t n_keys;
+  bool all_can_refer;
+} sort_data;
 
 #define CMPNUM(type) do {\
   if (as) {\
@@ -13006,11 +13025,12 @@ grn_inline static int
 sort_value_compare(grn_ctx *ctx,
                    sort_entry *a,
                    sort_entry *b,
-                   sort_key *keys,
-                   int n_keys)
+                   sort_data *data)
 {
-  int i;
-  int i_refer = 0;
+  const sort_key *keys = data->keys;
+  const size_t n_keys = data->n_keys;
+  size_t i;
+  size_t i_refer = 0;
   uint8_t type;
   uint32_t a_values_offset = 0;
   uint32_t b_values_offset = 0;
@@ -13018,30 +13038,48 @@ sort_value_compare(grn_ctx *ctx,
   uint32_t as, bs;
   const uint8_t *ap, *bp;
   for (i = 0; i < n_keys; i++, keys++) {
-    if (keys->can_refer) {
-      if (!a->refers[i_refer].cached) {
-        a->refers[i_refer].value =
-          grn_obj_get_value_(ctx, keys->key, a->id, &(a->refers[i_refer].size));
-        a->refers[i_refer].cached = true;
+    if (data->all_can_refer) {
+      if (i == 0) {
+        sort_entry_value_data *a_data = &(a->cache.data);
+        sort_entry_value_data *b_data = &(b->cache.data);
+        ap = (const unsigned char *)(a_data->value);
+        as = a_data->size;
+        bp = (const unsigned char *)(b_data->value);
+        bs = b_data->size;
+      } else {
+        ap = grn_obj_get_value_(ctx, keys->key, a->id, &as);
+        bp = grn_obj_get_value_(ctx, keys->key, b->id, &bs);
       }
-      if (!b->refers[i_refer].cached) {
-        b->refers[i_refer].value =
-          grn_obj_get_value_(ctx, keys->key, b->id, &(b->refers[i_refer].size));
-        b->refers[i_refer].cached = true;
-      }
-      ap = (const unsigned char *)(a->refers[i_refer].value);
-      as = a->refers[i_refer].size;
-      bp = (const unsigned char *)(b->refers[i_refer].value);
-      bs = b->refers[i_refer].size;
-      i_refer++;
     } else {
-      ap = (const uint8_t *)GRN_BULK_HEAD(a->copy.values) + a_values_offset;
-      as = grn_sort_key_get_size(a->copy.sizes + sizes_offset, keys->offset);
-      a_values_offset += as;
-      bp = (const uint8_t *)GRN_BULK_HEAD(b->copy.values) + b_values_offset;
-      bs = grn_sort_key_get_size(b->copy.sizes + sizes_offset, keys->offset);
-      b_values_offset += bs;
-      sizes_offset += grn_sort_key_size(keys->offset);
+      if (keys->can_refer) {
+        sort_entry_value_refer *a_refer = &(a->cache.buffer.refers[i_refer]);
+        sort_entry_value_refer *b_refer = &(b->cache.buffer.refers[i_refer]);
+        if (!a_refer->cached) {
+          a_refer->value =
+            grn_obj_get_value_(ctx, keys->key, a->id, &(a_refer->size));
+          a_refer->cached = true;
+        }
+        if (!b_refer->cached) {
+          b_refer->value =
+            grn_obj_get_value_(ctx, keys->key, b->id, &(b_refer->size));
+          b_refer->cached = true;
+        }
+        ap = (const unsigned char *)(a_refer->value);
+        as = a_refer->size;
+        bp = (const unsigned char *)(b_refer->value);
+        bs = b_refer->size;
+        i_refer++;
+      } else {
+        sort_entry_value_copy *a_copy = &(a->cache.buffer.copy);
+        sort_entry_value_copy *b_copy = &(b->cache.buffer.copy);
+        ap = (const uint8_t *)GRN_BULK_HEAD(a_copy->values) + a_values_offset;
+        as = grn_sort_key_get_size(a_copy->sizes + sizes_offset, keys->offset);
+        a_values_offset += as;
+        bp = (const uint8_t *)GRN_BULK_HEAD(b_copy->values) + b_values_offset;
+        bs = grn_sort_key_get_size(b_copy->sizes + sizes_offset, keys->offset);
+        b_values_offset += bs;
+        sizes_offset += grn_sort_key_size(keys->offset);
+      }
     }
     if (keys->flags & GRN_TABLE_SORT_DESC) {
       const uint8_t *tp = ap;
@@ -13115,20 +13153,19 @@ grn_inline static sort_entry *
 sort_value_part(grn_ctx *ctx,
                 sort_entry *b,
                 sort_entry *e,
-                sort_key *keys,
-                int n_keys)
+                sort_data *data)
 {
   sort_entry *c;
   intptr_t d = e - b;
-  if (sort_value_compare(ctx, b, e, keys, n_keys)) {
+  if (sort_value_compare(ctx, b, e, data)) {
     sort_value_swap(ctx, b, e);
   }
   if (d < 2) { return NULL; }
   c = b + (d >> 1);
-  if (sort_value_compare(ctx, b, c, keys, n_keys)) {
+  if (sort_value_compare(ctx, b, c, data)) {
     sort_value_swap(ctx, b, c);
   } else {
-    if (sort_value_compare(ctx, c, e, keys, n_keys)) {
+    if (sort_value_compare(ctx, c, e, data)) {
       sort_value_swap(ctx, c, e);
     }
   }
@@ -13139,10 +13176,10 @@ sort_value_part(grn_ctx *ctx,
   for (;;) {
     do {
       b++;
-    } while (sort_value_compare(ctx, c, b, keys, n_keys));
+    } while (sort_value_compare(ctx, c, b, data));
     do {
       e--;
-    } while (sort_value_compare(ctx, e, c, keys, n_keys));
+    } while (sort_value_compare(ctx, e, c, data));
     if (b >= e) { break; }
     sort_value_swap(ctx, b, e);
   }
@@ -13154,18 +13191,18 @@ static void
 sort_value_body(grn_ctx *ctx,
                 sort_entry *head,
                 sort_entry *tail,
-                int from, int to,
-                sort_key *keys,
-                int n_keys)
+                int from,
+                int to,
+                sort_data *data)
 {
   sort_entry *c;
-  if (head < tail && (c = sort_value_part(ctx, head, tail, keys, n_keys))) {
+  if (head < tail && (c = sort_value_part(ctx, head, tail, data))) {
     intptr_t m = c - head + 1;
     if (from < m - 1) {
-      sort_value_body(ctx, head, c - 1, from, to, keys, n_keys);
+      sort_value_body(ctx, head, c - 1, from, to, data);
     }
     if (m < to) {
-      sort_value_body(ctx, c + 1, tail, from - m, to - m, keys, n_keys);
+      sort_value_body(ctx, c + 1, tail, from - m, to - m, data);
     }
   }
 }
@@ -13175,8 +13212,7 @@ sort_value_pack(grn_ctx *ctx,
                 grn_obj *table,
                 sort_entry *head,
                 sort_entry *tail,
-                sort_key *keys,
-                int n_keys)
+                sort_data *data)
 {
   sort_entry *array = head;
 
@@ -13187,49 +13223,82 @@ sort_value_pack(grn_ctx *ctx,
   } GRN_TABLE_EACH_END(ctx, cursor);
 
   {
-    uint32_t size_offset = 0;
-    int i_key;
-    for (i_key = 0; i_key < n_keys; i_key++) {
-      if (keys[i_key].can_refer) {
-        continue;
+    const sort_key *keys = data->keys;
+    const size_t n_keys = data->n_keys;
+    if (data->all_can_refer) {
+      grn_obj *key = keys[0].key;
+      size_t i_id;
+      for (i_id = 0; i_id < n_ids; i_id++) {
+        sort_entry *entry = array + i_id;
+        sort_entry_value_data *entry_data = &(entry->cache.data);
+        entry_data->value = grn_obj_get_value_(ctx,
+                                               key,
+                                               entry->id,
+                                               &(entry_data->size));
       }
+    } else {
+      int32_t size_offset = 0;
+      int i_key;
+      int i_refer = 0;
+      for (i_key = 0; i_key < n_keys; i_key++) {
+        grn_obj *key = keys[i_key].key;
 
-      grn_obj *key = keys[i_key].key;
-      grn_column_cache *column_cache = grn_column_cache_open(ctx, key);
-      if (column_cache) {
-        size_t i_id;
-        for (i_id = 0; i_id < n_ids; i_id++) {
-          sort_entry *entry = array + i_id;
-          void *value;
-          size_t value_size;
-          value = grn_column_cache_ref(ctx,
-                                       column_cache,
-                                       entry->id,
-                                       &value_size);
-          GRN_TEXT_PUT(ctx, entry->copy.values, value, value_size);
-          grn_sort_key_set_size(entry->copy.sizes + size_offset,
-                                keys[i_key].offset,
-                                value_size);
-        }
-        grn_column_cache_close(ctx, column_cache);
-      } else {
-        size_t i_id;
-        for (i_id = 0; i_id < n_ids; i_id++) {
-          sort_entry *entry = array + i_id;
-          grn_obj *values = entry->copy.values;
-          size_t value_size_before = GRN_BULK_VSIZE(values);
-          grn_obj_get_value(ctx, key, entry->id, values);
-          size_t value_size = GRN_BULK_VSIZE(values) - value_size_before;
-          grn_sort_key_set_size(entry->copy.sizes + size_offset,
-                                keys[i_key].offset,
-                                value_size);
+        if (keys[i_key].can_refer) {
+          /* The first key is always used. */
+          if (i_key == 0 && i_refer == 0) {
+            size_t i_id;
+            for (i_id = 0; i_id < n_ids; i_id++) {
+              sort_entry *entry = array + i_id;
+              sort_entry_value_refer *refer =
+                &(entry->cache.buffer.refers[i_refer]);
+              refer->value = grn_obj_get_value_(ctx,
+                                                key,
+                                                entry->id,
+                                                &(refer->size));
+              refer->cached = true;
+            }
+          }
+          i_refer++;
+        } else {
+          grn_column_cache *column_cache = grn_column_cache_open(ctx, key);
+          if (column_cache) {
+            size_t i_id;
+            for (i_id = 0; i_id < n_ids; i_id++) {
+              sort_entry *entry = array + i_id;
+              sort_entry_value_copy *copy = &(entry->cache.buffer.copy);
+              void *value;
+              size_t value_size;
+              value = grn_column_cache_ref(ctx,
+                                           column_cache,
+                                           entry->id,
+                                           &value_size);
+              GRN_TEXT_PUT(ctx, copy->values, value, value_size);
+              grn_sort_key_set_size(copy->sizes + size_offset,
+                                    keys[i_key].offset,
+                                    value_size);
+            }
+            grn_column_cache_close(ctx, column_cache);
+          } else {
+            size_t i_id;
+            for (i_id = 0; i_id < n_ids; i_id++) {
+              sort_entry *entry = array + i_id;
+              sort_entry_value_copy *copy = &(entry->cache.buffer.copy);
+              size_t value_size_before = GRN_BULK_VSIZE(copy->values);
+              grn_obj_get_value(ctx, key, entry->id, copy->values);
+              size_t value_size =
+                GRN_BULK_VSIZE(copy->values) - value_size_before;
+              grn_sort_key_set_size(copy->sizes + size_offset,
+                                    keys[i_key].offset,
+                                    value_size);
+            }
+          }
+          size_offset += grn_sort_key_size(keys[i_key].offset);
         }
       }
-      size_offset += grn_sort_key_size(keys[i_key].offset);
     }
   }
 
-  /* We can use "return sort_value_part(ctx, head, tail, keys, n_keys)"
+  /* We can use "return sort_value_part(ctx, head, tail, data)"
    * here but we implement custom part logic here to use the same
    * logic before. It's easy to test that we use the same logic before
    * here because we can get the same sort order for the same sort key
@@ -13241,7 +13310,7 @@ sort_value_pack(grn_ctx *ctx,
     sort_entry first = *head;
     sort_entry *target;
     for (target = head + 1; target < tail; target++) {
-      if (sort_value_compare(ctx, &first, target, keys, n_keys)) {
+      if (sort_value_compare(ctx, &first, target, data)) {
         sort_value_swap(ctx, head, target);
         head++;
       } else {
@@ -13253,7 +13322,7 @@ sort_value_pack(grn_ctx *ctx,
       }
     }
     if (target == tail) {
-      if (sort_value_compare(ctx, &first, target, keys, n_keys)) {
+      if (sort_value_compare(ctx, &first, target, data)) {
         sort_value_swap(ctx, head, target);
         head++;
       } else {
@@ -13269,7 +13338,7 @@ sort_value_pack(grn_ctx *ctx,
     sort_entry *entry_queue_raw = (sort_entry *)GRN_BULK_HEAD(&entry_queue);
     for (i = 0; i < n_queued_entries; i++) {
       sort_entry *entry = entry_queue_raw + (n_queued_entries - i - 1);
-      if (sort_value_compare(ctx, &first, entry, keys, n_keys)) {
+      if (sort_value_compare(ctx, &first, entry, data)) {
         *head++ = *entry;
       } else {
         *tail-- = *entry;
@@ -13285,27 +13354,30 @@ sort_value_pack(grn_ctx *ctx,
 static int
 grn_table_sort_value_body(grn_ctx *ctx,
                           grn_obj *table,
-                          int offset,
-                          int limit,
-                          grn_obj *result,
-                          sort_key *keys,
-                          int n_keys)
+                          sort_data *data)
 {
+  const int offset = data->offset;
+  const int limit = data->limit;
   int n_sorted_records = 0;
   int e = offset + limit;
   int n = grn_table_size(ctx, table);
 
+  const sort_key *keys = data->keys;
+  const size_t n_keys = data->n_keys;
+
+  data->all_can_refer = true;
   size_t n_refers = 0;
   size_t n_copies = 0;
   size_t copy_size_per_entry = 0;
   {
-    int i;
+    size_t i;
     for (i = 0; i < n_keys; i++) {
       if (keys[i].can_refer) {
         n_refers++;
       } else {
         n_copies++;
         copy_size_per_entry += grn_sort_key_size(keys[i].offset);
+        data->all_can_refer = false;
       }
     }
   }
@@ -13314,46 +13386,53 @@ grn_table_sort_value_body(grn_ctx *ctx,
   grn_obj *bulks = NULL;
   uint8_t *sizes = NULL;
   sort_entry *array = NULL;
-  if (n_refers > 0) {
-    if (!(refers = GRN_CALLOC(sizeof(sort_entry_value_refer) * n_refers * n))) {
-      goto exit;
-    }
-  }
-  if (n_copies > 0) {
-    if (!(bulks = GRN_MALLOC(sizeof(grn_obj) * n))) {
-      goto exit;
-    }
-    {
-      int i;
-      for (i = 0; i < n; i++) {
-        grn_obj *values = &(bulks[i]);
-        GRN_TEXT_INIT(values, 0);
+  if (!data->all_can_refer) {
+    if (n_refers > 0) {
+      refers = GRN_CALLOC(sizeof(sort_entry_value_refer) * n_refers * n);
+      if (!refers) {
+        goto exit;
       }
     }
-    if (!(sizes = GRN_MALLOC(copy_size_per_entry * n))) {
-      goto exit;
+    if (n_copies > 0) {
+      bulks = GRN_MALLOC(sizeof(grn_obj) * n);
+      if (!bulks) {
+        goto exit;
+      }
+      {
+        int i;
+        for (i = 0; i < n; i++) {
+          grn_obj *values = &(bulks[i]);
+          GRN_TEXT_INIT(values, 0);
+        }
+      }
+      sizes = GRN_MALLOC(copy_size_per_entry * n);
+      if (!sizes) {
+        goto exit;
+      }
     }
   }
-
   if (!(array = GRN_MALLOC(sizeof(sort_entry) * n))) {
     goto exit;
   }
-  if (n_refers > 0) {
-    int i;
-    for (i = 0; i < n; i++) {
-      array[i].refers = &(refers[i * n_refers]);
+  if (!data->all_can_refer) {
+    if (n_refers > 0) {
+      int i;
+      for (i = 0; i < n; i++) {
+        array[i].cache.buffer.refers = &(refers[i * n_refers]);
+      }
+    }
+    if (n_copies > 0) {
+      int i;
+      for (i = 0; i < n; i++) {
+        array[i].cache.buffer.copy.values = &(bulks[i]);
+        array[i].cache.buffer.copy.sizes = sizes + copy_size_per_entry * i;
+      }
     }
   }
-  if (n_copies > 0) {
-    int i;
-    for (i = 0; i < n; i++) {
-      array[i].copy.values = &(bulks[i]);
-      array[i].copy.sizes = sizes + copy_size_per_entry * i;
-    }
-  }
+
   {
     sort_entry *ep;
-    if ((ep = sort_value_pack(ctx, table, array, array + n - 1, keys, n_keys))) {
+    if ((ep = sort_value_pack(ctx, table, array, array + n - 1, data))) {
       intptr_t m = ep - array + 1;
       if (offset < m - 1) {
         sort_value_body(ctx,
@@ -13361,8 +13440,7 @@ grn_table_sort_value_body(grn_ctx *ctx,
                         ep - 1,
                         offset,
                         e,
-                        keys,
-                        n_keys);
+                        data);
       }
       if (m < e) {
         sort_value_body(ctx,
@@ -13370,8 +13448,7 @@ grn_table_sort_value_body(grn_ctx *ctx,
                         array + n - 1,
                         offset - m,
                         e - m,
-                        keys,
-                        n_keys);
+                        data);
       }
     }
   }
@@ -13379,8 +13456,9 @@ grn_table_sort_value_body(grn_ctx *ctx,
     int i;
     sort_entry *ep;
     grn_id *v;
+    grn_array *result = (grn_array *)(data->result);
     for (i = 0, ep = array + offset; i < limit && ep < array + n; i++, ep++) {
-      if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) { break; }
+      if (!grn_array_add(ctx, result, (void **)&v)) { break; }
       *v = ep->id;
     }
     n_sorted_records = i;
@@ -13634,13 +13712,15 @@ grn_table_sort_value(grn_ctx *ctx,
     keys[i].can_refer = can_refer;
     keys[i].offset = offset;
   }
-  n_sorted_records = grn_table_sort_value_body(ctx,
-                                               table,
-                                               offset,
-                                               limit,
-                                               result,
-                                               keys,
-                                               n_keys);
+  {
+    sort_data data;
+    data.offset = offset;
+    data.limit = limit;
+    data.result = result;
+    data.keys = keys;
+    data.n_keys = n_keys;
+    n_sorted_records = grn_table_sort_value_body(ctx, table, &data);
+  }
 exit :
   if (keys) {
     GRN_FREE(keys);
