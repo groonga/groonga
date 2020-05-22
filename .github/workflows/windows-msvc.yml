@@ -229,14 +229,6 @@ jobs:
           asset_content_type: application/zip
 
       # Test
-      - name: Update pacman explicitly
-        # See also: https://github.com/msys2/MSYS2-packages/issues/1960
-        run: |
-          ridk exec pacman --sync --refresh --noconfirm zstd
-          ridk exec wget -q http://repo.msys2.org/msys/x86_64/pacman-5.2.1-7-x86_64.pkg.tar.zst
-          ridk exec zstd -d pacman-5.2.1-7-x86_64.pkg.tar.zst
-          ridk exec gzip pacman-5.2.1-7-x86_64.pkg.tar
-          ridk exec pacman --upgrade --noconfirm ./pacman-5.2.1-7-x86_64.pkg.tar.gz
       - name: Update MSYS2
         run: |
           ridk exec pacman --sync --refresh --sysupgrade --noconfirm
