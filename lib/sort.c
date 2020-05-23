@@ -156,20 +156,6 @@ union sort_entry_ {
   } value;
 };
 
-struct x_ {
-  grn_id id;
-  uint32_t size;
-  const void *value;
-};
-
-struct y_ {
-  grn_id id;
-  struct {
-    uint32_t size;
-    const void *value;
-  } refer;
-};
-
 struct sort_data_ {
   int offset;
   int limit;
@@ -180,7 +166,6 @@ struct sort_data_ {
 };
 
 struct sort_compare_data_ {
-  bool have_cache;
   size_t values_offset;
   size_t sizes_offset;
 };
