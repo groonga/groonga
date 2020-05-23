@@ -218,7 +218,6 @@ sort_value_get_value(grn_ctx *ctx,
                      uint32_t *size,
                      sort_data *data)
 {
-  const uint8_t *value;
   sort_value_copy *copy = entry->value.copy;
   if (entry->value.n_cached_values <= key->index_value) {
     if (key->column_cache) {
@@ -242,7 +241,7 @@ sort_value_get_value(grn_ctx *ctx,
     }
     entry->value.n_cached_values++;
   }
-  value =
+  const uint8_t *value =
     (const uint8_t *)GRN_BULK_HEAD(copy->values) +
     compare_data->values_offset;
   *size =
