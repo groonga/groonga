@@ -20,12 +20,14 @@
 #include "grn_ctx.h"
 #include "grn_str.h"
 
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#include <errno.h>
 
 #ifdef WIN32
 # include <share.h>
+#else
+# include <sys/select.h>
 #endif /* WIN32 */
 
 struct _grn_file_reader {
@@ -110,6 +112,15 @@ grn_file_reader_read_line(grn_ctx *ctx,
     }
     if (!fgets(GRN_BULK_CURR(buffer), BUFFER_SIZE, reader->file)) {
       if (errno == EAGAIN || errno == EWOULDBLOCK) {
+        int fd = fileno(reader->file);
+        int n_fds = 1;
+        fd_set read_fds;
+        FD_ZERO(&read_fds);
+        FD_SET(fd, &read_fds);
+        int n_ready_fds = select(n_fds, &read_fds, NULL, NULL, NULL);
+        if (n_ready_fds != 1) {
+          break;
+        }
         continue;
       }
       break;
