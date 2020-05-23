@@ -47,6 +47,15 @@ extern "C" {
 # define grn_log_reference_count(...)
 #endif
 
+#define GRN_TABLE_GROUPED (0x01<<0)
+#define GRN_TABLE_IS_GROUPED(table)\
+  ((table)->header.impl_flags & GRN_TABLE_GROUPED)
+#define GRN_TABLE_GROUPED_ON(table)\
+  ((table)->header.impl_flags |= GRN_TABLE_GROUPED)
+#define GRN_TABLE_IS_MULTI_KEYS_GROUPED(table)\
+  (GRN_TABLE_IS_GROUPED(table) &&\
+   table->header.domain == GRN_ID_NIL)
+
 extern bool grn_enable_reference_count;
 
 typedef struct _grn_db grn_db;

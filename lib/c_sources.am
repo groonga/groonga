@@ -124,6 +124,7 @@ libgroonga_c_sources =				\
 	scorers.c				\
 	selector.c				\
 	snip.c					\
+	sort.c					\
 	store.c					\
 	str.c					\
 	string.c				\

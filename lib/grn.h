@@ -675,6 +675,14 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 # define GRN_SUPPORT_REGEXP
 #endif /* GRN_WITH_ONIGMO */
 
+#ifdef __GNUC__
+# define GRN_LIKELY(expr) (__builtin_expect(!!(expr), 1))
+# define GRN_UNLIKELY(expr) (__builtin_expect(!!(expr), 0))
+#else
+# define GRN_LIKELY(expr) expr
+# define GRN_UNLIKELY(expr) expr
+#endif
+
 GRN_API void grn_sleep(uint32_t seconds);
 GRN_API void grn_nanosleep(uint64_t nanoseconds);
 
