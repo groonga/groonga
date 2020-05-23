@@ -8,14 +8,14 @@
 Summary
 -------
 
-``time_classify_day`` rounds date to a day unit.
+``time_classify_day`` rounds time to a day unit.
 
 This rounded ``2020-01-30 11:50:11.000000`` and ``2020-01-30 22:50:11.000000`` to ``2020-01-30 00:00:00.000000``.
 
 Syntax
 ------
 
-``time_classify_day`` has one parameters::
+``time_classify_day`` has one parameter::
 
   time_classify_day(column)
 
@@ -103,7 +103,7 @@ Parameters
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There are three required parameters ``column``.
+There is one required parameter ``column``.
 
 ``column``
 """"""""""
@@ -113,6 +113,6 @@ Specify a target column.
 Return value
 ------------
 
-It returns a value that rounded date to a day unit.
+It returns a value that rounded time to a day unit.
 
 The return value is Unix time.
