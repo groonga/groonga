@@ -23019,6 +23019,15 @@ msgstr ""
 msgid "Near search condition"
 msgstr "近傍検索条件"
 
+msgid "TODO: ``*N\"word1 word2 ...\"``"
+msgstr ""
+
+msgid "Near phrase search condition"
+msgstr "近傍フレーズ検索条件"
+
+msgid "TODO: ``*NP\"phrase1 phrase2 ...\"``"
+msgstr ""
+
 msgid "Similar search condition"
 msgstr "類似文書検索条件"
 
@@ -24468,6 +24477,24 @@ msgstr ""
 "語以内近くにあるレコードにマッチします。そのため、 ``I also started to use "
 "mroonga. It's also very fast! Really fast!`` にマッチします。 ``also`` と "
 "``Really`` の間の単語数は10です。"
+
+msgid "Near phrase search operator"
+msgstr "近傍フレーズ検索演算子"
+
+msgid ""
+"The operator does near phrase search with phrases ``phrase1 phrase2 ...``. "
+"Near phrase search searches records that contain the phrases and the phrases "
+"are appeared in the specified order and the max interval."
+msgstr ""
+"この演算子は ``phrase1 phrase2 ...`` というフレーズで近傍フレーズ検索します。"
+"近傍フレーズ検索はすべてのフレーズが含まれていてかつそれぞれが指定した順番で"
+"出現していてかつそれぞれのフレーズが指定した距離以内にあるレコードを検索しま"
+"す。"
+
+msgid ""
+"TODO: Use index that has ``TokenNgram(\"unify_alphabet\", false)`` tokenizer "
+"to show difference with near search with English text."
+msgstr ""
 
 msgid "Similar search"
 msgstr "類似文書検索"
