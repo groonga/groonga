@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 
 #ifdef WIN32
 # include <share.h>
@@ -108,6 +109,9 @@ grn_file_reader_read_line(grn_ctx *ctx,
       break;
     }
     if (!fgets(GRN_BULK_CURR(buffer), BUFFER_SIZE, reader->file)) {
+      if (errno == EAGAIN || errno == EWOULDBLOCK) {
+        continue;
+      }
       break;
     }
 #undef BUFFER_SIZE
