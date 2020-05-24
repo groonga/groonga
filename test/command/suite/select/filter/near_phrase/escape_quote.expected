@@ -1,0 +1,38 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("unify_alphabet", false,                                   "unify_digit", false)'   --normalizer NormalizerNFKC121
+[[0,0.0,0.0],true]
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "I started to use Groonga. It's very fast!"},
+{"content": "I also started to use Groonga. It's also very fast! Really fast!"}
+]
+[[0,0.0,0.0],2]
+select Entries --filter 'content *NP "I\\\\ started \\"use Groonga\\""' --output_columns 'content'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        "I started to use Groonga. It's very fast!"
+      ]
+    ]
+  ]
+]

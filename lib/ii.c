@@ -8882,74 +8882,16 @@ token_info_build(grn_ctx *ctx,
                  grn_operator mode)
 {
   *only_skip_token = false;
-  const char *phrase = string;
-  const char *current = string;
-  const char *string_end = string + string_len;
-  uint32_t phrase_id = 0;
-  if (mode == GRN_OP_NEAR_PHRASE) {
-    while (current < string_end) {
-      int space_char_len = grn_isspace(current, ctx->encoding);
-      if (space_char_len > 0) {
-        if (current != phrase) {
-          uint32_t n_before = *n;
-          grn_rc rc = token_info_build_phrase(ctx,
-                                              lexicon,
-                                              ii,
-                                              phrase,
-                                              current - phrase,
-                                              tis,
-                                              n,
-                                              only_skip_token,
-                                              min,
-                                              mode);
-          if (rc != GRN_SUCCESS) {
-            return rc;
-          }
-          uint32_t i;
-          for (i = n_before; i < *n; i++) {
-            tis[i]->n_tokens_in_phrase = *n - n_before;
-            tis[i]->phrase_id = phrase_id;
-          }
-          phrase_id++;
-        }
-        current += space_char_len;
-        phrase = current;
-        continue;
-      }
-      int char_len = grn_charlen(ctx, current, string_end);
-      if (char_len == 0) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "[ii][token-info][build] invalid character: <%0x>: <%.*s>",
-            current[0],
-            (int)string_len,
-            string);
-        return ctx->rc;
-      }
-      current += char_len;
-    }
-  }
-  if (phrase != string_end) {
-    uint32_t n_before = *n;
-    grn_rc rc = token_info_build_phrase(ctx,
-                                        lexicon,
-                                        ii,
-                                        phrase,
-                                        string_end - phrase,
-                                        tis,
-                                        n,
-                                        only_skip_token,
-                                        min,
-                                        mode);
-    if (rc != GRN_SUCCESS) {
-      return rc;
-    }
-    uint32_t i;
-    for (i = n_before; i < *n; i++) {
-      tis[i]->n_tokens_in_phrase = *n - n_before;
-      tis[i]->phrase_id = phrase_id;
-    }
-  }
-  return GRN_SUCCESS;
+  return token_info_build_phrase(ctx,
+                                 lexicon,
+                                 ii,
+                                 string,
+                                 string_len,
+                                 tis,
+                                 n,
+                                 only_skip_token,
+                                 min,
+                                 mode);
 }
 
 grn_inline static grn_rc
@@ -9008,6 +8950,158 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
   rc = GRN_SUCCESS;
 exit :
   grn_token_cursor_close(ctx, token_cursor);
+  return rc;
+}
+
+grn_inline static grn_rc
+token_info_build_near_phrase(grn_ctx *ctx,
+                             grn_obj *lexicon,
+                             grn_ii *ii,
+                             const char *string,
+                             uint32_t string_len,
+                             token_info **tis,
+                             uint32_t *n,
+                             bool *only_skip_token,
+                             grn_id min,
+                             grn_operator mode)
+{
+  grn_rc rc = GRN_SUCCESS;
+  *only_skip_token = false;
+  grn_obj buffer;
+  GRN_TEXT_INIT(&buffer, 0);
+  const char *current = string;
+  const char *string_end = string + string_len;
+  uint32_t phrase_id = 0;
+
+  while (current < string_end) {
+    int space_char_len = grn_isspace(current, ctx->encoding);
+    if (space_char_len > 0) {
+      current += space_char_len;
+      continue;
+    }
+
+    const char *phrase = NULL;
+    size_t phrase_len = 0;
+    bool use_buffer = false;
+    GRN_BULK_REWIND(&buffer);
+    bool escaping = false;
+    int char_len = grn_charlen(ctx, current, string_end);
+    if (char_len == 0) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[ii][token-info][build] invalid character: <%0x>: <%.*s>",
+          current[0],
+          (int)string_len,
+          string);
+      goto exit;
+    }
+    if (char_len == 1 && current[0] == GRN_QUERY_QUOTEL) {
+      use_buffer = true;
+      current += char_len;
+      while (current < string_end) {
+        char_len = grn_charlen(ctx, current, string_end);
+        if (char_len == 0) {
+          ERR(GRN_INVALID_ARGUMENT,
+              "[ii][token-info][build] invalid character: <%0x>: <%.*s>",
+              current[0],
+              (int)string_len,
+              string);
+          goto exit;
+        }
+        if (escaping) {
+          escaping = false;
+        } else {
+          if (char_len == 1) {
+            if (current[0] == GRN_QUERY_ESCAPE) {
+              escaping = true;
+              current += char_len;
+              continue;
+            } else if (current[0] == GRN_QUERY_QUOTER) {
+              current += char_len;
+              break;
+            }
+          }
+        }
+        GRN_TEXT_PUT(ctx, &buffer, current, char_len);
+        current += char_len;
+      }
+      phrase = GRN_TEXT_VALUE(&buffer);
+      phrase_len = GRN_TEXT_LEN(&buffer);
+    } else {
+      phrase = current;
+      while (current < string_end) {
+        if (!escaping) {
+          space_char_len = grn_isspace(current, ctx->encoding);
+          if (space_char_len > 0) {
+            break;
+          }
+        }
+        char_len = grn_charlen(ctx, current, string_end);
+        if (char_len == 0) {
+          ERR(GRN_INVALID_ARGUMENT,
+              "[ii][token-info][build] invalid character: <%0x>: <%.*s>",
+              current[0],
+              (int)string_len,
+              string);
+          goto exit;
+        }
+        if (escaping) {
+          escaping = false;
+        } else {
+          if (char_len == 1) {
+            if (current[0] == GRN_QUERY_ESCAPE) {
+              if (!use_buffer) {
+                use_buffer = true;
+                GRN_TEXT_PUT(ctx, &buffer, phrase, current - phrase);
+              }
+              current += char_len;
+              escaping = true;
+              continue;
+            } else if (current[0] == GRN_QUERY_QUOTEL) {
+              break;
+            }
+          }
+        }
+        if (use_buffer) {
+          GRN_TEXT_PUT(ctx, &buffer, current, char_len);
+        }
+        current += char_len;
+      }
+      if (use_buffer) {
+        phrase = GRN_TEXT_VALUE(&buffer);
+        phrase_len = GRN_TEXT_LEN(&buffer);
+      } else {
+        phrase_len = current - phrase;
+      }
+    }
+
+    if (phrase_len == 0) {
+      continue;
+    }
+
+    uint32_t n_before = *n;
+    rc = token_info_build_phrase(ctx,
+                                 lexicon,
+                                 ii,
+                                 phrase,
+                                 phrase_len,
+                                 tis,
+                                 n,
+                                 only_skip_token,
+                                 min,
+                                 mode);
+    if (rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    uint32_t i;
+    for (i = n_before; i < *n; i++) {
+      tis[i]->n_tokens_in_phrase = *n - n_before;
+      tis[i]->phrase_id = phrase_id;
+    }
+    phrase_id++;
+  }
+
+exit:
+  GRN_OBJ_FIN(ctx, &buffer);
   return rc;
 }
 
@@ -10719,6 +10813,13 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                                tis, &n, &(data.only_skip_token),
                                data.previous_min,
                                data.mode, &(optarg->fuzzy)) ||
+        !n) {
+      goto exit;
+    }
+  } else if (data.mode == GRN_OP_NEAR_PHRASE) {
+    if (token_info_build_near_phrase(ctx, lexicon, ii, string, string_len,
+                                     tis, &n, &(data.only_skip_token),
+                                     data.previous_min, data.mode) ||
         !n) {
       goto exit;
     }
