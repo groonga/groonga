@@ -67,7 +67,7 @@ Note that you must specify ``--command_version 2`` to use ``html_untag`` functio
 Parameters
 ----------
 
-There is one required parameter, ``html``.
+There is only one required parameter.
 
 ``html``
 ^^^^^^^^

@@ -75,7 +75,7 @@ Options
 Parameters
 ----------
 
-There is one required parameter - ``database_path``.
+There is only one required parameter.
 
 ``database_path``
 ^^^^^^^^^^^^^^^^^

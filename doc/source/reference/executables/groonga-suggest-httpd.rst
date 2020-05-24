@@ -214,7 +214,7 @@ Command line parameters
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is one required parameter.
+There is only one required parameter.
 
 ``DATABASE_PATH``
 """""""""""""""""

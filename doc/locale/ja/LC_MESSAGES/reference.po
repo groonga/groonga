@@ -6184,9 +6184,6 @@ msgid ""
 msgstr ""
 "``config_delete`` は存在しない設定項目を削除しようとするとエラーを返します。"
 
-msgid "There is one required parameter."
-msgstr "必須の引数が1つあります。"
-
 msgid "``key``"
 msgstr ""
 
@@ -10183,9 +10180,6 @@ msgid ""
 msgstr ""
 "``object_exist Users`` は ``Users`` テーブルを作った後は ``true`` を返しま"
 "す。"
-
-msgid "There is only one required parameters."
-msgstr "1つだけ必須の引数があります。"
 
 msgid "Specifies the object name to be checked."
 msgstr "チェック対象のオブジェクト名を指定してください。"
@@ -19702,9 +19696,6 @@ msgid ""
 "level outputs more logs."
 msgstr ""
 
-msgid "There is one required parameter - ``database_path``."
-msgstr "``database_path`` だけが必須の引数です。"
-
 msgid "``database_path``"
 msgstr ""
 
@@ -21230,9 +21221,6 @@ msgstr ""
 "がわかります。``html_untag`` 関数を使うのには ``--command_version 2`` を指定"
 "しなければならないことに注意してください。"
 
-msgid "There is one required parameter, ``html``."
-msgstr "必須引数が一つあり、それは ``html`` です。"
-
 msgid "``html``"
 msgstr ""
 
@@ -21546,9 +21534,6 @@ msgid ""
 msgstr ""
 "``--sort_keys from_office`` を指定することで、職場から近いお店を昇順で表示で"
 "きます。"
-
-msgid "There is one required parameter, ``target``."
-msgstr "必須引数が一つあり、それは ``target`` です。"
 
 msgid "``target``"
 msgstr ""

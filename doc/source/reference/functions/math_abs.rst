@@ -67,7 +67,7 @@ By specifying ``--sort_keys from_office``, you can show nearest shops by ascendi
 Parameters
 ----------
 
-There is one required parameter, ``target``.
+There is only one required parameter.
 
 ``target``
 ^^^^^^^^^^

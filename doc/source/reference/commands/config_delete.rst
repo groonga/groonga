@@ -51,7 +51,7 @@ This section describes all parameters.
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is one required parameter.
+There is only one required parameter.
 
 .. _config-delete-key:
 

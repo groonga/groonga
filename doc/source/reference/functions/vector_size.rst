@@ -62,7 +62,7 @@ Here is the simple usage of ``vector_size`` function which returns tags and size
 Parameters
 ----------
 
-There is one required parameter, ``target``.
+There is only one required parameter.
 
 ``target``
 ^^^^^^^^^^
