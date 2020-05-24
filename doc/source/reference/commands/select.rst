@@ -2423,6 +2423,16 @@ Here are available stages:
      - Description
    * - ``initial``
      - Dynamic column is created at first.
+   * - ``filtered``
+     - Dynamic column is created after ``drilldowns[${LABEL}].filter``
+       is evaluated.
+   * - ``output``
+     - Dynamic column is created before :ref:`select-drilldowns-label-output-columns`
+       is evaluated.
+
+.. note::
+
+   ``filtered`` stage and ``output`` stage will be able to use from 10.0.3 or later.
 
 Here is one drilldown process flow with dynamic column creation
 points. You should choose stage as late as possible:
@@ -2437,13 +2447,20 @@ points. You should choose stage as late as possible:
   #. Evaluates ``drilldowns[${LABEL}].filter``. You can use dynamic
      columns created in ``initial`` stage.
 
+  #. Creates dynamic columns for ``filtered`` stage.
+     Only filtered records have these dynamic columns.
+
   #. Evaluates ``drilldowns[${LABEL}].sort_keys``,
      ``drilldowns[${LABEL}].offset`` and
      ``drilldowns[${LABEL}].limit``. You can use dynamic columns
-     created in ``initial`` stage.
+     created in ``initial`` stage and ``filtered`` stage.
+
+  #. Creates dynamic columns for ``output`` stage.
+     Only ``drilldowns[${LABEL}].limit`` records have these dynamic columns.
 
   #. Evaluates :ref:`select-drilldowns-label-output-columns`. You can
-     use dynamic columns created in ``initial`` stage.
+     use dynamic columns created in ``initial`` stage, ``filtered`` stage,
+     and ``output`` stage.
 
 Here is a ``drilldowns[${LABEL}].columns[${NAME}].stage`` example. It
 creates ``is_popular`` column at ``initial`` stage. You can use
