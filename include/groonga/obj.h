@@ -79,6 +79,8 @@ GRN_API bool grn_obj_is_visible(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc grn_obj_set_visibility(grn_ctx *ctx,
                                       grn_obj *obj,
                                       bool is_visible);
+GRN_API bool grn_obj_have_source(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool grn_obj_is_token_column(grn_ctx *ctx, grn_obj *obj);
 
 GRN_API grn_rc grn_obj_cast(grn_ctx *ctx,
                             grn_obj *src,

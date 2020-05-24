@@ -497,6 +497,16 @@ grn_ja_get_flags(grn_ctx *ctx, grn_ja *ja)
   return ja->header->flags;
 }
 
+void
+grn_ja_set_visibility(grn_ctx *ctx, grn_ja *ja, bool is_visible)
+{
+  if (is_visible) {
+    ja->header->flags &= ~GRN_OBJ_INVISIBLE;
+  } else {
+    ja->header->flags |= GRN_OBJ_INVISIBLE;
+  }
+}
+
 grn_rc
 grn_ja_close(grn_ctx *ctx, grn_ja *ja)
 {

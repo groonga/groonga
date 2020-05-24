@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -150,6 +150,8 @@ int grn_ii_updspec_cmp(grn_ii_updspec *a, grn_ii_updspec *b);
 void grn_ii_expire(grn_ctx *ctx, grn_ii *ii);
 grn_rc grn_ii_flush(grn_ctx *ctx, grn_ii *ii);
 size_t grn_ii_get_disk_usage(grn_ctx *ctx, grn_ii *ii);
+
+void grn_ii_set_visibility(grn_ctx *ctx, grn_ii *ii, bool is_visible);
 
 grn_ii_cursor *grn_ii_cursor_openv1(grn_ii *ii, uint32_t key);
 grn_rc grn_ii_cursor_openv2(grn_ii_cursor **cursors, int ncursors);

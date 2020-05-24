@@ -1628,6 +1628,76 @@ grn_table_lcp_search(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int
   GRN_API_RETURN(id);
 }
 
+static void
+grn_var_size_column_update(grn_ctx *ctx,
+                           grn_obj *column,
+                           grn_id id,
+                           int section,
+                           grn_obj *old_value,
+                           grn_obj *new_value)
+{
+  grn_obj *lexicon = grn_ctx_at(ctx, DB_OBJ(column)->range);
+  grn_obj tokens;
+  GRN_RECORD_INIT(&tokens, GRN_OBJ_VECTOR, DB_OBJ(lexicon)->id);
+  unsigned int token_flags = 0;
+  grn_token_cursor *token_cursor =
+    grn_token_cursor_open(ctx,
+                          lexicon,
+                          GRN_TEXT_VALUE(new_value),
+                          GRN_TEXT_LEN(new_value),
+                          GRN_TOKEN_ADD,
+                          token_flags);
+  if (token_cursor) {
+    while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
+      grn_id token_id = grn_token_cursor_next(ctx, token_cursor);
+      GRN_RECORD_PUT(ctx, &tokens, token_id);
+    }
+    grn_token_cursor_close(ctx, token_cursor);
+  }
+  grn_obj_set_value(ctx, column, id, &tokens, GRN_OBJ_SET);
+  GRN_OBJ_FIN(ctx, &tokens);
+  grn_obj_unref(ctx, lexicon);
+}
+
+static void
+grn_var_size_column_build(grn_ctx *ctx, grn_obj *column)
+{
+  grn_obj *table = grn_ctx_at(ctx, column->header.domain);
+  grn_obj *lexicon = grn_ctx_at(ctx, DB_OBJ(column)->range);
+  grn_id *source_ids = DB_OBJ(column)->source;
+  grn_obj *source = grn_ctx_at(ctx, source_ids[0]);
+  grn_obj_set_visibility(ctx, column, false);
+  grn_obj tokens;
+  GRN_RECORD_INIT(&tokens, GRN_OBJ_VECTOR, DB_OBJ(lexicon)->id);
+  unsigned int token_flags = 0;
+  GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
+    GRN_BULK_REWIND(&tokens);
+    uint32_t value_size;
+    const char *value = grn_obj_get_value_(ctx, source, id, &value_size);
+    if (value_size > 0) {
+      grn_token_cursor *token_cursor = grn_token_cursor_open(ctx,
+                                                             lexicon,
+                                                             value,
+                                                             value_size,
+                                                             GRN_TOKEN_ADD,
+                                                             token_flags);
+      if (token_cursor) {
+        while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
+          grn_id token_id = grn_token_cursor_next(ctx, token_cursor);
+          GRN_RECORD_PUT(ctx, &tokens, token_id);
+        }
+        grn_token_cursor_close(ctx, token_cursor);
+      }
+    }
+    grn_obj_set_value(ctx, column, id, &tokens, GRN_OBJ_SET);
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  grn_obj_set_visibility(ctx, column, true);
+  GRN_OBJ_FIN(ctx, &tokens);
+  grn_obj_unref(ctx, source);
+  grn_obj_unref(ctx, lexicon);
+  grn_obj_unref(ctx, table);
+}
+
 grn_obj *
 grn_obj_default_set_value_hook(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -1646,14 +1716,23 @@ grn_obj_default_set_value_hook(grn_ctx *ctx, int nargs, grn_obj **args, grn_user
     if (flags) { /* todo */ }
     if (target) {
       switch (target->header.type) {
+      case GRN_COLUMN_VAR_SIZE :
+        grn_var_size_column_update(ctx,
+                                   target,
+                                   GRN_UINT32_VALUE(id),
+                                   section,
+                                   oldvalue,
+                                   newvalue);
+        break;
       case GRN_COLUMN_INDEX :
         grn_ii_column_update(ctx, (grn_ii *)target,
                              GRN_UINT32_VALUE(id),
                              section, oldvalue, newvalue, NULL);
+        break;
+      default :
+        break;
       }
-      if (grn_enable_reference_count) {
-        grn_obj_unlink(ctx, target);
-      }
+      grn_obj_unref(ctx, target);
     }
   }
   return NULL;
@@ -8606,9 +8685,17 @@ grn_obj_set_info_source_update(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
     DB_OBJ(obj)->source = v2;
     DB_OBJ(obj)->source_size = s;
 
-    if (obj->header.type == GRN_COLUMN_INDEX) {
+    switch (obj->header.type) {
+    case GRN_COLUMN_VAR_SIZE :
+      update_source_hook(ctx, obj);
+      grn_var_size_column_build(ctx, obj);
+      break;
+    case GRN_COLUMN_INDEX :
       update_source_hook(ctx, obj);
       grn_index_column_build(ctx, obj);
+      break;
+    default :
+      break;
     }
   } else {
     DB_OBJ(obj)->source = NULL;
@@ -13806,6 +13893,53 @@ grn_column_get_all_index_columns(grn_ctx *ctx,
                                            NULL, 0,
                                            index_columns);
   }
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_column_get_all_token_columns(grn_ctx *ctx,
+                                 grn_obj *obj,
+                                 grn_obj *token_columns)
+{
+  GRN_API_ENTER;
+
+  if (!GRN_DB_OBJP(obj)) {
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  grn_hook_entry hook_entry;
+  switch (obj->header.type) {
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+  case GRN_TABLE_NO_KEY :
+    hook_entry = GRN_HOOK_INSERT;
+    break;
+  default :
+    hook_entry = GRN_HOOK_SET;
+    break;
+  }
+
+  grn_hook *hooks;
+  for (hooks = DB_OBJ(obj)->hooks[hook_entry]; hooks; hooks = hooks->next) {
+    grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
+    grn_obj *target = grn_ctx_at(ctx, data->target);
+    if (!target) {
+      report_hook_has_dangling_reference_error(ctx, obj, data->target,
+                                               "[column][token-columns][all]");
+      continue;
+    }
+    if (target->header.type != GRN_COLUMN_VAR_SIZE) {
+      grn_obj_unref(ctx, target);
+      continue;
+    }
+    if (!grn_obj_is_visible(ctx, target)) {
+      grn_obj_unref(ctx, target);
+      continue;
+    }
+    GRN_PTR_PUT(ctx, token_columns, target);
+  }
+
   GRN_API_RETURN(ctx->rc);
 }
 

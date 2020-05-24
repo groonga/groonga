@@ -862,11 +862,7 @@ command_schema_column_output_sources(grn_ctx *ctx, grn_obj *column)
   source_table = grn_ctx_at(ctx, grn_obj_get_range(ctx, column));
 
   GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
-
-  if (column->header.type == GRN_COLUMN_INDEX) {
-    grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
-  }
-
+  grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
   n_ids = GRN_BULK_VSIZE(&source_ids) / sizeof(grn_id);
   grn_ctx_output_array_open(ctx, "sources", n_ids);
   for (i = 0; i < n_ids; i++) {
@@ -1019,7 +1015,7 @@ command_schema_column_command_collect_arguments(grn_ctx *ctx,
     ADD_OBJECT_NAME("type", value_type);
   }
 
-  if (column->header.type == GRN_COLUMN_INDEX) {
+  {
     grn_obj source_ids;
     unsigned int n_ids;
 

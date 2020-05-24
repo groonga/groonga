@@ -1,0 +1,76 @@
+table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC121   --default_tokenizer TokenNgram
+[[0,0.0,0.0],true]
+table_create Notes TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Notes title COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Notes title_terms COLUMN_VECTOR Terms title
+[[0,0.0,0.0],true]
+column_list Notes
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "id",
+        "UInt32"
+      ],
+      [
+        "name",
+        "ShortText"
+      ],
+      [
+        "path",
+        "ShortText"
+      ],
+      [
+        "type",
+        "ShortText"
+      ],
+      [
+        "flags",
+        "ShortText"
+      ],
+      [
+        "domain",
+        "ShortText"
+      ],
+      [
+        "range",
+        "ShortText"
+      ],
+      [
+        "source",
+        "ShortText"
+      ]
+    ],
+    [
+      258,
+      "title",
+      "db/db.0000102",
+      "var",
+      "COLUMN_SCALAR|PERSISTENT",
+      "Notes",
+      "Text",
+      [
+
+      ]
+    ],
+    [
+      259,
+      "title_terms",
+      "db/db.0000103",
+      "var",
+      "COLUMN_VECTOR|PERSISTENT",
+      "Notes",
+      "Terms",
+      [
+        "Notes.title"
+      ]
+    ]
+  ]
+]

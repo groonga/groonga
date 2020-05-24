@@ -25,6 +25,7 @@
 #include "grn_ii.h"
 #include "grn_index_column.h"
 #include "grn_pat.h"
+#include "grn_store.h"
 
 grn_bool
 grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
@@ -653,8 +654,7 @@ grn_obj_is_expr(grn_ctx *ctx, grn_obj *obj)
 }
 
 bool
-grn_obj_is_visible(grn_ctx *ctx,
-                   grn_obj *obj)
+grn_obj_is_visible(grn_ctx *ctx, grn_obj *obj)
 {
   if (!obj) {
     return false;
@@ -704,26 +704,48 @@ grn_obj_set_visibility(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
-  if (!grn_obj_is_index_column(ctx, obj)) {
+  if (!(grn_obj_is_index_column(ctx, obj) ||
+        grn_obj_is_token_column(ctx, obj))) {
     grn_obj inspected;
     GRN_TEXT_INIT(&inspected, 0);
     grn_inspect_limited(ctx, &inspected, obj);
     ERR(GRN_INVALID_ARGUMENT,
-        "[obj][set-visibility] must be index column: <%.*s>",
+        "[obj][set-visibility] "
+        "must be an index column or a token column: <%.*s>",
         (int)(GRN_TEXT_LEN(&inspected)),
         GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
     GRN_API_RETURN(ctx->rc);
   }
 
-  grn_ii *ii = (grn_ii *)obj;
-  if (is_visible) {
-    ii->header.common->flags &= ~GRN_OBJ_INVISIBLE;
-  } else {
-    ii->header.common->flags |= GRN_OBJ_INVISIBLE;
+  if (grn_obj_is_index_column(ctx, obj)) {
+    grn_ii_set_visibility(ctx, (grn_ii *)obj, is_visible);
+  } else if (grn_obj_is_token_column(ctx, obj)) {
+    grn_ja_set_visibility(ctx, (grn_ja *)obj, is_visible);
   }
 
   GRN_API_RETURN(GRN_SUCCESS);
+}
+
+bool
+grn_obj_have_source(grn_ctx *ctx,
+                    grn_obj *obj)
+{
+  if (!obj) {
+    return false;
+  }
+
+  if (!GRN_DB_OBJP(obj)) {
+    return false;
+  }
+
+  return DB_OBJ(obj)->source_size > 0;
+}
+
+bool
+grn_obj_is_token_column(grn_ctx *ctx, grn_obj *obj)
+{
+  return grn_obj_is_vector_column(ctx, obj) && grn_obj_have_source(ctx, obj);
 }
 
 static void

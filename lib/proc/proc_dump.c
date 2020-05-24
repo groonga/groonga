@@ -232,7 +232,7 @@ dump_column_name(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
 }
 
 static void
-dump_index_column_sources(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
+dump_column_sources(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
 {
   grn_obj sources;
   grn_id *source_ids;
@@ -317,8 +317,11 @@ dump_column(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_obj *column)
                                dumper->output);
   GRN_TEXT_PUTC(ctx, dumper->output, ' ');
   dump_obj_name(ctx, dumper, type);
-  if (column->header.flags & GRN_OBJ_COLUMN_INDEX) {
-    dump_index_column_sources(ctx, dumper, column);
+  switch (column->header.type) {
+  case GRN_COLUMN_VAR_SIZE :
+  case GRN_COLUMN_INDEX :
+    dump_column_sources(ctx, dumper, column);
+    break;
   }
   GRN_TEXT_PUTC(ctx, dumper->output, '\n');
 
@@ -511,8 +514,8 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
   grn_table_cursor *cursor;
   int i, n_columns;
   grn_obj columns;
-  grn_bool have_index_column = GRN_FALSE;
-  grn_bool have_data_column = GRN_FALSE;
+  bool have_auto_generated_value_column = false;
+  bool have_data_column = false;
 
   if (grn_table_size(ctx, table) == 0) {
     return;
@@ -569,13 +572,14 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 
       column = grn_ctx_at(ctx, column_id);
       if (column) {
-        if (grn_obj_is_index_column(ctx, column)) {
-          have_index_column = GRN_TRUE;
+        if (grn_obj_is_index_column(ctx, column) ||
+            grn_obj_is_token_column(ctx, column)) {
+          have_auto_generated_value_column = true;
           if (dumper->is_close_opened_object_mode) {
             grn_ctx_pop_temporary_open_space(ctx);
           }
         } else {
-          have_data_column = GRN_TRUE;
+          have_data_column = true;
           GRN_PTR_PUT(ctx, &columns, column);
           if (dumper->is_close_opened_object_mode) {
             grn_ctx_merge_temporary_open_space(ctx);
@@ -593,7 +597,7 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 
   n_columns = GRN_BULK_VSIZE(&columns) / sizeof(grn_obj *);
 
-  if (have_index_column && !have_data_column) {
+  if (have_auto_generated_value_column && !have_data_column) {
     goto exit;
   }
 

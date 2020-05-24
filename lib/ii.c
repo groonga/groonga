@@ -5774,6 +5774,16 @@ grn_ii_get_disk_usage(grn_ctx *ctx, grn_ii *ii)
   return usage;
 }
 
+void
+grn_ii_set_visibility(grn_ctx *ctx, grn_ii *ii, bool is_visible)
+{
+  if (is_visible) {
+    ii->header.common->flags &= ~GRN_OBJ_INVISIBLE;
+  } else {
+    ii->header.common->flags |= GRN_OBJ_INVISIBLE;
+  }
+}
+
 #define BIT11_01(x) ((x >> 1) & 0x7ff)
 #define BIT31_12(x) (x >> 12)
 
@@ -7327,7 +7337,7 @@ index_add(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
     return GRN_NO_MEMORY_AVAILABLE;
   }
   while (!token_cursor->status) {
-    (tid = grn_token_cursor_next(ctx, token_cursor));
+    tid = grn_token_cursor_next(ctx, token_cursor);
     if (tid) {
       if (!grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **) &u, NULL)) {
         break;
@@ -13602,6 +13612,7 @@ typedef struct {
 
   grn_obj  *src_table; /* Source table */
   grn_obj  **srcs;     /* Source columns (to be freed) */
+  grn_obj  **src_token_columns; /* Source token columns (to be freed) */
   uint32_t n_srcs;     /* Number of source columns */
   uint8_t  sid_bits;   /* Number of bits for section ID */
   uint64_t sid_mask;   /* Mask bits for section ID */
@@ -13656,6 +13667,7 @@ grn_ii_builder_init(grn_ctx *ctx, grn_ii_builder *builder,
 
   builder->src_table = NULL;
   builder->srcs = NULL;
+  builder->src_token_columns = NULL;
   builder->n_srcs = 0;
   builder->sid_bits = 0;
   builder->sid_mask = 0;
@@ -13747,15 +13759,19 @@ grn_ii_builder_fin(grn_ctx *ctx, grn_ii_builder *builder)
   if (builder->srcs) {
     int i;
     for (i = 0; i < builder->n_srcs; i++) {
-      if (!grn_obj_is_temporary(ctx, builder->srcs[i])) {
-        grn_obj_unlink(ctx, builder->srcs[i]);
-      }
+      grn_obj_unref(ctx, builder->srcs[i]);
     }
     GRN_FREE(builder->srcs);
   }
-  if (builder->src_table &&
-      !grn_obj_is_temporary(ctx, builder->src_table)) {
-    grn_obj_unlink(ctx, builder->src_table);
+  if (builder->src_token_columns) {
+    int i;
+    for (i = 0; i < builder->n_srcs; i++) {
+      grn_obj_unref(ctx, builder->src_token_columns[i]);
+    }
+    GRN_FREE(builder->src_token_columns);
+  }
+  if (builder->src_table) {
+    grn_obj_unref(ctx, builder->src_table);
   }
   return GRN_SUCCESS;
 }
@@ -14255,17 +14271,12 @@ grn_ii_builder_append_token(grn_ctx *ctx, grn_ii_builder *builder,
   return GRN_SUCCESS;
 }
 
-/*
- * grn_ii_builder_append_value appends a value. Note that values must be
- * appended in ascending rid and sid order.
- */
-static grn_rc
-grn_ii_builder_append_value(grn_ctx *ctx, grn_ii_builder *builder,
-                            grn_id rid, uint32_t sid, uint32_t weight,
-                            const char *value, uint32_t value_size)
+static void
+grn_ii_builder_start_value(grn_ctx *ctx,
+                           grn_ii_builder *builder,
+                           grn_id rid,
+                           uint32_t sid)
 {
-  uint32_t pos = 0;
-  grn_token_cursor *cursor;
   if (rid != builder->rid) {
     builder->rid = rid;
     builder->sid = sid;
@@ -14277,6 +14288,67 @@ grn_ii_builder_append_value(grn_ctx *ctx, grn_ii_builder *builder,
     /* Insert a space between values. */
     builder->pos++;
   }
+}
+
+static grn_rc
+grn_ii_builder_append_tokens(grn_ctx *ctx,
+                             grn_ii_builder *builder,
+                             grn_id rid,
+                             uint32_t sid,
+                             grn_obj *tokens)
+{
+  grn_ii_builder_start_value(ctx, builder, rid, sid);
+  grn_obj *src_lexicon = builder->ii->lexicon;
+  size_t n_tokens = grn_uvector_size(ctx, tokens);
+  size_t i;
+  for (i = 0; i < n_tokens; i++) {
+    float weight;
+    grn_id src_tid = grn_uvector_get_element_record(ctx, tokens, i, &weight);
+    uint32_t token_value_size;
+    const char *token_value = _grn_table_key(ctx,
+                                             src_lexicon,
+                                             src_tid,
+                                             &token_value_size);
+    grn_id tid = grn_table_add(ctx,
+                               builder->lexicon,
+                               token_value,
+                               token_value_size,
+                               NULL);
+    if (tid == GRN_ID_NIL) {
+      /* TODO: Token value may not be a string. */
+      ERR(GRN_INVALID_ARGUMENT,
+          "[ii][builder][append-tokens] failed to add a token: <%.*s>",
+          (int)token_value_size,
+          token_value);
+      return ctx->rc;
+    }
+    uint32_t pos = builder->pos + i;
+    grn_rc rc = grn_ii_builder_append_token(ctx,
+                                            builder,
+                                            rid,
+                                            sid,
+                                            weight,
+                                            tid,
+                                            pos);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+  return GRN_SUCCESS;
+}
+
+/*
+ * grn_ii_builder_append_value appends a value. Note that values must be
+ * appended in ascending rid and sid order.
+ */
+static grn_rc
+grn_ii_builder_append_value(grn_ctx *ctx, grn_ii_builder *builder,
+                            grn_id rid, uint32_t sid, uint32_t weight,
+                            const char *value, uint32_t value_size)
+{
+  uint32_t pos = 0;
+  grn_token_cursor *cursor;
+  grn_ii_builder_start_value(ctx, builder, rid, sid);
   if (value_size) {
     if (!builder->have_tokenizer && !builder->have_normalizer) {
       grn_id tid;
@@ -14439,28 +14511,45 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn_ii_builder *builder)
     for (i = 0; i < builder->n_srcs; i++) {
       grn_obj *obj = &objs[i];
       grn_obj *src = builder->srcs[i];
-      rc = grn_obj_reinit_for(ctx, obj, src);
-      if (rc == GRN_SUCCESS) {
-        if (GRN_OBJ_TABLEP(src)) {
-          int len = grn_table_get_key2(ctx, src, rid, obj);
-          if (len <= 0) {
+      grn_obj *token_column = builder->src_token_columns[i];
+      if (token_column) {
+        rc = grn_obj_reinit_for(ctx, obj, token_column);
+        if (rc == GRN_SUCCESS) {
+          if (!grn_obj_get_value(ctx, token_column, rid, obj)) {
             if (ctx->rc == GRN_SUCCESS) {
-              ERR(GRN_UNKNOWN_ERROR, "failed to get key: rid = %u, len = %d",
-                  rid, len);
+              ERR(GRN_UNKNOWN_ERROR, "failed to get tokens: rid = %u", rid);
             }
             rc = ctx->rc;
           }
-        } else {
-          if (!grn_obj_get_value(ctx, src, rid, obj)) {
-            if (ctx->rc == GRN_SUCCESS) {
-              ERR(GRN_UNKNOWN_ERROR, "failed to get value: rid = %u", rid);
-            }
-            rc = ctx->rc;
+          if (rc == GRN_SUCCESS) {
+            uint32_t sid = (uint32_t)(i + 1);
+            rc = grn_ii_builder_append_tokens(ctx, builder, rid, sid, obj);
           }
         }
+      } else {
+        rc = grn_obj_reinit_for(ctx, obj, src);
         if (rc == GRN_SUCCESS) {
-          uint32_t sid = (uint32_t)(i + 1);
-          rc = grn_ii_builder_append_obj(ctx, builder, rid, sid, obj);
+          if (GRN_OBJ_TABLEP(src)) {
+            int len = grn_table_get_key2(ctx, src, rid, obj);
+            if (len <= 0) {
+              if (ctx->rc == GRN_SUCCESS) {
+                ERR(GRN_UNKNOWN_ERROR, "failed to get key: rid = %u, len = %d",
+                    rid, len);
+              }
+              rc = ctx->rc;
+            }
+          } else {
+            if (!grn_obj_get_value(ctx, src, rid, obj)) {
+              if (ctx->rc == GRN_SUCCESS) {
+                ERR(GRN_UNKNOWN_ERROR, "failed to get value: rid = %u", rid);
+              }
+              rc = ctx->rc;
+            }
+          }
+          if (rc == GRN_SUCCESS) {
+            uint32_t sid = (uint32_t)(i + 1);
+            rc = grn_ii_builder_append_obj(ctx, builder, rid, sid, obj);
+          }
         }
       }
     }
@@ -14569,6 +14658,32 @@ grn_ii_builder_set_srcs(grn_ctx *ctx, grn_ii_builder *builder)
       }
       return ctx->rc;
     }
+  }
+  builder->src_token_columns = GRN_MALLOCN(grn_obj *, builder->n_srcs);
+  if (!builder->src_token_columns) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  {
+    grn_obj token_columns;
+    GRN_PTR_INIT(&token_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    for (i = 0; i < builder->n_srcs; i++) {
+      builder->src_token_columns[i] = NULL;
+      grn_obj *src = builder->srcs[i];
+      grn_column_get_all_token_columns(ctx, src, &token_columns);
+      size_t n_token_columns = GRN_PTR_VECTOR_SIZE(&token_columns);
+      size_t j;
+      for (j = 0; j < n_token_columns; j++) {
+        grn_obj *token_column = GRN_PTR_VALUE_AT(&token_columns, j);
+        if (!builder->src_token_columns[i] &&
+            DB_OBJ(token_column)->range == DB_OBJ(builder->ii->lexicon)->id) {
+          builder->src_token_columns[i] = token_column;
+        } else {
+          grn_obj_unref(ctx, token_column);
+        }
+      }
+      GRN_BULK_REWIND(&token_columns);
+    }
+    GRN_OBJ_FIN(ctx, &token_columns);
   }
   return grn_ii_builder_set_sid_bits(ctx, builder);
 }

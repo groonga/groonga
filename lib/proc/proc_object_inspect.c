@@ -451,7 +451,7 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
 }
 
 static void
-command_object_inspect_column_index_sources(grn_ctx *ctx, grn_obj *column)
+command_object_inspect_column_sources(grn_ctx *ctx, grn_obj *column)
 {
   grn_obj *source_table;
   grn_obj source_ids;
@@ -513,9 +513,10 @@ static void
 command_object_inspect_column(grn_ctx *ctx, grn_obj *column)
 {
   int n_elements = 7;
-  grn_bool is_index = (column->header.type == GRN_COLUMN_INDEX);
+  bool have_sources = (grn_obj_is_index_column(ctx, column) ||
+                       grn_obj_is_token_column(ctx, column));
 
-  if (is_index) {
+  if (have_sources) {
     n_elements += 1;
   }
   grn_ctx_output_map_open(ctx, "column", n_elements);
@@ -532,9 +533,9 @@ command_object_inspect_column(grn_ctx *ctx, grn_obj *column)
     command_object_inspect_column_type(ctx, column);
     grn_ctx_output_cstr(ctx, "value");
     command_object_inspect_column_value(ctx, column);
-    if (is_index) {
+    if (have_sources) {
       grn_ctx_output_cstr(ctx, "sources");
-      command_object_inspect_column_index_sources(ctx, column);
+      command_object_inspect_column_sources(ctx, column);
     }
     grn_ctx_output_cstr(ctx, "disk_usage");
     command_object_inspect_disk_usage(ctx, column);

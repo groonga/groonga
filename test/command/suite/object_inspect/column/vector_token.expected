@@ -1,0 +1,90 @@
+table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC121   --default_tokenizer TokenNgram
+[[0,0.0,0.0],true]
+table_create Notes TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Notes title COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Notes title_terms COLUMN_VECTOR Terms title
+[[0,0.0,0.0],true]
+object_inspect Notes.title_terms
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 259,
+    "name": "title_terms",
+    "table": {
+      "id": 257,
+      "name": "Notes",
+      "type": {
+        "id": 51,
+        "name": "table:no_key"
+      },
+      "key": null,
+      "value": {
+        "type": null
+      },
+      "n_records": 0,
+      "disk_usage": 0
+    },
+    "full_name": "Notes.title_terms",
+    "type": {
+      "name": "vector",
+      "raw": {
+        "id": 65,
+        "name": "column:var_size"
+      }
+    },
+    "value": {
+      "type": {
+        "id": 256,
+        "name": "Terms",
+        "type": {
+          "id": 49,
+          "name": "table:pat_key"
+        },
+        "size": 4
+      },
+      "compress": null,
+      "weight": false,
+      "weight_float32": false
+    },
+    "sources": [
+      {
+        "id": 258,
+        "name": "title",
+        "table": {
+          "id": 256,
+          "name": "Terms",
+          "type": {
+            "id": 49,
+            "name": "table:pat_key"
+          },
+          "key": {
+            "type": {
+              "id": 14,
+              "name": "ShortText",
+              "type": {
+                "id": 32,
+                "name": "type"
+              },
+              "size": 4096
+            },
+            "total_size": 0,
+            "max_total_size": 4294967294
+          },
+          "value": {
+            "type": null
+          },
+          "n_records": 0,
+          "disk_usage": 0
+        },
+        "full_name": "Notes.title"
+      }
+    ],
+    "disk_usage": 0
+  }
+]

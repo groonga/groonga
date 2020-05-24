@@ -250,13 +250,18 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
   }
 
   if (GRN_TEXT_LEN(source_raw) > 0) {
-    grn_rc rc;
     grn_obj source_ids;
     GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
-    rc = command_column_create_resolve_source_names(ctx,
-                                                    type,
-                                                    source_raw,
-                                                    &source_ids);
+    grn_obj *source_table;
+    if (column->header.type == GRN_COLUMN_INDEX) {
+      source_table = type;
+    } else {
+      source_table = table;
+    }
+    grn_rc rc = command_column_create_resolve_source_names(ctx,
+                                                           source_table,
+                                                           source_raw,
+                                                           &source_ids);
     if (rc == GRN_SUCCESS && GRN_BULK_VSIZE(&source_ids) > 0) {
       grn_obj_set_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
       rc = ctx->rc;

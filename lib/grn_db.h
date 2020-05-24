@@ -504,6 +504,11 @@ grn_obj *grn_obj_default_set_value_hook(grn_ctx *ctx,
                                         grn_obj **args,
                                         grn_user_data *user_data);
 
+grn_rc
+grn_column_get_all_token_columns(grn_ctx *ctx,
+                                 grn_obj *obj,
+                                 grn_obj *token_columns);
+
 grn_rc grn_pvector_fin(grn_ctx *ctx, grn_obj *obj);
 
 #ifdef __cplusplus
