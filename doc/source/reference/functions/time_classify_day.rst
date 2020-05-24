@@ -115,4 +115,4 @@ Return value
 
 It returns a value that rounded time to a day unit.
 
-The return value is Unix time.
+The return value is UNIX time.
