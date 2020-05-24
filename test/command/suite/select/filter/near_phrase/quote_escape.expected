@@ -8,17 +8,11 @@ column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
 [[0,0.0,0.0],true]
 load --table Entries
 [
-{"content": "abcXYZdef"},
-{"content": "abebcdXYZdef"},
-{"content": "abcdef"},
-{"content": "defXYZabc"},
-{"content": "XYZabc"},
-{"content": "abc123456789def"},
-{"content": "abc12345678def"},
-{"content": "abc1de2def"}
+{"content": "I started to use Groonga. It's very fast!"},
+{"content": "I also started to use Groonga. It's also very fast! Really fast!"}
 ]
-[[0,0.0,0.0],8]
-select Entries --filter 'content *NP "abc def"' --output_columns '_score, content'
+[[0,0.0,0.0],2]
+select Entries --filter 'content *NP "\\"I started\\" use\\\\ Groonga"' --output_columns 'content'
 [
   [
     0,
@@ -28,37 +22,16 @@ select Entries --filter 'content *NP "abc def"' --output_columns '_score, conten
   [
     [
       [
-        5
+        1
       ],
       [
-        [
-          "_score",
-          "Int32"
-        ],
         [
           "content",
           "Text"
         ]
       ],
       [
-        1,
-        "abcXYZdef"
-      ],
-      [
-        1,
-        "abcdef"
-      ],
-      [
-        1,
-        "defXYZabc"
-      ],
-      [
-        1,
-        "abc12345678def"
-      ],
-      [
-        1,
-        "abc1de2def"
+        "I started to use Groonga. It's very fast!"
       ]
     ]
   ]
