@@ -22301,6 +22301,34 @@ msgstr ""
 msgid "``time_classify_day``"
 msgstr ""
 
+msgid "``time_classify_day`` rounds time to a day unit."
+msgstr "``time_classify_day`` は時刻を日単位に丸めます。"
+
+msgid ""
+"This rounded ``2020-01-30 11:50:11.000000`` and ``2020-01-30 "
+"22:50:11.000000`` to ``2020-01-30 00:00:00.000000``."
+msgstr ""
+"これは、``2020-01-30 11:50:11.000000`` や ``2020-01-30 22:50:11.000000`` を "
+"``2020-01-30 00:00:00.000000`` に丸めます。"
+
+msgid "``time_classify_day`` has one parameter::"
+msgstr "``time_classify_day`` の引数は1つだけです::"
+
+msgid "Here is query to show round value of ``timestamp`` to a day unit."
+msgstr "これは、 ``timestamp`` の値を日単位に丸めた値を表示するクエリーです。"
+
+msgid "There is one required parameter ``column``."
+msgstr "必須引数が一つあり、それは ``column`` です。"
+
+msgid "Specify a target column."
+msgstr "対象のカラムを指定します。"
+
+msgid "It returns a value that rounded time to a day unit."
+msgstr "日単位に丸めた時刻を返します。"
+
+msgid "The return value is UNIX time."
+msgstr "戻り値はUNIX時間です。"
+
 msgid "``time_classify_day_of_week``"
 msgstr ""
 
