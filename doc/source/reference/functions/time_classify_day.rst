@@ -15,7 +15,7 @@ This rounded ``2020-01-30 11:50:11.000000`` and ``2020-01-30 22:50:11.000000`` t
 Syntax
 ------
 
-``time_classify_day`` has one parameter::
+This function has only one parameter::
 
   time_classify_day(column)
 
@@ -103,7 +103,7 @@ Parameters
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There is one required parameter ``column``.
+There is only one required parameter.
 
 ``column``
 """"""""""
