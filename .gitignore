@@ -112,6 +112,7 @@ CMakeFiles
 /benchmark/bench-query-optimizer
 /benchmark/bench-range-select
 /benchmark/bench-result-set
+/benchmark/bench-result-set-raw
 /benchmark/bench-between-sequential
 /benchmark/bench-nfkc
 /benchmark/bench-cache
