@@ -5,7 +5,8 @@ EXTRA_DIST =					\
 	mruby_build.rb				\
 	mruby_build.timestamp			\
 	version					\
-	mruby-dir/src/Win/dirent.c
+	mruby-dir/src/Win/dirent.c		\
+	mruby-errno/src/known_errors.def.cstub
 
 DEFAULT_INCLUDES =						\
 	-I$(builddir)/mruby-file-stat/src			\
@@ -63,6 +64,7 @@ mruby-file-stat/src/config.h:
 endif
 mruby-dir/src/dir.c: mruby_build.timestamp
 mruby-dir/src/Win/dirent.c: mruby_build.timestamp
+mruby-errno/src/known_errors.def.cstub: mruby_build.timestamp
 
 MRUBY_CONFIG = $(abs_srcdir)/build_config.rb
 MRUBY_BUILD_DIR = $(abs_top_builddir)/vendor/mruby-build
