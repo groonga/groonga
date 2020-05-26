@@ -46,10 +46,11 @@ cmake_install.cmake
 /vendor/mruby/mrbgems_init.c
 /vendor/mruby/mruby-compiler/
 /vendor/mruby/mruby-dir/
-/vendor/mruby/mruby-onig-regexp/
 /vendor/mruby/mruby-env/
-/vendor/mruby/mruby-io/
+/vendor/mruby/mruby-errno/
 /vendor/mruby/mruby-file-stat/
+/vendor/mruby/mruby-io/
+/vendor/mruby/mruby-onig-regexp/
 /vendor/mruby/mruby_build.timestamp
 /vendor/mruby-build/
 /vendor/mecab-*
