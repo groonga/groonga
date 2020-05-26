@@ -6,7 +6,7 @@ EXTRA_DIST =					\
 	mruby_build.timestamp			\
 	version					\
 	mruby-dir/src/Win/dirent.c		\
-	mruby-errno/src/known_errors.def.cstub
+	mruby-errno/src/known_errors_def.cstub
 
 DEFAULT_INCLUDES =						\
 	-I$(builddir)/mruby-file-stat/src			\
