@@ -52,7 +52,10 @@ LEGAL: mruby_build.timestamp
 mrblib.c: mruby_build.timestamp
 mrbgems_init.c: mruby_build.timestamp
 mruby-compiler/core/parse.c: mruby_build.timestamp
-mruby-onig-regexp/src/mruby_onig_regexp.c: mruby_build.timestamp
+mruby-dir/src/dir.c: mruby_build.timestamp
+mruby-dir/src/Win/dirent.c: mruby_build.timestamp
+mruby-errno/src/errno.c: mruby_build.timestamp
+mruby-errno/src/known_errors.def.cstub: mruby_build.timestamp
 mruby-env/src/env.c: mruby_build.timestamp
 mruby-file-stat/src/file-stat.c: mruby_build.timestamp
 if HAVE_SYS_SYSMACROS_H
@@ -62,9 +65,7 @@ else
 mruby-file-stat/src/config.h:
 	touch "$(builddir)/$@"
 endif
-mruby-dir/src/dir.c: mruby_build.timestamp
-mruby-dir/src/Win/dirent.c: mruby_build.timestamp
-mruby-errno/src/known_errors.def.cstub: mruby_build.timestamp
+mruby-onig-regexp/src/mruby_onig_regexp.c: mruby_build.timestamp
 
 MRUBY_CONFIG = $(abs_srcdir)/build_config.rb
 MRUBY_BUILD_DIR = $(abs_top_builddir)/vendor/mruby-build
