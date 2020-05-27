@@ -22311,14 +22311,18 @@ msgstr ""
 "これは、``2020-01-30 11:50:11.000000`` や ``2020-01-30 22:50:11.000000`` を "
 "``2020-01-30 00:00:00.000000`` に丸めます。"
 
-msgid "``time_classify_day`` has one parameter::"
-msgstr "``time_classify_day`` の引数は1つだけです::"
+msgid ""
+"To enable this function, register ``functions/time`` plugin by the following "
+"command::"
+msgstr ""
+"この関数を有効にするには、以下のコマンドで ``functions/time`` プラグインを登"
+"録します。::"
 
-msgid "Here is query to show round value of ``timestamp`` to a day unit."
-msgstr "これは、 ``timestamp`` の値を日単位に丸めた値を表示するクエリーです。"
+msgid "You need to register ``functions/time`` plugin at first:"
+msgstr "まず ``functions/time`` プラグインを登録します。"
 
-msgid "There is one required parameter ``column``."
-msgstr "必須引数が一つあり、それは ``column`` です。"
+msgid "Here is a simple usage of ``time_classify_day``:"
+msgstr "以下は簡単な ``time_classify_day`` の使用例です。"
 
 msgid "Specify a target column."
 msgstr "対象のカラムを指定します。"
@@ -22338,16 +22342,6 @@ msgid ""
 msgstr ""
 "指定された時刻の曜日を ``UInt8`` の値として返します。 ``0`` は日曜日で、 "
 "``6`` は土曜日です。"
-
-msgid ""
-"To enable this function, register ``functions/time`` plugin by the following "
-"command::"
-msgstr ""
-"この関数を有効にするには、以下のコマンドで ``functions/time`` プラグインを登"
-"録します。::"
-
-msgid "You need to register ``functions/time`` plugin at first:"
-msgstr "まず ``functions/time`` プラグインを登録します。"
 
 msgid "Here is a simple usage of ``time_classify_day_of_week``:"
 msgstr "以下は簡単な ``time_classify_day_of_week`` の使用例です。"
@@ -30204,3 +30198,13 @@ msgstr ""
 
 msgid "``window_sum``"
 msgstr ""
+
+#~ msgid "There is one required parameter ``column``."
+#~ msgstr "必須引数が一つあり、それは ``column`` です。"
+
+#~ msgid "Here is query to show round value of ``timestamp`` to a day unit."
+#~ msgstr ""
+#~ "これは、 ``timestamp`` の値を日単位に丸めた値を表示するクエリーです。"
+
+#~ msgid "``time_classify_day`` has one parameter::"
+#~ msgstr "``time_classify_day`` の引数は1つだけです::"
