@@ -30198,13 +30198,3 @@ msgstr ""
 
 msgid "``window_sum``"
 msgstr ""
-
-#~ msgid "There is one required parameter ``column``."
-#~ msgstr "必須引数が一つあり、それは ``column`` です。"
-
-#~ msgid "Here is query to show round value of ``timestamp`` to a day unit."
-#~ msgstr ""
-#~ "これは、 ``timestamp`` の値を日単位に丸めた値を表示するクエリーです。"
-
-#~ msgid "``time_classify_day`` has one parameter::"
-#~ msgstr "``time_classify_day`` の引数は1つだけです::"
