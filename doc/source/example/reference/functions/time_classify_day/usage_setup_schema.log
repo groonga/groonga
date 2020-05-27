@@ -1,0 +1,10 @@
+Execution example::
+
+  table_create Sales TABLE_NO_KEY
+  # [[0,1590571264.10303,0.007408380508422852],true]
+  column_create Sales name COLUMN_SCALAR ShortText
+  # [[0,1590571264.110569,0.003055095672607422],true]
+  column_create Sales price COLUMN_SCALAR UInt32
+  # [[0,1590571264.113767,0.002195358276367188],true]
+  column_create Sales timestamp COLUMN_SCALAR Time
+  # [[0,1590571264.116081,0.002101898193359375],true]

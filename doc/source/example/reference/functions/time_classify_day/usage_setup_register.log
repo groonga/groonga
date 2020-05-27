@@ -1,0 +1,4 @@
+Execution example::
+
+  plugin_register functions/time
+  # [[0,1590571264.101474,0.00133824348449707],true]
