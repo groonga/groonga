@@ -22286,15 +22286,15 @@ msgstr ""
 msgid "``time_classify_day``"
 msgstr ""
 
-msgid "``time_classify_day_of_week``"
-msgstr ""
+msgid "``time_classify_day`` rounds time to a day unit."
+msgstr "``time_classify_day`` は時刻を日単位に丸めます。"
 
 msgid ""
-"It returns the day of the week of the given time as a ``UInt8`` value. ``0`` "
-"is Sunday. ``6`` is Saturday."
+"This rounded ``2020-01-30 11:50:11.000000`` and ``2020-01-30 "
+"22:50:11.000000`` to ``2020-01-30 00:00:00.000000``."
 msgstr ""
-"指定された時刻の曜日を ``UInt8`` の値として返します。 ``0`` は日曜日で、 "
-"``6`` は土曜日です。"
+"これは、``2020-01-30 11:50:11.000000`` や ``2020-01-30 22:50:11.000000`` を "
+"``2020-01-30 00:00:00.000000`` に丸めます。"
 
 msgid ""
 "To enable this function, register ``functions/time`` plugin by the following "
@@ -22305,6 +22305,28 @@ msgstr ""
 
 msgid "You need to register ``functions/time`` plugin at first:"
 msgstr "まず ``functions/time`` プラグインを登録します。"
+
+msgid "Here is a simple usage of ``time_classify_day``:"
+msgstr "以下は簡単な ``time_classify_day`` の使用例です。"
+
+msgid "Specify a target column."
+msgstr "対象のカラムを指定します。"
+
+msgid "It returns a value that rounded time to a day unit."
+msgstr "日単位に丸めた時刻を返します。"
+
+msgid "The return value is UNIX time."
+msgstr "戻り値はUNIX時間です。"
+
+msgid "``time_classify_day_of_week``"
+msgstr ""
+
+msgid ""
+"It returns the day of the week of the given time as a ``UInt8`` value. ``0`` "
+"is Sunday. ``6`` is Saturday."
+msgstr ""
+"指定された時刻の曜日を ``UInt8`` の値として返します。 ``0`` は日曜日で、 "
+"``6`` は土曜日です。"
 
 msgid "Here is a simple usage of ``time_classify_day_of_week``:"
 msgstr "以下は簡単な ``time_classify_day_of_week`` の使用例です。"

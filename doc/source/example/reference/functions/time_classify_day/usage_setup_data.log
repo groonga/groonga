@@ -1,0 +1,12 @@
+Execution example::
+
+  load --table Sales
+  [
+  {"name": "Apple" , "price": "256", "timestamp": "2020-05-01 11:50:11.000000"},
+  {"name": "Apple" , "price": "256", "timestamp": "2020-05-01 10:20:00.000000"},
+  {"name": "Orange", "price": "122", "timestamp": "2020-05-01 11:44:12.000001"},
+  {"name": "Apple" , "price": "256", "timestamp": "2020-05-01 19:50:23.000020"},
+  {"name": "Banana", "price": "88" , "timestamp": "2020-05-01 11:00:02.000000"},
+  {"name": "Banana", "price": "88" , "timestamp": "2020-05-01 21:34:12.000001"}
+  ]
+  # [[0,1590571264.118352,0.001252651214599609],6]
