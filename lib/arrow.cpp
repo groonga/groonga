@@ -1758,7 +1758,7 @@ namespace grnarrow {
 
     void close_record() {
       n_records_++;
-      if (n_records_ == GRN_OUTPUT_AUTO_FLUSH_INTERVAL) {
+      if (n_records_ == grn_output_auto_flush_interval) {
         flush();
       }
     }

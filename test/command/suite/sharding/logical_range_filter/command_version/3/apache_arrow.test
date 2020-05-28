@@ -1,3 +1,5 @@
+#$GRN_OUTPUT_AUTO_FLUSH_INTERVAL=1
+
 #@require-apache-arrow
 #@require-interface http
 #@require-testee groonga
@@ -50,6 +52,16 @@ load --table Logs_20150203
   "reference_short_text_vector": ["2015-02-03 1", "2015-02-03 2"],
   "time": "2015-02-03 23:59:58",
   "uint32": 29
+},
+{
+  "_key": "2015-02-03 23:59:59",
+  "int32": -29,
+  "int32_vector": [1, -2, 3],
+  "int64": 4294967296,
+  "reference_short_text": "Hello again 2015-02-03",
+  "reference_short_text_vector": ["2015-02-03 3", "2015-02-03 4"],
+  "time": "2015-02-03 23:59:59",
+  "uint32": 2929
 }
 ]
 

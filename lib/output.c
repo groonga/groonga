@@ -29,6 +29,28 @@
 #include "grn_str.h"
 #include "grn_util.h"
 
+uint32_t grn_output_auto_flush_interval = 1024;
+
+void
+grn_output_init_from_env(void)
+{
+  {
+    char grn_output_auto_flush_interval_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_OUTPUT_AUTO_FLUSH_INTERVAL",
+               grn_output_auto_flush_interval_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_output_auto_flush_interval_env[0]) {
+      size_t env_len = strlen(grn_output_auto_flush_interval_env);
+      uint32_t interval = grn_atoui(grn_output_auto_flush_interval_env,
+                                    grn_output_auto_flush_interval_env + env_len,
+                                    NULL);
+      if (interval > 0) {
+        grn_output_auto_flush_interval = interval;
+      }
+    }
+  }
+}
+
 #define LEVELS (&ctx->impl->output.levels)
 #define DEPTH (GRN_BULK_VSIZE(LEVELS)>>2)
 #define CURR_LEVEL (DEPTH ? (GRN_UINT32_VALUE_AT(LEVELS, (DEPTH - 1))) : 0)
@@ -983,7 +1005,7 @@ grn_output_table_data_open_record(grn_ctx *ctx,
     return;
   }
 
-  if ((data->n_processed_records % GRN_OUTPUT_AUTO_FLUSH_INTERVAL) == 0) {
+  if ((data->n_processed_records % grn_output_auto_flush_interval) == 0) {
     const int flags = 0;
     grn_ctx_output_flush(ctx, flags);
   }

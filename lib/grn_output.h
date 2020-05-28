@@ -25,7 +25,8 @@
 extern "C" {
 #endif
 
-#define GRN_OUTPUT_AUTO_FLUSH_INTERVAL 1024
+extern uint32_t grn_output_auto_flush_interval;
+void grn_output_init_from_env(void);
 
 GRN_API void grn_output_result_set_open(grn_ctx *ctx,
                                         grn_obj *outbuf,
