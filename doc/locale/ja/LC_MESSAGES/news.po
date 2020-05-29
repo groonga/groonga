@@ -33,11 +33,628 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 10.0.2 - 2020-04-29"
-msgstr "10.0.2リリース - 2020-04-29"
+msgid "Release 10.0.3 - 2020-05-29"
+msgstr "10.0.3リリース - 2020-05-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"We came to be able to construct an inverted index from data that are "
+"tokenized in advance."
+msgstr ""
+"予めトークナイズされたデータから転置インデックスを構築できるようになりまし"
+"た。"
+
+msgid "The construct of an index is speeded up from this."
+msgstr "これにより、インデックスの構築が高速化します。"
+
+msgid "We need to prepare token column to use this improvement."
+msgstr "この改善を使うには、トークンカラムを準備する必要があります。"
+
+msgid "token column is an auto generated value column like an index column."
+msgstr "トークンカラムは、インデックスカラムのように自動で値が生成されます。"
+
+msgid ""
+"token column value is generated from source column value by tokenizing the "
+"source column value."
+msgstr ""
+"トークンカラムの値はソースカラムの値をトークナイズすることで生成されます。"
+
+msgid "We can create a token column by setting the source column as below."
+msgstr "トークンカラムは以下のようにソースカラムを設定することで作成できます。"
+
+msgid ""
+"[:doc:`reference/commands/select`] We came to be able to specify a "
+"``vector`` for the argument of a function."
+msgstr ""
+"[:doc:`/reference/commands/select`] 関数の引数に ``vector`` を指定できるよう"
+"になりました。"
+
+msgid ""
+"For example, ``flags`` options of ``query`` can describe by a ``vector`` as "
+"below."
+msgstr ""
+"例えば、 ``query`` の ``flags`` オプションを ``vector`` を使って以下のように"
+"記述できます。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added a new stage ``result_set`` for "
+"dynamic columns."
+msgstr ""
+"[:doc:`/reference/commands/select`] 動的カラムに新しいステージ "
+"``result_set`` を追加しました。"
+
+msgid ""
+"This stage generates a column into a result set table. Therefore, it is not "
+"generated if ``query`` or ``filter`` doesn't exist"
+msgstr ""
+"このステージは、結果セットのテーブルにカラムを作ります。したがって、 "
+"``query`` か ``filter`` が存在しない場合は作られません。"
+
+msgid ""
+"Because if ``query`` or ``filter`` doesn't exist, Groonga doesn't make a "
+"result set table."
+msgstr ""
+"``query`` や ``filter`` が存在しない場合は、結果セットのテーブルが作られない"
+"ためです。"
+
+msgid ""
+"We can't use ``_value`` for the stage. The ``result_set`` stage is for "
+"storing value by ``score_column``."
+msgstr ""
+"このステージでは ``_value`` は使用できません。 ``result_set`` ステージの値は "
+"``score_column`` に格納されます。"
+
+msgid ""
+"[vector_slice] Added support for weight vector that has weight of "
+"``Float32`` type. [GitHub#1106 patched by naoa]"
+msgstr ""
+"[vector_slice] 重み付きベクターの重みに ``Float32`` 型が使えるようになりまし"
+"た。  [GitHub#1106 naoaさんがパッチ提供]"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added support for ``filtered`` stage and "
+"``output`` stage of dynamic columns on drilldowns. [GitHub#1101 patched by "
+"naoa][GitHub#1100 patched by naoa]"
+msgstr ""
+"[:doc:`reference/commands/select`] drilldownsの動的カラムのステージに "
+"``filtered`` と ``output`` を追加しました。 [GitHub#1101 naoaさんがパッチ提"
+"供][GitHub#1100 naoaさんがパッチ提供]"
+
+msgid ""
+"We can use ``filtered`` and ``output`` stage of dynamic columns on "
+"drilldowns as with ``drilldowns[Label].stage filtered`` and "
+"``drilldowns[Label].stage output``."
+msgstr ""
+"``drilldowns[Label].stage filtered`` や ``drilldowns[Label].stage output`` の"
+"ように drilldowns の動的カラムのステージに ``filtered`` と ``output`` を使え"
+"ます。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added support for ``Float`` type value in "
+"aggregating on drilldown."
+msgstr ""
+"[:doc:`/reference/commands/select`] ドリルダウンでの集計に ``Float`` 型の値を"
+"サポートしました。"
+
+msgid ""
+"We can aggregate max value, min value, and sum value for ``Float`` type "
+"value using ``MAX``, ``MIN``, and ``SUM``."
+msgstr ""
+"``MAX``、``MIN``、``SUM`` を使って ``Float`` 型の値の最大値、最小値、合計値を"
+"集計できます。"
+
+msgid ""
+"[:doc:`reference/functions/query`] [:doc:`reference/functions/"
+"geo_in_rectangle`] [:doc:`reference/functions/geo_in_circle`] Added a new "
+"option ``score_column`` for ``query()``, ``geo_in_rectangle()``, and "
+"``geo_in_circle()``."
+msgstr ""
+"[:doc:`reference/functions/query`] [:doc:`reference/functions/"
+"geo_in_rectangle`] [:doc:`reference/functions/geo_in_circle`] ``query()`` と "
+"``geo_in_rectangle()`` と ``geo_in_circle()`` に新しいオプション "
+"``score_column`` を追加しました。"
+
+msgid "We can store a score value by condition using ``score_column``."
+msgstr "``score_column`` を使うことで条件毎にスコアの値を格納できます。"
+
+msgid ""
+"Normally, Groonga calculate a score by adding scores of all conditions. "
+"However, we sometimes want to get a score value by condition."
+msgstr ""
+"通常、Groongaは、全ての条件のスコアーを加算してスコアーを計算しますが、条件毎"
+"にスコアーの値を取得したいこともあります。"
+
+msgid ""
+"For example, if we want to only use how near central coordinate as score as "
+"below, we use ``score_column``."
+msgstr ""
+"例えば以下のように、中心座標にどれだけ近いかをスコアーとして使いたい場合に "
+"``score_column`` が使えます。"
+
+msgid ""
+"The sort by ``_score`` is meaningless in the above example. Because the "
+"value of ``_score`` is all ``1`` by ``category == \"Tower\"``. However, we "
+"can sort distance from central coordinate using ``score_column``."
+msgstr ""
+"上記の例では、 ``_score`` によるソートは意味をなしません。 ``category == "
+"\"Tower\"`` によって、 ``_score`` の値は全て ``1`` になるためです。しかし、 "
+"``socre_column`` を使うことで、中心座標からの距離でソートできます。"
+
+msgid ""
+"[Windows] Groonga came to be able to output backtrace when it occurs error "
+"even if it doesn't crash."
+msgstr ""
+"[Windows] クラッシュしていないくてもエラー時にはバックトレースが出力されるよ"
+"うになりました。"
+
+msgid "[Windows] Dropped support for old Windows."
+msgstr "[Windows] 古いWindowsのサポートをやめました。"
+
+msgid ""
+"Groonga for Windows come to require Windows 8 (Windows Server 2012) or later "
+"from 10.0.3."
+msgstr "10.0.3から、Windows 8 (Windows Server 2012) 以降を要求します。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Improved sort performance when sort keys "
+"were mixed referable sort keys and the other sort keys."
+msgstr ""
+"[:doc:`reference/commands/select`] 参照可能なソートキーとそうでないソートキー"
+"が混在しているときのソートパフォーマンスを改善しました。"
+
+msgid ""
+"We improved sort performance if mixed referable sort keys and the other and "
+"there are referable keys two or more."
+msgstr ""
+"参照可能なソートキーとそうでないソートキーが混在していて、参照可能なキーが2つ"
+"以上あるときのソートパフォーマンスを改善しました。"
+
+msgid "Referable sort keys are sort keys that except below them."
+msgstr "参照可能なソートキーとは以下のソートキー以外のことです。"
+
+msgid "Compressed columns"
+msgstr "圧縮されたカラム"
+
+msgid ""
+"``_value`` against the result of drilldown that is specified multiple values "
+"to the key of drilldown."
+msgstr ""
+"ドリルダウンのキーに複数の値が指定されているドリルダウンの値を格納する "
+"``_value``"
+
+msgid ""
+"``_key`` against patricia trie table that has not the key of ``ShortText`` "
+"type."
+msgstr "``ShortText`` 型のキーを持たないパトリシアトライテーブルの ``_key``"
+
+msgid "``_score``"
+msgstr ""
+
+msgid ""
+"The more sort keys that except string, a decrease in the usage of memory for "
+"sort."
+msgstr ""
+"文字列以外のソートキーが多いほど、ソートに使用するメモリ使用量が少なくなりま"
+"す。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Improved sort performance when sort keys "
+"are all referable keys case."
+msgstr ""
+"[:doc:`reference/commands/select`] 全てのソートキーが参照可能なキーの時のソー"
+"トのパフォーマンスを改善しました。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Improve scorer performance as a ``_socre "
+"= column1*X + column2*Y + ...`` case."
+msgstr ""
+"[:doc:`reference/commands/select`] ``_socre = column1*X + column2*Y + ...`` "
+"の場合のスコアラーのパフォーマンスを改善しました。"
+
+msgid ""
+"This optimization effective when there are many ``+`` or ``*`` in ``_score``."
+msgstr ""
+"この最適化は、 ``_score`` 内に多くの ``+`` または ``*`` がある場合に効きま"
+"す。"
+
+msgid "At the moment, it has only effective against ``+`` and ``*``."
+msgstr "現状、 ``+`` と ``*`` に対してのみ効果があります。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added support for phrase near search."
+msgstr ""
+"[:doc:`/reference/commands/select`] フレーズ近傍検索をサポートしました。"
+
+msgid "We can search phrase by phrase by a near search."
+msgstr "フレーズ単位で近傍検索できます。"
+
+msgid "Query syntax for near phrase search is ``*NP\"Phrase1 phrase2 ...\"``."
+msgstr ""
+"フレーズ近傍検索のクエリー構文は、 ``*NP\"Phrase1 phrase2 ...\"`` です。"
+
+msgid ""
+"Script syntax for near phrase search is ``column *NP \"phrase1 phrase2 ..."
+"\"``."
+msgstr ""
+"フレーズ近傍検索のスクリプト構文は、 ``column *NP \"phrase1 phrase2 ...\"`` "
+"です。"
+
+msgid ""
+"If the search target phrase includes space, we can search for it by "
+"surrounding it with ``\"`` as below."
+msgstr ""
+"検索対象のフレーズにスペースを含む場合、 以下のようにフレーズを ``\"`` で囲う"
+"ことで検索できます。"
+
+msgid ""
+"[:doc:`reference/columns/vector`] Added support for ``float32`` weight "
+"vector."
+msgstr ""
+"[:doc:`reference/columns/vector`] 重み付きベクターの重みに ``float32`` 型を追"
+"加しました。"
+
+msgid "We can store weight as ``float32`` instead of ``uint32``."
+msgstr "``uint32`` の代わりに ``float32`` として重みを格納できます。"
+
+msgid ""
+"We need to add ``WEIGHT_FLOAT32`` flag when execute ``column_create`` to use "
+"this feature."
+msgstr ""
+"この機能を使うには、 ``column_create`` 実行時に ``WEIGHT_FLOAT32`` フラグを追"
+"加する必要があります。"
+
+msgid ""
+"However, ``WEIGHT_FLOAT32`` flag isn't available with ``COLUMN_INDEX`` flag "
+"for now."
+msgstr ""
+"今の所、 ``WEIGHT_FLOAT32`` フラグは、 ``COLUMN_INDEX`` フラグと併用できませ"
+"ん。"
+
+msgid "Added following APIs"
+msgstr "以下のAPIを公開しました。"
+
+msgid "Added ``grn_obj_is_xxx`` functions. For more information as below."
+msgstr "``grn_obj_is_xxx`` 関数を追加しました。詳細は以下の通りです。"
+
+msgid "``grn_obj_is_weight_vector(grn_ctx *ctx, grn_obj *obj)``"
+msgstr ""
+
+msgid "It returns as a ``bool`` whether the object is a weight vector."
+msgstr "重み付きベクターかどうかを ``bool`` として返します。"
+
+msgid "``grn_obj_is_uvector(grn_ctx *ctx, grn_obj *obj)``"
+msgstr ""
+
+msgid "It returns as a ``bool`` whether the object is a ``uvector``."
+msgstr "``uvector`` かどうかを ``bool`` として返します。"
+
+msgid ""
+"``uvector`` is a ``vector`` that size of elements for ``vector`` are fixed."
+msgstr "``uvector`` とは、要素のサイズが固定の ``vector`` です。"
+
+msgid "``grn_obj_is_weight_uvector(grn_ctx *ctx, grn_obj *obj)``"
+msgstr ""
+
+msgid "It returns as a ``bool`` whether the object is a weight uvector."
+msgstr "重み付きuvectorかどうかを ``bool`` として返します。"
+
+msgid "Added ``grn_type_id_size(grn_ctx *ctx, grn_id id)``."
+msgstr "``grn_type_id_size(grn_ctx *ctx, grn_id id)`` を追加しました。"
+
+msgid "It returns the size of Groonga data type as a ``size_t``."
+msgstr "Groongaのデータ型のサイズを ``size_t`` として返します。"
+
+msgid ""
+"Added ``grn_selector_data_get_xxx`` functions. For more information as below."
+msgstr "``grn_selector_data_get_xxx`` を追加しました。詳細は以下の通りです。"
+
+msgid "These functions return selector related data."
+msgstr "これらの関数はセレクター関連のデータを返します。"
+
+msgid ""
+"These functions are supposed to call in selector. If they are called except "
+"in selector, they return ``NULL``."
+msgstr ""
+"これらの関数はセレクターの中で呼び出すことを想定しています。セレクター以外の"
+"場所で呼び出された場合は、 ``NULL`` を返します。"
+
+msgid "``grn_selector_data_get(grn_ctx *ctx)``"
+msgstr ""
+
+msgid ""
+"It returns all information that relating calling selector as "
+"``grn_selector_data *`` structure."
+msgstr ""
+"セレクター呼び出しに関する全ての情報を ``grn_selector_data *`` 構造体として返"
+"します。"
+
+msgid ""
+"``grn_selector_data_get_selector(grn_ctx *ctx, grn_selector_data *data)``"
+msgstr ""
+
+msgid "It returns selector itself as ``grn_obj *``."
+msgstr "セレクター自身を ``grn_obj *`` として返します。"
+
+msgid "``grn_selector_data_get_expr(grn_ctx *ctx, grn_selector_data *data)``"
+msgstr ""
+
+msgid ""
+"It returns selector is used ``--filter`` condition and ``--query`` condition "
+"as ``grn_obj *``."
+msgstr ""
+"セレクターに使用されている、 ``--filter`` 条件や ``--query`` 条件を "
+"``grn_obj *`` として返します。"
+
+msgid "``grn_selector_data_get_table(grn_ctx *ctx, grn_selector_data *data)``"
+msgstr ""
+
+msgid "It returns target table as ``grn_obj *``"
+msgstr "検索対象のテーブルを ``grn_obj *`` として返します。"
+
+msgid "``grn_selector_data_get_index(grn_ctx *ctx, grn_selector_data *data)``"
+msgstr ""
+
+msgid "It returns index is used by selector as ``grn_obj *``."
+msgstr "セレクターに使われているインデックスを ``grn_obj *`` として返します。"
+
+msgid ""
+"``grn_selector_data_get_args(grn_ctx *ctx, grn_selector_data *data, size_t "
+"*n_args)``"
+msgstr ""
+
+msgid ""
+"It returns arguments of function that called selector as ``grn_obj **``."
+msgstr "セレクターが呼び出した関数の引数を ``grn_obj *`` として返します。"
+
+msgid ""
+"``grn_selector_data_get_result_set(grn_ctx *ctx, grn_selector_data *data)``"
+msgstr ""
+
+msgid "It returns result table as ``grn_obj *``."
+msgstr "結果テーブルを ``grn_obj *`` として返します。"
+
+msgid "``grn_selector_data_get_op(grn_ctx *ctx, grn_selector_data *data)``"
+msgstr ""
+
+msgid ""
+"It returns how to perform the set operation on existing result set as "
+"``grn_operator``."
+msgstr ""
+"既存の結果セットに対してどう集合演算したかを ``grn_operator`` として返しま"
+"す。"
+
+msgid "Added ``grn_plugin_proc_xxx`` functions. For more information as below."
+msgstr "``grn_plugin_proc_xxx`` 関数を追加しました。詳細は以下の通りです。"
+
+msgid ""
+"``grn_plugin_proc_get_value_operator(grn_ctx *ctx, grn_obj *value, "
+"grn_operator default_operator, const char *context)``"
+msgstr ""
+
+msgid "It returns the operator of a query as a ``grn_operator``."
+msgstr "クエリーオペレーターを ``grn_operator`` として返します。"
+
+msgid "For example, ``&&`` is returned as a ``GRN_OP_AND``."
+msgstr "例えば、 ``&&`` は ``GRN_OP_ANDP`` として返されます。"
+
+msgid ""
+"``grn_plugin_proc_get_value_bool(grn_ctx *ctx, grn_obj *value, bool "
+"default_value, const char *tag)``"
+msgstr ""
+
+msgid ""
+"It returns the value that is specified ``true`` or ``false`` like "
+"``with_transposition`` argument of the below function as a ``bool`` "
+"(``bool`` is the data type of C language)."
+msgstr ""
+"以下の関数の引数 ``with_transposition`` のように ``true`` または ``false`` が"
+"指定される値を ``bool`` として返します。( ``bool`` はC言語のデータ型です。)"
+
+msgid ""
+"Added ``grn_proc_options_xxx`` functions. For more information as below."
+msgstr "``grn_proc_options_xxx`` 関数を追加しました。詳細は以下の通りです。"
+
+msgid "``query()`` only uses them for now."
+msgstr "これらは、 ``query()`` でのみ使えます。"
+
+msgid ""
+"``grn_proc_options_parsev(grn_ctx *ctx, grn_obj *options, const char *tag, "
+"const char *name, va_list args)``"
+msgstr ""
+"``grn_proc_options_parsev(grn_ctx *ctx, grn_obj *options, const char *tag, "
+"const char *name, va_list args)`` を追加しました。"
+
+msgid "This function execute parse options."
+msgstr "オプションのパースを実行します。"
+
+msgid ""
+"We had to implement parsing to options ourselves until now, however, we can "
+"parse them by just call this function from this version."
+msgstr ""
+"今までは、オプションのパースを自分で実装しなければなりませんでしたが、この関"
+"数を呼び出すだけでオプションをパースできます。"
+
+msgid ""
+"``grn_proc_options_parse(grn_ctx *ctx, grn_obj *options, const char *tag, "
+"const char *name, ...)``"
+msgstr ""
+
+msgid ""
+"It calls ``grn_proc_options_parsev()``. Therefore, features of this function "
+"same ``grn_proc_options_parsev()``."
+msgstr ""
+"``grn_proc_option_parsev()`` を呼び出します。したがって、この関数の機能は、 "
+"``grn_proc_options_parsev()`` と同じです。"
+
+msgid ""
+"It only differs in the interface compare with ``grn_proc_options_parsev()``."
+msgstr "``grn_proc_options_parsev()`` とは、インターフェースだけが異なります。"
+
+msgid ""
+"Added ``grn_text_printfv(grn_ctx *ctx, grn_obj *bulk, const char *format, "
+"va_list args)``"
+msgstr ""
+"``grn_text_printfv(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list "
+"args)`` を追加しました。"
+
+msgid ""
+"``grn_text_vprintf`` is deprecated from 10.0.3. We use ``grn_text_printfv`` "
+"instead."
+msgstr ""
+"``grn_text_vprintf`` は10.0.3から非推奨になりました。 代わりに "
+"``grn_text_printfv`` を使ってください。"
+
+msgid "Added ``grn_type_id_is_float_family(grn_ctx *ctx, grn_id id)``."
+msgstr ""
+"``grn_type_id_is_float_family(grn_ctx *ctx, grn_id id)`` を追加しました。"
+
+msgid ""
+"It returns whether ``grn_type_id`` is ``GRN_DB_FLOAT32`` or ``GRN_DB_FLOAT`` "
+"or not as a ``bool``."
+msgstr ""
+"``grn_type_id`` が ``GRN_DB_FLOAT32`` または ``GRN_DB_FLOAT`` かどうかを "
+"``bool`` として返します。"
+
+msgid ""
+"Added ``grn_dat_cursor_get_max_n_records(grn_ctx *ctx, grn_dat_cursor *c)``."
+msgstr ""
+"``grn_dat_cursor_get_max_n_records(grn_ctx *ctx, grn_dat_cursor *c)`` を追加"
+"しました。"
+
+msgid ""
+"It returns the number of max records the cursor can have as a ``size_t``. "
+"(This API is for the DAT table)"
+msgstr ""
+"カーソルが保持できるレコード数の最大値を ``size_t`` として返します。(このAPI"
+"はDATテーブル用です。)"
+
+msgid ""
+"Added ``grn_table_cursor_get_max_n_records(grn_ctx *ctx, grn_table_cursor "
+"*cursor)``."
+msgstr ""
+"``grn_table_cursor_get_max_n_records(grn_ctx *ctx, grn_table_cursor "
+"*cursor)`` を追加しました。"
+
+msgid ""
+"It returns the number of max records the cursor can have as a ``size_t``."
+msgstr "カーソルが保持できるレコード数の最大値を返します。"
+
+msgid ""
+"It can use against all table type (``TABLE_NO_KEY``, ``TABLE_HASH_KEY``, "
+"``TABLE_DAT_KEY``, and ``TABLE_PAT_KEY``)."
+msgstr ""
+"全ての種類(``TABLE_NO_KEY``, ``TABLE_HASH_KEY``, ``TABLE_DAT_KEY``, "
+"``TABLE_PAT_KEY``)のテーブルで使えます。"
+
+msgid ""
+"Added ``grn_result_set_add_xxx`` functions. For more information as below."
+msgstr "``grn_result_set_add_xxx`` を追加しました。詳細は以下の通りです。"
+
+msgid ""
+"``grn_result_set_add_record(grn_ctx *ctx, grn_hash *result_set, grn_posting "
+"*posting, grn_operator op)``"
+msgstr ""
+
+msgid "It adds a record into the table of result sets."
+msgstr "結果セットのテーブルにレコードを追加します。"
+
+msgid ""
+"``grn_ii_posting_add_float`` is deprecated from 10.0.3. We use "
+"``grn_rset_add_records()`` instead."
+msgstr ""
+"``grn_ii_posting_add_float`` は10.0.3から非推奨になりました。代わりに "
+"``grn_rset_add_records()`` を使ってください。"
+
+msgid ""
+"``grn_result_set_add_table(grn_ctx *ctx, grn_hash *result_set, grn_obj "
+"*table, double score, grn_operator op)``"
+msgstr ""
+
+msgid "It adds a table into the result sets."
+msgstr "結果セットにテーブルを追加します。"
+
+msgid ""
+"``grn_result_set_add_table_cursor(grn_ctx *ctx, grn_hash *result_set, "
+"grn_table_cursor *cursor, double score, grn_operator op)``"
+msgstr ""
+
+msgid "It adds records that a table cursor has into the result sets."
+msgstr "結果セットにカーソル内のレコードを追加します。"
+
+msgid "Added ``grn_vector_copy(grn_ctx *ctx, grn_obj *src, grn_obj *dest)``."
+msgstr ""
+"``grn_vector_copy(grn_ctx *ctx, grn_obj *src, grn_obj *dest)`` を追加しまし"
+"た。"
+
+msgid ""
+"It copies a ``vector`` object. It returns whether success copy a ``vector`` "
+"object."
+msgstr ""
+"``vector`` オブジェトをコピーします。 ``vector`` オブジェクトのコピーに成功し"
+"たかどうかを返します。"
+
+msgid "Added ``grn_obj_have_source(grn_ctx *ctx, grn_obj *obj)``."
+msgstr "``grn_obj_have_source(grn_ctx *ctx, grn_obj *obj)`` を追加しました。"
+
+msgid "It returns whether the column has a source column as a ``bool``."
+msgstr "ソースカラムを持つカラムかどうかを ``bool`` として返します。"
+
+msgid "Added ``grn_obj_is_token_column(grn_ctx *ctx, grn_obj *obj)``."
+msgstr ""
+"``grn_obj_is_token_column(grn_ctx *ctx, grn_obj *obj)`` を追加しました。"
+
+msgid "It returns whether the column is a token column as a ``bool``."
+msgstr "トークンカラムかどうかを ``bool`` として返します。"
+
+msgid ""
+"Added ``grn_hash_add_table_cursor(grn_ctx *ctx, grn_hash *hash, "
+"grn_table_cursor *cursor, double score)``."
+msgstr ""
+"``grn_hash_add_table_cursor(grn_ctx *ctx, grn_hash *hash, grn_table_cursor "
+"*cursor, double score)`` を追加しました。"
+
+msgid ""
+"It's for bulk result set insert. It's faster than inserting records by "
+"``grn_ii_posting_add()``."
+msgstr ""
+"結果セットを一括して挿入するための関数です。 ``grn_ii_posting_add()`` を使っ"
+"てレコードを挿入するより高速です。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"Fixed a crash bug if the modules (tokenizers, normalizers, and token "
+"filters) are used at the same time from multiple threads."
+msgstr ""
+"複数のスレッドから、同時にモジュール(トークナイザー、ノーマライザー、トークン"
+"フィルター)が使われた場合にクラッシュする問題を修正しました。"
+
+msgid "Fixed precision of ``Float32`` value when it outputted."
+msgstr "``Float32`` の値を表示する際の精度を修正しました。"
+
+msgid "The precision of it changes to  8-digit to 7-digit from 10.0.3."
+msgstr "10.0.3から ``Float32`` の値の精度は、 8桁から7桁になります。"
+
+msgid ""
+"Fixed a bug that Groonga used the wrong cache when the query that just the "
+"parameters of dynamic column different was executed. [GitHub#1102 patched by "
+"naoa]"
+msgstr ""
+"動的カラムのパラメーターだけが違うクエリーが実行された時にGroongaが誤った"
+"キャッシュを使用していた問題を修正しました。 [GitHub#1102 naoaさんがパッチ提"
+"供]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "naoa"
+msgstr "naoaさん"
+
+msgid "Release 10.0.2 - 2020-04-29"
+msgstr "10.0.2リリース - 2020-04-29"
 
 msgid ""
 "Added support for ``uvector`` for ``time_classify_*`` functions. "
@@ -108,9 +725,6 @@ msgstr ""
 msgid "We can select more suitable type by adding a ``Float32`` type."
 msgstr ""
 "``Float32`` 型を追加することで、より適切な型を選択できるようになりました。"
-
-msgid "Added following APIs"
-msgstr "以下のAPIを公開しました。"
 
 msgid "``grn_obj_unref(grn_ctx *ctx, grn_obj *obj)``"
 msgstr ""
@@ -233,9 +847,6 @@ msgid ""
 msgstr ""
 "近い将来、重みは内部的に ``uint32_t`` から ``float`` に変更するためです。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid "Fixed a bug that Groonga for 32bit on GNU/Linux may crash."
 msgstr ""
 "32bit GUN/Linux等でGroongaがクラッシュすることがある問題を修正しました。"
@@ -294,14 +905,8 @@ msgstr ""
 "Apache Arrow形式でデータをロードした際に ``_key`` アクセサーを解放しすぎる問"
 "題を修正しました。"
 
-msgid "Thanks"
-msgstr "感謝"
-
 msgid "sutamin"
 msgstr "sutaminさん"
-
-msgid "naoa"
-msgstr "naoaさん"
 
 msgid "Release 10.0.1 - 2020-03-30"
 msgstr "10.0.1リリース - 2020-03-30"
@@ -14880,50 +15485,3 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
-
-#~ msgid ""
-#~ "[mruby] Updated mruby from ``d2a2af2481908d208965ecc77a8f11065c50be49`` "
-#~ "to ``59464f35285e65598bca94ad9e77be6848a8e8be``."
-#~ msgstr ""
-#~ "[mruby] mrubyを ``d2a2af2481908d208965ecc77a8f11065c50be49`` から "
-#~ "``59464f35285e65598bca94ad9e77be6848a8e8be`` へアップデートしました。"
-
-#~ msgid ""
-#~ "It returns the number of rest posting information for term id as a "
-#~ "``uint32_t``."
-#~ msgstr "``uitn32_t`` として残りのポスティングリストの数を返します。"
-
-#~ msgid "It returns weight of token as a ``uint32_t``."
-#~ msgstr "``uint32_t`` としてトークンの重みを返します。"
-
-#~ msgid "It returns Term Frequency score as a ``uint32_t``."
-#~ msgstr "``uint32_t`` として、単語の出現頻度のスコアを返します。"
-
-#~ msgid "It returns position of token as a ``uint32_t``."
-#~ msgstr "``uint32_t`` としてポスティングリストのトークンを返します。"
-
-#~ msgid "It returns section id of posting list as a ``uint32_t``."
-#~ msgstr "``uint32_t`` としてポスティングリストが持つセクションIDを返します。"
-
-#~ msgid "It returns record id of posting list as a ``uint32_t``."
-#~ msgstr "``uint32_t`` としてポスティングリストが持つレコードIDを返します。"
-
-#~ msgid "It returns Groonga's micor version number as a ``uint32_t``."
-#~ msgstr "``unit32_t`` としてGroongaのマイクロバージョン番号を返します。"
-
-#~ msgid "It returns Groonga's minor version number as a ``uint32_t``."
-#~ msgstr "``uint32_t`` として、Groongaのマイナーバージョン番号を返します。"
-
-#~ msgid "It doesn't do anything except when the reference count mode."
-#~ msgstr "参照カウントモード以外の時は、何もしません。"
-
-#~ msgid ""
-#~ "Therefore if we only use single precision floating point number, it is "
-#~ "not efficient."
-#~ msgstr "したがって、単精度浮動小数点数のみを使う場合は、効率が悪いです。"
-
-#~ msgid "``grn_posting_get_*``"
-#~ msgstr "``grn_posting_get_*``"
-
-#~ msgid "``grn_get_version_*``"
-#~ msgstr " ``grn_get_version_*`` "
