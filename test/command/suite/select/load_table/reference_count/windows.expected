@@ -63,47 +63,47 @@ select   Logs   --load_table LoadedLogs   --load_columns "_key, original_id, tim
     ]
   ]
 ]
-#|i| [io][open] open existing file: <db.0000100>
+#|i| [io][open] open existing file: <db/db.0000100>
 #|-| [obj][open] <256>(<Logs>):<48>(<table:hash_key>)
-#|i| [io][open] open existing file: <db.0000102>
+#|i| [io][open] open existing file: <db/db.0000102>
 #|-| [obj][open] <258>(<LoadedLogs>):<48>(<table:hash_key>)
-#|i| [io][open] open existing file: <db.0000103>
+#|i| [io][open] open existing file: <db/db.0000103>
 #|-| [obj][open] <259>(<LoadedLogs.original_id>):<64>(<column:fix_size>)
-#|i| [io][open] open existing file: <db.0000104>
+#|i| [io][open] open existing file: <db/db.0000104>
 #|-| [obj][open] <260>(<LoadedLogs.timestamp_text>):<65>(<column:var_size>)
-#|i| [io][open] open existing file: <db.0000107>
+#|i| [io][open] open existing file: <db/db.0000107>
 #|-| [obj][open] <263>(<Keys>):<49>(<table:pat_key>)
-#|i| [io][open] open existing file: <db.0000108>
-#|i| [io][open] open existing file: <db.0000108.c>
+#|i| [io][open] open existing file: <db/db.0000108>
+#|i| [io][open] open existing file: <db/db.0000108.c>
 #|-| [obj][open] <264>(<Keys.loaded_logs_key>):<72>(<column:index>)
-#|i| [io][open] open existing file: <db.0000105>
+#|i| [io][open] open existing file: <db/db.0000105>
 #|-| [obj][open] <261>(<IDs>):<49>(<table:pat_key>)
-#|i| [io][open] open existing file: <db.0000106>
-#|i| [io][open] open existing file: <db.0000106.c>
+#|i| [io][open] open existing file: <db/db.0000106>
+#|i| [io][open] open existing file: <db/db.0000106.c>
 #|-| [obj][open] <262>(<IDs.loaded_logs_original_id>):<72>(<column:index>)
-#|i| [io][open] open existing file: <db.0000101>
+#|i| [io][open] open existing file: <db/db.0000101>
 #|-| [obj][open] <257>(<Logs.timestamp>):<64>(<column:fix_size>)
 #|-| [obj][close] <257>(<Logs.timestamp>):<64>(<column:fix_size>)
-#|d| [io][close] <db.0000101>
+#|d| [io][close] <db/db.0000101>
 #|-| [obj][close] <264>(<Keys.loaded_logs_key>):<72>(<column:index>)
-#|d| [io][close] <db.0000108>
-#|d| [io][close] <db.0000108.c>
+#|d| [io][close] <db/db.0000108>
+#|d| [io][close] <db/db.0000108.c>
 #|-| [obj][close] <263>(<Keys>):<49>(<table:pat_key>)
-#|d| [io][close] <db.0000107>
+#|d| [io][close] <db/db.0000107>
 #|-| [obj][close] <262>(<IDs.loaded_logs_original_id>):<72>(<column:index>)
-#|d| [io][close] <db.0000106>
-#|d| [io][close] <db.0000106.c>
+#|d| [io][close] <db/db.0000106>
+#|d| [io][close] <db/db.0000106.c>
 #|-| [obj][close] <261>(<IDs>):<49>(<table:pat_key>)
-#|d| [io][close] <db.0000105>
+#|d| [io][close] <db/db.0000105>
 #|-| [obj][close] <259>(<LoadedLogs.original_id>):<64>(<column:fix_size>)
-#|d| [io][close] <db.0000103>
+#|d| [io][close] <db/db.0000103>
 #|-| [obj][close] <260>(<LoadedLogs.timestamp_text>):<65>(<column:var_size>)
-#|d| [io][close] <db.0000104>
+#|d| [io][close] <db/db.0000104>
 #|-| [obj][close] <258>(<LoadedLogs>):<48>(<table:hash_key>)
-#|d| [io][close] <db.0000102>
-#|i| [io][open] open existing file: <db.0000101>
+#|d| [io][close] <db/db.0000102>
+#|i| [io][open] open existing file: <db/db.0000101>
 #|-| [obj][open] <257>(<Logs.timestamp>):<64>(<column:fix_size>)
 #|-| [obj][close] <257>(<Logs.timestamp>):<64>(<column:fix_size>)
-#|d| [io][close] <db.0000101>
+#|d| [io][close] <db/db.0000101>
 log_level --level notice
 [[0,0.0,0.0],true]
