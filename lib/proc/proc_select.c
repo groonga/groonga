@@ -2362,6 +2362,8 @@ grn_select_load(grn_ctx *ctx,
 {
   grn_obj *table = NULL;
   grn_obj columns;
+  grn_obj ranges;
+  grn_obj indexes;
   grn_obj *output_columns = NULL;
 
   if (data->load.table.length == 0) {
@@ -2388,6 +2390,9 @@ grn_select_load(grn_ctx *ctx,
   }
 
   GRN_PTR_INIT(&columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_PTR_INIT(&ranges, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_PTR_INIT(&indexes, GRN_OBJ_VECTOR, GRN_ID_NIL);
+
   grn_obj_columns(ctx,
                   table,
                   data->load.columns.value,
@@ -2402,6 +2407,22 @@ grn_select_load(grn_ctx *ctx,
                      data->load.columns.value,
                      ctx->errbuf);
     goto exit;
+  }
+
+  {
+    size_t i;
+    size_t n_columns = GRN_PTR_VECTOR_SIZE(&columns);
+    for (i = 0; i < n_columns; i++) {
+      grn_obj *column = GRN_PTR_VALUE_AT(&columns, i);
+      grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, column));
+      if (grn_obj_is_table(ctx, range)) {
+        GRN_PTR_PUT(ctx, &ranges, range);
+        grn_column_get_all_index_columns(ctx, range, &indexes);
+      } else {
+        grn_obj_unref(ctx, range);
+      }
+      grn_column_get_all_index_columns(ctx, column, &indexes);
+    }
   }
 
   output_columns = grn_output_columns_parse(ctx,
@@ -2441,6 +2462,24 @@ grn_select_load(grn_ctx *ctx,
 exit :
   if (output_columns) {
     grn_obj_close(ctx, output_columns);
+  }
+  {
+    size_t i;
+    size_t n_ranges = GRN_PTR_VECTOR_SIZE(&ranges);
+    for (i = 0; i < n_ranges; i++) {
+      grn_obj *range = GRN_PTR_VALUE_AT(&ranges, i);
+      grn_obj_unref(ctx, range);
+    }
+    GRN_OBJ_FIN(ctx, &ranges);
+  }
+  {
+    size_t i;
+    size_t n_indexes = GRN_PTR_VECTOR_SIZE(&indexes);
+    for (i = 0; i < n_indexes; i++) {
+      grn_obj *index = GRN_PTR_VALUE_AT(&indexes, i);
+      grn_obj_unref(ctx, index);
+    }
+    GRN_OBJ_FIN(ctx, &indexes);
   }
   {
     size_t i;
