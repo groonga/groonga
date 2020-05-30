@@ -1,0 +1,109 @@
+table_create Logs TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Logs timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create LoadedLogs TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create LoadedLogs original_id COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+column_create LoadedLogs timestamp_text COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create IDs TABLE_PAT_KEY UInt32
+[[0,0.0,0.0],true]
+column_create IDs loaded_logs_original_id COLUMN_INDEX LoadedLogs original_id
+[[0,0.0,0.0],true]
+table_create Keys TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Keys loaded_logs_key COLUMN_INDEX LoadedLogs _key
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{
+  "_key": "2015-02-03:1",
+  "timestamp": "2015-02-03 10:49:00"
+},
+{
+  "_key": "2015-02-03:2",
+  "timestamp": "2015-02-03 12:49:00"
+},
+{
+  "_key": "2015-02-04:1",
+  "timestamp": "2015-02-04 00:00:00"
+}
+]
+[[0,0.0,0.0],3]
+log_level --level dump
+[[0,0.0,0.0],true]
+select   Logs   --load_table LoadedLogs   --load_columns "_key, original_id, timestamp_text"   --load_values "cast_loose(ShortText, timestamp, '') + ':' + _id, _id, timestamp"   --limit 0
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ]
+    ]
+  ]
+]
+#|i| [io][open] open existing file: <db.0000100>
+#|-| [obj][open] <256>(<Logs>):<48>(<table:hash_key>)
+#|i| [io][open] open existing file: <db.0000102>
+#|-| [obj][open] <258>(<LoadedLogs>):<48>(<table:hash_key>)
+#|i| [io][open] open existing file: <db.0000103>
+#|-| [obj][open] <259>(<LoadedLogs.original_id>):<64>(<column:fix_size>)
+#|i| [io][open] open existing file: <db.0000104>
+#|-| [obj][open] <260>(<LoadedLogs.timestamp_text>):<65>(<column:var_size>)
+#|i| [io][open] open existing file: <db.0000107>
+#|-| [obj][open] <263>(<Keys>):<49>(<table:pat_key>)
+#|i| [io][open] open existing file: <db.0000108>
+#|i| [io][open] open existing file: <db.0000108.c>
+#|-| [obj][open] <264>(<Keys.loaded_logs_key>):<72>(<column:index>)
+#|i| [io][open] open existing file: <db.0000105>
+#|-| [obj][open] <261>(<IDs>):<49>(<table:pat_key>)
+#|i| [io][open] open existing file: <db.0000106>
+#|i| [io][open] open existing file: <db.0000106.c>
+#|-| [obj][open] <262>(<IDs.loaded_logs_original_id>):<72>(<column:index>)
+#|i| [io][open] open existing file: <db.0000101>
+#|-| [obj][open] <257>(<Logs.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][close] <257>(<Logs.timestamp>):<64>(<column:fix_size>)
+#|d| [io][close] <db.0000101>
+#|-| [obj][close] <264>(<Keys.loaded_logs_key>):<72>(<column:index>)
+#|d| [io][close] <db.0000108>
+#|d| [io][close] <db.0000108.c>
+#|-| [obj][close] <263>(<Keys>):<49>(<table:pat_key>)
+#|d| [io][close] <db.0000107>
+#|-| [obj][close] <262>(<IDs.loaded_logs_original_id>):<72>(<column:index>)
+#|d| [io][close] <db.0000106>
+#|d| [io][close] <db.0000106.c>
+#|-| [obj][close] <261>(<IDs>):<49>(<table:pat_key>)
+#|d| [io][close] <db.0000105>
+#|-| [obj][close] <259>(<LoadedLogs.original_id>):<64>(<column:fix_size>)
+#|d| [io][close] <db.0000103>
+#|-| [obj][close] <260>(<LoadedLogs.timestamp_text>):<65>(<column:var_size>)
+#|d| [io][close] <db.0000104>
+#|-| [obj][close] <258>(<LoadedLogs>):<48>(<table:hash_key>)
+#|d| [io][close] <db.0000102>
+#|i| [io][open] open existing file: <db.0000101>
+#|-| [obj][open] <257>(<Logs.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][close] <257>(<Logs.timestamp>):<64>(<column:fix_size>)
+#|d| [io][close] <db.0000101>
+log_level --level notice
+[[0,0.0,0.0],true]

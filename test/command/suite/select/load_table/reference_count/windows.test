@@ -1,4 +1,5 @@
 #$GRN_ENABLE_REFERENCE_COUNT=yes
+#@require-platform windows
 
 table_create Logs TABLE_HASH_KEY ShortText
 column_create Logs timestamp COLUMN_SCALAR Time
