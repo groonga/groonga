@@ -63,6 +63,7 @@
 #endif /* WIN32 */
 
 typedef struct _grn_io_fileinfo {
+  char *path;
 #ifdef WIN32
   HANDLE fh;
   HANDLE fmo;
@@ -1731,6 +1732,10 @@ grn_fileinfo_open_v0(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
   }
   CloseHandle(fi->fh);
   SERR("OpenFileMapping");
+  if (ctx->rc != GRN_SUCCESS && fi->path) {
+    free(fi->path);
+    fi->path = NULL;
+  }
   return ctx->rc;
 }
 
@@ -1796,6 +1801,8 @@ grn_inline static bool
 grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
   bool success = true;
+
+  fi->path = grn_strdup_raw(path);
 
   /* may be wrong if flags is just only O_RDWR */
   if ((flags & O_CREAT)) {
@@ -1912,6 +1919,10 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
           "[io][open] open existing file: <%s>", path);
 
 exit :
+  if (!success && fi->path) {
+    free(fi->path);
+    fi->path = NULL;
+  }
   return success;
 }
 
@@ -2029,20 +2040,15 @@ grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
   }
   if (fi->fh != INVALID_HANDLE_VALUE) {
     if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
-      TCHAR path[MAX_PATH];
-      DWORD path_length_including_null =
-        GetFinalPathNameByHandleA(fi->fh,
-                                  path,
-                                  MAX_PATH,
-                                  0);
-      if (path_length_including_null != 0 &&
-          path_length_including_null <= MAX_PATH) {
-        GRN_LOG(ctx, GRN_LOG_DEBUG, "[io][close] <%s>", path);
-      }
+      GRN_LOG(ctx, GRN_LOG_DEBUG, "[io][close] <%s>", fi->path);
     }
     CloseHandle(fi->fh);
     CRITICAL_SECTION_FIN(fi->cs);
     fi->fh = INVALID_HANDLE_VALUE;
+  }
+  if (fi->path) {
+    free(fi->path);
+    fi->path = NULL;
   }
   return GRN_SUCCESS;
 }
@@ -2051,6 +2057,7 @@ grn_inline static void
 grn_fileinfo_init(fileinfo *fis, int nfis)
 {
   for (; nfis--; fis++) {
+    fis->path = NULL;
     fis->fh = INVALID_HANDLE_VALUE;
     fis->fmo = NULL;
   }
@@ -2154,15 +2161,21 @@ grn_inline static grn_rc
 grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
   struct stat st;
+  fi->path = grn_strdup_raw(path);
   grn_open(fi->fd, path, flags);
   if (fi->fd == -1) {
     ERRNO_ERR("failed to open file info path: <%s>",
               path);
+    free(fi->path);
+    fi->path = NULL;
     return ctx->rc;
   }
   if (fstat(fi->fd, &st) == -1) {
     ERRNO_ERR("failed to stat file info path: <%s>",
               path);
+    grn_close(fi->fd);
+    free(fi->path);
+    fi->path = NULL;
     return ctx->rc;
   }
   fi->dev = st.st_dev;
@@ -2174,7 +2187,10 @@ grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 grn_inline static void
 grn_fileinfo_init(fileinfo *fis, int nfis)
 {
-  for (; nfis--; fis++) { fis->fd = -1; }
+  for (; nfis--; fis++) {
+    fis->path = NULL;
+    fis->fd = -1;
+  }
 }
 
 grn_inline static int
@@ -2187,27 +2203,18 @@ grn_inline static grn_rc
 grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
 {
   if (fi->fd != -1) {
-    char path[PATH_MAX];
-    path[0] = '\0';
-    if (grn_logger_pass(ctx, GRN_LOG_DUMP)) {
-      /* TODO: This works only on Linux. We need to use more portable way. */
-      char proc_path[PATH_MAX];
-      grn_snprintf(proc_path, PATH_MAX, PATH_MAX, "/proc/self/fd/%d", fi->fd);
-      ssize_t path_size = readlink(proc_path, path, PATH_MAX);
-      if (path_size == -1) {
-        errno = 0;
-      } else {
-        path[path_size] = '\0';
-      }
-    }
     if (grn_close(fi->fd) == -1) {
       SERR("close");
       return ctx->rc;
     }
     fi->fd = -1;
-    if (path[0]) {
-      GRN_LOG(ctx, GRN_LOG_DUMP, "[io][close] <%s>", path);
+    if (fi->path) {
+      GRN_LOG(ctx, GRN_LOG_DUMP, "[io][close] <%s>", fi->path);
     }
+  }
+  if (fi->path) {
+    free(fi->path);
+    fi->path = NULL;
   }
   return GRN_SUCCESS;
 }
