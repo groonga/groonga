@@ -311,6 +311,9 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
         case GRN_DB_FLOAT :
           PUT_SLICE_VALUES(FLOAT);
           break;
+        case GRN_DB_FLOAT32 :
+          PUT_SLICE_VALUES(FLOAT32);
+          break;
         case GRN_DB_TIME :
           PUT_SLICE_VALUES(TIME);
           break;
