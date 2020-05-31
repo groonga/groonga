@@ -91,6 +91,7 @@ namespace grn {
           grn_obj tokens;
           GRN_RECORD_INIT(&tokens, GRN_OBJ_VECTOR, DB_OBJ(lexicon_)->id);
           for (auto id : ids) {
+            GRN_BULK_REWIND(&tokens);
             uint32_t value_size;
             auto value = grn_obj_get_value_(&ctx, source_, id, &value_size);
             if (value_size > 0) {
