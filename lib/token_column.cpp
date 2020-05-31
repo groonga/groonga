@@ -32,7 +32,7 @@
 namespace grn {
   namespace token_column {
     static uint32_t parallel_chunk_size = 1024;
-    static uint32_t parallel_table_size_threshold = parallel_chunk_size * 10;
+    static uint32_t parallel_table_size_threshold = parallel_chunk_size * 100;
 
     class Builder
     {
