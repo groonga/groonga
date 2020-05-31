@@ -25,6 +25,9 @@ extern "C" {
 #endif
 
 void
+grn_token_column_init_from_env(void);
+
+void
 grn_token_column_update(grn_ctx *ctx,
                         grn_obj *column,
                         grn_id id,

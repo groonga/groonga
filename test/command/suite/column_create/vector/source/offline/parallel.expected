@@ -1,0 +1,36 @@
+table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC121   --default_tokenizer TokenNgram
+[[0,0.0,0.0],true]
+table_create Notes TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Notes title COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Notes
+[
+{"title": "Hello Groonga"},
+{"title": "Hello Mroonga"},
+{"title": "Hello Rroonga"}
+]
+[[0,0.0,0.0],3]
+column_create Notes title_terms COLUMN_VECTOR Terms title
+[[0,0.0,0.0],true]
+column_create Terms notes_title COLUMN_INDEX|WITH_POSITION Notes title
+[[0,0.0,0.0],true]
+dump
+table_create Notes TABLE_NO_KEY
+column_create Notes title COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenNgram --normalizer NormalizerNFKC121
+
+column_create Notes title_terms COLUMN_VECTOR Terms title
+
+load --table Notes
+[
+["_id","title"],
+[1,"Hello Groonga"],
+[2,"Hello Mroonga"],
+[3,"Hello Rroonga"]
+]
+
+column_create Terms notes_title COLUMN_INDEX|WITH_POSITION Notes title
+index_column_diff Terms notes_title
+[[0,0.0,0.0],[]]

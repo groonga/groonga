@@ -16,11 +16,235 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <cstring>
+
 #include "grn.h"
+#include "grn_str.h"
 #include "grn_token_column.h"
 #include "grn_token_cursor.h"
 
+#ifdef GRN_WITH_APACHE_ARROW
+# include "grn_arrow.hpp"
+# include <arrow/util/thread_pool.h>
+# include <mutex>
+#endif
+
+namespace grn {
+  namespace token_column {
+    static uint32_t parallel_chunk_size = 1024;
+    static uint32_t parallel_table_size_threshold = parallel_chunk_size * 10;
+
+    class Builder
+    {
+    public:
+      Builder(grn_ctx *ctx,
+              grn_obj *column)
+        : ctx_(ctx),
+          column_(column),
+          table_(grn_ctx_at(ctx, column->header.domain)),
+          lexicon_(grn_ctx_at(ctx, DB_OBJ(column)->range)),
+          source_(nullptr) {
+        grn_id *source_ids = static_cast<grn_id *>(DB_OBJ(column)->source);
+        source_ = grn_ctx_at(ctx, source_ids[0]);
+      }
+
+      ~Builder() {
+        grn_obj_unref(ctx_, source_);
+        grn_obj_unref(ctx_, lexicon_);
+        grn_obj_unref(ctx_, table_);
+      }
+
+      void
+      build() {
+        grn_obj_set_visibility(ctx_, column_, false);
+        if (use_parallel()) {
+          build_parallel();
+        } else {
+          build_sequential();
+        }
+        grn_obj_set_visibility(ctx_, column_, true);
+      }
+
+    private:
+      bool
+      use_parallel() {
+#ifdef GRN_WITH_APACHE_ARROW
+        return grn_table_size(ctx_, table_) >= parallel_table_size_threshold;
+#else
+        return false;
+#endif
+      }
+
+      void
+      build_parallel() {
+#ifdef GRN_WITH_APACHE_ARROW
+        std::mutex mutex;
+        auto pool = arrow::internal::GetCpuThreadPool();
+        unsigned int token_flags = 0;
+        grn_obj *db = grn_ctx_db(ctx_);
+        uint32_t chunk_size = parallel_chunk_size;
+        std::vector<grn_id> ids;
+        auto build_chunk = [&](std::vector<grn_id> ids) {
+          grn_ctx ctx;
+          grn_ctx_init(&ctx, 0);
+          grn_ctx_use(&ctx, db);
+          grn_obj tokens;
+          GRN_RECORD_INIT(&tokens, GRN_OBJ_VECTOR, DB_OBJ(lexicon_)->id);
+          for (auto id : ids) {
+            uint32_t value_size;
+            auto value = grn_obj_get_value_(&ctx, source_, id, &value_size);
+            if (value_size > 0) {
+              auto token_cursor = grn_token_cursor_open(&ctx,
+                                                        lexicon_,
+                                                        value,
+                                                        value_size,
+                                                        GRN_TOKEN_ADD,
+                                                        token_flags);
+              if (token_cursor) {
+                while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
+                  grn_id token_id = grn_token_cursor_next(&ctx, token_cursor);
+                  GRN_RECORD_PUT(&ctx, &tokens, token_id);
+                }
+                grn_token_cursor_close(&ctx, token_cursor);
+              }
+            }
+            grn_obj_set_value(&ctx, column_, id, &tokens, GRN_OBJ_SET);
+            if (ctx.rc != GRN_SUCCESS) {
+              break;
+            }
+          }
+          GRN_OBJ_FIN(&ctx, &tokens);
+          if (ctx.rc != GRN_SUCCESS) {
+            std::lock_guard<std::mutex> lock(mutex);
+            if (ctx_->rc == GRN_SUCCESS) {
+              ctx_->rc = ctx.rc;
+              ctx_->errlvl = ctx.errlvl;
+              ctx_->errfile = ctx.errfile;
+              ctx_->errline = ctx.errline;
+              ctx_->errfunc = ctx.errfunc;
+              grn_strcpy(ctx_->errbuf, GRN_CTX_MSGSIZE, ctx.errbuf);
+            }
+          }
+          grn_ctx_fin(&ctx);
+          return arrow::Status::OK();
+        };
+
+        std::vector<arrow::Future<arrow::Status>> futures;
+        GRN_TABLE_EACH_BEGIN(ctx_, table_, cursor, id) {
+          ids.push_back(id);
+          if (ids.size() == chunk_size) {
+            auto future = pool->Submit(build_chunk, ids);
+            if (!grnarrow::check(ctx_,
+                                 future,
+                                 "[token-column][build][parallel] "
+                                 "failed to submit a job")) {
+              break;
+            }
+            futures.push_back(*future);
+            ids.clear();
+          }
+        } GRN_TABLE_EACH_END(ctx_, cursor);
+        if (ctx_->rc == GRN_SUCCESS && !ids.empty()) {
+          auto future = pool->Submit(build_chunk, ids);
+          if (grnarrow::check(ctx_,
+                              future,
+                              "[token-column][build][parallel] "
+                              "failed to submit a job")) {
+            futures.push_back(*future);
+          }
+        }
+        auto status = arrow::Status::OK();
+        for (auto& future : futures) {
+          status &= future.status();
+        }
+        grnarrow::check(ctx_,
+                        status,
+                        "[token-column][build][parallel] "
+                        "failed to complete a job");
+#endif
+      }
+
+      void
+      build_sequential() {
+        grn_obj tokens;
+        GRN_RECORD_INIT(&tokens, GRN_OBJ_VECTOR, DB_OBJ(lexicon_)->id);
+        unsigned int token_flags = 0;
+        GRN_TABLE_EACH_BEGIN(ctx_, table_, cursor, id) {
+          GRN_BULK_REWIND(&tokens);
+          uint32_t value_size;
+          const char *value = grn_obj_get_value_(ctx_, source_, id, &value_size);
+          if (value_size > 0) {
+            grn_token_cursor *token_cursor = grn_token_cursor_open(ctx_,
+                                                                   lexicon_,
+                                                                   value,
+                                                                   value_size,
+                                                                   GRN_TOKEN_ADD,
+                                                                   token_flags);
+            if (token_cursor) {
+              while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
+                grn_id token_id = grn_token_cursor_next(ctx_, token_cursor);
+                GRN_RECORD_PUT(ctx_, &tokens, token_id);
+              }
+              grn_token_cursor_close(ctx_, token_cursor);
+            }
+          }
+          grn_obj_set_value(ctx_, column_, id, &tokens, GRN_OBJ_SET);
+          if (ctx_->rc != GRN_SUCCESS) {
+            break;
+          }
+        } GRN_TABLE_EACH_END(ctx_, cursor);
+        GRN_OBJ_FIN(ctx_, &tokens);
+      }
+
+      grn_ctx *ctx_;
+      grn_obj *column_;
+      grn_obj *table_;
+      grn_obj *lexicon_;
+      grn_obj *source_;
+    };
+  }
+}
+
 extern "C" {
+  void
+  grn_token_column_init_from_env(void)
+  {
+    {
+      char grn_token_column_parallel_chunk_size_env[GRN_ENV_BUFFER_SIZE];
+      grn_getenv("GRN_TOKEN_COLUMN_PARALLEL_CHUNK_SIZE",
+                 grn_token_column_parallel_chunk_size_env,
+                 GRN_ENV_BUFFER_SIZE);
+      if (grn_token_column_parallel_chunk_size_env[0]) {
+        size_t env_len = strlen(grn_token_column_parallel_chunk_size_env);
+        uint32_t chunk_size =
+          grn_atoui(grn_token_column_parallel_chunk_size_env,
+                    grn_token_column_parallel_chunk_size_env + env_len,
+                    NULL);
+        if (chunk_size > 0) {
+          grn::token_column::parallel_chunk_size = chunk_size;
+        }
+      }
+    }
+
+    {
+      char grn_token_column_parallel_table_size_threshold_env[GRN_ENV_BUFFER_SIZE];
+      grn_getenv("GRN_TOKEN_COLUMN_PARALLEL_TABLE_SIZE_THRESHOLD",
+                 grn_token_column_parallel_table_size_threshold_env,
+                 GRN_ENV_BUFFER_SIZE);
+      if (grn_token_column_parallel_table_size_threshold_env[0]) {
+        size_t env_len =
+          strlen(grn_token_column_parallel_table_size_threshold_env);
+        uint32_t threshold =
+          grn_atoui(grn_token_column_parallel_table_size_threshold_env,
+                    grn_token_column_parallel_table_size_threshold_env + env_len,
+                    NULL);
+        if (threshold > 0) {
+          grn::token_column::parallel_table_size_threshold = threshold;
+        }
+      }
+    }
+  }
+
   void
   grn_token_column_update(grn_ctx *ctx,
                           grn_obj *column,
@@ -55,39 +279,7 @@ extern "C" {
   void
   grn_token_column_build(grn_ctx *ctx, grn_obj *column)
   {
-    grn_obj *table = grn_ctx_at(ctx, column->header.domain);
-    grn_obj *lexicon = grn_ctx_at(ctx, DB_OBJ(column)->range);
-    grn_id *source_ids = static_cast<grn_id *>(DB_OBJ(column)->source);
-    grn_obj *source = grn_ctx_at(ctx, source_ids[0]);
-    grn_obj_set_visibility(ctx, column, false);
-    grn_obj tokens;
-    GRN_RECORD_INIT(&tokens, GRN_OBJ_VECTOR, DB_OBJ(lexicon)->id);
-    unsigned int token_flags = 0;
-    GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
-      GRN_BULK_REWIND(&tokens);
-      uint32_t value_size;
-      const char *value = grn_obj_get_value_(ctx, source, id, &value_size);
-      if (value_size > 0) {
-        grn_token_cursor *token_cursor = grn_token_cursor_open(ctx,
-                                                               lexicon,
-                                                               value,
-                                                               value_size,
-                                                               GRN_TOKEN_ADD,
-                                                               token_flags);
-        if (token_cursor) {
-          while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
-            grn_id token_id = grn_token_cursor_next(ctx, token_cursor);
-            GRN_RECORD_PUT(ctx, &tokens, token_id);
-          }
-          grn_token_cursor_close(ctx, token_cursor);
-        }
-      }
-      grn_obj_set_value(ctx, column, id, &tokens, GRN_OBJ_SET);
-    } GRN_TABLE_EACH_END(ctx, cursor);
-    grn_obj_set_visibility(ctx, column, true);
-    GRN_OBJ_FIN(ctx, &tokens);
-    grn_obj_unref(ctx, source);
-    grn_obj_unref(ctx, lexicon);
-    grn_obj_unref(ctx, table);
+    grn::token_column::Builder builder(ctx, column);
+    builder.build();
   }
 }

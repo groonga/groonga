@@ -1,0 +1,25 @@
+#@require-apache-arrow
+#$GRN_TOKEN_COLUMN_PARALLEL_TABLE_SIZE_THRESHOLD=1
+#$GRN_TOKEN_COLUMN_PARALLEL_CHUNK_SIZE=1
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNFKC121 \
+  --default_tokenizer TokenNgram
+
+table_create Notes TABLE_NO_KEY
+column_create Notes title COLUMN_SCALAR Text
+
+load --table Notes
+[
+{"title": "Hello Groonga"},
+{"title": "Hello Mroonga"},
+{"title": "Hello Rroonga"}
+]
+
+column_create Notes title_terms COLUMN_VECTOR Terms title
+
+column_create Terms notes_title COLUMN_INDEX|WITH_POSITION Notes title
+
+dump
+
+index_column_diff Terms notes_title

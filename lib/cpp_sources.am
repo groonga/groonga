@@ -5,5 +5,6 @@ libgroonga_cpp_source =				\
 	grn_arrow.h				\
 	grn_arrow.hpp				\
 	grn_cast.h				\
+	grn_token_column.h			\
 	token_column.cpp			\
 	vector.cpp

@@ -75,7 +75,6 @@ libgroonga_c_sources =				\
 	grn_table.h				\
 	grn_time.h				\
 	grn_token.h				\
-	grn_token_column.h			\
 	grn_token_cursor.h			\
 	grn_token_filters.h			\
 	grn_token_metadata.h			\
