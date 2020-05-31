@@ -131,7 +131,7 @@ namespace grn {
 
         std::vector<grn_id> ids;
         std::vector<arrow::Future<arrow::Status>> futures;
-        GRN_TABLE_EACH_BEGIN(ctx_, table_, cursor, id) {
+        GRN_TABLE_EACH_BEGIN_FLAGS(ctx_, table_, cursor, id, GRN_CURSOR_BY_ID) {
           ids.push_back(id);
           if (ids.size() == chunk_size) {
             auto future = pool->Submit(build_chunk, ids);
@@ -170,7 +170,7 @@ namespace grn {
         grn_obj tokens;
         GRN_RECORD_INIT(&tokens, GRN_OBJ_VECTOR, DB_OBJ(lexicon_)->id);
         unsigned int token_flags = 0;
-        GRN_TABLE_EACH_BEGIN(ctx_, table_, cursor, id) {
+        GRN_TABLE_EACH_BEGIN_FLAGS(ctx_, table_, cursor, id, GRN_CURSOR_BY_ID) {
           GRN_BULK_REWIND(&tokens);
           uint32_t value_size;
           const char *value = grn_obj_get_value_(ctx_, source_, id, &value_size);
