@@ -23,6 +23,7 @@
 #include "grn_output.h"
 
 #ifdef GRN_WITH_APACHE_ARROW
+#include "grn_arrow.hpp"
 #include <groonga/arrow.hpp>
 
 #include <arrow/api.h>
@@ -86,20 +87,6 @@ namespace grnarrow {
     return check(ctx,
                  status,
                  static_cast<std::stringstream &>(output).str().c_str());
-  }
-
-  template <typename TYPE>
-  bool check(grn_ctx *ctx,
-             arrow::Result<TYPE> &result,
-             const char *context) {
-    return check(ctx, result.status(), context);
-  }
-
-  template <typename TYPE>
-  bool check(grn_ctx *ctx,
-             arrow::Result<TYPE> &result,
-             std::ostream &output) {
-    return check(ctx, result.status(), output);
   }
 
   void put_time_value(grn_ctx *ctx,
