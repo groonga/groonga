@@ -83,7 +83,6 @@ namespace grn {
         unsigned int token_flags = 0;
         grn_obj *db = grn_ctx_db(ctx_);
         uint32_t chunk_size = parallel_chunk_size;
-        std::vector<grn_id> ids;
         auto build_chunk = [&](std::vector<grn_id> ids) {
           grn_ctx ctx;
           grn_ctx_init(&ctx, 0);
@@ -130,6 +129,7 @@ namespace grn {
           return arrow::Status::OK();
         };
 
+        std::vector<grn_id> ids;
         std::vector<arrow::Future<arrow::Status>> futures;
         GRN_TABLE_EACH_BEGIN(ctx_, table_, cursor, id) {
           ids.push_back(id);
