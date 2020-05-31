@@ -1,0 +1,63 @@
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos rates COLUMN_VECTOR Float32
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga", "rates": [1.2, 3.1, 5.0]},
+{"_key": "Rroonga", "rates": [2.2, 4.1]}
+]
+[[0,0.0,0.0],2]
+select Memos   --output_columns '_key, rates, vector_slice(rates, 1, 2)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "rates",
+          "Float32"
+        ],
+        [
+          "vector_slice",
+          null
+        ]
+      ],
+      [
+        "Groonga",
+        [
+          1.2,
+          3.1,
+          5.0
+        ],
+        [
+          3.1,
+          5.0
+        ]
+      ],
+      [
+        "Rroonga",
+        [
+          2.2,
+          4.1
+        ],
+        [
+          4.1
+        ]
+      ]
+    ]
+  ]
+]
