@@ -52,7 +52,7 @@ init:
 install:
   - set PATH=C:\Ruby25-x64\bin;%PATH%
   - set PATH=C:\msys64\usr\bin;%PATH%
-  - pacman --sync --refresh --noconfirm pacman
+  - pacman --sync --refresh --nodeps --nodeps --noconfirm pacman
   - pacman --sync --sysupgrade --noconfirm
   - if "%VS_VERSION%" == "15" if "%ARCH%" == "x86" set VS2017_X86=TRUE
   - if "%VS_VERSION%" == "15" if "%ARCH%" == "amd64" set VS2017_AMD64=TRUE
