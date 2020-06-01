@@ -7,6 +7,232 @@
 News
 ====
 
+.. _release-10-0-4:
+
+Release 10.0.4 - 2020-06-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/tables`] Added support for registering 400M records into a hash table.
+
+* [:doc:`reference/commands/select`] Improve scorer performance when the ``_score`` doesn't get recursively values.
+
+  * Groonga get recursively value of ``_score`` when search result is search target.
+  * For example, the search targets of ``slices`` are search result. Therefore, if we use ``slice`` in a query, this improvement doesn't ineffective.
+
+* [:doc:`reference/log`] Improved that we output drilldown keys in query-log.
+
+* [:doc:`reference/commands/reference_acquire`], [:doc:`reference/commands/reference_release`] Added new commands for reference count mode.
+
+  * If we need to call multiple ``load`` in a short time, auto close by the reference count mode will degrade performance.
+  * We can avoid the performance degrading by calling ``reference_acquire`` before multiple ``load`` and calling ``reference_release`` after multiple ``load``.
+    Between ``reference_acquire`` and ``reference_release``, auto close is disabled.
+
+    * Because ``reference_acquire`` acquires a reference of target objects.
+
+  * We can must call ``reference_release`` after you finish performance impact operations.
+  * If we don’t call ``reference_release``, the reference count mode doesn’t work.
+
+* [:doc:`reference/commands/select`] Added support for aggregating multiple groups on one time ``drilldown``.
+
+  * We came to be able to calculate sum or arithmetic mean every different multiple groups on one time ``drilldown`` as below.
+
+    .. code-block::
+
+      table_create Items TABLE_HASH_KEY ShortText
+      column_create Items price COLUMN_SCALAR UInt32
+      column_create Items quantity COLUMN_SCALAR UInt32
+      column_create Items tag COLUMN_SCALAR ShortText
+
+      load --table Items
+      [
+      {"_key": "Book",  "price": 1000, "quantity": 100, "tag": "A"},
+      {"_key": "Note",  "price": 1000, "quantity": 10,  "tag": "B"},
+      {"_key": "Box",   "price": 500,  "quantity": 15,  "tag": "B"},
+      {"_key": "Pen",   "price": 500,  "quantity": 12,  "tag": "A"},
+      {"_key": "Food",  "price": 500,  "quantity": 111, "tag": "C"},
+      {"_key": "Drink", "price": 300,  "quantity": 22,  "tag": "B"}
+      ]
+
+      select Items \
+        --drilldowns[tag].keys tag \
+        --drilldowns[tag].output_columns _key,_nsubrecs,price_sum,quantity_sum \
+        --drilldowns[tag].columns[price_sum].stage group \
+        --drilldowns[tag].columns[price_sum].type UInt32 \
+        --drilldowns[tag].columns[price_sum].flags COLUMN_SCALAR \
+        --drilldowns[tag].columns[price_sum].value 'aggregator_sum(price)' \
+        --drilldowns[tag].columns[quantity_sum].stage group \
+        --drilldowns[tag].columns[quantity_sum].type UInt32 \
+        --drilldowns[tag].columns[quantity_sum].flags COLUMN_SCALAR \
+        --drilldowns[tag].columns[quantity_sum].value 'aggregator_sum(quantity)'
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              6
+            ],
+            [
+              [
+                "_id",
+                "UInt32"
+              ],
+              [
+                "_key",
+                "ShortText"
+              ],
+              [
+                "price",
+                "UInt32"
+              ],
+              [
+                "quantity",
+                "UInt32"
+              ],
+              [
+                "tag",
+                "ShortText"
+              ]
+            ],
+            [
+              1,
+              "Book",
+              1000,
+              100,
+              "A"
+            ],
+            [
+              2,
+              "Note",
+              1000,
+              10,
+              "B"
+            ],
+            [
+              3,
+              "Box",
+              500,
+              15,
+              "B"
+            ],
+            [
+              4,
+              "Pen",
+              500,
+              12,
+              "A"
+            ],
+            [
+              5,
+              "Food",
+              500,
+              111,
+              "C"
+            ],
+            [
+              6,
+              "Drink",
+              300,
+              22,
+              "B"
+            ]
+          ],
+          {
+            "tag": [
+              [
+                3
+              ],
+              [
+                [
+                  "_key",
+                  "ShortText"
+                ],
+                [
+                  "_nsubrecs",
+                  "Int32"
+                ],
+                [
+                  "price_sum",
+                  "UInt32"
+                ],
+                [
+                  "quantity_sum",
+                  "UInt32"
+                ]
+              ],
+              [
+                "A",
+                2,
+                1500,
+                112
+              ],
+              [
+                "B",
+                3,
+                1800,
+                47
+              ],
+              [
+                "C",
+                1,
+                500,
+                111
+              ]
+            ]
+          }
+        ]
+      ]
+
+* [:doc:`reference/executables/groonga`] Added support for ``--pid-path`` in standalone mode.
+
+  * Because ``--pid-path`` had been ignored in standalone mode in before version.
+
+* [:doc:`/reference/commands/io_flush`] Added support for reference count mode.
+
+* [:doc:`reference/commands/logical_range_filter`], [:doc:`/reference/commands/logical_count`] Added support for reference count mode.
+
+* [:doc:`reference/executables/groonga-server-http`] We didn't add header after the last chunk.
+
+  * Because there is a possibility to exist that the HTTP client ignores header after the last chunk.
+
+* [vector_slice] Added support for a vector that has the value of the ``Float32`` type. [GitHub#1112 patched by naoa]
+
+* Added support for parallel offline index construction using token column.
+
+  * We came to be able to construct an offline index on parallel threads from data that are tokenized in advance.
+
+  * We can tune parameters of parallel offline construction by the following environment variables
+
+    * ``GRN_TOKEN_COLUMN_PARALLEL_CHUNK_SIZE`` : We specify how many records are processed per thread.
+
+      * The default value is ``1024`` records.
+
+    * ``GRN_TOKEN_COLUMN_PARALLEL_TABLE_SIZE_THRESHOLD`` : We specify how many source records are required for parallel offline construction.
+
+      * The default value is ``102400`` records.
+
+* [:doc:`reference/commands/select`] Improved performance for ``load_table`` on the reference count mode.
+
+Fixes
+^^^^^
+
+* Fixed a bug that the database of Groonga was broken when we search by using the dynamic columns that don't specify a ``--filter`` and stridden over shard.
+
+* Fixed a bug that ``Float32`` type had not displayed on a result of ``schema`` command.
+
+* Fixed a bug that we count in surplus to ``_nsubrecs`` when the reference ``uvector`` hasn't element.
+
+Thanks
+^^^^^^
+
+* naoa
+
 .. _release-10-0-3:
 
 Release 10.0.3 - 2020-05-29
