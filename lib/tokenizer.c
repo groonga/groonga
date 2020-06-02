@@ -178,7 +178,7 @@ grn_tokenizer_query_init(grn_ctx *ctx, grn_tokenizer_query *query)
 
 grn_tokenizer_query *
 grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
-                         unsigned int normalize_flags)
+                         uint32_t normalize_flags)
 {
   grn_obj *flags;
   grn_obj *query_str;
@@ -267,7 +267,7 @@ grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query)
 grn_rc
 grn_tokenizer_query_set_normalize_flags(grn_ctx *ctx,
                                         grn_tokenizer_query *query,
-                                        unsigned int normalize_flags)
+                                        uint32_t normalize_flags)
 {
   GRN_API_ENTER;
   if (query->normalize_flags != normalize_flags) {
@@ -277,7 +277,7 @@ grn_tokenizer_query_set_normalize_flags(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
-unsigned int
+uint32_t
 grn_tokenizer_query_get_normalize_flags(grn_ctx *ctx,
                                         grn_tokenizer_query *query)
 {
@@ -349,7 +349,7 @@ grn_tokenizer_query_get_encoding(grn_ctx *ctx, grn_tokenizer_query *query)
 grn_rc
 grn_tokenizer_query_set_flags(grn_ctx *ctx,
                               grn_tokenizer_query *query,
-                              unsigned int flags)
+                              uint32_t flags)
 {
   GRN_API_ENTER;
   if (query->flags != flags) {
@@ -359,7 +359,7 @@ grn_tokenizer_query_set_flags(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
-unsigned int
+uint32_t
 grn_tokenizer_query_get_flags(grn_ctx *ctx, grn_tokenizer_query *query)
 {
   GRN_API_ENTER;

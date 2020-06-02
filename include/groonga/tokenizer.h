@@ -86,7 +86,7 @@ GRN_PLUGIN_EXPORT grn_bool grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
  */
 GRN_PLUGIN_EXPORT grn_tokenizer_query *grn_tokenizer_query_open(grn_ctx *ctx,
                                                                 int num_args, grn_obj **args,
-                                                                unsigned int normalize_flags);
+                                                                uint32_t normalize_flags);
 
 /*
   grn_tokenizer_query_create() is deprecated. Use grn_tokenizer_query_open()
@@ -111,8 +111,8 @@ void grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query);
 GRN_PLUGIN_EXPORT grn_rc
 grn_tokenizer_query_set_normalize_flags(grn_ctx *ctx,
                                         grn_tokenizer_query *query,
-                                        unsigned int flags);
-GRN_PLUGIN_EXPORT unsigned int
+                                        uint32_t flags);
+GRN_PLUGIN_EXPORT uint32_t
 grn_tokenizer_query_get_normalize_flags(grn_ctx *ctx,
                                         grn_tokenizer_query *query);
 
@@ -128,7 +128,7 @@ grn_tokenizer_query_get_raw_string(grn_ctx *ctx,
 GRN_PLUGIN_EXPORT grn_encoding
 grn_tokenizer_query_get_encoding(grn_ctx *ctx, grn_tokenizer_query *query);
 
-GRN_PLUGIN_EXPORT unsigned int
+GRN_PLUGIN_EXPORT uint32_t
 grn_tokenizer_query_get_flags(grn_ctx *ctx, grn_tokenizer_query *query);
 
 GRN_PLUGIN_EXPORT grn_bool

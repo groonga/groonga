@@ -36,7 +36,7 @@ typedef struct _grn_tokenizer_query {
   const char *ptr;
   unsigned int length;
   grn_encoding encoding;
-  unsigned int flags;
+  uint32_t flags;
   grn_bool have_tokenized_delimiter;
   /* Deprecated since 4.0.8. Use tokenize_mode instead. */
   grn_token_mode token_mode;
@@ -45,7 +45,7 @@ typedef struct _grn_tokenizer_query {
 
   grn_obj *lexicon;
   unsigned int token_filter_index;
-  unsigned int normalize_flags;
+  uint32_t normalize_flags;
   grn_bool need_normalize;
   grn_bool need_delimiter_check;
 } grn_tokenizer_query;
@@ -64,7 +64,7 @@ grn_tokenizer_query_set_raw_string(grn_ctx *ctx,
 grn_rc
 grn_tokenizer_query_set_flags(grn_ctx *ctx,
                               grn_tokenizer_query *query,
-                              unsigned int flags);
+                              uint32_t flags);
 grn_rc
 grn_tokenizer_query_set_mode(grn_ctx *ctx,
                              grn_tokenizer_query *query,
