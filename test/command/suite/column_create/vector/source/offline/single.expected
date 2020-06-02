@@ -6,13 +6,14 @@ column_create Notes title COLUMN_SCALAR Text
 [[0,0.0,0.0],true]
 load --table Notes
 [
-{"title": "Hello Groonga"}
+{"title": "Hello Groonga"},
+{"title": " "}
 ]
-[[0,0.0,0.0],1]
+[[0,0.0,0.0],2]
 column_create Notes title_terms COLUMN_VECTOR Terms title
 [[0,0.0,0.0],true]
-column_create Terms notes_title COLUMN_INDEX|WITH_POSITION Notes title
-[[0,0.0,0.0],true]
+select Notes title_terms   --query _id:2   --output_columns title_terms
+[[0,0.0,0.0],[[[1],[["title_terms","Terms"]],[[]]]]]
 dump
 table_create Notes TABLE_NO_KEY
 column_create Notes title COLUMN_SCALAR Text
@@ -24,9 +25,17 @@ column_create Notes title_terms COLUMN_VECTOR Terms title
 load --table Notes
 [
 ["_id","title"],
-[1,"Hello Groonga"]
+[1,"Hello Groonga"],
+[2," "]
 ]
 
+load --table Terms
+[
+["_key"],
+["groonga"],
+["hello"]
+]
 column_create Terms notes_title COLUMN_INDEX|WITH_POSITION Notes title
+[[0,0.0,0.0],true]
 index_column_diff Terms notes_title
 [[0,0.0,0.0],[]]

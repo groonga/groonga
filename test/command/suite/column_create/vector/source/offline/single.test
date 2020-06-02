@@ -7,13 +7,17 @@ column_create Notes title COLUMN_SCALAR Text
 
 load --table Notes
 [
-{"title": "Hello Groonga"}
+{"title": "Hello Groonga"},
+{"title": " "}
 ]
 
 column_create Notes title_terms COLUMN_VECTOR Terms title
 
-column_create Terms notes_title COLUMN_INDEX|WITH_POSITION Notes title
+select Notes title_terms \
+  --query _id:2 \
+  --output_columns title_terms
 
 dump
 
+column_create Terms notes_title COLUMN_INDEX|WITH_POSITION Notes title
 index_column_diff Terms notes_title

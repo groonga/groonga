@@ -103,6 +103,9 @@ namespace grn {
               if (token_cursor) {
                 while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
                   grn_id token_id = grn_token_cursor_next(&ctx, token_cursor);
+                  if (token_id == GRN_ID_NIL) {
+                    break;
+                  }
                   GRN_RECORD_PUT(&ctx, &tokens, token_id);
                 }
                 grn_token_cursor_close(&ctx, token_cursor);
@@ -184,6 +187,9 @@ namespace grn {
             if (token_cursor) {
               while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
                 grn_id token_id = grn_token_cursor_next(ctx_, token_cursor);
+                if (token_id == GRN_ID_NIL) {
+                  break;
+                }
                 GRN_RECORD_PUT(ctx_, &tokens, token_id);
               }
               grn_token_cursor_close(ctx_, token_cursor);
@@ -268,6 +274,9 @@ extern "C" {
     if (token_cursor) {
       while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
         grn_id token_id = grn_token_cursor_next(ctx, token_cursor);
+        if (token_id == GRN_ID_NIL) {
+          break;
+        }
         GRN_RECORD_PUT(ctx, &tokens, token_id);
       }
       grn_token_cursor_close(ctx, token_cursor);
