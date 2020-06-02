@@ -43,7 +43,7 @@ namespace grn {
           column_(column),
           table_(grn_ctx_at(ctx, column->header.domain)),
           lexicon_(grn_ctx_at(ctx, DB_OBJ(column)->range)),
-          source_(nullptr) {
+          source_(NULL) {
         grn_id *source_ids = static_cast<grn_id *>(DB_OBJ(column)->source);
         source_ = grn_ctx_at(ctx, source_ids[0]);
       }
