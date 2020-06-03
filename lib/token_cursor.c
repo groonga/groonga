@@ -377,16 +377,14 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
                              token_cursor->curr_size,
                              NULL);
         }
-        if (grn_io_lock(ctx, ((grn_hash *)table)->io, grn_lock_timeout)) {
-          GRN_TABLE_LOCK_BEGIN(ctx, table) {
-            tid = grn_hash_add(ctx,
-                               (grn_hash *)table,
-                               token_cursor->curr,
-                               token_cursor->curr_size,
-                               NULL,
-                               NULL);
-          } GRN_TABLE_LOCK_END(ctx, table);
-        }
+        GRN_TABLE_LOCK_BEGIN(ctx, table) {
+          tid = grn_hash_add(ctx,
+                             (grn_hash *)table,
+                             token_cursor->curr,
+                             token_cursor->curr_size,
+                             NULL,
+                             NULL);
+        } GRN_TABLE_LOCK_END(ctx, table);
         break;
       case GRN_TABLE_NO_KEY :
         if (token_cursor->curr_size == sizeof(grn_id)) {
