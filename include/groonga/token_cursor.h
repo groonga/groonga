@@ -30,7 +30,8 @@ typedef enum {
   GRN_TOKEN_CURSOR_NOT_FOUND
 } grn_token_cursor_status;
 
-#define GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER (0x01L<<0)
+#define GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER (0x01<<0)
+#define GRN_TOKEN_CURSOR_PARALLEL                   (0x01<<1)
 
 typedef struct _grn_token_cursor grn_token_cursor;
 
@@ -40,7 +41,7 @@ grn_token_cursor_open(grn_ctx *ctx,
                       const char *str,
                       size_t str_len,
                       grn_tokenize_mode mode,
-                      unsigned int flags);
+                      uint32_t flags);
 
 GRN_API grn_id
 grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor);

@@ -32,7 +32,7 @@
 namespace grn {
   namespace token_column {
     static uint32_t parallel_chunk_size = 1024;
-    static uint32_t parallel_table_size_threshold = parallel_chunk_size * 100;
+    static uint32_t parallel_table_size_threshold = parallel_chunk_size * 10;
 
     class Builder
     {
@@ -80,7 +80,7 @@ namespace grn {
 #ifdef GRN_WITH_APACHE_ARROW
         std::mutex mutex;
         auto pool = arrow::internal::GetCpuThreadPool();
-        unsigned int token_flags = 0;
+        uint32_t token_cursor_flags = GRN_TOKEN_CURSOR_PARALLEL;
         grn_obj *db = grn_ctx_db(ctx_);
         uint32_t chunk_size = parallel_chunk_size;
         auto build_chunk = [&](std::vector<grn_id> ids) {
@@ -99,7 +99,7 @@ namespace grn {
                                                         value,
                                                         value_size,
                                                         GRN_TOKEN_ADD,
-                                                        token_flags);
+                                                        token_cursor_flags);
               if (token_cursor) {
                 while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
                   grn_id token_id = grn_token_cursor_next(&ctx, token_cursor);

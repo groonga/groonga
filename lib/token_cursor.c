@@ -19,9 +19,12 @@
 
 #include "grn_token.h"
 #include "grn_token_cursor.h"
-#include "grn_string.h"
-#include "grn_pat.h"
+
 #include "grn_dat.h"
+#include "grn_obj.h"
+#include "grn_pat.h"
+#include "grn_string.h"
+#include "grn_table.h"
 
 static void
 grn_token_cursor_open_initialize_token_filters(grn_ctx *ctx,
@@ -68,7 +71,8 @@ grn_token_cursor_open_initialize_token_filters(grn_ctx *ctx,
 grn_token_cursor *
 grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
                       const char *str, size_t str_len,
-                      grn_tokenize_mode mode, unsigned int flags)
+                      grn_tokenize_mode mode,
+                      uint32_t flags)
 {
   GRN_API_ENTER;
 
@@ -89,6 +93,7 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   token_cursor->table = table;
   token_cursor->mode = mode;
   token_cursor->encoding = encoding;
+  token_cursor->flags = flags;
   token_cursor->tokenizer.object = tokenizer;
   grn_tokenizer_query_init(ctx, &(token_cursor->tokenizer.query));
   grn_tokenizer_query_set_lexicon(ctx, &(token_cursor->tokenizer.query), table);
@@ -327,30 +332,60 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
     if (token_cursor->mode == GRN_TOKENIZE_ADD) {
       switch (table->header.type) {
       case GRN_TABLE_PAT_KEY :
-        if (grn_io_lock(ctx, ((grn_pat *)table)->io, grn_lock_timeout)) {
-          tid = GRN_ID_NIL;
-        } else {
-          tid = grn_pat_add(ctx, (grn_pat *)table, token_cursor->curr, token_cursor->curr_size,
-                            NULL, NULL);
-          grn_io_unlock(((grn_pat *)table)->io);
+        if (token_cursor->flags & GRN_TOKEN_CURSOR_PARALLEL) {
+          tid = grn_pat_get(ctx,
+                            (grn_pat *)table,
+                            token_cursor->curr,
+                            token_cursor->curr_size,
+                            NULL);
+        }
+        if (tid == GRN_ID_NIL) {
+          GRN_TABLE_LOCK_BEGIN(ctx, table) {
+            tid = grn_pat_add(ctx,
+                              (grn_pat *)table,
+                              token_cursor->curr,
+                              token_cursor->curr_size,
+                              NULL,
+                              NULL);
+          } GRN_TABLE_LOCK_END(ctx, table);
         }
         break;
       case GRN_TABLE_DAT_KEY :
-        if (grn_io_lock(ctx, ((grn_dat *)table)->io, grn_lock_timeout)) {
-          tid = GRN_ID_NIL;
-        } else {
-          tid = grn_dat_add(ctx, (grn_dat *)table, token_cursor->curr, token_cursor->curr_size,
-                            NULL, NULL);
-          grn_io_unlock(((grn_dat *)table)->io);
+        if (token_cursor->flags & GRN_TOKEN_CURSOR_PARALLEL) {
+          tid = grn_dat_get(ctx,
+                            (grn_dat *)table,
+                            token_cursor->curr,
+                            token_cursor->curr_size,
+                            NULL);
+        }
+        if (tid == GRN_ID_NIL) {
+          GRN_TABLE_LOCK_BEGIN(ctx, table) {
+            tid = grn_dat_add(ctx,
+                              (grn_dat *)table,
+                              token_cursor->curr,
+                              token_cursor->curr_size,
+                              NULL,
+                              NULL);
+          } GRN_TABLE_LOCK_END(ctx, table);
         }
         break;
       case GRN_TABLE_HASH_KEY :
+        if (token_cursor->flags & GRN_TOKEN_CURSOR_PARALLEL) {
+          tid = grn_hash_get(ctx,
+                             (grn_hash *)table,
+                             token_cursor->curr,
+                             token_cursor->curr_size,
+                             NULL);
+        }
         if (grn_io_lock(ctx, ((grn_hash *)table)->io, grn_lock_timeout)) {
-          tid = GRN_ID_NIL;
-        } else {
-          tid = grn_hash_add(ctx, (grn_hash *)table, token_cursor->curr, token_cursor->curr_size,
-                             NULL, NULL);
-          grn_io_unlock(((grn_hash *)table)->io);
+          GRN_TABLE_LOCK_BEGIN(ctx, table) {
+            tid = grn_hash_add(ctx,
+                               (grn_hash *)table,
+                               token_cursor->curr,
+                               token_cursor->curr_size,
+                               NULL,
+                               NULL);
+          } GRN_TABLE_LOCK_END(ctx, table);
         }
         break;
       case GRN_TABLE_NO_KEY :
