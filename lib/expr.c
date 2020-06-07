@@ -2601,6 +2601,9 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, int32_t weight)
         grn_obj *index;
         if (((grn_accessor *)(*p))->next) {
           index = *p;
+          if (index != index_datum.index) {
+            grn_obj_unref(ctx, index_datum.index);
+          }
         } else {
           index = index_datum.index;
         }
