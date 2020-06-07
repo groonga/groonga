@@ -4844,23 +4844,19 @@ grn_table_select_inspect_condition_argument(grn_ctx *ctx,
                                             grn_obj *buffer,
                                             grn_obj *argument)
 {
-  grn_obj *domain;
-
   switch (argument->header.type) {
   case GRN_BULK :
-    domain = grn_ctx_at(ctx, argument->header.domain);
-    if (grn_obj_is_table(ctx, domain)) {
-      grn_record_inspect_without_columns(ctx, buffer, argument);
-    } else {
+    if (grn_type_id_is_builtin(ctx, argument->header.domain)) {
       grn_inspect(ctx, buffer, argument);
+    } else {
+      grn_record_inspect_without_columns(ctx, buffer, argument);
     }
     break;
   case GRN_UVECTOR :
-    domain = grn_ctx_at(ctx, argument->header.domain);
-    if (grn_obj_is_table(ctx, domain)) {
-      grn_uvector_record_inspect_without_columns(ctx, buffer, argument);
-    } else {
+    if (grn_type_id_is_builtin(ctx, argument->header.domain)) {
       grn_inspect(ctx, buffer, argument);
+    } else {
+      grn_uvector_record_inspect_without_columns(ctx, buffer, argument);
     }
     break;
   case GRN_TABLE_HASH_KEY :
