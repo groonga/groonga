@@ -1183,8 +1183,8 @@ h_output_set_header(grn_ctx *ctx,
     GRN_TEXT_PUTS(ctx, header, grn_ctx_get_mime_type(ctx));
   }
   GRN_TEXT_PUTS(ctx, header, "\r\n");
+  GRN_TEXT_PUTS(ctx, header, "Connection: close\r\n");
   if (content_length >= 0) {
-    GRN_TEXT_PUTS(ctx, header, "Connection: close\r\n");
     GRN_TEXT_PUTS(ctx, header, "Content-Length: ");
     grn_text_lltoa(ctx, header, content_length);
     GRN_TEXT_PUTS(ctx, header, "\r\n");
@@ -1336,7 +1336,6 @@ h_output_raw(grn_ctx *ctx, int flags, ht_context *hc)
   if (is_last_message) {
     if (hc->is_chunked) {
       GRN_TEXT_PUTS(ctx, &foot_, "0\r\n");
-      GRN_TEXT_PUTS(ctx, &foot_, "Connection: close\r\n");
       GRN_TEXT_PUTS(ctx, &foot_, "\r\n");
       foot = &foot_;
     }
@@ -1486,7 +1485,6 @@ h_output_typed(grn_ctx *ctx, int flags, ht_context *hc)
     GRN_OBJ_FIN(ctx, &last_output);
 
     GRN_TEXT_PUTS(ctx, &foot_, "0\r\n");
-    GRN_TEXT_PUTS(ctx, &foot_, "Connection: close\r\n");
     GRN_TEXT_PUTS(ctx, &foot_, "\r\n");
     foot = &foot_;
   }
