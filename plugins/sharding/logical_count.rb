@@ -15,25 +15,26 @@ module Groonga
 
       def run_body(input)
         enumerator = LogicalEnumerator.new("logical_count", input)
-
         counter = Counter.new(input, enumerator.target_range)
         total = 0
         have_shard = false
+
         begin
           enumerator.each do |shard, shard_range|
             have_shard = true
             counter.count_pre(shard, shard_range)
           end
           total += counter.count
+          unless have_shard
+            message =
+              "[logical_count] no shard exists: " +
+              "logical_table: <#{enumerator.logical_table}>: " +
+              "shard_key: <#{enumerator.shard_key_name}>"
+            raise InvalidArgument, message
+          end
         ensure
           counter.close
-        end
-        unless have_shard
-          message =
-            "[logical_count] no shard exists: " +
-            "logical_table: <#{enumerator.logical_table}>: " +
-            "shard_key: <#{enumerator.shard_key_name}>"
-          raise InvalidArgument, message
+          enumerator.unref
         end
         query_logger.log(:size, ":", "count(#{total})")
         writer.write(total)
@@ -79,6 +80,7 @@ module Groonga
           @contexts = []
           @temporary_tables = []
           @temporary_expressions = []
+          @referred_objects = []
         end
 
         def count_pre(shard, shard_range)
@@ -104,6 +106,7 @@ module Groonga
             index_info = shard_key.find_index(Operator::LESS)
             range_index = index_info.index if index_info
             if range_index
+              @referred_objects << range_index
               log_use_range_index(true, table_name, "range index is available",
                                   __LINE__, __method__)
             else
@@ -126,6 +129,7 @@ module Groonga
         def close
           @temporary_expressions.each(&:close)
           @temporary_tables.each(&:close)
+          @referred_objects.each(&:unref)
         end
 
         private
@@ -256,7 +260,9 @@ module Groonga
             flags |= TableCursorFlags::LT
           end
 
-          TableCursor.open(context.range_index.table,
+          lexicon = context.range_index.table
+          @referred_objects << lexicon
+          TableCursor.open(lexicon,
                            :min => min,
                            :max => max,
                            :flags => flags) do |table_cursor|
