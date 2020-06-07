@@ -10,6 +10,7 @@ module Groonga
         @command_name = command_name
         @input = input
         @options = options
+        @shards = []
         initialize_parameters
       end
 
@@ -19,6 +20,10 @@ module Groonga
 
       def reverse_each(&block)
         each_internal(:descending, &block)
+      end
+
+      def unref
+        @shards.each(&:unref)
       end
 
       private
@@ -77,7 +82,9 @@ module Groonga
             next
           end
 
-          shards << Shard.new(name, @shard_key_name, shard_range_data)
+          shard = Shard.new(name, @shard_key_name, shard_range_data)
+          shards << shard
+          @shards << shard
           next if shards.size < 3
           yield(*shards)
           shards.shift
@@ -88,7 +95,6 @@ module Groonga
         end
       end
 
-      private
       def initialize_parameters
         @logical_table = @input[:logical_table]
         if @logical_table.nil?
@@ -121,6 +127,8 @@ module Groonga
           @table_name = table_name
           @key_name = key_name
           @range_data = range_data
+          @table = nil
+          @key = nil
         end
 
         def table
@@ -133,6 +141,11 @@ module Groonga
 
         def key
           @key ||= Context.instance[full_key_name]
+        end
+
+        def unref
+          @table.unref if @table
+          @key.unref if @key
         end
       end
 
