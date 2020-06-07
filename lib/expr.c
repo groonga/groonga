@@ -4421,6 +4421,7 @@ grn_table_select_index_range_column(grn_ctx *ctx,
                                                    logical_op,
                                                    tag,
                                                    lexicon)) {
+    grn_obj_unref(ctx, lexicon);
     return GRN_FUNCTION_NOT_IMPLEMENTED;
   }
 
@@ -4517,6 +4518,7 @@ grn_table_select_index_range_column(grn_ctx *ctx,
     grn_ii_resolve_sel_and(ctx, (grn_hash *)res, logical_op);
   }
   GRN_OBJ_FIN(ctx, &range);
+  grn_obj_unref(ctx, lexicon);
 
   return rc;
 }
