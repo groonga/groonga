@@ -622,6 +622,9 @@ grn_accessor_estimate_size_for_query_data_fin(
   grn_ctx *ctx,
   grn_accessor_estimate_size_for_query_data *data)
 {
+  if (data->index) {
+    grn_obj_unref(ctx, data->index);
+  }
   GRN_OBJ_FIN(ctx, &(data->query_casted));
 }
 
@@ -702,12 +705,12 @@ grn_accessor_estimate_size_for_query_prepare(
   }
 
   grn_obj *lexicon;
-  bool lexicon_need_unlink = false;
+  bool lexicon_need_unref = false;
   if (grn_obj_is_table(ctx, data->index)) {
     lexicon = data->index;
   } else {
     lexicon = grn_ctx_at(ctx, data->index->header.domain);
-    lexicon_need_unlink = true;
+    lexicon_need_unref = true;
   }
 
   if (data->query->header.domain == lexicon->header.domain) {
@@ -724,8 +727,8 @@ grn_accessor_estimate_size_for_query_prepare(
     }
   }
 
-  if (lexicon_need_unlink) {
-    grn_obj_unlink(ctx, lexicon);
+  if (lexicon_need_unref) {
+    grn_obj_unref(ctx, lexicon);
   }
 
   return ctx->rc == GRN_SUCCESS;
@@ -936,8 +939,8 @@ grn_accessor_name(grn_ctx *ctx, grn_obj *accessor, grn_obj *name)
         GRN_TEXT_PUT(ctx, name, target_name, target_name_size);
       }
       GRN_TEXT_PUTS(ctx, name, ")");
-      if (show_obj_domain_name && target && grn_enable_reference_count) {
-        grn_obj_unlink(ctx, target);
+      if (show_obj_domain_name && target) {
+        grn_obj_unref(ctx, target);
       }
     }
   }
