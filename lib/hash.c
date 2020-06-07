@@ -2090,6 +2090,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
           }
         }
       }
+      grn_obj_unref(ctx, domain);
     }
   }
   if (expected_n_entries > INT_MAX) {
