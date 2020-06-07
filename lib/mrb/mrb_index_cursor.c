@@ -205,6 +205,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
         n_unmatched_records++;
         if (n_unmatched_records > max_n_unmatched_records) {
           grn_expr_executor_fin(ctx, &executor);
+          grn_obj_unref(ctx, data_table);
           return mrb_fixnum_value(-1);
         }
         continue;
@@ -230,6 +231,8 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
     grn_expr_executor_fin(ctx, &executor);
   }
   grn_ii_resolve_sel_and(ctx, result_set, op);
+
+  grn_obj_unref(ctx, data_table);
 
   return mrb_fixnum_value(n_matched_records);
 }
