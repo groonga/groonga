@@ -9,8 +9,10 @@ column_create Times_20150709 timestamp_index COLUMN_INDEX Logs_20150709 timestam
 
 log_level --level debug
 #@add-important-log-levels debug
+#@add-ignore-log-pattern /\A\[io\]/
 logical_count Logs timestamp \
   --min "2015/07/09 00:00:00" \
   --max "2015/07/09 12:00:00"
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels debug
 log_level --level notice
