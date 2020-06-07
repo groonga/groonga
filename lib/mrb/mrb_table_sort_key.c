@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -42,6 +43,8 @@ mrb_grn_table_sort_key_free(mrb_state *mrb, void *data)
   if (sort_key->key) {
     if (sort_key->key->header.type == GRN_ACCESSOR) {
       grn_obj_unlink(ctx, sort_key->key);
+    } else {
+      grn_obj_unref(ctx, sort_key->key);
     }
   }
   mrb_free(mrb, sort_key);
