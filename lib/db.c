@@ -11248,8 +11248,9 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
   if (obj) {
-    grn_log_reference_count("close: %p\n", obj);
     if (GRN_DB_OBJP(obj)) {
+      grn_log_reference_count("close: %p\n", obj);
+
       grn_id id = DB_OBJ(obj)->id;
       grn_hook_entry entry;
 
