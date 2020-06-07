@@ -596,6 +596,10 @@ grn_accessor_execute(grn_ctx *ctx,
     grn_obj_close(ctx, base_res);
   }
 
+  if (n_index_datum > 0) {
+    grn_obj_unref(ctx, index_data.index);
+  }
+
   GRN_API_RETURN(rc);
 }
 
