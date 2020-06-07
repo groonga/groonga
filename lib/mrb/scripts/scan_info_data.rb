@@ -53,8 +53,8 @@ module Groonga
       end
     end
 
-    def unlink
-      @search_indexes.each(&:unlink)
+    def unref
+      @search_indexes.each(&:unref)
     end
 
     private
@@ -300,7 +300,7 @@ module Groonga
         if index_info
           if accessor.have_next? and index_info.index != accessor.object
             accessor.refer
-            index_info.index.unlink
+            index_info.index.unref
             index_info = IndexInfo.new(accessor, index_info.section_id)
           end
         end
@@ -335,7 +335,7 @@ module Groonga
       weight = expr_code.weight
       if accessor.next
         accessor.refer
-        index_info.index.unlink
+        index_info.index.unref
         put_search_index(accessor, section_id, weight)
       else
         put_search_index(index_info.index, section_id, weight)
@@ -366,7 +366,7 @@ module Groonga
       return if index_info.nil?
       if accessor.next
         accessor.refer
-        index_info.index.unlink
+        index_info.index.unref
         put_search_index(accessor, index_info.section_id, 1)
       else
         put_search_index(index_info.index, index_info.section_id, 1)

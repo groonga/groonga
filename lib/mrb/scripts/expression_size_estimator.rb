@@ -14,7 +14,7 @@ module Groonga
       begin
         estimate_data_list(data_list)
       ensure
-        data_list.each(&:unlink)
+        data_list.each(&:unref)
       end
     end
 
