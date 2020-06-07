@@ -30,6 +30,7 @@
 #include <arrow/io/api.h>
 #include <arrow/ipc/api.h>
 
+#include <map>
 #include <sstream>
 
 namespace grnarrow {
@@ -89,6 +90,38 @@ namespace grnarrow {
                  static_cast<std::stringstream &>(output).str().c_str());
   }
 
+  class ObjectCache {
+  public:
+    ObjectCache(grn_ctx *ctx) : ctx_(ctx) {
+    }
+
+    ~ObjectCache() {
+      for (auto &it : cached_objects_) {
+        auto object = it.second;
+        if (object) {
+          grn_obj_unref(ctx_, object);
+        }
+      }
+    }
+
+    grn_obj *operator[](grn_id id) {
+      auto it = cached_objects_.find(id);
+      if (it != cached_objects_.end()) {
+        return it->second;
+      } else {
+        auto object = grn_ctx_at(ctx_, id);
+        if (object) {
+          cached_objects_[id] = object;
+        }
+        return object;
+      }
+    }
+
+  private:
+    grn_ctx *ctx_;
+    std::map<grn_id, grn_obj *> cached_objects_;
+  };
+
   void put_time_value(grn_ctx *ctx,
                       grn_obj *bulk,
                       int64_t time_value,
@@ -145,8 +178,10 @@ namespace grnarrow {
     }
   }
 
-  std::shared_ptr<arrow::DataType> grn_column_to_arrow_type(grn_ctx *ctx,
-                                                            grn_obj *column) {
+  std::shared_ptr<arrow::DataType> grn_column_to_arrow_type(
+    grn_ctx *ctx,
+    grn_obj *column,
+    ObjectCache &object_cache) {
     switch (column->header.type) {
     case GRN_TYPE :
       return grn_type_id_to_arrow_type(ctx, grn_obj_id(ctx, column));
@@ -159,17 +194,18 @@ namespace grnarrow {
         grn_obj_get_range_info(ctx, column, &range_id, &range_flags);
         auto arrow_type = grn_type_id_to_arrow_type(ctx, range_id);
         if (!arrow_type) {
-          auto range = grn_ctx_at(ctx, range_id);
+          auto range = object_cache[range_id];
           if (grn_obj_is_lexicon(ctx, range)) {
             // TODO: We can't return reference value as dictionary
             // because arrow::ipc::RecordBatchWriter doesn't support
             // dictionary delta for now.
             //
-            // auto domain = grn_ctx_at(ctx, range->header.domain);
-            // auto dictionary_type = grn_column_to_arrow_type(ctx, domain);
+            // auto domain = object_cache[range->header.domain];
+            // auto dictionary_type =
+            //   grn_column_to_arrow_type(ctx, domain, object_cache);
             // arrow_type = arrow::dictionary(arrow::int32(), dictionary_type);
-            auto domain = grn_ctx_at(ctx, range->header.domain);
-            arrow_type = grn_column_to_arrow_type(ctx, domain);
+            auto domain = object_cache[range->header.domain];
+            arrow_type = grn_column_to_arrow_type(ctx, domain, object_cache);
           }
         }
         if (range_flags & GRN_OBJ_VECTOR) {
@@ -438,12 +474,14 @@ namespace grnarrow {
     ValueLoadVisitor(grn_ctx *ctx,
                      grn_obj *grn_column,
                      grn_obj *bulk,
-                     int64_t index)
+                     int64_t index,
+                     ObjectCache *object_cache)
       : ctx_(ctx),
         grn_column_(grn_column),
         bulk_(bulk),
         index_(index),
-        buffer_() {
+        buffer_(),
+        object_cache_(object_cache) {
       GRN_VOID_INIT(&buffer_);
     }
 
@@ -577,7 +615,7 @@ namespace grnarrow {
       switch (value_array->type_id()) {
       case arrow::Type::STRUCT :
         for (int64_t i = 0; i < value_array->length(); ++i) {
-          ValueLoadVisitor sub_visitor(ctx_, grn_column_, bulk_, i);
+          ValueLoadVisitor sub_visitor(ctx_, grn_column_, bulk_, i, object_cache_);
           ARROW_RETURN_NOT_OK(value_array->Accept(&sub_visitor));
         }
         break;
@@ -587,7 +625,7 @@ namespace grnarrow {
             std::static_pointer_cast<arrow::ListArray>(value_array);
           const auto &sub_value_array = sub_list_array->value_slice(i);
           for (int64_t j = 0; j < sub_value_array->length(); ++j) {
-            ValueLoadVisitor sub_visitor(ctx_, grn_column_, bulk_, j);
+            ValueLoadVisitor sub_visitor(ctx_, grn_column_, bulk_, j, object_cache_);
             ARROW_RETURN_NOT_OK(sub_value_array->Accept(&sub_visitor));
           }
         }
@@ -602,7 +640,11 @@ namespace grnarrow {
           }
           for (int64_t i = 0; i < value_array->length(); ++i) {
             GRN_BULK_REWIND(&sub_buffer);
-            ValueLoadVisitor sub_visitor(ctx_, grn_column_, &sub_buffer, i);
+            ValueLoadVisitor sub_visitor(ctx_,
+                                         grn_column_,
+                                         &sub_buffer,
+                                         i,
+                                         object_cache_);
             ARROW_RETURN_NOT_OK(value_array->Accept(&sub_visitor));
             if (ctx_->rc != GRN_SUCCESS) {
               continue;
@@ -674,10 +716,9 @@ namespace grnarrow {
                          &raw_value_buffer,
                          &value_buffer,
                          true) != GRN_SUCCESS) {
-          grn_ctx *ctx = ctx_;
-          grn_obj *domain_object = grn_ctx_at(ctx_, domain);
+          auto ctx = ctx_;
+          auto domain_object = (*object_cache_)[domain];
           ERR_CAST(grn_column_, domain_object, &raw_value_buffer);
-          grn_obj_unlink(ctx, domain_object);
         }
       }
       if (GRN_BULK_VSIZE(&value_buffer) > 0) {
@@ -712,16 +753,16 @@ namespace grnarrow {
     grn_obj *bulk_;
     int64_t index_;
     grn_obj buffer_;
+    ObjectCache *object_cache_;
 
     template <typename LoadBulk>
     arrow::Status
     load_value(LoadBulk load_bulk) {
       load_bulk();
       if (grn_obj_cast(ctx_, &buffer_, bulk_, true) != GRN_SUCCESS) {
-        grn_ctx *ctx = ctx_;
-        grn_obj *range = grn_ctx_at(ctx_, bulk_->header.domain);
+        auto ctx = ctx_;
+        auto range = (*object_cache_)[bulk_->header.domain];
         ERR_CAST(grn_column_, range, &buffer_);
-        grn_obj_unlink(ctx, range);
       }
       return arrow::Status::OK();
     }
@@ -733,13 +774,15 @@ namespace grnarrow {
                       grn_loader *grn_loader,
                       grn_obj *grn_table,
                       const std::shared_ptr<arrow::Field> &arrow_field,
-                      const grn_id *record_ids)
+                      const grn_id *record_ids,
+                      ObjectCache *object_cache)
       : ctx_(ctx),
         grn_loader_(grn_loader),
         grn_table_(grn_table),
         record_ids_(record_ids),
         grn_column_(nullptr),
-        buffer_() {
+        buffer_(),
+        object_cache_(object_cache) {
       const auto &column_name = arrow_field->name();
       if (grn_loader_) {
         grn_column_ = grn_loader_get_column(ctx_,
@@ -783,7 +826,7 @@ namespace grnarrow {
                               static_cast<unsigned int>(column_name.size()),
                               NULL,
                               GRN_OBJ_COLUMN_SCALAR,
-                              grn_ctx_at(ctx_, arrow_type_id));
+                              (*object_cache_)[arrow_type_id]);
         }
       }
       if (grn_type_id_is_text_family(ctx_, arrow_type_id)) {
@@ -875,6 +918,7 @@ namespace grnarrow {
     const grn_id *record_ids_;
     grn_obj *grn_column_;
     grn_obj buffer_;
+    ObjectCache *object_cache_;
 
     void detect_type(const std::shared_ptr<arrow::DataType> &arrow_type,
                      grn_id *type_id,
@@ -957,7 +1001,7 @@ namespace grnarrow {
           continue;
         }
         GRN_BULK_REWIND(&buffer_);
-        ValueLoadVisitor visitor(ctx_, grn_column_, &buffer_, i);
+        ValueLoadVisitor visitor(ctx_, grn_column_, &buffer_, i, object_cache_);
         ARROW_RETURN_NOT_OK(array.Accept(&visitor));
         if (ctx_->rc == GRN_SUCCESS) {
           grn_obj_set_value(ctx_, grn_column_, record_id, &buffer_, GRN_OBJ_SET);
@@ -989,7 +1033,8 @@ namespace grnarrow {
     FileLoader(grn_ctx *ctx, grn_obj *grn_table)
       : ctx_(ctx),
         grn_table_(grn_table),
-        key_column_name_("") {
+        key_column_name_(""),
+        object_cache_(ctx_) {
     }
 
     ~FileLoader() {
@@ -1018,7 +1063,8 @@ namespace grnarrow {
                                       nullptr,
                                       grn_table_,
                                       arrow_field,
-                                      sub_ids);
+                                      sub_ids,
+                                      &object_cache_);
             auto status = arrow_array->Accept(&visitor);
             offset += arrow_array->length();
           }
@@ -1048,6 +1094,7 @@ namespace grnarrow {
     grn_ctx *ctx_;
     grn_obj *grn_table_;
     std::string key_column_name_;
+    ObjectCache object_cache_;
   };
 
   class FileDumper {
@@ -1055,7 +1102,8 @@ namespace grnarrow {
     FileDumper(grn_ctx *ctx, grn_obj *grn_table, grn_obj *grn_columns)
       : ctx_(ctx),
         grn_table_(grn_table),
-        grn_columns_(grn_columns) {
+        grn_columns_(grn_columns),
+        object_cache_(ctx_) {
     }
 
     ~FileDumper() {
@@ -1073,8 +1121,8 @@ namespace grnarrow {
           grn_column_name(ctx_, column, column_name, GRN_TABLE_MAX_KEY_SIZE);
         std::string field_name(column_name, column_name_size);
         auto range_id = grn_obj_get_range(ctx_, column);
-        auto range = grn_ctx_at(ctx_, range_id);
-        auto field_type = grn_column_to_arrow_type(ctx_, range);
+        auto range = object_cache_[range_id];
+        auto field_type = grn_column_to_arrow_type(ctx_, range, object_cache_);
         if (!field_type) {
           continue;
         }
@@ -1121,6 +1169,7 @@ namespace grnarrow {
     grn_ctx *ctx_;
     grn_obj *grn_table_;
     grn_obj *grn_columns_;
+    ObjectCache object_cache_;
 
     void write_record_batch(std::vector<grn_id> &ids,
                             std::shared_ptr<arrow::Schema> &schema,
@@ -1471,8 +1520,8 @@ namespace grnarrow {
       : ctx_(ctx),
         grn_loader_(loader),
         decoder_(std::shared_ptr<StreamLoader>(this, [](void*) {})),
-        buffer_(nullptr)
-    {
+        buffer_(nullptr),
+        object_cache_(ctx_) {
     }
 
     grn_rc consume(const char *data, size_t data_size) {
@@ -1563,7 +1612,8 @@ namespace grnarrow {
                                   grn_loader_,
                                   grn_table,
                                   schema->field(i),
-                                  record_ids.data());
+                                  record_ids.data(),
+                                  &object_cache_);
         column->Accept(&visitor);
       }
       for (const auto record_id : record_ids) {
@@ -1578,6 +1628,7 @@ namespace grnarrow {
     grn_loader *grn_loader_;
     arrow::ipc::StreamDecoder decoder_;
     std::unique_ptr<arrow::ResizableBuffer> buffer_;
+    ObjectCache object_cache_;
   };
 
   class BulkOutputStream : public arrow::io::OutputStream {
@@ -1649,7 +1700,8 @@ namespace grnarrow {
         writer_(),
         record_batch_builder_(),
         n_records_(0),
-        current_column_index_(0) {
+        current_column_index_(0),
+        object_cache_(ctx_) {
     }
 
     ~StreamWriter() {
@@ -1679,7 +1731,7 @@ namespace grnarrow {
     }
 
     void add_field(const char *name, grn_obj *column) {
-      auto type = grn_column_to_arrow_type(ctx_, column);
+      auto type = grn_column_to_arrow_type(ctx_, column, object_cache_);
       if (!type) {
         auto ctx = ctx_;
         grn_obj inspected;
@@ -1864,7 +1916,7 @@ namespace grnarrow {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::StringBuilder>(
           current_column_index_++);
-      auto table = grn_ctx_at(ctx_, record->header.domain);
+      auto table = object_cache_[record->header.domain];
       char key[GRN_TABLE_MAX_KEY_SIZE];
       auto key_size = grn_table_get_key(ctx_,
                                         table,
@@ -1897,7 +1949,7 @@ namespace grnarrow {
           current_column_index_++);
       auto status = column_builder->Append();
       if (status.ok()) {
-        auto domain = grn_ctx_at(ctx_, uvector->header.domain);
+        auto domain = object_cache_[uvector->header.domain];
         auto raw_elements = GRN_BULK_HEAD(uvector);
         auto element_size = grn_uvector_element_size(ctx_, uvector);
         auto n = GRN_BULK_VSIZE(uvector) / element_size;
@@ -1980,6 +2032,7 @@ namespace grnarrow {
     std::unique_ptr<arrow::RecordBatchBuilder> record_batch_builder_;
     size_t n_records_;
     int current_column_index_;
+    ObjectCache object_cache_;
   };
 }
 #endif /* GRN_WITH_APACHE_ARROW */
@@ -2055,13 +2108,14 @@ grn_arrow_dump(grn_ctx *ctx,
                     "", 0,
                     reinterpret_cast<grn_obj *>(all_columns));
 
+  grnarrow::ObjectCache object_cache(ctx);
   grn_obj columns;
   GRN_PTR_INIT(&columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_HASH_EACH_BEGIN(ctx, all_columns, cursor, id) {
     void *key;
     grn_hash_cursor_get_key(ctx, cursor, &key);
     auto column_id = static_cast<grn_id *>(key);
-    auto column = grn_ctx_at(ctx, *column_id);
+    auto column = object_cache[*column_id];
     GRN_PTR_PUT(ctx, &columns, column);
   } GRN_HASH_EACH_END(ctx, cursor);
   grn_hash_close(ctx, all_columns);
