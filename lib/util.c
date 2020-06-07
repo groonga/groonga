@@ -1203,6 +1203,10 @@ grn_record_inspect_common(grn_ctx *ctx,
 
   GRN_TEXT_PUTS(ctx, buf, ">");
 
+  if (table) {
+    grn_obj_unref(ctx, table);
+  }
+
   return GRN_SUCCESS;
 }
 
