@@ -124,6 +124,7 @@ module Groonga
         attr_reader :large_shard_threshold
         attr_reader :time_classify_types
         attr_reader :result_sets
+        attr_reader :referred_objects
         def initialize(input)
           @input = input
           @use_range_index = parse_use_range_index(@input[:use_range_index])
@@ -148,6 +149,8 @@ module Groonga
           @large_shard_threshold = compute_large_shard_threshold
 
           @time_classify_types = detect_time_classify_types
+
+          @referred_objects = []
         end
 
         def temporary_tables
@@ -171,6 +174,8 @@ module Groonga
             shift
           end
           @result_sets.clear
+          @referred_objects.each(&:unref)
+          @enumerator.unref
         end
 
         def consume_result_sets
@@ -679,8 +684,10 @@ module Groonga
                                                            @target_range)
           @expression_builder.filter = @filter
           index_info = @shard_key.find_index(Operator::LESS)
-          if index_info and use_range_index?
-            @range_index = index_info.index
+          if index_info
+            index = index_info.index
+            @context.referred_objects << index
+            @range_index = index if use_range_index?
           end
 
           if @context.dynamic_columns.have_initial?
@@ -1011,7 +1018,9 @@ module Groonga
 
         def filter_by_range(range_index, min, min_border, max, max_border)
           lexicon = range_index.domain
+          @context.referred_objects << lexicon
           data_table = range_index.range
+          @context.referred_objects << data_table
           flags = build_range_search_flags(min_border, max_border)
 
           result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
