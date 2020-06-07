@@ -63,7 +63,7 @@ module Groonga
         def initialize(shard, cover_type, range_index)
           @shard = shard
           @cover_type = cover_type
-          @range_idnex = range_index
+          @range_index = range_index
           @table = shard.table
         end
       end
@@ -260,7 +260,7 @@ module Groonga
                            :min => min,
                            :max => max,
                            :flags => flags) do |table_cursor|
-            IndexCursor.open(table_cursor, range_index) do |index_cursor|
+            IndexCursor.open(table_cursor, context.range_index) do |index_cursor|
               index_cursor.count
             end
           end
