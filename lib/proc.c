@@ -4160,6 +4160,7 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
       grn_obj *sub_target = grn_ctx_at(ctx, id);
       rc = grn_obj_flush(ctx, sub_target);
+      grn_obj_unref(ctx, sub_target);
       if (rc != GRN_SUCCESS) {
         break;
       }
