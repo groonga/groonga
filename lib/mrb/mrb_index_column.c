@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright(C) 2014-2015  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -121,6 +122,7 @@ mrb_grn_index_column_estimate_size_for_query(mrb_state *mrb, mrb_value self)
   grn_mrb_value_to_raw_data_buffer_init(mrb, &buffer);
   grn_mrb_value_to_raw_data(mrb, "query", mrb_query, lexicon->header.domain,
                             &buffer, &query, &query_size);
+  grn_obj_unref(ctx, lexicon);
 
   memset(&optarg, 0, sizeof(grn_search_optarg));
   optarg.mode = GRN_OP_EXACT;
