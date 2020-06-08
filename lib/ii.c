@@ -10974,8 +10974,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
           if (need_check) {
             for (;;) {
               data.token_info = bt->min;
-              uint32_t min = data.token_info->pos;
-              uint32_t max = bt->max->pos;
+              int min = data.token_info->pos;
+              int max = bt->max->pos;
               if (min > max) {
                 char ii_name[GRN_TABLE_MAX_KEY_SIZE];
                 int ii_name_size;
@@ -10984,7 +10984,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                 ERR(GRN_FILE_CORRUPT,
                     "[ii][select][near] "
                     "max position must be larger than min position: "
-                    "min:<%u> max:<%u> ii:<%.*s> string:<%.*s>",
+                    "min:<%d> max:<%d> ii:<%.*s> string:<%.*s>",
                     min,
                     max,
                     ii_name_size, ii_name,
@@ -10992,7 +10992,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                 rc = ctx->rc;
                 goto exit;
               }
-              uint32_t interval = max - min;
+              int interval = max - min;
               if (data.mode == GRN_OP_NEAR_PHRASE) {
                 interval -= (data.token_info->n_tokens_in_phrase - 1);
               }
