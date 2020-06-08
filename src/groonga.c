@@ -443,6 +443,45 @@ s_output(grn_ctx *ctx, int flags, void *arg)
   }
 }
 
+static void
+create_pid_file(void)
+{
+  FILE *pid_file = NULL;
+
+  if (!pid_file_path) {
+    return;
+  }
+
+  pid_file = fopen(pid_file_path, "w");
+  if (!pid_file) {
+    fprintf(stderr,
+            "Failed to open PID file: <%s>: <%s>\n",
+            pid_file_path, grn_strerror(errno));
+    return;
+  }
+
+  {
+#ifdef WIN32
+    DWORD pid;
+    pid = GetCurrentProcessId();
+    fprintf(pid_file, "%" GRN_FMT_DWORD "\n", pid);
+#else /* WIN32 */
+    pid_t pid;
+    pid = grn_getpid();
+    fprintf(pid_file, "%d\n", pid);
+#endif /* WIN32 */
+  }
+  fclose(pid_file);
+}
+
+static void
+clean_pid_file(void)
+{
+  if (pid_file_path) {
+    grn_unlink(pid_file_path);
+  }
+}
+
 static int
 do_alone(int argc, char **argv)
 {
@@ -450,6 +489,7 @@ do_alone(int argc, char **argv)
   char *path = NULL;
   grn_obj *db;
   grn_ctx ctx_, *ctx = &ctx_;
+  create_pid_file();
   grn_ctx_init(ctx, 0);
   if (argc > 0 && argv) { path = *argv++; argc--; }
   db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
@@ -482,6 +522,7 @@ do_alone(int argc, char **argv)
     fprintf(stderr, "db open failed (%s): %s\n", path, ctx->errbuf);
   }
   grn_ctx_fin(ctx);
+  clean_pid_file();
   return exit_code;
 }
 
@@ -898,45 +939,6 @@ send_ready_notify(void)
   }
   close_ready_notify_pipe();
   return GRN_TRUE;
-}
-
-static void
-create_pid_file(void)
-{
-  FILE *pid_file = NULL;
-
-  if (!pid_file_path) {
-    return;
-  }
-
-  pid_file = fopen(pid_file_path, "w");
-  if (!pid_file) {
-    fprintf(stderr,
-            "Failed to open PID file: <%s>: <%s>\n",
-            pid_file_path, grn_strerror(errno));
-    return;
-  }
-
-  {
-#ifdef WIN32
-    DWORD pid;
-    pid = GetCurrentProcessId();
-    fprintf(pid_file, "%" GRN_FMT_DWORD "\n", pid);
-#else /* WIN32 */
-    pid_t pid;
-    pid = grn_getpid();
-    fprintf(pid_file, "%d\n", pid);
-#endif /* WIN32 */
-  }
-  fclose(pid_file);
-}
-
-static void
-clean_pid_file(void)
-{
-  if (pid_file_path) {
-    grn_unlink(pid_file_path);
-  }
 }
 
 static int
@@ -3888,7 +3890,6 @@ show_usage(FILE *output)
           "  -t, --max-threads <max threads>:\n"
           "                                specify max number of threads (default: %u)\n"
           "      --pid-path <path>:        specify file to write process ID to\n"
-          "                                (daemon mode only)\n"
           "      --default-request-timeout <timeout>:\n"
           "                                specify the default request timeout in seconds\n"
           "                                (default: %f)\n"
