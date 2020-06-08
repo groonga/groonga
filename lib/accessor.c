@@ -608,6 +608,7 @@ typedef struct {
   grn_obj *query;
   grn_search_optarg *optarg;
   grn_obj *index;
+  bool index_need_unref;
   grn_operator operator;
   grn_obj query_casted;
   const char *query_raw;
@@ -622,7 +623,7 @@ grn_accessor_estimate_size_for_query_data_fin(
   grn_ctx *ctx,
   grn_accessor_estimate_size_for_query_data *data)
 {
-  if (data->index) {
+  if (data->index_need_unref) {
     grn_obj_unref(ctx, data->index);
   }
   GRN_OBJ_FIN(ctx, &(data->query_casted));
@@ -702,6 +703,7 @@ grn_accessor_estimate_size_for_query_prepare(
     data->index = a->obj;
   } else {
     data->index = index_data.index;
+    data->index_need_unref = true;
   }
 
   grn_obj *lexicon;
@@ -763,6 +765,7 @@ grn_accessor_estimate_size_for_query(grn_ctx *ctx,
   data.query = query;
   data.optarg = optarg;
   data.index = NULL;
+  data.index_need_unref = false;
   data.operator = GRN_OP_MATCH;
   GRN_VOID_INIT(&(data.query_casted));
   data.query_raw = NULL;
