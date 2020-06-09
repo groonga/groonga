@@ -10022,7 +10022,6 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
         bt_zap(bt);
         for (tip = tis; tip < tie; tip++) {
           token_info *ti = *tip;
-          SKIP_OR_BREAK(pos);
           bt_push(bt, ti);
         }
         if (tip == tie) {
@@ -10966,7 +10965,6 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
           } else {
             for (tip = tis; tip < tie; tip++) {
               ti = *tip;
-              SKIP_OR_BREAK(data.pos);
               bt_push(bt, ti);
             }
             need_check = (tip == tie);
