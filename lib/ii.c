@@ -10931,9 +10931,6 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
           data.record.n_tokens = 0;
         }
 
-#define SKIP_OR_BREAK(pos)                                              \
-        if (!grn_ii_select_skip_pos(ctx, &data, pos)) { break; }
-
         if (data.n_token_infos == 1 && !rep) {
           noccur = (*tis)->p->tf;
           tscore = (*tis)->p->weight + (*tis)->cursors->bins[0]->weight;
@@ -11006,7 +11003,9 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                     break;
                   }
                 } else {
-                  SKIP_OR_BREAK(next_pos);
+                  if (!grn_ii_select_skip_pos(ctx, &data, next_pos)) {
+                    break;
+                  }
                 }
               } else {
                 int next_pos = max - max_interval;
@@ -11018,7 +11017,9 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                     break;
                   }
                 } else {
-                  SKIP_OR_BREAK(next_pos);
+                  if (!grn_ii_select_skip_pos(ctx, &data, next_pos)) {
+                    break;
+                  }
                 }
               }
               bt_pop(bt);
@@ -11028,7 +11029,9 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
           for (tip = tis; ; tip++) {
             if (tip == tie) { tip = tis; }
             data.token_info = *tip;
-            SKIP_OR_BREAK(data.pos);
+            if (!grn_ii_select_skip_pos(ctx, &data, data.pos)) {
+              break;
+            }
             if (data.token_info->pos == data.pos) {
               score +=
                 data.token_info->p->weight +
@@ -11087,7 +11090,6 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
           }
           res_add(ctx, s, &pi, record_score, op);
         }
-#undef SKIP_OR_BREAK
       }
     }
     if (token_info_skip(ctx, *tis, data.next_rid, data.next_sid) != GRN_SUCCESS) {
