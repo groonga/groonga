@@ -20,10 +20,11 @@
 #pragma once
 
 #include "grn.h"
+
 #include "grn_ctx.h"
 #include "grn_options.h"
-#include "grn_store.h"
 #include "grn_rset.h"
+#include "grn_store.h"
 
 #include <groonga/command.h>
 #include <groonga/token_filter.h>
