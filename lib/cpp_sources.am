@@ -1,9 +1,11 @@
 libgroonga_cpp_source =				\
 	arrow.cpp				\
+	bulk.cpp				\
 	cast.cpp				\
 	dat.cpp					\
 	grn_arrow.h				\
 	grn_arrow.hpp				\
+	grn_bulk.h				\
 	grn_cast.h				\
 	grn_token_column.h			\
 	token_column.cpp			\
