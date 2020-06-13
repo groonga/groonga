@@ -278,6 +278,9 @@ grn_proc_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   case GRN_PROC_WINDOW_FUNCTION :
     GRN_TEXT_PUTS(ctx, buf, "window-function");
     break;
+  case GRN_PROC_AGGREGATOR :
+    GRN_TEXT_PUTS(ctx, buf, "aggregator");
+    break;
   }
   GRN_TEXT_PUTS(ctx, buf, " ");
 

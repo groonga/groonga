@@ -320,6 +320,11 @@ struct _grn_proc {
       grn_scorer_score_func *score;
     } scorer;
     grn_window_function_func *window_function;
+    struct {
+      grn_aggregator_init_func *init;
+      grn_aggregator_update_func *update;
+      grn_aggregator_fin_func *fin;
+    } aggregator;
   } callbacks;
 
   void *user_data;

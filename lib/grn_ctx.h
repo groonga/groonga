@@ -452,6 +452,8 @@ typedef struct {
     grn_table_group_flags flags;
     grn_obj *calc_target;
     grn_id aggregated_value_type_id;
+    grn_table_group_aggregator **aggregators;
+    uint32_t n_aggregators;
   } group;
   uint32_t reference_count;
 } grn_db_obj;

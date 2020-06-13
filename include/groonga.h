@@ -26,6 +26,7 @@
 #include "groonga/posting.h"
 
 #include "groonga/accessor.h"
+#include "groonga/aggregator.h"
 #include "groonga/array.h"
 #include "groonga/arrow.h"
 #include "groonga/cache.h"

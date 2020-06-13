@@ -34,7 +34,8 @@ typedef enum {
   GRN_PROC_NORMALIZER,
   GRN_PROC_TOKEN_FILTER,
   GRN_PROC_SCORER,
-  GRN_PROC_WINDOW_FUNCTION
+  GRN_PROC_WINDOW_FUNCTION,
+  GRN_PROC_AGGREGATOR,
 } grn_proc_type;
 
 GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,

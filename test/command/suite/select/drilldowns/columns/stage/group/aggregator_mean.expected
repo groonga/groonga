@@ -1,0 +1,121 @@
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+column_create Items tag COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "Book",  "price": 1000, "tag": "A"},
+{"_key": "Note",  "price": 1000, "tag": "B"},
+{"_key": "Box",   "price": 500,  "tag": "B"},
+{"_key": "Pen",   "price": 500,  "tag": "A"},
+{"_key": "Food",  "price": 500,  "tag": "C"},
+{"_key": "Drink", "price": 300,  "tag": "B"}
+]
+[[0,0.0,0.0],6]
+select Items   --drilldowns[tag].keys tag   --drilldowns[tag].output_columns _key,_nsubrecs,price_mean   --drilldowns[tag].columns[price_mean].stage group   --drilldowns[tag].columns[price_mean].type Float   --drilldowns[tag].columns[price_mean].flags COLUMN_SCALAR   --drilldowns[tag].columns[price_mean].value 'aggregator_mean(price)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "price",
+          "UInt32"
+        ],
+        [
+          "tag",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Book",
+        1000,
+        "A"
+      ],
+      [
+        2,
+        "Note",
+        1000,
+        "B"
+      ],
+      [
+        3,
+        "Box",
+        500,
+        "B"
+      ],
+      [
+        4,
+        "Pen",
+        500,
+        "A"
+      ],
+      [
+        5,
+        "Food",
+        500,
+        "C"
+      ],
+      [
+        6,
+        "Drink",
+        300,
+        "B"
+      ]
+    ],
+    {
+      "tag": [
+        [
+          3
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ],
+          [
+            "price_mean",
+            "Float"
+          ]
+        ],
+        [
+          "A",
+          2,
+          750.0
+        ],
+        [
+          "B",
+          3,
+          600.0
+        ],
+        [
+          "C",
+          1,
+          500.0
+        ]
+      ]
+    }
+  ]
+]

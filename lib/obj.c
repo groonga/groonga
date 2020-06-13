@@ -643,6 +643,19 @@ grn_obj_is_window_function_proc(grn_ctx *ctx, grn_obj *obj)
   return proc->type == GRN_PROC_WINDOW_FUNCTION;
 }
 
+bool
+grn_obj_is_aggregator_proc(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_proc *proc;
+
+  if (!grn_obj_is_proc(ctx, obj)) {
+    return false;
+  }
+
+  proc = (grn_proc *)obj;
+  return proc->type == GRN_PROC_AGGREGATOR;
+}
+
 grn_bool
 grn_obj_is_expr(grn_ctx *ctx, grn_obj *obj)
 {

@@ -20,6 +20,7 @@
 #include "grn.h"
 #include "grn_tokenizer.h"
 
+#include "grn_aggregators.h"
 #include "grn_config.h"
 #include "grn_db.h"
 #include "grn_obj.h"
@@ -460,6 +461,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
     grn_db_init_builtin_commands(ctx);
     grn_db_init_builtin_window_functions(ctx);
     grn_db_init_builtin_token_filters(ctx);
+    grn_db_init_builtin_aggregators(ctx);
 
     if (grn_table_size(ctx, (grn_obj *)s) > n_records) {
       need_flush = true;
@@ -12225,6 +12227,7 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   grn_db_init_builtin_commands(ctx);
   grn_db_init_builtin_window_functions(ctx);
   grn_db_init_builtin_token_filters(ctx);
+  grn_db_init_builtin_aggregators(ctx);
   for (id = grn_db_curr_id(ctx, db) + 1; id < GRN_N_RESERVED_TYPES; id++) {
     grn_itoh(id, buf + 3, 2);
     grn_obj_register(ctx, db, buf, 5);

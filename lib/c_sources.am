@@ -1,5 +1,6 @@
 libgroonga_c_sources =				\
 	accessor.c				\
+	aggregators.c				\
 	alloc.c					\
 	cache.c					\
 	column.c				\

@@ -176,11 +176,58 @@ GRN_API int grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
 typedef struct _grn_table_group_result grn_table_group_result;
 typedef uint32_t grn_table_group_flags;
 
-#define GRN_TABLE_GROUP_CALC_COUNT     (0x01<<3)
-#define GRN_TABLE_GROUP_CALC_MAX       (0x01<<4)
-#define GRN_TABLE_GROUP_CALC_MIN       (0x01<<5)
-#define GRN_TABLE_GROUP_CALC_SUM       (0x01<<6)
-#define GRN_TABLE_GROUP_CALC_AVG       (0x01<<7)
+#define GRN_TABLE_GROUP_CALC_COUNT      (0x01<<3)
+#define GRN_TABLE_GROUP_CALC_MAX        (0x01<<4)
+#define GRN_TABLE_GROUP_CALC_MIN        (0x01<<5)
+#define GRN_TABLE_GROUP_CALC_SUM        (0x01<<6)
+#define GRN_TABLE_GROUP_CALC_AVG        (0x01<<7)
+#define GRN_TABLE_GROUP_CALC_AGGREGATOR (0x01<<8)
+
+typedef struct _grn_table_group_aggregator grn_table_group_aggregator;
+
+GRN_API grn_table_group_aggregator *
+grn_table_group_aggregator_open(grn_ctx *ctx);
+GRN_API grn_rc
+grn_table_group_aggregator_close(grn_ctx *ctx,
+                                 grn_table_group_aggregator *aggregator);
+GRN_API grn_rc
+grn_table_group_aggregator_set_output_column_name(
+  grn_ctx *ctx,
+  grn_table_group_aggregator *aggregator,
+  const char *name,
+  int32_t name_len);
+GRN_API const char *
+grn_table_group_aggregator_get_output_column_name(
+  grn_ctx *ctx,
+  grn_table_group_aggregator *aggregator,
+  uint32_t *len);
+GRN_API grn_rc
+grn_table_group_aggregator_set_output_column_type(
+  grn_ctx *ctx,
+  grn_table_group_aggregator *aggregator,
+  grn_obj *type);
+GRN_API grn_obj *
+grn_table_group_aggregator_get_output_column_type(
+  grn_ctx *ctx,
+  grn_table_group_aggregator *aggregator);
+GRN_API grn_rc
+grn_table_group_aggregator_set_output_column_flags(
+  grn_ctx *ctx,
+  grn_table_group_aggregator *aggregator,
+  grn_column_flags flags);
+GRN_API grn_column_flags
+grn_table_group_aggregator_get_output_column_flags(
+  grn_ctx *ctx,
+  grn_table_group_aggregator *aggregator);
+GRN_API grn_rc
+grn_table_group_aggregator_set_expression(grn_ctx *ctx,
+                                          grn_table_group_aggregator *aggregator,
+                                          const char *expression,
+                                          int32_t expression_len);
+GRN_API const char *
+grn_table_group_aggregator_get_expression(grn_ctx *ctx,
+                                          grn_table_group_aggregator *aggregator,
+                                          uint32_t *expression_len);
 
 struct _grn_table_group_result {
   grn_obj *table;
@@ -191,6 +238,8 @@ struct _grn_table_group_result {
   grn_operator op;
   unsigned int max_n_subrecs;
   grn_obj *calc_target;
+  grn_table_group_aggregator **aggregators;
+  uint32_t n_aggregators;
 };
 
 GRN_API grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table,
