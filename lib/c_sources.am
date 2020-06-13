@@ -42,6 +42,7 @@ libgroonga_c_sources =				\
 	grn_file_lock.h				\
 	grn_float.h				\
 	grn_geo.h				\
+	grn_group.h				\
 	grn_hash.h				\
 	grn_ii.h				\
 	grn_index_column.h			\
