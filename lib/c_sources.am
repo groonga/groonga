@@ -22,6 +22,7 @@ libgroonga_c_sources =				\
 	float.c					\
 	geo.c					\
 	grn.h					\
+	grn_aggregators.h			\
 	grn_alloc.h				\
 	grn_cache.h				\
 	grn_column.h				\
