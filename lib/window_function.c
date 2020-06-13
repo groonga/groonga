@@ -496,7 +496,7 @@ grn_obj *
 grn_window_function_create(grn_ctx *ctx,
                            const char *name,
                            int name_size,
-                           grn_window_function_func func)
+                           grn_window_function_func *func)
 {
   grn_obj *window_function = NULL;
 

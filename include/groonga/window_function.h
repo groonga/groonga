@@ -68,7 +68,7 @@ typedef grn_rc grn_window_function_func(grn_ctx *ctx,
 GRN_API grn_obj *grn_window_function_create(grn_ctx *ctx,
                                             const char *name,
                                             int name_size,
-                                            grn_window_function_func func);
+                                            grn_window_function_func *func);
 
 /* Deprecated since 9.0.2.
    Use grn_window_function_executor() instead. */
