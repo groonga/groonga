@@ -19,7 +19,7 @@ load --table Memos
 {"_key": "Rroonga3", "tag": "Rroonga", "priority": 0}
 ]
 [[0,0.0,0.0],9]
-select Memos   --limit 0   --drilldowns[tag].keys tag   --drilldowns[tag].calc_types 'AVG, MAX, MIN, SUM'   --drilldowns[tag].calc_target priority   --drilldowns[tag].output_columns _key,_max,_min,_sum,_avg
+select Memos   --limit 0   --drilldowns[tag].keys tag   --drilldowns[tag].calc_types 'MAX, MEAN, MIN, SUM'   --drilldowns[tag].calc_target priority   --drilldowns[tag].output_columns _key,_max,_min,_sum,_mean
 [
   [
     0,
@@ -73,7 +73,7 @@ select Memos   --limit 0   --drilldowns[tag].keys tag   --drilldowns[tag].calc_t
             "Float"
           ],
           [
-            "_avg",
+            "_mean",
             "Float"
           ]
         ],

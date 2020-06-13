@@ -49,7 +49,7 @@ typedef union {
 #define GRN_RSET_MAX_SIZE       (sizeof(grn_rset_aggregated_value))
 #define GRN_RSET_MIN_SIZE       (sizeof(grn_rset_aggregated_value))
 #define GRN_RSET_SUM_SIZE       (sizeof(grn_rset_aggregated_value))
-#define GRN_RSET_AVG_SIZE       (sizeof(double) + sizeof(uint64_t))
+#define GRN_RSET_MEAN_SIZE      (sizeof(double) + sizeof(uint64_t))
 
 #define GRN_RSET_SCORE_SIZE (sizeof(double))
 
@@ -115,16 +115,16 @@ grn_rset_recinfo_set_sum(grn_ctx *ctx,
                          grn_obj *table,
                          grn_rset_aggregated_value sum);
 
-double *grn_rset_recinfo_get_avg_(grn_ctx *ctx,
-                                  grn_rset_recinfo *ri,
-                                  grn_obj *table);
-double grn_rset_recinfo_get_avg(grn_ctx *ctx,
-                                grn_rset_recinfo *ri,
-                                grn_obj *table);
-void grn_rset_recinfo_set_avg(grn_ctx *ctx,
-                              grn_rset_recinfo *ri,
-                              grn_obj *table,
-                              double avg);
+double *grn_rset_recinfo_get_mean_(grn_ctx *ctx,
+                                   grn_rset_recinfo *ri,
+                                   grn_obj *table);
+double grn_rset_recinfo_get_mean(grn_ctx *ctx,
+                                 grn_rset_recinfo *ri,
+                                 grn_obj *table);
+void grn_rset_recinfo_set_mean(grn_ctx *ctx,
+                               grn_rset_recinfo *ri,
+                               grn_obj *table,
+                               double avg);
 
 #ifdef __cplusplus
 }

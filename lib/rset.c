@@ -30,8 +30,8 @@ grn_rset_recinfo_calc_values_size(grn_ctx *ctx, grn_table_group_flags flags)
   if (flags & GRN_TABLE_GROUP_CALC_SUM) {
     size += GRN_RSET_SUM_SIZE;
   }
-  if (flags & GRN_TABLE_GROUP_CALC_AVG) {
-    size += GRN_RSET_AVG_SIZE;
+  if (flags & GRN_TABLE_GROUP_CALC_MEAN) {
+    size += GRN_RSET_MEAN_SIZE;
   }
 
   return size;
@@ -67,7 +67,7 @@ grn_rset_recinfo_update_calc_values_bulk(
       need_int64_value = true;
     }
   }
-  if (data->flags & GRN_TABLE_GROUP_CALC_AVG) {
+  if (data->flags & GRN_TABLE_GROUP_CALC_MEAN) {
     need_float_value = true;
   }
   if (need_int64_value) {
@@ -119,13 +119,13 @@ grn_rset_recinfo_update_calc_values_bulk(
     }
     values += GRN_RSET_SUM_SIZE;
   }
-  if (data->flags & GRN_TABLE_GROUP_CALC_AVG) {
-    double *current_average = (double *)values;
+  if (data->flags & GRN_TABLE_GROUP_CALC_MEAN) {
+    double *current_mean = (double *)values;
     uint64_t *n_values = (uint64_t *)(((double *)values) + 1);
     double value_raw = GRN_FLOAT_VALUE(value_float);
     (*n_values)++;
-    *current_average += (value_raw - *current_average) / *n_values;
-    values += GRN_RSET_AVG_SIZE;
+    *current_mean += (value_raw - *current_mean) / *n_values;
+    values += GRN_RSET_MEAN_SIZE;
   }
 }
 
@@ -347,12 +347,12 @@ grn_rset_recinfo_set_sum(grn_ctx *ctx,
 }
 
 double *
-grn_rset_recinfo_get_avg_(grn_ctx *ctx,
-                          grn_rset_recinfo *ri,
-                          grn_obj *table)
+grn_rset_recinfo_get_mean_(grn_ctx *ctx,
+                           grn_rset_recinfo *ri,
+                           grn_obj *table)
 {
   const grn_table_group_flags flags = DB_OBJ(table)->group.flags;
-  if (!(flags & GRN_TABLE_GROUP_CALC_AVG)) {
+  if (!(flags & GRN_TABLE_GROUP_CALC_MEAN)) {
     return NULL;
   }
 
@@ -374,27 +374,27 @@ grn_rset_recinfo_get_avg_(grn_ctx *ctx,
 }
 
 double
-grn_rset_recinfo_get_avg(grn_ctx *ctx,
-                         grn_rset_recinfo *ri,
-                         grn_obj *table)
+grn_rset_recinfo_get_mean(grn_ctx *ctx,
+                          grn_rset_recinfo *ri,
+                          grn_obj *table)
 {
-  double *avg_address = grn_rset_recinfo_get_avg_(ctx, ri, table);
-  if (avg_address) {
-    return *avg_address;
+  double *mean_address = grn_rset_recinfo_get_mean_(ctx, ri, table);
+  if (mean_address) {
+    return *mean_address;
   } else {
     return 0;
   }
 }
 
 void
-grn_rset_recinfo_set_avg(grn_ctx *ctx,
-                         grn_rset_recinfo *ri,
-                         grn_obj *table,
-                         double avg)
+grn_rset_recinfo_set_mean(grn_ctx *ctx,
+                          grn_rset_recinfo *ri,
+                          grn_obj *table,
+                          double mean)
 {
-  double *avg_address = grn_rset_recinfo_get_avg_(ctx, ri, table);
-  if (!avg_address) {
+  double *mean_address = grn_rset_recinfo_get_mean_(ctx, ri, table);
+  if (!mean_address) {
     return;
   }
-  *avg_address = avg;
+  *mean_address = mean;
 }

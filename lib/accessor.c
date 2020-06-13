@@ -904,6 +904,12 @@ grn_accessor_name(grn_ctx *ctx, grn_obj *accessor, grn_obj *name)
                    GRN_COLUMN_NAME_AVG,
                    GRN_COLUMN_NAME_AVG_LEN);
       break;
+    case GRN_ACCESSOR_GET_MEAN :
+      GRN_TEXT_PUT(ctx,
+                   name,
+                   GRN_COLUMN_NAME_MEAN,
+                   GRN_COLUMN_NAME_MEAN_LEN);
+      break;
     case GRN_ACCESSOR_GET_COLUMN_VALUE :
       grn_column_name_(ctx, accessor_->obj, name);
       show_obj_domain_name = GRN_TRUE;

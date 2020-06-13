@@ -1128,11 +1128,12 @@ grn_output_table_column_value(grn_ctx *ctx,
         }
         break;
       case GRN_ACCESSOR_GET_AVG :
+      case GRN_ACCESSOR_GET_MEAN :
         {
           grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-          double avg;
-          avg = grn_rset_recinfo_get_avg(ctx, ri, a->obj);
-          GRN_FLOAT_PUT(ctx, bulk, avg);
+          double mean;
+          mean = grn_rset_recinfo_get_mean(ctx, ri, a->obj);
+          GRN_FLOAT_PUT(ctx, bulk, mean);
         }
         bulk->header.domain = GRN_DB_FLOAT;
         break;

@@ -536,7 +536,7 @@ grn_table_group_add_subrec(grn_ctx *ctx,
                                     (group_flags & (GRN_TABLE_GROUP_CALC_MAX |
                                                     GRN_TABLE_GROUP_CALC_MIN |
                                                     GRN_TABLE_GROUP_CALC_SUM |
-                                                    GRN_TABLE_GROUP_CALC_AVG)));
+                                                    GRN_TABLE_GROUP_CALC_MEAN)));
   const bool need_aggregator_update = (group_flags & (GRN_TABLE_GROUP_CALC_AGGREGATOR));
 
   if (need_recinfo_update) {

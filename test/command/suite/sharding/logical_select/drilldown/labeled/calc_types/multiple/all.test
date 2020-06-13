@@ -52,6 +52,6 @@ logical_select Memos \
   --shard_key created_at \
   --limit 0 \
   --drilldown[tag].keys tag,user \
-  --drilldown[tag].calc_types 'AVG, MAX, MIN, SUM' \
+  --drilldown[tag].calc_types 'MAX, MEAN, MIN, SUM' \
   --drilldown[tag].calc_target priority \
-  --drilldown[tag].output_columns _value.tag,_value.user,_max,_min,_sum,_avg
+  --drilldown[tag].output_columns _value.tag,_value.user,_max,_min,_sum,_mean

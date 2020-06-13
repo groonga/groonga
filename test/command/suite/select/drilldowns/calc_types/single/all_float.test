@@ -20,6 +20,6 @@ load --table Memos
 select Memos \
   --limit 0 \
   --drilldowns[tag].keys tag \
-  --drilldowns[tag].calc_types 'AVG, MAX, MIN, SUM' \
+  --drilldowns[tag].calc_types 'MAX, MEAN, MIN, SUM' \
   --drilldowns[tag].calc_target priority \
-  --drilldowns[tag].output_columns _key,_max,_min,_sum,_avg
+  --drilldowns[tag].output_columns _key,_max,_min,_sum,_mean

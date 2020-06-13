@@ -62,6 +62,7 @@ GRN_API bool grn_obj_is_max_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_min_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_sum_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_avg_accessor(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool grn_obj_is_mean_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_column_value_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_type(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_text_family_type(grn_ctx *ctx, grn_obj *obj);

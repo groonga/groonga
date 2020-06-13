@@ -167,6 +167,16 @@ mrb_grn_accessor_avg_p(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_accessor_mean_p(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *accessor;
+
+  accessor = DATA_PTR(self);
+  return mrb_bool_value(grn_obj_is_mean_accessor(ctx, accessor));
+}
+
+static mrb_value
 mrb_grn_accessor_column_value_p(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -276,6 +286,8 @@ grn_mrb_accessor_init(grn_ctx *ctx)
                     mrb_grn_accessor_sum_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "avg?",
                     mrb_grn_accessor_avg_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "mean?",
+                    mrb_grn_accessor_mean_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "column_value?",
                     mrb_grn_accessor_column_value_p, MRB_ARGS_NONE());
 

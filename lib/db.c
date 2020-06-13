@@ -4660,6 +4660,9 @@ grn_obj_get_accessor_rset_value(grn_ctx *ctx,
     case GRN_ACCESSOR_GET_AVG :
       CHECK_GROUP_CALC_FLAG(GRN_TABLE_GROUP_CALC_AVG);
       break;
+    case GRN_ACCESSOR_GET_MEAN :
+      CHECK_GROUP_CALC_FLAG(GRN_TABLE_GROUP_CALC_MEAN);
+      break;
     case GRN_ACCESSOR_GET_NSUBRECS :
       if (GRN_TABLE_IS_GROUPED(obj)) {
         (*rp)->action = action;
@@ -4725,6 +4728,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
     case GRN_ACCESSOR_GET_MIN :
     case GRN_ACCESSOR_GET_SUM :
     case GRN_ACCESSOR_GET_AVG :
+    case GRN_ACCESSOR_GET_MEAN :
       obj = grn_ctx_at(ctx, DB_OBJ(res->obj)->range);
       obj_is_referred = true;
       break;
@@ -4955,7 +4959,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
           goto exit;
         }
         break;
-      case 'm' : /* max, min */
+      case 'm' : /* max, mean, min */
         if (!obj_is_referred) {
           grn_obj_refer(ctx, obj);
           obj_is_referred = true;
@@ -4966,6 +4970,14 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
                    GRN_COLUMN_NAME_MAX_LEN) == 0) {
           if (!grn_obj_get_accessor_rset_value(ctx, obj, &res,
                                                GRN_ACCESSOR_GET_MAX)) {
+            goto exit;
+          }
+        } else if (len == GRN_COLUMN_NAME_MEAN_LEN &&
+                   memcmp(name,
+                          GRN_COLUMN_NAME_MEAN,
+                          GRN_COLUMN_NAME_MEAN_LEN) == 0) {
+          if (!grn_obj_get_accessor_rset_value(ctx, obj, &res,
+                                               GRN_ACCESSOR_GET_MEAN)) {
             goto exit;
           }
         } else if (len == GRN_COLUMN_NAME_MIN_LEN &&
@@ -5162,6 +5174,7 @@ grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
         *range_id = DB_OBJ(a->obj)->group.aggregated_value_type_id;
         break;
       case GRN_ACCESSOR_GET_AVG :
+      case GRN_ACCESSOR_GET_MEAN :
         *range_id = GRN_DB_FLOAT;
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
@@ -5205,6 +5218,7 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
       case GRN_ACCESSOR_GET_MIN :
       case GRN_ACCESSOR_GET_SUM :
       case GRN_ACCESSOR_GET_AVG :
+      case GRN_ACCESSOR_GET_MEAN :
         res = 0;
         break;
       case GRN_ACCESSOR_GET_ID :
@@ -5950,12 +5964,13 @@ grn_accessor_get_value_(grn_ctx *ctx, grn_accessor *a, grn_id id, uint32_t *size
       }
       break;
     case GRN_ACCESSOR_GET_AVG :
+    case GRN_ACCESSOR_GET_MEAN :
       if ((value = grn_obj_get_value_(ctx, a->obj, id, size))) {
         value =
-          (const char *)grn_rset_recinfo_get_avg_(ctx,
-                                                  (grn_rset_recinfo *)value,
-                                                  a->obj);
-        *size = GRN_RSET_AVG_SIZE;
+          (const char *)grn_rset_recinfo_get_mean_(ctx,
+                                                   (grn_rset_recinfo *)value,
+                                                   a->obj);
+        *size = GRN_RSET_MEAN_SIZE;
       }
       break;
     case GRN_ACCESSOR_GET_COLUMN_VALUE :
@@ -6099,11 +6114,12 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
       }
       break;
     case GRN_ACCESSOR_GET_AVG :
+    case GRN_ACCESSOR_GET_MEAN :
       if (id) {
         grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
-        double avg;
-        avg = grn_rset_recinfo_get_avg(ctx, ri, a->obj);
-        GRN_FLOAT_PUT(ctx, value, avg);
+        double mean;
+        mean = grn_rset_recinfo_get_mean(ctx, ri, a->obj);
+        GRN_FLOAT_PUT(ctx, value, mean);
       } else {
         GRN_FLOAT_PUT(ctx, value, 0.0);
       }
@@ -6296,17 +6312,18 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
         }
         break;
       case GRN_ACCESSOR_GET_AVG :
+      case GRN_ACCESSOR_GET_MEAN :
         grn_obj_get_value(ctx, a->obj, id, &buf);
         {
           grn_rset_recinfo *ri = (grn_rset_recinfo *)GRN_BULK_HEAD(&buf);
           if (value->header.type == GRN_DB_FLOAT) {
-            grn_rset_recinfo_set_avg(ctx, ri, a->obj, GRN_FLOAT_VALUE(value));
+            grn_rset_recinfo_set_mean(ctx, ri, a->obj, GRN_FLOAT_VALUE(value));
           } else {
             grn_obj value_float;
             GRN_FLOAT_INIT(&value_float, 0);
             if (!grn_obj_cast(ctx, value, &value_float, GRN_FALSE)) {
-              grn_rset_recinfo_set_avg(ctx, ri, a->obj,
-                                       GRN_FLOAT_VALUE(&value_float));
+              grn_rset_recinfo_set_mean(ctx, ri, a->obj,
+                                        GRN_FLOAT_VALUE(&value_float));
             }
             GRN_OBJ_FIN(ctx, &value_float);
           }
@@ -11140,6 +11157,10 @@ grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
         ADD_DELMITER();
         GRN_TEXT_PUTS(ctx, &name, GRN_COLUMN_NAME_AVG);
         break;
+      case GRN_ACCESSOR_GET_MEAN :
+        ADD_DELMITER();
+        GRN_TEXT_PUTS(ctx, &name, GRN_COLUMN_NAME_MEAN);
+        break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
         ADD_DELMITER();
         {
@@ -11241,6 +11262,11 @@ grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
         GRN_TEXT_PUT(ctx, buf,
                      GRN_COLUMN_NAME_AVG,
                      GRN_COLUMN_NAME_AVG_LEN);
+        break;
+      case GRN_ACCESSOR_GET_MEAN :
+        GRN_TEXT_PUT(ctx, buf,
+                     GRN_COLUMN_NAME_MEAN,
+                     GRN_COLUMN_NAME_MEAN_LEN);
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
         grn_column_name_(ctx, a->obj, buf);

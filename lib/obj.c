@@ -493,6 +493,23 @@ grn_obj_is_avg_accessor(grn_ctx *ctx, grn_obj *obj)
 }
 
 bool
+grn_obj_is_mean_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return false;
+  }
+
+  accessor = (grn_accessor *)obj;
+  if (accessor->next) {
+    return false;
+  }
+
+  return accessor->action == GRN_ACCESSOR_GET_MEAN;
+}
+
+bool
 grn_obj_is_column_value_accessor(grn_ctx *ctx, grn_obj *obj)
 {
   grn_accessor *accessor;

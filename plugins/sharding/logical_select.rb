@@ -345,8 +345,8 @@ module Groonga
               types |= TableGroupFlags::CALC_MIN
             when "SUM"
               types |= TableGroupFlags::CALC_SUM
-            when "AVG"
-              types |= TableGroupFlags::CALC_AVG
+            when "AVG", "MEAN"
+              types |= TableGroupFlags::CALC_MEAN
             when "NONE"
               # Do nothing
             else

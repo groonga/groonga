@@ -180,7 +180,9 @@ typedef uint32_t grn_table_group_flags;
 #define GRN_TABLE_GROUP_CALC_MAX        (0x01<<4)
 #define GRN_TABLE_GROUP_CALC_MIN        (0x01<<5)
 #define GRN_TABLE_GROUP_CALC_SUM        (0x01<<6)
-#define GRN_TABLE_GROUP_CALC_AVG        (0x01<<7)
+/* Deprecated since 10.0.4. Use GRN_TABLE_GROUP_CALC_MEAN instead. */
+#define GRN_TABLE_GROUP_CALC_AVG        GRN_TABLE_GROUP_CALC_MEAN
+#define GRN_TABLE_GROUP_CALC_MEAN       (0x01<<7)
 #define GRN_TABLE_GROUP_CALC_AGGREGATOR (0x01<<8)
 
 typedef struct _grn_table_group_aggregator grn_table_group_aggregator;

@@ -42,7 +42,10 @@ grn_mrb_table_group_flags_init(grn_ctx *ctx)
                    mrb_fixnum_value(GRN_TABLE_GROUP_CALC_MIN));
   mrb_define_const(mrb, flags_module, "CALC_SUM",
                    mrb_fixnum_value(GRN_TABLE_GROUP_CALC_SUM));
+  /* Deprecated since 10.0.4. Use CALC_MEAN instead. */
   mrb_define_const(mrb, flags_module, "CALC_AVG",
                    mrb_fixnum_value(GRN_TABLE_GROUP_CALC_AVG));
+  mrb_define_const(mrb, flags_module, "CALC_MEAN",
+                   mrb_fixnum_value(GRN_TABLE_GROUP_CALC_MEAN));
 }
 #endif
