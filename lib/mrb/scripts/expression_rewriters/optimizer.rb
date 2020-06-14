@@ -10,11 +10,14 @@ module Groonga
 
         variable = @expression[0]
         table = context[variable.domain_id]
-        optimized_root_node = optimize_node(table, root_node)
-
-        rewritten = Expression.create(table)
-        optimized_root_node.build(rewritten)
-        rewritten
+        begin
+          optimized_root_node = optimize_node(table, root_node)
+          rewritten = Expression.create(table)
+          optimized_root_node.build(rewritten)
+          rewritten
+        ensure
+          table.unref
+        end
       end
 
       private
