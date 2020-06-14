@@ -103,6 +103,8 @@ command_table_create(grn_ctx *ctx,
   grn_obj *default_tokenizer_raw;
   grn_obj *normalizer_raw;
   grn_raw_string token_filters_raw;
+  grn_obj *key_type = NULL;
+  grn_obj *value_type = NULL;
   grn_obj *table = NULL;
   const char *rest;
   grn_table_flags flags;
@@ -144,9 +146,6 @@ command_table_create(grn_ctx *ctx,
   }
 
   {
-    grn_obj *key_type = NULL;
-    grn_obj *value_type = NULL;
-
     if (key_type_raw.length > 0) {
       key_type = grn_ctx_get(ctx,
                              key_type_raw.value,
@@ -234,6 +233,12 @@ command_table_create(grn_ctx *ctx,
 exit :
   {
     grn_bool success = (ctx->rc == GRN_SUCCESS);
+    if (key_type) {
+      grn_obj_unref(ctx, key_type);
+    }
+    if (value_type) {
+      grn_obj_unref(ctx, value_type);
+    }
     if (success) {
       if (table) {
         grn_obj_unlink(ctx, table);
