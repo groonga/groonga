@@ -11426,24 +11426,34 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     uint32_t current_lock;
     uint32_t *lock_pointer = &vp->lock;
     GRN_ATOMIC_ADD_EX(lock_pointer, -1, current_lock);
+#ifdef GRN_REFERENCE_COUNT_DEBUG
+    uint32_t current_reference_count = vp->lock;
+#endif
     if (current_lock == 1) {
       grn_log_reference_count("unlink: lock: %u: %u: %u\n",
-                              id, current_lock, vp->lock);
+                              id, current_lock, current_reference_count);
       GRN_ATOMIC_ADD_EX(lock_pointer, GRN_IO_MAX_REF, current_lock);
+#ifdef GRN_REFERENCE_COUNT_DEBUG
+      current_reference_count = vp->lock;
+#endif
       grn_log_reference_count("unlink: locked: %u: %u: %u\n",
-                              id, current_lock, vp->lock);
+                              id, current_lock, current_reference_count);
       if (current_lock == 0) {
         grn_obj_close(ctx, obj);
       } else {
         grn_log_reference_count("unlink: unlock: %u: %u: %u\n",
-                                id, current_lock, vp->lock);
+                                id, current_lock, current_reference_count);
         GRN_ATOMIC_ADD_EX(lock_pointer, -GRN_IO_MAX_REF, current_lock);
+#ifdef GRN_REFERENCE_COUNT_DEBUG
+      current_reference_count = vp->lock;
+#endif
         grn_log_reference_count("unlink: unlocked: %u: %u: %u\n",
-                                id, current_lock, vp->lock);
+                                id, current_lock, current_reference_count);
       }
       GRN_FUTEX_WAKE(lock_pointer);
     }
-    grn_log_reference_count("unlink: done: %u: %u\n", id, current_lock);
+    grn_log_reference_count("unlink: done: %u: %u\n",
+                            id, current_reference_count);
   }
   GRN_API_RETURN();
 }
