@@ -42,6 +42,8 @@ column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
 
 #@add-important-log-levels notice debug dump
 #@add-ignore-log-pattern /\A\[io\]/
+#@add-ignore-log-pattern /\A\[obj\]\[open\]/
+#@add-ignore-log-pattern /\A\[obj\]\[close\]/
 log_level --level dump
 #@collect-query-log true
 logical_range_filter Logs \
@@ -53,5 +55,7 @@ logical_range_filter Logs \
   --output_columns _id,filtered_id,price
 #@collect-query-log false
 log_level --level notice
+#@remove-ignore-log-pattern /\A\[obj\]\[close\]/
+#@remove-ignore-log-pattern /\A\[obj\]\[open\]/
 #@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels notice debug dump
