@@ -631,8 +631,13 @@ module Groonga
             if @previous_executor
               @previous_executor.add_filtered_stage_context(apply_targets)
             end
-            @filtered_result_sets.each do |result_set|
+            @filtered_result_sets = @filtered_result_sets.collect do |result_set|
+              if result_set == @shard.table
+                result_set = result_set.select_all
+                @temporary_tables << result_set
+              end
               apply_targets << [result_set]
+              result_set
             end
             if @next_executor
               @next_executor.add_filtered_stage_context(apply_targets)

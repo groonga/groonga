@@ -1,0 +1,57 @@
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+
+table_create Logs_20170316 TABLE_NO_KEY
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+column_create Logs_20170316 price COLUMN_SCALAR UInt32
+
+table_create Logs_20170317 TABLE_NO_KEY
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+column_create Logs_20170317 price COLUMN_SCALAR UInt32
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 1000},
+{"timestamp": "2017/03/15 01:00:00", "price":  900},
+{"timestamp": "2017/03/15 02:00:00", "price":  300}
+]
+
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "price":  530},
+{"timestamp": "2017/03/16 11:00:00", "price":  520},
+{"timestamp": "2017/03/16 12:00:00", "price":  110}
+]
+
+load --table Logs_20170317
+[
+{"timestamp": "2017/03/17 20:00:00", "price":  800},
+{"timestamp": "2017/03/17 21:00:00", "price":  400},
+{"timestamp": "2017/03/17 22:00:00", "price":  300}
+]
+
+table_create Times TABLE_PAT_KEY Time
+column_create Times logs_20170315 COLUMN_INDEX Logs_20170315 timestamp
+column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
+column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
+
+#@add-important-log-levels notice debug dump
+#@add-ignore-log-pattern /\A\[io\]/
+log_level --level dump
+#@collect-query-log true
+logical_range_filter Logs \
+  --shard_key timestamp \
+  --columns[filtered_id].stage filtered \
+  --columns[filtered_id].type UInt32 \
+  --columns[filtered_id].flags COLUMN_SCALAR \
+  --columns[filtered_id].value '_id' \
+  --output_columns _id,filtered_id,price
+#@collect-query-log false
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels notice debug dump

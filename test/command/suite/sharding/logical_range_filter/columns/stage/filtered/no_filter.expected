@@ -1,0 +1,138 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Logs_20170315 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170315 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Logs_20170316 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170316 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Logs_20170317 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170317 price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 1000},
+{"timestamp": "2017/03/15 01:00:00", "price":  900},
+{"timestamp": "2017/03/15 02:00:00", "price":  300}
+]
+[[0,0.0,0.0],3]
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "price":  530},
+{"timestamp": "2017/03/16 11:00:00", "price":  520},
+{"timestamp": "2017/03/16 12:00:00", "price":  110}
+]
+[[0,0.0,0.0],3]
+load --table Logs_20170317
+[
+{"timestamp": "2017/03/17 20:00:00", "price":  800},
+{"timestamp": "2017/03/17 21:00:00", "price":  400},
+{"timestamp": "2017/03/17 22:00:00", "price":  300}
+]
+[[0,0.0,0.0],3]
+table_create Times TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times logs_20170315 COLUMN_INDEX Logs_20170315 timestamp
+[[0,0.0,0.0],true]
+column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
+[[0,0.0,0.0],true]
+column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
+[[0,0.0,0.0],true]
+log_level --level dump
+[[0,0.0,0.0],true]
+logical_range_filter Logs   --shard_key timestamp   --columns[filtered_id].stage filtered   --columns[filtered_id].type UInt32   --columns[filtered_id].flags COLUMN_SCALAR   --columns[filtered_id].value '_id'   --output_columns _id,filtered_id,price
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "_id",
+        "UInt32"
+      ],
+      [
+        "filtered_id",
+        "UInt32"
+      ],
+      [
+        "price",
+        "UInt32"
+      ]
+    ],
+    [
+      1,
+      1,
+      1000
+    ],
+    [
+      2,
+      2,
+      900
+    ],
+    [
+      3,
+      3,
+      300
+    ],
+    [
+      1,
+      1,
+      530
+    ],
+    [
+      2,
+      2,
+      520
+    ],
+    [
+      3,
+      3,
+      110
+    ],
+    [
+      1,
+      1,
+      800
+    ],
+    [
+      2,
+      2,
+      400
+    ],
+    [
+      3,
+      3,
+      300
+    ]
+  ]
+]
+#|d| [logical_range_filter][select] <Logs_20170315>: dynamic columns are used
+#|d| [logical_range_filter][select] <Logs_20170316>: dynamic columns are used
+#|d| [logical_range_filter][select] <Logs_20170317>: dynamic columns are used
+#>logical_range_filter --columns[filtered_id].flags "COLUMN_SCALAR" --columns[filtered_id].stage "filtered" --columns[filtered_id].type "UInt32" --columns[filtered_id].value "_id" --logical_table "Logs" --output_columns "_id,filtered_id,price" --shard_key "timestamp"
+#:000000000000000 filter(3): true
+#:000000000000000 columns[filtered_id](3)
+#:000000000000000 sort(3)[Logs_20170315]: timestamp
+#:000000000000000 filter(3): true
+#:000000000000000 columns[filtered_id](3)
+#:000000000000000 sort(3)[Logs_20170316]: timestamp
+#:000000000000000 filter(3): true
+#:000000000000000 columns[filtered_id](3)
+#:000000000000000 sort(3)[Logs_20170317]: timestamp
+#:000000000000000 output(9)
+#:000000000000000 send(0)
+#<000000000000000 rc=0
+log_level --level notice
+[[0,0.0,0.0],true]
