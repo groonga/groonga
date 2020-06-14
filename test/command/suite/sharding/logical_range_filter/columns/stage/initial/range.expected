@@ -116,11 +116,11 @@ logical_range_filter Logs   --shard_key timestamp   --min "2017/03/15 01:00:00" 
 #:000000000000000 filter(2): Logs_20170315.timestamp greater_equal 1489507200.0
 #:000000000000000 filter(3): true
 #:000000000000000 columns[price_sum_per_category](2)
+#:000000000000000 sort(2)[Logs_20170315]: timestamp
 #:000000000000000 filter(1): Logs_20170317.timestamp less 1489752000.0
 #:000000000000000 columns[price_sum_per_category](3)
-#:000000000000000 sort(2)[Logs_20170315]: timestamp
-#:000000000000000 columns[price_sum_per_category](1)
 #:000000000000000 sort(3)[Logs_20170316]: timestamp
+#:000000000000000 columns[price_sum_per_category](1)
 #:000000000000000 sort(1)[Logs_20170317]: timestamp
 #:000000000000000 output(6)
 #:000000000000000 send(0)

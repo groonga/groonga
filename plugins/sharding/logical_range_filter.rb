@@ -627,26 +627,7 @@ module Groonga
               end
             end
           else
-            apply_targets = []
-            if @previous_executor
-              @previous_executor.add_filtered_stage_context(apply_targets)
-            end
-            @filtered_result_sets = @filtered_result_sets.collect do |result_set|
-              if result_set == @shard.table
-                result_set = result_set.select_all
-                @temporary_tables << result_set
-              end
-              apply_targets << [result_set]
-              result_set
-            end
-            if @next_executor
-              @next_executor.add_filtered_stage_context(apply_targets)
-            end
-            options = {}
-            if @context.need_look_ahead?
-              options[:normal] = false
-            end
-            @context.dynamic_columns.apply_filtered(apply_targets, options)
+            apply_filtered_dynamic_columns
             @filtered_result_sets.each do |result_set|
               sort_result_set(result_set)
             end
@@ -1152,6 +1133,31 @@ module Groonga
         def add_filtered_result_set(result_set)
           return if result_set.empty?
           @filtered_result_sets << result_set
+        end
+
+        def apply_filtered_dynamic_columns
+          return unless @context.dynamic_columns.have_filtered?
+
+          apply_targets = []
+          if @previous_executor
+            @previous_executor.add_filtered_stage_context(apply_targets)
+          end
+          @filtered_result_sets = @filtered_result_sets.collect do |result_set|
+            if result_set == @shard.table
+              result_set = result_set.select_all
+              @temporary_tables << result_set
+            end
+            apply_targets << [result_set]
+            result_set
+          end
+          if @next_executor
+            @next_executor.add_filtered_stage_context(apply_targets)
+          end
+          options = {}
+          if @context.need_look_ahead?
+            options[:normal] = false
+          end
+          @context.dynamic_columns.apply_filtered(apply_targets, options)
         end
 
         def sort_result_set(result_set)
