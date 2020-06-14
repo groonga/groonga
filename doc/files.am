@@ -446,8 +446,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_without_sub_filter.log \
 	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day/usage_classify.log \
+	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day/usage_register.log \
 	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day/usage_setup_data.log \
-	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day/usage_setup_register.log \
 	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day_of_week/usage_classify.log \
 	$(top_srcdir)/doc/source/example/reference/functions/time_classify_day_of_week/usage_register.log \
