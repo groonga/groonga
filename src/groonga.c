@@ -516,7 +516,7 @@ do_alone(int argc, char **argv)
       rc = grn_ctx_sendv(ctx, argc, argv, 0);
       exit_code = grn_rc_to_exit_code(rc);
     }
-    grn_obj_unlink(ctx, &command);
+    GRN_OBJ_FIN(ctx, &command);
     grn_obj_close(ctx, db);
   } else {
     fprintf(stderr, "db open failed (%s): %s\n", path, ctx->errbuf);
