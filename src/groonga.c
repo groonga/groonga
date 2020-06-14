@@ -501,11 +501,19 @@ do_alone(int argc, char **argv)
     output_context.output = output;
     output_context.is_outputting = false;
     grn_ctx_recv_handler_set(ctx, s_output, &output_context);
+    grn_obj *load_command = grn_ctx_get(ctx, "load", -1);
     if (!argc) {
       grn_obj text;
       GRN_TEXT_INIT(&text, 0);
       while (prompt(ctx, &text) == GRN_SUCCESS) {
-        GRN_TEXT_PUT(ctx, &command, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text));
+        const bool is_loading =
+          (ctx->impl->command.keep.command == load_command);
+        if (!is_loading) {
+          GRN_TEXT_PUT(ctx,
+                       &command,
+                       GRN_TEXT_VALUE(&text),
+                       GRN_TEXT_LEN(&text));
+        }
         grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text), 0);
         if (ctx->stat == GRN_CTX_QUIT) { break; }
       }
