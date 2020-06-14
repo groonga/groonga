@@ -6,8 +6,8 @@ io_flush TokenBigram
       0.0,
       0.0
     ],
-    "[io][flush][recursive] object must be DB, table or column: <#<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>>"
+    "[obj][flush][recursive] object must be DB, table or column: #<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>"
   ],
   false
 ]
-#|e| [io][flush][recursive] object must be DB, table or column: <#<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>>
+#|e| [obj][flush][recursive] object must be DB, table or column: #<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>

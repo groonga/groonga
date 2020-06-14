@@ -10489,6 +10489,630 @@ grn_pvector_fin(grn_ctx *ctx, grn_obj *obj)
   return rc;
 }
 
+typedef void grn_traverse_func(grn_ctx *ctx,
+                               grn_obj *obj,
+                               void *user_data);
+
+typedef struct {
+  bool is_close_opened_object_mode;
+  grn_traverse_func *traverse;
+  void *user_data;
+  const char *tag;
+} grn_obj_traverse_recursive_data;
+
+static void
+grn_obj_traverse_recursive_dispatch(grn_ctx *ctx,
+                                    grn_obj_traverse_recursive_data *data,
+                                    grn_obj *obj);
+
+static void
+grn_obj_traverse_recursive_db(grn_ctx *ctx,
+                              grn_obj_traverse_recursive_data *data,
+                              grn_obj *db)
+{
+  GRN_TABLE_EACH_BEGIN(ctx, db, cursor, id) {
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+
+    grn_obj *object = grn_ctx_at(ctx, id);
+    if (grn_obj_is_table(ctx, object)) {
+      grn_obj_traverse_recursive_dispatch(ctx, data, object);
+    } else {
+      if (ctx->rc != GRN_SUCCESS) {
+        ERRCLR(ctx);
+      }
+    }
+    if (object) {
+      grn_obj_unref(ctx, object);
+    }
+
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+
+  data->traverse(ctx, db, data->user_data);
+}
+
+static void
+grn_obj_traverse_recursive_table(grn_ctx *ctx,
+                                 grn_obj_traverse_recursive_data *data,
+                                 grn_obj *table)
+{
+  grn_hash *columns = grn_hash_create(ctx,
+                                      NULL,
+                                      sizeof(grn_id),
+                                      0,
+                                      GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
+  if (!columns) {
+    grn_rc rc = ctx->rc;
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_NO_MEMORY_AVAILABLE;
+    }
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    char table_name[GRN_TABLE_MAX_KEY_SIZE];
+    int table_name_size;
+    table_name_size = grn_obj_name(ctx,
+                                   table,
+                                   table_name,
+                                   GRN_TABLE_MAX_KEY_SIZE);
+    ERR(rc,
+        "%s[recursive] "
+        "failed to create internal hash table "
+        "to store columns: <%.*s>: %s",
+        data->tag,
+        table_name_size, table_name,
+        message);
+    return;
+  }
+
+  if (grn_table_columns(ctx, table, "", 0, (grn_obj *)columns) > 0) {
+    GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
+      void *key;
+      if (grn_hash_cursor_get_key(ctx, cursor, &key) == 0) {
+        continue;
+      }
+
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_push_temporary_open_space(ctx);
+      }
+      grn_id *column_id = key;
+      grn_obj *column = grn_ctx_at(ctx, *column_id);
+      if (column) {
+        grn_obj_traverse_recursive_dispatch(ctx, data, column);
+        grn_obj_unref(ctx, column);
+      }
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_pop_temporary_open_space(ctx);
+      }
+
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+    } GRN_HASH_EACH_END(ctx, cursor);
+  }
+  grn_hash_close(ctx, columns);
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+
+  data->traverse(ctx, table, data->user_data);
+}
+
+static void
+grn_obj_traverse_recursive_column(grn_ctx *ctx,
+                                  grn_obj_traverse_recursive_data *data,
+                                  grn_obj *column)
+{
+  data->traverse(ctx, column, data->user_data);
+}
+
+static void
+grn_obj_traverse_recursive_dispatch(grn_ctx *ctx,
+                                    grn_obj_traverse_recursive_data *data,
+                                    grn_obj *obj)
+{
+  switch (obj->header.type) {
+  case GRN_DB :
+    grn_obj_traverse_recursive_db(ctx, data, obj);
+    break;
+  case GRN_TABLE_NO_KEY :
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+    grn_obj_traverse_recursive_table(ctx, data, obj);
+    break;
+  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_VAR_SIZE :
+  case GRN_COLUMN_INDEX :
+    grn_obj_traverse_recursive_column(ctx, data, obj);
+    break;
+  default :
+    {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect_limited(ctx, &inspected, obj);
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[recursive] "
+          "object must be DB, table or column: %.*s",
+          data->tag,
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+    }
+    break;
+  }
+}
+
+static void
+grn_obj_traverse_recursive(grn_ctx *ctx,
+                           grn_obj_traverse_recursive_data *data,
+                           grn_obj *obj)
+{
+  data->is_close_opened_object_mode = (grn_thread_get_limit() == 1);
+  grn_obj_traverse_recursive_dispatch(ctx, data, obj);
+}
+
+typedef struct {
+  grn_hash *traversed;
+  bool is_close_opened_object_mode;
+  bool is_top_level;
+  grn_traverse_func *traverse;
+  void *user_data;
+  const char *tag;
+} grn_obj_traverse_recursive_dependent_data;
+
+static bool
+grn_obj_traverse_recursive_dependent_need_traverse(
+  grn_ctx *ctx,
+  grn_obj_traverse_recursive_dependent_data *data,
+  grn_id id)
+{
+  int added = 0;
+  grn_id traversed_id = grn_hash_add(ctx,
+                                     data->traversed,
+                                     &id, sizeof(grn_id),
+                                     NULL,
+                                     &added);
+  if (traversed_id == GRN_ID_NIL) {
+    grn_rc rc = ctx->rc;
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_NO_MEMORY_AVAILABLE;
+    }
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    ERR(rc,
+        "%s[recursive][dependent] "
+        "failed to register flushed ID: <%u>: %s",
+        data->tag,
+        id,
+        message);
+    return false;
+  }
+  return added != 0;
+}
+
+static void
+grn_obj_traverse_recursive_dependent_dispatch(
+  grn_ctx *ctx,
+  grn_obj_traverse_recursive_dependent_data *data,
+  grn_obj *obj);
+
+static void
+grn_obj_traverse_recursive_dependent_db(
+  grn_ctx *ctx,
+  grn_obj_traverse_recursive_dependent_data *data,
+  grn_obj *db)
+{
+  GRN_TABLE_EACH_BEGIN(ctx, db, cursor, id) {
+    if (!grn_obj_traverse_recursive_dependent_need_traverse(ctx, data, id)) {
+      if (ctx->rc == GRN_SUCCESS) {
+        continue;
+      } else {
+        break;
+      }
+    }
+
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+
+    grn_obj *object = grn_ctx_at(ctx, id);
+    if (grn_obj_is_table(ctx, object)) {
+      data->is_top_level = true;
+      grn_obj_traverse_recursive_dependent_dispatch(ctx, data, object);
+    } else {
+      if (ctx->rc != GRN_SUCCESS) {
+        ERRCLR(ctx);
+      }
+    }
+    if (object) {
+      grn_obj_unref(ctx, object);
+    }
+
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+
+  data->traverse(ctx, db, data->user_data);
+}
+
+static void
+grn_obj_traverse_recursive_dependent_table(
+  grn_ctx *ctx,
+  grn_obj_traverse_recursive_dependent_data *data,
+  grn_obj *table)
+{
+  const bool is_top_level = data->is_top_level;
+  data->is_top_level = false;
+
+  if (grn_obj_is_lexicon(ctx, table)) {
+    grn_id domain_id = table->header.domain;
+    if (grn_obj_traverse_recursive_dependent_need_traverse(ctx,
+                                                           data,
+                                                           domain_id)) {
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_push_temporary_open_space(ctx);
+      }
+      grn_obj *domain = grn_ctx_at(ctx, domain_id);
+      if (grn_obj_is_table(ctx, domain)) {
+        grn_obj_traverse_recursive_dependent_dispatch(ctx, data, domain);
+      }
+      if (domain) {
+        grn_obj_unref(ctx, domain);
+      }
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_pop_temporary_open_space(ctx);
+      }
+    }
+    if (ctx->rc != GRN_SUCCESS) {
+      return;
+    }
+
+    for (grn_hook *hooks = DB_OBJ(table)->hooks[GRN_HOOK_INSERT];
+         hooks;
+         hooks = hooks->next) {
+      grn_obj_default_set_value_hook_data *hook_data =
+        (grn_obj_default_set_value_hook_data *)GRN_NEXT_ADDR(hooks);
+      if (grn_obj_traverse_recursive_dependent_need_traverse(ctx,
+                                                             data,
+                                                             hook_data->target)) {
+        if (data->is_close_opened_object_mode) {
+          grn_ctx_push_temporary_open_space(ctx);
+        }
+        grn_obj *index = grn_ctx_at(ctx, hook_data->target);
+        if (index) {
+          grn_obj_traverse_recursive_dependent_dispatch(ctx, data, index);
+          grn_obj_unref(ctx, index);
+        }
+        if (data->is_close_opened_object_mode) {
+          grn_ctx_pop_temporary_open_space(ctx);
+        }
+        if (ctx->rc != GRN_SUCCESS) {
+          return;
+        }
+      }
+    }
+  }
+
+  if (is_top_level) {
+    grn_hash *columns = grn_hash_create(ctx,
+                                        NULL,
+                                        sizeof(grn_id),
+                                        0,
+                                        GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
+    if (!columns) {
+      grn_rc rc = ctx->rc;
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_NO_MEMORY_AVAILABLE;
+      }
+      char message[GRN_CTX_MSGSIZE];
+      grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+      char table_name[GRN_TABLE_MAX_KEY_SIZE];
+      int table_name_size;
+      table_name_size = grn_obj_name(ctx,
+                                     table,
+                                     table_name,
+                                     GRN_TABLE_MAX_KEY_SIZE);
+      ERR(rc,
+          "%s[recursive][dependent] "
+          "failed to create internal hash table "
+          "to store columns: <%.*s>: %s",
+          data->tag,
+          table_name_size, table_name,
+          message);
+      return;
+    }
+
+    if (grn_table_columns(ctx, table, "", 0, (grn_obj *)columns) > 0) {
+      GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
+        void *key;
+        if (grn_hash_cursor_get_key(ctx, cursor, &key) == 0) {
+          continue;
+        }
+
+        grn_id *column_id = key;
+        if (!grn_obj_traverse_recursive_dependent_need_traverse(ctx,
+                                                                data,
+                                                                *column_id)) {
+          if (ctx->rc == GRN_SUCCESS) {
+            continue;
+          } else {
+            break;
+          }
+        }
+
+        if (data->is_close_opened_object_mode) {
+          grn_ctx_push_temporary_open_space(ctx);
+        }
+        grn_obj *column = grn_ctx_at(ctx, *column_id);
+        if (column) {
+          grn_obj_traverse_recursive_dependent_dispatch(ctx, data, column);
+          grn_obj_unref(ctx, column);
+        }
+        if (data->is_close_opened_object_mode) {
+          grn_ctx_pop_temporary_open_space(ctx);
+        }
+
+        if (ctx->rc != GRN_SUCCESS) {
+          break;
+        }
+      } GRN_HASH_EACH_END(ctx, cursor);
+    }
+    grn_hash_close(ctx, columns);
+    if (ctx->rc != GRN_SUCCESS) {
+      return;
+    }
+  }
+
+  data->traverse(ctx, table, data->user_data);
+}
+
+static void
+grn_obj_traverse_recursive_dependent_column_data(
+  grn_ctx *ctx,
+  grn_obj_traverse_recursive_dependent_data *data,
+  grn_obj *column)
+{
+  const bool is_top_level = data->is_top_level;
+  data->is_top_level = false;
+
+  if (is_top_level) {
+    const grn_id table_id = column->header.domain;
+    if (grn_obj_traverse_recursive_dependent_need_traverse(ctx,
+                                                           data,
+                                                           table_id)) {
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_push_temporary_open_space(ctx);
+      }
+      grn_obj *table = grn_ctx_at(ctx, table_id);
+      if (table) {
+        grn_obj_traverse_recursive_dependent_dispatch(ctx, data, table);
+        grn_obj_unref(ctx, table);
+      }
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_pop_temporary_open_space(ctx);
+      }
+    }
+    if (ctx->rc != GRN_SUCCESS) {
+      return;
+    }
+  }
+
+  const grn_id range_id = grn_obj_get_range(ctx, column);
+  if (grn_obj_traverse_recursive_dependent_need_traverse(ctx, data, range_id)) {
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+    grn_obj *range = grn_ctx_at(ctx, range_id);
+    if (grn_obj_is_table(ctx, range)) {
+      grn_obj_traverse_recursive_dependent_dispatch(ctx, data, range);
+    }
+    if (range) {
+      grn_obj_unref(ctx, range);
+    }
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+  }
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+
+  for (grn_hook *hooks = DB_OBJ(column)->hooks[GRN_HOOK_SET];
+       hooks;
+       hooks = hooks->next) {
+    grn_obj_default_set_value_hook_data *hook_data =
+      (grn_obj_default_set_value_hook_data *)GRN_NEXT_ADDR(hooks);
+    if (grn_obj_traverse_recursive_dependent_need_traverse(ctx,
+                                                           data,
+                                                           hook_data->target)) {
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_push_temporary_open_space(ctx);
+      }
+      grn_obj *index = grn_ctx_at(ctx, hook_data->target);
+      if (index) {
+        grn_obj_traverse_recursive_dependent_dispatch(ctx, data, index);
+        grn_obj_unref(ctx, index);
+      }
+      if (data->is_close_opened_object_mode) {
+        grn_ctx_pop_temporary_open_space(ctx);
+      }
+      if (ctx->rc != GRN_SUCCESS) {
+        return;
+      }
+    }
+  }
+
+  data->traverse(ctx, column, data->user_data);
+}
+
+static void
+grn_obj_traverse_recursive_dependent_column_index(
+  grn_ctx *ctx,
+  grn_obj_traverse_recursive_dependent_data *data,
+  grn_obj *column)
+{
+  data->is_top_level = false;
+
+  grn_id lexicon_id = column->header.domain;
+  if (grn_obj_traverse_recursive_dependent_need_traverse(ctx,
+                                                         data,
+                                                         lexicon_id)) {
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+    grn_obj *lexicon = grn_ctx_at(ctx, lexicon_id);
+    if (lexicon) {
+      grn_obj_traverse_recursive_dependent_dispatch(ctx, data, lexicon);
+      grn_obj_unref(ctx, lexicon);
+    }
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+  }
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+
+  grn_obj source_ids;
+  GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
+  grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
+  const size_t n = GRN_UINT32_VECTOR_SIZE(&source_ids);
+  for (size_t i = 0; i < n; i++) {
+    grn_id source_id = GRN_UINT32_VALUE_AT(&source_ids, i);
+    if (!grn_obj_traverse_recursive_dependent_need_traverse(ctx,
+                                                            data,
+                                                            source_id)) {
+      if (ctx->rc == GRN_SUCCESS) {
+        continue;
+      } else {
+        break;
+      }
+    }
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+    grn_obj *source = grn_ctx_at(ctx, source_id);
+    if (source) {
+      grn_obj_traverse_recursive_dependent_dispatch(ctx, data, source);
+      grn_obj_unref(ctx, source);
+    }
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+  }
+  GRN_OBJ_FIN(ctx, &source_ids);
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+
+  data->traverse(ctx, column, data->user_data);
+}
+
+static void
+grn_obj_traverse_recursive_dependent_dispatch(
+  grn_ctx *ctx,
+  grn_obj_traverse_recursive_dependent_data *data,
+  grn_obj *obj)
+{
+  switch (obj->header.type) {
+  case GRN_DB :
+    grn_obj_traverse_recursive_dependent_db(ctx, data, obj);
+    break;
+  case GRN_TABLE_NO_KEY :
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+    grn_obj_traverse_recursive_dependent_table(ctx, data, obj);
+    break;
+  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_VAR_SIZE :
+    grn_obj_traverse_recursive_dependent_column_data(ctx, data, obj);
+    break;
+  case GRN_COLUMN_INDEX :
+    grn_obj_traverse_recursive_dependent_column_index(ctx, data, obj);
+    break;
+  default :
+    {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect_limited(ctx, &inspected, obj);
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[recursive][dependent] "
+          "object must be DB, table or column: %.*s",
+          data->tag,
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+    }
+    break;
+  }
+}
+
+static void
+grn_obj_traverse_recursive_dependent(
+  grn_ctx *ctx,
+  grn_obj_traverse_recursive_dependent_data *data,
+  grn_obj *obj)
+{
+  data->traversed = grn_hash_create(ctx,
+                                    NULL,
+                                    sizeof(grn_id),
+                                    0,
+                                    GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+  if (!data->traversed) {
+    grn_rc rc = ctx->rc;
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_NO_MEMORY_AVAILABLE;
+    }
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(rc,
+        "%s[recursive][dependent] "
+        "failed to create an internal hash table "
+        "to manage traversed objects: <%.*s>: %s",
+        data->tag,
+        name_size, name,
+        message);
+    return;
+  }
+
+  data->is_close_opened_object_mode = (grn_thread_get_limit() == 1);
+
+  grn_id id = grn_obj_id(ctx, obj);
+  if (grn_obj_traverse_recursive_dependent_need_traverse(ctx, data, id)) {
+    data->is_top_level = true;
+    grn_obj_traverse_recursive_dependent_dispatch(ctx, data, obj);
+  }
+
+  grn_hash_close(ctx, data->traversed);
+}
+
+
 static void
 grn_table_close_columns(grn_ctx *ctx, grn_obj *table)
 {
@@ -11510,571 +12134,12 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
   GRN_API_RETURN(rc);
 }
 
-typedef struct {
-  grn_hash *flushed;
-  bool is_close_opened_object_mode;
-  bool is_top_level;
-} flush_recursive_dependent_data;
-
-static bool
-grn_obj_flush_recursive_dependent_need_flush(grn_ctx *ctx,
-                                             flush_recursive_dependent_data *data,
-                                             grn_id id)
-{
-  int added = 0;
-  grn_id flushed_id = grn_hash_add(ctx,
-                                   data->flushed,
-                                   &id, sizeof(grn_id),
-                                   NULL,
-                                   &added);
-  if (flushed_id == GRN_ID_NIL) {
-    grn_rc rc = ctx->rc;
-    if (rc == GRN_SUCCESS) {
-      rc = GRN_NO_MEMORY_AVAILABLE;
-    }
-    char message[GRN_CTX_MSGSIZE];
-    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
-    ERR(rc,
-        "[io][flush][recursive][dependent] "
-        "failed to register flushed ID: <%u>: %s",
-        id,
-        message);
-    return false;
-  }
-  return added != 0;
-}
-
 static void
-grn_obj_flush_recursive_dependent_internal(grn_ctx *ctx,
-                                           grn_obj *obj,
-                                           flush_recursive_dependent_data *data);
-
-static void
-grn_obj_flush_recursive_dependent_internal_db(grn_ctx *ctx,
-                                              grn_obj *db,
-                                              flush_recursive_dependent_data *data)
+grn_obj_flush_traverse(grn_ctx *ctx,
+                       grn_obj *obj,
+                       void *user_data)
 {
-  GRN_TABLE_EACH_BEGIN(ctx, db, cursor, id) {
-    if (!grn_obj_flush_recursive_dependent_need_flush(ctx, data, id)) {
-      if (ctx->rc == GRN_SUCCESS) {
-        continue;
-      } else {
-        break;
-      }
-    }
-
-    if (data->is_close_opened_object_mode) {
-      grn_ctx_push_temporary_open_space(ctx);
-    }
-
-    grn_obj *object = grn_ctx_at(ctx, id);
-    if (grn_obj_is_table(ctx, object)) {
-      data->is_top_level = true;
-      grn_obj_flush_recursive_dependent_internal(ctx, object, data);
-    } else {
-      if (ctx->rc != GRN_SUCCESS) {
-        ERRCLR(ctx);
-      }
-    }
-
-    if (data->is_close_opened_object_mode) {
-      grn_ctx_pop_temporary_open_space(ctx);
-    }
-
-    if (ctx->rc != GRN_SUCCESS) {
-      break;
-    }
-  } GRN_TABLE_EACH_END(ctx, cursor);
-  if (ctx->rc != GRN_SUCCESS) {
-    return;
-  }
-
-  grn_obj_flush(ctx, db);
-}
-
-static void
-grn_obj_flush_recursive_dependent_internal_table(grn_ctx *ctx,
-                                                 grn_obj *table,
-                                                 flush_recursive_dependent_data *data)
-{
-  const bool is_top_level = data->is_top_level;
-  data->is_top_level = false;
-
-  if (grn_obj_is_lexicon(ctx, table)) {
-    grn_id domain_id = table->header.domain;
-    if (grn_obj_flush_recursive_dependent_need_flush(ctx, data, domain_id)) {
-      if (data->is_close_opened_object_mode) {
-        grn_ctx_push_temporary_open_space(ctx);
-      }
-      grn_obj *domain = grn_ctx_at(ctx, domain_id);
-      if (grn_obj_is_table(ctx, domain)) {
-        grn_obj_flush_recursive_dependent_internal(ctx, domain, data);
-      }
-      if (data->is_close_opened_object_mode) {
-        grn_ctx_pop_temporary_open_space(ctx);
-      }
-    }
-    if (ctx->rc != GRN_SUCCESS) {
-      return;
-    }
-
-    for (grn_hook *hooks = DB_OBJ(table)->hooks[GRN_HOOK_INSERT];
-         hooks;
-         hooks = hooks->next) {
-      grn_obj_default_set_value_hook_data *hook_data =
-        (grn_obj_default_set_value_hook_data *)GRN_NEXT_ADDR(hooks);
-      if (grn_obj_flush_recursive_dependent_need_flush(ctx,
-                                                       data,
-                                                       hook_data->target)) {
-        if (data->is_close_opened_object_mode) {
-          grn_ctx_push_temporary_open_space(ctx);
-        }
-        grn_obj *index = grn_ctx_at(ctx, hook_data->target);
-        if (index) {
-          grn_obj_flush_recursive_dependent_internal(ctx, index, data);
-          grn_obj_unlink(ctx, index);
-        }
-        if (data->is_close_opened_object_mode) {
-          grn_ctx_pop_temporary_open_space(ctx);
-        }
-        if (ctx->rc != GRN_SUCCESS) {
-          return;
-        }
-      }
-    }
-  }
-
-  if (is_top_level) {
-    grn_hash *columns = grn_hash_create(ctx,
-                                        NULL,
-                                        sizeof(grn_id),
-                                        0,
-                                        GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
-    if (!columns) {
-      grn_rc rc = ctx->rc;
-      if (rc == GRN_SUCCESS) {
-        rc = GRN_NO_MEMORY_AVAILABLE;
-      }
-      char message[GRN_CTX_MSGSIZE];
-      grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
-      char table_name[GRN_TABLE_MAX_KEY_SIZE];
-      int table_name_size;
-      table_name_size = grn_obj_name(ctx,
-                                     table,
-                                     table_name,
-                                     GRN_TABLE_MAX_KEY_SIZE);
-      ERR(rc,
-          "[io][flush][recursive][dependent] "
-          "failed to create internal hash table "
-          "to store columns: <%.*s>: %s",
-          table_name_size, table_name,
-          message);
-      return;
-    }
-
-    if (grn_table_columns(ctx, table, "", 0, (grn_obj *)columns) > 0) {
-      GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
-        void *key;
-        if (grn_hash_cursor_get_key(ctx, cursor, &key) == 0) {
-          continue;
-        }
-
-        grn_id *column_id = key;
-        if (!grn_obj_flush_recursive_dependent_need_flush(ctx, data, *column_id)) {
-          if (ctx->rc == GRN_SUCCESS) {
-            continue;
-          } else {
-            break;
-          }
-        }
-
-        if (data->is_close_opened_object_mode) {
-          grn_ctx_push_temporary_open_space(ctx);
-        }
-        grn_obj *column = grn_ctx_at(ctx, *column_id);
-        if (column) {
-          grn_obj_flush_recursive_dependent_internal(ctx, column, data);
-          grn_obj_unlink(ctx, column);
-        }
-        if (data->is_close_opened_object_mode) {
-          grn_ctx_pop_temporary_open_space(ctx);
-        }
-
-        if (ctx->rc != GRN_SUCCESS) {
-          break;
-        }
-      } GRN_HASH_EACH_END(ctx, cursor);
-    }
-    grn_hash_close(ctx, columns);
-    if (ctx->rc != GRN_SUCCESS) {
-      return;
-    }
-  }
-
-  grn_obj_flush(ctx, table);
-}
-
-static void
-grn_obj_flush_recursive_dependent_internal_column_data(grn_ctx *ctx,
-                                                       grn_obj *column,
-                                                       flush_recursive_dependent_data *data)
-{
-  const bool is_top_level = data->is_top_level;
-  data->is_top_level = false;
-
-  if (is_top_level) {
-    const grn_id table_id = column->header.domain;
-    if (grn_obj_flush_recursive_dependent_need_flush(ctx, data, table_id)) {
-      if (data->is_close_opened_object_mode) {
-        grn_ctx_push_temporary_open_space(ctx);
-      }
-      grn_obj *table = grn_ctx_at(ctx, table_id);
-      if (table) {
-        grn_obj_flush_recursive_dependent_internal(ctx, table, data);
-      }
-      if (data->is_close_opened_object_mode) {
-        grn_ctx_pop_temporary_open_space(ctx);
-      }
-    }
-    if (ctx->rc != GRN_SUCCESS) {
-      return;
-    }
-  }
-
-  const grn_id range_id = grn_obj_get_range(ctx, column);
-  if (grn_obj_flush_recursive_dependent_need_flush(ctx, data, range_id)) {
-    if (data->is_close_opened_object_mode) {
-      grn_ctx_push_temporary_open_space(ctx);
-    }
-    grn_obj *range = grn_ctx_at(ctx, range_id);
-    if (grn_obj_is_table(ctx, range)) {
-      grn_obj_flush_recursive_dependent_internal(ctx, range, data);
-      grn_obj_unlink(ctx, range);
-    }
-    if (data->is_close_opened_object_mode) {
-      grn_ctx_pop_temporary_open_space(ctx);
-    }
-  }
-  if (ctx->rc != GRN_SUCCESS) {
-    return;
-  }
-
-  for (grn_hook *hooks = DB_OBJ(column)->hooks[GRN_HOOK_SET];
-       hooks;
-       hooks = hooks->next) {
-    grn_obj_default_set_value_hook_data *hook_data =
-      (grn_obj_default_set_value_hook_data *)GRN_NEXT_ADDR(hooks);
-    if (grn_obj_flush_recursive_dependent_need_flush(ctx,
-                                                     data,
-                                                     hook_data->target)) {
-      if (data->is_close_opened_object_mode) {
-        grn_ctx_push_temporary_open_space(ctx);
-      }
-      grn_obj *index = grn_ctx_at(ctx, hook_data->target);
-      if (index) {
-        grn_obj_flush_recursive_dependent_internal(ctx, index, data);
-        grn_obj_unlink(ctx, index);
-      }
-      if (data->is_close_opened_object_mode) {
-        grn_ctx_pop_temporary_open_space(ctx);
-      }
-      if (ctx->rc != GRN_SUCCESS) {
-        return;
-      }
-    }
-  }
-
-  grn_obj_flush(ctx, column);
-}
-
-static void
-grn_obj_flush_recursive_dependent_internal_column_index(grn_ctx *ctx,
-                                                        grn_obj *column,
-                                                        flush_recursive_dependent_data *data)
-{
-  data->is_top_level = false;
-
-  grn_id lexicon_id = column->header.domain;
-  if (grn_obj_flush_recursive_dependent_need_flush(ctx, data, lexicon_id)) {
-    if (data->is_close_opened_object_mode) {
-      grn_ctx_push_temporary_open_space(ctx);
-    }
-    grn_obj *lexicon = grn_ctx_at(ctx, lexicon_id);
-    if (lexicon) {
-      grn_obj_flush_recursive_dependent_internal(ctx, lexicon, data);
-      grn_obj_unlink(ctx, lexicon);
-    }
-    if (data->is_close_opened_object_mode) {
-      grn_ctx_pop_temporary_open_space(ctx);
-    }
-  }
-  if (ctx->rc != GRN_SUCCESS) {
-    return;
-  }
-
-  grn_obj source_ids;
-  GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
-  grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
-  const size_t n = GRN_UINT32_VECTOR_SIZE(&source_ids);
-  for (size_t i = 0; i < n; i++) {
-    grn_id source_id = GRN_UINT32_VALUE_AT(&source_ids, i);
-    if (!grn_obj_flush_recursive_dependent_need_flush(ctx, data, source_id)) {
-      if (ctx->rc == GRN_SUCCESS) {
-        continue;
-      } else {
-        break;
-      }
-    }
-    if (data->is_close_opened_object_mode) {
-      grn_ctx_push_temporary_open_space(ctx);
-    }
-    grn_obj *source = grn_ctx_at(ctx, source_id);
-    if (source) {
-      grn_obj_flush_recursive_dependent_internal(ctx, source, data);
-      grn_obj_unref(ctx, source);
-    }
-    if (data->is_close_opened_object_mode) {
-      grn_ctx_pop_temporary_open_space(ctx);
-    }
-    if (ctx->rc != GRN_SUCCESS) {
-      break;
-    }
-  }
-  GRN_OBJ_FIN(ctx, &source_ids);
-  if (ctx->rc != GRN_SUCCESS) {
-    return;
-  }
-
-  grn_obj_flush(ctx, column);
-}
-
-static void
-grn_obj_flush_recursive_dependent_internal(grn_ctx *ctx,
-                                           grn_obj *obj,
-                                           flush_recursive_dependent_data *data)
-{
-  switch (obj->header.type) {
-  case GRN_DB :
-    grn_obj_flush_recursive_dependent_internal_db(ctx, obj, data);
-    break;
-  case GRN_TABLE_NO_KEY :
-  case GRN_TABLE_HASH_KEY :
-  case GRN_TABLE_PAT_KEY :
-  case GRN_TABLE_DAT_KEY :
-    grn_obj_flush_recursive_dependent_internal_table(ctx, obj, data);
-    break;
-  case GRN_COLUMN_FIX_SIZE :
-  case GRN_COLUMN_VAR_SIZE :
-    grn_obj_flush_recursive_dependent_internal_column_data(ctx, obj, data);
-    break;
-  case GRN_COLUMN_INDEX :
-    grn_obj_flush_recursive_dependent_internal_column_index(ctx, obj, data);
-    break;
-  default :
-    {
-      grn_obj inspected;
-      GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, obj);
-      ERR(GRN_INVALID_ARGUMENT,
-          "[io][flush][recursive][dependent] "
-          "object must be DB, table or column: <%.*s>",
-          (int)GRN_TEXT_LEN(&inspected),
-          GRN_TEXT_VALUE(&inspected));
-      GRN_OBJ_FIN(ctx, &inspected);
-    }
-    break;
-  }
-}
-
-grn_rc
-grn_obj_flush_recursive_dependent(grn_ctx *ctx, grn_obj *obj)
-{
-  GRN_API_ENTER;
-
-  flush_recursive_dependent_data data;
-  data.flushed = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                                 GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
-  if (!data.flushed) {
-    grn_rc rc = ctx->rc;
-    if (rc == GRN_SUCCESS) {
-      rc = GRN_NO_MEMORY_AVAILABLE;
-    }
-    char message[GRN_CTX_MSGSIZE];
-    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
-    char name[GRN_TABLE_MAX_KEY_SIZE];
-    int name_size;
-    name_size = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
-    ERR(rc,
-        "[io][flush][recursive][dependent] "
-        "failed to create an internal hash table "
-        "to manage flushed objects: <%.*s>: %s",
-        name_size, name,
-        message);
-    GRN_API_RETURN(ctx->rc);
-  }
-
-  data.is_close_opened_object_mode = (grn_thread_get_limit() == 1);
-
-  grn_id id = grn_obj_id(ctx, obj);
-  if (grn_obj_flush_recursive_dependent_need_flush(ctx, &data, id)) {
-    data.is_top_level = true;
-    grn_obj_flush_recursive_dependent_internal(ctx, obj, &data);
-  }
-
-  grn_hash_close(ctx, data.flushed);
-
-  GRN_API_RETURN(ctx->rc);
-}
-
-typedef struct {
-  bool is_close_opened_object_mode;
-} flush_recursive_data;
-
-static void
-grn_obj_flush_recursive_internal(grn_ctx *ctx,
-                                 grn_obj *obj,
-                                 flush_recursive_data *data);
-
-static void
-grn_obj_flush_recursive_internal_db(grn_ctx *ctx,
-                                    grn_obj *db,
-                                    flush_recursive_data *data)
-{
-  GRN_TABLE_EACH_BEGIN(ctx, db, cursor, id) {
-    if (data->is_close_opened_object_mode) {
-      grn_ctx_push_temporary_open_space(ctx);
-    }
-
-    grn_obj *object = grn_ctx_at(ctx, id);
-    if (grn_obj_is_table(ctx, object)) {
-      grn_obj_flush_recursive_internal(ctx, object, data);
-    } else {
-      if (ctx->rc != GRN_SUCCESS) {
-        ERRCLR(ctx);
-      }
-    }
-
-    if (data->is_close_opened_object_mode) {
-      grn_ctx_pop_temporary_open_space(ctx);
-    }
-
-    if (ctx->rc != GRN_SUCCESS) {
-      break;
-    }
-  } GRN_TABLE_EACH_END(ctx, cursor);
-  if (ctx->rc != GRN_SUCCESS) {
-    return;
-  }
-
-  grn_obj_flush(ctx, db);
-}
-
-static void
-grn_obj_flush_recursive_internal_table(grn_ctx *ctx,
-                                       grn_obj *table,
-                                       flush_recursive_data *data)
-{
-  grn_hash *columns = grn_hash_create(ctx,
-                                      NULL,
-                                      sizeof(grn_id),
-                                      0,
-                                      GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
-  if (!columns) {
-    grn_rc rc = ctx->rc;
-    if (rc == GRN_SUCCESS) {
-      rc = GRN_NO_MEMORY_AVAILABLE;
-    }
-    char message[GRN_CTX_MSGSIZE];
-    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
-    char table_name[GRN_TABLE_MAX_KEY_SIZE];
-    int table_name_size;
-    table_name_size = grn_obj_name(ctx,
-                                   table,
-                                   table_name,
-                                   GRN_TABLE_MAX_KEY_SIZE);
-    ERR(rc,
-        "[io][flush][recursive] "
-        "failed to create internal hash table "
-        "to store columns: <%.*s>: %s",
-        table_name_size, table_name,
-        message);
-    return;
-  }
-
-  if (grn_table_columns(ctx, table, "", 0, (grn_obj *)columns) > 0) {
-    GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
-      void *key;
-      if (grn_hash_cursor_get_key(ctx, cursor, &key) == 0) {
-        continue;
-      }
-
-      if (data->is_close_opened_object_mode) {
-        grn_ctx_push_temporary_open_space(ctx);
-      }
-      grn_id *column_id = key;
-      grn_obj *column = grn_ctx_at(ctx, *column_id);
-      if (column) {
-        grn_obj_flush_recursive_internal(ctx, column, data);
-      }
-      if (data->is_close_opened_object_mode) {
-        grn_ctx_pop_temporary_open_space(ctx);
-      }
-
-      if (ctx->rc != GRN_SUCCESS) {
-        break;
-      }
-    } GRN_HASH_EACH_END(ctx, cursor);
-  }
-  grn_hash_close(ctx, columns);
-  if (ctx->rc != GRN_SUCCESS) {
-    return;
-  }
-
-  grn_obj_flush(ctx, table);
-}
-
-static void
-grn_obj_flush_recursive_internal_column(grn_ctx *ctx,
-                                        grn_obj *column,
-                                        flush_recursive_data *data)
-{
-  grn_obj_flush(ctx, column);
-}
-
-static void
-grn_obj_flush_recursive_internal(grn_ctx *ctx,
-                                 grn_obj *obj,
-                                 flush_recursive_data *data)
-{
-  switch (obj->header.type) {
-  case GRN_DB :
-    grn_obj_flush_recursive_internal_db(ctx, obj, data);
-    break;
-  case GRN_TABLE_NO_KEY :
-  case GRN_TABLE_HASH_KEY :
-  case GRN_TABLE_PAT_KEY :
-  case GRN_TABLE_DAT_KEY :
-    grn_obj_flush_recursive_internal_table(ctx, obj, data);
-    break;
-  case GRN_COLUMN_FIX_SIZE :
-  case GRN_COLUMN_VAR_SIZE :
-  case GRN_COLUMN_INDEX :
-    grn_obj_flush_recursive_internal_column(ctx, obj, data);
-    break;
-  default :
-    {
-      grn_obj inspected;
-      GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, obj);
-      ERR(GRN_INVALID_ARGUMENT,
-          "[io][flush][recursive] "
-          "object must be DB, table or column: <%.*s>",
-          (int)GRN_TEXT_LEN(&inspected),
-          GRN_TEXT_VALUE(&inspected));
-      GRN_OBJ_FIN(ctx, &inspected);
-    }
-    break;
-  }
+  grn_obj_flush(ctx, obj);
 }
 
 grn_rc
@@ -12082,9 +12147,25 @@ grn_obj_flush_recursive(grn_ctx *ctx, grn_obj *obj)
 {
   GRN_API_ENTER;
 
-  flush_recursive_data data;
-  data.is_close_opened_object_mode = (grn_thread_get_limit() == 1);
-  grn_obj_flush_recursive_internal(ctx, obj, &data);
+  grn_obj_traverse_recursive_data data;
+  data.tag = "[obj][flush]";
+  data.traverse = grn_obj_flush_traverse;
+  data.user_data = NULL;
+  grn_obj_traverse_recursive(ctx, &data, obj);
+
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_obj_flush_recursive_dependent(grn_ctx *ctx, grn_obj *obj)
+{
+  GRN_API_ENTER;
+
+  grn_obj_traverse_recursive_dependent_data data;
+  data.tag = "[obj][flush]";
+  data.traverse = grn_obj_flush_traverse;
+  data.user_data = NULL;
+  grn_obj_traverse_recursive_dependent(ctx, &data, obj);
 
   GRN_API_RETURN(ctx->rc);
 }
