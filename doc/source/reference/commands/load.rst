@@ -57,7 +57,7 @@ If you use HTTP style, you can pass ``values`` as body::
 Usage
 -----
 
-Here are schema definitions to show usage:
+Here is a schema definition to show usage:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/load/usage_setup.log

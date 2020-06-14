@@ -248,6 +248,26 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/object_remove/usage_broken_without_force.log \
 	$(top_srcdir)/doc/source/example/reference/commands/plugin_register/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/plugin_unregister/query_expanders_tsv.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/all.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/for_output.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/for_search.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/recursive_default.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/recursive_dependent.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/recursive_invalid.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/recursive_no.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/recursive_yes.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/release.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/schema.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/target_name_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/target_name_database.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_acquire/target_name_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_release/same_arguments.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_release/schema.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_release/target_name_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_release/target_name_database.log \
+	$(top_srcdir)/doc/source/example/reference/commands/reference_release/target_name_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/register/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/reindex/data_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/reindex/database.log \
@@ -923,6 +943,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/query_expand.rst \
 	$(top_srcdir)/doc/source/reference/commands/quit.rst \
 	$(top_srcdir)/doc/source/reference/commands/range_filter.rst \
+	$(top_srcdir)/doc/source/reference/commands/reference_acquire.rst \
+	$(top_srcdir)/doc/source/reference/commands/reference_release.rst \
 	$(top_srcdir)/doc/source/reference/commands/register.rst \
 	$(top_srcdir)/doc/source/reference/commands/reindex.rst \
 	$(top_srcdir)/doc/source/reference/commands/request_cancel.rst \
@@ -1337,6 +1359,26 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/object_remove/usage_broken_without_force.log \
 	source/example/reference/commands/plugin_register/query_expanders_tsv.log \
 	source/example/reference/commands/plugin_unregister/query_expanders_tsv.log \
+	source/example/reference/commands/reference_acquire/all.log \
+	source/example/reference/commands/reference_acquire/column.log \
+	source/example/reference/commands/reference_acquire/for_output.log \
+	source/example/reference/commands/reference_acquire/for_search.log \
+	source/example/reference/commands/reference_acquire/recursive_default.log \
+	source/example/reference/commands/reference_acquire/recursive_dependent.log \
+	source/example/reference/commands/reference_acquire/recursive_invalid.log \
+	source/example/reference/commands/reference_acquire/recursive_no.log \
+	source/example/reference/commands/reference_acquire/recursive_yes.log \
+	source/example/reference/commands/reference_acquire/release.log \
+	source/example/reference/commands/reference_acquire/schema.log \
+	source/example/reference/commands/reference_acquire/table.log \
+	source/example/reference/commands/reference_acquire/target_name_column.log \
+	source/example/reference/commands/reference_acquire/target_name_database.log \
+	source/example/reference/commands/reference_acquire/target_name_table.log \
+	source/example/reference/commands/reference_release/same_arguments.log \
+	source/example/reference/commands/reference_release/schema.log \
+	source/example/reference/commands/reference_release/target_name_column.log \
+	source/example/reference/commands/reference_release/target_name_database.log \
+	source/example/reference/commands/reference_release/target_name_table.log \
 	source/example/reference/commands/register/query_expanders_tsv.log \
 	source/example/reference/commands/reindex/data_column.log \
 	source/example/reference/commands/reindex/database.log \
@@ -1535,8 +1577,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
 	source/example/reference/functions/sub_filter/usage_without_sub_filter.log \
 	source/example/reference/functions/time_classify_day/usage_classify.log \
+	source/example/reference/functions/time_classify_day/usage_register.log \
 	source/example/reference/functions/time_classify_day/usage_setup_data.log \
-	source/example/reference/functions/time_classify_day/usage_setup_register.log \
 	source/example/reference/functions/time_classify_day/usage_setup_schema.log \
 	source/example/reference/functions/time_classify_day_of_week/usage_classify.log \
 	source/example/reference/functions/time_classify_day_of_week/usage_register.log \
@@ -2012,6 +2054,8 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/query_expand.rst \
 	source/reference/commands/quit.rst \
 	source/reference/commands/range_filter.rst \
+	source/reference/commands/reference_acquire.rst \
+	source/reference/commands/reference_release.rst \
 	source/reference/commands/register.rst \
 	source/reference/commands/reindex.rst \
 	source/reference/commands/request_cancel.rst \
@@ -2438,6 +2482,8 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/query_expand.html \
 	html/reference/commands/quit.html \
 	html/reference/commands/range_filter.html \
+	html/reference/commands/reference_acquire.html \
+	html/reference/commands/reference_release.html \
 	html/reference/commands/register.html \
 	html/reference/commands/reindex.html \
 	html/reference/commands/request_cancel.html \

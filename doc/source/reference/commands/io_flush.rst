@@ -285,23 +285,23 @@ There are optional parameters.
 ``target_name``
 """""""""""""""
 
-Specifies a flush target object name. Target object is one of
-database, table or column.
+Specifies a target object name. Target object is one of database,
+table or column.
 
-If you omit this parameter, database is flush target object:
+If you omit this parameter, database is the target object:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/io_flush/target_name_database.log
 .. io_flush
 
-If you specify table name, the table is flush target object:
+If you specify a table name, the table is the target object:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/io_flush/target_name_table.log
 .. table_create Users TABLE_HASH_KEY ShortText
 .. io_flush --target_name Users
 
-If you specify column name, the column is flush target object:
+If you specify a column name, the column is the target object:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/io_flush/target_name_column.log
@@ -313,24 +313,24 @@ If you specify column name, the column is flush target object:
 ``recursive``
 """""""""""""
 
-Specifies whether child objects of the flush target object are also
-flush target objects.
+Specifies whether child objects of the target object are also target
+objects.
 
-Child objects of database is all tables and all columns.
+Child objects of database are all tables and all columns.
 
-Child objects of table is all its columns.
+Child objects of table are all its columns.
 
-Child objects of column is nothing.
+Child objects of column are nothing.
 
 If you specify ``yes`` to :ref:`io-flush-only-opened`, ``recursive``
 is ignored.
 
-``recursive`` value must be ``yes``, ``no`` or ``dependent``. ``yes`` means that all
-of the specified flush target object and child objects are flush
-target objects. ``no`` means that only the specified flush target
-object is flush target object. ``dependent`` means that all of the specified flush target object,
-child objects, corresponding table of index column and corresponding index column are flush
-target objects.
+``recursive`` value must be ``yes``, ``no`` or ``dependent``. ``yes``
+means that all of the specified target object and child objects are
+the target objects. ``no`` means that only the specified target object
+is the target object. ``dependent`` means that all of the specified
+target object, child objects, corresponding table of index column and
+corresponding index column are the target objects.
 
 The following ``io_flush`` flushes all changes in database, all tables
 and all columns:
