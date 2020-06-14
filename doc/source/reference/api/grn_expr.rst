@@ -38,7 +38,7 @@ Reference
 
 .. c:function:: grn_obj *grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
 
-.. c:function:: grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, int nargs);
+.. c:function:: grn_obj *grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, int nargs)
 
 .. c:function:: grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, int nargs)
 
