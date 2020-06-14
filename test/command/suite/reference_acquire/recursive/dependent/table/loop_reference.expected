@@ -1,0 +1,59 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Groups TABLE_HASH_KEY Users
+[[0,0.0,0.0],true]
+column_create Groups name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users group COLUMN_SCALAR Groups
+[[0,0.0,0.0],true]
+log_level --level dump
+[[0,0.0,0.0],true]
+reference_acquire --target_name Users --recursive dependent
+[[0,0.0,0.0],true]
+#|-| [obj][open] <256>(<Users>):<48>(<table:hash_key>)
+#|-| [obj][open] <260>(<Users.group>):<64>(<column:fix_size>)
+#|-| [obj][open] <257>(<Groups>):<48>(<table:hash_key>)
+#|-| [obj][open] <258>(<Groups.name>):<65>(<column:var_size>)
+#|-| [obj][open] <259>(<Users.name>):<65>(<column:var_size>)
+select Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        0
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "group",
+          "Groups"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ]
+    ]
+  ]
+]
+reference_release --target_name Users --recursive dependent
+[[0,0.0,0.0],true]
+#|-| [obj][close] <258>(<Groups.name>):<65>(<column:var_size>)
+#|-| [obj][close] <257>(<Groups>):<48>(<table:hash_key>)
+#|-| [obj][close] <260>(<Users.group>):<64>(<column:fix_size>)
+#|-| [obj][close] <259>(<Users.name>):<65>(<column:var_size>)
+#|-| [obj][close] <256>(<Users>):<48>(<table:hash_key>)

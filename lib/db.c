@@ -10666,6 +10666,7 @@ typedef struct {
   grn_hash *traversed;
   bool is_close_opened_object_mode;
   bool is_top_level;
+  bool for_reference;
   grn_traverse_func *traverse;
   void *user_data;
   const char *tag;
@@ -10812,7 +10813,7 @@ grn_obj_traverse_recursive_dependent_table(
     }
   }
 
-  if (is_top_level) {
+  if (data->for_reference || is_top_level) {
     grn_hash *columns = grn_hash_create(ctx,
                                         NULL,
                                         sizeof(grn_id),
@@ -10983,6 +10984,26 @@ grn_obj_traverse_recursive_dependent_column_index(
     if (lexicon) {
       grn_obj_traverse_recursive_dependent_dispatch(ctx, data, lexicon);
       grn_obj_unref(ctx, lexicon);
+    }
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_pop_temporary_open_space(ctx);
+    }
+  }
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+
+  grn_id range_id = DB_OBJ(column)->range;
+  if (grn_obj_traverse_recursive_dependent_need_traverse(ctx,
+                                                         data,
+                                                         range_id)) {
+    if (data->is_close_opened_object_mode) {
+      grn_ctx_push_temporary_open_space(ctx);
+    }
+    grn_obj *source_table = grn_ctx_at(ctx, range_id);
+    if (source_table) {
+      grn_obj_traverse_recursive_dependent_dispatch(ctx, data, source_table);
+      grn_obj_unref(ctx, source_table);
     }
     if (data->is_close_opened_object_mode) {
       grn_ctx_pop_temporary_open_space(ctx);
@@ -11430,9 +11451,56 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
 void
 grn_obj_unref(grn_ctx *ctx, grn_obj *obj)
 {
-  if (grn_enable_reference_count) {
-    grn_obj_unlink(ctx, obj);
+  if (!grn_enable_reference_count) {
+    return;
   }
+
+  grn_obj_unlink(ctx, obj);
+}
+
+static void
+grn_obj_unref_traverse(grn_ctx *ctx,
+                       grn_obj *obj,
+                       void *user_data)
+{
+  grn_obj_unref(ctx, obj);
+}
+
+void
+grn_obj_unref_recursive(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_enable_reference_count) {
+    return;
+  }
+
+  GRN_API_ENTER;
+
+  grn_obj_traverse_recursive_data data;
+  data.tag = "[obj][unref]";
+  data.traverse = grn_obj_unref_traverse;
+  data.user_data = NULL;
+  grn_obj_traverse_recursive(ctx, &data, obj);
+
+  GRN_API_RETURN();
+}
+
+void
+grn_obj_unref_recursive_dependent(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_enable_reference_count) {
+    return;
+  }
+
+  GRN_API_ENTER;
+
+  grn_obj_traverse_recursive_dependent_data data;
+  data.tag = "[obj][unref]";
+  data.traverse = grn_obj_unref_traverse;
+  data.user_data = NULL;
+  data.for_reference = true;
+  grn_obj_traverse_recursive_dependent(ctx, &data, obj);
+
+  GRN_API_RETURN();
 }
 
 grn_rc
@@ -11457,6 +11525,51 @@ grn_obj_refer(grn_ctx *ctx, grn_obj *obj)
   }
 
   return ctx->rc;
+}
+
+static void
+grn_obj_refer_traverse(grn_ctx *ctx,
+                       grn_obj *obj,
+                       void *user_data)
+{
+  grn_obj_refer(ctx, obj);
+}
+
+grn_rc
+grn_obj_refer_recursive(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_enable_reference_count) {
+    return ctx->rc;
+  }
+
+  GRN_API_ENTER;
+
+  grn_obj_traverse_recursive_data data;
+  data.tag = "[obj][refer]";
+  data.traverse = grn_obj_refer_traverse;
+  data.user_data = NULL;
+  grn_obj_traverse_recursive(ctx, &data, obj);
+
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_obj_refer_recursive_dependent(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_enable_reference_count) {
+    return ctx->rc;
+  }
+
+  GRN_API_ENTER;
+
+  grn_obj_traverse_recursive_dependent_data data;
+  data.tag = "[obj][refer]";
+  data.traverse = grn_obj_refer_traverse;
+  data.user_data = NULL;
+  data.for_reference = true;
+  grn_obj_traverse_recursive_dependent(ctx, &data, obj);
+
+  GRN_API_RETURN(ctx->rc);
 }
 
 /* Internal function for debug */
@@ -12165,6 +12278,7 @@ grn_obj_flush_recursive_dependent(grn_ctx *ctx, grn_obj *obj)
   data.tag = "[obj][flush]";
   data.traverse = grn_obj_flush_traverse;
   data.user_data = NULL;
+  data.for_reference = false;
   grn_obj_traverse_recursive_dependent(ctx, &data, obj);
 
   GRN_API_RETURN(ctx->rc);

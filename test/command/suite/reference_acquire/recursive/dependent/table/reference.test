@@ -1,0 +1,18 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+
+table_create Tags TABLE_HASH_KEY ShortText
+column_create Tags label COLUMN_SCALAR ShortText
+
+table_create Titles TABLE_HASH_KEY ShortText
+column_create Titles tag COLUMN_SCALAR Tags
+
+table_create Memos TABLE_HASH_KEY Titles
+column_create Memos content COLUMN_SCALAR Text
+column_create Memos timestamp COLUMN_SCALAR Time
+
+log_level --level dump
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+reference_acquire --target_name Memos --recursive dependent
+select Memos
+reference_release --target_name Memos --recursive dependent

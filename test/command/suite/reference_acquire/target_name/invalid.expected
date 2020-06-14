@@ -1,0 +1,13 @@
+reference_acquire --target_name TokenBigram
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[obj][refer][recursive] object must be DB, table or column: #<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>"
+  ],
+  false
+]
+#|e| [obj][refer][recursive] object must be DB, table or column: #<proc:tokenizer TokenBigram arguments:[$1, $2, $3]>

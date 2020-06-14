@@ -4678,4 +4678,7 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
   grn_proc_init_index_column_diff(ctx);
 
   grn_proc_init_object_set_visibility(ctx);
+
+  grn_proc_init_reference_acquire(ctx);
+  grn_proc_init_reference_release(ctx);
 }

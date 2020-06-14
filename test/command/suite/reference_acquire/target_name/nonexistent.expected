@@ -1,0 +1,13 @@
+reference_acquire --target_name Nonexistent
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[reference][acquire] target object not found: <Nonexistent>"
+  ],
+  false
+]
+#|e| [reference][acquire] target object not found: <Nonexistent>

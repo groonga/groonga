@@ -768,9 +768,14 @@ GRN_API grn_rc grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigne
  * If the decreased reference count is zero, the object is closed.
  */
 GRN_API void grn_obj_unlink(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_rc grn_obj_refer(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_rc grn_obj_refer_recursive(grn_ctx *ctx, grn_obj *obj);
+GRN_API grn_rc grn_obj_refer_recursive_dependent(grn_ctx *ctx, grn_obj *obj);
 /* This calls grn_obj_unlink() only on reference count mode
  * (GRN_ENABLE_REFERENCE_COUNT=yes) */
 GRN_API void grn_obj_unref(grn_ctx *ctx, grn_obj *obj);
+GRN_API void grn_obj_unref_recursive(grn_ctx *ctx, grn_obj *obj);
+GRN_API void grn_obj_unref_recursive_dependent(grn_ctx *ctx, grn_obj *obj);
 
 GRN_API grn_user_data *grn_obj_user_data(grn_ctx *ctx, grn_obj *obj);
 

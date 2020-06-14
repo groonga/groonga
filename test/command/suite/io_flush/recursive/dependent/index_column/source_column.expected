@@ -12,6 +12,7 @@ io_flush Timestamps.memos_timestamp_index --recursive dependent
 [[0,0.0,0.0],true]
 #>io_flush --recursive "dependent" --target_name "Timestamps.memos_timestamp_index"
 #:000000000000000 flush[Timestamps]
+#:000000000000000 flush[Memos]
 #:000000000000000 flush[Memos.timestamp]
 #:000000000000000 flush[Timestamps.memos_timestamp_index]
 #:000000000000000 flush[(anonymous:table:dat_key)]

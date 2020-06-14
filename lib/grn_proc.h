@@ -70,6 +70,8 @@ void grn_proc_init_query_log_flags_get(grn_ctx *ctx);
 void grn_proc_init_query_log_flags_set(grn_ctx *ctx);
 void grn_proc_init_query_log_flags_add(grn_ctx *ctx);
 void grn_proc_init_query_log_flags_remove(grn_ctx *ctx);
+void grn_proc_init_reference_acquire(grn_ctx *ctx);
+void grn_proc_init_reference_release(grn_ctx *ctx);
 void grn_proc_init_schema(grn_ctx *ctx);
 void grn_proc_init_select(grn_ctx *ctx);
 void grn_proc_init_snippet(grn_ctx *ctx);

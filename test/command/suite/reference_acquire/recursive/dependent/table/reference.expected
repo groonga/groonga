@@ -1,0 +1,71 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Tags label COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Titles TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Titles tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY Titles
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Memos timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+log_level --level dump
+[[0,0.0,0.0],true]
+reference_acquire --target_name Memos --recursive dependent
+[[0,0.0,0.0],true]
+#|-| [obj][open] <260>(<Memos>):<48>(<table:hash_key>)
+#|-| [obj][open] <258>(<Titles>):<48>(<table:hash_key>)
+#|-| [obj][open] <259>(<Titles.tag>):<64>(<column:fix_size>)
+#|-| [obj][open] <256>(<Tags>):<48>(<table:hash_key>)
+#|-| [obj][open] <257>(<Tags.label>):<65>(<column:var_size>)
+#|-| [obj][open] <261>(<Memos.content>):<65>(<column:var_size>)
+#|-| [obj][open] <262>(<Memos.timestamp>):<64>(<column:fix_size>)
+select Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        0
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content",
+          "Text"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ],
+        [
+          "tag",
+          "Tags"
+        ]
+      ]
+    ]
+  ]
+]
+reference_release --target_name Memos --recursive dependent
+[[0,0.0,0.0],true]
+#|-| [obj][close] <257>(<Tags.label>):<65>(<column:var_size>)
+#|-| [obj][close] <256>(<Tags>):<48>(<table:hash_key>)
+#|-| [obj][close] <259>(<Titles.tag>):<64>(<column:fix_size>)
+#|-| [obj][close] <258>(<Titles>):<48>(<table:hash_key>)
+#|-| [obj][close] <261>(<Memos.content>):<65>(<column:var_size>)
+#|-| [obj][close] <262>(<Memos.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][close] <260>(<Memos>):<48>(<table:hash_key>)

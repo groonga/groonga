@@ -1,0 +1,49 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Labels TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Labels owner COLUMN_SCALR Users
+[[[-22,0.0,0.0],"[column][create][flags] unknown flag: <COLUMN_SCALR>"],false]
+#|e| [column][create][flags] unknown flag: <COLUMN_SCALR>
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Tags label COLUMN_SCALAR Labels
+[[0,0.0,0.0],true]
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+column_create Memos timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerNFKC100
+[[0,0.0,0.0],true]
+column_create Terms tags_index   COLUMN_INDEX|WITH_POSITION|WITH_SECTION Tags _key,label
+[[0,0.0,0.0],true]
+column_create Terms is_stop_word COLUMN_SCALAR Bool
+[[0,0.0,0.0],true]
+log_level --level dump
+[[0,0.0,0.0],true]
+reference_acquire --target_name Memos.tags --recursive dependent
+[[0,0.0,0.0],true]
+#|-| [obj][open] <261>(<Memos.tags>):<65>(<column:var_size>)
+#|-| [obj][open] <260>(<Memos>):<51>(<table:no_key>)
+#|-| [obj][open] <262>(<Memos.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <258>(<Tags>):<48>(<table:hash_key>)
+#|-| [obj][open] <263>(<Terms>):<49>(<table:pat_key>)
+#|-| [obj][open] <264>(<Terms.tags_index>):<72>(<column:index>)
+#|-| [obj][open] <265>(<Terms.is_stop_word>):<64>(<column:fix_size>)
+#|-| [obj][open] <259>(<Tags.label>):<64>(<column:fix_size>)
+#|-| [obj][open] <257>(<Labels>):<48>(<table:hash_key>)
+select Memos
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["tags","Tags"],["timestamp","Time"]]]]]
+reference_release --target_name Memos.tags --recursive dependent
+[[0,0.0,0.0],true]
+#|-| [obj][close] <262>(<Memos.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][close] <260>(<Memos>):<51>(<table:no_key>)
+#|-| [obj][close] <265>(<Terms.is_stop_word>):<64>(<column:fix_size>)
+#|-| [obj][close] <257>(<Labels>):<48>(<table:hash_key>)
+#|-| [obj][close] <259>(<Tags.label>):<64>(<column:fix_size>)
+#|-| [obj][close] <264>(<Terms.tags_index>):<72>(<column:index>)
+#|-| [obj][close] <263>(<Terms>):<49>(<table:pat_key>)
+#|-| [obj][close] <258>(<Tags>):<48>(<table:hash_key>)
+#|-| [obj][close] <261>(<Memos.tags>):<65>(<column:var_size>)

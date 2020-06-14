@@ -1,0 +1,15 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos timestamp COLUMN_SCALAR Time
+
+table_create Timestamps TABLE_PAT_KEY Time
+column_create Timestamps memos_timestamp_index COLUMN_INDEX Memos timestamp
+column_create Timestamps is_special COLUMN_SCALAR Bool
+
+log_level --level dump
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+reference_acquire --target_name Timestamps.memos_timestamp_index --recursive dependent
+select Memos --query timestamp:@0
+reference_release --target_name Timestamps.memos_timestamp_index --recursive dependent

@@ -1,0 +1,55 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Timestamps TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Timestamps memos_timestamp_index COLUMN_INDEX Memos timestamp
+[[0,0.0,0.0],true]
+column_create Timestamps is_special COLUMN_SCALAR Bool
+[[0,0.0,0.0],true]
+log_level --level dump
+[[0,0.0,0.0],true]
+reference_acquire --target_name Timestamps.memos_timestamp_index --recursive dependent
+[[0,0.0,0.0],true]
+#|-| [obj][open] <258>(<Timestamps>):<49>(<table:pat_key>)
+#|-| [obj][open] <259>(<Timestamps.memos_timestamp_index>):<72>(<column:index>)
+#|-| [obj][open] <260>(<Timestamps.is_special>):<64>(<column:fix_size>)
+#|-| [obj][open] <256>(<Memos>):<48>(<table:hash_key>)
+#|-| [obj][open] <257>(<Memos.timestamp>):<64>(<column:fix_size>)
+select Memos --query timestamp:@0
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        0
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ]
+    ]
+  ]
+]
+reference_release --target_name Timestamps.memos_timestamp_index --recursive dependent
+[[0,0.0,0.0],true]
+#|-| [obj][close] <260>(<Timestamps.is_special>):<64>(<column:fix_size>)
+#|-| [obj][close] <257>(<Memos.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][close] <256>(<Memos>):<48>(<table:hash_key>)
+#|-| [obj][close] <259>(<Timestamps.memos_timestamp_index>):<72>(<column:index>)
+#|-| [obj][close] <258>(<Timestamps>):<49>(<table:pat_key>)

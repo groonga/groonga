@@ -15,6 +15,7 @@ libgrnproc_la_SOURCES =				\
 	proc_object_list.c			\
 	proc_query.c				\
 	proc_query_log_flags.c			\
+	proc_reference.c			\
 	proc_schema.c				\
 	proc_select.c				\
 	proc_snippet.c				\

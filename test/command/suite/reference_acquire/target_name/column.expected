@@ -1,0 +1,47 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms users_name COLUMN_INDEX|WITH_POSITION Users name
+[[0,0.0,0.0],true]
+log_level --level dump
+[[0,0.0,0.0],true]
+reference_acquire --target_name Users.name
+[[0,0.0,0.0],true]
+#|-| [obj][open] <257>(<Users.name>):<65>(<column:var_size>)
+select Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        0
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ]
+    ]
+  ]
+]
+#|-| [obj][open] <256>(<Users>):<48>(<table:hash_key>)
+#|-| [obj][close] <256>(<Users>):<48>(<table:hash_key>)
+reference_release --target_name Users.name
+[[0,0.0,0.0],true]
+#|-| [obj][close] <257>(<Users.name>):<65>(<column:var_size>)

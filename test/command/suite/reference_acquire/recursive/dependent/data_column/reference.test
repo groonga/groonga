@@ -1,0 +1,27 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+
+table_create Users TABLE_HASH_KEY ShortText
+
+table_create Labels TABLE_HASH_KEY ShortText
+column_create Labels owner COLUMN_SCALR Users
+
+table_create Tags TABLE_HASH_KEY ShortText
+column_create Tags label COLUMN_SCALAR Labels
+
+table_create Memos TABLE_NO_KEY
+column_create Memos tags COLUMN_VECTOR Tags
+column_create Memos timestamp COLUMN_SCALAR Time
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerNFKC100
+column_create Terms tags_index \
+  COLUMN_INDEX|WITH_POSITION|WITH_SECTION Tags _key,label
+column_create Terms is_stop_word COLUMN_SCALAR Bool
+
+log_level --level dump
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+reference_acquire --target_name Memos.tags --recursive dependent
+select Memos
+reference_release --target_name Memos.tags --recursive dependent

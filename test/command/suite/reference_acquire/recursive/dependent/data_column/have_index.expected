@@ -1,0 +1,58 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Memos timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerNFKC100
+[[0,0.0,0.0],true]
+column_create Terms memos_key_index COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+column_create Terms is_stop_word COLUMN_SCALAR Bool
+[[0,0.0,0.0],true]
+log_level --level dump
+[[0,0.0,0.0],true]
+reference_acquire --target_name Memos.content --recursive dependent
+[[0,0.0,0.0],true]
+#|-| [obj][open] <257>(<Memos.content>):<65>(<column:var_size>)
+#|-| [obj][open] <256>(<Memos>):<51>(<table:no_key>)
+#|-| [obj][open] <258>(<Memos.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <259>(<Terms>):<49>(<table:pat_key>)
+#|-| [obj][open] <260>(<Terms.memos_key_index>):<72>(<column:index>)
+#|-| [obj][open] <261>(<Terms.is_stop_word>):<64>(<column:fix_size>)
+select Memos --query content:@hello
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        0
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ]
+    ]
+  ]
+]
+reference_release --target_name Memos.content --recursive dependent
+[[0,0.0,0.0],true]
+#|-| [obj][close] <258>(<Memos.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][close] <261>(<Terms.is_stop_word>):<64>(<column:fix_size>)
+#|-| [obj][close] <260>(<Terms.memos_key_index>):<72>(<column:index>)
+#|-| [obj][close] <259>(<Terms>):<49>(<table:pat_key>)
+#|-| [obj][close] <257>(<Memos.content>):<65>(<column:var_size>)

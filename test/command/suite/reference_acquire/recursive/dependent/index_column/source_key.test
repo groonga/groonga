@@ -1,0 +1,17 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos timestamp COLUMN_SCALAR Time
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerNFKC100
+column_create Terms memos_key_index COLUMN_INDEX|WITH_POSITION Memos _key
+column_create Terms is_stop_word COLUMN_SCALAR Bool
+
+log_level --level dump
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+reference_acquire --target_name Terms.memos_key_index --recursive dependent
+select Memos --query _key:@hello
+reference_release --target_name Terms.memos_key_index --recursive dependent
