@@ -239,13 +239,12 @@ grn_alloc_info_change(void *old_address, void *new_address, size_t size)
 void
 grn_alloc_info_dump(grn_ctx *ctx)
 {
-  int i = 0;
-  grn_alloc_info *alloc_info;
-
   if (!ctx) { return; }
   if (!ctx->impl) { return; }
 
-  alloc_info = ctx->impl->alloc_info;
+  int i = 0;
+  size_t total = 0;
+  grn_alloc_info *alloc_info = ctx->impl->alloc_info;
   for (; alloc_info; alloc_info = alloc_info->next) {
     if (alloc_info->freed) {
       printf("address[%d][freed]: %p(%" GRN_FMT_SIZE ")\n",
@@ -259,9 +258,11 @@ grn_alloc_info_dump(grn_ctx *ctx)
              alloc_info->line,
              alloc_info->func ? alloc_info->func : "(unknown)",
              alloc_info->alloc_backtrace);
+      total += alloc_info->size;
     }
     i++;
   }
+  printf("total: %" GRN_FMT_SIZE ":%d\n", total, i);
 }
 
 grn_inline static void
