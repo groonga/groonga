@@ -9,11 +9,9 @@ skip_commits:
     - ".travis.yml"
     - "benchmark/"
     - "configure.ac"
-    - "doc/"
     - "docker-compose.yml"
     - "dockerfiles/"
     - "examples/"
-    - "packages/"
     - "tools/"
     - "travis/"
 
