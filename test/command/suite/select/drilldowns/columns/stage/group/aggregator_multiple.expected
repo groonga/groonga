@@ -1,0 +1,140 @@
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+column_create Items quantity COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+column_create Items tag COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "Book",  "price": 1000, "quantity": 100, "tag": "A"},
+{"_key": "Note",  "price": 1000, "quantity": 10,  "tag": "B"},
+{"_key": "Box",   "price": 500,  "quantity": 15,  "tag": "B"},
+{"_key": "Pen",   "price": 500,  "quantity": 12,  "tag": "A"},
+{"_key": "Food",  "price": 500,  "quantity": 111, "tag": "C"},
+{"_key": "Drink", "price": 300,  "quantity": 22,  "tag": "B"}
+]
+[[0,0.0,0.0],6]
+select Items   --drilldowns[tag].keys tag   --drilldowns[tag].output_columns _key,_nsubrecs,price_sum,quantity_sum   --drilldowns[tag].columns[price_sum].stage group   --drilldowns[tag].columns[price_sum].type UInt32   --drilldowns[tag].columns[price_sum].flags COLUMN_SCALAR   --drilldowns[tag].columns[price_sum].value 'aggregator_sum(price)'   --drilldowns[tag].columns[quantity_sum].stage group   --drilldowns[tag].columns[quantity_sum].type UInt32   --drilldowns[tag].columns[quantity_sum].flags COLUMN_SCALAR   --drilldowns[tag].columns[quantity_sum].value 'aggregator_sum(quantity)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "price",
+          "UInt32"
+        ],
+        [
+          "quantity",
+          "UInt32"
+        ],
+        [
+          "tag",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Book",
+        1000,
+        100,
+        "A"
+      ],
+      [
+        2,
+        "Note",
+        1000,
+        10,
+        "B"
+      ],
+      [
+        3,
+        "Box",
+        500,
+        15,
+        "B"
+      ],
+      [
+        4,
+        "Pen",
+        500,
+        12,
+        "A"
+      ],
+      [
+        5,
+        "Food",
+        500,
+        111,
+        "C"
+      ],
+      [
+        6,
+        "Drink",
+        300,
+        22,
+        "B"
+      ]
+    ],
+    {
+      "tag": [
+        [
+          3
+        ],
+        [
+          [
+            "_key",
+            "ShortText"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ],
+          [
+            "price_sum",
+            "UInt32"
+          ],
+          [
+            "quantity_sum",
+            "UInt32"
+          ]
+        ],
+        [
+          "A",
+          2,
+          1500,
+          112
+        ],
+        [
+          "B",
+          3,
+          1800,
+          47
+        ],
+        [
+          "C",
+          1,
+          500,
+          111
+        ]
+      ]
+    }
+  ]
+]
