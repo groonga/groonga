@@ -11473,6 +11473,9 @@ grn_obj_unref_traverse(grn_ctx *ctx,
                        grn_obj *obj,
                        void *user_data)
 {
+  if (obj->header.type == GRN_DB) {
+    return;
+  }
   grn_obj_unref(ctx, obj);
 }
 
@@ -11542,6 +11545,9 @@ grn_obj_refer_traverse(grn_ctx *ctx,
                        grn_obj *obj,
                        void *user_data)
 {
+  if (obj->header.type == GRN_DB) {
+    return;
+  }
   grn_obj_refer(ctx, obj);
 }
 
