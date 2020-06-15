@@ -415,54 +415,20 @@ sort_value_pack(grn_ctx *ctx,
 {
   sort_entry *entries = head;
   size_t n_ids = 0;
-  if (data->keys[0].get_value) {
-    GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
-      entries[n_ids].common.id = id;
-      n_ids++;
-    } GRN_TABLE_EACH_END(ctx, cursor);
-  } else {
+  GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
+    entries[n_ids].common.id = id;
+    n_ids++;
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  if (!data->keys[0].get_value) {
     grn_obj *key = data->keys[0].key;
-    grn_accessor *key_accessor = (grn_accessor *)key;
-    grn_column_cache *column_cache;
-    /* _key->cachable_column */
-    if (grn_obj_is_accessor(ctx, key) &&
-        key_accessor->action == GRN_ACCESSOR_GET_KEY &&
-        key_accessor->next &&
-        key_accessor->next->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
-        !key_accessor->next->next &&
-        (column_cache = grn_column_cache_open(ctx, key_accessor->next->obj))) {
-      GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
-        sort_entry *entry = &(entries[n_ids]);
-        entry->common.id = id;
-        void *key;
-        int key_size = grn_table_cursor_get_key(ctx, cursor, &key);
-        if (key_size == 0) {
-          entry->refer.value = NULL;
-          entry->refer.size = 0;
-        } else {
-          grn_id resolved_id = *((grn_id *)key);
-          size_t value_size;
-          entry->refer.value =
-            grn_column_cache_ref(ctx,
-                                 column_cache,
-                                 resolved_id,
-                                 &value_size);
-          entry->refer.size = value_size;
-        }
-        n_ids++;
-      } GRN_TABLE_EACH_END(ctx, cursor);
-      grn_column_cache_close(ctx, column_cache);
-    } else {
-      GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
-        sort_entry *entry = &(entries[n_ids]);
-        entry->common.id = id;
-        entry->refer.value =
-          grn_obj_get_value_(ctx,
-                             key,
-                             entry->refer.id,
-                             &(entry->refer.size));
-        n_ids++;
-      } GRN_TABLE_EACH_END(ctx, cursor);
+    size_t i = 0;
+    for (i = 0; i < n_ids; i++) {
+      sort_entry *entry = &(entries[i]);
+      entry->refer.value =
+        grn_obj_get_value_(ctx,
+                           key,
+                           entry->refer.id,
+                           &(entry->refer.size));
     }
   }
 
