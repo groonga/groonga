@@ -2805,6 +2805,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
                                                   result->aggregators[i],
                                                   column_data->value.value,
                                                   column_data->value.length);
+        i++;
       } GRN_HASH_EACH_END(ctx, cursor);
       if (!success) {
         goto exit;
