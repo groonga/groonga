@@ -6,10 +6,12 @@ notifications:
 # See also: https://www.appveyor.com/blog/2018/09/11/how-to-skip-build-matrix-jobs-conditionally/
 for:
   - matrix:
-      - only: JOB_TYPE: tag
+      only:
+        - JOB_TYPE: tag
     skip_non_tags: true
   - matrix:
-      - only: JOB_TYPE: non-tag
+      only:
+        - JOB_TYPE: non-tag
     skip_tags: true
     skip_commits:
       files:
