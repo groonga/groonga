@@ -2,20 +2,29 @@ notifications:
   - provider: Webhook
     url: https://webhook.commit-email.info/
 
-skip_commits:
-  files:
-    - "**/Makefile.am"
-    - ".github/"
-    - ".travis.yml"
-    - "benchmark/"
-    - "configure.ac"
-    - "doc/"
-    - "docker-compose.yml"
-    - "dockerfiles/"
-    - "examples/"
-    - "packages/"
-    - "tools/"
-    - "travis/"
+# Don't skip on tag.
+# See also: https://www.appveyor.com/blog/2018/09/11/how-to-skip-build-matrix-jobs-conditionally/
+for:
+  - matrix:
+      only: JOB_TYPE: tag
+    skip_non_tags: true
+  - matrix:
+      only: JOB_TYPE: non-tag
+    skip_tags: true
+    skip_commits:
+      files:
+        - "**/Makefile.am"
+        - ".github/"
+        - ".travis.yml"
+        - "benchmark/"
+        - "configure.ac"
+        - "doc/"
+        - "docker-compose.yml"
+        - "dockerfiles/"
+        - "examples/"
+        - "packages/"
+        - "tools/"
+        - "travis/"
 
 version: "{build}"
 clone_depth: 10
@@ -25,19 +34,48 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VS_VERSION: 15
       ARCH: amd64
+      JOB_TYPE: tag
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       VS_VERSION: 14
       ARCH: amd64
+      JOB_TYPE: tag
     - VS_VERSION: 12
       ARCH: amd64
+      JOB_TYPE: tag
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VS_VERSION: 15
       ARCH: x86
+      JOB_TYPE: tag
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       VS_VERSION: 14
+      JOB_TYPE: tag
       ARCH: x86
     - VS_VERSION: 12
       ARCH: x86
+      JOB_TYPE: tag
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      VS_VERSION: 15
+      ARCH: amd64
+      JOB_TYPE: non-tag
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      VS_VERSION: 14
+      ARCH: amd64
+      JOB_TYPE: non-tag
+    - VS_VERSION: 12
+      ARCH: amd64
+      JOB_TYPE: non-tag
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      VS_VERSION: 15
+      ARCH: x86
+      JOB_TYPE: non-tag
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      VS_VERSION: 14
+      JOB_TYPE: non-tag
+      ARCH: x86
+    - VS_VERSION: 12
+      ARCH: x86
+      JOB_TYPE: non-tag
 
 # matrix:
 #   allow_failures:
