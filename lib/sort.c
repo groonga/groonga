@@ -740,7 +740,8 @@ grn_table_sort_value(grn_ctx *ctx,
     if (is_encoded_pat_key_accessor(ctx, key)) {
       can_refer = false;
     }
-    if (grn_obj_is_score_accessor(ctx, key)) {
+    if (grn_obj_is_score_accessor(ctx, key) &&
+        !grn_obj_is_referable_score_accessor(ctx, key)) {
       can_refer = false;
     }
 
