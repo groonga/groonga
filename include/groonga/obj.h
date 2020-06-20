@@ -57,6 +57,7 @@ GRN_API grn_bool grn_obj_is_id_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_key_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_value_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_score_accessor(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool grn_obj_is_referable_score_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_nsubrecs_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_max_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_min_accessor(grn_ctx *ctx, grn_obj *obj);

@@ -408,6 +408,31 @@ grn_obj_is_score_accessor(grn_ctx *ctx, grn_obj *obj)
 }
 
 bool
+grn_obj_is_referable_score_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_score_accessor(ctx, obj)) {
+    return false;
+  }
+
+  grn_accessor *accessor = (grn_accessor *)obj;
+  grn_id parent_domain = accessor->obj->header.domain;
+  if (!(parent_domain & GRN_OBJ_TMP_OBJECT)) {
+    return true;
+  }
+
+  bool need_recursive_collect = false;
+  grn_obj *parent = grn_ctx_at(ctx, parent_domain);
+  if (parent) {
+    if (parent->header.flags & GRN_OBJ_WITH_SUBREC) {
+      need_recursive_collect = true;
+    }
+    grn_obj_unref(ctx, parent);
+  }
+
+  return !need_recursive_collect;
+}
+
+bool
 grn_obj_is_nsubrecs_accessor(grn_ctx *ctx, grn_obj *obj)
 {
   grn_accessor *accessor;
