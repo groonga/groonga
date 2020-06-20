@@ -122,7 +122,7 @@ select Memos   --filter true   --drilldowns[tag].keys tag,date   --drilldowns[ta
 #>select --drilldowns[tag].keys "tag,date" --drilldowns[tag].output_columns "_key[0],_key[1],_nsubrecs" --drilldowns[tag].sort_keys "_value.tag._key,_value.date" --filter "true" --table "Memos"
 #:000000000000000 filter(5): true
 #:000000000000000 select(5)
-#:000000000000000 drilldowns[tag](4)
+#:000000000000000 drilldowns[tag](4): tag,date
 #:000000000000000 output(5)
 #:000000000000000 drilldowns[tag].sort(4): _value.tag._key,_value.date
 #:000000000000000 output.drilldowns[tag](4)

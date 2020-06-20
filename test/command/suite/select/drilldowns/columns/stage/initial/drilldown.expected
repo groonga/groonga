@@ -171,9 +171,9 @@ select Shops   --drilldowns[item].keys items   --drilldowns[item].sortby price  
 ]
 #>select --drilldowns[item].columns[price_with_tax].flags "COLUMN_SCALAR" --drilldowns[item].columns[price_with_tax].stage "initial" --drilldowns[item].columns[price_with_tax].type "UInt32" --drilldowns[item].columns[price_with_tax].value "price * 1.08" --drilldowns[item].keys "items" --drilldowns[item].output_columns "_key,_nsubrecs,price,price_with_tax" --drilldowns[item].sortby "price" --drilldowns[real_price].keys "price_with_tax" --drilldowns[real_price].table "item" --table "Shops"
 #:000000000000000 select(3)
-#:000000000000000 drilldowns[item](6)
+#:000000000000000 drilldowns[item](6): items
 #:000000000000000 drilldowns[item].columns[price_with_tax](6)
-#:000000000000000 drilldowns[real_price](3)
+#:000000000000000 drilldowns[real_price](3): price_with_tax
 #:000000000000000 output(3)
 #:000000000000000 drilldowns[item].sort(6): price
 #:000000000000000 output.drilldowns[item](6)

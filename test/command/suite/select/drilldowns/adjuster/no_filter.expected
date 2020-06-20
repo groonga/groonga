@@ -92,7 +92,7 @@ select Memos   --limit 0   --output_columns _id   --drilldowns[tags].keys tags  
 ]
 #>select --drilldowns[tags].adjuster "categories @ \"full-text-search\" * 2 + categories @ \"mysql\"" --drilldowns[tags].keys "tags" --drilldowns[tags].output_columns "_key,_nsubrecs,_score" --limit "0" --output_columns "_id" --table "Memos"
 #:000000000000000 select(3)
-#:000000000000000 drilldowns[tags](3)
+#:000000000000000 drilldowns[tags](3): tags
 #:000000000000000 drilldowns[tags].adjust(3)
 #:000000000000000 output(0)
 #:000000000000000 output.drilldowns[tags](3)

@@ -2834,11 +2834,38 @@ grn_select_drilldown_execute(grn_ctx *ctx,
     goto exit;
   }
 
-  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
-                ":", "%.*s(%u)",
-                (int)(GRN_TEXT_LEN(&full_query_log_tag_prefix) - 2),
-                GRN_TEXT_VALUE(&full_query_log_tag_prefix),
-                grn_table_size(ctx, result->table));
+  if (grn_query_logger_pass(ctx, GRN_QUERY_LOG_SIZE)) {
+    grn_obj keys_inspected;
+    if (drilldown->parsed_keys) {
+      GRN_TEXT_INIT(&keys_inspected, 0);
+      int i;
+      for (i = 0; i < drilldown->n_parsed_keys; i++) {
+        if (i > 0) {
+          GRN_TEXT_PUTS(ctx, &keys_inspected, ",");
+        }
+        grn_obj *key = drilldown->parsed_keys[i].key;
+        if (grn_obj_is_table(ctx, key) || grn_obj_is_column(ctx, key)) {
+          grn_inspect_name(ctx, &keys_inspected, key);
+        } else {
+          grn_inspect(ctx, &keys_inspected, key);
+        }
+      }
+    } else {
+      GRN_TEXT_INIT(&keys_inspected, GRN_OBJ_DO_SHALLOW_COPY);
+      GRN_TEXT_SET(ctx,
+                   &keys_inspected,
+                   drilldown->keys.value,
+                   drilldown->keys.length);
+    }
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                  ":", "%.*s(%u): %.*s",
+                  (int)(GRN_TEXT_LEN(&full_query_log_tag_prefix) - 2),
+                  GRN_TEXT_VALUE(&full_query_log_tag_prefix),
+                  grn_table_size(ctx, result->table),
+                  (int)(GRN_TEXT_LEN(&keys_inspected)),
+                  GRN_TEXT_VALUE(&keys_inspected));
+    GRN_OBJ_FIN(ctx, &keys_inspected);
+  }
 
   if (drilldown->columns.initial) {
     grn_select_apply_columns(ctx,

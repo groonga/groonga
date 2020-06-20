@@ -90,7 +90,7 @@ select Memos   --limit 0   --output_columns _id   --drilldown tags   --drilldown
 ]
 #>select --drilldown "tags" --drilldown_adjuster "categories @ \"full-text-search\" * 2 + categories @ \"mysql\"" --drilldown_output_columns "_key,_nsubrecs,_score" --limit "0" --output_columns "_id" --table "Memos"
 #:000000000000000 select(3)
-#:000000000000000 drilldown(3)
+#:000000000000000 drilldown(3): Memos.tags
 #:000000000000000 drilldown.adjust(3)
 #:000000000000000 output(0)
 #:000000000000000 output.drilldown(3)

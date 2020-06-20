@@ -88,7 +88,7 @@ select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].filter '_key != "G
 ]
 #>select --drilldowns[tag].filter "_key != \"Groonga\"" --drilldowns[tag].keys "tag" --table "Memos"
 #:000000000000000 select(4)
-#:000000000000000 drilldowns[tag](3)
+#:000000000000000 drilldowns[tag](3): tag
 #:000000000000000 filter(2): #<accessor _key(anonymous)._key(Tags)> not_equal "Groonga"
 #:000000000000000 drilldowns[tag].filter(2)
 #:000000000000000 output(4)

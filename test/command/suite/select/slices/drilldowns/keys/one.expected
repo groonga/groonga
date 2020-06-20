@@ -128,7 +128,7 @@ select Memos   --slices[no_rroonga].filter '_id < 4'   --slices[no_rroonga].dril
 #:000000000000000 select(4)
 #:000000000000000 slices[no_rroonga].filter(3): #<accessor _id(Memos)> less 4
 #:000000000000000 slices[no_rroonga](3)
-#:000000000000000 slices[no_rroonga].drilldowns[tag](2)
+#:000000000000000 slices[no_rroonga].drilldowns[tag](2): tag
 #:000000000000000 output(4)
 #:000000000000000 slices[no_rroonga].output.drilldowns[tag](2)
 #:000000000000000 slices[no_rroonga].output(3)
