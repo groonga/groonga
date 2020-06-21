@@ -372,7 +372,7 @@ grn_rc grn_io_flush(grn_ctx *ctx, grn_io *io);
 
 #define GRN_B_ENC_MAX_SIZE 5
 
-/* B is for BER */
+/* B is for ??? */
 #define GRN_B_ENC(v,p) do {\
   uint8_t *_p = (uint8_t *)p; \
   uint32_t _v = v; \
