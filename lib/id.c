@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2016 Brazil
+  Copyright(C) 2016  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -32,5 +33,5 @@ grn_id_is_builtin(grn_ctx *ctx, grn_id id)
 grn_bool
 grn_id_is_builtin_type(grn_ctx *ctx, grn_id id)
 {
-  return GRN_DB_OBJECT <= id && id <= GRN_DB_WGS84_GEO_POINT;
+  return grn_type_id_is_builtin(ctx, id);
 }

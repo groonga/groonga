@@ -27,6 +27,13 @@ schema
         "can_be_key_type": true,
         "can_be_value_type": true
       },
+      "Float32": {
+        "id": 19,
+        "name": "Float32",
+        "size": 4,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
       "Int16": {
         "id": 6,
         "name": "Int16",
