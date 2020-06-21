@@ -696,7 +696,7 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
           uint8_t *elements;
           int i, n_elements;
 
-          is_reference = !grn_type_id_is_builtin(ctx, bulk.header.type);
+          is_reference = grn_id_maybe_table(ctx, bulk.header.domain);
 
           element_size = grn_uvector_element_size(ctx, &bulk);
           elements = GRN_BULK_HEAD(&bulk);
