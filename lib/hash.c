@@ -1205,6 +1205,7 @@ enum {
   GRN_HASH_INDEX_SEGMENT  = 2,
   GRN_HASH_BITMAP_SEGMENT = 3
 };
+#define GRN_HASH_N_SEGMENTS 4
 
 grn_inline static int
 grn_hash_name(grn_ctx *ctx, grn_hash *hash, char *buffer, int buffer_size)
@@ -1632,7 +1633,7 @@ grn_io_hash_create_io(grn_ctx *ctx, const char *path,
                       uint32_t flags)
 {
   uint32_t w_of_element = 0;
-  grn_io_array_spec array_spec[4];
+  grn_io_array_spec array_spec[GRN_HASH_N_SEGMENTS];
 
   while ((1U << w_of_element) < entry_size) {
     w_of_element++;
@@ -1655,7 +1656,9 @@ grn_io_hash_create_io(grn_ctx *ctx, const char *path,
   array_spec[GRN_HASH_BITMAP_SEGMENT].max_n_segments = 1U << (30 - (22 + 3));
   return grn_io_create_with_array(ctx, path, header_size,
                                   GRN_HASH_SEGMENT_SIZE,
-                                  GRN_IO_AUTO, 4, array_spec);
+                                  GRN_IO_AUTO,
+                                  GRN_HASH_N_SEGMENTS,
+                                  array_spec);
 }
 
 static grn_rc
