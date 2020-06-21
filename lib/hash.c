@@ -1649,7 +1649,7 @@ grn_io_hash_create_io(grn_ctx *ctx, const char *path,
   }
   array_spec[GRN_HASH_ENTRY_SEGMENT].w_of_element = w_of_element;
   array_spec[GRN_HASH_ENTRY_SEGMENT].max_n_segments =
-      1U << (30 - (22 - w_of_element));
+    1U << (30 - (22 - w_of_element));
   array_spec[GRN_HASH_INDEX_SEGMENT].w_of_element = 2;
   array_spec[GRN_HASH_INDEX_SEGMENT].max_n_segments = 1U << (30 - (22 - 2));
   array_spec[GRN_HASH_BITMAP_SEGMENT].w_of_element = 0;
