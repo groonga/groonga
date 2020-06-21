@@ -35,3 +35,9 @@ grn_id_is_builtin_type(grn_ctx *ctx, grn_id id)
 {
   return grn_type_id_is_builtin(ctx, id);
 }
+
+bool
+grn_id_maybe_table(grn_ctx *ctx, grn_id id)
+{
+  return !grn_id_is_builtin(ctx, id);
+}
