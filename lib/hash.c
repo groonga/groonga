@@ -1650,8 +1650,10 @@ grn_io_hash_create_io(grn_ctx *ctx, const char *path,
   array_spec[GRN_HASH_ENTRY_SEGMENT].w_of_element = w_of_element;
   array_spec[GRN_HASH_ENTRY_SEGMENT].max_n_segments =
     1U << (30 - (22 - w_of_element));
-  array_spec[GRN_HASH_INDEX_SEGMENT].w_of_element = 2;
-  array_spec[GRN_HASH_INDEX_SEGMENT].max_n_segments = 1U << (30 - (22 - 2));
+  const uint32_t index_w_of_element = 2; /* log2(sizeof(grn_id)) */
+  array_spec[GRN_HASH_INDEX_SEGMENT].w_of_element = index_w_of_element;
+  array_spec[GRN_HASH_INDEX_SEGMENT].max_n_segments =
+    1U << (30 - (22 - index_w_of_element));
   array_spec[GRN_HASH_BITMAP_SEGMENT].w_of_element = 0;
   array_spec[GRN_HASH_BITMAP_SEGMENT].max_n_segments = 1U << (30 - (22 + 3));
   return grn_io_create_with_array(ctx, path, header_size,
