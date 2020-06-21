@@ -319,6 +319,19 @@ size_t grn_io_get_disk_usage(grn_ctx *ctx, grn_io *io);
 #define GRN_IO_ARRAY_AT(io,array,offset,flags,res) do {\
   grn_io_array_info *ainfo = &(io)->ainfo[array];\
   uint32_t lseg = (offset) >> ainfo->w_of_elm_in_a_segment;\
+  if (lseg >= ainfo->max_n_segments) {\
+    ERR(GRN_NO_MEMORY_AVAILABLE,\
+        "[io][array][at] too large offset: %" GRN_FMT_INT64U\
+        ": max=%" GRN_FMT_INT64U\
+        ": nth=%u"\
+        ": path=<%s>",\
+        (uint64_t)(offset),\
+        (uint64_t)((ainfo->max_n_segments << ainfo->w_of_elm_in_a_segment) - 1),\
+        array,\
+        io->path);\
+    (res) = NULL;\
+    break;\
+  }\
   void **p_ = &ainfo->addrs[lseg];\
   if (!*p_) {\
     grn_io_segment_alloc(ctx, (io), ainfo, lseg, (flags), p_);\
