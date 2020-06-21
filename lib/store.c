@@ -1706,7 +1706,10 @@ grn_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *value)
   if (with_weight) {
     value->header.flags |= GRN_OBJ_WITH_WEIGHT;
   }
-  bool is_weight_float32 = ((flags & GRN_OBJ_WEIGHT_FLOAT32) != 0);
+  grn_vector_pack_flags pack_flags = 0;
+  if (flags & GRN_OBJ_WEIGHT_FLOAT32) {
+    pack_flags |= GRN_VECTOR_PACK_WEIGHT_FLOAT32;
+  }
 
   void *v;
   uint32_t len;
@@ -1715,7 +1718,7 @@ grn_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *value)
     if ((flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
       bool is_var_size_element = grn_type_id_is_text_family(ctx, ja->obj.range);
       if (is_var_size_element) {
-        grn_vector_unpack(ctx, value, v, len, is_weight_float32);
+        grn_vector_unpack(ctx, value, v, len, pack_flags);
       } else {
         size_t offset = GRN_BULK_VSIZE(value);
         grn_bulk_write(ctx, value, v, len);
@@ -2434,7 +2437,10 @@ grn_rc
 grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
 {
   const grn_column_flags column_flags = ja->header->flags;
-  bool is_weight_float32 = ((column_flags & GRN_OBJ_WEIGHT_FLOAT32) != 0);
+  grn_vector_pack_flags pack_flags = 0;
+  if (column_flags & GRN_OBJ_WEIGHT_FLOAT32) {
+    pack_flags |= GRN_VECTOR_PACK_WEIGHT_FLOAT32;
+  }
   grn_obj header, footer;
   grn_rc rc = GRN_SUCCESS;
   GRN_TEXT_INIT(&header, 0);
@@ -2443,7 +2449,7 @@ grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
                                   vector,
                                   0,
                                   grn_vector_size(ctx, vector),
-                                  is_weight_float32,
+                                  pack_flags,
                                   &header,
                                   &footer);
   switch (column_flags & GRN_OBJ_COMPRESS_MASK) {

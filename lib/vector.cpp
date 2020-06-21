@@ -406,7 +406,7 @@ extern "C" {
                   grn_obj *vector,
                   uint32_t offset,
                   uint32_t n,
-                  bool is_weight_float32,
+                  grn_vector_pack_flags flags,
                   grn_obj *header,
                   grn_obj *footer)
   {
@@ -422,7 +422,7 @@ extern "C" {
     if (need_footer) {
       for (uint32_t i = 0; i < n; ++i) {
         grn_section *section = &(vector->u.v.sections[i + offset]);
-        if (is_weight_float32) {
+        if (flags & GRN_VECTOR_PACK_WEIGHT_FLOAT32) {
           GRN_FLOAT32_PUT(ctx, footer, section->weight);
         } else {
           grn_text_benc(ctx, footer, section->weight);
@@ -438,7 +438,7 @@ extern "C" {
                     grn_obj *vector,
                     const char *data,
                     uint32_t data_size,
-                    bool is_weight_float32)
+                    grn_vector_pack_flags flags)
   {
     uint8_t *p = (uint8_t *)data;
     uint8_t *pe = p + data_size;
@@ -476,7 +476,7 @@ extern "C" {
         for (uint32_t i = 0; i < n; ++i) {
           grn_section *section = vector->u.v.sections + n0 + i;
           if (pe <= p) { return GRN_INVALID_ARGUMENT; }
-          if (is_weight_float32) {
+          if (flags & GRN_VECTOR_PACK_WEIGHT_FLOAT32) {
             grn_memcpy(&(section->weight), p, sizeof(float));
             p += sizeof(float);
           } else {

@@ -24,6 +24,9 @@
 extern "C" {
 #endif
 
+typedef uint32_t grn_vector_pack_flags;
+#define GRN_VECTOR_PACK_WEIGHT_FLOAT32        (1 << 1)
+
 grn_rc grn_vector_delimit(grn_ctx *ctx,
                           grn_obj *vector,
                           float weight,
@@ -32,14 +35,14 @@ grn_obj *grn_vector_pack(grn_ctx *ctx,
                          grn_obj *vector,
                          uint32_t offset,
                          uint32_t n,
-                         bool is_weight_float32,
+                         grn_vector_pack_flags flags,
                          grn_obj *header,
                          grn_obj *footer);
 grn_rc grn_vector_unpack(grn_ctx *ctx,
                          grn_obj *vector,
                          const char *data,
                          uint32_t data_size,
-                         bool is_weight_float32);
+                         grn_vector_pack_flags flags);
 
 grn_obj *grn_vector_body(grn_ctx *ctx, grn_obj *vector);
 
