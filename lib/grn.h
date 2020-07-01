@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -129,6 +129,7 @@ typedef SOCKET grn_sock;
 
 # ifndef __GNUC__
 #  include <intrin.h>
+#  pragma intrinsic(_BitScanReverse)
 #  pragma intrinsic(_InterlockedExchangeAdd)
 #  include <sys/timeb.h>
 #  include <errno.h>
@@ -482,7 +483,11 @@ typedef int grn_cond;
 # endif /* ATOMIC 64BIT SET */
 
 /* todo */
-# define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
+# define GRN_BIT_SCAN_REV(v,r)  do {            \
+    if (!BitScanReverse(&r, v)) {               \
+      r = 0;                                    \
+    }                                           \
+  } while (0)
 # define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 
 #else /* __GNUC__ */
