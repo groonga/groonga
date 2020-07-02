@@ -109,7 +109,7 @@ aggregator_mean_init(grn_ctx *ctx, grn_aggregator_data *data)
   aggregator_mean_data *mean_data = GRN_MALLOCN(aggregator_mean_data, 1);
   if (!mean_data) {
     GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
+                     GRN_NO_MEMORY_AVAILABLE,
                      "aggregator_mean(): failed to allocate: %s",
                      ctx->errbuf);
     return NULL;
@@ -122,7 +122,7 @@ aggregator_mean_init(grn_ctx *ctx, grn_aggregator_data *data)
                                       GRN_OBJ_TABLE_HASH_KEY);
   if (!mean_data->values) {
     GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
+                     GRN_NO_MEMORY_AVAILABLE,
                      "aggregator_mean(): failed to create hash table: %s",
                      ctx->errbuf);
     GRN_FREE(mean_data);
