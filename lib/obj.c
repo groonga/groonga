@@ -255,6 +255,16 @@ grn_obj_is_scalar_column(grn_ctx *ctx, grn_obj *obj)
   return (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_SCALAR;
 }
 
+bool
+grn_obj_is_number_family_scalar_column(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_scalar_column(ctx, obj)) {
+    return false;
+  }
+
+  return grn_type_id_is_number_family(ctx, grn_obj_get_range(ctx, obj));
+}
+
 grn_bool
 grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj)
 {
