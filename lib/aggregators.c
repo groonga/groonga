@@ -35,7 +35,7 @@ aggregator_sum_init(grn_ctx *ctx, grn_aggregator_data *data)
   }
 
   grn_obj *target = GRN_PTR_VALUE_AT(args, 0);
-  if (n_args != 1) {
+  if (!grn_obj_is_number_family_scalar_column(ctx, target)) {
     grn_obj inspected;
     GRN_TEXT_INIT(&inspected, 0);
     grn_inspect_limited(ctx, &inspected, target);
@@ -93,7 +93,7 @@ aggregator_mean_init(grn_ctx *ctx, grn_aggregator_data *data)
   }
 
   grn_obj *target = GRN_PTR_VALUE_AT(args, 0);
-  if (n_args != 1) {
+  if (!grn_obj_is_number_family_scalar_column(ctx, target)) {
     grn_obj inspected;
     GRN_TEXT_INIT(&inspected, 0);
     grn_inspect_limited(ctx, &inspected, target);
