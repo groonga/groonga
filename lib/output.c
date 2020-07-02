@@ -19,8 +19,6 @@
 
 #include "grn.h"
 
-#include <string.h>
-
 #include "grn_ctx_impl.h"
 #include "grn_db.h"
 #include "grn_expr.h"
@@ -28,6 +26,9 @@
 #include "grn_output_columns.h"
 #include "grn_str.h"
 #include "grn_util.h"
+
+#include <string.h>
+#include <math.h>
 
 uint32_t grn_output_auto_flush_interval = 1024;
 
@@ -603,7 +604,15 @@ grn_output_float32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, 
   put_delimiter(ctx, outbuf, output_type);
   switch (output_type) {
   case GRN_CONTENT_JSON:
-    grn_text_f32toa(ctx, outbuf, value);
+    switch (fpclassify(value)) {
+    case FP_NAN :
+    case FP_INFINITE :
+      GRN_TEXT_PUTS(ctx, outbuf, "null");
+      break;
+    default :
+      grn_text_f32toa(ctx, outbuf, value);
+      break;
+    }
     break;
   case GRN_CONTENT_TSV:
     grn_text_f32toa(ctx, outbuf, value);
@@ -635,7 +644,15 @@ grn_output_float(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, do
   put_delimiter(ctx, outbuf, output_type);
   switch (output_type) {
   case GRN_CONTENT_JSON:
-    grn_text_ftoa(ctx, outbuf, value);
+    switch (fpclassify(value)) {
+    case FP_NAN :
+    case FP_INFINITE :
+      GRN_TEXT_PUTS(ctx, outbuf, "null");
+      break;
+    default :
+      grn_text_ftoa(ctx, outbuf, value);
+      break;
+    }
     break;
   case GRN_CONTENT_TSV:
     grn_text_ftoa(ctx, outbuf, value);
