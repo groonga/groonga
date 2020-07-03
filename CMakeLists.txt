@@ -449,7 +449,7 @@ string(STRIP
 
 set(GRN_WITH_BUNDLED_RAPIDJSON FALSE)
 set(GRN_WITH_RAPIDJSON "auto"
-  CACHE STRING "Support data compression by RapidJSON.")
+  CACHE STRING "Support JSON processing by RapidJSON.")
 if(NOT ${GRN_WITH_RAPIDJSON} STREQUAL "no")
   find_package(RapidJSON)
   if(NOT RapidJSON_FOUND)
