@@ -562,6 +562,9 @@ grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   case GRN_OBJ_COMPRESS_ZSTD :
     GRN_TEXT_PUTS(ctx, buf, "zstd");
     break;
+  case GRN_OBJ_COMPRESS_FASTPFOR :
+    GRN_TEXT_PUTS(ctx, buf, "fastpfor");
+    break;
   default:
     break;
   }

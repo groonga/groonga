@@ -330,6 +330,7 @@ typedef uint32_t grn_column_flags;
 /* Just for backward compatibility. We'll remove it at 5.0.0. */
 #define GRN_OBJ_COMPRESS_LZO           GRN_OBJ_COMPRESS_LZ4
 #define GRN_OBJ_COMPRESS_ZSTD          (0x03<<4)
+#define GRN_OBJ_COMPRESS_FASTPFOR      (0x04<<4)
 
 #define GRN_OBJ_WITH_SECTION           (0x01<<7)
 #define GRN_OBJ_WITH_WEIGHT            (0x01<<8)
@@ -691,7 +692,8 @@ typedef enum {
   GRN_INFO_SUPPORT_ZSTD,
 /* Just for backward compatibility. */
 #define GRN_INFO_SUPPORT_ARROW GRN_INFO_SUPPORT_APACHE_ARROW
-  GRN_INFO_SUPPORT_APACHE_ARROW
+  GRN_INFO_SUPPORT_APACHE_ARROW,
+  GRN_INFO_SUPPORT_FASTPFOR,
 } grn_info_type;
 
 GRN_API grn_obj *grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valuebuf);

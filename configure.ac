@@ -1002,6 +1002,47 @@ else
 fi
 AC_SUBST(RAPIDJSON_CFLAGS)
 
+# FastPFOR
+FastPFOR_CFLAGS=
+FastPFOR_LIBS=
+AC_ARG_WITH(fastpfor,
+  [AS_HELP_STRING([--with-fastpfor],
+    [Use FastPFOR. [default=auto]])],
+  [with_fastpfor="$withval"],
+  [with_fastpfor="auto"])
+if test "x$with_fastpfor" != "xno"; then
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([FASTPFOR],
+                      [fastpfor],
+                      [GRN_WITH_FASTPFOR=yes],
+                      [GRN_WITH_FASTPFOR=no])
+    ],
+    [GRN_WITH_FASTPFOR=no])
+  if test "$GRN_WITH_FASTPFOR" = "no"; then
+    AC_LANG_PUSH([C++])
+    AC_CHECK_HEADER(fastpfor/fastpfor.h,
+                    [GRN_WITH_FASTPFOR=yes],
+                    [GRN_WITH_FASTPFOR=no])
+    if test "$GRN_WITH_FASTPFOR" = "yes"; then
+      # We can't use AC_CHECK_LIB() for C++ library.
+      FASTPFOR_LIBS="-lFastPFOR"
+    fi
+    AC_LANG_POP([C++])
+  fi
+  if test "$GRN_WITH_FASTPFOR" = "yes"; then
+    AC_DEFINE(GRN_WITH_FASTPFOR, [1],
+              [Support FastPFOR.])
+  else
+    if test "x$with_fastpfor" != "xauto"; then
+      AC_MSG_ERROR("No FastPFOR found")
+    fi
+  fi
+else
+  GRN_WITH_FASTPFOR=no
+fi
+AC_SUBST(FASTPFOR_CFLAGS)
+AC_SUBST(FASTPFOR_LIBS)
+
 # MeCab
 # NOTE: MUST be checked last
 
@@ -1947,6 +1988,11 @@ fi
 echo "  RapidJSON:             $GRN_WITH_RAPIDJSON"
 if test "x$GRN_WITH_RAPIDJSON" = "xyes"; then
   echo "    CFLAGS:              ${RAPIDJSON_CFLAGS}"
+fi
+echo "  FastPFOR:              $GRN_WITH_FASTPFOR"
+if test "x$GRN_WITH_FASTPFOR" = "xyes"; then
+  echo "    CFLAGS:              ${FASTPFOR_CFLAGS}"
+  echo "    LIBS:                ${FASTPFOR_LIBS}"
 fi
 echo "  mruby:                 $enable_mruby"
 echo "  jemalloc:              $jemalloc_available"

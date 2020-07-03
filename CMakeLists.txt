@@ -483,6 +483,16 @@ else()
 endif()
 
 
+set(GRN_WITH_FASTPFOR "auto"
+  CACHE STRING "Support data compression by FastPFOR.")
+if(NOT ${GRN_WITH_FASTPFOR} STREQUAL "no")
+  find_package(FastPFOR)
+  set(GRN_WITH_FASTPFOR ${FastPFOR_FOUND})
+else()
+  set(GRN_WITH_FASTPFOR FALSE)
+endif()
+
+
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_mecab_version"
   GRN_BUNDLED_MECAB_VERSION)
 string(STRIP

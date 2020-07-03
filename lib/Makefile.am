@@ -28,7 +28,8 @@ AM_CXXFLAGS =					\
 	$(COVERAGE_CFLAGS)			\
 	$(GRN_CXXFLAGS)				\
 	$(APACHE_ARROW_CFLAGS)			\
-	$(RAPIDJSON_CFLAGS)
+	$(RAPIDJSON_CFLAGS)			\
+	$(FASTPFOR_CFLAGS)
 
 BUNDLED_LIBRARIES_CFLAGS =			\
 	$(MRUBY_CFLAGS)				\
@@ -75,7 +76,8 @@ libgroonga_la_LIBADD +=				\
 	$(ATOMIC_LIBS)				\
 	$(APACHE_ARROW_LIBS)			\
 	$(WINDOWS_LIBS)				\
-	$(LUAJIT_LIBS)
+	$(LUAJIT_LIBS)				\
+	$(FASTPFOR_LIBS)
 
 nfkc_dump_SOURCES =				\
 	nfkc_dump.c

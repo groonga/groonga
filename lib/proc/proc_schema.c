@@ -840,6 +840,9 @@ command_schema_column_output_compress(grn_ctx *ctx, grn_obj *column)
     case GRN_OBJ_COMPRESS_ZSTD :
       compress = "zstd";
       break;
+    case GRN_OBJ_COMPRESS_FASTPFOR :
+      compress = "fastpfor";
+      break;
     default :
       break;
     }

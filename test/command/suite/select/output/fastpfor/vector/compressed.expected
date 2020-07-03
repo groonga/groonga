@@ -1,0 +1,67 @@
+table_create Entries TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Entries contents COLUMN_VECTOR|COMPRESS_FASTPFOR Text
+[[0,0.0,0.0],true]
+load --table Entries
+[
+  {
+    "_key": "Groonga",
+    "contents": [
+      "(256 bytes or more required for compression.)",
+      "Groonga is a fast and accurate full text search engine based on inverted index. One of the characteristics of Groonga is that a newly registered document instantly appears in search results. Also, Groonga allows updates without read locks. These characteristics result in superior performance on real-time applications."
+    ]
+  },
+  {
+    "_key": "Mroonga",
+    "contents": [
+      "(256 bytes or more required for compression.)",
+      "Mroonga is a storage engine for MySQL. It provides fast fulltext search feature for all languages including Chinese, Japanese and Korean to all MySQL users. Mroonga was called Groonga storage engine. Mroonga is Tritonn successor."
+    ]
+  }
+]
+[[0,0.0,0.0],2]
+select Entries
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "contents",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "Groonga",
+        [
+          "(256 bytes or more required for compression.)",
+          "Groonga is a fast and accurate full text search engine based on inverted index. One of the characteristics of Groonga is that a newly registered document instantly appears in search results. Also, Groonga allows updates without read locks. These characteristics result in superior performance on real-time applications."
+        ]
+      ],
+      [
+        2,
+        "Mroonga",
+        [
+          "(256 bytes or more required for compression.)",
+          "Mroonga is a storage engine for MySQL. It provides fast fulltext search feature for all languages including Chinese, Japanese and Korean to all MySQL users. Mroonga was called Groonga storage engine. Mroonga is Tritonn successor."
+        ]
+      ]
+    ]
+  ]
+]

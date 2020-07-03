@@ -8,5 +8,6 @@ libgroonga_cpp_source =				\
 	grn_bulk.h				\
 	grn_cast.h				\
 	grn_token_column.h			\
+	store_fastpfor.cpp			\
 	token_column.cpp			\
 	vector.cpp

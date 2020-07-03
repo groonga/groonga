@@ -102,16 +102,19 @@ grn_dump_column_create_flags(grn_ctx *ctx,
     break;
   }
   switch (flags & GRN_OBJ_COMPRESS_MASK) {
-  case GRN_OBJ_COMPRESS_NONE:
+  case GRN_OBJ_COMPRESS_NONE :
     break;
-  case GRN_OBJ_COMPRESS_ZLIB:
+  case GRN_OBJ_COMPRESS_ZLIB :
     GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_ZLIB");
     break;
-  case GRN_OBJ_COMPRESS_LZ4:
+  case GRN_OBJ_COMPRESS_LZ4 :
     GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_LZ4");
     break;
-  case GRN_OBJ_COMPRESS_ZSTD:
+  case GRN_OBJ_COMPRESS_ZSTD :
     GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_ZSTD");
+    break;
+  case GRN_OBJ_COMPRESS_FASTPFOR :
+    GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_FASTPFOR");
     break;
   }
   if (flags & GRN_OBJ_PERSISTENT) {

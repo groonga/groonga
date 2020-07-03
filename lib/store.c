@@ -555,7 +555,7 @@ exit:
   return rc;
 }
 
-static void *
+void *
 grn_ja_ref_raw(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
   uint32_t pseg = ja->header->esegs[id >> JA_W_EINFO_IN_A_SEGMENT];
@@ -956,7 +956,7 @@ set_value(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
   return rc;
 }
 
-static grn_rc
+grn_rc
 grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
                void *value, uint32_t value_len, int flags, uint64_t *cas)
 {
@@ -1135,7 +1135,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
   return rc;
 }
 
-static grn_rc
+grn_rc
 grn_ja_putv_raw(grn_ctx *ctx,
                 grn_ja *ja,
                 grn_id id,
@@ -1242,16 +1242,11 @@ grn_ja_element_info(grn_ctx *ctx, grn_ja *ja, grn_id id,
 #define COMPRESSED_VALUE_META_UNCOMPRESSED_LEN(meta) \
                                          ((meta) & 0x0fffffffffffffff)
 
-#define COMPRESS_THRESHOLD_BYTE 256
-#define COMPRESS_PACKED_VALUE_SIZE_MAX 257
-        /* COMPRESS_THRESHOLD_BYTE - 1 + sizeof(uint64_t) = 257 */
-
 #if defined(GRN_WITH_ZLIB) || defined(GRN_WITH_LZ4) || defined(GRN_WITH_ZSTD)
 #  define GRN_WITH_COMPRESSED
 #endif
 
-#ifdef GRN_WITH_COMPRESSED
-static void *
+void *
 grn_ja_ref_packed(grn_ctx *ctx,
                   grn_io_win *iw,
                   uint32_t *value_len,
@@ -1279,7 +1274,7 @@ grn_ja_ref_packed(grn_ctx *ctx,
   }
 }
 
-static grn_rc
+grn_rc
 grn_ja_put_packed(grn_ctx *ctx,
                   grn_ja *ja,
                   grn_id id,
@@ -1288,7 +1283,7 @@ grn_ja_put_packed(grn_ctx *ctx,
                   int flags,
                   uint64_t *cas)
 {
-  char *packed_value[COMPRESS_PACKED_VALUE_SIZE_MAX];
+  char *packed_value[GRN_JA_COMPRESS_PACKED_VALUE_SIZE_MAX];
   uint32_t packed_value_len;
   uint64_t packed_value_meta;
 
@@ -1307,7 +1302,7 @@ grn_ja_put_packed(grn_ctx *ctx,
                         cas);
 }
 
-static grn_rc
+grn_rc
 grn_ja_putv_packed(grn_ctx *ctx,
                    grn_ja *ja,
                    grn_id id,
@@ -1353,7 +1348,7 @@ grn_ja_putv_packed(grn_ctx *ctx,
   return rc;
 }
 
-static grn_rc
+grn_rc
 grn_ja_putv_compressed(grn_ctx *ctx,
                        grn_ja *ja,
                        grn_id id,
@@ -1386,7 +1381,7 @@ grn_ja_putv_compressed(grn_ctx *ctx,
   return rc;
 }
 
-static void
+void
 grn_ja_compress_error(grn_ctx *ctx,
                       grn_ja *ja,
                       grn_id id,
@@ -1415,7 +1410,6 @@ grn_ja_compress_error(grn_ctx *ctx,
       detail ? detail : "",
       detail ? ">" : "");
 }
-#endif /* GRN_WITH_COMPRESSED */
 
 #ifdef GRN_WITH_ZLIB
 #include <zlib.h>
@@ -1670,6 +1664,10 @@ grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_
   case GRN_OBJ_COMPRESS_ZSTD :
     return grn_ja_ref_zstd(ctx, ja, id, iw, value_len);
 #endif /* GRN_WITH_ZSTD */
+#ifdef GRN_WITH_FASTPFOR
+  case GRN_OBJ_COMPRESS_FASTPFOR :
+    return grn_ja_ref_fastpfor(ctx, ja, id, iw, value_len);
+#endif
   default :
     return grn_ja_ref_raw(ctx, ja, id, iw, value_len);
   }
@@ -1756,7 +1754,7 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
   }
 
-  if (value_len < COMPRESS_THRESHOLD_BYTE) {
+  if (value_len < GRN_JA_COMPRESS_THRESHOLD_BYTE) {
     return grn_ja_put_packed(ctx, ja, id, value, value_len, flags, cas);
   }
 
@@ -1840,7 +1838,7 @@ grn_ja_putv_zlib(grn_ctx *ctx,
   int zmem_level = 8;
   int zrc;
 
-  if (size < COMPRESS_THRESHOLD_BYTE) {
+  if (size < GRN_JA_COMPRESS_THRESHOLD_BYTE) {
     return grn_ja_putv_packed(ctx, ja, id, header, body, footer, flags);
   }
 
@@ -1979,7 +1977,7 @@ grn_ja_put_lz4(grn_ctx *ctx, grn_ja *ja, grn_id id,
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
   }
 
-  if (value_len < COMPRESS_THRESHOLD_BYTE) {
+  if (value_len < GRN_JA_COMPRESS_THRESHOLD_BYTE) {
     return grn_ja_put_packed(ctx, ja, id, value, value_len, flags, cas);
   }
 
@@ -2071,7 +2069,7 @@ grn_ja_putv_lz4(grn_ctx *ctx,
   int lz4_value_len_max;
   int lz4_value_len_real;
 
-  if (size < COMPRESS_THRESHOLD_BYTE) {
+  if (size < GRN_JA_COMPRESS_THRESHOLD_BYTE) {
     return grn_ja_putv_packed(ctx, ja, id, header, body, footer, flags);
   }
 
@@ -2152,7 +2150,7 @@ grn_ja_put_zstd(grn_ctx *ctx,
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
   }
 
-  if (value_len < COMPRESS_THRESHOLD_BYTE) {
+  if (value_len < GRN_JA_COMPRESS_THRESHOLD_BYTE) {
     return grn_ja_put_packed(ctx, ja, id, value, value_len, flags, cas);
   }
 
@@ -2221,7 +2219,7 @@ grn_ja_putv_zstd(grn_ctx *ctx,
   zstd_output.pos = 0;
 #endif /* ZSTD_VERSION_MAJOR < 1 */
 
-  if (size < COMPRESS_THRESHOLD_BYTE) {
+  if (size < GRN_JA_COMPRESS_THRESHOLD_BYTE) {
     return grn_ja_putv_packed(ctx, ja, id, header, body, footer, flags);
   }
 
@@ -2428,6 +2426,10 @@ grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
   case GRN_OBJ_COMPRESS_ZSTD :
     return grn_ja_put_zstd(ctx, ja, id, value, value_len, flags, cas);
 #endif /* GRN_WITH_ZSTD */
+#ifdef GRN_WITH_FASTPFOR
+  case GRN_OBJ_COMPRESS_FASTPFOR :
+    return grn_ja_put_fastpfor(ctx, ja, id, value, value_len, flags, cas);
+#endif
   default :
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
   }
@@ -2468,6 +2470,11 @@ grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
     rc = grn_ja_putv_zstd(ctx, ja, id, &header, body, &footer, flags);
     break;
 #endif /* GRN_WITH_ZSTD */
+#ifdef GRN_WITH_FASTPFOR
+  case GRN_OBJ_COMPRESS_FASTPFOR :
+    rc = grn_ja_putv_fastpfor(ctx, ja, id, &header, body, &footer, flags);
+    break;
+#endif
   default :
     rc = grn_ja_putv_raw(ctx, ja, id, &header, body, &footer, flags);
     break;

@@ -1,0 +1,22 @@
+table_create Entries TABLE_PAT_KEY ShortText
+column_create Entries contents COLUMN_VECTOR|COMPRESS_FASTPFOR Text
+
+load --table Entries
+[
+  {
+    "_key": "Groonga",
+    "contents": [
+      "I found Groonga.",
+      "It's a fast fulltext search engine!"
+    ]
+  },
+  {
+    "_key": "Mroonga",
+    "contents": [
+      "I found Mroonga.",
+      "It's a MySQL storage engine to use Groonga!"
+    ]
+  }
+]
+
+select Entries

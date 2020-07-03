@@ -1,0 +1,16 @@
+table_create Entries TABLE_PAT_KEY ShortText
+column_create Entries content COLUMN_SCALAR|COMPRESS_FASTPFOR Text
+
+load --table Entries
+[
+  {
+    "_key": "Groonga",
+    "content": "I found Groonga that is a fast fulltext search engine!"
+  },
+  {
+    "_key": "Mroonga",
+    "content": "I found Mroonga that is a MySQL storage engine to use Groonga!"
+  }
+]
+
+select Entries

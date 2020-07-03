@@ -112,6 +112,100 @@ int grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold);
 
 GRN_API grn_rc grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id,
                            grn_obj *vector, int flags);
+
+
+#define GRN_JA_COMPRESS_THRESHOLD_BYTE 256
+#define GRN_JA_COMPRESS_PACKED_VALUE_SIZE_MAX 257
+        /* GRN_JA_COMPRESS_THRESHOLD_BYTE - 1 + sizeof(uint64_t) = 257 */
+
+void *
+grn_ja_ref_raw(grn_ctx *ctx,
+               grn_ja *ja,
+               grn_id id,
+               grn_io_win *iw,
+               uint32_t *value_len);
+grn_rc
+grn_ja_put_raw(grn_ctx *ctx,
+               grn_ja *ja,
+               grn_id id,
+               void *value,
+               uint32_t value_len,
+               int flags,
+               uint64_t *cas);
+grn_rc
+grn_ja_putv_raw(grn_ctx *ctx,
+                grn_ja *ja,
+                grn_id id,
+                grn_obj *header,
+                grn_obj *body,
+                grn_obj *footer,
+                int flags);
+void *
+grn_ja_ref_packed(grn_ctx *ctx,
+                  grn_io_win *iw,
+                  uint32_t *value_len,
+                  void *raw_value,
+                  uint32_t raw_value_len,
+                  void **compressed_value,
+                  uint32_t *compressed_value_len,
+                  uint32_t *uncompressed_value_len);
+grn_rc
+grn_ja_put_packed(grn_ctx *ctx,
+                  grn_ja *ja,
+                  grn_id id,
+                  void *value,
+                  uint32_t value_len,
+                  int flags,
+                  uint64_t *cas);
+grn_rc
+grn_ja_putv_packed(grn_ctx *ctx,
+                   grn_ja *ja,
+                   grn_id id,
+                   grn_obj *header,
+                   grn_obj *body,
+                   grn_obj *footer,
+                   int flags);
+grn_rc
+grn_ja_putv_compressed(grn_ctx *ctx,
+                       grn_ja *ja,
+                       grn_id id,
+                       void *compressed,
+                       size_t compressed_size,
+                       size_t uncompressed_size,
+                       int flags);
+void
+grn_ja_compress_error(grn_ctx *ctx,
+                      grn_ja *ja,
+                      grn_id id,
+                      grn_rc rc,
+                      const char *message,
+                      const char *detail);
+
+#ifdef GRN_WITH_FASTPFOR
+void *
+grn_ja_ref_fastpfor(grn_ctx *ctx,
+                    grn_ja *ja,
+                    grn_id id,
+                    grn_io_win *iw,
+                    uint32_t *value_len);
+grn_rc
+grn_ja_put_fastpfor(grn_ctx *ctx,
+                    grn_ja *ja,
+                    grn_id id,
+                    void *value,
+                    uint32_t value_len,
+                    int flags,
+                    uint64_t *cas);
+grn_rc
+grn_ja_putv_fastpfor(grn_ctx *ctx,
+                     grn_ja *ja,
+                     grn_id id,
+                     grn_obj *header,
+                     grn_obj *body,
+                     grn_obj *footer,
+                     int flags);
+#endif
+
 GRN_API uint32_t grn_ja_size(grn_ctx *ctx, grn_ja *ja, grn_id id);
 
 void grn_ja_check(grn_ctx *ctx, grn_ja *ja);
