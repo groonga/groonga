@@ -95,6 +95,15 @@ Unsigned 64bit integer. It's 0 or more and 18,446,744,073,709,551,615 or less. (
 
 .. _builtin-type-float:
 
+``Float32``
+^^^^^^^^^^^
+
+.. versionadded:: 10.0.2
+
+Single-precision floating-point number of IEEE 754 as a real number. (default: 0.0)
+
+See `IEEE floating point - Wikipedia, the free encyclopedia <http://en.wikipedia.org/wiki/IEEE_floating_point>`_ or `IEEE 754: Standard for Binary Floating-Point <http://grouper.ieee.org/groups/754/>`_ for details of IEEE 754 format.
+
 ``Float``
 ^^^^^^^^^
 
