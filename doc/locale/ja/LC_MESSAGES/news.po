@@ -33,11 +33,193 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 10.0.4 - 2020-06-29"
-msgstr "10.0.4リリース - 2020-06-29"
+msgid "Release 10.0.5 - 2020-07-29"
+msgstr "10.0.5リリース - 2020-07-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added support for storing reference in "
+"table that we specify with ``--load_table``."
+msgstr ""
+"[:doc:`/reference/commands/select`] ``-load_table`` で指定したテーブルに参照"
+"を格納できるようにしました。"
+
+msgid ""
+"``--load_table`` is a feature that stores search results to the table in a "
+"prepared."
+msgstr "``--load-table`` は予め用意したテーブルに検索結果を格納する機能です。"
+
+msgid ""
+"If the searches are executed multiple times, we can cache the search results "
+"by storing them to this table."
+msgstr ""
+"複数回検索が実行される場合、このテーブルに結果を格納することで、検索結果を"
+"キャッシュできます。"
+
+msgid ""
+"We can shorten the search times that the search after the first time by "
+"using this table."
+msgstr "このテーブルを使うことで、初回以降の検索時間を短縮できます。"
+
+msgid ""
+"We can store a reference to other tables into the key of this table as below "
+"since this release."
+msgstr ""
+"今回のリリース以降で、以下のようにこのテーブルに別のテーブルへの参照を格納で"
+"きます。"
+
+msgid ""
+"We can make a smaller size of this table. Because we only store references "
+"without store column values."
+msgstr ""
+"カラムの値を格納せず、参照のみを格納するため、このテーブルのサイズを小さくす"
+"ることができます。"
+
+msgid ""
+"If we search against this table, we can search by using indexes for "
+"reference destination."
+msgstr ""
+"このテーブルに対して検索する場合、参照先のテーブルのインデックスを使って検索"
+"できます。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Improved sort performance on below cases."
+msgstr ""
+"[:doc:`reference/commands/select`] 以下のケースのソートのパフォーマンスを改善"
+"しました。"
+
+msgid "When many sort keys need ID resolution."
+msgstr "多くのソートキーがID解決をする場合。"
+
+msgid "For example, the following expression needs ID resolution."
+msgstr "例えば、以下の式はIDを解決する必要があります。"
+
+msgid "``--filter true --sort_keys column``"
+msgstr ""
+
+msgid ""
+"For example, the following expression doesn't need ID resolution. Because "
+"the ``_score`` pseudo column exists in the result table not the source table."
+msgstr ""
+"例えば、以下の式はIDを解決する必要がありません。 擬似カラム ``_score`` は、結"
+"果テーブルに存在しており、ソーステーブルには存在しないためIDを解決する必要が"
+"ありません。"
+
+msgid "``--filter true --sort_keys _score``"
+msgstr ""
+
+msgid "When a sort target table has a key."
+msgstr "ソート対象のテーブルがキーを持っている場合。"
+
+msgid "Therefore, ``TABLE_NO_KEY`` isn't supported this improvement."
+msgstr "したがって、 ``TABLE_NO_KEY`` はこの改善をサポートしていません。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Improved performance a bit on below cases."
+msgstr ""
+"[:doc:`reference/commands/select`] 以下のケースのパフォーマンスを少し改善しま"
+"した。"
+
+msgid "A case of searching for many records matches."
+msgstr "沢山のレコードがマッチする検索をしているケース。"
+
+msgid "A case of drilldown for many records."
+msgstr "沢山のレコードに対してドリルダウンするケース。"
+
+msgid ""
+"[aggregator] Added support for score accessor for target. [GitHub#1120]"
+"[Patched by naoa]"
+msgstr ""
+"[aggregator] score アクセサーをサポートしました。[GitHub#1120][naoaさんのパッ"
+"チ提供]"
+
+msgid "For example, we can ``_score`` subject to ``aggregator_*`` as below."
+msgstr ""
+"例えば、 以下のように ``_score`` を ``aggregator_*`` の対象にできます。"
+
+msgid ""
+"[:doc:`reference/indexing`] Improved performance of offline index "
+"construction on VC++ version."
+msgstr ""
+"[:doc:`/reference/indexing`] VC++版の静的インデックス構築のパフォーマンスを改"
+"善しました。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Use ``null`` instead ``NaN``, "
+"``Infinity``, and ``-Infinity`` when Groonga outputs result for JSON format."
+msgstr ""
+"[:doc:`reference/commands/select`] JSON形式で出力する際に ``NaN`` や "
+"``Infinity`` 、 ``-Infinity`` の代わりに ``null`` を出力するようにしました。"
+
+msgid "Because JSON doesn't support them."
+msgstr "これらの値はJSONではサポートされていないためです。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Add support fot aggregating standard "
+"deviation value."
+msgstr "[:doc:`/reference/commands/select`] 標準偏差の集計をサポートしました。"
+
+msgid ""
+"For example, we can calculate a standard deviation for every group as below."
+msgstr "例えば、以下のようにグループごとの標準偏差を計算できます。"
+
+msgid ""
+"We can also calculate sample standard deviation to specifing "
+"``aggregate_sd(target, {\"unbiased\": true})``."
+msgstr ""
+"``aggregate_sd(target, {\"unbiased\": true})`` と指定することで、不偏標準偏差"
+"も計算できます。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"[:doc:`/reference/functions/between`] Fixed a crash bug when temporary table "
+"is used."
+msgstr ""
+"[:doc:`/reference/functions/between`] 一時テーブルを使用した時にクラッシュす"
+"る問題を修正しました。"
+
+msgid ""
+"For example, if we specify a dynamic column in the first argument for "
+"``between``, Groonga had crashed."
+msgstr ""
+"例えば、 ``between`` の第一引数に動的カラムを指定すると、Groongaがクラッシュ"
+"していました。"
+
+msgid "Fixed a bug that procedure created by plugin is freed unexpectedly."
+msgstr ""
+"プラグインで作成したプロシージャーが予期せず解放される問題を修正しました。"
+
+msgid "It's only occurred in reference count mode."
+msgstr "参照カウントモードでのみ発生します。"
+
+msgid "It's not occurred if we don't use ``plugin_register``."
+msgstr "``plugin_register`` を使っていない場合は、発生しません。"
+
+msgid "It's not occurred in the process that executes ``plugin_register``."
+msgstr "``plugin_register`` を実行したプロセスでは発生しません。"
+
+msgid "It's occurred in the process that doesn't execute ``plugin_register``."
+msgstr "``plugin_register`` を実行していないプロセスで発生します。"
+
+msgid ""
+"Fixed a bug that normalization error occurred while static index "
+"construction by ``token_column``. [GitHub#1122][Reported by naoa]"
+msgstr ""
+"``token_column`` を使った静的インデックス構築中に正規化エラーが発生する問題を"
+"修正しました。[GitHub#1122][naoaさんの報告]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "naoa"
+msgstr "naoaさん"
+
+msgid "Release 10.0.4 - 2020-06-29"
+msgstr "10.0.4リリース - 2020-06-29"
 
 msgid ""
 "[:doc:`reference/tables`] Added support for registering 400M records into a "
@@ -216,9 +398,6 @@ msgstr ""
 "[:doc:`reference/commands/select`] 参照カウントモード時の ``load_table`` のパ"
 "フォーマンスを改善しました。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "Fixed a bug that the database of Groonga was broken when we search by using "
 "the dynamic columns that don't specify a ``--filter`` and stridden over "
@@ -240,12 +419,6 @@ msgid ""
 msgstr ""
 "参照 ``uvector`` が要素を持っていないとき、 ``_nsubrecs`` を余分にカウントす"
 "る問題を修正しました。"
-
-msgid "Thanks"
-msgstr "感謝"
-
-msgid "naoa"
-msgstr "naoaさん"
 
 msgid "Release 10.0.3 - 2020-05-29"
 msgstr "10.0.3リリース - 2020-05-29"
@@ -15687,7 +15860,3 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
-
-#~ msgid ""
-#~ "Fixed a bug that ``schema`` command doesn't display ``Float32`` type."
-#~ msgstr "``schema`` コマンドが ``Float32`` 型表示しない問題を修正しました。"
