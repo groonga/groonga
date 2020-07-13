@@ -29,9 +29,6 @@ case ${version} in
     ;;
 esac
 
-# TODO: Require msgpack for testing normalizer options
-exit 0
-
 ${DNF} install -y \
   gcc \
   make \
