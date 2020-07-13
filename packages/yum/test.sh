@@ -29,6 +29,9 @@ case ${version} in
     ;;
 esac
 
+# TODO: mecab-devel is needed
+exit
+
 ${DNF} install -y \
   gcc \
   make \
