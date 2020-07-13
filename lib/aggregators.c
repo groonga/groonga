@@ -22,31 +22,50 @@
 
 #include <math.h>
 
+static bool
+numeric_aggregator_validate_target(grn_ctx *ctx,
+                                   grn_obj *target,
+                                   const char *tag)
+{
+  if (grn_obj_is_number_family_scalar_column(ctx, target)) {
+    return true;
+  }
+
+  if (grn_obj_is_score_accessor(ctx, target)) {
+    return true;
+  }
+
+  grn_obj inspected;
+  GRN_TEXT_INIT(&inspected, 0);
+  grn_inspect_limited(ctx, &inspected, target);
+  GRN_PLUGIN_ERROR(ctx,
+                   GRN_INVALID_ARGUMENT,
+                   "%s target must be numeric column: %.*s",
+                   tag,
+                   (int)GRN_TEXT_LEN(&inspected),
+                   GRN_TEXT_VALUE(&inspected));
+  GRN_OBJ_FIN(ctx, &inspected);
+  return false;
+}
+
 static void *
 aggregator_sum_init(grn_ctx *ctx, grn_aggregator_data *data)
 {
+  const char *tag = "[aggregator][sum]";
   grn_obj *args = grn_aggregator_data_get_args(ctx, data);
   size_t n_args = GRN_PTR_VECTOR_SIZE(args);
   if (n_args != 1) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
-                     "aggregator_sum(): wrong number of arguments "
+                     "%s wrong number of arguments "
                      "(%" GRN_FMT_SIZE " for 1)",
+                     tag,
                      n_args);
     return NULL;
   }
 
   grn_obj *target = GRN_PTR_VALUE_AT(args, 0);
-  if (!grn_obj_is_number_family_scalar_column(ctx, target)) {
-    grn_obj inspected;
-    GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect_limited(ctx, &inspected, target);
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "aggregator_sum(): target must be numeric column: %.*s",
-                     (int)GRN_TEXT_LEN(&inspected),
-                     GRN_TEXT_VALUE(&inspected));
-    GRN_OBJ_FIN(ctx, &inspected);
+  if (!numeric_aggregator_validate_target(ctx, target, tag)) {
     return NULL;
   }
 
@@ -83,28 +102,21 @@ typedef struct {
 static void *
 aggregator_mean_init(grn_ctx *ctx, grn_aggregator_data *data)
 {
+  const char *tag = "[aggregator][mean]";
   grn_obj *args = grn_aggregator_data_get_args(ctx, data);
   size_t n_args = GRN_PTR_VECTOR_SIZE(args);
   if (n_args != 1) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
-                     "aggregator_mean(): wrong number of arguments "
+                     "%s wrong number of arguments "
                      "(%" GRN_FMT_SIZE " for 1)",
+                     tag,
                      n_args);
     return NULL;
   }
 
   grn_obj *target = GRN_PTR_VALUE_AT(args, 0);
-  if (!grn_obj_is_number_family_scalar_column(ctx, target)) {
-    grn_obj inspected;
-    GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect_limited(ctx, &inspected, target);
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "aggregator_mean(): target must be numeric column: %.*s",
-                     (int)GRN_TEXT_LEN(&inspected),
-                     GRN_TEXT_VALUE(&inspected));
-    GRN_OBJ_FIN(ctx, &inspected);
+  if (!numeric_aggregator_validate_target(ctx, target, tag)) {
     return NULL;
   }
 
@@ -112,7 +124,8 @@ aggregator_mean_init(grn_ctx *ctx, grn_aggregator_data *data)
   if (!mean_data) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_NO_MEMORY_AVAILABLE,
-                     "aggregator_mean(): failed to allocate: %s",
+                     "%s failed to allocate: %s",
+                     tag,
                      ctx->errbuf);
     return NULL;
   }
@@ -125,7 +138,8 @@ aggregator_mean_init(grn_ctx *ctx, grn_aggregator_data *data)
   if (!mean_data->values) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_NO_MEMORY_AVAILABLE,
-                     "aggregator_mean(): failed to create hash table: %s",
+                     "%s failed to create hash table: %s",
+                     tag,
                      ctx->errbuf);
     GRN_FREE(mean_data);
     return NULL;
@@ -137,6 +151,7 @@ aggregator_mean_init(grn_ctx *ctx, grn_aggregator_data *data)
 static grn_rc
 aggregator_mean_update(grn_ctx *ctx, grn_aggregator_data *data)
 {
+  const char *tag = "[aggregator][mean]";
   aggregator_mean_data *mean_data =
     grn_aggregator_data_get_user_data(ctx, data);
   grn_id group_id = grn_aggregator_data_get_group_id(ctx, data);
@@ -151,7 +166,8 @@ aggregator_mean_update(grn_ctx *ctx, grn_aggregator_data *data)
   if (value_id == GRN_ID_NIL) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
-                     "aggregator_mean(): failed to add ID: <%u>: %s",
+                     "%s failed to add ID: <%u>: %s",
+                     tag,
                      group_id,
                      ctx->errbuf);
     return ctx->rc;
@@ -224,28 +240,21 @@ typedef struct {
 static void *
 aggregator_sd_init(grn_ctx *ctx, grn_aggregator_data *data)
 {
+  const char *tag = "[aggregator][sd]";
   grn_obj *args = grn_aggregator_data_get_args(ctx, data);
   size_t n_args = GRN_PTR_VECTOR_SIZE(args);
   if (!(1 <= n_args && n_args <= 2)) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
-                     "aggregator_sd(): wrong number of arguments "
+                     "%s wrong number of arguments "
                      "(%" GRN_FMT_SIZE " for 1..2)",
+                     tag,
                      n_args);
     return NULL;
   }
 
   grn_obj *target = GRN_PTR_VALUE_AT(args, 0);
-  if (!grn_obj_is_number_family_scalar_column(ctx, target)) {
-    grn_obj inspected;
-    GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect_limited(ctx, &inspected, target);
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "aggregator_sd(): target must be numeric column: %.*s",
-                     (int)GRN_TEXT_LEN(&inspected),
-                     GRN_TEXT_VALUE(&inspected));
-    GRN_OBJ_FIN(ctx, &inspected);
+  if (!numeric_aggregator_validate_target(ctx, target, tag)) {
     return NULL;
   }
 
@@ -254,7 +263,7 @@ aggregator_sd_init(grn_ctx *ctx, grn_aggregator_data *data)
     grn_obj *options = GRN_PTR_VALUE_AT(args, 1);
     grn_rc rc = grn_proc_options_parse(ctx,
                                        options,
-                                       "[aggregator_sd]",
+                                       tag,
                                        "unbiased",
                                        GRN_PROC_OPTION_VALUE_BOOL,
                                        &unbiased,
@@ -268,7 +277,8 @@ aggregator_sd_init(grn_ctx *ctx, grn_aggregator_data *data)
   if (!sd_data) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_NO_MEMORY_AVAILABLE,
-                     "aggregator_sd(): failed to allocate: %s",
+                     "%s failed to allocate: %s",
+                     tag,
                      ctx->errbuf);
     return NULL;
   }
@@ -282,7 +292,8 @@ aggregator_sd_init(grn_ctx *ctx, grn_aggregator_data *data)
   if (!sd_data->values) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_NO_MEMORY_AVAILABLE,
-                     "aggregator_sd(): failed to create hash table: %s",
+                     "%s failed to create hash table: %s",
+                     tag,
                      ctx->errbuf);
     GRN_FREE(sd_data);
     return NULL;
@@ -295,6 +306,7 @@ aggregator_sd_init(grn_ctx *ctx, grn_aggregator_data *data)
 static grn_rc
 aggregator_sd_update(grn_ctx *ctx, grn_aggregator_data *data)
 {
+  const char *tag = "[aggregator][sd]";
   aggregator_sd_data *sd_data =
     grn_aggregator_data_get_user_data(ctx, data);
   grn_id group_id = grn_aggregator_data_get_group_id(ctx, data);
@@ -309,7 +321,8 @@ aggregator_sd_update(grn_ctx *ctx, grn_aggregator_data *data)
   if (value_id == GRN_ID_NIL) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
-                     "aggregator_sd(): failed to add ID: <%u>: %s",
+                     "%s failed to add ID: <%u>: %s",
+                     tag,
                      group_id,
                      ctx->errbuf);
     return ctx->rc;

@@ -1,0 +1,22 @@
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items price COLUMN_SCALAR UInt32
+column_create Items tag COLUMN_SCALAR ShortText
+
+load --table Items
+[
+{"_key": "Book",  "price": 1000, "tag": "A"},
+{"_key": "Note",  "price": 1000, "tag": "B"},
+{"_key": "Box",   "price": 500,  "tag": "B"},
+{"_key": "Pen",   "price": 500,  "tag": "A"},
+{"_key": "Food",  "price": 500,  "tag": "C"},
+{"_key": "Drink", "price": 300,  "tag": "B"}
+]
+
+select Items \
+  --filter true \
+  --drilldowns[tag].keys tag \
+  --drilldowns[tag].output_columns _key,_nsubrecs,score_sd \
+  --drilldowns[tag].columns[score_sd].stage group \
+  --drilldowns[tag].columns[score_sd].type Float \
+  --drilldowns[tag].columns[score_sd].flags COLUMN_SCALAR \
+  --drilldowns[tag].columns[score_sd].value 'aggregator_sd(_score)'
