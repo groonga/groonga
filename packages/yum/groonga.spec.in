@@ -1,10 +1,8 @@
-%define _centos_ver   %{?centos_ver:%{centos_ver}}%{!?centos_ver:5}
+%define _centos_ver   %{?centos_ver:%{centos_ver}}%{!?centos_ver:6}
 
-%define _use_lz4      %{?use_lz4:%{use_lz4}}%{!?use_lz4:%{_centos_ver} >= 6}
-%define _use_zstd     %{?use_zstd:%{use_zstd}}%{!?use_zstd:%{_centos_ver} < 8}
 %define _use_mecab    %{?use_mecab:%{use_mecab}}%{!?use_mecab:%{_centos_ver} <= 7}
 %define _use_jemalloc %{?use_jemalloc:%{use_jemalloc}}%{!?use_jemalloc:0}
-%define _use_msgpack  %{?use_msgpack:%{use_msgpack}}%{!?use_msgpack:%{_centos_ver} == 7}
+%define _use_msgpack  %{?use_msgpack:%{use_msgpack}}%{!?use_msgpack:%{_centos_ver} >= 7}
 %define _use_libstemmer %{?use_libstemmer:%{use_libstemmer}}%{!?use_libstemmer:%{_centos_ver} >= 7}
 %define _use_systemd  %{?use_systemd:%{use_systemd}}%{!?use_systemd:%{_centos_ver} >= 7}
 %define _use_rapidjson %{?use_rapidjson:%{use_rapidjson}}%{!?use_rapidjson:%{_centos_ver} == 7}
@@ -29,12 +27,8 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildRequires:	mecab-devel
 %endif
 BuildRequires:	zlib-devel
-%if %{_use_lz4}
 BuildRequires:	lz4-devel
-%endif
-%if %{_use_zstd}
 BuildRequires:	libzstd-devel
-%endif
 %if %{_use_jemalloc}
 BuildRequires:	jemalloc-devel
 %endif
@@ -70,12 +64,8 @@ Summary:	Runtime libraries for Groonga
 Group:		System Environment/Libraries
 License:	LGPLv2 and (MIT or GPLv2)
 Requires:	zlib
-%if %{_use_lz4}
 Requires:	lz4
-%endif
-%if %{_use_zstd}
 Requires:	libzstd
-%endif
 %if %{_use_jemalloc}
 Requires:	jemalloc
 %endif
@@ -227,12 +217,6 @@ Munin plugins for Groonga
 %configure \
   --disable-static \
   --with-package-platform=centos%{?centos_ver} \
-%if ! %{_use_lz4}
-  --without-lz4 \
-%endif
-%if ! %{_use_zstd}
-  --without-zstd \
-%endif
 %if %{_use_mecab}
   --with-mecab \
 %else
