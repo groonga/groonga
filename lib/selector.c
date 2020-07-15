@@ -210,16 +210,13 @@ grn_selector_data_have_score_column(grn_ctx *ctx,
 }
 
 grn_rc
-grn_selector_data_current_add_score(grn_ctx *ctx,
-                                    grn_obj *result_set,
-                                    grn_id result_set_record_id,
-                                    grn_id record_id,
-                                    double score)
+grn_selector_data_current_add_score_no_validation(grn_ctx *ctx,
+                                                  grn_obj *result_set,
+                                                  grn_id result_set_record_id,
+                                                  grn_id record_id,
+                                                  double score)
 {
   grn_selector_data *data = ctx->impl->current_selector_data;
-  if (!data) {
-    return ctx->rc;
-  }
 
   if (data->result_set != result_set) {
     return ctx->rc;

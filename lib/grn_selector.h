@@ -19,6 +19,7 @@
 #pragma once
 
 #include "grn.h"
+#include "grn_ctx_impl.h"
 
 #ifdef  __cplusplus
 extern "C" {
@@ -36,11 +37,30 @@ grn_selector_run(grn_ctx *ctx,
                  grn_operator op);
 
 grn_rc
+grn_selector_data_current_add_score_no_validation(grn_ctx *ctx,
+                                                  grn_obj *result_set,
+                                                  grn_id result_set_record_id,
+                                                  grn_id record_id,
+                                                  double score);
+
+grn_inline static grn_rc
 grn_selector_data_current_add_score(grn_ctx *ctx,
                                     grn_obj *result_set,
                                     grn_id result_set_record_id,
                                     grn_id record_id,
-                                    double score);
+                                    double score)
+{
+  grn_selector_data *data = ctx->impl->current_selector_data;
+  if (!data) {
+    return ctx->rc;
+  }
+
+  return grn_selector_data_current_add_score_no_validation(ctx,
+                                                           result_set,
+                                                           result_set_record_id,
+                                                           record_id,
+                                                           score);
+}
 
 #ifdef __cplusplus
 }
