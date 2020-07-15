@@ -130,17 +130,15 @@ grn_pat_name(grn_ctx *ctx, grn_pat *pat, char *buffer, int buffer_size)
 
 #define PAT_AT(pat,id,n) do {\
   int flags = 0;\
-  GRN_IO_ARRAY_AT(pat->io, SEGMENT_PAT, id, &flags, n);\
+  n = grn_io_array_at(ctx, pat->io, SEGMENT_PAT, id, &flags);\
 } while (0)
 
 grn_inline static pat_node *
 pat_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
-  pat_node *res;
   int flags = GRN_TABLE_ADD;
   if (id > GRN_ID_MAX) { return NULL; }
-  GRN_IO_ARRAY_AT(pat->io, SEGMENT_PAT, id, &flags, res);
-  return res;
+  return grn_io_array_at(ctx, pat->io, SEGMENT_PAT, id, &flags);
 }
 
 grn_inline static pat_node *
@@ -162,21 +160,17 @@ pat_node_new(grn_ctx *ctx, grn_pat *pat, grn_id *id)
 grn_inline static sis_node *
 sis_at(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
-  sis_node *res;
   int flags = 0;
   if (id > GRN_ID_MAX) { return NULL; }
-  GRN_IO_ARRAY_AT(pat->io, SEGMENT_SIS, id, &flags, res);
-  return res;
+  return grn_io_array_at(ctx, pat->io, SEGMENT_SIS, id, &flags);
 }
 
 grn_inline static sis_node *
 sis_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
-  sis_node *res;
   int flags = GRN_TABLE_ADD;
   if (id > GRN_ID_MAX) { return NULL; }
-  GRN_IO_ARRAY_AT(pat->io, SEGMENT_SIS, id, &flags, res);
-  return res;
+  return grn_io_array_at(ctx, pat->io, SEGMENT_SIS, id, &flags);
 }
 
 #define MAX_LEVEL 16
@@ -205,7 +199,7 @@ sis_collect(grn_ctx *ctx, grn_pat *pat, grn_hash *h, grn_id id, uint32_t level)
 
 #define KEY_AT(pat,pos,ptr,addp) do {\
   int flags = addp;\
-  GRN_IO_ARRAY_AT(pat->io, SEGMENT_KEY, pos, &flags, ptr);\
+  ptr = grn_io_array_at(ctx, pat->io, SEGMENT_KEY, pos, &flags);\
 } while (0)
 
 grn_inline static uint32_t

@@ -519,14 +519,6 @@ grn_io_segment_alloc(grn_ctx *ctx, grn_io *io, grn_io_array_info *ai,
   }
 }
 
-void *
-grn_io_array_at(grn_ctx *ctx, grn_io *io, uint32_t array, off_t offset, int *flags)
-{
-  void *res;
-  GRN_IO_ARRAY_AT(io,array,offset,flags,res);
-  return res;
-}
-
 uint32_t
 grn_io_detect_type(grn_ctx *ctx, const char *path)
 {

@@ -270,9 +270,7 @@ grn_inline static void *
 grn_io_array_at_inline(grn_ctx *ctx, grn_io *io, uint32_t segment_id,
                        uint64_t offset, int flags)
 {
-  void *ptr;
-  GRN_IO_ARRAY_AT(io, segment_id, offset, &flags, ptr);
-  return ptr;
+  return grn_io_array_at(ctx, io, segment_id, offset, &flags);
 }
 
 /*

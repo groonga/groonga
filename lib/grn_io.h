@@ -304,8 +304,6 @@ grn_io *grn_io_create_with_array(grn_ctx *ctx, const char *path, uint32_t header
                                  uint32_t segment_size, grn_io_mode mode,
                                  int n_arrays, grn_io_array_spec *array_specs);
 
-void *grn_io_array_at(grn_ctx *ctx, grn_io *io, uint32_t array, off_t offset, int *flags);
-
 void grn_io_segment_alloc(grn_ctx *ctx, grn_io *io, grn_io_array_info *ai,
                           uint32_t lseg, int *flags, void **p);
 
@@ -316,56 +314,57 @@ uint32_t grn_io_is_locked(grn_io *io);
 grn_bool grn_io_is_corrupt(grn_ctx *ctx, grn_io *io);
 size_t grn_io_get_disk_usage(grn_ctx *ctx, grn_io *io);
 
-#define GRN_IO_ARRAY_AT(io,array,offset,flags,res) do {\
-  grn_io_array_info *ainfo = &(io)->ainfo[array];\
-  uint32_t lseg = (offset) >> ainfo->w_of_elm_in_a_segment;\
-  if (lseg >= ainfo->max_n_segments) {\
-    ERR(GRN_NO_MEMORY_AVAILABLE,\
-        "[io][array][at] too large offset: %" GRN_FMT_INT64U\
-        ": max=%" GRN_FMT_INT64U\
-        ": nth=%u"\
-        ": path=<%s>",\
-        (uint64_t)(offset),\
-        (uint64_t)((ainfo->max_n_segments << ainfo->w_of_elm_in_a_segment) - 1),\
-        array,\
-        io->path);\
-    (res) = NULL;\
-    break;\
-  }\
-  void **p_ = &ainfo->addrs[lseg];\
-  if (!*p_) {\
-    grn_io_segment_alloc(ctx, (io), ainfo, lseg, (flags), p_);\
-    if (!*p_) { (res) = NULL; break; }\
-  }\
-  *((byte **)(&(res))) = (((byte *)*p_) + \
-          (((offset) & ainfo->elm_mask_in_a_segment) * ainfo->element_size));\
-} while (0)
+static grn_inline void *
+grn_io_array_at(grn_ctx *ctx,
+                grn_io *io,
+                uint32_t array,
+                off_t offset,
+                int *flags)
+{
+  grn_io_array_info *ainfo = &(io->ainfo[array]);
+  uint32_t lseg = offset >> ainfo->w_of_elm_in_a_segment;
+  if (lseg >= ainfo->max_n_segments) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[io][array][at] too large offset: %" GRN_FMT_INT64U
+        ": max=%" GRN_FMT_INT64U
+        ": nth=%u"
+        ": path=<%s>",
+        (uint64_t)offset,
+        (uint64_t)((ainfo->max_n_segments << ainfo->w_of_elm_in_a_segment) - 1),
+        array,
+        io->path);
+    return NULL;
+  }
+  void **p_ = &ainfo->addrs[lseg];
+  if (!*p_) {
+    grn_io_segment_alloc(ctx, io, ainfo, lseg, flags, p_);
+    if (!*p_) { return NULL; }
+  }
+  return (((byte *)*p_) +
+          ((offset & ainfo->elm_mask_in_a_segment) * ainfo->element_size));
+}
 
 #define GRN_IO_ARRAY_BIT_AT(io,array,offset,res) do {\
-  uint8_t *ptr_;\
   int flags_ = 0;\
-  GRN_IO_ARRAY_AT((io), (array), ((offset) >> 3) + 1, &flags_, ptr_);\
+  uint8_t *ptr_ = grn_io_array_at(ctx, (io), (array), ((offset) >> 3) + 1, &flags_,);\
   res = ptr_ ? ((*ptr_ >> ((offset) & 7)) & 1) : 0;\
 } while (0)
 
 #define GRN_IO_ARRAY_BIT_ON(io,array,offset) do {\
-  uint8_t *ptr_;\
   int flags_ = GRN_TABLE_ADD;\
-  GRN_IO_ARRAY_AT((io), (array), ((offset) >> 3) + 1, &flags_, ptr_);\
+  uint8_t *ptr_ = grn_io_array_at(ctx, (io), (array), ((offset) >> 3) + 1, &flags_);\
   if (ptr_) { *ptr_ |= (1 << ((offset) & 7)); }\
 } while (0)
 
 #define GRN_IO_ARRAY_BIT_OFF(io,array,offset) do {\
-  uint8_t *ptr_;\
   int flags_ = GRN_TABLE_ADD;\
-  GRN_IO_ARRAY_AT((io), (array), ((offset) >> 3) + 1, &flags_, ptr_);\
+  uint8_t *ptr = grn_io_array_at(ctx, (io), (array), ((offset) >> 3) + 1, &flags_);\
   if (ptr_) { *ptr_ &= ~(1 << ((offset) & 7)); }\
 } while (0)
 
 #define GRN_IO_ARRAY_BIT_FLIP(io,array,offset) do {\
-  uint8_t *ptr_;\
   int flags_ = GRN_TABLE_ADD;\
-  GRN_IO_ARRAY_AT((io), (array), ((offset) >> 3) + 1, &flags_, ptr_);\
+  uint8_t *ptr_ = grn_io_array_at((io), (array), ((offset) >> 3) + 1, &flags_);\
   if (ptr_) { *ptr_ ^= (1 << ((offset) & 7)); }\
 } while (0)
 
