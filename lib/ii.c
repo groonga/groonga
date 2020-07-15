@@ -9133,7 +9133,7 @@ grn_rset_add_record(grn_ctx *ctx,
                       NULL);
     if (id != GRN_ID_NIL) {
       if (rset->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
-        grn_table_add_subrec((grn_obj *)rset, recinfo, score, posinfo, 1);
+        grn_table_add_subrec(ctx, (grn_obj *)rset, recinfo, score, posinfo, 1);
         grn_selector_data_current_add_score(ctx,
                                             (grn_obj *)rset,
                                             id,
@@ -9151,7 +9151,7 @@ grn_rset_add_record(grn_ctx *ctx,
     if (id != GRN_ID_NIL) {
       if (rset->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
         recinfo->n_subrecs |= GRN_RSET_UTIL_BIT;
-        grn_table_add_subrec((grn_obj *)rset, recinfo, score, posinfo, 1);
+        grn_table_add_subrec(ctx, (grn_obj *)rset, recinfo, score, posinfo, 1);
         grn_selector_data_current_add_score(ctx,
                                             (grn_obj *)rset,
                                             id,

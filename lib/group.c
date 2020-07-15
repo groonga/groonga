@@ -528,7 +528,7 @@ grn_table_group_add_subrec(grn_ctx *ctx,
                            grn_rset_posinfo *pi, int dir,
                            grn_obj *value_buffer)
 {
-  grn_table_add_subrec(table, ri, score, pi, dir);
+  grn_table_add_subrec(ctx, table, ri, score, pi, dir);
 
   const grn_table_flags table_flags = DB_OBJ(table)->header.flags;
   const grn_table_group_flags group_flags = DB_OBJ(table)->group.flags;
@@ -856,9 +856,12 @@ grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
                                        element_size, &value, NULL);
                 }
                 if (id) {
-                  grn_table_add_subrec(res, value,
+                  grn_table_add_subrec(ctx,
+                                       res,
+                                       value,
                                        ri ? ri->score : 0,
-                                       (grn_rset_posinfo *)&id, 0);
+                                       (grn_rset_posinfo *)&id,
+                                       0);
                 }
               }
             }
@@ -884,8 +887,12 @@ grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
                 while (len) {
                   if ((*v != GRN_ID_NIL) &&
                       grn_table_add_v(ctx, res, v, sizeof(grn_id), &value, NULL)) {
-                    grn_table_add_subrec(res, value, ri ? ri->score : 0,
-                                         (grn_rset_posinfo *)&id, 0);
+                    grn_table_add_subrec(ctx,
+                                         res,
+                                         value,
+                                         ri ? ri->score : 0,
+                                         (grn_rset_posinfo *)&id,
+                                         0);
                   }
                   v++;
                   len -= sizeof(grn_id);

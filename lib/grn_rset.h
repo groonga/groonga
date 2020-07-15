@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2016  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -64,6 +65,13 @@ typedef union {
   (grn_memcpy(GRN_RSET_SUBRECS_NTH(subrecs, size, n), src, GRN_RSET_SUBREC_SIZE(size)))
 #define GRN_RSET_SUBRECS_SIZE(subrec_size,n) \
   (GRN_RSET_SUBREC_SIZE(subrec_size) * n)
+
+void grn_rset_add_subrec(grn_ctx *ctx,
+                         grn_rset_recinfo *ri,
+                         grn_obj *table,
+                         double score,
+                         grn_rset_posinfo *pi,
+                         int dir);
 
 uint32_t grn_rset_recinfo_calc_values_size(grn_ctx *ctx,
                                            grn_table_group_flags flags);

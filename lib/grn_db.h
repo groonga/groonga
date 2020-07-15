@@ -57,6 +57,8 @@ extern "C" {
   (GRN_TABLE_IS_GROUPED(table) &&\
    table->header.domain == GRN_ID_NIL)
 
+#define DB_OBJ(obj) ((grn_db_obj *)obj)
+
 extern bool grn_enable_reference_count;
 
 typedef struct _grn_db grn_db;
@@ -202,8 +204,26 @@ int grn_table_get_key2(grn_ctx *ctx, grn_obj *table, grn_id id, grn_obj *bulk);
 grn_table_cursor *grn_table_cursor_open_by_id(grn_ctx *ctx, grn_obj *table,
                                               grn_id min, grn_id max, int flags);
 
-void grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, double score,
-                          grn_rset_posinfo *pi, int dir);
+grn_inline static void
+grn_table_add_subrec(grn_ctx *ctx,
+                     grn_obj *table,
+                     grn_rset_recinfo *ri,
+                     double score,
+                     grn_rset_posinfo *pi,
+                     int dir)
+{
+  if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
+    ri->score += score;
+    ri->n_subrecs += 1;
+    /* This is a duplicated check but it reduces the number of
+     * function calls. It improves performance when many records are
+     * matched. */
+    int limit = DB_OBJ(table)->max_n_subrecs;
+    if (limit > 0) {
+      grn_rset_add_subrec(ctx, ri, table, score, pi, dir);
+    }
+  }
+}
 
 grn_obj *grn_obj_graft(grn_ctx *ctx, grn_obj *obj);
 
@@ -391,8 +411,6 @@ typedef enum {
   GRN_ACCESSOR_LOOKUP,
   GRN_ACCESSOR_FUNCALL
 } grn_accessor_action;
-
-#define DB_OBJ(obj) ((grn_db_obj *)obj)
 
 GRN_API const char *grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size);
 void grn_obj_get_range_info(grn_ctx *ctx,

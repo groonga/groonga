@@ -1,5 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2015 Brazil
+/*
+  Copyright(C) 2009-2015  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -14,7 +16,110 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "grn_db.h"
+
+grn_inline static void
+grn_rset_subrecs_push(byte *subrecs,
+                      int size,
+                      int n_subrecs,
+                      double score,
+                      void *body,
+                      int dir)
+{
+  byte *v;
+  double *c2;
+  int n = n_subrecs - 1, n2;
+  while (n) {
+    n2 = (n - 1) >> 1;
+    c2 = GRN_RSET_SUBRECS_NTH(subrecs,size,n2);
+    if (GRN_RSET_SUBRECS_CMP(score, *c2, dir) >= 0) { break; }
+    GRN_RSET_SUBRECS_COPY(subrecs,size,n,c2);
+    n = n2;
+  }
+  v = subrecs + n * (GRN_RSET_SCORE_SIZE + size);
+  *((double *)v) = score;
+  grn_memcpy(v + GRN_RSET_SCORE_SIZE, body, size);
+}
+
+grn_inline static void
+grn_rset_subrecs_replace_min(byte *subrecs,
+                             int size,
+                             int n_subrecs,
+                             double score,
+                             void *body,
+                             int dir)
+{
+  byte *v;
+  int n = 0, n1, n2;
+  double *c1, *c2;
+  for (;;) {
+    n1 = n * 2 + 1;
+    n2 = n1 + 1;
+    c1 = n1 < n_subrecs ? GRN_RSET_SUBRECS_NTH(subrecs,size,n1) : NULL;
+    c2 = n2 < n_subrecs ? GRN_RSET_SUBRECS_NTH(subrecs,size,n2) : NULL;
+    if (c1 && GRN_RSET_SUBRECS_CMP(score, *c1, dir) > 0) {
+      if (c2 &&
+          GRN_RSET_SUBRECS_CMP(score, *c2, dir) > 0 &&
+          GRN_RSET_SUBRECS_CMP(*c1, *c2, dir) > 0) {
+        GRN_RSET_SUBRECS_COPY(subrecs,size,n,c2);
+        n = n2;
+      } else {
+        GRN_RSET_SUBRECS_COPY(subrecs,size,n,c1);
+        n = n1;
+      }
+    } else {
+      if (c2 && GRN_RSET_SUBRECS_CMP(score, *c2, dir) > 0) {
+        GRN_RSET_SUBRECS_COPY(subrecs,size,n,c2);
+        n = n2;
+      } else {
+        break;
+      }
+    }
+  }
+  v = subrecs + n * (GRN_RSET_SCORE_SIZE + size);
+  grn_memcpy(v, &score, GRN_RSET_SCORE_SIZE);
+  grn_memcpy(v + GRN_RSET_SCORE_SIZE, body, size);
+}
+
+void
+grn_rset_add_subrec(grn_ctx *ctx,
+                    grn_rset_recinfo *ri,
+                    grn_obj *table,
+                    double score,
+                    grn_rset_posinfo *pi,
+                    int dir)
+{
+  int limit = DB_OBJ(table)->max_n_subrecs;
+  if (limit == 0) {
+    return;
+  }
+
+  if (!pi) {
+    return;
+  }
+
+  int subrec_size = DB_OBJ(table)->subrec_size;
+  int n_subrecs = GRN_RSET_N_SUBRECS(ri);
+  byte *body = (byte *)pi + DB_OBJ(table)->subrec_offset;
+  if (limit < n_subrecs) {
+    if (GRN_RSET_SUBRECS_CMP(score, *((double *)(ri->subrecs)), dir) > 0) {
+      grn_rset_subrecs_replace_min((byte *)ri->subrecs,
+                                   subrec_size,
+                                   limit,
+                                   score,
+                                   body,
+                                   dir);
+    }
+  } else {
+    grn_rset_subrecs_push((byte *)ri->subrecs,
+                          subrec_size,
+                          n_subrecs,
+                          score,
+                          body,
+                          dir);
+  }
+}
 
 uint32_t
 grn_rset_recinfo_calc_values_size(grn_ctx *ctx, grn_table_group_flags flags)

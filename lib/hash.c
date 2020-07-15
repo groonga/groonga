@@ -2630,7 +2630,7 @@ grn_hash_add_table_cursor(grn_ctx *ctx,
       grn_rset_recinfo *recinfo = value;
       grn_rset_posinfo posinfo = {0};
       posinfo.rid = key;
-      grn_table_add_subrec((grn_obj *)hash, recinfo, score, &posinfo, 1);
+      grn_table_add_subrec(ctx, (grn_obj *)hash, recinfo, score, &posinfo, 1);
       grn_selector_data_current_add_score(ctx,
                                           (grn_obj *)hash,
                                           id,

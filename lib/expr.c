@@ -3624,7 +3624,7 @@ grn_table_select_sequential(grn_ctx *ctx,
         if (score > 0) {
           grn_rset_recinfo *ri;
           if (grn_hash_add(ctx, s, &id, s->key_size, (void **)&ri, NULL)) {
-            grn_table_add_subrec(res, ri, score, (grn_rset_posinfo *)&id, 1);
+            grn_table_add_subrec(ctx, res, ri, score, (grn_rset_posinfo *)&id, 1);
           }
         }
       }
@@ -3643,7 +3643,7 @@ grn_table_select_sequential(grn_ctx *ctx,
         if (score > 0) {
           grn_rset_recinfo *ri;
           grn_hash_cursor_get_value(ctx, hc, (void **) &ri);
-          grn_table_add_subrec(res, ri, score, (grn_rset_posinfo *)idp, 1);
+          grn_table_add_subrec(ctx, res, ri, score, (grn_rset_posinfo *)idp, 1);
         } else {
           grn_hash_cursor_delete(ctx, hc, NULL);
         }
@@ -3679,7 +3679,7 @@ grn_table_select_sequential(grn_ctx *ctx,
         if (score > 0) {
           grn_rset_recinfo *ri;
           grn_hash_cursor_get_value(ctx, hc, (void **) &ri);
-          grn_table_add_subrec(res, ri, score, (grn_rset_posinfo *)idp, 1);
+          grn_table_add_subrec(ctx, res, ri, score, (grn_rset_posinfo *)idp, 1);
         }
       }
       grn_hash_cursor_close(ctx, hc);
