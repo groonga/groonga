@@ -97,6 +97,7 @@ struct sort_key_ {
   grn_obj *key;
   grn_table_sort_flags flags;
   bool can_refer;
+  bool need_resolved_id;
   sort_key_offset offset;
   grn_column_cache *column_cache;
   sort_value_get_func get_value;
@@ -159,6 +160,8 @@ union sort_entry_ {
 struct sort_data_ {
   int offset;
   int limit;
+  bool entry_id_is_resolved;
+  grn_obj *table;
   grn_obj *result;
   sort_key *keys;
   uint32_t n_keys;
@@ -198,6 +201,39 @@ struct sort_compare_data_ {
   }\
 } while (0)
 
+static grn_inline grn_id
+sort_value_get_resolve_id(grn_ctx *ctx,
+                          const sort_key *key,
+                          sort_entry *entry,
+                          sort_data *data)
+{
+  if (key->need_resolved_id) {
+    if (data->entry_id_is_resolved) {
+      return entry->common.id;
+    } else {
+      grn_id id;
+      int key_size = grn_table_get_key(ctx,
+                                       data->table,
+                                       entry->common.id,
+                                       (void *)&id,
+                                       sizeof(grn_id));
+      if (key_size == sizeof(grn_id)) {
+        return id;
+      } else {
+        return GRN_ID_NIL;
+      }
+    }
+  } else {
+    if (data->entry_id_is_resolved) {
+      return grn_table_get(ctx,
+                           data->table,
+                           &(entry->common.id),
+                           sizeof(grn_id));
+    } else {
+      return entry->common.id;
+    }
+  }
+}
 
 static const uint8_t *
 sort_value_get_refer(grn_ctx *ctx,
@@ -207,7 +243,12 @@ sort_value_get_refer(grn_ctx *ctx,
                      uint32_t *size,
                      sort_data *data)
 {
-  return grn_obj_get_value_(ctx, key->key, entry->common.id, size);
+  grn_id id = sort_value_get_resolve_id(ctx, key, entry, data);
+  if (id == GRN_ID_NIL) {
+    *size = 0;
+    return NULL;
+  }
+  return grn_obj_get_value_(ctx, key->key, id, size);
 }
 
 static const uint8_t *
@@ -218,6 +259,7 @@ sort_value_get_value(grn_ctx *ctx,
                      uint32_t *size,
                      sort_data *data)
 {
+  grn_id id = sort_value_get_resolve_id(ctx, key, entry, data);
   sort_value_copy *copy = entry->value.copy;
   if (entry->value.n_cached_values <= key->index_value) {
     if (key->column_cache) {
@@ -225,7 +267,7 @@ sort_value_get_value(grn_ctx *ctx,
       size_t value_size;
       value = grn_column_cache_ref(ctx,
                                    key->column_cache,
-                                   entry->value.id,
+                                   id,
                                    &value_size);
       GRN_TEXT_PUT(ctx, copy->values, value, value_size);
       grn_sort_key_set_size(copy->sizes + compare_data->sizes_offset,
@@ -233,7 +275,7 @@ sort_value_get_value(grn_ctx *ctx,
                             value_size);
     } else {
       size_t value_size_before = GRN_BULK_VSIZE(copy->values);
-      grn_obj_get_value(ctx, key->key, entry->value.id, copy->values);
+      grn_obj_get_value(ctx, key->key, id, copy->values);
       size_t value_size = GRN_BULK_VSIZE(copy->values) - value_size_before;
       grn_sort_key_set_size(copy->sizes + compare_data->sizes_offset,
                             key->offset,
@@ -415,19 +457,30 @@ sort_value_pack(grn_ctx *ctx,
 {
   sort_entry *entries = head;
   size_t n_ids = 0;
-  GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
-    entries[n_ids].common.id = id;
-    n_ids++;
-  } GRN_TABLE_EACH_END(ctx, cursor);
+  if (data->entry_id_is_resolved) {
+    GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
+      void *key;
+      grn_table_cursor_get_key(ctx, cursor, &key);
+      grn_id resolved_id = *((grn_id *)key);
+      entries[n_ids].common.id = resolved_id;
+      n_ids++;
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  } else {
+    GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
+      entries[n_ids].common.id = id;
+      n_ids++;
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  }
   if (!data->keys[0].get_value) {
-    grn_obj *key = data->keys[0].key;
+    const sort_key *key = &(data->keys[0]);
     size_t i = 0;
     for (i = 0; i < n_ids; i++) {
       sort_entry *entry = &(entries[i]);
+      grn_id id = sort_value_get_resolve_id(ctx, key, entry, data);
       entry->refer.value =
         grn_obj_get_value_(ctx,
-                           key,
-                           entry->refer.id,
+                           key->key,
+                           id,
                            &(entry->refer.size));
     }
   }
@@ -581,7 +634,11 @@ grn_table_sort_value_body(grn_ctx *ctx,
          i < limit && ep < entries + n;
          i++, ep++) {
       if (!grn_array_add(ctx, result, (void **)&v)) { break; }
-      *v = ep->common.id;
+      if (data->entry_id_is_resolved) {
+        *v = grn_table_get(ctx, data->table, &(ep->common.id), sizeof(grn_id));
+      } else {
+        *v = ep->common.id;
+      }
     }
     n_sorted_records = i;
   }
@@ -721,11 +778,34 @@ grn_table_sort_value(grn_ctx *ctx,
     goto exit;
   }
 
+  /* Need key -> ID conversion feature by table to use pre ID
+   * resolution optimization. */
+  const bool is_lexicon = grn_obj_is_lexicon(ctx, table);
+
   int i;
   uint32_t index_refer = 0;
   uint32_t index_value = 0;
+  uint32_t n_need_resolved_id_keys = 0;
+  uint32_t n_not_need_resolved_id_keys = 0;
   for (i = 0; i < n_keys; i++) {
     grn_obj *key = raw_keys[i].key;
+
+    bool need_resolved_id_key = false;
+    if (is_lexicon && grn_obj_is_accessor(ctx, key)) {
+      grn_accessor *accessor = (grn_accessor *)key;
+      if (accessor->action == GRN_ACCESSOR_GET_KEY && accessor->next) {
+        need_resolved_id_key = true;
+        key = (grn_obj *)(accessor->next);
+      }
+    }
+
+    keys[i].need_resolved_id = need_resolved_id_key;
+    if (keys[i].need_resolved_id) {
+      n_need_resolved_id_keys++;
+    } else {
+      n_not_need_resolved_id_keys++;
+    }
+
     keys[i].index = i;
     keys[i].key = key;
     keys[i].flags = raw_keys[i].flags;
@@ -855,6 +935,9 @@ grn_table_sort_value(grn_ctx *ctx,
     sort_data data = {0};
     data.offset = offset;
     data.limit = limit;
+    data.entry_id_is_resolved =
+      (n_need_resolved_id_keys > n_not_need_resolved_id_keys);
+    data.table = table;
     data.result = result;
     data.keys = keys;
     data.n_keys = n_keys;
