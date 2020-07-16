@@ -78,11 +78,52 @@ jobs:
         with:
           name: windows-mingw-${{ matrix.architecture }}
           path: windows-mingw-${{ matrix.architecture }}
-
-      # Release
+  pdb:
+    name: PDB
+    needs:
+      - package
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture:
+          - x86
+          - x64
+    runs-on: windows-2019
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: windows-mingw-${{ matrix.architecture }}
+      - name: Generate PDB
+        run: |
+          cd windows-mingw-${{ matrix.architecture }}
+          bin\generate-pdb.bat
+      - name: Prepare artifacts
+        run: |
+          Move-Item `
+            windows-mingw-${{ matrix.architecture }} `
+            windows-mingw-with-pdb-${{ matrix.architecture }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: windows-mingw-with-pdb-${{ matrix.architecture }}
+          path: windows-mingw-with-pdb-${{ matrix.architecture }}
+  release:
+    name: Release
+    needs:
+      - pdb
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture:
+          - x86
+          - x64
+    runs-on: ubuntu-latest
+    if: |
+      startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: windows-mingw-with-pdb-${{ matrix.architecture }}
       - name: Asset
-        if: |
-          startsWith(github.ref, 'refs/tags/')
         id: asset
         run: |
           version=$(echo ${{ github.ref }} | sed -e 's,^refs/tags/v,,')
@@ -90,19 +131,15 @@ jobs:
           base_name=groonga-${version}-${{ matrix.architecture }}
           echo ::set-output name=base_name::${base_name}
       - name: Create assets
-        if: |
-          startsWith(github.ref, 'refs/tags/')
         run: |
           base_name=${{ steps.asset.outputs.base_name }}
           cp -a \
-            windows-mingw-${{ matrix.architecture }} \
+            windows-mingw-with-pdb-${{ matrix.architecture }} \
             ${base_name}
           zip -r \
             ${base_name}.zip \
             ${base_name}
       - name: Ensure creating release
-        if: |
-          startsWith(github.ref, 'refs/tags/')
         id: create-release
         uses: actions/github-script@0.4.0
         with:
