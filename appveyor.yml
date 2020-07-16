@@ -41,9 +41,6 @@ environment:
       VS_VERSION: 14
       ARCH: amd64
       JOB_TYPE: tag
-    - VS_VERSION: 12
-      ARCH: amd64
-      JOB_TYPE: tag
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VS_VERSION: 15
       ARCH: x86
@@ -52,9 +49,6 @@ environment:
       VS_VERSION: 14
       JOB_TYPE: tag
       ARCH: x86
-    - VS_VERSION: 12
-      ARCH: x86
-      JOB_TYPE: tag
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VS_VERSION: 15
@@ -64,9 +58,6 @@ environment:
       VS_VERSION: 14
       ARCH: amd64
       JOB_TYPE: non-tag
-    - VS_VERSION: 12
-      ARCH: amd64
-      JOB_TYPE: non-tag
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VS_VERSION: 15
       ARCH: x86
@@ -75,14 +66,6 @@ environment:
       VS_VERSION: 14
       JOB_TYPE: non-tag
       ARCH: x86
-    - VS_VERSION: 12
-      ARCH: x86
-      JOB_TYPE: non-tag
-
-# matrix:
-#   allow_failures:
-#     - VS_VERSION: 12
-#       ARCH: x86
 
 init:
   - ps: Set-WinSystemLocale ja-JP
@@ -128,9 +111,6 @@ install:
         "14" {
           $Env:GROONGA_INSTALL_FOLDER += "-vs2015"
         }
-        "12" {
-          $Env:GROONGA_INSTALL_FOLDER += "-vs2013"
-        }
       }
       "GRN_VERSION=" + $Env:GROONGA_VERSION | Set-Content version.sh
       $Env:FULL_GROONGA_INSTALL_FOLDER = $Env:APPVEYOR_BUILD_FOLDER + "\" + $Env:GROONGA_INSTALL_SUB_FOLDER + "\" + $Env:GROONGA_INSTALL_FOLDER
@@ -145,8 +125,6 @@ build_script:
   - ruby download_rapidjson.rb
   - cd ..
   - set CMAKE_GENERATOR_NAME=Visual Studio %VS_VERSION%
-  - if "%VS_VERSION%" == "12"
-      set CMAKE_GENERATOR_NAME=%CMAKE_GENERATOR_NAME% 2013
   - if "%VS_VERSION%" == "14"
       set CMAKE_GENERATOR_NAME=%CMAKE_GENERATOR_NAME% 2015
   - if "%VS_VERSION%" == "15"
@@ -155,8 +133,6 @@ build_script:
       set CMAKE_GENERATOR_NAME=%CMAKE_GENERATOR_NAME% Win64
   - set CMAKE_BUILD_PARALLEL_LEVEL=4
   - set GRN_WITH_APACHE_ARROW=ON
-  - if "%VS_VERSION%" == "12"
-      set GRN_WITH_APACHE_ARROW=OFF
   - if "%ARCH%" == "x86"
       set GRN_WITH_APACHE_ARROW=OFF
   - if "%GRN_WITH_APACHE_ARROW%" == "ON"
@@ -207,8 +183,6 @@ before_test:
   - bundle install --binstubs=..\bin
   - cd ..\..\..
   - del test\command\suite\select\filter\equal\vector_element_float.test
-  - if "%VS_VERSION%" == "12"
-      del test\command\suite\select\filter\geo_in_circle\score_column\column_*.test
   - ps: |
       Copy-Item -Recurse `
         vendor\plugins\groonga-normalizer-mysql\test\suite `
@@ -262,12 +236,6 @@ on_finish:
           $Env:LICENSE_FILE = $Env:APPVEYOR_BUILD_FOLDER + "\packages\windows\vcruntime\vs2015\readme.txt"
           $Env:UCRT_REDIST_DIR = "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\$Env:ARCH"
           $Env:UCRT_LICENSE_FILE = $Env:APPVEYOR_BUILD_FOLDER + "\packages\windows\vcruntime\ucrt-readme.txt"
-        }
-        "12" {
-          $Env:VCREDIST_DIR = "C:\Program Files (x86)\Microsoft Visual Studio $Env:VS_VERSION.0\VC\redist\$Env:ARCH"
-          $Env:VCREDIST_VCRUNTIME = "$Env:VCREDIST_DIR\Microsoft.VC120.CRT\msvcr120.dll"
-          $Env:VCREDIST_MSVCP = "$Env:VCREDIST_DIR\Microsoft.VC120.CRT\msvcp120.dll"
-          $Env:LICENSE_FILE = $Env:APPVEYOR_BUILD_FOLDER + "\packages\windows\vcruntime\vs2013\readme.txt"
         }
       }
   - copy "%VCREDIST_VCRUNTIME%" "%FULL_GROONGA_INSTALL_FOLDER%\bin"
