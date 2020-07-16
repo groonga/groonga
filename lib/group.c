@@ -609,12 +609,22 @@ grn_table_group_single_key_records_foreach_fix_size(grn_ctx *ctx,
     return ctx->rc;
   }
   void *value;
-  grn_id group_id = grn_table_add_v(ctx,
-                                    data->res,
-                                    column_value,
-                                    ra->header->element_size,
-                                    &value,
-                                    NULL);
+  grn_id group_id;
+  if (data->res->header.type == GRN_TABLE_HASH_KEY) {
+    group_id = grn_hash_add(ctx,
+                            (grn_hash *)(data->res),
+                            column_value,
+                            ra->header->element_size,
+                            &value,
+                            NULL);
+  } else {
+    group_id = grn_table_add_v(ctx,
+                               data->res,
+                               column_value,
+                               ra->header->element_size,
+                               &value,
+                               NULL);
+  }
   if (group_id == GRN_ID_NIL) {
     return ctx->rc;
   }
