@@ -568,6 +568,7 @@ typedef struct {
   bool need_resolved_id;
   grn_obj *table;
   grn_obj *key;
+  grn_obj *range;
   grn_ra_cache cache;
   grn_obj *res;
   bool with_subrec;
@@ -605,8 +606,14 @@ grn_table_group_single_key_records_foreach_fix_size(grn_ctx *ctx,
   grn_id value_id =
     grn_table_group_single_key_records_resolve_id(ctx, data, cursor, id);
   void *column_value = grn_ra_ref_cache(ctx, ra, value_id, &(data->cache));
-  if (data->is_reference_column && *((grn_id *)column_value) == GRN_ID_NIL) {
-    return ctx->rc;
+  if (data->is_reference_column) {
+    grn_id reference_id = *((grn_id *)column_value);
+    if (reference_id == GRN_ID_NIL) {
+      return ctx->rc;
+    }
+    if (grn_table_at(ctx, data->range, reference_id) == GRN_ID_NIL) {
+      return ctx->rc;
+    }
   }
   void *value;
   grn_id group_id;
@@ -820,8 +827,9 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
       }
     }
     data.with_subrec = (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC);
-    data.is_reference_column =
-      grn_id_maybe_table(ctx, grn_obj_get_range(ctx, data.key));
+    grn_id range_id = grn_obj_get_range(ctx, data.key);
+    data.range = grn_ctx_at(ctx, range_id);
+    data.is_reference_column = grn_obj_is_table(ctx, data.range);
     if (data.key->header.type == GRN_COLUMN_FIX_SIZE) {
       GRN_RA_CACHE_INIT((grn_ra *)(data.key), &(data.cache));
       grn_table_cursor_foreach(
@@ -843,6 +851,7 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
                                grn_table_group_single_key_records_foreach,
                                &data);
     }
+    grn_obj_unref(ctx, data.range);
     grn_table_cursor_close(ctx, cursor);
   }
   GRN_OBJ_FIN(ctx, &(data.value_buffer));
