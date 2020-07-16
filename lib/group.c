@@ -820,6 +820,13 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
         grn_table_group_single_key_records_foreach_fix_size,
         &data);
       GRN_RA_CACHE_FIN((grn_ra *)(data.key), &(data.cache));
+    } else if (data.key->header.type == GRN_COLUMN_VAR_SIZE &&
+               data.is_reference_column) {
+      grn_table_cursor_foreach(
+        ctx,
+        cursor,
+        grn_table_group_single_key_records_foreach_var_size_reference,
+        &data);
     } else {
       grn_table_cursor_foreach(ctx,
                                cursor,
