@@ -562,71 +562,6 @@ grn_table_group_add_subrec(grn_ctx *ctx,
   }
 }
 
-static grn_bool
-accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key,
-                        grn_table_group_result *result)
-{
-  grn_obj *res = result->table;
-  if (key->header.type == GRN_ACCESSOR) {
-    grn_accessor *a = (grn_accessor *)key;
-    if (a->action == GRN_ACCESSOR_GET_KEY &&
-        a->next && a->next->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
-        a->next->obj && !a->next->next &&
-        a->next->obj->header.type == GRN_COLUMN_VAR_SIZE) {
-      grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, key));
-      int idp = GRN_OBJ_TABLEP(range);
-      grn_table_cursor *tc;
-      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
-        grn_bool processed = GRN_TRUE;
-        grn_obj value_buffer;
-        GRN_VOID_INIT(&value_buffer);
-          if (idp) { /* todo : support other type */
-            grn_id id;
-            grn_ja *ja = (grn_ja *)a->next->obj;
-            while ((id = grn_table_cursor_next(ctx, tc))) {
-              grn_io_win jw;
-              unsigned int len = 0;
-              void *value;
-              grn_id *v, *id_;
-              uint32_t key_size;
-              grn_rset_recinfo *ri = NULL;
-              if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
-                grn_table_cursor_get_value(ctx, tc, (void **)&ri);
-              }
-              id_ = (grn_id *)_grn_table_key(ctx, table, id, &key_size);
-              if ((v = grn_ja_ref(ctx, ja, *id_, &jw, &len))) {
-                while (len) {
-                  grn_id group_id;
-                  if ((*v != GRN_ID_NIL) &&
-                      (group_id = grn_table_add_v(ctx,
-                                                  res,
-                                                  v,
-                                                  sizeof(grn_id),
-                                                  &value,
-                                                  NULL))) {
-                    grn_table_group_add_subrec(ctx, res, group_id, value,
-                                               ri ? ri->score : 0,
-                                               (grn_rset_posinfo *)&id, 0,
-                                               &value_buffer);
-                  }
-                  v++;
-                  len -= sizeof(grn_id);
-                }
-                grn_ja_unref(ctx, &jw);
-              }
-            }
-          } else {
-            processed = GRN_FALSE;
-          }
-        GRN_OBJ_FIN(ctx, &value_buffer);
-        grn_table_cursor_close(ctx, tc);
-        return processed;
-      }
-    }
-  }
-  return GRN_FALSE;
-}
-
 typedef struct {
   grn_obj bulk;
   grn_obj value_buffer;
@@ -691,6 +626,66 @@ grn_table_group_single_key_records_foreach_fix_size(grn_ctx *ctx,
                              (grn_rset_posinfo *)&id,
                              0,
                              &(data->value_buffer));
+  return ctx->rc;
+}
+
+static grn_rc
+grn_table_group_single_key_records_foreach_var_size_reference(
+  grn_ctx *ctx,
+  grn_table_cursor *cursor,
+  grn_id id,
+  void *user_data)
+{
+  single_key_records_data *data = user_data;
+  grn_ja *ja = (grn_ja *)(data->key);
+  grn_rset_recinfo *ri = NULL;
+
+  if (data->with_subrec) {
+    grn_table_cursor_get_value(ctx, cursor, (void **)&ri);
+  }
+  grn_id value_id =
+    grn_table_group_single_key_records_resolve_id(ctx, data, cursor, id);
+  grn_io_win jw;
+  uint32_t value_size;
+  grn_id *references = grn_ja_ref(ctx, ja, value_id, &jw, &value_size);
+  uint32_t n_references = value_size / sizeof(grn_id);
+  uint32_t i;
+  for (i = 0; i < n_references; i++) {
+    grn_id reference = references[i];
+    if (reference == GRN_ID_NIL) {
+      continue;
+    }
+    void *value;
+    grn_id group_id;
+    if (data->res->header.type == GRN_TABLE_HASH_KEY) {
+      group_id = grn_hash_add(ctx,
+                              (grn_hash *)(data->res),
+                              &reference,
+                              sizeof(grn_id),
+                              &value,
+                              NULL);
+    } else {
+      group_id = grn_table_add_v(ctx,
+                                 data->res,
+                                 &reference,
+                                 sizeof(grn_id),
+                                 &value,
+                                 NULL);
+    }
+    if (group_id == GRN_ID_NIL) {
+      continue;
+    }
+    grn_table_group_add_subrec(ctx,
+                               data->res,
+                               group_id,
+                               value,
+                               ri ? ri->score : 0,
+                               (grn_rset_posinfo *)&id,
+                               0,
+                               &(data->value_buffer));
+  }
+  grn_ja_unref(ctx, &jw);
+
   return ctx->rc;
 }
 
@@ -1335,9 +1330,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     if (group_by_all_records) {
       grn_table_group_all_records(ctx, table, results);
     } else if (n_keys == 1 && n_results == 1) {
-      if (!accelerated_table_group(ctx, table, keys->key, results)) {
-        grn_table_group_single_key_records(ctx, table, keys->key, results);
-      }
+      grn_table_group_single_key_records(ctx, table, keys->key, results);
     } else {
       grn_bool have_vector = GRN_FALSE;
       for (k = 0, kp = keys; k < n_keys; k++, kp++) {
