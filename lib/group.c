@@ -670,10 +670,49 @@ typedef struct {
   grn_obj bulk;
   grn_obj value_buffer;
   grn_obj *key;
+  grn_ra_cache cache;
   grn_obj *res;
   bool with_subrec;
   bool is_reference_column;
 } single_key_records_data;
+
+static grn_rc
+grn_table_group_single_key_records_foreach_fix_size(grn_ctx *ctx,
+                                                    grn_table_cursor *cursor,
+                                                    grn_id id,
+                                                    void *user_data)
+{
+  single_key_records_data *data = user_data;
+  grn_ra *ra = (grn_ra *)(data->key);
+  grn_rset_recinfo *ri = NULL;
+
+  if (data->with_subrec) {
+    grn_table_cursor_get_value(ctx, cursor, (void **)&ri);
+  }
+  void *column_value = grn_ra_ref_cache(ctx, ra, id, &(data->cache));
+  if (data->is_reference_column && *((grn_id *)column_value) == GRN_ID_NIL) {
+    return ctx->rc;
+  }
+  void *value;
+  grn_id group_id = grn_table_add_v(ctx,
+                                    data->res,
+                                    column_value,
+                                    ra->header->element_size,
+                                    &value,
+                                    NULL);
+  if (group_id == GRN_ID_NIL) {
+    return ctx->rc;
+  }
+  grn_table_group_add_subrec(ctx,
+                             data->res,
+                             group_id,
+                             value,
+                             ri ? ri->score : 0,
+                             (grn_rset_posinfo *)&id,
+                             0,
+                             &(data->value_buffer));
+  return ctx->rc;
+}
 
 static grn_rc
 grn_table_group_single_key_records_foreach(grn_ctx *ctx,
@@ -785,10 +824,20 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
     data.with_subrec = (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC);
     data.is_reference_column =
       grn_id_maybe_table(ctx, grn_obj_get_range(ctx, key));
-    grn_table_cursor_foreach(ctx,
-                             cursor,
-                             grn_table_group_single_key_records_foreach,
-                             &data);
+    if (key->header.type == GRN_COLUMN_FIX_SIZE) {
+      GRN_RA_CACHE_INIT((grn_ra *)(key), &(data.cache));
+      grn_table_cursor_foreach(
+        ctx,
+        cursor,
+        grn_table_group_single_key_records_foreach_fix_size,
+        &data);
+      GRN_RA_CACHE_FIN((grn_ra *)(key), &(data.cache));
+    } else {
+      grn_table_cursor_foreach(ctx,
+                               cursor,
+                               grn_table_group_single_key_records_foreach,
+                               &data);
+    }
     grn_table_cursor_close(ctx, cursor);
   }
   GRN_OBJ_FIN(ctx, &(data.value_buffer));
