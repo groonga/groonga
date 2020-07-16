@@ -22,6 +22,7 @@
 #include "grn_db.h"
 #include "grn_expr.h"
 #include "grn_group.h"
+#include "grn_table.h"
 #include "grn_vector.h"
 
 #define GRN_TABLE_GROUP_BY_KEY           0
