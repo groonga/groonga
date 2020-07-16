@@ -30,6 +30,7 @@
 #include "grn_ii.h"
 #include "grn_index_column.h"
 #include "grn_ctx_impl.h"
+#include "grn_table.h"
 #include "grn_token_cursor.h"
 #include "grn_tokenizers.h"
 #include "grn_token_filters.h"

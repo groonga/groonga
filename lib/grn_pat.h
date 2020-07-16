@@ -22,7 +22,7 @@
 #include "grn.h"
 #include "grn_db.h"
 #include "grn_hash.h"
-#include "grn_table.h"
+#include "grn_table_module.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -76,6 +76,7 @@ libgroonga_c_sources =				\
 	grn_str.h				\
 	grn_string.h				\
 	grn_table.h				\
+	grn_table_module.h			\
 	grn_time.h				\
 	grn_token.h				\
 	grn_token_cursor.h			\
@@ -133,6 +134,7 @@ libgroonga_c_sources =				\
 	str.c					\
 	string.c				\
 	table.c					\
+	table_module.c				\
 	thread.c				\
 	time.c					\
 	token.c					\

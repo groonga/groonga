@@ -59,6 +59,7 @@
 #include "groonga/selector.h"
 #include "groonga/string.h"
 #include "groonga/table.h"
+#include "groonga/table_module.h"
 #include "groonga/thread.h"
 #include "groonga/time.h"
 #include "groonga/token.h"

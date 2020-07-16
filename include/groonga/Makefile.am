@@ -42,6 +42,7 @@ groonga_include_HEADERS =			\
 	scorer.h				\
 	string.h				\
 	table.h					\
+	table_module.h				\
 	thread.h				\
 	time.h					\
 	token.h					\

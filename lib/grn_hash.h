@@ -21,7 +21,7 @@
 
 #include "grn.h"
 #include "grn_ctx.h"
-#include "grn_table.h"
+#include "grn_table_module.h"
 
 #ifdef __cplusplus
 extern "C" {

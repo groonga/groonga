@@ -21,6 +21,7 @@
 #include "grn_db.h"
 #include "grn_load.h"
 #include "grn_obj.h"
+#include "grn_table.h"
 #include "grn_util.h"
 
 void
