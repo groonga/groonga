@@ -571,7 +571,8 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key,
     grn_accessor *a = (grn_accessor *)key;
     if (a->action == GRN_ACCESSOR_GET_KEY &&
         a->next && a->next->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
-        a->next->obj && !a->next->next) {
+        a->next->obj && !a->next->next &&
+        a->next->obj->header.type == GRN_COLUMN_VAR_SIZE) {
       grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, key));
       int idp = GRN_OBJ_TABLEP(range);
       grn_table_cursor *tc;
@@ -579,41 +580,6 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key,
         grn_bool processed = GRN_TRUE;
         grn_obj value_buffer;
         GRN_VOID_INIT(&value_buffer);
-        switch (a->next->obj->header.type) {
-        case GRN_COLUMN_FIX_SIZE :
-          {
-            grn_id id;
-            grn_ra *ra = (grn_ra *)a->next->obj;
-            unsigned int element_size = (ra)->header->element_size;
-            grn_ra_cache cache;
-            GRN_RA_CACHE_INIT(ra, &cache);
-            while ((id = grn_table_cursor_next(ctx, tc))) {
-              void *v, *value;
-              grn_id *id_;
-              uint32_t key_size;
-              grn_rset_recinfo *ri = NULL;
-              if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
-                grn_table_cursor_get_value(ctx, tc, (void **)&ri);
-              }
-              id_ = (grn_id *)_grn_table_key(ctx, table, id, &key_size);
-              v = grn_ra_ref_cache(ctx, ra, *id_, &cache);
-              if (idp && *((grn_id *)v) &&
-                  grn_table_at(ctx, range, *((grn_id *)v)) == GRN_ID_NIL) {
-                continue;
-              }
-              grn_id group_id;
-              if ((!idp || *((grn_id *)v)) &&
-                  (group_id = grn_table_add_v(ctx, res, v, element_size, &value, NULL))) {
-                grn_table_group_add_subrec(ctx, res, group_id, value,
-                                           ri ? ri->score : 0,
-                                           (grn_rset_posinfo *)&id, 0,
-                                           &value_buffer);
-              }
-            }
-            GRN_RA_CACHE_FIN(ra, &cache);
-          }
-          break;
-        case GRN_COLUMN_VAR_SIZE :
           if (idp) { /* todo : support other type */
             grn_id id;
             grn_ja *ja = (grn_ja *)a->next->obj;
@@ -652,11 +618,6 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key,
           } else {
             processed = GRN_FALSE;
           }
-          break;
-        default :
-          processed = GRN_FALSE;
-          break;
-        }
         GRN_OBJ_FIN(ctx, &value_buffer);
         grn_table_cursor_close(ctx, tc);
         return processed;
@@ -669,12 +630,29 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key,
 typedef struct {
   grn_obj bulk;
   grn_obj value_buffer;
+  bool need_resolved_id;
+  grn_obj *table;
   grn_obj *key;
   grn_ra_cache cache;
   grn_obj *res;
   bool with_subrec;
   bool is_reference_column;
 } single_key_records_data;
+
+static grn_inline grn_id
+grn_table_group_single_key_records_resolve_id(grn_ctx *ctx,
+                                              single_key_records_data *data,
+                                              grn_table_cursor *cursor,
+                                              grn_id id)
+{
+  if (data->need_resolved_id) {
+    void *key;
+    grn_table_cursor_get_key(ctx, cursor, &key);
+    return *((grn_id *)key);
+  } else {
+    return id;
+  }
+}
 
 static grn_rc
 grn_table_group_single_key_records_foreach_fix_size(grn_ctx *ctx,
@@ -689,7 +667,9 @@ grn_table_group_single_key_records_foreach_fix_size(grn_ctx *ctx,
   if (data->with_subrec) {
     grn_table_cursor_get_value(ctx, cursor, (void **)&ri);
   }
-  void *column_value = grn_ra_ref_cache(ctx, ra, id, &(data->cache));
+  grn_id value_id =
+    grn_table_group_single_key_records_resolve_id(ctx, data, cursor, id);
+  void *column_value = grn_ra_ref_cache(ctx, ra, value_id, &(data->cache));
   if (data->is_reference_column && *((grn_id *)column_value) == GRN_ID_NIL) {
     return ctx->rc;
   }
@@ -730,7 +710,9 @@ grn_table_group_single_key_records_foreach(grn_ctx *ctx,
   if (data->with_subrec) {
     grn_table_cursor_get_value(ctx, cursor, (void **)&ri);
   }
-  grn_obj_get_value(ctx, data->key, id, bulk);
+  grn_id value_id =
+    grn_table_group_single_key_records_resolve_id(ctx, data, cursor, id);
+  grn_obj_get_value(ctx, data->key, value_id, bulk);
   switch (data->bulk.header.type) {
   case GRN_UVECTOR :
     {
@@ -745,8 +727,8 @@ grn_table_group_single_key_records_foreach(grn_ctx *ctx,
         uint8_t *element = elements + (element_size * i);
 
         if (data->is_reference_column) {
-          grn_id id = *((grn_id *)element);
-          if (id == GRN_ID_NIL) {
+          grn_id reference_id = *((grn_id *)element);
+          if (reference_id == GRN_ID_NIL) {
             return ctx->rc;
           }
         }
@@ -818,20 +800,31 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
 
   GRN_TEXT_INIT(&(data.bulk), 0);
   GRN_VOID_INIT(&(data.value_buffer));
+  data.table = table;
   data.key = key;
   data.res = result->table;
   if ((cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
+    data.need_resolved_id = false;
+    if (key->header.type == GRN_ACCESSOR) {
+      grn_accessor *a = (grn_accessor *)key;
+      if (a->action == GRN_ACCESSOR_GET_KEY &&
+          a->next && a->next->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
+          a->next->obj && !a->next->next) {
+        data.key = a->next->obj;
+        data.need_resolved_id = true;
+      }
+    }
     data.with_subrec = (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC);
     data.is_reference_column =
-      grn_id_maybe_table(ctx, grn_obj_get_range(ctx, key));
-    if (key->header.type == GRN_COLUMN_FIX_SIZE) {
-      GRN_RA_CACHE_INIT((grn_ra *)(key), &(data.cache));
+      grn_id_maybe_table(ctx, grn_obj_get_range(ctx, data.key));
+    if (data.key->header.type == GRN_COLUMN_FIX_SIZE) {
+      GRN_RA_CACHE_INIT((grn_ra *)(data.key), &(data.cache));
       grn_table_cursor_foreach(
         ctx,
         cursor,
         grn_table_group_single_key_records_foreach_fix_size,
         &data);
-      GRN_RA_CACHE_FIN((grn_ra *)(key), &(data.cache));
+      GRN_RA_CACHE_FIN((grn_ra *)(data.key), &(data.cache));
     } else {
       grn_table_cursor_foreach(ctx,
                                cursor,
