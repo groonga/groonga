@@ -353,8 +353,15 @@ typedef int grn_cond;
 # define GRN_FMT_INT64D "I64d"
 # define GRN_FMT_INT64U "I64u"
 # define GRN_FMT_INT64X "I64x"
-#elif defined(HAVE_INTTYPES_H)
+#elif defined(HAVE_INTTYPES_H) && !defined(__cplusplus)
 # include <inttypes.h>
+# define GRN_FMT_INT32D PRId32
+# define GRN_FMT_INT32U PRIu32
+# define GRN_FMT_INT64D PRId64
+# define GRN_FMT_INT64U PRIu64
+# define GRN_FMT_INT64X PRIx64
+#elif defined(__cplusplus) && __cplusplus >= 201103L
+# include <cinttypes>
 # define GRN_FMT_INT32D PRId32
 # define GRN_FMT_INT32U PRIu32
 # define GRN_FMT_INT64D PRId64
