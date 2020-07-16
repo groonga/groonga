@@ -2944,6 +2944,84 @@ grn_table_cursor_next(grn_ctx *ctx, grn_table_cursor *tc)
   GRN_API_RETURN(id);
 }
 
+grn_rc
+grn_table_cursor_foreach(grn_ctx *ctx,
+                         grn_table_cursor *cursor,
+                         grn_table_cursor_foreach_func func,
+                         void *user_data)
+{
+  const char *tag = "[table][cursor][foreach]";
+  grn_rc rc = GRN_SUCCESS;
+  GRN_API_ENTER;
+  if (!cursor) {
+    rc = GRN_INVALID_ARGUMENT;
+    ERR(GRN_INVALID_ARGUMENT, "%s invalid cursor", tag);
+  } else {
+    switch (cursor->header.type) {
+    case GRN_CURSOR_TABLE_PAT_KEY :
+      {
+        grn_id id;
+        while ((id = grn_pat_cursor_next(ctx, (grn_pat_cursor *)cursor))) {
+          rc = func(ctx, cursor, id, user_data);
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        }
+      }
+      break;
+    case GRN_CURSOR_TABLE_DAT_KEY :
+      {
+        grn_id id;
+        while ((id = grn_dat_cursor_next(ctx, (grn_dat_cursor *)cursor))) {
+          rc = func(ctx, cursor, id, user_data);
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        }
+      }
+      break;
+    case GRN_CURSOR_TABLE_HASH_KEY :
+      {
+        grn_id id;
+        while ((id = grn_hash_cursor_next(ctx, (grn_hash_cursor *)cursor))) {
+          rc = func(ctx, cursor, id, user_data);
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        }
+      }
+      break;
+    case GRN_CURSOR_TABLE_NO_KEY :
+      {
+        grn_id id;
+        while ((id = grn_array_cursor_next(ctx, (grn_array_cursor *)cursor))) {
+          rc = func(ctx, cursor, id, user_data);
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        }
+      }
+      break;
+    case GRN_CURSOR_COLUMN_INDEX :
+      {
+        grn_posting *posting;
+        while ((posting = grn_index_cursor_next(ctx, (grn_obj *)cursor, NULL))) {
+          rc = func(ctx, cursor, posting->rid, user_data);
+          if (rc != GRN_SUCCESS) {
+            break;
+          }
+        }
+      }
+      break;
+    default :
+      rc = GRN_INVALID_ARGUMENT;
+      ERR(rc, "%s invalid type %d", tag, cursor->header.type);
+      break;
+    }
+  }
+  GRN_API_RETURN(rc);
+}
+
 int
 grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key)
 {

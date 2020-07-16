@@ -86,6 +86,15 @@ GRN_API grn_obj *grn_index_cursor_open(grn_ctx *ctx, grn_table_cursor *tc, grn_o
                                        grn_id rid_min, grn_id rid_max, int flags);
 GRN_API grn_posting *grn_index_cursor_next(grn_ctx *ctx, grn_obj *ic, grn_id *tid);
 
+typedef grn_rc (*grn_table_cursor_foreach_func)(grn_ctx *ctx,
+                                                grn_table_cursor *cursor,
+                                                grn_id id,
+                                                void *user_data);
+GRN_API grn_rc grn_table_cursor_foreach(grn_ctx *ctx,
+                                        grn_table_cursor *cursor,
+                                        grn_table_cursor_foreach_func func,
+                                        void *user_data);
+
 #define GRN_TABLE_EACH(ctx,table,head,tail,id,key,key_size,value,block) do {\
   (ctx)->errlvl = GRN_LOG_NOTICE;\
   (ctx)->rc = GRN_SUCCESS;\
