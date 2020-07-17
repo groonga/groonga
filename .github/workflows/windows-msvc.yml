@@ -86,8 +86,13 @@ jobs:
           # to ja-JP on GitHub Actions...
           # $INSTALL_PARENT_FOLDER = "インストール"
           $INSTALL_PARENT_FOLDER = "install"
+          $RELATIVE_INSTALL_FOLDER = "${INSTALL_PARENT_FOLDER}\${INSTALL_FOLDER}"
+          $RELATIVE_INSTALL_FOLDER_WITH_VCRUNTIME = `
+            "${INSTALL_PARENT_FOLDER}\${INSTALL_FOLDER_WITH_VCRUNTIME}"
           $FULL_INSTALL_FOLDER = `
-            "${Env:GITHUB_WORKSPACE}\${INSTALL_PARENT_FOLDER}\${INSTALL_FOLDER}"
+            "${Env:GITHUB_WORKSPACE}\${RELATIVE_INSTALL_FOLDER}"
+          $FULL_INSTALL_FOLDER_WITH_VCRUNTIME = `
+            "${Env:GITHUB_WORKSPACE}\${RELATIVE_INSTALL_FOLDER_WITH_VCRUNTIME}"
           Write-Output "::set-env name=INSTALL_FOLDER::${INSTALL_FOLDER}"
           Write-Output "::set-env name=INSTALL_FOLDER_WITH_VCRUNTIME::${INSTALL_FOLDER_WITH_VCRUNTIME}"
           Write-Output "::set-env name=FULL_INSTALL_FOLDER::${FULL_INSTALL_FOLDER}"
@@ -96,7 +101,9 @@ jobs:
           Write-Output "::set-env name=VC_PREFIX::${VC_PREFIX}"
 
           Write-Output "::set-output name=install-folder::${INSTALL_FOLDER}"
+          Write-Output "::set-output name=relative-install-folder::${RELATIVE_INSTALL_FOLDER}"
           Write-Output "::set-output name=install-folder-with-vcruntime::${INSTALL_FOLDER_WITH_VCRUNTIME}"
+          Write-Output "::set-output name=relative-install-folder-with-vcruntime::${RELATIVE_INSTALL_FOLDER_WITH_VCRUNTIME}"
       - name: Set version
         run: |
           "GRN_VERSION=${Env:GROONGA_VERSION}" | Set-Content version.sh
@@ -150,7 +157,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.env.outputs.install-folder }}
-          path: ${{ steps.env.outputs.install-folder }}
+          path: ${{ steps.env.outputs.relative-install-folder }}
       - name: Prepare artifacts with VC++ runtime
         run: |
           Set-PSDebug -Trace 2
@@ -197,7 +204,7 @@ jobs:
       - uses: actions/upload-artifact@v1
         with:
           name: ${{ steps.env.outputs.install-folder-with-vcruntime }}
-          path: ${{ steps.env.outputs.install-folder-with-vcruntime }}
+          path: ${{ steps.env.outputs.relative-install-folder-with-vcruntime }}
 
       # Release
       - name: Ensure creating release
