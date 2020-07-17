@@ -17,15 +17,19 @@ jobs:
           - label: Visual Studio 2019 x64
             architecture: x64
             artifact-name: vs-2019-x64
+            cmake-architecture: x64
             cmake-generator: Visual Studio 16 2019
             runs-on: windows-2019
+            vc-architecture: x64
             vc-toolset-version: 142
             vs-version: 2019
           - label: Visual Studio 2019 x86
             architecture: x86
             artifact-name: vs-2019-x86
+            cmake-architecture: Win32
             cmake-generator: Visual Studio 16 2019
             runs-on: windows-2019
+            vc-architecture: x64_x86
             vc-toolset-version: 142
             vs-version: 2019
           - label: Visual Studio 2017 x64
@@ -33,6 +37,7 @@ jobs:
             artifact-name: vs-2017-x64
             cmake-generator: Visual Studio 15 2017 Win64
             runs-on: windows-2016
+            vc-architecture: x64
             vc-toolset-version: 141
             vs-version: 2017
           - label: Visual Studio 2017 x86
@@ -40,6 +45,7 @@ jobs:
             artifact-name: vs-2017-x86
             cmake-generator: Visual Studio 15 2017
             runs-on: windows-2016
+            vc-architecture: x64_x86
             vc-toolset-version: 141
             vs-version: 2017
     runs-on: ${{ matrix.runs-on }}
@@ -108,8 +114,8 @@ jobs:
             "-DCMAKE_BUILD_TYPE=Release",
             "-DCMAKE_INSTALL_PREFIX=${Env:FULL_INSTALL_FOLDER}"
           )
-          if ("${{ matrix.vs-version }}" -ne "2017") {
-            $CMAKE_ARGS += ("-A", "${{ matrix.architecture }}")
+          if ("${{ matrix.cmake-architecture }}" -ne "") {
+            $CMAKE_ARGS += ("-A", "${{ matrix.cmake-architecture }}")
           }
           cmake ${CMAKE_ARGS}
           cmake --build ..\apache-arrow-build --config Release
@@ -121,16 +127,12 @@ jobs:
         shell: cmd
         run: |
           set YACC="win_bison.exe"
-          if "${{ matrix.architecture }}" == "x64" (
-            call "%VC_PREFIX%\Auxiliary\Build\vcvars64.bat"
-          ) else (
-            call "%VC_PREFIX%\Auxiliary\Build\vcvars32.bat"
-          )
+          call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" ${{ matrix.vc-architecture }}
           mkdir ..\groonga-build
           set CMAKE_ARGS=-S .
           set CMAKE_ARGS=%CMAKE_ARGS% -B ..\groonga-build
-          if not "${{ matrix.vs-version }}" == "2017" (
-            set CMAKE_ARGS=%CMAKE_ARGS% -A ${{ matrix.architecture }}
+          if not "${{ matrix.cmake-architecture }}" == "" (
+            set CMAKE_ARGS=%CMAKE_ARGS% -A ${{ matrix.cmake-architecture }}
           )
           set CMAKE_ARGS=%CMAKE_ARGS% -G "${{ matrix.cmake-generator }}"
           set CMAKE_ARGS=%CMAKE_ARGS% "-DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%"
