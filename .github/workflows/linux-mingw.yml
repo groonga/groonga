@@ -13,7 +13,9 @@ jobs:
           - x64
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
       - name: Install packages
         run: |
           sudo apt update
@@ -93,16 +95,19 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: windows-mingw-${{ matrix.architecture }}
-          path: windows-mingw-${{ matrix.architecture }}
       - name: Generate PDB
         run: |
-          cd windows-mingw-${{ matrix.architecture }}
-          bin\generate-pdb.bat
-      - name: Prepare artifacts
-        run: |
-          Move-Item `
-            windows-mingw-${{ matrix.architecture }} `
+          New-Item `
+            -Type Directory `
             windows-mingw-with-pdb-${{ matrix.architecture }}
+          $ZIP_ITEM = $(Get-ChildItem . -Filter *.zip)[0]
+          Expand-Archive ${ZIP_ITEM}.Name
+          pushd ${ZIP_ITEM}.BaseName
+          bin\generate-pdb.bat
+          popd
+          Compress-Archive `
+            ${ZIP_ITEM}.BaseName
+            windows-mingw-with-pdb-${{ matrix.architecture }}\${ZIP_ITEM}.Name
       - uses: actions/upload-artifact@v2
         with:
           name: windows-mingw-with-pdb-${{ matrix.architecture }}
@@ -119,13 +124,17 @@ jobs:
           - x64
     runs-on: windows-2019
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
           name: windows-mingw-with-pdb-${{ matrix.architecture }}
           path: windows-mingw-with-pdb-${{ matrix.architecture }}
-      - name: Setup environment
+      - name: Extract
         run: |
-          $INSTALL_FOLDER = "windows-mingw-with-pdb-${{ matrix.architecture }}"
+          $ZIP_ITEM = $(Get-ChildItem windows-mingw-with-pdb-${{ matrix.architecture }} -Filter *.zip)[0]
+          Extract-Archive ${ZIP_ITEM}
+          $INSTALL_FOLDER = "groonga"
+          Move-Item groonga-* ${INSTALL_FOLDER}
           Write-Output "::set-env name=INSTALL_FOLDER::${INSTALL_FOLDER}"
           $FULL_INSTALL_FOLDER = "$(Get-Location)\${INSTALL_FOLDER}"
           Write-Output "::set-env name=FULL_INSTALL_FOLDER::${FULL_INSTALL_FOLDER}"
@@ -192,6 +201,10 @@ jobs:
     steps:
       - uses: actions/download-artifact@v2
         with:
+          name: windows-mingw-${{ matrix.architecture }}
+          path: windows-mingw-${{ matrix.architecture }}
+      - uses: actions/download-artifact@v2
+        with:
           name: windows-mingw-with-pdb-${{ matrix.architecture }}
           path: windows-mingw-with-pdb-${{ matrix.architecture }}
       - name: Asset
@@ -201,15 +214,6 @@ jobs:
           echo ::set-output name=version::${version}
           base_name=groonga-${version}-${{ matrix.architecture }}
           echo ::set-output name=base_name::${base_name}
-      - name: Create assets
-        run: |
-          base_name=${{ steps.asset.outputs.base_name }}
-          cp -a \
-            windows-mingw-with-pdb-${{ matrix.architecture }} \
-            ${base_name}
-          zip -r \
-            ${base_name}.zip \
-            ${base_name}
       - name: Ensure creating release
         id: create-release
         uses: actions/github-script@0.4.0
@@ -223,14 +227,21 @@ jobs:
             const script = fs.readFileSync(path).toString();
             const func = new AsyncFunction("require", "github", "context", script);
             return await func(require, github, context);
-      - name: Upload to release
+      - name: Upload zip to release
         uses: actions/upload-release-asset@v1.0.1
-        if: |
-          startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.result }}
-          asset_path: ${{ steps.asset.outputs.base_name }}.zip
+          asset_path: windows-mingw-with-pdb-${{ matrix.architecture }}/${{ steps.asset.outputs.base_name }}.zip
           asset_name: ${{ steps.asset.outputs.base_name }}.zip
           asset_content_type: application/zip
+      - name: Upload installer to release
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.result }}
+          asset_path: windows-mingw-${{ matrix.architecture }}/${{ steps.asset.outputs.base_name }}.exe
+          asset_name: ${{ steps.asset.outputs.base_name }}.exe
+          asset_content_type: application/x-msdos-program
