@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -223,7 +223,7 @@ grn_output_columns_apply_add_records_key(grn_ctx *ctx,
     GRN_SHORT_TEXT_INIT(&target_key_buffer, 0);
   } else {
     GRN_VALUE_FIX_SIZE_INIT(&target_key_buffer,
-                              0,
+                            0,
                             target_table->header.domain);
   }
 
