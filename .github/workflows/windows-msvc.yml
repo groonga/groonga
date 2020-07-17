@@ -290,6 +290,8 @@ jobs:
             --timeout 60 `
             test\command\suite
       - name: "Test: HTTP: Apache Arrow: chunked"
+        if: |
+          matrix.architecture == 'x64'
         run: |
           grntest `
             --base-directory test\command `
