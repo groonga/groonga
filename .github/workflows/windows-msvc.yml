@@ -95,17 +95,23 @@ jobs:
         run: |
           "GRN_VERSION=${GROONGA_VERSION}" | Set-Content version.sh
       - name: Install Apache Arrow
+        if: |
+          matrix.architecture == 'x64'
         run: |
           New-Item ..\apache-arrow-build -ItemType Directory
-          cmake `
-            -S vendor\apache-arrow-source\cpp `
-            -B ..\apache-arrow-build `
-            -A ${{ matrix.architecture }} `
-            -G "${{ matrix.cmake-generator }}" `
-            -DARROW_VERBOSE_THIRDPARTY_BUILD=ON `
-            -DBOOST_SOURCE=BUNDLED `
-            -DCMAKE_BUILD_TYPE=Release `
+          $CMAKE_ARGS = (
+            "-S", "vendor\apache-arrow-source\cpp",
+            "-B", "..\apache-arrow-build",
+            "-G", "${{ matrix.cmake-generator }}",
+            "-DARROW_VERBOSE_THIRDPARTY_BUILD=ON",
+            "-DBOOST_SOURCE=BUNDLED",
+            "-DCMAKE_BUILD_TYPE=Release",
             "-DCMAKE_INSTALL_PREFIX=${Env:FULL_INSTALL_FOLDER}"
+          )
+          if ("${{ matrix.vs-version }}" -ne "2017") {
+            $CMAKE_ARGS += ("-A", "${{ matrix.architecture }}")
+          }
+          cmake ${CMAKE_ARGS}
           cmake --build ..\apache-arrow-build --config Release
           cmake --build ..\apache-arrow-build --config Release --target Install
       - name: Install dependencies
@@ -121,15 +127,19 @@ jobs:
             call "%VC_PREFIX%\Auxiliary\Build\vcvars32.bat"
           )
           mkdir ..\groonga-build
-          cmake ^
-            -S . ^
-            -B ..\groonga-build ^
-            -A ${{ matrix.architecture }} ^
-            -G "${{ matrix.cmake-generator }}" ^
-            "-DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%" ^
-            -DCMAKE_BUILD_TYPE=RelWithDebInfo ^
-            -DGRN_WITH_APACHE_ARROW=yes ^
-            -DGRN_WITH_MRUBY=yes
+          set CMAKE_ARGS=-S .
+          set CMAKE_ARGS=%CMAKE_ARGS% -B ..\groonga-build
+          if "${{ matrix.vs-version }}" != "2017" (
+            set CMAKE_ARGS=%CMAKE_ARGS% -A ${{ matrix.architecture }}
+          )
+          set CMAKE_ARGS=%CMAKE_ARGS% -G "${{ matrix.cmake-generator }}"
+          set CMAKE_ARGS=%CMAKE_ARGS% "-DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%"
+          set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          if "${{ matrix.architecture }}" == "x64" (
+            set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_APACHE_ARROW=yes
+          )
+          set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_MRUBY=yes
+          cmake %CMAKE_ARGS%
           type ..\groonga-build\CMakeFiles\CMakeError.log
           cmake --build ..\groonga-build --config RelWithDebInfo
           cmake --build ..\groonga-build --config RelWithDebInfo --target Install
