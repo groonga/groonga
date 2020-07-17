@@ -129,7 +129,7 @@ jobs:
           mkdir ..\groonga-build
           set CMAKE_ARGS=-S .
           set CMAKE_ARGS=%CMAKE_ARGS% -B ..\groonga-build
-          if "${{ matrix.vs-version }}" != "2017" (
+          if not "${{ matrix.vs-version }}" == "2017" (
             set CMAKE_ARGS=%CMAKE_ARGS% -A ${{ matrix.architecture }}
           )
           set CMAKE_ARGS=%CMAKE_ARGS% -G "${{ matrix.cmake-generator }}"
