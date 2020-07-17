@@ -93,7 +93,7 @@ jobs:
           Write-Output "::set-env name=VC_PREFIX::${VC_PREFIX}"
       - name: Set version
         run: |
-          "GRN_VERSION=${GROONGA_VERSION}" | Set-Content version.sh
+          "GRN_VERSION=${Env:GROONGA_VERSION}" | Set-Content version.sh
       - name: Install Apache Arrow
         if: |
           matrix.architecture == 'x64'
