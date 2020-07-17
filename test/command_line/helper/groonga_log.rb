@@ -150,7 +150,7 @@ module GroongaLog
       true
     when /\A\(unknown\):\d+:\d+: /
       true
-    when /\A[\w.]+:\d+:\d+: /
+    when /\A[\w.\\-]+:\d+:\d+: /
       true
     when /\Agroonga\(\) \[0x[\da-f]+\]\z/
       true
