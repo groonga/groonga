@@ -3151,7 +3151,7 @@ func_between(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 exit :
   between_data_fin(ctx, &data);
   if (table) {
-    grn_obj_unlink(ctx, table);
+    grn_obj_unref(ctx, table);
   }
 
   return found;

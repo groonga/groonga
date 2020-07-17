@@ -1,0 +1,15 @@
+plugin_register functions/time
+table_create Sales TABLE_NO_KEY
+column_create Sales area COLUMN_SCALAR ShortText
+column_create Sales price_per_month COLUMN_SCALAR UInt32
+column_create Sales time_stamp COLUMN_SCALAR Time
+load --table Sales
+[
+{"area": "Sayama"   , "price_per_month": "256125", "time_stamp": "2020-04-30 11:00:00.000000"},
+{"area": "Hakodate" , "price_per_month": "112214", "time_stamp": "2020-04-30 22:00:06.000000"},
+{"area": "Sayama"   , "price_per_month": "219801", "time_stamp": "2020-05-30 00:00:12.000000"},
+{"area": "Hakodate" , "price_per_month": "354211", "time_stamp": "2020-05-30 05:00:00.000000"},
+{"area": "Sayama"   , "price_per_month": "103452", "time_stamp": "2020-06-30 11:00:00.000000"},
+{"area": "Hakodate" , "price_per_month": "667853", "time_stamp": "2020-06-30 15:00:55.000000"}
+]
+select Sales   --filter 'between(sales_month, "2020-05-01 00:00:00.000000", "include", "2020-06-01 00:00:00.000000", "exclude")'   --columns[sales_month].stage initial   --columns[sales_month].type Time   --columns[sales_month].value 'time_classify_month(time_stamp)'
