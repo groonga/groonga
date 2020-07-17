@@ -103,7 +103,7 @@ jobs:
           $ZIP_ITEM = $(Get-ChildItem . -Filter *.zip)[0]
           Expand-Archive ${ZIP_ITEM}.Name
           pushd ${ZIP_ITEM}.BaseName
-          bin\generate-pdb.bat
+          & bin\generate-pdb.bat
           popd
           Compress-Archive `
             ${ZIP_ITEM}.BaseName
