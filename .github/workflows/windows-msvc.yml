@@ -172,7 +172,7 @@ jobs:
           $GROONGA_VC_REDIST_LICENSE_DIR = `
             "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}\share\groonga\vcruntime"
           New-Item `
-            -Path "${Env:GROONGA_VC_REDIST_LICENSE_DIR}" `
+            -Path "${GROONGA_VC_REDIST_LICENSE_DIR}" `
             -ItemType Directory
 
           $VC_REDIST_VERSION = (Get-Content "${Env:VC_PREFIX}\Auxiliary\Build\Microsoft.VCRedistVersion.default.txt")
