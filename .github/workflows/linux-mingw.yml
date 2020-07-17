@@ -101,13 +101,13 @@ jobs:
             -Type Directory `
             windows-mingw-with-pdb-${{ matrix.architecture }}
           $ZIP_ITEM = $(Get-ChildItem . -Filter *.zip)[0]
-          Expand-Archive ${ZIP_ITEM}.Name
+          Expand-Archive ${ZIP_ITEM} .
           pushd ${ZIP_ITEM}.BaseName
-          & bin\generate-pdb.bat
+          bin\generate-pdb.bat
           popd
           Compress-Archive `
             ${ZIP_ITEM}.BaseName
-            windows-mingw-with-pdb-${{ matrix.architecture }}\${ZIP_ITEM}.Name
+            windows-mingw-with-pdb-${{ matrix.architecture }}\$(${ZIP_ITEM}.Name)
       - uses: actions/upload-artifact@v2
         with:
           name: windows-mingw-with-pdb-${{ matrix.architecture }}
