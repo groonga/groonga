@@ -4601,6 +4601,19 @@ accessor_new(grn_ctx *ctx)
   return res;
 }
 
+static grn_accessor *
+grn_accessor_new_key(grn_ctx *ctx, grn_obj *table)
+{
+  grn_accessor *accessor = accessor_new(ctx);
+  if (!accessor) {
+    return accessor;
+  }
+  grn_obj_refer(ctx, table);
+  accessor->obj = table;
+  accessor->action = GRN_ACCESSOR_GET_KEY;
+  return accessor;
+}
+
 grn_inline static void
 grn_accessor_refer(grn_ctx *ctx, grn_obj *accessor)
 {
@@ -13462,6 +13475,82 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
     p = q;
   }
   return ctx->rc;
+}
+
+grn_obj *
+grn_table_column(grn_ctx *ctx,
+                 grn_obj *table,
+                 const char *name,
+                 ssize_t name_size)
+{
+  GRN_API_ENTER;
+
+  if (name_size < 0) {
+    name_size = strlen(name);
+  }
+
+  grn_obj *column = grn_obj_column_(ctx, table, name, name_size);
+  if (grn_obj_is_accessor(ctx, column)) {
+    grn_obj_unlink(ctx, column);
+    column = NULL;
+  }
+
+  GRN_API_RETURN(column);
+}
+
+grn_rc
+grn_table_parse_load_columns(grn_ctx *ctx,
+                             grn_obj *table,
+                             const char *input,
+                             size_t input_size,
+                             grn_obj *columns)
+{
+  GRN_API_ENTER;
+  const char *current = input;
+  const char *end = input + input_size;
+#define TOKEN_MAX 256
+  const char *tokens[TOKEN_MAX];
+  while (current < end) {
+    const char *rest;
+    int n = grn_tokenize(current,
+                         end - current,
+                         tokens,
+                         TOKEN_MAX,
+                         &rest);
+    int i;
+    for (i = 0; i < n; i++) {
+      const char *next_start = tokens[i];
+      while (current < next_start && (' ' == *current || ',' == *current)) {
+        current++;
+      }
+      if (current < next_start) {
+        grn_raw_string column_name;
+        column_name.value = current;
+        column_name.length = next_start - current;
+        if (column_name.value[0] == '_') {
+          if (grn_obj_is_lexicon(ctx, table) &&
+              GRN_RAW_STRING_EQUAL_CSTRING(column_name, GRN_COLUMN_NAME_KEY)) {
+            grn_accessor *key_accessor = grn_accessor_new_key(ctx, table);
+            if (key_accessor) {
+              GRN_PTR_PUT(ctx, columns, key_accessor);
+            }
+          }
+        } else {
+          grn_obj *column = grn_table_column(ctx,
+                                             table,
+                                             current,
+                                             next_start - current);
+          if (column) {
+            GRN_PTR_PUT(ctx, columns, column);
+          }
+        }
+      }
+      current = next_start;
+    }
+    current = rest;
+  }
+#undef TOKEN_MAX
+  GRN_API_RETURN(ctx->rc);
 }
 
 static grn_table_sort_key *

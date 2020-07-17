@@ -1,0 +1,42 @@
+table_create Logs TABLE_HASH_KEY ShortText
+column_create Logs timestamp COLUMN_SCALAR Time
+
+table_create Times TABLE_PAT_KEY Time
+column_create Times logs_timestamp COLUMN_INDEX Logs timestamp
+
+table_create LoadedLogs TABLE_HASH_KEY Logs
+
+load --table Logs
+[
+{
+  "_key": "2015-02-03:1",
+  "timestamp": "2015-02-03 10:49:00"
+},
+{
+  "_key": "2015-02-03:2",
+  "timestamp": "2015-02-03 12:49:00"
+},
+{
+  "_key": "2015-02-04:1",
+  "timestamp": "2015-02-04 00:00:00"
+}
+]
+
+log_level --level info
+#@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
+#@collect-query-log true
+select \
+  Logs \
+  --load_table LoadedLogs \
+  --load_columns "_key" \
+  --load_values "_key" \
+  --limit 0
+
+select \
+  --table LoadedLogs \
+  --filter 'timestamp >= "2015-02-03 12:49:00"'
+#@collect-query-log false
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels info
+log_level --level notice

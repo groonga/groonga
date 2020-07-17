@@ -513,6 +513,16 @@ GRN_API grn_rc grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
                                               grn_obj *result_set,
                                               uint32_t range_gap);
 
+grn_obj *grn_table_column(grn_ctx *ctx,
+                          grn_obj *table,
+                          const char *name,
+                          ssize_t name_size);
+grn_rc grn_table_parse_load_columns(grn_ctx *ctx,
+                                    grn_obj *table,
+                                    const char *input,
+                                    size_t input_size,
+                                    grn_obj *columns);
+
 GRN_API grn_rc grn_column_filter(grn_ctx *ctx, grn_obj *column,
                                  grn_operator op,
                                  grn_obj *value, grn_obj *result_set,

@@ -2423,11 +2423,11 @@ grn_select_load(grn_ctx *ctx,
   GRN_PTR_INIT(&ranges, GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_PTR_INIT(&indexes, GRN_OBJ_VECTOR, GRN_ID_NIL);
 
-  grn_obj_columns(ctx,
-                  table,
-                  data->load.columns.value,
-                  data->load.columns.length,
-                  &columns);
+  grn_table_parse_load_columns(ctx,
+                               table,
+                               data->load.columns.value,
+                               data->load.columns.length,
+                               &columns);
   if (ctx->rc != GRN_SUCCESS) {
     GRN_PLUGIN_ERROR(ctx,
                      ctx->rc,

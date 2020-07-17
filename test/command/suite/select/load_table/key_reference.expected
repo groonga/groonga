@@ -1,0 +1,112 @@
+table_create Logs TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Logs timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Times TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times logs_timestamp COLUMN_INDEX Logs timestamp
+[[0,0.0,0.0],true]
+table_create LoadedLogs TABLE_HASH_KEY Logs
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{
+  "_key": "2015-02-03:1",
+  "timestamp": "2015-02-03 10:49:00"
+},
+{
+  "_key": "2015-02-03:2",
+  "timestamp": "2015-02-03 12:49:00"
+},
+{
+  "_key": "2015-02-04:1",
+  "timestamp": "2015-02-04 00:00:00"
+}
+]
+[[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
+select   Logs   --load_table LoadedLogs   --load_columns "_key"   --load_values "_key"   --limit 0
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ]
+    ]
+  ]
+]
+#>select --limit "0" --load_columns "_key" --load_table "LoadedLogs" --load_values "_key" --table "Logs"
+#:000000000000000 select(3)
+#:000000000000000 load(3): [LoadedLogs][3]
+#:000000000000000 output(0)
+#:000000000000000 send(0)
+#<000000000000000 rc=0
+select   --table LoadedLogs   --filter 'timestamp >= "2015-02-03 12:49:00"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ],
+      [
+        2,
+        "2015-02-03:2",
+        1422935340.0
+      ],
+      [
+        3,
+        "2015-02-04:1",
+        1422975600.0
+      ]
+    ]
+  ]
+]
+#|i| [table][select][index][range] <Times.logs_timestamp>
+#|i| [accessor][resolve][table] <LoadedLogs> -> <Logs> -> <ShortText>
+#>select --filter "timestamp >= \"2015-02-03 12:49:00\"" --table "LoadedLogs"
+#:000000000000000 filter(2): #<accessor _key(LoadedLogs).timestamp(Logs)> greater_equal "2015-02-03 12:49:00"
+#:000000000000000 select(2)
+#:000000000000000 output(2)
+#:000000000000000 send(0)
+#<000000000000000 rc=0
+log_level --level notice
+[[0,0.0,0.0],true]
