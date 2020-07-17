@@ -1084,7 +1084,9 @@ grn_proc_create(grn_ctx *ctx, const char *name, int name_size, grn_proc_type typ
         if (res->funcs[PROC_INIT] ||
             res->funcs[PROC_NEXT] ||
             res->funcs[PROC_FIN]) {
-          ERR(GRN_INVALID_ARGUMENT, "already used name");
+          ERR(GRN_INVALID_ARGUMENT,
+              "[proc][create] already used name: <%.*s>",
+              name_size, name);
           GRN_API_RETURN(NULL);
         }
         if (range != GRN_ID_NIL) {
