@@ -106,7 +106,7 @@ jobs:
           bin\generate-pdb.bat
           popd
           Compress-Archive `
-            ${ZIP_ITEM}.BaseName
+            ${ZIP_ITEM}.BaseName `
             windows-mingw-with-pdb-${{ matrix.architecture }}\$(${ZIP_ITEM}.Name)
       - uses: actions/upload-artifact@v2
         with:
