@@ -150,6 +150,8 @@ module GroongaLog
       true
     when /\A\(unknown\):\d+:\d+: /
       true
+    when /\A[\w.]+:\d+:\d+: /
+      true
     when /\Agroonga\(\) \[0x[\da-f]+\]\z/
       true
     when /\A\d+\s+(?:lib\S+\.dylib|\S+\.so|groonga|nginx|\?\?\?)\s+
