@@ -272,6 +272,10 @@ jobs:
           cd ..\grntest
           bundle install
           bundle exec ruby -rdevkit -S rake install
+      - name: Install Red Arrow
+        if: |
+          matrix.architecture == 'x64'
+        run: |
           gem install red-arrow
       - name: "Test: command line"
         run: |
