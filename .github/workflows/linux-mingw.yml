@@ -93,6 +93,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: windows-mingw-${{ matrix.architecture }}
+          path: windows-mingw-${{ matrix.architecture }}
       - name: Generate PDB
         run: |
           cd windows-mingw-${{ matrix.architecture }}
@@ -106,6 +107,75 @@ jobs:
         with:
           name: windows-mingw-with-pdb-${{ matrix.architecture }}
           path: windows-mingw-with-pdb-${{ matrix.architecture }}
+  test:
+    name: Test
+    needs:
+      - pdb
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture:
+          - x86
+          - x64
+    runs-on: windows-2019
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: windows-mingw-with-pdb-${{ matrix.architecture }}
+          path: windows-mingw-with-pdb-${{ matrix.architecture }}
+      - name: Setup environment
+        run: |
+          $INSTALL_FOLDER = "windows-mingw-with-pdb-${{ matrix.architecture }}"
+          Write-Output "::set-env name=INSTALL_FOLDER::${INSTALL_FOLDER}"
+          $FULL_INSTALL_FOLDER = "$(Get-Location)\${INSTALL_FOLDER}"
+          Write-Output "::set-env name=FULL_INSTALL_FOLDER::${FULL_INSTALL_FOLDER}"
+      - uses: actions/setup-ruby@v1
+      - name: Update MSYS2
+        run: |
+          ridk exec pacman --sync --refresh --sysupgrade --noconfirm
+      - name: Update GCC
+        run: |
+          ridk exec pacman --sync --noconfirm mingw-w64-x86_64-gcc
+      - name: Install grntest
+        run: |
+          git clone --depth 1 `
+            https://github.com/groonga/grntest.git `
+            ..\grntest
+          cd ..\grntest
+          bundle install
+          bundle exec ruby -rdevkit -S rake install
+          gem install red-arrow
+      - name: "Test: command line"
+        run: |
+          ruby test\command_line\run-test.rb `
+            --groonga-install-prefix="${Env:INSTALL_FOLDER}"
+      - name: "Test: HTTP: reference count"
+        run: |
+          $Env:GRN_ENABLE_REFERENCE_COUNT = "yes"
+          grntest `
+            --base-directory test\command `
+            --groonga "${Env:FULL_INSTALL_FOLDER}\bin\groonga.exe" `
+            --interface http `
+            --n-retries 2 `
+            --n-workers ${Env:NUMBER_OF_PROCESSORS} `
+            --read-timeout 30 `
+            --reporter mark `
+            --timeout 60 `
+            test\command\suite
+      - name: "Test: HTTP: Apache Arrow: chunked"
+        run: |
+          grntest `
+            --base-directory test\command `
+            --groonga "${Env:FULL_INSTALL_FOLDER}\bin\groonga.exe" `
+            --input-type apache-arrow `
+            --interface http `
+            --n-retries 2 `
+            --n-workers ${Env:NUMBER_OF_PROCESSORS} `
+            --read-timeout 30 `
+            --reporter mark `
+            --timeout 360 `
+            --use-http-chunked `
+            test\command\suite
   release:
     name: Release
     needs:
@@ -123,6 +193,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: windows-mingw-with-pdb-${{ matrix.architecture }}
+          path: windows-mingw-with-pdb-${{ matrix.architecture }}
       - name: Asset
         id: asset
         run: |
