@@ -16,7 +16,6 @@ jobs:
         include:
           - label: Visual Studio 2019 x64
             architecture: x64
-            artifact-name: vs-2019-x64
             cmake-architecture: x64
             cmake-generator: Visual Studio 16 2019
             runs-on: windows-2019
@@ -25,7 +24,6 @@ jobs:
             vs-version: 2019
           - label: Visual Studio 2019 x86
             architecture: x86
-            artifact-name: vs-2019-x86
             cmake-architecture: Win32
             cmake-generator: Visual Studio 16 2019
             runs-on: windows-2019
@@ -34,7 +32,6 @@ jobs:
             vs-version: 2019
           - label: Visual Studio 2017 x64
             architecture: x64
-            artifact-name: vs-2017-x64
             cmake-generator: Visual Studio 15 2017 Win64
             runs-on: windows-2016
             vc-architecture: x64
@@ -42,7 +39,6 @@ jobs:
             vs-version: 2017
           - label: Visual Studio 2017 x86
             architecture: x86
-            artifact-name: vs-2017-x86
             cmake-generator: Visual Studio 15 2017
             runs-on: windows-2016
             vc-architecture: x64_x86
@@ -73,6 +69,7 @@ jobs:
           ruby download_message_pack.rb
           ruby download_rapidjson.rb
       - name: Set environments
+        id: env
         run: |
           Write-Output "::set-env name=CMAKE_BUILD_PARALLEL_LEVEL::${Env:NUMBER_OF_PROCESSORS}"
 
@@ -97,6 +94,9 @@ jobs:
 
           $VC_PREFIX = "C:\Program Files (x86)\Microsoft Visual Studio\${{ matrix.vs-version }}\Enterprise\VC"
           Write-Output "::set-env name=VC_PREFIX::${VC_PREFIX}"
+
+          Write-Output "::set-output name=install-folder::${INSTALL_FOLDER}"
+          Write-Output "::set-output name=install-folder-with-vcruntime::${INSTALL_FOLDER_WITH_VCRUNTIME}"
       - name: Set version
         run: |
           "GRN_VERSION=${Env:GROONGA_VERSION}" | Set-Content version.sh
@@ -147,23 +147,14 @@ jobs:
           cmake --build ..\groonga-build --config RelWithDebInfo --target Install
 
       # Artifact
-      - name: Prepare artifacts without VC++ runtime
-        run: |
-          New-Item artifacts -ItemType Directory
-          pushd "${Env:FULL_INSTALL_FOLDER}\.."
-          Compress-Archive `
-            -Path "${Env:INSTALL_FOLDER}" `
-            -DestinationPath "${Env:GITHUB_WORKSPACE}\artifacts\${Env:INSTALL_FOLDER}.zip"
-          popd
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.artifact-name }}
-          path: artifacts
+          name: ${{ steps.env.outputs.install-folder }}
+          path: ${{ steps.env.outputs.install-folder }}
       - name: Prepare artifacts with VC++ runtime
         run: |
           Set-PSDebug -Trace 2
 
-          New-Item artifacts-with-vcruntime -ItemType Directory
           pushd "${Env:FULL_INSTALL_FOLDER}\.."
 
           Copy-Item -Recurse `
@@ -202,23 +193,13 @@ jobs:
           Copy-Item `
             "${Env:GITHUB_WORKSPACE}\packages\windows\vcruntime\ucrt-readme.txt" `
             ${Env:GROONGA_VC_REDIST_LICENSE_DIR}
-
-          Compress-Archive `
-            -Path ${Env:INSTALL_FOLDER_WITH_VCRUNTIME} `
-            -DestinationPath "${Env:GITHUB_WORKSPACE}\artifacts-with-vcruntime\${Env:INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
           popd
       - uses: actions/upload-artifact@v1
         with:
-          name: ${{ matrix.artifact-name }}-with-vcruntime
-          path: artifacts-with-vcruntime
+          name: ${{ steps.env.outputs.install-folder-with-vcruntime }}
+          path: ${{ steps.env.outputs.install-folder-with-vcruntime }}
 
       # Release
-      - name: Asset
-        if: |
-          startsWith(github.ref, 'refs/tags/')
-        id: asset
-        run: |
-          Write-Output "::set-output name=base_name::${INSTALL_FOLDER}"
       - name: Ensure creating release
         if: |
           startsWith(github.ref, 'refs/tags/')
@@ -234,6 +215,13 @@ jobs:
             const script = fs.readFileSync(path).toString();
             const func = new AsyncFunction("require", "github", "context", script);
             return await func(require, github, context);
+      - name: Compress the artifact without VC++ runtime
+        if: |
+          startsWith(github.ref, 'refs/tags/')
+        run: |
+          Compress-Archive `
+            -Path ${Env:INSTALL_FOLDER} `
+            -DestinationPath "${Env:INSTALL_FOLDER}.zip"
       - name: Upload the artifact without VC++ runtime to release
         uses: actions/upload-release-asset@v1.0.1
         if: |
@@ -242,9 +230,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.result }}
-          asset_path: artifacts/${{ steps.asset.outputs.base_name }}.zip
-          asset_name: ${{ steps.asset.outputs.base_name }}.zip
+          asset_path: ${{ steps.env.outputs.install-folder }}.zip
+          asset_name: ${{ steps.env.outputs.install-folder }}.zip
           asset_content_type: application/zip
+      - name: Compress the artifact with VC++ runtime
+        if: |
+          startsWith(github.ref, 'refs/tags/')
+        run: |
+          Compress-Archive `
+            -Path ${Env:INSTALL_FOLDER_WITH_VCRUNTIME} `
+            -DestinationPath "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
       - name: Upload the artifact with VC++ runtime to release
         uses: actions/upload-release-asset@v1.0.1
         if: |
@@ -253,8 +248,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.result }}
-          asset_path: artifacts-with-vcruntime/${{ steps.asset.outputs.base_name }}-with-vcruntime.zip
-          asset_name: ${{ steps.asset.outputs.base_name }}-with-vcruntime.zip
+          asset_path: ${{ steps.env.outputs.install-folder-with-vcruntime }}.zip
+          asset_name: ${{ steps.env.outputs.install-folder-with-vcruntime }}.zip
           asset_content_type: application/zip
 
       # Test
