@@ -1,0 +1,16 @@
+table_create Data TABLE_NO_KEY
+column_create Data timestamp COLUMN_SCALAR Time
+
+load --table Data
+[
+{"timestamp": "2020-04-01 11:00:00.000000"},
+{"timestamp": "2020-04-01 12:00:00.000000"}
+]
+
+select Data \
+  --filter 'between(timestamp, \
+                    "2020-04-01 01:00:00.000000", "include", \
+                    "2020-04-01 12:00:00.000000", "exclude")' \
+  --columns[dummy_for_creating_temporary_table].stage initial \
+  --columns[dummy_for_creating_temporary_table].type Bool \
+  --columns[dummy_for_creating_temporary_table].value true
