@@ -132,7 +132,7 @@ jobs:
       - name: Extract
         run: |
           $ZIP_ITEM = $(Get-ChildItem windows-mingw-with-pdb-${{ matrix.architecture }} -Filter *.zip)[0]
-          Extract-Archive ${ZIP_ITEM}
+          Expand-Archive ${ZIP_ITEM}
           $INSTALL_FOLDER = "groonga"
           Move-Item groonga-* ${INSTALL_FOLDER}
           Write-Output "::set-env name=INSTALL_FOLDER::${INSTALL_FOLDER}"
