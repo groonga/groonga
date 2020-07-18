@@ -124,6 +124,13 @@ jobs:
           - x64
     runs-on: windows-2019
     steps:
+      - name: Disable crash dialog
+        run: |
+          reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" `
+            /v DontShowUI `
+            /t REG_DWORD `
+            /d 1 `
+            /f
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
