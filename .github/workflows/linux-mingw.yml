@@ -131,6 +131,9 @@ jobs:
             /t REG_DWORD `
             /d 1 `
             /f
+      - name: Use JST
+        run: |
+          Set-TimeZone -Id "Tokyo Standard Time"
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
