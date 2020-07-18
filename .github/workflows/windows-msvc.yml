@@ -201,7 +201,7 @@ jobs:
             "${Env:GITHUB_WORKSPACE}\packages\windows\vcruntime\ucrt-readme.txt" `
             ${Env:GROONGA_VC_REDIST_LICENSE_DIR}
           popd
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.env.outputs.install-folder-with-vcruntime }}
           path: ${{ steps.env.outputs.relative-install-folder-with-vcruntime }}
