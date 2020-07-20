@@ -10313,6 +10313,30 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
               case GRN_PROC :
                 GET_PATH(spec, &decoded_spec, buffer, s, id);
                 grn_plugin_register(ctx, buffer);
+                if (grn_enable_reference_count && vp->ptr) {
+                  /* Registered proc by plugin must not be freed by
+                   * grn_obj_unlink() for now. In the future, we may
+                   * support reference count for proc registered by
+                   * plugin.
+                   *
+                   * Registered proc by plugin isn't freed by
+                   * grn_obj_unlink() in the process that executes
+                   * plugin_register. Because plugin doesn't call
+                   * grn_obj_unlink() against the returned object by
+                   * grn_proc_create().
+                   *
+                   * Registered proc by plugin is freed by
+                   * grn_obj_unlink() without this increment in the
+                   * process that does not execute
+                   * plugin_register. Because the initial reference
+                   * count ("vp->lock = 1") in grn_db_obj_init()
+                   * (called from grn_proc_create()) is reused by this
+                   * grn_ctx_at(). If we increment the reference count
+                   * here, the registered proc by plugin here isn't
+                   * freed by grn_obj_unlink() in the process that
+                   * does not execute plugin_register. */
+                  vp->lock++;
+                }
                 break;
               case GRN_EXPR :
                 {
