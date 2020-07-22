@@ -88,16 +88,18 @@ namespace grn {
           grn_ctx_init(&ctx, 0);
           grn_ctx_use(&ctx, db);
           grn_obj tokens;
+          grn_obj value;
           GRN_RECORD_INIT(&tokens, GRN_OBJ_VECTOR, DB_OBJ(lexicon_)->id);
+          GRN_VOID_INIT(&value);
           for (auto id : ids) {
             GRN_BULK_REWIND(&tokens);
-            uint32_t value_size;
-            auto value = grn_obj_get_value_(&ctx, source_, id, &value_size);
-            if (value_size > 0) {
+            GRN_BULK_REWIND(&value);
+            grn_obj_get_value(&ctx, source_, id, &value);
+            if (GRN_TEXT_LEN(&value) > 0) {
               auto token_cursor = grn_token_cursor_open(&ctx,
                                                         lexicon_,
-                                                        value,
-                                                        value_size,
+                                                        GRN_BULK_HEAD(&value),
+                                                        GRN_BULK_VSIZE(&value),
                                                         GRN_TOKEN_ADD,
                                                         token_cursor_flags);
               if (token_cursor) {
@@ -116,6 +118,7 @@ namespace grn {
               break;
             }
           }
+          GRN_OBJ_FIN(&ctx, &value);
           GRN_OBJ_FIN(&ctx, &tokens);
           if (ctx.rc != GRN_SUCCESS) {
             std::lock_guard<std::mutex> lock(mutex);
@@ -171,19 +174,22 @@ namespace grn {
       void
       build_sequential() {
         grn_obj tokens;
+        grn_obj value;
         GRN_RECORD_INIT(&tokens, GRN_OBJ_VECTOR, DB_OBJ(lexicon_)->id);
+        GRN_VOID_INIT(&value);
         unsigned int token_flags = 0;
         GRN_TABLE_EACH_BEGIN_FLAGS(ctx_, table_, cursor, id, GRN_CURSOR_BY_ID) {
           GRN_BULK_REWIND(&tokens);
-          uint32_t value_size;
-          const char *value = grn_obj_get_value_(ctx_, source_, id, &value_size);
-          if (value_size > 0) {
-            grn_token_cursor *token_cursor = grn_token_cursor_open(ctx_,
-                                                                   lexicon_,
-                                                                   value,
-                                                                   value_size,
-                                                                   GRN_TOKEN_ADD,
-                                                                   token_flags);
+          GRN_BULK_REWIND(&value);
+          grn_obj_get_value(ctx_, source_, id, &value);
+          if (GRN_TEXT_LEN(&value) > 0) {
+            grn_token_cursor *token_cursor =
+              grn_token_cursor_open(ctx_,
+                                    lexicon_,
+                                    GRN_BULK_HEAD(&value),
+                                    GRN_BULK_VSIZE(&value),
+                                    GRN_TOKEN_ADD,
+                                    token_flags);
             if (token_cursor) {
               while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
                 grn_id token_id = grn_token_cursor_next(ctx_, token_cursor);
@@ -200,6 +206,7 @@ namespace grn {
             break;
           }
         } GRN_TABLE_EACH_END(ctx_, cursor);
+        GRN_OBJ_FIN(ctx_, &value);
         GRN_OBJ_FIN(ctx_, &tokens);
       }
 
