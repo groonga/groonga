@@ -10336,6 +10336,8 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                    * freed by grn_obj_unlink() in the process that
                    * does not execute plugin_register. */
                   vp->lock++;
+                  grn_log_reference_count("at: proc: increment: %u: %u\n",
+                                          id, vp->lock);
                 }
                 break;
               case GRN_EXPR :
