@@ -263,20 +263,13 @@ jobs:
       - name: Update MSYS2 keyring
         run: |
           # https://www.msys2.org/news/#2020-06-29-new-packagers
-          msys2_keyring_pkg=msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
-          for suffix in "" ".sig"; do
-            curl \
-              --location \
-              --remote-name \
-              --show-error \
-              --silent \
-              https://repo.msys2.org/msys/x86_64/${msys2_keyring_pkg}${suffix}
-          done
-          pacman-key --verify ${msys2_keyring_pkg}.sig
-          pacman \
-            --noconfirm \
-            --upgrade \
-            ${msys2_keyring_pkg}
+          Invoke-WebRequest `
+            -Uri https://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz `
+            -OutFile msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
+          ridk exec pacman `
+            --noconfirm `
+            --upgrade `
+            msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
       - name: Update MSYS2
         run: |
           ridk exec pacman --sync --refresh --sysupgrade --sysupgrade --noconfirm
