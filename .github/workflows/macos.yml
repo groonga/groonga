@@ -34,8 +34,8 @@ jobs:
           gem install \
             groonga-client \
             json \
-            pkg-config \
-            red-arrow
+            pkg-config
+          gem install red-arrow -v 0.17.1
       - name: Set environment variables
         run: |
           echo "::set-env name=COLUMNS::79"
