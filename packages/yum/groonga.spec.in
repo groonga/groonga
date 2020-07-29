@@ -539,6 +539,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Wed Jul 29 2020 Horimoto Yasuhiro <horimoto@clear-code.com> - 10.0.5-1
+- New upstream release.
+
 * Fri Jun 26 2020 Horimoto Yasuhiro <horimoto@clear-code.com> - 10.0.4-1
 - New upstream release.
 
