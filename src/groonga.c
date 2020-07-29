@@ -22,7 +22,6 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <sys/time.h>
 #include <errno.h>
 
 #ifdef WIN32
