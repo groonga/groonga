@@ -7,6 +7,418 @@
 News
 ====
 
+.. _release-10-0-5:
+
+Release 10.0.5 - 2020-07-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/select`] Added support for storing reference in table that we specify with ``--load_table``.
+
+  * ``--load_table`` is a feature that stores search results to the table in a prepared.
+
+    * If the searches are executed multiple times, we can cache the search results by storing them to this table.
+    * We can shorten the search times that the search after the first time by using this table.
+
+  * We can store a reference to other tables into the key of this table as below since this release.
+
+    * We can make a smaller size of this table. Because we only store references without store column values.
+    * If we search against this table, we can search by using indexes for reference destination.
+
+    .. code-block::
+
+      table_create Logs TABLE_HASH_KEY ShortText
+      column_create Logs timestamp COLUMN_SCALAR Time
+
+      table_create Times TABLE_PAT_KEY Time
+      column_create Times logs_timestamp COLUMN_INDEX Logs timestamp
+
+      table_create LoadedLogs TABLE_HASH_KEY Logs
+
+      load --table Logs
+      [
+      {
+        "_key": "2015-02-03:1",
+        "timestamp": "2015-02-03 10:49:00"
+      },
+      {
+        "_key": "2015-02-03:2",
+        "timestamp": "2015-02-03 12:49:00"
+      },
+      {
+        "_key": "2015-02-04:1",
+        "timestamp": "2015-02-04 00:00:00"
+      }
+      ]
+
+      select \
+        Logs \
+        --load_table LoadedLogs \
+        --load_columns "_key" \
+        --load_values "_key" \
+        --limit 0
+
+      select \
+        --table LoadedLogs \
+        --filter 'timestamp >= "2015-02-03 12:49:00"'
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              2
+            ],
+            [
+              [
+                "_id",
+                "UInt32"
+              ],
+              [
+                "_key",
+                "ShortText"
+              ],
+              [
+                "timestamp",
+                "Time"
+              ]
+            ],
+            [
+              2,
+              "2015-02-03:2",
+              1422935340.0
+            ],
+            [
+              3,
+              "2015-02-04:1",
+              1422975600.0
+            ]
+          ]
+        ]
+      ]
+
+* [:doc:`reference/commands/select`] Improved sort performance on below cases.
+
+  * When many sort keys need ID resolution.
+
+    * For example, the following expression needs ID resolution.
+
+      * ``--filter true --sort_keys column``
+
+    * For example, the following expression doesn't need ID resolution.
+      Because the ``_score`` pseudo column exists in the result table not the source table.
+
+      * ``--filter true --sort_keys _score``
+
+  * When a sort target table has a key.
+
+    * Therefore, ``TABLE_NO_KEY`` isn't supported this improvement.
+
+* [:doc:`reference/commands/select`] Improved performance a bit on below cases.
+
+  * A case of searching for many records matches.
+  * A case of drilldown for many records.
+
+* [aggregator] Added support for score accessor for target. [GitHub#1120][Patched by naoa]
+
+  * For example, we can ``_score`` subject to ``aggregator_*`` as below.
+
+    .. code-block::
+
+       table_create Items TABLE_HASH_KEY ShortText
+       column_create Items price COLUMN_SCALAR UInt32
+       column_create Items tag COLUMN_SCALAR ShortText
+
+       load --table Items
+       [
+       {"_key": "Book",  "price": 1000, "tag": "A"},
+       {"_key": "Note",  "price": 1000, "tag": "B"},
+       {"_key": "Box",   "price": 500,  "tag": "B"},
+       {"_key": "Pen",   "price": 500,  "tag": "A"},
+       {"_key": "Food",  "price": 500,  "tag": "C"},
+       {"_key": "Drink", "price": 300,  "tag": "B"}
+       ]
+
+       select Items \
+         --filter true \
+         --drilldowns[tag].keys tag \
+         --drilldowns[tag].output_columns _key,_nsubrecs,score_mean \
+         --drilldowns[tag].columns[score_mean].stage group \
+         --drilldowns[tag].columns[score_mean].type Float \
+         --drilldowns[tag].columns[score_mean].flags COLUMN_SCALAR \
+         --drilldowns[tag].columns[score_mean].value 'aggregator_mean(_score)'
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               6
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "price",
+                 "UInt32"
+               ],
+               [
+                 "tag",
+                 "ShortText"
+               ]
+             ],
+             [
+               1,
+               "Book",
+               1000,
+               "A"
+             ],
+             [
+               2,
+               "Note",
+               1000,
+               "B"
+             ],
+             [
+               3,
+               "Box",
+               500,
+               "B"
+             ],
+             [
+               4,
+               "Pen",
+               500,
+               "A"
+             ],
+             [
+               5,
+               "Food",
+               500,
+               "C"
+             ],
+             [
+               6,
+               "Drink",
+               300,
+               "B"
+             ]
+           ],
+           {
+             "tag": [
+               [
+                 3
+               ],
+               [
+                 [
+                   "_key",
+                   "ShortText"
+                 ],
+                 [
+                   "_nsubrecs",
+                   "Int32"
+                 ],
+                 [
+                   "score_mean",
+                   "Float"
+                 ]
+               ],
+               [
+                 "A",
+                 2,
+                 1.0
+               ],
+               [
+                 "B",
+                 3,
+                 1.0
+               ],
+               [
+                 "C",
+                 1,
+                 1.0
+               ]
+             ]
+           }
+         ]
+       ]
+
+* [:doc:`reference/indexing`] Improved performance of offline index construction on VC++ version.
+
+* [:doc:`reference/commands/select`] Use ``null`` instead ``NaN``, ``Infinity``, and ``-Infinity`` when Groonga outputs result for JSON format.
+
+  * Because JSON doesn't support them.
+
+* [:doc:`reference/commands/select`] Add support fot aggregating standard deviation value.
+
+  * For example, we can calculate a standard deviation for every group as below.
+
+    .. code-block::
+
+        table_create Items TABLE_HASH_KEY ShortText
+        column_create Items price COLUMN_SCALAR UInt32
+        column_create Items tag COLUMN_SCALAR ShortText
+
+        load --table Items
+        [
+        {"_key": "Book",  "price": 1000, "tag": "A"},
+        {"_key": "Note",  "price": 1000, "tag": "B"},
+        {"_key": "Box",   "price": 500,  "tag": "B"},
+        {"_key": "Pen",   "price": 500,  "tag": "A"},
+        {"_key": "Food",  "price": 500,  "tag": "C"},
+        {"_key": "Drink", "price": 300,  "tag": "B"}
+        ]
+
+        select Items \
+          --drilldowns[tag].keys tag \
+          --drilldowns[tag].output_columns _key,_nsubrecs,price_sd \
+          --drilldowns[tag].columns[price_sd].stage group \
+          --drilldowns[tag].columns[price_sd].type Float \
+          --drilldowns[tag].columns[price_sd].flags COLUMN_SCALAR \
+          --drilldowns[tag].columns[price_sd].value 'aggregator_sd(price)' \
+          --output_pretty yes
+        [
+          [
+            0,
+            1594339851.924836,
+            0.002813816070556641
+          ],
+          [
+            [
+              [
+                6
+              ],
+              [
+                [
+                  "_id",
+                  "UInt32"
+                ],
+                [
+                  "_key",
+                  "ShortText"
+                ],
+                [
+                  "price",
+                  "UInt32"
+                ],
+                [
+                  "tag",
+                  "ShortText"
+                ]
+              ],
+              [
+                1,
+                "Book",
+                1000,
+                "A"
+              ],
+              [
+                2,
+                "Note",p
+                1000,
+                "B"
+              ],
+              [
+                3,
+                "Box",
+                500,
+                "B"
+              ],
+              [
+                4,
+                "Pen",
+                500,
+                "A"
+              ],
+              [
+                5,
+                "Food",
+                500,
+                "C"
+              ],
+              [
+                6,
+                "Drink",
+                300,
+                "B"
+              ]
+            ],
+            {
+              "tag": [
+                [
+                  3
+                ],
+                [
+                  [
+                    "_key",
+                    "ShortText"
+                  ],
+                  [
+                    "_nsubrecs",
+                    "Int32"
+                  ],
+                  [
+                    "price_sd",
+                    "Float"
+                  ]
+                ],
+                [
+                  "A",
+                  2,
+                  250.0
+                ],
+                [
+                  "B",
+                  3,
+                  294.3920288775949
+                ],
+                [
+                  "C",
+                  1,
+                  0.0
+                ]
+              ]
+            }
+          ]
+        ]
+
+    * We can also calculate sample standard deviation to specifing ``aggregate_sd(target, {"unbiased": true})``.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/functions/between`] Fixed a crash bug when temporary table is used.
+
+  * For example, if we specify a dynamic column in the first argument for ``between``, Groonga had crashed.
+
+* Fixed a bug that procedure created by plugin is freed unexpectedly.
+
+  * It's only occurred in reference count mode.
+  * It's not occurred if we don't use ``plugin_register``.
+  * It's not occurred in the process that executes ``plugin_register``.
+  * It's occurred in the process that doesn't execute ``plugin_register``.
+
+* Fixed a bug that normalization error occurred while static index construction by ``token_column``. [GitHub#1122][Reported by naoa]
+
+Thanks
+^^^^^^
+
+* naoa
+
 .. _release-10-0-4:
 
 Release 10.0.4 - 2020-06-29
