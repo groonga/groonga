@@ -260,9 +260,31 @@ jobs:
           asset_content_type: application/zip
 
       # Test
-      - name: Update MSYS2
+      - name: Update MSYS2 keyring
         run: |
-          ridk exec pacman --sync --refresh --sysupgrade --noconfirm
+          # https://www.msys2.org/news/#2020-06-29-new-packagers
+          msys2_keyring_pkg=msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
+          for suffix in "" ".sig"; do
+            curl \
+              --location \
+              --remote-name \
+              --show-error \
+              --silent \
+              https://repo.msys2.org/msys/x86_64/${msys2_keyring_pkg}${suffix}
+          done
+          pacman-key --verify ${msys2_keyring_pkg}.sig
+          pacman \
+            --noconfirm \
+            --upgrade \
+            ${msys2_keyring_pkg}
+      - name: Update MSYS2 (phase1)
+        run: |
+          ridk exec pacman --sync --refresh --sysupgrade --sysupgrade --noconfirm
+          taskkill /F /FI "MODULES eq msys-2.0.dll"
+      - name: Update MSYS2 (phase2)
+        run: |
+          ridk exec pacman --sync --sysupgrade --sysupgrade --noconfirm
+          taskkill /F /FI "MODULES eq msys-2.0.dll"
       - name: Update GCC
         run: |
           ridk exec pacman --sync --noconfirm mingw-w64-x86_64-gcc
