@@ -3286,6 +3286,7 @@ grn_output_envelope_close_apache_arrow(grn_ctx *ctx,
 {
   if (ctx->impl->output.arrow_stream_writer) {
     grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
+    ctx->impl->output.arrow_stream_writer = NULL;
     if (ctx->rc != GRN_SUCCESS) {
       return;
     }
