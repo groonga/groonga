@@ -22,6 +22,7 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <errno.h>
 
 #ifdef WIN32
@@ -1210,6 +1211,46 @@ h_output_send(grn_ctx *ctx, grn_sock fd,
 {
   ssize_t ret;
   ssize_t len = 0;
+  /* WSASend() and sendmsg() may block when a client doesn't read
+   * written data. Immediate shutdown doesn't work while they
+   * block. To work immediate shutdown, check writability before
+   * calling WSASend() and sendmsg(). */
+  if (GRN_TEXT_LEN(&(ctx->impl->current_request_id)) > 0) {
+    int max_fd = fd;
+    fd_set write_fds;
+    fd_set exception_fds;
+    FD_ZERO(&write_fds);
+    FD_ZERO(&exception_fds);
+    while (true) {
+      FD_SET(fd, &write_fds);
+      FD_SET(fd, &exception_fds);
+      struct timeval timeout;
+      timeout.tv_sec = 1;
+      timeout.tv_usec = 0;
+      int n_changed_fds = select(max_fd + 1,
+                                 NULL,
+                                 &write_fds,
+                                 &exception_fds,
+                                 &timeout);
+      if (ctx->rc != GRN_SUCCESS) {
+        return;
+      }
+      if (n_changed_fds == -1) {
+        SOERR("select");
+        return;
+      }
+      if (n_changed_fds > 0) {
+        if (FD_ISSET(fd, &exception_fds)) {
+          ERR(GRN_UNKNOWN_ERROR,
+              "[http][output][send][select] failed to wait for socket writable");
+          return;
+        }
+        if (FD_ISSET(fd, &write_fds)) {
+          break;
+        }
+      }
+    }
+  }
 #ifdef WIN32
   int n_buffers = 0;
   WSABUF wsabufs[4];

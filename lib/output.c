@@ -2144,7 +2144,8 @@ grn_output_table_records_by_columns(grn_ctx *ctx, grn_obj *outbuf,
   grn_id id;
   int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
   grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
-  while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
+  while (ctx->rc == GRN_SUCCESS &&
+         (id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
     grn_output_table_data_open_record(ctx, data);
     grn_output_table_record_open(ctx, outbuf, output_type, ncolumns);
     for (i = 0; i < ncolumns; i++) {
