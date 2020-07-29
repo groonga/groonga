@@ -79,8 +79,6 @@ install:
   - pacman --noconfirm --upgrade msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
   - pacman --sync --refresh --sysupgrade --sysupgrade --noconfirm
   - taskkill /F /FI "MODULES eq msys-2.0.dll"
-  - pacman --sync --sysupgrade --sysupgrade --noconfirm
-  - taskkill /F /FI "MODULES eq msys-2.0.dll"
   - if "%VS_VERSION%" == "15" if "%ARCH%" == "x86" set VS2017_X86=TRUE
   - if "%VS_VERSION%" == "15" if "%ARCH%" == "amd64" set VS2017_AMD64=TRUE
   - if "%VS2017_X86%" == "TRUE"
