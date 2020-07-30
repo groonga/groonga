@@ -205,6 +205,7 @@ jobs:
     if: |
       startsWith(github.ref, 'refs/tags/')
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
           name: windows-mingw-${{ matrix.architecture }}
