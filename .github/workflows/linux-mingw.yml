@@ -149,9 +149,20 @@ jobs:
           $FULL_INSTALL_FOLDER = "$(Get-Location)\${INSTALL_FOLDER}"
           Write-Output "::set-env name=FULL_INSTALL_FOLDER::${FULL_INSTALL_FOLDER}"
       - uses: actions/setup-ruby@v1
+      - name: Update MSYS2 keyring
+        run: |
+          # https://www.msys2.org/news/#2020-06-29-new-packagers
+          Invoke-WebRequest `
+            -Uri https://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz `
+            -OutFile msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
+          ridk exec pacman `
+            --noconfirm `
+            --upgrade `
+            msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
       - name: Update MSYS2
         run: |
           ridk exec pacman --sync --refresh --sysupgrade --noconfirm
+          taskkill /F /FI "MODULES eq msys-2.0.dll"
       - name: Update GCC
         run: |
           ridk exec pacman --sync --noconfirm mingw-w64-x86_64-gcc
