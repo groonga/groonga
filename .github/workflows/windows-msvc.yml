@@ -226,9 +226,11 @@ jobs:
         if: |
           startsWith(github.ref, 'refs/tags/')
         run: |
+          pushd "${Env:FULL_INSTALL_FOLDER}\.."
           Compress-Archive `
             -Path ${Env:INSTALL_FOLDER} `
-            -DestinationPath "${Env:INSTALL_FOLDER}.zip"
+            -DestinationPath "${Env:FULL_INSTALL_FOLDER}.zip"
+          popd
       - name: Upload the artifact without VC++ runtime to release
         uses: actions/upload-release-asset@v1.0.1
         if: |
@@ -244,9 +246,11 @@ jobs:
         if: |
           startsWith(github.ref, 'refs/tags/')
         run: |
+          pushd "${Env:FULL_INSTALL_FOLDER}\.."
           Compress-Archive `
             -Path ${Env:INSTALL_FOLDER_WITH_VCRUNTIME} `
-            -DestinationPath "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
+            -DestinationPath "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
+          popd
       - name: Upload the artifact with VC++ runtime to release
         uses: actions/upload-release-asset@v1.0.1
         if: |
