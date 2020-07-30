@@ -328,7 +328,7 @@ Improvements
               ],
               [
                 2,
-                "Note",p
+                "Note",
                 1000,
                 "B"
               ],
