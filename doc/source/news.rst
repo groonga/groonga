@@ -9,7 +9,7 @@ News
 
 .. _release-10-0-5:
 
-Release 10.0.5 - 2020-07-29
+Release 10.0.5 - 2020-07-30
 ---------------------------
 
 Improvements
@@ -400,6 +400,13 @@ Improvements
 
 Fixes
 ^^^^^
+
+* [:doc:`reference/executables/groonga-server-http`] Fixed a bug that a request can't halt even if we execute ``shutdown?mode=immediate`` when the response was halted by error occurrence.
+
+* Fixed a crash bug when an error occurs while a request.
+
+  * It only occurs when we use Apache Arrow Format.
+  * Groonga crashes when we send request to Groonga again after the previous request was halted by error occurrence.
 
 * [:doc:`/reference/functions/between`] Fixed a crash bug when temporary table is used.
 

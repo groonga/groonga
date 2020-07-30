@@ -33,8 +33,8 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 10.0.5 - 2020-07-29"
-msgstr "10.0.5リリース - 2020-07-29"
+msgid "Release 10.0.5 - 2020-07-30"
+msgstr "10.0.5リリース - 2020-07-30"
 
 msgid "Improvements"
 msgstr "改良"
@@ -174,6 +174,28 @@ msgstr ""
 
 msgid "Fixes"
 msgstr "修正"
+
+msgid ""
+"[:doc:`reference/executables/groonga-server-http`] Fixed a bug that a "
+"request can't halt even if we execute ``shutdown?mode=immediate`` when the "
+"response was halted by error occurrence."
+msgstr ""
+"[:doc:`reference/executables/groonga-server-http`] 応答がエラーで中断された時"
+"に、 ``shutdown?immediate`` を実行しても、リクエストが中断しない問題を修正し"
+"ました。"
+
+msgid "Fixed a crash bug when an error occurs while a request."
+msgstr "リクエスト中にエラーが発生した時にクラッシュする問題を修正しました。"
+
+msgid "It only occurs when we use Apache Arrow Format."
+msgstr "これは、Apache Arrow形式を使っている時にのみ発生します。"
+
+msgid ""
+"Groonga crashes when we send request to Groonga again after the previous "
+"request was halted by error occurrence."
+msgstr ""
+"前のリクエストがエラーによって中断された後に再度Groongaへリクエストを送信した"
+"時にGroongaがクラッシュします。"
 
 msgid ""
 "[:doc:`/reference/functions/between`] Fixed a crash bug when temporary table "
