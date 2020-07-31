@@ -22,6 +22,12 @@ set(GRN_PROJECT_NAME "groonga")
 set(GRN_PROJECT_LABEL "Groonga")
 project("${GRN_PROJECT_NAME}")
 
+# https://cmake.org/cmake/help/latest/policy/CMP0054.html
+# Only interpret if() arguments as variables or keywords when unquoted.
+if(POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW)
+endif()
+
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
   set(GRN_BUNDLED FALSE)
 else()
