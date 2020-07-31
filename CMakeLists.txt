@@ -84,7 +84,7 @@ include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(${CMAKE_CURRENT_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
 
-find_package(PkgConfig REQUIRED)
+find_package(PkgConfig)
 
 if(DEFINED GRN_EMBED)
   set(GRN_EMBED_DEFAULT ${GRN_EMBED})
