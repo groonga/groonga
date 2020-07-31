@@ -172,6 +172,9 @@ msgstr ""
 "``aggregate_sd(target, {\"unbiased\": true})`` と指定することで、不偏標準偏差"
 "も計算できます。"
 
+msgid "[Windows] Dropped Visual Studio 2013 support."
+msgstr "[Windows] Visual Studio 2013のサポートをやめました。"
+
 msgid "Fixes"
 msgstr "修正"
 

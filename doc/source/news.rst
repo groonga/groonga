@@ -398,6 +398,8 @@ Improvements
 
     * We can also calculate sample standard deviation to specifing ``aggregate_sd(target, {"unbiased": true})``.
 
+* [Windows] Dropped Visual Studio 2013 support.
+
 Fixes
 ^^^^^
 
