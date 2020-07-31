@@ -160,6 +160,18 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
   set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} -std=gnu99")
 endif()
 
+# /Ob1 is used with RelWithDebInfo by default but it's slower than
+# /Ob2 which is the default with Release. We need performance with
+# debug information.
+if(CMAKE_C_COMPILER_ID STRREQUAL "MSVC")
+  set(GRN_C_COMPILE_FLAGS
+    "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:/Ob2>")
+endif()
+if(CMAKE_CXX_COMPILER_ID STRREQUAL "MSVC")
+  set(GRN_CXX_COMPILE_FLAGS
+    "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:/Ob2>")
+endif()
+
 
 macro(check_cflag flag)
   string(REGEX REPLACE "[-=]" "_" temporary_variable_name ${flag})
