@@ -1,7 +1,6 @@
 built_sources =						\
 	mrblib.c					\
 	mrbgems_init.c					\
-	mruby-compiler/core/parse.c			\
 	mruby-dir/src/dir.c				\
 	mruby-env/src/env.c				\
 	mruby-errno/src/errno.c				\

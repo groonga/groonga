@@ -70,7 +70,6 @@ jobs:
           sudo apt update
           sudo apt -V install \
             autoconf-archive \
-            bison \
             devscripts \
             python3-pip \
             ruby

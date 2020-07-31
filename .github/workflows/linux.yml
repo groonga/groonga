@@ -48,7 +48,6 @@ jobs:
             autoconf-archive \
             automake1.11 \
             autotools-dev \
-            bison \
             cmake \
             gdb \
             gettext \

@@ -34,6 +34,7 @@ libmruby_la_SOURCES = \
 	../mruby-source/mrbgems/mruby-array-ext/src/array.c \
 	../mruby-source/mrbgems/mruby-compiler/core/codegen.c \
 	../mruby-source/mrbgems/mruby-compiler/core/node.h \
+	../mruby-source/mrbgems/mruby-compiler/core/y.tab.c \
 	../mruby-source/mrbgems/mruby-fiber/src/fiber.c \
 	../mruby-source/mrbgems/mruby-hash-ext/src/hash-ext.c \
 	../mruby-source/mrbgems/mruby-io/include/mruby/ext/io.h \

@@ -127,13 +127,9 @@ jobs:
           cmake ${CMAKE_ARGS}
           cmake --build ..\apache-arrow-build --config Release
           cmake --build ..\apache-arrow-build --config Release --target Install
-      - name: Install dependencies
-        run: |
-          choco install -y winflexbison3
       - name: Install Groonga
         shell: cmd
         run: |
-          set YACC="win_bison.exe"
           call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" ${{ matrix.vc-architecture }}
           mkdir ..\groonga-build
           set CMAKE_ARGS=-S .
