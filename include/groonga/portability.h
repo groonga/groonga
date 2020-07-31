@@ -199,3 +199,13 @@
 #else /* WIN32 */
 # define grn_getpid() getpid()
 #endif /* WIN32 */
+
+#ifdef WIN32
+# define grn_time_t __time64_t
+# define grn_time(dest_time) _time64((dest_time))
+# define grn_mktime(tm) _mktime64((tm))
+#else /* WIN32 */
+# define grn_time_t time_t
+# define grn_time(dest_time) time((dest_time))
+# define grn_mktime(tm) mktime((tm))
+#endif /* WIN32 */

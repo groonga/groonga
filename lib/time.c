@@ -39,9 +39,9 @@ grn_rc
 grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
 {
 #ifdef WIN32
-  time_t t;
+  grn_time_t t;
   struct _timeb tb;
-  time(&t);
+  grn_time(&t);
   _ftime(&tb);
   tv->tv_sec = t;
   tv->tv_nsec = tb.millitm * (GRN_TIME_NSEC_PER_SEC / 1000);
@@ -90,7 +90,7 @@ grn_time_now(grn_ctx *ctx, grn_obj *obj)
 }
 
 static grn_bool
-grn_time_t_to_tm(grn_ctx *ctx, const time_t time, struct tm *tm)
+grn_time_t_to_tm(grn_ctx *ctx, const grn_time_t time, struct tm *tm)
 {
   grn_bool success;
   const char *function_name;
@@ -144,12 +144,12 @@ grn_time_to_tm(grn_ctx *ctx, int64_t time, struct tm *tm)
 }
 
 static grn_bool
-grn_time_t_from_tm(grn_ctx *ctx, time_t *time, struct tm *tm)
+grn_time_t_from_tm(grn_ctx *ctx, grn_time_t *time, struct tm *tm)
 {
   grn_bool success;
 
   tm->tm_yday = -1;
-  *time = mktime(tm);
+  *time = grn_mktime(tm);
   success = (tm->tm_yday != -1);
   if (!success) {
     ERR(GRN_INVALID_ARGUMENT,
@@ -169,7 +169,7 @@ grn_time_t_from_tm(grn_ctx *ctx, time_t *time, struct tm *tm)
 grn_bool
 grn_time_from_tm(grn_ctx *ctx, int64_t *time, struct tm *tm)
 {
-  time_t sec_time_t;
+  grn_time_t sec_time_t;
   int64_t sec;
   int32_t usec = 0;
 
@@ -244,7 +244,7 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
   tm.tm_isdst = -1;
 
   /* tm_yday is set appropriately (0-365) on successful completion. */
-  tv->tv_sec = mktime(&tm);
+  tv->tv_sec = grn_mktime(&tm);
   if (tm.tm_yday == -1) { return GRN_INVALID_ARGUMENT; }
   if ((r1 + 1) < rend && *r1 == '.') { r1++; }
   uv = grn_atoi(r1, rend, &r2);
