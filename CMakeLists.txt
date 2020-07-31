@@ -163,11 +163,11 @@ endif()
 # /Ob1 is used with RelWithDebInfo by default but it's slower than
 # /Ob2 which is the default with Release. We need performance with
 # debug information.
-if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+if("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
   set(GRN_C_COMPILE_FLAGS
     "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:/Ob2>")
 endif()
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   set(GRN_CXX_COMPILE_FLAGS
     "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:/Ob2>")
 endif()
