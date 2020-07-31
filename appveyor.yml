@@ -7,7 +7,7 @@ notifications:
 for:
   - matrix:
       only:
-        - JOB_TYPE: tag
+        - JOB_TYPE: tagged
     skip_non_tags: true
   - matrix:
       only:
@@ -36,18 +36,18 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VS_VERSION: 15
       ARCH: amd64
-      JOB_TYPE: tag
+      JOB_TYPE: tagged
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       VS_VERSION: 14
       ARCH: amd64
-      JOB_TYPE: tag
+      JOB_TYPE: tagged
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VS_VERSION: 15
       ARCH: x86
-      JOB_TYPE: tag
+      JOB_TYPE: tagged
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       VS_VERSION: 14
-      JOB_TYPE: tag
+      JOB_TYPE: tagged
       ARCH: x86
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
