@@ -96,7 +96,7 @@ grn_time_t_to_tm(grn_ctx *ctx, const grn_time_t time, struct tm *tm)
   const char *function_name;
 #ifdef HAVE__LOCALTIME64_S
   function_name = "localtime_s";
-  success = (localtime_s(tm, &time) == 0);
+  success = (_localtime64_s(tm, &time) == 0);
 #else /* HAVE__LOCALTIME64_S */
 # ifdef HAVE_LOCALTIME_R
   function_name = "localtime_r";
