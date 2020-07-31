@@ -37,6 +37,10 @@ if PLATFORM_WIN32
 AM_CPPFLAGS +=					\
 	-DMRB_BUILD_AS_DLL			\
 	-DMRB_CORE
+
+# Use _time64_t with 32bit MinGW build.
+AM_CPPFLAGS +=					\
+	-D__MINGW_USE_VC2005_COMPAT
 endif
 
 include sources.am
