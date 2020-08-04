@@ -31,10 +31,8 @@
 #include <time.h>
 
 #ifdef WIN32
-# if defined(__GNUC__)
-#  define timegm _mkgmtime
-#  define HAVE_TIMEGM
-# endif /* defined(__GNUC__) */
+# define timegm _mkgmtime
+# define HAVE_TIMEGM
 #else /* WIN32 */
 # define HAVE_TIMEGM
 #endif /* WIN32 */
