@@ -31,12 +31,10 @@
 #include <time.h>
 
 #ifdef WIN32
-# if defined(__GNUC__) && defined(__i386__)
-   /* 32bit MinGW doesn't provide _mkgmtime(). */
-# else /* defined(__GNUC__) && defined(__i386__) */
+# if defined(__GNUC__)
 #  define timegm _mkgmtime
 #  define HAVE_TIMEGM
-# endif /* defined(__GNUC__) && defined(__i386__) */
+# endif /* defined(__GNUC__) */
 #else /* WIN32 */
 # define HAVE_TIMEGM
 #endif /* WIN32 */
