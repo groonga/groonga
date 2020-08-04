@@ -1119,7 +1119,7 @@ module Groonga
           return limit if max_n_records.zero?
 
           scale = Math.log(max_n_records) ** 2
-          max_n_unmatched_records = limit * scale
+          max_n_unmatched_records = limit * 2 * scale
           max_n_sample_records = max_n_records
           if max_n_sample_records > 10000
             max_n_sample_records = max_n_sample_records / scale
