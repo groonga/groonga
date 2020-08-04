@@ -695,6 +695,15 @@ module Groonga
           @window = detect_window
         end
 
+        def compute_limit(n_source_records)
+          current_limit = @context.current_limit
+          if current_limit < 0
+            n_source_records
+          else
+            current_limit
+          end
+        end
+
         def decide_use_range_index(use, reason, line, method)
           message = "[logical_range_filter]"
           if use
@@ -833,6 +842,17 @@ module Groonga
             reason << ">= "
             reason << "the number of estimated records (#{estimated_n_records})"
             return decide_use_range_index(false, reason,
+                                          __LINE__, __method__)
+          end
+
+          max_n_unmatched_records =
+              compute_max_n_unmatched_records(max_n_records,
+                                              required_n_records)
+          if estimated_n_records >= max_n_unmatched_records
+            reason = "the max number of unmatched records (#{max_n_unmatched_records}) "
+            reason << "<= "
+            reason << "the number of estimated records (#{estimated_n_records})"
+            return decide_use_range_index(true, reason,
                                           __LINE__, __method__)
           end
 
@@ -1019,13 +1039,8 @@ module Groonga
                            :flags => flags) do |table_cursor|
             options = {
               :offset => @context.current_offset,
+              :limit => compute_limit(data_table.size),
             }
-            current_limit = @context.current_limit
-            if current_limit < 0
-              options[:limit] = data_table.size
-            else
-              options[:limit] = current_limit
-            end
             max_n_unmatched_records =
               compute_max_n_unmatched_records(data_table.size,
                                               options[:limit])
@@ -1100,17 +1115,19 @@ module Groonga
           flags
         end
 
-        def compute_max_n_unmatched_records(data_table_size, limit)
-          max_n_unmatched_records = limit * 100
-          max_n_sample_records = data_table_size
+        def compute_max_n_unmatched_records(max_n_records, limit)
+          return limit if max_n_records.zero?
+
+          scale = Math.log(max_n_records) ** 2
+          max_n_unmatched_records = limit * scale
+          max_n_sample_records = max_n_records
           if max_n_sample_records > 10000
-            sample_ratio = 1 / (Math.log(data_table_size) ** 2)
-            max_n_sample_records = (max_n_sample_records * sample_ratio).ceil
+            max_n_sample_records = max_n_sample_records / scale
           end
           if max_n_unmatched_records > max_n_sample_records
             max_n_unmatched_records = max_n_sample_records
           end
-          max_n_unmatched_records
+          max_n_unmatched_records.ceil
         end
 
         def filter_table

@@ -71,7 +71,7 @@ logical_range_filter Logs timestamp   --limit 1   --filter 'comment @~ "ca\\\\z"
     ]
   ]
 ]
-#|d| [logical_range_filter][range-index] <Logs_20150205>: hit ratio (1.5=6/4) >= threshold (0.3)
+#|d| [logical_range_filter][range-index] <Logs_20150205>: the max number of unmatched records (2) <= the number of estimated records (6)
 #>logical_range_filter --filter "comment @~ \"ca\\\\z\"" --limit "1" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(1)[Logs_20150205]: comment @~ "ca\\z"
 #:000000000000000 output(1)

@@ -71,7 +71,7 @@ logical_range_filter Logs timestamp   --limit 1   --filter 'user_id == 2'
     ]
   ]
 ]
-#|d| [logical_range_filter][range-index] <Logs_20150205>: hit ratio (1=4/4) >= threshold (0.3)
+#|d| [logical_range_filter][range-index] <Logs_20150205>: the max number of unmatched records (2) <= the number of estimated records (4)
 #>logical_range_filter --filter "user_id == 2" --limit "1" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(1)[Logs_20150205]: user_id == 2
 #:000000000000000 output(1)

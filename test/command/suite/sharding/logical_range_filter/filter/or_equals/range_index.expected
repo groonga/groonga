@@ -76,7 +76,7 @@ logical_range_filter Logs timestamp   --limit 2   --filter 'action == "Running" 
     ]
   ]
 ]
-#|d| [logical_range_filter][range-index] <Logs_20150205>: hit ratio (1=4/4) >= threshold (0.3)
+#|d| [logical_range_filter][range-index] <Logs_20150205>: the max number of unmatched records (4) <= the number of estimated records (4)
 #>logical_range_filter --filter "action == \"Running\" || action == \"Start\"" --limit "2" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(2)[Logs_20150205]: action == "Running" || action == "Start"
 #:000000000000000 output(2)
