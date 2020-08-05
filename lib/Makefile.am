@@ -14,12 +14,12 @@ AM_CPPFLAGS =					\
 	$(MRUBY_CPPFLAGS)
 
 if PLATFORM_WIN32
-# Don't use MinGW's vsnprintf() implementation. It has a different
+# Don't use MSVCRC's vsnprintf() implementation. It has a different
 # behavior for double value with vsnprintf("%#.*g", DBL_DIG + 1,
-# value) with the glibc's implementation and the MSVCRT
+# value) with the glibc's implementation and the UCRT's
 # implementation.
 AM_CPPFLAGS +=					\
-	-D__USE_MINGW_ANSI_STDIO=0
+	-D__USE_MINGW_ANSI_STDIO=1
 endif
 
 AM_CFLAGS =					\
