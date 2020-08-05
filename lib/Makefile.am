@@ -13,6 +13,15 @@ AM_CPPFLAGS =					\
 	$(LUAJIT_CFLAGS)			\
 	$(MRUBY_CPPFLAGS)
 
+if PLATFORM_WIN32
+# Don't use MinGW's vsnprintf() implementation. It has a different
+# behavior for double value with vsnprintf("%#.*g", DBL_DIG + 1,
+# value) with the glibc's implementation and the MSVCRT
+# implementation.
+AM_CPPFLAGS +=					\
+	-D__USE_MINGW_ANSI_STDIO=0
+endif
+
 AM_CFLAGS =					\
 	$(NO_STRICT_ALIASING_CFLAGS)		\
 	$(COVERAGE_CFLAGS)			\
