@@ -56,7 +56,6 @@ typedef struct {
   uint32_t offset;
   uint32_t size;
   uint32_t nseg;
-  off_t pos;
   void *addr;
   uint32_t diff;
   int32_t cached;
