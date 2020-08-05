@@ -90,7 +90,7 @@ grn_inline static void *grn_mmap(grn_ctx *ctx,
                                  grn_io *io,
                                  HANDLE *fmo,
                                  fileinfo *fi,
-                                 off_t offset,
+                                 int64_t offset,
                                  size_t length,
                                  const char *file,
                                  int line,
@@ -108,7 +108,7 @@ grn_inline static void *grn_mmap(grn_ctx *ctx,
                                  grn_ctx *owner_ctx,
                                  grn_io *io,
                                  fileinfo *fi,
-                                 off_t offset,
+                                 int64_t offset,
                                  size_t length,
                                  const char *file,
                                  int line,
@@ -1616,7 +1616,7 @@ grn_fileinfo_open_v1(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 
 grn_inline static void *
 grn_mmap_v1(grn_ctx *ctx, grn_ctx *owner_ctx, HANDLE *fmo, fileinfo *fi,
-            off_t offset, size_t length)
+            int64_t offset, size_t length)
 {
   void *res;
   if (!fi) {
@@ -1631,6 +1631,7 @@ grn_mmap_v1(grn_ctx *ctx, grn_ctx *owner_ctx, HANDLE *fmo, fileinfo *fi,
   }
   /* CRITICAL_SECTION_ENTER(fi->cs); */
   /* try to create fmo */
+  /* TODO: Add support for 32bit over offset by using dwMaximumSizeHigh. */
   *fmo = CreateFileMapping(fi->fh, NULL, PAGE_READWRITE, 0, offset + length, NULL);
   if (!*fmo) {
     SERR("CreateFileMapping(%lu + %" GRN_FMT_SIZE ") failed "
@@ -1732,7 +1733,7 @@ grn_fileinfo_open_v0(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 }
 
 grn_inline static void *
-grn_mmap_v0(grn_ctx *ctx, grn_ctx *owner_ctx, fileinfo *fi, off_t offset,
+grn_mmap_v0(grn_ctx *ctx, grn_ctx *owner_ctx, fileinfo *fi, int64_t offset,
             size_t length)
 {
   void *res;
@@ -1753,6 +1754,7 @@ grn_mmap_v0(grn_ctx *ctx, grn_ctx *owner_ctx, fileinfo *fi, off_t offset,
     filesize = tail;
   }
   */
+  /* TODO: Add support for 32bit over offset by using dwFileOffsetHigh. */
   res = MapViewOfFile(fi->fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
   if (!res) {
     MERR("MapViewOfFile failed: <%" GRN_FMT_SIZE ">: %s",
@@ -1975,7 +1977,7 @@ grn_mmap(grn_ctx *ctx,
          grn_io *io,
          HANDLE *fmo,
          fileinfo *fi,
-         off_t offset,
+         int64_t offset,
          size_t length,
          const char *file,
          int line,
@@ -1983,13 +1985,13 @@ grn_mmap(grn_ctx *ctx,
 {
   if (grn_fail_malloc_should_fail(length, file, line, func)) {
     MERR("[alloc][fail][mmap] <%d>: <%" GRN_FMT_SIZE ">: <%s>: "
-         "<%p:%" GRN_FMT_INT64U ":%" GRN_FMT_SIZE ">: "
+         "<%p:%" GRN_FMT_INT64D ":%" GRN_FMT_SIZE ">: "
          "%s:%d: %s",
          grn_alloc_count(),
          mmap_size,
          io ? (io->path[0] ? io->path : "(memory)") : "(null)",
          fi ? fi->fh : NULL,
-         (uint64_t)offset,
+         offset,
          length,
          file,
          line,
@@ -2222,7 +2224,7 @@ grn_mmap(grn_ctx *ctx,
          grn_ctx *owner_ctx,
          grn_io *io,
          fileinfo *fi,
-         off_t offset,
+         int64_t offset,
          size_t length,
          const char *file,
          int line,
@@ -2230,13 +2232,13 @@ grn_mmap(grn_ctx *ctx,
 {
   if (grn_fail_malloc_should_fail(length, file, line, func)) {
     MERR("[alloc][fail][mmap] <%d>: <%" GRN_FMT_SIZE ">: <%s>: "
-         "<%d:%" GRN_FMT_INT64U ":%" GRN_FMT_SIZE ">: "
+         "<%d:%" GRN_FMT_INT64D ":%" GRN_FMT_SIZE ">: "
          "%s:%d: %s",
          grn_alloc_count(),
          mmap_size,
          io ? (io->path[0] ? io->path : "(memory)") : "(null)",
          fi ? fi->fd : 0,
-         (uint64_t)offset,
+         offset,
          length,
          file,
          line,
@@ -2247,7 +2249,7 @@ grn_mmap(grn_ctx *ctx,
     int fd, flags;
     if (fi) {
       struct stat s;
-      off_t tail = offset + length;
+      int64_t tail = offset + length;
       fd = fi->fd;
       if ((fstat(fd, &s) == -1) || (s.st_size < tail && ftruncate(fd, tail) == -1)) {
         SERR("fstat");
@@ -2260,9 +2262,12 @@ grn_mmap(grn_ctx *ctx,
     }
     res = mmap(NULL, length, PROT_READ|PROT_WRITE, flags, fd, offset);
     if (MAP_FAILED == res) {
-      MERR("mmap(%" GRN_FMT_LLU ",%d,%" GRN_FMT_LLD ")=%s <%" GRN_FMT_LLU ">",
-           (unsigned long long int)length, fd, (long long int)offset,
-           strerror(errno), (unsigned long long int)mmap_size);
+      MERR("mmap(%" GRN_FMT_SIZE ",%d,%" GRN_FMT_INT64D ")=%s <%" GRN_FMT_SIZE ">",
+           length,
+           fd,
+           offset,
+           strerror(errno),
+           mmap_size);
       return NULL;
     }
     mmap_size += length;
@@ -2323,8 +2328,9 @@ grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
     } else {
       /* todo : should retry ? */
       ERR(GRN_INPUT_OUTPUT_ERROR,
-          "pread returned %" GRN_FMT_LLD " != %" GRN_FMT_LLU,
-          (long long int)r, (unsigned long long int)count);
+          "pread returned %" GRN_FMT_SSIZE " != %" GRN_FMT_SIZE,
+          r,
+          count);
     }
     return ctx->rc;
   }
@@ -2341,8 +2347,9 @@ grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
     } else {
       /* todo : should retry ? */
       ERR(GRN_INPUT_OUTPUT_ERROR,
-          "pwrite returned %" GRN_FMT_LLD " != %" GRN_FMT_LLU,
-          (long long int)r, (unsigned long long int)count);
+          "pwrite returned %" GRN_FMT_SSIZE " != %" GRN_FMT_SIZE,
+          r,
+          count);
     }
     return ctx->rc;
   }

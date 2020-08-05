@@ -278,7 +278,7 @@ grn_io_array_at_inline(grn_ctx *ctx, grn_io *io, uint32_t segment_id,
  */
 grn_inline static int
 grn_io_array_bit_at(grn_ctx *ctx, grn_io *io,
-                    uint32_t segment_id, uint32_t offset)
+                    uint32_t segment_id, uint64_t offset)
 {
   uint8_t * const ptr = (uint8_t *)grn_io_array_at_inline(
       ctx, io, segment_id, (offset >> 3) + 1, 0);
@@ -291,7 +291,7 @@ grn_io_array_bit_at(grn_ctx *ctx, grn_io *io,
  */
 grn_inline static void *
 grn_io_array_bit_on(grn_ctx *ctx, grn_io *io,
-                    uint32_t segment_id, uint32_t offset)
+                    uint32_t segment_id, uint64_t offset)
 {
   uint8_t * const ptr = (uint8_t *)grn_io_array_at_inline(
       ctx, io, segment_id, (offset >> 3) + 1, GRN_TABLE_ADD);
@@ -303,7 +303,7 @@ grn_io_array_bit_on(grn_ctx *ctx, grn_io *io,
 
 grn_inline static void *
 grn_io_array_bit_off(grn_ctx *ctx, grn_io *io,
-                     uint32_t segment_id, uint32_t offset)
+                     uint32_t segment_id, uint64_t offset)
 {
   uint8_t * const ptr = (uint8_t *)grn_io_array_at_inline(
       ctx, io, segment_id, (offset >> 3) + 1, GRN_TABLE_ADD);
@@ -315,7 +315,7 @@ grn_io_array_bit_off(grn_ctx *ctx, grn_io *io,
 
 grn_inline static void *
 grn_io_array_bit_flip(grn_ctx *ctx, grn_io *io,
-                      uint32_t segment_id, uint32_t offset)
+                      uint32_t segment_id, uint64_t offset)
 {
   uint8_t * const ptr = (uint8_t *)grn_io_array_at_inline(
       ctx, io, segment_id, (offset >> 3) + 1, GRN_TABLE_ADD);
