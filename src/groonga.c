@@ -1285,12 +1285,13 @@ h_output_send(grn_ctx *ctx, grn_sock fd,
 #endif /* WIN32 */
   if (ret != len) {
     GRN_LOG(&grn_gctx, GRN_LOG_NOTICE,
-            "couldn't send all data (%" GRN_FMT_LLD "/%" GRN_FMT_LLD ")",
-            (long long int)ret, (long long int)len);
+            "couldn't send all data (%" GRN_FMT_SSIZE "/%" GRN_FMT_SSIZE ")",
+            ret,
+            len);
   }
   GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                 ":",
-                "send(%" GRN_FMT_SIZE "): %" GRN_FMT_SIZE "/%" GRN_FMT_SIZE,
+                "send(%" GRN_FMT_SSIZE "): %" GRN_FMT_SSIZE "/%" GRN_FMT_SSIZE,
                 len, ret, len);
 }
 
