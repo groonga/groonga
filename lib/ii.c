@@ -11132,14 +11132,14 @@ grn_ii_estimate_size_for_query_regexp(grn_ctx *ctx, grn_ii *ii,
                                       grn_search_optarg *optarg)
 {
   grn_rc rc;
-  grn_obj parsed_query;
+  grn_obj parsed_strings;
   uint32_t size;
 
-  GRN_TEXT_INIT(&parsed_query, 0);
+  GRN_TEXT_INIT(&parsed_strings, GRN_OBJ_VECTOR);
   rc = grn_ii_parse_regexp_query(ctx, "[ii][estimate-size][query][regexp]",
-                                 query, query_len, &parsed_query);
+                                 query, query_len, &parsed_strings);
   if (rc != GRN_SUCCESS) {
-    GRN_OBJ_FIN(ctx, &parsed_query);
+    GRN_OBJ_FIN(ctx, &parsed_strings);
     return 0;
   }
 
@@ -11147,11 +11147,31 @@ grn_ii_estimate_size_for_query_regexp(grn_ctx *ctx, grn_ii *ii,
     optarg->mode = GRN_OP_EXACT;
   }
 
-  size = grn_ii_estimate_size_for_query(ctx, ii,
-                                        GRN_TEXT_VALUE(&parsed_query),
-                                        GRN_TEXT_LEN(&parsed_query),
-                                        optarg);
-  GRN_OBJ_FIN(ctx, &parsed_query);
+  unsigned int i;
+  unsigned int n_parsed_strings = grn_vector_size(ctx, &parsed_strings);
+  for (i = 0; i < n_parsed_strings; i++) {
+    const char *parsed_string;
+    unsigned int parsed_string_len;
+    parsed_string_len = grn_vector_get_element(ctx,
+                                               &parsed_strings,
+                                               0,
+                                               &parsed_string,
+                                               NULL,
+                                               NULL);
+    size_t estimated_size =
+      grn_ii_estimate_size_for_query(ctx, ii,
+                                     parsed_string,
+                                     parsed_string_len,
+                                     optarg);
+    if (i == 0) {
+      size = estimated_size;
+    } else {
+      if (estimated_size < size) {
+        size = estimated_size;
+      }
+    }
+  }
+  GRN_OBJ_FIN(ctx, &parsed_strings);
 
   if (optarg) {
     optarg->mode = GRN_OP_REGEXP;
