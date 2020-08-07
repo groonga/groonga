@@ -1,0 +1,57 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC121
+[[0,0.0,0.0],true]
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "abc. def"},
+{"content": "abebcd. def."},
+{"content": "abc def."},
+{"content": "def. abc"},
+{"content": ". abc def"},
+{"content": "abc 1 2 3 4 5 6 7 8 9 def."},
+{"content": "abc 1 2 3 4 5 6 7 8 def."},
+{"content": "abc 1 de 2 def."}
+]
+[[0,0.0,0.0],8]
+select Entries   --match_columns content   --query '*NP"abc def .$"'   --output_columns '_score, content'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "abc def."
+      ],
+      [
+        1,
+        "abc 1 2 3 4 5 6 7 8 def."
+      ],
+      [
+        1,
+        "abc 1 de 2 def."
+      ]
+    ]
+  ]
+]

@@ -8184,6 +8184,7 @@ typedef struct {
   grn_posting *p;
   uint32_t phrase_id;
   uint32_t n_tokens_in_phrase;
+  bool must_last;
 } token_info;
 
 #define EX_NONE   0
@@ -8274,6 +8275,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
   ti->size = 0;
   ti->ntoken = 0;
   ti->offset = offset;
+  ti->must_last = false;
   switch (mode) {
   case EX_BOTH :
     token_info_expand_both(ctx, lexicon, ii, key, key_size, ti);
@@ -8971,6 +8973,8 @@ token_info_build_near_phrase(grn_ctx *ctx,
   GRN_TEXT_INIT(&buffer, 0);
   const char *current = string;
   const char *string_end = string + string_len;
+  const char *last_char = NULL;
+  int last_char_len = 0;
   uint32_t phrase_id = 0;
 
   while (current < string_end) {
@@ -9009,6 +9013,8 @@ token_info_build_near_phrase(grn_ctx *ctx,
         }
         if (escaping) {
           escaping = false;
+          last_char = NULL;
+          last_char_len = 0;
         } else {
           if (char_len == 1) {
             if (current[0] == GRN_QUERY_ESCAPE) {
@@ -9020,6 +9026,8 @@ token_info_build_near_phrase(grn_ctx *ctx,
               break;
             }
           }
+          last_char = current;
+          last_char_len = char_len;
         }
         GRN_TEXT_PUT(ctx, &buffer, current, char_len);
         current += char_len;
@@ -9046,6 +9054,8 @@ token_info_build_near_phrase(grn_ctx *ctx,
         }
         if (escaping) {
           escaping = false;
+          last_char = NULL;
+          last_char_len = 0;
         } else {
           if (char_len == 1) {
             if (current[0] == GRN_QUERY_ESCAPE) {
@@ -9060,6 +9070,8 @@ token_info_build_near_phrase(grn_ctx *ctx,
               break;
             }
           }
+          last_char = current;
+          last_char_len = char_len;
         }
         if (use_buffer) {
           GRN_TEXT_PUT(ctx, &buffer, current, char_len);
@@ -9072,6 +9084,12 @@ token_info_build_near_phrase(grn_ctx *ctx,
       } else {
         phrase_len = current - phrase;
       }
+    }
+
+    bool must_last = false;
+    if (phrase_len > 0 && last_char_len == 1 && *last_char == '$') {
+      phrase_len -= last_char_len;
+      must_last = true;
     }
 
     if (phrase_len == 0) {
@@ -9092,6 +9110,10 @@ token_info_build_near_phrase(grn_ctx *ctx,
     if (rc != GRN_SUCCESS) {
       goto exit;
     }
+    if (*n > n_before) {
+      tis[*n - 1]->must_last = must_last;
+    }
+    must_last = false;
     uint32_t i;
     for (i = n_before; i < *n; i++) {
       tis[i]->n_tokens_in_phrase = *n - n_before;
@@ -9687,6 +9709,7 @@ typedef struct {
   uint32_t phrase_id_max;
   token_info **token_infos;
   uint32_t n_token_infos;
+  token_info *last_token_info;
   token_info *token_info;
   int pos;
   grn_id rid;
@@ -10851,6 +10874,19 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
   tie = tis + n;
   data.token_infos = tis;
   data.n_token_infos = n;
+  {
+    data.last_token_info = NULL;
+    uint32_t i;
+    for (i = 0; i < data.n_token_infos; i++) {
+      if (data.token_infos[i]->must_last) {
+        if (data.last_token_info) {
+          /* Multiple last tokens query are never matched. */
+          goto exit;
+        }
+        data.last_token_info = data.token_infos[i];
+      }
+    }
+  }
   /*
   for (tip = tis; tip < tie; tip++) {
     ti = *tip;
@@ -10991,7 +11027,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
               if (data.mode == GRN_OP_NEAR_PHRASE) {
                 interval -= (data.token_info->n_tokens_in_phrase - 1);
               }
-              if ((max_interval < 0) || (interval <= max_interval)) {
+              if ((!data.last_token_info || data.last_token_info == bt->max) &&
+                  ((max_interval < 0) || (interval <= max_interval))) {
                 if (rep) { pi.pos = min; res_add(ctx, s, &pi, weight, op); }
                 noccur++;
                 int next_pos = max + 1;
