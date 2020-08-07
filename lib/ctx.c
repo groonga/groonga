@@ -1566,6 +1566,7 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
         is_comment = true;
       } else {
         GRN_BULK_REWIND(ctx->impl->output.buf);
+        GRN_BULK_REWIND(&(ctx->impl->output.levels));
         ctx->impl->output.type = GRN_CONTENT_JSON;
         ctx->impl->output.mime_type = "application/json";
         ctx->impl->output.is_pretty = GRN_FALSE;
