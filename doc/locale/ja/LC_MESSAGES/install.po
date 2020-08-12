@@ -131,8 +131,8 @@ msgstr ""
 msgid "stretch"
 msgstr ""
 
-msgid "Install ``groonga-archive-keyring``::"
-msgstr "``groonga-archive-keyring`` パッケージのインストール::"
+msgid "Install ``groonga-apt-source``::"
+msgstr "``groonga-apt-source`` パッケージのインストール::"
 
 msgid ""
 "If you want to use ``TokenFilterStem`` as a token filter, install groonga-"

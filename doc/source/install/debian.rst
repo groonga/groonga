@@ -19,12 +19,12 @@ stretch
 
 .. versionadded:: 7.0.5
 
-Install ``groonga-archive-keyring``::
+Install ``groonga-apt-source``::
 
   % sudo apt update
   % sudo apt install -y -V wget
-  % wget https://packages.groonga.org/debian/groonga-archive-keyring-latest-stretch.deb
-  % sudo apt install -y -V ./groonga-archive-keyring-latest-stretch.deb
+  % wget https://packages.groonga.org/debian/groonga-apt-source-latest-stretch.deb
+  % sudo apt install -y -V ./groonga-apt-source-latest-stretch.deb
   % sudo apt update
 
 Install::
@@ -83,12 +83,12 @@ buster
 
 .. versionadded:: 9.1.1
 
-Install ``groonga-archive-keyring``::
+Install ``groonga-apt-source``::
 
   % sudo apt update
   % sudo apt install -y -V wget
-  % wget https://packages.groonga.org/debian/groonga-archive-keyring-latest-buster.deb
-  % sudo apt install -y -V ./groonga-archive-keyring-latest-buster.deb
+  % wget https://packages.groonga.org/debian/groonga-apt-source-latest-buster.deb
+  % sudo apt install -y -V ./groonga-apt-source-latest-buster.deb
   % sudo apt update
 
 Install::
