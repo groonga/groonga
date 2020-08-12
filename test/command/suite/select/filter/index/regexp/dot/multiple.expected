@@ -8,14 +8,14 @@ column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION   Memos cont
 [[0,0.0,0.0],true]
 load --table Memos
 [
-{"content": "alphabet: aXYb"},
-{"content": "space:    a  b"},
-{"content": "not match: aXb"}
+{"content": "alphabet: abcXYdeXYZfXg"},
+{"content": "space:    abc  de   f g"},
+{"content": "not match: abcXYde   fg"}
 ]
 [[0,0.0,0.0],3]
 log_level --level info
 [[0,0.0,0.0],true]
-select Memos --filter 'content @~ "a..b"' --output_columns 'content, _score'
+select Memos   --filter 'content @~ "abc..de...f.g"'   --output_columns 'content, _score'
 [
   [
     0,
@@ -38,24 +38,26 @@ select Memos --filter 'content @~ "a..b"' --output_columns 'content, _score'
         ]
       ],
       [
-        "alphabet: aXYb",
+        "alphabet: abcXYdeXYZfXg",
         1
       ],
       [
-        "space:    a  b",
+        "space:    abc  de   f g",
         1
       ]
     ]
   ]
 ]
 #|i| [object][search][index][key][regexp] <RegexpTokens.memos_content>
-#|i| grn_ii_sel > (a..b)
-#|i| [ii][select][cursor][open] n=1 <a>
-#|i| [ii][select][cursor][open] n=1 <b>
+#|i| grn_ii_sel > (abc..de...f.g)
+#|i| [ii][select][cursor][open] n=2 <abc>
+#|i| [ii][select][cursor][open] n=1 <de>
+#|i| [ii][select][cursor][open] n=1 <f>
+#|i| [ii][select][cursor][open] n=1 <g>
 #|i| exact: 2
 #|i| hits=2
-#>select --filter "content @~ \"a..b\"" --output_columns "content, _score" --table "Memos"
-#:000000000000000 filter(2): Memos.content "a..b" regexp
+#>select --filter "content @~ \"abc..de...f.g\"" --output_columns "content, _score" --table "Memos"
+#:000000000000000 filter(2): Memos.content "abc..de...f.g" regexp
 #:000000000000000 select(2)
 #:000000000000000 output(2)
 #:000000000000000 send(0)

@@ -8,15 +8,17 @@ column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION \
 
 load --table Memos
 [
-{"content": "alphabet: aXYb"},
-{"content": "space:    a  b"},
-{"content": "not match: aXb"}
+{"content": "alphabet: abcXYdeXYZfXg"},
+{"content": "space:    abc  de   f g"},
+{"content": "not match: abcXYde   fg"}
 ]
 
 #@add-important-log-levels info
 log_level --level info
 #@collect-query-log true
-select Memos --filter 'content @~ "a..b"' --output_columns 'content, _score'
+select Memos \
+  --filter 'content @~ "abc..de...f.g"' \
+  --output_columns 'content, _score'
 #@collect-query-log false
 log_level --level notice
 #@remove-important-log-levels info

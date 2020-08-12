@@ -10291,6 +10291,7 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
 typedef struct {
   grn_ii_select_cursor *cursor;
   uint32_t n_following_characters;
+  uint32_t next_start_pos_offset;
 } grn_ii_select_regexp_chunk;
 
 static grn_rc
@@ -10359,6 +10360,38 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
       }
       chunks[i].n_following_characters =
         GRN_UINT32_VALUE_AT(&parsed_n_following_characters, i);
+      uint32_t next_start_pos_offset = chunks[i].n_following_characters;
+      if (chunks[i].n_following_characters > 0) {
+        size_t n_characters = 0;
+        const char *current = parsed_string;
+        const char *parsed_string_end = parsed_string + parsed_string_len;
+        while (current < parsed_string_end) {
+          int char_len = grn_charlen(ctx, current, parsed_string_end);
+          if (char_len == 0) { /* must not happen */
+            break;
+          }
+          current += char_len;
+          n_characters++;
+        }
+        if (n_characters > 1) {
+          /* text: "abcd", query: "a." case:
+           *   tokens: "ab", "bc", "cd", "d"
+           *   n_characters: 1
+           *   n_following_characters: 1
+           *   There are no token that is ignored after the "ab" token.
+           *
+           * text: "abcd", query: "ab." case:
+           *   tokens: "ab", "bc", "cd", "d"
+           *   n_characters: 2
+           *   n_following_characters: 1
+           *   The "bc" token must be ignored because the cursor returns
+           *   the position for the "ab" token.
+           */
+          next_start_pos_offset++;
+        }
+        next_start_pos_offset++;
+      }
+      chunks[i].next_start_pos_offset = next_start_pos_offset;
     }
 
     while (!have_error) {
@@ -10371,6 +10404,7 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
 
       uint32_t pos = posting->end_pos;
       uint32_t n_following_characters = chunks[0].n_following_characters;
+      uint32_t next_start_pos = pos + chunks[0].next_start_pos_offset;
       for (i = 1; i < n_parsed_strings; i++) {
         grn_ii_select_cursor_posting *posting_i;
 
@@ -10396,7 +10430,7 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
                 break;
               }
             } else {
-              if (posting_i->start_pos >= pos + n_following_characters + 1) {
+              if (posting_i->start_pos >= next_start_pos) {
                 grn_ii_select_cursor_unshift(ctx, chunks[i].cursor, posting_i);
                 break;
               }
@@ -10414,13 +10448,14 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
           break;
         }
         if (n_following_characters > 0) {
-          if (posting_i->start_pos != pos + n_following_characters + 1) {
+          if (posting_i->start_pos != next_start_pos) {
             break;
           }
         }
 
         pos = posting_i->end_pos;
         n_following_characters = chunks[i].n_following_characters;
+        next_start_pos = pos + chunks[i].next_start_pos_offset;
       }
 
       if (i == n_parsed_strings && n_following_characters == 0) {
