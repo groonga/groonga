@@ -10142,7 +10142,8 @@ grn_ii_parse_regexp_query_flush(grn_ctx *ctx,
                                 grn_obj *parsed_strings,
                                 grn_obj *parsed_n_following_characters,
                                 grn_obj *string,
-                                uint32_t *n_following_characters)
+                                uint32_t *n_following_characters_start,
+                                uint32_t *n_following_characters_end)
 {
   if (GRN_TEXT_LEN(string) > 0) {
     grn_vector_add_element(ctx,
@@ -10154,9 +10155,13 @@ grn_ii_parse_regexp_query_flush(grn_ctx *ctx,
     GRN_BULK_REWIND(string);
     GRN_UINT32_PUT(ctx,
                    parsed_n_following_characters,
-                   *n_following_characters);
+                   *n_following_characters_start);
+    GRN_UINT32_PUT(ctx,
+                   parsed_n_following_characters,
+                   *n_following_characters_end);
   }
-  *n_following_characters = 0;
+  *n_following_characters_start = 0;
+  *n_following_characters_end = 0;
 }
 
 static grn_rc
@@ -10174,7 +10179,8 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
   const char *current = string;
   const char *string_end = string + string_len;
   grn_obj buffer;
-  uint32_t n_following_characters = 0;
+  uint32_t n_following_characters_start = 0;
+  uint32_t n_following_characters_end = 0;
 
   GRN_TEXT_INIT(&buffer, 0);
   while (current < string_end) {
@@ -10219,13 +10225,14 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
         }
       }
     } else {
-      if (n_following_characters > 0 &&
+      if (n_following_characters_start > 0 &&
           (!(char_len == 1 && (*target == '.' || *target == '*')))) {
         grn_ii_parse_regexp_query_flush(ctx,
                                         parsed_strings,
                                         parsed_n_following_characters,
                                         &buffer,
-                                        &n_following_characters);
+                                        &n_following_characters_start,
+                                        &n_following_characters_end);
       }
 
       if (char_len == 1) {
@@ -10242,18 +10249,21 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
           in_paren = GRN_FALSE;
           continue;
         } else if (*target == '.') {
-          n_following_characters++;
+          n_following_characters_start++;
+          n_following_characters_end++;
           continue;
         } else if (*target == '*') {
           /* ".*" is only supported for now. */
-          if (n_following_characters > 0) {
-            n_following_characters--;
+          if (n_following_characters_start > 0) {
+            n_following_characters_start--;
+            n_following_characters_end--;
           }
           grn_ii_parse_regexp_query_flush(ctx,
                                           parsed_strings,
                                           parsed_n_following_characters,
                                           &buffer,
-                                          &n_following_characters);
+                                          &n_following_characters_start,
+                                          &n_following_characters_end);
           continue;
         }
       }
@@ -10266,12 +10276,17 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
                                   parsed_strings,
                                   parsed_n_following_characters,
                                   &buffer,
-                                  &n_following_characters);
+                                  &n_following_characters_start,
+                                  &n_following_characters_end);
   size_t parsed_n_following_characters_size =
     GRN_UINT32_VECTOR_SIZE(parsed_n_following_characters);
   if (parsed_n_following_characters_size > 0 &&
       (GRN_UINT32_VALUE_AT(parsed_n_following_characters,
                            parsed_n_following_characters_size - 1) > 0)) {
+    /* 0 means no limit for now. It may be changed when we implement full
+     * the number of following characters range support. */
+    GRN_UINT32_VALUE_AT(parsed_n_following_characters,
+                        parsed_n_following_characters_size - 1) = 0;
     GRN_TEXT_SET(ctx,
                  &buffer,
                  GRN_TOKENIZER_END_MARK_UTF8,
@@ -10280,7 +10295,8 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
                                     parsed_strings,
                                     parsed_n_following_characters,
                                     &buffer,
-                                    &n_following_characters);
+                                    &n_following_characters_start,
+                                    &n_following_characters_end);
   }
   GRN_OBJ_FIN(ctx, &buffer);
 
@@ -10289,7 +10305,8 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
 
 typedef struct {
   grn_ii_select_cursor *cursor;
-  uint32_t n_following_characters;
+  uint32_t n_following_characters_start;
+  uint32_t n_following_characters_end;
   uint32_t next_start_pos_offset;
 } grn_ii_select_regexp_chunk;
 
@@ -10357,10 +10374,12 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
         have_error = GRN_TRUE;
         break;
       }
-      chunks[i].n_following_characters =
-        GRN_UINT32_VALUE_AT(&parsed_n_following_characters, i);
-      uint32_t next_start_pos_offset = chunks[i].n_following_characters;
-      if (chunks[i].n_following_characters > 0) {
+      chunks[i].n_following_characters_start =
+        GRN_UINT32_VALUE_AT(&parsed_n_following_characters, i * 2);
+      chunks[i].n_following_characters_end =
+        GRN_UINT32_VALUE_AT(&parsed_n_following_characters, i * 2 + 1);
+      uint32_t next_start_pos_offset = chunks[i].n_following_characters_start;
+      if (chunks[i].n_following_characters_start > 0) {
         size_t n_characters = 0;
         const char *current = parsed_string;
         const char *parsed_string_end = parsed_string + parsed_string_len;
@@ -10402,7 +10421,10 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
       }
 
       uint32_t pos = posting->end_pos;
-      uint32_t n_following_characters = chunks[0].n_following_characters;
+      uint32_t n_following_characters_start =
+        chunks[0].n_following_characters_start;
+      uint32_t n_following_characters_end =
+        chunks[0].n_following_characters_end;
       uint32_t next_start_pos = pos + chunks[0].next_start_pos_offset;
       for (i = 1; i < n_parsed_strings; i++) {
         grn_ii_select_cursor_posting *posting_i;
@@ -10423,7 +10445,7 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
           }
           if (posting_i->rid == posting->rid &&
               posting_i->sid == posting->sid) {
-            if (n_following_characters == 0) {
+            if (n_following_characters_start == 0) {
               if (posting_i->start_pos > pos) {
                 grn_ii_select_cursor_unshift(ctx, chunks[i].cursor, posting_i);
                 break;
@@ -10446,18 +10468,25 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
         if (posting_i->sid != posting->sid) {
           break;
         }
-        if (n_following_characters > 0) {
-          if (posting_i->start_pos != next_start_pos) {
-            break;
+        if (n_following_characters_start > 0) {
+          if (n_following_characters_end == 0) { /* 0 means no limit for now. */
+            if (posting_i->start_pos < next_start_pos) {
+              break;
+            }
+          } else {
+            if (posting_i->start_pos != next_start_pos) {
+              break;
+            }
           }
         }
 
         pos = posting_i->end_pos;
-        n_following_characters = chunks[i].n_following_characters;
+        n_following_characters_start = chunks[i].n_following_characters_start;
+        n_following_characters_end = chunks[i].n_following_characters_end;
         next_start_pos = pos + chunks[i].next_start_pos_offset;
       }
 
-      if (i == n_parsed_strings && n_following_characters == 0) {
+      if (i == n_parsed_strings && n_following_characters_start == 0) {
         grn_rset_posinfo pi = {posting->rid, posting->sid, pos};
         double record_score = 1.0;
         res_add(ctx, s, &pi, record_score, op);

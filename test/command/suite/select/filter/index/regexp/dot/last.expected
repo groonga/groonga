@@ -10,9 +10,10 @@ load --table Memos
 [
 {"content": "alphabet: aXbY"},
 {"content": "space:    a b "},
+{"content": "match:   aXbYZ"},
 {"content": "not match: aXb"}
 ]
-[[0,0.0,0.0],3]
+[[0,0.0,0.0],4]
 log_level --level info
 [[0,0.0,0.0],true]
 select Memos --filter 'content @~ "a.b."' --output_columns 'content, _score'
@@ -25,7 +26,7 @@ select Memos --filter 'content @~ "a.b."' --output_columns 'content, _score'
   [
     [
       [
-        2
+        3
       ],
       [
         [
@@ -44,6 +45,10 @@ select Memos --filter 'content @~ "a.b."' --output_columns 'content, _score'
       [
         "space:    a b ",
         1
+      ],
+      [
+        "match:   aXbYZ",
+        1
       ]
     ]
   ]
@@ -53,12 +58,12 @@ select Memos --filter 'content @~ "a.b."' --output_columns 'content, _score'
 #|i| [ii][select][cursor][open] n=1 <a>
 #|i| [ii][select][cursor][open] n=1 <b>
 #|i| [ii][select][cursor][open] n=1 <￰>
-#|i| exact: 2
-#|i| hits=2
+#|i| exact: 3
+#|i| hits=3
 #>select --filter "content @~ \"a.b.\"" --output_columns "content, _score" --table "Memos"
-#:000000000000000 filter(2): Memos.content "a.b." regexp
-#:000000000000000 select(2)
-#:000000000000000 output(2)
+#:000000000000000 filter(3): Memos.content "a.b." regexp
+#:000000000000000 select(3)
+#:000000000000000 output(3)
 #:000000000000000 send(0)
 #<000000000000000 rc=0
 log_level --level notice
