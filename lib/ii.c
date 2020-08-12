@@ -10137,11 +10137,34 @@ grn_ii_select_cursor_unshift(grn_ctx *ctx,
   cursor->have_unshifted_posting = GRN_TRUE;
 }
 
+static void
+grn_ii_parse_regexp_query_flush(grn_ctx *ctx,
+                                grn_obj *parsed_strings,
+                                grn_obj *parsed_n_following_characters,
+                                grn_obj *string,
+                                uint32_t *n_following_characters)
+{
+  if (GRN_TEXT_LEN(string) > 0) {
+    grn_vector_add_element(ctx,
+                           parsed_strings,
+                           GRN_TEXT_VALUE(string),
+                           GRN_TEXT_LEN(string),
+                           0,
+                           GRN_DB_TEXT);
+    GRN_BULK_REWIND(string);
+    GRN_UINT32_PUT(ctx,
+                   parsed_n_following_characters,
+                   *n_following_characters);
+  }
+  *n_following_characters = 0;
+}
+
 static grn_rc
 grn_ii_parse_regexp_query(grn_ctx *ctx,
                           const char *log_tag,
                           const char *string, unsigned int string_len,
-                          grn_obj *parsed_strings)
+                          grn_obj *parsed_strings,
+                          grn_obj *parsed_n_following_characters)
 {
   grn_bool escaping = GRN_FALSE;
   grn_bool in_paren = GRN_FALSE;
@@ -10151,6 +10174,7 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
   const char *current = string;
   const char *string_end = string + string_len;
   grn_obj buffer;
+  uint32_t n_following_characters = 0;
 
   GRN_TEXT_INIT(&buffer, 0);
   while (current < string_end) {
@@ -10195,6 +10219,15 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
         }
       }
     } else {
+      if (n_following_characters > 0 &&
+          (!(char_len == 1 && (*target == '.' || *target == '*')))) {
+        grn_ii_parse_regexp_query_flush(ctx,
+                                        parsed_strings,
+                                        parsed_n_following_characters,
+                                        &buffer,
+                                        &n_following_characters);
+      }
+
       if (char_len == 1) {
         if (*target == '\\') {
           escaping = GRN_TRUE;
@@ -10208,20 +10241,19 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
         } else if (*target == ')') {
           in_paren = GRN_FALSE;
           continue;
-        } else if (*target == '.' &&
-                   grn_charlen(ctx, current, string_end) == 1 &&
-                   *current == '*') {
-          if (GRN_TEXT_LEN(&buffer) > 0) {
-            grn_vector_add_element(ctx,
-                                   parsed_strings,
-                                   GRN_TEXT_VALUE(&buffer),
-                                   GRN_TEXT_LEN(&buffer),
-                                   0,
-                                   GRN_DB_TEXT);
-            GRN_BULK_REWIND(&buffer);
+        } else if (*target == '.') {
+          n_following_characters++;
+          continue;
+        } else if (*target == '*') {
+          /* ".*" is only supported for now. */
+          if (n_following_characters > 0) {
+            n_following_characters--;
           }
-          current++;
-          nth_char++;
+          grn_ii_parse_regexp_query_flush(ctx,
+                                          parsed_strings,
+                                          parsed_n_following_characters,
+                                          &buffer,
+                                          &n_following_characters);
           continue;
         }
       }
@@ -10230,18 +10262,36 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
     GRN_TEXT_PUT(ctx, &buffer, target, char_len);
     nth_char++;
   }
-  if (GRN_TEXT_LEN(&buffer) > 0) {
-    grn_vector_add_element(ctx,
-                           parsed_strings,
-                           GRN_TEXT_VALUE(&buffer),
-                           GRN_TEXT_LEN(&buffer),
-                           0,
-                           GRN_DB_TEXT);
+  grn_ii_parse_regexp_query_flush(ctx,
+                                  parsed_strings,
+                                  parsed_n_following_characters,
+                                  &buffer,
+                                  &n_following_characters);
+  size_t parsed_n_following_characters_size =
+    GRN_UINT32_VECTOR_SIZE(parsed_n_following_characters);
+  if (parsed_n_following_characters_size > 0 &&
+      (GRN_UINT32_VALUE_AT(parsed_n_following_characters,
+                           parsed_n_following_characters_size - 1) > 0)) {
+    GRN_OBJ_FIN(ctx, &buffer);
+    GRN_TEXT_SET(ctx,
+                 &buffer,
+                 GRN_TOKENIZER_END_MARK_UTF8,
+                 GRN_TOKENIZER_END_MARK_UTF8_LEN);
+    grn_ii_parse_regexp_query_flush(ctx,
+                                    parsed_strings,
+                                    parsed_n_following_characters,
+                                    &buffer,
+                                    &n_following_characters);
   }
   GRN_OBJ_FIN(ctx, &buffer);
 
   return GRN_SUCCESS;
 }
+
+typedef struct {
+  grn_ii_select_cursor *cursor;
+  uint32_t n_following_characters;
+} grn_ii_select_regexp_chunk;
 
 static grn_rc
 grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
@@ -10250,11 +10300,15 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
 {
   grn_rc rc;
   grn_obj parsed_strings;
+  grn_obj parsed_n_following_characters;
   unsigned int n_parsed_strings;
 
   GRN_TEXT_INIT(&parsed_strings, GRN_OBJ_VECTOR);
+  GRN_UINT32_INIT(&parsed_n_following_characters, GRN_OBJ_VECTOR);
   rc = grn_ii_parse_regexp_query(ctx, "[ii][select][regexp]",
-                                 string, string_len, &parsed_strings);
+                                 string, string_len,
+                                 &parsed_strings,
+                                 &parsed_n_following_characters);
   if (rc != GRN_SUCCESS) {
     GRN_OBJ_FIN(ctx, &parsed_strings);
     return rc;
@@ -10265,7 +10319,8 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
   }
 
   n_parsed_strings = grn_vector_size(ctx, &parsed_strings);
-  if (n_parsed_strings == 1) {
+  if (n_parsed_strings == 1 &&
+      GRN_UINT32_VALUE_AT(&parsed_n_following_characters, 0) == 0) {
     const char *parsed_string;
     unsigned int parsed_string_len;
     parsed_string_len = grn_vector_get_element(ctx,
@@ -10280,10 +10335,10 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
                        s, op, optarg);
   } else {
     int i;
-    grn_ii_select_cursor **cursors;
+    grn_ii_select_regexp_chunk *chunks;
     grn_bool have_error = GRN_FALSE;
 
-    cursors = GRN_CALLOC(sizeof(grn_ii_select_cursor *) * n_parsed_strings);
+    chunks = GRN_CALLOC(sizeof(grn_ii_select_regexp_chunk) * n_parsed_strings);
     for (i = 0; i < n_parsed_strings; i++) {
       const char *parsed_string;
       unsigned int parsed_string_len;
@@ -10293,60 +10348,82 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
                                                  &parsed_string,
                                                  NULL,
                                                  NULL);
-      cursors[i] = grn_ii_select_cursor_open(ctx,
-                                             ii,
-                                             parsed_string,
-                                             parsed_string_len,
-                                             optarg);
-      if (!cursors[i]) {
+      chunks[i].cursor = grn_ii_select_cursor_open(ctx,
+                                                   ii,
+                                                   parsed_string,
+                                                   parsed_string_len,
+                                                   optarg);
+      if (!chunks[i].cursor) {
         have_error = GRN_TRUE;
         break;
       }
+      chunks[i].n_following_characters =
+        GRN_UINT32_VALUE_AT(&parsed_n_following_characters, i);
     }
 
     while (!have_error) {
       grn_ii_select_cursor_posting *posting;
-      uint32_t pos;
 
-      posting = grn_ii_select_cursor_next(ctx, cursors[0]);
+      posting = grn_ii_select_cursor_next(ctx, chunks[0].cursor);
       if (!posting) {
         break;
       }
 
-      pos = posting->end_pos;
+      uint32_t pos = posting->end_pos;
+      uint32_t n_following_characters = chunks[0].n_following_characters;
       for (i = 1; i < n_parsed_strings; i++) {
         grn_ii_select_cursor_posting *posting_i;
 
         for (;;) {
-          posting_i = grn_ii_select_cursor_next(ctx, cursors[i]);
+          posting_i = grn_ii_select_cursor_next(ctx, chunks[i].cursor);
           if (!posting_i) {
             break;
           }
 
-          if (posting_i->rid == posting->rid &&
-              posting_i->sid == posting->sid &&
-              posting_i->start_pos > pos) {
-            grn_ii_select_cursor_unshift(ctx, cursors[i], posting_i);
+          if (posting_i->rid > posting->rid) {
+            grn_ii_select_cursor_unshift(ctx, chunks[i].cursor, posting_i);
             break;
           }
-          if (posting_i->rid > posting->rid) {
-            grn_ii_select_cursor_unshift(ctx, cursors[i], posting_i);
+          if (posting_i->sid > posting->sid) {
+            grn_ii_select_cursor_unshift(ctx, chunks[i].cursor, posting_i);
             break;
+          }
+          if (posting_i->rid == posting->rid &&
+              posting_i->sid == posting->sid) {
+            if (n_following_characters == 0) {
+              if (posting_i->start_pos > pos) {
+                grn_ii_select_cursor_unshift(ctx, chunks[i].cursor, posting_i);
+                break;
+              }
+            } else {
+              if (posting_i->start_pos >= pos + n_following_characters + 1) {
+                grn_ii_select_cursor_unshift(ctx, chunks[i].cursor, posting_i);
+                break;
+              }
+            }
           }
         }
 
         if (!posting_i) {
           break;
         }
-
-        if (posting_i->rid != posting->rid || posting_i->sid != posting->sid) {
+        if (posting_i->rid != posting->rid) {
           break;
+        }
+        if (posting_i->sid != posting->sid) {
+          break;
+        }
+        if (n_following_characters > 0) {
+          if (posting_i->start_pos != pos + n_following_characters + 1) {
+            break;
+          }
         }
 
         pos = posting_i->end_pos;
+        n_following_characters = chunks[i].n_following_characters;
       }
 
-      if (i == n_parsed_strings) {
+      if (i == n_parsed_strings && n_following_characters == 0) {
         grn_rset_posinfo pi = {posting->rid, posting->sid, pos};
         double record_score = 1.0;
         res_add(ctx, s, &pi, record_score, op);
@@ -10354,13 +10431,14 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
     }
 
     for (i = 0; i < n_parsed_strings; i++) {
-      if (cursors[i]) {
-        grn_ii_select_cursor_close(ctx, cursors[i]);
+      if (chunks[i].cursor) {
+        grn_ii_select_cursor_close(ctx, chunks[i].cursor);
       }
     }
-    GRN_FREE(cursors);
+    GRN_FREE(chunks);
   }
   GRN_OBJ_FIN(ctx, &parsed_strings);
+  GRN_OBJ_FIN(ctx, &parsed_n_following_characters);
 
   if (optarg) {
     optarg->mode = GRN_OP_REGEXP;
@@ -11170,11 +11248,15 @@ grn_ii_estimate_size_for_query_regexp(grn_ctx *ctx, grn_ii *ii,
 {
   grn_rc rc;
   grn_obj parsed_strings;
+  grn_obj parsed_n_following_characters;
   uint32_t size;
 
   GRN_TEXT_INIT(&parsed_strings, GRN_OBJ_VECTOR);
+  GRN_UINT32_INIT(&parsed_n_following_characters, GRN_OBJ_VECTOR);
   rc = grn_ii_parse_regexp_query(ctx, "[ii][estimate-size][query][regexp]",
-                                 query, query_len, &parsed_strings);
+                                 query, query_len,
+                                 &parsed_strings,
+                                 &parsed_n_following_characters);
   if (rc != GRN_SUCCESS) {
     GRN_OBJ_FIN(ctx, &parsed_strings);
     return 0;

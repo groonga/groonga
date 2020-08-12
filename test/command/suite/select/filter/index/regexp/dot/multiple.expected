@@ -1,0 +1,64 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create RegexpTokens TABLE_PAT_KEY ShortText   --default_tokenizer TokenRegexp
+[[0,0.0,0.0],true]
+column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION   Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "alphabet: aXYb"},
+{"content": "space:    a  b"},
+{"content": "not match: aXb"}
+]
+[[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
+select Memos --filter 'content @~ "a..b"' --output_columns 'content, _score'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "content",
+          "Text"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "alphabet: aXYb",
+        1
+      ],
+      [
+        "space:    a  b",
+        1
+      ]
+    ]
+  ]
+]
+#|i| [object][search][index][key][regexp] <RegexpTokens.memos_content>
+#|i| grn_ii_sel > (a..b)
+#|i| [ii][select][cursor][open] n=1 <a>
+#|i| [ii][select][cursor][open] n=1 <b>
+#|i| exact: 2
+#|i| hits=2
+#>select --filter "content @~ \"a..b\"" --output_columns "content, _score" --table "Memos"
+#:000000000000000 filter(2): Memos.content "a..b" regexp
+#:000000000000000 select(2)
+#:000000000000000 output(2)
+#:000000000000000 send(0)
+#<000000000000000 rc=0
+log_level --level notice
+[[0,0.0,0.0],true]

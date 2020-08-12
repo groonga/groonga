@@ -2502,9 +2502,6 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
           }
           break;
         case '.' :
-          if (dot) {
-            return GRN_FALSE;
-          }
           dot = GRN_TRUE;
           break;
         case '*' :
@@ -2527,15 +2524,9 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
         case '$' :
           return GRN_FALSE;
         case '\\' :
-          if (dot) {
-            return GRN_FALSE;
-          }
           escaping = GRN_TRUE;
           break;
         default :
-          if (dot) {
-            return GRN_FALSE;
-          }
           break;
         }
       }
@@ -2546,9 +2537,6 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
     regexp_raw += char_len;
   }
 
-  if (dot) {
-    return GRN_FALSE;
-  }
   if (in_paren) {
     return GRN_FALSE;
   }

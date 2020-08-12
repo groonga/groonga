@@ -1,0 +1,22 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+
+table_create RegexpTokens TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenRegexp
+column_create RegexpTokens memos_content COLUMN_INDEX|WITH_POSITION \
+  Memos content
+
+load --table Memos
+[
+{"content": "alphabet: aXYb"},
+{"content": "space:    a  b"},
+{"content": "not match: aXb"}
+]
+
+#@add-important-log-levels info
+log_level --level info
+#@collect-query-log true
+select Memos --filter 'content @~ "a..b"' --output_columns 'content, _score'
+#@collect-query-log false
+log_level --level notice
+#@remove-important-log-levels info
