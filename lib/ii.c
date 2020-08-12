@@ -10272,7 +10272,6 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
   if (parsed_n_following_characters_size > 0 &&
       (GRN_UINT32_VALUE_AT(parsed_n_following_characters,
                            parsed_n_following_characters_size - 1) > 0)) {
-    GRN_OBJ_FIN(ctx, &buffer);
     GRN_TEXT_SET(ctx,
                  &buffer,
                  GRN_TOKENIZER_END_MARK_UTF8,
