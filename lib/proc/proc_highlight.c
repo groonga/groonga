@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -398,17 +399,11 @@ static grn_highlighter *
 func_highlight_html_create_highlighter(grn_ctx *ctx, grn_obj *expression)
 {
   grn_highlighter *highlighter;
-  grn_obj *condition_ptr = NULL;
   grn_obj *condition = NULL;
 
   highlighter = grn_highlighter_open(ctx);
 
-  condition_ptr = grn_expr_get_var(ctx, expression,
-                                   GRN_SELECT_INTERNAL_VAR_CONDITION,
-                                   strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
-  if (condition_ptr) {
-    condition = GRN_PTR_VALUE(condition_ptr);
-  }
+  condition = grn_expr_get_condition(ctx, expression);
 
   for (; condition; condition = grn_expr_get_parent(ctx, condition)) {
     size_t i, n_keywords;

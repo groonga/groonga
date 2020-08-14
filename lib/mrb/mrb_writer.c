@@ -191,6 +191,7 @@ writer_write_table_records_content_internal(mrb_state *mrb,
   mrb_int columns_size;
   grn_obj *table;
   grn_obj_format format;
+  grn_obj *condition = NULL;
   int n_hits = 0;
   int offset = 0;
   int limit = -1;
@@ -216,6 +217,12 @@ writer_write_table_records_content_internal(mrb_state *mrb,
     if (!mrb_nil_p(mrb_auto_flush)) {
       auto_flush = mrb_bool(mrb_auto_flush);
     }
+
+    mrb_value mrb_condition =
+      grn_mrb_options_get_lit(mrb, mrb_options, "condition");
+    if (!mrb_nil_p(mrb_condition)) {
+      condition = DATA_PTR(mrb_condition);
+    }
   }
   if (limit < 0) {
     limit = grn_table_size(ctx, table) + limit + 1;
@@ -231,6 +238,9 @@ writer_write_table_records_content_internal(mrb_state *mrb,
     if (rc != GRN_SUCCESS) {
       grn_obj_format_fin(ctx, &format);
       grn_mrb_ctx_check(mrb);
+    }
+    if (format.expression) {
+      
     }
   }
   if (only_content) {

@@ -513,6 +513,7 @@ grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t 
     GRN_TEXT_INIT(&expr->query_log_tag_prefix, 0);
     GRN_TEXT_PUTC(ctx, &expr->query_log_tag_prefix, '\0');
     expr->parent = NULL;
+    expr->condition = NULL;
     expr->vars = NULL;
     expr->nvars = 0;
     GRN_DB_OBJ_SET_TYPE(expr, GRN_EXPR);
@@ -654,6 +655,7 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned int name_size)
     GRN_TEXT_INIT(&expr->query_log_tag_prefix, 0);
     GRN_TEXT_PUTC(ctx, &expr->query_log_tag_prefix, '\0');
     expr->parent = NULL;
+    expr->condition = NULL;
     expr->code0 = NULL;
     expr->vars = NULL;
     expr->nvars = 0;
@@ -8037,4 +8039,23 @@ grn_expr_get_parent(grn_ctx *ctx, grn_obj *expr)
   GRN_API_ENTER;
   grn_expr *e = (grn_expr *)expr;
   GRN_API_RETURN(e->parent);
+}
+
+grn_rc
+grn_expr_set_condition(grn_ctx *ctx,
+                       grn_obj *expr,
+                       grn_obj *condition)
+{
+  GRN_API_ENTER;
+  grn_expr *e = (grn_expr *)expr;
+  e->condition = condition;
+  GRN_API_RETURN(GRN_SUCCESS);
+}
+
+grn_obj *
+grn_expr_get_condition(grn_ctx *ctx, grn_obj *expr)
+{
+  GRN_API_ENTER;
+  grn_expr *e = (grn_expr *)expr;
+  GRN_API_RETURN(e->condition);
 }

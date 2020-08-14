@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,10 +27,6 @@ extern "C" {
 
 #define GRN_SELECT_DEFAULT_LIMIT           10
 #define GRN_SELECT_DEFAULT_OUTPUT_COLUMNS  "_id, _key, *"
-
-#define GRN_SELECT_INTERNAL_VAR_CONDITION     "$condition"
-#define GRN_SELECT_INTERNAL_VAR_CONDITION_LEN           \
-  (sizeof(GRN_SELECT_INTERNAL_VAR_CONDITION) - 1)
 
 void grn_proc_init_from_env(void);
 

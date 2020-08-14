@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2017 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2017  Brazil
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -138,6 +138,13 @@ grn_expr_set_parent(grn_ctx *ctx,
                     grn_obj *parent);
 GRN_API grn_obj *
 grn_expr_get_parent(grn_ctx *ctx, grn_obj *expr);
+
+GRN_API grn_rc
+grn_expr_set_condition(grn_ctx *ctx,
+                       grn_obj *expr,
+                       grn_obj *condition);
+GRN_API grn_obj *
+grn_expr_get_condition(grn_ctx *ctx, grn_obj *expr);
 
 #ifdef __cplusplus
 }

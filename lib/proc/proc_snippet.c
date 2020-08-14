@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2016  Brazil
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -270,7 +270,6 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
   if (nargs > 0) {
     grn_obj *text = args[0];
     grn_obj *expression = NULL;
-    grn_obj *condition_ptr = NULL;
     grn_obj *condition = NULL;
     grn_obj *snip = NULL;
     grn_obj *default_return_value = NULL;
@@ -314,13 +313,7 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
     }
 
     grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
-    condition_ptr = grn_expr_get_var(ctx, expression,
-                                     GRN_SELECT_INTERNAL_VAR_CONDITION,
-                                     strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
-    if (condition_ptr) {
-      condition = GRN_PTR_VALUE(condition_ptr);
-    }
-
+    condition = grn_expr_get_condition(ctx, expression);
     if (condition) {
       grn_obj *snip_ptr;
       snip_ptr = grn_expr_get_var(ctx, expression,

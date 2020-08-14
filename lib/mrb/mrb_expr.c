@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2018 Brazil
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2013-2018  Brazil
+  Copyright(C) 2019-2020  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -621,18 +621,11 @@ mrb_grn_expression_set_condition(mrb_state *mrb, mrb_value self)
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_obj *expr;
   mrb_value mrb_condition;
-  grn_obj *condition_ptr;
 
   mrb_get_args(mrb, "o", &mrb_condition);
 
   expr = DATA_PTR(self);
-  condition_ptr = grn_expr_get_or_add_var(ctx,
-                                          expr,
-                                          GRN_SELECT_INTERNAL_VAR_CONDITION,
-                                          GRN_SELECT_INTERNAL_VAR_CONDITION_LEN);
-  GRN_OBJ_FIN(ctx, condition_ptr);
-  GRN_PTR_INIT(condition_ptr, 0, GRN_DB_OBJECT);
-  GRN_PTR_SET(ctx, condition_ptr, GRN_MRB_DATA_PTR(mrb_condition));
+  grn_expr_set_condition(ctx, expr, GRN_MRB_DATA_PTR(mrb_condition));
 
   return mrb_nil_value();
 }
