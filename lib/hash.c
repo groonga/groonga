@@ -328,6 +328,9 @@ grn_io_array_bit_flip(grn_ctx *ctx, grn_io *io,
 /* grn_array */
 
 #define GRN_ARRAY_SEGMENT_SIZE 0x400000
+#define GRN_ARRAY_STATUS_TRUNCATED                   (0x01<<0)
+#define GRN_ARRAY_STATUS_GARBAGES_BUFFER_INITIALIZED (0x01<<1)
+#define GRN_ARRAY_GARBAGES_BUFFER_SIZE 5
 
 /* Header of grn_io-based grn_array. */
 struct grn_array_header {
@@ -338,8 +341,10 @@ struct grn_array_header {
   uint32_t n_garbages;
   grn_id garbages;
   uint32_t lock;
-  uint32_t truncated;
-  uint32_t reserved[8];
+  uint32_t status;
+  uint32_t n_garbages_in_buffer;
+  grn_id garbages_buffer[GRN_ARRAY_GARBAGES_BUFFER_SIZE];
+  uint32_t reserved[1];
 };
 
 /*
@@ -356,6 +361,41 @@ grn_inline static grn_bool
 grn_array_is_io_array(grn_array *array)
 {
   return array->io != NULL;
+}
+
+grn_inline static grn_bool
+grn_array_can_use_value_for_garbage(grn_array *array)
+{
+  return array->value_size >= sizeof(grn_id);
+}
+
+/*
+ * array must be grn_array_is_io_array(array) &&
+ * !grn_array_can_use_value_for_garbage(array). The
+ * grn_array_is_io_array(array) restriction may be removed when we
+ * need to implement this for tiny array.
+ */
+grn_inline static void
+grn_array_put_garbage_to_buffer(grn_ctx *ctx,
+                                grn_array *array,
+                                grn_id garbage_id)
+{
+  struct grn_array_header * const header = array->header;
+  if (header->garbages != GRN_ID_NIL &&
+      header->n_garbages_in_buffer < GRN_ARRAY_GARBAGES_BUFFER_SIZE) {
+    int i;
+    for (i = 0; i < GRN_ARRAY_GARBAGES_BUFFER_SIZE; i++) {
+      if (header->garbages_buffer[i] == GRN_ID_NIL) {
+        header->garbages_buffer[i] = header->garbages;
+        header->n_garbages_in_buffer++;
+        header->garbages = GRN_ID_NIL;
+        break;
+      }
+    }
+  }
+  if (header->garbages == GRN_ID_NIL) {
+    header->garbages = garbage_id;
+  }
 }
 
 grn_inline static void *
@@ -379,7 +419,11 @@ grn_inline static int
 grn_array_bitmap_at(grn_ctx *ctx, grn_array *array, grn_id id)
 {
   if (grn_array_is_io_array(array)) {
-    return grn_io_array_bit_at(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
+    int bit = grn_io_array_bit_at(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
+    if (bit == 0 && !grn_array_can_use_value_for_garbage(array)) {
+      grn_array_put_garbage_to_buffer(ctx, array, id);
+    }
+    return bit;
   } else {
     return grn_tiny_bitmap_put(&array->bitmap, id);
   }
@@ -451,7 +495,15 @@ grn_array_init_io_array(grn_ctx *ctx, grn_array *array, const char *path,
   header->n_entries = 0;
   header->n_garbages = 0;
   header->garbages = GRN_ID_NIL;
-  header->truncated = GRN_FALSE;
+  header->status = 0;
+  header->n_garbages_in_buffer = 0;
+  {
+    int i;
+    for (i = 0; i < GRN_ARRAY_GARBAGES_BUFFER_SIZE; i++) {
+      header->garbages_buffer[i] = GRN_ID_NIL;
+    }
+  }
+  header->status |= GRN_ARRAY_STATUS_GARBAGES_BUFFER_INITIALIZED;
   array->obj.header.flags = flags;
   array->ctx = ctx;
   array->value_size = value_size;
@@ -515,6 +567,17 @@ grn_array_open(grn_ctx *ctx, const char *path)
             array->io = io;
             array->header = header;
             array->lock = &header->lock;
+            /* For old array created by Groonga that doesn't have
+             * garbages_buffer. */
+            if (!grn_array_can_use_value_for_garbage(array) &&
+                !(header->status & GRN_ARRAY_STATUS_GARBAGES_BUFFER_INITIALIZED)) {
+              header->n_garbages_in_buffer = 0;
+              int i;
+              for (i = 0; i < GRN_ARRAY_GARBAGES_BUFFER_SIZE; i++) {
+                header->garbages_buffer[i] = GRN_ID_NIL;
+              }
+              header->status |= GRN_ARRAY_STATUS_GARBAGES_BUFFER_INITIALIZED;
+            }
             return array;
           } else {
             GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid array flags. (%x)", header->flags);
@@ -543,7 +606,7 @@ grn_array_open(grn_ctx *ctx, const char *path)
 static grn_rc
 grn_array_error_if_truncated(grn_ctx *ctx, grn_array *array)
 {
-  if (array->header && array->header->truncated) {
+  if (array->header && (array->header->status & GRN_ARRAY_STATUS_TRUNCATED)) {
     ERR(GRN_FILE_CORRUPT,
         "array is truncated, please unmap or reopen the database");
     return GRN_FILE_CORRUPT;
@@ -618,7 +681,7 @@ grn_array_truncate(grn_ctx *ctx, grn_array *array)
   if (grn_array_is_io_array(array)) {
     if (path) {
       /* Only an I/O array with a valid path uses the `truncated` flag. */
-      array->header->truncated = GRN_TRUE;
+      array->header->status |= GRN_ARRAY_STATUS_TRUNCATED;
     }
     rc = grn_io_close(ctx, array->io);
     if (!rc) {
@@ -775,7 +838,7 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
     rc = GRN_SUCCESS;
     /* lock */
     if (grn_array_is_io_array(array)) {
-      if (array->value_size >= sizeof(grn_id)) {
+      if (grn_array_can_use_value_for_garbage(array)) {
         struct grn_array_header * const header = array->header;
         void * const entry = grn_array_io_entry_at(ctx, array, id, 0);
         if (!entry) {
@@ -784,6 +847,8 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
           *((grn_id *)entry) = header->garbages;
           header->garbages = id;
         }
+      } else {
+        grn_array_put_garbage_to_buffer(ctx, array, id);
       }
       if (!rc) {
         (*array->n_entries)--;
@@ -796,7 +861,7 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
         grn_io_array_bit_off(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
       }
     } else {
-      if (array->value_size >= sizeof(grn_id)) {
+      if (grn_array_can_use_value_for_garbage(array)) {
         void * const entry = grn_tiny_array_get(&array->array, id);
         if (!entry) {
           rc = GRN_INVALID_ARGUMENT;
@@ -1039,13 +1104,29 @@ grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
   header = array->header;
   id = header->garbages;
   if (id) {
-    /* These operations fail iff the array is broken. */
-    entry = grn_array_io_entry_at(ctx, array, id, GRN_TABLE_ADD);
-    if (!entry) {
-      return GRN_ID_NIL;
+    if (grn_array_can_use_value_for_garbage(array)) {
+      /* These operations fail iff the array is broken. */
+      entry = grn_array_io_entry_at(ctx, array, id, GRN_TABLE_ADD);
+      if (!entry) {
+        return GRN_ID_NIL;
+      }
+      header->garbages = *(grn_id *)entry;
+      memset(entry, 0, header->value_size);
+    } else {
+      header->garbages = GRN_ID_NIL;
+      if ((*array->n_garbages) > 0 &&
+          header->n_garbages_in_buffer > 0) {
+        int i;
+        for (i = 0; i < GRN_ARRAY_GARBAGES_BUFFER_SIZE; i++) {
+          if (header->garbages_buffer[i] != GRN_ID_NIL) {
+            header->garbages = header->garbages_buffer[i];
+            header->garbages_buffer[i] = GRN_ID_NIL;
+            header->n_garbages_in_buffer--;
+            break;
+          }
+        }
+      }
     }
-    header->garbages = *(grn_id *)entry;
-    memset(entry, 0, header->value_size);
     (*array->n_garbages)--;
     if (!grn_io_array_bit_on(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id)) {
       /* Actually, it is difficult to recover from this error. */

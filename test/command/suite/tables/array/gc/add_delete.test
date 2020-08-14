@@ -1,0 +1,25 @@
+table_create array TABLE_NO_KEY
+
+load --table array
+[
+{}
+]
+delete array --filter true
+
+load --table array
+[
+{}
+]
+delete array --filter true
+
+load --table array
+[
+{}
+]
+delete array --filter true
+
+load --table array
+[
+{}
+]
+select array

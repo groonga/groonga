@@ -1,0 +1,26 @@
+table_create array TABLE_NO_KEY
+[[0,0.0,0.0],true]
+load --table array
+[
+{},
+{},
+{},
+{},
+{},
+{}
+]
+[[0,0.0,0.0],6]
+delete array --filter true
+[[0,0.0,0.0],true]
+load --table array
+[
+{},
+{},
+{},
+{},
+{},
+{}
+]
+[[0,0.0,0.0],6]
+select array
+[[0,0.0,0.0],[[[6],[["_id","UInt32"]],[1],[2],[3],[4],[5],[6]]]]

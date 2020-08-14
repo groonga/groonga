@@ -1,0 +1,48 @@
+table_create array TABLE_NO_KEY
+
+# GRN_ARRAY_GARBAGES_BUFFER_SIZE + 1 (array_header::garbages) is 6
+load --table array
+[
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{}
+]
+delete array --filter true
+
+load --table array
+[
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{}
+]
+# This select collects garbage
+select array
+
+load --table array
+[
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{}
+]
+select array --limit -1
