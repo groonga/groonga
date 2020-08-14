@@ -1,0 +1,71 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+plugin_register functions/number
+[[0,0.0,0.0],true]
+table_create Memos_20170315 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos_20170315 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos_20170315 content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Memos_20170316 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos_20170316 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos_20170316 content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Memos_20170317 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos_20170317 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos_20170317 content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Memos_20170315
+[
+{"timestamp": "2017/03/15 00:00:00", "content": "Groonga is fast."},
+{"timestamp": "2017/03/15 01:00:00", "content": "Mroonga is fast and easy to use."}
+]
+[[0,0.0,0.0],2]
+load --table Memos_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "content": "PGroonga is fast and easy to use."},
+{"timestamp": "2017/03/16 11:00:00", "content": "Rroonga is fast and easy to use."}
+]
+[[0,0.0,0.0],2]
+logical_select Memos   --shard_key timestamp   --query 'content:@easy'   --output_columns 'content, highlight_html(content)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "content",
+          "Text"
+        ],
+        [
+          "highlight_html",
+          null
+        ]
+      ],
+      [
+        "Mroonga is fast and easy to use.",
+        "Mroonga is fast and <span class=\"keyword\">easy</span> to use."
+      ],
+      [
+        "PGroonga is fast and easy to use.",
+        "PGroonga is fast and <span class=\"keyword\">easy</span> to use."
+      ],
+      [
+        "Rroonga is fast and easy to use.",
+        "Rroonga is fast and <span class=\"keyword\">easy</span> to use."
+      ]
+    ]
+  ]
+]

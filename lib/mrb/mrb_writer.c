@@ -239,8 +239,8 @@ writer_write_table_records_content_internal(mrb_state *mrb,
       grn_obj_format_fin(ctx, &format);
       grn_mrb_ctx_check(mrb);
     }
-    if (format.expression) {
-      
+    if (format.expression && condition) {
+      grn_expr_set_condition(ctx, format.expression, condition);
     }
   }
   if (only_content) {
