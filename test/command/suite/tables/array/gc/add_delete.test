@@ -1,25 +1,26 @@
 table_create array TABLE_NO_KEY
+column_create array index COLUMN_SCALAR UInt32
 
 load --table array
 [
-{}
+{"index": 1}
 ]
 delete array --filter true
 
 load --table array
 [
-{}
+{"index": 2}
 ]
 delete array --filter true
 
 load --table array
 [
-{}
+{"index": 3}
 ]
 delete array --filter true
 
 load --table array
 [
-{}
+{"index": 4}
 ]
 select array
