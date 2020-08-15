@@ -280,9 +280,9 @@ test_corrupt_jagged_array(void)
     cut_take_printf("[[[3],"
                     "[[\"_id\",\"UInt32\"],"
                      "[\"description\",\"ShortText\"]],"
+                     "[1,\"%s\"],"
                      "[2,\"%s\"],"
-                     "[3,\"%s\"],"
-                     "[4,\"%s\"]]]",
+                     "[3,\"%s\"]]]",
                     text_65bytes,
                     text_65bytes,
                     text_129bytes),
