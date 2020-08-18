@@ -1,0 +1,9 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga"}
+]
+[[0,0.0,0.0],1]
+select Memos --filter '_key @ "gROONGA"'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"Groonga"]]]]

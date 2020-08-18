@@ -1,0 +1,8 @@
+table_create Memos TABLE_HASH_KEY ShortText
+
+load --table Memos
+[
+{"_key": "Groonga"}
+]
+
+select Memos --filter '_key @ "gROONGA"'

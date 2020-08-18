@@ -2823,7 +2823,10 @@ grn_expr_executor_init_simple_match(grn_ctx *ctx,
       "[expr-executor][match]");
 #endif
 
-  GRN_VOID_INIT(&(executor->data.simple_match.value_buffer));
+  grn_obj *target = e->codes[0].value;
+  grn_obj *value_buffer = &(executor->data.simple_match.value_buffer);
+  GRN_VOID_INIT(value_buffer);
+  grn_obj_reinit_for(ctx, value_buffer, target);
 }
 
 static grn_bool
@@ -2859,20 +2862,9 @@ grn_expr_executor_is_simple_match(grn_ctx *ctx,
   if (!target->value) {
     return GRN_FALSE;
   }
-  if (target->value->header.type != GRN_COLUMN_VAR_SIZE) {
-    return GRN_FALSE;
-  }
-  if ((target->value->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) !=
-      GRN_OBJ_COLUMN_SCALAR) {
-    return GRN_FALSE;
-  }
-  switch (grn_obj_get_range(ctx, target->value)) {
-  case GRN_DB_SHORT_TEXT :
-  case GRN_DB_TEXT :
-  case GRN_DB_LONG_TEXT :
-    break;
-  default :
-    return GRN_FALSE;
+  if (!(grn_obj_is_key_accessor(ctx, target->value) ||
+        grn_obj_is_text_family_scalar_column(ctx, target->value))) {
+    return false;
   }
 
   if (sub_text->op != GRN_OP_PUSH) {
@@ -2881,19 +2873,8 @@ grn_expr_executor_is_simple_match(grn_ctx *ctx,
   if (sub_text->nargs != 1) {
     return GRN_FALSE;
   }
-  if (!sub_text->value) {
-    return GRN_FALSE;
-  }
-  if (sub_text->value->header.type != GRN_BULK) {
-    return GRN_FALSE;
-  }
-  switch (sub_text->value->header.domain) {
-  case GRN_DB_SHORT_TEXT :
-  case GRN_DB_TEXT :
-  case GRN_DB_LONG_TEXT :
-    break;
-  default :
-    return GRN_FALSE;
+  if (!grn_obj_is_text_family_bulk(ctx, sub_text->value)) {
+    return false;
   }
 
   if (!grn_onigmo_is_valid_encoding(ctx)) {
@@ -2962,7 +2943,7 @@ grn_expr_executor_exec_simple_match(grn_ctx *ctx,
     return result_buffer;
   }
 
-  grn_obj_reinit_for(ctx, value_buffer, e->codes[0].value);
+  GRN_BULK_REWIND(value_buffer);
   grn_obj_get_value(ctx, e->codes[0].value, id, value_buffer);
   {
     grn_obj *norm_target;
