@@ -2988,11 +2988,11 @@ grn_expr_executor_fin_simple_match(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &(executor->data.simple_match.value_buffer));
 }
 
-static void
-grn_expr_executor_init_proc(grn_ctx *ctx,
-                            grn_expr_executor *executor)
+static bool
+grn_expr_executor_init_simple_proc(grn_ctx *ctx,
+                                   grn_expr_executor *executor)
 {
-  grn_proc_ctx *proc_ctx = &(executor->data.proc.proc_ctx);
+  grn_proc_ctx *proc_ctx = &(executor->data.simple_proc.proc_ctx);
   grn_expr *expr;
   grn_proc *proc;
 
@@ -3000,16 +3000,56 @@ grn_expr_executor_init_proc(grn_ctx *ctx,
   proc = (grn_proc *)(expr->codes[0].value);
   proc_ctx->proc = proc;
   proc_ctx->caller = executor->expr;
-  proc_ctx->phase = PROC_INIT;
 
-  executor->data.proc.n_args = expr->codes[expr->codes_curr - 1].nargs - 1;
+  int n_args = 0;
+  int n_buffers = 0;
+  {
+    uint32_t i;
+    for (i = 1; i < expr->codes_curr - 1; i++) {
+      switch (expr->codes[i].op) {
+      case GRN_OP_GET_VALUE :
+        n_args++;
+        n_buffers++;
+        break;
+      case GRN_OP_PUSH :
+        n_args++;
+        break;
+      default :
+        return false;
+      }
+    }
+  }
 
-  proc->funcs[PROC_INIT](ctx, 0, NULL, &(proc_ctx->user_data));
+
+  grn_obj **args = GRN_MALLOCN(grn_obj *, n_args);
+  if (!args) {
+    return false;
+  }
+  executor->data.simple_proc.args = args;
+  executor->data.simple_proc.n_args = n_args;
+
+  if (n_buffers > 0) {
+    grn_obj *buffers = GRN_MALLOCN(grn_obj, n_buffers);
+    if (!buffers) {
+      GRN_FREE(args);
+      return false;
+    }
+    int i;
+    for (i = 0; i < n_buffers; i++) {
+      GRN_VOID_INIT(&(buffers[i]));
+    }
+    executor->data.simple_proc.buffers = buffers;
+  } else {
+    executor->data.simple_proc.buffers = NULL;
+  }
+  executor->data.simple_proc.n_buffers = n_buffers;
+
+  return true;
 }
 
 static grn_bool
-grn_expr_executor_is_proc(grn_ctx *ctx,
-                          grn_expr_executor *executor)
+grn_expr_executor_is_simple_proc(grn_ctx *ctx,
+                                 grn_expr_executor *executor)
 {
   grn_expr *e = (grn_expr *)(executor->expr);
   grn_obj *first;
@@ -3025,8 +3065,9 @@ grn_expr_executor_is_proc(grn_ctx *ctx,
   }
 
   proc = (grn_proc *)first;
-  if (!(proc->funcs[PROC_INIT] &&
-        proc->funcs[PROC_NEXT])) {
+  if (!proc->funcs[PROC_INIT] &&
+      !proc->funcs[PROC_NEXT] &&
+      !proc->funcs[PROC_FIN]) {
     return GRN_FALSE;
   }
 
@@ -3034,72 +3075,102 @@ grn_expr_executor_is_proc(grn_ctx *ctx,
     return GRN_FALSE;
   }
 
-  grn_expr_executor_init_proc(ctx, executor);
-
-  return GRN_TRUE;
+  return grn_expr_executor_init_simple_proc(ctx, executor);
 }
 
 static grn_obj *
-grn_expr_executor_exec_proc(grn_ctx *ctx,
-                            grn_expr_executor *executor,
-                            grn_id id)
+grn_expr_executor_exec_simple_proc(grn_ctx *ctx,
+                                   grn_expr_executor *executor,
+                                   grn_id id)
 {
-  grn_proc_ctx *proc_ctx = &(executor->data.proc.proc_ctx);
-  int n_args = executor->data.proc.n_args;
+  grn_proc_ctx *proc_ctx = &(executor->data.simple_proc.proc_ctx);
+  grn_obj **args = executor->data.simple_proc.args;
+  grn_obj *buffers = executor->data.simple_proc.buffers;
+  int n_args = executor->data.simple_proc.n_args;
   grn_proc *proc;
   grn_expr *expr;
-  grn_obj **args;
-  uint32_t values_curr;
-  uint32_t values_tail;
-  grn_obj *result;
+  grn_obj *result = NULL;
 
   proc = proc_ctx->proc;
-  proc_ctx->phase = PROC_NEXT;
   if (executor->variable) {
     GRN_RECORD_SET(ctx, executor->variable, id);
   }
 
   expr = (grn_expr *)(executor->expr);
-  values_curr = expr->values_curr;
-  values_tail = expr->values_tail;
-
-  expr->codes += 1;
-  expr->codes_curr -= 2;
-  grn_expr_exec(ctx, executor->expr, 0);
-  expr->codes_curr += 2;
-  expr->codes -= 1;
-
-  args = ctx->impl->stack + ctx->impl->stack_curr;
-  while (ctx->impl->stack_curr + n_args > ctx->impl->stack_size) {
-    if (grn_ctx_expand_stack(ctx) != GRN_SUCCESS) {
-      return NULL;
+  {
+    uint32_t i_expr;
+    uint32_t i_buffer;
+    uint32_t i_arg;
+    for (i_expr = 1, i_buffer = 0, i_arg = 0;
+         i_expr < expr->codes_curr - 1;
+         i_expr++, i_arg++) {
+      switch (expr->codes[i_expr].op) {
+      case GRN_OP_GET_VALUE :
+        {
+          grn_obj *buffer = &(buffers[i_buffer++]);
+          GRN_BULK_REWIND(buffer);
+          grn_obj_get_value(ctx, expr->codes[i_expr].value, id, buffer);
+          args[i_arg] = buffer;
+          break;
+        }
+      case GRN_OP_PUSH :
+        args[i_arg] = expr->codes[i_expr].value;
+        break;
+      default :
+        break;
+      }
     }
   }
-  ctx->impl->stack_curr += n_args;
-  expr->values_curr = expr->values_tail;
-  result = proc->funcs[PROC_NEXT](ctx,
-                                  n_args,
-                                  args,
-                                  &(proc_ctx->user_data));
-  ctx->impl->stack_curr -= n_args;
 
-  expr->values_tail = values_tail;
+  uint32_t values_curr = expr->values_curr;
+  if (proc->funcs[PROC_INIT]) {
+    proc_ctx->phase = PROC_INIT;
+    grn_obj *sub_result = proc->funcs[PROC_INIT](ctx,
+                                                 n_args,
+                                                 args,
+                                                 &(proc_ctx->user_data));
+    if (sub_result) {
+      result = sub_result;
+    }
+  }
+  if (proc->funcs[PROC_NEXT]) {
+    proc_ctx->phase = PROC_NEXT;
+    grn_obj *sub_result = proc->funcs[PROC_NEXT](ctx,
+                                                 n_args,
+                                                 args,
+                                                 &(proc_ctx->user_data));
+    if (sub_result) {
+      result = sub_result;
+    }
+  }
+  if (proc->funcs[PROC_FIN]) {
+    proc_ctx->phase = PROC_FIN;
+    grn_obj *sub_result = proc->funcs[PROC_FIN](ctx,
+                                                 n_args,
+                                                 args,
+                                                 &(proc_ctx->user_data));
+    if (sub_result) {
+      result = sub_result;
+    }
+  }
   expr->values_curr = values_curr;
 
   return result;
 }
 
 static void
-grn_expr_executor_fin_proc(grn_ctx *ctx,
-                           grn_expr_executor *executor)
+grn_expr_executor_fin_simple_proc(grn_ctx *ctx,
+                                  grn_expr_executor *executor)
 {
-  grn_proc_ctx *proc_ctx = &(executor->data.proc.proc_ctx);
-  grn_proc *proc;
-
-  proc = proc_ctx->proc;
-  proc_ctx->phase = PROC_FIN;
-  if (proc->funcs[PROC_FIN]) {
-    proc->funcs[PROC_FIN](ctx, 0, NULL, &(proc_ctx->user_data));
+  GRN_FREE(executor->data.simple_proc.args);
+  int n_buffers = executor->data.simple_proc.n_buffers;
+  if (n_buffers > 0) {
+    grn_obj *buffers = executor->data.simple_proc.buffers;
+    int i;
+    for (i = 0; i < n_buffers; i++) {
+      GRN_OBJ_FIN(ctx, &(buffers[i]));
+    }
+    GRN_FREE(buffers);
   }
 }
 
@@ -3911,9 +3982,9 @@ grn_expr_executor_init(grn_ctx *ctx,
   } else if (grn_expr_executor_is_simple_match(ctx, executor)) {
     executor->exec = grn_expr_executor_exec_simple_match;
     executor->fin = grn_expr_executor_fin_simple_match;
-  } else if (grn_expr_executor_is_proc(ctx, executor)) {
-    executor->exec = grn_expr_executor_exec_proc;
-    executor->fin = grn_expr_executor_fin_proc;
+  } else if (grn_expr_executor_is_simple_proc(ctx, executor)) {
+    executor->exec = grn_expr_executor_exec_simple_proc;
+    executor->fin = grn_expr_executor_fin_simple_proc;
   } else if (grn_expr_executor_is_simple_condition_constant(ctx, executor)) {
     executor->exec = grn_expr_executor_exec_simple_condition_constant;
     executor->fin = grn_expr_executor_fin_simple_condition_constant;
@@ -4004,6 +4075,9 @@ grn_expr_executor_exec(grn_ctx *ctx, grn_expr_executor *executor, grn_id id)
   }
 
   value = executor->exec(ctx, executor, id);
+  if (ctx->rc != GRN_SUCCESS) {
+    value = NULL;
+  }
 
   GRN_API_RETURN(value);
 }

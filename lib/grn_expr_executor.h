@@ -65,8 +65,11 @@ typedef union {
   } simple_match;
   struct {
     grn_proc_ctx proc_ctx;
+    grn_obj **args;
     int n_args;
-  } proc;
+    grn_obj *buffers;
+    int n_buffers;
+  } simple_proc;
   struct {
     grn_obj result_buffer;
   } simple_condition_constant;
