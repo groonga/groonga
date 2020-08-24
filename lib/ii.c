@@ -14606,17 +14606,35 @@ grn_ii_builder_append_tokens(grn_ctx *ctx,
   size_t i;
   for (i = 0; i < n_tokens; i++) {
     float weight;
+    grn_id tid;
     grn_id src_tid = grn_uvector_get_element_record(ctx, tokens, i, &weight);
     uint32_t token_value_size;
     const char *token_value = _grn_table_key(ctx,
                                              src_lexicon,
                                              src_tid,
                                              &token_value_size);
-    grn_id tid = grn_table_add(ctx,
-                               builder->lexicon,
-                               token_value,
-                               token_value_size,
-                               NULL);
+
+    switch (builder->lexicon->header.type) {
+    case GRN_TABLE_PAT_KEY :
+      tid = grn_pat_add(ctx, (grn_pat *)builder->lexicon,
+                        token_value, token_value_size, NULL, NULL);
+      break;
+    case GRN_TABLE_DAT_KEY :
+      tid = grn_dat_add(ctx, (grn_dat *)builder->lexicon,
+                        token_value, token_value_size, NULL, NULL);
+      break;
+    case GRN_TABLE_HASH_KEY :
+      tid = grn_hash_add(ctx, (grn_hash *)builder->lexicon,
+                         token_value, token_value_size, NULL, NULL);
+      break;
+    case GRN_TABLE_NO_KEY :
+      tid = *(grn_id *)token_value;
+      break;
+    default :
+      tid = GRN_ID_NIL;
+      break;
+    }
+
     if (tid == GRN_ID_NIL) {
       /* TODO: Token value may not be a string. */
       ERR(GRN_INVALID_ARGUMENT,
