@@ -14627,10 +14627,8 @@ grn_ii_builder_append_tokens(grn_ctx *ctx,
       tid = grn_hash_add(ctx, (grn_hash *)builder->lexicon,
                          token_value, token_value_size, NULL, NULL);
       break;
-    case GRN_TABLE_NO_KEY :
-      tid = *(grn_id *)token_value;
-      break;
     default :
+      /* This case must not be happen. */
       tid = GRN_ID_NIL;
       break;
     }
