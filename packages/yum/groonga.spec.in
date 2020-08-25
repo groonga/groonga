@@ -1,6 +1,5 @@
 %define _centos_ver   %{?centos_ver:%{centos_ver}}%{!?centos_ver:6}
 
-%define _use_mecab    %{?use_mecab:%{use_mecab}}%{!?use_mecab:%{_centos_ver} <= 7}
 %define _use_jemalloc %{?use_jemalloc:%{use_jemalloc}}%{!?use_jemalloc:0}
 %define _use_msgpack  %{?use_msgpack:%{use_msgpack}}%{!?use_msgpack:%{_centos_ver} >= 7}
 %define _use_libstemmer %{?use_libstemmer:%{use_libstemmer}}%{!?use_libstemmer:%{_centos_ver} >= 7}
@@ -23,9 +22,7 @@ URL:		http://groonga.org/
 Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
-%if %{_use_mecab}
 BuildRequires:	mecab-devel
-%endif
 BuildRequires:	zlib-devel
 BuildRequires:	lz4-devel
 BuildRequires:	libzstd-devel
@@ -166,16 +163,14 @@ Requires:	%{name}-libs = %{version}-%{release}
 %description devel
 Libraries and header files for Groonga
 
-%if %{_use_mecab}
 %package tokenizer-mecab
 Summary:	MeCab tokenizer for Groonga
 Group:		Applications/Text
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	mecab-dic
+Requires:	mecab-ipadic
 
 %description tokenizer-mecab
 MeCab tokenizer for Groonga
-%endif
 
 %if %{_use_libstemmer}
 %package token-filter-stem
@@ -217,11 +212,7 @@ Munin plugins for Groonga
 %configure \
   --disable-static \
   --with-package-platform=centos%{?centos_ver} \
-%if %{_use_mecab}
   --with-mecab \
-%else
-  --without-mecab \
-%endif
 %if ! %{_use_msgpack}
   --without-message-pack \
 %endif
@@ -417,9 +408,7 @@ fi
 %dir %{_libdir}/groonga
 %dir %{_libdir}/groonga/plugins
 %dir %{_libdir}/groonga/plugins/functions
-%if %{_use_mecab}
 %dir %{_libdir}/groonga/plugins/tokenizers
-%endif
 %dir %{_libdir}/groonga/plugins/token_filters
 %dir %{_libdir}/groonga/plugins/ruby
 %dir %{_libdir}/groonga/plugins/sharding
@@ -521,11 +510,9 @@ fi
 %dir %{_libdir}/groonga/plugins
 %{_libdir}/groonga/plugins/suggest/suggest.so
 
-%if %{_use_mecab}
 %files tokenizer-mecab
 %defattr(-,root,root,-)
 %{_libdir}/groonga/plugins/tokenizers/mecab.so
-%endif
 
 %if %{_use_libstemmer}
 %files token-filter-stem
