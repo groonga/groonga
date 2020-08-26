@@ -27,6 +27,5 @@ RUN \
     tar \
     zlib-devel && \
   dnf install -y ${quiet} https://packages.groonga.org/centos/8/groonga-release-latest.noarch.rpm && \
-  dnf install -y --enablerepo=epel groonga && \
   dnf install -y ${quiet} mecab-devel && \
   dnf clean ${quiet} all
