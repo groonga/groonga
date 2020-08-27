@@ -2989,15 +2989,16 @@ grn_expr_executor_fin_simple_match(grn_ctx *ctx,
 }
 
 static bool
-grn_expr_executor_init_simple_proc(grn_ctx *ctx,
-                                   grn_expr_executor *executor)
+grn_expr_executor_data_simple_proc_init(grn_ctx *ctx,
+                                        grn_expr_executor *executor,
+                                        grn_expr_executor_data_simple_proc *data)
 {
-  grn_proc_ctx *proc_ctx = &(executor->data.simple_proc.proc_ctx);
+  grn_proc_ctx *proc_ctx = &(data->proc_ctx);
   grn_expr *expr;
   grn_proc *proc;
 
   expr = (grn_expr *)(executor->expr);
-  proc = (grn_proc *)(expr->codes[0].value);
+  proc = (grn_proc *)(expr->codes[data->codes_start_offset].value);
   proc_ctx->proc = proc;
   proc_ctx->caller = executor->expr;
 
@@ -3005,7 +3006,9 @@ grn_expr_executor_init_simple_proc(grn_ctx *ctx,
   int n_buffers = 0;
   {
     uint32_t i;
-    for (i = 1; i < expr->codes_curr - 1; i++) {
+    for (i = data->codes_start_offset + 1;
+         i < expr->codes_curr - data->codes_end_offset - 1;
+         i++) {
       switch (expr->codes[i].op) {
       case GRN_OP_GET_VALUE :
         n_args++;
@@ -3025,8 +3028,8 @@ grn_expr_executor_init_simple_proc(grn_ctx *ctx,
   if (!args) {
     return false;
   }
-  executor->data.simple_proc.args = args;
-  executor->data.simple_proc.n_args = n_args;
+  data->args = args;
+  data->n_args = n_args;
 
   if (n_buffers > 0) {
     grn_obj *buffers = GRN_MALLOCN(grn_obj, n_buffers);
@@ -3038,55 +3041,42 @@ grn_expr_executor_init_simple_proc(grn_ctx *ctx,
     for (i = 0; i < n_buffers; i++) {
       GRN_VOID_INIT(&(buffers[i]));
     }
-    executor->data.simple_proc.buffers = buffers;
+    data->buffers = buffers;
   } else {
-    executor->data.simple_proc.buffers = NULL;
+    data->buffers = NULL;
   }
-  executor->data.simple_proc.n_buffers = n_buffers;
+  data->n_buffers = n_buffers;
 
   return true;
 }
 
-static grn_bool
-grn_expr_executor_is_simple_proc(grn_ctx *ctx,
-                                 grn_expr_executor *executor)
+static void
+grn_expr_executor_data_simple_proc_fin(grn_ctx *ctx,
+                                       grn_expr_executor *executor,
+                                       grn_expr_executor_data_simple_proc *data)
 {
-  grn_expr *e = (grn_expr *)(executor->expr);
-  grn_obj *first;
-  grn_proc *proc;
-
-  if (e->codes_curr < 2) {
-    return GRN_FALSE;
+  GRN_FREE(data->args);
+  int n_buffers = data->n_buffers;
+  if (n_buffers > 0) {
+    grn_obj *buffers = data->buffers;
+    int i;
+    for (i = 0; i < n_buffers; i++) {
+      GRN_OBJ_FIN(ctx, &(buffers[i]));
+    }
+    GRN_FREE(buffers);
   }
-
-  first = e->codes[0].value;
-  if (!grn_obj_is_function_proc(ctx, first)) {
-    return GRN_FALSE;
-  }
-
-  proc = (grn_proc *)first;
-  if (!proc->funcs[PROC_INIT] &&
-      !proc->funcs[PROC_NEXT] &&
-      !proc->funcs[PROC_FIN]) {
-    return GRN_FALSE;
-  }
-
-  if (e->codes[e->codes_curr - 1].op != GRN_OP_CALL) {
-    return GRN_FALSE;
-  }
-
-  return grn_expr_executor_init_simple_proc(ctx, executor);
 }
 
 static grn_obj *
-grn_expr_executor_exec_simple_proc(grn_ctx *ctx,
-                                   grn_expr_executor *executor,
-                                   grn_id id)
+grn_expr_executor_data_simple_proc_exec(grn_ctx *ctx,
+                                        grn_expr_executor *executor,
+                                        grn_expr_executor_data_simple_proc *data,
+                                        grn_id id)
 {
-  grn_proc_ctx *proc_ctx = &(executor->data.simple_proc.proc_ctx);
-  grn_obj **args = executor->data.simple_proc.args;
-  grn_obj *buffers = executor->data.simple_proc.buffers;
-  int n_args = executor->data.simple_proc.n_args;
+  grn_proc_ctx *proc_ctx = &(data->proc_ctx);
+  grn_obj **args = data->args;
+  grn_obj *buffers = data->buffers;
+  int n_args = data->n_args;
   grn_proc *proc;
   grn_expr *expr;
   grn_obj *result = NULL;
@@ -3101,8 +3091,8 @@ grn_expr_executor_exec_simple_proc(grn_ctx *ctx,
     uint32_t i_expr;
     uint32_t i_buffer;
     uint32_t i_arg;
-    for (i_expr = 1, i_buffer = 0, i_arg = 0;
-         i_expr < expr->codes_curr - 1;
+    for (i_expr = data->codes_start_offset + 1, i_buffer = 0, i_arg = 0;
+         i_expr < expr->codes_curr - data->codes_end_offset - 1;
          i_expr++, i_arg++) {
       switch (expr->codes[i_expr].op) {
       case GRN_OP_GET_VALUE :
@@ -3158,20 +3148,70 @@ grn_expr_executor_exec_simple_proc(grn_ctx *ctx,
   return result;
 }
 
+static bool
+grn_expr_executor_init_simple_proc(grn_ctx *ctx,
+                                   grn_expr_executor *executor)
+{
+  grn_expr_executor_data_simple_proc *data = &(executor->data.simple_proc.data);
+  data->codes_start_offset = 0;
+  data->codes_end_offset = 0;
+  return grn_expr_executor_data_simple_proc_init(ctx, executor, data);
+}
+
+static bool
+grn_expr_executor_is_simple_proc(grn_ctx *ctx,
+                                 grn_expr_executor *executor)
+{
+  grn_expr *e = (grn_expr *)(executor->expr);
+
+  /*
+   * 0: GRN_OP_PUSH(func)
+   * n-1: GRN_OP_CALL(func)
+   */
+  if (e->codes_curr < 2) {
+    return false;
+  }
+
+  grn_expr_code *func = &(e->codes[0]);
+  if (func->op != GRN_OP_PUSH) {
+    return false;
+  }
+  if (!grn_obj_is_function_proc(ctx, func->value)) {
+    return false;
+  }
+
+  grn_proc *proc = (grn_proc *)(func->value);
+  if (!proc->funcs[PROC_INIT] &&
+      !proc->funcs[PROC_NEXT] &&
+      !proc->funcs[PROC_FIN]) {
+    return false;
+  }
+
+  if (func->modify != e->codes_curr - 1) {
+    return false;
+  }
+  if (e->codes[func->modify].op != GRN_OP_CALL) {
+    return false;
+  }
+
+  return grn_expr_executor_init_simple_proc(ctx, executor);
+}
+
+static grn_obj *
+grn_expr_executor_exec_simple_proc(grn_ctx *ctx,
+                                   grn_expr_executor *executor,
+                                   grn_id id)
+{
+  grn_expr_executor_data_simple_proc *data = &(executor->data.simple_proc.data);
+  return grn_expr_executor_data_simple_proc_exec(ctx, executor, data, id);
+}
+
 static void
 grn_expr_executor_fin_simple_proc(grn_ctx *ctx,
                                   grn_expr_executor *executor)
 {
-  GRN_FREE(executor->data.simple_proc.args);
-  int n_buffers = executor->data.simple_proc.n_buffers;
-  if (n_buffers > 0) {
-    grn_obj *buffers = executor->data.simple_proc.buffers;
-    int i;
-    for (i = 0; i < n_buffers; i++) {
-      GRN_OBJ_FIN(ctx, &(buffers[i]));
-    }
-    GRN_FREE(buffers);
-  }
+  grn_expr_executor_data_simple_proc *data = &(executor->data.simple_proc.data);
+  grn_expr_executor_data_simple_proc_fin(ctx, executor, data);
 }
 
 static grn_bool
@@ -3693,6 +3733,107 @@ grn_expr_executor_fin_simple_condition(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &(executor->data.simple_condition.constant_buffer));
 }
 
+static bool
+grn_expr_executor_init_simple_proc_scorer(grn_ctx *ctx,
+                                          grn_expr_executor *executor)
+{
+  grn_expr_executor_data_simple_proc *data =
+    &(executor->data.simple_proc_scorer.data);
+  /* The first GRN_OP_GET_REF for _score */
+  data->codes_start_offset = 1;
+  /* The last GRN_OP_ASSIGN */
+  data->codes_end_offset = 1;
+  return grn_expr_executor_data_simple_proc_init(ctx, executor, data);
+}
+
+static void
+grn_expr_executor_fin_simple_proc_scorer(grn_ctx *ctx,
+                                         grn_expr_executor *executor)
+{
+  grn_expr_executor_data_simple_proc *data =
+    &(executor->data.simple_proc_scorer.data);
+  grn_expr_executor_data_simple_proc_fin(ctx, executor, data);
+}
+
+static bool
+grn_expr_executor_is_simple_proc_scorer(grn_ctx *ctx,
+                                        grn_expr_executor *executor)
+{
+  grn_expr *e = (grn_expr *)(executor->expr);
+
+  /*
+   * 0: GRN_OP_GET_REF(_score)
+   * 1: GRN_OP_PUSH(func)
+   * n-2: GRN_OP_CALL(func)
+   * n-1: GRN_OP_ASSIGN(_score)
+   */
+  if (e->codes_curr < 4) {
+    return false;
+  }
+
+  grn_expr_code *score = &(e->codes[0]);
+  if (score->op != GRN_OP_GET_REF) {
+    return false;
+  }
+  if (!grn_obj_is_score_accessor(ctx, score->value)) {
+    return false;
+  }
+  executor->data.simple_proc_scorer.score_column = score->value;
+
+  if (score->modify != e->codes_curr - 1) {
+    return false;
+  }
+  grn_expr_code *operation = &(e->codes[score->modify]);
+  if (operation->op != GRN_OP_ASSIGN) {
+    return false;
+  }
+
+  const size_t func_index = 1;
+  grn_expr_code *func = &(e->codes[func_index]);
+  if (func->op != GRN_OP_PUSH) {
+    return false;
+  }
+  if (!grn_obj_is_function_proc(ctx, func->value)) {
+    return false;
+  }
+  grn_proc *proc = (grn_proc *)(func->value);
+  if (!proc->funcs[PROC_INIT] &&
+      !proc->funcs[PROC_NEXT] &&
+      !proc->funcs[PROC_FIN]) {
+    return false;
+  }
+
+  if ((func->modify + func_index) != e->codes_curr - 2) {
+    return false;
+  }
+  if (e->codes[func->modify + func_index].op != GRN_OP_CALL) {
+    return false;
+  }
+
+  if (!grn_expr_executor_init_simple_proc_scorer(ctx, executor)) {
+    grn_expr_executor_fin_simple_proc_scorer(ctx, executor);
+    return false;
+  }
+
+  return true;
+}
+
+static grn_obj *
+grn_expr_executor_exec_simple_proc_scorer(grn_ctx *ctx,
+                                          grn_expr_executor *executor,
+                                          grn_id id)
+{
+  grn_expr_executor_data_simple_proc *data =
+    &(executor->data.simple_proc_scorer.data);
+  grn_obj *score =
+    grn_expr_executor_data_simple_proc_exec(ctx, executor, data, id);
+  if (score) {
+    grn_obj *score_column = executor->data.simple_proc_scorer.score_column;
+    grn_obj_set_value(ctx, score_column, id, score, GRN_OBJ_SET);
+  }
+  return score;
+}
+
 static double
 grn_expr_executor_scorer_get_value(grn_ctx *ctx,
                                    grn_expr_executor *executor,
@@ -3994,6 +4135,9 @@ grn_expr_executor_init(grn_ctx *ctx,
   } else if (grn_expr_executor_is_simple_condition(ctx, executor)) {
     executor->exec = grn_expr_executor_exec_simple_condition;
     executor->fin = grn_expr_executor_fin_simple_condition;
+  } else if (grn_expr_executor_is_simple_proc_scorer(ctx, executor)) {
+    executor->exec = grn_expr_executor_exec_simple_proc_scorer;
+    executor->fin = grn_expr_executor_fin_simple_proc_scorer;
   } else if (grn_expr_executor_is_scorer(ctx, executor)) {
     executor->exec = grn_expr_executor_exec_scorer;
     executor->fin = grn_expr_executor_fin_scorer;

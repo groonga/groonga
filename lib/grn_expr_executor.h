@@ -40,6 +40,16 @@ typedef double (*grn_expr_executor_scorer_func)(grn_ctx *ctx,
                                                 grn_obj *args,
                                                 grn_expr_executor_scorer_data *data);
 
+typedef struct {
+  uint32_t codes_start_offset;
+  uint32_t codes_end_offset;
+  grn_proc_ctx proc_ctx;
+  grn_obj **args;
+  int n_args;
+  grn_obj *buffers;
+  int n_buffers;
+} grn_expr_executor_data_simple_proc;
+
 typedef union {
   struct {
     grn_obj *value;
@@ -64,11 +74,7 @@ typedef union {
     grn_obj value_buffer;
   } simple_match;
   struct {
-    grn_proc_ctx proc_ctx;
-    grn_obj **args;
-    int n_args;
-    grn_obj *buffers;
-    int n_buffers;
+    grn_expr_executor_data_simple_proc data;
   } simple_proc;
   struct {
     grn_obj result_buffer;
@@ -89,6 +95,10 @@ typedef union {
     grn_obj constant_buffer;
     grn_operator_exec_func *exec;
   } simple_condition;
+  struct {
+    grn_obj *score_column;
+    grn_expr_executor_data_simple_proc data;
+  } simple_proc_scorer;
   struct {
     grn_obj *score_column;
     grn_obj args;
