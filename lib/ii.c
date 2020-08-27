@@ -3777,7 +3777,7 @@ chunk_flush(grn_ctx *ctx, grn_ii *ii, chunk_info *cinfo, uint8_t *enc, uint32_t 
         {
           DEFINE_NAME(ii);
           MERR("[ii][chunk][flush] failed to allocate a destination chunk: "
-               "<%.*s> :"
+               "<%.*s>:"
                "segment:<%u>, size:<%u>",
                name_size, name,
                dcn, encsize);
