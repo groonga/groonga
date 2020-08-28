@@ -39,9 +39,9 @@ Improvements
 
       * https://groonga.org/docs/install/debian.html
 
-* [:doc:`reference/commands/logical_select`] Added a support for ``highlight_html``.
+* [:doc:`reference/commands/logical_select`] Added a support for ``highlight_html`` and ``highlight_full`` .
 
-* Added support for recycling the IDs of records that are deleted when an array without value space delete.[GitHub#mroonga/mroonga#327 Reported by gaeeyo]
+* Added support for recycling the IDs of records that are deleted when an array without value space delete.[GitHub#mroonga/mroonga#327][Reported by gaeeyo]
 
   * If an array that doesn't have value space is deleted, deleted IDs are never recycled.
   * Groonga had used large storage space by large ID. Because it uses large storage space by itself.
