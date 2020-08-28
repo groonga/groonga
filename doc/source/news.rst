@@ -7,6 +7,72 @@
 News
 ====
 
+.. _release-10-0-6:
+
+Release 10.0.6 - 2020-08-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/logical_range_filter`] Improved search plan for large data.
+
+  * Normally, ``logical_range_filter`` is faster than ``logical_select``.
+    However, it had been slower than ``logical_select`` in the below case.
+
+    * If Groonga can't get the number of required records easily, it has the feature that switches index search from sequential search. (Normally, ``logical_range_filter`` uses a sequential search when records of search target are many.)
+    * The search process for it is almost the same as ``logical_select`` if the above switching occurred.
+      So, ``logical_range_filter`` is severalfold slower than ``logical_select`` in the above case if the search target is large data.
+      Because ``logical_range_filter`` executes sort after the search.
+
+  * If we search for large data, Groonga easily use sequential search than until now since this release.
+  * Therefore, ``logical_range_filter`` will improve performance. Because the case of the search process almost the same as ``logical_select`` decreases.
+
+* [httpd] Updated bundled nginx to 1.19.1.
+
+* Modify how to install into Debian GNU/Linux.
+
+  * We modify to use ``groonga-apt-source`` instead of ``groonga-archive-keyring``. Because the ``lintian`` command recommends using ``apt-source`` if a package that it puts files under the ``/etc/apt/sources.lists.d/``.
+
+    * The ``lintian`` command is the command which checks for many common packaging errors.
+    * Please also refer to the following URL for the details about installation procedures.
+
+      * https://groonga.org/docs/install/debian.html
+
+* [:doc:`reference/commands/logical_select`] Added a support for ``highlight_html``.
+
+* Added support for recycling the IDs of records that are deleted when an array without value space delete.[GitHub#mroonga/mroonga#327 Reported by gaeeyo]
+
+  * If an array that doesn't have value space is deleted, deleted IDs are never recycled.
+  * Groonga had used large storage space by large ID. Because it uses large storage space by itself.
+
+    * For example, large ID is caused after many adds and deletes like Mroonga's ``mroonga_operations``
+
+* [:doc:`reference/commands/select`] Improved performance of full-text-search without index.
+
+* [:doc:`reference/function`] Improved performance for calling of function that all arguments a variable reference or literal.
+
+* [:doc:`reference/indexing`] Improved performance of offline index construction by using token column. [GitHub#1126][Patched by naoa]
+
+* Improved performance for ``"_score = func(...)"``.
+
+  * The performance when the ``_score`` value calculate by using only function like ``"_score = func(...)"`` improved.
+
+Fixes
+^^^^^
+
+* Fixed a bug that garbage may be included in response after response send error.
+
+  * It may occur if a client didn't read all responses and closed the connection.
+
+
+Thanks
+^^^^^^
+
+* gaeeyo
+
+* naoa
+
 .. _release-10-0-5:
 
 Release 10.0.5 - 2020-07-30
@@ -454,7 +520,7 @@ Improvements
     * Because ``reference_acquire`` acquires a reference of target objects.
 
   * We can must call ``reference_release`` after you finish performance impact operations.
-  * If we don’t call ``reference_release``, the reference count mode doesn’t work.
+  * If we don't call ``reference_release``, the reference count mode doesn't work.
 
 * [:doc:`reference/commands/select`] Added support for aggregating multiple groups on one time ``drilldown``.
 
