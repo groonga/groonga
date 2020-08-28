@@ -8,6 +8,8 @@
 ``highlight_full``
 ==================
 
+.. versionadded:: 4.0.5
+
 Summary
 -------
 
@@ -42,9 +44,9 @@ Here are a schema definition and sample data to show usage.
 .. ]
 
 ``highlight_full`` can be used in only ``--output_columns`` in
-:doc:`/reference/commands/select`.
-
-``highlight_full`` requires Groonga 4.0.5 or later.
+:doc:`/reference/commands/select` before version 10.0.6 (exclusive).
+However, it can be also used in ``--output_columns`` in
+:doc:`/reference/commands/logical_select` since version 10.0.6.
 
 ``highlight_full`` requires :doc:`/reference/command/command_version` 2
 or later.
@@ -124,4 +126,5 @@ See also
 --------
 
 * :doc:`/reference/commands/select`
+* :doc:`/reference/commands/logical_select`
 * :doc:`/reference/functions/highlight_html`

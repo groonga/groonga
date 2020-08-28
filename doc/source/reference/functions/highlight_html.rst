@@ -44,7 +44,9 @@ Here are a schema definition and sample data to show usage.
 .. ]
 
 ``highlight_html`` can be used in only ``--output_columns`` in
-:doc:`/reference/commands/select`.
+:doc:`/reference/commands/select` before version 10.0.6 (exclusive).
+However, it can be also used in ``--output_columns`` in
+:doc:`/reference/commands/logical_select` since version 10.0.6.
 
 ``highlight_html`` requires :doc:`/reference/command/command_version` 2
 or later.
@@ -102,4 +104,5 @@ See also
 --------
 
 * :doc:`/reference/commands/select`
+* :doc:`/reference/commands/logical_select`
 * :doc:`/reference/functions/highlight_full`

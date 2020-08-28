@@ -21160,13 +21160,14 @@ msgstr "``highlight_full`` には必須引数と省略可能引数とがあり�
 
 msgid ""
 "``highlight_full`` can be used in only ``--output_columns`` in :doc:`/"
-"reference/commands/select`."
+"reference/commands/select` before version 10.0.6 (exclusive). However, it "
+"can be also used in ``--output_columns`` in :doc:`/reference/commands/"
+"logical_select` since version 10.0.6."
 msgstr ""
-"``highlight_full`` は :doc:`/reference/commands/select` コマンドの ``--"
-"output_columns`` 内でのみ指定できます。"
-
-msgid "``highlight_full`` requires Groonga 4.0.5 or later."
-msgstr "``highlight_full`` を使うにはGroonga 4.0.5以降が必要です。"
+"10.0.6より前のバージョンでは、``highlight_full`` は :doc:`/reference/"
+"commands/select` コマンドの ``--output_columns`` 内でのみ指定できますが、 "
+"10.0.6以降は :doc:`/reference/commands/logical_select` コマンドの ``--"
+"output_columns`` 内でも使用できます。"
 
 msgid ""
 "``highlight_full`` requires :doc:`/reference/command/command_version` 2 or "
@@ -21277,6 +21278,9 @@ msgstr ""
 "``highlight_full`` はタグ付の文字列もしくは null を返します。"
 "``highlight_full`` は該当するキーワードがない場合に null を返します。"
 
+msgid ":doc:`/reference/commands/logical_select`"
+msgstr ""
+
 msgid ":doc:`/reference/functions/highlight_html`"
 msgstr ""
 
@@ -21304,10 +21308,14 @@ msgstr "この関数の引数は1つです。::"
 
 msgid ""
 "``highlight_html`` can be used in only ``--output_columns`` in :doc:`/"
-"reference/commands/select`."
+"reference/commands/select` before version 10.0.6 (exclusive). However, it "
+"can be also used in ``--output_columns`` in :doc:`/reference/commands/"
+"logical_select` since version 10.0.6."
 msgstr ""
-"``highlight_html`` は :doc:`/reference/commands/select` コマンドの ``--"
-"output_columns`` 内でのみ指定できます。"
+"10.0.6より前のバージョンでは、``highlight_html`` は :doc:`/reference/"
+"commands/select` コマンドの ``--output_columns`` 内でのみ指定できますが、"
+"10.0.6以降は、 :doc:`/reference/commands/logical_select` コマンドの ``--"
+"output_columns`` 内でも使用できます。"
 
 msgid ""
 "``highlight_html`` requires :doc:`/reference/command/command_version` 2 or "
