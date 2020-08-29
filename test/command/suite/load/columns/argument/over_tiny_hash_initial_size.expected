@@ -1,0 +1,1830 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data c0 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c1 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c2 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c3 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c4 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c5 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c6 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c7 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c8 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c9 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c10 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c11 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c12 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c13 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c14 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c15 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c16 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c17 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c18 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c19 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c20 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c21 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c22 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c23 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c24 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c25 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c26 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c27 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c28 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c29 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c30 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c31 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c32 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c33 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c34 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c35 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c36 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c37 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c38 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c39 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c40 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c41 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c42 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c43 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c44 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c45 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c46 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c47 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c48 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c49 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c50 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c51 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c52 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c53 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c54 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c55 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c56 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c57 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c58 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c59 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c60 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c61 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c62 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c63 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c64 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c65 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c66 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c67 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c68 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c69 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c70 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c71 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c72 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c73 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c74 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c75 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c76 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c77 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c78 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c79 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c80 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c81 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c82 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c83 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c84 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c85 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c86 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c87 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c88 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c89 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c90 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c91 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c92 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c93 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c94 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c95 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c96 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c97 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c98 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c99 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c100 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c101 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c102 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c103 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c104 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c105 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c106 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c107 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c108 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c109 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c110 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c111 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c112 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c113 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c114 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c115 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c116 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c117 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c118 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c119 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c120 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c121 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c122 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c123 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c124 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c125 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c126 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c127 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c128 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c129 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c130 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c131 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c132 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c133 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c134 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c135 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c136 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c137 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c138 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c139 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c140 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c141 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c142 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c143 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c144 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c145 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c146 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c147 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c148 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c149 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c150 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c151 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c152 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c153 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c154 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c155 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c156 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c157 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c158 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c159 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c160 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c161 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c162 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c163 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c164 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c165 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c166 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c167 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c168 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c169 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c170 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c171 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c172 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c173 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c174 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c175 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c176 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c177 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c178 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c179 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c180 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c181 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c182 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c183 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c184 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c185 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c186 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c187 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c188 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c189 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c190 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c191 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c192 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c193 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c194 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c195 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c196 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c197 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c198 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c199 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c200 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c201 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c202 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c203 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c204 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c205 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c206 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c207 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c208 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c209 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c210 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c211 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c212 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c213 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c214 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c215 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c216 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c217 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c218 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c219 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c220 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c221 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c222 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c223 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c224 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c225 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c226 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c227 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c228 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c229 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c230 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c231 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c232 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c233 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c234 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c235 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c236 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c237 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c238 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c239 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c240 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c241 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c242 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c243 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c244 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c245 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c246 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c247 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c248 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c249 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c250 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c251 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c252 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c253 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c254 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c255 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Data c256 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+load --table Data --columns c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13,c14,c15,c16,c17,c18,c19,c20,c21,c22,c23,c24,c25,c26,c27,c28,c29,c30,c31,c32,c33,c34,c35,c36,c37,c38,c39,c40,c41,c42,c43,c44,c45,c46,c47,c48,c49,c50,c51,c52,c53,c54,c55,c56,c57,c58,c59,c60,c61,c62,c63,c64,c65,c66,c67,c68,c69,c70,c71,c72,c73,c74,c75,c76,c77,c78,c79,c80,c81,c82,c83,c84,c85,c86,c87,c88,c89,c90,c91,c92,c93,c94,c95,c96,c97,c98,c99,c100,c101,c102,c103,c104,c105,c106,c107,c108,c109,c110,c111,c112,c113,c114,c115,c116,c117,c118,c119,c120,c121,c122,c123,c124,c125,c126,c127,c128,c129,c130,c131,c132,c133,c134,c135,c136,c137,c138,c139,c140,c141,c142,c143,c144,c145,c146,c147,c148,c149,c150,c151,c152,c153,c154,c155,c156,c157,c158,c159,c160,c161,c162,c163,c164,c165,c166,c167,c168,c169,c170,c171,c172,c173,c174,c175,c176,c177,c178,c179,c180,c181,c182,c183,c184,c185,c186,c187,c188,c189,c190,c191,c192,c193,c194,c195,c196,c197,c198,c199,c200,c201,c202,c203,c204,c205,c206,c207,c208,c209,c210,c211,c212,c213,c214,c215,c216,c217,c218,c219,c220,c221,c222,c223,c224,c225,c226,c227,c228,c229,c230,c231,c232,c233,c234,c235,c236,c237,c238,c239,c240,c241,c242,c243,c244,c245,c246,c247,c248,c249,c250,c251,c252,c253,c254,c255,c256
+[
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+]
+[[0,0.0,0.0],1]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "c0",
+          "UInt8"
+        ],
+        [
+          "c1",
+          "UInt8"
+        ],
+        [
+          "c10",
+          "UInt8"
+        ],
+        [
+          "c100",
+          "UInt8"
+        ],
+        [
+          "c101",
+          "UInt8"
+        ],
+        [
+          "c102",
+          "UInt8"
+        ],
+        [
+          "c103",
+          "UInt8"
+        ],
+        [
+          "c104",
+          "UInt8"
+        ],
+        [
+          "c105",
+          "UInt8"
+        ],
+        [
+          "c106",
+          "UInt8"
+        ],
+        [
+          "c107",
+          "UInt8"
+        ],
+        [
+          "c108",
+          "UInt8"
+        ],
+        [
+          "c109",
+          "UInt8"
+        ],
+        [
+          "c11",
+          "UInt8"
+        ],
+        [
+          "c110",
+          "UInt8"
+        ],
+        [
+          "c111",
+          "UInt8"
+        ],
+        [
+          "c112",
+          "UInt8"
+        ],
+        [
+          "c113",
+          "UInt8"
+        ],
+        [
+          "c114",
+          "UInt8"
+        ],
+        [
+          "c115",
+          "UInt8"
+        ],
+        [
+          "c116",
+          "UInt8"
+        ],
+        [
+          "c117",
+          "UInt8"
+        ],
+        [
+          "c118",
+          "UInt8"
+        ],
+        [
+          "c119",
+          "UInt8"
+        ],
+        [
+          "c12",
+          "UInt8"
+        ],
+        [
+          "c120",
+          "UInt8"
+        ],
+        [
+          "c121",
+          "UInt8"
+        ],
+        [
+          "c122",
+          "UInt8"
+        ],
+        [
+          "c123",
+          "UInt8"
+        ],
+        [
+          "c124",
+          "UInt8"
+        ],
+        [
+          "c125",
+          "UInt8"
+        ],
+        [
+          "c126",
+          "UInt8"
+        ],
+        [
+          "c127",
+          "UInt8"
+        ],
+        [
+          "c128",
+          "UInt8"
+        ],
+        [
+          "c129",
+          "UInt8"
+        ],
+        [
+          "c13",
+          "UInt8"
+        ],
+        [
+          "c130",
+          "UInt8"
+        ],
+        [
+          "c131",
+          "UInt8"
+        ],
+        [
+          "c132",
+          "UInt8"
+        ],
+        [
+          "c133",
+          "UInt8"
+        ],
+        [
+          "c134",
+          "UInt8"
+        ],
+        [
+          "c135",
+          "UInt8"
+        ],
+        [
+          "c136",
+          "UInt8"
+        ],
+        [
+          "c137",
+          "UInt8"
+        ],
+        [
+          "c138",
+          "UInt8"
+        ],
+        [
+          "c139",
+          "UInt8"
+        ],
+        [
+          "c14",
+          "UInt8"
+        ],
+        [
+          "c140",
+          "UInt8"
+        ],
+        [
+          "c141",
+          "UInt8"
+        ],
+        [
+          "c142",
+          "UInt8"
+        ],
+        [
+          "c143",
+          "UInt8"
+        ],
+        [
+          "c144",
+          "UInt8"
+        ],
+        [
+          "c145",
+          "UInt8"
+        ],
+        [
+          "c146",
+          "UInt8"
+        ],
+        [
+          "c147",
+          "UInt8"
+        ],
+        [
+          "c148",
+          "UInt8"
+        ],
+        [
+          "c149",
+          "UInt8"
+        ],
+        [
+          "c15",
+          "UInt8"
+        ],
+        [
+          "c150",
+          "UInt8"
+        ],
+        [
+          "c151",
+          "UInt8"
+        ],
+        [
+          "c152",
+          "UInt8"
+        ],
+        [
+          "c153",
+          "UInt8"
+        ],
+        [
+          "c154",
+          "UInt8"
+        ],
+        [
+          "c155",
+          "UInt8"
+        ],
+        [
+          "c156",
+          "UInt8"
+        ],
+        [
+          "c157",
+          "UInt8"
+        ],
+        [
+          "c158",
+          "UInt8"
+        ],
+        [
+          "c159",
+          "UInt8"
+        ],
+        [
+          "c16",
+          "UInt8"
+        ],
+        [
+          "c160",
+          "UInt8"
+        ],
+        [
+          "c161",
+          "UInt8"
+        ],
+        [
+          "c162",
+          "UInt8"
+        ],
+        [
+          "c163",
+          "UInt8"
+        ],
+        [
+          "c164",
+          "UInt8"
+        ],
+        [
+          "c165",
+          "UInt8"
+        ],
+        [
+          "c166",
+          "UInt8"
+        ],
+        [
+          "c167",
+          "UInt8"
+        ],
+        [
+          "c168",
+          "UInt8"
+        ],
+        [
+          "c169",
+          "UInt8"
+        ],
+        [
+          "c17",
+          "UInt8"
+        ],
+        [
+          "c170",
+          "UInt8"
+        ],
+        [
+          "c171",
+          "UInt8"
+        ],
+        [
+          "c172",
+          "UInt8"
+        ],
+        [
+          "c173",
+          "UInt8"
+        ],
+        [
+          "c174",
+          "UInt8"
+        ],
+        [
+          "c175",
+          "UInt8"
+        ],
+        [
+          "c176",
+          "UInt8"
+        ],
+        [
+          "c177",
+          "UInt8"
+        ],
+        [
+          "c178",
+          "UInt8"
+        ],
+        [
+          "c179",
+          "UInt8"
+        ],
+        [
+          "c18",
+          "UInt8"
+        ],
+        [
+          "c180",
+          "UInt8"
+        ],
+        [
+          "c181",
+          "UInt8"
+        ],
+        [
+          "c182",
+          "UInt8"
+        ],
+        [
+          "c183",
+          "UInt8"
+        ],
+        [
+          "c184",
+          "UInt8"
+        ],
+        [
+          "c185",
+          "UInt8"
+        ],
+        [
+          "c186",
+          "UInt8"
+        ],
+        [
+          "c187",
+          "UInt8"
+        ],
+        [
+          "c188",
+          "UInt8"
+        ],
+        [
+          "c189",
+          "UInt8"
+        ],
+        [
+          "c19",
+          "UInt8"
+        ],
+        [
+          "c190",
+          "UInt8"
+        ],
+        [
+          "c191",
+          "UInt8"
+        ],
+        [
+          "c192",
+          "UInt8"
+        ],
+        [
+          "c193",
+          "UInt8"
+        ],
+        [
+          "c194",
+          "UInt8"
+        ],
+        [
+          "c195",
+          "UInt8"
+        ],
+        [
+          "c196",
+          "UInt8"
+        ],
+        [
+          "c197",
+          "UInt8"
+        ],
+        [
+          "c198",
+          "UInt8"
+        ],
+        [
+          "c199",
+          "UInt8"
+        ],
+        [
+          "c2",
+          "UInt8"
+        ],
+        [
+          "c20",
+          "UInt8"
+        ],
+        [
+          "c200",
+          "UInt8"
+        ],
+        [
+          "c201",
+          "UInt8"
+        ],
+        [
+          "c202",
+          "UInt8"
+        ],
+        [
+          "c203",
+          "UInt8"
+        ],
+        [
+          "c204",
+          "UInt8"
+        ],
+        [
+          "c205",
+          "UInt8"
+        ],
+        [
+          "c206",
+          "UInt8"
+        ],
+        [
+          "c207",
+          "UInt8"
+        ],
+        [
+          "c208",
+          "UInt8"
+        ],
+        [
+          "c209",
+          "UInt8"
+        ],
+        [
+          "c21",
+          "UInt8"
+        ],
+        [
+          "c210",
+          "UInt8"
+        ],
+        [
+          "c211",
+          "UInt8"
+        ],
+        [
+          "c212",
+          "UInt8"
+        ],
+        [
+          "c213",
+          "UInt8"
+        ],
+        [
+          "c214",
+          "UInt8"
+        ],
+        [
+          "c215",
+          "UInt8"
+        ],
+        [
+          "c216",
+          "UInt8"
+        ],
+        [
+          "c217",
+          "UInt8"
+        ],
+        [
+          "c218",
+          "UInt8"
+        ],
+        [
+          "c219",
+          "UInt8"
+        ],
+        [
+          "c22",
+          "UInt8"
+        ],
+        [
+          "c220",
+          "UInt8"
+        ],
+        [
+          "c221",
+          "UInt8"
+        ],
+        [
+          "c222",
+          "UInt8"
+        ],
+        [
+          "c223",
+          "UInt8"
+        ],
+        [
+          "c224",
+          "UInt8"
+        ],
+        [
+          "c225",
+          "UInt8"
+        ],
+        [
+          "c226",
+          "UInt8"
+        ],
+        [
+          "c227",
+          "UInt8"
+        ],
+        [
+          "c228",
+          "UInt8"
+        ],
+        [
+          "c229",
+          "UInt8"
+        ],
+        [
+          "c23",
+          "UInt8"
+        ],
+        [
+          "c230",
+          "UInt8"
+        ],
+        [
+          "c231",
+          "UInt8"
+        ],
+        [
+          "c232",
+          "UInt8"
+        ],
+        [
+          "c233",
+          "UInt8"
+        ],
+        [
+          "c234",
+          "UInt8"
+        ],
+        [
+          "c235",
+          "UInt8"
+        ],
+        [
+          "c236",
+          "UInt8"
+        ],
+        [
+          "c237",
+          "UInt8"
+        ],
+        [
+          "c238",
+          "UInt8"
+        ],
+        [
+          "c239",
+          "UInt8"
+        ],
+        [
+          "c24",
+          "UInt8"
+        ],
+        [
+          "c240",
+          "UInt8"
+        ],
+        [
+          "c241",
+          "UInt8"
+        ],
+        [
+          "c242",
+          "UInt8"
+        ],
+        [
+          "c243",
+          "UInt8"
+        ],
+        [
+          "c244",
+          "UInt8"
+        ],
+        [
+          "c245",
+          "UInt8"
+        ],
+        [
+          "c246",
+          "UInt8"
+        ],
+        [
+          "c247",
+          "UInt8"
+        ],
+        [
+          "c248",
+          "UInt8"
+        ],
+        [
+          "c249",
+          "UInt8"
+        ],
+        [
+          "c25",
+          "UInt8"
+        ],
+        [
+          "c250",
+          "UInt8"
+        ],
+        [
+          "c251",
+          "UInt8"
+        ],
+        [
+          "c252",
+          "UInt8"
+        ],
+        [
+          "c253",
+          "UInt8"
+        ],
+        [
+          "c254",
+          "UInt8"
+        ],
+        [
+          "c255",
+          "UInt8"
+        ],
+        [
+          "c256",
+          "UInt8"
+        ],
+        [
+          "c26",
+          "UInt8"
+        ],
+        [
+          "c27",
+          "UInt8"
+        ],
+        [
+          "c28",
+          "UInt8"
+        ],
+        [
+          "c29",
+          "UInt8"
+        ],
+        [
+          "c3",
+          "UInt8"
+        ],
+        [
+          "c30",
+          "UInt8"
+        ],
+        [
+          "c31",
+          "UInt8"
+        ],
+        [
+          "c32",
+          "UInt8"
+        ],
+        [
+          "c33",
+          "UInt8"
+        ],
+        [
+          "c34",
+          "UInt8"
+        ],
+        [
+          "c35",
+          "UInt8"
+        ],
+        [
+          "c36",
+          "UInt8"
+        ],
+        [
+          "c37",
+          "UInt8"
+        ],
+        [
+          "c38",
+          "UInt8"
+        ],
+        [
+          "c39",
+          "UInt8"
+        ],
+        [
+          "c4",
+          "UInt8"
+        ],
+        [
+          "c40",
+          "UInt8"
+        ],
+        [
+          "c41",
+          "UInt8"
+        ],
+        [
+          "c42",
+          "UInt8"
+        ],
+        [
+          "c43",
+          "UInt8"
+        ],
+        [
+          "c44",
+          "UInt8"
+        ],
+        [
+          "c45",
+          "UInt8"
+        ],
+        [
+          "c46",
+          "UInt8"
+        ],
+        [
+          "c47",
+          "UInt8"
+        ],
+        [
+          "c48",
+          "UInt8"
+        ],
+        [
+          "c49",
+          "UInt8"
+        ],
+        [
+          "c5",
+          "UInt8"
+        ],
+        [
+          "c50",
+          "UInt8"
+        ],
+        [
+          "c51",
+          "UInt8"
+        ],
+        [
+          "c52",
+          "UInt8"
+        ],
+        [
+          "c53",
+          "UInt8"
+        ],
+        [
+          "c54",
+          "UInt8"
+        ],
+        [
+          "c55",
+          "UInt8"
+        ],
+        [
+          "c56",
+          "UInt8"
+        ],
+        [
+          "c57",
+          "UInt8"
+        ],
+        [
+          "c58",
+          "UInt8"
+        ],
+        [
+          "c59",
+          "UInt8"
+        ],
+        [
+          "c6",
+          "UInt8"
+        ],
+        [
+          "c60",
+          "UInt8"
+        ],
+        [
+          "c61",
+          "UInt8"
+        ],
+        [
+          "c62",
+          "UInt8"
+        ],
+        [
+          "c63",
+          "UInt8"
+        ],
+        [
+          "c64",
+          "UInt8"
+        ],
+        [
+          "c65",
+          "UInt8"
+        ],
+        [
+          "c66",
+          "UInt8"
+        ],
+        [
+          "c67",
+          "UInt8"
+        ],
+        [
+          "c68",
+          "UInt8"
+        ],
+        [
+          "c69",
+          "UInt8"
+        ],
+        [
+          "c7",
+          "UInt8"
+        ],
+        [
+          "c70",
+          "UInt8"
+        ],
+        [
+          "c71",
+          "UInt8"
+        ],
+        [
+          "c72",
+          "UInt8"
+        ],
+        [
+          "c73",
+          "UInt8"
+        ],
+        [
+          "c74",
+          "UInt8"
+        ],
+        [
+          "c75",
+          "UInt8"
+        ],
+        [
+          "c76",
+          "UInt8"
+        ],
+        [
+          "c77",
+          "UInt8"
+        ],
+        [
+          "c78",
+          "UInt8"
+        ],
+        [
+          "c79",
+          "UInt8"
+        ],
+        [
+          "c8",
+          "UInt8"
+        ],
+        [
+          "c80",
+          "UInt8"
+        ],
+        [
+          "c81",
+          "UInt8"
+        ],
+        [
+          "c82",
+          "UInt8"
+        ],
+        [
+          "c83",
+          "UInt8"
+        ],
+        [
+          "c84",
+          "UInt8"
+        ],
+        [
+          "c85",
+          "UInt8"
+        ],
+        [
+          "c86",
+          "UInt8"
+        ],
+        [
+          "c87",
+          "UInt8"
+        ],
+        [
+          "c88",
+          "UInt8"
+        ],
+        [
+          "c89",
+          "UInt8"
+        ],
+        [
+          "c9",
+          "UInt8"
+        ],
+        [
+          "c90",
+          "UInt8"
+        ],
+        [
+          "c91",
+          "UInt8"
+        ],
+        [
+          "c92",
+          "UInt8"
+        ],
+        [
+          "c93",
+          "UInt8"
+        ],
+        [
+          "c94",
+          "UInt8"
+        ],
+        [
+          "c95",
+          "UInt8"
+        ],
+        [
+          "c96",
+          "UInt8"
+        ],
+        [
+          "c97",
+          "UInt8"
+        ],
+        [
+          "c98",
+          "UInt8"
+        ],
+        [
+          "c99",
+          "UInt8"
+        ]
+      ],
+      [
+        1,
+        0,
+        1,
+        10,
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        11,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        12,
+        120,
+        121,
+        122,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        129,
+        13,
+        130,
+        131,
+        132,
+        133,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        14,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        147,
+        148,
+        149,
+        15,
+        150,
+        151,
+        152,
+        153,
+        154,
+        155,
+        156,
+        157,
+        158,
+        159,
+        16,
+        160,
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        17,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178,
+        179,
+        18,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        187,
+        188,
+        189,
+        19,
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        196,
+        197,
+        198,
+        199,
+        2,
+        20,
+        200,
+        201,
+        202,
+        203,
+        204,
+        205,
+        206,
+        207,
+        208,
+        209,
+        21,
+        210,
+        211,
+        212,
+        213,
+        214,
+        215,
+        216,
+        217,
+        218,
+        219,
+        22,
+        220,
+        221,
+        222,
+        223,
+        224,
+        225,
+        226,
+        227,
+        228,
+        229,
+        23,
+        230,
+        231,
+        232,
+        233,
+        234,
+        235,
+        236,
+        237,
+        238,
+        239,
+        24,
+        240,
+        241,
+        242,
+        243,
+        244,
+        245,
+        246,
+        247,
+        248,
+        249,
+        25,
+        250,
+        251,
+        252,
+        253,
+        254,
+        255,
+        0,
+        26,
+        27,
+        28,
+        29,
+        3,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        4,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        5,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        6,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        7,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        8,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        9,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99
+      ]
+    ]
+  ]
+]

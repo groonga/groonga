@@ -2167,8 +2167,8 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
       grn_obj *domain = grn_ctx_at(ctx, hash->obj.header.domain);
       if (grn_obj_is_table(ctx, domain)) {
         const unsigned int n_source_records = grn_table_size(ctx, domain);
-        if (n_source_records > expected_n_entries) {
-          expected_n_entries = n_source_records;
+        if (n_source_records + 1 > expected_n_entries) {
+          expected_n_entries = n_source_records + 1;
         }
       }
       grn_obj_unref(ctx, domain);
@@ -2499,7 +2499,7 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
     if (!grn_id_maybe_table(ctx, hash->obj.header.domain)) {
       reset_threshold *= 2;
     }
-    if (reset_threshold > *hash->max_offset) {
+    if (reset_threshold >= *hash->max_offset) {
       if (*hash->max_offset > (1 << 29)) {
         char name[GRN_TABLE_MAX_KEY_SIZE];
         int name_size;
