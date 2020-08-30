@@ -29,11 +29,6 @@ addons_linux_build: &addons_linux_build
       - wget
       - zlib1g-dev
 
-addons_macos_build: &addons_macos_build
-  homebrew:
-    brewfile: true
-    update: true
-
 matrix:
   include:
     - name: "CMake"
@@ -56,14 +51,6 @@ matrix:
       compiler: clang
       addons:
         <<: *addons_linux_build
-      env:
-        - BUILD_TOOL=cmake
-        - ENABLE_MRUBY=yes
-    - name: "CMake: macOS"
-      os: osx
-      osx_image: xcode10.2
-      addons:
-        <<: *addons_macos_build
       env:
         - BUILD_TOOL=cmake
         - ENABLE_MRUBY=yes

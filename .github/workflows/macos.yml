@@ -3,10 +3,19 @@ on:
   - push
   - pull_request
 jobs:
-  autotools:
-    name: Autotools
+  test:
+    name: Test
     strategy:
       fail-fast: false
+      matrix:
+        label:
+          - "Autotools"
+          - "CMake"
+        include:
+          - label: "Autotools"
+            use-autotools: true
+          - label: "CMake"
+            use-cmake: true
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@master
@@ -15,19 +24,38 @@ jobs:
           brew update
           brew bundle
       - name: Generate configure
+        if: |
+          matrix.use-autotools
         run: |
           ./autogen.sh
       - name: Configure
+        if: |
+          matrix.use-autotools
         run: |
-          ./configure \
+          mkdir -p ../groonga.build
+          cd ../groonga.build
+          ../groonga/configure \
             --enable-debug \
             --enable-mruby \
             --prefix=/tmp/local \
             --with-ruby \
             PKG_CONFIG_PATH=$(brew --prefix openssl)/lib/pkgconfig
+      - name: Run CMake
+        if: |
+          matrix.use-cmake
+        run: |
+          mkdir -p ../groonga.build
+          PKG_CONFIG_PATH=$(brew --prefix openssl)/lib/pkgconfig \
+            cmake \
+              -B ../groonga.build \
+              -S . \
+              -DCMAKE_INSTALL_PREFIX=/tmp/local \
+              -DGRN_WITH_DEBUG=yes \
+              -DGRN_WITH_MRUBY=yes \
+              -DRUBY=$(which ruby)
       - name: Build
         run: |
-          make -j$(/usr/sbin/sysctl -n hw.ncpu)
+          make -C ../groonga.build -j$(/usr/sbin/sysctl -n hw.ncpu)
       - name: Install test dependencies
         run: |
           gem install \
@@ -78,4 +106,4 @@ jobs:
             --interface=http
       - name: Install
         run: |
-          make install
+          make -C ../groonga.build install
