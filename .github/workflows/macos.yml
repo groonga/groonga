@@ -68,42 +68,52 @@ jobs:
           echo "::set-env name=COLUMNS::79"
       - name: "Test: stdio"
         run: |
-          bash -x test/command/run-test.sh \
-            --n-retries=3 \
-            --read-timeout 30 \
-            --reporter=mark
+          cd ../groonga.build
+          BUILD_DIR=$PWD/test/command \
+            bash -x ../groonga/test/command/run-test.sh \
+              --n-retries=3 \
+              --read-timeout 30 \
+              --reporter=mark
       - name: "Test: HTTP: load: Apache Arrow"
         run: |
-          bash -x test/command/run-test.sh \
-            --n-retries=3 \
-            --read-timeout 30 \
-            --reporter=mark \
-            --input-type=apache-arrow \
-            --interface=http
+          cd ../groonga.build
+          BUILD_DIR=$PWD/test/command \
+            bash -x ../groonga/test/command/run-test.sh \
+              --n-retries=3 \
+              --read-timeout 30 \
+              --reporter=mark \
+              --input-type=apache-arrow \
+              --interface=http
       - name: "Test: HTTP: command: POST"
         run: |
-          bash -x test/command/run-test.sh \
-            --n-retries=3 \
-            --read-timeout 30 \
-            --reporter=mark \
-            --interface=http \
-            --use-http-post
+          cd ../groonga.build
+          BUILD_DIR=$PWD/test/command \
+            bash -x ../groonga/test/command/run-test.sh \
+              --n-retries=3 \
+              --read-timeout 30 \
+              --reporter=mark \
+              --interface=http \
+              --use-http-post
       - name: "Test: HTTP: command: chunked"
         run: |
-          bash -x test/command/run-test.sh \
-            --n-retries=3 \
-            --read-timeout 30 \
-            --reporter=mark \
-            --interface=http \
-            --use-http-chunked
+          cd ../groonga.build
+          BUILD_DIR=$PWD/test/command \
+            bash -x ../groonga/test/command/run-test.sh \
+              --n-retries=3 \
+              --read-timeout 30 \
+              --reporter=mark \
+              --interface=http \
+              --use-http-chunked
       - name: "Test: HTTP: reference count"
         run: |
+          cd ../groonga.build
           export GRN_ENABLE_REFERENCE_COUNT=yes
-          bash -x test/command/run-test.sh \
-            --n-retries=3 \
-            --read-timeout 30 \
-            --reporter=mark \
-            --interface=http
+          BUILD_DIR=$PWD/test/command \
+            bash -x ../groonga/test/command/run-test.sh \
+              --n-retries=3 \
+              --read-timeout 30 \
+              --reporter=mark \
+              --interface=http
       - name: Install
         run: |
           make -C ../groonga.build install
