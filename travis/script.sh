@@ -48,6 +48,9 @@ if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
   mkdir -p tmp
   mount -t hfs ${memory_fs_device_path} tmp
 
+  sudo sysctl -w kern.maxfiles=8192
+  sudo sysctl -w kern.maxfilesperproc=8192
+
   command_test_options="${command_test_options} --n-workers=2"
   # if [ "${TEST_TARGET}" = "command" ]; then
   #   command_test_options="${command_test_options} --no-suppress-backtrace"
