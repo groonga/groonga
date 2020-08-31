@@ -18,7 +18,9 @@ jobs:
             use-cmake: true
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
       - name: Install packages
         run: |
           brew update

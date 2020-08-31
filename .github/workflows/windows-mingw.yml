@@ -7,7 +7,9 @@ jobs:
     name: Build
     runs-on: windows-2019
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
       - name: Install MSYS2
         shell: cmd
         run: |

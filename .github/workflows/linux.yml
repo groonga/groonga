@@ -32,7 +32,9 @@ jobs:
               CXX=clang++
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
       - name: Enable Apache Arrow repository
         run: |
           sudo apt update
