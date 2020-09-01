@@ -673,7 +673,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
 
 static grn_rc
 chunk_free(grn_ctx *ctx, grn_ii *ii,
-           uint32_t offset, uint32_t dummy, uint32_t size)
+           uint32_t offset, uint32_t size)
 {
   /*
   if (size) {
@@ -3774,7 +3774,7 @@ chunk_flush(grn_ctx *ctx, grn_ii *ii, chunk_info *cinfo, uint8_t *enc, uint32_t 
         cinfo->segno = dcn;
         cinfo->size = encsize;
       } else {
-        chunk_free(ctx, ii, dcn, 0, encsize);
+        chunk_free(ctx, ii, dcn, encsize);
         {
           DEFINE_NAME(ii);
           MERR("[ii][chunk][flush] failed to allocate a destination chunk: "
@@ -3999,7 +3999,7 @@ chunk_merge(grn_ctx *ctx,
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    chunk_free(ctx, ii, segno, 0, size);
+    chunk_free(ctx, ii, segno, size);
   }
   *balance += (ndf - chunk_data->n_documents);
 
@@ -4661,7 +4661,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
               ii->header.common->total_chunk_size += actual_chunk_size;
               need_chunk_free = false;
               if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
-                chunk_free(ctx, ii, scn, 0, sb->header.chunk_size);
+                chunk_free(ctx, ii, scn, sb->header.chunk_size);
                 ii->header.common->total_chunk_size -= sb->header.chunk_size;
               }
             } else {
@@ -4677,7 +4677,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
             }
           }
           if (need_chunk_free) {
-            chunk_free(ctx, ii, dcn, 0, actual_chunk_size);
+            chunk_free(ctx, ii, dcn, actual_chunk_size);
           }
           if (dc) {
             GRN_FREE(dc);
@@ -5087,7 +5087,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
                       need_db0_chunk_free = false;
                       need_db1_chunk_free = false;
                       if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
-                        chunk_free(ctx, ii, scn, 0, sb->header.chunk_size);
+                        chunk_free(ctx, ii, scn, sb->header.chunk_size);
                         ii->header.common->total_chunk_size -=
                           sb->header.chunk_size;
                       }
@@ -5111,7 +5111,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
                     }
                   }
                   if (need_db1_chunk_free) {
-                    chunk_free(ctx, ii, dcn1, 0, actual_db1_chunk_size);
+                    chunk_free(ctx, ii, dcn1, actual_db1_chunk_size);
                   }
                   if (dc1) {
                     GRN_FREE(dc1);
@@ -5133,7 +5133,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
               }
             }
             if (need_db0_chunk_free) {
-              chunk_free(ctx, ii, dcn0, 0, actual_db0_chunk_size);
+              chunk_free(ctx, ii, dcn0, actual_db0_chunk_size);
             }
             if (dc0) {
               GRN_FREE(dc0);
