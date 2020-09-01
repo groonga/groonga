@@ -2876,7 +2876,7 @@ typedef struct {
   const char *tag;
   grn_ii *ii;
   buffer *buffer;
-  uint8_t *chunk;
+  const uint8_t *chunk;
   buffer_term *term;
   uint16_t nth_term;
   uint16_t n_terms;
@@ -2963,10 +2963,10 @@ merge_dump_source_add_entry(grn_ctx *ctx,
 static void
 merge_dump_source_chunk_raw(grn_ctx *ctx,
                             merge_dump_source_data *data,
-                            uint8_t *chunk_start,
-                            uint8_t *chunk_end)
+                            const uint8_t *chunk_start,
+                            const uint8_t *chunk_end)
 {
-  uint8_t *chunk_current = chunk_start;
+  const uint8_t *chunk_current = chunk_start;
   int decoded_size;
 
   if ((chunk_end - chunk_current) == 0) {
@@ -3004,11 +3004,11 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
 
   {
     uint32_t n_documents;
-    uint32_t *record_id_gaps;
-    uint32_t *section_id_gaps = NULL;
-    uint32_t *n_terms_list;
-    uint32_t *weights = NULL;
-    uint32_t *position_gaps = NULL;
+    const uint32_t *record_id_gaps;
+    const uint32_t *section_id_gaps = NULL;
+    const uint32_t *n_terms_list;
+    const uint32_t *weights = NULL;
+    const uint32_t *position_gaps = NULL;
 
     {
       int i = 0;
@@ -3068,11 +3068,11 @@ static void
 merge_dump_source_chunk(grn_ctx *ctx,
                         merge_dump_source_data *data)
 {
-  uint8_t *chunk_start = data->chunk + data->term->pos_in_chunk;
-  uint8_t *chunk_end = chunk_start + data->term->size_in_chunk;
+  const uint8_t *chunk_start = data->chunk + data->term->pos_in_chunk;
+  const uint8_t *chunk_end = chunk_start + data->term->size_in_chunk;
 
   if (data->term->tid & CHUNK_SPLIT) {
-    uint8_t *chunk_current = chunk_start;
+    const uint8_t *chunk_current = chunk_start;
 
     GRN_B_DEC(data->n_chunks, chunk_current);
     GRN_LOG(ctx, data->log_level,
@@ -3191,7 +3191,7 @@ static void
 merge_dump_source(grn_ctx *ctx,
                   grn_ii *ii,
                   buffer *buffer,
-                  uint8_t *chunk,
+                  const uint8_t *chunk,
                   grn_log_level log_level)
 {
   merge_dump_source_data data;
@@ -3321,17 +3321,17 @@ typedef struct {
 } merger_buffer_data;
 
 typedef struct {
-  uint8_t *data_start;
-  uint8_t *data_end;
-  uint8_t *data;
+  const uint8_t *data_start;
+  const uint8_t *data_end;
+  const uint8_t *data;
   docinfo id;
   uint32_t n_documents;
-  uint32_t *record_id_gaps;
-  uint32_t *section_id_gaps;
-  uint32_t *tfs;
-  uint32_t *weights;
-  uint32_t *position_gaps;
-  uint32_t *position_gaps_end;
+  const uint32_t *record_id_gaps;
+  const uint32_t *section_id_gaps;
+  const uint32_t *tfs;
+  const uint32_t *weights;
+  const uint32_t *position_gaps;
+  const uint32_t *position_gaps_end;
 } merger_chunk_data;
 
 typedef struct {
@@ -3753,7 +3753,8 @@ chunk_merge(grn_ctx *ctx,
   uint32_t segno = cinfo->segno;
   uint32_t size = cinfo->size;
   uint32_t ndf = 0;
-  uint8_t *scp = WIN_MAP(ii->chunk, ctx, &sw, segno, 0, size, GRN_IO_RDONLY);
+  const uint8_t *scp =
+    WIN_MAP(ii->chunk, ctx, &sw, segno, 0, size, GRN_IO_RDONLY);
   datavec rdv[MAX_N_ELEMENTS + 1];
   size_t bufsize = S_SEGMENT * ii->n_elements;
 
