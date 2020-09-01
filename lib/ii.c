@@ -2181,7 +2181,7 @@ grn_p_dec(grn_ctx *ctx, uint8_t *data, uint32_t data_size, uint32_t nreq, uint32
   }
 }
 
-int
+static int
 grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
            uint8_t *data, uint32_t data_size, datavec *dv, uint32_t dvlen)
 {
