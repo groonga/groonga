@@ -3896,8 +3896,6 @@ chunk_merge(grn_ctx *ctx,
   {
     int j = 0;
     uint8_t *enc;
-    uint32_t encsize_probably_enough;
-    uint32_t encsize;
     uint32_t np = data->dest.position_gaps - dv[ii->n_elements - 1].data;
     uint32_t f_s = (ndf < 3) ? 0 : USE_P_ENC;
     uint32_t f_d = ((ndf < 16) || (ndf <= (data->last_id.rid >> 8))) ? 0 : USE_P_ENC;
@@ -3918,8 +3916,30 @@ chunk_merge(grn_ctx *ctx,
       }
       dv[j].data_size = np; dv[j].flags = f_p|ODD;
     }
-    encsize_probably_enough = (ndf * 4 + np) * 3;
-    enc = GRN_MALLOC(encsize_probably_enough);
+    const size_t encsize_estimated = grn_p_encv(ctx, dv, ii->n_elements, NULL);
+    if (encsize_estimated == 0) {
+      grn_obj term;
+      DEFINE_NAME(ii);
+      GRN_TEXT_INIT(&term, 0);
+      grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
+      MERR("[ii][chunk][merge] failed to estimated encode buffer size: "
+           "<%.*s>: "
+           "<%.*s>(%u): "
+           "record:<%u>, "
+           "segment:<%u>, "
+           "size:<%u>, "
+           "estimated-buffer-size: <%" GRN_FMT_SIZE ">",
+           name_size, name,
+           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+           data->term_id,
+           rid,
+           segno,
+           size,
+           encsize_estimated);
+      GRN_OBJ_FIN(ctx, &term);
+      goto exit;
+    }
+    enc = GRN_MALLOC(encsize_estimated);
     if (!enc) {
       grn_obj term;
       DEFINE_NAME(ii);
@@ -3928,17 +3948,44 @@ chunk_merge(grn_ctx *ctx,
       MERR("[ii][chunk][merge] failed to allocate a encode buffer: "
            "<%.*s>: "
            "<%.*s>(%u): "
-           "record:<%u>, segment:<%u>, size:<%u>",
+           "record:<%u>, "
+           "segment:<%u>, "
+           "size:<%u>, "
+           "estimated-buffer-size: <%" GRN_FMT_SIZE ">",
            name_size, name,
            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
            data->term_id,
            rid,
            segno,
-           size);
+           size,
+           encsize_estimated);
       GRN_OBJ_FIN(ctx, &term);
       goto exit;
     }
-    encsize = grn_p_encv(ctx, dv, ii->n_elements, enc);
+    const size_t encsize = grn_p_encv(ctx, dv, ii->n_elements, enc);
+    if (encsize == 0) {
+      grn_obj term;
+      DEFINE_NAME(ii);
+      GRN_TEXT_INIT(&term, 0);
+      grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
+      MERR("[ii][chunk][merge] failed to encode: "
+           "<%.*s>: "
+           "<%.*s>(%u): "
+           "record:<%u>, "
+           "segment:<%u>, "
+           "size:<%u>, "
+           "estimated-buffer-size: <%" GRN_FMT_SIZE ">",
+           name_size, name,
+           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+           data->term_id,
+           rid,
+           segno,
+           size,
+           encsize_estimated);
+      GRN_OBJ_FIN(ctx, &term);
+      GRN_FREE(enc);
+      goto exit;
+    }
     chunk_flush(ctx, ii, cinfo, enc, encsize);
     GRN_FREE(enc);
     if (ctx->rc != GRN_SUCCESS) {
