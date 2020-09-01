@@ -4058,7 +4058,7 @@ buffer_merge_ensure_dc(grn_ctx *ctx,
 
 static grn_rc
 buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
-             buffer *sb, uint8_t *sc, buffer *db, uint8_t **dc_output)
+             buffer *sb, const uint8_t *sc, buffer *db, uint8_t **dc_output)
 {
   buffer_term *bt;
   uint8_t *dc = NULL;
@@ -4577,7 +4577,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
   {
     GRN_IO_SEG_REF(ii->seg, ds, db);
     if (db) {
-      uint8_t *sc = NULL;
+      const uint8_t *sc = NULL;
       if ((scn = sb->header.chunk) == GRN_II_PSEG_NOT_ASSIGNED ||
           (sc = WIN_MAP(ii->chunk, ctx, &sw, scn, 0,
                         sb->header.chunk_size, GRN_IO_RDONLY))) {
@@ -4978,7 +4978,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
     if (db0) {
       GRN_IO_SEG_REF(ii->seg, dps1, db1);
       if (db1) {
-        uint8_t *sc = NULL;
+        const uint8_t *sc = NULL;
         if ((scn = sb->header.chunk) == GRN_II_PSEG_NOT_ASSIGNED ||
             (sc = WIN_MAP(ii->chunk, ctx, &sw, scn, 0,
                           sb->header.chunk_size, GRN_IO_RDONLY))) {
