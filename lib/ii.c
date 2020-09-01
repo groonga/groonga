@@ -3315,7 +3315,7 @@ merge_dump_source(grn_ctx *ctx,
 typedef struct {
   buffer *buffer;
   buffer_term *term;
-  uint8_t *data;
+  const uint8_t *data;
   docinfo id;
   uint16_t next_position;
 } merger_buffer_data;
