@@ -46,6 +46,7 @@ jobs:
         if: |
           matrix.use-cmake
         run: |
+          export SDKROOT="$(xcrun --show-sdk-path)"
           mkdir -p ../groonga.build
           PKG_CONFIG_PATH=$(brew --prefix openssl)/lib/pkgconfig \
             cmake \
