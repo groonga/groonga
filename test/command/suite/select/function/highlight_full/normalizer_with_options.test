@@ -1,0 +1,15 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries body COLUMN_SCALAR ShortText
+
+load --table Entries
+[
+{"body": "Mroonga is a ＭｙＳＱＬ storage engine based on Groonga (ぐるんが). <b>Rroonga</b> is a Ruby binding of Groonga (グルンガ)."}
+]
+
+select Entries --output_columns \
+  'highlight_full(body, \
+                  "NormalizerNFKC121(\\"unify_kana\\", true)", \
+                  true, \
+                  "ぐるんが", \
+                  "<span class=\\"keyword1\\">", \
+                  "</span>")'

@@ -4,10 +4,10 @@ column_create Entries body COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 load --table Entries
 [
-{"body": "PGroonga is a PostgreSQL plugin to use groonga as index."}
+{"body": "PGroonga is a PostgreSQL plugin to use groonga (グルンガ) as index."}
 ]
 [[0,0.0,0.0],1]
-select Entries --output_columns   'highlight(body,   "groonga", "<span class=\\"keyword1\\">", "</span>",   {"normalizer": "NormalizerAuto"} )'
+select Entries --output_columns   'highlight(body,   "ぐるんが", "<span class=\\"keyword1\\">", "</span>",   {"normalizer": "NormalizerNFKC121(\\"unify_kana\\", true)"} )'
 [
   [
     0,
@@ -26,7 +26,7 @@ select Entries --output_columns   'highlight(body,   "groonga", "<span class=\\"
         ]
       ],
       [
-        "P<span class=\"keyword1\">Groonga</span> is a PostgreSQL plugin to use <span class=\"keyword1\">groonga</span> as index."
+        "PGroonga is a PostgreSQL plugin to use groonga (<span class=\"keyword1\">グルンガ</span>) as index."
       ]
     ]
   ]

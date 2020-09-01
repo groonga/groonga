@@ -109,25 +109,15 @@ func_highlight_create_keywords_table(grn_ctx *ctx,
                               NULL);
 
   if (normalizer_name_length > 0) {
-    grn_obj *normalizer;
-    normalizer = grn_ctx_get(ctx,
-                             normalizer_name,
-                             normalizer_name_length);
-    if (!grn_obj_is_normalizer_proc(ctx, normalizer)) {
-      grn_obj inspected;
-      GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, normalizer);
-      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                       "highlight_full() not normalizer: <%.*s>",
-                       (int)GRN_TEXT_LEN(&inspected),
-                       GRN_TEXT_VALUE(&inspected));
-      GRN_OBJ_FIN(ctx, &inspected);
-      grn_obj_unlink(ctx, normalizer);
+    grn_obj normalizer;
+    GRN_TEXT_INIT(&normalizer, GRN_OBJ_DO_SHALLOW_COPY);
+    GRN_TEXT_SET(ctx, &normalizer, normalizer_name, normalizer_name_length);
+    grn_obj_set_info(ctx, keywords, GRN_INFO_NORMALIZER, &normalizer);
+    if (ctx->rc != GRN_SUCCESS) {
       grn_obj_unlink(ctx, keywords);
-      return NULL;
+      keywords = NULL;
     }
-    grn_obj_set_info(ctx, keywords, GRN_INFO_NORMALIZER, normalizer);
-    grn_obj_unlink(ctx, normalizer);
+    GRN_OBJ_FIN(ctx, &normalizer);
   }
 
   return keywords;
