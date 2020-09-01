@@ -1829,31 +1829,6 @@ pack(uint32_t *p, uint32_t i, uint8_t *freq, uint8_t *rp)
   return rp + (ep - ebuf);
 }
 
-int
-grn_p_enc(grn_ctx *ctx, uint32_t *data, uint32_t data_size, uint8_t **res)
-{
-  uint8_t *rp, freq[33];
-  uint32_t j, *dp, *dpe, d, w, buf[UNIT_SIZE];
-  *res = rp = GRN_MALLOC(data_size * sizeof(uint32_t) * 2);
-  GRN_B_ENC(data_size, rp);
-  memset(freq, 0, 33);
-  for (j = 0, dp = data, dpe = dp + data_size; dp < dpe; j++, dp++) {
-    if (j == UNIT_SIZE) {
-      rp = pack(buf, j, freq, rp);
-      memset(freq, 0, 33);
-      j = 0;
-    }
-    if ((d = buf[j] = *dp)) {
-      GRN_BIT_SCAN_REV(d, w);
-      freq[w + 1]++;
-    } else {
-      freq[0]++;
-    }
-  }
-  if (j) { rp = pack(buf, j, freq, rp); }
-  return rp - *res;
-}
-
 #define USE_P_ENC (1<<0) /* Use PForDelta */
 #define ODD       (1<<2) /* Variable size data */
 
@@ -2150,35 +2125,6 @@ unpack(uint8_t *dp, uint8_t *dpe, int i, uint32_t *rp)
     }
   }
   return dp;
-}
-
-int
-grn_p_dec(grn_ctx *ctx, uint8_t *data, uint32_t data_size, uint32_t nreq, uint32_t **res)
-{
-  uint8_t *dp = data, *dpe = data + data_size;
-  uint32_t rest, orig_size, *rp, *rpe;
-  GRN_B_DEC(orig_size, dp);
-  if (!orig_size) {
-    if (!nreq || nreq > data_size) { nreq = data_size; }
-    if ((*res = rp = GRN_MALLOC(nreq * 4))) {
-      for (rpe = rp + nreq; dp < data + data_size && rp < rpe; rp++) {
-        GRN_B_DEC(*rp, dp);
-      }
-    }
-    return rp - *res;
-  } else {
-    if (!(*res = rp = GRN_MALLOC(orig_size * sizeof(uint32_t)))) {
-      return 0;
-    }
-    if (!nreq || nreq > orig_size) { nreq = orig_size; }
-    for (rest = nreq; rest >= UNIT_SIZE; rest -= UNIT_SIZE) {
-      if (!(dp = unpack(dp, dpe, UNIT_SIZE, rp))) { return 0; }
-      rp += UNIT_SIZE;
-    }
-    if (rest) { if (!(dp = unpack(dp, dpe, rest, rp))) { return 0; } }
-    GRN_ASSERT(data + data_size == dp);
-    return nreq;
-  }
 }
 
 static int
