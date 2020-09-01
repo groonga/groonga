@@ -76,7 +76,7 @@ jobs:
           BUILD_DIR=$PWD/test/command \
             bash -x ../groonga/test/command/run-test.sh \
               --n-retries=3 \
-              --read-timeout 30 \
+              --read-timeout=30 \
               --reporter=mark
       - name: "Test: HTTP: load: Apache Arrow"
         run: |
@@ -84,7 +84,7 @@ jobs:
           BUILD_DIR=$PWD/test/command \
             bash -x ../groonga/test/command/run-test.sh \
               --n-retries=3 \
-              --read-timeout 30 \
+              --read-timeout=30 \
               --reporter=mark \
               --input-type=apache-arrow \
               --interface=http
@@ -94,7 +94,7 @@ jobs:
           BUILD_DIR=$PWD/test/command \
             bash -x ../groonga/test/command/run-test.sh \
               --n-retries=3 \
-              --read-timeout 30 \
+              --read-timeout=30 \
               --reporter=mark \
               --interface=http \
               --use-http-post
@@ -104,7 +104,7 @@ jobs:
           BUILD_DIR=$PWD/test/command \
             bash -x ../groonga/test/command/run-test.sh \
               --n-retries=3 \
-              --read-timeout 30 \
+              --read-timeout=30 \
               --reporter=mark \
               --interface=http \
               --use-http-chunked
@@ -115,7 +115,7 @@ jobs:
           BUILD_DIR=$PWD/test/command \
             bash -x ../groonga/test/command/run-test.sh \
               --n-retries=3 \
-              --read-timeout 30 \
+              --read-timeout=30 \
               --reporter=mark \
               --interface=http
       - name: Install

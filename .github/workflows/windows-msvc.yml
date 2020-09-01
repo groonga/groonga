@@ -303,7 +303,7 @@ jobs:
             --interface http `
             --n-retries 2 `
             --n-workers ${Env:NUMBER_OF_PROCESSORS} `
-            --read-timeout 30 `
+            --read-timeout=30 `
             --reporter mark `
             --timeout 60 `
             test\command\suite
@@ -318,7 +318,7 @@ jobs:
             --interface http `
             --n-retries 2 `
             --n-workers ${Env:NUMBER_OF_PROCESSORS} `
-            --read-timeout 30 `
+            --read-timeout=30 `
             --reporter mark `
             --timeout 360 `
             --use-http-chunked `
